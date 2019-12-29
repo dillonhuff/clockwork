@@ -1,5 +1,6 @@
 extern "C" {
 #include <isl/id.h>
+#include <isl/aff.h>
 #include <isl/set.h>
 #include <isl/flow.h>
 #include <isl/polynomial.h>
@@ -24,6 +25,10 @@ extern "C" {
 #include <vector>
 
 using namespace std;
+
+isl_pw_multi_aff* cpy(isl_pw_multi_aff* const s) {
+  return isl_pw_multi_aff_copy(s);
+}
 
 isl_pw_qpolynomial* cpy(isl_pw_qpolynomial* const s) {
   return isl_pw_qpolynomial_copy(s);
@@ -51,6 +56,16 @@ isl_set* cpy(isl_set* const b) {
 
 isl_map* cpy(isl_map* const b) {
   return isl_map_copy(b);
+}
+
+void print(struct isl_ctx* const ctx, isl_pw_multi_aff* const bset) {
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_print_pw_multi_aff(p, cpy(bset));
+  char* rs = isl_printer_get_str(p);
+  printf("%s\n", rs);
+  isl_printer_free(p);
+  free(rs);
 }
 
 void print(struct isl_ctx* const ctx, isl_point* const bset) {
@@ -149,12 +164,21 @@ class UBuffer {
 
       int varNum = 0;
       isl_constraint* c = isl_constraint_alloc_equality(cpy(ls));
-      c = isl_constraint_set_constant_si(c, offset);
+      c = isl_constraint_set_constant_si(c, -offset);
       c = isl_constraint_set_coefficient_si(c, isl_dim_out, varNum, 1);
       c = isl_constraint_set_coefficient_si(c, isl_dim_in, varNum, -1);
       m = isl_basic_map_add_constraint(m, c);
 
       return isl_map_from_basic_map(m);
+    }
+
+    string get_in_port() const {
+      for (auto m : isIn) {
+        if (m.second) {
+          return m.first;
+        }
+      }
+      assert(false);
     }
 
     void add_out_port(const std::string& name, const std::vector<int>& ranges) {
@@ -179,11 +203,11 @@ int main() {
   buf.schedule["in"] = buf.build_map(0);
   
   buf.add_out_port("out0", {0, 5});
-  buf.schedule["out0"] = buf.build_map(0);
+  buf.schedule["out0"] = buf.build_map(2);
   buf.add_out_port("out1", {1, 6});
   buf.schedule["out1"] = buf.build_map(1);
   buf.add_out_port("out2", {2, 7});
-  buf.schedule["out2"] = buf.build_map(2);
+  buf.schedule["out2"] = buf.build_map(0);
 
   cout << "--- Domains" << endl;
   for (auto d : buf.domain) {
@@ -206,6 +230,64 @@ int main() {
     cout << "Cardinality of domain..." << endl;
     print(buf.ctx, isl_set_card(cpy(s)));
   }
+
+  string in_name = buf.get_in_port();
+  isl_map* in_sched = buf.schedule.at(in_name);
+  isl_set* in_domain = buf.domain.at(in_name);
+  isl_pw_multi_aff* write_time =
+    isl_map_lexmax_pw_multi_aff(in_sched);
+  cout << "Write times..." << endl;
+  print(ctx, write_time);
+  for (auto d : buf.isIn) {
+    if (!d.second) {
+      string out_name = d.first;
+      cout << "Output port: " << d.first << endl;
+      isl_map* out_sched = buf.schedule.at(out_name);
+      isl_pw_multi_aff* first_read_time =
+        isl_map_lexmin_pw_multi_aff(out_sched);
+
+      auto diff =
+        isl_pw_multi_aff_sub(cpy(first_read_time), cpy(write_time));
+
+      cout << "Write -> read Difference..." << endl;
+      print(ctx, diff);
+
+      isl_set* out_domain = buf.domain.at(out_name);
+
+
+    }
+  }
+
+  // Now: I want to add code to check if the schedules
+  // violate data dependencies, so I need to check if
+  //  1. Any read on a port is done before the corresponding write
+  //  Later: When there are physical address constraints we need to
+  //  figure out whether any value is read after the physical location
+  //  that stores it is written
+  //
+  //  RAW check: How to do it in ISL?
+  //   - Given: Input port and output port
+  //   - Goal: Decide if any value appears on the output port before
+  //           it appears on the input port
+  //   - Plan: Construct the set of all values that are read before
+  //           being written, then check if it is empty.
+  //           How to construct that set?
+  //           Map from value to difference between read and write time
+  //           The range of that map is all write -> read differences
+  //           Find the min of that range (or intersect with <= 0)
+  //           If the min is less than zero there is a violation
+  //
+  //           Note: But the read time / write time are maps, so I cannot
+  //           just do arithmetic on their output expressions, and even
+  //           if I could I dont know how to build a map out of
+  //           the resulting expression.
+  //
+  //           Like: get lexmin read time
+  //                 get lexmax for write time
+  //
+  //                 do read - write
+  //
+  //                 isl_map_from_pw_multi_affine?
 
   return 0;
 
