@@ -134,7 +134,32 @@ class UBuffer {
     std::map<string, isl_set*> domain;
     std::map<string, isl_map*> schedule;
 
+    std::map<string, int> varInds;
+
+    std::vector<string> logical_addr_vars;
+    std::vector<string> physical_addr_vars;
+    std::vector<string> writer_vars;
+    std::vector<string> reader_vars;
+
+    // Map from writer vars to logical addr vars
+    map<string, isl_map*> write_funcs;
+
+    // Map from reader vars to logical addr vars
+    map<string, isl_map*> read_funcs;
+    
     isl_map* physical_address_mapping;
+
+    void add_out_port(const std::string& name) {
+
+    }
+
+    void add_in_port(const std::string& name) {
+
+    }
+
+    void add_var(const std::string& name) {
+
+    }
 
     isl_basic_set* build_domain(const std::vector<int>& ranges) {
       assert(ranges.size() % 2 == 0);
@@ -234,6 +259,14 @@ isl_constraint* ge(isl_space* const space, const int value, const std::vector<in
   return c;
 }
 
+// What questions do I have about spaces / variable names by index?
+//  1. is a copy of a space equal to the original space?
+//  2. What are these tuple things that keep getting mentioned?
+//  3. Can you intersect sets from different spaces?
+//  4. When sets from different spaces are operated on w/named variables
+//     are constraints merged by variable names or indexes?
+//  5. What is the space of the inverse of a map? Does it make a new space
+//     with in and out variables reversed?
 void test_swizzle_buffer() {
 
   struct isl_ctx *ctx;
@@ -244,6 +277,40 @@ void test_swizzle_buffer() {
   // time
   // physical position variable
   UBuffer buf;
+
+  // Logical addresses
+  buf.add_var("c");
+  buf.add_var("r");
+
+  // Physical addresses
+  buf.add_var("pc");
+  buf.add_var("pr");
+
+  // Writer loop nest
+  buf.add_var("wy");
+  buf.add_var("wx");
+
+  // Reader loop nest
+  buf.add_var("ry");
+  buf.add_var("rxo");
+  buf.add_var("rxi");
+
+  // Time
+  buf.add_var("t");
+
+  // Add ports, say two in, three out
+  buf.add_in_port("in0");
+  buf.add_in_port("in1");
+
+  buf.add_out_port("out0");
+  buf.add_out_port("out1");
+  buf.add_out_port("out2");
+
+  // Want to add read / write schedules, and domains
+  // Should the domain describe all logical addresses
+  // as a restriction of r / c
+  // Or should it describe all logical addresses as
+  // the union of the ranges of all address write functions
   buf.ctx = ctx;
   buf.space = isl_space_set_alloc(ctx, 0, 2);
   buf.map_space = isl_space_alloc(ctx, 0, 2, 3);
@@ -263,9 +330,6 @@ void test_swizzle_buffer() {
 
   // How do you create a space if you dont know how many
   // variables you will need?
-
-  //isl_basic_set* less_value = isl_basic_set_universe(cpy(buf.map_space));
-
   auto c = eq(buf.map_space, 0, {1}, {1});
   buf.physical_address_mapping = isl_map_add_constraint(buf.physical_address_mapping, c);
 
@@ -282,15 +346,61 @@ void test_swizzle_buffer() {
   c = le(buf.map_space, 0, {0, 0}, {0, 1, 0});
   buf.physical_address_mapping = isl_map_add_constraint(buf.physical_address_mapping, c);
   
-  //cout << "Physical address mapping" << endl;
-  //print(ctx, buf.physical_address_mapping);
-  //cout << endl;
+  cout << "Physical address mapping" << endl;
+  print(ctx, buf.physical_address_mapping);
+  cout << endl;
 
   buf.physical_address_mapping = isl_map_project_out(buf.physical_address_mapping, isl_dim_out, 2, 1);
 
   cout << "Physical address mapping" << endl;
   print(ctx, buf.physical_address_mapping);
   cout << endl;
+
+  // Now: Create a domain for input / output ports
+
+  isl_ctx_free(ctx);
+}
+
+void basic_space_tests() {
+
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+
+
+  auto s0 = isl_space_set_alloc(ctx, 0, 2);
+  auto s1 = isl_space_set_alloc(ctx, 0, 2);
+  auto s2 = isl_space_set_alloc(ctx, 0, 3);
+
+  // A space is equal to itself
+  assert(isl_space_is_equal(s0, s0));
+
+  auto copyS0 = cpy(s0);
+
+  // A space is equal to a copy of itself
+  assert(isl_space_is_equal(s0, copyS0));
+
+  // A space is equal to another space with the same construction params
+  assert(isl_space_is_equal(s0, s1));
+
+  // A space is not equal to another space with different numbers of
+  // variables
+  assert(!isl_space_is_equal(s0, s2));
+
+  auto set0 = isl_basic_set_universe(s0);
+  auto set2 = isl_basic_set_universe(s2);
+
+  // This fails because set0 is not equal to set2
+  //auto res = isl_basic_set_intersect(set0, set2);
+  //assert(false);
+  //
+  // So maybe what we need is several different spaces
+  //  - Logical address space (set space)
+  //  - Physical address space (set space)
+  //  - Schedule space (la -> t)
+  //  - PMap space (la -> pa) (what about extra variables?)
+  //  To add extra variables to remove via projection we need
+  //   to insert variables in the local space
 
   isl_ctx_free(ctx);
 }
@@ -393,6 +503,7 @@ int main() {
 
   isl_ctx_free(buf.ctx);
 
+  basic_space_tests();
   test_swizzle_buffer();
 
   return 0;
