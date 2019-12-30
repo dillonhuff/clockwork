@@ -17,6 +17,8 @@ extern "C" {
 #include <isl/map.h>
 }
 
+// i
+
 #include "barvinok/barvinok.h"
 
 #include <cassert>
@@ -132,6 +134,8 @@ class UBuffer {
     std::map<string, isl_set*> domain;
     std::map<string, isl_map*> schedule;
 
+    isl_map* physical_address_mapping;
+
     isl_basic_set* build_domain(const std::vector<int>& ranges) {
       assert(ranges.size() % 2 == 0);
 
@@ -188,6 +192,81 @@ class UBuffer {
 
 };
 
+isl_constraint* eq(isl_space* const space, const int value, const std::vector<int>& in_coeffs, const std::vector<int>& out_coeffs) {
+  isl_local_space* ls = isl_local_space_from_space(space);
+  isl_constraint* c = isl_constraint_alloc_equality(cpy(ls));
+  c = isl_constraint_set_constant_si(c, -value);
+  for (size_t i = 0; i < in_coeffs.size(); i++) {
+    c = isl_constraint_set_coefficient_si(c, isl_dim_in, i, in_coeffs[i]);
+  }
+  for (size_t i = 0; i < out_coeffs.size(); i++) {
+    c = isl_constraint_set_coefficient_si(c, isl_dim_out, i, -out_coeffs[i]);
+  }
+
+  return c;
+}
+isl_constraint* le(isl_space* const space, const int value, const std::vector<int>& in_coeffs, const std::vector<int>& out_coeffs) {
+  isl_local_space* ls = isl_local_space_from_space(space);
+  isl_constraint* c = isl_constraint_alloc_inequality(cpy(ls));
+  c = isl_constraint_set_constant_si(c, -value);
+  for (size_t i = 0; i < in_coeffs.size(); i++) {
+    c = isl_constraint_set_coefficient_si(c, isl_dim_in, i, in_coeffs[i]);
+  }
+  for (size_t i = 0; i < out_coeffs.size(); i++) {
+    c = isl_constraint_set_coefficient_si(c, isl_dim_out, i, -out_coeffs[i]);
+  }
+
+  return c;
+}
+
+void test_swizzle_buffer() {
+
+  struct isl_ctx *ctx;
+
+  ctx = isl_ctx_alloc();
+
+  // 2 image variables
+  // time
+  // physical position variable
+  UBuffer buf;
+  buf.ctx = ctx;
+  buf.space = isl_space_set_alloc(ctx, 0, 2);
+  buf.map_space = isl_space_alloc(ctx, 0, 2, 3);
+
+
+  buf.physical_address_mapping =
+    isl_map_from_basic_map(isl_basic_map_universe(cpy(buf.map_space)));
+
+  // Mapping: (x, y) -> (x, y % 3)
+  // How to represent modulus? y % 3 === k, exists q. 3*q + k = y
+  //int x = 0;
+  //int y = 1;
+
+  //int k = 0;
+  //int k = 1;
+  //int q = 2;
+
+  // How do you create a space if you dont know how many
+  // variables you will need?
+
+  //isl_basic_set* less_value = isl_basic_set_universe(cpy(buf.map_space));
+
+  // -i1 <> -1 <> 0
+  // becomes: i1 < 0
+  //          i1 <= -1
+  //          0  <= -i1 - 1
+  isl_constraint* c = le(buf.map_space, 1, {0, -1}, {});
+  buf.physical_address_mapping = isl_map_add_constraint(buf.physical_address_mapping, c);
+
+  c = eq(buf.map_space, 0, {1}, {1});
+  buf.physical_address_mapping = isl_map_add_constraint(buf.physical_address_mapping, c);
+
+  cout << "Physical address mapping" << endl;
+  print(ctx, buf.physical_address_mapping);
+
+  isl_ctx_free(ctx);
+}
+
 int main() {
   struct isl_ctx *ctx;
 
@@ -224,7 +303,7 @@ int main() {
   cout << "Adding domains to schedules..." << endl;
   for (auto d : buf.schedule) {
     isl_set* s = buf.domain.at(d.first);
-    isl_map* m = isl_map_intersect_domain(d.second, s);
+    isl_map* m = isl_map_intersect_domain(cpy(d.second), cpy(s));
     cout << "Schedule with domain for " << d.first << endl;
     print(buf.ctx, m);
     cout << "Cardinality of domain..." << endl;
@@ -252,106 +331,41 @@ int main() {
       cout << "Write -> read Difference..." << endl;
       print(ctx, diff);
 
+      auto diff_map =
+        isl_map_from_pw_multi_aff(diff);
+      
       isl_set* out_domain = buf.domain.at(out_name);
+      diff_map = isl_map_intersect_domain(diff_map, cpy(out_domain));
+      auto range = isl_map_range(diff_map);
 
+      // Intersect with range?
+      isl_basic_set* less_value = isl_basic_set_universe(cpy(buf.space));
+      isl_local_space* ls = isl_local_space_from_space(buf.space);
+      isl_constraint* c = isl_constraint_alloc_inequality(cpy(ls));
+      c = isl_constraint_set_constant_si(c, -1);
+      c = isl_constraint_set_coefficient_si(c, isl_dim_set, 0, -1);
+      less_value = isl_basic_set_add_constraint(less_value, c);
 
+      cout << "LTZ..." << endl;
+      print(buf.ctx, less_value);
+
+      range = isl_set_intersect(isl_set_from_basic_set(less_value), range);
+
+      cout << "Range of output..." << endl;
+      print(ctx, range);
+
+      if (isl_set_is_empty(range)) {
+        cout << "\tPassed, no violated deps" << endl;
+      } else {
+        cout << "\tERROR: Some values read before being written" << endl;
+        assert(false);
+      }
     }
   }
 
-  // Now: I want to add code to check if the schedules
-  // violate data dependencies, so I need to check if
-  //  1. Any read on a port is done before the corresponding write
-  //  Later: When there are physical address constraints we need to
-  //  figure out whether any value is read after the physical location
-  //  that stores it is written
-  //
-  //  RAW check: How to do it in ISL?
-  //   - Given: Input port and output port
-  //   - Goal: Decide if any value appears on the output port before
-  //           it appears on the input port
-  //   - Plan: Construct the set of all values that are read before
-  //           being written, then check if it is empty.
-  //           How to construct that set?
-  //           Map from value to difference between read and write time
-  //           The range of that map is all write -> read differences
-  //           Find the min of that range (or intersect with <= 0)
-  //           If the min is less than zero there is a violation
-  //
-  //           Note: But the read time / write time are maps, so I cannot
-  //           just do arithmetic on their output expressions, and even
-  //           if I could I dont know how to build a map out of
-  //           the resulting expression.
-  //
-  //           Like: get lexmin read time
-  //                 get lexmax for write time
-  //
-  //                 do read - write
-  //
-  //                 isl_map_from_pw_multi_affine?
+  isl_ctx_free(buf.ctx);
+
+  test_swizzle_buffer();
 
   return 0;
-
-  // (x -> x + 0)
-  // (x -> x + 1)
-  // (x -> x + 2)
-
-  isl_space* space;
-  isl_local_space* ls;
-  isl_constraint* c;
-  isl_basic_set* bset;
-
-  isl_id* space_name = isl_id_alloc(ctx, "Dillon", nullptr);
-  space = isl_space_set_alloc(ctx, 0, 2);
-  //space = isl_space_add_param_id(cpy(space), space_name);
-
-  bset = isl_basic_set_universe(cpy(space));
-  cout << "Universe set: " << endl;
-  print(ctx, bset);
-
-  ls = isl_local_space_from_space(space);
-
-  c = isl_constraint_alloc_equality(cpy(ls));
-  c = isl_constraint_set_coefficient_si(c, isl_dim_set, 0, -1);
-  c = isl_constraint_set_coefficient_si(c, isl_dim_set, 1, 2);
-  bset = isl_basic_set_add_constraint(bset, c);
-
-  cout << "After adding constraint: " << endl;
-  print(ctx, bset);
-
-  c = isl_constraint_alloc_inequality(cpy(ls));
-  c = isl_constraint_set_constant_si(c, -10);
-  c = isl_constraint_set_coefficient_si(c, isl_dim_set, 0, 1);
-  bset = isl_basic_set_add_constraint(bset, c);
-
-  cout << "After adding > 10: " << endl;
-  print(ctx, bset);
-
-  bset = isl_basic_set_project_out(bset, isl_dim_set, 1, 1);
-
-  cout << "After projecting out i1: " << endl;
-  print(ctx, bset);
-
-  isl_map* lex_lt = isl_map_lex_lt(cpy(space));
-  cout << "Lex lt map for space..." << endl;
-  print(ctx, lex_lt);
-
-  auto zr = isl_point_zero(cpy(space));
-  auto zero_set = isl_set_from_basic_set(isl_basic_set_from_point(zr));
-
-  isl_set* ltz =
-    isl_set_apply(cpy(zero_set), cpy(lex_lt));
-  cout << "Points less than zero..." << endl;
-  print(ctx, ltz);
-
-  cout << "One point from ltz..." << endl;
-  print(ctx, isl_set_sample_point(ltz));
-
-  isl_basic_set_free(bset);
-  isl_space_free(space);
-  //isl_constraint_free(c);
-  isl_local_space_free(ls);
-
-  isl_ctx_free(ctx);
-
-  cout << "Done." << endl;
 }
