@@ -197,18 +197,33 @@ isl_constraint* eq(isl_space* const space, const int value, const std::vector<in
   isl_constraint* c = isl_constraint_alloc_equality(cpy(ls));
   c = isl_constraint_set_constant_si(c, -value);
   for (size_t i = 0; i < in_coeffs.size(); i++) {
-    c = isl_constraint_set_coefficient_si(c, isl_dim_in, i, in_coeffs[i]);
+    c = isl_constraint_set_coefficient_si(c, isl_dim_in, i, -in_coeffs[i]);
   }
   for (size_t i = 0; i < out_coeffs.size(); i++) {
-    c = isl_constraint_set_coefficient_si(c, isl_dim_out, i, -out_coeffs[i]);
+    c = isl_constraint_set_coefficient_si(c, isl_dim_out, i, out_coeffs[i]);
   }
 
   return c;
 }
+
 isl_constraint* le(isl_space* const space, const int value, const std::vector<int>& in_coeffs, const std::vector<int>& out_coeffs) {
   isl_local_space* ls = isl_local_space_from_space(space);
   isl_constraint* c = isl_constraint_alloc_inequality(cpy(ls));
-  c = isl_constraint_set_constant_si(c, -value);
+  c = isl_constraint_set_constant_si(c, value);
+  for (size_t i = 0; i < in_coeffs.size(); i++) {
+    c = isl_constraint_set_coefficient_si(c, isl_dim_in, i, -in_coeffs[i]);
+  }
+  for (size_t i = 0; i < out_coeffs.size(); i++) {
+    c = isl_constraint_set_coefficient_si(c, isl_dim_out, i, out_coeffs[i]);
+  }
+
+  return c;
+}
+
+isl_constraint* ge(isl_space* const space, const int value, const std::vector<int>& in_coeffs, const std::vector<int>& out_coeffs) {
+  isl_local_space* ls = isl_local_space_from_space(space);
+  isl_constraint* c = isl_constraint_alloc_inequality(cpy(ls));
+  c = isl_constraint_set_constant_si(c, value);
   for (size_t i = 0; i < in_coeffs.size(); i++) {
     c = isl_constraint_set_coefficient_si(c, isl_dim_in, i, in_coeffs[i]);
   }
@@ -251,18 +266,31 @@ void test_swizzle_buffer() {
 
   //isl_basic_set* less_value = isl_basic_set_universe(cpy(buf.map_space));
 
-  // -i1 <> -1 <> 0
-  // becomes: i1 < 0
-  //          i1 <= -1
-  //          0  <= -i1 - 1
-  isl_constraint* c = le(buf.map_space, 1, {0, -1}, {});
+  auto c = eq(buf.map_space, 0, {1}, {1});
   buf.physical_address_mapping = isl_map_add_constraint(buf.physical_address_mapping, c);
 
-  c = eq(buf.map_space, 0, {1}, {1});
+  c = eq(buf.map_space, 0, {0, 1}, {0, 1, 3});
   buf.physical_address_mapping = isl_map_add_constraint(buf.physical_address_mapping, c);
+  
+  c = ge(buf.map_space, 2, {0, 0}, {0, 1, 0});
+  buf.physical_address_mapping = isl_map_add_constraint(buf.physical_address_mapping, c);
+  
+  cout << "Physical address mapping" << endl;
+  print(ctx, buf.physical_address_mapping);
+  cout << endl;
+  
+  c = le(buf.map_space, 0, {0, 0}, {0, 1, 0});
+  buf.physical_address_mapping = isl_map_add_constraint(buf.physical_address_mapping, c);
+  
+  //cout << "Physical address mapping" << endl;
+  //print(ctx, buf.physical_address_mapping);
+  //cout << endl;
+
+  buf.physical_address_mapping = isl_map_project_out(buf.physical_address_mapping, isl_dim_out, 2, 1);
 
   cout << "Physical address mapping" << endl;
   print(ctx, buf.physical_address_mapping);
+  cout << endl;
 
   isl_ctx_free(ctx);
 }
