@@ -60,6 +60,16 @@ isl_map* cpy(isl_map* const b) {
   return isl_map_copy(b);
 }
 
+void print(struct isl_ctx* const ctx, isl_space* const bset) {
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_print_space(p, cpy(bset));
+
+  char* rs = isl_printer_get_str(p);
+  printf("%s\n", rs);
+  isl_printer_free(p);
+  free(rs);
+}
 void print(struct isl_ctx* const ctx, isl_pw_multi_aff* const bset) {
   isl_printer *p;
   p = isl_printer_to_str(ctx);
@@ -390,6 +400,16 @@ void basic_space_tests() {
   auto set0 = isl_basic_set_universe(s0);
   auto set2 = isl_basic_set_universe(s2);
 
+  cout << "s0 before naming..." << endl;
+  print(ctx, s0);
+
+  s0 = isl_space_set_dim_name(s0, isl_dim_set, 0, "x");
+  s0 = isl_space_set_dim_name(s0, isl_dim_set, 1, "y");
+  s0 = isl_space_set_tuple_name(s0, isl_dim_set, "Q");
+
+  cout << "s0 after naming..." << endl;
+  print(ctx, s0);
+
   // This fails because set0 is not equal to set2
   //auto res = isl_basic_set_intersect(set0, set2);
   //assert(false);
@@ -503,8 +523,8 @@ int main() {
 
   isl_ctx_free(buf.ctx);
 
-  basic_space_tests();
   test_swizzle_buffer();
+  basic_space_tests();
 
   return 0;
 }
