@@ -53,6 +53,10 @@ isl_set* cpy(isl_set* const b) {
   return isl_set_copy(b);
 }
 
+isl_union_map* cpy(isl_union_map* const b) {
+  return isl_union_map_copy(b);
+}
+
 isl_map* cpy(isl_map* const b) {
   return isl_map_copy(b);
 }
@@ -161,6 +165,9 @@ isl_map* inv(isl_map* const m0) {
   return isl_map_reverse(cpy(m0));
 }
 
+isl_union_map* unn(isl_union_map* const m0, isl_union_map* const m1) {
+  return isl_union_map_union(cpy(m0), cpy(m1));
+}
 isl_map* its(isl_map* const m0, isl_map* const m1) {
   return isl_map_intersect(cpy(m0), cpy(m1));
 }

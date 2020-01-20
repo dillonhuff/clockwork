@@ -12,6 +12,7 @@ class UBuffer {
     struct isl_ctx* ctx;
     isl_space* space;
     isl_space* map_space;
+    string name;
 
     std::map<string, bool> isIn;
     std::map<string, isl_set*> domain;
@@ -478,6 +479,7 @@ void synth_wire_test() {
   ctx = isl_ctx_alloc();
   
   UBuffer buf;
+  buf.name = "shift_reg";
   buf.ctx = ctx;
 
   buf.domain["write0"] =
@@ -511,16 +513,51 @@ void synth_wire_test() {
   buf.schedule["read2"] =
     isl_map_read_from_str(ctx, "{ R2[i] -> [i + 2, 1] : 0 <= i < 8 }");
 
+  map<string, int> read_delays;
   int r0 = check_value_dd(buf, "read0", "write0");
   assert(r0 == 2);
+  read_delays["read0"] = r0;
   int r1 = check_value_dd(buf, "read1", "write0");
   assert(r1 == 1);
+  read_delays["read1"] = r1;
   int r2 = check_value_dd(buf, "read2", "write0");
   assert(r2 == 0);
+  read_delays["read2"] = r2;
 
-  // Now: Create delays in verilog for that value, also:
-  // need to add control logic to generate valids and enables
-  
+  isl_ast_build* build = isl_ast_build_alloc(ctx);
+  isl_union_map* rmap0 =
+    isl_union_map_from_map(cpy(buf.schedule.at("read0")));
+  isl_union_map* rmap1 =
+    isl_union_map_from_map(cpy(buf.schedule.at("read1")));
+  isl_union_map* rmap2 =
+    isl_union_map_from_map(cpy(buf.schedule.at("read2")));
+  isl_union_map* wmap =
+    isl_union_map_from_map(cpy(buf.schedule.at("write0")));
+
+  isl_union_map* res =
+    unn(rmap0, unn(rmap1, unn(rmap2, wmap)));
+
+  //isl_map_union(cpy(buf.schedule.at("read0")), cpy(buf.schedule.at("write0"))));
+  isl_ast_node* code =
+    isl_ast_build_node_from_schedule_map(build, res);
+
+  char* code_str = isl_ast_node_to_C_str(code);
+  string code_string(code_str);
+  free(code_str);
+
+  cout << "Code generation..." << endl;
+  std::ostream& out = cout;
+  out << "void " << buf.name << "(";
+  for (auto pt : buf.domain) {
+    out << "Stream& " << pt.first << endl;
+  }
+  out << ") {" << endl;
+  for (auto delay : read_delays) {
+    out << "\tdelay_fifo<" << delay.second << "> " << delay.first + "_delay;\n";
+  }
+  out << code_string << endl;
+  out << "}" << endl;
+
   isl_ctx_free(buf.ctx);
 }
 
@@ -563,7 +600,7 @@ int main() {
   basic_space_tests();
 
   synth_wire_test();
-  synth_lb_test();
+  //synth_lb_test();
 
   return 0;
 }
