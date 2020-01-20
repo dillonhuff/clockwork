@@ -25,6 +25,10 @@ isl_pw_multi_aff* cpy(isl_pw_multi_aff* const s) {
   return isl_pw_multi_aff_copy(s);
 }
 
+isl_qpolynomial* cpy(isl_qpolynomial* const s) {
+  return isl_qpolynomial_copy(s);
+}
+
 isl_pw_qpolynomial* cpy(isl_pw_qpolynomial* const s) {
   return isl_pw_qpolynomial_copy(s);
 }
@@ -55,6 +59,17 @@ isl_map* cpy(isl_map* const b) {
 
 isl_val* cpy(isl_val* const b) {
   return isl_val_copy(b);
+}
+
+void print(struct isl_ctx* const ctx, isl_qpolynomial* const bset) {
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_print_qpolynomial(p, cpy(bset));
+
+  char* rs = isl_printer_get_str(p);
+  printf("%s\n", rs);
+  isl_printer_free(p);
+  free(rs);
 }
 
 void print(struct isl_ctx* const ctx, isl_val* const bset) {

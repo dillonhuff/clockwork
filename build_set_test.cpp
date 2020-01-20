@@ -33,6 +33,18 @@ class UBuffer {
     
     isl_map* physical_address_mapping;
 
+    void add_pt(const std::string& name,
+        const std::string& dm,
+        const std::string& access,
+        const std::string& sched) {
+      domain[name] =
+        isl_set_read_from_str(ctx, dm.c_str());
+      access_map[name] =
+        isl_map_read_from_str(ctx, access.c_str());
+      schedule[name] =
+        isl_map_read_from_str(ctx, sched.c_str());
+    }
+
     void add_out_port(const std::string& name) {
 
     }
@@ -402,11 +414,17 @@ void ubuffer_test() {
 isl_stat get_const(isl_set* s, isl_qpolynomial* qp, void* user) {
   vector<int>* vals = (vector<int>*) user;
   cout << "getting piece" << endl;
+  print(isl_qpolynomial_get_ctx(qp), qp);
+  print(isl_set_get_ctx(s), s);
+
   isl_val* v = isl_qpolynomial_get_constant_val(qp);
   print(isl_val_get_ctx(v), v);
   long vs = isl_val_get_num_si(v);
   cout << "value = " << vs << endl;
-  vals->push_back(vs);
+  if (vals->size() == 0 ||
+      vals->back() != vs) {
+    vals->push_back(vs);
+  }
   return isl_stat_ok;
 }
 
@@ -437,18 +455,20 @@ int check_value_dd(UBuffer& buf, const std::string& read_port, const std::string
   cout << "Cardinality..." << endl;
   print(ctx, c);
 
+  //cout << "Cardinality after simpification..." << endl;
+  //print(ctx, isl_pw_qpolynomial_fold_coalesce(cpy(c)));
   auto s = isl_pw_qpolynomial_n_piece(c);
   cout << "s = " << s << endl;
 
-  assert(s <= 1);
+  //assert(s <= 1);
 
   if (s == 0) {
     return 0;
   } else {
     vector<int> nums;
     void* user = (void*) &nums;
-    isl_pw_qpolynomial_foreach_piece(c, get_const, user);
-    assert(nums.size() == 1);
+    isl_pw_qpolynomial_foreach_lifted_piece(c, get_const, user);
+    //assert(nums.size() == 1);
     return nums[0];
   }
 }
@@ -497,10 +517,45 @@ void synth_wire_test() {
   assert(r1 == 1);
   int r2 = check_value_dd(buf, "read2", "write0");
   assert(r2 == 0);
+
+  // Now: Create delays in verilog for that value, also:
+  // need to add control logic to generate valids and enables
   
   isl_ctx_free(buf.ctx);
 }
 
+void synth_lb_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+  
+  UBuffer buf;
+  buf.ctx = ctx;
+
+  buf.add_pt("write0",
+      "{ W[i, j] : 0 <= i < 64 and 0 <= j < 64 }",
+      "{ W[i, j] -> M[j, i] : 0 <= i < 64 and 0 <= j < 64 }",
+      "{ W[i, j] -> [i, j, 0] : 0 <= i < 64 and 0 <= j < 64 }"
+      );
+
+  for (int r = 0; r < 3; r++) {
+    for (int c = 0; c < 3; c++) {
+      string rn = "read_" + to_string(r) + "_" + to_string(c);
+      buf.add_pt(rn,
+          "{ " + rn + "[i, j] : 0 <= i < 62 and 0 <= j < 62 }",
+          "{ " + rn + "[i, j] -> M[j + " + to_string(c) + ", i + " + to_string(r)  + "] : 0 <= i < 62 and 0 <= j < 62 }",
+          "{ " + rn + "[i, j] -> [i + 2, j + 2, 1] : 0 <= i < 62 and 0 <= j < 62 }"
+          );
+
+      int r0 = check_value_dd(buf, rn, "write0");
+      cout << "Delay (" << c << ", " << r << "): " << r0 << endl;
+    }
+  }
+
+  //// Now: Create delays in verilog for that value, also:
+  //// need to add control logic to generate valids and enables
+  
+  isl_ctx_free(buf.ctx);
+}
 int main() {
 
   ubuffer_test();
@@ -508,6 +563,7 @@ int main() {
   basic_space_tests();
 
   synth_wire_test();
+  synth_lb_test();
 
   return 0;
 }
