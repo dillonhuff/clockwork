@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <fstream>
 #include <map>
 #include <vector>
 
@@ -474,6 +475,16 @@ int check_value_dd(UBuffer& buf, const std::string& read_port, const std::string
   }
 }
 
+std::string ReplaceString(std::string subject, const std::string& search,
+                          const std::string& replace) {
+    size_t pos = 0;
+    while ((pos = subject.find(search, pos)) != std::string::npos) {
+         subject.replace(pos, search.length(), replace);
+         pos += replace.length();
+    }
+    return subject;
+}
+
 void synth_wire_test() {
   struct isl_ctx *ctx;
   ctx = isl_ctx_alloc();
@@ -548,12 +559,24 @@ void synth_wire_test() {
   char* code_str = isl_ast_node_to_C_str(code);
   string code_string(code_str);
   free(code_str);
+  code_string = ReplaceString(code_string, "W(", "write0.read(");
+  code_string = ReplaceString(code_string, "R0(", "read0.write(");
+  code_string = ReplaceString(code_string, "R1(", "read1.write(");
+  code_string = ReplaceString(code_string, "R2(", "read2.write(");
 
   cout << "Code generation..." << endl;
-  std::ostream& out = cout;
+  ofstream os("shift_reg.cpp");
+  std::ostream& out = os;
+  //cout;
+  out << "#include \"hw_classes.h\"" << endl << endl;
   out << "void " << buf.name << "(";
+  size_t nargs = 0;
   for (auto pt : buf.domain) {
     out << (buf.isIn.at(pt.first) ? "Input" : "Output") << "Stream& " << pt.first << endl;
+    if (nargs < buf.domain.size() - 1) {
+      out << ", ";
+    }
+    nargs++;
   }
   out << ") {" << endl;
   for (auto delay : read_delays) {
