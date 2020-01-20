@@ -532,13 +532,13 @@ void synth_wire_test() {
   map<string, int> read_delays;
   int r0 = check_value_dd(buf, "read0", "write0");
   assert(r0 == 2);
-  read_delays["read0"] = r0 + 1;
+  read_delays["read0"] = r0;
   int r1 = check_value_dd(buf, "read1", "write0");
   assert(r1 == 1);
-  read_delays["read1"] = r1 + 1;
+  read_delays["read1"] = r1;
   int r2 = check_value_dd(buf, "read2", "write0");
   assert(r2 == 0);
-  read_delays["read2"] = r2 + 1;
+  read_delays["read2"] = r2;
 
   isl_ast_build* build = isl_ast_build_alloc(ctx);
   isl_union_map* rmap0 =
@@ -560,13 +560,13 @@ void synth_wire_test() {
   string code_string(code_str);
   free(code_str);
   regex re("W\(.*\);");
-  code_string = regex_replace(code_string, re, "int W0 = write0.read(); read0_delay.push(W0); read1_delay.push(W0); read2_delay.push(W0);");
+  code_string = regex_replace(code_string, re, "int W0 = write0.read(); write0_delay.push(W0);");
   regex re0("R0\((.*)\);");
-  code_string = regex_replace(code_string, re0, "read0.write(read0_delay.pop(0));");
+  code_string = regex_replace(code_string, re0, "read0.write(write0_delay.pop(-" + to_string(read_delays.at("read0")) + "));");
   regex re1("R1\((.*)\);");
-  code_string = regex_replace(code_string, re1, "read1.write(read1_delay.pop(-1));");
+  code_string = regex_replace(code_string, re1, "read1.write(write0_delay.pop(-" + to_string(read_delays.at("read1")) + "));");
   regex re2("R2\((.*)\);");
-  code_string = regex_replace(code_string, re2, "read2.write(read2_delay.pop(-2));");
+  code_string = regex_replace(code_string, re2, "read2.write(write0_delay.pop(-" + to_string(read_delays.at("read2")) + "));");
 
   cout << "Code generation..." << endl;
   ofstream os("shift_reg.cpp");
@@ -583,10 +583,7 @@ void synth_wire_test() {
     nargs++;
   }
   out << ") {" << endl;
-  for (auto delay : read_delays) {
-    //out << "\tdelay_sr<" << delay.second << "> " << delay.first + "_delay;\n";
-    out << "\tdelay_sr<3> " << delay.first + "_delay;\n";
-  }
+  out << "\tdelay_sr<3> write0_delay;\n\n";
   out << code_string << endl;
   out << "}" << endl;
 
