@@ -532,13 +532,13 @@ void synth_wire_test() {
   map<string, int> read_delays;
   int r0 = check_value_dd(buf, "read0", "write0");
   assert(r0 == 2);
-  read_delays["read0"] = r0;
+  read_delays["read0"] = r0 + 1;
   int r1 = check_value_dd(buf, "read1", "write0");
   assert(r1 == 1);
-  read_delays["read1"] = r1;
+  read_delays["read1"] = r1 + 1;
   int r2 = check_value_dd(buf, "read2", "write0");
   assert(r2 == 0);
-  read_delays["read2"] = r2;
+  read_delays["read2"] = r2 + 1;
 
   isl_ast_build* build = isl_ast_build_alloc(ctx);
   isl_union_map* rmap0 =
@@ -553,7 +553,6 @@ void synth_wire_test() {
   isl_union_map* res =
     unn(rmap0, unn(rmap1, unn(rmap2, wmap)));
 
-  //isl_map_union(cpy(buf.schedule.at("read0")), cpy(buf.schedule.at("write0"))));
   isl_ast_node* code =
     isl_ast_build_node_from_schedule_map(build, res);
 
@@ -562,14 +561,17 @@ void synth_wire_test() {
   free(code_str);
   regex re("W\(.*\);");
   code_string = regex_replace(code_string, re, "int W0 = write0.read(); read0_delay.push(W0); read1_delay.push(W0); read2_delay.push(W0);");
-  code_string = ReplaceString(code_string, "R0(", "read0.write(read0_delay.pop(), ");
-  code_string = ReplaceString(code_string, "R1(", "read1.write(read1_delay.pop(), ");
-  code_string = ReplaceString(code_string, "R2(", "read2.write(read2_delay.pop(), ");
+  regex re0("R0\((.*)\);");
+  code_string = regex_replace(code_string, re0, "read0.write(read0_delay.pop(0));");
+  regex re1("R1\((.*)\);");
+  code_string = regex_replace(code_string, re1, "read1.write(read1_delay.pop(-1));");
+  regex re2("R2\((.*)\);");
+  code_string = regex_replace(code_string, re2, "read2.write(read2_delay.pop(-2));");
 
   cout << "Code generation..." << endl;
   ofstream os("shift_reg.cpp");
   std::ostream& out = os;
-  //cout;
+  
   out << "#include \"hw_classes.h\"" << endl << endl;
   out << "void " << buf.name << "(";
   size_t nargs = 0;
@@ -582,10 +584,26 @@ void synth_wire_test() {
   }
   out << ") {" << endl;
   for (auto delay : read_delays) {
-    out << "\tdelay_fifo<" << delay.second << "> " << delay.first + "_delay;\n";
+    //out << "\tdelay_sr<" << delay.second << "> " << delay.first + "_delay;\n";
+    out << "\tdelay_sr<3> " << delay.first + "_delay;\n";
   }
   out << code_string << endl;
   out << "}" << endl;
+
+  cout << "Code generation..." << endl;
+  ofstream of("shift_reg.h");
+  of << "#pragma once\n\n" << endl;
+  of << "#include \"hw_classes.h\"" << endl << endl;
+  of << "void " << buf.name << "(";
+  nargs = 0;
+  for (auto pt : buf.domain) {
+    of << (buf.isIn.at(pt.first) ? "Input" : "Output") << "Stream& " << pt.first << endl;
+    if (nargs < buf.domain.size() - 1) {
+      of << ", ";
+    }
+    nargs++;
+  }
+  of << ");" << endl;
 
   isl_ctx_free(buf.ctx);
 }
