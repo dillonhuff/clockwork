@@ -1,5 +1,6 @@
 #include "isl_utils.h"
 
+#include <regex>
 #include <cassert>
 #include <iostream>
 #include <fstream>
@@ -559,10 +560,11 @@ void synth_wire_test() {
   char* code_str = isl_ast_node_to_C_str(code);
   string code_string(code_str);
   free(code_str);
-  code_string = ReplaceString(code_string, "W(", "write0.read(");
-  code_string = ReplaceString(code_string, "R0(", "read0.write(");
-  code_string = ReplaceString(code_string, "R1(", "read1.write(");
-  code_string = ReplaceString(code_string, "R2(", "read2.write(");
+  regex re("W\(.*\);");
+  code_string = regex_replace(code_string, re, "int W0 = write0.read(); read0_delay.push(W0); read1_delay.push(W0); read2_delay.push(W0);");
+  code_string = ReplaceString(code_string, "R0(", "read0.write(read0_delay.pop(), ");
+  code_string = ReplaceString(code_string, "R1(", "read1.write(read1_delay.pop(), ");
+  code_string = ReplaceString(code_string, "R2(", "read2.write(read2_delay.pop(), ");
 
   cout << "Code generation..." << endl;
   ofstream os("shift_reg.cpp");
