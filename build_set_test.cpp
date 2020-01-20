@@ -399,19 +399,64 @@ void ubuffer_test() {
 
 }
 
+isl_map* inv(isl_map* const m0) {
+  return isl_map_reverse(cpy(m0));
+}
+
+isl_map* its(isl_map* const m0, isl_map* const m1) {
+  return isl_map_intersect(cpy(m0), cpy(m1));
+}
+
+isl_map* lex_gt(isl_map* const m0, isl_map* const m1) {
+  return isl_map_lex_gt_map(cpy(m0), cpy(m1));
+}
+
+isl_map* lex_lt(isl_map* const m0, isl_map* const m1) {
+  return isl_map_lex_lt_map(cpy(m0), cpy(m1));
+}
+
+isl_map* dot(isl_map* const m0, isl_map* const m1) {
+  return isl_map_apply_range(cpy(m0), cpy(m1));
+}
+
+isl_pw_qpolynomial* card(isl_map* const m) {
+  return isl_map_card(cpy(m));
+}
+
+void check_value_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
+  auto ctx = buf.ctx;
+  isl_map* sched = buf.schedule.at(write_port);
+  assert(sched != nullptr);
+  
+  auto WritesAfterWrite = lex_lt(sched, sched);
+
+  assert(WritesAfterWrite != nullptr);
+
+  auto port0WritesInv =
+    inv(buf.access_map.at(write_port));
+
+  auto WriteThatProducesReadData =
+    dot(buf.access_map.at(read_port), port0WritesInv);
+
+  auto WritesBeforeRead =
+    lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
+
+  auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
+
+  auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
+
+  auto c = card(WritesBtwn);
+  //isl_map_card(cpy(WritesBtwn));
+  cout << "Cardinality..." << endl;
+  print(ctx, c);
+}
+
 void synth_wire_test() {
   struct isl_ctx *ctx;
   ctx = isl_ctx_alloc();
   
   UBuffer buf;
   buf.ctx = ctx;
-
-  buf.domain["read0"] =
-    isl_set_read_from_str(ctx, "{ R[i] : 0 <= i < 10 }");
-  buf.access_map["read0"] =
-    isl_map_read_from_str(ctx, "{ R[i] -> M[i] : 0 <= i < 10 }");
-  buf.schedule["read0"] =
-    isl_map_read_from_str(ctx, "{ R[i] -> [i, 1] : 0 <= i < 10 }");
 
   buf.domain["write0"] =
     isl_set_read_from_str(ctx, "{ W[i] : 0 <= i < 10 }");
@@ -420,47 +465,34 @@ void synth_wire_test() {
   buf.schedule["write0"] =
     isl_map_read_from_str(ctx, "{ W[i] -> [i, 0] : 0 <= i < 10 }");
 
-  // Create lexicographic order for write schedule
+  // Read 0 through 7
+  buf.domain["read0"] =
+    isl_set_read_from_str(ctx, "{ R0[i] : 0 <= i < 8}");
+  buf.access_map["read0"] =
+    isl_map_read_from_str(ctx, "{ R0[i] -> M[i] : 0 <= i < 8 }");
+  buf.schedule["read0"] =
+    isl_map_read_from_str(ctx, "{ R0[i] -> [i + 2, 1] : 0 <= i < 8 }");
 
-  isl_map* sched = buf.schedule.at("write0");
-  assert(sched != nullptr);
+  // Read 1 through 8
+  buf.domain["read1"] =
+    isl_set_read_from_str(ctx, "{ R1[i] : 0 <= i < 8}");
+  buf.access_map["read1"] =
+    isl_map_read_from_str(ctx, "{ R1[i] -> M[i + 1] : 0 <= i < 8 }");
+  buf.schedule["read1"] =
+    isl_map_read_from_str(ctx, "{ R1[i] -> [i + 2, 1] : 0 <= i < 8 }");
+
+  // Read 2 through 9
+  buf.domain["read2"] =
+    isl_set_read_from_str(ctx, "{ R2[i] : 0 <= i < 8}");
+  buf.access_map["read2"] =
+    isl_map_read_from_str(ctx, "{ R2[i] -> M[i + 2] : 0 <= i < 8 }");
+  buf.schedule["read2"] =
+    isl_map_read_from_str(ctx, "{ R2[i] -> [i + 2, 1] : 0 <= i < 8 }");
+
+  check_value_dd(buf, "read0", "write0");
+  check_value_dd(buf, "read1", "write0");
+  check_value_dd(buf, "read2", "write0");
   
-  auto WritesAfterWrite =
-    isl_map_lex_lt_map(cpy(sched), cpy(sched));
-
-  assert(WritesAfterWrite != nullptr);
-
-  cout << "Writes after write" << endl;
-  print(ctx, WritesAfterWrite);
-
-  auto port0WritesInv =
-    isl_map_reverse(cpy(buf.access_map.at("write0")));
-  cout << "Acces map reversed" << endl;
-  print(ctx, port0WritesInv);
-
-  auto WriteThatProducesReadData =
-    isl_map_apply_range(cpy(buf.access_map.at("read0")), cpy(port0WritesInv));
-  cout << "WriteThatProducesReadData" << endl;
-  print(ctx, WriteThatProducesReadData);
-
-  auto WritesBeforeRead =
-    isl_map_lex_gt_map(cpy(buf.schedule.at("read0")), cpy(buf.schedule.at("write0")));
-  cout << "Writes before read" << endl;
-  print(ctx, WritesBeforeRead);
-
-  auto WritesAfterProduction =
-    isl_map_apply_range(cpy(WriteThatProducesReadData), cpy(WritesAfterWrite));
- 
-  auto WritesBtwn =
-    isl_map_intersect(cpy(WritesAfterProduction), cpy(WritesBeforeRead));
-
-  cout << "Writes between..." << endl;
-  print(ctx, WritesBtwn);
-
-  auto card = isl_map_card(cpy(WritesBtwn));
-  cout << "Cardinality..." << endl;
-  print(ctx, card);
-
   isl_ctx_free(buf.ctx);
 }
 
