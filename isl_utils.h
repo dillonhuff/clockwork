@@ -53,6 +53,21 @@ isl_map* cpy(isl_map* const b) {
   return isl_map_copy(b);
 }
 
+isl_val* cpy(isl_val* const b) {
+  return isl_val_copy(b);
+}
+
+void print(struct isl_ctx* const ctx, isl_val* const bset) {
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_print_val(p, cpy(bset));
+
+  char* rs = isl_printer_get_str(p);
+  printf("%s\n", rs);
+  isl_printer_free(p);
+  free(rs);
+}
+
 void print(struct isl_ctx* const ctx, isl_space* const bset) {
   isl_printer *p;
   p = isl_printer_to_str(ctx);
@@ -125,5 +140,29 @@ void print(struct isl_ctx* const ctx, isl_map* const m) {
   isl_printer_free(p);
   free(rs);
 
+}
+
+isl_map* inv(isl_map* const m0) {
+  return isl_map_reverse(cpy(m0));
+}
+
+isl_map* its(isl_map* const m0, isl_map* const m1) {
+  return isl_map_intersect(cpy(m0), cpy(m1));
+}
+
+isl_map* lex_gt(isl_map* const m0, isl_map* const m1) {
+  return isl_map_lex_gt_map(cpy(m0), cpy(m1));
+}
+
+isl_map* lex_lt(isl_map* const m0, isl_map* const m1) {
+  return isl_map_lex_lt_map(cpy(m0), cpy(m1));
+}
+
+isl_map* dot(isl_map* const m0, isl_map* const m1) {
+  return isl_map_apply_range(cpy(m0), cpy(m1));
+}
+
+isl_pw_qpolynomial* card(isl_map* const m) {
+  return isl_map_card(cpy(m));
 }
 

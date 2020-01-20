@@ -399,31 +399,18 @@ void ubuffer_test() {
 
 }
 
-isl_map* inv(isl_map* const m0) {
-  return isl_map_reverse(cpy(m0));
+isl_stat get_const(isl_set* s, isl_qpolynomial* qp, void* user) {
+  vector<int>* vals = (vector<int>*) user;
+  cout << "getting piece" << endl;
+  isl_val* v = isl_qpolynomial_get_constant_val(qp);
+  print(isl_val_get_ctx(v), v);
+  long vs = isl_val_get_num_si(v);
+  cout << "value = " << vs << endl;
+  vals->push_back(vs);
+  return isl_stat_ok;
 }
 
-isl_map* its(isl_map* const m0, isl_map* const m1) {
-  return isl_map_intersect(cpy(m0), cpy(m1));
-}
-
-isl_map* lex_gt(isl_map* const m0, isl_map* const m1) {
-  return isl_map_lex_gt_map(cpy(m0), cpy(m1));
-}
-
-isl_map* lex_lt(isl_map* const m0, isl_map* const m1) {
-  return isl_map_lex_lt_map(cpy(m0), cpy(m1));
-}
-
-isl_map* dot(isl_map* const m0, isl_map* const m1) {
-  return isl_map_apply_range(cpy(m0), cpy(m1));
-}
-
-isl_pw_qpolynomial* card(isl_map* const m) {
-  return isl_map_card(cpy(m));
-}
-
-void check_value_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
+int check_value_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
   auto ctx = buf.ctx;
   isl_map* sched = buf.schedule.at(write_port);
   assert(sched != nullptr);
@@ -446,9 +433,24 @@ void check_value_dd(UBuffer& buf, const std::string& read_port, const std::strin
   auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
 
   auto c = card(WritesBtwn);
-  //isl_map_card(cpy(WritesBtwn));
+  
   cout << "Cardinality..." << endl;
   print(ctx, c);
+
+  auto s = isl_pw_qpolynomial_n_piece(c);
+  cout << "s = " << s << endl;
+
+  assert(s <= 1);
+
+  if (s == 0) {
+    return 0;
+  } else {
+    vector<int> nums;
+    void* user = (void*) &nums;
+    isl_pw_qpolynomial_foreach_piece(c, get_const, user);
+    assert(nums.size() == 1);
+    return nums[0];
+  }
 }
 
 void synth_wire_test() {
@@ -489,9 +491,12 @@ void synth_wire_test() {
   buf.schedule["read2"] =
     isl_map_read_from_str(ctx, "{ R2[i] -> [i + 2, 1] : 0 <= i < 8 }");
 
-  check_value_dd(buf, "read0", "write0");
-  check_value_dd(buf, "read1", "write0");
-  check_value_dd(buf, "read2", "write0");
+  int r0 = check_value_dd(buf, "read0", "write0");
+  assert(r0 == 2);
+  int r1 = check_value_dd(buf, "read1", "write0");
+  assert(r1 == 1);
+  int r2 = check_value_dd(buf, "read2", "write0");
+  assert(r2 == 0);
   
   isl_ctx_free(buf.ctx);
 }
