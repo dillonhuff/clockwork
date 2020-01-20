@@ -1,25 +1,4 @@
-extern "C" {
-#include <isl/id.h>
-#include <isl/aff.h>
-#include <isl/set.h>
-#include <isl/flow.h>
-#include <isl/polynomial.h>
-#include <isl/union_set.h>
-#include <isl/union_map.h>
-#include <isl/space.h>
-#include <isl/schedule.h>
-#include <isl/schedule_node.h>
-#include <isl/ast_build.h>
-#include <isl/val.h>
-#include <isl/ilp.h>
-#include <isl_ast_build_expr.h>
-#include <isl/options.h>
-#include <isl/map.h>
-}
-
-// i
-
-#include "barvinok/barvinok.h"
+#include "isl_utils.h"
 
 #include <cassert>
 #include <iostream>
@@ -27,112 +6,6 @@ extern "C" {
 #include <vector>
 
 using namespace std;
-
-isl_pw_multi_aff* cpy(isl_pw_multi_aff* const s) {
-  return isl_pw_multi_aff_copy(s);
-}
-
-isl_pw_qpolynomial* cpy(isl_pw_qpolynomial* const s) {
-  return isl_pw_qpolynomial_copy(s);
-}
-
-isl_point* cpy(isl_point* const s) {
-  return isl_point_copy(s);
-}
-
-isl_space* cpy(isl_space* const s) {
-  return isl_space_copy(s);
-}
-
-isl_local_space* cpy(isl_local_space* const s) {
-  return isl_local_space_copy(s);
-}
-
-isl_basic_set* cpy(isl_basic_set* const b) {
-  return isl_basic_set_copy(b);
-}
-
-isl_set* cpy(isl_set* const b) {
-  return isl_set_copy(b);
-}
-
-isl_map* cpy(isl_map* const b) {
-  return isl_map_copy(b);
-}
-
-void print(struct isl_ctx* const ctx, isl_space* const bset) {
-  isl_printer *p;
-  p = isl_printer_to_str(ctx);
-  p = isl_printer_print_space(p, cpy(bset));
-
-  char* rs = isl_printer_get_str(p);
-  printf("%s\n", rs);
-  isl_printer_free(p);
-  free(rs);
-}
-void print(struct isl_ctx* const ctx, isl_pw_multi_aff* const bset) {
-  isl_printer *p;
-  p = isl_printer_to_str(ctx);
-  p = isl_printer_print_pw_multi_aff(p, cpy(bset));
-  char* rs = isl_printer_get_str(p);
-  printf("%s\n", rs);
-  isl_printer_free(p);
-  free(rs);
-}
-
-void print(struct isl_ctx* const ctx, isl_point* const bset) {
-  isl_printer *p;
-  p = isl_printer_to_str(ctx);
-  p = isl_printer_print_point(p, cpy(bset));
-  char* rs = isl_printer_get_str(p);
-  printf("%s\n", rs);
-  isl_printer_free(p);
-  free(rs);
-
-}
-
-void print(struct isl_ctx* const ctx, isl_set* const bset) {
-  isl_printer *p;
-  p = isl_printer_to_str(ctx);
-  p = isl_printer_print_set(p, cpy(bset));
-  char* rs = isl_printer_get_str(p);
-  printf("%s\n", rs);
-  isl_printer_free(p);
-  free(rs);
-
-}
-void print(struct isl_ctx* const ctx, isl_basic_set* const bset) {
-  isl_printer *p;
-  p = isl_printer_to_str(ctx);
-  p = isl_printer_print_basic_set(p, cpy(bset));
-  char* rs = isl_printer_get_str(p);
-  printf("%s\n", rs);
-  isl_printer_free(p);
-  free(rs);
-
-}
-
-void print(struct isl_ctx* const ctx, isl_pw_qpolynomial* const m) {
-  isl_printer *p;
-  p = isl_printer_to_str(ctx);
-  p = isl_printer_print_pw_qpolynomial(p, cpy(m));
-  char* rs = isl_printer_get_str(p);
-  printf("%s\n", rs);
-  isl_printer_free(p);
-  free(rs);
-
-}
-
-void print(struct isl_ctx* const ctx, isl_map* const m) {
-  isl_printer *p;
-  p = isl_printer_to_str(ctx);
-  p = isl_printer_print_map(p, cpy(m));
-  char* rs = isl_printer_get_str(p);
-  printf("%s\n", rs);
-  isl_printer_free(p);
-  free(rs);
-
-}
 
 class UBuffer {
   public:
@@ -142,6 +15,7 @@ class UBuffer {
 
     std::map<string, bool> isIn;
     std::map<string, isl_set*> domain;
+    std::map<string, isl_map*> access_map;
     std::map<string, isl_map*> schedule;
 
     std::map<string, int> varInds;
@@ -425,7 +299,7 @@ void basic_space_tests() {
   isl_ctx_free(ctx);
 }
 
-int main() {
+void ubuffer_test() {
   struct isl_ctx *ctx;
 
   ctx = isl_ctx_alloc();
@@ -523,8 +397,80 @@ int main() {
 
   isl_ctx_free(buf.ctx);
 
+}
+
+void synth_wire_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+  
+  UBuffer buf;
+  buf.ctx = ctx;
+
+  buf.domain["read0"] =
+    isl_set_read_from_str(ctx, "{ R[i] : 0 <= i < 10 }");
+  buf.access_map["read0"] =
+    isl_map_read_from_str(ctx, "{ R[i] -> M[i] : 0 <= i < 10 }");
+  buf.schedule["read0"] =
+    isl_map_read_from_str(ctx, "{ R[i] -> [i, 1] : 0 <= i < 10 }");
+
+  buf.domain["write0"] =
+    isl_set_read_from_str(ctx, "{ W[i] : 0 <= i < 10 }");
+  buf.access_map["write0"] =
+    isl_map_read_from_str(ctx, "{ W[i] -> M[i] : 0 <= i < 10 }");
+  buf.schedule["write0"] =
+    isl_map_read_from_str(ctx, "{ W[i] -> [i, 0] : 0 <= i < 10 }");
+
+  // Create lexicographic order for write schedule
+
+  isl_map* sched = buf.schedule.at("write0");
+  assert(sched != nullptr);
+  
+  auto WritesAfterWrite =
+    isl_map_lex_lt_map(cpy(sched), cpy(sched));
+
+  assert(WritesAfterWrite != nullptr);
+
+  cout << "Writes after write" << endl;
+  print(ctx, WritesAfterWrite);
+
+  auto port0WritesInv =
+    isl_map_reverse(cpy(buf.access_map.at("write0")));
+  cout << "Acces map reversed" << endl;
+  print(ctx, port0WritesInv);
+
+  auto WriteThatProducesReadData =
+    isl_map_apply_range(cpy(buf.access_map.at("read0")), cpy(port0WritesInv));
+  cout << "WriteThatProducesReadData" << endl;
+  print(ctx, WriteThatProducesReadData);
+
+  auto WritesBeforeRead =
+    isl_map_lex_gt_map(cpy(buf.schedule.at("read0")), cpy(buf.schedule.at("write0")));
+  cout << "Writes before read" << endl;
+  print(ctx, WritesBeforeRead);
+
+  auto WritesAfterProduction =
+    isl_map_apply_range(cpy(WriteThatProducesReadData), cpy(WritesAfterWrite));
+ 
+  auto WritesBtwn =
+    isl_map_intersect(cpy(WritesAfterProduction), cpy(WritesBeforeRead));
+
+  cout << "Writes between..." << endl;
+  print(ctx, WritesBtwn);
+
+  auto card = isl_map_card(cpy(WritesBtwn));
+  cout << "Cardinality..." << endl;
+  print(ctx, card);
+
+  isl_ctx_free(buf.ctx);
+}
+
+int main() {
+
+  ubuffer_test();
   test_swizzle_buffer();
   basic_space_tests();
+
+  synth_wire_test();
 
   return 0;
 }
