@@ -488,6 +488,7 @@ void synth_wire_test() {
     isl_map_read_from_str(ctx, "{ W[i] -> M[i] : 0 <= i < 10 }");
   buf.schedule["write0"] =
     isl_map_read_from_str(ctx, "{ W[i] -> [i, 0] : 0 <= i < 10 }");
+  buf.isIn["write0"] = true;
 
   // Read 0 through 7
   buf.domain["read0"] =
@@ -496,6 +497,7 @@ void synth_wire_test() {
     isl_map_read_from_str(ctx, "{ R0[i] -> M[i] : 0 <= i < 8 }");
   buf.schedule["read0"] =
     isl_map_read_from_str(ctx, "{ R0[i] -> [i + 2, 1] : 0 <= i < 8 }");
+  buf.isIn["read0"] = false;
 
   // Read 1 through 8
   buf.domain["read1"] =
@@ -504,6 +506,7 @@ void synth_wire_test() {
     isl_map_read_from_str(ctx, "{ R1[i] -> M[i + 1] : 0 <= i < 8 }");
   buf.schedule["read1"] =
     isl_map_read_from_str(ctx, "{ R1[i] -> [i + 2, 1] : 0 <= i < 8 }");
+  buf.isIn["read1"] = false;
 
   // Read 2 through 9
   buf.domain["read2"] =
@@ -512,6 +515,7 @@ void synth_wire_test() {
     isl_map_read_from_str(ctx, "{ R2[i] -> M[i + 2] : 0 <= i < 8 }");
   buf.schedule["read2"] =
     isl_map_read_from_str(ctx, "{ R2[i] -> [i + 2, 1] : 0 <= i < 8 }");
+  buf.isIn["read2"] = false;
 
   map<string, int> read_delays;
   int r0 = check_value_dd(buf, "read0", "write0");
@@ -549,7 +553,7 @@ void synth_wire_test() {
   std::ostream& out = cout;
   out << "void " << buf.name << "(";
   for (auto pt : buf.domain) {
-    out << "Stream& " << pt.first << endl;
+    out << (buf.isIn.at(pt.first) ? "Input" : "Output") << "Stream& " << pt.first << endl;
   }
   out << ") {" << endl;
   for (auto delay : read_delays) {
@@ -588,9 +592,6 @@ void synth_lb_test() {
     }
   }
 
-  //// Now: Create delays in verilog for that value, also:
-  //// need to add control logic to generate valids and enables
-  
   isl_ctx_free(buf.ctx);
 }
 int main() {
