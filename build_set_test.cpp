@@ -502,6 +502,8 @@ std::string ReplaceString(std::string subject, const std::string& search,
 }
 
 isl_stat codegen_constraint(isl_constraint* c, void* user) {
+
+  // TODO: Update to get DIV!!!
   vector<string>& code_holder = *((vector<string>*) user);
 
   string resstr;
