@@ -36,6 +36,22 @@ class UBuffer {
     
     isl_map* physical_address_mapping;
 
+    void add_out_pt(const std::string& name,
+        const std::string& dm,
+        const std::string& access,
+        const std::string& sched) {
+      add_pt(name, dm, access, sched);
+      isIn[name] = false;
+    }
+
+    void add_in_pt(const std::string& name,
+        const std::string& dm,
+        const std::string& access,
+        const std::string& sched) {
+      add_pt(name, dm, access, sched);
+      isIn[name] = true;
+    }
+
     void add_pt(const std::string& name,
         const std::string& dm,
         const std::string& access,
@@ -466,8 +482,12 @@ void generate_hls_code(UBuffer& buf) {
     isl_union_map_from_map(cpy(buf.schedule.at(inpt)));
 
   map<string, int> read_delays;
+  int maxdelay = 0;
   for (auto outpt : buf.get_out_ports()) {
     int r0 = check_value_dd(buf, outpt, inpt);
+    if (r0 > maxdelay) {
+      maxdelay = r0;
+    }
     read_delays[outpt] = r0;
     wmap =
       isl_union_map_union(wmap,
@@ -483,21 +503,15 @@ void generate_hls_code(UBuffer& buf) {
   string code_string(code_str);
   free(code_str);
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
-  regex re("write\(.*\);");
-  code_string = regex_replace(code_string, re, "int W0 = " + inpt + ".read(); write0_delay.push(W0);");
+  regex re(inpt + "\(.*\);");
+  code_string = regex_replace(code_string, re, "int W0 = " + inpt + ".read(); " + inpt + "_delay.push(W0);");
   for (auto outpt : buf.get_out_ports()) {
     regex re0(outpt + "\((.*)\);");
     code_string = regex_replace(code_string, re0, outpt + ".write(" + inpt + "_delay.pop(-" + to_string(read_delays.at(outpt)) + "));");
   }
-  //regex re0("R0\((.*)\);");
-  //code_string = regex_replace(code_string, re0, "read0.write(" + inpt + "_delay.pop(-" + to_string(read_delays.at("read0")) + "));");
-  //regex re1("R1\((.*)\);");
-  //code_string = regex_replace(code_string, re1, "read1.write(" + inpt + "_delay.pop(-" + to_string(read_delays.at("read1")) + "));");
-  //regex re2("R2\((.*)\);");
-  //code_string = regex_replace(code_string, re2, "read2.write(" + inpt + "_delay.pop(-" + to_string(read_delays.at("read2")) + "));");
 
   cout << "Code generation..." << endl;
-  ofstream os("shift_reg.cpp");
+  ofstream os(buf.name + ".cpp");
   std::ostream& out = os;
   
   out << "#include \"hw_classes.h\"" << endl << endl;
@@ -511,12 +525,12 @@ void generate_hls_code(UBuffer& buf) {
     nargs++;
   }
   out << ") {" << endl;
-  out << "\tdelay_sr<3> write0_delay;\n\n";
+  out << "\tdelay_sr<" + to_string(maxdelay + 1) + "> " + inpt + "_delay;\n\n";
   out << code_string << endl;
   out << "}" << endl;
 
   cout << "Code generation..." << endl;
-  ofstream of("shift_reg.h");
+  ofstream of(buf.name + ".h");
   of << "#pragma once\n\n" << endl;
   of << "#include \"hw_classes.h\"" << endl << endl;
   of << "void " << buf.name << "(";
@@ -540,13 +554,13 @@ void synth_wire_test() {
   buf.name = "shift_reg";
   buf.ctx = ctx;
 
-  buf.domain["write0"] =
+  buf.domain["write"] =
     isl_set_read_from_str(ctx, "{ write[i] : 0 <= i < 10 }");
-  buf.access_map["write0"] =
+  buf.access_map["write"] =
     isl_map_read_from_str(ctx, "{ write[i] -> M[i] : 0 <= i < 10 }");
-  buf.schedule["write0"] =
+  buf.schedule["write"] =
     isl_map_read_from_str(ctx, "{ write[i] -> [i, 0] : 0 <= i < 10 }");
-  buf.isIn["write0"] = true;
+  buf.isIn["write"] = true;
 
   // Read 0 through 7
   buf.domain["read0"] =
@@ -591,9 +605,10 @@ void synth_lb_test() {
   ctx = isl_ctx_alloc();
   
   UBuffer buf;
+  buf.name = "linebuffer_3x3";
   buf.ctx = ctx;
 
-  buf.add_pt("write0",
+  buf.add_in_pt("write0",
       "{ W[i, j] : 0 <= i < 64 and 0 <= j < 64 }",
       "{ W[i, j] -> M[j, i] : 0 <= i < 64 and 0 <= j < 64 }",
       "{ W[i, j] -> [i, j, 0] : 0 <= i < 64 and 0 <= j < 64 }"
@@ -602,7 +617,7 @@ void synth_lb_test() {
   for (int r = 0; r < 3; r++) {
     for (int c = 0; c < 3; c++) {
       string rn = "read_" + to_string(r) + "_" + to_string(c);
-      buf.add_pt(rn,
+      buf.add_out_pt(rn,
           "{ " + rn + "[i, j] : 0 <= i < 62 and 0 <= j < 62 }",
           "{ " + rn + "[i, j] -> M[j + " + to_string(c) + ", i + " + to_string(r)  + "] : 0 <= i < 62 and 0 <= j < 62 }",
           "{ " + rn + "[i, j] -> [i + 2, j + 2, 1] : 0 <= i < 62 and 0 <= j < 62 }"
@@ -613,6 +628,8 @@ void synth_lb_test() {
     }
   }
 
+  generate_hls_code(buf);
+
   isl_ctx_free(buf.ctx);
 }
 int main() {
@@ -622,7 +639,7 @@ int main() {
   basic_space_tests();
 
   synth_wire_test();
-  //synth_lb_test();
+  synth_lb_test();
 
   return 0;
 }
