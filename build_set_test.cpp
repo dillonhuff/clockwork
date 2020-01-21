@@ -517,7 +517,7 @@ isl_stat codegen_constraint(isl_constraint* c, void* user) {
       int ndims = isl_space_dim(s, isl_dim_out);
       for (int i = 0; i < ndims; i++) {
         ss << str(isl_constraint_get_coefficient_val(c, isl_dim_out, i)) << "*"
-          << str(isl_space_get_dim_id(s, isl_dim_out, i)) << "'" << " + ";
+          << str(isl_space_get_dim_id(s, isl_dim_out, i)) << "_p" << " + ";
       }
     }
   }
@@ -532,21 +532,25 @@ isl_stat codegen_constraint(isl_constraint* c, void* user) {
 }
 
 isl_stat bmap_codegen_c(isl_basic_map* m, void* user) {
+  //isl_basic_set* s = domain(m);
   //vector<string>& code_holder = *((vector<string>*) user);
   //string code = "";
   //cout << "\t BASIC MAP" << endl;
   //code_holder.push_back(code);
   isl_basic_map_foreach_constraint(m, codegen_constraint, user);
+  //isl_basic_set_foreach_constraint(s, codegen_constraint, user);
 
   return isl_stat_ok;
 }
 
 isl_stat map_codegen_c(isl_map* m, void* user) {
+  cout << "Visiting map..." << endl;
+  print(isl_map_get_ctx(m), m);
+  cout << "Cardinality..." << endl;
+  auto cardm = card(m);
+  print(isl_map_get_ctx(m), cardm);
   vector<string>& code_holder = *((vector<string>*) user);
   isl_map_foreach_basic_map(m, bmap_codegen_c, (void*)(&code_holder));
-  //for (auto c : code_holder) {
-    //cout << "\t" << c << " && ";
-  //}
   return isl_stat_ok;
 }
 
@@ -559,16 +563,15 @@ isl_stat umap_codegen_c_comp(isl_map* m, void* user) {
 
   vector<string> holder;
   map_codegen_c(m, &holder);
-  cout << "Code for map..." << endl;
-  cout << "Holder size = " << holder.size() << endl;
-  cout << "\t" << sep_list(holder, "(", ")", " && ") << endl;
+  mc[range_name(get_space(m))] = sep_list(holder, "(", ")", " && ");
 
   return isl_stat_ok;
 }
 
-void umap_codegen_c(umap* const um) {
+map<string, string> umap_codegen_c(umap* const um) {
   map<string, string> cm;
   isl_union_map_foreach_map(um, umap_codegen_c_comp, (void*) (&cm));
+  return cm;
 }
 
 void generate_hls_code(UBuffer& buf) {
@@ -649,11 +652,17 @@ void generate_hls_code(UBuffer& buf) {
     cout << "SrcMap " << inpt << " -> outport..." << endl;
     print(ctx(src_map), src_map);
 
+    cout << "Src map cardinality..." << endl;
+    auto src_card = card(src_map);
+    print(buf.ctx, src_card);
+
+    //cout << "SrcMap " << inpt << " -> outport after projection..." << endl;
+    //src_map = isl_union_map_project_out(src_map, isl_dim_out, 0, 1);
+    print(ctx(src_map), src_map);
     src_map = lexmax(src_map);
     cout << "Lexmax SrcMap" << inpt << " -> outport..." << endl;
     print(ctx(src_map), src_map);
     out << "// Select if: " << str(src_map) << endl;
-    umap_codegen_c(src_map);
     out << "inline int " + outpt + "_select(";
     size_t nargs = 0;
     for (auto pt : buf.get_in_ports()) {
@@ -668,6 +677,10 @@ void generate_hls_code(UBuffer& buf) {
     //assert(isl_space_is_union_map(map_space));
 
     out << ") {" << endl;
+    map<string, string> ms = umap_codegen_c(src_map);
+    for (auto e : ms) {
+      out << "\t// bool select_" << e.first << " = " << e.second << ";" << endl;
+    }
     // Body of select function
     for (auto inpt : buf.get_in_ports()) {
       int r0 = check_value_dd(buf, outpt, inpt);
