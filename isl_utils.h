@@ -179,6 +179,10 @@ isl_union_map* inv(isl_union_map* const m0) {
   return isl_union_map_reverse(cpy(m0));
 }
 
+isl_map* lexmax(isl_map* const m0) {
+  return isl_map_lexmax(cpy(m0));
+}
+
 isl_map* inv(isl_map* const m0) {
   return isl_map_reverse(cpy(m0));
 }

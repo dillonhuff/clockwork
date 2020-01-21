@@ -537,11 +537,6 @@ void generate_hls_code(UBuffer& buf) {
 
   for (auto outpt : buf.get_out_ports()) {
     regex re0(outpt + "\((.*)\);");
-
-    //string replacement = "";
-    //string chosen = inpt + "_delay.pop(-" + to_string(read_delays.at(outpt)) + ")";
-    //replacement += outpt + ".write(" + chosen + ");";
-    //code_string = regex_replace(code_string, re0, replacement);
     code_string = regex_replace(code_string, re0, outpt + ".write(" + outpt + "_select(" + delay_list + "));");
   }
 
@@ -564,6 +559,11 @@ void generate_hls_code(UBuffer& buf) {
     // Body of select
     for (auto inpt : buf.get_in_ports()) {
       int r0 = check_value_dd(buf, outpt, inpt);
+      auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
+      auto src_map =
+        lexmax(its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc));
+      cout << "SrcMap" << inpt << " -> outport..." << endl;
+      print(isl_map_get_ctx(src_map), src_map);
       out << "\tint value_" << inpt << " = " << inpt << "_delay.pop(" << -r0 << ");\n";
     }
     string chosen = "value_" + inpt;
@@ -587,7 +587,7 @@ void generate_hls_code(UBuffer& buf) {
   out << code_string << endl;
   out << "}" << endl;
 
-  cout << "Code generation..." << endl;
+  cout << "Header file generation..." << endl;
   ofstream of(buf.name + ".h");
   of << "#pragma once\n\n" << endl;
   of << "#include \"hw_classes.h\"" << endl << endl;
@@ -820,3 +820,6 @@ int main() {
 
   return 0;
 }
+
+
+
