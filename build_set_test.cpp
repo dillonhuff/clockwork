@@ -559,16 +559,16 @@ void synth_upsample_test() {
   buf.access_map["write"] =
     isl_map_read_from_str(ctx, "{ write[i] -> M[i] : 0 <= i < 10 }");
   buf.schedule["write"] =
-    isl_map_read_from_str(ctx, "{ write[i, 0] -> [i, 0, 0] : 0 <= i < 10 }");
+    isl_map_read_from_str(ctx, "{ write[i] -> [i, 0, 0] : 0 <= i < 10 }");
   buf.isIn["write"] = true;
 
   // Read 0 through 7
   buf.domain["read0"] =
-    isl_set_read_from_str(ctx, "{ read0[i, j] : 0 <= i < 5 and 0 <= j < 2}");
+    isl_set_read_from_str(ctx, "{ read0[i, j] : 0 <= i < 10 and 0 <= j < 2}");
   buf.access_map["read0"] =
-    isl_map_read_from_str(ctx, "{ read0[i, j] -> M[i] : 0 <= i < 5 and 0 <= j < 2}");
+    isl_map_read_from_str(ctx, "{ read0[i, j] -> M[i] : 0 <= i < 10 and 0 <= j < 2}");
   buf.schedule["read0"] =
-    isl_map_read_from_str(ctx, "{ read0[i, j] -> [i, 1, j] : 0 <= i < 5 and 0 <= j < 2 }");
+    isl_map_read_from_str(ctx, "{ read0[i, j] -> [i, 1, j] : 0 <= i < 10 and 0 <= j < 2 }");
   buf.isIn["read0"] = false;
 
   generate_hls_code(buf);
