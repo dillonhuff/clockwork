@@ -5,6 +5,8 @@
 
 using namespace std;
 
+#define MOD_INC(x, N) ((x) == ((N) - 1) ? 0 : (x) + 1)
+
 template<int Depth>
 class hw_mem {
   public:
@@ -39,7 +41,7 @@ class delay_sr {
     void push(const int val) {
       empty = false;
       vals[write_addr] = val;
-      write_addr = write_addr == (Depth - 1) ? 0 : write_addr + 1;
+      write_addr = MOD_INC(write_addr, Depth);
     }
 };
 

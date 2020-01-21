@@ -48,18 +48,6 @@ class UBuffer {
         isl_map_read_from_str(ctx, sched.c_str());
     }
 
-    void add_out_port(const std::string& name) {
-
-    }
-
-    void add_in_port(const std::string& name) {
-
-    }
-
-    void add_var(const std::string& name) {
-
-    }
-
     isl_basic_set* build_domain(const std::vector<int>& ranges) {
       assert(ranges.size() % 2 == 0);
 
@@ -98,6 +86,16 @@ class UBuffer {
       m = isl_basic_map_add_constraint(m, c);
 
       return isl_map_from_basic_map(m);
+    }
+
+    vector<string> get_out_ports() const {
+      vector<string> outpts;
+      for (auto m : isIn) {
+        if (!m.second) {
+          outpts.push_back(m.first);
+        }
+      }
+      return outpts;
     }
 
     string get_in_port() const {
@@ -178,33 +176,8 @@ void test_swizzle_buffer() {
   UBuffer buf;
 
   // Logical addresses
-  buf.add_var("c");
-  buf.add_var("r");
-
-  // Physical addresses
-  buf.add_var("pc");
-  buf.add_var("pr");
-
-  // Writer loop nest
-  buf.add_var("wy");
-  buf.add_var("wx");
-
-  // Reader loop nest
-  buf.add_var("ry");
-  buf.add_var("rxo");
-  buf.add_var("rxi");
-
-  // Time
-  buf.add_var("t");
 
   // Add ports, say two in, three out
-  buf.add_in_port("in0");
-  buf.add_in_port("in1");
-
-  buf.add_out_port("out0");
-  buf.add_out_port("out1");
-  buf.add_out_port("out2");
-
   // Want to add read / write schedules, and domains
   // Should the domain describe all logical addresses
   // as a restriction of r / c
@@ -486,87 +459,42 @@ std::string ReplaceString(std::string subject, const std::string& search,
     return subject;
 }
 
-void synth_wire_test() {
-  struct isl_ctx *ctx;
-  ctx = isl_ctx_alloc();
-  
-  UBuffer buf;
-  buf.name = "shift_reg";
-  buf.ctx = ctx;
+void generate_hls_code(UBuffer& buf) {
 
-  buf.domain["write0"] =
-    isl_set_read_from_str(ctx, "{ W[i] : 0 <= i < 10 }");
-  buf.access_map["write0"] =
-    isl_map_read_from_str(ctx, "{ W[i] -> M[i] : 0 <= i < 10 }");
-  buf.schedule["write0"] =
-    isl_map_read_from_str(ctx, "{ W[i] -> [i, 0] : 0 <= i < 10 }");
-  buf.isIn["write0"] = true;
-
-  // Read 0 through 7
-  buf.domain["read0"] =
-    isl_set_read_from_str(ctx, "{ R0[i] : 0 <= i < 8}");
-  buf.access_map["read0"] =
-    isl_map_read_from_str(ctx, "{ R0[i] -> M[i] : 0 <= i < 8 }");
-  buf.schedule["read0"] =
-    isl_map_read_from_str(ctx, "{ R0[i] -> [i + 2, 1] : 0 <= i < 8 }");
-  buf.isIn["read0"] = false;
-
-  // Read 1 through 8
-  buf.domain["read1"] =
-    isl_set_read_from_str(ctx, "{ R1[i] : 0 <= i < 8}");
-  buf.access_map["read1"] =
-    isl_map_read_from_str(ctx, "{ R1[i] -> M[i + 1] : 0 <= i < 8 }");
-  buf.schedule["read1"] =
-    isl_map_read_from_str(ctx, "{ R1[i] -> [i + 2, 1] : 0 <= i < 8 }");
-  buf.isIn["read1"] = false;
-
-  // Read 2 through 9
-  buf.domain["read2"] =
-    isl_set_read_from_str(ctx, "{ R2[i] : 0 <= i < 8}");
-  buf.access_map["read2"] =
-    isl_map_read_from_str(ctx, "{ R2[i] -> M[i + 2] : 0 <= i < 8 }");
-  buf.schedule["read2"] =
-    isl_map_read_from_str(ctx, "{ R2[i] -> [i + 2, 1] : 0 <= i < 8 }");
-  buf.isIn["read2"] = false;
+  string inpt = buf.get_in_port();
+  isl_union_map* wmap =
+    isl_union_map_from_map(cpy(buf.schedule.at(inpt)));
 
   map<string, int> read_delays;
-  int r0 = check_value_dd(buf, "read0", "write0");
-  assert(r0 == 2);
-  read_delays["read0"] = r0;
-  int r1 = check_value_dd(buf, "read1", "write0");
-  assert(r1 == 1);
-  read_delays["read1"] = r1;
-  int r2 = check_value_dd(buf, "read2", "write0");
-  assert(r2 == 0);
-  read_delays["read2"] = r2;
+  for (auto outpt : buf.get_out_ports()) {
+    int r0 = check_value_dd(buf, outpt, inpt);
+    read_delays[outpt] = r0;
+    wmap =
+      isl_union_map_union(wmap,
+          isl_union_map_from_map(cpy(buf.schedule.at(outpt))));
+  }
+  isl_union_map* res = wmap;
 
-  isl_ast_build* build = isl_ast_build_alloc(ctx);
-  isl_union_map* rmap0 =
-    isl_union_map_from_map(cpy(buf.schedule.at("read0")));
-  isl_union_map* rmap1 =
-    isl_union_map_from_map(cpy(buf.schedule.at("read1")));
-  isl_union_map* rmap2 =
-    isl_union_map_from_map(cpy(buf.schedule.at("read2")));
-  isl_union_map* wmap =
-    isl_union_map_from_map(cpy(buf.schedule.at("write0")));
-
-  isl_union_map* res =
-    unn(rmap0, unn(rmap1, unn(rmap2, wmap)));
-
+  isl_ast_build* build = isl_ast_build_alloc(buf.ctx);
   isl_ast_node* code =
     isl_ast_build_node_from_schedule_map(build, res);
 
   char* code_str = isl_ast_node_to_C_str(code);
   string code_string(code_str);
   free(code_str);
-  regex re("W\(.*\);");
-  code_string = regex_replace(code_string, re, "int W0 = write0.read(); write0_delay.push(W0);");
-  regex re0("R0\((.*)\);");
-  code_string = regex_replace(code_string, re0, "read0.write(write0_delay.pop(-" + to_string(read_delays.at("read0")) + "));");
-  regex re1("R1\((.*)\);");
-  code_string = regex_replace(code_string, re1, "read1.write(write0_delay.pop(-" + to_string(read_delays.at("read1")) + "));");
-  regex re2("R2\((.*)\);");
-  code_string = regex_replace(code_string, re2, "read2.write(write0_delay.pop(-" + to_string(read_delays.at("read2")) + "));");
+  code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
+  regex re("write\(.*\);");
+  code_string = regex_replace(code_string, re, "int W0 = " + inpt + ".read(); write0_delay.push(W0);");
+  for (auto outpt : buf.get_out_ports()) {
+    regex re0(outpt + "\((.*)\);");
+    code_string = regex_replace(code_string, re0, outpt + ".write(" + inpt + "_delay.pop(-" + to_string(read_delays.at(outpt)) + "));");
+  }
+  //regex re0("R0\((.*)\);");
+  //code_string = regex_replace(code_string, re0, "read0.write(" + inpt + "_delay.pop(-" + to_string(read_delays.at("read0")) + "));");
+  //regex re1("R1\((.*)\);");
+  //code_string = regex_replace(code_string, re1, "read1.write(" + inpt + "_delay.pop(-" + to_string(read_delays.at("read1")) + "));");
+  //regex re2("R2\((.*)\);");
+  //code_string = regex_replace(code_string, re2, "read2.write(" + inpt + "_delay.pop(-" + to_string(read_delays.at("read2")) + "));");
 
   cout << "Code generation..." << endl;
   ofstream os("shift_reg.cpp");
@@ -601,6 +529,59 @@ void synth_wire_test() {
     nargs++;
   }
   of << ");" << endl;
+
+}
+
+void synth_wire_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+  
+  UBuffer buf;
+  buf.name = "shift_reg";
+  buf.ctx = ctx;
+
+  buf.domain["write0"] =
+    isl_set_read_from_str(ctx, "{ write[i] : 0 <= i < 10 }");
+  buf.access_map["write0"] =
+    isl_map_read_from_str(ctx, "{ write[i] -> M[i] : 0 <= i < 10 }");
+  buf.schedule["write0"] =
+    isl_map_read_from_str(ctx, "{ write[i] -> [i, 0] : 0 <= i < 10 }");
+  buf.isIn["write0"] = true;
+
+  // Read 0 through 7
+  buf.domain["read0"] =
+    isl_set_read_from_str(ctx, "{ read0[i] : 0 <= i < 8}");
+  buf.access_map["read0"] =
+    isl_map_read_from_str(ctx, "{ read0[i] -> M[i] : 0 <= i < 8 }");
+  buf.schedule["read0"] =
+    isl_map_read_from_str(ctx, "{ read0[i] -> [i + 2, 1] : 0 <= i < 8 }");
+  buf.isIn["read0"] = false;
+
+  // Read 1 through 8
+  buf.domain["read1"] =
+    isl_set_read_from_str(ctx, "{ read1[i] : 0 <= i < 8}");
+  buf.access_map["read1"] =
+    isl_map_read_from_str(ctx, "{ read1[i] -> M[i + 1] : 0 <= i < 8 }");
+  buf.schedule["read1"] =
+    isl_map_read_from_str(ctx, "{ read1[i] -> [i + 2, 1] : 0 <= i < 8 }");
+  buf.isIn["read1"] = false;
+
+  // Read 2 through 9
+  buf.domain["read2"] =
+    isl_set_read_from_str(ctx, "{ read2[i] : 0 <= i < 8}");
+  buf.access_map["read2"] =
+    isl_map_read_from_str(ctx, "{ read2[i] -> M[i + 2] : 0 <= i < 8 }");
+  buf.schedule["read2"] =
+    isl_map_read_from_str(ctx, "{ read2[i] -> [i + 2, 1] : 0 <= i < 8 }");
+  buf.isIn["read2"] = false;
+  
+  generate_hls_code(buf);
+
+  int res = system("clang++ tb_shift_reg.cpp shift_reg.cpp");
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
 
   isl_ctx_free(buf.ctx);
 }

@@ -1,4 +1,4 @@
-./build.sh
+./make_code.sh
 if [ $? -eq 0 ]; then
   ./a.out
 else
