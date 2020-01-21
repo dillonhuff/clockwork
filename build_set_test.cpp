@@ -486,6 +486,9 @@ std::string ReplaceString(std::string subject, const std::string& search,
 
 void generate_hls_code(UBuffer& buf) {
 
+  // Maybe start by building all writes and all reads?
+  //  - Then compute RAWs and ??
+
   string inpt = buf.get_in_port();
   isl_union_map* wmap = nullptr;
   cout << "# in ports = " << buf.get_in_ports().size() << endl;
@@ -501,6 +504,10 @@ void generate_hls_code(UBuffer& buf) {
   map<string, int> read_delays;
   int maxdelay = 0;
   for (auto outpt : buf.get_out_ports()) {
+    for (auto inpt : buf.get_in_ports()) {
+      int ri = check_value_dd(buf, outpt, inpt);
+      cout << "ri from " << inpt << " to " << outpt << " = " << ri << endl;
+    }
     int r0 = check_value_dd(buf, outpt, inpt);
     if (r0 > maxdelay) {
       maxdelay = r0;
