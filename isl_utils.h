@@ -23,6 +23,10 @@ extern "C" {
 
 typedef isl_union_map umap;
 
+isl_space* get_space(isl_constraint* const m) {
+  return isl_constraint_get_space(m);
+}
+
 isl_space* get_space(isl_map* const m) {
   return isl_map_get_space(m);
 }
@@ -30,6 +34,10 @@ isl_space* get_space(isl_map* const m) {
 int dim(isl_space* const s) {
   assert(false);
   return 0;
+}
+
+std::string str(isl_id* const id) {
+  return std::string(isl_id_to_str(id));
 }
 
 std::string domain_name(isl_space* const s) {
@@ -42,6 +50,10 @@ std::string range_name(isl_space* const s) {
 
 isl_union_map* to_umap(isl_map* const m) {
   return isl_union_map_from_map(m);
+}
+
+isl_ctx* ctx(isl_val* const m) {
+  return isl_val_get_ctx(m);
 }
 
 isl_ctx* ctx(isl_map* const m) {
@@ -111,6 +123,18 @@ void print(struct isl_ctx* const ctx, isl_qpolynomial* const bset) {
   free(rs);
 }
 
+std::string str(isl_val* const bset) {
+  auto context = ctx(bset);
+  isl_printer *p;
+  p = isl_printer_to_str(context);
+  p = isl_printer_print_val(p, cpy(bset));
+
+  char* rs = isl_printer_get_str(p);
+  std::string r(rs);
+  isl_printer_free(p);
+  free(rs);
+  return r;
+}
 void print(struct isl_ctx* const ctx, isl_val* const bset) {
   isl_printer *p;
   p = isl_printer_to_str(ctx);

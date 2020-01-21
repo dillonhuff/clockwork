@@ -485,10 +485,26 @@ std::string ReplaceString(std::string subject, const std::string& search,
 }
 
 isl_stat codegen_constraint(isl_constraint* c, void* user) {
+  isl_space* s = get_space(c);
+  if (isl_space_is_map(s)) {
+    int ndims = isl_space_dim(s, isl_dim_in);
+    for (int i = 0; i < ndims; i++) {
+      cout << str(isl_constraint_get_coefficient_val(c, isl_dim_in, i)) << "*"
+        << str(isl_space_get_dim_id(s, isl_dim_in, i)) << " + ";
+    }
+    {
+      int ndims = isl_space_dim(s, isl_dim_out);
+      for (int i = 0; i < ndims; i++) {
+        cout << str(isl_constraint_get_coefficient_val(c, isl_dim_out, i)) << "*"
+          << str(isl_space_get_dim_id(s, isl_dim_out, i)) << "'" << " + ";
+      }
+    }
+  }
+  cout << str(isl_constraint_get_constant_val(c)) << " ";
   if (isl_constraint_is_equality(c)) {
-    cout << "a" << " = " << "b" << endl;
+    cout << " = " << "0" << endl;
   } else {
-    cout << "a" << " >= " << "b" << endl;
+    cout << " >= " << "0" << endl;
   }
   return isl_stat_ok;
 }
