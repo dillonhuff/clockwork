@@ -484,6 +484,49 @@ std::string ReplaceString(std::string subject, const std::string& search,
     return subject;
 }
 
+isl_stat codegen_constraint(isl_constraint* c, void* user) {
+  if (isl_constraint_is_equality(c)) {
+    cout << "a" << " = " << "b" << endl;
+  } else {
+    cout << "a" << " >= " << "b" << endl;
+  }
+  return isl_stat_ok;
+}
+
+isl_stat bmap_codegen_c(isl_basic_map* m, void* user) {
+  vector<string>& code_holder = *((vector<string>*) user);
+  string code = "";
+  cout << "\t BASIC MAP" << endl;
+  code_holder.push_back(code);
+  isl_basic_map_foreach_constraint(m, codegen_constraint, user);
+
+  return isl_stat_ok;
+}
+
+isl_stat map_codegen_c(isl_map* m, void* user) {
+  vector<string> code_holder;
+  isl_map_foreach_basic_map(m, bmap_codegen_c, (void*)(&code_holder));
+  for (auto c : code_holder) {
+    cout << "\t" << c << " && ";
+  }
+  return isl_stat_ok;
+}
+
+isl_stat umap_codegen_c_comp(isl_map* m, void* user) {
+  map<string, string>& mc = *((map<string, string>*) user);
+  mc[range_name(get_space(m))] = str(m);
+  for (auto r : mc) {
+    cout << "\t" << r.first << ": " << r.second << endl;
+  }
+  map_codegen_c(m, user);
+  return isl_stat_ok;
+}
+
+void umap_codegen_c(umap* const um) {
+  map<string, string> cm;
+  isl_union_map_foreach_map(um, umap_codegen_c_comp, (void*) (&cm));
+}
+
 void generate_hls_code(UBuffer& buf) {
 
   string inpt = buf.get_in_port();
@@ -555,18 +598,36 @@ void generate_hls_code(UBuffer& buf) {
       }
       nargs++;
     }
+    //isl_space* s = get_space(buf.domain.at(outpt));
+
     out << ") {" << endl;
     // Body of select
+    umap* src_map = nullptr;
     for (auto inpt : buf.get_in_ports()) {
       int r0 = check_value_dd(buf, outpt, inpt);
       auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
-      auto src_map =
-        lexmax(its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc));
-      cout << "SrcMap" << inpt << " -> outport..." << endl;
-      out << "// Select if: " << str(src_map) << endl;
-      print(isl_map_get_ctx(src_map), src_map);
+      if (src_map == nullptr) {
+        src_map =
+          to_umap((its(dot(buf.access_map.at(outpt),
+                    inv(buf.access_map.at(inpt))), beforeAcc)));
+      } else {
+        src_map =
+          unn(src_map, to_umap((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
+      }
       out << "\tint value_" << inpt << " = " << inpt << "_delay.pop(" << -r0 << ");\n";
     }
+
+    cout << "SrcMap" << inpt << " -> outport..." << endl;
+    print(ctx(src_map), src_map);
+
+    src_map = lexmax(src_map);
+    cout << "Lexmax SrcMap" << inpt << " -> outport..." << endl;
+    print(ctx(src_map), src_map);
+    out << "// Select if: " << str(src_map) << endl;
+    umap_codegen_c(src_map);
+
+    print(ctx(src_map), src_map);
+
     string chosen = "value_" + inpt;
     out << "\treturn " + chosen + ";\n";
     out << "}" << endl << endl;

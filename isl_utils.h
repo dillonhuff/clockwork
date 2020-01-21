@@ -21,6 +21,37 @@ extern "C" {
 
 #include "barvinok/barvinok.h"
 
+typedef isl_union_map umap;
+
+isl_space* get_space(isl_map* const m) {
+  return isl_map_get_space(m);
+}
+
+int dim(isl_space* const s) {
+  assert(false);
+  return 0;
+}
+
+std::string domain_name(isl_space* const s) {
+  return std::string(isl_id_to_str(isl_space_get_tuple_id(s, isl_dim_in)));
+}
+
+std::string range_name(isl_space* const s) {
+  return std::string(isl_id_to_str(isl_space_get_tuple_id(s, isl_dim_out)));
+}
+
+isl_union_map* to_umap(isl_map* const m) {
+  return isl_union_map_from_map(m);
+}
+
+isl_ctx* ctx(isl_map* const m) {
+  return isl_map_get_ctx(m);
+}
+
+isl_ctx* ctx(umap* const m) {
+  return isl_union_map_get_ctx(m);
+}
+
 isl_pw_multi_aff* cpy(isl_pw_multi_aff* const s) {
   return isl_pw_multi_aff_copy(s);
 }
@@ -165,6 +196,19 @@ void print(struct isl_ctx* const ctx, isl_union_map* const m) {
 
 }
 
+std::string str(umap* const m) {
+  auto ctx = isl_union_map_get_ctx(m);
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_print_union_map(p, cpy(m));
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  std::string r(rs);
+  free(rs);
+  
+  return r;
+}
+
 std::string str(isl_map* const m) {
   auto ctx = isl_map_get_ctx(m);
   isl_printer *p;
@@ -191,6 +235,10 @@ void print(struct isl_ctx* const ctx, isl_map* const m) {
 
 isl_union_map* inv(isl_union_map* const m0) {
   return isl_union_map_reverse(cpy(m0));
+}
+
+umap* lexmax(umap* const m0) {
+  return isl_union_map_lexmax(cpy(m0));
 }
 
 isl_map* lexmax(isl_map* const m0) {
