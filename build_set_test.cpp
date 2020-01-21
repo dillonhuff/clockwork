@@ -563,6 +563,7 @@ void generate_hls_code(UBuffer& buf) {
       auto src_map =
         lexmax(its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc));
       cout << "SrcMap" << inpt << " -> outport..." << endl;
+      out << "// Select if: " << str(src_map) << endl;
       print(isl_map_get_ctx(src_map), src_map);
       out << "\tint value_" << inpt << " = " << inpt << "_delay.pop(" << -r0 << ");\n";
     }

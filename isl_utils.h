@@ -164,6 +164,20 @@ void print(struct isl_ctx* const ctx, isl_union_map* const m) {
   free(rs);
 
 }
+
+std::string str(isl_map* const m) {
+  auto ctx = isl_map_get_ctx(m);
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_print_map(p, cpy(m));
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  std::string r(rs);
+  free(rs);
+  
+  return r;
+}
+
 void print(struct isl_ctx* const ctx, isl_map* const m) {
   isl_printer *p;
   p = isl_printer_to_str(ctx);
