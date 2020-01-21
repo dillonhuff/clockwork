@@ -27,6 +27,10 @@ isl_space* get_space(isl_constraint* const m) {
   return isl_constraint_get_space(m);
 }
 
+isl_space* get_space(isl_union_map* const m) {
+  return isl_union_map_get_space(m);
+}
+
 isl_space* get_space(isl_map* const m) {
   return isl_map_get_space(m);
 }

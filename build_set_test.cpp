@@ -4,10 +4,27 @@
 #include <cassert>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <map>
 #include <vector>
 
 using namespace std;
+
+std::string sep_list(const std::vector<std::string>& strs, const std::string& ldelim, const std::string& rdelim, const std::string& sep) {
+  string res = ldelim;
+
+  if (strs.size() > 0) {
+    for (size_t i = 0; i < strs.size(); i++) {
+      res += strs[i];
+      if (strs.size() > 1 && i < strs.size() - 1) {
+        res += sep;
+      }
+    }
+  }
+  res += rdelim;
+
+  return res;
+}
 
 class UBuffer {
   public:
@@ -485,46 +502,51 @@ std::string ReplaceString(std::string subject, const std::string& search,
 }
 
 isl_stat codegen_constraint(isl_constraint* c, void* user) {
+  vector<string>& code_holder = *((vector<string>*) user);
+
+  string resstr;
+  stringstream ss(resstr);
   isl_space* s = get_space(c);
   if (isl_space_is_map(s)) {
     int ndims = isl_space_dim(s, isl_dim_in);
     for (int i = 0; i < ndims; i++) {
-      cout << str(isl_constraint_get_coefficient_val(c, isl_dim_in, i)) << "*"
+      ss << str(isl_constraint_get_coefficient_val(c, isl_dim_in, i)) << "*"
         << str(isl_space_get_dim_id(s, isl_dim_in, i)) << " + ";
     }
     {
       int ndims = isl_space_dim(s, isl_dim_out);
       for (int i = 0; i < ndims; i++) {
-        cout << str(isl_constraint_get_coefficient_val(c, isl_dim_out, i)) << "*"
+        ss << str(isl_constraint_get_coefficient_val(c, isl_dim_out, i)) << "*"
           << str(isl_space_get_dim_id(s, isl_dim_out, i)) << "'" << " + ";
       }
     }
   }
-  cout << str(isl_constraint_get_constant_val(c)) << " ";
+  ss << str(isl_constraint_get_constant_val(c)) << " ";
   if (isl_constraint_is_equality(c)) {
-    cout << " = " << "0" << endl;
+    ss << " == " << "0";
   } else {
-    cout << " >= " << "0" << endl;
+    ss << " >= " << "0";
   }
+  code_holder.push_back(ss.str());
   return isl_stat_ok;
 }
 
 isl_stat bmap_codegen_c(isl_basic_map* m, void* user) {
-  vector<string>& code_holder = *((vector<string>*) user);
-  string code = "";
-  cout << "\t BASIC MAP" << endl;
-  code_holder.push_back(code);
+  //vector<string>& code_holder = *((vector<string>*) user);
+  //string code = "";
+  //cout << "\t BASIC MAP" << endl;
+  //code_holder.push_back(code);
   isl_basic_map_foreach_constraint(m, codegen_constraint, user);
 
   return isl_stat_ok;
 }
 
 isl_stat map_codegen_c(isl_map* m, void* user) {
-  vector<string> code_holder;
+  vector<string>& code_holder = *((vector<string>*) user);
   isl_map_foreach_basic_map(m, bmap_codegen_c, (void*)(&code_holder));
-  for (auto c : code_holder) {
-    cout << "\t" << c << " && ";
-  }
+  //for (auto c : code_holder) {
+    //cout << "\t" << c << " && ";
+  //}
   return isl_stat_ok;
 }
 
@@ -534,7 +556,13 @@ isl_stat umap_codegen_c_comp(isl_map* m, void* user) {
   for (auto r : mc) {
     cout << "\t" << r.first << ": " << r.second << endl;
   }
-  map_codegen_c(m, user);
+
+  vector<string> holder;
+  map_codegen_c(m, &holder);
+  cout << "Code for map..." << endl;
+  cout << "Holder size = " << holder.size() << endl;
+  cout << "\t" << sep_list(holder, "(", ")", " && ") << endl;
+
   return isl_stat_ok;
 }
 
@@ -602,25 +630,11 @@ void generate_hls_code(UBuffer& buf) {
   cout << "Code generation..." << endl;
   ofstream os(buf.name + ".cpp");
   std::ostream& out = os;
-  
+
   out << "#include \"hw_classes.h\"" << endl << endl;
   for (auto outpt : buf.get_out_ports()) {
-    out << "inline int " + outpt + "_select(";
-    size_t nargs = 0;
-    for (auto pt : buf.get_in_ports()) {
-      out << "delay_sr<" << to_string(maxdelay + 1) << ">& " << pt << "_delay" << endl;
-      if (buf.get_in_ports().size() > 1 && nargs < buf.get_in_ports().size() - 1) {
-        out << ", ";
-      }
-      nargs++;
-    }
-    //isl_space* s = get_space(buf.domain.at(outpt));
-
-    out << ") {" << endl;
-    // Body of select
     umap* src_map = nullptr;
     for (auto inpt : buf.get_in_ports()) {
-      int r0 = check_value_dd(buf, outpt, inpt);
       auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
       if (src_map == nullptr) {
         src_map =
@@ -630,10 +644,9 @@ void generate_hls_code(UBuffer& buf) {
         src_map =
           unn(src_map, to_umap((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
       }
-      out << "\tint value_" << inpt << " = " << inpt << "_delay.pop(" << -r0 << ");\n";
     }
 
-    cout << "SrcMap" << inpt << " -> outport..." << endl;
+    cout << "SrcMap " << inpt << " -> outport..." << endl;
     print(ctx(src_map), src_map);
 
     src_map = lexmax(src_map);
@@ -641,6 +654,27 @@ void generate_hls_code(UBuffer& buf) {
     print(ctx(src_map), src_map);
     out << "// Select if: " << str(src_map) << endl;
     umap_codegen_c(src_map);
+    out << "inline int " + outpt + "_select(";
+    size_t nargs = 0;
+    for (auto pt : buf.get_in_ports()) {
+      out << "delay_sr<" << to_string(maxdelay + 1) << ">& " << pt << "_delay" << endl;
+      if (buf.get_in_ports().size() > 1 && nargs < buf.get_in_ports().size() - 1) {
+        out << ", ";
+      }
+      nargs++;
+    }
+
+    //auto map_space = get_space(src_map);
+    //assert(isl_space_is_union_map(map_space));
+
+    out << ") {" << endl;
+    // Body of select function
+    for (auto inpt : buf.get_in_ports()) {
+      int r0 = check_value_dd(buf, outpt, inpt);
+      auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
+      out << "\tint value_" << inpt << " = " << inpt << "_delay.pop(" << -r0 << ");\n";
+    }
+
 
     print(ctx(src_map), src_map);
 
