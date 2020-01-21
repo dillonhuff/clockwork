@@ -546,6 +546,59 @@ void generate_hls_code(UBuffer& buf) {
 
 }
 
+void synth_reduce_test() {
+
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  // for i in 0, 4:
+  //    m[i] = 0
+  //    for j in 0 3:
+  //      r = m[i]
+  //      m[i] = r + 1
+  //    out = m[i]
+	isl_union_set *domain =
+    isl_union_set_read_from_str(ctx, "{ init[i] : 0 <= i <= 4;  read0[i, j] : 0 <= i <= 4 and 0 <= j <= 3; update[i, j] : 0 <= i <= 4 and 0 <= j <= 3; out[i] : 0 <= i <= 4 }");
+	isl_union_map *validity =
+    isl_union_map_read_from_str(ctx, "{ }");
+	isl_union_map *proximity =
+    isl_union_map_read_from_str(ctx, "{ }");
+
+  isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+  auto schedmap = isl_schedule_get_map(sched);
+  cout << "Reduce schedule..." << endl;
+  print(ctx, schedmap);
+
+  return;
+  
+  UBuffer buf;
+  buf.name = "upsample";
+  buf.ctx = ctx;
+
+  buf.add_in_pt("write0",
+    "{ write[i] : 0 <= i < 10 }",
+    "{ write[i] -> M[i] : 0 <= i < 10 }",
+    "{ write[i] -> [i, 0, 0] : 0 <= i < 10 }");
+
+  //buf.domain["read0"] =
+    //isl_set_read_from_str(ctx, "{ read0[i, j] : 0 <= i < 10 and 0 <= j < 2}");
+  //buf.access_map["read0"] =
+    //isl_map_read_from_str(ctx, "{ read0[i, j] -> M[i] : 0 <= i < 10 and 0 <= j < 2}");
+  //buf.schedule["read0"] =
+    //isl_map_read_from_str(ctx, "{ read0[i, j] -> [i, 1, j] : 0 <= i < 10 and 0 <= j < 2 }");
+  //buf.isIn["read0"] = false;
+
+  //generate_hls_code(buf);
+
+  //int res = system("clang++ tb_upsample.cpp upsample.cpp");
+  //assert(res == 0);
+
+  //res = system("./a.out");
+  //assert(res == 0);
+
+  isl_ctx_free(buf.ctx);
+}
+
 void synth_upsample_test() {
   struct isl_ctx *ctx;
   ctx = isl_ctx_alloc();
@@ -684,6 +737,7 @@ int main() {
   synth_wire_test();
   synth_lb_test();
   synth_upsample_test();
+  synth_reduce_test();
 
   return 0;
 }

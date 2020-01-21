@@ -150,6 +150,16 @@ void print(struct isl_ctx* const ctx, isl_pw_qpolynomial* const m) {
 
 }
 
+void print(struct isl_ctx* const ctx, isl_union_map* const m) {
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_print_union_map(p, cpy(m));
+  char* rs = isl_printer_get_str(p);
+  printf("%s\n", rs);
+  isl_printer_free(p);
+  free(rs);
+
+}
 void print(struct isl_ctx* const ctx, isl_map* const m) {
   isl_printer *p;
   p = isl_printer_to_str(ctx);
