@@ -486,9 +486,6 @@ std::string ReplaceString(std::string subject, const std::string& search,
 
 void generate_hls_code(UBuffer& buf) {
 
-  // Maybe start by building all writes and all reads?
-  //  - Then compute RAWs and ??
-
   string inpt = buf.get_in_port();
   isl_union_map* wmap = nullptr;
   cout << "# in ports = " << buf.get_in_ports().size() << endl;
@@ -526,13 +523,26 @@ void generate_hls_code(UBuffer& buf) {
   cout << code_string << endl;
 
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
+  string delay_list = "";
+  size_t nd = 0;
   for (auto inpt : buf.get_in_ports()) {
     regex re(inpt + "\(.*\);");
     code_string = regex_replace(code_string, re, "int " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);");
+    delay_list += inpt + "_delay";
+    if (nd < buf.get_in_ports().size() - 1) {
+      delay_list += ", ";
+    }
+    nd++;
   }
+
   for (auto outpt : buf.get_out_ports()) {
     regex re0(outpt + "\((.*)\);");
-    code_string = regex_replace(code_string, re0, outpt + ".write(" + inpt + "_delay.pop(-" + to_string(read_delays.at(outpt)) + "));");
+
+    //string replacement = "";
+    //string chosen = inpt + "_delay.pop(-" + to_string(read_delays.at(outpt)) + ")";
+    //replacement += outpt + ".write(" + chosen + ");";
+    //code_string = regex_replace(code_string, re0, replacement);
+    code_string = regex_replace(code_string, re0, outpt + ".write(" + outpt + "_select(" + delay_list + "));");
   }
 
   cout << "Code generation..." << endl;
@@ -540,6 +550,27 @@ void generate_hls_code(UBuffer& buf) {
   std::ostream& out = os;
   
   out << "#include \"hw_classes.h\"" << endl << endl;
+  for (auto outpt : buf.get_out_ports()) {
+    out << "inline int " + outpt + "_select(";
+    size_t nargs = 0;
+    for (auto pt : buf.get_in_ports()) {
+      out << "delay_sr<" << to_string(maxdelay + 1) << ">& " << pt << "_delay" << endl;
+      if (buf.get_in_ports().size() > 1 && nargs < buf.get_in_ports().size() - 1) {
+        out << ", ";
+      }
+      nargs++;
+    }
+    out << ") {" << endl;
+    // Body of select
+    for (auto inpt : buf.get_in_ports()) {
+      int r0 = check_value_dd(buf, outpt, inpt);
+      out << "\tint value_" << inpt << " = " << inpt << "_delay.pop(" << -r0 << ");\n";
+    }
+    string chosen = "value_" + inpt;
+    out << "\treturn " + chosen + ";\n";
+    out << "}" << endl << endl;
+  }
+
   out << "void " << buf.name << "(";
   size_t nargs = 0;
   for (auto pt : buf.domain) {
