@@ -546,6 +546,42 @@ void generate_hls_code(UBuffer& buf) {
 
 }
 
+void synth_upsample_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+  
+  UBuffer buf;
+  buf.name = "upsample";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[i] : 0 <= i < 10 }");
+  buf.access_map["write"] =
+    isl_map_read_from_str(ctx, "{ write[i] -> M[i] : 0 <= i < 10 }");
+  buf.schedule["write"] =
+    isl_map_read_from_str(ctx, "{ write[i, 0] -> [i, 0, 0] : 0 <= i < 10 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read0"] =
+    isl_set_read_from_str(ctx, "{ read0[i, j] : 0 <= i < 5 and 0 <= j < 2}");
+  buf.access_map["read0"] =
+    isl_map_read_from_str(ctx, "{ read0[i, j] -> M[i] : 0 <= i < 5 and 0 <= j < 2}");
+  buf.schedule["read0"] =
+    isl_map_read_from_str(ctx, "{ read0[i, j] -> [i, 1, j] : 0 <= i < 5 and 0 <= j < 2 }");
+  buf.isIn["read0"] = false;
+
+  generate_hls_code(buf);
+
+  int res = system("clang++ tb_upsample.cpp upsample.cpp");
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+
+  isl_ctx_free(buf.ctx);
+}
+
 void synth_wire_test() {
   struct isl_ctx *ctx;
   ctx = isl_ctx_alloc();
@@ -609,9 +645,9 @@ void synth_lb_test() {
   buf.ctx = ctx;
 
   buf.add_in_pt("write0",
-      "{ W[i, j] : 0 <= i < 64 and 0 <= j < 64 }",
-      "{ W[i, j] -> M[j, i] : 0 <= i < 64 and 0 <= j < 64 }",
-      "{ W[i, j] -> [i, j, 0] : 0 <= i < 64 and 0 <= j < 64 }"
+      "{ write0[i, j] : 0 <= i < 64 and 0 <= j < 64 }",
+      "{ write0[i, j] -> M[j, i] : 0 <= i < 64 and 0 <= j < 64 }",
+      "{ write0[i, j] -> [i, j, 0] : 0 <= i < 64 and 0 <= j < 64 }"
       );
 
   for (int r = 0; r < 3; r++) {
@@ -630,8 +666,15 @@ void synth_lb_test() {
 
   generate_hls_code(buf);
 
+  int res = system("clang++ tb_linebuffer_3x3.cpp linebuffer_3x3.cpp");
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+
   isl_ctx_free(buf.ctx);
 }
+
 int main() {
 
   ubuffer_test();
@@ -640,6 +683,7 @@ int main() {
 
   synth_wire_test();
   synth_lb_test();
+  synth_upsample_test();
 
   return 0;
 }
