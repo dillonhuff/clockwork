@@ -495,13 +495,14 @@ void generate_hls_code(UBuffer& buf) {
   }
   isl_union_map* res = wmap;
 
-  isl_ast_build* build = isl_ast_build_alloc(buf.ctx);
-  isl_ast_node* code =
-    isl_ast_build_node_from_schedule_map(build, res);
+  string code_string = codegen_c(res);
+  //isl_ast_build* build = isl_ast_build_alloc(buf.ctx);
+  //isl_ast_node* code =
+    //isl_ast_build_node_from_schedule_map(build, res);
 
-  char* code_str = isl_ast_node_to_C_str(code);
-  string code_string(code_str);
-  free(code_str);
+  //char* code_str = isl_ast_node_to_C_str(code);
+  //string code_string(code_str);
+  //free(code_str);
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
   regex re(inpt + "\(.*\);");
   code_string = regex_replace(code_string, re, "int W0 = " + inpt + ".read(); " + inpt + "_delay.push(W0);");
@@ -559,15 +560,32 @@ void synth_reduce_test() {
   //    out = m[i]
 	isl_union_set *domain =
     isl_union_set_read_from_str(ctx, "{ init[i] : 0 <= i <= 4;  read0[i, j] : 0 <= i <= 4 and 0 <= j <= 3; update[i, j] : 0 <= i <= 4 and 0 <= j <= 3; out[i] : 0 <= i <= 4 }");
+  auto naive_sched =
+    its(isl_union_map_read_from_str(ctx, "{ init[i] -> [0, i, 0, 0]; read0[i, j] -> [0, i, j, 1]; update[i, j] -> [0, i, j, 2]; out[i] -> [1, i, 0, 0] }"), domain);
+  cout << "Code for naive schedule..." << endl;
+  cout << codegen_c(naive_sched) << endl;
+
+  auto before = lex_lt(naive_sched, naive_sched);
+  auto writes =
+    its(isl_union_map_read_from_str(ctx, "{ init[i] -> M[i]; update[i, j] -> M[i] }"), domain);
+  auto reads =
+    its(isl_union_map_read_from_str(ctx, "{ read0[i, j] -> M[i]; out[i] -> M[i] }"), domain);
 	isl_union_map *validity =
-    isl_union_map_read_from_str(ctx, "{ }");
+    its(dot(writes, inv(reads)), before);
+  cout << "Validity" << endl;
+  print(ctx, validity);
+    //isl_union_map_read_from_str(ctx, "{ }");
 	isl_union_map *proximity =
-    isl_union_map_read_from_str(ctx, "{ }");
+    cpy(validity);
+    //isl_union_map_read_from_str(ctx, "{ }");
 
   isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
-  auto schedmap = isl_schedule_get_map(sched);
+  auto schedmap = its(isl_schedule_get_map(sched), domain);
   cout << "Reduce schedule..." << endl;
   print(ctx, schedmap);
+
+  cout << "Code for reduce..." << endl;
+  cout << codegen_c(schedmap) << endl;
 
   return;
   
@@ -579,22 +597,6 @@ void synth_reduce_test() {
     "{ write[i] : 0 <= i < 10 }",
     "{ write[i] -> M[i] : 0 <= i < 10 }",
     "{ write[i] -> [i, 0, 0] : 0 <= i < 10 }");
-
-  //buf.domain["read0"] =
-    //isl_set_read_from_str(ctx, "{ read0[i, j] : 0 <= i < 10 and 0 <= j < 2}");
-  //buf.access_map["read0"] =
-    //isl_map_read_from_str(ctx, "{ read0[i, j] -> M[i] : 0 <= i < 10 and 0 <= j < 2}");
-  //buf.schedule["read0"] =
-    //isl_map_read_from_str(ctx, "{ read0[i, j] -> [i, 1, j] : 0 <= i < 10 and 0 <= j < 2 }");
-  //buf.isIn["read0"] = false;
-
-  //generate_hls_code(buf);
-
-  //int res = system("clang++ tb_upsample.cpp upsample.cpp");
-  //assert(res == 0);
-
-  //res = system("./a.out");
-  //assert(res == 0);
 
   isl_ctx_free(buf.ctx);
 }

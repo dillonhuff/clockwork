@@ -53,6 +53,10 @@ isl_set* cpy(isl_set* const b) {
   return isl_set_copy(b);
 }
 
+isl_union_set* cpy(isl_union_set* const b) {
+  return isl_union_set_copy(b);
+}
+
 isl_union_map* cpy(isl_union_map* const b) {
   return isl_union_map_copy(b);
 }
@@ -171,6 +175,10 @@ void print(struct isl_ctx* const ctx, isl_map* const m) {
 
 }
 
+isl_union_map* inv(isl_union_map* const m0) {
+  return isl_union_map_reverse(cpy(m0));
+}
+
 isl_map* inv(isl_map* const m0) {
   return isl_map_reverse(cpy(m0));
 }
@@ -178,12 +186,25 @@ isl_map* inv(isl_map* const m0) {
 isl_union_map* unn(isl_union_map* const m0, isl_union_map* const m1) {
   return isl_union_map_union(cpy(m0), cpy(m1));
 }
+
 isl_map* its(isl_map* const m0, isl_map* const m1) {
   return isl_map_intersect(cpy(m0), cpy(m1));
 }
 
+isl_union_map* its(isl_union_map* const m0, isl_union_map* const m1) {
+  return isl_union_map_intersect(cpy(m0), cpy(m1));
+}
+
+isl_union_map* its(isl_union_map* const m0, isl_union_set* const m1) {
+  return isl_union_map_intersect_domain(cpy(m0), cpy(m1));
+}
+
 isl_map* lex_gt(isl_map* const m0, isl_map* const m1) {
   return isl_map_lex_gt_map(cpy(m0), cpy(m1));
+}
+
+isl_union_map* lex_lt(isl_union_map* const m0, isl_union_map* const m1) {
+  return isl_union_map_lex_lt_union_map(cpy(m0), cpy(m1));
 }
 
 isl_map* lex_lt(isl_map* const m0, isl_map* const m1) {
@@ -194,7 +215,22 @@ isl_map* dot(isl_map* const m0, isl_map* const m1) {
   return isl_map_apply_range(cpy(m0), cpy(m1));
 }
 
+isl_union_map* dot(isl_union_map* const m0, isl_union_map* const m1) {
+  return isl_union_map_apply_range(cpy(m0), cpy(m1));
+}
 isl_pw_qpolynomial* card(isl_map* const m) {
   return isl_map_card(cpy(m));
+}
+
+std::string codegen_c(isl_union_map* res) {
+  isl_ast_build* build = isl_ast_build_alloc(isl_union_map_get_ctx(res));
+  isl_ast_node* code =
+    isl_ast_build_node_from_schedule_map(build, cpy(res));
+
+  char* code_str = isl_ast_node_to_C_str(code);
+  std::string code_string(code_str);
+  free(code_str);
+
+  return code_string;
 }
 
