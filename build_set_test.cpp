@@ -23,7 +23,6 @@ class UBuffer {
 
     std::map<string, int> varInds;
 
-    std::vector<string> logical_addr_vars;
     std::vector<string> physical_addr_vars;
     std::vector<string> writer_vars;
     std::vector<string> reader_vars;
@@ -102,6 +101,16 @@ class UBuffer {
       m = isl_basic_map_add_constraint(m, c);
 
       return isl_map_from_basic_map(m);
+    }
+
+    vector<string> get_in_ports() const {
+      vector<string> outpts;
+      for (auto m : isIn) {
+        if (m.second) {
+          outpts.push_back(m.first);
+        }
+      }
+      return outpts;
     }
 
     vector<string> get_out_ports() const {
@@ -478,8 +487,16 @@ std::string ReplaceString(std::string subject, const std::string& search,
 void generate_hls_code(UBuffer& buf) {
 
   string inpt = buf.get_in_port();
-  isl_union_map* wmap =
-    isl_union_map_from_map(cpy(buf.schedule.at(inpt)));
+  isl_union_map* wmap = nullptr;
+  cout << "# in ports = " << buf.get_in_ports().size() << endl;
+
+  for (auto inpt : buf.get_in_ports()) {
+    if (wmap == nullptr) {
+      wmap = isl_union_map_from_map(cpy(buf.schedule.at(inpt)));
+    } else {
+      wmap = unn(wmap, isl_union_map_from_map(cpy(buf.schedule.at(inpt))));
+    }
+  }
 
   map<string, int> read_delays;
   int maxdelay = 0;
@@ -490,22 +507,22 @@ void generate_hls_code(UBuffer& buf) {
     }
     read_delays[outpt] = r0;
     wmap =
-      isl_union_map_union(wmap,
+      unn(wmap,
           isl_union_map_from_map(cpy(buf.schedule.at(outpt))));
   }
   isl_union_map* res = wmap;
+  cout << "Map to schedule.." << endl;
+  print(buf.ctx, res);
 
   string code_string = codegen_c(res);
-  //isl_ast_build* build = isl_ast_build_alloc(buf.ctx);
-  //isl_ast_node* code =
-    //isl_ast_build_node_from_schedule_map(build, res);
+  cout << "Code string..." << endl;
+  cout << code_string << endl;
 
-  //char* code_str = isl_ast_node_to_C_str(code);
-  //string code_string(code_str);
-  //free(code_str);
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
-  regex re(inpt + "\(.*\);");
-  code_string = regex_replace(code_string, re, "int W0 = " + inpt + ".read(); " + inpt + "_delay.push(W0);");
+  for (auto inpt : buf.get_in_ports()) {
+    regex re(inpt + "\(.*\);");
+    code_string = regex_replace(code_string, re, "int " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);");
+  }
   for (auto outpt : buf.get_out_ports()) {
     regex re0(outpt + "\((.*)\);");
     code_string = regex_replace(code_string, re0, outpt + ".write(" + inpt + "_delay.pop(-" + to_string(read_delays.at(outpt)) + "));");
@@ -526,7 +543,9 @@ void generate_hls_code(UBuffer& buf) {
     nargs++;
   }
   out << ") {" << endl;
-  out << "\tdelay_sr<" + to_string(maxdelay + 1) + "> " + inpt + "_delay;\n\n";
+  for (auto inpt : buf.get_in_ports()) {
+    out << "\tdelay_sr<" + to_string(maxdelay + 1) + "> " + inpt + "_delay;\n\n";
+  }
   out << code_string << endl;
   out << "}" << endl;
 
@@ -561,7 +580,7 @@ void synth_reduce_test() {
 	isl_union_set *domain =
     isl_union_set_read_from_str(ctx, "{ init[i] : 0 <= i <= 4;  read0[i, j] : 0 <= i <= 4 and 0 <= j <= 3; update[i, j] : 0 <= i <= 4 and 0 <= j <= 3; out[i] : 0 <= i <= 4 }");
   auto naive_sched =
-    its(isl_union_map_read_from_str(ctx, "{ init[i] -> [0, i, 0, 0]; read0[i, j] -> [0, i, j, 1]; update[i, j] -> [0, i, j, 2]; out[i] -> [1, i, 0, 0] }"), domain);
+    its(isl_union_map_read_from_str(ctx, "{ init[i] -> [0, i, 0, 0, 0]; read0[i, j] -> [0, i, 1, j, 0]; update[i, j] -> [0, i, 1, j, 1]; out[i] -> [0, i, 2, 0, 0] }"), domain);
   cout << "Code for naive schedule..." << endl;
   cout << codegen_c(naive_sched) << endl;
 
@@ -574,10 +593,8 @@ void synth_reduce_test() {
     its(dot(writes, inv(reads)), before);
   cout << "Validity" << endl;
   print(ctx, validity);
-    //isl_union_map_read_from_str(ctx, "{ }");
 	isl_union_map *proximity =
     cpy(validity);
-    //isl_union_map_read_from_str(ctx, "{ }");
 
   isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
   auto schedmap = its(isl_schedule_get_map(sched), domain);
@@ -587,16 +604,38 @@ void synth_reduce_test() {
   cout << "Code for reduce..." << endl;
   cout << codegen_c(schedmap) << endl;
 
-  return;
   
   UBuffer buf;
-  buf.name = "upsample";
+  buf.name = "reduce";
   buf.ctx = ctx;
 
-  buf.add_in_pt("write0",
-    "{ write[i] : 0 <= i < 10 }",
-    "{ write[i] -> M[i] : 0 <= i < 10 }",
-    "{ write[i] -> [i, 0, 0] : 0 <= i < 10 }");
+  buf.add_in_pt("init",
+    "{ init[i] : 0 <= i <= 4}",
+    "{ init[i] -> M[i] : 0 <= i <= 4 }",
+    "{ init[i] -> [0, i, 0, 0, 0] : 0 <= i <= 4 }");
+
+  buf.add_in_pt("update",
+    "{ update[i, j] : 0 <= i <= 4 and 0 <= j <= 3 }",
+    "{ update[i, j] -> M[i] : 0 <= i <= 4 and 0 <= j <= 3 }",
+    "{ update[i, j] -> [0, i, 1, j, 1] : 0 <= i <= 4 and 0 <= j <= 3 }");
+
+  buf.add_out_pt("read0",
+    "{ read0[i, j] : 0 <= i <= 4 and 0 <= j <= 3 }",
+    "{ read0[i, j] -> M[i] : 0 <= i <= 4 and 0 <= j <= 3 }",
+    "{ read0[i, j] -> [0, i, 1, j, 0] : 0 <= i <= 4 and 0 <= j <= 3 }");
+  
+  buf.add_out_pt("out",
+    "{ out[i] : 0 <= i <= 4 }",
+    "{ out[i] -> M[i] : 0 <= i <= 4 }",
+    "{ out[i] -> [0, i, 2, 0, 0] : 0 <= i <= 4 }");
+
+  generate_hls_code(buf);
+
+  int res = system("clang++ tb_reduce.cpp reduce.cpp");
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
 
   isl_ctx_free(buf.ctx);
 }
