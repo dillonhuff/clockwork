@@ -620,6 +620,11 @@ map<string, string> umap_codegen_c(umap* const um) {
   return cm;
 }
 
+string evaluate_dd(UBuffer& buf, const std::string& outpt, const std::string& inpt) {
+  int r0 = check_value_dd(buf, outpt, inpt);
+  return to_string(r0);
+}
+
 void generate_hls_code(UBuffer& buf) {
 
   string inpt = buf.get_in_port();
@@ -679,7 +684,6 @@ void generate_hls_code(UBuffer& buf) {
   for (auto inpt : buf.get_in_ports()) {
     out << "inline void " << inpt << "_write(" << "InputStream& " << inpt << ", " << "delay_sr<" << maxdelay + 1 << ">& " << inpt << "_delay) {" << endl;
     out << "\tint " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);" << endl;
-    //code_string = regex_replace(code_string, re, "int " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);");
     out << "}" << endl << endl;
   }
 
@@ -754,9 +758,11 @@ void generate_hls_code(UBuffer& buf) {
       if (contains_key(inpt, ms)) {
         // Need to replace this with evaluating the pqqpolynomial for DD
         // What would be a good test of this?
-        int r0 = check_value_dd(buf, outpt, inpt);
+        //int r0 = check_value_dd(buf, outpt, inpt);
+        string delay_expr = evaluate_dd(buf, outpt, inpt);
         auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
-        out << "\tint value_" << inpt << " = " << inpt << "_delay.pop(" << -r0 << ");\n";
+        //out << "\tint value_" << inpt << " = " << inpt << "_delay.pop(" << -r0 << ");\n";
+        out << "\tint value_" << inpt << " = " << inpt << "_delay.pop(" << "-1*(" << delay_expr << ")" << ");\n";
         out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
       }
     }
@@ -1064,7 +1070,7 @@ int main() {
   basic_space_tests();
 
   synth_wire_test();
-  //synth_sr_boundary_condition_test();
+  synth_sr_boundary_condition_test();
   synth_lb_test();
   synth_upsample_test();
   synth_reduce_test();
