@@ -842,11 +842,8 @@ void generate_hls_code(UBuffer& buf) {
       if (contains_key(inpt, ms)) {
         // Need to replace this with evaluating the pqqpolynomial for DD
         // What would be a good test of this?
-        //int r0 = check_value_dd(buf, outpt, inpt);
         string delay_expr = evaluate_dd(buf, outpt, inpt);
         auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
-        //out << "\tint value_" << inpt << " = " << inpt << "_delay.pop(" << -r0 << ");\n";
-        //out << "\tint value_" << inpt << " = " << inpt << "_delay.pop(" << "-1*(" << delay_expr << ")" << ");\n";
         out << "\tint value_" << inpt << " = " << inpt << "_delay.pop(" << "(" << delay_expr << ")" << ");\n";
         out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
       }
