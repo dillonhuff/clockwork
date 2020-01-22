@@ -482,13 +482,13 @@ int check_value_dd(UBuffer& buf, const std::string& read_port, const std::string
 
   auto c = card(WritesBtwn);
   
-  cout << "Cardinality..." << endl;
-  print(ctx, c);
+  //cout << "Cardinality..." << endl;
+  //print(ctx, c);
 
   //cout << "Cardinality after simpification..." << endl;
   //print(ctx, isl_pw_qpolynomial_fold_coalesce(cpy(c)));
   auto s = isl_pw_qpolynomial_n_piece(c);
-  cout << "s = " << s << endl;
+  //cout << "s = " << s << endl;
 
   //assert(s <= 1);
 
@@ -587,11 +587,11 @@ isl_stat codegen_domain(isl_set* domain, isl_qpolynomial* qp, void* user) {
 }
 
 isl_stat map_codegen_c(isl_map* m, void* user) {
-  cout << "Visiting map..." << endl;
-  print(isl_map_get_ctx(m), m);
-  cout << "Cardinality of this map..." << endl;
+  //cout << "Visiting map..." << endl;
+  //print(isl_map_get_ctx(m), m);
+  //cout << "Cardinality of this map..." << endl;
   auto cardm = card(m);
-  print(isl_map_get_ctx(m), cardm);
+  //print(isl_map_get_ctx(m), cardm);
 
   vector<string>& code_holder = *((vector<string>*) user);
   isl_pw_qpolynomial_foreach_lifted_piece(cardm, codegen_domain, (void*)(&code_holder));
@@ -609,7 +609,7 @@ isl_stat umap_codegen_c_comp(isl_map* m, void* user) {
 
   vector<string> holder;
   map_codegen_c(m, &holder);
-  mc[range_name(get_space(m))] = sep_list(holder, "(", ")", " && ");
+  mc[range_name(get_space(m))] = sep_list(holder, "(", ")", " || ");
 
   return isl_stat_ok;
 }
@@ -938,7 +938,7 @@ void synth_sr_boundary_condition_test() {
   buf.domain["read1"] =
     isl_set_read_from_str(ctx, "{ read1[i] : 0 <= i < 10}");
   buf.access_map["read1"] =
-    isl_map_read_from_str(ctx, "{ read1[i] -> M[i + 1] : 0 <= i < 9; read1[i] -> M[10] : 9 <= i < 10 }");
+    isl_map_read_from_str(ctx, "{ read1[i] -> M[i + 1] : 0 <= i < 9; read1[i] -> M[9] : 9 <= i < 10 }");
   buf.schedule["read1"] =
     isl_map_read_from_str(ctx, "{ read1[i] -> [i + 2, 1] : 0 <= i < 10 }");
   buf.isIn["read1"] = false;
@@ -947,7 +947,7 @@ void synth_sr_boundary_condition_test() {
   buf.domain["read2"] =
     isl_set_read_from_str(ctx, "{ read2[i] : 0 <= i < 10 }");
   buf.access_map["read2"] =
-    isl_map_read_from_str(ctx, "{ read2[i] -> M[i + 2] : 0 <= i < 8; read2[i] -> M[10] : 8 <= i < 10}");
+    isl_map_read_from_str(ctx, "{ read2[i] -> M[i + 2] : 0 <= i < 8; read2[i] -> M[9] : 8 <= i < 10}");
   buf.schedule["read2"] =
     isl_map_read_from_str(ctx, "{ read2[i] -> [i + 2, 1] : 0 <= i < 10 }");
   buf.isIn["read2"] = false;
