@@ -580,10 +580,46 @@ std::string codegen_c(isl_set* s) {
   return sep_list(code_holder, "(", ")", " && ");
 }
 
+std::string codegen_c(isl_qpolynomial* qp) {
+  cout << "Generating code for qp..." << endl;
+  print(isl_qpolynomial_get_ctx(qp), qp);
+
+  isl_val* v = isl_qpolynomial_get_constant_val(qp);
+  return isl_val_to_str(v);
+}
+
 isl_stat codegen_domain(isl_set* domain, isl_qpolynomial* qp, void* user) {
   vector<string>& code_holder = *((vector<string>*) user);
   code_holder.push_back(codegen_c(domain));
   return isl_stat_ok;
+}
+
+isl_stat codegen_value(isl_set* domain, isl_qpolynomial* qp, void* user) {
+  vector<string>& code_holder = *((vector<string>*) user);
+  code_holder.push_back(codegen_c(qp));
+  return isl_stat_ok;
+}
+
+std::string codegen_c(isl_pw_qpolynomial* p) {
+
+  vector<string> code_holder;
+  isl_pw_qpolynomial_foreach_lifted_piece(p, codegen_domain, (void*)(&code_holder));
+
+  vector<string> val_holder;
+  isl_pw_qpolynomial_foreach_lifted_piece(p, codegen_value, (void*)(&val_holder));
+
+  assert(code_holder.size() == val_holder.size());
+  string res = "0";
+  for (size_t i = 0; i < code_holder.size(); i++) {
+    string cond = code_holder[i];
+    string val = val_holder[i];
+    res = "(" + cond + " ? " + val + " : " + res + ")";
+  }
+  return res;
+
+  //vector<string> code_holder;
+  //isl_set_foreach_basic_set(s, bset_codegen_c, &code_holder);
+  //return sep_list(code_holder, "(", ")", " && ");
 }
 
 isl_stat map_codegen_c(isl_map* m, void* user) {
@@ -620,9 +656,33 @@ map<string, string> umap_codegen_c(umap* const um) {
   return cm;
 }
 
-string evaluate_dd(UBuffer& buf, const std::string& outpt, const std::string& inpt) {
-  int r0 = check_value_dd(buf, outpt, inpt);
-  return to_string(r0);
+string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
+  //int r0 = check_value_dd(buf, outpt, inpt);
+  
+  auto ctx = buf.ctx;
+  isl_map* sched = buf.schedule.at(write_port);
+  assert(sched != nullptr);
+  
+  auto WritesAfterWrite = lex_lt(sched, sched);
+
+  assert(WritesAfterWrite != nullptr);
+
+  auto port0WritesInv =
+    inv(buf.access_map.at(write_port));
+
+  auto WriteThatProducesReadData =
+    dot(buf.access_map.at(read_port), port0WritesInv);
+
+  auto WritesBeforeRead =
+    lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
+
+  auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
+
+  auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
+
+  auto c = card(WritesBtwn);
+  
+  return codegen_c(c);
 }
 
 void generate_hls_code(UBuffer& buf) {
@@ -1070,7 +1130,7 @@ int main() {
   basic_space_tests();
 
   synth_wire_test();
-  synth_sr_boundary_condition_test();
+  //synth_sr_boundary_condition_test();
   synth_lb_test();
   synth_upsample_test();
   synth_reduce_test();
