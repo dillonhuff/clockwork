@@ -501,10 +501,7 @@ std::string ReplaceString(std::string subject, const std::string& search,
     return subject;
 }
 
-isl_stat codegen_constraint(isl_constraint* c, void* user) {
-
-  // TODO: Update to get DIV!!!
-  vector<string>& code_holder = *((vector<string>*) user);
+string codegen_c_constraint(isl_constraint* c) {
 
   string resstr;
   stringstream ss(resstr);
@@ -512,24 +509,44 @@ isl_stat codegen_constraint(isl_constraint* c, void* user) {
   if (isl_space_is_map(s)) {
     int ndims = isl_space_dim(s, isl_dim_in);
     for (int i = 0; i < ndims; i++) {
-      ss << str(isl_constraint_get_coefficient_val(c, isl_dim_in, i)) << "*"
-        << str(isl_space_get_dim_id(s, isl_dim_in, i)) << " + ";
+      ss << str(isl_constraint_get_coefficient_val(c, isl_dim_in, i)) << "*" << "i_" << i << " + ";
+        //<< str(isl_space_get_dim_id(s, isl_dim_in, i)) << " + ";
     }
     {
       int ndims = isl_space_dim(s, isl_dim_out);
       for (int i = 0; i < ndims; i++) {
-        ss << str(isl_constraint_get_coefficient_val(c, isl_dim_out, i)) << "*"
-          << str(isl_space_get_dim_id(s, isl_dim_out, i)) << "_p" << " + ";
+        ss << str(isl_constraint_get_coefficient_val(c, isl_dim_out, i)) << "*" << "i_" << i << "_p" << " + ";
+          //<< str(isl_space_get_dim_id(s, isl_dim_out, i)) << "_p" << " + ";
       }
     }
+  } else {
+    assert(isl_space_is_set(s));
+    for (int i = 0; i < num_dims(s); i++) {
+      ss << str(isl_constraint_get_coefficient_val(c, isl_dim_set, i)) << "*" << "i_" << i << " + ";
+        //<< str(isl_space_get_dim_id(s, isl_dim_set, i)) << "_p" << " + ";
+    }
   }
+
   ss << str(isl_constraint_get_constant_val(c)) << " ";
   if (isl_constraint_is_equality(c)) {
     ss << " == " << "0";
   } else {
     ss << " >= " << "0";
   }
-  code_holder.push_back(ss.str());
+  return ss.str();
+}
+
+isl_stat codegen_constraint(isl_constraint* c, void* user) {
+
+  // TODO: Update to get DIV!!!
+  vector<string>& code_holder = *((vector<string>*) user);
+  string cc = codegen_c_constraint(c);
+  code_holder.push_back(cc);
+  return isl_stat_ok;
+}
+
+isl_stat bset_codegen_c(isl_basic_set* m, void* user) {
+  isl_basic_set_foreach_constraint(m, codegen_constraint, user);
   return isl_stat_ok;
 }
 
@@ -545,14 +562,29 @@ isl_stat bmap_codegen_c(isl_basic_map* m, void* user) {
   return isl_stat_ok;
 }
 
+std::string codegen_c(isl_set* s) {
+  vector<string> code_holder;
+  isl_set_foreach_basic_set(s, bset_codegen_c, &code_holder);
+  return sep_list(code_holder, "(", ")", " && ");
+}
+
+isl_stat codegen_domain(isl_set* domain, isl_qpolynomial* qp, void* user) {
+  vector<string>& code_holder = *((vector<string>*) user);
+  code_holder.push_back(codegen_c(domain));
+  return isl_stat_ok;
+}
+
 isl_stat map_codegen_c(isl_map* m, void* user) {
   cout << "Visiting map..." << endl;
   print(isl_map_get_ctx(m), m);
-  cout << "Cardinality..." << endl;
+  cout << "Cardinality of this map..." << endl;
   auto cardm = card(m);
   print(isl_map_get_ctx(m), cardm);
+
   vector<string>& code_holder = *((vector<string>*) user);
-  isl_map_foreach_basic_map(m, bmap_codegen_c, (void*)(&code_holder));
+  isl_pw_qpolynomial_foreach_lifted_piece(cardm, codegen_domain, (void*)(&code_holder));
+  
+  //isl_map_foreach_basic_map(m, bmap_codegen_c, (void*)(&code_holder));
   return isl_stat_ok;
 }
 
@@ -675,7 +707,7 @@ void generate_hls_code(UBuffer& buf) {
     isl_space* s = get_space(buf.domain.at(outpt));
     assert(isl_space_is_set(s));
     vector<string> dim_decls;
-    for (int i = 0; i < num_set_dims(s); i++) {
+    for (int i = 0; i < num_dims(s); i++) {
       dim_decls.push_back("int i_" + to_string(i));
     }
     out << sep_list(dim_decls, "", "", ", ");
@@ -683,7 +715,7 @@ void generate_hls_code(UBuffer& buf) {
     out << ") {" << endl;
     map<string, string> ms = umap_codegen_c(src_map);
     for (auto e : ms) {
-      out << "\t// bool select_" << e.first << " = " << e.second << ";" << endl;
+      out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
     }
     // Body of select function
     for (auto inpt : buf.get_in_ports()) {
@@ -769,7 +801,6 @@ void synth_reduce_test() {
 
   cout << "Code for reduce..." << endl;
   cout << codegen_c(schedmap) << endl;
-
   
   UBuffer buf;
   buf.name = "reduce";

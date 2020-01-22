@@ -43,7 +43,7 @@ int dim(isl_space* const s) {
   return 0;
 }
 
-int num_set_dims(isl_space* const s) {
+int num_dims(isl_space* const s) {
   assert(isl_space_is_set(s));
   int ndims = isl_space_dim(s, isl_dim_set);
   return ndims;
