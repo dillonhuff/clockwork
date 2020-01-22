@@ -35,9 +35,18 @@ isl_space* get_space(isl_map* const m) {
   return isl_map_get_space(m);
 }
 
+isl_space* get_space(isl_set* const m) {
+  return isl_set_get_space(m);
+}
 int dim(isl_space* const s) {
   assert(false);
   return 0;
+}
+
+int num_set_dims(isl_space* const s) {
+  assert(isl_space_is_set(s));
+  int ndims = isl_space_dim(s, isl_dim_set);
+  return ndims;
 }
 
 std::string str(isl_id* const id) {

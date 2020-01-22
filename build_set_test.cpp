@@ -628,8 +628,8 @@ void generate_hls_code(UBuffer& buf) {
   }
 
   for (auto outpt : buf.get_out_ports()) {
-    regex re0(outpt + "\((.*)\);");
-    code_string = regex_replace(code_string, re0, outpt + ".write(" + outpt + "_select(" + delay_list + "));");
+    regex re0(outpt + "\\((.*)\\);");
+    code_string = regex_replace(code_string, re0, outpt + ".write(" + outpt + "_select(" + delay_list + ", $1" + "));");
   }
 
   cout << "Code generation..." << endl;
@@ -658,8 +658,6 @@ void generate_hls_code(UBuffer& buf) {
     auto src_card = card(src_map);
     print(buf.ctx, src_card);
 
-    //cout << "SrcMap " << inpt << " -> outport after projection..." << endl;
-    //src_map = isl_union_map_project_out(src_map, isl_dim_out, 0, 1);
     print(ctx(src_map), src_map);
     src_map = lexmax(src_map);
     cout << "Lexmax SrcMap" << inpt << " -> outport..." << endl;
@@ -669,14 +667,18 @@ void generate_hls_code(UBuffer& buf) {
     size_t nargs = 0;
     for (auto pt : buf.get_in_ports()) {
       out << "delay_sr<" << to_string(maxdelay + 1) << ">& " << pt << "_delay" << endl;
-      if (buf.get_in_ports().size() > 1 && nargs < buf.get_in_ports().size() - 1) {
+      //if (buf.get_in_ports().size() > 1 && nargs < buf.get_in_ports().size() - 1) {
         out << ", ";
-      }
+      //}
       nargs++;
     }
-
-    //auto map_space = get_space(src_map);
-    //assert(isl_space_is_union_map(map_space));
+    isl_space* s = get_space(buf.domain.at(outpt));
+    assert(isl_space_is_set(s));
+    vector<string> dim_decls;
+    for (int i = 0; i < num_set_dims(s); i++) {
+      dim_decls.push_back("int i_" + to_string(i));
+    }
+    out << sep_list(dim_decls, "", "", ", ");
 
     out << ") {" << endl;
     map<string, string> ms = umap_codegen_c(src_map);
@@ -689,7 +691,6 @@ void generate_hls_code(UBuffer& buf) {
       auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
       out << "\tint value_" << inpt << " = " << inpt << "_delay.pop(" << -r0 << ");\n";
     }
-
 
     print(ctx(src_map), src_map);
 
