@@ -23,9 +23,9 @@ int main() {
     int v2 = r2.read();
     cout << "v2 = " << v2 << endl;
     
-    assert(v0 == i + 2);
+    assert(v2 == i + 2);
     assert(v1 == i + 1);
-    assert(v2 == i + 0);
+    assert(v0 == i + 0);
   }
   return 0;
 }

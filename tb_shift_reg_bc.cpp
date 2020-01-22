@@ -23,10 +23,12 @@ int main() {
     int v2 = r2.read();
     cout << "v2 = " << v2 << endl;
     
-    assert(v0 == min(i + 2, 9));
+    assert(v0 == min(i + 0, 9));
     assert(v1 == min(i + 1, 9));
-    assert(v2 == min(i + 0, 9));
+    assert(v2 == min(i + 2, 9));
   }
+
+  //assert(false);
 
   return 0;
 }

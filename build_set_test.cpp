@@ -657,7 +657,6 @@ map<string, string> umap_codegen_c(umap* const um) {
 }
 
 string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
-  //int r0 = check_value_dd(buf, outpt, inpt);
   
   auto ctx = buf.ctx;
   isl_map* sched = buf.schedule.at(write_port);
@@ -670,13 +669,32 @@ string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string
   auto port0WritesInv =
     inv(buf.access_map.at(write_port));
 
-  auto WriteThatProducesReadData =
-    dot(buf.access_map.at(read_port), port0WritesInv);
-
   auto WritesBeforeRead =
     lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
 
+  auto WriteThatProducesReadData =
+    its(dot(buf.access_map.at(read_port), port0WritesInv), WritesBeforeRead);
+  cout << "----Writes that produces read data: " << endl;
+  cout << "\t" << str(WriteThatProducesReadData) << endl;
+
+  auto time_to_event = inv(sched);
+  auto LastWriteBeforeRead =
+    dot(lexmax(dot(WriteThatProducesReadData, sched)), time_to_event);
+
+  cout << "----Last Write that produce read data before read: " << endl;
+  cout << "\t" << str(LastWriteBeforeRead) << endl;
+
+  WriteThatProducesReadData = LastWriteBeforeRead;
+  //auto lex_max_events =
+    //dot(lexmax(dot(src_map, sched)), time_to_event);
+
+  cout << "----Writes before read: " << endl;
+  cout << "\t" << str(WritesBeforeRead) << endl;
+
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
+
+  cout << "----Writes after production: " << endl;
+  cout << "\t" << str(WritesAfterProduction) << endl;
 
   auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
 
@@ -684,7 +702,10 @@ string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string
   print(ctx, WritesBtwn);
 
   auto c = card(WritesBtwn);
-  
+ 
+  cout << "DD between: " << read_port << " and " << write_port << endl;
+  print(ctx, c);
+
   return codegen_c(c);
 }
 
@@ -825,7 +846,8 @@ void generate_hls_code(UBuffer& buf) {
         string delay_expr = evaluate_dd(buf, outpt, inpt);
         auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
         //out << "\tint value_" << inpt << " = " << inpt << "_delay.pop(" << -r0 << ");\n";
-        out << "\tint value_" << inpt << " = " << inpt << "_delay.pop(" << "-1*(" << delay_expr << ")" << ");\n";
+        //out << "\tint value_" << inpt << " = " << inpt << "_delay.pop(" << "-1*(" << delay_expr << ")" << ");\n";
+        out << "\tint value_" << inpt << " = " << inpt << "_delay.pop(" << "(" << delay_expr << ")" << ");\n";
         out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
       }
     }

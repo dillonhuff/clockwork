@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <deque>
+#include <iostream>
 
 using namespace std;
 
@@ -27,21 +28,34 @@ class delay_sr {
   public:
 
     int write_addr;
+    int read_addr;
     bool empty;
 
     int vals[Depth];
 
-    delay_sr() : write_addr(0), empty(true) {}
+    delay_sr() : read_addr(0), write_addr(0), empty(true) {}
 
     int pop(const int offset) {
-      int val = vals[(write_addr - offset) % Depth];
+      int addr = read_addr - offset;
+      if (addr < 0) {
+        // Wrap around
+        int rem = offset - read_addr;
+        addr = Depth - rem;
+      }
+      int val = vals[addr];
+      //abs(read_addr - offset) % Depth];
+      //cout << "Reading data " << val << " at offset: " << offset << endl;
       return val;
     }
 
     void push(const int val) {
       empty = false;
       vals[write_addr] = val;
+      read_addr = write_addr;
       write_addr = MOD_INC(write_addr, Depth);
+      //cout << "------------------------------" << endl;
+      //cout << "After write read_addr  = " << read_addr << endl;
+      //cout << "After write write_addr = " << write_addr<< endl;
     }
 };
 

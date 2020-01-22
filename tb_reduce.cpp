@@ -22,13 +22,15 @@ int main() {
 
   for (int i = 0; i <= 4; i++) {
     for (int j = 0; j <= 3; j++) {
-      read0.read();
+      int rv = read0.read();
+      cout << "read0 = " << rv << endl;
     }
     int outv = out.read();
     cout << "outv = " << outv << endl;
     assert(outv == i + 3);
   }
 
+  //assert(false);
   // Expecting outputs??
   return 0;
 }
