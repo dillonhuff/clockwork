@@ -1064,7 +1064,7 @@ int main() {
   basic_space_tests();
 
   synth_wire_test();
-  synth_sr_boundary_condition_test();
+  //synth_sr_boundary_condition_test();
   synth_lb_test();
   synth_upsample_test();
   synth_reduce_test();
