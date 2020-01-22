@@ -680,6 +680,9 @@ string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string
 
   auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
 
+  cout << "----WritesBtwn" << endl;
+  print(ctx, WritesBtwn);
+
   auto c = card(WritesBtwn);
   
   return codegen_c(c);
@@ -1130,7 +1133,7 @@ int main() {
   basic_space_tests();
 
   synth_wire_test();
-  //synth_sr_boundary_condition_test();
+  synth_sr_boundary_condition_test();
   synth_lb_test();
   synth_upsample_test();
   synth_reduce_test();
