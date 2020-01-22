@@ -320,6 +320,10 @@ isl_map* lex_gt(isl_map* const m0, isl_map* const m1) {
   return isl_map_lex_gt_map(cpy(m0), cpy(m1));
 }
 
+isl_union_map* lex_gt(isl_union_map* const m0, isl_union_map* const m1) {
+  return isl_union_map_lex_gt_union_map(cpy(m0), cpy(m1));
+}
+
 isl_union_map* lex_lt(isl_union_map* const m0, isl_union_map* const m1) {
   return isl_union_map_lex_lt_union_map(cpy(m0), cpy(m1));
 }

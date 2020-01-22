@@ -8,6 +8,9 @@
 #include <map>
 #include <vector>
 
+#include "algorithm.h"
+
+using namespace dbhc;
 using namespace std;
 
 std::string sep_list(const std::vector<std::string>& strs, const std::string& ldelim, const std::string& rdelim, const std::string& sep) {
@@ -51,6 +54,15 @@ class UBuffer {
     map<string, isl_map*> read_funcs;
     
     isl_map* physical_address_mapping;
+
+    isl_union_map* global_schedule() {
+      umap* s = isl_union_map_read_from_str(ctx, "{ }");
+      for (auto other : schedule) {
+        s = unn(s, isl_union_map_from_map(cpy(other.second)));
+      }
+
+      return s;
+    }
 
     void add_out_pt(const std::string& name,
         const std::string& dm,
@@ -683,8 +695,14 @@ void generate_hls_code(UBuffer& buf) {
       }
     }
 
+    auto sched = buf.global_schedule();
+    auto after = lex_gt(sched, sched);
+
     cout << "SrcMap " << inpt << " -> outport..." << endl;
     print(ctx(src_map), src_map);
+
+    cout << "SrcMap After Intersection with before" << endl;
+    src_map = its(src_map, after);
 
     cout << "Src map cardinality..." << endl;
     auto src_card = card(src_map);
@@ -694,14 +712,26 @@ void generate_hls_code(UBuffer& buf) {
     src_map = lexmax(src_map);
     cout << "Lexmax SrcMap" << inpt << " -> outport..." << endl;
     print(ctx(src_map), src_map);
+
+    auto time_to_event = inv(sched);
+    cout << "Source write times..." << endl;
+    print(ctx(src_map), dot(src_map, sched));
+
+    cout << "LexMax Source write times..." << endl;
+    print(ctx(src_map), lexmax(dot(src_map, sched)));
+
+    cout << "LexMax Source Events..." << endl;
+    auto lex_max_events =
+      dot(lexmax(dot(src_map, sched)), time_to_event);
+    print(ctx(src_map), lex_max_events);
+
+    // Maybe: Get the schedule position, take the lexmax and then get it back?source map and then?? Creating more code?
     out << "// Select if: " << str(src_map) << endl;
     out << "inline int " + outpt + "_select(";
     size_t nargs = 0;
     for (auto pt : buf.get_in_ports()) {
       out << "delay_sr<" << to_string(maxdelay + 1) << ">& " << pt << "_delay" << endl;
-      //if (buf.get_in_ports().size() > 1 && nargs < buf.get_in_ports().size() - 1) {
-        out << ", ";
-      //}
+      out << ", ";
       nargs++;
     }
     isl_space* s = get_space(buf.domain.at(outpt));
@@ -713,21 +743,25 @@ void generate_hls_code(UBuffer& buf) {
     out << sep_list(dim_decls, "", "", ", ");
 
     out << ") {" << endl;
-    map<string, string> ms = umap_codegen_c(src_map);
+    // Body of select function
+    map<string, string> ms = umap_codegen_c(lex_max_events);
     for (auto e : ms) {
       out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
     }
-    // Body of select function
     for (auto inpt : buf.get_in_ports()) {
-      int r0 = check_value_dd(buf, outpt, inpt);
-      auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
-      out << "\tint value_" << inpt << " = " << inpt << "_delay.pop(" << -r0 << ");\n";
+      if (contains_key(inpt, ms)) {
+        int r0 = check_value_dd(buf, outpt, inpt);
+        auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
+        out << "\tint value_" << inpt << " = " << inpt << "_delay.pop(" << -r0 << ");\n";
+        out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
+      }
     }
 
     print(ctx(src_map), src_map);
 
-    string chosen = "value_" + inpt;
-    out << "\treturn " + chosen + ";\n";
+    //string chosen = "value_" + inpt;
+    //out << "\treturn " + chosen + ";\n";
+    out << "\tassert(false);\n\treturn 0;\n";
     out << "}" << endl << endl;
   }
 
