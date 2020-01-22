@@ -634,18 +634,12 @@ void generate_hls_code(UBuffer& buf) {
     }
   }
 
-  map<string, int> read_delays;
   int maxdelay = 0;
   for (auto outpt : buf.get_out_ports()) {
-    for (auto inpt : buf.get_in_ports()) {
-      int ri = check_value_dd(buf, outpt, inpt);
-      cout << "ri from " << inpt << " to " << outpt << " = " << ri << endl;
-    }
     int r0 = check_value_dd(buf, outpt, inpt);
     if (r0 > maxdelay) {
       maxdelay = r0;
     }
-    read_delays[outpt] = r0;
     wmap =
       unn(wmap,
           isl_union_map_from_map(cpy(buf.schedule.at(outpt))));
@@ -663,7 +657,8 @@ void generate_hls_code(UBuffer& buf) {
   size_t nd = 0;
   for (auto inpt : buf.get_in_ports()) {
     regex re(inpt + "\(.*\);");
-    code_string = regex_replace(code_string, re, "int " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);");
+    //code_string = regex_replace(code_string, re, "int " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);");
+    code_string = regex_replace(code_string, re, inpt + "_write(" + inpt + ", " + inpt + "_delay);");
     delay_list += inpt + "_delay";
     if (nd < buf.get_in_ports().size() - 1) {
       delay_list += ", ";
@@ -681,6 +676,13 @@ void generate_hls_code(UBuffer& buf) {
   std::ostream& out = os;
 
   out << "#include \"hw_classes.h\"" << endl << endl;
+  for (auto inpt : buf.get_in_ports()) {
+    out << "inline void " << inpt << "_write(" << "InputStream& " << inpt << ", " << "delay_sr<" << maxdelay + 1 << ">& " << inpt << "_delay) {" << endl;
+    out << "\tint " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);" << endl;
+    //code_string = regex_replace(code_string, re, "int " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);");
+    out << "}" << endl << endl;
+  }
+
   for (auto outpt : buf.get_out_ports()) {
     umap* src_map = nullptr;
     for (auto inpt : buf.get_in_ports()) {
@@ -750,6 +752,8 @@ void generate_hls_code(UBuffer& buf) {
     }
     for (auto inpt : buf.get_in_ports()) {
       if (contains_key(inpt, ms)) {
+        // Need to replace this with evaluating the pqqpolynomial for DD
+        // What would be a good test of this?
         int r0 = check_value_dd(buf, outpt, inpt);
         auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
         out << "\tint value_" << inpt << " = " << inpt << "_delay.pop(" << -r0 << ");\n";
@@ -759,8 +763,6 @@ void generate_hls_code(UBuffer& buf) {
 
     print(ctx(src_map), src_map);
 
-    //string chosen = "value_" + inpt;
-    //out << "\treturn " + chosen + ";\n";
     out << "\tassert(false);\n\treturn 0;\n";
     out << "}" << endl << endl;
   }
@@ -907,6 +909,61 @@ void synth_upsample_test() {
   isl_ctx_free(buf.ctx);
 }
 
+void synth_sr_boundary_condition_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+  
+  UBuffer buf;
+  buf.name = "shift_reg_bc";
+  buf.ctx = ctx;
+
+  buf.domain["write"] =
+    isl_set_read_from_str(ctx, "{ write[i] : 0 <= i < 10 }");
+  buf.access_map["write"] =
+    isl_map_read_from_str(ctx, "{ write[i] -> M[i] : 0 <= i < 10 }");
+  buf.schedule["write"] =
+    isl_map_read_from_str(ctx, "{ write[i] -> [i, 0] : 0 <= i < 10 }");
+  buf.isIn["write"] = true;
+
+  // Read 0 through 7
+  buf.domain["read0"] =
+    isl_set_read_from_str(ctx, "{ read0[i] : 0 <= i < 10}");
+  buf.access_map["read0"] =
+    isl_map_read_from_str(ctx, "{ read0[i] -> M[i] : 0 <= i < 10 }");
+  buf.schedule["read0"] =
+    isl_map_read_from_str(ctx, "{ read0[i] -> [i + 2, 1] : 0 <= i < 10 }");
+  buf.isIn["read0"] = false;
+
+  // Read 1 through 8
+  buf.domain["read1"] =
+    isl_set_read_from_str(ctx, "{ read1[i] : 0 <= i < 10}");
+  buf.access_map["read1"] =
+    isl_map_read_from_str(ctx, "{ read1[i] -> M[i + 1] : 0 <= i < 9; read1[i] -> M[10] : 9 <= i < 10 }");
+  buf.schedule["read1"] =
+    isl_map_read_from_str(ctx, "{ read1[i] -> [i + 2, 1] : 0 <= i < 10 }");
+  buf.isIn["read1"] = false;
+
+  // Read 2 through 9
+  buf.domain["read2"] =
+    isl_set_read_from_str(ctx, "{ read2[i] : 0 <= i < 10 }");
+  buf.access_map["read2"] =
+    isl_map_read_from_str(ctx, "{ read2[i] -> M[i + 2] : 0 <= i < 8; read2[i] -> M[10] : 8 <= i < 10}");
+  buf.schedule["read2"] =
+    isl_map_read_from_str(ctx, "{ read2[i] -> [i + 2, 1] : 0 <= i < 10 }");
+  buf.isIn["read2"] = false;
+  
+  generate_hls_code(buf);
+
+  int res = system("clang++ tb_shift_reg_bc.cpp shift_reg_bc.cpp");
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+
+  isl_ctx_free(buf.ctx);
+
+}
+
 void synth_wire_test() {
   struct isl_ctx *ctx;
   ctx = isl_ctx_alloc();
@@ -1007,6 +1064,7 @@ int main() {
   basic_space_tests();
 
   synth_wire_test();
+  synth_sr_boundary_condition_test();
   synth_lb_test();
   synth_upsample_test();
   synth_reduce_test();
