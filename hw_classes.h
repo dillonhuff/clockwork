@@ -28,41 +28,33 @@ template<int Depth>
 class fifo {
   public:
 
-    std::deque<int> values;
+    //std::deque<int> values;
 
-    //int write_addr;
-    //int read_addr;
-    //bool empty;
+    int write_addr;
+    int read_addr;
+    bool empty;
 
-    //int vals[Depth];
+    int vals[Depth];
 
-    //fifo() : read_addr(0), write_addr(0), empty(true) {}
-
-    //int peek() {
-      //int val = vals[read_addr];
-      //if (!empty) {
-        //read_addr = MOD_INC(read_addr, Depth);
-      //}
-      //empty = read_addr == write_addr;
-      //return val;
-    //}
+    fifo() : read_addr(0), write_addr(0), empty(true) {}
 
     int back() {
-      if (values.size() == Depth) {
-        return values.back();
-      }
-      return -212;
+      return vals[(write_addr + Depth) % Depth];
+      //if (values.size() == Depth) {
+        //return values.back();
+      //}
+      //return -212;
     }
 
     void push(const int val) {
-      values.push_front(val);
-      if (values.size() == Depth + 1) {
-        values.pop_back();
-      }
+      //values.push_front(val);
+      //if (values.size() == Depth + 1) {
+        //values.pop_back();
+      //}
 
-      //vals[write_addr] = val;
-      //write_addr = MOD_INC(write_addr, Depth);
-      //empty = false;
+      vals[write_addr] = val;
+      write_addr = MOD_INC(write_addr, Depth);
+      empty = false;
     }
 };
 
