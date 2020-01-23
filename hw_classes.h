@@ -125,17 +125,20 @@ class delay_fifo {
 class HWStream {
   public:
 
-    deque<int> values;
+    int arr[10];
+    //deque<int> values;
 
     void write(const int v) {
-      return values.push_front(v);
+      arr[0] = v;
+      //return values.push_front(v);
     }
 
     int read() {
-      assert(values.size() > 0);
-      int b = values.back();
-      values.pop_back();
-      return b;
+      return arr[0];
+      //assert(values.size() > 0);
+      //int b = values.back();
+      //values.pop_back();
+      //return b;
     }
 };
 
