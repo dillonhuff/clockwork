@@ -77,6 +77,10 @@ isl_ctx* ctx(umap* const m) {
   return isl_union_map_get_ctx(m);
 }
 
+isl_ctx* ctx(isl_pw_qpolynomial* const m) {
+  return isl_pw_qpolynomial_get_ctx(m);
+}
+
 isl_pw_multi_aff* cpy(isl_pw_multi_aff* const s) {
   return isl_pw_multi_aff_copy(s);
 }
@@ -140,6 +144,18 @@ void print(struct isl_ctx* const ctx, isl_qpolynomial* const bset) {
   free(rs);
 }
 
+std::string str(isl_pw_qpolynomial* const bset) {
+  auto context = ctx(bset);
+  isl_printer *p;
+  p = isl_printer_to_str(context);
+  p = isl_printer_print_pw_qpolynomial(p, cpy(bset));
+
+  char* rs = isl_printer_get_str(p);
+  std::string r(rs);
+  isl_printer_free(p);
+  free(rs);
+  return r;
+}
 std::string str(isl_val* const bset) {
   auto context = ctx(bset);
   isl_printer *p;

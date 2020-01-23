@@ -768,7 +768,51 @@ void generate_hls_code(UBuffer& buf) {
   for (auto inpt : buf.get_in_ports()) {
     out << "struct " + inpt + "_cache {" << endl;
     out << "\t// Capacity: " << maxdelay + 1 << endl;
+    vector<int> read_delays;
+    for (auto outpt : buf.get_out_ports()) {
+      auto dd = check_value_dd(buf, outpt, inpt);
+      read_delays.push_back(dd);
+    }
 
+    sort(read_delays.begin(), read_delays.end());
+
+    cout << "\t// Peak points" << endl;
+    for (auto dd : read_delays) {
+      cout << "\t// DD = " << dd << endl;
+    }
+
+    vector<int> break_points;
+    for (size_t i = 0; i < read_delays.size(); i++) {
+      break_points.push_back(read_delays[i]);
+      if (i < read_delays.size() - 1 && read_delays[i] != read_delays[i + 1] + 1) {
+        break_points.push_back(read_delays[i] + 1);
+      }
+    }
+    read_delays = break_points;
+
+    cout << "\t// Break points in parition" << endl;
+    for (auto dd : read_delays) {
+      cout << "\t// BP = " << dd << endl;
+    }
+
+    if (read_delays.size() > 0) {
+      for (size_t i = 0; i < read_delays.size(); i++) {
+        int current = read_delays[i];
+        int partition_capacity = -1;
+        if (i < read_delays.size() - 1) {
+          if (read_delays[i] != read_delays[i + 1]) {
+            int next = read_delays[i + 1];
+            partition_capacity = next - current;
+            out << "\t// Parition [" << current << ", " << next << ") capacity = " << partition_capacity << endl;
+          }
+        } else {
+          partition_capacity = 1;
+          out << "\t// Parition [" << current << ", " << current << "] capacity = " << partition_capacity << endl;
+        }
+
+        //assert(partition_capacity > 0);
+      }
+    }
     out << "};" << endl << endl;
   }
 
