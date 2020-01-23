@@ -774,25 +774,31 @@ void generate_hls_code(UBuffer& buf) {
       read_delays.push_back(dd);
     }
 
-    sort(read_delays.begin(), read_delays.end());
+    read_delays = sort_unique(read_delays);
+    //reverse(read_delays);
+    //sortu(read_delays.begin(), read_delays.end());
 
-    cout << "\t// Peak points" << endl;
+    out << "\t// Peak points" << endl;
     for (auto dd : read_delays) {
-      cout << "\t// DD = " << dd << endl;
+      out << "\t// DD = " << dd << endl;
     }
 
     vector<int> break_points;
-    for (size_t i = 0; i < read_delays.size(); i++) {
-      break_points.push_back(read_delays[i]);
-      if (i < read_delays.size() - 1 && read_delays[i] != read_delays[i + 1] + 1) {
-        break_points.push_back(read_delays[i] + 1);
+    if (read_delays.size() == 1) {
+      break_points = {read_delays[0], read_delays[0]};
+    } else {
+      for (size_t i = 0; i < read_delays.size(); i++) {
+        break_points.push_back(read_delays[i]);
+        if (i < read_delays.size() - 1 && read_delays[i] != read_delays[i + 1] + 1) {
+          break_points.push_back(read_delays[i] + 1);
+        }
       }
     }
     read_delays = break_points;
 
-    cout << "\t// Break points in parition" << endl;
+    out << "\t// Break points in parition" << endl;
     for (auto dd : read_delays) {
-      cout << "\t// BP = " << dd << endl;
+      out << "\t// BP = " << dd << endl;
     }
 
     vector<string> partitions;
@@ -805,16 +811,21 @@ void generate_hls_code(UBuffer& buf) {
             int next = read_delays[i + 1];
             partition_capacity = next - current;
             out << "\t// Parition [" << current << ", " << next << ") capacity = " << partition_capacity << endl;
-            out << "\tfifo<" << partition_capactiy << "> f" << i << ";" << endl;
+            out << "\tfifo<" << partition_capacity << "> f" << i << ";" << endl;
           }
         } else {
           partition_capacity = 1;
           out << "\t// Parition [" << current << ", " << current << "] capacity = " << partition_capacity << endl;
-          out << "\tfifo<" << partition_capactiy << "> f" << i << ";" << endl;
+          out << "\tfifo<" << partition_capacity << "> f" << i << ";" << endl;
         }
 
         //assert(partition_capacity > 0);
       }
+
+      out << endl << endl;
+
+      out << "\tint peek(const int offset) { return 0; }" << endl << endl;
+      out << "\tvoid push(const int value) { }" << endl << endl;
     }
     out << "};" << endl << endl;
   }

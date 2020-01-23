@@ -24,6 +24,32 @@ class hw_mem {
 };
 
 template<int Depth>
+class fifo {
+    int write_addr;
+    int read_addr;
+    bool empty;
+
+    int vals[Depth];
+
+    fifo() : read_addr(0), write_addr(0), empty(true) {}
+
+    int peek() {
+      int val = vals[read_addr];
+      if (!empty) {
+        read_addr = MOD_INC(read_addr, Depth);
+      }
+      empty = read_addr == write_addr;
+      return val;
+    }
+
+    void push(const int val) {
+      vals[write_addr] = val;
+      write_addr = MOD_INC(write_addr, Depth);
+      empty = false;
+    }
+};
+
+template<int Depth>
 class delay_sr {
   public:
 
