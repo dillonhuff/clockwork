@@ -3,6 +3,7 @@
 #include <cassert>
 #include <deque>
 #include <iostream>
+#include <cmath>
 
 using namespace std;
 
@@ -27,31 +28,41 @@ template<int Depth>
 class fifo {
   public:
 
-    int write_addr;
-    int read_addr;
-    bool empty;
+    std::deque<int> values;
 
-    int vals[Depth];
+    //int write_addr;
+    //int read_addr;
+    //bool empty;
 
-    fifo() : read_addr(0), write_addr(0), empty(true) {}
+    //int vals[Depth];
 
-    int peek() {
-      int val = vals[read_addr];
-      if (!empty) {
-        read_addr = MOD_INC(read_addr, Depth);
-      }
-      empty = read_addr == write_addr;
-      return val;
-    }
+    //fifo() : read_addr(0), write_addr(0), empty(true) {}
+
+    //int peek() {
+      //int val = vals[read_addr];
+      //if (!empty) {
+        //read_addr = MOD_INC(read_addr, Depth);
+      //}
+      //empty = read_addr == write_addr;
+      //return val;
+    //}
 
     int back() {
-      return 0;
+      if (values.size() == Depth) {
+        return values.back();
+      }
+      return -212;
     }
 
     void push(const int val) {
-      vals[write_addr] = val;
-      write_addr = MOD_INC(write_addr, Depth);
-      empty = false;
+      values.push_front(val);
+      if (values.size() == Depth + 1) {
+        values.pop_back();
+      }
+
+      //vals[write_addr] = val;
+      //write_addr = MOD_INC(write_addr, Depth);
+      //empty = false;
     }
 };
 
@@ -67,7 +78,7 @@ class delay_sr {
 
     delay_sr() : read_addr(0), write_addr(0), empty(true) {}
 
-    int pop(const int offset) {
+    int peek(const int offset) {
       int addr = read_addr - offset;
       if (addr < 0) {
         // Wrap around

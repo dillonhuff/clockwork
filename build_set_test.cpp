@@ -575,17 +575,81 @@ isl_stat bmap_codegen_c(isl_basic_map* m, void* user) {
 }
 
 std::string codegen_c(isl_set* s) {
-  vector<string> code_holder;
-  isl_set_foreach_basic_set(s, bset_codegen_c, &code_holder);
-  return sep_list(code_holder, "(", ")", " && ");
+  cout << "Generating code for set..." << endl;
+  auto ctx = isl_set_get_ctx(s);
+  print(ctx, s);
+
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+
+  cout << "Set print string..." << endl;
+
+  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
+  
+  cout << "set output format..." << endl;
+  
+  p = isl_printer_print_set(p, cpy(s));
+  
+  cout << "Built printer..." << endl;
+
+  char* rs = isl_printer_get_str(p);
+  string r(rs);
+  isl_printer_free(p);
+  free(rs);
+
+  cout << "Done..." << endl;
+
+  return r;
+  
+  //vector<string> code_holder;
+  //isl_set_foreach_basic_set(s, bset_codegen_c, &code_holder);
+  //return sep_list(code_holder, "(", ")", " && ");
+}
+
+
+isl_stat return_term(isl_term* t, void* user) {
+  vector<isl_term*>* v = (vector<isl_term*>*) user;
+  v->push_back(t);
+  return isl_stat_ok;
+}
+
+vector<isl_term*> get_terms(isl_qpolynomial* qp) {
+  vector<isl_term*> terms;
+  isl_qpolynomial_foreach_term(qp, return_term, &terms);
+  return terms;
+}
+
+std::string codegen_c(isl_term* t) {
+  cout << "\tterm dim = " << isl_term_dim(t, isl_dim_set) << endl;
+  vector<string> exps;
+  for (int i = 0; i < isl_term_dim(t, isl_dim_set); i++) {
+    int exp = isl_term_get_exp(t, isl_dim_set, i);
+    //if (exp != 0) {
+    exps.push_back("pow(i_" + to_string(i) + ", " + to_string(exp) + ")");
+    //cout << "Aff " << i << ": " << str(div) << endl;
+    //} else {
+      //exps.push_back("1");
+    //}
+  }
+
+  //isl_aff* div = isl_term_get_div(t, 0);
+  //cout << "Aff " << ": " << str(div) << endl;
+
+  return "(" + str(isl_term_get_coefficient_val(t)) + "*" + sep_list(exps, "", "", "*") + ")";
 }
 
 std::string codegen_c(isl_qpolynomial* qp) {
-  cout << "Generating code for qp..." << endl;
-  print(isl_qpolynomial_get_ctx(qp), qp);
+  auto ctx = isl_qpolynomial_get_ctx(qp);
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
+  p = isl_printer_print_qpolynomial(p, cpy(qp));
 
-  isl_val* v = isl_qpolynomial_get_constant_val(qp);
-  return isl_val_to_str(v);
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  string r(rs);
+  free(rs);
+  return r;
 }
 
 isl_stat codegen_domain(isl_set* domain, isl_qpolynomial* qp, void* user) {
@@ -600,26 +664,38 @@ isl_stat codegen_value(isl_set* domain, isl_qpolynomial* qp, void* user) {
   return isl_stat_ok;
 }
 
-std::string codegen_c(isl_pw_qpolynomial* p) {
+std::string codegen_c(isl_pw_qpolynomial* pqp) {
 
-  vector<string> code_holder;
-  isl_pw_qpolynomial_foreach_lifted_piece(p, codegen_domain, (void*)(&code_holder));
+  auto ctx = isl_pw_qpolynomial_get_ctx(pqp);
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
+  p = isl_printer_print_pw_qpolynomial(p, cpy(pqp));
 
-  vector<string> val_holder;
-  isl_pw_qpolynomial_foreach_lifted_piece(p, codegen_value, (void*)(&val_holder));
-
-  assert(code_holder.size() == val_holder.size());
-  string res = "0";
-  for (size_t i = 0; i < code_holder.size(); i++) {
-    string cond = code_holder[i];
-    string val = val_holder[i];
-    res = "(" + cond + " ? " + val + " : " + res + ")";
-  }
-  return res;
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  string r(rs);
+  free(rs);
+  return r;
 
   //vector<string> code_holder;
-  //isl_set_foreach_basic_set(s, bset_codegen_c, &code_holder);
-  //return sep_list(code_holder, "(", ")", " && ");
+  //isl_pw_qpolynomial_foreach_lifted_piece(p, codegen_domain, (void*)(&code_holder));
+
+  //vector<string> val_holder;
+  //isl_pw_qpolynomial_foreach_lifted_piece(p, codegen_value, (void*)(&val_holder));
+
+  //assert(code_holder.size() == val_holder.size());
+  //string res = "0";
+  //for (size_t i = 0; i < code_holder.size(); i++) {
+    //string cond = code_holder[i];
+    //string val = val_holder[i];
+    //res = "(" + cond + " ? " + val + " : " + res + ")";
+  //}
+  //return res;
+
+  ////vector<string> code_holder;
+  ////isl_set_foreach_basic_set(s, bset_codegen_c, &code_holder);
+  ////return sep_list(code_holder, "(", ")", " && ");
 }
 
 isl_stat map_codegen_c(isl_map* m, void* user) {
@@ -801,6 +877,7 @@ void generate_hls_code(UBuffer& buf) {
     }
 
     vector<string> partitions;
+    vector<int> end_inds;
     if (read_delays.size() > 0) {
       for (size_t i = 0; i < read_delays.size(); i++) {
         int current = read_delays[i];
@@ -812,12 +889,14 @@ void generate_hls_code(UBuffer& buf) {
             out << "\t// Parition [" << current << ", " << next << ") capacity = " << partition_capacity << endl;
             out << "\tfifo<" << partition_capacity << "> f" << i << ";" << endl;
             partitions.push_back("f" + to_string(i));
+            end_inds.push_back(current + partition_capacity - 1);
           }
         } else {
           partition_capacity = 1;
           out << "\t// Parition [" << current << ", " << current << "] capacity = " << partition_capacity << endl;
           out << "\tfifo<" << partition_capacity << "> f" << i << ";" << endl;
           partitions.push_back("f" + to_string(i));
+          end_inds.push_back(current + partition_capacity - 1);
         }
 
         //assert(partition_capacity > 0);
@@ -826,11 +905,15 @@ void generate_hls_code(UBuffer& buf) {
       out << endl << endl;
 
       out << "\tinline int peek(const int offset) {" << endl;
+      int nind = 0;
       for (auto p : partitions) {
-        out << "\t\tif (0) {" << endl;
+        int dv = end_inds[nind];
+        out << "\t\tif (offset == " << dv << ") {" << endl;
         out << "\t\t\treturn " << p << ".back();" << endl;
         out << "\t\t}" << endl;
+        nind++;
       }
+      out << "\t\tcout << \"Error: Unsupported offset: \" << offset << endl;" << endl;
       out << "\t\tassert(false);" << endl;
       out << "\t\treturn 0;\n" << endl;
       out << "\t}" << endl << endl;
@@ -851,7 +934,8 @@ void generate_hls_code(UBuffer& buf) {
 
   out << endl << endl;
   for (auto inpt : buf.get_in_ports()) {
-    out << "inline void " << inpt << "_write(" << "InputStream& " << inpt << ", " << "delay_sr<" << maxdelay + 1 << ">& " << inpt << "_delay) {" << endl;
+    //out << "inline void " << inpt << "_write(" << "InputStream& " << inpt << ", " << "delay_sr<" << maxdelay + 1 << ">& " << inpt << "_delay) {" << endl;
+    out << "inline void " << inpt << "_write(" << "InputStream& " << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
     out << "\tint " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);" << endl;
     out << "}" << endl << endl;
   }
@@ -905,7 +989,8 @@ void generate_hls_code(UBuffer& buf) {
     out << "inline int " + outpt + "_select(";
     size_t nargs = 0;
     for (auto pt : buf.get_in_ports()) {
-      out << "delay_sr<" << to_string(maxdelay + 1) << ">& " << pt << "_delay" << endl;
+      //out << "delay_sr<" << to_string(maxdelay + 1) << ">& " << pt << "_delay" << endl;
+      out << pt + "_cache& " << pt << "_delay" << endl;
       out << ", ";
       nargs++;
     }
@@ -913,7 +998,8 @@ void generate_hls_code(UBuffer& buf) {
     assert(isl_space_is_set(s));
     vector<string> dim_decls;
     for (int i = 0; i < num_dims(s); i++) {
-      dim_decls.push_back("int i_" + to_string(i));
+      //dim_decls.push_back("int i_" + to_string(i));
+      dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
     }
     out << sep_list(dim_decls, "", "", ", ");
 
@@ -929,7 +1015,7 @@ void generate_hls_code(UBuffer& buf) {
         // What would be a good test of this?
         string delay_expr = evaluate_dd(buf, outpt, inpt);
         auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
-        out << "\tint value_" << inpt << " = " << inpt << "_delay.pop(" << "(" << delay_expr << ")" << ");\n";
+        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
         out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
       }
     }
@@ -951,7 +1037,8 @@ void generate_hls_code(UBuffer& buf) {
   }
   out << ") {" << endl;
   for (auto inpt : buf.get_in_ports()) {
-    out << "\tdelay_sr<" + to_string(maxdelay + 1) + "> " + inpt + "_delay;\n\n";
+    //out << "\tdelay_sr<" + to_string(maxdelay + 1) + "> " + inpt + "_delay;\n\n";
+    out << "\t" + inpt + "_cache " + inpt + "_delay;\n\n";
   }
   out << code_string << endl;
   out << "}" << endl;

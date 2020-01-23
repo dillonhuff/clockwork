@@ -65,6 +65,10 @@ isl_union_map* to_umap(isl_map* const m) {
   return isl_union_map_from_map(m);
 }
 
+isl_ctx* ctx(isl_aff* const m) {
+  return isl_aff_get_ctx(m);
+}
+
 isl_ctx* ctx(isl_val* const m) {
   return isl_val_get_ctx(m);
 }
@@ -133,6 +137,10 @@ isl_val* cpy(isl_val* const b) {
   return isl_val_copy(b);
 }
 
+isl_aff* cpy(isl_aff* const b) {
+  return isl_aff_copy(b);
+}
+
 void print(struct isl_ctx* const ctx, isl_qpolynomial* const bset) {
   isl_printer *p;
   p = isl_printer_to_str(ctx);
@@ -142,6 +150,19 @@ void print(struct isl_ctx* const ctx, isl_qpolynomial* const bset) {
   printf("%s\n", rs);
   isl_printer_free(p);
   free(rs);
+}
+
+std::string str(isl_aff* const bset) {
+  auto context = ctx(bset);
+  isl_printer *p;
+  p = isl_printer_to_str(context);
+  p = isl_printer_print_aff(p, cpy(bset));
+
+  char* rs = isl_printer_get_str(p);
+  std::string r(rs);
+  isl_printer_free(p);
+  free(rs);
+  return r;
 }
 
 std::string str(isl_pw_qpolynomial* const bset) {
