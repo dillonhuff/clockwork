@@ -521,21 +521,22 @@ string codegen_c_constraint(isl_constraint* c) {
   if (isl_space_is_map(s)) {
     int ndims = isl_space_dim(s, isl_dim_in);
     for (int i = 0; i < ndims; i++) {
-      ss << str(isl_constraint_get_coefficient_val(c, isl_dim_in, i)) << "*" << "i_" << i << " + ";
-        //<< str(isl_space_get_dim_id(s, isl_dim_in, i)) << " + ";
+      //ss << str(isl_constraint_get_coefficient_val(c, isl_dim_in, i)) << "*" << "i_" << i << " + ";
+      ss << str(isl_constraint_get_coefficient_val(c, isl_dim_in, i)) << "*" << str(isl_space_get_dim_id(s, isl_dim_out, i)) << " + ";
     }
     {
       int ndims = isl_space_dim(s, isl_dim_out);
       for (int i = 0; i < ndims; i++) {
-        ss << str(isl_constraint_get_coefficient_val(c, isl_dim_out, i)) << "*" << "i_" << i << "_p" << " + ";
+        ss << str(isl_constraint_get_coefficient_val(c, isl_dim_in, i)) << "*" << str(isl_space_get_dim_id(s, isl_dim_out, i)) << " + ";
+        //ss << str(isl_constraint_get_coefficient_val(c, isl_dim_out, i)) << "*" << "i_" << i << "_p" << " + ";
           //<< str(isl_space_get_dim_id(s, isl_dim_out, i)) << "_p" << " + ";
       }
     }
   } else {
     assert(isl_space_is_set(s));
     for (int i = 0; i < num_dims(s); i++) {
-      ss << str(isl_constraint_get_coefficient_val(c, isl_dim_set, i)) << "*" << "i_" << i << " + ";
-        //<< str(isl_space_get_dim_id(s, isl_dim_set, i)) << "_p" << " + ";
+      //ss << str(isl_constraint_get_coefficient_val(c, isl_dim_set, i)) << "*" << "i_" << i << " + ";
+      ss << str(isl_constraint_get_coefficient_val(c, isl_dim_set, i)) << "*" << str(isl_space_get_dim_id(s, isl_dim_set, i)) << " + ";
     }
   }
 
@@ -575,35 +576,35 @@ isl_stat bmap_codegen_c(isl_basic_map* m, void* user) {
 }
 
 std::string codegen_c(isl_set* s) {
-  cout << "Generating code for set..." << endl;
-  auto ctx = isl_set_get_ctx(s);
-  print(ctx, s);
+  //cout << "Generating code for set..." << endl;
+  //auto ctx = isl_set_get_ctx(s);
+  //print(ctx, s);
 
-  isl_printer *p;
-  p = isl_printer_to_str(ctx);
+  //isl_printer *p;
+  //p = isl_printer_to_str(ctx);
 
-  cout << "Set print string..." << endl;
+  //cout << "Set print string..." << endl;
 
-  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
+  //p = isl_printer_set_output_format(p, ISL_FORMAT_C);
   
-  cout << "set output format..." << endl;
+  //cout << "set output format..." << endl;
   
-  p = isl_printer_print_set(p, cpy(s));
+  //p = isl_printer_print_set(p, cpy(s));
   
-  cout << "Built printer..." << endl;
+  //cout << "Built printer..." << endl;
 
-  char* rs = isl_printer_get_str(p);
-  string r(rs);
-  isl_printer_free(p);
-  free(rs);
+  //char* rs = isl_printer_get_str(p);
+  //string r(rs);
+  //isl_printer_free(p);
+  //free(rs);
 
-  cout << "Done..." << endl;
+  //cout << "Done..." << endl;
 
-  return r;
+  //return r;
   
-  //vector<string> code_holder;
-  //isl_set_foreach_basic_set(s, bset_codegen_c, &code_holder);
-  //return sep_list(code_holder, "(", ")", " && ");
+  vector<string> code_holder;
+  isl_set_foreach_basic_set(s, bset_codegen_c, &code_holder);
+  return sep_list(code_holder, "(", ")", " && ");
 }
 
 
