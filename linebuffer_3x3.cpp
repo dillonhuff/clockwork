@@ -276,19 +276,46 @@ void linebuffer_3x3(OutputStream& read_0_0
 
 	for (int c0 = 0; c0 <= 63; c0 += 1)
 	  for (int c1 = 0; c1 <= 63; c1 += 1) {
+
+#pragma HLS pipeline
 	    write0_write(write0, write0_delay);
 	    if (c0 >= 2 && c1 >= 2) {
-        read_0_0.write(write0_delay.peek_129());
-	      read_0_1.write(write0_delay.peek_1());
-        read_0_2.write(write0_delay.peek_128());
-	      
-        read_1_0.write(write0_delay.peek_0());
-	      read_1_1.write(write0_delay.peek_66());
-        read_1_2.write(write0_delay.peek_130());
-	      
-	      read_2_0.write(write0_delay.peek_65());
-        read_2_1.write(write0_delay.peek_2());
-        read_2_2.write(write0_delay.peek_64());
+        int res = 0;
+        res += (write0_delay.peek_130());
+        res += (write0_delay.peek_129());
+        res += (write0_delay.peek_128());
+
+        res += (write0_delay.peek_66());
+        res += (write0_delay.peek_65());
+        res += (write0_delay.peek_64());
+
+        res += (write0_delay.peek_2());
+        res += (write0_delay.peek_1());
+        res += (write0_delay.peek_0());
+
+        read_0_0.write(res);
+
+        //read_0_1.write(write0_delay.peek_1());
+        //read_0_2.write(write0_delay.peek_128());
+				
+        //read_1_0.write(write0_delay.peek_0());
+				//read_1_1.write(write0_delay.peek_66());
+        //read_1_2.write(write0_delay.peek_130());
+				
+				//read_2_0.write(write0_delay.peek_65());
+        //read_2_1.write(write0_delay.peek_2());
+        //read_2_2.write(write0_delay.peek_64());
+        //read_0_0.write(write0_delay.peek_129());
+				//read_0_1.write(write0_delay.peek_1());
+        //read_0_2.write(write0_delay.peek_128());
+				
+        //read_1_0.write(write0_delay.peek_0());
+				//read_1_1.write(write0_delay.peek_66());
+        //read_1_2.write(write0_delay.peek_130());
+				
+				//read_2_0.write(write0_delay.peek_65());
+        //read_2_1.write(write0_delay.peek_2());
+        //read_2_2.write(write0_delay.peek_64());
 	      
 
 				//read_1_0.write(read_1_0_select(write0_delay, c0 - 2, c1 - 2));
