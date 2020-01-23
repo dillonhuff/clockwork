@@ -766,6 +766,14 @@ void generate_hls_code(UBuffer& buf) {
 
   out << "#include \"hw_classes.h\"" << endl << endl;
   for (auto inpt : buf.get_in_ports()) {
+    out << "struct " + inpt + "_cache {" << endl;
+    out << "\t// Capacity: " << maxdelay + 1 << endl;
+
+    out << "};" << endl << endl;
+  }
+
+  out << endl << endl;
+  for (auto inpt : buf.get_in_ports()) {
     out << "inline void " << inpt << "_write(" << "InputStream& " << inpt << ", " << "delay_sr<" << maxdelay + 1 << ">& " << inpt << "_delay) {" << endl;
     out << "\tint " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);" << endl;
     out << "}" << endl << endl;
