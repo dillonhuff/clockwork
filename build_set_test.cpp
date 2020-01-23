@@ -733,8 +733,7 @@ map<string, string> umap_codegen_c(umap* const um) {
   return cm;
 }
 
-string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
-  
+isl_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
   auto ctx = buf.ctx;
   isl_map* sched = buf.schedule.at(write_port);
   assert(sched != nullptr);
@@ -779,9 +778,13 @@ string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string
   print(ctx, WritesBtwn);
 
   auto c = card(WritesBtwn);
- 
-  cout << "DD between: " << read_port << " and " << write_port << endl;
-  print(ctx, c);
+  return c;
+}
+
+string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
+  auto c = compute_dd(buf, read_port, write_port);
+  //cout << "DD between: " << read_port << " and " << write_port << endl;
+  //print(ctx, c);
 
   return codegen_c(c);
 }
@@ -802,10 +805,20 @@ void generate_hls_code(UBuffer& buf) {
 
   int maxdelay = 0;
   for (auto outpt : buf.get_out_ports()) {
-    int r0 = check_value_dd(buf, outpt, inpt);
-    if (r0 > maxdelay) {
-      maxdelay = r0;
+    auto qpd = compute_dd(buf, outpt, inpt);
+    int tight;
+    int* b = &tight;
+    auto bound = isl_pw_qpolynomial_bound(qpd, isl_fold_max, b);
+    int bint = stoi(codegen_c(bound));
+    if (bint > maxdelay) {
+      maxdelay = bint;
     }
+  }
+  for (auto outpt : buf.get_out_ports()) {
+    //int r0 = check_value_dd(buf, outpt, inpt);
+    //if (r0 > maxdelay) {
+      //maxdelay = r0;
+    //}
     wmap =
       unn(wmap,
           isl_union_map_from_map(cpy(buf.schedule.at(outpt))));
@@ -846,8 +859,18 @@ void generate_hls_code(UBuffer& buf) {
     out << "\t// Capacity: " << maxdelay + 1 << endl;
     vector<int> read_delays;
     for (auto outpt : buf.get_out_ports()) {
+      auto qpd = compute_dd(buf, outpt, inpt);
+      out << "\t// DD expr = " << str(qpd) << endl;
+      int tight;
+      int* b = &tight;
+      auto bound = isl_pw_qpolynomial_bound(qpd, isl_fold_max, b);
+      out << "\t// Bound       = " << str(bound) << endl;
+      out << "\t// Bound  as C = " << codegen_c(bound) << endl;
+      auto qp = evaluate_dd(buf, outpt, inpt);
+      out << "\t// DD from " << outpt << " = " << qp << endl;
       auto dd = check_value_dd(buf, outpt, inpt);
-      read_delays.push_back(dd);
+      //read_delays.push_back(dd);
+      read_delays.push_back(stoi(codegen_c(bound)));
     }
 
     read_delays = sort_unique(read_delays);
