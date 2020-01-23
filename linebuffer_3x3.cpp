@@ -90,6 +90,52 @@ struct write0_cache {
 	fifo<1> f16;
 
 
+	inline int peek_0() {
+		return f0.back();
+	}
+
+	inline int peek_1() {
+		return f2.back();
+	}
+
+	inline int peek_2() {
+		return f4.back();
+	}
+
+	inline int peek_63() {
+		return f5.back();
+	}
+
+	inline int peek_64() {
+		return f6.back();
+	}
+
+	inline int peek_65() {
+		return f8.back();
+	}
+
+	inline int peek_66() {
+		return f10.back();
+	}
+
+	inline int peek_127() {
+		return f11.back();
+	}
+
+	inline int peek_128() {
+		return f12.back();
+	}
+
+	inline int peek_129() {
+		return f14.back();
+	}
+
+	inline int peek_130() {
+		return f16.back();
+	}
+
+
+
 	inline int peek(const int offset) {
 		if (offset == 0) {
 			return f0.back();
