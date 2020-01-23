@@ -795,6 +795,7 @@ void generate_hls_code(UBuffer& buf) {
       cout << "\t// BP = " << dd << endl;
     }
 
+    vector<string> partitions;
     if (read_delays.size() > 0) {
       for (size_t i = 0; i < read_delays.size(); i++) {
         int current = read_delays[i];
@@ -804,10 +805,12 @@ void generate_hls_code(UBuffer& buf) {
             int next = read_delays[i + 1];
             partition_capacity = next - current;
             out << "\t// Parition [" << current << ", " << next << ") capacity = " << partition_capacity << endl;
+            out << "\tfifo<" << partition_capactiy << "> f" << i << ";" << endl;
           }
         } else {
           partition_capacity = 1;
           out << "\t// Parition [" << current << ", " << current << "] capacity = " << partition_capacity << endl;
+          out << "\tfifo<" << partition_capactiy << "> f" << i << ";" << endl;
         }
 
         //assert(partition_capacity > 0);
