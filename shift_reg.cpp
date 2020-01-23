@@ -65,31 +65,22 @@ inline void write_write(InputStream& write, write_cache& write_delay) {
 // Select if: { read0[i] -> write[i' = i] : 0 <= i <= 7 }
 inline int read0_select(write_cache& write_delay
 , int i) {
-	bool select_write = ((1*i + 0  >= 0 && -1*i + 7  >= 0));
 	int value_write = write_delay.peek(((i >= 0 && 7 - i >= 0) ? (2) : 0));
-	if (select_write) { return value_write; }
-	assert(false);
-	return 0;
+	return value_write;
 }
 
 // Select if: { read1[i] -> write[i' = 1 + i] : 0 <= i <= 7 }
 inline int read1_select(write_cache& write_delay
 , int i) {
-	bool select_write = ((1*i + 0  >= 0 && -1*i + 7  >= 0));
 	int value_write = write_delay.peek(((i >= 0 && 7 - i >= 0) ? (1) : 0));
-	if (select_write) { return value_write; }
-	assert(false);
-	return 0;
+	return value_write;
 }
 
 // Select if: { read2[i] -> write[i' = 2 + i] : 0 <= i <= 7 }
 inline int read2_select(write_cache& write_delay
 , int i) {
-	bool select_write = ((1*i + 0  >= 0 && -1*i + 7  >= 0));
 	int value_write = write_delay.peek((0));
-	if (select_write) { return value_write; }
-	assert(false);
-	return 0;
+	return value_write;
 }
 
 void shift_reg(OutputStream& read0

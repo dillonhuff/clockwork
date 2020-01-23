@@ -155,91 +155,64 @@ inline void write0_write(InputStream& write0, write0_cache& write0_delay) {
 // Select if: { read_0_0[i, j] -> write0[i' = i, j' = j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_0_0_select(write0_cache& write0_delay
 , int i, int j) {
-	bool select_write0 = ((1*i + 0*j + 0  >= 0 && -1*i + 0*j + 61  >= 0 && 0*i + 1*j + 0  >= 0 && 0*i + -1*j + 61  >= 0));
 	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (130) : 0));
-	if (select_write0) { return value_write0; }
-	assert(false);
-	return 0;
+	return value_write0;
 }
 
 // Select if: { read_0_1[i, j] -> write0[i' = i, j' = 1 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_0_1_select(write0_cache& write0_delay
 , int i, int j) {
-	bool select_write0 = ((1*i + 0*j + 0  >= 0 && -1*i + 0*j + 61  >= 0 && 0*i + 1*j + 0  >= 0 && 0*i + -1*j + 61  >= 0));
 	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (129) : 0));
-	if (select_write0) { return value_write0; }
-	assert(false);
-	return 0;
+	return value_write0;
 }
 
 // Select if: { read_0_2[i, j] -> write0[i' = i, j' = 2 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_0_2_select(write0_cache& write0_delay
 , int i, int j) {
-	bool select_write0 = ((1*i + 0*j + 0  >= 0 && -1*i + 0*j + 61  >= 0 && 0*i + 1*j + 0  >= 0 && 0*i + -1*j + 61  >= 0));
 	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 60 - j >= 0) ? (128) : (-61 + j == 0 && i >= 0 && 61 - i >= 0) ? ((67 + j)) : 0));
-	if (select_write0) { return value_write0; }
-	assert(false);
-	return 0;
+	return value_write0;
 }
 
 // Select if: { read_1_0[i, j] -> write0[i' = 1 + i, j' = j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_1_0_select(write0_cache& write0_delay
 , int i, int j) {
-	bool select_write0 = ((1*i + 0*j + 0  >= 0 && -1*i + 0*j + 61  >= 0 && 0*i + 1*j + 0  >= 0 && 0*i + -1*j + 61  >= 0));
 	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (66) : 0));
-	if (select_write0) { return value_write0; }
-	assert(false);
-	return 0;
+	return value_write0;
 }
 
 // Select if: { read_1_1[i, j] -> write0[i' = 1 + i, j' = 1 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_1_1_select(write0_cache& write0_delay
 , int i, int j) {
-	bool select_write0 = ((1*i + 0*j + 0  >= 0 && -1*i + 0*j + 61  >= 0 && 0*i + 1*j + 0  >= 0 && 0*i + -1*j + 61  >= 0));
 	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (65) : 0));
-	if (select_write0) { return value_write0; }
-	assert(false);
-	return 0;
+	return value_write0;
 }
 
 // Select if: { read_1_2[i, j] -> write0[i' = 1 + i, j' = 2 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_1_2_select(write0_cache& write0_delay
 , int i, int j) {
-	bool select_write0 = ((1*i + 0*j + 0  >= 0 && -1*i + 0*j + 61  >= 0 && 0*i + 1*j + 0  >= 0 && 0*i + -1*j + 61  >= 0));
 	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 60 - j >= 0) ? (64) : (-61 + j == 0 && i >= 0 && 61 - i >= 0) ? ((3 + j)) : 0));
-	if (select_write0) { return value_write0; }
-	assert(false);
-	return 0;
+	return value_write0;
 }
 
 // Select if: { read_2_0[i, j] -> write0[i' = 2 + i, j' = j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_2_0_select(write0_cache& write0_delay
 , int i, int j) {
-	bool select_write0 = ((1*i + 0*j + 0  >= 0 && -1*i + 0*j + 61  >= 0 && 0*i + 1*j + 0  >= 0 && 0*i + -1*j + 61  >= 0));
 	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (2) : 0));
-	if (select_write0) { return value_write0; }
-	assert(false);
-	return 0;
+	return value_write0;
 }
 
 // Select if: { read_2_1[i, j] -> write0[i' = 2 + i, j' = 1 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_2_1_select(write0_cache& write0_delay
 , int i, int j) {
-	bool select_write0 = ((1*i + 0*j + 0  >= 0 && -1*i + 0*j + 61  >= 0 && 0*i + 1*j + 0  >= 0 && 0*i + -1*j + 61  >= 0));
 	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (1) : 0));
-	if (select_write0) { return value_write0; }
-	assert(false);
-	return 0;
+	return value_write0;
 }
 
 // Select if: { read_2_2[i, j] -> write0[i' = 2 + i, j' = 2 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_2_2_select(write0_cache& write0_delay
 , int i, int j) {
-	bool select_write0 = ((1*i + 0*j + 0  >= 0 && -1*i + 0*j + 61  >= 0 && 0*i + 1*j + 0  >= 0 && 0*i + -1*j + 61  >= 0));
 	int value_write0 = write0_delay.peek((0));
-	if (select_write0) { return value_write0; }
-	assert(false);
-	return 0;
+	return value_write0;
 }
 
 void linebuffer_3x3(OutputStream& read_0_0
