@@ -825,8 +825,17 @@ void generate_hls_code(UBuffer& buf) {
 
       out << endl << endl;
 
-      out << "\tint peek(const int offset) { return 0; }" << endl << endl;
-      out << "\tvoid push(const int value) {" << endl;
+      out << "\tinline int peek(const int offset) {" << endl;
+      for (auto p : partitions) {
+        out << "\t\tif (0) {" << endl;
+        out << "\t\t\treturn " << p << ".back();" << endl;
+        out << "\t\t}" << endl;
+      }
+      out << "\t\tassert(false);" << endl;
+      out << "\t\treturn 0;\n" << endl;
+      out << "\t}" << endl << endl;
+
+      out << "\tinline void push(const int value) {" << endl;
       if (partitions.size() > 0) {
         for (size_t i = partitions.size() - 1; i >= 1; i--) {
           auto current = partitions[i];
