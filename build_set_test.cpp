@@ -924,9 +924,19 @@ void generate_hls_code(UBuffer& buf) {
       }
 
       out << endl << endl;
+      int nind = 0;
+      for (auto p : partitions) {
+        int dv = end_inds[nind];
+        out << "\tinline int peek_" + to_string(dv) + "() {" << endl;
+        out << "\t\treturn " << p << ".back();" << endl;
+        out << "\t}" << endl << endl;
+        nind++;
+      }
+
+      out << endl << endl;
 
       out << "\tinline int peek(const int offset) {" << endl;
-      int nind = 0;
+      nind = 0;
       for (auto p : partitions) {
         int dv = end_inds[nind];
         out << "\t\tif (offset == " << dv << ") {" << endl;

@@ -32,6 +32,20 @@ struct write_cache {
 	fifo<1> f4;
 
 
+	inline int peek_0() {
+		return f0.back();
+	}
+
+	inline int peek_1() {
+		return f2.back();
+	}
+
+	inline int peek_2() {
+		return f4.back();
+	}
+
+
+
 	inline int peek(const int offset) {
 		if (offset == 0) {
 			return f0.back();
