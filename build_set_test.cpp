@@ -874,8 +874,6 @@ void generate_hls_code(UBuffer& buf) {
     }
 
     read_delays = sort_unique(read_delays);
-    //reverse(read_delays);
-    //sortu(read_delays.begin(), read_delays.end());
 
     out << "\t// Peak points" << endl;
     for (auto dd : read_delays) {
@@ -922,8 +920,6 @@ void generate_hls_code(UBuffer& buf) {
           partitions.push_back("f" + to_string(i));
           end_inds.push_back(current + partition_capacity - 1);
         }
-
-        //assert(partition_capacity > 0);
       }
 
       out << endl << endl;
