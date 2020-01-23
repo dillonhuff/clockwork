@@ -25,6 +25,8 @@ class hw_mem {
 
 template<int Depth>
 class fifo {
+  public:
+
     int write_addr;
     int read_addr;
     bool empty;
@@ -40,6 +42,10 @@ class fifo {
       }
       empty = read_addr == write_addr;
       return val;
+    }
+
+    int back() {
+      return 0;
     }
 
     void push(const int val) {

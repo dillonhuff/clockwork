@@ -745,8 +745,7 @@ void generate_hls_code(UBuffer& buf) {
   string delay_list = "";
   size_t nd = 0;
   for (auto inpt : buf.get_in_ports()) {
-    regex re(inpt + "\(.*\);");
-    //code_string = regex_replace(code_string, re, "int " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);");
+    regex re(inpt + "(.*);");
     code_string = regex_replace(code_string, re, inpt + "_write(" + inpt + ", " + inpt + "_delay);");
     delay_list += inpt + "_delay";
     if (nd < buf.get_in_ports().size() - 1) {
@@ -812,11 +811,13 @@ void generate_hls_code(UBuffer& buf) {
             partition_capacity = next - current;
             out << "\t// Parition [" << current << ", " << next << ") capacity = " << partition_capacity << endl;
             out << "\tfifo<" << partition_capacity << "> f" << i << ";" << endl;
+            partitions.push_back("f" + to_string(i));
           }
         } else {
           partition_capacity = 1;
           out << "\t// Parition [" << current << ", " << current << "] capacity = " << partition_capacity << endl;
           out << "\tfifo<" << partition_capacity << "> f" << i << ";" << endl;
+          partitions.push_back("f" + to_string(i));
         }
 
         //assert(partition_capacity > 0);
@@ -825,7 +826,16 @@ void generate_hls_code(UBuffer& buf) {
       out << endl << endl;
 
       out << "\tint peek(const int offset) { return 0; }" << endl << endl;
-      out << "\tvoid push(const int value) { }" << endl << endl;
+      out << "\tvoid push(const int value) {" << endl;
+      if (partitions.size() > 0) {
+        for (size_t i = partitions.size() - 1; i >= 1; i--) {
+          auto current = partitions[i];
+          auto prior = partitions[i - 1];
+          out << "\t\t" << current << ".push(" << prior << ".back());" << endl;
+        }
+        out << "\t\t" << partitions[0] << ".push(value);" << endl;
+      }
+      out << "\t}" << endl << endl;
     }
     out << "};" << endl << endl;
   }
