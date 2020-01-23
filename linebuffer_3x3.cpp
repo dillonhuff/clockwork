@@ -278,6 +278,9 @@ void linebuffer_3x3(OutputStream& read_0_0
 	  for (int c1 = 0; c1 <= 63; c1 += 1) {
 
 #pragma HLS pipeline
+#pragma HLS dependence variable=write0_delay.f5.vals inter false
+#pragma HLS dependence variable=write0_delay.f11.vals inter false
+
 	    write0_write(write0, write0_delay);
 	    if (c0 >= 2 && c1 >= 2) {
         int res = 0;
