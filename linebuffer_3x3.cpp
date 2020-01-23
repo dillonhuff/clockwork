@@ -278,15 +278,28 @@ void linebuffer_3x3(OutputStream& read_0_0
 	  for (int c1 = 0; c1 <= 63; c1 += 1) {
 	    write0_write(write0, write0_delay);
 	    if (c0 >= 2 && c1 >= 2) {
-	      read_1_0.write(read_1_0_select(write0_delay, c0 - 2, c1 - 2));
-	      read_0_1.write(read_0_1_select(write0_delay, c0 - 2, c1 - 2));
-	      read_2_1.write(read_2_1_select(write0_delay, c0 - 2, c1 - 2));
-	      read_2_2.write(read_2_2_select(write0_delay, c0 - 2, c1 - 2));
-	      read_2_0.write(read_2_0_select(write0_delay, c0 - 2, c1 - 2));
-	      read_1_1.write(read_1_1_select(write0_delay, c0 - 2, c1 - 2));
-	      read_0_2.write(read_0_2_select(write0_delay, c0 - 2, c1 - 2));
-	      read_0_0.write(read_0_0_select(write0_delay, c0 - 2, c1 - 2));
-	      read_1_2.write(read_1_2_select(write0_delay, c0 - 2, c1 - 2));
+        read_0_0.write(write0_delay.peek_129());
+	      read_0_1.write(write0_delay.peek_1());
+        read_0_2.write(write0_delay.peek_128());
+	      
+        read_1_0.write(write0_delay.peek_0());
+	      read_1_1.write(write0_delay.peek_66());
+        read_1_2.write(write0_delay.peek_130());
+	      
+	      read_2_0.write(write0_delay.peek_65());
+        read_2_1.write(write0_delay.peek_2());
+        read_2_2.write(write0_delay.peek_64());
+	      
+
+				//read_1_0.write(read_1_0_select(write0_delay, c0 - 2, c1 - 2));
+				//read_0_1.write(read_0_1_select(write0_delay, c0 - 2, c1 - 2));
+				//read_2_1.write(read_2_1_select(write0_delay, c0 - 2, c1 - 2));
+				//read_2_2.write(read_2_2_select(write0_delay, c0 - 2, c1 - 2));
+				//read_2_0.write(read_2_0_select(write0_delay, c0 - 2, c1 - 2));
+				//read_1_1.write(read_1_1_select(write0_delay, c0 - 2, c1 - 2));
+				//read_0_2.write(read_0_2_select(write0_delay, c0 - 2, c1 - 2));
+				//read_0_0.write(read_0_0_select(write0_delay, c0 - 2, c1 - 2));
+				//read_1_2.write(read_1_2_select(write0_delay, c0 - 2, c1 - 2));
 	    }
 	  }
 	
