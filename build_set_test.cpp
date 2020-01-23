@@ -1350,6 +1350,7 @@ int main() {
   synth_reduce_test();
 
   return 0;
+
 }
 
 
