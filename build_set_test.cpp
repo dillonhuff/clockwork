@@ -728,6 +728,7 @@ isl_stat umap_codegen_c_comp(isl_map* m, void* user) {
 }
 
 map<string, string> umap_codegen_c(umap* const um) {
+  cout << "##### Codgen for umap: " << str(um) << endl;
   map<string, string> cm;
   isl_union_map_foreach_map(um, umap_codegen_c_comp, (void*) (&cm));
   return cm;
@@ -750,32 +751,32 @@ isl_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const
 
   auto WriteThatProducesReadData =
     its(dot(buf.access_map.at(read_port), port0WritesInv), WritesBeforeRead);
-  cout << "----Writes that produces read data: " << endl;
-  cout << "\t" << str(WriteThatProducesReadData) << endl;
+  //cout << "----Writes that produces read data: " << endl;
+  //cout << "\t" << str(WriteThatProducesReadData) << endl;
 
   auto time_to_event = inv(sched);
   auto LastWriteBeforeRead =
     dot(lexmax(dot(WriteThatProducesReadData, sched)), time_to_event);
 
-  cout << "----Last Write that produce read data before read: " << endl;
-  cout << "\t" << str(LastWriteBeforeRead) << endl;
+  //cout << "----Last Write that produce read data before read: " << endl;
+  //cout << "\t" << str(LastWriteBeforeRead) << endl;
 
   WriteThatProducesReadData = LastWriteBeforeRead;
   //auto lex_max_events =
     //dot(lexmax(dot(src_map, sched)), time_to_event);
 
-  cout << "----Writes before read: " << endl;
-  cout << "\t" << str(WritesBeforeRead) << endl;
+  //cout << "----Writes before read: " << endl;
+  //cout << "\t" << str(WritesBeforeRead) << endl;
 
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
-  cout << "----Writes after production: " << endl;
-  cout << "\t" << str(WritesAfterProduction) << endl;
+  //cout << "----Writes after production: " << endl;
+  //cout << "\t" << str(WritesAfterProduction) << endl;
 
   auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
 
-  cout << "----WritesBtwn" << endl;
-  print(ctx, WritesBtwn);
+  //cout << "----WritesBtwn" << endl;
+  //print(ctx, WritesBtwn);
 
   auto c = card(WritesBtwn);
   return c;
@@ -1024,25 +1025,29 @@ void generate_hls_code(UBuffer& buf) {
     out << sep_list(dim_decls, "", "", ", ");
 
     out << ") {" << endl;
+
+
     // Body of select function
-    map<string, string> ms = umap_codegen_c(lex_max_events);
-    for (auto e : ms) {
-      out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
-    }
-    for (auto inpt : buf.get_in_ports()) {
-      if (contains_key(inpt, ms)) {
-        // Need to replace this with evaluating the pqqpolynomial for DD
-        // What would be a good test of this?
-        string delay_expr = evaluate_dd(buf, outpt, inpt);
-        auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
-        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
-        out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
+    if (buf.get_in_ports().size() == 1) {
+      inpt = *(buf.get_in_ports().begin());
+      string delay_expr = evaluate_dd(buf, outpt, inpt);
+      out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
+      out << "\treturn value_" + inpt + ";" << endl;
+    } else {
+      map<string, string> ms = umap_codegen_c(lex_max_events);
+      for (auto e : ms) {
+        out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
       }
+      for (auto inpt : buf.get_in_ports()) {
+        if (contains_key(inpt, ms)) {
+          string delay_expr = evaluate_dd(buf, outpt, inpt);
+          out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
+          out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
+        }
+      }
+      out << "\tassert(false);\n\treturn 0;\n";
     }
 
-    print(ctx(src_map), src_map);
-
-    out << "\tassert(false);\n\treturn 0;\n";
     out << "}" << endl << endl;
   }
 
@@ -1350,6 +1355,7 @@ int main() {
   synth_reduce_test();
 
   return 0;
+
 }
 
 

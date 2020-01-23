@@ -5,6 +5,10 @@
 #include <iostream>
 #include <cmath>
 
+#ifdef __VIVADO_SYNTH__
+#include "hls_stream.h"
+#endif
+
 using namespace std;
 
 #define MOD_INC(x, N) ((x) == ((N) - 1) ? 0 : (x) + 1)
@@ -125,8 +129,21 @@ class delay_fifo {
 class HWStream {
   public:
 
-    int arr[10];
-    //deque<int> values;
+#ifdef __VIVADO_SYNTH__
+
+    hls::stream<int> values;
+
+    void write(const int v) {
+      return values.write(v);
+    }
+
+    int read() {
+      return values.read();
+    }
+
+#else
+
+    deque<int> values;
 
     void write(const int v) {
       arr[0] = v;
@@ -140,6 +157,8 @@ class HWStream {
       //values.pop_back();
       //return b;
     }
+
+#endif // __VIVADO_SYNTH__
 };
 
 typedef HWStream InputStream;
