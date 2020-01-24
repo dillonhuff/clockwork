@@ -782,32 +782,32 @@ isl_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const
 
   auto WriteThatProducesReadData =
     its(dot(buf.access_map.at(read_port), port0WritesInv), WritesBeforeRead);
-  //cout << "----Writes that produces read data: " << endl;
-  //cout << "\t" << str(WriteThatProducesReadData) << endl;
+  cout << "----Writes that produces read data: " << endl;
+  cout << "\t" << str(WriteThatProducesReadData) << endl;
 
   auto time_to_event = inv(sched);
   auto LastWriteBeforeRead =
     dot(lexmax(dot(WriteThatProducesReadData, sched)), time_to_event);
 
-  //cout << "----Last Write that produce read data before read: " << endl;
-  //cout << "\t" << str(LastWriteBeforeRead) << endl;
+  cout << "----Last Write that produce read data before read: " << endl;
+  cout << "\t" << str(LastWriteBeforeRead) << endl;
 
   WriteThatProducesReadData = LastWriteBeforeRead;
   //auto lex_max_events =
     //dot(lexmax(dot(src_map, sched)), time_to_event);
 
-  //cout << "----Writes before read: " << endl;
-  //cout << "\t" << str(WritesBeforeRead) << endl;
+  cout << "----Writes before read: " << endl;
+  cout << "\t" << str(WritesBeforeRead) << endl;
 
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
-  //cout << "----Writes after production: " << endl;
-  //cout << "\t" << str(WritesAfterProduction) << endl;
+  cout << "----Writes after production: " << endl;
+  cout << "\t" << str(WritesAfterProduction) << endl;
 
   auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
 
-  //cout << "----WritesBtwn" << endl;
-  //print(ctx, WritesBtwn);
+  cout << "----WritesBtwn" << endl;
+  print(ctx, WritesBtwn);
 
   auto c = card(WritesBtwn);
   return c;
@@ -852,9 +852,15 @@ void generate_hls_code(UBuffer& buf) {
     }
   }
 
+  cout << "Computing maxdelay..." << endl;
+
   int maxdelay = 0;
   for (auto outpt : buf.get_out_ports()) {
+    cout << "Computing dd for " << outpt << " to " << inpt << endl;
     auto qpd = compute_dd(buf, outpt, inpt);
+    assert(qpd != nullptr);
+
+    cout << "Computed dd for " << outpt << " to " << inpt << " = " << str(qpd) << endl;
     int tight;
     int* b = &tight;
     auto bound = isl_pw_qpolynomial_bound(qpd, isl_fold_max, b);
@@ -863,6 +869,9 @@ void generate_hls_code(UBuffer& buf) {
       maxdelay = bint;
     }
   }
+
+  cout << "Creating res map" << endl;
+
   for (auto outpt : buf.get_out_ports()) {
     //int r0 = check_value_dd(buf, outpt, inpt);
     //if (r0 > maxdelay) {
@@ -1799,6 +1808,9 @@ void conv_1d_test() {
   auto schedules = prg.schedules();
 
   int usuffix = 0;
+
+  cout << "Got ops and domains" << endl;
+
   for (auto op : prg.all_ops()) {
 
     for (auto produced : op->produce_locs) {
@@ -1816,33 +1828,42 @@ void conv_1d_test() {
       string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
       isl_map* produced_here =
         isl_map_read_from_str(buf.ctx, "{}");
+
+      assert(contains_key(op, domains));
+      assert(contains_key(op, schedules));
+
       buf.add_in_pt(pt_name, domains.at(op), produced_here, schedules.at(op));
 
       usuffix++;
       // Add in port..."
     }
 
-    for (auto consumed : op->consume_locs) {
-      string name = consumed.first;
+    //for (auto consumed : op->consume_locs) {
+      //string name = consumed.first;
 
-      if (!contains_key(name, buffers)) {
-        UBuffer buf;
-        buf.name = name;
-        buf.ctx = prg.ctx;
-        buffers[name] = buf;
-      }
+      //if (!contains_key(name, buffers)) {
+        //UBuffer buf;
+        //buf.name = name;
+        //buf.ctx = prg.ctx;
+        //buffers[name] = buf;
+      //}
 
-      UBuffer& buf = buffers.at(name);
+      //UBuffer& buf = buffers.at(name);
 
-      string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
-      isl_map* consumed_here =
-        isl_map_read_from_str(buf.ctx, "{}");
-      buf.add_out_pt(pt_name, domains.at(op), consumed_here, schedules.at(op));
+      //string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
+      //isl_map* consumed_here =
+        //isl_map_read_from_str(buf.ctx, "{}");
+      
+      //assert(contains_key(op, domains));
+      //assert(contains_key(op, schedules));
 
-      usuffix++;
-    }
+      //buf.add_out_pt(pt_name, domains.at(op), consumed_here, schedules.at(op));
+
+      //usuffix++;
+    //}
   }
 
+  assert(false);
   cout << "# of buffers: " << buffers.size() << endl;
   for (auto b : buffers) {
     cout << "--- " << b.second.name << endl;
@@ -1854,6 +1875,9 @@ void conv_1d_test() {
     for (auto inpt : b.second.get_out_ports()) {
       cout << "\t" << inpt << endl;
     }
+
+    cout << "Generating code..." << endl;
+    generate_hls_code(b.second);
   }
 }
 
