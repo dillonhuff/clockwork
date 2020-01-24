@@ -32,33 +32,27 @@ template<int Depth>
 class fifo {
   public:
 
-    //std::deque<int> values;
-
     int write_addr;
     int read_addr;
-    bool empty;
 
     int vals[Depth];
 
-    fifo() : read_addr(0), write_addr(0), empty(true) {}
+    fifo() : read_addr(0), write_addr(0) {}
 
     int back() {
-      return vals[(write_addr + Depth) % Depth];
-      //if (values.size() == Depth) {
-        //return values.back();
-      //}
-      //return -212;
+      int addr = write_addr + Depth;
+      if (addr >= Depth) {
+        // Wrap around
+        int rem = (addr - Depth);
+        addr = rem;
+      }
+      return vals[addr];
+      //return vals[(write_addr + Depth) % Depth];
     }
 
     void push(const int val) {
-      //values.push_front(val);
-      //if (values.size() == Depth + 1) {
-        //values.pop_back();
-      //}
-
       vals[write_addr] = val;
       write_addr = MOD_INC(write_addr, Depth);
-      empty = false;
     }
 };
 
@@ -146,16 +140,14 @@ class HWStream {
     deque<int> values;
 
     void write(const int v) {
-      arr[0] = v;
-      //return values.push_front(v);
+      return values.push_front(v);
     }
 
     int read() {
-      return arr[0];
-      //assert(values.size() > 0);
-      //int b = values.back();
-      //values.pop_back();
-      //return b;
+      assert(values.size() > 0);
+      int b = values.back();
+      values.pop_back();
+      return b;
     }
 
 #endif // __VIVADO_SYNTH__

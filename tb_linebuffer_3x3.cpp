@@ -1,6 +1,7 @@
 #include "linebuffer_3x3.h"
 
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -53,8 +54,9 @@ int main() {
 
   for (int v = 0; v < 62*62; v++) {
     int rv = read0.read();
+    cout << "rv[" << v << "] = " << rv << ", expecting: " << expected.at(v) << endl;
     assert(rv == expected.at(v));
-    cout << "rv[" << v << "] = " << rv << endl;
+    //read0.read();
     //read1.read();
     //read2.read();
     //read3.read();

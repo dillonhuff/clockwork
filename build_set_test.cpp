@@ -1352,7 +1352,46 @@ void synth_lb_test() {
   isl_ctx_free(buf.ctx);
 }
 
+void permute_test() {
+
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+  
+  UBuffer buf;
+  buf.name = "permute";
+  buf.ctx = ctx;
+
+  buf.add_in_pt("write0",
+      "{ write0[i] : 0 <= i < 10 }",
+      "{ write0[i] -> M[2*i] : 0 <= i < 10 }",
+      "{ write0[i] -> [0, i] : 0 <= i < 10 }"
+      );
+
+  buf.add_in_pt("write1",
+      "{ write1[i] : 0 <= i < 10 }",
+      "{ write1[i] -> M[2*i + 1] : 0 <= i < 10 }",
+      "{ write1[i] -> [0, i] : 0 <= i < 10 }"
+      );
+
+  buf.add_out_pt("read0",
+      "{ read0[i] : 0 <= i < 10 }",
+      "{ read0[i] -> M[2*i] : 0 <= i < 10 }",
+      "{ read0[i] -> [1, i] : 0 <= i < 10 }"
+      );
+
+  buf.add_out_pt("read1",
+      "{ read1[i] : 0 <= i < 10 }",
+      "{ read1[i] -> M[2*i + 1] : 0 <= i < 10 }",
+      "{ read1[i] -> [1, i] : 0 <= i < 10 }"
+      );
+
+  generate_hls_code(buf);
+}
+
 int main() {
+
+  //permute_test();
+  //assert(false);
 
   ubuffer_test();
   test_swizzle_buffer();
