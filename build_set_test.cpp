@@ -1456,11 +1456,6 @@ struct op {
 
   op() : parent(nullptr), is_loop(false) {}
 
-  isl_union_map* produced() {
-    umap* m = isl_union_map_read_from_str(ctx, "{}");
-    return m;
-  }
-
   op* add_loop(const std::string& name, const int l, const int u) {
     auto lp = new op();
     lp->name = name;
@@ -1550,6 +1545,9 @@ struct op {
 
   set<op*> all_ops() {
     set<op*> ops{this};
+    if (is_loop) {
+      ops = {};
+    }
     for (auto c : children) {
       for (auto op : c->all_ops()) {
         ops.insert(op);
@@ -1591,6 +1589,13 @@ struct prog {
     return whole_d;
   }
 
+  map<op*, vector<string> > iter_vars() {
+    vector<string> act;
+    map<op*, vector<string> > ivars;
+    root->populate_iter_vars(ivars, act);
+    return ivars;
+  }
+
   map<op*, isl_set*> domains() {
     vector<string> sched_coeffs{"0"};
     vector<string> sched_domains;
@@ -1604,6 +1609,7 @@ struct prog {
 
     map<op*, isl_set*> doms;
     for (auto op : ivars) {
+      cout << "Getting op production:" << op.first->name << endl;
       auto iters = map_find(op.first, ivars);
       auto vars = sep_list(iters, "[", "]", ", ");
 
@@ -1613,6 +1619,7 @@ struct prog {
       doms[op.first] =
         isl_set_read_from_str(ctx, string("{ " + op.first->name + vars + " : " + ds + " }").c_str());
 
+      cout << "Got op..." << endl;
     }
     return doms;
   }
@@ -1659,16 +1666,49 @@ struct prog {
   }
 
   umap* producer_map() {
+    auto ivars = iter_vars();
+    auto doms = domains();
+
     auto ops = root->all_ops();
     auto m = isl_union_map_read_from_str(ctx, "{}");
     for (auto op : ops) {
-      m = unn(m, op->produced());
+      auto vars = map_find(op, ivars);
+      string ivar_str = sep_list(vars, "[", "]", ", ");
+      auto dom = map_find(op, doms);
+
+      umap* pmap = isl_union_map_read_from_str(ctx, "{}");
+      for (auto p : op->produces) {
+        umap* vmap =
+          its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
+        pmap = unn(pmap, vmap);
+      }
+      m = unn(m, pmap);
     }
     return m;
   }
 
   umap* consumer_map() {
-    return isl_union_map_read_from_str(ctx, "{}");
+    auto ivars = iter_vars();
+    auto doms = domains();
+
+    auto ops = root->all_ops();
+    auto m = isl_union_map_read_from_str(ctx, "{}");
+    for (auto op : ops) {
+      cout << op->name << endl;
+      auto vars = map_find(op, ivars);
+      string ivar_str = sep_list(vars, "[", "]", ", ");
+      auto dom = map_find(op, doms);
+
+      umap* pmap = isl_union_map_read_from_str(ctx, "{}");
+      for (auto p : op->consumes) {
+        cout << "\tConsumes: " << p << endl;
+        umap* vmap =
+          its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
+        pmap = unn(pmap, vmap);
+      }
+      m = unn(m, pmap);
+    }
+    return m;
   }
 
   void optimized_codegen() {
@@ -1679,6 +1719,9 @@ struct prog {
       its(producer_map(), domain);
     auto reads =
       its(consumer_map(), domain);
+
+    cout << "Producer map..." << str(writes) << endl;
+    cout << "Consumer map..." << str(reads) << endl;
 
     isl_union_map *validity =
       its(dot(writes, inv(reads)), before);
@@ -1707,15 +1750,24 @@ void conv_1d_test() {
   auto c = prg.add_loop("c", 0, 10 - 2);
   auto read0 = c->add_op("read0");
   read0->add_load("M[c]");
+  read0->add_store("T[c]");
 
   auto read1 = c->add_op("read1");
   read1->add_load("M[c + 1]");
+  read1->add_store("T[c + 1]");
 
   auto read2 = c->add_op("read2");
   read2->add_load("M[c + 2]");
+  read2->add_store("T[c + 2]");
 
   auto compute = c->add_op("compute_out");
-  compute->add_args({read0, read1, read2});
+  compute->add_load("T[c]");
+  compute->add_load("T[c + 1]");
+  compute->add_load("T[c + 2]");
+
+  //compute->add_load("read1[c]");
+  //compute->add_load("read2[c]");
+  //compute->add_args({read0, read1, read2});
 
   cout << "Program code without optimization..." << endl;
   prg.unoptimized_codegen();
