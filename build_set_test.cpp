@@ -1442,7 +1442,65 @@ void permute_test() {
   generate_hls_code(buf);
 }
 
+struct op {
+
+  void add_load(const std::string& loc) {
+
+  }
+
+  void add_store(const std::string& loc) {
+
+  }
+
+  void add_args(const std::vector<op*>& args) {
+
+  }
+
+};
+
+struct loop {
+
+  op* add_op(const std::string& name) {
+    return new op();
+  }
+};
+
+struct prog {
+
+  op* add_op(const std::string& name) {
+    return new op();
+  }
+
+  loop* add_loop(const std::string& name, const int l, const int u) {
+    return new loop();
+  }
+
+};
+
+void conv_1d_test() {
+  prog prg;
+  auto p = prg.add_loop("p", 0, 10);
+  auto write = p->add_op("write");
+  write->add_store("M[p]");
+
+  auto c = prg.add_loop("c", 0, 10 - 2);
+  auto read0 = c->add_op("read0");
+  read0->add_load("M[c]");
+
+  auto read1 = c->add_op("read1");
+  read1->add_load("M[c + 1]");
+
+  auto read2 = c->add_op("read2");
+  read2->add_load("M[c + 2]");
+
+  auto compute = c->add_op("compute_out");
+  compute->add_args({read0, read1, read2});
+
+}
+
 int main() {
+
+  conv_1d_test();
 
   ubuffer_test();
   test_swizzle_buffer();
