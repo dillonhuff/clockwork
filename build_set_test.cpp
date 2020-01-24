@@ -1444,37 +1444,107 @@ void permute_test() {
 
 struct op {
 
-  void add_load(const std::string& loc) {
+  op* parent;
+  bool is_loop;
+  int start;
+  int end_exclusive;
+  std::string name;
+  std::vector<op*> children;
+  std::set<std::string> produces;
+  std::set<std::string> consumes;
+  isl_ctx* ctx;
 
+  op() : parent(nullptr), is_loop(false) {}
+
+  op* add_loop(const std::string& name, const int l, const int u) {
+    auto lp = new op();
+    lp->ctx = ctx;
+    lp->parent = this ;
+    lp->is_loop = true;
+    lp->start = l;
+    lp->end_exclusive = u;
+    children.push_back(lp);
+
+    return lp;
+  }
+
+  op* add_op(const std::string& name) {
+    auto fo = new op();
+    fo->name = name;
+    fo->ctx = ctx;
+    children.push_back(fo);
+    return fo;
+  }
+
+  void add_load(const std::string& loc) {
+    consumes.insert(loc);
   }
 
   void add_store(const std::string& loc) {
-
+    produces.insert(loc);
   }
 
   void add_args(const std::vector<op*>& args) {
 
   }
 
-};
-
-struct loop {
-
-  op* add_op(const std::string& name) {
-    return new op();
+  void populate_schedules(map<op*, isl_map*>& schedules, const std::vector<string>& sched_coeffs, const std::vector<string>& sched_domains) {
+    if (is_loop) {
+      auto nds = sched_coeffs;
+      nds.push_back(name);
+      for (auto c : children) {
+        c->populate_schedules(schedules, nds, sched_domains);
+      }
+    } else {
+      cout << "Adding schedule for: " << this->name << endl;
+      schedules[this] = isl_map_read_from_str(ctx, string("{ " + name + "[i] -> [0] : 0 <= i < 10 }").c_str());
+      cout << "Done adding..." << endl;
+      for (auto c : children) {
+        c->populate_schedules(schedules, sched_coeffs, sched_domains);
+      }
+    }
   }
+
 };
+
+typedef op loop;
 
 struct prog {
 
-  op* add_op(const std::string& name) {
-    return new op();
+  struct isl_ctx* ctx;
+  op* root;
+
+  prog() {
+    ctx = isl_ctx_alloc();
+    root = new op();
+    root->ctx = ctx;
   }
 
   loop* add_loop(const std::string& name, const int l, const int u) {
-    return new loop();
+    return root->add_loop(name, l, u);
   }
 
+  map<op*, isl_map*> schedules() {
+    map<op*, isl_map*> scheds;
+    vector<string> sched_coeffs{"0"};
+    vector<string> sched_domains;
+    root->populate_schedules(scheds, sched_coeffs, sched_domains);
+    return scheds;
+  }
+
+  umap* unoptimized_schedule() {
+    map<op*, isl_map*> prog_ops = schedules();
+    umap* m = isl_union_map_read_from_str(ctx, "{ }");
+    for (auto o : prog_ops) {
+      m = unn(m, to_umap(o.second));
+    }
+    return m;
+  }
+
+  void unoptimized_codegen() {
+    umap* sched = unoptimized_schedule();
+    cout << codegen_c(sched);
+  }
 };
 
 void conv_1d_test() {
@@ -1496,11 +1566,14 @@ void conv_1d_test() {
   auto compute = c->add_op("compute_out");
   compute->add_args({read0, read1, read2});
 
+  cout << "Program code without optimization..." << endl;
+  prg.unoptimized_codegen();
 }
 
 int main() {
 
   conv_1d_test();
+  assert(false);
 
   ubuffer_test();
   test_swizzle_buffer();
