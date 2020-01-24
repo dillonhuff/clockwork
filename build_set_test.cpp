@@ -1078,7 +1078,10 @@ void generate_hls_code(UBuffer& buf) {
       }
       inpt = *(buf.get_in_ports().begin());
 
-      if (pieces.size() == 1 &&
+      if (pieces.size() == 0) {
+        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << 0 << "()" << ";\n";
+        out << "\treturn value_" + inpt + ";" << endl;
+      } else if (pieces.size() == 1 &&
           isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
         string dx = codegen_c(pieces[0].second);
         out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
@@ -1440,9 +1443,6 @@ void permute_test() {
 }
 
 int main() {
-
-  //permute_test();
-  //assert(false);
 
   ubuffer_test();
   test_swizzle_buffer();

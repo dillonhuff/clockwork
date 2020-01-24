@@ -100,7 +100,7 @@ inline int read1_select(write_cache& write_delay
 inline int read2_select(write_cache& write_delay
 , int i) {
 // Pieces...
-	int value_write = write_delay.peek((0));
+	int value_write = write_delay.peek_0();
 	return value_write;
 }
 
