@@ -1629,6 +1629,28 @@ struct prog {
     return m;
   }
 
+  void optimized_codegen() {
+    umap* naive_sched = unoptimized_schedule();
+    auto before = lex_lt(naive_sched, naive_sched);
+    auto domain =
+      isl_union_set_read_from_str(ctx, "{ }");
+    auto writes =
+      isl_union_map_read_from_str(ctx, "{ }");
+    auto reads =
+      isl_union_map_read_from_str(ctx, "{ }");
+
+    isl_union_map *validity =
+      its(dot(writes, inv(reads)), before);
+    print(ctx, validity);
+    isl_union_map *proximity =
+      cpy(validity);
+
+    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+    auto schedmap = its(isl_schedule_get_map(sched), domain);
+    cout << "Optimized schedule..." << endl;
+    cout << codegen_c(schedmap);
+  }
+
   void unoptimized_codegen() {
     umap* sched = unoptimized_schedule();
     cout << codegen_c(sched);
@@ -1656,6 +1678,9 @@ void conv_1d_test() {
 
   cout << "Program code without optimization..." << endl;
   prg.unoptimized_codegen();
+
+  cout << "Program with optimized schedule..." << endl;
+  prg.optimized_codegen();
 }
 
 int main() {
