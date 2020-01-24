@@ -36,14 +36,14 @@ int main() {
 
   for (int v = 0; v < 62*62; v++) {
     read0.read();
-    read1.read();
-    read2.read();
-    read3.read();
-    read4.read();
-    read5.read();
-    read6.read();
-    read7.read();
-    read8.read();
+    //read1.read();
+    //read2.read();
+    //read3.read();
+    //read4.read();
+    //read5.read();
+    //read6.read();
+    //read7.read();
+    //read8.read();
   }
 
   return 0;
