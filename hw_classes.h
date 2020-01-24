@@ -47,7 +47,6 @@ class fifo {
         addr = rem;
       }
       return vals[addr];
-      //return vals[(write_addr + Depth) % Depth];
     }
 
     void push(const int val) {
