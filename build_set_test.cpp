@@ -63,6 +63,26 @@ class UBuffer {
 
       return s;
     }
+    
+    void add_out_pt(const std::string& name,
+        isl_set* dm,
+        isl_map* access,
+        isl_map* sched) {
+      domain[name] = dm;
+      access_map[name] = access;
+      schedule[name] = sched;
+      isIn[name] = false;
+    }
+
+    void add_in_pt(const std::string& name,
+        isl_set* dm,
+        isl_map* access,
+        isl_map* sched) {
+      domain[name] = dm;
+      access_map[name] = access;
+      schedule[name] = sched;
+      isIn[name] = true;
+    }
 
     void add_out_pt(const std::string& name,
         const std::string& dm,
@@ -1775,7 +1795,12 @@ void conv_1d_test() {
   cout << "---- Generating customized re-use buffers" << endl;
   map<string, UBuffer> buffers;
 
+  auto domains = prg.domains();
+  auto schedules = prg.schedules();
+
+  int usuffix = 0;
   for (auto op : prg.all_ops()) {
+
     for (auto produced : op->produce_locs) {
       string name = produced.first;
 
@@ -1786,6 +1811,15 @@ void conv_1d_test() {
         buffers[name] = buf;
       }
 
+      UBuffer& buf = buffers.at(name);
+      
+      string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
+      isl_map* produced_here =
+        isl_map_read_from_str(buf.ctx, "{}");
+      buf.add_in_pt(pt_name, domains.at(op), produced_here, schedules.at(op));
+
+      usuffix++;
+      // Add in port..."
     }
 
     for (auto consumed : op->consume_locs) {
@@ -1798,19 +1832,29 @@ void conv_1d_test() {
         buffers[name] = buf;
       }
 
+      UBuffer& buf = buffers.at(name);
+
+      string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
+      isl_map* consumed_here =
+        isl_map_read_from_str(buf.ctx, "{}");
+      buf.add_out_pt(pt_name, domains.at(op), consumed_here, schedules.at(op));
+
+      usuffix++;
     }
   }
 
   cout << "# of buffers: " << buffers.size() << endl;
-
-  // For each write with location M add a write???
-  // Q: What is the relationship between ports on the ubuffer and
-  //    statements that load more than one value from the buffer?
-  //
-  // A: I guess each read becomes its own port, but they all have
-  //    the same schedule? 
-  //
-  //    Then in code generation we need to aggregate all of them?
+  for (auto b : buffers) {
+    cout << "--- " << b.second.name << endl;
+    cout << "---- In ports" << endl;
+    for (auto inpt : b.second.get_in_ports()) {
+      cout << "\t" << inpt << endl;
+    }
+    cout << "---- Out ports" << endl;
+    for (auto inpt : b.second.get_out_ports()) {
+      cout << "\t" << inpt << endl;
+    }
+  }
 }
 
 int main() {
