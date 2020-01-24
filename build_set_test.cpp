@@ -803,6 +803,7 @@ void generate_vivado_tcl(UBuffer& buf) {
   of << "csynth_design" << endl;
   of << "export_design -rtl verilog" << endl;
   of << "cosim_design -rtl verilog" << endl;
+  of << "exit" << endl;
   of.close();
 }
 
