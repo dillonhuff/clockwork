@@ -1451,7 +1451,11 @@ struct op {
   std::string name;
   std::vector<op*> children;
   std::set<std::string> produces;
+  std::set<pair<std::string, std::string> > produce_locs;
+
   std::set<std::string> consumes;
+  std::set<pair<std::string, std::string> > consume_locs;
+
   isl_ctx* ctx;
 
   op() : parent(nullptr), is_loop(false) {}
@@ -1477,12 +1481,14 @@ struct op {
     return fo;
   }
 
-  void add_load(const std::string& loc) {
-    consumes.insert(loc);
+  void add_load(const std::string& b, const std::string& loc) {
+    consumes.insert(b + "[" + loc + "]");
+    consume_locs.insert({b, loc});
   }
 
-  void add_store(const std::string& loc) {
-    produces.insert(loc);
+  void add_store(const std::string& b, const std::string& loc) {
+    produces.insert(b + "[" + loc + "]");
+    produce_locs.insert({b, loc});
   }
 
   void add_args(const std::vector<op*>& args) {
@@ -1575,6 +1581,8 @@ struct prog {
     root->start = 0;
     root->end_exclusive = 1;
   }
+
+  set<op*> all_ops() { return root->all_ops(); }
 
   loop* add_loop(const std::string& name, const int l, const int u) {
     return root->add_loop(name, l, u);
@@ -1711,7 +1719,7 @@ struct prog {
     return m;
   }
 
-  void optimized_codegen() {
+  isl_union_map* optimized_codegen() {
     umap* naive_sched = unoptimized_schedule();
     auto before = lex_lt(naive_sched, naive_sched);
     auto domain = whole_iteration_domain();
@@ -1733,6 +1741,7 @@ struct prog {
     auto schedmap = its(isl_schedule_get_map(sched), domain);
     cout << "Optimized schedule..." << endl;
     cout << codegen_c(schedmap);
+    return schedmap;
   }
 
   void unoptimized_codegen() {
@@ -1745,35 +1754,63 @@ void conv_1d_test() {
   prog prg;
   auto p = prg.add_loop("p", 0, 10);
   auto write = p->add_op("write");
-  write->add_store("M[p]");
+  write->add_store("M", "p");
 
   auto c = prg.add_loop("c", 0, 10 - 2);
   auto read0 = c->add_op("read0");
-  read0->add_load("M[c]");
-  read0->add_store("T[c]");
-
-  auto read1 = c->add_op("read1");
-  read1->add_load("M[c + 1]");
-  read1->add_store("T[c + 1]");
-
-  auto read2 = c->add_op("read2");
-  read2->add_load("M[c + 2]");
-  read2->add_store("T[c + 2]");
+  read0->add_load("M", "c");
+  read0->add_load("M", "c + 1");
+  read0->add_load("M", "c + 2");
+  read0->add_store("T", "c");
 
   auto compute = c->add_op("compute_out");
-  compute->add_load("T[c]");
-  compute->add_load("T[c + 1]");
-  compute->add_load("T[c + 2]");
-
-  //compute->add_load("read1[c]");
-  //compute->add_load("read2[c]");
-  //compute->add_args({read0, read1, read2});
+  compute->add_load("T", "c");
 
   cout << "Program code without optimization..." << endl;
   prg.unoptimized_codegen();
 
   cout << "Program with optimized schedule..." << endl;
-  prg.optimized_codegen();
+  umap* opt_sched = prg.optimized_codegen();
+
+  cout << "---- Generating customized re-use buffers" << endl;
+  map<string, UBuffer> buffers;
+
+  for (auto op : prg.all_ops()) {
+    for (auto produced : op->produce_locs) {
+      string name = produced.first;
+
+      if (!contains_key(name, buffers)) {
+        UBuffer buf;
+        buf.name = name;
+        buf.ctx = prg.ctx;
+        buffers[name] = buf;
+      }
+
+    }
+
+    for (auto consumed : op->consume_locs) {
+      string name = consumed.first;
+
+      if (!contains_key(name, buffers)) {
+        UBuffer buf;
+        buf.name = name;
+        buf.ctx = prg.ctx;
+        buffers[name] = buf;
+      }
+
+    }
+  }
+
+  cout << "# of buffers: " << buffers.size() << endl;
+
+  // For each write with location M add a write???
+  // Q: What is the relationship between ports on the ubuffer and
+  //    statements that load more than one value from the buffer?
+  //
+  // A: I guess each read becomes its own port, but they all have
+  //    the same schedule? 
+  //
+  //    Then in code generation we need to aggregate all of them?
 }
 
 int main() {
