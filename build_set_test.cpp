@@ -1496,19 +1496,24 @@ struct op {
       auto nds = active_vecs;
       nds.push_back(to_string(start) + " <= " + name + " < " + to_string(end_exclusive));
       for (auto c : children) {
-        c->populate_schedule_vectors(sched_vecs, nds);
+        c->populate_iteration_domains(sched_vecs, nds);
       }
     } else {
       sched_vecs[this] = active_vecs;
       for (auto c : children) {
-        c->populate_schedule_vectors(sched_vecs, active_vecs);
+        c->populate_iteration_domains(sched_vecs, active_vecs);
       }
     }
   }
 
   void populate_schedule_vectors(map<op*, vector<string> >& sched_vecs, vector<string>& active_vecs) {
+    cout << "Populating schedule for " << name << ", active vecs: " << active_vecs.size() << endl;
     if (is_loop) {
       auto nds = active_vecs;
+      cout << "At loop: " << this->name << endl;
+      assert(nds.size() > 0);
+      //nds.at(nds.size() - 1) = to_string(stoi(nds.at(nds.size() - 1)) + 1);
+
       nds.push_back(name);
       nds.push_back("0");
       for (auto c : children) {
@@ -1540,38 +1545,24 @@ struct op {
 
   // Schedule for op: list of variables (domain), list of restrictions on variables
   void populate_schedules(map<op*, isl_map*>& schedules, const std::vector<string>& sched_coeffs, const std::vector<string>& sched_domains) {
-    map<op*, vector<string> > idoms;
-    vector<string> act;
-    populate_iteration_domains(idoms, act);
-    
-    map<op*, vector<string> > vecs;
-    vector<string> base{"0"};
-    populate_schedule_vectors(vecs, base);
 
-    map<op*, vector<string> > ivars;
-    populate_iter_vars(ivars, act);
-
-    for (auto op : vecs) {
-      cout << "\t" << op.first->name << " has ivec: " << sep_list(op.second, "[", "]", ", ") << endl;
-    }
-
-    if (is_loop) {
-      auto nds = sched_coeffs;
-      nds.push_back(name);
-      nds.push_back("0");
-      auto domains = sched_domains;
-      for (auto c : children) {
-        c->populate_schedules(schedules, nds, sched_domains);
-        nds[nds.size() - 1] = to_string(stoi(nds[nds.size() - 1]) + 1);
-      }
-    } else {
-      cout << "Adding schedule for: " << this->name << endl;
-      schedules[this] = isl_map_read_from_str(ctx, string("{ " + name + "[i] -> [0] : 0 <= i < 10 }").c_str());
-      cout << "Done adding..." << endl;
-      for (auto c : children) {
-        c->populate_schedules(schedules, sched_coeffs, sched_domains);
-      }
-    }
+    //if (is_loop) {
+      //auto nds = sched_coeffs;
+      //nds.push_back(name);
+      //nds.push_back("0");
+      //auto domains = sched_domains;
+      //for (auto c : children) {
+        //c->populate_schedules(schedules, nds, sched_domains);
+        //nds[nds.size() - 1] = to_string(stoi(nds[nds.size() - 1]) + 1);
+      //}
+    //} else {
+      //cout << "Adding schedule for: " << this->name << endl;
+      //schedules[this] = isl_map_read_from_str(ctx, string("{ " + name + "[i] -> [0] : 0 <= i < 10 }").c_str());
+      //cout << "Done adding..." << endl;
+      //for (auto c : children) {
+        //c->populate_schedules(schedules, sched_coeffs, sched_domains);
+      //}
+    //}
   }
 
 };
@@ -1586,7 +1577,11 @@ struct prog {
   prog() {
     ctx = isl_ctx_alloc();
     root = new op();
+    root->name = "root";
     root->ctx = ctx;
+    root->is_loop = true;
+    root->start = 0;
+    root->end_exclusive = 1;
   }
 
   loop* add_loop(const std::string& name, const int l, const int u) {
@@ -1597,7 +1592,31 @@ struct prog {
     map<op*, isl_map*> scheds;
     vector<string> sched_coeffs{"0"};
     vector<string> sched_domains;
-    root->populate_schedules(scheds, sched_coeffs, sched_domains);
+    
+    map<op*, vector<string> > idoms;
+    vector<string> act;
+    root->populate_iteration_domains(idoms, act);
+    
+    map<op*, vector<string> > vecs;
+    vector<string> base{"0"};
+    cout << "Calling populate sched vectors" << endl;
+    root->populate_schedule_vectors(vecs, base);
+
+    map<op*, vector<string> > ivars;
+    root->populate_iter_vars(ivars, act);
+
+    for (auto op : vecs) {
+      auto iters = map_find(op.first, ivars);
+      auto vars = sep_list(iters, "[", "]", ", ");
+
+      auto dom = map_find(op.first, idoms);
+      auto doms = sep_list(dom, "", "", " and ");
+
+      cout << "\t" << op.first->name << vars << " -> " << sep_list(op.second, "[", "]", ", ") << " : " << doms << endl;
+      scheds[op.first] =
+        isl_map_read_from_str(ctx, string("{ " + op.first->name + vars + " -> " + sep_list(op.second, "[", "]", ", ") + " : " + doms + " }").c_str());
+
+    }
     return scheds;
   }
 
