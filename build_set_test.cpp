@@ -789,6 +789,22 @@ string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string
 
   return codegen_c(c);
 }
+void generate_vivado_tcl(UBuffer& buf) {
+  ofstream of(buf.name + "_hls.tcl");
+
+  of << "open_project -reset " << buf.name << "_proj" << endl;
+  of << "set_top " << buf.name << endl;
+  of << "add_files -cflags \"-D__VIVADO_SYNTH__\" " + buf.name + ".cpp" << endl;
+  of << "add_files -cflags \"-D__VIVADO_SYNTH__\" -tb tb_" + buf.name + ".cpp" << endl;
+  of << "open_solution -reset \"solution1\"" << endl;
+  of << "set_part {xc7k160tfbg484-2}" << endl;
+  of << "list_core" << endl;
+  of << "create_clock -period 10" << endl;
+  of << "csynth_design" << endl;
+  of << "export_design -rtl verilog" << endl;
+  of << "cosim_design -rtl verilog" << endl;
+  of.close();
+}
 
 void generate_hls_code(UBuffer& buf) {
 
@@ -1093,6 +1109,7 @@ void generate_hls_code(UBuffer& buf) {
   }
   of << ");" << endl;
 
+  generate_vivado_tcl(buf);
 }
 
 void synth_reduce_test() {
