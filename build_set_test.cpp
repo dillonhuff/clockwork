@@ -607,6 +607,17 @@ std::string codegen_c(isl_set* s) {
   return sep_list(code_holder, "(", ")", " && ");
 }
 
+isl_stat return_piece(isl_set* domain, isl_qpolynomial* val, void* user) {
+  vector<pair<isl_set*, isl_qpolynomial*> >* v = (vector<pair<isl_set*, isl_qpolynomial*> >*) user;
+  v->push_back({domain, val});
+  return isl_stat_ok;
+}
+vector<pair<isl_set*, isl_qpolynomial*> >
+get_pieces(isl_pw_qpolynomial* p) {
+  vector<pair<isl_set*, isl_qpolynomial*> > terms;
+  isl_pw_qpolynomial_foreach_piece(p, return_piece, &terms);
+  return terms;
+}
 
 isl_stat return_term(isl_term* t, void* user) {
   vector<isl_term*>* v = (vector<isl_term*>*) user;
@@ -1056,10 +1067,26 @@ void generate_hls_code(UBuffer& buf) {
 
     // Body of select function
     if (buf.get_in_ports().size() == 1) {
+      auto qpd = compute_dd(buf, outpt, inpt);
+      string delay_expr = codegen_c(qpd);
+      auto pieces = get_pieces(qpd);
+      out << "// Pieces..." << endl;
+      auto out_domain = buf.domain.at(outpt);
+      for (auto p : pieces) {
+        out << "// " << str(p.first) << " -> " << str(p.second) << endl;
+        out << "// \tis always true on iteration domain: " << isl_set_is_subset(cpy(out_domain), cpy(p.first)) << endl;
+      }
       inpt = *(buf.get_in_ports().begin());
-      string delay_expr = evaluate_dd(buf, outpt, inpt);
-      out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
-      out << "\treturn value_" + inpt + ";" << endl;
+
+      if (pieces.size() == 1 &&
+          isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
+        string dx = codegen_c(pieces[0].second);
+        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
+        out << "\treturn value_" + inpt + ";" << endl;
+      } else {
+        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
+        out << "\treturn value_" + inpt + ";" << endl;
+      }
     } else {
       map<string, string> ms = umap_codegen_c(lex_max_events);
       for (auto e : ms) {
@@ -1067,7 +1094,13 @@ void generate_hls_code(UBuffer& buf) {
       }
       for (auto inpt : buf.get_in_ports()) {
         if (contains_key(inpt, ms)) {
-          string delay_expr = evaluate_dd(buf, outpt, inpt);
+          auto qpd = compute_dd(buf, outpt, inpt);
+          auto pieces = get_pieces(qpd);
+          out << "// Pieces..." << endl;
+          for (auto p : pieces) {
+            out << "// " << str(p.first) << " -> " << str(p.second) << endl;
+          }
+          string delay_expr = codegen_c(qpd);
           out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
           out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
         }

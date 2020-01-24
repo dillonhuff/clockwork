@@ -201,20 +201,31 @@ inline void write0_write(InputStream& write0, write0_cache& write0_delay) {
 // Select if: { read_0_0[i, j] -> write0[i' = i, j' = j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_0_0_select(write0_cache& write0_delay
 , int i, int j) {
-	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (130) : 0));
+// Pieces...
+// { read_0_0[i, j] : 0 <= i <= 61 and 0 <= j <= 61 } -> { read_0_0[i, j] -> 130 }
+// 	is always true on iteration domain: 1
+	int value_write0 = write0_delay.peek_130();
 	return value_write0;
 }
 
 // Select if: { read_0_1[i, j] -> write0[i' = i, j' = 1 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_0_1_select(write0_cache& write0_delay
 , int i, int j) {
-	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (129) : 0));
+// Pieces...
+// { read_0_1[i, j] : 0 <= i <= 61 and 0 <= j <= 61 } -> { read_0_1[i, j] -> 129 }
+// 	is always true on iteration domain: 1
+	int value_write0 = write0_delay.peek_129();
 	return value_write0;
 }
 
 // Select if: { read_0_2[i, j] -> write0[i' = i, j' = 2 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_0_2_select(write0_cache& write0_delay
 , int i, int j) {
+// Pieces...
+// { read_0_2[i, j] : 0 <= i <= 61 and 0 <= j <= 60 } -> { read_0_2[i, j] -> 128 }
+// 	is always true on iteration domain: 0
+// { read_0_2[i, j = 61] : 0 <= i <= 61 } -> { read_0_2[i, j] -> (67 + j) }
+// 	is always true on iteration domain: 0
 	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 60 - j >= 0) ? (128) : (-61 + j == 0 && i >= 0 && 61 - i >= 0) ? ((67 + j)) : 0));
 	return value_write0;
 }
@@ -222,20 +233,31 @@ inline int read_0_2_select(write0_cache& write0_delay
 // Select if: { read_1_0[i, j] -> write0[i' = 1 + i, j' = j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_1_0_select(write0_cache& write0_delay
 , int i, int j) {
-	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (66) : 0));
+// Pieces...
+// { read_1_0[i, j] : 0 <= i <= 61 and 0 <= j <= 61 } -> { read_1_0[i, j] -> 66 }
+// 	is always true on iteration domain: 1
+	int value_write0 = write0_delay.peek_66();
 	return value_write0;
 }
 
 // Select if: { read_1_1[i, j] -> write0[i' = 1 + i, j' = 1 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_1_1_select(write0_cache& write0_delay
 , int i, int j) {
-	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (65) : 0));
+// Pieces...
+// { read_1_1[i, j] : 0 <= i <= 61 and 0 <= j <= 61 } -> { read_1_1[i, j] -> 65 }
+// 	is always true on iteration domain: 1
+	int value_write0 = write0_delay.peek_65();
 	return value_write0;
 }
 
 // Select if: { read_1_2[i, j] -> write0[i' = 1 + i, j' = 2 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_1_2_select(write0_cache& write0_delay
 , int i, int j) {
+// Pieces...
+// { read_1_2[i, j] : 0 <= i <= 61 and 0 <= j <= 60 } -> { read_1_2[i, j] -> 64 }
+// 	is always true on iteration domain: 0
+// { read_1_2[i, j = 61] : 0 <= i <= 61 } -> { read_1_2[i, j] -> (3 + j) }
+// 	is always true on iteration domain: 0
 	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 60 - j >= 0) ? (64) : (-61 + j == 0 && i >= 0 && 61 - i >= 0) ? ((3 + j)) : 0));
 	return value_write0;
 }
@@ -243,20 +265,27 @@ inline int read_1_2_select(write0_cache& write0_delay
 // Select if: { read_2_0[i, j] -> write0[i' = 2 + i, j' = j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_2_0_select(write0_cache& write0_delay
 , int i, int j) {
-	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (2) : 0));
+// Pieces...
+// { read_2_0[i, j] : 0 <= i <= 61 and 0 <= j <= 61 } -> { read_2_0[i, j] -> 2 }
+// 	is always true on iteration domain: 1
+	int value_write0 = write0_delay.peek_2();
 	return value_write0;
 }
 
 // Select if: { read_2_1[i, j] -> write0[i' = 2 + i, j' = 1 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_2_1_select(write0_cache& write0_delay
 , int i, int j) {
-	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (1) : 0));
+// Pieces...
+// { read_2_1[i, j] : 0 <= i <= 61 and 0 <= j <= 61 } -> { read_2_1[i, j] -> 1 }
+// 	is always true on iteration domain: 1
+	int value_write0 = write0_delay.peek_1();
 	return value_write0;
 }
 
 // Select if: { read_2_2[i, j] -> write0[i' = 2 + i, j' = 2 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_2_2_select(write0_cache& write0_delay
 , int i, int j) {
+// Pieces...
 	int value_write0 = write0_delay.peek((0));
 	return value_write0;
 }

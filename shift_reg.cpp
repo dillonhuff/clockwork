@@ -79,20 +79,27 @@ inline void write_write(InputStream& write, write_cache& write_delay) {
 // Select if: { read0[i] -> write[i' = i] : 0 <= i <= 7 }
 inline int read0_select(write_cache& write_delay
 , int i) {
-	int value_write = write_delay.peek(((i >= 0 && 7 - i >= 0) ? (2) : 0));
+// Pieces...
+// { read0[i] : 0 <= i <= 7 } -> { read0[i] -> 2 }
+// 	is always true on iteration domain: 1
+	int value_write = write_delay.peek_2();
 	return value_write;
 }
 
 // Select if: { read1[i] -> write[i' = 1 + i] : 0 <= i <= 7 }
 inline int read1_select(write_cache& write_delay
 , int i) {
-	int value_write = write_delay.peek(((i >= 0 && 7 - i >= 0) ? (1) : 0));
+// Pieces...
+// { read1[i] : 0 <= i <= 7 } -> { read1[i] -> 1 }
+// 	is always true on iteration domain: 1
+	int value_write = write_delay.peek_1();
 	return value_write;
 }
 
 // Select if: { read2[i] -> write[i' = 2 + i] : 0 <= i <= 7 }
 inline int read2_select(write_cache& write_delay
 , int i) {
+// Pieces...
 	int value_write = write_delay.peek((0));
 	return value_write;
 }
