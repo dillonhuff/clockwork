@@ -61,6 +61,10 @@ std::string range_name(isl_space* const s) {
   return std::string(isl_id_to_str(isl_space_get_tuple_id(s, isl_dim_out)));
 }
 
+isl_union_set* to_uset(isl_set* const m) {
+  return isl_union_set_from_set(m);
+}
+
 isl_union_map* to_umap(isl_map* const m) {
   return isl_union_map_from_map(m);
 }
@@ -401,6 +405,10 @@ isl_map* lexmax(isl_map* const m0) {
 
 isl_map* inv(isl_map* const m0) {
   return isl_map_reverse(cpy(m0));
+}
+
+isl_union_set* unn(isl_union_set* const m0, isl_union_set* const m1) {
+  return isl_union_set_union(cpy(m0), cpy(m1));
 }
 
 isl_union_map* unn(isl_union_map* const m0, isl_union_map* const m1) {

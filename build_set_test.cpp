@@ -1543,27 +1543,6 @@ struct op {
     }
   }
 
-  // Schedule for op: list of variables (domain), list of restrictions on variables
-  void populate_schedules(map<op*, isl_map*>& schedules, const std::vector<string>& sched_coeffs, const std::vector<string>& sched_domains) {
-
-    //if (is_loop) {
-      //auto nds = sched_coeffs;
-      //nds.push_back(name);
-      //nds.push_back("0");
-      //auto domains = sched_domains;
-      //for (auto c : children) {
-        //c->populate_schedules(schedules, nds, sched_domains);
-        //nds[nds.size() - 1] = to_string(stoi(nds[nds.size() - 1]) + 1);
-      //}
-    //} else {
-      //cout << "Adding schedule for: " << this->name << endl;
-      //schedules[this] = isl_map_read_from_str(ctx, string("{ " + name + "[i] -> [0] : 0 <= i < 10 }").c_str());
-      //cout << "Done adding..." << endl;
-      //for (auto c : children) {
-        //c->populate_schedules(schedules, sched_coeffs, sched_domains);
-      //}
-    //}
-  }
 
 };
 
@@ -1586,6 +1565,41 @@ struct prog {
 
   loop* add_loop(const std::string& name, const int l, const int u) {
     return root->add_loop(name, l, u);
+  }
+
+  isl_union_set* whole_iteration_domain() {
+    map<op*, isl_set*> doms = domains();
+    isl_union_set* whole_d = isl_union_set_read_from_str(ctx, "{ }");
+    for (auto d : doms) {
+      whole_d = unn(whole_d, to_uset(d.second));
+    }
+    return whole_d;
+  }
+
+  map<op*, isl_set*> domains() {
+    vector<string> sched_coeffs{"0"};
+    vector<string> sched_domains;
+    
+    map<op*, vector<string> > idoms;
+    vector<string> act;
+    root->populate_iteration_domains(idoms, act);
+    
+    map<op*, vector<string> > ivars;
+    root->populate_iter_vars(ivars, act);
+
+    map<op*, isl_set*> doms;
+    for (auto op : ivars) {
+      auto iters = map_find(op.first, ivars);
+      auto vars = sep_list(iters, "[", "]", ", ");
+
+      auto dom = map_find(op.first, idoms);
+      auto ds = sep_list(dom, "", "", " and ");
+
+      doms[op.first] =
+        isl_set_read_from_str(ctx, string("{ " + op.first->name + vars + " : " + ds + " }").c_str());
+
+    }
+    return doms;
   }
 
   map<op*, isl_map*> schedules() {
@@ -1629,15 +1643,22 @@ struct prog {
     return m;
   }
 
+  umap* producer_map() {
+    return isl_union_map_read_from_str(ctx, "{}");
+  }
+
+  umap* consumer_map() {
+    return isl_union_map_read_from_str(ctx, "{}");
+  }
+
   void optimized_codegen() {
     umap* naive_sched = unoptimized_schedule();
     auto before = lex_lt(naive_sched, naive_sched);
-    auto domain =
-      isl_union_set_read_from_str(ctx, "{ }");
+    auto domain = whole_iteration_domain();
     auto writes =
-      isl_union_map_read_from_str(ctx, "{ }");
+      its(producer_map(), domain);
     auto reads =
-      isl_union_map_read_from_str(ctx, "{ }");
+      its(consumer_map(), domain);
 
     isl_union_map *validity =
       its(dot(writes, inv(reads)), before);
