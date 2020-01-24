@@ -1456,6 +1456,11 @@ struct op {
 
   op() : parent(nullptr), is_loop(false) {}
 
+  isl_union_map* produced() {
+    umap* m = isl_union_map_read_from_str(ctx, "{}");
+    return m;
+  }
+
   op* add_loop(const std::string& name, const int l, const int u) {
     auto lp = new op();
     lp->name = name;
@@ -1541,6 +1546,16 @@ struct op {
         c->populate_iter_vars(varmap, active_vars);
       }
     }
+  }
+
+  set<op*> all_ops() {
+    set<op*> ops{this};
+    for (auto c : children) {
+      for (auto op : c->all_ops()) {
+        ops.insert(op);
+      }
+    }
+    return ops;
   }
 
 
@@ -1644,7 +1659,12 @@ struct prog {
   }
 
   umap* producer_map() {
-    return isl_union_map_read_from_str(ctx, "{}");
+    auto ops = root->all_ops();
+    auto m = isl_union_map_read_from_str(ctx, "{}");
+    for (auto op : ops) {
+      m = unn(m, op->produced());
+    }
+    return m;
   }
 
   umap* consumer_map() {
