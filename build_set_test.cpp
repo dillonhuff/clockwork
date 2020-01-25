@@ -187,6 +187,16 @@ class UBuffer {
       return isl_map_from_basic_map(m);
     }
 
+    vector<string> get_in_bundles() const {
+      vector<string> outpts;
+      for (auto m : port_bundles) {
+        if (!is_out_pt(pick(m.second))) {
+          outpts.push_back(m.first);
+        }
+      }
+      return outpts;
+    }
+
     vector<string> get_in_ports() const {
       vector<string> outpts;
       for (auto m : isIn) {
@@ -1135,6 +1145,7 @@ void generate_hls_code(UBuffer& buf) {
 
   out << endl << endl;
   for (auto inpt : buf.get_in_ports()) {
+  //for (auto inpt : buf.get_in_bundles()) {
     out << "inline void " << inpt << "_write(" << "InputStream& " << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
     out << "\tint " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);" << endl;
     out << "}" << endl << endl;
