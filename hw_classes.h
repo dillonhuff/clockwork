@@ -119,18 +119,19 @@ class delay_fifo {
     }
 };
 
+template<typename T>
 class HWStream {
   public:
 
 #ifdef __VIVADO_SYNTH__
 
-    hls::stream<int> values;
+    hls::stream<T> values;
 
     void write(const int v) {
       return values.write(v);
     }
 
-    int read() {
+    T read() {
       return values.read();
     }
 
@@ -138,11 +139,11 @@ class HWStream {
 
     deque<int> values;
 
-    void write(const int v) {
+    void write(const T& v) {
       return values.push_front(v);
     }
 
-    int read() {
+    T read() {
       assert(values.size() > 0);
       int b = values.back();
       values.pop_back();
@@ -152,6 +153,6 @@ class HWStream {
 #endif // __VIVADO_SYNTH__
 };
 
-typedef HWStream InputStream;
-typedef HWStream OutputStream;
+typedef HWStream<int> InputStream;
+typedef HWStream<int> OutputStream;
 
