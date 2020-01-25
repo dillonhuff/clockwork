@@ -955,6 +955,106 @@ void generate_vivado_tcl(UBuffer& buf) {
   of.close();
 }
 
+void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer& buf, const int maxdelay) {
+  out << "struct " + inpt + "_cache {" << endl;
+  out << "\t// Capacity: " << maxdelay + 1 << endl;
+  vector<int> read_delays;
+  for (auto outpt : buf.get_out_ports()) {
+    auto qpd = compute_dd_bound(buf, outpt, inpt);
+    read_delays.push_back(qpd);
+
+    out << "\t// DD expr = " << qpd << endl;
+  }
+
+  read_delays = sort_unique(read_delays);
+
+  out << "\t// Peak points" << endl;
+  for (auto dd : read_delays) {
+    out << "\t// DD = " << dd << endl;
+  }
+
+  vector<int> break_points;
+  if (read_delays.size() == 1) {
+    break_points = {read_delays[0], read_delays[0]};
+  } else {
+    for (size_t i = 0; i < read_delays.size(); i++) {
+      break_points.push_back(read_delays[i]);
+      if (i < read_delays.size() - 1 && read_delays[i] != read_delays[i + 1] + 1) {
+        break_points.push_back(read_delays[i] + 1);
+      }
+    }
+  }
+  read_delays = break_points;
+
+  out << "\t// Break points in parition" << endl;
+  for (auto dd : read_delays) {
+    out << "\t// BP = " << dd << endl;
+  }
+
+  vector<string> partitions;
+  vector<int> end_inds;
+  if (read_delays.size() > 0) {
+    for (size_t i = 0; i < read_delays.size(); i++) {
+      int current = read_delays[i];
+      int partition_capacity = -1;
+      if (i < read_delays.size() - 1) {
+        if (read_delays[i] != read_delays[i + 1]) {
+          int next = read_delays[i + 1];
+          partition_capacity = next - current;
+          out << "\t// Parition [" << current << ", " << next << ") capacity = " << partition_capacity << endl;
+          out << "\tfifo<" << partition_capacity << "> f" << i << ";" << endl;
+          partitions.push_back("f" + to_string(i));
+          end_inds.push_back(current + partition_capacity - 1);
+        }
+      } else {
+        partition_capacity = 1;
+        out << "\t// Parition [" << current << ", " << current << "] capacity = " << partition_capacity << endl;
+        out << "\tfifo<" << partition_capacity << "> f" << i << ";" << endl;
+        partitions.push_back("f" + to_string(i));
+        end_inds.push_back(current + partition_capacity - 1);
+      }
+    }
+
+    out << endl << endl;
+    int nind = 0;
+    for (auto p : partitions) {
+      int dv = end_inds[nind];
+      out << "\tinline int peek_" + to_string(dv) + "() {" << endl;
+      out << "\t\treturn " << p << ".back();" << endl;
+      out << "\t}" << endl << endl;
+      nind++;
+    }
+
+    out << endl << endl;
+
+    out << "\tinline int peek(const int offset) {" << endl;
+    nind = 0;
+    for (auto p : partitions) {
+      int dv = end_inds[nind];
+      out << "\t\tif (offset == " << dv << ") {" << endl;
+      out << "\t\t\treturn " << p << ".back();" << endl;
+      out << "\t\t}" << endl;
+      nind++;
+    }
+    out << "\t\tcout << \"Error: Unsupported offset: \" << offset << endl;" << endl;
+    out << "\t\tassert(false);" << endl;
+    out << "\t\treturn 0;\n" << endl;
+    out << "\t}" << endl << endl;
+
+    out << "\tinline void push(const int value) {" << endl;
+    if (partitions.size() > 0) {
+      for (size_t i = partitions.size() - 1; i >= 1; i--) {
+        auto current = partitions[i];
+        auto prior = partitions[i - 1];
+        out << "\t\t" << current << ".push(" << prior << ".back());" << endl;
+      }
+      out << "\t\t" << partitions[0] << ".push(value);" << endl;
+    }
+    out << "\t}" << endl << endl;
+  }
+  out << "};" << endl << endl;
+}
+
 void generate_hls_code(UBuffer& buf) {
 
   string inpt = buf.get_in_port();
@@ -963,35 +1063,12 @@ void generate_hls_code(UBuffer& buf) {
 
   int maxdelay = 0;
   for (auto outpt : buf.get_out_ports()) {
-    cout << "Computing dd for " << outpt << " to " << inpt << endl;
-    auto qpd = compute_dd(buf, outpt, inpt);
-    assert(qpd != nullptr);
-
-    cout << "Computed dd for " << outpt << " to " << inpt << " = " << str(qpd) << endl;
-    int tight;
-    int* b = &tight;
-    auto bound = isl_union_pw_qpolynomial_bound(qpd, isl_fold_max, b);
-    auto folds  = get_polynomial_folds(bound);
-    int bint;
-    if (folds.size() == 0) {
-      bint = 0;
-    } else {
-      assert(folds.size() == 1);
-      bint = stoi(codegen_c(folds[0]));
-    }
-    if (bint > maxdelay) {
-      maxdelay = bint;
-    }
-  }
-
-  cout << "Creating res map" << endl;
-
-  for (auto outpt : buf.get_out_ports()) {
     int r0 = compute_dd_bound(buf, outpt, inpt);
     if (r0 > maxdelay) {
       maxdelay = r0;
     }
   }
+
   isl_union_map* res = buf.global_schedule();
   cout << "Map to schedule.." << endl;
   print(buf.ctx, res);
@@ -1024,103 +1101,7 @@ void generate_hls_code(UBuffer& buf) {
 
   out << "#include \"hw_classes.h\"" << endl << endl;
   for (auto inpt : buf.get_in_ports()) {
-    out << "struct " + inpt + "_cache {" << endl;
-    out << "\t// Capacity: " << maxdelay + 1 << endl;
-    vector<int> read_delays;
-    for (auto outpt : buf.get_out_ports()) {
-      auto qpd = compute_dd_bound(buf, outpt, inpt);
-      read_delays.push_back(qpd);
-
-      out << "\t// DD expr = " << qpd << endl;
-    }
-
-    read_delays = sort_unique(read_delays);
-
-    out << "\t// Peak points" << endl;
-    for (auto dd : read_delays) {
-      out << "\t// DD = " << dd << endl;
-    }
-
-    vector<int> break_points;
-    if (read_delays.size() == 1) {
-      break_points = {read_delays[0], read_delays[0]};
-    } else {
-      for (size_t i = 0; i < read_delays.size(); i++) {
-        break_points.push_back(read_delays[i]);
-        if (i < read_delays.size() - 1 && read_delays[i] != read_delays[i + 1] + 1) {
-          break_points.push_back(read_delays[i] + 1);
-        }
-      }
-    }
-    read_delays = break_points;
-
-    out << "\t// Break points in parition" << endl;
-    for (auto dd : read_delays) {
-      out << "\t// BP = " << dd << endl;
-    }
-
-    vector<string> partitions;
-    vector<int> end_inds;
-    if (read_delays.size() > 0) {
-      for (size_t i = 0; i < read_delays.size(); i++) {
-        int current = read_delays[i];
-        int partition_capacity = -1;
-        if (i < read_delays.size() - 1) {
-          if (read_delays[i] != read_delays[i + 1]) {
-            int next = read_delays[i + 1];
-            partition_capacity = next - current;
-            out << "\t// Parition [" << current << ", " << next << ") capacity = " << partition_capacity << endl;
-            out << "\tfifo<" << partition_capacity << "> f" << i << ";" << endl;
-            partitions.push_back("f" + to_string(i));
-            end_inds.push_back(current + partition_capacity - 1);
-          }
-        } else {
-          partition_capacity = 1;
-          out << "\t// Parition [" << current << ", " << current << "] capacity = " << partition_capacity << endl;
-          out << "\tfifo<" << partition_capacity << "> f" << i << ";" << endl;
-          partitions.push_back("f" + to_string(i));
-          end_inds.push_back(current + partition_capacity - 1);
-        }
-      }
-
-      out << endl << endl;
-      int nind = 0;
-      for (auto p : partitions) {
-        int dv = end_inds[nind];
-        out << "\tinline int peek_" + to_string(dv) + "() {" << endl;
-        out << "\t\treturn " << p << ".back();" << endl;
-        out << "\t}" << endl << endl;
-        nind++;
-      }
-
-      out << endl << endl;
-
-      out << "\tinline int peek(const int offset) {" << endl;
-      nind = 0;
-      for (auto p : partitions) {
-        int dv = end_inds[nind];
-        out << "\t\tif (offset == " << dv << ") {" << endl;
-        out << "\t\t\treturn " << p << ".back();" << endl;
-        out << "\t\t}" << endl;
-        nind++;
-      }
-      out << "\t\tcout << \"Error: Unsupported offset: \" << offset << endl;" << endl;
-      out << "\t\tassert(false);" << endl;
-      out << "\t\treturn 0;\n" << endl;
-      out << "\t}" << endl << endl;
-
-      out << "\tinline void push(const int value) {" << endl;
-      if (partitions.size() > 0) {
-        for (size_t i = partitions.size() - 1; i >= 1; i--) {
-          auto current = partitions[i];
-          auto prior = partitions[i - 1];
-          out << "\t\t" << current << ".push(" << prior << ".back());" << endl;
-        }
-        out << "\t\t" << partitions[0] << ".push(value);" << endl;
-      }
-      out << "\t}" << endl << endl;
-    }
-    out << "};" << endl << endl;
+    generate_memory_struct(out, inpt, buf, maxdelay);
   }
 
   out << endl << endl;
