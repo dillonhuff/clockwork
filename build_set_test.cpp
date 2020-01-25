@@ -637,6 +637,7 @@ isl_stat return_piece(isl_set* domain, isl_qpolynomial* val, void* user) {
   v->push_back({domain, val});
   return isl_stat_ok;
 }
+
 vector<pair<isl_set*, isl_qpolynomial*> >
 get_pieces(isl_pw_qpolynomial* p) {
   vector<pair<isl_set*, isl_qpolynomial*> > terms;
@@ -644,6 +645,22 @@ get_pieces(isl_pw_qpolynomial* p) {
   return terms;
 }
 
+isl_stat return_pieces(isl_pw_qpolynomial* qp, void* user) {
+  vector<pair<isl_set*, isl_qpolynomial*> >* v = (vector<pair<isl_set*, isl_qpolynomial*> >*) user;
+  auto pieces = get_pieces(qp);
+  for (auto p : pieces) {
+    v->push_back(p);
+  }
+
+  return isl_stat_ok;
+}
+
+vector<pair<isl_set*, isl_qpolynomial*> >
+get_pieces(isl_union_pw_qpolynomial* p) {
+  vector<pair<isl_set*, isl_qpolynomial*> > terms;
+  isl_union_pw_qpolynomial_foreach_pw_qpolynomial(p, return_pieces, &terms);
+  return terms;
+}
 isl_stat return_term(isl_term* t, void* user) {
   vector<isl_term*>* v = (vector<isl_term*>*) user;
   v->push_back(t);
@@ -892,7 +909,7 @@ void generate_hls_code(UBuffer& buf) {
     cout << "Computed dd for " << outpt << " to " << inpt << " = " << str(qpd) << endl;
     int tight;
     int* b = &tight;
-    auto bound = isl_pw_qpolynomial_bound(qpd, isl_fold_max, b);
+    auto bound = isl_union_pw_qpolynomial_bound(qpd, isl_fold_max, b);
     int bint = stoi(codegen_c(bound));
     if (bint > maxdelay) {
       maxdelay = bint;

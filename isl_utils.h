@@ -248,6 +248,18 @@ std::string codegen_c(isl_pw_qpolynomial_fold* const bset) {
   return r;
 }
 
+std::string str(isl_union_pw_qpolynomial_fold* const bset) {
+  auto context = ctx(bset);
+  isl_printer *p;
+  p = isl_printer_to_str(context);
+  p = isl_printer_print_union_pw_qpolynomial_fold(p, cpy(bset));
+
+  char* rs = isl_printer_get_str(p);
+  std::string r(rs);
+  isl_printer_free(p);
+  free(rs);
+  return r;
+}
 std::string str(isl_pw_qpolynomial_fold* const bset) {
   auto context = ctx(bset);
   isl_printer *p;
