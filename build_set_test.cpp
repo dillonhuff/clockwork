@@ -69,6 +69,26 @@ class UBuffer {
     void add_out_pt(const std::string& name,
         isl_set* dm,
         isl_map* access,
+        isl_union_map* sched) {
+      domain[name] = dm;
+      access_map[name] = access;
+      schedule[name] = (sched);
+      isIn[name] = false;
+    }
+
+    void add_in_pt(const std::string& name,
+        isl_set* dm,
+        isl_map* access,
+        isl_union_map* sched) {
+      domain[name] = dm;
+      access_map[name] = access;
+      schedule[name] = (sched);
+      isIn[name] = true;
+    }
+    
+    void add_out_pt(const std::string& name,
+        isl_set* dm,
+        isl_map* access,
         isl_map* sched) {
       domain[name] = dm;
       access_map[name] = access;
@@ -1930,7 +1950,7 @@ void conv_1d_test() {
   map<string, UBuffer> buffers;
 
   auto domains = prg.domains();
-  auto schedules = prg.schedules();
+  //auto schedules = prg.schedules();
 
   int usuffix = 0;
 
@@ -1953,13 +1973,14 @@ void conv_1d_test() {
       string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
 
       assert(contains_key(op, domains));
-      assert(contains_key(op, schedules));
+      //assert(contains_key(op, schedules));
 
       // Map from??
       isl_map* produced_here =
         its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + produced.second + "]" + " }").c_str()), cpy(domains.at(op)));
 
-      buf.add_in_pt(pt_name, domains.at(op), produced_here, schedules.at(op));
+      //buf.add_in_pt(pt_name, domains.at(op), produced_here, schedules.at(op));
+      buf.add_in_pt(pt_name, domains.at(op), produced_here, its(opt_sched, domains.at(op)));
 
       usuffix++;
       // Add in port..."
@@ -1983,9 +2004,10 @@ void conv_1d_test() {
         its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + consumed.second + "]" + " }").c_str()), cpy(domains.at(op)));
 
       assert(contains_key(op, domains));
-      assert(contains_key(op, schedules));
+      //assert(contains_key(op, schedules));
 
-      buf.add_out_pt(pt_name, domains.at(op), consumed_here, schedules.at(op));
+      //buf.add_out_pt(pt_name, domains.at(op), consumed_here, schedules.at(op));
+      buf.add_out_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
 
       usuffix++;
     }
@@ -2018,7 +2040,6 @@ void conv_1d_test() {
 int main() {
 
   conv_1d_test();
-  //assert(false);
 
   //ubuffer_test();
   test_swizzle_buffer();
