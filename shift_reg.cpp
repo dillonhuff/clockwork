@@ -2,18 +2,9 @@
 
 struct write_cache {
 	// Capacity: 3
-	// DD expr = { read0[i] -> 2 : 0 <= i <= 7 }
-	// Bound       = { max(2) }
-	// Bound  as C = 2
-	// DD from read0 = (i >= 0 && 7 - i >= 0) ? (2) : 0
-	// DD expr = { read1[i] -> 1 : 0 <= i <= 7 }
-	// Bound       = { max(1) }
-	// Bound  as C = 1
-	// DD from read1 = (i >= 0 && 7 - i >= 0) ? (1) : 0
-	// DD expr = { read2[i] -> 0 }
-	// Bound       = { 0 }
-	// Bound  as C = 0
-	// DD from read2 = 0
+	// DD expr = 2
+	// DD expr = 1
+	// DD expr = 0
 	// Peak points
 	// DD = 0
 	// DD = 1

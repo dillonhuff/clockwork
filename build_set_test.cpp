@@ -645,6 +645,20 @@ get_pieces(isl_pw_qpolynomial* p) {
   return terms;
 }
 
+isl_stat get_pw_qpolynomial_fold(isl_pw_qpolynomial_fold* qp, void* user) {
+  vector<isl_pw_qpolynomial_fold*>* v = (vector<isl_pw_qpolynomial_fold*>*) user;
+  v->push_back(qp);
+
+  return isl_stat_ok;
+}
+
+isl_stat get_pw_qpolynomial(isl_pw_qpolynomial* qp, void* user) {
+  vector<isl_pw_qpolynomial*>* v = (vector<isl_pw_qpolynomial*>*) user;
+  v->push_back(qp);
+
+  return isl_stat_ok;
+}
+
 isl_stat return_pieces(isl_pw_qpolynomial* qp, void* user) {
   vector<pair<isl_set*, isl_qpolynomial*> >* v = (vector<pair<isl_set*, isl_qpolynomial*> >*) user;
   auto pieces = get_pieces(qp);
@@ -661,6 +675,21 @@ get_pieces(isl_union_pw_qpolynomial* p) {
   isl_union_pw_qpolynomial_foreach_pw_qpolynomial(p, return_pieces, &terms);
   return terms;
 }
+
+vector<isl_pw_qpolynomial_fold*>
+get_polynomial_folds(isl_union_pw_qpolynomial_fold* p) {
+  vector<isl_pw_qpolynomial_fold*> terms;
+  isl_union_pw_qpolynomial_fold_foreach_pw_qpolynomial_fold(p, get_pw_qpolynomial_fold, &terms);
+  return terms;
+}
+
+vector<isl_pw_qpolynomial*>
+get_polynomials(isl_union_pw_qpolynomial* p) {
+  vector<isl_pw_qpolynomial*> terms;
+  isl_union_pw_qpolynomial_foreach_pw_qpolynomial(p, get_pw_qpolynomial, &terms);
+  return terms;
+}
+
 isl_stat return_term(isl_term* t, void* user) {
   vector<isl_term*>* v = (vector<isl_term*>*) user;
   v->push_back(t);
@@ -857,13 +886,33 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
   return c;
 }
 
+int compute_dd_bound(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
+  auto c = compute_dd(buf, read_port, write_port);
+  int tight;
+  int* b = &tight;
+  auto bound = isl_union_pw_qpolynomial_bound(c, isl_fold_max, b);
+  auto folds  = get_polynomial_folds(bound);
+  int bint;
+  if (folds.size() == 0) {
+    bint = 0;
+  } else {
+    assert(folds.size() == 1);
+    bint = stoi(codegen_c(folds[0]));
+  }
+  return bint;
+}
+
 string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
   auto c = compute_dd(buf, read_port, write_port);
-  //cout << "DD between: " << read_port << " and " << write_port << endl;
-  //print(ctx, c);
 
-  return codegen_c(c);
+  cout << "Computed dd" << endl;
+  auto folds  = get_polynomials(c);
+  if (folds.size() == 1) {
+    return codegen_c(folds[0]);
+  }
+  return "0";
 }
+
 void generate_vivado_tcl(UBuffer& buf) {
   ofstream of(buf.name + "_hls.tcl");
 
@@ -910,7 +959,14 @@ void generate_hls_code(UBuffer& buf) {
     int tight;
     int* b = &tight;
     auto bound = isl_union_pw_qpolynomial_bound(qpd, isl_fold_max, b);
-    int bint = stoi(codegen_c(bound));
+    auto folds  = get_polynomial_folds(bound);
+    int bint;
+    if (folds.size() == 0) {
+      bint = 0;
+    } else {
+      assert(folds.size() == 1);
+      bint = stoi(codegen_c(folds[0]));
+    }
     if (bint > maxdelay) {
       maxdelay = bint;
     }
@@ -920,9 +976,10 @@ void generate_hls_code(UBuffer& buf) {
 
   for (auto outpt : buf.get_out_ports()) {
     //int r0 = check_value_dd(buf, outpt, inpt);
-    //if (r0 > maxdelay) {
-      //maxdelay = r0;
-    //}
+    int r0 = compute_dd_bound(buf, outpt, inpt);
+    if (r0 > maxdelay) {
+      maxdelay = r0;
+    }
     //wmap =
       //unn(wmap,
           //isl_union_map_from_map(cpy(buf.schedule.at(outpt))));
@@ -966,18 +1023,20 @@ void generate_hls_code(UBuffer& buf) {
     out << "\t// Capacity: " << maxdelay + 1 << endl;
     vector<int> read_delays;
     for (auto outpt : buf.get_out_ports()) {
-      auto qpd = compute_dd(buf, outpt, inpt);
-      out << "\t// DD expr = " << str(qpd) << endl;
-      int tight;
-      int* b = &tight;
-      auto bound = isl_union_pw_qpolynomial_bound(qpd, isl_fold_max, b);
-      out << "\t// Bound       = " << str(bound) << endl;
-      out << "\t// Bound  as C = " << codegen_c(bound) << endl;
-      auto qp = evaluate_dd(buf, outpt, inpt);
-      out << "\t// DD from " << outpt << " = " << qp << endl;
-      //auto dd = check_value_dd(buf, outpt, inpt);
-      //read_delays.push_back(dd);
-      read_delays.push_back(stoi(codegen_c(bound)));
+      auto qpd = compute_dd_bound(buf, outpt, inpt);
+      read_delays.push_back(qpd);
+
+      out << "\t// DD expr = " << qpd << endl;
+      //str(qpd) << endl;
+      //int tight;
+      //int* b = &tight;
+      //auto bound = isl_union_pw_qpolynomial_bound(qpd, isl_fold_max, b);
+      //out << "\t// Bound       = " << str(bound) << endl;
+      ////out << "\t// Bound  as C = " << codegen_c(bound) << endl;
+      //auto folds  = get_polynomial_folds(bound);
+      //assert(folds.size() == 1);
+      //int bint = stoi(codegen_c(folds[0]));
+      //read_delays.push_back(bint);
     }
 
     read_delays = sort_unique(read_delays);
@@ -1071,7 +1130,6 @@ void generate_hls_code(UBuffer& buf) {
 
   out << endl << endl;
   for (auto inpt : buf.get_in_ports()) {
-    //out << "inline void " << inpt << "_write(" << "InputStream& " << inpt << ", " << "delay_sr<" << maxdelay + 1 << ">& " << inpt << "_delay) {" << endl;
     out << "inline void " << inpt << "_write(" << "InputStream& " << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
     out << "\tint " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);" << endl;
     out << "}" << endl << endl;
@@ -1085,14 +1143,9 @@ void generate_hls_code(UBuffer& buf) {
         src_map =
           ((its(dot(buf.access_map.at(outpt),
                     inv(buf.access_map.at(inpt))), beforeAcc)));
-        //src_map =
-          //to_umap((its(dot(buf.access_map.at(outpt),
-                    //inv(buf.access_map.at(inpt))), beforeAcc)));
       } else {
         src_map =
           unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
-        //src_map =
-          //unn(src_map, to_umap((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
       }
     }
 
@@ -1150,8 +1203,11 @@ void generate_hls_code(UBuffer& buf) {
 
     // Body of select function
     if (buf.get_in_ports().size() == 1) {
+      string delay_expr = evaluate_dd(buf, outpt, inpt);
       auto qpd = compute_dd(buf, outpt, inpt);
-      string delay_expr = codegen_c(qpd);
+      //auto fold = get_polynomials(qpd);
+      //assert(fold.size() == 1);
+      //string delay_expr = codegen_c(fold[0]);
       auto pieces = get_pieces(qpd);
       out << "// Pieces..." << endl;
       auto out_domain = buf.domain.at(outpt);
@@ -1180,13 +1236,16 @@ void generate_hls_code(UBuffer& buf) {
       }
       for (auto inpt : buf.get_in_ports()) {
         if (contains_key(inpt, ms)) {
-          auto qpd = compute_dd(buf, outpt, inpt);
-          auto pieces = get_pieces(qpd);
-          out << "// Pieces..." << endl;
-          for (auto p : pieces) {
-            out << "// " << str(p.first) << " -> " << str(p.second) << endl;
-          }
-          string delay_expr = codegen_c(qpd);
+          string delay_expr = evaluate_dd(buf, outpt, inpt);
+          //auto qpd = compute_dd(buf, outpt, inpt);
+          //auto fold = get_polynomials(qpd);
+          //assert(fold.size() == 1);
+          //auto pieces = get_pieces(qpd);
+          //out << "// Pieces..." << endl;
+          //for (auto p : pieces) {
+            //out << "// " << str(p.first) << " -> " << str(p.second) << endl;
+          //}
+          //string delay_expr = codegen_c(fold[0]);
           out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
           out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
         }
@@ -1473,7 +1532,8 @@ void synth_lb_test() {
           "{ " + rn + "[i, j] -> [i + 2, j + 2, 1] : 0 <= i < 62 and 0 <= j < 62 }"
           );
 
-      int r0 = check_value_dd(buf, rn, "write0");
+      //int r0 = check_value_dd(buf, rn, "write0");
+      int r0 = compute_dd_bound(buf, rn, "write0");
       cout << "Delay (" << c << ", " << r << "): " << r0 << endl;
     }
   }

@@ -2,42 +2,15 @@
 
 struct write0_cache {
 	// Capacity: 131
-	// DD expr = { read_0_0[i, j] -> 130 : 0 <= i <= 61 and 0 <= j <= 61 }
-	// Bound       = { max(130) }
-	// Bound  as C = 130
-	// DD from read_0_0 = (i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (130) : 0
-	// DD expr = { read_0_1[i, j] -> 129 : 0 <= i <= 61 and 0 <= j <= 61 }
-	// Bound       = { max(129) }
-	// Bound  as C = 129
-	// DD from read_0_1 = (i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (129) : 0
-	// DD expr = { read_0_2[i, j] -> 128 : 0 <= i <= 61 and 0 <= j <= 60; read_0_2[i, j] -> (67 + j) : j = 61 and 0 <= i <= 61 }
-	// Bound       = { max(128) }
-	// Bound  as C = 128
-	// DD from read_0_2 = (i >= 0 && 61 - i >= 0 && j >= 0 && 60 - j >= 0) ? (128) : (-61 + j == 0 && i >= 0 && 61 - i >= 0) ? ((67 + j)) : 0
-	// DD expr = { read_1_0[i, j] -> 66 : 0 <= i <= 61 and 0 <= j <= 61 }
-	// Bound       = { max(66) }
-	// Bound  as C = 66
-	// DD from read_1_0 = (i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (66) : 0
-	// DD expr = { read_1_1[i, j] -> 65 : 0 <= i <= 61 and 0 <= j <= 61 }
-	// Bound       = { max(65) }
-	// Bound  as C = 65
-	// DD from read_1_1 = (i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (65) : 0
-	// DD expr = { read_1_2[i, j] -> 64 : 0 <= i <= 61 and 0 <= j <= 60; read_1_2[i, j] -> (3 + j) : j = 61 and 0 <= i <= 61 }
-	// Bound       = { max(64) }
-	// Bound  as C = 64
-	// DD from read_1_2 = (i >= 0 && 61 - i >= 0 && j >= 0 && 60 - j >= 0) ? (64) : (-61 + j == 0 && i >= 0 && 61 - i >= 0) ? ((3 + j)) : 0
-	// DD expr = { read_2_0[i, j] -> 2 : 0 <= i <= 61 and 0 <= j <= 61 }
-	// Bound       = { max(2) }
-	// Bound  as C = 2
-	// DD from read_2_0 = (i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (2) : 0
-	// DD expr = { read_2_1[i, j] -> 1 : 0 <= i <= 61 and 0 <= j <= 61 }
-	// Bound       = { max(1) }
-	// Bound  as C = 1
-	// DD from read_2_1 = (i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (1) : 0
-	// DD expr = { read_2_2[i, j] -> 0 }
-	// Bound       = { 0 }
-	// Bound  as C = 0
-	// DD from read_2_2 = 0
+	// DD expr = 130
+	// DD expr = 129
+	// DD expr = 128
+	// DD expr = 66
+	// DD expr = 65
+	// DD expr = 64
+	// DD expr = 2
+	// DD expr = 1
+	// DD expr = 0
 	// Peak points
 	// DD = 0
 	// DD = 1
