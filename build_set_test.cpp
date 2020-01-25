@@ -510,7 +510,7 @@ int check_value_dd(UBuffer& buf, const std::string& read_port, const std::string
 
   //cout << "Cardinality after simpification..." << endl;
   //print(ctx, isl_pw_qpolynomial_fold_coalesce(cpy(c)));
-  auto s = isl_union_pw_qpolynomial_n_piece(c);
+  //auto s = isl_pw_qpolynomial_n_piece(c);
   //cout << "s = " << s << endl;
 
   //assert(s <= 1);
@@ -701,6 +701,21 @@ isl_stat codegen_value(isl_set* domain, isl_qpolynomial* qp, void* user) {
   return isl_stat_ok;
 }
 
+std::string codegen_c(isl_union_pw_qpolynomial* pqp) {
+
+  auto ct = ctx(pqp);
+  isl_printer *p;
+  p = isl_printer_to_str(ct);
+  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
+  p = isl_printer_print_union_pw_qpolynomial(p, cpy(pqp));
+
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  string r(rs);
+  free(rs);
+  return r;
+}
+
 std::string codegen_c(isl_pw_qpolynomial* pqp) {
 
   auto ctx = isl_pw_qpolynomial_get_ctx(pqp);
@@ -770,9 +785,9 @@ map<string, string> umap_codegen_c(umap* const um) {
   return cm;
 }
 
-isl_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
+isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
   auto ctx = buf.ctx;
-  isl_map* sched = buf.schedule.at(write_port);
+  isl_union_map* sched = buf.schedule.at(write_port);
   assert(sched != nullptr);
   
   auto WritesAfterWrite = lex_lt(sched, sched);
@@ -891,9 +906,12 @@ void generate_hls_code(UBuffer& buf) {
     //if (r0 > maxdelay) {
       //maxdelay = r0;
     //}
+    //wmap =
+      //unn(wmap,
+          //isl_union_map_from_map(cpy(buf.schedule.at(outpt))));
     wmap =
       unn(wmap,
-          isl_union_map_from_map(cpy(buf.schedule.at(outpt))));
+          (cpy(buf.schedule.at(outpt))));
   }
   isl_union_map* res = wmap;
   cout << "Map to schedule.." << endl;
@@ -935,7 +953,7 @@ void generate_hls_code(UBuffer& buf) {
       out << "\t// DD expr = " << str(qpd) << endl;
       int tight;
       int* b = &tight;
-      auto bound = isl_pw_qpolynomial_bound(qpd, isl_fold_max, b);
+      auto bound = isl_union_pw_qpolynomial_bound(qpd, isl_fold_max, b);
       out << "\t// Bound       = " << str(bound) << endl;
       out << "\t// Bound  as C = " << codegen_c(bound) << endl;
       auto qp = evaluate_dd(buf, outpt, inpt);
@@ -1048,11 +1066,16 @@ void generate_hls_code(UBuffer& buf) {
       auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
       if (src_map == nullptr) {
         src_map =
-          to_umap((its(dot(buf.access_map.at(outpt),
+          ((its(dot(buf.access_map.at(outpt),
                     inv(buf.access_map.at(inpt))), beforeAcc)));
+        //src_map =
+          //to_umap((its(dot(buf.access_map.at(outpt),
+                    //inv(buf.access_map.at(inpt))), beforeAcc)));
       } else {
         src_map =
-          unn(src_map, to_umap((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
+          unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
+        //src_map =
+          //unn(src_map, to_umap((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
       }
     }
 
@@ -1369,7 +1392,7 @@ void synth_wire_test() {
   buf.access_map["write"] =
     isl_map_read_from_str(ctx, "{ write[i] -> M[i] : 0 <= i < 10 }");
   buf.schedule["write"] =
-    isl_map_read_from_str(ctx, "{ write[i] -> [i, 0] : 0 <= i < 10 }");
+    isl_union_map_read_from_str(ctx, "{ write[i] -> [i, 0] : 0 <= i < 10 }");
   buf.isIn["write"] = true;
 
   // Read 0 through 7
@@ -1378,7 +1401,7 @@ void synth_wire_test() {
   buf.access_map["read0"] =
     isl_map_read_from_str(ctx, "{ read0[i] -> M[i] : 0 <= i < 8 }");
   buf.schedule["read0"] =
-    isl_map_read_from_str(ctx, "{ read0[i] -> [i + 2, 1] : 0 <= i < 8 }");
+    isl_union_map_read_from_str(ctx, "{ read0[i] -> [i + 2, 1] : 0 <= i < 8 }");
   buf.isIn["read0"] = false;
 
   // Read 1 through 8
@@ -1387,7 +1410,7 @@ void synth_wire_test() {
   buf.access_map["read1"] =
     isl_map_read_from_str(ctx, "{ read1[i] -> M[i + 1] : 0 <= i < 8 }");
   buf.schedule["read1"] =
-    isl_map_read_from_str(ctx, "{ read1[i] -> [i + 2, 1] : 0 <= i < 8 }");
+    isl_union_map_read_from_str(ctx, "{ read1[i] -> [i + 2, 1] : 0 <= i < 8 }");
   buf.isIn["read1"] = false;
 
   // Read 2 through 9
@@ -1396,7 +1419,7 @@ void synth_wire_test() {
   buf.access_map["read2"] =
     isl_map_read_from_str(ctx, "{ read2[i] -> M[i + 2] : 0 <= i < 8 }");
   buf.schedule["read2"] =
-    isl_map_read_from_str(ctx, "{ read2[i] -> [i + 2, 1] : 0 <= i < 8 }");
+    isl_union_map_read_from_str(ctx, "{ read2[i] -> [i + 2, 1] : 0 <= i < 8 }");
   buf.isIn["read2"] = false;
   
   generate_hls_code(buf);
