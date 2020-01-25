@@ -39,7 +39,8 @@ class UBuffer {
     std::map<string, bool> isIn;
     std::map<string, isl_set*> domain;
     std::map<string, isl_map*> access_map;
-    std::map<string, isl_map*> schedule;
+    //std::map<string, isl_map*> schedule;
+    std::map<string, isl_union_map*> schedule;
 
     std::map<string, int> varInds;
 
@@ -58,7 +59,8 @@ class UBuffer {
     isl_union_map* global_schedule() {
       umap* s = isl_union_map_read_from_str(ctx, "{ }");
       for (auto other : schedule) {
-        s = unn(s, isl_union_map_from_map(cpy(other.second)));
+        //s = unn(s, isl_union_map_from_map(cpy(other.second)));
+        s = unn(s, (cpy(other.second)));
       }
 
       return s;
@@ -70,7 +72,7 @@ class UBuffer {
         isl_map* sched) {
       domain[name] = dm;
       access_map[name] = access;
-      schedule[name] = sched;
+      schedule[name] = to_umap(sched);
       isIn[name] = false;
     }
 
@@ -80,7 +82,7 @@ class UBuffer {
         isl_map* sched) {
       domain[name] = dm;
       access_map[name] = access;
-      schedule[name] = sched;
+      schedule[name] = to_umap(sched);
       isIn[name] = true;
     }
 
@@ -109,7 +111,7 @@ class UBuffer {
       access_map[name] =
         isl_map_read_from_str(ctx, access.c_str());
       schedule[name] =
-        isl_map_read_from_str(ctx, sched.c_str());
+        isl_union_map_read_from_str(ctx, sched.c_str());
     }
 
     isl_basic_set* build_domain(const std::vector<int>& ranges) {
@@ -361,105 +363,105 @@ void basic_space_tests() {
   isl_ctx_free(ctx);
 }
 
-void ubuffer_test() {
-  struct isl_ctx *ctx;
+//void ubuffer_test() {
+  //struct isl_ctx *ctx;
 
-  ctx = isl_ctx_alloc();
+  //ctx = isl_ctx_alloc();
 
-  UBuffer buf;
-  buf.ctx = ctx;
-  buf.space = isl_space_set_alloc(ctx, 0, 1);
-  buf.map_space = isl_space_alloc(ctx, 0, 1, 1);
+  //UBuffer buf;
+  //buf.ctx = ctx;
+  //buf.space = isl_space_set_alloc(ctx, 0, 1);
+  //buf.map_space = isl_space_alloc(ctx, 0, 1, 1);
 
-  buf.isIn["in"] = true;
-  buf.domain["in"] = isl_set_from_basic_set(buf.build_domain({0, 7}));
-  buf.schedule["in"] = buf.build_map(0);
+  //buf.isIn["in"] = true;
+  //buf.domain["in"] = isl_set_from_basic_set(buf.build_domain({0, 7}));
+  //buf.schedule["in"] = buf.build_map(0);
   
-  buf.add_out_port("out0", {0, 5});
-  buf.schedule["out0"] = buf.build_map(2);
-  buf.add_out_port("out1", {1, 6});
-  buf.schedule["out1"] = buf.build_map(1);
-  buf.add_out_port("out2", {2, 7});
-  buf.schedule["out2"] = buf.build_map(0);
+  //buf.add_out_port("out0", {0, 5});
+  //buf.schedule["out0"] = buf.build_map(2);
+  //buf.add_out_port("out1", {1, 6});
+  //buf.schedule["out1"] = buf.build_map(1);
+  //buf.add_out_port("out2", {2, 7});
+  //buf.schedule["out2"] = buf.build_map(0);
 
-  cout << "--- Domains" << endl;
-  for (auto d : buf.domain) {
-    cout << "Set for: " << d.first << endl;
-    print(buf.ctx, d.second);
-  }
+  //cout << "--- Domains" << endl;
+  //for (auto d : buf.domain) {
+    //cout << "Set for: " << d.first << endl;
+    //print(buf.ctx, d.second);
+  //}
 
-  cout << "--- Schedules" << endl;
-  for (auto d : buf.schedule) {
-    cout << "Schedule for: " << d.first << endl;
-    print(buf.ctx, d.second);
-  }
+  //cout << "--- Schedules" << endl;
+  //for (auto d : buf.schedule) {
+    //cout << "Schedule for: " << d.first << endl;
+    //print(buf.ctx, d.second);
+  //}
 
-  cout << "Adding domains to schedules..." << endl;
-  for (auto d : buf.schedule) {
-    isl_set* s = buf.domain.at(d.first);
-    isl_map* m = isl_map_intersect_domain(cpy(d.second), cpy(s));
-    cout << "Schedule with domain for " << d.first << endl;
-    print(buf.ctx, m);
-    cout << "Cardinality of domain..." << endl;
-    print(buf.ctx, isl_set_card(cpy(s)));
-  }
+  //cout << "Adding domains to schedules..." << endl;
+  //for (auto d : buf.schedule) {
+    //isl_set* s = buf.domain.at(d.first);
+    //isl_map* m = isl_map_intersect_domain(cpy(d.second), cpy(s));
+    //cout << "Schedule with domain for " << d.first << endl;
+    //print(buf.ctx, m);
+    //cout << "Cardinality of domain..." << endl;
+    //print(buf.ctx, isl_set_card(cpy(s)));
+  //}
 
-  string in_name = buf.get_in_port();
-  isl_map* in_sched = buf.schedule.at(in_name);
-  isl_set* in_domain = buf.domain.at(in_name);
-  isl_pw_multi_aff* write_time =
-    isl_map_lexmax_pw_multi_aff(in_sched);
-  cout << "Write times..." << endl;
-  print(ctx, write_time);
-  for (auto d : buf.isIn) {
-    if (!d.second) {
-      string out_name = d.first;
-      cout << "Output port: " << d.first << endl;
-      isl_map* out_sched = buf.schedule.at(out_name);
-      isl_pw_multi_aff* first_read_time =
-        isl_map_lexmin_pw_multi_aff(out_sched);
+  //string in_name = buf.get_in_port();
+  //isl_map* in_sched = buf.schedule.at(in_name);
+  //isl_set* in_domain = buf.domain.at(in_name);
+  //isl_pw_multi_aff* write_time =
+    //isl_map_lexmax_pw_multi_aff(in_sched);
+  //cout << "Write times..." << endl;
+  //print(ctx, write_time);
+  //for (auto d : buf.isIn) {
+    //if (!d.second) {
+      //string out_name = d.first;
+      //cout << "Output port: " << d.first << endl;
+      //isl_map* out_sched = buf.schedule.at(out_name);
+      //isl_pw_multi_aff* first_read_time =
+        //isl_map_lexmin_pw_multi_aff(out_sched);
 
-      auto diff =
-        isl_pw_multi_aff_sub(cpy(first_read_time), cpy(write_time));
+      //auto diff =
+        //isl_pw_multi_aff_sub(cpy(first_read_time), cpy(write_time));
 
-      cout << "Write -> read Difference..." << endl;
-      print(ctx, diff);
+      //cout << "Write -> read Difference..." << endl;
+      //print(ctx, diff);
 
-      auto diff_map =
-        isl_map_from_pw_multi_aff(diff);
+      //auto diff_map =
+        //isl_map_from_pw_multi_aff(diff);
       
-      isl_set* out_domain = buf.domain.at(out_name);
-      diff_map = isl_map_intersect_domain(diff_map, cpy(out_domain));
-      auto range = isl_map_range(diff_map);
+      //isl_set* out_domain = buf.domain.at(out_name);
+      //diff_map = isl_map_intersect_domain(diff_map, cpy(out_domain));
+      //auto range = isl_map_range(diff_map);
 
-      // Intersect with range?
-      isl_basic_set* less_value = isl_basic_set_universe(cpy(buf.space));
-      isl_local_space* ls = isl_local_space_from_space(buf.space);
-      isl_constraint* c = isl_constraint_alloc_inequality(cpy(ls));
-      c = isl_constraint_set_constant_si(c, -1);
-      c = isl_constraint_set_coefficient_si(c, isl_dim_set, 0, -1);
-      less_value = isl_basic_set_add_constraint(less_value, c);
+      //// Intersect with range?
+      //isl_basic_set* less_value = isl_basic_set_universe(cpy(buf.space));
+      //isl_local_space* ls = isl_local_space_from_space(buf.space);
+      //isl_constraint* c = isl_constraint_alloc_inequality(cpy(ls));
+      //c = isl_constraint_set_constant_si(c, -1);
+      //c = isl_constraint_set_coefficient_si(c, isl_dim_set, 0, -1);
+      //less_value = isl_basic_set_add_constraint(less_value, c);
 
-      cout << "LTZ..." << endl;
-      print(buf.ctx, less_value);
+      //cout << "LTZ..." << endl;
+      //print(buf.ctx, less_value);
 
-      range = isl_set_intersect(isl_set_from_basic_set(less_value), range);
+      //range = isl_set_intersect(isl_set_from_basic_set(less_value), range);
 
-      cout << "Range of output..." << endl;
-      print(ctx, range);
+      //cout << "Range of output..." << endl;
+      //print(ctx, range);
 
-      if (isl_set_is_empty(range)) {
-        cout << "\tPassed, no violated deps" << endl;
-      } else {
-        cout << "\tERROR: Some values read before being written" << endl;
-        assert(false);
-      }
-    }
-  }
+      //if (isl_set_is_empty(range)) {
+        //cout << "\tPassed, no violated deps" << endl;
+      //} else {
+        //cout << "\tERROR: Some values read before being written" << endl;
+        //assert(false);
+      //}
+    //}
+  //}
 
-  isl_ctx_free(buf.ctx);
+  //isl_ctx_free(buf.ctx);
 
-}
+//}
 
 isl_stat get_const(isl_set* s, isl_qpolynomial* qp, void* user) {
   vector<int>* vals = (vector<int>*) user;
@@ -480,7 +482,8 @@ isl_stat get_const(isl_set* s, isl_qpolynomial* qp, void* user) {
 
 int check_value_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
   auto ctx = buf.ctx;
-  isl_map* sched = buf.schedule.at(write_port);
+  //isl_map* sched = buf.schedule.at(write_port);
+  umap* sched = buf.schedule.at(write_port);
   assert(sched != nullptr);
   
   auto WritesAfterWrite = lex_lt(sched, sched);
@@ -507,20 +510,22 @@ int check_value_dd(UBuffer& buf, const std::string& read_port, const std::string
 
   //cout << "Cardinality after simpification..." << endl;
   //print(ctx, isl_pw_qpolynomial_fold_coalesce(cpy(c)));
-  auto s = isl_pw_qpolynomial_n_piece(c);
+  auto s = isl_union_pw_qpolynomial_n_piece(c);
   //cout << "s = " << s << endl;
 
   //assert(s <= 1);
 
-  if (s == 0) {
-    return 0;
-  } else {
-    vector<int> nums;
-    void* user = (void*) &nums;
-    isl_pw_qpolynomial_foreach_lifted_piece(c, get_const, user);
-    //assert(nums.size() == 1);
-    return nums[0];
-  }
+  assert(false);
+  return 0;
+  //if (s == 0) {
+    //return 0;
+  //} else {
+    //vector<int> nums;
+    //void* user = (void*) &nums;
+    //isl_pw_qpolynomial_foreach_lifted_piece(c, get_const, user);
+    ////assert(nums.size() == 1);
+    //return nums[0];
+  //}
 }
 
 std::string ReplaceString(std::string subject, const std::string& search,
@@ -853,9 +858,11 @@ void generate_hls_code(UBuffer& buf) {
 
   for (auto inpt : buf.get_in_ports()) {
     if (wmap == nullptr) {
-      wmap = isl_union_map_from_map(cpy(buf.schedule.at(inpt)));
+      //wmap = isl_union_map_from_map(cpy(buf.schedule.at(inpt)));
+      wmap = (cpy(buf.schedule.at(inpt)));
     } else {
-      wmap = unn(wmap, isl_union_map_from_map(cpy(buf.schedule.at(inpt))));
+      //wmap = unn(wmap, isl_union_map_from_map(cpy(buf.schedule.at(inpt))));
+      wmap = unn(wmap, (cpy(buf.schedule.at(inpt))));
     }
   }
 
@@ -933,7 +940,7 @@ void generate_hls_code(UBuffer& buf) {
       out << "\t// Bound  as C = " << codegen_c(bound) << endl;
       auto qp = evaluate_dd(buf, outpt, inpt);
       out << "\t// DD from " << outpt << " = " << qp << endl;
-      auto dd = check_value_dd(buf, outpt, inpt);
+      //auto dd = check_value_dd(buf, outpt, inpt);
       //read_delays.push_back(dd);
       read_delays.push_back(stoi(codegen_c(bound)));
     }
@@ -1271,7 +1278,7 @@ void synth_upsample_test() {
   buf.access_map["write"] =
     isl_map_read_from_str(ctx, "{ write[i] -> M[i] : 0 <= i < 10 }");
   buf.schedule["write"] =
-    isl_map_read_from_str(ctx, "{ write[i] -> [i, 0, 0] : 0 <= i < 10 }");
+    isl_union_map_read_from_str(ctx, "{ write[i] -> [i, 0, 0] : 0 <= i < 10 }");
   buf.isIn["write"] = true;
 
   // Read 0 through 7
@@ -1280,7 +1287,7 @@ void synth_upsample_test() {
   buf.access_map["read0"] =
     isl_map_read_from_str(ctx, "{ read0[i, j] -> M[i] : 0 <= i < 10 and 0 <= j < 2}");
   buf.schedule["read0"] =
-    isl_map_read_from_str(ctx, "{ read0[i, j] -> [i, 1, j] : 0 <= i < 10 and 0 <= j < 2 }");
+    isl_union_map_read_from_str(ctx, "{ read0[i, j] -> [i, 1, j] : 0 <= i < 10 and 0 <= j < 2 }");
   buf.isIn["read0"] = false;
 
   generate_hls_code(buf);
@@ -1307,7 +1314,7 @@ void synth_sr_boundary_condition_test() {
   buf.access_map["write"] =
     isl_map_read_from_str(ctx, "{ write[i] -> M[i] : 0 <= i < 10 }");
   buf.schedule["write"] =
-    isl_map_read_from_str(ctx, "{ write[i] -> [i, 0] : 0 <= i < 10 }");
+    isl_union_map_read_from_str(ctx, "{ write[i] -> [i, 0] : 0 <= i < 10 }");
   buf.isIn["write"] = true;
 
   // Read 0 through 7
@@ -1316,7 +1323,7 @@ void synth_sr_boundary_condition_test() {
   buf.access_map["read0"] =
     isl_map_read_from_str(ctx, "{ read0[i] -> M[i] : 0 <= i < 10 }");
   buf.schedule["read0"] =
-    isl_map_read_from_str(ctx, "{ read0[i] -> [i + 2, 1] : 0 <= i < 10 }");
+    isl_union_map_read_from_str(ctx, "{ read0[i] -> [i + 2, 1] : 0 <= i < 10 }");
   buf.isIn["read0"] = false;
 
   // Read 1 through 8
@@ -1325,7 +1332,7 @@ void synth_sr_boundary_condition_test() {
   buf.access_map["read1"] =
     isl_map_read_from_str(ctx, "{ read1[i] -> M[i + 1] : 0 <= i < 9; read1[i] -> M[9] : 9 <= i < 10 }");
   buf.schedule["read1"] =
-    isl_map_read_from_str(ctx, "{ read1[i] -> [i + 2, 1] : 0 <= i < 10 }");
+    isl_union_map_read_from_str(ctx, "{ read1[i] -> [i + 2, 1] : 0 <= i < 10 }");
   buf.isIn["read1"] = false;
 
   // Read 2 through 9
@@ -1334,7 +1341,7 @@ void synth_sr_boundary_condition_test() {
   buf.access_map["read2"] =
     isl_map_read_from_str(ctx, "{ read2[i] -> M[i + 2] : 0 <= i < 8; read2[i] -> M[9] : 8 <= i < 10}");
   buf.schedule["read2"] =
-    isl_map_read_from_str(ctx, "{ read2[i] -> [i + 2, 1] : 0 <= i < 10 }");
+    isl_union_map_read_from_str(ctx, "{ read2[i] -> [i + 2, 1] : 0 <= i < 10 }");
   buf.isIn["read2"] = false;
   
   generate_hls_code(buf);
@@ -1911,9 +1918,9 @@ void conv_1d_test() {
 int main() {
 
   conv_1d_test();
-  assert(false);
+  //assert(false);
 
-  ubuffer_test();
+  //ubuffer_test();
   test_swizzle_buffer();
   basic_space_tests();
 

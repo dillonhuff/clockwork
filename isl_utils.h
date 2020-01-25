@@ -427,6 +427,10 @@ isl_union_map* its(isl_union_map* const m0, isl_union_map* const m1) {
   return isl_union_map_intersect(cpy(m0), cpy(m1));
 }
 
+isl_union_map* its(isl_union_map* const m0, isl_set* const m1) {
+  return isl_union_map_intersect_domain(cpy(m0), cpy(to_uset(m1)));
+}
+
 isl_union_map* its(isl_union_map* const m0, isl_union_set* const m1) {
   return isl_union_map_intersect_domain(cpy(m0), cpy(m1));
 }
@@ -445,6 +449,14 @@ isl_union_map* lex_lt(isl_union_map* const m0, isl_union_map* const m1) {
 
 isl_map* lex_lt(isl_map* const m0, isl_map* const m1) {
   return isl_map_lex_lt_map(cpy(m0), cpy(m1));
+}
+
+isl_union_map* dot(isl_map* const m0, isl_union_map* const m1) {
+  return isl_union_map_apply_range(to_umap(m0), cpy(m1));
+}
+
+isl_union_map* dot(isl_union_map* const m0, isl_map* const m1) {
+  return isl_union_map_apply_range(cpy(m0), to_umap(m1));
 }
 
 isl_map* dot(isl_map* const m0, isl_map* const m1) {
