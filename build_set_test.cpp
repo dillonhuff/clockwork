@@ -2023,7 +2023,7 @@ void conv_1d_test() {
 
 int main() {
 
-  conv_1d_test();
+  //conv_1d_test();
 
   synth_wire_test();
   synth_sr_boundary_condition_test();
