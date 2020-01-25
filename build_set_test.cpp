@@ -39,8 +39,8 @@ class UBuffer {
     std::map<string, bool> isIn;
     std::map<string, isl_set*> domain;
     std::map<string, isl_map*> access_map;
-    //std::map<string, isl_map*> schedule;
     std::map<string, isl_union_map*> schedule;
+    std::map<string, set<string> > port_bundles;
 
     std::map<string, int> varInds;
 
@@ -64,6 +64,10 @@ class UBuffer {
       }
 
       return s;
+    }
+
+    void add_port_bundle(const std::string& bundle_name, const set<string>& port_names) {
+      port_bundles[bundle_name] = port_names;
     }
     
     void add_out_pt(const std::string& name,
@@ -954,18 +958,16 @@ void generate_vivado_tcl(UBuffer& buf) {
 void generate_hls_code(UBuffer& buf) {
 
   string inpt = buf.get_in_port();
-  isl_union_map* wmap = nullptr;
-  cout << "# in ports = " << buf.get_in_ports().size() << endl;
+  //isl_union_map* wmap = nullptr;
+  //cout << "# in ports = " << buf.get_in_ports().size() << endl;
 
-  for (auto inpt : buf.get_in_ports()) {
-    if (wmap == nullptr) {
-      //wmap = isl_union_map_from_map(cpy(buf.schedule.at(inpt)));
-      wmap = (cpy(buf.schedule.at(inpt)));
-    } else {
-      //wmap = unn(wmap, isl_union_map_from_map(cpy(buf.schedule.at(inpt))));
-      wmap = unn(wmap, (cpy(buf.schedule.at(inpt))));
-    }
-  }
+  //for (auto inpt : buf.get_in_ports()) {
+    //if (wmap == nullptr) {
+      //wmap = (cpy(buf.schedule.at(inpt)));
+    //} else {
+      //wmap = unn(wmap, (cpy(buf.schedule.at(inpt))));
+    //}
+  //}
 
   cout << "Computing maxdelay..." << endl;
 
@@ -1002,12 +1004,10 @@ void generate_hls_code(UBuffer& buf) {
     }
     //wmap =
       //unn(wmap,
-          //isl_union_map_from_map(cpy(buf.schedule.at(outpt))));
-    wmap =
-      unn(wmap,
-          (cpy(buf.schedule.at(outpt))));
+          //(cpy(buf.schedule.at(outpt))));
   }
-  isl_union_map* res = wmap;
+  //isl_union_map* res = wmap;
+  isl_union_map* res = buf.global_schedule();
   cout << "Map to schedule.." << endl;
   print(buf.ctx, res);
 
@@ -1047,16 +1047,6 @@ void generate_hls_code(UBuffer& buf) {
       read_delays.push_back(qpd);
 
       out << "\t// DD expr = " << qpd << endl;
-      //str(qpd) << endl;
-      //int tight;
-      //int* b = &tight;
-      //auto bound = isl_union_pw_qpolynomial_bound(qpd, isl_fold_max, b);
-      //out << "\t// Bound       = " << str(bound) << endl;
-      ////out << "\t// Bound  as C = " << codegen_c(bound) << endl;
-      //auto folds  = get_polynomial_folds(bound);
-      //assert(folds.size() == 1);
-      //int bint = stoi(codegen_c(folds[0]));
-      //read_delays.push_back(bint);
     }
 
     read_delays = sort_unique(read_delays);
@@ -1204,7 +1194,6 @@ void generate_hls_code(UBuffer& buf) {
     out << "inline int " + outpt + "_select(";
     size_t nargs = 0;
     for (auto pt : buf.get_in_ports()) {
-      //out << "delay_sr<" << to_string(maxdelay + 1) << ">& " << pt << "_delay" << endl;
       out << pt + "_cache& " << pt << "_delay" << endl;
       out << ", ";
       nargs++;
@@ -1257,15 +1246,6 @@ void generate_hls_code(UBuffer& buf) {
       for (auto inpt : buf.get_in_ports()) {
         if (contains_key(inpt, ms)) {
           string delay_expr = evaluate_dd(buf, outpt, inpt);
-          //auto qpd = compute_dd(buf, outpt, inpt);
-          //auto fold = get_polynomials(qpd);
-          //assert(fold.size() == 1);
-          //auto pieces = get_pieces(qpd);
-          //out << "// Pieces..." << endl;
-          //for (auto p : pieces) {
-            //out << "// " << str(p.first) << " -> " << str(p.second) << endl;
-          //}
-          //string delay_expr = codegen_c(fold[0]);
           out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
           out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
         }
@@ -1275,6 +1255,35 @@ void generate_hls_code(UBuffer& buf) {
 
     out << "}" << endl << endl;
   }
+
+  out << "// Bundles..." << endl;
+  for (auto b : buf.port_bundles) {
+    out << "// " << b.first << endl;
+    for (auto pt : b.second) {
+      out << "//\t" << pt << endl;
+    }
+    out << "inline int " + b.first + "_bundle_action(";
+    size_t nargs = 0;
+    for (auto pt : buf.get_in_ports()) {
+      out << pt + "_cache& " << pt << "_delay" << endl;
+      out << ", ";
+      nargs++;
+    }
+    auto outpt = *begin(b.second);
+    isl_space* s = get_space(buf.domain.at(outpt));
+    assert(isl_space_is_set(s));
+    vector<string> dim_decls;
+    for (int i = 0; i < num_dims(s); i++) {
+      //dim_decls.push_back("int i_" + to_string(i));
+      dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
+    }
+    out << sep_list(dim_decls, "", "", ", ");
+
+    out << ") {" << endl;
+    out << "//\tTODO: Insert code to select and then aggregate reads?" << endl;
+    out << "}" << endl << endl;
+  }
+  out << endl << endl;
 
   out << "void " << buf.name << "(";
   size_t nargs = 0;
@@ -1950,7 +1959,6 @@ void conv_1d_test() {
   map<string, UBuffer> buffers;
 
   auto domains = prg.domains();
-  //auto schedules = prg.schedules();
 
   int usuffix = 0;
 
@@ -1971,20 +1979,20 @@ void conv_1d_test() {
       UBuffer& buf = buffers.at(name);
       
       string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
+      buf.port_bundles[op->name].insert(pt_name);
 
       assert(contains_key(op, domains));
-      //assert(contains_key(op, schedules));
 
       // Map from??
       isl_map* produced_here =
         its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + produced.second + "]" + " }").c_str()), cpy(domains.at(op)));
 
-      //buf.add_in_pt(pt_name, domains.at(op), produced_here, schedules.at(op));
       buf.add_in_pt(pt_name, domains.at(op), produced_here, its(opt_sched, domains.at(op)));
 
       usuffix++;
       // Add in port..."
     }
+
 
     for (auto consumed : op->consume_locs) {
       string name = consumed.first;
@@ -1999,18 +2007,18 @@ void conv_1d_test() {
       UBuffer& buf = buffers.at(name);
 
       string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
+      buf.port_bundles[op->name].insert(pt_name);
       
       isl_map* consumed_here=
         its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + consumed.second + "]" + " }").c_str()), cpy(domains.at(op)));
 
       assert(contains_key(op, domains));
-      //assert(contains_key(op, schedules));
 
-      //buf.add_out_pt(pt_name, domains.at(op), consumed_here, schedules.at(op));
       buf.add_out_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
 
       usuffix++;
     }
+
   }
 
   cout << "# of buffers: " << buffers.size() << endl;
@@ -2034,12 +2042,15 @@ void conv_1d_test() {
 
     cout << "Generating code..." << endl;
     generate_hls_code(b.second);
+
+    int res = system(string("g++ -c " + b.second.name + ".cpp").c_str());
+    assert(res == 0);
   }
 }
 
 int main() {
 
-  conv_1d_test();
+  //conv_1d_test();
 
   //ubuffer_test();
   test_swizzle_buffer();
