@@ -267,7 +267,6 @@ inline int read_2_2_select(write0_cache& write0_delay
 // read_0_0
 //	read_0_0
 inline int read_0_0_bundle_action(write0_cache& write0_delay, int i, int j) {
-//	TODO: Insert code to select and then aggregate reads?
 	int read_0_0_res = read_0_0_select(write0_delay, i, j);
 	return read_0_0_res;
 }
@@ -275,7 +274,6 @@ inline int read_0_0_bundle_action(write0_cache& write0_delay, int i, int j) {
 // read_0_1
 //	read_0_1
 inline int read_0_1_bundle_action(write0_cache& write0_delay, int i, int j) {
-//	TODO: Insert code to select and then aggregate reads?
 	int read_0_1_res = read_0_1_select(write0_delay, i, j);
 	return read_0_1_res;
 }
@@ -283,7 +281,6 @@ inline int read_0_1_bundle_action(write0_cache& write0_delay, int i, int j) {
 // read_0_2
 //	read_0_2
 inline int read_0_2_bundle_action(write0_cache& write0_delay, int i, int j) {
-//	TODO: Insert code to select and then aggregate reads?
 	int read_0_2_res = read_0_2_select(write0_delay, i, j);
 	return read_0_2_res;
 }
@@ -291,7 +288,6 @@ inline int read_0_2_bundle_action(write0_cache& write0_delay, int i, int j) {
 // read_1_0
 //	read_1_0
 inline int read_1_0_bundle_action(write0_cache& write0_delay, int i, int j) {
-//	TODO: Insert code to select and then aggregate reads?
 	int read_1_0_res = read_1_0_select(write0_delay, i, j);
 	return read_1_0_res;
 }
@@ -299,7 +295,6 @@ inline int read_1_0_bundle_action(write0_cache& write0_delay, int i, int j) {
 // read_1_1
 //	read_1_1
 inline int read_1_1_bundle_action(write0_cache& write0_delay, int i, int j) {
-//	TODO: Insert code to select and then aggregate reads?
 	int read_1_1_res = read_1_1_select(write0_delay, i, j);
 	return read_1_1_res;
 }
@@ -307,7 +302,6 @@ inline int read_1_1_bundle_action(write0_cache& write0_delay, int i, int j) {
 // read_1_2
 //	read_1_2
 inline int read_1_2_bundle_action(write0_cache& write0_delay, int i, int j) {
-//	TODO: Insert code to select and then aggregate reads?
 	int read_1_2_res = read_1_2_select(write0_delay, i, j);
 	return read_1_2_res;
 }
@@ -315,7 +309,6 @@ inline int read_1_2_bundle_action(write0_cache& write0_delay, int i, int j) {
 // read_2_0
 //	read_2_0
 inline int read_2_0_bundle_action(write0_cache& write0_delay, int i, int j) {
-//	TODO: Insert code to select and then aggregate reads?
 	int read_2_0_res = read_2_0_select(write0_delay, i, j);
 	return read_2_0_res;
 }
@@ -323,7 +316,6 @@ inline int read_2_0_bundle_action(write0_cache& write0_delay, int i, int j) {
 // read_2_1
 //	read_2_1
 inline int read_2_1_bundle_action(write0_cache& write0_delay, int i, int j) {
-//	TODO: Insert code to select and then aggregate reads?
 	int read_2_1_res = read_2_1_select(write0_delay, i, j);
 	return read_2_1_res;
 }
@@ -331,15 +323,14 @@ inline int read_2_1_bundle_action(write0_cache& write0_delay, int i, int j) {
 // read_2_2
 //	read_2_2
 inline int read_2_2_bundle_action(write0_cache& write0_delay, int i, int j) {
-//	TODO: Insert code to select and then aggregate reads?
 	int read_2_2_res = read_2_2_select(write0_delay, i, j);
 	return read_2_2_res;
 }
 
 // write0
 //	write0
-inline int write0_bundle_action(write0_cache& write0_delay, int i, int j) {
-//	TODO: Insert code to select and then aggregate reads?
+inline int write0_bundle_action(InputStream& write0, write0_cache& write0_delay) {
+	write0_write(write0, write0_delay);
 }
 
 
@@ -359,7 +350,7 @@ void linebuffer_3x3(OutputStream& read_0_0
 
 	for (int c0 = 0; c0 <= 63; c0 += 1)
 	  for (int c1 = 0; c1 <= 63; c1 += 1) {
-	    write0_write(write0, write0_delay);
+	    write0_bundle_action(write0, write0_delay);
 	    if (c0 >= 2 && c1 >= 2) {
 	      read_1_0.write(read_1_0_bundle_action(write0_delay, c0 - 2, c1 - 2));
 	      read_0_1.write(read_0_1_bundle_action(write0_delay, c0 - 2, c1 - 2));

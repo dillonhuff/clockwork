@@ -13,6 +13,11 @@
 using namespace dbhc;
 using namespace std;
 
+template<typename T>
+T pick(const std::set<T>& s) {
+  return *(begin(s));
+}
+
 std::string sep_list(const std::vector<std::string>& strs, const std::string& ldelim, const std::string& rdelim, const std::string& sep) {
   string res = ldelim;
 
@@ -1093,8 +1098,6 @@ void generate_hls_code(UBuffer& buf) {
   string delay_list = "";
   size_t nd = 0;
   for (auto inpt : buf.get_in_ports()) {
-    regex re(inpt + "(.*);");
-    code_string = regex_replace(code_string, re, inpt + "_write(" + inpt + ", " + inpt + "_delay);");
     delay_list += inpt + "_delay";
     if (nd < buf.get_in_ports().size() - 1) {
       delay_list += ", ";
@@ -1102,16 +1105,23 @@ void generate_hls_code(UBuffer& buf) {
     nd++;
   }
 
+  // Replace fill-ins from polyhedral code generator with calls to memory actions 
+  for (auto b : buf.port_bundles) {
+    if (buf.is_out_pt(*(begin(b.second)))) {
+    } else {
+      regex re(b.first + "(.*);");
+      string inpt = pick(b.second);
+      //code_string = regex_replace(code_string, re, b.first + "_write(" + b.first + ", " + inpt + "_delay);");
+      code_string = regex_replace(code_string, re, b.first + "_bundle_action(" + b.first + ", " + inpt + "_delay);");
+    }
+  }
   for (auto b : buf.port_bundles) {
     if (buf.is_out_pt(*(begin(b.second)))) {
       regex re0(b.first + "\\((.*)\\);");
       code_string = regex_replace(code_string, re0, b.first + ".write(" + b.first + "_bundle_action(" + delay_list + ", $1" + "));");
+    } else {
     }
   }
-  //for (auto outpt : buf.get_out_ports()) {
-    //regex re0(outpt + "\\((.*)\\);");
-    //code_string = regex_replace(code_string, re0, outpt + ".write(" + outpt + "_select(" + delay_list + ", $1" + "));");
-  //}
 
   cout << "Code generation..." << endl;
   ofstream os(buf.name + ".cpp");
@@ -1225,30 +1235,48 @@ void generate_hls_code(UBuffer& buf) {
       out << "//\t" << pt << endl;
     }
     out << "inline int " + b.first + "_bundle_action(";
-    vector<string> dim_decls;
-    vector<string> dim_args;
-    for (auto pt : buf.get_in_ports()) {
-      dim_decls.push_back(pt + "_cache& " + pt + "_delay");
-      dim_args.push_back(pt + "_delay");
-    }
-    auto outpt = *begin(b.second);
-    isl_space* s = get_space(buf.domain.at(outpt));
-    assert(isl_space_is_set(s));
-    for (int i = 0; i < num_dims(s); i++) {
-      dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
-      dim_args.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
-    }
-    string param_string = sep_list(dim_decls, "", "", ", ");
-    string arg_string = sep_list(dim_args, "", "", ", ");
-    out << param_string;
-
-    out << ") {" << endl;
-    out << "//\tTODO: Insert code to select and then aggregate reads?" << endl;
-    if (buf.is_out_pt(outpt)) {
-      for (auto p : b.second) {
-        out << "\tint " << p << "_res = " << p << "_select(" << arg_string << ");" << endl;
+    string rep = pick(b.second);
+    if (buf.is_out_pt(rep)) {
+      vector<string> dim_decls;
+      vector<string> dim_args;
+      for (auto pt : buf.get_in_ports()) {
+        dim_decls.push_back(pt + "_cache& " + pt + "_delay");
+        dim_args.push_back(pt + "_delay");
       }
-      out << "\treturn " << *(begin(b.second)) << "_res;" << endl;
+      auto outpt = *begin(b.second);
+      isl_space* s = get_space(buf.domain.at(outpt));
+      assert(isl_space_is_set(s));
+      for (int i = 0; i < num_dims(s); i++) {
+        dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
+        dim_args.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
+      }
+      string param_string = sep_list(dim_decls, "", "", ", ");
+      string arg_string = sep_list(dim_args, "", "", ", ");
+      out << param_string;
+
+      out << ") {" << endl;
+      if (buf.is_out_pt(outpt)) {
+        for (auto p : b.second) {
+          out << "\tint " << p << "_res = " << p << "_select(" << arg_string << ");" << endl;
+        }
+        out << "\treturn " << *(begin(b.second)) << "_res;" << endl;
+      }
+    } else {
+      vector<string> dim_decls;
+      dim_decls.push_back("InputStream& " + b.first);
+      vector<string> dim_args;
+      dim_args.push_back(b.first);
+      for (auto pt : buf.get_in_ports()) {
+        dim_decls.push_back(pt + "_cache& " + pt + "_delay");
+        dim_args.push_back(pt + "_delay");
+      }
+      string param_string = sep_list(dim_decls, "", "", ", ");
+      string arg_string = sep_list(dim_args, "", "", ", ");
+      out << param_string;
+
+      out << ") {" << endl;
+      out << "\t" << rep << "_write(" << b.first << ", " << rep + "_delay);" << endl;
+
     }
     out << "}" << endl << endl;
   }
@@ -1256,8 +1284,6 @@ void generate_hls_code(UBuffer& buf) {
 
   out << "void " << buf.name << "(";
   size_t nargs = 0;
-  //for (auto pt : buf.domain) {
-    //out << (buf.isIn.at(pt.first) ? "Input" : "Output") << "Stream& " << pt.first << endl;
   for (auto pt : buf.port_bundles) {
     bool input_bundle = buf.isIn.at(*begin(pt.second));
     out << (input_bundle ? "Input" : "Output") << "Stream& " << pt.first << endl;
@@ -1279,7 +1305,6 @@ void generate_hls_code(UBuffer& buf) {
   of << "#include \"hw_classes.h\"" << endl << endl;
   of << "void " << buf.name << "(";
   nargs = 0;
-  //for (auto pt : buf.domain) {
   for (auto pt : buf.port_bundles) {
     bool input_bundle = buf.isIn.at(*begin(pt.second));
     of << (input_bundle ? "Input" : "Output") << "Stream& " << pt.first << endl;
@@ -2023,7 +2048,7 @@ void conv_1d_test() {
 
 int main() {
 
-  //conv_1d_test();
+  conv_1d_test();
 
   synth_wire_test();
   synth_sr_boundary_condition_test();
