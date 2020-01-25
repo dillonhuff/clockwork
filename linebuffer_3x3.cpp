@@ -329,7 +329,7 @@ inline int read_2_2_bundle_action(write0_cache& write0_delay, int i, int j) {
 
 // write0
 //	write0
-inline int write0_bundle_action(InputStream& write0, write0_cache& write0_delay) {
+inline void write0_bundle_action(InputStream& write0, write0_cache& write0_delay) {
 	write0_write(write0, write0_delay);
 }
 
@@ -350,7 +350,7 @@ void linebuffer_3x3(OutputStream& read_0_0
 
 	for (int c0 = 0; c0 <= 63; c0 += 1)
 	  for (int c1 = 0; c1 <= 63; c1 += 1) {
-	    write0_bundle_action(write0, write0_delay);
+	    write0_write(write0, write0_delay);
 	    if (c0 >= 2 && c1 >= 2) {
 	      read_1_0.write(read_1_0_bundle_action(write0_delay, c0 - 2, c1 - 2));
 	      read_0_1.write(read_0_1_bundle_action(write0_delay, c0 - 2, c1 - 2));

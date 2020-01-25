@@ -1111,8 +1111,9 @@ void generate_hls_code(UBuffer& buf) {
     } else {
       regex re(b.first + "(.*);");
       string inpt = pick(b.second);
-      //code_string = regex_replace(code_string, re, b.first + "_write(" + b.first + ", " + inpt + "_delay);");
-      code_string = regex_replace(code_string, re, b.first + "_bundle_action(" + b.first + ", " + inpt + "_delay);");
+      code_string = regex_replace(code_string, re, inpt + "_write(" + b.first + ", " + inpt + "_delay);");
+      //code_string = regex_replace(code_string, re, b.first + "_bundle_action(" + b.first + ", " + delay_list + ");");
+      //inpt + "_delay);");
     }
   }
   for (auto b : buf.port_bundles) {
@@ -1234,9 +1235,9 @@ void generate_hls_code(UBuffer& buf) {
     for (auto pt : b.second) {
       out << "//\t" << pt << endl;
     }
-    out << "inline int " + b.first + "_bundle_action(";
     string rep = pick(b.second);
     if (buf.is_out_pt(rep)) {
+      out << "inline int " + b.first + "_bundle_action(";
       vector<string> dim_decls;
       vector<string> dim_args;
       for (auto pt : buf.get_in_ports()) {
@@ -1262,13 +1263,16 @@ void generate_hls_code(UBuffer& buf) {
         out << "\treturn " << *(begin(b.second)) << "_res;" << endl;
       }
     } else {
+      out << "inline void " + b.first + "_bundle_action(";
       vector<string> dim_decls;
       dim_decls.push_back("InputStream& " + b.first);
       vector<string> dim_args;
       dim_args.push_back(b.first);
       for (auto pt : buf.get_in_ports()) {
-        dim_decls.push_back(pt + "_cache& " + pt + "_delay");
-        dim_args.push_back(pt + "_delay");
+        if (elem(pt, b.second)) {
+          dim_decls.push_back(pt + "_cache& " + pt + "_delay");
+          dim_args.push_back(pt + "_delay");
+        }
       }
       string param_string = sep_list(dim_decls, "", "", ", ");
       string arg_string = sep_list(dim_args, "", "", ", ");
@@ -2048,13 +2052,13 @@ void conv_1d_test() {
 
 int main() {
 
+  synth_reduce_test();
   conv_1d_test();
 
   synth_wire_test();
   synth_sr_boundary_condition_test();
   synth_lb_test();
   synth_upsample_test();
-  synth_reduce_test();
 
   return 0;
 

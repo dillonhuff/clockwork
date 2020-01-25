@@ -119,7 +119,7 @@ inline int read2_bundle_action(write_cache& write_delay, int i) {
 
 // write
 //	write
-inline int write_bundle_action(InputStream& write, write_cache& write_delay) {
+inline void write_bundle_action(InputStream& write, write_cache& write_delay) {
 	write_write(write, write_delay);
 }
 
@@ -133,7 +133,7 @@ void shift_reg(OutputStream& read0
 	write_cache write_delay;
 
 	for (int c0 = 0; c0 <= 9; c0 += 1) {
-	  write_bundle_action(write, write_delay);
+	  write_write(write, write_delay);
 	  if (c0 >= 2) {
 	    read2.write(read2_bundle_action(write_delay, c0 - 2));
 	    read1.write(read1_bundle_action(write_delay, c0 - 2));
