@@ -958,16 +958,6 @@ void generate_vivado_tcl(UBuffer& buf) {
 void generate_hls_code(UBuffer& buf) {
 
   string inpt = buf.get_in_port();
-  //isl_union_map* wmap = nullptr;
-  //cout << "# in ports = " << buf.get_in_ports().size() << endl;
-
-  //for (auto inpt : buf.get_in_ports()) {
-    //if (wmap == nullptr) {
-      //wmap = (cpy(buf.schedule.at(inpt)));
-    //} else {
-      //wmap = unn(wmap, (cpy(buf.schedule.at(inpt))));
-    //}
-  //}
 
   cout << "Computing maxdelay..." << endl;
 
@@ -997,16 +987,11 @@ void generate_hls_code(UBuffer& buf) {
   cout << "Creating res map" << endl;
 
   for (auto outpt : buf.get_out_ports()) {
-    //int r0 = check_value_dd(buf, outpt, inpt);
     int r0 = compute_dd_bound(buf, outpt, inpt);
     if (r0 > maxdelay) {
       maxdelay = r0;
     }
-    //wmap =
-      //unn(wmap,
-          //(cpy(buf.schedule.at(outpt))));
   }
-  //isl_union_map* res = wmap;
   isl_union_map* res = buf.global_schedule();
   cout << "Map to schedule.." << endl;
   print(buf.ctx, res);
@@ -1162,29 +1147,11 @@ void generate_hls_code(UBuffer& buf) {
     auto sched = buf.global_schedule();
     auto after = lex_gt(sched, sched);
 
-    cout << "SrcMap " << inpt << " -> outport..." << endl;
-    print(ctx(src_map), src_map);
-
-    cout << "SrcMap After Intersection with before" << endl;
     src_map = its(src_map, after);
-
-    cout << "Src map cardinality..." << endl;
-    auto src_card = card(src_map);
-    print(buf.ctx, src_card);
-
-    print(ctx(src_map), src_map);
     src_map = lexmax(src_map);
-    cout << "Lexmax SrcMap" << inpt << " -> outport..." << endl;
-    print(ctx(src_map), src_map);
 
     auto time_to_event = inv(sched);
-    cout << "Source write times..." << endl;
-    print(ctx(src_map), dot(src_map, sched));
 
-    cout << "LexMax Source write times..." << endl;
-    print(ctx(src_map), lexmax(dot(src_map, sched)));
-
-    cout << "LexMax Source Events..." << endl;
     auto lex_max_events =
       dot(lexmax(dot(src_map, sched)), time_to_event);
     print(ctx(src_map), lex_max_events);
@@ -1202,7 +1169,6 @@ void generate_hls_code(UBuffer& buf) {
     assert(isl_space_is_set(s));
     vector<string> dim_decls;
     for (int i = 0; i < num_dims(s); i++) {
-      //dim_decls.push_back("int i_" + to_string(i));
       dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
     }
     out << sep_list(dim_decls, "", "", ", ");
@@ -1214,9 +1180,6 @@ void generate_hls_code(UBuffer& buf) {
     if (buf.get_in_ports().size() == 1) {
       string delay_expr = evaluate_dd(buf, outpt, inpt);
       auto qpd = compute_dd(buf, outpt, inpt);
-      //auto fold = get_polynomials(qpd);
-      //assert(fold.size() == 1);
-      //string delay_expr = codegen_c(fold[0]);
       auto pieces = get_pieces(qpd);
       out << "// Pieces..." << endl;
       auto out_domain = buf.domain.at(outpt);
