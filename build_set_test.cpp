@@ -66,6 +66,10 @@ class UBuffer {
       return s;
     }
 
+    bool is_out_pt(const std::string& name) const {
+      return !isIn.at(name);
+    }
+
     void add_port_bundle(const std::string& bundle_name, const set<string>& port_names) {
       port_bundles[bundle_name] = port_names;
     }
@@ -1057,6 +1061,14 @@ void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer&
 
 void generate_hls_code(UBuffer& buf) {
 
+  if (buf.port_bundles.size() == 0) {
+    for (auto pt : buf.get_out_ports()) {
+      buf.port_bundles[pt] = {pt};
+    }
+    for (auto pt : buf.get_in_ports()) {
+      buf.port_bundles[pt] = {pt};
+    }
+  }
   string inpt = buf.get_in_port();
 
   cout << "Computing maxdelay..." << endl;
@@ -1090,10 +1102,16 @@ void generate_hls_code(UBuffer& buf) {
     nd++;
   }
 
-  for (auto outpt : buf.get_out_ports()) {
-    regex re0(outpt + "\\((.*)\\);");
-    code_string = regex_replace(code_string, re0, outpt + ".write(" + outpt + "_select(" + delay_list + ", $1" + "));");
+  for (auto b : buf.port_bundles) {
+    if (buf.is_out_pt(*(begin(b.second)))) {
+      regex re0(b.first + "\\((.*)\\);");
+      code_string = regex_replace(code_string, re0, b.first + ".write(" + b.first + "_bundle_action(" + delay_list + ", $1" + "));");
+    }
   }
+  //for (auto outpt : buf.get_out_ports()) {
+    //regex re0(outpt + "\\((.*)\\);");
+    //code_string = regex_replace(code_string, re0, outpt + ".write(" + outpt + "_select(" + delay_list + ", $1" + "));");
+  //}
 
   cout << "Code generation..." << endl;
   ofstream os(buf.name + ".cpp");
@@ -1207,40 +1225,49 @@ void generate_hls_code(UBuffer& buf) {
       out << "//\t" << pt << endl;
     }
     out << "inline int " + b.first + "_bundle_action(";
-    size_t nargs = 0;
+    vector<string> dim_decls;
+    vector<string> dim_args;
     for (auto pt : buf.get_in_ports()) {
-      out << pt + "_cache& " << pt << "_delay" << endl;
-      out << ", ";
-      nargs++;
+      dim_decls.push_back(pt + "_cache& " + pt + "_delay");
+      dim_args.push_back(pt + "_delay");
     }
     auto outpt = *begin(b.second);
     isl_space* s = get_space(buf.domain.at(outpt));
     assert(isl_space_is_set(s));
-    vector<string> dim_decls;
     for (int i = 0; i < num_dims(s); i++) {
-      //dim_decls.push_back("int i_" + to_string(i));
       dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
+      dim_args.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
     }
-    out << sep_list(dim_decls, "", "", ", ");
+    string param_string = sep_list(dim_decls, "", "", ", ");
+    string arg_string = sep_list(dim_args, "", "", ", ");
+    out << param_string;
 
     out << ") {" << endl;
     out << "//\tTODO: Insert code to select and then aggregate reads?" << endl;
+    if (buf.is_out_pt(outpt)) {
+      for (auto p : b.second) {
+        out << "\tint " << p << "_res = " << p << "_select(" << arg_string << ");" << endl;
+      }
+      out << "\treturn " << *(begin(b.second)) << "_res;" << endl;
+    }
     out << "}" << endl << endl;
   }
   out << endl << endl;
 
   out << "void " << buf.name << "(";
   size_t nargs = 0;
-  for (auto pt : buf.domain) {
-    out << (buf.isIn.at(pt.first) ? "Input" : "Output") << "Stream& " << pt.first << endl;
-    if (nargs < buf.domain.size() - 1) {
+  //for (auto pt : buf.domain) {
+    //out << (buf.isIn.at(pt.first) ? "Input" : "Output") << "Stream& " << pt.first << endl;
+  for (auto pt : buf.port_bundles) {
+    bool input_bundle = buf.isIn.at(*begin(pt.second));
+    out << (input_bundle ? "Input" : "Output") << "Stream& " << pt.first << endl;
+    if (nargs < buf.port_bundles.size() - 1) {
       out << ", ";
     }
     nargs++;
   }
   out << ") {" << endl;
   for (auto inpt : buf.get_in_ports()) {
-    //out << "\tdelay_sr<" + to_string(maxdelay + 1) + "> " + inpt + "_delay;\n\n";
     out << "\t" + inpt + "_cache " + inpt + "_delay;\n\n";
   }
   out << code_string << endl;
@@ -1252,9 +1279,11 @@ void generate_hls_code(UBuffer& buf) {
   of << "#include \"hw_classes.h\"" << endl << endl;
   of << "void " << buf.name << "(";
   nargs = 0;
-  for (auto pt : buf.domain) {
-    of << (buf.isIn.at(pt.first) ? "Input" : "Output") << "Stream& " << pt.first << endl;
-    if (nargs < buf.domain.size() - 1) {
+  //for (auto pt : buf.domain) {
+  for (auto pt : buf.port_bundles) {
+    bool input_bundle = buf.isIn.at(*begin(pt.second));
+    of << (input_bundle ? "Input" : "Output") << "Stream& " << pt.first << endl;
+    if (nargs < buf.port_bundles.size() - 1) {
       of << ", ";
     }
     nargs++;
@@ -1994,11 +2023,7 @@ void conv_1d_test() {
 
 int main() {
 
-  //conv_1d_test();
-
-  //ubuffer_test();
-  test_swizzle_buffer();
-  basic_space_tests();
+  conv_1d_test();
 
   synth_wire_test();
   synth_sr_boundary_condition_test();

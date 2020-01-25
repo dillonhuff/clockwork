@@ -96,6 +96,36 @@ inline int read2_select(write_cache& write_delay
 }
 
 // Bundles...
+// read0
+//	read0
+inline int read0_bundle_action(write_cache& write_delay, int i) {
+//	TODO: Insert code to select and then aggregate reads?
+	int read0_res = read0_select(write_delay, i);
+	return read0_res;
+}
+
+// read1
+//	read1
+inline int read1_bundle_action(write_cache& write_delay, int i) {
+//	TODO: Insert code to select and then aggregate reads?
+	int read1_res = read1_select(write_delay, i);
+	return read1_res;
+}
+
+// read2
+//	read2
+inline int read2_bundle_action(write_cache& write_delay, int i) {
+//	TODO: Insert code to select and then aggregate reads?
+	int read2_res = read2_select(write_delay, i);
+	return read2_res;
+}
+
+// write
+//	write
+inline int write_bundle_action(write_cache& write_delay, int i) {
+//	TODO: Insert code to select and then aggregate reads?
+}
+
 
 
 void shift_reg(OutputStream& read0
@@ -108,9 +138,9 @@ void shift_reg(OutputStream& read0
 	for (int c0 = 0; c0 <= 9; c0 += 1) {
 	  write_write(write, write_delay);
 	  if (c0 >= 2) {
-	    read2.write(read2_select(write_delay, c0 - 2));
-	    read1.write(read1_select(write_delay, c0 - 2));
-	    read0.write(read0_select(write_delay, c0 - 2));
+	    read2.write(read2_bundle_action(write_delay, c0 - 2));
+	    read1.write(read1_bundle_action(write_delay, c0 - 2));
+	    read0.write(read0_bundle_action(write_delay, c0 - 2));
 	  }
 	}
 	
