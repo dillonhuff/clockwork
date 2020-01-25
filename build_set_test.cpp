@@ -777,11 +777,18 @@ isl_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const
   auto port0WritesInv =
     inv(buf.access_map.at(write_port));
 
+
+  assert(port0WritesInv != nullptr);
+
   auto WritesBeforeRead =
     lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
 
+  assert(WritesBeforeRead != nullptr);
+  cout << "WritesBeforeRead = " << str(WritesBeforeRead) << endl;
+
   auto WriteThatProducesReadData =
     its(dot(buf.access_map.at(read_port), port0WritesInv), WritesBeforeRead);
+
   cout << "----Writes that produces read data: " << endl;
   cout << "\t" << str(WriteThatProducesReadData) << endl;
 
@@ -1617,6 +1624,17 @@ struct prog {
     return root->add_loop(name, l, u);
   }
 
+  string op_iter(op* const o) {
+    vector<string> act;
+    map<op*, vector<string> > ivars;
+    root->populate_iter_vars(ivars, act);
+
+    auto iters = map_find(o, ivars);
+    auto vars = sep_list(iters, "[", "]", ", ");
+
+    return o->name + vars;
+  }
+
   isl_union_set* whole_iteration_domain() {
     map<op*, isl_set*> doms = domains();
     isl_union_set* whole_d = isl_union_set_read_from_str(ctx, "{ }");
@@ -1826,11 +1844,13 @@ void conv_1d_test() {
       UBuffer& buf = buffers.at(name);
       
       string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
-      isl_map* produced_here =
-        isl_map_read_from_str(buf.ctx, "{}");
 
       assert(contains_key(op, domains));
       assert(contains_key(op, schedules));
+
+      // Map from??
+      isl_map* produced_here =
+        its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + produced.second + "]" + " }").c_str()), cpy(domains.at(op)));
 
       buf.add_in_pt(pt_name, domains.at(op), produced_here, schedules.at(op));
 
@@ -1838,42 +1858,49 @@ void conv_1d_test() {
       // Add in port..."
     }
 
-    //for (auto consumed : op->consume_locs) {
-      //string name = consumed.first;
+    for (auto consumed : op->consume_locs) {
+      string name = consumed.first;
 
-      //if (!contains_key(name, buffers)) {
-        //UBuffer buf;
-        //buf.name = name;
-        //buf.ctx = prg.ctx;
-        //buffers[name] = buf;
-      //}
+      if (!contains_key(name, buffers)) {
+        UBuffer buf;
+        buf.name = name;
+        buf.ctx = prg.ctx;
+        buffers[name] = buf;
+      }
 
-      //UBuffer& buf = buffers.at(name);
+      UBuffer& buf = buffers.at(name);
 
-      //string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
-      //isl_map* consumed_here =
-        //isl_map_read_from_str(buf.ctx, "{}");
+      string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
       
-      //assert(contains_key(op, domains));
-      //assert(contains_key(op, schedules));
+      isl_map* consumed_here=
+        its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + consumed.second + "]" + " }").c_str()), cpy(domains.at(op)));
 
-      //buf.add_out_pt(pt_name, domains.at(op), consumed_here, schedules.at(op));
+      assert(contains_key(op, domains));
+      assert(contains_key(op, schedules));
 
-      //usuffix++;
-    //}
+      buf.add_out_pt(pt_name, domains.at(op), consumed_here, schedules.at(op));
+
+      usuffix++;
+    }
   }
 
-  assert(false);
   cout << "# of buffers: " << buffers.size() << endl;
-  for (auto b : buffers) {
+  for (auto& b : buffers) {
+    auto& buf = b.second;
     cout << "--- " << b.second.name << endl;
     cout << "---- In ports" << endl;
     for (auto inpt : b.second.get_in_ports()) {
       cout << "\t" << inpt << endl;
+      cout << "\t\tdom : " << str(buf.domain.at(inpt)) << endl;
+      cout << "\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
+      cout << "\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
     }
     cout << "---- Out ports" << endl;
     for (auto inpt : b.second.get_out_ports()) {
       cout << "\t" << inpt << endl;
+      cout << "\t\tdom : " << str(buf.domain.at(inpt)) << endl;
+      cout << "\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
+      cout << "\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
     }
 
     cout << "Generating code..." << endl;
