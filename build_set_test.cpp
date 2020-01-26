@@ -1472,6 +1472,20 @@ struct prog {
 
   struct isl_ctx* ctx;
   op* root;
+  set<string> ins;
+  set<string> outs;
+
+  bool is_boundary(const std::string& name) {
+    return elem(name, ins) || elem(name, outs);
+  }
+
+  void add_output(const std::string& name) {
+    outs.insert(name);
+  }
+
+  void add_input(const std::string& name) {
+    ins.insert(name);
+  }
 
   prog() {
     ctx = isl_ctx_alloc();
@@ -1689,8 +1703,11 @@ struct prog {
 
 void conv_1d_test() {
   prog prg;
+  prg.add_input("in");
+  prg.add_output("out");
   auto p = prg.add_loop("p", 0, 10);
   auto write = p->add_op("write");
+  write->add_load("in", "p");
   write->add_store("M", "p");
 
   auto c = prg.add_loop("c", 0, 10 - 2);
@@ -1702,6 +1719,7 @@ void conv_1d_test() {
 
   auto compute = c->add_op("compute_out");
   compute->add_load("T", "c");
+  compute->add_store("out", "c");
 
   cout << "Program code without optimization..." << endl;
   prg.unoptimized_codegen();
@@ -1722,6 +1740,10 @@ void conv_1d_test() {
 
     for (auto produced : op->produce_locs) {
       string name = produced.first;
+
+      if (prg.is_boundary(name)) {
+        continue;
+      }
 
       if (!contains_key(name, buffers)) {
         UBuffer buf;
@@ -1749,6 +1771,10 @@ void conv_1d_test() {
 
     for (auto consumed : op->consume_locs) {
       string name = consumed.first;
+
+      if (prg.is_boundary(name)) {
+        continue;
+      }
 
       if (!contains_key(name, buffers)) {
         UBuffer buf;
@@ -1883,6 +1909,7 @@ int main() {
   //mmul_test();
   synth_reduce_test();
   conv_1d_test();
+  //assert(false);
 
   synth_wire_test();
   synth_sr_boundary_condition_test();
