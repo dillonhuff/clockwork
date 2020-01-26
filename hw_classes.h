@@ -119,6 +119,13 @@ class delay_fifo {
     }
 };
 
+template<int Len>
+class hw_uint {
+  public:
+
+    hw_uint(const int v) {}
+};
+
 template<typename T>
 class HWStream {
   public:
@@ -137,7 +144,7 @@ class HWStream {
 
 #else
 
-    deque<int> values;
+    deque<T> values;
 
     void write(const T& v) {
       return values.push_front(v);

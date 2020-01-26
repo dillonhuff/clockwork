@@ -61,9 +61,22 @@ class UBuffer {
     
     isl_map* physical_address_mapping;
 
+    std::string bundle_type_string(const std::string& bundle_name) {
+      int len = 0;
+      for (auto pt : map_find(bundle_name, port_bundles)) {
+        len += 32;
+      }
+
+      if (len == 32) {
+        return "int";
+      }
+      return "hw_uint<" + to_string(len) + ">";
+    }
+
     std::string bundle_stream(const std::string& bundle_name) {
       bool input_bundle = isIn.at(pick(port_bundles.at(bundle_name)));
-      return string(input_bundle ? "Input" : "Output") + "Stream<int>& " + bundle_name;
+      string bundle_type_str = bundle_type_string(bundle_name);
+      return string(input_bundle ? "Input" : "Output") + "Stream<" + bundle_type_str + " >& " + bundle_name;
     }
 
     isl_union_map* global_schedule() {
@@ -932,7 +945,7 @@ void generate_hls_code(UBuffer& buf) {
     }
     string rep = pick(b.second);
     if (buf.is_out_pt(rep)) {
-      out << "inline int " + b.first + "_bundle_action(";
+      out << "inline " << buf.bundle_type_string(b.first) << " " <<  b.first << "_bundle_action(";
       vector<string> dim_decls;
       vector<string> dim_args;
       for (auto pt : buf.get_in_ports()) {
@@ -984,8 +997,6 @@ void generate_hls_code(UBuffer& buf) {
   out << "void " << buf.name << "(";
   size_t nargs = 0;
   for (auto pt : buf.port_bundles) {
-    //bool input_bundle = buf.isIn.at(*begin(pt.second));
-    //out << (input_bundle ? "Input" : "Output") << "Stream<int>& " << pt.first << endl;
     out << buf.bundle_stream(pt.first);
     if (nargs < buf.port_bundles.size() - 1) {
       out << ", ";
@@ -1006,8 +1017,6 @@ void generate_hls_code(UBuffer& buf) {
   of << "void " << buf.name << "(";
   nargs = 0;
   for (auto pt : buf.port_bundles) {
-    //bool input_bundle = buf.isIn.at(*begin(pt.second));
-    //of << (input_bundle ? "Input" : "Output") << "Stream<int>& " << pt.first << endl;
     of << buf.bundle_stream(pt.first);
     if (nargs < buf.port_bundles.size() - 1) {
       of << ", ";

@@ -125,7 +125,7 @@ inline void write_bundle_action(InputStream<int>& write, write_cache& write_dela
 
 
 
-void shift_reg(OutputStream<int>& read0, OutputStream<int>& read1, OutputStream<int>& read2, InputStream<int>& write) {
+void shift_reg(OutputStream<int >& read0, OutputStream<int >& read1, OutputStream<int >& read2, InputStream<int >& write) {
 	write_cache write_delay;
 
 	for (int c0 = 0; c0 <= 9; c0 += 1) {
