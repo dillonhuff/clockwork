@@ -1880,26 +1880,56 @@ void conv_1d_test() {
   conv_out << "// Operation logic" << endl;
   for (auto op : prg.all_ops()) {
     vector<string> args;
-    set<string> bufs;
-    for (auto con : op->consume_locs) {
-      if (!elem(con.first, bufs)) {
-        args.push_back("HWStream<int>& " + con.first);
-        bufs.insert(con.first);
+    set<string> done;
+    vector<string> buf_srcs;
+    for (auto p : op->consume_locs) {
+      auto buf_name = p.first;
+      if (!elem(buf_name, done)) {
+        if (prg.is_boundary(buf_name)) {
+          buf_srcs.push_back("HWStream<int>& " + buf_name);
+        } else {
+          UBuffer& b = buffers.at(buf_name);
+          for (auto ib : b.get_in_ports()) {
+            buf_srcs.push_back(ib + "_cache& " + ib);
+          }
+        }
+        done.insert(buf_name);
       }
     }
-    bufs = {};
-    for (auto con : op->produce_locs) {
-      if (!elem(con.first, bufs)) {
-        args.push_back("HWStream<int>& " + con.first);
-        bufs.insert(con.first);
+    for (auto p : op->produce_locs) {
+      auto buf_name = p.first;
+      if (!elem(buf_name, done)) {
+        if (prg.is_boundary(buf_name)) {
+          buf_srcs.push_back("HWStream<int>& " + buf_name);
+        } else {
+          UBuffer& b = buffers.at(buf_name);
+          for (auto ib : b.get_in_ports()) {
+            buf_srcs.push_back(ib + "_cache& " + ib);
+          }
+        }
+        done.insert(buf_name);
       }
     }
+    //set<string> bufs;
+    //for (auto con : op->consume_locs) {
+      //if (!elem(con.first, bufs)) {
+        //args.push_back("HWStream<int>& " + con.first);
+        //bufs.insert(con.first);
+      //}
+    //}
+    //bufs = {};
+    //for (auto con : op->produce_locs) {
+      //if (!elem(con.first, bufs)) {
+        //args.push_back("HWStream<int>& " + con.first);
+        //bufs.insert(con.first);
+      //}
+    //}
     auto s = get_space(domains.at(op));
     assert(isl_space_is_set(s));
     for (int i = 0; i < num_dims(s); i++) {
-      args.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
+      buf_srcs.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
     }
-    conv_out << "inline void " << op->name << sep_list(args, "(", ")", ", ") << " {" << endl;
+    conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
     for (auto con : op->consume_locs) {
       conv_out << "\t// Consume: " << con.first << endl;
     }
@@ -1920,7 +1950,7 @@ void conv_1d_test() {
     if (!prg.is_boundary(b.first)) {
       for (auto in : b.second.get_in_ports()) {
         //conv_out << "\t" << b.first << "_" << in << "_cache " << in << endl;
-        conv_out << "\t" << in << "_cache " << in << endl;
+        conv_out << "\t" << in << "_cache " << in << ";" << endl;
       }
     }
   }
@@ -1931,13 +1961,50 @@ void conv_1d_test() {
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
   for (auto op : prg.all_ops()) {
     regex re(op->name + "\\((.*)\\);");
-    string args = sep_list(prg.cache_args(op), "", "", ", ");
-    code_string = regex_replace(code_string, re, op->name + "(" + args + ", $1)");
+    vector<string> args = prg.cache_args(op);
+    set<string> done;
+    vector<string> buf_srcs;
+    for (auto p : op->consume_locs) {
+      auto buf_name = p.first;
+      if (!elem(buf_name, done)) {
+        if (prg.is_boundary(buf_name)) {
+          buf_srcs.push_back(buf_name);
+        } else {
+          UBuffer& b = buffers.at(buf_name);
+          for (auto ib : b.get_in_ports()) {
+            buf_srcs.push_back(ib);
+          }
+        }
+        done.insert(buf_name);
+      }
+    }
+    for (auto p : op->produce_locs) {
+      auto buf_name = p.first;
+      if (!elem(buf_name, done)) {
+        if (prg.is_boundary(buf_name)) {
+          buf_srcs.push_back(buf_name);
+        } else {
+          UBuffer& b = buffers.at(buf_name);
+          for (auto ib : b.get_in_ports()) {
+            buf_srcs.push_back(ib);
+          }
+        }
+        done.insert(buf_name);
+      }
+    }
+    string args_list = sep_list(buf_srcs, "", "", ", ");
+    code_string = regex_replace(code_string, re, op->name + "(" + args_list + ", $1);");
   }
+
+  cout << "Code string:" << endl;
+  cout << code_string << endl;
+
   conv_out << code_string << endl;
 
-  conv_out << "}";
+  conv_out << "}" << endl;
 
+  int res = system(string("g++ -std=c++11 -c " + prg.name + ".cpp").c_str());
+  assert(res == 0);
 }
 
 isl_schedule_node* print_sched_tp(isl_schedule_node* n, void* user) {
