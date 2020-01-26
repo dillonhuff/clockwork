@@ -135,9 +135,22 @@ class hw_uint {
     bsim::static_quad_value_bit_vector<Len> val;
 
     hw_uint(const int v) : val(v) {}
+    hw_uint() : val(0) {}
 
 #endif // __VIVADO_SYNTH__
 };
+
+template<int Len>
+void set_at(hw_uint<Len>& i, const int offset, const int value) {
+  for (int v = offset; v < offset + 32; v++) {
+    i.val.set(v, bsim::quad_value((value >> (v - offset)) & 1));
+  }
+}
+
+static inline
+void set_at(int& i, const int offset, const int value) {
+  *(&i) = value;
+}
 
 template<typename T>
 class HWStream {

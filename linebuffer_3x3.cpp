@@ -267,64 +267,82 @@ inline int read_2_2_select(write0_cache& write0_delay
 // read_0_0
 //	read_0_0
 inline int read_0_0_bundle_action(write0_cache& write0_delay, int i, int j) {
+	int result;
 	int read_0_0_res = read_0_0_select(write0_delay, i, j);
-	return read_0_0_res;
+	set_at(result, 0, read_0_0_res);
+	return result;
 }
 
 // read_0_1
 //	read_0_1
 inline int read_0_1_bundle_action(write0_cache& write0_delay, int i, int j) {
+	int result;
 	int read_0_1_res = read_0_1_select(write0_delay, i, j);
-	return read_0_1_res;
+	set_at(result, 0, read_0_1_res);
+	return result;
 }
 
 // read_0_2
 //	read_0_2
 inline int read_0_2_bundle_action(write0_cache& write0_delay, int i, int j) {
+	int result;
 	int read_0_2_res = read_0_2_select(write0_delay, i, j);
-	return read_0_2_res;
+	set_at(result, 0, read_0_2_res);
+	return result;
 }
 
 // read_1_0
 //	read_1_0
 inline int read_1_0_bundle_action(write0_cache& write0_delay, int i, int j) {
+	int result;
 	int read_1_0_res = read_1_0_select(write0_delay, i, j);
-	return read_1_0_res;
+	set_at(result, 0, read_1_0_res);
+	return result;
 }
 
 // read_1_1
 //	read_1_1
 inline int read_1_1_bundle_action(write0_cache& write0_delay, int i, int j) {
+	int result;
 	int read_1_1_res = read_1_1_select(write0_delay, i, j);
-	return read_1_1_res;
+	set_at(result, 0, read_1_1_res);
+	return result;
 }
 
 // read_1_2
 //	read_1_2
 inline int read_1_2_bundle_action(write0_cache& write0_delay, int i, int j) {
+	int result;
 	int read_1_2_res = read_1_2_select(write0_delay, i, j);
-	return read_1_2_res;
+	set_at(result, 0, read_1_2_res);
+	return result;
 }
 
 // read_2_0
 //	read_2_0
 inline int read_2_0_bundle_action(write0_cache& write0_delay, int i, int j) {
+	int result;
 	int read_2_0_res = read_2_0_select(write0_delay, i, j);
-	return read_2_0_res;
+	set_at(result, 0, read_2_0_res);
+	return result;
 }
 
 // read_2_1
 //	read_2_1
 inline int read_2_1_bundle_action(write0_cache& write0_delay, int i, int j) {
+	int result;
 	int read_2_1_res = read_2_1_select(write0_delay, i, j);
-	return read_2_1_res;
+	set_at(result, 0, read_2_1_res);
+	return result;
 }
 
 // read_2_2
 //	read_2_2
 inline int read_2_2_bundle_action(write0_cache& write0_delay, int i, int j) {
+	int result;
 	int read_2_2_res = read_2_2_select(write0_delay, i, j);
-	return read_2_2_res;
+	set_at(result, 0, read_2_2_res);
+	return result;
 }
 
 // write0

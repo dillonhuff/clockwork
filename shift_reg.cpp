@@ -99,22 +99,28 @@ inline int read2_select(write_cache& write_delay
 // read0
 //	read0
 inline int read0_bundle_action(write_cache& write_delay, int i) {
+	int result;
 	int read0_res = read0_select(write_delay, i);
-	return read0_res;
+	set_at(result, 0, read0_res);
+	return result;
 }
 
 // read1
 //	read1
 inline int read1_bundle_action(write_cache& write_delay, int i) {
+	int result;
 	int read1_res = read1_select(write_delay, i);
-	return read1_res;
+	set_at(result, 0, read1_res);
+	return result;
 }
 
 // read2
 //	read2
 inline int read2_bundle_action(write_cache& write_delay, int i) {
+	int result;
 	int read2_res = read2_select(write_delay, i);
-	return read2_res;
+	set_at(result, 0, read2_res);
+	return result;
 }
 
 // write

@@ -14,6 +14,11 @@ using namespace dbhc;
 using namespace std;
 
 template<typename T>
+T pick(const std::vector<T>& s) {
+  return *(begin(s));
+}
+
+template<typename T>
 T pick(const std::set<T>& s) {
   return *(begin(s));
 }
@@ -45,7 +50,7 @@ class UBuffer {
     std::map<string, isl_set*> domain;
     std::map<string, isl_map*> access_map;
     std::map<string, isl_union_map*> schedule;
-    std::map<string, set<string> > port_bundles;
+    std::map<string, vector<string> > port_bundles;
 
     std::map<string, int> varInds;
 
@@ -60,6 +65,10 @@ class UBuffer {
     map<string, isl_map*> read_funcs;
     
     isl_map* physical_address_mapping;
+
+    int port_width(const std::string& port_name) {
+      return 32;
+    }
 
     std::string bundle_type_string(const std::string& bundle_name) {
       int len = 0;
@@ -93,10 +102,6 @@ class UBuffer {
       return !isIn.at(name);
     }
 
-    void add_port_bundle(const std::string& bundle_name, const set<string>& port_names) {
-      port_bundles[bundle_name] = port_names;
-    }
-    
     void add_out_pt(const std::string& name,
         isl_set* dm,
         isl_map* access,
@@ -964,12 +969,14 @@ void generate_hls_code(UBuffer& buf) {
       out << param_string;
 
       out << ") {" << endl;
-      if (buf.is_out_pt(outpt)) {
-        for (auto p : b.second) {
-          out << "\tint " << p << "_res = " << p << "_select(" << arg_string << ");" << endl;
-        }
-        out << "\treturn " << *(begin(b.second)) << "_res;" << endl;
+      out << "\t" << buf.bundle_type_string(b.first) + " result;" << endl;
+      int offset = 0;
+      for (auto p : b.second) {
+        out << "\tint " << p << "_res = " << p << "_select(" << arg_string << ");" << endl;
+        out << "\tset_at(result, " << offset << ", " << p << "_res" << ");" << endl;
+        offset += buf.port_width(p);
       }
+      out << "\treturn result;" << endl;
     } else {
       out << "inline void " + b.first + "_bundle_action(";
       vector<string> dim_decls;
@@ -1726,7 +1733,7 @@ void conv_1d_test() {
       UBuffer& buf = buffers.at(name);
       
       string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
-      buf.port_bundles[op->name].insert(pt_name);
+      buf.port_bundles[op->name].push_back(pt_name);
 
       assert(contains_key(op, domains));
 
@@ -1753,7 +1760,7 @@ void conv_1d_test() {
       UBuffer& buf = buffers.at(name);
 
       string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
-      buf.port_bundles[op->name].insert(pt_name);
+      buf.port_bundles[op->name].push_back(pt_name);
       
       isl_map* consumed_here=
         its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + consumed.second + "]" + " }").c_str()), cpy(domains.at(op)));
