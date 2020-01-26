@@ -779,16 +779,7 @@ void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer&
   out << "};" << endl << endl;
 }
 
-void generate_hls_code(UBuffer& buf) {
-
-  if (buf.port_bundles.size() == 0) {
-    for (auto pt : buf.get_out_ports()) {
-      buf.port_bundles[pt] = {pt};
-    }
-    for (auto pt : buf.get_in_ports()) {
-      buf.port_bundles[pt] = {pt};
-    }
-  }
+void generate_hls_code(std::ostream& out, UBuffer& buf) {
   string inpt = buf.get_in_port();
 
   cout << "Computing maxdelay..." << endl;
@@ -800,47 +791,6 @@ void generate_hls_code(UBuffer& buf) {
       maxdelay = r0;
     }
   }
-
-  isl_union_map* res = buf.global_schedule();
-  cout << "Map to schedule.." << endl;
-  print(buf.ctx, res);
-
-  string code_string = codegen_c(res);
-  cout << "Code string..." << endl;
-  cout << code_string << endl;
-
-  code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
-  string delay_list = "";
-  size_t nd = 0;
-  for (auto inpt : buf.get_in_ports()) {
-    delay_list += inpt + "_delay";
-    if (nd < buf.get_in_ports().size() - 1) {
-      delay_list += ", ";
-    }
-    nd++;
-  }
-
-  // Replace fill-ins from polyhedral code generator with calls to memory actions 
-  for (auto b : buf.port_bundles) {
-    if (buf.is_out_pt(*(begin(b.second)))) {
-    } else {
-      regex re(b.first + "(.*);");
-      string inpt = pick(b.second);
-      code_string = regex_replace(code_string, re, inpt + "_write(" + b.first + ", " + inpt + "_delay);");
-    }
-  }
-  for (auto b : buf.port_bundles) {
-    if (buf.is_out_pt(*(begin(b.second)))) {
-      regex re0(b.first + "\\((.*)\\);");
-      code_string = regex_replace(code_string, re0, b.first + ".write(" + b.first + "_bundle_action(" + delay_list + ", $1" + "));");
-    } else {
-    }
-  }
-
-  cout << "Code generation..." << endl;
-  ofstream os(buf.name + ".cpp");
-  std::ostream& out = os;
-
   out << "#include \"hw_classes.h\"" << endl << endl;
   for (auto inpt : buf.get_in_ports()) {
     generate_memory_struct(out, inpt, buf, maxdelay);
@@ -1000,6 +950,62 @@ void generate_hls_code(UBuffer& buf) {
     out << "}" << endl << endl;
   }
   out << endl << endl;
+
+}
+
+void generate_hls_code(UBuffer& buf) {
+
+  if (buf.port_bundles.size() == 0) {
+    for (auto pt : buf.get_out_ports()) {
+      buf.port_bundles[pt] = {pt};
+    }
+    for (auto pt : buf.get_in_ports()) {
+      buf.port_bundles[pt] = {pt};
+    }
+  }
+
+  cout << "Code generation..." << endl;
+  ofstream os(buf.name + ".cpp");
+  std::ostream& out = os;
+
+  generate_hls_code(os, buf);
+
+  // Generate driver function for this buffer.
+  isl_union_map* res = buf.global_schedule();
+  cout << "Map to schedule.." << endl;
+  print(buf.ctx, res);
+
+  string code_string = codegen_c(res);
+  cout << "Code string..." << endl;
+  cout << code_string << endl;
+
+  code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
+  string delay_list = "";
+  size_t nd = 0;
+  for (auto inpt : buf.get_in_ports()) {
+    delay_list += inpt + "_delay";
+    if (nd < buf.get_in_ports().size() - 1) {
+      delay_list += ", ";
+    }
+    nd++;
+  }
+
+  // Replace fill-ins from polyhedral code generator with calls to memory actions 
+  for (auto b : buf.port_bundles) {
+    if (buf.is_out_pt(*(begin(b.second)))) {
+    } else {
+      regex re(b.first + "(.*);");
+      string inpt = pick(b.second);
+      code_string = regex_replace(code_string, re, inpt + "_write(" + b.first + ", " + inpt + "_delay);");
+    }
+  }
+  for (auto b : buf.port_bundles) {
+    if (buf.is_out_pt(*(begin(b.second)))) {
+      regex re0(b.first + "\\((.*)\\);");
+      code_string = regex_replace(code_string, re0, b.first + ".write(" + b.first + "_bundle_action(" + delay_list + ", $1" + "));");
+    } else {
+    }
+  }
 
   out << "void " << buf.name << "(";
   size_t nargs = 0;
@@ -1475,6 +1481,7 @@ typedef op loop;
 
 struct prog {
 
+  std::string name;
   struct isl_ctx* ctx;
   op* root;
   set<string> ins;
@@ -1727,6 +1734,7 @@ void generate_op_code(map<string, UBuffer>& buffers, op* op) {
 
 void conv_1d_test() {
   prog prg;
+  prg.name = "conv_1d";
   prg.add_input("in");
   prg.add_output("out");
   auto p = prg.add_loop("p", 0, 10);
@@ -1847,11 +1855,24 @@ void conv_1d_test() {
     assert(res == 0);
   }
 
-  for (auto op : prg.all_ops()) {
-    if (op->func != "") {
-      generate_op_code(buffers, op);
+  ofstream conv_out(prg.name + ".cpp");
+  for (auto& b : buffers) {
+    if (!prg.is_boundary(b.first)) {
+      generate_hls_code(conv_out, b.second);
     }
   }
+
+  auto domain = prg.whole_iteration_domain();
+  auto schedmap = its(isl_schedule_get_map(prg.optimized_schedule()), domain);
+  conv_out << "// Optimized schedule..." << endl;
+  conv_out << codegen_c(schedmap);
+
+  //string
+  //for (auto op : prg.all_ops()) {
+  //if (op->func != "") {
+  //generate_op_code(buffers, op);
+  //}
+  //}
 }
 
 //isl_bool print_sched_tp(isl_schedule_node* n, void* user) {
@@ -1930,7 +1951,7 @@ int main() {
   //mmul_test();
   synth_reduce_test();
   conv_1d_test();
-  //assert(false);
+  assert(false);
 
   synth_wire_test();
   synth_sr_boundary_condition_test();
