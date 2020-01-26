@@ -1930,7 +1930,7 @@ int main() {
   //mmul_test();
   synth_reduce_test();
   conv_1d_test();
-  assert(false);
+  //assert(false);
 
   synth_wire_test();
   synth_sr_boundary_condition_test();
