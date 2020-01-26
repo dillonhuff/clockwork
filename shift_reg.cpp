@@ -63,7 +63,7 @@ struct write_cache {
 
 
 
-inline void write_write(InputStream& write, write_cache& write_delay) {
+inline void write_write(InputStream<int>& write, write_cache& write_delay) {
 	int write_value = write.read(); write_delay.push(write_value);
 }
 
@@ -119,16 +119,16 @@ inline int read2_bundle_action(write_cache& write_delay, int i) {
 
 // write
 //	write
-inline void write_bundle_action(InputStream& write, write_cache& write_delay) {
+inline void write_bundle_action(InputStream<int>& write, write_cache& write_delay) {
 	write_write(write, write_delay);
 }
 
 
 
-void shift_reg(OutputStream& read0
-, OutputStream& read1
-, OutputStream& read2
-, InputStream& write
+void shift_reg(OutputStream<int>& read0
+, OutputStream<int>& read1
+, OutputStream<int>& read2
+, InputStream<int>& write
 ) {
 	write_cache write_delay;
 

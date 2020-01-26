@@ -1146,7 +1146,7 @@ void generate_hls_code(UBuffer& buf) {
   out << endl << endl;
   for (auto inpt : buf.get_in_ports()) {
   //for (auto inpt : buf.get_in_bundles()) {
-    out << "inline void " << inpt << "_write(" << "InputStream& " << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
+    out << "inline void " << inpt << "_write(" << "InputStream<int>& " << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
     out << "\tint " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);" << endl;
     out << "}" << endl << endl;
   }
@@ -1276,7 +1276,7 @@ void generate_hls_code(UBuffer& buf) {
     } else {
       out << "inline void " + b.first + "_bundle_action(";
       vector<string> dim_decls;
-      dim_decls.push_back("InputStream& " + b.first);
+      dim_decls.push_back("InputStream<int>& " + b.first);
       vector<string> dim_args;
       dim_args.push_back(b.first);
       for (auto pt : buf.get_in_ports()) {
@@ -1301,7 +1301,7 @@ void generate_hls_code(UBuffer& buf) {
   size_t nargs = 0;
   for (auto pt : buf.port_bundles) {
     bool input_bundle = buf.isIn.at(*begin(pt.second));
-    out << (input_bundle ? "Input" : "Output") << "Stream& " << pt.first << endl;
+    out << (input_bundle ? "Input" : "Output") << "Stream<int>& " << pt.first << endl;
     if (nargs < buf.port_bundles.size() - 1) {
       out << ", ";
     }
@@ -1322,7 +1322,7 @@ void generate_hls_code(UBuffer& buf) {
   nargs = 0;
   for (auto pt : buf.port_bundles) {
     bool input_bundle = buf.isIn.at(*begin(pt.second));
-    of << (input_bundle ? "Input" : "Output") << "Stream& " << pt.first << endl;
+    of << (input_bundle ? "Input" : "Output") << "Stream<int>& " << pt.first << endl;
     if (nargs < buf.port_bundles.size() - 1) {
       of << ", ";
     }
@@ -1397,7 +1397,7 @@ void synth_reduce_test() {
 
   generate_hls_code(buf);
 
-  int res = system("clang++ tb_reduce.cpp reduce.cpp");
+  int res = system("g++ -std=c++11 tb_reduce.cpp reduce.cpp");
   assert(res == 0);
 
   res = system("./a.out");
@@ -1433,7 +1433,7 @@ void synth_upsample_test() {
 
   generate_hls_code(buf);
 
-  int res = system("clang++ tb_upsample.cpp upsample.cpp");
+  int res = system("g++ -std=c++11 tb_upsample.cpp upsample.cpp");
   assert(res == 0);
 
   res = system("./a.out");
@@ -1487,7 +1487,7 @@ void synth_sr_boundary_condition_test() {
   
   generate_hls_code(buf);
 
-  int res = system("clang++ tb_shift_reg_bc.cpp shift_reg_bc.cpp");
+  int res = system("g++ -std=c++11 tb_shift_reg_bc.cpp shift_reg_bc.cpp");
   assert(res == 0);
 
   res = system("./a.out");

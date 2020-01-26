@@ -167,7 +167,7 @@ struct write0_cache {
 
 
 
-inline void write0_write(InputStream& write0, write0_cache& write0_delay) {
+inline void write0_write(InputStream<int>& write0, write0_cache& write0_delay) {
 	int write0_value = write0.read(); write0_delay.push(write0_value);
 }
 
@@ -329,22 +329,22 @@ inline int read_2_2_bundle_action(write0_cache& write0_delay, int i, int j) {
 
 // write0
 //	write0
-inline void write0_bundle_action(InputStream& write0, write0_cache& write0_delay) {
+inline void write0_bundle_action(InputStream<int>& write0, write0_cache& write0_delay) {
 	write0_write(write0, write0_delay);
 }
 
 
 
-void linebuffer_3x3(OutputStream& read_0_0
-, OutputStream& read_0_1
-, OutputStream& read_0_2
-, OutputStream& read_1_0
-, OutputStream& read_1_1
-, OutputStream& read_1_2
-, OutputStream& read_2_0
-, OutputStream& read_2_1
-, OutputStream& read_2_2
-, InputStream& write0
+void linebuffer_3x3(OutputStream<int>& read_0_0
+, OutputStream<int>& read_0_1
+, OutputStream<int>& read_0_2
+, OutputStream<int>& read_1_0
+, OutputStream<int>& read_1_1
+, OutputStream<int>& read_1_2
+, OutputStream<int>& read_2_0
+, OutputStream<int>& read_2_1
+, OutputStream<int>& read_2_2
+, InputStream<int>& write0
 ) {
 	write0_cache write0_delay;
 

@@ -5,11 +5,11 @@
 using namespace std;
 
 int main() {
-  InputStream w0;
+  InputStream<int> w0;
   for (int i = 0; i < 10; i++) {
     w0.write(i);
   }
-  OutputStream r0, r1, r2;
+  OutputStream<int> r0, r1, r2;
   shift_reg(r0, r1, r2, w0);
 
   for (int i = 0; i < 8; i++) {

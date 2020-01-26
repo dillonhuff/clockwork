@@ -153,6 +153,10 @@ class HWStream {
 #endif // __VIVADO_SYNTH__
 };
 
-typedef HWStream<int> InputStream;
-typedef HWStream<int> OutputStream;
+template<typename T>
+using InputStream = HWStream<T>;
+template<typename T>
+using OutputStream = HWStream<T>;
+//typedef HWStream InputStream;
+//typedef HWStream OutputStream;
 
