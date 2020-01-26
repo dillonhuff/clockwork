@@ -1697,7 +1697,6 @@ void conv_1d_test() {
       buf.add_in_pt(pt_name, domains.at(op), produced_here, its(opt_sched, domains.at(op)));
 
       usuffix++;
-      // Add in port..."
     }
 
 

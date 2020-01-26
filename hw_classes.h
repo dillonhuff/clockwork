@@ -2,11 +2,17 @@
 
 #include <cassert>
 #include <deque>
-#include <iostream>
 #include <cmath>
 
 #ifdef __VIVADO_SYNTH__
+
 #include "hls_stream.h"
+
+#else
+
+#include "static_quad_value_bit_vector.h"
+#include <iostream>
+
 #endif
 
 using namespace std;
@@ -123,7 +129,14 @@ template<int Len>
 class hw_uint {
   public:
 
-    hw_uint(const int v) {}
+#ifdef __VIVADO_SYNTH__
+#else
+
+    bsim::static_quad_value_bit_vector<Len> val;
+
+    hw_uint(const int v) : val(v) {}
+
+#endif // __VIVADO_SYNTH__
 };
 
 template<typename T>
@@ -162,8 +175,7 @@ class HWStream {
 
 template<typename T>
 using InputStream = HWStream<T>;
+
 template<typename T>
 using OutputStream = HWStream<T>;
-//typedef HWStream InputStream;
-//typedef HWStream OutputStream;
 
