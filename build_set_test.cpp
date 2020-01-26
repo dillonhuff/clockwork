@@ -1411,6 +1411,21 @@ struct op {
         c->populate_schedule_vectors(sched_vecs, active_vecs);
       }
     }
+
+    size_t max_len = 1;
+    for (auto& v : sched_vecs) {
+      auto& vecs = v.second;
+      if (vecs.size() > max_len) {
+        max_len = vecs.size();
+      }
+    }
+
+    for (auto& v : sched_vecs) {
+      size_t diff = max_len - v.second.size();
+      for (size_t d = 0; d < diff; d++) {
+        v.second.push_back("0");
+      }
+    }
   }
 
   void populate_iter_vars(map<op*, vector<string> >& varmap, vector<string>& active_vars) {
@@ -1609,7 +1624,7 @@ struct prog {
     return m;
   }
 
-  isl_union_map* optimized_codegen() {
+  isl_schedule* optimized_schedule() {
     umap* naive_sched = unoptimized_schedule();
     auto before = lex_lt(naive_sched, naive_sched);
     auto domain = whole_iteration_domain();
@@ -1628,6 +1643,31 @@ struct prog {
       cpy(validity);
 
     isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+    return sched;
+  }
+
+  isl_union_map* optimized_codegen() {
+    //auto sched = optimized_schedule();
+    //umap* naive_sched = unoptimized_schedule();
+    //auto before = lex_lt(naive_sched, naive_sched);
+    auto domain = whole_iteration_domain();
+    //auto writes =
+      //its(producer_map(), domain);
+    //auto reads =
+      //its(consumer_map(), domain);
+
+    //cout << "Producer map..." << str(writes) << endl;
+    //cout << "Consumer map..." << str(reads) << endl;
+
+    //isl_union_map *validity =
+      //its(dot(writes, inv(reads)), before);
+    //print(ctx, validity);
+    //isl_union_map *proximity =
+      //cpy(validity);
+
+    //isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+    
+    isl_schedule* sched = optimized_schedule();
     auto schedmap = its(isl_schedule_get_map(sched), domain);
     cout << "Optimized schedule..." << endl;
     cout << codegen_c(schedmap);
@@ -1754,8 +1794,86 @@ void conv_1d_test() {
   }
 }
 
+//isl_bool print_sched_tp(isl_schedule_node* n, void* user) {
+isl_schedule_node* print_sched_tp(isl_schedule_node* n, void* user) {
+  cout << "\tNode..." << endl;
+
+  isl_schedule_node_type tp = isl_schedule_node_get_type(n);
+  cout << "\t\ttp = " << tp << endl;
+  if (tp == isl_schedule_node_sequence) {
+    cout << "\t\t\tseq" << endl;
+  } else if (tp == isl_schedule_node_band) {
+    cout << "\t\t\tband" << endl;
+    cout << "\t\t\t" << str(isl_schedule_node_band_get_space(n)) << endl;
+    cout << "\t\t\t" << str(isl_schedule_node_band_get_partial_schedule_union_map(n)) << endl;
+
+    int* ind = (int*) user;
+    //bool* seen = (bool*) user;
+
+    //if (!(*seen)) {
+    if (*ind == 1 || *ind == 2) {
+      isl_multi_val* tile_factor = isl_multi_val_zero(isl_schedule_node_band_get_space(n));
+      isl_val* tile_val = isl_val_int_from_si(isl_schedule_node_get_ctx(n), 2);
+      isl_multi_val_set_val(tile_factor, 0, tile_val);
+
+      isl_schedule_node_band_tile(n, tile_factor);
+      //*seen = true;
+      *ind = *ind + 1;
+    } else {
+      *ind = *ind + 1;
+    }
+    //auto bnds = (vector<isl_schedule_node*>*) user;
+    //bnds->push_back(n);
+  }
+  return n;
+  //return isl_bool_true;
+}
+
+void mmul_test() {
+  prog prg;
+  auto r = prg.add_loop("r", 0, 8);
+  auto c = r->add_loop("c", 0, 8);
+  auto rd = c->add_op("read");
+  rd->add_store("T", "0");
+
+  auto k = c->add_loop("k", 0, 8);
+  auto accum = k->add_op("accum");
+  accum->add_load("T", "0");
+  accum->add_store("T", "0");
+
+  auto write = c->add_op("write");
+  write->add_load("T", "0");
+  write->add_store("M", "r, c");
+
+
+  cout << "Program code without optimization..." << endl;
+  prg.unoptimized_codegen();
+
+  cout << "Program with optimized schedule..." << endl;
+  isl_schedule* opt_sched = prg.optimized_schedule();
+
+  cout << "Optimized schedule" << endl;
+  print(prg.ctx, opt_sched);
+
+  cout << "Node types..." << endl;
+  //bool seen = false;
+  //isl_schedule_foreach_schedule_node_top_down(opt_sched, print_sched_tp, &seen);
+  int ind = 0;
+  opt_sched = isl_schedule_map_schedule_node_bottom_up(opt_sched, print_sched_tp, &ind);
+
+  cout << "tile schedule..." << endl;
+  print(prg.ctx, opt_sched);
+
+  auto domain = prg.whole_iteration_domain();
+  auto schedmap = its(isl_schedule_get_map(opt_sched), domain);
+  cout << "Optimized schedule..." << endl;
+  cout << codegen_c(schedmap);
+  assert(false);
+}
+
 int main() {
 
+  //mmul_test();
   synth_reduce_test();
   conv_1d_test();
 
