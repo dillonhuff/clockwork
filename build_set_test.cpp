@@ -1856,26 +1856,65 @@ void conv_1d_test() {
   }
 
   ofstream conv_out(prg.name + ".cpp");
+  vector<string> args;
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
       generate_hls_code(conv_out, b.second);
+    } else {
+      args.push_back("Arg& " + b.first);
     }
   }
 
+  conv_out << endl << endl;
+  conv_out << "// Operation logic" << endl;
+  for (auto op : prg.all_ops()) {
+    vector<string> args;
+    set<string> bufs;
+    for (auto con : op->consume_locs) {
+      if (!elem(con.first, bufs)) {
+        args.push_back("Arg& " + con.first);
+        bufs.insert(con.first);
+      }
+    }
+    bufs = {};
+    for (auto con : op->produce_locs) {
+      if (!elem(con.first, bufs)) {
+        args.push_back("Arg& " + con.first);
+        bufs.insert(con.first);
+      }
+    }
+    conv_out << "inline void " << op->name << sep_list(args, "(", ")", ", ") << " {" << endl;
+    for (auto con : op->consume_locs) {
+      conv_out << "\t// Consume: " << con.first << endl;
+    }
+    if (op->func != "") {
+      conv_out << "\t// Apply function: " << op->func << endl;
+    }
+    for (auto con : op->produce_locs) {
+      conv_out << "\t// Produce: " << con.first << endl;
+    }
+
+    conv_out << "}" << endl << endl;
+  }
+
+  conv_out << "// Driver function" << endl;
+  string arg_buffers = sep_list(args, "(", ")", ", ");
+  conv_out << "void " << prg.name << arg_buffers << " {" << endl;
+  for (auto& b : buffers) {
+    if (!prg.is_boundary(b.first)) {
+      conv_out << "\t" << b.first << "_cache " << b.first << endl;
+    }
+  }
+  conv_out << "// Optimized schedule..." << endl;
+  
   auto domain = prg.whole_iteration_domain();
   auto schedmap = its(isl_schedule_get_map(prg.optimized_schedule()), domain);
-  conv_out << "// Optimized schedule..." << endl;
   conv_out << codegen_c(schedmap);
 
-  //string
-  //for (auto op : prg.all_ops()) {
-  //if (op->func != "") {
-  //generate_op_code(buffers, op);
-  //}
-  //}
+  conv_out << "}";
+
 }
 
-//isl_bool print_sched_tp(isl_schedule_node* n, void* user) {
 isl_schedule_node* print_sched_tp(isl_schedule_node* n, void* user) {
   cout << "\tNode..." << endl;
 
@@ -1951,7 +1990,7 @@ int main() {
   //mmul_test();
   synth_reduce_test();
   conv_1d_test();
-  assert(false);
+  //assert(false);
 
   synth_wire_test();
   synth_sr_boundary_condition_test();
