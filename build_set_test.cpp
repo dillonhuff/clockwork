@@ -1509,6 +1509,17 @@ struct prog {
     root->end_exclusive = 1;
   }
 
+  vector<string> cache_args(op* op) {
+    vector<string> args;
+    for (auto cs : op->consume_locs) {
+      args.push_back(cs.first);
+    }
+    for (auto cs : op->produce_locs) {
+      args.push_back(cs.first);
+    }
+    return args;
+  }
+
   set<op*> all_ops() { return root->all_ops(); }
 
   loop* add_loop(const std::string& name, const int l, const int u) {
@@ -1907,7 +1918,10 @@ void conv_1d_test() {
   conv_out << "void " << prg.name << arg_buffers << " {" << endl;
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
-      conv_out << "\t" << b.first << "_cache " << b.first << endl;
+      for (auto in : b.second.get_in_ports()) {
+        //conv_out << "\t" << b.first << "_" << in << "_cache " << in << endl;
+        conv_out << "\t" << in << "_cache " << in << endl;
+      }
     }
   }
 
@@ -1917,7 +1931,8 @@ void conv_1d_test() {
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
   for (auto op : prg.all_ops()) {
     regex re(op->name + "\\((.*)\\);");
-    code_string = regex_replace(code_string, re, op->name + "(<args>, $1)");
+    string args = sep_list(prg.cache_args(op), "", "", ", ");
+    code_string = regex_replace(code_string, re, op->name + "(" + args + ", $1)");
   }
   conv_out << code_string << endl;
 
