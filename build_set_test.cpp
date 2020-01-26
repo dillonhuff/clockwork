@@ -1861,7 +1861,7 @@ void conv_1d_test() {
     if (!prg.is_boundary(b.first)) {
       generate_hls_code(conv_out, b.second);
     } else {
-      args.push_back("Arg& " + b.first);
+      args.push_back("HWStream<int>& " + b.first);
     }
   }
 
@@ -1872,16 +1872,21 @@ void conv_1d_test() {
     set<string> bufs;
     for (auto con : op->consume_locs) {
       if (!elem(con.first, bufs)) {
-        args.push_back("Arg& " + con.first);
+        args.push_back("HWStream<int>& " + con.first);
         bufs.insert(con.first);
       }
     }
     bufs = {};
     for (auto con : op->produce_locs) {
       if (!elem(con.first, bufs)) {
-        args.push_back("Arg& " + con.first);
+        args.push_back("HWStream<int>& " + con.first);
         bufs.insert(con.first);
       }
+    }
+    auto s = get_space(domains.at(op));
+    assert(isl_space_is_set(s));
+    for (int i = 0; i < num_dims(s); i++) {
+      args.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
     }
     conv_out << "inline void " << op->name << sep_list(args, "(", ")", ", ") << " {" << endl;
     for (auto con : op->consume_locs) {
