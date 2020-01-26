@@ -1910,11 +1910,16 @@ void conv_1d_test() {
       conv_out << "\t" << b.first << "_cache " << b.first << endl;
     }
   }
-  conv_out << "// Optimized schedule..." << endl;
-  
+
   auto domain = prg.whole_iteration_domain();
   auto schedmap = its(isl_schedule_get_map(prg.optimized_schedule()), domain);
-  conv_out << codegen_c(schedmap);
+  string code_string = codegen_c(schedmap);
+  code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
+  for (auto op : prg.all_ops()) {
+    regex re(op->name + "\\((.*)\\);");
+    code_string = regex_replace(code_string, re, op->name + "(<args>, $1)");
+  }
+  conv_out << code_string << endl;
 
   conv_out << "}";
 
