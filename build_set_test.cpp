@@ -1342,10 +1342,15 @@ struct op {
 
   std::set<std::string> consumes;
   std::set<pair<std::string, std::string> > consume_locs;
+  std::string func;
 
   isl_ctx* ctx;
 
   op() : parent(nullptr), is_loop(false) {}
+
+  void add_function(const std::string& n) {
+    func = n;
+  }
 
   op* add_loop(const std::string& name, const int l, const int u) {
     auto lp = new op();
@@ -1701,6 +1706,25 @@ struct prog {
   }
 };
 
+void generate_op_code(map<string, UBuffer>& buffers, op* op) {
+  assert(op->func != "");
+  string name = op->func;
+
+  ofstream out(name + "_wrapper.cpp");
+  vector<string> decls;
+  for (auto consumed : op->consume_locs) {
+    decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
+  }
+  
+  for (auto consumed : op->produce_locs) {
+    if (contains_key(consumed.first, buffers)) {
+      decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
+    } 
+  }
+  out << "void " << name << sep_list(decls, "(", ")", ", ") << "{}";
+  out.close();
+}
+
 void conv_1d_test() {
   prog prg;
   prg.add_input("in");
@@ -1718,6 +1742,7 @@ void conv_1d_test() {
   read0->add_store("T", "c");
 
   auto compute = c->add_op("compute_out");
+  compute->add_function("accumulate_3");
   compute->add_load("T", "c");
   compute->add_store("out", "c");
 
@@ -1740,10 +1765,6 @@ void conv_1d_test() {
 
     for (auto produced : op->produce_locs) {
       string name = produced.first;
-
-      if (prg.is_boundary(name)) {
-        continue;
-      }
 
       if (!contains_key(name, buffers)) {
         UBuffer buf;
@@ -1771,10 +1792,6 @@ void conv_1d_test() {
 
     for (auto consumed : op->consume_locs) {
       string name = consumed.first;
-
-      if (prg.is_boundary(name)) {
-        continue;
-      }
 
       if (!contains_key(name, buffers)) {
         UBuffer buf;
@@ -1819,11 +1836,21 @@ void conv_1d_test() {
       cout << "\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
     }
 
+    if (prg.is_boundary(buf.name)) {
+      continue;
+    }
+
     cout << "Generating code..." << endl;
     generate_hls_code(b.second);
 
     int res = system(string("g++ -c " + b.second.name + ".cpp").c_str());
     assert(res == 0);
+  }
+
+  for (auto op : prg.all_ops()) {
+    if (op->func != "") {
+      generate_op_code(buffers, op);
+    }
   }
 }
 
@@ -1841,9 +1868,6 @@ isl_schedule_node* print_sched_tp(isl_schedule_node* n, void* user) {
     cout << "\t\t\t" << str(isl_schedule_node_band_get_partial_schedule_union_map(n)) << endl;
 
     int* ind = (int*) user;
-    //bool* seen = (bool*) user;
-
-    //if (!(*seen)) {
     if (*ind == 1 || *ind == 2) {
       isl_multi_val* tile_factor = isl_multi_val_zero(isl_schedule_node_band_get_space(n));
       isl_val* tile_val = isl_val_int_from_si(isl_schedule_node_get_ctx(n), 2);
@@ -1855,11 +1879,8 @@ isl_schedule_node* print_sched_tp(isl_schedule_node* n, void* user) {
     } else {
       *ind = *ind + 1;
     }
-    //auto bnds = (vector<isl_schedule_node*>*) user;
-    //bnds->push_back(n);
   }
   return n;
-  //return isl_bool_true;
 }
 
 void mmul_test() {
@@ -1909,7 +1930,7 @@ int main() {
   //mmul_test();
   synth_reduce_test();
   conv_1d_test();
-  //assert(false);
+  assert(false);
 
   synth_wire_test();
   synth_sr_boundary_condition_test();
@@ -1919,6 +1940,7 @@ int main() {
   return 0;
 
 }
+
 
 
 
