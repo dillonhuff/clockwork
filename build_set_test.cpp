@@ -852,7 +852,7 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
 
     // Maybe: Get the schedule position, take the lexmax and then get it back?source map and then?? Creating more code?
     out << "// Select if: " << str(src_map) << endl;
-    out << "inline int " + outpt + "_select(";
+    out << "inline " + buf.port_type_string() + " " + outpt + "_select(";
     size_t nargs = 0;
     for (auto pt : buf.get_in_ports()) {
       out << pt + "_cache& " << pt << "_delay" << endl;
@@ -884,7 +884,7 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
       inpt = *(buf.get_in_ports().begin());
 
       if (pieces.size() == 0) {
-        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << 0 << "()" << ";\n";
+        out << "\t" << buf.port_type_string() << " value_" << inpt << " = " << inpt << "_delay.peek_" << 0 << "()" << ";\n";
         out << "\treturn value_" + inpt + ";" << endl;
       } else if (pieces.size() == 1 &&
           isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
@@ -943,7 +943,7 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
       out << "\t" << buf.bundle_type_string(b.first) + " result;" << endl;
       int offset = 0;
       for (auto p : b.second) {
-        out << "\tint " << p << "_res = " << p << "_select(" << arg_string << ");" << endl;
+        out << "\t" + buf.port_type_string() + " " << p << "_res = " << p << "_select(" << arg_string << ");" << endl;
         out << "\tset_at(result, " << offset << ", " << p << "_res" << ");" << endl;
         offset += buf.port_width(p);
       }
@@ -2299,7 +2299,7 @@ int main() {
 
   //mmul_test();
   synth_reduce_test();
-  //conv_1d_test();
+  conv_1d_test();
   //assert(false);
 
   synth_wire_test();

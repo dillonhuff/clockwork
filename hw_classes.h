@@ -147,6 +147,14 @@ void set_at(hw_uint<Len>& i, const int offset, const int value) {
   }
 }
 
+template<int Len>
+void set_at(hw_uint<Len>& i, const int offset, const hw_uint<Len>& value) {
+  assert(offset == 0);
+  for (int v = offset; v < offset + Len; v++) {
+    i.val.set(v, value.val.get(v - offset));
+  }
+}
+
 static inline
 void set_at(int& i, const int offset, const int value) {
   *(&i) = value;
