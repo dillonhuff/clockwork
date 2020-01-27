@@ -140,6 +140,7 @@ class hw_uint {
     hw_uint<E_inclusive - S + 1> extract() {
       hw_uint<E_inclusive - S + 1> extr;
       for (int i = S; i < E_inclusive + 1; i++) {
+#pragma HLS unroll
         assert(i < Len);
         extr.val[i - S] = val[i];
       }
@@ -158,6 +159,7 @@ class hw_uint {
     hw_uint() : val(0) {}
 
     template<int S, int E_inclusive>
+      inline
     hw_uint<E_inclusive - S + 1> extract() {
       hw_uint<E_inclusive - S + 1> extr;
       for (int i = S; i < E_inclusive + 1; i++) {
@@ -174,11 +176,13 @@ class hw_uint {
 #endif // __VIVADO_SYNTH__
 };
 
+#ifndef __VIVADO_SYNTH__
 template<int Len>
 std::ostream& operator<<(std::ostream& out, hw_uint<Len>& v) {
   out << v.val;
   return out;
 }
+#endif
 
 template<int Len>
 hw_uint<Len> operator+(const hw_uint<Len>& a, const hw_uint<Len>& b) {
@@ -194,9 +198,11 @@ hw_uint<Len> operator+(const hw_uint<Len>& a, const hw_uint<Len>& b) {
 }
 
 template<int Len>
+inline
 void set_at(hw_uint<Len>& i, const int offset, const int value) {
 #ifdef __VIVADO_SYNTH__
   for (int v = offset; v < offset + 32; v++) {
+#pragma HLS unroll
     i.val[v] = ((value >> (v - offset)) & 1);
   }
 #else
@@ -207,10 +213,12 @@ void set_at(hw_uint<Len>& i, const int offset, const int value) {
 }
 
 template<int Len>
+inline
 void set_at(hw_uint<Len>& i, const int offset, const hw_uint<Len>& value) {
 #ifdef __VIVADO_SYNTH__
   assert(offset == 0);
   for (int v = offset; v < offset + Len; v++) {
+#pragma HLS unroll
     i.val[v] = value.val[v - offset];
   }
 #else
