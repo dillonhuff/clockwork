@@ -137,8 +137,35 @@ class hw_uint {
     hw_uint(const int v) : val(v) {}
     hw_uint() : val(0) {}
 
+    template<int S, int E_inclusive>
+    hw_uint<E_inclusive - S + 1> extract() {
+      hw_uint<E_inclusive - S + 1> extr;
+      for (int i = S; i < E_inclusive + 1; i++) {
+        assert(i < Len);
+        extr.val.set(i - S, val.get(i));
+      }
+      return extr;
+    }
+
+    int to_int() {
+      return val.template to_type<int>();
+    }
+
 #endif // __VIVADO_SYNTH__
 };
+
+template<int Len>
+std::ostream& operator<<(std::ostream& out, hw_uint<Len>& v) {
+  out << v.val;
+  return out;
+}
+
+template<int Len>
+hw_uint<Len> operator+(const hw_uint<Len>& a, const hw_uint<Len>& b) {
+  hw_uint<Len> res;
+  res.val = bsim::add_general_width_bv(a.val, b.val);
+  return res;
+}
 
 template<int Len>
 void set_at(hw_uint<Len>& i, const int offset, const int value) {
