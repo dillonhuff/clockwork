@@ -151,6 +151,8 @@ class hw_uint {
       return val.template to_type<int>();
     }
 
+    operator int() { return to_int(); }
+
 #endif // __VIVADO_SYNTH__
 };
 
@@ -167,23 +169,24 @@ hw_uint<Len> operator+(const hw_uint<Len>& a, const hw_uint<Len>& b) {
   return res;
 }
 
-template<int Len>
-void set_at(hw_uint<Len>& i, const int offset, const int value) {
+template<int offset, int Len>
+void set_at(hw_uint<Len>& i, const int value) {
   for (int v = offset; v < offset + 32; v++) {
     i.val.set(v, bsim::quad_value((value >> (v - offset)) & 1));
   }
 }
 
-template<int Len>
-void set_at(hw_uint<Len>& i, const int offset, const hw_uint<Len>& value) {
+template<int offset, int Len>
+void set_at(hw_uint<Len>& i, const hw_uint<Len>& value) {
   assert(offset == 0);
   for (int v = offset; v < offset + Len; v++) {
     i.val.set(v, value.val.get(v - offset));
   }
 }
 
+template<int offset, int Len>
 static inline
-void set_at(int& i, const int offset, const int value) {
+void set_at(int& i, const int value) {
   *(&i) = value;
 }
 
@@ -217,6 +220,7 @@ class HWStream {
       values.pop_back();
       return b;
     }
+
 
 #endif // __VIVADO_SYNTH__
 };

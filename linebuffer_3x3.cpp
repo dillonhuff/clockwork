@@ -269,7 +269,7 @@ inline int read_2_2_select(write0_cache& write0_delay
 inline int linebuffer_3x3_read_0_0_bundle_action(write0_cache& write0_delay, int i, int j) {
 	int result;
 	int read_0_0_res = read_0_0_select(write0_delay, i, j);
-	set_at(result, 0, read_0_0_res);
+	set_at<0, 32>(result, read_0_0_res);
 	return result;
 }
 
@@ -278,7 +278,7 @@ inline int linebuffer_3x3_read_0_0_bundle_action(write0_cache& write0_delay, int
 inline int linebuffer_3x3_read_0_1_bundle_action(write0_cache& write0_delay, int i, int j) {
 	int result;
 	int read_0_1_res = read_0_1_select(write0_delay, i, j);
-	set_at(result, 0, read_0_1_res);
+	set_at<0, 32>(result, read_0_1_res);
 	return result;
 }
 
@@ -287,7 +287,7 @@ inline int linebuffer_3x3_read_0_1_bundle_action(write0_cache& write0_delay, int
 inline int linebuffer_3x3_read_0_2_bundle_action(write0_cache& write0_delay, int i, int j) {
 	int result;
 	int read_0_2_res = read_0_2_select(write0_delay, i, j);
-	set_at(result, 0, read_0_2_res);
+	set_at<0, 32>(result, read_0_2_res);
 	return result;
 }
 
@@ -296,7 +296,7 @@ inline int linebuffer_3x3_read_0_2_bundle_action(write0_cache& write0_delay, int
 inline int linebuffer_3x3_read_1_0_bundle_action(write0_cache& write0_delay, int i, int j) {
 	int result;
 	int read_1_0_res = read_1_0_select(write0_delay, i, j);
-	set_at(result, 0, read_1_0_res);
+	set_at<0, 32>(result, read_1_0_res);
 	return result;
 }
 
@@ -305,7 +305,7 @@ inline int linebuffer_3x3_read_1_0_bundle_action(write0_cache& write0_delay, int
 inline int linebuffer_3x3_read_1_1_bundle_action(write0_cache& write0_delay, int i, int j) {
 	int result;
 	int read_1_1_res = read_1_1_select(write0_delay, i, j);
-	set_at(result, 0, read_1_1_res);
+	set_at<0, 32>(result, read_1_1_res);
 	return result;
 }
 
@@ -314,7 +314,7 @@ inline int linebuffer_3x3_read_1_1_bundle_action(write0_cache& write0_delay, int
 inline int linebuffer_3x3_read_1_2_bundle_action(write0_cache& write0_delay, int i, int j) {
 	int result;
 	int read_1_2_res = read_1_2_select(write0_delay, i, j);
-	set_at(result, 0, read_1_2_res);
+	set_at<0, 32>(result, read_1_2_res);
 	return result;
 }
 
@@ -323,7 +323,7 @@ inline int linebuffer_3x3_read_1_2_bundle_action(write0_cache& write0_delay, int
 inline int linebuffer_3x3_read_2_0_bundle_action(write0_cache& write0_delay, int i, int j) {
 	int result;
 	int read_2_0_res = read_2_0_select(write0_delay, i, j);
-	set_at(result, 0, read_2_0_res);
+	set_at<0, 32>(result, read_2_0_res);
 	return result;
 }
 
@@ -332,7 +332,7 @@ inline int linebuffer_3x3_read_2_0_bundle_action(write0_cache& write0_delay, int
 inline int linebuffer_3x3_read_2_1_bundle_action(write0_cache& write0_delay, int i, int j) {
 	int result;
 	int read_2_1_res = read_2_1_select(write0_delay, i, j);
-	set_at(result, 0, read_2_1_res);
+	set_at<0, 32>(result, read_2_1_res);
 	return result;
 }
 
@@ -341,7 +341,7 @@ inline int linebuffer_3x3_read_2_1_bundle_action(write0_cache& write0_delay, int
 inline int linebuffer_3x3_read_2_2_bundle_action(write0_cache& write0_delay, int i, int j) {
 	int result;
 	int read_2_2_res = read_2_2_select(write0_delay, i, j);
-	set_at(result, 0, read_2_2_res);
+	set_at<0, 32>(result, read_2_2_res);
 	return result;
 }
 
