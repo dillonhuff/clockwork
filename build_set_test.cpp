@@ -2226,6 +2226,12 @@ void conv_1d_test() {
   conv_out << code_string << endl;
 
   conv_out << "}" << endl;
+  
+  ofstream of(prg.name + ".h");
+  of << "#pragma once\n\n" << endl;
+  of << "#include \"hw_classes.h\"" << endl << endl;
+  of << "void " << prg.name << arg_buffers << ";" << endl;
+  of.close();
 
   int res = system(string("g++ -std=c++11 -c " + prg.name + ".cpp").c_str());
   assert(res == 0);
