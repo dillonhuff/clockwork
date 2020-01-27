@@ -40,27 +40,27 @@ struct write0_cache {
 	// BP = 130
 	// BP = 130
 	// Parition [0, 1) capacity = 1
-	fifo<1> f0;
+	fifo<int, 1> f0;
 	// Parition [1, 2) capacity = 1
-	fifo<1> f2;
+	fifo<int, 1> f2;
 	// Parition [2, 3) capacity = 1
-	fifo<1> f4;
+	fifo<int, 1> f4;
 	// Parition [3, 64) capacity = 61
-	fifo<61> f5;
+	fifo<int, 61> f5;
 	// Parition [64, 65) capacity = 1
-	fifo<1> f6;
+	fifo<int, 1> f6;
 	// Parition [65, 66) capacity = 1
-	fifo<1> f8;
+	fifo<int, 1> f8;
 	// Parition [66, 67) capacity = 1
-	fifo<1> f10;
+	fifo<int, 1> f10;
 	// Parition [67, 128) capacity = 61
-	fifo<61> f11;
+	fifo<int, 61> f11;
 	// Parition [128, 129) capacity = 1
-	fifo<1> f12;
+	fifo<int, 1> f12;
 	// Parition [129, 130) capacity = 1
-	fifo<1> f14;
+	fifo<int, 1> f14;
 	// Parition [130, 130] capacity = 1
-	fifo<1> f16;
+	fifo<int, 1> f16;
 
 
 	inline int peek_0() {

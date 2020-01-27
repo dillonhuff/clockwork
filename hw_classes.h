@@ -34,18 +34,18 @@ class hw_mem {
     }
 };
 
-template<int Depth>
+template<typename T, int Depth>
 class fifo {
   public:
 
     int write_addr;
     int read_addr;
 
-    int vals[Depth];
+    T vals[Depth];
 
     fifo() : read_addr(0), write_addr(0) {}
 
-    int back() {
+    T back() {
       int addr = write_addr + Depth;
       if (addr >= Depth) {
         // Wrap around
@@ -55,7 +55,7 @@ class fifo {
       return vals[addr];
     }
 
-    void push(const int val) {
+    void push(const T& val) {
       vals[write_addr] = val;
       write_addr = MOD_INC(write_addr, Depth);
     }
