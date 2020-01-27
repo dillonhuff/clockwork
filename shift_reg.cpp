@@ -98,7 +98,7 @@ inline int read2_select(write_cache& write_delay
 // Bundles...
 // read0
 //	read0
-inline int read0_bundle_action(write_cache& write_delay, int i) {
+inline int shift_reg_read0_bundle_action(write_cache& write_delay, int i) {
 	int result;
 	int read0_res = read0_select(write_delay, i);
 	set_at(result, 0, read0_res);
@@ -107,7 +107,7 @@ inline int read0_bundle_action(write_cache& write_delay, int i) {
 
 // read1
 //	read1
-inline int read1_bundle_action(write_cache& write_delay, int i) {
+inline int shift_reg_read1_bundle_action(write_cache& write_delay, int i) {
 	int result;
 	int read1_res = read1_select(write_delay, i);
 	set_at(result, 0, read1_res);
@@ -116,7 +116,7 @@ inline int read1_bundle_action(write_cache& write_delay, int i) {
 
 // read2
 //	read2
-inline int read2_bundle_action(write_cache& write_delay, int i) {
+inline int shift_reg_read2_bundle_action(write_cache& write_delay, int i) {
 	int result;
 	int read2_res = read2_select(write_delay, i);
 	set_at(result, 0, read2_res);
@@ -125,7 +125,7 @@ inline int read2_bundle_action(write_cache& write_delay, int i) {
 
 // write
 //	write
-inline void write_bundle_action(InputStream<int>& write, write_cache& write_delay) {
+inline void shift_reg_write_bundle_action(InputStream<int>& write, write_cache& write_delay) {
 	write_write(write, write_delay);
 }
 
@@ -137,9 +137,9 @@ void shift_reg(OutputStream<int >& read0, OutputStream<int >& read1, OutputStrea
 	for (int c0 = 0; c0 <= 9; c0 += 1) {
 	  write_write(write, write_delay);
 	  if (c0 >= 2) {
-	    read2.write(read2_bundle_action(write_delay, c0 - 2));
-	    read1.write(read1_bundle_action(write_delay, c0 - 2));
-	    read0.write(read0_bundle_action(write_delay, c0 - 2));
+	    read2.write(shift_reg_read2_bundle_action(write_delay, c0 - 2));
+	    read1.write(shift_reg_read1_bundle_action(write_delay, c0 - 2));
+	    read0.write(shift_reg_read0_bundle_action(write_delay, c0 - 2));
 	  }
 	}
 	

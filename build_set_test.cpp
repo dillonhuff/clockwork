@@ -900,7 +900,7 @@ void generate_hls_code(std::ostream& out, UBuffer& buf) {
     }
     string rep = pick(b.second);
     if (buf.is_out_pt(rep)) {
-      out << "inline " << buf.bundle_type_string(b.first) << " " <<  b.first << "_bundle_action(";
+      out << "inline " << buf.bundle_type_string(b.first) << " " <<  buf.name << "_" << b.first << "_bundle_action(";
       vector<string> dim_decls;
       vector<string> dim_args;
       for (auto pt : buf.get_in_ports()) {
@@ -928,7 +928,7 @@ void generate_hls_code(std::ostream& out, UBuffer& buf) {
       }
       out << "\treturn result;" << endl;
     } else {
-      out << "inline void " + b.first + "_bundle_action(";
+      out << "inline void " + buf.name + "_" + b.first + "_bundle_action(";
       vector<string> dim_decls;
       dim_decls.push_back("InputStream<int>& " + b.first);
       vector<string> dim_args;
@@ -1002,7 +1002,7 @@ void generate_hls_code(UBuffer& buf) {
   for (auto b : buf.port_bundles) {
     if (buf.is_out_pt(*(begin(b.second)))) {
       regex re0(b.first + "\\((.*)\\);");
-      code_string = regex_replace(code_string, re0, b.first + ".write(" + b.first + "_bundle_action(" + delay_list + ", $1" + "));");
+      code_string = regex_replace(code_string, re0, b.first + ".write(" + buf.name + "_" + b.first + "_bundle_action(" + delay_list + ", $1" + "));");
     } else {
     }
   }
@@ -1910,35 +1910,30 @@ void conv_1d_test() {
         done.insert(buf_name);
       }
     }
-    //set<string> bufs;
-    //for (auto con : op->consume_locs) {
-      //if (!elem(con.first, bufs)) {
-        //args.push_back("HWStream<int>& " + con.first);
-        //bufs.insert(con.first);
-      //}
-    //}
-    //bufs = {};
-    //for (auto con : op->produce_locs) {
-      //if (!elem(con.first, bufs)) {
-        //args.push_back("HWStream<int>& " + con.first);
-        //bufs.insert(con.first);
-      //}
-    //}
+
     auto s = get_space(domains.at(op));
     assert(isl_space_is_set(s));
     for (int i = 0; i < num_dims(s); i++) {
       buf_srcs.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
     }
     conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
+    set<string> in_buffers;
     for (auto con : op->consume_locs) {
       conv_out << "\t// Consume: " << con.first << endl;
+      in_buffers.insert(con.first);
     }
+    assert(in_buffers.size() == 1);
+
     if (op->func != "") {
       conv_out << "\t// Apply function: " << op->func << endl;
     }
+
+    set<string> out_buffers;
     for (auto con : op->produce_locs) {
       conv_out << "\t// Produce: " << con.first << endl;
+      out_buffers.insert(con.first);
     }
+    assert(out_buffers.size() == 1);
 
     conv_out << "}" << endl << endl;
   }
