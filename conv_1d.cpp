@@ -220,6 +220,7 @@ void conv_1d(HWStream<int>& in, HWStream<int>& out) {
 	M_write_2_cache M_write_2;
 	T_read0_4_cache T_read0_4;
 	for (int c0 = 0; c0 <= 9; c0 += 1) {
+#pragma HLS pipeline
 	  write(in, M_write_2, 0, c0);
 	  if (c0 >= 2) {
 	    read0(M_write_2, T_read0_4, 0, c0 - 2);
