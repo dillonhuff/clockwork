@@ -2143,7 +2143,7 @@ void conv_1d_test() {
     string res = in_buffer + "_val";
     if (op->func != "") {
       conv_out << "\t// Apply function: " << op->func << endl;
-      conv_out << "auto compute_result = " << op->func << "(" << res << ");" << endl;
+      conv_out << "\tauto compute_result = " << op->func << "(" << res << ");" << endl;
       res = "compute_result";
     }
 
