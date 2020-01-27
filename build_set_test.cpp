@@ -70,14 +70,18 @@ class UBuffer {
     
     isl_map* physical_address_mapping;
 
+    int port_widths;
+
+    UBuffer() : port_widths(32) {}
+
     int port_width(const std::string& port_name) {
-      return 32;
+      return port_widths;
     }
 
     std::string bundle_type_string(const std::string& bundle_name) {
       int len = 0;
       for (auto pt : map_find(bundle_name, port_bundles)) {
-        len += 32;
+        len += port_width(pt);
       }
 
       if (len == 32) {
@@ -783,6 +787,179 @@ void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer&
   out << "};" << endl << endl;
 }
 
+void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
+  string inpt = buf.get_in_port();
+
+  cout << "Computing maxdelay..." << endl;
+
+  int maxdelay = 0;
+  for (auto outpt : buf.get_out_ports()) {
+    int r0 = compute_dd_bound(buf, outpt, inpt);
+    if (r0 > maxdelay) {
+      maxdelay = r0;
+    }
+  }
+  out << "#include \"hw_classes.h\"" << endl << endl;
+  for (auto inpt : buf.get_in_ports()) {
+    generate_memory_struct(out, inpt, buf, maxdelay);
+  }
+
+  out << endl << endl;
+  for (auto inpt : buf.get_in_ports()) {
+    out << "inline void " << inpt << "_write(" << "int& " << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
+    out << "\t" + inpt + "_delay.push(" + inpt + ");" << endl;
+    out << "}" << endl << endl;
+  }
+
+  for (auto outpt : buf.get_out_ports()) {
+    umap* src_map = nullptr;
+    for (auto inpt : buf.get_in_ports()) {
+      auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
+      if (src_map == nullptr) {
+        src_map =
+          ((its(dot(buf.access_map.at(outpt),
+                    inv(buf.access_map.at(inpt))), beforeAcc)));
+      } else {
+        src_map =
+          unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
+      }
+    }
+
+    auto sched = buf.global_schedule();
+    auto after = lex_gt(sched, sched);
+
+    src_map = its(src_map, after);
+    src_map = lexmax(src_map);
+
+    auto time_to_event = inv(sched);
+
+    auto lex_max_events =
+      dot(lexmax(dot(src_map, sched)), time_to_event);
+    print(ctx(src_map), lex_max_events);
+
+    // Maybe: Get the schedule position, take the lexmax and then get it back?source map and then?? Creating more code?
+    out << "// Select if: " << str(src_map) << endl;
+    out << "inline int " + outpt + "_select(";
+    size_t nargs = 0;
+    for (auto pt : buf.get_in_ports()) {
+      out << pt + "_cache& " << pt << "_delay" << endl;
+      out << ", ";
+      nargs++;
+    }
+    isl_space* s = get_space(buf.domain.at(outpt));
+    assert(isl_space_is_set(s));
+    vector<string> dim_decls;
+    for (int i = 0; i < num_dims(s); i++) {
+      dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
+    }
+    out << sep_list(dim_decls, "", "", ", ");
+
+    out << ") {" << endl;
+
+
+    // Body of select function
+    if (buf.get_in_ports().size() == 1) {
+      string delay_expr = evaluate_dd(buf, outpt, inpt);
+      auto qpd = compute_dd(buf, outpt, inpt);
+      auto pieces = get_pieces(qpd);
+      out << "// Pieces..." << endl;
+      auto out_domain = buf.domain.at(outpt);
+      for (auto p : pieces) {
+        out << "// " << str(p.first) << " -> " << str(p.second) << endl;
+        out << "// \tis always true on iteration domain: " << isl_set_is_subset(cpy(out_domain), cpy(p.first)) << endl;
+      }
+      inpt = *(buf.get_in_ports().begin());
+
+      if (pieces.size() == 0) {
+        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << 0 << "()" << ";\n";
+        out << "\treturn value_" + inpt + ";" << endl;
+      } else if (pieces.size() == 1 &&
+          isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
+        string dx = codegen_c(pieces[0].second);
+        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
+        out << "\treturn value_" + inpt + ";" << endl;
+      } else {
+        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
+        out << "\treturn value_" + inpt + ";" << endl;
+      }
+    } else {
+      map<string, string> ms = umap_codegen_c(lex_max_events);
+      for (auto e : ms) {
+        out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
+      }
+      for (auto inpt : buf.get_in_ports()) {
+        if (contains_key(inpt, ms)) {
+          string delay_expr = evaluate_dd(buf, outpt, inpt);
+          out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
+          out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
+        }
+      }
+      out << "\tassert(false);\n\treturn 0;\n";
+    }
+
+    out << "}" << endl << endl;
+  }
+
+  out << "// Bundles..." << endl;
+  for (auto b : buf.port_bundles) {
+    out << "// " << b.first << endl;
+    for (auto pt : b.second) {
+      out << "//\t" << pt << endl;
+    }
+    string rep = pick(b.second);
+    if (buf.is_out_pt(rep)) {
+      out << "inline " << buf.bundle_type_string(b.first) << " " <<  buf.name << "_" << b.first << "_bundle_action(";
+      vector<string> dim_decls;
+      vector<string> dim_args;
+      for (auto pt : buf.get_in_ports()) {
+        dim_decls.push_back(pt + "_cache& " + pt + "_delay");
+        dim_args.push_back(pt + "_delay");
+      }
+      auto outpt = *begin(b.second);
+      isl_space* s = get_space(buf.domain.at(outpt));
+      assert(isl_space_is_set(s));
+      for (int i = 0; i < num_dims(s); i++) {
+        dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
+        dim_args.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
+      }
+      string param_string = sep_list(dim_decls, "", "", ", ");
+      string arg_string = sep_list(dim_args, "", "", ", ");
+      out << param_string;
+
+      out << ") {" << endl;
+      out << "\t" << buf.bundle_type_string(b.first) + " result;" << endl;
+      int offset = 0;
+      for (auto p : b.second) {
+        out << "\tint " << p << "_res = " << p << "_select(" << arg_string << ");" << endl;
+        out << "\tset_at(result, " << offset << ", " << p << "_res" << ");" << endl;
+        offset += buf.port_width(p);
+      }
+      out << "\treturn result;" << endl;
+    } else {
+      out << "inline void " + buf.name + "_" + b.first + "_bundle_action(";
+      vector<string> dim_decls;
+      dim_decls.push_back(buf.bundle_type_string(b.first) + "& " + b.first);
+      vector<string> dim_args;
+      dim_args.push_back(b.first);
+      for (auto pt : buf.get_in_ports()) {
+        if (elem(pt, b.second)) {
+          dim_decls.push_back(pt + "_cache& " + pt + "_delay");
+          dim_args.push_back(pt + "_delay");
+        }
+      }
+      string param_string = sep_list(dim_decls, "", "", ", ");
+      string arg_string = sep_list(dim_args, "", "", ", ");
+      out << param_string;
+
+      out << ") {" << endl;
+      out << "\t" << rep << "_write(" << b.first << ", " << rep + "_delay);" << endl;
+
+    }
+    out << "}" << endl << endl;
+  }
+  out << endl << endl;
+
+}
 void generate_hls_code(std::ostream& out, UBuffer& buf) {
   string inpt = buf.get_in_port();
 
@@ -1490,6 +1667,7 @@ struct prog {
   op* root;
   set<string> ins;
   set<string> outs;
+  map<string, int> buffer_port_widths;
 
   bool is_boundary(const std::string& name) {
     return elem(name, ins) || elem(name, outs);
@@ -1752,6 +1930,7 @@ void conv_1d_test() {
   prg.name = "conv_1d";
   prg.add_input("in");
   prg.add_output("out");
+  prg.buffer_port_widths["T"] = 32*3;
   auto p = prg.add_loop("p", 0, 10);
   auto write = p->add_op("write");
   write->add_load("in", "p");
@@ -1793,6 +1972,9 @@ void conv_1d_test() {
         UBuffer buf;
         buf.name = name;
         buf.ctx = prg.ctx;
+        if (contains_key(name, prg.buffer_port_widths)) {
+          buf.port_widths = 32;
+        }
         buffers[name] = buf;
       }
 
@@ -1820,6 +2002,9 @@ void conv_1d_test() {
         UBuffer buf;
         buf.name = name;
         buf.ctx = prg.ctx;
+        if (contains_key(name, prg.buffer_port_widths)) {
+          buf.port_widths = 32;
+        }
         buffers[name] = buf;
       }
 
@@ -1874,7 +2059,7 @@ void conv_1d_test() {
   vector<string> args;
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
-      generate_hls_code(conv_out, b.second);
+      generate_hls_code_internal(conv_out, b.second);
     } else {
       args.push_back("HWStream<int>& " + b.first);
     }
@@ -2080,8 +2265,6 @@ void mmul_test() {
   print(prg.ctx, opt_sched);
 
   cout << "Node types..." << endl;
-  //bool seen = false;
-  //isl_schedule_foreach_schedule_node_top_down(opt_sched, print_sched_tp, &seen);
   int ind = 0;
   opt_sched = isl_schedule_map_schedule_node_bottom_up(opt_sched, print_sched_tp, &ind);
 
@@ -2099,7 +2282,7 @@ int main() {
 
   //mmul_test();
   synth_reduce_test();
-  conv_1d_test();
+  //conv_1d_test();
   //assert(false);
 
   synth_wire_test();
