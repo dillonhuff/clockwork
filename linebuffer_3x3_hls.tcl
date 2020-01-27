@@ -9,3 +9,4 @@ create_clock -period 10
 csynth_design
 export_design -rtl verilog
 cosim_design -rtl verilog
+exit

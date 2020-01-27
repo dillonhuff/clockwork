@@ -2,11 +2,17 @@
 
 #include <cassert>
 #include <deque>
-#include <iostream>
 #include <cmath>
 
 #ifdef __VIVADO_SYNTH__
+
 #include "hls_stream.h"
+
+#else
+
+#include "static_quad_value_bit_vector.h"
+#include <iostream>
+
 #endif
 
 using namespace std;
@@ -28,18 +34,18 @@ class hw_mem {
     }
 };
 
-template<int Depth>
+template<typename T, int Depth>
 class fifo {
   public:
 
     int write_addr;
     int read_addr;
 
-    int vals[Depth];
+    T vals[Depth];
 
     fifo() : read_addr(0), write_addr(0) {}
 
-    int back() {
+    T back() {
       int addr = write_addr + Depth;
       if (addr >= Depth) {
         // Wrap around
@@ -49,7 +55,7 @@ class fifo {
       return vals[addr];
     }
 
-    void push(const int val) {
+    void push(const T& val) {
       vals[write_addr] = val;
       write_addr = MOD_INC(write_addr, Depth);
     }
@@ -119,30 +125,93 @@ class delay_fifo {
     }
 };
 
+template<int Len>
+class hw_uint {
+  public:
+
+#ifdef __VIVADO_SYNTH__
+#else
+
+    bsim::static_quad_value_bit_vector<Len> val;
+
+    hw_uint(const int v) : val(v) {}
+    hw_uint() : val(0) {}
+
+    template<int S, int E_inclusive>
+    hw_uint<E_inclusive - S + 1> extract() {
+      hw_uint<E_inclusive - S + 1> extr;
+      for (int i = S; i < E_inclusive + 1; i++) {
+        assert(i < Len);
+        extr.val.set(i - S, val.get(i));
+      }
+      return extr;
+    }
+
+    int to_int() {
+      return val.template to_type<int>();
+    }
+
+#endif // __VIVADO_SYNTH__
+};
+
+template<int Len>
+std::ostream& operator<<(std::ostream& out, hw_uint<Len>& v) {
+  out << v.val;
+  return out;
+}
+
+template<int Len>
+hw_uint<Len> operator+(const hw_uint<Len>& a, const hw_uint<Len>& b) {
+  hw_uint<Len> res;
+  res.val = bsim::add_general_width_bv(a.val, b.val);
+  return res;
+}
+
+template<int Len>
+void set_at(hw_uint<Len>& i, const int offset, const int value) {
+  for (int v = offset; v < offset + 32; v++) {
+    i.val.set(v, bsim::quad_value((value >> (v - offset)) & 1));
+  }
+}
+
+template<int Len>
+void set_at(hw_uint<Len>& i, const int offset, const hw_uint<Len>& value) {
+  assert(offset == 0);
+  for (int v = offset; v < offset + Len; v++) {
+    i.val.set(v, value.val.get(v - offset));
+  }
+}
+
+static inline
+void set_at(int& i, const int offset, const int value) {
+  *(&i) = value;
+}
+
+template<typename T>
 class HWStream {
   public:
 
 #ifdef __VIVADO_SYNTH__
 
-    hls::stream<int> values;
+    hls::stream<T> values;
 
     void write(const int v) {
       return values.write(v);
     }
 
-    int read() {
+    T read() {
       return values.read();
     }
 
 #else
 
-    deque<int> values;
+    deque<T> values;
 
-    void write(const int v) {
+    void write(const T& v) {
       return values.push_front(v);
     }
 
-    int read() {
+    T read() {
       assert(values.size() > 0);
       int b = values.back();
       values.pop_back();
@@ -152,6 +221,9 @@ class HWStream {
 #endif // __VIVADO_SYNTH__
 };
 
-typedef HWStream InputStream;
-typedef HWStream OutputStream;
+template<typename T>
+using InputStream = HWStream<T>;
+
+template<typename T>
+using OutputStream = HWStream<T>;
 

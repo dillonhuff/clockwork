@@ -61,8 +61,25 @@ std::string range_name(isl_space* const s) {
   return std::string(isl_id_to_str(isl_space_get_tuple_id(s, isl_dim_out)));
 }
 
+isl_union_set* to_uset(isl_set* const m) {
+  return isl_union_set_from_set(m);
+}
+
 isl_union_map* to_umap(isl_map* const m) {
   return isl_union_map_from_map(m);
+}
+
+isl_ctx* ctx(isl_space* const m) {
+  return isl_space_get_ctx(m);
+}
+
+isl_ctx* ctx(isl_qpolynomial* const m) {
+  return isl_qpolynomial_get_ctx(m);
+}
+
+
+isl_ctx* ctx(isl_union_pw_qpolynomial* const m) {
+  return isl_union_pw_qpolynomial_get_ctx(m);
 }
 
 isl_ctx* ctx(isl_aff* const m) {
@@ -81,12 +98,24 @@ isl_ctx* ctx(umap* const m) {
   return isl_union_map_get_ctx(m);
 }
 
+isl_ctx* ctx(isl_schedule* const m) {
+  return isl_schedule_get_ctx(m);
+}
+
+isl_ctx* ctx(isl_union_pw_qpolynomial_fold* const m) {
+  return isl_union_pw_qpolynomial_fold_get_ctx(m);
+}
+
 isl_ctx* ctx(isl_pw_qpolynomial_fold* const m) {
   return isl_pw_qpolynomial_fold_get_ctx(m);
 }
 
 isl_ctx* ctx(isl_pw_qpolynomial* const m) {
   return isl_pw_qpolynomial_get_ctx(m);
+}
+
+isl_schedule* cpy(isl_schedule* const s) {
+  return isl_schedule_copy(s);
 }
 
 isl_pw_multi_aff* cpy(isl_pw_multi_aff* const s) {
@@ -103,6 +132,10 @@ isl_union_pw_qpolynomial* cpy(isl_union_pw_qpolynomial* const s) {
 
 isl_pw_qpolynomial* cpy(isl_pw_qpolynomial* const s) {
   return isl_pw_qpolynomial_copy(s);
+}
+
+isl_union_pw_qpolynomial_fold* cpy(isl_union_pw_qpolynomial_fold* const s) {
+  return isl_union_pw_qpolynomial_fold_copy(s);
 }
 
 isl_pw_qpolynomial_fold* cpy(isl_pw_qpolynomial_fold* const s) {
@@ -149,6 +182,32 @@ isl_aff* cpy(isl_aff* const b) {
   return isl_aff_copy(b);
 }
 
+std::string codegen_c(isl_schedule* const bset) {
+  auto ct = ctx(bset);
+  isl_printer *p;
+  p = isl_printer_to_str(ct);
+  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
+  p = isl_printer_print_schedule(p, cpy(bset));
+
+  char* rs = isl_printer_get_str(p);
+  printf("%s\n", rs);
+  isl_printer_free(p);
+  std::string r(rs);
+  free(rs);
+  return r;
+}
+
+void print(struct isl_ctx* const ctx, isl_schedule* const bset) {
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_print_schedule(p, cpy(bset));
+
+  char* rs = isl_printer_get_str(p);
+  printf("%s\n", rs);
+  isl_printer_free(p);
+  free(rs);
+}
+
 void print(struct isl_ctx* const ctx, isl_qpolynomial* const bset) {
   isl_printer *p;
   p = isl_printer_to_str(ctx);
@@ -160,11 +219,64 @@ void print(struct isl_ctx* const ctx, isl_qpolynomial* const bset) {
   free(rs);
 }
 
+std::string str(isl_space* const bset) {
+  auto context = ctx(bset);
+  isl_printer *p;
+  p = isl_printer_to_str(context);
+  p = isl_printer_print_space(p, cpy(bset));
+
+  char* rs = isl_printer_get_str(p);
+  std::string r(rs);
+  isl_printer_free(p);
+  free(rs);
+  return r;
+}
+
+std::string str(isl_union_pw_qpolynomial* const bset) {
+  auto context = ctx(bset);
+  isl_printer *p;
+  p = isl_printer_to_str(context);
+  p = isl_printer_print_union_pw_qpolynomial(p, cpy(bset));
+
+  char* rs = isl_printer_get_str(p);
+  std::string r(rs);
+  isl_printer_free(p);
+  free(rs);
+  return r;
+}
+
+std::string str(isl_qpolynomial* const bset) {
+  auto context = ctx(bset);
+  isl_printer *p;
+  p = isl_printer_to_str(context);
+  p = isl_printer_print_qpolynomial(p, cpy(bset));
+
+  char* rs = isl_printer_get_str(p);
+  std::string r(rs);
+  isl_printer_free(p);
+  free(rs);
+  return r;
+}
+
 std::string str(isl_aff* const bset) {
   auto context = ctx(bset);
   isl_printer *p;
   p = isl_printer_to_str(context);
   p = isl_printer_print_aff(p, cpy(bset));
+
+  char* rs = isl_printer_get_str(p);
+  std::string r(rs);
+  isl_printer_free(p);
+  free(rs);
+  return r;
+}
+
+std::string codegen_c(isl_union_pw_qpolynomial_fold* const bset) {
+  auto context = ctx(bset);
+  isl_printer *p;
+  p = isl_printer_to_str(context);
+  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
+  p = isl_printer_print_union_pw_qpolynomial_fold(p, cpy(bset));
 
   char* rs = isl_printer_get_str(p);
   std::string r(rs);
@@ -187,6 +299,18 @@ std::string codegen_c(isl_pw_qpolynomial_fold* const bset) {
   return r;
 }
 
+std::string str(isl_union_pw_qpolynomial_fold* const bset) {
+  auto context = ctx(bset);
+  isl_printer *p;
+  p = isl_printer_to_str(context);
+  p = isl_printer_print_union_pw_qpolynomial_fold(p, cpy(bset));
+
+  char* rs = isl_printer_get_str(p);
+  std::string r(rs);
+  isl_printer_free(p);
+  free(rs);
+  return r;
+}
 std::string str(isl_pw_qpolynomial_fold* const bset) {
   auto context = ctx(bset);
   isl_printer *p;
@@ -332,6 +456,19 @@ std::string str(umap* const m) {
   return r;
 }
 
+std::string str(isl_set* const m) {
+  auto ctx = isl_set_get_ctx(m);
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_print_set(p, cpy(m));
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  std::string r(rs);
+  free(rs);
+  
+  return r;
+}
+
 std::string str(isl_map* const m) {
   auto ctx = isl_map_get_ctx(m);
   isl_printer *p;
@@ -372,8 +509,20 @@ isl_map* inv(isl_map* const m0) {
   return isl_map_reverse(cpy(m0));
 }
 
+isl_union_set* unn(isl_union_set* const m0, isl_union_set* const m1) {
+  return isl_union_set_union(cpy(m0), cpy(m1));
+}
+
 isl_union_map* unn(isl_union_map* const m0, isl_union_map* const m1) {
   return isl_union_map_union(cpy(m0), cpy(m1));
+}
+
+isl_map* its(isl_map* const m0, isl_set* const m1) {
+  return isl_map_intersect_domain(cpy(m0), cpy(m1));
+}
+
+isl_union_map* its(isl_map* const m0, isl_union_map* const m1) {
+  return isl_union_map_intersect(to_umap(m0), cpy(m1));
 }
 
 isl_map* its(isl_map* const m0, isl_map* const m1) {
@@ -382,6 +531,10 @@ isl_map* its(isl_map* const m0, isl_map* const m1) {
 
 isl_union_map* its(isl_union_map* const m0, isl_union_map* const m1) {
   return isl_union_map_intersect(cpy(m0), cpy(m1));
+}
+
+isl_union_map* its(isl_union_map* const m0, isl_set* const m1) {
+  return isl_union_map_intersect_domain(cpy(m0), cpy(to_uset(m1)));
 }
 
 isl_union_map* its(isl_union_map* const m0, isl_union_set* const m1) {
@@ -402,6 +555,14 @@ isl_union_map* lex_lt(isl_union_map* const m0, isl_union_map* const m1) {
 
 isl_map* lex_lt(isl_map* const m0, isl_map* const m1) {
   return isl_map_lex_lt_map(cpy(m0), cpy(m1));
+}
+
+isl_union_map* dot(isl_map* const m0, isl_union_map* const m1) {
+  return isl_union_map_apply_range(to_umap(m0), cpy(m1));
+}
+
+isl_union_map* dot(isl_union_map* const m0, isl_map* const m1) {
+  return isl_union_map_apply_range(cpy(m0), to_umap(m1));
 }
 
 isl_map* dot(isl_map* const m0, isl_map* const m1) {

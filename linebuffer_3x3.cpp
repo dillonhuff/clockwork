@@ -2,42 +2,15 @@
 
 struct write0_cache {
 	// Capacity: 131
-	// DD expr = { read_0_0[i, j] -> 130 : 0 <= i <= 61 and 0 <= j <= 61 }
-	// Bound       = { max(130) }
-	// Bound  as C = 130
-	// DD from read_0_0 = (i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (130) : 0
-	// DD expr = { read_0_1[i, j] -> 129 : 0 <= i <= 61 and 0 <= j <= 61 }
-	// Bound       = { max(129) }
-	// Bound  as C = 129
-	// DD from read_0_1 = (i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (129) : 0
-	// DD expr = { read_0_2[i, j] -> 128 : 0 <= i <= 61 and 0 <= j <= 60; read_0_2[i, j] -> (67 + j) : j = 61 and 0 <= i <= 61 }
-	// Bound       = { max(128) }
-	// Bound  as C = 128
-	// DD from read_0_2 = (i >= 0 && 61 - i >= 0 && j >= 0 && 60 - j >= 0) ? (128) : (-61 + j == 0 && i >= 0 && 61 - i >= 0) ? ((67 + j)) : 0
-	// DD expr = { read_1_0[i, j] -> 66 : 0 <= i <= 61 and 0 <= j <= 61 }
-	// Bound       = { max(66) }
-	// Bound  as C = 66
-	// DD from read_1_0 = (i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (66) : 0
-	// DD expr = { read_1_1[i, j] -> 65 : 0 <= i <= 61 and 0 <= j <= 61 }
-	// Bound       = { max(65) }
-	// Bound  as C = 65
-	// DD from read_1_1 = (i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (65) : 0
-	// DD expr = { read_1_2[i, j] -> 64 : 0 <= i <= 61 and 0 <= j <= 60; read_1_2[i, j] -> (3 + j) : j = 61 and 0 <= i <= 61 }
-	// Bound       = { max(64) }
-	// Bound  as C = 64
-	// DD from read_1_2 = (i >= 0 && 61 - i >= 0 && j >= 0 && 60 - j >= 0) ? (64) : (-61 + j == 0 && i >= 0 && 61 - i >= 0) ? ((3 + j)) : 0
-	// DD expr = { read_2_0[i, j] -> 2 : 0 <= i <= 61 and 0 <= j <= 61 }
-	// Bound       = { max(2) }
-	// Bound  as C = 2
-	// DD from read_2_0 = (i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (2) : 0
-	// DD expr = { read_2_1[i, j] -> 1 : 0 <= i <= 61 and 0 <= j <= 61 }
-	// Bound       = { max(1) }
-	// Bound  as C = 1
-	// DD from read_2_1 = (i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (1) : 0
-	// DD expr = { read_2_2[i, j] -> 0 }
-	// Bound       = { 0 }
-	// Bound  as C = 0
-	// DD from read_2_2 = 0
+	// DD expr = 130
+	// DD expr = 129
+	// DD expr = 128
+	// DD expr = 66
+	// DD expr = 65
+	// DD expr = 64
+	// DD expr = 2
+	// DD expr = 1
+	// DD expr = 0
 	// Peak points
 	// DD = 0
 	// DD = 1
@@ -67,27 +40,27 @@ struct write0_cache {
 	// BP = 130
 	// BP = 130
 	// Parition [0, 1) capacity = 1
-	fifo<1> f0;
+	fifo<int, 1> f0;
 	// Parition [1, 2) capacity = 1
-	fifo<1> f2;
+	fifo<int, 1> f2;
 	// Parition [2, 3) capacity = 1
-	fifo<1> f4;
+	fifo<int, 1> f4;
 	// Parition [3, 64) capacity = 61
-	fifo<61> f5;
+	fifo<int, 61> f5;
 	// Parition [64, 65) capacity = 1
-	fifo<1> f6;
+	fifo<int, 1> f6;
 	// Parition [65, 66) capacity = 1
-	fifo<1> f8;
+	fifo<int, 1> f8;
 	// Parition [66, 67) capacity = 1
-	fifo<1> f10;
+	fifo<int, 1> f10;
 	// Parition [67, 128) capacity = 61
-	fifo<61> f11;
+	fifo<int, 61> f11;
 	// Parition [128, 129) capacity = 1
-	fifo<1> f12;
+	fifo<int, 1> f12;
 	// Parition [129, 130) capacity = 1
-	fifo<1> f14;
+	fifo<int, 1> f14;
 	// Parition [130, 130] capacity = 1
-	fifo<1> f16;
+	fifo<int, 1> f16;
 
 
 	inline int peek_0() {
@@ -194,27 +167,38 @@ struct write0_cache {
 
 
 
-inline void write0_write(InputStream& write0, write0_cache& write0_delay) {
+inline void write0_write(InputStream<int>& write0, write0_cache& write0_delay) {
 	int write0_value = write0.read(); write0_delay.push(write0_value);
 }
 
 // Select if: { read_0_0[i, j] -> write0[i' = i, j' = j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_0_0_select(write0_cache& write0_delay
 , int i, int j) {
-	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (130) : 0));
+// Pieces...
+// { read_0_0[i, j] : 0 <= i <= 61 and 0 <= j <= 61 } -> { read_0_0[i, j] -> 130 }
+// 	is always true on iteration domain: 1
+	int value_write0 = write0_delay.peek_130();
 	return value_write0;
 }
 
 // Select if: { read_0_1[i, j] -> write0[i' = i, j' = 1 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_0_1_select(write0_cache& write0_delay
 , int i, int j) {
-	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (129) : 0));
+// Pieces...
+// { read_0_1[i, j] : 0 <= i <= 61 and 0 <= j <= 61 } -> { read_0_1[i, j] -> 129 }
+// 	is always true on iteration domain: 1
+	int value_write0 = write0_delay.peek_129();
 	return value_write0;
 }
 
 // Select if: { read_0_2[i, j] -> write0[i' = i, j' = 2 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_0_2_select(write0_cache& write0_delay
 , int i, int j) {
+// Pieces...
+// { read_0_2[i, j] : 0 <= i <= 61 and 0 <= j <= 60 } -> { read_0_2[i, j] -> 128 }
+// 	is always true on iteration domain: 0
+// { read_0_2[i, j = 61] : 0 <= i <= 61 } -> { read_0_2[i, j] -> (67 + j) }
+// 	is always true on iteration domain: 0
 	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 60 - j >= 0) ? (128) : (-61 + j == 0 && i >= 0 && 61 - i >= 0) ? ((67 + j)) : 0));
 	return value_write0;
 }
@@ -222,20 +206,31 @@ inline int read_0_2_select(write0_cache& write0_delay
 // Select if: { read_1_0[i, j] -> write0[i' = 1 + i, j' = j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_1_0_select(write0_cache& write0_delay
 , int i, int j) {
-	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (66) : 0));
+// Pieces...
+// { read_1_0[i, j] : 0 <= i <= 61 and 0 <= j <= 61 } -> { read_1_0[i, j] -> 66 }
+// 	is always true on iteration domain: 1
+	int value_write0 = write0_delay.peek_66();
 	return value_write0;
 }
 
 // Select if: { read_1_1[i, j] -> write0[i' = 1 + i, j' = 1 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_1_1_select(write0_cache& write0_delay
 , int i, int j) {
-	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (65) : 0));
+// Pieces...
+// { read_1_1[i, j] : 0 <= i <= 61 and 0 <= j <= 61 } -> { read_1_1[i, j] -> 65 }
+// 	is always true on iteration domain: 1
+	int value_write0 = write0_delay.peek_65();
 	return value_write0;
 }
 
 // Select if: { read_1_2[i, j] -> write0[i' = 1 + i, j' = 2 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_1_2_select(write0_cache& write0_delay
 , int i, int j) {
+// Pieces...
+// { read_1_2[i, j] : 0 <= i <= 61 and 0 <= j <= 60 } -> { read_1_2[i, j] -> 64 }
+// 	is always true on iteration domain: 0
+// { read_1_2[i, j = 61] : 0 <= i <= 61 } -> { read_1_2[i, j] -> (3 + j) }
+// 	is always true on iteration domain: 0
 	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 60 - j >= 0) ? (64) : (-61 + j == 0 && i >= 0 && 61 - i >= 0) ? ((3 + j)) : 0));
 	return value_write0;
 }
@@ -243,35 +238,122 @@ inline int read_1_2_select(write0_cache& write0_delay
 // Select if: { read_2_0[i, j] -> write0[i' = 2 + i, j' = j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_2_0_select(write0_cache& write0_delay
 , int i, int j) {
-	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (2) : 0));
+// Pieces...
+// { read_2_0[i, j] : 0 <= i <= 61 and 0 <= j <= 61 } -> { read_2_0[i, j] -> 2 }
+// 	is always true on iteration domain: 1
+	int value_write0 = write0_delay.peek_2();
 	return value_write0;
 }
 
 // Select if: { read_2_1[i, j] -> write0[i' = 2 + i, j' = 1 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_2_1_select(write0_cache& write0_delay
 , int i, int j) {
-	int value_write0 = write0_delay.peek(((i >= 0 && 61 - i >= 0 && j >= 0 && 61 - j >= 0) ? (1) : 0));
+// Pieces...
+// { read_2_1[i, j] : 0 <= i <= 61 and 0 <= j <= 61 } -> { read_2_1[i, j] -> 1 }
+// 	is always true on iteration domain: 1
+	int value_write0 = write0_delay.peek_1();
 	return value_write0;
 }
 
 // Select if: { read_2_2[i, j] -> write0[i' = 2 + i, j' = 2 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_2_2_select(write0_cache& write0_delay
 , int i, int j) {
-	int value_write0 = write0_delay.peek((0));
+// Pieces...
+	int value_write0 = write0_delay.peek_0();
 	return value_write0;
 }
 
-void linebuffer_3x3(OutputStream& read_0_0
-, OutputStream& read_0_1
-, OutputStream& read_0_2
-, OutputStream& read_1_0
-, OutputStream& read_1_1
-, OutputStream& read_1_2
-, OutputStream& read_2_0
-, OutputStream& read_2_1
-, OutputStream& read_2_2
-, InputStream& write0
-) {
+// Bundles...
+// read_0_0
+//	read_0_0
+inline int linebuffer_3x3_read_0_0_bundle_action(write0_cache& write0_delay, int i, int j) {
+	int result;
+	int read_0_0_res = read_0_0_select(write0_delay, i, j);
+	set_at(result, 0, read_0_0_res);
+	return result;
+}
+
+// read_0_1
+//	read_0_1
+inline int linebuffer_3x3_read_0_1_bundle_action(write0_cache& write0_delay, int i, int j) {
+	int result;
+	int read_0_1_res = read_0_1_select(write0_delay, i, j);
+	set_at(result, 0, read_0_1_res);
+	return result;
+}
+
+// read_0_2
+//	read_0_2
+inline int linebuffer_3x3_read_0_2_bundle_action(write0_cache& write0_delay, int i, int j) {
+	int result;
+	int read_0_2_res = read_0_2_select(write0_delay, i, j);
+	set_at(result, 0, read_0_2_res);
+	return result;
+}
+
+// read_1_0
+//	read_1_0
+inline int linebuffer_3x3_read_1_0_bundle_action(write0_cache& write0_delay, int i, int j) {
+	int result;
+	int read_1_0_res = read_1_0_select(write0_delay, i, j);
+	set_at(result, 0, read_1_0_res);
+	return result;
+}
+
+// read_1_1
+//	read_1_1
+inline int linebuffer_3x3_read_1_1_bundle_action(write0_cache& write0_delay, int i, int j) {
+	int result;
+	int read_1_1_res = read_1_1_select(write0_delay, i, j);
+	set_at(result, 0, read_1_1_res);
+	return result;
+}
+
+// read_1_2
+//	read_1_2
+inline int linebuffer_3x3_read_1_2_bundle_action(write0_cache& write0_delay, int i, int j) {
+	int result;
+	int read_1_2_res = read_1_2_select(write0_delay, i, j);
+	set_at(result, 0, read_1_2_res);
+	return result;
+}
+
+// read_2_0
+//	read_2_0
+inline int linebuffer_3x3_read_2_0_bundle_action(write0_cache& write0_delay, int i, int j) {
+	int result;
+	int read_2_0_res = read_2_0_select(write0_delay, i, j);
+	set_at(result, 0, read_2_0_res);
+	return result;
+}
+
+// read_2_1
+//	read_2_1
+inline int linebuffer_3x3_read_2_1_bundle_action(write0_cache& write0_delay, int i, int j) {
+	int result;
+	int read_2_1_res = read_2_1_select(write0_delay, i, j);
+	set_at(result, 0, read_2_1_res);
+	return result;
+}
+
+// read_2_2
+//	read_2_2
+inline int linebuffer_3x3_read_2_2_bundle_action(write0_cache& write0_delay, int i, int j) {
+	int result;
+	int read_2_2_res = read_2_2_select(write0_delay, i, j);
+	set_at(result, 0, read_2_2_res);
+	return result;
+}
+
+// write0
+//	write0
+inline void linebuffer_3x3_write0_bundle_action(InputStream<int>& write0, write0_cache& write0_delay) {
+	write0_write(write0, write0_delay);
+}
+
+
+
+void linebuffer_3x3(OutputStream<int >& read_0_0, OutputStream<int >& read_0_1, OutputStream<int >& read_0_2, OutputStream<int >& read_1_0, OutputStream<int >& read_1_1, OutputStream<int >& read_1_2, OutputStream<int >& read_2_0, OutputStream<int >& read_2_1, OutputStream<int >& read_2_2, InputStream<int >& write0) {
 	write0_cache write0_delay;
 
 	for (int c0 = 0; c0 <= 63; c0 += 1)
@@ -283,6 +365,7 @@ void linebuffer_3x3(OutputStream& read_0_0
 
 	    write0_write(write0, write0_delay);
 	    if (c0 >= 2 && c1 >= 2) {
+<<<<<<< HEAD
         int res = 0;
         res += (write0_delay.peek_130());
         res += (write0_delay.peek_129());
@@ -330,6 +413,17 @@ void linebuffer_3x3(OutputStream& read_0_0
 				//read_0_2.write(read_0_2_select(write0_delay, c0 - 2, c1 - 2));
 				//read_0_0.write(read_0_0_select(write0_delay, c0 - 2, c1 - 2));
 				//read_1_2.write(read_1_2_select(write0_delay, c0 - 2, c1 - 2));
+=======
+	      read_1_0.write(linebuffer_3x3_read_1_0_bundle_action(write0_delay, c0 - 2, c1 - 2));
+	      read_0_1.write(linebuffer_3x3_read_0_1_bundle_action(write0_delay, c0 - 2, c1 - 2));
+	      read_2_1.write(linebuffer_3x3_read_2_1_bundle_action(write0_delay, c0 - 2, c1 - 2));
+	      read_2_2.write(linebuffer_3x3_read_2_2_bundle_action(write0_delay, c0 - 2, c1 - 2));
+	      read_2_0.write(linebuffer_3x3_read_2_0_bundle_action(write0_delay, c0 - 2, c1 - 2));
+	      read_1_1.write(linebuffer_3x3_read_1_1_bundle_action(write0_delay, c0 - 2, c1 - 2));
+	      read_0_2.write(linebuffer_3x3_read_0_2_bundle_action(write0_delay, c0 - 2, c1 - 2));
+	      read_0_0.write(linebuffer_3x3_read_0_0_bundle_action(write0_delay, c0 - 2, c1 - 2));
+	      read_1_2.write(linebuffer_3x3_read_1_2_bundle_action(write0_delay, c0 - 2, c1 - 2));
+>>>>>>> 862ffcf7f2387fff4330a6d80bd4d025ee0c2bd8
 	    }
 	  }
 	

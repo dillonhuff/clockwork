@@ -6,8 +6,8 @@ using namespace std;
 
 int main() {
 
-  InputStream write0;
-  OutputStream read0;
+  InputStream<int> write0;
+  OutputStream<int> read0;
 
   for (int i = 0; i < 10; i++) {
     write0.write(i);

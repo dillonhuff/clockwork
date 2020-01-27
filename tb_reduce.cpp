@@ -5,10 +5,10 @@
 using namespace std;
 
 int main() {
-  InputStream init;
-  OutputStream out;
-  OutputStream read0;
-  InputStream update;
+  InputStream<int> init;
+  OutputStream<int> out;
+  OutputStream<int> read0;
+  InputStream<int> update;
 
   for (int i = 0; i <= 4; i++) {
     init.write(0);
