@@ -1933,43 +1933,12 @@ void generate_op_code(map<string, UBuffer>& buffers, op* op) {
   out.close();
 }
 
-void conv_1d_test() {
-  prog prg;
-  prg.name = "conv_1d";
-  prg.add_input("in");
-  prg.add_output("out");
-  prg.buffer_port_widths["T"] = 32*3;
-  prg.buffer_port_widths["in"] = 32;
-  prg.buffer_port_widths["out"] = 32;
-  prg.buffer_port_widths["M"] = 32;
+map<string, UBuffer> build_buffers(prog& prg) {
 
-  auto p = prg.add_loop("p", 0, 10);
-  auto write = p->add_op("write");
-  write->add_load("in", "p");
-  write->add_store("M", "p");
-
-  auto c = prg.add_loop("c", 0, 10 - 2);
-  auto read0 = c->add_op("read0");
-  read0->add_load("M", "c");
-  read0->add_load("M", "c + 1");
-  read0->add_load("M", "c + 2");
-  read0->add_store("T", "c");
-
-  auto compute = c->add_op("compute_out");
-  compute->add_function("accumulate_3");
-  compute->add_load("T", "c");
-  compute->add_store("out", "c");
-
-  cout << "Program code without optimization..." << endl;
-  prg.unoptimized_codegen();
-
-  cout << "Program with optimized schedule..." << endl;
-  umap* opt_sched = prg.optimized_codegen();
-
-  cout << "---- Generating customized re-use buffers" << endl;
   map<string, UBuffer> buffers;
 
   auto domains = prg.domains();
+  umap* opt_sched = prg.optimized_codegen();
 
   int usuffix = 0;
 
@@ -2062,6 +2031,12 @@ void conv_1d_test() {
 
   }
 
+  return buffers;
+}
+
+void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
+
+  cout << "---- Generating customized re-use buffers" << endl;
   ofstream conv_out(prg.name + ".cpp");
   conv_out << "#include \"accumulate_3.h\"" << endl << endl;
   vector<string> args;
@@ -2073,6 +2048,7 @@ void conv_1d_test() {
     }
   }
 
+  auto domains = prg.domains();
   conv_out << endl << endl;
   conv_out << "// Operation logic" << endl;
   for (auto op : prg.all_ops()) {
@@ -2222,6 +2198,86 @@ void conv_1d_test() {
   of << "#include \"hw_classes.h\"" << endl << endl;
   of << "void " << prg.name << arg_buffers << ";" << endl;
   of.close();
+}
+
+void conv_1d_bc_test() {
+  prog prg;
+  prg.name = "conv_1d_bc";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["M"] = 32;
+
+  auto p = prg.add_loop("p", 0, 10);
+  auto write = p->add_op("write");
+  write->add_load("in", "p");
+  write->add_store("M", "p");
+
+  auto c = prg.add_loop("c", 0, 10);
+  auto read0 = c->add_op("read0");
+  read0->add_load("M", "min(c, 9)");
+  read0->add_load("M", "min(c + 1, 9)");
+  read0->add_load("M", "min(c + 2, 9)");
+  read0->add_store("T", "c");
+
+  auto compute = c->add_op("compute_out");
+  compute->add_function("accumulate_3");
+  compute->add_load("T", "c");
+  compute->add_store("out", "c");
+
+  cout << "Program code without optimization..." << endl;
+  prg.unoptimized_codegen();
+  
+  cout << "Program with optimized schedule..." << endl;
+  umap* opt_sched = prg.optimized_codegen();
+  
+  auto buffers = build_buffers(prg);
+  generate_app_code(buffers, prg);
+
+  int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+void conv_1d_test() {
+  prog prg;
+  prg.name = "conv_1d";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["M"] = 32;
+
+  auto p = prg.add_loop("p", 0, 10);
+  auto write = p->add_op("write");
+  write->add_load("in", "p");
+  write->add_store("M", "p");
+
+  auto c = prg.add_loop("c", 0, 10 - 2);
+  auto read0 = c->add_op("read0");
+  read0->add_load("M", "c");
+  read0->add_load("M", "c + 1");
+  read0->add_load("M", "c + 2");
+  read0->add_store("T", "c");
+
+  auto compute = c->add_op("compute_out");
+  compute->add_function("accumulate_3");
+  compute->add_load("T", "c");
+  compute->add_store("out", "c");
+
+  cout << "Program code without optimization..." << endl;
+  prg.unoptimized_codegen();
+
+  cout << "Program with optimized schedule..." << endl;
+
+  auto buffers = build_buffers(prg);
+
+  generate_app_code(buffers, prg);
 
   int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
   assert(res == 0);
@@ -2303,6 +2359,7 @@ int main() {
   //mmul_test();
   synth_reduce_test();
   conv_1d_test();
+  conv_1d_bc_test();
   //assert(false);
 
   synth_wire_test();
