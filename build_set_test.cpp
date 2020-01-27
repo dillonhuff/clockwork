@@ -1886,25 +1886,7 @@ struct prog {
   }
 
   isl_union_map* optimized_codegen() {
-    //auto sched = optimized_schedule();
-    //umap* naive_sched = unoptimized_schedule();
-    //auto before = lex_lt(naive_sched, naive_sched);
     auto domain = whole_iteration_domain();
-    //auto writes =
-      //its(producer_map(), domain);
-    //auto reads =
-      //its(consumer_map(), domain);
-
-    //cout << "Producer map..." << str(writes) << endl;
-    //cout << "Consumer map..." << str(reads) << endl;
-
-    //isl_union_map *validity =
-      //its(dot(writes, inv(reads)), before);
-    //print(ctx, validity);
-    //isl_union_map *proximity =
-      //cpy(validity);
-
-    //isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
     
     isl_schedule* sched = optimized_schedule();
     auto schedmap = its(isl_schedule_get_map(sched), domain);
@@ -2065,11 +2047,6 @@ void conv_1d_test() {
       continue;
     }
 
-    //cout << "Generating code..." << endl;
-    //generate_hls_code(b.second);
-
-    //int res = system(string("g++ -c " + b.second.name + ".cpp").c_str());
-    //assert(res == 0);
   }
 
   ofstream conv_out(prg.name + ".cpp");
@@ -2233,7 +2210,10 @@ void conv_1d_test() {
   of << "void " << prg.name << arg_buffers << ";" << endl;
   of.close();
 
-  int res = system(string("g++ -std=c++11 -c " + prg.name + ".cpp").c_str());
+  int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
+  assert(res == 0);
+
+  res = system("./a.out");
   assert(res == 0);
 }
 
