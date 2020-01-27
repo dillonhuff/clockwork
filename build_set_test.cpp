@@ -1919,10 +1919,16 @@ void conv_1d_test() {
     conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
     set<string> in_buffers;
     for (auto con : op->consume_locs) {
-      conv_out << "\t// Consume: " << con.first << endl;
       in_buffers.insert(con.first);
     }
     assert(in_buffers.size() == 1);
+    string in_buffer = pick(in_buffers);
+    conv_out << "\t// Consume: " << in_buffer << endl;
+    if (prg.is_boundary(in_buffer)) {
+      conv_out << "\tauto " << in_buffer << "_val = " << in_buffer << ".read();" << endl;
+    } else {
+      conv_out << "\tauto " << in_buffer << "_val = " << in_buffer << "_" << op->name << "_bundle_action();" << endl;
+    }
 
     if (op->func != "") {
       conv_out << "\t// Apply function: " << op->func << endl;
@@ -1930,10 +1936,16 @@ void conv_1d_test() {
 
     set<string> out_buffers;
     for (auto con : op->produce_locs) {
-      conv_out << "\t// Produce: " << con.first << endl;
       out_buffers.insert(con.first);
     }
     assert(out_buffers.size() == 1);
+    string out_buffer = pick(out_buffers);
+    conv_out << "\t// Produce: " << out_buffer << endl;
+    if (prg.is_boundary(out_buffer)) {
+      conv_out << "\t" << out_buffer << ".write(" << in_buffer << "_val" << ");" << endl;
+    } else {
+      conv_out << "\t" << out_buffer << "_" << op->name << "_bundle_action();" << endl;
+    }
 
     conv_out << "}" << endl << endl;
   }
