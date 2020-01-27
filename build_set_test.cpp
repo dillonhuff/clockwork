@@ -39,6 +39,10 @@ std::string sep_list(const std::vector<std::string>& strs, const std::string& ld
   return res;
 }
 
+std::string comma_list(const std::vector<std::string>& strs) {
+  return sep_list(strs, "", "", ", ");
+}
+
 class UBuffer {
   public:
     struct isl_ctx* ctx;
@@ -1913,8 +1917,10 @@ void conv_1d_test() {
 
     auto s = get_space(domains.at(op));
     assert(isl_space_is_set(s));
+    vector<string> dim_args;
     for (int i = 0; i < num_dims(s); i++) {
       buf_srcs.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
+      dim_args.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
     }
     conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
     set<string> in_buffers;
@@ -1927,7 +1933,8 @@ void conv_1d_test() {
     if (prg.is_boundary(in_buffer)) {
       conv_out << "\tauto " << in_buffer << "_val = " << in_buffer << ".read();" << endl;
     } else {
-      conv_out << "\tauto " << in_buffer << "_val = " << in_buffer << "_" << op->name << "_bundle_action();" << endl;
+      string source_delay = pick(buffers.at(in_buffer).get_in_ports());
+      conv_out << "\tauto " << in_buffer << "_val = " << in_buffer << "_" << op->name << "_bundle_action(" << source_delay << ", " << comma_list(dim_args) << ");" << endl;
     }
 
     if (op->func != "") {
@@ -1944,7 +1951,11 @@ void conv_1d_test() {
     if (prg.is_boundary(out_buffer)) {
       conv_out << "\t" << out_buffer << ".write(" << in_buffer << "_val" << ");" << endl;
     } else {
-      conv_out << "\t" << out_buffer << "_" << op->name << "_bundle_action();" << endl;
+      assert(contains_key(out_buffer, buffers));
+      cout << "Getting source buffer: " << buffers.at(out_buffer).name << endl;
+
+      string source_delay = pick(buffers.at(out_buffer).get_in_ports());
+      conv_out << "\t" << out_buffer << "_" << op->name << "_bundle_action(" << in_buffer << "_val" << ", " << source_delay << ");" << endl;
     }
 
     conv_out << "}" << endl << endl;
