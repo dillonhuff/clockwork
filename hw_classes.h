@@ -7,6 +7,7 @@
 #ifdef __VIVADO_SYNTH__
 
 #include "hls_stream.h"
+#include "ap_int.h"
 
 #else
 
@@ -130,6 +131,25 @@ class hw_uint {
   public:
 
 #ifdef __VIVADO_SYNTH__
+    ap_int<Len> val;
+
+    hw_uint(const int v) : val(v) {}
+    hw_uint() : val(0) {}
+
+    template<int S, int E_inclusive>
+    hw_uint<E_inclusive - S + 1> extract() {
+      hw_uint<E_inclusive - S + 1> extr;
+      for (int i = S; i < E_inclusive + 1; i++) {
+        assert(i < Len);
+        extr.val[i - S] = val[i];
+      }
+      return extr;
+    }
+
+    int to_int() {
+      return val;
+    }
+
 #else
 
     bsim::static_quad_value_bit_vector<Len> val;
@@ -162,29 +182,55 @@ std::ostream& operator<<(std::ostream& out, hw_uint<Len>& v) {
 
 template<int Len>
 hw_uint<Len> operator+(const hw_uint<Len>& a, const hw_uint<Len>& b) {
+#ifdef __VIVADO_SYNTH__
+  hw_uint<Len> v;
+  v.val = a.val + b.val;
+  return v;
+#else
   hw_uint<Len> res;
   res.val = bsim::add_general_width_bv(a.val, b.val);
   return res;
+#endif
 }
 
 template<int Len>
 void set_at(hw_uint<Len>& i, const int offset, const int value) {
+#ifdef __VIVADO_SYNTH__
+  for (int v = offset; v < offset + 32; v++) {
+    i.val[v] = ((value >> (v - offset)) & 1);
+  }
+#else
   for (int v = offset; v < offset + 32; v++) {
     i.val.set(v, bsim::quad_value((value >> (v - offset)) & 1));
   }
+#endif
 }
 
 template<int Len>
 void set_at(hw_uint<Len>& i, const int offset, const hw_uint<Len>& value) {
+#ifdef __VIVADO_SYNTH__
+  assert(offset == 0);
+  for (int v = offset; v < offset + Len; v++) {
+    i.val[v] = value.val[v - offset];
+  }
+#else
   assert(offset == 0);
   for (int v = offset; v < offset + Len; v++) {
     i.val.set(v, value.val.get(v - offset));
   }
+#endif
 }
 
 static inline
 void set_at(int& i, const int offset, const int value) {
+#ifdef __VIVADO_SYNTH__
+
   *(&i) = value;
+#else
+
+  *(&i) = value;
+
+#endif
 }
 
 template<typename T>
