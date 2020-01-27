@@ -2073,6 +2073,7 @@ void conv_1d_test() {
   }
 
   ofstream conv_out(prg.name + ".cpp");
+  conv_out << "#include \"accumulate_3.h\"" << endl << endl;
   vector<string> args;
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
@@ -2139,8 +2140,11 @@ void conv_1d_test() {
       conv_out << "\tauto " << in_buffer << "_val = " << in_buffer << "_" << op->name << "_bundle_action(" << source_delay << ", " << comma_list(dim_args) << ");" << endl;
     }
 
+    string res = in_buffer + "_val";
     if (op->func != "") {
       conv_out << "\t// Apply function: " << op->func << endl;
+      conv_out << "auto compute_result = " << op->func << "(" << res << ");" << endl;
+      res = "compute_result";
     }
 
     set<string> out_buffers;
@@ -2151,13 +2155,13 @@ void conv_1d_test() {
     string out_buffer = pick(out_buffers);
     conv_out << "\t// Produce: " << out_buffer << endl;
     if (prg.is_boundary(out_buffer)) {
-      conv_out << "\t" << out_buffer << ".write(" << in_buffer << "_val" << ");" << endl;
+      conv_out << "\t" << out_buffer << ".write(" << res << ");" << endl;
     } else {
       assert(contains_key(out_buffer, buffers));
       cout << "Getting source buffer: " << buffers.at(out_buffer).name << endl;
 
       string source_delay = pick(buffers.at(out_buffer).get_in_ports());
-      conv_out << "\t" << out_buffer << "_" << op->name << "_bundle_action(" << in_buffer << "_val" << ", " << source_delay << ");" << endl;
+      conv_out << "\t" << out_buffer << "_" << op->name << "_bundle_action(" << res << ", " << source_delay << ");" << endl;
     }
 
     conv_out << "}" << endl << endl;
