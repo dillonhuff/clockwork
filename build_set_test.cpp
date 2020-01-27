@@ -2276,7 +2276,6 @@ void conv_1d_test() {
   cout << "Program with optimized schedule..." << endl;
 
   auto buffers = build_buffers(prg);
-
   generate_app_code(buffers, prg);
 
   int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
@@ -2354,7 +2353,71 @@ void mmul_test() {
   assert(false);
 }
 
+void pyramid_test() {
+  prog prg;
+  prg.name = "conv_1d_pyramid";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["T1"] = 32*3;
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["M"] = 32;
+  prg.buffer_port_widths["M1"] = 32;
+
+  auto p = prg.add_loop("p", 0, 10);
+  auto write = p->add_op("write");
+  write->add_load("in", "p");
+  write->add_store("M", "p");
+
+  auto c = prg.add_loop("c", 0, 10 - 2);
+  auto read0 = c->add_op("read0");
+  read0->add_load("M", "c");
+  read0->add_load("M", "c + 1");
+  read0->add_load("M", "c + 2");
+  read0->add_store("T", "c");
+
+  auto compute = c->add_op("compute_out");
+  compute->add_function("accumulate_3");
+  compute->add_load("T", "c");
+  compute->add_store("M1", "c");
+
+  auto l = prg.add_loop("l", 0, 6);
+  auto read1 = l->add_op("read1");
+  read1->add_load("M1", "l");
+  read1->add_load("M1", "l + 1");
+  read1->add_load("M1", "l + 2");
+  read1->add_store("T1", "l");
+
+
+  auto compute1 = l->add_op("compute_out_1");
+  compute1->add_function("accumulate_3");
+  compute1->add_load("T1", "l");
+  compute1->add_store("out", "l");
+
+  cout << "Program code without optimization..." << endl;
+  prg.unoptimized_codegen();
+  
+  umap* opt_sched = prg.optimized_codegen();
+  auto domain = prg.whole_iteration_domain();
+  auto schedmap = its(opt_sched, domain);
+  cout << "Optimized schedule..." << endl;
+  cout << codegen_c(schedmap);
+  
+  auto buffers = build_buffers(prg);
+  generate_app_code(buffers, prg);
+
+  int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
+  assert(res == 0);
+  
+  res = system("./a.out");
+  assert(res == 0);
+}
+
 int main() {
+
+  pyramid_test();
+  //assert(false);
 
   //mmul_test();
   synth_reduce_test();
