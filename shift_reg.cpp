@@ -101,7 +101,7 @@ inline int read2_select(write_cache& write_delay
 inline int shift_reg_read0_bundle_action(write_cache& write_delay, int i) {
 	int result;
 	int read0_res = read0_select(write_delay, i);
-	set_at(result, 0, read0_res);
+	set_at<0, 32>(result, read0_res);
 	return result;
 }
 
@@ -110,7 +110,7 @@ inline int shift_reg_read0_bundle_action(write_cache& write_delay, int i) {
 inline int shift_reg_read1_bundle_action(write_cache& write_delay, int i) {
 	int result;
 	int read1_res = read1_select(write_delay, i);
-	set_at(result, 0, read1_res);
+	set_at<0, 32>(result, read1_res);
 	return result;
 }
 
@@ -119,7 +119,7 @@ inline int shift_reg_read1_bundle_action(write_cache& write_delay, int i) {
 inline int shift_reg_read2_bundle_action(write_cache& write_delay, int i) {
 	int result;
 	int read2_res = read2_select(write_delay, i);
-	set_at(result, 0, read2_res);
+	set_at<0, 32>(result, read2_res);
 	return result;
 }
 

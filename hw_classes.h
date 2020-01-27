@@ -173,6 +173,8 @@ class hw_uint {
       return val.template to_type<int>();
     }
 
+    operator int() { return to_int(); }
+
 #endif // __VIVADO_SYNTH__
 };
 
@@ -197,9 +199,13 @@ hw_uint<Len> operator+(const hw_uint<Len>& a, const hw_uint<Len>& b) {
 #endif
 }
 
-template<int Len>
-inline
-void set_at(hw_uint<Len>& i, const int offset, const int value) {
+//<<<<<<< HEAD
+//template<int Len>
+//inline
+//void set_at(hw_uint<Len>& i, const int offset, const int value) {
+//=======
+template<int offset, int Len>
+void set_at(hw_uint<Len>& i, const int value) {
 #ifdef __VIVADO_SYNTH__
   for (int v = offset; v < offset + 32; v++) {
 #pragma HLS unroll
@@ -212,25 +218,35 @@ void set_at(hw_uint<Len>& i, const int offset, const int value) {
 #endif
 }
 
-template<int Len>
-inline
-void set_at(hw_uint<Len>& i, const int offset, const hw_uint<Len>& value) {
+//<<<<<<< HEAD
+//template<int Len>
+//inline
+//void set_at(hw_uint<Len>& i, const int offset, const hw_uint<Len>& value) {
+//#ifdef __VIVADO_SYNTH__
+  //assert(offset == 0);
+  //for (int v = offset; v < offset + Len; v++) {
+//#pragma HLS unroll
+    //i.val[v] = value.val[v - offset];
+  //}
+//#else
+//=======
+template<int offset, int Len>
+void set_at(hw_uint<Len>& i, const hw_uint<Len>& value) {
 #ifdef __VIVADO_SYNTH__
-  assert(offset == 0);
   for (int v = offset; v < offset + Len; v++) {
 #pragma HLS unroll
     i.val[v] = value.val[v - offset];
   }
 #else
-  assert(offset == 0);
   for (int v = offset; v < offset + Len; v++) {
     i.val.set(v, value.val.get(v - offset));
   }
 #endif
 }
 
+template<int offset, int Len>
 static inline
-void set_at(int& i, const int offset, const int value) {
+void set_at(int& i, const int value) {
 #ifdef __VIVADO_SYNTH__
 
   *(&i) = value;
@@ -271,6 +287,7 @@ class HWStream {
       values.pop_back();
       return b;
     }
+
 
 #endif // __VIVADO_SYNTH__
 };

@@ -91,6 +91,16 @@ class UBuffer {
       return "hw_uint<" + to_string(port_width(name)) + ">";
     }
 
+    int port_bundle_width(const std::string& bundle_name) {
+      cout << "Getting width of bundle: " << bundle_name << endl;
+      int len = 0;
+      for (auto pt : map_find(bundle_name, port_bundles)) {
+        len += port_width(pt);
+      }
+
+      return len;
+    }
+
     std::string bundle_type_string(const std::string& bundle_name) {
       int len = 0;
       for (auto pt : map_find(bundle_name, port_bundles)) {
@@ -944,7 +954,7 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
       int offset = 0;
       for (auto p : b.second) {
         out << "\t" + buf.port_type_string() + " " << p << "_res = " << p << "_select(" << arg_string << ");" << endl;
-        out << "\tset_at(result, " << offset << ", " << p << "_res" << ");" << endl;
+        out << "\tset_at<" << offset << ", " << buf.port_bundle_width(b.first) << ">(result, " << p << "_res" << ");" << endl;
         offset += buf.port_width(p);
       }
       out << "\treturn result;" << endl;
@@ -1117,7 +1127,10 @@ void generate_hls_code(std::ostream& out, UBuffer& buf) {
       int offset = 0;
       for (auto p : b.second) {
         out << "\tint " << p << "_res = " << p << "_select(" << arg_string << ");" << endl;
-        out << "\tset_at(result, " << offset << ", " << p << "_res" << ");" << endl;
+        out << "\tset_at<" << offset << ", " << buf.port_bundle_width(b.first) << ">(result, " << p << "_res" << ");" << endl;
+        //out << "\tset_at<" << offset << ">(result, " << p << "_res" << ");" << endl;
+        //out << "\tset_at<" << offset << ", " << buf.port_widths << ">(result, " << p << "_res" << ");" << endl;
+        //out << "\tset_at(result, " << offset << ", " << p << "_res" << ");" << endl;
         offset += buf.port_width(p);
       }
       out << "\treturn result;" << endl;
