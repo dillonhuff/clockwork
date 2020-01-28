@@ -665,6 +665,22 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
   return c;
 }
 
+int compute_dd_lower_bound(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
+  auto c = compute_dd(buf, read_port, write_port);
+  int tight;
+  int* b = &tight;
+  auto bound = isl_union_pw_qpolynomial_bound(c, isl_fold_min, b);
+  auto folds  = get_polynomial_folds(bound);
+  int bint;
+  if (folds.size() == 0) {
+    bint = 0;
+  } else {
+    assert(folds.size() == 1);
+    bint = stoi(codegen_c(folds[0]));
+  }
+  return bint;
+}
+
 int compute_dd_bound(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
   auto c = compute_dd(buf, read_port, write_port);
   int tight;
@@ -711,19 +727,31 @@ void generate_vivado_tcl(UBuffer& buf) {
 }
 
 void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer& buf, const int maxdelay) {
+  cout << "Creating structs for " << buf.name << endl;
   out << "struct " + inpt + "_cache {" << endl;
   out << "\t// Capacity: " << maxdelay + 1 << endl;
-  vector<int> read_delays;
+  vector<int> read_delays{0};
   for (auto outpt : buf.get_out_ports()) {
+
     auto qpd = compute_dd_bound(buf, outpt, inpt);
-    read_delays.push_back(qpd);
+    int lb = compute_dd_lower_bound(buf, outpt, inpt);
+
+    cout << "qpd = " << qpd << endl;
+    cout << "lb  = " << lb << endl;
+
+    //assert(qpd == lb);
+
+    //read_delays.push_back(qpd);
+    for (int i = lb; i < qpd + 1; i++) {
+      read_delays.push_back(i);
+    }
 
     out << "\t// DD expr = " << qpd << endl;
   }
 
   read_delays = sort_unique(read_delays);
 
-  out << "\t// Peak points" << endl;
+  out << "\t// Peek points" << endl;
   for (auto dd : read_delays) {
     out << "\t// DD = " << dd << endl;
   }
@@ -2497,8 +2525,8 @@ void pyramid_2d_test() {
   int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
   assert(res == 0);
 
-  //res = system("./a.out");
-  //assert(res == 0);
+  res = system("./a.out");
+  assert(res == 0);
 
   //assert(false);
 }

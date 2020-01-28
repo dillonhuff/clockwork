@@ -5,7 +5,7 @@ struct write_cache {
 	// DD expr = 2
 	// DD expr = 1
 	// DD expr = 0
-	// Peak points
+	// Peek points
 	// DD = 0
 	// DD = 1
 	// DD = 2
