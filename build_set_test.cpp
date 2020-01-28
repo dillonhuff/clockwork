@@ -1694,6 +1694,7 @@ struct prog {
   set<string> ins;
   set<string> outs;
   map<string, int> buffer_port_widths;
+  string compute_unit_file;
 
   bool is_boundary(const std::string& name) {
     return elem(name, ins) || elem(name, outs);
@@ -1715,6 +1716,10 @@ struct prog {
     root->is_loop = true;
     root->start = 0;
     root->end_exclusive = 1;
+  }
+
+  ~prog() {
+    isl_ctx_free(ctx);
   }
 
   vector<string> cache_args(op* op) {
@@ -2038,7 +2043,8 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
 
   cout << "---- Generating customized re-use buffers" << endl;
   ofstream conv_out(prg.name + ".cpp");
-  conv_out << "#include \"accumulate_3.h\"" << endl << endl;
+  conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
+  //conv_out << "#include \"accumulate_3.h\"" << endl << endl;
   vector<string> args;
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
@@ -2202,6 +2208,7 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
 
 void conv_1d_bc_test() {
   prog prg;
+  prg.compute_unit_file = "accumulate_3.h";
   prg.name = "conv_1d_bc";
   prg.add_input("in");
   prg.add_output("out");
@@ -2245,6 +2252,7 @@ void conv_1d_bc_test() {
 
 void conv_1d_test() {
   prog prg;
+  prg.compute_unit_file = "accumulate_3.h";
   prg.name = "conv_1d";
   prg.add_input("in");
   prg.add_output("out");
@@ -2355,6 +2363,7 @@ void mmul_test() {
 
 void pyramid_test() {
   prog prg;
+  prg.compute_unit_file = "accumulate_3.h";
   prg.name = "conv_1d_pyramid";
   prg.add_input("in");
   prg.add_output("out");
@@ -2389,7 +2398,6 @@ void pyramid_test() {
   read1->add_load("M1", "l + 2");
   read1->add_store("T1", "l");
 
-
   auto compute1 = l->add_op("compute_out_1");
   compute1->add_function("accumulate_3");
   compute1->add_load("T1", "l");
@@ -2414,8 +2422,90 @@ void pyramid_test() {
   assert(res == 0);
 }
 
+void pyramid_2d_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "conv_3x3_pyramid";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["T"] = 32*9;
+  prg.buffer_port_widths["T1"] = 32*9;
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["M"] = 32;
+  prg.buffer_port_widths["M1"] = 32;
+
+  {
+    auto pr = prg.add_loop("pr", 0, 10);
+    auto pc = pr->add_loop("pc", 0, 10);
+    auto write = pc->add_op("write");
+    write->add_load("in", "pc, pr");
+    write->add_store("I", "pc, pr");
+  }
+
+  {
+    auto pr = prg.add_loop("lr", 0, 10 - 2);
+    auto pc = pr->add_loop("lc", 0, 10 - 2);
+    auto rd = pc->add_op("read_0");
+    // Need to load 9 values
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        string c = "lc + " + to_string(i);
+        string r = "lr + " + to_string(j);
+        rd->add_load("I", c + ", " + r);
+      }
+    }
+    rd->add_function("conv_3_3");
+    rd->add_store("CI", "lc, lr");
+  }
+
+  {
+    auto pr = prg.add_loop("dr", 0, 8 / 2);
+    auto pc = pr->add_loop("dc", 0, 8 / 2);
+    auto rd = pc->add_op("read_down");
+    rd->add_load("CI", "2*dc, 2*dr");
+    rd->add_store("D", "2*dc, 2*dr");
+  }
+
+  {
+    auto pr = prg.add_loop("sr", 0, 8 / 2 - 2);
+    auto pc = pr->add_loop("sc", 0, 8 / 2 - 2);
+    auto rd = pc->add_op("read_conv");
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        string c = "sc + " + to_string(i);
+        string r = "sr + " + to_string(j);
+        rd->add_load("D", c + ", " + r);
+      }
+    }
+    rd->add_function("conv_3_3");
+    rd->add_store("out", "sc, sr");
+  }
+
+  cout << "Program code without optimization..." << endl;
+  prg.unoptimized_codegen();
+
+  umap* opt_sched = prg.optimized_codegen();
+  auto domain = prg.whole_iteration_domain();
+  auto schedmap = its(opt_sched, domain);
+  cout << "Optimized schedule..." << endl;
+  cout << codegen_c(schedmap);
+  
+  auto buffers = build_buffers(prg);
+  generate_app_code(buffers, prg);
+
+  int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+
+  assert(false);
+}
+
 int main() {
 
+  pyramid_2d_test();
   pyramid_test();
   //assert(false);
 
