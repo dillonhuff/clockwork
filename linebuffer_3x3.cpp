@@ -143,7 +143,7 @@ struct write0_cache {
 		if (offset == 130) {
 			return f16.back();
 		}
-		cout << "Error: Unsupported offset: " << offset << endl;
+		cout << "Error: Unsupported offset in linebuffer_3x3: " << offset << endl;
 		assert(false);
 		return 0;
 

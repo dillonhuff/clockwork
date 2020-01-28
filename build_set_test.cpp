@@ -791,7 +791,7 @@ void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer&
       out << "\t\t}" << endl;
       nind++;
     }
-    out << "\t\tcout << \"Error: Unsupported offset: \" << offset << endl;" << endl;
+    out << "\t\tcout << \"Error: Unsupported offset in " << buf.name << ": \" << offset << endl;" << endl;
     out << "\t\tassert(false);" << endl;
     out << "\t\treturn 0;\n" << endl;
     out << "\t}" << endl << endl;
@@ -2464,7 +2464,7 @@ void pyramid_2d_test() {
     auto pc = pr->add_loop("dc", 0, 8 / 2);
     auto rd = pc->add_op("read_down");
     rd->add_load("CI", "2*dc, 2*dr");
-    rd->add_store("D", "2*dc, 2*dr");
+    rd->add_store("D", "dc, dr");
   }
 
   {
@@ -2497,10 +2497,10 @@ void pyramid_2d_test() {
   int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
   assert(res == 0);
 
-  res = system("./a.out");
-  assert(res == 0);
+  //res = system("./a.out");
+  //assert(res == 0);
 
-  assert(false);
+  //assert(false);
 }
 
 int main() {

@@ -47,7 +47,7 @@ struct write_cache {
 		if (offset == 2) {
 			return f4.back();
 		}
-		cout << "Error: Unsupported offset: " << offset << endl;
+		cout << "Error: Unsupported offset in shift_reg: " << offset << endl;
 		assert(false);
 		return 0;
 
