@@ -736,8 +736,8 @@ void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer&
     auto qpd = compute_dd_bound(buf, outpt, inpt);
     int lb = compute_dd_lower_bound(buf, outpt, inpt);
 
-    cout << "qpd = " << qpd << endl;
-    cout << "lb  = " << lb << endl;
+    //cout << "qpd = " << qpd << endl;
+    //cout << "lb  = " << lb << endl;
 
     //assert(qpd == lb);
 
@@ -746,15 +746,15 @@ void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer&
       read_delays.push_back(i);
     }
 
-    out << "\t// DD expr = " << qpd << endl;
+    //out << "\t// DD expr = " << qpd << endl;
   }
 
   read_delays = sort_unique(read_delays);
 
-  out << "\t// Peek points" << endl;
-  for (auto dd : read_delays) {
-    out << "\t// DD = " << dd << endl;
-  }
+  //out << "\t// Peek points" << endl;
+  //for (auto dd : read_delays) {
+    //out << "\t// DD = " << dd << endl;
+  //}
 
   vector<int> break_points;
   if (read_delays.size() == 1) {
@@ -769,10 +769,10 @@ void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer&
   }
   read_delays = break_points;
 
-  out << "\t// Break points in parition" << endl;
-  for (auto dd : read_delays) {
-    out << "\t// BP = " << dd << endl;
-  }
+  //out << "\t// Break points in parition" << endl;
+  //for (auto dd : read_delays) {
+    //out << "\t// BP = " << dd << endl;
+  //}
 
   vector<string> partitions;
   vector<int> end_inds;
@@ -1593,6 +1593,24 @@ struct op {
     func = n;
   }
 
+  op* add_nest(
+      const std::string& x, int x_min, int x_max,
+      const std::string& y, int y_min, int y_max) {
+    auto xl = this->add_loop(x, x_min, x_max);
+    auto yl = xl->add_loop(y, y_min, y_max);
+    return yl;
+  }
+
+  op* add_nest(
+      const std::string& x, int x_min, int x_max,
+      const std::string& y, int y_min, int y_max,
+      const std::string& c, int c_min, int c_max) {
+    auto xl = this->add_loop(x, x_min, x_max);
+    auto yl = xl->add_loop(y, y_min, y_max);
+    auto cl = yl->add_loop(c, c_min, c_max);
+    return cl;
+  }
+
   op* add_loop(const std::string& name, const int l, const int u) {
     auto lp = new op();
     lp->name = name;
@@ -1615,11 +1633,13 @@ struct op {
   }
 
   void add_load(const std::string& b, const std::string& loc) {
+    assert(!is_loop);
     consumes.insert(b + "[" + loc + "]");
     consume_locs.insert({b, loc});
   }
 
   void add_store(const std::string& b, const std::string& loc) {
+    assert(!is_loop);
     produces.insert(b + "[" + loc + "]");
     produce_locs.insert({b, loc});
   }
@@ -1723,6 +1743,13 @@ struct prog {
   set<string> outs;
   map<string, int> buffer_port_widths;
   string compute_unit_file;
+
+  loop* add_nest(
+      const std::string& x, int x_min, int x_max,
+      const std::string& y, int y_min, int y_max,
+      const std::string& c, int c_min, int c_max) {
+    return root->add_nest(x, x_min, x_max, y, y_min, y_max, c, c_min, c_max);
+  }
 
   bool is_boundary(const std::string& name) {
     return elem(name, ins) || elem(name, outs);
@@ -2130,21 +2157,34 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
     for (auto con : op->consume_locs) {
       in_buffers.insert(con.first);
     }
-    assert(in_buffers.size() == 1);
-    string in_buffer = pick(in_buffers);
-    conv_out << "\t// Consume: " << in_buffer << endl;
-    if (prg.is_boundary(in_buffer)) {
-      conv_out << "\tauto " << in_buffer << "_val = " << in_buffer << ".read();" << endl;
-    } else {
-      string source_delay = pick(buffers.at(in_buffer).get_in_ports());
-      conv_out << "\tauto " << in_buffer << "_val = " << in_buffer << "_" << op->name << "_bundle_action(" << source_delay << ", " << comma_list(dim_args) << ");" << endl;
-    }
+    cout << "# of input buffers: " << in_buffers.size() << endl;
 
-    string res = in_buffer + "_val";
-    if (op->func != "") {
-      conv_out << "\t// Apply function: " << op->func << endl;
-      conv_out << "\tauto compute_result = " << op->func << "(" << res << ");" << endl;
-      res = "compute_result";
+    //assert(in_buffers.size() == 1);
+    string res;
+    if (in_buffers.size() == 1) {
+      string in_buffer = pick(in_buffers);
+      conv_out << "\t// Consume: " << in_buffer << endl;
+      if (prg.is_boundary(in_buffer)) {
+        conv_out << "\tauto " << in_buffer << "_val = " << in_buffer << ".read();" << endl;
+      } else {
+        string source_delay = pick(buffers.at(in_buffer).get_in_ports());
+        conv_out << "\tauto " << in_buffer << "_val = " << in_buffer << "_" << op->name << "_bundle_action(" << source_delay << ", " << comma_list(dim_args) << ");" << endl;
+      }
+
+      res = in_buffer + "_val";
+      if (op->func != "") {
+        conv_out << "\t// Apply function: " << op->func << endl;
+        conv_out << "\tauto compute_result = " << op->func << "(" << res << ");" << endl;
+        res = "compute_result";
+      }
+    } else {
+      assert(in_buffers.size() == 0);
+      res = "";
+      if (op->func != "") {
+        conv_out << "\t// Apply function: " << op->func << endl;
+        conv_out << "\tauto compute_result = " << op->func << "(" << res << ");" << endl;
+        res = "compute_result";
+      }
     }
 
     set<string> out_buffers;
@@ -2531,8 +2571,68 @@ void pyramid_2d_test() {
   //assert(false);
 }
 
+void mobilenet_test() {
+
+  prog prg;
+  prg.compute_unit_file = "mobilenet_compute.h";
+  prg.name = "mobilenet";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["dw_conv"] = 32;
+
+  {
+    auto read_in = prg.add_nest("px", 0, 14, "py", 0, 14, "pc", 0, 4);
+    auto write = read_in->add_op("read_input_stream");
+    write->add_load("in", "px, py, pc");
+    write->add_store("I", "px, py, pc");
+  }
+
+  {
+    // dw_conv
+    auto set_dw = prg.add_nest("dwx", 0, 14, "dwy", 0, 14, "dwc", 0, 4);
+    auto init_dw = set_dw->add_op("init_dw");
+    init_dw->add_store("dw_conv", "dwx, dwy, dwz");
+    init_dw->add_function("set_zero");
+    // Set dw_conv to be
+    auto update_dw = set_dw->add_nest("rx", 0, 3, "ry", 0, 3);
+    auto rdw = update_dw->add_op("rdw");
+    rdw->add_load("I", "dwx + rx, dwy + ry, dwc");
+    rdw->add_load("dw_conv", "dwx, dwy, dwc");
+    rdw->add_store("dw_conv", "dwx, dwy, dwc");
+    rdw->add_function("fma");
+  }
+
+  {
+    auto read_in = prg.add_nest("ox", 0, 14, "oy", 0, 14, "ok", 0, 4);
+    auto write = read_in->add_op("write_max_out");
+    write->add_load("dw_conv", "ox, oy, ok");
+    write->add_function("max_zero");
+    write->add_store("out", "ox, oy, ok");
+  }
+
+  cout << "Program code without optimization..." << endl;
+  prg.unoptimized_codegen();
+
+  umap* opt_sched = prg.optimized_codegen();
+  auto domain = prg.whole_iteration_domain();
+  auto schedmap = its(opt_sched, domain);
+  cout << "Optimized schedule..." << endl;
+  cout << codegen_c(schedmap);
+  
+  auto buffers = build_buffers(prg);
+  generate_app_code(buffers, prg);
+
+  int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
+  assert(res == 0);
+
+  assert(false);
+}
+
 int main() {
 
+  mobilenet_test();
   pyramid_2d_test();
   pyramid_test();
   //assert(false);
