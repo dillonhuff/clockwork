@@ -2161,7 +2161,8 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
 
     //assert(in_buffers.size() == 1);
     string res;
-    if (in_buffers.size() == 1) {
+    if (in_buffers.size() > 0) {
+
       string in_buffer = pick(in_buffers);
       conv_out << "\t// Consume: " << in_buffer << endl;
       if (prg.is_boundary(in_buffer)) {
@@ -2594,14 +2595,14 @@ void mobilenet_test() {
     auto set_dw = prg.add_nest("dwx", 0, 14, "dwy", 0, 14, "dwc", 0, 4);
     auto init_dw = set_dw->add_op("init_dw");
     init_dw->add_store("dw_conv", "dwx, dwy, dwz");
-    init_dw->add_function("set_zero");
+    init_dw->add_function("set_zero<32>");
     // Set dw_conv to be
     auto update_dw = set_dw->add_nest("rx", 0, 3, "ry", 0, 3);
     auto rdw = update_dw->add_op("rdw");
     rdw->add_load("I", "dwx + rx, dwy + ry, dwc");
     rdw->add_load("dw_conv", "dwx, dwy, dwc");
     rdw->add_store("dw_conv", "dwx, dwy, dwc");
-    rdw->add_function("fma");
+    rdw->add_function("fma<32>");
   }
 
   {
