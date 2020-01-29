@@ -92,7 +92,6 @@ class UBuffer {
     }
 
     int port_bundle_width(const std::string& bundle_name) {
-      //cout << "Getting width of bundle: " << bundle_name << endl;
       int len = 0;
       for (auto pt : map_find(bundle_name, port_bundles)) {
         len += port_width(pt);
@@ -244,14 +243,9 @@ class UBuffer {
 
 isl_stat get_const(isl_set* s, isl_qpolynomial* qp, void* user) {
   vector<int>* vals = (vector<int>*) user;
-  //cout << "getting piece" << endl;
-  print(isl_qpolynomial_get_ctx(qp), qp);
-  print(isl_set_get_ctx(s), s);
 
   isl_val* v = isl_qpolynomial_get_constant_val(qp);
-  print(isl_val_get_ctx(v), v);
   long vs = isl_val_get_num_si(v);
-  //cout << "value = " << vs << endl;
   if (vals->size() == 0 ||
       vals->back() != vs) {
     vals->push_back(vs);
@@ -284,16 +278,6 @@ int check_value_dd(UBuffer& buf, const std::string& read_port, const std::string
 
   auto c = card(WritesBtwn);
   
-  //cout << "Cardinality..." << endl;
-  //print(ctx, c);
-
-  //cout << "Cardinality after simpification..." << endl;
-  //print(ctx, isl_pw_qpolynomial_fold_coalesce(cpy(c)));
-  //auto s = isl_pw_qpolynomial_n_piece(c);
-  //cout << "s = " << s << endl;
-
-  //assert(s <= 1);
-
   assert(false);
   return 0;
   //if (s == 0) {
@@ -371,7 +355,6 @@ isl_stat bmap_codegen_c(isl_basic_map* m, void* user) {
   //isl_basic_set* s = domain(m);
   //vector<string>& code_holder = *((vector<string>*) user);
   //string code = "";
-  //cout << "\t BASIC MAP" << endl;
   //code_holder.push_back(code);
   isl_basic_map_foreach_constraint(m, codegen_constraint, user);
   //isl_basic_set_foreach_constraint(s, codegen_constraint, user);
@@ -380,29 +363,23 @@ isl_stat bmap_codegen_c(isl_basic_map* m, void* user) {
 }
 
 std::string codegen_c(isl_set* s) {
-  //cout << "Generating code for set..." << endl;
   //auto ctx = isl_set_get_ctx(s);
-  //print(ctx, s);
 
   //isl_printer *p;
   //p = isl_printer_to_str(ctx);
 
-  //cout << "Set print string..." << endl;
 
   //p = isl_printer_set_output_format(p, ISL_FORMAT_C);
   
-  //cout << "set output format..." << endl;
   
   //p = isl_printer_print_set(p, cpy(s));
   
-  //cout << "Built printer..." << endl;
 
   //char* rs = isl_printer_get_str(p);
   //string r(rs);
   //isl_printer_free(p);
   //free(rs);
 
-  //cout << "Done..." << endl;
 
   //return r;
   
@@ -482,20 +459,17 @@ vector<isl_term*> get_terms(isl_qpolynomial* qp) {
 }
 
 std::string codegen_c(isl_term* t) {
-  //cout << "\tterm dim = " << isl_term_dim(t, isl_dim_set) << endl;
   vector<string> exps;
   for (int i = 0; i < isl_term_dim(t, isl_dim_set); i++) {
     int exp = isl_term_get_exp(t, isl_dim_set, i);
     //if (exp != 0) {
     exps.push_back("pow(i_" + to_string(i) + ", " + to_string(exp) + ")");
-    //cout << "Aff " << i << ": " << str(div) << endl;
     //} else {
       //exps.push_back("1");
     //}
   }
 
   //isl_aff* div = isl_term_get_div(t, 0);
-  //cout << "Aff " << ": " << str(div) << endl;
 
   return "(" + str(isl_term_get_coefficient_val(t)) + "*" + sep_list(exps, "", "", "*") + ")";
 }
@@ -576,11 +550,7 @@ std::string codegen_c(isl_pw_qpolynomial* pqp) {
 }
 
 isl_stat map_codegen_c(isl_map* m, void* user) {
-  //cout << "Visiting map..." << endl;
-  //print(isl_map_get_ctx(m), m);
-  //cout << "Cardinality of this map..." << endl;
   auto cardm = card(m);
-  //print(isl_map_get_ctx(m), cardm);
 
   vector<string>& code_holder = *((vector<string>*) user);
   isl_pw_qpolynomial_foreach_lifted_piece(cardm, codegen_domain, (void*)(&code_holder));
@@ -592,9 +562,6 @@ isl_stat map_codegen_c(isl_map* m, void* user) {
 isl_stat umap_codegen_c_comp(isl_map* m, void* user) {
   map<string, string>& mc = *((map<string, string>*) user);
   mc[range_name(get_space(m))] = str(m);
-  //for (auto r : mc) {
-    //cout << "\t" << r.first << ": " << r.second << endl;
-  //}
 
   vector<string> holder;
   map_codegen_c(m, &holder);
@@ -628,27 +595,20 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
     lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
 
   assert(WritesBeforeRead != nullptr);
-  //cout << "WritesBeforeRead = " << str(WritesBeforeRead) << endl;
 
   auto WriteThatProducesReadData =
     its(dot(buf.access_map.at(read_port), port0WritesInv), WritesBeforeRead);
 
-  //cout << "----Writes that produces read data: " << endl;
-  //cout << "\t" << str(WriteThatProducesReadData) << endl;
 
   auto time_to_event = inv(sched);
   auto LastWriteBeforeRead =
     dot(lexmax(dot(WriteThatProducesReadData, sched)), time_to_event);
 
-  //cout << "----Last Write that produce read data before read: " << endl;
-  //cout << "\t" << str(LastWriteBeforeRead) << endl;
 
   WriteThatProducesReadData = LastWriteBeforeRead;
   //auto lex_max_events =
     //dot(lexmax(dot(src_map, sched)), time_to_event);
 
-  //cout << "----Writes before read: " << endl;
-  //cout << "\t" << str(WritesBeforeRead) << endl;
 
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
@@ -658,7 +618,6 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
   auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
 
   //cout << "----WritesBtwn" << endl;
-  //print(ctx, WritesBtwn);
 
   auto c = card(WritesBtwn);
   return c;
@@ -840,7 +799,7 @@ void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer&
 void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
   string inpt = buf.get_in_port();
 
-  cout << "Computing maxdelay..." << endl;
+  //cout << "Computing maxdelay..." << endl;
 
   int maxdelay = 0;
   for (auto outpt : buf.get_out_ports()) {
@@ -885,7 +844,6 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
 
     auto lex_max_events =
       dot(lexmax(dot(src_map, sched)), time_to_event);
-    print(ctx(src_map), lex_max_events);
 
     // Maybe: Get the schedule position, take the lexmax and then get it back?source map and then?? Creating more code?
     out << "// Select if: " << str(src_map) << endl;
@@ -1013,7 +971,7 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
 void generate_hls_code(std::ostream& out, UBuffer& buf) {
   string inpt = buf.get_in_port();
 
-  cout << "Computing maxdelay..." << endl;
+  //cout << "Computing maxdelay..." << endl;
 
   int maxdelay = 0;
   for (auto outpt : buf.get_out_ports()) {
@@ -1058,7 +1016,6 @@ void generate_hls_code(std::ostream& out, UBuffer& buf) {
 
     auto lex_max_events =
       dot(lexmax(dot(src_map, sched)), time_to_event);
-    print(ctx(src_map), lex_max_events);
 
     // Maybe: Get the schedule position, take the lexmax and then get it back?source map and then?? Creating more code?
     out << "// Select if: " << str(src_map) << endl;
@@ -1198,7 +1155,7 @@ void generate_hls_code(UBuffer& buf) {
     }
   }
 
-  cout << "Code generation..." << endl;
+  //cout << "Code generation..." << endl;
   ofstream os(buf.name + ".cpp");
   std::ostream& out = os;
 
@@ -1206,12 +1163,11 @@ void generate_hls_code(UBuffer& buf) {
 
   // Generate driver function for this buffer.
   isl_union_map* res = buf.global_schedule();
-  cout << "Map to schedule.." << endl;
-  print(buf.ctx, res);
+  //cout << "Map to schedule.." << endl;
 
   string code_string = codegen_c(res);
-  cout << "Code string..." << endl;
-  cout << code_string << endl;
+  //cout << "Code string..." << endl;
+  //cout << code_string << endl;
 
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
   string delay_list = "";
@@ -1300,18 +1256,16 @@ void synth_reduce_test() {
     its(isl_union_map_read_from_str(ctx, "{ read0[i, j] -> M[i]; out[i] -> M[i] }"), domain);
 	isl_union_map *validity =
     its(dot(writes, inv(reads)), before);
-  cout << "Validity" << endl;
-  print(ctx, validity);
+  //cout << "Validity" << endl;
 	isl_union_map *proximity =
     cpy(validity);
 
   isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
   auto schedmap = its(isl_schedule_get_map(sched), domain);
-  cout << "Reduce schedule..." << endl;
-  print(ctx, schedmap);
+  //cout << "Reduce schedule..." << endl;
 
-  cout << "Code for reduce..." << endl;
-  cout << codegen_c(schedmap) << endl;
+  //cout << "Code for reduce..." << endl;
+  //cout << codegen_c(schedmap) << endl;
   
   UBuffer buf;
   buf.name = "reduce";
@@ -1956,7 +1910,6 @@ struct prog {
 
     isl_union_map *validity =
       its(dot(writes, inv(reads)), before);
-    print(ctx, validity);
     isl_union_map *proximity =
       cpy(validity);
 
@@ -2077,7 +2030,7 @@ map<string, UBuffer> build_buffers(prog& prg) {
 
 void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
 
-  cout << "---- Generating customized re-use buffers" << endl;
+  //cout << "---- Generating customized re-use buffers" << endl;
   ofstream conv_out(prg.name + ".cpp");
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
   //conv_out << "#include \"accumulate_3.h\"" << endl << endl;
@@ -2138,7 +2091,7 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
     for (auto con : op->consume_locs) {
       in_buffers.insert(con.first);
     }
-    cout << "# of input buffers: " << in_buffers.size() << endl;
+    //cout << "# of input buffers: " << in_buffers.size() << endl;
 
     //assert(in_buffers.size() == 1);
     string res;
@@ -2180,7 +2133,7 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
       conv_out << "\t" << out_buffer << ".write(" << res << ");" << endl;
     } else {
       assert(contains_key(out_buffer, buffers));
-      cout << "Getting source buffer: " << buffers.at(out_buffer).name << endl;
+      //cout << "Getting source buffer: " << buffers.at(out_buffer).name << endl;
 
       string source_delay = pick(buffers.at(out_buffer).get_in_ports());
       conv_out << "\t" << out_buffer << "_" << op->name << "_bundle_action(" << res << ", " << source_delay << ");" << endl;
@@ -2242,8 +2195,8 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
     code_string = regex_replace(code_string, re, op->name + "(" + args_list + ", $1);");
   }
 
-  cout << "Code string:" << endl;
-  cout << code_string << endl;
+  //cout << "Code string:" << endl;
+  //cout << code_string << endl;
 
   conv_out << code_string << endl;
 
@@ -2402,21 +2355,15 @@ void mmul_test() {
   cout << "Program with optimized schedule..." << endl;
   isl_schedule* opt_sched = prg.optimized_schedule();
 
-  cout << "Optimized schedule" << endl;
-  print(prg.ctx, opt_sched);
-
-  cout << "Node types..." << endl;
   int ind = 0;
   opt_sched = isl_schedule_map_schedule_node_bottom_up(opt_sched, print_sched_tp, &ind);
 
-  cout << "tile schedule..." << endl;
-  print(prg.ctx, opt_sched);
 
   auto domain = prg.whole_iteration_domain();
   auto schedmap = its(isl_schedule_get_map(opt_sched), domain);
-  cout << "Optimized schedule..." << endl;
-  cout << codegen_c(schedmap);
-  assert(false);
+  //cout << "Optimized schedule..." << endl;
+  //cout << codegen_c(schedmap);
+  //assert(false);
 }
 
 void pyramid_test() {
@@ -2652,15 +2599,17 @@ void aha_talk_print_info() {
   cout << "----- Un-optimized loop nests for program..." << endl;
   prg.unoptimized_codegen();
 
+  cout << endl << endl;
+
   cout << "----- Optimized loop nests for program minimizing (write -> read) time..." << endl;
   cout << prg.optimized_loop_nest() << endl << endl;
 
   auto buffers = build_buffers(prg);
-  cout << "----- Unified buffers..." << endl;
-  cout << "# of buffers: " << buffers.size() << endl;
+  cout << "###### Unified buffers..." << endl;
+  cout << "Number of buffers: " << buffers.size() << endl;
   for (auto& b : buffers) {
     auto& buf = b.second;
-    cout << "\t--- " << (prg.is_boundary(b.second.name) ? "Off Chip Buffer: " : "On Chip Buffer: ") << b.second.name << endl;
+    cout << "--- " << (prg.is_boundary(b.second.name) ? "Off Chip Buffer: " : "On Chip Buffer: ") << b.second.name << endl;
     cout << "\t---- In ports" << endl;
     for (auto inpt : b.second.get_in_ports()) {
       cout << "\t\t" << inpt << endl;
@@ -2679,7 +2628,8 @@ void aha_talk_print_info() {
     cout << endl << endl;
   }
 
-  //generate_app_code(buffers, prg);
+  generate_app_code(buffers, prg);
+  cout << "output code for application is in file: " << prg.name << ".cpp" << endl;
 
 }
 
