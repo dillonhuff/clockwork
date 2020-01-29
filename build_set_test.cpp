@@ -1825,6 +1825,10 @@ struct prog {
 
   set<op*> all_ops() { return root->all_ops(); }
 
+  op* add_op(const std::string& name) {
+    return root->add_op(name);
+  }
+
   loop* add_loop(const std::string& name, const int l, const int u) {
     return root->add_loop(name, l, u);
   }
@@ -2703,40 +2707,23 @@ void reduce_1d_test() {
     rop->add_load("in", "rd_in");
     rop->add_store("I", "rd_in");
   }
-  //{
-    //auto read_in = prg.add_nest("px", 0, 14);
-    //auto set_z = read_in->add_op("set_zero");
-    //set_z->add_function("set_zero");
-    //set_z->add_store("I", "px");
 
-    //auto accum_loop = read_in->add_loop("ac", 0, 14);
-    //auto get_in = accum_loop->add_op("read_input_stream");
-    //get_in->add_load("in", "px");
-    //get_in->add_store("I", "px");
-  //}
+  {
+    auto init = prg.add_op("set_z");
+    init->add_function("set_zero");
+    init->add_store("tmp", "0");
+  
+    auto accum_loop = prg.add_loop("a", 0, 14);
+    auto accum = accum_loop->add_op("accumulate");
+    auto tmp = accum->add_load("tmp", "0");
+    auto next = accum->add_load("I", "a");
+    accum->add_function("fma", {tmp, tmp, next});
+    accum->add_store("tmp", "0");
 
-  //{
-    //// dw_conv
-    //auto set_dw = prg.add_nest("dwx", 0, 14, "dwy", 0, 14, "dwc", 0, 4);
-    //auto init_dw = set_dw->add_op("init_dw");
-    //init_dw->add_store("dw_conv", "dwx, dwy, dwz");
-    //init_dw->add_function("set_zero");
-    //// Set dw_conv to be
-    //auto update_dw = set_dw->add_nest("rx", 0, 3, "ry", 0, 3);
-    //auto rdw = update_dw->add_op("rdw");
-    //auto l1 = rdw->add_load("I", "dwx + rx, dwy + ry, dwc");
-    //auto l2 = rdw->add_load("dw_conv", "dwx, dwy, dwc");
-    //rdw->add_function("fma", {l1, l1, l2});
-    //rdw->add_store("dw_conv", "dwx, dwy, dwc");
-  //}
-
-  //{
-    //auto read_in = prg.add_nest("ox", 0, 14, "oy", 0, 14, "ok", 0, 4);
-    //auto write = read_in->add_op("write_max_out");
-    //write->add_load("dw_conv", "ox, oy, ok");
-    //write->add_function("max_zero");
-    //write->add_store("out", "ox, oy, ok");
-  //}
+    auto write_out = prg.add_op("output");
+    write_out->add_load("tmp", "0");
+    write_out->add_store("out", "0");
+  }
 
   cout << "Program code without optimization..." << endl;
   prg.unoptimized_codegen();
