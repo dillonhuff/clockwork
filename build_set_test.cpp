@@ -2699,6 +2699,7 @@ umap* input_chunk(UBuffer& buf, const std::string& out_bundle) {
   auto EventsBeforeRead = lex_gt(sched, sched);
 
   auto ReadsBeforeCurrentRead = its_range(its(EventsBeforeRead, bundle_ops), bundle_ops);
+  // lexmax wrt schedule
   auto PreviousRead = lexmax(ReadsBeforeCurrentRead);
 
   auto WritesBeforePreviousRead =
@@ -2707,8 +2708,6 @@ umap* input_chunk(UBuffer& buf, const std::string& out_bundle) {
   auto DataWrittenBeforePreviousRead =
     dot(WritesBeforePreviousRead, DataWritten);
 
-  //return DataWritten;
-      //DataWrittenBeforePreviousRead);
   return isl_union_map_subtract(DataRead,
       DataWrittenBeforePreviousRead);
 }
