@@ -2609,17 +2609,12 @@ void mobilenet_test() {
 
 
 umap* input_chunk(UBuffer& buf, const std::string& out_bundle) {
-
-  // What is output chunk?
-  //  - All of the data needed to start a new iteration of 
-  //    an op that was not passed in to any prior iteration
-
   umap* sched = buf.global_schedule();
   auto bundle_ops = buf.bundle_domain(out_bundle);
 
-  auto EventsAfterRead = lex_gt(sched, sched);
+  auto EventsBeforeRead = lex_gt(sched, sched);
 
-  auto ReadsBeforeCurrentRead = its_range(its(EventsAfterRead, bundle_ops), bundle_ops);
+  auto ReadsBeforeCurrentRead = its_range(its(EventsBeforeRead, bundle_ops), bundle_ops);
 
   auto DataRead = buf.bundle_access(out_bundle);
   auto DataReadBeforeCurrentRead =
@@ -2628,10 +2623,6 @@ umap* input_chunk(UBuffer& buf, const std::string& out_bundle) {
   return isl_union_map_subtract(DataRead,
       DataReadBeforeCurrentRead);
 
-  //umap* read = buf.bundle_access_map(out_bundle);
-  //auto reads_before_read; // insert;
-  //auto used_before; // apply read map to range
-  //return diff(used, used_in_earlier_read);
 }
 
 void aha_talk_print_info() {
@@ -2708,8 +2699,9 @@ void aha_talk_print_info() {
         cout << "\t\t\t" << p << endl;
       }
 
-      cout << "\t\t Input Chunk: " << str(input_chunk(buf, out_bundle)) << endl << endl;
-      cout << "\t\t Input Chunk Sizes: " << str(card(input_chunk(buf, out_bundle))) << endl << endl;
+      auto in_chunk = isl_union_map_coalesce(input_chunk(buf, out_bundle));
+      cout << "\t\t Input Chunk: " << str(in_chunk) << endl;
+      cout << "\t\t Input Chunk Sizes: " << str(card(in_chunk)) << endl;
     }
 
     cout << endl << endl;
