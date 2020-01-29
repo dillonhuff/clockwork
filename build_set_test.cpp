@@ -1896,6 +1896,21 @@ struct prog {
     return m;
   }
 
+  umap* validity_deps() {
+
+    umap* naive_sched = unoptimized_schedule();
+    auto before = lex_lt(naive_sched, naive_sched);
+    auto domain = whole_iteration_domain();
+    auto writes =
+      its(producer_map(), domain);
+    auto reads =
+      its(consumer_map(), domain);
+
+    isl_union_map *validity =
+      its(dot(writes, inv(reads)), before);
+    return validity;
+  }
+
   isl_schedule* optimized_schedule() {
     umap* naive_sched = unoptimized_schedule();
     auto before = lex_lt(naive_sched, naive_sched);
@@ -1905,11 +1920,7 @@ struct prog {
     auto reads =
       its(consumer_map(), domain);
 
-    //cout << "Producer map..." << str(writes) << endl;
-    //cout << "Consumer map..." << str(reads) << endl;
-
-    isl_union_map *validity =
-      its(dot(writes, inv(reads)), before);
+    isl_union_map *validity = validity_deps();
     isl_union_map *proximity =
       cpy(validity);
 
@@ -2598,8 +2609,13 @@ void aha_talk_print_info() {
 
   cout << "----- Un-optimized loop nests for program..." << endl;
   prg.unoptimized_codegen();
-
   cout << endl << endl;
+
+  //cout << "----- Memory operations that must be preserved in re-scheduling..." << endl;
+  //cout << str(prg.validity_deps()) << endl << endl;
+
+  cout << "----- Memory dependencies..." << endl;
+  cout << str(isl_union_map_coalesce(inv(prg.validity_deps()))) << endl << endl;
 
   cout << "----- Optimized loop nests for program minimizing (write -> read) time..." << endl;
   cout << prg.optimized_loop_nest() << endl << endl;
@@ -2647,7 +2663,7 @@ int main(int argc, char** argv) {
     cout << "Error: Unrecognized command: " << cmd << endl;
     assert(false);
 
-  } if (argc == 1) {
+  } else if (argc == 1) {
 
     pyramid_2d_test();
     pyramid_test();
@@ -2664,7 +2680,10 @@ int main(int argc, char** argv) {
     //mobilenet_test();
     //mmul_test();
 
+  } else {
+    assert(false);
   }
+
   return 0;
 
 }
