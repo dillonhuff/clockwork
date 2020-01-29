@@ -2776,6 +2776,7 @@ void mobilenet_test() {
   prg.compute_unit_file = "mobilenet_compute.h";
   prg.name = "mobilenet";
   prg.add_input("in");
+  prg.add_input("weights");
   prg.add_output("out");
   prg.buffer_port_widths["in"] = 32;
   prg.buffer_port_widths["out"] = 32;
@@ -2790,6 +2791,13 @@ void mobilenet_test() {
   }
 
   {
+    auto read_in = prg.add_nest("px", 0, 14, "py", 0, 14, "pc", 0, 4);
+    auto write = read_in->add_op("read_weight_input_stream");
+    write->add_load("weights", "px, py, pc");
+    write->add_store("weight_buffer", "px, py, pc");
+  }
+
+  {
     // dw_conv
     auto set_dw = prg.add_nest("dwx", 0, 14 - 2, "dwy", 0, 14 - 2, "dwc", 0, 4);
     auto init_dw = set_dw->add_op("init_dw");
@@ -2799,8 +2807,9 @@ void mobilenet_test() {
     auto update_dw = set_dw->add_nest("rx", 0, 3, "ry", 0, 3);
     auto rdw = update_dw->add_op("rdw");
     auto l1 = rdw->add_load("I", "dwx + rx, dwy + ry, dwc");
+    auto w = rdw->add_load("weight_buffer", "dwx + rx, dwy + ry, dwc");
     auto l2 = rdw->add_load("dw_conv", "dwx, dwy, dwc");
-    rdw->add_function("fma", {l1, l1, l2});
+    rdw->add_function("fma", {l1, w, l2});
     rdw->add_store("dw_conv", "dwx, dwy, dwc");
   }
 
