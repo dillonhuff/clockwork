@@ -12,6 +12,14 @@
 
 using namespace dbhc;
 using namespace std;
+bool
+is_prefix( std::string const& lhs, std::string const& rhs )
+{
+    return std::equal(
+        lhs.begin(),
+        lhs.begin() + std::min( lhs.size(), rhs.size() ),
+        rhs.begin() );
+}
 
 template<typename T>
 T pick(const std::vector<T>& s) {
@@ -2206,22 +2214,14 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
           conv_out << in_buffer << ".read();" << endl;
         } else {
           string source_delay = pick(buffers.at(in_buffer).get_in_ports());
-          conv_out << in_buffer << "_" << op->name << "_bundle_action(" << source_delay << ", " << comma_list(dim_args) << ");" << endl;
+          auto source_delays = buffers.at(in_buffer).get_in_ports();
+          conv_out << in_buffer << "_" << op->name << "_bundle_action(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
         }
         res = value_name;
 
       }
 
       string in_buffer = pick(in_buffers).first;
-      //if (prg.is_boundary(in_buffer)) {
-        //conv_out << "\tauto " << in_buffer << "_val = " << in_buffer << ".read();" << endl;
-      //} else {
-        //string source_delay = pick(buffers.at(in_buffer).get_in_ports());
-        //conv_out << "\tauto " << in_buffer << "_val = " << in_buffer << "_" << op->name << "_bundle_action(" << source_delay << ", " << comma_list(dim_args) << ");" << endl;
-      //}
-
-      //res =
-        ///in_buffer + "_val";
       if (op->func != "") {
         conv_out << "\t// Apply function: " << op->func << endl;
         if (op->func_args.size() == 0) {
@@ -2252,10 +2252,23 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
       conv_out << "\t" << out_buffer << ".write(" << res << ");" << endl;
     } else {
       assert(contains_key(out_buffer, buffers));
-      //cout << "Getting source buffer: " << buffers.at(out_buffer).name << endl;
 
-      string source_delay = pick(buffers.at(out_buffer).get_in_ports());
-      conv_out << "\t" << out_buffer << "_" << op->name << "_bundle_action(" << res << ", " << source_delay << ");" << endl;
+      auto possible_ports = buffers.at(out_buffer).get_in_ports();
+      conv_out << "\t// Buffer: " << out_buffer << ", Op: " << op->name << endl;
+      conv_out << "\t// Possible ports..." << endl;
+      string prefix = out_buffer + "_" + op->name;
+      string port_cache = "";
+      for (auto pt : possible_ports) {
+        conv_out << "\t\t// " << pt << endl;
+        if (is_prefix(prefix, pt)) {
+          port_cache = pt;
+          break;
+        }
+      }
+      assert(port_cache != "");
+
+      //string source_delay = pick(buffers.at(out_buffer).get_in_ports());
+      conv_out << "\t" << out_buffer << "_" << op->name << "_bundle_action(" << res << ", " << port_cache << " /* output src_delay */);" << endl;
     }
 
     conv_out << "}" << endl << endl;
@@ -2983,8 +2996,8 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
 
-    reduce_1d_test();
-    mobilenet_test();
+    //reduce_1d_test();
+    //mobilenet_test();
     pyramid_2d_test();
     pyramid_test();
 
