@@ -2614,7 +2614,7 @@ void aha_talk_print_info() {
   //cout << "----- Memory operations that must be preserved in re-scheduling..." << endl;
   //cout << str(prg.validity_deps()) << endl << endl;
 
-  cout << "----- Memory dependencies..." << endl;
+  cout << "----- Statement RaW dependencies..." << endl;
   cout << str(isl_union_map_coalesce(inv(prg.validity_deps()))) << endl << endl;
 
   cout << "----- Optimized loop nests for program minimizing (write -> read) time..." << endl;
@@ -2625,7 +2625,7 @@ void aha_talk_print_info() {
   cout << "Number of buffers: " << buffers.size() << endl;
   for (auto& b : buffers) {
     auto& buf = b.second;
-    cout << "--- " << (prg.is_boundary(b.second.name) ? "Off Chip Buffer: " : "On Chip Buffer: ") << b.second.name << endl;
+    cout << "--- " << (prg.is_boundary(b.second.name) ? "External Buffer: " : "Internal Buffer: ") << b.second.name << endl;
     cout << "\t---- In ports" << endl;
     for (auto inpt : b.second.get_in_ports()) {
       cout << "\t\t" << inpt << endl;
