@@ -2694,23 +2694,48 @@ umap* input_chunk(UBuffer& buf, const std::string& out_bundle) {
   auto write_ops = buf.bundle_domain(in_bundle);
   auto DataWritten = buf.bundle_access(in_bundle);
 
-  cout << "DataWritten: " << str(DataWritten) << endl;
+  //cout << "DataWritten: " << str(DataWritten) << endl;
 
   auto EventsBeforeRead = lex_gt(sched, sched);
 
   auto ReadsBeforeCurrentRead = its_range(its(EventsBeforeRead, bundle_ops), bundle_ops);
   auto PreviousRead = lexmax(ReadsBeforeCurrentRead);
-  cout << "Previous read: " << str(PreviousRead) << endl;
+  //cout << "Previous read: " << str(PreviousRead) << endl;
 
   auto WritesBeforePreviousRead =
     its_range(its(dot(PreviousRead, EventsBeforeRead), bundle_ops), write_ops);
 
-  cout << "WritesBeforePreviousRead: " << str(WritesBeforePreviousRead) << endl;
+  //cout << "WritesBeforePreviousRead: " << str(WritesBeforePreviousRead) << endl;
   auto DataWrittenBeforePreviousRead =
     dot(WritesBeforePreviousRead, DataWritten);
 
   return isl_union_map_subtract(DataRead,
       DataWrittenBeforePreviousRead);
+}
+
+void aha_talk_print_raw_deps(prog& prg) {
+
+  auto iter_domain = prg.whole_iteration_domain();
+ 
+  auto sched = prg.unoptimized_schedule();
+
+  //cout << "----- Values read by each statement" << endl;
+  auto reads =
+    its(prg.consumer_map(), iter_domain);
+  //cout << "\t" << str(reads) << endl << endl;
+ 
+  //cout << "----- Values written by each statement" << endl;
+  auto writes =
+    its(prg.producer_map(), iter_domain);
+  //cout << "\t" << str(writes) << endl << endl;
+
+  cout << "---- Write   = " << str((writes)) << endl << endl;
+  cout << "---- Read    = " << str((reads)) << endl << endl;
+  cout << "---- Read^-1 = " << str(inv(reads)) << endl << endl;
+  cout << "---- Write . Read^-1 = " << str(dot(writes, inv(reads))) << endl << endl;
+  cout << "---- Schedule << Schedule = " << str(lex_lt(sched, sched)) << endl << endl;
+  cout << "---- RaW deps = " << str(its(dot(writes, inv(reads)), lex_lt(sched, sched))) << endl << endl;
+  cout << "---- RaW^-1   = " << str(coalesce(inv(its(dot(writes, inv(reads)), lex_lt(sched, sched))))) << endl << endl;
 }
 
 void aha_talk_print_info(prog& prg) {
@@ -2811,19 +2836,25 @@ int main(int argc, char** argv) {
     assert(argc == 2);
     string cmd = argv[1];
 
-    if (cmd == "aha_talk_print_info_conv_1d") {
+    if (cmd == "raw_deps") {
+      prog prg = conv_1d();
+      aha_talk_print_raw_deps(prg);
+      return 0;
+    }
+
+    if (cmd == "conv_1d") {
       prog prg = conv_1d();
       aha_talk_print_info(prg);
       return 0;
     }
 
-    if (cmd == "aha_talk_print_info_conv_1d_bc") {
+    if (cmd == "conv_1d_bc") {
       prog prg = conv_1d_bc();
       aha_talk_print_info(prg);
       return 0;
     }
 
-    if (cmd == "aha_talk_print_info_conv_2d") {
+    if (cmd == "conv_2d") {
       prog prg = conv_2d();
       aha_talk_print_info(prg);
       return 0;

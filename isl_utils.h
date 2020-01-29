@@ -586,6 +586,9 @@ isl_map* dot(isl_map* const m0, isl_map* const m1) {
   return isl_map_apply_range(cpy(m0), cpy(m1));
 }
 
+isl_union_map* coalesce(isl_union_map* const m0) {
+  return isl_union_map_coalesce(cpy(m0));
+}
 isl_union_map* dot(isl_union_map* const m0, isl_union_map* const m1) {
   return isl_union_map_apply_range(cpy(m0), cpy(m1));
 }
