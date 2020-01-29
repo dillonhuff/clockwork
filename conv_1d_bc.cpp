@@ -3,38 +3,20 @@
 #include "hw_classes.h"
 
 struct M_get_input_0_cache {
-	// Capacity: 3
-	// Parition [0, 1) capacity = 1
-	fifo<int, 1> f0;
-	// Parition [1, 2) capacity = 1
-	fifo<int, 1> f2;
-	// Parition [2, 2] capacity = 1
-	fifo<int, 1> f4;
+	// Capacity: 1
+	// Parition [0, 0] capacity = 1
+	fifo<int, 1> f1;
 
 
 	inline int peek_0() {
-		return f0.back();
-	}
-
-	inline int peek_1() {
-		return f2.back();
-	}
-
-	inline int peek_2() {
-		return f4.back();
+		return f1.back();
 	}
 
 
 
 	inline int peek(const int offset) {
 		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 1) {
-			return f2.back();
-		}
-		if (offset == 2) {
-			return f4.back();
+			return f1.back();
 		}
 		cout << "Error: Unsupported offset in M: " << offset << endl;
 		assert(false);
@@ -43,9 +25,7 @@ struct M_get_input_0_cache {
 	}
 
 	inline void push(const int value) {
-		f4.push(f2.back());
-		f2.push(f0.back());
-		f0.push(value);
+		f1.push(value);
 	}
 
 };
@@ -56,17 +36,15 @@ inline void M_get_input_0_write(int& M_get_input_0, M_get_input_0_cache& M_get_i
 	M_get_input_0_delay.push(M_get_input_0);
 }
 
-// Select if: { compute_output[root = 0, c] -> get_input[root' = 0, p = 1 + c] : 0 <= c <= 8; compute_output[root = 0, c = 9] -> get_input[root' = 0, p = 9] }
+// Select if: {  }
 inline int M_compute_output_3_select(M_get_input_0_cache& M_get_input_0_delay
 , int root, int c) {
 // Pieces...
-// { compute_output[root = 0, c] : 0 <= c <= 7 } -> { compute_output[root, c] -> 1 }
-// 	is always true on iteration domain: 0
-	int value_M_get_input_0 = M_get_input_0_delay.peek(((root == 0 && c >= 0 && 7 - c >= 0) ? (1) : 0));
+	int value_M_get_input_0 = M_get_input_0_delay.peek_0();
 	return value_M_get_input_0;
 }
 
-// Select if: { compute_output[root = 0, c] -> get_input[root' = 0, p = 9] : 8 <= c <= 9; compute_output[root = 0, c] -> get_input[root' = 0, p = 2 + c] : 0 <= c <= 7 }
+// Select if: {  }
 inline int M_compute_output_4_select(M_get_input_0_cache& M_get_input_0_delay
 , int root, int c) {
 // Pieces...
@@ -74,15 +52,11 @@ inline int M_compute_output_4_select(M_get_input_0_cache& M_get_input_0_delay
 	return value_M_get_input_0;
 }
 
-// Select if: { compute_output[root = 0, c] -> get_input[root' = 0, p = c] : 0 <= c <= 9 }
+// Select if: {  }
 inline int M_compute_output_5_select(M_get_input_0_cache& M_get_input_0_delay
 , int root, int c) {
 // Pieces...
-// { compute_output[root = 0, c] : 0 <= c <= 7 } -> { compute_output[root, c] -> 2 }
-// 	is always true on iteration domain: 0
-// { compute_output[root = 0, c = 8] } -> { compute_output[root, c] -> 1 }
-// 	is always true on iteration domain: 0
-	int value_M_get_input_0 = M_get_input_0_delay.peek(((root == 0 && c >= 0 && 7 - c >= 0) ? (2) : (-8 + c == 0 && root == 0) ? (1) : 0));
+	int value_M_get_input_0 = M_get_input_0_delay.peek_0();
 	return value_M_get_input_0;
 }
 

@@ -22,6 +22,7 @@ extern "C" {
 #include "barvinok/barvinok.h"
 
 typedef isl_union_map umap;
+typedef isl_union_set uset;
 
 isl_space* get_space(isl_constraint* const m) {
   return isl_constraint_get_space(m);
@@ -114,6 +115,9 @@ isl_ctx* ctx(isl_pw_qpolynomial* const m) {
   return isl_pw_qpolynomial_get_ctx(m);
 }
 
+isl_basic_map* cpy(isl_basic_map* const s) {
+  return isl_basic_map_copy(s);
+}
 isl_schedule* cpy(isl_schedule* const s) {
   return isl_schedule_copy(s);
 }
@@ -510,6 +514,25 @@ isl_union_map* inv(isl_union_map* const m0) {
   return isl_union_map_reverse(cpy(m0));
 }
 
+isl_set* lexmin(isl_set* const m0) {
+  return isl_set_lexmin(cpy(m0));
+}
+
+isl_union_set* lexmin(uset* const m0) {
+  return isl_union_set_lexmin(cpy(m0));
+}
+umap* lexmin(umap* const m0) {
+  return isl_union_map_lexmin(cpy(m0));
+}
+
+isl_map* lexmin(isl_map* const m0) {
+  return isl_map_lexmin(cpy(m0));
+}
+
+isl_set* lexmax(isl_set* const m0) {
+  return isl_set_lexmax(cpy(m0));
+}
+
 umap* lexmax(umap* const m0) {
   return isl_union_map_lexmax(cpy(m0));
 }
@@ -601,8 +624,20 @@ isl_pw_qpolynomial* card(isl_map* const m) {
   return isl_map_card(cpy(m));
 }
 
+isl_union_set* domain(isl_union_map* const m) {
+  return isl_union_map_domain(m);
+}
+
+isl_set* range(isl_map* const m) {
+  return isl_map_range(cpy(m));
+}
+
+isl_set* domain(isl_map* const m) {
+  return isl_map_domain(cpy(m));
+}
+
 isl_basic_set* domain(isl_basic_map* const m) {
-  return isl_basic_map_domain(m);
+  return isl_basic_map_domain(cpy(m));
 }
 
 std::string codegen_c(isl_union_map* res) {

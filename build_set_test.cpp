@@ -79,8 +79,10 @@ class UBuffer {
     isl_union_map* bundle_access(const std::string& bn) {
       auto d = isl_union_map_read_from_str(ctx, "{}");
       for (auto pt : port_bundles.at(bn)) {
+        //cout << "Access map: " << str(access_map.at(pt)) << endl;
         d = unn(d, cpy(to_umap(access_map.at(pt))));
       }
+      //cout << "Bundle access = " << str(d) << endl;
       return d;
     }
 
@@ -2694,21 +2696,19 @@ umap* input_chunk(UBuffer& buf, const std::string& out_bundle) {
   auto write_ops = buf.bundle_domain(in_bundle);
   auto DataWritten = buf.bundle_access(in_bundle);
 
-  //cout << "DataWritten: " << str(DataWritten) << endl;
-
   auto EventsBeforeRead = lex_gt(sched, sched);
 
   auto ReadsBeforeCurrentRead = its_range(its(EventsBeforeRead, bundle_ops), bundle_ops);
   auto PreviousRead = lexmax(ReadsBeforeCurrentRead);
-  //cout << "Previous read: " << str(PreviousRead) << endl;
 
   auto WritesBeforePreviousRead =
     its_range(its(dot(PreviousRead, EventsBeforeRead), bundle_ops), write_ops);
 
-  //cout << "WritesBeforePreviousRead: " << str(WritesBeforePreviousRead) << endl;
   auto DataWrittenBeforePreviousRead =
     dot(WritesBeforePreviousRead, DataWritten);
 
+  //return DataWritten;
+      //DataWrittenBeforePreviousRead);
   return isl_union_map_subtract(DataRead,
       DataWrittenBeforePreviousRead);
 }
@@ -2719,15 +2719,11 @@ void aha_talk_print_raw_deps(prog& prg) {
  
   auto sched = prg.unoptimized_schedule();
 
-  //cout << "----- Values read by each statement" << endl;
   auto reads =
     its(prg.consumer_map(), iter_domain);
-  //cout << "\t" << str(reads) << endl << endl;
  
-  //cout << "----- Values written by each statement" << endl;
   auto writes =
     its(prg.producer_map(), iter_domain);
-  //cout << "\t" << str(writes) << endl << endl;
 
   cout << "---- Write   = " << str((writes)) << endl << endl;
   cout << "---- Read    = " << str((reads)) << endl << endl;
@@ -2790,6 +2786,8 @@ void aha_talk_print_info(prog& prg) {
       cout << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
       cout << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
       cout << "\t\t\tbuffer capacity: " << compute_max_dd(b.second, inpt) << endl;
+      cout << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
+      cout << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
     }
 
     cout << "\t---- Out ports" << endl;
@@ -2798,6 +2796,8 @@ void aha_talk_print_info(prog& prg) {
       cout << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
       cout << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
       cout << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
+      cout << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
+      cout << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
     }
 
     cout << "\t---- Output Bundles" << endl;
@@ -2808,7 +2808,6 @@ void aha_talk_print_info(prog& prg) {
       for (auto p : ports) {
         cout << "\t\t\t" << p << endl;
       }
-
 
       if (buf.get_in_ports().size() == 0) {
         continue;
@@ -2827,7 +2826,6 @@ void aha_talk_print_info(prog& prg) {
 
   generate_app_code(buffers, prg);
   cout << "output code for application is in file: " << prg.name << ".cpp" << endl;
-
 }
 
 int main(int argc, char** argv) {
