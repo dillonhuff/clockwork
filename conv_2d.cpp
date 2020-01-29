@@ -108,7 +108,7 @@ struct I_write_0_cache {
 		if (offset == 130) {
 			return f16.back();
 		}
-		cout << "Error: Unsupported offset in I: " << offset << endl;
+		//cout << "Error: Unsupported offset in I: " << offset << endl;
 		assert(false);
 		return 0;
 
@@ -144,7 +144,8 @@ inline int I_read_0_10_select(I_write_0_cache& I_write_0_delay
 // 	is always true on iteration domain: 0
 // { read_0[root = 0, lr, lc = 61] : 0 <= lr <= 61 } -> { read_0[root, lr, lc] -> (3 + lc) }
 // 	is always true on iteration domain: 0
-	int value_I_write_0 = I_write_0_delay.peek(((root == 0 && lr >= 0 && 61 - lr >= 0 && lc >= 0 && 60 - lc >= 0) ? (64) : (-61 + lc == 0 && root == 0 && lr >= 0 && 61 - lr >= 0) ? ((3 + lc)) : 0));
+	int value_I_write_0 = I_write_0_delay.peek(64);
+  //((root == 0 && lr >= 0 && 61 - lr >= 0 && lc >= 0 && 60 - lc >= 0) ? (64) : (-61 + lc == 0 && root == 0 && lr >= 0 && 61 - lr >= 0) ? ((3 + lc)) : 0));
 	return value_I_write_0;
 }
 
@@ -224,7 +225,8 @@ inline int I_read_0_9_select(I_write_0_cache& I_write_0_delay
 // 	is always true on iteration domain: 0
 // { read_0[root = 0, lr, lc = 61] : 0 <= lr <= 61 } -> { read_0[root, lr, lc] -> (67 + lc) }
 // 	is always true on iteration domain: 0
-	int value_I_write_0 = I_write_0_delay.peek(((root == 0 && lr >= 0 && 61 - lr >= 0 && lc >= 0 && 60 - lc >= 0) ? (128) : (-61 + lc == 0 && root == 0 && lr >= 0 && 61 - lr >= 0) ? ((67 + lc)) : 0));
+	int value_I_write_0 = I_write_0_delay.peek(128);
+  //((root == 0 && lr >= 0 && 61 - lr >= 0 && lc >= 0 && 60 - lc >= 0) ? (128) : (-61 + lc == 0 && root == 0 && lr >= 0 && 61 - lr >= 0) ? ((67 + lc)) : 0));
 	return value_I_write_0;
 }
 
@@ -300,6 +302,9 @@ void conv_2d(HWStream<int>& in, HWStream<int>& out) {
 	I_write_0_cache I_write_0;
 	for (int c0 = 0; c0 <= 63; c0 += 1)
 	  for (int c1 = 0; c1 <= 63; c1 += 1) {
+#pragma HLS pipeline
+#pragma HLS dependence variable=I_write_0.f5.vals inter false
+#pragma HLS dependence variable=I_write_0.f11.vals inter false
 	    write(in, I_write_0, 0, c0, c1);
 	    if (c0 >= 2 && c1 >= 2)
 	      read_0(I_write_0, out, 0, c0 - 2, c1 - 2);

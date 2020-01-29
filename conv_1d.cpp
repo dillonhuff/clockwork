@@ -134,6 +134,7 @@ inline void get_input(HWStream<int>& in, M_get_input_4_cache& M_get_input_4, int
 void conv_1d(HWStream<int>& in, HWStream<int>& out) {
 	M_get_input_4_cache M_get_input_4;
 	for (int c0 = 0; c0 <= 9; c0 += 1) {
+#pragma HLS pipeline
 	  get_input(in, M_get_input_4, 0, c0);
 	  if (c0 >= 2)
 	    compute_output(M_get_input_4, out, 0, c0 - 2);

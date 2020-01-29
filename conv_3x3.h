@@ -16,7 +16,7 @@ int conv_3_3(hw_uint<32*9>& in) {
   hw_uint<32> v7 = in.extract<224, 255>();
   hw_uint<32> v8 = in.extract<256, 287>();
 
-  return v0 + v1 + v2 +
+  return (v0 + v1 + v2 +
     v3 + v4 + v5 +
-    v6 + v7 + v8;
+    v6 + v7 + v8).to_int();
 }
