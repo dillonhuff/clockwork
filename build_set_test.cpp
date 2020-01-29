@@ -2683,13 +2683,6 @@ void mobilenet_test() {
 
 umap* input_chunk(UBuffer& buf, const std::string& out_bundle) {
 
-  if (buf.get_in_ports().size() == 0) {
-    return isl_union_map_read_from_str(buf.ctx, "{}");
-  }
-
-  auto inpt = pick(buf.get_in_ports());
-  buf.port_bundles[inpt] = {inpt};
-
   umap* sched = buf.global_schedule();
   
   auto bundle_ops = buf.bundle_domain(out_bundle);
@@ -2791,6 +2784,13 @@ void aha_talk_print_info(prog& prg) {
         cout << "\t\t\t" << p << endl;
       }
 
+
+      if (buf.get_in_ports().size() == 0) {
+        continue;
+      }
+
+      auto inpt = pick(buf.get_in_ports());
+      buf.port_bundles[inpt] = {inpt};
 
       auto in_chunk = isl_union_map_coalesce(input_chunk(buf, out_bundle));
       cout << "\t\t Input Chunk: " << str(in_chunk) << endl;
