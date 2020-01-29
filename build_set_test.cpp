@@ -12,6 +12,14 @@
 
 using namespace dbhc;
 using namespace std;
+bool
+is_prefix( std::string const& lhs, std::string const& rhs )
+{
+    return std::equal(
+        lhs.begin(),
+        lhs.begin() + std::min( lhs.size(), rhs.size() ),
+        rhs.begin() );
+}
 
 template<typename T>
 T pick(const std::vector<T>& s) {
@@ -938,10 +946,22 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
         out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
       }
       for (auto inpt : buf.get_in_ports()) {
-        if (contains_key(inpt, ms)) {
+        out << "\t// inpt: " << inpt << endl;
+        bool found_key = false;
+        string k_var = "";
+        for (auto k : ms) {
+          string prefix = buf.name + "_" + k.first;
+          if (is_prefix(prefix, inpt)) {
+            found_key = true;
+            k_var = "select_" + k.first;
+          }
+        }
+        //if (contains_key(inpt, ms)) {
+        if (found_key) {
+          assert(k_var != "");
           string delay_expr = evaluate_dd(buf, outpt, inpt);
           out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
-          out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
+          out << "\tif (" + k_var + ") { return value_"+ inpt + "; }\n";
         }
       }
       out << "\tassert(false);\n\treturn 0;\n";
@@ -958,7 +978,7 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
     }
     string rep = pick(b.second);
     if (buf.is_out_pt(rep)) {
-      out << "inline " << buf.bundle_type_string(b.first) << " " <<  buf.name << "_" << b.first << "_bundle_action(";
+      out << "inline " << buf.bundle_type_string(b.first) << " " <<  buf.name << "_" << b.first << "_bundle_read(";
       vector<string> dim_decls;
       vector<string> dim_args;
       for (auto pt : buf.get_in_ports()) {
@@ -986,9 +1006,9 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
       }
       out << "\treturn result;" << endl;
     } else {
-      out << "inline void " + buf.name + "_" + b.first + "_bundle_action(";
+      out << "inline void " + buf.name + "_" + b.first + "_bundle_write(";
       vector<string> dim_decls;
-      dim_decls.push_back(buf.bundle_type_string(b.first) + "& /* width = " + to_string(buf.port_widths) + "*/" + b.first);
+      dim_decls.push_back(buf.port_type_string(b.first) + "& /* width = " + to_string(buf.port_widths) + "*/" + b.first);
       vector<string> dim_args;
       dim_args.push_back(b.first);
       for (auto pt : buf.get_in_ports()) {
@@ -1378,6 +1398,7 @@ void synth_upsample_test() {
   assert(res == 0);
 
   isl_ctx_free(buf.ctx);
+  cout << "Upsample passed" << endl;
 }
 
 void synth_sr_boundary_condition_test() {
@@ -1565,6 +1586,28 @@ void permute_test() {
   generate_hls_code(buf);
 }
 
+string c_sanitize(const std::string& str) {
+  string res = "";
+  for (auto c : str) {
+    if (c == '+') {
+      res += "_p_";
+    } else if (c == ')') {
+      res += "_rp_";
+    } else if (c == '(') {
+      res += "_lp_";
+    } else if (c == '*') {
+      res += "_m_";
+    } else if (c == ' ') {
+      res += "_";
+    } else if (c == ',') {
+      res += "_c_";
+    } else {
+      res += c;
+    }
+  }
+  return res;
+}
+
 struct op {
 
   op* parent;
@@ -1578,14 +1621,28 @@ struct op {
 
   std::set<std::string> consumes;
   std::set<pair<std::string, std::string> > consume_locs;
+  map<pair<string, string>, string> consumed_value_names;
   std::string func;
+  vector<string> func_args;
 
   isl_ctx* ctx;
 
   op() : parent(nullptr), is_loop(false) {}
 
+  string consumed_value_name(pair<string, string>& val_loc) {
+    if (contains_key(val_loc, consumed_value_names)) {
+      return map_find(val_loc, consumed_value_names);
+    }
+    return val_loc.first + "_value";
+  }
+
   void add_function(const std::string& n) {
     func = n;
+  }
+
+  void add_function(const std::string& n, const vector<string>& args) {
+    func = n;
+    func_args = args;
   }
 
   op* add_nest(
@@ -1627,10 +1684,13 @@ struct op {
     return fo;
   }
 
-  void add_load(const std::string& b, const std::string& loc) {
+  string add_load(const std::string& b, const std::string& loc) {
     assert(!is_loop);
     consumes.insert(b + "[" + loc + "]");
     consume_locs.insert({b, loc});
+    string val_name = c_sanitize(b + "_" + loc + "_value");
+    consumed_value_names[{b, loc}] = val_name;
+    return val_name;
   }
 
   void add_store(const std::string& b, const std::string& loc) {
@@ -1784,6 +1844,10 @@ struct prog {
   }
 
   set<op*> all_ops() { return root->all_ops(); }
+
+  op* add_op(const std::string& name) {
+    return root->add_op(name);
+  }
 
   loop* add_loop(const std::string& name, const int l, const int u) {
     return root->add_loop(name, l, u);
@@ -2034,7 +2098,7 @@ map<string, UBuffer> build_buffers(prog& prg) {
       UBuffer& buf = buffers.at(name);
       
       string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
-      buf.port_bundles[op->name].push_back(pt_name);
+      buf.port_bundles[op->name + "_write"].push_back(pt_name);
 
       assert(contains_key(op, domains));
 
@@ -2064,7 +2128,7 @@ map<string, UBuffer> build_buffers(prog& prg) {
       UBuffer& buf = buffers.at(name);
 
       string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
-      buf.port_bundles[op->name].push_back(pt_name);
+      buf.port_bundles[op->name + "_read"].push_back(pt_name);
       
       isl_map* consumed_here=
         its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + consumed.second + "]" + " }").c_str()), cpy(domains.at(op)));
@@ -2140,29 +2204,43 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
       dim_args.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
     }
     conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
-    set<string> in_buffers;
+    set<pair<string, string> > in_buffers;
+    set<string> distinct;
     for (auto con : op->consume_locs) {
-      in_buffers.insert(con.first);
+      if (!elem(con.first, distinct)) {
+        in_buffers.insert(con);
+        distinct.insert(con.first);
+      }
     }
-    //cout << "# of input buffers: " << in_buffers.size() << endl;
 
-    //assert(in_buffers.size() == 1);
     string res;
     if (in_buffers.size() > 0) {
 
-      string in_buffer = pick(in_buffers);
-      conv_out << "\t// Consume: " << in_buffer << endl;
-      if (prg.is_boundary(in_buffer)) {
-        conv_out << "\tauto " << in_buffer << "_val = " << in_buffer << ".read();" << endl;
-      } else {
-        string source_delay = pick(buffers.at(in_buffer).get_in_ports());
-        conv_out << "\tauto " << in_buffer << "_val = " << in_buffer << "_" << op->name << "_bundle_action(" << source_delay << ", " << comma_list(dim_args) << ");" << endl;
+      for (auto ib : in_buffers) {
+        auto in_buffer = ib.first;
+        conv_out << "\t// Consume: " << in_buffer << endl;
+        string value_name = op->consumed_value_name(ib);
+        conv_out << "\tauto " << value_name << " = ";
+
+        if (prg.is_boundary(in_buffer)) {
+          conv_out << in_buffer << ".read();" << endl;
+        } else {
+          string source_delay = pick(buffers.at(in_buffer).get_in_ports());
+          auto source_delays = buffers.at(in_buffer).get_in_ports();
+          conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
+        }
+        res = value_name;
+
       }
 
-      res = in_buffer + "_val";
+      string in_buffer = pick(in_buffers).first;
       if (op->func != "") {
         conv_out << "\t// Apply function: " << op->func << endl;
-        conv_out << "\tauto compute_result = " << op->func << "(" << res << ");" << endl;
+        if (op->func_args.size() == 0) {
+          conv_out << "\tauto compute_result = " << op->func << "(" << res << ");" << endl;
+        } else {
+          conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(op->func_args) << ");" << endl;
+        }
         res = "compute_result";
       }
     } else {
@@ -2186,10 +2264,23 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
       conv_out << "\t" << out_buffer << ".write(" << res << ");" << endl;
     } else {
       assert(contains_key(out_buffer, buffers));
-      //cout << "Getting source buffer: " << buffers.at(out_buffer).name << endl;
 
-      string source_delay = pick(buffers.at(out_buffer).get_in_ports());
-      conv_out << "\t" << out_buffer << "_" << op->name << "_bundle_action(" << res << ", " << source_delay << ");" << endl;
+      auto possible_ports = buffers.at(out_buffer).get_in_ports();
+      conv_out << "\t// Buffer: " << out_buffer << ", Op: " << op->name << endl;
+      conv_out << "\t// Possible ports..." << endl;
+      string prefix = out_buffer + "_" + op->name;
+      string port_cache = "";
+      for (auto pt : possible_ports) {
+        conv_out << "\t\t// " << pt << endl;
+        if (is_prefix(prefix, pt)) {
+          port_cache = pt;
+          break;
+        }
+      }
+      assert(port_cache != "");
+
+      //string source_delay = pick(buffers.at(out_buffer).get_in_ports());
+      conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" << res << ", " << port_cache << " /* output src_delay */);" << endl;
     }
 
     conv_out << "}" << endl << endl;
@@ -2623,16 +2714,75 @@ void pyramid_2d_test() {
   //assert(false);
 }
 
+void reduce_1d_test() {
+
+  prog prg;
+  prg.compute_unit_file = "mobilenet_compute.h";
+  prg.name = "reduce_1d";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["I"] = 32;
+  prg.buffer_port_widths["tmp"] = 32;
+
+  {
+    auto read_in = prg.add_loop("rd_in", 0, 14);
+    auto rop = read_in->add_op("read_input_stream");
+    rop->add_load("in", "rd_in");
+    rop->add_store("I", "rd_in");
+  }
+
+  {
+    auto init = prg.add_op("set_z");
+    init->add_function("set_zero");
+    init->add_store("tmp", "0");
+  
+    auto accum_loop = prg.add_loop("a", 0, 14);
+    auto accum = accum_loop->add_op("accumulate");
+    auto tmp = accum->add_load("tmp", "0");
+    auto next = accum->add_load("I", "a");
+    accum->add_function("inc", {tmp, next});
+    accum->add_store("tmp", "0");
+
+    auto write_out = prg.add_op("output");
+    write_out->add_load("tmp", "0");
+    write_out->add_store("out", "0");
+  }
+
+  cout << "Program code without optimization..." << endl;
+  prg.unoptimized_codegen();
+
+  umap* opt_sched = prg.optimized_codegen();
+  auto domain = prg.whole_iteration_domain();
+  auto schedmap = its(opt_sched, domain);
+  cout << "Optimized schedule..." << endl;
+  cout << codegen_c(schedmap);
+  
+  auto buffers = build_buffers(prg);
+  generate_app_code(buffers, prg);
+
+  int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+
+}
+
 void mobilenet_test() {
 
   prog prg;
   prg.compute_unit_file = "mobilenet_compute.h";
   prg.name = "mobilenet";
   prg.add_input("in");
+  prg.add_input("weights");
   prg.add_output("out");
   prg.buffer_port_widths["in"] = 32;
   prg.buffer_port_widths["out"] = 32;
   prg.buffer_port_widths["dw_conv"] = 32;
+  prg.buffer_port_widths["weights"] = 32;
+  prg.buffer_port_widths["I"] = 32;
 
   {
     auto read_in = prg.add_nest("px", 0, 14, "py", 0, 14, "pc", 0, 4);
@@ -2642,22 +2792,30 @@ void mobilenet_test() {
   }
 
   {
+    auto read_in = prg.add_nest("px", 0, 14, "py", 0, 14, "pc", 0, 4);
+    auto write = read_in->add_op("read_weight_input_stream");
+    write->add_load("weights", "px, py, pc");
+    write->add_store("weight_buffer", "px, py, pc");
+  }
+
+  {
     // dw_conv
-    auto set_dw = prg.add_nest("dwx", 0, 14, "dwy", 0, 14, "dwc", 0, 4);
+    auto set_dw = prg.add_nest("dwx", 0, 14 - 2, "dwy", 0, 14 - 2, "dwc", 0, 4);
     auto init_dw = set_dw->add_op("init_dw");
     init_dw->add_store("dw_conv", "dwx, dwy, dwz");
     init_dw->add_function("set_zero");
     // Set dw_conv to be
     auto update_dw = set_dw->add_nest("rx", 0, 3, "ry", 0, 3);
     auto rdw = update_dw->add_op("rdw");
-    rdw->add_load("I", "dwx + rx, dwy + ry, dwc");
-    rdw->add_load("dw_conv", "dwx, dwy, dwc");
+    auto l1 = rdw->add_load("I", "dwx + rx, dwy + ry, dwc");
+    auto w = rdw->add_load("weight_buffer", "dwx + rx, dwy + ry, dwc");
+    auto l2 = rdw->add_load("dw_conv", "dwx, dwy, dwc");
+    rdw->add_function("fma", {l1, w, l2});
     rdw->add_store("dw_conv", "dwx, dwy, dwc");
-    rdw->add_function("fma");
   }
 
   {
-    auto read_in = prg.add_nest("ox", 0, 14, "oy", 0, 14, "ok", 0, 4);
+    auto read_in = prg.add_nest("ox", 0, 14 - 2, "oy", 0, 14 - 2, "ok", 0, 4);
     auto write = read_in->add_op("write_max_out");
     write->add_load("dw_conv", "ox, oy, ok");
     write->add_function("max_zero");
@@ -2679,7 +2837,10 @@ void mobilenet_test() {
   int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
   assert(res == 0);
 
-  assert(false);
+  res = system("./a.out");
+  assert(res == 0);
+
+  //assert(false);
 }
 
 
@@ -2862,6 +3023,8 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
 
+    reduce_1d_test();
+    mobilenet_test();
     pyramid_2d_test();
     pyramid_test();
 
@@ -2874,7 +3037,6 @@ int main(int argc, char** argv) {
     synth_lb_test();
     synth_upsample_test();
 
-    //mobilenet_test();
     //mmul_test();
 
   } else {
