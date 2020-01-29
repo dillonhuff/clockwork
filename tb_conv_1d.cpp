@@ -13,6 +13,8 @@ int main() {
   for (int i = 0; i < 10 - 2; i++) {
     int v = out.read();
     cout << "v[" << i << "] = " << v << endl;
-    assert(v == i + i + 1 + i + 2);
+    int expected = i + (i + 1) + (i + 2);
+    cout << "\texpected: " << expected << endl;
+    assert(v == expected);
   }
 }

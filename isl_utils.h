@@ -22,6 +22,7 @@ extern "C" {
 #include "barvinok/barvinok.h"
 
 typedef isl_union_map umap;
+typedef isl_union_set uset;
 
 isl_space* get_space(isl_constraint* const m) {
   return isl_constraint_get_space(m);
@@ -114,6 +115,9 @@ isl_ctx* ctx(isl_pw_qpolynomial* const m) {
   return isl_pw_qpolynomial_get_ctx(m);
 }
 
+isl_basic_map* cpy(isl_basic_map* const s) {
+  return isl_basic_map_copy(s);
+}
 isl_schedule* cpy(isl_schedule* const s) {
   return isl_schedule_copy(s);
 }
@@ -456,6 +460,19 @@ std::string str(umap* const m) {
   return r;
 }
 
+std::string str(isl_union_set* const m) {
+  auto ctx = isl_union_set_get_ctx(m);
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_print_union_set(p, cpy(m));
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  std::string r(rs);
+  free(rs);
+  
+  return r;
+}
+
 std::string str(isl_set* const m) {
   auto ctx = isl_set_get_ctx(m);
   isl_printer *p;
@@ -497,6 +514,25 @@ isl_union_map* inv(isl_union_map* const m0) {
   return isl_union_map_reverse(cpy(m0));
 }
 
+isl_set* lexmin(isl_set* const m0) {
+  return isl_set_lexmin(cpy(m0));
+}
+
+isl_union_set* lexmin(uset* const m0) {
+  return isl_union_set_lexmin(cpy(m0));
+}
+umap* lexmin(umap* const m0) {
+  return isl_union_map_lexmin(cpy(m0));
+}
+
+isl_map* lexmin(isl_map* const m0) {
+  return isl_map_lexmin(cpy(m0));
+}
+
+isl_set* lexmax(isl_set* const m0) {
+  return isl_set_lexmax(cpy(m0));
+}
+
 umap* lexmax(umap* const m0) {
   return isl_union_map_lexmax(cpy(m0));
 }
@@ -527,6 +563,10 @@ isl_union_map* its(isl_map* const m0, isl_union_map* const m1) {
 
 isl_map* its(isl_map* const m0, isl_map* const m1) {
   return isl_map_intersect(cpy(m0), cpy(m1));
+}
+
+isl_union_map* its_range(isl_union_map* const m0, isl_union_set* const m1) {
+  return isl_union_map_intersect_range(cpy(m0), cpy(m1));
 }
 
 isl_union_map* its(isl_union_map* const m0, isl_union_map* const m1) {
@@ -569,6 +609,9 @@ isl_map* dot(isl_map* const m0, isl_map* const m1) {
   return isl_map_apply_range(cpy(m0), cpy(m1));
 }
 
+isl_union_map* coalesce(isl_union_map* const m0) {
+  return isl_union_map_coalesce(cpy(m0));
+}
 isl_union_map* dot(isl_union_map* const m0, isl_union_map* const m1) {
   return isl_union_map_apply_range(cpy(m0), cpy(m1));
 }
@@ -581,8 +624,20 @@ isl_pw_qpolynomial* card(isl_map* const m) {
   return isl_map_card(cpy(m));
 }
 
+isl_union_set* domain(isl_union_map* const m) {
+  return isl_union_map_domain(m);
+}
+
+isl_set* range(isl_map* const m) {
+  return isl_map_range(cpy(m));
+}
+
+isl_set* domain(isl_map* const m) {
+  return isl_map_domain(cpy(m));
+}
+
 isl_basic_set* domain(isl_basic_map* const m) {
-  return isl_basic_map_domain(m);
+  return isl_basic_map_domain(cpy(m));
 }
 
 std::string codegen_c(isl_union_map* res) {

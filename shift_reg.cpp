@@ -2,19 +2,6 @@
 
 struct write_cache {
 	// Capacity: 3
-	// DD expr = 2
-	// DD expr = 1
-	// DD expr = 0
-	// Peak points
-	// DD = 0
-	// DD = 1
-	// DD = 2
-	// Break points in parition
-	// BP = 0
-	// BP = 1
-	// BP = 1
-	// BP = 2
-	// BP = 2
 	// Parition [0, 1) capacity = 1
 	fifo<int, 1> f0;
 	// Parition [1, 2) capacity = 1
@@ -47,7 +34,7 @@ struct write_cache {
 		if (offset == 2) {
 			return f4.back();
 		}
-		cout << "Error: Unsupported offset: " << offset << endl;
+		cout << "Error: Unsupported offset in shift_reg: " << offset << endl;
 		assert(false);
 		return 0;
 

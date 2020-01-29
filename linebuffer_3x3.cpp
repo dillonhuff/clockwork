@@ -2,43 +2,6 @@
 
 struct write0_cache {
 	// Capacity: 131
-	// DD expr = 130
-	// DD expr = 129
-	// DD expr = 128
-	// DD expr = 66
-	// DD expr = 65
-	// DD expr = 64
-	// DD expr = 2
-	// DD expr = 1
-	// DD expr = 0
-	// Peak points
-	// DD = 0
-	// DD = 1
-	// DD = 2
-	// DD = 64
-	// DD = 65
-	// DD = 66
-	// DD = 128
-	// DD = 129
-	// DD = 130
-	// Break points in parition
-	// BP = 0
-	// BP = 1
-	// BP = 1
-	// BP = 2
-	// BP = 2
-	// BP = 3
-	// BP = 64
-	// BP = 65
-	// BP = 65
-	// BP = 66
-	// BP = 66
-	// BP = 67
-	// BP = 128
-	// BP = 129
-	// BP = 129
-	// BP = 130
-	// BP = 130
 	// Parition [0, 1) capacity = 1
 	fifo<int, 1> f0;
 	// Parition [1, 2) capacity = 1
@@ -143,7 +106,7 @@ struct write0_cache {
 		if (offset == 130) {
 			return f16.back();
 		}
-		cout << "Error: Unsupported offset: " << offset << endl;
+		cout << "Error: Unsupported offset in linebuffer_3x3: " << offset << endl;
 		assert(false);
 		return 0;
 
