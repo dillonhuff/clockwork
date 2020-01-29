@@ -85,12 +85,6 @@ inline int M_compute_output_5_select(M_get_input_0_cache& M_get_input_0_delay
 }
 
 // Bundles...
-// M_get_input_0
-//	M_get_input_0
-inline void M_M_get_input_0_bundle_action(int& /* width = 32*/M_get_input_0, M_get_input_0_cache& M_get_input_0_delay) {
-	M_get_input_0_write(M_get_input_0, M_get_input_0_delay);
-}
-
 // compute_output
 //	M_compute_output_3
 //	M_compute_output_4
@@ -119,16 +113,20 @@ inline void M_get_input_bundle_action(int& /* width = 32*/get_input, M_get_input
 // Operation logic
 inline void get_input(HWStream<int>& in, M_get_input_0_cache& M_get_input_0, int root, int p) {
 	// Consume: in
-	auto in_val = in.read();
+	auto in_p_value = in.read();
 	// Produce: M
-	M_get_input_bundle_action(in_val, M_get_input_0);
+	M_get_input_bundle_action(in_p_value, M_get_input_0);
 }
 
 inline void compute_output(M_get_input_0_cache& M_get_input_0, HWStream<int>& out, int root, int c) {
 	// Consume: M
-	auto M_val = M_compute_output_bundle_action(M_get_input_0, root, c);
+	auto M_c_value = M_compute_output_bundle_action(M_get_input_0, root, c);
+	// Consume: M
+	auto M_c__p__1_value = M_compute_output_bundle_action(M_get_input_0, root, c);
+	// Consume: M
+	auto M_c__p__2_value = M_compute_output_bundle_action(M_get_input_0, root, c);
 	// Apply function: accumulate_3
-	auto compute_result = accumulate_3(M_val);
+	auto compute_result = accumulate_3(M_c__p__2_value);
 	// Produce: out
 	out.write(compute_result);
 }

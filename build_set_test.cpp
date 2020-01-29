@@ -1565,6 +1565,28 @@ void permute_test() {
   generate_hls_code(buf);
 }
 
+string c_sanitize(const std::string& str) {
+  string res = "";
+  for (auto c : str) {
+    if (c == '+') {
+      res += "_p_";
+    } else if (c == ')') {
+      res += "_rp_";
+    } else if (c == '(') {
+      res += "_lp_";
+    } else if (c == '*') {
+      res += "_m_";
+    } else if (c == ' ') {
+      res += "_";
+    } else if (c == ',') {
+      res += "_c_";
+    } else {
+      res += c;
+    }
+  }
+  return res;
+}
+
 struct op {
 
   op* parent;
@@ -1578,14 +1600,28 @@ struct op {
 
   std::set<std::string> consumes;
   std::set<pair<std::string, std::string> > consume_locs;
+  map<pair<string, string>, string> consumed_value_names;
   std::string func;
+  vector<string> func_args;
 
   isl_ctx* ctx;
 
   op() : parent(nullptr), is_loop(false) {}
 
+  string consumed_value_name(pair<string, string>& val_loc) {
+    if (contains_key(val_loc, consumed_value_names)) {
+      return map_find(val_loc, consumed_value_names);
+    }
+    return val_loc.first + "_value";
+  }
+
   void add_function(const std::string& n) {
     func = n;
+  }
+
+  void add_function(const std::string& n, const vector<string>& args) {
+    func = n;
+    func_args = args;
   }
 
   op* add_nest(
@@ -1627,10 +1663,13 @@ struct op {
     return fo;
   }
 
-  void add_load(const std::string& b, const std::string& loc) {
+  string add_load(const std::string& b, const std::string& loc) {
     assert(!is_loop);
     consumes.insert(b + "[" + loc + "]");
     consume_locs.insert({b, loc});
+    string val_name = c_sanitize(b + "_" + loc + "_value");
+    consumed_value_names[{b, loc}] = val_name;
+    return val_name;
   }
 
   void add_store(const std::string& b, const std::string& loc) {
@@ -2140,29 +2179,47 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
       dim_args.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
     }
     conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
-    set<string> in_buffers;
+    set<pair<string, string> > in_buffers;
     for (auto con : op->consume_locs) {
-      in_buffers.insert(con.first);
+      in_buffers.insert(con);
     }
-    //cout << "# of input buffers: " << in_buffers.size() << endl;
 
-    //assert(in_buffers.size() == 1);
     string res;
     if (in_buffers.size() > 0) {
 
-      string in_buffer = pick(in_buffers);
-      conv_out << "\t// Consume: " << in_buffer << endl;
-      if (prg.is_boundary(in_buffer)) {
-        conv_out << "\tauto " << in_buffer << "_val = " << in_buffer << ".read();" << endl;
-      } else {
-        string source_delay = pick(buffers.at(in_buffer).get_in_ports());
-        conv_out << "\tauto " << in_buffer << "_val = " << in_buffer << "_" << op->name << "_bundle_action(" << source_delay << ", " << comma_list(dim_args) << ");" << endl;
+      for (auto ib : in_buffers) {
+        auto in_buffer = ib.first;
+        conv_out << "\t// Consume: " << in_buffer << endl;
+        string value_name = op->consumed_value_name(ib);
+        conv_out << "\tauto " << value_name << " = ";
+
+        if (prg.is_boundary(in_buffer)) {
+          conv_out << in_buffer << ".read();" << endl;
+        } else {
+          string source_delay = pick(buffers.at(in_buffer).get_in_ports());
+          conv_out << in_buffer << "_" << op->name << "_bundle_action(" << source_delay << ", " << comma_list(dim_args) << ");" << endl;
+        }
+        res = value_name;
+
       }
 
-      res = in_buffer + "_val";
+      string in_buffer = pick(in_buffers).first;
+      //if (prg.is_boundary(in_buffer)) {
+        //conv_out << "\tauto " << in_buffer << "_val = " << in_buffer << ".read();" << endl;
+      //} else {
+        //string source_delay = pick(buffers.at(in_buffer).get_in_ports());
+        //conv_out << "\tauto " << in_buffer << "_val = " << in_buffer << "_" << op->name << "_bundle_action(" << source_delay << ", " << comma_list(dim_args) << ");" << endl;
+      //}
+
+      //res =
+        ///in_buffer + "_val";
       if (op->func != "") {
         conv_out << "\t// Apply function: " << op->func << endl;
-        conv_out << "\tauto compute_result = " << op->func << "(" << res << ");" << endl;
+        if (op->func_args.size() == 0) {
+          conv_out << "\tauto compute_result = " << op->func << "(" << res << ");" << endl;
+        } else {
+          conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(op->func_args) << ");" << endl;
+        }
         res = "compute_result";
       }
     } else {
@@ -2650,10 +2707,10 @@ void mobilenet_test() {
     // Set dw_conv to be
     auto update_dw = set_dw->add_nest("rx", 0, 3, "ry", 0, 3);
     auto rdw = update_dw->add_op("rdw");
-    rdw->add_load("I", "dwx + rx, dwy + ry, dwc");
-    rdw->add_load("dw_conv", "dwx, dwy, dwc");
+    auto l1 = rdw->add_load("I", "dwx + rx, dwy + ry, dwc");
+    auto l2 = rdw->add_load("dw_conv", "dwx, dwy, dwc");
+    rdw->add_function("fma", {l1, l1, l2});
     rdw->add_store("dw_conv", "dwx, dwy, dwc");
-    rdw->add_function("fma");
   }
 
   {
@@ -2862,6 +2919,7 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
 
+    //mobilenet_test();
     pyramid_2d_test();
     pyramid_test();
 
@@ -2874,7 +2932,6 @@ int main(int argc, char** argv) {
     synth_lb_test();
     synth_upsample_test();
 
-    //mobilenet_test();
     //mmul_test();
 
   } else {
