@@ -2660,22 +2660,23 @@ void aha_talk_print_info() {
   cout << "# of buffers: " << buffers.size() << endl;
   for (auto& b : buffers) {
     auto& buf = b.second;
-    cout << "--- " << (prg.is_boundary(b.name) ? "Off Chip Buffer: " : "On Chip Buffer") << b.second.name << endl;
-    cout << "---- In ports" << endl;
+    cout << "\t--- " << (prg.is_boundary(b.second.name) ? "Off Chip Buffer: " : "On Chip Buffer: ") << b.second.name << endl;
+    cout << "\t---- In ports" << endl;
     for (auto inpt : b.second.get_in_ports()) {
-      cout << "\t" << inpt << endl;
-      cout << "\t\tdom : " << str(buf.domain.at(inpt)) << endl;
-      cout << "\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
-      cout << "\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
+      cout << "\t\t" << inpt << endl;
+      cout << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
+      cout << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
+      cout << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
     }
-    cout << "---- Out ports" << endl;
+    cout << "\t---- Out ports" << endl;
     for (auto inpt : b.second.get_out_ports()) {
-      cout << "\t" << inpt << endl;
-      cout << "\t\tdom : " << str(buf.domain.at(inpt)) << endl;
-      cout << "\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
-      cout << "\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
+      cout << "\t\t" << inpt << endl;
+      cout << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
+      cout << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
+      cout << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
     }
 
+    cout << endl << endl;
   }
 
   //generate_app_code(buffers, prg);
