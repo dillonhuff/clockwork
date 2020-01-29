@@ -15,11 +15,13 @@ using namespace std;
 
 template<typename T>
 T pick(const std::vector<T>& s) {
+  assert(s.size() > 0);
   return *(begin(s));
 }
 
 template<typename T>
 T pick(const std::set<T>& s) {
+  assert(s.size() > 0);
   return *(begin(s));
 }
 
@@ -225,6 +227,15 @@ class UBuffer {
       }
       return outpts;
     }
+
+    void set_default_bundles() {
+      for (auto pt : get_in_ports()) {
+        cout << "Creating default bundle for: " << pt << endl;
+        port_bundles[pt] = {pt};
+      }
+      assert(get_in_bundles().size() >= get_in_ports().size());
+    }
+
     vector<string> get_in_bundles() const {
       vector<string> outpts;
       for (auto m : port_bundles) {
@@ -2504,16 +2515,16 @@ prog conv_2d() {
   prg.buffer_port_widths["M"] = 32;
 
   {
-    auto pr = prg.add_loop("pr", 0, 10);
-    auto pc = pr->add_loop("pc", 0, 10);
+    auto pr = prg.add_loop("pr", 0, 64);
+    auto pc = pr->add_loop("pc", 0, 64);
     auto write = pc->add_op("write");
     write->add_load("in", "pc, pr");
     write->add_store("I", "pc, pr");
   }
 
   {
-    auto pr = prg.add_loop("lr", 0, 10 - 2);
-    auto pc = pr->add_loop("lc", 0, 10 - 2);
+    auto pr = prg.add_loop("lr", 0, 64 - 2);
+    auto pc = pr->add_loop("lc", 0, 64 - 2);
     auto rd = pc->add_op("read_0");
     // Need to load 9 values
     for (int i = 0; i < 3; i++) {
@@ -2671,20 +2682,42 @@ void mobilenet_test() {
 
 
 umap* input_chunk(UBuffer& buf, const std::string& out_bundle) {
+
+  if (buf.get_in_ports().size() == 0) {
+    return isl_union_map_read_from_str(buf.ctx, "{}");
+  }
+
+  auto inpt = pick(buf.get_in_ports());
+  buf.port_bundles[inpt] = {inpt};
+
   umap* sched = buf.global_schedule();
+  
   auto bundle_ops = buf.bundle_domain(out_bundle);
+  auto DataRead = buf.bundle_access(out_bundle);
+
+  // Assume there is only 1 input port (for now)
+  auto in_bundle = pick(buf.get_in_bundles());
+  
+  auto write_ops = buf.bundle_domain(in_bundle);
+  auto DataWritten = buf.bundle_access(in_bundle);
+
+  cout << "DataWritten: " << str(DataWritten) << endl;
 
   auto EventsBeforeRead = lex_gt(sched, sched);
 
   auto ReadsBeforeCurrentRead = its_range(its(EventsBeforeRead, bundle_ops), bundle_ops);
+  auto PreviousRead = lexmax(ReadsBeforeCurrentRead);
+  cout << "Previous read: " << str(PreviousRead) << endl;
 
-  auto DataRead = buf.bundle_access(out_bundle);
-  auto DataReadBeforeCurrentRead =
-    dot(ReadsBeforeCurrentRead, DataRead);
+  auto WritesBeforePreviousRead =
+    its_range(its(dot(PreviousRead, EventsBeforeRead), bundle_ops), write_ops);
+
+  cout << "WritesBeforePreviousRead: " << str(WritesBeforePreviousRead) << endl;
+  auto DataWrittenBeforePreviousRead =
+    dot(WritesBeforePreviousRead, DataWritten);
 
   return isl_union_map_subtract(DataRead,
-      DataReadBeforeCurrentRead);
-
+      DataWrittenBeforePreviousRead);
 }
 
 void aha_talk_print_info(prog& prg) {
@@ -2731,8 +2764,10 @@ void aha_talk_print_info(prog& prg) {
   auto buffers = build_buffers(prg);
   cout << "###### Unified buffers..." << endl;
   cout << "Number of buffers: " << buffers.size() << endl;
+  //for (pair<string, UBuffer>& b : buffers) {
   for (auto& b : buffers) {
-    auto& buf = b.second;
+    UBuffer& buf = b.second;
+
     cout << "--- " << (prg.is_boundary(b.second.name) ? "External Buffer: " : "Internal Buffer: ") << b.second.name << endl;
     cout << "\t---- In ports" << endl;
     for (auto inpt : b.second.get_in_ports()) {
@@ -2759,6 +2794,7 @@ void aha_talk_print_info(prog& prg) {
       for (auto p : ports) {
         cout << "\t\t\t" << p << endl;
       }
+
 
       auto in_chunk = isl_union_map_coalesce(input_chunk(buf, out_bundle));
       cout << "\t\t Input Chunk: " << str(in_chunk) << endl;
