@@ -2008,7 +2008,7 @@ map<string, UBuffer> build_buffers(prog& prg) {
 
   int usuffix = 0;
 
-  cout << "Got ops and domains" << endl;
+  //cout << "Got ops and domains" << endl;
 
   for (auto op : prg.all_ops()) {
 
@@ -2068,31 +2068,6 @@ map<string, UBuffer> build_buffers(prog& prg) {
       buf.add_out_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
 
       usuffix++;
-    }
-
-  }
-
-  cout << "# of buffers: " << buffers.size() << endl;
-  for (auto& b : buffers) {
-    auto& buf = b.second;
-    cout << "--- " << b.second.name << endl;
-    cout << "---- In ports" << endl;
-    for (auto inpt : b.second.get_in_ports()) {
-      cout << "\t" << inpt << endl;
-      cout << "\t\tdom : " << str(buf.domain.at(inpt)) << endl;
-      cout << "\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
-      cout << "\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
-    }
-    cout << "---- Out ports" << endl;
-    for (auto inpt : b.second.get_out_ports()) {
-      cout << "\t" << inpt << endl;
-      cout << "\t\tdom : " << str(buf.domain.at(inpt)) << endl;
-      cout << "\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
-      cout << "\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
-    }
-
-    if (prg.is_boundary(buf.name)) {
-      continue;
     }
 
   }
@@ -2678,10 +2653,32 @@ void aha_talk_print_info() {
   prg.unoptimized_codegen();
 
   cout << "----- Optimized loop nests for program minimizing (write -> read) time..." << endl;
-  cout << prg.optimized_loop_nest();
+  cout << prg.optimized_loop_nest() << endl << endl;
 
   auto buffers = build_buffers(prg);
-  generate_app_code(buffers, prg);
+  cout << "----- Unified buffers..." << endl;
+  cout << "# of buffers: " << buffers.size() << endl;
+  for (auto& b : buffers) {
+    auto& buf = b.second;
+    cout << "--- " << (prg.is_boundary(b.name) ? "Off Chip Buffer: " : "On Chip Buffer") << b.second.name << endl;
+    cout << "---- In ports" << endl;
+    for (auto inpt : b.second.get_in_ports()) {
+      cout << "\t" << inpt << endl;
+      cout << "\t\tdom : " << str(buf.domain.at(inpt)) << endl;
+      cout << "\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
+      cout << "\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
+    }
+    cout << "---- Out ports" << endl;
+    for (auto inpt : b.second.get_out_ports()) {
+      cout << "\t" << inpt << endl;
+      cout << "\t\tdom : " << str(buf.domain.at(inpt)) << endl;
+      cout << "\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
+      cout << "\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
+    }
+
+  }
+
+  //generate_app_code(buffers, prg);
 
 }
 
