@@ -74,6 +74,22 @@ class UBuffer {
 
     UBuffer() : port_widths(32) {}
 
+    isl_union_map* bundle_access(const std::string& bn) {
+      auto d = isl_union_map_read_from_str(ctx, "{}");
+      for (auto pt : port_bundles.at(bn)) {
+        d = unn(d, cpy(to_umap(access_map.at(pt))));
+      }
+      return d;
+    }
+
+    isl_union_set* bundle_domain(const std::string& bn) {
+      auto d = isl_union_set_read_from_str(ctx, "{}");
+      for (auto pt : port_bundles.at(bn)) {
+        d = unn(d, cpy(to_uset(domain.at(pt))));
+      }
+      return d;
+    }
+
     int port_width(const std::string& port_name) {
       return port_widths;
     }
@@ -200,6 +216,15 @@ class UBuffer {
         isl_union_map_read_from_str(ctx, sched.c_str());
     }
 
+    vector<string> get_out_bundles() const {
+      vector<string> outpts;
+      for (auto m : port_bundles) {
+        if (is_out_pt(pick(m.second))) {
+          outpts.push_back(m.first);
+        }
+      }
+      return outpts;
+    }
     vector<string> get_in_bundles() const {
       vector<string> outpts;
       for (auto m : port_bundles) {
@@ -796,11 +821,7 @@ void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer&
   out << "};" << endl << endl;
 }
 
-void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
-  string inpt = buf.get_in_port();
-
-  //cout << "Computing maxdelay..." << endl;
-
+int compute_max_dd(UBuffer& buf, const string& inpt) {
   int maxdelay = 0;
   for (auto outpt : buf.get_out_ports()) {
     int r0 = compute_dd_bound(buf, outpt, inpt);
@@ -808,6 +829,14 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
       maxdelay = r0;
     }
   }
+  return maxdelay;
+}
+
+void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
+  string inpt = buf.get_in_port();
+
+  //cout << "Computing maxdelay..." << endl;
+  int maxdelay = compute_max_dd(buf, inpt);
   out << "#include \"hw_classes.h\"" << endl << endl;
   for (auto inpt : buf.get_in_ports()) {
     generate_memory_struct(out, inpt, buf, maxdelay);
@@ -2578,6 +2607,33 @@ void mobilenet_test() {
   assert(false);
 }
 
+
+umap* input_chunk(UBuffer& buf, const std::string& out_bundle) {
+
+  // What is output chunk?
+  //  - All of the data needed to start a new iteration of 
+  //    an op that was not passed in to any prior iteration
+
+  umap* sched = buf.global_schedule();
+  auto bundle_ops = buf.bundle_domain(out_bundle);
+
+  auto EventsAfterRead = lex_gt(sched, sched);
+
+  auto ReadsBeforeCurrentRead = its_range(its(EventsAfterRead, bundle_ops), bundle_ops);
+
+  auto DataRead = buf.bundle_access(out_bundle);
+  auto DataReadBeforeCurrentRead =
+    dot(ReadsBeforeCurrentRead, DataRead);
+
+  return isl_union_map_subtract(DataRead,
+      DataReadBeforeCurrentRead);
+
+  //umap* read = buf.bundle_access_map(out_bundle);
+  //auto reads_before_read; // insert;
+  //auto used_before; // apply read map to range
+  //return diff(used, used_in_earlier_read);
+}
+
 void aha_talk_print_info() {
   prog prg = conv_1d();
 
@@ -2632,13 +2688,28 @@ void aha_talk_print_info() {
       cout << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
       cout << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
       cout << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
+      cout << "\t\t\tbuffer capacity: " << compute_max_dd(b.second, inpt) << endl;
     }
+
     cout << "\t---- Out ports" << endl;
     for (auto inpt : b.second.get_out_ports()) {
       cout << "\t\t" << inpt << endl;
       cout << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
       cout << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
       cout << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
+    }
+
+    cout << "\t---- Output Bundles" << endl;
+    for (auto out_bundle : b.second.get_out_bundles()) {
+      cout << "\t\t" << out_bundle << endl;
+      auto ports = b.second.port_bundles.at(out_bundle);
+      cout << "\t\t---- Ports..." << endl;
+      for (auto p : ports) {
+        cout << "\t\t\t" << p << endl;
+      }
+
+      cout << "\t\t Input Chunk: " << str(input_chunk(buf, out_bundle)) << endl << endl;
+      cout << "\t\t Input Chunk Sizes: " << str(card(input_chunk(buf, out_bundle))) << endl << endl;
     }
 
     cout << endl << endl;

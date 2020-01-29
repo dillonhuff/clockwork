@@ -542,6 +542,10 @@ isl_map* its(isl_map* const m0, isl_map* const m1) {
   return isl_map_intersect(cpy(m0), cpy(m1));
 }
 
+isl_union_map* its_range(isl_union_map* const m0, isl_union_set* const m1) {
+  return isl_union_map_intersect_range(cpy(m0), cpy(m1));
+}
+
 isl_union_map* its(isl_union_map* const m0, isl_union_map* const m1) {
   return isl_union_map_intersect(cpy(m0), cpy(m1));
 }
