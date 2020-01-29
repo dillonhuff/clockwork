@@ -2,7 +2,7 @@
 
 #include "hw_classes.h"
 
-struct M_write_0_cache {
+struct M_get_input_4_cache {
 	// Capacity: 3
 	// Parition [0, 1) capacity = 1
 	fifo<int, 1> f0;
@@ -52,120 +52,58 @@ struct M_write_0_cache {
 
 
 
-inline void M_write_0_write(int& M_write_0, M_write_0_cache& M_write_0_delay) {
-	M_write_0_delay.push(M_write_0);
+inline void M_get_input_4_write(int& M_get_input_4, M_get_input_4_cache& M_get_input_4_delay) {
+	M_get_input_4_delay.push(M_get_input_4);
 }
 
-// Select if: { read0[root = 0, c] -> write[root' = 0, p = c] : 0 <= c <= 7 }
-inline int M_read0_5_select(M_write_0_cache& M_write_0_delay
+// Select if: { compute_output[root = 0, c] -> get_input[root' = 0, p = c] : 0 <= c <= 7 }
+inline int M_compute_output_1_select(M_get_input_4_cache& M_get_input_4_delay
 , int root, int c) {
 // Pieces...
-// { read0[root = 0, c] : 0 <= c <= 7 } -> { read0[root, c] -> 2 }
+// { compute_output[root = 0, c] : 0 <= c <= 7 } -> { compute_output[root, c] -> 2 }
 // 	is always true on iteration domain: 1
-	int value_M_write_0 = M_write_0_delay.peek_2();
-	return value_M_write_0;
+	int value_M_get_input_4 = M_get_input_4_delay.peek_2();
+	return value_M_get_input_4;
 }
 
-// Select if: { read0[root = 0, c] -> write[root' = 0, p = 1 + c] : 0 <= c <= 7 }
-inline int M_read0_6_select(M_write_0_cache& M_write_0_delay
+// Select if: { compute_output[root = 0, c] -> get_input[root' = 0, p = 1 + c] : 0 <= c <= 7 }
+inline int M_compute_output_2_select(M_get_input_4_cache& M_get_input_4_delay
 , int root, int c) {
 // Pieces...
-// { read0[root = 0, c] : 0 <= c <= 7 } -> { read0[root, c] -> 1 }
+// { compute_output[root = 0, c] : 0 <= c <= 7 } -> { compute_output[root, c] -> 1 }
 // 	is always true on iteration domain: 1
-	int value_M_write_0 = M_write_0_delay.peek_1();
-	return value_M_write_0;
+	int value_M_get_input_4 = M_get_input_4_delay.peek_1();
+	return value_M_get_input_4;
 }
 
-// Select if: { read0[root = 0, c] -> write[root' = 0, p = 2 + c] : 0 <= c <= 7 }
-inline int M_read0_7_select(M_write_0_cache& M_write_0_delay
+// Select if: { compute_output[root = 0, c] -> get_input[root' = 0, p = 2 + c] : 0 <= c <= 7 }
+inline int M_compute_output_3_select(M_get_input_4_cache& M_get_input_4_delay
 , int root, int c) {
 // Pieces...
-	int value_M_write_0 = M_write_0_delay.peek_0();
-	return value_M_write_0;
+	int value_M_get_input_4 = M_get_input_4_delay.peek_0();
+	return value_M_get_input_4;
 }
 
 // Bundles...
-// read0
-//	M_read0_5
-//	M_read0_6
-//	M_read0_7
-inline hw_uint<96> M_read0_bundle_action(M_write_0_cache& M_write_0_delay, int root, int c) {
+// compute_output
+//	M_compute_output_1
+//	M_compute_output_2
+//	M_compute_output_3
+inline hw_uint<96> M_compute_output_bundle_action(M_get_input_4_cache& M_get_input_4_delay, int root, int c) {
 	hw_uint<96> result;
-	int M_read0_5_res = M_read0_5_select(M_write_0_delay, root, c);
-	set_at<0, 96>(result, M_read0_5_res);
-	int M_read0_6_res = M_read0_6_select(M_write_0_delay, root, c);
-	set_at<32, 96>(result, M_read0_6_res);
-	int M_read0_7_res = M_read0_7_select(M_write_0_delay, root, c);
-	set_at<64, 96>(result, M_read0_7_res);
+	int M_compute_output_1_res = M_compute_output_1_select(M_get_input_4_delay, root, c);
+	set_at<0, 96>(result, M_compute_output_1_res);
+	int M_compute_output_2_res = M_compute_output_2_select(M_get_input_4_delay, root, c);
+	set_at<32, 96>(result, M_compute_output_2_res);
+	int M_compute_output_3_res = M_compute_output_3_select(M_get_input_4_delay, root, c);
+	set_at<64, 96>(result, M_compute_output_3_res);
 	return result;
 }
 
-// write
-//	M_write_0
-inline void M_write_bundle_action(int& /* width = 32*/write, M_write_0_cache& M_write_0_delay) {
-	M_write_0_write(write, M_write_0_delay);
-}
-
-
-
-#include "hw_classes.h"
-
-struct T_read0_4_cache {
-	// Capacity: 1
-	// Parition [0, 0] capacity = 1
-	fifo<hw_uint<96>, 1> f1;
-
-
-	inline hw_uint<96> peek_0() {
-		return f1.back();
-	}
-
-
-
-	inline hw_uint<96> peek(const int offset) {
-		if (offset == 0) {
-			return f1.back();
-		}
-		cout << "Error: Unsupported offset in T: " << offset << endl;
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<96> value) {
-		f1.push(value);
-	}
-
-};
-
-
-
-inline void T_read0_4_write(hw_uint<96>& T_read0_4, T_read0_4_cache& T_read0_4_delay) {
-	T_read0_4_delay.push(T_read0_4);
-}
-
-// Select if: { compute_out[root = 0, c] -> read0[root' = 0, c' = c] : 0 <= c <= 7 }
-inline hw_uint<96> T_compute_out_3_select(T_read0_4_cache& T_read0_4_delay
-, int root, int c) {
-// Pieces...
-	hw_uint<96> value_T_read0_4 = T_read0_4_delay.peek_0();
-	return value_T_read0_4;
-}
-
-// Bundles...
-// compute_out
-//	T_compute_out_3
-inline hw_uint<96> T_compute_out_bundle_action(T_read0_4_cache& T_read0_4_delay, int root, int c) {
-	hw_uint<96> result;
-	hw_uint<96> T_compute_out_3_res = T_compute_out_3_select(T_read0_4_delay, root, c);
-	set_at<0, 96>(result, T_compute_out_3_res);
-	return result;
-}
-
-// read0
-//	T_read0_4
-inline void T_read0_bundle_action(hw_uint<96>& /* width = 96*/read0, T_read0_4_cache& T_read0_4_delay) {
-	T_read0_4_write(read0, T_read0_4_delay);
+// get_input
+//	M_get_input_4
+inline void M_get_input_bundle_action(int& /* width = 32*/get_input, M_get_input_4_cache& M_get_input_4_delay) {
+	M_get_input_4_write(get_input, M_get_input_4_delay);
 }
 
 
@@ -173,39 +111,29 @@ inline void T_read0_bundle_action(hw_uint<96>& /* width = 96*/read0, T_read0_4_c
 
 
 // Operation logic
-inline void write(HWStream<int>& in, M_write_0_cache& M_write_0, int root, int p) {
-	// Consume: in
-	auto in_val = in.read();
-	// Produce: M
-	M_write_bundle_action(in_val, M_write_0);
-}
-
-inline void compute_out(T_read0_4_cache& T_read0_4, HWStream<int>& out, int root, int c) {
-	// Consume: T
-	auto T_val = T_compute_out_bundle_action(T_read0_4, root, c);
+inline void compute_output(M_get_input_4_cache& M_get_input_4, HWStream<int>& out, int root, int c) {
+	// Consume: M
+	auto M_val = M_compute_output_bundle_action(M_get_input_4, root, c);
 	// Apply function: accumulate_3
-	auto compute_result = accumulate_3(T_val);
+	auto compute_result = accumulate_3(M_val);
 	// Produce: out
 	out.write(compute_result);
 }
 
-inline void read0(M_write_0_cache& M_write_0, T_read0_4_cache& T_read0_4, int root, int c) {
-	// Consume: M
-	auto M_val = M_read0_bundle_action(M_write_0, root, c);
-	// Produce: T
-	T_read0_bundle_action(M_val, T_read0_4);
+inline void get_input(HWStream<int>& in, M_get_input_4_cache& M_get_input_4, int root, int p) {
+	// Consume: in
+	auto in_val = in.read();
+	// Produce: M
+	M_get_input_bundle_action(in_val, M_get_input_4);
 }
 
 // Driver function
 void conv_1d(HWStream<int>& in, HWStream<int>& out) {
-	M_write_0_cache M_write_0;
-	T_read0_4_cache T_read0_4;
+	M_get_input_4_cache M_get_input_4;
 	for (int c0 = 0; c0 <= 9; c0 += 1) {
-	  write(in, M_write_0, 0, c0);
-	  if (c0 >= 2) {
-	    read0(M_write_0, T_read0_4, 0, c0 - 2);
-	    compute_out(T_read0_4, out, 0, c0 - 2);
-	  }
+	  get_input(in, M_get_input_4, 0, c0);
+	  if (c0 >= 2)
+	    compute_output(M_get_input_4, out, 0, c0 - 2);
 	}
 	
 }

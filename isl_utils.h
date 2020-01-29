@@ -456,6 +456,19 @@ std::string str(umap* const m) {
   return r;
 }
 
+std::string str(isl_union_set* const m) {
+  auto ctx = isl_union_set_get_ctx(m);
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_print_union_set(p, cpy(m));
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  std::string r(rs);
+  free(rs);
+  
+  return r;
+}
+
 std::string str(isl_set* const m) {
   auto ctx = isl_set_get_ctx(m);
   isl_printer *p;

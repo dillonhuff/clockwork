@@ -1,6 +1,7 @@
 ./make_code.sh
 if [ $? -eq 0 ]; then
-  ./a.out
+  echo "Cmd: " $1
+  ./a.out $1
 else
   echo "Build FAILED"
 fi

@@ -92,7 +92,7 @@ class UBuffer {
     }
 
     int port_bundle_width(const std::string& bundle_name) {
-      cout << "Getting width of bundle: " << bundle_name << endl;
+      //cout << "Getting width of bundle: " << bundle_name << endl;
       int len = 0;
       for (auto pt : map_find(bundle_name, port_bundles)) {
         len += port_width(pt);
@@ -244,14 +244,14 @@ class UBuffer {
 
 isl_stat get_const(isl_set* s, isl_qpolynomial* qp, void* user) {
   vector<int>* vals = (vector<int>*) user;
-  cout << "getting piece" << endl;
+  //cout << "getting piece" << endl;
   print(isl_qpolynomial_get_ctx(qp), qp);
   print(isl_set_get_ctx(s), s);
 
   isl_val* v = isl_qpolynomial_get_constant_val(qp);
   print(isl_val_get_ctx(v), v);
   long vs = isl_val_get_num_si(v);
-  cout << "value = " << vs << endl;
+  //cout << "value = " << vs << endl;
   if (vals->size() == 0 ||
       vals->back() != vs) {
     vals->push_back(vs);
@@ -482,7 +482,7 @@ vector<isl_term*> get_terms(isl_qpolynomial* qp) {
 }
 
 std::string codegen_c(isl_term* t) {
-  cout << "\tterm dim = " << isl_term_dim(t, isl_dim_set) << endl;
+  //cout << "\tterm dim = " << isl_term_dim(t, isl_dim_set) << endl;
   vector<string> exps;
   for (int i = 0; i < isl_term_dim(t, isl_dim_set); i++) {
     int exp = isl_term_get_exp(t, isl_dim_set, i);
@@ -592,9 +592,9 @@ isl_stat map_codegen_c(isl_map* m, void* user) {
 isl_stat umap_codegen_c_comp(isl_map* m, void* user) {
   map<string, string>& mc = *((map<string, string>*) user);
   mc[range_name(get_space(m))] = str(m);
-  for (auto r : mc) {
-    cout << "\t" << r.first << ": " << r.second << endl;
-  }
+  //for (auto r : mc) {
+    //cout << "\t" << r.first << ": " << r.second << endl;
+  //}
 
   vector<string> holder;
   map_codegen_c(m, &holder);
@@ -604,7 +604,6 @@ isl_stat umap_codegen_c_comp(isl_map* m, void* user) {
 }
 
 map<string, string> umap_codegen_c(umap* const um) {
-  cout << "##### Codgen for umap: " << str(um) << endl;
   map<string, string> cm;
   isl_union_map_foreach_map(um, umap_codegen_c_comp, (void*) (&cm));
   return cm;
@@ -629,37 +628,37 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
     lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
 
   assert(WritesBeforeRead != nullptr);
-  cout << "WritesBeforeRead = " << str(WritesBeforeRead) << endl;
+  //cout << "WritesBeforeRead = " << str(WritesBeforeRead) << endl;
 
   auto WriteThatProducesReadData =
     its(dot(buf.access_map.at(read_port), port0WritesInv), WritesBeforeRead);
 
-  cout << "----Writes that produces read data: " << endl;
-  cout << "\t" << str(WriteThatProducesReadData) << endl;
+  //cout << "----Writes that produces read data: " << endl;
+  //cout << "\t" << str(WriteThatProducesReadData) << endl;
 
   auto time_to_event = inv(sched);
   auto LastWriteBeforeRead =
     dot(lexmax(dot(WriteThatProducesReadData, sched)), time_to_event);
 
-  cout << "----Last Write that produce read data before read: " << endl;
-  cout << "\t" << str(LastWriteBeforeRead) << endl;
+  //cout << "----Last Write that produce read data before read: " << endl;
+  //cout << "\t" << str(LastWriteBeforeRead) << endl;
 
   WriteThatProducesReadData = LastWriteBeforeRead;
   //auto lex_max_events =
     //dot(lexmax(dot(src_map, sched)), time_to_event);
 
-  cout << "----Writes before read: " << endl;
-  cout << "\t" << str(WritesBeforeRead) << endl;
+  //cout << "----Writes before read: " << endl;
+  //cout << "\t" << str(WritesBeforeRead) << endl;
 
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
-  cout << "----Writes after production: " << endl;
-  cout << "\t" << str(WritesAfterProduction) << endl;
+  //cout << "----Writes after production: " << endl;
+  //cout << "\t" << str(WritesAfterProduction) << endl;
 
   auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
 
-  cout << "----WritesBtwn" << endl;
-  print(ctx, WritesBtwn);
+  //cout << "----WritesBtwn" << endl;
+  //print(ctx, WritesBtwn);
 
   auto c = card(WritesBtwn);
   return c;
@@ -700,7 +699,7 @@ int compute_dd_bound(UBuffer& buf, const std::string& read_port, const std::stri
 string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
   auto c = compute_dd(buf, read_port, write_port);
 
-  cout << "Computed dd" << endl;
+  //cout << "Computed dd" << endl;
   auto folds  = get_polynomials(c);
   if (folds.size() == 1) {
     return codegen_c(folds[0]);
@@ -727,7 +726,7 @@ void generate_vivado_tcl(UBuffer& buf) {
 }
 
 void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer& buf, const int maxdelay) {
-  cout << "Creating structs for " << buf.name << endl;
+  //cout << "Creating structs for " << buf.name << endl;
   out << "struct " + inpt + "_cache {" << endl;
   out << "\t// Capacity: " << maxdelay + 1 << endl;
   vector<int> read_delays{0};
@@ -1666,10 +1665,10 @@ struct op {
   }
 
   void populate_schedule_vectors(map<op*, vector<string> >& sched_vecs, vector<string>& active_vecs) {
-    cout << "Populating schedule for " << name << ", active vecs: " << active_vecs.size() << endl;
+    //cout << "Populating schedule for " << name << ", active vecs: " << active_vecs.size() << endl;
     if (is_loop) {
       auto nds = active_vecs;
-      cout << "At loop: " << this->name << endl;
+      //cout << "At loop: " << this->name << endl;
       assert(nds.size() > 0);
 
       nds.push_back(name);
@@ -1834,7 +1833,7 @@ struct prog {
 
     map<op*, isl_set*> doms;
     for (auto op : ivars) {
-      cout << "Getting op production:" << op.first->name << endl;
+      //cout << "Getting op production:" << op.first->name << endl;
       auto iters = map_find(op.first, ivars);
       auto vars = sep_list(iters, "[", "]", ", ");
 
@@ -1844,7 +1843,7 @@ struct prog {
       doms[op.first] =
         isl_set_read_from_str(ctx, string("{ " + op.first->name + vars + " : " + ds + " }").c_str());
 
-      cout << "Got op..." << endl;
+      //cout << "Got op..." << endl;
     }
     return doms;
   }
@@ -1860,7 +1859,7 @@ struct prog {
     
     map<op*, vector<string> > vecs;
     vector<string> base{"0"};
-    cout << "Calling populate sched vectors" << endl;
+    //cout << "Calling populate sched vectors" << endl;
     root->populate_schedule_vectors(vecs, base);
 
     map<op*, vector<string> > ivars;
@@ -1873,7 +1872,7 @@ struct prog {
       auto dom = map_find(op.first, idoms);
       auto doms = sep_list(dom, "", "", " and ");
 
-      cout << "\t" << op.first->name << vars << " -> " << sep_list(op.second, "[", "]", ", ") << " : " << doms << endl;
+      //cout << "\t" << op.first->name << vars << " -> " << sep_list(op.second, "[", "]", ", ") << " : " << doms << endl;
       scheds[op.first] =
         isl_map_read_from_str(ctx, string("{ " + op.first->name + vars + " -> " + sep_list(op.second, "[", "]", ", ") + " : " + doms + " }").c_str());
 
@@ -1888,6 +1887,13 @@ struct prog {
       m = unn(m, to_umap(o.second));
     }
     return m;
+  }
+
+  std::string optimized_loop_nest() {
+    umap* opt_sched = optimized_codegen();
+    auto domain = whole_iteration_domain();
+    auto schedmap = its(opt_sched, domain);
+    return codegen_c(schedmap);
   }
 
   umap* producer_map() {
@@ -1919,14 +1925,14 @@ struct prog {
     auto ops = root->all_ops();
     auto m = isl_union_map_read_from_str(ctx, "{}");
     for (auto op : ops) {
-      cout << op->name << endl;
+      //cout << op->name << endl;
       auto vars = map_find(op, ivars);
       string ivar_str = sep_list(vars, "[", "]", ", ");
       auto dom = map_find(op, doms);
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
       for (auto p : op->consumes) {
-        cout << "\tConsumes: " << p << endl;
+        //cout << "\tConsumes: " << p << endl;
         umap* vmap =
           its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
         pmap = unn(pmap, vmap);
@@ -1945,8 +1951,8 @@ struct prog {
     auto reads =
       its(consumer_map(), domain);
 
-    cout << "Producer map..." << str(writes) << endl;
-    cout << "Consumer map..." << str(reads) << endl;
+    //cout << "Producer map..." << str(writes) << endl;
+    //cout << "Consumer map..." << str(reads) << endl;
 
     isl_union_map *validity =
       its(dot(writes, inv(reads)), before);
@@ -1963,8 +1969,8 @@ struct prog {
     
     isl_schedule* sched = optimized_schedule();
     auto schedmap = its(isl_schedule_get_map(sched), domain);
-    cout << "Optimized schedule..." << endl;
-    cout << codegen_c(schedmap);
+    //cout << "Optimized schedule..." << endl;
+    //cout << codegen_c(schedmap);
     return schedmap;
   }
 
@@ -2319,33 +2325,41 @@ void conv_1d_bc_test() {
   assert(res == 0);
 }
 
-void conv_1d_test() {
+prog conv_1d() {
   prog prg;
   prg.compute_unit_file = "accumulate_3.h";
   prg.name = "conv_1d";
   prg.add_input("in");
   prg.add_output("out");
-  prg.buffer_port_widths["T"] = 32*3;
+  //prg.buffer_port_widths["T"] = 32*3;
   prg.buffer_port_widths["in"] = 32;
   prg.buffer_port_widths["out"] = 32;
   prg.buffer_port_widths["M"] = 32;
 
   auto p = prg.add_loop("p", 0, 10);
-  auto write = p->add_op("write");
+  auto write = p->add_op("get_input");
   write->add_load("in", "p");
   write->add_store("M", "p");
 
   auto c = prg.add_loop("c", 0, 10 - 2);
-  auto read0 = c->add_op("read0");
-  read0->add_load("M", "c");
-  read0->add_load("M", "c + 1");
-  read0->add_load("M", "c + 2");
-  read0->add_store("T", "c");
+  //auto read0 = c->add_op("read0");
+  //read0->add_load("M", "c");
+  //read0->add_load("M", "c + 1");
+  //read0->add_load("M", "c + 2");
+  //read0->add_store("T", "c");
 
-  auto compute = c->add_op("compute_out");
+  auto compute = c->add_op("compute_output");
   compute->add_function("accumulate_3");
-  compute->add_load("T", "c");
+  //compute->add_load("T", "c");
+  compute->add_load("M", "c");
+  compute->add_load("M", "c + 1");
+  compute->add_load("M", "c + 2");
   compute->add_store("out", "c");
+  return prg;
+}
+
+void conv_1d_test() {
+  prog prg = conv_1d();
 
   cout << "Program code without optimization..." << endl;
   prg.unoptimized_codegen();
@@ -2595,14 +2609,14 @@ void mobilenet_test() {
     auto set_dw = prg.add_nest("dwx", 0, 14, "dwy", 0, 14, "dwc", 0, 4);
     auto init_dw = set_dw->add_op("init_dw");
     init_dw->add_store("dw_conv", "dwx, dwy, dwz");
-    init_dw->add_function("set_zero<32>");
+    init_dw->add_function("set_zero");
     // Set dw_conv to be
     auto update_dw = set_dw->add_nest("rx", 0, 3, "ry", 0, 3);
     auto rdw = update_dw->add_op("rdw");
     rdw->add_load("I", "dwx + rx, dwy + ry, dwc");
     rdw->add_load("dw_conv", "dwx, dwy, dwc");
     rdw->add_store("dw_conv", "dwx, dwy, dwc");
-    rdw->add_function("fma<32>");
+    rdw->add_function("fma");
   }
 
   {
@@ -2631,24 +2645,78 @@ void mobilenet_test() {
   assert(false);
 }
 
-int main() {
+void aha_talk_print_info() {
+  prog prg = conv_1d();
 
-  mobilenet_test();
-  pyramid_2d_test();
-  pyramid_test();
-  //assert(false);
+  auto iter_domain = prg.whole_iteration_domain();
 
-  //mmul_test();
-  synth_reduce_test();
-  conv_1d_test();
-  conv_1d_bc_test();
-  //assert(false);
+  cout << "#### Info for input program: " << prg.name << endl << endl;
 
-  synth_wire_test();
-  synth_sr_boundary_condition_test();
-  synth_lb_test();
-  synth_upsample_test();
+  cout << "----- Statements in program..." << endl;
+  for (auto op : prg.all_ops()) {
+    cout << "\t" << op->name << endl;
+  }
+  cout << endl << endl;
 
+  cout << "----- Iteration domains for statements..." << endl;
+  cout << "\t" << str(iter_domain) << endl << endl;
+
+  cout << "----- Schedules for statements..." << endl;
+  cout << "\t" << str(prg.unoptimized_schedule()) << endl << endl;
+
+  cout << "----- Values read by each statement" << endl;
+  auto reads =
+    its(prg.consumer_map(), iter_domain);
+  cout << "\t" << str(reads) << endl << endl;
+ 
+  cout << "----- Values written by each statement" << endl;
+  auto writes =
+    its(prg.producer_map(), iter_domain);
+  cout << "\t" << str(writes) << endl << endl;
+
+  cout << "----- Un-optimized loop nests for program..." << endl;
+  prg.unoptimized_codegen();
+
+  cout << "----- Optimized loop nests for program minimizing (write -> read) time..." << endl;
+  cout << prg.optimized_loop_nest();
+
+  auto buffers = build_buffers(prg);
+  generate_app_code(buffers, prg);
+
+}
+
+int main(int argc, char** argv) {
+
+  if (argc > 1) {
+    assert(argc == 2);
+    string cmd = argv[1];
+
+    if (cmd == "aha_talk_print_info") {
+      aha_talk_print_info();
+      return 0;
+    }
+
+    cout << "Error: Unrecognized command: " << cmd << endl;
+    assert(false);
+
+  } if (argc == 1) {
+
+    pyramid_2d_test();
+    pyramid_test();
+
+    synth_reduce_test();
+    conv_1d_test();
+    conv_1d_bc_test();
+
+    synth_wire_test();
+    synth_sr_boundary_condition_test();
+    synth_lb_test();
+    synth_upsample_test();
+
+    //mobilenet_test();
+    //mmul_test();
+
+  }
   return 0;
 
 }
