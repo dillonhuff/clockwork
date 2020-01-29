@@ -2,6 +2,10 @@
 
 #include "hw_classes.h"
 
+int max_zero(const int& val) {
+  return max(val, 0);
+}
+
 int inc(int& src, int& a0) {
   cout << "src = " << src << endl;
   cout << "a0  = " << a0 << endl;
@@ -28,3 +32,5 @@ template<int Len>
 hw_uint<Len> set_zero() {
   return hw_uint<Len>();
 }
+
+

@@ -1398,6 +1398,7 @@ void synth_upsample_test() {
   assert(res == 0);
 
   isl_ctx_free(buf.ctx);
+  cout << "Upsample passed" << endl;
 }
 
 void synth_sr_boundary_condition_test() {
@@ -2767,7 +2768,6 @@ void reduce_1d_test() {
   res = system("./a.out");
   assert(res == 0);
 
-  assert(false);
 }
 
 void mobilenet_test() {
@@ -2791,7 +2791,7 @@ void mobilenet_test() {
 
   {
     // dw_conv
-    auto set_dw = prg.add_nest("dwx", 0, 14, "dwy", 0, 14, "dwc", 0, 4);
+    auto set_dw = prg.add_nest("dwx", 0, 14 - 2, "dwy", 0, 14 - 2, "dwc", 0, 4);
     auto init_dw = set_dw->add_op("init_dw");
     init_dw->add_store("dw_conv", "dwx, dwy, dwz");
     init_dw->add_function("set_zero");
@@ -2805,7 +2805,7 @@ void mobilenet_test() {
   }
 
   {
-    auto read_in = prg.add_nest("ox", 0, 14, "oy", 0, 14, "ok", 0, 4);
+    auto read_in = prg.add_nest("ox", 0, 14 - 2, "oy", 0, 14 - 2, "ok", 0, 4);
     auto write = read_in->add_op("write_max_out");
     write->add_load("dw_conv", "ox, oy, ok");
     write->add_function("max_zero");
@@ -2827,7 +2827,10 @@ void mobilenet_test() {
   int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
   assert(res == 0);
 
-  assert(false);
+  res = system("./a.out");
+  assert(res == 0);
+
+  //assert(false);
 }
 
 
