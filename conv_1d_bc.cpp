@@ -185,12 +185,8 @@ inline void write(HWStream<int>& in, M_write_0_cache& M_write_0, int root, int p
 inline void read0(M_write_0_cache& M_write_0, T_read0_2_cache& T_read0_2, int root, int c) {
 	// Consume: M
 	auto M_min_lp_c__p__1_c__9_rp__value = M_read0_bundle_action(M_write_0, root, c);
-	// Consume: M
-	auto M_min_lp_c__p__2_c__9_rp__value = M_read0_bundle_action(M_write_0, root, c);
-	// Consume: M
-	auto M_min_lp_c_c__9_rp__value = M_read0_bundle_action(M_write_0, root, c);
 	// Produce: T
-	T_read0_bundle_action(M_min_lp_c_c__9_rp__value, T_read0_2);
+	T_read0_bundle_action(M_min_lp_c__p__1_c__9_rp__value, T_read0_2);
 }
 
 inline void compute_out(T_read0_2_cache& T_read0_2, HWStream<int>& out, int root, int c) {

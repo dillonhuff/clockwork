@@ -988,7 +988,8 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
     } else {
       out << "inline void " + buf.name + "_" + b.first + "_bundle_action(";
       vector<string> dim_decls;
-      dim_decls.push_back(buf.bundle_type_string(b.first) + "& /* width = " + to_string(buf.port_widths) + "*/" + b.first);
+      //dim_decls.push_back(buf.bundle_type_string(b.first) + "& /* width = " + to_string(buf.port_widths) + "*/" + b.first);
+      dim_decls.push_back(buf.port_type_string(b.first) + "& /* width = " + to_string(buf.port_widths) + "*/" + b.first);
       vector<string> dim_args;
       dim_args.push_back(b.first);
       for (auto pt : buf.get_in_ports()) {
@@ -2180,8 +2181,12 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
     }
     conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
     set<pair<string, string> > in_buffers;
+    set<string> distinct;
     for (auto con : op->consume_locs) {
-      in_buffers.insert(con);
+      if (!elem(con.first, distinct)) {
+        in_buffers.insert(con);
+        distinct.insert(con.first);
+      }
     }
 
     string res;
