@@ -2293,6 +2293,31 @@ void conv_1d_bc_test() {
   assert(res == 0);
 }
 
+prog conv_1d_bc() {
+  prog prg;
+  prg.compute_unit_file = "accumulate_3.h";
+  prg.name = "conv_1d_bc";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["M"] = 32;
+
+  auto p = prg.add_loop("p", 0, 10);
+  auto write = p->add_op("get_input");
+  write->add_load("in", "p");
+  write->add_store("M", "p");
+
+  auto c = prg.add_loop("c", 0, 10);
+  auto compute = c->add_op("compute_output");
+  compute->add_function("accumulate_3");
+  compute->add_load("M", "min(c, 9)");
+  compute->add_load("M", "min(c + 1, 9)");
+  compute->add_load("M", "min(c + 2, 9)");
+  compute->add_store("out", "c");
+  return prg;
+}
+
 prog conv_1d() {
   prog prg;
   prg.compute_unit_file = "accumulate_3.h";
@@ -2467,6 +2492,43 @@ void pyramid_test() {
   assert(res == 0);
 }
 
+prog conv_2d() {
+
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "conv_2d";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["M"] = 32;
+
+  {
+    auto pr = prg.add_loop("pr", 0, 10);
+    auto pc = pr->add_loop("pc", 0, 10);
+    auto write = pc->add_op("write");
+    write->add_load("in", "pc, pr");
+    write->add_store("I", "pc, pr");
+  }
+
+  {
+    auto pr = prg.add_loop("lr", 0, 10 - 2);
+    auto pc = pr->add_loop("lc", 0, 10 - 2);
+    auto rd = pc->add_op("read_0");
+    // Need to load 9 values
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        string c = "lc + " + to_string(i);
+        string r = "lr + " + to_string(j);
+        rd->add_load("I", c + ", " + r);
+      }
+    }
+    rd->add_function("conv_3_3");
+    rd->add_store("out", "lc, lr");
+  }
+  return prg;
+}
+
 void pyramid_2d_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
@@ -2625,8 +2687,7 @@ umap* input_chunk(UBuffer& buf, const std::string& out_bundle) {
 
 }
 
-void aha_talk_print_info() {
-  prog prg = conv_1d();
+void aha_talk_print_info(prog& prg) {
 
   auto iter_domain = prg.whole_iteration_domain();
 
@@ -2718,8 +2779,21 @@ int main(int argc, char** argv) {
     assert(argc == 2);
     string cmd = argv[1];
 
-    if (cmd == "aha_talk_print_info") {
-      aha_talk_print_info();
+    if (cmd == "aha_talk_print_info_conv_1d") {
+      prog prg = conv_1d();
+      aha_talk_print_info(prg);
+      return 0;
+    }
+
+    if (cmd == "aha_talk_print_info_conv_1d_bc") {
+      prog prg = conv_1d_bc();
+      aha_talk_print_info(prg);
+      return 0;
+    }
+
+    if (cmd == "aha_talk_print_info_conv_2d") {
+      prog prg = conv_2d();
+      aha_talk_print_info(prg);
       return 0;
     }
 
