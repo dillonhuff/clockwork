@@ -2996,8 +2996,8 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
 
-    //reduce_1d_test();
-    //mobilenet_test();
+    reduce_1d_test();
+    mobilenet_test();
     pyramid_2d_test();
     pyramid_test();
 
