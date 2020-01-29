@@ -2781,6 +2781,7 @@ void mobilenet_test() {
   prg.buffer_port_widths["in"] = 32;
   prg.buffer_port_widths["out"] = 32;
   prg.buffer_port_widths["dw_conv"] = 32;
+  prg.buffer_port_widths["weights"] = 32;
   prg.buffer_port_widths["I"] = 32;
 
   {
