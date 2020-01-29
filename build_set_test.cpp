@@ -2752,9 +2752,6 @@ void aha_talk_print_info(prog& prg) {
   prg.unoptimized_codegen();
   cout << endl << endl;
 
-  //cout << "----- Memory operations that must be preserved in re-scheduling..." << endl;
-  //cout << str(prg.validity_deps()) << endl << endl;
-
   cout << "----- Statement RaW dependencies..." << endl;
   cout << str(isl_union_map_coalesce(inv(prg.validity_deps()))) << endl << endl;
 
@@ -2764,7 +2761,6 @@ void aha_talk_print_info(prog& prg) {
   auto buffers = build_buffers(prg);
   cout << "###### Unified buffers..." << endl;
   cout << "Number of buffers: " << buffers.size() << endl;
-  //for (pair<string, UBuffer>& b : buffers) {
   for (auto& b : buffers) {
     UBuffer& buf = b.second;
 

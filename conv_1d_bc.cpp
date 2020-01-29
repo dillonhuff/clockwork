@@ -87,6 +87,12 @@ inline int M_compute_output_5_select(M_get_input_0_cache& M_get_input_0_delay
 }
 
 // Bundles...
+// M_get_input_0
+//	M_get_input_0
+inline void M_M_get_input_0_bundle_action(int& /* width = 32*/M_get_input_0, M_get_input_0_cache& M_get_input_0_delay) {
+	M_get_input_0_write(M_get_input_0, M_get_input_0_delay);
+}
+
 // compute_output
 //	M_compute_output_3
 //	M_compute_output_4
