@@ -946,10 +946,22 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
         out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
       }
       for (auto inpt : buf.get_in_ports()) {
-        if (contains_key(inpt, ms)) {
+        out << "\t// inpt: " << inpt << endl;
+        bool found_key = false;
+        string k_var = "";
+        for (auto k : ms) {
+          string prefix = buf.name + "_" + k.first;
+          if (is_prefix(prefix, inpt)) {
+            found_key = true;
+            k_var = "select_" + k.first;
+          }
+        }
+        //if (contains_key(inpt, ms)) {
+        if (found_key) {
+          assert(k_var != "");
           string delay_expr = evaluate_dd(buf, outpt, inpt);
           out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
-          out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
+          out << "\tif (" + k_var + ") { return value_"+ inpt + "; }\n";
         }
       }
       out << "\tassert(false);\n\treturn 0;\n";
@@ -966,7 +978,7 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
     }
     string rep = pick(b.second);
     if (buf.is_out_pt(rep)) {
-      out << "inline " << buf.bundle_type_string(b.first) << " " <<  buf.name << "_" << b.first << "_bundle_action(";
+      out << "inline " << buf.bundle_type_string(b.first) << " " <<  buf.name << "_" << b.first << "_bundle_read(";
       vector<string> dim_decls;
       vector<string> dim_args;
       for (auto pt : buf.get_in_ports()) {
@@ -994,9 +1006,8 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
       }
       out << "\treturn result;" << endl;
     } else {
-      out << "inline void " + buf.name + "_" + b.first + "_bundle_action(";
+      out << "inline void " + buf.name + "_" + b.first + "_bundle_write(";
       vector<string> dim_decls;
-      //dim_decls.push_back(buf.bundle_type_string(b.first) + "& /* width = " + to_string(buf.port_widths) + "*/" + b.first);
       dim_decls.push_back(buf.port_type_string(b.first) + "& /* width = " + to_string(buf.port_widths) + "*/" + b.first);
       vector<string> dim_args;
       dim_args.push_back(b.first);
@@ -2086,7 +2097,7 @@ map<string, UBuffer> build_buffers(prog& prg) {
       UBuffer& buf = buffers.at(name);
       
       string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
-      buf.port_bundles[op->name].push_back(pt_name);
+      buf.port_bundles[op->name + "_write"].push_back(pt_name);
 
       assert(contains_key(op, domains));
 
@@ -2116,7 +2127,7 @@ map<string, UBuffer> build_buffers(prog& prg) {
       UBuffer& buf = buffers.at(name);
 
       string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
-      buf.port_bundles[op->name].push_back(pt_name);
+      buf.port_bundles[op->name + "_read"].push_back(pt_name);
       
       isl_map* consumed_here=
         its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + consumed.second + "]" + " }").c_str()), cpy(domains.at(op)));
@@ -2215,7 +2226,7 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
         } else {
           string source_delay = pick(buffers.at(in_buffer).get_in_ports());
           auto source_delays = buffers.at(in_buffer).get_in_ports();
-          conv_out << in_buffer << "_" << op->name << "_bundle_action(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
+          conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
         }
         res = value_name;
 
@@ -2268,7 +2279,7 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
       assert(port_cache != "");
 
       //string source_delay = pick(buffers.at(out_buffer).get_in_ports());
-      conv_out << "\t" << out_buffer << "_" << op->name << "_bundle_action(" << res << ", " << port_cache << " /* output src_delay */);" << endl;
+      conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" << res << ", " << port_cache << " /* output src_delay */);" << endl;
     }
 
     conv_out << "}" << endl << endl;
@@ -2730,7 +2741,7 @@ void reduce_1d_test() {
     auto accum = accum_loop->add_op("accumulate");
     auto tmp = accum->add_load("tmp", "0");
     auto next = accum->add_load("I", "a");
-    accum->add_function("fma", {tmp, tmp, next});
+    accum->add_function("inc", {tmp, next});
     accum->add_store("tmp", "0");
 
     auto write_out = prg.add_op("output");
@@ -2751,6 +2762,9 @@ void reduce_1d_test() {
   generate_app_code(buffers, prg);
 
   int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
+  assert(res == 0);
+
+  res = system("./a.out");
   assert(res == 0);
 
   assert(false);

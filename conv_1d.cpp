@@ -85,11 +85,11 @@ inline int M_compute_output_5_select(M_get_input_0_cache& M_get_input_0_delay
 }
 
 // Bundles...
-// compute_output
+// compute_output_read
 //	M_compute_output_3
 //	M_compute_output_4
 //	M_compute_output_5
-inline hw_uint<96> M_compute_output_bundle_action(M_get_input_0_cache& M_get_input_0_delay, int root, int c) {
+inline hw_uint<96> M_compute_output_read_bundle_read(M_get_input_0_cache& M_get_input_0_delay, int root, int c) {
 	hw_uint<96> result;
 	int M_compute_output_3_res = M_compute_output_3_select(M_get_input_0_delay, root, c);
 	set_at<0, 96>(result, M_compute_output_3_res);
@@ -100,10 +100,10 @@ inline hw_uint<96> M_compute_output_bundle_action(M_get_input_0_cache& M_get_inp
 	return result;
 }
 
-// get_input
+// get_input_write
 //	M_get_input_0
-inline void M_get_input_bundle_action(int& /* width = 32*/get_input, M_get_input_0_cache& M_get_input_0_delay) {
-	M_get_input_0_write(get_input, M_get_input_0_delay);
+inline void M_get_input_write_bundle_write(int& /* width = 32*/get_input_write, M_get_input_0_cache& M_get_input_0_delay) {
+	M_get_input_0_write(get_input_write, M_get_input_0_delay);
 }
 
 
@@ -118,12 +118,12 @@ inline void get_input(HWStream<int>& in, M_get_input_0_cache& M_get_input_0, int
 	// Buffer: M, Op: get_input
 	// Possible ports...
 		// M_get_input_0
-	M_get_input_bundle_action(in_p_value, M_get_input_0 /* output src_delay */);
+	M_get_input_write_bundle_write(in_p_value, M_get_input_0 /* output src_delay */);
 }
 
 inline void compute_output(M_get_input_0_cache& M_get_input_0, HWStream<int>& out, int root, int c) {
 	// Consume: M
-	auto M_c_value = M_compute_output_bundle_action(M_get_input_0/* source_delay */, root, c);
+	auto M_c_value = M_compute_output_read_bundle_read(M_get_input_0/* source_delay */, root, c);
 	// Apply function: accumulate_3
 	auto compute_result = accumulate_3(M_c_value);
 	// Produce: out
