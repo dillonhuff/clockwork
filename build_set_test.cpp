@@ -3137,6 +3137,9 @@ void unsharp_test() {
       conv_loads.push_back("br + " + to_string(r) + ", bc + " + to_string(c));
     }
   }
+
+  // Problem here is that conv loads are all added as arguments, but really the result just wants to
+  // bundle all
   prg.add_nest("br", 0, 64 - 2, "bc", 0, 64 - 2)->add_op({"Blur", "br,bc"}, "conv_3x3", conv_loads);
   prg.add_nest("dr", 0, 64 - 2, "dc", 0, 64 - 2)->add_op({"Diff", "dr, dc"}, "diff", {"I", "dr, dc", "Blur", "dr, dc"});
   prg.add_nest("xr", 0, 64 - 2, "xc", 0, 64 - 2)->store({"out", "xr, xc"}, {"Diff", "xr, xc"});
