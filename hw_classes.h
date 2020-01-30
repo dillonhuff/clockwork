@@ -53,10 +53,12 @@ class fifo {
         int rem = (addr - Depth);
         addr = rem;
       }
+      assert(addr < Depth);
       return vals[addr];
     }
 
     void push(const T& val) {
+      assert(write_addr < Depth);
       vals[write_addr] = val;
       write_addr = MOD_INC(write_addr, Depth);
     }

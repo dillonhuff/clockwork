@@ -13,6 +13,15 @@
 using namespace dbhc;
 using namespace std;
 
+bool is_number(string s) { 
+  for (int i = 0; i < s.length(); i++)  {
+    if (isdigit(s[i]) == false) {
+      return false; 
+    }
+  }  
+  return true; 
+} 
+
 string tab(const int n) {
   string t = "";
   for (int i = 0; i < n; i++) {
@@ -943,7 +952,11 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
       } else if (pieces.size() == 1 &&
           isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
         string dx = codegen_c(pieces[0].second);
-        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
+        if (is_number(dx)) {
+          out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
+        } else {
+          out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << dx << ")" << ";\n";
+        }
         out << "\treturn value_" + inpt + ";" << endl;
       } else {
         out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
@@ -2557,7 +2570,7 @@ prog conv_1d() {
 }
 
 void run_regression_tb(prog& prg) {
-  int res = system(string("g++ -std=c++11 regression_tb_" + prg.name + ".cpp " + prg.name + ".cpp" + " unoptimized_" + prg.name + ".cpp").c_str());
+  int res = system(string("g++ -std=c++11 regression_tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
   assert(res == 0);
 
   res = system("./a.out");
@@ -2574,29 +2587,43 @@ void run_tb(prog& prg) {
 
 void generate_regression_testbench(prog& prg) {
   ofstream rgtb("regression_tb_" + prg.name + ".cpp");
+  rgtb << "#include <fstream>" << endl;
   rgtb << "#include \"" << prg.name << ".h\"" << endl;
-  rgtb << "#include \"unoptimized_" << prg.name << ".h\"" << endl << endl;
 
   rgtb << "int main() {" << endl;
+  rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << ".txt\");" << endl;
+
   vector<string> unoptimized_streams;
   vector<string> optimized_streams;
   for (auto in : prg.ins) {
     rgtb << tab(1) << "HWStream<int> " << in << ";" << endl;
     optimized_streams.push_back(in);
-    rgtb << tab(1) << "HWStream<int> " << "unoptimized_" << in << ";" << endl;
-    unoptimized_streams.push_back("unoptimized_" + in);
   }
   for (auto out : prg.outs) {
     rgtb << tab(1) << "HWStream<int> " << out << ";" << endl;
     optimized_streams.push_back(out);
-    rgtb << tab(1) << "HWStream<int> " << "unoptimized_" << out << ";" << endl;
-    unoptimized_streams.push_back("unoptimized_" + out);
   }
 
   rgtb << endl << endl;
 
-  rgtb << "unoptimized_" << prg.name << "(" << comma_list(unoptimized_streams) << ");" << endl;
-  rgtb << prg.name << "(" << comma_list(optimized_streams) << ");" << endl;
+  rgtb << tab(1) << "// Loading input data" << endl;
+  for (auto in : prg.ins) {
+    // TODO: Compute this from the program
+    int num_pushes = 10;
+    rgtb << tab(1) << "for (int i = 0; i < 10; i++) {" << endl;
+    rgtb << tab(2) << in << ".write(i);" << endl;
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+  rgtb << tab(1) << prg.name << "(" << comma_list(optimized_streams) << ");" << endl;
+
+  for (auto in : prg.outs) {
+    // TODO: Compute this from the program
+    int num_pops = 8;
+    rgtb << tab(1) << "for (int i = 0; i < " << num_pops << "; i++) {" << endl;
+    rgtb << tab(2) << "int actual = " << in << ".read();" << endl;
+    rgtb << tab(2) << "fout << actual << endl;" << endl;
+    rgtb << tab(1) << "}" << endl << endl;
+  }
   rgtb << tab(1) << "return 0;" << endl;
   rgtb << "}" << endl;
   rgtb.close();
@@ -2606,6 +2633,13 @@ void conv_1d_test() {
   prog prg = conv_1d();
 
   generate_unoptimized_code(prg);
+  
+  auto old_name = prg.name;
+  prg.name = "unoptimized_" + old_name;
+  generate_regression_testbench(prg);
+  run_regression_tb(prg);
+  prg.name = old_name;
+  
   generate_optimized_code(prg);
   generate_regression_testbench(prg);
   run_regression_tb(prg);
