@@ -2109,17 +2109,18 @@ void generate_op_code(map<string, UBuffer>& buffers, op* op) {
   out.close();
 }
 
+map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched);
+
 map<string, UBuffer> build_buffers(prog& prg) {
-
-  map<string, UBuffer> buffers;
-
-  auto domains = prg.domains();
   umap* opt_sched = prg.optimized_codegen();
+  return build_buffers(prg, opt_sched);
+}
 
+map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
   int usuffix = 0;
 
-  //cout << "Got ops and domains" << endl;
-
+  map<string, UBuffer> buffers;
+  auto domains = prg.domains();
   for (auto op : prg.all_ops()) {
 
     for (auto produced : op->produce_locs) {
@@ -2185,12 +2186,16 @@ map<string, UBuffer> build_buffers(prog& prg) {
   return buffers;
 }
 
-void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
+void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* sched);
 
-  //cout << "---- Generating customized re-use buffers" << endl;
+void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
+  auto schedmap = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
+  generate_app_code(buffers, prg, schedmap);
+}
+
+void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* schedmap) {
   ofstream conv_out(prg.name + ".cpp");
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
-  //conv_out << "#include \"accumulate_3.h\"" << endl << endl;
   vector<string> args;
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
@@ -2360,7 +2365,8 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
   }
 
   auto domain = prg.whole_iteration_domain();
-  auto schedmap = its(isl_schedule_get_map(prg.optimized_schedule()), domain);
+  //auto schedmap = its(isl_schedule_get_map(prg.optimized_schedule()), domain);
+  //auto schedmap = its(isl_schedule_get_map(prg.optimized_schedule()), domain);
   string code_string = codegen_c(schedmap);
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
   for (auto op : prg.all_ops()) {
@@ -2413,6 +2419,17 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
   of << "void " << prg.name << arg_buffers << ";" << endl;
   of.close();
 }
+
+void generate_unoptimized_code(prog& prg) {
+  cout << "Unoptimized schedule..." << endl;
+  auto sched = prg.unoptimized_schedule();
+
+  cout << codegen_c(prg.unoptimized_schedule());
+  auto buffers = build_buffers(prg, prg.unoptimized_schedule());
+  generate_app_code(buffers, prg, sched);
+  assert(false);
+}
+
 
 void conv_1d_bc_test() {
   prog prg;
@@ -2519,14 +2536,11 @@ prog conv_1d() {
 void conv_1d_test() {
   prog prg = conv_1d();
 
-  cout << "Program code without optimization..." << endl;
-  prg.unoptimized_codegen();
+  generate_unoptimized_code(prg);
 
   cout << "Program with optimized schedule..." << endl;
-
   auto buffers = build_buffers(prg);
   generate_app_code(buffers, prg);
-
   int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
   assert(res == 0);
 
@@ -3291,11 +3305,11 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     conv_1d_test();
+    assert(false);
     conv_2d_bc_test();
     conv_2d_rolled_test();
     unsharp_test();
     warp_and_upsample_test();
-    // TODO: Fill this in
     blur_and_downsample_test();
 
     synth_reduce_test();
@@ -3315,14 +3329,6 @@ int main(int argc, char** argv) {
   } else {
     assert(false);
   }
-
-  // What do I want to have here?
-  // What do I want to show Steve?
-  //  - Processing element that is not always ready (blur that is not unrolled)
-  //  - Unsharp (unlike halide to hardware there is no need for manual computation of linebuffer delays)
-  //  - Warp and upsample pyramid
-  //  - Blur and downsample
-  //  - App with PE that processes data over multiple cycles
 
   return 0;
 
