@@ -12,6 +12,15 @@
 
 using namespace dbhc;
 using namespace std;
+
+string tab(const int n) {
+  string t = "";
+  for (int i = 0; i < n; i++) {
+    t += "\t";
+  }
+  return t;
+}
+
 bool
 is_prefix( std::string const& lhs, std::string const& rhs )
 {
@@ -2420,14 +2429,28 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* schedmap)
   of.close();
 }
 
+void generate_optimized_code(prog& prg) {
+  auto sched = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
+
+  cout << "Optimized schedule..." << endl;
+  cout << codegen_c(sched) << endl;
+  auto buffers = build_buffers(prg, sched);
+  generate_app_code(buffers, prg, sched);
+}
+
 void generate_unoptimized_code(prog& prg) {
-  cout << "Unoptimized schedule..." << endl;
+  string old_name = prg.name;
+
+  prg.name = "unoptimized_" + prg.name;
+  
+    cout << "Unoptimized schedule..." << endl;
   auto sched = prg.unoptimized_schedule();
 
   cout << codegen_c(prg.unoptimized_schedule());
   auto buffers = build_buffers(prg, prg.unoptimized_schedule());
   generate_app_code(buffers, prg, sched);
-  assert(false);
+
+  prg.name = old_name;
 }
 
 
@@ -2533,19 +2556,69 @@ prog conv_1d() {
   return prg;
 }
 
-void conv_1d_test() {
-  prog prg = conv_1d();
+void run_regression_tb(prog& prg) {
+  int res = system(string("g++ -std=c++11 regression_tb_" + prg.name + ".cpp " + prg.name + ".cpp" + " unoptimized_" + prg.name + ".cpp").c_str());
+  assert(res == 0);
 
-  generate_unoptimized_code(prg);
+  res = system("./a.out");
+  assert(res == 0);
+}
 
-  cout << "Program with optimized schedule..." << endl;
-  auto buffers = build_buffers(prg);
-  generate_app_code(buffers, prg);
+void run_tb(prog& prg) {
   int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
   assert(res == 0);
 
   res = system("./a.out");
   assert(res == 0);
+}
+
+void generate_regression_testbench(prog& prg) {
+  ofstream rgtb("regression_tb_" + prg.name + ".cpp");
+  rgtb << "#include \"" << prg.name << ".h\"" << endl;
+  rgtb << "#include \"unoptimized_" << prg.name << ".h\"" << endl << endl;
+
+  rgtb << "int main() {" << endl;
+  vector<string> unoptimized_streams;
+  vector<string> optimized_streams;
+  for (auto in : prg.ins) {
+    rgtb << tab(1) << "HWStream<int> " << in << ";" << endl;
+    optimized_streams.push_back(in);
+    rgtb << tab(1) << "HWStream<int> " << "unoptimized_" << in << ";" << endl;
+    unoptimized_streams.push_back("unoptimized_" + in);
+  }
+  for (auto out : prg.outs) {
+    rgtb << tab(1) << "HWStream<int> " << out << ";" << endl;
+    optimized_streams.push_back(out);
+    rgtb << tab(1) << "HWStream<int> " << "unoptimized_" << out << ";" << endl;
+    unoptimized_streams.push_back("unoptimized_" + out);
+  }
+
+  rgtb << endl << endl;
+
+  rgtb << "unoptimized_" << prg.name << "(" << comma_list(unoptimized_streams) << ");" << endl;
+  rgtb << prg.name << "(" << comma_list(optimized_streams) << ");" << endl;
+  rgtb << tab(1) << "return 0;" << endl;
+  rgtb << "}" << endl;
+  rgtb.close();
+}
+
+void conv_1d_test() {
+  prog prg = conv_1d();
+
+  generate_unoptimized_code(prg);
+  generate_optimized_code(prg);
+  generate_regression_testbench(prg);
+  run_regression_tb(prg);
+
+  //cout << "Program with optimized schedule..." << endl;
+  //auto buffers = build_buffers(prg);
+  //generate_app_code(buffers, prg);
+
+  //int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
+  //assert(res == 0);
+
+  //res = system("./a.out");
+  //assert(res == 0);
 }
 
 isl_schedule_node* print_sched_tp(isl_schedule_node* n, void* user) {
@@ -3063,14 +3136,6 @@ void aha_talk_print_info(prog& prg) {
   cout << "output code for application is in file: " << prg.name << ".cpp" << endl;
 }
 
-void run_tb(prog& prg) {
-  int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
-  assert(res == 0);
-
-  res = system("./a.out");
-  assert(res == 0);
-}
-
 void conv_2d_bc_test() {
 
   prog prg;
@@ -3305,7 +3370,6 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     conv_1d_test();
-    assert(false);
     conv_2d_bc_test();
     conv_2d_rolled_test();
     unsharp_test();

@@ -2,3 +2,6 @@
 *.tcl
 a.out
 *.o
+reduce_*
+warp_and_upsample_*
+blur_and_downsample_*
