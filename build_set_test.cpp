@@ -1676,6 +1676,28 @@ struct op {
     return lp;
   }
 
+  op* store(const pair<string, string>& dst, const pair<string, string>& src) {
+    auto op = add_op("store_" + dst.first + "_from_" + src.first);
+    op->add_load(src.first, src.second);
+    op->add_store(dst.first, dst.second);
+    return op;
+  }
+
+  op* add_op(const pair<string, string>& src, const std::string& func_name, const std::vector<string>& loads) {
+    int n_ops = children.size();
+    auto res = add_op(src.first + "_" + func_name + to_string(n_ops));
+    assert(loads.size() % 2 == 0);
+    vector<string> ops;
+    for (int i = 0; i < loads.size(); i += 2) {
+      auto r = res->add_load(loads[i], loads[i + 1]);
+      ops.push_back(r);
+    }
+    assert(ops.size() == loads.size() / 2);
+    res->add_function(func_name, ops);
+    res->add_store(src.first, src.second);
+    return res;
+  }
+
   op* add_op(const std::string& name) {
     auto fo = new op();
     fo->name = name;
@@ -3050,7 +3072,51 @@ void conv_2d_bc_test() {
 }
 
 void conv_2d_rolled_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "conv_2d_rolled";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["I"] = 32;
+  prg.buffer_port_widths["R"] = 32;
 
+  {
+    auto pc = prg.add_nest("pr", 0, 64, "pc", 0, 64);
+    auto write = pc->add_op("write");
+    write->add_load("in", "pc, pr");
+    write->add_store("I", "pc, pr");
+  }
+
+  {
+    auto pr = prg.add_loop("lr", 0, 64 - 2);
+    auto pc = pr->add_loop("lc", 0, 64 - 2);
+    
+    auto rd = pc->add_op("read_0");
+    rd->add_store("R", "lr, lc");
+    rd->add_function("set_zero");
+
+    auto reduce_inner_loop = rd->add_nest("rr", 0, 3, "rc", 0, 3);
+    auto reduce_inner = reduce_inner_loop->add_op({"R", "lr, lc"}, "inc", {"R", "lr, lc", "I", "lr + rr, lc + rc"});
+  }
+
+  {
+    auto outlp = prg.add_nest("xr", 0, 64 - 2, "xc", 0, 64 - 2);
+    outlp->store({"out", "xc, oc"}, {"R", "xr, oc"});
+  }
+
+  cout << "Program code without optimization..." << endl;
+  prg.unoptimized_codegen();
+
+  umap* opt_sched = prg.optimized_codegen();
+  auto domain = prg.whole_iteration_domain();
+  auto schedmap = its(opt_sched, domain);
+  cout << "Optimized schedule..." << endl;
+  cout << codegen_c(schedmap);
+  
+  auto buffers = build_buffers(prg);
+  generate_app_code(buffers, prg);
+
+  run_tb(prg);
 }
 
 void unsharp_test() {
@@ -3102,7 +3168,6 @@ int main(int argc, char** argv) {
 
     conv_1d_test();
     conv_2d_bc_test();
-    // TODO: Fill this in
     conv_2d_rolled_test();
     // TODO: Fill this in
     unsharp_test();
