@@ -3120,7 +3120,40 @@ void conv_2d_rolled_test() {
 }
 
 void unsharp_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "unsharp";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["I"] = 32;
+  prg.buffer_port_widths["Blur"] = 32;
+  prg.buffer_port_widths["Diff"] = 32;
 
+  prg.add_nest("pr", 0, 64, "pc", 0, 64)->store({"I", "pc, pr"}, {"in", "pc, pr"});
+  vector<string> conv_loads;
+  for (int r = 0; r < 3; r++) {
+    for (int c = 0; c < 3; c++) {
+      conv_loads.push_back("I");
+      conv_loads.push_back("br + " + to_string(r) + ", bc + " + to_string(c));
+    }
+  }
+  prg.add_nest("br", 0, 64 - 2, "bc", 0, 64 - 2)->add_op({"Blur", "br,bc"}, "conv_3x3", conv_loads);
+  prg.add_nest("dr", 0, 64 - 2, "dc", 0, 64 - 2)->add_op({"Diff", "dr, dc"}, "diff", {"I", "dr, dc", "Blur", "dr, dc"});
+  prg.add_nest("xr", 0, 64 - 2, "xc", 0, 64 - 2)->store({"out", "xr, xc"}, {"Diff", "xr, xc"});
+
+  cout << "Program code without optimization..." << endl;
+  prg.unoptimized_codegen();
+
+  umap* opt_sched = prg.optimized_codegen();
+  auto domain = prg.whole_iteration_domain();
+  auto schedmap = its(opt_sched, domain);
+  cout << "Optimized schedule..." << endl;
+  cout << codegen_c(schedmap);
+  
+  auto buffers = build_buffers(prg);
+  generate_app_code(buffers, prg);
+
+  run_tb(prg);
 }
 
 void warp_and_upsample_test() {
@@ -3169,7 +3202,6 @@ int main(int argc, char** argv) {
     conv_1d_test();
     conv_2d_bc_test();
     conv_2d_rolled_test();
-    // TODO: Fill this in
     unsharp_test();
     // TODO: Fill this in
     warp_and_upsample_test();
