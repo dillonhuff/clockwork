@@ -1821,6 +1821,18 @@ struct prog {
   map<string, int> buffer_port_widths;
   string compute_unit_file;
 
+  vector<string> vector_load(const std::string& img, const std::string& rbase, const int ro, const int re,
+      const std::string& cbase, const int co, const int ce) {
+    vector<string> conv_loads;
+    for (int r = ro; r < re; r++) {
+      for (int c = co; c < ce; c++) {
+        conv_loads.push_back(img);
+        conv_loads.push_back(rbase + " + " + to_string(r) + ", " + cbase + " + " + to_string(c));
+      }
+    }
+    return conv_loads;
+  }
+
   loop* add_nest(
       const std::string& x, int x_min, int x_max,
       const std::string& y, int y_min, int y_max) {
@@ -3159,8 +3171,6 @@ void unsharp_test() {
     }
   }
 
-  // Problem here is that conv loads are all added as arguments, but really the result just wants to
-  // bundle all
   prg.add_nest("br", 0, 64 - 2, "bc", 0, 64 - 2)->add_op({"Blur", "br,bc"}, "conv_3_3", conv_loads);
   prg.add_nest("dr", 0, 64 - 2, "dc", 0, 64 - 2)->add_op({"Diff", "dr, dc"}, "diff", {"I", "dr, dc", "Blur", "dr, dc"});
   prg.add_nest("xr", 0, 64 - 2, "xc", 0, 64 - 2)->store({"out", "xr, xc"}, {"Diff", "xr, xc"});
@@ -3186,7 +3196,31 @@ void warp_and_upsample_test() {
   prg.name = "warp_and_upsample";
   prg.add_input("in");
   prg.add_output("out");
+  prg.buffer_port_widths["I"] = 32;
+  prg.buffer_port_widths["warped_0"] = 32;
 
+  prg.add_nest("pr", 0, 64, "pc", 0, 64)->store({"I", "pc, pr"}, {"in", "pc, pr"});
+ 
+  auto loads = prg.vector_load("I", "br", 0, 3, "bc", 0, 3);
+  cout << "# of loads: " << loads.size() << endl;
+  prg.add_nest("br", 0, 64 - 2, "bc", 0, 64 - 2)->add_op({"warped_0", "br,bc"}, "conv_3_3", loads);
+  prg.add_nest("ur", 0, 64 - 2, "kr", 0, 2)->add_nest("uc", 0, 64 - 2, "kc", 0, 2)->
+    add_op({"out", "ur, uc"}, "id", {"warped_0", "ur, uc"});
+
+  cout << "Program code without optimization..." << endl;
+  prg.unoptimized_codegen();
+
+  umap* opt_sched = prg.optimized_codegen();
+  auto domain = prg.whole_iteration_domain();
+  auto schedmap = its(opt_sched, domain);
+
+  cout << "Optimized schedule..." << endl;
+  cout << codegen_c(schedmap);
+  
+  auto buffers = build_buffers(prg);
+  generate_app_code(buffers, prg);
+
+  run_tb(prg);
 }
 
 void blur_and_downsample_test() {
@@ -3237,7 +3271,6 @@ int main(int argc, char** argv) {
     conv_2d_bc_test();
     conv_2d_rolled_test();
     unsharp_test();
-    // TODO: Fill this in
     warp_and_upsample_test();
     // TODO: Fill this in
     blur_and_downsample_test();

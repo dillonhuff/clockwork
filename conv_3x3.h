@@ -2,14 +2,23 @@
 
 #include "hw_classes.h"
 
+template<typename T>
+static inline
+T id(const T& val) {
+  return val;
+}
+
+static inline
 int max_zero(const int& val) {
   return max(val, 0);
 }
 
+static inline
 int diff(int& src, int& a0) {
   return src - a0;
 }
 
+static inline
 int inc(int& src, int& a0) {
   return src + a0;
 }
