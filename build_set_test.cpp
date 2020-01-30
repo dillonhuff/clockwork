@@ -2569,12 +2569,17 @@ prog conv_1d() {
   return prg;
 }
 
-void run_regression_tb(prog& prg) {
+std::string run_regression_tb(prog& prg) {
   int res = system(string("g++ -std=c++11 regression_tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
   assert(res == 0);
 
   res = system("./a.out");
   assert(res == 0);
+
+  ifstream infile("regression_result_" + prg.name + ".txt");
+  std::string str((std::istreambuf_iterator<char>(infile)),
+      std::istreambuf_iterator<char>());
+  return str;
 }
 
 void run_tb(prog& prg) {
@@ -2637,12 +2642,15 @@ void conv_1d_test() {
   auto old_name = prg.name;
   prg.name = "unoptimized_" + old_name;
   generate_regression_testbench(prg);
-  run_regression_tb(prg);
+  string unoptimized_res = run_regression_tb(prg);
   prg.name = old_name;
   
   generate_optimized_code(prg);
   generate_regression_testbench(prg);
-  run_regression_tb(prg);
+  string optimized_res = run_regression_tb(prg);
+
+
+  assert(unoptimized_res == optimized_res);
 
   //cout << "Program with optimized schedule..." << endl;
   //auto buffers = build_buffers(prg);
