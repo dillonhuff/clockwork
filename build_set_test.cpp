@@ -1801,6 +1801,12 @@ struct prog {
 
   loop* add_nest(
       const std::string& x, int x_min, int x_max,
+      const std::string& y, int y_min, int y_max) {
+    return root->add_nest(x, x_min, x_max, y, y_min, y_max);
+  }
+
+  loop* add_nest(
+      const std::string& x, int x_min, int x_max,
       const std::string& y, int y_min, int y_max,
       const std::string& c, int c_min, int c_max) {
     return root->add_nest(x, x_min, x_max, y, y_min, y_max, c, c_min, c_max);
@@ -2988,6 +2994,77 @@ void aha_talk_print_info(prog& prg) {
   cout << "output code for application is in file: " << prg.name << ".cpp" << endl;
 }
 
+void run_tb(prog& prg) {
+  int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+void conv_2d_bc_test() {
+
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "conv_2d_bc";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["I"] = 32;
+
+  {
+    auto pc = prg.add_nest("pr", 0, 64, "pc", 0, 64);
+    auto write = pc->add_op("write");
+    write->add_load("in", "pc, pr");
+    write->add_store("I", "pc, pr");
+  }
+
+  {
+    auto pr = prg.add_loop("lr", 0, 64);
+    auto pc = pr->add_loop("lc", 0, 64);
+    auto rd = pc->add_op("read_0");
+    // Need to load 9 values
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        string c = "min(lc + " + to_string(i) + ", 63)";
+        string r = "min(lr + " + to_string(j) + ", 63)";
+        rd->add_load("I", c + ", " + r);
+      }
+    }
+    rd->add_function("conv_3_3");
+    rd->add_store("out", "lc, lr");
+  }
+
+  cout << "Program code without optimization..." << endl;
+  prg.unoptimized_codegen();
+
+  umap* opt_sched = prg.optimized_codegen();
+  auto domain = prg.whole_iteration_domain();
+  auto schedmap = its(opt_sched, domain);
+  cout << "Optimized schedule..." << endl;
+  cout << codegen_c(schedmap);
+  
+  auto buffers = build_buffers(prg);
+  generate_app_code(buffers, prg);
+
+  run_tb(prg);
+}
+
+void conv_2d_rolled_test() {
+
+}
+
+void unsharp_test() {
+
+}
+
+void warp_and_upsample_test() {
+
+}
+
+void blur_and_downsample_test() {
+
+}
+
 int main(int argc, char** argv) {
 
   if (argc > 1) {
@@ -3023,6 +3100,17 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
 
+    conv_1d_test();
+    conv_2d_bc_test();
+    // TODO: Fill this in
+    conv_2d_rolled_test();
+    // TODO: Fill this in
+    unsharp_test();
+    // TODO: Fill this in
+    warp_and_upsample_test();
+    // TODO: Fill this in
+    blur_and_downsample_test();
+
     synth_reduce_test();
     mobilenet_test();
 
@@ -3030,7 +3118,6 @@ int main(int argc, char** argv) {
     pyramid_2d_test();
     pyramid_test();
 
-    conv_1d_test();
     conv_1d_bc_test();
 
     synth_wire_test();
@@ -3038,11 +3125,19 @@ int main(int argc, char** argv) {
     synth_lb_test();
     synth_upsample_test();
 
-    //mmul_test();
-
   } else {
     assert(false);
   }
+
+  // What do I want to have here?
+  // What do I want to show Steve?
+  //  - 1d blur (done)
+  //  - 2D boundary conditions (repeating)
+  //  - Processing element that is not always ready (blur that is not unrolled)
+  //  - Unsharp (unlike halide to hardware there is no need for manual computation of linebuffer delays)
+  //  - Warp and upsample pyramid
+  //  - Blur and downsample
+  //  - App with PE that processes data over multiple cycles
 
   return 0;
 
