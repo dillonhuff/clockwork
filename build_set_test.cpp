@@ -13,6 +13,11 @@
 using namespace dbhc;
 using namespace std;
 
+string take_until(const std::string& s, const std::string& delim) {
+  std::size_t found = s.find_first_of(delim);
+  return s.substr(0, found);
+}
+
 bool is_number(string s) { 
   for (int i = 0; i < s.length(); i++)  {
     if (isdigit(s[i]) == false) {
@@ -2040,6 +2045,31 @@ struct prog {
     return m;
   }
 
+  umap* consumer_map(const std::string& buf_name) {
+    auto ivars = iter_vars();
+    auto doms = domains();
+
+    auto ops = root->all_ops();
+    auto m = isl_union_map_read_from_str(ctx, "{}");
+    for (auto op : ops) {
+      auto vars = map_find(op, ivars);
+      string ivar_str = sep_list(vars, "[", "]", ", ");
+      auto dom = map_find(op, doms);
+
+      umap* pmap = isl_union_map_read_from_str(ctx, "{}");
+      for (auto p : op->consumes) {
+        string buf = take_until(p, "[");
+        if (buf == buf_name) {
+          umap* vmap =
+            its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
+          pmap = unn(pmap, vmap);
+        }
+      }
+      m = unn(m, pmap);
+    }
+    return m;
+  }
+
   umap* consumer_map() {
     auto ivars = iter_vars();
     auto doms = domains();
@@ -2047,14 +2077,12 @@ struct prog {
     auto ops = root->all_ops();
     auto m = isl_union_map_read_from_str(ctx, "{}");
     for (auto op : ops) {
-      //cout << op->name << endl;
       auto vars = map_find(op, ivars);
       string ivar_str = sep_list(vars, "[", "]", ", ");
       auto dom = map_find(op, doms);
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
       for (auto p : op->consumes) {
-        //cout << "\tConsumes: " << p << endl;
         umap* vmap =
           its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
         pmap = unn(pmap, vmap);
@@ -2613,8 +2641,19 @@ void generate_regression_testbench(prog& prg) {
 
   rgtb << tab(1) << "// Loading input data" << endl;
   for (auto in : prg.ins) {
+    auto cmap = prg.consumer_map("in");
+    //vector<pair<isl_set*, isl_qpolynomial*> >
+    //get_pieces(isl_union_pw_qpolynomial* p) {
+    auto read_map = inv(cmap);
+    
     // TODO: Compute this from the program
     int num_pushes = 10;
+    cout << "Read map: " << str(read_map) << endl;
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    cout << "# of reads from " << in << " = " << str(range_card) << endl;
+    assert(false);
+
     rgtb << tab(1) << "for (int i = 0; i < 10; i++) {" << endl;
     rgtb << tab(2) << in << ".write(i);" << endl;
     rgtb << tab(1) << "}" << endl << endl;

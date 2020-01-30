@@ -616,6 +616,10 @@ isl_union_map* dot(isl_union_map* const m0, isl_union_map* const m1) {
   return isl_union_map_apply_range(cpy(m0), cpy(m1));
 }
 
+isl_union_pw_qpolynomial* card(isl_union_set* const m) {
+  return isl_union_set_card(cpy(m));
+}
+
 isl_union_pw_qpolynomial* card(isl_union_map* const m) {
   return isl_union_map_card(cpy(m));
 }
@@ -626,6 +630,10 @@ isl_pw_qpolynomial* card(isl_map* const m) {
 
 isl_union_set* domain(isl_union_map* const m) {
   return isl_union_map_domain(m);
+}
+
+isl_union_set* range(isl_union_map* const m) {
+  return isl_union_map_range(cpy(m));
 }
 
 isl_set* range(isl_map* const m) {
