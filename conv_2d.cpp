@@ -231,11 +231,11 @@ inline int I_read_0_9_select(I_write_0_cache& I_write_0_delay
 // Bundles...
 // I_write_0
 //	I_write_0
-inline void I_I_write_0_bundle_action(int& /* width = 32*/I_write_0, I_write_0_cache& I_write_0_delay) {
+inline void I_I_write_0_bundle_write(int& /* width = 32*/I_write_0, I_write_0_cache& I_write_0_delay) {
 	I_write_0_write(I_write_0, I_write_0_delay);
 }
 
-// read_0
+// read_0_read
 //	I_read_0_3
 //	I_read_0_4
 //	I_read_0_5
@@ -245,7 +245,7 @@ inline void I_I_write_0_bundle_action(int& /* width = 32*/I_write_0, I_write_0_c
 //	I_read_0_9
 //	I_read_0_10
 //	I_read_0_11
-inline hw_uint<288> I_read_0_bundle_action(I_write_0_cache& I_write_0_delay, int root, int lr, int lc) {
+inline hw_uint<288> I_read_0_read_bundle_read(I_write_0_cache& I_write_0_delay, int root, int lr, int lc) {
 	hw_uint<288> result;
 	int I_read_0_3_res = I_read_0_3_select(I_write_0_delay, root, lr, lc);
 	set_at<0, 288>(result, I_read_0_3_res);
@@ -268,10 +268,10 @@ inline hw_uint<288> I_read_0_bundle_action(I_write_0_cache& I_write_0_delay, int
 	return result;
 }
 
-// write
+// write_write
 //	I_write_0
-inline void I_write_bundle_action(int& /* width = 32*/write, I_write_0_cache& I_write_0_delay) {
-	I_write_0_write(write, I_write_0_delay);
+inline void I_write_write_bundle_write(int& /* width = 32*/write_write, I_write_0_cache& I_write_0_delay) {
+	I_write_0_write(write_write, I_write_0_delay);
 }
 
 
@@ -281,16 +281,19 @@ inline void I_write_bundle_action(int& /* width = 32*/write, I_write_0_cache& I_
 // Operation logic
 inline void write(HWStream<int>& in, I_write_0_cache& I_write_0, int root, int pr, int pc) {
 	// Consume: in
-	auto in_val = in.read();
+	auto in_pc_c__pr_value = in.read();
 	// Produce: I
-	I_write_bundle_action(in_val, I_write_0);
+	// Buffer: I, Op: write
+	// Possible ports...
+		// I_write_0
+	I_write_write_bundle_write(in_pc_c__pr_value, I_write_0 /* output src_delay */);
 }
 
 inline void read_0(I_write_0_cache& I_write_0, HWStream<int>& out, int root, int lr, int lc) {
 	// Consume: I
-	auto I_val = I_read_0_bundle_action(I_write_0, root, lr, lc);
+	auto I_lc__p__0_c__lr__p__0_value = I_read_0_read_bundle_read(I_write_0/* source_delay */, root, lr, lc);
 	// Apply function: conv_3_3
-	auto compute_result = conv_3_3(I_val);
+	auto compute_result = conv_3_3(I_lc__p__0_c__lr__p__0_value);
 	// Produce: out
 	out.write(compute_result);
 }

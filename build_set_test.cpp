@@ -1501,7 +1501,7 @@ void synth_wire_test() {
   
   generate_hls_code(buf);
 
-  int res = system("clang++ tb_shift_reg.cpp shift_reg.cpp");
+  int res = system("clang++ -std=c++11 tb_shift_reg.cpp shift_reg.cpp");
   assert(res == 0);
 
   res = system("./a.out");
@@ -1541,7 +1541,7 @@ void synth_lb_test() {
 
   generate_hls_code(buf);
 
-  int res = system("clang++ tb_linebuffer_3x3.cpp linebuffer_3x3.cpp");
+  int res = system("clang++ -std=c++11 tb_linebuffer_3x3.cpp linebuffer_3x3.cpp");
   assert(res == 0);
 
   res = system("./a.out");
@@ -3023,12 +3023,13 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
 
-    reduce_1d_test();
+    synth_reduce_test();
     mobilenet_test();
+
+    reduce_1d_test();
     pyramid_2d_test();
     pyramid_test();
 
-    synth_reduce_test();
     conv_1d_test();
     conv_1d_bc_test();
 
