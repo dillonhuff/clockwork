@@ -2267,7 +2267,28 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
         if (op->func_args.size() == 0) {
           conv_out << "\tauto compute_result = " << op->func << "(" << res << ");" << endl;
         } else {
-          conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(op->func_args) << ");" << endl;
+          vector<string> arg_list;
+          set<string> buffers_seen;
+          for (auto arg : op->func_args) {
+            conv_out << "\t// Arg: " << arg << endl;
+            //conv_out << "\t// Consumed value names..." << endl;
+            string arg_buf = "";
+            for (auto v : op->consumed_value_names) {
+              if (v.second == arg) {
+                arg_buf = v.first.first;
+                break;
+              }
+              //conv_out << "\t// " << v.first.first << ", " << v.first.second << " -> " << v.second << endl;
+            }
+            assert(arg_buf != "");
+            conv_out << "\t// Arg buf: " << arg_buf << endl;
+            if (!elem(arg_buf, buffers_seen)) {
+              arg_list.push_back(arg);
+              buffers_seen.insert(arg_buf);
+            }
+          }
+          //conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(op->func_args) << ");" << endl;
+          conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(arg_list) << ");" << endl;
         }
         res = "compute_result";
       }
@@ -3140,7 +3161,7 @@ void unsharp_test() {
 
   // Problem here is that conv loads are all added as arguments, but really the result just wants to
   // bundle all
-  prg.add_nest("br", 0, 64 - 2, "bc", 0, 64 - 2)->add_op({"Blur", "br,bc"}, "conv_3x3", conv_loads);
+  prg.add_nest("br", 0, 64 - 2, "bc", 0, 64 - 2)->add_op({"Blur", "br,bc"}, "conv_3_3", conv_loads);
   prg.add_nest("dr", 0, 64 - 2, "dc", 0, 64 - 2)->add_op({"Diff", "dr, dc"}, "diff", {"I", "dr, dc", "Blur", "dr, dc"});
   prg.add_nest("xr", 0, 64 - 2, "xc", 0, 64 - 2)->store({"out", "xr, xc"}, {"Diff", "xr, xc"});
 
@@ -3160,10 +3181,20 @@ void unsharp_test() {
 }
 
 void warp_and_upsample_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "warp_and_upsample";
+  prg.add_input("in");
+  prg.add_output("out");
 
 }
 
 void blur_and_downsample_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "blur_and_downsample";
+  prg.add_input("in");
+  prg.add_output("out");
 
 }
 
@@ -3231,8 +3262,6 @@ int main(int argc, char** argv) {
 
   // What do I want to have here?
   // What do I want to show Steve?
-  //  - 1d blur (done)
-  //  - 2D boundary conditions (repeating)
   //  - Processing element that is not always ready (blur that is not unrolled)
   //  - Unsharp (unlike halide to hardware there is no need for manual computation of linebuffer delays)
   //  - Warp and upsample pyramid
