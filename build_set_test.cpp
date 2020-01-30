@@ -3229,7 +3229,30 @@ void blur_and_downsample_test() {
   prg.name = "blur_and_downsample";
   prg.add_input("in");
   prg.add_output("out");
+  prg.buffer_port_widths["I"] = 32;
+  prg.buffer_port_widths["blurred_0"] = 32;
 
+  prg.add_nest("pr", 0, 64, "pc", 0, 64)->store({"I", "pc, pr"}, {"in", "pc, pr"});
+ 
+  auto loads = prg.vector_load("I", "br", 0, 3, "bc", 0, 3);
+  prg.add_nest("br", 0, 64 - 2, "bc", 0, 64 - 2)->add_op({"blurred_0", "br,bc"}, "conv_3_3", loads);
+  prg.add_nest("dr", 0, (64 - 2) / 2, "dc", 0, (64 - 2) / 2)->
+    add_op({"out", "dr, dc"}, "id", {"blurred_0", "2*dr, 2*dc"});
+
+  cout << "Program code without optimization..." << endl;
+  prg.unoptimized_codegen();
+
+  umap* opt_sched = prg.optimized_codegen();
+  auto domain = prg.whole_iteration_domain();
+  auto schedmap = its(opt_sched, domain);
+
+  cout << "Optimized schedule..." << endl;
+  cout << codegen_c(schedmap);
+  
+  auto buffers = build_buffers(prg);
+  generate_app_code(buffers, prg);
+
+  run_tb(prg);
 }
 
 int main(int argc, char** argv) {
