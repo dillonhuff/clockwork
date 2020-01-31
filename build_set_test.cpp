@@ -1729,6 +1729,8 @@ struct op {
   }
 
   op* add_loop(const std::string& name, const int l, const int u) {
+    assert(is_loop);
+
     auto lp = new op();
     lp->name = name;
     lp->ctx = ctx;
