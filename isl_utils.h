@@ -70,6 +70,10 @@ isl_union_map* to_umap(isl_map* const m) {
   return isl_union_map_from_map(m);
 }
 
+isl_ctx* ctx(isl_constraint* const m) {
+  return isl_constraint_get_ctx(m);
+}
+
 isl_ctx* ctx(isl_basic_set* const m) {
   return isl_basic_set_get_ctx(m);
 }
@@ -117,6 +121,10 @@ isl_ctx* ctx(isl_pw_qpolynomial_fold* const m) {
 
 isl_ctx* ctx(isl_pw_qpolynomial* const m) {
   return isl_pw_qpolynomial_get_ctx(m);
+}
+
+isl_constraint* cpy(isl_constraint* const s) {
+  return isl_constraint_copy(s);
 }
 
 isl_basic_map* cpy(isl_basic_map* const s) {
@@ -225,6 +233,19 @@ void print(struct isl_ctx* const ctx, isl_qpolynomial* const bset) {
   printf("%s\n", rs);
   isl_printer_free(p);
   free(rs);
+}
+
+std::string str(isl_constraint* const bset) {
+  auto context = ctx(bset);
+  isl_printer *p;
+  p = isl_printer_to_str(context);
+  p = isl_printer_print_constraint(p, cpy(bset));
+
+  char* rs = isl_printer_get_str(p);
+  std::string r(rs);
+  isl_printer_free(p);
+  free(rs);
+  return r;
 }
 
 std::string str(isl_space* const bset) {

@@ -372,42 +372,60 @@ std::string ReplaceString(std::string subject, const std::string& search,
 
 string codegen_c_constraint(isl_constraint* c) {
 
+  vector<string> non_zero_coeffs;
   string resstr;
   stringstream ss(resstr);
   isl_space* s = get_space(c);
   if (isl_space_is_map(s)) {
-    int ndims = isl_space_dim(s, isl_dim_in);
-    for (int i = 0; i < ndims; i++) {
-      auto v = isl_constraint_get_coefficient_val(c, isl_dim_in, i);
-      if (!isl_val_is_zero(v)) {
-        ss << str(isl_constraint_get_coefficient_val(c, isl_dim_in, i)) << "*" << str(isl_space_get_dim_id(s, isl_dim_out, i)) << " + ";
-      }
-    }
-    {
-      int ndims = isl_space_dim(s, isl_dim_out);
-      for (int i = 0; i < ndims; i++) {
-        auto v = isl_constraint_get_coefficient_val(c, isl_dim_out, i);
-        if (!isl_val_is_zero(v)) {
-          ss << str(isl_constraint_get_coefficient_val(c, isl_dim_out, i)) << "*" << str(isl_space_get_dim_id(s, isl_dim_out, i)) << " + ";
-        }
-      }
-    }
+    assert(false);
+    //int ndims = isl_space_dim(s, isl_dim_in);
+    //for (int i = 0; i < ndims; i++) {
+      //auto v = isl_constraint_get_coefficient_val(c, isl_dim_in, i);
+      //if (!isl_val_is_zero(v)) {
+        //ss << str(isl_constraint_get_coefficient_val(c, isl_dim_in, i)) << "*" << str(isl_space_get_dim_id(s, isl_dim_out, i));
+        //if (i < ndims - 1) {
+          //ss << " + ";
+        //}
+      //}
+
+    //}
+    //{
+      //int ndims = isl_space_dim(s, isl_dim_out);
+      //for (int i = 0; i < ndims; i++) {
+        //auto v = isl_constraint_get_coefficient_val(c, isl_dim_out, i);
+        //if (!isl_val_is_zero(v)) {
+          //ss << str(isl_constraint_get_coefficient_val(c, isl_dim_out, i)) << "*" << str(isl_space_get_dim_id(s, isl_dim_out, i));
+          //if (i < ndims - 1) {
+            //ss << " + ";
+          //}
+        //}
+      //}
+    //}
   } else {
     assert(isl_space_is_set(s));
     for (int i = 0; i < num_dims(s); i++) {
       auto v = isl_constraint_get_coefficient_val(c, isl_dim_set, i);
       if (!isl_val_is_zero(v)) {
-        ss << str(isl_constraint_get_coefficient_val(c, isl_dim_set, i)) << "*" << str(isl_space_get_dim_id(s, isl_dim_set, i)) << " + ";
-      }
+        non_zero_coeffs.push_back(
+            str(isl_constraint_get_coefficient_val(c, isl_dim_set, i)) + "*" + str(isl_space_get_dim_id(s, isl_dim_set, i)));
+            //"/* " + str(isl_constraint_get_div(c, i)) + " */");
+      } 
     }
   }
 
-  ss << str(isl_constraint_get_constant_val(c)) << " ";
+  ss << "/* constraint: " << str(c) << " */" << endl;
+  ss << sep_list(non_zero_coeffs, "", "", " + ");
+
+  auto cv = isl_constraint_get_constant_val(c);
+  if (!isl_val_is_zero(cv)) {
+    ss << " + " << str(isl_constraint_get_constant_val(c));
+  }
   if (isl_constraint_is_equality(c)) {
     ss << " == " << "0";
   } else {
     ss << " >= " << "0";
   }
+
   return ss.str();
 }
 
@@ -1001,6 +1019,16 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
           out << "\tif (" + k_var + ") { return value_"+ inpt + "; }\n";
         }
       }
+      vector<string> offset_printouts;
+      isl_space* s = get_space(buf.domain.at(outpt));
+      assert(isl_space_is_set(s));
+      for (int i = 0; i < num_dims(s); i++) {
+        string name = 
+          str(isl_space_get_dim_id(s, isl_dim_set, i));
+        offset_printouts.push_back("\"" + name + " = \" << " + name + " ");
+      }
+
+      out << "\tcout << \"Error: Unsupported offsets: \" << " << sep_list(offset_printouts, "", "", " << ") << " << endl;" << endl;
       out << "\tassert(false);\n\treturn 0;\n";
     }
 
@@ -3028,6 +3056,40 @@ void reduce_1d_test() {
 
 }
 
+void reduce_2d_test() {
+
+  prog prg;
+  prg.compute_unit_file = "mobilenet_compute.h";
+  prg.name = "reduce_2d";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["I"] = 32;
+  prg.buffer_port_widths["tmp"] = 32;
+
+  auto read_in = prg.add_nest("rd_r", 0, 3, "rd_c", 0, 3)->add_op({"I", "rd_r, rd_c"}, "id", {"in", "rd_r, rd_c"});
+
+  {
+    auto init = prg.add_op("set_z");
+    init->add_function("set_zero");
+    init->add_store("tmp", "0");
+
+    auto accum_loop = prg.add_nest("ar", 0, 3, "ac", 0, 3);
+    auto accum = accum_loop->add_op("accumulate");
+    auto tmp = accum->add_load("tmp", "0");
+    auto next = accum->add_load("I", "ar, ac");
+    accum->add_function("inc", {tmp, next});
+    accum->add_store("tmp", "0");
+
+    auto write_out = prg.add_op("output");
+    write_out->add_load("tmp", "0");
+    write_out->add_store("out", "0");
+  }
+
+  regression_test(prg);
+}
+
 void mobilenet_test() {
 
   prog prg;
@@ -3314,7 +3376,7 @@ void conv_2d_rolled_test() {
 
   {
     auto outlp = prg.add_nest("xr", 0, 64 - 2, "xc", 0, 64 - 2);
-    outlp->store({"out", "xc, oc"}, {"R", "xr, oc"});
+    outlp->store({"out", "xr, xc"}, {"R", "xr, xc"});
   }
 
   regression_test(prg);
@@ -3330,7 +3392,7 @@ void unsharp_test() {
   prg.buffer_port_widths["Blur"] = 32;
   prg.buffer_port_widths["Diff"] = 32;
 
-  prg.add_nest("pr", 0, 64, "pc", 0, 64)->store({"I", "pc, pr"}, {"in", "pc, pr"});
+  prg.add_nest("pr", 0, 64, "pc", 0, 64)->store({"I", "pr, pc"}, {"in", "pr, pc"});
   vector<string> conv_loads;
   for (int r = 0; r < 3; r++) {
     for (int c = 0; c < 3; c++) {
@@ -3355,7 +3417,7 @@ void warp_and_upsample_test() {
   prg.buffer_port_widths["I"] = 32;
   prg.buffer_port_widths["warped_0"] = 32;
 
-  prg.add_nest("pr", 0, 64, "pc", 0, 64)->store({"I", "pc, pr"}, {"in", "pc, pr"});
+  prg.add_nest("pr", 0, 64, "pc", 0, 64)->store({"I", "pr, pc"}, {"in", "pr, pc"});
  
   auto loads = prg.vector_load("I", "br", 0, 3, "bc", 0, 3);
   cout << "# of loads: " << loads.size() << endl;
@@ -3375,7 +3437,7 @@ void blur_and_downsample_test() {
   prg.buffer_port_widths["I"] = 32;
   prg.buffer_port_widths["blurred_0"] = 32;
 
-  prg.add_nest("pr", 0, 64, "pc", 0, 64)->store({"I", "pc, pr"}, {"in", "pc, pr"});
+  prg.add_nest("pr", 0, 64, "pc", 0, 64)->store({"I", "pr, pc"}, {"in", "pr, pc"});
  
   auto loads = prg.vector_load("I", "br", 0, 3, "bc", 0, 3);
   prg.add_nest("br", 0, 64 - 2, "bc", 0, 64 - 2)->add_op({"blurred_0", "br,bc"}, "conv_3_3", loads);
@@ -3420,17 +3482,18 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
 
+    reduce_1d_test();
+    reduce_2d_test();
     conv_1d_test();
     conv_2d_bc_test();
     //conv_2d_rolled_test();
-    //unsharp_test();
-    //warp_and_upsample_test();
-    //blur_and_downsample_test();
+    unsharp_test();
+    warp_and_upsample_test();
+    blur_and_downsample_test();
 
     synth_reduce_test();
     mobilenet_test();
 
-    reduce_1d_test();
     pyramid_2d_test();
     pyramid_test();
 

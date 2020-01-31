@@ -2,6 +2,12 @@
 
 #include "hw_classes.h"
 
+template<typename T>
+static inline
+T id(const T& v) {
+  return v;
+}
+
 int max_zero(const int& val) {
   return max(val, 0);
 }
