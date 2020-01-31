@@ -13,15 +13,15 @@ int max_zero(const int& val) {
 }
 
 int inc(int& src, int& a0) {
-  cout << "src = " << src << endl;
-  cout << "a0  = " << a0 << endl;
+  //cout << "src = " << src << endl;
+  //cout << "a0  = " << a0 << endl;
   return src + a0;
 }
 
 int fma(int& src, int& a0, int& a1) {
-  cout << "src = " << src << endl;
-  cout << "a0  = " << a0 << endl;
-  cout << "a1  = " << a1 << endl;
+  //cout << "src = " << src << endl;
+  //cout << "a0  = " << a0 << endl;
+  //cout << "a1  = " << a1 << endl;
   return src + a0*a1;
 }
 
