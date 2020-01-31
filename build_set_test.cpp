@@ -349,15 +349,6 @@ int check_value_dd(UBuffer& buf, const std::string& read_port, const std::string
   
   assert(false);
   return 0;
-  //if (s == 0) {
-    //return 0;
-  //} else {
-    //vector<int> nums;
-    //void* user = (void*) &nums;
-    //isl_pw_qpolynomial_foreach_lifted_piece(c, get_const, user);
-    ////assert(nums.size() == 1);
-    //return nums[0];
-  //}
 }
 
 std::string ReplaceString(std::string subject, const std::string& search,
@@ -429,8 +420,14 @@ string codegen_c_constraint(isl_constraint* c) {
   return ss.str();
 }
 
-isl_stat codegen_constraint(isl_constraint* c, void* user) {
+isl_stat collect_constraint(isl_constraint* c, void* user) {
+  vector<isl_constraint*>& code_holder = *((vector<isl_constraint*>*) user);
+  string cc = codegen_c_constraint(c);
+  code_holder.push_back(cpy(c));
+  return isl_stat_ok;
+}
 
+isl_stat codegen_constraint(isl_constraint* c, void* user) {
   // TODO: Update to get DIV!!!
   vector<string>& code_holder = *((vector<string>*) user);
   string cc = codegen_c_constraint(c);
@@ -438,23 +435,8 @@ isl_stat codegen_constraint(isl_constraint* c, void* user) {
   return isl_stat_ok;
 }
 
-isl_stat bset_codegen_c(isl_basic_set* m, void* user) {
-  //auto context = ctx(m);
-  //isl_printer *p;
-  //p = isl_printer_to_str(context);
-  //p = isl_printer_set_output_format(p, ISL_FORMAT_C);
-  //p = isl_printer_print_basic_set(p, cpy(m));
-
-  //char* rs = isl_printer_get_str(p);
-  //std::string r(rs);
-  //isl_printer_free(p);
-  //free(rs);
-  //vector<string>& code_holder = *((vector<string>*) user);
-  //code_holder.push_back(r);
-
-  //return isl_stat_ok;
-
-  isl_basic_set_foreach_constraint(m, codegen_constraint, user);
+isl_stat bset_collect_constraints(isl_basic_set* m, void* user) {
+  isl_basic_set_foreach_constraint(m, collect_constraint, user);
   return isl_stat_ok;
 }
 
@@ -465,9 +447,14 @@ isl_stat bmap_codegen_c(isl_basic_map* m, void* user) {
 }
 
 std::string codegen_c(isl_set* s) {
-  vector<string> code_holder;
-  isl_set_foreach_basic_set(s, bset_codegen_c, &code_holder);
-  return sep_list(code_holder, "(", ")", " && ");
+  vector<isl_constraint*> code_holder;
+  isl_set_foreach_basic_set(s, bset_collect_constraints, &code_holder);
+  vector<string> set_strings;
+  for (auto hc : code_holder) {
+    set_strings.push_back(codegen_c_constraint(hc));
+  }
+  return sep_list(set_strings, "(", ")", " && ");
+  //return sep_list(code_holder, "(", ")", " && ");
 }
 
 isl_stat return_piece(isl_set* domain, isl_qpolynomial* val, void* user) {
@@ -779,7 +766,6 @@ void generate_vivado_tcl(UBuffer& buf) {
 }
 
 void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer& buf, const int maxdelay) {
-  //cout << "Creating structs for " << buf.name << endl;
   out << "struct " + inpt + "_cache {" << endl;
   out << "\t// Capacity: " << maxdelay + 1 << endl;
   vector<int> read_delays{0};
@@ -788,25 +774,13 @@ void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer&
     auto qpd = compute_dd_bound(buf, outpt, inpt);
     int lb = compute_dd_lower_bound(buf, outpt, inpt);
 
-    //cout << "qpd = " << qpd << endl;
-    //cout << "lb  = " << lb << endl;
-
-    //assert(qpd == lb);
-
-    //read_delays.push_back(qpd);
     for (int i = lb; i < qpd + 1; i++) {
       read_delays.push_back(i);
     }
 
-    //out << "\t// DD expr = " << qpd << endl;
   }
 
   read_delays = sort_unique(read_delays);
-
-  //out << "\t// Peek points" << endl;
-  //for (auto dd : read_delays) {
-    //out << "\t// DD = " << dd << endl;
-  //}
 
   vector<int> break_points;
   if (read_delays.size() == 1) {
@@ -820,11 +794,6 @@ void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer&
     }
   }
   read_delays = break_points;
-
-  //out << "\t// Break points in parition" << endl;
-  //for (auto dd : read_delays) {
-    //out << "\t// BP = " << dd << endl;
-  //}
 
   vector<string> partitions;
   vector<int> end_inds;
@@ -956,9 +925,6 @@ umap* get_lexmax_events(const std::string& inpt, const std::string& outpt, UBuff
 
     auto lex_max_events =
       dot(lexmax(dot(src_map, sched)), time_to_event);
-
-    // Maybe: Get the schedule position, take the lexmax and then get it back?source map and then?? Creating more code?
-    //out << "// Select if: " << str(src_map) << endl;
 
     return lex_max_events;
 }
