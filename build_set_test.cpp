@@ -645,6 +645,22 @@ map<string, string> umap_codegen_c(umap* const um) {
   return cm;
 }
 
+int int_upper_bound(isl_union_pw_qpolynomial* range_card) {
+
+  int tight;
+  int* b = &tight;
+  auto bound = isl_union_pw_qpolynomial_bound(cpy(range_card), isl_fold_max, b);
+  auto folds  = get_polynomial_folds(bound);
+  int bint;
+  if (folds.size() == 0) {
+    bint = 0;
+  } else {
+    assert(folds.size() == 1);
+    bint = stoi(codegen_c(folds[0]));
+  }
+  return bint;
+}
+
 isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
   auto ctx = buf.ctx;
   isl_union_map* sched = buf.schedule.at(write_port);
@@ -1302,7 +1318,7 @@ void generate_hls_code(UBuffer& buf) {
   out << code_string << endl;
   out << "}" << endl;
 
-  cout << "Header file generation..." << endl;
+  //cout << "Header file generation..." << endl;
   ofstream of(buf.name + ".h");
   of << "#pragma once\n\n" << endl;
   of << "#include \"hw_classes.h\"" << endl << endl;
@@ -2045,6 +2061,31 @@ struct prog {
     return m;
   }
 
+  umap* producer_map(const std::string& buf_name) {
+    auto ivars = iter_vars();
+    auto doms = domains();
+
+    auto ops = root->all_ops();
+    auto m = isl_union_map_read_from_str(ctx, "{}");
+    for (auto op : ops) {
+      auto vars = map_find(op, ivars);
+      string ivar_str = sep_list(vars, "[", "]", ", ");
+      auto dom = map_find(op, doms);
+
+      umap* pmap = isl_union_map_read_from_str(ctx, "{}");
+      for (auto p : op->produces) {
+        string buf = take_until(p, "[");
+        if (buf == buf_name) {
+          umap* vmap =
+            its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
+          pmap = unn(pmap, vmap);
+        }
+      }
+      m = unn(m, pmap);
+    }
+    return m;
+  }
+
   umap* consumer_map(const std::string& buf_name) {
     auto ivars = iter_vars();
     auto doms = domains();
@@ -2641,20 +2682,13 @@ void generate_regression_testbench(prog& prg) {
 
   rgtb << tab(1) << "// Loading input data" << endl;
   for (auto in : prg.ins) {
-    auto cmap = prg.consumer_map("in");
-    //vector<pair<isl_set*, isl_qpolynomial*> >
-    //get_pieces(isl_union_pw_qpolynomial* p) {
+    auto cmap = prg.consumer_map(in);
     auto read_map = inv(cmap);
-    
-    // TODO: Compute this from the program
-    int num_pushes = 10;
-    cout << "Read map: " << str(read_map) << endl;
     auto rng = range(read_map);
     auto range_card = card(rng);
-    cout << "# of reads from " << in << " = " << str(range_card) << endl;
-    assert(false);
+    int num_pushes = int_upper_bound(range_card);
 
-    rgtb << tab(1) << "for (int i = 0; i < 10; i++) {" << endl;
+    rgtb << tab(1) << "for (int i = 0; i < " << num_pushes << "; i++) {" << endl;
     rgtb << tab(2) << in << ".write(i);" << endl;
     rgtb << tab(1) << "}" << endl << endl;
   }
@@ -2662,7 +2696,11 @@ void generate_regression_testbench(prog& prg) {
 
   for (auto in : prg.outs) {
     // TODO: Compute this from the program
-    int num_pops = 8;
+    auto cmap = prg.producer_map(in);
+    auto read_map = inv(cmap);
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    int num_pops = int_upper_bound(range_card);
     rgtb << tab(1) << "for (int i = 0; i < " << num_pops << "; i++) {" << endl;
     rgtb << tab(2) << "int actual = " << in << ".read();" << endl;
     rgtb << tab(2) << "fout << actual << endl;" << endl;
