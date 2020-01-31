@@ -988,6 +988,8 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
           out << "//\tNo key for: " << inpt << endl;
         }
       }
+
+      // Error printouts
       vector<string> offset_printouts;
       isl_space* s = get_space(buf.domain.at(outpt));
       assert(isl_space_is_set(s));
@@ -1000,15 +1002,11 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
       out << "\tcout << \"Error: Unsupported offsets: \" << " << sep_list(offset_printouts, "", "", " << ") << " << endl;" << endl;
       out << "\tassert(false);\n\treturn 0;\n";
     } else {
-      //for (auto e : ms) {
-        //out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
-      //}
       for (auto inpt : buf.get_in_ports()) {
         auto in_actions = buf.domain.at(inpt);
         auto act_dom = 
           domain(its_range(lex_max_events, to_uset(in_actions)));
-        cout << tab(1) << "lex_max_events from " << inpt << " = " << str(act_dom) << endl;
-        
+
         if (contains_key(inpt, ms)) {
           out << "\tbool select_" << inpt << " = " << codegen_c(act_dom) << ";" << endl;
           string delay_expr = evaluate_dd(buf, outpt, inpt);
