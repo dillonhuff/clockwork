@@ -904,10 +904,14 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
   return maxdelay;
 }
 
-void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
-  string inpt = buf.get_in_port();
+struct CodegenOptions {
+  bool internal;
+};
 
-  //cout << "Computing maxdelay..." << endl;
+void generate_code_prefix(CodegenOptions& options,
+    std::ostream& out, UBuffer& buf) {
+
+  string inpt = buf.get_in_port();
   int maxdelay = compute_max_dd(buf, inpt);
   out << "#include \"hw_classes.h\"" << endl << endl;
   for (auto inpt : buf.get_in_ports()) {
@@ -916,10 +920,27 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
 
   out << endl << endl;
   for (auto inpt : buf.get_in_ports()) {
-    out << "inline void " << inpt << "_write(" << buf.port_type_string(inpt) + "& " << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
-    out << "\t" + inpt + "_delay.push(" + inpt + ");" << endl;
-    out << "}" << endl << endl;
+    out << "inline void " << inpt << "_write(";
+    if (options.internal) {
+      out << buf.port_type_string(inpt) + "& ";
+      out << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
+      out << "\t" + inpt + "_delay.push(" + inpt + ");" << endl;
+      out << "}" << endl << endl;
+    } else {
+      out << "inline void " << inpt << "_write(" << "InputStream<int>& " << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
+      out << "\tint " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);" << endl;
+      out << "}" << endl << endl;
+    }
   }
+
+}
+
+void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
+  string inpt = buf.get_in_port();
+
+  CodegenOptions options;
+  options.internal = true;
+  generate_code_prefix(options, out, buf);
 
   for (auto outpt : buf.get_out_ports()) {
     umap* src_map = nullptr;
@@ -1011,7 +1032,6 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
             k_var = "select_" + k.first;
           }
         }
-        //if (contains_key(inpt, ms)) {
         if (found_key) {
           assert(k_var != "");
           string delay_expr = evaluate_dd(buf, outpt, inpt);
@@ -1095,29 +1115,13 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
   out << endl << endl;
 
 }
+
 void generate_hls_code(std::ostream& out, UBuffer& buf) {
   string inpt = buf.get_in_port();
 
-  //cout << "Computing maxdelay..." << endl;
-
-  int maxdelay = 0;
-  for (auto outpt : buf.get_out_ports()) {
-    int r0 = compute_dd_bound(buf, outpt, inpt);
-    if (r0 > maxdelay) {
-      maxdelay = r0;
-    }
-  }
-  out << "#include \"hw_classes.h\"" << endl << endl;
-  for (auto inpt : buf.get_in_ports()) {
-    generate_memory_struct(out, inpt, buf, maxdelay);
-  }
-
-  out << endl << endl;
-  for (auto inpt : buf.get_in_ports()) {
-    out << "inline void " << inpt << "_write(" << "InputStream<int>& " << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
-    out << "\tint " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);" << endl;
-    out << "}" << endl << endl;
-  }
+  CodegenOptions options;
+  options.internal = true;
+  generate_code_prefix(options, out, buf);
 
   for (auto outpt : buf.get_out_ports()) {
     umap* src_map = nullptr;
@@ -1239,9 +1243,6 @@ void generate_hls_code(std::ostream& out, UBuffer& buf) {
       for (auto p : b.second) {
         out << "\tint " << p << "_res = " << p << "_select(" << arg_string << ");" << endl;
         out << "\tset_at<" << offset << ", " << buf.port_bundle_width(b.first) << ">(result, " << p << "_res" << ");" << endl;
-        //out << "\tset_at<" << offset << ">(result, " << p << "_res" << ");" << endl;
-        //out << "\tset_at<" << offset << ", " << buf.port_widths << ">(result, " << p << "_res" << ");" << endl;
-        //out << "\tset_at(result, " << offset << ", " << p << "_res" << ");" << endl;
         offset += buf.port_width(p);
       }
       out << "\treturn result;" << endl;
@@ -3485,6 +3486,7 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     reduce_1d_test();
+    synth_reduce_test();
     reduce_2d_test();
     conv_1d_test();
     conv_2d_bc_test();
@@ -3493,7 +3495,6 @@ int main(int argc, char** argv) {
     warp_and_upsample_test();
     blur_and_downsample_test();
 
-    synth_reduce_test();
     mobilenet_test();
 
     pyramid_2d_test();
