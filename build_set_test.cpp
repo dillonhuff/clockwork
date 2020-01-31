@@ -738,12 +738,27 @@ void generate_vivado_tcl(UBuffer& buf) {
   of.close();
 }
 
-void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer& buf, const int maxdelay) {
+int compute_max_dd(UBuffer& buf, const string& inpt) {
+  int maxdelay = 0;
+  for (auto outpt : buf.get_out_ports()) {
+    int r0 = compute_dd_bound(buf, outpt, inpt);
+    if (r0 > maxdelay) {
+      maxdelay = r0;
+    }
+  }
+  return maxdelay;
+}
+
+//void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer& buf, const int maxdelay) {
+void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer& buf) {
+  int maxdelay = compute_max_dd(buf, inpt);
   out << "struct " + inpt + "_cache {" << endl;
   out << "\t// Capacity: " << maxdelay + 1 << endl;
   vector<int> read_delays{0};
   for (auto outpt : buf.get_out_ports()) {
 
+    auto c = compute_dd(buf, outpt, inpt);
+    cout << "\t" << buf.name << ": DD between " << inpt << " and " << outpt << " = " << str(c) << endl;
     auto qpd = compute_dd_bound(buf, outpt, inpt);
     int lb = compute_dd_lower_bound(buf, outpt, inpt);
 
@@ -832,17 +847,6 @@ void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer&
   out << "};" << endl << endl;
 }
 
-int compute_max_dd(UBuffer& buf, const string& inpt) {
-  int maxdelay = 0;
-  for (auto outpt : buf.get_out_ports()) {
-    int r0 = compute_dd_bound(buf, outpt, inpt);
-    if (r0 > maxdelay) {
-      maxdelay = r0;
-    }
-  }
-  return maxdelay;
-}
-
 struct CodegenOptions {
   bool internal;
 };
@@ -851,10 +855,9 @@ void generate_code_prefix(CodegenOptions& options,
     std::ostream& out, UBuffer& buf) {
 
   string inpt = buf.get_in_port();
-  int maxdelay = compute_max_dd(buf, inpt);
   out << "#include \"hw_classes.h\"" << endl << endl;
   for (auto inpt : buf.get_in_ports()) {
-    generate_memory_struct(out, inpt, buf, maxdelay);
+    generate_memory_struct(out, inpt, buf);
   }
 
   out << endl << endl;
@@ -911,11 +914,11 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
   auto in_writes = buf.access_map.at(inpt);
 
   auto reads_from_inpt = dot(out_reads, inv(in_writes));
-  cout << "reads from inpt: " << str(reads_from_inpt) << endl;
-  cout << "op reads from inpt: " << str(domain(reads_from_inpt)) << endl;
+  //cout << "reads from inpt: " << str(reads_from_inpt) << endl;
+  //cout << "op reads from inpt: " << str(domain(reads_from_inpt)) << endl;
 
   auto lex_max_events = get_lexmax_events(inpt, outpt, buf);
-  cout << "lex_max_events = " << str(lex_max_events) << endl;
+  //cout << "lex_max_events = " << str(lex_max_events) << endl;
 
   out << "inline " + buf.port_type_string() + " " + outpt + "_select(";
   size_t nargs = 0;
@@ -1552,6 +1555,12 @@ struct op {
   }
 
   op* add_nest(
+      const std::string& x, int x_min, int x_max) {
+    auto xl = this->add_loop(x, x_min, x_max);
+    return xl;
+  }
+
+  op* add_nest(
       const std::string& x, int x_min, int x_max,
       const std::string& y, int y_min, int y_max) {
     auto xl = this->add_loop(x, x_min, x_max);
@@ -1739,6 +1748,11 @@ struct prog {
       }
     }
     return conv_loads;
+  }
+
+  loop* add_nest(
+      const std::string& x, int x_min, int x_max) {
+    return root->add_nest(x, x_min, x_max);
   }
 
   loop* add_nest(
@@ -3179,6 +3193,40 @@ void conv_2d_bc_test() {
   regression_test(prg);
 }
 
+void conv_1d_rolled_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "conv_1d_rolled";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["I"] = 32;
+  prg.buffer_port_widths["R"] = 32;
+
+  {
+    auto pc = prg.add_loop("pr", 0, 64);
+    auto write = pc->add_op("write");
+    write->add_load("in", "pr");
+    write->add_store("I", "pr");
+  }
+
+  {
+    auto pr = prg.add_loop("lr", 0, 64 - 2);
+    auto rd = pr->add_op("init");
+    rd->add_store("R", "lr");
+    rd->add_function("set_zero");
+
+    auto reduce_inner_loop = pr->add_loop("rr", 0, 3);
+    auto reduce_inner = reduce_inner_loop->add_op({"R", "lr"}, "inc", {"R", "lr", "I", "lr + rr"});
+  }
+
+  {
+    auto outlp = prg.add_nest("xr", 0, 64 - 2);
+    outlp->store({"out", "xr"}, {"R", "xr"});
+  }
+
+  regression_test(prg);
+}
+
 void conv_2d_rolled_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
@@ -3199,7 +3247,7 @@ void conv_2d_rolled_test() {
     auto pr = prg.add_loop("lr", 0, 64 - 2);
     auto pc = pr->add_loop("lc", 0, 64 - 2);
     
-    auto rd = pc->add_op("read_0");
+    auto rd = pc->add_op("init");
     rd->add_store("R", "lr, lc");
     rd->add_function("set_zero");
 
@@ -3314,13 +3362,15 @@ int main(int argc, char** argv) {
     assert(false);
 
   } else if (argc == 1) {
-
+    
+    conv_1d_rolled_test();
+    //assert(false);
+    conv_2d_rolled_test();
     reduce_1d_test();
     synth_reduce_test();
     reduce_2d_test();
     conv_1d_test();
     conv_2d_bc_test();
-    conv_2d_rolled_test();
     unsharp_test();
     warp_and_upsample_test();
     blur_and_downsample_test();
