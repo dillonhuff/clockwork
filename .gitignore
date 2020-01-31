@@ -2,6 +2,8 @@
 *.tcl
 a.out
 *.o
+unoptimized_*.cpp
+unoptimized_*.h
 reduce*
 warp_and_upsample*
 blur_and_downsample*
