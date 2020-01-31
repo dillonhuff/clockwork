@@ -749,23 +749,59 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
   return maxdelay;
 }
 
-//void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer& buf, const int maxdelay) {
+umap* get_lexmax_events(const std::string& inpt, const std::string& outpt, UBuffer& buf) {
+    umap* src_map = nullptr;
+    for (auto inpt : buf.get_in_ports()) {
+      auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
+      if (src_map == nullptr) {
+        src_map =
+          ((its(dot(buf.access_map.at(outpt),
+                    inv(buf.access_map.at(inpt))), beforeAcc)));
+      } else {
+        src_map =
+          unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
+      }
+    }
+
+    auto sched = buf.global_schedule();
+    auto after = lex_gt(sched, sched);
+
+    src_map = its(src_map, after);
+    src_map = lexmax(src_map);
+
+    auto time_to_event = inv(sched);
+
+    auto lex_max_events =
+      dot(lexmax(dot(src_map, sched)), time_to_event);
+
+    return lex_max_events;
+}
+
 void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer& buf) {
+
   int maxdelay = compute_max_dd(buf, inpt);
   out << "struct " + inpt + "_cache {" << endl;
   out << "\t// Capacity: " << maxdelay + 1 << endl;
   vector<int> read_delays{0};
   for (auto outpt : buf.get_out_ports()) {
 
-    auto c = compute_dd(buf, outpt, inpt);
-    cout << "\t" << buf.name << ": DD between " << inpt << " and " << outpt << " = " << str(c) << endl;
-    auto qpd = compute_dd_bound(buf, outpt, inpt);
-    int lb = compute_dd_lower_bound(buf, outpt, inpt);
+    auto in_actions = buf.domain.at(inpt);
+    auto lex_max_events =
+      get_lexmax_events(inpt, outpt, buf);
+    auto act_dom = 
+      domain(its_range(lex_max_events, to_uset(in_actions)));
 
-    for (int i = lb; i < qpd + 1; i++) {
-      read_delays.push_back(i);
+    if (!isl_union_set_is_empty(act_dom)) {
+      auto c = compute_dd(buf, outpt, inpt);
+      cout << "\t" << buf.name << ": DD between " << inpt
+        << " and " << outpt << " = " << str(c) << endl;
+      auto qpd = compute_dd_bound(buf, outpt, inpt);
+      int lb = compute_dd_lower_bound(buf, outpt, inpt);
+
+      for (int i = lb; i < qpd + 1; i++) {
+        read_delays.push_back(i);
+      }
     }
-
   }
 
   read_delays = sort_unique(read_delays);
@@ -875,34 +911,6 @@ void generate_code_prefix(CodegenOptions& options,
     }
   }
 
-}
-
-umap* get_lexmax_events(const std::string& inpt, const std::string& outpt, UBuffer& buf) {
-    umap* src_map = nullptr;
-    for (auto inpt : buf.get_in_ports()) {
-      auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
-      if (src_map == nullptr) {
-        src_map =
-          ((its(dot(buf.access_map.at(outpt),
-                    inv(buf.access_map.at(inpt))), beforeAcc)));
-      } else {
-        src_map =
-          unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
-      }
-    }
-
-    auto sched = buf.global_schedule();
-    auto after = lex_gt(sched, sched);
-
-    src_map = its(src_map, after);
-    src_map = lexmax(src_map);
-
-    auto time_to_event = inv(sched);
-
-    auto lex_max_events =
-      dot(lexmax(dot(src_map, sched)), time_to_event);
-
-    return lex_max_events;
 }
 
 void generate_selects(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
