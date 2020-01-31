@@ -378,22 +378,27 @@ string codegen_c_constraint(isl_constraint* c) {
   if (isl_space_is_map(s)) {
     int ndims = isl_space_dim(s, isl_dim_in);
     for (int i = 0; i < ndims; i++) {
-      //ss << str(isl_constraint_get_coefficient_val(c, isl_dim_in, i)) << "*" << "i_" << i << " + ";
-      ss << str(isl_constraint_get_coefficient_val(c, isl_dim_in, i)) << "*" << str(isl_space_get_dim_id(s, isl_dim_out, i)) << " + ";
+      auto v = isl_constraint_get_coefficient_val(c, isl_dim_in, i);
+      if (!isl_val_is_zero(v)) {
+        ss << str(isl_constraint_get_coefficient_val(c, isl_dim_in, i)) << "*" << str(isl_space_get_dim_id(s, isl_dim_out, i)) << " + ";
+      }
     }
     {
       int ndims = isl_space_dim(s, isl_dim_out);
       for (int i = 0; i < ndims; i++) {
-        ss << str(isl_constraint_get_coefficient_val(c, isl_dim_in, i)) << "*" << str(isl_space_get_dim_id(s, isl_dim_out, i)) << " + ";
-        //ss << str(isl_constraint_get_coefficient_val(c, isl_dim_out, i)) << "*" << "i_" << i << "_p" << " + ";
-          //<< str(isl_space_get_dim_id(s, isl_dim_out, i)) << "_p" << " + ";
+        auto v = isl_constraint_get_coefficient_val(c, isl_dim_out, i);
+        if (!isl_val_is_zero(v)) {
+          ss << str(isl_constraint_get_coefficient_val(c, isl_dim_out, i)) << "*" << str(isl_space_get_dim_id(s, isl_dim_out, i)) << " + ";
+        }
       }
     }
   } else {
     assert(isl_space_is_set(s));
     for (int i = 0; i < num_dims(s); i++) {
-      //ss << str(isl_constraint_get_coefficient_val(c, isl_dim_set, i)) << "*" << "i_" << i << " + ";
-      ss << str(isl_constraint_get_coefficient_val(c, isl_dim_set, i)) << "*" << str(isl_space_get_dim_id(s, isl_dim_set, i)) << " + ";
+      auto v = isl_constraint_get_coefficient_val(c, isl_dim_set, i);
+      if (!isl_val_is_zero(v)) {
+        ss << str(isl_constraint_get_coefficient_val(c, isl_dim_set, i)) << "*" << str(isl_space_get_dim_id(s, isl_dim_set, i)) << " + ";
+      }
     }
   }
 
@@ -416,42 +421,32 @@ isl_stat codegen_constraint(isl_constraint* c, void* user) {
 }
 
 isl_stat bset_codegen_c(isl_basic_set* m, void* user) {
+  //auto context = ctx(m);
+  //isl_printer *p;
+  //p = isl_printer_to_str(context);
+  //p = isl_printer_set_output_format(p, ISL_FORMAT_C);
+  //p = isl_printer_print_basic_set(p, cpy(m));
+
+  //char* rs = isl_printer_get_str(p);
+  //std::string r(rs);
+  //isl_printer_free(p);
+  //free(rs);
+  //vector<string>& code_holder = *((vector<string>*) user);
+  //code_holder.push_back(r);
+
+  //return isl_stat_ok;
+
   isl_basic_set_foreach_constraint(m, codegen_constraint, user);
   return isl_stat_ok;
 }
 
 isl_stat bmap_codegen_c(isl_basic_map* m, void* user) {
-  //isl_basic_set* s = domain(m);
-  //vector<string>& code_holder = *((vector<string>*) user);
-  //string code = "";
-  //code_holder.push_back(code);
   isl_basic_map_foreach_constraint(m, codegen_constraint, user);
-  //isl_basic_set_foreach_constraint(s, codegen_constraint, user);
 
   return isl_stat_ok;
 }
 
 std::string codegen_c(isl_set* s) {
-  //auto ctx = isl_set_get_ctx(s);
-
-  //isl_printer *p;
-  //p = isl_printer_to_str(ctx);
-
-
-  //p = isl_printer_set_output_format(p, ISL_FORMAT_C);
-  
-  
-  //p = isl_printer_print_set(p, cpy(s));
-  
-
-  //char* rs = isl_printer_get_str(p);
-  //string r(rs);
-  //isl_printer_free(p);
-  //free(rs);
-
-
-  //return r;
-  
   vector<string> code_holder;
   isl_set_foreach_basic_set(s, bset_codegen_c, &code_holder);
   return sep_list(code_holder, "(", ")", " && ");
@@ -624,7 +619,6 @@ isl_stat map_codegen_c(isl_map* m, void* user) {
   vector<string>& code_holder = *((vector<string>*) user);
   isl_pw_qpolynomial_foreach_lifted_piece(cardm, codegen_domain, (void*)(&code_holder));
   
-  //isl_map_foreach_basic_map(m, bmap_codegen_c, (void*)(&code_holder));
   return isl_stat_ok;
 }
 
@@ -2725,7 +2719,10 @@ void regression_test(prog& prg) {
   string optimized_res = run_regression_tb(prg);
 
 
-  assert(unoptimized_res == optimized_res);
+  if (unoptimized_res != optimized_res) {
+    cout << "After optimization " << prg.name << " gives different results" << endl;
+    assert(false);
+  }
 }
 
 void conv_1d_test() {
@@ -3285,16 +3282,6 @@ void conv_2d_bc_test() {
   prg.unoptimized_codegen();
 
   regression_test(prg);
-  //umap* opt_sched = prg.optimized_codegen();
-  //auto domain = prg.whole_iteration_domain();
-  //auto schedmap = its(opt_sched, domain);
-  //cout << "Optimized schedule..." << endl;
-  //cout << codegen_c(schedmap);
-  
-  //auto buffers = build_buffers(prg);
-  //generate_app_code(buffers, prg);
-
-  //run_tb(prg);
 }
 
 void conv_2d_rolled_test() {
@@ -3330,19 +3317,7 @@ void conv_2d_rolled_test() {
     outlp->store({"out", "xc, oc"}, {"R", "xr, oc"});
   }
 
-  cout << "Program code without optimization..." << endl;
-  prg.unoptimized_codegen();
-
-  umap* opt_sched = prg.optimized_codegen();
-  auto domain = prg.whole_iteration_domain();
-  auto schedmap = its(opt_sched, domain);
-  cout << "Optimized schedule..." << endl;
-  cout << codegen_c(schedmap);
-  
-  auto buffers = build_buffers(prg);
-  generate_app_code(buffers, prg);
-
-  run_tb(prg);
+  regression_test(prg);
 }
 
 void unsharp_test() {
@@ -3368,19 +3343,7 @@ void unsharp_test() {
   prg.add_nest("dr", 0, 64 - 2, "dc", 0, 64 - 2)->add_op({"Diff", "dr, dc"}, "diff", {"I", "dr, dc", "Blur", "dr, dc"});
   prg.add_nest("xr", 0, 64 - 2, "xc", 0, 64 - 2)->store({"out", "xr, xc"}, {"Diff", "xr, xc"});
 
-  cout << "Program code without optimization..." << endl;
-  prg.unoptimized_codegen();
-
-  umap* opt_sched = prg.optimized_codegen();
-  auto domain = prg.whole_iteration_domain();
-  auto schedmap = its(opt_sched, domain);
-  cout << "Optimized schedule..." << endl;
-  cout << codegen_c(schedmap);
-  
-  auto buffers = build_buffers(prg);
-  generate_app_code(buffers, prg);
-
-  run_tb(prg);
+  regression_test(prg);
 }
 
 void warp_and_upsample_test() {
@@ -3400,20 +3363,7 @@ void warp_and_upsample_test() {
   prg.add_nest("ur", 0, 64 - 2, "kr", 0, 2)->add_nest("uc", 0, 64 - 2, "kc", 0, 2)->
     add_op({"out", "ur, uc"}, "id", {"warped_0", "ur, uc"});
 
-  cout << "Program code without optimization..." << endl;
-  prg.unoptimized_codegen();
-
-  umap* opt_sched = prg.optimized_codegen();
-  auto domain = prg.whole_iteration_domain();
-  auto schedmap = its(opt_sched, domain);
-
-  cout << "Optimized schedule..." << endl;
-  cout << codegen_c(schedmap);
-  
-  auto buffers = build_buffers(prg);
-  generate_app_code(buffers, prg);
-
-  run_tb(prg);
+  regression_test(prg);
 }
 
 void blur_and_downsample_test() {
@@ -3432,20 +3382,7 @@ void blur_and_downsample_test() {
   prg.add_nest("dr", 0, (64 - 2) / 2, "dc", 0, (64 - 2) / 2)->
     add_op({"out", "dr, dc"}, "id", {"blurred_0", "2*dr, 2*dc"});
 
-  cout << "Program code without optimization..." << endl;
-  prg.unoptimized_codegen();
-
-  umap* opt_sched = prg.optimized_codegen();
-  auto domain = prg.whole_iteration_domain();
-  auto schedmap = its(opt_sched, domain);
-
-  cout << "Optimized schedule..." << endl;
-  cout << codegen_c(schedmap);
-  
-  auto buffers = build_buffers(prg);
-  generate_app_code(buffers, prg);
-
-  run_tb(prg);
+  regression_test(prg);
 }
 
 int main(int argc, char** argv) {
@@ -3485,10 +3422,10 @@ int main(int argc, char** argv) {
 
     conv_1d_test();
     conv_2d_bc_test();
-    conv_2d_rolled_test();
-    unsharp_test();
-    warp_and_upsample_test();
-    blur_and_downsample_test();
+    //conv_2d_rolled_test();
+    //unsharp_test();
+    //warp_and_upsample_test();
+    //blur_and_downsample_test();
 
     synth_reduce_test();
     mobilenet_test();
