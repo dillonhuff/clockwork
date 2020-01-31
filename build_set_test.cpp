@@ -1097,7 +1097,6 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
 }
 
 void generate_bundles(CodegenOptions& options, std::ostream& out, const string& inpt, UBuffer& buf) {
-  if (options.internal) {
   out << "// Bundles..." << endl;
   for (auto b : buf.port_bundles) {
     out << "// " << b.first << endl;
@@ -1136,7 +1135,11 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, const string& 
     } else {
       out << "inline void " + buf.name + "_" + b.first + "_bundle_write(";
       vector<string> dim_decls;
-      dim_decls.push_back(buf.port_type_string(b.first) + "& /* width = " + to_string(buf.port_widths) + "*/" + b.first);
+      if (options.internal) {
+        dim_decls.push_back(buf.port_type_string(b.first) + "& /* width = " + to_string(buf.port_widths) + "*/" + b.first);
+      } else {
+        dim_decls.push_back("InputStream<int>& " + b.first);
+      }
       vector<string> dim_args;
       dim_args.push_back(b.first);
       for (auto pt : buf.get_in_ports()) {
@@ -1154,66 +1157,6 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, const string& 
 
     }
     out << "}" << endl << endl;
-  }
-  } else {
-
-  out << "// Bundles..." << endl;
-  for (auto b : buf.port_bundles) {
-    out << "// " << b.first << endl;
-    for (auto pt : b.second) {
-      out << "//\t" << pt << endl;
-    }
-    string rep = pick(b.second);
-    if (buf.is_out_pt(rep)) {
-      out << "inline " << buf.bundle_type_string(b.first) << " " <<  buf.name << "_" << b.first << "_bundle_action(";
-      vector<string> dim_decls;
-      vector<string> dim_args;
-      for (auto pt : buf.get_in_ports()) {
-        dim_decls.push_back(pt + "_cache& " + pt + "_delay");
-        dim_args.push_back(pt + "_delay");
-      }
-      auto outpt = *begin(b.second);
-      isl_space* s = get_space(buf.domain.at(outpt));
-      assert(isl_space_is_set(s));
-      for (int i = 0; i < num_dims(s); i++) {
-        dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
-        dim_args.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
-      }
-      string param_string = sep_list(dim_decls, "", "", ", ");
-      string arg_string = sep_list(dim_args, "", "", ", ");
-      out << param_string;
-
-      out << ") {" << endl;
-      out << "\t" << buf.bundle_type_string(b.first) + " result;" << endl;
-      int offset = 0;
-      for (auto p : b.second) {
-        out << "\tint " << p << "_res = " << p << "_select(" << arg_string << ");" << endl;
-        out << "\tset_at<" << offset << ", " << buf.port_bundle_width(b.first) << ">(result, " << p << "_res" << ");" << endl;
-        offset += buf.port_width(p);
-      }
-      out << "\treturn result;" << endl;
-    } else {
-      out << "inline void " + buf.name + "_" + b.first + "_bundle_action(";
-      vector<string> dim_decls;
-      dim_decls.push_back("InputStream<int>& " + b.first);
-      vector<string> dim_args;
-      dim_args.push_back(b.first);
-      for (auto pt : buf.get_in_ports()) {
-        if (elem(pt, b.second)) {
-          dim_decls.push_back(pt + "_cache& " + pt + "_delay");
-          dim_args.push_back(pt + "_delay");
-        }
-      }
-      string param_string = sep_list(dim_decls, "", "", ", ");
-      string arg_string = sep_list(dim_args, "", "", ", ");
-      out << param_string;
-
-      out << ") {" << endl;
-      out << "\t" << rep << "_write(" << b.first << ", " << rep + "_delay);" << endl;
-
-    }
-    out << "}" << endl << endl;
-  }
   }
 }
 
@@ -1292,7 +1235,7 @@ void generate_hls_code(UBuffer& buf) {
   for (auto b : buf.port_bundles) {
     if (buf.is_out_pt(*(begin(b.second)))) {
       regex re0(b.first + "\\((.*)\\);");
-      code_string = regex_replace(code_string, re0, b.first + ".write(" + buf.name + "_" + b.first + "_bundle_action(" + delay_list + ", $1" + "));");
+      code_string = regex_replace(code_string, re0, b.first + ".write(" + buf.name + "_" + b.first + "_bundle_read(" + delay_list + ", $1" + "));");
     } else {
     }
   }
@@ -2453,8 +2396,6 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* schedmap)
   }
 
   auto domain = prg.whole_iteration_domain();
-  //auto schedmap = its(isl_schedule_get_map(prg.optimized_schedule()), domain);
-  //auto schedmap = its(isl_schedule_get_map(prg.optimized_schedule()), domain);
   string code_string = codegen_c(schedmap);
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
   for (auto op : prg.all_ops()) {
