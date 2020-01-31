@@ -13,6 +13,27 @@
 using namespace dbhc;
 using namespace std;
 
+// Now I want to start optimizing the reduce operations.
+// The main problem is that there are too many different peek operations
+// going on in some of these memories
+//
+// One easy case that (I think) shows up often is that a port only has
+// a small number of different readers, so even if the range of read
+// addresses is huge the number of distinct reads in a given cycle is small
+// so it does not need a partition for each possible read location, it may
+// be possible to service all reads with a smaller number of ports
+//
+// How to reduce this to some polyhedral computation?
+// I guess one way is to analyze the times of all reads in the schedule
+// and find the largest number of simultaneous reads
+//
+// This doesnt give a perfect answer though since the largest number of
+// simultaneous reads in the sequential schedule is not necessarily the
+// largest number in the pipelined schedule
+//
+// In the pipelined schedule the largest # of simultaneous ops is?
+//  - sum of largest # of simultaneous operations at a given level
+
 string take_until(const std::string& s, const std::string& delim) {
   std::size_t found = s.find_first_of(delim);
   return s.substr(0, found);
