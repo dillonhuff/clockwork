@@ -369,29 +369,6 @@ string codegen_c_constraint(isl_constraint* c) {
   isl_space* s = get_space(c);
   if (isl_space_is_map(s)) {
     assert(false);
-    //int ndims = isl_space_dim(s, isl_dim_in);
-    //for (int i = 0; i < ndims; i++) {
-      //auto v = isl_constraint_get_coefficient_val(c, isl_dim_in, i);
-      //if (!isl_val_is_zero(v)) {
-        //ss << str(isl_constraint_get_coefficient_val(c, isl_dim_in, i)) << "*" << str(isl_space_get_dim_id(s, isl_dim_out, i));
-        //if (i < ndims - 1) {
-          //ss << " + ";
-        //}
-      //}
-
-    //}
-    //{
-      //int ndims = isl_space_dim(s, isl_dim_out);
-      //for (int i = 0; i < ndims; i++) {
-        //auto v = isl_constraint_get_coefficient_val(c, isl_dim_out, i);
-        //if (!isl_val_is_zero(v)) {
-          //ss << str(isl_constraint_get_coefficient_val(c, isl_dim_out, i)) << "*" << str(isl_space_get_dim_id(s, isl_dim_out, i));
-          //if (i < ndims - 1) {
-            //ss << " + ";
-          //}
-        //}
-      //}
-    //}
   } else {
     assert(isl_space_is_set(s));
     for (int i = 0; i < num_dims(s); i++) {
@@ -399,7 +376,6 @@ string codegen_c_constraint(isl_constraint* c) {
       if (!isl_val_is_zero(v)) {
         non_zero_coeffs.push_back(
             str(isl_constraint_get_coefficient_val(c, isl_dim_set, i)) + "*" + str(isl_space_get_dim_id(s, isl_dim_set, i)));
-            //"/* " + str(isl_constraint_get_div(c, i)) + " */");
       } 
     }
   }
@@ -598,24 +574,6 @@ std::string codegen_c(isl_pw_qpolynomial* pqp) {
   free(rs);
   return r;
 
-  //vector<string> code_holder;
-  //isl_pw_qpolynomial_foreach_lifted_piece(p, codegen_domain, (void*)(&code_holder));
-
-  //vector<string> val_holder;
-  //isl_pw_qpolynomial_foreach_lifted_piece(p, codegen_value, (void*)(&val_holder));
-
-  //assert(code_holder.size() == val_holder.size());
-  //string res = "0";
-  //for (size_t i = 0; i < code_holder.size(); i++) {
-    //string cond = code_holder[i];
-    //string val = val_holder[i];
-    //res = "(" + cond + " ? " + val + " : " + res + ")";
-  //}
-  //return res;
-
-  ////vector<string> code_holder;
-  ////isl_set_foreach_basic_set(s, bset_codegen_c, &code_holder);
-  ////return sep_list(code_holder, "(", ")", " && ");
 }
 
 isl_stat map_codegen_c(isl_map* m, void* user) {
@@ -932,56 +890,56 @@ umap* get_lexmax_events(const std::string& inpt, const std::string& outpt, UBuff
 void generate_selects(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
 
   auto lex_max_events = get_lexmax_events(inpt, outpt, buf);
-    out << "inline " + buf.port_type_string() + " " + outpt + "_select(";
-    size_t nargs = 0;
-    for (auto pt : buf.get_in_ports()) {
-      out << pt + "_cache& " << pt << "_delay" << endl;
-      out << ", ";
-      nargs++;
+  cout << "lex_max_events = " << str(lex_max_events) << endl;
+
+  out << "inline " + buf.port_type_string() + " " + outpt + "_select(";
+  size_t nargs = 0;
+  for (auto pt : buf.get_in_ports()) {
+    out << pt + "_cache& " << pt << "_delay" << endl;
+    out << ", ";
+    nargs++;
+  }
+  isl_space* s = get_space(buf.domain.at(outpt));
+  assert(isl_space_is_set(s));
+  vector<string> dim_decls;
+  for (int i = 0; i < num_dims(s); i++) {
+    dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
+  }
+  out << sep_list(dim_decls, "", "", ", ");
+
+  out << ") {" << endl;
+  // Body of select function
+  if (buf.get_in_ports().size() == 1) {
+    string delay_expr = evaluate_dd(buf, outpt, inpt);
+    auto qpd = compute_dd(buf, outpt, inpt);
+    auto pieces = get_pieces(qpd);
+    out << "// Pieces..." << endl;
+    auto out_domain = buf.domain.at(outpt);
+    for (auto p : pieces) {
+      out << "// " << str(p.first) << " -> " << str(p.second) << endl;
+      out << "// \tis always true on iteration domain: " << isl_set_is_subset(cpy(out_domain), cpy(p.first)) << endl;
     }
-    isl_space* s = get_space(buf.domain.at(outpt));
-    assert(isl_space_is_set(s));
-    vector<string> dim_decls;
-    for (int i = 0; i < num_dims(s); i++) {
-      dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
-    }
-    out << sep_list(dim_decls, "", "", ", ");
+    string inpt = *(buf.get_in_ports().begin());
 
-    out << ") {" << endl;
-  if (options.internal) {
-
-
-    // Body of select function
-    if (buf.get_in_ports().size() == 1) {
-      string delay_expr = evaluate_dd(buf, outpt, inpt);
-      auto qpd = compute_dd(buf, outpt, inpt);
-      auto pieces = get_pieces(qpd);
-      out << "// Pieces..." << endl;
-      auto out_domain = buf.domain.at(outpt);
-      for (auto p : pieces) {
-        out << "// " << str(p.first) << " -> " << str(p.second) << endl;
-        out << "// \tis always true on iteration domain: " << isl_set_is_subset(cpy(out_domain), cpy(p.first)) << endl;
-      }
-      string inpt = *(buf.get_in_ports().begin());
-
-      if (pieces.size() == 0) {
-        out << "\t" << buf.port_type_string() << " value_" << inpt << " = " << inpt << "_delay.peek_" << 0 << "()" << ";\n";
-        out << "\treturn value_" + inpt + ";" << endl;
-      } else if (pieces.size() == 1 &&
-          isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
-        string dx = codegen_c(pieces[0].second);
-        if (is_number(dx)) {
-          out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
-        } else {
-          out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << dx << ")" << ";\n";
-        }
-        out << "\treturn value_" + inpt + ";" << endl;
+    if (pieces.size() == 0) {
+      out << "\t" << buf.port_type_string() << " value_" << inpt << " = " << inpt << "_delay.peek_" << 0 << "()" << ";\n";
+      out << "\treturn value_" + inpt + ";" << endl;
+    } else if (pieces.size() == 1 &&
+        isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
+      string dx = codegen_c(pieces[0].second);
+      if (is_number(dx)) {
+        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
       } else {
-        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
-        out << "\treturn value_" + inpt + ";" << endl;
+        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << dx << ")" << ";\n";
       }
+      out << "\treturn value_" + inpt + ";" << endl;
     } else {
-      map<string, string> ms = umap_codegen_c(lex_max_events);
+      out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
+      out << "\treturn value_" + inpt + ";" << endl;
+    }
+  } else {
+    map<string, string> ms = umap_codegen_c(lex_max_events);
+    if (options.internal) {
       for (auto e : ms) {
         out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
       }
@@ -1001,6 +959,8 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
           string delay_expr = evaluate_dd(buf, outpt, inpt);
           out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
           out << "\tif (" + k_var + ") { return value_"+ inpt + "; }\n";
+        } else {
+          out << "//\tNo key for: " << inpt << endl;
         }
       }
       vector<string> offset_printouts;
@@ -1014,37 +974,7 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
 
       out << "\tcout << \"Error: Unsupported offsets: \" << " << sep_list(offset_printouts, "", "", " << ") << " << endl;" << endl;
       out << "\tassert(false);\n\treturn 0;\n";
-    }
-
-    out << "}" << endl << endl;
-  } else {
-    // Body of select function
-    if (buf.get_in_ports().size() == 1) {
-      string delay_expr = evaluate_dd(buf, outpt, inpt);
-      auto qpd = compute_dd(buf, outpt, inpt);
-      auto pieces = get_pieces(qpd);
-      out << "// Pieces..." << endl;
-      auto out_domain = buf.domain.at(outpt);
-      for (auto p : pieces) {
-        out << "// " << str(p.first) << " -> " << str(p.second) << endl;
-        out << "// \tis always true on iteration domain: " << isl_set_is_subset(cpy(out_domain), cpy(p.first)) << endl;
-      }
-      string inpt = *(buf.get_in_ports().begin());
-
-      if (pieces.size() == 0) {
-        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << 0 << "()" << ";\n";
-        out << "\treturn value_" + inpt + ";" << endl;
-      } else if (pieces.size() == 1 &&
-          isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
-        string dx = codegen_c(pieces[0].second);
-        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
-        out << "\treturn value_" + inpt + ";" << endl;
-      } else {
-        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
-        out << "\treturn value_" + inpt + ";" << endl;
-      }
     } else {
-      map<string, string> ms = umap_codegen_c(lex_max_events);
       for (auto e : ms) {
         out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
       }
@@ -1057,9 +987,9 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
       }
       out << "\tassert(false);\n\treturn 0;\n";
     }
-
-    out << "}" << endl << endl;
   }
+
+  out << "}" << endl << endl;
 }
 
 void generate_bundles(CodegenOptions& options, std::ostream& out, const string& inpt, UBuffer& buf) {
