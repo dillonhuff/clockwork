@@ -70,6 +70,9 @@ isl_union_map* to_umap(isl_map* const m) {
   return isl_union_map_from_map(m);
 }
 
+isl_ctx* ctx(isl_union_set* const m) {
+  return isl_union_set_get_ctx(m);
+}
 isl_ctx* ctx(isl_constraint* const m) {
   return isl_constraint_get_ctx(m);
 }

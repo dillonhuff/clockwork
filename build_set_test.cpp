@@ -396,6 +396,12 @@ string codegen_c_constraint(isl_constraint* c) {
   return ss.str();
 }
 
+isl_stat uset_collect_set(isl_set* c, void* user) {
+  vector<isl_set*>& code_holder = *((vector<isl_set*>*) user);
+  code_holder.push_back(cpy(c));
+  return isl_stat_ok;
+}
+
 isl_stat collect_constraint(isl_constraint* c, void* user) {
   vector<isl_constraint*>& code_holder = *((vector<isl_constraint*>*) user);
   string cc = codegen_c_constraint(c);
@@ -430,7 +436,16 @@ std::string codegen_c(isl_set* s) {
     set_strings.push_back(codegen_c_constraint(hc));
   }
   return sep_list(set_strings, "(", ")", " && ");
-  //return sep_list(code_holder, "(", ")", " && ");
+}
+
+std::string codegen_c(isl_union_set* s) {
+  vector<isl_set*> code_holder;
+  isl_union_set_foreach_set(s, uset_collect_set, &code_holder);
+  vector<string> set_strings;
+  for (auto hc : code_holder) {
+    set_strings.push_back(codegen_c(hc));
+  }
+  return sep_list(set_strings, "(", ")", " || ");
 }
 
 isl_stat return_piece(isl_set* domain, isl_qpolynomial* val, void* user) {
@@ -889,6 +904,16 @@ umap* get_lexmax_events(const std::string& inpt, const std::string& outpt, UBuff
 
 void generate_selects(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
 
+  auto out_domain = buf.domain.at(outpt);
+  auto out_reads = buf.access_map.at(outpt);
+
+  auto in_actions = buf.domain.at(inpt);
+  auto in_writes = buf.access_map.at(inpt);
+
+  auto reads_from_inpt = dot(out_reads, inv(in_writes));
+  cout << "reads from inpt: " << str(reads_from_inpt) << endl;
+  cout << "op reads from inpt: " << str(domain(reads_from_inpt)) << endl;
+
   auto lex_max_events = get_lexmax_events(inpt, outpt, buf);
   cout << "lex_max_events = " << str(lex_max_events) << endl;
 
@@ -914,7 +939,7 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     auto qpd = compute_dd(buf, outpt, inpt);
     auto pieces = get_pieces(qpd);
     out << "// Pieces..." << endl;
-    auto out_domain = buf.domain.at(outpt);
+    //auto out_domain = buf.domain.at(outpt);
     for (auto p : pieces) {
       out << "// " << str(p.first) << " -> " << str(p.second) << endl;
       out << "// \tis always true on iteration domain: " << isl_set_is_subset(cpy(out_domain), cpy(p.first)) << endl;
@@ -975,11 +1000,17 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
       out << "\tcout << \"Error: Unsupported offsets: \" << " << sep_list(offset_printouts, "", "", " << ") << " << endl;" << endl;
       out << "\tassert(false);\n\treturn 0;\n";
     } else {
-      for (auto e : ms) {
-        out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
-      }
+      //for (auto e : ms) {
+        //out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
+      //}
       for (auto inpt : buf.get_in_ports()) {
+        auto in_actions = buf.domain.at(inpt);
+        auto act_dom = 
+          domain(its_range(lex_max_events, to_uset(in_actions)));
+        cout << tab(1) << "lex_max_events from " << inpt << " = " << str(act_dom) << endl;
+        
         if (contains_key(inpt, ms)) {
+          out << "\tbool select_" << inpt << " = " << codegen_c(act_dom) << ";" << endl;
           string delay_expr = evaluate_dd(buf, outpt, inpt);
           out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
           out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
@@ -2215,14 +2246,12 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* schedmap)
           set<string> buffers_seen;
           for (auto arg : op->func_args) {
             conv_out << "\t// Arg: " << arg << endl;
-            //conv_out << "\t// Consumed value names..." << endl;
             string arg_buf = "";
             for (auto v : op->consumed_value_names) {
               if (v.second == arg) {
                 arg_buf = v.first.first;
                 break;
               }
-              //conv_out << "\t// " << v.first.first << ", " << v.first.second << " -> " << v.second << endl;
             }
             assert(arg_buf != "");
             conv_out << "\t// Arg buf: " << arg_buf << endl;
@@ -2231,7 +2260,6 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* schedmap)
               buffers_seen.insert(arg_buf);
             }
           }
-          //conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(op->func_args) << ");" << endl;
           conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(arg_list) << ");" << endl;
         }
         res = "compute_result";
@@ -2456,11 +2484,6 @@ prog conv_1d() {
   write->add_store("M", "p");
 
   auto c = prg.add_loop("c", 0, 10 - 2);
-  //auto read0 = c->add_op("read0");
-  //read0->add_load("M", "c");
-  //read0->add_load("M", "c + 1");
-  //read0->add_load("M", "c + 2");
-  //read0->add_store("T", "c");
 
   auto compute = c->add_op("compute_output");
   compute->add_function("accumulate_3");
