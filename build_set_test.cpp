@@ -966,8 +966,6 @@ umap* get_lexmax_events(const std::string& inpt, const std::string& outpt, UBuff
 void generate_selects(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
 
   auto lex_max_events = get_lexmax_events(inpt, outpt, buf);
-  if (options.internal) {
-
     out << "inline " + buf.port_type_string() + " " + outpt + "_select(";
     size_t nargs = 0;
     for (auto pt : buf.get_in_ports()) {
@@ -984,6 +982,8 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     out << sep_list(dim_decls, "", "", ", ");
 
     out << ") {" << endl;
+  if (options.internal) {
+
 
     // Body of select function
     if (buf.get_in_ports().size() == 1) {
@@ -1052,50 +1052,6 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
 
     out << "}" << endl << endl;
   } else {
-    //umap* src_map = nullptr;
-    //for (auto inpt : buf.get_in_ports()) {
-      //auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
-      //if (src_map == nullptr) {
-        //src_map =
-          //((its(dot(buf.access_map.at(outpt),
-                    //inv(buf.access_map.at(inpt))), beforeAcc)));
-      //} else {
-        //src_map =
-          //unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
-      //}
-    //}
-
-    //auto sched = buf.global_schedule();
-    //auto after = lex_gt(sched, sched);
-
-    //src_map = its(src_map, after);
-    //src_map = lexmax(src_map);
-
-    //auto time_to_event = inv(sched);
-
-    //auto lex_max_events =
-      //dot(lexmax(dot(src_map, sched)), time_to_event);
-
-    //// Maybe: Get the schedule position, take the lexmax and then get it back?source map and then?? Creating more code?
-    //out << "// Select if: " << str(src_map) << endl;
-    out << "inline int " + outpt + "_select(";
-    size_t nargs = 0;
-    for (auto pt : buf.get_in_ports()) {
-      out << pt + "_cache& " << pt << "_delay" << endl;
-      out << ", ";
-      nargs++;
-    }
-    isl_space* s = get_space(buf.domain.at(outpt));
-    assert(isl_space_is_set(s));
-    vector<string> dim_decls;
-    for (int i = 0; i < num_dims(s); i++) {
-      dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
-    }
-    out << sep_list(dim_decls, "", "", ", ");
-
-    out << ") {" << endl;
-
-
     // Body of select function
     if (buf.get_in_ports().size() == 1) {
       string delay_expr = evaluate_dd(buf, outpt, inpt);
@@ -1140,17 +1096,8 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
   }
 }
 
-void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
-  string inpt = buf.get_in_port();
-
-  CodegenOptions options;
-  options.internal = true;
-  generate_code_prefix(options, out, buf);
-
-  for (auto outpt : buf.get_out_ports()) {
-    generate_selects(options, out, inpt, outpt, buf);
-  }
-
+void generate_bundles(CodegenOptions& options, std::ostream& out, const string& inpt, UBuffer& buf) {
+  if (options.internal) {
   out << "// Bundles..." << endl;
   for (auto b : buf.port_bundles) {
     out << "// " << b.first << endl;
@@ -1208,82 +1155,7 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
     }
     out << "}" << endl << endl;
   }
-  out << endl << endl;
-
-}
-
-void generate_hls_code(std::ostream& out, UBuffer& buf) {
-  string inpt = buf.get_in_port();
-
-  CodegenOptions options;
-  options.internal = false;
-  generate_code_prefix(options, out, buf);
-
-  for (auto outpt : buf.get_out_ports()) {
-
-    generate_selects(options, out, inpt, outpt, buf);
-    //auto lex_max_events = get_lexmax_events(inpt, outpt, buf);
-
-    //out << "inline int " + outpt + "_select(";
-    //size_t nargs = 0;
-    //for (auto pt : buf.get_in_ports()) {
-      //out << pt + "_cache& " << pt << "_delay" << endl;
-      //out << ", ";
-      //nargs++;
-    //}
-    //isl_space* s = get_space(buf.domain.at(outpt));
-    //assert(isl_space_is_set(s));
-    //vector<string> dim_decls;
-    //for (int i = 0; i < num_dims(s); i++) {
-      //dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
-    //}
-    //out << sep_list(dim_decls, "", "", ", ");
-
-    //out << ") {" << endl;
-
-
-    //// Body of select function
-    //if (buf.get_in_ports().size() == 1) {
-      //string delay_expr = evaluate_dd(buf, outpt, inpt);
-      //auto qpd = compute_dd(buf, outpt, inpt);
-      //auto pieces = get_pieces(qpd);
-      //out << "// Pieces..." << endl;
-      //auto out_domain = buf.domain.at(outpt);
-      //for (auto p : pieces) {
-        //out << "// " << str(p.first) << " -> " << str(p.second) << endl;
-        //out << "// \tis always true on iteration domain: " << isl_set_is_subset(cpy(out_domain), cpy(p.first)) << endl;
-      //}
-      //inpt = *(buf.get_in_ports().begin());
-
-      //if (pieces.size() == 0) {
-        //out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << 0 << "()" << ";\n";
-        //out << "\treturn value_" + inpt + ";" << endl;
-      //} else if (pieces.size() == 1 &&
-          //isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
-        //string dx = codegen_c(pieces[0].second);
-        //out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
-        //out << "\treturn value_" + inpt + ";" << endl;
-      //} else {
-        //out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
-        //out << "\treturn value_" + inpt + ";" << endl;
-      //}
-    //} else {
-      //map<string, string> ms = umap_codegen_c(lex_max_events);
-      //for (auto e : ms) {
-        //out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
-      //}
-      //for (auto inpt : buf.get_in_ports()) {
-        //if (contains_key(inpt, ms)) {
-          //string delay_expr = evaluate_dd(buf, outpt, inpt);
-          //out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
-          //out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
-        //}
-      //}
-      //out << "\tassert(false);\n\treturn 0;\n";
-    //}
-
-    //out << "}" << endl << endl;
-  }
+  } else {
 
   out << "// Bundles..." << endl;
   for (auto b : buf.port_bundles) {
@@ -1342,8 +1214,34 @@ void generate_hls_code(std::ostream& out, UBuffer& buf) {
     }
     out << "}" << endl << endl;
   }
-  out << endl << endl;
+  }
+}
 
+void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
+  string inpt = buf.get_in_port();
+  generate_code_prefix(options, out, buf);
+
+  for (auto outpt : buf.get_out_ports()) {
+    generate_selects(options, out, inpt, outpt, buf);
+  }
+
+  generate_bundles(options, out, inpt, buf);
+  out << endl << endl;
+}
+
+void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
+
+  CodegenOptions options;
+  options.internal = true;
+
+  generate_hls_code(options, out, buf);
+}
+
+void generate_hls_code(std::ostream& out, UBuffer& buf) {
+  CodegenOptions options;
+  options.internal = false;
+
+  generate_hls_code(options, out, buf);
 }
 
 void generate_hls_code(UBuffer& buf) {
