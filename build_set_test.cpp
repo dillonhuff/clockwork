@@ -1025,7 +1025,7 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
       for (int i = 0; i < num_dims(s); i++) {
         string name = 
           str(isl_space_get_dim_id(s, isl_dim_set, i));
-        offset_printouts.push_back("\"" + name + " = \" << " + name + " ");
+        offset_printouts.push_back("\" " + name + " = \" << " + name + " ");
       }
 
       out << "\tcout << \"Error: Unsupported offsets: \" << " << sep_list(offset_printouts, "", "", " << ") << " << endl;" << endl;
@@ -3358,8 +3358,8 @@ void conv_2d_rolled_test() {
   {
     auto pc = prg.add_nest("pr", 0, 64, "pc", 0, 64);
     auto write = pc->add_op("write");
-    write->add_load("in", "pc, pr");
-    write->add_store("I", "pc, pr");
+    write->add_load("in", "pr, pc");
+    write->add_store("I", "pr, pc");
   }
 
   {
@@ -3370,7 +3370,7 @@ void conv_2d_rolled_test() {
     rd->add_store("R", "lr, lc");
     rd->add_function("set_zero");
 
-    auto reduce_inner_loop = rd->add_nest("rr", 0, 3, "rc", 0, 3);
+    auto reduce_inner_loop = pc->add_nest("rr", 0, 3, "rc", 0, 3);
     auto reduce_inner = reduce_inner_loop->add_op({"R", "lr, lc"}, "inc", {"R", "lr, lc", "I", "lr + rr, lc + rc"});
   }
 
@@ -3486,7 +3486,7 @@ int main(int argc, char** argv) {
     reduce_2d_test();
     conv_1d_test();
     conv_2d_bc_test();
-    //conv_2d_rolled_test();
+    conv_2d_rolled_test();
     unsharp_test();
     warp_and_upsample_test();
     blur_and_downsample_test();
