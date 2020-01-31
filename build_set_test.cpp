@@ -965,119 +965,119 @@ umap* get_lexmax_events(const std::string& inpt, const std::string& outpt, UBuff
 
 void generate_selects(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
 
-  if (options.internal) {
   auto lex_max_events = get_lexmax_events(inpt, outpt, buf);
+  if (options.internal) {
 
-  out << "inline " + buf.port_type_string() + " " + outpt + "_select(";
-  size_t nargs = 0;
-  for (auto pt : buf.get_in_ports()) {
-    out << pt + "_cache& " << pt << "_delay" << endl;
-    out << ", ";
-    nargs++;
-  }
-  isl_space* s = get_space(buf.domain.at(outpt));
-  assert(isl_space_is_set(s));
-  vector<string> dim_decls;
-  for (int i = 0; i < num_dims(s); i++) {
-    dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
-  }
-  out << sep_list(dim_decls, "", "", ", ");
-
-  out << ") {" << endl;
-
-  // Body of select function
-  if (buf.get_in_ports().size() == 1) {
-    string delay_expr = evaluate_dd(buf, outpt, inpt);
-    auto qpd = compute_dd(buf, outpt, inpt);
-    auto pieces = get_pieces(qpd);
-    out << "// Pieces..." << endl;
-    auto out_domain = buf.domain.at(outpt);
-    for (auto p : pieces) {
-      out << "// " << str(p.first) << " -> " << str(p.second) << endl;
-      out << "// \tis always true on iteration domain: " << isl_set_is_subset(cpy(out_domain), cpy(p.first)) << endl;
+    out << "inline " + buf.port_type_string() + " " + outpt + "_select(";
+    size_t nargs = 0;
+    for (auto pt : buf.get_in_ports()) {
+      out << pt + "_cache& " << pt << "_delay" << endl;
+      out << ", ";
+      nargs++;
     }
-    string inpt = *(buf.get_in_ports().begin());
-
-    if (pieces.size() == 0) {
-      out << "\t" << buf.port_type_string() << " value_" << inpt << " = " << inpt << "_delay.peek_" << 0 << "()" << ";\n";
-      out << "\treturn value_" + inpt + ";" << endl;
-    } else if (pieces.size() == 1 &&
-        isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
-      string dx = codegen_c(pieces[0].second);
-      if (is_number(dx)) {
-        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
-      } else {
-        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << dx << ")" << ";\n";
-      }
-      out << "\treturn value_" + inpt + ";" << endl;
-    } else {
-      out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
-      out << "\treturn value_" + inpt + ";" << endl;
-    }
-  } else {
-    map<string, string> ms = umap_codegen_c(lex_max_events);
-    for (auto e : ms) {
-      out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
-    }
-    for (auto inpt : buf.get_in_ports()) {
-      out << "\t// inpt: " << inpt << endl;
-      bool found_key = false;
-      string k_var = "";
-      for (auto k : ms) {
-        string prefix = buf.name + "_" + k.first;
-        if (is_prefix(prefix, inpt)) {
-          found_key = true;
-          k_var = "select_" + k.first;
-        }
-      }
-      if (found_key) {
-        assert(k_var != "");
-        string delay_expr = evaluate_dd(buf, outpt, inpt);
-        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
-        out << "\tif (" + k_var + ") { return value_"+ inpt + "; }\n";
-      }
-    }
-    vector<string> offset_printouts;
     isl_space* s = get_space(buf.domain.at(outpt));
     assert(isl_space_is_set(s));
+    vector<string> dim_decls;
     for (int i = 0; i < num_dims(s); i++) {
-      string name = 
-        str(isl_space_get_dim_id(s, isl_dim_set, i));
-      offset_printouts.push_back("\" " + name + " = \" << " + name + " ");
+      dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
     }
+    out << sep_list(dim_decls, "", "", ", ");
 
-    out << "\tcout << \"Error: Unsupported offsets: \" << " << sep_list(offset_printouts, "", "", " << ") << " << endl;" << endl;
-    out << "\tassert(false);\n\treturn 0;\n";
-  }
+    out << ") {" << endl;
 
-  out << "}" << endl << endl;
-  } else {
-    umap* src_map = nullptr;
-    for (auto inpt : buf.get_in_ports()) {
-      auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
-      if (src_map == nullptr) {
-        src_map =
-          ((its(dot(buf.access_map.at(outpt),
-                    inv(buf.access_map.at(inpt))), beforeAcc)));
-      } else {
-        src_map =
-          unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
+    // Body of select function
+    if (buf.get_in_ports().size() == 1) {
+      string delay_expr = evaluate_dd(buf, outpt, inpt);
+      auto qpd = compute_dd(buf, outpt, inpt);
+      auto pieces = get_pieces(qpd);
+      out << "// Pieces..." << endl;
+      auto out_domain = buf.domain.at(outpt);
+      for (auto p : pieces) {
+        out << "// " << str(p.first) << " -> " << str(p.second) << endl;
+        out << "// \tis always true on iteration domain: " << isl_set_is_subset(cpy(out_domain), cpy(p.first)) << endl;
       }
+      string inpt = *(buf.get_in_ports().begin());
+
+      if (pieces.size() == 0) {
+        out << "\t" << buf.port_type_string() << " value_" << inpt << " = " << inpt << "_delay.peek_" << 0 << "()" << ";\n";
+        out << "\treturn value_" + inpt + ";" << endl;
+      } else if (pieces.size() == 1 &&
+          isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
+        string dx = codegen_c(pieces[0].second);
+        if (is_number(dx)) {
+          out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
+        } else {
+          out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << dx << ")" << ";\n";
+        }
+        out << "\treturn value_" + inpt + ";" << endl;
+      } else {
+        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
+        out << "\treturn value_" + inpt + ";" << endl;
+      }
+    } else {
+      map<string, string> ms = umap_codegen_c(lex_max_events);
+      for (auto e : ms) {
+        out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
+      }
+      for (auto inpt : buf.get_in_ports()) {
+        out << "\t// inpt: " << inpt << endl;
+        bool found_key = false;
+        string k_var = "";
+        for (auto k : ms) {
+          string prefix = buf.name + "_" + k.first;
+          if (is_prefix(prefix, inpt)) {
+            found_key = true;
+            k_var = "select_" + k.first;
+          }
+        }
+        if (found_key) {
+          assert(k_var != "");
+          string delay_expr = evaluate_dd(buf, outpt, inpt);
+          out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
+          out << "\tif (" + k_var + ") { return value_"+ inpt + "; }\n";
+        }
+      }
+      vector<string> offset_printouts;
+      isl_space* s = get_space(buf.domain.at(outpt));
+      assert(isl_space_is_set(s));
+      for (int i = 0; i < num_dims(s); i++) {
+        string name = 
+          str(isl_space_get_dim_id(s, isl_dim_set, i));
+        offset_printouts.push_back("\" " + name + " = \" << " + name + " ");
+      }
+
+      out << "\tcout << \"Error: Unsupported offsets: \" << " << sep_list(offset_printouts, "", "", " << ") << " << endl;" << endl;
+      out << "\tassert(false);\n\treturn 0;\n";
     }
 
-    auto sched = buf.global_schedule();
-    auto after = lex_gt(sched, sched);
+    out << "}" << endl << endl;
+  } else {
+    //umap* src_map = nullptr;
+    //for (auto inpt : buf.get_in_ports()) {
+      //auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
+      //if (src_map == nullptr) {
+        //src_map =
+          //((its(dot(buf.access_map.at(outpt),
+                    //inv(buf.access_map.at(inpt))), beforeAcc)));
+      //} else {
+        //src_map =
+          //unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
+      //}
+    //}
 
-    src_map = its(src_map, after);
-    src_map = lexmax(src_map);
+    //auto sched = buf.global_schedule();
+    //auto after = lex_gt(sched, sched);
 
-    auto time_to_event = inv(sched);
+    //src_map = its(src_map, after);
+    //src_map = lexmax(src_map);
 
-    auto lex_max_events =
-      dot(lexmax(dot(src_map, sched)), time_to_event);
+    //auto time_to_event = inv(sched);
 
-    // Maybe: Get the schedule position, take the lexmax and then get it back?source map and then?? Creating more code?
-    out << "// Select if: " << str(src_map) << endl;
+    //auto lex_max_events =
+      //dot(lexmax(dot(src_map, sched)), time_to_event);
+
+    //// Maybe: Get the schedule position, take the lexmax and then get it back?source map and then?? Creating more code?
+    //out << "// Select if: " << str(src_map) << endl;
     out << "inline int " + outpt + "_select(";
     size_t nargs = 0;
     for (auto pt : buf.get_in_ports()) {

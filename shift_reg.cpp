@@ -54,7 +54,6 @@ inline void write_write(InputStream<int>& write, write_cache& write_delay) {
 	int write_value = write.read(); write_delay.push(write_value);
 }
 
-// Select if: { read0[i] -> write[i' = i] : 0 <= i <= 7 }
 inline int read0_select(write_cache& write_delay
 , int i) {
 // Pieces...
@@ -64,7 +63,6 @@ inline int read0_select(write_cache& write_delay
 	return value_write;
 }
 
-// Select if: { read1[i] -> write[i' = 1 + i] : 0 <= i <= 7 }
 inline int read1_select(write_cache& write_delay
 , int i) {
 // Pieces...
@@ -74,7 +72,6 @@ inline int read1_select(write_cache& write_delay
 	return value_write;
 }
 
-// Select if: { read2[i] -> write[i' = 2 + i] : 0 <= i <= 7 }
 inline int read2_select(write_cache& write_delay
 , int i) {
 // Pieces...
