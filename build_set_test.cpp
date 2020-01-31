@@ -2711,9 +2711,7 @@ void generate_regression_testbench(prog& prg) {
   rgtb.close();
 }
 
-void conv_1d_test() {
-  prog prg = conv_1d();
-
+void regression_test(prog& prg) {
   generate_unoptimized_code(prg);
   
   auto old_name = prg.name;
@@ -2728,16 +2726,12 @@ void conv_1d_test() {
 
 
   assert(unoptimized_res == optimized_res);
+}
 
-  //cout << "Program with optimized schedule..." << endl;
-  //auto buffers = build_buffers(prg);
-  //generate_app_code(buffers, prg);
+void conv_1d_test() {
+  prog prg = conv_1d();
 
-  //int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
-  //assert(res == 0);
-
-  //res = system("./a.out");
-  //assert(res == 0);
+  regression_test(prg);
 }
 
 isl_schedule_node* print_sched_tp(isl_schedule_node* n, void* user) {
@@ -3290,16 +3284,17 @@ void conv_2d_bc_test() {
   cout << "Program code without optimization..." << endl;
   prg.unoptimized_codegen();
 
-  umap* opt_sched = prg.optimized_codegen();
-  auto domain = prg.whole_iteration_domain();
-  auto schedmap = its(opt_sched, domain);
-  cout << "Optimized schedule..." << endl;
-  cout << codegen_c(schedmap);
+  regression_test(prg);
+  //umap* opt_sched = prg.optimized_codegen();
+  //auto domain = prg.whole_iteration_domain();
+  //auto schedmap = its(opt_sched, domain);
+  //cout << "Optimized schedule..." << endl;
+  //cout << codegen_c(schedmap);
   
-  auto buffers = build_buffers(prg);
-  generate_app_code(buffers, prg);
+  //auto buffers = build_buffers(prg);
+  //generate_app_code(buffers, prg);
 
-  run_tb(prg);
+  //run_tb(prg);
 }
 
 void conv_2d_rolled_test() {
