@@ -56,7 +56,6 @@ inline void M_write_0_write(int& M_write_0, M_write_0_cache& M_write_0_delay) {
 	M_write_0_delay.push(M_write_0);
 }
 
-// Select if: { read0[root = 0, c] -> write[root' = 0, p = 1 + c] : 0 <= c <= 8; read0[root = 0, c = 9] -> write[root' = 0, p = 9] }
 inline int M_read0_3_select(M_write_0_cache& M_write_0_delay
 , int root, int c) {
 // Pieces...
@@ -66,7 +65,6 @@ inline int M_read0_3_select(M_write_0_cache& M_write_0_delay
 	return value_M_write_0;
 }
 
-// Select if: { read0[root = 0, c] -> write[root' = 0, p = 9] : 8 <= c <= 9; read0[root = 0, c] -> write[root' = 0, p = 2 + c] : 0 <= c <= 7 }
 inline int M_read0_4_select(M_write_0_cache& M_write_0_delay
 , int root, int c) {
 // Pieces...
@@ -74,7 +72,6 @@ inline int M_read0_4_select(M_write_0_cache& M_write_0_delay
 	return value_M_write_0;
 }
 
-// Select if: { read0[root = 0, c] -> write[root' = 0, p = c] : 0 <= c <= 9 }
 inline int M_read0_5_select(M_write_0_cache& M_write_0_delay
 , int root, int c) {
 // Pieces...
@@ -146,7 +143,6 @@ inline void T_read0_2_write(hw_uint<96>& T_read0_2, T_read0_2_cache& T_read0_2_d
 	T_read0_2_delay.push(T_read0_2);
 }
 
-// Select if: { compute_out[root = 0, c] -> read0[root' = 0, c' = c] : 0 <= c <= 9 }
 inline hw_uint<96> T_compute_out_7_select(T_read0_2_cache& T_read0_2_delay
 , int root, int c) {
 // Pieces...

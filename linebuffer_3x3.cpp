@@ -134,7 +134,6 @@ inline void write0_write(InputStream<int>& write0, write0_cache& write0_delay) {
 	int write0_value = write0.read(); write0_delay.push(write0_value);
 }
 
-// Select if: { read_0_0[i, j] -> write0[i' = i, j' = j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_0_0_select(write0_cache& write0_delay
 , int i, int j) {
 // Pieces...
@@ -144,7 +143,6 @@ inline int read_0_0_select(write0_cache& write0_delay
 	return value_write0;
 }
 
-// Select if: { read_0_1[i, j] -> write0[i' = i, j' = 1 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_0_1_select(write0_cache& write0_delay
 , int i, int j) {
 // Pieces...
@@ -154,7 +152,6 @@ inline int read_0_1_select(write0_cache& write0_delay
 	return value_write0;
 }
 
-// Select if: { read_0_2[i, j] -> write0[i' = i, j' = 2 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_0_2_select(write0_cache& write0_delay
 , int i, int j) {
 // Pieces...
@@ -166,7 +163,6 @@ inline int read_0_2_select(write0_cache& write0_delay
 	return value_write0;
 }
 
-// Select if: { read_1_0[i, j] -> write0[i' = 1 + i, j' = j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_1_0_select(write0_cache& write0_delay
 , int i, int j) {
 // Pieces...
@@ -176,7 +172,6 @@ inline int read_1_0_select(write0_cache& write0_delay
 	return value_write0;
 }
 
-// Select if: { read_1_1[i, j] -> write0[i' = 1 + i, j' = 1 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_1_1_select(write0_cache& write0_delay
 , int i, int j) {
 // Pieces...
@@ -186,7 +181,6 @@ inline int read_1_1_select(write0_cache& write0_delay
 	return value_write0;
 }
 
-// Select if: { read_1_2[i, j] -> write0[i' = 1 + i, j' = 2 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_1_2_select(write0_cache& write0_delay
 , int i, int j) {
 // Pieces...
@@ -198,7 +192,6 @@ inline int read_1_2_select(write0_cache& write0_delay
 	return value_write0;
 }
 
-// Select if: { read_2_0[i, j] -> write0[i' = 2 + i, j' = j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_2_0_select(write0_cache& write0_delay
 , int i, int j) {
 // Pieces...
@@ -208,7 +201,6 @@ inline int read_2_0_select(write0_cache& write0_delay
 	return value_write0;
 }
 
-// Select if: { read_2_1[i, j] -> write0[i' = 2 + i, j' = 1 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_2_1_select(write0_cache& write0_delay
 , int i, int j) {
 // Pieces...
@@ -218,7 +210,6 @@ inline int read_2_1_select(write0_cache& write0_delay
 	return value_write0;
 }
 
-// Select if: { read_2_2[i, j] -> write0[i' = 2 + i, j' = 2 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_2_2_select(write0_cache& write0_delay
 , int i, int j) {
 // Pieces...

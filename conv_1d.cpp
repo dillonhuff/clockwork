@@ -56,7 +56,6 @@ inline void M_get_input_0_write(int& M_get_input_0, M_get_input_0_cache& M_get_i
 	M_get_input_0_delay.push(M_get_input_0);
 }
 
-// Select if: { compute_output[root = 0, c] -> get_input[root' = 0, p = c] : 0 <= c <= 7 }
 inline int M_compute_output_3_select(M_get_input_0_cache& M_get_input_0_delay
 , int root, int c) {
 // Pieces...
@@ -66,7 +65,6 @@ inline int M_compute_output_3_select(M_get_input_0_cache& M_get_input_0_delay
 	return value_M_get_input_0;
 }
 
-// Select if: { compute_output[root = 0, c] -> get_input[root' = 0, p = 1 + c] : 0 <= c <= 7 }
 inline int M_compute_output_4_select(M_get_input_0_cache& M_get_input_0_delay
 , int root, int c) {
 // Pieces...
@@ -76,7 +74,6 @@ inline int M_compute_output_4_select(M_get_input_0_cache& M_get_input_0_delay
 	return value_M_get_input_0;
 }
 
-// Select if: { compute_output[root = 0, c] -> get_input[root' = 0, p = 2 + c] : 0 <= c <= 7 }
 inline int M_compute_output_5_select(M_get_input_0_cache& M_get_input_0_delay
 , int root, int c) {
 // Pieces...

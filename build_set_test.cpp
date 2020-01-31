@@ -703,9 +703,6 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
 
 
   WriteThatProducesReadData = LastWriteBeforeRead;
-  //auto lex_max_events =
-    //dot(lexmax(dot(src_map, sched)), time_to_event);
-
 
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
@@ -920,8 +917,8 @@ void generate_code_prefix(CodegenOptions& options,
 
   out << endl << endl;
   for (auto inpt : buf.get_in_ports()) {
-    out << "inline void " << inpt << "_write(";
     if (options.internal) {
+      out << "inline void " << inpt << "_write(";
       out << buf.port_type_string(inpt) + "& ";
       out << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
       out << "\t" + inpt + "_delay.push(" + inpt + ");" << endl;
@@ -935,14 +932,7 @@ void generate_code_prefix(CodegenOptions& options,
 
 }
 
-void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
-  string inpt = buf.get_in_port();
-
-  CodegenOptions options;
-  options.internal = true;
-  generate_code_prefix(options, out, buf);
-
-  for (auto outpt : buf.get_out_ports()) {
+umap* get_lexmax_events(const std::string& inpt, const std::string& outpt, UBuffer& buf) {
     umap* src_map = nullptr;
     for (auto inpt : buf.get_in_ports()) {
       auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
@@ -968,7 +958,21 @@ void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
       dot(lexmax(dot(src_map, sched)), time_to_event);
 
     // Maybe: Get the schedule position, take the lexmax and then get it back?source map and then?? Creating more code?
-    out << "// Select if: " << str(src_map) << endl;
+    //out << "// Select if: " << str(src_map) << endl;
+
+    return lex_max_events;
+}
+
+void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
+  string inpt = buf.get_in_port();
+
+  CodegenOptions options;
+  options.internal = true;
+  generate_code_prefix(options, out, buf);
+
+  for (auto outpt : buf.get_out_ports()) {
+    auto lex_max_events = get_lexmax_events(inpt, outpt, buf);
+
     out << "inline " + buf.port_type_string() + " " + outpt + "_select(";
     size_t nargs = 0;
     for (auto pt : buf.get_in_ports()) {
@@ -1120,36 +1124,12 @@ void generate_hls_code(std::ostream& out, UBuffer& buf) {
   string inpt = buf.get_in_port();
 
   CodegenOptions options;
-  options.internal = true;
+  options.internal = false;
   generate_code_prefix(options, out, buf);
 
   for (auto outpt : buf.get_out_ports()) {
-    umap* src_map = nullptr;
-    for (auto inpt : buf.get_in_ports()) {
-      auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
-      if (src_map == nullptr) {
-        src_map =
-          ((its(dot(buf.access_map.at(outpt),
-                    inv(buf.access_map.at(inpt))), beforeAcc)));
-      } else {
-        src_map =
-          unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
-      }
-    }
+    auto lex_max_events = get_lexmax_events(inpt, outpt, buf);
 
-    auto sched = buf.global_schedule();
-    auto after = lex_gt(sched, sched);
-
-    src_map = its(src_map, after);
-    src_map = lexmax(src_map);
-
-    auto time_to_event = inv(sched);
-
-    auto lex_max_events =
-      dot(lexmax(dot(src_map, sched)), time_to_event);
-
-    // Maybe: Get the schedule position, take the lexmax and then get it back?source map and then?? Creating more code?
-    out << "// Select if: " << str(src_map) << endl;
     out << "inline int " + outpt + "_select(";
     size_t nargs = 0;
     for (auto pt : buf.get_in_ports()) {
