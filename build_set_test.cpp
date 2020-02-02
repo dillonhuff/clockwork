@@ -906,6 +906,7 @@ void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer&
 
 struct CodegenOptions {
   bool internal;
+  bool all_rams;
 };
 
 void generate_code_prefix(CodegenOptions& options,
@@ -1130,7 +1131,6 @@ void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf)
 }
 
 void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
-
   CodegenOptions options;
   options.internal = true;
 
@@ -2213,9 +2213,11 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* schedmap)
   }
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
-      generate_hls_code_internal(conv_out, b.second);
-    } else {
-      //args.push_back("HWStream<int>& " + b.first);
+      CodegenOptions options;
+      options.internal = true;
+
+      generate_hls_code(options, conv_out, b.second);
+      //generate_hls_code_internal(conv_out, b.second);
     }
   }
 
@@ -2415,9 +2417,6 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* schedmap)
     code_string = regex_replace(code_string, re, op->name + "(" + args_list + ", $1);");
   }
 
-  //cout << "Code string:" << endl;
-  //cout << code_string << endl;
-
   conv_out << code_string << endl;
 
   conv_out << "}" << endl;
@@ -2447,7 +2446,12 @@ void generate_unoptimized_code(prog& prg) {
   auto sched = prg.unoptimized_schedule();
 
   cout << codegen_c(prg.unoptimized_schedule());
+  
   auto buffers = build_buffers(prg, prg.unoptimized_schedule());
+  
+  CodegenOptions options;
+  options.internal = false;
+
   generate_app_code(buffers, prg, sched);
 
   prg.name = old_name;
