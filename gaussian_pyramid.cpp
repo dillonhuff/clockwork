@@ -2,7 +2,7 @@
 
 #include "hw_classes.h"
 
-struct I_store_I_from_in_0_cache {
+struct I_store_I_from_in_18_cache {
 	// Capacity: 67
 	// Parition [0, 1) capacity = 1
 	fifo<int, 1> f0;
@@ -132,138 +132,138 @@ struct I_store_I_from_in_0_cache {
 
 
 
-inline void I_store_I_from_in_0_write(int& I_store_I_from_in_0, I_store_I_from_in_0_cache& I_store_I_from_in_0_delay) {
-	I_store_I_from_in_0_delay.push(I_store_I_from_in_0);
+inline void I_store_I_from_in_18_write(int& I_store_I_from_in_18, I_store_I_from_in_18_cache& I_store_I_from_in_18_delay) {
+	I_store_I_from_in_18_delay.push(I_store_I_from_in_18);
 }
 
-inline int I_I_blurred_conv_3_30_10_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
-, int root, int I_blurred_r, int I_blurred_c) {
-// Pieces...
-// { I_blurred_conv_3_30[root = 0, I_blurred_r, I_blurred_c] : 0 <= I_blurred_r <= 29 and 0 <= I_blurred_c <= 29 } -> { I_blurred_conv_3_30[root, I_blurred_r, I_blurred_c] -> 1 }
-// 	is always true on iteration domain: 1
-	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_1();
-	return value_I_store_I_from_in_0;
-}
-
-inline int I_I_blurred_conv_3_30_11_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
-, int root, int I_blurred_r, int I_blurred_c) {
-// Pieces...
-	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_0();
-	return value_I_store_I_from_in_0;
-}
-
-inline int I_I_blurred_conv_3_30_3_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
+inline int I_I_blurred_conv_3_30_21_select(I_store_I_from_in_18_cache& I_store_I_from_in_18_delay
 , int root, int I_blurred_r, int I_blurred_c) {
 // Pieces...
 // { I_blurred_conv_3_30[root = 0, I_blurred_r, I_blurred_c] : 0 <= I_blurred_r <= 29 and 0 <= I_blurred_c <= 29 } -> { I_blurred_conv_3_30[root, I_blurred_r, I_blurred_c] -> 66 }
 // 	is always true on iteration domain: 1
-	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_66();
-	return value_I_store_I_from_in_0;
+	int value_I_store_I_from_in_18 = I_store_I_from_in_18_delay.peek_66();
+	return value_I_store_I_from_in_18;
 }
 
-inline int I_I_blurred_conv_3_30_4_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
+inline int I_I_blurred_conv_3_30_22_select(I_store_I_from_in_18_cache& I_store_I_from_in_18_delay
 , int root, int I_blurred_r, int I_blurred_c) {
 // Pieces...
 // { I_blurred_conv_3_30[root = 0, I_blurred_r, I_blurred_c] : 0 <= I_blurred_r <= 29 and 0 <= I_blurred_c <= 29 } -> { I_blurred_conv_3_30[root, I_blurred_r, I_blurred_c] -> 65 }
 // 	is always true on iteration domain: 1
-	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_65();
-	return value_I_store_I_from_in_0;
+	int value_I_store_I_from_in_18 = I_store_I_from_in_18_delay.peek_65();
+	return value_I_store_I_from_in_18;
 }
 
-inline int I_I_blurred_conv_3_30_5_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
+inline int I_I_blurred_conv_3_30_23_select(I_store_I_from_in_18_cache& I_store_I_from_in_18_delay
 , int root, int I_blurred_r, int I_blurred_c) {
 // Pieces...
 // { I_blurred_conv_3_30[root = 0, I_blurred_r, I_blurred_c] : 0 <= I_blurred_r <= 29 and 0 <= I_blurred_c <= 28 } -> { I_blurred_conv_3_30[root, I_blurred_r, I_blurred_c] -> 64 }
 // 	is always true on iteration domain: 0
 // { I_blurred_conv_3_30[root = 0, I_blurred_r, I_blurred_c = 29] : 0 <= I_blurred_r <= 29 } -> { I_blurred_conv_3_30[root, I_blurred_r, I_blurred_c] -> (35 + I_blurred_c) }
 // 	is always true on iteration domain: 0
-	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek(((root == 0 && I_blurred_r >= 0 && 29 - I_blurred_r >= 0 && I_blurred_c >= 0 && 28 - I_blurred_c >= 0) ? (64) : (-29 + I_blurred_c == 0 && root == 0 && I_blurred_r >= 0 && 29 - I_blurred_r >= 0) ? ((35 + I_blurred_c)) : 0));
-	return value_I_store_I_from_in_0;
+	int value_I_store_I_from_in_18 = I_store_I_from_in_18_delay.peek(((root == 0 && I_blurred_r >= 0 && 29 - I_blurred_r >= 0 && I_blurred_c >= 0 && 28 - I_blurred_c >= 0) ? (64) : (-29 + I_blurred_c == 0 && root == 0 && I_blurred_r >= 0 && 29 - I_blurred_r >= 0) ? ((35 + I_blurred_c)) : 0));
+	return value_I_store_I_from_in_18;
 }
 
-inline int I_I_blurred_conv_3_30_6_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
+inline int I_I_blurred_conv_3_30_24_select(I_store_I_from_in_18_cache& I_store_I_from_in_18_delay
 , int root, int I_blurred_r, int I_blurred_c) {
 // Pieces...
 // { I_blurred_conv_3_30[root = 0, I_blurred_r, I_blurred_c] : 0 <= I_blurred_r <= 29 and 0 <= I_blurred_c <= 29 } -> { I_blurred_conv_3_30[root, I_blurred_r, I_blurred_c] -> 34 }
 // 	is always true on iteration domain: 1
-	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_34();
-	return value_I_store_I_from_in_0;
+	int value_I_store_I_from_in_18 = I_store_I_from_in_18_delay.peek_34();
+	return value_I_store_I_from_in_18;
 }
 
-inline int I_I_blurred_conv_3_30_7_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
+inline int I_I_blurred_conv_3_30_25_select(I_store_I_from_in_18_cache& I_store_I_from_in_18_delay
 , int root, int I_blurred_r, int I_blurred_c) {
 // Pieces...
 // { I_blurred_conv_3_30[root = 0, I_blurred_r, I_blurred_c] : 0 <= I_blurred_r <= 29 and 0 <= I_blurred_c <= 29 } -> { I_blurred_conv_3_30[root, I_blurred_r, I_blurred_c] -> 33 }
 // 	is always true on iteration domain: 1
-	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_33();
-	return value_I_store_I_from_in_0;
+	int value_I_store_I_from_in_18 = I_store_I_from_in_18_delay.peek_33();
+	return value_I_store_I_from_in_18;
 }
 
-inline int I_I_blurred_conv_3_30_8_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
+inline int I_I_blurred_conv_3_30_26_select(I_store_I_from_in_18_cache& I_store_I_from_in_18_delay
 , int root, int I_blurred_r, int I_blurred_c) {
 // Pieces...
 // { I_blurred_conv_3_30[root = 0, I_blurred_r, I_blurred_c] : 0 <= I_blurred_r <= 29 and 0 <= I_blurred_c <= 28 } -> { I_blurred_conv_3_30[root, I_blurred_r, I_blurred_c] -> 32 }
 // 	is always true on iteration domain: 0
 // { I_blurred_conv_3_30[root = 0, I_blurred_r, I_blurred_c = 29] : 0 <= I_blurred_r <= 29 } -> { I_blurred_conv_3_30[root, I_blurred_r, I_blurred_c] -> (3 + I_blurred_c) }
 // 	is always true on iteration domain: 0
-	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek(((root == 0 && I_blurred_r >= 0 && 29 - I_blurred_r >= 0 && I_blurred_c >= 0 && 28 - I_blurred_c >= 0) ? (32) : (-29 + I_blurred_c == 0 && root == 0 && I_blurred_r >= 0 && 29 - I_blurred_r >= 0) ? ((3 + I_blurred_c)) : 0));
-	return value_I_store_I_from_in_0;
+	int value_I_store_I_from_in_18 = I_store_I_from_in_18_delay.peek(((root == 0 && I_blurred_r >= 0 && 29 - I_blurred_r >= 0 && I_blurred_c >= 0 && 28 - I_blurred_c >= 0) ? (32) : (-29 + I_blurred_c == 0 && root == 0 && I_blurred_r >= 0 && 29 - I_blurred_r >= 0) ? ((3 + I_blurred_c)) : 0));
+	return value_I_store_I_from_in_18;
 }
 
-inline int I_I_blurred_conv_3_30_9_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
+inline int I_I_blurred_conv_3_30_27_select(I_store_I_from_in_18_cache& I_store_I_from_in_18_delay
 , int root, int I_blurred_r, int I_blurred_c) {
 // Pieces...
 // { I_blurred_conv_3_30[root = 0, I_blurred_r, I_blurred_c] : 0 <= I_blurred_r <= 29 and 0 <= I_blurred_c <= 29 } -> { I_blurred_conv_3_30[root, I_blurred_r, I_blurred_c] -> 2 }
 // 	is always true on iteration domain: 1
-	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_2();
-	return value_I_store_I_from_in_0;
+	int value_I_store_I_from_in_18 = I_store_I_from_in_18_delay.peek_2();
+	return value_I_store_I_from_in_18;
+}
+
+inline int I_I_blurred_conv_3_30_28_select(I_store_I_from_in_18_cache& I_store_I_from_in_18_delay
+, int root, int I_blurred_r, int I_blurred_c) {
+// Pieces...
+// { I_blurred_conv_3_30[root = 0, I_blurred_r, I_blurred_c] : 0 <= I_blurred_r <= 29 and 0 <= I_blurred_c <= 29 } -> { I_blurred_conv_3_30[root, I_blurred_r, I_blurred_c] -> 1 }
+// 	is always true on iteration domain: 1
+	int value_I_store_I_from_in_18 = I_store_I_from_in_18_delay.peek_1();
+	return value_I_store_I_from_in_18;
+}
+
+inline int I_I_blurred_conv_3_30_29_select(I_store_I_from_in_18_cache& I_store_I_from_in_18_delay
+, int root, int I_blurred_r, int I_blurred_c) {
+// Pieces...
+	int value_I_store_I_from_in_18 = I_store_I_from_in_18_delay.peek_0();
+	return value_I_store_I_from_in_18;
 }
 
 // Bundles...
 // I_blurred_conv_3_30_read
-//	I_I_blurred_conv_3_30_3
-//	I_I_blurred_conv_3_30_4
-//	I_I_blurred_conv_3_30_5
-//	I_I_blurred_conv_3_30_6
-//	I_I_blurred_conv_3_30_7
-//	I_I_blurred_conv_3_30_8
-//	I_I_blurred_conv_3_30_9
-//	I_I_blurred_conv_3_30_10
-//	I_I_blurred_conv_3_30_11
-inline hw_uint<288> I_I_blurred_conv_3_30_read_bundle_read(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay, int root, int I_blurred_r, int I_blurred_c) {
+//	I_I_blurred_conv_3_30_21
+//	I_I_blurred_conv_3_30_22
+//	I_I_blurred_conv_3_30_23
+//	I_I_blurred_conv_3_30_24
+//	I_I_blurred_conv_3_30_25
+//	I_I_blurred_conv_3_30_26
+//	I_I_blurred_conv_3_30_27
+//	I_I_blurred_conv_3_30_28
+//	I_I_blurred_conv_3_30_29
+inline hw_uint<288> I_I_blurred_conv_3_30_read_bundle_read(I_store_I_from_in_18_cache& I_store_I_from_in_18_delay, int root, int I_blurred_r, int I_blurred_c) {
 	hw_uint<288> result;
-	int I_I_blurred_conv_3_30_3_res = I_I_blurred_conv_3_30_3_select(I_store_I_from_in_0_delay, root, I_blurred_r, I_blurred_c);
-	set_at<0, 288>(result, I_I_blurred_conv_3_30_3_res);
-	int I_I_blurred_conv_3_30_4_res = I_I_blurred_conv_3_30_4_select(I_store_I_from_in_0_delay, root, I_blurred_r, I_blurred_c);
-	set_at<32, 288>(result, I_I_blurred_conv_3_30_4_res);
-	int I_I_blurred_conv_3_30_5_res = I_I_blurred_conv_3_30_5_select(I_store_I_from_in_0_delay, root, I_blurred_r, I_blurred_c);
-	set_at<64, 288>(result, I_I_blurred_conv_3_30_5_res);
-	int I_I_blurred_conv_3_30_6_res = I_I_blurred_conv_3_30_6_select(I_store_I_from_in_0_delay, root, I_blurred_r, I_blurred_c);
-	set_at<96, 288>(result, I_I_blurred_conv_3_30_6_res);
-	int I_I_blurred_conv_3_30_7_res = I_I_blurred_conv_3_30_7_select(I_store_I_from_in_0_delay, root, I_blurred_r, I_blurred_c);
-	set_at<128, 288>(result, I_I_blurred_conv_3_30_7_res);
-	int I_I_blurred_conv_3_30_8_res = I_I_blurred_conv_3_30_8_select(I_store_I_from_in_0_delay, root, I_blurred_r, I_blurred_c);
-	set_at<160, 288>(result, I_I_blurred_conv_3_30_8_res);
-	int I_I_blurred_conv_3_30_9_res = I_I_blurred_conv_3_30_9_select(I_store_I_from_in_0_delay, root, I_blurred_r, I_blurred_c);
-	set_at<192, 288>(result, I_I_blurred_conv_3_30_9_res);
-	int I_I_blurred_conv_3_30_10_res = I_I_blurred_conv_3_30_10_select(I_store_I_from_in_0_delay, root, I_blurred_r, I_blurred_c);
-	set_at<224, 288>(result, I_I_blurred_conv_3_30_10_res);
-	int I_I_blurred_conv_3_30_11_res = I_I_blurred_conv_3_30_11_select(I_store_I_from_in_0_delay, root, I_blurred_r, I_blurred_c);
-	set_at<256, 288>(result, I_I_blurred_conv_3_30_11_res);
+	int I_I_blurred_conv_3_30_21_res = I_I_blurred_conv_3_30_21_select(I_store_I_from_in_18_delay, root, I_blurred_r, I_blurred_c);
+	set_at<0, 288>(result, I_I_blurred_conv_3_30_21_res);
+	int I_I_blurred_conv_3_30_22_res = I_I_blurred_conv_3_30_22_select(I_store_I_from_in_18_delay, root, I_blurred_r, I_blurred_c);
+	set_at<32, 288>(result, I_I_blurred_conv_3_30_22_res);
+	int I_I_blurred_conv_3_30_23_res = I_I_blurred_conv_3_30_23_select(I_store_I_from_in_18_delay, root, I_blurred_r, I_blurred_c);
+	set_at<64, 288>(result, I_I_blurred_conv_3_30_23_res);
+	int I_I_blurred_conv_3_30_24_res = I_I_blurred_conv_3_30_24_select(I_store_I_from_in_18_delay, root, I_blurred_r, I_blurred_c);
+	set_at<96, 288>(result, I_I_blurred_conv_3_30_24_res);
+	int I_I_blurred_conv_3_30_25_res = I_I_blurred_conv_3_30_25_select(I_store_I_from_in_18_delay, root, I_blurred_r, I_blurred_c);
+	set_at<128, 288>(result, I_I_blurred_conv_3_30_25_res);
+	int I_I_blurred_conv_3_30_26_res = I_I_blurred_conv_3_30_26_select(I_store_I_from_in_18_delay, root, I_blurred_r, I_blurred_c);
+	set_at<160, 288>(result, I_I_blurred_conv_3_30_26_res);
+	int I_I_blurred_conv_3_30_27_res = I_I_blurred_conv_3_30_27_select(I_store_I_from_in_18_delay, root, I_blurred_r, I_blurred_c);
+	set_at<192, 288>(result, I_I_blurred_conv_3_30_27_res);
+	int I_I_blurred_conv_3_30_28_res = I_I_blurred_conv_3_30_28_select(I_store_I_from_in_18_delay, root, I_blurred_r, I_blurred_c);
+	set_at<224, 288>(result, I_I_blurred_conv_3_30_28_res);
+	int I_I_blurred_conv_3_30_29_res = I_I_blurred_conv_3_30_29_select(I_store_I_from_in_18_delay, root, I_blurred_r, I_blurred_c);
+	set_at<256, 288>(result, I_I_blurred_conv_3_30_29_res);
 	return result;
 }
 
 // store_I_from_in_write
-//	I_store_I_from_in_0
-inline void I_store_I_from_in_write_bundle_write(int& /* width = 32*/store_I_from_in_write, I_store_I_from_in_0_cache& I_store_I_from_in_0_delay) {
-	I_store_I_from_in_0_write(store_I_from_in_write, I_store_I_from_in_0_delay);
+//	I_store_I_from_in_18
+inline void I_store_I_from_in_write_bundle_write(int& /* width = 32*/store_I_from_in_write, I_store_I_from_in_18_cache& I_store_I_from_in_18_delay) {
+	I_store_I_from_in_18_write(store_I_from_in_write, I_store_I_from_in_18_delay);
 }
 
 
 
 #include "hw_classes.h"
 
-struct I_blurred_I_blurred_conv_3_30_2_cache {
+struct I_blurred_I_blurred_conv_3_30_20_cache {
 	// Capacity: 1
 	// Parition [0, 0] capacity = 1
 	fifo<int, 1> f1;
@@ -293,30 +293,30 @@ struct I_blurred_I_blurred_conv_3_30_2_cache {
 
 
 
-inline void I_blurred_I_blurred_conv_3_30_2_write(int& I_blurred_I_blurred_conv_3_30_2, I_blurred_I_blurred_conv_3_30_2_cache& I_blurred_I_blurred_conv_3_30_2_delay) {
-	I_blurred_I_blurred_conv_3_30_2_delay.push(I_blurred_I_blurred_conv_3_30_2);
+inline void I_blurred_I_blurred_conv_3_30_20_write(int& I_blurred_I_blurred_conv_3_30_20, I_blurred_I_blurred_conv_3_30_20_cache& I_blurred_I_blurred_conv_3_30_20_delay) {
+	I_blurred_I_blurred_conv_3_30_20_delay.push(I_blurred_I_blurred_conv_3_30_20);
 }
 
-inline int I_blurred_I_blurred_downsampled_id0_13_select(I_blurred_I_blurred_conv_3_30_2_cache& I_blurred_I_blurred_conv_3_30_2_delay
+inline int I_blurred_I_blurred_downsampled_id0_11_select(I_blurred_I_blurred_conv_3_30_20_cache& I_blurred_I_blurred_conv_3_30_20_delay
 , int root, int I_blurred_downsampled_r, int I_blurred_downsampled_c) {
 // Pieces...
-	int value_I_blurred_I_blurred_conv_3_30_2 = I_blurred_I_blurred_conv_3_30_2_delay.peek_0();
-	return value_I_blurred_I_blurred_conv_3_30_2;
+	int value_I_blurred_I_blurred_conv_3_30_20 = I_blurred_I_blurred_conv_3_30_20_delay.peek_0();
+	return value_I_blurred_I_blurred_conv_3_30_20;
 }
 
 // Bundles...
 // I_blurred_conv_3_30_write
-//	I_blurred_I_blurred_conv_3_30_2
-inline void I_blurred_I_blurred_conv_3_30_write_bundle_write(int& /* width = 32*/I_blurred_conv_3_30_write, I_blurred_I_blurred_conv_3_30_2_cache& I_blurred_I_blurred_conv_3_30_2_delay) {
-	I_blurred_I_blurred_conv_3_30_2_write(I_blurred_conv_3_30_write, I_blurred_I_blurred_conv_3_30_2_delay);
+//	I_blurred_I_blurred_conv_3_30_20
+inline void I_blurred_I_blurred_conv_3_30_write_bundle_write(int& /* width = 32*/I_blurred_conv_3_30_write, I_blurred_I_blurred_conv_3_30_20_cache& I_blurred_I_blurred_conv_3_30_20_delay) {
+	I_blurred_I_blurred_conv_3_30_20_write(I_blurred_conv_3_30_write, I_blurred_I_blurred_conv_3_30_20_delay);
 }
 
 // I_blurred_downsampled_id0_read
-//	I_blurred_I_blurred_downsampled_id0_13
-inline int I_blurred_I_blurred_downsampled_id0_read_bundle_read(I_blurred_I_blurred_conv_3_30_2_cache& I_blurred_I_blurred_conv_3_30_2_delay, int root, int I_blurred_downsampled_r, int I_blurred_downsampled_c) {
+//	I_blurred_I_blurred_downsampled_id0_11
+inline int I_blurred_I_blurred_downsampled_id0_read_bundle_read(I_blurred_I_blurred_conv_3_30_20_cache& I_blurred_I_blurred_conv_3_30_20_delay, int root, int I_blurred_downsampled_r, int I_blurred_downsampled_c) {
 	int result;
-	int I_blurred_I_blurred_downsampled_id0_13_res = I_blurred_I_blurred_downsampled_id0_13_select(I_blurred_I_blurred_conv_3_30_2_delay, root, I_blurred_downsampled_r, I_blurred_downsampled_c);
-	set_at<0, 32>(result, I_blurred_I_blurred_downsampled_id0_13_res);
+	int I_blurred_I_blurred_downsampled_id0_11_res = I_blurred_I_blurred_downsampled_id0_11_select(I_blurred_I_blurred_conv_3_30_20_delay, root, I_blurred_downsampled_r, I_blurred_downsampled_c);
+	set_at<0, 32>(result, I_blurred_I_blurred_downsampled_id0_11_res);
 	return result;
 }
 
@@ -324,7 +324,7 @@ inline int I_blurred_I_blurred_downsampled_id0_read_bundle_read(I_blurred_I_blur
 
 #include "hw_classes.h"
 
-struct I_blurred_downsampled_I_blurred_downsampled_id0_12_cache {
+struct I_blurred_downsampled_I_blurred_downsampled_id0_10_cache {
 	// Capacity: 33
 	// Parition [0, 1) capacity = 1
 	fifo<int, 1> f0;
@@ -454,145 +454,145 @@ struct I_blurred_downsampled_I_blurred_downsampled_id0_12_cache {
 
 
 
-inline void I_blurred_downsampled_I_blurred_downsampled_id0_12_write(int& I_blurred_downsampled_I_blurred_downsampled_id0_12, I_blurred_downsampled_I_blurred_downsampled_id0_12_cache& I_blurred_downsampled_I_blurred_downsampled_id0_12_delay) {
-	I_blurred_downsampled_I_blurred_downsampled_id0_12_delay.push(I_blurred_downsampled_I_blurred_downsampled_id0_12);
+inline void I_blurred_downsampled_I_blurred_downsampled_id0_10_write(int& I_blurred_downsampled_I_blurred_downsampled_id0_10, I_blurred_downsampled_I_blurred_downsampled_id0_10_cache& I_blurred_downsampled_I_blurred_downsampled_id0_10_delay) {
+	I_blurred_downsampled_I_blurred_downsampled_id0_10_delay.push(I_blurred_downsampled_I_blurred_downsampled_id0_10);
 }
 
-inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_17_select(I_blurred_downsampled_I_blurred_downsampled_id0_12_cache& I_blurred_downsampled_I_blurred_downsampled_id0_12_delay
+inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_1_select(I_blurred_downsampled_I_blurred_downsampled_id0_10_cache& I_blurred_downsampled_I_blurred_downsampled_id0_10_delay
 , int root, int I_blurred_downsampled_blurred_r, int I_blurred_downsampled_blurred_c) {
 // Pieces...
 // { I_blurred_downsampled_blurred_conv_3_30[root = 0, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c] : 0 <= I_blurred_downsampled_blurred_r <= 12 and 0 <= I_blurred_downsampled_blurred_c <= 12 } -> { I_blurred_downsampled_blurred_conv_3_30[root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c] -> 32 }
 // 	is always true on iteration domain: 1
-	int value_I_blurred_downsampled_I_blurred_downsampled_id0_12 = I_blurred_downsampled_I_blurred_downsampled_id0_12_delay.peek_32();
-	return value_I_blurred_downsampled_I_blurred_downsampled_id0_12;
+	int value_I_blurred_downsampled_I_blurred_downsampled_id0_10 = I_blurred_downsampled_I_blurred_downsampled_id0_10_delay.peek_32();
+	return value_I_blurred_downsampled_I_blurred_downsampled_id0_10;
 }
 
-inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_18_select(I_blurred_downsampled_I_blurred_downsampled_id0_12_cache& I_blurred_downsampled_I_blurred_downsampled_id0_12_delay
+inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_2_select(I_blurred_downsampled_I_blurred_downsampled_id0_10_cache& I_blurred_downsampled_I_blurred_downsampled_id0_10_delay
 , int root, int I_blurred_downsampled_blurred_r, int I_blurred_downsampled_blurred_c) {
 // Pieces...
 // { I_blurred_downsampled_blurred_conv_3_30[root = 0, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c] : 0 <= I_blurred_downsampled_blurred_r <= 12 and 0 <= I_blurred_downsampled_blurred_c <= 12 } -> { I_blurred_downsampled_blurred_conv_3_30[root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c] -> 31 }
 // 	is always true on iteration domain: 1
-	int value_I_blurred_downsampled_I_blurred_downsampled_id0_12 = I_blurred_downsampled_I_blurred_downsampled_id0_12_delay.peek_31();
-	return value_I_blurred_downsampled_I_blurred_downsampled_id0_12;
+	int value_I_blurred_downsampled_I_blurred_downsampled_id0_10 = I_blurred_downsampled_I_blurred_downsampled_id0_10_delay.peek_31();
+	return value_I_blurred_downsampled_I_blurred_downsampled_id0_10;
 }
 
-inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_19_select(I_blurred_downsampled_I_blurred_downsampled_id0_12_cache& I_blurred_downsampled_I_blurred_downsampled_id0_12_delay
+inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_3_select(I_blurred_downsampled_I_blurred_downsampled_id0_10_cache& I_blurred_downsampled_I_blurred_downsampled_id0_10_delay
 , int root, int I_blurred_downsampled_blurred_r, int I_blurred_downsampled_blurred_c) {
 // Pieces...
 // { I_blurred_downsampled_blurred_conv_3_30[root = 0, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c] : 0 <= I_blurred_downsampled_blurred_r <= 12 and 0 <= I_blurred_downsampled_blurred_c <= 11 } -> { I_blurred_downsampled_blurred_conv_3_30[root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c] -> 30 }
 // 	is always true on iteration domain: 0
 // { I_blurred_downsampled_blurred_conv_3_30[root = 0, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c = 12] : 0 <= I_blurred_downsampled_blurred_r <= 12 } -> { I_blurred_downsampled_blurred_conv_3_30[root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c] -> (18 + I_blurred_downsampled_blurred_c) }
 // 	is always true on iteration domain: 0
-	int value_I_blurred_downsampled_I_blurred_downsampled_id0_12 = I_blurred_downsampled_I_blurred_downsampled_id0_12_delay.peek(((root == 0 && I_blurred_downsampled_blurred_r >= 0 && 12 - I_blurred_downsampled_blurred_r >= 0 && I_blurred_downsampled_blurred_c >= 0 && 11 - I_blurred_downsampled_blurred_c >= 0) ? (30) : (-12 + I_blurred_downsampled_blurred_c == 0 && root == 0 && I_blurred_downsampled_blurred_r >= 0 && 12 - I_blurred_downsampled_blurred_r >= 0) ? ((18 + I_blurred_downsampled_blurred_c)) : 0));
-	return value_I_blurred_downsampled_I_blurred_downsampled_id0_12;
+	int value_I_blurred_downsampled_I_blurred_downsampled_id0_10 = I_blurred_downsampled_I_blurred_downsampled_id0_10_delay.peek(((root == 0 && I_blurred_downsampled_blurred_r >= 0 && 12 - I_blurred_downsampled_blurred_r >= 0 && I_blurred_downsampled_blurred_c >= 0 && 11 - I_blurred_downsampled_blurred_c >= 0) ? (30) : (-12 + I_blurred_downsampled_blurred_c == 0 && root == 0 && I_blurred_downsampled_blurred_r >= 0 && 12 - I_blurred_downsampled_blurred_r >= 0) ? ((18 + I_blurred_downsampled_blurred_c)) : 0));
+	return value_I_blurred_downsampled_I_blurred_downsampled_id0_10;
 }
 
-inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_20_select(I_blurred_downsampled_I_blurred_downsampled_id0_12_cache& I_blurred_downsampled_I_blurred_downsampled_id0_12_delay
+inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_4_select(I_blurred_downsampled_I_blurred_downsampled_id0_10_cache& I_blurred_downsampled_I_blurred_downsampled_id0_10_delay
 , int root, int I_blurred_downsampled_blurred_r, int I_blurred_downsampled_blurred_c) {
 // Pieces...
 // { I_blurred_downsampled_blurred_conv_3_30[root = 0, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c] : 0 <= I_blurred_downsampled_blurred_r <= 12 and 0 <= I_blurred_downsampled_blurred_c <= 12 } -> { I_blurred_downsampled_blurred_conv_3_30[root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c] -> 17 }
 // 	is always true on iteration domain: 1
-	int value_I_blurred_downsampled_I_blurred_downsampled_id0_12 = I_blurred_downsampled_I_blurred_downsampled_id0_12_delay.peek_17();
-	return value_I_blurred_downsampled_I_blurred_downsampled_id0_12;
+	int value_I_blurred_downsampled_I_blurred_downsampled_id0_10 = I_blurred_downsampled_I_blurred_downsampled_id0_10_delay.peek_17();
+	return value_I_blurred_downsampled_I_blurred_downsampled_id0_10;
 }
 
-inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_21_select(I_blurred_downsampled_I_blurred_downsampled_id0_12_cache& I_blurred_downsampled_I_blurred_downsampled_id0_12_delay
+inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_5_select(I_blurred_downsampled_I_blurred_downsampled_id0_10_cache& I_blurred_downsampled_I_blurred_downsampled_id0_10_delay
 , int root, int I_blurred_downsampled_blurred_r, int I_blurred_downsampled_blurred_c) {
 // Pieces...
 // { I_blurred_downsampled_blurred_conv_3_30[root = 0, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c] : 0 <= I_blurred_downsampled_blurred_r <= 12 and 0 <= I_blurred_downsampled_blurred_c <= 12 } -> { I_blurred_downsampled_blurred_conv_3_30[root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c] -> 16 }
 // 	is always true on iteration domain: 1
-	int value_I_blurred_downsampled_I_blurred_downsampled_id0_12 = I_blurred_downsampled_I_blurred_downsampled_id0_12_delay.peek_16();
-	return value_I_blurred_downsampled_I_blurred_downsampled_id0_12;
+	int value_I_blurred_downsampled_I_blurred_downsampled_id0_10 = I_blurred_downsampled_I_blurred_downsampled_id0_10_delay.peek_16();
+	return value_I_blurred_downsampled_I_blurred_downsampled_id0_10;
 }
 
-inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_22_select(I_blurred_downsampled_I_blurred_downsampled_id0_12_cache& I_blurred_downsampled_I_blurred_downsampled_id0_12_delay
+inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_6_select(I_blurred_downsampled_I_blurred_downsampled_id0_10_cache& I_blurred_downsampled_I_blurred_downsampled_id0_10_delay
 , int root, int I_blurred_downsampled_blurred_r, int I_blurred_downsampled_blurred_c) {
 // Pieces...
 // { I_blurred_downsampled_blurred_conv_3_30[root = 0, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c] : 0 <= I_blurred_downsampled_blurred_r <= 12 and 0 <= I_blurred_downsampled_blurred_c <= 11 } -> { I_blurred_downsampled_blurred_conv_3_30[root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c] -> 15 }
 // 	is always true on iteration domain: 0
 // { I_blurred_downsampled_blurred_conv_3_30[root = 0, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c = 12] : 0 <= I_blurred_downsampled_blurred_r <= 12 } -> { I_blurred_downsampled_blurred_conv_3_30[root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c] -> (3 + I_blurred_downsampled_blurred_c) }
 // 	is always true on iteration domain: 0
-	int value_I_blurred_downsampled_I_blurred_downsampled_id0_12 = I_blurred_downsampled_I_blurred_downsampled_id0_12_delay.peek(((root == 0 && I_blurred_downsampled_blurred_r >= 0 && 12 - I_blurred_downsampled_blurred_r >= 0 && I_blurred_downsampled_blurred_c >= 0 && 11 - I_blurred_downsampled_blurred_c >= 0) ? (15) : (-12 + I_blurred_downsampled_blurred_c == 0 && root == 0 && I_blurred_downsampled_blurred_r >= 0 && 12 - I_blurred_downsampled_blurred_r >= 0) ? ((3 + I_blurred_downsampled_blurred_c)) : 0));
-	return value_I_blurred_downsampled_I_blurred_downsampled_id0_12;
+	int value_I_blurred_downsampled_I_blurred_downsampled_id0_10 = I_blurred_downsampled_I_blurred_downsampled_id0_10_delay.peek(((root == 0 && I_blurred_downsampled_blurred_r >= 0 && 12 - I_blurred_downsampled_blurred_r >= 0 && I_blurred_downsampled_blurred_c >= 0 && 11 - I_blurred_downsampled_blurred_c >= 0) ? (15) : (-12 + I_blurred_downsampled_blurred_c == 0 && root == 0 && I_blurred_downsampled_blurred_r >= 0 && 12 - I_blurred_downsampled_blurred_r >= 0) ? ((3 + I_blurred_downsampled_blurred_c)) : 0));
+	return value_I_blurred_downsampled_I_blurred_downsampled_id0_10;
 }
 
-inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_23_select(I_blurred_downsampled_I_blurred_downsampled_id0_12_cache& I_blurred_downsampled_I_blurred_downsampled_id0_12_delay
+inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_7_select(I_blurred_downsampled_I_blurred_downsampled_id0_10_cache& I_blurred_downsampled_I_blurred_downsampled_id0_10_delay
 , int root, int I_blurred_downsampled_blurred_r, int I_blurred_downsampled_blurred_c) {
 // Pieces...
 // { I_blurred_downsampled_blurred_conv_3_30[root = 0, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c] : 0 <= I_blurred_downsampled_blurred_r <= 12 and 0 <= I_blurred_downsampled_blurred_c <= 12 } -> { I_blurred_downsampled_blurred_conv_3_30[root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c] -> 2 }
 // 	is always true on iteration domain: 1
-	int value_I_blurred_downsampled_I_blurred_downsampled_id0_12 = I_blurred_downsampled_I_blurred_downsampled_id0_12_delay.peek_2();
-	return value_I_blurred_downsampled_I_blurred_downsampled_id0_12;
+	int value_I_blurred_downsampled_I_blurred_downsampled_id0_10 = I_blurred_downsampled_I_blurred_downsampled_id0_10_delay.peek_2();
+	return value_I_blurred_downsampled_I_blurred_downsampled_id0_10;
 }
 
-inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_24_select(I_blurred_downsampled_I_blurred_downsampled_id0_12_cache& I_blurred_downsampled_I_blurred_downsampled_id0_12_delay
+inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_8_select(I_blurred_downsampled_I_blurred_downsampled_id0_10_cache& I_blurred_downsampled_I_blurred_downsampled_id0_10_delay
 , int root, int I_blurred_downsampled_blurred_r, int I_blurred_downsampled_blurred_c) {
 // Pieces...
 // { I_blurred_downsampled_blurred_conv_3_30[root = 0, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c] : 0 <= I_blurred_downsampled_blurred_r <= 12 and 0 <= I_blurred_downsampled_blurred_c <= 12 } -> { I_blurred_downsampled_blurred_conv_3_30[root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c] -> 1 }
 // 	is always true on iteration domain: 1
-	int value_I_blurred_downsampled_I_blurred_downsampled_id0_12 = I_blurred_downsampled_I_blurred_downsampled_id0_12_delay.peek_1();
-	return value_I_blurred_downsampled_I_blurred_downsampled_id0_12;
+	int value_I_blurred_downsampled_I_blurred_downsampled_id0_10 = I_blurred_downsampled_I_blurred_downsampled_id0_10_delay.peek_1();
+	return value_I_blurred_downsampled_I_blurred_downsampled_id0_10;
 }
 
-inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_25_select(I_blurred_downsampled_I_blurred_downsampled_id0_12_cache& I_blurred_downsampled_I_blurred_downsampled_id0_12_delay
+inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_9_select(I_blurred_downsampled_I_blurred_downsampled_id0_10_cache& I_blurred_downsampled_I_blurred_downsampled_id0_10_delay
 , int root, int I_blurred_downsampled_blurred_r, int I_blurred_downsampled_blurred_c) {
 // Pieces...
-	int value_I_blurred_downsampled_I_blurred_downsampled_id0_12 = I_blurred_downsampled_I_blurred_downsampled_id0_12_delay.peek_0();
-	return value_I_blurred_downsampled_I_blurred_downsampled_id0_12;
+	int value_I_blurred_downsampled_I_blurred_downsampled_id0_10 = I_blurred_downsampled_I_blurred_downsampled_id0_10_delay.peek_0();
+	return value_I_blurred_downsampled_I_blurred_downsampled_id0_10;
 }
 
-inline int I_blurred_downsampled_store_I_blurred_downsampled_out_from_I_blurred_downsampled_15_select(I_blurred_downsampled_I_blurred_downsampled_id0_12_cache& I_blurred_downsampled_I_blurred_downsampled_id0_12_delay
+inline int I_blurred_downsampled_store_I_blurred_downsampled_out_from_I_blurred_downsampled_15_select(I_blurred_downsampled_I_blurred_downsampled_id0_10_cache& I_blurred_downsampled_I_blurred_downsampled_id0_10_delay
 , int root, int I_blurred_downsampled_out_r, int I_blurred_downsampled_out_c) {
 // Pieces...
-	int value_I_blurred_downsampled_I_blurred_downsampled_id0_12 = I_blurred_downsampled_I_blurred_downsampled_id0_12_delay.peek_0();
-	return value_I_blurred_downsampled_I_blurred_downsampled_id0_12;
+	int value_I_blurred_downsampled_I_blurred_downsampled_id0_10 = I_blurred_downsampled_I_blurred_downsampled_id0_10_delay.peek_0();
+	return value_I_blurred_downsampled_I_blurred_downsampled_id0_10;
 }
 
 // Bundles...
 // I_blurred_downsampled_blurred_conv_3_30_read
-//	I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_17
-//	I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_18
-//	I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_19
-//	I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_20
-//	I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_21
-//	I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_22
-//	I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_23
-//	I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_24
-//	I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_25
-inline hw_uint<288> I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_read_bundle_read(I_blurred_downsampled_I_blurred_downsampled_id0_12_cache& I_blurred_downsampled_I_blurred_downsampled_id0_12_delay, int root, int I_blurred_downsampled_blurred_r, int I_blurred_downsampled_blurred_c) {
+//	I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_1
+//	I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_2
+//	I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_3
+//	I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_4
+//	I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_5
+//	I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_6
+//	I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_7
+//	I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_8
+//	I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_9
+inline hw_uint<288> I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_read_bundle_read(I_blurred_downsampled_I_blurred_downsampled_id0_10_cache& I_blurred_downsampled_I_blurred_downsampled_id0_10_delay, int root, int I_blurred_downsampled_blurred_r, int I_blurred_downsampled_blurred_c) {
 	hw_uint<288> result;
-	int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_17_res = I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_17_select(I_blurred_downsampled_I_blurred_downsampled_id0_12_delay, root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c);
-	set_at<0, 288>(result, I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_17_res);
-	int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_18_res = I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_18_select(I_blurred_downsampled_I_blurred_downsampled_id0_12_delay, root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c);
-	set_at<32, 288>(result, I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_18_res);
-	int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_19_res = I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_19_select(I_blurred_downsampled_I_blurred_downsampled_id0_12_delay, root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c);
-	set_at<64, 288>(result, I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_19_res);
-	int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_20_res = I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_20_select(I_blurred_downsampled_I_blurred_downsampled_id0_12_delay, root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c);
-	set_at<96, 288>(result, I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_20_res);
-	int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_21_res = I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_21_select(I_blurred_downsampled_I_blurred_downsampled_id0_12_delay, root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c);
-	set_at<128, 288>(result, I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_21_res);
-	int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_22_res = I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_22_select(I_blurred_downsampled_I_blurred_downsampled_id0_12_delay, root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c);
-	set_at<160, 288>(result, I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_22_res);
-	int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_23_res = I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_23_select(I_blurred_downsampled_I_blurred_downsampled_id0_12_delay, root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c);
-	set_at<192, 288>(result, I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_23_res);
-	int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_24_res = I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_24_select(I_blurred_downsampled_I_blurred_downsampled_id0_12_delay, root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c);
-	set_at<224, 288>(result, I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_24_res);
-	int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_25_res = I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_25_select(I_blurred_downsampled_I_blurred_downsampled_id0_12_delay, root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c);
-	set_at<256, 288>(result, I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_25_res);
+	int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_1_res = I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_1_select(I_blurred_downsampled_I_blurred_downsampled_id0_10_delay, root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c);
+	set_at<0, 288>(result, I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_1_res);
+	int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_2_res = I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_2_select(I_blurred_downsampled_I_blurred_downsampled_id0_10_delay, root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c);
+	set_at<32, 288>(result, I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_2_res);
+	int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_3_res = I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_3_select(I_blurred_downsampled_I_blurred_downsampled_id0_10_delay, root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c);
+	set_at<64, 288>(result, I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_3_res);
+	int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_4_res = I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_4_select(I_blurred_downsampled_I_blurred_downsampled_id0_10_delay, root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c);
+	set_at<96, 288>(result, I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_4_res);
+	int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_5_res = I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_5_select(I_blurred_downsampled_I_blurred_downsampled_id0_10_delay, root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c);
+	set_at<128, 288>(result, I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_5_res);
+	int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_6_res = I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_6_select(I_blurred_downsampled_I_blurred_downsampled_id0_10_delay, root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c);
+	set_at<160, 288>(result, I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_6_res);
+	int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_7_res = I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_7_select(I_blurred_downsampled_I_blurred_downsampled_id0_10_delay, root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c);
+	set_at<192, 288>(result, I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_7_res);
+	int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_8_res = I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_8_select(I_blurred_downsampled_I_blurred_downsampled_id0_10_delay, root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c);
+	set_at<224, 288>(result, I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_8_res);
+	int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_9_res = I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_9_select(I_blurred_downsampled_I_blurred_downsampled_id0_10_delay, root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c);
+	set_at<256, 288>(result, I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_9_res);
 	return result;
 }
 
 // I_blurred_downsampled_id0_write
-//	I_blurred_downsampled_I_blurred_downsampled_id0_12
-inline void I_blurred_downsampled_I_blurred_downsampled_id0_write_bundle_write(int& /* width = 32*/I_blurred_downsampled_id0_write, I_blurred_downsampled_I_blurred_downsampled_id0_12_cache& I_blurred_downsampled_I_blurred_downsampled_id0_12_delay) {
-	I_blurred_downsampled_I_blurred_downsampled_id0_12_write(I_blurred_downsampled_id0_write, I_blurred_downsampled_I_blurred_downsampled_id0_12_delay);
+//	I_blurred_downsampled_I_blurred_downsampled_id0_10
+inline void I_blurred_downsampled_I_blurred_downsampled_id0_write_bundle_write(int& /* width = 32*/I_blurred_downsampled_id0_write, I_blurred_downsampled_I_blurred_downsampled_id0_10_cache& I_blurred_downsampled_I_blurred_downsampled_id0_10_delay) {
+	I_blurred_downsampled_I_blurred_downsampled_id0_10_write(I_blurred_downsampled_id0_write, I_blurred_downsampled_I_blurred_downsampled_id0_10_delay);
 }
 
 // store_I_blurred_downsampled_out_from_I_blurred_downsampled_read
 //	I_blurred_downsampled_store_I_blurred_downsampled_out_from_I_blurred_downsampled_15
-inline int I_blurred_downsampled_store_I_blurred_downsampled_out_from_I_blurred_downsampled_read_bundle_read(I_blurred_downsampled_I_blurred_downsampled_id0_12_cache& I_blurred_downsampled_I_blurred_downsampled_id0_12_delay, int root, int I_blurred_downsampled_out_r, int I_blurred_downsampled_out_c) {
+inline int I_blurred_downsampled_store_I_blurred_downsampled_out_from_I_blurred_downsampled_read_bundle_read(I_blurred_downsampled_I_blurred_downsampled_id0_10_cache& I_blurred_downsampled_I_blurred_downsampled_id0_10_delay, int root, int I_blurred_downsampled_out_r, int I_blurred_downsampled_out_c) {
 	int result;
-	int I_blurred_downsampled_store_I_blurred_downsampled_out_from_I_blurred_downsampled_15_res = I_blurred_downsampled_store_I_blurred_downsampled_out_from_I_blurred_downsampled_15_select(I_blurred_downsampled_I_blurred_downsampled_id0_12_delay, root, I_blurred_downsampled_out_r, I_blurred_downsampled_out_c);
+	int I_blurred_downsampled_store_I_blurred_downsampled_out_from_I_blurred_downsampled_15_res = I_blurred_downsampled_store_I_blurred_downsampled_out_from_I_blurred_downsampled_15_select(I_blurred_downsampled_I_blurred_downsampled_id0_10_delay, root, I_blurred_downsampled_out_r, I_blurred_downsampled_out_c);
 	set_at<0, 32>(result, I_blurred_downsampled_store_I_blurred_downsampled_out_from_I_blurred_downsampled_15_res);
 	return result;
 }
@@ -601,7 +601,7 @@ inline int I_blurred_downsampled_store_I_blurred_downsampled_out_from_I_blurred_
 
 #include "hw_classes.h"
 
-struct I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16_cache {
+struct I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0_cache {
 	// Capacity: 39
 	// Parition [0, 1) capacity = 1
 	fifo<int, 1> f0;
@@ -1011,11 +1011,11 @@ struct I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16_
 
 
 
-inline void I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16_write(int& I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16, I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16_cache& I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16_delay) {
-	I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16_delay.push(I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16);
+inline void I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0_write(int& I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0, I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0_cache& I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0_delay) {
+	I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0_delay.push(I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0);
 }
 
-inline int I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_downsampled_id0_27_select(I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16_cache& I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16_delay
+inline int I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_downsampled_id0_13_select(I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0_cache& I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0_delay
 , int root, int I_blurred_downsampled_blurred_downsampled_r, int I_blurred_downsampled_blurred_downsampled_c) {
 // Pieces...
 // { I_blurred_downsampled_blurred_downsampled_id0[root = 0, I_blurred_downsampled_blurred_downsampled_r = 5, I_blurred_downsampled_blurred_downsampled_c] : (1 + I_blurred_downsampled_blurred_downsampled_c) mod 2 = 0 and 0 < I_blurred_downsampled_blurred_downsampled_c <= 2 } -> { I_blurred_downsampled_blurred_downsampled_id0[root, I_blurred_downsampled_blurred_downsampled_r, I_blurred_downsampled_blurred_downsampled_c] -> 2 }
@@ -1036,23 +1036,23 @@ inline int I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_downsampl
 // 	is always true on iteration domain: 0
 // { I_blurred_downsampled_blurred_downsampled_id0[root = 0, I_blurred_downsampled_blurred_downsampled_r = 4, I_blurred_downsampled_blurred_downsampled_c] : 0 <= I_blurred_downsampled_blurred_downsampled_c <= 5 and ((1 + I_blurred_downsampled_blurred_downsampled_c) mod 2 = 0 or (I_blurred_downsampled_blurred_downsampled_c) mod 2 = 0) } -> { I_blurred_downsampled_blurred_downsampled_id0[root, I_blurred_downsampled_blurred_downsampled_r, I_blurred_downsampled_blurred_downsampled_c] -> (12 - 2 * I_blurred_downsampled_blurred_downsampled_c) }
 // 	is always true on iteration domain: 0
-	int value_I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16 = I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16_delay.peek((((-1 - I_blurred_downsampled_blurred_downsampled_c) % 2 == 0 && -5 + I_blurred_downsampled_blurred_downsampled_r == 0 && root == 0 && -1 + I_blurred_downsampled_blurred_downsampled_c >= 0 && 2 - I_blurred_downsampled_blurred_downsampled_c >= 0) ? (2) : ((-I_blurred_downsampled_blurred_downsampled_c) % 2 == 0 && -5 + I_blurred_downsampled_blurred_downsampled_r == 0 && root == 0 && I_blurred_downsampled_blurred_downsampled_c >= 0 && 2 - I_blurred_downsampled_blurred_downsampled_c >= 0) ? (((2 - I_blurred_downsampled_blurred_downsampled_c) + floord(I_blurred_downsampled_blurred_downsampled_c, 2))) : (-3 + I_blurred_downsampled_blurred_downsampled_c == 0 && -5 + I_blurred_downsampled_blurred_downsampled_r == 0 && root == 0) ? (1) : ((-1 - I_blurred_downsampled_blurred_downsampled_c) % 2 == 0 && (-1 - I_blurred_downsampled_blurred_downsampled_r) % 2 == 0 && root == 0 && -1 + I_blurred_downsampled_blurred_downsampled_r >= 0 && 2 - I_blurred_downsampled_blurred_downsampled_r >= 0 && -1 + I_blurred_downsampled_blurred_downsampled_c >= 0 && 5 - I_blurred_downsampled_blurred_downsampled_c >= 0) ? (((57 - I_blurred_downsampled_blurred_downsampled_c))/2) : ((-I_blurred_downsampled_blurred_downsampled_c) % 2 == 0 && (-1 - I_blurred_downsampled_blurred_downsampled_r) % 2 == 0 && root == 0 && -1 + I_blurred_downsampled_blurred_downsampled_r >= 0 && 2 - I_blurred_downsampled_blurred_downsampled_r >= 0 && I_blurred_downsampled_blurred_downsampled_c >= 0 && 5 - I_blurred_downsampled_blurred_downsampled_c >= 0) ? (((56 - I_blurred_downsampled_blurred_downsampled_c))/2) : ((-I_blurred_downsampled_blurred_downsampled_r) % 2 == 0 && root == 0 && I_blurred_downsampled_blurred_downsampled_r >= 0 && 2 - I_blurred_downsampled_blurred_downsampled_r >= 0 && I_blurred_downsampled_blurred_downsampled_c >= 0 && 5 - I_blurred_downsampled_blurred_downsampled_c >= 0) ? ((((76 - 13 * I_blurred_downsampled_blurred_downsampled_r) - 4 * I_blurred_downsampled_blurred_downsampled_c))/2) : ((-1 - I_blurred_downsampled_blurred_downsampled_c) % 2 == 0 && -3 + I_blurred_downsampled_blurred_downsampled_r == 0 && root == 0 && -1 + I_blurred_downsampled_blurred_downsampled_c >= 0 && 5 - I_blurred_downsampled_blurred_downsampled_c >= 0) ? (((31 - I_blurred_downsampled_blurred_downsampled_c))/2) : ((-I_blurred_downsampled_blurred_downsampled_c) % 2 == 0 && -3 + I_blurred_downsampled_blurred_downsampled_r == 0 && root == 0 && I_blurred_downsampled_blurred_downsampled_c >= 0 && 5 - I_blurred_downsampled_blurred_downsampled_c >= 0) ? (((30 - I_blurred_downsampled_blurred_downsampled_c))/2) : (((-1 - I_blurred_downsampled_blurred_downsampled_c) % 2 == 0 && -4 + I_blurred_downsampled_blurred_downsampled_r == 0 && root == 0 && I_blurred_downsampled_blurred_downsampled_c >= 0 && 5 - I_blurred_downsampled_blurred_downsampled_c >= 0) || ((-I_blurred_downsampled_blurred_downsampled_c) % 2 == 0 && -4 + I_blurred_downsampled_blurred_downsampled_r == 0 && root == 0 && I_blurred_downsampled_blurred_downsampled_c >= 0 && 5 - I_blurred_downsampled_blurred_downsampled_c >= 0)) ? ((12 - 2 * I_blurred_downsampled_blurred_downsampled_c)) : 0));
-	return value_I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16;
+	int value_I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0 = I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0_delay.peek((((-1 - I_blurred_downsampled_blurred_downsampled_c) % 2 == 0 && -5 + I_blurred_downsampled_blurred_downsampled_r == 0 && root == 0 && -1 + I_blurred_downsampled_blurred_downsampled_c >= 0 && 2 - I_blurred_downsampled_blurred_downsampled_c >= 0) ? (2) : ((-I_blurred_downsampled_blurred_downsampled_c) % 2 == 0 && -5 + I_blurred_downsampled_blurred_downsampled_r == 0 && root == 0 && I_blurred_downsampled_blurred_downsampled_c >= 0 && 2 - I_blurred_downsampled_blurred_downsampled_c >= 0) ? (((2 - I_blurred_downsampled_blurred_downsampled_c) + floord(I_blurred_downsampled_blurred_downsampled_c, 2))) : (-3 + I_blurred_downsampled_blurred_downsampled_c == 0 && -5 + I_blurred_downsampled_blurred_downsampled_r == 0 && root == 0) ? (1) : ((-1 - I_blurred_downsampled_blurred_downsampled_c) % 2 == 0 && (-1 - I_blurred_downsampled_blurred_downsampled_r) % 2 == 0 && root == 0 && -1 + I_blurred_downsampled_blurred_downsampled_r >= 0 && 2 - I_blurred_downsampled_blurred_downsampled_r >= 0 && -1 + I_blurred_downsampled_blurred_downsampled_c >= 0 && 5 - I_blurred_downsampled_blurred_downsampled_c >= 0) ? (((57 - I_blurred_downsampled_blurred_downsampled_c))/2) : ((-I_blurred_downsampled_blurred_downsampled_c) % 2 == 0 && (-1 - I_blurred_downsampled_blurred_downsampled_r) % 2 == 0 && root == 0 && -1 + I_blurred_downsampled_blurred_downsampled_r >= 0 && 2 - I_blurred_downsampled_blurred_downsampled_r >= 0 && I_blurred_downsampled_blurred_downsampled_c >= 0 && 5 - I_blurred_downsampled_blurred_downsampled_c >= 0) ? (((56 - I_blurred_downsampled_blurred_downsampled_c))/2) : ((-I_blurred_downsampled_blurred_downsampled_r) % 2 == 0 && root == 0 && I_blurred_downsampled_blurred_downsampled_r >= 0 && 2 - I_blurred_downsampled_blurred_downsampled_r >= 0 && I_blurred_downsampled_blurred_downsampled_c >= 0 && 5 - I_blurred_downsampled_blurred_downsampled_c >= 0) ? ((((76 - 13 * I_blurred_downsampled_blurred_downsampled_r) - 4 * I_blurred_downsampled_blurred_downsampled_c))/2) : ((-1 - I_blurred_downsampled_blurred_downsampled_c) % 2 == 0 && -3 + I_blurred_downsampled_blurred_downsampled_r == 0 && root == 0 && -1 + I_blurred_downsampled_blurred_downsampled_c >= 0 && 5 - I_blurred_downsampled_blurred_downsampled_c >= 0) ? (((31 - I_blurred_downsampled_blurred_downsampled_c))/2) : ((-I_blurred_downsampled_blurred_downsampled_c) % 2 == 0 && -3 + I_blurred_downsampled_blurred_downsampled_r == 0 && root == 0 && I_blurred_downsampled_blurred_downsampled_c >= 0 && 5 - I_blurred_downsampled_blurred_downsampled_c >= 0) ? (((30 - I_blurred_downsampled_blurred_downsampled_c))/2) : (((-1 - I_blurred_downsampled_blurred_downsampled_c) % 2 == 0 && -4 + I_blurred_downsampled_blurred_downsampled_r == 0 && root == 0 && I_blurred_downsampled_blurred_downsampled_c >= 0 && 5 - I_blurred_downsampled_blurred_downsampled_c >= 0) || ((-I_blurred_downsampled_blurred_downsampled_c) % 2 == 0 && -4 + I_blurred_downsampled_blurred_downsampled_r == 0 && root == 0 && I_blurred_downsampled_blurred_downsampled_c >= 0 && 5 - I_blurred_downsampled_blurred_downsampled_c >= 0)) ? ((12 - 2 * I_blurred_downsampled_blurred_downsampled_c)) : 0));
+	return value_I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0;
 }
 
 // Bundles...
 // I_blurred_downsampled_blurred_conv_3_30_write
-//	I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16
-inline void I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_write_bundle_write(int& /* width = 32*/I_blurred_downsampled_blurred_conv_3_30_write, I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16_cache& I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16_delay) {
-	I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16_write(I_blurred_downsampled_blurred_conv_3_30_write, I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16_delay);
+//	I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0
+inline void I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_write_bundle_write(int& /* width = 32*/I_blurred_downsampled_blurred_conv_3_30_write, I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0_cache& I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0_delay) {
+	I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0_write(I_blurred_downsampled_blurred_conv_3_30_write, I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0_delay);
 }
 
 // I_blurred_downsampled_blurred_downsampled_id0_read
-//	I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_downsampled_id0_27
-inline int I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_downsampled_id0_read_bundle_read(I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16_cache& I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16_delay, int root, int I_blurred_downsampled_blurred_downsampled_r, int I_blurred_downsampled_blurred_downsampled_c) {
+//	I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_downsampled_id0_13
+inline int I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_downsampled_id0_read_bundle_read(I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0_cache& I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0_delay, int root, int I_blurred_downsampled_blurred_downsampled_r, int I_blurred_downsampled_blurred_downsampled_c) {
 	int result;
-	int I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_downsampled_id0_27_res = I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_downsampled_id0_27_select(I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16_delay, root, I_blurred_downsampled_blurred_downsampled_r, I_blurred_downsampled_blurred_downsampled_c);
-	set_at<0, 32>(result, I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_downsampled_id0_27_res);
+	int I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_downsampled_id0_13_res = I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_downsampled_id0_13_select(I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0_delay, root, I_blurred_downsampled_blurred_downsampled_r, I_blurred_downsampled_blurred_downsampled_c);
+	set_at<0, 32>(result, I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_downsampled_id0_13_res);
 	return result;
 }
 
@@ -1060,7 +1060,7 @@ inline int I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_downsampl
 
 #include "hw_classes.h"
 
-struct I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26_cache {
+struct I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12_cache {
 	// Capacity: 12
 	// Parition [0, 1) capacity = 1
 	fifo<int, 1> f0;
@@ -1200,11 +1200,11 @@ struct I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_d
 
 
 
-inline void I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26_write(int& I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26, I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26_cache& I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26_delay) {
-	I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26_delay.push(I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26);
+inline void I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12_write(int& I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12, I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12_cache& I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12_delay) {
+	I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12_delay.push(I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12);
 }
 
-inline int I_blurred_downsampled_blurred_downsampled_store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled_29_select(I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26_cache& I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26_delay
+inline int I_blurred_downsampled_blurred_downsampled_store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled_17_select(I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12_cache& I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12_delay
 , int root, int I_blurred_downsampled_blurred_downsampled_out_r, int I_blurred_downsampled_blurred_downsampled_out_c) {
 // Pieces...
 // { store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled[root = 0, I_blurred_downsampled_blurred_downsampled_out_r = 5, I_blurred_downsampled_blurred_downsampled_out_c] : 0 <= I_blurred_downsampled_blurred_downsampled_out_c <= 1 } -> { store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled[root, I_blurred_downsampled_blurred_downsampled_out_r, I_blurred_downsampled_blurred_downsampled_out_c] -> 1 }
@@ -1223,23 +1223,23 @@ inline int I_blurred_downsampled_blurred_downsampled_store_I_blurred_downsampled
 // 	is always true on iteration domain: 0
 // { store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled[root = 0, I_blurred_downsampled_blurred_downsampled_out_r, I_blurred_downsampled_blurred_downsampled_out_c] : 3 <= I_blurred_downsampled_blurred_downsampled_out_r <= 4 and 0 <= I_blurred_downsampled_blurred_downsampled_out_c <= 4 and ((3*floor((1 + I_blurred_downsampled_blurred_downsampled_out_c)/3) <= I_blurred_downsampled_blurred_downsampled_out_c) or (1 + I_blurred_downsampled_blurred_downsampled_out_c) mod 3 = 0) } -> { store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled[root, I_blurred_downsampled_blurred_downsampled_out_r, I_blurred_downsampled_blurred_downsampled_out_c] -> (5 - I_blurred_downsampled_blurred_downsampled_out_c) }
 // 	is always true on iteration domain: 0
-	int value_I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26 = I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26_delay.peek(((-5 + I_blurred_downsampled_blurred_downsampled_out_r == 0 && root == 0 && I_blurred_downsampled_blurred_downsampled_out_c >= 0 && 1 - I_blurred_downsampled_blurred_downsampled_out_c >= 0) ? (1) : (-2 + I_blurred_downsampled_blurred_downsampled_out_c == 0 && -5 + I_blurred_downsampled_blurred_downsampled_out_r == 0 && root == 0) ? (1) : (root == 0 && I_blurred_downsampled_blurred_downsampled_out_r >= 0 && 1 - I_blurred_downsampled_blurred_downsampled_out_r >= 0 && I_blurred_downsampled_blurred_downsampled_out_c >= 0 && 4 - I_blurred_downsampled_blurred_downsampled_out_c >= 0) ? ((11 - I_blurred_downsampled_blurred_downsampled_out_c)) : (-5 + I_blurred_downsampled_blurred_downsampled_out_c == 0 && root == 0 && I_blurred_downsampled_blurred_downsampled_out_r >= 0 && 1 - I_blurred_downsampled_blurred_downsampled_out_r >= 0) ? (6) : ((-1 - I_blurred_downsampled_blurred_downsampled_out_c) % 3 == 0 && -2 + I_blurred_downsampled_blurred_downsampled_out_r == 0 && root == 0 && -2 + I_blurred_downsampled_blurred_downsampled_out_c >= 0 && 4 - I_blurred_downsampled_blurred_downsampled_out_c >= 0) ? (7) : (-5 + I_blurred_downsampled_blurred_downsampled_out_c == 0 && -2 + I_blurred_downsampled_blurred_downsampled_out_r == 0 && root == 0) ? (((8 + 2 * I_blurred_downsampled_blurred_downsampled_out_c))/3) : (-2 + I_blurred_downsampled_blurred_downsampled_out_r == 0 && root == 0 && I_blurred_downsampled_blurred_downsampled_out_c >= 0 && 4 - I_blurred_downsampled_blurred_downsampled_out_c >= 0 && I_blurred_downsampled_blurred_downsampled_out_c - 3*floord(1 + I_blurred_downsampled_blurred_downsampled_out_c, 3) >= 0) ? ((7 - floord(1 + I_blurred_downsampled_blurred_downsampled_out_c, 3))) : ((root == 0 && -3 + I_blurred_downsampled_blurred_downsampled_out_r >= 0 && 4 - I_blurred_downsampled_blurred_downsampled_out_r >= 0 && I_blurred_downsampled_blurred_downsampled_out_c >= 0 && 4 - I_blurred_downsampled_blurred_downsampled_out_c >= 0 && I_blurred_downsampled_blurred_downsampled_out_c - 3*floord(1 + I_blurred_downsampled_blurred_downsampled_out_c, 3) >= 0) || ((-1 - I_blurred_downsampled_blurred_downsampled_out_c) % 3 == 0 && root == 0 && -3 + I_blurred_downsampled_blurred_downsampled_out_r >= 0 && 4 - I_blurred_downsampled_blurred_downsampled_out_r >= 0 && I_blurred_downsampled_blurred_downsampled_out_c >= 0 && 4 - I_blurred_downsampled_blurred_downsampled_out_c >= 0)) ? ((5 - I_blurred_downsampled_blurred_downsampled_out_c)) : 0));
-	return value_I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26;
+	int value_I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12 = I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12_delay.peek(((-5 + I_blurred_downsampled_blurred_downsampled_out_r == 0 && root == 0 && I_blurred_downsampled_blurred_downsampled_out_c >= 0 && 1 - I_blurred_downsampled_blurred_downsampled_out_c >= 0) ? (1) : (-2 + I_blurred_downsampled_blurred_downsampled_out_c == 0 && -5 + I_blurred_downsampled_blurred_downsampled_out_r == 0 && root == 0) ? (1) : (root == 0 && I_blurred_downsampled_blurred_downsampled_out_r >= 0 && 1 - I_blurred_downsampled_blurred_downsampled_out_r >= 0 && I_blurred_downsampled_blurred_downsampled_out_c >= 0 && 4 - I_blurred_downsampled_blurred_downsampled_out_c >= 0) ? ((11 - I_blurred_downsampled_blurred_downsampled_out_c)) : (-5 + I_blurred_downsampled_blurred_downsampled_out_c == 0 && root == 0 && I_blurred_downsampled_blurred_downsampled_out_r >= 0 && 1 - I_blurred_downsampled_blurred_downsampled_out_r >= 0) ? (6) : ((-1 - I_blurred_downsampled_blurred_downsampled_out_c) % 3 == 0 && -2 + I_blurred_downsampled_blurred_downsampled_out_r == 0 && root == 0 && -2 + I_blurred_downsampled_blurred_downsampled_out_c >= 0 && 4 - I_blurred_downsampled_blurred_downsampled_out_c >= 0) ? (7) : (-5 + I_blurred_downsampled_blurred_downsampled_out_c == 0 && -2 + I_blurred_downsampled_blurred_downsampled_out_r == 0 && root == 0) ? (((8 + 2 * I_blurred_downsampled_blurred_downsampled_out_c))/3) : (-2 + I_blurred_downsampled_blurred_downsampled_out_r == 0 && root == 0 && I_blurred_downsampled_blurred_downsampled_out_c >= 0 && 4 - I_blurred_downsampled_blurred_downsampled_out_c >= 0 && I_blurred_downsampled_blurred_downsampled_out_c - 3*floord(1 + I_blurred_downsampled_blurred_downsampled_out_c, 3) >= 0) ? ((7 - floord(1 + I_blurred_downsampled_blurred_downsampled_out_c, 3))) : ((root == 0 && -3 + I_blurred_downsampled_blurred_downsampled_out_r >= 0 && 4 - I_blurred_downsampled_blurred_downsampled_out_r >= 0 && I_blurred_downsampled_blurred_downsampled_out_c >= 0 && 4 - I_blurred_downsampled_blurred_downsampled_out_c >= 0 && I_blurred_downsampled_blurred_downsampled_out_c - 3*floord(1 + I_blurred_downsampled_blurred_downsampled_out_c, 3) >= 0) || ((-1 - I_blurred_downsampled_blurred_downsampled_out_c) % 3 == 0 && root == 0 && -3 + I_blurred_downsampled_blurred_downsampled_out_r >= 0 && 4 - I_blurred_downsampled_blurred_downsampled_out_r >= 0 && I_blurred_downsampled_blurred_downsampled_out_c >= 0 && 4 - I_blurred_downsampled_blurred_downsampled_out_c >= 0)) ? ((5 - I_blurred_downsampled_blurred_downsampled_out_c)) : 0));
+	return value_I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12;
 }
 
 // Bundles...
 // I_blurred_downsampled_blurred_downsampled_id0_write
-//	I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26
-inline void I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_write_bundle_write(int& /* width = 32*/I_blurred_downsampled_blurred_downsampled_id0_write, I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26_cache& I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26_delay) {
-	I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26_write(I_blurred_downsampled_blurred_downsampled_id0_write, I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26_delay);
+//	I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12
+inline void I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_write_bundle_write(int& /* width = 32*/I_blurred_downsampled_blurred_downsampled_id0_write, I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12_cache& I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12_delay) {
+	I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12_write(I_blurred_downsampled_blurred_downsampled_id0_write, I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12_delay);
 }
 
 // store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled_read
-//	I_blurred_downsampled_blurred_downsampled_store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled_29
-inline int I_blurred_downsampled_blurred_downsampled_store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled_read_bundle_read(I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26_cache& I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26_delay, int root, int I_blurred_downsampled_blurred_downsampled_out_r, int I_blurred_downsampled_blurred_downsampled_out_c) {
+//	I_blurred_downsampled_blurred_downsampled_store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled_17
+inline int I_blurred_downsampled_blurred_downsampled_store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled_read_bundle_read(I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12_cache& I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12_delay, int root, int I_blurred_downsampled_blurred_downsampled_out_r, int I_blurred_downsampled_blurred_downsampled_out_c) {
 	int result;
-	int I_blurred_downsampled_blurred_downsampled_store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled_29_res = I_blurred_downsampled_blurred_downsampled_store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled_29_select(I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26_delay, root, I_blurred_downsampled_blurred_downsampled_out_r, I_blurred_downsampled_blurred_downsampled_out_c);
-	set_at<0, 32>(result, I_blurred_downsampled_blurred_downsampled_store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled_29_res);
+	int I_blurred_downsampled_blurred_downsampled_store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled_17_res = I_blurred_downsampled_blurred_downsampled_store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled_17_select(I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12_delay, root, I_blurred_downsampled_blurred_downsampled_out_r, I_blurred_downsampled_blurred_downsampled_out_c);
+	set_at<0, 32>(result, I_blurred_downsampled_blurred_downsampled_store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled_17_res);
 	return result;
 }
 
@@ -1248,70 +1248,9 @@ inline int I_blurred_downsampled_blurred_downsampled_store_I_blurred_downsampled
 
 
 // Operation logic
-inline void store_I_from_in(HWStream<int>& in, I_store_I_from_in_0_cache& I_store_I_from_in_0, int root, int pr, int pc) {
-	// Consume: in
-	auto in_pr_c__pc_value = in.read();
-	// Produce: I
-	// Buffer: I, Op: store_I_from_in
-	// Possible ports...
-		// I_store_I_from_in_0
-	I_store_I_from_in_write_bundle_write(in_pr_c__pc_value, I_store_I_from_in_0 /* output src_delay */);
-}
-
-inline void I_blurred_conv_3_30(I_store_I_from_in_0_cache& I_store_I_from_in_0, I_blurred_I_blurred_conv_3_30_2_cache& I_blurred_I_blurred_conv_3_30_2, int root, int I_blurred_r, int I_blurred_c) {
-	// Consume: I
-	auto I_I_blurred_r__p__0_c__I_blurred_c__p__0_value = I_I_blurred_conv_3_30_read_bundle_read(I_store_I_from_in_0/* source_delay */, root, I_blurred_r, I_blurred_c);
-	// Apply function: conv_3_3
-	// Arg: I_I_blurred_r__p__0_c__I_blurred_c__p__0_value
-	// Arg buf: I
-	// Arg: I_I_blurred_r__p__0_c__I_blurred_c__p__1_value
-	// Arg buf: I
-	// Arg: I_I_blurred_r__p__0_c__I_blurred_c__p__2_value
-	// Arg buf: I
-	// Arg: I_I_blurred_r__p__1_c__I_blurred_c__p__0_value
-	// Arg buf: I
-	// Arg: I_I_blurred_r__p__1_c__I_blurred_c__p__1_value
-	// Arg buf: I
-	// Arg: I_I_blurred_r__p__1_c__I_blurred_c__p__2_value
-	// Arg buf: I
-	// Arg: I_I_blurred_r__p__2_c__I_blurred_c__p__0_value
-	// Arg buf: I
-	// Arg: I_I_blurred_r__p__2_c__I_blurred_c__p__1_value
-	// Arg buf: I
-	// Arg: I_I_blurred_r__p__2_c__I_blurred_c__p__2_value
-	// Arg buf: I
-	auto compute_result = conv_3_3(I_I_blurred_r__p__0_c__I_blurred_c__p__0_value);
-	// Produce: I_blurred
-	// Buffer: I_blurred, Op: I_blurred_conv_3_30
-	// Possible ports...
-		// I_blurred_I_blurred_conv_3_30_2
-	I_blurred_I_blurred_conv_3_30_write_bundle_write(compute_result, I_blurred_I_blurred_conv_3_30_2 /* output src_delay */);
-}
-
-inline void I_blurred_downsampled_id0(I_blurred_I_blurred_conv_3_30_2_cache& I_blurred_I_blurred_conv_3_30_2, I_blurred_downsampled_I_blurred_downsampled_id0_12_cache& I_blurred_downsampled_I_blurred_downsampled_id0_12, int root, int I_blurred_downsampled_r, int I_blurred_downsampled_c) {
-	// Consume: I_blurred
-	auto I_blurred_2_m_I_blurred_downsampled_r_c__2_m_I_blurred_downsampled_c_value = I_blurred_I_blurred_downsampled_id0_read_bundle_read(I_blurred_I_blurred_conv_3_30_2/* source_delay */, root, I_blurred_downsampled_r, I_blurred_downsampled_c);
-	// Apply function: id
-	// Arg: I_blurred_2_m_I_blurred_downsampled_r_c__2_m_I_blurred_downsampled_c_value
-	// Arg buf: I_blurred
-	auto compute_result = id(I_blurred_2_m_I_blurred_downsampled_r_c__2_m_I_blurred_downsampled_c_value);
-	// Produce: I_blurred_downsampled
-	// Buffer: I_blurred_downsampled, Op: I_blurred_downsampled_id0
-	// Possible ports...
-		// I_blurred_downsampled_I_blurred_downsampled_id0_12
-	I_blurred_downsampled_I_blurred_downsampled_id0_write_bundle_write(compute_result, I_blurred_downsampled_I_blurred_downsampled_id0_12 /* output src_delay */);
-}
-
-inline void store_I_blurred_downsampled_out_from_I_blurred_downsampled(I_blurred_downsampled_I_blurred_downsampled_id0_12_cache& I_blurred_downsampled_I_blurred_downsampled_id0_12, HWStream<int>& I_blurred_downsampled_out, int root, int I_blurred_downsampled_out_r, int I_blurred_downsampled_out_c) {
+inline void I_blurred_downsampled_blurred_conv_3_30(I_blurred_downsampled_I_blurred_downsampled_id0_10_cache& I_blurred_downsampled_I_blurred_downsampled_id0_10, I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0_cache& I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0, int root, int I_blurred_downsampled_blurred_r, int I_blurred_downsampled_blurred_c) {
 	// Consume: I_blurred_downsampled
-	auto I_blurred_downsampled_I_blurred_downsampled_out_r_c__I_blurred_downsampled_out_c_value = I_blurred_downsampled_store_I_blurred_downsampled_out_from_I_blurred_downsampled_read_bundle_read(I_blurred_downsampled_I_blurred_downsampled_id0_12/* source_delay */, root, I_blurred_downsampled_out_r, I_blurred_downsampled_out_c);
-	// Produce: I_blurred_downsampled_out
-	I_blurred_downsampled_out.write(I_blurred_downsampled_I_blurred_downsampled_out_r_c__I_blurred_downsampled_out_c_value);
-}
-
-inline void I_blurred_downsampled_blurred_conv_3_30(I_blurred_downsampled_I_blurred_downsampled_id0_12_cache& I_blurred_downsampled_I_blurred_downsampled_id0_12, I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16_cache& I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16, int root, int I_blurred_downsampled_blurred_r, int I_blurred_downsampled_blurred_c) {
-	// Consume: I_blurred_downsampled
-	auto I_blurred_downsampled_I_blurred_downsampled_blurred_r__p__0_c__I_blurred_downsampled_blurred_c__p__0_value = I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_read_bundle_read(I_blurred_downsampled_I_blurred_downsampled_id0_12/* source_delay */, root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c);
+	auto I_blurred_downsampled_I_blurred_downsampled_blurred_r__p__0_c__I_blurred_downsampled_blurred_c__p__0_value = I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_read_bundle_read(I_blurred_downsampled_I_blurred_downsampled_id0_10/* source_delay */, root, I_blurred_downsampled_blurred_r, I_blurred_downsampled_blurred_c);
 	// Apply function: conv_3_3
 	// Arg: I_blurred_downsampled_I_blurred_downsampled_blurred_r__p__0_c__I_blurred_downsampled_blurred_c__p__0_value
 	// Arg buf: I_blurred_downsampled
@@ -1335,13 +1274,27 @@ inline void I_blurred_downsampled_blurred_conv_3_30(I_blurred_downsampled_I_blur
 	// Produce: I_blurred_downsampled_blurred
 	// Buffer: I_blurred_downsampled_blurred, Op: I_blurred_downsampled_blurred_conv_3_30
 	// Possible ports...
-		// I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16
-	I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_write_bundle_write(compute_result, I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16 /* output src_delay */);
+		// I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0
+	I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_write_bundle_write(compute_result, I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0 /* output src_delay */);
 }
 
-inline void I_blurred_downsampled_blurred_downsampled_id0(I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16_cache& I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16, I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26_cache& I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26, int root, int I_blurred_downsampled_blurred_downsampled_r, int I_blurred_downsampled_blurred_downsampled_c) {
+inline void I_blurred_downsampled_id0(I_blurred_I_blurred_conv_3_30_20_cache& I_blurred_I_blurred_conv_3_30_20, I_blurred_downsampled_I_blurred_downsampled_id0_10_cache& I_blurred_downsampled_I_blurred_downsampled_id0_10, int root, int I_blurred_downsampled_r, int I_blurred_downsampled_c) {
+	// Consume: I_blurred
+	auto I_blurred_2_m_I_blurred_downsampled_r_c__2_m_I_blurred_downsampled_c_value = I_blurred_I_blurred_downsampled_id0_read_bundle_read(I_blurred_I_blurred_conv_3_30_20/* source_delay */, root, I_blurred_downsampled_r, I_blurred_downsampled_c);
+	// Apply function: id
+	// Arg: I_blurred_2_m_I_blurred_downsampled_r_c__2_m_I_blurred_downsampled_c_value
+	// Arg buf: I_blurred
+	auto compute_result = id(I_blurred_2_m_I_blurred_downsampled_r_c__2_m_I_blurred_downsampled_c_value);
+	// Produce: I_blurred_downsampled
+	// Buffer: I_blurred_downsampled, Op: I_blurred_downsampled_id0
+	// Possible ports...
+		// I_blurred_downsampled_I_blurred_downsampled_id0_10
+	I_blurred_downsampled_I_blurred_downsampled_id0_write_bundle_write(compute_result, I_blurred_downsampled_I_blurred_downsampled_id0_10 /* output src_delay */);
+}
+
+inline void I_blurred_downsampled_blurred_downsampled_id0(I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0_cache& I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0, I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12_cache& I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12, int root, int I_blurred_downsampled_blurred_downsampled_r, int I_blurred_downsampled_blurred_downsampled_c) {
 	// Consume: I_blurred_downsampled_blurred
-	auto I_blurred_downsampled_blurred_2_m_I_blurred_downsampled_blurred_downsampled_r_c__2_m_I_blurred_downsampled_blurred_downsampled_c_value = I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_downsampled_id0_read_bundle_read(I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16/* source_delay */, root, I_blurred_downsampled_blurred_downsampled_r, I_blurred_downsampled_blurred_downsampled_c);
+	auto I_blurred_downsampled_blurred_2_m_I_blurred_downsampled_blurred_downsampled_r_c__2_m_I_blurred_downsampled_blurred_downsampled_c_value = I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_downsampled_id0_read_bundle_read(I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0/* source_delay */, root, I_blurred_downsampled_blurred_downsampled_r, I_blurred_downsampled_blurred_downsampled_c);
 	// Apply function: id
 	// Arg: I_blurred_downsampled_blurred_2_m_I_blurred_downsampled_blurred_downsampled_r_c__2_m_I_blurred_downsampled_blurred_downsampled_c_value
 	// Arg buf: I_blurred_downsampled_blurred
@@ -1349,40 +1302,87 @@ inline void I_blurred_downsampled_blurred_downsampled_id0(I_blurred_downsampled_
 	// Produce: I_blurred_downsampled_blurred_downsampled
 	// Buffer: I_blurred_downsampled_blurred_downsampled, Op: I_blurred_downsampled_blurred_downsampled_id0
 	// Possible ports...
-		// I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26
-	I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_write_bundle_write(compute_result, I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26 /* output src_delay */);
+		// I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12
+	I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_write_bundle_write(compute_result, I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12 /* output src_delay */);
 }
 
-inline void store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled(I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26_cache& I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26, HWStream<int>& I_blurred_downsampled_blurred_downsampled_out, int root, int I_blurred_downsampled_blurred_downsampled_out_r, int I_blurred_downsampled_blurred_downsampled_out_c) {
+inline void store_I_blurred_downsampled_out_from_I_blurred_downsampled(I_blurred_downsampled_I_blurred_downsampled_id0_10_cache& I_blurred_downsampled_I_blurred_downsampled_id0_10, HWStream<int>& I_blurred_downsampled_out, int root, int I_blurred_downsampled_out_r, int I_blurred_downsampled_out_c) {
+	// Consume: I_blurred_downsampled
+	auto I_blurred_downsampled_I_blurred_downsampled_out_r_c__I_blurred_downsampled_out_c_value = I_blurred_downsampled_store_I_blurred_downsampled_out_from_I_blurred_downsampled_read_bundle_read(I_blurred_downsampled_I_blurred_downsampled_id0_10/* source_delay */, root, I_blurred_downsampled_out_r, I_blurred_downsampled_out_c);
+	// Produce: I_blurred_downsampled_out
+	I_blurred_downsampled_out.write(I_blurred_downsampled_I_blurred_downsampled_out_r_c__I_blurred_downsampled_out_c_value);
+}
+
+inline void store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled(I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12_cache& I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12, HWStream<int>& I_blurred_downsampled_blurred_downsampled_out, int root, int I_blurred_downsampled_blurred_downsampled_out_r, int I_blurred_downsampled_blurred_downsampled_out_c) {
 	// Consume: I_blurred_downsampled_blurred_downsampled
-	auto I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_out_r_c__I_blurred_downsampled_blurred_downsampled_out_c_value = I_blurred_downsampled_blurred_downsampled_store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled_read_bundle_read(I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26/* source_delay */, root, I_blurred_downsampled_blurred_downsampled_out_r, I_blurred_downsampled_blurred_downsampled_out_c);
+	auto I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_out_r_c__I_blurred_downsampled_blurred_downsampled_out_c_value = I_blurred_downsampled_blurred_downsampled_store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled_read_bundle_read(I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12/* source_delay */, root, I_blurred_downsampled_blurred_downsampled_out_r, I_blurred_downsampled_blurred_downsampled_out_c);
 	// Produce: I_blurred_downsampled_blurred_downsampled_out
 	I_blurred_downsampled_blurred_downsampled_out.write(I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_out_r_c__I_blurred_downsampled_blurred_downsampled_out_c_value);
 }
 
+inline void store_I_from_in(HWStream<int>& in, I_store_I_from_in_18_cache& I_store_I_from_in_18, int root, int pr, int pc) {
+	// Consume: in
+	auto in_pr_c__pc_value = in.read();
+	// Produce: I
+	// Buffer: I, Op: store_I_from_in
+	// Possible ports...
+		// I_store_I_from_in_18
+	I_store_I_from_in_write_bundle_write(in_pr_c__pc_value, I_store_I_from_in_18 /* output src_delay */);
+}
+
+inline void I_blurred_conv_3_30(I_store_I_from_in_18_cache& I_store_I_from_in_18, I_blurred_I_blurred_conv_3_30_20_cache& I_blurred_I_blurred_conv_3_30_20, int root, int I_blurred_r, int I_blurred_c) {
+	// Consume: I
+	auto I_I_blurred_r__p__0_c__I_blurred_c__p__0_value = I_I_blurred_conv_3_30_read_bundle_read(I_store_I_from_in_18/* source_delay */, root, I_blurred_r, I_blurred_c);
+	// Apply function: conv_3_3
+	// Arg: I_I_blurred_r__p__0_c__I_blurred_c__p__0_value
+	// Arg buf: I
+	// Arg: I_I_blurred_r__p__0_c__I_blurred_c__p__1_value
+	// Arg buf: I
+	// Arg: I_I_blurred_r__p__0_c__I_blurred_c__p__2_value
+	// Arg buf: I
+	// Arg: I_I_blurred_r__p__1_c__I_blurred_c__p__0_value
+	// Arg buf: I
+	// Arg: I_I_blurred_r__p__1_c__I_blurred_c__p__1_value
+	// Arg buf: I
+	// Arg: I_I_blurred_r__p__1_c__I_blurred_c__p__2_value
+	// Arg buf: I
+	// Arg: I_I_blurred_r__p__2_c__I_blurred_c__p__0_value
+	// Arg buf: I
+	// Arg: I_I_blurred_r__p__2_c__I_blurred_c__p__1_value
+	// Arg buf: I
+	// Arg: I_I_blurred_r__p__2_c__I_blurred_c__p__2_value
+	// Arg buf: I
+	auto compute_result = conv_3_3(I_I_blurred_r__p__0_c__I_blurred_c__p__0_value);
+	// Produce: I_blurred
+	// Buffer: I_blurred, Op: I_blurred_conv_3_30
+	// Possible ports...
+		// I_blurred_I_blurred_conv_3_30_20
+	I_blurred_I_blurred_conv_3_30_write_bundle_write(compute_result, I_blurred_I_blurred_conv_3_30_20 /* output src_delay */);
+}
+
 // Driver function
 void gaussian_pyramid(HWStream<int>& in, HWStream<int>& I_blurred_downsampled_blurred_downsampled_out, HWStream<int>& I_blurred_downsampled_out) {
-	I_store_I_from_in_0_cache I_store_I_from_in_0;
-	I_blurred_I_blurred_conv_3_30_2_cache I_blurred_I_blurred_conv_3_30_2;
-	I_blurred_downsampled_I_blurred_downsampled_id0_12_cache I_blurred_downsampled_I_blurred_downsampled_id0_12;
-	I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16_cache I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16;
-	I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26_cache I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26;
+	I_store_I_from_in_18_cache I_store_I_from_in_18;
+	I_blurred_I_blurred_conv_3_30_20_cache I_blurred_I_blurred_conv_3_30_20;
+	I_blurred_downsampled_I_blurred_downsampled_id0_10_cache I_blurred_downsampled_I_blurred_downsampled_id0_10;
+	I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0_cache I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0;
+	I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12_cache I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12;
 	for (int c0 = 0; c0 <= 31; c0 += 1)
 	  for (int c1 = 0; c1 <= 31; c1 += 1) {
-	    store_I_from_in(in, I_store_I_from_in_0, 0, c0, c1);
+	    store_I_from_in(in, I_store_I_from_in_18, 0, c0, c1);
 	    if (c0 >= 2 && c1 >= 2) {
-	      I_blurred_conv_3_30(I_store_I_from_in_0, I_blurred_I_blurred_conv_3_30_2, 0, c0 - 2, c1 - 2);
+	      I_blurred_conv_3_30(I_store_I_from_in_18, I_blurred_I_blurred_conv_3_30_20, 0, c0 - 2, c1 - 2);
 	      if (c0 % 2 == 0 && c1 % 2 == 0) {
-	        I_blurred_downsampled_id0(I_blurred_I_blurred_conv_3_30_2, I_blurred_downsampled_I_blurred_downsampled_id0_12, 0, (c0 / 2) - 1, (c1 / 2) - 1);
+	        I_blurred_downsampled_id0(I_blurred_I_blurred_conv_3_30_20, I_blurred_downsampled_I_blurred_downsampled_id0_10, 0, (c0 / 2) - 1, (c1 / 2) - 1);
 	        if (c0 >= 6 && c1 >= 6)
-	          I_blurred_downsampled_blurred_conv_3_30(I_blurred_downsampled_I_blurred_downsampled_id0_12, I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16, 0, (c0 / 2) - 3, (c1 / 2) - 3);
+	          I_blurred_downsampled_blurred_conv_3_30(I_blurred_downsampled_I_blurred_downsampled_id0_10, I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0, 0, (c0 / 2) - 3, (c1 / 2) - 3);
 	      }
 	      if (c0 >= 11 && c0 <= 26 && c1 >= 11 && c1 <= 26 && (c0 + 1) % 3 == 0 && (c1 + 1) % 3 == 0)
-	        I_blurred_downsampled_blurred_downsampled_id0(I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_16, I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26, 0, (c0 - 11) / 3, (c1 - 11) / 3);
+	        I_blurred_downsampled_blurred_downsampled_id0(I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_0, I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12, 0, (c0 - 11) / 3, (c1 - 11) / 3);
 	      if (c0 % 2 == 0 && c1 % 2 == 0) {
-	        store_I_blurred_downsampled_out_from_I_blurred_downsampled(I_blurred_downsampled_I_blurred_downsampled_id0_12, I_blurred_downsampled_out, 0, (c0 / 2) - 1, (c1 / 2) - 1);
+	        store_I_blurred_downsampled_out_from_I_blurred_downsampled(I_blurred_downsampled_I_blurred_downsampled_id0_10, I_blurred_downsampled_out, 0, (c0 / 2) - 1, (c1 / 2) - 1);
 	        if (c0 >= 16 && c0 <= 26 && c1 >= 16 && c1 <= 26)
-	          store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled(I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_26, I_blurred_downsampled_blurred_downsampled_out, 0, (c0 / 2) - 8, (c1 / 2) - 8);
+	          store_I_blurred_downsampled_blurred_downsampled_out_from_I_blurred_downsampled_blurred_downsampled(I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12, I_blurred_downsampled_blurred_downsampled_out, 0, (c0 / 2) - 8, (c1 / 2) - 8);
 	      }
 	    }
 	  }

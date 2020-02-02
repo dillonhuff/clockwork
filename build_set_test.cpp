@@ -343,34 +343,34 @@ isl_stat get_const(isl_set* s, isl_qpolynomial* qp, void* user) {
   return isl_stat_ok;
 }
 
-int check_value_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
-  auto ctx = buf.ctx;
-  //isl_map* sched = buf.schedule.at(write_port);
-  umap* sched = buf.schedule.at(write_port);
-  assert(sched != nullptr);
+//int check_value_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
+  //auto ctx = buf.ctx;
+  ////isl_map* sched = buf.schedule.at(write_port);
+  //umap* sched = buf.schedule.at(write_port);
+  //assert(sched != nullptr);
   
-  auto WritesAfterWrite = lex_lt(sched, sched);
+  //auto WritesAfterWrite = lex_lt(sched, sched);
 
-  assert(WritesAfterWrite != nullptr);
+  //assert(WritesAfterWrite != nullptr);
 
-  auto port0WritesInv =
-    inv(buf.access_map.at(write_port));
+  //auto port0WritesInv =
+    //inv(buf.access_map.at(write_port));
 
-  auto WriteThatProducesReadData =
-    dot(buf.access_map.at(read_port), port0WritesInv);
+  //auto WriteThatProducesReadData =
+    //dot(buf.access_map.at(read_port), port0WritesInv);
 
-  auto WritesBeforeRead =
-    lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
+  //auto WritesBeforeRead =
+    //lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
 
-  auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
+  //auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
-  auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
+  //auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
 
-  auto c = card(WritesBtwn);
+  //auto c = card(WritesBtwn);
   
-  assert(false);
-  return 0;
-}
+  //assert(false);
+  //return 0;
+//}
 
 std::string ReplaceString(std::string subject, const std::string& search,
                           const std::string& replace) {
@@ -654,8 +654,36 @@ int int_upper_bound(isl_union_pw_qpolynomial* range_card) {
   return bint;
 }
 
-isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
-  auto ctx = buf.ctx;
+umap* get_lexmax_events(const std::string& inpt, const std::string& outpt, UBuffer& buf) {
+    umap* src_map = nullptr;
+    for (auto inpt : buf.get_in_ports()) {
+      auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
+      if (src_map == nullptr) {
+        src_map =
+          ((its(dot(buf.access_map.at(outpt),
+                    inv(buf.access_map.at(inpt))), beforeAcc)));
+      } else {
+        src_map =
+          unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
+      }
+    }
+
+    auto sched = buf.global_schedule();
+    auto after = lex_gt(sched, sched);
+
+    src_map = its(src_map, after);
+    src_map = lexmax(src_map);
+
+    auto time_to_event = inv(sched);
+
+    auto lex_max_events =
+      dot(lexmax(dot(src_map, sched)), time_to_event);
+
+    return lex_max_events;
+}
+
+umap* writes_between(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
+
   isl_union_map* sched = buf.schedule.at(write_port);
   assert(sched != nullptr);
   
@@ -663,36 +691,37 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
 
   assert(WritesAfterWrite != nullptr);
 
-  auto port0WritesInv =
-    inv(buf.access_map.at(write_port));
+  auto WritesBeforeRead =
+    lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
 
+  auto WriteThatProducesReadData =
+    get_lexmax_events(write_port, read_port, buf);
 
-  assert(port0WritesInv != nullptr);
+  auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
+
+  auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
+
+  return WritesBtwn;
+}
+
+isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
+
+  isl_union_map* sched = buf.schedule.at(write_port);
+  assert(sched != nullptr);
+  
+  auto WritesAfterWrite = lex_lt(sched, sched);
+
+  assert(WritesAfterWrite != nullptr);
 
   auto WritesBeforeRead =
     lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
 
-  assert(WritesBeforeRead != nullptr);
-
   auto WriteThatProducesReadData =
-    its(dot(buf.access_map.at(read_port), port0WritesInv), WritesBeforeRead);
-
-
-  auto time_to_event = inv(sched);
-  auto LastWriteBeforeRead =
-    dot(lexmax(dot(WriteThatProducesReadData, sched)), time_to_event);
-
-
-  WriteThatProducesReadData = LastWriteBeforeRead;
+    get_lexmax_events(write_port, read_port, buf);
 
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
-  //cout << "----Writes after production: " << endl;
-  //cout << "\t" << str(WritesAfterProduction) << endl;
-
   auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
-
-  //cout << "----WritesBtwn" << endl;
 
   auto c = card(WritesBtwn);
   return c;
@@ -770,34 +799,6 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
   return maxdelay;
 }
 
-umap* get_lexmax_events(const std::string& inpt, const std::string& outpt, UBuffer& buf) {
-    umap* src_map = nullptr;
-    for (auto inpt : buf.get_in_ports()) {
-      auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
-      if (src_map == nullptr) {
-        src_map =
-          ((its(dot(buf.access_map.at(outpt),
-                    inv(buf.access_map.at(inpt))), beforeAcc)));
-      } else {
-        src_map =
-          unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
-      }
-    }
-
-    auto sched = buf.global_schedule();
-    auto after = lex_gt(sched, sched);
-
-    src_map = its(src_map, after);
-    src_map = lexmax(src_map);
-
-    auto time_to_event = inv(sched);
-
-    auto lex_max_events =
-      dot(lexmax(dot(src_map, sched)), time_to_event);
-
-    return lex_max_events;
-}
-
 void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer& buf) {
 
   int maxdelay = compute_max_dd(buf, inpt);
@@ -812,8 +813,61 @@ void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer&
     auto act_dom = 
       domain(its_range(lex_max_events, to_uset(in_actions)));
 
+    cout << "Lex max events" << endl;
+    cout << tab(1) << str(coalesce(lex_max_events)) << endl;
+    //cout << "Card of lexmax" << endl;
+    //auto c = card(coalesce(lex_max_events));
+    //cout << tab(1) << str(c) << endl;
+
     if (!isl_union_set_is_empty(act_dom)) {
+      {
+        //auto ctx = buf.ctx;
+        //isl_union_map* sched = buf.schedule.at(inpt);
+        //assert(sched != nullptr);
+
+        //cout << "Write schedule..." << endl;
+        //cout << tab(1) << str(sched) << endl;
+
+        //umap* read_sched = buf.schedule.at(outpt);
+        //cout << "Read schedule..." << endl;
+        //cout << tab(1) << str(read_sched) << endl;
+
+        //auto WritesAfterWrite = lex_lt(sched, sched);
+
+        //assert(WritesAfterWrite != nullptr);
+
+        //auto port0WritesInv =
+          //inv(buf.access_map.at(write_port));
+
+
+        //assert(port0WritesInv != nullptr);
+
+        //auto WritesBeforeRead =
+          //lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
+
+        //assert(WritesBeforeRead != nullptr);
+
+        //auto WriteThatProducesReadData =
+          //its(dot(buf.access_map.at(read_port), port0WritesInv), WritesBeforeRead);
+
+
+        //auto time_to_event = inv(sched);
+        //auto LastWriteBeforeRead =
+          //dot(lexmax(dot(WriteThatProducesReadData, sched)), time_to_event);
+
+
+        //WriteThatProducesReadData = LastWriteBeforeRead;
+
+        //auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
+
+        ////cout << "----Writes after production: " << endl;
+        ////cout << "\t" << str(WritesAfterProduction) << endl;
+
+        //auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
+      }
       auto c = compute_dd(buf, outpt, inpt);
+      cout << "Writes btwn: " << endl;
+      cout << tab(1) << str(writes_between(buf, outpt, inpt)) << endl;
       cout << "\t" << buf.name << ": DD between " << inpt
         << " and " << outpt << " = " << str(c) << endl;
       auto qpd = compute_dd_bound(buf, outpt, inpt);
@@ -1689,10 +1743,8 @@ struct op {
   }
 
   void populate_schedule_vectors(map<op*, vector<string> >& sched_vecs, vector<string>& active_vecs) {
-    //cout << "Populating schedule for " << name << ", active vecs: " << active_vecs.size() << endl;
     if (is_loop) {
       auto nds = active_vecs;
-      //cout << "At loop: " << this->name << endl;
       assert(nds.size() > 0);
 
       nds.push_back(name);
@@ -1932,7 +1984,6 @@ struct prog {
       auto dom = map_find(op.first, idoms);
       auto doms = sep_list(dom, "", "", " and ");
 
-      //cout << "\t" << op.first->name << vars << " -> " << sep_list(op.second, "[", "]", ", ") << " : " << doms << endl;
       scheds[op.first] =
         isl_map_read_from_str(ctx, string("{ " + op.first->name + vars + " -> " + sep_list(op.second, "[", "]", ", ") + " : " + doms + " }").c_str());
 
@@ -3494,8 +3545,9 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
 
-    downsample_and_blur_test();
+    warp_and_upsample_test();
     assert(false);
+    downsample_and_blur_test();
     gaussian_pyramid_test();
     conv_1d_rolled_test();
     conv_2d_rolled_test();
@@ -3505,7 +3557,6 @@ int main(int argc, char** argv) {
     conv_1d_test();
     conv_2d_bc_test();
     unsharp_test();
-    warp_and_upsample_test();
     blur_and_downsample_test();
 
     mobilenet_test();
