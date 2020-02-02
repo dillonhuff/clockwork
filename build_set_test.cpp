@@ -1766,6 +1766,15 @@ struct prog {
   set<string> outs;
   map<string, int> buffer_port_widths;
   string compute_unit_file;
+  map<string, vector<int> > buffer_bounds;
+
+  int dim(const string& buf, const int dim) {
+    if (!(contains_key(buf, buffer_bounds))) {
+      cout << "No key for: " << buf << " in buffer_bounds" << endl;
+    }
+    assert(contains_key(buf, buffer_bounds));
+    return map_find(buf, buffer_bounds).at(dim);
+  }
 
   vector<string> vector_load(const std::string& img, const std::string& rbase, const int ro, const int re,
       const std::string& cbase, const int co, const int ce) {
@@ -3256,6 +3265,69 @@ void conv_1d_rolled_test() {
   regression_test(prg);
 }
 
+string add_gaussian_stage(prog& prg, const std::string& inbuffer) {
+
+  int in_rows = prg.dim(inbuffer, 0);
+  int in_cols = prg.dim(inbuffer, 1);
+
+  int res_rows = in_rows - 2;
+  int res_cols = in_cols - 2;
+
+  string blur = inbuffer + "_blurred";
+  prg.buffer_port_widths[blur] = prg.buffer_port_widths[inbuffer];
+  prg.buffer_bounds[blur] = {res_rows, res_cols};
+  string rb = blur + "_r";
+  string rc = blur + "_c";
+  auto loads = prg.vector_load(inbuffer, rb, 0, 3, rc, 0, 3);
+  prg.add_nest(rb, 0, res_rows, rc, 0, res_cols)->add_op({blur, rb + "," + rc}, "conv_3_3", loads);
+
+  string ds = blur + "_downsampled";
+  string dr = ds + "_r";
+  string dc = ds + "_c";
+  prg.buffer_port_widths[ds] = prg.buffer_port_widths[inbuffer];
+  prg.buffer_bounds[ds] = {res_rows / 2, res_cols / 2};
+  prg.add_nest(dr, 0, res_rows / 2, dc, 0, res_cols / 2)->
+    add_op({ds, dr + ", " + dc}, "id", {blur, "2*" + dr + ", 2*" + dc});
+
+  return ds;
+}
+
+void write_out(prog& prg, const std::string& output) {
+  string out_stream = output + "_out";
+  prg.buffer_port_widths[out_stream] = prg.buffer_port_widths[output];
+  prg.buffer_bounds[out_stream] = prg.buffer_bounds[output];
+  prg.add_output(out_stream);
+
+  int res_rows = prg.dim(output, 0);
+  int res_cols = prg.dim(output, 1);
+
+  string r = out_stream + "_r";
+  string c = out_stream + "_c";
+  prg.add_nest(r, 0, res_rows, c, 0, res_cols)->store({out_stream, r + ", " + c}, {output, r + ", " + c});
+}
+
+void gaussian_pyramid_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "gaussian_pyramid";
+  prg.add_input("in");
+
+  prg.buffer_port_widths["I"] = 32;
+  prg.buffer_port_widths["in"] = 32;
+
+  prg.buffer_bounds["in"] = {32, 32};
+  prg.buffer_bounds["I"] = {32, 32};
+
+  prg.add_nest("pr", 0, 32, "pc", 0, 32)->store({"I", "pr, pc"}, {"in", "pr, pc"});
+  string I1 = add_gaussian_stage(prg, "I");
+  string I2 = add_gaussian_stage(prg, I1);
+
+  write_out(prg, I1);
+  write_out(prg, I2);
+
+  regression_test(prg);
+}
+
 void conv_2d_rolled_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
@@ -3391,9 +3463,9 @@ int main(int argc, char** argv) {
     assert(false);
 
   } else if (argc == 1) {
-    
+
+    gaussian_pyramid_test();
     conv_1d_rolled_test();
-    //assert(false);
     conv_2d_rolled_test();
     reduce_1d_test();
     synth_reduce_test();
