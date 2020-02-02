@@ -3420,6 +3420,26 @@ void warp_and_upsample_test() {
   regression_test(prg);
 }
 
+void downsample_and_blur_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "downsample_and_blur";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["I"] = 32;
+  prg.buffer_port_widths["downsampled"] = 32;
+
+  prg.add_nest("pr", 0, 64, "pc", 0, 64)->store({"I", "pr, pc"}, {"in", "pr, pc"});
+ 
+  prg.add_nest("dr", 0, (64) / 2, "dc", 0, (64) / 2)->
+    add_op({"downsampled", "dr, dc"}, "id", {"I", "2*dr, 2*dc"});
+
+  auto loads = prg.vector_load("downsampled", "br", 0, 3, "bc", 0, 3);
+  prg.add_nest("br", 0, 32 - 2, "bc", 0, 32 - 2)->add_op({"out", "br,bc"}, "conv_3_3", loads);
+
+  regression_test(prg);
+}
+
 void blur_and_downsample_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
@@ -3474,6 +3494,8 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
 
+    downsample_and_blur_test();
+    assert(false);
     gaussian_pyramid_test();
     conv_1d_rolled_test();
     conv_2d_rolled_test();
