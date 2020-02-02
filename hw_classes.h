@@ -20,6 +20,8 @@ using namespace std;
 
 #define MOD_INC(x, N) ((x) == ((N) - 1) ? 0 : (x) + 1)
 
+#define floord(x, d) ((x) / (d))
+
 template<int Depth>
 class hw_mem {
   public:

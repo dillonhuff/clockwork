@@ -2205,11 +2205,17 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* schedmap)
   ofstream conv_out(prg.name + ".cpp");
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
   vector<string> args;
+  for (auto& b : prg.ins) {
+    args.push_back("HWStream<int>& " + b);
+  }
+  for (auto& b : prg.outs) {
+    args.push_back("HWStream<int>& " + b);
+  }
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
       generate_hls_code_internal(conv_out, b.second);
     } else {
-      args.push_back("HWStream<int>& " + b.first);
+      //args.push_back("HWStream<int>& " + b.first);
     }
   }
 
