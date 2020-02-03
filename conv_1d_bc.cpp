@@ -111,28 +111,19 @@ inline void M_write_write_bundle_write(int& /* width = 32*/write_write, M_write_
 
 struct T_read0_2_cache {
 	// Capacity: 1
-	// Parition [0, 0] capacity = 1
-	fifo<hw_uint<96>, 1> f1;
-
+	fifo<hw_uint<96>, 1> f;
+	inline hw_uint<96> peek(const int offset) {
+		return f.peek(0 - offset);
+	}
 
 	inline hw_uint<96> peek_0() {
-		return f1.back();
+		return f.peek(0);
 	}
 
 
-
-	inline hw_uint<96> peek(const int offset) {
-		if (offset == 0) {
-			return f1.back();
-		}
-		cout << "Error: Unsupported offset in T: " << offset << endl;
-		assert(false);
-		return 0;
-
-	}
 
 	inline void push(const hw_uint<96> value) {
-		f1.push(value);
+		return f.push(value);
 	}
 
 };

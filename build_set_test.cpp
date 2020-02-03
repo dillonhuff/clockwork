@@ -13,27 +13,6 @@
 using namespace dbhc;
 using namespace std;
 
-// Now I want to start optimizing the reduce operations.
-// The main problem is that there are too many different peek operations
-// going on in some of these memories
-//
-// One easy case that (I think) shows up often is that a port only has
-// a small number of different readers, so even if the range of read
-// addresses is huge the number of distinct reads in a given cycle is small
-// so it does not need a partition for each possible read location, it may
-// be possible to service all reads with a smaller number of ports
-//
-// How to reduce this to some polyhedral computation?
-// I guess one way is to analyze the times of all reads in the schedule
-// and find the largest number of simultaneous reads
-//
-// This doesnt give a perfect answer though since the largest number of
-// simultaneous reads in the sequential schedule is not necessarily the
-// largest number in the pipelined schedule
-//
-// In the pipelined schedule the largest # of simultaneous ops is?
-//  - sum of largest # of simultaneous operations at a given level
-
 string take_until(const std::string& s, const std::string& delim) {
   std::size_t found = s.find_first_of(delim);
   return s.substr(0, found);
@@ -96,6 +75,13 @@ std::string sep_list(const std::vector<std::string>& strs, const std::string& ld
 std::string comma_list(const std::vector<std::string>& strs) {
   return sep_list(strs, "", "", ", ");
 }
+
+struct CodegenOptions {
+  bool internal;
+  bool all_rams;
+   
+  CodegenOptions() : internal(true), all_rams(false) {}
+};
 
 class UBuffer {
   public:
@@ -800,12 +786,13 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
   return maxdelay;
 }
 
-void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer& buf) {
+void generate_memory_struct(CodegenOptions& options, std::ostream& out, const std::string& inpt, UBuffer& buf) {
 
   int maxdelay = compute_max_dd(buf, inpt);
   out << "struct " + inpt + "_cache {" << endl;
   out << "\t// Capacity: " << maxdelay + 1 << endl;
   vector<int> read_delays{0};
+  int num_readers = 0;
   for (auto outpt : buf.get_out_ports()) {
 
     auto in_actions = buf.domain.at(inpt);
@@ -816,56 +803,9 @@ void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer&
 
     cout << "Lex max events" << endl;
     cout << tab(1) << str(coalesce(lex_max_events)) << endl;
-    //cout << "Card of lexmax" << endl;
-    //auto c = card(coalesce(lex_max_events));
-    //cout << tab(1) << str(c) << endl;
 
     if (!isl_union_set_is_empty(act_dom)) {
-      {
-        //auto ctx = buf.ctx;
-        //isl_union_map* sched = buf.schedule.at(inpt);
-        //assert(sched != nullptr);
-
-        //cout << "Write schedule..." << endl;
-        //cout << tab(1) << str(sched) << endl;
-
-        //umap* read_sched = buf.schedule.at(outpt);
-        //cout << "Read schedule..." << endl;
-        //cout << tab(1) << str(read_sched) << endl;
-
-        //auto WritesAfterWrite = lex_lt(sched, sched);
-
-        //assert(WritesAfterWrite != nullptr);
-
-        //auto port0WritesInv =
-          //inv(buf.access_map.at(write_port));
-
-
-        //assert(port0WritesInv != nullptr);
-
-        //auto WritesBeforeRead =
-          //lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
-
-        //assert(WritesBeforeRead != nullptr);
-
-        //auto WriteThatProducesReadData =
-          //its(dot(buf.access_map.at(read_port), port0WritesInv), WritesBeforeRead);
-
-
-        //auto time_to_event = inv(sched);
-        //auto LastWriteBeforeRead =
-          //dot(lexmax(dot(WriteThatProducesReadData, sched)), time_to_event);
-
-
-        //WriteThatProducesReadData = LastWriteBeforeRead;
-
-        //auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
-
-        ////cout << "----Writes after production: " << endl;
-        ////cout << "\t" << str(WritesAfterProduction) << endl;
-
-        //auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
-      }
+      num_readers++;
       auto c = compute_dd(buf, outpt, inpt);
       cout << "Writes btwn: " << endl;
       cout << tab(1) << str(writes_between(buf, outpt, inpt)) << endl;
@@ -880,89 +820,103 @@ void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer&
     }
   }
 
-  read_delays = sort_unique(read_delays);
+  if (num_readers == 1 || options.all_rams) {
+  //if (num_readers == 1) {
+    int partition_capacity = 1 + maxdelay;
+    out << "\tfifo<" << buf.port_type_string() << ", " << partition_capacity << "> f" << ";" << endl;
+    out << "\tinline " + buf.port_type_string() + " peek(const int offset) {" << endl;
+    out << tab(2) << "return f.peek(" << partition_capacity - 1 << " - offset);" << endl;
+    out << tab(1) << "}" << endl << endl;
 
-  vector<int> break_points;
-  if (read_delays.size() == 1) {
-    break_points = {read_delays[0], read_delays[0]};
+    for (int i = 0; i < partition_capacity; i++) {
+      int dv = i;
+      out << "\tinline " << buf.port_type_string() << " peek_" << to_string(dv) << "() {" << endl;
+      out << "\t\treturn f.peek(" << dv <<");" << endl;
+      out << "\t}" << endl << endl;
+    }
+    out << endl << endl;
+    out << "\tinline void push(const " + buf.port_type_string() + " value) {" << endl;
+    out << tab(2) << "return f.push(value);" << endl;
+    out << tab(1) << "}" << endl << endl;
   } else {
-    for (size_t i = 0; i < read_delays.size(); i++) {
-      break_points.push_back(read_delays[i]);
-      if (i < read_delays.size() - 1 && read_delays[i] != read_delays[i + 1] + 1) {
-        break_points.push_back(read_delays[i] + 1);
+    read_delays = sort_unique(read_delays);
+
+    vector<int> break_points;
+    if (read_delays.size() == 1) {
+      break_points = {read_delays[0], read_delays[0]};
+    } else {
+      for (size_t i = 0; i < read_delays.size(); i++) {
+        break_points.push_back(read_delays[i]);
+        if (i < read_delays.size() - 1 && read_delays[i] != read_delays[i + 1] + 1) {
+          break_points.push_back(read_delays[i] + 1);
+        }
       }
     }
-  }
-  read_delays = break_points;
+    read_delays = break_points;
 
-  vector<string> partitions;
-  vector<int> end_inds;
-  if (read_delays.size() > 0) {
-    for (size_t i = 0; i < read_delays.size(); i++) {
-      int current = read_delays[i];
-      int partition_capacity = -1;
-      if (i < read_delays.size() - 1) {
-        if (read_delays[i] != read_delays[i + 1]) {
-          int next = read_delays[i + 1];
-          partition_capacity = next - current;
-          out << "\t// Parition [" << current << ", " << next << ") capacity = " << partition_capacity << endl;
+    vector<string> partitions;
+    vector<int> end_inds;
+    if (read_delays.size() > 0) {
+      for (size_t i = 0; i < read_delays.size(); i++) {
+        int current = read_delays[i];
+        int partition_capacity = -1;
+        if (i < read_delays.size() - 1) {
+          if (read_delays[i] != read_delays[i + 1]) {
+            int next = read_delays[i + 1];
+            partition_capacity = next - current;
+            out << "\t// Parition [" << current << ", " << next << ") capacity = " << partition_capacity << endl;
+            out << "\tfifo<" << buf.port_type_string() << ", " << partition_capacity << "> f" << i << ";" << endl;
+            partitions.push_back("f" + to_string(i));
+            end_inds.push_back(current + partition_capacity - 1);
+          }
+        } else {
+          partition_capacity = 1;
+          out << "\t// Parition [" << current << ", " << current << "] capacity = " << partition_capacity << endl;
           out << "\tfifo<" << buf.port_type_string() << ", " << partition_capacity << "> f" << i << ";" << endl;
           partitions.push_back("f" + to_string(i));
           end_inds.push_back(current + partition_capacity - 1);
         }
-      } else {
-        partition_capacity = 1;
-        out << "\t// Parition [" << current << ", " << current << "] capacity = " << partition_capacity << endl;
-        out << "\tfifo<" << buf.port_type_string() << ", " << partition_capacity << "> f" << i << ";" << endl;
-        partitions.push_back("f" + to_string(i));
-        end_inds.push_back(current + partition_capacity - 1);
       }
-    }
 
-    out << endl << endl;
-    int nind = 0;
-    for (auto p : partitions) {
-      int dv = end_inds[nind];
-      out << "\tinline " << buf.port_type_string() << " peek_" << to_string(dv) << "() {" << endl;
-      out << "\t\treturn " << p << ".back();" << endl;
+      out << endl << endl;
+      int nind = 0;
+      for (auto p : partitions) {
+        int dv = end_inds[nind];
+        out << "\tinline " << buf.port_type_string() << " peek_" << to_string(dv) << "() {" << endl;
+        out << "\t\treturn " << p << ".back();" << endl;
+        out << "\t}" << endl << endl;
+        nind++;
+      }
+      out << endl << endl;
+
+      out << "\tinline " + buf.port_type_string() + " peek(const int offset) {" << endl;
+      nind = 0;
+      for (auto p : partitions) {
+        int dv = end_inds[nind];
+        out << "\t\tif (offset == " << dv << ") {" << endl;
+        out << "\t\t\treturn " << p << ".back();" << endl;
+        out << "\t\t}" << endl;
+        nind++;
+      }
+      out << "\t\tcout << \"Error: Unsupported offset in " << buf.name << ": \" << offset << endl;" << endl;
+      out << "\t\tassert(false);" << endl;
+      out << "\t\treturn 0;\n" << endl;
       out << "\t}" << endl << endl;
-      nind++;
-    }
 
-    out << endl << endl;
-
-    out << "\tinline " + buf.port_type_string() + " peek(const int offset) {" << endl;
-    nind = 0;
-    for (auto p : partitions) {
-      int dv = end_inds[nind];
-      out << "\t\tif (offset == " << dv << ") {" << endl;
-      out << "\t\t\treturn " << p << ".back();" << endl;
-      out << "\t\t}" << endl;
-      nind++;
-    }
-    out << "\t\tcout << \"Error: Unsupported offset in " << buf.name << ": \" << offset << endl;" << endl;
-    out << "\t\tassert(false);" << endl;
-    out << "\t\treturn 0;\n" << endl;
-    out << "\t}" << endl << endl;
-
-    out << "\tinline void push(const " + buf.port_type_string() + " value) {" << endl;
-    if (partitions.size() > 0) {
-      for (size_t i = partitions.size() - 1; i >= 1; i--) {
-        auto current = partitions[i];
-        auto prior = partitions[i - 1];
-        out << "\t\t" << current << ".push(" << prior << ".back());" << endl;
+      out << "\tinline void push(const " + buf.port_type_string() + " value) {" << endl;
+      if (partitions.size() > 0) {
+        for (size_t i = partitions.size() - 1; i >= 1; i--) {
+          auto current = partitions[i];
+          auto prior = partitions[i - 1];
+          out << "\t\t" << current << ".push(" << prior << ".back());" << endl;
+        }
+        out << "\t\t" << partitions[0] << ".push(value);" << endl;
       }
-      out << "\t\t" << partitions[0] << ".push(value);" << endl;
+      out << "\t}" << endl << endl;
     }
-    out << "\t}" << endl << endl;
   }
   out << "};" << endl << endl;
 }
-
-struct CodegenOptions {
-  bool internal;
-  bool all_rams;
-};
 
 void generate_code_prefix(CodegenOptions& options,
     std::ostream& out, UBuffer& buf) {
@@ -970,7 +924,7 @@ void generate_code_prefix(CodegenOptions& options,
   string inpt = buf.get_in_port();
   out << "#include \"hw_classes.h\"" << endl << endl;
   for (auto inpt : buf.get_in_ports()) {
-    generate_memory_struct(out, inpt, buf);
+    generate_memory_struct(options, out, inpt, buf);
   }
 
   out << endl << endl;
@@ -2508,9 +2462,10 @@ void generate_unoptimized_code(prog& prg) {
   auto buffers = build_buffers(prg, prg.unoptimized_schedule());
   
   CodegenOptions options;
-  options.internal = false;
+  options.internal = true;
+  options.all_rams = true;
 
-  generate_app_code(buffers, prg, sched);
+  generate_app_code(options, buffers, prg, sched);
 
   prg.name = old_name;
 }
@@ -3552,8 +3507,8 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
 
+    blur_and_downsample_test();
     warp_and_upsample_test();
-    //assert(false);
     downsample_and_blur_test();
     gaussian_pyramid_test();
     conv_1d_rolled_test();
@@ -3564,7 +3519,6 @@ int main(int argc, char** argv) {
     conv_1d_test();
     conv_2d_bc_test();
     unsharp_test();
-    blur_and_downsample_test();
 
     mobilenet_test();
 
