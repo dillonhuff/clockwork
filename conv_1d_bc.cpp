@@ -43,6 +43,9 @@ struct M_write_0_cache {
 	}
 
 	inline void push(const int value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
 		f4.push(f2.back());
 		f2.push(f0.back());
 		f0.push(value);
@@ -61,6 +64,7 @@ inline int M_read0_3_select(M_write_0_cache& M_write_0_delay
 // Pieces...
 // { read0[root = 0, c] : 0 <= c <= 7 } -> { read0[root, c] -> 1 }
 // 	is always true on iteration domain: 0
+//	is optimizable constant: 0
 	int value_M_write_0 = M_write_0_delay.peek(((root == 0 && c >= 0 && 7 - c >= 0) ? (1) : 0));
 	return value_M_write_0;
 }
@@ -68,6 +72,7 @@ inline int M_read0_3_select(M_write_0_cache& M_write_0_delay
 inline int M_read0_4_select(M_write_0_cache& M_write_0_delay
 , int root, int c) {
 // Pieces...
+//	is optimizable constant: 0
 	int value_M_write_0 = M_write_0_delay.peek_0();
 	return value_M_write_0;
 }
@@ -79,6 +84,7 @@ inline int M_read0_5_select(M_write_0_cache& M_write_0_delay
 // 	is always true on iteration domain: 0
 // { read0[root = 0, c = 8] } -> { read0[root, c] -> 1 }
 // 	is always true on iteration domain: 0
+//	is optimizable constant: 0
 	int value_M_write_0 = M_write_0_delay.peek(((root == 0 && c >= 0 && 7 - c >= 0) ? (2) : (-8 + c == 0 && root == 0) ? (1) : 0));
 	return value_M_write_0;
 }
@@ -123,6 +129,9 @@ struct T_read0_2_cache {
 
 
 	inline void push(const hw_uint<96> value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
 		return f.push(value);
 	}
 
@@ -137,6 +146,7 @@ inline void T_read0_2_write(hw_uint<96>& T_read0_2, T_read0_2_cache& T_read0_2_d
 inline hw_uint<96> T_compute_out_7_select(T_read0_2_cache& T_read0_2_delay
 , int root, int c) {
 // Pieces...
+//	is optimizable constant: 0
 	hw_uint<96> value_T_read0_2 = T_read0_2_delay.peek_0();
 	return value_T_read0_2;
 }

@@ -41,6 +41,9 @@ struct write_cache {
 	}
 
 	inline void push(const int value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
 		f4.push(f2.back());
 		f2.push(f0.back());
 		f0.push(value);
@@ -59,6 +62,7 @@ inline int read0_select(write_cache& write_delay
 // Pieces...
 // { read0[i] : 0 <= i <= 7 } -> { read0[i] -> 2 }
 // 	is always true on iteration domain: 1
+//	is optimizable constant: 1
 	int value_write = write_delay.peek_2();
 	return value_write;
 }
@@ -68,6 +72,7 @@ inline int read1_select(write_cache& write_delay
 // Pieces...
 // { read1[i] : 0 <= i <= 7 } -> { read1[i] -> 1 }
 // 	is always true on iteration domain: 1
+//	is optimizable constant: 1
 	int value_write = write_delay.peek_1();
 	return value_write;
 }
@@ -75,6 +80,7 @@ inline int read1_select(write_cache& write_delay
 inline int read2_select(write_cache& write_delay
 , int i) {
 // Pieces...
+//	is optimizable constant: 0
 	int value_write = write_delay.peek_0();
 	return value_write;
 }

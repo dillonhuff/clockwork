@@ -115,6 +115,9 @@ struct I_store_I_from_in_2_cache {
 	}
 
 	inline void push(const int value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
 		f16.push(f14.back());
 		f14.push(f12.back());
 		f12.push(f11.back());
@@ -143,7 +146,8 @@ inline int I_warped_0_conv_3_30_10_select(I_store_I_from_in_2_cache& I_store_I_f
 // 	is always true on iteration domain: 0
 // { warped_0_conv_3_30[root = 0, br, bc = 61] : 0 <= br <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> (3 + bc) }
 // 	is always true on iteration domain: 0
-	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek(((root == 0 && br >= 0 && 61 - br >= 0 && bc >= 0 && 60 - bc >= 0) ? (64) : (-61 + bc == 0 && root == 0 && br >= 0 && 61 - br >= 0) ? ((3 + bc)) : 0));
+//	is optimizable constant: 1
+	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek_64();
 	return value_I_store_I_from_in_2;
 }
 
@@ -152,6 +156,7 @@ inline int I_warped_0_conv_3_30_11_select(I_store_I_from_in_2_cache& I_store_I_f
 // Pieces...
 // { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 2 }
 // 	is always true on iteration domain: 1
+//	is optimizable constant: 1
 	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek_2();
 	return value_I_store_I_from_in_2;
 }
@@ -161,6 +166,7 @@ inline int I_warped_0_conv_3_30_12_select(I_store_I_from_in_2_cache& I_store_I_f
 // Pieces...
 // { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 1 }
 // 	is always true on iteration domain: 1
+//	is optimizable constant: 1
 	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek_1();
 	return value_I_store_I_from_in_2;
 }
@@ -168,6 +174,7 @@ inline int I_warped_0_conv_3_30_12_select(I_store_I_from_in_2_cache& I_store_I_f
 inline int I_warped_0_conv_3_30_13_select(I_store_I_from_in_2_cache& I_store_I_from_in_2_delay
 , int root, int br, int bc) {
 // Pieces...
+//	is optimizable constant: 0
 	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek_0();
 	return value_I_store_I_from_in_2;
 }
@@ -177,6 +184,7 @@ inline int I_warped_0_conv_3_30_5_select(I_store_I_from_in_2_cache& I_store_I_fr
 // Pieces...
 // { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 130 }
 // 	is always true on iteration domain: 1
+//	is optimizable constant: 1
 	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek_130();
 	return value_I_store_I_from_in_2;
 }
@@ -186,6 +194,7 @@ inline int I_warped_0_conv_3_30_6_select(I_store_I_from_in_2_cache& I_store_I_fr
 // Pieces...
 // { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 129 }
 // 	is always true on iteration domain: 1
+//	is optimizable constant: 1
 	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek_129();
 	return value_I_store_I_from_in_2;
 }
@@ -197,7 +206,8 @@ inline int I_warped_0_conv_3_30_7_select(I_store_I_from_in_2_cache& I_store_I_fr
 // 	is always true on iteration domain: 0
 // { warped_0_conv_3_30[root = 0, br, bc = 61] : 0 <= br <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> (67 + bc) }
 // 	is always true on iteration domain: 0
-	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek(((root == 0 && br >= 0 && 61 - br >= 0 && bc >= 0 && 60 - bc >= 0) ? (128) : (-61 + bc == 0 && root == 0 && br >= 0 && 61 - br >= 0) ? ((67 + bc)) : 0));
+//	is optimizable constant: 1
+	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek_128();
 	return value_I_store_I_from_in_2;
 }
 
@@ -206,6 +216,7 @@ inline int I_warped_0_conv_3_30_8_select(I_store_I_from_in_2_cache& I_store_I_fr
 // Pieces...
 // { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 66 }
 // 	is always true on iteration domain: 1
+//	is optimizable constant: 1
 	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek_66();
 	return value_I_store_I_from_in_2;
 }
@@ -215,6 +226,7 @@ inline int I_warped_0_conv_3_30_9_select(I_store_I_from_in_2_cache& I_store_I_fr
 // Pieces...
 // { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 65 }
 // 	is always true on iteration domain: 1
+//	is optimizable constant: 1
 	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek_65();
 	return value_I_store_I_from_in_2;
 }
@@ -521,6 +533,9 @@ struct warped_0_warped_0_conv_3_30_4_cache {
 
 
 	inline void push(const int value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
 		return f.push(value);
 	}
 
@@ -537,6 +552,7 @@ inline int warped_0_out_id0_1_select(warped_0_warped_0_conv_3_30_4_cache& warped
 // Pieces...
 // { out_id0[root = 0, ur, kr = 1, uc, kc] : 0 <= ur <= 61 and 0 <= uc <= 60 and 0 <= kc <= 1 } -> { out_id0[root, ur, kr, uc, kc] -> (61 - uc) }
 // 	is always true on iteration domain: 0
+//	is optimizable constant: 0
 	int value_warped_0_warped_0_conv_3_30_4 = warped_0_warped_0_conv_3_30_4_delay.peek(((-1 + kr == 0 && root == 0 && ur >= 0 && 61 - ur >= 0 && uc >= 0 && 60 - uc >= 0 && kc >= 0 && 1 - kc >= 0) ? ((61 - uc)) : 0));
 	return value_warped_0_warped_0_conv_3_30_4;
 }

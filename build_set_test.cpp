@@ -88,8 +88,9 @@ std::string comma_list(const std::vector<std::string>& strs) {
 struct CodegenOptions {
   bool internal;
   bool all_rams;
+  bool add_dependence_pragmas;
    
-  CodegenOptions() : internal(true), all_rams(false) {}
+  CodegenOptions() : internal(true), all_rams(false), add_dependence_pragmas(true) {}
 };
 
 class UBuffer {
@@ -633,8 +634,22 @@ map<string, string> umap_codegen_c(umap* const um) {
   return cm;
 }
 
-int int_upper_bound(isl_union_pw_qpolynomial* range_card) {
+int int_lower_bound(isl_union_pw_qpolynomial* range_card) {
+  int tight;
+  int* b = &tight;
+  auto bound = isl_union_pw_qpolynomial_bound(cpy(range_card), isl_fold_min, b);
+  auto folds  = get_polynomial_folds(bound);
+  int bint;
+  if (folds.size() == 0) {
+    bint = 0;
+  } else {
+    assert(folds.size() == 1);
+    bint = safe_stoi(codegen_c(folds[0]));
+  }
+  return bint;
+}
 
+int int_upper_bound(isl_union_pw_qpolynomial* range_card) {
   int tight;
   int* b = &tight;
   auto bound = isl_union_pw_qpolynomial_bound(cpy(range_card), isl_fold_max, b);
@@ -847,6 +862,11 @@ void generate_memory_struct(CodegenOptions& options, std::ostream& out, const st
     }
     out << endl << endl;
     out << "\tinline void push(const " + buf.port_type_string() + " value) {" << endl;
+    if (options.add_dependence_pragmas) {
+      out << "#ifdef __VIVADO_SYNTH__" << endl;
+      out << "#pragma HLS dependence array inter false" << endl;
+      out << "#endif //__VIVADO_SYNTH__" << endl;
+    }
     out << tab(2) << "return f.push(value);" << endl;
     out << tab(1) << "}" << endl << endl;
   } else {
@@ -915,6 +935,11 @@ void generate_memory_struct(CodegenOptions& options, std::ostream& out, const st
       out << "\t}" << endl << endl;
 
       out << "\tinline void push(const " + buf.port_type_string() + " value) {" << endl;
+      if (options.add_dependence_pragmas) {
+        out << "#ifdef __VIVADO_SYNTH__" << endl;
+        out << "#pragma HLS dependence array inter false" << endl;
+        out << "#endif //__VIVADO_SYNTH__" << endl;
+      }
       if (partitions.size() > 0) {
         for (size_t i = partitions.size() - 1; i >= 1; i--) {
           auto current = partitions[i];
@@ -955,6 +980,60 @@ void generate_code_prefix(CodegenOptions& options,
 
 }
 
+bool is_optimizable_constant_dd(const string& inpt, const string& outpt, UBuffer& buf) {
+  auto out_domain = buf.domain.at(outpt);
+  auto qpd = compute_dd(buf, outpt, inpt);
+  auto pieces = get_pieces(qpd);
+  uset* pieces_dom = isl_union_set_read_from_str(ctx(qpd), "{}");
+  for (auto p : pieces) {
+    cout << "// " << str(p.first) << " -> " << str(p.second) << endl;
+    pieces_dom = unn(pieces_dom, to_uset(p.first));
+  }
+
+  bool pieces_are_complete =
+    subset(to_uset(out_domain), (pieces_dom));
+  cout << "//\tPieces dom: " << str(pieces_dom) << endl;
+  cout << "//\tPieces are complete: " << pieces_are_complete << endl;
+
+  if (pieces_are_complete) {
+    int ub = int_upper_bound(qpd);
+    int lb = int_lower_bound(qpd);
+    return ub == lb;
+    //bool all_pieces_tight = true;
+    //vector<int> bnds;
+    //for (auto p : pieces) {
+      //int ub = int_upper_bound(p.second);
+      //int lb = int_lower_bound(p.second);
+
+      //if (ub == lb) {
+        //bnds.push_back(ub);
+      //} else {
+        //all_pieces_tight = false;
+        //break;
+      //}
+    //}
+
+    //if (!all_pieces_tight) {
+      //return false;
+    //}
+
+    //assert(!all_pieces_tight || bnds.size() == pieces.size());
+    //bool all_bounds_equal = true;
+    //if (bnds.size() > 1) {
+      //for (size_t i = 0; i < bnds.size() - 1; i++) {
+        //all_bounds_equal = bnds[i] == bnds[i + 1];
+        //if (!all_bounds_equal) {
+          //break;
+        //}
+      //}
+    //}
+
+    //return all_pieces_tight && all_bounds_equal;
+  }
+
+  return false;
+}
+
 void generate_selects(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
 
   auto out_domain = buf.domain.at(outpt);
@@ -992,14 +1071,23 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     auto qpd = compute_dd(buf, outpt, inpt);
     auto pieces = get_pieces(qpd);
     out << "// Pieces..." << endl;
-    //auto out_domain = buf.domain.at(outpt);
     for (auto p : pieces) {
       out << "// " << str(p.first) << " -> " << str(p.second) << endl;
       out << "// \tis always true on iteration domain: " << isl_set_is_subset(cpy(out_domain), cpy(p.first)) << endl;
     }
+    bool opt_const = is_optimizable_constant_dd(inpt, outpt, buf);
+    out << "//\tis optimizable constant: " << opt_const << endl;
     string inpt = *(buf.get_in_ports().begin());
 
-    if (pieces.size() == 0 && !options.all_rams) {
+    if (opt_const) {
+      string dx = to_string(int_upper_bound(qpd));
+      if (!options.all_rams && is_number(dx)) {
+        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
+      } else {
+        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << dx << ")" << ";\n";
+      }
+      out << "\treturn value_" + inpt + ";" << endl;
+    } else if (pieces.size() == 0 && !options.all_rams) {
       out << "\t" << buf.port_type_string() << " value_" << inpt << " = " << inpt << "_delay.peek_" << 0 << "()" << ";\n";
       out << "\treturn value_" + inpt + ";" << endl;
     } else if (pieces.size() == 1 &&
@@ -3531,14 +3619,10 @@ int main(int argc, char** argv) {
     conv_1d_test();
     conv_2d_bc_test();
     unsharp_test();
-
     mobilenet_test();
-
     pyramid_2d_test();
     pyramid_test();
-
     conv_1d_bc_test();
-
     synth_wire_test();
     synth_sr_boundary_condition_test();
     synth_upsample_test();
