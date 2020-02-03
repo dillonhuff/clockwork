@@ -13,27 +13,6 @@
 using namespace dbhc;
 using namespace std;
 
-// Now I want to start optimizing the reduce operations.
-// The main problem is that there are too many different peek operations
-// going on in some of these memories
-//
-// One easy case that (I think) shows up often is that a port only has
-// a small number of different readers, so even if the range of read
-// addresses is huge the number of distinct reads in a given cycle is small
-// so it does not need a partition for each possible read location, it may
-// be possible to service all reads with a smaller number of ports
-//
-// How to reduce this to some polyhedral computation?
-// I guess one way is to analyze the times of all reads in the schedule
-// and find the largest number of simultaneous reads
-//
-// This doesnt give a perfect answer though since the largest number of
-// simultaneous reads in the sequential schedule is not necessarily the
-// largest number in the pipelined schedule
-//
-// In the pipelined schedule the largest # of simultaneous ops is?
-//  - sum of largest # of simultaneous operations at a given level
-
 string take_until(const std::string& s, const std::string& delim) {
   std::size_t found = s.find_first_of(delim);
   return s.substr(0, found);
@@ -96,6 +75,13 @@ std::string sep_list(const std::vector<std::string>& strs, const std::string& ld
 std::string comma_list(const std::vector<std::string>& strs) {
   return sep_list(strs, "", "", ", ");
 }
+
+struct CodegenOptions {
+  bool internal;
+  bool all_rams;
+   
+  CodegenOptions() : internal(true), all_rams(false) {}
+};
 
 class UBuffer {
   public:
@@ -343,34 +329,34 @@ isl_stat get_const(isl_set* s, isl_qpolynomial* qp, void* user) {
   return isl_stat_ok;
 }
 
-int check_value_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
-  auto ctx = buf.ctx;
-  //isl_map* sched = buf.schedule.at(write_port);
-  umap* sched = buf.schedule.at(write_port);
-  assert(sched != nullptr);
+//int check_value_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
+  //auto ctx = buf.ctx;
+  ////isl_map* sched = buf.schedule.at(write_port);
+  //umap* sched = buf.schedule.at(write_port);
+  //assert(sched != nullptr);
   
-  auto WritesAfterWrite = lex_lt(sched, sched);
+  //auto WritesAfterWrite = lex_lt(sched, sched);
 
-  assert(WritesAfterWrite != nullptr);
+  //assert(WritesAfterWrite != nullptr);
 
-  auto port0WritesInv =
-    inv(buf.access_map.at(write_port));
+  //auto port0WritesInv =
+    //inv(buf.access_map.at(write_port));
 
-  auto WriteThatProducesReadData =
-    dot(buf.access_map.at(read_port), port0WritesInv);
+  //auto WriteThatProducesReadData =
+    //dot(buf.access_map.at(read_port), port0WritesInv);
 
-  auto WritesBeforeRead =
-    lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
+  //auto WritesBeforeRead =
+    //lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
 
-  auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
+  //auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
-  auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
+  //auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
 
-  auto c = card(WritesBtwn);
+  //auto c = card(WritesBtwn);
   
-  assert(false);
-  return 0;
-}
+  //assert(false);
+  //return 0;
+//}
 
 std::string ReplaceString(std::string subject, const std::string& search,
                           const std::string& replace) {
@@ -654,8 +640,36 @@ int int_upper_bound(isl_union_pw_qpolynomial* range_card) {
   return bint;
 }
 
-isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
-  auto ctx = buf.ctx;
+umap* get_lexmax_events(const std::string& inpt, const std::string& outpt, UBuffer& buf) {
+    umap* src_map = nullptr;
+    for (auto inpt : buf.get_in_ports()) {
+      auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
+      if (src_map == nullptr) {
+        src_map =
+          ((its(dot(buf.access_map.at(outpt),
+                    inv(buf.access_map.at(inpt))), beforeAcc)));
+      } else {
+        src_map =
+          unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
+      }
+    }
+
+    auto sched = buf.global_schedule();
+    auto after = lex_gt(sched, sched);
+
+    src_map = its(src_map, after);
+    src_map = lexmax(src_map);
+
+    auto time_to_event = inv(sched);
+
+    auto lex_max_events =
+      dot(lexmax(dot(src_map, sched)), time_to_event);
+
+    return lex_max_events;
+}
+
+umap* writes_between(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
+
   isl_union_map* sched = buf.schedule.at(write_port);
   assert(sched != nullptr);
   
@@ -663,36 +677,38 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
 
   assert(WritesAfterWrite != nullptr);
 
-  auto port0WritesInv =
-    inv(buf.access_map.at(write_port));
+  auto WritesBeforeRead =
+    lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
 
+  auto WriteThatProducesReadData =
+    get_lexmax_events(write_port, read_port, buf);
 
-  assert(port0WritesInv != nullptr);
+  auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
+
+  auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
+
+  return WritesBtwn;
+}
+
+isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
+
+  isl_union_map* sched = buf.schedule.at(write_port);
+  assert(sched != nullptr);
+  
+  auto WritesAfterWrite = lex_lt(sched, sched);
+
+  assert(WritesAfterWrite != nullptr);
 
   auto WritesBeforeRead =
     lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
 
-  assert(WritesBeforeRead != nullptr);
-
   auto WriteThatProducesReadData =
-    its(dot(buf.access_map.at(read_port), port0WritesInv), WritesBeforeRead);
-
-
-  auto time_to_event = inv(sched);
-  auto LastWriteBeforeRead =
-    dot(lexmax(dot(WriteThatProducesReadData, sched)), time_to_event);
-
-
-  WriteThatProducesReadData = LastWriteBeforeRead;
+    get_lexmax_events(write_port, read_port, buf);
 
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
-  //cout << "----Writes after production: " << endl;
-  //cout << "\t" << str(WritesAfterProduction) << endl;
-
-  auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
-
-  //cout << "----WritesBtwn" << endl;
+  auto WritesBtwn = (its(WritesAfterProduction, WritesBeforeRead));
+  //auto WritesBtwn = coalesce(its(WritesAfterProduction, WritesBeforeRead));
 
   auto c = card(WritesBtwn);
   return c;
@@ -770,40 +786,13 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
   return maxdelay;
 }
 
-umap* get_lexmax_events(const std::string& inpt, const std::string& outpt, UBuffer& buf) {
-    umap* src_map = nullptr;
-    for (auto inpt : buf.get_in_ports()) {
-      auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
-      if (src_map == nullptr) {
-        src_map =
-          ((its(dot(buf.access_map.at(outpt),
-                    inv(buf.access_map.at(inpt))), beforeAcc)));
-      } else {
-        src_map =
-          unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
-      }
-    }
-
-    auto sched = buf.global_schedule();
-    auto after = lex_gt(sched, sched);
-
-    src_map = its(src_map, after);
-    src_map = lexmax(src_map);
-
-    auto time_to_event = inv(sched);
-
-    auto lex_max_events =
-      dot(lexmax(dot(src_map, sched)), time_to_event);
-
-    return lex_max_events;
-}
-
-void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer& buf) {
+void generate_memory_struct(CodegenOptions& options, std::ostream& out, const std::string& inpt, UBuffer& buf) {
 
   int maxdelay = compute_max_dd(buf, inpt);
   out << "struct " + inpt + "_cache {" << endl;
   out << "\t// Capacity: " << maxdelay + 1 << endl;
   vector<int> read_delays{0};
+  int num_readers = 0;
   for (auto outpt : buf.get_out_ports()) {
 
     auto in_actions = buf.domain.at(inpt);
@@ -812,8 +801,14 @@ void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer&
     auto act_dom = 
       domain(its_range(lex_max_events, to_uset(in_actions)));
 
+    cout << "Lex max events" << endl;
+    cout << tab(1) << str(coalesce(lex_max_events)) << endl;
+
     if (!isl_union_set_is_empty(act_dom)) {
+      num_readers++;
       auto c = compute_dd(buf, outpt, inpt);
+      cout << "Writes btwn: " << endl;
+      cout << tab(1) << str(writes_between(buf, outpt, inpt)) << endl;
       cout << "\t" << buf.name << ": DD between " << inpt
         << " and " << outpt << " = " << str(c) << endl;
       auto qpd = compute_dd_bound(buf, outpt, inpt);
@@ -825,88 +820,105 @@ void generate_memory_struct(std::ostream& out, const std::string& inpt, UBuffer&
     }
   }
 
-  read_delays = sort_unique(read_delays);
+  if (num_readers == 1 || options.all_rams) {
+  //if (num_readers == 1) {
+    int partition_capacity = 1 + maxdelay;
+    out << "\tfifo<" << buf.port_type_string() << ", " << partition_capacity << "> f" << ";" << endl;
+    out << "\tinline " + buf.port_type_string() + " peek(const int offset) {" << endl;
+    out << tab(2) << "return f.peek(" << partition_capacity - 1 << " - offset);" << endl;
+    out << tab(1) << "}" << endl << endl;
 
-  vector<int> break_points;
-  if (read_delays.size() == 1) {
-    break_points = {read_delays[0], read_delays[0]};
-  } else {
-    for (size_t i = 0; i < read_delays.size(); i++) {
-      break_points.push_back(read_delays[i]);
-      if (i < read_delays.size() - 1 && read_delays[i] != read_delays[i + 1] + 1) {
-        break_points.push_back(read_delays[i] + 1);
+    if (!options.all_rams) {
+      for (int i = 0; i < partition_capacity; i++) {
+        int dv = i;
+        out << "\tinline " << buf.port_type_string() << " peek_" << to_string(dv) << "() {" << endl;
+        out << "\t\treturn f.peek(" << dv <<");" << endl;
+        out << "\t}" << endl << endl;
       }
     }
-  }
-  read_delays = break_points;
+    out << endl << endl;
+    out << "\tinline void push(const " + buf.port_type_string() + " value) {" << endl;
+    out << tab(2) << "return f.push(value);" << endl;
+    out << tab(1) << "}" << endl << endl;
+  } else {
+    read_delays = sort_unique(read_delays);
 
-  vector<string> partitions;
-  vector<int> end_inds;
-  if (read_delays.size() > 0) {
-    for (size_t i = 0; i < read_delays.size(); i++) {
-      int current = read_delays[i];
-      int partition_capacity = -1;
-      if (i < read_delays.size() - 1) {
-        if (read_delays[i] != read_delays[i + 1]) {
-          int next = read_delays[i + 1];
-          partition_capacity = next - current;
-          out << "\t// Parition [" << current << ", " << next << ") capacity = " << partition_capacity << endl;
+    vector<int> break_points;
+    if (read_delays.size() == 1) {
+      break_points = {read_delays[0], read_delays[0]};
+    } else {
+      for (size_t i = 0; i < read_delays.size(); i++) {
+        break_points.push_back(read_delays[i]);
+        if (i < read_delays.size() - 1 && read_delays[i] != read_delays[i + 1] + 1) {
+          break_points.push_back(read_delays[i] + 1);
+        }
+      }
+    }
+    read_delays = break_points;
+
+    vector<string> partitions;
+    vector<int> end_inds;
+    if (read_delays.size() > 0) {
+      for (size_t i = 0; i < read_delays.size(); i++) {
+        int current = read_delays[i];
+        int partition_capacity = -1;
+        if (i < read_delays.size() - 1) {
+          if (read_delays[i] != read_delays[i + 1]) {
+            int next = read_delays[i + 1];
+            partition_capacity = next - current;
+            out << "\t// Parition [" << current << ", " << next << ") capacity = " << partition_capacity << endl;
+            out << "\tfifo<" << buf.port_type_string() << ", " << partition_capacity << "> f" << i << ";" << endl;
+            partitions.push_back("f" + to_string(i));
+            end_inds.push_back(current + partition_capacity - 1);
+          }
+        } else {
+          partition_capacity = 1;
+          out << "\t// Parition [" << current << ", " << current << "] capacity = " << partition_capacity << endl;
           out << "\tfifo<" << buf.port_type_string() << ", " << partition_capacity << "> f" << i << ";" << endl;
           partitions.push_back("f" + to_string(i));
           end_inds.push_back(current + partition_capacity - 1);
         }
-      } else {
-        partition_capacity = 1;
-        out << "\t// Parition [" << current << ", " << current << "] capacity = " << partition_capacity << endl;
-        out << "\tfifo<" << buf.port_type_string() << ", " << partition_capacity << "> f" << i << ";" << endl;
-        partitions.push_back("f" + to_string(i));
-        end_inds.push_back(current + partition_capacity - 1);
       }
-    }
 
-    out << endl << endl;
-    int nind = 0;
-    for (auto p : partitions) {
-      int dv = end_inds[nind];
-      out << "\tinline " << buf.port_type_string() << " peek_" << to_string(dv) << "() {" << endl;
-      out << "\t\treturn " << p << ".back();" << endl;
+      out << endl << endl;
+      int nind = 0;
+      for (auto p : partitions) {
+        int dv = end_inds[nind];
+        out << "\tinline " << buf.port_type_string() << " peek_" << to_string(dv) << "() {" << endl;
+        out << "\t\treturn " << p << ".back();" << endl;
+        out << "\t}" << endl << endl;
+        nind++;
+      }
+      out << endl << endl;
+
+      out << "\tinline " + buf.port_type_string() + " peek(const int offset) {" << endl;
+      nind = 0;
+      for (auto p : partitions) {
+        int dv = end_inds[nind];
+        out << "\t\tif (offset == " << dv << ") {" << endl;
+        out << "\t\t\treturn " << p << ".back();" << endl;
+        out << "\t\t}" << endl;
+        nind++;
+      }
+      out << "\t\tcout << \"Error: Unsupported offset in " << buf.name << ": \" << offset << endl;" << endl;
+      out << "\t\tassert(false);" << endl;
+      out << "\t\treturn 0;\n" << endl;
       out << "\t}" << endl << endl;
-      nind++;
-    }
 
-    out << endl << endl;
-
-    out << "\tinline " + buf.port_type_string() + " peek(const int offset) {" << endl;
-    nind = 0;
-    for (auto p : partitions) {
-      int dv = end_inds[nind];
-      out << "\t\tif (offset == " << dv << ") {" << endl;
-      out << "\t\t\treturn " << p << ".back();" << endl;
-      out << "\t\t}" << endl;
-      nind++;
-    }
-    out << "\t\tcout << \"Error: Unsupported offset in " << buf.name << ": \" << offset << endl;" << endl;
-    out << "\t\tassert(false);" << endl;
-    out << "\t\treturn 0;\n" << endl;
-    out << "\t}" << endl << endl;
-
-    out << "\tinline void push(const " + buf.port_type_string() + " value) {" << endl;
-    if (partitions.size() > 0) {
-      for (size_t i = partitions.size() - 1; i >= 1; i--) {
-        auto current = partitions[i];
-        auto prior = partitions[i - 1];
-        out << "\t\t" << current << ".push(" << prior << ".back());" << endl;
+      out << "\tinline void push(const " + buf.port_type_string() + " value) {" << endl;
+      if (partitions.size() > 0) {
+        for (size_t i = partitions.size() - 1; i >= 1; i--) {
+          auto current = partitions[i];
+          auto prior = partitions[i - 1];
+          out << "\t\t" << current << ".push(" << prior << ".back());" << endl;
+        }
+        out << "\t\t" << partitions[0] << ".push(value);" << endl;
       }
-      out << "\t\t" << partitions[0] << ".push(value);" << endl;
+      out << "\t}" << endl << endl;
     }
-    out << "\t}" << endl << endl;
   }
   out << "};" << endl << endl;
 }
-
-struct CodegenOptions {
-  bool internal;
-};
 
 void generate_code_prefix(CodegenOptions& options,
     std::ostream& out, UBuffer& buf) {
@@ -914,7 +926,7 @@ void generate_code_prefix(CodegenOptions& options,
   string inpt = buf.get_in_port();
   out << "#include \"hw_classes.h\"" << endl << endl;
   for (auto inpt : buf.get_in_ports()) {
-    generate_memory_struct(out, inpt, buf);
+    generate_memory_struct(options, out, inpt, buf);
   }
 
   out << endl << endl;
@@ -978,13 +990,13 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     }
     string inpt = *(buf.get_in_ports().begin());
 
-    if (pieces.size() == 0) {
+    if (pieces.size() == 0 && !options.all_rams) {
       out << "\t" << buf.port_type_string() << " value_" << inpt << " = " << inpt << "_delay.peek_" << 0 << "()" << ";\n";
       out << "\treturn value_" + inpt + ";" << endl;
     } else if (pieces.size() == 1 &&
         isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
       string dx = codegen_c(pieces[0].second);
-      if (is_number(dx)) {
+      if (!options.all_rams && is_number(dx)) {
         out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
       } else {
         out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << dx << ")" << ";\n";
@@ -1130,7 +1142,6 @@ void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf)
 }
 
 void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
-
   CodegenOptions options;
   options.internal = true;
 
@@ -1689,10 +1700,8 @@ struct op {
   }
 
   void populate_schedule_vectors(map<op*, vector<string> >& sched_vecs, vector<string>& active_vecs) {
-    //cout << "Populating schedule for " << name << ", active vecs: " << active_vecs.size() << endl;
     if (is_loop) {
       auto nds = active_vecs;
-      //cout << "At loop: " << this->name << endl;
       assert(nds.size() > 0);
 
       nds.push_back(name);
@@ -1932,7 +1941,6 @@ struct prog {
       auto dom = map_find(op.first, idoms);
       auto doms = sep_list(dom, "", "", " and ");
 
-      //cout << "\t" << op.first->name << vars << " -> " << sep_list(op.second, "[", "]", ", ") << " : " << doms << endl;
       scheds[op.first] =
         isl_map_read_from_str(ctx, string("{ " + op.first->name + vars + " -> " + sep_list(op.second, "[", "]", ", ") + " : " + doms + " }").c_str());
 
@@ -2194,14 +2202,24 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
   return buffers;
 }
 
-void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* sched);
+void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap);
+
+void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* sched) {
+  CodegenOptions options;
+  options.internal = true;
+
+  generate_app_code(options, buffers, prg, sched);
+}
 
 void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
   auto schedmap = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
   generate_app_code(buffers, prg, schedmap);
 }
 
-void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* schedmap) {
+void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap) {
+  //CodegenOptions options;
+  //options.internal = true;
+
   ofstream conv_out(prg.name + ".cpp");
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
   vector<string> args;
@@ -2213,9 +2231,7 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* schedmap)
   }
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
-      generate_hls_code_internal(conv_out, b.second);
-    } else {
-      //args.push_back("HWStream<int>& " + b.first);
+      generate_hls_code(options, conv_out, b.second);
     }
   }
 
@@ -2415,9 +2431,6 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* schedmap)
     code_string = regex_replace(code_string, re, op->name + "(" + args_list + ", $1);");
   }
 
-  //cout << "Code string:" << endl;
-  //cout << code_string << endl;
-
   conv_out << code_string << endl;
 
   conv_out << "}" << endl;
@@ -2447,8 +2460,14 @@ void generate_unoptimized_code(prog& prg) {
   auto sched = prg.unoptimized_schedule();
 
   cout << codegen_c(prg.unoptimized_schedule());
+  
   auto buffers = build_buffers(prg, prg.unoptimized_schedule());
-  generate_app_code(buffers, prg, sched);
+  
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+
+  generate_app_code(options, buffers, prg, sched);
 
   prg.name = old_name;
 }
@@ -3416,6 +3435,26 @@ void warp_and_upsample_test() {
   regression_test(prg);
 }
 
+void downsample_and_blur_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "downsample_and_blur";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["I"] = 32;
+  prg.buffer_port_widths["downsampled"] = 32;
+
+  prg.add_nest("pr", 0, 64, "pc", 0, 64)->store({"I", "pr, pc"}, {"in", "pr, pc"});
+ 
+  prg.add_nest("dr", 0, (64) / 2, "dc", 0, (64) / 2)->
+    add_op({"downsampled", "dr, dc"}, "id", {"I", "2*dr, 2*dc"});
+
+  auto loads = prg.vector_load("downsampled", "br", 0, 3, "bc", 0, 3);
+  prg.add_nest("br", 0, 32 - 2, "bc", 0, 32 - 2)->add_op({"out", "br,bc"}, "conv_3_3", loads);
+
+  regression_test(prg);
+}
+
 void blur_and_downsample_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
@@ -3470,6 +3509,9 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
 
+    blur_and_downsample_test();
+    warp_and_upsample_test();
+    downsample_and_blur_test();
     gaussian_pyramid_test();
     conv_1d_rolled_test();
     conv_2d_rolled_test();
@@ -3479,8 +3521,6 @@ int main(int argc, char** argv) {
     conv_1d_test();
     conv_2d_bc_test();
     unsharp_test();
-    warp_and_upsample_test();
-    blur_and_downsample_test();
 
     mobilenet_test();
 
