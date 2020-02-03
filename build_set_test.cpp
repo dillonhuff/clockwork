@@ -3447,7 +3447,7 @@ void gaussian_pyramid_test() {
   string I1 = add_gaussian_stage(prg, "I");
   string I2 = add_gaussian_stage(prg, I1);
 
-  write_out(prg, I1);
+  //write_out(prg, I1);
   write_out(prg, I2);
 
   regression_test(prg);
