@@ -115,6 +115,7 @@ struct I_store_I_from_in_0_cache {
 	}
 
 	inline void push(const int value) {
+#pragma HLS dependence array inter false
 		f16.push(f14.back());
 		f14.push(f12.back());
 		f12.push(f11.back());
@@ -172,12 +173,16 @@ inline int I_warped_0_conv_3_30_4_select(I_store_I_from_in_0_cache& I_store_I_fr
 
 inline int I_warped_0_conv_3_30_5_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
 , int root, int br, int bc) {
+#pragma HLS dependence inter false
+#pragma HLS dependence intra false
 // Pieces...
 // { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 60 } -> { warped_0_conv_3_30[root, br, bc] -> 128 }
 // 	is always true on iteration domain: 0
 // { warped_0_conv_3_30[root = 0, br, bc = 61] : 0 <= br <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> (67 + bc) }
 // 	is always true on iteration domain: 0
-	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek(((root == 0 && br >= 0 && 61 - br >= 0 && bc >= 0 && 60 - bc >= 0) ? (128) : (-61 + bc == 0 && root == 0 && br >= 0 && 61 - br >= 0) ? ((67 + bc)) : 0));
+	//int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek(((root == 0 && br >= 0 && 61 - br >= 0 && bc >= 0 && 60 - bc >= 0) ? (128) : (-61 + bc == 0 && root == 0 && br >= 0 && 61 - br >= 0) ? ((67 + bc)) : 0));
+	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_128();
+  //(((root == 0 && br >= 0 && 61 - br >= 0 && bc >= 0 && 60 - bc >= 0) ? (128) : (-61 + bc == 0 && root == 0 && br >= 0 && 61 - br >= 0) ? ((67 + bc)) : 0));
 	return value_I_store_I_from_in_0;
 }
 
@@ -201,12 +206,15 @@ inline int I_warped_0_conv_3_30_7_select(I_store_I_from_in_0_cache& I_store_I_fr
 
 inline int I_warped_0_conv_3_30_8_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
 , int root, int br, int bc) {
+#pragma HLS dependence inter false
+#pragma HLS dependence intra false
 // Pieces...
 // { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 60 } -> { warped_0_conv_3_30[root, br, bc] -> 64 }
 // 	is always true on iteration domain: 0
 // { warped_0_conv_3_30[root = 0, br, bc = 61] : 0 <= br <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> (3 + bc) }
 // 	is always true on iteration domain: 0
-	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek(((root == 0 && br >= 0 && 61 - br >= 0 && bc >= 0 && 60 - bc >= 0) ? (64) : (-61 + bc == 0 && root == 0 && br >= 0 && 61 - br >= 0) ? ((3 + bc)) : 0));
+	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_64();
+  //((root == 0 && br >= 0 && 61 - br >= 0 && bc >= 0 && 60 - bc >= 0) ? (64) : (-61 + bc == 0 && root == 0 && br >= 0 && 61 - br >= 0) ? ((3 + bc)) : 0));
 	return value_I_store_I_from_in_0;
 }
 
@@ -237,6 +245,8 @@ inline void I_store_I_from_in_write_bundle_write(int& /* width = 32*/store_I_fro
 //	I_warped_0_conv_3_30_10
 //	I_warped_0_conv_3_30_11
 inline hw_uint<288> I_warped_0_conv_3_30_read_bundle_read(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay, int root, int br, int bc) {
+#pragma HLS dependence inter false
+#pragma HLS dependence intra false
 	hw_uint<288> result;
 	int I_warped_0_conv_3_30_3_res = I_warped_0_conv_3_30_3_select(I_store_I_from_in_0_delay, root, br, bc);
 	set_at<0, 288>(result, I_warped_0_conv_3_30_3_res);
@@ -267,6 +277,8 @@ struct warped_0_warped_0_conv_3_30_2_cache {
 	// Capacity: 62
 	fifo<int, 62> f;
 	inline int peek(const int offset) {
+#pragma HLS dependence inter false
+#pragma HLS dependence intra false
 		return f.peek(61 - offset);
 	}
 
@@ -521,6 +533,8 @@ struct warped_0_warped_0_conv_3_30_2_cache {
 
 
 	inline void push(const int value) {
+#pragma HLS dependence inter false
+#pragma HLS dependence intra false
 		return f.push(value);
 	}
 
@@ -545,6 +559,8 @@ inline int warped_0_out_id0_13_select(warped_0_warped_0_conv_3_30_2_cache& warpe
 // out_id0_read
 //	warped_0_out_id0_13
 inline int warped_0_out_id0_read_bundle_read(warped_0_warped_0_conv_3_30_2_cache& warped_0_warped_0_conv_3_30_2_delay, int root, int ur, int kr, int uc, int kc) {
+#pragma HLS dependence inter false
+#pragma HLS dependence intra false
 	int result;
 	int warped_0_out_id0_13_res = warped_0_out_id0_13_select(warped_0_warped_0_conv_3_30_2_delay, root, ur, kr, uc, kc);
 	set_at<0, 32>(result, warped_0_out_id0_13_res);
@@ -554,6 +570,8 @@ inline int warped_0_out_id0_read_bundle_read(warped_0_warped_0_conv_3_30_2_cache
 // warped_0_conv_3_30_write
 //	warped_0_warped_0_conv_3_30_2
 inline void warped_0_warped_0_conv_3_30_write_bundle_write(int& /* width = 32*/warped_0_conv_3_30_write, warped_0_warped_0_conv_3_30_2_cache& warped_0_warped_0_conv_3_30_2_delay) {
+#pragma HLS dependence inter false
+#pragma HLS dependence intra false
 	warped_0_warped_0_conv_3_30_2_write(warped_0_conv_3_30_write, warped_0_warped_0_conv_3_30_2_delay);
 }
 
@@ -563,6 +581,8 @@ inline void warped_0_warped_0_conv_3_30_write_bundle_write(int& /* width = 32*/w
 
 // Operation logic
 inline void store_I_from_in(HWStream<int>& in, I_store_I_from_in_0_cache& I_store_I_from_in_0, int root, int pr, int pc) {
+#pragma HLS dependence inter false
+#pragma HLS dependence intra false
 	// Consume: in
 	auto in_pr_c__pc_value = in.read();
 	// Produce: I
@@ -573,6 +593,8 @@ inline void store_I_from_in(HWStream<int>& in, I_store_I_from_in_0_cache& I_stor
 }
 
 inline void warped_0_conv_3_30(I_store_I_from_in_0_cache& I_store_I_from_in_0, warped_0_warped_0_conv_3_30_2_cache& warped_0_warped_0_conv_3_30_2, int root, int br, int bc) {
+#pragma HLS dependence inter false
+#pragma HLS dependence intra false
 	// Consume: I
 	auto I_br__p__0_c__bc__p__0_value = I_warped_0_conv_3_30_read_bundle_read(I_store_I_from_in_0/* source_delay */, root, br, bc);
 	// Apply function: conv_3_3
@@ -624,6 +646,11 @@ void warp_and_upsample(HWStream<int>& in, HWStream<int>& out) {
 	        for (int c2 = 0; c2 <= 1; c2 += 1)
 	          store_I_from_in(in, I_store_I_from_in_0, 0, c0, c2);
 	      for (int c2 = 2; c2 <= 63; c2 += 1) {
+#pragma HLS pipeline II=1
+#pragma HLS dependence array false
+//#pragma HLS dependence variable=warped_0_warped_0_conv_3_30_2.f.vals false
+//#pragma HLS dependence variable=I_store_I_from_in_0.f5.vals false
+//#pragma HLS dependence variable=I_store_I_from_in_0.f11.vals false
 	        if (c1 == 0) {
 	          store_I_from_in(in, I_store_I_from_in_0, 0, c0, c2);
 	          warped_0_conv_3_30(I_store_I_from_in_0, warped_0_warped_0_conv_3_30_2, 0, c0 - 2, c2 - 2);
@@ -634,6 +661,10 @@ void warp_and_upsample(HWStream<int>& in, HWStream<int>& out) {
 	    }
 	  } else {
 	    for (int c2 = 0; c2 <= 63; c2 += 1)
+#pragma HLS pipeline II=1
+#pragma HLS dependence inter false
+//#pragma HLS dependence variable=I_store_I_from_in_0.f5.vals false
+//#pragma HLS dependence variable=I_store_I_from_in_0.f11.vals false
 	      store_I_from_in(in, I_store_I_from_in_0, 0, c0, c2);
 	  }
 	}

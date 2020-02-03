@@ -1048,6 +1048,20 @@ void gaussian_pyramid(HWStream<int>& in, HWStream<int>& I_blurred_downsampled_bl
 	I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12_cache I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12;
 	for (int c0 = 0; c0 <= 31; c0 += 1)
 	  for (int c1 = 0; c1 <= 31; c1 += 1) {
+#pragma HLS pipeline II=1
+
+#pragma HLS dependence variable=I_store_I_from_in_16.f5.vals inter false
+#pragma HLS dependence variable=I_store_I_from_in_16.f11.vals inter false
+
+#pragma HLS dependence variable=I_blurred_I_blurred_conv_3_30_20.f.vals inter false
+
+#pragma HLS dependence variable=I_blurred_downsampled_I_blurred_downsampled_id0_18.f5.vals inter false
+#pragma HLS dependence variable=I_blurred_downsampled_I_blurred_downsampled_id0_18.f11.vals inter false
+
+#pragma HLS dependence variable=I_blurred_downsampled_blurred_I_blurred_downsampled_blurred_conv_3_30_2.f.vals inter false
+
+#pragma HLS dependence variable=I_blurred_downsampled_blurred_downsampled_I_blurred_downsampled_blurred_downsampled_id0_12.f.vals inter false
+
 	    store_I_from_in(in, I_store_I_from_in_16, 0, c0, c1);
 	    if (c0 >= 2 && c1 >= 2) {
 	      I_blurred_conv_3_30(I_store_I_from_in_16, I_blurred_I_blurred_conv_3_30_20, 0, c0 - 2, c1 - 2);
