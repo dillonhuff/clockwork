@@ -721,7 +721,8 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
 
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
-  auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
+  auto WritesBtwn = (its(WritesAfterProduction, WritesBeforeRead));
+  //auto WritesBtwn = coalesce(its(WritesAfterProduction, WritesBeforeRead));
 
   auto c = card(WritesBtwn);
   return c;
@@ -2245,14 +2246,24 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
   return buffers;
 }
 
-void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* sched);
+void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap);
+
+void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* sched) {
+  CodegenOptions options;
+  options.internal = true;
+
+  generate_app_code(options, buffers, prg, sched);
+}
 
 void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
   auto schedmap = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
   generate_app_code(buffers, prg, schedmap);
 }
 
-void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* schedmap) {
+void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap) {
+  //CodegenOptions options;
+  //options.internal = true;
+
   ofstream conv_out(prg.name + ".cpp");
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
   vector<string> args;
@@ -2264,11 +2275,7 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* schedmap)
   }
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
-      CodegenOptions options;
-      options.internal = true;
-
       generate_hls_code(options, conv_out, b.second);
-      //generate_hls_code_internal(conv_out, b.second);
     }
   }
 
@@ -3546,7 +3553,7 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     warp_and_upsample_test();
-    assert(false);
+    //assert(false);
     downsample_and_blur_test();
     gaussian_pyramid_test();
     conv_1d_rolled_test();
