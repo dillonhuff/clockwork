@@ -108,7 +108,9 @@ struct I_store_I_from_in_0_cache {
 		if (offset == 130) {
 			return f16.back();
 		}
+#ifndef __VIVADO_SYNTH__
 		cout << "Error: Unsupported offset in I: " << offset << endl;
+#endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
 

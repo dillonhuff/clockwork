@@ -127,10 +127,8 @@ class UBuffer {
     isl_union_map* bundle_access(const std::string& bn) {
       auto d = isl_union_map_read_from_str(ctx, "{}");
       for (auto pt : port_bundles.at(bn)) {
-        //cout << "Access map: " << str(access_map.at(pt)) << endl;
         d = unn(d, cpy(to_umap(access_map.at(pt))));
       }
-      //cout << "Bundle access = " << str(d) << endl;
       return d;
     }
 
@@ -280,7 +278,6 @@ class UBuffer {
 
     void set_default_bundles() {
       for (auto pt : get_in_ports()) {
-        cout << "Creating default bundle for: " << pt << endl;
         port_bundles[pt] = {pt};
       }
       assert(get_in_bundles().size() >= get_in_ports().size());
@@ -773,7 +770,6 @@ int compute_dd_bound(UBuffer& buf, const std::string& read_port, const std::stri
 string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
   auto c = compute_dd(buf, read_port, write_port);
 
-  //cout << "Computed dd" << endl;
   auto folds  = get_polynomials(c);
   if (folds.size() == 1) {
     return codegen_c(folds[0]);
@@ -933,7 +929,9 @@ void generate_memory_struct(CodegenOptions& options, std::ostream& out, const st
         out << "\t\t}" << endl;
         nind++;
       }
+      out << "#ifndef __VIVADO_SYNTH__" << endl;
       out << "\t\tcout << \"Error: Unsupported offset in " << buf.name << ": \" << offset << endl;" << endl;
+      out << "#endif // __VIVADO_SYNTH__" << endl;
       out << "\t\tassert(false);" << endl;
       out << "\t\treturn 0;\n" << endl;
       out << "\t}" << endl << endl;

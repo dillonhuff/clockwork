@@ -34,7 +34,9 @@ struct write_cache {
 		if (offset == 2) {
 			return f4.back();
 		}
+#ifndef __VIVADO_SYNTH__
 		cout << "Error: Unsupported offset in shift_reg: " << offset << endl;
+#endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
 

@@ -36,7 +36,9 @@ struct M_get_input_0_cache {
 		if (offset == 2) {
 			return f4.back();
 		}
+#ifndef __VIVADO_SYNTH__
 		cout << "Error: Unsupported offset in M: " << offset << endl;
+#endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
 

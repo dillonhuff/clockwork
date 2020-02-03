@@ -106,7 +106,9 @@ struct write0_cache {
 		if (offset == 130) {
 			return f16.back();
 		}
+#ifndef __VIVADO_SYNTH__
 		cout << "Error: Unsupported offset in linebuffer_3x3: " << offset << endl;
+#endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
 
