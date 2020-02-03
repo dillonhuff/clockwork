@@ -828,11 +828,13 @@ void generate_memory_struct(CodegenOptions& options, std::ostream& out, const st
     out << tab(2) << "return f.peek(" << partition_capacity - 1 << " - offset);" << endl;
     out << tab(1) << "}" << endl << endl;
 
-    for (int i = 0; i < partition_capacity; i++) {
-      int dv = i;
-      out << "\tinline " << buf.port_type_string() << " peek_" << to_string(dv) << "() {" << endl;
-      out << "\t\treturn f.peek(" << dv <<");" << endl;
-      out << "\t}" << endl << endl;
+    if (!options.all_rams) {
+      for (int i = 0; i < partition_capacity; i++) {
+        int dv = i;
+        out << "\tinline " << buf.port_type_string() << " peek_" << to_string(dv) << "() {" << endl;
+        out << "\t\treturn f.peek(" << dv <<");" << endl;
+        out << "\t}" << endl << endl;
+      }
     }
     out << endl << endl;
     out << "\tinline void push(const " + buf.port_type_string() + " value) {" << endl;
@@ -988,13 +990,13 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     }
     string inpt = *(buf.get_in_ports().begin());
 
-    if (pieces.size() == 0) {
+    if (pieces.size() == 0 && !options.all_rams) {
       out << "\t" << buf.port_type_string() << " value_" << inpt << " = " << inpt << "_delay.peek_" << 0 << "()" << ";\n";
       out << "\treturn value_" + inpt + ";" << endl;
     } else if (pieces.size() == 1 &&
         isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
       string dx = codegen_c(pieces[0].second);
-      if (is_number(dx)) {
+      if (!options.all_rams && is_number(dx)) {
         out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
       } else {
         out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << dx << ")" << ";\n";
