@@ -781,13 +781,13 @@ string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string
   return "0";
 }
 
-void generate_vivado_tcl(UBuffer& buf) {
-  ofstream of(buf.name + "_hls.tcl");
+void generate_vivado_tcl(std::string& name) {
+  ofstream of(name + "_hls.tcl");
 
-  of << "open_project -reset " << buf.name << "_proj" << endl;
-  of << "set_top " << buf.name << endl;
-  of << "add_files -cflags \"-D__VIVADO_SYNTH__\" " + buf.name + ".cpp" << endl;
-  of << "add_files -cflags \"-D__VIVADO_SYNTH__\" -tb tb_" + buf.name + ".cpp" << endl;
+  of << "open_project -reset " << name << "_proj" << endl;
+  of << "set_top " << name << endl;
+  of << "add_files -cflags \"-D__VIVADO_SYNTH__\" " + name + ".cpp" << endl;
+  of << "add_files -cflags \"-D__VIVADO_SYNTH__\" -tb tb_" + name + ".cpp" << endl;
   of << "open_solution -reset \"solution1\"" << endl;
   of << "set_part {xc7k160tfbg484-2}" << endl;
   of << "list_core" << endl;
@@ -797,6 +797,10 @@ void generate_vivado_tcl(UBuffer& buf) {
   of << "cosim_design -rtl verilog" << endl;
   of << "exit" << endl;
   of.close();
+}
+
+void generate_vivado_tcl(UBuffer& buf) {
+  generate_vivado_tcl(buf.name);
 }
 
 int compute_max_dd(UBuffer& buf, const string& inpt) {
@@ -2546,6 +2550,7 @@ void generate_optimized_code(prog& prg) {
   cout << codegen_c(sched) << endl;
   auto buffers = build_buffers(prg, sched);
   generate_app_code(buffers, prg, sched);
+  generate_vivado_tcl(prg.name);
 }
 
 void generate_unoptimized_code(prog& prg) {
@@ -3606,11 +3611,11 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
 
-    synth_lb_test();
     blur_and_downsample_test();
     warp_and_upsample_test();
     downsample_and_blur_test();
     gaussian_pyramid_test();
+    unsharp_test();
     conv_1d_rolled_test();
     conv_2d_rolled_test();
     reduce_1d_test();
@@ -3618,11 +3623,12 @@ int main(int argc, char** argv) {
     reduce_2d_test();
     conv_1d_test();
     conv_2d_bc_test();
-    unsharp_test();
     mobilenet_test();
     pyramid_2d_test();
     pyramid_test();
     conv_1d_bc_test();
+    
+    synth_lb_test();
     synth_wire_test();
     synth_sr_boundary_condition_test();
     synth_upsample_test();
