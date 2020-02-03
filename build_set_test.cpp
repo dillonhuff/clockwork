@@ -3398,7 +3398,7 @@ string add_gaussian_stage(prog& prg, const std::string& inbuffer) {
   int res_rows = in_rows - 2;
   int res_cols = in_cols - 2;
 
-  string blur = inbuffer + "_blurred";
+  string blur = inbuffer + "_blr";
   prg.buffer_port_widths[blur] = prg.buffer_port_widths[inbuffer];
   prg.buffer_bounds[blur] = {res_rows, res_cols};
   string rb = blur + "_r";
@@ -3406,7 +3406,7 @@ string add_gaussian_stage(prog& prg, const std::string& inbuffer) {
   auto loads = prg.vector_load(inbuffer, rb, 0, 3, rc, 0, 3);
   prg.add_nest(rb, 0, res_rows, rc, 0, res_cols)->add_op({blur, rb + "," + rc}, "conv_3_3", loads);
 
-  string ds = blur + "_downsampled";
+  string ds = blur + "_ds";
   string dr = ds + "_r";
   string dc = ds + "_c";
   prg.buffer_port_widths[ds] = prg.buffer_port_widths[inbuffer];
@@ -3609,10 +3609,11 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
 
+    gaussian_pyramid_test();
+    assert(false);
     blur_and_downsample_test();
     warp_and_upsample_test();
     downsample_and_blur_test();
-    gaussian_pyramid_test();
     unsharp_test();
     conv_1d_rolled_test();
     conv_2d_rolled_test();
