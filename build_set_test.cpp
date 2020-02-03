@@ -336,35 +336,6 @@ isl_stat get_const(isl_set* s, isl_qpolynomial* qp, void* user) {
   return isl_stat_ok;
 }
 
-//int check_value_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
-  //auto ctx = buf.ctx;
-  ////isl_map* sched = buf.schedule.at(write_port);
-  //umap* sched = buf.schedule.at(write_port);
-  //assert(sched != nullptr);
-  
-  //auto WritesAfterWrite = lex_lt(sched, sched);
-
-  //assert(WritesAfterWrite != nullptr);
-
-  //auto port0WritesInv =
-    //inv(buf.access_map.at(write_port));
-
-  //auto WriteThatProducesReadData =
-    //dot(buf.access_map.at(read_port), port0WritesInv);
-
-  //auto WritesBeforeRead =
-    //lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
-
-  //auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
-
-  //auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
-
-  //auto c = card(WritesBtwn);
-  
-  //assert(false);
-  //return 0;
-//}
-
 std::string ReplaceString(std::string subject, const std::string& search,
                           const std::string& replace) {
     size_t pos = 0;
@@ -646,6 +617,20 @@ int int_lower_bound(isl_union_pw_qpolynomial* range_card) {
   return bint;
 }
 
+isl_union_pw_qpolynomial_fold* lower_bound(isl_union_pw_qpolynomial* range_card) {
+  int tight;
+  int* b = &tight;
+  auto bound = isl_union_pw_qpolynomial_bound(cpy(range_card), isl_fold_min, b);
+  return bound;
+}
+
+isl_union_pw_qpolynomial_fold* upper_bound(isl_union_pw_qpolynomial* range_card) {
+  int tight;
+  int* b = &tight;
+  auto bound = isl_union_pw_qpolynomial_bound(cpy(range_card), isl_fold_max, b);
+  return bound;
+}
+
 int int_upper_bound(isl_union_pw_qpolynomial* range_card) {
   int tight;
   int* b = &tight;
@@ -729,7 +714,6 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
   auto WritesBtwn = (its(WritesAfterProduction, WritesBeforeRead));
-  //auto WritesBtwn = coalesce(its(WritesAfterProduction, WritesBeforeRead));
 
   auto c = card(WritesBtwn);
   return c;
@@ -989,6 +973,10 @@ bool is_optimizable_constant_dd(const string& inpt, const string& outpt, UBuffer
   uset* pieces_dom = isl_union_set_read_from_str(ctx(qpd), "{}");
   for (auto p : pieces) {
     cout << "// " << str(p.first) << " -> " << str(p.second) << endl;
+    auto pp = isl_pw_qpolynomial_intersect_domain(isl_pw_qpolynomial_from_qpolynomial(cpy(p.second)), cpy(p.first));
+    cout << "\t\tpp = " << str(pp) << endl;
+    cout << "\t\t\tlb = " << str(lower_bound(isl_union_pw_qpolynomial_from_pw_qpolynomial(cpy(pp)))) << endl;
+    cout << "\t\t\tub = " << str(upper_bound(isl_union_pw_qpolynomial_from_pw_qpolynomial(cpy(pp)))) << endl;
     pieces_dom = unn(pieces_dom, to_uset(p.first));
   }
 
@@ -996,41 +984,14 @@ bool is_optimizable_constant_dd(const string& inpt, const string& outpt, UBuffer
     subset(to_uset(out_domain), (pieces_dom));
   cout << "//\tPieces dom: " << str(pieces_dom) << endl;
   cout << "//\tPieces are complete: " << pieces_are_complete << endl;
+  int ub = int_upper_bound(qpd);
+  int lb = int_lower_bound(qpd);
+  cout << "//\tqpd: " << str(qpd) << endl;
+  cout << "//\tLower bound: " << lb << endl;
+  cout << "//\tUpper bound: " << ub << endl;
 
   if (pieces_are_complete) {
-    int ub = int_upper_bound(qpd);
-    int lb = int_lower_bound(qpd);
     return ub == lb;
-    //bool all_pieces_tight = true;
-    //vector<int> bnds;
-    //for (auto p : pieces) {
-      //int ub = int_upper_bound(p.second);
-      //int lb = int_lower_bound(p.second);
-
-      //if (ub == lb) {
-        //bnds.push_back(ub);
-      //} else {
-        //all_pieces_tight = false;
-        //break;
-      //}
-    //}
-
-    //if (!all_pieces_tight) {
-      //return false;
-    //}
-
-    //assert(!all_pieces_tight || bnds.size() == pieces.size());
-    //bool all_bounds_equal = true;
-    //if (bnds.size() > 1) {
-      //for (size_t i = 0; i < bnds.size() - 1; i++) {
-        //all_bounds_equal = bnds[i] == bnds[i + 1];
-        //if (!all_bounds_equal) {
-          //break;
-        //}
-      //}
-    //}
-
-    //return all_pieces_tight && all_bounds_equal;
   }
 
   return false;
@@ -3610,7 +3571,7 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     gaussian_pyramid_test();
-    assert(false);
+    //assert(false);
     blur_and_downsample_test();
     warp_and_upsample_test();
     downsample_and_blur_test();
