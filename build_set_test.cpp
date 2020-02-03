@@ -27,6 +27,15 @@ bool is_number(string s) {
   return true; 
 } 
 
+int safe_stoi(const string s) {
+  if (is_number(s)) {
+    return stoi(s);
+  }
+  cout << "String: " << s << " is not a number!" << endl;
+  assert(false);
+  return -1;
+}
+
 string tab(const int n) {
   string t = "";
   for (int i = 0; i < n; i++) {
@@ -635,7 +644,7 @@ int int_upper_bound(isl_union_pw_qpolynomial* range_card) {
     bint = 0;
   } else {
     assert(folds.size() == 1);
-    bint = stoi(codegen_c(folds[0]));
+    bint = safe_stoi(codegen_c(folds[0]));
   }
   return bint;
 }
@@ -725,7 +734,7 @@ int compute_dd_lower_bound(UBuffer& buf, const std::string& read_port, const std
     bint = 0;
   } else {
     assert(folds.size() == 1);
-    bint = stoi(codegen_c(folds[0]));
+    bint = safe_stoi(codegen_c(folds[0]));
   }
   return bint;
 }
@@ -741,7 +750,7 @@ int compute_dd_bound(UBuffer& buf, const std::string& read_port, const std::stri
     bint = 0;
   } else {
     assert(folds.size() == 1);
-    bint = stoi(codegen_c(folds[0]));
+    bint = safe_stoi(codegen_c(folds[0]));
   }
   return bint;
 }
@@ -1708,7 +1717,7 @@ struct op {
       nds.push_back("0");
       for (auto c : children) {
         c->populate_schedule_vectors(sched_vecs, nds);
-        nds[nds.size() - 1] = to_string(stoi(nds[nds.size() - 1]) + 1);
+        nds[nds.size() - 1] = to_string(safe_stoi(nds[nds.size() - 1]) + 1);
       }
     } else {
       sched_vecs[this] = active_vecs;
@@ -3509,6 +3518,7 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
 
+    synth_lb_test();
     blur_and_downsample_test();
     warp_and_upsample_test();
     downsample_and_blur_test();
@@ -3531,7 +3541,6 @@ int main(int argc, char** argv) {
 
     synth_wire_test();
     synth_sr_boundary_condition_test();
-    synth_lb_test();
     synth_upsample_test();
 
   } else {
