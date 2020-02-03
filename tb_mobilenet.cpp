@@ -7,7 +7,7 @@ int main() {
     in.write(i);
     weights.write(i - 24);
   }
-  mobilenet(in, out, weights);
+  mobilenet(in, weights, out);
 
   for (int j = 0; j < 12*12*4; j++) {
     cout << out.read() << endl;

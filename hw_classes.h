@@ -20,6 +20,8 @@ using namespace std;
 
 #define MOD_INC(x, N) ((x) == ((N) - 1) ? 0 : (x) + 1)
 
+#define floord(x, d) ((x) / (d))
+
 template<int Depth>
 class hw_mem {
   public:
@@ -53,10 +55,12 @@ class fifo {
         int rem = (addr - Depth);
         addr = rem;
       }
+      assert(addr < Depth);
       return vals[addr];
     }
 
     void push(const T& val) {
+      assert(write_addr < Depth);
       vals[write_addr] = val;
       write_addr = MOD_INC(write_addr, Depth);
     }

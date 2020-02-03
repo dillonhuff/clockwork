@@ -134,7 +134,6 @@ inline void write0_write(InputStream<int>& write0, write0_cache& write0_delay) {
 	int write0_value = write0.read(); write0_delay.push(write0_value);
 }
 
-// Select if: { read_0_0[i, j] -> write0[i' = i, j' = j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_0_0_select(write0_cache& write0_delay
 , int i, int j) {
 // Pieces...
@@ -144,7 +143,6 @@ inline int read_0_0_select(write0_cache& write0_delay
 	return value_write0;
 }
 
-// Select if: { read_0_1[i, j] -> write0[i' = i, j' = 1 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_0_1_select(write0_cache& write0_delay
 , int i, int j) {
 // Pieces...
@@ -154,7 +152,6 @@ inline int read_0_1_select(write0_cache& write0_delay
 	return value_write0;
 }
 
-// Select if: { read_0_2[i, j] -> write0[i' = i, j' = 2 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_0_2_select(write0_cache& write0_delay
 , int i, int j) {
 // Pieces...
@@ -166,7 +163,6 @@ inline int read_0_2_select(write0_cache& write0_delay
 	return value_write0;
 }
 
-// Select if: { read_1_0[i, j] -> write0[i' = 1 + i, j' = j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_1_0_select(write0_cache& write0_delay
 , int i, int j) {
 // Pieces...
@@ -176,7 +172,6 @@ inline int read_1_0_select(write0_cache& write0_delay
 	return value_write0;
 }
 
-// Select if: { read_1_1[i, j] -> write0[i' = 1 + i, j' = 1 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_1_1_select(write0_cache& write0_delay
 , int i, int j) {
 // Pieces...
@@ -186,7 +181,6 @@ inline int read_1_1_select(write0_cache& write0_delay
 	return value_write0;
 }
 
-// Select if: { read_1_2[i, j] -> write0[i' = 1 + i, j' = 2 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_1_2_select(write0_cache& write0_delay
 , int i, int j) {
 // Pieces...
@@ -198,7 +192,6 @@ inline int read_1_2_select(write0_cache& write0_delay
 	return value_write0;
 }
 
-// Select if: { read_2_0[i, j] -> write0[i' = 2 + i, j' = j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_2_0_select(write0_cache& write0_delay
 , int i, int j) {
 // Pieces...
@@ -208,7 +201,6 @@ inline int read_2_0_select(write0_cache& write0_delay
 	return value_write0;
 }
 
-// Select if: { read_2_1[i, j] -> write0[i' = 2 + i, j' = 1 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_2_1_select(write0_cache& write0_delay
 , int i, int j) {
 // Pieces...
@@ -218,7 +210,6 @@ inline int read_2_1_select(write0_cache& write0_delay
 	return value_write0;
 }
 
-// Select if: { read_2_2[i, j] -> write0[i' = 2 + i, j' = 2 + j] : 0 <= i <= 61 and 0 <= j <= 61 }
 inline int read_2_2_select(write0_cache& write0_delay
 , int i, int j) {
 // Pieces...
@@ -229,7 +220,7 @@ inline int read_2_2_select(write0_cache& write0_delay
 // Bundles...
 // read_0_0
 //	read_0_0
-inline int linebuffer_3x3_read_0_0_bundle_action(write0_cache& write0_delay, int i, int j) {
+inline int linebuffer_3x3_read_0_0_bundle_read(write0_cache& write0_delay, int i, int j) {
 	int result;
 	int read_0_0_res = read_0_0_select(write0_delay, i, j);
 	set_at<0, 32>(result, read_0_0_res);
@@ -238,7 +229,7 @@ inline int linebuffer_3x3_read_0_0_bundle_action(write0_cache& write0_delay, int
 
 // read_0_1
 //	read_0_1
-inline int linebuffer_3x3_read_0_1_bundle_action(write0_cache& write0_delay, int i, int j) {
+inline int linebuffer_3x3_read_0_1_bundle_read(write0_cache& write0_delay, int i, int j) {
 	int result;
 	int read_0_1_res = read_0_1_select(write0_delay, i, j);
 	set_at<0, 32>(result, read_0_1_res);
@@ -247,7 +238,7 @@ inline int linebuffer_3x3_read_0_1_bundle_action(write0_cache& write0_delay, int
 
 // read_0_2
 //	read_0_2
-inline int linebuffer_3x3_read_0_2_bundle_action(write0_cache& write0_delay, int i, int j) {
+inline int linebuffer_3x3_read_0_2_bundle_read(write0_cache& write0_delay, int i, int j) {
 	int result;
 	int read_0_2_res = read_0_2_select(write0_delay, i, j);
 	set_at<0, 32>(result, read_0_2_res);
@@ -256,7 +247,7 @@ inline int linebuffer_3x3_read_0_2_bundle_action(write0_cache& write0_delay, int
 
 // read_1_0
 //	read_1_0
-inline int linebuffer_3x3_read_1_0_bundle_action(write0_cache& write0_delay, int i, int j) {
+inline int linebuffer_3x3_read_1_0_bundle_read(write0_cache& write0_delay, int i, int j) {
 	int result;
 	int read_1_0_res = read_1_0_select(write0_delay, i, j);
 	set_at<0, 32>(result, read_1_0_res);
@@ -265,7 +256,7 @@ inline int linebuffer_3x3_read_1_0_bundle_action(write0_cache& write0_delay, int
 
 // read_1_1
 //	read_1_1
-inline int linebuffer_3x3_read_1_1_bundle_action(write0_cache& write0_delay, int i, int j) {
+inline int linebuffer_3x3_read_1_1_bundle_read(write0_cache& write0_delay, int i, int j) {
 	int result;
 	int read_1_1_res = read_1_1_select(write0_delay, i, j);
 	set_at<0, 32>(result, read_1_1_res);
@@ -274,7 +265,7 @@ inline int linebuffer_3x3_read_1_1_bundle_action(write0_cache& write0_delay, int
 
 // read_1_2
 //	read_1_2
-inline int linebuffer_3x3_read_1_2_bundle_action(write0_cache& write0_delay, int i, int j) {
+inline int linebuffer_3x3_read_1_2_bundle_read(write0_cache& write0_delay, int i, int j) {
 	int result;
 	int read_1_2_res = read_1_2_select(write0_delay, i, j);
 	set_at<0, 32>(result, read_1_2_res);
@@ -283,7 +274,7 @@ inline int linebuffer_3x3_read_1_2_bundle_action(write0_cache& write0_delay, int
 
 // read_2_0
 //	read_2_0
-inline int linebuffer_3x3_read_2_0_bundle_action(write0_cache& write0_delay, int i, int j) {
+inline int linebuffer_3x3_read_2_0_bundle_read(write0_cache& write0_delay, int i, int j) {
 	int result;
 	int read_2_0_res = read_2_0_select(write0_delay, i, j);
 	set_at<0, 32>(result, read_2_0_res);
@@ -292,7 +283,7 @@ inline int linebuffer_3x3_read_2_0_bundle_action(write0_cache& write0_delay, int
 
 // read_2_1
 //	read_2_1
-inline int linebuffer_3x3_read_2_1_bundle_action(write0_cache& write0_delay, int i, int j) {
+inline int linebuffer_3x3_read_2_1_bundle_read(write0_cache& write0_delay, int i, int j) {
 	int result;
 	int read_2_1_res = read_2_1_select(write0_delay, i, j);
 	set_at<0, 32>(result, read_2_1_res);
@@ -301,7 +292,7 @@ inline int linebuffer_3x3_read_2_1_bundle_action(write0_cache& write0_delay, int
 
 // read_2_2
 //	read_2_2
-inline int linebuffer_3x3_read_2_2_bundle_action(write0_cache& write0_delay, int i, int j) {
+inline int linebuffer_3x3_read_2_2_bundle_read(write0_cache& write0_delay, int i, int j) {
 	int result;
 	int read_2_2_res = read_2_2_select(write0_delay, i, j);
 	set_at<0, 32>(result, read_2_2_res);
@@ -310,7 +301,7 @@ inline int linebuffer_3x3_read_2_2_bundle_action(write0_cache& write0_delay, int
 
 // write0
 //	write0
-inline void linebuffer_3x3_write0_bundle_action(InputStream<int>& write0, write0_cache& write0_delay) {
+inline void linebuffer_3x3_write0_bundle_write(InputStream<int>& write0, write0_cache& write0_delay) {
 	write0_write(write0, write0_delay);
 }
 
@@ -328,6 +319,7 @@ void linebuffer_3x3(OutputStream<int >& read_0_0, OutputStream<int >& read_0_1, 
 
 	    write0_write(write0, write0_delay);
 	    if (c0 >= 2 && c1 >= 2) {
+<<<<<<< HEAD
 <<<<<<< HEAD
         int res = 0;
         res += (write0_delay.peek_130());
@@ -387,6 +379,17 @@ void linebuffer_3x3(OutputStream<int >& read_0_0, OutputStream<int >& read_0_1, 
 	      read_0_0.write(linebuffer_3x3_read_0_0_bundle_action(write0_delay, c0 - 2, c1 - 2));
 	      read_1_2.write(linebuffer_3x3_read_1_2_bundle_action(write0_delay, c0 - 2, c1 - 2));
 >>>>>>> 862ffcf7f2387fff4330a6d80bd4d025ee0c2bd8
+=======
+	      read_1_0.write(linebuffer_3x3_read_1_0_bundle_read(write0_delay, c0 - 2, c1 - 2));
+	      read_0_1.write(linebuffer_3x3_read_0_1_bundle_read(write0_delay, c0 - 2, c1 - 2));
+	      read_2_1.write(linebuffer_3x3_read_2_1_bundle_read(write0_delay, c0 - 2, c1 - 2));
+	      read_2_2.write(linebuffer_3x3_read_2_2_bundle_read(write0_delay, c0 - 2, c1 - 2));
+	      read_2_0.write(linebuffer_3x3_read_2_0_bundle_read(write0_delay, c0 - 2, c1 - 2));
+	      read_1_1.write(linebuffer_3x3_read_1_1_bundle_read(write0_delay, c0 - 2, c1 - 2));
+	      read_0_2.write(linebuffer_3x3_read_0_2_bundle_read(write0_delay, c0 - 2, c1 - 2));
+	      read_0_0.write(linebuffer_3x3_read_0_0_bundle_read(write0_delay, c0 - 2, c1 - 2));
+	      read_1_2.write(linebuffer_3x3_read_1_2_bundle_read(write0_delay, c0 - 2, c1 - 2));
+>>>>>>> origin/master
 	    }
 	  }
 	

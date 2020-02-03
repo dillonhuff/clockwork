@@ -2,6 +2,34 @@
 
 #include "hw_classes.h"
 
+template<typename T>
+static inline
+T id(const T& val) {
+  return val;
+}
+
+static inline
+int max_zero(const int& val) {
+  return max(val, 0);
+}
+
+static inline
+int diff(int& src, int& a0) {
+  return src - a0;
+}
+
+static inline
+int inc(int& src, int& a0) {
+  return src + a0;
+}
+
+int fma(int& src, int& a0, int& a1) {
+  return src + a0*a1;
+}
+
+int set_zero() {
+  return 0;
+}
 static inline
 int conv_3_3(hw_uint<32*9>& in) {
   hw_uint<32> v0 = in.extract<0, 31>();

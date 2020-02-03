@@ -70,6 +70,17 @@ isl_union_map* to_umap(isl_map* const m) {
   return isl_union_map_from_map(m);
 }
 
+isl_ctx* ctx(isl_union_set* const m) {
+  return isl_union_set_get_ctx(m);
+}
+isl_ctx* ctx(isl_constraint* const m) {
+  return isl_constraint_get_ctx(m);
+}
+
+isl_ctx* ctx(isl_basic_set* const m) {
+  return isl_basic_set_get_ctx(m);
+}
+
 isl_ctx* ctx(isl_space* const m) {
   return isl_space_get_ctx(m);
 }
@@ -113,6 +124,10 @@ isl_ctx* ctx(isl_pw_qpolynomial_fold* const m) {
 
 isl_ctx* ctx(isl_pw_qpolynomial* const m) {
   return isl_pw_qpolynomial_get_ctx(m);
+}
+
+isl_constraint* cpy(isl_constraint* const s) {
+  return isl_constraint_copy(s);
 }
 
 isl_basic_map* cpy(isl_basic_map* const s) {
@@ -186,6 +201,20 @@ isl_aff* cpy(isl_aff* const b) {
   return isl_aff_copy(b);
 }
 
+std::string codegen_c(isl_constraint* const bset) {
+  auto ct = ctx(bset);
+  isl_printer *p;
+  p = isl_printer_to_str(ct);
+  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
+  p = isl_printer_print_constraint(p, cpy(bset));
+
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  std::string r(rs);
+  free(rs);
+  return r;
+}
+
 std::string codegen_c(isl_schedule* const bset) {
   auto ct = ctx(bset);
   isl_printer *p;
@@ -221,6 +250,19 @@ void print(struct isl_ctx* const ctx, isl_qpolynomial* const bset) {
   printf("%s\n", rs);
   isl_printer_free(p);
   free(rs);
+}
+
+std::string str(isl_constraint* const bset) {
+  auto context = ctx(bset);
+  isl_printer *p;
+  p = isl_printer_to_str(context);
+  p = isl_printer_print_constraint(p, cpy(bset));
+
+  char* rs = isl_printer_get_str(p);
+  std::string r(rs);
+  isl_printer_free(p);
+  free(rs);
+  return r;
 }
 
 std::string str(isl_space* const bset) {
@@ -616,6 +658,10 @@ isl_union_map* dot(isl_union_map* const m0, isl_union_map* const m1) {
   return isl_union_map_apply_range(cpy(m0), cpy(m1));
 }
 
+isl_union_pw_qpolynomial* card(isl_union_set* const m) {
+  return isl_union_set_card(cpy(m));
+}
+
 isl_union_pw_qpolynomial* card(isl_union_map* const m) {
   return isl_union_map_card(cpy(m));
 }
@@ -626,6 +672,10 @@ isl_pw_qpolynomial* card(isl_map* const m) {
 
 isl_union_set* domain(isl_union_map* const m) {
   return isl_union_map_domain(m);
+}
+
+isl_union_set* range(isl_union_map* const m) {
+  return isl_union_map_range(cpy(m));
 }
 
 isl_set* range(isl_map* const m) {

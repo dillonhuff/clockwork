@@ -2,20 +2,26 @@
 
 #include "hw_classes.h"
 
+template<typename T>
+static inline
+T id(const T& v) {
+  return v;
+}
+
 int max_zero(const int& val) {
   return max(val, 0);
 }
 
 int inc(int& src, int& a0) {
-  cout << "src = " << src << endl;
-  cout << "a0  = " << a0 << endl;
+  //cout << "src = " << src << endl;
+  //cout << "a0  = " << a0 << endl;
   return src + a0;
 }
 
 int fma(int& src, int& a0, int& a1) {
-  cout << "src = " << src << endl;
-  cout << "a0  = " << a0 << endl;
-  cout << "a1  = " << a1 << endl;
+  //cout << "src = " << src << endl;
+  //cout << "a0  = " << a0 << endl;
+  //cout << "a1  = " << a1 << endl;
   return src + a0*a1;
 }
 
