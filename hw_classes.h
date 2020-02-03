@@ -51,17 +51,23 @@ class fifo {
     T peek(int offset) {
       assert(offset >= 0);
       //cout << "Getting offset from top: " << offset << endl;
-      int top_addr = (write_addr + Depth) % Depth;
+      //int top_addr = (write_addr + Depth) % Depth;
       //cout << "\t" << "Top at: " << top_addr << endl;
-      return vals[(write_addr + Depth + offset) % Depth];
-      //int addr = write_addr + Depth + offset;
-      //if (addr >= Depth) {
-        //// Wrap around
-        //int rem = (addr - Depth);
-        //addr = rem;
-      //}
-      //assert(addr < Depth);
-      //return vals[addr];
+      // Note: This works
+      //return vals[(write_addr + Depth + offset) % Depth];
+
+      int addr = write_addr + Depth + offset;
+      if (addr >= Depth) {
+        // Wrap around
+        int rem = (addr - Depth);
+        addr = rem;
+      }
+      if (addr >= Depth) {
+        int rem = (addr - Depth);
+        addr = rem;
+      }
+      assert(addr < Depth);
+      return vals[addr];
     }
 
     T back() {
