@@ -809,16 +809,16 @@ void generate_memory_struct(CodegenOptions& options, std::ostream& out, const st
     auto act_dom = 
       domain(its_range(lex_max_events, to_uset(in_actions)));
 
-    cout << "Lex max events" << endl;
-    cout << tab(1) << str(coalesce(lex_max_events)) << endl;
+    //cout << "Lex max events" << endl;
+    //cout << tab(1) << str(coalesce(lex_max_events)) << endl;
 
     if (!isl_union_set_is_empty(act_dom)) {
       num_readers++;
       auto c = compute_dd(buf, outpt, inpt);
-      cout << "Writes btwn: " << endl;
-      cout << tab(1) << str(writes_between(buf, outpt, inpt)) << endl;
-      cout << "\t" << buf.name << ": DD between " << inpt
-        << " and " << outpt << " = " << str(c) << endl;
+      //cout << "Writes btwn: " << endl;
+      //cout << tab(1) << str(writes_between(buf, outpt, inpt)) << endl;
+      //cout << "\t" << buf.name << ": DD between " << inpt
+        //<< " and " << outpt << " = " << str(c) << endl;
       auto qpd = compute_dd_bound(buf, outpt, inpt);
       int lb = compute_dd_lower_bound(buf, outpt, inpt);
 
@@ -972,23 +972,23 @@ bool is_optimizable_constant_dd(const string& inpt, const string& outpt, UBuffer
   auto pieces = get_pieces(qpd);
   uset* pieces_dom = isl_union_set_read_from_str(ctx(qpd), "{}");
   for (auto p : pieces) {
-    cout << "// " << str(p.first) << " -> " << str(p.second) << endl;
+    //cout << "// " << str(p.first) << " -> " << str(p.second) << endl;
     auto pp = isl_pw_qpolynomial_intersect_domain(isl_pw_qpolynomial_from_qpolynomial(cpy(p.second)), cpy(p.first));
-    cout << "\t\tpp = " << str(pp) << endl;
-    cout << "\t\t\tlb = " << str(lower_bound(isl_union_pw_qpolynomial_from_pw_qpolynomial(cpy(pp)))) << endl;
-    cout << "\t\t\tub = " << str(upper_bound(isl_union_pw_qpolynomial_from_pw_qpolynomial(cpy(pp)))) << endl;
+    //cout << "\t\tpp = " << str(pp) << endl;
+    //cout << "\t\t\tlb = " << str(lower_bound(isl_union_pw_qpolynomial_from_pw_qpolynomial(cpy(pp)))) << endl;
+    //cout << "\t\t\tub = " << str(upper_bound(isl_union_pw_qpolynomial_from_pw_qpolynomial(cpy(pp)))) << endl;
     pieces_dom = unn(pieces_dom, to_uset(p.first));
   }
 
   bool pieces_are_complete =
     subset(to_uset(out_domain), (pieces_dom));
-  cout << "//\tPieces dom: " << str(pieces_dom) << endl;
-  cout << "//\tPieces are complete: " << pieces_are_complete << endl;
+  //cout << "//\tPieces dom: " << str(pieces_dom) << endl;
+  //cout << "//\tPieces are complete: " << pieces_are_complete << endl;
   int ub = int_upper_bound(qpd);
   int lb = int_lower_bound(qpd);
-  cout << "//\tqpd: " << str(qpd) << endl;
-  cout << "//\tLower bound: " << lb << endl;
-  cout << "//\tUpper bound: " << ub << endl;
+  //cout << "//\tqpd: " << str(qpd) << endl;
+  //cout << "//\tLower bound: " << lb << endl;
+  //cout << "//\tUpper bound: " << ub << endl;
 
   if (pieces_are_complete) {
     return ub == lb;
@@ -2506,8 +2506,12 @@ void generate_optimized_code(prog& prg) {
   auto sched = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
 
   cout << "Optimized schedule..." << endl;
+  cout << tab(1) << ": " << str(sched) << endl << endl;
   cout << codegen_c(sched) << endl;
+  //assert(false);
+
   auto buffers = build_buffers(prg, sched);
+
   generate_app_code(buffers, prg, sched);
   generate_vivado_tcl(prg.name);
 }
@@ -2517,11 +2521,13 @@ void generate_unoptimized_code(prog& prg) {
 
   prg.name = "unoptimized_" + prg.name;
   
-    cout << "Unoptimized schedule..." << endl;
+  cout << "Unoptimized schedule..." << endl;
   auto sched = prg.unoptimized_schedule();
+  cout << tab(1) << ": " << str(sched) << endl;
 
   cout << codegen_c(prg.unoptimized_schedule());
-  
+
+  //assert(false);
   auto buffers = build_buffers(prg, prg.unoptimized_schedule());
   
   CodegenOptions options;
@@ -3351,6 +3357,53 @@ void conv_1d_rolled_test() {
   regression_test(prg);
 }
 
+string add_conv_stage(prog& prg, const std::string& inbuffer) {
+  int in_rows = prg.dim(inbuffer, 0);
+  int in_cols = prg.dim(inbuffer, 1);
+
+  int res_rows = in_rows - 2;
+  int res_cols = in_cols - 2;
+
+  string blur = inbuffer + "_blr";
+  prg.buffer_port_widths[blur] = prg.buffer_port_widths[inbuffer];
+  prg.buffer_bounds[blur] = {res_rows, res_cols};
+ 
+  string rb = blur + "_r";
+  string rc = blur + "_c";
+  auto loads = prg.vector_load(inbuffer, rb, 0, 3, rc, 0, 3);
+  auto ns = prg.add_nest(rb, 0, res_rows, rc, 0, res_cols);
+  ns->add_op({blur, rb + "," + rc}, "conv_3_3", loads);
+
+  return blur;
+}
+
+string add_conv_stage_out(prog& prg, const std::string& inbuffer) {
+  int in_rows = prg.dim(inbuffer, 0);
+  int in_cols = prg.dim(inbuffer, 1);
+
+  int res_rows = in_rows - 2;
+  int res_cols = in_cols - 2;
+
+  string blur = inbuffer + "_blr";
+  prg.buffer_port_widths[blur] = prg.buffer_port_widths[inbuffer];
+  prg.buffer_bounds[blur] = {res_rows, res_cols};
+ 
+  string output = blur;
+  string out_stream = output + "_out";
+  prg.buffer_port_widths[out_stream] = prg.buffer_port_widths[output];
+  prg.buffer_bounds[out_stream] = prg.buffer_bounds[output];
+  prg.add_output(out_stream);
+  
+  string rb = blur + "_r";
+  string rc = blur + "_c";
+  auto loads = prg.vector_load(inbuffer, rb, 0, 3, rc, 0, 3);
+  auto ns = prg.add_nest(rb, 0, res_rows, rc, 0, res_cols);
+  ns->add_op({blur, rb + "," + rc}, "conv_3_3", loads);
+  ns->store({out_stream, rb + ", " + rc}, {output, rb + ", " + rc});
+
+  return out_stream;
+}
+
 string add_gaussian_stage(prog& prg, const std::string& inbuffer) {
 
   int in_rows = prg.dim(inbuffer, 0);
@@ -3408,7 +3461,6 @@ void gaussian_pyramid_test() {
   string I1 = add_gaussian_stage(prg, "I");
   string I2 = add_gaussian_stage(prg, I1);
 
-  //write_out(prg, I1);
   write_out(prg, I2);
 
   regression_test(prg);
@@ -3523,16 +3575,19 @@ void blur_and_downsample_test() {
   prg.add_input("in");
   prg.add_output("out");
   prg.buffer_port_widths["I"] = 32;
-  prg.buffer_port_widths["blurred_0"] = 32;
+  int img_size = 15;
+  prg.buffer_bounds["I"] = {img_size, img_size};
 
-  prg.add_nest("pr", 0, 64, "pc", 0, 64)->store({"I", "pr, pc"}, {"in", "pr, pc"});
- 
-  auto loads = prg.vector_load("I", "br", 0, 3, "bc", 0, 3);
-  prg.add_nest("br", 0, 64 - 2, "bc", 0, 64 - 2)->add_op({"blurred_0", "br,bc"}, "conv_3_3", loads);
-  prg.add_nest("dr", 0, (64 - 2) / 2, "dc", 0, (64 - 2) / 2)->
-    add_op({"out", "dr, dc"}, "id", {"blurred_0", "2*dr, 2*dc"});
+  //prg.buffer_port_widths["blurred_0"] = 32;
 
+  prg.add_nest("pr", 0, img_size, "pc", 0, img_size)->store({"I", "pr, pc"}, {"in", "pr, pc"});
+  string bds = add_gaussian_stage(prg, "I");
+  string cv = add_conv_stage(prg, bds);
+  write_out(prg, cv);
+
+  //write_out(prg, bds);
   regression_test(prg);
+
 }
 
 int main(int argc, char** argv) {
@@ -3570,9 +3625,9 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
 
-    gaussian_pyramid_test();
-    //assert(false);
     blur_and_downsample_test();
+    assert(false);
+    gaussian_pyramid_test();
     warp_and_upsample_test();
     downsample_and_blur_test();
     unsharp_test();

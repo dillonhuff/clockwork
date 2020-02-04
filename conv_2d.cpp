@@ -108,13 +108,18 @@ struct I_write_0_cache {
 		if (offset == 130) {
 			return f16.back();
 		}
+#ifndef __VIVADO_SYNTH__
 		cout << "Error: Unsupported offset in I: " << offset << endl;
+#endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
 
 	}
 
 	inline void push(const int value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
 		f16.push(f14.back());
 		f14.push(f12.back());
 		f12.push(f11.back());
@@ -136,7 +141,6 @@ inline void I_write_0_write(int& I_write_0, I_write_0_cache& I_write_0_delay) {
 	I_write_0_delay.push(I_write_0);
 }
 
-// Select if: { read_0[root = 0, lr, lc] -> write[root' = 0, pr = 1 + lr, pc = 2 + lc] : 0 <= lr <= 61 and 0 <= lc <= 61 }
 inline int I_read_0_10_select(I_write_0_cache& I_write_0_delay
 , int root, int lr, int lc) {
 // Pieces...
@@ -144,79 +148,79 @@ inline int I_read_0_10_select(I_write_0_cache& I_write_0_delay
 // 	is always true on iteration domain: 0
 // { read_0[root = 0, lr, lc = 61] : 0 <= lr <= 61 } -> { read_0[root, lr, lc] -> (3 + lc) }
 // 	is always true on iteration domain: 0
-	int value_I_write_0 = I_write_0_delay.peek(((root == 0 && lr >= 0 && 61 - lr >= 0 && lc >= 0 && 60 - lc >= 0) ? (64) : (-61 + lc == 0 && root == 0 && lr >= 0 && 61 - lr >= 0) ? ((3 + lc)) : 0));
+//	is optimizable constant: 1
+	int value_I_write_0 = I_write_0_delay.peek_64();
 	return value_I_write_0;
 }
 
-// Select if: { read_0[root = 0, lr, lc] -> write[root' = 0, pr = 2 + lr, pc = 2 + lc] : 0 <= lr <= 61 and 0 <= lc <= 61 }
 inline int I_read_0_11_select(I_write_0_cache& I_write_0_delay
 , int root, int lr, int lc) {
 // Pieces...
+//	is optimizable constant: 0
 	int value_I_write_0 = I_write_0_delay.peek_0();
 	return value_I_write_0;
 }
 
-// Select if: { read_0[root = 0, lr, lc] -> write[root' = 0, pr = lr, pc = lc] : 0 <= lr <= 61 and 0 <= lc <= 61 }
 inline int I_read_0_3_select(I_write_0_cache& I_write_0_delay
 , int root, int lr, int lc) {
 // Pieces...
 // { read_0[root = 0, lr, lc] : 0 <= lr <= 61 and 0 <= lc <= 61 } -> { read_0[root, lr, lc] -> 130 }
 // 	is always true on iteration domain: 1
+//	is optimizable constant: 1
 	int value_I_write_0 = I_write_0_delay.peek_130();
 	return value_I_write_0;
 }
 
-// Select if: { read_0[root = 0, lr, lc] -> write[root' = 0, pr = 1 + lr, pc = lc] : 0 <= lr <= 61 and 0 <= lc <= 61 }
 inline int I_read_0_4_select(I_write_0_cache& I_write_0_delay
 , int root, int lr, int lc) {
 // Pieces...
 // { read_0[root = 0, lr, lc] : 0 <= lr <= 61 and 0 <= lc <= 61 } -> { read_0[root, lr, lc] -> 66 }
 // 	is always true on iteration domain: 1
+//	is optimizable constant: 1
 	int value_I_write_0 = I_write_0_delay.peek_66();
 	return value_I_write_0;
 }
 
-// Select if: { read_0[root = 0, lr, lc] -> write[root' = 0, pr = 2 + lr, pc = lc] : 0 <= lr <= 61 and 0 <= lc <= 61 }
 inline int I_read_0_5_select(I_write_0_cache& I_write_0_delay
 , int root, int lr, int lc) {
 // Pieces...
 // { read_0[root = 0, lr, lc] : 0 <= lr <= 61 and 0 <= lc <= 61 } -> { read_0[root, lr, lc] -> 2 }
 // 	is always true on iteration domain: 1
+//	is optimizable constant: 1
 	int value_I_write_0 = I_write_0_delay.peek_2();
 	return value_I_write_0;
 }
 
-// Select if: { read_0[root = 0, lr, lc] -> write[root' = 0, pr = lr, pc = 1 + lc] : 0 <= lr <= 61 and 0 <= lc <= 61 }
 inline int I_read_0_6_select(I_write_0_cache& I_write_0_delay
 , int root, int lr, int lc) {
 // Pieces...
 // { read_0[root = 0, lr, lc] : 0 <= lr <= 61 and 0 <= lc <= 61 } -> { read_0[root, lr, lc] -> 129 }
 // 	is always true on iteration domain: 1
+//	is optimizable constant: 1
 	int value_I_write_0 = I_write_0_delay.peek_129();
 	return value_I_write_0;
 }
 
-// Select if: { read_0[root = 0, lr, lc] -> write[root' = 0, pr = 1 + lr, pc = 1 + lc] : 0 <= lr <= 61 and 0 <= lc <= 61 }
 inline int I_read_0_7_select(I_write_0_cache& I_write_0_delay
 , int root, int lr, int lc) {
 // Pieces...
 // { read_0[root = 0, lr, lc] : 0 <= lr <= 61 and 0 <= lc <= 61 } -> { read_0[root, lr, lc] -> 65 }
 // 	is always true on iteration domain: 1
+//	is optimizable constant: 1
 	int value_I_write_0 = I_write_0_delay.peek_65();
 	return value_I_write_0;
 }
 
-// Select if: { read_0[root = 0, lr, lc] -> write[root' = 0, pr = 2 + lr, pc = 1 + lc] : 0 <= lr <= 61 and 0 <= lc <= 61 }
 inline int I_read_0_8_select(I_write_0_cache& I_write_0_delay
 , int root, int lr, int lc) {
 // Pieces...
 // { read_0[root = 0, lr, lc] : 0 <= lr <= 61 and 0 <= lc <= 61 } -> { read_0[root, lr, lc] -> 1 }
 // 	is always true on iteration domain: 1
+//	is optimizable constant: 1
 	int value_I_write_0 = I_write_0_delay.peek_1();
 	return value_I_write_0;
 }
 
-// Select if: { read_0[root = 0, lr, lc] -> write[root' = 0, pr = lr, pc = 2 + lc] : 0 <= lr <= 61 and 0 <= lc <= 61 }
 inline int I_read_0_9_select(I_write_0_cache& I_write_0_delay
 , int root, int lr, int lc) {
 // Pieces...
@@ -224,7 +228,8 @@ inline int I_read_0_9_select(I_write_0_cache& I_write_0_delay
 // 	is always true on iteration domain: 0
 // { read_0[root = 0, lr, lc = 61] : 0 <= lr <= 61 } -> { read_0[root, lr, lc] -> (67 + lc) }
 // 	is always true on iteration domain: 0
-	int value_I_write_0 = I_write_0_delay.peek(((root == 0 && lr >= 0 && 61 - lr >= 0 && lc >= 0 && 60 - lc >= 0) ? (128) : (-61 + lc == 0 && root == 0 && lr >= 0 && 61 - lr >= 0) ? ((67 + lc)) : 0));
+//	is optimizable constant: 1
+	int value_I_write_0 = I_write_0_delay.peek_128();
 	return value_I_write_0;
 }
 
