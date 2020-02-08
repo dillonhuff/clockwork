@@ -226,6 +226,7 @@ inline int read_2_1_select(write0_cache& write0_delay
 inline int read_2_2_select(write0_cache& write0_delay
 , int i, int j) {
 // Pieces...
+// Always 0
 //	is optimizable constant: 0
 	int value_write0 = write0_delay.peek_0();
 	return value_write0;

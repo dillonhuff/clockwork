@@ -1029,21 +1029,27 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
 
   out << ") {" << endl;
   // Body of select function
+  string delay_expr = evaluate_dd(buf, outpt, inpt);
+  auto qpd = compute_dd(buf, outpt, inpt);
+  auto pieces = get_pieces(qpd);
+  out << "// Pieces..." << endl;
+  for (auto p : pieces) {
+    out << "// " << str(p.first) << " -> " << str(p.second) << endl;
+    out << "// \tis always true on iteration domain: " << isl_set_is_subset(cpy(out_domain), cpy(p.first)) << endl;
+  }
+  bool always_zero_distance = pieces.size() == 0;
+
+  if (pieces.size() == 0) {
+    out << "// Always 0" << endl;
+  }
+  bool opt_const = is_optimizable_constant_dd(inpt, outpt, buf);
+  out << "//\tis optimizable constant: " << opt_const << endl;
+  string dx = to_string(int_upper_bound(qpd));
+
   if (buf.get_in_ports().size() == 1) {
-    string delay_expr = evaluate_dd(buf, outpt, inpt);
-    auto qpd = compute_dd(buf, outpt, inpt);
-    auto pieces = get_pieces(qpd);
-    out << "// Pieces..." << endl;
-    for (auto p : pieces) {
-      out << "// " << str(p.first) << " -> " << str(p.second) << endl;
-      out << "// \tis always true on iteration domain: " << isl_set_is_subset(cpy(out_domain), cpy(p.first)) << endl;
-    }
-    bool opt_const = is_optimizable_constant_dd(inpt, outpt, buf);
-    out << "//\tis optimizable constant: " << opt_const << endl;
     string inpt = *(buf.get_in_ports().begin());
 
     if (opt_const) {
-      string dx = to_string(int_upper_bound(qpd));
       if (!options.all_rams && is_number(dx)) {
         out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
       } else {
@@ -1845,6 +1851,14 @@ struct prog {
     return map_find(buf, buffer_bounds).at(dim);
   }
 
+  vector<string> vector_load(const std::string& img, const std::string& rbase, const int ro, const int re) {
+    vector<string> conv_loads;
+    for (int r = ro; r < re; r++) {
+      conv_loads.push_back(img);
+      conv_loads.push_back(rbase + " + " + to_string(r));
+    }
+    return conv_loads;
+  }
   vector<string> vector_load(const std::string& img, const std::string& rbase, const int ro, const int re,
       const std::string& cbase, const int co, const int ce) {
     vector<string> conv_loads;
@@ -3568,6 +3582,63 @@ void downsample_and_blur_test() {
   regression_test(prg);
 }
 
+void two_in_conv2d_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "conv_2d_two_in_window";
+  prg.add_input("in0");
+  prg.add_input("in1");
+  prg.add_output("out");
+
+  prg.buffer_port_widths["I"] = 32;
+  int img_size = 20;
+  prg.buffer_bounds["I"] = {img_size, img_size};
+
+  auto ldi = prg.add_nest("pr", 0, img_size, "pc", 0, img_size / 2);
+  ldi->store({"I", "pr, 2*pc"}, {"in0", "pr, 2*pc"});
+  ldi->store({"I", "pr, 2*pc + 1"}, {"in1", "pr, 2*pc + 1"});
+
+  auto cpi = prg.add_nest("r", 0, (img_size / 2) - 2, "c", 0, (img_size / 2) - 2);
+  auto ld = prg.vector_load("I", "2*r", 0, 3, "2*c", 0, 3);
+  cout << "Loads..." << endl;
+  for (auto d : ld) {
+    cout << "\t" << d << endl;
+  }
+  cpi->add_op({"out", "c"}, "conv_3_3", ld);
+
+  regression_test(prg);
+  assert(false);
+}
+
+void two_in_window_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "two_in_window";
+  prg.add_input("in0");
+  prg.add_input("in1");
+  prg.add_output("out");
+
+  prg.buffer_port_widths["I"] = 32;
+  int img_size = 10;
+  prg.buffer_bounds["I"] = {img_size, img_size};
+
+  auto ldi = prg.add_nest("pr", 0, img_size);
+  ldi->store({"I", "2*pr"}, {"in0", "pr"});
+  ldi->store({"I", "2*pr + 1"}, {"in1", "pr"});
+
+  auto cpi = prg.add_nest("c", 0, (img_size / 2) - 2);
+  auto ld = prg.vector_load("I", "2*c", 0, 3);
+  cout << "Loads..." << endl;
+  for (auto d : ld) {
+    cout << "\t" << d << endl;
+  }
+  cpi->add_op({"out", "c"}, "conv_1_3", ld);
+
+  regression_test(prg);
+
+  //assert(false);
+}
+
 void blur_and_downsample_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
@@ -3578,14 +3649,11 @@ void blur_and_downsample_test() {
   int img_size = 15;
   prg.buffer_bounds["I"] = {img_size, img_size};
 
-  //prg.buffer_port_widths["blurred_0"] = 32;
-
   prg.add_nest("pr", 0, img_size, "pc", 0, img_size)->store({"I", "pr, pc"}, {"in", "pr, pc"});
   string bds = add_gaussian_stage(prg, "I");
   string cv = add_conv_stage(prg, bds);
   write_out(prg, cv);
 
-  //write_out(prg, bds);
   regression_test(prg);
 
 }
@@ -3625,8 +3693,10 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
 
+    two_in_window_test();
+    two_in_conv2d_test();
+    //assert(false);
     blur_and_downsample_test();
-    assert(false);
     gaussian_pyramid_test();
     warp_and_upsample_test();
     downsample_and_blur_test();

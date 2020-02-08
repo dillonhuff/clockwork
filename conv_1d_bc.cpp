@@ -74,6 +74,7 @@ inline int M_read0_1_select(M_write_4_cache& M_write_4_delay
 inline int M_read0_2_select(M_write_4_cache& M_write_4_delay
 , int root, int c) {
 // Pieces...
+// Always 0
 //	is optimizable constant: 0
 	int value_M_write_4 = M_write_4_delay.peek_0();
 	return value_M_write_4;
@@ -148,6 +149,7 @@ inline void T_read0_0_write(hw_uint<96>& T_read0_0, T_read0_0_cache& T_read0_0_d
 inline hw_uint<96> T_compute_out_7_select(T_read0_0_cache& T_read0_0_delay
 , int root, int c) {
 // Pieces...
+// Always 0
 //	is optimizable constant: 0
 	hw_uint<96> value_T_read0_0 = T_read0_0_delay.peek_0();
 	return value_T_read0_0;

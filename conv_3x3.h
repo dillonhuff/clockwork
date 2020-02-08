@@ -30,6 +30,19 @@ int fma(int& src, int& a0, int& a1) {
 int set_zero() {
   return 0;
 }
+
+static inline
+int conv_1_3(hw_uint<32*3>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+
+  cout << "v0 = " << v0 << endl;
+  cout << "v1 = " << v1 << endl;
+  cout << "v2 = " << v2 << endl;
+  return v0 + v1 + v2;
+}
+
 static inline
 int conv_3_3(hw_uint<32*9>& in) {
   hw_uint<32> v0 = in.extract<0, 31>();
