@@ -3501,15 +3501,15 @@ void conv_2d_rolled_test() {
   }
 
   {
-    auto pr = prg.add_loop("lr", 0, 64 - 2);
-    auto pc = pr->add_loop("lc", 0, 64 - 2);
+    auto pr = prg.add_loop("lr", 1, 64 - 1);
+    auto pc = pr->add_loop("lc", 1, 64 - 1);
     
     auto rd = pc->add_op("init");
     rd->add_store("R", "lr, lc");
     rd->add_function("set_zero");
 
-    auto reduce_inner_loop = pc->add_nest("rr", 0, 3, "rc", 0, 3);
-    auto reduce_inner = reduce_inner_loop->add_op({"R", "lr, lc"}, "inc", {"R", "lr, lc", "I", "lr + rr, lc + rc"});
+    auto reduce_inner_loop = pc->add_nest("rr", -1, 2, "rc", -1, 2);
+    auto reduce_inner = reduce_inner_loop->add_op({"R", "lr - 1, lc - 1"}, "inc", {"R", "lr, lc", "I", "lr + rr, lc + rc"});
   }
 
   {
@@ -3605,16 +3605,15 @@ void two_in_conv2d_test() {
   //auto cpi = prg.add_nest("r", 0, img_size - 2, "c", 0, (img_size) - 2);
   //auto ld = prg.vector_load("I", "r", 0, 3, "c", 0, 3);
   auto cpi = prg.add_nest("r", 0, (img_size / 2) - 2, "c", 0, (img_size / 2) - 2);
-  //auto ld = prg.vector_load("I", "2*r", 0, 3, "2*c", 0, 3);
-  auto ld = prg.vector_load("I", "r", 0, 3, "c", 0, 3);
-  cout << "Loads..." << endl;
-  for (auto d : ld) {
-    cout << "\t" << d << endl;
-  }
+  auto ld = prg.vector_load("I", "2*r", 0, 3, "2*c", 0, 3);
+  //auto ld = prg.vector_load("I", "r", 0, 3, "c", 0, 3);
+  //cout << "Loads..." << endl;
+  //for (auto d : ld) {
+    //cout << "\t" << d << endl;
+  //}
   cpi->add_op({"out", "r, c"}, "conv_3_3", ld);
 
   regression_test(prg);
-  assert(false);
 }
 
 void two_in_window_test() {
@@ -3642,8 +3641,6 @@ void two_in_window_test() {
   cpi->add_op({"out", "c"}, "conv_1_3", ld);
 
   regression_test(prg);
-
-  //assert(false);
 }
 
 void blur_and_downsample_test() {
@@ -3662,7 +3659,6 @@ void blur_and_downsample_test() {
   write_out(prg, cv);
 
   regression_test(prg);
-
 }
 
 int main(int argc, char** argv) {
@@ -3700,16 +3696,16 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
 
+    conv_2d_rolled_test();
+    assert(false);
     two_in_window_test();
     two_in_conv2d_test();
-    //assert(false);
     blur_and_downsample_test();
     gaussian_pyramid_test();
     warp_and_upsample_test();
     downsample_and_blur_test();
     unsharp_test();
     conv_1d_rolled_test();
-    conv_2d_rolled_test();
     reduce_1d_test();
     synth_reduce_test();
     reduce_2d_test();
