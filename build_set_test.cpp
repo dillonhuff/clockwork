@@ -1073,7 +1073,9 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
       out << "\treturn value_" + inpt + ";" << endl;
     }
   } else {
+    cout << "Lexmax events: " << str(lex_max_events) << endl;
     map<string, string> ms = umap_codegen_c(lex_max_events);
+    cout << "Done" << endl;
     if (options.internal) {
       for (auto e : ms) {
         out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
@@ -2726,13 +2728,15 @@ void generate_regression_testbench(prog& prg) {
 
 void regression_test(prog& prg) {
   generate_unoptimized_code(prg);
-  
+ 
+  cout << "Built unoptimized code" << endl;
   auto old_name = prg.name;
   prg.name = "unoptimized_" + old_name;
   generate_regression_testbench(prg);
   string unoptimized_res = run_regression_tb(prg);
   prg.name = old_name;
   
+  cout << "Building optimized code" << endl;
   generate_optimized_code(prg);
   generate_regression_testbench(prg);
   string optimized_res = run_regression_tb(prg);
@@ -3598,13 +3602,16 @@ void two_in_conv2d_test() {
   ldi->store({"I", "pr, 2*pc"}, {"in0", "pr, 2*pc"});
   ldi->store({"I", "pr, 2*pc + 1"}, {"in1", "pr, 2*pc + 1"});
 
+  //auto cpi = prg.add_nest("r", 0, img_size - 2, "c", 0, (img_size) - 2);
+  //auto ld = prg.vector_load("I", "r", 0, 3, "c", 0, 3);
   auto cpi = prg.add_nest("r", 0, (img_size / 2) - 2, "c", 0, (img_size / 2) - 2);
-  auto ld = prg.vector_load("I", "2*r", 0, 3, "2*c", 0, 3);
+  //auto ld = prg.vector_load("I", "2*r", 0, 3, "2*c", 0, 3);
+  auto ld = prg.vector_load("I", "r", 0, 3, "c", 0, 3);
   cout << "Loads..." << endl;
   for (auto d : ld) {
     cout << "\t" << d << endl;
   }
-  cpi->add_op({"out", "c"}, "conv_3_3", ld);
+  cpi->add_op({"out", "r, c"}, "conv_3_3", ld);
 
   regression_test(prg);
   assert(false);
