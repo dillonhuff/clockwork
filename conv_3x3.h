@@ -30,6 +30,30 @@ int fma(int& src, int& a0, int& a1) {
 int set_zero() {
   return 0;
 }
+
+static inline
+int conv_1_3(hw_uint<32*3>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+
+  return v0 + v1 + v2;
+}
+
+static inline
+int conv_1_3_16(hw_uint<16*3>& in) {
+  hw_uint<16> v0 = in.extract<0, 15>();
+  hw_uint<16> v1 = in.extract<16, 31>();
+  hw_uint<16> v2 = in.extract<32, 47>();
+
+  return v0 + v1 + v2;
+}
+
+static inline
+hw_uint<16> blur_3(hw_uint<16*3>& in) {
+  return conv_1_3_16(in) / 3;
+}
+
 static inline
 int conv_3_3(hw_uint<32*9>& in) {
   hw_uint<32> v0 = in.extract<0, 31>();

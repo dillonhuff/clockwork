@@ -686,6 +686,10 @@ isl_set* domain(isl_map* const m) {
   return isl_map_domain(cpy(m));
 }
 
+isl_bool subset(isl_union_set* const s0, uset* s1) {
+  return isl_union_set_is_subset(cpy(s0), cpy(s1));
+}
+
 isl_basic_set* domain(isl_basic_map* const m) {
   return isl_basic_map_domain(cpy(m));
 }

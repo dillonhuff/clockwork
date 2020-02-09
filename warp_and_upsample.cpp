@@ -108,7 +108,9 @@ struct I_store_I_from_in_2_cache {
 		if (offset == 130) {
 			return f16.back();
 		}
+#ifndef __VIVADO_SYNTH__
 		cout << "Error: Unsupported offset in I: " << offset << endl;
+#endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
 
@@ -167,16 +169,28 @@ inline int I_warped_0_conv_3_30_12_select(I_store_I_from_in_2_cache& I_store_I_f
 // { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 1 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
+<<<<<<< HEAD
 	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek_1();
 	return value_I_store_I_from_in_2;
+=======
+	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_1();
+	return value_I_store_I_from_in_0;
+>>>>>>> origin/master
 }
 
 inline int I_warped_0_conv_3_30_13_select(I_store_I_from_in_2_cache& I_store_I_from_in_2_delay
 , int root, int br, int bc) {
 // Pieces...
+<<<<<<< HEAD
 //	is optimizable constant: 0
 	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek_0();
 	return value_I_store_I_from_in_2;
+=======
+// Always 0
+//	is optimizable constant: 0
+	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_0();
+	return value_I_store_I_from_in_0;
+>>>>>>> origin/master
 }
 
 inline int I_warped_0_conv_3_30_5_select(I_store_I_from_in_2_cache& I_store_I_from_in_2_delay
@@ -185,8 +199,13 @@ inline int I_warped_0_conv_3_30_5_select(I_store_I_from_in_2_cache& I_store_I_fr
 // { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 130 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
+<<<<<<< HEAD
 	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek_130();
 	return value_I_store_I_from_in_2;
+=======
+	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_130();
+	return value_I_store_I_from_in_0;
+>>>>>>> origin/master
 }
 
 inline int I_warped_0_conv_3_30_6_select(I_store_I_from_in_2_cache& I_store_I_from_in_2_delay
@@ -195,8 +214,13 @@ inline int I_warped_0_conv_3_30_6_select(I_store_I_from_in_2_cache& I_store_I_fr
 // { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 129 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
+<<<<<<< HEAD
 	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek_129();
 	return value_I_store_I_from_in_2;
+=======
+	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_129();
+	return value_I_store_I_from_in_0;
+>>>>>>> origin/master
 }
 
 inline int I_warped_0_conv_3_30_7_select(I_store_I_from_in_2_cache& I_store_I_from_in_2_delay
@@ -207,8 +231,13 @@ inline int I_warped_0_conv_3_30_7_select(I_store_I_from_in_2_cache& I_store_I_fr
 // { warped_0_conv_3_30[root = 0, br, bc = 61] : 0 <= br <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> (67 + bc) }
 // 	is always true on iteration domain: 0
 //	is optimizable constant: 1
+<<<<<<< HEAD
 	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek_128();
 	return value_I_store_I_from_in_2;
+=======
+	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_128();
+	return value_I_store_I_from_in_0;
+>>>>>>> origin/master
 }
 
 inline int I_warped_0_conv_3_30_8_select(I_store_I_from_in_2_cache& I_store_I_from_in_2_delay
@@ -217,8 +246,13 @@ inline int I_warped_0_conv_3_30_8_select(I_store_I_from_in_2_cache& I_store_I_fr
 // { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 66 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
+<<<<<<< HEAD
 	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek_66();
 	return value_I_store_I_from_in_2;
+=======
+	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_66();
+	return value_I_store_I_from_in_0;
+>>>>>>> origin/master
 }
 
 inline int I_warped_0_conv_3_30_9_select(I_store_I_from_in_2_cache& I_store_I_from_in_2_delay
@@ -227,8 +261,35 @@ inline int I_warped_0_conv_3_30_9_select(I_store_I_from_in_2_cache& I_store_I_fr
 // { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 65 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
+<<<<<<< HEAD
 	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek_65();
 	return value_I_store_I_from_in_2;
+=======
+	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_65();
+	return value_I_store_I_from_in_0;
+}
+
+inline int I_warped_0_conv_3_30_8_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
+, int root, int br, int bc) {
+// Pieces...
+// { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 60 } -> { warped_0_conv_3_30[root, br, bc] -> 64 }
+// 	is always true on iteration domain: 0
+// { warped_0_conv_3_30[root = 0, br, bc = 61] : 0 <= br <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> (3 + bc) }
+// 	is always true on iteration domain: 0
+//	is optimizable constant: 1
+	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_64();
+	return value_I_store_I_from_in_0;
+}
+
+inline int I_warped_0_conv_3_30_9_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
+, int root, int br, int bc) {
+// Pieces...
+// { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 2 }
+// 	is always true on iteration domain: 1
+//	is optimizable constant: 1
+	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_2();
+	return value_I_store_I_from_in_0;
+>>>>>>> origin/master
 }
 
 // Bundles...
@@ -553,8 +614,13 @@ inline int warped_0_out_id0_1_select(warped_0_warped_0_conv_3_30_4_cache& warped
 // { out_id0[root = 0, ur, kr = 1, uc, kc] : 0 <= ur <= 61 and 0 <= uc <= 60 and 0 <= kc <= 1 } -> { out_id0[root, ur, kr, uc, kc] -> (61 - uc) }
 // 	is always true on iteration domain: 0
 //	is optimizable constant: 0
+<<<<<<< HEAD
 	int value_warped_0_warped_0_conv_3_30_4 = warped_0_warped_0_conv_3_30_4_delay.peek(((-1 + kr == 0 && root == 0 && ur >= 0 && 61 - ur >= 0 && uc >= 0 && 60 - uc >= 0 && kc >= 0 && 1 - kc >= 0) ? ((61 - uc)) : 0));
 	return value_warped_0_warped_0_conv_3_30_4;
+=======
+	int value_warped_0_warped_0_conv_3_30_2 = warped_0_warped_0_conv_3_30_2_delay.peek(((-1 + kr == 0 && root == 0 && ur >= 0 && 61 - ur >= 0 && uc >= 0 && 60 - uc >= 0 && kc >= 0 && 1 - kc >= 0) ? ((61 - uc)) : 0));
+	return value_warped_0_warped_0_conv_3_30_2;
+>>>>>>> origin/master
 }
 
 // Bundles...

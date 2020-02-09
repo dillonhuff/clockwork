@@ -36,13 +36,18 @@ struct M_get_input_4_cache {
 		if (offset == 2) {
 			return f4.back();
 		}
+#ifndef __VIVADO_SYNTH__
 		cout << "Error: Unsupported offset in M: " << offset << endl;
+#endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
 
 	}
 
 	inline void push(const int value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
 		f4.push(f2.back());
 		f2.push(f0.back());
 		f0.push(value);
@@ -61,6 +66,7 @@ inline int M_compute_output_1_select(M_get_input_4_cache& M_get_input_4_delay
 // Pieces...
 // { compute_output[root = 0, c] : 0 <= c <= 7 } -> { compute_output[root, c] -> 2 }
 // 	is always true on iteration domain: 1
+//	is optimizable constant: 1
 	int value_M_get_input_4 = M_get_input_4_delay.peek_2();
 	return value_M_get_input_4;
 }
@@ -70,6 +76,7 @@ inline int M_compute_output_2_select(M_get_input_4_cache& M_get_input_4_delay
 // Pieces...
 // { compute_output[root = 0, c] : 0 <= c <= 7 } -> { compute_output[root, c] -> 1 }
 // 	is always true on iteration domain: 1
+//	is optimizable constant: 1
 	int value_M_get_input_4 = M_get_input_4_delay.peek_1();
 	return value_M_get_input_4;
 }
@@ -77,6 +84,8 @@ inline int M_compute_output_2_select(M_get_input_4_cache& M_get_input_4_delay
 inline int M_compute_output_3_select(M_get_input_4_cache& M_get_input_4_delay
 , int root, int c) {
 // Pieces...
+// Always 0
+//	is optimizable constant: 0
 	int value_M_get_input_4 = M_get_input_4_delay.peek_0();
 	return value_M_get_input_4;
 }
