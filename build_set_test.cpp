@@ -959,7 +959,7 @@ void generate_code_prefix(CodegenOptions& options,
       out << "}" << endl << endl;
     } else {
       out << "inline void " << inpt << "_write(" << "InputStream<int>& " << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
-      out << "\tint " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);" << endl;
+      out << "\t" + buf.port_type_string() + " " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);" << endl;
       out << "}" << endl << endl;
     }
   }
@@ -1845,12 +1845,44 @@ struct prog {
   string compute_unit_file;
   map<string, vector<int> > buffer_bounds;
 
+  string buffer_element_type_string(const string& name) const {
+    if (!contains_key(name, buffer_port_widths)) {
+      return "int";
+      //cout << "No key: " << name << " in port widths!" << endl;
+      //cout << "Widths..." << endl;
+      //for (auto k : buffer_port_widths) {
+        //cout << k.first << " = " << k.second << endl;
+      //}
+    }
+    assert(contains_key(name, buffer_port_widths));
+    
+    auto width = buffer_port_widths.at(name);
+    if (width == 32) {
+      return "int";
+    }
+    return "hw_uint<" + to_string(width) + ">";
+  }
+
   int dim(const string& buf, const int dim) {
     if (!(contains_key(buf, buffer_bounds))) {
       cout << "No key for: " << buf << " in buffer_bounds" << endl;
     }
     assert(contains_key(buf, buffer_bounds));
     return map_find(buf, buffer_bounds).at(dim);
+  }
+
+  void stencil2(const std::string& operation) {
+    regex opRe("(.*)\\((.*)\\) = (.*)\\((.*)\\((.*)\\)\\)");
+    smatch match;
+    auto res = regex_search(operation, match, opRe);
+    assert(res);
+    cout << "ResultBuffer : " << match[1] << endl;
+    cout << "Index        : " << match[2] << endl;
+    cout << "Operation    : " << match[3] << endl;
+    cout << "Input buffer : " << match[4] << endl;
+    cout << "Input inds   : " << match[5] << endl;
+    //code_string = regex_replace(code_string, re0, b.first + ".write(" + buf.name + "_" + b.first + "_bundle_read(" + delay_list + ", $1" + "));");
+    assert(false);
   }
 
   vector<string> vector_load(const std::string& img, const std::string& rbase, const int ro, const int re) {
@@ -2300,10 +2332,11 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
   vector<string> args;
   for (auto& b : prg.ins) {
-    args.push_back("HWStream<int>& " + b);
+    assert(contains_key(b, buffers));
+    args.push_back("HWStream<" + buffers.at(b).port_type_string() + ">& " + b);
   }
   for (auto& b : prg.outs) {
-    args.push_back("HWStream<int>& " + b);
+    args.push_back("HWStream<" + prg.buffer_element_type_string(b) + ">& " + b);
   }
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
@@ -2322,7 +2355,7 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
       auto buf_name = p.first;
       if (!elem(buf_name, done)) {
         if (prg.is_boundary(buf_name)) {
-          buf_srcs.push_back("HWStream<int>& " + buf_name);
+          buf_srcs.push_back("HWStream<" + map_find(buf_name, buffers).port_type_string() + ">& " + buf_name);
         } else {
           UBuffer& b = buffers.at(buf_name);
           for (auto ib : b.get_in_ports()) {
@@ -2336,7 +2369,7 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
       auto buf_name = p.first;
       if (!elem(buf_name, done)) {
         if (prg.is_boundary(buf_name)) {
-          buf_srcs.push_back("HWStream<int>& " + buf_name);
+          buf_srcs.push_back("HWStream<" + map_find(buf_name, buffers).port_type_string() + ">& " + buf_name);
         } else {
           UBuffer& b = buffers.at(buf_name);
           for (auto ib : b.get_in_ports()) {
@@ -2566,6 +2599,7 @@ void conv_1d_bc_test() {
   prg.buffer_port_widths["in"] = 32;
   prg.buffer_port_widths["out"] = 32;
   prg.buffer_port_widths["M"] = 32;
+  prg.buffer_bounds["out"] = {32 - 2, 32 - 2};
 
   auto p = prg.add_loop("p", 0, 10);
   auto write = p->add_op("write");
@@ -2685,11 +2719,11 @@ void generate_regression_testbench(prog& prg) {
   vector<string> unoptimized_streams;
   vector<string> optimized_streams;
   for (auto in : prg.ins) {
-    rgtb << tab(1) << "HWStream<int> " << in << ";" << endl;
+    rgtb << tab(1) << "HWStream<" << prg.buffer_element_type_string(in) << " > " << in << ";" << endl;
     optimized_streams.push_back(in);
   }
   for (auto out : prg.outs) {
-    rgtb << tab(1) << "HWStream<int> " << out << ";" << endl;
+    rgtb << tab(1) << "HWStream<" << prg.buffer_element_type_string(out) << " > " << out << ";" << endl;
     optimized_streams.push_back(out);
   }
 
@@ -3484,6 +3518,30 @@ void gaussian_pyramid_test() {
   regression_test(prg);
 }
 
+void soda_blur_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "soda_blur";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["out"] = 16;
+  prg.buffer_port_widths["I"] = 16;
+  prg.buffer_port_widths["blur_x"] = 16;
+
+  prg.add_nest("ir", 0, 32, "ic", 0, 32)->add_op({"I", "ir, ic"}, "id", {"in", "ir, ic"});
+  auto lds = prg.vector_load("I", "yr", 0, 1, "yc", 0, 3);
+  prg.add_nest("yr", 0, 32, "yc", 0, 32 - 2)->
+    add_op({"blur_x", "yr, yc"}, "blur_3", lds);
+
+  auto lds0 = prg.vector_load("blur_x", "xr", 0, 3, "xc", 0, 1);
+  prg.add_nest("xr", 0, 32 - 2, "xc", 0, 32 - 2)->
+    add_op({"out", "xr, xc"}, "blur_3", lds0);
+
+  regression_test(prg);
+  //assert(false);
+}
+
 void conv_2d_rolled_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
@@ -3696,8 +3754,8 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
 
+    soda_blur_test();
     conv_2d_rolled_test();
-    assert(false);
     two_in_window_test();
     two_in_conv2d_test();
     blur_and_downsample_test();
