@@ -3625,8 +3625,6 @@ struct App {
 
       for (auto inputs : app_dag.at(next).srcs) {
         cout << "Data: " << inputs.name << " to " << next << endl;
-
-        //string ms = "{ [d0, d1] -> [s0, s1] : d0 <= s0 < d0 + 3 and d1 = s1 }";
         auto domain = domains.at(next);
         umap* consumer_map =
           inputs.needed;
@@ -3638,6 +3636,12 @@ struct App {
       }
     }
 
+    // In a static schedule:
+    //  - Prefix which stores all elements that are needed for the first iteration up to
+    //    raster order
+    //  - Chunks which store all elements needed for each loop iteration
+    //  - Higher unroll -> Larger box?
+
     // Second: Compute naive schedules (with unrolling?)
     //  - Critical question: If I unroll one loop by a bunch, what do I need to do to feed that loop?
     //  - Scheduling invariant: for a given kernel unrolled by N the data demands of moving from one
@@ -3648,56 +3652,72 @@ struct App {
 };
 
 void soda_blur_test() {
-  App blur;
-  auto in = blur.func2d("in");
-  auto blur_x = blur.func2d("blur_x", "blur_1_3_16", "in", {1, 1}, {{0, 0}, {0, 1}, {0, 2}});
-  auto blur_y = blur.func2d("blur_y", "blur_1_3_16", "blur_x", {1, 1}, {{0, 0}, {1, 0}, {2, 0}});
-  blur.realize("blur_y", 32, 32, 2);
+  //App blur;
+  //auto in = blur.func2d("in");
+  //auto blur_x = blur.func2d("blur_x", "blur_1_3_16", "in", {1, 1}, {{0, 0}, {0, 1}, {0, 2}});
+  //auto blur_y = blur.func2d("blur_y", "blur_1_3_16", "blur_x", {1, 1}, {{0, 0}, {1, 0}, {2, 0}});
+  //blur.realize("blur_y", 32, 32, 2);
 
-  assert(false);
+  //assert(false);
 
-  //prog prg;
-  //prg.compute_unit_file = "conv_3x3.h";
-  //prg.name = "soda_blur";
-  //prg.buffer_port_widths["I"] = 16;
-  //prg.buffer_port_widths["blur_x"] = 16;
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "soda_blur";
+  prg.buffer_port_widths["I"] = 16;
+  prg.buffer_port_widths["blur_x"] = 16;
 
-  //int unroll_factor = 2;
-  //for (int i = 0; i < unroll_factor; i++) {
-    //string in_name = "in_" + to_string(i);
-    //string out_name = "out_" + to_string(i);
+  int unroll_factor = 2;
+  for (int i = 0; i < unroll_factor; i++) {
+    string in_name = "in_" + to_string(i);
+    string out_name = "out_" + to_string(i);
 
-    //prg.buffer_port_widths[in_name] = 16;
-    //prg.add_input(in_name);
+    prg.buffer_port_widths[in_name] = 16;
+    prg.add_input(in_name);
   
-    //prg.buffer_port_widths[out_name] = 16;
-    //prg.add_output(out_name);
-  //}
+    prg.buffer_port_widths[out_name] = 16;
+    prg.add_output(out_name);
+  }
 
   //auto in_nest = prg.add_nest("ir", 0, 32, "ic", 0, 32 / unroll_factor);
   //for (int i = 0; i < unroll_factor; i++) {
     //string in_name = "in_" + to_string(i);
-    //in_nest->add_op({"I", "ir, " + to_string(unroll_factor) + "*ic + " + to_string(i)}, "id", {in_name, "ir, ic"});
+    //in_nest->add_op({"out_" + to_string(i), "ir, " + to_string(unroll_factor) + "*ic + " + to_string(i)}, "id", {in_name, "ir, ic"});
   //}
 
-  //auto blur_x_nest = 
-    //prg.add_nest("yr", 0, 32, "yc", 0, (32 - 2) / unroll_factor);
-  //for (int i = 0; i < unroll_factor; i++) {
-    //auto lds = prg.vector_load("I", "yr", 0, 1, to_string(unroll_factor) + "*yc + " + to_string(i), 0, 3);
-    //blur_x_nest->add_op({"blur_x", "yr, yc"}, "blur_3", lds);
-  //}
+  auto in_nest = prg.add_nest("ir", 0, 32, "ic", 0, 32 / unroll_factor);
+  for (int i = 0; i < unroll_factor; i++) {
+    string in_name = "in_" + to_string(i);
+    in_nest->add_op({"I", "ir, " + to_string(unroll_factor) + "*ic + " + to_string(i)}, "id", {in_name, "ir, ic"});
+  }
 
-  //auto blur_y_nest = 
-    //prg.add_nest("xr", 0, (32 - 2), "xc", 0, (32 - 2) / unroll_factor);
-  //for (int i = 0; i < unroll_factor; i++) {
+  auto blur_x_nest = 
+    prg.add_nest("yr", 0, 32, "yc", 0, (32 - 2) / unroll_factor);
+  for (int i = 0; i < unroll_factor; i++) {
+    auto lds = prg.vector_load("I", "yr", 0, 1, to_string(unroll_factor) + "*yc + " + to_string(i), 0, 3);
+
+    // Passes
     //string out_name = "out_" + to_string(i);
-    //auto lds0 = prg.vector_load("blur_x", "xr", 0, 3, to_string(unroll_factor) + "*xc + " + to_string(i), 0, 1);
-    //blur_y_nest->
-      //add_op({out_name, "xr, xc"}, "blur_3", lds0);
-  //}
+    //blur_x_nest->add_op({out_name, "yr, yc"}, "blur_3", lds);
+   
+    string is = to_string(i);
+    string uf = to_string(unroll_factor);
+    blur_x_nest->add_op({"blur_x", "yr, " + uf + "*yc + " + is}, "blur_3", lds);
+  }
 
-  //regression_test(prg);
-  //assert(false);
+  auto blur_y_nest = 
+    prg.add_nest("xr", 0, (32 - 2), "xc", 0, (32 - 2) / unroll_factor);
+  for (int i = 0; i < unroll_factor; i++) {
+    string is = to_string(i);
+    string uf = to_string(unroll_factor);
+
+    string out_name = "out_" + to_string(i);
+    auto lds0 = prg.vector_load("blur_x", "xr", 0, 3, to_string(unroll_factor) + "*xc + " + to_string(i), 0, 1);
+    blur_y_nest->
+      add_op({out_name, "xr, " + uf + "*xc + " + is}, "blur_3", lds0);
+  }
+
+  regression_test(prg);
+  assert(false);
 }
 
 void conv_2d_rolled_test() {
