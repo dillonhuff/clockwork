@@ -3518,27 +3518,128 @@ void gaussian_pyramid_test() {
   regression_test(prg);
 }
 
+struct Window {
+  string name;
+  vector<int> strides;
+  vector<vector<int> > offsets;
+};
+
+bool operator<(const Window& w0, const Window& w1) {
+  if (w0.name != w1.name) {
+    return false;
+  }
+  return true;
+}
+
+struct Result {
+  string compute_name;
+  set<Window> srcs;
+};
+
+struct App {
+
+  isl_ctx* ctx;
+  map<string, Result> app_dag;
+
+  App() {
+    ctx = isl_ctx_alloc();
+  }
+
+  ~App() {
+    isl_ctx_free(ctx);
+  }
+
+  string func2d(const std::string& name) {
+    app_dag[name] = {};
+    return name;
+  }
+
+  string func2d(const std::string& name, const string& compute, const string& arg, const vector<int>& strides, const vector<vector<int> >& offsets) {
+    Window w{arg, strides, offsets};
+    Result res{compute, {w}};
+    app_dag[name] = res;
+    return name;
+  }
+
+  void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
+    cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
+    uset* s =
+      isl_union_set_read_from_str(ctx, string("{ [d0, d1] : 0 <= d0 < " + to_string(d0) + " and 0 <= d1 < " + to_string(d1) + " }").c_str());
+    string n = name;
+    map<string, uset*> domains;
+    domains[n] = s;
+    cout << "Domain: " << str(s) << endl;
+
+    for (auto inputs : app_dag.at(name).srcs) {
+      cout << "Input: " << inputs.name << endl;
+
+      string ms = "{ [d0, d1] -> [s0, s1] : d0 <= s0 < d0 + 3 and d1 = s1 }";
+      umap* consumer_map =
+        isl_union_map_read_from_str(ctx, ms.c_str());
+      uset* in_elems =
+        range(its(consumer_map, s));
+      domains[inputs.name] = in_elems;
+      cout << "\tneeded elements: " << str(in_elems) << endl;
+    }
+
+    // First: Collect the transitive closure of all arguments with their domains
+    // Second: Compute naive schedules (with unrolling?)
+    //  - Critical question: If I unroll one loop by a bunch, what do I need to do to feed that loop?
+    //   
+  }
+
+};
+
 void soda_blur_test() {
-  prog prg;
-  prg.compute_unit_file = "conv_3x3.h";
-  prg.name = "soda_blur";
-  prg.add_input("in");
-  prg.add_output("out");
-  prg.buffer_port_widths["in"] = 16;
-  prg.buffer_port_widths["out"] = 16;
-  prg.buffer_port_widths["I"] = 16;
-  prg.buffer_port_widths["blur_x"] = 16;
+  App blur;
+  auto in = blur.func2d("in");
+  auto blur_x = blur.func2d("blur_x", "blur_1_3_16", "in", {1, 1}, {{0, 0}, {0, 1}, {0, 2}});
+  auto blur_y = blur.func2d("blur_y", "blur_1_3_16", "blur_x", {1, 1}, {{0, 0}, {1, 0}, {2, 0}});
+  blur.realize("blur_y", 32, 32, 2);
 
-  prg.add_nest("ir", 0, 32, "ic", 0, 32)->add_op({"I", "ir, ic"}, "id", {"in", "ir, ic"});
-  auto lds = prg.vector_load("I", "yr", 0, 1, "yc", 0, 3);
-  prg.add_nest("yr", 0, 32, "yc", 0, 32 - 2)->
-    add_op({"blur_x", "yr, yc"}, "blur_3", lds);
+  assert(false);
 
-  auto lds0 = prg.vector_load("blur_x", "xr", 0, 3, "xc", 0, 1);
-  prg.add_nest("xr", 0, 32 - 2, "xc", 0, 32 - 2)->
-    add_op({"out", "xr, xc"}, "blur_3", lds0);
+  //prog prg;
+  //prg.compute_unit_file = "conv_3x3.h";
+  //prg.name = "soda_blur";
+  //prg.buffer_port_widths["I"] = 16;
+  //prg.buffer_port_widths["blur_x"] = 16;
 
-  regression_test(prg);
+  //int unroll_factor = 2;
+  //for (int i = 0; i < unroll_factor; i++) {
+    //string in_name = "in_" + to_string(i);
+    //string out_name = "out_" + to_string(i);
+
+    //prg.buffer_port_widths[in_name] = 16;
+    //prg.add_input(in_name);
+  
+    //prg.buffer_port_widths[out_name] = 16;
+    //prg.add_output(out_name);
+  //}
+
+  //auto in_nest = prg.add_nest("ir", 0, 32, "ic", 0, 32 / unroll_factor);
+  //for (int i = 0; i < unroll_factor; i++) {
+    //string in_name = "in_" + to_string(i);
+    //in_nest->add_op({"I", "ir, " + to_string(unroll_factor) + "*ic + " + to_string(i)}, "id", {in_name, "ir, ic"});
+  //}
+
+  //auto blur_x_nest = 
+    //prg.add_nest("yr", 0, 32, "yc", 0, (32 - 2) / unroll_factor);
+  //for (int i = 0; i < unroll_factor; i++) {
+    //auto lds = prg.vector_load("I", "yr", 0, 1, to_string(unroll_factor) + "*yc + " + to_string(i), 0, 3);
+    //blur_x_nest->add_op({"blur_x", "yr, yc"}, "blur_3", lds);
+  //}
+
+  //auto blur_y_nest = 
+    //prg.add_nest("xr", 0, (32 - 2), "xc", 0, (32 - 2) / unroll_factor);
+  //for (int i = 0; i < unroll_factor; i++) {
+    //string out_name = "out_" + to_string(i);
+    //auto lds0 = prg.vector_load("blur_x", "xr", 0, 3, to_string(unroll_factor) + "*xc + " + to_string(i), 0, 1);
+    //blur_y_nest->
+      //add_op({out_name, "xr, xc"}, "blur_3", lds0);
+  //}
+
+  //regression_test(prg);
   //assert(false);
 }
 
