@@ -3539,6 +3539,7 @@ struct Result {
 struct App {
 
   isl_ctx* ctx;
+  set<string> functions;
   map<string, Result> app_dag;
 
   App() {
@@ -3550,12 +3551,58 @@ struct App {
   }
 
   string func2d(const std::string& name) {
+    functions.insert(name);
     app_dag[name] = {};
     return name;
   }
 
-  string func2d(const std::string& name, const string& compute, const string& arg, const vector<int>& strides, const vector<vector<int> >& offsets) {
+  string func2d(const std::string& name,
+      const string& compute,
+      const string& arg,
+      const vector<int>& strides,
+      const vector<vector<int> >& offsets) {
+
+    assert(strides.size() > 0);
+    int ndims = strides.size();
+    functions.insert(name);
+
     Window w{arg, strides, offsets};
+    vector<int> mins;
+    vector<int> maxs;
+    for (int i = 0; i < ndims; i++) {
+      mins.push_back(10000);
+      maxs.push_back(-1);
+    }
+
+    for (auto s : offsets) {
+      for (size_t d = 0; d < s.size(); d++) {
+        if (s[d] < mins[d]) {
+          mins[d] = s[d];
+        }
+        if (s[d] > maxs[d]) {
+          maxs[d] = s[d];
+        }
+      }
+    }
+
+    vector<string> box_strs;
+    vector<string> base_vars;
+    vector<string> arg_vars;
+    for (size_t i = 0; i < mins.size(); i++) {
+      string stride = to_string(strides[i]);
+      string base_var = "d" + to_string(i);
+      base_vars.push_back(base_var);
+      string kv = "k" + to_string(i);
+      arg_vars.push_back(kv);
+      int min = mins[i];
+      int max = maxs[i];
+      string base_expr = stride + "*" + base_var;
+      box_strs.push_back(base_expr + " + " + to_string(min) + " <= " + kv + " <= " + base_expr + " + " + to_string(max));
+    }
+    string box_cond = "{ " + sep_list(base_vars, "[", "]", ", ") + " -> " + sep_list(arg_vars, "[", "]", ", ") + " : " + sep_list(box_strs, "", "", " and ") + " }";
+    cout << "Box needed: " << box_cond << endl;
+    umap* m = isl_union_map_read_from_str(ctx, box_cond.c_str());
+    cout << "Map       : " << str(m) << endl;
     Result res{compute, {w}};
     app_dag[name] = res;
     return name;
@@ -3582,10 +3629,11 @@ struct App {
       cout << "\tneeded elements: " << str(in_elems) << endl;
     }
 
-    // First: Collect the transitive closure of all arguments with their domains
     // Second: Compute naive schedules (with unrolling?)
     //  - Critical question: If I unroll one loop by a bunch, what do I need to do to feed that loop?
-    //   
+    //  - Scheduling invariant: for a given kernel unrolled by N the data demands of moving from one
+    //    iteration of the inner loop of the kernel to the next must be met by a single iteration of
+    //    the inner loop of the producer?
   }
 
 };
