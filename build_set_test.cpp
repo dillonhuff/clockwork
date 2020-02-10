@@ -3522,6 +3522,7 @@ struct Window {
   string name;
   vector<int> strides;
   vector<vector<int> > offsets;
+  umap* needed;
 };
 
 bool operator<(const Window& w0, const Window& w1) {
@@ -3566,7 +3567,6 @@ struct App {
     int ndims = strides.size();
     functions.insert(name);
 
-    Window w{arg, strides, offsets};
     vector<int> mins;
     vector<int> maxs;
     for (int i = 0; i < ndims; i++) {
@@ -3603,6 +3603,7 @@ struct App {
     cout << "Box needed: " << box_cond << endl;
     umap* m = isl_union_map_read_from_str(ctx, box_cond.c_str());
     cout << "Map       : " << str(m) << endl;
+    Window w{arg, strides, offsets, m};
     Result res{compute, {w}};
     app_dag[name] = res;
     return name;
@@ -3617,16 +3618,24 @@ struct App {
     domains[n] = s;
     cout << "Domain: " << str(s) << endl;
 
-    for (auto inputs : app_dag.at(name).srcs) {
-      cout << "Input: " << inputs.name << endl;
+    set<string> search{n};
+    while (search.size() > 0) {
+      string next = pick(search);
+      search.erase(next);
 
-      string ms = "{ [d0, d1] -> [s0, s1] : d0 <= s0 < d0 + 3 and d1 = s1 }";
-      umap* consumer_map =
-        isl_union_map_read_from_str(ctx, ms.c_str());
-      uset* in_elems =
-        range(its(consumer_map, s));
-      domains[inputs.name] = in_elems;
-      cout << "\tneeded elements: " << str(in_elems) << endl;
+      for (auto inputs : app_dag.at(next).srcs) {
+        cout << "Data: " << inputs.name << " to " << next << endl;
+
+        //string ms = "{ [d0, d1] -> [s0, s1] : d0 <= s0 < d0 + 3 and d1 = s1 }";
+        auto domain = domains.at(next);
+        umap* consumer_map =
+          inputs.needed;
+        uset* in_elems =
+          range(its(consumer_map, domain));
+        domains[inputs.name] = in_elems;
+        cout << "\tneeded elements: " << str(in_elems) << endl;
+        search.insert(inputs.name);
+      }
     }
 
     // Second: Compute naive schedules (with unrolling?)
