@@ -176,6 +176,8 @@ class hw_uint {
     int to_int() {
       return val;
     }
+    
+    operator int() { return to_int(); }
 
 #else
 
