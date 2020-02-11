@@ -4,6 +4,13 @@
 
 template<typename T>
 static inline
+T plus_one(const T& val) {
+  T one(1);
+  return val + one;
+}
+
+template<typename T>
+static inline
 T id(const T& val) {
   return val;
 }
