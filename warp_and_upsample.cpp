@@ -2,7 +2,11 @@
 
 #include "hw_classes.h"
 
+<<<<<<< HEAD
 struct I_store_I_from_in_2_cache {
+=======
+struct I_store_I_from_in_12_cache {
+>>>>>>> origin/master
 	// Capacity: 131
 	// Parition [0, 1) capacity = 1
 	fifo<int, 1> f0;
@@ -137,6 +141,7 @@ struct I_store_I_from_in_2_cache {
 
 
 
+<<<<<<< HEAD
 inline void I_store_I_from_in_2_write(int& I_store_I_from_in_2, I_store_I_from_in_2_cache& I_store_I_from_in_2_delay) {
 	I_store_I_from_in_2_delay.push(I_store_I_from_in_2);
 }
@@ -194,11 +199,19 @@ inline int I_warped_0_conv_3_30_13_select(I_store_I_from_in_2_cache& I_store_I_f
 }
 
 inline int I_warped_0_conv_3_30_5_select(I_store_I_from_in_2_cache& I_store_I_from_in_2_delay
+=======
+inline void I_store_I_from_in_12_write(int& I_store_I_from_in_12, I_store_I_from_in_12_cache& I_store_I_from_in_12_delay) {
+	I_store_I_from_in_12_delay.push(I_store_I_from_in_12);
+}
+
+inline int I_warped_0_conv_3_30_1_select(I_store_I_from_in_12_cache& I_store_I_from_in_12_delay
+>>>>>>> origin/master
 , int root, int br, int bc) {
 // Pieces...
 // { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 130 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
+<<<<<<< HEAD
 <<<<<<< HEAD
 	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek_130();
 	return value_I_store_I_from_in_2;
@@ -209,11 +222,19 @@ inline int I_warped_0_conv_3_30_5_select(I_store_I_from_in_2_cache& I_store_I_fr
 }
 
 inline int I_warped_0_conv_3_30_6_select(I_store_I_from_in_2_cache& I_store_I_from_in_2_delay
+=======
+	int value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_130();
+	return value_I_store_I_from_in_12;
+}
+
+inline int I_warped_0_conv_3_30_2_select(I_store_I_from_in_12_cache& I_store_I_from_in_12_delay
+>>>>>>> origin/master
 , int root, int br, int bc) {
 // Pieces...
 // { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 129 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
+<<<<<<< HEAD
 <<<<<<< HEAD
 	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek_129();
 	return value_I_store_I_from_in_2;
@@ -224,6 +245,13 @@ inline int I_warped_0_conv_3_30_6_select(I_store_I_from_in_2_cache& I_store_I_fr
 }
 
 inline int I_warped_0_conv_3_30_7_select(I_store_I_from_in_2_cache& I_store_I_from_in_2_delay
+=======
+	int value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_129();
+	return value_I_store_I_from_in_12;
+}
+
+inline int I_warped_0_conv_3_30_3_select(I_store_I_from_in_12_cache& I_store_I_from_in_12_delay
+>>>>>>> origin/master
 , int root, int br, int bc) {
 // Pieces...
 // { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 60 } -> { warped_0_conv_3_30[root, br, bc] -> 128 }
@@ -231,6 +259,7 @@ inline int I_warped_0_conv_3_30_7_select(I_store_I_from_in_2_cache& I_store_I_fr
 // { warped_0_conv_3_30[root = 0, br, bc = 61] : 0 <= br <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> (67 + bc) }
 // 	is always true on iteration domain: 0
 //	is optimizable constant: 1
+<<<<<<< HEAD
 <<<<<<< HEAD
 	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek_128();
 	return value_I_store_I_from_in_2;
@@ -241,11 +270,19 @@ inline int I_warped_0_conv_3_30_7_select(I_store_I_from_in_2_cache& I_store_I_fr
 }
 
 inline int I_warped_0_conv_3_30_8_select(I_store_I_from_in_2_cache& I_store_I_from_in_2_delay
+=======
+	int value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_128();
+	return value_I_store_I_from_in_12;
+}
+
+inline int I_warped_0_conv_3_30_4_select(I_store_I_from_in_12_cache& I_store_I_from_in_12_delay
+>>>>>>> origin/master
 , int root, int br, int bc) {
 // Pieces...
 // { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 66 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
+<<<<<<< HEAD
 <<<<<<< HEAD
 	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek_66();
 	return value_I_store_I_from_in_2;
@@ -256,20 +293,32 @@ inline int I_warped_0_conv_3_30_8_select(I_store_I_from_in_2_cache& I_store_I_fr
 }
 
 inline int I_warped_0_conv_3_30_9_select(I_store_I_from_in_2_cache& I_store_I_from_in_2_delay
+=======
+	int value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_66();
+	return value_I_store_I_from_in_12;
+}
+
+inline int I_warped_0_conv_3_30_5_select(I_store_I_from_in_12_cache& I_store_I_from_in_12_delay
+>>>>>>> origin/master
 , int root, int br, int bc) {
 // Pieces...
 // { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 65 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
 <<<<<<< HEAD
+<<<<<<< HEAD
 	int value_I_store_I_from_in_2 = I_store_I_from_in_2_delay.peek_65();
 	return value_I_store_I_from_in_2;
 =======
 	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_65();
 	return value_I_store_I_from_in_0;
+=======
+	int value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_65();
+	return value_I_store_I_from_in_12;
+>>>>>>> origin/master
 }
 
-inline int I_warped_0_conv_3_30_8_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
+inline int I_warped_0_conv_3_30_6_select(I_store_I_from_in_12_cache& I_store_I_from_in_12_delay
 , int root, int br, int bc) {
 // Pieces...
 // { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 60 } -> { warped_0_conv_3_30[root, br, bc] -> 64 }
@@ -277,34 +326,72 @@ inline int I_warped_0_conv_3_30_8_select(I_store_I_from_in_0_cache& I_store_I_fr
 // { warped_0_conv_3_30[root = 0, br, bc = 61] : 0 <= br <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> (3 + bc) }
 // 	is always true on iteration domain: 0
 //	is optimizable constant: 1
-	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_64();
-	return value_I_store_I_from_in_0;
+	int value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_64();
+	return value_I_store_I_from_in_12;
 }
 
-inline int I_warped_0_conv_3_30_9_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
+inline int I_warped_0_conv_3_30_7_select(I_store_I_from_in_12_cache& I_store_I_from_in_12_delay
 , int root, int br, int bc) {
 // Pieces...
 // { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 2 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
+<<<<<<< HEAD
 	int value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_2();
 	return value_I_store_I_from_in_0;
+>>>>>>> origin/master
+=======
+	int value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_2();
+	return value_I_store_I_from_in_12;
+}
+
+inline int I_warped_0_conv_3_30_8_select(I_store_I_from_in_12_cache& I_store_I_from_in_12_delay
+, int root, int br, int bc) {
+// Pieces...
+// { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 1 }
+// 	is always true on iteration domain: 1
+//	is optimizable constant: 1
+	int value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_1();
+	return value_I_store_I_from_in_12;
+}
+
+inline int I_warped_0_conv_3_30_9_select(I_store_I_from_in_12_cache& I_store_I_from_in_12_delay
+, int root, int br, int bc) {
+// Pieces...
+// Always 0
+//	is optimizable constant: 0
+	int value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_0();
+	return value_I_store_I_from_in_12;
 >>>>>>> origin/master
 }
 
 // Bundles...
 // store_I_from_in_write
+<<<<<<< HEAD
 //	I_store_I_from_in_2
 inline void I_store_I_from_in_write_bundle_write(int& /* width = 32*/store_I_from_in_write, I_store_I_from_in_2_cache& I_store_I_from_in_2_delay) {
 	I_store_I_from_in_2_write(store_I_from_in_write, I_store_I_from_in_2_delay);
 }
 
 // warped_0_conv_3_30_read
+=======
+//	I_store_I_from_in_12
+inline void I_store_I_from_in_write_bundle_write(int& /* width = 32*/store_I_from_in_write, I_store_I_from_in_12_cache& I_store_I_from_in_12_delay) {
+	I_store_I_from_in_12_write(store_I_from_in_write, I_store_I_from_in_12_delay);
+}
+
+// warped_0_conv_3_30_read
+//	I_warped_0_conv_3_30_1
+//	I_warped_0_conv_3_30_2
+//	I_warped_0_conv_3_30_3
+//	I_warped_0_conv_3_30_4
+>>>>>>> origin/master
 //	I_warped_0_conv_3_30_5
 //	I_warped_0_conv_3_30_6
 //	I_warped_0_conv_3_30_7
 //	I_warped_0_conv_3_30_8
 //	I_warped_0_conv_3_30_9
+<<<<<<< HEAD
 //	I_warped_0_conv_3_30_10
 //	I_warped_0_conv_3_30_11
 //	I_warped_0_conv_3_30_12
@@ -329,6 +416,28 @@ inline hw_uint<288> I_warped_0_conv_3_30_read_bundle_read(I_store_I_from_in_2_ca
 	set_at<224, 288>(result, I_warped_0_conv_3_30_12_res);
 	int I_warped_0_conv_3_30_13_res = I_warped_0_conv_3_30_13_select(I_store_I_from_in_2_delay, root, br, bc);
 	set_at<256, 288>(result, I_warped_0_conv_3_30_13_res);
+=======
+inline hw_uint<288> I_warped_0_conv_3_30_read_bundle_read(I_store_I_from_in_12_cache& I_store_I_from_in_12_delay, int root, int br, int bc) {
+	hw_uint<288> result;
+	int I_warped_0_conv_3_30_1_res = I_warped_0_conv_3_30_1_select(I_store_I_from_in_12_delay, root, br, bc);
+	set_at<0, 288>(result, I_warped_0_conv_3_30_1_res);
+	int I_warped_0_conv_3_30_2_res = I_warped_0_conv_3_30_2_select(I_store_I_from_in_12_delay, root, br, bc);
+	set_at<32, 288>(result, I_warped_0_conv_3_30_2_res);
+	int I_warped_0_conv_3_30_3_res = I_warped_0_conv_3_30_3_select(I_store_I_from_in_12_delay, root, br, bc);
+	set_at<64, 288>(result, I_warped_0_conv_3_30_3_res);
+	int I_warped_0_conv_3_30_4_res = I_warped_0_conv_3_30_4_select(I_store_I_from_in_12_delay, root, br, bc);
+	set_at<96, 288>(result, I_warped_0_conv_3_30_4_res);
+	int I_warped_0_conv_3_30_5_res = I_warped_0_conv_3_30_5_select(I_store_I_from_in_12_delay, root, br, bc);
+	set_at<128, 288>(result, I_warped_0_conv_3_30_5_res);
+	int I_warped_0_conv_3_30_6_res = I_warped_0_conv_3_30_6_select(I_store_I_from_in_12_delay, root, br, bc);
+	set_at<160, 288>(result, I_warped_0_conv_3_30_6_res);
+	int I_warped_0_conv_3_30_7_res = I_warped_0_conv_3_30_7_select(I_store_I_from_in_12_delay, root, br, bc);
+	set_at<192, 288>(result, I_warped_0_conv_3_30_7_res);
+	int I_warped_0_conv_3_30_8_res = I_warped_0_conv_3_30_8_select(I_store_I_from_in_12_delay, root, br, bc);
+	set_at<224, 288>(result, I_warped_0_conv_3_30_8_res);
+	int I_warped_0_conv_3_30_9_res = I_warped_0_conv_3_30_9_select(I_store_I_from_in_12_delay, root, br, bc);
+	set_at<256, 288>(result, I_warped_0_conv_3_30_9_res);
+>>>>>>> origin/master
 	return result;
 }
 
@@ -336,7 +445,11 @@ inline hw_uint<288> I_warped_0_conv_3_30_read_bundle_read(I_store_I_from_in_2_ca
 
 #include "hw_classes.h"
 
+<<<<<<< HEAD
 struct warped_0_warped_0_conv_3_30_4_cache {
+=======
+struct warped_0_warped_0_conv_3_30_0_cache {
+>>>>>>> origin/master
 	// Capacity: 62
 	fifo<int, 62> f;
 	inline int peek(const int offset) {
@@ -604,16 +717,25 @@ struct warped_0_warped_0_conv_3_30_4_cache {
 
 
 
+<<<<<<< HEAD
 inline void warped_0_warped_0_conv_3_30_4_write(int& warped_0_warped_0_conv_3_30_4, warped_0_warped_0_conv_3_30_4_cache& warped_0_warped_0_conv_3_30_4_delay) {
 	warped_0_warped_0_conv_3_30_4_delay.push(warped_0_warped_0_conv_3_30_4);
 }
 
 inline int warped_0_out_id0_1_select(warped_0_warped_0_conv_3_30_4_cache& warped_0_warped_0_conv_3_30_4_delay
+=======
+inline void warped_0_warped_0_conv_3_30_0_write(int& warped_0_warped_0_conv_3_30_0, warped_0_warped_0_conv_3_30_0_cache& warped_0_warped_0_conv_3_30_0_delay) {
+	warped_0_warped_0_conv_3_30_0_delay.push(warped_0_warped_0_conv_3_30_0);
+}
+
+inline int warped_0_out_id0_11_select(warped_0_warped_0_conv_3_30_0_cache& warped_0_warped_0_conv_3_30_0_delay
+>>>>>>> origin/master
 , int root, int ur, int kr, int uc, int kc) {
 // Pieces...
 // { out_id0[root = 0, ur, kr = 1, uc, kc] : 0 <= ur <= 61 and 0 <= uc <= 60 and 0 <= kc <= 1 } -> { out_id0[root, ur, kr, uc, kc] -> (61 - uc) }
 // 	is always true on iteration domain: 0
 //	is optimizable constant: 0
+<<<<<<< HEAD
 <<<<<<< HEAD
 	int value_warped_0_warped_0_conv_3_30_4 = warped_0_warped_0_conv_3_30_4_delay.peek(((-1 + kr == 0 && root == 0 && ur >= 0 && 61 - ur >= 0 && uc >= 0 && 60 - uc >= 0 && kc >= 0 && 1 - kc >= 0) ? ((61 - uc)) : 0));
 	return value_warped_0_warped_0_conv_3_30_4;
@@ -621,22 +743,40 @@ inline int warped_0_out_id0_1_select(warped_0_warped_0_conv_3_30_4_cache& warped
 	int value_warped_0_warped_0_conv_3_30_2 = warped_0_warped_0_conv_3_30_2_delay.peek(((-1 + kr == 0 && root == 0 && ur >= 0 && 61 - ur >= 0 && uc >= 0 && 60 - uc >= 0 && kc >= 0 && 1 - kc >= 0) ? ((61 - uc)) : 0));
 	return value_warped_0_warped_0_conv_3_30_2;
 >>>>>>> origin/master
+=======
+	int value_warped_0_warped_0_conv_3_30_0 = warped_0_warped_0_conv_3_30_0_delay.peek(((-1 + kr == 0 && root == 0 && ur >= 0 && 61 - ur >= 0 && uc >= 0 && 60 - uc >= 0 && kc >= 0 && 1 - kc >= 0) ? ((61 - uc)) : 0));
+	return value_warped_0_warped_0_conv_3_30_0;
+>>>>>>> origin/master
 }
 
 // Bundles...
 // out_id0_read
+<<<<<<< HEAD
 //	warped_0_out_id0_1
 inline int warped_0_out_id0_read_bundle_read(warped_0_warped_0_conv_3_30_4_cache& warped_0_warped_0_conv_3_30_4_delay, int root, int ur, int kr, int uc, int kc) {
 	int result;
 	int warped_0_out_id0_1_res = warped_0_out_id0_1_select(warped_0_warped_0_conv_3_30_4_delay, root, ur, kr, uc, kc);
 	set_at<0, 32>(result, warped_0_out_id0_1_res);
+=======
+//	warped_0_out_id0_11
+inline int warped_0_out_id0_read_bundle_read(warped_0_warped_0_conv_3_30_0_cache& warped_0_warped_0_conv_3_30_0_delay, int root, int ur, int kr, int uc, int kc) {
+	int result;
+	int warped_0_out_id0_11_res = warped_0_out_id0_11_select(warped_0_warped_0_conv_3_30_0_delay, root, ur, kr, uc, kc);
+	set_at<0, 32>(result, warped_0_out_id0_11_res);
+>>>>>>> origin/master
 	return result;
 }
 
 // warped_0_conv_3_30_write
+<<<<<<< HEAD
 //	warped_0_warped_0_conv_3_30_4
 inline void warped_0_warped_0_conv_3_30_write_bundle_write(int& /* width = 32*/warped_0_conv_3_30_write, warped_0_warped_0_conv_3_30_4_cache& warped_0_warped_0_conv_3_30_4_delay) {
 	warped_0_warped_0_conv_3_30_4_write(warped_0_conv_3_30_write, warped_0_warped_0_conv_3_30_4_delay);
+=======
+//	warped_0_warped_0_conv_3_30_0
+inline void warped_0_warped_0_conv_3_30_write_bundle_write(int& /* width = 32*/warped_0_conv_3_30_write, warped_0_warped_0_conv_3_30_0_cache& warped_0_warped_0_conv_3_30_0_delay) {
+	warped_0_warped_0_conv_3_30_0_write(warped_0_conv_3_30_write, warped_0_warped_0_conv_3_30_0_delay);
+>>>>>>> origin/master
 }
 
 
@@ -644,6 +784,7 @@ inline void warped_0_warped_0_conv_3_30_write_bundle_write(int& /* width = 32*/w
 
 
 // Operation logic
+<<<<<<< HEAD
 inline void out_id0(warped_0_warped_0_conv_3_30_4_cache& warped_0_warped_0_conv_3_30_4, HWStream<int>& out, int root, int ur, int kr, int uc, int kc) {
 	// Consume: warped_0
 	auto warped_0_ur_c__uc_value = warped_0_out_id0_read_bundle_read(warped_0_warped_0_conv_3_30_4/* source_delay */, root, ur, kr, uc, kc);
@@ -668,6 +809,11 @@ inline void store_I_from_in(HWStream<int>& in, I_store_I_from_in_2_cache& I_stor
 inline void warped_0_conv_3_30(I_store_I_from_in_2_cache& I_store_I_from_in_2, warped_0_warped_0_conv_3_30_4_cache& warped_0_warped_0_conv_3_30_4, int root, int br, int bc) {
 	// Consume: I
 	auto I_br__p__0_c__bc__p__0_value = I_warped_0_conv_3_30_read_bundle_read(I_store_I_from_in_2/* source_delay */, root, br, bc);
+=======
+inline void warped_0_conv_3_30(I_store_I_from_in_12_cache& I_store_I_from_in_12, warped_0_warped_0_conv_3_30_0_cache& warped_0_warped_0_conv_3_30_0, int root, int br, int bc) {
+	// Consume: I
+	auto I_br__p__0_c__bc__p__0_value = I_warped_0_conv_3_30_read_bundle_read(I_store_I_from_in_12/* source_delay */, root, br, bc);
+>>>>>>> origin/master
 	// Apply function: conv_3_3
 	// Arg: I_br__p__0_c__bc__p__0_value
 	// Arg buf: I
@@ -691,24 +837,61 @@ inline void warped_0_conv_3_30(I_store_I_from_in_2_cache& I_store_I_from_in_2, w
 	// Produce: warped_0
 	// Buffer: warped_0, Op: warped_0_conv_3_30
 	// Possible ports...
+<<<<<<< HEAD
 		// warped_0_warped_0_conv_3_30_4
 	warped_0_warped_0_conv_3_30_write_bundle_write(compute_result, warped_0_warped_0_conv_3_30_4 /* output src_delay */);
+=======
+		// warped_0_warped_0_conv_3_30_0
+	warped_0_warped_0_conv_3_30_write_bundle_write(compute_result, warped_0_warped_0_conv_3_30_0 /* output src_delay */);
+}
+
+inline void out_id0(warped_0_warped_0_conv_3_30_0_cache& warped_0_warped_0_conv_3_30_0, HWStream<int >& out, int root, int ur, int kr, int uc, int kc) {
+	// Consume: warped_0
+	auto warped_0_ur_c__uc_value = warped_0_out_id0_read_bundle_read(warped_0_warped_0_conv_3_30_0/* source_delay */, root, ur, kr, uc, kc);
+	// Apply function: id
+	// Arg: warped_0_ur_c__uc_value
+	// Arg buf: warped_0
+	auto compute_result = id(warped_0_ur_c__uc_value);
+	// Produce: out
+	out.write(compute_result);
+>>>>>>> origin/master
+}
+
+inline void store_I_from_in(HWStream<int >& in, I_store_I_from_in_12_cache& I_store_I_from_in_12, int root, int pr, int pc) {
+	// Consume: in
+	auto in_pr_c__pc_value = in.read();
+	// Produce: I
+	// Buffer: I, Op: store_I_from_in
+	// Possible ports...
+		// I_store_I_from_in_12
+	I_store_I_from_in_write_bundle_write(in_pr_c__pc_value, I_store_I_from_in_12 /* output src_delay */);
 }
 
 // Driver function
+<<<<<<< HEAD
 void warp_and_upsample(HWStream<int>& in, HWStream<int>& out) {
 	I_store_I_from_in_2_cache I_store_I_from_in_2;
 	warped_0_warped_0_conv_3_30_4_cache warped_0_warped_0_conv_3_30_4;
 #pragma HLS dependence array inter false
+=======
+void warp_and_upsample(HWStream<int >& in, HWStream<int >& out) {
+	I_store_I_from_in_12_cache I_store_I_from_in_12;
+	warped_0_warped_0_conv_3_30_0_cache warped_0_warped_0_conv_3_30_0;
+>>>>>>> origin/master
 	for (int c0 = 0; c0 <= 63; c0 += 1) {
 	  if (c0 >= 2) {
 	    for (int c1 = 0; c1 <= 1; c1 += 1) {
 	      if (c1 == 0)
 	        for (int c2 = 0; c2 <= 1; c2 += 1)
+<<<<<<< HEAD
 	          store_I_from_in(in, I_store_I_from_in_2, 0, c0, c2);
+=======
+	          store_I_from_in(in, I_store_I_from_in_12, 0, c0, c2);
+>>>>>>> origin/master
 	      for (int c2 = 2; c2 <= 63; c2 += 1) {
 #pragma HLS pipeline
 	        if (c1 == 0) {
+<<<<<<< HEAD
 	          store_I_from_in(in, I_store_I_from_in_2, 0, c0, c2);
 	          warped_0_conv_3_30(I_store_I_from_in_2, warped_0_warped_0_conv_3_30_4, 0, c0 - 2, c2 - 2);
 	        }
@@ -720,6 +903,18 @@ void warp_and_upsample(HWStream<int>& in, HWStream<int>& out) {
       for (int c2 = 0; c2 <= 63; c2 += 1)
 #pragma HLS pipeline
         store_I_from_in(in, I_store_I_from_in_2, 0, c0, c2);
+=======
+	          store_I_from_in(in, I_store_I_from_in_12, 0, c0, c2);
+	          warped_0_conv_3_30(I_store_I_from_in_12, warped_0_warped_0_conv_3_30_0, 0, c0 - 2, c2 - 2);
+	        }
+	        for (int c3 = 0; c3 <= 1; c3 += 1)
+	          out_id0(warped_0_warped_0_conv_3_30_0, out, 0, c0 - 2, c1, c2 - 2, c3);
+	      }
+	    }
+	  } else {
+	    for (int c2 = 0; c2 <= 63; c2 += 1)
+	      store_I_from_in(in, I_store_I_from_in_12, 0, c0, c2);
+>>>>>>> origin/master
 	  }
 	}
 	
