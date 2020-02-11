@@ -1893,6 +1893,7 @@ struct prog {
     }
     return conv_loads;
   }
+
   vector<string> vector_load(const std::string& img, const std::string& rbase, const int ro, const int re,
       const std::string& cbase, const int co, const int ce) {
     vector<string> conv_loads;
@@ -1900,6 +1901,21 @@ struct prog {
       for (int c = co; c < ce; c++) {
         conv_loads.push_back(img);
         conv_loads.push_back(rbase + " + " + to_string(r) + ", " + cbase + " + " + to_string(c));
+      }
+    }
+    return conv_loads;
+  }
+
+  vector<string> vector_load(const std::string& img, const std::string& rbase, const int ro, const int re,
+      const std::string& cbase, const int co, const int ce,
+      const std::string& bbase, const int bo, const int be) {
+    vector<string> conv_loads;
+    for (int r = ro; r < re; r++) {
+      for (int c = co; c < ce; c++) {
+        for (int b = bo; b < be; b++) {
+          conv_loads.push_back(img);
+          conv_loads.push_back(rbase + " + " + to_string(r) + ", " + cbase + " + " + to_string(c) + ", " + bbase + " + " + to_string(b));
+        }
       }
     }
     return conv_loads;
@@ -2333,10 +2349,10 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
   vector<string> args;
   for (auto& b : prg.ins) {
     assert(contains_key(b, buffers));
-    args.push_back("HWStream<" + buffers.at(b).port_type_string() + ">& " + b);
+    args.push_back("HWStream<" + buffers.at(b).port_type_string() + " >& " + b);
   }
   for (auto& b : prg.outs) {
-    args.push_back("HWStream<" + prg.buffer_element_type_string(b) + ">& " + b);
+    args.push_back("HWStream<" + prg.buffer_element_type_string(b) + " >& " + b);
   }
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
@@ -2355,7 +2371,7 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
       auto buf_name = p.first;
       if (!elem(buf_name, done)) {
         if (prg.is_boundary(buf_name)) {
-          buf_srcs.push_back("HWStream<" + map_find(buf_name, buffers).port_type_string() + ">& " + buf_name);
+          buf_srcs.push_back("HWStream<" + map_find(buf_name, buffers).port_type_string() + " >& " + buf_name);
         } else {
           UBuffer& b = buffers.at(buf_name);
           for (auto ib : b.get_in_ports()) {
@@ -2369,7 +2385,7 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
       auto buf_name = p.first;
       if (!elem(buf_name, done)) {
         if (prg.is_boundary(buf_name)) {
-          buf_srcs.push_back("HWStream<" + map_find(buf_name, buffers).port_type_string() + ">& " + buf_name);
+          buf_srcs.push_back("HWStream<" + map_find(buf_name, buffers).port_type_string() + " >& " + buf_name);
         } else {
           UBuffer& b = buffers.at(buf_name);
           for (auto ib : b.get_in_ports()) {
@@ -3651,14 +3667,38 @@ struct App {
 
 };
 
-void soda_blur_test() {
-  //App blur;
-  //auto in = blur.func2d("in");
-  //auto blur_x = blur.func2d("blur_x", "blur_1_3_16", "in", {1, 1}, {{0, 0}, {0, 1}, {0, 2}});
-  //auto blur_y = blur.func2d("blur_y", "blur_1_3_16", "blur_x", {1, 1}, {{0, 0}, {1, 0}, {2, 0}});
-  //blur.realize("blur_y", 32, 32, 2);
+void stencil_3d_test() {
 
-  //assert(false);
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "stencil_3d";
+  prg.buffer_port_widths["I"] = 16;
+  prg.buffer_port_widths["blur_x"] = 16;
+
+  string in_name = "in";
+  string out_name = "out";
+
+  prg.buffer_port_widths[in_name] = 16;
+  prg.add_input(in_name);
+
+  prg.buffer_port_widths[out_name] = 16;
+  prg.add_output(out_name);
+
+  auto in_nest = prg.add_nest("ir", 0, 32, "ic", 0, 32, "ib", 0, 32);
+  in_nest->add_op({"I", "ir, ic, ib"}, "id", {in_name, "ir, ic, ib"});
+
+  auto blur_y_nest = 
+    prg.add_nest("xr", 0, (32 - 2), "xc", 0, (32 - 2), "xb", 0, (32 - 2));
+  auto lds0 = prg.vector_load("I", "xr", 0, 3, "xc", 0, 3, "xb", 0, 3);
+  blur_y_nest->
+    add_op({out_name, "xr, xc, xb"}, "blur_27", lds0);
+
+
+  regression_test(prg);
+  assert(false);
+}
+
+void soda_blur_test() {
 
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
@@ -3677,47 +3717,49 @@ void soda_blur_test() {
     prg.buffer_port_widths[out_name] = 16;
     prg.add_output(out_name);
   }
-
-  //auto in_nest = prg.add_nest("ir", 0, 32, "ic", 0, 32 / unroll_factor);
-  //for (int i = 0; i < unroll_factor; i++) {
-    //string in_name = "in_" + to_string(i);
-    //in_nest->add_op({"out_" + to_string(i), "ir, " + to_string(unroll_factor) + "*ic + " + to_string(i)}, "id", {in_name, "ir, ic"});
-  //}
-
+  
   auto in_nest = prg.add_nest("ir", 0, 32, "ic", 0, 32 / unroll_factor);
   for (int i = 0; i < unroll_factor; i++) {
     string in_name = "in_" + to_string(i);
     in_nest->add_op({"I", "ir, " + to_string(unroll_factor) + "*ic + " + to_string(i)}, "id", {in_name, "ir, ic"});
   }
 
-  auto blur_x_nest = 
-    prg.add_nest("yr", 0, 32, "yc", 0, (32 - 2) / unroll_factor);
-  for (int i = 0; i < unroll_factor; i++) {
-    auto lds = prg.vector_load("I", "yr", 0, 1, to_string(unroll_factor) + "*yc + " + to_string(i), 0, 3);
-
-    // Passes
-    //string out_name = "out_" + to_string(i);
-    //blur_x_nest->add_op({out_name, "yr, yc"}, "blur_3", lds);
-   
-    string is = to_string(i);
-    string uf = to_string(unroll_factor);
-    blur_x_nest->add_op({"blur_x", "yr, " + uf + "*yc + " + is}, "blur_3", lds);
-  }
-
   auto blur_y_nest = 
-    prg.add_nest("xr", 0, (32 - 2), "xc", 0, (32 - 2) / unroll_factor);
+    prg.add_nest("xr", 0, (32 - 2), "xc", 0, (32) / unroll_factor);
   for (int i = 0; i < unroll_factor; i++) {
     string is = to_string(i);
     string uf = to_string(unroll_factor);
 
     string out_name = "out_" + to_string(i);
-    auto lds0 = prg.vector_load("blur_x", "xr", 0, 3, to_string(unroll_factor) + "*xc + " + to_string(i), 0, 1);
+    auto lds0 = prg.vector_load("I", "xr", 0, 3, to_string(unroll_factor) + "*xc + " + to_string(i), 0, 1);
     blur_y_nest->
       add_op({out_name, "xr, " + uf + "*xc + " + is}, "blur_3", lds0);
   }
 
+  //auto blur_x_nest = 
+    //prg.add_nest("yr", 0, 32, "yc", 0, (32 - 2) / unroll_factor);
+  //for (int i = 0; i < unroll_factor; i++) {
+    //auto lds = prg.vector_load("I", "yr", 0, 1, to_string(unroll_factor) + "*yc + " + to_string(i), 0, 3);
+
+    //string is = to_string(i);
+    //string uf = to_string(unroll_factor);
+    //blur_x_nest->add_op({"blur_x", "yr, " + uf + "*yc + " + is}, "blur_3", lds);
+  //}
+
+  //auto blur_y_nest = 
+    //prg.add_nest("xr", 0, (32 - 2), "xc", 0, (32 - 2) / unroll_factor);
+  //for (int i = 0; i < unroll_factor; i++) {
+    //string is = to_string(i);
+    //string uf = to_string(unroll_factor);
+
+    //string out_name = "out_" + to_string(i);
+    //auto lds0 = prg.vector_load("blur_x", "xr", 0, 3, to_string(unroll_factor) + "*xc + " + to_string(i), 0, 1);
+    //blur_y_nest->
+      //add_op({out_name, "xr, " + uf + "*xc + " + is}, "blur_3", lds0);
+  //}
+
   regression_test(prg);
-  assert(false);
+  //assert(false);
 }
 
 void conv_2d_rolled_test() {
@@ -3932,6 +3974,7 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
 
+    stencil_3d_test();
     soda_blur_test();
     conv_2d_rolled_test();
     two_in_window_test();
