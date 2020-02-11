@@ -2198,19 +2198,37 @@ struct prog {
   }
 
   isl_schedule* optimized_schedule() {
-    umap* naive_sched = unoptimized_schedule();
-    auto before = lex_lt(naive_sched, naive_sched);
     auto domain = whole_iteration_domain();
-    auto writes =
-      its(producer_map(), domain);
-    auto reads =
-      its(consumer_map(), domain);
 
     isl_union_map *validity = validity_deps();
     isl_union_map *proximity =
       cpy(validity);
 
+    cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
     isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+
+    cout << endl;
+    cout << "Result: " << str(sched) << endl;
+
+    // New scheduling algorithm: Build schedule tree
+
+    //isl_schedule_constraints *sc;
+    //sc = isl_schedule_constraints_on_domain(cpy(domain));
+    //sc = isl_schedule_constraints_set_validity(sc, cpy(validity));
+    //sc = isl_schedule_constraints_set_proximity(sc, cpy(proximity));
+
+
+    //isl_schedule *mysched;
+    //isl_schedule_node *node =
+      //isl_schedule_node_from_domain(cpy(domain));
+    //node = isl_schedule_node_child(node, 0);
+    //mysched = isl_schedule_node_get_schedule(node);
+
+
+
+    //cout << "My schedule..." << str(mysched) << endl;
+    //assert(false);
+
     return sched;
   }
 
@@ -2219,8 +2237,6 @@ struct prog {
     
     isl_schedule* sched = optimized_schedule();
     auto schedmap = its(isl_schedule_get_map(sched), domain);
-    //cout << "Optimized schedule..." << endl;
-    //cout << codegen_c(schedmap);
     return schedmap;
   }
 
@@ -3667,6 +3683,35 @@ struct App {
 
 };
 
+void pointwise_test() {
+
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "pointwise";
+  prg.buffer_port_widths["I"] = 16;
+
+  string in_name = "in";
+  string out_name = "out";
+
+  prg.buffer_port_widths[in_name] = 16;
+  prg.add_input(in_name);
+
+  prg.buffer_port_widths[out_name] = 16;
+  prg.add_output(out_name);
+
+  auto in_nest = prg.add_nest("id1", 0, 32, "id0", 0, 8);
+  in_nest->add_op({"I", "id0, id1"}, "id", {in_name, "id0, id1"});
+
+  auto blur_y_nest = 
+    prg.add_nest("d1", 0, 32, "d0", 0, 8);
+  blur_y_nest->
+    add_op({out_name, "d0, d1"}, "plus_one", {"I", "d0, d1"});
+
+
+  regression_test(prg);
+  assert(false);
+}
+
 void stencil_3d_test() {
 
   prog prg;
@@ -3694,8 +3739,10 @@ void stencil_3d_test() {
     add_op({out_name, "xr, xc, xb"}, "blur_27", lds0);
 
 
+  // How do I want to schedule things?
+  //  - Using a single loop nest over input pixels giving each pixel
+  //    a time?
   regression_test(prg);
-  assert(false);
 }
 
 void soda_blur_test() {
@@ -3973,7 +4020,7 @@ int main(int argc, char** argv) {
     assert(false);
 
   } else if (argc == 1) {
-
+    pointwise_test();
     stencil_3d_test();
     soda_blur_test();
     conv_2d_rolled_test();
