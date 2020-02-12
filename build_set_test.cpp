@@ -766,7 +766,7 @@ void generate_vivado_tcl(std::string& name) {
 
   of << "open_project -reset " << name << "_proj" << endl;
   of << "set_top " << name << endl;
-  of << "add_files -cflags \"-std=c++11 -D__VIVADO_SYNTH__\" " + name + ".cpp" << endl;
+  of << "add_files -cflags \"-I ../../ -std=c++11 -D__VIVADO_SYNTH__\" " + name + ".cpp" << endl;
   of << "# add_files -cflags \"-std=c++11 -D__VIVADO_SYNTH__\" -tb tb_" + name + ".cpp" << endl;
   of << "open_solution -reset \"solution1\"" << endl;
   of << "set_part {xc7k160tfbg484-2}" << endl;
@@ -3683,6 +3683,36 @@ struct App {
 
 };
 
+void blur_x_test() {
+
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "blur_x";
+  prg.buffer_port_widths["I"] = 16;
+
+  string in_name = "in";
+  string out_name = "out";
+
+  prg.buffer_port_widths[in_name] = 16;
+  prg.add_input(in_name);
+
+  prg.buffer_port_widths[out_name] = 16;
+  prg.add_output(out_name);
+
+  // blur_x(0, 0) = in(0, 0) + in(0, 1) + in(0, 2)
+  auto in_nest = prg.add_nest("id1", 0, 32, "id0", 0, 8);
+  in_nest->add_op({"I", "id0, id1"}, "id", {in_name, "id0, id1"});
+
+  auto blur_y_nest = 
+    prg.add_nest("d1", 0, 32, "d0", 0, 8);
+  auto lds = prg.vector_load("I", "d1", 0, 1, "d0", 0, 3);
+  blur_y_nest->
+    add_op({out_name, "d0, d1"}, "blur_3", lds);
+
+  regression_test(prg);
+  assert(false);
+}
+
 void pointwise_test() {
 
   prog prg;
@@ -3709,7 +3739,6 @@ void pointwise_test() {
 
 
   regression_test(prg);
-  assert(false);
 }
 
 void stencil_3d_test() {
@@ -4020,6 +4049,7 @@ int main(int argc, char** argv) {
     assert(false);
 
   } else if (argc == 1) {
+    blur_x_test();
     pointwise_test();
     stencil_3d_test();
     soda_blur_test();
