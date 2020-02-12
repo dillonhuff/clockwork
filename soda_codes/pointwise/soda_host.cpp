@@ -30,7 +30,7 @@ using std::unordered_map;
 #include "pointwise.h"
 
 #ifndef BURST_WIDTH
-#define BURST_WIDTH 16
+#define BURST_WIDTH 64
 #endif//BURST_WIDTH
 #ifndef STENCIL_DIM_0
 #define STENCIL_DIM_0 1

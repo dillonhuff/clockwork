@@ -1,6 +1,6 @@
 kernel: pointwise # the kernel name, will be used as the kernel name in HLS
-burst width: 16 # DRAM burst I/O width in bits, for Xilinx platform by default it's 512
-unroll factor: 1 # how many pixels are generated per cycle
+burst width: 64 # DRAM burst I/O width in bits, for Xilinx platform by default it's 512
+unroll factor: 4 # how many pixels are generated per cycle
 
 input dram 1 uint16: input(32, *)
 
