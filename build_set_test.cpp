@@ -3699,12 +3699,13 @@ void blur_x_test() {
   prg.buffer_port_widths[out_name] = 16;
   prg.add_output(out_name);
 
+  // This code (in SODA is described as blur_x)
   // blur_x(0, 0) = in(0, 0) + in(0, 1) + in(0, 2)
-  auto in_nest = prg.add_nest("id1", 0, 32, "id0", 0, 8);
+  auto in_nest = prg.add_nest("id1", 0, 8, "id0", 0, 32);
   in_nest->add_op({"I", "id0, id1"}, "id", {in_name, "id0, id1"});
 
   auto blur_y_nest = 
-    prg.add_nest("d1", 0, 32 - 2, "d0", 0, 8);
+    prg.add_nest("d1", 0, 8 - 2, "d0", 0, 32);
   auto lds = prg.vector_load("I", "d0", 0, 1, "d1", 0, 3);
   blur_y_nest->
     add_op({out_name, "d0, d1"}, "blur_3", lds);

@@ -64,7 +64,7 @@ inline void I_I_id0_0_write(hw_uint<16>& I_I_id0_0, I_I_id0_0_cache& I_I_id0_0_d
 inline hw_uint<16> I_out_blur_30_3_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
 // Pieces...
-// { out_blur_30[root = 0, d1, d0] : 0 <= d1 <= 29 and 0 <= d0 <= 7 } -> { out_blur_30[root, d1, d0] -> 2 }
+// { out_blur_30[root = 0, d1, d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 } -> { out_blur_30[root, d1, d0] -> 2 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
 	int value_I_I_id0_0 = I_I_id0_0_delay.peek_2();
@@ -74,7 +74,7 @@ inline hw_uint<16> I_out_blur_30_3_select(I_I_id0_0_cache& I_I_id0_0_delay
 inline hw_uint<16> I_out_blur_30_4_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
 // Pieces...
-// { out_blur_30[root = 0, d1, d0] : 0 <= d1 <= 29 and 0 <= d0 <= 7 } -> { out_blur_30[root, d1, d0] -> 1 }
+// { out_blur_30[root = 0, d1, d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 } -> { out_blur_30[root, d1, d0] -> 1 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
 	int value_I_I_id0_0 = I_I_id0_0_delay.peek_1();
@@ -149,8 +149,8 @@ inline void out_blur_30(I_I_id0_0_cache& I_I_id0_0, HWStream<hw_uint<16> >& out,
 // Driver function
 void blur_x(HWStream<hw_uint<16> >& in, HWStream<hw_uint<16> >& out) {
 	I_I_id0_0_cache I_I_id0_0;
-	for (int c0 = 0; c0 <= 7; c0 += 1)
-	  for (int c1 = 0; c1 <= 31; c1 += 1) {
+	for (int c0 = 0; c0 <= 31; c0 += 1)
+	  for (int c1 = 0; c1 <= 7; c1 += 1) {
 	    I_id0(in, I_I_id0_0, 0, c1, c0);
 	    if (c1 >= 2)
 	      out_blur_30(I_I_id0_0, out, 0, c1 - 2, c0);
