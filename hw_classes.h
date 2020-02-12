@@ -296,9 +296,17 @@ class HWStream {
       return values.read();
     }
 
+    bool is_empty() const {
+      return values.empty();
+    }
+
 #else
 
     deque<T> values;
+
+    bool is_empty() const {
+      return values.size() == 0;
+    }
 
     void write(const T& v) {
       return values.push_front(v);

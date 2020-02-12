@@ -64,20 +64,20 @@ inline void I_I_id0_0_write(hw_uint<16>& I_I_id0_0, I_I_id0_0_cache& I_I_id0_0_d
 inline hw_uint<16> I_out_blur_30_3_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
 // Pieces...
-// { out_blur_30[root = 0, d1, d0] : 0 <= d1 <= 7 and 0 <= d0 <= 7 } -> { out_blur_30[root, d1, d0] -> 2 }
-// 	is always true on iteration domain: 0
-//	is optimizable constant: 0
-	int value_I_I_id0_0 = I_I_id0_0_delay.peek(((root == 0 && d1 >= 0 && 7 - d1 >= 0 && d0 >= 0 && 7 - d0 >= 0) ? (2) : 0));
+// { out_blur_30[root = 0, d1, d0] : 0 <= d1 <= 29 and 0 <= d0 <= 7 } -> { out_blur_30[root, d1, d0] -> 2 }
+// 	is always true on iteration domain: 1
+//	is optimizable constant: 1
+	int value_I_I_id0_0 = I_I_id0_0_delay.peek_2();
 	return value_I_I_id0_0;
 }
 
 inline hw_uint<16> I_out_blur_30_4_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
 // Pieces...
-// { out_blur_30[root = 0, d1, d0] : 0 <= d1 <= 7 and 0 <= d0 <= 7 } -> { out_blur_30[root, d1, d0] -> 1 }
-// 	is always true on iteration domain: 0
-//	is optimizable constant: 0
-	int value_I_I_id0_0 = I_I_id0_0_delay.peek(((root == 0 && d1 >= 0 && 7 - d1 >= 0 && d0 >= 0 && 7 - d0 >= 0) ? (1) : 0));
+// { out_blur_30[root = 0, d1, d0] : 0 <= d1 <= 29 and 0 <= d0 <= 7 } -> { out_blur_30[root, d1, d0] -> 1 }
+// 	is always true on iteration domain: 1
+//	is optimizable constant: 1
+	int value_I_I_id0_0 = I_I_id0_0_delay.peek_1();
 	return value_I_I_id0_0;
 }
 
@@ -133,15 +133,15 @@ inline void I_id0(HWStream<hw_uint<16> >& in, I_I_id0_0_cache& I_I_id0_0, int ro
 
 inline void out_blur_30(I_I_id0_0_cache& I_I_id0_0, HWStream<hw_uint<16> >& out, int root, int d1, int d0) {
 	// Consume: I
-	auto I_d1__p__0_c__d0__p__0_value = I_out_blur_30_read_bundle_read(I_I_id0_0/* source_delay */, root, d1, d0);
+	auto I_d0__p__0_c__d1__p__0_value = I_out_blur_30_read_bundle_read(I_I_id0_0/* source_delay */, root, d1, d0);
 	// Apply function: blur_3
-	// Arg: I_d1__p__0_c__d0__p__0_value
+	// Arg: I_d0__p__0_c__d1__p__0_value
 	// Arg buf: I
-	// Arg: I_d1__p__0_c__d0__p__1_value
+	// Arg: I_d0__p__0_c__d1__p__1_value
 	// Arg buf: I
-	// Arg: I_d1__p__0_c__d0__p__2_value
+	// Arg: I_d0__p__0_c__d1__p__2_value
 	// Arg buf: I
-	auto compute_result = blur_3(I_d1__p__0_c__d0__p__0_value);
+	auto compute_result = blur_3(I_d0__p__0_c__d1__p__0_value);
 	// Produce: out
 	out.write(compute_result);
 }
@@ -149,17 +149,11 @@ inline void out_blur_30(I_I_id0_0_cache& I_I_id0_0, HWStream<hw_uint<16> >& out,
 // Driver function
 void blur_x(HWStream<hw_uint<16> >& in, HWStream<hw_uint<16> >& out) {
 	I_I_id0_0_cache I_I_id0_0;
-	for (int c0 = 0; c0 <= 31; c0 += 1) {
-	  if (c0 >= 8) {
-	    for (int c1 = 2; c1 <= 9; c1 += 1)
-	      out_blur_30(I_I_id0_0, out, 0, c0, c1 - 2);
-	  } else {
-	    for (int c1 = 0; c1 <= 31; c1 += 1) {
-	      I_id0(in, I_I_id0_0, 0, c1, c0);
-	      if (c1 >= 2 && c1 <= 9)
-	        out_blur_30(I_I_id0_0, out, 0, c0, c1 - 2);
-	    }
+	for (int c0 = 0; c0 <= 7; c0 += 1)
+	  for (int c1 = 0; c1 <= 31; c1 += 1) {
+	    I_id0(in, I_I_id0_0, 0, c1, c0);
+	    if (c1 >= 2)
+	      out_blur_30(I_I_id0_0, out, 0, c1 - 2, c0);
 	  }
-	}
 	
 }
