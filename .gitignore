@@ -10,3 +10,5 @@ blur_and_downsample*
 regression_*
 conv_*.cpp
 conv_*.h
+*.rpt
+*.log
