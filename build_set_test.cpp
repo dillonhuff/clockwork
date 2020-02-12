@@ -3704,13 +3704,13 @@ void blur_x_test() {
   in_nest->add_op({"I", "id0, id1"}, "id", {in_name, "id0, id1"});
 
   auto blur_y_nest = 
-    prg.add_nest("d1", 0, 32, "d0", 0, 8);
-  auto lds = prg.vector_load("I", "d1", 0, 1, "d0", 0, 3);
+    prg.add_nest("d1", 0, 32 - 2, "d0", 0, 8);
+  auto lds = prg.vector_load("I", "d0", 0, 1, "d1", 0, 3);
   blur_y_nest->
     add_op({out_name, "d0, d1"}, "blur_3", lds);
 
   regression_test(prg);
-  assert(false);
+  //assert(false);
 }
 
 void pointwise_test() {
