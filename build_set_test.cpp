@@ -1848,11 +1848,6 @@ struct prog {
   string buffer_element_type_string(const string& name) const {
     if (!contains_key(name, buffer_port_widths)) {
       return "int";
-      //cout << "No key: " << name << " in port widths!" << endl;
-      //cout << "Widths..." << endl;
-      //for (auto k : buffer_port_widths) {
-        //cout << k.first << " = " << k.second << endl;
-      //}
     }
     assert(contains_key(name, buffer_port_widths));
     
@@ -2183,9 +2178,9 @@ struct prog {
   }
 
   umap* validity_deps() {
-
     umap* naive_sched = unoptimized_schedule();
     auto before = lex_lt(naive_sched, naive_sched);
+
     auto domain = whole_iteration_domain();
     auto writes =
       its(producer_map(), domain);
@@ -2194,6 +2189,15 @@ struct prog {
 
     isl_union_map *validity =
       its(dot(writes, inv(reads)), before);
+
+    // Relative order of accesses for each op must be the same
+    for (auto op : schedules()) {
+      auto op_sched = to_umap(op.second);
+      auto op_order = lex_lt(op_sched, op_sched);
+      validity = unn(validity, op_order);
+    }
+
+    //validity = unn(validity, in_order);
     return validity;
   }
 
