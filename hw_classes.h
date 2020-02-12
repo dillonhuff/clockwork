@@ -163,7 +163,7 @@ class hw_uint {
     hw_uint() : val(0) {}
 
     template<int S, int E_inclusive>
-    hw_uint<E_inclusive - S + 1> extract() {
+    hw_uint<E_inclusive - S + 1> extract() const {
       hw_uint<E_inclusive - S + 1> extr;
       for (int i = S; i < E_inclusive + 1; i++) {
 #pragma HLS unroll
@@ -173,11 +173,11 @@ class hw_uint {
       return extr;
     }
 
-    int to_int() {
+    int to_int() const {
       return val;
     }
     
-    operator int() { return to_int(); }
+    operator int() const { return to_int(); }
 
 #else
 
@@ -188,7 +188,7 @@ class hw_uint {
 
     template<int S, int E_inclusive>
       inline
-    hw_uint<E_inclusive - S + 1> extract() {
+    hw_uint<E_inclusive - S + 1> extract() const {
       hw_uint<E_inclusive - S + 1> extr;
       for (int i = S; i < E_inclusive + 1; i++) {
         assert(i < Len);
@@ -197,11 +197,11 @@ class hw_uint {
       return extr;
     }
 
-    int to_int() {
+    int to_int() const {
       return val.template to_type<int>();
     }
 
-    operator int() { return to_int(); }
+    operator int() const { return to_int(); }
 
 #endif // __VIVADO_SYNTH__
 };

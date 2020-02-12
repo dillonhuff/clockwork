@@ -1708,6 +1708,20 @@ struct op {
     return op;
   }
 
+  op* stencil(const pair<string, string>& src,
+      const std::string& func_name,
+      const std::vector<string>& vars,
+      const std::vector<vector<int> >& offsets) {
+    assert(false);
+    return nullptr;
+  }
+
+  op* stencil_op(const string& out_name, const string& cu, const string& in_buf, vector<string> vars, const vector<vector<int> >& offsets) {
+    string var_str = comma_list(vars);
+    vector<string> loads = {};
+    return add_op({out_name, var_str}, cu, loads);
+  }
+
   op* add_op(const pair<string, string>& src, const std::string& func_name, const std::vector<string>& loads) {
     int n_ops = children.size();
     auto res = add_op(src.first + "_" + func_name + to_string(n_ops));
@@ -2241,6 +2255,8 @@ struct prog {
     
     isl_schedule* sched = optimized_schedule();
     auto schedmap = its(isl_schedule_get_map(sched), domain);
+    //cout << "Schedule map: " << str(schedmap) << endl;
+    //assert(false);
     return schedmap;
   }
 
@@ -3687,6 +3703,37 @@ struct App {
 
 };
 
+void jacobi_2d_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "jacobi2d";
+  prg.buffer_port_widths["I"] = 16;
+
+  string in_name = "in";
+  string out_name = "out";
+
+  int rows = 32;
+  int cols = 32;
+
+  prg.buffer_port_widths[in_name] = 16;
+  prg.add_input(in_name);
+
+  prg.buffer_port_widths[out_name] = 16;
+  prg.add_output(out_name);
+
+  // This code (in SODA is described as blur_x)
+  // blur_x(0, 0) = in(0, 0) + in(0, 1) + in(0, 2)
+  auto in_nest = prg.add_nest("id1", 0, 8, "id0", 0, 32);
+  in_nest->add_op({"I", "id0, id1"}, "id", {in_name, "id0, id1"});
+
+  auto blur_y_nest = 
+    prg.add_nest("d1", 0, rows - 1, "d0", 0, cols - 1);
+  blur_y_nest->
+    stencil_op(out_name, "jacobi2d_compute", "I", {"d0, d1"}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
+
+  regression_test(prg);
+}
+
 void blur_x_test() {
 
   prog prg;
@@ -4054,8 +4101,12 @@ int main(int argc, char** argv) {
     assert(false);
 
   } else if (argc == 1) {
+
+    jacobi_2d_test();
     blur_x_test();
     pointwise_test();
+
+    downsample_and_blur_test();
     stencil_3d_test();
     soda_blur_test();
     conv_2d_rolled_test();
@@ -4064,7 +4115,6 @@ int main(int argc, char** argv) {
     blur_and_downsample_test();
     gaussian_pyramid_test();
     warp_and_upsample_test();
-    downsample_and_blur_test();
     unsharp_test();
     conv_1d_rolled_test();
     reduce_1d_test();
