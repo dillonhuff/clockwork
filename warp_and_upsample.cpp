@@ -15763,7 +15763,7 @@ inline void warped_0_conv_3_30(I_store_I_from_in_0_cache& I_store_I_from_in_0, w
 	// Arg buf: I
 	// Arg: I_br__p__2_c__bc__p__2_value
 	// Arg buf: I
-	auto compute_result = conv_3_3(I_br__p__0_c__bc__p__0_value);
+	 /* comma list args */ auto compute_result = conv_3_3(I_br__p__0_c__bc__p__0_value);
 	// Produce: warped_0
 	// Buffer: warped_0, Op: warped_0_conv_3_30
 	// Possible ports...
@@ -15777,7 +15777,7 @@ inline void out_id0(warped_0_warped_0_conv_3_30_2_cache& warped_0_warped_0_conv_
 	// Apply function: id
 	// Arg: warped_0_ur_c__uc_value
 	// Arg buf: warped_0
-	auto compute_result = id(warped_0_ur_c__uc_value);
+	 /* comma list args */ auto compute_result = id(warped_0_ur_c__uc_value);
 	// Produce: out
 	out.write(compute_result);
 }

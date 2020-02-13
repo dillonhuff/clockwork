@@ -1618,6 +1618,8 @@ string c_sanitize(const std::string& str) {
       res += "_";
     } else if (c == ',') {
       res += "_c_";
+    } else if (c == '-') {
+      res += "_m_";
     } else {
       res += c;
     }
@@ -1719,6 +1721,18 @@ struct op {
   op* stencil_op(const string& out_name, const string& cu, const string& in_buf, vector<string> vars, const vector<vector<int> >& offsets) {
     string var_str = comma_list(vars);
     vector<string> loads = {};
+    for (auto offset : offsets) {
+      assert(offset.size() == vars.size());
+
+      loads.push_back(in_buf);
+      vector<string> ofstrs;
+      int i = 0;
+      for (auto val : offset) {
+        ofstrs.push_back(vars.at(i) + " + " + to_string(val));
+        i++;
+      }
+      loads.push_back(comma_list(ofstrs));
+    }
     return add_op({out_name, var_str}, cu, loads);
   }
 
@@ -2450,6 +2464,7 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
     }
 
     string res;
+    map<string, string> buffer_reps;
     if (in_buffers.size() > 0) {
 
       for (auto ib : in_buffers) {
@@ -2465,6 +2480,7 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
           auto source_delays = buffers.at(in_buffer).get_in_ports();
           conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
         }
+        buffer_reps[in_buffer] = value_name;
         res = value_name;
 
       }
@@ -2473,7 +2489,7 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
       if (op->func != "") {
         conv_out << "\t// Apply function: " << op->func << endl;
         if (op->func_args.size() == 0) {
-          conv_out << "\tauto compute_result = " << op->func << "(" << res << ");" << endl;
+          conv_out << "\t/* No args */ auto compute_result = " << op->func << "(" << res << ");" << endl;
         } else {
           vector<string> arg_list;
           set<string> buffers_seen;
@@ -2489,11 +2505,13 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
             assert(arg_buf != "");
             conv_out << "\t// Arg buf: " << arg_buf << endl;
             if (!elem(arg_buf, buffers_seen)) {
-              arg_list.push_back(arg);
+              //arg_list.push_back(arg);
+              arg_list.push_back(map_find(arg_buf, buffer_reps));
               buffers_seen.insert(arg_buf);
             }
           }
-          conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(arg_list) << ");" << endl;
+          conv_out << "\t /* comma list args */ auto compute_result = " << op->func << "(" << comma_list(arg_list) << ");" << endl;
+          //conv_out << "\t /* comma list args */ auto compute_result = " << op->func << "(" << res << ");" << endl;
         }
         res = "compute_result";
       }
@@ -2502,7 +2520,7 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
       res = "";
       if (op->func != "") {
         conv_out << "\t// Apply function: " << op->func << endl;
-        conv_out << "\tauto compute_result = " << op->func << "(" << res << ");" << endl;
+        conv_out << "\t/* op func res */ auto compute_result = " << op->func << "(" << res << ");" << endl;
         res = "compute_result";
       }
     }
@@ -3707,7 +3725,7 @@ void jacobi_2d_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
   prg.name = "jacobi2d";
-  prg.buffer_port_widths["I"] = 16;
+  prg.buffer_port_widths["I"] = 32;
 
   string in_name = "in";
   string out_name = "out";
@@ -3715,21 +3733,21 @@ void jacobi_2d_test() {
   int rows = 32;
   int cols = 32;
 
-  prg.buffer_port_widths[in_name] = 16;
+  prg.buffer_port_widths[in_name] = 32;
   prg.add_input(in_name);
 
-  prg.buffer_port_widths[out_name] = 16;
+  prg.buffer_port_widths[out_name] = 32;
   prg.add_output(out_name);
 
   // This code (in SODA is described as blur_x)
   // blur_x(0, 0) = in(0, 0) + in(0, 1) + in(0, 2)
-  auto in_nest = prg.add_nest("id1", 0, 8, "id0", 0, 32);
+  auto in_nest = prg.add_nest("id1", 0, rows, "id0", 0, cols);
   in_nest->add_op({"I", "id0, id1"}, "id", {in_name, "id0, id1"});
 
   auto blur_y_nest = 
-    prg.add_nest("d1", 0, rows - 1, "d0", 0, cols - 1);
+    prg.add_nest("d1", 1, rows - 1, "d0", 1, cols - 1);
   blur_y_nest->
-    stencil_op(out_name, "jacobi2d_compute", "I", {"d0, d1"}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
+    stencil_op(out_name, "jacobi2d_compute", "I", {"d0", "d1"}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
 
   regression_test(prg);
 }

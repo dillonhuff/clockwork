@@ -131,7 +131,7 @@ inline void compute_output(M_get_input_0_cache& M_get_input_0, HWStream<int >& o
 	// Consume: M
 	auto M_c_value = M_compute_output_read_bundle_read(M_get_input_0/* source_delay */, root, c);
 	// Apply function: accumulate_3
-	auto compute_result = accumulate_3(M_c_value);
+	/* No args */ auto compute_result = accumulate_3(M_c_value);
 	// Produce: out
 	out.write(compute_result);
 }

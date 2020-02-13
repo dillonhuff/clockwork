@@ -155,7 +155,7 @@ inline void out_blur_30(I_I_id0_4_cache& I_I_id0_4, HWStream<hw_uint<16> >& out,
 	// Arg buf: I
 	// Arg: I_d0__p__0_c__d1__p__2_value
 	// Arg buf: I
-	auto compute_result = blur_3(I_d0__p__0_c__d1__p__0_value);
+	 /* comma list args */ auto compute_result = blur_3(I_d0__p__0_c__d1__p__0_value);
 	// Produce: out
 	out.write(compute_result);
 }
@@ -166,7 +166,7 @@ inline void I_id0(HWStream<hw_uint<16> >& in, I_I_id0_4_cache& I_I_id0_4, int ro
 	// Apply function: id
 	// Arg: in_id0_c__id1_value
 	// Arg buf: in
-	auto compute_result = id(in_id0_c__id1_value);
+	 /* comma list args */ auto compute_result = id(in_id0_c__id1_value);
 	// Produce: I
 	// Buffer: I, Op: I_id0
 	// Possible ports...

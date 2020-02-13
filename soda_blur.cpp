@@ -354,7 +354,7 @@ inline void I_id1(HWStream<hw_uint<16> >& in_1, I_I_id0_10_cache& I_I_id0_10, I_
 	// Apply function: id
 	// Arg: in_1_ir_c__ic_value
 	// Arg buf: in_1
-	auto compute_result = id(in_1_ir_c__ic_value);
+	 /* comma list args */ auto compute_result = id(in_1_ir_c__ic_value);
 	// Produce: I
 	// Buffer: I, Op: I_id1
 	// Possible ports...
@@ -373,7 +373,7 @@ inline void out_0_blur_30(I_I_id0_10_cache& I_I_id0_10, I_I_id1_0_cache& I_I_id1
 	// Arg buf: I
 	// Arg: I_xr__p__2_c__2_m_xc__p__0__p__0_value
 	// Arg buf: I
-	auto compute_result = blur_3(I_xr__p__0_c__2_m_xc__p__0__p__0_value);
+	 /* comma list args */ auto compute_result = blur_3(I_xr__p__0_c__2_m_xc__p__0__p__0_value);
 	// Produce: out_0
 	out_0.write(compute_result);
 }
@@ -388,7 +388,7 @@ inline void out_1_blur_31(I_I_id0_10_cache& I_I_id0_10, I_I_id1_0_cache& I_I_id1
 	// Arg buf: I
 	// Arg: I_xr__p__2_c__2_m_xc__p__1__p__0_value
 	// Arg buf: I
-	auto compute_result = blur_3(I_xr__p__0_c__2_m_xc__p__1__p__0_value);
+	 /* comma list args */ auto compute_result = blur_3(I_xr__p__0_c__2_m_xc__p__1__p__0_value);
 	// Produce: out_1
 	out_1.write(compute_result);
 }
@@ -399,7 +399,7 @@ inline void I_id0(HWStream<hw_uint<16> >& in_0, I_I_id0_10_cache& I_I_id0_10, I_
 	// Apply function: id
 	// Arg: in_0_ir_c__ic_value
 	// Arg buf: in_0
-	auto compute_result = id(in_0_ir_c__ic_value);
+	 /* comma list args */ auto compute_result = id(in_0_ir_c__ic_value);
 	// Produce: I
 	// Buffer: I, Op: I_id0
 	// Possible ports...
