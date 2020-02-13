@@ -3706,17 +3706,6 @@ struct App {
       }
     }
 
-    // In a static schedule:
-    //  - Prefix which stores all elements that are needed for the first iteration up to
-    //    raster order
-    //  - Chunks which store all elements needed for each loop iteration
-    //  - Higher unroll -> Larger box?
-
-    // Second: Compute naive schedules (with unrolling?)
-    //  - Critical question: If I unroll one loop by a bunch, what do I need to do to feed that loop?
-    //  - Scheduling invariant: for a given kernel unrolled by N the data demands of moving from one
-    //    iteration of the inner loop of the kernel to the next must be met by a single iteration of
-    //    the inner loop of the producer?
   }
 
 };

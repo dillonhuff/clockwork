@@ -4,12 +4,16 @@
 
 static inline
 float to_float(const hw_uint<32>& in) {
-  return -1;
+  int i = in.to_int();
+  void* ip = (void*)(&i);
+  float* f = (float*) ip;
+  return (*f);
 }
 
 static inline
 hw_uint<32> to_bits(const float& f) {
-  return 0;
+  int* ip = (int*) ((void*)(&f));
+  return *ip;
 }
 
 static inline
