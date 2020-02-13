@@ -15,3 +15,6 @@ csynth_design
 export_design -rtl verilog
 
 exit
+
+
+

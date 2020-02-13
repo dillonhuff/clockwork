@@ -1618,6 +1618,8 @@ string c_sanitize(const std::string& str) {
       res += "_";
     } else if (c == ',') {
       res += "_c_";
+    } else if (c == '-') {
+      res += "_m_";
     } else {
       res += c;
     }
@@ -1706,6 +1708,32 @@ struct op {
     op->add_load(src.first, src.second);
     op->add_store(dst.first, dst.second);
     return op;
+  }
+
+  op* stencil(const pair<string, string>& src,
+      const std::string& func_name,
+      const std::vector<string>& vars,
+      const std::vector<vector<int> >& offsets) {
+    assert(false);
+    return nullptr;
+  }
+
+  op* stencil_op(const string& out_name, const string& cu, const string& in_buf, vector<string> vars, const vector<vector<int> >& offsets) {
+    string var_str = comma_list(vars);
+    vector<string> loads = {};
+    for (auto offset : offsets) {
+      assert(offset.size() == vars.size());
+
+      loads.push_back(in_buf);
+      vector<string> ofstrs;
+      int i = 0;
+      for (auto val : offset) {
+        ofstrs.push_back(vars.at(i) + " + " + to_string(val));
+        i++;
+      }
+      loads.push_back(comma_list(ofstrs));
+    }
+    return add_op({out_name, var_str}, cu, loads);
   }
 
   op* add_op(const pair<string, string>& src, const std::string& func_name, const std::vector<string>& loads) {
@@ -2241,6 +2269,8 @@ struct prog {
     
     isl_schedule* sched = optimized_schedule();
     auto schedmap = its(isl_schedule_get_map(sched), domain);
+    //cout << "Schedule map: " << str(schedmap) << endl;
+    //assert(false);
     return schedmap;
   }
 
@@ -2434,6 +2464,7 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
     }
 
     string res;
+    map<string, string> buffer_reps;
     if (in_buffers.size() > 0) {
 
       for (auto ib : in_buffers) {
@@ -2449,6 +2480,7 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
           auto source_delays = buffers.at(in_buffer).get_in_ports();
           conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
         }
+        buffer_reps[in_buffer] = value_name;
         res = value_name;
 
       }
@@ -2457,7 +2489,7 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
       if (op->func != "") {
         conv_out << "\t// Apply function: " << op->func << endl;
         if (op->func_args.size() == 0) {
-          conv_out << "\tauto compute_result = " << op->func << "(" << res << ");" << endl;
+          conv_out << "\t/* No args */ auto compute_result = " << op->func << "(" << res << ");" << endl;
         } else {
           vector<string> arg_list;
           set<string> buffers_seen;
@@ -2473,11 +2505,13 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
             assert(arg_buf != "");
             conv_out << "\t// Arg buf: " << arg_buf << endl;
             if (!elem(arg_buf, buffers_seen)) {
-              arg_list.push_back(arg);
+              //arg_list.push_back(arg);
+              arg_list.push_back(map_find(arg_buf, buffer_reps));
               buffers_seen.insert(arg_buf);
             }
           }
-          conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(arg_list) << ");" << endl;
+          conv_out << "\t /* comma list args */ auto compute_result = " << op->func << "(" << comma_list(arg_list) << ");" << endl;
+          //conv_out << "\t /* comma list args */ auto compute_result = " << op->func << "(" << res << ");" << endl;
         }
         res = "compute_result";
       }
@@ -2486,7 +2520,7 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
       res = "";
       if (op->func != "") {
         conv_out << "\t// Apply function: " << op->func << endl;
-        conv_out << "\tauto compute_result = " << op->func << "(" << res << ");" << endl;
+        conv_out << "\t/* op func res */ auto compute_result = " << op->func << "(" << res << ");" << endl;
         res = "compute_result";
       }
     }
@@ -3672,20 +3706,40 @@ struct App {
       }
     }
 
-    // In a static schedule:
-    //  - Prefix which stores all elements that are needed for the first iteration up to
-    //    raster order
-    //  - Chunks which store all elements needed for each loop iteration
-    //  - Higher unroll -> Larger box?
-
-    // Second: Compute naive schedules (with unrolling?)
-    //  - Critical question: If I unroll one loop by a bunch, what do I need to do to feed that loop?
-    //  - Scheduling invariant: for a given kernel unrolled by N the data demands of moving from one
-    //    iteration of the inner loop of the kernel to the next must be met by a single iteration of
-    //    the inner loop of the producer?
   }
 
 };
+
+void jacobi_2d_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "jacobi2d";
+  prg.buffer_port_widths["I"] = 32;
+
+  string in_name = "in";
+  string out_name = "out";
+
+  int rows = 32;
+  int cols = 32;
+
+  prg.buffer_port_widths[in_name] = 32;
+  prg.add_input(in_name);
+
+  prg.buffer_port_widths[out_name] = 32;
+  prg.add_output(out_name);
+
+  // This code (in SODA is described as blur_x)
+  // blur_x(0, 0) = in(0, 0) + in(0, 1) + in(0, 2)
+  auto in_nest = prg.add_nest("id1", 0, rows, "id0", 0, cols);
+  in_nest->add_op({"I", "id0, id1"}, "id", {in_name, "id0, id1"});
+
+  auto blur_y_nest = 
+    prg.add_nest("d1", 1, rows - 1, "d0", 1, cols - 1);
+  blur_y_nest->
+    stencil_op(out_name, "jacobi2d_compute", "I", {"d0", "d1"}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
+
+  regression_test(prg);
+}
 
 void blur_x_test() {
 
@@ -4054,8 +4108,12 @@ int main(int argc, char** argv) {
     assert(false);
 
   } else if (argc == 1) {
+
+    jacobi_2d_test();
     blur_x_test();
     pointwise_test();
+
+    downsample_and_blur_test();
     stencil_3d_test();
     soda_blur_test();
     conv_2d_rolled_test();
@@ -4064,7 +4122,6 @@ int main(int argc, char** argv) {
     blur_and_downsample_test();
     gaussian_pyramid_test();
     warp_and_upsample_test();
-    downsample_and_blur_test();
     unsharp_test();
     conv_1d_rolled_test();
     reduce_1d_test();

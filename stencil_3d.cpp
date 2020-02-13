@@ -787,7 +787,7 @@ inline void I_id0(HWStream<hw_uint<16> >& in, I_I_id0_0_cache& I_I_id0_0, int ro
 	// Apply function: id
 	// Arg: in_ir_c__ic_c__ib_value
 	// Arg buf: in
-	auto compute_result = id(in_ir_c__ic_c__ib_value);
+	 /* comma list args */ auto compute_result = id(in_ir_c__ic_c__ib_value);
 	// Produce: I
 	// Buffer: I, Op: I_id0
 	// Possible ports...
@@ -853,7 +853,7 @@ inline void out_blur_270(I_I_id0_0_cache& I_I_id0_0, HWStream<hw_uint<16> >& out
 	// Arg buf: I
 	// Arg: I_xr__p__2_c__xc__p__2_c__xb__p__2_value
 	// Arg buf: I
-	auto compute_result = blur_27(I_xr__p__0_c__xc__p__0_c__xb__p__0_value);
+	 /* comma list args */ auto compute_result = blur_27(I_xr__p__0_c__xc__p__0_c__xb__p__0_value);
 	// Produce: out
 	out.write(compute_result);
 }
