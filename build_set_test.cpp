@@ -3782,7 +3782,6 @@ void seidel2d_test() {
         {{0, -1}, {0, 0}, {0, 1}});
 
   regression_test(prg);
-
 }
 
 void heat_3d_test() {
@@ -4188,6 +4187,22 @@ int main(int argc, char** argv) {
     assert(false);
 
   } else if (argc == 1) {
+    seidel2d_test();
+    jacobi_2d_test();
+    heat_3d_test();
+
+    blur_x_test();
+    pointwise_test();
+
+    downsample_and_blur_test();
+    stencil_3d_test();
+    soda_blur_test();
+    two_in_window_test();
+    two_in_conv2d_test();
+    gaussian_pyramid_test();
+    warp_and_upsample_test();
+
+    conv_1d_rolled_test();
     synth_upsample_test();
     reduce_1d_test();
     unsharp_test();
@@ -4206,20 +4221,6 @@ int main(int argc, char** argv) {
     synth_sr_boundary_condition_test();
     
 
-    seidel2d_test();
-    jacobi_2d_test();
-    blur_x_test();
-    pointwise_test();
-    heat_3d_test();
-
-    downsample_and_blur_test();
-    stencil_3d_test();
-    soda_blur_test();
-    two_in_window_test();
-    two_in_conv2d_test();
-    gaussian_pyramid_test();
-    warp_and_upsample_test();
-    conv_1d_rolled_test();
 
   } else {
     assert(false);
