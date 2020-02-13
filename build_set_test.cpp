@@ -3745,6 +3745,212 @@ void jacobi_2d_test() {
   regression_test(prg);
 }
 
+struct Token {
+  string txt;
+};
+
+struct StencilProgram {
+  string name;
+  int burst_width;
+  int unroll_factor;
+};
+
+bool is_isolated_token(const char nextc) {
+  if (nextc == '-') {
+    return true;
+  }
+  if (nextc == '+') {
+    return true;
+  }
+  if (nextc == '*') {
+    return true;
+  }
+  if (nextc == '/') {
+    return true;
+  }
+  if (nextc == '.') {
+    return true;
+  }
+  if (nextc == ':') {
+    return true;
+  }
+  if (nextc == ',') {
+    return true;
+  }
+  if (nextc == '(') {
+    return true;
+  }
+  if (nextc == ')') {
+    return true;
+  }
+
+  return false;
+}
+
+bool is_token_break(const char nextc) {
+  if (isspace(nextc)) {
+    return true;
+  }
+
+  if (nextc == '-') {
+    return true;
+  }
+  if (nextc == '+') {
+    return true;
+  }
+  if (nextc == '*') {
+    return true;
+  }
+  if (nextc == '/') {
+    return true;
+  }
+  if (nextc == '.') {
+    return true;
+  }
+
+  if (nextc == ':') {
+    return true;
+  }
+
+  if (nextc == ',') {
+    return true;
+  }
+
+  if (nextc == '(') {
+    return true;
+  }
+  
+  if (nextc == ')') {
+    return true;
+  }
+
+  return false;
+}
+
+void add_token(vector<Token>& toks, const string& t) {
+  if (t.size() == 0) {
+    return;
+  }
+  toks.push_back({t});
+}
+
+
+vector<Token> tokenize(istream& in) {
+  vector<Token> toks;
+  char nextc;
+  string next;
+  while (in.get(nextc)) {
+    cout << "Next = " << nextc << endl;
+    if (is_token_break(nextc)) {
+      add_token(toks, next);
+      next = "";
+      if (!isspace(nextc)) {
+        if (is_isolated_token(nextc)) {
+          string n = "";
+          n += nextc;
+          add_token(toks, {n});
+        } else {
+          next += (nextc);
+        }
+      }
+    } else {
+      next += nextc;
+    }
+  }
+  add_token(toks, next);
+  //in.close();
+  return toks;
+}
+struct BaseExpr {
+  string name;
+  vector<Token> dims;
+};
+
+Token consume(vector<Token>& tokens, size_t& pos, const string& next) {
+  assert(pos < tokens.size());
+  pos++;
+  assert(tokens.at(pos - 1).txt == next);
+  return tokens.at(pos - 1);
+}
+
+Token peek(vector<Token>& tokens, size_t& pos) {
+  assert(pos < tokens.size());
+  return tokens.at(pos);
+}
+
+Token next(vector<Token>& tokens, size_t& pos) {
+  assert(pos < tokens.size());
+  pos++;
+  return tokens.at(pos - 1);
+}
+
+BaseExpr parse_base(vector<Token>& tokens, size_t& pos) {
+  string name = next(tokens, pos).txt;
+  vector<Token> tks;
+  if (peek(tokens, pos).txt == "(") {
+    next(tokens, pos);
+    while (peek(tokens, pos).txt != ")") {
+      tks.push_back(next(tokens, pos));
+      if (peek(tokens, pos).txt == ",") {
+        consume(tokens, pos, ",");
+      } else {
+        break;
+      }
+    }
+    consume(tokens, pos, ")");
+  }
+  return BaseExpr{name, tks};
+}
+
+StencilProgram parse_soda_program(istream& in) {
+  StencilProgram program;
+
+  vector<Token> tokens = tokenize(in);
+  cout << "Tokens = " << endl;
+  for (auto t : tokens) {
+    cout << "\ttok: " << t.txt << endl;
+    assert(t.txt.size() > 0);
+  }
+
+  size_t pos = 0;
+  while (pos < tokens.size()) {
+    string next = tokens[pos].txt;
+    if (next == "kernel") {
+      pos += 3;
+      program.name = tokens.at(pos + 2).txt;
+    } else if (next == "burst") {
+      program.burst_width = safe_stoi(tokens.at(pos + 3).txt);
+      pos += 4;
+    } else if (next == "unroll") {
+      program.unroll_factor = safe_stoi(tokens.at(pos + 3).txt);
+      pos += 4;
+    } else if (next == "iterate") {
+      //program.unroll_factor = to_string(tokens.at(pos + 3).txt);
+      pos += 3;
+    } else if (next == "input") {
+      //string tp = tokens.at(pos + 1);
+      pos = pos + 3;
+      BaseExpr b = parse_base(tokens, pos);
+      cout << "Base: " << b.name << "(";
+      for (auto e : b.dims) {
+        cout << e.txt << ", ";
+      }
+      cout << " )" << endl;
+    } else {
+      cout << "Unsupported next token: " << tokens.at(pos).txt << endl;
+      assert(false);
+    }
+  }
+  return program;
+}
+
+void parse_denoise3d_test() {
+  ifstream in("denoise3d.soda");
+  auto prg = parse_soda_program(in);
+
+  assert(false);
+}
+
 void seidel2d_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
@@ -4187,6 +4393,7 @@ int main(int argc, char** argv) {
     assert(false);
 
   } else if (argc == 1) {
+    parse_denoise3d_test();
     seidel2d_test();
     jacobi_2d_test();
     heat_3d_test();
