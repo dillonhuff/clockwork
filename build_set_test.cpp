@@ -4492,7 +4492,7 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
     jacobi_2d_2_test();
-    assert(false);
+    //assert(false);
     jacobi_2d_test();
     parse_denoise3d_test();
     seidel2d_test();
