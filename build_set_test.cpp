@@ -2224,13 +2224,12 @@ struct prog {
       its(dot(writes, inv(reads)), before);
 
     // Relative order of accesses for each op must be the same
-    for (auto op : schedules()) {
-      auto op_sched = to_umap(op.second);
-      auto op_order = lex_lt(op_sched, op_sched);
-      validity = unn(validity, op_order);
-    }
+    //for (auto op : schedules()) {
+      //auto op_sched = to_umap(op.second);
+      //auto op_order = lex_lt(op_sched, op_sched);
+      //validity = unn(validity, op_order);
+    //}
 
-    //validity = unn(validity, in_order);
     return validity;
   }
 
@@ -3715,6 +3714,47 @@ struct App {
 
 };
 
+void jacobi_2d_2_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "jacobi2d_2";
+  prg.buffer_port_widths["I"] = 32;
+
+  int unroll_factor = 2;
+
+  string in_name_0 = "in_0";
+  string in_name_1 = "in_1";
+
+  string out_name_0 = "out_0";
+  string out_name_1 = "out_1";
+
+  int rows = 32;
+  int cols = 32;
+
+  prg.buffer_port_widths[in_name_0] = 32;
+  prg.add_input(in_name_0);
+  prg.buffer_port_widths[in_name_1] = 32;
+  prg.add_input(in_name_1);
+
+  prg.buffer_port_widths[out_name_0] = 32;
+  prg.add_output(out_name_0);
+  prg.buffer_port_widths[out_name_1] = 32;
+  prg.add_output(out_name_1);
+
+  auto in_nest = prg.add_nest("id1", 0, rows, "id0", 0, cols / 2);
+  in_nest->store({"I", "2*id0, id1"}, {in_name_0, "id0, id1"});
+  in_nest->store({"I", "2*id0 + 1, id1"}, {in_name_1, "id0, id1"});
+
+  auto blur_y_nest = 
+    prg.add_nest("d1", 1, rows - 1, "d0", 1, (cols - 1) / 2);
+  blur_y_nest->
+    stencil_op(out_name_0, "jacobi2d_compute", "I", {"2*d0 - 1", "d1"}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
+  blur_y_nest->
+    stencil_op(out_name_1, "jacobi2d_compute", "I", {"2*(d0) + 1 - 1", "d1"}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
+
+  regression_test(prg);
+}
+
 void jacobi_2d_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
@@ -4451,9 +4491,11 @@ int main(int argc, char** argv) {
     assert(false);
 
   } else if (argc == 1) {
+    jacobi_2d_2_test();
+    assert(false);
+    jacobi_2d_test();
     parse_denoise3d_test();
     seidel2d_test();
-    jacobi_2d_test();
     heat_3d_test();
 
     blur_x_test();
