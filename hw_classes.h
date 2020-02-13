@@ -296,7 +296,7 @@ class HWStream {
       return values.read();
     }
 
-    bool is_empty() const {
+    bool is_empty() {
       return values.empty();
     }
 

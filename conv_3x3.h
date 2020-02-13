@@ -16,6 +16,17 @@ hw_uint<32> to_bits(const float& f) {
   return *ip;
 }
 
+//static inline
+//hw_uint<32> jacobi2d_compute(const hw_uint<32*5>& in) {
+  //hw_uint<32> v0 = in.extract<0, 31>();
+  //hw_uint<32> v1 = in.extract<32, 63>();
+  //hw_uint<32> v2 = in.extract<64, 95>();
+  //hw_uint<32> v3 = in.extract<96, 127>();
+  //hw_uint<32> v4 = in.extract<128, 159>();
+
+  //return to_bits((to_float(v0) + to_float(v1) + to_float(v2) + to_float(v3) + to_float(v4)) * ((float) 0.2));
+//}
+
 static inline
 hw_uint<32> jacobi2d_compute(const hw_uint<32*5>& in) {
   hw_uint<32> v0 = in.extract<0, 31>();
@@ -24,7 +35,7 @@ hw_uint<32> jacobi2d_compute(const hw_uint<32*5>& in) {
   hw_uint<32> v3 = in.extract<96, 127>();
   hw_uint<32> v4 = in.extract<128, 159>();
 
-  return to_bits((to_float(v0) + to_float(v1) + to_float(v2) + to_float(v3) + to_float(v4)) * ((float) 0.2));
+  return (((v0) + (v1) + (v2) + (v3) + (v4)) / 5);
 }
 
 template<typename T>
