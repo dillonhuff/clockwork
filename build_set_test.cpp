@@ -978,21 +978,13 @@ bool is_optimizable_constant_dd(const string& inpt, const string& outpt, UBuffer
   for (auto p : pieces) {
     //cout << "// " << str(p.first) << " -> " << str(p.second) << endl;
     auto pp = isl_pw_qpolynomial_intersect_domain(isl_pw_qpolynomial_from_qpolynomial(cpy(p.second)), cpy(p.first));
-    //cout << "\t\tpp = " << str(pp) << endl;
-    //cout << "\t\t\tlb = " << str(lower_bound(isl_union_pw_qpolynomial_from_pw_qpolynomial(cpy(pp)))) << endl;
-    //cout << "\t\t\tub = " << str(upper_bound(isl_union_pw_qpolynomial_from_pw_qpolynomial(cpy(pp)))) << endl;
     pieces_dom = unn(pieces_dom, to_uset(p.first));
   }
 
   bool pieces_are_complete =
     subset(to_uset(out_domain), (pieces_dom));
-  //cout << "//\tPieces dom: " << str(pieces_dom) << endl;
-  //cout << "//\tPieces are complete: " << pieces_are_complete << endl;
   int ub = int_upper_bound(qpd);
   int lb = int_lower_bound(qpd);
-  //cout << "//\tqpd: " << str(qpd) << endl;
-  //cout << "//\tLower bound: " << lb << endl;
-  //cout << "//\tUpper bound: " << ub << endl;
 
   if (pieces_are_complete) {
     return ub == lb;
@@ -2210,6 +2202,20 @@ struct prog {
     return m;
   }
 
+  umap* relative_orders() {
+    // Relative order of accesses for each op must be the same
+    umap* rel_order = isl_union_map_read_from_str(ctx, "{}"); 
+    for (auto op : schedules()) {
+      auto op_sched = to_umap(op.second);
+      auto op_order = lex_lt(op_sched, op_sched);
+      //validity = unn(validity, op_order);
+      rel_order = unn(rel_order, op_order);
+    }
+
+    cout << "Rel order = " << str(rel_order) << endl;
+    return rel_order;
+  }
+
   umap* validity_deps() {
     umap* naive_sched = unoptimized_schedule();
     auto before = lex_lt(naive_sched, naive_sched);
@@ -2223,13 +2229,7 @@ struct prog {
     isl_union_map *validity =
       its(dot(writes, inv(reads)), before);
 
-    // Relative order of accesses for each op must be the same
-    //for (auto op : schedules()) {
-      //auto op_sched = to_umap(op.second);
-      //auto op_order = lex_lt(op_sched, op_sched);
-      //validity = unn(validity, op_order);
-    //}
-
+    //assert(false);
     return validity;
   }
 
@@ -3753,6 +3753,7 @@ void jacobi_2d_2_test() {
     stencil_op(out_name_1, "jacobi2d_compute", "I", {"2*(d0) + 1 - 1", "d1"}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
 
   regression_test(prg);
+  assert(false);
 }
 
 void jacobi_2d_test() {
@@ -4046,7 +4047,7 @@ void parse_denoise3d_test() {
   ifstream in("denoise3d.soda");
   auto prg = parse_soda_program(in);
 
-  assert(false);
+  //assert(false);
 }
 
 void seidel2d_test() {
