@@ -2,31 +2,25 @@
 
 #include "hw_classes.h"
 
+#include "conv_3x3.h"
+
+//template<typename T>
+//static inline
+//T id(const T& v) {
+  //return v;
+//}
+
 template<typename T>
-static inline
-T id(const T& v) {
-  return v;
+T max_zero(const T& val) {
+  return max(val.to_int(), 0);
 }
 
-int max_zero(const int& val) {
-  return max(val, 0);
-}
-
-int inc(int& src, int& a0) {
-  //cout << "src = " << src << endl;
-  //cout << "a0  = " << a0 << endl;
-  return src + a0;
-}
-
-int fma(int& src, int& a0, int& a1) {
+template<typename T>
+T fma(T& src, T& a0, T& a1) {
   //cout << "src = " << src << endl;
   //cout << "a0  = " << a0 << endl;
   //cout << "a1  = " << a1 << endl;
   return src + a0*a1;
-}
-
-int set_zero() {
-  return 0;
 }
 
 template<int Len>

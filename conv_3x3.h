@@ -17,6 +17,22 @@ hw_uint<32> to_bits(const float& f) {
 }
 
 static inline
+hw_uint<32> heat3d_compute(const hw_uint<32*9>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+  hw_uint<32> v3 = in.extract<96, 127>();
+  hw_uint<32> v4 = in.extract<128, 159>();
+  hw_uint<32> v5 = in.extract<32*5, 32*6 - 1>();
+  hw_uint<32> v6 = in.extract<32*6, 32*7 - 1>();
+  hw_uint<32> v7 = in.extract<32*7, 32*8 - 1>();
+  hw_uint<32> v8 = in.extract<32*8, 32*9 - 1>();
+  return (v0 + v1 + v2) / 8 +
+    (v3 + v4 + v5) / 8 +
+    (v6 + v7 + v8) / 8;
+}
+
+static inline
 hw_uint<32> jacobi2d_compute(const hw_uint<32*5>& in) {
   hw_uint<32> v0 = in.extract<0, 31>();
   hw_uint<32> v1 = in.extract<32, 63>();
@@ -45,18 +61,27 @@ int max_zero(const int& val) {
   return max(val, 0);
 }
 
+template<typename T>
 static inline
-int diff(int& src, int& a0) {
+T diff(T& src, T& a0) {
   return src - a0;
 }
 
+template<typename T>
 static inline
-int inc(int& src, int& a0) {
+T inc(T& src, T& a0) {
   return src + a0;
 }
+//int inc(int& src, int& a0) {
+  //return src + a0;
+//}
 
 int fma(int& src, int& a0, int& a1) {
   return src + a0*a1;
+}
+
+hw_uint<32> set_zero_32() {
+  return hw_uint<32>(0);
 }
 
 int set_zero() {
@@ -73,12 +98,26 @@ int conv_1_3(hw_uint<32*3>& in) {
 }
 
 static inline
+int conv_1_3_32(hw_uint<32*3>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+
+  return v0 + v1 + v2;
+}
+
+static inline
 int conv_1_3_16(hw_uint<16*3>& in) {
   hw_uint<16> v0 = in.extract<0, 15>();
   hw_uint<16> v1 = in.extract<16, 31>();
   hw_uint<16> v2 = in.extract<32, 47>();
 
   return v0 + v1 + v2;
+}
+
+static inline
+hw_uint<32> blur_3_32(hw_uint<32*3>& in) {
+  return conv_1_3_32(in) / 3;
 }
 
 static inline
@@ -106,7 +145,7 @@ int blur_27(hw_uint<16*27>& in) {
 }
 
 static inline
-int conv_3_3(hw_uint<32*9>& in) {
+hw_uint<32> conv_3_3(hw_uint<32*9>& in) {
   hw_uint<32> v0 = in.extract<0, 31>();
   hw_uint<32> v1 = in.extract<32, 63>();
   hw_uint<32> v2 = in.extract<64, 95>();

@@ -146,13 +146,14 @@ class UBuffer {
 
     std::string port_type_string() {
       if (port_widths == 32) {
-        return "int";
+        return "hw_uint<32> ";
       }
       return "hw_uint<" + to_string(port_widths) + ">";
     }
     std::string port_type_string(const std::string& name) {
       if (port_width(name) == 32) {
-        return "int";
+        return "hw_uint<32> ";
+        //return "int";
       }
       return "hw_uint<" + to_string(port_width(name)) + ">";
     }
@@ -172,9 +173,10 @@ class UBuffer {
         len += port_width(pt);
       }
 
-      if (len == 32) {
-        return "int";
-      }
+      //if (len == 32) {
+        //return "hw_uint<" + to_string(len) + ">";
+        //return "int";
+      //}
       return "hw_uint<" + to_string(len) + ">";
     }
 
@@ -959,7 +961,7 @@ void generate_code_prefix(CodegenOptions& options,
       out << "\t" + inpt + "_delay.push(" + inpt + ");" << endl;
       out << "}" << endl << endl;
     } else {
-      out << "inline void " << inpt << "_write(" << "InputStream<int>& " << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
+      out << "inline void " << inpt << "_write(" << "InputStream<" << buf.port_type_string() << " >& " << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
       out << "\t" + buf.port_type_string() + " " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);" << endl;
       out << "}" << endl << endl;
     }
@@ -1176,7 +1178,7 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, const string& 
       if (options.internal) {
         dim_decls.push_back(buf.port_type_string(b.first) + "& /* width = " + to_string(buf.port_widths) + "*/" + b.first);
       } else {
-        dim_decls.push_back("InputStream<int>& " + b.first);
+        dim_decls.push_back("InputStream<" + buf.port_type_string(b.first)  + " >& " + b.first);
       }
       vector<string> dim_args;
       dim_args.push_back(b.first);
@@ -1876,14 +1878,15 @@ struct prog {
 
   string buffer_element_type_string(const string& name) const {
     if (!contains_key(name, buffer_port_widths)) {
-      return "int";
+      return "hw_uint<32> ";
+      //return "int";
     }
     assert(contains_key(name, buffer_port_widths));
     
     auto width = buffer_port_widths.at(name);
-    if (width == 32) {
-      return "int";
-    }
+    //if (width == 32) {
+      //return "int";
+    //}
     return "hw_uint<" + to_string(width) + ">";
   }
 
@@ -3121,7 +3124,7 @@ void reduce_1d_test() {
 
   {
     auto init = prg.add_op("set_z");
-    init->add_function("set_zero");
+    init->add_function("set_zero_32");
     init->add_store("tmp", "0");
   
     auto accum_loop = prg.add_loop("a", 0, 14);
@@ -3172,7 +3175,7 @@ void reduce_2d_test() {
 
   {
     auto init = prg.add_op("set_z");
-    init->add_function("set_zero");
+    init->add_function("set_zero_32");
     init->add_store("tmp", "0");
 
     auto accum_loop = prg.add_nest("ar", 0, 3, "ac", 0, 3);
@@ -3223,7 +3226,7 @@ void mobilenet_test() {
     auto set_dw = prg.add_nest("dwx", 0, 14 - 2, "dwy", 0, 14 - 2, "dwc", 0, 4);
     auto init_dw = set_dw->add_op("init_dw");
     init_dw->add_store("dw_conv", "dwx, dwy, dwz");
-    init_dw->add_function("set_zero");
+    init_dw->add_function("set_zero_32");
     // Set dw_conv to be
     auto update_dw = set_dw->add_nest("rx", 0, 3, "ry", 0, 3);
     auto rdw = update_dw->add_op("rdw");
@@ -3466,7 +3469,7 @@ void conv_1d_rolled_test() {
     auto pr = prg.add_loop("lr", 0, 64 - 2);
     auto rd = pr->add_op("init");
     rd->add_store("R", "lr");
-    rd->add_function("set_zero");
+    rd->add_function("set_zero_32");
 
     auto reduce_inner_loop = pr->add_loop("rr", 0, 3);
     auto reduce_inner = reduce_inner_loop->add_op({"R", "lr"}, "inc", {"R", "lr", "I", "lr + rr"});
@@ -3742,6 +3745,82 @@ void jacobi_2d_test() {
   regression_test(prg);
 }
 
+void seidel2d_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "seidel2d";
+  prg.buffer_port_widths["I"] = 32;
+  prg.buffer_port_widths["tmp"] = 32;
+  
+  int rows = 32;
+  int cols = 32;
+
+  prg.buffer_bounds["I"] = {rows, cols};
+
+  string in_name = "in";
+  string out_name = "out";
+
+  prg.buffer_port_widths[in_name] = 32;
+  prg.add_input(in_name);
+
+  prg.buffer_port_widths[out_name] = 32;
+  prg.add_output(out_name);
+
+  auto in_nest = prg.add_nest("id1", 0, rows, "id0", 0, cols);
+  in_nest->add_op({"I", "id0, id1"}, "id", {in_name, "id0, id1"});
+
+  auto blur_y_nest = 
+    prg.add_nest("d1", 0, rows, "d0", 1, cols - 1);
+  blur_y_nest->
+    stencil_op("tmp", "blur_3_32", "I", {"d0", "d1"},
+        {{-1, 0}, {0, 0}, {1, 0}});
+
+  auto blur_out_nest= 
+    prg.add_nest("d1", 1, rows - 1, "d0", 1, cols - 1);
+  blur_out_nest->
+    stencil_op(out_name, "blur_3_32", "tmp", {"d0", "d1"},
+        {{0, -1}, {0, 0}, {0, 1}});
+
+  regression_test(prg);
+
+}
+
+void heat_3d_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "jacobi2d";
+  prg.buffer_port_widths["I"] = 32;
+  
+  int rows = 32;
+  int cols = 32;
+  int channels = 32;
+
+  prg.buffer_bounds["I"] = {rows, cols, channels};
+
+  string in_name = "in";
+  string out_name = "out";
+
+  prg.buffer_port_widths[in_name] = 32;
+  prg.add_input(in_name);
+
+  prg.buffer_port_widths[out_name] = 32;
+  prg.add_output(out_name);
+
+  auto in_nest = prg.add_nest("id2", 0, rows, "id1", 0, cols, "id0", 0, channels);
+  in_nest->add_op({"I", "id0, id1, id2"}, "id", {in_name, "id0, id1, id2"});
+
+  auto blur_y_nest = 
+    prg.add_nest("d2", 1, rows - 1, "d1", 1, cols - 1, "d0", 1, channels);
+  blur_y_nest->
+    stencil_op(out_name, "heat3d_compute", "I", {"d0", "d1", "d2"},
+        {{1, 0, 0}, {0, 0, 0}, {0, 0, 1},
+        {0, 1, 0}, {0, 0, 0}, {0, -1, 0},
+        {0, 0, 1}, {0, 0, 0}, {0, 0, -1}});
+
+  // Need to fix repeated reads from the same location
+  //regression_test(prg);
+}
+
 void blur_x_test() {
 
   prog prg;
@@ -3920,7 +3999,7 @@ void conv_2d_rolled_test() {
     
     auto rd = pc->add_op("init");
     rd->add_store("R", "lr, lc");
-    rd->add_function("set_zero");
+    rd->add_function("set_zero_32");
 
     auto reduce_inner_loop = pc->add_nest("rr", -1, 2, "rc", -1, 2);
     auto reduce_inner = reduce_inner_loop->add_op({"R", "lr - 1, lc - 1"}, "inc", {"R", "lr, lc", "I", "lr + rr, lc + rc"});
@@ -4109,23 +4188,11 @@ int main(int argc, char** argv) {
     assert(false);
 
   } else if (argc == 1) {
-
-    jacobi_2d_test();
-    blur_x_test();
-    pointwise_test();
-
-    downsample_and_blur_test();
-    stencil_3d_test();
-    soda_blur_test();
-    conv_2d_rolled_test();
-    two_in_window_test();
-    two_in_conv2d_test();
-    blur_and_downsample_test();
-    gaussian_pyramid_test();
-    warp_and_upsample_test();
-    unsharp_test();
-    conv_1d_rolled_test();
+    synth_upsample_test();
     reduce_1d_test();
+    unsharp_test();
+    blur_and_downsample_test();
+    conv_2d_rolled_test();
     synth_reduce_test();
     reduce_2d_test();
     conv_1d_test();
@@ -4134,11 +4201,25 @@ int main(int argc, char** argv) {
     pyramid_2d_test();
     pyramid_test();
     conv_1d_bc_test();
-    
     synth_lb_test();
     synth_wire_test();
     synth_sr_boundary_condition_test();
-    synth_upsample_test();
+    
+
+    seidel2d_test();
+    jacobi_2d_test();
+    blur_x_test();
+    pointwise_test();
+    heat_3d_test();
+
+    downsample_and_blur_test();
+    stencil_3d_test();
+    soda_blur_test();
+    two_in_window_test();
+    two_in_conv2d_test();
+    gaussian_pyramid_test();
+    warp_and_upsample_test();
+    conv_1d_rolled_test();
 
   } else {
     assert(false);

@@ -1,8 +1,8 @@
 #include "conv_1d_bc.h"
 
 int main() {
-  HWStream<int> in;
-  HWStream<int> out;
+  HWStream<hw_uint<32> > in;
+  HWStream<hw_uint<32> > out;
 
   for (int i = 0; i < 10; i++) {
     in.write(i);

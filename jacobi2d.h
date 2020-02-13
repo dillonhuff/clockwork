@@ -3,4 +3,4 @@
 
 #include "hw_classes.h"
 
-void jacobi2d(HWStream<int >& in, HWStream<int >& out);
+void jacobi2d(HWStream<hw_uint<32>  >& in, HWStream<hw_uint<32> >& out);

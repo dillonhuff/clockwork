@@ -5,7 +5,7 @@
 using namespace std;
 
 int main() {
-  HWStream<int> in, out;
+  HWStream<hw_uint<32> > in, out;
 
   vector<int> input;
   for (int r = 0; r < 10; r++) {

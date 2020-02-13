@@ -1,7 +1,7 @@
 #include "reduce_1d.h"
 
 int main() {
-  HWStream<int> in, out;
+  HWStream<hw_uint<32> > in, out;
   int sum = 0;
   for (int i = 0; i < 14; i++) {
     in.write(i*3);
