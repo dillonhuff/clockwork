@@ -1,5 +1,6 @@
 #include "isl_utils.h"
 
+#include <stack>
 #include <regex>
 #include <cassert>
 #include <iostream>
@@ -3749,10 +3750,21 @@ struct Token {
   string txt;
 };
 
+struct Expr {
+  vector<Token> tokens;
+};
+
+struct BaseExpr {
+  string name;
+  vector<Token> dims;
+};
+
 struct StencilProgram {
   string name;
   int burst_width;
   int unroll_factor;
+
+  vector<pair<BaseExpr, Expr> > operations;
 };
 
 bool is_isolated_token(const char nextc) {
@@ -3861,10 +3873,6 @@ vector<Token> tokenize(istream& in) {
   //in.close();
   return toks;
 }
-struct BaseExpr {
-  string name;
-  vector<Token> dims;
-};
 
 Token consume(vector<Token>& tokens, size_t& pos, const string& next) {
   assert(pos < tokens.size());
@@ -3902,13 +3910,30 @@ BaseExpr parse_base(vector<Token>& tokens, size_t& pos) {
   return BaseExpr{name, tks};
 }
 
+bool expr_start(const Token& t) {
+  return t.txt != "local" && t.txt != "input" && t.txt != "output";
+}
+
+bool done(vector<Token>& tokens, size_t& pos) {
+  return tokens.size() <= pos;
+}
+
+Expr parse_expr(vector<Token>& tokens, size_t& pos) {
+  stack<Token> op_stack;
+  Expr e;
+  while (!done(tokens, pos) && expr_start(peek(tokens, pos))) {
+    e.tokens.push_back(next(tokens, pos));
+  }
+  return e;
+}
+
 StencilProgram parse_soda_program(istream& in) {
   StencilProgram program;
 
   vector<Token> tokens = tokenize(in);
-  cout << "Tokens = " << endl;
+  //cout << "Tokens = " << endl;
   for (auto t : tokens) {
-    cout << "\ttok: " << t.txt << endl;
+    //cout << "\ttok: " << t.txt << endl;
     assert(t.txt.size() > 0);
   }
 
@@ -3936,11 +3961,44 @@ StencilProgram parse_soda_program(istream& in) {
         cout << e.txt << ", ";
       }
       cout << " )" << endl;
+    } else if (next == "local" || next == "output") {
+      pos = pos + 3;
+      BaseExpr b = parse_base(tokens, pos);
+      cout << "Base: " << b.name << "(";
+      for (auto e : b.dims) {
+        cout << e.txt << ", ";
+      }
+      cout << " )" << endl;
+
+      consume(tokens, pos, "=");
+      Expr e = parse_expr(tokens, pos);
+      cout << "After expr: " <<
+        endl;
+      for (size_t i = pos; i < tokens.size(); i++) {
+        cout << "tok: " << tokens.at(i).txt << endl;
+      }
+      program.operations.push_back({b, e});
     } else {
       cout << "Unsupported next token: " << tokens.at(pos).txt << endl;
       assert(false);
     }
   }
+
+  cout << "Program: " << program.name << endl;
+  for (auto op : program.operations) {
+    BaseExpr b = op.first;
+    Expr e = op.second;
+    cout << b.name << "(";
+    for (auto e : b.dims) {
+      cout << e.txt << ", ";
+    }
+    cout << " ) = ";
+    for (auto t : e.tokens) {
+      cout << t.txt << " ";
+    }
+    cout << endl;
+  }
+  cout << "Done" << endl;
   return program;
 }
 
