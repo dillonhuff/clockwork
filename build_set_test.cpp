@@ -1,5 +1,6 @@
 #include "isl_utils.h"
 
+#include <stack>
 #include <regex>
 #include <cassert>
 #include <iostream>
@@ -146,13 +147,14 @@ class UBuffer {
 
     std::string port_type_string() {
       if (port_widths == 32) {
-        return "int";
+        return "hw_uint<32> ";
       }
       return "hw_uint<" + to_string(port_widths) + ">";
     }
     std::string port_type_string(const std::string& name) {
       if (port_width(name) == 32) {
-        return "int";
+        return "hw_uint<32> ";
+        //return "int";
       }
       return "hw_uint<" + to_string(port_width(name)) + ">";
     }
@@ -172,9 +174,10 @@ class UBuffer {
         len += port_width(pt);
       }
 
-      if (len == 32) {
-        return "int";
-      }
+      //if (len == 32) {
+        //return "hw_uint<" + to_string(len) + ">";
+        //return "int";
+      //}
       return "hw_uint<" + to_string(len) + ">";
     }
 
@@ -767,7 +770,8 @@ void generate_vivado_tcl(std::string& name) {
   of << "open_project -reset " << name << "_proj" << endl;
   of << "set_top " << name << endl;
   of << "add_files -cflags \"-I ../../ -std=c++11 -D__VIVADO_SYNTH__\" " + name + ".cpp" << endl;
-  of << "add_files -cflags \"-I ../.. -std=c++11 -D__VIVADO_SYNTH__\" -tb tb_" + name + ".cpp" << endl;
+  of << "add_files -cflags \"-I ../../ -std=c++11 -D__VIVADO_SYNTH__\" " + name + ".cpp" << endl;
+  of << "add_files -cflags \"-I ../.. -std=c++11 -D__VIVADO_SYNTH__\" -tb tb_soda_" + name + ".cpp" << endl;
   of << "open_solution -reset \"solution1\"" << endl;
   of << "set_part {xc7k160tfbg484-2}" << endl;
   of << "list_core" << endl;
@@ -958,7 +962,7 @@ void generate_code_prefix(CodegenOptions& options,
       out << "\t" + inpt + "_delay.push(" + inpt + ");" << endl;
       out << "}" << endl << endl;
     } else {
-      out << "inline void " << inpt << "_write(" << "InputStream<int>& " << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
+      out << "inline void " << inpt << "_write(" << "InputStream<" << buf.port_type_string() << " >& " << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
       out << "\t" + buf.port_type_string() + " " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);" << endl;
       out << "}" << endl << endl;
     }
@@ -974,21 +978,13 @@ bool is_optimizable_constant_dd(const string& inpt, const string& outpt, UBuffer
   for (auto p : pieces) {
     //cout << "// " << str(p.first) << " -> " << str(p.second) << endl;
     auto pp = isl_pw_qpolynomial_intersect_domain(isl_pw_qpolynomial_from_qpolynomial(cpy(p.second)), cpy(p.first));
-    //cout << "\t\tpp = " << str(pp) << endl;
-    //cout << "\t\t\tlb = " << str(lower_bound(isl_union_pw_qpolynomial_from_pw_qpolynomial(cpy(pp)))) << endl;
-    //cout << "\t\t\tub = " << str(upper_bound(isl_union_pw_qpolynomial_from_pw_qpolynomial(cpy(pp)))) << endl;
     pieces_dom = unn(pieces_dom, to_uset(p.first));
   }
 
   bool pieces_are_complete =
     subset(to_uset(out_domain), (pieces_dom));
-  //cout << "//\tPieces dom: " << str(pieces_dom) << endl;
-  //cout << "//\tPieces are complete: " << pieces_are_complete << endl;
   int ub = int_upper_bound(qpd);
   int lb = int_lower_bound(qpd);
-  //cout << "//\tqpd: " << str(qpd) << endl;
-  //cout << "//\tLower bound: " << lb << endl;
-  //cout << "//\tUpper bound: " << ub << endl;
 
   if (pieces_are_complete) {
     return ub == lb;
@@ -1175,7 +1171,7 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, const string& 
       if (options.internal) {
         dim_decls.push_back(buf.port_type_string(b.first) + "& /* width = " + to_string(buf.port_widths) + "*/" + b.first);
       } else {
-        dim_decls.push_back("InputStream<int>& " + b.first);
+        dim_decls.push_back("InputStream<" + buf.port_type_string(b.first)  + " >& " + b.first);
       }
       vector<string> dim_args;
       dim_args.push_back(b.first);
@@ -1875,14 +1871,15 @@ struct prog {
 
   string buffer_element_type_string(const string& name) const {
     if (!contains_key(name, buffer_port_widths)) {
-      return "int";
+      return "hw_uint<32> ";
+      //return "int";
     }
     assert(contains_key(name, buffer_port_widths));
     
     auto width = buffer_port_widths.at(name);
-    if (width == 32) {
-      return "int";
-    }
+    //if (width == 32) {
+      //return "int";
+    //}
     return "hw_uint<" + to_string(width) + ">";
   }
 
@@ -2205,6 +2202,20 @@ struct prog {
     return m;
   }
 
+  umap* relative_orders() {
+    // Relative order of accesses for each op must be the same
+    umap* rel_order = isl_union_map_read_from_str(ctx, "{}"); 
+    for (auto op : schedules()) {
+      auto op_sched = to_umap(op.second);
+      auto op_order = lex_lt(op_sched, op_sched);
+      //validity = unn(validity, op_order);
+      rel_order = unn(rel_order, op_order);
+    }
+
+    cout << "Rel order = " << str(rel_order) << endl;
+    return rel_order;
+  }
+
   umap* validity_deps() {
     umap* naive_sched = unoptimized_schedule();
     auto before = lex_lt(naive_sched, naive_sched);
@@ -2218,14 +2229,7 @@ struct prog {
     isl_union_map *validity =
       its(dot(writes, inv(reads)), before);
 
-    // Relative order of accesses for each op must be the same
-    for (auto op : schedules()) {
-      auto op_sched = to_umap(op.second);
-      auto op_order = lex_lt(op_sched, op_sched);
-      validity = unn(validity, op_order);
-    }
-
-    //validity = unn(validity, in_order);
+    //assert(false);
     return validity;
   }
 
@@ -3120,7 +3124,7 @@ void reduce_1d_test() {
 
   {
     auto init = prg.add_op("set_z");
-    init->add_function("set_zero");
+    init->add_function("set_zero_32");
     init->add_store("tmp", "0");
   
     auto accum_loop = prg.add_loop("a", 0, 14);
@@ -3171,7 +3175,7 @@ void reduce_2d_test() {
 
   {
     auto init = prg.add_op("set_z");
-    init->add_function("set_zero");
+    init->add_function("set_zero_32");
     init->add_store("tmp", "0");
 
     auto accum_loop = prg.add_nest("ar", 0, 3, "ac", 0, 3);
@@ -3222,7 +3226,7 @@ void mobilenet_test() {
     auto set_dw = prg.add_nest("dwx", 0, 14 - 2, "dwy", 0, 14 - 2, "dwc", 0, 4);
     auto init_dw = set_dw->add_op("init_dw");
     init_dw->add_store("dw_conv", "dwx, dwy, dwz");
-    init_dw->add_function("set_zero");
+    init_dw->add_function("set_zero_32");
     // Set dw_conv to be
     auto update_dw = set_dw->add_nest("rx", 0, 3, "ry", 0, 3);
     auto rdw = update_dw->add_op("rdw");
@@ -3465,7 +3469,7 @@ void conv_1d_rolled_test() {
     auto pr = prg.add_loop("lr", 0, 64 - 2);
     auto rd = pr->add_op("init");
     rd->add_store("R", "lr");
-    rd->add_function("set_zero");
+    rd->add_function("set_zero_32");
 
     auto reduce_inner_loop = pr->add_loop("rr", 0, 3);
     auto reduce_inner = reduce_inner_loop->add_op({"R", "lr"}, "inc", {"R", "lr", "I", "lr + rr"});
@@ -3710,6 +3714,48 @@ struct App {
 
 };
 
+void jacobi_2d_2_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "jacobi2d_2";
+  prg.buffer_port_widths["I"] = 32;
+
+  int unroll_factor = 2;
+
+  string in_name_0 = "in_0";
+  string in_name_1 = "in_1";
+
+  string out_name_0 = "out_0";
+  string out_name_1 = "out_1";
+
+  int rows = 32;
+  int cols = 32;
+
+  prg.buffer_port_widths[in_name_0] = 32;
+  prg.add_input(in_name_0);
+  prg.buffer_port_widths[in_name_1] = 32;
+  prg.add_input(in_name_1);
+
+  prg.buffer_port_widths[out_name_0] = 32;
+  prg.add_output(out_name_0);
+  prg.buffer_port_widths[out_name_1] = 32;
+  prg.add_output(out_name_1);
+
+  auto in_nest = prg.add_nest("id1", 0, rows, "id0", 0, cols / 2);
+  in_nest->store({"I", "2*id0, id1"}, {in_name_0, "id0, id1"});
+  in_nest->store({"I", "2*id0 + 1, id1"}, {in_name_1, "id0, id1"});
+
+  auto blur_y_nest = 
+    prg.add_nest("d1", 1, rows - 1, "d0", 1, (cols - 1) / 2);
+  blur_y_nest->
+    stencil_op(out_name_0, "jacobi2d_compute", "I", {"2*d0 - 1", "d1"}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
+  blur_y_nest->
+    stencil_op(out_name_1, "jacobi2d_compute", "I", {"2*(d0) + 1 - 1", "d1"}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
+
+  regression_test(prg);
+  assert(false);
+}
+
 void jacobi_2d_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
@@ -3739,6 +3785,344 @@ void jacobi_2d_test() {
     stencil_op(out_name, "jacobi2d_compute", "I", {"d0", "d1"}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
 
   regression_test(prg);
+}
+
+struct Token {
+  string txt;
+};
+
+struct Expr {
+  vector<Token> tokens;
+};
+
+struct BaseExpr {
+  string name;
+  vector<Token> dims;
+};
+
+struct StencilProgram {
+  string name;
+  int burst_width;
+  int unroll_factor;
+
+  vector<pair<BaseExpr, Expr> > operations;
+};
+
+bool is_isolated_token(const char nextc) {
+  if (nextc == '-') {
+    return true;
+  }
+  if (nextc == '+') {
+    return true;
+  }
+  if (nextc == '*') {
+    return true;
+  }
+  if (nextc == '/') {
+    return true;
+  }
+  if (nextc == '.') {
+    return true;
+  }
+  if (nextc == ':') {
+    return true;
+  }
+  if (nextc == ',') {
+    return true;
+  }
+  if (nextc == '(') {
+    return true;
+  }
+  if (nextc == ')') {
+    return true;
+  }
+
+  return false;
+}
+
+bool is_token_break(const char nextc) {
+  if (isspace(nextc)) {
+    return true;
+  }
+
+  if (nextc == '-') {
+    return true;
+  }
+  if (nextc == '+') {
+    return true;
+  }
+  if (nextc == '*') {
+    return true;
+  }
+  if (nextc == '/') {
+    return true;
+  }
+  if (nextc == '.') {
+    return true;
+  }
+
+  if (nextc == ':') {
+    return true;
+  }
+
+  if (nextc == ',') {
+    return true;
+  }
+
+  if (nextc == '(') {
+    return true;
+  }
+  
+  if (nextc == ')') {
+    return true;
+  }
+
+  return false;
+}
+
+void add_token(vector<Token>& toks, const string& t) {
+  if (t.size() == 0) {
+    return;
+  }
+  toks.push_back({t});
+}
+
+
+vector<Token> tokenize(istream& in) {
+  vector<Token> toks;
+  char nextc;
+  string next;
+  while (in.get(nextc)) {
+    cout << "Next = " << nextc << endl;
+    if (is_token_break(nextc)) {
+      add_token(toks, next);
+      next = "";
+      if (!isspace(nextc)) {
+        if (is_isolated_token(nextc)) {
+          string n = "";
+          n += nextc;
+          add_token(toks, {n});
+        } else {
+          next += (nextc);
+        }
+      }
+    } else {
+      next += nextc;
+    }
+  }
+  add_token(toks, next);
+  //in.close();
+  return toks;
+}
+
+Token consume(vector<Token>& tokens, size_t& pos, const string& next) {
+  assert(pos < tokens.size());
+  pos++;
+  assert(tokens.at(pos - 1).txt == next);
+  return tokens.at(pos - 1);
+}
+
+Token peek(vector<Token>& tokens, size_t& pos) {
+  assert(pos < tokens.size());
+  return tokens.at(pos);
+}
+
+Token next(vector<Token>& tokens, size_t& pos) {
+  assert(pos < tokens.size());
+  pos++;
+  return tokens.at(pos - 1);
+}
+
+BaseExpr parse_base(vector<Token>& tokens, size_t& pos) {
+  string name = next(tokens, pos).txt;
+  vector<Token> tks;
+  if (peek(tokens, pos).txt == "(") {
+    next(tokens, pos);
+    while (peek(tokens, pos).txt != ")") {
+      tks.push_back(next(tokens, pos));
+      if (peek(tokens, pos).txt == ",") {
+        consume(tokens, pos, ",");
+      } else {
+        break;
+      }
+    }
+    consume(tokens, pos, ")");
+  }
+  return BaseExpr{name, tks};
+}
+
+bool expr_start(const Token& t) {
+  return t.txt != "local" && t.txt != "input" && t.txt != "output";
+}
+
+bool done(vector<Token>& tokens, size_t& pos) {
+  return tokens.size() <= pos;
+}
+
+Expr parse_expr(vector<Token>& tokens, size_t& pos) {
+  stack<Token> op_stack;
+  Expr e;
+  while (!done(tokens, pos) && expr_start(peek(tokens, pos))) {
+    e.tokens.push_back(next(tokens, pos));
+  }
+  return e;
+}
+
+StencilProgram parse_soda_program(istream& in) {
+  StencilProgram program;
+
+  vector<Token> tokens = tokenize(in);
+  //cout << "Tokens = " << endl;
+  for (auto t : tokens) {
+    //cout << "\ttok: " << t.txt << endl;
+    assert(t.txt.size() > 0);
+  }
+
+  size_t pos = 0;
+  while (pos < tokens.size()) {
+    string next = tokens[pos].txt;
+    if (next == "kernel") {
+      pos += 3;
+      program.name = tokens.at(pos + 2).txt;
+    } else if (next == "burst") {
+      program.burst_width = safe_stoi(tokens.at(pos + 3).txt);
+      pos += 4;
+    } else if (next == "unroll") {
+      program.unroll_factor = safe_stoi(tokens.at(pos + 3).txt);
+      pos += 4;
+    } else if (next == "iterate") {
+      //program.unroll_factor = to_string(tokens.at(pos + 3).txt);
+      pos += 3;
+    } else if (next == "input") {
+      //string tp = tokens.at(pos + 1);
+      pos = pos + 3;
+      BaseExpr b = parse_base(tokens, pos);
+      cout << "Base: " << b.name << "(";
+      for (auto e : b.dims) {
+        cout << e.txt << ", ";
+      }
+      cout << " )" << endl;
+    } else if (next == "local" || next == "output") {
+      pos = pos + 3;
+      BaseExpr b = parse_base(tokens, pos);
+      cout << "Base: " << b.name << "(";
+      for (auto e : b.dims) {
+        cout << e.txt << ", ";
+      }
+      cout << " )" << endl;
+
+      consume(tokens, pos, "=");
+      Expr e = parse_expr(tokens, pos);
+      cout << "After expr: " <<
+        endl;
+      for (size_t i = pos; i < tokens.size(); i++) {
+        cout << "tok: " << tokens.at(i).txt << endl;
+      }
+      program.operations.push_back({b, e});
+    } else {
+      cout << "Unsupported next token: " << tokens.at(pos).txt << endl;
+      assert(false);
+    }
+  }
+
+  cout << "Program: " << program.name << endl;
+  for (auto op : program.operations) {
+    BaseExpr b = op.first;
+    Expr e = op.second;
+    cout << b.name << "(";
+    for (auto e : b.dims) {
+      cout << e.txt << ", ";
+    }
+    cout << " ) = ";
+    for (auto t : e.tokens) {
+      cout << t.txt << " ";
+    }
+    cout << endl;
+  }
+  cout << "Done" << endl;
+  return program;
+}
+
+void parse_denoise3d_test() {
+  ifstream in("denoise3d.soda");
+  auto prg = parse_soda_program(in);
+
+  //assert(false);
+}
+
+void seidel2d_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "seidel2d";
+  prg.buffer_port_widths["I"] = 32;
+  prg.buffer_port_widths["tmp"] = 32;
+  
+  int rows = 32;
+  int cols = 32;
+
+  prg.buffer_bounds["I"] = {rows, cols};
+
+  string in_name = "in";
+  string out_name = "out";
+
+  prg.buffer_port_widths[in_name] = 32;
+  prg.add_input(in_name);
+
+  prg.buffer_port_widths[out_name] = 32;
+  prg.add_output(out_name);
+
+  auto in_nest = prg.add_nest("id1", 0, rows, "id0", 0, cols);
+  in_nest->add_op({"I", "id0, id1"}, "id", {in_name, "id0, id1"});
+
+  auto blur_y_nest = 
+    prg.add_nest("d1", 0, rows, "d0", 1, cols - 1);
+  blur_y_nest->
+    stencil_op("tmp", "blur_3_32", "I", {"d0", "d1"},
+        {{-1, 0}, {0, 0}, {1, 0}});
+
+  auto blur_out_nest= 
+    prg.add_nest("d1", 1, rows - 1, "d0", 1, cols - 1);
+  blur_out_nest->
+    stencil_op(out_name, "blur_3_32", "tmp", {"d0", "d1"},
+        {{0, -1}, {0, 0}, {0, 1}});
+
+  regression_test(prg);
+}
+
+void heat_3d_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "jacobi2d";
+  prg.buffer_port_widths["I"] = 32;
+  
+  int rows = 32;
+  int cols = 32;
+  int channels = 32;
+
+  prg.buffer_bounds["I"] = {rows, cols, channels};
+
+  string in_name = "in";
+  string out_name = "out";
+
+  prg.buffer_port_widths[in_name] = 32;
+  prg.add_input(in_name);
+
+  prg.buffer_port_widths[out_name] = 32;
+  prg.add_output(out_name);
+
+  auto in_nest = prg.add_nest("id2", 0, rows, "id1", 0, cols, "id0", 0, channels);
+  in_nest->add_op({"I", "id0, id1, id2"}, "id", {in_name, "id0, id1, id2"});
+
+  auto blur_y_nest = 
+    prg.add_nest("d2", 1, rows - 1, "d1", 1, cols - 1, "d0", 1, channels);
+  blur_y_nest->
+    stencil_op(out_name, "heat3d_compute", "I", {"d0", "d1", "d2"},
+        {{1, 0, 0}, {0, 0, 0}, {0, 0, 1},
+        {0, 1, 0}, {0, 0, 0}, {0, -1, 0},
+        {0, 0, 1}, {0, 0, 0}, {0, 0, -1}});
+
+  // Need to fix repeated reads from the same location
+  //regression_test(prg);
 }
 
 void blur_x_test() {
@@ -3919,7 +4303,7 @@ void conv_2d_rolled_test() {
     
     auto rd = pc->add_op("init");
     rd->add_store("R", "lr, lc");
-    rd->add_function("set_zero");
+    rd->add_function("set_zero_32");
 
     auto reduce_inner_loop = pc->add_nest("rr", -1, 2, "rc", -1, 2);
     auto reduce_inner = reduce_inner_loop->add_op({"R", "lr - 1, lc - 1"}, "inc", {"R", "lr, lc", "I", "lr + rr, lc + rc"});
@@ -4108,23 +4492,30 @@ int main(int argc, char** argv) {
     assert(false);
 
   } else if (argc == 1) {
-
+    jacobi_2d_2_test();
+    //assert(false);
     jacobi_2d_test();
+    parse_denoise3d_test();
+    seidel2d_test();
+    heat_3d_test();
+
     blur_x_test();
     pointwise_test();
 
     downsample_and_blur_test();
     stencil_3d_test();
     soda_blur_test();
-    conv_2d_rolled_test();
     two_in_window_test();
     two_in_conv2d_test();
-    blur_and_downsample_test();
     gaussian_pyramid_test();
     warp_and_upsample_test();
-    unsharp_test();
+
     conv_1d_rolled_test();
+    synth_upsample_test();
     reduce_1d_test();
+    unsharp_test();
+    blur_and_downsample_test();
+    conv_2d_rolled_test();
     synth_reduce_test();
     reduce_2d_test();
     conv_1d_test();
@@ -4133,11 +4524,11 @@ int main(int argc, char** argv) {
     pyramid_2d_test();
     pyramid_test();
     conv_1d_bc_test();
-    
     synth_lb_test();
     synth_wire_test();
     synth_sr_boundary_condition_test();
-    synth_upsample_test();
+    
+
 
   } else {
     assert(false);

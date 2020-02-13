@@ -2,7 +2,7 @@
 
 int main() {
 
-  HWStream<int> in, out, weights;
+  HWStream<hw_uint<32> > in, out, weights;
   for (int i = 0; i < 14*14*4; i++) {
     in.write(i);
     weights.write(i - 24);

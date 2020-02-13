@@ -6,7 +6,7 @@ int main() {
 
   cout << "Time sharing pyramid test" << endl;
 
-  HWStream<int> in, out;
+  HWStream<hw_uint<32> > in, out;
   vector<int> stage0;
   for (int i = 0; i < 10; i++) {
     in.write(i);
