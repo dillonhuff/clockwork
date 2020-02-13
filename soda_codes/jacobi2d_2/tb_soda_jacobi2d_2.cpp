@@ -24,11 +24,16 @@ int main() {
   for (int i = 0; i < img_size; i++) {
     int v = i;
     buf[i] = i;
-    in0.write(i);
+    if (i % 2 == 0) {
+      in0.write(i);
+    } else {
+      in1.write(i);
+    }
   }
 
   ap_uint<64> blur_y[img_size];
 
+  cout << "starting jacobi2d_2" << endl;
   jacobi2d_2(in0, in1, out0, out1);
   jacobi2d_2_kernel(blur_y, buf, img_size);
 
@@ -36,17 +41,24 @@ int main() {
   const int row_prefix = ncols*2;
   const int col_prefix = 1;
 
+  cout << "reading output" << endl;
   int start = row_prefix + col_prefix;
-  //for (int i = start; i < img_size; i++) {
-    //if ((i - start) % ncols < 30) {
-      //int soda_res_int = (int) blur_y[i];
-      //auto our_res = out.read();
-      //auto our_res_int = (int) our_res;
-      //cout << "soda out(" << i - start << ") = " << soda_res_int << endl;
-      //cout << "our  out(" << i - start << ") = " << our_res_int << endl;
+  for (int i = start; i < img_size; i++) {
+    cout << "i = " << i << endl;
+    if ((i - start) % ncols < 30) {
+      int soda_res_int = (int) blur_y[i];
+      hw_uint<32> our_res;
+      if (i % 2 == 0) {
+        our_res = out0.read();
+      } else {
+        our_res = out1.read();
+      }
+      auto our_res_int = (int) our_res;
+      cout << "soda out(" << i - start << ") = " << soda_res_int << endl;
+      cout << "our  out(" << i - start << ") = " << our_res_int << endl;
       //assert(our_res_int == soda_res_int);
-    //}
-  //}
+    }
+  }
 
   cout << "Output is empty: " << out0.is_empty() << endl;
   assert(out0.is_empty());
