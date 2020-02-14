@@ -67,7 +67,7 @@ inline hw_uint<32>  M_compute_output_3_select(M_get_input_0_cache& M_get_input_0
 // { compute_output[root = 0, c] : 0 <= c <= 7 } -> { compute_output[root, c] -> 2 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
-	int value_M_get_input_0 = M_get_input_0_delay.peek_2();
+	hw_uint<32>  value_M_get_input_0 = M_get_input_0_delay.peek_2();
 	return value_M_get_input_0;
 }
 
@@ -77,7 +77,7 @@ inline hw_uint<32>  M_compute_output_4_select(M_get_input_0_cache& M_get_input_0
 // { compute_output[root = 0, c] : 0 <= c <= 7 } -> { compute_output[root, c] -> 1 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
-	int value_M_get_input_0 = M_get_input_0_delay.peek_1();
+	hw_uint<32>  value_M_get_input_0 = M_get_input_0_delay.peek_1();
 	return value_M_get_input_0;
 }
 

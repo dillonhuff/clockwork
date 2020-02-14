@@ -387,7 +387,7 @@ inline hw_uint<16> I_out_blur_270_1_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 } -> { out_blur_270[root, xr, xc, xb] -> 2114 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_2114();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_2114();
 	return value_I_I_id0_28;
 }
 
@@ -397,7 +397,7 @@ inline hw_uint<16> I_out_blur_270_10_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 } -> { out_blur_270[root, xr, xc, xb] -> 1090 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_1090();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_1090();
 	return value_I_I_id0_28;
 }
 
@@ -407,7 +407,7 @@ inline hw_uint<16> I_out_blur_270_11_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 } -> { out_blur_270[root, xr, xc, xb] -> 1089 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_1089();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_1089();
 	return value_I_I_id0_28;
 }
 
@@ -419,7 +419,7 @@ inline hw_uint<16> I_out_blur_270_12_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc, xb = 29] : 0 <= xr <= 29 and 0 <= xc <= 29 } -> { out_blur_270[root, xr, xc, xb] -> (1059 + xb) }
 // 	is always true on iteration domain: 0
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_1088();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_1088();
 	return value_I_I_id0_28;
 }
 
@@ -429,7 +429,7 @@ inline hw_uint<16> I_out_blur_270_13_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 } -> { out_blur_270[root, xr, xc, xb] -> 1058 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_1058();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_1058();
 	return value_I_I_id0_28;
 }
 
@@ -439,7 +439,7 @@ inline hw_uint<16> I_out_blur_270_14_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 } -> { out_blur_270[root, xr, xc, xb] -> 1057 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_1057();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_1057();
 	return value_I_I_id0_28;
 }
 
@@ -451,7 +451,7 @@ inline hw_uint<16> I_out_blur_270_15_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc, xb = 29] : 0 <= xr <= 29 and 0 <= xc <= 29 } -> { out_blur_270[root, xr, xc, xb] -> (1027 + xb) }
 // 	is always true on iteration domain: 0
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_1056();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_1056();
 	return value_I_I_id0_28;
 }
 
@@ -463,7 +463,7 @@ inline hw_uint<16> I_out_blur_270_16_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc = 29, xb] : 0 <= xr <= 29 and 0 <= xb <= 29 } -> { out_blur_270[root, xr, xc, xb] -> 1026 }
 // 	is always true on iteration domain: 0
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_1026();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_1026();
 	return value_I_I_id0_28;
 }
 
@@ -475,7 +475,7 @@ inline hw_uint<16> I_out_blur_270_17_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc = 29, xb] : 0 <= xr <= 29 and 0 <= xb <= 29 } -> { out_blur_270[root, xr, xc, xb] -> 1025 }
 // 	is always true on iteration domain: 0
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_1025();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_1025();
 	return value_I_I_id0_28;
 }
 
@@ -491,7 +491,7 @@ inline hw_uint<16> I_out_blur_270_18_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc = 29, xb = 29] : 0 <= xr <= 29 } -> { out_blur_270[root, xr, xc, xb] -> ((67 + 32 * xc) + xb) }
 // 	is always true on iteration domain: 0
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_1024();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_1024();
 	return value_I_I_id0_28;
 }
 
@@ -501,7 +501,7 @@ inline hw_uint<16> I_out_blur_270_19_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 } -> { out_blur_270[root, xr, xc, xb] -> 66 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_66();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_66();
 	return value_I_I_id0_28;
 }
 
@@ -511,7 +511,7 @@ inline hw_uint<16> I_out_blur_270_2_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 } -> { out_blur_270[root, xr, xc, xb] -> 2113 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_2113();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_2113();
 	return value_I_I_id0_28;
 }
 
@@ -521,7 +521,7 @@ inline hw_uint<16> I_out_blur_270_20_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 } -> { out_blur_270[root, xr, xc, xb] -> 65 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_65();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_65();
 	return value_I_I_id0_28;
 }
 
@@ -533,7 +533,7 @@ inline hw_uint<16> I_out_blur_270_21_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc, xb = 29] : 0 <= xr <= 29 and 0 <= xc <= 29 } -> { out_blur_270[root, xr, xc, xb] -> (35 + xb) }
 // 	is always true on iteration domain: 0
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_64();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_64();
 	return value_I_I_id0_28;
 }
 
@@ -543,7 +543,7 @@ inline hw_uint<16> I_out_blur_270_22_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 } -> { out_blur_270[root, xr, xc, xb] -> 34 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_34();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_34();
 	return value_I_I_id0_28;
 }
 
@@ -553,7 +553,7 @@ inline hw_uint<16> I_out_blur_270_23_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 } -> { out_blur_270[root, xr, xc, xb] -> 33 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_33();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_33();
 	return value_I_I_id0_28;
 }
 
@@ -565,7 +565,7 @@ inline hw_uint<16> I_out_blur_270_24_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc, xb = 29] : 0 <= xr <= 29 and 0 <= xc <= 29 } -> { out_blur_270[root, xr, xc, xb] -> (3 + xb) }
 // 	is always true on iteration domain: 0
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_32();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_32();
 	return value_I_I_id0_28;
 }
 
@@ -575,7 +575,7 @@ inline hw_uint<16> I_out_blur_270_25_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 } -> { out_blur_270[root, xr, xc, xb] -> 2 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_2();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_2();
 	return value_I_I_id0_28;
 }
 
@@ -585,7 +585,7 @@ inline hw_uint<16> I_out_blur_270_26_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 } -> { out_blur_270[root, xr, xc, xb] -> 1 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_1();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_1();
 	return value_I_I_id0_28;
 }
 
@@ -606,7 +606,7 @@ inline hw_uint<16> I_out_blur_270_3_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc, xb = 29] : 0 <= xr <= 29 and 0 <= xc <= 29 } -> { out_blur_270[root, xr, xc, xb] -> (2083 + xb) }
 // 	is always true on iteration domain: 0
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_2112();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_2112();
 	return value_I_I_id0_28;
 }
 
@@ -616,7 +616,7 @@ inline hw_uint<16> I_out_blur_270_4_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 } -> { out_blur_270[root, xr, xc, xb] -> 2082 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_2082();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_2082();
 	return value_I_I_id0_28;
 }
 
@@ -626,7 +626,7 @@ inline hw_uint<16> I_out_blur_270_5_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 } -> { out_blur_270[root, xr, xc, xb] -> 2081 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_2081();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_2081();
 	return value_I_I_id0_28;
 }
 
@@ -638,7 +638,7 @@ inline hw_uint<16> I_out_blur_270_6_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc, xb = 29] : 0 <= xr <= 29 and 0 <= xc <= 29 } -> { out_blur_270[root, xr, xc, xb] -> (2051 + xb) }
 // 	is always true on iteration domain: 0
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_2080();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_2080();
 	return value_I_I_id0_28;
 }
 
@@ -650,7 +650,7 @@ inline hw_uint<16> I_out_blur_270_7_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc = 29, xb] : 0 <= xr <= 29 and 0 <= xb <= 29 } -> { out_blur_270[root, xr, xc, xb] -> 2050 }
 // 	is always true on iteration domain: 0
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_2050();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_2050();
 	return value_I_I_id0_28;
 }
 
@@ -662,7 +662,7 @@ inline hw_uint<16> I_out_blur_270_8_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc = 29, xb] : 0 <= xr <= 29 and 0 <= xb <= 29 } -> { out_blur_270[root, xr, xc, xb] -> 2049 }
 // 	is always true on iteration domain: 0
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_2049();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_2049();
 	return value_I_I_id0_28;
 }
 
@@ -678,7 +678,7 @@ inline hw_uint<16> I_out_blur_270_9_select(I_I_id0_28_cache& I_I_id0_28_delay
 // { out_blur_270[root = 0, xr, xc = 29, xb = 29] : 0 <= xr <= 29 } -> { out_blur_270[root, xr, xc, xb] -> ((1091 + 32 * xc) + xb) }
 // 	is always true on iteration domain: 0
 //	is optimizable constant: 1
-	int value_I_I_id0_28 = I_I_id0_28_delay.peek_2048();
+	hw_uint<16> value_I_I_id0_28 = I_I_id0_28_delay.peek_2048();
 	return value_I_I_id0_28;
 }
 

@@ -65,7 +65,7 @@ inline hw_uint<32>  read0_select(write_cache& write_delay
 // { read0[i] : 0 <= i <= 7 } -> { read0[i] -> 2 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
-	int value_write = write_delay.peek_2();
+	hw_uint<32>  value_write = write_delay.peek_2();
 	return value_write;
 }
 
@@ -75,7 +75,7 @@ inline hw_uint<32>  read1_select(write_cache& write_delay
 // { read1[i] : 0 <= i <= 7 } -> { read1[i] -> 1 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
-	int value_write = write_delay.peek_1();
+	hw_uint<32>  value_write = write_delay.peek_1();
 	return value_write;
 }
 

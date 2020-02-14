@@ -107,7 +107,7 @@ inline hw_uint<32>  I_out_jacobi2d_compute0_1_select(I_I_id0_6_cache& I_I_id0_6_
 // { out_jacobi2d_compute0[root = 0, d1, d0] : 0 < d1 <= 30 and 0 < d0 <= 30 } -> { out_jacobi2d_compute0[root, d1, d0] -> 33 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
-	int value_I_I_id0_6 = I_I_id0_6_delay.peek_33();
+	hw_uint<32>  value_I_I_id0_6 = I_I_id0_6_delay.peek_33();
 	return value_I_I_id0_6;
 }
 
@@ -117,7 +117,7 @@ inline hw_uint<32>  I_out_jacobi2d_compute0_2_select(I_I_id0_6_cache& I_I_id0_6_
 // { out_jacobi2d_compute0[root = 0, d1, d0] : 0 < d1 <= 30 and 0 < d0 <= 30 } -> { out_jacobi2d_compute0[root, d1, d0] -> 64 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
-	int value_I_I_id0_6 = I_I_id0_6_delay.peek_64();
+	hw_uint<32>  value_I_I_id0_6 = I_I_id0_6_delay.peek_64();
 	return value_I_I_id0_6;
 }
 
@@ -127,7 +127,7 @@ inline hw_uint<32>  I_out_jacobi2d_compute0_3_select(I_I_id0_6_cache& I_I_id0_6_
 // { out_jacobi2d_compute0[root = 0, d1, d0] : 0 < d1 <= 30 and 0 < d0 <= 30 } -> { out_jacobi2d_compute0[root, d1, d0] -> 32 }
 // 	is always true on iteration domain: 1
 //	is optimizable constant: 1
-	int value_I_I_id0_6 = I_I_id0_6_delay.peek_32();
+	hw_uint<32>  value_I_I_id0_6 = I_I_id0_6_delay.peek_32();
 	return value_I_I_id0_6;
 }
 
@@ -148,7 +148,7 @@ inline hw_uint<32>  I_out_jacobi2d_compute0_5_select(I_I_id0_6_cache& I_I_id0_6_
 // { out_jacobi2d_compute0[root = 0, d1, d0 = 30] : 0 < d1 <= 30 } -> { out_jacobi2d_compute0[root, d1, d0] -> (1 + d0) }
 // 	is always true on iteration domain: 0
 //	is optimizable constant: 1
-	int value_I_I_id0_6 = I_I_id0_6_delay.peek_31();
+	hw_uint<32>  value_I_I_id0_6 = I_I_id0_6_delay.peek_31();
 	return value_I_I_id0_6;
 }
 

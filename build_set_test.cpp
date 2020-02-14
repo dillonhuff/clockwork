@@ -849,12 +849,7 @@ bool is_optimizable_constant_dd(const string& inpt, const string& outpt, UBuffer
   return false;
 }
 
-void generate_selects(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
-
-  auto out_domain = buf.domain.at(outpt);
-
-  auto lex_max_events = get_lexmax_events(inpt, outpt, buf);
-
+void generate_select_decl(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
   out << "inline " + buf.port_type_string() + " " + outpt + "_select(";
   size_t nargs = 0;
   for (auto pt : buf.get_in_ports()) {
@@ -871,6 +866,15 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
   out << sep_list(dim_decls, "", "", ", ");
 
   out << ") {" << endl;
+}
+
+void generate_selects(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
+  generate_select_decl(options, out, inpt, outpt, buf);
+
+  auto out_domain = buf.domain.at(outpt);
+
+  auto lex_max_events = get_lexmax_events(inpt, outpt, buf);
+
   // Body of select function
   string delay_expr = evaluate_dd(buf, outpt, inpt);
   auto qpd = compute_dd(buf, outpt, inpt);
@@ -892,35 +896,42 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
   if (buf.get_in_ports().size() == 1) {
     string inpt = *(buf.get_in_ports().begin());
 
+    string value_str = "";
     if (opt_const) {
       if (!options.all_rams && is_number(dx)) {
-        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
+        value_str = inpt + "_delay.peek_" + dx + "()";
+        //<< ";\n";
+        //out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
       } else {
-        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << dx << ")" << ";\n";
+        //out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << dx << ")" << ";\n";
+        value_str = inpt + "_delay.peek" + "(" + dx + ")";
       }
-      //out << "\treturn value_" + inpt + ";" << endl;
     } else if (pieces.size() == 0 && !options.all_rams) {
-      out << "\t" << buf.port_type_string() << " value_" << inpt << " = " << inpt << "_delay.peek_" << 0 << "()" << ";\n";
-      //out << "\treturn value_" + inpt + ";" << endl;
+      //out << "\t" << buf.port_type_string() << " value_" << inpt << " = " << inpt << "_delay.peek_" << 0 << "()" << ";\n";
+      value_str = inpt + "_delay.peek_0()";
     } else if (pieces.size() == 1 &&
         isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
       string dx = codegen_c(pieces[0].second);
       if (!options.all_rams && is_number(dx)) {
-        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
+        //out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
+        value_str = inpt + "_delay.peek_" + dx + "()";
       } else {
-        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << dx << ")" << ";\n";
+        //out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << dx << ")" << ";\n";
+        value_str = inpt + "_delay.peek" + "(" + dx + ")";
       }
-      //out << "\treturn value_" + inpt + ";" << endl;
     } else {
-      out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
-      //out << "\treturn value_" + inpt + ";" << endl;
+      //out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
+      value_str = inpt + "_delay.peek" + "(" + delay_expr + ")";
     }
+
+    out << "\t" << buf.port_type_string() << " value_" << inpt << " = " << value_str << ";" << endl;
     out << "\treturn value_" + inpt + ";" << endl;
   } else {
     cout << "Lexmax events: " << str(lex_max_events) << endl;
     map<string, string> ms = umap_codegen_c(lex_max_events);
     cout << "Done" << endl;
     if (options.internal) {
+    //if (true) {
       for (auto e : ms) {
         out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
       }
