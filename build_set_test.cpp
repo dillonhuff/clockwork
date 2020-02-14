@@ -2108,8 +2108,8 @@ struct prog {
     auto order_deps = relative_orders();
     isl_union_map *raw_deps = validity_deps();
     auto validity =
-      //raw_deps;
-      unn(order_deps, raw_deps);
+      raw_deps;
+      //unn(order_deps, raw_deps);
     isl_union_map *proximity =
       cpy(raw_deps);
       //cpy(validity);
@@ -4419,6 +4419,7 @@ int main(int argc, char** argv) {
     //assert(false);
     synth_reduce_test();
     jacobi_2d_2_test();
+    assert(false);
     jacobi_2d_test();
     parse_denoise3d_test();
     seidel2d_test();
