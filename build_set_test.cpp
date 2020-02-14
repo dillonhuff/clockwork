@@ -852,12 +852,7 @@ bool is_optimizable_constant_dd(const string& inpt, const string& outpt, UBuffer
 void generate_selects(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
 
   auto out_domain = buf.domain.at(outpt);
-  auto out_reads = buf.access_map.at(outpt);
 
-  //auto in_actions = buf.domain.at(inpt);
-  //auto in_writes = buf.access_map.at(inpt);
-
-  //auto reads_from_inpt = dot(out_reads, inv(in_writes));
   auto lex_max_events = get_lexmax_events(inpt, outpt, buf);
 
   out << "inline " + buf.port_type_string() + " " + outpt + "_select(";
@@ -903,10 +898,10 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
       } else {
         out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << dx << ")" << ";\n";
       }
-      out << "\treturn value_" + inpt + ";" << endl;
+      //out << "\treturn value_" + inpt + ";" << endl;
     } else if (pieces.size() == 0 && !options.all_rams) {
       out << "\t" << buf.port_type_string() << " value_" << inpt << " = " << inpt << "_delay.peek_" << 0 << "()" << ";\n";
-      out << "\treturn value_" + inpt + ";" << endl;
+      //out << "\treturn value_" + inpt + ";" << endl;
     } else if (pieces.size() == 1 &&
         isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
       string dx = codegen_c(pieces[0].second);
@@ -915,11 +910,12 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
       } else {
         out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << dx << ")" << ";\n";
       }
-      out << "\treturn value_" + inpt + ";" << endl;
+      //out << "\treturn value_" + inpt + ";" << endl;
     } else {
       out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
-      out << "\treturn value_" + inpt + ";" << endl;
+      //out << "\treturn value_" + inpt + ";" << endl;
     }
+    out << "\treturn value_" + inpt + ";" << endl;
   } else {
     cout << "Lexmax events: " << str(lex_max_events) << endl;
     map<string, string> ms = umap_codegen_c(lex_max_events);
