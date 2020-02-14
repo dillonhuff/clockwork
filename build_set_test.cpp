@@ -938,6 +938,7 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
   } else {
     cout << "Lexmax events: " << str(lex_max_events) << endl;
     map<string, string> ms = umap_codegen_c(lex_max_events);
+    out << "\t// lexmax events: " << str(lex_max_events) << endl;
     cout << "Done" << endl;
     for (auto e : ms) {
       out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
