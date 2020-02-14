@@ -891,8 +891,13 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
 
   auto lex_max_events = get_lexmax_events(outpt, buf);
 
+  map<string, string> in_port_offsets;
+  for (auto inpt : buf.get_in_ports()) {
+    string delay_expr = evaluate_dd(buf, outpt, inpt);
+    in_port_offsets[inpt] = delay_expr;
+  }
   // Body of select function
-  string delay_expr = evaluate_dd(buf, outpt, inpt);
+  //string delay_expr = evaluate_dd(buf, outpt, inpt);
   auto qpd = compute_dd(buf, outpt, inpt);
   auto pieces = get_pieces(qpd);
   out << "// Pieces..." << endl;
@@ -911,13 +916,14 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
 
   if (buf.get_in_ports().size() == 1) {
     string inpt = *(buf.get_in_ports().begin());
+    string delay_expr = map_find(inpt, in_port_offsets);
 
     string value_str = "";
     if (opt_const) {
       if (!options.all_rams && is_number(dx)) {
         value_str = inpt + "_delay.peek_" + dx + "()";
       } else {
-        value_str = inpt + "_delay.peek" + "(" + dx + ")";
+        value_str = inpt + "_delay.peek" + "(" + delay_expr + ")";
       }
     } else if (pieces.size() == 0 && !options.all_rams) {
       value_str = inpt + "_delay.peek_0()";
@@ -942,11 +948,6 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     cout << "Done" << endl;
     for (auto e : ms) {
       out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
-    }
-    map<string, string> in_port_offsets;
-    for (auto inpt : buf.get_in_ports()) {
-      string delay_expr = evaluate_dd(buf, outpt, inpt);
-      in_port_offsets[inpt] = delay_expr;
     }
 
     for (auto inpt : buf.get_in_ports()) {
