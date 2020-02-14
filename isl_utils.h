@@ -719,3 +719,48 @@ std::string codegen_c(isl_union_map* res) {
   return code_string;
 }
 
+std::string codegen_c(isl_qpolynomial* qp) {
+  auto ctx = isl_qpolynomial_get_ctx(qp);
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
+  p = isl_printer_print_qpolynomial(p, cpy(qp));
+
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  std::string r(rs);
+  free(rs);
+  return r;
+}
+
+std::string codegen_c(isl_union_pw_qpolynomial* pqp) {
+
+  auto ct = ctx(pqp);
+  isl_printer *p;
+  p = isl_printer_to_str(ct);
+  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
+  p = isl_printer_print_union_pw_qpolynomial(p, cpy(pqp));
+
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  std::string r(rs);
+  free(rs);
+  return r;
+}
+
+std::string codegen_c(isl_pw_qpolynomial* pqp) {
+
+  auto ctx = isl_pw_qpolynomial_get_ctx(pqp);
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
+  p = isl_printer_print_pw_qpolynomial(p, cpy(pqp));
+
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  std::string r(rs);
+  free(rs);
+  return r;
+
+}
+

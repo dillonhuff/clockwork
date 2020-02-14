@@ -264,16 +264,6 @@ isl_stat get_const(isl_set* s, isl_qpolynomial* qp, void* user) {
   return isl_stat_ok;
 }
 
-std::string ReplaceString(std::string subject, const std::string& search,
-                          const std::string& replace) {
-    size_t pos = 0;
-    while ((pos = subject.find(search, pos)) != std::string::npos) {
-         subject.replace(pos, search.length(), replace);
-         pos += replace.length();
-    }
-    return subject;
-}
-
 string codegen_c_constraint(isl_constraint* c) {
 
   vector<string> non_zero_coeffs;
@@ -447,20 +437,6 @@ std::string codegen_c(isl_term* t) {
   return "(" + str(isl_term_get_coefficient_val(t)) + "*" + sep_list(exps, "", "", "*") + ")";
 }
 
-std::string codegen_c(isl_qpolynomial* qp) {
-  auto ctx = isl_qpolynomial_get_ctx(qp);
-  isl_printer *p;
-  p = isl_printer_to_str(ctx);
-  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
-  p = isl_printer_print_qpolynomial(p, cpy(qp));
-
-  char* rs = isl_printer_get_str(p);
-  isl_printer_free(p);
-  string r(rs);
-  free(rs);
-  return r;
-}
-
 isl_stat codegen_domain(isl_set* domain, isl_qpolynomial* qp, void* user) {
   vector<string>& code_holder = *((vector<string>*) user);
   code_holder.push_back(codegen_c(domain));
@@ -471,37 +447,6 @@ isl_stat codegen_value(isl_set* domain, isl_qpolynomial* qp, void* user) {
   vector<string>& code_holder = *((vector<string>*) user);
   code_holder.push_back(codegen_c(qp));
   return isl_stat_ok;
-}
-
-std::string codegen_c(isl_union_pw_qpolynomial* pqp) {
-
-  auto ct = ctx(pqp);
-  isl_printer *p;
-  p = isl_printer_to_str(ct);
-  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
-  p = isl_printer_print_union_pw_qpolynomial(p, cpy(pqp));
-
-  char* rs = isl_printer_get_str(p);
-  isl_printer_free(p);
-  string r(rs);
-  free(rs);
-  return r;
-}
-
-std::string codegen_c(isl_pw_qpolynomial* pqp) {
-
-  auto ctx = isl_pw_qpolynomial_get_ctx(pqp);
-  isl_printer *p;
-  p = isl_printer_to_str(ctx);
-  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
-  p = isl_printer_print_pw_qpolynomial(p, cpy(pqp));
-
-  char* rs = isl_printer_get_str(p);
-  isl_printer_free(p);
-  string r(rs);
-  free(rs);
-  return r;
-
 }
 
 isl_stat map_codegen_c(isl_map* m, void* user) {
