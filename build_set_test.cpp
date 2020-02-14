@@ -868,6 +868,21 @@ void generate_select_decl(CodegenOptions& options, std::ostream& out, const stri
   out << ") {" << endl;
 }
 
+void select_debug_assertions(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
+  // ------------ Error printouts only
+  vector<string> offset_printouts;
+  isl_space* s = get_space(buf.domain.at(outpt));
+  assert(isl_space_is_set(s));
+  for (int i = 0; i < num_dims(s); i++) {
+    string name = 
+      str(isl_space_get_dim_id(s, isl_dim_set, i));
+    offset_printouts.push_back("\" " + name + " = \" << " + name + " ");
+  }
+
+  out << "\tcout << \"Error: Unsupported offsets: \" << " << sep_list(offset_printouts, "", "", " << ") << " << endl;" << endl;
+  out << "\tassert(false);\n\treturn 0;\n";
+}
+
 void generate_selects(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
   generate_select_decl(options, out, inpt, outpt, buf);
 
@@ -900,27 +915,20 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     if (opt_const) {
       if (!options.all_rams && is_number(dx)) {
         value_str = inpt + "_delay.peek_" + dx + "()";
-        //<< ";\n";
-        //out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
       } else {
-        //out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << dx << ")" << ";\n";
         value_str = inpt + "_delay.peek" + "(" + dx + ")";
       }
     } else if (pieces.size() == 0 && !options.all_rams) {
-      //out << "\t" << buf.port_type_string() << " value_" << inpt << " = " << inpt << "_delay.peek_" << 0 << "()" << ";\n";
       value_str = inpt + "_delay.peek_0()";
     } else if (pieces.size() == 1 &&
         isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
       string dx = codegen_c(pieces[0].second);
       if (!options.all_rams && is_number(dx)) {
-        //out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
         value_str = inpt + "_delay.peek_" + dx + "()";
       } else {
-        //out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << dx << ")" << ";\n";
         value_str = inpt + "_delay.peek" + "(" + dx + ")";
       }
     } else {
-      //out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
       value_str = inpt + "_delay.peek" + "(" + delay_expr + ")";
     }
 
@@ -931,7 +939,6 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     map<string, string> ms = umap_codegen_c(lex_max_events);
     cout << "Done" << endl;
     if (options.internal) {
-    //if (true) {
       for (auto e : ms) {
         out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
       }
@@ -956,18 +963,7 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
         }
       }
 
-      // Error printouts
-      vector<string> offset_printouts;
-      isl_space* s = get_space(buf.domain.at(outpt));
-      assert(isl_space_is_set(s));
-      for (int i = 0; i < num_dims(s); i++) {
-        string name = 
-          str(isl_space_get_dim_id(s, isl_dim_set, i));
-        offset_printouts.push_back("\" " + name + " = \" << " + name + " ");
-      }
-
-      out << "\tcout << \"Error: Unsupported offsets: \" << " << sep_list(offset_printouts, "", "", " << ") << " << endl;" << endl;
-      out << "\tassert(false);\n\treturn 0;\n";
+      select_debug_assertions(options, out, inpt, outpt, buf);
     } else {
       for (auto inpt : buf.get_in_ports()) {
         auto in_actions = buf.domain.at(inpt);
