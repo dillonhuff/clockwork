@@ -981,7 +981,7 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
   out << "}" << endl << endl;
 }
 
-void generate_bundles(CodegenOptions& options, std::ostream& out, const string& inpt, UBuffer& buf) {
+void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
   out << "// Bundles..." << endl;
   for (auto b : buf.port_bundles) {
     out << "// " << b.first << endl;
@@ -1053,7 +1053,7 @@ void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf)
     generate_selects(options, out, inpt, outpt, buf);
   }
 
-  generate_bundles(options, out, inpt, buf);
+  generate_bundles(options, out, buf);
   out << endl << endl;
 }
 
