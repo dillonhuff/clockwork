@@ -941,8 +941,8 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     for (auto e : ms) {
       out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
     }
-    if (options.internal) {
-      for (auto inpt : buf.get_in_ports()) {
+    for (auto inpt : buf.get_in_ports()) {
+      if (options.internal) {
         out << "\t// inpt: " << inpt << endl;
         bool found_key = false;
         string k_var = "";
@@ -961,22 +961,31 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
         } else {
           out << "//\tNo key for: " << inpt << endl;
         }
-      }
-    } else {
-
-      for (auto inpt : buf.get_in_ports()) {
+      } else {
         if (contains_key(inpt, ms)) {
           string delay_expr = evaluate_dd(buf, outpt, inpt);
           out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
           out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
         }
+
       }
     }
     select_debug_assertions(options, out, inpt, outpt, buf);
   }
 
+  //else {
+
+  //for (auto inpt : buf.get_in_ports()) {
+  //if (contains_key(inpt, ms)) {
+  //string delay_expr = evaluate_dd(buf, outpt, inpt);
+  //out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
+  //out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
+  //}
+  //}
   out << "}" << endl << endl;
 }
+
+//}
 
 void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
   out << "// Bundles..." << endl;
