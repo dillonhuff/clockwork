@@ -854,15 +854,11 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
   auto out_domain = buf.domain.at(outpt);
   auto out_reads = buf.access_map.at(outpt);
 
-  auto in_actions = buf.domain.at(inpt);
-  auto in_writes = buf.access_map.at(inpt);
+  //auto in_actions = buf.domain.at(inpt);
+  //auto in_writes = buf.access_map.at(inpt);
 
-  auto reads_from_inpt = dot(out_reads, inv(in_writes));
-  //cout << "reads from inpt: " << str(reads_from_inpt) << endl;
-  //cout << "op reads from inpt: " << str(domain(reads_from_inpt)) << endl;
-
+  //auto reads_from_inpt = dot(out_reads, inv(in_writes));
   auto lex_max_events = get_lexmax_events(inpt, outpt, buf);
-  //cout << "lex_max_events = " << str(lex_max_events) << endl;
 
   out << "inline " + buf.port_type_string() + " " + outpt + "_select(";
   size_t nargs = 0;
