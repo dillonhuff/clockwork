@@ -1,0 +1,287 @@
+
+
+================================================================
+== Vivado HLS Report for 'jacobi2d_2_kernel'
+================================================================
+* Date:           Thu Feb 13 14:32:37 2020
+
+* Version:        2018.2 (Build 2258646 on Thu Jun 14 20:25:20 MDT 2018)
+* Project:        soda_jacobi2d_2_proj
+* Solution:       solution1
+* Product family: kintex7
+* Target device:  xc7k160tfbg484-2
+
+
+================================================================
+== Performance Estimates
+================================================================
++ Timing (ns): 
+    * Summary: 
+    +--------+-------+----------+------------+
+    |  Clock | Target| Estimated| Uncertainty|
+    +--------+-------+----------+------------+
+    |ap_clk  |   5.00|     4.375|        0.62|
+    +--------+-------+----------+------------+
+
++ Latency (clock cycles): 
+    * Summary: 
+    +-----+-----+-----+-----+----------+
+    |  Latency  |  Interval | Pipeline |
+    | min | max | min | max |   Type   |
+    +-----+-----+-----+-----+----------+
+    |    ?|    ?|    ?|    ?| dataflow |
+    +-----+-----+-----+-----+----------+
+
+    + Detail: 
+        * Instance: 
+        +------------------+---------------+-----+-----+-----+-----+---------+
+        |                  |               |  Latency  |  Interval | Pipeline|
+        |     Instance     |     Module    | min | max | min | max |   Type  |
+        +------------------+---------------+-----+-----+-----+-----+---------+
+        |Module7Func70_U0  |Module7Func70  |    ?|    ?|    ?|    ?|   none  |
+        |Module7Func_U0    |Module7Func    |    ?|    ?|    ?|    ?|   none  |
+        |BurstRead5_U0     |BurstRead5     |    ?|    ?|    ?|    ?|   none  |
+        |BurstWrite_U0     |BurstWrite     |    ?|    ?|    ?|    ?|   none  |
+        |Module2Func_U0    |Module2Func    |    ?|    ?|    ?|    ?|   none  |
+        |Module8Func_U0    |Module8Func    |    ?|    ?|    ?|    ?|   none  |
+        |Module3Func_U0    |Module3Func    |    ?|    ?|    ?|    ?|   none  |
+        |Module6Func_U0    |Module6Func    |    ?|    ?|    ?|    ?|   none  |
+        |Module9Func_U0    |Module9Func    |    ?|    ?|    ?|    ?|   none  |
+        |Module0Func_U0    |Module0Func    |    ?|    ?|    ?|    ?|   none  |
+        |Module5Func_U0    |Module5Func    |    ?|    ?|    ?|    ?|   none  |
+        |Module4Func_U0    |Module4Func    |    ?|    ?|    ?|    ?|   none  |
+        |Module1Func69_U0  |Module1Func69  |    ?|    ?|    ?|    ?|   none  |
+        |Module1Func_U0    |Module1Func    |    ?|    ?|    ?|    ?|   none  |
+        +------------------+---------------+-----+-----+-----+-----+---------+
+
+        * Loop: 
+        N/A
+
+
+
+================================================================
+== Utilization Estimates
+================================================================
+* Summary: 
++-----------------+---------+-------+--------+--------+
+|       Name      | BRAM_18K| DSP48E|   FF   |   LUT  |
++-----------------+---------+-------+--------+--------+
+|DSP              |        -|      -|       -|       -|
+|Expression       |        -|      -|       0|      10|
+|FIFO             |       52|      -|    1227|    1207|
+|Instance         |        8|      8|    4084|    4375|
+|Memory           |        -|      -|       -|       -|
+|Multiplexer      |        -|      -|       -|       -|
+|Register         |        -|      -|       -|       -|
++-----------------+---------+-------+--------+--------+
+|Total            |       60|      8|    5311|    5592|
++-----------------+---------+-------+--------+--------+
+|Available        |      650|    600|  202800|  101400|
++-----------------+---------+-------+--------+--------+
+|Utilization (%)  |        9|      1|       2|       5|
++-----------------+---------+-------+--------+--------+
+
++ Detail: 
+    * Instance: 
+    +-------------------------------------+-----------------------------------+---------+-------+-----+-----+
+    |               Instance              |               Module              | BRAM_18K| DSP48E|  FF | LUT |
+    +-------------------------------------+-----------------------------------+---------+-------+-----+-----+
+    |BurstRead5_U0                        |BurstRead5                         |        0|      0|  211|  294|
+    |BurstWrite_U0                        |BurstWrite                         |        0|      0|  269|  259|
+    |Module0Func_U0                       |Module0Func                        |        0|      0|   74|   83|
+    |Module1Func_U0                       |Module1Func                        |        0|      0|   41|   83|
+    |Module1Func69_U0                     |Module1Func69                      |        0|      0|   41|   83|
+    |Module2Func_U0                       |Module2Func                        |        0|      0|  113|  137|
+    |Module3Func_U0                       |Module3Func                        |        0|      0|  113|  126|
+    |Module4Func_U0                       |Module4Func                        |        0|      0|   73|   83|
+    |Module5Func_U0                       |Module5Func                        |        0|      0|   73|   92|
+    |Module6Func_U0                       |Module6Func                        |        0|      0|  112|  108|
+    |Module7Func_U0                       |Module7Func                        |        0|      4|  732|  500|
+    |Module7Func70_U0                     |Module7Func70                      |        0|      4|  733|  509|
+    |Module8Func_U0                       |Module8Func                        |        0|      0|  112|  110|
+    |Module9Func_U0                       |Module9Func                        |        0|      0|   73|   80|
+    |jacobi2d_2_kernel_control_s_axi_U    |jacobi2d_2_kernel_control_s_axi    |        0|      0|  182|  296|
+    |jacobi2d_2_kernel_in_bank_0_m_axi_U  |jacobi2d_2_kernel_in_bank_0_m_axi  |        4|      0|  566|  766|
+    |jacobi2d_2_kernel_t0_bank_0_m_axi_U  |jacobi2d_2_kernel_t0_bank_0_m_axi  |        4|      0|  566|  766|
+    +-------------------------------------+-----------------------------------+---------+-------+-----+-----+
+    |Total                                |                                   |        8|      8| 4084| 4375|
+    +-------------------------------------+-----------------------------------+---------+-------+-----+-----+
+
+    * DSP48: 
+    N/A
+
+    * Memory: 
+    N/A
+
+    * FIFO: 
+    +--------------------------+---------+----+----+------+-----+---------+
+    |           Name           | BRAM_18K| FF | LUT| Depth| Bits| Size:D*B|
+    +--------------------------+---------+----+----+------+-----+---------+
+    |bank_0_in_buf_V_U         |        4|  82|  75|    32|   65|     2080|
+    |bank_0_t0_V_c_U           |        0|   6|  46|     9|   32|      288|
+    |bank_0_t0_buf_V_U         |        4|  82|  75|    32|   65|     2080|
+    |coalesced_data_num_c_1_U  |        4|  77|  71|     9|   64|      576|
+    |from_in_offset_0_to_2_U   |        2|  49|  47|    16|   33|      528|
+    |from_in_offset_0_to_3_U   |        2|  49|  47|    16|   33|      528|
+    |from_in_offset_1_to_2_U   |        2|  49|  47|    16|   33|      528|
+    |from_in_offset_1_to_3_U   |        2|  49|  47|    16|   33|      528|
+    |from_in_offset_31_to_2_U  |        2|  49|  47|    16|   33|      528|
+    |from_in_offset_31_to_3_U  |        2|  49|  47|    16|   33|      528|
+    |from_in_offset_32_to_3_U  |        2|  49|  47|    16|   33|      528|
+    |from_in_offset_32_to_4_U  |        2|  49|  47|    16|   33|      528|
+    |from_in_offset_32_to_5_U  |        2|  49|  47|    16|   33|      528|
+    |from_in_offset_33_to_3_U  |        2|  49|  47|    16|   33|      528|
+    |from_in_offset_33_to_4_U  |        2|  49|  47|    16|   33|      528|
+    |from_in_offset_33_to_5_U  |        2|  49|  47|    16|   33|      528|
+    |from_in_offset_34_to_2_U  |        2|  49|  47|    16|   33|      528|
+    |from_in_offset_34_to_3_U  |        2|  49|  47|    16|   33|      528|
+    |from_in_offset_64_to_1_U  |        2|  49|  47|    16|   33|      528|
+    |from_in_offset_65_to_1_U  |        2|  49|  47|    16|   33|      528|
+    |from_super_source_to_2_U  |        2|  49|  47|    16|   33|      528|
+    |from_super_source_to_3_U  |        2|  49|  47|    16|   33|      528|
+    |from_t0_pe_0_to_supe_1_U  |        2|  49|  47|    16|   33|      528|
+    |from_t0_pe_1_to_supe_1_U  |        2|  49|  47|    16|   33|      528|
+    +--------------------------+---------+----+----+------+-----+---------+
+    |Total                     |       52|1227|1207|   402|  886|    15584|
+    +--------------------------+---------+----+----+------+-----+---------+
+
+    * Expression: 
+    +-------------------------------+----------+-------+---+----+------------+------------+
+    |         Variable Name         | Operation| DSP48E| FF| LUT| Bitwidth P0| Bitwidth P1|
+    +-------------------------------+----------+-------+---+----+------------+------------+
+    |BurstRead5_U0_start_full_n     |    and   |      0|  0|   2|           1|           1|
+    |Module0Func_U0_start_full_n    |    and   |      0|  0|   2|           1|           1|
+    |Module1Func69_U0_start_full_n  |    and   |      0|  0|   2|           1|           1|
+    |Module1Func_U0_start_full_n    |    and   |      0|  0|   2|           1|           1|
+    |ap_idle                        |    and   |      0|  0|   2|           1|           1|
+    +-------------------------------+----------+-------+---+----+------------+------------+
+    |Total                          |          |      0|  0|  10|           5|           5|
+    +-------------------------------+----------+-------+---+----+------------+------------+
+
+    * Multiplexer: 
+    N/A
+
+    * Register: 
+    N/A
+
+
+
+================================================================
+== Interface
+================================================================
+* Summary: 
++--------------------------+-----+-----+------------+-------------------+--------------+
+|         RTL Ports        | Dir | Bits|  Protocol  |   Source Object   |    C Type    |
++--------------------------+-----+-----+------------+-------------------+--------------+
+|s_axi_control_AWVALID     |  in |    1|    s_axi   |      control      |    scalar    |
+|s_axi_control_AWREADY     | out |    1|    s_axi   |      control      |    scalar    |
+|s_axi_control_AWADDR      |  in |    6|    s_axi   |      control      |    scalar    |
+|s_axi_control_WVALID      |  in |    1|    s_axi   |      control      |    scalar    |
+|s_axi_control_WREADY      | out |    1|    s_axi   |      control      |    scalar    |
+|s_axi_control_WDATA       |  in |   32|    s_axi   |      control      |    scalar    |
+|s_axi_control_WSTRB       |  in |    4|    s_axi   |      control      |    scalar    |
+|s_axi_control_ARVALID     |  in |    1|    s_axi   |      control      |    scalar    |
+|s_axi_control_ARREADY     | out |    1|    s_axi   |      control      |    scalar    |
+|s_axi_control_ARADDR      |  in |    6|    s_axi   |      control      |    scalar    |
+|s_axi_control_RVALID      | out |    1|    s_axi   |      control      |    scalar    |
+|s_axi_control_RREADY      |  in |    1|    s_axi   |      control      |    scalar    |
+|s_axi_control_RDATA       | out |   32|    s_axi   |      control      |    scalar    |
+|s_axi_control_RRESP       | out |    2|    s_axi   |      control      |    scalar    |
+|s_axi_control_BVALID      | out |    1|    s_axi   |      control      |    scalar    |
+|s_axi_control_BREADY      |  in |    1|    s_axi   |      control      |    scalar    |
+|s_axi_control_BRESP       | out |    2|    s_axi   |      control      |    scalar    |
+|ap_clk                    |  in |    1| ap_ctrl_hs | jacobi2d_2_kernel | return value |
+|ap_rst_n                  |  in |    1| ap_ctrl_hs | jacobi2d_2_kernel | return value |
+|interrupt                 | out |    1| ap_ctrl_hs | jacobi2d_2_kernel | return value |
+|m_axi_t0_bank_0_AWVALID   | out |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_AWREADY   |  in |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_AWADDR    | out |   32|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_AWID      | out |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_AWLEN     | out |    8|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_AWSIZE    | out |    3|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_AWBURST   | out |    2|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_AWLOCK    | out |    2|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_AWCACHE   | out |    4|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_AWPROT    | out |    3|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_AWQOS     | out |    4|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_AWREGION  | out |    4|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_AWUSER    | out |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_WVALID    | out |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_WREADY    |  in |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_WDATA     | out |   64|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_WSTRB     | out |    8|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_WLAST     | out |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_WID       | out |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_WUSER     | out |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_ARVALID   | out |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_ARREADY   |  in |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_ARADDR    | out |   32|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_ARID      | out |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_ARLEN     | out |    8|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_ARSIZE    | out |    3|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_ARBURST   | out |    2|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_ARLOCK    | out |    2|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_ARCACHE   | out |    4|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_ARPROT    | out |    3|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_ARQOS     | out |    4|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_ARREGION  | out |    4|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_ARUSER    | out |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_RVALID    |  in |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_RREADY    | out |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_RDATA     |  in |   64|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_RLAST     |  in |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_RID       |  in |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_RUSER     |  in |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_RRESP     |  in |    2|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_BVALID    |  in |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_BREADY    | out |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_BRESP     |  in |    2|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_BID       |  in |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_t0_bank_0_BUSER     |  in |    1|    m_axi   |     t0_bank_0     |    pointer   |
+|m_axi_in_bank_0_AWVALID   | out |    1|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_AWREADY   |  in |    1|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_AWADDR    | out |   32|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_AWID      | out |    1|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_AWLEN     | out |    8|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_AWSIZE    | out |    3|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_AWBURST   | out |    2|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_AWLOCK    | out |    2|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_AWCACHE   | out |    4|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_AWPROT    | out |    3|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_AWQOS     | out |    4|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_AWREGION  | out |    4|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_AWUSER    | out |    1|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_WVALID    | out |    1|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_WREADY    |  in |    1|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_WDATA     | out |   64|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_WSTRB     | out |    8|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_WLAST     | out |    1|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_WID       | out |    1|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_WUSER     | out |    1|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_ARVALID   | out |    1|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_ARREADY   |  in |    1|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_ARADDR    | out |   32|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_ARID      | out |    1|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_ARLEN     | out |    8|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_ARSIZE    | out |    3|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_ARBURST   | out |    2|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_ARLOCK    | out |    2|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_ARCACHE   | out |    4|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_ARPROT    | out |    3|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_ARQOS     | out |    4|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_ARREGION  | out |    4|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_ARUSER    | out |    1|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_RVALID    |  in |    1|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_RREADY    | out |    1|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_RDATA     |  in |   64|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_RLAST     |  in |    1|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_RID       |  in |    1|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_RUSER     |  in |    1|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_RRESP     |  in |    2|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_BVALID    |  in |    1|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_BREADY    | out |    1|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_BRESP     |  in |    2|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_BID       |  in |    1|    m_axi   |     in_bank_0     |    pointer   |
+|m_axi_in_bank_0_BUSER     |  in |    1|    m_axi   |     in_bank_0     |    pointer   |
++--------------------------+-----+-----+------------+-------------------+--------------+
+
