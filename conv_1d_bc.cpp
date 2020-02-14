@@ -174,7 +174,7 @@ inline void compute_out(T_read0_0_cache& T_read0_0, HWStream<hw_uint<32>  >& out
 	// Consume: T
 	auto T_c_value = T_compute_out_read_bundle_read(T_read0_0/* source_delay */, root, c);
 	// Apply function: accumulate_3
-	/* No args */ auto compute_result = accumulate_3(T_c_value);
+	auto compute_result = accumulate_3(T_c_value);
 	// Produce: out
 	out.write(compute_result);
 }

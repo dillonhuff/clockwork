@@ -2107,8 +2107,9 @@ struct prog {
 
     auto order_deps = relative_orders();
     isl_union_map *raw_deps = validity_deps();
-    auto validity = raw_deps;
-      //unn(order_deps, raw_deps);
+    auto validity =
+      //raw_deps;
+      unn(order_deps, raw_deps);
     isl_union_map *proximity =
       cpy(raw_deps);
       //cpy(validity);
@@ -2366,7 +2367,7 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
       if (op->func != "") {
         conv_out << "\t// Apply function: " << op->func << endl;
         if (op->func_args.size() == 0) {
-          conv_out << "\t/* No args */ auto compute_result = " << op->func << "(" << res << ");" << endl;
+          conv_out << "\tauto compute_result = " << op->func << "(" << res << ");" << endl;
         } else {
           vector<string> arg_list;
           set<string> buffers_seen;
@@ -2387,8 +2388,7 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
               buffers_seen.insert(arg_buf);
             }
           }
-          conv_out << "\t /* comma list args */ auto compute_result = " << op->func << "(" << comma_list(arg_list) << ");" << endl;
-          //conv_out << "\t /* comma list args */ auto compute_result = " << op->func << "(" << res << ");" << endl;
+          conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(arg_list) << ");" << endl;
         }
         res = "compute_result";
       }

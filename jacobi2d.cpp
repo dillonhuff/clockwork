@@ -170,7 +170,7 @@ inline void I_id0(HWStream<hw_uint<32>  >& in, I_I_id0_0_cache& I_I_id0_0, int r
 	// Apply function: id
 	// Arg: in_id0_c__id1_value
 	// Arg buf: in
-	 /* comma list args */ auto compute_result = id(in_id0_c__id1_value);
+	auto compute_result = id(in_id0_c__id1_value);
 	// Produce: I
 	// Buffer: I, Op: I_id0
 	// Possible ports...
@@ -192,7 +192,7 @@ inline void out_jacobi2d_compute0(I_I_id0_0_cache& I_I_id0_0, HWStream<hw_uint<3
 	// Arg buf: I
 	// Arg: I_d0__p___m_1_c__d1__p__0_value
 	// Arg buf: I
-	 /* comma list args */ auto compute_result = jacobi2d_compute(I_d0__p___m_1_c__d1__p__0_value);
+	auto compute_result = jacobi2d_compute(I_d0__p___m_1_c__d1__p__0_value);
 	// Produce: out
 	out.write(compute_result);
 }
@@ -202,9 +202,9 @@ void jacobi2d(HWStream<hw_uint<32>  >& in, HWStream<hw_uint<32> >& out) {
 	I_I_id0_0_cache I_I_id0_0;
 	for (int c0 = 0; c0 <= 31; c0 += 1)
 	  for (int c1 = 0; c1 <= 31; c1 += 1) {
-	    if (c0 >= 2 && c1 >= 2)
-	      out_jacobi2d_compute0(I_I_id0_0, out, 0, c0 - 1, c1 - 1);
 	    I_id0(in, I_I_id0_0, 0, c0, c1);
+	    if (c0 >= 2 && c1 >= 1 && c1 <= 30)
+	      out_jacobi2d_compute0(I_I_id0_0, out, 0, c0 - 1, c1);
 	  }
 	
 }
