@@ -966,7 +966,6 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
         }
         if (found_key) {
           assert(k_var != "");
-          //string delay_expr = evaluate_dd(buf, outpt, inpt);
           out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
           out << "\tif (select_" + k_var + ") { return value_"+ inpt + "; }\n";
         } else {
@@ -974,7 +973,6 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
         }
       } else {
         if (contains_key(inpt, ms)) {
-          //string delay_expr = evaluate_dd(buf, outpt, inpt);
           out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
           out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
         }
