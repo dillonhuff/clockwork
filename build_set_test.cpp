@@ -938,50 +938,34 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     cout << "Lexmax events: " << str(lex_max_events) << endl;
     map<string, string> ms = umap_codegen_c(lex_max_events);
     cout << "Done" << endl;
-    //if (options.internal) {
-    if (true) {
-      for (auto e : ms) {
-        out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
-      }
-      if (options.internal) {
-        for (auto inpt : buf.get_in_ports()) {
-          out << "\t// inpt: " << inpt << endl;
-          bool found_key = false;
-          string k_var = "";
-          for (auto k : ms) {
-            string prefix = buf.name + "_" + k.first;
-            if (is_prefix(prefix, inpt)) {
-              found_key = true;
-              k_var = "select_" + k.first;
-            }
-          }
-          if (found_key) {
-            assert(k_var != "");
-            string delay_expr = evaluate_dd(buf, outpt, inpt);
-            out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
-            out << "\tif (" + k_var + ") { return value_"+ inpt + "; }\n";
-          } else {
-            out << "//\tNo key for: " << inpt << endl;
+    for (auto e : ms) {
+      out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
+    }
+    if (options.internal) {
+      for (auto inpt : buf.get_in_ports()) {
+        out << "\t// inpt: " << inpt << endl;
+        bool found_key = false;
+        string k_var = "";
+        for (auto k : ms) {
+          string prefix = buf.name + "_" + k.first;
+          if (is_prefix(prefix, inpt)) {
+            found_key = true;
+            k_var = k.first;
           }
         }
-      } else {
-
-        for (auto inpt : buf.get_in_ports()) {
-          if (contains_key(inpt, ms)) {
-            string delay_expr = evaluate_dd(buf, outpt, inpt);
-            out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
-            out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
-          }
+        if (found_key) {
+          assert(k_var != "");
+          string delay_expr = evaluate_dd(buf, outpt, inpt);
+          out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
+          out << "\tif (select_" + k_var + ") { return value_"+ inpt + "; }\n";
+        } else {
+          out << "//\tNo key for: " << inpt << endl;
         }
       }
     } else {
-      for (auto inpt : buf.get_in_ports()) {
-        auto in_actions = buf.domain.at(inpt);
-        auto act_dom = 
-          domain(its_range(lex_max_events, to_uset(in_actions)));
 
+      for (auto inpt : buf.get_in_ports()) {
         if (contains_key(inpt, ms)) {
-          out << "\tbool select_" << inpt << " = " << codegen_c(act_dom) << ";" << endl;
           string delay_expr = evaluate_dd(buf, outpt, inpt);
           out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
           out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
