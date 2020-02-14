@@ -141,93 +141,54 @@ inline void write0_write(InputStream<hw_uint<32>  >& write0, write0_cache& write
 
 inline hw_uint<32>  read_0_0_select(write0_cache& write0_delay
 , int i, int j) {
-// Pieces...
-// { read_0_0[i, j] : 0 <= i <= 61 and 0 <= j <= 61 } -> { read_0_0[i, j] -> 130 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
 	hw_uint<32>  value_write0 = write0_delay.peek_130();
 	return value_write0;
 }
 
 inline hw_uint<32>  read_0_1_select(write0_cache& write0_delay
 , int i, int j) {
-// Pieces...
-// { read_0_1[i, j] : 0 <= i <= 61 and 0 <= j <= 61 } -> { read_0_1[i, j] -> 129 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
 	hw_uint<32>  value_write0 = write0_delay.peek_129();
 	return value_write0;
 }
 
 inline hw_uint<32>  read_0_2_select(write0_cache& write0_delay
 , int i, int j) {
-// Pieces...
-// { read_0_2[i, j] : 0 <= i <= 61 and 0 <= j <= 60 } -> { read_0_2[i, j] -> 128 }
-// 	is always true on iteration domain: 0
-// { read_0_2[i, j = 61] : 0 <= i <= 61 } -> { read_0_2[i, j] -> (67 + j) }
-// 	is always true on iteration domain: 0
-//	is optimizable constant: 1
 	hw_uint<32>  value_write0 = write0_delay.peek_128();
 	return value_write0;
 }
 
 inline hw_uint<32>  read_1_0_select(write0_cache& write0_delay
 , int i, int j) {
-// Pieces...
-// { read_1_0[i, j] : 0 <= i <= 61 and 0 <= j <= 61 } -> { read_1_0[i, j] -> 66 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
 	hw_uint<32>  value_write0 = write0_delay.peek_66();
 	return value_write0;
 }
 
 inline hw_uint<32>  read_1_1_select(write0_cache& write0_delay
 , int i, int j) {
-// Pieces...
-// { read_1_1[i, j] : 0 <= i <= 61 and 0 <= j <= 61 } -> { read_1_1[i, j] -> 65 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
 	hw_uint<32>  value_write0 = write0_delay.peek_65();
 	return value_write0;
 }
 
 inline hw_uint<32>  read_1_2_select(write0_cache& write0_delay
 , int i, int j) {
-// Pieces...
-// { read_1_2[i, j] : 0 <= i <= 61 and 0 <= j <= 60 } -> { read_1_2[i, j] -> 64 }
-// 	is always true on iteration domain: 0
-// { read_1_2[i, j = 61] : 0 <= i <= 61 } -> { read_1_2[i, j] -> (3 + j) }
-// 	is always true on iteration domain: 0
-//	is optimizable constant: 1
 	hw_uint<32>  value_write0 = write0_delay.peek_64();
 	return value_write0;
 }
 
 inline hw_uint<32>  read_2_0_select(write0_cache& write0_delay
 , int i, int j) {
-// Pieces...
-// { read_2_0[i, j] : 0 <= i <= 61 and 0 <= j <= 61 } -> { read_2_0[i, j] -> 2 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
 	hw_uint<32>  value_write0 = write0_delay.peek_2();
 	return value_write0;
 }
 
 inline hw_uint<32>  read_2_1_select(write0_cache& write0_delay
 , int i, int j) {
-// Pieces...
-// { read_2_1[i, j] : 0 <= i <= 61 and 0 <= j <= 61 } -> { read_2_1[i, j] -> 1 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
 	hw_uint<32>  value_write0 = write0_delay.peek_1();
 	return value_write0;
 }
 
 inline hw_uint<32>  read_2_2_select(write0_cache& write0_delay
 , int i, int j) {
-// Pieces...
-// Always 0
-//	is optimizable constant: 0
 	hw_uint<32>  value_write0 = write0_delay.peek_0();
 	return value_write0;
 }

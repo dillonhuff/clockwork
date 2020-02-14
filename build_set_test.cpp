@@ -884,61 +884,64 @@ void select_debug_assertions(CodegenOptions& options, std::ostream& out, const s
   out << "\tassert(false);\n\treturn 0;\n";
 }
 
-void generate_selects(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
-  generate_select_decl(options, out, inpt, outpt, buf);
-
+string delay_string(CodegenOptions& options, const string& inpt, const string& outpt, UBuffer& buf) {
   auto out_domain = buf.domain.at(outpt);
-
-  auto lex_max_events = get_lexmax_events(outpt, buf);
-
-  map<string, string> in_port_offsets;
-  for (auto inpt : buf.get_in_ports()) {
-    string delay_expr = evaluate_dd(buf, outpt, inpt);
-    in_port_offsets[inpt] = delay_expr;
-  }
-  // Body of select function
-  //string delay_expr = evaluate_dd(buf, outpt, inpt);
   auto qpd = compute_dd(buf, outpt, inpt);
   auto pieces = get_pieces(qpd);
-  out << "// Pieces..." << endl;
-  for (auto p : pieces) {
-    out << "// " << str(p.first) << " -> " << str(p.second) << endl;
-    out << "// \tis always true on iteration domain: " << isl_set_is_subset(cpy(out_domain), cpy(p.first)) << endl;
-  }
   bool always_zero_distance = pieces.size() == 0;
 
-  if (pieces.size() == 0) {
-    out << "// Always 0" << endl;
-  }
-  bool opt_const = is_optimizable_constant_dd(inpt, outpt, buf);
-  out << "//\tis optimizable constant: " << opt_const << endl;
   string dx = to_string(int_upper_bound(qpd));
-
-  if (buf.get_in_ports().size() == 1) {
-    string inpt = *(buf.get_in_ports().begin());
-    string delay_expr = map_find(inpt, in_port_offsets);
-
-    string value_str = "";
-    if (opt_const) {
-      if (!options.all_rams && is_number(dx)) {
-        value_str = inpt + "_delay.peek_" + dx + "()";
-      } else {
-        value_str = inpt + "_delay.peek" + "(" + delay_expr + ")";
-      }
-    } else if (pieces.size() == 0 && !options.all_rams) {
-      value_str = inpt + "_delay.peek_0()";
-    } else if (pieces.size() == 1 &&
-        isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
-      string dx = codegen_c(pieces[0].second);
-      if (!options.all_rams && is_number(dx)) {
-        value_str = inpt + "_delay.peek_" + dx + "()";
-      } else {
-        value_str = inpt + "_delay.peek" + "(" + dx + ")";
-      }
+  string delay_expr = evaluate_dd(buf, outpt, inpt);
+  string value_str = "";
+  bool opt_const = is_optimizable_constant_dd(inpt, outpt, buf);
+  if (opt_const) {
+    if (!options.all_rams && is_number(dx)) {
+      value_str = inpt + "_delay.peek_" + dx + "()";
     } else {
       value_str = inpt + "_delay.peek" + "(" + delay_expr + ")";
     }
+  } else if (pieces.size() == 0 && !options.all_rams) {
+    value_str = inpt + "_delay.peek_0()";
+  } else if (pieces.size() == 1 &&
+      isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
+    string dx = codegen_c(pieces[0].second);
+    if (!options.all_rams && is_number(dx)) {
+      value_str = inpt + "_delay.peek_" + dx + "()";
+    } else {
+      value_str = inpt + "_delay.peek" + "(" + dx + ")";
+    }
+  } else {
+    value_str = inpt + "_delay.peek" + "(" + delay_expr + ")";
+  }
+  return value_str;
+}
 
+void generate_selects(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
+  generate_select_decl(options, out, inpt, outpt, buf);
+
+
+  auto lex_max_events = get_lexmax_events(outpt, buf);
+
+  // Body of select function
+  //string delay_expr = evaluate_dd(buf, outpt, inpt);
+  //auto qpd = compute_dd(buf, outpt, inpt);
+  //auto pieces = get_pieces(qpd);
+  //out << "// Pieces..." << endl;
+  //for (auto p : pieces) {
+    //out << "// " << str(p.first) << " -> " << str(p.second) << endl;
+    //out << "// \tis always true on iteration domain: " << isl_set_is_subset(cpy(out_domain), cpy(p.first)) << endl;
+  //}
+  //bool always_zero_distance = pieces.size() == 0;
+
+  //if (pieces.size() == 0) {
+    //out << "// Always 0" << endl;
+  //}
+  //out << "//\tis optimizable constant: " << opt_const << endl;
+  //string dx = to_string(int_upper_bound(qpd));
+
+  if (buf.get_in_ports().size() == 1) {
+    string inpt = *(buf.get_in_ports().begin());
+    string value_str = delay_string(options, inpt, outpt, buf);
     out << "\t" << buf.port_type_string() << " value_" << inpt << " = " << value_str << ";" << endl;
     out << "\treturn value_" + inpt + ";" << endl;
   } else {
@@ -951,7 +954,9 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     }
 
     for (auto inpt : buf.get_in_ports()) {
-      string delay_expr = map_find(inpt, in_port_offsets);
+      string delay_expr = evaluate_dd(buf, outpt, inpt);
+      string peeked_val = inpt + "_delay.peek((" + delay_expr + "))";
+      
       if (options.internal) {
         out << "\t// inpt: " << inpt << endl;
         bool found_key = false;
@@ -966,14 +971,14 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
         }
         if (found_key) {
           assert(k_var != "");
-          out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
+          out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
           out << "\tif (select_" + k_var + ") { return value_"+ inpt + "; }\n";
         } else {
           out << "//\tNo key for: " << inpt << endl;
         }
       } else {
         if (contains_key(inpt, ms)) {
-          out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
+          out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
           out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
         }
 

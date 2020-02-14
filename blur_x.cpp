@@ -83,37 +83,18 @@ inline void I_I_id0_0_write(hw_uint<16>& I_I_id0_0, I_I_id0_0_cache& I_I_id0_0_d
 
 inline hw_uint<16> I_out_blur_30_3_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
-// Pieces...
-// { out_blur_30[root = 0, d1, d0] : 0 <= d1 <= 5 and 0 < d0 <= 30 } -> { out_blur_30[root, d1, d0] -> 64 }
-// 	is always true on iteration domain: 0
-// { out_blur_30[root = 0, d1, d0 = 31] : 0 <= d1 <= 5 } -> { out_blur_30[root, d1, d0] -> (33 + d0) }
-// 	is always true on iteration domain: 0
-// { out_blur_30[root = 0, d1, d0 = 0] : 0 <= d1 <= 5 } -> { out_blur_30[root, d1, d0] -> 64 }
-// 	is always true on iteration domain: 0
-//	is optimizable constant: 1
 	hw_uint<16> value_I_I_id0_0 = I_I_id0_0_delay.peek_64();
 	return value_I_I_id0_0;
 }
 
 inline hw_uint<16> I_out_blur_30_4_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
-// Pieces...
-// { out_blur_30[root = 0, d1, d0] : 0 <= d1 <= 5 and 0 < d0 <= 30 } -> { out_blur_30[root, d1, d0] -> 32 }
-// 	is always true on iteration domain: 0
-// { out_blur_30[root = 0, d1, d0 = 31] : 0 <= d1 <= 5 } -> { out_blur_30[root, d1, d0] -> (1 + d0) }
-// 	is always true on iteration domain: 0
-// { out_blur_30[root = 0, d1, d0 = 0] : 0 <= d1 <= 5 } -> { out_blur_30[root, d1, d0] -> 32 }
-// 	is always true on iteration domain: 0
-//	is optimizable constant: 1
 	hw_uint<16> value_I_I_id0_0 = I_I_id0_0_delay.peek_32();
 	return value_I_I_id0_0;
 }
 
 inline hw_uint<16> I_out_blur_30_5_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
-// Pieces...
-// Always 0
-//	is optimizable constant: 0
 	hw_uint<16> value_I_I_id0_0 = I_I_id0_0_delay.peek_0();
 	return value_I_I_id0_0;
 }

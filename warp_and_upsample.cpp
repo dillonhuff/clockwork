@@ -143,93 +143,54 @@ inline void I_store_I_from_in_10_write(hw_uint<32> & I_store_I_from_in_10, I_sto
 
 inline hw_uint<32>  I_warped_0_conv_3_30_1_select(I_store_I_from_in_10_cache& I_store_I_from_in_10_delay
 , int root, int br, int bc) {
-// Pieces...
-// { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 130 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
 	hw_uint<32>  value_I_store_I_from_in_10 = I_store_I_from_in_10_delay.peek_130();
 	return value_I_store_I_from_in_10;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_2_select(I_store_I_from_in_10_cache& I_store_I_from_in_10_delay
 , int root, int br, int bc) {
-// Pieces...
-// { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 129 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
 	hw_uint<32>  value_I_store_I_from_in_10 = I_store_I_from_in_10_delay.peek_129();
 	return value_I_store_I_from_in_10;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_3_select(I_store_I_from_in_10_cache& I_store_I_from_in_10_delay
 , int root, int br, int bc) {
-// Pieces...
-// { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 60 } -> { warped_0_conv_3_30[root, br, bc] -> 128 }
-// 	is always true on iteration domain: 0
-// { warped_0_conv_3_30[root = 0, br, bc = 61] : 0 <= br <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> (67 + bc) }
-// 	is always true on iteration domain: 0
-//	is optimizable constant: 1
 	hw_uint<32>  value_I_store_I_from_in_10 = I_store_I_from_in_10_delay.peek_128();
 	return value_I_store_I_from_in_10;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_4_select(I_store_I_from_in_10_cache& I_store_I_from_in_10_delay
 , int root, int br, int bc) {
-// Pieces...
-// { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 66 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
 	hw_uint<32>  value_I_store_I_from_in_10 = I_store_I_from_in_10_delay.peek_66();
 	return value_I_store_I_from_in_10;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_5_select(I_store_I_from_in_10_cache& I_store_I_from_in_10_delay
 , int root, int br, int bc) {
-// Pieces...
-// { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 65 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
 	hw_uint<32>  value_I_store_I_from_in_10 = I_store_I_from_in_10_delay.peek_65();
 	return value_I_store_I_from_in_10;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_6_select(I_store_I_from_in_10_cache& I_store_I_from_in_10_delay
 , int root, int br, int bc) {
-// Pieces...
-// { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 60 } -> { warped_0_conv_3_30[root, br, bc] -> 64 }
-// 	is always true on iteration domain: 0
-// { warped_0_conv_3_30[root = 0, br, bc = 61] : 0 <= br <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> (3 + bc) }
-// 	is always true on iteration domain: 0
-//	is optimizable constant: 1
 	hw_uint<32>  value_I_store_I_from_in_10 = I_store_I_from_in_10_delay.peek_64();
 	return value_I_store_I_from_in_10;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_7_select(I_store_I_from_in_10_cache& I_store_I_from_in_10_delay
 , int root, int br, int bc) {
-// Pieces...
-// { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 2 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
 	hw_uint<32>  value_I_store_I_from_in_10 = I_store_I_from_in_10_delay.peek_2();
 	return value_I_store_I_from_in_10;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_8_select(I_store_I_from_in_10_cache& I_store_I_from_in_10_delay
 , int root, int br, int bc) {
-// Pieces...
-// { warped_0_conv_3_30[root = 0, br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 } -> { warped_0_conv_3_30[root, br, bc] -> 1 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
 	hw_uint<32>  value_I_store_I_from_in_10 = I_store_I_from_in_10_delay.peek_1();
 	return value_I_store_I_from_in_10;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_9_select(I_store_I_from_in_10_cache& I_store_I_from_in_10_delay
 , int root, int br, int bc) {
-// Pieces...
-// Always 0
-//	is optimizable constant: 0
 	hw_uint<32>  value_I_store_I_from_in_10 = I_store_I_from_in_10_delay.peek_0();
 	return value_I_store_I_from_in_10;
 }
@@ -552,10 +513,6 @@ inline void warped_0_warped_0_conv_3_30_0_write(hw_uint<32> & warped_0_warped_0_
 
 inline hw_uint<32>  warped_0_out_id0_13_select(warped_0_warped_0_conv_3_30_0_cache& warped_0_warped_0_conv_3_30_0_delay
 , int root, int ur, int kr, int uc, int kc) {
-// Pieces...
-// { out_id0[root = 0, ur, kr = 1, uc, kc] : 0 <= ur <= 61 and 0 <= uc <= 60 and 0 <= kc <= 1 } -> { out_id0[root, ur, kr, uc, kc] -> (61 - uc) }
-// 	is always true on iteration domain: 0
-//	is optimizable constant: 0
 	hw_uint<32>  value_warped_0_warped_0_conv_3_30_0 = warped_0_warped_0_conv_3_30_0_delay.peek((-1 + kr == 0 && root == 0 && ur >= 0 && 61 - ur >= 0 && uc >= 0 && 60 - uc >= 0 && kc >= 0 && 1 - kc >= 0) ? ((61 - uc)) : 0);
 	return value_warped_0_warped_0_conv_3_30_0;
 }

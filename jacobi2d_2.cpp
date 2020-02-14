@@ -441,10 +441,6 @@ inline void I_store_I_from_in_1_12_write(hw_uint<32> & I_store_I_from_in_1_12, I
 inline hw_uint<32>  I_out_0_jacobi2d_compute0_1_select(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay
 , I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay
 , int root, int d1, int d0) {
-// Pieces...
-// { out_0_jacobi2d_compute0[root = 0, d1, d0] : 0 < d1 <= 30 and 0 < d0 <= 14 } -> { out_0_jacobi2d_compute0[root, d1, d0] -> (32 - d0) }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 0
 	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_0[root' = 0, id1 = d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
 	bool select_store_I_from_in_0 = ((/* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : root = 0 } */
 1*root == 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : -1 + d1 >= 0 } */
@@ -467,9 +463,6 @@ inline hw_uint<32>  I_out_0_jacobi2d_compute0_1_select(I_store_I_from_in_0_14_ca
 inline hw_uint<32>  I_out_0_jacobi2d_compute0_2_select(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay
 , I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay
 , int root, int d1, int d0) {
-// Pieces...
-// Always 0
-//	is optimizable constant: 0
 	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_1[root' = 0, id1 = -1 + d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
 	bool select_store_I_from_in_1 = ((/* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : root = 0 } */
 1*root == 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : -1 + d1 >= 0 } */
@@ -492,9 +485,6 @@ inline hw_uint<32>  I_out_0_jacobi2d_compute0_2_select(I_store_I_from_in_0_14_ca
 inline hw_uint<32>  I_out_0_jacobi2d_compute0_3_select(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay
 , I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay
 , int root, int d1, int d0) {
-// Pieces...
-// Always 0
-//	is optimizable constant: 0
 	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_1[root' = 0, id1 = d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
 	bool select_store_I_from_in_1 = ((/* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : root = 0 } */
 1*root == 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : -1 + d1 >= 0 } */
@@ -517,9 +507,6 @@ inline hw_uint<32>  I_out_0_jacobi2d_compute0_3_select(I_store_I_from_in_0_14_ca
 inline hw_uint<32>  I_out_0_jacobi2d_compute0_4_select(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay
 , I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay
 , int root, int d1, int d0) {
-// Pieces...
-// Always 0
-//	is optimizable constant: 0
 	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_1[root' = 0, id1 = 1 + d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
 	bool select_store_I_from_in_1 = ((/* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : root = 0 } */
 1*root == 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : -1 + d1 >= 0 } */
@@ -542,10 +529,6 @@ inline hw_uint<32>  I_out_0_jacobi2d_compute0_4_select(I_store_I_from_in_0_14_ca
 inline hw_uint<32>  I_out_0_jacobi2d_compute0_5_select(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay
 , I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay
 , int root, int d1, int d0) {
-// Pieces...
-// { out_0_jacobi2d_compute0[root = 0, d1, d0] : 0 < d1 <= 30 and 0 < d0 <= 14 } -> { out_0_jacobi2d_compute0[root, d1, d0] -> (31 - d0) }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 0
 	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_0[root' = 0, id1 = d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
 	bool select_store_I_from_in_0 = ((/* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : root = 0 } */
 1*root == 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : -1 + d1 >= 0 } */
@@ -568,9 +551,6 @@ inline hw_uint<32>  I_out_0_jacobi2d_compute0_5_select(I_store_I_from_in_0_14_ca
 inline hw_uint<32>  I_out_1_jacobi2d_compute1_10_select(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay
 , I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay
 , int root, int d1, int d0) {
-// Pieces...
-// Always 0
-//	is optimizable constant: 0
 	// lexmax events: { out_1_jacobi2d_compute1[root = 0, d1, d0] -> store_I_from_in_0[root' = 0, id1 = 1 + d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
 	bool select_store_I_from_in_0 = ((/* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : root = 0 } */
 1*root == 0 && /* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : -1 + d1 >= 0 } */
@@ -593,9 +573,6 @@ inline hw_uint<32>  I_out_1_jacobi2d_compute1_10_select(I_store_I_from_in_0_14_c
 inline hw_uint<32>  I_out_1_jacobi2d_compute1_11_select(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay
 , I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay
 , int root, int d1, int d0) {
-// Pieces...
-// Always 0
-//	is optimizable constant: 0
 	// lexmax events: { out_1_jacobi2d_compute1[root = 0, d1, d0] -> store_I_from_in_1[root' = 0, id1 = d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
 	bool select_store_I_from_in_1 = ((/* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : root = 0 } */
 1*root == 0 && /* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : -1 + d1 >= 0 } */
@@ -618,9 +595,6 @@ inline hw_uint<32>  I_out_1_jacobi2d_compute1_11_select(I_store_I_from_in_0_14_c
 inline hw_uint<32>  I_out_1_jacobi2d_compute1_7_select(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay
 , I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay
 , int root, int d1, int d0) {
-// Pieces...
-// Always 0
-//	is optimizable constant: 0
 	// lexmax events: { out_1_jacobi2d_compute1[root = 0, d1, d0] -> store_I_from_in_1[root' = 0, id1 = d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
 	bool select_store_I_from_in_1 = ((/* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : root = 0 } */
 1*root == 0 && /* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : -1 + d1 >= 0 } */
@@ -643,10 +617,6 @@ inline hw_uint<32>  I_out_1_jacobi2d_compute1_7_select(I_store_I_from_in_0_14_ca
 inline hw_uint<32>  I_out_1_jacobi2d_compute1_8_select(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay
 , I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay
 , int root, int d1, int d0) {
-// Pieces...
-// { out_1_jacobi2d_compute1[root = 0, d1, d0] : 0 < d1 <= 30 and 0 < d0 <= 14 } -> { out_1_jacobi2d_compute1[root, d1, d0] -> 32 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
 	// lexmax events: { out_1_jacobi2d_compute1[root = 0, d1, d0] -> store_I_from_in_0[root' = 0, id1 = -1 + d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
 	bool select_store_I_from_in_0 = ((/* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : root = 0 } */
 1*root == 0 && /* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : -1 + d1 >= 0 } */
@@ -669,10 +639,6 @@ inline hw_uint<32>  I_out_1_jacobi2d_compute1_8_select(I_store_I_from_in_0_14_ca
 inline hw_uint<32>  I_out_1_jacobi2d_compute1_9_select(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay
 , I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay
 , int root, int d1, int d0) {
-// Pieces...
-// { out_1_jacobi2d_compute1[root = 0, d1, d0] : 0 < d1 <= 30 and 0 < d0 <= 14 } -> { out_1_jacobi2d_compute1[root, d1, d0] -> 16 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
 	// lexmax events: { out_1_jacobi2d_compute1[root = 0, d1, d0] -> store_I_from_in_0[root' = 0, id1 = d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
 	bool select_store_I_from_in_0 = ((/* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : root = 0 } */
 1*root == 0 && /* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : -1 + d1 >= 0 } */
