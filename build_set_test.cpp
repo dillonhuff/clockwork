@@ -66,7 +66,7 @@ class UBuffer {
       return d;
     }
 
-    int port_width(const std::string& port_name) {
+    int port_width(const std::string& port_name) const {
       return port_widths;
     }
 
@@ -93,7 +93,7 @@ class UBuffer {
       return len;
     }
 
-    std::string bundle_type_string(const std::string& bundle_name) {
+    std::string bundle_type_string(const std::string& bundle_name) const {
       int len = 0;
       for (auto pt : map_find(bundle_name, port_bundles)) {
         len += port_width(pt);
@@ -106,7 +106,7 @@ class UBuffer {
       return "hw_uint<" + to_string(len) + ">";
     }
 
-    std::string bundle_stream(const std::string& bundle_name) {
+    std::string bundle_stream(const std::string& bundle_name) const {
       bool input_bundle = isIn.at(pick(port_bundles.at(bundle_name)));
       string bundle_type_str = bundle_type_string(bundle_name);
       return string(input_bundle ? "Input" : "Output") + "Stream<" + bundle_type_str + " >& " + bundle_name;
@@ -488,20 +488,6 @@ int int_lower_bound(isl_union_pw_qpolynomial* range_card) {
     bint = safe_stoi(codegen_c(folds[0]));
   }
   return bint;
-}
-
-isl_union_pw_qpolynomial_fold* lower_bound(isl_union_pw_qpolynomial* range_card) {
-  int tight;
-  int* b = &tight;
-  auto bound = isl_union_pw_qpolynomial_bound(cpy(range_card), isl_fold_min, b);
-  return bound;
-}
-
-isl_union_pw_qpolynomial_fold* upper_bound(isl_union_pw_qpolynomial* range_card) {
-  int tight;
-  int* b = &tight;
-  auto bound = isl_union_pw_qpolynomial_bound(cpy(range_card), isl_fold_max, b);
-  return bound;
 }
 
 int int_upper_bound(isl_union_pw_qpolynomial* range_card) {
@@ -1089,6 +1075,24 @@ void generate_hls_code(std::ostream& out, UBuffer& buf) {
   generate_hls_code(options, out, buf);
 }
 
+void generate_header(const UBuffer& buf) {
+  //cout << "Header file generation..." << endl;
+  ofstream of(buf.name + ".h");
+  of << "#pragma once\n\n" << endl;
+  of << "#include \"hw_classes.h\"" << endl << endl;
+  of << "void " << buf.name << "(";
+  int nargs = 0;
+  for (auto pt : buf.port_bundles) {
+    of << buf.bundle_stream(pt.first);
+    if (nargs < buf.port_bundles.size() - 1) {
+      of << ", ";
+    }
+    nargs++;
+  }
+  of << ");" << endl;
+
+}
+
 void generate_hls_code(UBuffer& buf) {
 
   if (buf.port_bundles.size() == 0) {
@@ -1158,21 +1162,8 @@ void generate_hls_code(UBuffer& buf) {
   out << code_string << endl;
   out << "}" << endl;
 
-  //cout << "Header file generation..." << endl;
-  ofstream of(buf.name + ".h");
-  of << "#pragma once\n\n" << endl;
-  of << "#include \"hw_classes.h\"" << endl << endl;
-  of << "void " << buf.name << "(";
-  nargs = 0;
-  for (auto pt : buf.port_bundles) {
-    of << buf.bundle_stream(pt.first);
-    if (nargs < buf.port_bundles.size() - 1) {
-      of << ", ";
-    }
-    nargs++;
-  }
-  of << ");" << endl;
 
+  generate_header(buf);
   generate_vivado_tcl(buf);
 }
 

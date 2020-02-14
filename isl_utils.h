@@ -764,3 +764,17 @@ std::string codegen_c(isl_pw_qpolynomial* pqp) {
 
 }
 
+isl_union_pw_qpolynomial_fold* lower_bound(isl_union_pw_qpolynomial* range_card) {
+  int tight;
+  int* b = &tight;
+  auto bound = isl_union_pw_qpolynomial_bound(cpy(range_card), isl_fold_min, b);
+  return bound;
+}
+
+isl_union_pw_qpolynomial_fold* upper_bound(isl_union_pw_qpolynomial* range_card) {
+  int tight;
+  int* b = &tight;
+  auto bound = isl_union_pw_qpolynomial_bound(cpy(range_card), isl_fold_max, b);
+  return bound;
+}
+
