@@ -938,32 +938,42 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     cout << "Lexmax events: " << str(lex_max_events) << endl;
     map<string, string> ms = umap_codegen_c(lex_max_events);
     cout << "Done" << endl;
-    if (options.internal) {
+    //if (options.internal) {
+    if (true) {
       for (auto e : ms) {
         out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
       }
-      for (auto inpt : buf.get_in_ports()) {
-        out << "\t// inpt: " << inpt << endl;
-        bool found_key = false;
-        string k_var = "";
-        for (auto k : ms) {
-          string prefix = buf.name + "_" + k.first;
-          if (is_prefix(prefix, inpt)) {
-            found_key = true;
-            k_var = "select_" + k.first;
+      if (options.internal) {
+        for (auto inpt : buf.get_in_ports()) {
+          out << "\t// inpt: " << inpt << endl;
+          bool found_key = false;
+          string k_var = "";
+          for (auto k : ms) {
+            string prefix = buf.name + "_" + k.first;
+            if (is_prefix(prefix, inpt)) {
+              found_key = true;
+              k_var = "select_" + k.first;
+            }
+          }
+          if (found_key) {
+            assert(k_var != "");
+            string delay_expr = evaluate_dd(buf, outpt, inpt);
+            out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
+            out << "\tif (" + k_var + ") { return value_"+ inpt + "; }\n";
+          } else {
+            out << "//\tNo key for: " << inpt << endl;
           }
         }
-        if (found_key) {
-          assert(k_var != "");
-          string delay_expr = evaluate_dd(buf, outpt, inpt);
-          out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
-          out << "\tif (" + k_var + ") { return value_"+ inpt + "; }\n";
-        } else {
-          out << "//\tNo key for: " << inpt << endl;
+      } else {
+
+        for (auto inpt : buf.get_in_ports()) {
+          if (contains_key(inpt, ms)) {
+            string delay_expr = evaluate_dd(buf, outpt, inpt);
+            out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
+            out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
+          }
         }
       }
-
-      select_debug_assertions(options, out, inpt, outpt, buf);
     } else {
       for (auto inpt : buf.get_in_ports()) {
         auto in_actions = buf.domain.at(inpt);
@@ -977,8 +987,8 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
           out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
         }
       }
-      out << "\tassert(false);\n\treturn 0;\n";
     }
+    select_debug_assertions(options, out, inpt, outpt, buf);
   }
 
   out << "}" << endl << endl;
@@ -4408,6 +4418,7 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
     //jacobi_2d_4_test();
     //assert(false);
+    synth_reduce_test();
     jacobi_2d_2_test();
     jacobi_2d_test();
     parse_denoise3d_test();
@@ -4431,7 +4442,6 @@ int main(int argc, char** argv) {
     unsharp_test();
     blur_and_downsample_test();
     conv_2d_rolled_test();
-    synth_reduce_test();
     reduce_2d_test();
     conv_1d_test();
     conv_2d_bc_test();
