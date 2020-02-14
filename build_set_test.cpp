@@ -9,82 +9,7 @@
 #include <map>
 #include <vector>
 
-#include "algorithm.h"
-
-using namespace dbhc;
-using namespace std;
-
-string take_until(const std::string& s, const std::string& delim) {
-  std::size_t found = s.find_first_of(delim);
-  return s.substr(0, found);
-}
-
-bool is_number(string s) { 
-  for (int i = 0; i < s.length(); i++)  {
-    if (isdigit(s[i]) == false) {
-      return false; 
-    }
-  }  
-  return true; 
-} 
-
-int safe_stoi(const string s) {
-  if (is_number(s)) {
-    return stoi(s);
-  }
-  cout << "String: " << s << " is not a number!" << endl;
-  assert(false);
-  return -1;
-}
-
-string tab(const int n) {
-  string t = "";
-  for (int i = 0; i < n; i++) {
-    t += "\t";
-  }
-  return t;
-}
-
-bool
-is_prefix( std::string const& lhs, std::string const& rhs )
-{
-    return std::equal(
-        lhs.begin(),
-        lhs.begin() + std::min( lhs.size(), rhs.size() ),
-        rhs.begin() );
-}
-
-template<typename T>
-T pick(const std::vector<T>& s) {
-  assert(s.size() > 0);
-  return *(begin(s));
-}
-
-template<typename T>
-T pick(const std::set<T>& s) {
-  assert(s.size() > 0);
-  return *(begin(s));
-}
-
-std::string sep_list(const std::vector<std::string>& strs, const std::string& ldelim, const std::string& rdelim, const std::string& sep) {
-  string res = ldelim;
-
-  if (strs.size() > 0) {
-    for (size_t i = 0; i < strs.size(); i++) {
-      res += strs[i];
-      if (strs.size() > 1 && i < strs.size() - 1) {
-        res += sep;
-      }
-    }
-  }
-  res += rdelim;
-
-  return res;
-}
-
-std::string comma_list(const std::vector<std::string>& strs) {
-  return sep_list(strs, "", "", ", ");
-}
+#include "utils.h"
 
 struct CodegenOptions {
   bool internal;
@@ -2236,9 +2161,13 @@ struct prog {
   isl_schedule* optimized_schedule() {
     auto domain = whole_iteration_domain();
 
-    isl_union_map *validity = validity_deps();
+
+    auto order_deps = relative_orders();
+    isl_union_map *raw_deps = validity_deps();
+    auto validity = unn(order_deps, raw_deps);
     isl_union_map *proximity =
-      cpy(validity);
+      cpy(raw_deps);
+      //cpy(validity);
 
     cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
     isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
@@ -3714,6 +3643,56 @@ struct App {
 
 };
 
+void jacobi_2d_4_test() {
+
+  const int unroll = 4;
+  string us = to_string(unroll);
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "jacobi2d_" + us;
+  prg.buffer_port_widths["I"] = 32;
+
+  vector<string> inputs;
+  vector<string> outputs;
+  for (int i = 0; i < unroll; i++) {
+    string in_name_0 = "in_" + us;
+    string out_name_0 = "out_" + us;
+
+    prg.buffer_port_widths[in_name_0] = 32;
+    prg.add_input(in_name_0);
+    prg.buffer_port_widths[out_name_0] = 32;
+    prg.add_output(out_name_0);
+
+    inputs.push_back("in_" + us);
+    outputs.push_back("out_" + us);
+  }
+
+  int rows = 32;
+  int cols = 32;
+
+  assert(cols % unroll == 0);
+
+  auto in_nest = prg.add_nest("id1", 0, rows, "id0", 0, cols / unroll);
+  for (size_t i = 0; i < inputs.size(); i++) {
+    string in_name_0 = inputs.at(i);
+    cout << "Creating in nest: " << i << endl;
+    //in_nest->add_op
+      //({"I", us + "*id0 + " + to_string(i) + ", id1"}, "conv", {in_name_0, "id0, id1"});
+    in_nest->add_op({"I", us + "*id0 + " + to_string(i) + ", id1"}, "id", {in_name_0, "id0, id1"});
+  }
+
+  auto blur_y_nest = 
+    prg.add_nest("d1", 1, rows - 1, "d0", 1, (cols - 1) / unroll);
+  for (size_t i = 0; i < outputs.size(); i++) {
+    string out_name_1 = outputs.at(i);
+    blur_y_nest->
+      stencil_op(out_name_1, "jacobi2d_compute", "I", {us + "*(d0) + " + to_string(i) + " - 1", "d1"}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
+  }
+
+  regression_test(prg);
+  assert(false);
+}
+
 void jacobi_2d_2_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
@@ -3753,7 +3732,7 @@ void jacobi_2d_2_test() {
     stencil_op(out_name_1, "jacobi2d_compute", "I", {"2*(d0) + 1 - 1", "d1"}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
 
   regression_test(prg);
-  assert(false);
+  //assert(false);
 }
 
 void jacobi_2d_test() {
@@ -4492,8 +4471,9 @@ int main(int argc, char** argv) {
     assert(false);
 
   } else if (argc == 1) {
-    jacobi_2d_2_test();
+    //jacobi_2d_4_test();
     //assert(false);
+    jacobi_2d_2_test();
     jacobi_2d_test();
     parse_denoise3d_test();
     seidel2d_test();
