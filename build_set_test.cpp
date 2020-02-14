@@ -955,7 +955,9 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
 
     for (auto inpt : buf.get_in_ports()) {
       string delay_expr = evaluate_dd(buf, outpt, inpt);
-      string peeked_val = inpt + "_delay.peek((" + delay_expr + "))";
+      string value_str = delay_string(options, inpt, outpt, buf);
+      string peeked_val = value_str;
+      //inpt + "_delay.peek((" + delay_expr + "))";
       
       if (options.internal) {
         out << "\t// inpt: " << inpt << endl;
@@ -2105,7 +2107,8 @@ struct prog {
 
     auto order_deps = relative_orders();
     isl_union_map *raw_deps = validity_deps();
-    auto validity = unn(order_deps, raw_deps);
+    auto validity = raw_deps;
+      //unn(order_deps, raw_deps);
     isl_union_map *proximity =
       cpy(raw_deps);
       //cpy(validity);

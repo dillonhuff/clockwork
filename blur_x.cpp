@@ -3,16 +3,12 @@
 #include "hw_classes.h"
 
 struct I_I_id0_0_cache {
-	// Capacity: 65
+	// Capacity: 3
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
-	// Parition [1, 32) capacity = 31
-	fifo<hw_uint<16>, 31> f1;
-	// Parition [32, 33) capacity = 1
+	// Parition [1, 2) capacity = 1
 	fifo<hw_uint<16>, 1> f2;
-	// Parition [33, 64) capacity = 31
-	fifo<hw_uint<16>, 31> f3;
-	// Parition [64, 64] capacity = 1
+	// Parition [2, 2] capacity = 1
 	fifo<hw_uint<16>, 1> f4;
 
 
@@ -20,19 +16,11 @@ struct I_I_id0_0_cache {
 		return f0.back();
 	}
 
-	inline hw_uint<16> peek_31() {
-		return f1.back();
-	}
-
-	inline hw_uint<16> peek_32() {
+	inline hw_uint<16> peek_1() {
 		return f2.back();
 	}
 
-	inline hw_uint<16> peek_63() {
-		return f3.back();
-	}
-
-	inline hw_uint<16> peek_64() {
+	inline hw_uint<16> peek_2() {
 		return f4.back();
 	}
 
@@ -42,16 +30,10 @@ struct I_I_id0_0_cache {
 		if (offset == 0) {
 			return f0.back();
 		}
-		if (offset == 31) {
-			return f1.back();
-		}
-		if (offset == 32) {
+		if (offset == 1) {
 			return f2.back();
 		}
-		if (offset == 63) {
-			return f3.back();
-		}
-		if (offset == 64) {
+		if (offset == 2) {
 			return f4.back();
 		}
 #ifndef __VIVADO_SYNTH__
@@ -66,10 +48,8 @@ struct I_I_id0_0_cache {
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence array inter false
 #endif //__VIVADO_SYNTH__
-		f4.push(f3.back());
-		f3.push(f2.back());
-		f2.push(f1.back());
-		f1.push(f0.back());
+		f4.push(f2.back());
+		f2.push(f0.back());
 		f0.push(value);
 	}
 
@@ -83,13 +63,13 @@ inline void I_I_id0_0_write(hw_uint<16>& I_I_id0_0, I_I_id0_0_cache& I_I_id0_0_d
 
 inline hw_uint<16> I_out_blur_30_3_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
-	hw_uint<16> value_I_I_id0_0 = I_I_id0_0_delay.peek_64();
+	hw_uint<16> value_I_I_id0_0 = I_I_id0_0_delay.peek_2();
 	return value_I_I_id0_0;
 }
 
 inline hw_uint<16> I_out_blur_30_4_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
-	hw_uint<16> value_I_I_id0_0 = I_I_id0_0_delay.peek_32();
+	hw_uint<16> value_I_I_id0_0 = I_I_id0_0_delay.peek_1();
 	return value_I_I_id0_0;
 }
 
@@ -158,11 +138,11 @@ inline void out_blur_30(I_I_id0_0_cache& I_I_id0_0, HWStream<hw_uint<16> >& out,
 // Driver function
 void blur_x(HWStream<hw_uint<16> >& in, HWStream<hw_uint<16> >& out) {
 	I_I_id0_0_cache I_I_id0_0;
-	for (int c0 = 0; c0 <= 7; c0 += 1)
-	  for (int c1 = 0; c1 <= 31; c1 += 1) {
-	    I_id0(in, I_I_id0_0, 0, c0, c1);
-	    if (c0 >= 2)
-	      out_blur_30(I_I_id0_0, out, 0, c0 - 2, c1);
+	for (int c0 = 0; c0 <= 31; c0 += 1)
+	  for (int c1 = 0; c1 <= 7; c1 += 1) {
+	    I_id0(in, I_I_id0_0, 0, c1, c0);
+	    if (c1 >= 2)
+	      out_blur_30(I_I_id0_0, out, 0, c1 - 2, c0);
 	  }
 	
 }
