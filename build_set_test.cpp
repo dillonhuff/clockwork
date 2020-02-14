@@ -505,7 +505,8 @@ int int_upper_bound(isl_union_pw_qpolynomial* range_card) {
   return bint;
 }
 
-umap* get_lexmax_events(const std::string& inpt, const std::string& outpt, UBuffer& buf) {
+//umap* get_lexmax_events(const std::string& inpt, const std::string& outpt, UBuffer& buf) {
+umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
     umap* src_map = nullptr;
     for (auto inpt : buf.get_in_ports()) {
       auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
@@ -546,7 +547,7 @@ umap* writes_between(UBuffer& buf, const std::string& read_port, const std::stri
     lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
 
   auto WriteThatProducesReadData =
-    get_lexmax_events(write_port, read_port, buf);
+    get_lexmax_events(read_port, buf);
 
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
@@ -568,7 +569,7 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
     lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
 
   auto WriteThatProducesReadData =
-    get_lexmax_events(write_port, read_port, buf);
+    get_lexmax_events(read_port, buf);
 
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
@@ -665,7 +666,7 @@ void generate_memory_struct(CodegenOptions& options, std::ostream& out, const st
 
     auto in_actions = buf.domain.at(inpt);
     auto lex_max_events =
-      get_lexmax_events(inpt, outpt, buf);
+      get_lexmax_events(outpt, buf);
     auto act_dom = 
       domain(its_range(lex_max_events, to_uset(in_actions)));
 
@@ -888,7 +889,7 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
 
   auto out_domain = buf.domain.at(outpt);
 
-  auto lex_max_events = get_lexmax_events(inpt, outpt, buf);
+  auto lex_max_events = get_lexmax_events(outpt, buf);
 
   // Body of select function
   string delay_expr = evaluate_dd(buf, outpt, inpt);
@@ -947,6 +948,7 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
         bool found_key = false;
         string k_var = "";
         for (auto k : ms) {
+          out << "\t// k = " << k.first << endl;
           string prefix = buf.name + "_" + k.first;
           if (is_prefix(prefix, inpt)) {
             found_key = true;
@@ -973,19 +975,8 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     select_debug_assertions(options, out, inpt, outpt, buf);
   }
 
-  //else {
-
-  //for (auto inpt : buf.get_in_ports()) {
-  //if (contains_key(inpt, ms)) {
-  //string delay_expr = evaluate_dd(buf, outpt, inpt);
-  //out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
-  //out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
-  //}
-  //}
   out << "}" << endl << endl;
 }
-
-//}
 
 void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
   out << "// Bundles..." << endl;
