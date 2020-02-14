@@ -63,32 +63,19 @@ inline void M_write_6_write(hw_uint<32> & M_write_6, M_write_6_cache& M_write_6_
 
 inline hw_uint<32>  M_read0_1_select(M_write_6_cache& M_write_6_delay
 , int root, int c) {
-// Pieces...
-// { read0[root = 0, c] : 0 <= c <= 7 } -> { read0[root, c] -> 1 }
-// 	is always true on iteration domain: 0
-//	is optimizable constant: 0
-	int value_M_write_6 = M_write_6_delay.peek(((root == 0 && c >= 0 && 7 - c >= 0) ? (1) : 0));
+	hw_uint<32>  value_M_write_6 = M_write_6_delay.peek((root == 0 && c >= 0 && 7 - c >= 0) ? (1) : 0);
 	return value_M_write_6;
 }
 
 inline hw_uint<32>  M_read0_2_select(M_write_6_cache& M_write_6_delay
 , int root, int c) {
-// Pieces...
-// Always 0
-//	is optimizable constant: 0
 	hw_uint<32>  value_M_write_6 = M_write_6_delay.peek_0();
 	return value_M_write_6;
 }
 
 inline hw_uint<32>  M_read0_3_select(M_write_6_cache& M_write_6_delay
 , int root, int c) {
-// Pieces...
-// { read0[root = 0, c] : 0 <= c <= 7 } -> { read0[root, c] -> 2 }
-// 	is always true on iteration domain: 0
-// { read0[root = 0, c = 8] } -> { read0[root, c] -> 1 }
-// 	is always true on iteration domain: 0
-//	is optimizable constant: 0
-	int value_M_write_6 = M_write_6_delay.peek(((root == 0 && c >= 0 && 7 - c >= 0) ? (2) : (-8 + c == 0 && root == 0) ? (1) : 0));
+	hw_uint<32>  value_M_write_6 = M_write_6_delay.peek((root == 0 && c >= 0 && 7 - c >= 0) ? (2) : (-8 + c == 0 && root == 0) ? (1) : 0);
 	return value_M_write_6;
 }
 
@@ -148,9 +135,6 @@ inline void T_read0_0_write(hw_uint<96>& T_read0_0, T_read0_0_cache& T_read0_0_d
 
 inline hw_uint<96> T_compute_out_5_select(T_read0_0_cache& T_read0_0_delay
 , int root, int c) {
-// Pieces...
-// Always 0
-//	is optimizable constant: 0
 	hw_uint<96> value_T_read0_0 = T_read0_0_delay.peek_0();
 	return value_T_read0_0;
 }
@@ -190,7 +174,7 @@ inline void compute_out(T_read0_0_cache& T_read0_0, HWStream<hw_uint<32>  >& out
 	// Consume: T
 	auto T_c_value = T_compute_out_read_bundle_read(T_read0_0/* source_delay */, root, c);
 	// Apply function: accumulate_3
-	/* No args */ auto compute_result = accumulate_3(T_c_value);
+	auto compute_result = accumulate_3(T_c_value);
 	// Produce: out
 	out.write(compute_result);
 }

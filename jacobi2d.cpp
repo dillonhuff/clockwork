@@ -103,52 +103,31 @@ inline void I_I_id0_0_write(hw_uint<32> & I_I_id0_0, I_I_id0_0_cache& I_I_id0_0_
 
 inline hw_uint<32>  I_out_jacobi2d_compute0_3_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
-// Pieces...
-// { out_jacobi2d_compute0[root = 0, d1, d0] : 0 < d1 <= 30 and 0 < d0 <= 30 } -> { out_jacobi2d_compute0[root, d1, d0] -> 33 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
-	int value_I_I_id0_0 = I_I_id0_0_delay.peek_33();
+	hw_uint<32>  value_I_I_id0_0 = I_I_id0_0_delay.peek_33();
 	return value_I_I_id0_0;
 }
 
 inline hw_uint<32>  I_out_jacobi2d_compute0_4_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
-// Pieces...
-// { out_jacobi2d_compute0[root = 0, d1, d0] : 0 < d1 <= 30 and 0 < d0 <= 30 } -> { out_jacobi2d_compute0[root, d1, d0] -> 64 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
-	int value_I_I_id0_0 = I_I_id0_0_delay.peek_64();
+	hw_uint<32>  value_I_I_id0_0 = I_I_id0_0_delay.peek_64();
 	return value_I_I_id0_0;
 }
 
 inline hw_uint<32>  I_out_jacobi2d_compute0_5_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
-// Pieces...
-// { out_jacobi2d_compute0[root = 0, d1, d0] : 0 < d1 <= 30 and 0 < d0 <= 30 } -> { out_jacobi2d_compute0[root, d1, d0] -> 32 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
-	int value_I_I_id0_0 = I_I_id0_0_delay.peek_32();
+	hw_uint<32>  value_I_I_id0_0 = I_I_id0_0_delay.peek_32();
 	return value_I_I_id0_0;
 }
 
 inline hw_uint<32>  I_out_jacobi2d_compute0_6_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
-// Pieces...
-// Always 0
-//	is optimizable constant: 0
 	hw_uint<32>  value_I_I_id0_0 = I_I_id0_0_delay.peek_0();
 	return value_I_I_id0_0;
 }
 
 inline hw_uint<32>  I_out_jacobi2d_compute0_7_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
-// Pieces...
-// { out_jacobi2d_compute0[root = 0, d1, d0] : 0 < d1 <= 30 and 0 < d0 <= 29 } -> { out_jacobi2d_compute0[root, d1, d0] -> 31 }
-// 	is always true on iteration domain: 0
-// { out_jacobi2d_compute0[root = 0, d1, d0 = 30] : 0 < d1 <= 30 } -> { out_jacobi2d_compute0[root, d1, d0] -> (1 + d0) }
-// 	is always true on iteration domain: 0
-//	is optimizable constant: 1
-	int value_I_I_id0_0 = I_I_id0_0_delay.peek_31();
+	hw_uint<32>  value_I_I_id0_0 = I_I_id0_0_delay.peek_31();
 	return value_I_I_id0_0;
 }
 
@@ -191,7 +170,7 @@ inline void I_id0(HWStream<hw_uint<32>  >& in, I_I_id0_0_cache& I_I_id0_0, int r
 	// Apply function: id
 	// Arg: in_id0_c__id1_value
 	// Arg buf: in
-	 /* comma list args */ auto compute_result = id(in_id0_c__id1_value);
+	auto compute_result = id(in_id0_c__id1_value);
 	// Produce: I
 	// Buffer: I, Op: I_id0
 	// Possible ports...
@@ -213,7 +192,7 @@ inline void out_jacobi2d_compute0(I_I_id0_0_cache& I_I_id0_0, HWStream<hw_uint<3
 	// Arg buf: I
 	// Arg: I_d0__p___m_1_c__d1__p__0_value
 	// Arg buf: I
-	 /* comma list args */ auto compute_result = jacobi2d_compute(I_d0__p___m_1_c__d1__p__0_value);
+	auto compute_result = jacobi2d_compute(I_d0__p___m_1_c__d1__p__0_value);
 	// Produce: out
 	out.write(compute_result);
 }

@@ -32,9 +32,6 @@ inline void I_I_id0_0_write(hw_uint<16>& I_I_id0_0, I_I_id0_0_cache& I_I_id0_0_d
 
 inline hw_uint<16> I_out_plus_one0_3_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
-// Pieces...
-// Always 0
-//	is optimizable constant: 0
 	hw_uint<16> value_I_I_id0_0 = I_I_id0_0_delay.peek_0();
 	return value_I_I_id0_0;
 }
@@ -66,7 +63,7 @@ inline void I_id0(HWStream<hw_uint<16> >& in, I_I_id0_0_cache& I_I_id0_0, int ro
 	// Apply function: id
 	// Arg: in_id0_c__id1_value
 	// Arg buf: in
-	 /* comma list args */ auto compute_result = id(in_id0_c__id1_value);
+	auto compute_result = id(in_id0_c__id1_value);
 	// Produce: I
 	// Buffer: I, Op: I_id0
 	// Possible ports...
@@ -80,7 +77,7 @@ inline void out_plus_one0(I_I_id0_0_cache& I_I_id0_0, HWStream<hw_uint<16> >& ou
 	// Apply function: plus_one
 	// Arg: I_d0_c__d1_value
 	// Arg buf: I
-	 /* comma list args */ auto compute_result = plus_one(I_d0_c__d1_value);
+	auto compute_result = plus_one(I_d0_c__d1_value);
 	// Produce: out
 	out.write(compute_result);
 }

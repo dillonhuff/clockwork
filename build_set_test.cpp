@@ -9,82 +9,7 @@
 #include <map>
 #include <vector>
 
-#include "algorithm.h"
-
-using namespace dbhc;
-using namespace std;
-
-string take_until(const std::string& s, const std::string& delim) {
-  std::size_t found = s.find_first_of(delim);
-  return s.substr(0, found);
-}
-
-bool is_number(string s) { 
-  for (int i = 0; i < s.length(); i++)  {
-    if (isdigit(s[i]) == false) {
-      return false; 
-    }
-  }  
-  return true; 
-} 
-
-int safe_stoi(const string s) {
-  if (is_number(s)) {
-    return stoi(s);
-  }
-  cout << "String: " << s << " is not a number!" << endl;
-  assert(false);
-  return -1;
-}
-
-string tab(const int n) {
-  string t = "";
-  for (int i = 0; i < n; i++) {
-    t += "\t";
-  }
-  return t;
-}
-
-bool
-is_prefix( std::string const& lhs, std::string const& rhs )
-{
-    return std::equal(
-        lhs.begin(),
-        lhs.begin() + std::min( lhs.size(), rhs.size() ),
-        rhs.begin() );
-}
-
-template<typename T>
-T pick(const std::vector<T>& s) {
-  assert(s.size() > 0);
-  return *(begin(s));
-}
-
-template<typename T>
-T pick(const std::set<T>& s) {
-  assert(s.size() > 0);
-  return *(begin(s));
-}
-
-std::string sep_list(const std::vector<std::string>& strs, const std::string& ldelim, const std::string& rdelim, const std::string& sep) {
-  string res = ldelim;
-
-  if (strs.size() > 0) {
-    for (size_t i = 0; i < strs.size(); i++) {
-      res += strs[i];
-      if (strs.size() > 1 && i < strs.size() - 1) {
-        res += sep;
-      }
-    }
-  }
-  res += rdelim;
-
-  return res;
-}
-
-std::string comma_list(const std::vector<std::string>& strs) {
-  return sep_list(strs, "", "", ", ");
-}
+#include "utils.h"
 
 struct CodegenOptions {
   bool internal;
@@ -141,7 +66,7 @@ class UBuffer {
       return d;
     }
 
-    int port_width(const std::string& port_name) {
+    int port_width(const std::string& port_name) const {
       return port_widths;
     }
 
@@ -168,7 +93,7 @@ class UBuffer {
       return len;
     }
 
-    std::string bundle_type_string(const std::string& bundle_name) {
+    std::string bundle_type_string(const std::string& bundle_name) const {
       int len = 0;
       for (auto pt : map_find(bundle_name, port_bundles)) {
         len += port_width(pt);
@@ -181,7 +106,7 @@ class UBuffer {
       return "hw_uint<" + to_string(len) + ">";
     }
 
-    std::string bundle_stream(const std::string& bundle_name) {
+    std::string bundle_stream(const std::string& bundle_name) const {
       bool input_bundle = isIn.at(pick(port_bundles.at(bundle_name)));
       string bundle_type_str = bundle_type_string(bundle_name);
       return string(input_bundle ? "Input" : "Output") + "Stream<" + bundle_type_str + " >& " + bundle_name;
@@ -337,16 +262,6 @@ isl_stat get_const(isl_set* s, isl_qpolynomial* qp, void* user) {
     vals->push_back(vs);
   }
   return isl_stat_ok;
-}
-
-std::string ReplaceString(std::string subject, const std::string& search,
-                          const std::string& replace) {
-    size_t pos = 0;
-    while ((pos = subject.find(search, pos)) != std::string::npos) {
-         subject.replace(pos, search.length(), replace);
-         pos += replace.length();
-    }
-    return subject;
 }
 
 string codegen_c_constraint(isl_constraint* c) {
@@ -522,20 +437,6 @@ std::string codegen_c(isl_term* t) {
   return "(" + str(isl_term_get_coefficient_val(t)) + "*" + sep_list(exps, "", "", "*") + ")";
 }
 
-std::string codegen_c(isl_qpolynomial* qp) {
-  auto ctx = isl_qpolynomial_get_ctx(qp);
-  isl_printer *p;
-  p = isl_printer_to_str(ctx);
-  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
-  p = isl_printer_print_qpolynomial(p, cpy(qp));
-
-  char* rs = isl_printer_get_str(p);
-  isl_printer_free(p);
-  string r(rs);
-  free(rs);
-  return r;
-}
-
 isl_stat codegen_domain(isl_set* domain, isl_qpolynomial* qp, void* user) {
   vector<string>& code_holder = *((vector<string>*) user);
   code_holder.push_back(codegen_c(domain));
@@ -546,37 +447,6 @@ isl_stat codegen_value(isl_set* domain, isl_qpolynomial* qp, void* user) {
   vector<string>& code_holder = *((vector<string>*) user);
   code_holder.push_back(codegen_c(qp));
   return isl_stat_ok;
-}
-
-std::string codegen_c(isl_union_pw_qpolynomial* pqp) {
-
-  auto ct = ctx(pqp);
-  isl_printer *p;
-  p = isl_printer_to_str(ct);
-  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
-  p = isl_printer_print_union_pw_qpolynomial(p, cpy(pqp));
-
-  char* rs = isl_printer_get_str(p);
-  isl_printer_free(p);
-  string r(rs);
-  free(rs);
-  return r;
-}
-
-std::string codegen_c(isl_pw_qpolynomial* pqp) {
-
-  auto ctx = isl_pw_qpolynomial_get_ctx(pqp);
-  isl_printer *p;
-  p = isl_printer_to_str(ctx);
-  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
-  p = isl_printer_print_pw_qpolynomial(p, cpy(pqp));
-
-  char* rs = isl_printer_get_str(p);
-  isl_printer_free(p);
-  string r(rs);
-  free(rs);
-  return r;
-
 }
 
 isl_stat map_codegen_c(isl_map* m, void* user) {
@@ -620,20 +490,6 @@ int int_lower_bound(isl_union_pw_qpolynomial* range_card) {
   return bint;
 }
 
-isl_union_pw_qpolynomial_fold* lower_bound(isl_union_pw_qpolynomial* range_card) {
-  int tight;
-  int* b = &tight;
-  auto bound = isl_union_pw_qpolynomial_bound(cpy(range_card), isl_fold_min, b);
-  return bound;
-}
-
-isl_union_pw_qpolynomial_fold* upper_bound(isl_union_pw_qpolynomial* range_card) {
-  int tight;
-  int* b = &tight;
-  auto bound = isl_union_pw_qpolynomial_bound(cpy(range_card), isl_fold_max, b);
-  return bound;
-}
-
 int int_upper_bound(isl_union_pw_qpolynomial* range_card) {
   int tight;
   int* b = &tight;
@@ -649,7 +505,8 @@ int int_upper_bound(isl_union_pw_qpolynomial* range_card) {
   return bint;
 }
 
-umap* get_lexmax_events(const std::string& inpt, const std::string& outpt, UBuffer& buf) {
+//umap* get_lexmax_events(const std::string& inpt, const std::string& outpt, UBuffer& buf) {
+umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
     umap* src_map = nullptr;
     for (auto inpt : buf.get_in_ports()) {
       auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
@@ -690,7 +547,7 @@ umap* writes_between(UBuffer& buf, const std::string& read_port, const std::stri
     lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
 
   auto WriteThatProducesReadData =
-    get_lexmax_events(write_port, read_port, buf);
+    get_lexmax_events(read_port, buf);
 
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
@@ -712,7 +569,7 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
     lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
 
   auto WriteThatProducesReadData =
-    get_lexmax_events(write_port, read_port, buf);
+    get_lexmax_events(read_port, buf);
 
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
@@ -809,7 +666,7 @@ void generate_memory_struct(CodegenOptions& options, std::ostream& out, const st
 
     auto in_actions = buf.domain.at(inpt);
     auto lex_max_events =
-      get_lexmax_events(inpt, outpt, buf);
+      get_lexmax_events(outpt, buf);
     auto act_dom = 
       domain(its_range(lex_max_events, to_uset(in_actions)));
 
@@ -993,21 +850,7 @@ bool is_optimizable_constant_dd(const string& inpt, const string& outpt, UBuffer
   return false;
 }
 
-void generate_selects(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
-
-  auto out_domain = buf.domain.at(outpt);
-  auto out_reads = buf.access_map.at(outpt);
-
-  auto in_actions = buf.domain.at(inpt);
-  auto in_writes = buf.access_map.at(inpt);
-
-  auto reads_from_inpt = dot(out_reads, inv(in_writes));
-  //cout << "reads from inpt: " << str(reads_from_inpt) << endl;
-  //cout << "op reads from inpt: " << str(domain(reads_from_inpt)) << endl;
-
-  auto lex_max_events = get_lexmax_events(inpt, outpt, buf);
-  //cout << "lex_max_events = " << str(lex_max_events) << endl;
-
+void generate_select_decl(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
   out << "inline " + buf.port_type_string() + " " + outpt + "_select(";
   size_t nargs = 0;
   for (auto pt : buf.get_in_ports()) {
@@ -1024,112 +867,132 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
   out << sep_list(dim_decls, "", "", ", ");
 
   out << ") {" << endl;
-  // Body of select function
-  string delay_expr = evaluate_dd(buf, outpt, inpt);
+}
+
+void select_debug_assertions(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
+  // ------------ Error printouts only
+  vector<string> offset_printouts;
+  isl_space* s = get_space(buf.domain.at(outpt));
+  assert(isl_space_is_set(s));
+  for (int i = 0; i < num_dims(s); i++) {
+    string name = 
+      str(isl_space_get_dim_id(s, isl_dim_set, i));
+    offset_printouts.push_back("\" " + name + " = \" << " + name + " ");
+  }
+
+  out << "\tcout << \"Error: Unsupported offsets: \" << " << sep_list(offset_printouts, "", "", " << ") << " << endl;" << endl;
+  out << "\tassert(false);\n\treturn 0;\n";
+}
+
+string delay_string(CodegenOptions& options, const string& inpt, const string& outpt, UBuffer& buf) {
+  auto out_domain = buf.domain.at(outpt);
   auto qpd = compute_dd(buf, outpt, inpt);
   auto pieces = get_pieces(qpd);
-  out << "// Pieces..." << endl;
-  for (auto p : pieces) {
-    out << "// " << str(p.first) << " -> " << str(p.second) << endl;
-    out << "// \tis always true on iteration domain: " << isl_set_is_subset(cpy(out_domain), cpy(p.first)) << endl;
-  }
   bool always_zero_distance = pieces.size() == 0;
 
-  if (pieces.size() == 0) {
-    out << "// Always 0" << endl;
-  }
-  bool opt_const = is_optimizable_constant_dd(inpt, outpt, buf);
-  out << "//\tis optimizable constant: " << opt_const << endl;
   string dx = to_string(int_upper_bound(qpd));
+  string delay_expr = evaluate_dd(buf, outpt, inpt);
+  string value_str = "";
+  bool opt_const = is_optimizable_constant_dd(inpt, outpt, buf);
+  if (opt_const) {
+    if (!options.all_rams && is_number(dx)) {
+      value_str = inpt + "_delay.peek_" + dx + "()";
+    } else {
+      value_str = inpt + "_delay.peek" + "(" + delay_expr + ")";
+    }
+  } else if (pieces.size() == 0 && !options.all_rams) {
+    value_str = inpt + "_delay.peek_0()";
+  } else if (pieces.size() == 1 &&
+      isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
+    string dx = codegen_c(pieces[0].second);
+    if (!options.all_rams && is_number(dx)) {
+      value_str = inpt + "_delay.peek_" + dx + "()";
+    } else {
+      value_str = inpt + "_delay.peek" + "(" + dx + ")";
+    }
+  } else {
+    value_str = inpt + "_delay.peek" + "(" + delay_expr + ")";
+  }
+  return value_str;
+}
+
+void generate_selects(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
+  generate_select_decl(options, out, inpt, outpt, buf);
+
+
+  auto lex_max_events = get_lexmax_events(outpt, buf);
+
+  // Body of select function
+  //string delay_expr = evaluate_dd(buf, outpt, inpt);
+  //auto qpd = compute_dd(buf, outpt, inpt);
+  //auto pieces = get_pieces(qpd);
+  //out << "// Pieces..." << endl;
+  //for (auto p : pieces) {
+    //out << "// " << str(p.first) << " -> " << str(p.second) << endl;
+    //out << "// \tis always true on iteration domain: " << isl_set_is_subset(cpy(out_domain), cpy(p.first)) << endl;
+  //}
+  //bool always_zero_distance = pieces.size() == 0;
+
+  //if (pieces.size() == 0) {
+    //out << "// Always 0" << endl;
+  //}
+  //out << "//\tis optimizable constant: " << opt_const << endl;
+  //string dx = to_string(int_upper_bound(qpd));
 
   if (buf.get_in_ports().size() == 1) {
     string inpt = *(buf.get_in_ports().begin());
-
-    if (opt_const) {
-      if (!options.all_rams && is_number(dx)) {
-        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
-      } else {
-        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << dx << ")" << ";\n";
-      }
-      out << "\treturn value_" + inpt + ";" << endl;
-    } else if (pieces.size() == 0 && !options.all_rams) {
-      out << "\t" << buf.port_type_string() << " value_" << inpt << " = " << inpt << "_delay.peek_" << 0 << "()" << ";\n";
-      out << "\treturn value_" + inpt + ";" << endl;
-    } else if (pieces.size() == 1 &&
-        isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
-      string dx = codegen_c(pieces[0].second);
-      if (!options.all_rams && is_number(dx)) {
-        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek_" << dx << "()" << ";\n";
-      } else {
-        out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << dx << ")" << ";\n";
-      }
-      out << "\treturn value_" + inpt + ";" << endl;
-    } else {
-      out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
-      out << "\treturn value_" + inpt + ";" << endl;
-    }
+    string value_str = delay_string(options, inpt, outpt, buf);
+    out << "\t" << buf.port_type_string() << " value_" << inpt << " = " << value_str << ";" << endl;
+    out << "\treturn value_" + inpt + ";" << endl;
   } else {
     cout << "Lexmax events: " << str(lex_max_events) << endl;
     map<string, string> ms = umap_codegen_c(lex_max_events);
+    out << "\t// lexmax events: " << str(lex_max_events) << endl;
     cout << "Done" << endl;
-    if (options.internal) {
-      for (auto e : ms) {
-        out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
-      }
-      for (auto inpt : buf.get_in_ports()) {
+    for (auto e : ms) {
+      out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
+    }
+
+    for (auto inpt : buf.get_in_ports()) {
+      string delay_expr = evaluate_dd(buf, outpt, inpt);
+      string value_str = delay_string(options, inpt, outpt, buf);
+      string peeked_val = value_str;
+      //inpt + "_delay.peek((" + delay_expr + "))";
+      
+      if (options.internal) {
         out << "\t// inpt: " << inpt << endl;
         bool found_key = false;
         string k_var = "";
         for (auto k : ms) {
+          out << "\t// k = " << k.first << endl;
           string prefix = buf.name + "_" + k.first;
           if (is_prefix(prefix, inpt)) {
             found_key = true;
-            k_var = "select_" + k.first;
+            k_var = k.first;
           }
         }
         if (found_key) {
           assert(k_var != "");
-          string delay_expr = evaluate_dd(buf, outpt, inpt);
-          out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
-          out << "\tif (" + k_var + ") { return value_"+ inpt + "; }\n";
+          out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
+          out << "\tif (select_" + k_var + ") { return value_"+ inpt + "; }\n";
         } else {
           out << "//\tNo key for: " << inpt << endl;
         }
-      }
-
-      // Error printouts
-      vector<string> offset_printouts;
-      isl_space* s = get_space(buf.domain.at(outpt));
-      assert(isl_space_is_set(s));
-      for (int i = 0; i < num_dims(s); i++) {
-        string name = 
-          str(isl_space_get_dim_id(s, isl_dim_set, i));
-        offset_printouts.push_back("\" " + name + " = \" << " + name + " ");
-      }
-
-      out << "\tcout << \"Error: Unsupported offsets: \" << " << sep_list(offset_printouts, "", "", " << ") << " << endl;" << endl;
-      out << "\tassert(false);\n\treturn 0;\n";
-    } else {
-      for (auto inpt : buf.get_in_ports()) {
-        auto in_actions = buf.domain.at(inpt);
-        auto act_dom = 
-          domain(its_range(lex_max_events, to_uset(in_actions)));
-
+      } else {
         if (contains_key(inpt, ms)) {
-          out << "\tbool select_" << inpt << " = " << codegen_c(act_dom) << ";" << endl;
-          string delay_expr = evaluate_dd(buf, outpt, inpt);
-          out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
+          out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
           out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
         }
+
       }
-      out << "\tassert(false);\n\treturn 0;\n";
     }
+    select_debug_assertions(options, out, inpt, outpt, buf);
   }
 
   out << "}" << endl << endl;
 }
 
-void generate_bundles(CodegenOptions& options, std::ostream& out, const string& inpt, UBuffer& buf) {
+void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
   out << "// Bundles..." << endl;
   for (auto b : buf.port_bundles) {
     out << "// " << b.first << endl;
@@ -1201,7 +1064,7 @@ void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf)
     generate_selects(options, out, inpt, outpt, buf);
   }
 
-  generate_bundles(options, out, inpt, buf);
+  generate_bundles(options, out, buf);
   out << endl << endl;
 }
 
@@ -1217,6 +1080,24 @@ void generate_hls_code(std::ostream& out, UBuffer& buf) {
   options.internal = false;
 
   generate_hls_code(options, out, buf);
+}
+
+void generate_header(const UBuffer& buf) {
+  //cout << "Header file generation..." << endl;
+  ofstream of(buf.name + ".h");
+  of << "#pragma once\n\n" << endl;
+  of << "#include \"hw_classes.h\"" << endl << endl;
+  of << "void " << buf.name << "(";
+  int nargs = 0;
+  for (auto pt : buf.port_bundles) {
+    of << buf.bundle_stream(pt.first);
+    if (nargs < buf.port_bundles.size() - 1) {
+      of << ", ";
+    }
+    nargs++;
+  }
+  of << ");" << endl;
+
 }
 
 void generate_hls_code(UBuffer& buf) {
@@ -1288,21 +1169,8 @@ void generate_hls_code(UBuffer& buf) {
   out << code_string << endl;
   out << "}" << endl;
 
-  //cout << "Header file generation..." << endl;
-  ofstream of(buf.name + ".h");
-  of << "#pragma once\n\n" << endl;
-  of << "#include \"hw_classes.h\"" << endl << endl;
-  of << "void " << buf.name << "(";
-  nargs = 0;
-  for (auto pt : buf.port_bundles) {
-    of << buf.bundle_stream(pt.first);
-    if (nargs < buf.port_bundles.size() - 1) {
-      of << ", ";
-    }
-    nargs++;
-  }
-  of << ");" << endl;
 
+  generate_header(buf);
   generate_vivado_tcl(buf);
 }
 
@@ -2236,9 +2104,15 @@ struct prog {
   isl_schedule* optimized_schedule() {
     auto domain = whole_iteration_domain();
 
-    isl_union_map *validity = validity_deps();
+
+    auto order_deps = relative_orders();
+    isl_union_map *raw_deps = validity_deps();
+    auto validity =
+      raw_deps;
+      //unn(order_deps, raw_deps);
     isl_union_map *proximity =
-      cpy(validity);
+      cpy(raw_deps);
+      //cpy(validity);
 
     cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
     isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
@@ -2493,7 +2367,7 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
       if (op->func != "") {
         conv_out << "\t// Apply function: " << op->func << endl;
         if (op->func_args.size() == 0) {
-          conv_out << "\t/* No args */ auto compute_result = " << op->func << "(" << res << ");" << endl;
+          conv_out << "\tauto compute_result = " << op->func << "(" << res << ");" << endl;
         } else {
           vector<string> arg_list;
           set<string> buffers_seen;
@@ -2514,8 +2388,7 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
               buffers_seen.insert(arg_buf);
             }
           }
-          conv_out << "\t /* comma list args */ auto compute_result = " << op->func << "(" << comma_list(arg_list) << ");" << endl;
-          //conv_out << "\t /* comma list args */ auto compute_result = " << op->func << "(" << res << ");" << endl;
+          conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(arg_list) << ");" << endl;
         }
         res = "compute_result";
       }
@@ -3714,6 +3587,56 @@ struct App {
 
 };
 
+void jacobi_2d_4_test() {
+
+  const int unroll = 4;
+  string us = to_string(unroll);
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "jacobi2d_" + us;
+  prg.buffer_port_widths["I"] = 32;
+
+  vector<string> inputs;
+  vector<string> outputs;
+  for (int i = 0; i < unroll; i++) {
+    string in_name_0 = "in_" + us;
+    string out_name_0 = "out_" + us;
+
+    prg.buffer_port_widths[in_name_0] = 32;
+    prg.add_input(in_name_0);
+    prg.buffer_port_widths[out_name_0] = 32;
+    prg.add_output(out_name_0);
+
+    inputs.push_back("in_" + us);
+    outputs.push_back("out_" + us);
+  }
+
+  int rows = 32;
+  int cols = 32;
+
+  assert(cols % unroll == 0);
+
+  auto in_nest = prg.add_nest("id1", 0, rows, "id0", 0, cols / unroll);
+  for (size_t i = 0; i < inputs.size(); i++) {
+    string in_name_0 = inputs.at(i);
+    cout << "Creating in nest: " << i << endl;
+    //in_nest->add_op
+      //({"I", us + "*id0 + " + to_string(i) + ", id1"}, "conv", {in_name_0, "id0, id1"});
+    in_nest->add_op({"I", us + "*id0 + " + to_string(i) + ", id1"}, "id", {in_name_0, "id0, id1"});
+  }
+
+  auto blur_y_nest = 
+    prg.add_nest("d1", 1, rows - 1, "d0", 1, (cols - 1) / unroll);
+  for (size_t i = 0; i < outputs.size(); i++) {
+    string out_name_1 = outputs.at(i);
+    blur_y_nest->
+      stencil_op(out_name_1, "jacobi2d_compute", "I", {us + "*(d0) + " + to_string(i) + " - 1", "d1"}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
+  }
+
+  regression_test(prg);
+  assert(false);
+}
+
 void jacobi_2d_2_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
@@ -3753,7 +3676,7 @@ void jacobi_2d_2_test() {
     stencil_op(out_name_1, "jacobi2d_compute", "I", {"2*(d0) + 1 - 1", "d1"}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
 
   regression_test(prg);
-  assert(false);
+  //assert(false);
 }
 
 void jacobi_2d_test() {
@@ -4492,8 +4415,11 @@ int main(int argc, char** argv) {
     assert(false);
 
   } else if (argc == 1) {
-    jacobi_2d_2_test();
+    //jacobi_2d_4_test();
     //assert(false);
+    synth_reduce_test();
+    jacobi_2d_2_test();
+    assert(false);
     jacobi_2d_test();
     parse_denoise3d_test();
     seidel2d_test();
@@ -4516,7 +4442,6 @@ int main(int argc, char** argv) {
     unsharp_test();
     blur_and_downsample_test();
     conv_2d_rolled_test();
-    synth_reduce_test();
     reduce_2d_test();
     conv_1d_test();
     conv_2d_bc_test();

@@ -21,14 +21,14 @@ int main() {
   HWStream<hw_uint<32> > in0, in1;
   HWStream<hw_uint<32> > out0, out1;
 
-  for (int i = 0; i < img_size; i++) {
+  //for (int i = 0; i < img_size; i++) {
+  for (int i = 0; i < img_size; i+=2) {
     int v = i;
-    buf[i] = i;
-    if (i % 2 == 0) {
-      in0.write(i);
-    } else {
-      in1.write(i);
-    }
+    int v1 = i + 1;
+    buf[i](31, 0) = i;
+    buf[i](63, 32) = i;
+    in0.write(v);
+    in1.write(v1);
   }
 
   ap_uint<64> blur_y[img_size];

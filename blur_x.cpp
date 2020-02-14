@@ -83,37 +83,18 @@ inline void I_I_id0_0_write(hw_uint<16>& I_I_id0_0, I_I_id0_0_cache& I_I_id0_0_d
 
 inline hw_uint<16> I_out_blur_30_3_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
-// Pieces...
-// { out_blur_30[root = 0, d1, d0] : 0 <= d1 <= 5 and 0 < d0 <= 30 } -> { out_blur_30[root, d1, d0] -> 64 }
-// 	is always true on iteration domain: 0
-// { out_blur_30[root = 0, d1, d0 = 31] : 0 <= d1 <= 5 } -> { out_blur_30[root, d1, d0] -> (33 + d0) }
-// 	is always true on iteration domain: 0
-// { out_blur_30[root = 0, d1, d0 = 0] : 0 <= d1 <= 5 } -> { out_blur_30[root, d1, d0] -> 64 }
-// 	is always true on iteration domain: 0
-//	is optimizable constant: 1
-	int value_I_I_id0_0 = I_I_id0_0_delay.peek_64();
+	hw_uint<16> value_I_I_id0_0 = I_I_id0_0_delay.peek_64();
 	return value_I_I_id0_0;
 }
 
 inline hw_uint<16> I_out_blur_30_4_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
-// Pieces...
-// { out_blur_30[root = 0, d1, d0] : 0 <= d1 <= 5 and 0 < d0 <= 30 } -> { out_blur_30[root, d1, d0] -> 32 }
-// 	is always true on iteration domain: 0
-// { out_blur_30[root = 0, d1, d0 = 31] : 0 <= d1 <= 5 } -> { out_blur_30[root, d1, d0] -> (1 + d0) }
-// 	is always true on iteration domain: 0
-// { out_blur_30[root = 0, d1, d0 = 0] : 0 <= d1 <= 5 } -> { out_blur_30[root, d1, d0] -> 32 }
-// 	is always true on iteration domain: 0
-//	is optimizable constant: 1
-	int value_I_I_id0_0 = I_I_id0_0_delay.peek_32();
+	hw_uint<16> value_I_I_id0_0 = I_I_id0_0_delay.peek_32();
 	return value_I_I_id0_0;
 }
 
 inline hw_uint<16> I_out_blur_30_5_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
-// Pieces...
-// Always 0
-//	is optimizable constant: 0
 	hw_uint<16> value_I_I_id0_0 = I_I_id0_0_delay.peek_0();
 	return value_I_I_id0_0;
 }
@@ -151,7 +132,7 @@ inline void I_id0(HWStream<hw_uint<16> >& in, I_I_id0_0_cache& I_I_id0_0, int ro
 	// Apply function: id
 	// Arg: in_id0_c__id1_value
 	// Arg buf: in
-	 /* comma list args */ auto compute_result = id(in_id0_c__id1_value);
+	auto compute_result = id(in_id0_c__id1_value);
 	// Produce: I
 	// Buffer: I, Op: I_id0
 	// Possible ports...
@@ -169,7 +150,7 @@ inline void out_blur_30(I_I_id0_0_cache& I_I_id0_0, HWStream<hw_uint<16> >& out,
 	// Arg buf: I
 	// Arg: I_d0__p__0_c__d1__p__2_value
 	// Arg buf: I
-	 /* comma list args */ auto compute_result = blur_3(I_d0__p__0_c__d1__p__0_value);
+	auto compute_result = blur_3(I_d0__p__0_c__d1__p__0_value);
 	// Produce: out
 	out.write(compute_result);
 }

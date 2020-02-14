@@ -209,57 +209,37 @@ inline void I_store_I_from_in_12_write(hw_uint<32> & I_store_I_from_in_12, I_sto
 
 inline hw_uint<32>  I_I_blr_conv_3_30_10_select(I_store_I_from_in_12_cache& I_store_I_from_in_12_delay
 , int root, int I_blr_r, int I_blr_c) {
-// Pieces...
-// { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 } -> { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 1 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
-	int value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_1();
+	hw_uint<32>  value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_1();
 	return value_I_store_I_from_in_12;
 }
 
 inline hw_uint<32>  I_I_blr_conv_3_30_11_select(I_store_I_from_in_12_cache& I_store_I_from_in_12_delay
 , int root, int I_blr_r, int I_blr_c) {
-// Pieces...
-// Always 0
-//	is optimizable constant: 0
 	hw_uint<32>  value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_0();
 	return value_I_store_I_from_in_12;
 }
 
 inline hw_uint<32>  I_I_blr_conv_3_30_3_select(I_store_I_from_in_12_cache& I_store_I_from_in_12_delay
 , int root, int I_blr_r, int I_blr_c) {
-// Pieces...
-// { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 } -> { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 66 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
-	int value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_66();
+	hw_uint<32>  value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_66();
 	return value_I_store_I_from_in_12;
 }
 
 inline hw_uint<32>  I_I_blr_conv_3_30_4_select(I_store_I_from_in_12_cache& I_store_I_from_in_12_delay
 , int root, int I_blr_r, int I_blr_c) {
-// Pieces...
-// { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 } -> { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 65 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
-	int value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_65();
+	hw_uint<32>  value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_65();
 	return value_I_store_I_from_in_12;
 }
 
 inline hw_uint<32>  I_I_blr_conv_3_30_5_select(I_store_I_from_in_12_cache& I_store_I_from_in_12_delay
 , int root, int I_blr_r, int I_blr_c) {
-// Pieces...
-// { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 28 } -> { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 64 }
-// 	is always true on iteration domain: 0
-// { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c = 29] : 0 <= I_blr_r <= 29 } -> { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> (35 + I_blr_c) }
-// 	is always true on iteration domain: 0
-//	is optimizable constant: 1
-	int value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_64();
+	hw_uint<32>  value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_64();
 	return value_I_store_I_from_in_12;
 }
 
 inline hw_uint<32>  I_I_blr_conv_3_30_6_select(I_store_I_from_in_12_cache& I_store_I_from_in_12_delay
 , int root, int I_blr_r, int I_blr_c) {
+<<<<<<< HEAD
 >>>>>>> origin/master
 // Pieces...
 // { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 } -> { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 34 }
@@ -293,12 +273,16 @@ inline int I_I_blurred_conv_3_30_4_select(I_store_I_from_in_0_cache& I_store_I_f
 >>>>>>> origin/master
 =======
 	int value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_34();
+=======
+	hw_uint<32>  value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_34();
+>>>>>>> origin/master
 	return value_I_store_I_from_in_12;
 >>>>>>> origin/master
 }
 
 inline hw_uint<32>  I_I_blr_conv_3_30_7_select(I_store_I_from_in_12_cache& I_store_I_from_in_12_delay
 , int root, int I_blr_r, int I_blr_c) {
+<<<<<<< HEAD
 >>>>>>> origin/master
 // Pieces...
 // { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 } -> { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 33 }
@@ -338,11 +322,15 @@ inline int I_I_blr_conv_3_30_8_select(I_store_I_from_in_0_cache& I_store_I_from_
 >>>>>>> origin/master
 =======
 	int value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_33();
+=======
+	hw_uint<32>  value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_33();
+>>>>>>> origin/master
 	return value_I_store_I_from_in_12;
 }
 
 inline hw_uint<32>  I_I_blr_conv_3_30_8_select(I_store_I_from_in_12_cache& I_store_I_from_in_12_delay
 , int root, int I_blr_r, int I_blr_c) {
+<<<<<<< HEAD
 >>>>>>> origin/master
 // Pieces...
 // { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 28 } -> { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 32 }
@@ -383,11 +371,15 @@ inline int I_I_blr_conv_3_30_9_select(I_store_I_from_in_0_cache& I_store_I_from_
 >>>>>>> origin/master
 =======
 	int value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_32();
+=======
+	hw_uint<32>  value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_32();
+>>>>>>> origin/master
 	return value_I_store_I_from_in_12;
 }
 
 inline hw_uint<32>  I_I_blr_conv_3_30_9_select(I_store_I_from_in_12_cache& I_store_I_from_in_12_delay
 , int root, int I_blr_r, int I_blr_c) {
+<<<<<<< HEAD
 >>>>>>> origin/master
 // Pieces...
 // { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 } -> { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 2 }
@@ -517,6 +509,9 @@ inline hw_uint<288> I_I_blurred_conv_3_30_read_bundle_read(I_store_I_from_in_0_c
 	set_at<256, 288>(result, I_I_blurred_conv_3_30_11_res);
 =======
 	int value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_2();
+=======
+	hw_uint<32>  value_I_store_I_from_in_12 = I_store_I_from_in_12_delay.peek_2();
+>>>>>>> origin/master
 	return value_I_store_I_from_in_12;
 =======
 	int value_I_store_I_from_in_4 = I_store_I_from_in_4_delay.peek_66();
@@ -596,6 +591,7 @@ inline void I_store_I_from_in_write_bundle_write(hw_uint<32> & /* width = 32*/st
 #include "hw_classes.h"
 
 struct I_blr_I_blr_conv_3_30_2_cache {
+<<<<<<< HEAD
 	// Capacity: 435
 	fifo<hw_uint<32> , 435> f;
 	inline hw_uint<32>  peek(const int offset) {
@@ -2437,10 +2433,16 @@ struct I_blr_I_blr_conv_3_30_6_cache {
 
 	inline hw_uint<32>  peek_433() {
 		return f.peek(433);
+=======
+	// Capacity: 1
+	fifo<hw_uint<32> , 1> f;
+	inline hw_uint<32>  peek(const int offset) {
+		return f.peek(0 - offset);
+>>>>>>> origin/master
 	}
 
-	inline hw_uint<32>  peek_434() {
-		return f.peek(434);
+	inline hw_uint<32>  peek_0() {
+		return f.peek(0);
 	}
 
 
@@ -2512,19 +2514,9 @@ inline void I_blr_I_blr_conv_3_30_2_write(hw_uint<32> & I_blr_I_blr_conv_3_30_2,
 >>>>>>> origin/master
 }
 
-inline hw_uint<32>  I_blr_I_blr_ds_id0_15_select(I_blr_I_blr_conv_3_30_2_cache& I_blr_I_blr_conv_3_30_2_delay
+inline hw_uint<32>  I_blr_I_blr_ds_id0_17_select(I_blr_I_blr_conv_3_30_2_cache& I_blr_I_blr_conv_3_30_2_delay
 , int root, int I_blr_ds_r, int I_blr_ds_c) {
-// Pieces...
-// { I_blr_ds_id0[root = 0, I_blr_ds_r = 14, I_blr_ds_c] : 0 <= I_blr_ds_c <= 12 } -> { I_blr_ds_id0[root, I_blr_ds_r, I_blr_ds_c] -> (14 - I_blr_ds_c) }
-// 	is always true on iteration domain: 0
-// { I_blr_ds_id0[root = 0, I_blr_ds_r = 14, I_blr_ds_c = 13] } -> { I_blr_ds_id0[root, I_blr_ds_r, I_blr_ds_c] -> 1 }
-// 	is always true on iteration domain: 0
-// { I_blr_ds_id0[root = 0, I_blr_ds_r, I_blr_ds_c] : 0 <= I_blr_ds_r <= 12 and 0 <= I_blr_ds_c <= 14 } -> { I_blr_ds_id0[root, I_blr_ds_r, I_blr_ds_c] -> ((434 - 30 * I_blr_ds_r) - I_blr_ds_c) }
-// 	is always true on iteration domain: 0
-// { I_blr_ds_id0[root = 0, I_blr_ds_r = 13, I_blr_ds_c] : 0 <= I_blr_ds_c <= 14 } -> { I_blr_ds_id0[root, I_blr_ds_r, I_blr_ds_c] -> (44 - I_blr_ds_c) }
-// 	is always true on iteration domain: 0
-//	is optimizable constant: 0
-	int value_I_blr_I_blr_conv_3_30_2 = I_blr_I_blr_conv_3_30_2_delay.peek(((-14 + I_blr_ds_r == 0 && root == 0 && I_blr_ds_c >= 0 && 12 - I_blr_ds_c >= 0) ? ((14 - I_blr_ds_c)) : (-13 + I_blr_ds_c == 0 && -14 + I_blr_ds_r == 0 && root == 0) ? (1) : (root == 0 && I_blr_ds_r >= 0 && 12 - I_blr_ds_r >= 0 && I_blr_ds_c >= 0 && 14 - I_blr_ds_c >= 0) ? (((434 - 30 * I_blr_ds_r) - I_blr_ds_c)) : (-13 + I_blr_ds_r == 0 && root == 0 && I_blr_ds_c >= 0 && 14 - I_blr_ds_c >= 0) ? ((44 - I_blr_ds_c)) : 0));
+	hw_uint<32>  value_I_blr_I_blr_conv_3_30_2 = I_blr_I_blr_conv_3_30_2_delay.peek_0();
 	return value_I_blr_I_blr_conv_3_30_2;
 }
 
@@ -2536,6 +2528,7 @@ inline void I_blr_I_blr_conv_3_30_write_bundle_write(hw_uint<32> & /* width = 32
 }
 
 // I_blr_ds_id0_read
+<<<<<<< HEAD
 <<<<<<< HEAD
 //	I_blr_I_blr_ds_id0_3
 inline int I_blr_I_blr_ds_id0_read_bundle_read(I_blr_I_blr_conv_3_30_4_cache& I_blr_I_blr_conv_3_30_4_delay, int root, int I_blr_ds_r, int I_blr_ds_c) {
@@ -2570,6 +2563,13 @@ inline hw_uint<32> I_blr_I_blr_ds_id0_read_bundle_read(I_blr_I_blr_conv_3_30_2_c
 	hw_uint<32>  I_blr_I_blr_ds_id0_15_res = I_blr_I_blr_ds_id0_15_select(I_blr_I_blr_conv_3_30_2_delay, root, I_blr_ds_r, I_blr_ds_c);
 	set_at<0, 32>(result, I_blr_I_blr_ds_id0_15_res);
 >>>>>>> origin/master
+=======
+//	I_blr_I_blr_ds_id0_17
+inline hw_uint<32> I_blr_I_blr_ds_id0_read_bundle_read(I_blr_I_blr_conv_3_30_2_cache& I_blr_I_blr_conv_3_30_2_delay, int root, int I_blr_ds_r, int I_blr_ds_c) {
+	hw_uint<32> result;
+	hw_uint<32>  I_blr_I_blr_ds_id0_17_res = I_blr_I_blr_ds_id0_17_select(I_blr_I_blr_conv_3_30_2_delay, root, I_blr_ds_r, I_blr_ds_c);
+	set_at<0, 32>(result, I_blr_I_blr_ds_id0_17_res);
+>>>>>>> origin/master
 	return result;
 }
 
@@ -2577,6 +2577,7 @@ inline hw_uint<32> I_blr_I_blr_ds_id0_read_bundle_read(I_blr_I_blr_conv_3_30_2_c
 
 #include "hw_classes.h"
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -2601,6 +2602,9 @@ struct I_blr_ds_I_blr_ds_id0_2_cache {
 >>>>>>> origin/master
 =======
 struct I_blr_ds_I_blr_ds_id0_14_cache {
+>>>>>>> origin/master
+=======
+struct I_blr_ds_I_blr_ds_id0_16_cache {
 >>>>>>> origin/master
 	// Capacity: 33
 	// Parition [0, 1) capacity = 1
@@ -2746,6 +2750,7 @@ struct I_blr_ds_I_blr_ds_id0_14_cache {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 inline void I_blurred_downsampled_I_blurred_downsampled_id0_12_write(int& I_blurred_downsampled_I_blurred_downsampled_id0_12, I_blurred_downsampled_I_blurred_downsampled_id0_12_cache& I_blurred_downsampled_I_blurred_downsampled_id0_12_delay) {
 	I_blurred_downsampled_I_blurred_downsampled_id0_12_delay.push(I_blurred_downsampled_I_blurred_downsampled_id0_12);
 }
@@ -2795,30 +2800,27 @@ inline void I_blr_ds_I_blr_ds_id0_2_write(int& I_blr_ds_I_blr_ds_id0_2, I_blr_ds
 inline void I_blr_ds_I_blr_ds_id0_14_write(hw_uint<32> & I_blr_ds_I_blr_ds_id0_14, I_blr_ds_I_blr_ds_id0_14_cache& I_blr_ds_I_blr_ds_id0_14_delay) {
 	I_blr_ds_I_blr_ds_id0_14_delay.push(I_blr_ds_I_blr_ds_id0_14);
 >>>>>>> origin/master
+=======
+inline void I_blr_ds_I_blr_ds_id0_16_write(hw_uint<32> & I_blr_ds_I_blr_ds_id0_16, I_blr_ds_I_blr_ds_id0_16_cache& I_blr_ds_I_blr_ds_id0_16_delay) {
+	I_blr_ds_I_blr_ds_id0_16_delay.push(I_blr_ds_I_blr_ds_id0_16);
+>>>>>>> origin/master
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_19_select(I_blr_ds_I_blr_ds_id0_14_cache& I_blr_ds_I_blr_ds_id0_14_delay
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_19_select(I_blr_ds_I_blr_ds_id0_16_cache& I_blr_ds_I_blr_ds_id0_16_delay
 , int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-// Pieces...
-// { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 } -> { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 32 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
-	int value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds_I_blr_ds_id0_14_delay.peek_32();
-	return value_I_blr_ds_I_blr_ds_id0_14;
+	hw_uint<32>  value_I_blr_ds_I_blr_ds_id0_16 = I_blr_ds_I_blr_ds_id0_16_delay.peek_32();
+	return value_I_blr_ds_I_blr_ds_id0_16;
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_20_select(I_blr_ds_I_blr_ds_id0_14_cache& I_blr_ds_I_blr_ds_id0_14_delay
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_20_select(I_blr_ds_I_blr_ds_id0_16_cache& I_blr_ds_I_blr_ds_id0_16_delay
 , int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-// Pieces...
-// { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 } -> { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 31 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
-	int value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds_I_blr_ds_id0_14_delay.peek_31();
-	return value_I_blr_ds_I_blr_ds_id0_14;
+	hw_uint<32>  value_I_blr_ds_I_blr_ds_id0_16 = I_blr_ds_I_blr_ds_id0_16_delay.peek_31();
+	return value_I_blr_ds_I_blr_ds_id0_16;
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_21_select(I_blr_ds_I_blr_ds_id0_14_cache& I_blr_ds_I_blr_ds_id0_14_delay
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_21_select(I_blr_ds_I_blr_ds_id0_16_cache& I_blr_ds_I_blr_ds_id0_16_delay
 , int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+<<<<<<< HEAD
 >>>>>>> origin/master
 // Pieces...
 // { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 11 } -> { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 30 }
@@ -2861,10 +2863,15 @@ inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_20_sele
 	int value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds_I_blr_ds_id0_14_delay.peek_30();
 	return value_I_blr_ds_I_blr_ds_id0_14;
 >>>>>>> origin/master
+=======
+	hw_uint<32>  value_I_blr_ds_I_blr_ds_id0_16 = I_blr_ds_I_blr_ds_id0_16_delay.peek_30();
+	return value_I_blr_ds_I_blr_ds_id0_16;
+>>>>>>> origin/master
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_22_select(I_blr_ds_I_blr_ds_id0_14_cache& I_blr_ds_I_blr_ds_id0_14_delay
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_22_select(I_blr_ds_I_blr_ds_id0_16_cache& I_blr_ds_I_blr_ds_id0_16_delay
 , int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+<<<<<<< HEAD
 >>>>>>> origin/master
 // Pieces...
 // { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 } -> { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 17 }
@@ -2905,10 +2912,15 @@ inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_21_sele
 	int value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds_I_blr_ds_id0_14_delay.peek_17();
 	return value_I_blr_ds_I_blr_ds_id0_14;
 >>>>>>> origin/master
+=======
+	hw_uint<32>  value_I_blr_ds_I_blr_ds_id0_16 = I_blr_ds_I_blr_ds_id0_16_delay.peek_17();
+	return value_I_blr_ds_I_blr_ds_id0_16;
+>>>>>>> origin/master
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_23_select(I_blr_ds_I_blr_ds_id0_14_cache& I_blr_ds_I_blr_ds_id0_14_delay
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_23_select(I_blr_ds_I_blr_ds_id0_16_cache& I_blr_ds_I_blr_ds_id0_16_delay
 , int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+<<<<<<< HEAD
 >>>>>>> origin/master
 // Pieces...
 // { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 } -> { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 16 }
@@ -2949,10 +2961,15 @@ inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_22_sele
 	int value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds_I_blr_ds_id0_14_delay.peek_16();
 	return value_I_blr_ds_I_blr_ds_id0_14;
 >>>>>>> origin/master
+=======
+	hw_uint<32>  value_I_blr_ds_I_blr_ds_id0_16 = I_blr_ds_I_blr_ds_id0_16_delay.peek_16();
+	return value_I_blr_ds_I_blr_ds_id0_16;
+>>>>>>> origin/master
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_24_select(I_blr_ds_I_blr_ds_id0_14_cache& I_blr_ds_I_blr_ds_id0_14_delay
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_24_select(I_blr_ds_I_blr_ds_id0_16_cache& I_blr_ds_I_blr_ds_id0_16_delay
 , int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+<<<<<<< HEAD
 >>>>>>> origin/master
 // Pieces...
 // { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 11 } -> { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 15 }
@@ -2995,20 +3012,21 @@ inline int I_blurred_downsampled_I_blurred_downsampled_blurred_conv_3_30_23_sele
 	int value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds_I_blr_ds_id0_14_delay.peek_15();
 	return value_I_blr_ds_I_blr_ds_id0_14;
 >>>>>>> origin/master
+=======
+	hw_uint<32>  value_I_blr_ds_I_blr_ds_id0_16 = I_blr_ds_I_blr_ds_id0_16_delay.peek_15();
+	return value_I_blr_ds_I_blr_ds_id0_16;
+>>>>>>> origin/master
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_25_select(I_blr_ds_I_blr_ds_id0_14_cache& I_blr_ds_I_blr_ds_id0_14_delay
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_25_select(I_blr_ds_I_blr_ds_id0_16_cache& I_blr_ds_I_blr_ds_id0_16_delay
 , int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-// Pieces...
-// { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 } -> { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 2 }
-// 	is always true on iteration domain: 1
-//	is optimizable constant: 1
-	int value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds_I_blr_ds_id0_14_delay.peek_2();
-	return value_I_blr_ds_I_blr_ds_id0_14;
+	hw_uint<32>  value_I_blr_ds_I_blr_ds_id0_16 = I_blr_ds_I_blr_ds_id0_16_delay.peek_2();
+	return value_I_blr_ds_I_blr_ds_id0_16;
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_26_select(I_blr_ds_I_blr_ds_id0_14_cache& I_blr_ds_I_blr_ds_id0_14_delay
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_26_select(I_blr_ds_I_blr_ds_id0_16_cache& I_blr_ds_I_blr_ds_id0_16_delay
 , int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+<<<<<<< HEAD
 >>>>>>> origin/master
 // Pieces...
 // { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 } -> { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 1 }
@@ -3120,15 +3138,16 @@ inline int I_blurred_downsampled_store_I_blurred_downsampled_out_from_I_blurred_
 	int value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds_I_blr_ds_id0_14_delay.peek_1();
 	return value_I_blr_ds_I_blr_ds_id0_14;
 >>>>>>> origin/master
+=======
+	hw_uint<32>  value_I_blr_ds_I_blr_ds_id0_16 = I_blr_ds_I_blr_ds_id0_16_delay.peek_1();
+	return value_I_blr_ds_I_blr_ds_id0_16;
+>>>>>>> origin/master
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_27_select(I_blr_ds_I_blr_ds_id0_14_cache& I_blr_ds_I_blr_ds_id0_14_delay
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_27_select(I_blr_ds_I_blr_ds_id0_16_cache& I_blr_ds_I_blr_ds_id0_16_delay
 , int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-// Pieces...
-// Always 0
-//	is optimizable constant: 0
-	hw_uint<32>  value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds_I_blr_ds_id0_14_delay.peek_0();
-	return value_I_blr_ds_I_blr_ds_id0_14;
+	hw_uint<32>  value_I_blr_ds_I_blr_ds_id0_16 = I_blr_ds_I_blr_ds_id0_16_delay.peek_0();
+	return value_I_blr_ds_I_blr_ds_id0_16;
 }
 
 // Bundles...
@@ -3142,30 +3161,31 @@ inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_27_select(I_blr_ds_I_blr_ds_
 //	I_blr_ds_I_blr_ds_blr_conv_3_30_25
 //	I_blr_ds_I_blr_ds_blr_conv_3_30_26
 //	I_blr_ds_I_blr_ds_blr_conv_3_30_27
-inline hw_uint<288> I_blr_ds_I_blr_ds_blr_conv_3_30_read_bundle_read(I_blr_ds_I_blr_ds_id0_14_cache& I_blr_ds_I_blr_ds_id0_14_delay, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+inline hw_uint<288> I_blr_ds_I_blr_ds_blr_conv_3_30_read_bundle_read(I_blr_ds_I_blr_ds_id0_16_cache& I_blr_ds_I_blr_ds_id0_16_delay, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 	hw_uint<288> result;
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_19_res = I_blr_ds_I_blr_ds_blr_conv_3_30_19_select(I_blr_ds_I_blr_ds_id0_14_delay, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_19_res = I_blr_ds_I_blr_ds_blr_conv_3_30_19_select(I_blr_ds_I_blr_ds_id0_16_delay, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
 	set_at<0, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_19_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_20_res = I_blr_ds_I_blr_ds_blr_conv_3_30_20_select(I_blr_ds_I_blr_ds_id0_14_delay, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_20_res = I_blr_ds_I_blr_ds_blr_conv_3_30_20_select(I_blr_ds_I_blr_ds_id0_16_delay, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
 	set_at<32, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_20_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_21_res = I_blr_ds_I_blr_ds_blr_conv_3_30_21_select(I_blr_ds_I_blr_ds_id0_14_delay, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_21_res = I_blr_ds_I_blr_ds_blr_conv_3_30_21_select(I_blr_ds_I_blr_ds_id0_16_delay, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
 	set_at<64, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_21_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_22_res = I_blr_ds_I_blr_ds_blr_conv_3_30_22_select(I_blr_ds_I_blr_ds_id0_14_delay, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_22_res = I_blr_ds_I_blr_ds_blr_conv_3_30_22_select(I_blr_ds_I_blr_ds_id0_16_delay, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
 	set_at<96, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_22_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_23_res = I_blr_ds_I_blr_ds_blr_conv_3_30_23_select(I_blr_ds_I_blr_ds_id0_14_delay, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_23_res = I_blr_ds_I_blr_ds_blr_conv_3_30_23_select(I_blr_ds_I_blr_ds_id0_16_delay, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
 	set_at<128, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_23_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_24_res = I_blr_ds_I_blr_ds_blr_conv_3_30_24_select(I_blr_ds_I_blr_ds_id0_14_delay, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_24_res = I_blr_ds_I_blr_ds_blr_conv_3_30_24_select(I_blr_ds_I_blr_ds_id0_16_delay, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
 	set_at<160, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_24_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_25_res = I_blr_ds_I_blr_ds_blr_conv_3_30_25_select(I_blr_ds_I_blr_ds_id0_14_delay, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_25_res = I_blr_ds_I_blr_ds_blr_conv_3_30_25_select(I_blr_ds_I_blr_ds_id0_16_delay, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
 	set_at<192, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_25_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_26_res = I_blr_ds_I_blr_ds_blr_conv_3_30_26_select(I_blr_ds_I_blr_ds_id0_14_delay, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_26_res = I_blr_ds_I_blr_ds_blr_conv_3_30_26_select(I_blr_ds_I_blr_ds_id0_16_delay, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
 	set_at<224, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_26_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_27_res = I_blr_ds_I_blr_ds_blr_conv_3_30_27_select(I_blr_ds_I_blr_ds_id0_14_delay, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_27_res = I_blr_ds_I_blr_ds_blr_conv_3_30_27_select(I_blr_ds_I_blr_ds_id0_16_delay, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
 	set_at<256, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_27_res);
 	return result;
 }
 
 // I_blr_ds_id0_write
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -3199,6 +3219,11 @@ inline void I_blr_ds_I_blr_ds_id0_write_bundle_write(int& /* width = 32*/I_blr_d
 //	I_blr_ds_I_blr_ds_id0_14
 inline void I_blr_ds_I_blr_ds_id0_write_bundle_write(hw_uint<32> & /* width = 32*/I_blr_ds_id0_write, I_blr_ds_I_blr_ds_id0_14_cache& I_blr_ds_I_blr_ds_id0_14_delay) {
 	I_blr_ds_I_blr_ds_id0_14_write(I_blr_ds_id0_write, I_blr_ds_I_blr_ds_id0_14_delay);
+>>>>>>> origin/master
+=======
+//	I_blr_ds_I_blr_ds_id0_16
+inline void I_blr_ds_I_blr_ds_id0_write_bundle_write(hw_uint<32> & /* width = 32*/I_blr_ds_id0_write, I_blr_ds_I_blr_ds_id0_16_cache& I_blr_ds_I_blr_ds_id0_16_delay) {
+	I_blr_ds_I_blr_ds_id0_16_write(I_blr_ds_id0_write, I_blr_ds_I_blr_ds_id0_16_delay);
 >>>>>>> origin/master
 }
 
@@ -3235,11 +3260,15 @@ struct I_blr_ds_blr_I_blr_ds_blr_conv_3_30_14_cache {
 	inline int peek(const int offset) {
 =======
 struct I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18_cache {
-	// Capacity: 71
-	fifo<hw_uint<32> , 71> f;
+	// Capacity: 39
+	fifo<hw_uint<32> , 39> f;
 	inline hw_uint<32>  peek(const int offset) {
+<<<<<<< HEAD
 >>>>>>> origin/master
 		return f.peek(70 - offset);
+=======
+		return f.peek(38 - offset);
+>>>>>>> origin/master
 	}
 
 	inline hw_uint<32>  peek_0() {
@@ -3398,6 +3427,7 @@ struct I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18_cache {
 		return f.peek(38);
 	}
 
+<<<<<<< HEAD
 	inline hw_uint<32>  peek_39() {
 		return f.peek(39);
 	}
@@ -3641,6 +3671,8 @@ struct I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16_cache {
 		return f.peek(70);
 	}
 
+=======
+>>>>>>> origin/master
 
 
 	inline void push(const hw_uint<32>  value) {
@@ -3695,8 +3727,9 @@ inline void I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18_write(hw_uint<32> & I_blr_ds_
 >>>>>>> origin/master
 }
 
-inline hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_ds_id0_17_select(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18_cache& I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18_delay
+inline hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_ds_id0_15_select(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18_cache& I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18_delay
 , int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
+<<<<<<< HEAD
 >>>>>>> origin/master
 // Pieces...
 // { I_blr_ds_blr_ds_id0[root = 0, I_blr_ds_blr_ds_r = 5, I_blr_ds_blr_ds_c] : 0 <= I_blr_ds_blr_ds_c <= 3 } -> { I_blr_ds_blr_ds_id0[root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> (5 - I_blr_ds_blr_ds_c) }
@@ -3752,6 +3785,9 @@ inline int I_blurred_downsampled_blurred_downsampled_store_I_blurred_downsampled
 >>>>>>> origin/master
 =======
 	int value_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18 = I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18_delay.peek(((-5 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 3 - I_blr_ds_blr_ds_c >= 0) ? ((5 - I_blr_ds_blr_ds_c)) : (-4 + I_blr_ds_blr_ds_c == 0 && -5 + I_blr_ds_blr_ds_r == 0 && root == 0) ? (1) : (root == 0 && I_blr_ds_blr_ds_r >= 0 && 3 - I_blr_ds_blr_ds_r >= 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((70 - 13 * I_blr_ds_blr_ds_r) - I_blr_ds_blr_ds_c)) : (-4 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? ((18 - I_blr_ds_blr_ds_c)) : 0));
+=======
+	hw_uint<32>  value_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18 = I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18_delay.peek(((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -5 + I_blr_ds_blr_ds_r == 0 && root == 0 && -1 + I_blr_ds_blr_ds_c >= 0 && 2 - I_blr_ds_blr_ds_c >= 0) ? (2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && -5 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 2 - I_blr_ds_blr_ds_c >= 0) ? (((2 - I_blr_ds_blr_ds_c) + floord(I_blr_ds_blr_ds_c, 2))) : (-3 + I_blr_ds_blr_ds_c == 0 && -5 + I_blr_ds_blr_ds_r == 0 && root == 0) ? (1) : ((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && (-1 - I_blr_ds_blr_ds_r) % 2 == 0 && root == 0 && -1 + I_blr_ds_blr_ds_r >= 0 && 2 - I_blr_ds_blr_ds_r >= 0 && -1 + I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((57 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && (-1 - I_blr_ds_blr_ds_r) % 2 == 0 && root == 0 && -1 + I_blr_ds_blr_ds_r >= 0 && 2 - I_blr_ds_blr_ds_r >= 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((56 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_r) % 2 == 0 && root == 0 && I_blr_ds_blr_ds_r >= 0 && 2 - I_blr_ds_blr_ds_r >= 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? ((((76 - 13 * I_blr_ds_blr_ds_r) - 4 * I_blr_ds_blr_ds_c))/2) : ((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -3 + I_blr_ds_blr_ds_r == 0 && root == 0 && -1 + I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((31 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && -3 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((30 - I_blr_ds_blr_ds_c))/2) : (((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -4 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) || ((-I_blr_ds_blr_ds_c) % 2 == 0 && -4 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0)) ? ((12 - 2 * I_blr_ds_blr_ds_c)) : 0);
+>>>>>>> origin/master
 	return value_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18;
 >>>>>>> origin/master
 }
@@ -3764,6 +3800,7 @@ inline void I_blr_ds_blr_I_blr_ds_blr_conv_3_30_write_bundle_write(hw_uint<32> &
 }
 
 // I_blr_ds_blr_ds_id0_read
+<<<<<<< HEAD
 <<<<<<< HEAD
 //	I_blr_ds_blr_I_blr_ds_blr_ds_id0_25
 inline int I_blr_ds_blr_I_blr_ds_blr_ds_id0_read_bundle_read(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_14_cache& I_blr_ds_blr_I_blr_ds_blr_conv_3_30_14_delay, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
@@ -3798,6 +3835,13 @@ inline hw_uint<32> I_blr_ds_blr_I_blr_ds_blr_ds_id0_read_bundle_read(I_blr_ds_bl
 	hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_ds_id0_17_res = I_blr_ds_blr_I_blr_ds_blr_ds_id0_17_select(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18_delay, root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c);
 	set_at<0, 32>(result, I_blr_ds_blr_I_blr_ds_blr_ds_id0_17_res);
 >>>>>>> origin/master
+=======
+//	I_blr_ds_blr_I_blr_ds_blr_ds_id0_15
+inline hw_uint<32> I_blr_ds_blr_I_blr_ds_blr_ds_id0_read_bundle_read(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18_cache& I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18_delay, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
+	hw_uint<32> result;
+	hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_ds_id0_15_res = I_blr_ds_blr_I_blr_ds_blr_ds_id0_15_select(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18_delay, root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c);
+	set_at<0, 32>(result, I_blr_ds_blr_I_blr_ds_blr_ds_id0_15_res);
+>>>>>>> origin/master
 	return result;
 }
 
@@ -3805,15 +3849,59 @@ inline hw_uint<32> I_blr_ds_blr_I_blr_ds_blr_ds_id0_read_bundle_read(I_blr_ds_bl
 
 #include "hw_classes.h"
 
-struct I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16_cache {
-	// Capacity: 1
-	fifo<hw_uint<32> , 1> f;
+struct I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_cache {
+	// Capacity: 12
+	fifo<hw_uint<32> , 12> f;
 	inline hw_uint<32>  peek(const int offset) {
-		return f.peek(0 - offset);
+		return f.peek(11 - offset);
 	}
 
 	inline hw_uint<32>  peek_0() {
 		return f.peek(0);
+	}
+
+	inline hw_uint<32>  peek_1() {
+		return f.peek(1);
+	}
+
+	inline hw_uint<32>  peek_2() {
+		return f.peek(2);
+	}
+
+	inline hw_uint<32>  peek_3() {
+		return f.peek(3);
+	}
+
+	inline hw_uint<32>  peek_4() {
+		return f.peek(4);
+	}
+
+	inline hw_uint<32>  peek_5() {
+		return f.peek(5);
+	}
+
+	inline hw_uint<32>  peek_6() {
+		return f.peek(6);
+	}
+
+	inline hw_uint<32>  peek_7() {
+		return f.peek(7);
+	}
+
+	inline hw_uint<32>  peek_8() {
+		return f.peek(8);
+	}
+
+	inline hw_uint<32>  peek_9() {
+		return f.peek(9);
+	}
+
+	inline hw_uint<32>  peek_10() {
+		return f.peek(10);
+	}
+
+	inline hw_uint<32>  peek_11() {
+		return f.peek(11);
 	}
 
 
@@ -4019,6 +4107,7 @@ void gaussian_pyramid(HWStream<int>& in, HWStream<int>& I_blurred_downsampled_bl
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 inline void I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_20_write(int& I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_20, I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_20_cache& I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_20_delay) {
 	I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_20_delay.push(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_20);
 >>>>>>> origin/master
@@ -4034,29 +4123,30 @@ inline void I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_24_write(int& I_blr_ds_blr_ds_I_
 inline void I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16_write(hw_uint<32> & I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16, I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16_cache& I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16_delay) {
 	I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16_delay.push(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16);
 >>>>>>> origin/master
+=======
+inline void I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_write(hw_uint<32> & I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14, I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_cache& I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_delay) {
+	I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_delay.push(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14);
+>>>>>>> origin/master
 }
 
-inline hw_uint<32>  I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_1_select(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16_cache& I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16_delay
+inline hw_uint<32>  I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_1_select(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_cache& I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_delay
 , int root, int I_blr_ds_blr_ds_out_r, int I_blr_ds_blr_ds_out_c) {
-// Pieces...
-// Always 0
-//	is optimizable constant: 0
-	hw_uint<32>  value_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16 = I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16_delay.peek_0();
-	return value_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16;
+	hw_uint<32>  value_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14 = I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_delay.peek((-5 + I_blr_ds_blr_ds_out_r == 0 && root == 0 && I_blr_ds_blr_ds_out_c >= 0 && 1 - I_blr_ds_blr_ds_out_c >= 0) ? (1) : (-2 + I_blr_ds_blr_ds_out_c == 0 && -5 + I_blr_ds_blr_ds_out_r == 0 && root == 0) ? (1) : (root == 0 && I_blr_ds_blr_ds_out_r >= 0 && 1 - I_blr_ds_blr_ds_out_r >= 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0) ? ((11 - I_blr_ds_blr_ds_out_c)) : (-5 + I_blr_ds_blr_ds_out_c == 0 && root == 0 && I_blr_ds_blr_ds_out_r >= 0 && 1 - I_blr_ds_blr_ds_out_r >= 0) ? (6) : ((-1 - I_blr_ds_blr_ds_out_c) % 3 == 0 && -2 + I_blr_ds_blr_ds_out_r == 0 && root == 0 && -2 + I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0) ? (7) : (-5 + I_blr_ds_blr_ds_out_c == 0 && -2 + I_blr_ds_blr_ds_out_r == 0 && root == 0) ? (((8 + 2 * I_blr_ds_blr_ds_out_c))/3) : (-2 + I_blr_ds_blr_ds_out_r == 0 && root == 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0 && I_blr_ds_blr_ds_out_c - 3*floord(1 + I_blr_ds_blr_ds_out_c, 3) >= 0) ? ((7 - floord(1 + I_blr_ds_blr_ds_out_c, 3))) : ((root == 0 && -3 + I_blr_ds_blr_ds_out_r >= 0 && 4 - I_blr_ds_blr_ds_out_r >= 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0 && I_blr_ds_blr_ds_out_c - 3*floord(1 + I_blr_ds_blr_ds_out_c, 3) >= 0) || ((-1 - I_blr_ds_blr_ds_out_c) % 3 == 0 && root == 0 && -3 + I_blr_ds_blr_ds_out_r >= 0 && 4 - I_blr_ds_blr_ds_out_r >= 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0)) ? ((5 - I_blr_ds_blr_ds_out_c)) : 0);
+	return value_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14;
 }
 
 // Bundles...
 // I_blr_ds_blr_ds_id0_write
-//	I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16
-inline void I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_write_bundle_write(hw_uint<32> & /* width = 32*/I_blr_ds_blr_ds_id0_write, I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16_cache& I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16_delay) {
-	I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16_write(I_blr_ds_blr_ds_id0_write, I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16_delay);
+//	I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14
+inline void I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_write_bundle_write(hw_uint<32> & /* width = 32*/I_blr_ds_blr_ds_id0_write, I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_cache& I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_delay) {
+	I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_write(I_blr_ds_blr_ds_id0_write, I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_delay);
 }
 
 // store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_read
 //	I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_1
-inline hw_uint<32> I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_read_bundle_read(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16_cache& I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16_delay, int root, int I_blr_ds_blr_ds_out_r, int I_blr_ds_blr_ds_out_c) {
+inline hw_uint<32> I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_read_bundle_read(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_cache& I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_delay, int root, int I_blr_ds_blr_ds_out_r, int I_blr_ds_blr_ds_out_c) {
 	hw_uint<32> result;
-	hw_uint<32>  I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_1_res = I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_1_select(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16_delay, root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c);
+	hw_uint<32>  I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_1_res = I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_1_select(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_delay, root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c);
 	set_at<0, 32>(result, I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_1_res);
 	return result;
 }
@@ -4066,9 +4156,9 @@ inline hw_uint<32> I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_d
 
 
 // Operation logic
-inline void store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16_cache& I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16, HWStream<hw_uint<32>  >& I_blr_ds_blr_ds_out, int root, int I_blr_ds_blr_ds_out_r, int I_blr_ds_blr_ds_out_c) {
+inline void store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_cache& I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14, HWStream<hw_uint<32>  >& I_blr_ds_blr_ds_out, int root, int I_blr_ds_blr_ds_out_r, int I_blr_ds_blr_ds_out_c) {
 	// Consume: I_blr_ds_blr_ds
-	auto I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value = I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_read_bundle_read(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16/* source_delay */, root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c);
+	auto I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value = I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_read_bundle_read(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14/* source_delay */, root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c);
 	// Produce: I_blr_ds_blr_ds_out
 	I_blr_ds_blr_ds_out.write(I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value);
 }
@@ -4095,7 +4185,7 @@ inline void I_blr_conv_3_30(I_store_I_from_in_12_cache& I_store_I_from_in_12, I_
 	// Arg buf: I
 	// Arg: I_I_blr_r__p__2_c__I_blr_c__p__2_value
 	// Arg buf: I
-	 /* comma list args */ auto compute_result = conv_3_3(I_I_blr_r__p__0_c__I_blr_c__p__0_value);
+	auto compute_result = conv_3_3(I_I_blr_r__p__0_c__I_blr_c__p__0_value);
 	// Produce: I_blr
 	// Buffer: I_blr, Op: I_blr_conv_3_30
 	// Possible ports...
@@ -4113,37 +4203,37 @@ inline void store_I_from_in(HWStream<hw_uint<32>  >& in, I_store_I_from_in_12_ca
 	I_store_I_from_in_write_bundle_write(in_pr_c__pc_value, I_store_I_from_in_12 /* output src_delay */);
 }
 
-inline void I_blr_ds_id0(I_blr_I_blr_conv_3_30_2_cache& I_blr_I_blr_conv_3_30_2, I_blr_ds_I_blr_ds_id0_14_cache& I_blr_ds_I_blr_ds_id0_14, int root, int I_blr_ds_r, int I_blr_ds_c) {
-	// Consume: I_blr
-	auto I_blr_2_m_I_blr_ds_r_c__2_m_I_blr_ds_c_value = I_blr_I_blr_ds_id0_read_bundle_read(I_blr_I_blr_conv_3_30_2/* source_delay */, root, I_blr_ds_r, I_blr_ds_c);
-	// Apply function: id
-	// Arg: I_blr_2_m_I_blr_ds_r_c__2_m_I_blr_ds_c_value
-	// Arg buf: I_blr
-	 /* comma list args */ auto compute_result = id(I_blr_2_m_I_blr_ds_r_c__2_m_I_blr_ds_c_value);
-	// Produce: I_blr_ds
-	// Buffer: I_blr_ds, Op: I_blr_ds_id0
-	// Possible ports...
-		// I_blr_ds_I_blr_ds_id0_14
-	I_blr_ds_I_blr_ds_id0_write_bundle_write(compute_result, I_blr_ds_I_blr_ds_id0_14 /* output src_delay */);
-}
-
-inline void I_blr_ds_blr_ds_id0(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18_cache& I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18, I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16_cache& I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
+inline void I_blr_ds_blr_ds_id0(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18_cache& I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18, I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_cache& I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
 	// Consume: I_blr_ds_blr
 	auto I_blr_ds_blr_2_m_I_blr_ds_blr_ds_r_c__2_m_I_blr_ds_blr_ds_c_value = I_blr_ds_blr_I_blr_ds_blr_ds_id0_read_bundle_read(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18/* source_delay */, root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c);
 	// Apply function: id
 	// Arg: I_blr_ds_blr_2_m_I_blr_ds_blr_ds_r_c__2_m_I_blr_ds_blr_ds_c_value
 	// Arg buf: I_blr_ds_blr
-	 /* comma list args */ auto compute_result = id(I_blr_ds_blr_2_m_I_blr_ds_blr_ds_r_c__2_m_I_blr_ds_blr_ds_c_value);
+	auto compute_result = id(I_blr_ds_blr_2_m_I_blr_ds_blr_ds_r_c__2_m_I_blr_ds_blr_ds_c_value);
 	// Produce: I_blr_ds_blr_ds
 	// Buffer: I_blr_ds_blr_ds, Op: I_blr_ds_blr_ds_id0
 	// Possible ports...
-		// I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16
-	I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_write_bundle_write(compute_result, I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16 /* output src_delay */);
+		// I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14
+	I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_write_bundle_write(compute_result, I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14 /* output src_delay */);
 }
 
-inline void I_blr_ds_blr_conv_3_30(I_blr_ds_I_blr_ds_id0_14_cache& I_blr_ds_I_blr_ds_id0_14, I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18_cache& I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+inline void I_blr_ds_id0(I_blr_I_blr_conv_3_30_2_cache& I_blr_I_blr_conv_3_30_2, I_blr_ds_I_blr_ds_id0_16_cache& I_blr_ds_I_blr_ds_id0_16, int root, int I_blr_ds_r, int I_blr_ds_c) {
+	// Consume: I_blr
+	auto I_blr_2_m_I_blr_ds_r_c__2_m_I_blr_ds_c_value = I_blr_I_blr_ds_id0_read_bundle_read(I_blr_I_blr_conv_3_30_2/* source_delay */, root, I_blr_ds_r, I_blr_ds_c);
+	// Apply function: id
+	// Arg: I_blr_2_m_I_blr_ds_r_c__2_m_I_blr_ds_c_value
+	// Arg buf: I_blr
+	auto compute_result = id(I_blr_2_m_I_blr_ds_r_c__2_m_I_blr_ds_c_value);
+	// Produce: I_blr_ds
+	// Buffer: I_blr_ds, Op: I_blr_ds_id0
+	// Possible ports...
+		// I_blr_ds_I_blr_ds_id0_16
+	I_blr_ds_I_blr_ds_id0_write_bundle_write(compute_result, I_blr_ds_I_blr_ds_id0_16 /* output src_delay */);
+}
+
+inline void I_blr_ds_blr_conv_3_30(I_blr_ds_I_blr_ds_id0_16_cache& I_blr_ds_I_blr_ds_id0_16, I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18_cache& I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 	// Consume: I_blr_ds
-	auto I_blr_ds_I_blr_ds_blr_r__p__0_c__I_blr_ds_blr_c__p__0_value = I_blr_ds_I_blr_ds_blr_conv_3_30_read_bundle_read(I_blr_ds_I_blr_ds_id0_14/* source_delay */, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	auto I_blr_ds_I_blr_ds_blr_r__p__0_c__I_blr_ds_blr_c__p__0_value = I_blr_ds_I_blr_ds_blr_conv_3_30_read_bundle_read(I_blr_ds_I_blr_ds_id0_16/* source_delay */, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
 	// Apply function: conv_3_3
 	// Arg: I_blr_ds_I_blr_ds_blr_r__p__0_c__I_blr_ds_blr_c__p__0_value
 	// Arg buf: I_blr_ds
@@ -4163,7 +4253,7 @@ inline void I_blr_ds_blr_conv_3_30(I_blr_ds_I_blr_ds_id0_14_cache& I_blr_ds_I_bl
 	// Arg buf: I_blr_ds
 	// Arg: I_blr_ds_I_blr_ds_blr_r__p__2_c__I_blr_ds_blr_c__p__2_value
 	// Arg buf: I_blr_ds
-	 /* comma list args */ auto compute_result = conv_3_3(I_blr_ds_I_blr_ds_blr_r__p__0_c__I_blr_ds_blr_c__p__0_value);
+	auto compute_result = conv_3_3(I_blr_ds_I_blr_ds_blr_r__p__0_c__I_blr_ds_blr_c__p__0_value);
 	// Produce: I_blr_ds_blr
 	// Buffer: I_blr_ds_blr, Op: I_blr_ds_blr_conv_3_30
 	// Possible ports...
@@ -4175,24 +4265,20 @@ inline void I_blr_ds_blr_conv_3_30(I_blr_ds_I_blr_ds_id0_14_cache& I_blr_ds_I_bl
 void gaussian_pyramid(HWStream<hw_uint<32>  >& in, HWStream<hw_uint<32> >& I_blr_ds_blr_ds_out) {
 	I_store_I_from_in_12_cache I_store_I_from_in_12;
 	I_blr_I_blr_conv_3_30_2_cache I_blr_I_blr_conv_3_30_2;
-	I_blr_ds_I_blr_ds_id0_14_cache I_blr_ds_I_blr_ds_id0_14;
+	I_blr_ds_I_blr_ds_id0_16_cache I_blr_ds_I_blr_ds_id0_16;
 	I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18_cache I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18;
-	I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16_cache I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16;
+	I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_cache I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14;
 	for (int c0 = 0; c0 <= 31; c0 += 1)
 	  for (int c1 = 0; c1 <= 31; c1 += 1) {
 	    store_I_from_in(in, I_store_I_from_in_12, 0, c0, c1);
 	    if (c0 >= 2 && c1 >= 2) {
 	      I_blr_conv_3_30(I_store_I_from_in_12, I_blr_I_blr_conv_3_30_2, 0, c0 - 2, c1 - 2);
-	      if (c0 >= 16 && c0 <= 30 && c1 >= 16 && c1 <= 30) {
-	        I_blr_ds_id0(I_blr_I_blr_conv_3_30_2, I_blr_ds_I_blr_ds_id0_14, 0, c0 - 16, c1 - 16);
-	        if (c0 >= 18 && c1 >= 18) {
-	          I_blr_ds_blr_conv_3_30(I_blr_ds_I_blr_ds_id0_14, I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18, 0, c0 - 18, c1 - 18);
-	          if (c0 >= 23 && c0 <= 28 && c1 >= 23 && c1 <= 28) {
-	            I_blr_ds_blr_ds_id0(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18, I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16, 0, c0 - 23, c1 - 23);
-	            store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16, I_blr_ds_blr_ds_out, 0, c0 - 23, c1 - 23);
-	          }
-	        }
+	      if (c0 % 2 == 0 && c1 % 2 == 0) {
+	        I_blr_ds_id0(I_blr_I_blr_conv_3_30_2, I_blr_ds_I_blr_ds_id0_16, 0, (c0 / 2) - 1, (c1 / 2) - 1);
+	        if (c0 >= 6 && c1 >= 6)
+	          I_blr_ds_blr_conv_3_30(I_blr_ds_I_blr_ds_id0_16, I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18, 0, (c0 / 2) - 3, (c1 / 2) - 3);
 	      }
+<<<<<<< HEAD
 <<<<<<< HEAD
 	      if (c0 >= 11 && c0 <= 26 && c1 >= 11 && c1 <= 26 && (c0 + 1) % 3 == 0 && (c1 + 1) % 3 == 0)
 	        I_blr_ds_blr_ds_id0(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18, I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16, 0, (c0 - 11) / 3, (c1 - 11) / 3);
@@ -4204,6 +4290,12 @@ void gaussian_pyramid(HWStream<hw_uint<32>  >& in, HWStream<hw_uint<32> >& I_blr
 	        store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_16, I_blr_ds_blr_ds_out, 0, (c0 / 2) - 8, (c1 / 2) - 8);
 >>>>>>> origin/master
 =======
+>>>>>>> origin/master
+=======
+	      if (c0 >= 11 && c0 <= 26 && c1 >= 11 && c1 <= 26 && (c0 + 1) % 3 == 0 && (c1 + 1) % 3 == 0)
+	        I_blr_ds_blr_ds_id0(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_18, I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14, 0, (c0 - 11) / 3, (c1 - 11) / 3);
+	      if (c0 >= 16 && c0 <= 26 && c1 >= 16 && c1 <= 26 && c0 % 2 == 0 && c1 % 2 == 0)
+	        store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14, I_blr_ds_blr_ds_out, 0, (c0 / 2) - 8, (c1 / 2) - 8);
 >>>>>>> origin/master
 	    }
 	  }
