@@ -51,15 +51,15 @@ is_prefix( std::string const& lhs, std::string const& rhs )
         rhs.begin() );
 }
 
-static inline
 template<typename T>
+static inline
 T pick(const std::vector<T>& s) {
   assert(s.size() > 0);
   return *(begin(s));
 }
 
-static inline
 template<typename T>
+static inline
 T pick(const std::set<T>& s) {
   assert(s.size() > 0);
   return *(begin(s));
