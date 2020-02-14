@@ -943,7 +943,14 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     for (auto e : ms) {
       out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
     }
+    map<string, string> in_port_offsets;
     for (auto inpt : buf.get_in_ports()) {
+      string delay_expr = evaluate_dd(buf, outpt, inpt);
+      in_port_offsets[inpt] = delay_expr;
+    }
+
+    for (auto inpt : buf.get_in_ports()) {
+      string delay_expr = map_find(inpt, in_port_offsets);
       if (options.internal) {
         out << "\t// inpt: " << inpt << endl;
         bool found_key = false;
@@ -958,7 +965,7 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
         }
         if (found_key) {
           assert(k_var != "");
-          string delay_expr = evaluate_dd(buf, outpt, inpt);
+          //string delay_expr = evaluate_dd(buf, outpt, inpt);
           out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
           out << "\tif (select_" + k_var + ") { return value_"+ inpt + "; }\n";
         } else {
@@ -966,7 +973,7 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
         }
       } else {
         if (contains_key(inpt, ms)) {
-          string delay_expr = evaluate_dd(buf, outpt, inpt);
+          //string delay_expr = evaluate_dd(buf, outpt, inpt);
           out << "\tint value_" << inpt << " = " << inpt << "_delay.peek(" << "(" << delay_expr << ")" << ");\n";
           out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
         }

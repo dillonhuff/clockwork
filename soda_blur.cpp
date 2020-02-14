@@ -2,7 +2,7 @@
 
 #include "hw_classes.h"
 
-struct I_I_id0_6_cache {
+struct I_I_id0_10_cache {
 	// Capacity: 33
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
@@ -75,7 +75,7 @@ struct I_I_id0_6_cache {
 
 };
 
-struct I_I_id1_4_cache {
+struct I_I_id1_8_cache {
 	// Capacity: 33
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
@@ -150,16 +150,16 @@ struct I_I_id1_4_cache {
 
 
 
-inline void I_I_id0_6_write(hw_uint<16>& I_I_id0_6, I_I_id0_6_cache& I_I_id0_6_delay) {
-	I_I_id0_6_delay.push(I_I_id0_6);
+inline void I_I_id0_10_write(hw_uint<16>& I_I_id0_10, I_I_id0_10_cache& I_I_id0_10_delay) {
+	I_I_id0_10_delay.push(I_I_id0_10);
 }
 
-inline void I_I_id1_4_write(hw_uint<16>& I_I_id1_4, I_I_id1_4_cache& I_I_id1_4_delay) {
-	I_I_id1_4_delay.push(I_I_id1_4);
+inline void I_I_id1_8_write(hw_uint<16>& I_I_id1_8, I_I_id1_8_cache& I_I_id1_8_delay) {
+	I_I_id1_8_delay.push(I_I_id1_8);
 }
 
-inline hw_uint<16> I_out_0_blur_30_1_select(I_I_id0_6_cache& I_I_id0_6_delay
-, I_I_id1_4_cache& I_I_id1_4_delay
+inline hw_uint<16> I_out_0_blur_30_1_select(I_I_id0_10_cache& I_I_id0_10_delay
+, I_I_id1_8_cache& I_I_id1_8_delay
 , int root, int xr, int xc) {
 // Pieces...
 // { out_0_blur_30[root = 0, xr, xc] : 0 <= xr <= 29 and 0 < xc <= 14 } -> { out_0_blur_30[root, xr, xc] -> 32 }
@@ -176,20 +176,20 @@ inline hw_uint<16> I_out_0_blur_30_1_select(I_I_id0_6_cache& I_I_id0_6_delay
 -1*xr + 29 >= 0 && /* constraint: { out_0_blur_30[root, xr, xc] : xc >= 0 } */
 1*xc >= 0 && /* constraint: { out_0_blur_30[root, xr, xc] : 15 - xc >= 0 } */
 -1*xc + 15 >= 0));
-	// inpt: I_I_id0_6
+	// inpt: I_I_id0_10
 	// k = I_id0
-	int value_I_I_id0_6 = I_I_id0_6_delay.peek(((root == 0 && xr >= 0 && 29 - xr >= 0 && -1 + xc >= 0 && 14 - xc >= 0) ? (32) : (-15 + xc == 0 && root == 0 && xr >= 0 && 29 - xr >= 0) ? ((17 + xc)) : (xc == 0 && root == 0 && xr >= 0 && 29 - xr >= 0) ? (32) : 0));
-	if (select_I_id0) { return value_I_I_id0_6; }
-	// inpt: I_I_id1_4
+	int value_I_I_id0_10 = I_I_id0_10_delay.peek(((root == 0 && xr >= 0 && 29 - xr >= 0 && -1 + xc >= 0 && 14 - xc >= 0) ? (32) : (-15 + xc == 0 && root == 0 && xr >= 0 && 29 - xr >= 0) ? ((17 + xc)) : (xc == 0 && root == 0 && xr >= 0 && 29 - xr >= 0) ? (32) : 0));
+	if (select_I_id0) { return value_I_I_id0_10; }
+	// inpt: I_I_id1_8
 	// k = I_id0
-//	No key for: I_I_id1_4
+//	No key for: I_I_id1_8
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " xr = " << xr  << " xc = " << xc  << endl;
 	assert(false);
 	return 0;
 }
 
-inline hw_uint<16> I_out_0_blur_30_2_select(I_I_id0_6_cache& I_I_id0_6_delay
-, I_I_id1_4_cache& I_I_id1_4_delay
+inline hw_uint<16> I_out_0_blur_30_2_select(I_I_id0_10_cache& I_I_id0_10_delay
+, I_I_id1_8_cache& I_I_id1_8_delay
 , int root, int xr, int xc) {
 // Pieces...
 // { out_0_blur_30[root = 0, xr, xc] : 0 <= xr <= 29 and 0 < xc <= 14 } -> { out_0_blur_30[root, xr, xc] -> 16 }
@@ -206,20 +206,20 @@ inline hw_uint<16> I_out_0_blur_30_2_select(I_I_id0_6_cache& I_I_id0_6_delay
 -1*xr + 29 >= 0 && /* constraint: { out_0_blur_30[root, xr, xc] : xc >= 0 } */
 1*xc >= 0 && /* constraint: { out_0_blur_30[root, xr, xc] : 15 - xc >= 0 } */
 -1*xc + 15 >= 0));
-	// inpt: I_I_id0_6
+	// inpt: I_I_id0_10
 	// k = I_id0
-	int value_I_I_id0_6 = I_I_id0_6_delay.peek(((root == 0 && xr >= 0 && 29 - xr >= 0 && -1 + xc >= 0 && 14 - xc >= 0) ? (16) : (-15 + xc == 0 && root == 0 && xr >= 0 && 29 - xr >= 0) ? ((1 + xc)) : (xc == 0 && root == 0 && xr >= 0 && 29 - xr >= 0) ? (16) : 0));
-	if (select_I_id0) { return value_I_I_id0_6; }
-	// inpt: I_I_id1_4
+	int value_I_I_id0_10 = I_I_id0_10_delay.peek(((root == 0 && xr >= 0 && 29 - xr >= 0 && -1 + xc >= 0 && 14 - xc >= 0) ? (16) : (-15 + xc == 0 && root == 0 && xr >= 0 && 29 - xr >= 0) ? ((1 + xc)) : (xc == 0 && root == 0 && xr >= 0 && 29 - xr >= 0) ? (16) : 0));
+	if (select_I_id0) { return value_I_I_id0_10; }
+	// inpt: I_I_id1_8
 	// k = I_id0
-//	No key for: I_I_id1_4
+//	No key for: I_I_id1_8
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " xr = " << xr  << " xc = " << xc  << endl;
 	assert(false);
 	return 0;
 }
 
-inline hw_uint<16> I_out_0_blur_30_3_select(I_I_id0_6_cache& I_I_id0_6_delay
-, I_I_id1_4_cache& I_I_id1_4_delay
+inline hw_uint<16> I_out_0_blur_30_3_select(I_I_id0_10_cache& I_I_id0_10_delay
+, I_I_id1_8_cache& I_I_id1_8_delay
 , int root, int xr, int xc) {
 // Pieces...
 // Always 0
@@ -231,70 +231,20 @@ inline hw_uint<16> I_out_0_blur_30_3_select(I_I_id0_6_cache& I_I_id0_6_delay
 -1*xr + 29 >= 0 && /* constraint: { out_0_blur_30[root, xr, xc] : xc >= 0 } */
 1*xc >= 0 && /* constraint: { out_0_blur_30[root, xr, xc] : 15 - xc >= 0 } */
 -1*xc + 15 >= 0));
-	// inpt: I_I_id0_6
+	// inpt: I_I_id0_10
 	// k = I_id0
-	int value_I_I_id0_6 = I_I_id0_6_delay.peek((0));
-	if (select_I_id0) { return value_I_I_id0_6; }
-	// inpt: I_I_id1_4
+	int value_I_I_id0_10 = I_I_id0_10_delay.peek((0));
+	if (select_I_id0) { return value_I_I_id0_10; }
+	// inpt: I_I_id1_8
 	// k = I_id0
-//	No key for: I_I_id1_4
+//	No key for: I_I_id1_8
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " xr = " << xr  << " xc = " << xc  << endl;
 	assert(false);
 	return 0;
 }
 
-inline hw_uint<16> I_out_1_blur_31_10_select(I_I_id0_6_cache& I_I_id0_6_delay
-, I_I_id1_4_cache& I_I_id1_4_delay
-, int root, int xr, int xc) {
-// Pieces...
-// Always 0
-//	is optimizable constant: 0
-	// lexmax events: { out_1_blur_31[root = 0, xr, xc] -> I_id1[root' = 0, ir = 1 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-	bool select_I_id1 = ((/* constraint: { out_1_blur_31[root, xr, xc] : root = 0 } */
-1*root == 0 && /* constraint: { out_1_blur_31[root, xr, xc] : xr >= 0 } */
-1*xr >= 0 && /* constraint: { out_1_blur_31[root, xr, xc] : 29 - xr >= 0 } */
--1*xr + 29 >= 0 && /* constraint: { out_1_blur_31[root, xr, xc] : xc >= 0 } */
-1*xc >= 0 && /* constraint: { out_1_blur_31[root, xr, xc] : 15 - xc >= 0 } */
--1*xc + 15 >= 0));
-	// inpt: I_I_id0_6
-	// k = I_id1
-//	No key for: I_I_id0_6
-	// inpt: I_I_id1_4
-	// k = I_id1
-	int value_I_I_id1_4 = I_I_id1_4_delay.peek(((root == 0 && xr >= 0 && 29 - xr >= 0 && -1 + xc >= 0 && 14 - xc >= 0) ? (16) : (-15 + xc == 0 && root == 0 && xr >= 0 && 29 - xr >= 0) ? ((1 + xc)) : (xc == 0 && root == 0 && xr >= 0 && 29 - xr >= 0) ? (16) : 0));
-	if (select_I_id1) { return value_I_I_id1_4; }
-	cout << "Error: Unsupported offsets: " << " root = " << root  << " xr = " << xr  << " xc = " << xc  << endl;
-	assert(false);
-	return 0;
-}
-
-inline hw_uint<16> I_out_1_blur_31_11_select(I_I_id0_6_cache& I_I_id0_6_delay
-, I_I_id1_4_cache& I_I_id1_4_delay
-, int root, int xr, int xc) {
-// Pieces...
-// Always 0
-//	is optimizable constant: 0
-	// lexmax events: { out_1_blur_31[root = 0, xr, xc] -> I_id1[root' = 0, ir = 2 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-	bool select_I_id1 = ((/* constraint: { out_1_blur_31[root, xr, xc] : root = 0 } */
-1*root == 0 && /* constraint: { out_1_blur_31[root, xr, xc] : xr >= 0 } */
-1*xr >= 0 && /* constraint: { out_1_blur_31[root, xr, xc] : 29 - xr >= 0 } */
--1*xr + 29 >= 0 && /* constraint: { out_1_blur_31[root, xr, xc] : xc >= 0 } */
-1*xc >= 0 && /* constraint: { out_1_blur_31[root, xr, xc] : 15 - xc >= 0 } */
--1*xc + 15 >= 0));
-	// inpt: I_I_id0_6
-	// k = I_id1
-//	No key for: I_I_id0_6
-	// inpt: I_I_id1_4
-	// k = I_id1
-	int value_I_I_id1_4 = I_I_id1_4_delay.peek((0));
-	if (select_I_id1) { return value_I_I_id1_4; }
-	cout << "Error: Unsupported offsets: " << " root = " << root  << " xr = " << xr  << " xc = " << xc  << endl;
-	assert(false);
-	return 0;
-}
-
-inline hw_uint<16> I_out_1_blur_31_9_select(I_I_id0_6_cache& I_I_id0_6_delay
-, I_I_id1_4_cache& I_I_id1_4_delay
+inline hw_uint<16> I_out_1_blur_31_5_select(I_I_id0_10_cache& I_I_id0_10_delay
+, I_I_id1_8_cache& I_I_id1_8_delay
 , int root, int xr, int xc) {
 // Pieces...
 // Always 0
@@ -306,13 +256,63 @@ inline hw_uint<16> I_out_1_blur_31_9_select(I_I_id0_6_cache& I_I_id0_6_delay
 -1*xr + 29 >= 0 && /* constraint: { out_1_blur_31[root, xr, xc] : xc >= 0 } */
 1*xc >= 0 && /* constraint: { out_1_blur_31[root, xr, xc] : 15 - xc >= 0 } */
 -1*xc + 15 >= 0));
-	// inpt: I_I_id0_6
+	// inpt: I_I_id0_10
 	// k = I_id1
-//	No key for: I_I_id0_6
-	// inpt: I_I_id1_4
+//	No key for: I_I_id0_10
+	// inpt: I_I_id1_8
 	// k = I_id1
-	int value_I_I_id1_4 = I_I_id1_4_delay.peek(((root == 0 && xr >= 0 && 29 - xr >= 0 && -1 + xc >= 0 && 14 - xc >= 0) ? (32) : (-15 + xc == 0 && root == 0 && xr >= 0 && 29 - xr >= 0) ? ((17 + xc)) : (xc == 0 && root == 0 && xr >= 0 && 29 - xr >= 0) ? (32) : 0));
-	if (select_I_id1) { return value_I_I_id1_4; }
+	int value_I_I_id1_8 = I_I_id1_8_delay.peek(((root == 0 && xr >= 0 && 29 - xr >= 0 && -1 + xc >= 0 && 14 - xc >= 0) ? (32) : (-15 + xc == 0 && root == 0 && xr >= 0 && 29 - xr >= 0) ? ((17 + xc)) : (xc == 0 && root == 0 && xr >= 0 && 29 - xr >= 0) ? (32) : 0));
+	if (select_I_id1) { return value_I_I_id1_8; }
+	cout << "Error: Unsupported offsets: " << " root = " << root  << " xr = " << xr  << " xc = " << xc  << endl;
+	assert(false);
+	return 0;
+}
+
+inline hw_uint<16> I_out_1_blur_31_6_select(I_I_id0_10_cache& I_I_id0_10_delay
+, I_I_id1_8_cache& I_I_id1_8_delay
+, int root, int xr, int xc) {
+// Pieces...
+// Always 0
+//	is optimizable constant: 0
+	// lexmax events: { out_1_blur_31[root = 0, xr, xc] -> I_id1[root' = 0, ir = 1 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+	bool select_I_id1 = ((/* constraint: { out_1_blur_31[root, xr, xc] : root = 0 } */
+1*root == 0 && /* constraint: { out_1_blur_31[root, xr, xc] : xr >= 0 } */
+1*xr >= 0 && /* constraint: { out_1_blur_31[root, xr, xc] : 29 - xr >= 0 } */
+-1*xr + 29 >= 0 && /* constraint: { out_1_blur_31[root, xr, xc] : xc >= 0 } */
+1*xc >= 0 && /* constraint: { out_1_blur_31[root, xr, xc] : 15 - xc >= 0 } */
+-1*xc + 15 >= 0));
+	// inpt: I_I_id0_10
+	// k = I_id1
+//	No key for: I_I_id0_10
+	// inpt: I_I_id1_8
+	// k = I_id1
+	int value_I_I_id1_8 = I_I_id1_8_delay.peek(((root == 0 && xr >= 0 && 29 - xr >= 0 && -1 + xc >= 0 && 14 - xc >= 0) ? (16) : (-15 + xc == 0 && root == 0 && xr >= 0 && 29 - xr >= 0) ? ((1 + xc)) : (xc == 0 && root == 0 && xr >= 0 && 29 - xr >= 0) ? (16) : 0));
+	if (select_I_id1) { return value_I_I_id1_8; }
+	cout << "Error: Unsupported offsets: " << " root = " << root  << " xr = " << xr  << " xc = " << xc  << endl;
+	assert(false);
+	return 0;
+}
+
+inline hw_uint<16> I_out_1_blur_31_7_select(I_I_id0_10_cache& I_I_id0_10_delay
+, I_I_id1_8_cache& I_I_id1_8_delay
+, int root, int xr, int xc) {
+// Pieces...
+// Always 0
+//	is optimizable constant: 0
+	// lexmax events: { out_1_blur_31[root = 0, xr, xc] -> I_id1[root' = 0, ir = 2 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+	bool select_I_id1 = ((/* constraint: { out_1_blur_31[root, xr, xc] : root = 0 } */
+1*root == 0 && /* constraint: { out_1_blur_31[root, xr, xc] : xr >= 0 } */
+1*xr >= 0 && /* constraint: { out_1_blur_31[root, xr, xc] : 29 - xr >= 0 } */
+-1*xr + 29 >= 0 && /* constraint: { out_1_blur_31[root, xr, xc] : xc >= 0 } */
+1*xc >= 0 && /* constraint: { out_1_blur_31[root, xr, xc] : 15 - xc >= 0 } */
+-1*xc + 15 >= 0));
+	// inpt: I_I_id0_10
+	// k = I_id1
+//	No key for: I_I_id0_10
+	// inpt: I_I_id1_8
+	// k = I_id1
+	int value_I_I_id1_8 = I_I_id1_8_delay.peek((0));
+	if (select_I_id1) { return value_I_I_id1_8; }
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " xr = " << xr  << " xc = " << xc  << endl;
 	assert(false);
 	return 0;
@@ -320,44 +320,44 @@ inline hw_uint<16> I_out_1_blur_31_9_select(I_I_id0_6_cache& I_I_id0_6_delay
 
 // Bundles...
 // I_id0_write
-//	I_I_id0_6
-inline void I_I_id0_write_bundle_write(hw_uint<16>& /* width = 16*/I_id0_write, I_I_id0_6_cache& I_I_id0_6_delay) {
-	I_I_id0_6_write(I_id0_write, I_I_id0_6_delay);
+//	I_I_id0_10
+inline void I_I_id0_write_bundle_write(hw_uint<16>& /* width = 16*/I_id0_write, I_I_id0_10_cache& I_I_id0_10_delay) {
+	I_I_id0_10_write(I_id0_write, I_I_id0_10_delay);
 }
 
 // I_id1_write
-//	I_I_id1_4
-inline void I_I_id1_write_bundle_write(hw_uint<16>& /* width = 16*/I_id1_write, I_I_id1_4_cache& I_I_id1_4_delay) {
-	I_I_id1_4_write(I_id1_write, I_I_id1_4_delay);
+//	I_I_id1_8
+inline void I_I_id1_write_bundle_write(hw_uint<16>& /* width = 16*/I_id1_write, I_I_id1_8_cache& I_I_id1_8_delay) {
+	I_I_id1_8_write(I_id1_write, I_I_id1_8_delay);
 }
 
 // out_0_blur_30_read
 //	I_out_0_blur_30_1
 //	I_out_0_blur_30_2
 //	I_out_0_blur_30_3
-inline hw_uint<48> I_out_0_blur_30_read_bundle_read(I_I_id0_6_cache& I_I_id0_6_delay, I_I_id1_4_cache& I_I_id1_4_delay, int root, int xr, int xc) {
+inline hw_uint<48> I_out_0_blur_30_read_bundle_read(I_I_id0_10_cache& I_I_id0_10_delay, I_I_id1_8_cache& I_I_id1_8_delay, int root, int xr, int xc) {
 	hw_uint<48> result;
-	hw_uint<16> I_out_0_blur_30_1_res = I_out_0_blur_30_1_select(I_I_id0_6_delay, I_I_id1_4_delay, root, xr, xc);
+	hw_uint<16> I_out_0_blur_30_1_res = I_out_0_blur_30_1_select(I_I_id0_10_delay, I_I_id1_8_delay, root, xr, xc);
 	set_at<0, 48>(result, I_out_0_blur_30_1_res);
-	hw_uint<16> I_out_0_blur_30_2_res = I_out_0_blur_30_2_select(I_I_id0_6_delay, I_I_id1_4_delay, root, xr, xc);
+	hw_uint<16> I_out_0_blur_30_2_res = I_out_0_blur_30_2_select(I_I_id0_10_delay, I_I_id1_8_delay, root, xr, xc);
 	set_at<16, 48>(result, I_out_0_blur_30_2_res);
-	hw_uint<16> I_out_0_blur_30_3_res = I_out_0_blur_30_3_select(I_I_id0_6_delay, I_I_id1_4_delay, root, xr, xc);
+	hw_uint<16> I_out_0_blur_30_3_res = I_out_0_blur_30_3_select(I_I_id0_10_delay, I_I_id1_8_delay, root, xr, xc);
 	set_at<32, 48>(result, I_out_0_blur_30_3_res);
 	return result;
 }
 
 // out_1_blur_31_read
-//	I_out_1_blur_31_9
-//	I_out_1_blur_31_10
-//	I_out_1_blur_31_11
-inline hw_uint<48> I_out_1_blur_31_read_bundle_read(I_I_id0_6_cache& I_I_id0_6_delay, I_I_id1_4_cache& I_I_id1_4_delay, int root, int xr, int xc) {
+//	I_out_1_blur_31_5
+//	I_out_1_blur_31_6
+//	I_out_1_blur_31_7
+inline hw_uint<48> I_out_1_blur_31_read_bundle_read(I_I_id0_10_cache& I_I_id0_10_delay, I_I_id1_8_cache& I_I_id1_8_delay, int root, int xr, int xc) {
 	hw_uint<48> result;
-	hw_uint<16> I_out_1_blur_31_9_res = I_out_1_blur_31_9_select(I_I_id0_6_delay, I_I_id1_4_delay, root, xr, xc);
-	set_at<0, 48>(result, I_out_1_blur_31_9_res);
-	hw_uint<16> I_out_1_blur_31_10_res = I_out_1_blur_31_10_select(I_I_id0_6_delay, I_I_id1_4_delay, root, xr, xc);
-	set_at<16, 48>(result, I_out_1_blur_31_10_res);
-	hw_uint<16> I_out_1_blur_31_11_res = I_out_1_blur_31_11_select(I_I_id0_6_delay, I_I_id1_4_delay, root, xr, xc);
-	set_at<32, 48>(result, I_out_1_blur_31_11_res);
+	hw_uint<16> I_out_1_blur_31_5_res = I_out_1_blur_31_5_select(I_I_id0_10_delay, I_I_id1_8_delay, root, xr, xc);
+	set_at<0, 48>(result, I_out_1_blur_31_5_res);
+	hw_uint<16> I_out_1_blur_31_6_res = I_out_1_blur_31_6_select(I_I_id0_10_delay, I_I_id1_8_delay, root, xr, xc);
+	set_at<16, 48>(result, I_out_1_blur_31_6_res);
+	hw_uint<16> I_out_1_blur_31_7_res = I_out_1_blur_31_7_select(I_I_id0_10_delay, I_I_id1_8_delay, root, xr, xc);
+	set_at<32, 48>(result, I_out_1_blur_31_7_res);
 	return result;
 }
 
@@ -366,9 +366,9 @@ inline hw_uint<48> I_out_1_blur_31_read_bundle_read(I_I_id0_6_cache& I_I_id0_6_d
 
 
 // Operation logic
-inline void out_0_blur_30(I_I_id0_6_cache& I_I_id0_6, I_I_id1_4_cache& I_I_id1_4, HWStream<hw_uint<16> >& out_0, int root, int xr, int xc) {
+inline void out_0_blur_30(I_I_id0_10_cache& I_I_id0_10, I_I_id1_8_cache& I_I_id1_8, HWStream<hw_uint<16> >& out_0, int root, int xr, int xc) {
 	// Consume: I
-	auto I_xr__p__0_c__2_m_xc__p__0__p__0_value = I_out_0_blur_30_read_bundle_read(I_I_id0_6, I_I_id1_4/* source_delay */, root, xr, xc);
+	auto I_xr__p__0_c__2_m_xc__p__0__p__0_value = I_out_0_blur_30_read_bundle_read(I_I_id0_10, I_I_id1_8/* source_delay */, root, xr, xc);
 	// Apply function: blur_3
 	// Arg: I_xr__p__0_c__2_m_xc__p__0__p__0_value
 	// Arg buf: I
@@ -381,38 +381,9 @@ inline void out_0_blur_30(I_I_id0_6_cache& I_I_id0_6, I_I_id1_4_cache& I_I_id1_4
 	out_0.write(compute_result);
 }
 
-inline void I_id1(HWStream<hw_uint<16> >& in_1, I_I_id0_6_cache& I_I_id0_6, I_I_id1_4_cache& I_I_id1_4, int root, int ir, int ic) {
-	// Consume: in_1
-	auto in_1_ir_c__ic_value = in_1.read();
-	// Apply function: id
-	// Arg: in_1_ir_c__ic_value
-	// Arg buf: in_1
-	 /* comma list args */ auto compute_result = id(in_1_ir_c__ic_value);
-	// Produce: I
-	// Buffer: I, Op: I_id1
-	// Possible ports...
-		// I_I_id0_6
-		// I_I_id1_4
-	I_I_id1_write_bundle_write(compute_result, I_I_id1_4 /* output src_delay */);
-}
-
-inline void I_id0(HWStream<hw_uint<16> >& in_0, I_I_id0_6_cache& I_I_id0_6, I_I_id1_4_cache& I_I_id1_4, int root, int ir, int ic) {
-	// Consume: in_0
-	auto in_0_ir_c__ic_value = in_0.read();
-	// Apply function: id
-	// Arg: in_0_ir_c__ic_value
-	// Arg buf: in_0
-	 /* comma list args */ auto compute_result = id(in_0_ir_c__ic_value);
-	// Produce: I
-	// Buffer: I, Op: I_id0
-	// Possible ports...
-		// I_I_id0_6
-	I_I_id0_write_bundle_write(compute_result, I_I_id0_6 /* output src_delay */);
-}
-
-inline void out_1_blur_31(I_I_id0_6_cache& I_I_id0_6, I_I_id1_4_cache& I_I_id1_4, HWStream<hw_uint<16> >& out_1, int root, int xr, int xc) {
+inline void out_1_blur_31(I_I_id0_10_cache& I_I_id0_10, I_I_id1_8_cache& I_I_id1_8, HWStream<hw_uint<16> >& out_1, int root, int xr, int xc) {
 	// Consume: I
-	auto I_xr__p__0_c__2_m_xc__p__1__p__0_value = I_out_1_blur_31_read_bundle_read(I_I_id0_6, I_I_id1_4/* source_delay */, root, xr, xc);
+	auto I_xr__p__0_c__2_m_xc__p__1__p__0_value = I_out_1_blur_31_read_bundle_read(I_I_id0_10, I_I_id1_8/* source_delay */, root, xr, xc);
 	// Apply function: blur_3
 	// Arg: I_xr__p__0_c__2_m_xc__p__1__p__0_value
 	// Arg buf: I
@@ -425,22 +396,51 @@ inline void out_1_blur_31(I_I_id0_6_cache& I_I_id0_6, I_I_id1_4_cache& I_I_id1_4
 	out_1.write(compute_result);
 }
 
+inline void I_id1(HWStream<hw_uint<16> >& in_1, I_I_id0_10_cache& I_I_id0_10, I_I_id1_8_cache& I_I_id1_8, int root, int ir, int ic) {
+	// Consume: in_1
+	auto in_1_ir_c__ic_value = in_1.read();
+	// Apply function: id
+	// Arg: in_1_ir_c__ic_value
+	// Arg buf: in_1
+	 /* comma list args */ auto compute_result = id(in_1_ir_c__ic_value);
+	// Produce: I
+	// Buffer: I, Op: I_id1
+	// Possible ports...
+		// I_I_id0_10
+		// I_I_id1_8
+	I_I_id1_write_bundle_write(compute_result, I_I_id1_8 /* output src_delay */);
+}
+
+inline void I_id0(HWStream<hw_uint<16> >& in_0, I_I_id0_10_cache& I_I_id0_10, I_I_id1_8_cache& I_I_id1_8, int root, int ir, int ic) {
+	// Consume: in_0
+	auto in_0_ir_c__ic_value = in_0.read();
+	// Apply function: id
+	// Arg: in_0_ir_c__ic_value
+	// Arg buf: in_0
+	 /* comma list args */ auto compute_result = id(in_0_ir_c__ic_value);
+	// Produce: I
+	// Buffer: I, Op: I_id0
+	// Possible ports...
+		// I_I_id0_10
+	I_I_id0_write_bundle_write(compute_result, I_I_id0_10 /* output src_delay */);
+}
+
 // Driver function
 void soda_blur(HWStream<hw_uint<16> >& in_0, HWStream<hw_uint<16> >& in_1, HWStream<hw_uint<16> >& out_0, HWStream<hw_uint<16> >& out_1) {
-	I_I_id0_6_cache I_I_id0_6;
-	I_I_id1_4_cache I_I_id1_4;
+	I_I_id0_10_cache I_I_id0_10;
+	I_I_id1_8_cache I_I_id1_8;
 	{
 	  for (int c1 = 0; c1 <= 31; c1 += 1)
 	    for (int c2 = 0; c2 <= 15; c2 += 1) {
-	      I_id0(in_0, I_I_id0_6, I_I_id1_4, 0, c1, c2);
+	      I_id0(in_0, I_I_id0_10, I_I_id1_8, 0, c1, c2);
 	      if (c1 >= 2)
-	        out_0_blur_30(I_I_id0_6, I_I_id1_4, out_0, 0, c1 - 2, c2);
+	        out_0_blur_30(I_I_id0_10, I_I_id1_8, out_0, 0, c1 - 2, c2);
 	    }
 	  for (int c1 = 0; c1 <= 31; c1 += 1)
 	    for (int c2 = 0; c2 <= 15; c2 += 1) {
-	      I_id1(in_1, I_I_id0_6, I_I_id1_4, 0, c1, c2);
+	      I_id1(in_1, I_I_id0_10, I_I_id1_8, 0, c1, c2);
 	      if (c1 >= 2)
-	        out_1_blur_31(I_I_id0_6, I_I_id1_4, out_1, 0, c1 - 2, c2);
+	        out_1_blur_31(I_I_id0_10, I_I_id1_8, out_1, 0, c1 - 2, c2);
 	    }
 	}
 	
