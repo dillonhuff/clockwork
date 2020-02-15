@@ -4447,7 +4447,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
-     heat_3d_test();
+    heat_3d_test();
     
     synth_lb_test();
     synth_reduce_test();
