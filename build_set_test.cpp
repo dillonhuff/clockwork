@@ -2645,7 +2645,7 @@ prog conv_1d() {
   return prg;
 }
 
-std::string run_regression_tb(prog& prg) {
+std::vector<std::string> run_regression_tb(prog& prg) {
   int res = system(string("g++ -std=c++11 regression_tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
   assert(res == 0);
 
@@ -2653,9 +2653,17 @@ std::string run_regression_tb(prog& prg) {
   assert(res == 0);
 
   ifstream infile("regression_result_" + prg.name + ".txt");
-  std::string str((std::istreambuf_iterator<char>(infile)),
-      std::istreambuf_iterator<char>());
-  return str;
+  vector<string> lines;
+  std::string line;
+  while (std::getline(infile, line))
+  {
+    lines.push_back(line);
+  }
+  return lines;
+    //synth_lb_test();
+  //std::string str((std::istreambuf_iterator<char>(infile)),
+      //std::istreambuf_iterator<char>());
+  //return str;
 }
 
 void run_tb(prog& prg) {
@@ -2725,18 +2733,29 @@ void regression_test(prog& prg) {
   auto old_name = prg.name;
   prg.name = "unoptimized_" + old_name;
   generate_regression_testbench(prg);
-  string unoptimized_res = run_regression_tb(prg);
+  vector<string> unoptimized_res = run_regression_tb(prg);
   prg.name = old_name;
   
   cout << "Building optimized code" << endl;
   generate_optimized_code(prg);
   generate_regression_testbench(prg);
-  string optimized_res = run_regression_tb(prg);
+  vector<string> optimized_res = run_regression_tb(prg);
 
-  if (unoptimized_res != optimized_res) {
-    cout << "After optimization " << prg.name << " gives different results" << endl;
-    assert(false);
+  assert(unoptimized_res.size() == optimized_res.size());
+  for (size_t i = 0; i < unoptimized_res.size(); i++) {
+
+    if (!(unoptimized_res.at(i) == optimized_res.at(i))) {
+      cout << "Error: After optimization, at output " << i << " unoptimized_res != optimized_res" << endl;
+      cout << "\tunoptimized = " << unoptimized_res.at(i) << endl;
+      cout << "\toptimized   = " << optimized_res.at(i) << endl;
+      assert(unoptimized_res.at(i) == optimized_res.at(i));
+    }
   }
+
+  //if (unoptimized_res != optimized_res) {
+    //cout << "After optimization " << prg.name << " gives different results" << endl;
+    //assert(false);
+  //}
 }
 
 void conv_1d_test() {
@@ -4047,7 +4066,7 @@ void heat_3d_test() {
   in_nest->add_op({"I", "id0, id1, id2"}, "id", {in_name, "id0, id1, id2"});
 
   auto blur_y_nest = 
-    prg.add_nest("d2", 1, rows - 1, "d1", 1, cols - 1, "d0", 1, channels);
+    prg.add_nest("d2", 1, rows - 1, "d1", 1, cols - 1, "d0", 1, channels - 1);
   blur_y_nest->
     stencil_op(out_name, "heat3d_compute", "I", {"d0", "d1", "d2"},
         {{1, 0, 0}, {0, 0, 0}, {-1, 0, 0},
@@ -4427,7 +4446,8 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
     //jacobi_2d_4_test();
     //assert(false);
-    //heat_3d_test();
+
+     heat_3d_test();
     
     synth_lb_test();
     synth_reduce_test();
