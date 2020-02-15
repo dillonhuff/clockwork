@@ -3927,10 +3927,10 @@ struct Window {
 };
 
 bool operator<(const Window& w0, const Window& w1) {
-  if (w0.name != w1.name) {
+  if (w0.name == w1.name) {
     return false;
   }
-  return true;
+  return w0.name < w1.name;
 }
 
 struct Result {
@@ -3969,6 +3969,9 @@ struct App {
       w.needed = build_needed(name, w);
       res.srcs.insert(w);
     }
+
+    assert(res.srcs.size() == windows.size());
+
     app_dag[name] = res;
     return name;
   }
@@ -4035,7 +4038,7 @@ struct App {
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     uset* s =
-      isl_union_set_read_from_str(ctx, string("{ [d0, d1] : 0 <= d0 < " + to_string(d0) + " and 0 <= d1 < " + to_string(d1) + " }").c_str());
+      isl_union_set_read_from_str(ctx, string("{ " + name + "[d0, d1] : 0 <= d0 < " + to_string(d0) + " and 0 <= d1 < " + to_string(d1) + " }").c_str());
     string n = name;
     map<string, uset*> domains;
     domains[n] = s;
@@ -4075,6 +4078,8 @@ void sobel_test() {
   Window xwindow{"mag_x", {1, 1}, {{0, 0}}};
   Window ywindow{"mag_y", {1, 1}, {{0, 0}}};
   sobel.func2d("mag", "mag_cu", {xwindow, ywindow});
+
+  sobel.realize("mag", 30, 30, 1);
   assert(false);
 }
 
