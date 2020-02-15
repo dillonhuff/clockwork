@@ -103,13 +103,13 @@ inline void I_I_id0_0_write(hw_uint<32> & I_I_id0_0, I_I_id0_0_cache& I_I_id0_0_
 
 inline hw_uint<32>  I_out_jacobi2d_compute0_3_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
-	hw_uint<32>  value_I_I_id0_0 = I_I_id0_0_delay.peek_33();
+	hw_uint<32>  value_I_I_id0_0 = I_I_id0_0_delay.peek_0();
 	return value_I_I_id0_0;
 }
 
 inline hw_uint<32>  I_out_jacobi2d_compute0_4_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
-	hw_uint<32>  value_I_I_id0_0 = I_I_id0_0_delay.peek_64();
+	hw_uint<32>  value_I_I_id0_0 = I_I_id0_0_delay.peek_31();
 	return value_I_I_id0_0;
 }
 
@@ -121,13 +121,13 @@ inline hw_uint<32>  I_out_jacobi2d_compute0_5_select(I_I_id0_0_cache& I_I_id0_0_
 
 inline hw_uint<32>  I_out_jacobi2d_compute0_6_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
-	hw_uint<32>  value_I_I_id0_0 = I_I_id0_0_delay.peek_0();
+	hw_uint<32>  value_I_I_id0_0 = I_I_id0_0_delay.peek_64();
 	return value_I_I_id0_0;
 }
 
 inline hw_uint<32>  I_out_jacobi2d_compute0_7_select(I_I_id0_0_cache& I_I_id0_0_delay
 , int root, int d1, int d0) {
-	hw_uint<32>  value_I_I_id0_0 = I_I_id0_0_delay.peek_31();
+	hw_uint<32>  value_I_I_id0_0 = I_I_id0_0_delay.peek_33();
 	return value_I_I_id0_0;
 }
 
@@ -180,7 +180,7 @@ inline void I_id0(HWStream<hw_uint<32>  >& in, I_I_id0_0_cache& I_I_id0_0, int r
 
 inline void out_jacobi2d_compute0(I_I_id0_0_cache& I_I_id0_0, HWStream<hw_uint<32>  >& out, int root, int d1, int d0) {
 	// Consume: I
-	auto I_d0__p___m_1_c__d1__p__0_value = I_out_jacobi2d_compute0_read_bundle_read(I_I_id0_0/* source_delay */, root, d1, d0);
+	auto I_d0__p__0_c__d1__p__1_value = I_out_jacobi2d_compute0_read_bundle_read(I_I_id0_0/* source_delay */, root, d1, d0);
 	// Apply function: jacobi2d_compute
 	// Arg: I_d0__p__0_c__d1__p__1_value
 	// Arg buf: I
@@ -192,7 +192,7 @@ inline void out_jacobi2d_compute0(I_I_id0_0_cache& I_I_id0_0, HWStream<hw_uint<3
 	// Arg buf: I
 	// Arg: I_d0__p___m_1_c__d1__p__0_value
 	// Arg buf: I
-	auto compute_result = jacobi2d_compute(I_d0__p___m_1_c__d1__p__0_value);
+	auto compute_result = jacobi2d_compute(I_d0__p__0_c__d1__p__1_value);
 	// Produce: out
 	out.write(compute_result);
 }

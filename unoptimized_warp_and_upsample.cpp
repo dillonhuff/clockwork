@@ -233,69 +233,15 @@ void unoptimized_warp_and_upsample(HWStream<hw_uint<32>  >& in, HWStream<hw_uint
 	{
 	  for (int c3 = 0; c3 <= 63; c3 += 1)
 	    for (int c5 = 0; c5 <= 63; c5 += 1)
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-#pragma HLS pipeline II=1
-	      store_I_from_in(in, I_store_I_from_in_0, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 61; c3 += 1)
-	    for (int c5 = 0; c5 <= 61; c5 += 1)
-#pragma HLS pipeline II=1
-	      warped_0_conv_3_30(I_store_I_from_in_0, warped_0_warped_0_conv_3_30_2, 0, c3, c5);
-=======
-	      store_I_from_in(in, I_store_I_from_in_12, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 61; c3 += 1)
-	    for (int c5 = 0; c5 <= 61; c5 += 1)
-	      warped_0_conv_3_30(I_store_I_from_in_12, warped_0_warped_0_conv_3_30_0, 0, c3, c5);
->>>>>>> origin/master
-=======
 	      store_I_from_in(in, I_store_I_from_in_0, 0, c3, c5);
 	  for (int c3 = 0; c3 <= 61; c3 += 1)
 	    for (int c5 = 0; c5 <= 61; c5 += 1)
 	      warped_0_conv_3_30(I_store_I_from_in_0, warped_0_warped_0_conv_3_30_2, 0, c3, c5);
->>>>>>> origin/master
-=======
-	      store_I_from_in(in, I_store_I_from_in_2, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 61; c3 += 1)
-	    for (int c5 = 0; c5 <= 61; c5 += 1)
-	      warped_0_conv_3_30(I_store_I_from_in_2, warped_0_warped_0_conv_3_30_4, 0, c3, c5);
->>>>>>> origin/master
-=======
-	      store_I_from_in(in, I_store_I_from_in_12, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 61; c3 += 1)
-	    for (int c5 = 0; c5 <= 61; c5 += 1)
-	      warped_0_conv_3_30(I_store_I_from_in_12, warped_0_warped_0_conv_3_30_2, 0, c3, c5);
->>>>>>> origin/master
-=======
-	      store_I_from_in(in, I_store_I_from_in_0, 0, c3, c5);
-	  for (int c3 = 0; c3 <= 61; c3 += 1)
-	    for (int c5 = 0; c5 <= 61; c5 += 1)
-	      warped_0_conv_3_30(I_store_I_from_in_0, warped_0_warped_0_conv_3_30_2, 0, c3, c5);
->>>>>>> origin/master
 	  for (int c3 = 0; c3 <= 61; c3 += 1)
 	    for (int c5 = 0; c5 <= 1; c5 += 1)
 	      for (int c7 = 0; c7 <= 61; c7 += 1)
 	        for (int c9 = 0; c9 <= 1; c9 += 1)
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-#pragma HLS pipeline II=1
 	          out_id0(warped_0_warped_0_conv_3_30_2, out, 0, c3, c5, c7, c9);
-=======
-	          out_id0(warped_0_warped_0_conv_3_30_0, out, 0, c3, c5, c7, c9);
->>>>>>> origin/master
-=======
-	          out_id0(warped_0_warped_0_conv_3_30_2, out, 0, c3, c5, c7, c9);
->>>>>>> origin/master
-=======
-	          out_id0(warped_0_warped_0_conv_3_30_4, out, 0, c3, c5, c7, c9);
->>>>>>> origin/master
-=======
-	          out_id0(warped_0_warped_0_conv_3_30_2, out, 0, c3, c5, c7, c9);
->>>>>>> origin/master
 	}
 	
 }

@@ -129,20 +129,7 @@ inline void compute_output(M_get_input_0_cache& M_get_input_0, HWStream<hw_uint<
 void conv_1d(HWStream<hw_uint<32>  >& in, HWStream<hw_uint<32> >& out) {
 	M_get_input_0_cache M_get_input_0;
 	for (int c0 = 0; c0 <= 9; c0 += 1) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-#pragma HLS pipeline
-	  get_input(in, M_get_input_4, 0, c0);
-=======
 	  get_input(in, M_get_input_0, 0, c0);
->>>>>>> origin/master
-=======
-	  get_input(in, M_get_input_4, 0, c0);
->>>>>>> origin/master
-=======
-	  get_input(in, M_get_input_0, 0, c0);
->>>>>>> origin/master
 	  if (c0 >= 2)
 	    compute_output(M_get_input_0, out, 0, c0 - 2);
 	}

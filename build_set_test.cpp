@@ -1061,6 +1061,7 @@ void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf)
   generate_code_prefix(options, out, buf);
 
   for (auto outpt : buf.get_out_ports()) {
+    cout << "Generating select for outpt: " << outpt << endl;
     generate_selects(options, out, inpt, outpt, buf);
   }
 
@@ -1500,10 +1501,12 @@ struct op {
   std::string name;
   std::vector<op*> children;
   std::set<std::string> produces;
-  std::set<pair<std::string, std::string> > produce_locs;
+  //std::set<pair<std::string, std::string> > produce_locs;
+  std::vector<pair<std::string, std::string> > produce_locs;
 
   std::set<std::string> consumes;
-  std::set<pair<std::string, std::string> > consume_locs;
+  //std::set<pair<std::string, std::string> > consume_locs;
+  std::vector<pair<std::string, std::string> > consume_locs;
   map<pair<string, string>, string> consumed_value_names;
   std::string func;
   vector<string> func_args;
@@ -1597,6 +1600,10 @@ struct op {
       }
       loads.push_back(comma_list(ofstrs));
     }
+    cout << "Loads in stencil op: " << endl;
+    for (auto ld : loads) {
+      cout << "\t" << ld << endl;
+    }
     return add_op({out_name, var_str}, cu, loads);
   }
 
@@ -1626,7 +1633,7 @@ struct op {
   string add_load(const std::string& b, const std::string& loc) {
     assert(!is_loop);
     consumes.insert(b + "[" + loc + "]");
-    consume_locs.insert({b, loc});
+    consume_locs.push_back({b, loc});
     string val_name = c_sanitize(b + "_" + loc + "_value");
     consumed_value_names[{b, loc}] = val_name;
     return val_name;
@@ -1635,7 +1642,7 @@ struct op {
   void add_store(const std::string& b, const std::string& loc) {
     assert(!is_loop);
     produces.insert(b + "[" + loc + "]");
-    produce_locs.insert({b, loc});
+    produce_locs.push_back({b, loc});
   }
 
   void add_args(const std::vector<op*>& args) {
@@ -2108,8 +2115,8 @@ struct prog {
     auto order_deps = relative_orders();
     isl_union_map *raw_deps = validity_deps();
     auto validity =
-      raw_deps;
-      //unn(order_deps, raw_deps);
+      //raw_deps;
+      unn(order_deps, raw_deps);
     isl_union_map *proximity =
       cpy(raw_deps);
       //cpy(validity);
@@ -2221,10 +2228,12 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
     }
 
 
+    cout << "# of consumed locations: " << op->consume_locs.size() << endl;
     for (auto consumed : op->consume_locs) {
       string name = consumed.first;
 
       if (!contains_key(name, buffers)) {
+        cout << "Creating ports for op: " << name << endl;
         UBuffer buf;
         buf.name = name;
         buf.ctx = prg.ctx;
@@ -2244,6 +2253,8 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
 
       assert(contains_key(op, domains));
 
+      cout << "\tAdding output port: " << pt_name << endl;
+      cout << "\t\tConsumed: " << str(consumed_here) << endl;
       buf.add_out_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
 
       usuffix++;
@@ -2721,7 +2732,6 @@ void regression_test(prog& prg) {
   generate_optimized_code(prg);
   generate_regression_testbench(prg);
   string optimized_res = run_regression_tb(prg);
-
 
   if (unoptimized_res != optimized_res) {
     cout << "After optimization " << prg.name << " gives different results" << endl;
@@ -4015,7 +4025,7 @@ void seidel2d_test() {
 void heat_3d_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
-  prg.name = "jacobi2d";
+  prg.name = "heat3d";
   prg.buffer_port_widths["I"] = 32;
   
   int rows = 32;
@@ -4040,12 +4050,12 @@ void heat_3d_test() {
     prg.add_nest("d2", 1, rows - 1, "d1", 1, cols - 1, "d0", 1, channels);
   blur_y_nest->
     stencil_op(out_name, "heat3d_compute", "I", {"d0", "d1", "d2"},
-        {{1, 0, 0}, {0, 0, 0}, {0, 0, 1},
+        {{1, 0, 0}, {0, 0, 0}, {-1, 0, 0},
         {0, 1, 0}, {0, 0, 0}, {0, -1, 0},
         {0, 0, 1}, {0, 0, 0}, {0, 0, -1}});
 
   // Need to fix repeated reads from the same location
-  //regression_test(prg);
+  regression_test(prg);
 }
 
 void blur_x_test() {
@@ -4417,13 +4427,15 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
     //jacobi_2d_4_test();
     //assert(false);
+    //heat_3d_test();
+    
+    synth_lb_test();
     synth_reduce_test();
     jacobi_2d_2_test();
-    assert(false);
+    //assert(false);
     jacobi_2d_test();
     parse_denoise3d_test();
     seidel2d_test();
-    heat_3d_test();
 
     blur_x_test();
     pointwise_test();
@@ -4449,7 +4461,6 @@ int main(int argc, char** argv) {
     pyramid_2d_test();
     pyramid_test();
     conv_1d_bc_test();
-    synth_lb_test();
     synth_wire_test();
     synth_sr_boundary_condition_test();
     
