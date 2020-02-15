@@ -3494,128 +3494,6 @@ void gaussian_pyramid_test() {
   regression_test(prg);
 }
 
-struct Window {
-  string name;
-  vector<int> strides;
-  vector<vector<int> > offsets;
-  umap* needed;
-};
-
-bool operator<(const Window& w0, const Window& w1) {
-  if (w0.name != w1.name) {
-    return false;
-  }
-  return true;
-}
-
-struct Result {
-  string compute_name;
-  set<Window> srcs;
-};
-
-struct App {
-
-  isl_ctx* ctx;
-  set<string> functions;
-  map<string, Result> app_dag;
-
-  App() {
-    ctx = isl_ctx_alloc();
-  }
-
-  ~App() {
-    isl_ctx_free(ctx);
-  }
-
-  string func2d(const std::string& name) {
-    functions.insert(name);
-    app_dag[name] = {};
-    return name;
-  }
-
-  string func2d(const std::string& name,
-      const string& compute,
-      const string& arg,
-      const vector<int>& strides,
-      const vector<vector<int> >& offsets) {
-
-    assert(strides.size() > 0);
-    int ndims = strides.size();
-    functions.insert(name);
-
-    vector<int> mins;
-    vector<int> maxs;
-    for (int i = 0; i < ndims; i++) {
-      mins.push_back(10000);
-      maxs.push_back(-1);
-    }
-
-    for (auto s : offsets) {
-      for (size_t d = 0; d < s.size(); d++) {
-        if (s[d] < mins[d]) {
-          mins[d] = s[d];
-        }
-        if (s[d] > maxs[d]) {
-          maxs[d] = s[d];
-        }
-      }
-    }
-
-    vector<string> box_strs;
-    vector<string> base_vars;
-    vector<string> arg_vars;
-    for (size_t i = 0; i < mins.size(); i++) {
-      string stride = to_string(strides[i]);
-      string base_var = "d" + to_string(i);
-      base_vars.push_back(base_var);
-      string kv = "k" + to_string(i);
-      arg_vars.push_back(kv);
-      int min = mins[i];
-      int max = maxs[i];
-      string base_expr = stride + "*" + base_var;
-      box_strs.push_back(base_expr + " + " + to_string(min) + " <= " + kv + " <= " + base_expr + " + " + to_string(max));
-    }
-    string box_cond = "{ " + sep_list(base_vars, "[", "]", ", ") + " -> " + sep_list(arg_vars, "[", "]", ", ") + " : " + sep_list(box_strs, "", "", " and ") + " }";
-    cout << "Box needed: " << box_cond << endl;
-    umap* m = isl_union_map_read_from_str(ctx, box_cond.c_str());
-    cout << "Map       : " << str(m) << endl;
-    Window w{arg, strides, offsets, m};
-    Result res{compute, {w}};
-    app_dag[name] = res;
-    return name;
-  }
-
-  void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
-    uset* s =
-      isl_union_set_read_from_str(ctx, string("{ [d0, d1] : 0 <= d0 < " + to_string(d0) + " and 0 <= d1 < " + to_string(d1) + " }").c_str());
-    string n = name;
-    map<string, uset*> domains;
-    domains[n] = s;
-    cout << "Domain: " << str(s) << endl;
-
-    set<string> search{n};
-    while (search.size() > 0) {
-      string next = pick(search);
-      search.erase(next);
-
-      for (auto inputs : app_dag.at(next).srcs) {
-        cout << "Data: " << inputs.name << " to " << next << endl;
-        auto domain = domains.at(next);
-        umap* consumer_map =
-          inputs.needed;
-        uset* in_elems =
-          range(its(consumer_map, domain));
-        domains[inputs.name] = in_elems;
-        cout << "\tneeded elements: " << str(in_elems) << endl;
-        search.insert(inputs.name);
-      }
-    }
-
-  }
-
-};
-
 void jacobi_2d_4_test() {
 
   const int unroll = 4;
@@ -4041,6 +3919,165 @@ void seidel2d_test() {
   regression_test(prg);
 }
 
+struct Window {
+  string name;
+  vector<int> strides;
+  vector<vector<int> > offsets;
+  umap* needed;
+};
+
+bool operator<(const Window& w0, const Window& w1) {
+  if (w0.name != w1.name) {
+    return false;
+  }
+  return true;
+}
+
+struct Result {
+  string compute_name;
+  set<Window> srcs;
+};
+
+struct App {
+
+  isl_ctx* ctx;
+  set<string> functions;
+  map<string, Result> app_dag;
+
+  App() {
+    ctx = isl_ctx_alloc();
+  }
+
+  ~App() {
+    isl_ctx_free(ctx);
+  }
+
+  string func2d(const std::string& name) {
+    functions.insert(name);
+    app_dag[name] = {};
+    return name;
+  }
+
+  string func2d(const std::string& name,
+      const string& compute,
+      const vector<Window>& windows) {
+    // TODO: Fill this in
+
+    functions.insert(name);
+    Result res{compute};
+    for (auto w : windows) {
+      w.needed = build_needed(name, w);
+      res.srcs.insert(w);
+    }
+    app_dag[name] = res;
+    return name;
+  }
+
+  umap* build_needed(const string& name, const Window& w) {
+    assert(w.strides.size() > 0);
+    int ndims = w.strides.size();
+
+    vector<int> mins;
+    vector<int> maxs;
+    for (int i = 0; i < ndims; i++) {
+      mins.push_back(10000);
+      maxs.push_back(-1);
+    }
+
+    for (auto s : w.offsets) {
+      for (size_t d = 0; d < s.size(); d++) {
+        if (s[d] < mins[d]) {
+          mins[d] = s[d];
+        }
+        if (s[d] > maxs[d]) {
+          maxs[d] = s[d];
+        }
+      }
+    }
+
+    vector<string> box_strs;
+    vector<string> base_vars;
+    vector<string> arg_vars;
+    for (size_t i = 0; i < mins.size(); i++) {
+      string stride = to_string(w.strides[i]);
+      string base_var = "d" + to_string(i);
+      base_vars.push_back(base_var);
+      string kv = "k" + to_string(i);
+      arg_vars.push_back(kv);
+      int min = mins[i];
+      int max = maxs[i];
+      string base_expr = stride + "*" + base_var;
+      box_strs.push_back(base_expr + " + " + to_string(min) + " <= " + kv + " <= " + base_expr + " + " + to_string(max));
+    }
+    string box_cond = "{ " + name + sep_list(base_vars, "[", "]", ", ") + " -> " + w.name + sep_list(arg_vars, "[", "]", ", ") + " : " + sep_list(box_strs, "", "", " and ") + " }";
+    cout << "Box needed: " << box_cond << endl;
+    umap* m = isl_union_map_read_from_str(ctx, box_cond.c_str());
+    cout << "Map       : " << str(m) << endl;
+
+    return m;
+  }
+
+  string func2d(const std::string& name,
+      const string& compute,
+      const string& arg,
+      const vector<int>& strides,
+      const vector<vector<int> >& offsets) {
+
+    Window w{arg, strides, offsets};
+
+    functions.insert(name);
+    w.needed = build_needed(name, w);
+    Result res{compute, {w}};
+    app_dag[name] = res;
+    return name;
+  }
+
+  void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
+    cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
+    uset* s =
+      isl_union_set_read_from_str(ctx, string("{ [d0, d1] : 0 <= d0 < " + to_string(d0) + " and 0 <= d1 < " + to_string(d1) + " }").c_str());
+    string n = name;
+    map<string, uset*> domains;
+    domains[n] = s;
+    cout << "Domain: " << str(s) << endl;
+
+    set<string> search{n};
+    while (search.size() > 0) {
+      string next = pick(search);
+      search.erase(next);
+
+      for (auto inputs : app_dag.at(next).srcs) {
+        cout << "Data: " << inputs.name << " to " << next << endl;
+        auto domain = domains.at(next);
+        umap* consumer_map =
+          inputs.needed;
+        uset* in_elems =
+          range(its(consumer_map, domain));
+        domains[inputs.name] = in_elems;
+        cout << "\tneeded elements: " << str(in_elems) << endl;
+        search.insert(inputs.name);
+      }
+    }
+
+  }
+
+};
+
+void sobel_test() {
+  App sobel;
+
+  sobel.func2d("img");
+  sobel.func2d("mag_x", "sobel_mx", "img", {1, 1},
+      {{1, -1}, {-1, -1}, {1, 0}, {-1, 0}, {1, 1}, {-1, 1}});
+  sobel.func2d("mag_y", "sobel_my", "img", {1, 1},
+      {{-1, 1}, {-1, -1}, {0, 1}, {0, -1}, {1, 1}, {1, -1}});
+
+  Window xwindow{"mag_x", {1, 1}, {{0, 0}}};
+  Window ywindow{"mag_y", {1, 1}, {{0, 0}}};
+  sobel.func2d("mag", "mag_cu", {xwindow, ywindow});
+  assert(false);
+}
+
 void heat_3d_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
@@ -4447,6 +4484,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
+    sobel_test();
     heat_3d_test();
     
     synth_lb_test();
