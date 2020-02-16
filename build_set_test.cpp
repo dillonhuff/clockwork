@@ -4069,12 +4069,21 @@ struct App {
     cout << "Domain: " << str(wd) << endl;
     isl_union_map *validity =
       isl_union_map_read_from_str(ctx, "{}");
+    for (auto nd : app_dag) {
+      for (auto w : nd.second.srcs) {
+        validity =
+          unn(validity, inv(w.needed));
+      }
+    }
+    cout << "Validity: " << str(validity) << endl;
       //its(dot(writes, inv(reads)), before);
     //cout << "Validity" << endl;
     isl_union_map *proximity =
       cpy(validity);
     isl_schedule* sched = isl_union_set_compute_schedule(wd, validity, proximity);
     cout << "Schedule: " << str(sched) << endl;
+    cout << "C code for schedule..." << endl;
+    cout << codegen_c(its(isl_schedule_get_map(sched), wd)) << endl;
   }
 
 };
