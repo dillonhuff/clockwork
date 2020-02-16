@@ -4106,6 +4106,12 @@ struct App {
 
     {
       auto validity = prox_map;
+      auto raster_sched =
+        rdmap(ctx, "{ img_unrolled[d0, d1] -> [d1, d0] }");
+      auto raster_lt =
+        lex_lt(raster_sched, raster_sched);
+      cout << "Raster lt: " << str(raster_lt) << endl;
+      validity = unn(validity, raster_lt);
       isl_union_map *proximity =
         cpy(prox_map);
       isl_schedule* sched = isl_union_set_compute_schedule(unroll_wd, validity, proximity);
