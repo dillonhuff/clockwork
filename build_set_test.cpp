@@ -3550,7 +3550,7 @@ void jacobi_2d_2_test() {
   prg.name = "jacobi2d_2";
   prg.buffer_port_widths["I"] = 32;
 
-  int unroll_factor = 2;
+  int unroll_factor = 4;
 
   string in_name_0 = "in_0";
   string in_name_1 = "in_1";
@@ -4039,8 +4039,15 @@ struct App {
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     uset* s =
       isl_union_set_read_from_str(ctx, string("{ " + name + "[d0, d1] : 0 <= d0 < " + to_string(d0) + " and 0 <= d1 < " + to_string(d1) + " }").c_str());
+
+    //isl_union_map* unroll_map =
+      ////rdmap(ctx, "{ " + name + "[d0, d1] -> " + name + "_unrolled[floor(d0 / " + to_string(unroll_factor) + "), d1] }");
+    //cout << "Unroll map: " << str(unroll_map) << endl;
+
     string n = name;
     map<string, uset*> domains;
+    //map<string, umap*> unroll_maps;
+    //unroll_maps[n] = unroll_map;
     domains[n] = s;
     cout << "Domain: " << str(s) << endl;
 
@@ -4062,11 +4069,17 @@ struct App {
       }
     }
 
+    umap* unroll_map = rdmap(ctx, "{}");
     uset* wd = isl_union_set_read_from_str(ctx, "{}");
     for (auto d : domains) {
       wd = unn(wd, d.second);
+      isl_union_map* next_map =
+        rdmap(ctx, "{ " + d.first + "[d0, d1] -> " + d.first + "_unrolled[floor(d0 / " + to_string(unroll_factor) + "), d1] }");
+      unroll_map =
+        unn(unroll_map, next_map);
     }
     cout << "Domain: " << str(wd) << endl;
+    cout << "Unroll map: " << str(unroll_map) << endl;
     isl_union_map *validity =
       isl_union_map_read_from_str(ctx, "{}");
     for (auto nd : app_dag) {
@@ -4083,7 +4096,25 @@ struct App {
     isl_schedule* sched = isl_union_set_compute_schedule(wd, validity, proximity);
     cout << "Schedule: " << str(sched) << endl;
     cout << "C code for schedule..." << endl;
-    cout << codegen_c(its(isl_schedule_get_map(sched), wd)) << endl;
+    cout << codegen_c(its(isl_schedule_get_map(sched), wd)) << endl << endl;
+
+    auto prox_roll = dot(proximity, unroll_map);
+    auto prox_map = inv(dot(inv(prox_roll), unroll_map));
+    cout << "Unrolled proximity: " << str(prox_map) << endl;
+    auto unroll_wd = range(its(unroll_map, wd));
+    cout << "Unrolled domain   : " << str(unroll_wd) << endl;
+
+    {
+      auto validity = prox_map;
+      isl_union_map *proximity =
+        cpy(prox_map);
+      isl_schedule* sched = isl_union_set_compute_schedule(unroll_wd, validity, proximity);
+      cout << "After unrolling: " << endl;
+      cout << "Schedule: " << str(sched) << endl;
+      cout << "C code for schedule..." << endl;
+      cout << codegen_c(its(isl_schedule_get_map(sched), unroll_wd)) << endl << endl;
+    }
+
   }
 
 };
@@ -4101,7 +4132,8 @@ void sobel_test() {
   Window ywindow{"mag_y", {1, 1}, {{0, 0}}};
   sobel.func2d("mag", "mag_cu", {xwindow, ywindow});
 
-  sobel.realize("mag", 30, 30, 1);
+  sobel.realize("mag", 30, 30, 4);
+
   assert(false);
 }
 

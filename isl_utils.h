@@ -667,6 +667,11 @@ isl_map* dot(isl_map* const m0, isl_map* const m1) {
 isl_union_map* coalesce(isl_union_map* const m0) {
   return isl_union_map_coalesce(cpy(m0));
 }
+
+isl_union_map* dot_domain(isl_union_map* const m0, isl_union_map* const m1) {
+  return isl_union_map_apply_domain(cpy(m0), cpy(m1));
+}
+
 isl_union_map* dot(isl_union_map* const m0, isl_union_map* const m1) {
   return isl_union_map_apply_range(cpy(m0), cpy(m1));
 }
@@ -776,5 +781,9 @@ isl_union_pw_qpolynomial_fold* upper_bound(isl_union_pw_qpolynomial* range_card)
   int* b = &tight;
   auto bound = isl_union_pw_qpolynomial_bound(cpy(range_card), isl_fold_max, b);
   return bound;
+}
+
+umap* rdmap(isl_ctx* ctx, const std::string& str) {
+  return isl_union_map_read_from_str(ctx, str.c_str());
 }
 
