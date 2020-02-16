@@ -4062,6 +4062,19 @@ struct App {
       }
     }
 
+    uset* wd = isl_union_set_read_from_str(ctx, "{}");
+    for (auto d : domains) {
+      wd = unn(wd, d.second);
+    }
+    cout << "Domain: " << str(wd) << endl;
+    isl_union_map *validity =
+      isl_union_map_read_from_str(ctx, "{}");
+      //its(dot(writes, inv(reads)), before);
+    //cout << "Validity" << endl;
+    isl_union_map *proximity =
+      cpy(validity);
+    isl_schedule* sched = isl_union_set_compute_schedule(wd, validity, proximity);
+    cout << "Schedule: " << str(sched) << endl;
   }
 
 };
