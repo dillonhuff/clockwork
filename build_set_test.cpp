@@ -3960,6 +3960,13 @@ struct App {
 
   string func2d(const std::string& name,
       const string& compute,
+      const Window& window) {
+    vector<Window> windows{window};
+    return func2d(name, compute, windows);
+  }
+
+  string func2d(const std::string& name,
+      const string& compute,
       const vector<Window>& windows) {
     // TODO: Fill this in
 
@@ -3977,6 +3984,8 @@ struct App {
   }
 
   umap* build_needed(const string& name, const Window& w) {
+    cout << "Building: " << w.name << " needed map" << endl;
+
     assert(w.strides.size() > 0);
     int ndims = w.strides.size();
 
@@ -4023,6 +4032,19 @@ struct App {
   string func2d(const std::string& name,
       const string& compute,
       const string& arg,
+      const vector<vector<int> >& offsets) {
+    assert(offsets.size() > 0);
+    size_t ndims = offsets.at(0).size();
+    vector<int> strides;
+    for (size_t i = 0; i < ndims; i++) {
+      strides.push_back(i);
+    }
+    return func2d(name, compute, arg, strides, offsets);
+  }
+
+  string func2d(const std::string& name,
+      const string& compute,
+      const string& arg,
       const vector<int>& strides,
       const vector<vector<int> >& offsets) {
 
@@ -4056,6 +4078,9 @@ struct App {
       string next = pick(search);
       search.erase(next);
 
+      cout << "Next = " << next << endl;
+      assert(contains_key(next, app_dag));
+
       for (auto inputs : app_dag.at(next).srcs) {
         cout << "Data: " << inputs.name << " to " << next << endl;
         auto domain = domains.at(next);
@@ -4068,6 +4093,8 @@ struct App {
         search.insert(inputs.name);
       }
     }
+
+    cout << "Dealing with unroll..." << endl;
 
     umap* unroll_map = rdmap(ctx, "{}");
     uset* wd = isl_union_set_read_from_str(ctx, "{}");
@@ -4118,12 +4145,46 @@ struct App {
       cout << "After unrolling: " << endl;
       cout << "Schedule: " << str(sched) << endl;
       cout << "C code for schedule..." << endl;
-      cout << codegen_c(its(isl_schedule_get_map(sched), unroll_wd)) << endl << endl;
+      auto sched_map = coalesce(its(isl_schedule_get_map(sched), unroll_wd));
+      cout << "Generating code for schedule map: " << str(sched_map) << endl;
+      cout << codegen_c(sched_map) << endl;
     }
 
   }
 
 };
+
+Window win(const std::string& name, const std::vector<vector<int > >& offsets) {
+  assert(offsets.size() > 0);
+  size_t ndims = offsets.at(0).size();
+  vector<int> strides;
+  for (size_t i = 0; i < ndims; i++) {
+    strides.push_back(i);
+  }
+  return Window{name, strides, offsets};
+}
+
+Window pt(const std::string& name) {
+  return Window{name, {1, 1}, {{0, 0}}};
+}
+
+void denoise2d_test() {
+  App dn;
+
+  dn.func2d("f");
+  dn.func2d("u");
+  dn.func2d("diff_u", "sub", "u", {{0, 0}, {0, -1}});
+  dn.func2d("diff_d", "sub", "u", {{0, 0}, {0, 1}});
+  dn.func2d("diff_l", "sub", "u", {{0, 0}, {-1, 0}});
+  dn.func2d("diff_r", "sub", "u", {{0, 0}, {1, 0}});
+  dn.func2d("g", "mag_dn2", {pt("diff_u"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
+  dn.func2d("r0", "comp_r0", {pt("u"), pt("f")});
+  dn.func2d("r1", "r1_comp", pt("r0"));
+  dn.func2d("output", "out_comp_dn2d", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
+ 
+  dn.realize("output", 30, 30, 1);
+  assert(false);
+}
 
 void sobel_test() {
   App sobel;
@@ -4139,8 +4200,6 @@ void sobel_test() {
   sobel.func2d("mag", "mag_cu", {xwindow, ywindow});
 
   sobel.realize("mag", 30, 30, 4);
-
-  assert(false);
 }
 
 void heat_3d_test() {
@@ -4549,6 +4608,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
+    denoise2d_test();
     sobel_test();
     heat_3d_test();
     

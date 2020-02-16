@@ -713,6 +713,7 @@ isl_basic_set* domain(isl_basic_map* const m) {
 }
 
 std::string codegen_c(isl_union_map* res) {
+  //isl_options_set_ast_build_allow_else(ctx(res), 0);
   isl_ast_build* build = isl_ast_build_alloc(isl_union_map_get_ctx(res));
   isl_ast_node* code =
     isl_ast_build_node_from_schedule_map(build, cpy(res));
