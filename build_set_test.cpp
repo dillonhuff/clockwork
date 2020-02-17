@@ -4079,8 +4079,7 @@ struct App {
 
     string n = name;
     map<string, uset*> domains;
-    //map<string, umap*> unroll_maps;
-    //unroll_maps[n] = unroll_map;
+    map<string, Box> domain_boxes;
     domains[n] = s;
     cout << "Domain: " << str(s) << endl;
 
@@ -4092,7 +4091,27 @@ struct App {
       cout << "Next = " << next << endl;
       assert(contains_key(next, app_dag));
 
+      Box consumer_domain =
+        map_find(next. domain_boxes);
+
+      int i = 0;
       for (auto inputs : app_dag.at(next).srcs) {
+        Window win = inputs;
+
+        // For each input to this function the analysis
+        // needs to compute the largest address read by
+        // this consumer. 
+        for (auto range : consumer_domain) {
+          int min_result_addr = range.min;
+          int max_result_addr = range.max;
+
+          // Need to compute the max address
+          int min_input_addr =
+            win.strides.at(dim)*min_result_addr - min_window_offset;
+          int max_input_addr =
+            win.strides.at(dim)*max_result_addr - max_window_offset;
+          i++;
+        }
         cout << "Data: " << inputs.name << " to " << next << endl;
         auto domain = domains.at(next);
         umap* consumer_map =
