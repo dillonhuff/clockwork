@@ -3919,6 +3919,15 @@ void seidel2d_test() {
   regression_test(prg);
 }
 
+struct Range {
+  int start;
+  int end;
+};
+
+struct Box {
+  vector<Range> intervals;
+};
+
 struct Window {
   string name;
   vector<int> strides;
@@ -4037,7 +4046,7 @@ struct App {
     size_t ndims = offsets.at(0).size();
     vector<int> strides;
     for (size_t i = 0; i < ndims; i++) {
-      strides.push_back(i);
+      strides.push_back(1);
     }
     return func2d(name, compute, arg, strides, offsets);
   }
@@ -4061,7 +4070,9 @@ struct App {
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     uset* s =
       isl_union_set_read_from_str(ctx, string("{ " + name + "[d0, d1] : 0 <= d0 < " + to_string(d0) + " and 0 <= d1 < " + to_string(d1) + " }").c_str());
-
+    Box sbox;
+    sbox.intervals.push_back({0, d0});
+    sbox.intervals.push_back({0, d1});
     //isl_union_map* unroll_map =
       ////rdmap(ctx, "{ " + name + "[d0, d1] -> " + name + "_unrolled[floor(d0 / " + to_string(unroll_factor) + "), d1] }");
     //cout << "Unroll map: " << str(unroll_map) << endl;
@@ -4088,13 +4099,16 @@ struct App {
           inputs.needed;
         uset* in_elems =
           range(its(consumer_map, domain));
+        cout << "\tneeded elements: " << str(in_elems) << endl;
         if (!contains_key(inputs.name, domains)) {
           domains[inputs.name] = in_elems;
         } else {
+          cout << "\tdomain before union = " << str(domains[inputs.name]) << endl;
           domains[inputs.name] =
-            unn(domains[inputs.name], in_elems);
+            simplify(coalesce(unn(domains[inputs.name], in_elems)));
+          cout << "\tdomain after union = " << str(domains[inputs.name]) << endl;
+          cout << "\tcardinality        = " << str(card(domains[inputs.name])) << endl;
         }
-        cout << "\tneeded elements: " << str(in_elems) << endl;
         search.insert(inputs.name);
       }
     }
