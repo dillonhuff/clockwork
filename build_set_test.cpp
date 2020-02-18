@@ -4160,7 +4160,7 @@ struct App {
         Window win = inputs;
 
         Box in_box;
-        //domain_boxes[inputs.name] = Box(2);
+        domain_boxes[inputs.name] = Box(2);
         // For each input to this function the analysis
         // needs to compute the largest address read by
         // this consumer. 
@@ -4178,7 +4178,7 @@ struct App {
           in_box.intervals.push_back({min_input_addr, max_input_addr});
         }
         cout << "Data: " << inputs.name << " to " << next << endl;
-        domain_boxes[inputs.name] = unn(domain_boxes[next], in_box);
+        domain_boxes[inputs.name] = unn(domain_boxes[inputs.name], in_box);
 
         cout << "Added " << next << " domain to boxes" << endl;
         assert(contains_key(next, domain_boxes));
