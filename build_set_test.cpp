@@ -3920,19 +3920,69 @@ void seidel2d_test() {
 }
 
 struct Range {
-  int start;
-  int end;
+  int min;
+  int max;
 };
 
 struct Box {
   vector<Range> intervals;
+
+  Box() {}
+
+  Box(const int dims) {
+    for (int i = 0; i < dims; i++) {
+      intervals.push_back({0, -1});
+    }
+  }
 };
+
+Box unn(const Box& l, const Box& r) {
+  cout << "l intervals = " << l.intervals.size() << endl;
+  cout << "r intervals = " << r.intervals.size() << endl;
+
+  assert(l.intervals.size() == r.intervals.size());
+  Box un;
+  for (size_t dim = 0; dim < l.intervals.size(); dim++) {
+    un.intervals.push_back({min(l.intervals.at(dim).min, r.intervals.at(dim).min), max(l.intervals.at(dim).max, r.intervals.at(dim).max)});
+  }
+
+  cout << "Got union" << endl;
+  return un;
+}
 
 struct Window {
   string name;
   vector<int> strides;
   vector<vector<int> > offsets;
   umap* needed;
+
+  int stride(const int dim) {
+    cout << "Getting dim = " << dim << endl;
+    assert(dim < (int) strides.size());
+    return strides.at(dim);
+  }
+
+  int min_offset(const int dim) {
+    assert((int) strides.size() > dim);
+    int min = 10000;
+    for (auto off : offsets) {
+      if (off.at(dim) < min) {
+        min = off.at(dim);
+      }
+    }
+    return min;
+  }
+
+  int max_offset(const int dim) {
+    assert((int) strides.size() > dim);
+    int max = -100000;
+    for (auto off : offsets) {
+      if (off.at(dim) > max) {
+        max = off.at(dim);
+      }
+    }
+    return max;
+  }
 };
 
 bool operator<(const Window& w0, const Window& w1) {
@@ -4081,6 +4131,7 @@ struct App {
     map<string, uset*> domains;
     map<string, Box> domain_boxes;
     domains[n] = s;
+    domain_boxes[n] = sbox;
     cout << "Domain: " << str(s) << endl;
 
     set<string> search{n};
@@ -4092,27 +4143,31 @@ struct App {
       assert(contains_key(next, app_dag));
 
       Box consumer_domain =
-        map_find(next. domain_boxes);
+        map_find(next, domain_boxes);
 
-      int i = 0;
+      int dim = 0;
+      domain_boxes[next] = Box(2);
       for (auto inputs : app_dag.at(next).srcs) {
         Window win = inputs;
 
+        Box in_box;
         // For each input to this function the analysis
         // needs to compute the largest address read by
         // this consumer. 
-        for (auto range : consumer_domain) {
+        for (auto range : consumer_domain.intervals) {
           int min_result_addr = range.min;
           int max_result_addr = range.max;
 
           // Need to compute the max address
           int min_input_addr =
-            win.strides.at(dim)*min_result_addr - min_window_offset;
+            win.stride(dim)*min_result_addr - win.min_offset(dim);
           int max_input_addr =
-            win.strides.at(dim)*max_result_addr - max_window_offset;
-          i++;
+            win.stride(dim)*max_result_addr + win.max_offset(dim);
+          dim++;
+          in_box.intervals.push_back({min_input_addr, max_input_addr});
         }
         cout << "Data: " << inputs.name << " to " << next << endl;
+        domain_boxes[next] = unn(domain_boxes[next], in_box);
         auto domain = domains.at(next);
         umap* consumer_map =
           inputs.needed;
