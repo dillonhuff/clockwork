@@ -4017,6 +4017,17 @@ struct QAV {
   int denom;
 };
 
+bool operator==(const QAV& l, const QAV& r) {
+  if (l.is_num != r.is_num) {
+    return false;
+  }
+
+  if (l.is_num) {
+    return l.num == r.num && l.denom == r.denom;
+  }
+
+  return l.name == r.name;
+}
 
 std::ostream& operator<<(std::ostream& out, const QAV& c) {
   if (c.is_num) {
@@ -4043,6 +4054,17 @@ QAV qvar(const std::string& v) {
 struct QTerm {
   QAV lhs;
   QAV rhs;
+
+
+  void replace(const QAV& target, const QAV& replacement) {
+    if (lhs == target) {
+      lhs = replacement;
+    }
+    if (rhs == target) {
+      rhs = replacement;
+    }
+  }
+
 };
 
 std::ostream& operator<<(std::ostream& out, const QTerm& c) {
@@ -4060,6 +4082,13 @@ QTerm qterm(const QAV& l, const QAV& r) {
 
 struct QExpr {
   vector<QTerm> terms;
+ 
+
+  void replace(const QAV& target, const QAV& replacement) {
+    for (auto& t : terms) {
+      t.replace(target, replacement);
+    }
+  }
 };
 
 std::ostream& operator<<(std::ostream& out, const QExpr& c) {
@@ -4094,7 +4123,8 @@ struct QConstraint {
   QExpr rhs;
 
   void replace(const QAV& target, const QAV& replacement) {
-
+    lhs.replace(target, replacement);
+    rhs.replace(target, replacement);
   }
 };
 
