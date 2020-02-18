@@ -4084,8 +4084,20 @@ QTerm qterm(const string& r) {
   return qterm(qvar(r));
 }
 
+QTerm qterm(const int& r) {
+  return qterm(qconst(r));
+}
+
 QTerm qterm(const QAV& l, const QAV& r) {
   return {{l, r}};
+}
+
+QTerm qterm(const int& l, const QAV& r) {
+  return {{qconst(l), r}};
+}
+
+QTerm qterm(const int& l, const string& r) {
+  return {{qconst(l), qvar(r)}};
 }
 
 QTerm qterm(const QAV& a, const QAV& l, const QAV& r) {
@@ -4377,6 +4389,7 @@ struct App {
       cout << "\t" << s << map_find(s, domain_boxes) << endl;
     }
     int ndims = 2;
+    map<string, vector<QExpr> > schedules;
     for (int i = 0; i < ndims; i++) {
       string dv = "d" + to_string(i);
       cout << "Scheduling dim: " << i << endl;
@@ -4442,15 +4455,40 @@ struct App {
         p++;
       }
 
-      // TODO: Print schedules and create loop nest for the program
       cout << "Final schedules: " << endl;
       for (auto f : sorted_functions) {
-        cout << "s_" << f << "(x) = " <<
-          map_find("q_" + f, rates) << "*" << "x" <<
-          " + " << map_find("d_" + f, delays) << endl;
+        assert(contains_key("d_" + f, delays));
+        assert(contains_key("q_" + f, rates));
+
+        int delay = 
+          map_find("d_" + f, delays);
+        int rate =
+          map_find("q_" + f, rates);
+
+        QTerm rd = qterm(rate, dv);
+        QTerm d = qterm(delay);
+        //cout << "s_" << f << "(" << dv << ") = " <<
+          //map_find("q_" + f, rates) << "*" << dv <<
+          //" + " << map_find("d_" + f, delays) << endl;
+        // rd = dim_var * rate constant
+        // d = delay_constant
+        auto si = qexpr(rd, d);
+        schedules[f].push_back(si);
       }
     }
 
+    cout << "Schedule vectors..." << endl;
+    for (auto s : schedules) {
+      cout << "\t" << s.first;
+      vector<string> strs;
+      for (auto d : s.second) {
+        ostringstream ss;
+        ss << d;
+        strs.push_back(ss.str());
+      }
+      cout << sep_list(strs, "[", "]", ", ");
+      cout << endl;
+    }
     assert(false);
     cout << "Dealing with unroll..." << endl;
 
