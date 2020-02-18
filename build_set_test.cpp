@@ -3957,7 +3957,7 @@ struct Window {
   umap* needed;
 
   int stride(const int dim) {
-    cout << "Getting dim = " << dim << endl;
+    cout << "Getting stride for dim = " << dim << endl;
     assert(dim < (int) strides.size());
     return strides.at(dim);
   }
@@ -4145,7 +4145,6 @@ struct App {
       Box consumer_domain =
         map_find(next, domain_boxes);
 
-      int dim = 0;
       domain_boxes[next] = Box(2);
       for (auto inputs : app_dag.at(next).srcs) {
         Window win = inputs;
@@ -4154,6 +4153,7 @@ struct App {
         // For each input to this function the analysis
         // needs to compute the largest address read by
         // this consumer. 
+        int dim = 0;
         for (auto range : consumer_domain.intervals) {
           int min_result_addr = range.min;
           int max_result_addr = range.max;
