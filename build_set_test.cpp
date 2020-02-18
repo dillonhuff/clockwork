@@ -3965,8 +3965,17 @@ struct Window {
   vector<vector<int> > offsets;
   umap* needed;
 
+  string interval_set_string(const int dim) {
+    assert(dim < strides.size());
+    string base = "x*" + to_string(stride(dim));
+    int min_off = min_offset(dim);
+    int max_off = max_offset(dim);
+
+    return "{ k | " + base + " + " + to_string(min_off) + " <= k <= " + base + " + " + to_string(max_off) + " }";
+  }
+
   int stride(const int dim) {
-    cout << "Getting stride for dim = " << dim << endl;
+    //cout << "Getting stride for dim = " << dim << endl;
     assert(dim < (int) strides.size());
     return strides.at(dim);
   }
@@ -4142,10 +4151,12 @@ struct App {
     cout << "Domain: " << str(s) << endl;
 
     set<string> search{n};
+    set<string> considered;
     vector<string> sorted_functions;
     while (search.size() > 0) {
       string next = pick(search);
       search.erase(next);
+      considered.insert(next);
       sorted_functions.push_back(next);
 
       cout << "Next = " << next << endl;
@@ -4159,11 +4170,10 @@ struct App {
       for (auto inputs : app_dag.at(next).srcs) {
         Window win = inputs;
 
+        if (!contains_key(inputs.name, domain_boxes)) {
+          domain_boxes[inputs.name] = Box(2);
+        }
         Box in_box;
-        domain_boxes[inputs.name] = Box(2);
-        // For each input to this function the analysis
-        // needs to compute the largest address read by
-        // this consumer. 
         int dim = 0;
         for (auto range : consumer_domain.intervals) {
           int min_result_addr = range.min;
@@ -4200,7 +4210,10 @@ struct App {
           cout << "\tdomain after union = " << str(domains[inputs.name]) << endl;
           cout << "\tcardinality        = " << str(card(domains[inputs.name])) << endl;
         }
-        search.insert(inputs.name);
+
+        if (!elem(inputs.name, considered)) {
+          search.insert(inputs.name);
+        }
       }
     }
 
@@ -4209,6 +4222,22 @@ struct App {
     for (auto s : sorted_functions) {
       cout << "\t" << s << map_find(s, domain_boxes) << endl;
     }
+    int ndims = 2;
+    for (int i = 0; i < ndims; i++) {
+      string dv = "d" + to_string(i);
+      cout << "Scheduling dim: " << i << endl;
+      for (auto f : sorted_functions) {
+        cout << f << " schedule constraints: " << endl;
+        Box b = map_find(f, domain_boxes);
+        Range r = b.intervals.at(i);
+        int min = r.min;
+        cout << "\tq_" << f << "*" << min << " + d_" << f << " >= 0" << endl;
+        for (auto arg : app_dag.at(f).srcs) {
+          cout << "\ts_" << f << "(x) >= " << "s_" << arg.name << "(k) forall k in " << arg.interval_set_string(i) << endl;
+        }
+      }
+    }
+
     assert(false);
     cout << "Dealing with unroll..." << endl;
 
@@ -4232,6 +4261,7 @@ struct App {
           unn(validity, inv(w.needed));
       }
     }
+
     cout << "Validity: " << str(validity) << endl;
       //its(dot(writes, inv(reads)), before);
     //cout << "Validity" << endl;
