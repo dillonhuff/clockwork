@@ -3991,7 +3991,7 @@ struct Window {
     return min;
   }
 
-  int max_offset(const int dim) {
+  int max_offset(const int dim) const {
     assert((int) strides.size() > dim);
     int max = -100000;
     for (auto off : offsets) {
@@ -4020,7 +4020,12 @@ struct QAV {
 
 std::ostream& operator<<(std::ostream& out, const QAV& c) {
   if (c.is_num) {
-    out << "(" << c.num << " / " << c.denom << ")";
+    assert(c.denom != 0);
+    if (c.num == 0) {
+      out << "0";
+    } else {
+      out << "(" << c.num << " / " << c.denom << ")";
+    }
   } else {
     out << c.name;
   }
@@ -4072,6 +4077,14 @@ QExpr qexpr(const int v) {
   return QExpr{{qterm(qconst(v))}};
 }
 
+QExpr qexpr(const QAV& v) {
+  return QExpr{{qterm(v)}};
+}
+
+QExpr qexpr(const QTerm& l) {
+  return QExpr{{l}};
+}
+
 QExpr qexpr(const QTerm& l, const QTerm& r) {
   return QExpr{{l, r}};
 }
@@ -4090,6 +4103,18 @@ struct Result {
   string compute_name;
   set<Window> srcs;
 };
+
+QExpr upper_bound(const Window& arg, const int dim) {
+  string dvar = "d" + to_string(dim);
+  QAV dv = qvar(dvar);
+  QAV stride = qconst(arg.strides.at(dim));
+  QAV max_off = qconst(arg.max_offset(dim));
+  cout << "Max ffset = " << arg.max_offset(dim) << endl;
+  cout << "Max off = " << max_off << endl;
+  QTerm dvs = qterm(stride, dv);
+  QExpr k = qexpr(dvs, (qterm(max_off)));
+  return k;
+}
 
 struct App {
 
@@ -4319,10 +4344,14 @@ struct App {
         for (auto arg : app_dag.at(f).srcs) {
           QTerm ft = qterm(f_rate, qvar(dv));
           QExpr ftime = qexpr(ft, f_delay);
-          cout << "\t" << ftime << " >= " << "s_" << arg.name << "(k) forall k in " << arg.interval_set_string(i) << endl;
+          //cout << "\t" << ftime << " >= " << "s_" << arg.name << "(k) forall k in " << arg.interval_set_string(i) << endl;
           //cout << "\ts_" << f << "(x) >= " << "s_" << arg.name << "(k) forall k in " << arg.interval_set_string(i) << endl;
-          //QExpr ub = upper_bound(arg.interval(i));
+          QExpr ub = upper_bound(arg, i);
 
+          QConstraint start_after_deps{ftime, ub};
+          cout << "\t" << start_after_deps << endl;
+
+          //cout << "\t" << ftime << " >= " << "s_" << arg.name << "(k) forall k in " << arg.interval_set_string(i) << endl;
           // Get bounding quasi affine expression and use it to set rates
           // For stencil this is already done, all rates should be 1.
           //
