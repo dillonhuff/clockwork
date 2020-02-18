@@ -36,7 +36,7 @@ static inline
 string tab(const int n) {
   string t = "";
   for (int i = 0; i < n; i++) {
-    t += "\t";
+    t += "  ";
   }
   return t;
 }

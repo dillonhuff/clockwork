@@ -4477,7 +4477,17 @@ struct App {
       }
     }
 
+    int pos = 0;
+    for (auto f : sorted_functions) {
+      schedules[f].push_back(qexpr(pos));
+      pos++;
+    }
+
     cout << "Schedule vectors..." << endl;
+    Box time_bounds =
+      Box(ndims + 1);
+
+    // TODO: Actually set time bounds
     for (auto s : schedules) {
       cout << "\t" << s.first;
       vector<string> strs;
@@ -4487,7 +4497,21 @@ struct App {
         strs.push_back(ss.str());
       }
       cout << sep_list(strs, "[", "]", ", ");
+      auto d = 
+        map_find(s.first, domain_boxes);
+      d.intervals.push_back({0, 0});
+      cout << " over: " << d << endl;
       cout << endl;
+    }
+
+    cout << "Loops for schedule..." << endl;
+    int indent_level = 0;
+    for (auto r : time_bounds.intervals) {
+      string v = "t" + to_string(indent_level);
+      cout << tab(indent_level) << "for (" << v << " = 0; " << v << 
+        " <= 1; " << v << "++) {" << endl;
+      indent_level++;
+      cout << tab(indent_level) << "}" << endl;
     }
     assert(false);
     cout << "Dealing with unroll..." << endl;
