@@ -4010,6 +4010,82 @@ bool operator<(const Window& w0, const Window& w1) {
   return w0.name < w1.name;
 }
 
+struct QAV {
+  bool is_num;
+  string name;
+  int num;
+  int denom;
+};
+
+
+std::ostream& operator<<(std::ostream& out, const QAV& c) {
+  if (c.is_num) {
+    out << "(" << c.num << " / " << c.denom << ")";
+  } else {
+    out << c.name;
+  }
+  return out;
+}
+
+QAV qconst(const int& v) {
+  return {true, "", v, 1};
+}
+
+QAV qvar(const std::string& v) {
+  return {false, v};
+}
+
+struct QTerm {
+  QAV lhs;
+  QAV rhs;
+};
+
+std::ostream& operator<<(std::ostream& out, const QTerm& c) {
+  out << c.lhs << "*" << c.rhs;
+  return out;
+}
+
+QTerm qterm(const QAV& r) {
+  return QTerm{qconst(1), r};
+}
+
+QTerm qterm(const QAV& l, const QAV& r) {
+  return QTerm{l, r};
+}
+
+struct QExpr {
+  vector<QTerm> terms;
+};
+
+std::ostream& operator<<(std::ostream& out, const QExpr& c) {
+  vector<string> termstrings;
+  for (auto t : c.terms) {
+    ostringstream ss;
+    ss << t;
+    termstrings.push_back(ss.str());
+  }
+  out << sep_list(termstrings, "", "", " + ");
+  return out;
+}
+
+QExpr qexpr(const int v) {
+  return QExpr{{qterm(qconst(v))}};
+}
+
+QExpr qexpr(const QTerm& l, const QTerm& r) {
+  return QExpr{{l, r}};
+}
+
+struct QConstraint {
+  QExpr lhs;
+  QExpr rhs;
+};
+
+std::ostream& operator<<(std::ostream& out, const QConstraint& c) {
+  out << c.lhs << " >= " << c.rhs;
+  return out;
+}
+
 struct Result {
   string compute_name;
   set<Window> srcs;
@@ -4231,9 +4307,23 @@ struct App {
         Box b = map_find(f, domain_boxes);
         Range r = b.intervals.at(i);
         int min = r.min;
-        cout << "\tq_" << f << "*" << min << " + d_" << f << " >= 0" << endl;
+        QAV f_rate = qvar("q_" + f);
+        QAV minr = qconst(min);
+        QTerm f_delay = qterm(qvar("d_" + f));
+        QTerm prod = qterm(minr, f_rate);
+        QExpr offset = qexpr(prod, f_delay);
+        QExpr zero = qexpr(0);
+        QConstraint start_time{offset, zero};
+        cout << "\t" << start_time << endl;
+        //cout << "\tq_" << f << "*" << min << " + d_" << f << " >= 0" << endl;
         for (auto arg : app_dag.at(f).srcs) {
           cout << "\ts_" << f << "(x) >= " << "s_" << arg.name << "(k) forall k in " << arg.interval_set_string(i) << endl;
+          //QExpr ub = upper_bound(arg.interval(i));
+
+          // Get bounding quasi affine expression and use it to set rates
+          // For stencil this is already done, all rates should be 1.
+          //
+          // Next: Once this is done we need to compute delays
         }
       }
     }
