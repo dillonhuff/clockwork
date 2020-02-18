@@ -4317,7 +4317,10 @@ struct App {
         cout << "\t" << start_time << endl;
         //cout << "\tq_" << f << "*" << min << " + d_" << f << " >= 0" << endl;
         for (auto arg : app_dag.at(f).srcs) {
-          cout << "\ts_" << f << "(x) >= " << "s_" << arg.name << "(k) forall k in " << arg.interval_set_string(i) << endl;
+          QTerm ft = qterm(f_rate, qvar(dv));
+          QExpr ftime = qexpr(ft, f_delay);
+          cout << "\t" << ftime << " >= " << "s_" << arg.name << "(k) forall k in " << arg.interval_set_string(i) << endl;
+          //cout << "\ts_" << f << "(x) >= " << "s_" << arg.name << "(k) forall k in " << arg.interval_set_string(i) << endl;
           //QExpr ub = upper_bound(arg.interval(i));
 
           // Get bounding quasi affine expression and use it to set rates
