@@ -4092,6 +4092,10 @@ QExpr qexpr(const QTerm& l, const QTerm& r) {
 struct QConstraint {
   QExpr lhs;
   QExpr rhs;
+
+  void replace(const QAV& target, const QAV& replacement) {
+
+  }
 };
 
 std::ostream& operator<<(std::ostream& out, const QConstraint& c) {
@@ -4363,6 +4367,19 @@ struct App {
       cout << "Rates..." << endl;
       for (auto r : rates) {
         cout << "\t" << r.first << " -> " << r.second << endl;
+      }
+      vector<QConstraint> delay_constraints =
+        all_constraints;
+      for (auto& c : delay_constraints) {
+        for (auto r : rates) {
+          c.replace(qvar(r.first),
+              qconst(map_find(r.first, rates)));
+        }
+      }
+
+      cout << "All delay constraints..." << endl;
+      for (auto c : delay_constraints) {
+        cout << "\t" << c << endl;
       }
     }
 
