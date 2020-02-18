@@ -3936,6 +3936,15 @@ struct Box {
   }
 };
 
+std::ostream& operator<<(std::ostream& out, const Box& b) {
+  vector<string> ranges;
+  for (auto range : b.intervals) {
+    ranges.push_back("[" + to_string(range.min) + ", " + to_string(range.max) + "]");
+  }
+  out << sep_list(ranges, "{", "}", ", ");
+  return out;
+}
+
 Box unn(const Box& l, const Box& r) {
   cout << "l intervals = " << l.intervals.size() << endl;
   cout << "r intervals = " << r.intervals.size() << endl;
@@ -4121,8 +4130,8 @@ struct App {
     uset* s =
       isl_union_set_read_from_str(ctx, string("{ " + name + "[d0, d1] : 0 <= d0 < " + to_string(d0) + " and 0 <= d1 < " + to_string(d1) + " }").c_str());
     Box sbox;
-    sbox.intervals.push_back({0, d0});
-    sbox.intervals.push_back({0, d1});
+    sbox.intervals.push_back({0, d0 - 1});
+    sbox.intervals.push_back({0, d1 - 1});
     //isl_union_map* unroll_map =
       ////rdmap(ctx, "{ " + name + "[d0, d1] -> " + name + "_unrolled[floor(d0 / " + to_string(unroll_factor) + "), d1] }");
     //cout << "Unroll map: " << str(unroll_map) << endl;
@@ -4132,6 +4141,7 @@ struct App {
     map<string, Box> domain_boxes;
     domains[n] = s;
     domain_boxes[n] = sbox;
+    cout << "Added " << n << " to domain boxes" << endl;
     cout << "Domain: " << str(s) << endl;
 
     set<string> search{n};
@@ -4141,15 +4151,17 @@ struct App {
 
       cout << "Next = " << next << endl;
       assert(contains_key(next, app_dag));
+      assert(contains_key(next, domain_boxes));
 
       Box consumer_domain =
         map_find(next, domain_boxes);
 
-      domain_boxes[next] = Box(2);
+      cout << "Adding " << next << " to domain boxes" << endl;
       for (auto inputs : app_dag.at(next).srcs) {
         Window win = inputs;
 
         Box in_box;
+        //domain_boxes[inputs.name] = Box(2);
         // For each input to this function the analysis
         // needs to compute the largest address read by
         // this consumer. 
@@ -4160,20 +4172,26 @@ struct App {
 
           // Need to compute the max address
           int min_input_addr =
-            win.stride(dim)*min_result_addr - win.min_offset(dim);
+            win.stride(dim)*min_result_addr + win.min_offset(dim);
           int max_input_addr =
             win.stride(dim)*max_result_addr + win.max_offset(dim);
           dim++;
           in_box.intervals.push_back({min_input_addr, max_input_addr});
         }
         cout << "Data: " << inputs.name << " to " << next << endl;
-        domain_boxes[next] = unn(domain_boxes[next], in_box);
+        domain_boxes[inputs.name] = unn(domain_boxes[next], in_box);
+
+        cout << "Added " << next << " domain to boxes" << endl;
+        assert(contains_key(next, domain_boxes));
+
         auto domain = domains.at(next);
+
         umap* consumer_map =
           inputs.needed;
         uset* in_elems =
           range(its(consumer_map, domain));
         cout << "\tneeded elements: " << str(in_elems) << endl;
+        cout << "\tneeded box     : " << in_box << endl;
         if (!contains_key(inputs.name, domains)) {
           domains[inputs.name] = in_elems;
         } else {
