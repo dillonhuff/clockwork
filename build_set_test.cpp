@@ -4132,9 +4132,6 @@ struct App {
     Box sbox;
     sbox.intervals.push_back({0, d0 - 1});
     sbox.intervals.push_back({0, d1 - 1});
-    //isl_union_map* unroll_map =
-      ////rdmap(ctx, "{ " + name + "[d0, d1] -> " + name + "_unrolled[floor(d0 / " + to_string(unroll_factor) + "), d1] }");
-    //cout << "Unroll map: " << str(unroll_map) << endl;
 
     string n = name;
     map<string, uset*> domains;
@@ -4145,9 +4142,11 @@ struct App {
     cout << "Domain: " << str(s) << endl;
 
     set<string> search{n};
+    vector<string> sorted_functions;
     while (search.size() > 0) {
       string next = pick(search);
       search.erase(next);
+      sorted_functions.push_back(next);
 
       cout << "Next = " << next << endl;
       assert(contains_key(next, app_dag));
@@ -4205,6 +4204,12 @@ struct App {
       }
     }
 
+    reverse(sorted_functions);
+    cout << "Pipeline sort: " << endl;
+    for (auto s : sorted_functions) {
+      cout << "\t" << s << map_find(s, domain_boxes) << endl;
+    }
+    assert(false);
     cout << "Dealing with unroll..." << endl;
 
     //umap* unroll_map = rdmap(ctx, "{}");
