@@ -4032,8 +4032,8 @@ bool operator==(const QAV& l, const QAV& r) {
 std::ostream& operator<<(std::ostream& out, const QAV& c) {
   if (c.is_num) {
     assert(c.denom != 0);
-    if (c.num == 0) {
-      out << "0";
+    if (c.denom == 1) {
+      out << c.num;
     } else {
       out << "(" << c.num << " / " << c.denom << ")";
     }
@@ -4052,32 +4052,44 @@ QAV qvar(const std::string& v) {
 }
 
 struct QTerm {
-  QAV lhs;
-  QAV rhs;
+  vector<QAV> vals;
 
 
   void replace(const QAV& target, const QAV& replacement) {
-    if (lhs == target) {
-      lhs = replacement;
-    }
-    if (rhs == target) {
-      rhs = replacement;
+    for (auto& v : vals) {
+      if (v == target) {
+        v = replacement;
+      }
     }
   }
 
 };
 
 std::ostream& operator<<(std::ostream& out, const QTerm& c) {
-  out << c.lhs << "*" << c.rhs;
+  vector<string> strs;
+  for (auto t : c.vals) {
+    ostringstream ss;
+    ss << t;
+    strs.push_back(ss.str());
+  }
+  out << sep_list(strs, "", "", "*");
   return out;
 }
 
 QTerm qterm(const QAV& r) {
-  return QTerm{qconst(1), r};
+  return QTerm{{qconst(1), r}};
+}
+
+QTerm qterm(const string& r) {
+  return qterm(qvar(r));
 }
 
 QTerm qterm(const QAV& l, const QAV& r) {
-  return QTerm{l, r};
+  return {{l, r}};
+}
+
+QTerm qterm(const QAV& a, const QAV& l, const QAV& r) {
+  return {{a, l, r}};
 }
 
 struct QExpr {
@@ -4118,6 +4130,10 @@ QExpr qexpr(const QTerm& l, const QTerm& r) {
   return QExpr{{l, r}};
 }
 
+QExpr qexpr(const QTerm& a, const QTerm& l, const QTerm& r) {
+  return QExpr{{a, l, r}};
+}
+
 struct QConstraint {
   QExpr lhs;
   QExpr rhs;
@@ -4143,10 +4159,13 @@ QExpr upper_bound(const Window& arg, const int dim) {
   QAV dv = qvar(dvar);
   QAV stride = qconst(arg.strides.at(dim));
   QAV max_off = qconst(arg.max_offset(dim));
+  QAV rate = qvar("q_" + arg.name);
   cout << "Max ffset = " << arg.max_offset(dim) << endl;
   cout << "Max off = " << max_off << endl;
-  QTerm dvs = qterm(stride, dv);
-  QExpr k = qexpr(dvs, (qterm(max_off)));
+  QTerm dvs = qterm(stride, rate, dv);
+  QTerm qm = qterm(rate, max_off);
+  QTerm delay = qterm("d_" + arg.name);
+  QExpr k = qexpr(dvs, qm, delay);
   return k;
 }
 
