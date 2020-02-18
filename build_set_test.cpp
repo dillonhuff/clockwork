@@ -4430,6 +4430,25 @@ struct App {
       for (auto c : delay_constraints) {
         cout << "\t" << c << endl;
       }
+
+      // TODO: send these constraints to the solver
+      // to get real delay values.
+      //
+
+      map<string, int> delays;
+      int p = 0;
+      for (auto f : sorted_functions) {
+        delays["d_" + f] = p;
+        p++;
+      }
+
+      // TODO: Print schedules and create loop nest for the program
+      cout << "Final schedules: " << endl;
+      for (auto f : sorted_functions) {
+        cout << "s_" << f << "(x) = " <<
+          map_find("q_" + f, rates) << "*" << "x" <<
+          " + " << map_find("d_" + f, delays) << endl;
+      }
     }
 
     assert(false);
