@@ -4327,7 +4327,12 @@ struct App {
     for (int i = 0; i < ndims; i++) {
       string dv = "d" + to_string(i);
       cout << "Scheduling dim: " << i << endl;
+      // Collect all rate variables and
+      // collect all constraints
+      vector<QConstraint> all_constraints;
+      map<string, int> rates;
       for (auto f : sorted_functions) {
+        rates["q_" + f] = 1;
         cout << f << " schedule constraints: " << endl;
         Box b = map_find(f, domain_boxes);
         Range r = b.intervals.at(i);
@@ -4339,6 +4344,7 @@ struct App {
         QExpr offset = qexpr(prod, f_delay);
         QExpr zero = qexpr(0);
         QConstraint start_time{offset, zero};
+        all_constraints.push_back(start_time);
         cout << "\t" << start_time << endl;
         //cout << "\tq_" << f << "*" << min << " + d_" << f << " >= 0" << endl;
         for (auto arg : app_dag.at(f).srcs) {
@@ -4349,14 +4355,14 @@ struct App {
           QExpr ub = upper_bound(arg, i);
 
           QConstraint start_after_deps{ftime, ub};
-          cout << "\t" << start_after_deps << endl;
+          all_constraints.push_back(start_after_deps);
 
-          //cout << "\t" << ftime << " >= " << "s_" << arg.name << "(k) forall k in " << arg.interval_set_string(i) << endl;
-          // Get bounding quasi affine expression and use it to set rates
-          // For stencil this is already done, all rates should be 1.
-          //
-          // Next: Once this is done we need to compute delays
+          cout << "\t" << start_after_deps << endl;
         }
+      }
+      cout << "Rates..." << endl;
+      for (auto r : rates) {
+        cout << "\t" << r.first << " -> " << r.second << endl;
       }
     }
 
