@@ -3939,7 +3939,7 @@ struct Box {
     }
   }
 
-  uset* to_uset(isl_ctx* ctx, const string& name) {
+  isl_set* to_set(isl_ctx* ctx, const string& name) {
     string s = "{ ";
     vector<string> names;
     vector<string> ranges;
@@ -4475,12 +4475,12 @@ struct App {
     for (auto s : sorted_functions) {
       cout << "\t" << s << map_find(s, domain_boxes) << endl;
     }
-    uset* whole_dom =
-      isl_union_set_read_from_str(ctx, "{}");
+    auto whole_dom =
+      rdset(ctx, "{}");
     for (auto f : sorted_functions) {
       Box b = map_find(f, domain_boxes);
       whole_dom =
-        unn(whole_dom, b.to_uset(ctx, f));
+        unn(whole_dom, b.to_set(ctx, f));
     }
 
 
@@ -4562,7 +4562,7 @@ struct App {
         ds.push_back("d_" + f);
       }
       string varspx = sep_list(ds, "[", "]", ", ");
-      uset* legal_delays = rdset(ctx, "{ " + sep_list(ds, "[", "]", ", ") + " }");
+      auto* legal_delays = rdset(ctx, "{ " + sep_list(ds, "[", "]", ", ") + " }");
       for (auto c : delay_constraints) {
         cout << "\t" << c << endl;
         cout << "\tisl str: " << isl_str(c) << endl;
@@ -4570,7 +4570,7 @@ struct App {
       }
 
       cout << "Legal delays: " << str(legal_delays) << endl;
-      cout << "Legal delay point: " << str(isl_union_set_sample_point(legal_delays)) << endl;
+      cout << "Legal delay point: " << str(isl_set_sample_point(legal_delays)) << endl;
       assert(false);
 
       map<string, int> delays;

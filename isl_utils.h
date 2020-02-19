@@ -618,12 +618,20 @@ isl_map* inv(isl_map* const m0) {
   return isl_map_reverse(cpy(m0));
 }
 
+isl_set* unn(isl_set* const m0, isl_set* const m1) {
+  return isl_set_union(cpy(m0), cpy(m1));
+}
+
 isl_union_set* unn(isl_union_set* const m0, isl_union_set* const m1) {
   return isl_union_set_union(cpy(m0), cpy(m1));
 }
 
 isl_union_map* unn(isl_union_map* const m0, isl_union_map* const m1) {
   return isl_union_map_union(cpy(m0), cpy(m1));
+}
+
+isl_set* its(isl_set* const m0, isl_set* const m1) {
+  return isl_set_intersect(cpy(m0), cpy(m1));
 }
 
 isl_map* its(isl_map* const m0, isl_set* const m1) {
@@ -814,8 +822,8 @@ isl_union_pw_qpolynomial_fold* upper_bound(isl_union_pw_qpolynomial* range_card)
   return bound;
 }
 
-uset* rdset(isl_ctx* ctx, const std::string& str) {
-  return isl_union_set_read_from_str(ctx, str.c_str());
+isl_set* rdset(isl_ctx* ctx, const std::string& str) {
+  return isl_set_read_from_str(ctx, str.c_str());
 }
 
 umap* rdmap(isl_ctx* ctx, const std::string& str) {
