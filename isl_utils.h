@@ -792,6 +792,10 @@ isl_union_pw_qpolynomial_fold* upper_bound(isl_union_pw_qpolynomial* range_card)
   return bound;
 }
 
+uset* rdset(isl_ctx* ctx, const std::string& str) {
+  return isl_union_set_read_from_str(ctx, str.c_str());
+}
+
 umap* rdmap(isl_ctx* ctx, const std::string& str) {
   return isl_union_map_read_from_str(ctx, str.c_str());
 }

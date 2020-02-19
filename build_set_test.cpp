@@ -3922,6 +3922,10 @@ void seidel2d_test() {
 struct Range {
   int min;
   int max;
+
+  string constraint_str(const string& v) {
+    return to_string(min) + " <= " + v + " <= " + to_string(max);
+  }
 };
 
 struct Box {
@@ -3933,6 +3937,24 @@ struct Box {
     for (int i = 0; i < dims; i++) {
       intervals.push_back({0, -1});
     }
+  }
+
+  uset* to_uset(isl_ctx* ctx, const string& name) {
+    string s = "{ ";
+    vector<string> names;
+    vector<string> ranges;
+    int i = 0;
+    for (auto r : intervals) {
+      string v = "k" + to_string(i);
+      names.push_back("k" + to_string(i));
+      ranges.push_back(r.constraint_str(v));
+      i++;
+    }
+    s += name + sep_list(names, "[", "]", ", ");
+    s += " : ";
+    s += sep_list(ranges, "", "", " and ");
+    s += " }";
+    return rdset(ctx, s);
   }
 };
 
@@ -4015,6 +4037,10 @@ struct QAV {
   string name;
   int num;
   int denom;
+
+  bool is_one() const {
+    return is_num && (num == 1 && denom == 1);
+  }
 };
 
 bool operator==(const QAV& l, const QAV& r) {
@@ -4053,7 +4079,19 @@ QAV qvar(const std::string& v) {
 
 struct QTerm {
   vector<QAV> vals;
-
+  
+  void simplify() {
+    vector<QAV> newvals;
+    for (auto v : vals) {
+      if (!v.is_one()) {
+        newvals.push_back(v);
+      }
+    }
+    vals = newvals;
+    if (vals.size() == 0) {
+      vals = {qconst(1)};
+    }
+  }
 
   void replace(const QAV& target, const QAV& replacement) {
     for (auto& v : vals) {
@@ -4144,6 +4182,25 @@ QExpr qexpr(const QTerm& l, const QTerm& r) {
 
 QExpr qexpr(const QTerm& a, const QTerm& l, const QTerm& r) {
   return QExpr{{a, l, r}};
+}
+
+string isl_str(QTerm& v) {
+  vector<string> tstrings;
+  for (auto v : v.vals) {
+    ostringstream ss;
+    ss << v;
+    tstrings.push_back(ss.str());
+  }
+  return sep_list(tstrings, "", "", "*");
+}
+
+string isl_str(QExpr& v) {
+  vector<string> tstrings;
+  for (auto t : v.terms) {
+    t.simplify();
+    tstrings.push_back(isl_str(t));
+  }
+  return sep_list(tstrings, "", "", " + ");
 }
 
 struct QConstraint {
@@ -4388,6 +4445,16 @@ struct App {
     for (auto s : sorted_functions) {
       cout << "\t" << s << map_find(s, domain_boxes) << endl;
     }
+    uset* whole_dom =
+      isl_union_set_read_from_str(ctx, "{}");
+    for (auto f : sorted_functions) {
+      Box b = map_find(f, domain_boxes);
+      whole_dom =
+        unn(whole_dom, b.to_uset(ctx, f));
+    }
+
+
+
     int ndims = 2;
     map<string, vector<QExpr> > schedules;
     for (int i = 0; i < ndims; i++) {
@@ -4467,11 +4534,6 @@ struct App {
 
         QTerm rd = qterm(rate, dv);
         QTerm d = qterm(delay);
-        //cout << "s_" << f << "(" << dv << ") = " <<
-          //map_find("q_" + f, rates) << "*" << dv <<
-          //" + " << map_find("d_" + f, delays) << endl;
-        // rd = dim_var * rate constant
-        // d = delay_constant
         auto si = qexpr(rd, d);
         schedules[f].push_back(si);
       }
@@ -4482,6 +4544,52 @@ struct App {
       schedules[f].push_back(qexpr(pos));
       pos++;
     }
+
+
+    // Maybe the thing to do is to build a map from 
+    // the schedule?
+    umap* m = rdmap(ctx, "{}");
+    for (auto f : sorted_functions) {
+      vector<string> sched_exprs;
+      vector<string> var_names;
+      int i = 0; 
+      for (auto v : schedules[f]) {
+        string dv = "d" + to_string(i);
+        sched_exprs.push_back(isl_str(v));
+        var_names.push_back(dv);
+        i++;
+      }
+      var_names.pop_back();
+      string map_str = "{ " + f + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
+      cout << "Map str: " << map_str << endl;
+      m = unn(m, rdmap(ctx, map_str));
+      cout << "Unioned" << endl;
+      cout << "m = " << str(m) << endl;
+    }
+
+    cout << "Getting schedule for m: " << endl;
+    cout << "Schedule as ISL map: " << str(m) << endl;
+    cout << "Whole domain: " << str(whole_dom) << endl;
+    cout << endl << "Final loops; " << endl;
+    cout << codegen_c(its(m, whole_dom)) << endl << endl;
+    assert(false);
+
+    //isl_schedule_node *node =
+      //isl_schedule_node_from_domain(cpy(whole_dom));
+    //node = isl_schedule_node_child(node, 0);
+    
+    //isl_union_set_list* filters =
+      //isl_union_set_list_alloc(ctx, 0);
+    //for (auto f : sorted_functions) {
+      //filters = isl_union_set_list_add(filters, map_find(f, domain_boxes).to_uset(ctx, f));
+    //}
+    //cout << "Adding filters" << endl;
+    //node = isl_schedule_node_insert_sequence(node, filters);
+
+    //auto mysched = isl_schedule_node_get_schedule(node);
+    //cout << "Schedule: " << endl;
+    //cout << codegen_c(its(isl_schedule_get_map(mysched), whole_dom)) << endl << endl;
+    assert(false);
 
     cout << "Schedule vectors..." << endl;
     Box time_bounds =
