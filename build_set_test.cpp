@@ -4511,7 +4511,11 @@ struct App {
       cout << tab(indent_level) << "for (" << v << " = 0; " << v << 
         " <= 1; " << v << "++) {" << endl;
       indent_level++;
+    }
+    indent_level--;
+    for (auto r : time_bounds.intervals) {
       cout << tab(indent_level) << "}" << endl;
+      indent_level--;
     }
     assert(false);
     cout << "Dealing with unroll..." << endl;
