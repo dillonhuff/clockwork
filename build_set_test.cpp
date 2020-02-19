@@ -4561,16 +4561,27 @@ struct App {
         }
       }
 
+      vector<string> qs;
+      for (auto f : sorted_functions) {
+        qs.push_back("q_" + f);
+      }
       cout << "Rate constraints..." << endl;
-      // TODO: Need to turn these constraints into equalities and solve for
-      // minimal delay
+      isl_set* rate_space = 
+        rdset(ctx, "{ " + sep_list(qs, "[", "]", ", ") + " }");
+      assert(rate_space != nullptr);
+
       for (auto r : rate_constraints) {
         r.lhs.delete_terms_without(qvar(dv));
         r.rhs.delete_terms_without(qvar(dv));
         r.replace(qvar(dv), qconst(1));
         r.simplify();
         cout << "\t" << r << endl;
+        string mset = set_string(qs, isl_str(r.lhs) + " = " + isl_str(r.rhs));
+        cout << "\t" << mset << endl;
+        rate_space = its(rate_space, rdset(ctx, mset));
       }
+
+      cout << "Rate space: " << str(rate_space) << endl;
 
       assert(false);
 
