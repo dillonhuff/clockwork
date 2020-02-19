@@ -5196,7 +5196,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
-    denoise2d_test();
+    //denoise2d_test();
     sobel_test();
     heat_3d_test();
     
