@@ -4038,6 +4038,15 @@ struct QAV {
   int num;
   int denom;
 
+  bool is_zero() const {
+    if (!is_num) {
+      return false;
+    }
+
+    assert(denom != 0);
+    return is_num && (num == 0);
+  }
+
   bool is_one() const {
     return is_num && (num == 1 && denom == 1);
   }
@@ -4090,6 +4099,12 @@ struct QTerm {
     vals = newvals;
     if (vals.size() == 0) {
       vals = {qconst(1)};
+    }
+
+    for (auto v : vals) {
+      if (v.is_zero()) {
+        vals = {qconst(0)};
+      }
     }
   }
 
@@ -4144,7 +4159,12 @@ QTerm qterm(const QAV& a, const QAV& l, const QAV& r) {
 
 struct QExpr {
   vector<QTerm> terms;
- 
+
+  void simplify() {
+    for (auto& t : terms) {
+      t.simplify();
+    }
+  }
 
   void replace(const QAV& target, const QAV& replacement) {
     for (auto& t : terms) {
@@ -4212,6 +4232,11 @@ struct QConstraint {
     rhs.replace(target, replacement);
   }
 };
+
+string isl_str(QConstraint& v) {
+  return isl_str(v.lhs) + " >= " + isl_str(v.rhs);
+}
+
 
 std::ostream& operator<<(std::ostream& out, const QConstraint& c) {
   out << c.lhs << " >= " << c.rhs;
@@ -4499,17 +4524,37 @@ struct App {
       }
       vector<QConstraint> delay_constraints =
         all_constraints;
+      cout << "Constraints before delay substitution" << endl;
+      for (auto c : delay_constraints) {
+        cout << "\t" << c << endl;
+      }
+
       for (auto& c : delay_constraints) {
         for (auto r : rates) {
           c.replace(qvar(r.first),
               qconst(map_find(r.first, rates)));
+          c.replace(qvar(dv), qconst(0));
+          c.lhs.simplify();
+          c.rhs.simplify();
         }
       }
 
       cout << "All delay constraints..." << endl;
+      vector<string> ds;
+      for (auto f : sorted_functions) {
+        ds.push_back("d_" + f);
+      }
+      string varspx = sep_list(ds, "[", "]", ", ");
+      uset* legal_delays = rdset(ctx, "{ " + sep_list(ds, "[", "]", ", ") + " }");
       for (auto c : delay_constraints) {
         cout << "\t" << c << endl;
+        cout << "\tisl str: " << isl_str(c) << endl;
+        legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(c) + " }"));
       }
+
+      cout << "Legal delays: " << str(legal_delays) << endl;
+      cout << "Legal delay point: " << str(isl_union_set_sample_point(legal_delays)) << endl;
+      assert(false);
 
       // TODO: send these constraints to the solver
       // to get real delay values.

@@ -73,6 +73,11 @@ isl_union_map* to_umap(isl_map* const m) {
 isl_ctx* ctx(isl_union_set* const m) {
   return isl_union_set_get_ctx(m);
 }
+
+isl_ctx* ctx(isl_point* const m) {
+  return isl_point_get_ctx(m);
+}
+
 isl_ctx* ctx(isl_constraint* const m) {
   return isl_constraint_get_ctx(m);
 }
@@ -250,6 +255,19 @@ void print(struct isl_ctx* const ctx, isl_qpolynomial* const bset) {
   printf("%s\n", rs);
   isl_printer_free(p);
   free(rs);
+}
+
+std::string str(isl_point* const bset) {
+  auto context = ctx(bset);
+  isl_printer *p;
+  p = isl_printer_to_str(context);
+  p = isl_printer_print_point(p, cpy(bset));
+
+  char* rs = isl_printer_get_str(p);
+  std::string r(rs);
+  isl_printer_free(p);
+  free(rs);
+  return r;
 }
 
 std::string str(isl_schedule* const bset) {
@@ -622,6 +640,10 @@ isl_map* its(isl_map* const m0, isl_map* const m1) {
 
 isl_union_map* its_range(isl_union_map* const m0, isl_union_set* const m1) {
   return isl_union_map_intersect_range(cpy(m0), cpy(m1));
+}
+
+isl_union_set* its(isl_union_set* const m0, isl_union_set* const m1) {
+  return isl_union_set_intersect(cpy(m0), cpy(m1));
 }
 
 isl_union_map* its(isl_union_map* const m0, isl_union_map* const m1) {
