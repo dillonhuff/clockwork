@@ -4601,16 +4601,27 @@ struct App {
       auto min_set = rdset(ctx, mset.c_str());
 
       auto mvs = its(min_set, legal_delays);
-      cout << "Min pt: " << str(isl_set_sample_point(mvs)) << endl;
+      string dp = str(isl_set_sample_point(mvs));
+      cout << "Min pt: " << dp << endl;
 
-      assert(false);
+      vector<int> delay_coeffs =
+        parse_pt(dp);
+      //assert(false);
 
       map<string, int> delays;
       int p = 0;
       for (auto f : sorted_functions) {
-        delays["d_" + f] = p;
+        string fd = "d_" + f;
+        for (auto d : ds) {
+          if (fd == d) {
+            delays[fd] = delay_coeffs.at(p);
+          }
+        }
+        //delays["d_" + f] = p;
         p++;
       }
+
+      //assert(false);
 
       cout << "Final schedules: " << endl;
       for (auto f : sorted_functions) {
