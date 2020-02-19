@@ -7,6 +7,24 @@ using namespace dbhc;
 using namespace std;
 
 static inline
+vector<string> split_at(const string& t, const string& delimiter) {
+  string s = t;
+  size_t pos = 0;
+  std::string token;
+  vector<string> tokens;
+  while ((pos = s.find(delimiter)) != std::string::npos) {
+    token = s.substr(0, pos);
+    std::cout << token << std::endl;
+    tokens.push_back(token);
+    s.erase(0, pos + delimiter.length());
+  }
+
+  tokens.push_back(s);
+
+  return tokens;
+}
+
+static inline
 string take_until(const std::string& s, const std::string& delim) {
   std::size_t found = s.find_first_of(delim);
   return s.substr(0, found);

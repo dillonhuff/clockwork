@@ -11,6 +11,26 @@
 
 #include "utils.h"
 
+vector<int> parse_pt(const string& pt) {
+  cout << "pt: " << pt << endl;
+  regex cm("\\{ \\[(.*)\\] \\}");
+  smatch match;
+  auto res = regex_search(pt, match, cm);
+
+  assert(res);
+
+  string coefs = match[1];
+  cout << "coefs: " << coefs << endl;
+  vector<int> coords;
+
+  auto vals = split_at(coefs, ", ");
+  for (auto v : vals) {
+    coords.push_back(safe_stoi(v));
+  }
+
+  return coords;
+}
+
 string set_string(const vector<string>& vars, const string& s) {
   return "{ " + sep_list(vars, "[", "]", ", ") + " : " + s + " }";
 }
@@ -4481,16 +4501,6 @@ struct App {
     for (auto s : sorted_functions) {
       cout << "\t" << s << map_find(s, domain_boxes) << endl;
     }
-    auto whole_dom =
-      rdset(ctx, "{}");
-    for (auto f : sorted_functions) {
-      Box b = map_find(f, domain_boxes);
-      whole_dom =
-        unn(whole_dom, b.to_set(ctx, f));
-    }
-
-
-
     int ndims = 2;
     map<string, vector<QExpr> > schedules;
     for (int i = 0; i < ndims; i++) {
@@ -4606,6 +4616,7 @@ struct App {
 
       vector<int> delay_coeffs =
         parse_pt(dp);
+      assert(delay_coeffs.size() == ds.size());
       //assert(false);
 
       map<string, int> delays;
@@ -4662,13 +4673,31 @@ struct App {
       var_names.pop_back();
       string map_str = "{ " + f + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
       cout << "Map str: " << map_str << endl;
-      m = unn(m, rdmap(ctx, map_str));
+      auto rm = rdmap(ctx, map_str);
+      m = unn(m, rm);
+      isl_union_map_free(rm);
       cout << "Unioned" << endl;
       cout << "m = " << str(m) << endl;
     }
 
+    cout << "done getting m..." << endl;
+
+    uset* whole_dom =
+      isl_union_set_read_from_str(ctx, "{}");
+    cout << "Whole domain at top of realize " << name << ": " << whole_dom << endl;
+    assert(whole_dom != nullptr);
+    for (auto f : sorted_functions) {
+      cout << "Whole dom: " << str(whole_dom) << endl;
+      Box b = map_find(f, domain_boxes);
+      whole_dom =
+        unn(whole_dom, to_uset(b.to_set(ctx, f)));
+    }
+
+    //assert(false);
+
     cout << "Getting schedule for m: " << endl;
     cout << "Schedule as ISL map: " << str(m) << endl;
+    cout << "Dom: " << endl;
     cout << "Whole domain: " << str(whole_dom) << endl;
     cout << endl << "Final loops; " << endl;
     cout << codegen_c(its(m, whole_dom)) << endl << endl;
