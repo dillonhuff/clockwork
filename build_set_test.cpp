@@ -4114,6 +4114,15 @@ QAV qvar(const std::string& v) {
 
 struct QTerm {
   vector<QAV> vals;
+
+  bool contains(const QAV& v) {
+    for (auto ov : vals) {
+      if (ov == v) {
+        return true;
+      }
+    }
+    return false;
+  }
   
   void simplify() {
     vector<QAV> newvals;
@@ -4185,6 +4194,16 @@ QTerm qterm(const QAV& a, const QAV& l, const QAV& r) {
 
 struct QExpr {
   vector<QTerm> terms;
+
+  void delete_terms_without(const QAV& v) {
+    vector<QTerm> new_terms;
+    for (auto t : terms) {
+      if (t.contains(v)) {
+        new_terms.push_back(t);
+      }
+    }
+    terms = new_terms;
+  }
 
   void simplify() {
     for (auto& t : terms) {
@@ -4546,10 +4565,14 @@ struct App {
       // TODO: Need to turn these constraints into equalities and solve for
       // minimal delay
       for (auto r : rate_constraints) {
+        r.lhs.delete_terms_without(qvar(dv));
+        r.rhs.delete_terms_without(qvar(dv));
         r.replace(qvar(dv), qconst(1));
         r.simplify();
         cout << "\t" << r << endl;
       }
+
+      assert(false);
 
       cout << "Rates..." << endl;
       for (auto r : rates) {
@@ -4841,6 +4864,16 @@ Window pt(const std::string& name) {
   return Window{name, {1, 1}, {{0, 0}}};
 }
 
+void downsample2d_test() {
+  App ds;
+  ds.func2d("A");
+  Window awin{"A", {2, 2}, {{0, 0}}};
+  ds.func2d("B", "blur", awin);
+  ds.realize("B", 10, 10, 1);
+
+  assert(false);
+}
+
 void denoise2d_test() {
   App dn;
 
@@ -4856,7 +4889,6 @@ void denoise2d_test() {
   dn.func2d("output", "out_comp_dn2d", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
  
   dn.realize("output", 30, 30, 1);
-  //assert(false);
 }
 
 void sobel_test() {
@@ -5281,6 +5313,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
+    downsample2d_test();
     denoise2d_test();
     sobel_test();
     heat_3d_test();
