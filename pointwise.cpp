@@ -6,8 +6,8 @@ struct I_I_id0_0_cache {
 	// Capacity: 1
 	fifo<hw_uint<16>, 1> f;
 	inline hw_uint<16> peek(const int offset) {
-		return f.peek(0 - offset);
-	}
+    return f.peek(0 - offset);
+  }
 
 	inline hw_uint<16> peek_0() {
 		return f.peek(0);
@@ -19,8 +19,8 @@ struct I_I_id0_0_cache {
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence array inter false
 #endif //__VIVADO_SYNTH__
-		return f.push(value);
-	}
+    return f.push(value);
+  }
 
 };
 

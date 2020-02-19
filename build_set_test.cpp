@@ -11,6 +11,10 @@
 
 #include "utils.h"
 
+string set_string(const vector<string>& vars, const string& s) {
+  return "{ " + sep_list(vars, "[", "]", ", ") + " : " + s + " }";
+}
+
 struct CodegenOptions {
   bool internal;
   bool all_rams;
@@ -2153,6 +2157,8 @@ struct prog {
     auto domain = whole_iteration_domain();
     
     isl_schedule* sched = optimized_schedule();
+    cout << "Sched: " << str(sched) << endl;
+    assert(false);
     auto schedmap = its(isl_schedule_get_map(sched), domain);
     //cout << "Schedule map: " << str(schedmap) << endl;
     //assert(false);
@@ -4569,8 +4575,34 @@ struct App {
         legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(c) + " }"));
       }
 
+      string aff_c = sep_list(ds, "", "", " + ");
+      string aff_str =
+        "{ " + 
+        sep_list(ds, "[", "]", ", ") + " -> " +
+        sep_list(ds, "[", "]", " + ") + " }";
+
+      cout << "Aff str: " << aff_str << endl;
+
+      auto obj_func =
+        isl_aff_read_from_str(ctx, aff_str.c_str());
+
+      cout << "Objective: " << str(obj_func) << endl;
       cout << "Legal delays: " << str(legal_delays) << endl;
       cout << "Legal delay point: " << str(isl_set_sample_point(legal_delays)) << endl;
+
+      auto min_point =
+        isl_set_min_val(cpy(legal_delays), obj_func);
+      string mstring =
+        str(min_point);
+      cout << "Min delays: " << mstring << endl;
+      string os = aff_c;
+      string mset = set_string(ds, os + " = " + mstring);
+      cout << "Min set: " << mset << endl;
+      auto min_set = rdset(ctx, mset.c_str());
+
+      auto mvs = its(min_set, legal_delays);
+      cout << "Min pt: " << str(isl_set_sample_point(mvs)) << endl;
+
       assert(false);
 
       map<string, int> delays;
@@ -5208,7 +5240,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
-    //denoise2d_test();
+    denoise2d_test();
     sobel_test();
     heat_3d_test();
     
