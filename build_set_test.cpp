@@ -4013,6 +4013,8 @@ struct Window {
   vector<vector<int> > offsets;
   umap* needed;
 
+  Window() {}
+
   string interval_set_string(const int dim) {
     assert(dim < strides.size());
     string base = "x*" + to_string(stride(dim));
@@ -4102,6 +4104,11 @@ std::ostream& operator<<(std::ostream& out, const QAV& c) {
     out << c.name;
   }
   return out;
+}
+
+QAV qconst(const int& v, const int& d) {
+  assert(v == 1);
+  return {true, "", v, d};
 }
 
 QAV qconst(const int& v) {
@@ -4919,6 +4926,16 @@ Window pt(const std::string& name) {
   return Window{name, {1, 1}, {{0, 0}}};
 }
 
+void upsample2d_test() {
+  App ds;
+  ds.func2d("A");
+  Window awin("A", {qconst(1, 2), qconst(1, 2)}, {{0, 0}});
+  ds.func2d("B", "blur", awin);
+  ds.realize("B", 10, 10, 1);
+
+  //assert(false);
+}
+
 void downsample2d_test() {
   App ds;
   ds.func2d("A");
@@ -4926,7 +4943,7 @@ void downsample2d_test() {
   ds.func2d("B", "blur", awin);
   ds.realize("B", 10, 10, 1);
 
-  assert(false);
+  //assert(false);
 }
 
 void denoise2d_test() {
@@ -5368,6 +5385,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
+    upsample2d_test();
     downsample2d_test();
     denoise2d_test();
     sobel_test();
