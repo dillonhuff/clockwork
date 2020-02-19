@@ -4570,6 +4570,11 @@ struct App {
         rdset(ctx, "{ " + sep_list(qs, "[", "]", ", ") + " }");
       assert(rate_space != nullptr);
 
+      for (auto f : sorted_functions) {
+        string gtzs = set_string(qs, "q_" + f + " > 0");
+        rate_space = its(rate_space, rdset(ctx, gtzs));
+      }
+
       for (auto r : rate_constraints) {
         r.lhs.delete_terms_without(qvar(dv));
         r.rhs.delete_terms_without(qvar(dv));
@@ -4583,7 +4588,46 @@ struct App {
 
       cout << "Rate space: " << str(rate_space) << endl;
 
-      assert(false);
+      {
+        string aff_c = sep_list(qs, "", "", " + ");
+        string aff_str =
+          "{ " + 
+          sep_list(qs, "[", "]", ", ") + " -> " +
+          sep_list(qs, "[", "]", " + ") + " }";
+
+        cout << "Aff str: " << aff_str << endl;
+
+        auto obj_func =
+          isl_aff_read_from_str(ctx, aff_str.c_str());
+
+        auto legal_delays = rate_space;
+        auto ds = qs;
+        cout << "Objective: " << str(obj_func) << endl;
+        cout << "Legal delays: " << str(rate_space) << endl;
+        cout << "Legal delay point: " << str(isl_set_sample_point(legal_delays)) << endl;
+
+        auto min_point =
+          isl_set_min_val(cpy(legal_delays), obj_func);
+        string mstring =
+          str(min_point);
+        cout << "Min delays: " << mstring << endl;
+        string os = aff_c;
+        string mset = set_string(ds, os + " = " + mstring);
+        cout << "Min set: " << mset << endl;
+        auto min_set = rdset(ctx, mset.c_str());
+
+        auto mvs = its(min_set, legal_delays);
+        string dp = str(isl_set_sample_point(mvs));
+        cout << "Min pt: " << dp << endl;
+
+        vector<int> delay_coeffs =
+          parse_pt(dp);
+        assert(delay_coeffs.size() == ds.size());
+        for (size_t i = 0; i < ds.size(); i++) {
+          rates[ds[i]] = delay_coeffs[i];
+        }
+        //assert(false);
+      }
 
       cout << "Rates..." << endl;
       for (auto r : rates) {
