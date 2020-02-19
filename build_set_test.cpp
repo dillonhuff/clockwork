@@ -2178,7 +2178,7 @@ struct prog {
     
     isl_schedule* sched = optimized_schedule();
     cout << "Sched: " << str(sched) << endl;
-    assert(false);
+    //assert(false);
     auto schedmap = its(isl_schedule_get_map(sched), domain);
     //cout << "Schedule map: " << str(schedmap) << endl;
     //assert(false);
@@ -4701,126 +4701,127 @@ struct App {
     cout << "Whole domain: " << str(whole_dom) << endl;
     cout << endl << "Final loops; " << endl;
     cout << codegen_c(its(m, whole_dom)) << endl << endl;
-    assert(false);
+    return;
+    //assert(false);
 
-    //isl_schedule_node *node =
-      //isl_schedule_node_from_domain(cpy(whole_dom));
-    //node = isl_schedule_node_child(node, 0);
+    ////isl_schedule_node *node =
+      ////isl_schedule_node_from_domain(cpy(whole_dom));
+    ////node = isl_schedule_node_child(node, 0);
     
-    //isl_union_set_list* filters =
-      //isl_union_set_list_alloc(ctx, 0);
-    //for (auto f : sorted_functions) {
-      //filters = isl_union_set_list_add(filters, map_find(f, domain_boxes).to_uset(ctx, f));
+    ////isl_union_set_list* filters =
+      ////isl_union_set_list_alloc(ctx, 0);
+    ////for (auto f : sorted_functions) {
+      ////filters = isl_union_set_list_add(filters, map_find(f, domain_boxes).to_uset(ctx, f));
+    ////}
+    ////cout << "Adding filters" << endl;
+    ////node = isl_schedule_node_insert_sequence(node, filters);
+
+    ////auto mysched = isl_schedule_node_get_schedule(node);
+    ////cout << "Schedule: " << endl;
+    ////cout << codegen_c(its(isl_schedule_get_map(mysched), whole_dom)) << endl << endl;
+    //assert(false);
+
+    //cout << "Schedule vectors..." << endl;
+    //Box time_bounds =
+      //Box(ndims + 1);
+
+    //// TODO: Actually set time bounds
+    //for (auto s : schedules) {
+      //cout << "\t" << s.first;
+      //vector<string> strs;
+      //for (auto d : s.second) {
+        //ostringstream ss;
+        //ss << d;
+        //strs.push_back(ss.str());
+      //}
+      //cout << sep_list(strs, "[", "]", ", ");
+      //auto d = 
+        //map_find(s.first, domain_boxes);
+      //d.intervals.push_back({0, 0});
+      //cout << " over: " << d << endl;
+      //cout << endl;
     //}
-    //cout << "Adding filters" << endl;
-    //node = isl_schedule_node_insert_sequence(node, filters);
 
-    //auto mysched = isl_schedule_node_get_schedule(node);
-    //cout << "Schedule: " << endl;
-    //cout << codegen_c(its(isl_schedule_get_map(mysched), whole_dom)) << endl << endl;
-    assert(false);
-
-    cout << "Schedule vectors..." << endl;
-    Box time_bounds =
-      Box(ndims + 1);
-
-    // TODO: Actually set time bounds
-    for (auto s : schedules) {
-      cout << "\t" << s.first;
-      vector<string> strs;
-      for (auto d : s.second) {
-        ostringstream ss;
-        ss << d;
-        strs.push_back(ss.str());
-      }
-      cout << sep_list(strs, "[", "]", ", ");
-      auto d = 
-        map_find(s.first, domain_boxes);
-      d.intervals.push_back({0, 0});
-      cout << " over: " << d << endl;
-      cout << endl;
-    }
-
-    cout << "Loops for schedule..." << endl;
-    int indent_level = 0;
-    for (auto r : time_bounds.intervals) {
-      string v = "t" + to_string(indent_level);
-      cout << tab(indent_level) << "for (" << v << " = 0; " << v << 
-        " <= 1; " << v << "++) {" << endl;
-      indent_level++;
-    }
-    indent_level--;
-    for (auto r : time_bounds.intervals) {
-      cout << tab(indent_level) << "}" << endl;
-      indent_level--;
-    }
-    assert(false);
-    cout << "Dealing with unroll..." << endl;
-
-    //umap* unroll_map = rdmap(ctx, "{}");
-    uset* wd = isl_union_set_read_from_str(ctx, "{}");
-    for (auto d : domains) {
-      wd = unn(wd, d.second);
-      //isl_union_map* next_map =
-        //rdmap(ctx, "{ " + d.first + "[d0, d1] -> " + d.first + "_unrolled[floor(d0 / " + to_string(unroll_factor) + "), d1] }");
-      //unroll_map =
-        //unn(unroll_map, next_map);
-    }
-    wd = coalesce(wd);
-    cout << "Domain: " << str(wd) << endl;
-    //cout << "Unroll map: " << str(unroll_map) << endl;
-    isl_union_map *validity =
-      isl_union_map_read_from_str(ctx, "{}");
-    for (auto nd : app_dag) {
-      for (auto w : nd.second.srcs) {
-        validity =
-          unn(validity, inv(w.needed));
-      }
-    }
-
-    cout << "Validity: " << str(validity) << endl;
-      //its(dot(writes, inv(reads)), before);
-    //cout << "Validity" << endl;
-    isl_union_map *proximity =
-      cpy(validity);
-    isl_options_set_schedule_algorithm(ctx, ISL_SCHEDULE_ALGORITHM_FEAUTRIER);
-    isl_schedule* sched = isl_union_set_compute_schedule(wd, validity, proximity);
-    cout << "Schedule: " << str(sched) << endl;
-    cout << "C code for schedule..." << endl;
-    cout << codegen_c(its(isl_schedule_get_map(sched), wd)) << endl << endl;
-
-    assert(false);
-
-    //auto prox_roll = dot(proximity, unroll_map);
-    //auto prox_map = inv(dot(inv(prox_roll), unroll_map));
-    //cout << "Unrolled proximity: " << str(prox_map) << endl;
-    //auto unroll_wd = range(its(unroll_map, wd));
-    //cout << "Unrolled domain   : " << str(unroll_wd) << endl;
-
-    //{
-      //isl_schedule_node* top = isl_schedule_node_from_domain(cpy(wd));
+    //cout << "Loops for schedule..." << endl;
+    //int indent_level = 0;
+    //for (auto r : time_bounds.intervals) {
+      //string v = "t" + to_string(indent_level);
+      //cout << tab(indent_level) << "for (" << v << " = 0; " << v << 
+        //" <= 1; " << v << "++) {" << endl;
+      //indent_level++;
     //}
+    //indent_level--;
+    //for (auto r : time_bounds.intervals) {
+      //cout << tab(indent_level) << "}" << endl;
+      //indent_level--;
+    //}
+    //assert(false);
+    //cout << "Dealing with unroll..." << endl;
+
+    ////umap* unroll_map = rdmap(ctx, "{}");
+    //uset* wd = isl_union_set_read_from_str(ctx, "{}");
+    //for (auto d : domains) {
+      //wd = unn(wd, d.second);
+      ////isl_union_map* next_map =
+        ////rdmap(ctx, "{ " + d.first + "[d0, d1] -> " + d.first + "_unrolled[floor(d0 / " + to_string(unroll_factor) + "), d1] }");
+      ////unroll_map =
+        ////unn(unroll_map, next_map);
+    //}
+    //wd = coalesce(wd);
+    //cout << "Domain: " << str(wd) << endl;
+    ////cout << "Unroll map: " << str(unroll_map) << endl;
+    //isl_union_map *validity =
+      //isl_union_map_read_from_str(ctx, "{}");
+    //for (auto nd : app_dag) {
+      //for (auto w : nd.second.srcs) {
+        //validity =
+          //unn(validity, inv(w.needed));
+      //}
+    //}
+
+    //cout << "Validity: " << str(validity) << endl;
+      ////its(dot(writes, inv(reads)), before);
+    ////cout << "Validity" << endl;
+    //isl_union_map *proximity =
+      //cpy(validity);
+    //isl_options_set_schedule_algorithm(ctx, ISL_SCHEDULE_ALGORITHM_FEAUTRIER);
+    //isl_schedule* sched = isl_union_set_compute_schedule(wd, validity, proximity);
+    //cout << "Schedule: " << str(sched) << endl;
+    //cout << "C code for schedule..." << endl;
+    //cout << codegen_c(its(isl_schedule_get_map(sched), wd)) << endl << endl;
+
+    //assert(false);
+
+    ////auto prox_roll = dot(proximity, unroll_map);
+    ////auto prox_map = inv(dot(inv(prox_roll), unroll_map));
+    ////cout << "Unrolled proximity: " << str(prox_map) << endl;
+    ////auto unroll_wd = range(its(unroll_map, wd));
+    ////cout << "Unrolled domain   : " << str(unroll_wd) << endl;
+
+    ////{
+      ////isl_schedule_node* top = isl_schedule_node_from_domain(cpy(wd));
+    ////}
   
 
-    //{
-      //auto validity = prox_map;
-      //auto raster_sched =
-        //rdmap(ctx, "{ img_unrolled[d0, d1] -> [d1, d0] }");
-      //auto raster_lt =
-        //lex_lt(raster_sched, raster_sched);
-      //cout << "Raster lt: " << str(raster_lt) << endl;
-      //validity = unn(validity, raster_lt);
-      //isl_union_map *proximity =
-        //cpy(prox_map);
-      //isl_options_set_schedule_algorithm(ctx, ISL_SCHEDULE_ALGORITHM_FEAUTRIER);
-      //isl_schedule* sched = isl_union_set_compute_schedule(unroll_wd, validity, proximity);
-      //cout << "After unrolling: " << endl;
-      //cout << "Schedule: " << str(sched) << endl;
-      //cout << "C code for schedule..." << endl;
-      //auto sched_map = coalesce(its(isl_schedule_get_map(sched), unroll_wd));
-      //cout << "Generating code for schedule map: " << str(sched_map) << endl;
-      //cout << codegen_c(sched_map) << endl;
-    //}
+    ////{
+      ////auto validity = prox_map;
+      ////auto raster_sched =
+        ////rdmap(ctx, "{ img_unrolled[d0, d1] -> [d1, d0] }");
+      ////auto raster_lt =
+        ////lex_lt(raster_sched, raster_sched);
+      ////cout << "Raster lt: " << str(raster_lt) << endl;
+      ////validity = unn(validity, raster_lt);
+      ////isl_union_map *proximity =
+        ////cpy(prox_map);
+      ////isl_options_set_schedule_algorithm(ctx, ISL_SCHEDULE_ALGORITHM_FEAUTRIER);
+      ////isl_schedule* sched = isl_union_set_compute_schedule(unroll_wd, validity, proximity);
+      ////cout << "After unrolling: " << endl;
+      ////cout << "Schedule: " << str(sched) << endl;
+      ////cout << "C code for schedule..." << endl;
+      ////auto sched_map = coalesce(its(isl_schedule_get_map(sched), unroll_wd));
+      ////cout << "Generating code for schedule map: " << str(sched_map) << endl;
+      ////cout << codegen_c(sched_map) << endl;
+    ////}
 
   }
 
@@ -4855,7 +4856,7 @@ void denoise2d_test() {
   dn.func2d("output", "out_comp_dn2d", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
  
   dn.realize("output", 30, 30, 1);
-  assert(false);
+  //assert(false);
 }
 
 void sobel_test() {
