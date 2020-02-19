@@ -4227,6 +4227,11 @@ struct QConstraint {
   QExpr lhs;
   QExpr rhs;
 
+  void simplify() {
+    lhs.simplify();
+    rhs.simplify();
+  }
+
   void replace(const QAV& target, const QAV& replacement) {
     lhs.replace(target, replacement);
     rhs.replace(target, replacement);
@@ -4488,6 +4493,7 @@ struct App {
       // Collect all rate variables and
       // collect all constraints
       vector<QConstraint> all_constraints;
+      vector<QConstraint> rate_constraints;
       map<string, int> rates;
       for (auto f : sorted_functions) {
         rates["q_" + f] = 1;
@@ -4514,10 +4520,21 @@ struct App {
 
           QConstraint start_after_deps{ftime, ub};
           all_constraints.push_back(start_after_deps);
+          rate_constraints.push_back(start_after_deps);
 
           cout << "\t" << start_after_deps << endl;
         }
       }
+
+      cout << "Rate constraints..." << endl;
+      // TODO: Need to turn these constraints into equalities and solve for
+      // minimal delay
+      for (auto r : rate_constraints) {
+        r.replace(qvar(dv), qconst(1));
+        r.simplify();
+        cout << "\t" << r << endl;
+      }
+
       cout << "Rates..." << endl;
       for (auto r : rates) {
         cout << "\t" << r.first << " -> " << r.second << endl;
@@ -4556,10 +4573,6 @@ struct App {
       cout << "Legal delay point: " << str(isl_union_set_sample_point(legal_delays)) << endl;
       assert(false);
 
-      // TODO: send these constraints to the solver
-      // to get real delay values.
-      //
-
       map<string, int> delays;
       int p = 0;
       for (auto f : sorted_functions) {
@@ -4589,7 +4602,6 @@ struct App {
       schedules[f].push_back(qexpr(pos));
       pos++;
     }
-
 
     // Maybe the thing to do is to build a map from 
     // the schedule?
