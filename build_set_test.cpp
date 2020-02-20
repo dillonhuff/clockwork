@@ -214,9 +214,14 @@ class UBuffer {
     }
 
     void set_default_bundles() {
+      for (auto pt : get_out_ports()) {
+        port_bundles[pt] = {pt};
+      }
+
       for (auto pt : get_in_ports()) {
         port_bundles[pt] = {pt};
       }
+
       assert(get_in_bundles().size() >= get_in_ports().size());
     }
 
@@ -2318,9 +2323,6 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
 }
 
 void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap) {
-  //CodegenOptions options;
-  //options.internal = true;
-
   ofstream conv_out(prg.name + ".cpp");
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
   vector<string> args;
@@ -2477,7 +2479,6 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
       }
       assert(port_cache != "");
 
-      //string source_delay = pick(buffers.at(out_buffer).get_in_ports());
       conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" << res << ", " << port_cache << " /* output src_delay */);" << endl;
     }
 
@@ -2490,7 +2491,6 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
       for (auto in : b.second.get_in_ports()) {
-        //conv_out << "\t" << b.first << "_" << in << "_cache " << in << endl;
         conv_out << "\t" << in << "_cache " << in << ";" << endl;
       }
     }
@@ -4964,11 +4964,17 @@ struct App {
         b.add_out_pt(consumer, domain, to_map(access_map), sched);
       }
 
+      b.set_default_bundles();
+
       ofstream out(f + "_buf.cpp");
       generate_hls_code(out, b);
     }
+    CodegenOptions options;
+    options.internal = false;
+    prog prg;
+    generate_app_code(options, buffers, prg, its(m, whole_dom));
 
-    assert(false);
+    //assert(false);
     return;
   }
 
