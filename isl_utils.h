@@ -24,6 +24,10 @@ extern "C" {
 typedef isl_union_map umap;
 typedef isl_union_set uset;
 
+#include <vector>
+
+using std::vector;
+
 isl_space* get_space(isl_constraint* const m) {
   return isl_constraint_get_space(m);
 }
@@ -66,8 +70,17 @@ isl_union_set* to_uset(isl_set* const m) {
   return isl_union_set_from_set(m);
 }
 
+isl_stat get_maps(isl_map* m, void* user) {
+  auto* vm = (vector<isl_map*>*) user;
+  vm->push_back(m);
+  return isl_stat_ok;
+}
+
 isl_map* to_map(isl_union_map* const m) {
-  assert(false);
+  vector<isl_map*> map_vec;
+  isl_union_map_foreach_map(m, get_maps, &map_vec);
+  assert(map_vec.size() == 1);
+  return map_vec.at(0);
   //auto map_list = isl_union_map_get_map_list(m);
   //assert(isl_map_list_size(map_list) == 1);
   //return isl_map_list_get_map(map_list, 0);
