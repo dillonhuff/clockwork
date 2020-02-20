@@ -4523,13 +4523,27 @@ struct App {
 
   set<string> consumers(const string& f) {
     set<string> cons;
-    for (auto d : app_dag.at(f).srcs) {
-      if (d.name == f) {
-        cons.insert(d.name);
-        break;
+    for (auto other_func : app_dag) {
+      for (auto d : other_func.second.srcs) {
+        if (d.name == f) {
+          cons.insert(other_func.first);
+          break;
+        }
       }
     }
+    cout << "# of consumers of " << f << " = " << cons.size() << endl;
     return cons;
+  }
+
+  umap* ws_map(const std::string& producer, const std::string& consumer) {
+    for (auto w : app_dag.at(consumer).srcs) {
+      if (w.name == producer) {
+        return w.needed;
+      }
+    }
+    cout << "No map from: " << producer << " to " << consumer << endl;
+    assert(false);
+    return nullptr;
   }
 
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
@@ -4887,6 +4901,7 @@ struct App {
     // Generate re-use buffers
     map<string, UBuffer> buffers;
     for (auto f : sorted_functions) {
+      cout << "Adding buffer: " << f << endl;
       UBuffer b;
       b.ctx = ctx;
       b.name = f + "_buf";
@@ -4894,7 +4909,7 @@ struct App {
         map_find(f, domain_boxes).to_set(b.ctx, f);
       isl_union_map* sched =
         its(m, domain);
-      b.add_in_pt(f, domain, isl_map_read_from_str(ctx, "{}"), sched); 
+      b.add_in_pt(f, domain, isl_map_read_from_str(ctx, "{ [x] -> [x] }"), sched); 
       buffers[f] = b;
 
       for (auto consumer : consumers(f)) {
@@ -4903,9 +4918,20 @@ struct App {
         isl_union_map* sched =
           its(m, domain);
 
-        b.add_out_pt(consumer, domain, isl_map_read_from_str(ctx, "{ [a] -> [x] : a = x / 2 }"), sched); 
+        cout << "Getting map from " << f << " to " << consumer << endl;
+        umap* ws_cf = (ws_map(f, consumer));
+        assert(ws_cf != nullptr);
+
+        auto access_map =
+          its(inv(ws_cf), domain);
+
+        cout << "Access map: " << str(access_map) << endl;
+        b.add_out_pt(consumer, domain, to_map(access_map), sched);
       }
+
+
     }
+    assert(false);
     return;
   }
 

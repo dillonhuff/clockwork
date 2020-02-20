@@ -66,6 +66,13 @@ isl_union_set* to_uset(isl_set* const m) {
   return isl_union_set_from_set(m);
 }
 
+isl_map* to_map(isl_union_map* const m) {
+  assert(false);
+  //auto map_list = isl_union_map_get_map_list(m);
+  //assert(isl_map_list_size(map_list) == 1);
+  //return isl_map_list_get_map(map_list, 0);
+}
+
 isl_union_map* to_umap(isl_map* const m) {
   return isl_union_map_from_map(m);
 }
