@@ -4064,7 +4064,7 @@ std::string to_string(const QAV& q) {
 }
 
 QAV qconst(const int& v, const int& d) {
-  assert(v == 1);
+  assert(v == 1 || d == 1);
   return {true, "", v, d};
 }
 
@@ -4182,6 +4182,33 @@ struct QTerm {
   }
   
   void simplify() {
+    // Collect constant terms
+    vector<QAV> constants;
+    vector<QAV> vars;
+    for (auto v : vals) {
+      if (v.is_num) {
+        constants.push_back(v);
+      } else {
+        vars.push_back(v);
+      }
+    }
+
+    int n = 1;
+    int d = 1;
+    for (auto c : constants) {
+      assert(c.is_num);
+      n *= c.num;
+      d *= c.denom;
+    }
+
+    if (n != 1) {
+      assert(n % d == 0);
+      n = n / d;
+      d = 1;
+    }
+    vals = {qconst(n, d)};
+    concat(vals, vars);
+
     vector<QAV> newvals;
     for (auto v : vals) {
       if (!v.is_one()) {
@@ -4198,6 +4225,7 @@ struct QTerm {
         vals = {qconst(0)};
       }
     }
+
   }
 
   void replace(const QAV& target, const QAV& replacement) {
@@ -4251,6 +4279,12 @@ QTerm qterm(const QAV& a, const QAV& l, const QAV& r) {
 
 struct QExpr {
   vector<QTerm> terms;
+
+  void scale(const int v) {
+    for (auto& t : terms) {
+      t.vals.push_back(qconst(v));
+    }
+  }
 
   void delete_terms_without(const QAV& v) {
     vector<QTerm> new_terms;
@@ -4328,6 +4362,11 @@ string isl_str(QExpr& v) {
 struct QConstraint {
   QExpr lhs;
   QExpr rhs;
+
+  void scale(const int v) {
+    lhs.scale(v);
+    rhs.scale(v);
+  }
 
   void simplify() {
     lhs.simplify();
@@ -4626,7 +4665,6 @@ struct App {
       for (auto f : sorted_functions) {
         qs.push_back("q_" + f);
       }
-      cout << "Rate constraints..." << endl;
       isl_set* rate_space = 
         rdset(ctx, "{ " + sep_list(qs, "[", "]", ", ") + " }");
       assert(rate_space != nullptr);
@@ -4636,12 +4674,47 @@ struct App {
         rate_space = its(rate_space, rdset(ctx, gtzs));
       }
 
+      cout << "Rate constraints..." << endl;
+      vector<QConstraint> rates_only;
+      set<int> denoms;
       for (auto r : rate_constraints) {
         r.lhs.delete_terms_without(qvar(dv));
         r.rhs.delete_terms_without(qvar(dv));
         r.replace(qvar(dv), qconst(1));
         r.simplify();
         cout << "\t" << r << endl;
+        rates_only.push_back(r);
+        for (auto t : r.rhs.terms) {
+          for (auto v : t.vals) {
+            if (v.is_num) {
+              denoms.insert(v.denom);
+            }
+          }
+        }
+        for (auto t : r.lhs.terms) {
+          for (auto v : t.vals) {
+            if (v.is_num) {
+              denoms.insert(v.denom);
+            }
+          }
+        }
+      }
+      cout << "Denoms..." << endl;
+      int lcm = 1;
+      for (auto d : denoms) {
+        cout << "\t" << d << endl;
+        lcm *= d;
+      }
+
+      cout << "LCM: " << lcm << endl;
+      for (auto& c : rates_only) {
+        cout << "Pre scaling: " << c << endl;
+        c.scale(lcm);
+        cout << "C: " << c << endl;
+      }
+
+      cout << "After simplification" << endl;
+      for (auto r : rates_only) {
         string mset = set_string(qs, isl_str(r.lhs) + " = " + isl_str(r.rhs));
         cout << "\t" << mset << endl;
         rate_space = its(rate_space, rdset(ctx, mset));
@@ -4987,7 +5060,7 @@ void upsample2d_test() {
   ds.func2d("B", "blur", awin);
   ds.realize("B", 10, 10, 1);
 
-  //assert(false);
+  assert(false);
 }
 
 void downsample2d_test() {
