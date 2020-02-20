@@ -5056,11 +5056,11 @@ Window pt(const std::string& name) {
 void upsample2d_test() {
   App ds;
   ds.func2d("A");
-  Window awin("A", {qconst(1, 2), qconst(1, 2)}, {{0, 0}});
+  Window awin("A", {qconst(1, 2), qconst(1, 5)}, {{0, 0}});
   ds.func2d("B", "blur", awin);
   ds.realize("B", 10, 10, 1);
 
-  assert(false);
+  //assert(false);
 }
 
 void downsample2d_test() {
