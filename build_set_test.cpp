@@ -4118,7 +4118,7 @@ struct Window {
     return max_result_addr / stride(dim).denom + min_offset(dim);
   }
 
-  QAV stride(const int dim) {
+  QAV stride(const int dim) const {
     //cout << "Getting stride for dim = " << dim << endl;
     assert(dim < (int) strides.size());
     return strides.at(dim);
@@ -4430,7 +4430,7 @@ struct App {
     functions.insert(name);
     Result res{compute};
     for (auto w : windows) {
-      //w.needed = build_needed(name, w);
+      w.needed = build_needed(name, w);
       res.srcs.insert(w);
     }
 
@@ -4464,27 +4464,31 @@ struct App {
       }
     }
 
-    umap* m = nullptr;
-    assert(false);
-    //vector<string> box_strs;
-    //vector<string> base_vars;
-    //vector<string> arg_vars;
-    //for (size_t i = 0; i < mins.size(); i++) {
-      ////string stride = to_string(w.strides[i]);
+    //umap* m = nullptr;
+    //assert(false);
+    vector<string> box_strs;
+    vector<string> base_vars;
+    vector<string> arg_vars;
+    for (size_t i = 0; i < mins.size(); i++) {
+      //string stride = to_string(w.strides[i]);
+      QAV stride = w.stride(i);
       //string stride = isl_str(w.strides[i]);
-      //string base_var = "d" + to_string(i);
-      //base_vars.push_back(base_var);
-      //string kv = "k" + to_string(i);
-      //arg_vars.push_back(kv);
-      //int min = mins[i];
-      //int max = maxs[i];
-      //string base_expr = stride + "*" + base_var;
-      //box_strs.push_back(base_expr + " + " + to_string(min) + " <= " + kv + " <= " + base_expr + " + " + to_string(max));
-    //}
-    //string box_cond = "{ " + name + sep_list(base_vars, "[", "]", ", ") + " -> " + w.name + sep_list(arg_vars, "[", "]", ", ") + " : " + sep_list(box_strs, "", "", " and ") + " }";
-    //cout << "Box needed: " << box_cond << endl;
-    //umap* m = isl_union_map_read_from_str(ctx, box_cond.c_str());
-    //cout << "Map       : " << str(m) << endl;
+      string base_var = "d" + to_string(i);
+      base_vars.push_back(base_var);
+      string kv = "k" + to_string(i);
+      arg_vars.push_back(kv);
+      int min = mins[i];
+      int max = maxs[i];
+      string base_expr = to_string(stride) + "*" + base_var;
+      if (!stride.is_whole()) {
+        base_expr = base_var + " / " + to_string(stride.denom);
+      }
+      box_strs.push_back(base_expr + " + " + to_string(min) + " <= " + kv + " <= " + base_expr + " + " + to_string(max));
+    }
+    string box_cond = "{ " + name + sep_list(base_vars, "[", "]", ", ") + " -> " + w.name + sep_list(arg_vars, "[", "]", ", ") + " : " + sep_list(box_strs, "", "", " and ") + " }";
+    cout << "Box needed: " << box_cond << endl;
+    umap* m = isl_union_map_read_from_str(ctx, box_cond.c_str());
+    cout << "Map       : " << str(m) << endl;
 
     return m;
   }
@@ -4511,7 +4515,7 @@ struct App {
     Window w{arg, strides, offsets};
 
     functions.insert(name);
-    //w.needed = build_needed(name, w);
+    w.needed = build_needed(name, w);
     Result res{compute, {w}};
     app_dag[name] = res;
     return name;
@@ -4899,7 +4903,7 @@ struct App {
         isl_union_map* sched =
           its(m, domain);
 
-        b.add_out_pt(consumer, domain, isl_map_read_from_str(ctx, "{}"), sched); 
+        b.add_out_pt(consumer, domain, isl_map_read_from_str(ctx, "{ [a] -> [x] : a = x / 2 }"), sched); 
       }
     }
     return;
