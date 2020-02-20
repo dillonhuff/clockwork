@@ -4909,7 +4909,8 @@ struct App {
         map_find(f, domain_boxes).to_set(b.ctx, f);
       isl_union_map* sched =
         its(m, domain);
-      isl_map* acc = to_map(rdmap(ctx, "{ " + f + "[d0, d1] -> " + b.name + "[d0, d1] }"));
+      //isl_map* acc = to_map(rdmap(ctx, "{ " + f + "[d0, d1] -> " + b.name + "[d0, d1] }"));
+      isl_map* acc = to_map(rdmap(ctx, "{ " + f + "[d0, d1] -> " + f + "[d0, d1] }"));
       b.add_in_pt(f, domain, acc, sched);
       buffers[f] = b;
 
@@ -4930,11 +4931,11 @@ struct App {
         b.add_out_pt(consumer, domain, to_map(access_map), sched);
       }
 
-      ofstream out(f + "_buf.cpp");
-      generate_hls_code(out, b);
+      //ofstream out(f + "_buf.cpp");
+      //generate_hls_code(out, b);
     }
 
-    assert(false);
+    //assert(false);
     return;
   }
 
