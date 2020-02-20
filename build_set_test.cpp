@@ -4898,6 +4898,7 @@ struct App {
           map_find(consumer, domain_boxes).to_set(b.ctx, f);
         isl_union_map* sched =
           its(m, domain);
+
         b.add_out_pt(consumer, domain, isl_map_read_from_str(ctx, "{}"), sched); 
       }
     }
