@@ -4873,6 +4873,15 @@ struct App {
     map<string, UBuffer> buffers;
     for (auto f : sorted_functions) {
       UBuffer b;
+      b.ctx = ctx;
+      b.name = f;
+      isl_set* domain =
+        map_find(f, domain_boxes).to_set(b.ctx, f);
+      isl_union_map* sched =
+        its(m, domain);
+      cout << "Creating in port.." << endl;
+      b.add_in_pt(f + "_in", domain, isl_map_read_from_str(ctx, "{}"), sched); 
+      cout << "Created it";
       buffers[f] = b;
     }
     return;
