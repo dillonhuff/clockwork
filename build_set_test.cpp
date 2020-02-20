@@ -4007,64 +4007,15 @@ Box unn(const Box& l, const Box& r) {
   return un;
 }
 
-struct Window {
-  string name;
-  vector<int> strides;
-  vector<vector<int> > offsets;
-  umap* needed;
-
-  Window() {}
-
-  string interval_set_string(const int dim) {
-    assert(dim < strides.size());
-    string base = "x*" + to_string(stride(dim));
-    int min_off = min_offset(dim);
-    int max_off = max_offset(dim);
-
-    return "{ k | " + base + " + " + to_string(min_off) + " <= k <= " + base + " + " + to_string(max_off) + " }";
-  }
-
-  int stride(const int dim) {
-    //cout << "Getting stride for dim = " << dim << endl;
-    assert(dim < (int) strides.size());
-    return strides.at(dim);
-  }
-
-  int min_offset(const int dim) {
-    assert((int) strides.size() > dim);
-    int min = 10000;
-    for (auto off : offsets) {
-      if (off.at(dim) < min) {
-        min = off.at(dim);
-      }
-    }
-    return min;
-  }
-
-  int max_offset(const int dim) const {
-    assert((int) strides.size() > dim);
-    int max = -100000;
-    for (auto off : offsets) {
-      if (off.at(dim) > max) {
-        max = off.at(dim);
-      }
-    }
-    return max;
-  }
-};
-
-bool operator<(const Window& w0, const Window& w1) {
-  if (w0.name == w1.name) {
-    return false;
-  }
-  return w0.name < w1.name;
-}
-
 struct QAV {
   bool is_num;
   string name;
   int num;
   int denom;
+
+  bool is_whole() {
+    return is_num && denom == 1;
+  }
 
   bool is_zero() const {
     if (!is_num) {
@@ -4106,6 +4057,12 @@ std::ostream& operator<<(std::ostream& out, const QAV& c) {
   return out;
 }
 
+std::string to_string(const QAV& q) {
+  ostringstream ss;
+  ss << q;
+  return ss.str();
+}
+
 QAV qconst(const int& v, const int& d) {
   assert(v == 1);
   return {true, "", v, d};
@@ -4117,6 +4074,99 @@ QAV qconst(const int& v) {
 
 QAV qvar(const std::string& v) {
   return {false, v};
+}
+
+struct Window {
+  string name;
+  //vector<int> strides;
+  vector<QAV> strides;
+  vector<vector<int> > offsets;
+  umap* needed;
+
+  Window() {}
+
+  Window(const string& name_,
+      const vector<QAV>& strides_,
+      const vector<vector<int > >& offsets_) :
+    name(name_),
+    strides(strides_),
+    offsets(offsets_) {}
+
+  Window(const string& name_,
+      const vector<int>& strides_,
+      const vector<vector<int > >& offsets_) :
+    name(name_),
+    strides({}),
+    offsets(offsets_) {
+      for (auto s : strides_) {
+        strides.push_back(qconst(s));
+      }
+    }
+
+  string interval_set_string(const int dim) {
+    assert(dim < strides.size());
+    ostringstream ss;
+    ss << stride(dim);
+    string base = "x*" + ss.str();
+    //to_string(stride(dim));
+    int min_off = min_offset(dim);
+    int max_off = max_offset(dim);
+
+    return "{ k | " + base + " + " + to_string(min_off) + " <= k <= " + base + " + " + to_string(max_off) + " }";
+  }
+
+  int max_addr(const int dim, const int max_result_addr) {
+    if (stride(dim).is_whole()) {
+      assert(stride(dim).denom == 1);
+      return stride(dim).num*max_result_addr + max_offset(dim);
+    }
+    assert(stride(dim).num == 1);
+    return max_result_addr / stride(dim).denom + max_offset(dim);
+  }
+
+  int min_addr(const int dim, const int max_result_addr) {
+    if (stride(dim).is_whole()) {
+      assert(stride(dim).denom == 1);
+      return stride(dim).num*max_result_addr + min_offset(dim);
+    }
+    assert(stride(dim).num == 1);
+    return max_result_addr / stride(dim).denom + min_offset(dim);
+  }
+
+  QAV stride(const int dim) {
+    //cout << "Getting stride for dim = " << dim << endl;
+    assert(dim < (int) strides.size());
+    return strides.at(dim);
+  }
+
+  int min_offset(const int dim) {
+    assert((int) strides.size() > dim);
+    int min = 10000;
+    for (auto off : offsets) {
+      if (off.at(dim) < min) {
+        min = off.at(dim);
+      }
+    }
+    return min;
+  }
+
+  int max_offset(const int dim) const {
+    assert((int) strides.size() > dim);
+    int max = -100000;
+    for (auto off : offsets) {
+      if (off.at(dim) > max) {
+        max = off.at(dim);
+      }
+    }
+    return max;
+  }
+};
+
+bool operator<(const Window& w0, const Window& w1) {
+  if (w0.name == w1.name) {
+    return false;
+  }
+  return w0.name < w1.name;
 }
 
 struct QTerm {
@@ -4308,7 +4358,8 @@ struct Result {
 QExpr upper_bound(const Window& arg, const int dim) {
   string dvar = "d" + to_string(dim);
   QAV dv = qvar(dvar);
-  QAV stride = qconst(arg.strides.at(dim));
+  //QAV stride = qconst(arg.strides.at(dim));
+  QAV stride = arg.strides.at(dim);
   QAV max_off = qconst(arg.max_offset(dim));
   QAV rate = qvar("q_" + arg.name);
   cout << "Max ffset = " << arg.max_offset(dim) << endl;
@@ -4355,7 +4406,7 @@ struct App {
     functions.insert(name);
     Result res{compute};
     for (auto w : windows) {
-      w.needed = build_needed(name, w);
+      //w.needed = build_needed(name, w);
       res.srcs.insert(w);
     }
 
@@ -4389,24 +4440,27 @@ struct App {
       }
     }
 
-    vector<string> box_strs;
-    vector<string> base_vars;
-    vector<string> arg_vars;
-    for (size_t i = 0; i < mins.size(); i++) {
-      string stride = to_string(w.strides[i]);
-      string base_var = "d" + to_string(i);
-      base_vars.push_back(base_var);
-      string kv = "k" + to_string(i);
-      arg_vars.push_back(kv);
-      int min = mins[i];
-      int max = maxs[i];
-      string base_expr = stride + "*" + base_var;
-      box_strs.push_back(base_expr + " + " + to_string(min) + " <= " + kv + " <= " + base_expr + " + " + to_string(max));
-    }
-    string box_cond = "{ " + name + sep_list(base_vars, "[", "]", ", ") + " -> " + w.name + sep_list(arg_vars, "[", "]", ", ") + " : " + sep_list(box_strs, "", "", " and ") + " }";
-    cout << "Box needed: " << box_cond << endl;
-    umap* m = isl_union_map_read_from_str(ctx, box_cond.c_str());
-    cout << "Map       : " << str(m) << endl;
+    umap* m = nullptr;
+    assert(false);
+    //vector<string> box_strs;
+    //vector<string> base_vars;
+    //vector<string> arg_vars;
+    //for (size_t i = 0; i < mins.size(); i++) {
+      ////string stride = to_string(w.strides[i]);
+      //string stride = isl_str(w.strides[i]);
+      //string base_var = "d" + to_string(i);
+      //base_vars.push_back(base_var);
+      //string kv = "k" + to_string(i);
+      //arg_vars.push_back(kv);
+      //int min = mins[i];
+      //int max = maxs[i];
+      //string base_expr = stride + "*" + base_var;
+      //box_strs.push_back(base_expr + " + " + to_string(min) + " <= " + kv + " <= " + base_expr + " + " + to_string(max));
+    //}
+    //string box_cond = "{ " + name + sep_list(base_vars, "[", "]", ", ") + " -> " + w.name + sep_list(arg_vars, "[", "]", ", ") + " : " + sep_list(box_strs, "", "", " and ") + " }";
+    //cout << "Box needed: " << box_cond << endl;
+    //umap* m = isl_union_map_read_from_str(ctx, box_cond.c_str());
+    //cout << "Map       : " << str(m) << endl;
 
     return m;
   }
@@ -4433,7 +4487,7 @@ struct App {
     Window w{arg, strides, offsets};
 
     functions.insert(name);
-    w.needed = build_needed(name, w);
+    //w.needed = build_needed(name, w);
     Result res{compute, {w}};
     app_dag[name] = res;
     return name;
@@ -4441,19 +4495,19 @@ struct App {
 
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
-    uset* s =
-      isl_union_set_read_from_str(ctx, string("{ " + name + "[d0, d1] : 0 <= d0 < " + to_string(d0) + " and 0 <= d1 < " + to_string(d1) + " }").c_str());
+    //uset* s =
+      //isl_union_set_read_from_str(ctx, string("{ " + name + "[d0, d1] : 0 <= d0 < " + to_string(d0) + " and 0 <= d1 < " + to_string(d1) + " }").c_str());
     Box sbox;
     sbox.intervals.push_back({0, d0 - 1});
     sbox.intervals.push_back({0, d1 - 1});
 
     string n = name;
-    map<string, uset*> domains;
+    //map<string, uset*> domains;
     map<string, Box> domain_boxes;
-    domains[n] = s;
+    //domains[n] = s;
     domain_boxes[n] = sbox;
     cout << "Added " << n << " to domain boxes" << endl;
-    cout << "Domain: " << str(s) << endl;
+    //cout << "Domain: " << str(s) << endl;
 
     set<string> search{n};
     set<string> considered;
@@ -4485,10 +4539,10 @@ struct App {
           int max_result_addr = range.max;
 
           // Need to compute the max address
-          int min_input_addr =
-            win.stride(dim)*min_result_addr + win.min_offset(dim);
-          int max_input_addr =
-            win.stride(dim)*max_result_addr + win.max_offset(dim);
+          int min_input_addr = win.min_addr(dim, min_result_addr);
+            //win.stride(dim)*min_result_addr + win.min_offset(dim);
+          int max_input_addr = win.max_addr(dim, max_result_addr);
+            //win.stride(dim)*max_result_addr + win.max_offset(dim);
           dim++;
           in_box.intervals.push_back({min_input_addr, max_input_addr});
         }
@@ -4498,23 +4552,23 @@ struct App {
         cout << "Added " << next << " domain to boxes" << endl;
         assert(contains_key(next, domain_boxes));
 
-        auto domain = domains.at(next);
+        //auto domain = domains.at(next);
 
-        umap* consumer_map =
-          inputs.needed;
-        uset* in_elems =
-          range(its(consumer_map, domain));
-        cout << "\tneeded elements: " << str(in_elems) << endl;
-        cout << "\tneeded box     : " << in_box << endl;
-        if (!contains_key(inputs.name, domains)) {
-          domains[inputs.name] = in_elems;
-        } else {
-          cout << "\tdomain before union = " << str(domains[inputs.name]) << endl;
-          domains[inputs.name] =
-            simplify(coalesce(unn(domains[inputs.name], in_elems)));
-          cout << "\tdomain after union = " << str(domains[inputs.name]) << endl;
-          cout << "\tcardinality        = " << str(card(domains[inputs.name])) << endl;
-        }
+        //umap* consumer_map =
+          //inputs.needed;
+        //uset* in_elems =
+          //range(its(consumer_map, domain));
+        //cout << "\tneeded elements: " << str(in_elems) << endl;
+        //cout << "\tneeded box     : " << in_box << endl;
+        //if (!contains_key(inputs.name, domains)) {
+          //domains[inputs.name] = in_elems;
+        //} else {
+          //cout << "\tdomain before union = " << str(domains[inputs.name]) << endl;
+          //domains[inputs.name] =
+            //simplify(coalesce(unn(domains[inputs.name], in_elems)));
+          //cout << "\tdomain after union = " << str(domains[inputs.name]) << endl;
+          //cout << "\tcardinality        = " << str(card(domains[inputs.name])) << endl;
+        //}
 
         if (!elem(inputs.name, considered)) {
           search.insert(inputs.name);
