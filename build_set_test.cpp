@@ -46,8 +46,8 @@ struct CodegenOptions {
 class UBuffer {
   public:
     struct isl_ctx* ctx;
-    isl_space* space;
-    isl_space* map_space;
+    //isl_space* space;
+    //isl_space* map_space;
     string name;
 
     std::map<string, bool> isIn;
@@ -56,19 +56,19 @@ class UBuffer {
     std::map<string, isl_union_map*> schedule;
     std::map<string, vector<string> > port_bundles;
 
-    std::map<string, int> varInds;
+    //std::map<string, int> varInds;
 
-    std::vector<string> physical_addr_vars;
-    std::vector<string> writer_vars;
-    std::vector<string> reader_vars;
+    //std::vector<string> physical_addr_vars;
+    //std::vector<string> writer_vars;
+    //std::vector<string> reader_vars;
 
     // Map from writer vars to logical addr vars
-    map<string, isl_map*> write_funcs;
+    //map<string, isl_map*> write_funcs;
 
     // Map from reader vars to logical addr vars
-    map<string, isl_map*> read_funcs;
+    //map<string, isl_map*> read_funcs;
     
-    isl_map* physical_address_mapping;
+    //isl_map* physical_address_mapping;
 
     int port_widths;
 
@@ -4534,19 +4534,13 @@ struct App {
 
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
-    //uset* s =
-      //isl_union_set_read_from_str(ctx, string("{ " + name + "[d0, d1] : 0 <= d0 < " + to_string(d0) + " and 0 <= d1 < " + to_string(d1) + " }").c_str());
     Box sbox;
     sbox.intervals.push_back({0, d0 - 1});
     sbox.intervals.push_back({0, d1 - 1});
 
     string n = name;
-    //map<string, uset*> domains;
     map<string, Box> domain_boxes;
-    //domains[n] = s;
     domain_boxes[n] = sbox;
-    cout << "Added " << n << " to domain boxes" << endl;
-    //cout << "Domain: " << str(s) << endl;
 
     set<string> search{n};
     set<string> considered;
@@ -4577,11 +4571,8 @@ struct App {
           int min_result_addr = range.min;
           int max_result_addr = range.max;
 
-          // Need to compute the max address
           int min_input_addr = win.min_addr(dim, min_result_addr);
-            //win.stride(dim)*min_result_addr + win.min_offset(dim);
           int max_input_addr = win.max_addr(dim, max_result_addr);
-            //win.stride(dim)*max_result_addr + win.max_offset(dim);
           dim++;
           in_box.intervals.push_back({min_input_addr, max_input_addr});
         }
@@ -4822,11 +4813,8 @@ struct App {
             delays[fd] = delay_coeffs.at(p);
           }
         }
-        //delays["d_" + f] = p;
         p++;
       }
-
-      //assert(false);
 
       cout << "Final schedules: " << endl;
       for (auto f : sorted_functions) {
@@ -4895,6 +4883,13 @@ struct App {
     cout << "Whole domain: " << str(whole_dom) << endl;
     cout << endl << "Final loops; " << endl;
     cout << codegen_c(its(m, whole_dom)) << endl << endl;
+
+    // Generate re-use buffers
+    map<string, UBuffer> buffers;
+    for (auto f : sorted_functions) {
+      UBuffer b;
+      buffers[f] = b;
+    }
     return;
   }
 
