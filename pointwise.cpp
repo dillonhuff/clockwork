@@ -39,7 +39,7 @@ inline hw_uint<16> I_out_plus_one0_1_select(I_I_id0_2_cache& I_I_id0_2_delay
 // Bundles...
 // I_id0_write
 //	I_I_id0_2
-inline void I_I_id0_write_bundle_write(hw_uint<16>& /* width = 16*/I_id0_write, I_I_id0_2_cache& I_I_id0_2_delay) {
+inline void I_I_id0_write_bundle_write(hw_uint<16>& I_id0_write, I_I_id0_2_cache& I_I_id0_2_delay) {
 	I_I_id0_2_write(I_id0_write, I_I_id0_2_delay);
 }
 

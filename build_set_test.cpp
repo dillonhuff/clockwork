@@ -44,10 +44,10 @@ struct CodegenOptions {
 };
 
 class UBuffer {
+
   public:
+    int port_widths;
     struct isl_ctx* ctx;
-    //isl_space* space;
-    //isl_space* map_space;
     string name;
 
     std::map<string, bool> isIn;
@@ -56,21 +56,6 @@ class UBuffer {
     std::map<string, isl_union_map*> schedule;
     std::map<string, vector<string> > port_bundles;
 
-    //std::map<string, int> varInds;
-
-    //std::vector<string> physical_addr_vars;
-    //std::vector<string> writer_vars;
-    //std::vector<string> reader_vars;
-
-    // Map from writer vars to logical addr vars
-    //map<string, isl_map*> write_funcs;
-
-    // Map from reader vars to logical addr vars
-    //map<string, isl_map*> read_funcs;
-    
-    //isl_map* physical_address_mapping;
-
-    int port_widths;
 
     UBuffer() : port_widths(32) {}
 
@@ -1056,7 +1041,7 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
       out << "inline void " + buf.name + "_" + b.first + "_bundle_write(";
       vector<string> dim_decls;
       if (options.internal) {
-        dim_decls.push_back(buf.port_type_string(b.first) + "& /* width = " + to_string(buf.port_widths) + "*/" + b.first);
+        dim_decls.push_back(buf.port_type_string(b.first) + "& " + b.first);
       } else {
         dim_decls.push_back("InputStream<" + buf.port_type_string(b.first)  + " >& " + b.first);
       }
