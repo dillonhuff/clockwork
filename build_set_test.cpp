@@ -4517,6 +4517,17 @@ struct App {
     return name;
   }
 
+  set<string> consumers(const string& f) {
+    set<string> cons;
+    for (auto d : app_dag.at(f).srcs) {
+      if (d.name == f) {
+        cons.insert(d.name);
+        break;
+      }
+    }
+    return cons;
+  }
+
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     Box sbox;
@@ -4874,15 +4885,21 @@ struct App {
     for (auto f : sorted_functions) {
       UBuffer b;
       b.ctx = ctx;
-      b.name = f;
+      b.name = f + "_buf";
       isl_set* domain =
         map_find(f, domain_boxes).to_set(b.ctx, f);
       isl_union_map* sched =
         its(m, domain);
-      cout << "Creating in port.." << endl;
-      b.add_in_pt(f + "_in", domain, isl_map_read_from_str(ctx, "{}"), sched); 
-      cout << "Created it";
+      b.add_in_pt(f, domain, isl_map_read_from_str(ctx, "{}"), sched); 
       buffers[f] = b;
+
+      for (auto consumer : consumers(f)) {
+        isl_set* domain =
+          map_find(consumer, domain_boxes).to_set(b.ctx, f);
+        isl_union_map* sched =
+          its(m, domain);
+        b.add_out_pt(consumer, domain, isl_map_read_from_str(ctx, "{}"), sched); 
+      }
     }
     return;
   }
