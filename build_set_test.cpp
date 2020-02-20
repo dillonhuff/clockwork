@@ -514,33 +514,42 @@ int int_upper_bound(isl_union_pw_qpolynomial* range_card) {
   return bint;
 }
 
-//umap* get_lexmax_events(const std::string& inpt, const std::string& outpt, UBuffer& buf) {
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
-    umap* src_map = nullptr;
-    for (auto inpt : buf.get_in_ports()) {
-      auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
-      if (src_map == nullptr) {
-        src_map =
-          ((its(dot(buf.access_map.at(outpt),
-                    inv(buf.access_map.at(inpt))), beforeAcc)));
-      } else {
-        src_map =
-          unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
-      }
+  cout << "Getting lexmax events for " << outpt << endl;
+  umap* src_map = nullptr;
+  for (auto inpt : buf.get_in_ports()) {
+    auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
+    cout << "Got beforeacc" << endl;
+    cout << "\t" << str(beforeAcc) << endl;
+    if (src_map == nullptr) {
+      auto outmap = buf.access_map.at(outpt);
+      auto inmap = buf.access_map.at(inpt);
+      cout << "outmap: " << str(outmap) << endl;
+      cout << "inmap : " << str(inmap) << endl;
+      src_map =
+        its(dot(outmap,
+              inv(inmap)), beforeAcc);
+      cout << "Got first srcmap" << endl;
+    } else {
+      src_map =
+        unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
     }
+  }
 
-    auto sched = buf.global_schedule();
-    auto after = lex_gt(sched, sched);
+  cout << "src map done" << endl;
+  auto sched = buf.global_schedule();
+  auto after = lex_gt(sched, sched);
 
-    src_map = its(src_map, after);
-    src_map = lexmax(src_map);
+  src_map = its(src_map, after);
+  src_map = lexmax(src_map);
 
-    auto time_to_event = inv(sched);
+  auto time_to_event = inv(sched);
 
-    auto lex_max_events =
-      dot(lexmax(dot(src_map, sched)), time_to_event);
+  auto lex_max_events =
+    dot(lexmax(dot(src_map, sched)), time_to_event);
 
-    return lex_max_events;
+  cout << "Done" << outpt << endl;
+  return lex_max_events;
 }
 
 umap* writes_between(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
@@ -566,6 +575,7 @@ umap* writes_between(UBuffer& buf, const std::string& read_port, const std::stri
 }
 
 isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
+  cout << "Computing dd from " << read_port << " to " << write_port << endl;
 
   isl_union_map* sched = buf.schedule.at(write_port);
   assert(sched != nullptr);
@@ -574,21 +584,31 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
 
   assert(WritesAfterWrite != nullptr);
 
+  cout << "Got writesafterwrite" << endl;
+  umap* rdsched = buf.schedule.at(read_port);
+  cout << "rdsched: " << str(rdsched) << endl;
+  umap* wrsched = buf.schedule.at(write_port);
+  cout << "wrsched: " << str(wrsched) << endl;
   auto WritesBeforeRead =
-    lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
+    lex_gt(rdsched, wrsched);
+  //buf.schedule.at(write_port));
 
+  cout << "Got writesbeforeread" << endl;
   auto WriteThatProducesReadData =
     get_lexmax_events(read_port, buf);
 
+  cout << "Got WriteThatProducesReadData" << endl;
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
   auto WritesBtwn = (its(WritesAfterProduction, WritesBeforeRead));
 
   auto c = card(WritesBtwn);
+  cout << "Done" << endl;
   return c;
 }
 
 int compute_dd_lower_bound(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
+  cout << "Computing dd from " << read_port << " to " << write_port << endl;
   auto c = compute_dd(buf, read_port, write_port);
   int tight;
   int* b = &tight;
@@ -666,7 +686,9 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
 
 void generate_memory_struct(CodegenOptions& options, std::ostream& out, const std::string& inpt, UBuffer& buf) {
 
+  cout << "Computing max delay..." << endl;
   int maxdelay = compute_max_dd(buf, inpt);
+  cout << "maxdelay: " << maxdelay << endl;
   out << "struct " + inpt + "_cache {" << endl;
   out << "\t// Capacity: " << maxdelay + 1 << endl;
   vector<int> read_delays{0};
@@ -818,6 +840,8 @@ void generate_code_prefix(CodegenOptions& options,
   for (auto inpt : buf.get_in_ports()) {
     generate_memory_struct(options, out, inpt, buf);
   }
+
+  cout << "Generated struct" << endl;
 
   out << endl << endl;
   for (auto inpt : buf.get_in_ports()) {
@@ -1067,7 +1091,10 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
 
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
   string inpt = buf.get_in_port();
+  cout << "Generating prefix for: " << buf.name << endl;
   generate_code_prefix(options, out, buf);
+
+  cout << "Generating ports" << endl;
 
   for (auto outpt : buf.get_out_ports()) {
     cout << "Generating select for outpt: " << outpt << endl;
@@ -4909,14 +4936,17 @@ struct App {
         map_find(f, domain_boxes).to_set(b.ctx, f);
       isl_union_map* sched =
         its(m, domain);
-      //isl_map* acc = to_map(rdmap(ctx, "{ " + f + "[d0, d1] -> " + b.name + "[d0, d1] }"));
       isl_map* acc = to_map(rdmap(ctx, "{ " + f + "[d0, d1] -> " + f + "[d0, d1] }"));
+
+      cout << "In acc: " << str(acc) << endl;
+
       b.add_in_pt(f, domain, acc, sched);
       buffers[f] = b;
 
       for (auto consumer : consumers(f)) {
         isl_set* domain =
-          map_find(consumer, domain_boxes).to_set(b.ctx, f);
+          map_find(consumer, domain_boxes).to_set(b.ctx, consumer);
+        cout << "Domain for " << consumer << ": " << str(domain) << endl;
         isl_union_map* sched =
           its(m, domain);
 
@@ -4925,17 +4955,20 @@ struct App {
         assert(ws_cf != nullptr);
 
         auto access_map =
-          its(inv(ws_cf), domain);
+          its(ws_cf, domain);
+          //inv(its(ws_cf, domain));
+          //int(inv(ws_cf), domain);
 
         cout << "Access map: " << str(access_map) << endl;
+        cout << "Sched for " << consumer << ": " << str(sched) << endl;
         b.add_out_pt(consumer, domain, to_map(access_map), sched);
       }
 
-      //ofstream out(f + "_buf.cpp");
-      //generate_hls_code(out, b);
+      ofstream out(f + "_buf.cpp");
+      generate_hls_code(out, b);
     }
 
-    //assert(false);
+    assert(false);
     return;
   }
 
@@ -4990,6 +5023,7 @@ void denoise2d_test() {
   dn.func2d("output", "out_comp_dn2d", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
  
   dn.realize("output", 30, 30, 1);
+  //assert(false);
 }
 
 void sobel_test() {
