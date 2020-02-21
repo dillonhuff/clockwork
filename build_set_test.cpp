@@ -2411,7 +2411,11 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
   return buf_srcs;
 }
 
-void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap) {
+void generate_app_code(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    map<string, isl_set*>& domain_map) {
   ofstream conv_out(prg.name + ".cpp");
 
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
@@ -2419,12 +2423,6 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
     if (!prg.is_boundary(b.first)) {
       generate_hls_code(options, conv_out, b.second);
     }
-  }
-
-  auto domains = prg.domains();
-  map<string, isl_set*> domain_map;
-  for (auto d : domains) {
-    domain_map[d.first->name] = d.second;
   }
 
   conv_out << endl << endl;
@@ -2567,6 +2565,16 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
   conv_out << "}" << endl;
 
   generate_app_code_header(buffers, prg);
+}
+
+void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap) {
+  auto domains = prg.domains();
+  map<string, isl_set*> domain_map;
+  for (auto d : domains) {
+    domain_map[d.first->name] = d.second;
+  }
+
+  generate_app_code(options, buffers, prg, schedmap, domain_map);
 }
 
 void generate_optimized_code(prog& prg) {
@@ -5032,6 +5040,7 @@ struct App {
     prg.name = name;
     prg.compute_unit_file = "conv_3x3.h";
     auto action_domain = cpy(whole_dom);
+    map<string, isl_set*> domain_map;
     for (auto f : sorted_functions) {
       if (app_dag.at(f).srcs.size() == 0) {
         prg.ins.insert(f);
@@ -5053,10 +5062,11 @@ struct App {
         for (auto p : app_dag.at(f).srcs) {
           op->add_load(p.name, "0, 0");
         }
+        domain_map[f + "_comp"] = compute_domain.to_set(ctx, f + "_comp");
       }
     }
     prg.outs = {name};
-    generate_app_code(options, buffers, prg, its(m, action_domain));
+    generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
 
     return;
   }
