@@ -77,7 +77,7 @@ inline hw_uint<32>  read2_select(write_cache& write_delay
 	return value_write;
 }
 
-// Bundles...
+// # of bundles = 4
 // read0
 //	read0
 inline hw_uint<32> shift_reg_read0_bundle_read(write_cache& write_delay, int i) {

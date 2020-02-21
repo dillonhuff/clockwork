@@ -80,7 +80,7 @@ inline hw_uint<32>  I_warped_0_conv_3_30_9_select(I_store_I_from_in_2_cache& I_s
 	return value_I_store_I_from_in_2;
 }
 
-// Bundles...
+// # of bundles = 2
 // store_I_from_in_write
 //	I_store_I_from_in_2
 inline void I_store_I_from_in_write_bundle_write(hw_uint<32> & store_I_from_in_write, I_store_I_from_in_2_cache& I_store_I_from_in_2_delay) {
@@ -154,7 +154,7 @@ inline hw_uint<32>  warped_0_out_id0_1_select(warped_0_warped_0_conv_3_30_4_cach
 	return value_warped_0_warped_0_conv_3_30_4;
 }
 
-// Bundles...
+// # of bundles = 2
 // out_id0_read
 //	warped_0_out_id0_1
 inline hw_uint<32> warped_0_out_id0_read_bundle_read(warped_0_warped_0_conv_3_30_4_cache& warped_0_warped_0_conv_3_30_4_delay, int root, int ur, int kr, int uc, int kc) {

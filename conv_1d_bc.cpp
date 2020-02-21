@@ -79,7 +79,7 @@ inline hw_uint<32>  M_read0_5_select(M_write_0_cache& M_write_0_delay
 	return value_M_write_0;
 }
 
-// Bundles...
+// # of bundles = 2
 // read0_read
 //	M_read0_3
 //	M_read0_4
@@ -139,7 +139,7 @@ inline hw_uint<96> T_compute_out_7_select(T_read0_2_cache& T_read0_2_delay
 	return value_T_read0_2;
 }
 
-// Bundles...
+// # of bundles = 2
 // compute_out_read
 //	T_compute_out_7
 inline hw_uint<96> T_compute_out_read_bundle_read(T_read0_2_cache& T_read0_2_delay, int root, int c) {

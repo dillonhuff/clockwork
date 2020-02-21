@@ -99,7 +99,7 @@ inline hw_uint<16> I_out_blur_30_5_select(I_I_id0_0_cache& I_I_id0_0_delay
 	return value_I_I_id0_0;
 }
 
-// Bundles...
+// # of bundles = 2
 // I_id0_write
 //	I_I_id0_0
 inline void I_I_id0_write_bundle_write(hw_uint<16>& I_id0_write, I_I_id0_0_cache& I_I_id0_0_delay) {

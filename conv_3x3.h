@@ -173,3 +173,18 @@ hw_uint<32> conv_3_3(hw_uint<32*9>& in) {
     v3 + v4 + v5 +
     v6 + v7 + v8).to_int();
 }
+
+static inline
+hw_uint<32> mag_cu(hw_uint<32>& a) {
+  return a;
+}
+
+static inline
+hw_uint<32> sobel_my(hw_uint<32>& a) {
+  return a;
+}
+
+static inline
+hw_uint<32> sobel_mx(hw_uint<32>& a) {
+  return a;
+}

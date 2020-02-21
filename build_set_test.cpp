@@ -561,28 +561,6 @@ umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
   return lex_max_events;
 }
 
-//umap* writes_between(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
-
-  //isl_union_map* sched = buf.schedule.at(write_port);
-  //assert(sched != nullptr);
-  
-  //auto WritesAfterWrite = lex_lt(sched, sched);
-
-  //assert(WritesAfterWrite != nullptr);
-
-  //auto WritesBeforeRead =
-    //lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
-
-  //auto WriteThatProducesReadData =
-    //get_lexmax_events(read_port, buf);
-
-  //auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
-
-  //auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
-
-  //return WritesBtwn;
-//}
-
 isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
   //cout << "Computing dd from " << read_port << " to " << write_port << endl;
 
@@ -4986,7 +4964,7 @@ struct App {
       cout << "Adding buffer: " << f << endl;
       UBuffer b;
       b.ctx = ctx;
-      b.name = f + "_buf";
+      b.name = f;
       isl_set* domain =
         map_find(f, domain_boxes).to_set(b.ctx, f);
       isl_union_map* sched =
@@ -4996,7 +4974,7 @@ struct App {
       cout << "In acc: " << str(acc) << endl;
 
       b.add_in_pt(f, domain, acc, sched);
-      b.port_bundles[f + "_read"] = {f};
+      b.port_bundles[f + "_comp_write"] = {f};
 
       for (auto consumer : consumers(f)) {
         isl_set* domain =
@@ -5015,7 +4993,7 @@ struct App {
         cout << "Access map: " << str(access_map) << endl;
         cout << "Sched for " << consumer << ": " << str(sched) << endl;
         b.add_out_pt(consumer, domain, to_map(access_map), sched);
-        b.port_bundles[consumer + "_read"] = {consumer};
+        b.port_bundles[consumer + "_comp_read"] = {consumer};
       }
 
       //b.set_default_bundles();
@@ -5028,7 +5006,7 @@ struct App {
     //assert(false);
     
     CodegenOptions options;
-    options.internal = false;
+    options.internal = true;
     prog prg;
     prg.name = name;
     prg.compute_unit_file = "conv_3x3.h";

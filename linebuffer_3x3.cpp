@@ -193,7 +193,7 @@ inline hw_uint<32>  read_2_2_select(write0_cache& write0_delay
 	return value_write0;
 }
 
-// Bundles...
+// # of bundles = 10
 // read_0_0
 //	read_0_0
 inline hw_uint<32> linebuffer_3x3_read_0_0_bundle_read(write0_cache& write0_delay, int i, int j) {
