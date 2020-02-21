@@ -12,3 +12,8 @@ conv_*.cpp
 conv_*.h
 *.rpt
 *.log
+.cpp
+.h
+unsharp*
+mag_*
+diff_*

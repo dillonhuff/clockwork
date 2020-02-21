@@ -2323,14 +2323,6 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
 void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap) {
   ofstream conv_out(prg.name + ".cpp");
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
-  vector<string> args;
-  for (auto& b : prg.ins) {
-    assert(contains_key(b, buffers));
-    args.push_back("HWStream<" + buffers.at(b).port_type_string() + " >& " + b);
-  }
-  for (auto& b : prg.outs) {
-    args.push_back("HWStream<" + prg.buffer_element_type_string(b) + " >& " + b);
-  }
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
       generate_hls_code(options, conv_out, b.second);
@@ -2484,6 +2476,14 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
   }
 
   conv_out << "// Driver function" << endl;
+  vector<string> args;
+  for (auto& b : prg.ins) {
+    assert(contains_key(b, buffers));
+    args.push_back("HWStream<" + buffers.at(b).port_type_string() + " >& " + b);
+  }
+  for (auto& b : prg.outs) {
+    args.push_back("HWStream<" + prg.buffer_element_type_string(b) + " >& " + b);
+  }
   string arg_buffers = sep_list(args, "(", ")", ", ");
   conv_out << "void " << prg.name << arg_buffers << " {" << endl;
   for (auto& b : buffers) {
@@ -4088,7 +4088,6 @@ QAV qvar(const std::string& v) {
 
 struct Window {
   string name;
-  //vector<int> strides;
   vector<QAV> strides;
   vector<vector<int> > offsets;
   umap* needed;
@@ -4490,15 +4489,11 @@ struct App {
       }
     }
 
-    //umap* m = nullptr;
-    //assert(false);
     vector<string> box_strs;
     vector<string> base_vars;
     vector<string> arg_vars;
     for (size_t i = 0; i < mins.size(); i++) {
-      //string stride = to_string(w.strides[i]);
       QAV stride = w.stride(i);
-      //string stride = isl_str(w.strides[i]);
       string base_var = "d" + to_string(i);
       base_vars.push_back(base_var);
       string kv = "k" + to_string(i);
@@ -5025,7 +5020,19 @@ struct App {
       } else {
         // TODO: Convert to compute box
         Box compute_domain = map_find(f, domain_boxes);
-        auto op = prg.add_op(f + "_comp");
+        op* nest = prg.root;
+        int i = 0;
+        for (auto r : compute_domain.intervals) {
+          nest = nest->add_nest(f + "_" + to_string(i), r.min, r.max - 1);
+          i++;
+        }
+        auto op = nest->add_op(f + "_comp");
+        op->add_function(app_dag.at(f).compute_name);
+        op->add_store(f, "0, 0");
+
+        for (auto p : app_dag.at(f).srcs) {
+          op->add_load(p.name, "0, 0");
+        }
       }
     }
     prg.outs = {name};
@@ -5054,7 +5061,7 @@ void upsample2d_test() {
   App ds;
   ds.func2d("A");
   Window awin("A", {qconst(1, 2), qconst(1, 5)}, {{0, 0}});
-  ds.func2d("B", "blur", awin);
+  ds.func2d("B", "id", awin);
   ds.realize("B", 10, 10, 1);
 
   //assert(false);
@@ -5064,7 +5071,7 @@ void downsample2d_test() {
   App ds;
   ds.func2d("A");
   Window awin{"A", {2, 2}, {{0, 0}}};
-  ds.func2d("B", "blur", awin);
+  ds.func2d("B", "id", awin);
   ds.realize("B", 10, 10, 1);
 
   //assert(false);
@@ -5512,6 +5519,8 @@ int main(int argc, char** argv) {
 
     upsample2d_test();
     downsample2d_test();
+    //assert(false);
+
     denoise2d_test();
     sobel_test();
     heat_3d_test();
