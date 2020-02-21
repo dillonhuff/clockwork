@@ -108,10 +108,6 @@ class UBuffer {
         len += port_width(pt);
       }
 
-      //if (len == 32) {
-        //return "hw_uint<" + to_string(len) + ">";
-        //return "int";
-      //}
       return "hw_uint<" + to_string(len) + ">";
     }
 
@@ -124,7 +120,6 @@ class UBuffer {
     isl_union_map* global_schedule() {
       umap* s = isl_union_map_read_from_str(ctx, "{ }");
       for (auto other : schedule) {
-        //s = unn(s, isl_union_map_from_map(cpy(other.second)));
         s = unn(s, (cpy(other.second)));
       }
 
@@ -454,14 +449,8 @@ std::string codegen_c(isl_term* t) {
   vector<string> exps;
   for (int i = 0; i < isl_term_dim(t, isl_dim_set); i++) {
     int exp = isl_term_get_exp(t, isl_dim_set, i);
-    //if (exp != 0) {
     exps.push_back("pow(i_" + to_string(i) + ", " + to_string(exp) + ")");
-    //} else {
-      //exps.push_back("1");
-    //}
   }
-
-  //isl_aff* div = isl_term_get_div(t, 0);
 
   return "(" + str(isl_term_get_coefficient_val(t)) + "*" + sep_list(exps, "", "", "*") + ")";
 }
@@ -572,27 +561,27 @@ umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
   return lex_max_events;
 }
 
-umap* writes_between(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
+//umap* writes_between(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
 
-  isl_union_map* sched = buf.schedule.at(write_port);
-  assert(sched != nullptr);
+  //isl_union_map* sched = buf.schedule.at(write_port);
+  //assert(sched != nullptr);
   
-  auto WritesAfterWrite = lex_lt(sched, sched);
+  //auto WritesAfterWrite = lex_lt(sched, sched);
 
-  assert(WritesAfterWrite != nullptr);
+  //assert(WritesAfterWrite != nullptr);
 
-  auto WritesBeforeRead =
-    lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
+  //auto WritesBeforeRead =
+    //lex_gt(buf.schedule.at(read_port), buf.schedule.at(write_port));
 
-  auto WriteThatProducesReadData =
-    get_lexmax_events(read_port, buf);
+  //auto WriteThatProducesReadData =
+    //get_lexmax_events(read_port, buf);
 
-  auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
+  //auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
-  auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
+  //auto WritesBtwn = its(WritesAfterProduction, WritesBeforeRead);
 
-  return WritesBtwn;
-}
+  //return WritesBtwn;
+//}
 
 isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
   //cout << "Computing dd from " << read_port << " to " << write_port << endl;
@@ -741,7 +730,6 @@ void generate_memory_struct(CodegenOptions& options, std::ostream& out, const st
   }
 
   if (num_readers == 1 || options.all_rams) {
-  //if (num_readers == 1) {
     int partition_capacity = 1 + maxdelay;
     out << "\tfifo<" << buf.port_type_string() << ", " << partition_capacity << "> f" << ";" << endl;
     out << "\tinline " + buf.port_type_string() + " peek(const int offset) {" << endl;
@@ -975,23 +963,6 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
 
   auto lex_max_events = get_lexmax_events(outpt, buf);
 
-  // Body of select function
-  //string delay_expr = evaluate_dd(buf, outpt, inpt);
-  //auto qpd = compute_dd(buf, outpt, inpt);
-  //auto pieces = get_pieces(qpd);
-  //out << "// Pieces..." << endl;
-  //for (auto p : pieces) {
-    //out << "// " << str(p.first) << " -> " << str(p.second) << endl;
-    //out << "// \tis always true on iteration domain: " << isl_set_is_subset(cpy(out_domain), cpy(p.first)) << endl;
-  //}
-  //bool always_zero_distance = pieces.size() == 0;
-
-  //if (pieces.size() == 0) {
-    //out << "// Always 0" << endl;
-  //}
-  //out << "//\tis optimizable constant: " << opt_const << endl;
-  //string dx = to_string(int_upper_bound(qpd));
-
   if (buf.get_in_ports().size() == 1) {
     string inpt = *(buf.get_in_ports().begin());
     string value_str = delay_string(options, inpt, outpt, buf);
@@ -1010,7 +981,6 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
       string delay_expr = evaluate_dd(buf, outpt, inpt);
       string value_str = delay_string(options, inpt, outpt, buf);
       string peeked_val = value_str;
-      //inpt + "_delay.peek((" + delay_expr + "))";
       
       if (options.internal) {
         out << "\t// inpt: " << inpt << endl;
@@ -1111,13 +1081,13 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
 
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
   string inpt = buf.get_in_port();
-  cout << "Generating prefix for: " << buf.name << endl;
+  //cout << "Generating prefix for: " << buf.name << endl;
   generate_code_prefix(options, out, buf);
 
-  cout << "Generating ports" << endl;
+  //cout << "Generating ports" << endl;
 
   for (auto outpt : buf.get_out_ports()) {
-    cout << "Generating select for outpt: " << outpt << endl;
+    //cout << "Generating select for outpt: " << outpt << endl;
     generate_selects(options, out, inpt, outpt, buf);
   }
 
@@ -1193,7 +1163,6 @@ void generate_hls_code(UBuffer& buf) {
     nd++;
   }
 
-  // Replace fill-ins from polyhedral code generator with calls to memory actions 
   for (auto b : buf.port_bundles) {
     if (buf.is_out_pt(*(begin(b.second)))) {
     } else {
@@ -1246,8 +1215,8 @@ void synth_reduce_test() {
     isl_union_set_read_from_str(ctx, "{ init[i] : 0 <= i <= 4;  read0[i, j] : 0 <= i <= 4 and 0 <= j <= 3; update[i, j] : 0 <= i <= 4 and 0 <= j <= 3; out[i] : 0 <= i <= 4 }");
   auto naive_sched =
     its(isl_union_map_read_from_str(ctx, "{ init[i] -> [0, i, 0, 0, 0]; read0[i, j] -> [0, i, 1, j, 0]; update[i, j] -> [0, i, 1, j, 1]; out[i] -> [0, i, 2, 0, 0] }"), domain);
-  cout << "Code for naive schedule..." << endl;
-  cout << codegen_c(naive_sched) << endl;
+  //cout << "Code for naive schedule..." << endl;
+  //cout << codegen_c(naive_sched) << endl;
 
   auto before = lex_lt(naive_sched, naive_sched);
   auto writes =
@@ -2168,11 +2137,9 @@ struct prog {
     auto order_deps = relative_orders();
     isl_union_map *raw_deps = validity_deps();
     auto validity =
-      //raw_deps;
       unn(order_deps, raw_deps);
     isl_union_map *proximity =
       cpy(raw_deps);
-      //cpy(validity);
 
     cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
     isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
@@ -2477,9 +2444,12 @@ void generate_app_code(CodegenOptions& options,
         } else {
           string source_delay = pick(buffers.at(in_buffer).get_in_ports());
           auto source_delays = buffers.at(in_buffer).get_in_ports();
-          string bundle = buffers.at(in_buffer).get_bundle(op->name.substr(0, op->name.size() - 5));
-          //conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
-          conv_out << in_buffer << "_" << op->name << "_" << bundle << "_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
+          cout << "op = " << op->name << endl;
+          //string bundle = buffers.at(in_buffer).get_bundle(op->name.substr(0, op->name.size() - 5));
+          //string bundle = buffers.at(in_buffer).get_bundle(op->name);
+          //string bundle = op->name;
+          //conv_out << in_buffer << "_" << op->name << "_" << bundle << "_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
+          conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
         }
         buffer_reps[in_buffer] = value_name;
         res = value_name;
@@ -2743,10 +2713,6 @@ std::vector<std::string> run_regression_tb(prog& prg) {
     lines.push_back(line);
   }
   return lines;
-    //synth_lb_test();
-  //std::string str((std::istreambuf_iterator<char>(infile)),
-      //std::istreambuf_iterator<char>());
-  //return str;
 }
 
 void run_tb(prog& prg) {
@@ -5030,6 +4996,7 @@ struct App {
       cout << "In acc: " << str(acc) << endl;
 
       b.add_in_pt(f, domain, acc, sched);
+      b.port_bundles[f + "_read"] = {f};
 
       for (auto consumer : consumers(f)) {
         isl_set* domain =
@@ -5048,9 +5015,10 @@ struct App {
         cout << "Access map: " << str(access_map) << endl;
         cout << "Sched for " << consumer << ": " << str(sched) << endl;
         b.add_out_pt(consumer, domain, to_map(access_map), sched);
+        b.port_bundles[consumer + "_read"] = {consumer};
       }
 
-      b.set_default_bundles();
+      //b.set_default_bundles();
 
       ofstream out(f + "_buf.cpp");
       generate_hls_code(out, b);
@@ -5170,8 +5138,8 @@ void sobel_test() {
 
   sobel.realize("mag", 30, 30, 1);
 
-  //int res = system("g++ -std=c++11 -c mag.cpp");
-  //assert(res == 0);
+  int res = system("g++ -std=c++11 -c mag.cpp");
+  assert(res == 0);
 }
 
 void heat_3d_test() {
