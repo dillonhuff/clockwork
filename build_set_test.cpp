@@ -580,7 +580,7 @@ umap* writes_between(UBuffer& buf, const std::string& read_port, const std::stri
 }
 
 isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
-  cout << "Computing dd from " << read_port << " to " << write_port << endl;
+  //cout << "Computing dd from " << read_port << " to " << write_port << endl;
 
   isl_union_map* sched = buf.schedule.at(write_port);
   assert(sched != nullptr);
@@ -589,31 +589,31 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
 
   assert(WritesAfterWrite != nullptr);
 
-  cout << "Got writesafterwrite" << endl;
+  //cout << "Got writesafterwrite" << endl;
   umap* rdsched = buf.schedule.at(read_port);
-  cout << "rdsched: " << str(rdsched) << endl;
+  //cout << "rdsched: " << str(rdsched) << endl;
   umap* wrsched = buf.schedule.at(write_port);
-  cout << "wrsched: " << str(wrsched) << endl;
+  //cout << "wrsched: " << str(wrsched) << endl;
   auto WritesBeforeRead =
     lex_gt(rdsched, wrsched);
   //buf.schedule.at(write_port));
 
-  cout << "Got writesbeforeread" << endl;
+  //cout << "Got writesbeforeread" << endl;
   auto WriteThatProducesReadData =
     get_lexmax_events(read_port, buf);
 
-  cout << "Got WriteThatProducesReadData" << endl;
+  //cout << "Got WriteThatProducesReadData" << endl;
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
   auto WritesBtwn = (its(WritesAfterProduction, WritesBeforeRead));
 
   auto c = card(WritesBtwn);
-  cout << "Done" << endl;
+  //cout << "Done" << endl;
   return c;
 }
 
 int compute_dd_lower_bound(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
-  cout << "Computing dd from " << read_port << " to " << write_port << endl;
+  //cout << "Computing dd from " << read_port << " to " << write_port << endl;
   auto c = compute_dd(buf, read_port, write_port);
   int tight;
   int* b = &tight;
@@ -691,9 +691,9 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
 
 void generate_memory_struct(CodegenOptions& options, std::ostream& out, const std::string& inpt, UBuffer& buf) {
 
-  cout << "Computing max delay..." << endl;
+  //cout << "Computing max delay..." << endl;
   int maxdelay = compute_max_dd(buf, inpt);
-  cout << "maxdelay: " << maxdelay << endl;
+  //cout << "maxdelay: " << maxdelay << endl;
   out << "struct " + inpt + "_cache {" << endl;
   out << "\t// Capacity: " << maxdelay + 1 << endl;
   vector<int> read_delays{0};
@@ -2341,6 +2341,76 @@ void generate_app_code_header(const map<string, UBuffer>& buffers, prog& prg) {
   of.close();
 }
 
+
+vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, prog& prg) {
+  set<string> done;
+  vector<string> buf_srcs;
+
+  for (auto p : op->consume_locs) {
+    auto buf_name = p.first;
+    if (!elem(buf_name, done)) {
+      if (prg.is_boundary(buf_name)) {
+        buf_srcs.push_back(buf_name);
+      } else {
+        const UBuffer& b = buffers.at(buf_name);
+        for (auto ib : b.get_in_ports()) {
+          buf_srcs.push_back(ib);
+        }
+      }
+      done.insert(buf_name);
+    }
+  }
+  for (auto p : op->produce_locs) {
+    auto buf_name = p.first;
+    if (!elem(buf_name, done)) {
+      if (prg.is_boundary(buf_name)) {
+        buf_srcs.push_back(buf_name);
+      } else {
+        const UBuffer& b = buffers.at(buf_name);
+        for (auto ib : b.get_in_ports()) {
+          buf_srcs.push_back(ib);
+        }
+      }
+      done.insert(buf_name);
+    }
+  }
+  return buf_srcs;
+}
+
+vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& prg) {
+  set<string> done;
+  vector<string> buf_srcs;
+  for (auto p : op->consume_locs) {
+    auto buf_name = p.first;
+    if (!elem(buf_name, done)) {
+      if (prg.is_boundary(buf_name)) {
+        buf_srcs.push_back("HWStream<" + map_find(buf_name, buffers).port_type_string() + " >& " + buf_name);
+      } else {
+        const UBuffer& b = buffers.at(buf_name);
+        for (auto ib : b.get_in_ports()) {
+          buf_srcs.push_back(ib + "_cache& " + ib);
+        }
+      }
+      done.insert(buf_name);
+    }
+  }
+  for (auto p : op->produce_locs) {
+    auto buf_name = p.first;
+    if (!elem(buf_name, done)) {
+      if (prg.is_boundary(buf_name)) {
+        buf_srcs.push_back("HWStream<" + map_find(buf_name, buffers).port_type_string() + " >& " + buf_name);
+      } else {
+        const UBuffer& b = buffers.at(buf_name);
+        for (auto ib : b.get_in_ports()) {
+          buf_srcs.push_back(ib + "_cache& " + ib);
+        }
+      }
+      done.insert(buf_name);
+    }
+  }
+  return buf_srcs;
+}
+
 void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap) {
   ofstream conv_out(prg.name + ".cpp");
 
@@ -2352,42 +2422,19 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
   }
 
   auto domains = prg.domains();
+  map<string, isl_set*> domain_map;
+  for (auto d : domains) {
+    domain_map[d.first->name] = d.second;
+  }
+
   conv_out << endl << endl;
   conv_out << "// Operation logic" << endl;
   for (auto op : prg.all_ops()) {
-    vector<string> args;
-    set<string> done;
     vector<string> buf_srcs;
-    for (auto p : op->consume_locs) {
-      auto buf_name = p.first;
-      if (!elem(buf_name, done)) {
-        if (prg.is_boundary(buf_name)) {
-          buf_srcs.push_back("HWStream<" + map_find(buf_name, buffers).port_type_string() + " >& " + buf_name);
-        } else {
-          UBuffer& b = buffers.at(buf_name);
-          for (auto ib : b.get_in_ports()) {
-            buf_srcs.push_back(ib + "_cache& " + ib);
-          }
-        }
-        done.insert(buf_name);
-      }
-    }
-    for (auto p : op->produce_locs) {
-      auto buf_name = p.first;
-      if (!elem(buf_name, done)) {
-        if (prg.is_boundary(buf_name)) {
-          buf_srcs.push_back("HWStream<" + map_find(buf_name, buffers).port_type_string() + " >& " + buf_name);
-        } else {
-          UBuffer& b = buffers.at(buf_name);
-          for (auto ib : b.get_in_ports()) {
-            buf_srcs.push_back(ib + "_cache& " + ib);
-          }
-        }
-        done.insert(buf_name);
-      }
-    }
+    concat(buf_srcs, buffer_args(buffers, op, prg));
 
-    auto s = get_space(domains.at(op));
+    //auto s = get_space(domains.at(op));
+    auto s = get_space(domain_map.at(op->name));
     assert(isl_space_is_set(s));
     vector<string> dim_args;
     for (int i = 0; i < num_dims(s); i++) {
@@ -2446,7 +2493,6 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
             assert(arg_buf != "");
             conv_out << "\t// Arg buf: " << arg_buf << endl;
             if (!elem(arg_buf, buffers_seen)) {
-              //arg_list.push_back(arg);
               arg_list.push_back(map_find(arg_buf, buffer_reps));
               buffers_seen.insert(arg_buf);
             }
@@ -2497,8 +2543,6 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
     conv_out << "}" << endl << endl;
   }
   
-  auto domain = prg.whole_iteration_domain();
-
   conv_out << "// Driver function" << endl;
   string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
   conv_out << "void " << prg.name << arg_buffers << " {" << endl;
@@ -2514,39 +2558,7 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
   for (auto op : prg.all_ops()) {
     regex re(op->name + "\\((.*)\\);");
-    vector<string> args = prg.cache_args(op);
-    set<string> done;
-    vector<string> buf_srcs;
-
-    for (auto p : op->consume_locs) {
-      auto buf_name = p.first;
-      if (!elem(buf_name, done)) {
-        if (prg.is_boundary(buf_name)) {
-          buf_srcs.push_back(buf_name);
-        } else {
-          UBuffer& b = buffers.at(buf_name);
-          for (auto ib : b.get_in_ports()) {
-            buf_srcs.push_back(ib);
-          }
-        }
-        done.insert(buf_name);
-      }
-    }
-    for (auto p : op->produce_locs) {
-      auto buf_name = p.first;
-      if (!elem(buf_name, done)) {
-        if (prg.is_boundary(buf_name)) {
-          buf_srcs.push_back(buf_name);
-        } else {
-          UBuffer& b = buffers.at(buf_name);
-          for (auto ib : b.get_in_ports()) {
-            buf_srcs.push_back(ib);
-          }
-        }
-        done.insert(buf_name);
-      }
-    }
-    string args_list = sep_list(buf_srcs, "", "", ", ");
+    string args_list = sep_list(buffer_arg_names(buffers, op, prg), "", "", ", ");
     code_string = regex_replace(code_string, re, op->name + "(" + args_list + ", $1);");
   }
 
@@ -2555,11 +2567,6 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
   conv_out << "}" << endl;
 
   generate_app_code_header(buffers, prg);
-  //ofstream of(prg.name + ".h");
-  //of << "#pragma once\n\n" << endl;
-  //of << "#include \"hw_classes.h\"" << endl << endl;
-  //of << "void " << prg.name << arg_buffers << ";" << endl;
-  //of.close();
 }
 
 void generate_optimized_code(prog& prg) {
@@ -4917,10 +4924,6 @@ struct App {
     fill_data_domain(name, d0, d1);
     fill_compute_domain(name, unroll_factor);
 
-    //cout << "Pipeline sort: " << endl;
-    //for (auto s : sorted_functions) {
-      //cout << "\t" << s << map_find(s, domain_boxes) << endl;
-    //}
     int ndims = 2;
     map<string, vector<QExpr> > schedules;
     for (int i = 0; i < ndims; i++) {
