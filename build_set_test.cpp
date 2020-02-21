@@ -4911,6 +4911,10 @@ struct App {
     return map_find(name, compute_boxes);
   }
 
+  isl_map* compute_map(const std::string& f) {
+    return to_map(rdmap(ctx, "{ " + f + "[d0, d1] -> " + f + "_comp[d0, d1] }"));
+  }
+
   isl_set* compute_domain(const std::string& name) {
     return map_find(name, compute_boxes).to_set(ctx, name + "_comp");
   }
@@ -4988,19 +4992,21 @@ struct App {
       b.name = f;
       isl_set* domain =
         compute_domain(f);
-        //map_find(f, domain_boxes).to_set(b.ctx, f + "_comp");
       isl_union_map* sched =
         its(m, domain);
-      isl_map* acc = to_map(rdmap(ctx, "{ " + f + "_comp[d0, d1] -> " + f + "[d0, d1] }"));
+      isl_map* write_map =
+        inv(compute_map(f));
+        //to_map(rdmap(ctx, "{ " + f + "_comp[d0, d1] -> " + f + "[d0, d1] }"));
 
-      cout << "In acc: " << str(acc) << endl;
+      cout << "In write_map: " << str(write_map) << endl;
 
-      b.add_in_pt(f, domain, acc, sched);
+      b.add_in_pt(f, domain, write_map, sched);
       b.port_bundles[f + "_comp_write"] = {f};
 
       for (auto consumer : consumers(f)) {
         isl_set* domain =
-          map_find(consumer, domain_boxes).to_set(b.ctx, consumer + "_comp");
+          compute_domain(consumer);
+          //map_find(consumer, domain_boxes).to_set(b.ctx, consumer + "_comp");
         isl_union_map* sched =
           its(m, domain);
 
@@ -5036,12 +5042,14 @@ struct App {
       if (app_dag.at(f).srcs.size() == 0) {
         prg.ins.insert(f);
         action_domain =
-          isl_union_set_subtract(action_domain, to_uset(map_find(f, domain_boxes).to_set(ctx, f + "_comp")));
+          isl_union_set_subtract(action_domain,
+              to_uset(compute_domain(f)));
+              //to_uset(compute_domain(f)); map_find(f, domain_boxes).to_set(ctx, f + "_comp")));
+          //isl_union_set_subtract(action_domain, to_uset(map_find(f, domain_boxes).to_set(ctx, f + "_comp")));
       } else {
         // TODO: Convert to compute box
         Box compute_b =
           compute_box(f);
-           //map_find(f, domain_boxes);
         op* nest = prg.root;
         int i = 0;
         for (auto r : compute_b.intervals) {
@@ -5057,7 +5065,6 @@ struct App {
         }
         domain_map[f + "_comp"] =
           compute_domain(f);
-          //compute_domain.to_set(ctx, f + "_comp");
       }
     }
     prg.outs = {name};
