@@ -524,12 +524,14 @@ int int_upper_bound(isl_union_pw_qpolynomial* range_card) {
 }
 
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
-  //cout << "Getting lexmax events for " << outpt << endl;
+  cout << "Getting lexmax events for " << outpt << endl;
   umap* src_map = nullptr;
   for (auto inpt : buf.get_in_ports()) {
+    cout << "outpt sched: " << str(buf.schedule.at(outpt)) << endl;
+    cout << "inpt sched : " << str(buf.schedule.at(inpt)) << endl;
     auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
-    //cout << "Got beforeacc" << endl;
-    //cout << "\t" << str(beforeAcc) << endl;
+    cout << "Got beforeacc" << endl;
+    cout << "\t" << str(beforeAcc) << endl;
     if (src_map == nullptr) {
       auto outmap = buf.access_map.at(outpt);
       auto inmap = buf.access_map.at(inpt);
@@ -545,7 +547,7 @@ umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
     }
   }
 
-  //cout << "src map done" << endl;
+  cout << "src map done: " << str(src_map) << endl;
   auto sched = buf.global_schedule();
   auto after = lex_gt(sched, sched);
 
@@ -673,9 +675,10 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
 
 void generate_memory_struct(CodegenOptions& options, std::ostream& out, const std::string& inpt, UBuffer& buf) {
 
+  cout << "Creating struct for: " << inpt << " on " << buf.name << endl;
   //cout << "Computing max delay..." << endl;
   int maxdelay = compute_max_dd(buf, inpt);
-  //cout << "maxdelay: " << maxdelay << endl;
+  cout << "maxdelay: " << maxdelay << endl;
   out << "struct " + inpt + "_cache {" << endl;
   out << "\t// Capacity: " << maxdelay + 1 << endl;
   vector<int> read_delays{0};
@@ -688,8 +691,8 @@ void generate_memory_struct(CodegenOptions& options, std::ostream& out, const st
     auto act_dom = 
       domain(its_range(lex_max_events, to_uset(in_actions)));
 
-    //cout << "Lex max events" << endl;
-    //cout << tab(1) << str(coalesce(lex_max_events)) << endl;
+    cout << "Lex max events" << endl;
+    cout << tab(1) << str(coalesce(lex_max_events)) << endl;
 
     if (!isl_union_set_is_empty(act_dom)) {
       num_readers++;
@@ -4416,6 +4419,9 @@ struct App {
   set<string> functions;
   map<string, Result> app_dag;
   map<string, Box> domain_boxes;
+  // Map from functions to compute invocations of 
+  // other functions that they need
+  map<string, Box> compute_boxes;
 
   App() {
     ctx = isl_ctx_alloc();
@@ -4497,7 +4503,8 @@ struct App {
       }
       box_strs.push_back(base_expr + " + " + to_string(min) + " <= " + kv + " <= " + base_expr + " + " + to_string(max));
     }
-    string box_cond = "{ " + name + sep_list(base_vars, "[", "]", ", ") + " -> " + w.name + sep_list(arg_vars, "[", "]", ", ") + " : " + sep_list(box_strs, "", "", " and ") + " }";
+    //string box_cond = "{ " + name + sep_list(base_vars, "[", "]", ", ") + " -> " + w.name + sep_list(arg_vars, "[", "]", ", ") + " : " + sep_list(box_strs, "", "", " and ") + " }";
+    string box_cond = "{ " + name + "_comp" + sep_list(base_vars, "[", "]", ", ") + " -> " + w.name + sep_list(arg_vars, "[", "]", ", ") + " : " + sep_list(box_strs, "", "", " and ") + " }";
     cout << "Box needed: " << box_cond << endl;
     umap* m = isl_union_map_read_from_str(ctx, box_cond.c_str());
     cout << "Map       : " << str(m) << endl;
@@ -4593,9 +4600,16 @@ struct App {
     return sorted;
   }
 
+  Box data_domain(const std::string& f) {
+    return map_find(f, domain_boxes);
+  }
+
 
   void fill_compute_domain(const std::string& name, const int unroll_factor) {
-
+    for (auto s : app_dag) {
+      compute_boxes[s.first] =
+        data_domain(s.first);
+    }
   }
 
   void fill_data_domain(const std::string& name, const int d0, const int d1) {
@@ -4893,6 +4907,10 @@ struct App {
 
   }
 
+  isl_set* compute_domain(const std::string& name) {
+    return map_find(name, compute_boxes).to_set(ctx, name + "_comp");
+  }
+
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     fill_data_domain(name, d0, d1);
@@ -4926,7 +4944,6 @@ struct App {
         i++;
       }
       var_names.pop_back();
-      //string map_str = "{ " + f + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
       string map_str = "{ " + f + "_comp" + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
       cout << "Map str: " << map_str << endl;
       auto rm = rdmap(ctx, map_str);
@@ -4966,7 +4983,7 @@ struct App {
       b.ctx = ctx;
       b.name = f;
       isl_set* domain =
-        map_find(f, domain_boxes).to_set(b.ctx, f);
+        map_find(f, domain_boxes).to_set(b.ctx, f + "_comp");
       isl_union_map* sched =
         its(m, domain);
       isl_map* acc = to_map(rdmap(ctx, "{ " + f + "_comp[d0, d1] -> " + f + "[d0, d1] }"));
@@ -4978,8 +4995,7 @@ struct App {
 
       for (auto consumer : consumers(f)) {
         isl_set* domain =
-          map_find(consumer, domain_boxes).to_set(b.ctx, consumer);
-        cout << "Domain for " << consumer << ": " << str(domain) << endl;
+          map_find(consumer, domain_boxes).to_set(b.ctx, consumer + "_comp");
         isl_union_map* sched =
           its(m, domain);
 
@@ -4990,13 +5006,12 @@ struct App {
         auto access_map =
           its(ws_cf, domain);
 
+        cout << "Domain for " << consumer << ": " << str(domain) << endl;
         cout << "Access map: " << str(access_map) << endl;
         cout << "Sched for " << consumer << ": " << str(sched) << endl;
         b.add_out_pt(consumer, domain, to_map(access_map), sched);
         b.port_bundles[consumer + "_comp_read"] = {consumer};
       }
-
-      //b.set_default_bundles();
 
       ofstream out(f + "_buf.cpp");
       generate_hls_code(out, b);
@@ -5098,6 +5113,26 @@ void denoise2d_test() {
 
   //int res = system("g++ -std=c++11 -c denoise2d.cpp");
   //assert(res == 0);
+}
+
+void conv3x3_app_test() {
+  App sobel;
+
+  sobel.func2d("off_chip_img");
+  sobel.func2d("img", "id", "off_chip_img", {1, 1}, {{0, 0}});
+  vector<vector<int> > offsets;
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      offsets.push_back({i, j});
+    }
+  }
+  sobel.func2d("conv3x3_app", "id", "img", {1, 1}, offsets);
+
+  sobel.realize("conv3x3_app", 30, 30, 1);
+
+  int res = system("g++ -std=c++11 -c conv3x3_app.cpp");
+  assert(res == 0);
+  //assert(false);
 }
 
 void sobel_test() {
@@ -5526,6 +5561,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
+    conv3x3_app_test();
     sobel_test();
     upsample2d_test();
     downsample2d_test();
