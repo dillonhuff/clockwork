@@ -4907,6 +4907,10 @@ struct App {
 
   }
 
+  Box compute_box(const std::string& name) {
+    return map_find(name, compute_boxes);
+  }
+
   isl_set* compute_domain(const std::string& name) {
     return map_find(name, compute_boxes).to_set(ctx, name + "_comp");
   }
@@ -4961,10 +4965,10 @@ struct App {
     assert(whole_dom != nullptr);
     for (auto f : sorted_functions) {
       cout << "Whole dom: " << str(whole_dom) << endl;
-      Box b = map_find(f, domain_boxes);
       whole_dom =
+        unn(whole_dom, to_uset(compute_domain(f)));
         //unn(whole_dom, to_uset(b.to_set(ctx, f)));
-        unn(whole_dom, to_uset(b.to_set(ctx, f + "_comp")));
+        //unn(whole_dom, to_uset(b.to_set(ctx, f + "_comp")));
     }
 
 
@@ -4983,7 +4987,8 @@ struct App {
       b.ctx = ctx;
       b.name = f;
       isl_set* domain =
-        map_find(f, domain_boxes).to_set(b.ctx, f + "_comp");
+        compute_domain(f);
+        //map_find(f, domain_boxes).to_set(b.ctx, f + "_comp");
       isl_union_map* sched =
         its(m, domain);
       isl_map* acc = to_map(rdmap(ctx, "{ " + f + "_comp[d0, d1] -> " + f + "[d0, d1] }"));
@@ -5034,10 +5039,12 @@ struct App {
           isl_union_set_subtract(action_domain, to_uset(map_find(f, domain_boxes).to_set(ctx, f + "_comp")));
       } else {
         // TODO: Convert to compute box
-        Box compute_domain = map_find(f, domain_boxes);
+        Box compute_b =
+          compute_box(f);
+           //map_find(f, domain_boxes);
         op* nest = prg.root;
         int i = 0;
-        for (auto r : compute_domain.intervals) {
+        for (auto r : compute_b.intervals) {
           nest = nest->add_nest(f + "_" + to_string(i), r.min, r.max - 1);
           i++;
         }
@@ -5048,7 +5055,9 @@ struct App {
         for (auto p : app_dag.at(f).srcs) {
           op->add_load(p.name, "0, 0");
         }
-        domain_map[f + "_comp"] = compute_domain.to_set(ctx, f + "_comp");
+        domain_map[f + "_comp"] =
+          compute_domain(f);
+          //compute_domain.to_set(ctx, f + "_comp");
       }
     }
     prg.outs = {name};

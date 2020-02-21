@@ -2,7 +2,7 @@
 
 #include "hw_classes.h"
 
-struct I_store_I_from_in_0_2_cache {
+struct I_store_I_from_in_0_14_cache {
 	// Capacity: 33
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -215,7 +215,7 @@ struct I_store_I_from_in_0_2_cache {
 
 };
 
-struct I_store_I_from_in_1_0_cache {
+struct I_store_I_from_in_1_12_cache {
 	// Capacity: 33
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -430,82 +430,16 @@ struct I_store_I_from_in_1_0_cache {
 
 
 
-inline void I_store_I_from_in_0_2_write(hw_uint<32> & I_store_I_from_in_0_2, I_store_I_from_in_0_2_cache& I_store_I_from_in_0_2_delay) {
-	I_store_I_from_in_0_2_delay.push(I_store_I_from_in_0_2);
+inline void I_store_I_from_in_0_14_write(hw_uint<32> & I_store_I_from_in_0_14, I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay) {
+	I_store_I_from_in_0_14_delay.push(I_store_I_from_in_0_14);
 }
 
-inline void I_store_I_from_in_1_0_write(hw_uint<32> & I_store_I_from_in_1_0, I_store_I_from_in_1_0_cache& I_store_I_from_in_1_0_delay) {
-	I_store_I_from_in_1_0_delay.push(I_store_I_from_in_1_0);
+inline void I_store_I_from_in_1_12_write(hw_uint<32> & I_store_I_from_in_1_12, I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay) {
+	I_store_I_from_in_1_12_delay.push(I_store_I_from_in_1_12);
 }
 
-inline hw_uint<32>  I_out_0_jacobi2d_compute0_11_select(I_store_I_from_in_0_2_cache& I_store_I_from_in_0_2_delay
-, I_store_I_from_in_1_0_cache& I_store_I_from_in_1_0_delay
-, int root, int d1, int d0) {
-	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_1[root' = 0, id1 = 1 + d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
-	bool select_store_I_from_in_1 = ((/* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : root = 0 } */
-1*root == 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : -1 + d1 >= 0 } */
-1*d1 + -1 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : 30 - d1 >= 0 } */
--1*d1 + 30 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : -1 + d0 >= 0 } */
-1*d0 + -1 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : 14 - d0 >= 0 } */
--1*d0 + 14 >= 0));
-	// inpt: I_store_I_from_in_0_2
-	// k = store_I_from_in_1
-//	No key for: I_store_I_from_in_0_2
-	// inpt: I_store_I_from_in_1_0
-	// k = store_I_from_in_1
-	int value_I_store_I_from_in_1_0 = I_store_I_from_in_1_0_delay.peek_0();
-	if (select_store_I_from_in_1) { return value_I_store_I_from_in_1_0; }
-	cout << "Error: Unsupported offsets: " << " root = " << root  << " d1 = " << d1  << " d0 = " << d0  << endl;
-	assert(false);
-	return 0;
-}
-
-inline hw_uint<32>  I_out_0_jacobi2d_compute0_12_select(I_store_I_from_in_0_2_cache& I_store_I_from_in_0_2_delay
-, I_store_I_from_in_1_0_cache& I_store_I_from_in_1_0_delay
-, int root, int d1, int d0) {
-	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_0[root' = 0, id1 = d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
-	bool select_store_I_from_in_0 = ((/* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : root = 0 } */
-1*root == 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : -1 + d1 >= 0 } */
-1*d1 + -1 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : 30 - d1 >= 0 } */
--1*d1 + 30 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : -1 + d0 >= 0 } */
-1*d0 + -1 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : 14 - d0 >= 0 } */
--1*d0 + 14 >= 0));
-	// inpt: I_store_I_from_in_0_2
-	// k = store_I_from_in_0
-	int value_I_store_I_from_in_0_2 = I_store_I_from_in_0_2_delay.peek((31 - d0));
-	if (select_store_I_from_in_0) { return value_I_store_I_from_in_0_2; }
-	// inpt: I_store_I_from_in_1_0
-	// k = store_I_from_in_0
-//	No key for: I_store_I_from_in_1_0
-	cout << "Error: Unsupported offsets: " << " root = " << root  << " d1 = " << d1  << " d0 = " << d0  << endl;
-	assert(false);
-	return 0;
-}
-
-inline hw_uint<32>  I_out_0_jacobi2d_compute0_13_select(I_store_I_from_in_0_2_cache& I_store_I_from_in_0_2_delay
-, I_store_I_from_in_1_0_cache& I_store_I_from_in_1_0_delay
-, int root, int d1, int d0) {
-	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_1[root' = 0, id1 = d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
-	bool select_store_I_from_in_1 = ((/* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : root = 0 } */
-1*root == 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : -1 + d1 >= 0 } */
-1*d1 + -1 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : 30 - d1 >= 0 } */
--1*d1 + 30 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : -1 + d0 >= 0 } */
-1*d0 + -1 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : 14 - d0 >= 0 } */
--1*d0 + 14 >= 0));
-	// inpt: I_store_I_from_in_0_2
-	// k = store_I_from_in_1
-//	No key for: I_store_I_from_in_0_2
-	// inpt: I_store_I_from_in_1_0
-	// k = store_I_from_in_1
-	int value_I_store_I_from_in_1_0 = I_store_I_from_in_1_0_delay.peek_16();
-	if (select_store_I_from_in_1) { return value_I_store_I_from_in_1_0; }
-	cout << "Error: Unsupported offsets: " << " root = " << root  << " d1 = " << d1  << " d0 = " << d0  << endl;
-	assert(false);
-	return 0;
-}
-
-inline hw_uint<32>  I_out_0_jacobi2d_compute0_14_select(I_store_I_from_in_0_2_cache& I_store_I_from_in_0_2_delay
-, I_store_I_from_in_1_0_cache& I_store_I_from_in_1_0_delay
+inline hw_uint<32>  I_out_0_jacobi2d_compute0_10_select(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay
+, I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay
 , int root, int d1, int d0) {
 	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_1[root' = 0, id1 = -1 + d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
 	bool select_store_I_from_in_1 = ((/* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : root = 0 } */
@@ -514,20 +448,20 @@ inline hw_uint<32>  I_out_0_jacobi2d_compute0_14_select(I_store_I_from_in_0_2_ca
 -1*d1 + 30 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : -1 + d0 >= 0 } */
 1*d0 + -1 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : 14 - d0 >= 0 } */
 -1*d0 + 14 >= 0));
-	// inpt: I_store_I_from_in_0_2
+	// inpt: I_store_I_from_in_0_14
 	// k = store_I_from_in_1
-//	No key for: I_store_I_from_in_0_2
-	// inpt: I_store_I_from_in_1_0
+//	No key for: I_store_I_from_in_0_14
+	// inpt: I_store_I_from_in_1_12
 	// k = store_I_from_in_1
-	int value_I_store_I_from_in_1_0 = I_store_I_from_in_1_0_delay.peek_32();
-	if (select_store_I_from_in_1) { return value_I_store_I_from_in_1_0; }
+	int value_I_store_I_from_in_1_12 = I_store_I_from_in_1_12_delay.peek_32();
+	if (select_store_I_from_in_1) { return value_I_store_I_from_in_1_12; }
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " d1 = " << d1  << " d0 = " << d0  << endl;
 	assert(false);
 	return 0;
 }
 
-inline hw_uint<32>  I_out_0_jacobi2d_compute0_15_select(I_store_I_from_in_0_2_cache& I_store_I_from_in_0_2_delay
-, I_store_I_from_in_1_0_cache& I_store_I_from_in_1_0_delay
+inline hw_uint<32>  I_out_0_jacobi2d_compute0_11_select(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay
+, I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay
 , int root, int d1, int d0) {
 	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_0[root' = 0, id1 = d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
 	bool select_store_I_from_in_0 = ((/* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : root = 0 } */
@@ -536,20 +470,86 @@ inline hw_uint<32>  I_out_0_jacobi2d_compute0_15_select(I_store_I_from_in_0_2_ca
 -1*d1 + 30 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : -1 + d0 >= 0 } */
 1*d0 + -1 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : 14 - d0 >= 0 } */
 -1*d0 + 14 >= 0));
-	// inpt: I_store_I_from_in_0_2
+	// inpt: I_store_I_from_in_0_14
 	// k = store_I_from_in_0
-	int value_I_store_I_from_in_0_2 = I_store_I_from_in_0_2_delay.peek((32 - d0));
-	if (select_store_I_from_in_0) { return value_I_store_I_from_in_0_2; }
-	// inpt: I_store_I_from_in_1_0
+	int value_I_store_I_from_in_0_14 = I_store_I_from_in_0_14_delay.peek((32 - d0));
+	if (select_store_I_from_in_0) { return value_I_store_I_from_in_0_14; }
+	// inpt: I_store_I_from_in_1_12
 	// k = store_I_from_in_0
-//	No key for: I_store_I_from_in_1_0
+//	No key for: I_store_I_from_in_1_12
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " d1 = " << d1  << " d0 = " << d0  << endl;
 	assert(false);
 	return 0;
 }
 
-inline hw_uint<32>  I_out_1_jacobi2d_compute1_5_select(I_store_I_from_in_0_2_cache& I_store_I_from_in_0_2_delay
-, I_store_I_from_in_1_0_cache& I_store_I_from_in_1_0_delay
+inline hw_uint<32>  I_out_0_jacobi2d_compute0_7_select(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay
+, I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay
+, int root, int d1, int d0) {
+	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_1[root' = 0, id1 = 1 + d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
+	bool select_store_I_from_in_1 = ((/* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : root = 0 } */
+1*root == 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : -1 + d1 >= 0 } */
+1*d1 + -1 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : 30 - d1 >= 0 } */
+-1*d1 + 30 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : -1 + d0 >= 0 } */
+1*d0 + -1 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : 14 - d0 >= 0 } */
+-1*d0 + 14 >= 0));
+	// inpt: I_store_I_from_in_0_14
+	// k = store_I_from_in_1
+//	No key for: I_store_I_from_in_0_14
+	// inpt: I_store_I_from_in_1_12
+	// k = store_I_from_in_1
+	int value_I_store_I_from_in_1_12 = I_store_I_from_in_1_12_delay.peek_0();
+	if (select_store_I_from_in_1) { return value_I_store_I_from_in_1_12; }
+	cout << "Error: Unsupported offsets: " << " root = " << root  << " d1 = " << d1  << " d0 = " << d0  << endl;
+	assert(false);
+	return 0;
+}
+
+inline hw_uint<32>  I_out_0_jacobi2d_compute0_8_select(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay
+, I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay
+, int root, int d1, int d0) {
+	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_0[root' = 0, id1 = d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
+	bool select_store_I_from_in_0 = ((/* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : root = 0 } */
+1*root == 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : -1 + d1 >= 0 } */
+1*d1 + -1 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : 30 - d1 >= 0 } */
+-1*d1 + 30 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : -1 + d0 >= 0 } */
+1*d0 + -1 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : 14 - d0 >= 0 } */
+-1*d0 + 14 >= 0));
+	// inpt: I_store_I_from_in_0_14
+	// k = store_I_from_in_0
+	int value_I_store_I_from_in_0_14 = I_store_I_from_in_0_14_delay.peek((31 - d0));
+	if (select_store_I_from_in_0) { return value_I_store_I_from_in_0_14; }
+	// inpt: I_store_I_from_in_1_12
+	// k = store_I_from_in_0
+//	No key for: I_store_I_from_in_1_12
+	cout << "Error: Unsupported offsets: " << " root = " << root  << " d1 = " << d1  << " d0 = " << d0  << endl;
+	assert(false);
+	return 0;
+}
+
+inline hw_uint<32>  I_out_0_jacobi2d_compute0_9_select(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay
+, I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay
+, int root, int d1, int d0) {
+	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_1[root' = 0, id1 = d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
+	bool select_store_I_from_in_1 = ((/* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : root = 0 } */
+1*root == 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : -1 + d1 >= 0 } */
+1*d1 + -1 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : 30 - d1 >= 0 } */
+-1*d1 + 30 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : -1 + d0 >= 0 } */
+1*d0 + -1 >= 0 && /* constraint: { out_0_jacobi2d_compute0[root, d1, d0] : 14 - d0 >= 0 } */
+-1*d0 + 14 >= 0));
+	// inpt: I_store_I_from_in_0_14
+	// k = store_I_from_in_1
+//	No key for: I_store_I_from_in_0_14
+	// inpt: I_store_I_from_in_1_12
+	// k = store_I_from_in_1
+	int value_I_store_I_from_in_1_12 = I_store_I_from_in_1_12_delay.peek_16();
+	if (select_store_I_from_in_1) { return value_I_store_I_from_in_1_12; }
+	cout << "Error: Unsupported offsets: " << " root = " << root  << " d1 = " << d1  << " d0 = " << d0  << endl;
+	assert(false);
+	return 0;
+}
+
+inline hw_uint<32>  I_out_1_jacobi2d_compute1_1_select(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay
+, I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay
 , int root, int d1, int d0) {
 	// lexmax events: { out_1_jacobi2d_compute1[root = 0, d1, d0] -> store_I_from_in_0[root' = 0, id1 = 1 + d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
 	bool select_store_I_from_in_0 = ((/* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : root = 0 } */
@@ -558,20 +558,20 @@ inline hw_uint<32>  I_out_1_jacobi2d_compute1_5_select(I_store_I_from_in_0_2_cac
 -1*d1 + 30 >= 0 && /* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : -1 + d0 >= 0 } */
 1*d0 + -1 >= 0 && /* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : 14 - d0 >= 0 } */
 -1*d0 + 14 >= 0));
-	// inpt: I_store_I_from_in_0_2
+	// inpt: I_store_I_from_in_0_14
 	// k = store_I_from_in_0
-	int value_I_store_I_from_in_0_2 = I_store_I_from_in_0_2_delay.peek_0();
-	if (select_store_I_from_in_0) { return value_I_store_I_from_in_0_2; }
-	// inpt: I_store_I_from_in_1_0
+	int value_I_store_I_from_in_0_14 = I_store_I_from_in_0_14_delay.peek_0();
+	if (select_store_I_from_in_0) { return value_I_store_I_from_in_0_14; }
+	// inpt: I_store_I_from_in_1_12
 	// k = store_I_from_in_0
-//	No key for: I_store_I_from_in_1_0
+//	No key for: I_store_I_from_in_1_12
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " d1 = " << d1  << " d0 = " << d0  << endl;
 	assert(false);
 	return 0;
 }
 
-inline hw_uint<32>  I_out_1_jacobi2d_compute1_6_select(I_store_I_from_in_0_2_cache& I_store_I_from_in_0_2_delay
-, I_store_I_from_in_1_0_cache& I_store_I_from_in_1_0_delay
+inline hw_uint<32>  I_out_1_jacobi2d_compute1_2_select(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay
+, I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay
 , int root, int d1, int d0) {
 	// lexmax events: { out_1_jacobi2d_compute1[root = 0, d1, d0] -> store_I_from_in_1[root' = 0, id1 = d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
 	bool select_store_I_from_in_1 = ((/* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : root = 0 } */
@@ -580,20 +580,20 @@ inline hw_uint<32>  I_out_1_jacobi2d_compute1_6_select(I_store_I_from_in_0_2_cac
 -1*d1 + 30 >= 0 && /* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : -1 + d0 >= 0 } */
 1*d0 + -1 >= 0 && /* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : 14 - d0 >= 0 } */
 -1*d0 + 14 >= 0));
-	// inpt: I_store_I_from_in_0_2
+	// inpt: I_store_I_from_in_0_14
 	// k = store_I_from_in_1
-//	No key for: I_store_I_from_in_0_2
-	// inpt: I_store_I_from_in_1_0
+//	No key for: I_store_I_from_in_0_14
+	// inpt: I_store_I_from_in_1_12
 	// k = store_I_from_in_1
-	int value_I_store_I_from_in_1_0 = I_store_I_from_in_1_0_delay.peek((15 - d0));
-	if (select_store_I_from_in_1) { return value_I_store_I_from_in_1_0; }
+	int value_I_store_I_from_in_1_12 = I_store_I_from_in_1_12_delay.peek((15 - d0));
+	if (select_store_I_from_in_1) { return value_I_store_I_from_in_1_12; }
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " d1 = " << d1  << " d0 = " << d0  << endl;
 	assert(false);
 	return 0;
 }
 
-inline hw_uint<32>  I_out_1_jacobi2d_compute1_7_select(I_store_I_from_in_0_2_cache& I_store_I_from_in_0_2_delay
-, I_store_I_from_in_1_0_cache& I_store_I_from_in_1_0_delay
+inline hw_uint<32>  I_out_1_jacobi2d_compute1_3_select(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay
+, I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay
 , int root, int d1, int d0) {
 	// lexmax events: { out_1_jacobi2d_compute1[root = 0, d1, d0] -> store_I_from_in_0[root' = 0, id1 = d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
 	bool select_store_I_from_in_0 = ((/* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : root = 0 } */
@@ -602,20 +602,20 @@ inline hw_uint<32>  I_out_1_jacobi2d_compute1_7_select(I_store_I_from_in_0_2_cac
 -1*d1 + 30 >= 0 && /* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : -1 + d0 >= 0 } */
 1*d0 + -1 >= 0 && /* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : 14 - d0 >= 0 } */
 -1*d0 + 14 >= 0));
-	// inpt: I_store_I_from_in_0_2
+	// inpt: I_store_I_from_in_0_14
 	// k = store_I_from_in_0
-	int value_I_store_I_from_in_0_2 = I_store_I_from_in_0_2_delay.peek_16();
-	if (select_store_I_from_in_0) { return value_I_store_I_from_in_0_2; }
-	// inpt: I_store_I_from_in_1_0
+	int value_I_store_I_from_in_0_14 = I_store_I_from_in_0_14_delay.peek_16();
+	if (select_store_I_from_in_0) { return value_I_store_I_from_in_0_14; }
+	// inpt: I_store_I_from_in_1_12
 	// k = store_I_from_in_0
-//	No key for: I_store_I_from_in_1_0
+//	No key for: I_store_I_from_in_1_12
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " d1 = " << d1  << " d0 = " << d0  << endl;
 	assert(false);
 	return 0;
 }
 
-inline hw_uint<32>  I_out_1_jacobi2d_compute1_8_select(I_store_I_from_in_0_2_cache& I_store_I_from_in_0_2_delay
-, I_store_I_from_in_1_0_cache& I_store_I_from_in_1_0_delay
+inline hw_uint<32>  I_out_1_jacobi2d_compute1_4_select(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay
+, I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay
 , int root, int d1, int d0) {
 	// lexmax events: { out_1_jacobi2d_compute1[root = 0, d1, d0] -> store_I_from_in_0[root' = 0, id1 = -1 + d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
 	bool select_store_I_from_in_0 = ((/* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : root = 0 } */
@@ -624,20 +624,20 @@ inline hw_uint<32>  I_out_1_jacobi2d_compute1_8_select(I_store_I_from_in_0_2_cac
 -1*d1 + 30 >= 0 && /* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : -1 + d0 >= 0 } */
 1*d0 + -1 >= 0 && /* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : 14 - d0 >= 0 } */
 -1*d0 + 14 >= 0));
-	// inpt: I_store_I_from_in_0_2
+	// inpt: I_store_I_from_in_0_14
 	// k = store_I_from_in_0
-	int value_I_store_I_from_in_0_2 = I_store_I_from_in_0_2_delay.peek_32();
-	if (select_store_I_from_in_0) { return value_I_store_I_from_in_0_2; }
-	// inpt: I_store_I_from_in_1_0
+	int value_I_store_I_from_in_0_14 = I_store_I_from_in_0_14_delay.peek_32();
+	if (select_store_I_from_in_0) { return value_I_store_I_from_in_0_14; }
+	// inpt: I_store_I_from_in_1_12
 	// k = store_I_from_in_0
-//	No key for: I_store_I_from_in_1_0
+//	No key for: I_store_I_from_in_1_12
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " d1 = " << d1  << " d0 = " << d0  << endl;
 	assert(false);
 	return 0;
 }
 
-inline hw_uint<32>  I_out_1_jacobi2d_compute1_9_select(I_store_I_from_in_0_2_cache& I_store_I_from_in_0_2_delay
-, I_store_I_from_in_1_0_cache& I_store_I_from_in_1_0_delay
+inline hw_uint<32>  I_out_1_jacobi2d_compute1_5_select(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay
+, I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay
 , int root, int d1, int d0) {
 	// lexmax events: { out_1_jacobi2d_compute1[root = 0, d1, d0] -> store_I_from_in_1[root' = 0, id1 = d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
 	bool select_store_I_from_in_1 = ((/* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : root = 0 } */
@@ -646,13 +646,13 @@ inline hw_uint<32>  I_out_1_jacobi2d_compute1_9_select(I_store_I_from_in_0_2_cac
 -1*d1 + 30 >= 0 && /* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : -1 + d0 >= 0 } */
 1*d0 + -1 >= 0 && /* constraint: { out_1_jacobi2d_compute1[root, d1, d0] : 14 - d0 >= 0 } */
 -1*d0 + 14 >= 0));
-	// inpt: I_store_I_from_in_0_2
+	// inpt: I_store_I_from_in_0_14
 	// k = store_I_from_in_1
-//	No key for: I_store_I_from_in_0_2
-	// inpt: I_store_I_from_in_1_0
+//	No key for: I_store_I_from_in_0_14
+	// inpt: I_store_I_from_in_1_12
 	// k = store_I_from_in_1
-	int value_I_store_I_from_in_1_0 = I_store_I_from_in_1_0_delay.peek((16 - d0));
-	if (select_store_I_from_in_1) { return value_I_store_I_from_in_1_0; }
+	int value_I_store_I_from_in_1_12 = I_store_I_from_in_1_12_delay.peek((16 - d0));
+	if (select_store_I_from_in_1) { return value_I_store_I_from_in_1_12; }
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " d1 = " << d1  << " d0 = " << d0  << endl;
 	assert(false);
 	return 0;
@@ -660,57 +660,57 @@ inline hw_uint<32>  I_out_1_jacobi2d_compute1_9_select(I_store_I_from_in_0_2_cac
 
 // # of bundles = 4
 // out_0_jacobi2d_compute0_read
+//	I_out_0_jacobi2d_compute0_7
+//	I_out_0_jacobi2d_compute0_8
+//	I_out_0_jacobi2d_compute0_9
+//	I_out_0_jacobi2d_compute0_10
 //	I_out_0_jacobi2d_compute0_11
-//	I_out_0_jacobi2d_compute0_12
-//	I_out_0_jacobi2d_compute0_13
-//	I_out_0_jacobi2d_compute0_14
-//	I_out_0_jacobi2d_compute0_15
-inline hw_uint<160> I_out_0_jacobi2d_compute0_read_bundle_read(I_store_I_from_in_0_2_cache& I_store_I_from_in_0_2_delay, I_store_I_from_in_1_0_cache& I_store_I_from_in_1_0_delay, int root, int d1, int d0) {
+inline hw_uint<160> I_out_0_jacobi2d_compute0_read_bundle_read(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay, I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay, int root, int d1, int d0) {
 	hw_uint<160> result;
-	hw_uint<32>  I_out_0_jacobi2d_compute0_11_res = I_out_0_jacobi2d_compute0_11_select(I_store_I_from_in_0_2_delay, I_store_I_from_in_1_0_delay, root, d1, d0);
-	set_at<0, 160>(result, I_out_0_jacobi2d_compute0_11_res);
-	hw_uint<32>  I_out_0_jacobi2d_compute0_12_res = I_out_0_jacobi2d_compute0_12_select(I_store_I_from_in_0_2_delay, I_store_I_from_in_1_0_delay, root, d1, d0);
-	set_at<32, 160>(result, I_out_0_jacobi2d_compute0_12_res);
-	hw_uint<32>  I_out_0_jacobi2d_compute0_13_res = I_out_0_jacobi2d_compute0_13_select(I_store_I_from_in_0_2_delay, I_store_I_from_in_1_0_delay, root, d1, d0);
-	set_at<64, 160>(result, I_out_0_jacobi2d_compute0_13_res);
-	hw_uint<32>  I_out_0_jacobi2d_compute0_14_res = I_out_0_jacobi2d_compute0_14_select(I_store_I_from_in_0_2_delay, I_store_I_from_in_1_0_delay, root, d1, d0);
-	set_at<96, 160>(result, I_out_0_jacobi2d_compute0_14_res);
-	hw_uint<32>  I_out_0_jacobi2d_compute0_15_res = I_out_0_jacobi2d_compute0_15_select(I_store_I_from_in_0_2_delay, I_store_I_from_in_1_0_delay, root, d1, d0);
-	set_at<128, 160>(result, I_out_0_jacobi2d_compute0_15_res);
+	hw_uint<32>  I_out_0_jacobi2d_compute0_7_res = I_out_0_jacobi2d_compute0_7_select(I_store_I_from_in_0_14_delay, I_store_I_from_in_1_12_delay, root, d1, d0);
+	set_at<0, 160>(result, I_out_0_jacobi2d_compute0_7_res);
+	hw_uint<32>  I_out_0_jacobi2d_compute0_8_res = I_out_0_jacobi2d_compute0_8_select(I_store_I_from_in_0_14_delay, I_store_I_from_in_1_12_delay, root, d1, d0);
+	set_at<32, 160>(result, I_out_0_jacobi2d_compute0_8_res);
+	hw_uint<32>  I_out_0_jacobi2d_compute0_9_res = I_out_0_jacobi2d_compute0_9_select(I_store_I_from_in_0_14_delay, I_store_I_from_in_1_12_delay, root, d1, d0);
+	set_at<64, 160>(result, I_out_0_jacobi2d_compute0_9_res);
+	hw_uint<32>  I_out_0_jacobi2d_compute0_10_res = I_out_0_jacobi2d_compute0_10_select(I_store_I_from_in_0_14_delay, I_store_I_from_in_1_12_delay, root, d1, d0);
+	set_at<96, 160>(result, I_out_0_jacobi2d_compute0_10_res);
+	hw_uint<32>  I_out_0_jacobi2d_compute0_11_res = I_out_0_jacobi2d_compute0_11_select(I_store_I_from_in_0_14_delay, I_store_I_from_in_1_12_delay, root, d1, d0);
+	set_at<128, 160>(result, I_out_0_jacobi2d_compute0_11_res);
 	return result;
 }
 
 // out_1_jacobi2d_compute1_read
+//	I_out_1_jacobi2d_compute1_1
+//	I_out_1_jacobi2d_compute1_2
+//	I_out_1_jacobi2d_compute1_3
+//	I_out_1_jacobi2d_compute1_4
 //	I_out_1_jacobi2d_compute1_5
-//	I_out_1_jacobi2d_compute1_6
-//	I_out_1_jacobi2d_compute1_7
-//	I_out_1_jacobi2d_compute1_8
-//	I_out_1_jacobi2d_compute1_9
-inline hw_uint<160> I_out_1_jacobi2d_compute1_read_bundle_read(I_store_I_from_in_0_2_cache& I_store_I_from_in_0_2_delay, I_store_I_from_in_1_0_cache& I_store_I_from_in_1_0_delay, int root, int d1, int d0) {
+inline hw_uint<160> I_out_1_jacobi2d_compute1_read_bundle_read(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay, I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay, int root, int d1, int d0) {
 	hw_uint<160> result;
-	hw_uint<32>  I_out_1_jacobi2d_compute1_5_res = I_out_1_jacobi2d_compute1_5_select(I_store_I_from_in_0_2_delay, I_store_I_from_in_1_0_delay, root, d1, d0);
-	set_at<0, 160>(result, I_out_1_jacobi2d_compute1_5_res);
-	hw_uint<32>  I_out_1_jacobi2d_compute1_6_res = I_out_1_jacobi2d_compute1_6_select(I_store_I_from_in_0_2_delay, I_store_I_from_in_1_0_delay, root, d1, d0);
-	set_at<32, 160>(result, I_out_1_jacobi2d_compute1_6_res);
-	hw_uint<32>  I_out_1_jacobi2d_compute1_7_res = I_out_1_jacobi2d_compute1_7_select(I_store_I_from_in_0_2_delay, I_store_I_from_in_1_0_delay, root, d1, d0);
-	set_at<64, 160>(result, I_out_1_jacobi2d_compute1_7_res);
-	hw_uint<32>  I_out_1_jacobi2d_compute1_8_res = I_out_1_jacobi2d_compute1_8_select(I_store_I_from_in_0_2_delay, I_store_I_from_in_1_0_delay, root, d1, d0);
-	set_at<96, 160>(result, I_out_1_jacobi2d_compute1_8_res);
-	hw_uint<32>  I_out_1_jacobi2d_compute1_9_res = I_out_1_jacobi2d_compute1_9_select(I_store_I_from_in_0_2_delay, I_store_I_from_in_1_0_delay, root, d1, d0);
-	set_at<128, 160>(result, I_out_1_jacobi2d_compute1_9_res);
+	hw_uint<32>  I_out_1_jacobi2d_compute1_1_res = I_out_1_jacobi2d_compute1_1_select(I_store_I_from_in_0_14_delay, I_store_I_from_in_1_12_delay, root, d1, d0);
+	set_at<0, 160>(result, I_out_1_jacobi2d_compute1_1_res);
+	hw_uint<32>  I_out_1_jacobi2d_compute1_2_res = I_out_1_jacobi2d_compute1_2_select(I_store_I_from_in_0_14_delay, I_store_I_from_in_1_12_delay, root, d1, d0);
+	set_at<32, 160>(result, I_out_1_jacobi2d_compute1_2_res);
+	hw_uint<32>  I_out_1_jacobi2d_compute1_3_res = I_out_1_jacobi2d_compute1_3_select(I_store_I_from_in_0_14_delay, I_store_I_from_in_1_12_delay, root, d1, d0);
+	set_at<64, 160>(result, I_out_1_jacobi2d_compute1_3_res);
+	hw_uint<32>  I_out_1_jacobi2d_compute1_4_res = I_out_1_jacobi2d_compute1_4_select(I_store_I_from_in_0_14_delay, I_store_I_from_in_1_12_delay, root, d1, d0);
+	set_at<96, 160>(result, I_out_1_jacobi2d_compute1_4_res);
+	hw_uint<32>  I_out_1_jacobi2d_compute1_5_res = I_out_1_jacobi2d_compute1_5_select(I_store_I_from_in_0_14_delay, I_store_I_from_in_1_12_delay, root, d1, d0);
+	set_at<128, 160>(result, I_out_1_jacobi2d_compute1_5_res);
 	return result;
 }
 
 // store_I_from_in_0_write
-//	I_store_I_from_in_0_2
-inline void I_store_I_from_in_0_write_bundle_write(hw_uint<32> & store_I_from_in_0_write, I_store_I_from_in_0_2_cache& I_store_I_from_in_0_2_delay) {
-	I_store_I_from_in_0_2_write(store_I_from_in_0_write, I_store_I_from_in_0_2_delay);
+//	I_store_I_from_in_0_14
+inline void I_store_I_from_in_0_write_bundle_write(hw_uint<32> & store_I_from_in_0_write, I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14_delay) {
+	I_store_I_from_in_0_14_write(store_I_from_in_0_write, I_store_I_from_in_0_14_delay);
 }
 
 // store_I_from_in_1_write
-//	I_store_I_from_in_1_0
-inline void I_store_I_from_in_1_write_bundle_write(hw_uint<32> & store_I_from_in_1_write, I_store_I_from_in_1_0_cache& I_store_I_from_in_1_0_delay) {
-	I_store_I_from_in_1_0_write(store_I_from_in_1_write, I_store_I_from_in_1_0_delay);
+//	I_store_I_from_in_1_12
+inline void I_store_I_from_in_1_write_bundle_write(hw_uint<32> & store_I_from_in_1_write, I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12_delay) {
+	I_store_I_from_in_1_12_write(store_I_from_in_1_write, I_store_I_from_in_1_12_delay);
 }
 
 
@@ -718,30 +718,9 @@ inline void I_store_I_from_in_1_write_bundle_write(hw_uint<32> & store_I_from_in
 
 
 // Operation logic
-inline void store_I_from_in_1(HWStream<hw_uint<32>  >& in_1, I_store_I_from_in_0_2_cache& I_store_I_from_in_0_2, I_store_I_from_in_1_0_cache& I_store_I_from_in_1_0, int root, int id1, int id0) {
-	// Consume: in_1
-	auto in_1_id0_c__id1_value = in_1.read();
-	// Produce: I
-	// Buffer: I, Op: store_I_from_in_1
-	// Possible ports...
-		// I_store_I_from_in_0_2
-		// I_store_I_from_in_1_0
-	I_store_I_from_in_1_write_bundle_write(in_1_id0_c__id1_value, I_store_I_from_in_1_0 /* output src_delay */);
-}
-
-inline void store_I_from_in_0(HWStream<hw_uint<32>  >& in_0, I_store_I_from_in_0_2_cache& I_store_I_from_in_0_2, I_store_I_from_in_1_0_cache& I_store_I_from_in_1_0, int root, int id1, int id0) {
-	// Consume: in_0
-	auto in_0_id0_c__id1_value = in_0.read();
-	// Produce: I
-	// Buffer: I, Op: store_I_from_in_0
-	// Possible ports...
-		// I_store_I_from_in_0_2
-	I_store_I_from_in_0_write_bundle_write(in_0_id0_c__id1_value, I_store_I_from_in_0_2 /* output src_delay */);
-}
-
-inline void out_1_jacobi2d_compute1(I_store_I_from_in_0_2_cache& I_store_I_from_in_0_2, I_store_I_from_in_1_0_cache& I_store_I_from_in_1_0, HWStream<hw_uint<32>  >& out_1, int root, int d1, int d0) {
+inline void out_1_jacobi2d_compute1(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14, I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12, HWStream<hw_uint<32>  >& out_1, int root, int d1, int d0) {
 	// Consume: I
-	auto I_2_m__lp_d0_rp___p__1__m__1__p__0_c__d1__p__1_value = I_out_1_jacobi2d_compute1_read_bundle_read(I_store_I_from_in_0_2, I_store_I_from_in_1_0/* source_delay */, root, d1, d0);
+	auto I_2_m__lp_d0_rp___p__1__m__1__p__0_c__d1__p__1_value = I_out_1_jacobi2d_compute1_read_bundle_read(I_store_I_from_in_0_14, I_store_I_from_in_1_12/* source_delay */, root, d1, d0);
 	// Apply function: jacobi2d_compute
 	// Arg: I_2_m__lp_d0_rp___p__1__m__1__p__0_c__d1__p__1_value
 	// Arg buf: I
@@ -758,9 +737,9 @@ inline void out_1_jacobi2d_compute1(I_store_I_from_in_0_2_cache& I_store_I_from_
 	out_1.write(compute_result);
 }
 
-inline void out_0_jacobi2d_compute0(I_store_I_from_in_0_2_cache& I_store_I_from_in_0_2, I_store_I_from_in_1_0_cache& I_store_I_from_in_1_0, HWStream<hw_uint<32>  >& out_0, int root, int d1, int d0) {
+inline void out_0_jacobi2d_compute0(I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14, I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12, HWStream<hw_uint<32>  >& out_0, int root, int d1, int d0) {
 	// Consume: I
-	auto I_2_m_d0__m__1__p__0_c__d1__p__1_value = I_out_0_jacobi2d_compute0_read_bundle_read(I_store_I_from_in_0_2, I_store_I_from_in_1_0/* source_delay */, root, d1, d0);
+	auto I_2_m_d0__m__1__p__0_c__d1__p__1_value = I_out_0_jacobi2d_compute0_read_bundle_read(I_store_I_from_in_0_14, I_store_I_from_in_1_12/* source_delay */, root, d1, d0);
 	// Apply function: jacobi2d_compute
 	// Arg: I_2_m_d0__m__1__p__0_c__d1__p__1_value
 	// Arg buf: I
@@ -777,20 +756,41 @@ inline void out_0_jacobi2d_compute0(I_store_I_from_in_0_2_cache& I_store_I_from_
 	out_0.write(compute_result);
 }
 
+inline void store_I_from_in_1(HWStream<hw_uint<32>  >& in_1, I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14, I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12, int root, int id1, int id0) {
+	// Consume: in_1
+	auto in_1_id0_c__id1_value = in_1.read();
+	// Produce: I
+	// Buffer: I, Op: store_I_from_in_1
+	// Possible ports...
+		// I_store_I_from_in_0_14
+		// I_store_I_from_in_1_12
+	I_store_I_from_in_1_write_bundle_write(in_1_id0_c__id1_value, I_store_I_from_in_1_12 /* output src_delay */);
+}
+
+inline void store_I_from_in_0(HWStream<hw_uint<32>  >& in_0, I_store_I_from_in_0_14_cache& I_store_I_from_in_0_14, I_store_I_from_in_1_12_cache& I_store_I_from_in_1_12, int root, int id1, int id0) {
+	// Consume: in_0
+	auto in_0_id0_c__id1_value = in_0.read();
+	// Produce: I
+	// Buffer: I, Op: store_I_from_in_0
+	// Possible ports...
+		// I_store_I_from_in_0_14
+	I_store_I_from_in_0_write_bundle_write(in_0_id0_c__id1_value, I_store_I_from_in_0_14 /* output src_delay */);
+}
+
 // Driver function
 void jacobi2d_2(HWStream<hw_uint<32>  >& in_0, HWStream<hw_uint<32>  >& in_1, HWStream<hw_uint<32> >& out_0, HWStream<hw_uint<32> >& out_1) {
-	I_store_I_from_in_0_2_cache I_store_I_from_in_0_2;
-	I_store_I_from_in_1_0_cache I_store_I_from_in_1_0;
+	I_store_I_from_in_0_14_cache I_store_I_from_in_0_14;
+	I_store_I_from_in_1_12_cache I_store_I_from_in_1_12;
 	for (int c0 = 0; c0 <= 31; c0 += 1) {
 	  for (int c2 = 0; c2 <= 15; c2 += 1) {
-	    store_I_from_in_0(in_0, I_store_I_from_in_0_2, I_store_I_from_in_1_0, 0, c0, c2);
+	    store_I_from_in_0(in_0, I_store_I_from_in_0_14, I_store_I_from_in_1_12, 0, c0, c2);
 	    if (c0 >= 2 && c2 >= 1 && c2 <= 14)
-	      out_1_jacobi2d_compute1(I_store_I_from_in_0_2, I_store_I_from_in_1_0, out_1, 0, c0 - 1, c2);
+	      out_1_jacobi2d_compute1(I_store_I_from_in_0_14, I_store_I_from_in_1_12, out_1, 0, c0 - 1, c2);
 	  }
 	  for (int c2 = 1; c2 <= 16; c2 += 1) {
-	    store_I_from_in_1(in_1, I_store_I_from_in_0_2, I_store_I_from_in_1_0, 0, c0, c2 - 1);
+	    store_I_from_in_1(in_1, I_store_I_from_in_0_14, I_store_I_from_in_1_12, 0, c0, c2 - 1);
 	    if (c0 >= 2 && c2 <= 14)
-	      out_0_jacobi2d_compute0(I_store_I_from_in_0_2, I_store_I_from_in_1_0, out_0, 0, c0 - 1, c2);
+	      out_0_jacobi2d_compute0(I_store_I_from_in_0_14, I_store_I_from_in_1_12, out_0, 0, c0 - 1, c2);
 	  }
 	}
 	
