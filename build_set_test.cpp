@@ -520,28 +520,28 @@ int int_upper_bound(isl_union_pw_qpolynomial* range_card) {
 }
 
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
-  cout << "Getting lexmax events for " << outpt << endl;
+  //cout << "Getting lexmax events for " << outpt << endl;
   umap* src_map = nullptr;
   for (auto inpt : buf.get_in_ports()) {
     auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
-    cout << "Got beforeacc" << endl;
-    cout << "\t" << str(beforeAcc) << endl;
+    //cout << "Got beforeacc" << endl;
+    //cout << "\t" << str(beforeAcc) << endl;
     if (src_map == nullptr) {
       auto outmap = buf.access_map.at(outpt);
       auto inmap = buf.access_map.at(inpt);
-      cout << "outmap: " << str(outmap) << endl;
-      cout << "inmap : " << str(inmap) << endl;
+      //cout << "outmap: " << str(outmap) << endl;
+      //cout << "inmap : " << str(inmap) << endl;
       src_map =
         its(dot(outmap,
               inv(inmap)), beforeAcc);
-      cout << "Got first srcmap" << endl;
+      //cout << "Got first srcmap" << endl;
     } else {
       src_map =
         unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
     }
   }
 
-  cout << "src map done" << endl;
+  //cout << "src map done" << endl;
   auto sched = buf.global_schedule();
   auto after = lex_gt(sched, sched);
 
@@ -553,7 +553,7 @@ umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
   auto lex_max_events =
     dot(lexmax(dot(src_map, sched)), time_to_event);
 
-  cout << "Done" << outpt << endl;
+  //cout << "Done" << outpt << endl;
   return lex_max_events;
 }
 
@@ -4624,6 +4624,13 @@ struct App {
     }
     assert(sorted.size() == app_dag.size());
 
+    reverse(sorted);
+    //cout << "Sorted functions..." << endl;
+    //for (auto f : sorted) {
+      //cout << "\t" << f << endl;
+    //}
+    //assert(false);
+
     return sorted;
   }
 
@@ -4934,13 +4941,16 @@ struct App {
 
     int ndims = 2;
     map<string, vector<QExpr> > schedules;
-    for (int i = 0; i < ndims; i++) {
+    //for (int i = 0; i < ndims; i++) {
+    for (int i = ndims - 1; i >= 0; i--) {
       schedule_dim(i, schedules);
     }
 
     vector<string> sorted_functions = sort_functions();
     int pos = 0;
+    cout << "Sorted pipeline..." << endl;
     for (auto f : sorted_functions) {
+      cout << "\t" << f << endl;
       schedules[f].push_back(qexpr(pos));
       pos++;
     }
@@ -5094,7 +5104,8 @@ void upsample2d_test() {
   ds.func2d("B", "id", awin);
   ds.realize("B", 10, 10, 1);
 
-  //assert(false);
+  int res = system("g++ -std=c++11 -c B.cpp");
+  assert(res == 0);
 }
 
 void downsample2d_test() {
@@ -5104,7 +5115,8 @@ void downsample2d_test() {
   ds.func2d("B", "id", awin);
   ds.realize("B", 10, 10, 1);
 
-  //assert(false);
+  int res = system("g++ -std=c++11 -c B.cpp");
+  assert(res == 0);
 }
 
 void denoise2d_test() {
@@ -5119,10 +5131,13 @@ void denoise2d_test() {
   dn.func2d("g", "mag_dn2", {pt("diff_u"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
   dn.func2d("r0", "comp_r0", {pt("u"), pt("f")});
   dn.func2d("r1", "r1_comp", pt("r0"));
-  dn.func2d("output", "out_comp_dn2d", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
+  dn.func2d("denoise2d", "out_comp_dn2d", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
  
-  dn.realize("output", 30, 30, 1);
-  //assert(false);
+  dn.realize("denoise2d", 30, 30, 1);
+
+  int res = system("g++ -std=c++11 -c denoise2d.cpp");
+  assert(res == 0);
+  assert(false);
 }
 
 void sobel_test() {

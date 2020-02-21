@@ -17,3 +17,11 @@ conv_*.h
 unsharp*
 mag_*
 diff_*
+upsample*
+two_in_*
+mobilenet*
+seidel*
+shift_reg_*
+jacobi2d_*
+mag.cpp
+mag.h
