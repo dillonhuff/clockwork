@@ -25,3 +25,5 @@ shift_reg_*
 jacobi2d_*
 mag.cpp
 mag.h
+output*
+denoise*

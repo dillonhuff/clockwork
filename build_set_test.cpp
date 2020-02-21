@@ -1031,7 +1031,7 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
 }
 
 void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
-  out << "// Bundles..." << endl;
+  out << "// # of bundles = " << buf.port_bundles.size() << endl;
   for (auto b : buf.port_bundles) {
     out << "// " << b.first << endl;
     for (auto pt : b.second) {
@@ -5015,7 +5015,6 @@ struct App {
       cout << "In acc: " << str(acc) << endl;
 
       b.add_in_pt(f, domain, acc, sched);
-      buffers[f] = b;
 
       for (auto consumer : consumers(f)) {
         isl_set* domain =
@@ -5040,6 +5039,7 @@ struct App {
 
       ofstream out(f + "_buf.cpp");
       generate_hls_code(out, b);
+      buffers[f] = b;
     }
 
     //assert(false);
@@ -5124,10 +5124,10 @@ void denoise2d_test() {
 
   dn.func2d("f");
   dn.func2d("u");
-  dn.func2d("diff_u", "sub", "u", {{0, 0}, {0, -1}});
-  dn.func2d("diff_d", "sub", "u", {{0, 0}, {0, 1}});
-  dn.func2d("diff_l", "sub", "u", {{0, 0}, {-1, 0}});
-  dn.func2d("diff_r", "sub", "u", {{0, 0}, {1, 0}});
+  dn.func2d("diff_u", "diff", "u", {{0, 0}, {0, -1}});
+  dn.func2d("diff_d", "diff", "u", {{0, 0}, {0, 1}});
+  dn.func2d("diff_l", "diff", "u", {{0, 0}, {-1, 0}});
+  dn.func2d("diff_r", "diff", "u", {{0, 0}, {1, 0}});
   dn.func2d("g", "mag_dn2", {pt("diff_u"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
   dn.func2d("r0", "comp_r0", {pt("u"), pt("f")});
   dn.func2d("r1", "r1_comp", pt("r0"));
