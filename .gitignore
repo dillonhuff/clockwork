@@ -27,3 +27,6 @@ mag.cpp
 mag.h
 output*
 denoise*
+permute*
+downsample_*
+heat3d*

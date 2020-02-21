@@ -224,6 +224,21 @@ class UBuffer {
 
       assert(get_in_bundles().size() >= get_in_ports().size());
     }
+    
+    string get_bundle(const std::string& port) const {
+      for (auto b : port_bundles) {
+        for (auto bp : b.second) {
+          cout << "Trying bundle: " << bp << endl;
+          if (bp == port) {
+            return b.first;
+          }
+        }
+      }
+
+      cout << "Error: No bundle for: " << port << endl;
+      assert(false);
+      return "";
+    }
 
     vector<string> get_in_bundles() const {
       vector<string> outpts;
@@ -1815,7 +1830,6 @@ struct prog {
     cout << "Operation    : " << match[3] << endl;
     cout << "Input buffer : " << match[4] << endl;
     cout << "Input inds   : " << match[5] << endl;
-    //code_string = regex_replace(code_string, re0, b.first + ".write(" + buf.name + "_" + b.first + "_bundle_read(" + delay_list + ", $1" + "));");
     assert(false);
   }
 
@@ -2431,7 +2445,6 @@ void generate_app_code(CodegenOptions& options,
     vector<string> buf_srcs;
     concat(buf_srcs, buffer_args(buffers, op, prg));
 
-    //auto s = get_space(domains.at(op));
     auto s = get_space(domain_map.at(op->name));
     assert(isl_space_is_set(s));
     vector<string> dim_args;
@@ -2464,7 +2477,9 @@ void generate_app_code(CodegenOptions& options,
         } else {
           string source_delay = pick(buffers.at(in_buffer).get_in_ports());
           auto source_delays = buffers.at(in_buffer).get_in_ports();
-          conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
+          string bundle = buffers.at(in_buffer).get_bundle(op->name.substr(0, op->name.size() - 5));
+          //conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
+          conv_out << in_buffer << "_" << op->name << "_" << bundle << "_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
         }
         buffer_reps[in_buffer] = value_name;
         res = value_name;
@@ -5135,15 +5150,15 @@ void denoise2d_test() {
  
   dn.realize("denoise2d", 30, 30, 1);
 
-  int res = system("g++ -std=c++11 -c denoise2d.cpp");
-  assert(res == 0);
-  assert(false);
+  //int res = system("g++ -std=c++11 -c denoise2d.cpp");
+  //assert(res == 0);
 }
 
 void sobel_test() {
   App sobel;
 
-  sobel.func2d("img");
+  sobel.func2d("off_chip_img");
+  sobel.func2d("img", "id", "off_chip_img", {1, 1}, {{0, 0}});
   sobel.func2d("mag_x", "sobel_mx", "img", {1, 1},
       {{1, -1}, {-1, -1}, {1, 0}, {-1, 0}, {1, 1}, {-1, 1}});
   sobel.func2d("mag_y", "sobel_my", "img", {1, 1},
@@ -5153,7 +5168,10 @@ void sobel_test() {
   Window ywindow{"mag_y", {1, 1}, {{0, 0}}};
   sobel.func2d("mag", "mag_cu", {xwindow, ywindow});
 
-  sobel.realize("mag", 30, 30, 4);
+  sobel.realize("mag", 30, 30, 1);
+
+  //int res = system("g++ -std=c++11 -c mag.cpp");
+  //assert(res == 0);
 }
 
 void heat_3d_test() {
@@ -5562,12 +5580,12 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
+    sobel_test();
     upsample2d_test();
     downsample2d_test();
     //assert(false);
 
     denoise2d_test();
-    sobel_test();
     heat_3d_test();
     
     synth_lb_test();
@@ -5604,9 +5622,6 @@ int main(int argc, char** argv) {
     conv_1d_bc_test();
     synth_wire_test();
     synth_sr_boundary_condition_test();
-    
-
-
   } else {
     assert(false);
   }
