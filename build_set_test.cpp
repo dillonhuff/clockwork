@@ -79,13 +79,13 @@ class UBuffer {
       return port_widths;
     }
 
-    std::string port_type_string() {
+    std::string port_type_string() const {
       if (port_widths == 32) {
         return "hw_uint<32> ";
       }
       return "hw_uint<" + to_string(port_widths) + ">";
     }
-    std::string port_type_string(const std::string& name) {
+    std::string port_type_string(const std::string& name) const {
       if (port_width(name) == 32) {
         return "hw_uint<32> ";
         //return "int";
@@ -2320,8 +2320,30 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
   generate_app_code(buffers, prg, schedmap);
 }
 
+vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg) {
+  vector<string> args;
+  for (auto& b : prg.ins) {
+    assert(contains_key(b, buffers));
+    args.push_back("HWStream<" + buffers.at(b).port_type_string() + " >& " + b);
+  }
+  for (auto& b : prg.outs) {
+    args.push_back("HWStream<" + prg.buffer_element_type_string(b) + " >& " + b);
+  }
+  return args;
+}
+
+void generate_app_code_header(const map<string, UBuffer>& buffers, prog& prg) {
+  string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
+  ofstream of(prg.name + ".h");
+  of << "#pragma once\n\n" << endl;
+  of << "#include \"hw_classes.h\"" << endl << endl;
+  of << "void " << prg.name << arg_buffers << ";" << endl;
+  of.close();
+}
+
 void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap) {
   ofstream conv_out(prg.name + ".cpp");
+
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
@@ -2474,17 +2496,11 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
 
     conv_out << "}" << endl << endl;
   }
+  
+  auto domain = prg.whole_iteration_domain();
 
   conv_out << "// Driver function" << endl;
-  vector<string> args;
-  for (auto& b : prg.ins) {
-    assert(contains_key(b, buffers));
-    args.push_back("HWStream<" + buffers.at(b).port_type_string() + " >& " + b);
-  }
-  for (auto& b : prg.outs) {
-    args.push_back("HWStream<" + prg.buffer_element_type_string(b) + " >& " + b);
-  }
-  string arg_buffers = sep_list(args, "(", ")", ", ");
+  string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
   conv_out << "void " << prg.name << arg_buffers << " {" << endl;
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
@@ -2494,7 +2510,6 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
     }
   }
 
-  auto domain = prg.whole_iteration_domain();
   string code_string = codegen_c(schedmap);
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
   for (auto op : prg.all_ops()) {
@@ -2502,6 +2517,7 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
     vector<string> args = prg.cache_args(op);
     set<string> done;
     vector<string> buf_srcs;
+
     for (auto p : op->consume_locs) {
       auto buf_name = p.first;
       if (!elem(buf_name, done)) {
@@ -2537,12 +2553,13 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
   conv_out << code_string << endl;
 
   conv_out << "}" << endl;
-  
-  ofstream of(prg.name + ".h");
-  of << "#pragma once\n\n" << endl;
-  of << "#include \"hw_classes.h\"" << endl << endl;
-  of << "void " << prg.name << arg_buffers << ";" << endl;
-  of.close();
+
+  generate_app_code_header(buffers, prg);
+  //ofstream of(prg.name + ".h");
+  //of << "#pragma once\n\n" << endl;
+  //of << "#include \"hw_classes.h\"" << endl << endl;
+  //of << "void " << prg.name << arg_buffers << ";" << endl;
+  //of.close();
 }
 
 void generate_optimized_code(prog& prg) {
