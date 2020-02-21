@@ -1542,11 +1542,9 @@ struct op {
   std::string name;
   std::vector<op*> children;
   std::set<std::string> produces;
-  //std::set<pair<std::string, std::string> > produce_locs;
   std::vector<pair<std::string, std::string> > produce_locs;
 
   std::set<std::string> consumes;
-  //std::set<pair<std::string, std::string> > consume_locs;
   std::vector<pair<std::string, std::string> > consume_locs;
   map<pair<string, string>, string> consumed_value_names;
   std::string func;
@@ -4427,6 +4425,7 @@ struct App {
   isl_ctx* ctx;
   set<string> functions;
   map<string, Result> app_dag;
+  map<string, Box> domain_boxes;
 
   App() {
     ctx = isl_ctx_alloc();
@@ -4573,24 +4572,54 @@ struct App {
     return nullptr;
   }
 
-  void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
+
+  vector<string> sort_functions() {
+    vector<string> sorted;
+
+    while (sorted.size() != app_dag.size()) {
+      for (auto fs : app_dag) {
+        if (elem(fs.first, sorted)) {
+          continue;
+        }
+        string f = fs.first;
+        bool consumers_done = true;
+        for (auto c : consumers(f)) {
+          if (!elem(c, sorted)) {
+            consumers_done = false;
+            break;
+          }
+        }
+
+        if (consumers_done) {
+          sorted.push_back(f);
+        }
+      }
+    }
+    assert(sorted.size() == app_dag.size());
+
+    return sorted;
+  }
+
+
+  void fill_compute_domain(const std::string& name, const int unroll_factor) {
+
+  }
+
+  void fill_data_domain(const std::string& name, const int d0, const int d1) {
     Box sbox;
     sbox.intervals.push_back({0, d0 - 1});
     sbox.intervals.push_back({0, d1 - 1});
 
     string n = name;
-    map<string, Box> domain_boxes;
+    domain_boxes = {};
     domain_boxes[n] = sbox;
 
     set<string> search{n};
     set<string> considered;
-    vector<string> sorted_functions;
     while (search.size() > 0) {
       string next = pick(search);
       search.erase(next);
       considered.insert(next);
-      sorted_functions.push_back(next);
 
       cout << "Next = " << next << endl;
       assert(contains_key(next, app_dag));
@@ -4629,14 +4658,10 @@ struct App {
       }
     }
 
-    reverse(sorted_functions);
-    cout << "Pipeline sort: " << endl;
-    for (auto s : sorted_functions) {
-      cout << "\t" << s << map_find(s, domain_boxes) << endl;
-    }
-    int ndims = 2;
-    map<string, vector<QExpr> > schedules;
-    for (int i = 0; i < ndims; i++) {
+  }
+
+  void schedule_dim(const int i, map<string, vector<QExpr> >& schedules) {
+    vector<string> sorted_functions = sort_functions();
       string dv = "d" + to_string(i);
       cout << "Scheduling dim: " << i << endl;
       // Collect all rate variables and
@@ -4872,16 +4897,31 @@ struct App {
         auto si = qexpr(rd, d);
         schedules[f].push_back(si);
       }
+
+  }
+
+  void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
+    cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
+    fill_data_domain(name, d0, d1);
+    fill_compute_domain(name, unroll_factor);
+
+    //cout << "Pipeline sort: " << endl;
+    //for (auto s : sorted_functions) {
+      //cout << "\t" << s << map_find(s, domain_boxes) << endl;
+    //}
+    int ndims = 2;
+    map<string, vector<QExpr> > schedules;
+    for (int i = 0; i < ndims; i++) {
+      schedule_dim(i, schedules);
     }
 
+    vector<string> sorted_functions = sort_functions();
     int pos = 0;
     for (auto f : sorted_functions) {
       schedules[f].push_back(qexpr(pos));
       pos++;
     }
 
-    // Maybe the thing to do is to build a map from 
-    // the schedule?
     umap* m = rdmap(ctx, "{}");
     for (auto f : sorted_functions) {
       vector<string> sched_exprs;
@@ -4894,7 +4934,8 @@ struct App {
         i++;
       }
       var_names.pop_back();
-      string map_str = "{ " + f + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
+      //string map_str = "{ " + f + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
+      string map_str = "{ " + f + "_comp" + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
       cout << "Map str: " << map_str << endl;
       auto rm = rdmap(ctx, map_str);
       m = unn(m, rm);
@@ -4913,10 +4954,10 @@ struct App {
       cout << "Whole dom: " << str(whole_dom) << endl;
       Box b = map_find(f, domain_boxes);
       whole_dom =
-        unn(whole_dom, to_uset(b.to_set(ctx, f)));
+        //unn(whole_dom, to_uset(b.to_set(ctx, f)));
+        unn(whole_dom, to_uset(b.to_set(ctx, f + "_comp")));
     }
 
-    //assert(false);
 
     cout << "Getting schedule for m: " << endl;
     cout << "Schedule as ISL map: " << str(m) << endl;
@@ -4936,7 +4977,7 @@ struct App {
         map_find(f, domain_boxes).to_set(b.ctx, f);
       isl_union_map* sched =
         its(m, domain);
-      isl_map* acc = to_map(rdmap(ctx, "{ " + f + "[d0, d1] -> " + f + "[d0, d1] }"));
+      isl_map* acc = to_map(rdmap(ctx, "{ " + f + "_comp[d0, d1] -> " + f + "[d0, d1] }"));
 
       cout << "In acc: " << str(acc) << endl;
 
@@ -4956,8 +4997,6 @@ struct App {
 
         auto access_map =
           its(ws_cf, domain);
-          //inv(its(ws_cf, domain));
-          //int(inv(ws_cf), domain);
 
         cout << "Access map: " << str(access_map) << endl;
         cout << "Sched for " << consumer << ": " << str(sched) << endl;
@@ -4969,12 +5008,29 @@ struct App {
       ofstream out(f + "_buf.cpp");
       generate_hls_code(out, b);
     }
+
+    //assert(false);
+    
     CodegenOptions options;
     options.internal = false;
     prog prg;
-    generate_app_code(options, buffers, prg, its(m, whole_dom));
+    prg.name = name;
+    prg.compute_unit_file = "conv_3x3.h";
+    auto action_domain = cpy(whole_dom);
+    for (auto f : sorted_functions) {
+      if (app_dag.at(f).srcs.size() == 0) {
+        prg.ins.insert(f);
+        action_domain =
+          isl_union_set_subtract(action_domain, to_uset(map_find(f, domain_boxes).to_set(ctx, f + "_comp")));
+      } else {
+        // TODO: Convert to compute box
+        Box compute_domain = map_find(f, domain_boxes);
+        auto op = prg.add_op(f + "_comp");
+      }
+    }
+    prg.outs = {name};
+    generate_app_code(options, buffers, prg, its(m, action_domain));
 
-    //assert(false);
     return;
   }
 
