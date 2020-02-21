@@ -5006,7 +5006,6 @@ struct App {
       for (auto consumer : consumers(f)) {
         isl_set* domain =
           compute_domain(consumer);
-          //map_find(consumer, domain_boxes).to_set(b.ctx, consumer + "_comp");
         isl_union_map* sched =
           its(m, domain);
 
@@ -5017,6 +5016,9 @@ struct App {
         auto access_map =
           its(ws_cf, domain);
 
+        // This needs to be replaced by a loop which
+        // adds one port to the bundle for each point
+        // in the bounding box of the domain
         cout << "Domain for " << consumer << ": " << str(domain) << endl;
         cout << "Access map: " << str(access_map) << endl;
         cout << "Sched for " << consumer << ": " << str(sched) << endl;
