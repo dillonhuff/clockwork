@@ -180,11 +180,11 @@ hw_uint<32> mag_cu(hw_uint<32>& a) {
 }
 
 static inline
-hw_uint<32> sobel_my(hw_uint<32>& a) {
-  return a;
+hw_uint<32> sobel_my(hw_uint<192>& a) {
+  return 0;
 }
 
 static inline
-hw_uint<32> sobel_mx(hw_uint<32>& a) {
-  return a;
+hw_uint<32> sobel_mx(hw_uint<192>& a) {
+  return 0;
 }
