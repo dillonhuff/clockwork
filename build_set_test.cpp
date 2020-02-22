@@ -3975,8 +3975,8 @@ struct Box {
     vector<string> ranges;
     int i = 0;
     for (auto r : intervals) {
-      string v = "k" + to_string(i);
-      names.push_back("k" + to_string(i));
+      string v = "d" + to_string(i);
+      names.push_back("d" + to_string(i));
       ranges.push_back(r.constraint_str(v));
       i++;
     }
@@ -4078,98 +4078,6 @@ QAV qconst(const int& v) {
 
 QAV qvar(const std::string& v) {
   return {false, v};
-}
-
-struct Window {
-  string name;
-  vector<QAV> strides;
-  vector<vector<int> > offsets;
-  umap* needed;
-
-  Window() {}
-
-  Window(const string& name_,
-      const vector<QAV>& strides_,
-      const vector<vector<int > >& offsets_) :
-    name(name_),
-    strides(strides_),
-    offsets(offsets_) {}
-
-  Window(const string& name_,
-      const vector<int>& strides_,
-      const vector<vector<int > >& offsets_) :
-    name(name_),
-    strides({}),
-    offsets(offsets_) {
-      for (auto s : strides_) {
-        strides.push_back(qconst(s));
-      }
-    }
-
-  string interval_set_string(const int dim) {
-    assert(dim < strides.size());
-    ostringstream ss;
-    ss << stride(dim);
-    string base = "x*" + ss.str();
-    //to_string(stride(dim));
-    int min_off = min_offset(dim);
-    int max_off = max_offset(dim);
-
-    return "{ k | " + base + " + " + to_string(min_off) + " <= k <= " + base + " + " + to_string(max_off) + " }";
-  }
-
-  int max_addr(const int dim, const int max_result_addr) {
-    if (stride(dim).is_whole()) {
-      assert(stride(dim).denom == 1);
-      return stride(dim).num*max_result_addr + max_offset(dim);
-    }
-    assert(stride(dim).num == 1);
-    return max_result_addr / stride(dim).denom + max_offset(dim);
-  }
-
-  int min_addr(const int dim, const int max_result_addr) {
-    if (stride(dim).is_whole()) {
-      assert(stride(dim).denom == 1);
-      return stride(dim).num*max_result_addr + min_offset(dim);
-    }
-    assert(stride(dim).num == 1);
-    return max_result_addr / stride(dim).denom + min_offset(dim);
-  }
-
-  QAV stride(const int dim) const {
-    //cout << "Getting stride for dim = " << dim << endl;
-    assert(dim < (int) strides.size());
-    return strides.at(dim);
-  }
-
-  int min_offset(const int dim) {
-    assert((int) strides.size() > dim);
-    int min = 10000;
-    for (auto off : offsets) {
-      if (off.at(dim) < min) {
-        min = off.at(dim);
-      }
-    }
-    return min;
-  }
-
-  int max_offset(const int dim) const {
-    assert((int) strides.size() > dim);
-    int max = -100000;
-    for (auto off : offsets) {
-      if (off.at(dim) > max) {
-        max = off.at(dim);
-      }
-    }
-    return max;
-  }
-};
-
-bool operator<(const Window& w0, const Window& w1) {
-  if (w0.name == w1.name) {
-    return false;
-  }
-  return w0.name < w1.name;
 }
 
 struct QTerm {
@@ -4361,6 +4269,107 @@ string isl_str(QExpr& v) {
   }
   return sep_list(tstrings, "", "", " + ");
 }
+struct Window {
+  string name;
+  vector<QAV> strides;
+  vector<vector<int> > offsets;
+  umap* needed;
+
+  Window() {}
+
+  Window(const string& name_,
+      const vector<QAV>& strides_,
+      const vector<vector<int > >& offsets_) :
+    name(name_),
+    strides(strides_),
+    offsets(offsets_) {}
+
+  Window(const string& name_,
+      const vector<int>& strides_,
+      const vector<vector<int > >& offsets_) :
+    name(name_),
+    strides({}),
+    offsets(offsets_) {
+      for (auto s : strides_) {
+        strides.push_back(qconst(s));
+      }
+    }
+
+  vector<QExpr> pts() const {
+    vector<QExpr> ps;
+    for (auto s : offsets) {
+      assert(s.size() > 0);
+      ps.push_back(qexpr(s.at(0)));
+    }
+    return ps;
+  }
+
+  string interval_set_string(const int dim) {
+    assert(dim < strides.size());
+    ostringstream ss;
+    ss << stride(dim);
+    string base = "x*" + ss.str();
+    //to_string(stride(dim));
+    int min_off = min_offset(dim);
+    int max_off = max_offset(dim);
+
+    return "{ k | " + base + " + " + to_string(min_off) + " <= k <= " + base + " + " + to_string(max_off) + " }";
+  }
+
+  int max_addr(const int dim, const int max_result_addr) {
+    if (stride(dim).is_whole()) {
+      assert(stride(dim).denom == 1);
+      return stride(dim).num*max_result_addr + max_offset(dim);
+    }
+    assert(stride(dim).num == 1);
+    return max_result_addr / stride(dim).denom + max_offset(dim);
+  }
+
+  int min_addr(const int dim, const int max_result_addr) {
+    if (stride(dim).is_whole()) {
+      assert(stride(dim).denom == 1);
+      return stride(dim).num*max_result_addr + min_offset(dim);
+    }
+    assert(stride(dim).num == 1);
+    return max_result_addr / stride(dim).denom + min_offset(dim);
+  }
+
+  QAV stride(const int dim) const {
+    //cout << "Getting stride for dim = " << dim << endl;
+    assert(dim < (int) strides.size());
+    return strides.at(dim);
+  }
+
+  int min_offset(const int dim) {
+    assert((int) strides.size() > dim);
+    int min = 10000;
+    for (auto off : offsets) {
+      if (off.at(dim) < min) {
+        min = off.at(dim);
+      }
+    }
+    return min;
+  }
+
+  int max_offset(const int dim) const {
+    assert((int) strides.size() > dim);
+    int max = -100000;
+    for (auto off : offsets) {
+      if (off.at(dim) > max) {
+        max = off.at(dim);
+      }
+    }
+    return max;
+  }
+};
+
+bool operator<(const Window& w0, const Window& w1) {
+  if (w0.name == w1.name) {
+    return false;
+  }
+  return w0.name < w1.name;
+}
+
 
 struct QConstraint {
   QExpr lhs;
@@ -4919,6 +4928,16 @@ struct App {
     return map_find(name, compute_boxes).to_set(ctx, name + "_comp");
   }
 
+  Window box_touched(const std::string& consumer, const std::string& producer) {
+    for (auto s : app_dag.at(consumer).srcs) {
+      if (s.name == producer) {
+        return s;
+      }
+    }
+    assert(false);
+    return {};
+  }
+
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     fill_data_domain(name, d0, d1);
@@ -4996,7 +5015,6 @@ struct App {
         its(m, domain);
       isl_map* write_map =
         inv(compute_map(f));
-        //to_map(rdmap(ctx, "{ " + f + "_comp[d0, d1] -> " + f + "[d0, d1] }"));
 
       cout << "In write_map: " << str(write_map) << endl;
 
@@ -5013,17 +5031,37 @@ struct App {
         umap* ws_cf = (ws_map(f, consumer));
         assert(ws_cf != nullptr);
 
-        auto access_map =
-          its(ws_cf, domain);
-
         // This needs to be replaced by a loop which
         // adds one port to the bundle for each point
         // in the bounding box of the domain
-        cout << "Domain for " << consumer << ": " << str(domain) << endl;
-        cout << "Access map: " << str(access_map) << endl;
-        cout << "Sched for " << consumer << ": " << str(sched) << endl;
-        b.add_out_pt(consumer, domain, to_map(access_map), sched);
-        b.port_bundles[consumer + "_comp_read"] = {consumer};
+        // Cheap solution: Get the window accessed
+        // and build a list of maps from CU firings
+        // to the data on the port. Then take that
+        // list of maps and union over the compute domain.
+        // For each one build a port.
+        Window f_win = box_touched(consumer, f);
+        int i = 0;
+        for (auto p : f_win.pts()) {
+          // sched should be the same for all ports
+          // domain (I think) should be the same
+          // access_map should be different
+          auto access_map =
+            rdmap(ctx, "{ " + consumer + "_comp[d0, d1] -> " +
+                f + "[d0 + " + to_string(i) + ", d1] }");
+          string pt_name = consumer + "_rd" + to_string(i);
+          b.add_out_pt(pt_name, domain, to_map(access_map), sched);
+          i++;
+          b.port_bundles[consumer + "_comp_read"].push_back(pt_name);
+        }
+        //auto access_map =
+          //its(ws_cf, domain);
+
+        //cout << "Domain for " << consumer << ": " << str(domain) << endl;
+        //cout << "Access map: " << str(access_map) << endl;
+        //cout << "Sched for " << consumer << ": " << str(sched) << endl;
+        //b.add_out_pt(consumer, domain, to_map(access_map), sched);
+
+
       }
 
       ofstream out(f + "_buf.cpp");
@@ -5144,7 +5182,7 @@ void conv3x3_app_test() {
       offsets.push_back({i, j});
     }
   }
-  sobel.func2d("conv3x3_app", "id", "img", {1, 1}, offsets);
+  sobel.func2d("conv3x3_app", "conv_3_3", "img", {1, 1}, offsets);
 
   sobel.realize("conv3x3_app", 30, 30, 1);
 
