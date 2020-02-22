@@ -564,7 +564,6 @@ umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
 }
 
 isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
-  //cout << "Computing dd from " << read_port << " to " << write_port << endl;
 
   isl_union_map* sched = buf.schedule.at(write_port);
   assert(sched != nullptr);
@@ -573,26 +572,19 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
 
   assert(WritesAfterWrite != nullptr);
 
-  //cout << "Got writesafterwrite" << endl;
   umap* rdsched = buf.schedule.at(read_port);
-  //cout << "rdsched: " << str(rdsched) << endl;
   umap* wrsched = buf.schedule.at(write_port);
-  //cout << "wrsched: " << str(wrsched) << endl;
   auto WritesBeforeRead =
     lex_gt(rdsched, wrsched);
-  //buf.schedule.at(write_port));
 
-  //cout << "Got writesbeforeread" << endl;
   auto WriteThatProducesReadData =
     get_lexmax_events(read_port, buf);
 
-  //cout << "Got WriteThatProducesReadData" << endl;
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
   auto WritesBtwn = (its(WritesAfterProduction, WritesBeforeRead));
 
   auto c = card(WritesBtwn);
-  //cout << "Done" << endl;
   return c;
 }
 
@@ -1751,14 +1743,10 @@ struct prog {
   string buffer_element_type_string(const string& name) const {
     if (!contains_key(name, buffer_port_widths)) {
       return "hw_uint<32> ";
-      //return "int";
     }
     assert(contains_key(name, buffer_port_widths));
     
     auto width = buffer_port_widths.at(name);
-    //if (width == 32) {
-      //return "int";
-    //}
     return "hw_uint<" + to_string(width) + ">";
   }
 
@@ -2412,41 +2400,29 @@ void generate_app_code(CodegenOptions& options,
     }
 
     string res;
-    //map<string, string> buffer_reps;
     vector<string> buf_args;
-    //if (in_buffers.size() > 0) {
-      for (auto ib : in_buffers) {
-        auto in_buffer = ib.first;
-        conv_out << "\t// Consume: " << in_buffer << endl;
-        string value_name = op->consumed_value_name(ib);
-        conv_out << "\tauto " << value_name << " = ";
+    for (auto ib : in_buffers) {
+      auto in_buffer = ib.first;
+      conv_out << "\t// Consume: " << in_buffer << endl;
+      string value_name = op->consumed_value_name(ib);
+      conv_out << "\tauto " << value_name << " = ";
 
-        if (prg.is_boundary(in_buffer)) {
-          conv_out << in_buffer << ".read();" << endl;
-        } else {
-          string source_delay = pick(buffers.at(in_buffer).get_in_ports());
-          auto source_delays = buffers.at(in_buffer).get_in_ports();
-          cout << "op = " << op->name << endl;
-          conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
-        }
-        //buffer_reps[in_buffer] = value_name;
-        buf_args.push_back(value_name);
-        res = value_name;
+      if (prg.is_boundary(in_buffer)) {
+        conv_out << in_buffer << ".read();" << endl;
+      } else {
+        string source_delay = pick(buffers.at(in_buffer).get_in_ports());
+        auto source_delays = buffers.at(in_buffer).get_in_ports();
+        cout << "op = " << op->name << endl;
+        conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
       }
+      buf_args.push_back(value_name);
+      res = value_name;
+    }
 
-      if (op->func != "") {
-        conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(buf_args) << ");" << endl;
-        res = "compute_result";
-      }
-    //} else {
-      //assert(in_buffers.size() == 0);
-      //res = "";
-      //if (op->func != "") {
-        //conv_out << "\t// Apply function: " << op->func << endl;
-        //conv_out << "\t/* op func res */ auto compute_result = " << op->func << "(" << res << ");" << endl;
-        //res = "compute_result";
-      //}
-    //}
+    if (op->func != "") {
+      conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(buf_args) << ");" << endl;
+      res = "compute_result";
+    }
 
     set<string> out_buffers;
     for (auto con : op->produce_locs) {
@@ -4987,26 +4963,6 @@ struct App {
 
     cout << "done getting m..." << endl;
 
-    uset* whole_dom =
-      isl_union_set_read_from_str(ctx, "{}");
-    cout << "Whole domain at top of realize " << name << ": " << whole_dom << endl;
-    assert(whole_dom != nullptr);
-    for (auto f : sorted_functions) {
-      cout << "Whole dom: " << str(whole_dom) << endl;
-      whole_dom =
-        unn(whole_dom, to_uset(compute_domain(f)));
-        //unn(whole_dom, to_uset(b.to_set(ctx, f)));
-        //unn(whole_dom, to_uset(b.to_set(ctx, f + "_comp")));
-    }
-
-
-    cout << "Getting schedule for m: " << endl;
-    cout << "Schedule as ISL map: " << str(m) << endl;
-    cout << "Dom: " << endl;
-    cout << "Whole domain: " << str(whole_dom) << endl;
-    cout << endl << "Final loops; " << endl;
-    cout << codegen_c(its(m, whole_dom)) << endl << endl;
-
     // Generate re-use buffers
     map<string, UBuffer> buffers;
     for (auto f : sorted_functions) {
@@ -5036,20 +4992,9 @@ struct App {
         umap* ws_cf = (ws_map(f, consumer));
         assert(ws_cf != nullptr);
 
-        // This needs to be replaced by a loop which
-        // adds one port to the bundle for each point
-        // in the bounding box of the domain
-        // Cheap solution: Get the window accessed
-        // and build a list of maps from CU firings
-        // to the data on the port. Then take that
-        // list of maps and union over the compute domain.
-        // For each one build a port.
         Window f_win = box_touched(consumer, f);
         int i = 0;
         for (auto p : f_win.pts()) {
-          // sched should be the same for all ports
-          // domain (I think) should be the same
-          // access_map should be different
           vector<string> coeffs;
           for (auto e : p) {
             coeffs.push_back(isl_str(e));
@@ -5065,15 +5010,6 @@ struct App {
           i++;
           b.port_bundles[consumer + "_comp_read"].push_back(pt_name);
         }
-        //auto access_map =
-          //its(ws_cf, domain);
-
-        //cout << "Domain for " << consumer << ": " << str(domain) << endl;
-        //cout << "Access map: " << str(access_map) << endl;
-        //cout << "Sched for " << consumer << ": " << str(sched) << endl;
-        //b.add_out_pt(consumer, domain, to_map(access_map), sched);
-
-
       }
 
       ofstream out(f + "_buf.cpp");
@@ -5083,6 +5019,16 @@ struct App {
 
     //assert(false);
     
+    uset* whole_dom =
+      isl_union_set_read_from_str(ctx, "{}");
+    cout << "Whole domain at top of realize " << name << ": " << whole_dom << endl;
+    assert(whole_dom != nullptr);
+    for (auto f : sorted_functions) {
+      cout << "Whole dom: " << str(whole_dom) << endl;
+      whole_dom =
+        unn(whole_dom, to_uset(compute_domain(f)));
+    }
+
     CodegenOptions options;
     options.internal = true;
     prog prg;
@@ -5096,8 +5042,6 @@ struct App {
         action_domain =
           isl_union_set_subtract(action_domain,
               to_uset(compute_domain(f)));
-              //to_uset(compute_domain(f)); map_find(f, domain_boxes).to_set(ctx, f + "_comp")));
-          //isl_union_set_subtract(action_domain, to_uset(map_find(f, domain_boxes).to_set(ctx, f + "_comp")));
       } else {
         // TODO: Convert to compute box
         Box compute_b =
