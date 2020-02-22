@@ -5193,8 +5193,10 @@ void downsample2d_test() {
 void denoise2d_test() {
   App dn;
 
-  dn.func2d("f");
-  dn.func2d("u");
+  dn.func2d("f_off_chip");
+  dn.func2d("u_off_chip");
+  dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
+  dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
   dn.func2d("diff_u", "diff", "u", {{0, 0}, {0, -1}});
   dn.func2d("diff_d", "diff", "u", {{0, 0}, {0, 1}});
   dn.func2d("diff_l", "diff", "u", {{0, 0}, {-1, 0}});
