@@ -2413,7 +2413,6 @@ void generate_app_code(CodegenOptions& options,
     string res;
     map<string, string> buffer_reps;
     if (in_buffers.size() > 0) {
-
       for (auto ib : in_buffers) {
         auto in_buffer = ib.first;
         conv_out << "\t// Consume: " << in_buffer << endl;
@@ -2426,10 +2425,6 @@ void generate_app_code(CodegenOptions& options,
           string source_delay = pick(buffers.at(in_buffer).get_in_ports());
           auto source_delays = buffers.at(in_buffer).get_in_ports();
           cout << "op = " << op->name << endl;
-          //string bundle = buffers.at(in_buffer).get_bundle(op->name.substr(0, op->name.size() - 5));
-          //string bundle = buffers.at(in_buffer).get_bundle(op->name);
-          //string bundle = op->name;
-          //conv_out << in_buffer << "_" << op->name << "_" << bundle << "_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
           conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
         }
         buffer_reps[in_buffer] = value_name;
@@ -2449,11 +2444,13 @@ void generate_app_code(CodegenOptions& options,
             conv_out << "\t// Arg: " << arg << endl;
             string arg_buf = "";
             for (auto v : op->consumed_value_names) {
+              cout << "\tChecking: " << v.second << endl;
               if (v.second == arg) {
                 arg_buf = v.first.first;
                 break;
               }
             }
+            cout << "No arg buf for: " << arg << endl;
             assert(arg_buf != "");
             conv_out << "\t// Arg buf: " << arg_buf << endl;
             if (!elem(arg_buf, buffers_seen)) {
@@ -5136,12 +5133,16 @@ struct App {
           i++;
         }
         auto op = nest->add_op(f + "_comp");
-        op->add_function(app_dag.at(f).compute_name);
         op->add_store(f, "0, 0");
 
+        vector<string> fargs;
         for (auto p : app_dag.at(f).srcs) {
           op->add_load(p.name, "0, 0");
+          if (!elem(p.name, fargs)) {
+            fargs.push_back(p.name);
+          }
         }
+        op->add_function(app_dag.at(f).compute_name);
         domain_map[f + "_comp"] =
           compute_domain(f);
       }
@@ -5166,6 +5167,24 @@ Window win(const std::string& name, const std::vector<vector<int > >& offsets) {
 
 Window pt(const std::string& name) {
   return Window{name, {1, 1}, {{0, 0}}};
+}
+
+void updown_merge_test() {
+  App ds;
+  ds.func2d("A_off");
+  ds.func2d("B_off");
+
+  ds.func2d("A", "id", "A_off", {1, 1}, {{0, 0}});
+  ds.func2d("B", "id", "B_off", {1, 1}, {{0, 0}});
+
+  Window awin("A", {qconst(1, 2), qconst(1, 5)}, {{0, 0}});
+  Window bwin("B", {qconst(4), qconst(3)}, {{0, 0}});
+  ds.func2d("C", "diff", {awin, bwin});
+
+  ds.realize("C", 10, 10, 1);
+
+  int res = system("g++ -std=c++11 -c C.cpp");
+  assert(res == 0);
 }
 
 void upsample2d_test() {
@@ -5658,6 +5677,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
+    updown_merge_test();
     conv3x3_app_test();
     sobel_test();
     upsample2d_test();
