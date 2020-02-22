@@ -175,8 +175,8 @@ hw_uint<32> conv_3_3(hw_uint<32*9>& in) {
 }
 
 static inline
-hw_uint<32> mag_cu(hw_uint<32>& a) {
-  return a;
+hw_uint<32> mag_cu(hw_uint<32>& a, hw_uint<32>& b) {
+  return a + b;
 }
 
 static inline

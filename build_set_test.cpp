@@ -2378,6 +2378,7 @@ void generate_app_code(CodegenOptions& options,
     prog& prg,
     umap* schedmap,
     map<string, isl_set*>& domain_map) {
+
   ofstream conv_out(prg.name + ".cpp");
 
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
@@ -2412,6 +2413,7 @@ void generate_app_code(CodegenOptions& options,
 
     string res;
     map<string, string> buffer_reps;
+    vector<string> buf_args;
     if (in_buffers.size() > 0) {
       for (auto ib : in_buffers) {
         auto in_buffer = ib.first;
@@ -2428,39 +2430,51 @@ void generate_app_code(CodegenOptions& options,
           conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
         }
         buffer_reps[in_buffer] = value_name;
+        buf_args.push_back(value_name);
         res = value_name;
-
       }
 
-      string in_buffer = pick(in_buffers).first;
+      //string in_buffer = pick(in_buffers).first;
+
       if (op->func != "") {
-        conv_out << "\t// Apply function: " << op->func << endl;
-        if (op->func_args.size() == 0) {
-          conv_out << "\tauto compute_result = " << op->func << "(" << res << ");" << endl;
-        } else {
-          vector<string> arg_list;
-          set<string> buffers_seen;
-          for (auto arg : op->func_args) {
-            conv_out << "\t// Arg: " << arg << endl;
-            string arg_buf = "";
-            for (auto v : op->consumed_value_names) {
-              cout << "\tChecking: " << v.second << endl;
-              if (v.second == arg) {
-                arg_buf = v.first.first;
-                break;
-              }
-            }
-            cout << "No arg buf for: " << arg << endl;
-            assert(arg_buf != "");
-            conv_out << "\t// Arg buf: " << arg_buf << endl;
-            if (!elem(arg_buf, buffers_seen)) {
-              arg_list.push_back(map_find(arg_buf, buffer_reps));
-              buffers_seen.insert(arg_buf);
-            }
-          }
-          conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(arg_list) << ");" << endl;
-        }
+        conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(buf_args) << ");" << endl;
         res = "compute_result";
+        ////res = apply_function(conv_out, op, res, )
+        //conv_out << "\t// Apply function: " << op->func << endl;
+        //if (op->func_args.size() == 0) {
+          //conv_out << "\tauto compute_result = " << op->func << "( /* Default arg */ " << res << ");" << endl;
+        //} else {
+          ////vector<string> arg_list;
+          ////set<string> buffers_seen;
+
+          ////for (auto v : op->consumed_value_names) {
+            ////if (!elem(v.first.first, arg_list)) {
+              ////arg_list.push_back(v.first.first);
+            ////}
+          ////}
+
+          ////for (auto arg : op->func_args) {
+            ////conv_out << "\t// Arg: " << arg << endl;
+            ////string arg_buf = "";
+            ////for (auto v : op->consumed_value_names) {
+              ////cout << "\tChecking: " << v.second << endl;
+              ////if (v.second == arg) {
+                ////arg_buf = v.first.first;
+                ////break;
+              ////}
+            ////}
+            ////cout << "No arg buf for: " << arg << endl;
+            ////assert(arg_buf != "");
+            ////conv_out << "\t// Arg buf: " << arg_buf << endl;
+            ////if (!elem(arg_buf, buffers_seen)) {
+              ////arg_list.push_back(map_find(arg_buf, buffer_reps));
+              ////buffers_seen.insert(arg_buf);
+            ////}
+          ////}
+          ////conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(arg_list) << ");" << endl;
+          //conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(buf_args) << ");" << endl;
+        //}
+        //res = "compute_result";
       }
     } else {
       assert(in_buffers.size() == 0);

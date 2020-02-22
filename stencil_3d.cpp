@@ -645,9 +645,6 @@ inline hw_uint<432> I_out_blur_270_read_bundle_read(I_I_id0_0_cache& I_I_id0_0_d
 inline void I_id0(HWStream<hw_uint<16> >& in, I_I_id0_0_cache& I_I_id0_0, int root, int ir, int ic, int ib) {
 	// Consume: in
 	auto in_ir_c__ic_c__ib_value = in.read();
-	// Apply function: id
-	// Arg: in_ir_c__ic_c__ib_value
-	// Arg buf: in
 	auto compute_result = id(in_ir_c__ic_c__ib_value);
 	// Produce: I
 	// Buffer: I, Op: I_id0
@@ -659,61 +656,6 @@ inline void I_id0(HWStream<hw_uint<16> >& in, I_I_id0_0_cache& I_I_id0_0, int ro
 inline void out_blur_270(I_I_id0_0_cache& I_I_id0_0, HWStream<hw_uint<16> >& out, int root, int xr, int xc, int xb) {
 	// Consume: I
 	auto I_xr__p__0_c__xc__p__0_c__xb__p__0_value = I_out_blur_270_read_bundle_read(I_I_id0_0/* source_delay */, root, xr, xc, xb);
-	// Apply function: blur_27
-	// Arg: I_xr__p__0_c__xc__p__0_c__xb__p__0_value
-	// Arg buf: I
-	// Arg: I_xr__p__0_c__xc__p__0_c__xb__p__1_value
-	// Arg buf: I
-	// Arg: I_xr__p__0_c__xc__p__0_c__xb__p__2_value
-	// Arg buf: I
-	// Arg: I_xr__p__0_c__xc__p__1_c__xb__p__0_value
-	// Arg buf: I
-	// Arg: I_xr__p__0_c__xc__p__1_c__xb__p__1_value
-	// Arg buf: I
-	// Arg: I_xr__p__0_c__xc__p__1_c__xb__p__2_value
-	// Arg buf: I
-	// Arg: I_xr__p__0_c__xc__p__2_c__xb__p__0_value
-	// Arg buf: I
-	// Arg: I_xr__p__0_c__xc__p__2_c__xb__p__1_value
-	// Arg buf: I
-	// Arg: I_xr__p__0_c__xc__p__2_c__xb__p__2_value
-	// Arg buf: I
-	// Arg: I_xr__p__1_c__xc__p__0_c__xb__p__0_value
-	// Arg buf: I
-	// Arg: I_xr__p__1_c__xc__p__0_c__xb__p__1_value
-	// Arg buf: I
-	// Arg: I_xr__p__1_c__xc__p__0_c__xb__p__2_value
-	// Arg buf: I
-	// Arg: I_xr__p__1_c__xc__p__1_c__xb__p__0_value
-	// Arg buf: I
-	// Arg: I_xr__p__1_c__xc__p__1_c__xb__p__1_value
-	// Arg buf: I
-	// Arg: I_xr__p__1_c__xc__p__1_c__xb__p__2_value
-	// Arg buf: I
-	// Arg: I_xr__p__1_c__xc__p__2_c__xb__p__0_value
-	// Arg buf: I
-	// Arg: I_xr__p__1_c__xc__p__2_c__xb__p__1_value
-	// Arg buf: I
-	// Arg: I_xr__p__1_c__xc__p__2_c__xb__p__2_value
-	// Arg buf: I
-	// Arg: I_xr__p__2_c__xc__p__0_c__xb__p__0_value
-	// Arg buf: I
-	// Arg: I_xr__p__2_c__xc__p__0_c__xb__p__1_value
-	// Arg buf: I
-	// Arg: I_xr__p__2_c__xc__p__0_c__xb__p__2_value
-	// Arg buf: I
-	// Arg: I_xr__p__2_c__xc__p__1_c__xb__p__0_value
-	// Arg buf: I
-	// Arg: I_xr__p__2_c__xc__p__1_c__xb__p__1_value
-	// Arg buf: I
-	// Arg: I_xr__p__2_c__xc__p__1_c__xb__p__2_value
-	// Arg buf: I
-	// Arg: I_xr__p__2_c__xc__p__2_c__xb__p__0_value
-	// Arg buf: I
-	// Arg: I_xr__p__2_c__xc__p__2_c__xb__p__1_value
-	// Arg buf: I
-	// Arg: I_xr__p__2_c__xc__p__2_c__xb__p__2_value
-	// Arg buf: I
 	auto compute_result = blur_27(I_xr__p__0_c__xc__p__0_c__xb__p__0_value);
 	// Produce: out
 	out.write(compute_result);
