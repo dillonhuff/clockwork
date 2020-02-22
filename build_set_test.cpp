@@ -4243,6 +4243,18 @@ QExpr qexpr(const QTerm& l) {
   return QExpr{{l}};
 }
 
+QExpr qexpr(const QTerm& l, const QAV& r) {
+  return QExpr{{l, qterm(r)}};
+}
+
+QExpr qexpr(const QAV& l, const QAV& r) {
+  return QExpr{{qterm(l), qterm(r)}};
+}
+
+QExpr qexpr(const QAV& l, const QTerm& r) {
+  return QExpr{{qterm(l), r}};
+}
+
 QExpr qexpr(const QTerm& l, const QTerm& r) {
   return QExpr{{l, r}};
 }
@@ -4252,13 +4264,26 @@ QExpr qexpr(const QTerm& a, const QTerm& l, const QTerm& r) {
 }
 
 string isl_str(QTerm& v) {
+
   vector<string> tstrings;
+  vector<string> divs;
   for (auto v : v.vals) {
-    ostringstream ss;
-    ss << v;
-    tstrings.push_back(ss.str());
+    if (!v.is_num || v.is_whole()) {
+      ostringstream ss;
+      ss << v;
+      tstrings.push_back(ss.str());
+    } else {
+      divs.push_back(to_string(v.denom));
+    }
   }
-  return sep_list(tstrings, "", "", "*");
+  string s = sep_list(tstrings, "", "", "*");
+
+  if (divs.size() == 0) {
+    return s;
+  }
+  vector<string> cfs{"(" + s + ")"};
+  concat(cfs, divs);
+  return sep_list(cfs, "", "", " / ");
 }
 
 string isl_str(QExpr& v) {
@@ -4295,11 +4320,19 @@ struct Window {
       }
     }
 
-  vector<QExpr> pts() const {
-    vector<QExpr> ps;
+  vector<vector<QExpr> > pts() const {
+    vector<vector<QExpr> > ps;
     for (auto s : offsets) {
       assert(s.size() > 0);
-      ps.push_back(qexpr(s.at(0)));
+      vector<QExpr> comps;
+      for (size_t i = 0; i < strides.size(); i++) {
+        QAV dv = qvar("d" + to_string(i));
+        QTerm t = qterm(stride(i), dv);
+        QAV offset = qconst(s.at(i));
+        comps.push_back(qexpr(t, offset));
+      }
+
+      ps.push_back(comps);
     }
     return ps;
   }
@@ -4309,7 +4342,6 @@ struct Window {
     ostringstream ss;
     ss << stride(dim);
     string base = "x*" + ss.str();
-    //to_string(stride(dim));
     int min_off = min_offset(dim);
     int max_off = max_offset(dim);
 
@@ -5045,9 +5077,16 @@ struct App {
           // sched should be the same for all ports
           // domain (I think) should be the same
           // access_map should be different
+          vector<string> coeffs;
+          for (auto e : p) {
+            coeffs.push_back(isl_str(e));
+          }
+          cout << "Coeffs: " << sep_list(coeffs, "[", "]", ", ") << endl;
           auto access_map =
             rdmap(ctx, "{ " + consumer + "_comp[d0, d1] -> " +
-                f + "[d0 + " + to_string(i) + ", d1] }");
+                f + sep_list(coeffs, "[", "]", ", ") + " }");
+                //f + "[d0 + " + to_string(i) + ", d1] }");
+          cout << "Access map: " << str(access_map) << endl;
           string pt_name = consumer + "_rd" + to_string(i);
           b.add_out_pt(pt_name, domain, to_map(access_map), sched);
           i++;
