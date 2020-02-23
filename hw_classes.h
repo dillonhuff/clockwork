@@ -226,6 +226,7 @@ hw_uint<Len> operator/(const hw_uint<Len>& a, const hw_uint<Len>& b) {
   return res;
 #endif
 }
+
 template<int Len>
 hw_uint<Len> operator+(const hw_uint<Len>& a, const hw_uint<Len>& b) {
 #ifdef __VIVADO_SYNTH__

@@ -5166,9 +5166,11 @@ void conv3x3_app_test() {
 
   sobel.realize("conv3x3_app", 30, 30, 1);
 
-  int res = system("g++ -std=c++11 -c conv3x3_app.cpp");
+  int res = system("g++ -std=c++11 tb_app_conv3x3.cpp conv3x3_app.cpp");
   assert(res == 0);
-  //assert(false);
+
+  int tb_res = system("./a.out");
+  assert(tb_res == 0);
 }
 
 void sobel_test() {
