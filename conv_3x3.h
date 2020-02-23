@@ -78,6 +78,13 @@ T diff(T& src, T& a0) {
   return src - a0;
 }
 
+static inline
+hw_uint<32> diff_b(const hw_uint<32*2>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  return diff(v0, v1);
+}
+
 template<typename T>
 static inline
 T inc(T& src, T& a0) {

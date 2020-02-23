@@ -5136,10 +5136,10 @@ void denoise2d_test() {
   dn.func2d("u_off_chip");
   dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
   dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
-  dn.func2d("diff_u", "diff", "u", {{0, 0}, {0, -1}});
-  dn.func2d("diff_d", "diff", "u", {{0, 0}, {0, 1}});
-  dn.func2d("diff_l", "diff", "u", {{0, 0}, {-1, 0}});
-  dn.func2d("diff_r", "diff", "u", {{0, 0}, {1, 0}});
+  dn.func2d("diff_u", "diff_b", "u", {{0, 0}, {0, -1}});
+  dn.func2d("diff_d", "diff_b", "u", {{0, 0}, {0, 1}});
+  dn.func2d("diff_l", "diff_b", "u", {{0, 0}, {-1, 0}});
+  dn.func2d("diff_r", "diff_b", "u", {{0, 0}, {1, 0}});
   dn.func2d("g", "mag_dn2", {pt("diff_u"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
   dn.func2d("r0", "comp_r0", {pt("u"), pt("f")});
   dn.func2d("r1", "r1_comp", pt("r0"));
@@ -5147,8 +5147,8 @@ void denoise2d_test() {
  
   dn.realize("denoise2d", 30, 30, 1);
 
-  //int res = system("g++ -std=c++11 -c denoise2d.cpp");
-  //assert(res == 0);
+  int res = system("g++ -std=c++11 -c denoise2d.cpp");
+  assert(res == 0);
 }
 
 void conv3x3_app_test() {
@@ -5599,6 +5599,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
+    denoise2d_test();
     updown_merge_test();
     conv3x3_app_test();
     sobel_test();
@@ -5606,7 +5607,6 @@ int main(int argc, char** argv) {
     downsample2d_test();
     //assert(false);
 
-    denoise2d_test();
     heat_3d_test();
     
     synth_lb_test();
