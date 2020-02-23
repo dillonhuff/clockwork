@@ -2678,14 +2678,14 @@ prog conv_1d() {
   return prg;
 }
 
-std::vector<std::string> run_regression_tb(prog& prg) {
-  int res = system(string("g++ -std=c++11 regression_tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
+std::vector<std::string> run_regression_tb(const std::string& name) {
+  int res = system(string("g++ -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
   assert(res == 0);
 
   res = system("./a.out");
   assert(res == 0);
 
-  ifstream infile("regression_result_" + prg.name + ".txt");
+  ifstream infile("regression_result_" + name + ".txt");
   vector<string> lines;
   std::string line;
   while (std::getline(infile, line))
@@ -2694,6 +2694,11 @@ std::vector<std::string> run_regression_tb(prog& prg) {
   }
   return lines;
 }
+
+std::vector<std::string> run_regression_tb(prog& prg) {
+  return run_regression_tb(prg.name);
+}
+
 
 void run_tb(prog& prg) {
   int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
@@ -2706,7 +2711,7 @@ void run_tb(prog& prg) {
 void generate_regression_testbench(prog& prg) {
   ofstream rgtb("regression_tb_" + prg.name + ".cpp");
   rgtb << "#include <fstream>" << endl;
-  rgtb << "#include \"" << prg.name << ".h\"" << endl;
+  rgtb << "#include \"" << prg.name << ".h\"" << endl << endl;
 
   rgtb << "int main() {" << endl;
   rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << ".txt\");" << endl;
@@ -2732,6 +2737,9 @@ void generate_regression_testbench(prog& prg) {
     auto range_card = card(rng);
     int num_pushes = int_upper_bound(range_card);
 
+    rgtb << tab(1) << "// cmap    : " << str(cmap) << endl;
+    rgtb << tab(1) << "// read map: " << str(read_map) << endl;
+    rgtb << tab(1) << "// rng     : " << str(rng) << endl;
     rgtb << tab(1) << "for (int i = 0; i < " << num_pushes << "; i++) {" << endl;
     rgtb << tab(2) << in << ".write(i);" << endl;
     rgtb << tab(1) << "}" << endl << endl;
@@ -2781,10 +2789,6 @@ void regression_test(prog& prg) {
     }
   }
 
-  //if (unoptimized_res != optimized_res) {
-    //cout << "After optimization " << prg.name << " gives different results" << endl;
-    //assert(false);
-  //}
 }
 
 void conv_1d_test() {
@@ -5128,7 +5132,7 @@ struct App {
           i++;
         }
         auto op = nest->add_op(f + "_comp");
-        op->add_store(f, "0, 0");
+        op->add_store(f, "f_0, f_1");
 
         vector<string> fargs;
         for (auto p : app_dag.at(f).srcs) {
@@ -5144,6 +5148,8 @@ struct App {
     }
     prg.outs = {name};
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
+    generate_regression_testbench(prg);
+    //assert(false);
 
     return;
   }
@@ -5244,8 +5250,6 @@ struct App {
       buffers[f] = b;
     }
 
-    //assert(false);
-    
     uset* whole_dom =
       isl_union_set_read_from_str(ctx, "{}");
     cout << "Whole domain at top of realize " << name << ": " << whole_dom << endl;
@@ -5295,6 +5299,8 @@ struct App {
     }
     prg.outs = {name};
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
+
+    generate_regression_testbench(prg);
 
     return;
   }
@@ -5381,11 +5387,12 @@ void denoise2d_test() {
 
   dn.realize_naive("denoise2d", 30, 30);
 
-  int res = system("g++ -std=c++11 -c denoise2d_naive.cpp");
-  assert(res == 0);
-  
-  res = system("g++ -std=c++11 -c denoise2d.cpp");
-  assert(res == 0);
+  std::vector<std::string> naive =
+    run_regression_tb("denoise2d_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb("denoise2d");
+
+  assert(naive == optimized);
 }
 
 void conv3x3_app_test() {
