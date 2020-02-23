@@ -195,3 +195,12 @@ static inline
 hw_uint<32> sobel_mx(hw_uint<192>& a) {
   return 0;
 }
+
+static inline
+hw_uint<32> mag_dn2(hw_uint<32>& diff_d_0_c__0_value,
+    hw_uint<32>& diff_l_0_c__0_value,
+    hw_uint<32>& diff_r_0_c__0_value,
+    hw_uint<32>& diff_u_0_c__0_value) {
+  return diff_d_0_c__0_value;
+}
+

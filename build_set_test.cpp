@@ -4344,12 +4344,16 @@ struct Window {
   }
 };
 
-bool operator<(const Window& w0, const Window& w1) {
-  if (w0.name == w1.name) {
-    return false;
-  }
-  return w0.name < w1.name;
-}
+//bool operator<(const Window& w0, const Window& w1) {
+  //if (w0.name != w1.name) {
+    //return w0.name < w1.name;
+  //}
+
+  //if (w0.strides == w1.strides) {
+    //return false;
+  //}
+
+//}
 
 
 struct QConstraint {
@@ -4384,7 +4388,7 @@ std::ostream& operator<<(std::ostream& out, const QConstraint& c) {
 
 struct Result {
   string compute_name;
-  set<Window> srcs;
+  vector<Window> srcs;
 };
 
 QExpr upper_bound(const Window& arg, const int dim) {
@@ -4443,7 +4447,7 @@ struct App {
     Result res{compute};
     for (auto w : windows) {
       w.needed = build_needed(name, w);
-      res.srcs.insert(w);
+      res.srcs.push_back(w);
     }
 
     assert(res.srcs.size() == windows.size());
@@ -4530,6 +4534,20 @@ struct App {
     return name;
   }
 
+  vector<Window> producers(const string& f) {
+    cout << "Getting producers for: " << f << endl;
+    if (contains_key(f, app_dag)) {
+      cout << "In app dag: " << f << endl;
+      for (auto s : app_dag) {
+        cout << "\t" << s.first << endl;
+      }
+      auto res = map_find(f, app_dag).srcs;
+      cout << "Got res from map" << endl;
+      return res;
+    }
+    return {};
+  }
+
   set<string> consumers(const string& f) {
     set<string> cons;
     for (auto other_func : app_dag) {
@@ -4591,6 +4609,7 @@ struct App {
   }
 
   Box data_domain(const std::string& f) {
+    assert(contains_key(f, domain_boxes));
     return map_find(f, domain_boxes);
   }
 
@@ -4626,7 +4645,9 @@ struct App {
         map_find(next, domain_boxes);
 
       cout << "Adding " << next << " to domain boxes" << endl;
-      for (auto inputs : app_dag.at(next).srcs) {
+      for (auto inputs : producers(next)) {
+        cout << "Getting producers..." << endl;
+        //app_dag.at(next).srcs) {
         Window win = inputs;
 
         if (!contains_key(inputs.name, domain_boxes)) {
@@ -4653,6 +4674,7 @@ struct App {
           search.insert(inputs.name);
         }
       }
+      cout << "Done with " << next << endl;
     }
 
   }
@@ -5132,18 +5154,19 @@ void downsample2d_test() {
 void denoise2d_test() {
   App dn;
 
-  dn.func2d("f_off_chip");
+  //dn.func2d("f_off_chip");
   dn.func2d("u_off_chip");
-  dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
+  //dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
   dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
   dn.func2d("diff_u", "diff_b", "u", {{0, 0}, {0, -1}});
   dn.func2d("diff_d", "diff_b", "u", {{0, 0}, {0, 1}});
   dn.func2d("diff_l", "diff_b", "u", {{0, 0}, {-1, 0}});
   dn.func2d("diff_r", "diff_b", "u", {{0, 0}, {1, 0}});
-  dn.func2d("g", "mag_dn2", {pt("diff_u"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
-  dn.func2d("r0", "comp_r0", {pt("u"), pt("f")});
-  dn.func2d("r1", "r1_comp", pt("r0"));
-  dn.func2d("denoise2d", "out_comp_dn2d", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
+  dn.func2d("denoise2d", "mag_dn2", {pt("diff_u"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
+  //dn.func2d("g", "mag_dn2", {pt("diff_u"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
+  //dn.func2d("r0", "comp_r0", {pt("u"), pt("f")});
+  //dn.func2d("r1", "r1_comp", pt("r0"));
+  //dn.func2d("denoise2d", "out_comp_dn2d", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
  
   dn.realize("denoise2d", 30, 30, 1);
 
