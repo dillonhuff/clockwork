@@ -19,6 +19,7 @@ vector<string> split_at(const string& t, const string& delimiter) {
     s.erase(0, pos + delimiter.length());
   }
 
+  cout << s << endl;
   tokens.push_back(s);
 
   return tokens;
