@@ -5128,7 +5128,7 @@ struct App {
         op* nest = prg.root;
         int i = 0;
         for (auto r : compute_b.intervals) {
-          nest = nest->add_nest(f + "_" + to_string(i), r.min, r.max - 1);
+          nest = nest->add_nest(f + "_" + to_string(i), r.min, r.max + 1);
           i++;
         }
         auto op = nest->add_op(f + "_comp");
@@ -5149,7 +5149,6 @@ struct App {
     prg.outs = {name};
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
     generate_regression_testbench(prg);
-    //assert(false);
 
     return;
   }
@@ -5263,7 +5262,7 @@ struct App {
     CodegenOptions options;
     options.internal = true;
     prog prg;
-    prg.name = name;
+    prg.name = name + "_opt";
     prg.compute_unit_file = "conv_3x3.h";
     auto action_domain = cpy(whole_dom);
     map<string, isl_set*> domain_map;
@@ -5279,7 +5278,7 @@ struct App {
         op* nest = prg.root;
         int i = 0;
         for (auto r : compute_b.intervals) {
-          nest = nest->add_nest(f + "_" + to_string(i), r.min, r.max - 1);
+          nest = nest->add_nest(f + "_" + to_string(i), r.min, r.max + 1);
           i++;
         }
         auto op = nest->add_op(f + "_comp");
@@ -5390,7 +5389,7 @@ void denoise2d_test() {
   std::vector<std::string> naive =
     run_regression_tb("denoise2d_naive");
   std::vector<std::string> optimized =
-    run_regression_tb("denoise2d");
+    run_regression_tb("denoise2d_opt");
 
   assert(naive == optimized);
 }
