@@ -276,6 +276,53 @@ class UBuffer {
 
 };
 
+int compute_max_dd(UBuffer& buf, const string& inpt);
+
+std::ostream& operator<<(std::ostream& out, UBuffer& buf) {
+  out << "--- " << buf.name << endl;
+  out << "\t---- In ports" << endl;
+  for (auto inpt : buf.get_in_ports()) {
+    out << "\t\t" << inpt << endl;
+    out << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
+    out << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
+    out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
+    out << "\t\t\tbuffer capacity: " << compute_max_dd(buf, inpt) << endl;
+    out << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
+    out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
+  }
+
+  out << "\t---- Out ports" << endl;
+  for (auto inpt : buf.get_out_ports()) {
+    out << "\t\t" << inpt << endl;
+    out << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
+    out << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
+    out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
+    out << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
+    out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
+  }
+
+  out << "\t---- Output Bundles" << endl;
+  for (auto out_bundle : buf.get_out_bundles()) {
+    out << "\t\t" << out_bundle << endl;
+    auto ports = buf.port_bundles.at(out_bundle);
+    out << "\t\t---- Ports..." << endl;
+    for (auto p : ports) {
+      out << "\t\t\t" << p << endl;
+    }
+
+    if (buf.get_in_ports().size() == 0) {
+      continue;
+    }
+
+    auto inpt = pick(buf.get_in_ports());
+
+    //auto in_chunk = isl_union_map_coalesce(input_chunk(buf, out_bundle));
+    //out << "\t\t Input Chunk: " << str(in_chunk) << endl;
+    //out << "\t\t Input Chunk Sizes: " << str(card(in_chunk)) << endl;
+  }
+  return out;
+}
+
 isl_stat get_const(isl_set* s, isl_qpolynomial* qp, void* user) {
   vector<int>* vals = (vector<int>*) user;
 
@@ -667,7 +714,9 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
 
 void generate_memory_struct(CodegenOptions& options, std::ostream& out, const std::string& inpt, UBuffer& buf) {
 
-  //cout << "Creating struct for: " << inpt << " on " << buf.name << endl;
+  cout << "Creating struct for: " << inpt << " on " << buf.name << endl;
+  cout << buf << endl;
+
   cout << "Computing max delay..." << endl;
   int maxdelay = compute_max_dd(buf, inpt);
   cout << "maxdelay: " << maxdelay << endl;
@@ -4998,7 +5047,7 @@ struct App {
       isl_union_map* sched =
         its(m, domain);
       isl_map* write_map =
-        inv(compute_map(f));
+        its(inv(compute_map(f)), domain);
 
       cout << "In write_map: " << str(write_map) << endl;
 
@@ -5026,10 +5075,9 @@ struct App {
           auto access_map =
             rdmap(ctx, "{ " + consumer + "_comp[d0, d1] -> " +
                 f + sep_list(coeffs, "[", "]", ", ") + " }");
-                //f + "[d0 + " + to_string(i) + ", d1] }");
           cout << "Access map: " << str(access_map) << endl;
           string pt_name = consumer + "_rd" + to_string(i);
-          b.add_out_pt(pt_name, domain, to_map(access_map), sched);
+          b.add_out_pt(pt_name, domain, its(to_map(access_map), domain), sched);
           i++;
           b.port_bundles[consumer + "_comp_read"].push_back(pt_name);
         }
@@ -5066,7 +5114,6 @@ struct App {
           isl_union_set_subtract(action_domain,
               to_uset(compute_domain(f)));
       } else {
-        // TODO: Convert to compute box
         Box compute_b =
           compute_box(f);
         op* nest = prg.root;
