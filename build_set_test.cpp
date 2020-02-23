@@ -524,14 +524,14 @@ int int_upper_bound(isl_union_pw_qpolynomial* range_card) {
 }
 
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
-  cout << "Getting lexmax events for " << outpt << endl;
+  //cout << "Getting lexmax events for " << outpt << endl;
   umap* src_map = nullptr;
   for (auto inpt : buf.get_in_ports()) {
-    cout << "outpt sched: " << str(buf.schedule.at(outpt)) << endl;
-    cout << "inpt sched : " << str(buf.schedule.at(inpt)) << endl;
+    //cout << "outpt sched: " << str(buf.schedule.at(outpt)) << endl;
+    //cout << "inpt sched : " << str(buf.schedule.at(inpt)) << endl;
     auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
-    cout << "Got beforeacc" << endl;
-    cout << "\t" << str(beforeAcc) << endl;
+    //cout << "Got beforeacc" << endl;
+    //cout << "\t" << str(beforeAcc) << endl;
     if (src_map == nullptr) {
       auto outmap = buf.access_map.at(outpt);
       auto inmap = buf.access_map.at(inpt);
@@ -547,7 +547,7 @@ umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
     }
   }
 
-  cout << "src map done: " << str(src_map) << endl;
+  //cout << "src map done: " << str(src_map) << endl;
   auto sched = buf.global_schedule();
   auto after = lex_gt(sched, sched);
 
@@ -667,8 +667,8 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
 
 void generate_memory_struct(CodegenOptions& options, std::ostream& out, const std::string& inpt, UBuffer& buf) {
 
-  cout << "Creating struct for: " << inpt << " on " << buf.name << endl;
-  //cout << "Computing max delay..." << endl;
+  //cout << "Creating struct for: " << inpt << " on " << buf.name << endl;
+  cout << "Computing max delay..." << endl;
   int maxdelay = compute_max_dd(buf, inpt);
   cout << "maxdelay: " << maxdelay << endl;
   out << "struct " + inpt + "_cache {" << endl;
@@ -683,8 +683,8 @@ void generate_memory_struct(CodegenOptions& options, std::ostream& out, const st
     auto act_dom = 
       domain(its_range(lex_max_events, to_uset(in_actions)));
 
-    cout << "Lex max events" << endl;
-    cout << tab(1) << str(coalesce(lex_max_events)) << endl;
+    //cout << "Lex max events" << endl;
+    //cout << tab(1) << str(coalesce(lex_max_events)) << endl;
 
     if (!isl_union_set_is_empty(act_dom)) {
       num_readers++;
@@ -697,6 +697,7 @@ void generate_memory_struct(CodegenOptions& options, std::ostream& out, const st
       int lb = compute_dd_lower_bound(buf, outpt, inpt);
 
       for (int i = lb; i < qpd + 1; i++) {
+        cout << "Adding delay at: " << i << endl;
         read_delays.push_back(i);
       }
     }
@@ -822,7 +823,7 @@ void generate_code_prefix(CodegenOptions& options,
     generate_memory_struct(options, out, inpt, buf);
   }
 
-  cout << "Generated struct" << endl;
+  //cout << "Generated struct" << endl;
 
   out << endl << endl;
   for (auto inpt : buf.get_in_ports()) {
@@ -5039,7 +5040,7 @@ struct App {
       buffers[f] = b;
     }
 
-    //assert(false);
+    assert(false);
     
     uset* whole_dom =
       isl_union_set_read_from_str(ctx, "{}");
