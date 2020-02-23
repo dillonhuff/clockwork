@@ -5334,7 +5334,7 @@ void updown_merge_test() {
 
   ds.realize("C", 10, 10, 1);
 
-  int res = system("g++ -std=c++11 -c C.cpp");
+  int res = system("g++ -std=c++11 -c C_opt.cpp");
   assert(res == 0);
 }
 
@@ -5345,7 +5345,7 @@ void upsample2d_test() {
   ds.func2d("B", "id", awin);
   ds.realize("B", 10, 10, 1);
 
-  int res = system("g++ -std=c++11 -c B.cpp");
+  int res = system("g++ -std=c++11 -c B_opt.cpp");
   assert(res == 0);
 }
 
@@ -5356,7 +5356,7 @@ void downsample2d_test() {
   ds.func2d("B", "id", awin);
   ds.realize("B", 10, 10, 1);
 
-  int res = system("g++ -std=c++11 -c B.cpp");
+  int res = system("g++ -std=c++11 -c B_opt.cpp");
   assert(res == 0);
 }
 
@@ -5409,7 +5409,7 @@ void conv3x3_app_test() {
 
   sobel.realize("conv3x3_app", 30, 30, 1);
 
-  int res = system("g++ -std=c++11 tb_app_conv3x3.cpp conv3x3_app.cpp");
+  int res = system("g++ -std=c++11 tb_app_conv3x3.cpp conv3x3_app_opt.cpp");
   assert(res == 0);
 
   int tb_res = system("./a.out");
@@ -5432,7 +5432,7 @@ void sobel_test() {
 
   sobel.realize("mag", 30, 30, 1);
 
-  int res = system("g++ -std=c++11 -c mag.cpp");
+  int res = system("g++ -std=c++11 -c mag_opt.cpp");
   assert(res == 0);
 }
 

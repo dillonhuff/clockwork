@@ -1,4 +1,4 @@
-#include "conv3x3_app.h"
+#include "conv3x3_app_opt.h"
 
 #define ROWS 30
 #define COLS 30
@@ -23,7 +23,7 @@ int main() {
     }
   }
 
-  conv3x3_app(off_chip_img, conv3x3_out);
+  conv3x3_app_opt(off_chip_img, conv3x3_out);
 
   for (int r = 0; r < ROWS; r++) {
     for (int c = 0; c < COLS; c++) {
