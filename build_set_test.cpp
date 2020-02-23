@@ -4991,6 +4991,163 @@ struct App {
     return {};
   }
 
+  umap* schedule_naive() {
+    vector<string> sorted_functions = sort_functions();
+    map<string, vector<QExpr> > schedules;
+    int pos = 0;
+    cout << "Sorted pipeline..." << endl;
+    for (auto f : sorted_functions) {
+      cout << "\t" << f << endl;
+      schedules[f].push_back(qexpr(pos));
+      pos++;
+    }
+
+    int ndims = 2;
+    for (int i = ndims - 1; i >= 0; i--) {
+      schedule_dim(i, schedules);
+    }
+
+    umap* m = rdmap(ctx, "{}");
+    for (auto f : sorted_functions) {
+      vector<string> sched_exprs;
+      vector<string> var_names;
+      int i = 0; 
+      for (auto v : schedules[f]) {
+        string dv = "d" + to_string(i);
+        sched_exprs.push_back(isl_str(v));
+        var_names.push_back(dv);
+        i++;
+      }
+      var_names.pop_back();
+      string map_str = "{ " + f + "_comp" + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
+      cout << "Map str: " << map_str << endl;
+      auto rm = rdmap(ctx, map_str);
+      m = unn(m, rm);
+      isl_union_map_free(rm);
+      cout << "Unioned" << endl;
+      cout << "m = " << str(m) << endl;
+    }
+
+    cout << "done getting m..." << endl;
+
+    //assert(false);
+    return m;
+  }
+
+  void realize_naive(const std::string& name, const int d0, const int d1) {
+    const int unroll_factor = 1;
+    cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
+    fill_data_domain(name, d0, d1);
+    fill_compute_domain(name, unroll_factor);
+
+    umap* m = schedule_naive();
+
+    auto sorted_functions = sort_functions();
+    // Generate re-use buffers
+    map<string, UBuffer> buffers;
+    for (auto f : sorted_functions) {
+      cout << "Adding buffer: " << f << endl;
+      UBuffer b;
+      b.ctx = ctx;
+      b.name = f;
+      isl_set* domain =
+        compute_domain(f);
+      isl_union_map* sched =
+        its(m, domain);
+      isl_map* write_map =
+        its(inv(compute_map(f)), domain);
+
+      cout << "In write_map: " << str(write_map) << endl;
+
+      b.add_in_pt(f, domain, write_map, sched);
+      b.port_bundles[f + "_comp_write"] = {f};
+
+      for (auto consumer : consumers(f)) {
+        isl_set* domain =
+          compute_domain(consumer);
+        isl_union_map* sched =
+          its(m, domain);
+
+        cout << "Getting map from " << f << " to " << consumer << endl;
+        umap* ws_cf = (ws_map(f, consumer));
+        assert(ws_cf != nullptr);
+
+        Window f_win = box_touched(consumer, f);
+        int i = 0;
+        for (auto p : f_win.pts()) {
+          vector<string> coeffs;
+          for (auto e : p) {
+            coeffs.push_back(isl_str(e));
+          }
+          cout << "Coeffs: " << sep_list(coeffs, "[", "]", ", ") << endl;
+          auto access_map =
+            rdmap(ctx, "{ " + consumer + "_comp[d0, d1] -> " +
+                f + sep_list(coeffs, "[", "]", ", ") + " }");
+          cout << "Access map: " << str(access_map) << endl;
+          string pt_name = consumer + "_rd" + to_string(i);
+          b.add_out_pt(pt_name, domain, its(to_map(access_map), domain), sched);
+          i++;
+          b.port_bundles[consumer + "_comp_read"].push_back(pt_name);
+        }
+      }
+
+      buffers[f] = b;
+    }
+
+    
+    uset* whole_dom =
+      isl_union_set_read_from_str(ctx, "{}");
+    cout << "Whole domain at top of realize " << name << ": " << whole_dom << endl;
+    assert(whole_dom != nullptr);
+    for (auto f : sorted_functions) {
+      cout << "Whole dom: " << str(whole_dom) << endl;
+      whole_dom =
+        unn(whole_dom, to_uset(compute_domain(f)));
+    }
+
+    CodegenOptions options;
+    options.internal = true;
+    prog prg;
+    prg.name = name + "_naive";
+    prg.compute_unit_file = "conv_3x3.h";
+    auto action_domain = cpy(whole_dom);
+    map<string, isl_set*> domain_map;
+    for (auto f : sorted_functions) {
+      if (app_dag.at(f).srcs.size() == 0) {
+        prg.ins.insert(f);
+        action_domain =
+          isl_union_set_subtract(action_domain,
+              to_uset(compute_domain(f)));
+      } else {
+        Box compute_b =
+          compute_box(f);
+        op* nest = prg.root;
+        int i = 0;
+        for (auto r : compute_b.intervals) {
+          nest = nest->add_nest(f + "_" + to_string(i), r.min, r.max - 1);
+          i++;
+        }
+        auto op = nest->add_op(f + "_comp");
+        op->add_store(f, "0, 0");
+
+        vector<string> fargs;
+        for (auto p : app_dag.at(f).srcs) {
+          op->add_load(p.name, "0, 0");
+          if (!elem(p.name, fargs)) {
+            fargs.push_back(p.name);
+          }
+        }
+        op->add_function(app_dag.at(f).compute_name);
+        domain_map[f + "_comp"] =
+          compute_domain(f);
+      }
+    }
+    prg.outs = {name};
+    generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
+
+    return;
+  }
+
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     fill_data_domain(name, d0, d1);
@@ -4998,7 +5155,6 @@ struct App {
 
     int ndims = 2;
     map<string, vector<QExpr> > schedules;
-    //for (int i = 0; i < ndims; i++) {
     for (int i = ndims - 1; i >= 0; i--) {
       schedule_dim(i, schedules);
     }
@@ -5140,7 +5296,6 @@ struct App {
     prg.outs = {name};
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
 
-    assert(false);
     return;
   }
 
@@ -5224,7 +5379,12 @@ void denoise2d_test() {
  
   dn.realize("denoise2d", 30, 30, 1);
 
-  int res = system("g++ -std=c++11 -c denoise2d.cpp");
+  dn.realize_naive("denoise2d", 30, 30);
+
+  int res = system("g++ -std=c++11 -c denoise2d_naive.cpp");
+  assert(res == 0);
+  
+  res = system("g++ -std=c++11 -c denoise2d.cpp");
   assert(res == 0);
 }
 
