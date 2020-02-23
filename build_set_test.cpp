@@ -715,7 +715,7 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
 void generate_memory_struct(CodegenOptions& options, std::ostream& out, const std::string& inpt, UBuffer& buf) {
 
   cout << "Creating struct for: " << inpt << " on " << buf.name << endl;
-  cout << buf << endl;
+  //cout << buf << endl;
 
   cout << "Computing max delay..." << endl;
   int maxdelay = compute_max_dd(buf, inpt);
@@ -746,7 +746,7 @@ void generate_memory_struct(CodegenOptions& options, std::ostream& out, const st
       int lb = compute_dd_lower_bound(buf, outpt, inpt);
 
       for (int i = lb; i < qpd + 1; i++) {
-        cout << "Adding delay at: " << i << endl;
+        //cout << "Adding delay at: " << i << endl;
         read_delays.push_back(i);
       }
     }
