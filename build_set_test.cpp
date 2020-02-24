@@ -972,13 +972,11 @@ void generate_select_decl(CodegenOptions& options, std::ostream& out, const stri
   vector<string> dim_decls;
   for (int i = 0; i < num_dims(s); i++) {
     if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
-      string dn = "i" + to_string(i);
+      string dn = "d" + to_string(i);
       auto new_id = id(buf.ctx, dn);
       assert(new_id != nullptr);
       cout << "setting id: " << str(new_id) << endl;
       s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
-      //s = isl_space_set_dim_name(s, isl_dim_set, i, dn.c_str());
-      //assert(isl_space_has_dim_name(s, isl_dim_set, i));
     }
 
     assert(isl_space_has_dim_name(s, isl_dim_set, i));
@@ -1116,6 +1114,13 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
       isl_space* s = get_space(buf.domain.at(outpt));
       assert(isl_space_is_set(s));
       for (int i = 0; i < num_dims(s); i++) {
+        if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
+          string dn = "d" + to_string(i);
+          auto new_id = id(buf.ctx, dn);
+          assert(new_id != nullptr);
+          cout << "setting id: " << str(new_id) << endl;
+          s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
+        }
         dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
         dim_args.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
       }
@@ -2494,6 +2499,13 @@ void generate_app_code(CodegenOptions& options,
     assert(isl_space_is_set(s));
     vector<string> dim_args;
     for (int i = 0; i < num_dims(s); i++) {
+      if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
+        string dn = "d" + to_string(i);
+        auto new_id = id(ctx(s), dn);
+        assert(new_id != nullptr);
+        cout << "setting id: " << str(new_id) << endl;
+        s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
+      }
       buf_srcs.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
       dim_args.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
     }
