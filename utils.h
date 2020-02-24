@@ -33,7 +33,12 @@ string take_until(const std::string& s, const std::string& delim) {
 
 static inline
 bool is_number(string s) { 
-  for (int i = 0; i < s.length(); i++)  {
+
+  if (s[0] != '-' && !isdigit(s[0])) {
+    return false;
+  }
+
+  for (int i = 1; i < s.length(); i++)  {
     if (isdigit(s[i]) == false) {
       return false; 
     }

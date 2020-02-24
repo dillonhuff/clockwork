@@ -17,18 +17,41 @@ vector<int> parse_pt(const string& pt) {
   smatch match;
   auto res = regex_search(pt, match, cm);
 
-  assert(res);
+  if (res) {
 
-  string coefs = match[1];
-  cout << "coefs: " << coefs << endl;
-  vector<int> coords;
+    string coefs = match[1];
+    cout << "coefs: " << coefs << endl;
+    vector<int> coords;
 
-  auto vals = split_at(coefs, ", ");
-  for (auto v : vals) {
-    coords.push_back(safe_stoi(v));
+    auto vals = split_at(coefs, ", ");
+    for (auto v : vals) {
+      coords.push_back(safe_stoi(v));
+    }
+
+    return coords;
+  } else {
+    regex cm("\\{ (.*)\\[(.*)\\] \\}");
+    smatch match;
+    auto res = regex_search(pt, match, cm);
+
+
+    string coefs = match[2];
+    cout << "coefs: " << coefs << endl;
+    vector<int> coords;
+
+    auto vals = split_at(coefs, ", ");
+    for (auto v : vals) {
+      coords.push_back(safe_stoi(v));
+    }
+
+    return coords;
   }
 
-  return coords;
+
+}
+
+vector<int> parse_pt(isl_point* p) {
+  return parse_pt(str(p));
 }
 
 string set_string(const vector<string>& vars, const string& s) {
@@ -4465,7 +4488,8 @@ struct App {
   map<string, Box> domain_boxes;
   // Map from functions to compute invocations of 
   // other functions that they need
-  map<string, Box> compute_boxes;
+  //map<string, Box> compute_boxes;
+  map<string, isl_set*> compute_sets;
 
   App() {
     ctx = isl_ctx_alloc();
@@ -4666,8 +4690,10 @@ struct App {
 
   void fill_compute_domain(const std::string& name, const int unroll_factor) {
     for (auto s : app_dag) {
-      compute_boxes[s.first] =
-        data_domain(s.first);
+      compute_sets[s.first] =
+        data_domain(s.first).to_set(ctx, s.first + "_comp");
+      //compute_boxes[s.first] =
+        //data_domain(s.first);
     }
   }
 
@@ -4697,7 +4723,6 @@ struct App {
       cout << "Adding " << next << " to domain boxes" << endl;
       for (auto inputs : producers(next)) {
         cout << "Getting producers..." << endl;
-        //app_dag.at(next).srcs) {
         Window win = inputs;
 
         if (!contains_key(inputs.name, domain_boxes)) {
@@ -4968,7 +4993,23 @@ struct App {
   }
 
   Box compute_box(const std::string& name) {
-    return map_find(name, compute_boxes);
+    cout << "Getting box: " << name << ": for " << str(compute_domain(name)) << endl;
+    cout << tab(1) << "lexmin: " << str(lexmin(compute_domain(name))) << endl;
+    cout << tab(1) << "lexmax: " << str(lexmax(compute_domain(name))) << endl;
+
+    auto min_pt =
+      parse_pt(sample(lexmin(compute_domain(name))));
+    auto max_pt =
+      parse_pt(sample(lexmax(compute_domain(name))));
+
+    assert(min_pt.size() == max_pt.size());
+
+    Box b;
+    for (size_t i = 0; i < min_pt.size(); i++) {
+      b.intervals.push_back({min_pt.at(i), max_pt.at(i)});
+    }
+    return b;
+    //return map_find(name, compute_boxes);
   }
 
   isl_map* compute_map(const std::string& f) {
@@ -4976,7 +5017,8 @@ struct App {
   }
 
   isl_set* compute_domain(const std::string& name) {
-    return map_find(name, compute_boxes).to_set(ctx, name + "_comp");
+    return map_find(name, compute_sets);
+    //return map_find(name, compute_boxes).to_set(ctx, name + "_comp");
   }
 
   Window box_touched(const std::string& consumer, const std::string& producer) {
@@ -5121,7 +5163,6 @@ struct App {
     prg.outs = {name};
     auto action_domain = cpy(whole_dom);
     map<string, isl_set*> domain_map;
-    //auto sorted_functions = sort_functions();
 
     for (auto f : sorted_functions) {
       if (app_dag.at(f).srcs.size() == 0) {
@@ -5153,8 +5194,6 @@ struct App {
           compute_domain(f);
       }
     }
-
-    //populate_prog_domain(prg, action_domain, domain_map);
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
     generate_regression_testbench(prg);
