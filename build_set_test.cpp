@@ -4757,8 +4757,6 @@ struct App {
         for (auto arg : app_dag.at(f).srcs) {
           QTerm ft = qterm(f_rate, qvar(dv));
           QExpr ftime = qexpr(ft, f_delay);
-          //cout << "\t" << ftime << " >= " << "s_" << arg.name << "(k) forall k in " << arg.interval_set_string(i) << endl;
-          //cout << "\ts_" << f << "(x) >= " << "s_" << arg.name << "(k) forall k in " << arg.interval_set_string(i) << endl;
           QExpr ub = upper_bound(arg, i);
 
           QConstraint start_after_deps{ftime, ub};
@@ -5149,18 +5147,14 @@ struct App {
     return;
   }
 
-  void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
-    fill_data_domain(name, d0, d1);
-    fill_compute_domain(name, unroll_factor);
-
+  umap* schedule() {
+    vector<string> sorted_functions = sort_functions();
     int ndims = 2;
     map<string, vector<QExpr> > schedules;
     for (int i = ndims - 1; i >= 0; i--) {
       schedule_dim(i, schedules);
     }
 
-    vector<string> sorted_functions = sort_functions();
     int pos = 0;
     cout << "Sorted pipeline..." << endl;
     for (auto f : sorted_functions) {
@@ -5192,8 +5186,20 @@ struct App {
 
     cout << "done getting m..." << endl;
 
+
+    return m;
+  }
+
+  void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
+    cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
+    fill_data_domain(name, d0, d1);
+    fill_compute_domain(name, unroll_factor);
+
+    umap* m = schedule();
+
     // Generate re-use buffers
     map<string, UBuffer> buffers;
+    auto sorted_functions = sort_functions();
     for (auto f : sorted_functions) {
       cout << "Adding buffer: " << f << endl;
       UBuffer b;
