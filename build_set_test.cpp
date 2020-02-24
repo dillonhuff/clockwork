@@ -5032,14 +5032,7 @@ struct App {
     return m;
   }
 
-  void realize_naive(const std::string& name, const int d0, const int d1) {
-    const int unroll_factor = 1;
-    cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
-    fill_data_domain(name, d0, d1);
-    fill_compute_domain(name, unroll_factor);
-
-    umap* m = schedule_naive();
-
+  map<string, UBuffer> build_buffers(umap* m) {
     auto sorted_functions = sort_functions();
     // Generate re-use buffers
     map<string, UBuffer> buffers;
@@ -5092,7 +5085,21 @@ struct App {
       buffers[f] = b;
     }
 
+
+    return buffers;
+  }
+
+  void realize_naive(const std::string& name, const int d0, const int d1) {
+    const int unroll_factor = 1;
+    cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
+    fill_data_domain(name, d0, d1);
+    fill_compute_domain(name, unroll_factor);
+
+    umap* m = schedule_naive();
+
+    map<string, UBuffer> buffers = build_buffers(m);
     
+    auto sorted_functions = sort_functions();
     uset* whole_dom =
       isl_union_set_read_from_str(ctx, "{}");
     cout << "Whole domain at top of realize " << name << ": " << whole_dom << endl;
@@ -5197,64 +5204,13 @@ struct App {
 
     umap* m = schedule();
 
-    // Generate re-use buffers
-    map<string, UBuffer> buffers;
-    auto sorted_functions = sort_functions();
-    for (auto f : sorted_functions) {
-      cout << "Adding buffer: " << f << endl;
-      UBuffer b;
-      b.ctx = ctx;
-      b.name = f;
-      isl_set* domain =
-        compute_domain(f);
-      isl_union_map* sched =
-        its(m, domain);
-      isl_map* write_map =
-        its(inv(compute_map(f)), domain);
-
-      cout << "In write_map: " << str(write_map) << endl;
-
-      b.add_in_pt(f, domain, write_map, sched);
-      b.port_bundles[f + "_comp_write"] = {f};
-
-      for (auto consumer : consumers(f)) {
-        isl_set* domain =
-          compute_domain(consumer);
-        isl_union_map* sched =
-          its(m, domain);
-
-        cout << "Getting map from " << f << " to " << consumer << endl;
-        umap* ws_cf = (ws_map(f, consumer));
-        assert(ws_cf != nullptr);
-
-        Window f_win = box_touched(consumer, f);
-        int i = 0;
-        for (auto p : f_win.pts()) {
-          vector<string> coeffs;
-          for (auto e : p) {
-            coeffs.push_back(isl_str(e));
-          }
-          cout << "Coeffs: " << sep_list(coeffs, "[", "]", ", ") << endl;
-          auto access_map =
-            rdmap(ctx, "{ " + consumer + "_comp[d0, d1] -> " +
-                f + sep_list(coeffs, "[", "]", ", ") + " }");
-          cout << "Access map: " << str(access_map) << endl;
-          string pt_name = consumer + "_rd" + to_string(i);
-          b.add_out_pt(pt_name, domain, its(to_map(access_map), domain), sched);
-          i++;
-          b.port_bundles[consumer + "_comp_read"].push_back(pt_name);
-        }
-      }
-
-      ofstream out(f + "_buf.cpp");
-      generate_hls_code(out, b);
-      buffers[f] = b;
-    }
+    map<string, UBuffer> buffers = build_buffers(m);
 
     uset* whole_dom =
       isl_union_set_read_from_str(ctx, "{}");
     cout << "Whole domain at top of realize " << name << ": " << whole_dom << endl;
     assert(whole_dom != nullptr);
+    auto sorted_functions = sort_functions();
     for (auto f : sorted_functions) {
       cout << "Whole dom: " << str(whole_dom) << endl;
       whole_dom =
@@ -5299,8 +5255,8 @@ struct App {
       }
     }
     prg.outs = {name};
-    generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
 
+    generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
     generate_regression_testbench(prg);
 
     return;
