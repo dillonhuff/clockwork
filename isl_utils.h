@@ -54,6 +54,10 @@ int num_dims(isl_space* const s) {
   return ndims;
 }
 
+isl_id* id(isl_ctx* c, const std::string& s) {
+  return isl_id_alloc(c, s.c_str(), nullptr);
+}
+
 std::string str(isl_id* const id) {
   return std::string(isl_id_to_str(id));
 }

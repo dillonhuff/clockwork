@@ -679,6 +679,7 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
   cout << "WritesBtwn: " << str(WritesBtwn) << endl;
 
   auto c = card(WritesBtwn);
+  cout << "got card" << endl;
   return c;
 }
 
@@ -964,15 +965,30 @@ void generate_select_decl(CodegenOptions& options, std::ostream& out, const stri
     out << ", ";
     nargs++;
   }
+  cout << "Getting space..." << endl;
   isl_space* s = get_space(buf.domain.at(outpt));
   assert(isl_space_is_set(s));
+  cout << "Got set space: " << str(s) << endl;
   vector<string> dim_decls;
   for (int i = 0; i < num_dims(s); i++) {
+    if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
+      string dn = "i" + to_string(i);
+      auto new_id = id(buf.ctx, dn);
+      assert(new_id != nullptr);
+      cout << "setting id: " << str(new_id) << endl;
+      s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
+      //s = isl_space_set_dim_name(s, isl_dim_set, i, dn.c_str());
+      //assert(isl_space_has_dim_name(s, isl_dim_set, i));
+    }
+
+    assert(isl_space_has_dim_name(s, isl_dim_set, i));
+    assert(isl_space_has_dim_id(s, isl_dim_set, i));
     dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
   }
   out << sep_list(dim_decls, "", "", ", ");
 
   out << ") {" << endl;
+  cout << "Created dim decls" << endl;
 }
 
 void select_debug_assertions(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
@@ -5885,7 +5901,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
-    conv3x3_app_unrolled_test();
+    //conv3x3_app_unrolled_test();
     denoise2d_test();
     updown_merge_test();
     conv3x3_app_test();
