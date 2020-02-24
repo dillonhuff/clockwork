@@ -88,7 +88,6 @@ class UBuffer {
     std::string port_type_string(const std::string& name) const {
       if (port_width(name) == 32) {
         return "hw_uint<32> ";
-        //return "int";
       }
       return "hw_uint<" + to_string(port_width(name)) + ">";
     }
@@ -316,9 +315,6 @@ std::ostream& operator<<(std::ostream& out, UBuffer& buf) {
 
     auto inpt = pick(buf.get_in_ports());
 
-    //auto in_chunk = isl_union_map_coalesce(input_chunk(buf, out_bundle));
-    //out << "\t\t Input Chunk: " << str(in_chunk) << endl;
-    //out << "\t\t Input Chunk Sizes: " << str(card(in_chunk)) << endl;
   }
   return out;
 }
@@ -5369,13 +5365,12 @@ void denoise2d_test() {
   dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
   dn.func2d("diff_qwe", "diff_b", "u", {{0, 0}, {1, 0}});
   dn.func2d("diff_d", "diff_b", "u", {{0, 0}, {2, 0}});
+  dn.func2d("diff_l", "diff_b", "u", {{0, 0}, {-1, 0}});
+  dn.func2d("diff_r", "diff_b", "u", {{0, 0}, {1, 0}});
 
-  //dn.func2d("diff_l", "diff_b", "u", {{0, 0}, {-1, 0}});
-  //dn.func2d("diff_r", "diff_b", "u", {{0, 0}, {1, 0}});
+  //dn.func2d("denoise2d", "diff", {pt("diff_qwe"), pt("diff_d")});
 
-  dn.func2d("denoise2d", "diff", {pt("diff_qwe"), pt("diff_d")});
-
-  //dn.func2d("denoise2d", "mag_dn2", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
+  dn.func2d("denoise2d", "mag_dn2", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
 
   //dn.func2d("g", "mag_dn2", {pt("diff_u"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
   //dn.func2d("r0", "comp_r0", {pt("u"), pt("f")});
