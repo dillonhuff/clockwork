@@ -559,34 +559,60 @@ map<string, string> umap_codegen_c(umap* const um) {
   return cm;
 }
 
-int int_lower_bound(isl_union_pw_qpolynomial* range_card) {
-  int tight;
-  int* b = &tight;
-  auto bound = isl_union_pw_qpolynomial_bound(cpy(range_card), isl_fold_min, b);
+int bnd_int(isl_union_pw_qpolynomial_fold* bound) {
   auto folds  = get_polynomial_folds(bound);
   int bint;
   if (folds.size() == 0) {
     bint = 0;
   } else {
     assert(folds.size() == 1);
-    bint = safe_stoi(codegen_c(folds[0]));
+    string str_bnd = codegen_c(folds[0]);
+    cout << "\tbound: " << str_bnd << endl;
+
+    if (is_number(str_bnd)) {
+      bint = safe_stoi(str_bnd);
+      return bint;
+    } else {
+      regex cm("\\((.*)\\)/(.*)");
+      smatch match;
+      auto res = regex_search(str_bnd, match, cm);
+      assert(res);
+      return safe_stoi(match[1]) / safe_stoi(match[2]);
+    }
   }
   return bint;
+}
+
+int int_lower_bound(isl_union_pw_qpolynomial* range_card) {
+  int tight;
+  int* b = &tight;
+  auto bound = isl_union_pw_qpolynomial_bound(cpy(range_card), isl_fold_min, b);
+  return bnd_int(bound);
+  //auto folds  = get_polynomial_folds(bound);
+  //int bint;
+  //if (folds.size() == 0) {
+    //bint = 0;
+  //} else {
+    //assert(folds.size() == 1);
+    //bint = safe_stoi(codegen_c(folds[0]));
+  //}
+  //return bint;
 }
 
 int int_upper_bound(isl_union_pw_qpolynomial* range_card) {
   int tight;
   int* b = &tight;
   auto bound = isl_union_pw_qpolynomial_bound(cpy(range_card), isl_fold_max, b);
-  auto folds  = get_polynomial_folds(bound);
-  int bint;
-  if (folds.size() == 0) {
-    bint = 0;
-  } else {
-    assert(folds.size() == 1);
-    bint = safe_stoi(codegen_c(folds[0]));
-  }
-  return bint;
+  return bnd_int(bound);
+  //auto folds  = get_polynomial_folds(bound);
+  //int bint;
+  //if (folds.size() == 0) {
+    //bint = 0;
+  //} else {
+    //assert(folds.size() == 1);
+    //bint = safe_stoi(codegen_c(folds[0]));
+  //}
+  //return bint;
 }
 
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
@@ -650,6 +676,8 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
 
   auto WritesBtwn = (its(WritesAfterProduction, WritesBeforeRead));
 
+  cout << "WritesBtwn: " << str(WritesBtwn) << endl;
+
   auto c = card(WritesBtwn);
   return c;
 }
@@ -660,31 +688,25 @@ int compute_dd_lower_bound(UBuffer& buf, const std::string& read_port, const std
   int tight;
   int* b = &tight;
   auto bound = isl_union_pw_qpolynomial_bound(c, isl_fold_min, b);
-  auto folds  = get_polynomial_folds(bound);
-  int bint;
-  if (folds.size() == 0) {
-    bint = 0;
-  } else {
-    assert(folds.size() == 1);
-    bint = safe_stoi(codegen_c(folds[0]));
-  }
-  return bint;
+  return bnd_int(bound);
+  //auto folds  = get_polynomial_folds(bound);
+  //int bint;
+  //if (folds.size() == 0) {
+    //bint = 0;
+  //} else {
+    //assert(folds.size() == 1);
+    //bint = safe_stoi(codegen_c(folds[0]));
+  //}
+  //return bint;
 }
 
 int compute_dd_bound(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
   auto c = compute_dd(buf, read_port, write_port);
+  cout << "DD: " << str(c) << endl;
   int tight;
   int* b = &tight;
   auto bound = isl_union_pw_qpolynomial_bound(c, isl_fold_max, b);
-  auto folds  = get_polynomial_folds(bound);
-  int bint;
-  if (folds.size() == 0) {
-    bint = 0;
-  } else {
-    assert(folds.size() == 1);
-    bint = safe_stoi(codegen_c(folds[0]));
-  }
-  return bint;
+  return bnd_int(bound);
 }
 
 string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
@@ -723,6 +745,7 @@ void generate_vivado_tcl(UBuffer& buf) {
 int compute_max_dd(UBuffer& buf, const string& inpt) {
   int maxdelay = 0;
   for (auto outpt : buf.get_out_ports()) {
+    cout << "computing dd bound for " << inpt << " -> " << outpt << " on " << buf.name << endl;
     int r0 = compute_dd_bound(buf, outpt, inpt);
     if (r0 > maxdelay) {
       maxdelay = r0;
@@ -4477,6 +4500,7 @@ struct App {
   // Map from functions to compute invocations of 
   // other functions that they need
   map<string, isl_set*> compute_sets;
+  map<string, isl_map*> compute_maps;
 
   App() {
     ctx = isl_ctx_alloc();
@@ -4673,13 +4697,18 @@ struct App {
   }
 
 
-  void fill_compute_domain(const std::string& name, const int unroll_factor) {
+  void fill_compute_domain(const int unroll_factor) {
     for (auto s : app_dag) {
+      compute_maps[s.first] =
+        to_map(rdmap(ctx, "{ " + s.first + "[d0, d1] -> " + s.first + "_comp[floor(d0 / " + to_string(unroll_factor) + "), d1] }"));
       compute_sets[s.first] =
-        data_domain(s.first).to_set(ctx, s.first + "_comp");
-      //compute_boxes[s.first] =
-        //data_domain(s.first);
+        range(its(
+            compute_maps[s.first],
+            data_domain(s.first).to_set(ctx, s.first)));
+      cout << "Compute domain for " << s.first << " is " << str(compute_sets[s.first]) << endl;
+        //data_domain(s.first).to_set(ctx, s.first + "_comp")
     }
+    //assert(false);
   }
 
   void fill_data_domain(const std::string& name, const int d0, const int d1) {
@@ -4998,7 +5027,8 @@ struct App {
   }
 
   isl_map* compute_map(const std::string& f) {
-    return to_map(rdmap(ctx, "{ " + f + "[d0, d1] -> " + f + "_comp[d0, d1] }"));
+    return map_find(f, compute_maps);
+    //return to_map(rdmap(ctx, "{ " + f + "[d0, d1] -> " + f + "_comp[d0, d1] }"));
   }
 
   isl_set* compute_domain(const std::string& name) {
@@ -5072,6 +5102,8 @@ struct App {
         compute_domain(f);
       isl_union_map* sched =
         its(m, domain);
+      cout << "compute_map: " << str(compute_map(f)) << endl;
+      cout << "Domain     : " << str(domain) << endl;
       isl_map* write_map =
         its(inv(compute_map(f)), domain);
 
@@ -5116,14 +5148,14 @@ struct App {
     return buffers;
   }
 
-  void populate_prog_domain(prog& prg, uset* action_domain, map<string, isl_set*>& domain_map) {
-  }
+  //void populate_prog_domain(prog& prg, uset* action_domain, map<string, isl_set*>& domain_map) {
+  //}
 
   void realize_naive(const std::string& name, const int d0, const int d1) {
     const int unroll_factor = 1;
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     fill_data_domain(name, d0, d1);
-    fill_compute_domain(name, unroll_factor);
+    fill_compute_domain(unroll_factor);
 
     umap* m = schedule_naive();
 
@@ -5132,7 +5164,7 @@ struct App {
     auto sorted_functions = sort_functions();
     uset* whole_dom =
       isl_union_set_read_from_str(ctx, "{}");
-    cout << "Whole domain at top of realize " << name << ": " << whole_dom << endl;
+    //cout << "Whole domain at top of realize " << name << ": " << whole_dom << endl;
     assert(whole_dom != nullptr);
     for (auto f : sorted_functions) {
       cout << "Whole dom: " << str(whole_dom) << endl;
@@ -5232,7 +5264,7 @@ struct App {
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     fill_data_domain(name, d0, d1);
-    fill_compute_domain(name, unroll_factor);
+    fill_compute_domain(unroll_factor);
 
     umap* m = schedule();
 
@@ -5240,11 +5272,11 @@ struct App {
 
     uset* whole_dom =
       isl_union_set_read_from_str(ctx, "{}");
-    cout << "Whole domain at top of realize " << name << ": " << whole_dom << endl;
+    //cout << "Whole domain at top of realize " << name << ": " << whole_dom << endl;
     assert(whole_dom != nullptr);
     auto sorted_functions = sort_functions();
     for (auto f : sorted_functions) {
-      cout << "Whole dom: " << str(whole_dom) << endl;
+      //cout << "Whole dom: " << str(whole_dom) << endl;
       whole_dom =
         unn(whole_dom, to_uset(compute_domain(f)));
     }
