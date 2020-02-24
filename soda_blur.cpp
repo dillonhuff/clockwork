@@ -158,7 +158,7 @@ inline void I_I_id1_10_write(hw_uint<16>& I_I_id1_10, I_I_id1_10_cache& I_I_id1_
 	I_I_id1_10_delay.push(I_I_id1_10);
 }
 
-inline hw_uint<16> I_out_0_blur_30_5_select(I_I_id0_8_cache& I_I_id0_8_delay
+inline hw_uint<16> I_out_0_blur_30_1_select(I_I_id0_8_cache& I_I_id0_8_delay
 , I_I_id1_10_cache& I_I_id1_10_delay
 , int root, int xr, int xc) {
 	// lexmax events: { out_0_blur_30[root = 0, xr, xc] -> I_id0[root' = 0, ir = xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
@@ -180,7 +180,7 @@ inline hw_uint<16> I_out_0_blur_30_5_select(I_I_id0_8_cache& I_I_id0_8_delay
 	return 0;
 }
 
-inline hw_uint<16> I_out_0_blur_30_6_select(I_I_id0_8_cache& I_I_id0_8_delay
+inline hw_uint<16> I_out_0_blur_30_2_select(I_I_id0_8_cache& I_I_id0_8_delay
 , I_I_id1_10_cache& I_I_id1_10_delay
 , int root, int xr, int xc) {
 	// lexmax events: { out_0_blur_30[root = 0, xr, xc] -> I_id0[root' = 0, ir = 1 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
@@ -202,7 +202,7 @@ inline hw_uint<16> I_out_0_blur_30_6_select(I_I_id0_8_cache& I_I_id0_8_delay
 	return 0;
 }
 
-inline hw_uint<16> I_out_0_blur_30_7_select(I_I_id0_8_cache& I_I_id0_8_delay
+inline hw_uint<16> I_out_0_blur_30_3_select(I_I_id0_8_cache& I_I_id0_8_delay
 , I_I_id1_10_cache& I_I_id1_10_delay
 , int root, int xr, int xc) {
 	// lexmax events: { out_0_blur_30[root = 0, xr, xc] -> I_id0[root' = 0, ir = 2 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
@@ -224,7 +224,7 @@ inline hw_uint<16> I_out_0_blur_30_7_select(I_I_id0_8_cache& I_I_id0_8_delay
 	return 0;
 }
 
-inline hw_uint<16> I_out_1_blur_31_1_select(I_I_id0_8_cache& I_I_id0_8_delay
+inline hw_uint<16> I_out_1_blur_31_5_select(I_I_id0_8_cache& I_I_id0_8_delay
 , I_I_id1_10_cache& I_I_id1_10_delay
 , int root, int xr, int xc) {
 	// lexmax events: { out_1_blur_31[root = 0, xr, xc] -> I_id1[root' = 0, ir = xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
@@ -246,7 +246,7 @@ inline hw_uint<16> I_out_1_blur_31_1_select(I_I_id0_8_cache& I_I_id0_8_delay
 	return 0;
 }
 
-inline hw_uint<16> I_out_1_blur_31_2_select(I_I_id0_8_cache& I_I_id0_8_delay
+inline hw_uint<16> I_out_1_blur_31_6_select(I_I_id0_8_cache& I_I_id0_8_delay
 , I_I_id1_10_cache& I_I_id1_10_delay
 , int root, int xr, int xc) {
 	// lexmax events: { out_1_blur_31[root = 0, xr, xc] -> I_id1[root' = 0, ir = 1 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
@@ -268,7 +268,7 @@ inline hw_uint<16> I_out_1_blur_31_2_select(I_I_id0_8_cache& I_I_id0_8_delay
 	return 0;
 }
 
-inline hw_uint<16> I_out_1_blur_31_3_select(I_I_id0_8_cache& I_I_id0_8_delay
+inline hw_uint<16> I_out_1_blur_31_7_select(I_I_id0_8_cache& I_I_id0_8_delay
 , I_I_id1_10_cache& I_I_id1_10_delay
 , int root, int xr, int xc) {
 	// lexmax events: { out_1_blur_31[root = 0, xr, xc] -> I_id1[root' = 0, ir = 2 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
@@ -304,32 +304,32 @@ inline void I_I_id1_write_bundle_write(hw_uint<16>& I_id1_write, I_I_id1_10_cach
 }
 
 // out_0_blur_30_read
-//	I_out_0_blur_30_5
-//	I_out_0_blur_30_6
-//	I_out_0_blur_30_7
+//	I_out_0_blur_30_1
+//	I_out_0_blur_30_2
+//	I_out_0_blur_30_3
 inline hw_uint<48> I_out_0_blur_30_read_bundle_read(I_I_id0_8_cache& I_I_id0_8_delay, I_I_id1_10_cache& I_I_id1_10_delay, int root, int xr, int xc) {
 	hw_uint<48> result;
-	hw_uint<16> I_out_0_blur_30_5_res = I_out_0_blur_30_5_select(I_I_id0_8_delay, I_I_id1_10_delay, root, xr, xc);
-	set_at<0, 48>(result, I_out_0_blur_30_5_res);
-	hw_uint<16> I_out_0_blur_30_6_res = I_out_0_blur_30_6_select(I_I_id0_8_delay, I_I_id1_10_delay, root, xr, xc);
-	set_at<16, 48>(result, I_out_0_blur_30_6_res);
-	hw_uint<16> I_out_0_blur_30_7_res = I_out_0_blur_30_7_select(I_I_id0_8_delay, I_I_id1_10_delay, root, xr, xc);
-	set_at<32, 48>(result, I_out_0_blur_30_7_res);
+	hw_uint<16> I_out_0_blur_30_1_res = I_out_0_blur_30_1_select(I_I_id0_8_delay, I_I_id1_10_delay, root, xr, xc);
+	set_at<0, 48>(result, I_out_0_blur_30_1_res);
+	hw_uint<16> I_out_0_blur_30_2_res = I_out_0_blur_30_2_select(I_I_id0_8_delay, I_I_id1_10_delay, root, xr, xc);
+	set_at<16, 48>(result, I_out_0_blur_30_2_res);
+	hw_uint<16> I_out_0_blur_30_3_res = I_out_0_blur_30_3_select(I_I_id0_8_delay, I_I_id1_10_delay, root, xr, xc);
+	set_at<32, 48>(result, I_out_0_blur_30_3_res);
 	return result;
 }
 
 // out_1_blur_31_read
-//	I_out_1_blur_31_1
-//	I_out_1_blur_31_2
-//	I_out_1_blur_31_3
+//	I_out_1_blur_31_5
+//	I_out_1_blur_31_6
+//	I_out_1_blur_31_7
 inline hw_uint<48> I_out_1_blur_31_read_bundle_read(I_I_id0_8_cache& I_I_id0_8_delay, I_I_id1_10_cache& I_I_id1_10_delay, int root, int xr, int xc) {
 	hw_uint<48> result;
-	hw_uint<16> I_out_1_blur_31_1_res = I_out_1_blur_31_1_select(I_I_id0_8_delay, I_I_id1_10_delay, root, xr, xc);
-	set_at<0, 48>(result, I_out_1_blur_31_1_res);
-	hw_uint<16> I_out_1_blur_31_2_res = I_out_1_blur_31_2_select(I_I_id0_8_delay, I_I_id1_10_delay, root, xr, xc);
-	set_at<16, 48>(result, I_out_1_blur_31_2_res);
-	hw_uint<16> I_out_1_blur_31_3_res = I_out_1_blur_31_3_select(I_I_id0_8_delay, I_I_id1_10_delay, root, xr, xc);
-	set_at<32, 48>(result, I_out_1_blur_31_3_res);
+	hw_uint<16> I_out_1_blur_31_5_res = I_out_1_blur_31_5_select(I_I_id0_8_delay, I_I_id1_10_delay, root, xr, xc);
+	set_at<0, 48>(result, I_out_1_blur_31_5_res);
+	hw_uint<16> I_out_1_blur_31_6_res = I_out_1_blur_31_6_select(I_I_id0_8_delay, I_I_id1_10_delay, root, xr, xc);
+	set_at<16, 48>(result, I_out_1_blur_31_6_res);
+	hw_uint<16> I_out_1_blur_31_7_res = I_out_1_blur_31_7_select(I_I_id0_8_delay, I_I_id1_10_delay, root, xr, xc);
+	set_at<32, 48>(result, I_out_1_blur_31_7_res);
 	return result;
 }
 
@@ -338,20 +338,20 @@ inline hw_uint<48> I_out_1_blur_31_read_bundle_read(I_I_id0_8_cache& I_I_id0_8_d
 
 
 // Operation logic
-inline void out_1_blur_31(I_I_id0_8_cache& I_I_id0_8, I_I_id1_10_cache& I_I_id1_10, HWStream<hw_uint<16> >& out_1, int root, int xr, int xc) {
-	// Consume: I
-	auto I_xr__p__0_c__2_m_xc__p__1__p__0_value = I_out_1_blur_31_read_bundle_read(I_I_id0_8, I_I_id1_10/* source_delay */, root, xr, xc);
-	auto compute_result = blur_3(I_xr__p__0_c__2_m_xc__p__1__p__0_value);
-	// Produce: out_1
-	out_1.write(compute_result);
-}
-
 inline void out_0_blur_30(I_I_id0_8_cache& I_I_id0_8, I_I_id1_10_cache& I_I_id1_10, HWStream<hw_uint<16> >& out_0, int root, int xr, int xc) {
 	// Consume: I
 	auto I_xr__p__0_c__2_m_xc__p__0__p__0_value = I_out_0_blur_30_read_bundle_read(I_I_id0_8, I_I_id1_10/* source_delay */, root, xr, xc);
 	auto compute_result = blur_3(I_xr__p__0_c__2_m_xc__p__0__p__0_value);
 	// Produce: out_0
 	out_0.write(compute_result);
+}
+
+inline void out_1_blur_31(I_I_id0_8_cache& I_I_id0_8, I_I_id1_10_cache& I_I_id1_10, HWStream<hw_uint<16> >& out_1, int root, int xr, int xc) {
+	// Consume: I
+	auto I_xr__p__0_c__2_m_xc__p__1__p__0_value = I_out_1_blur_31_read_bundle_read(I_I_id0_8, I_I_id1_10/* source_delay */, root, xr, xc);
+	auto compute_result = blur_3(I_xr__p__0_c__2_m_xc__p__1__p__0_value);
+	// Produce: out_1
+	out_1.write(compute_result);
 }
 
 inline void I_id0(HWStream<hw_uint<16> >& in_0, I_I_id0_8_cache& I_I_id0_8, I_I_id1_10_cache& I_I_id1_10, int root, int ir, int ic) {
