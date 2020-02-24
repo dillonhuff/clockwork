@@ -4417,18 +4417,6 @@ struct Window {
   }
 };
 
-//bool operator<(const Window& w0, const Window& w1) {
-  //if (w0.name != w1.name) {
-    //return w0.name < w1.name;
-  //}
-
-  //if (w0.strides == w1.strides) {
-    //return false;
-  //}
-
-//}
-
-
 struct QConstraint {
   QExpr lhs;
   QExpr rhs;
@@ -4488,7 +4476,6 @@ struct App {
   map<string, Box> domain_boxes;
   // Map from functions to compute invocations of 
   // other functions that they need
-  //map<string, Box> compute_boxes;
   map<string, isl_set*> compute_sets;
 
   App() {
@@ -4515,8 +4502,6 @@ struct App {
   string func2d(const std::string& name,
       const string& compute,
       const vector<Window>& windows) {
-    // TODO: Fill this in
-
     functions.insert(name);
     Result res{compute};
     for (auto w : windows) {
@@ -5398,6 +5383,28 @@ void denoise2d_test() {
   assert(naive == optimized);
 }
 
+void conv3x3_app_unrolled_test() {
+  App sobel;
+
+  sobel.func2d("off_chip_img");
+  sobel.func2d("img", "id", "off_chip_img", {1, 1}, {{0, 0}});
+  vector<vector<int> > offsets;
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      offsets.push_back({i, j});
+    }
+  }
+  sobel.func2d("conv3x3_app_unrolled", "conv_3_3", "img", {1, 1}, offsets);
+
+  sobel.realize("conv3x3_app_unrolled", 30, 30, 2);
+
+  int res = system("g++ -std=c++11 tb_app_unrolled_conv3x3.cpp conv3x3_app_unrolled_opt.cpp");
+  assert(res == 0);
+
+  int tb_res = system("./a.out");
+  assert(tb_res == 0);
+}
+
 void conv3x3_app_test() {
   App sobel;
 
@@ -5846,6 +5853,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
+    conv3x3_app_unrolled_test();
     denoise2d_test();
     updown_merge_test();
     conv3x3_app_test();
