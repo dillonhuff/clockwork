@@ -5089,6 +5089,9 @@ struct App {
     return buffers;
   }
 
+  void populate_prog_domain(prog& prg, uset* action_domain, map<string, isl_set*>& domain_map) {
+  }
+
   void realize_naive(const std::string& name, const int d0, const int d1) {
     const int unroll_factor = 1;
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
@@ -5115,8 +5118,11 @@ struct App {
     prog prg;
     prg.name = name + "_naive";
     prg.compute_unit_file = "conv_3x3.h";
+    prg.outs = {name};
     auto action_domain = cpy(whole_dom);
     map<string, isl_set*> domain_map;
+    //auto sorted_functions = sort_functions();
+
     for (auto f : sorted_functions) {
       if (app_dag.at(f).srcs.size() == 0) {
         prg.ins.insert(f);
@@ -5147,7 +5153,9 @@ struct App {
           compute_domain(f);
       }
     }
-    prg.outs = {name};
+
+    //populate_prog_domain(prg, action_domain, domain_map);
+
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
     generate_regression_testbench(prg);
 
