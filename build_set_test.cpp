@@ -4188,6 +4188,15 @@ QAV qvar(const std::string& v) {
 struct QTerm {
   vector<QAV> vals;
 
+  bool is_zero() const {
+    for (auto v : vals) {
+      if (!v.is_zero()) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   bool contains(const QAV& v) {
     for (auto ov : vals) {
       if (ov == v) {
@@ -4241,7 +4250,7 @@ struct QTerm {
         vals = {qconst(0)};
       }
     }
-
+    
   }
 
   void replace(const QAV& target, const QAV& replacement) {
@@ -4255,13 +4264,20 @@ struct QTerm {
 };
 
 std::ostream& operator<<(std::ostream& out, const QTerm& c) {
+  assert(c.vals.size() > 0);
+
   vector<string> strs;
   for (auto t : c.vals) {
     ostringstream ss;
     ss << t;
     strs.push_back(ss.str());
   }
-  out << sep_list(strs, "", "", "*");
+  if (strs.size() == 0) {
+    assert(c.is_zero());
+    out << "0";
+  } else {
+    out << sep_list(strs, "", "", "*");
+  }
   return out;
 }
 
@@ -4310,6 +4326,9 @@ struct QExpr {
       }
     }
     terms = new_terms;
+    if (terms.size() == 0) {
+      terms.push_back(qterm(qconst(0)));
+    }
   }
 
   void simplify() {
@@ -4358,6 +4377,10 @@ QExpr qexpr(const QAV& l, const QAV& r) {
 
 QExpr qexpr(const QAV& l, const QTerm& r) {
   return QExpr{{qterm(l), r}};
+}
+
+QExpr qexpr(const QTerm& l, const int r) {
+  return QExpr{{l, qterm(r)}};
 }
 
 QExpr qexpr(const QTerm& l, const QTerm& r) {
@@ -4549,6 +4572,38 @@ QExpr upper_bound(const Window& arg, const int dim) {
   QTerm delay = qterm("d_" + arg.name);
   QExpr k = qexpr(dvs, qm, delay);
   return k;
+}
+
+QTerm parse_term(const std::string& f, const int dim, const std::string& str) {
+  regex floor_reg("floor\\(\\((.*)\\)/(.*)\\)");
+  smatch tt_match;
+  auto tt_res = regex_match(str, tt_match, floor_reg);
+  if (tt_res) {
+    cout << "Group 1: " << tt_match[1] << endl;
+    cout << "Group 2: " << tt_match[2] << endl;
+    return qterm(qvar("q_" + f), qvar("d" + to_string(dim)), qconst(1, safe_stoi(tt_match[2])));
+  }
+
+  regex mul_reg("(\\d+)(.+)");
+  smatch mul_match;
+  auto mul_res = regex_match(str, mul_match, mul_reg);
+  if (mul_res) {
+    return qterm(qconst(safe_stoi(mul_match[1])), qvar("q_" + f), qvar("d" + to_string(dim)));
+  }
+ 
+  {
+    regex mul_reg("(\\d+)");
+    smatch mul_match;
+    auto mul_res = regex_match(str, mul_match, mul_reg);
+    if (mul_res) {
+      return qterm(qconst(safe_stoi(mul_match[1])), qvar("q_" + f));
+    }
+  }
+  
+  return qterm(qconst(safe_stoi("1")), qvar("q_" + f), qvar("d" + to_string(dim)));
+  //cout << "No match for term: " << str << endl;
+  //assert(false);
+  //return qterm(qconst(0));
 }
 
 struct App {
@@ -4884,16 +4939,34 @@ struct App {
           cout << "max needed in dim " << i << " = " << str(max) << endl;
 
           //regex cm("\\{ (.*)\\[(.*)\\](.*) \\}");
-          regex cm("\\{ (.*)\\[(.*)\\] -> \\[(.*)\\] \\}");
+          regex cm("\\{ (.*)\\[(.*)\\] -> \\[\\((.*)\\)\\] \\}");
           //-> \\[\\((.*)\\)\\]\\}");
           smatch match;
           auto res = regex_search(str(max), match, cm);
 
           assert(res);
-          cout << "\tmax bound: " << match[3] << endl;
+
+          string gp = match[3];
+          cout << "\tmax bound: " << gp << endl;
+          regex two_terms("(.*) \\+ (.*)");
+          smatch tt_match;
+          auto tt_res = regex_match(gp, tt_match, two_terms);
+
+          QExpr ub;
+          if (tt_res) {
+            cout << "\tt0 = " << tt_match[1] << endl;
+            cout << "\tt1 = " << tt_match[2] << endl;
+            ub = qexpr(parse_term(arg.name, i, tt_match[1]), parse_term(arg.name, i, tt_match[2]));
+          } else {
+            cout << "\tg  = " << gp << endl;
+            ub = qexpr(parse_term(arg.name, i, gp), 0);
+          }
+
+          cout << "ub = " << ub << endl;
+
 
           //assert(false);
-          QExpr ub = upper_bound(arg, i);
+          ub = upper_bound(arg, i);
 
           QConstraint start_after_deps{ftime, ub};
           all_constraints.push_back(start_after_deps);
@@ -4923,8 +4996,9 @@ struct App {
         r.lhs.delete_terms_without(qvar(dv));
         r.rhs.delete_terms_without(qvar(dv));
         r.replace(qvar(dv), qconst(1));
+        cout << "\tbefore simplify: " << r << endl;
         r.simplify();
-        cout << "\t" << r << endl;
+        cout << "\tafter simplify: " << r << endl;
         rates_only.push_back(r);
         for (auto t : r.rhs.terms) {
           for (auto v : t.vals) {
