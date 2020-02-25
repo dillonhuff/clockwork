@@ -4964,9 +4964,11 @@ struct App {
 
           cout << "ub = " << ub << endl;
 
+          ub.terms.push_back(qterm(qvar("d_" + arg.name)));
 
           //assert(false);
-          ub = upper_bound(arg, i);
+          //ub = upper_bound(arg, i);
+
 
           QConstraint start_after_deps{ftime, ub};
           all_constraints.push_back(start_after_deps);
