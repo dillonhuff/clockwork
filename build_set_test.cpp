@@ -4656,6 +4656,7 @@ std::ostream& operator<<(std::ostream& out, const QConstraint& c) {
 struct Result {
   string compute_name;
   vector<Window> srcs;
+  Window provided;
 };
 
 QExpr upper_bound(const Window& arg, const int dim) {
@@ -4866,6 +4867,25 @@ vector<vector<int> > offsets(vector<QExpr>& mins, vector<QExpr>& maxs) {
   return build_points(vals_by_dim, ps, 0);
 }
 
+struct BundleBinding {
+
+  Window win;
+  map<vector<int>, string> offset_ports;
+
+};
+
+struct BufferInfo {
+
+  UBuffer buf;
+  map<string, BundleBinding> bundles;
+
+};
+
+struct Memory {
+
+  map<string, BufferInfo> buffers;
+};
+
 struct App {
 
   isl_ctx* ctx;
@@ -4909,6 +4929,8 @@ struct App {
     }
 
     assert(res.srcs.size() == windows.size());
+    res.provided =
+      Window(name, {1, 1}, {{0, 0}});
 
     app_dag[name] = res;
     return name;
@@ -5074,7 +5096,6 @@ struct App {
     assert(contains_key(f, domain_boxes));
     return map_find(f, domain_boxes);
   }
-
 
   void fill_compute_domain(const int unroll_factor) {
     for (auto s : app_dag) {
@@ -5711,11 +5732,7 @@ struct App {
     return m;
   }
 
-  void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
-    fill_data_domain(name, d0, d1);
-    fill_compute_domain(unroll_factor);
-
+  void schedule_and_codegen(const std::string& name) {
     umap* m = schedule();
 
     map<string, UBuffer> buffers = build_buffers(m);
@@ -5774,6 +5791,13 @@ struct App {
     generate_regression_testbench(prg);
 
     return;
+  }
+
+  void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
+    cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
+    fill_data_domain(name, d0, d1);
+    fill_compute_domain(unroll_factor);
+    schedule_and_codegen(name);
   }
 
 };
@@ -6365,7 +6389,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
-    conv3x3_app_unrolled_test();
+    //conv3x3_app_unrolled_test();
     //assert(false);
     upsample2d_test();
     //assert(false);

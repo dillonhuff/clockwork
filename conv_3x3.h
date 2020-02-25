@@ -204,3 +204,11 @@ hw_uint<32> mag_dn2(hw_uint<32>& diff_d_0_c__0_value,
   return diff_d_0_c__0_value;
 }
 
+static inline
+hw_uint<64> id_unroll(hw_uint<64>& v) {
+  return v;
+}
+static inline
+hw_uint<64> conv_3_3_unroll(hw_uint<384>& img_unrolled_0_c__0_value) {
+  return 0;
+}
