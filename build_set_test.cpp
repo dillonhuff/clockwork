@@ -1148,9 +1148,11 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
       out << "inline void " + buf.name + "_" + b.first + "_bundle_write(";
       vector<string> dim_decls;
       if (options.internal) {
-        dim_decls.push_back(buf.port_type_string(b.first) + "& " + b.first);
+        //dim_decls.push_back(buf.port_type_string(b.first) + "& " + b.first);
+        dim_decls.push_back(buf.bundle_type_string(b.first) + "& " + b.first);
       } else {
-        dim_decls.push_back("InputStream<" + buf.port_type_string(b.first)  + " >& " + b.first);
+        //dim_decls.push_back("InputStream<" + buf.port_type_string(b.first)  + " >& " + b.first);
+        dim_decls.push_back("InputStream<" + buf.bundle_type_string(b.first)  + " >& " + b.first);
       }
       vector<string> dim_args;
       dim_args.push_back(b.first);
@@ -1165,7 +1167,16 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
       out << param_string;
 
       out << ") {" << endl;
-      out << "\t" << rep << "_write(" << b.first << ", " << rep + "_delay);" << endl;
+      int offset = 0;
+      for (auto p : b.second) {
+        out << "\t" + buf.port_type_string() + " " << p << "_res = "
+          << b.first << ".extract<" << offset << ", " << (offset + buf.port_width(p) - 1)
+          << ">();" << endl;
+        out << "\t" << p << "_write(" << p << "_res" << ", " << p << "_delay);" << endl;
+        offset += buf.port_width(p);
+      }
+
+      //out << "\t" << rep << "_write(" << b.first << ", " << rep + "_delay);" << endl;
 
     }
     out << "}" << endl << endl;
@@ -2591,33 +2602,15 @@ void generate_app_code(CodegenOptions& options,
       auto& buf = buffers.at(out_buffer);
       for (auto ib : buf.get_in_bundles()) {
         if (is_prefix(op->name, ib)) {
-          // TODO: Instead of picking one port, actually write
-          // each port in the bundle 
+          vector<string> args{res};
           for (auto port_cache : buf.port_bundles.at(ib)) {
-            //string port_cache = pick(buf.port_bundles.at(ib));
-            conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" << res << ", " << port_cache << " /* output src_delay */);" << endl;
+            args.push_back(port_cache);
           }
+          conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" <<
+            sep_list(args, "", "", ", ") << ");" << endl;
+          //res << ", " << port_cache << " /* output src_delay */);" << endl;
         }
       }
-
-      //// TODO: Need to use bundles here
-      //auto possible_ports = buffers.at(out_buffer).get_in_ports();
-      //conv_out << "\t// Buffer: " << out_buffer << ", Op: " << op->name << endl;
-      //conv_out << "\t// Possible ports..." << endl;
-      //string prefix = out_buffer + "_" + op->name;
-      //string port_cache = "";
-      //cout << "Finding cache for: " << prefix << endl;
-      //for (auto pt : possible_ports) {
-        //conv_out << "\t\t// " << pt << endl;
-        //cout << "pt: " << pt << endl;
-        //if (is_prefix(prefix, pt)) {
-          //port_cache = pt;
-          //break;
-        //}
-      //}
-      //assert(port_cache != "");
-
-      //conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" << res << ", " << port_cache << " /* output src_delay */);" << endl;
     }
 
     conv_out << "}" << endl << endl;
@@ -6441,7 +6434,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
-    //conv3x3_app_unrolled_test();
+    conv3x3_app_unrolled_test();
     //assert(false);
     upsample2d_test();
     //assert(false);
