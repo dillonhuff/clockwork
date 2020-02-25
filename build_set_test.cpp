@@ -3301,6 +3301,38 @@ umap* input_chunk(UBuffer& buf, const std::string& out_bundle) {
       DataWrittenBeforePreviousRead);
 }
 
+void aha_talk_print_program_representation(prog& prg) {
+  cout << "#### Info for input program: " << prg.name << endl << endl;
+
+  auto iter_domain = prg.whole_iteration_domain();
+  cout << "----- Statements in program..." << endl;
+  for (auto op : prg.all_ops()) {
+    cout << "\t" << op->name << endl;
+  }
+  cout << endl << endl;
+
+  cout << "----- Iteration domains for statements..." << endl;
+  cout << "\t" << str(iter_domain) << endl << endl;
+
+  cout << "----- Schedules for statements..." << endl;
+  cout << "\t" << str(prg.unoptimized_schedule()) << endl << endl;
+
+  cout << "----- Values read by each statement" << endl;
+  auto reads =
+    its(prg.consumer_map(), iter_domain);
+  cout << "\t" << str(reads) << endl << endl;
+ 
+  cout << "----- Values written by each statement" << endl;
+  auto writes =
+    its(prg.producer_map(), iter_domain);
+  cout << "\t" << str(writes) << endl << endl;
+
+  cout << "----- Un-optimized loop nests for program..." << endl;
+  prg.unoptimized_codegen();
+  cout << endl << endl;
+
+}
+
 void aha_talk_print_raw_deps(prog& prg) {
 
   auto iter_domain = prg.whole_iteration_domain();
@@ -5909,6 +5941,12 @@ int main(int argc, char** argv) {
   if (argc > 1) {
     assert(argc == 2);
     string cmd = argv[1];
+    
+    if (cmd == "program_representation") {
+      prog prg = conv_1d();
+      aha_talk_print_program_representation(prg);
+      return 0;
+    }
 
     if (cmd == "raw_deps") {
       prog prg = conv_1d();
