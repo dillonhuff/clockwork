@@ -6064,10 +6064,10 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
+    conv3x3_app_unrolled_test();
     upsample2d_test();
     //assert(false);
     downsample2d_test();
-    //conv3x3_app_unrolled_test();
     denoise2d_test();
     updown_merge_test();
     conv3x3_app_test();
