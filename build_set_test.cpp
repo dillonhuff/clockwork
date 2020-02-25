@@ -4845,6 +4845,10 @@ struct App {
           isl_map* comps_needed =
             dot(pixels_needed, a_cm);
           cout << "comps needed: " << str(comps_needed) << endl;
+          isl_map* last_pix =
+            lexmax(comps_needed);
+          cout << "last comp needed: " << str(last_pix) << endl;
+
           //assert(false);
           QExpr ub = upper_bound(arg, i);
 
@@ -5935,7 +5939,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
-    //conv3x3_app_unrolled_test();
+    conv3x3_app_unrolled_test();
     denoise2d_test();
     updown_merge_test();
     conv3x3_app_test();
