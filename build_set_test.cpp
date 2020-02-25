@@ -995,6 +995,13 @@ void select_debug_assertions(CodegenOptions& options, std::ostream& out, const s
   isl_space* s = get_space(buf.domain.at(outpt));
   assert(isl_space_is_set(s));
   for (int i = 0; i < num_dims(s); i++) {
+    if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
+      string dn = "d" + to_string(i);
+      auto new_id = id(buf.ctx, dn);
+      assert(new_id != nullptr);
+      cout << "setting id: " << str(new_id) << endl;
+      s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
+    }
     string name = 
       str(isl_space_get_dim_id(s, isl_dim_set, i));
     offset_printouts.push_back("\" " + name + " = \" << " + name + " ");
@@ -2586,11 +2593,13 @@ void generate_app_code(CodegenOptions& options,
         if (is_prefix(op->name, ib)) {
           // TODO: Instead of picking one port, actually write
           // each port in the bundle 
-          assert(buf.port_bundles.at(ib).size() == 1);
-          string port_cache = pick(buf.port_bundles.at(ib));
-          conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" << res << ", " << port_cache << " /* output src_delay */);" << endl;
+          for (auto port_cache : buf.port_bundles.at(ib)) {
+            //string port_cache = pick(buf.port_bundles.at(ib));
+            conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" << res << ", " << port_cache << " /* output src_delay */);" << endl;
+          }
         }
       }
+
       //// TODO: Need to use bundles here
       //auto possible_ports = buffers.at(out_buffer).get_in_ports();
       //conv_out << "\t// Buffer: " << out_buffer << ", Op: " << op->name << endl;
@@ -5941,6 +5950,9 @@ App unroll(const App& app, const int unroll_factor) {
     string cn = f.second.compute_name + "_unroll";
 
     unrolled.func2d(f.first + "_unrolled", cn, args);
+
+    unrolled.app_dag[f.first + "_unrolled"].provided =
+      unrolled.app_dag[f.first + "_unrolled"].provided.unroll_cpy(unroll_factor);
   }
 
   return unrolled;

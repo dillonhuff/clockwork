@@ -2,7 +2,7 @@
 
 #include "hw_classes.h"
 
-struct I_I_id0_0_cache {
+struct I_I_id0_4_cache {
 	// Capacity: 65
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
@@ -77,47 +77,47 @@ struct I_I_id0_0_cache {
 
 
 
-inline void I_I_id0_0_write(hw_uint<16>& I_I_id0_0, I_I_id0_0_cache& I_I_id0_0_delay) {
-	I_I_id0_0_delay.push(I_I_id0_0);
+inline void I_I_id0_4_write(hw_uint<16>& I_I_id0_4, I_I_id0_4_cache& I_I_id0_4_delay) {
+	I_I_id0_4_delay.push(I_I_id0_4);
 }
 
-inline hw_uint<16> I_out_blur_30_3_select(I_I_id0_0_cache& I_I_id0_0_delay
+inline hw_uint<16> I_out_blur_30_1_select(I_I_id0_4_cache& I_I_id0_4_delay
 , int root, int d1, int d0) {
-	hw_uint<16> value_I_I_id0_0 = I_I_id0_0_delay.peek_64();
-	return value_I_I_id0_0;
+	hw_uint<16> value_I_I_id0_4 = I_I_id0_4_delay.peek_64();
+	return value_I_I_id0_4;
 }
 
-inline hw_uint<16> I_out_blur_30_4_select(I_I_id0_0_cache& I_I_id0_0_delay
+inline hw_uint<16> I_out_blur_30_2_select(I_I_id0_4_cache& I_I_id0_4_delay
 , int root, int d1, int d0) {
-	hw_uint<16> value_I_I_id0_0 = I_I_id0_0_delay.peek_32();
-	return value_I_I_id0_0;
+	hw_uint<16> value_I_I_id0_4 = I_I_id0_4_delay.peek_32();
+	return value_I_I_id0_4;
 }
 
-inline hw_uint<16> I_out_blur_30_5_select(I_I_id0_0_cache& I_I_id0_0_delay
+inline hw_uint<16> I_out_blur_30_3_select(I_I_id0_4_cache& I_I_id0_4_delay
 , int root, int d1, int d0) {
-	hw_uint<16> value_I_I_id0_0 = I_I_id0_0_delay.peek_0();
-	return value_I_I_id0_0;
+	hw_uint<16> value_I_I_id0_4 = I_I_id0_4_delay.peek_0();
+	return value_I_I_id0_4;
 }
 
 // # of bundles = 2
 // I_id0_write
-//	I_I_id0_0
-inline void I_I_id0_write_bundle_write(hw_uint<16>& I_id0_write, I_I_id0_0_cache& I_I_id0_0_delay) {
-	I_I_id0_0_write(I_id0_write, I_I_id0_0_delay);
+//	I_I_id0_4
+inline void I_I_id0_write_bundle_write(hw_uint<16>& I_id0_write, I_I_id0_4_cache& I_I_id0_4_delay) {
+	I_I_id0_4_write(I_id0_write, I_I_id0_4_delay);
 }
 
 // out_blur_30_read
+//	I_out_blur_30_1
+//	I_out_blur_30_2
 //	I_out_blur_30_3
-//	I_out_blur_30_4
-//	I_out_blur_30_5
-inline hw_uint<48> I_out_blur_30_read_bundle_read(I_I_id0_0_cache& I_I_id0_0_delay, int root, int d1, int d0) {
+inline hw_uint<48> I_out_blur_30_read_bundle_read(I_I_id0_4_cache& I_I_id0_4_delay, int root, int d1, int d0) {
 	hw_uint<48> result;
-	hw_uint<16> I_out_blur_30_3_res = I_out_blur_30_3_select(I_I_id0_0_delay, root, d1, d0);
-	set_at<0, 48>(result, I_out_blur_30_3_res);
-	hw_uint<16> I_out_blur_30_4_res = I_out_blur_30_4_select(I_I_id0_0_delay, root, d1, d0);
-	set_at<16, 48>(result, I_out_blur_30_4_res);
-	hw_uint<16> I_out_blur_30_5_res = I_out_blur_30_5_select(I_I_id0_0_delay, root, d1, d0);
-	set_at<32, 48>(result, I_out_blur_30_5_res);
+	hw_uint<16> I_out_blur_30_1_res = I_out_blur_30_1_select(I_I_id0_4_delay, root, d1, d0);
+	set_at<0, 48>(result, I_out_blur_30_1_res);
+	hw_uint<16> I_out_blur_30_2_res = I_out_blur_30_2_select(I_I_id0_4_delay, root, d1, d0);
+	set_at<16, 48>(result, I_out_blur_30_2_res);
+	hw_uint<16> I_out_blur_30_3_res = I_out_blur_30_3_select(I_I_id0_4_delay, root, d1, d0);
+	set_at<32, 48>(result, I_out_blur_30_3_res);
 	return result;
 }
 
@@ -126,30 +126,30 @@ inline hw_uint<48> I_out_blur_30_read_bundle_read(I_I_id0_0_cache& I_I_id0_0_del
 
 
 // Operation logic
-inline void I_id0(HWStream<hw_uint<16> >& /* num ports = 1 */in, I_I_id0_0_cache& I_I_id0_0, int root, int id1, int id0) {
-	// Consume: in
-	auto in_id0_c__id1_value = in.read();
-	auto compute_result = id(in_id0_c__id1_value);
-	// Produce: I
-	I_I_id0_write_bundle_write(compute_result, I_I_id0_0 /* output src_delay */);
-}
-
-inline void out_blur_30(I_I_id0_0_cache& I_I_id0_0, HWStream<hw_uint<16> >& /* num ports = 1 */out, int root, int d1, int d0) {
+inline void out_blur_30(I_I_id0_4_cache& I_I_id0_4, HWStream<hw_uint<16> >& /* num ports = 1 */out, int root, int d1, int d0) {
 	// Consume: I
-	auto I_d0__p__0_c__d1__p__0_value = I_out_blur_30_read_bundle_read(I_I_id0_0/* source_delay */, root, d1, d0);
+	auto I_d0__p__0_c__d1__p__0_value = I_out_blur_30_read_bundle_read(I_I_id0_4/* source_delay */, root, d1, d0);
 	auto compute_result = blur_3(I_d0__p__0_c__d1__p__0_value);
 	// Produce: out
 	out.write(compute_result);
 }
 
+inline void I_id0(HWStream<hw_uint<16> >& /* num ports = 1 */in, I_I_id0_4_cache& I_I_id0_4, int root, int id1, int id0) {
+	// Consume: in
+	auto in_id0_c__id1_value = in.read();
+	auto compute_result = id(in_id0_c__id1_value);
+	// Produce: I
+	I_I_id0_write_bundle_write(compute_result, I_I_id0_4 /* output src_delay */);
+}
+
 // Driver function
 void blur_x(HWStream<hw_uint<16> >& /* num ports = 1 */in, HWStream<hw_uint<16> >& /* num ports = 1 */out) {
-	I_I_id0_0_cache I_I_id0_0;
+	I_I_id0_4_cache I_I_id0_4;
 	for (int c0 = 0; c0 <= 7; c0 += 1)
 	  for (int c1 = 0; c1 <= 31; c1 += 1) {
-	    I_id0(in, I_I_id0_0, 0, c0, c1);
+	    I_id0(in, I_I_id0_4, 0, c0, c1);
 	    if (c0 >= 2)
-	      out_blur_30(I_I_id0_0, out, 0, c0 - 2, c1);
+	      out_blur_30(I_I_id0_4, out, 0, c0 - 2, c1);
 	  }
 	
 }
