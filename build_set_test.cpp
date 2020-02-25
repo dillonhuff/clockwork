@@ -4883,6 +4883,15 @@ struct App {
           auto max = isl_map_dim_max(cpy(comps_needed), i);
           cout << "max needed in dim " << i << " = " << str(max) << endl;
 
+          //regex cm("\\{ (.*)\\[(.*)\\](.*) \\}");
+          regex cm("\\{ (.*)\\[(.*)\\] -> \\[(.*)\\] \\}");
+          //-> \\[\\((.*)\\)\\]\\}");
+          smatch match;
+          auto res = regex_search(str(max), match, cm);
+
+          assert(res);
+          cout << "\tmax bound: " << match[3] << endl;
+
           //assert(false);
           QExpr ub = upper_bound(arg, i);
 
