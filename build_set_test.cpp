@@ -4609,7 +4609,8 @@ struct App {
       box_strs.push_back(base_expr + " + " + to_string(min) + " <= " + kv + " <= " + base_expr + " + " + to_string(max));
     }
     //string box_cond = "{ " + name + sep_list(base_vars, "[", "]", ", ") + " -> " + w.name + sep_list(arg_vars, "[", "]", ", ") + " : " + sep_list(box_strs, "", "", " and ") + " }";
-    string box_cond = "{ " + name + "_comp" + sep_list(base_vars, "[", "]", ", ") + " -> " + w.name + sep_list(arg_vars, "[", "]", ", ") + " : " + sep_list(box_strs, "", "", " and ") + " }";
+    //string box_cond = "{ " + name + "_comp" + sep_list(base_vars, "[", "]", ", ") + " -> " + w.name + sep_list(arg_vars, "[", "]", ", ") + " : " + sep_list(box_strs, "", "", " and ") + " }";
+    string box_cond = "{ " + name + sep_list(base_vars, "[", "]", ", ") + " -> " + w.name + sep_list(arg_vars, "[", "]", ", ") + " : " + sep_list(box_strs, "", "", " and ") + " }";
     cout << "Box needed: " << box_cond << endl;
     umap* m = isl_union_map_read_from_str(ctx, box_cond.c_str());
     cout << "Map       : " << str(m) << endl;
@@ -4820,10 +4821,31 @@ struct App {
         QConstraint start_time{offset, zero};
         all_constraints.push_back(start_time);
         cout << "\t" << start_time << endl;
-        //cout << "\tq_" << f << "*" << min << " + d_" << f << " >= 0" << endl;
         for (auto arg : app_dag.at(f).srcs) {
           QTerm ft = qterm(f_rate, qvar(dv));
           QExpr ftime = qexpr(ft, f_delay);
+          // TODO: Convert this to use compute domains
+          // and compute mappings for upper bounds
+          isl_map* f_cm = inv(compute_map(f));
+          cout << "f_cm: " << str(f_cm) << endl;
+
+          auto data_needed =
+            to_map(arg.needed);
+
+          cout << "data needed: " << str(data_needed) << endl;
+
+          isl_map* pixels_needed =
+            dot(f_cm, data_needed);
+
+          cout << "pixels needed: " << str(pixels_needed) << endl;
+
+          isl_map* a_cm = compute_map(arg.name);
+          cout << "a_cm: " << str(a_cm) << endl;
+
+          isl_map* comps_needed =
+            dot(pixels_needed, a_cm);
+          cout << "comps needed: " << str(comps_needed) << endl;
+          //assert(false);
           QExpr ub = upper_bound(arg, i);
 
           QConstraint start_after_deps{ftime, ub};
