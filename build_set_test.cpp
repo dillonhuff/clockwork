@@ -4146,6 +4146,12 @@ struct QAV {
   int num;
   int denom;
 
+  int to_int() const {
+    assert(is_num);
+    assert(denom == 1);
+    return num;
+  }
+
   bool is_whole() {
     return is_num && denom == 1;
   }
@@ -4211,6 +4217,34 @@ QAV qvar(const std::string& v) {
 
 struct QTerm {
   vector<QAV> vals;
+
+  int to_int() const {
+
+    assert(is_constant());
+    assert(vals.size() == 1);
+    return vals.at(0).to_int();
+  }
+
+  QAV get_coefficient() const {
+    vector<QAV> const_vals;
+    for (auto v : vals) {
+      if (v.is_num) {
+        const_vals.push_back(v);
+      }
+    }
+
+    assert(const_vals.size() == 1);
+    return const_vals.at(0);
+  }
+
+  bool is_constant() const {
+    for (auto v : vals) {
+      if (!v.is_num) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   bool is_zero() const {
     for (auto v : vals) {
@@ -4335,6 +4369,18 @@ QTerm qterm(const QAV& a, const QAV& l, const QAV& r) {
 
 struct QExpr {
   vector<QTerm> terms;
+
+  QTerm const_term() const {
+    for (auto t : terms) {
+      if (t.is_constant()) {
+        return t;
+      }
+    }
+
+    cout << "Error: No constant terms in qexpr " << endl;
+    assert(false);
+    return qterm(0);
+  }
 
   void scale(const int v) {
     for (auto& t : terms) {
@@ -4599,6 +4645,8 @@ QExpr upper_bound(const Window& arg, const int dim) {
 }
 
 QTerm parse_qterm(const std::string& str) {
+  cout << "Parsing qterm: " << str << endl;
+
   regex floor_reg("floor\\(\\((.*)\\)/(.*)\\)");
   smatch tt_match;
   auto tt_res = regex_match(str, tt_match, floor_reg);
@@ -4608,11 +4656,17 @@ QTerm parse_qterm(const std::string& str) {
     return qterm(qvar(tt_match[1]), qconst(1, safe_stoi(tt_match[2])));
   }
 
-  regex mul_reg("(\\d+)(.+)");
+  regex mul_reg("(\\d+)12234");
   smatch mul_match;
   auto mul_res = regex_match(str, mul_match, mul_reg);
   if (mul_res) {
-    return qterm(qconst(safe_stoi(mul_match[1])), qvar(tt_match[2]));
+    cout << "Matched mul coeff: " << mul_match[1] << endl;
+    string var_name = tt_match[2];
+    cout << "var name = " << var_name << endl;
+    assert(var_name.size() > 0);
+    QAV qv = qvar(var_name);
+    cout << "\tqv = " << qv << endl;
+    return qterm(qconst(safe_stoi(mul_match[1])), qv);
   }
  
   {
@@ -4634,20 +4688,29 @@ QTerm parse_qterm(const std::string& str) {
   }
 }
 
-QExpr parse_qexpr(const std::string& gp) {
+QExpr parse_qexpr(const std::string& str) {
+  regex cm("\\{ (.*)\\[(.*)\\] -> \\[\\((.*)\\)\\] \\}");
+  smatch match;
+  auto res = regex_search(str, match, cm);
+
+  assert(res);
+
+  string gp = match[3];
   regex two_terms("(.*) \\+ (.*)");
   smatch tt_match;
   auto tt_res = regex_match(gp, tt_match, two_terms);
 
   QExpr ub;
   if (tt_res) {
-    //cout << "\tt0 = " << tt_match[1] << endl;
-    //cout << "\tt1 = " << tt_match[2] << endl;
+    cout << "\tt0 = " << tt_match[1] << endl;
+    cout << "\tt1 = " << tt_match[2] << endl;
     ub = qexpr(parse_qterm(tt_match[1]), parse_qterm(tt_match[2]));
+    cout << "two term ub = " << ub << endl;
   } else {
     cout << "\tg  = " << gp << endl;
     ub = qexpr(parse_qterm(gp), 0);
   }
+  cout << "ub = " << ub << endl;
   return ub;
 }
 
@@ -4683,11 +4746,51 @@ QTerm parse_term(const std::string& f, const int dim, const std::string& str) {
   //return qterm(qconst(0));
 }
 
+QTerm offset(const QExpr& e) {
+  assert(e.terms.size() == 2);
+  return e.const_term();
+}
+
+QAV stride(const QExpr& e) {
+  assert(e.terms.size() == 2);
+  for (auto t : e.terms) {
+    if (!t.is_constant()) {
+      QAV c = t.get_coefficient();
+      return c;
+    }
+  }
+
+  cout << "Error: No stride in: " << e << endl;
+  assert(false);
+  return qconst(0);
+}
+
 vector<QAV> strides(vector<QExpr>& mins, vector<QExpr>& maxs) {
-  return {};
+  assert(mins.size() == maxs.size());
+
+  vector<QAV> strides;
+  for (auto m : mins) {
+    QAV s = stride(m);
+    strides.push_back(s);
+  }
+  return strides;
 }
 
 vector<vector<int> > offsets(vector<QExpr>& mins, vector<QExpr>& maxs) {
+  assert(mins.size() == maxs.size());
+
+  vector<int> vals;
+  for (size_t i = 0; mins.size(); i++) {
+    cout << "Min: " << mins.at(i) << endl;
+    cout << "Max: " << maxs.at(i) << endl;
+    int min_offset = offset(mins.at(i)).to_int();
+    int max_offset = offset(maxs.at(i)).to_int();
+    for (int t = min_offset; t <= max_offset; t++) {
+      vals.push_back(t);
+    }
+  }
+
+  assert(false);
   return {};
 }
 
