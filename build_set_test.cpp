@@ -4848,6 +4848,8 @@ struct App {
           isl_map* last_pix =
             lexmax(comps_needed);
           cout << "last comp needed: " << str(last_pix) << endl;
+          auto max = isl_map_dim_max(cpy(comps_needed), i);
+          cout << "max needed in dim " << i << " = " << str(max) << endl;
 
           //assert(false);
           QExpr ub = upper_bound(arg, i);
@@ -5939,13 +5941,14 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
+    upsample2d_test();
+    assert(false);
+    downsample2d_test();
     conv3x3_app_unrolled_test();
     denoise2d_test();
     updown_merge_test();
     conv3x3_app_test();
     sobel_test();
-    upsample2d_test();
-    downsample2d_test();
     //assert(false);
 
     heat_3d_test();
