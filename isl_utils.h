@@ -28,137 +28,6 @@ typedef isl_union_set uset;
 
 using std::vector;
 
-isl_space* get_space(isl_constraint* const m) {
-  return isl_constraint_get_space(m);
-}
-
-isl_space* get_space(isl_union_map* const m) {
-  return isl_union_map_get_space(m);
-}
-
-isl_space* get_space(isl_map* const m) {
-  return isl_map_get_space(m);
-}
-
-isl_space* get_space(isl_set* const m) {
-  return isl_set_get_space(m);
-}
-int dim(isl_space* const s) {
-  assert(false);
-  return 0;
-}
-
-int num_dims(isl_space* const s) {
-  assert(isl_space_is_set(s));
-  int ndims = isl_space_dim(s, isl_dim_set);
-  return ndims;
-}
-
-isl_id* id(isl_ctx* c, const std::string& s) {
-  return isl_id_alloc(c, s.c_str(), nullptr);
-}
-
-std::string str(isl_id* const id) {
-  return std::string(isl_id_to_str(id));
-}
-
-std::string domain_name(isl_space* const s) {
-  return std::string(isl_id_to_str(isl_space_get_tuple_id(s, isl_dim_in)));
-}
-
-std::string range_name(isl_space* const s) {
-  return std::string(isl_id_to_str(isl_space_get_tuple_id(s, isl_dim_out)));
-}
-
-isl_union_set* to_uset(isl_set* const m) {
-  return isl_union_set_from_set(m);
-}
-
-isl_stat get_maps(isl_map* m, void* user) {
-  auto* vm = (vector<isl_map*>*) user;
-  vm->push_back(m);
-  return isl_stat_ok;
-}
-
-isl_map* to_map(isl_union_map* const m) {
-  vector<isl_map*> map_vec;
-  isl_union_map_foreach_map(m, get_maps, &map_vec);
-  assert(map_vec.size() == 1);
-  return map_vec.at(0);
-  //auto map_list = isl_union_map_get_map_list(m);
-  //assert(isl_map_list_size(map_list) == 1);
-  //return isl_map_list_get_map(map_list, 0);
-}
-
-isl_union_map* to_umap(isl_map* const m) {
-  return isl_union_map_from_map(m);
-}
-
-isl_ctx* ctx(isl_pw_aff* const m) {
-  return isl_pw_aff_get_ctx(m);
-}
-
-isl_ctx* ctx(isl_union_set* const m) {
-  return isl_union_set_get_ctx(m);
-}
-
-isl_ctx* ctx(isl_point* const m) {
-  return isl_point_get_ctx(m);
-}
-
-isl_ctx* ctx(isl_constraint* const m) {
-  return isl_constraint_get_ctx(m);
-}
-
-isl_ctx* ctx(isl_basic_set* const m) {
-  return isl_basic_set_get_ctx(m);
-}
-
-isl_ctx* ctx(isl_space* const m) {
-  return isl_space_get_ctx(m);
-}
-
-isl_ctx* ctx(isl_qpolynomial* const m) {
-  return isl_qpolynomial_get_ctx(m);
-}
-
-
-isl_ctx* ctx(isl_union_pw_qpolynomial* const m) {
-  return isl_union_pw_qpolynomial_get_ctx(m);
-}
-
-isl_ctx* ctx(isl_aff* const m) {
-  return isl_aff_get_ctx(m);
-}
-
-isl_ctx* ctx(isl_val* const m) {
-  return isl_val_get_ctx(m);
-}
-
-isl_ctx* ctx(isl_map* const m) {
-  return isl_map_get_ctx(m);
-}
-
-isl_ctx* ctx(umap* const m) {
-  return isl_union_map_get_ctx(m);
-}
-
-isl_ctx* ctx(isl_schedule* const m) {
-  return isl_schedule_get_ctx(m);
-}
-
-isl_ctx* ctx(isl_union_pw_qpolynomial_fold* const m) {
-  return isl_union_pw_qpolynomial_fold_get_ctx(m);
-}
-
-isl_ctx* ctx(isl_pw_qpolynomial_fold* const m) {
-  return isl_pw_qpolynomial_fold_get_ctx(m);
-}
-
-isl_ctx* ctx(isl_pw_qpolynomial* const m) {
-  return isl_pw_qpolynomial_get_ctx(m);
-}
-
 isl_pw_aff* cpy(isl_pw_aff* const s) {
   return isl_pw_aff_copy(s);
 }
@@ -236,6 +105,167 @@ isl_val* cpy(isl_val* const b) {
 
 isl_aff* cpy(isl_aff* const b) {
   return isl_aff_copy(b);
+}
+
+
+isl_space* get_space(isl_constraint* const m) {
+  return isl_constraint_get_space(m);
+}
+
+isl_space* get_space(isl_union_map* const m) {
+  return isl_union_map_get_space(m);
+}
+
+isl_space* get_space(isl_map* const m) {
+  return isl_map_get_space(m);
+}
+
+isl_space* get_space(isl_set* const m) {
+  return isl_set_get_space(m);
+}
+int dim(isl_space* const s) {
+  assert(false);
+  return 0;
+}
+
+int num_dims(isl_space* const s) {
+  assert(isl_space_is_set(s));
+  int ndims = isl_space_dim(s, isl_dim_set);
+  return ndims;
+}
+
+isl_id* id(isl_ctx* c, const std::string& s) {
+  return isl_id_alloc(c, s.c_str(), nullptr);
+}
+
+std::string str(isl_id* const id) {
+  return std::string(isl_id_to_str(id));
+}
+
+std::string domain_name(isl_space* const s) {
+  return std::string(isl_id_to_str(isl_space_get_tuple_id(s, isl_dim_in)));
+}
+
+std::string range_name(isl_space* const s) {
+  return std::string(isl_id_to_str(isl_space_get_tuple_id(s, isl_dim_out)));
+}
+
+isl_union_set* to_uset(isl_set* const m) {
+  return isl_union_set_from_set(m);
+}
+
+isl_stat get_maps(isl_map* m, void* user) {
+  auto* vm = (vector<isl_map*>*) user;
+  vm->push_back(m);
+  return isl_stat_ok;
+}
+
+std::string str(umap* const m) {
+  auto ctx = isl_union_map_get_ctx(m);
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_print_union_map(p, cpy(m));
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  std::string r(rs);
+  free(rs);
+  
+  return r;
+}
+
+std::string str(isl_map* const m) {
+  auto ctx = isl_map_get_ctx(m);
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_print_map(p, cpy(m));
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  std::string r(rs);
+  free(rs);
+  
+  return r;
+}
+
+isl_map* to_map(isl_union_map* const m) {
+  vector<isl_map*> map_vec;
+  isl_union_map_foreach_map(m, get_maps, &map_vec);
+  if (map_vec.size() != 1) {
+    std::cout << "Error: Several maps in: " << str(m) << std::endl;
+  }
+  assert(map_vec.size() == 1);
+  return map_vec.at(0);
+  //auto map_list = isl_union_map_get_map_list(m);
+  //assert(isl_map_list_size(map_list) == 1);
+  //return isl_map_list_get_map(map_list, 0);
+}
+
+isl_union_map* to_umap(isl_map* const m) {
+  return isl_union_map_from_map(m);
+}
+
+isl_ctx* ctx(isl_pw_aff* const m) {
+  return isl_pw_aff_get_ctx(m);
+}
+
+isl_ctx* ctx(isl_union_set* const m) {
+  return isl_union_set_get_ctx(m);
+}
+
+isl_ctx* ctx(isl_point* const m) {
+  return isl_point_get_ctx(m);
+}
+
+isl_ctx* ctx(isl_constraint* const m) {
+  return isl_constraint_get_ctx(m);
+}
+
+isl_ctx* ctx(isl_basic_set* const m) {
+  return isl_basic_set_get_ctx(m);
+}
+
+isl_ctx* ctx(isl_space* const m) {
+  return isl_space_get_ctx(m);
+}
+
+isl_ctx* ctx(isl_qpolynomial* const m) {
+  return isl_qpolynomial_get_ctx(m);
+}
+
+
+isl_ctx* ctx(isl_union_pw_qpolynomial* const m) {
+  return isl_union_pw_qpolynomial_get_ctx(m);
+}
+
+isl_ctx* ctx(isl_aff* const m) {
+  return isl_aff_get_ctx(m);
+}
+
+isl_ctx* ctx(isl_val* const m) {
+  return isl_val_get_ctx(m);
+}
+
+isl_ctx* ctx(isl_map* const m) {
+  return isl_map_get_ctx(m);
+}
+
+isl_ctx* ctx(umap* const m) {
+  return isl_union_map_get_ctx(m);
+}
+
+isl_ctx* ctx(isl_schedule* const m) {
+  return isl_schedule_get_ctx(m);
+}
+
+isl_ctx* ctx(isl_union_pw_qpolynomial_fold* const m) {
+  return isl_union_pw_qpolynomial_fold_get_ctx(m);
+}
+
+isl_ctx* ctx(isl_pw_qpolynomial_fold* const m) {
+  return isl_pw_qpolynomial_fold_get_ctx(m);
+}
+
+isl_ctx* ctx(isl_pw_qpolynomial* const m) {
+  return isl_pw_qpolynomial_get_ctx(m);
 }
 
 std::string codegen_c(isl_constraint* const bset) {
@@ -566,19 +596,6 @@ void print(struct isl_ctx* const ctx, isl_union_map* const m) {
 
 }
 
-std::string str(umap* const m) {
-  auto ctx = isl_union_map_get_ctx(m);
-  isl_printer *p;
-  p = isl_printer_to_str(ctx);
-  p = isl_printer_print_union_map(p, cpy(m));
-  char* rs = isl_printer_get_str(p);
-  isl_printer_free(p);
-  std::string r(rs);
-  free(rs);
-  
-  return r;
-}
-
 std::string str(isl_union_set* const m) {
   auto ctx = isl_union_set_get_ctx(m);
   isl_printer *p;
@@ -597,19 +614,6 @@ std::string str(isl_set* const m) {
   isl_printer *p;
   p = isl_printer_to_str(ctx);
   p = isl_printer_print_set(p, cpy(m));
-  char* rs = isl_printer_get_str(p);
-  isl_printer_free(p);
-  std::string r(rs);
-  free(rs);
-  
-  return r;
-}
-
-std::string str(isl_map* const m) {
-  auto ctx = isl_map_get_ctx(m);
-  isl_printer *p;
-  p = isl_printer_to_str(ctx);
-  p = isl_printer_print_map(p, cpy(m));
   char* rs = isl_printer_get_str(p);
   isl_printer_free(p);
   std::string r(rs);

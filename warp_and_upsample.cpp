@@ -143,55 +143,55 @@ inline void I_store_I_from_in_0_write(hw_uint<32> & I_store_I_from_in_0, I_store
 
 inline hw_uint<32>  I_warped_0_conv_3_30_10_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
 , int root, int br, int bc) {
-	hw_uint<32>  value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_64();
+	hw_uint<32>  value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_1();
 	return value_I_store_I_from_in_0;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_11_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
 , int root, int br, int bc) {
-	hw_uint<32>  value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_2();
-	return value_I_store_I_from_in_0;
-}
-
-inline hw_uint<32>  I_warped_0_conv_3_30_12_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
-, int root, int br, int bc) {
-	hw_uint<32>  value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_1();
-	return value_I_store_I_from_in_0;
-}
-
-inline hw_uint<32>  I_warped_0_conv_3_30_13_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
-, int root, int br, int bc) {
 	hw_uint<32>  value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_0();
 	return value_I_store_I_from_in_0;
 }
 
-inline hw_uint<32>  I_warped_0_conv_3_30_5_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
+inline hw_uint<32>  I_warped_0_conv_3_30_3_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
 , int root, int br, int bc) {
 	hw_uint<32>  value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_130();
 	return value_I_store_I_from_in_0;
 }
 
-inline hw_uint<32>  I_warped_0_conv_3_30_6_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
+inline hw_uint<32>  I_warped_0_conv_3_30_4_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
 , int root, int br, int bc) {
 	hw_uint<32>  value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_129();
 	return value_I_store_I_from_in_0;
 }
 
-inline hw_uint<32>  I_warped_0_conv_3_30_7_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
+inline hw_uint<32>  I_warped_0_conv_3_30_5_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
 , int root, int br, int bc) {
 	hw_uint<32>  value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_128();
 	return value_I_store_I_from_in_0;
 }
 
-inline hw_uint<32>  I_warped_0_conv_3_30_8_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
+inline hw_uint<32>  I_warped_0_conv_3_30_6_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
 , int root, int br, int bc) {
 	hw_uint<32>  value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_66();
 	return value_I_store_I_from_in_0;
 }
 
-inline hw_uint<32>  I_warped_0_conv_3_30_9_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
+inline hw_uint<32>  I_warped_0_conv_3_30_7_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
 , int root, int br, int bc) {
 	hw_uint<32>  value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_65();
+	return value_I_store_I_from_in_0;
+}
+
+inline hw_uint<32>  I_warped_0_conv_3_30_8_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
+, int root, int br, int bc) {
+	hw_uint<32>  value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_64();
+	return value_I_store_I_from_in_0;
+}
+
+inline hw_uint<32>  I_warped_0_conv_3_30_9_select(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay
+, int root, int br, int bc) {
+	hw_uint<32>  value_I_store_I_from_in_0 = I_store_I_from_in_0_delay.peek_2();
 	return value_I_store_I_from_in_0;
 }
 
@@ -203,6 +203,8 @@ inline void I_store_I_from_in_write_bundle_write(hw_uint<32> & store_I_from_in_w
 }
 
 // warped_0_conv_3_30_read
+//	I_warped_0_conv_3_30_3
+//	I_warped_0_conv_3_30_4
 //	I_warped_0_conv_3_30_5
 //	I_warped_0_conv_3_30_6
 //	I_warped_0_conv_3_30_7
@@ -210,28 +212,26 @@ inline void I_store_I_from_in_write_bundle_write(hw_uint<32> & store_I_from_in_w
 //	I_warped_0_conv_3_30_9
 //	I_warped_0_conv_3_30_10
 //	I_warped_0_conv_3_30_11
-//	I_warped_0_conv_3_30_12
-//	I_warped_0_conv_3_30_13
 inline hw_uint<288> I_warped_0_conv_3_30_read_bundle_read(I_store_I_from_in_0_cache& I_store_I_from_in_0_delay, int root, int br, int bc) {
 	hw_uint<288> result;
+	hw_uint<32>  I_warped_0_conv_3_30_3_res = I_warped_0_conv_3_30_3_select(I_store_I_from_in_0_delay, root, br, bc);
+	set_at<0, 288>(result, I_warped_0_conv_3_30_3_res);
+	hw_uint<32>  I_warped_0_conv_3_30_4_res = I_warped_0_conv_3_30_4_select(I_store_I_from_in_0_delay, root, br, bc);
+	set_at<32, 288>(result, I_warped_0_conv_3_30_4_res);
 	hw_uint<32>  I_warped_0_conv_3_30_5_res = I_warped_0_conv_3_30_5_select(I_store_I_from_in_0_delay, root, br, bc);
-	set_at<0, 288>(result, I_warped_0_conv_3_30_5_res);
+	set_at<64, 288>(result, I_warped_0_conv_3_30_5_res);
 	hw_uint<32>  I_warped_0_conv_3_30_6_res = I_warped_0_conv_3_30_6_select(I_store_I_from_in_0_delay, root, br, bc);
-	set_at<32, 288>(result, I_warped_0_conv_3_30_6_res);
+	set_at<96, 288>(result, I_warped_0_conv_3_30_6_res);
 	hw_uint<32>  I_warped_0_conv_3_30_7_res = I_warped_0_conv_3_30_7_select(I_store_I_from_in_0_delay, root, br, bc);
-	set_at<64, 288>(result, I_warped_0_conv_3_30_7_res);
+	set_at<128, 288>(result, I_warped_0_conv_3_30_7_res);
 	hw_uint<32>  I_warped_0_conv_3_30_8_res = I_warped_0_conv_3_30_8_select(I_store_I_from_in_0_delay, root, br, bc);
-	set_at<96, 288>(result, I_warped_0_conv_3_30_8_res);
+	set_at<160, 288>(result, I_warped_0_conv_3_30_8_res);
 	hw_uint<32>  I_warped_0_conv_3_30_9_res = I_warped_0_conv_3_30_9_select(I_store_I_from_in_0_delay, root, br, bc);
-	set_at<128, 288>(result, I_warped_0_conv_3_30_9_res);
+	set_at<192, 288>(result, I_warped_0_conv_3_30_9_res);
 	hw_uint<32>  I_warped_0_conv_3_30_10_res = I_warped_0_conv_3_30_10_select(I_store_I_from_in_0_delay, root, br, bc);
-	set_at<160, 288>(result, I_warped_0_conv_3_30_10_res);
+	set_at<224, 288>(result, I_warped_0_conv_3_30_10_res);
 	hw_uint<32>  I_warped_0_conv_3_30_11_res = I_warped_0_conv_3_30_11_select(I_store_I_from_in_0_delay, root, br, bc);
-	set_at<192, 288>(result, I_warped_0_conv_3_30_11_res);
-	hw_uint<32>  I_warped_0_conv_3_30_12_res = I_warped_0_conv_3_30_12_select(I_store_I_from_in_0_delay, root, br, bc);
-	set_at<224, 288>(result, I_warped_0_conv_3_30_12_res);
-	hw_uint<32>  I_warped_0_conv_3_30_13_res = I_warped_0_conv_3_30_13_select(I_store_I_from_in_0_delay, root, br, bc);
-	set_at<256, 288>(result, I_warped_0_conv_3_30_13_res);
+	set_at<256, 288>(result, I_warped_0_conv_3_30_11_res);
 	return result;
 }
 
@@ -239,7 +239,7 @@ inline hw_uint<288> I_warped_0_conv_3_30_read_bundle_read(I_store_I_from_in_0_ca
 
 #include "hw_classes.h"
 
-struct warped_0_warped_0_conv_3_30_4_cache {
+struct warped_0_warped_0_conv_3_30_2_cache {
 	// Capacity: 62
 	fifo<hw_uint<32> , 62> f;
 	inline hw_uint<32>  peek(const int offset) {
@@ -507,30 +507,30 @@ struct warped_0_warped_0_conv_3_30_4_cache {
 
 
 
-inline void warped_0_warped_0_conv_3_30_4_write(hw_uint<32> & warped_0_warped_0_conv_3_30_4, warped_0_warped_0_conv_3_30_4_cache& warped_0_warped_0_conv_3_30_4_delay) {
-	warped_0_warped_0_conv_3_30_4_delay.push(warped_0_warped_0_conv_3_30_4);
+inline void warped_0_warped_0_conv_3_30_2_write(hw_uint<32> & warped_0_warped_0_conv_3_30_2, warped_0_warped_0_conv_3_30_2_cache& warped_0_warped_0_conv_3_30_2_delay) {
+	warped_0_warped_0_conv_3_30_2_delay.push(warped_0_warped_0_conv_3_30_2);
 }
 
-inline hw_uint<32>  warped_0_out_id0_3_select(warped_0_warped_0_conv_3_30_4_cache& warped_0_warped_0_conv_3_30_4_delay
+inline hw_uint<32>  warped_0_out_id0_13_select(warped_0_warped_0_conv_3_30_2_cache& warped_0_warped_0_conv_3_30_2_delay
 , int root, int ur, int kr, int uc, int kc) {
-	hw_uint<32>  value_warped_0_warped_0_conv_3_30_4 = warped_0_warped_0_conv_3_30_4_delay.peek((-1 + kr == 0 && root == 0 && ur >= 0 && 61 - ur >= 0 && uc >= 0 && 60 - uc >= 0 && kc >= 0 && 1 - kc >= 0) ? ((61 - uc)) : 0);
-	return value_warped_0_warped_0_conv_3_30_4;
+	hw_uint<32>  value_warped_0_warped_0_conv_3_30_2 = warped_0_warped_0_conv_3_30_2_delay.peek((-1 + kr == 0 && root == 0 && ur >= 0 && 61 - ur >= 0 && uc >= 0 && 60 - uc >= 0 && kc >= 0 && 1 - kc >= 0) ? ((61 - uc)) : 0);
+	return value_warped_0_warped_0_conv_3_30_2;
 }
 
 // # of bundles = 2
 // out_id0_read
-//	warped_0_out_id0_3
-inline hw_uint<32> warped_0_out_id0_read_bundle_read(warped_0_warped_0_conv_3_30_4_cache& warped_0_warped_0_conv_3_30_4_delay, int root, int ur, int kr, int uc, int kc) {
+//	warped_0_out_id0_13
+inline hw_uint<32> warped_0_out_id0_read_bundle_read(warped_0_warped_0_conv_3_30_2_cache& warped_0_warped_0_conv_3_30_2_delay, int root, int ur, int kr, int uc, int kc) {
 	hw_uint<32> result;
-	hw_uint<32>  warped_0_out_id0_3_res = warped_0_out_id0_3_select(warped_0_warped_0_conv_3_30_4_delay, root, ur, kr, uc, kc);
-	set_at<0, 32>(result, warped_0_out_id0_3_res);
+	hw_uint<32>  warped_0_out_id0_13_res = warped_0_out_id0_13_select(warped_0_warped_0_conv_3_30_2_delay, root, ur, kr, uc, kc);
+	set_at<0, 32>(result, warped_0_out_id0_13_res);
 	return result;
 }
 
 // warped_0_conv_3_30_write
-//	warped_0_warped_0_conv_3_30_4
-inline void warped_0_warped_0_conv_3_30_write_bundle_write(hw_uint<32> & warped_0_conv_3_30_write, warped_0_warped_0_conv_3_30_4_cache& warped_0_warped_0_conv_3_30_4_delay) {
-	warped_0_warped_0_conv_3_30_4_write(warped_0_conv_3_30_write, warped_0_warped_0_conv_3_30_4_delay);
+//	warped_0_warped_0_conv_3_30_2
+inline void warped_0_warped_0_conv_3_30_write_bundle_write(hw_uint<32> & warped_0_conv_3_30_write, warped_0_warped_0_conv_3_30_2_cache& warped_0_warped_0_conv_3_30_2_delay) {
+	warped_0_warped_0_conv_3_30_2_write(warped_0_conv_3_30_write, warped_0_warped_0_conv_3_30_2_delay);
 }
 
 
@@ -548,29 +548,29 @@ inline void store_I_from_in(HWStream<hw_uint<32> >& /* num ports = 1 */in, I_sto
 	I_store_I_from_in_write_bundle_write(in_pr_c__pc_value, I_store_I_from_in_0 /* output src_delay */);
 }
 
-inline void out_id0(warped_0_warped_0_conv_3_30_4_cache& warped_0_warped_0_conv_3_30_4, HWStream<hw_uint<32> >& /* num ports = 1 */out, int root, int ur, int kr, int uc, int kc) {
-	// Consume: warped_0
-	auto warped_0_ur_c__uc_value = warped_0_out_id0_read_bundle_read(warped_0_warped_0_conv_3_30_4/* source_delay */, root, ur, kr, uc, kc);
-	auto compute_result = id(warped_0_ur_c__uc_value);
-	// Produce: out
-	out.write(compute_result);
-}
-
-inline void warped_0_conv_3_30(I_store_I_from_in_0_cache& I_store_I_from_in_0, warped_0_warped_0_conv_3_30_4_cache& warped_0_warped_0_conv_3_30_4, int root, int br, int bc) {
+inline void warped_0_conv_3_30(I_store_I_from_in_0_cache& I_store_I_from_in_0, warped_0_warped_0_conv_3_30_2_cache& warped_0_warped_0_conv_3_30_2, int root, int br, int bc) {
 	// Consume: I
 	auto I_br__p__0_c__bc__p__0_value = I_warped_0_conv_3_30_read_bundle_read(I_store_I_from_in_0/* source_delay */, root, br, bc);
 	auto compute_result = conv_3_3(I_br__p__0_c__bc__p__0_value);
 	// Produce: warped_0
 	// Buffer: warped_0, Op: warped_0_conv_3_30
 	// Possible ports...
-		// warped_0_warped_0_conv_3_30_4
-	warped_0_warped_0_conv_3_30_write_bundle_write(compute_result, warped_0_warped_0_conv_3_30_4 /* output src_delay */);
+		// warped_0_warped_0_conv_3_30_2
+	warped_0_warped_0_conv_3_30_write_bundle_write(compute_result, warped_0_warped_0_conv_3_30_2 /* output src_delay */);
+}
+
+inline void out_id0(warped_0_warped_0_conv_3_30_2_cache& warped_0_warped_0_conv_3_30_2, HWStream<hw_uint<32> >& /* num ports = 1 */out, int root, int ur, int kr, int uc, int kc) {
+	// Consume: warped_0
+	auto warped_0_ur_c__uc_value = warped_0_out_id0_read_bundle_read(warped_0_warped_0_conv_3_30_2/* source_delay */, root, ur, kr, uc, kc);
+	auto compute_result = id(warped_0_ur_c__uc_value);
+	// Produce: out
+	out.write(compute_result);
 }
 
 // Driver function
 void warp_and_upsample(HWStream<hw_uint<32> >& /* num ports = 1 */in, HWStream<hw_uint<32> >& /* num ports = 1 */out) {
 	I_store_I_from_in_0_cache I_store_I_from_in_0;
-	warped_0_warped_0_conv_3_30_4_cache warped_0_warped_0_conv_3_30_4;
+	warped_0_warped_0_conv_3_30_2_cache warped_0_warped_0_conv_3_30_2;
 	for (int c0 = 0; c0 <= 63; c0 += 1) {
 	  if (c0 >= 2) {
 	    for (int c1 = 0; c1 <= 1; c1 += 1) {
@@ -580,10 +580,10 @@ void warp_and_upsample(HWStream<hw_uint<32> >& /* num ports = 1 */in, HWStream<h
 	      for (int c2 = 2; c2 <= 63; c2 += 1) {
 	        if (c1 == 0) {
 	          store_I_from_in(in, I_store_I_from_in_0, 0, c0, c2);
-	          warped_0_conv_3_30(I_store_I_from_in_0, warped_0_warped_0_conv_3_30_4, 0, c0 - 2, c2 - 2);
+	          warped_0_conv_3_30(I_store_I_from_in_0, warped_0_warped_0_conv_3_30_2, 0, c0 - 2, c2 - 2);
 	        }
 	        for (int c3 = 0; c3 <= 1; c3 += 1)
-	          out_id0(warped_0_warped_0_conv_3_30_4, out, 0, c0 - 2, c1, c2 - 2, c3);
+	          out_id0(warped_0_warped_0_conv_3_30_2, out, 0, c0 - 2, c1, c2 - 2, c3);
 	      }
 	    }
 	  } else {

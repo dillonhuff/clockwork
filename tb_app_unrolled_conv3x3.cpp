@@ -12,10 +12,10 @@ using namespace std;
 
 int main() {
 
-  HWStream<hw_uint<32> > off_chip_img,
-    conv3x3_out;
+  HWStream<hw_uint<64> > off_chip_img;
+  HWStream<hw_uint<32> > conv3x3_out;
 
-  vector<hw_uint<32> > values;
+  vector<hw_uint<64> > values;
   for (int r = 0; r < ROWS + 2; r++) {
     for (int c = 0; c < COLS + 2; c++) {
       values.push_back(r*IN_COLS + c);

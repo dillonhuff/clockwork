@@ -4207,6 +4207,11 @@ QAV qconst(const int& v, const int& d) {
   return {true, "", v, d};
 }
 
+QAV times(const int s, const QAV& v) {
+  assert(v.is_num);
+  return qconst(s * v.num, v.denom);
+}
+
 QAV qconst(const int& v) {
   return {true, "", v, 1};
 }
@@ -4377,9 +4382,10 @@ struct QExpr {
       }
     }
 
-    cout << "Error: No constant terms in qexpr " << endl;
-    assert(false);
-    return qterm(0);
+    return qterm(qconst(0));
+    //cout << "Error: No constant terms in qexpr " << endl;
+    //assert(false);
+    //return qterm(0);
   }
 
   void scale(const int v) {
@@ -4492,6 +4498,7 @@ string isl_str(QExpr& v) {
   }
   return sep_list(tstrings, "", "", " + ");
 }
+
 struct Window {
   string name;
   vector<QAV> strides;
@@ -4517,6 +4524,29 @@ struct Window {
         strides.push_back(qconst(s));
       }
     }
+
+  Window unroll_cpy(const int factor) const {
+    Window c;
+    c.name = name + "_unrolled";
+    for (auto s : strides) {
+      c.strides.push_back(times(factor, s));
+    }
+
+    set<vector<int> > unrolled_offsets;
+    for (int i = 0; i < factor; i++) {
+      for (auto offset : offsets) {
+        vector<int> uoff = offset;
+        uoff[0] = uoff.at(0) + i;
+        unrolled_offsets.insert(uoff);
+      }
+    }
+
+    for (auto u : unrolled_offsets) {
+      c.offsets.push_back(u);
+    }
+
+    return c;
+  }
 
   vector<vector<QExpr> > pts() const {
     vector<vector<QExpr> > ps;
@@ -4752,6 +4782,8 @@ QTerm offset(QExpr& e) {
   e.simplify();
   QTerm offset = e.const_term();
   cout << "Offset = " << offset << endl;
+  offset.simplify();
+  cout << "Offset after simplification: " << offset << endl;
   return offset;
 }
 
@@ -5036,6 +5068,9 @@ struct App {
   }
 
   Box data_domain(const std::string& f) {
+    if (!contains_key(f, domain_boxes)) {
+      cout << "Error: No key for: " << f << " in domain_boxes" << endl;
+    }
     assert(contains_key(f, domain_boxes));
     return map_find(f, domain_boxes);
   }
@@ -5441,21 +5476,21 @@ struct App {
   Window box_touched(const std::string& consumer, const std::string& producer) {
     for (auto s : app_dag.at(consumer).srcs) {
       if (s.name == producer) {
-        isl_map* pixels_needed =
-          dot(inv(compute_map(consumer)), to_map(s.needed));
-        cout << "Pixels needed from " << producer << " for " << consumer << ": " << str(pixels_needed) << endl;
+        //isl_map* pixels_needed =
+          //dot(inv(compute_map(consumer)), to_map(s.needed));
+        //cout << "Pixels needed from " << producer << " for " << consumer << ": " << str(pixels_needed) << endl;
 
-        vector<QExpr> mins;
-        vector<QExpr> maxs;
-        for (int i = 0; i < 2; i++) {
-          cout << "d" << i << " min: " << str(dim_min(pixels_needed, i)) << endl;
-          mins.push_back(parse_qexpr(str(dim_min(pixels_needed, i))));
-          cout << "d" << i << " max: " << str(dim_max(pixels_needed, i)) << endl;
-          maxs.push_back(parse_qexpr(str(dim_max(pixels_needed, i))));
-        }
+        //vector<QExpr> mins;
+        //vector<QExpr> maxs;
+        //for (int i = 0; i < 2; i++) {
+          //cout << "d" << i << " min: " << str(dim_min(pixels_needed, i)) << endl;
+          //mins.push_back(parse_qexpr(str(dim_min(pixels_needed, i))));
+          //cout << "d" << i << " max: " << str(dim_max(pixels_needed, i)) << endl;
+          //maxs.push_back(parse_qexpr(str(dim_max(pixels_needed, i))));
+        //}
 
-        return {s.name, strides(mins, maxs), offsets(mins, maxs)};
-        //return s;
+        //return {s.name, strides(mins, maxs), offsets(mins, maxs)};
+        return s;
       }
     }
     assert(false);
@@ -5805,8 +5840,8 @@ void denoise2d_test() {
   //dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
   dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
   dn.func2d("diff_qwe", "diff_b", "u", {{0, 0}, {1, 0}});
-  dn.func2d("diff_d", "diff_b", "u", {{0, 0}, {2, 0}});
-  dn.func2d("diff_l", "diff_b", "u", {{0, 0}, {-1, 0}});
+  dn.func2d("diff_d", "diff_b", "u", {{0, 0}, {1, 0}});
+  dn.func2d("diff_l", "diff_b", "u", {{0, 0}, {1, 0}});
   dn.func2d("diff_r", "diff_b", "u", {{0, 0}, {1, 0}});
 
   //dn.func2d("denoise2d", "diff", {pt("diff_qwe"), pt("diff_d")});
@@ -5830,6 +5865,23 @@ void denoise2d_test() {
   assert(naive == optimized);
 }
 
+App unroll(const App& app, const int unroll_factor) {
+  App unrolled;
+
+  for (auto f : app.app_dag) {
+    vector<Window> args;
+    for (auto w : f.second.srcs) {
+      args.push_back(w.unroll_cpy(unroll_factor));
+    }
+
+    string cn = f.second.compute_name + "_unroll";
+
+    unrolled.func2d(f.first + "_unrolled", cn, args);
+  }
+
+  return unrolled;
+}
+
 void conv3x3_app_unrolled_test() {
 
   // What needs to change to make the code correct?
@@ -5846,9 +5898,11 @@ void conv3x3_app_unrolled_test() {
       offsets.push_back({i, j});
     }
   }
-  sobel.func2d("conv3x3_app_unrolled", "conv_3_3", "img", {1, 1}, offsets);
+  sobel.func2d("conv3x3_app", "conv_3_3", "img", {1, 1}, offsets);
 
-  sobel.realize("conv3x3_app_unrolled", 30, 30, 2);
+  App ur = unroll(sobel, 2);
+
+  ur.realize("conv3x3_app_unrolled", 30, ceil(30 / 2.0), 1);
 
   int res = system("g++ -std=c++11 tb_app_unrolled_conv3x3.cpp conv3x3_app_unrolled_opt.cpp");
   assert(res == 0);
@@ -6311,7 +6365,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
-    //conv3x3_app_unrolled_test();
+    conv3x3_app_unrolled_test();
     //assert(false);
     upsample2d_test();
     //assert(false);
