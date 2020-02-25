@@ -278,7 +278,8 @@ inline hw_uint<32> linebuffer_3x3_read_2_2_bundle_read(write0_cache& write0_dela
 // write0
 //	write0
 inline void linebuffer_3x3_write0_bundle_write(InputStream<hw_uint<32> >& write0, write0_cache& write0_delay) {
-	hw_uint<32>  write0_res = write0.extract<0, 31>();
+	hw_uint<32> data_write0 = write0.read();
+	hw_uint<32>  write0_res = data_write0.extract<0, 31>();
 	write0_write(write0_res, write0_delay);
 }
 

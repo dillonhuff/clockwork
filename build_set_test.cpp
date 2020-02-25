@@ -1148,10 +1148,8 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
       out << "inline void " + buf.name + "_" + b.first + "_bundle_write(";
       vector<string> dim_decls;
       if (options.internal) {
-        //dim_decls.push_back(buf.port_type_string(b.first) + "& " + b.first);
         dim_decls.push_back(buf.bundle_type_string(b.first) + "& " + b.first);
       } else {
-        //dim_decls.push_back("InputStream<" + buf.port_type_string(b.first)  + " >& " + b.first);
         dim_decls.push_back("InputStream<" + buf.bundle_type_string(b.first)  + " >& " + b.first);
       }
       vector<string> dim_args;
@@ -1168,9 +1166,15 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
 
       out << ") {" << endl;
       int offset = 0;
+      string src = b.first;
+      if (!options.internal) {
+        out << "\t" << buf.bundle_type_string(b.first) <<
+          " data_" << b.first << " = " << b.first << ".read();" << endl;
+        src = "data_" + b.first;
+      }
       for (auto p : b.second) {
         out << "\t" + buf.port_type_string() + " " << p << "_res = "
-          << b.first << ".extract<" << offset << ", " << (offset + buf.port_width(p) - 1)
+          << src << ".extract<" << offset << ", " << (offset + buf.port_width(p) - 1)
           << ">();" << endl;
         out << "\t" << p << "_write(" << p << "_res" << ", " << p << "_delay);" << endl;
         offset += buf.port_width(p);
@@ -6434,6 +6438,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
+    synth_lb_test();
     conv3x3_app_unrolled_test();
     //assert(false);
     upsample2d_test();
@@ -6450,7 +6455,6 @@ int main(int argc, char** argv) {
     blur_and_downsample_test();
     downsample_and_blur_test();
 
-    synth_lb_test();
     synth_reduce_test();
     jacobi_2d_2_test();
     //assert(false);
