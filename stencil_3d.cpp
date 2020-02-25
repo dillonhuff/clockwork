@@ -642,7 +642,7 @@ inline hw_uint<432> I_out_blur_270_read_bundle_read(I_I_id0_0_cache& I_I_id0_0_d
 
 
 // Operation logic
-inline void I_id0(HWStream<hw_uint<16> >& in, I_I_id0_0_cache& I_I_id0_0, int root, int ir, int ic, int ib) {
+inline void I_id0(HWStream<hw_uint<16> >& /* num ports = 1 */in, I_I_id0_0_cache& I_I_id0_0, int root, int ir, int ic, int ib) {
 	// Consume: in
 	auto in_ir_c__ic_c__ib_value = in.read();
 	auto compute_result = id(in_ir_c__ic_c__ib_value);
@@ -653,7 +653,7 @@ inline void I_id0(HWStream<hw_uint<16> >& in, I_I_id0_0_cache& I_I_id0_0, int ro
 	I_I_id0_write_bundle_write(compute_result, I_I_id0_0 /* output src_delay */);
 }
 
-inline void out_blur_270(I_I_id0_0_cache& I_I_id0_0, HWStream<hw_uint<16> >& out, int root, int xr, int xc, int xb) {
+inline void out_blur_270(I_I_id0_0_cache& I_I_id0_0, HWStream<hw_uint<16> >& /* num ports = 1 */out, int root, int xr, int xc, int xb) {
 	// Consume: I
 	auto I_xr__p__0_c__xc__p__0_c__xb__p__0_value = I_out_blur_270_read_bundle_read(I_I_id0_0/* source_delay */, root, xr, xc, xb);
 	auto compute_result = blur_27(I_xr__p__0_c__xc__p__0_c__xb__p__0_value);
@@ -662,7 +662,7 @@ inline void out_blur_270(I_I_id0_0_cache& I_I_id0_0, HWStream<hw_uint<16> >& out
 }
 
 // Driver function
-void stencil_3d(HWStream<hw_uint<16> >& in, HWStream<hw_uint<16> >& out) {
+void stencil_3d(HWStream<hw_uint<16> >& /* num ports = 1 */in, HWStream<hw_uint<16> >& /* num ports = 1 */out) {
 	I_I_id0_0_cache I_I_id0_0;
 	for (int c0 = 0; c0 <= 31; c0 += 1)
 	  for (int c1 = 0; c1 <= 31; c1 += 1)
