@@ -2585,8 +2585,10 @@ void generate_app_code(CodegenOptions& options,
       conv_out << "\t// Possible ports..." << endl;
       string prefix = out_buffer + "_" + op->name;
       string port_cache = "";
+      cout << "Finding cache for: " << prefix << endl;
       for (auto pt : possible_ports) {
         conv_out << "\t\t// " << pt << endl;
+        cout << "pt: " << pt << endl;
         if (is_prefix(prefix, pt)) {
           port_cache = pt;
           break;
@@ -5011,6 +5013,8 @@ struct App {
     functions.insert(name);
     w.needed = build_needed(name, w);
     Result res{compute, {w}};
+    res.provided =
+      Window(name, {1, 1}, {{0, 0}});
     app_dag[name] = res;
     return name;
   }
@@ -5493,6 +5497,10 @@ struct App {
     return map_find(name, compute_sets);
     //return map_find(name, compute_boxes).to_set(ctx, name + "_comp");
   }
+
+  Window box_provided_by_compute(const std::string& f) {
+    return map_find(f, app_dag).provided;
+  }
   
   Window box_touched(const std::string& consumer, const std::string& producer) {
     for (auto s : app_dag.at(consumer).srcs) {
@@ -5574,15 +5582,35 @@ struct App {
         compute_domain(f);
       isl_union_map* sched =
         its(m, domain);
-      cout << "compute_map: " << str(compute_map(f)) << endl;
-      cout << "Domain     : " << str(domain) << endl;
-      isl_map* write_map =
-        its(inv(compute_map(f)), domain);
 
-      cout << "In write_map: " << str(write_map) << endl;
+      Window write_box = box_provided_by_compute(f);
+      int i = 0;
+      for (auto p : write_box.pts()) {
+        vector<string> coeffs;
+        for (auto e : p) {
+          coeffs.push_back(isl_str(e));
+        }
+        //cout << "Coeffs: " << sep_list(coeffs, "[", "]", ", ") << endl;
+        auto access_map =
+          rdmap(ctx, "{ " + f + "_comp[d0, d1] -> " +
+              f + sep_list(coeffs, "[", "]", ", ") + " }");
+        //cout << "Access map: " << str(access_map) << endl;
+        //string pt_name = f + "_write" + to_string(i);
+        string pt_name = f + "_" + f + "_comp_write" + to_string(i);
+        b.add_in_pt(pt_name, domain, its(to_map(access_map), domain), sched);
+        i++;
+        b.port_bundles[f + "_comp_write"].push_back(pt_name);
+      }
 
-      b.add_in_pt(f, domain, write_map, sched);
-      b.port_bundles[f + "_comp_write"] = {f};
+      //cout << "compute_map: " << str(compute_map(f)) << endl;
+      //cout << "Domain     : " << str(domain) << endl;
+      //isl_map* write_map =
+        //its(inv(compute_map(f)), domain);
+
+      //cout << "In write_map: " << str(write_map) << endl;
+
+      //b.add_in_pt(f, domain, write_map, sched);
+      //b.port_bundles[f + "_comp_write"] = {f};
 
       for (auto consumer : consumers(f)) {
         isl_set* domain =
