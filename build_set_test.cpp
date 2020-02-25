@@ -4634,6 +4634,23 @@ QTerm parse_qterm(const std::string& str) {
   }
 }
 
+QExpr parse_qexpr(const std::string& gp) {
+  regex two_terms("(.*) \\+ (.*)");
+  smatch tt_match;
+  auto tt_res = regex_match(gp, tt_match, two_terms);
+
+  QExpr ub;
+  if (tt_res) {
+    //cout << "\tt0 = " << tt_match[1] << endl;
+    //cout << "\tt1 = " << tt_match[2] << endl;
+    ub = qexpr(parse_qterm(tt_match[1]), parse_qterm(tt_match[2]));
+  } else {
+    cout << "\tg  = " << gp << endl;
+    ub = qexpr(parse_qterm(gp), 0);
+  }
+  return ub;
+}
+
 QTerm parse_term(const std::string& f, const int dim, const std::string& str) {
   regex floor_reg("floor\\(\\((.*)\\)/(.*)\\)");
   smatch tt_match;
@@ -4664,6 +4681,14 @@ QTerm parse_term(const std::string& f, const int dim, const std::string& str) {
   //cout << "No match for term: " << str << endl;
   //assert(false);
   //return qterm(qconst(0));
+}
+
+vector<QAV> strides(vector<QExpr>& mins, vector<QExpr>& maxs) {
+  return {};
+}
+
+vector<vector<int> > offsets(vector<QExpr>& mins, vector<QExpr>& maxs) {
+  return {};
 }
 
 struct App {
@@ -5277,13 +5302,13 @@ struct App {
           dot(inv(compute_map(consumer)), to_map(s.needed));
         cout << "Pixels needed from " << producer << " for " << consumer << ": " << str(pixels_needed) << endl;
 
-        vector<QTerm> mins;
-        vector<QTerm> maxs;
+        vector<QExpr> mins;
+        vector<QExpr> maxs;
         for (int i = 0; i < 2; i++) {
           cout << "d" << i << " min: " << str(dim_min(pixels_needed, i)) << endl;
-          mins.push_back(parse_qterm(str(dim_min(pixels_needed, i))));
+          mins.push_back(parse_qexpr(str(dim_min(pixels_needed, i))));
           cout << "d" << i << " max: " << str(dim_max(pixels_needed, i)) << endl;
-          maxs.push_back(parse_qterm(str(dim_max(pixels_needed, i))));
+          maxs.push_back(parse_qexpr(str(dim_max(pixels_needed, i))));
         }
 
         return {s.name, strides(mins, maxs), offsets(mins, maxs)};
