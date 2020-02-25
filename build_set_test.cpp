@@ -2584,6 +2584,9 @@ void generate_app_code(CodegenOptions& options,
       auto& buf = buffers.at(out_buffer);
       for (auto ib : buf.get_in_bundles()) {
         if (is_prefix(op->name, ib)) {
+          // TODO: Instead of picking one port, actually write
+          // each port in the bundle 
+          assert(buf.port_bundles.at(ib).size() == 1);
           string port_cache = pick(buf.port_bundles.at(ib));
           conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" << res << ", " << port_cache << " /* output src_delay */);" << endl;
         }
