@@ -116,7 +116,7 @@ inline void get_input(HWStream<hw_uint<32>  >& in, M_get_input_0_cache& M_get_in
 	M_get_input_write_bundle_write(in_p_value, M_get_input_0 /* output src_delay */);
 }
 
-inline void compute_output(M_get_input_0_cache& M_get_input_0, HWStream<hw_uint<32>  >& out, int root, int c) {
+inline void compute_output(M_get_input_0_cache& M_get_input_0, HWStream<hw_uint<32> >& out, int root, int c) {
 	// Consume: M
 	auto M_c_value = M_compute_output_read_bundle_read(M_get_input_0/* source_delay */, root, c);
 	auto compute_result = accumulate_3(M_c_value);

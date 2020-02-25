@@ -75,6 +75,13 @@ is_prefix( std::string const& lhs, std::string const& rhs )
         rhs.begin() );
 }
 
+template<typename A, typename B>
+static inline
+pair<A, B> pick(const map<A, B>& s) {
+  assert(s.size() > 0);
+  return *(begin(s));
+}
+
 template<typename T>
 static inline
 T pick(const std::vector<T>& s) {

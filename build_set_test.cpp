@@ -2461,7 +2461,12 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
     auto buf_name = p.first;
     if (!elem(buf_name, done)) {
       if (prg.is_boundary(buf_name)) {
-        buf_srcs.push_back("HWStream<" + map_find(buf_name, buffers).port_type_string() + " >& " + buf_name);
+        auto& buf = buffers.at(buf_name);
+        pair<string, vector<string> > bundle =
+          pick(buf.port_bundles);
+        buf_srcs.push_back("HWStream<" + buf.bundle_type_string(bundle.first) + " >& " + buf_name);
+
+        //buf_srcs.push_back("HWStream<" + map_find(buf_name, buffers).port_type_string() + " >& " + buf_name);
       } else {
         const UBuffer& b = buffers.at(buf_name);
         for (auto ib : b.get_in_ports()) {
@@ -5589,6 +5594,11 @@ void denoise2d_test() {
 }
 
 void conv3x3_app_unrolled_test() {
+
+  // What needs to change to make the code correct?
+  //  1. 64 bits wide on input and output channels
+  //  2. Compute result needs to be doubled in width
+  //  3. 
   App sobel;
 
   sobel.func2d("off_chip_img");
