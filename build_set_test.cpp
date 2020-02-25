@@ -5232,7 +5232,7 @@ struct App {
     return map_find(name, compute_sets);
     //return map_find(name, compute_boxes).to_set(ctx, name + "_comp");
   }
-
+  
   Window box_touched(const std::string& consumer, const std::string& producer) {
     for (auto s : app_dag.at(consumer).srcs) {
       if (s.name == producer) {
@@ -5316,10 +5316,16 @@ struct App {
           its(m, domain);
 
         cout << "Getting map from " << f << " to " << consumer << endl;
-        umap* ws_cf = (ws_map(f, consumer));
-        assert(ws_cf != nullptr);
+
+        // TODO: This function needs to be generalized to create a window
+        // out of the isl_map from compute to data needs
 
         Window f_win = box_touched(consumer, f);
+        isl_map* pixels_needed =
+          dot(inv(compute_map(consumer)), to_map(f_win.needed));
+        cout << "Pixels needed from " << f << " for " << consumer << str(pixels_needed) << endl;
+        assert(false);
+
         int i = 0;
         for (auto p : f_win.pts()) {
           vector<string> coeffs;
@@ -5344,9 +5350,6 @@ struct App {
 
     return buffers;
   }
-
-  //void populate_prog_domain(prog& prg, uset* action_domain, map<string, isl_set*>& domain_map) {
-  //}
 
   void realize_naive(const std::string& name, const int d0, const int d1) {
     const int unroll_factor = 1;
@@ -6093,10 +6096,8 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
-    blur_and_downsample_test();
-    downsample_and_blur_test();
-
     conv3x3_app_unrolled_test();
+    assert(false);
     upsample2d_test();
     //assert(false);
     downsample2d_test();
@@ -6108,6 +6109,9 @@ int main(int argc, char** argv) {
 
     heat_3d_test();
     
+    blur_and_downsample_test();
+    downsample_and_blur_test();
+
     synth_lb_test();
     synth_reduce_test();
     jacobi_2d_2_test();
