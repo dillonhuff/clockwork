@@ -4746,9 +4746,13 @@ QTerm parse_term(const std::string& f, const int dim, const std::string& str) {
   //return qterm(qconst(0));
 }
 
-QTerm offset(const QExpr& e) {
+QTerm offset(QExpr& e) {
   assert(e.terms.size() == 2);
-  return e.const_term();
+
+  e.simplify();
+  QTerm offset = e.const_term();
+  cout << "Offset = " << offset << endl;
+  return offset;
 }
 
 QAV stride(const QExpr& e) {
@@ -4776,22 +4780,58 @@ vector<QAV> strides(vector<QExpr>& mins, vector<QExpr>& maxs) {
   return strides;
 }
 
+vector<vector<int> > build_points(vector<vector<int> >& vals_by_dim, vector<vector<int> >& current, const int i) {
+  cout << "Building points: " << i << endl;
+  if (i >= vals_by_dim.size()) {
+    return current;
+  }
+
+  if (current.size() == 0) {
+    assert(i == 0);
+    assert(vals_by_dim.size() > i);
+    vector<vector<int> > vs;
+    for (auto v : vals_by_dim.at(i)) {
+      vs.push_back({v});
+    }
+
+    return build_points(vals_by_dim, vs, i + 1);
+  }
+
+  vector<vector<int> > vs;
+  for (auto c : current) {
+    for (auto v : vals_by_dim.at(i)) {
+      vector<int> cpy = c;
+      cpy.push_back(v);
+      vs.push_back(cpy);
+    }
+  }
+
+  return build_points(vals_by_dim, vs, i + 1);
+
+}
+
 vector<vector<int> > offsets(vector<QExpr>& mins, vector<QExpr>& maxs) {
   assert(mins.size() == maxs.size());
 
-  vector<int> vals;
-  for (size_t i = 0; mins.size(); i++) {
+  vector<vector<int> > vals_by_dim;
+  for (int i = 0; i < mins.size(); i++) {
+    vals_by_dim.push_back({});
+  }
+
+  for (size_t i = 0; i < mins.size(); i++) {
     cout << "Min: " << mins.at(i) << endl;
     cout << "Max: " << maxs.at(i) << endl;
     int min_offset = offset(mins.at(i)).to_int();
     int max_offset = offset(maxs.at(i)).to_int();
+    cout << "setting offset values" << endl;
     for (int t = min_offset; t <= max_offset; t++) {
-      vals.push_back(t);
+      vals_by_dim.at(i).push_back(t);
     }
+    cout << "Done with offset value addition" << endl;
   }
 
-  assert(false);
-  return {};
+  vector<vector<int> > ps;
+  return build_points(vals_by_dim, ps, 0);
 }
 
 struct App {
@@ -6271,8 +6311,8 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
-    conv3x3_app_unrolled_test();
-    assert(false);
+    //conv3x3_app_unrolled_test();
+    //assert(false);
     upsample2d_test();
     //assert(false);
     downsample2d_test();
