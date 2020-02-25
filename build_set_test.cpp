@@ -5980,9 +5980,9 @@ int main(int argc, char** argv) {
     //assert(false);
 
     upsample2d_test();
-    assert(false);
+    //assert(false);
     downsample2d_test();
-    conv3x3_app_unrolled_test();
+    //conv3x3_app_unrolled_test();
     denoise2d_test();
     updown_merge_test();
     conv3x3_app_test();
