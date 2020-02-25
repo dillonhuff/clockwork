@@ -2575,28 +2575,37 @@ void generate_app_code(CodegenOptions& options,
     assert(out_buffers.size() == 1);
     string out_buffer = pick(out_buffers);
     conv_out << "\t// Produce: " << out_buffer << endl;
+
     if (prg.is_boundary(out_buffer)) {
       conv_out << "\t" << out_buffer << ".write(" << res << ");" << endl;
     } else {
       assert(contains_key(out_buffer, buffers));
 
-      auto possible_ports = buffers.at(out_buffer).get_in_ports();
-      conv_out << "\t// Buffer: " << out_buffer << ", Op: " << op->name << endl;
-      conv_out << "\t// Possible ports..." << endl;
-      string prefix = out_buffer + "_" + op->name;
-      string port_cache = "";
-      cout << "Finding cache for: " << prefix << endl;
-      for (auto pt : possible_ports) {
-        conv_out << "\t\t// " << pt << endl;
-        cout << "pt: " << pt << endl;
-        if (is_prefix(prefix, pt)) {
-          port_cache = pt;
-          break;
+      auto& buf = buffers.at(out_buffer);
+      for (auto ib : buf.get_in_bundles()) {
+        if (is_prefix(op->name, ib)) {
+          string port_cache = pick(buf.port_bundles.at(ib));
+          conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" << res << ", " << port_cache << " /* output src_delay */);" << endl;
         }
       }
-      assert(port_cache != "");
+      //// TODO: Need to use bundles here
+      //auto possible_ports = buffers.at(out_buffer).get_in_ports();
+      //conv_out << "\t// Buffer: " << out_buffer << ", Op: " << op->name << endl;
+      //conv_out << "\t// Possible ports..." << endl;
+      //string prefix = out_buffer + "_" + op->name;
+      //string port_cache = "";
+      //cout << "Finding cache for: " << prefix << endl;
+      //for (auto pt : possible_ports) {
+        //conv_out << "\t\t// " << pt << endl;
+        //cout << "pt: " << pt << endl;
+        //if (is_prefix(prefix, pt)) {
+          //port_cache = pt;
+          //break;
+        //}
+      //}
+      //assert(port_cache != "");
 
-      conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" << res << ", " << port_cache << " /* output src_delay */);" << endl;
+      //conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" << res << ", " << port_cache << " /* output src_delay */);" << endl;
     }
 
     conv_out << "}" << endl << endl;

@@ -177,9 +177,6 @@ inline void I_id0(HWStream<hw_uint<32> >& /* num ports = 1 */in, I_I_id0_6_cache
 	auto in_id0_c__id1_value = in.read();
 	auto compute_result = id(in_id0_c__id1_value);
 	// Produce: I
-	// Buffer: I, Op: I_id0
-	// Possible ports...
-		// I_I_id0_6
 	I_I_id0_write_bundle_write(compute_result, I_I_id0_6 /* output src_delay */);
 }
 
