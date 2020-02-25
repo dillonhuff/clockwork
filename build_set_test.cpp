@@ -4636,7 +4636,7 @@ struct App {
       int max = maxs[i];
       string base_expr = to_string(stride) + "*" + base_var;
       if (!stride.is_whole()) {
-        base_expr = base_var + " / " + to_string(stride.denom);
+        base_expr = "floor(" + base_var + " / " + to_string(stride.denom) + ")";
       }
       box_strs.push_back(base_expr + " + " + to_string(min) + " <= " + kv + " <= " + base_expr + " + " + to_string(max));
     }
