@@ -880,4 +880,10 @@ isl_point* sample(isl_set* s) {
   return isl_set_sample_point(cpy(s));
 }
 
+isl_pw_aff* dim_min(isl_map* const m, const int d) {
+  return isl_map_dim_min(cpy(m), d);
+}
 
+isl_pw_aff* dim_max(isl_map* const m, const int d) {
+  return isl_map_dim_max(cpy(m), d);
+}

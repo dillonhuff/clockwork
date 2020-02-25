@@ -4598,6 +4598,42 @@ QExpr upper_bound(const Window& arg, const int dim) {
   return k;
 }
 
+QTerm parse_qterm(const std::string& str) {
+  regex floor_reg("floor\\(\\((.*)\\)/(.*)\\)");
+  smatch tt_match;
+  auto tt_res = regex_match(str, tt_match, floor_reg);
+  if (tt_res) {
+    cout << "Group 1: " << tt_match[1] << endl;
+    cout << "Group 2: " << tt_match[2] << endl;
+    return qterm(qvar(tt_match[1]), qconst(1, safe_stoi(tt_match[2])));
+  }
+
+  regex mul_reg("(\\d+)(.+)");
+  smatch mul_match;
+  auto mul_res = regex_match(str, mul_match, mul_reg);
+  if (mul_res) {
+    return qterm(qconst(safe_stoi(mul_match[1])), qvar(tt_match[2]));
+  }
+ 
+  {
+    regex mul_reg("(\\d+)");
+    smatch mul_match;
+    auto mul_res = regex_match(str, mul_match, mul_reg);
+    if (mul_res) {
+      return qterm(qconst(safe_stoi(mul_match[1])));
+    }
+  }
+ 
+  {
+    regex var_reg("(.+)");
+    smatch var_match;
+    auto var_res = regex_match(str, var_match, var_reg);
+    assert(var_res);
+
+    return qterm(qvar(var_match[1]));
+  }
+}
+
 QTerm parse_term(const std::string& f, const int dim, const std::string& str) {
   regex floor_reg("floor\\(\\((.*)\\)/(.*)\\)");
   smatch tt_match;
@@ -4959,7 +4995,8 @@ struct App {
           isl_map* last_pix =
             lexmax(comps_needed);
           cout << "last comp needed: " << str(last_pix) << endl;
-          auto max = isl_map_dim_max(cpy(comps_needed), i);
+          auto max = dim_max(comps_needed, i);
+          //auto max = isl_map_dim_max(cpy(comps_needed), i);
           cout << "max needed in dim " << i << " = " << str(max) << endl;
 
           //regex cm("\\{ (.*)\\[(.*)\\](.*) \\}");
@@ -5236,7 +5273,21 @@ struct App {
   Window box_touched(const std::string& consumer, const std::string& producer) {
     for (auto s : app_dag.at(consumer).srcs) {
       if (s.name == producer) {
-        return s;
+        isl_map* pixels_needed =
+          dot(inv(compute_map(consumer)), to_map(s.needed));
+        cout << "Pixels needed from " << producer << " for " << consumer << ": " << str(pixels_needed) << endl;
+
+        vector<QTerm> mins;
+        vector<QTerm> maxs;
+        for (int i = 0; i < 2; i++) {
+          cout << "d" << i << " min: " << str(dim_min(pixels_needed, i)) << endl;
+          mins.push_back(parse_qterm(str(dim_min(pixels_needed, i))));
+          cout << "d" << i << " max: " << str(dim_max(pixels_needed, i)) << endl;
+          maxs.push_back(parse_qterm(str(dim_max(pixels_needed, i))));
+        }
+
+        return {s.name, strides(mins, maxs), offsets(mins, maxs)};
+        //return s;
       }
     }
     assert(false);
@@ -5321,10 +5372,6 @@ struct App {
         // out of the isl_map from compute to data needs
 
         Window f_win = box_touched(consumer, f);
-        isl_map* pixels_needed =
-          dot(inv(compute_map(consumer)), to_map(f_win.needed));
-        cout << "Pixels needed from " << f << " for " << consumer << str(pixels_needed) << endl;
-        assert(false);
 
         int i = 0;
         for (auto p : f_win.pts()) {
