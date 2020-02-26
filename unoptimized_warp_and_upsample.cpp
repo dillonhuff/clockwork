@@ -177,7 +177,7 @@ inline void warped_0_warped_0_conv_3_30_write_bundle_write(hw_uint<32>& warped_0
 
 
 // Operation logic
-inline void out_id0(warped_0_warped_0_conv_3_30_4_cache& warped_0_warped_0_conv_3_30_4, HWStream<hw_uint<32> >& /* num ports = 1 */out, int root, int ur, int kr, int uc, int kc) {
+inline void out_id0(warped_0_warped_0_conv_3_30_4_cache& warped_0_warped_0_conv_3_30_4, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */out, int root, int ur, int kr, int uc, int kc) {
 	// Consume: warped_0
 	auto warped_0_ur_c__uc_value = warped_0_out_id0_read_bundle_read(warped_0_warped_0_conv_3_30_4/* source_delay */, root, ur, kr, uc, kc);
 	auto compute_result = id(warped_0_ur_c__uc_value);
@@ -185,7 +185,7 @@ inline void out_id0(warped_0_warped_0_conv_3_30_4_cache& warped_0_warped_0_conv_
 	out.write(compute_result);
 }
 
-inline void store_I_from_in(HWStream<hw_uint<32> >& /* num ports = 1 */in, I_store_I_from_in_2_cache& I_store_I_from_in_2, int root, int pr, int pc) {
+inline void store_I_from_in(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, I_store_I_from_in_2_cache& I_store_I_from_in_2, int root, int pr, int pc) {
 	// Consume: in
 	auto in_pr_c__pc_value = in.read();
 	// Produce: I
@@ -201,7 +201,7 @@ inline void warped_0_conv_3_30(I_store_I_from_in_2_cache& I_store_I_from_in_2, w
 }
 
 // Driver function
-void unoptimized_warp_and_upsample(HWStream<hw_uint<32> >& /* num ports = 1 */in, HWStream<hw_uint<32> >& /* num ports = 1 */out) {
+void unoptimized_warp_and_upsample(HWStream<hw_uint<32> >& /* get_args num ports = 1 */in, HWStream<hw_uint<32> >& /* get_args num ports = 1 */out) {
 	I_store_I_from_in_2_cache I_store_I_from_in_2;
 	warped_0_warped_0_conv_3_30_4_cache warped_0_warped_0_conv_3_30_4;
 	{

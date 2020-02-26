@@ -3,4 +3,4 @@
 
 #include "hw_classes.h"
 
-void conv_1d_bc(HWStream<hw_uint<32> >& /* num ports = 1 */in, HWStream<hw_uint<32> >& /* num ports = 1 */out);
+void conv_1d_bc(HWStream<hw_uint<32> >& /* get_args num ports = 1 */in, HWStream<hw_uint<32> >& /* get_args num ports = 1 */out);

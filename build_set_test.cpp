@@ -2418,10 +2418,27 @@ vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg) {
   for (auto& b : prg.ins) {
     assert(contains_key(b, buffers));
     auto& buf = buffers.at(b);
-    pair<string, vector<string> > bundle =
-      pick(buf.port_bundles);
-    args.push_back("HWStream<" + buf.bundle_type_string(bundle.first) + " >& /* get_args num ports = " + to_string(bundle.second.size()) + " */" + buf.name);
-    //args.push_back("HWStream<" + buffers.at(b).port_type_string() + " >& " + b);
+
+    bool found_bundle = false;
+    for (auto bndl : buf.port_bundles) {
+      cout << "Trying bundle: " << bndl.first << endl;
+      if (is_prefix(b, bndl.first)) {
+        string bname = bndl.first;
+        vector<string> ports = bndl.second;
+        args.push_back("HWStream<" + buf.bundle_type_string(bname) + " >& /* get_args num ports = " + to_string(ports.size()) + " */" + buf.name);
+        found_bundle = true;
+        break;
+      }
+    }
+    if (!found_bundle) {
+      cout << "No bundle for input: " << b << endl;
+      cout << "No bundle for input: " << b << endl;
+      auto bndl = pick(buf.port_bundles);
+      string bname = bndl.first;
+      vector<string> ports = 
+        map_find(bname, buf.port_bundles);
+      args.push_back("HWStream<" + buf.bundle_type_string(bname) + " >& /* get_args num ports = " + to_string(ports.size()) + " */" + buf.name);
+    }
   }
   for (auto& b : prg.outs) {
     
@@ -2431,16 +2448,35 @@ vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg) {
 
     assert(contains_key(b, buffers));
     auto& buf = buffers.at(b);
-    pair<string, vector<string> > bundle =
-      pick(buf.port_bundles);
-    args.push_back("HWStream<" + buf.bundle_type_string(bundle.first) + " >& /* get_args num ports = " + to_string(bundle.second.size()) + " */" + buf.name);
-    //args.push_back("HWStream<" + prg.buffer_element_type_string(b) + " >& " + b);
+
+    bool found_bundle = false;
+    for (auto bndl : buf.port_bundles) {
+      cout << "Trying bundle: " << bndl.first << endl;
+      if (is_prefix(b, bndl.first)) {
+        string bname = bndl.first;
+        vector<string> ports = bndl.second;
+        args.push_back("HWStream<" + buf.bundle_type_string(bname) + " >& /* get_args num ports = " + to_string(ports.size()) + " */" + buf.name);
+        found_bundle = true;
+        break;
+      }
+    }
+    if (!found_bundle) {
+      // TODO: Should really be an error
+      cout << "No bundle for input: " << b << endl;
+      auto bndl = pick(buf.port_bundles);
+      string bname = bndl.first;
+      vector<string> ports = 
+        map_find(bname, buf.port_bundles);
+      args.push_back("HWStream<" + buf.bundle_type_string(bname) + " >& /* get_args num ports = " + to_string(ports.size()) + " */" + buf.name);
+    }
+    
   }
   return args;
 }
 
 void generate_app_code_header(const map<string, UBuffer>& buffers, prog& prg) {
   string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
+  //string arg_buffers = sep_list(buffer_args(buffers, prg), "(", ")", ", ");
   ofstream of(prg.name + ".h");
   of << "#pragma once\n\n" << endl;
   of << "#include \"hw_classes.h\"" << endl << endl;
@@ -2630,6 +2666,7 @@ void generate_app_code(CodegenOptions& options,
   
   conv_out << "// Driver function" << endl;
   string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
+  //string arg_buffers = sep_list(buffer_args(buffers, prg), "(", ")", ", ");
   conv_out << "void " << prg.name << arg_buffers << " {" << endl;
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
@@ -5604,6 +5641,17 @@ struct App {
     return m;
   }
 
+  Window data_window_provided_by_compute(const std::string& consumer) {
+    return map_find(consumer, app_dag).provided;
+  }
+
+  Window data_window_needed_by_compute(const std::string& consumer, const std::string& producer) {
+    return box_touched(consumer, producer).unroll_cpy(2);
+    //Window bt = box_touched(consumer, producer);
+    //Window provided = data_window_provided_by_compute(consumer);
+    //return apply(provided, bt);
+  }
+
   map<string, UBuffer> build_buffers(umap* m) {
     auto sorted_functions = sort_functions();
     // Generate re-use buffers
@@ -5638,7 +5686,7 @@ struct App {
         b.port_bundles[f + "_comp_write"].push_back(pt_name);
       }
       cout << "Port bundle has " << b.port_bundles[f + "_comp_write"].size() << " ports in it" << endl;
-      assert(false);
+      //assert(false);
 
       //cout << "compute_map: " << str(compute_map(f)) << endl;
       //cout << "Domain     : " << str(domain) << endl;
@@ -5658,10 +5706,7 @@ struct App {
 
         cout << "Getting map from " << f << " to " << consumer << endl;
 
-        // TODO: This function needs to be generalized to create a window
-        // out of the isl_map from compute to data needs
-
-        Window f_win = box_touched(consumer, f);
+        Window f_win = data_window_needed_by_compute(consumer, f);
 
         int i = 0;
         for (auto p : f_win.pts()) {
@@ -6456,6 +6501,7 @@ int main(int argc, char** argv) {
     //assert(false);
 
     conv3x3_app_unrolled_test();
+    heat_3d_test();
     synth_lb_test();
     //assert(false);
     upsample2d_test();
@@ -6467,7 +6513,6 @@ int main(int argc, char** argv) {
     sobel_test();
     //assert(false);
 
-    heat_3d_test();
     
     blur_and_downsample_test();
     downsample_and_blur_test();
