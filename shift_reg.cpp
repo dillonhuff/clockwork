@@ -55,8 +55,8 @@ struct write_cache {
 
 
 
-inline void write_write(InputStream<hw_uint<32>  >& write, write_cache& write_delay) {
-	hw_uint<32>  write_value = write.read(); write_delay.push(write_value);
+inline void write_write(hw_uint<32> & write, write_cache& write_delay) {
+	write_delay.push(write);
 }
 
 inline hw_uint<32>  read0_select(write_cache& write_delay
@@ -107,8 +107,10 @@ inline hw_uint<32> shift_reg_read2_bundle_read(write_cache& write_delay, int i) 
 
 // write
 //	write
-inline void shift_reg_write_bundle_write(InputStream<hw_uint<32>  >& write, write_cache& write_delay) {
-	write_write(write, write_delay);
+inline void shift_reg_write_bundle_write(InputStream<hw_uint<32> >& write, write_cache& write_delay) {
+	hw_uint<32> data_write = write.read();
+	hw_uint<32>  write_res = data_write.extract<0, 31>();
+	write_write(write_res, write_delay);
 }
 
 
@@ -117,7 +119,7 @@ void shift_reg(OutputStream<hw_uint<32> >& read0, OutputStream<hw_uint<32> >& re
 	write_cache write_delay;
 
 	for (int c0 = 0; c0 <= 9; c0 += 1) {
-	  write_write(write, write_delay);
+	  shift_reg_write_bundle_write(write, write_delay);
 	  if (c0 >= 2) {
 	    read2.write(shift_reg_read2_bundle_read(write_delay, c0 - 2));
 	    read1.write(shift_reg_read1_bundle_read(write_delay, c0 - 2));

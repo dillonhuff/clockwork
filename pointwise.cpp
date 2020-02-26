@@ -40,7 +40,8 @@ inline hw_uint<16> I_out_plus_one0_3_select(I_I_id0_0_cache& I_I_id0_0_delay
 // I_id0_write
 //	I_I_id0_0
 inline void I_I_id0_write_bundle_write(hw_uint<16>& I_id0_write, I_I_id0_0_cache& I_I_id0_0_delay) {
-	I_I_id0_0_write(I_id0_write, I_I_id0_0_delay);
+	hw_uint<16> I_I_id0_0_res = I_id0_write.extract<0, 15>();
+	I_I_id0_0_write(I_I_id0_0_res, I_I_id0_0_delay);
 }
 
 // out_plus_one0_read
@@ -62,7 +63,7 @@ inline void I_id0(HWStream<hw_uint<16> >& /* num ports = 1 */in, I_I_id0_0_cache
 	auto in_id0_c__id1_value = in.read();
 	auto compute_result = id(in_id0_c__id1_value);
 	// Produce: I
-	I_I_id0_write_bundle_write(compute_result, I_I_id0_0 /* output src_delay */);
+	I_I_id0_write_bundle_write(compute_result, I_I_id0_0);
 }
 
 inline void out_plus_one0(I_I_id0_0_cache& I_I_id0_0, HWStream<hw_uint<16> >& /* num ports = 1 */out, int root, int d1, int d0) {

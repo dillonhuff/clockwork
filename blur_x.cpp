@@ -103,7 +103,8 @@ inline hw_uint<16> I_out_blur_30_3_select(I_I_id0_4_cache& I_I_id0_4_delay
 // I_id0_write
 //	I_I_id0_4
 inline void I_I_id0_write_bundle_write(hw_uint<16>& I_id0_write, I_I_id0_4_cache& I_I_id0_4_delay) {
-	I_I_id0_4_write(I_id0_write, I_I_id0_4_delay);
+	hw_uint<16> I_I_id0_4_res = I_id0_write.extract<0, 15>();
+	I_I_id0_4_write(I_I_id0_4_res, I_I_id0_4_delay);
 }
 
 // out_blur_30_read

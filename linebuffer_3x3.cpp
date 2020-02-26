@@ -135,8 +135,8 @@ struct write0_cache {
 
 
 
-inline void write0_write(InputStream<hw_uint<32>  >& write0, write0_cache& write0_delay) {
-	hw_uint<32>  write0_value = write0.read(); write0_delay.push(write0_value);
+inline void write0_write(hw_uint<32> & write0, write0_cache& write0_delay) {
+	write0_delay.push(write0);
 }
 
 inline hw_uint<32>  read_0_0_select(write0_cache& write0_delay
@@ -290,7 +290,7 @@ void linebuffer_3x3(OutputStream<hw_uint<32> >& read_0_0, OutputStream<hw_uint<3
 
 	for (int c0 = 0; c0 <= 63; c0 += 1)
 	  for (int c1 = 0; c1 <= 63; c1 += 1) {
-	    write0_write(write0, write0_delay);
+	    linebuffer_3x3_write0_bundle_write(write0, write0_delay);
 	    if (c0 >= 2 && c1 >= 2) {
 	      read_1_0.write(linebuffer_3x3_read_1_0_bundle_read(write0_delay, c0 - 2, c1 - 2));
 	      read_0_1.write(linebuffer_3x3_read_0_1_bundle_read(write0_delay, c0 - 2, c1 - 2));

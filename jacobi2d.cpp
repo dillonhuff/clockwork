@@ -134,8 +134,9 @@ inline hw_uint<32>  I_out_jacobi2d_compute0_5_select(I_I_id0_6_cache& I_I_id0_6_
 // # of bundles = 2
 // I_id0_write
 //	I_I_id0_6
-inline void I_I_id0_write_bundle_write(hw_uint<32> & I_id0_write, I_I_id0_6_cache& I_I_id0_6_delay) {
-	I_I_id0_6_write(I_id0_write, I_I_id0_6_delay);
+inline void I_I_id0_write_bundle_write(hw_uint<32>& I_id0_write, I_I_id0_6_cache& I_I_id0_6_delay) {
+	hw_uint<32>  I_I_id0_6_res = I_id0_write.extract<0, 31>();
+	I_I_id0_6_write(I_I_id0_6_res, I_I_id0_6_delay);
 }
 
 // out_jacobi2d_compute0_read

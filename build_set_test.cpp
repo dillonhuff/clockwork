@@ -919,17 +919,17 @@ void generate_code_prefix(CodegenOptions& options,
 
   out << endl << endl;
   for (auto inpt : buf.get_in_ports()) {
-    if (options.internal) {
+    //if (options.internal) {
       out << "inline void " << inpt << "_write(";
       out << buf.port_type_string(inpt) + "& ";
       out << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
       out << "\t" + inpt + "_delay.push(" + inpt + ");" << endl;
       out << "}" << endl << endl;
-    } else {
-      out << "inline void " << inpt << "_write(" << "InputStream<" << buf.port_type_string() << " >& " << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
-      out << "\t" + buf.port_type_string() + " " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);" << endl;
-      out << "}" << endl << endl;
-    }
+    //} else {
+      //out << "inline void " << inpt << "_write(" << "InputStream<" << buf.port_type_string() << " >& " << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
+      //out << "\t" + buf.port_type_string() + " " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);" << endl;
+      //out << "}" << endl << endl;
+    //}
   }
 
 }
@@ -1276,7 +1276,8 @@ void generate_hls_code(UBuffer& buf) {
     } else {
       regex re(b.first + "(.*);");
       string inpt = pick(b.second);
-      code_string = regex_replace(code_string, re, inpt + "_write(" + b.first + ", " + inpt + "_delay);");
+      //code_string = regex_replace(code_string, re, inpt + "_write(" + b.first + ", " + inpt + "_delay);");
+      code_string = regex_replace(code_string, re, buf.name + "_" + b.first + "_bundle_write(" + b.first + ", " + delay_list + ");");
     }
   }
   for (auto b : buf.port_bundles) {
@@ -5980,8 +5981,8 @@ void conv3x3_app_unrolled_test() {
   int res = system("g++ -std=c++11 tb_app_unrolled_conv3x3.cpp conv3x3_app_unrolled_opt.cpp");
   assert(res == 0);
 
-  //int tb_res = system("./a.out");
-  //assert(tb_res == 0);
+  int tb_res = system("./a.out");
+  assert(tb_res == 0);
 }
 
 void conv3x3_app_test() {
@@ -6438,8 +6439,8 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
-    synth_lb_test();
     conv3x3_app_unrolled_test();
+    synth_lb_test();
     //assert(false);
     upsample2d_test();
     //assert(false);
@@ -6455,7 +6456,7 @@ int main(int argc, char** argv) {
     blur_and_downsample_test();
     downsample_and_blur_test();
 
-    synth_reduce_test();
+    //synth_reduce_test();
     jacobi_2d_2_test();
     //assert(false);
     jacobi_2d_test();
@@ -6474,10 +6475,10 @@ int main(int argc, char** argv) {
 
     conv_1d_rolled_test();
     synth_upsample_test();
-    reduce_1d_test();
+    //reduce_1d_test();
     unsharp_test();
     conv_2d_rolled_test();
-    reduce_2d_test();
+    //reduce_2d_test();
     conv_1d_test();
     conv_2d_bc_test();
     mobilenet_test();
