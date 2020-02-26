@@ -367,6 +367,13 @@ string codegen_c_constraint(isl_constraint* c) {
     for (int i = 0; i < num_dims(s); i++) {
       auto v = isl_constraint_get_coefficient_val(c, isl_dim_set, i);
       if (!isl_val_is_zero(v)) {
+        if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
+          string dn = "d" + to_string(i);
+          auto new_id = id(ctx(c), dn);
+          assert(new_id != nullptr);
+          cout << "setting id: " << str(new_id) << endl;
+          s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
+        }
         non_zero_coeffs.push_back(
             str(isl_constraint_get_coefficient_val(c, isl_dim_set, i)) + "*" + str(isl_space_get_dim_id(s, isl_dim_set, i)));
       } 
@@ -4549,8 +4556,14 @@ struct Window {
   Window unroll_cpy(const int factor) const {
     Window c;
     c.name = name + "_unrolled";
+    int i = 0;
     for (auto s : strides) {
-      c.strides.push_back(times(factor, s));
+      if (i == 0) {
+        c.strides.push_back(times(factor, s));
+      } else {
+        c.strides.push_back(s);
+      }
+      i++;
     }
 
     set<vector<int> > unrolled_offsets;
@@ -4929,6 +4942,7 @@ struct App {
   string func2d(const std::string& name) {
     functions.insert(name);
     app_dag[name] = {};
+    app_dag[name].provided = Window(name, {1, 1}, {{0, 0}});
     return name;
   }
 
@@ -5129,6 +5143,8 @@ struct App {
             compute_maps[s.first],
             data_domain(s.first).to_set(ctx, s.first)));
       cout << "Compute domain for " << s.first << " is " << str(compute_sets[s.first]) << endl;
+      app_dag[s.first].provided =
+        app_dag[s.first].provided.unroll_cpy(unroll_factor);
         //data_domain(s.first).to_set(ctx, s.first + "_comp")
     }
     //assert(false);
@@ -5604,12 +5620,13 @@ struct App {
 
       Window write_box = box_provided_by_compute(f);
       int i = 0;
+      cout << "Write box for: " << f << " has " << write_box.pts().size() << " points in it" << endl;
       for (auto p : write_box.pts()) {
         vector<string> coeffs;
         for (auto e : p) {
           coeffs.push_back(isl_str(e));
         }
-        //cout << "Coeffs: " << sep_list(coeffs, "[", "]", ", ") << endl;
+        cout << "Coeffs: " << sep_list(coeffs, "[", "]", ", ") << endl;
         auto access_map =
           rdmap(ctx, "{ " + f + "_comp[d0, d1] -> " +
               f + sep_list(coeffs, "[", "]", ", ") + " }");
@@ -5620,6 +5637,8 @@ struct App {
         i++;
         b.port_bundles[f + "_comp_write"].push_back(pt_name);
       }
+      cout << "Port bundle has " << b.port_bundles[f + "_comp_write"].size() << " ports in it" << endl;
+      //assert(false);
 
       //cout << "compute_map: " << str(compute_map(f)) << endl;
       //cout << "Domain     : " << str(domain) << endl;
@@ -5958,10 +5977,6 @@ App unroll(const App& app, const int unroll_factor) {
 
 void conv3x3_app_unrolled_test() {
 
-  // What needs to change to make the code correct?
-  //  1. 64 bits wide on input and output channels
-  //  2. Compute result needs to be doubled in width
-  //  3. 
   App sobel;
 
   sobel.func2d("off_chip_img");
@@ -5972,11 +5987,11 @@ void conv3x3_app_unrolled_test() {
       offsets.push_back({i, j});
     }
   }
-  sobel.func2d("conv3x3_app", "conv_3_3", "img", {1, 1}, offsets);
+  sobel.func2d("conv3x3_app_unrolled", "conv_3_3", "img", {1, 1}, offsets);
+  sobel.realize("conv3x3_app_unrolled", 30, 30, 2);
 
-  App ur = unroll(sobel, 2);
-
-  ur.realize("conv3x3_app_unrolled", 30, ceil(30 / 2.0), 1);
+  //App ur = unroll(sobel, 2);
+  //ur.realize("conv3x3_app_unrolled", 30, ceil(30 / 2.0), 1);
 
   int res = system("g++ -std=c++11 tb_app_unrolled_conv3x3.cpp conv3x3_app_unrolled_opt.cpp");
   assert(res == 0);
