@@ -2420,7 +2420,7 @@ vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg) {
     auto& buf = buffers.at(b);
     pair<string, vector<string> > bundle =
       pick(buf.port_bundles);
-    args.push_back("HWStream<" + buf.bundle_type_string(bundle.first) + " >& /* num ports = " + to_string(bundle.second.size()) + " */" + buf.name);
+    args.push_back("HWStream<" + buf.bundle_type_string(bundle.first) + " >& /* get_args num ports = " + to_string(bundle.second.size()) + " */" + buf.name);
     //args.push_back("HWStream<" + buffers.at(b).port_type_string() + " >& " + b);
   }
   for (auto& b : prg.outs) {
@@ -2433,7 +2433,7 @@ vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg) {
     auto& buf = buffers.at(b);
     pair<string, vector<string> > bundle =
       pick(buf.port_bundles);
-    args.push_back("HWStream<" + buf.bundle_type_string(bundle.first) + " >& /* num ports = " + to_string(bundle.second.size()) + " */" + buf.name);
+    args.push_back("HWStream<" + buf.bundle_type_string(bundle.first) + " >& /* get_args num ports = " + to_string(bundle.second.size()) + " */" + buf.name);
     //args.push_back("HWStream<" + prg.buffer_element_type_string(b) + " >& " + b);
   }
   return args;
@@ -2494,7 +2494,7 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
         auto& buf = buffers.at(buf_name);
         pair<string, vector<string> > bundle =
           pick(buf.port_bundles);
-        buf_srcs.push_back("HWStream<" + buf.bundle_type_string(bundle.first) + " >& /* num ports = " + to_string(bundle.second.size()) + " */" + buf.name);
+        buf_srcs.push_back("HWStream<" + buf.bundle_type_string(bundle.first) + " >& /* buffer_args num ports = " + to_string(bundle.second.size()) + " */" + buf.name);
 
       } else {
         const UBuffer& b = buffers.at(buf_name);
@@ -2513,7 +2513,7 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
         pair<string, vector<string> > bundle =
           pick(buf.port_bundles);
         //buf_srcs.push_back("HWStream<" + buf.bundle_type_string(bundle.first) + " >& " + buf_name);
-        buf_srcs.push_back("HWStream<" + buf.bundle_type_string(bundle.first) + " >& /* num ports = " + to_string(bundle.second.size()) + " */" + buf.name);
+        buf_srcs.push_back("HWStream<" + buf.bundle_type_string(bundle.first) + " >& /* buffer_args num ports = " + to_string(bundle.second.size()) + " */" + buf.name);
 
         //buf_srcs.push_back("HWStream<" + map_find(buf_name, buffers).port_type_string() + " >& " + buf_name);
       } else {
@@ -5638,7 +5638,7 @@ struct App {
         b.port_bundles[f + "_comp_write"].push_back(pt_name);
       }
       cout << "Port bundle has " << b.port_bundles[f + "_comp_write"].size() << " ports in it" << endl;
-      //assert(false);
+      assert(false);
 
       //cout << "compute_map: " << str(compute_map(f)) << endl;
       //cout << "Domain     : " << str(domain) << endl;
@@ -5988,6 +5988,7 @@ void conv3x3_app_unrolled_test() {
     }
   }
   sobel.func2d("conv3x3_app_unrolled", "conv_3_3", "img", {1, 1}, offsets);
+
   sobel.realize("conv3x3_app_unrolled", 30, 30, 2);
 
   //App ur = unroll(sobel, 2);
