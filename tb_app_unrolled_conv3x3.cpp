@@ -17,16 +17,26 @@ int main() {
 
   vector<hw_uint<64> > values;
   for (int r = 0; r < ROWS + 2; r++) {
-    for (int c = 0; c < COLS + 2; c++) {
-      values.push_back(r*IN_COLS + c);
-      off_chip_img.write(values.back());
+    //for (int c = 0; c < COLS + 2; c++) {
+    for (int c = 0; c < ceil((COLS + 2) / 2.0); c++) {
+      hw_uint<64> in;
+      int v0 =
+        r*IN_COLS + c + 0;
+      int v1 =
+        r*IN_COLS + c + 1;
+      set_at<0, 64>(in, v0);
+      set_at<32, 64>(in, v1);
+
+      values.push_back(v0);
+      values.push_back(v1);
+      off_chip_img.write(in);
     }
   }
 
   conv3x3_app_unrolled_opt(off_chip_img, conv3x3_out);
 
   for (int r = 0; r < ROWS; r++) {
-    for (int c = 0; c < COLS; c++) {
+    for (int c = 0; c < ceil(COLS / 2.0); c++) {
 
       hw_uint<32> expected;
       expected = 0;
@@ -37,13 +47,11 @@ int main() {
         }
       }
       auto out = conv3x3_out.read();
-      cout << "Out  = " << out << endl;
-      cout << "Next = " << expected << endl;
+      cout << "Out  = " << out << ", as int: " << out.to_int() << endl;
+      cout << "Next = " << expected << ", as int: " << expected.to_int() << endl;
       assert(out == expected);
     }
   }
-
-  //assert(false);
 
   return 0;
 }

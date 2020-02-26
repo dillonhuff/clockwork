@@ -6032,7 +6032,7 @@ void conv3x3_app_unrolled_test() {
       offsets.push_back({i, j});
     }
   }
-  sobel.func2d("conv3x3_app_unrolled", "conv_3_3", "img", {1, 1}, offsets);
+  sobel.func2d("conv3x3_app_unrolled", "conv_3_3_unroll", "img", {1, 1}, offsets);
 
   sobel.realize("conv3x3_app_unrolled", 30, 30, 2);
 
