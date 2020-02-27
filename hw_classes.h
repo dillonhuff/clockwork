@@ -267,7 +267,7 @@ void set_at(hw_uint<Len>& i, const int value) {
     i.val[v] = ((value >> (v - offset)) & 1);
   }
 #else
-  cout << "Setting " << i << " to be " << value << " at: " << offset << endl;
+  //cout << "Setting " << i << " to be " << value << " at: " << offset << endl;
   for (int v = offset; v < offset + 32; v++) {
     i.val.set(v, bsim::quad_value((value >> (v - offset)) & 1));
   }
@@ -330,7 +330,7 @@ class HWStream {
     }
 
     void write(const T& v) {
-      cout << "Inserting: " << (hw_uint<64>) v << " into hwstream" << endl;
+      //cout << "Inserting: " << (hw_uint<64>) v << " into hwstream" << endl;
       return values.push_front(v);
     }
 

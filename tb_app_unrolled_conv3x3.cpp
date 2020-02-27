@@ -45,21 +45,39 @@ int main() {
   conv3x3_app_unrolled_opt(off_chip_img, conv3x3_out);
 
   for (int r = 0; r < ROWS; r++) {
-    for (int c = 0; c < ceil(COLS / 2.0); c++) {
+    for (int c = 0; c < COLS; c += 2) {
 
-      hw_uint<32> expected;
-      expected = 0;
+    //}ceil(COLS / 2.0); c++) {
+
+      hw_uint<32> expected0;
+      expected0 = 0;
       for (int ri = 0; ri < 3; ri++) {
         for (int ci = 0; ci < 3; ci++) {
           auto next = values.at((r + ri) * IN_COLS + c + ci);
           cout << "next = " << next.to_int() << endl;
-          expected = expected + next;
+          expected0 = expected0 + next;
         }
       }
-      auto out = conv3x3_out.read();
+      
+      hw_uint<32> expected1;
+      expected1 = 0;
+      for (int ri = 0; ri < 3; ri++) {
+        for (int ci = 0; ci < 3; ci++) {
+          auto next = values.at((r + ri) * IN_COLS + c + 1 + ci);
+          cout << "next = " << next.to_int() << endl;
+          expected1 = expected1 + next;
+        }
+      }
+
+      hw_uint<64> out = conv3x3_out.read();
+      hw_uint<32> out0 = out.extract<0, 31>();
+      hw_uint<32> out1 = out.extract<32, 63>();
+
       cout << "Out  = " << out << ", as int: " << out.to_int() << endl;
-      cout << "Next = " << expected << ", as int: " << expected.to_int() << endl;
-      assert(out == expected);
+      cout << "Next = " << expected0 << ", as int: " << expected0.to_int() << endl;
+      cout << "Next = " << expected1 << ", as int: " << expected1.to_int() << endl;
+      assert(out0 == expected0);
+      assert(out1 == expected1);
     }
   }
 
