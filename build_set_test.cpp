@@ -1187,7 +1187,6 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
         offset += buf.port_width(p);
       }
 
-      //out << "\t" << rep << "_write(" << b.first << ", " << rep + "_delay);" << endl;
 
     }
     out << "}" << endl << endl;
@@ -4590,6 +4589,25 @@ struct Window {
       }
     }
 
+  Window increment(const int diff) const {
+    Window c;
+    c.name = name;
+    c.strides = strides;
+
+    set<vector<int> > unrolled_offsets;
+    for (auto offset : offsets) {
+      vector<int> uoff = offset;
+      uoff[0] = uoff.at(0) + diff;
+      unrolled_offsets.insert(uoff);
+    }
+
+    for (auto u : unrolled_offsets) {
+      c.offsets.push_back(u);
+    }
+
+    return c;
+  }
+
   Window unroll_cpy(const int factor) const {
     Window c;
     c.name = name + "_unrolled";
@@ -5846,8 +5864,24 @@ struct App {
       cfile << out_type_string << " " << compute_name(f) << "_unrolled_" << unroll_factor << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
       cfile << tab(1) << "hw_uint<" << out_width << "> whole_result;" << endl;
       for (int lane = 0; lane < unroll_factor; lane++) {
-        cfile << tab(1) << "auto result_" << lane << " = " << compute_name(f) << "(" << "window_" << lane << ");" << endl;
-        cfile << tab(1) << "set_at<" << fwidth*lane << ", " << fwidth << ">(whole_result, result_" << lane << ");" << endl;
+        vector<string> arg_names;
+        for (auto arg : args_and_widths) {
+          int arg_width = 32;
+
+          string p = arg.second;
+          string arg_name = "lane_" + to_string(lane) + "_" + p;
+
+          arg_names.push_back(arg_name);
+          Window win_needed = 
+            data_window_needed_by_compute(f, p, 1).increment(lane);
+
+          cfile << tab(1) << "hw_uint<" << win_needed.pts().size()*arg_width << "> " << arg_name << ";" << endl;
+          for (auto off : win_needed.offsets) {
+            cfile << tab(1) << "// Need offset: " << str(off) << endl;
+          }
+        }
+        cfile << tab(1) << "auto result_" << lane << " = " << compute_name(f) << "(" << comma_list(arg_names) << ");" << endl;
+        cfile << tab(1) << "set_at<" << fwidth*lane << ", " << out_width << ">(whole_result, result_" << lane << ");" << endl;
       }
       cfile << tab(1) << " return whole_result;" << endl;
       cfile << "}" << endl;

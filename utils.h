@@ -129,3 +129,14 @@ std::string ReplaceString(std::string subject, const std::string& search,
     return subject;
 }
 
+template<typename T>
+std::string str(const std::vector<T>& t) {
+  vector<string> strs;
+  for (auto v : t) {
+    ostringstream ss;
+    ss << v;
+    strs.push_back(ss.str());
+  }
+  return comma_list(strs);
+}
+
