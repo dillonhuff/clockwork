@@ -5843,7 +5843,14 @@ struct App {
       }
 
       string out_type_string = "hw_uint<" + to_string(out_width) + "> ";
-      cfile << out_type_string << " " << compute_name(f) << "_unrolled_" << unroll_factor << sep_list(arg_decls, "(", ")", ", ") << "{ return 0; }" << endl;
+      cfile << out_type_string << " " << compute_name(f) << "_unrolled_" << unroll_factor << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+      cfile << tab(1) << "hw_uint<" << out_width << "> whole_result;" << endl;
+      for (int lane = 0; lane < unroll_factor; lane++) {
+        cfile << tab(1) << "auto result_" << lane << " = " << compute_name(f) << "(" << "window_" << lane << ");" << endl;
+        cfile << tab(1) << "set_at<" << fwidth*lane << ", " << fwidth << ">(whole_result, result_" << lane << ");" << endl;
+      }
+      cfile << tab(1) << " return whole_result;" << endl;
+      cfile << "}" << endl;
 
       already_seen.insert(compute_name(f));
     }
