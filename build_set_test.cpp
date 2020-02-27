@@ -6106,8 +6106,8 @@ void conv3x3_app_unrolled_test() {
   int res = system("g++ -std=c++11 tb_app_unrolled_conv3x3.cpp conv3x3_app_unrolled_opt.cpp");
   assert(res == 0);
 
-  int tb_res = system("./a.out");
-  assert(tb_res == 0);
+  //int tb_res = system("./a.out");
+  //assert(tb_res == 0);
 }
 
 void conv3x3_app_test() {
@@ -6564,6 +6564,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
+    reduce_1d_test();
     conv3x3_app_unrolled_test();
     //assert(false);
     upsample2d_test();
@@ -6600,10 +6601,9 @@ int main(int argc, char** argv) {
 
     conv_1d_rolled_test();
     synth_upsample_test();
-    //reduce_1d_test();
     unsharp_test();
     conv_2d_rolled_test();
-    //reduce_2d_test();
+    reduce_2d_test();
     conv_1d_test();
     conv_2d_bc_test();
     mobilenet_test();
