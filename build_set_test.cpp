@@ -2437,7 +2437,7 @@ vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg) {
       string bname = bndl.first;
       vector<string> ports = 
         map_find(bname, buf.port_bundles);
-      args.push_back("HWStream<" + buf.bundle_type_string(bname) + " >& /* get_args num ports = " + to_string(ports.size()) + " */" + buf.name);
+      args.push_back("HWStream<" + buf.bundle_type_string(bname) + " >& /* no bundle get_args num ports = " + to_string(ports.size()) + " */" + buf.name);
     }
   }
   for (auto& b : prg.outs) {
@@ -2467,7 +2467,7 @@ vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg) {
       string bname = bndl.first;
       vector<string> ports = 
         map_find(bname, buf.port_bundles);
-      args.push_back("HWStream<" + buf.bundle_type_string(bname) + " >& /* get_args num ports = " + to_string(ports.size()) + " */" + buf.name);
+      args.push_back("HWStream<" + buf.bundle_type_string(bname) + " >& /* no bundle get_args num ports = " + to_string(ports.size()) + " */" + buf.name);
     }
     
   }
@@ -5652,8 +5652,8 @@ struct App {
 
   Window data_window_needed_by_compute(const std::string& consumer, const std::string& producer) {
 
-    return box_touched(consumer, producer).unroll_cpy(1);
-    //return box_touched(consumer, producer).unroll_cpy(2);
+    //return box_touched(consumer, producer).unroll_cpy(1);
+    return box_touched(consumer, producer).unroll_cpy(2);
     //Window bt = box_touched(consumer, producer);
     //Window provided = data_window_provided_by_compute(consumer);
     //return apply(provided, bt);
@@ -6494,7 +6494,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
-    //conv3x3_app_unrolled_test();
+    conv3x3_app_unrolled_test();
     //assert(false);
     upsample2d_test();
     //assert(false);
