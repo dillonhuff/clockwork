@@ -5050,8 +5050,6 @@ struct App {
       }
       box_strs.push_back(base_expr + " + " + to_string(min) + " <= " + kv + " <= " + base_expr + " + " + to_string(max));
     }
-    //string box_cond = "{ " + name + sep_list(base_vars, "[", "]", ", ") + " -> " + w.name + sep_list(arg_vars, "[", "]", ", ") + " : " + sep_list(box_strs, "", "", " and ") + " }";
-    //string box_cond = "{ " + name + "_comp" + sep_list(base_vars, "[", "]", ", ") + " -> " + w.name + sep_list(arg_vars, "[", "]", ", ") + " : " + sep_list(box_strs, "", "", " and ") + " }";
     string box_cond = "{ " + name + sep_list(base_vars, "[", "]", ", ") + " -> " + w.name + sep_list(arg_vars, "[", "]", ", ") + " : " + sep_list(box_strs, "", "", " and ") + " }";
     cout << "Box needed: " << box_cond << endl;
     umap* m = isl_union_map_read_from_str(ctx, box_cond.c_str());
@@ -5155,11 +5153,6 @@ struct App {
     assert(sorted.size() == app_dag.size());
 
     reverse(sorted);
-    //cout << "Sorted functions..." << endl;
-    //for (auto f : sorted) {
-      //cout << "\t" << f << endl;
-    //}
-    //assert(false);
 
     return sorted;
   }
@@ -5575,28 +5568,9 @@ struct App {
     //return map_find(name, compute_boxes).to_set(ctx, name + "_comp");
   }
 
-  Window box_provided_by_compute(const std::string& f) {
-    return map_find(f, app_dag).provided;
-    //return map_find(f, app_dag).provided.unroll_cpy(2);
-  }
-  
   Window box_touched(const std::string& consumer, const std::string& producer) {
     for (auto s : app_dag.at(consumer).srcs) {
       if (s.name == producer) {
-        //isl_map* pixels_needed =
-          //dot(inv(compute_map(consumer)), to_map(s.needed));
-        //cout << "Pixels needed from " << producer << " for " << consumer << ": " << str(pixels_needed) << endl;
-
-        //vector<QExpr> mins;
-        //vector<QExpr> maxs;
-        //for (int i = 0; i < 2; i++) {
-          //cout << "d" << i << " min: " << str(dim_min(pixels_needed, i)) << endl;
-          //mins.push_back(parse_qexpr(str(dim_min(pixels_needed, i))));
-          //cout << "d" << i << " max: " << str(dim_max(pixels_needed, i)) << endl;
-          //maxs.push_back(parse_qexpr(str(dim_max(pixels_needed, i))));
-        //}
-
-        //return {s.name, strides(mins, maxs), offsets(mins, maxs)};
         return s;
       }
     }
@@ -5647,20 +5621,15 @@ struct App {
     return m;
   }
 
-  Window data_window_provided_by_compute(const std::string& consumer) {
-    return map_find(consumer, app_dag).provided;
+  Window data_window_provided_by_compute(const std::string& f, const int unroll_factor) {
+    return map_find(f, app_dag).provided.unroll_cpy(unroll_factor);
   }
 
-  Window data_window_needed_by_compute(const std::string& consumer, const std::string& producer) {
-
-    return box_touched(consumer, producer).unroll_cpy(1);
-    //return box_touched(consumer, producer).unroll_cpy(2);
-    //Window bt = box_touched(consumer, producer);
-    //Window provided = data_window_provided_by_compute(consumer);
-    //return apply(provided, bt);
+  Window data_window_needed_by_compute(const std::string& consumer, const std::string& producer, const int unroll_factor) {
+    return box_touched(consumer, producer).unroll_cpy(unroll_factor);
   }
 
-  map<string, UBuffer> build_buffers(umap* m) {
+  map<string, UBuffer> build_buffers(umap* m, const int unroll_factor) {
     auto sorted_functions = sort_functions();
     // Generate re-use buffers
     map<string, UBuffer> buffers;
@@ -5674,7 +5643,7 @@ struct App {
       isl_union_map* sched =
         its(m, domain);
 
-      Window write_box = box_provided_by_compute(f);
+      Window write_box = data_window_provided_by_compute(f, unroll_factor);
       int i = 0;
       cout << "Write box for: " << f << " has " << write_box.pts().size() << " points in it" << endl;
       for (auto p : write_box.pts()) {
@@ -5701,7 +5670,7 @@ struct App {
 
         cout << "Getting map from " << f << " to " << consumer << endl;
 
-        Window f_win = data_window_needed_by_compute(consumer, f);
+        Window f_win = data_window_needed_by_compute(consumer, f, unroll_factor);
 
         int i = 0;
         for (auto p : f_win.pts()) {
@@ -5727,6 +5696,10 @@ struct App {
 
     return buffers;
   }
+  
+  map<string, UBuffer> build_buffers(umap* m) {
+    return build_buffers(m, 1);
+  }
 
   void realize_naive(const std::string& name, const int d0, const int d1) {
     const int unroll_factor = 1;
@@ -5741,7 +5714,6 @@ struct App {
     auto sorted_functions = sort_functions();
     uset* whole_dom =
       isl_union_set_read_from_str(ctx, "{}");
-    //cout << "Whole domain at top of realize " << name << ": " << whole_dom << endl;
     assert(whole_dom != nullptr);
     for (auto f : sorted_functions) {
       cout << "Whole dom: " << str(whole_dom) << endl;
@@ -5838,10 +5810,10 @@ struct App {
     return m;
   }
 
-  void schedule_and_codegen(const std::string& name) {
+  void schedule_and_codegen(const std::string& name, const int unroll_factor) {
     umap* m = schedule();
 
-    map<string, UBuffer> buffers = build_buffers(m);
+    map<string, UBuffer> buffers = build_buffers(m, unroll_factor);
 
     uset* whole_dom =
       isl_union_set_read_from_str(ctx, "{}");
@@ -5903,7 +5875,7 @@ struct App {
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     fill_data_domain(name, d0, d1);
     fill_compute_domain(unroll_factor);
-    schedule_and_codegen(name);
+    schedule_and_codegen(name, unroll_factor);
   }
 
 };
@@ -6037,8 +6009,8 @@ void conv3x3_app_unrolled_test() {
   int res = system("g++ -std=c++11 tb_app_unrolled_conv3x3.cpp conv3x3_app_unrolled_opt.cpp");
   assert(res == 0);
 
-  int tb_res = system("./a.out");
-  assert(tb_res == 0);
+  //int tb_res = system("./a.out");
+  //assert(tb_res == 0);
 }
 
 void conv3x3_app_test() {
@@ -6495,7 +6467,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
-    //conv3x3_app_unrolled_test();
+    conv3x3_app_unrolled_test();
     //assert(false);
     upsample2d_test();
     //assert(false);
