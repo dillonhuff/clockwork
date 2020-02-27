@@ -13,13 +13,12 @@ using namespace std;
 int main() {
 
   HWStream<hw_uint<64> > off_chip_img;
+
   HWStream<hw_uint<64> > conv3x3_out;
 
   vector<hw_uint<64> > values;
   for (int r = 0; r < IN_ROWS; r++) {
-    //for (int c = 0; c < COLS + 2; c++) {
     for (int c = 0; c < IN_ROWS; c += 2) {
-        //ceil(IN_ROWS / 2.0); c += 2) {
       hw_uint<64> in;
       int v0 =
         r*IN_COLS + c + 0;
@@ -28,12 +27,21 @@ int main() {
       set_at<0, 64>(in, v0);
       set_at<32, 64>(in, v1);
 
+      cout << "Writing to accelerator: " << in << endl;
+
       values.push_back(v0);
       values.push_back(v1);
-      off_chip_img.write(in);
+      off_chip_img.write((hw_uint<64>) in);
+
+      //hw_uint<64> v = off_chip_img.read();
+      //cout << "v  = " << v << endl;
+      //cout << "in = " << in << endl;
+      //assert(v == in);
+      //cout << "Are equal!" << endl;
     }
   }
 
+  //assert(false);
   conv3x3_app_unrolled_opt(off_chip_img, conv3x3_out);
 
   for (int r = 0; r < ROWS; r++) {

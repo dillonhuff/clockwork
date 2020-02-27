@@ -159,6 +159,7 @@ class hw_uint {
 #ifdef __VIVADO_SYNTH__
     ap_int<Len> val;
 
+    hw_uint(const hw_uint<Len>& v) : val(v.val) {}
     hw_uint(const int v) : val(v) {}
     hw_uint() : val(0) {}
 
@@ -183,6 +184,11 @@ class hw_uint {
 
     bsim::static_quad_value_bit_vector<Len> val;
 
+    //hw_uint(const hw_uint<Len>&& v) : val(v.val) {
+      //assert(false);
+    //}
+
+    hw_uint(const hw_uint<Len>& v) : val(v.val) {}
     hw_uint(const int v) : val(v) {}
     hw_uint() : val(0) {}
 
@@ -228,6 +234,19 @@ hw_uint<Len> operator/(const hw_uint<Len>& a, const hw_uint<Len>& b) {
 }
 
 template<int Len>
+bool operator==(const hw_uint<Len>& a, const hw_uint<Len>& b) {
+#ifdef __VIVADO_SYNTH__
+  hw_uint<Len> v;
+  v.val = a.val + b.val;
+  return v;
+#else
+  hw_uint<Len> res;
+  res.val = a.val == b.val;
+  return res;
+#endif
+}
+
+template<int Len>
 hw_uint<Len> operator+(const hw_uint<Len>& a, const hw_uint<Len>& b) {
 #ifdef __VIVADO_SYNTH__
   hw_uint<Len> v;
@@ -248,6 +267,7 @@ void set_at(hw_uint<Len>& i, const int value) {
     i.val[v] = ((value >> (v - offset)) & 1);
   }
 #else
+  cout << "Setting " << i << " to be " << value << " at: " << offset << endl;
   for (int v = offset; v < offset + 32; v++) {
     i.val.set(v, bsim::quad_value((value >> (v - offset)) & 1));
   }
@@ -289,7 +309,7 @@ class HWStream {
 
     hls::stream<T> values;
 
-    void write(const int v) {
+    void write(const T& v) {
       return values.write(v);
     }
 
@@ -310,12 +330,13 @@ class HWStream {
     }
 
     void write(const T& v) {
+      cout << "Inserting: " << (hw_uint<64>) v << " into hwstream" << endl;
       return values.push_front(v);
     }
 
     T read() {
       assert(values.size() > 0);
-      int b = values.back();
+      T b = values.back();
       values.pop_back();
       return b;
     }

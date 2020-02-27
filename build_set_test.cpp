@@ -1065,6 +1065,29 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     cout << "Lexmax events: " << str(lex_max_events) << endl;
     map<string, string> ms = umap_codegen_c(lex_max_events);
     out << "\t// lexmax events: " << str(lex_max_events) << endl;
+    out << tab(1) << "// " << outpt << "read pattern: " << str(buf.access_map.at(outpt)) << endl;
+    vector<string> possible_ports;
+    for (auto pt : buf.get_in_ports()) {
+      out << tab(1) << "// " << pt << " stores range: " << str(range(buf.access_map.at(pt))) << endl;
+      out << tab(2) << "// overlap with reads : " << str(its(range(buf.access_map.at(pt)), range(buf.access_map.at(outpt)))) << endl;
+      auto overlap =
+        its(range(buf.access_map.at(pt)), range(buf.access_map.at(outpt)));
+
+      if (!isl_set_is_empty(overlap)) {
+        possible_ports.push_back(pt);
+      }
+    }
+
+    if (possible_ports.size() == 1) {
+      string inpt = possible_ports.at(0);
+      string delay_expr = evaluate_dd(buf, outpt, inpt);
+      string peeked_val = delay_string(options, inpt, outpt, buf);
+
+      out << "\tauto value_" << inpt << " = " << peeked_val << ";\n";
+      out << "\treturn value_" << inpt << ";" << endl;
+      out << "}" << endl << endl;
+      return;
+    }
     cout << "Done" << endl;
     for (auto e : ms) {
       out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
@@ -1072,8 +1095,7 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
 
     for (auto inpt : buf.get_in_ports()) {
       string delay_expr = evaluate_dd(buf, outpt, inpt);
-      string value_str = delay_string(options, inpt, outpt, buf);
-      string peeked_val = value_str;
+      string peeked_val = delay_string(options, inpt, outpt, buf);
       
       if (options.internal) {
         out << "\t// inpt: " << inpt << endl;
@@ -5878,15 +5900,18 @@ struct App {
             data_window_needed_by_compute(f, p, 1).increment(lane);
 
           cfile << tab(1) << "hw_uint<" << win_needed.pts().size()*arg_width << "> " << arg_name << ";" << endl;
+          int win_pos = 0;
           for (auto off : win_needed.offsets) {
             cfile << tab(1) << "// Need offset: " << str(off) << endl;
+            int npts = win_needed.pts().size()*arg_width;
             for (int i = 0; i < arg_input_window.offsets.size(); i++) {
               if (arg_input_window.offsets.at(i) == off) {
                 int base = i*arg_width;
                 int end = (i + 1)*arg_width - 1;
-                cfile << tab(1) << "set_at<" << i*arg_width << ", " << win_needed.pts().size()*arg_width << ">(" << arg_name << ", " << p << ".extract<" << base << ", " << end << ">());" << endl;
+                cfile << tab(1) << "set_at<" << win_pos*arg_width << ", " << npts << ">(" << arg_name << ", " << p << ".extract<" << base << ", " << end << ">());" << endl;
               }
             }
+            win_pos++;
           }
         }
         cfile << tab(1) << "auto result_" << lane << " = " << compute_name(f) << "(" << comma_list(arg_names) << ");" << endl;
@@ -6106,8 +6131,8 @@ void conv3x3_app_unrolled_test() {
   int res = system("g++ -std=c++11 tb_app_unrolled_conv3x3.cpp conv3x3_app_unrolled_opt.cpp");
   assert(res == 0);
 
-  //int tb_res = system("./a.out");
-  //assert(tb_res == 0);
+  int tb_res = system("./a.out");
+  assert(tb_res == 0);
 }
 
 void conv3x3_app_test() {
@@ -6564,8 +6589,8 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
-    reduce_1d_test();
     conv3x3_app_unrolled_test();
+    reduce_1d_test();
     //assert(false);
     upsample2d_test();
     //assert(false);
