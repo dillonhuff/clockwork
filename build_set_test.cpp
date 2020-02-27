@@ -6124,6 +6124,7 @@ void conv3x3_app_unrolled_test() {
   sobel.func2d("conv3x3_app_unrolled", "conv_3_3", "img", {1, 1}, offsets);
 
   sobel.realize("conv3x3_app_unrolled", 30, 30, 2);
+  //sobel.realize("conv3x3_app_unrolled", 32, 32, 8);
 
   //App ur = unroll(sobel, 2);
   //ur.realize("conv3x3_app_unrolled", 30, ceil(30 / 2.0), 1);
@@ -6589,8 +6590,8 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
-    denoise2d_test();
     conv3x3_app_unrolled_test();
+    denoise2d_test();
     reduce_1d_test();
     //assert(false);
     upsample2d_test();
