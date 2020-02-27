@@ -6059,23 +6059,23 @@ void downsample2d_test() {
 void denoise2d_test() {
   App dn;
 
-  //dn.func2d("f_off_chip");
+  dn.func2d("f_off_chip");
   dn.func2d("u_off_chip");
-  //dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
+  dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
   dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
   dn.func2d("diff_qwe", "diff_b", "u", {{0, 0}, {1, 0}});
   dn.func2d("diff_d", "diff_b", "u", {{0, 0}, {1, 0}});
   dn.func2d("diff_l", "diff_b", "u", {{0, 0}, {1, 0}});
   dn.func2d("diff_r", "diff_b", "u", {{0, 0}, {1, 0}});
 
-  //dn.func2d("denoise2d", "diff", {pt("diff_qwe"), pt("diff_d")});
+  ////dn.func2d("denoise2d", "diff", {pt("diff_qwe"), pt("diff_d")});
 
-  dn.func2d("denoise2d", "mag_dn2", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
+  //dn.func2d("denoise2d", "mag_dn2", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
 
-  //dn.func2d("g", "mag_dn2", {pt("diff_u"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
-  //dn.func2d("r0", "comp_r0", {pt("u"), pt("f")});
-  //dn.func2d("r1", "r1_comp", pt("r0"));
-  //dn.func2d("denoise2d", "out_comp_dn2d", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
+  dn.func2d("g", "mag_dn2", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
+  dn.func2d("r0", "comp_r0", {pt("u"), pt("f")});
+  dn.func2d("r1", "r1_comp", pt("r0"));
+  dn.func2d("denoise2d", "out_comp_dn2d", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
  
   dn.realize("denoise2d", 30, 30, 1);
 
@@ -6589,13 +6589,13 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
+    denoise2d_test();
     conv3x3_app_unrolled_test();
     reduce_1d_test();
     //assert(false);
     upsample2d_test();
     //assert(false);
     downsample2d_test();
-    denoise2d_test();
     updown_merge_test();
     conv3x3_app_test();
     sobel_test();
