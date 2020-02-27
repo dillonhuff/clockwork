@@ -16,9 +16,10 @@ int main() {
   HWStream<hw_uint<64> > conv3x3_out;
 
   vector<hw_uint<64> > values;
-  for (int r = 0; r < ROWS + 2; r++) {
+  for (int r = 0; r < IN_ROWS; r++) {
     //for (int c = 0; c < COLS + 2; c++) {
-    for (int c = 0; c < ceil((COLS + 2) / 2.0); c++) {
+    for (int c = 0; c < IN_ROWS; c += 2) {
+        //ceil(IN_ROWS / 2.0); c += 2) {
       hw_uint<64> in;
       int v0 =
         r*IN_COLS + c + 0;
@@ -43,6 +44,7 @@ int main() {
       for (int ri = 0; ri < 3; ri++) {
         for (int ci = 0; ci < 3; ci++) {
           auto next = values.at((r + ri) * IN_COLS + c + ci);
+          cout << "next = " << next.to_int() << endl;
           expected = expected + next;
         }
       }

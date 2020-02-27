@@ -5866,9 +5866,11 @@ struct App {
       for (int lane = 0; lane < unroll_factor; lane++) {
         vector<string> arg_names;
         for (auto arg : args_and_widths) {
+
           int arg_width = 32;
 
           string p = arg.second;
+          Window arg_input_window = data_window_needed_by_compute(f, p, unroll_factor);
           string arg_name = "lane_" + to_string(lane) + "_" + p;
 
           arg_names.push_back(arg_name);
@@ -5878,6 +5880,13 @@ struct App {
           cfile << tab(1) << "hw_uint<" << win_needed.pts().size()*arg_width << "> " << arg_name << ";" << endl;
           for (auto off : win_needed.offsets) {
             cfile << tab(1) << "// Need offset: " << str(off) << endl;
+            for (int i = 0; i < arg_input_window.offsets.size(); i++) {
+              if (arg_input_window.offsets.at(i) == off) {
+                int base = i*arg_width;
+                int end = (i + 1)*arg_width - 1;
+                cfile << tab(1) << "set_at<" << i*arg_width << ", " << win_needed.pts().size()*arg_width << ">(" << arg_name << ", " << p << ".extract<" << base << ", " << end << ">());" << endl;
+              }
+            }
           }
         }
         cfile << tab(1) << "auto result_" << lane << " = " << compute_name(f) << "(" << comma_list(arg_names) << ");" << endl;
@@ -6097,8 +6106,8 @@ void conv3x3_app_unrolled_test() {
   int res = system("g++ -std=c++11 tb_app_unrolled_conv3x3.cpp conv3x3_app_unrolled_opt.cpp");
   assert(res == 0);
 
-  //int tb_res = system("./a.out");
-  //assert(tb_res == 0);
+  int tb_res = system("./a.out");
+  assert(tb_res == 0);
 }
 
 void conv3x3_app_test() {
