@@ -660,7 +660,7 @@ inline void out_blur_270(I_I_id0_0_cache& I_I_id0_0, HWStream<hw_uint<16> >& /* 
 }
 
 // Driver function
-void stencil_3d(HWStream<hw_uint<16> >& /* get_args num ports = 1 */in, HWStream<hw_uint<16> >& /* get_args num ports = 1 */out) {
+void stencil_3d(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in, HWStream<hw_uint<16> >& /* get_args num ports = 1 */out) {
 	I_I_id0_0_cache I_I_id0_0;
 	for (int c0 = 0; c0 <= 31; c0 += 1)
 	  for (int c1 = 0; c1 <= 31; c1 += 1)

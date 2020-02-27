@@ -5577,6 +5577,7 @@ struct App {
 
   Window box_provided_by_compute(const std::string& f) {
     return map_find(f, app_dag).provided;
+    //return map_find(f, app_dag).provided.unroll_cpy(2);
   }
   
   Window box_touched(const std::string& consumer, const std::string& producer) {
@@ -5652,8 +5653,8 @@ struct App {
 
   Window data_window_needed_by_compute(const std::string& consumer, const std::string& producer) {
 
-    //return box_touched(consumer, producer).unroll_cpy(1);
-    return box_touched(consumer, producer).unroll_cpy(2);
+    return box_touched(consumer, producer).unroll_cpy(1);
+    //return box_touched(consumer, producer).unroll_cpy(2);
     //Window bt = box_touched(consumer, producer);
     //Window provided = data_window_provided_by_compute(consumer);
     //return apply(provided, bt);
@@ -6494,7 +6495,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
-    conv3x3_app_unrolled_test();
+    //conv3x3_app_unrolled_test();
     //assert(false);
     upsample2d_test();
     //assert(false);
