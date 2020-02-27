@@ -5810,6 +5810,47 @@ struct App {
     return m;
   }
 
+  string compute_name(const string& f) {
+    return map_find(f, app_dag).compute_name;
+  }
+    
+  void generate_compute_unit_file(const std::string& filename, const int unroll_factor) {
+    ofstream cfile(filename);
+    cfile << "#pragma once" << endl << endl;
+    cfile << "#include \"conv_3x3.h\"" << endl << endl;
+
+    set<string> already_seen;
+    for (auto f : sort_functions()) {
+      if (producers(f).size() == 0) {
+        continue;
+      }
+
+      if (elem(compute_name(f), already_seen)) {
+        continue;
+      }
+
+      int fwidth = 32;
+      int out_width = unroll_factor*fwidth;
+      vector<pair<int, string> > args_and_widths;
+      for (auto p : producers(f)) {
+        int arg_width = 32;
+        args_and_widths.push_back({arg_width*data_window_needed_by_compute(f, p.name, unroll_factor).pts().size(), p.name});
+      }
+
+      vector<string> arg_decls;
+      for (auto a : args_and_widths) {
+        arg_decls.push_back("hw_uint<" + to_string(a.first) + ">& " + a.second);
+      }
+
+      string out_type_string = "hw_uint<" + to_string(out_width) + "> ";
+      cfile << out_type_string << " " << compute_name(f) << "_unrolled_" << unroll_factor << sep_list(arg_decls, "(", ")", ", ") << "{ return 0; }" << endl;
+
+      already_seen.insert(compute_name(f));
+    }
+
+    cfile.close();
+  }
+
   void schedule_and_codegen(const std::string& name, const int unroll_factor) {
     umap* m = schedule();
 
@@ -5830,7 +5871,9 @@ struct App {
     options.internal = true;
     prog prg;
     prg.name = name + "_opt";
-    prg.compute_unit_file = "conv_3x3.h";
+    prg.compute_unit_file = prg.name + "_compute_units.h";
+    generate_compute_unit_file(prg.compute_unit_file, unroll_factor);
+
     auto action_domain = cpy(whole_dom);
     map<string, isl_set*> domain_map;
     for (auto f : sorted_functions) {
@@ -5858,7 +5901,11 @@ struct App {
             fargs.push_back(p.name);
           }
         }
-        op->add_function(app_dag.at(f).compute_name);
+        if (unroll_factor == 1) {
+          op->add_function(app_dag.at(f).compute_name);
+        } else {
+          op->add_function(app_dag.at(f).compute_name + "_unrolled_" + to_string(unroll_factor));
+        }
         domain_map[f + "_comp"] =
           compute_domain(f);
       }
@@ -5999,7 +6046,7 @@ void conv3x3_app_unrolled_test() {
       offsets.push_back({i, j});
     }
   }
-  sobel.func2d("conv3x3_app_unrolled", "conv_3_3_unroll", "img", {1, 1}, offsets);
+  sobel.func2d("conv3x3_app_unrolled", "conv_3_3", "img", {1, 1}, offsets);
 
   sobel.realize("conv3x3_app_unrolled", 30, 30, 2);
 
