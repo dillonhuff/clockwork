@@ -4728,6 +4728,7 @@ struct Result {
   string compute_name;
   vector<Window> srcs;
   Window provided;
+  vector<Window> unrolled_srcs;
 };
 
 QExpr upper_bound(const Window& arg, const int dim) {
@@ -5173,6 +5174,14 @@ struct App {
 
   void fill_compute_domain(const int unroll_factor) {
     for (auto s : app_dag) {
+      string name = s.first;
+      for (auto w : s.second.srcs) {
+        app_dag[name].unrolled_srcs.
+          push_back(w.unroll_cpy(unroll_factor));
+      }
+    }
+
+    for (auto s : app_dag) {
       compute_maps[s.first] =
         to_map(rdmap(ctx, "{ " + s.first + "[d0, d1] -> " + s.first + "_comp[floor(d0 / " + to_string(unroll_factor) + "), d1] }"));
       compute_sets[s.first] =
@@ -5180,11 +5189,7 @@ struct App {
             compute_maps[s.first],
             data_domain(s.first).to_set(ctx, s.first)));
       cout << "Compute domain for " << s.first << " is " << str(compute_sets[s.first]) << endl;
-      app_dag[s.first].provided =
-        app_dag[s.first].provided.unroll_cpy(unroll_factor);
-        //data_domain(s.first).to_set(ctx, s.first + "_comp")
     }
-    //assert(false);
   }
 
   void fill_data_domain(const std::string& name, const int d0, const int d1) {
@@ -5646,7 +5651,9 @@ struct App {
   }
 
   Window data_window_needed_by_compute(const std::string& consumer, const std::string& producer) {
-    return box_touched(consumer, producer).unroll_cpy(2);
+
+    return box_touched(consumer, producer).unroll_cpy(1);
+    //return box_touched(consumer, producer).unroll_cpy(2);
     //Window bt = box_touched(consumer, producer);
     //Window provided = data_window_provided_by_compute(consumer);
     //return apply(provided, bt);
@@ -5678,25 +5685,12 @@ struct App {
         auto access_map =
           rdmap(ctx, "{ " + f + "_comp[d0, d1] -> " +
               f + sep_list(coeffs, "[", "]", ", ") + " }");
-        //cout << "Access map: " << str(access_map) << endl;
-        //string pt_name = f + "_write" + to_string(i);
         string pt_name = f + "_" + f + "_comp_write" + to_string(i);
         b.add_in_pt(pt_name, domain, its(to_map(access_map), domain), sched);
         i++;
         b.port_bundles[f + "_comp_write"].push_back(pt_name);
       }
       cout << "Port bundle has " << b.port_bundles[f + "_comp_write"].size() << " ports in it" << endl;
-      //assert(false);
-
-      //cout << "compute_map: " << str(compute_map(f)) << endl;
-      //cout << "Domain     : " << str(domain) << endl;
-      //isl_map* write_map =
-        //its(inv(compute_map(f)), domain);
-
-      //cout << "In write_map: " << str(write_map) << endl;
-
-      //b.add_in_pt(f, domain, write_map, sched);
-      //b.port_bundles[f + "_comp_write"] = {f};
 
       for (auto consumer : consumers(f)) {
         isl_set* domain =
@@ -6500,9 +6494,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
-    conv3x3_app_unrolled_test();
-    heat_3d_test();
-    synth_lb_test();
+    //conv3x3_app_unrolled_test();
     //assert(false);
     upsample2d_test();
     //assert(false);
@@ -6513,6 +6505,8 @@ int main(int argc, char** argv) {
     sobel_test();
     //assert(false);
 
+    heat_3d_test();
+    synth_lb_test();
     
     blur_and_downsample_test();
     downsample_and_blur_test();
