@@ -231,3 +231,19 @@ hw_uint<64> conv_3_3_unroll(hw_uint<384>& in) {
     v3 + v4 + v5 +
     v6 + v7 + v8).to_int();
 }
+
+static inline
+hw_uint<32> comp_r0(hw_uint<32>& a, hw_uint<32>& b) {
+  return a + b;
+}
+
+static inline
+hw_uint<32> r1_comp(hw_uint<32>& a) {
+  return a;
+}
+
+static inline
+hw_uint<32>
+out_comp_dn2d(hw_uint<32>& a, hw_uint<32>& b, hw_uint<128>& c, hw_uint<128>& d) {
+  return a;
+}

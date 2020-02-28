@@ -2621,17 +2621,18 @@ void generate_app_code(CodegenOptions& options,
       dim_args.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
     }
     conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
-    set<pair<string, string> > in_buffers;
+    vector<pair<string, string> > in_buffers;
     set<string> distinct;
     for (auto con : op->consume_locs) {
       if (!elem(con.first, distinct)) {
-        in_buffers.insert(con);
+        in_buffers.push_back(con);
         distinct.insert(con.first);
       }
     }
 
     string res;
     vector<string> buf_args;
+
     for (auto ib : in_buffers) {
       auto in_buffer = ib.first;
       conv_out << "\t// Consume: " << in_buffer << endl;
@@ -5918,7 +5919,7 @@ struct App {
         cfile << tab(1) << "set_at<" << fwidth*lane << ", " << out_width << ">(whole_result, result_" << lane << ");" << endl;
       }
       cfile << tab(1) << " return whole_result;" << endl;
-      cfile << "}" << endl;
+      cfile << "}" << endl << endl;
 
       already_seen.insert(compute_name(f));
     }

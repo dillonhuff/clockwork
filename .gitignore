@@ -34,3 +34,4 @@ A_opt.*
 B_opt.*
 A_buf.*
 B_buf.*
+conv3x3_*
