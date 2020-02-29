@@ -55,6 +55,10 @@ struct M_get_input_0_cache {
 
 };
 
+struct M{
+  M_get_input_0_cache M_get_input_0_delay;
+};
+
 
 
 inline void M_get_input_0_write(hw_uint<32> & M_get_input_0, M_get_input_0_cache& M_get_input_0_delay) {

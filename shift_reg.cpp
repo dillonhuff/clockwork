@@ -53,6 +53,10 @@ struct write_cache {
 
 };
 
+struct shift_reg{
+  write_cache write_delay;
+};
+
 
 
 inline void write_write(hw_uint<32> & write, write_cache& write_delay) {

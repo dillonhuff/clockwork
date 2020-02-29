@@ -918,11 +918,17 @@ void generate_code_prefix(CodegenOptions& options,
 
   string inpt = buf.get_in_port();
   out << "#include \"hw_classes.h\"" << endl << endl;
+  vector<string> caches;
   for (auto inpt : buf.get_in_ports()) {
     generate_memory_struct(options, out, inpt, buf);
+    caches.push_back(inpt);
   }
 
-  //cout << "Generated struct" << endl;
+  out << "struct " << buf.name << "{" << endl;
+  for (auto inpt : buf.get_in_ports()) {
+    out << tab(1) << inpt << "_cache " << inpt << "_delay;" << endl;
+  }
+  out << "};" << endl << endl;
 
   out << endl << endl;
   for (auto inpt : buf.get_in_ports()) {
@@ -5601,12 +5607,10 @@ struct App {
 
   isl_map* compute_map(const std::string& f) {
     return map_find(f, compute_maps);
-    //return to_map(rdmap(ctx, "{ " + f + "[d0, d1] -> " + f + "_comp[d0, d1] }"));
   }
 
   isl_set* compute_domain(const std::string& name) {
     return map_find(name, compute_sets);
-    //return map_find(name, compute_boxes).to_set(ctx, name + "_comp");
   }
 
   Window box_touched(const std::string& consumer, const std::string& producer) {

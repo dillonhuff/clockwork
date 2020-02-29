@@ -24,6 +24,10 @@ struct I_I_id0_0_cache {
 
 };
 
+struct I{
+  I_I_id0_0_cache I_I_id0_0_delay;
+};
+
 
 
 inline void I_I_id0_0_write(hw_uint<16>& I_I_id0_0, I_I_id0_0_cache& I_I_id0_0_delay) {

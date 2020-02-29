@@ -133,6 +133,10 @@ struct write0_cache {
 
 };
 
+struct linebuffer_3x3{
+  write0_cache write0_delay;
+};
+
 
 
 inline void write0_write(hw_uint<32> & write0, write0_cache& write0_delay) {
