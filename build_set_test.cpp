@@ -1296,7 +1296,6 @@ void generate_hls_code(UBuffer& buf) {
     } else {
       regex re(b.first + "(.*);");
       string inpt = pick(b.second);
-      //code_string = regex_replace(code_string, re, inpt + "_write(" + b.first + ", " + inpt + "_delay);");
       code_string = regex_replace(code_string, re, buf.name + "_" + b.first + "_bundle_write(" + b.first + ", " + delay_list + ");");
     }
   }
