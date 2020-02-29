@@ -935,8 +935,8 @@ void generate_code_prefix(CodegenOptions& options,
     //if (options.internal) {
       out << "inline void " << inpt << "_write(";
       out << buf.port_type_string(inpt) + "& ";
-      out << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
-      out << "\t" + inpt + "_delay.push(" + inpt + ");" << endl;
+      out << inpt << ", " << buf.name + "_cache& " << buf.name << ") {" << endl;
+      out << "\t" + buf.name + "." + inpt + ".push(" + inpt + ");" << endl;
       out << "}" << endl << endl;
     //} else {
       //out << "inline void " << inpt << "_write(" << "InputStream<" << buf.port_type_string() << " >& " << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
@@ -1192,9 +1192,8 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
         dim_decls.push_back("InputStream<" + buf.bundle_type_string(b.first)  + " >& " + b.first);
       }
       vector<string> dim_args;
-      dim_args.push_back(b.first);
-      dim_decls.push_back(b.first + "_cache& " + b.first);
-      dim_args.push_back(b.first);
+      dim_decls.push_back(buf.name + "_cache& " + buf.name);
+      dim_args.push_back(buf.name);
       //for (auto pt : buf.get_in_ports()) {
         //if (elem(pt, b.second)) {
           //dim_decls.push_back(pt + "_cache& " + pt + "_delay");
@@ -1217,7 +1216,7 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
         out << "\t" + buf.port_type_string() + " " << p << "_res = "
           << src << ".extract<" << offset << ", " << (offset + buf.port_width(p) - 1)
           << ">();" << endl;
-        out << "\t" << p << "_write(" << p << "_res" << ", " << p << "_delay);" << endl;
+        out << "\t" << p << "_write(" << p << "_res" << ", " << buf.name << ");" << endl;
         offset += buf.port_width(p);
       }
 
@@ -2526,14 +2525,6 @@ vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, pro
     auto buf_name = p.first;
     if (!elem(buf_name, done)) {
       buf_srcs.push_back(buf_name);
-      //if (prg.is_boundary(buf_name)) {
-        //buf_srcs.push_back(buf_name);
-      //} else {
-        //const UBuffer& b = buffers.at(buf_name);
-        //for (auto ib : b.get_in_ports()) {
-          //buf_srcs.push_back(buf_name + "." + ib);
-        //}
-      //}
       done.insert(buf_name);
     }
   }
@@ -2541,14 +2532,6 @@ vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, pro
     auto buf_name = p.first;
     if (!elem(buf_name, done)) {
       buf_srcs.push_back(buf_name);
-      //if (prg.is_boundary(buf_name)) {
-        //buf_srcs.push_back(buf_name);
-      //} else {
-        //const UBuffer& b = buffers.at(buf_name);
-        //for (auto ib : b.get_in_ports()) {
-          //buf_srcs.push_back(buf_name + "." + ib);
-        //}
-      //}
       done.insert(buf_name);
     }
   }
@@ -2570,9 +2553,6 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
       } else {
         const UBuffer& b = buffers.at(buf_name);
         buf_srcs.push_back(b.name + "_cache& " + b.name);
-        //for (auto ib : b.get_in_ports()) {
-          //buf_srcs.push_back(ib + "_cache& " + b.name + "." + ib);
-        //}
       }
       done.insert(buf_name);
     }
@@ -2584,16 +2564,10 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
         auto& buf = buffers.at(buf_name);
         pair<string, vector<string> > bundle =
           pick(buf.port_bundles);
-        //buf_srcs.push_back("HWStream<" + buf.bundle_type_string(bundle.first) + " >& " + buf_name);
         buf_srcs.push_back("HWStream<" + buf.bundle_type_string(bundle.first) + " >& /* buffer_args num ports = " + to_string(bundle.second.size()) + " */" + buf.name);
-
-        //buf_srcs.push_back("HWStream<" + map_find(buf_name, buffers).port_type_string() + " >& " + buf_name);
       } else {
         const UBuffer& b = buffers.at(buf_name);
         buf_srcs.push_back(b.name + "_cache& " + b.name);
-        //for (auto ib : b.get_in_ports()) {
-          //buf_srcs.push_back(ib + "_cache& " + b.name + "." + ib);
-        //}
       }
       done.insert(buf_name);
     }
@@ -2661,9 +2635,6 @@ void generate_app_code(CodegenOptions& options,
         string source_delay = pick(buffers.at(in_buffer).get_in_ports());
         auto source_pts = buffers.at(in_buffer).get_in_ports();
         vector<string> source_delays{in_buffer};
-        //for (auto s : source_pts) {
-          //source_delays.push_back(in_buffer + "." + s);
-        //}
         cout << "op = " << op->name << endl;
         conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
       }
@@ -2694,9 +2665,6 @@ void generate_app_code(CodegenOptions& options,
         if (is_prefix(op->name, ib)) {
           vector<string> args{res};
           args.push_back(buf.name);
-          //for (auto port_cache : buf.port_bundles.at(ib)) {
-            //args.push_back(buf.name + "." + port_cache);
-          //}
           conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" <<
             sep_list(args, "", "", ", ") << ");" << endl;
         }
@@ -2711,7 +2679,7 @@ void generate_app_code(CodegenOptions& options,
   conv_out << "void " << prg.name << arg_buffers << " {" << endl;
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
-      conv_out << tab(1) << b.first << "_cache " << b.first << ";" << endl;
+      conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
     }
   }
 
@@ -6606,6 +6574,7 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
+    synth_lb_test();
     conv3x3_app_unrolled_test();
     denoise2d_test();
     reduce_1d_test();
@@ -6619,7 +6588,6 @@ int main(int argc, char** argv) {
     //assert(false);
 
     heat_3d_test();
-    synth_lb_test();
     
     blur_and_downsample_test();
     downsample_and_blur_test();
