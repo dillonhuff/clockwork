@@ -61,25 +61,22 @@ struct M_cache {
 
 
 
-inline void M_write_6_write(hw_uint<32> & M_write_6, M_write_6_cache& M_write_6_delay) {
-	M_write_6_delay.push(M_write_6);
+inline void M_write_6_write(hw_uint<32> & M_write_6, M_cache& M) {
+	M.M_write_6.push(M_write_6);
 }
 
-inline hw_uint<32>  M_read0_1_select(M_write_6_cache& M_write_6_delay
-, int root, int c) {
-	hw_uint<32>  value_M_write_6 = M_write_6_delay.peek((root == 0 && c >= 0 && 7 - c >= 0) ? (2) : (-8 + c == 0 && root == 0) ? (1) : 0);
+inline hw_uint<32>  M_read0_1_select(M_cache& M, int root, int c) {
+	hw_uint<32>  value_M_write_6 = M.M_write_6.peek((root == 0 && c >= 0 && 7 - c >= 0) ? (2) : (-8 + c == 0 && root == 0) ? (1) : 0);
 	return value_M_write_6;
 }
 
-inline hw_uint<32>  M_read0_2_select(M_write_6_cache& M_write_6_delay
-, int root, int c) {
-	hw_uint<32>  value_M_write_6 = M_write_6_delay.peek((root == 0 && c >= 0 && 7 - c >= 0) ? (1) : 0);
+inline hw_uint<32>  M_read0_2_select(M_cache& M, int root, int c) {
+	hw_uint<32>  value_M_write_6 = M.M_write_6.peek((root == 0 && c >= 0 && 7 - c >= 0) ? (1) : 0);
 	return value_M_write_6;
 }
 
-inline hw_uint<32>  M_read0_3_select(M_write_6_cache& M_write_6_delay
-, int root, int c) {
-	hw_uint<32>  value_M_write_6 = M_write_6_delay.peek_0();
+inline hw_uint<32>  M_read0_3_select(M_cache& M, int root, int c) {
+	hw_uint<32>  value_M_write_6 = M.M_write_6.peek_0();
 	return value_M_write_6;
 }
 
@@ -88,22 +85,22 @@ inline hw_uint<32>  M_read0_3_select(M_write_6_cache& M_write_6_delay
 //	M_read0_1
 //	M_read0_2
 //	M_read0_3
-inline hw_uint<96> M_read0_read_bundle_read(M_write_6_cache& M_write_6_delay, int root, int c) {
+inline hw_uint<96> M_read0_read_bundle_read(M_cache& M, int root, int c) {
 	hw_uint<96> result;
-	hw_uint<32>  M_read0_1_res = M_read0_1_select(M_write_6_delay, root, c);
+	hw_uint<32>  M_read0_1_res = M_read0_1_select(M, root, c);
 	set_at<0, 96>(result, M_read0_1_res);
-	hw_uint<32>  M_read0_2_res = M_read0_2_select(M_write_6_delay, root, c);
+	hw_uint<32>  M_read0_2_res = M_read0_2_select(M, root, c);
 	set_at<32, 96>(result, M_read0_2_res);
-	hw_uint<32>  M_read0_3_res = M_read0_3_select(M_write_6_delay, root, c);
+	hw_uint<32>  M_read0_3_res = M_read0_3_select(M, root, c);
 	set_at<64, 96>(result, M_read0_3_res);
 	return result;
 }
 
 // write_write
 //	M_write_6
-inline void M_write_write_bundle_write(hw_uint<32>& write_write, M_write_6_cache& M_write_6_delay) {
+inline void M_write_write_bundle_write(hw_uint<32>& write_write, M_cache& M) {
 	hw_uint<32>  M_write_6_res = write_write.extract<0, 31>();
-	M_write_6_write(M_write_6_res, M_write_6_delay);
+	M_write_6_write(M_write_6_res, M);
 }
 
 
@@ -138,31 +135,30 @@ struct T_cache {
 
 
 
-inline void T_read0_0_write(hw_uint<96>& T_read0_0, T_read0_0_cache& T_read0_0_delay) {
-	T_read0_0_delay.push(T_read0_0);
+inline void T_read0_0_write(hw_uint<96>& T_read0_0, T_cache& T) {
+	T.T_read0_0.push(T_read0_0);
 }
 
-inline hw_uint<96> T_compute_out_5_select(T_read0_0_cache& T_read0_0_delay
-, int root, int c) {
-	hw_uint<96> value_T_read0_0 = T_read0_0_delay.peek_0();
+inline hw_uint<96> T_compute_out_5_select(T_cache& T, int root, int c) {
+	hw_uint<96> value_T_read0_0 = T.T_read0_0.peek_0();
 	return value_T_read0_0;
 }
 
 // # of bundles = 2
 // compute_out_read
 //	T_compute_out_5
-inline hw_uint<96> T_compute_out_read_bundle_read(T_read0_0_cache& T_read0_0_delay, int root, int c) {
+inline hw_uint<96> T_compute_out_read_bundle_read(T_cache& T, int root, int c) {
 	hw_uint<96> result;
-	hw_uint<96> T_compute_out_5_res = T_compute_out_5_select(T_read0_0_delay, root, c);
+	hw_uint<96> T_compute_out_5_res = T_compute_out_5_select(T, root, c);
 	set_at<0, 96>(result, T_compute_out_5_res);
 	return result;
 }
 
 // read0_write
 //	T_read0_0
-inline void T_read0_write_bundle_write(hw_uint<96>& read0_write, T_read0_0_cache& T_read0_0_delay) {
+inline void T_read0_write_bundle_write(hw_uint<96>& read0_write, T_cache& T) {
 	hw_uint<96> T_read0_0_res = read0_write.extract<0, 95>();
-	T_read0_0_write(T_read0_0_res, T_read0_0_delay);
+	T_read0_0_write(T_read0_0_res, T);
 }
 
 
@@ -172,14 +168,14 @@ inline void T_read0_write_bundle_write(hw_uint<96>& read0_write, T_read0_0_cache
 // Operation logic
 inline void read0(M_cache& M, T_cache& T, int root, int c) {
 	// Consume: M
-	auto M_min_lp_c_c__9_rp__value = M_read0_read_bundle_read(M.M_write_6/* source_delay */, root, c);
+	auto M_min_lp_c_c__9_rp__value = M_read0_read_bundle_read(M/* source_delay */, root, c);
 	// Produce: T
-	T_read0_write_bundle_write(M_min_lp_c_c__9_rp__value, T.T_read0_0);
+	T_read0_write_bundle_write(M_min_lp_c_c__9_rp__value, T);
 }
 
 inline void compute_out(T_cache& T, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */out, int root, int c) {
 	// Consume: T
-	auto T_c_value = T_compute_out_read_bundle_read(T.T_read0_0/* source_delay */, root, c);
+	auto T_c_value = T_compute_out_read_bundle_read(T/* source_delay */, root, c);
 	auto compute_result = accumulate_3(T_c_value);
 	// Produce: out
 	out.write(compute_result);
@@ -189,7 +185,7 @@ inline void write(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, M_c
 	// Consume: in
 	auto in_p_value = in.read();
 	// Produce: M
-	M_write_write_bundle_write(in_p_value, M.M_write_6);
+	M_write_write_bundle_write(in_p_value, M);
 }
 
 // Driver function

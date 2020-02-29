@@ -6574,7 +6574,8 @@ int main(int argc, char** argv) {
     //jacobi_2d_4_test();
     //assert(false);
 
-    synth_lb_test();
+    //synth_lb_test();
+
     conv3x3_app_unrolled_test();
     denoise2d_test();
     reduce_1d_test();
@@ -6610,7 +6611,7 @@ int main(int argc, char** argv) {
     warp_and_upsample_test();
 
     conv_1d_rolled_test();
-    synth_upsample_test();
+    //synth_upsample_test();
     unsharp_test();
     conv_2d_rolled_test();
     reduce_2d_test();
@@ -6620,8 +6621,8 @@ int main(int argc, char** argv) {
     pyramid_2d_test();
     pyramid_test();
     conv_1d_bc_test();
-    synth_wire_test();
-    synth_sr_boundary_condition_test();
+    //synth_wire_test();
+    //synth_sr_boundary_condition_test();
   } else {
     assert(false);
   }
