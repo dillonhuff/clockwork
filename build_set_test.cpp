@@ -973,11 +973,13 @@ bool is_optimizable_constant_dd(const string& inpt, const string& outpt, UBuffer
 void generate_select_decl(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
   out << "inline " + buf.port_type_string() + " " + outpt + "_select(";
   size_t nargs = 0;
-  for (auto pt : buf.get_in_ports()) {
-    out << pt + "_cache& " << pt << "_delay" << endl;
-    out << ", ";
-    nargs++;
-  }
+  out << buf.name << "_cache& " << buf.name << ", ";
+  nargs++;
+  //for (auto pt : buf.get_in_ports()) {
+    //out << pt + "_cache& " << pt << "_delay" << endl;
+    //out << ", ";
+    //nargs++;
+  //}
   cout << "Getting space..." << endl;
   isl_space* s = get_space(buf.domain.at(outpt));
   assert(isl_space_is_set(s));
@@ -1036,24 +1038,24 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
   bool opt_const = is_optimizable_constant_dd(inpt, outpt, buf);
   if (opt_const) {
     if (!options.all_rams && is_number(dx)) {
-      value_str = inpt + "_delay.peek_" + dx + "()";
+      value_str = inpt + ".peek_" + dx + "()";
     } else {
-      value_str = inpt + "_delay.peek" + "(" + delay_expr + ")";
+      value_str = inpt + ".peek" + "(" + delay_expr + ")";
     }
   } else if (pieces.size() == 0 && !options.all_rams) {
-    value_str = inpt + "_delay.peek_0()";
+    value_str = inpt + ".peek_0()";
   } else if (pieces.size() == 1 &&
       isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
     string dx = codegen_c(pieces[0].second);
     if (!options.all_rams && is_number(dx)) {
-      value_str = inpt + "_delay.peek_" + dx + "()";
+      value_str = inpt + ".peek_" + dx + "()";
     } else {
-      value_str = inpt + "_delay.peek" + "(" + dx + ")";
+      value_str = inpt + ".peek" + "(" + dx + ")";
     }
   } else {
-    value_str = inpt + "_delay.peek" + "(" + delay_expr + ")";
+    value_str = inpt + ".peek" + "(" + delay_expr + ")";
   }
-  return value_str;
+  return buf.name + "." + value_str;
 }
 
 void generate_selects(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
@@ -1148,10 +1150,12 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
       out << "inline " << buf.bundle_type_string(b.first) << " " <<  buf.name << "_" << b.first << "_bundle_read(";
       vector<string> dim_decls;
       vector<string> dim_args;
-      for (auto pt : buf.get_in_ports()) {
-        dim_decls.push_back(pt + "_cache& " + pt + "_delay");
-        dim_args.push_back(pt + "_delay");
-      }
+      dim_decls.push_back(buf.name + "_cache& " + buf.name);
+      dim_args.push_back(buf.name);
+      //for (auto pt : buf.get_in_ports()) {
+        //dim_decls.push_back(pt + "_cache& " + pt + "_delay");
+        //dim_args.push_back(pt + "_delay");
+      //}
       auto outpt = *begin(b.second);
       isl_space* s = get_space(buf.domain.at(outpt));
       assert(isl_space_is_set(s));
@@ -1189,12 +1193,14 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
       }
       vector<string> dim_args;
       dim_args.push_back(b.first);
-      for (auto pt : buf.get_in_ports()) {
-        if (elem(pt, b.second)) {
-          dim_decls.push_back(pt + "_cache& " + pt + "_delay");
-          dim_args.push_back(pt + "_delay");
-        }
-      }
+      dim_decls.push_back(b.first + "_cache& " + b.first);
+      dim_args.push_back(b.first);
+      //for (auto pt : buf.get_in_ports()) {
+        //if (elem(pt, b.second)) {
+          //dim_decls.push_back(pt + "_cache& " + pt + "_delay");
+          //dim_args.push_back(pt + "_delay");
+        //}
+      //}
       string param_string = sep_list(dim_decls, "", "", ", ");
       string arg_string = sep_list(dim_args, "", "", ", ");
       out << param_string;
@@ -1295,15 +1301,16 @@ void generate_hls_code(UBuffer& buf) {
   //cout << code_string << endl;
 
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
-  string delay_list = "";
-  size_t nd = 0;
-  for (auto inpt : buf.get_in_ports()) {
-    delay_list += inpt + "_delay";
-    if (nd < buf.get_in_ports().size() - 1) {
-      delay_list += ", ";
-    }
-    nd++;
-  }
+  string delay_list = buf.name;
+  //string delay_list = "";
+  //size_t nd = 0;
+  //for (auto inpt : buf.get_in_ports()) {
+    //delay_list += inpt + "_delay";
+    //if (nd < buf.get_in_ports().size() - 1) {
+      //delay_list += ", ";
+    //}
+    //nd++;
+  //}
 
   for (auto b : buf.port_bundles) {
     if (buf.is_out_pt(*(begin(b.second)))) {
@@ -2653,10 +2660,10 @@ void generate_app_code(CodegenOptions& options,
       } else {
         string source_delay = pick(buffers.at(in_buffer).get_in_ports());
         auto source_pts = buffers.at(in_buffer).get_in_ports();
-        vector<string> source_delays;
-        for (auto s : source_pts) {
-          source_delays.push_back(in_buffer + "." + s);
-        }
+        vector<string> source_delays{in_buffer};
+        //for (auto s : source_pts) {
+          //source_delays.push_back(in_buffer + "." + s);
+        //}
         cout << "op = " << op->name << endl;
         conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
       }
@@ -2686,9 +2693,10 @@ void generate_app_code(CodegenOptions& options,
       for (auto ib : buf.get_in_bundles()) {
         if (is_prefix(op->name, ib)) {
           vector<string> args{res};
-          for (auto port_cache : buf.port_bundles.at(ib)) {
-            args.push_back(buf.name + "." + port_cache);
-          }
+          args.push_back(buf.name);
+          //for (auto port_cache : buf.port_bundles.at(ib)) {
+            //args.push_back(buf.name + "." + port_cache);
+          //}
           conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" <<
             sep_list(args, "", "", ", ") << ");" << endl;
         }
