@@ -2518,28 +2518,30 @@ vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, pro
   for (auto p : op->consume_locs) {
     auto buf_name = p.first;
     if (!elem(buf_name, done)) {
-      if (prg.is_boundary(buf_name)) {
-        buf_srcs.push_back(buf_name);
-      } else {
-        const UBuffer& b = buffers.at(buf_name);
-        for (auto ib : b.get_in_ports()) {
-          buf_srcs.push_back(buf_name + "." + ib);
-        }
-      }
+      buf_srcs.push_back(buf_name);
+      //if (prg.is_boundary(buf_name)) {
+        //buf_srcs.push_back(buf_name);
+      //} else {
+        //const UBuffer& b = buffers.at(buf_name);
+        //for (auto ib : b.get_in_ports()) {
+          //buf_srcs.push_back(buf_name + "." + ib);
+        //}
+      //}
       done.insert(buf_name);
     }
   }
   for (auto p : op->produce_locs) {
     auto buf_name = p.first;
     if (!elem(buf_name, done)) {
-      if (prg.is_boundary(buf_name)) {
-        buf_srcs.push_back(buf_name);
-      } else {
-        const UBuffer& b = buffers.at(buf_name);
-        for (auto ib : b.get_in_ports()) {
-          buf_srcs.push_back(buf_name + "." + ib);
-        }
-      }
+      buf_srcs.push_back(buf_name);
+      //if (prg.is_boundary(buf_name)) {
+        //buf_srcs.push_back(buf_name);
+      //} else {
+        //const UBuffer& b = buffers.at(buf_name);
+        //for (auto ib : b.get_in_ports()) {
+          //buf_srcs.push_back(buf_name + "." + ib);
+        //}
+      //}
       done.insert(buf_name);
     }
   }
@@ -2560,9 +2562,10 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
 
       } else {
         const UBuffer& b = buffers.at(buf_name);
-        for (auto ib : b.get_in_ports()) {
-          buf_srcs.push_back(ib + "_cache& " + ib);
-        }
+        buf_srcs.push_back(b.name + "_cache& " + b.name);
+        //for (auto ib : b.get_in_ports()) {
+          //buf_srcs.push_back(ib + "_cache& " + b.name + "." + ib);
+        //}
       }
       done.insert(buf_name);
     }
@@ -2580,9 +2583,10 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
         //buf_srcs.push_back("HWStream<" + map_find(buf_name, buffers).port_type_string() + " >& " + buf_name);
       } else {
         const UBuffer& b = buffers.at(buf_name);
-        for (auto ib : b.get_in_ports()) {
-          buf_srcs.push_back(ib + "_cache& " + ib);
-        }
+        buf_srcs.push_back(b.name + "_cache& " + b.name);
+        //for (auto ib : b.get_in_ports()) {
+          //buf_srcs.push_back(ib + "_cache& " + b.name + "." + ib);
+        //}
       }
       done.insert(buf_name);
     }
@@ -2648,7 +2652,11 @@ void generate_app_code(CodegenOptions& options,
         conv_out << in_buffer << ".read();" << endl;
       } else {
         string source_delay = pick(buffers.at(in_buffer).get_in_ports());
-        auto source_delays = buffers.at(in_buffer).get_in_ports();
+        auto source_pts = buffers.at(in_buffer).get_in_ports();
+        vector<string> source_delays;
+        for (auto s : source_pts) {
+          source_delays.push_back(in_buffer + "." + s);
+        }
         cout << "op = " << op->name << endl;
         conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
       }
@@ -2679,11 +2687,10 @@ void generate_app_code(CodegenOptions& options,
         if (is_prefix(op->name, ib)) {
           vector<string> args{res};
           for (auto port_cache : buf.port_bundles.at(ib)) {
-            args.push_back(port_cache);
+            args.push_back(buf.name + "." + port_cache);
           }
           conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" <<
             sep_list(args, "", "", ", ") << ");" << endl;
-          //res << ", " << port_cache << " /* output src_delay */);" << endl;
         }
       }
     }
@@ -2697,9 +2704,6 @@ void generate_app_code(CodegenOptions& options,
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
       conv_out << tab(1) << b.first << "_cache " << b.first << ";" << endl;
-      //for (auto in : b.second.get_in_ports()) {
-        //conv_out << "\t" << in << "_cache " << in << ";" << endl;
-      //}
     }
   }
 

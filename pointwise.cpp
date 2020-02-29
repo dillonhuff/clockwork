@@ -62,17 +62,17 @@ inline hw_uint<16> I_out_plus_one0_read_bundle_read(I_I_id0_0_cache& I_I_id0_0_d
 
 
 // Operation logic
-inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in, I_I_id0_0_cache& I_I_id0_0, int root, int id1, int id0) {
+inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in, I_cache& I, int root, int id1, int id0) {
 	// Consume: in
 	auto in_id0_c__id1_value = in.read();
 	auto compute_result = id(in_id0_c__id1_value);
 	// Produce: I
-	I_I_id0_write_bundle_write(compute_result, I_I_id0_0);
+	I_I_id0_write_bundle_write(compute_result, I.I_I_id0_0);
 }
 
-inline void out_plus_one0(I_I_id0_0_cache& I_I_id0_0, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */out, int root, int d1, int d0) {
+inline void out_plus_one0(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */out, int root, int d1, int d0) {
 	// Consume: I
-	auto I_d0_c__d1_value = I_out_plus_one0_read_bundle_read(I_I_id0_0/* source_delay */, root, d1, d0);
+	auto I_d0_c__d1_value = I_out_plus_one0_read_bundle_read(I.I_I_id0_0/* source_delay */, root, d1, d0);
 	auto compute_result = plus_one(I_d0_c__d1_value);
 	// Produce: out
 	out.write(compute_result);
@@ -83,8 +83,8 @@ void pointwise(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in,
   I_cache I;
 	for (int c0 = 0; c0 <= 31; c0 += 1)
 	  for (int c1 = 0; c1 <= 7; c1 += 1) {
-	    I_id0(in, I.I_I_id0_0, 0, c0, c1);
-	    out_plus_one0(I.I_I_id0_0, out, 0, c0, c1);
+	    I_id0(in, I, 0, c0, c1);
+	    out_plus_one0(I, out, 0, c0, c1);
 	  }
 	
 }

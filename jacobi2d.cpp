@@ -169,20 +169,20 @@ inline hw_uint<160> I_out_jacobi2d_compute0_read_bundle_read(I_I_id0_6_cache& I_
 
 
 // Operation logic
-inline void out_jacobi2d_compute0(I_I_id0_6_cache& I_I_id0_6, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */out, int root, int d1, int d0) {
+inline void out_jacobi2d_compute0(I_cache& I, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */out, int root, int d1, int d0) {
 	// Consume: I
-	auto I_d0__p__0_c__d1__p__1_value = I_out_jacobi2d_compute0_read_bundle_read(I_I_id0_6/* source_delay */, root, d1, d0);
+	auto I_d0__p__0_c__d1__p__1_value = I_out_jacobi2d_compute0_read_bundle_read(I.I_I_id0_6/* source_delay */, root, d1, d0);
 	auto compute_result = jacobi2d_compute(I_d0__p__0_c__d1__p__1_value);
 	// Produce: out
 	out.write(compute_result);
 }
 
-inline void I_id0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, I_I_id0_6_cache& I_I_id0_6, int root, int id1, int id0) {
+inline void I_id0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, I_cache& I, int root, int id1, int id0) {
 	// Consume: in
 	auto in_id0_c__id1_value = in.read();
 	auto compute_result = id(in_id0_c__id1_value);
 	// Produce: I
-	I_I_id0_write_bundle_write(compute_result, I_I_id0_6);
+	I_I_id0_write_bundle_write(compute_result, I.I_I_id0_6);
 }
 
 // Driver function
@@ -190,9 +190,9 @@ void jacobi2d(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in, 
   I_cache I;
 	for (int c0 = 0; c0 <= 31; c0 += 1)
 	  for (int c1 = 0; c1 <= 31; c1 += 1) {
-	    I_id0(in, I.I_I_id0_6, 0, c0, c1);
+	    I_id0(in, I, 0, c0, c1);
 	    if (c0 >= 2 && c1 >= 1 && c1 <= 30)
-	      out_jacobi2d_compute0(I.I_I_id0_6, out, 0, c0 - 1, c1);
+	      out_jacobi2d_compute0(I, out, 0, c0 - 1, c1);
 	  }
 	
 }

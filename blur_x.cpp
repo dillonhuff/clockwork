@@ -131,20 +131,20 @@ inline hw_uint<48> I_out_blur_30_read_bundle_read(I_I_id0_4_cache& I_I_id0_4_del
 
 
 // Operation logic
-inline void out_blur_30(I_I_id0_4_cache& I_I_id0_4, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */out, int root, int d1, int d0) {
+inline void out_blur_30(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */out, int root, int d1, int d0) {
 	// Consume: I
-	auto I_d0__p__0_c__d1__p__0_value = I_out_blur_30_read_bundle_read(I_I_id0_4/* source_delay */, root, d1, d0);
+	auto I_d0__p__0_c__d1__p__0_value = I_out_blur_30_read_bundle_read(I.I_I_id0_4/* source_delay */, root, d1, d0);
 	auto compute_result = blur_3(I_d0__p__0_c__d1__p__0_value);
 	// Produce: out
 	out.write(compute_result);
 }
 
-inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in, I_I_id0_4_cache& I_I_id0_4, int root, int id1, int id0) {
+inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in, I_cache& I, int root, int id1, int id0) {
 	// Consume: in
 	auto in_id0_c__id1_value = in.read();
 	auto compute_result = id(in_id0_c__id1_value);
 	// Produce: I
-	I_I_id0_write_bundle_write(compute_result, I_I_id0_4);
+	I_I_id0_write_bundle_write(compute_result, I.I_I_id0_4);
 }
 
 // Driver function
@@ -152,9 +152,9 @@ void blur_x(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in, HW
   I_cache I;
 	for (int c0 = 0; c0 <= 7; c0 += 1)
 	  for (int c1 = 0; c1 <= 31; c1 += 1) {
-	    I_id0(in, I.I_I_id0_4, 0, c0, c1);
+	    I_id0(in, I, 0, c0, c1);
 	    if (c0 >= 2)
-	      out_blur_30(I.I_I_id0_4, out, 0, c0 - 2, c1);
+	      out_blur_30(I, out, 0, c0 - 2, c1);
 	  }
 	
 }
