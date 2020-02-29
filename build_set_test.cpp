@@ -2632,8 +2632,8 @@ void generate_app_code(CodegenOptions& options,
       if (prg.is_boundary(in_buffer)) {
         conv_out << in_buffer << ".read();" << endl;
       } else {
-        string source_delay = pick(buffers.at(in_buffer).get_in_ports());
-        auto source_pts = buffers.at(in_buffer).get_in_ports();
+        //string source_delay = pick(buffers.at(in_buffer).get_in_ports());
+        //auto source_pts = buffers.at(in_buffer).get_in_ports();
         vector<string> source_delays{in_buffer};
         cout << "op = " << op->name << endl;
         conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
@@ -2661,14 +2661,16 @@ void generate_app_code(CodegenOptions& options,
       assert(contains_key(out_buffer, buffers));
 
       auto& buf = buffers.at(out_buffer);
-      for (auto ib : buf.get_in_bundles()) {
-        if (is_prefix(op->name, ib)) {
-          vector<string> args{res};
-          args.push_back(buf.name);
-          conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" <<
-            sep_list(args, "", "", ", ") << ");" << endl;
-        }
-      }
+      conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" <<
+        sep_list({res, buf.name}, "", "", ", ") << ");" << endl;
+      //for (auto ib : buf.get_in_bundles()) {
+        //if (is_prefix(op->name, ib)) {
+          //vector<string> args{res};
+          //args.push_back(buf.name);
+          //conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" <<
+            //sep_list(args, "", "", ", ") << ");" << endl;
+        //}
+      //}
     }
 
     conv_out << "}" << endl << endl;
