@@ -95,8 +95,8 @@ struct I_I_id0_6_cache {
 
 };
 
-struct I{
-  I_I_id0_6_cache I_I_id0_6_delay;
+struct I_cache {
+  I_I_id0_6_cache I_I_id0_6;
 };
 
 
@@ -187,12 +187,12 @@ inline void I_id0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, I_I
 
 // Driver function
 void jacobi2d(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in, HWStream<hw_uint<32> >& /* get_args num ports = 1 */out) {
-	I_I_id0_6_cache I_I_id0_6;
+  I_cache I;
 	for (int c0 = 0; c0 <= 31; c0 += 1)
 	  for (int c1 = 0; c1 <= 31; c1 += 1) {
-	    I_id0(in, I_I_id0_6, 0, c0, c1);
+	    I_id0(in, I.I_I_id0_6, 0, c0, c1);
 	    if (c0 >= 2 && c1 >= 1 && c1 <= 30)
-	      out_jacobi2d_compute0(I_I_id0_6, out, 0, c0 - 1, c1);
+	      out_jacobi2d_compute0(I.I_I_id0_6, out, 0, c0 - 1, c1);
 	  }
 	
 }

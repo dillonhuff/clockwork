@@ -133,8 +133,8 @@ struct write0_cache {
 
 };
 
-struct linebuffer_3x3{
-  write0_cache write0_delay;
+struct linebuffer_3x3_cache {
+  write0_cache write0;
 };
 
 

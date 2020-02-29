@@ -375,8 +375,8 @@ struct I_I_id0_0_cache {
 
 };
 
-struct I{
-  I_I_id0_0_cache I_I_id0_0_delay;
+struct I_cache {
+  I_I_id0_0_cache I_I_id0_0;
 };
 
 
@@ -665,13 +665,13 @@ inline void out_blur_270(I_I_id0_0_cache& I_I_id0_0, HWStream<hw_uint<16> >& /* 
 
 // Driver function
 void stencil_3d(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in, HWStream<hw_uint<16> >& /* get_args num ports = 1 */out) {
-	I_I_id0_0_cache I_I_id0_0;
+  I_cache I;
 	for (int c0 = 0; c0 <= 31; c0 += 1)
 	  for (int c1 = 0; c1 <= 31; c1 += 1)
 	    for (int c2 = 0; c2 <= 31; c2 += 1) {
-	      I_id0(in, I_I_id0_0, 0, c0, c1, c2);
+	      I_id0(in, I.I_I_id0_0, 0, c0, c1, c2);
 	      if (c0 >= 2 && c1 >= 2 && c2 >= 2)
-	        out_blur_270(I_I_id0_0, out, 0, c0 - 2, c1 - 2, c2 - 2);
+	        out_blur_270(I.I_I_id0_0, out, 0, c0 - 2, c1 - 2, c2 - 2);
 	    }
 	
 }

@@ -24,8 +24,8 @@ struct I_I_id0_0_cache {
 
 };
 
-struct I{
-  I_I_id0_0_cache I_I_id0_0_delay;
+struct I_cache {
+  I_I_id0_0_cache I_I_id0_0;
 };
 
 
@@ -80,11 +80,11 @@ inline void out_plus_one0(I_I_id0_0_cache& I_I_id0_0, HWStream<hw_uint<16> >& /*
 
 // Driver function
 void pointwise(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in, HWStream<hw_uint<16> >& /* get_args num ports = 1 */out) {
-	I_I_id0_0_cache I_I_id0_0;
+  I_cache I;
 	for (int c0 = 0; c0 <= 31; c0 += 1)
 	  for (int c1 = 0; c1 <= 7; c1 += 1) {
-	    I_id0(in, I_I_id0_0, 0, c0, c1);
-	    out_plus_one0(I_I_id0_0, out, 0, c0, c1);
+	    I_id0(in, I.I_I_id0_0, 0, c0, c1);
+	    out_plus_one0(I.I_I_id0_0, out, 0, c0, c1);
 	  }
 	
 }

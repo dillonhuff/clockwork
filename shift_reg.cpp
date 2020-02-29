@@ -53,8 +53,8 @@ struct write_cache {
 
 };
 
-struct shift_reg{
-  write_cache write_delay;
+struct shift_reg_cache {
+  write_cache write;
 };
 
 

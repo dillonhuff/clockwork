@@ -55,8 +55,8 @@ struct M_get_input_0_cache {
 
 };
 
-struct M{
-  M_get_input_0_cache M_get_input_0_delay;
+struct M_cache {
+  M_get_input_0_cache M_get_input_0;
 };
 
 
@@ -128,11 +128,11 @@ inline void compute_output(M_get_input_0_cache& M_get_input_0, HWStream<hw_uint<
 
 // Driver function
 void conv_1d(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in, HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */out) {
-	M_get_input_0_cache M_get_input_0;
+  M_cache M;
 	for (int c0 = 0; c0 <= 9; c0 += 1) {
-	  get_input(in, M_get_input_0, 0, c0);
+	  get_input(in, M.M_get_input_0, 0, c0);
 	  if (c0 >= 2)
-	    compute_output(M_get_input_0, out, 0, c0 - 2);
+	    compute_output(M.M_get_input_0, out, 0, c0 - 2);
 	}
 	
 }

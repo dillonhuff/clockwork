@@ -924,9 +924,9 @@ void generate_code_prefix(CodegenOptions& options,
     caches.push_back(inpt);
   }
 
-  out << "struct " << buf.name << "{" << endl;
+  out << "struct " << buf.name << "_cache {" << endl;
   for (auto inpt : buf.get_in_ports()) {
-    out << tab(1) << inpt << "_cache " << inpt << "_delay;" << endl;
+    out << tab(1) << inpt << "_cache " << inpt << ";" << endl;
   }
   out << "};" << endl << endl;
 
@@ -2503,7 +2503,6 @@ vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg) {
 
 void generate_app_code_header(const map<string, UBuffer>& buffers, prog& prg) {
   string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
-  //string arg_buffers = sep_list(buffer_args(buffers, prg), "(", ")", ", ");
   ofstream of(prg.name + ".h");
   of << "#pragma once\n\n" << endl;
   of << "#include \"hw_classes.h\"" << endl << endl;
@@ -2524,7 +2523,7 @@ vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, pro
       } else {
         const UBuffer& b = buffers.at(buf_name);
         for (auto ib : b.get_in_ports()) {
-          buf_srcs.push_back(ib);
+          buf_srcs.push_back(buf_name + "." + ib);
         }
       }
       done.insert(buf_name);
@@ -2538,7 +2537,7 @@ vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, pro
       } else {
         const UBuffer& b = buffers.at(buf_name);
         for (auto ib : b.get_in_ports()) {
-          buf_srcs.push_back(ib);
+          buf_srcs.push_back(buf_name + "." + ib);
         }
       }
       done.insert(buf_name);
@@ -2694,13 +2693,13 @@ void generate_app_code(CodegenOptions& options,
   
   conv_out << "// Driver function" << endl;
   string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
-  //string arg_buffers = sep_list(buffer_args(buffers, prg), "(", ")", ", ");
   conv_out << "void " << prg.name << arg_buffers << " {" << endl;
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
-      for (auto in : b.second.get_in_ports()) {
-        conv_out << "\t" << in << "_cache " << in << ";" << endl;
-      }
+      conv_out << tab(1) << b.first << "_cache " << b.first << ";" << endl;
+      //for (auto in : b.second.get_in_ports()) {
+        //conv_out << "\t" << in << "_cache " << in << ";" << endl;
+      //}
     }
   }
 
