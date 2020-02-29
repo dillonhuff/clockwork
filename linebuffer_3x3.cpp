@@ -285,17 +285,17 @@ void linebuffer_3x3(OutputStream<hw_uint<32> >& read_0_0, OutputStream<hw_uint<3
 
 	for (int c0 = 0; c0 <= 63; c0 += 1)
 	  for (int c1 = 0; c1 <= 63; c1 += 1) {
-	    linebuffer_3x3_write0_bundle_write(write0, linebuffer_3x3);
+	    linebuffer_3x3_write0_bundle_write(write0, write0_delay);
 	    if (c0 >= 2 && c1 >= 2) {
-	      read_1_0.write(linebuffer_3x3_read_1_0_bundle_read(linebuffer_3x3, c0 - 2, c1 - 2));
-	      read_0_1.write(linebuffer_3x3_read_0_1_bundle_read(linebuffer_3x3, c0 - 2, c1 - 2));
-	      read_2_1.write(linebuffer_3x3_read_2_1_bundle_read(linebuffer_3x3, c0 - 2, c1 - 2));
-	      read_2_2.write(linebuffer_3x3_read_2_2_bundle_read(linebuffer_3x3, c0 - 2, c1 - 2));
-	      read_2_0.write(linebuffer_3x3_read_2_0_bundle_read(linebuffer_3x3, c0 - 2, c1 - 2));
-	      read_1_1.write(linebuffer_3x3_read_1_1_bundle_read(linebuffer_3x3, c0 - 2, c1 - 2));
-	      read_0_2.write(linebuffer_3x3_read_0_2_bundle_read(linebuffer_3x3, c0 - 2, c1 - 2));
-	      read_0_0.write(linebuffer_3x3_read_0_0_bundle_read(linebuffer_3x3, c0 - 2, c1 - 2));
-	      read_1_2.write(linebuffer_3x3_read_1_2_bundle_read(linebuffer_3x3, c0 - 2, c1 - 2));
+	      read_1_0.write(linebuffer_3x3_read_1_0_bundle_read(write0_delay, c0 - 2, c1 - 2));
+	      read_0_1.write(linebuffer_3x3_read_0_1_bundle_read(write0_delay, c0 - 2, c1 - 2));
+	      read_2_1.write(linebuffer_3x3_read_2_1_bundle_read(write0_delay, c0 - 2, c1 - 2));
+	      read_2_2.write(linebuffer_3x3_read_2_2_bundle_read(write0_delay, c0 - 2, c1 - 2));
+	      read_2_0.write(linebuffer_3x3_read_2_0_bundle_read(write0_delay, c0 - 2, c1 - 2));
+	      read_1_1.write(linebuffer_3x3_read_1_1_bundle_read(write0_delay, c0 - 2, c1 - 2));
+	      read_0_2.write(linebuffer_3x3_read_0_2_bundle_read(write0_delay, c0 - 2, c1 - 2));
+	      read_0_0.write(linebuffer_3x3_read_0_0_bundle_read(write0_delay, c0 - 2, c1 - 2));
+	      read_1_2.write(linebuffer_3x3_read_1_2_bundle_read(write0_delay, c0 - 2, c1 - 2));
 	    }
 	  }
 	

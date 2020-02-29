@@ -2,7 +2,7 @@
 
 #include "hw_classes.h"
 
-struct I_I_id0_0_cache {
+struct I_I_id0_6_cache {
 	// Capacity: 65
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -96,66 +96,66 @@ struct I_I_id0_0_cache {
 };
 
 struct I_cache {
-  I_I_id0_0_cache I_I_id0_0;
+  I_I_id0_6_cache I_I_id0_6;
 };
 
 
 
-inline void I_I_id0_0_write(hw_uint<32> & I_I_id0_0, I_cache& I) {
-	I.I_I_id0_0.push(I_I_id0_0);
+inline void I_I_id0_6_write(hw_uint<32> & I_I_id0_6, I_cache& I) {
+	I.I_I_id0_6.push(I_I_id0_6);
+}
+
+inline hw_uint<32>  I_out_jacobi2d_compute0_1_select(I_cache& I, int root, int d1, int d0) {
+	hw_uint<32>  value_I_I_id0_6 = I.I_I_id0_6.peek_0();
+	return value_I_I_id0_6;
+}
+
+inline hw_uint<32>  I_out_jacobi2d_compute0_2_select(I_cache& I, int root, int d1, int d0) {
+	hw_uint<32>  value_I_I_id0_6 = I.I_I_id0_6.peek_31();
+	return value_I_I_id0_6;
 }
 
 inline hw_uint<32>  I_out_jacobi2d_compute0_3_select(I_cache& I, int root, int d1, int d0) {
-	hw_uint<32>  value_I_I_id0_0 = I.I_I_id0_0.peek_0();
-	return value_I_I_id0_0;
+	hw_uint<32>  value_I_I_id0_6 = I.I_I_id0_6.peek_32();
+	return value_I_I_id0_6;
 }
 
 inline hw_uint<32>  I_out_jacobi2d_compute0_4_select(I_cache& I, int root, int d1, int d0) {
-	hw_uint<32>  value_I_I_id0_0 = I.I_I_id0_0.peek_31();
-	return value_I_I_id0_0;
+	hw_uint<32>  value_I_I_id0_6 = I.I_I_id0_6.peek_64();
+	return value_I_I_id0_6;
 }
 
 inline hw_uint<32>  I_out_jacobi2d_compute0_5_select(I_cache& I, int root, int d1, int d0) {
-	hw_uint<32>  value_I_I_id0_0 = I.I_I_id0_0.peek_32();
-	return value_I_I_id0_0;
-}
-
-inline hw_uint<32>  I_out_jacobi2d_compute0_6_select(I_cache& I, int root, int d1, int d0) {
-	hw_uint<32>  value_I_I_id0_0 = I.I_I_id0_0.peek_64();
-	return value_I_I_id0_0;
-}
-
-inline hw_uint<32>  I_out_jacobi2d_compute0_7_select(I_cache& I, int root, int d1, int d0) {
-	hw_uint<32>  value_I_I_id0_0 = I.I_I_id0_0.peek_33();
-	return value_I_I_id0_0;
+	hw_uint<32>  value_I_I_id0_6 = I.I_I_id0_6.peek_33();
+	return value_I_I_id0_6;
 }
 
 // # of bundles = 2
 // I_id0_write
-//	I_I_id0_0
+//	I_I_id0_6
 inline void I_I_id0_write_bundle_write(hw_uint<32>& I_id0_write, I_cache& I) {
-	hw_uint<32>  I_I_id0_0_res = I_id0_write.extract<0, 31>();
-	I_I_id0_0_write(I_I_id0_0_res, I);
+	hw_uint<32>  I_I_id0_6_res = I_id0_write.extract<0, 31>();
+	I_I_id0_6_write(I_I_id0_6_res, I);
 }
 
 // out_jacobi2d_compute0_read
+//	I_out_jacobi2d_compute0_1
+//	I_out_jacobi2d_compute0_2
 //	I_out_jacobi2d_compute0_3
 //	I_out_jacobi2d_compute0_4
 //	I_out_jacobi2d_compute0_5
-//	I_out_jacobi2d_compute0_6
-//	I_out_jacobi2d_compute0_7
 inline hw_uint<160> I_out_jacobi2d_compute0_read_bundle_read(I_cache& I, int root, int d1, int d0) {
 	hw_uint<160> result;
+	hw_uint<32>  I_out_jacobi2d_compute0_1_res = I_out_jacobi2d_compute0_1_select(I, root, d1, d0);
+	set_at<0, 160>(result, I_out_jacobi2d_compute0_1_res);
+	hw_uint<32>  I_out_jacobi2d_compute0_2_res = I_out_jacobi2d_compute0_2_select(I, root, d1, d0);
+	set_at<32, 160>(result, I_out_jacobi2d_compute0_2_res);
 	hw_uint<32>  I_out_jacobi2d_compute0_3_res = I_out_jacobi2d_compute0_3_select(I, root, d1, d0);
-	set_at<0, 160>(result, I_out_jacobi2d_compute0_3_res);
+	set_at<64, 160>(result, I_out_jacobi2d_compute0_3_res);
 	hw_uint<32>  I_out_jacobi2d_compute0_4_res = I_out_jacobi2d_compute0_4_select(I, root, d1, d0);
-	set_at<32, 160>(result, I_out_jacobi2d_compute0_4_res);
+	set_at<96, 160>(result, I_out_jacobi2d_compute0_4_res);
 	hw_uint<32>  I_out_jacobi2d_compute0_5_res = I_out_jacobi2d_compute0_5_select(I, root, d1, d0);
-	set_at<64, 160>(result, I_out_jacobi2d_compute0_5_res);
-	hw_uint<32>  I_out_jacobi2d_compute0_6_res = I_out_jacobi2d_compute0_6_select(I, root, d1, d0);
-	set_at<96, 160>(result, I_out_jacobi2d_compute0_6_res);
-	hw_uint<32>  I_out_jacobi2d_compute0_7_res = I_out_jacobi2d_compute0_7_select(I, root, d1, d0);
-	set_at<128, 160>(result, I_out_jacobi2d_compute0_7_res);
+	set_at<128, 160>(result, I_out_jacobi2d_compute0_5_res);
 	return result;
 }
 
@@ -164,20 +164,20 @@ inline hw_uint<160> I_out_jacobi2d_compute0_read_bundle_read(I_cache& I, int roo
 
 
 // Operation logic
-inline void I_id0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, I_cache& I, int root, int id1, int id0) {
-	// Consume: in
-	auto in_id0_c__id1_value = in.read();
-	auto compute_result = id(in_id0_c__id1_value);
-	// Produce: I
-	I_I_id0_write_bundle_write(compute_result, I);
-}
-
 inline void out_jacobi2d_compute0(I_cache& I, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */out, int root, int d1, int d0) {
 	// Consume: I
 	auto I_d0__p__0_c__d1__p__1_value = I_out_jacobi2d_compute0_read_bundle_read(I/* source_delay */, root, d1, d0);
 	auto compute_result = jacobi2d_compute(I_d0__p__0_c__d1__p__1_value);
 	// Produce: out
 	out.write(compute_result);
+}
+
+inline void I_id0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, I_cache& I, int root, int id1, int id0) {
+	// Consume: in
+	auto in_id0_c__id1_value = in.read();
+	auto compute_result = id(in_id0_c__id1_value);
+	// Produce: I
+	I_I_id0_write_bundle_write(compute_result, I);
 }
 
 // Driver function

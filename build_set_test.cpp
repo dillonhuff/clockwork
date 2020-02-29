@@ -1152,10 +1152,6 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
       vector<string> dim_args;
       dim_decls.push_back(buf.name + "_cache& " + buf.name);
       dim_args.push_back(buf.name);
-      //for (auto pt : buf.get_in_ports()) {
-        //dim_decls.push_back(pt + "_cache& " + pt + "_delay");
-        //dim_args.push_back(pt + "_delay");
-      //}
       auto outpt = *begin(b.second);
       isl_space* s = get_space(buf.domain.at(outpt));
       assert(isl_space_is_set(s));
@@ -1194,12 +1190,6 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
       vector<string> dim_args;
       dim_decls.push_back(buf.name + "_cache& " + buf.name);
       dim_args.push_back(buf.name);
-      //for (auto pt : buf.get_in_ports()) {
-        //if (elem(pt, b.second)) {
-          //dim_decls.push_back(pt + "_cache& " + pt + "_delay");
-          //dim_args.push_back(pt + "_delay");
-        //}
-      //}
       string param_string = sep_list(dim_decls, "", "", ", ");
       string arg_string = sep_list(dim_args, "", "", ", ");
       out << param_string;
@@ -1293,23 +1283,13 @@ void generate_hls_code(UBuffer& buf) {
 
   // Generate driver function for this buffer.
   isl_union_map* res = buf.global_schedule();
-  //cout << "Map to schedule.." << endl;
 
   string code_string = codegen_c(res);
-  //cout << "Code string..." << endl;
-  //cout << code_string << endl;
 
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
-  string delay_list = buf.name;
-  //string delay_list = "";
-  //size_t nd = 0;
-  //for (auto inpt : buf.get_in_ports()) {
-    //delay_list += inpt + "_delay";
-    //if (nd < buf.get_in_ports().size() - 1) {
-      //delay_list += ", ";
-    //}
-    //nd++;
-  //}
+  string delay_list =
+    buf.port_bundles.at(pick(buf.get_in_bundles())).at(0) + "_delay";
+    //buf.name;
 
   for (auto b : buf.port_bundles) {
     if (buf.is_out_pt(*(begin(b.second)))) {
@@ -2632,8 +2612,6 @@ void generate_app_code(CodegenOptions& options,
       if (prg.is_boundary(in_buffer)) {
         conv_out << in_buffer << ".read();" << endl;
       } else {
-        //string source_delay = pick(buffers.at(in_buffer).get_in_ports());
-        //auto source_pts = buffers.at(in_buffer).get_in_ports();
         vector<string> source_delays{in_buffer};
         cout << "op = " << op->name << endl;
         conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
@@ -2663,14 +2641,6 @@ void generate_app_code(CodegenOptions& options,
       auto& buf = buffers.at(out_buffer);
       conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" <<
         sep_list({res, buf.name}, "", "", ", ") << ");" << endl;
-      //for (auto ib : buf.get_in_bundles()) {
-        //if (is_prefix(op->name, ib)) {
-          //vector<string> args{res};
-          //args.push_back(buf.name);
-          //conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" <<
-            //sep_list(args, "", "", ", ") << ");" << endl;
-        //}
-      //}
     }
 
     conv_out << "}" << endl << endl;
@@ -6581,14 +6551,11 @@ int main(int argc, char** argv) {
     conv3x3_app_unrolled_test();
     denoise2d_test();
     reduce_1d_test();
-    //assert(false);
     upsample2d_test();
-    //assert(false);
     downsample2d_test();
     updown_merge_test();
     conv3x3_app_test();
     sobel_test();
-    //assert(false);
 
     heat_3d_test();
     
