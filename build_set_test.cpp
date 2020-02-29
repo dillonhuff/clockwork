@@ -4158,6 +4158,16 @@ struct Box {
     s += " }";
     return rdset(ctx, s);
   }
+
+  Box pad(const int padding) const {
+    assert(padding > 0);
+
+    Box padded;
+    for (auto i : intervals) {
+      padded.intervals.push_back({i.min - padding, i.max + padding});
+    }
+    return padded;
+  }
 };
 
 std::ostream& operator<<(std::ostream& out, const Box& b) {
@@ -5235,6 +5245,14 @@ struct App {
         }
       }
       cout << "Done with " << next << endl;
+    }
+
+    // Expand input boxes
+    for (auto b : domain_boxes) {
+      if (producers(b.first).size() == 0) {
+        // If function is an input expand its domain box
+        domain_boxes[b.first] = b.second.pad(200);
+      }
     }
 
   }
@@ -6547,8 +6565,9 @@ int main(int argc, char** argv) {
 
     //synth_lb_test();
 
-    conv3x3_app_unrolled_test();
     denoise2d_test();
+    assert(false);
+    conv3x3_app_unrolled_test();
     reduce_1d_test();
     upsample2d_test();
     downsample2d_test();
