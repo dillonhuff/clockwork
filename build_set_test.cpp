@@ -1061,7 +1061,6 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
 void generate_selects(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
   generate_select_decl(options, out, inpt, outpt, buf);
 
-
   auto lex_max_events = get_lexmax_events(outpt, buf);
 
   if (buf.get_in_ports().size() == 1) {
@@ -1138,7 +1137,78 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
   out << "}" << endl << endl;
 }
 
+void print_death_times(UBuffer& buf) {
+
+  auto sched = buf.global_schedule();
+  for (auto inpt : buf.get_in_ports()) {
+    cout << "Port: " << inpt << endl;
+    auto writes = buf.access_map.at(inpt);
+    cout << "Access map: " << str(writes) << endl;
+    auto writers = inv(writes);
+    cout << "Writer map: " << str(writers) << endl;
+    uset* written_values = to_uset(range(writes));
+    isl_union_map* reads_from_fifo = rdmap(buf.ctx, "{}");
+    for (auto outpt : buf.get_out_ports()) {
+      reads_from_fifo =
+        unn(reads_from_fifo, to_umap(buf.access_map.at(outpt)));
+    }
+    reads_from_fifo = its_range(reads_from_fifo, written_values);
+    cout << "Reads: " << str(reads_from_fifo) << endl;
+
+    auto write_sched = its(sched, domain(writes));
+    cout << "Write schedule: " << str(write_sched) << endl;
+
+    auto read_sched = its(sched, domain(reads_from_fifo));
+    cout << "Read schedule: " << str(read_sched) << endl;
+    auto vals_to_reads = inv(reads_from_fifo);
+
+    // Should be lexmax in the schedule
+    auto last_read = lexmax(vals_to_reads);
+    //cout << "Last read: " << str(last_read) << endl;
+
+    //auto read_op_sched = dot(vals_to_reads, sched);
+    //cout << "read schedule : " << str(read_sched) << endl;
+    auto death_sched = dot(last_read, sched);
+    cout << "death schedule: " << str(death_sched) << endl;
+
+    auto earlier_events =
+      unn(lex_gt(read_sched, write_sched), lex_gt(read_sched, death_sched));
+    auto esched = unn(death_sched, write_sched);
+
+    auto earlier_event_times = dot(earlier_events, esched);
+    auto earliest_event_time = lexmax(earlier_event_times);
+    auto earliest_event = dot(earliest_event_time, inv(esched));
+
+    cout << "earliest event: " << str(earliest_event) << endl;
+    bool event_isnt_death = isl_union_set_is_empty(its(domain(death_sched), range(earliest_event)));
+    bool event_is_death = !event_isnt_death;
+
+    cout << "Earliest event is death ?" << event_is_death << endl;
+
+    assert(!event_is_death);
+
+    //cout << "reads to earlier events: " << str(earlier_events) << endl;
+    //cout << "reads to earliest event: " << str(lexmin(earlier_events)) << endl;
+
+
+    // Reads -> times
+    // Writes -> times
+    // Deaths -> times
+    // Get umap from death time to read time
+
+    // (read, earlier deaths) | (read, earlier writes)
+    // get last in schedule?
+  }
+}
+
 void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
+  // Here I want to add an analysis to check whether a dead value will
+  // ever be at the head of a port. After a bundle is read there should
+  // be a check to see if the read needs to evict data from the input
+  // FIFOs
+
+  print_death_times(buf);
+
   out << "// # of bundles = " << buf.port_bundles.size() << endl;
   for (auto b : buf.port_bundles) {
     out << "// " << b.first << endl;
@@ -6614,14 +6684,14 @@ int main(int argc, char** argv) {
 
     //synth_lb_test();
 
+    upsample2d_test();
+    conv3x3_app_test();
+    //denoise2d_test();
     conv3x3_app_unrolled_uneven_test();
-    denoise2d_test();
     conv3x3_app_unrolled_test();
     reduce_1d_test();
-    upsample2d_test();
     downsample2d_test();
     updown_merge_test();
-    conv3x3_app_test();
     sobel_test();
 
     heat_3d_test();
