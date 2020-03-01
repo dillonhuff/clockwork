@@ -165,7 +165,7 @@ inline void I_I_id1_6_write(hw_uint<16>& I_I_id1_6, I_cache& I) {
 
 inline hw_uint<16> I_out_0_blur_30_1_select(I_cache& I, int root, int xr, int xc) {
 	// lexmax events: { out_0_blur_30[root = 0, xr, xc] -> I_id0[root' = 0, ir = xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_out_0_blur_30_1read pattern: { out_0_blur_30[root = 0, xr, xc] -> I[xr, 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+  // I_out_0_blur_30_1 read pattern: { out_0_blur_30[root = 0, xr, xc] -> I[xr, 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
   // I_I_id0_4 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
     // overlap with reads : { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 29 and 0 <= i1 <= 30 }
   // I_I_id1_6 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
@@ -176,7 +176,7 @@ inline hw_uint<16> I_out_0_blur_30_1_select(I_cache& I, int root, int xr, int xc
 
 inline hw_uint<16> I_out_0_blur_30_2_select(I_cache& I, int root, int xr, int xc) {
 	// lexmax events: { out_0_blur_30[root = 0, xr, xc] -> I_id0[root' = 0, ir = 1 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_out_0_blur_30_2read pattern: { out_0_blur_30[root = 0, xr, xc] -> I[1 + xr, 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+  // I_out_0_blur_30_2 read pattern: { out_0_blur_30[root = 0, xr, xc] -> I[1 + xr, 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
   // I_I_id0_4 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
     // overlap with reads : { I[i0, i1] : (i1) mod 2 = 0 and 0 < i0 <= 30 and 0 <= i1 <= 30 }
   // I_I_id1_6 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
@@ -187,7 +187,7 @@ inline hw_uint<16> I_out_0_blur_30_2_select(I_cache& I, int root, int xr, int xc
 
 inline hw_uint<16> I_out_0_blur_30_3_select(I_cache& I, int root, int xr, int xc) {
 	// lexmax events: { out_0_blur_30[root = 0, xr, xc] -> I_id0[root' = 0, ir = 2 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_out_0_blur_30_3read pattern: { out_0_blur_30[root = 0, xr, xc] -> I[2 + xr, 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+  // I_out_0_blur_30_3 read pattern: { out_0_blur_30[root = 0, xr, xc] -> I[2 + xr, 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
   // I_I_id0_4 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
     // overlap with reads : { I[i0, i1] : (i1) mod 2 = 0 and 2 <= i0 <= 31 and 0 <= i1 <= 30 }
   // I_I_id1_6 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
@@ -198,7 +198,7 @@ inline hw_uint<16> I_out_0_blur_30_3_select(I_cache& I, int root, int xr, int xc
 
 inline hw_uint<16> I_out_1_blur_31_10_select(I_cache& I, int root, int xr, int xc) {
 	// lexmax events: { out_1_blur_31[root = 0, xr, xc] -> I_id1[root' = 0, ir = 1 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_out_1_blur_31_10read pattern: { out_1_blur_31[root = 0, xr, xc] -> I[1 + xr, 1 + 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+  // I_out_1_blur_31_10 read pattern: { out_1_blur_31[root = 0, xr, xc] -> I[1 + xr, 1 + 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
   // I_I_id0_4 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
     // overlap with reads : { I[i0, i1] : false }
   // I_I_id1_6 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
@@ -209,7 +209,7 @@ inline hw_uint<16> I_out_1_blur_31_10_select(I_cache& I, int root, int xr, int x
 
 inline hw_uint<16> I_out_1_blur_31_11_select(I_cache& I, int root, int xr, int xc) {
 	// lexmax events: { out_1_blur_31[root = 0, xr, xc] -> I_id1[root' = 0, ir = 2 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_out_1_blur_31_11read pattern: { out_1_blur_31[root = 0, xr, xc] -> I[2 + xr, 1 + 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+  // I_out_1_blur_31_11 read pattern: { out_1_blur_31[root = 0, xr, xc] -> I[2 + xr, 1 + 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
   // I_I_id0_4 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
     // overlap with reads : { I[i0, i1] : false }
   // I_I_id1_6 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
@@ -220,7 +220,7 @@ inline hw_uint<16> I_out_1_blur_31_11_select(I_cache& I, int root, int xr, int x
 
 inline hw_uint<16> I_out_1_blur_31_9_select(I_cache& I, int root, int xr, int xc) {
 	// lexmax events: { out_1_blur_31[root = 0, xr, xc] -> I_id1[root' = 0, ir = xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_out_1_blur_31_9read pattern: { out_1_blur_31[root = 0, xr, xc] -> I[xr, 1 + 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+  // I_out_1_blur_31_9 read pattern: { out_1_blur_31[root = 0, xr, xc] -> I[xr, 1 + 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
   // I_I_id0_4 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
     // overlap with reads : { I[i0, i1] : false }
   // I_I_id1_6 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }

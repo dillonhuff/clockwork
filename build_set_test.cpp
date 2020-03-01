@@ -1027,10 +1027,10 @@ void select_debug_assertions(CodegenOptions& options, std::ostream& out, const s
 }
 
 string delay_string(CodegenOptions& options, const string& inpt, const string& outpt, UBuffer& buf) {
+
   auto out_domain = buf.domain.at(outpt);
   auto qpd = compute_dd(buf, outpt, inpt);
   auto pieces = get_pieces(qpd);
-  bool always_zero_distance = pieces.size() == 0;
 
   string dx = to_string(int_upper_bound(qpd));
   string delay_expr = evaluate_dd(buf, outpt, inpt);
@@ -1073,7 +1073,7 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     cout << "Lexmax events: " << str(lex_max_events) << endl;
     map<string, string> ms = umap_codegen_c(lex_max_events);
     out << "\t// lexmax events: " << str(lex_max_events) << endl;
-    out << tab(1) << "// " << outpt << "read pattern: " << str(buf.access_map.at(outpt)) << endl;
+    out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
     vector<string> possible_ports;
     for (auto pt : buf.get_in_ports()) {
       out << tab(1) << "// " << pt << " stores range: " << str(range(buf.access_map.at(pt))) << endl;
@@ -4159,6 +4159,40 @@ struct Box {
     return rdset(ctx, s);
   }
 
+  int length(const int dim) const {
+    return intervals.at(dim).max - intervals.at(dim).min + 1;
+  }
+
+  Box pad_range_to_nearest_multiple(const int unroll_factor) const {
+    assert(unroll_factor > 0);
+
+    Box padded;
+    int r = 0;
+    for (auto i : intervals) {
+      if (r != 0) {
+        padded.intervals.push_back({i.min, i.max});
+      } else {
+        int range = length(0);
+        cout << "Length: " << range << endl;
+        if (range % unroll_factor != 0) {
+          int new_range = range + (unroll_factor - (range % unroll_factor));
+          cout << "new_range = " << new_range << endl;
+          int new_max = i.min + new_range - 1;
+
+          cout << "new_max = " << new_max << endl;
+
+          padded.intervals.push_back({i.min, new_max});
+        } else {
+          padded.intervals.push_back({i.min, i.max});
+        }
+      }
+      r++;
+    }
+    cout << "New length: " << padded.length(0) << endl;
+    assert(padded.length(0) % unroll_factor == 0);
+    return padded;
+  }
+
   Box pad(const int padding) const {
     assert(padding > 0);
 
@@ -5192,10 +5226,11 @@ struct App {
     }
   }
 
-  void fill_data_domain(const std::string& name, const int d0, const int d1) {
+  void fill_data_domain(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     Box sbox;
     sbox.intervals.push_back({0, d0 - 1});
     sbox.intervals.push_back({0, d1 - 1});
+    sbox = sbox.pad_range_to_nearest_multiple(unroll_factor);
 
     string n = name;
     domain_boxes = {};
@@ -5236,6 +5271,7 @@ struct App {
         }
         cout << "Data: " << inputs.name << " to " << next << endl;
         domain_boxes[inputs.name] = unn(domain_boxes[inputs.name], in_box);
+        domain_boxes[inputs.name] = domain_boxes[inputs.name].pad_range_to_nearest_multiple(unroll_factor);
 
         cout << "Added " << next << " domain to boxes" << endl;
         assert(contains_key(next, domain_boxes));
@@ -5245,14 +5281,6 @@ struct App {
         }
       }
       cout << "Done with " << next << endl;
-    }
-
-    // Expand input boxes
-    for (auto b : domain_boxes) {
-      if (producers(b.first).size() == 0) {
-        // If function is an input expand its domain box
-        domain_boxes[b.first] = b.second.pad(200);
-      }
     }
 
   }
@@ -5717,7 +5745,7 @@ struct App {
   void realize_naive(const std::string& name, const int d0, const int d1) {
     const int unroll_factor = 1;
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
-    fill_data_domain(name, d0, d1);
+    fill_data_domain(name, d0, d1, unroll_factor);
     fill_compute_domain(unroll_factor);
 
     umap* m = schedule_naive();
@@ -5968,7 +5996,7 @@ struct App {
 
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
-    fill_data_domain(name, d0, d1);
+    fill_data_domain(name, d0, d1, unroll_factor);
     fill_compute_domain(unroll_factor);
     schedule_and_codegen(name, unroll_factor);
   }
@@ -6080,6 +6108,27 @@ App unroll(const App& app, const int unroll_factor) {
   }
 
   return unrolled;
+}
+
+void conv3x3_app_unrolled_uneven_test() {
+
+  App sobel;
+
+  sobel.func2d("off_chip_img");
+  sobel.func2d("img", "id", "off_chip_img", {1, 1}, {{0, 0}});
+  vector<vector<int> > offsets;
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      offsets.push_back({i, j});
+    }
+  }
+  sobel.func2d("conv3x3_app_unrolled_uneven", "conv_3_3", "img", {1, 1}, offsets);
+
+  sobel.realize("conv3x3_app_unrolled_uneven", 30, 30, 7);
+
+  int res = system("g++ -std=c++11 conv3x3_app_unrolled_uneven_opt.cpp -c ");
+  assert(res == 0);
+
 }
 
 void conv3x3_app_unrolled_test() {
@@ -6565,8 +6614,8 @@ int main(int argc, char** argv) {
 
     //synth_lb_test();
 
+    conv3x3_app_unrolled_uneven_test();
     denoise2d_test();
-    assert(false);
     conv3x3_app_unrolled_test();
     reduce_1d_test();
     upsample2d_test();
