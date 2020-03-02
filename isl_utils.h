@@ -204,7 +204,7 @@ isl_map* to_map(isl_union_map* const m) {
 }
 
 isl_union_map* to_umap(isl_map* const m) {
-  return isl_union_map_from_map(m);
+  return isl_union_map_from_map(cpy(m));
 }
 
 isl_ctx* ctx(isl_pw_aff* const m) {

@@ -634,15 +634,15 @@ umap* last_reads(const string& inpt, UBuffer& buf) {
 umap* death_schedule(const string& inpt, UBuffer& buf) {
 
   auto sched = buf.global_schedule();
-  cout << "Port: " << inpt << endl;
+  //cout << "Port: " << inpt << endl;
   auto writes = buf.access_map.at(inpt);
   assert(writes!= nullptr);
 
-  cout << "Access map: " << str(writes) << endl;
+  //cout << "Access map: " << str(writes) << endl;
 
   auto writers = inv(writes);
   assert(writers != nullptr);
-  cout << "Writer map: " << str(writers) << endl;
+  //cout << "Writer map: " << str(writers) << endl;
   uset* written_values = to_uset(range(writes));
   isl_union_map* reads_from_fifo = rdmap(buf.ctx, "{}");
   for (auto outpt : buf.get_out_ports()) {
@@ -658,12 +658,12 @@ umap* death_schedule(const string& inpt, UBuffer& buf) {
   auto read_sched = its(sched, domain(reads_from_fifo));
   assert(reads_from_fifo != nullptr);
 
-  cout << "Read schedule: " << str(read_sched) << endl;
+  //cout << "Read schedule: " << str(read_sched) << endl;
   auto vals_to_reads = inv(reads_from_fifo);
 
   // Should be lexmax in the schedule
   auto last_read = lexmax(vals_to_reads);
-  cout << "Last read: " << str(last_read) << endl;
+  //cout << "Last read: " << str(last_read) << endl;
 
   //auto read_op_sched = dot(vals_to_reads, sched);
   //cout << "read schedule : " << str(read_sched) << endl;
@@ -796,6 +796,8 @@ void print_death_times(UBuffer& buf) {
 // Compute a map from data read on read port to the fifo
 // offset of the data in the FIFO cache for write_port
 isl_union_pw_qpolynomial* compute_fifo_addr(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
+  cout << "Getting fifo addrs for: " << read_port << " to " << write_port << " in: " << buf.name << endl;
+
   isl_union_map* sched = buf.schedule.at(write_port);
   assert(sched != nullptr);
   
@@ -819,42 +821,72 @@ isl_union_pw_qpolynomial* compute_fifo_addr(UBuffer& buf, const std::string& rea
 
   cout << "WritesBtwn: " << str(WritesBtwn) << endl;
 
-  umap* last_readers =
-    last_reads(write_port, buf);
-  cout << "Last reads: " << str(last_readers) << endl;
-
-  // I should really compute addresses at a given time
+  // Also need: evictsbetween?
+  // img_comp -> imgs evicted?
   umap* evict_sched = forced_eviction_times(write_port, buf);
-  cout << "eviction sched: " << str(evict_sched) << endl;
+  cout << "Evict sched: " << str(evict_sched) << endl;
+  cout << "rdsched    : " << str(rdsched) << endl;
+  auto EvictsBeforeRead =
+    lex_gt(rdsched, evict_sched);
+
+  cout << "EvictsBeforeRead: " << str(EvictsBeforeRead) << endl;
+
+  auto EvictsAfterAction =
+    lex_lt(sched, evict_sched);
   auto EvictsAfterProduction =
-    lex_lt(wrsched, evict_sched);
-  //auto EvictsBeforeRead =
-    //lex_lt
+    dot(WriteThatProducesReadData, EvictsAfterAction);
 
-  cout << "Evictions after production: " << str(EvictsAfterProduction) << endl;
-  //assert(empty(domain(evict_sched)));
+  auto EvictsBtwn = its(EvictsAfterProduction, EvictsBeforeRead);
+  cout << "EvictsBtwn: " << str(EvictsBtwn) << endl;
+  //assert(false);
+  
+  return card(unn(EvictsBtwn, WritesBtwn));
 
-  auto death_sched = death_schedule(write_port, buf);
-  auto EvictsBeforeDeath =
-    lex_gt(death_sched, evict_sched);
-  cout << "Evictions before death    : " << str(EvictsBeforeDeath) << endl;
+  //umap* last_readers =
+    //last_reads(write_port, buf);
+  //cout << "Last reads: " << str(last_readers) << endl;
 
-  // TODO: Intersect with evicts after production
-  auto EvictsInLifetime =
-    EvictsBeforeDeath;
+  //// I should really compute addresses at a given time
+  //cout << "eviction sched: " << str(evict_sched) << endl;
+  //auto writes = buf.access_map.at(write_port);
+  //cout << "Access map: " << str(writes) << endl;
+  //auto writers = inv(writes);
+
+  //auto EvictsAfterProduction =
+    //lex_lt(dot(writers, wrsched), evict_sched);
+  ////auto EvictsBeforeRead =
+    ////lex_lt
+
+  //cout << "Evictions after production: " << str(EvictsAfterProduction) << endl;
+  ////assert(empty(domain(evict_sched)));
+
+  //auto death_sched = death_schedule(write_port, buf);
+  //auto EvictsBeforeDeath =
+    //lex_gt(death_sched, evict_sched);
+  //cout << "Evictions before death    : " << str(EvictsBeforeDeath) << endl;
+
+  //// TODO: Intersect with evicts after production
+  //auto EvictsInLifetime =
+    ////EvictsBeforeDeath;
     //its(EvictsBeforeDeath, EvictsAfterProduction);
 
-  cout << "Evictions in lifetime     : " << str(EvictsInLifetime) << endl;
-  auto writeTimes = dot(WritesBtwn, sched);
-  auto evictTimes = dot(EvictsInLifetime, evict_sched);
-  auto c = card(unn(writeTimes, evictTimes));
-  //unn(dot(WritesBtwn, sched), EvictsAfterProduction));
-  cout << "got card" << endl;
-  return c;
+  //cout << "Evictions in lifetime     : " << str(EvictsInLifetime) << endl;
+  //auto writeTimes = dot(WritesBtwn, sched);
+  //cout << "writeTimes: " << str(writeTimes) << endl;
+  //assert(writers != nullptr);
+  //cout << "writers   : " << str(writers) << endl;
+  //auto evictTimes = dot(EvictsInLifetime, evict_sched);
+  //cout << "EvictTimes: " << str(evictTimes) << endl;
+  //auto shift_times = coalesce(unn(writeTimes, evictTimes));
+  //cout << "shift times: " << str(shift_times) << endl;
+  //auto c = card(shift_times);
+  ////unn(dot(WritesBtwn, sched), EvictsAfterProduction));
+  //cout << "got card" << endl;
+  //return c;
 }
 
 isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
-  //return compute_fifo_addr(buf, read_port, write_port);
+  return compute_fifo_addr(buf, read_port, write_port);
 
   isl_union_map* sched = buf.schedule.at(write_port);
   assert(sched != nullptr);
@@ -1261,7 +1293,7 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
 
     if (possible_ports.size() == 1) {
       string inpt = possible_ports.at(0);
-      string delay_expr = evaluate_dd(buf, outpt, inpt);
+      //string delay_expr = evaluate_dd(buf, outpt, inpt);
       string peeked_val = delay_string(options, inpt, outpt, buf);
 
       out << "\tauto value_" << inpt << " = " << peeked_val << ";\n";
@@ -1275,7 +1307,7 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     }
 
     for (auto inpt : buf.get_in_ports()) {
-      string delay_expr = evaluate_dd(buf, outpt, inpt);
+      //string delay_expr = evaluate_dd(buf, outpt, inpt);
       string peeked_val = delay_string(options, inpt, outpt, buf);
       
       if (options.internal) {
@@ -6809,8 +6841,8 @@ int main(int argc, char** argv) {
 
     //synth_lb_test();
 
-    //mismatched_stencil_test();
     denoise2d_test();
+    mismatched_stencil_test();
     upsample2d_test();
     conv3x3_app_test();
     conv3x3_app_unrolled_uneven_test();
