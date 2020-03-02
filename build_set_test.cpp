@@ -886,7 +886,7 @@ isl_union_pw_qpolynomial* compute_fifo_addr(UBuffer& buf, const std::string& rea
 }
 
 isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
-  return compute_fifo_addr(buf, read_port, write_port);
+  //return compute_fifo_addr(buf, read_port, write_port);
 
   isl_union_map* sched = buf.schedule.at(write_port);
   assert(sched != nullptr);
@@ -4407,6 +4407,22 @@ struct Box {
     return padded;
   }
 
+  Box pad(const int dim, const int padding) const {
+    assert(padding > 0);
+
+    Box padded;
+    int k = 0;
+    for (auto i : intervals) {
+      if (k == dim) {
+        padded.intervals.push_back({i.min, i.max + padding});
+      } else {
+        padded.intervals.push_back({i.min, i.max});
+      }
+      k++;
+    }
+    return padded;
+  }
+
   Box pad(const int padding) const {
     assert(padding > 0);
 
@@ -5432,12 +5448,16 @@ struct App {
     for (auto s : app_dag) {
       compute_maps[s.first] =
         to_map(rdmap(ctx, "{ " + s.first + "[d0, d1] -> " + s.first + "_comp[floor(d0 / " + to_string(unroll_factor) + "), d1] }"));
+      cout << "Compute map for " << s.first << ": " << str(compute_maps[s.first]) << endl;
+      cout << "Data domain: " << 
+        str(data_domain(s.first).to_set(ctx, s.first)) << endl;
       compute_sets[s.first] =
         range(its(
             compute_maps[s.first],
             data_domain(s.first).to_set(ctx, s.first)));
       cout << "Compute domain for " << s.first << " is " << str(compute_sets[s.first]) << endl;
     }
+    cout << "Got compute domain" << endl;
   }
 
   void fill_data_domain(const std::string& name, const int d0, const int d1, const int unroll_factor) {
@@ -5497,6 +5517,18 @@ struct App {
       cout << "Done with " << next << endl;
     }
 
+    for (auto d : domain_boxes) {
+      if (producers(d.first).size() == 0) {
+        domain_boxes[d.first] = d.second.pad(0, 10);
+      }
+    }
+
+    cout << "Data domains.." << endl;
+    for (auto d : domain_boxes) {
+      cout << d.first << " = " << d.second << endl;
+    }
+
+    //assert(false);
   }
 
   void schedule_dim(const int i, map<string, vector<QExpr> >& schedules) {
@@ -6015,6 +6047,7 @@ struct App {
           compute_domain(f);
       }
     }
+
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
     generate_regression_testbench(prg);
@@ -6841,8 +6874,8 @@ int main(int argc, char** argv) {
 
     //synth_lb_test();
 
-    denoise2d_test();
     mismatched_stencil_test();
+    denoise2d_test();
     upsample2d_test();
     conv3x3_app_test();
     conv3x3_app_unrolled_uneven_test();
