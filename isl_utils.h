@@ -128,6 +128,10 @@ int dim(isl_space* const s) {
   return 0;
 }
 
+bool empty(uset* const s) {
+  return isl_union_set_is_empty(s);
+}
+
 int num_dims(isl_space* const s) {
   assert(isl_space_is_set(s));
   int ndims = isl_space_dim(s, isl_dim_set);
@@ -777,7 +781,7 @@ isl_pw_qpolynomial* card(isl_map* const m) {
 }
 
 isl_union_set* domain(isl_union_map* const m) {
-  return isl_union_map_domain(m);
+  return isl_union_map_domain(cpy(m));
 }
 
 isl_union_set* range(isl_union_map* const m) {

@@ -11,51 +11,8 @@
 
 #include "utils.h"
 
-vector<int> parse_pt(const string& pt) {
-  cout << "pt: " << pt << endl;
-  regex cm("\\{ \\[(.*)\\] \\}");
-  smatch match;
-  auto res = regex_search(pt, match, cm);
-
-  if (res) {
-
-    string coefs = match[1];
-    cout << "coefs: " << coefs << endl;
-    vector<int> coords;
-
-    auto vals = split_at(coefs, ", ");
-    for (auto v : vals) {
-      coords.push_back(safe_stoi(v));
-    }
-
-    return coords;
-  } else {
-    regex cm("\\{ (.*)\\[(.*)\\] \\}");
-    smatch match;
-    auto res = regex_search(pt, match, cm);
-
-
-    string coefs = match[2];
-    cout << "coefs: " << coefs << endl;
-    vector<int> coords;
-
-    auto vals = split_at(coefs, ", ");
-    for (auto v : vals) {
-      coords.push_back(safe_stoi(v));
-    }
-
-    return coords;
-  }
-
-
-}
-
 vector<int> parse_pt(isl_point* p) {
   return parse_pt(str(p));
-}
-
-string set_string(const vector<string>& vars, const string& s) {
-  return "{ " + sep_list(vars, "[", "]", ", ") + " : " + s + " }";
 }
 
 struct CodegenOptions {
@@ -595,15 +552,6 @@ int int_lower_bound(isl_union_pw_qpolynomial* range_card) {
   int* b = &tight;
   auto bound = isl_union_pw_qpolynomial_bound(cpy(range_card), isl_fold_min, b);
   return bnd_int(bound);
-  //auto folds  = get_polynomial_folds(bound);
-  //int bint;
-  //if (folds.size() == 0) {
-    //bint = 0;
-  //} else {
-    //assert(folds.size() == 1);
-    //bint = safe_stoi(codegen_c(folds[0]));
-  //}
-  //return bint;
 }
 
 int int_upper_bound(isl_union_pw_qpolynomial* range_card) {
@@ -611,15 +559,6 @@ int int_upper_bound(isl_union_pw_qpolynomial* range_card) {
   int* b = &tight;
   auto bound = isl_union_pw_qpolynomial_bound(cpy(range_card), isl_fold_max, b);
   return bnd_int(bound);
-  //auto folds  = get_polynomial_folds(bound);
-  //int bint;
-  //if (folds.size() == 0) {
-    //bint = 0;
-  //} else {
-    //assert(folds.size() == 1);
-    //bint = safe_stoi(codegen_c(folds[0]));
-  //}
-  //return bint;
 }
 
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
@@ -662,7 +601,260 @@ umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
   return lex_max_events;
 }
 
+umap* last_reads(const string& inpt, UBuffer& buf) {
+  auto sched = buf.global_schedule();
+  cout << "Port: " << inpt << endl;
+  auto writes = buf.access_map.at(inpt);
+  cout << "Access map: " << str(writes) << endl;
+  auto writers = inv(writes);
+  cout << "Writer map: " << str(writers) << endl;
+  uset* written_values = to_uset(range(writes));
+  isl_union_map* reads_from_fifo = rdmap(buf.ctx, "{}");
+  for (auto outpt : buf.get_out_ports()) {
+    reads_from_fifo =
+      unn(reads_from_fifo, to_umap(buf.access_map.at(outpt)));
+  }
+  reads_from_fifo = its_range(reads_from_fifo, written_values);
+  cout << "Reads: " << str(reads_from_fifo) << endl;
+
+  auto write_sched = its(sched, domain(writes));
+  cout << "Write schedule: " << str(write_sched) << endl;
+
+  auto read_sched = its(sched, domain(reads_from_fifo));
+  cout << "Read schedule: " << str(read_sched) << endl;
+  auto vals_to_reads = inv(reads_from_fifo);
+
+  cout << "vals to reads: " << str(reads_from_fifo) << endl;
+  // TODO: Should be lexmax in the schedule
+  auto last_read = lexmax(vals_to_reads);
+  return last_read;
+
+}
+
+umap* death_schedule(const string& inpt, UBuffer& buf) {
+
+  auto sched = buf.global_schedule();
+  cout << "Port: " << inpt << endl;
+  auto writes = buf.access_map.at(inpt);
+  assert(writes!= nullptr);
+
+  cout << "Access map: " << str(writes) << endl;
+
+  auto writers = inv(writes);
+  assert(writers != nullptr);
+  cout << "Writer map: " << str(writers) << endl;
+  uset* written_values = to_uset(range(writes));
+  isl_union_map* reads_from_fifo = rdmap(buf.ctx, "{}");
+  for (auto outpt : buf.get_out_ports()) {
+    reads_from_fifo =
+      unn(reads_from_fifo, to_umap(buf.access_map.at(outpt)));
+  }
+  reads_from_fifo = its_range(reads_from_fifo, written_values);
+  //cout << "Reads: " << str(reads_from_fifo) << endl;
+
+  auto write_sched = its(sched, domain(writes));
+  //cout << "Write schedule: " << str(write_sched) << endl;
+
+  auto read_sched = its(sched, domain(reads_from_fifo));
+  assert(reads_from_fifo != nullptr);
+
+  cout << "Read schedule: " << str(read_sched) << endl;
+  auto vals_to_reads = inv(reads_from_fifo);
+
+  // Should be lexmax in the schedule
+  auto last_read = lexmax(vals_to_reads);
+  cout << "Last read: " << str(last_read) << endl;
+
+  //auto read_op_sched = dot(vals_to_reads, sched);
+  //cout << "read schedule : " << str(read_sched) << endl;
+  auto death_sched = dot(last_read, sched);
+  return death_sched;
+}
+
+umap* forced_eviction_times(const string& inpt, UBuffer& buf) {
+  auto sched = buf.global_schedule();
+  cout << "Port: " << inpt << endl;
+  auto writes = buf.access_map.at(inpt);
+  assert(writes!= nullptr);
+
+  cout << "Access map: " << str(writes) << endl;
+
+  auto writers = inv(writes);
+  assert(writers != nullptr);
+  cout << "Writer map: " << str(writers) << endl;
+  uset* written_values = to_uset(range(writes));
+  isl_union_map* reads_from_fifo = rdmap(buf.ctx, "{}");
+  for (auto outpt : buf.get_out_ports()) {
+    reads_from_fifo =
+      unn(reads_from_fifo, to_umap(buf.access_map.at(outpt)));
+  }
+  reads_from_fifo = its_range(reads_from_fifo, written_values);
+  //cout << "Reads: " << str(reads_from_fifo) << endl;
+
+  auto write_sched = its(sched, domain(writes));
+  //cout << "Write schedule: " << str(write_sched) << endl;
+
+  auto read_sched = its(sched, domain(reads_from_fifo));
+  assert(reads_from_fifo != nullptr);
+
+  cout << "Read schedule: " << str(read_sched) << endl;
+  auto vals_to_reads = inv(reads_from_fifo);
+
+  // Should be lexmax in the schedule
+  auto last_read = lexmax(vals_to_reads);
+  cout << "Last read: " << str(last_read) << endl;
+
+  //auto read_op_sched = dot(vals_to_reads, sched);
+  //cout << "read schedule : " << str(read_sched) << endl;
+  auto death_sched = dot(last_read, sched);
+  //cout << "death schedule: " << str(death_sched) << endl;
+
+  auto earlier_events =
+    unn(lex_gt(read_sched, write_sched), lex_gt(read_sched, death_sched));
+  auto esched = unn(death_sched, write_sched);
+
+  assert(esched != nullptr);
+
+  auto earlier_event_times = dot(earlier_events, esched);
+  auto earliest_event_time = lexmax(earlier_event_times);
+  auto earliest_event = dot(earliest_event_time, inv(esched));
+
+  auto forced_eviction_times =
+    its(death_sched, range(earliest_event));
+  //cout << "forced eviction times: " << str(forced_eviction_times) << endl;
+  return forced_eviction_times;
+}
+
+void print_death_times(UBuffer& buf) {
+
+  auto sched = buf.global_schedule();
+  for (auto inpt : buf.get_in_ports()) {
+    cout << "Port: " << inpt << endl;
+    auto writes = buf.access_map.at(inpt);
+    cout << "Access map: " << str(writes) << endl;
+    auto writers = inv(writes);
+    cout << "Writer map: " << str(writers) << endl;
+    uset* written_values = to_uset(range(writes));
+    isl_union_map* reads_from_fifo = rdmap(buf.ctx, "{}");
+    for (auto outpt : buf.get_out_ports()) {
+      reads_from_fifo =
+        unn(reads_from_fifo, to_umap(buf.access_map.at(outpt)));
+    }
+    reads_from_fifo = its_range(reads_from_fifo, written_values);
+    cout << "Reads: " << str(reads_from_fifo) << endl;
+
+    auto write_sched = its(sched, domain(writes));
+    cout << "Write schedule: " << str(write_sched) << endl;
+
+    auto read_sched = its(sched, domain(reads_from_fifo));
+    cout << "Read schedule: " << str(read_sched) << endl;
+    auto vals_to_reads = inv(reads_from_fifo);
+
+    // Should be lexmax in the schedule
+    auto last_read = lexmax(vals_to_reads);
+    //cout << "Last read: " << str(last_read) << endl;
+
+    //auto read_op_sched = dot(vals_to_reads, sched);
+    //cout << "read schedule : " << str(read_sched) << endl;
+    auto death_sched = dot(last_read, sched);
+    cout << "death schedule: " << str(death_sched) << endl;
+
+    auto earlier_events =
+      unn(lex_gt(read_sched, write_sched), lex_gt(read_sched, death_sched));
+    auto esched = unn(death_sched, write_sched);
+
+    auto earlier_event_times = dot(earlier_events, esched);
+    auto earliest_event_time = lexmax(earlier_event_times);
+    auto earliest_event = dot(earliest_event_time, inv(esched));
+
+    auto forced_eviction_times =
+      its(death_sched, range(earliest_event));
+    cout << "forced eviction times: " << str(forced_eviction_times) << endl;
+
+    cout << "earliest event: " << str(earliest_event) << endl;
+    bool event_isnt_death = isl_union_set_is_empty(its(domain(death_sched), range(earliest_event)));
+    bool event_is_death = !event_isnt_death;
+
+    cout << "Earliest event is death ?" << event_is_death << endl;
+
+    //assert(!event_is_death);
+
+    //cout << "reads to earlier events: " << str(earlier_events) << endl;
+    //cout << "reads to earliest event: " << str(lexmin(earlier_events)) << endl;
+
+
+    // Reads -> times
+    // Writes -> times
+    // Deaths -> times
+    // Get umap from death time to read time
+
+    // (read, earlier deaths) | (read, earlier writes)
+    // get last in schedule?
+  }
+}
+
+// Compute a map from data read on read port to the fifo
+// offset of the data in the FIFO cache for write_port
+isl_union_pw_qpolynomial* compute_fifo_addr(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
+  isl_union_map* sched = buf.schedule.at(write_port);
+  assert(sched != nullptr);
+  
+  //print_death_times(buf);
+
+  auto WritesAfterWrite = lex_lt(sched, sched);
+
+  assert(WritesAfterWrite != nullptr);
+
+  umap* rdsched = buf.schedule.at(read_port);
+  umap* wrsched = buf.schedule.at(write_port);
+  auto WritesBeforeRead =
+    lex_gt(rdsched, wrsched);
+
+  auto WriteThatProducesReadData =
+    get_lexmax_events(read_port, buf);
+
+  auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
+
+  auto WritesBtwn = (its(WritesAfterProduction, WritesBeforeRead));
+
+  cout << "WritesBtwn: " << str(WritesBtwn) << endl;
+
+  umap* last_readers =
+    last_reads(write_port, buf);
+  cout << "Last reads: " << str(last_readers) << endl;
+
+  // I should really compute addresses at a given time
+  umap* evict_sched = forced_eviction_times(write_port, buf);
+  cout << "eviction sched: " << str(evict_sched) << endl;
+  auto EvictsAfterProduction =
+    lex_lt(wrsched, evict_sched);
+  //auto EvictsBeforeRead =
+    //lex_lt
+
+  cout << "Evictions after production: " << str(EvictsAfterProduction) << endl;
+  //assert(empty(domain(evict_sched)));
+
+  auto death_sched = death_schedule(write_port, buf);
+  auto EvictsBeforeDeath =
+    lex_gt(death_sched, evict_sched);
+  cout << "Evictions before death    : " << str(EvictsBeforeDeath) << endl;
+
+  // TODO: Intersect with evicts after production
+  auto EvictsInLifetime =
+    EvictsBeforeDeath;
+    //its(EvictsBeforeDeath, EvictsAfterProduction);
+
+  cout << "Evictions in lifetime     : " << str(EvictsInLifetime) << endl;
+  auto writeTimes = dot(WritesBtwn, sched);
+  auto evictTimes = dot(EvictsInLifetime, evict_sched);
+  auto c = card(unn(writeTimes, evictTimes));
+  //unn(dot(WritesBtwn, sched), EvictsAfterProduction));
+  cout << "got card" << endl;
+  return c;
+}
+
 isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
+  //return compute_fifo_addr(buf, read_port, write_port);
 
   isl_union_map* sched = buf.schedule.at(write_port);
   assert(sched != nullptr);
@@ -697,15 +889,6 @@ int compute_dd_lower_bound(UBuffer& buf, const std::string& read_port, const std
   int* b = &tight;
   auto bound = isl_union_pw_qpolynomial_bound(c, isl_fold_min, b);
   return bnd_int(bound);
-  //auto folds  = get_polynomial_folds(bound);
-  //int bint;
-  //if (folds.size() == 0) {
-    //bint = 0;
-  //} else {
-    //assert(folds.size() == 1);
-    //bint = safe_stoi(codegen_c(folds[0]));
-  //}
-  //return bint;
 }
 
 int compute_dd_bound(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
@@ -724,6 +907,8 @@ string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string
   if (folds.size() == 1) {
     return codegen_c(folds[0]);
   }
+
+  assert(folds.size() == 0);
   return "0";
 }
 
@@ -762,46 +947,8 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
   return maxdelay;
 }
 
-void generate_memory_struct(CodegenOptions& options, std::ostream& out, const std::string& inpt, UBuffer& buf) {
-
-  cout << "Creating struct for: " << inpt << " on " << buf.name << endl;
-  //cout << buf << endl;
-
-  cout << "Computing max delay..." << endl;
-  int maxdelay = compute_max_dd(buf, inpt);
-  cout << "maxdelay: " << maxdelay << endl;
-  out << "struct " + inpt + "_cache {" << endl;
-  out << "\t// Capacity: " << maxdelay + 1 << endl;
-  vector<int> read_delays{0};
-  int num_readers = 0;
-  for (auto outpt : buf.get_out_ports()) {
-
-    auto in_actions = buf.domain.at(inpt);
-    auto lex_max_events =
-      get_lexmax_events(outpt, buf);
-    auto act_dom = 
-      domain(its_range(lex_max_events, to_uset(in_actions)));
-
-    //cout << "Lex max events" << endl;
-    //cout << tab(1) << str(coalesce(lex_max_events)) << endl;
-
-    if (!isl_union_set_is_empty(act_dom)) {
-      num_readers++;
-      auto c = compute_dd(buf, outpt, inpt);
-      //cout << "Writes btwn: " << endl;
-      //cout << tab(1) << str(writes_between(buf, outpt, inpt)) << endl;
-      //cout << "\t" << buf.name << ": DD between " << inpt
-        //<< " and " << outpt << " = " << str(c) << endl;
-      auto qpd = compute_dd_bound(buf, outpt, inpt);
-      int lb = compute_dd_lower_bound(buf, outpt, inpt);
-
-      for (int i = lb; i < qpd + 1; i++) {
-        //cout << "Adding delay at: " << i << endl;
-        read_delays.push_back(i);
-      }
-    }
-  }
-
+void generate_fifo_cache(CodegenOptions& options, std::ostream& out, const std::string& inpt, UBuffer& buf,
+    vector<int> read_delays, const int num_readers, const int maxdelay) {
   if (num_readers == 1 || options.all_rams) {
     int partition_capacity = 1 + maxdelay;
     out << "\tfifo<" << buf.port_type_string() << ", " << partition_capacity << "> f" << ";" << endl;
@@ -913,6 +1060,42 @@ void generate_memory_struct(CodegenOptions& options, std::ostream& out, const st
   out << "};" << endl << endl;
 }
 
+void generate_memory_struct(CodegenOptions& options, std::ostream& out, const std::string& inpt, UBuffer& buf) {
+
+  cout << "Creating struct for: " << inpt << " on " << buf.name << endl;
+  //cout << buf << endl;
+
+  cout << "Computing max delay..." << endl;
+  int maxdelay = compute_max_dd(buf, inpt);
+  cout << "maxdelay: " << maxdelay << endl;
+  out << "struct " + inpt + "_cache {" << endl;
+  out << "\t// Capacity: " << maxdelay + 1 << endl;
+  vector<int> read_delays{0};
+  int num_readers = 0;
+  for (auto outpt : buf.get_out_ports()) {
+
+    auto in_actions = buf.domain.at(inpt);
+    auto lex_max_events =
+      get_lexmax_events(outpt, buf);
+    auto act_dom = 
+      domain(its_range(lex_max_events, to_uset(in_actions)));
+
+    if (!isl_union_set_is_empty(act_dom)) {
+      num_readers++;
+      auto c = compute_dd(buf, outpt, inpt);
+      auto qpd = compute_dd_bound(buf, outpt, inpt);
+      int lb = compute_dd_lower_bound(buf, outpt, inpt);
+
+      for (int i = lb; i < qpd + 1; i++) {
+        read_delays.push_back(i);
+      }
+    }
+  }
+
+  generate_fifo_cache(options, out, inpt, buf, read_delays, num_readers, maxdelay);
+
+}
+
 void generate_code_prefix(CodegenOptions& options,
     std::ostream& out, UBuffer& buf) {
 
@@ -932,17 +1115,11 @@ void generate_code_prefix(CodegenOptions& options,
 
   out << endl << endl;
   for (auto inpt : buf.get_in_ports()) {
-    //if (options.internal) {
-      out << "inline void " << inpt << "_write(";
-      out << buf.port_type_string(inpt) + "& ";
-      out << inpt << ", " << buf.name + "_cache& " << buf.name << ") {" << endl;
-      out << "\t" + buf.name + "." + inpt + ".push(" + inpt + ");" << endl;
-      out << "}" << endl << endl;
-    //} else {
-      //out << "inline void " << inpt << "_write(" << "InputStream<" << buf.port_type_string() << " >& " << inpt << ", " << inpt + "_cache& " << inpt << "_delay) {" << endl;
-      //out << "\t" + buf.port_type_string() + " " + inpt + "_value = " + inpt + ".read(); " + inpt + "_delay.push(" + inpt + "_value);" << endl;
-      //out << "}" << endl << endl;
-    //}
+    out << "inline void " << inpt << "_write(";
+    out << buf.port_type_string(inpt) + "& ";
+    out << inpt << ", " << buf.name + "_cache& " << buf.name << ") {" << endl;
+    out << "\t" + buf.name + "." + inpt + ".push(" + inpt + ");" << endl;
+    out << "}" << endl << endl;
   }
 
 }
@@ -975,11 +1152,6 @@ void generate_select_decl(CodegenOptions& options, std::ostream& out, const stri
   size_t nargs = 0;
   out << buf.name << "_cache& " << buf.name << ", ";
   nargs++;
-  //for (auto pt : buf.get_in_ports()) {
-    //out << pt + "_cache& " << pt << "_delay" << endl;
-    //out << ", ";
-    //nargs++;
-  //}
   cout << "Getting space..." << endl;
   isl_space* s = get_space(buf.domain.at(outpt));
   assert(isl_space_is_set(s));
@@ -1040,7 +1212,7 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
     if (!options.all_rams && is_number(dx)) {
       value_str = inpt + ".peek_" + dx + "()";
     } else {
-      value_str = inpt + ".peek" + "(" + delay_expr + ")";
+      value_str = inpt + ".peek" + "( /* is opt const */ " + delay_expr + ")";
     }
   } else if (pieces.size() == 0 && !options.all_rams) {
     value_str = inpt + ".peek_0()";
@@ -1050,10 +1222,10 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
     if (!options.all_rams && is_number(dx)) {
       value_str = inpt + ".peek_" + dx + "()";
     } else {
-      value_str = inpt + ".peek" + "(" + dx + ")";
+      value_str = inpt + ".peek" + "(/* is one piece but not a number */" + dx + ")";
     }
   } else {
-    value_str = inpt + ".peek" + "(" + delay_expr + ")";
+    value_str = inpt + ".peek" + "(/* Needs general delay string */ " + delay_expr + ")";
   }
   return buf.name + "." + value_str;
 }
@@ -1063,6 +1235,8 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
 
   auto lex_max_events = get_lexmax_events(outpt, buf);
 
+  auto qpd = compute_dd(buf, outpt, inpt);
+  out << tab(1) << "// qpd = " << str(qpd) << endl;
   if (buf.get_in_ports().size() == 1) {
     string inpt = *(buf.get_in_ports().begin());
     string value_str = delay_string(options, inpt, outpt, buf);
@@ -1137,77 +1311,13 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
   out << "}" << endl << endl;
 }
 
-void print_death_times(UBuffer& buf) {
-
-  auto sched = buf.global_schedule();
-  for (auto inpt : buf.get_in_ports()) {
-    cout << "Port: " << inpt << endl;
-    auto writes = buf.access_map.at(inpt);
-    cout << "Access map: " << str(writes) << endl;
-    auto writers = inv(writes);
-    cout << "Writer map: " << str(writers) << endl;
-    uset* written_values = to_uset(range(writes));
-    isl_union_map* reads_from_fifo = rdmap(buf.ctx, "{}");
-    for (auto outpt : buf.get_out_ports()) {
-      reads_from_fifo =
-        unn(reads_from_fifo, to_umap(buf.access_map.at(outpt)));
-    }
-    reads_from_fifo = its_range(reads_from_fifo, written_values);
-    cout << "Reads: " << str(reads_from_fifo) << endl;
-
-    auto write_sched = its(sched, domain(writes));
-    cout << "Write schedule: " << str(write_sched) << endl;
-
-    auto read_sched = its(sched, domain(reads_from_fifo));
-    cout << "Read schedule: " << str(read_sched) << endl;
-    auto vals_to_reads = inv(reads_from_fifo);
-
-    // Should be lexmax in the schedule
-    auto last_read = lexmax(vals_to_reads);
-    //cout << "Last read: " << str(last_read) << endl;
-
-    //auto read_op_sched = dot(vals_to_reads, sched);
-    //cout << "read schedule : " << str(read_sched) << endl;
-    auto death_sched = dot(last_read, sched);
-    cout << "death schedule: " << str(death_sched) << endl;
-
-    auto earlier_events =
-      unn(lex_gt(read_sched, write_sched), lex_gt(read_sched, death_sched));
-    auto esched = unn(death_sched, write_sched);
-
-    auto earlier_event_times = dot(earlier_events, esched);
-    auto earliest_event_time = lexmax(earlier_event_times);
-    auto earliest_event = dot(earliest_event_time, inv(esched));
-
-    cout << "earliest event: " << str(earliest_event) << endl;
-    bool event_isnt_death = isl_union_set_is_empty(its(domain(death_sched), range(earliest_event)));
-    bool event_is_death = !event_isnt_death;
-
-    cout << "Earliest event is death ?" << event_is_death << endl;
-
-    assert(!event_is_death);
-
-    //cout << "reads to earlier events: " << str(earlier_events) << endl;
-    //cout << "reads to earliest event: " << str(lexmin(earlier_events)) << endl;
-
-
-    // Reads -> times
-    // Writes -> times
-    // Deaths -> times
-    // Get umap from death time to read time
-
-    // (read, earlier deaths) | (read, earlier writes)
-    // get last in schedule?
-  }
-}
-
 void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
   // Here I want to add an analysis to check whether a dead value will
   // ever be at the head of a port. After a bundle is read there should
   // be a check to see if the read needs to evict data from the input
   // FIFOs
 
-  print_death_times(buf);
+  //print_death_times(buf);
 
   out << "// # of bundles = " << buf.port_bundles.size() << endl;
   for (auto b : buf.port_bundles) {
@@ -2638,6 +2748,8 @@ void generate_app_code(CodegenOptions& options,
       generate_hls_code(options, conv_out, b.second);
     }
   }
+
+  //assert(false);
 
   conv_out << endl << endl;
   conv_out << "// Operation logic" << endl;
@@ -6127,6 +6239,26 @@ void downsample2d_test() {
   assert(res == 0);
 }
 
+void mismatched_stencil_test() {
+  App sobel;
+
+  sobel.func2d("off_chip_img0");
+  sobel.func2d("img0", "id", "off_chip_img0", {1, 1}, {{0, 0}});
+  
+  sobel.func2d("off_chip_img1");
+  sobel.func2d("img1", "id", "off_chip_img1", {1, 1}, {{0, 0}});
+
+  Window xwindow{"img0", {1, 1}, {{0, 0}, {1, 0}, {2, 0}}};
+  Window ywindow{"img1", {1, 1}, {{0, 0}, {1, 0}}};
+  sobel.func2d("mismatched_stencils", "contrived", {xwindow, ywindow});
+
+  sobel.realize("mismatched_stencils", 10, 1, 1);
+
+  int res = system("g++ -std=c++11 -c mismatched_stencils_opt.cpp");
+  assert(res == 0);
+  assert(false);
+}
+
 void denoise2d_test() {
   App dn;
 
@@ -6580,15 +6712,8 @@ void two_in_conv2d_test() {
   ldi->store({"I", "pr, 2*pc"}, {"in0", "pr, 2*pc"});
   ldi->store({"I", "pr, 2*pc + 1"}, {"in1", "pr, 2*pc + 1"});
 
-  //auto cpi = prg.add_nest("r", 0, img_size - 2, "c", 0, (img_size) - 2);
-  //auto ld = prg.vector_load("I", "r", 0, 3, "c", 0, 3);
   auto cpi = prg.add_nest("r", 0, (img_size / 2) - 2, "c", 0, (img_size / 2) - 2);
   auto ld = prg.vector_load("I", "2*r", 0, 3, "2*c", 0, 3);
-  //auto ld = prg.vector_load("I", "r", 0, 3, "c", 0, 3);
-  //cout << "Loads..." << endl;
-  //for (auto d : ld) {
-    //cout << "\t" << d << endl;
-  //}
   cpi->add_op({"out", "r, c"}, "conv_3_3", ld);
 
   regression_test(prg);
@@ -6684,9 +6809,10 @@ int main(int argc, char** argv) {
 
     //synth_lb_test();
 
+    //mismatched_stencil_test();
+    denoise2d_test();
     upsample2d_test();
     conv3x3_app_test();
-    //denoise2d_test();
     conv3x3_app_unrolled_uneven_test();
     conv3x3_app_unrolled_test();
     reduce_1d_test();

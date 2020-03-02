@@ -66,16 +66,19 @@ inline void M_get_input_4_write(hw_uint<32> & M_get_input_4, M_cache& M) {
 }
 
 inline hw_uint<32>  M_compute_output_1_select(M_cache& M, int root, int c) {
+  // qpd = { compute_output[root, c] -> 2 : root = 0 and 0 <= c <= 7 }
 	hw_uint<32>  value_M_get_input_4 = M.M_get_input_4.peek_2();
 	return value_M_get_input_4;
 }
 
 inline hw_uint<32>  M_compute_output_2_select(M_cache& M, int root, int c) {
+  // qpd = { compute_output[root, c] -> 1 : root = 0 and 0 <= c <= 7 }
 	hw_uint<32>  value_M_get_input_4 = M.M_get_input_4.peek_1();
 	return value_M_get_input_4;
 }
 
 inline hw_uint<32>  M_compute_output_3_select(M_cache& M, int root, int c) {
+  // qpd = {  }
 	hw_uint<32>  value_M_get_input_4 = M.M_get_input_4.peek_0();
 	return value_M_get_input_4;
 }

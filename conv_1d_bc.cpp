@@ -66,16 +66,19 @@ inline void M_write_0_write(hw_uint<32> & M_write_0, M_cache& M) {
 }
 
 inline hw_uint<32>  M_read0_3_select(M_cache& M, int root, int c) {
-	hw_uint<32>  value_M_write_0 = M.M_write_0.peek((root == 0 && c >= 0 && 7 - c >= 0) ? (2) : (-8 + c == 0 && root == 0) ? (1) : 0);
+  // qpd = { read0[root, c] -> 2 : root = 0 and 0 <= c <= 7; read0[root, c] -> 1 : root = 0 and c = 8 }
+	hw_uint<32>  value_M_write_0 = M.M_write_0.peek(/* Needs general delay string */ (root == 0 && c >= 0 && 7 - c >= 0) ? (2) : (-8 + c == 0 && root == 0) ? (1) : 0);
 	return value_M_write_0;
 }
 
 inline hw_uint<32>  M_read0_4_select(M_cache& M, int root, int c) {
-	hw_uint<32>  value_M_write_0 = M.M_write_0.peek((root == 0 && c >= 0 && 7 - c >= 0) ? (1) : 0);
+  // qpd = { read0[root, c] -> 1 : root = 0 and 0 <= c <= 7 }
+	hw_uint<32>  value_M_write_0 = M.M_write_0.peek(/* Needs general delay string */ (root == 0 && c >= 0 && 7 - c >= 0) ? (1) : 0);
 	return value_M_write_0;
 }
 
 inline hw_uint<32>  M_read0_5_select(M_cache& M, int root, int c) {
+  // qpd = {  }
 	hw_uint<32>  value_M_write_0 = M.M_write_0.peek_0();
 	return value_M_write_0;
 }
@@ -140,6 +143,7 @@ inline void T_read0_2_write(hw_uint<96>& T_read0_2, T_cache& T) {
 }
 
 inline hw_uint<96> T_compute_out_7_select(T_cache& T, int root, int c) {
+  // qpd = {  }
 	hw_uint<96> value_T_read0_2 = T.T_read0_2.peek_0();
 	return value_T_read0_2;
 }

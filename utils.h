@@ -140,3 +140,48 @@ std::string str(const std::vector<T>& t) {
   return comma_list(strs);
 }
 
+static inline
+vector<int> parse_pt(const string& pt) {
+  cout << "pt: " << pt << endl;
+  regex cm("\\{ \\[(.*)\\] \\}");
+  smatch match;
+  auto res = regex_search(pt, match, cm);
+
+  if (res) {
+
+    string coefs = match[1];
+    cout << "coefs: " << coefs << endl;
+    vector<int> coords;
+
+    auto vals = split_at(coefs, ", ");
+    for (auto v : vals) {
+      coords.push_back(safe_stoi(v));
+    }
+
+    return coords;
+  } else {
+    regex cm("\\{ (.*)\\[(.*)\\] \\}");
+    smatch match;
+    auto res = regex_search(pt, match, cm);
+
+
+    string coefs = match[2];
+    cout << "coefs: " << coefs << endl;
+    vector<int> coords;
+
+    auto vals = split_at(coefs, ", ");
+    for (auto v : vals) {
+      coords.push_back(safe_stoi(v));
+    }
+
+    return coords;
+  }
+
+
+}
+
+static inline
+string set_string(const vector<string>& vars, const string& s) {
+  return "{ " + sep_list(vars, "[", "]", ", ") + " : " + s + " }";
+}
+
