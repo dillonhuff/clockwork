@@ -6318,10 +6318,18 @@ void mismatched_stencil_test() {
   sobel.func2d("mismatched_stencils", "contrived", {xwindow, ywindow});
 
   sobel.realize("mismatched_stencils", 10, 1, 1);
+  sobel.realize_naive("mismatched_stencils", 10, 1);
 
-  int res = system("g++ -std=c++11 -c mismatched_stencils_opt.cpp");
-  assert(res == 0);
-  assert(false);
+  std::vector<std::string> naive =
+    run_regression_tb("mismatched_stencils_naive");
+  cout << "Naive    : " << naive << endl;
+  std::vector<std::string> optimized =
+    run_regression_tb("mismatched_stencils_opt");
+  cout << "Optimized: " << optimized << endl;
+  assert(naive == optimized);
+  //int res = system("g++ -std=c++11 -c mismatched_stencils_opt.cpp");
+  //assert(res == 0);
+  //assert(false);
 }
 
 void denoise2d_test() {
@@ -6874,7 +6882,7 @@ int main(int argc, char** argv) {
 
     //synth_lb_test();
 
-    mismatched_stencil_test();
+    //mismatched_stencil_test();
     denoise2d_test();
     upsample2d_test();
     conv3x3_app_test();

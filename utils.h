@@ -113,6 +113,18 @@ std::string sep_list(const std::vector<std::string>& strs, const std::string& ld
   return res;
 }
 
+template<typename T>
+static inline
+std::string sep_list(const std::vector<T>& vals, const std::string& ldelim, const std::string& rdelim, const std::string& sep) {
+  vector<string> strs;
+  for (auto v : vals) {
+    ostringstream ss;
+    ss << v;
+    strs.push_back(ss.str());
+  }
+  return sep_list(vals, ldelim, rdelim, sep);
+}
+
 static inline
 std::string comma_list(const std::vector<std::string>& strs) {
   return sep_list(strs, "", "", ", ");
@@ -183,5 +195,12 @@ vector<int> parse_pt(const string& pt) {
 static inline
 string set_string(const vector<string>& vars, const string& s) {
   return "{ " + sep_list(vars, "[", "]", ", ") + " : " + s + " }";
+}
+
+template<typename T>
+static inline
+std::ostream& operator<<(std::ostream& out, vector<T>& v) {
+  out << sep_list(v, "{", "}", ", ");
+  return out;
 }
 

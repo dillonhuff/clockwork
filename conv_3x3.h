@@ -247,3 +247,13 @@ hw_uint<32>
 out_comp_dn2d(hw_uint<32>& a, hw_uint<32>& b, hw_uint<128>& c, hw_uint<128>& d) {
   return a;
 }
+
+static inline
+hw_uint<32>
+contrived(hw_uint<32*3>& in, hw_uint<32*2>& b) {
+  return in.extract<0, 31>() +
+    in.extract<32, 63>() +
+    in.extract<64, 95>() +
+    b.extract<0, 31>() +
+    b.extract<32, 63>();
+}
