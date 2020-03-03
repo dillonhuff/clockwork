@@ -14,12 +14,12 @@ vector<string> split_at(const string& t, const string& delimiter) {
   vector<string> tokens;
   while ((pos = s.find(delimiter)) != std::string::npos) {
     token = s.substr(0, pos);
-    std::cout << token << std::endl;
+    //std::cout << token << std::endl;
     tokens.push_back(token);
     s.erase(0, pos + delimiter.length());
   }
 
-  cout << s << endl;
+  //cout << s << endl;
   tokens.push_back(s);
 
   return tokens;
@@ -154,7 +154,7 @@ std::string str(const std::vector<T>& t) {
 
 static inline
 vector<int> parse_pt(const string& pt) {
-  cout << "pt: " << pt << endl;
+  //cout << "pt: " << pt << endl;
   regex cm("\\{ \\[(.*)\\] \\}");
   smatch match;
   auto res = regex_search(pt, match, cm);
@@ -162,7 +162,7 @@ vector<int> parse_pt(const string& pt) {
   if (res) {
 
     string coefs = match[1];
-    cout << "coefs: " << coefs << endl;
+    //cout << "coefs: " << coefs << endl;
     vector<int> coords;
 
     auto vals = split_at(coefs, ", ");
@@ -178,7 +178,7 @@ vector<int> parse_pt(const string& pt) {
 
 
     string coefs = match[2];
-    cout << "coefs: " << coefs << endl;
+    //cout << "coefs: " << coefs << endl;
     vector<int> coords;
 
     auto vals = split_at(coefs, ", ");

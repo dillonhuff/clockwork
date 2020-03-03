@@ -6025,9 +6025,9 @@ struct App {
   }
 
   Box compute_box(const std::string& name) {
-    cout << "Getting box: " << name << ": for " << str(compute_domain(name)) << endl;
-    cout << tab(1) << "lexmin: " << str(lexmin(compute_domain(name))) << endl;
-    cout << tab(1) << "lexmax: " << str(lexmax(compute_domain(name))) << endl;
+    //cout << "Getting box: " << name << ": for " << str(compute_domain(name)) << endl;
+    //cout << tab(1) << "lexmin: " << str(lexmin(compute_domain(name))) << endl;
+    //cout << tab(1) << "lexmax: " << str(lexmax(compute_domain(name))) << endl;
 
     auto min_pt =
       parse_pt(sample(lexmin(compute_domain(name))));
