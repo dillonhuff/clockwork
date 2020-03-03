@@ -3601,7 +3601,10 @@ void aha_talk_print_program_representation(prog& prg) {
   cout << "----- Values read by each statement" << endl;
   auto reads =
     its(prg.consumer_map(), iter_domain);
-  cout << "\t" << str(reads) << endl << endl;
+  cout << "\tread    = " << str(reads) << endl << endl;
+  
+  cout << "---- Statements that read each value" << endl;
+  cout << "\tread^-1 = " << str(inv(reads)) << endl << endl;
  
   cout << "----- Values written by each statement" << endl;
   auto writes =
