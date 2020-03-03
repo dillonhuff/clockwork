@@ -5714,11 +5714,11 @@ struct App {
       cout << "Done with " << next << endl;
     }
 
-    for (auto d : domain_boxes) {
-      if (producers(d.first).size() == 0) {
-        domain_boxes[d.first] = d.second.pad(0, 10);
-      }
-    }
+    //for (auto d : domain_boxes) {
+      //if (producers(d.first).size() == 0) {
+        //domain_boxes[d.first] = d.second.pad(0, 10);
+      //}
+    //}
 
     cout << "Data domains.." << endl;
     for (auto d : domain_boxes) {
