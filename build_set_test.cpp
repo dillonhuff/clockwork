@@ -7212,11 +7212,11 @@ int main(int argc, char** argv) {
     mismatched_stencil_test();
     //assert(false);
 
-    //conv3x3_app_unrolled_test();
+    conv3x3_app_unrolled_test();
     conv3x3_app_test();
     denoise2d_test();
     upsample2d_test();
-    //conv3x3_app_unrolled_uneven_test();
+    conv3x3_app_unrolled_uneven_test();
     reduce_1d_test();
     downsample2d_test();
     updown_merge_test();
