@@ -991,6 +991,7 @@ void generate_fifo_cache(CodegenOptions& options, std::ostream& out, const std::
     if (!options.all_rams) {
       for (int i = 0; i < partition_capacity; i++) {
         int dv = i;
+        assert(dv >= 0);
         out << "\tinline " << buf.port_type_string() << " peek_" << to_string(dv) << "() {" << endl;
         out << "\t\treturn f.peek(" << dv <<");" << endl;
         out << "\t}" << endl << endl;
@@ -1049,6 +1050,7 @@ void generate_fifo_cache(CodegenOptions& options, std::ostream& out, const std::
       int nind = 0;
       for (auto p : partitions) {
         int dv = end_inds[nind];
+        assert(dv >= 0);
         out << "\tinline " << buf.port_type_string() << " peek_" << to_string(dv) << "() {" << endl;
         out << "\t\treturn " << p << ".back();" << endl;
         out << "\t}" << endl << endl;
@@ -1242,6 +1244,7 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
   bool opt_const = is_optimizable_constant_dd(inpt, outpt, buf);
   if (opt_const) {
     if (!options.all_rams && is_number(dx)) {
+      assert(safe_stoi(dx) >= 0);
       value_str = inpt + ".peek_" + dx + "()";
     } else {
       value_str = inpt + ".peek" + "( /* is opt const */ " + delay_expr + ")";
@@ -1252,6 +1255,7 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
       isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
     string dx = codegen_c(pieces[0].second);
     if (!options.all_rams && is_number(dx)) {
+      assert(safe_stoi(dx) >= 0);
       value_str = inpt + ".peek_" + dx + "()";
     } else {
       value_str = inpt + ".peek" + "(/* is one piece but not a number */" + dx + ")";
@@ -6289,6 +6293,24 @@ struct App {
     return schedules;
   }
 
+  int inner_range(const std::string& f, const int dim) {
+    cout << "Inner range of " << f << " for " << dim << endl;
+    int total = 1;
+    for (int d = dim - 1; d >= 0; d--) {
+      int max_comp = -1;
+      for (auto f : sort_functions()) {
+        int c = compute_box(f).length(d);
+        if (c > max_comp) {
+          max_comp = c;
+        }
+      }
+      total *= max_comp;
+      cout << "total = " << total << endl;
+    }
+    cout << total << endl;
+    return total;
+  }
+
   QExpr flatten(const std::string& f,
       const vector<QExpr>& s) {
     cout << "Flattening: " << f << endl;
@@ -6296,6 +6318,7 @@ struct App {
     QExpr flat;
     int sched_dim = s.size() - 1;
     int ndims = s.size() - 1;
+    int num_funcs = sort_functions().size();
     for (auto t : s) {
       if (sched_dim == 0) {
         for (auto v : t.terms) {
@@ -6303,10 +6326,11 @@ struct App {
           flat.terms.push_back(times(range, v));
         }
       } else {
-        int dim = ndims - sched_dim;
+        int dim = sched_dim - 1;
+        //ndims - sched_dim;
         for (auto v : t.terms) {
           int range =
-            compute_box(f).length(dim);
+            num_funcs*inner_range(f, dim);
           flat.terms.push_back(times(range, v));
         }
       }
@@ -6330,7 +6354,7 @@ struct App {
         cout << tab(2) << k << endl;
       }
     }
-    assert(false);
+    //assert(false);
     return flattened;
   }
 
@@ -7186,13 +7210,13 @@ int main(int argc, char** argv) {
     //synth_lb_test();
 
     mismatched_stencil_test();
-    assert(false);
+    //assert(false);
 
-    conv3x3_app_unrolled_test();
+    //conv3x3_app_unrolled_test();
     conv3x3_app_test();
     denoise2d_test();
     upsample2d_test();
-    conv3x3_app_unrolled_uneven_test();
+    //conv3x3_app_unrolled_uneven_test();
     reduce_1d_test();
     downsample2d_test();
     updown_merge_test();
