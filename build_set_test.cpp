@@ -3034,8 +3034,21 @@ void aha_talk_print_info(prog& prg);
 struct tb_config {
     vector<int> indices;
     int range_inner;
-    int range_outter;
+    int range_outer;
     int stride;
+
+    string csv_config_str(int tb_cnt) {
+        ostringstream out;
+        int pos = 0;
+        for (int index : indices) {
+            out << "tba_" << tb_cnt << "_tb_0_indices_"  << pos << "," << index<< endl;
+            pos ++;
+        }
+        out << "tba_" << tb_cnt << "_tb_0_range_inner," << range_inner << endl;
+        out << "tba_" << tb_cnt << "_tb_0_range_outer," << range_outer<< endl;
+        out << "tba_" << tb_cnt << "_tb_0_stride," << stride<< endl;
+        return out.str();
+    }
 };
 
 struct memtile_config {
@@ -3055,6 +3068,8 @@ struct memtile_config {
   int output_addr_ctrl_address_gen_0_dimensionality;
   int output_addr_ctrl_address_gen_0_ranges_0;
 
+  map<string, int> config_map;
+
 
    vector<tb_config> tb_config_vec;
    memtile_config():
@@ -3063,8 +3078,37 @@ struct memtile_config {
        agg_in_0_out_period(0),
        agg_in_0_in_sched_0(0),
        agg_in_0_out_sched_0(0){
-
+           config_map["output_addr_ctrl_address_gen_0_starting_addr"] = 0;
+           config_map["output_addr_ctrl_address_gen_0_stride_0"] = 1;
+           config_map["input_addr_ctrl_offsets_cfg_0_0"] = 0;
+           config_map["sync_grp_sync_group_0"] = 1;
        }
+
+   void emit_config_file_csv(string fname) {
+       ofstream out(fname + ".csv");
+       out << "agg_align_0_line_length," << agg_align_0_line_length << endl;
+       out << "agg_in_0_in_period," << agg_in_0_in_period << endl;
+       out << "agg_in_0_in_sched_0," << agg_in_0_in_sched_0 << endl;
+       out << "agg_in_0_out_period," << agg_in_0_in_period << endl;
+       out << "agg_in_0_out_sched_0," << agg_in_0_out_sched_0 << endl;
+       out << "input_addr_ctrl_address_gen_0_dimensionality," << input_addr_ctrl_address_gen_0_dimensionality << endl;
+       out << "input_addr_ctrl_address_gen_0_ranges_0," << input_addr_ctrl_address_gen_0_ranges_0 << endl;
+       out << "input_addr_ctrl_address_gen_0_starting_addr," << input_addr_ctrl_address_gen_0_starting_addr << endl;
+       out << "input_addr_ctrl_address_gen_0_strides_0," << input_addr_ctrl_address_gen_0_strides_0 << endl;
+       out << "output_addr_ctrl_address_gen_0_dimensionality," << output_addr_ctrl_address_gen_0_dimensionality << endl;
+       out << "output_addr_ctrl_address_gen_0_ranges_0," << output_addr_ctrl_address_gen_0_ranges_0 << endl;
+       int i = 0;
+       for (auto tb_config : tb_config_vec) {
+           out << tb_config.csv_config_str(i);
+           i ++;
+       }
+
+       for (auto it : config_map) {
+           out << it.first << "," << it.second << endl;
+       }
+
+       out.close();
+   }
 };
 
 void agg_test() {
@@ -3165,8 +3209,10 @@ void agg_test() {
   }
   tb.stride = 4;
   tb.range_inner = 4;
-  tb.range_outter = 3;
+  tb.range_outer = 3;
   memtile.tb_config_vec.push_back(tb);
+
+  memtile.emit_config_file_csv("lake_memtile_config");
 
   assert(false);
 }
