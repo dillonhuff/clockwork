@@ -6292,6 +6292,7 @@ struct App {
   QExpr flatten(const std::string& f,
       const vector<QExpr>& s) {
     cout << "Flattening: " << f << endl;
+    cout << tab(1) << "compute box: " << compute_box(f) << endl;
     QExpr flat;
     int sched_dim = s.size() - 1;
     int ndims = s.size() - 1;
