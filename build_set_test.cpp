@@ -3214,7 +3214,6 @@ void agg_test() {
 
   memtile.emit_config_file_csv("lake_memtile_config");
 
-  assert(false);
 }
 
 std::vector<std::string> run_regression_tb(const std::string& name) {
@@ -4145,7 +4144,7 @@ void jacobi_2d_4_test() {
   }
 
   regression_test(prg);
-  assert(false);
+  //assert(false);
 }
 
 void jacobi_2d_2_test() {
@@ -6626,7 +6625,6 @@ void conv3x3_app_unrolled_test() {
   sobel.func2d("conv3x3_app_unrolled", "conv_3_3", "img", {1, 1}, offsets);
 
   sobel.realize("conv3x3_app_unrolled", 30, 30, 2);
-  assert(false);
   //sobel.realize("conv3x3_app_unrolled", 32, 32, 8);
 
   //App ur = unroll(sobel, 2);
@@ -6660,7 +6658,6 @@ void conv3x3_app_test() {
 
   int tb_res = system("./a.out");
   assert(tb_res == 0);
-  assert(false);
 }
 
 void sobel_test() {
