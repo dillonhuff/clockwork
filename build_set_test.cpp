@@ -4879,6 +4879,13 @@ QTerm qterm(const QAV& a, const QAV& l, const QAV& r) {
   return {{a, l, r}};
 }
 
+QTerm times(const int s, const QTerm& v) {
+  QTerm t = v;
+  t.vals.push_back(qconst(s));
+  t.simplify();
+  return t;
+}
+
 struct QExpr {
   vector<QTerm> terms;
 
@@ -6075,14 +6082,16 @@ struct App {
     for (auto f : sorted_functions) {
       vector<string> sched_exprs;
       vector<string> var_names;
-      int i = 0;
-      for (auto v : schedules[f]) {
+      for (int i = 0; i < ndims; i++) {
         string dv = "d" + to_string(i);
-        sched_exprs.push_back(isl_str(v));
         var_names.push_back(dv);
-        i++;
       }
-      var_names.pop_back();
+
+      for (auto v : schedules[f]) {
+        sched_exprs.push_back(isl_str(v));
+      }
+      cout << "naive vars: " << var_names << endl;
+
       string map_str = "{ " + f + "_comp" + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
       cout << "Map str: " << map_str << endl;
       auto rm = rdmap(ctx, map_str);
@@ -6262,7 +6271,7 @@ struct App {
     return;
   }
 
-  umap* schedule() {
+  map<string, vector<QExpr> > schedule_opt() {
     vector<string> sorted_functions = sort_functions();
     int ndims = 2;
     map<string, vector<QExpr> > schedules;
@@ -6277,7 +6286,92 @@ struct App {
       schedules[f].push_back(qexpr(pos));
       pos++;
     }
+    return schedules;
+  }
 
+  QExpr flatten(const std::string& f,
+      const vector<QExpr>& s) {
+    cout << "Flattening: " << f << endl;
+    QExpr flat;
+    int sched_dim = s.size() - 1;
+    int ndims = s.size() - 1;
+    for (auto t : s) {
+      if (sched_dim == 0) {
+        for (auto v : t.terms) {
+          int range = 1;
+          flat.terms.push_back(times(range, v));
+        }
+      } else {
+        int dim = ndims - sched_dim;
+        for (auto v : t.terms) {
+          int range =
+            compute_box(f).length(dim);
+          flat.terms.push_back(times(range, v));
+        }
+      }
+      sched_dim--;
+    }
+    cout << "Flattened: " << flat << endl;
+    return flat;
+  }
+
+  map<string, vector<QExpr> > flatten(const map<string, vector<QExpr> >& s) {
+    map<string, vector<QExpr> > flattened;
+    for (auto t : s) {
+      flattened[t.first] =
+      {flatten(t.first, t.second)};
+    }
+    cout << "Flattened schedules size: " << flattened.size() << endl;
+    for (auto f : flattened) {
+      assert(f.second.size() > 0);
+      cout << tab(1) << f.first << endl;
+      for (auto k : f.second) {
+        cout << tab(2) << k << endl;
+      }
+    }
+    assert(false);
+    return flattened;
+  }
+
+  umap* schedule_flat() {
+    auto schedules = schedule_opt();
+    schedules = flatten(schedules);
+    vector<string> sorted_functions = sort_functions();
+
+    int ndims = 2;
+    umap* m = rdmap(ctx, "{}");
+    for (auto f : sorted_functions) {
+
+      vector<string> var_names;
+      for (int i = 0; i < ndims; i++) {
+        string dv = "d" + to_string(i);
+        var_names.push_back(dv);
+      }
+
+      vector<string> sched_exprs;
+      for (auto v : schedules[f]) {
+        sched_exprs.push_back(isl_str(v));
+      }
+      cout << "var names: " << var_names << endl;
+      string map_str = "{ " + f + "_comp" + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
+      cout << "Map str: " << map_str << endl;
+      auto rm = rdmap(ctx, map_str);
+      m = unn(m, rm);
+      isl_union_map_free(rm);
+      cout << "Unioned" << endl;
+      cout << "m = " << str(m) << endl;
+    }
+
+    cout << "done getting m..." << endl;
+
+
+    return m;
+  }
+
+  umap* schedule() {
+    auto schedules = schedule_opt();
+    vector<string> sorted_functions = sort_functions();
+    
     umap* m = rdmap(ctx, "{}");
     for (auto f : sorted_functions) {
       vector<string> sched_exprs;
@@ -6382,7 +6476,7 @@ struct App {
   }
 
   void schedule_and_codegen(const std::string& name, const int unroll_factor) {
-    umap* m = schedule();
+    umap* m = schedule_flat();
 
     map<string, UBuffer> buffers = build_buffers(m, unroll_factor);
 
@@ -7090,8 +7184,9 @@ int main(int argc, char** argv) {
 
     //synth_lb_test();
 
-    //mismatched_stencil_test();
-    agg_test();
+    mismatched_stencil_test();
+    assert(false);
+
     conv3x3_app_unrolled_test();
     conv3x3_app_test();
     denoise2d_test();
@@ -7101,6 +7196,8 @@ int main(int argc, char** argv) {
     downsample2d_test();
     updown_merge_test();
     sobel_test();
+
+    agg_test();
 
     heat_3d_test();
 
