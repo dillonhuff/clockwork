@@ -173,7 +173,7 @@ std::string str(umap* const m) {
   isl_printer_free(p);
   std::string r(rs);
   free(rs);
-  
+
   return r;
 }
 
@@ -186,7 +186,7 @@ std::string str(isl_map* const m) {
   isl_printer_free(p);
   std::string r(rs);
   free(rs);
-  
+
   return r;
 }
 
@@ -609,7 +609,7 @@ std::string str(isl_union_set* const m) {
   isl_printer_free(p);
   std::string r(rs);
   free(rs);
-  
+
   return r;
 }
 
@@ -622,7 +622,7 @@ std::string str(isl_set* const m) {
   isl_printer_free(p);
   std::string r(rs);
   free(rs);
-  
+
   return r;
 }
 
@@ -778,6 +778,10 @@ isl_union_pw_qpolynomial* card(isl_union_map* const m) {
 
 isl_pw_qpolynomial* card(isl_map* const m) {
   return isl_map_card(cpy(m));
+}
+
+isl_pw_qpolynomial* card(isl_set* const m) {
+  return isl_set_card(cpy(m));
 }
 
 isl_union_set* domain(isl_union_map* const m) {
