@@ -96,6 +96,13 @@ class UBuffer {
       return string(input_bundle ? "Input" : "Output") + "Stream<" + bundle_type_str + " >& " + bundle_name;
     }
 
+    isl_union_set* global_domain() {
+      uset* s = isl_union_set_read_from_str(ctx, "{ }");
+      for (auto other : domain) {
+        s = unn(s, to_uset(cpy(other.second)));
+      }
+      return s;
+    }
     isl_union_map* global_schedule() {
       umap* s = isl_union_map_read_from_str(ctx, "{ }");
       for (auto other : schedule) {
@@ -817,13 +824,17 @@ isl_union_pw_qpolynomial* compute_fifo_addr(UBuffer& buf, const std::string& rea
 
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
-  auto WritesBtwn = (its(WritesAfterProduction, WritesBeforeRead));
+  auto WritesBtwn = its_range((its(WritesAfterProduction, WritesBeforeRead)),
+      to_uset(buf.domain.at(write_port)));
 
   cout << "WritesBtwn: " << str(WritesBtwn) << endl;
 
   // Also need: evictsbetween?
   // img_comp -> imgs evicted?
-  umap* evict_sched = forced_eviction_times(write_port, buf);
+  //umap* evict_sched = forced_eviction_times(write_port, buf);
+  umap* evict_sched =
+    death_schedule(write_port, buf);
+
   cout << "Evict sched: " << str(evict_sched) << endl;
   cout << "rdsched    : " << str(rdsched) << endl;
   auto EvictsBeforeRead =
@@ -905,7 +916,8 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
 
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
-  auto WritesBtwn = (its(WritesAfterProduction, WritesBeforeRead));
+  auto WritesBtwn = its_range((its(WritesAfterProduction, WritesBeforeRead)),
+      to_uset(buf.domain.at(write_port)));
 
   cout << "WritesBtwn: " << str(WritesBtwn) << endl;
 
@@ -1498,7 +1510,7 @@ void generate_hls_code(UBuffer& buf) {
   generate_hls_code(os, buf);
 
   // Generate driver function for this buffer.
-  isl_union_map* res = buf.global_schedule();
+  isl_union_map* res = its(buf.global_schedule(), buf.global_domain());
 
   string code_string = codegen_c(res);
 
@@ -1542,6 +1554,31 @@ void generate_hls_code(UBuffer& buf) {
 
   generate_header(buf);
   generate_vivado_tcl(buf);
+}
+
+void dead_push_test() {
+
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+  UBuffer buf;
+  buf.name = "dead_push";
+  buf.ctx = ctx;
+
+  buf.add_in_pt("init",
+    "{ init[i, j] : 0 <= i <= 8 and 0 <= j <= 8 }",
+    "{ init[i, j] -> M[i, j] }",
+    "{ init[i, j] -> [i, j, 0] }");
+
+  buf.add_out_pt("read0",
+    "{ read0[i, j] : 0 <= i <= 8 and 0 <= j <= 8 }",
+    "{ read0[i, j] -> M[floor(i / 2), floor(j / 2)] }",
+    "{ read0[i, j] -> [i, j, 1] }");
+
+  generate_hls_code(buf);
+
+  isl_ctx_free(buf.ctx);
+  assert(false);
 }
 
 void synth_reduce_test() {
@@ -5449,6 +5486,10 @@ struct App {
     isl_ctx_free(ctx);
   }
 
+  bool is_input(const std::string& name) const {
+    return producers(name).size() == 0;
+  }
+
   string func2d(const std::string& name) {
     functions.insert(name);
     app_dag[name] = {};
@@ -5560,7 +5601,7 @@ struct App {
     return name;
   }
 
-  vector<Window> producers(const string& f) {
+  vector<Window> producers(const string& f) const {
     cout << "Getting producers for: " << f << endl;
     if (contains_key(f, app_dag)) {
       cout << "In app dag: " << f << endl;
@@ -5719,8 +5760,18 @@ struct App {
     }
 
     //for (auto d : domain_boxes) {
-      //if (producers(d.first).size() == 0) {
-        //domain_boxes[d.first] = d.second.pad(0, 10);
+      //bool is_edge = !is_input(d.first);
+
+      //for (auto p : producers(d.first)) {
+        //if (!is_input(p.name)) {
+          //is_edge = false;
+          //break;
+        //}
+      //}
+      ////if (producers(d.first).size() == 0) {
+      ////if (d.first == "img1") {
+      //if (is_edge) {
+        //domain_boxes[d.first] = d.second.pad(0, 1000);
       //}
     //}
 
@@ -6501,7 +6552,8 @@ struct App {
   }
 
   void schedule_and_codegen(const std::string& name, const int unroll_factor) {
-    umap* m = schedule_flat();
+    //umap* m = schedule_flat();
+    umap* m = schedule();
 
     map<string, UBuffer> buffers = build_buffers(m, unroll_factor);
 
@@ -6683,10 +6735,12 @@ void denoise2d_test() {
 
   dn.realize_naive("denoise2d", 30, 30);
 
-  std::vector<std::string> naive =
-    run_regression_tb("denoise2d_naive");
   std::vector<std::string> optimized =
     run_regression_tb("denoise2d_opt");
+  assert(false);
+
+  std::vector<std::string> naive =
+    run_regression_tb("denoise2d_naive");
 
   assert(naive == optimized);
 }
@@ -7211,10 +7265,11 @@ int main(int argc, char** argv) {
 
     mismatched_stencil_test();
     //assert(false);
+    denoise2d_test();
+    conv3x3_app_test();
+    //assert(false);
 
     conv3x3_app_unrolled_test();
-    conv3x3_app_test();
-    denoise2d_test();
     upsample2d_test();
     conv3x3_app_unrolled_uneven_test();
     reduce_1d_test();
