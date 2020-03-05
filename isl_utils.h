@@ -656,6 +656,11 @@ isl_map* lexmin(isl_map* const m0) {
   return isl_map_lexmin(cpy(m0));
 }
 
+
+isl_union_set* lexmax(isl_union_set* const m0) {
+  return isl_union_set_lexmax(cpy(m0));
+}
+
 isl_set* lexmax(isl_set* const m0) {
   return isl_set_lexmax(cpy(m0));
 }

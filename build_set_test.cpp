@@ -32,7 +32,7 @@ class UBuffer {
 
     std::map<string, bool> isIn;
     std::map<string, isl_set*> domain;
-    std::map<string, isl_map*> access_map;
+    std::map<string, umap*> access_map;
     std::map<string, isl_union_map*> schedule;
     std::map<string, vector<string> > port_bundles;
 
@@ -42,7 +42,7 @@ class UBuffer {
     isl_union_map* bundle_access(const std::string& bn) {
       auto d = isl_union_map_read_from_str(ctx, "{}");
       for (auto pt : port_bundles.at(bn)) {
-        d = unn(d, cpy(to_umap(access_map.at(pt))));
+        d = unn(d, cpy((access_map.at(pt))));
       }
       return d;
     }
@@ -121,7 +121,7 @@ class UBuffer {
         isl_map* access,
         isl_union_map* sched) {
       domain[name] = dm;
-      access_map[name] = access;
+      access_map[name] = to_umap(access);
       schedule[name] = (sched);
       isIn[name] = false;
     }
@@ -131,7 +131,7 @@ class UBuffer {
         isl_map* access,
         isl_union_map* sched) {
       domain[name] = dm;
-      access_map[name] = access;
+      access_map[name] = to_umap(access);
       schedule[name] = (sched);
       isIn[name] = true;
     }
@@ -141,7 +141,7 @@ class UBuffer {
         isl_map* access,
         isl_map* sched) {
       domain[name] = dm;
-      access_map[name] = access;
+      access_map[name] = to_umap(access);
       schedule[name] = to_umap(sched);
       isIn[name] = false;
     }
@@ -151,7 +151,7 @@ class UBuffer {
         isl_map* access,
         isl_map* sched) {
       domain[name] = dm;
-      access_map[name] = access;
+      access_map[name] = to_umap(access);
       schedule[name] = to_umap(sched);
       isIn[name] = true;
     }
@@ -179,7 +179,7 @@ class UBuffer {
       domain[name] =
         isl_set_read_from_str(ctx, dm.c_str());
       access_map[name] =
-        isl_map_read_from_str(ctx, access.c_str());
+        rdmap(ctx, access.c_str());
       schedule[name] =
         isl_union_map_read_from_str(ctx, sched.c_str());
     }
@@ -615,11 +615,11 @@ umap* last_reads(const string& inpt, UBuffer& buf) {
   cout << "Access map: " << str(writes) << endl;
   auto writers = inv(writes);
   cout << "Writer map: " << str(writers) << endl;
-  uset* written_values = to_uset(range(writes));
+  uset* written_values = (range(writes));
   isl_union_map* reads_from_fifo = rdmap(buf.ctx, "{}");
   for (auto outpt : buf.get_out_ports()) {
     reads_from_fifo =
-      unn(reads_from_fifo, to_umap(buf.access_map.at(outpt)));
+      unn(reads_from_fifo, (buf.access_map.at(outpt)));
   }
   reads_from_fifo = its_range(reads_from_fifo, written_values);
   cout << "Reads: " << str(reads_from_fifo) << endl;
@@ -650,11 +650,11 @@ umap* death_schedule(const string& inpt, UBuffer& buf) {
   auto writers = inv(writes);
   assert(writers != nullptr);
   //cout << "Writer map: " << str(writers) << endl;
-  uset* written_values = to_uset(range(writes));
+  uset* written_values = (range(writes));
   isl_union_map* reads_from_fifo = rdmap(buf.ctx, "{}");
   for (auto outpt : buf.get_out_ports()) {
     reads_from_fifo =
-      unn(reads_from_fifo, to_umap(buf.access_map.at(outpt)));
+      unn(reads_from_fifo, (buf.access_map.at(outpt)));
   }
   reads_from_fifo = its_range(reads_from_fifo, written_values);
   //cout << "Reads: " << str(reads_from_fifo) << endl;
@@ -689,11 +689,11 @@ umap* forced_eviction_times(const string& inpt, UBuffer& buf) {
   auto writers = inv(writes);
   assert(writers != nullptr);
   cout << "Writer map: " << str(writers) << endl;
-  uset* written_values = to_uset(range(writes));
+  uset* written_values = (range(writes));
   isl_union_map* reads_from_fifo = rdmap(buf.ctx, "{}");
   for (auto outpt : buf.get_out_ports()) {
     reads_from_fifo =
-      unn(reads_from_fifo, to_umap(buf.access_map.at(outpt)));
+      unn(reads_from_fifo, (buf.access_map.at(outpt)));
   }
   reads_from_fifo = its_range(reads_from_fifo, written_values);
   //cout << "Reads: " << str(reads_from_fifo) << endl;
@@ -741,11 +741,11 @@ void print_death_times(UBuffer& buf) {
     cout << "Access map: " << str(writes) << endl;
     auto writers = inv(writes);
     cout << "Writer map: " << str(writers) << endl;
-    uset* written_values = to_uset(range(writes));
+    uset* written_values = (range(writes));
     isl_union_map* reads_from_fifo = rdmap(buf.ctx, "{}");
     for (auto outpt : buf.get_out_ports()) {
       reads_from_fifo =
-        unn(reads_from_fifo, to_umap(buf.access_map.at(outpt)));
+        unn(reads_from_fifo, (buf.access_map.at(outpt)));
     }
     reads_from_fifo = its_range(reads_from_fifo, written_values);
     cout << "Reads: " << str(reads_from_fifo) << endl;
@@ -1302,7 +1302,7 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
       auto overlap =
         its(range(buf.access_map.at(pt)), range(buf.access_map.at(outpt)));
 
-      if (!isl_set_is_empty(overlap)) {
+      if (!empty(overlap)) {
         possible_ports.push_back(pt);
       }
     }
@@ -1663,7 +1663,7 @@ void synth_upsample_test() {
   buf.domain["write"] =
     isl_set_read_from_str(ctx, "{ write[i] : 0 <= i < 10 }");
   buf.access_map["write"] =
-    isl_map_read_from_str(ctx, "{ write[i] -> M[i] : 0 <= i < 10 }");
+    rdmap(ctx, "{ write[i] -> M[i] : 0 <= i < 10 }");
   buf.schedule["write"] =
     isl_union_map_read_from_str(ctx, "{ write[i] -> [i, 0, 0] : 0 <= i < 10 }");
   buf.isIn["write"] = true;
@@ -1672,7 +1672,7 @@ void synth_upsample_test() {
   buf.domain["read0"] =
     isl_set_read_from_str(ctx, "{ read0[i, j] : 0 <= i < 10 and 0 <= j < 2}");
   buf.access_map["read0"] =
-    isl_map_read_from_str(ctx, "{ read0[i, j] -> M[i] : 0 <= i < 10 and 0 <= j < 2}");
+    rdmap(ctx, "{ read0[i, j] -> M[i] : 0 <= i < 10 and 0 <= j < 2}");
   buf.schedule["read0"] =
     isl_union_map_read_from_str(ctx, "{ read0[i, j] -> [i, 1, j] : 0 <= i < 10 and 0 <= j < 2 }");
   buf.isIn["read0"] = false;
@@ -1700,7 +1700,7 @@ void synth_sr_boundary_condition_test() {
   buf.domain["write"] =
     isl_set_read_from_str(ctx, "{ write[i] : 0 <= i < 10 }");
   buf.access_map["write"] =
-    isl_map_read_from_str(ctx, "{ write[i] -> M[i] : 0 <= i < 10 }");
+    rdmap(ctx, "{ write[i] -> M[i] : 0 <= i < 10 }");
   buf.schedule["write"] =
     isl_union_map_read_from_str(ctx, "{ write[i] -> [i, 0] : 0 <= i < 10 }");
   buf.isIn["write"] = true;
@@ -1709,7 +1709,7 @@ void synth_sr_boundary_condition_test() {
   buf.domain["read0"] =
     isl_set_read_from_str(ctx, "{ read0[i] : 0 <= i < 10}");
   buf.access_map["read0"] =
-    isl_map_read_from_str(ctx, "{ read0[i] -> M[i] : 0 <= i < 10 }");
+    rdmap(ctx, "{ read0[i] -> M[i] : 0 <= i < 10 }");
   buf.schedule["read0"] =
     isl_union_map_read_from_str(ctx, "{ read0[i] -> [i + 2, 1] : 0 <= i < 10 }");
   buf.isIn["read0"] = false;
@@ -1718,7 +1718,7 @@ void synth_sr_boundary_condition_test() {
   buf.domain["read1"] =
     isl_set_read_from_str(ctx, "{ read1[i] : 0 <= i < 10}");
   buf.access_map["read1"] =
-    isl_map_read_from_str(ctx, "{ read1[i] -> M[i + 1] : 0 <= i < 9; read1[i] -> M[9] : 9 <= i < 10 }");
+    rdmap(ctx, "{ read1[i] -> M[i + 1] : 0 <= i < 9; read1[i] -> M[9] : 9 <= i < 10 }");
   buf.schedule["read1"] =
     isl_union_map_read_from_str(ctx, "{ read1[i] -> [i + 2, 1] : 0 <= i < 10 }");
   buf.isIn["read1"] = false;
@@ -1727,7 +1727,7 @@ void synth_sr_boundary_condition_test() {
   buf.domain["read2"] =
     isl_set_read_from_str(ctx, "{ read2[i] : 0 <= i < 10 }");
   buf.access_map["read2"] =
-    isl_map_read_from_str(ctx, "{ read2[i] -> M[i + 2] : 0 <= i < 8; read2[i] -> M[9] : 8 <= i < 10}");
+    rdmap(ctx, "{ read2[i] -> M[i + 2] : 0 <= i < 8; read2[i] -> M[9] : 8 <= i < 10}");
   buf.schedule["read2"] =
     isl_union_map_read_from_str(ctx, "{ read2[i] -> [i + 2, 1] : 0 <= i < 10 }");
   buf.isIn["read2"] = false;
@@ -1755,7 +1755,7 @@ void synth_wire_test() {
   buf.domain["write"] =
     isl_set_read_from_str(ctx, "{ write[i] : 0 <= i < 10 }");
   buf.access_map["write"] =
-    isl_map_read_from_str(ctx, "{ write[i] -> M[i] : 0 <= i < 10 }");
+    rdmap(ctx, "{ write[i] -> M[i] : 0 <= i < 10 }");
   buf.schedule["write"] =
     isl_union_map_read_from_str(ctx, "{ write[i] -> [i, 0] : 0 <= i < 10 }");
   buf.isIn["write"] = true;
@@ -1764,7 +1764,7 @@ void synth_wire_test() {
   buf.domain["read0"] =
     isl_set_read_from_str(ctx, "{ read0[i] : 0 <= i < 8}");
   buf.access_map["read0"] =
-    isl_map_read_from_str(ctx, "{ read0[i] -> M[i] : 0 <= i < 8 }");
+    rdmap(ctx, "{ read0[i] -> M[i] : 0 <= i < 8 }");
   buf.schedule["read0"] =
     isl_union_map_read_from_str(ctx, "{ read0[i] -> [i + 2, 1] : 0 <= i < 8 }");
   buf.isIn["read0"] = false;
@@ -1773,7 +1773,7 @@ void synth_wire_test() {
   buf.domain["read1"] =
     isl_set_read_from_str(ctx, "{ read1[i] : 0 <= i < 8}");
   buf.access_map["read1"] =
-    isl_map_read_from_str(ctx, "{ read1[i] -> M[i + 1] : 0 <= i < 8 }");
+    rdmap(ctx, "{ read1[i] -> M[i + 1] : 0 <= i < 8 }");
   buf.schedule["read1"] =
     isl_union_map_read_from_str(ctx, "{ read1[i] -> [i + 2, 1] : 0 <= i < 8 }");
   buf.isIn["read1"] = false;
@@ -1782,7 +1782,7 @@ void synth_wire_test() {
   buf.domain["read2"] =
     isl_set_read_from_str(ctx, "{ read2[i] : 0 <= i < 8}");
   buf.access_map["read2"] =
-    isl_map_read_from_str(ctx, "{ read2[i] -> M[i + 2] : 0 <= i < 8 }");
+    rdmap(ctx, "{ read2[i] -> M[i + 2] : 0 <= i < 8 }");
   buf.schedule["read2"] =
     isl_union_map_read_from_str(ctx, "{ read2[i] -> [i + 2, 1] : 0 <= i < 8 }");
   buf.isIn["read2"] = false;
@@ -3234,7 +3234,7 @@ void agg_test() {
           auto buf = buffer.second;
           string inpt = pick(buf.get_out_ports());
           int num_reads =
-              int_upper_bound(card(to_uset(domain(buf.access_map.at(inpt)))));
+              int_upper_bound(card((domain(buf.access_map.at(inpt)))));
           cout <<"total read: " << num_reads << endl;
           memtile.output_addr_ctrl_address_gen_0_ranges_0 = num_reads;
       }
@@ -6734,7 +6734,6 @@ void denoise2d_test() {
 
   std::vector<std::string> optimized =
     run_regression_tb("denoise2d_opt");
-  assert(false);
 
   std::vector<std::string> naive =
     run_regression_tb("denoise2d_naive");
