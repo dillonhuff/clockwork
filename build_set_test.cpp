@@ -3229,9 +3229,6 @@ void agg_test() {
               int_upper_bound(card(to_uset(buf.domain.at(inpt))));
           cout << "total data: " << total_data << endl;
           memtile.input_addr_ctrl_address_gen_0_ranges_0 = total_data;
-          //string min = jkstr(lexmin(range(buf.access_map.at(inpt))))
-          //cout << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
-          //cout << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
       }
       if (buffer.first == "sram") {
           auto buf = buffer.second;
