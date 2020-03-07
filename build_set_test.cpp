@@ -1919,6 +1919,19 @@ struct op {
 
   op() : parent(nullptr), is_loop(false) {}
 
+  void pretty_print(std::ostream& out, int level) const {
+    if (is_loop) {
+      out << tab(level) << "for (int " << name << " = " << start << "; " << name << " < " << end_exclusive << "; " << name << "++) {" << endl;
+      for (auto c : children) {
+        c->pretty_print(out, level + 1);
+      }
+      out << tab(level) << "}" << endl;
+    } else {
+      vector<string> args;
+      out << tab(level) << name << ": " << comma_list(produces) << " = " << func << "(" << comma_list(consumes) << ")" << endl;
+    }
+  }
+
   string consumed_value_name(pair<string, string>& val_loc) {
     if (contains_key(val_loc, consumed_value_names)) {
       return map_find(val_loc, consumed_value_names);
@@ -2147,6 +2160,10 @@ struct prog {
   map<string, int> buffer_port_widths;
   string compute_unit_file;
   map<string, vector<int> > buffer_bounds;
+
+  void pretty_print() {
+    root->pretty_print(cout, 0);
+  }
 
   string buffer_element_type_string(const string& name) const {
     if (!contains_key(name, buffer_port_widths)) {
@@ -7196,6 +7213,29 @@ void two_in_window_test() {
   regression_test(prg);
 }
 
+void upsample_reduce_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "upsample_reduce_test";
+  prg.add_input("in");
+  //prg.add_output("out");
+  prg.buffer_port_widths["I"] = 32;
+  int img_size = 15;
+  prg.buffer_bounds["I"] = {img_size, img_size};
+
+  auto y_nest =
+    prg.add_nest("y", 0, img_size, "yu", 0, 3);
+  auto x_nest =
+    y_nest->add_nest("x", 0, img_size, "xu", 0, 3);
+  auto reduce_nest =
+    x_nest->add_nest("yi", 0, 4, "xi", 0, 4);
+  reduce_nest->add_op({"I", "3*x + xu, 3*y + yu"}, "id", {"in", "x + xi, y + yi"});
+
+  prg.pretty_print();
+
+  assert(false);
+}
+
 void blur_and_downsample_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
@@ -7259,6 +7299,7 @@ int main(int argc, char** argv) {
 
     //synth_lb_test();
 
+    upsample_reduce_test();
     mismatched_stencil_test();
     //assert(false);
     denoise2d_test();

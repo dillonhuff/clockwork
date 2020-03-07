@@ -130,6 +130,11 @@ std::string comma_list(const std::vector<std::string>& strs) {
   return sep_list(strs, "", "", ", ");
 }
 
+static inline
+std::string comma_list(const std::set<std::string>& strs) {
+  vector<string> strv(begin(strs), end(strs));
+  return sep_list(strv, "", "", ", ");
+}
 
 std::string ReplaceString(std::string subject, const std::string& search,
                           const std::string& replace) {
