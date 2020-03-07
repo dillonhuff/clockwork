@@ -3216,6 +3216,60 @@ void agg_test() {
 
 }
 
+void memtile_test() {
+
+  prog prg;
+  prg.compute_unit_file = "accumulate_3.h";
+  prg.name = "memtile";
+  prg.add_input("in");
+  prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["agg"] = 32;
+  prg.buffer_port_widths["tb"] = 32;
+  prg.buffer_port_widths["sram"] = 32;
+
+  /* this program will be a test of memory tile flatten,
+   * I hand written the memory access pattern after vectorization
+   * and see if the Polyhedra analysis could figure out the
+   * correct schedule and memory size for me.
+   * */
+
+
+  auto agg = prg.add_nest("po", 0, 8, "pi", 0, 8);
+  agg->store({"agg", "po, pi"}, {"in", "po,pi"});
+
+  auto sram = prg.add_nest("qo", 0, 8, "qi", 0, 2);
+  sram->store({"sram", "qo, qi*4"}, {"agg", "qo, qi*4"});
+  sram->store({"sram", "qo, qi*4+1"}, {"agg", "qo, qi*4+1"});
+  sram->store({"sram", "qo, qi*4+2"}, {"agg", "qo, qi*4+2"});
+  sram->store({"sram", "qo, qi*4+3"}, {"agg", "qo, qi*4+3"});
+
+  {
+  auto tb = prg.add_nest("k", 0, 6, "l", 0, 2, "m", 0, 3);
+  tb->store({"tb", "k, m, l*4"}  , {"sram", "(k+m), l*4"} );
+  tb->store({"tb", "k, m, l*4+1"}, {"sram", "(k+m), l*4+1"});
+  tb->store({"tb", "k, m, l*4+2"}, {"sram", "(k+m), l*4+2"});
+  tb->store({"tb", "k, m, l*4+3"}, {"sram", "(k+m), l*4+3"});
+  }
+  {
+  auto out = prg.add_nest("a", 0, 6, "b", 0, 2, "c", 0, 4);
+
+  out->store({"out", "a, 0, 4*b+c"}, {"tb", "a, 0, 4*b + c"});
+  out->store({"out", "a, 1, 4*b+c"}, {"tb", "a, 1, 4*b + c"});
+  out->store({"out", "a, 2, 4*b+c"}, {"tb", "a, 2, 4*b + c"});
+
+  }
+  auto sched = prg.unoptimized_schedule();
+  cout << codegen_c(sched) << endl;
+
+  auto sched_opt = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
+ // auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
+  cout << codegen_c(sched_opt) << endl;
+  //aha_talk_print_info(prg);
+}
+
 std::vector<std::string> run_regression_tb(const std::string& name) {
   int res = system(string("g++ -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
   assert(res == 0);
@@ -7089,6 +7143,8 @@ int main(int argc, char** argv) {
 
     //mismatched_stencil_test();
     agg_test();
+    memtile_test();
+    assert(false);
     conv3x3_app_unrolled_test();
     conv3x3_app_test();
     denoise2d_test();

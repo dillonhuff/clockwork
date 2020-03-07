@@ -1,4 +1,5 @@
 *~
+out
 *.tcl
 a.out
 *.o
