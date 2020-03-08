@@ -1910,7 +1910,7 @@ struct op {
 
   std::vector<pair<std::string, std::string> > consume_locs;
   std::string func;
-  vector<string> func_args;
+  //vector<string> func_args;
 
   isl_ctx* ctx;
 
@@ -1944,7 +1944,7 @@ struct op {
 
   void add_function(const std::string& n, const vector<string>& args) {
     func = n;
-    func_args = args;
+    //func_args = args;
   }
 
   op* add_nest(
