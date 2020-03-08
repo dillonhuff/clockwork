@@ -2545,13 +2545,22 @@ struct prog {
 
   umap* validity_deps() {
     umap* naive_sched = unoptimized_schedule();
+    cout << "Naive sched: " << str(naive_sched) << endl;
+
     auto before = lex_lt(naive_sched, naive_sched);
 
+    cout << "Getting iteration domain..."<< endl;
+
     auto domain = whole_iteration_domain();
+
+    cout << "Got domain..." << endl;
+
     auto writes =
       its(producer_map(), domain);
     auto reads =
       its(consumer_map(), domain);
+
+    cout << "Got producer / consumer maps" << endl;
 
     isl_union_map *validity =
       its(dot(writes, inv(reads)), before);
@@ -2565,7 +2574,9 @@ struct prog {
 
 
     auto order_deps = relative_orders();
+    cout << "Getting validity deps..." << endl;
     isl_union_map *raw_deps = validity_deps();
+    cout << "Got validity deps..." << endl;
     auto validity =
       unn(order_deps, raw_deps);
     isl_union_map *proximity =
@@ -3255,7 +3266,9 @@ void agg_test() {
 
   auto sched_opt = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
  // auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
+  cout << "Sched map: " << str(sched_opt) << endl;
   cout << codegen_c(sched_opt) << endl;
+  //assert(false);
   //aha_talk_print_info(prg);
   //hardcode some configuration registers
   memtile_config memtile;
@@ -3298,6 +3311,85 @@ void agg_test() {
 
   memtile.emit_config_file_csv("lake_memtile_config");
 
+}
+
+void memtile_test() {
+
+  prog prg;
+  prg.compute_unit_file = "accumulate_3.h";
+  prg.name = "memtile";
+  prg.add_input("in");
+  prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["agg"] = 32;
+  prg.buffer_port_widths["tb"] = 32;
+  prg.buffer_port_widths["sram"] = 32;
+
+  /* this program will be a test of memory tile flatten,
+   * I hand written the memory access pattern after vectorization
+   * and see if the Polyhedra analysis could figure out the
+   * correct schedule and memory size for me.
+   * */
+
+
+  {
+    auto agg_loop = prg.add_nest("po", 0, 8, "pi", 0, 8);
+    auto agg = agg_loop->add_op("in2agg");
+    agg->add_load("in", "po, pi");
+    agg->add_store("agg", "po, pi");
+  }
+
+  {
+    auto sram_loop = prg.add_nest("qo", 0, 8, "qi", 0, 2);
+    auto sram = sram_loop->add_op("agg2sram");
+    sram->add_load("agg", "qo, qi*4");
+    sram->add_load("agg", "qo, qi*4+1");
+    sram->add_load("agg", "qo, qi*4+2");
+    sram->add_load("agg", "qo, qi*4+3");
+
+    sram->add_store("sram", "qo, qi*4");
+    sram->add_store("sram", "qo, qi*4+1");
+    sram->add_store("sram", "qo, qi*4+2");
+    sram->add_store("sram", "qo, qi*4+3");
+  }
+
+  {
+    auto tb_loop = prg.add_nest("k", 0, 6, "l", 0, 2, "m", 0, 3);
+    auto tb = tb_loop->add_op("sram2tb");
+    tb->add_load("sram", "(k+m), l*4");
+    tb->add_load("sram", "(k+m), l*4+1");
+    tb->add_load("sram", "(k+m), l*4+2");
+    tb->add_load("sram", "(k+m), l*4+3");
+
+
+    tb->add_store("tb", "k, m, l*4");
+    tb->add_store("tb", "k, m, l*4+1");
+    tb->add_store("tb", "k, m, l*4+2");
+    tb->add_store("tb", "k, m, l*4+3");
+  }
+
+  {
+    auto out_loop = prg.add_nest("a", 0, 6, "b", 0, 2, "c", 0, 4);
+    auto out = out_loop->add_op("tb2out");
+    out->add_load("tb", "a, 0, 4*b + c");
+    out->add_load("tb", "a, 1, 4*b + c");
+    out->add_load("tb", "a, 2, 4*b + c");
+
+    out->add_store("out", "a, 0, 4*b+c");
+    out->add_store("out", "a, 1, 4*b+c");
+    out->add_store("out", "a, 2, 4*b+c");
+  }
+
+  auto sched = prg.unoptimized_schedule();
+  cout << codegen_c(sched) << endl;
+
+  auto sched_opt = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
+  cout << "Sched map: " << str(sched_opt) << endl;
+ // auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
+  cout << codegen_c(sched_opt) << endl;
+  //aha_talk_print_info(prg);
 }
 
 std::vector<std::string> run_regression_tb(const std::string& name) {
@@ -5510,6 +5602,255 @@ struct Memory {
   map<string, BufferInfo> buffers;
 };
 
+map<string, int> 
+compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstraint>& delay_constraints) {
+  map<string, int> delays;
+
+  cout << "All delay constraints..." << endl;
+  vector<string> ds;
+  for (auto f : sorted_functions) {
+    ds.push_back("d_" + f);
+  }
+  string varspx = sep_list(ds, "[", "]", ", ");
+  auto* legal_delays = rdset(ctx, "{ " + sep_list(ds, "[", "]", ", ") + " }");
+  for (auto c : delay_constraints) {
+    cout << "\t" << c << endl;
+    cout << "\tisl str: " << isl_str(c) << endl;
+    legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(c) + " }"));
+  }
+
+  string aff_c = sep_list(ds, "", "", " + ");
+  string aff_str =
+    "{ " +
+    sep_list(ds, "[", "]", ", ") + " -> " +
+    sep_list(ds, "[", "]", " + ") + " }";
+
+  cout << "Aff str: " << aff_str << endl;
+
+  auto obj_func =
+    isl_aff_read_from_str(ctx, aff_str.c_str());
+
+  cout << "Objective: " << str(obj_func) << endl;
+  cout << "Legal delays: " << str(legal_delays) << endl;
+  cout << "Legal delay point: " << str(isl_set_sample_point(legal_delays)) << endl;
+
+  auto min_point =
+    isl_set_min_val(cpy(legal_delays), obj_func);
+  string mstring =
+    str(min_point);
+  cout << "Min delays: " << mstring << endl;
+  string os = aff_c;
+  string mset = set_string(ds, os + " = " + mstring);
+  cout << "Min set: " << mset << endl;
+  auto min_set = rdset(ctx, mset.c_str());
+
+  auto mvs = its(min_set, legal_delays);
+  string dp = str(isl_set_sample_point(mvs));
+  cout << "Min pt: " << dp << endl;
+
+  vector<int> delay_coeffs =
+    parse_pt(dp);
+  assert(delay_coeffs.size() == ds.size());
+
+  int p = 0;
+  for (auto f : sorted_functions) {
+    string fd = "d_" + f;
+    for (auto d : ds) {
+      if (fd == d) {
+        delays[fd] = delay_coeffs.at(p);
+      }
+    }
+    p++;
+  }
+
+  return delays;
+}
+
+map<string, QExpr> 
+compute_schedule_for_dim(isl_ctx* ctx, const int i, vector<string>& sorted_functions, const vector<QConstraint>& all_constraints, const vector<QConstraint>& rate_constraints) {
+
+  string dv = "d" + to_string(i);
+  map<string, int> rates;
+  for (auto f : sorted_functions) {
+    rates["q_" + f] = 1;
+  }
+
+  vector<string> qs;
+  for (auto f : sorted_functions) {
+    qs.push_back("q_" + f);
+  }
+  isl_set* rate_space =
+    rdset(ctx, "{ " + sep_list(qs, "[", "]", ", ") + " }");
+  assert(rate_space != nullptr);
+
+  for (auto f : sorted_functions) {
+    string gtzs = set_string(qs, "q_" + f + " > 0");
+    rate_space = its(rate_space, rdset(ctx, gtzs));
+  }
+
+  cout << "Rate constraints..." << endl;
+  vector<QConstraint> rates_only;
+  set<int> denoms;
+  for (auto r : rate_constraints) {
+    r.lhs.delete_terms_without(qvar(dv));
+    r.rhs.delete_terms_without(qvar(dv));
+    r.replace(qvar(dv), qconst(1));
+    cout << "\tbefore simplify: " << r << endl;
+    r.simplify();
+    cout << "\tafter simplify: " << r << endl;
+    rates_only.push_back(r);
+    for (auto t : r.rhs.terms) {
+      for (auto v : t.vals) {
+        if (v.is_num) {
+          denoms.insert(v.denom);
+        }
+      }
+    }
+    for (auto t : r.lhs.terms) {
+      for (auto v : t.vals) {
+        if (v.is_num) {
+          denoms.insert(v.denom);
+        }
+      }
+    }
+  }
+  cout << "Denoms..." << endl;
+  int lcm = 1;
+  for (auto d : denoms) {
+    cout << "\t" << d << endl;
+    lcm *= d;
+  }
+
+  cout << "LCM: " << lcm << endl;
+  for (auto& c : rates_only) {
+    cout << "Pre scaling: " << c << endl;
+    c.scale(lcm);
+    cout << "C: " << c << endl;
+  }
+
+  cout << "After simplification" << endl;
+  for (auto r : rates_only) {
+    string mset = set_string(qs, isl_str(r.lhs) + " = " + isl_str(r.rhs));
+    cout << "\t" << mset << endl;
+    rate_space = its(rate_space, rdset(ctx, mset));
+  }
+
+  cout << "Rate space: " << str(rate_space) << endl;
+
+  {
+    string aff_c = sep_list(qs, "", "", " + ");
+    string aff_str =
+      "{ " +
+      sep_list(qs, "[", "]", ", ") + " -> " +
+      sep_list(qs, "[", "]", " + ") + " }";
+
+    cout << "Aff str: " << aff_str << endl;
+
+    auto obj_func =
+      isl_aff_read_from_str(ctx, aff_str.c_str());
+
+    auto legal_delays = rate_space;
+    auto ds = qs;
+    cout << "Objective: " << str(obj_func) << endl;
+    cout << "Legal delays: " << str(rate_space) << endl;
+    cout << "Legal delay point: " << str(isl_set_sample_point(legal_delays)) << endl;
+
+    auto min_point =
+      isl_set_min_val(cpy(legal_delays), obj_func);
+    string mstring =
+      str(min_point);
+    cout << "Min delays: " << mstring << endl;
+    string os = aff_c;
+    string mset = set_string(ds, os + " = " + mstring);
+    cout << "Min set: " << mset << endl;
+    auto min_set = rdset(ctx, mset.c_str());
+
+    auto mvs = its(min_set, legal_delays);
+    string dp = str(isl_set_sample_point(mvs));
+    cout << "Min pt: " << dp << endl;
+
+    vector<int> delay_coeffs =
+      parse_pt(dp);
+    assert(delay_coeffs.size() == ds.size());
+    for (size_t i = 0; i < ds.size(); i++) {
+      rates[ds[i]] = delay_coeffs[i];
+    }
+  }
+
+  cout << "Rates..." << endl;
+  for (auto r : rates) {
+    cout << "\t" << r.first << " -> " << r.second << endl;
+  }
+  vector<QConstraint> delay_constraints =
+    all_constraints;
+  cout << "Constraints before delay substitution" << endl;
+  for (auto c : delay_constraints) {
+    cout << "\t" << c << endl;
+  }
+
+  for (auto& c : delay_constraints) {
+    for (auto r : rates) {
+      c.replace(qvar(r.first),
+          qconst(map_find(r.first, rates)));
+      c.replace(qvar(dv), qconst(0));
+      c.lhs.simplify();
+      c.rhs.simplify();
+    }
+  }
+
+  map<string, int> delays =
+    compute_delays(ctx, sorted_functions, delay_constraints);
+
+  cout << "Final schedules: " << endl;
+  map<string, QExpr> schedules;
+  for (auto f : sorted_functions) {
+    assert(contains_key("d_" + f, delays));
+    assert(contains_key("q_" + f, rates));
+
+    int delay =
+      map_find("d_" + f, delays);
+    int rate =
+      map_find("q_" + f, rates);
+
+    QTerm rd = qterm(rate, dv);
+    QTerm d = qterm(delay);
+    auto si = qexpr(rd, d);
+    schedules[f] = si;
+  }
+
+  return schedules;
+}
+
+QExpr extract_bound(const int i, const std::string& name, const string& max) {
+  QExpr ub;
+  regex cm("\\{ (.*)\\[(.*)\\] -> \\[\\((.*)\\)\\] \\}");
+  smatch match;
+  auto res = regex_search(max, match, cm);
+
+  assert(res);
+
+  string gp = match[3];
+  cout << "\tmax bound: " << gp << endl;
+  regex two_terms("(.*) \\+ (.*)");
+  smatch tt_match;
+  auto tt_res = regex_match(gp, tt_match, two_terms);
+
+  if (tt_res) {
+    cout << "\tt0 = " << tt_match[1] << endl;
+    cout << "\tt1 = " << tt_match[2] << endl;
+    ub = qexpr(parse_term(name, i, tt_match[1]), parse_term(name, i, tt_match[2]));
+  } else {
+    cout << "\tg  = " << gp << endl;
+    ub = qexpr(parse_term(name, i, gp), 0);
+  }
+
+  cout << "ub = " << ub << endl;
+
+  ub.terms.push_back(qterm(qvar("d_" + name)));
+
+  return ub;
+}
+
 struct App {
 
   isl_ctx* ctx;
@@ -5834,9 +6175,7 @@ struct App {
       // collect all constraints
       vector<QConstraint> all_constraints;
       vector<QConstraint> rate_constraints;
-      map<string, int> rates;
       for (auto f : sorted_functions) {
-        rates["q_" + f] = 1;
         cout << f << " schedule constraints: " << endl;
         Box b = map_find(f, domain_boxes);
         Range r = b.intervals.at(i);
@@ -5849,12 +6188,11 @@ struct App {
         QExpr zero = qexpr(0);
         QConstraint start_time{offset, zero};
         all_constraints.push_back(start_time);
+
         cout << "\t" << start_time << endl;
         for (auto arg : app_dag.at(f).srcs) {
           QTerm ft = qterm(f_rate, qvar(dv));
           QExpr ftime = qexpr(ft, f_delay);
-          // TODO: Convert this to use compute domains
-          // and compute mappings for upper bounds
           isl_map* f_cm = inv(compute_map(f));
           cout << "f_cm: " << str(f_cm) << endl;
 
@@ -5878,40 +6216,9 @@ struct App {
             lexmax(comps_needed);
           cout << "last comp needed: " << str(last_pix) << endl;
           auto max = dim_max(comps_needed, i);
-          //auto max = isl_map_dim_max(cpy(comps_needed), i);
           cout << "max needed in dim " << i << " = " << str(max) << endl;
 
-          //regex cm("\\{ (.*)\\[(.*)\\](.*) \\}");
-          regex cm("\\{ (.*)\\[(.*)\\] -> \\[\\((.*)\\)\\] \\}");
-          //-> \\[\\((.*)\\)\\]\\}");
-          smatch match;
-          auto res = regex_search(str(max), match, cm);
-
-          assert(res);
-
-          string gp = match[3];
-          cout << "\tmax bound: " << gp << endl;
-          regex two_terms("(.*) \\+ (.*)");
-          smatch tt_match;
-          auto tt_res = regex_match(gp, tt_match, two_terms);
-
-          QExpr ub;
-          if (tt_res) {
-            cout << "\tt0 = " << tt_match[1] << endl;
-            cout << "\tt1 = " << tt_match[2] << endl;
-            ub = qexpr(parse_term(arg.name, i, tt_match[1]), parse_term(arg.name, i, tt_match[2]));
-          } else {
-            cout << "\tg  = " << gp << endl;
-            ub = qexpr(parse_term(arg.name, i, gp), 0);
-          }
-
-          cout << "ub = " << ub << endl;
-
-          ub.terms.push_back(qterm(qvar("d_" + arg.name)));
-
-          //assert(false);
-          //ub = upper_bound(arg, i);
-
+          QExpr ub = extract_bound(i, arg.name, str(max));
 
           QConstraint start_after_deps{ftime, ub};
           all_constraints.push_back(start_after_deps);
@@ -5920,206 +6227,12 @@ struct App {
           cout << "\t" << start_after_deps << endl;
         }
       }
-
-      vector<string> qs;
-      for (auto f : sorted_functions) {
-        qs.push_back("q_" + f);
-      }
-      isl_set* rate_space =
-        rdset(ctx, "{ " + sep_list(qs, "[", "]", ", ") + " }");
-      assert(rate_space != nullptr);
+      map<string, QExpr> dim_schedules =
+        compute_schedule_for_dim(ctx, i, sorted_functions, all_constraints, rate_constraints);
 
       for (auto f : sorted_functions) {
-        string gtzs = set_string(qs, "q_" + f + " > 0");
-        rate_space = its(rate_space, rdset(ctx, gtzs));
+        schedules[f].push_back(dim_schedules.at(f));
       }
-
-      cout << "Rate constraints..." << endl;
-      vector<QConstraint> rates_only;
-      set<int> denoms;
-      for (auto r : rate_constraints) {
-        r.lhs.delete_terms_without(qvar(dv));
-        r.rhs.delete_terms_without(qvar(dv));
-        r.replace(qvar(dv), qconst(1));
-        cout << "\tbefore simplify: " << r << endl;
-        r.simplify();
-        cout << "\tafter simplify: " << r << endl;
-        rates_only.push_back(r);
-        for (auto t : r.rhs.terms) {
-          for (auto v : t.vals) {
-            if (v.is_num) {
-              denoms.insert(v.denom);
-            }
-          }
-        }
-        for (auto t : r.lhs.terms) {
-          for (auto v : t.vals) {
-            if (v.is_num) {
-              denoms.insert(v.denom);
-            }
-          }
-        }
-      }
-      cout << "Denoms..." << endl;
-      int lcm = 1;
-      for (auto d : denoms) {
-        cout << "\t" << d << endl;
-        lcm *= d;
-      }
-
-      cout << "LCM: " << lcm << endl;
-      for (auto& c : rates_only) {
-        cout << "Pre scaling: " << c << endl;
-        c.scale(lcm);
-        cout << "C: " << c << endl;
-      }
-
-      cout << "After simplification" << endl;
-      for (auto r : rates_only) {
-        string mset = set_string(qs, isl_str(r.lhs) + " = " + isl_str(r.rhs));
-        cout << "\t" << mset << endl;
-        rate_space = its(rate_space, rdset(ctx, mset));
-      }
-
-      cout << "Rate space: " << str(rate_space) << endl;
-
-      {
-        string aff_c = sep_list(qs, "", "", " + ");
-        string aff_str =
-          "{ " +
-          sep_list(qs, "[", "]", ", ") + " -> " +
-          sep_list(qs, "[", "]", " + ") + " }";
-
-        cout << "Aff str: " << aff_str << endl;
-
-        auto obj_func =
-          isl_aff_read_from_str(ctx, aff_str.c_str());
-
-        auto legal_delays = rate_space;
-        auto ds = qs;
-        cout << "Objective: " << str(obj_func) << endl;
-        cout << "Legal delays: " << str(rate_space) << endl;
-        cout << "Legal delay point: " << str(isl_set_sample_point(legal_delays)) << endl;
-
-        auto min_point =
-          isl_set_min_val(cpy(legal_delays), obj_func);
-        string mstring =
-          str(min_point);
-        cout << "Min delays: " << mstring << endl;
-        string os = aff_c;
-        string mset = set_string(ds, os + " = " + mstring);
-        cout << "Min set: " << mset << endl;
-        auto min_set = rdset(ctx, mset.c_str());
-
-        auto mvs = its(min_set, legal_delays);
-        string dp = str(isl_set_sample_point(mvs));
-        cout << "Min pt: " << dp << endl;
-
-        vector<int> delay_coeffs =
-          parse_pt(dp);
-        assert(delay_coeffs.size() == ds.size());
-        for (size_t i = 0; i < ds.size(); i++) {
-          rates[ds[i]] = delay_coeffs[i];
-        }
-        //assert(false);
-      }
-
-      cout << "Rates..." << endl;
-      for (auto r : rates) {
-        cout << "\t" << r.first << " -> " << r.second << endl;
-      }
-      vector<QConstraint> delay_constraints =
-        all_constraints;
-      cout << "Constraints before delay substitution" << endl;
-      for (auto c : delay_constraints) {
-        cout << "\t" << c << endl;
-      }
-
-      for (auto& c : delay_constraints) {
-        for (auto r : rates) {
-          c.replace(qvar(r.first),
-              qconst(map_find(r.first, rates)));
-          c.replace(qvar(dv), qconst(0));
-          c.lhs.simplify();
-          c.rhs.simplify();
-        }
-      }
-
-      cout << "All delay constraints..." << endl;
-      vector<string> ds;
-      for (auto f : sorted_functions) {
-        ds.push_back("d_" + f);
-      }
-      string varspx = sep_list(ds, "[", "]", ", ");
-      auto* legal_delays = rdset(ctx, "{ " + sep_list(ds, "[", "]", ", ") + " }");
-      for (auto c : delay_constraints) {
-        cout << "\t" << c << endl;
-        cout << "\tisl str: " << isl_str(c) << endl;
-        legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(c) + " }"));
-      }
-
-      string aff_c = sep_list(ds, "", "", " + ");
-      string aff_str =
-        "{ " +
-        sep_list(ds, "[", "]", ", ") + " -> " +
-        sep_list(ds, "[", "]", " + ") + " }";
-
-      cout << "Aff str: " << aff_str << endl;
-
-      auto obj_func =
-        isl_aff_read_from_str(ctx, aff_str.c_str());
-
-      cout << "Objective: " << str(obj_func) << endl;
-      cout << "Legal delays: " << str(legal_delays) << endl;
-      cout << "Legal delay point: " << str(isl_set_sample_point(legal_delays)) << endl;
-
-      auto min_point =
-        isl_set_min_val(cpy(legal_delays), obj_func);
-      string mstring =
-        str(min_point);
-      cout << "Min delays: " << mstring << endl;
-      string os = aff_c;
-      string mset = set_string(ds, os + " = " + mstring);
-      cout << "Min set: " << mset << endl;
-      auto min_set = rdset(ctx, mset.c_str());
-
-      auto mvs = its(min_set, legal_delays);
-      string dp = str(isl_set_sample_point(mvs));
-      cout << "Min pt: " << dp << endl;
-
-      vector<int> delay_coeffs =
-        parse_pt(dp);
-      assert(delay_coeffs.size() == ds.size());
-      //assert(false);
-
-      map<string, int> delays;
-      int p = 0;
-      for (auto f : sorted_functions) {
-        string fd = "d_" + f;
-        for (auto d : ds) {
-          if (fd == d) {
-            delays[fd] = delay_coeffs.at(p);
-          }
-        }
-        p++;
-      }
-
-      cout << "Final schedules: " << endl;
-      for (auto f : sorted_functions) {
-        assert(contains_key("d_" + f, delays));
-        assert(contains_key("q_" + f, rates));
-
-        int delay =
-          map_find("d_" + f, delays);
-        int rate =
-          map_find("q_" + f, rates);
-
-        QTerm rd = qterm(rate, dv);
-        QTerm d = qterm(delay);
-        auto si = qexpr(rd, d);
-        schedules[f].push_back(si);
-      }
-
   }
 
   Box compute_box(const std::string& name) {
@@ -7343,6 +7456,13 @@ int main(int argc, char** argv) {
     upsample_reduce_test();
     mismatched_stencil_test();
     //assert(false);
+    //mismatched_stencil_test();
+    agg_test();
+    //assert(false);
+    memtile_test();
+    //assert(false);
+    conv3x3_app_unrolled_test();
+    conv3x3_app_test();
     denoise2d_test();
     conv3x3_app_test();
     //assert(false);
