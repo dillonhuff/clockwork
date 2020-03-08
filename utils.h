@@ -130,6 +130,12 @@ std::string comma_list(const std::vector<std::string>& strs) {
   return sep_list(strs, "", "", ", ");
 }
 
+template<typename T>
+static inline
+std::string comma_list(const std::vector<T>& strs) {
+  return sep_list(strs, "", "", ", ");
+}
+
 static inline
 std::string comma_list(const std::set<std::string>& strs) {
   vector<string> strv(begin(strs), end(strs));

@@ -1917,6 +1917,7 @@ struct op {
   op() : parent(nullptr), is_loop(false) {}
 
   void pretty_print(std::ostream& out, int level) const {
+
     if (is_loop) {
       out << tab(level) << "for (int " << name << " = " << start << "; " << name << " < " << end_exclusive << "; " << name << "++) {" << endl;
       for (auto c : children) {
@@ -2147,6 +2148,19 @@ struct op {
     }
   }
 
+  set<op*> all_loops() {
+    set<op*> loops{this};
+    if (!is_loop) {
+      loops = {};
+    }
+    for (auto c : children) {
+      for (auto op : c->all_loops()) {
+        loops.insert(op);
+      }
+    }
+    return loops;
+  }
+
   set<op*> all_ops() {
     set<op*> ops{this};
     if (is_loop) {
@@ -2177,6 +2191,12 @@ struct prog {
   map<string, vector<int> > buffer_bounds;
 
   void pretty_print() {
+    cout << "program: " << name << endl;
+    cout << "buffers..." << endl;
+    for (auto b : buffer_bounds) {
+      cout << tab(1) << b.first << endl;
+      //"[" << comma_list(b.second) << "]" << endl;
+    }
     root->pretty_print(cout, 0);
   }
 
@@ -2302,6 +2322,7 @@ struct prog {
     return args;
   }
 
+  set<op*> all_loops() { return root->all_loops(); }
   set<op*> all_ops() { return root->all_ops(); }
 
   op* add_op(const std::string& name) {
@@ -2576,6 +2597,18 @@ struct prog {
     cout << codegen_c(sched);
   }
 };
+
+prog duplicate_interface(prog& p) {
+  prog pcpy;
+  pcpy.name = p.name;
+  pcpy.ins = p.ins;
+  pcpy.outs = p.outs;
+  pcpy.buffer_port_widths = p.buffer_port_widths;
+  pcpy.compute_unit_file = p.compute_unit_file;
+  pcpy.buffer_bounds = p.buffer_bounds;
+
+  return pcpy;
+}
 
 void generate_op_code(map<string, UBuffer>& buffers, op* op) {
   assert(op->func != "");
@@ -7227,13 +7260,21 @@ void upsample_reduce_test() {
     x_nest->add_nest("yi", 0, 4, "xi", 0, 4);
   reduce_nest->add_op({"I", "3*x + xu, 3*y + yu"}, "id", {"in", "x + xi, y + yi"});
 
-  for (auto c : prg.root->children) {
-    c->pretty_print(cout, 0);
-  }
+  prg.pretty_print();
   cout << "Consumer maps..." << endl;
   cout << tab(1) << str(prg.consumer_map()) << endl;
 
-  assert(false);
+  prog pcpy = duplicate_interface(prg);
+  for (auto c : prg.all_loops()) {
+    cout << "Adding loop: " << c->name << endl;
+    string lc = c->name + "_cache";
+    pcpy.buffer_bounds[lc] = {};
+  }
+
+  cout << "Copy..." << endl;
+  pcpy.pretty_print();
+
+  //assert(false);
 }
 
 void blur_and_downsample_test() {
