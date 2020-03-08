@@ -7233,7 +7233,7 @@ void upsample_reduce_test() {
   cout << "Consumer maps..." << endl;
   cout << tab(1) << str(prg.consumer_map()) << endl;
 
-  //assert(false);
+  assert(false);
 }
 
 void blur_and_downsample_test() {
