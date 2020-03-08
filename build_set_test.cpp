@@ -1911,7 +1911,7 @@ struct op {
 
   std::set<std::string> consumes;
   std::vector<pair<std::string, std::string> > consume_locs;
-  map<pair<string, string>, string> consumed_value_names;
+  //map<pair<string, string>, string> consumed_value_names;
   std::string func;
   vector<string> func_args;
 
@@ -1933,10 +1933,12 @@ struct op {
   }
 
   string consumed_value_name(pair<string, string>& val_loc) {
-    if (contains_key(val_loc, consumed_value_names)) {
-      return map_find(val_loc, consumed_value_names);
-    }
-    return val_loc.first + "_value";
+    string val_name = c_sanitize(val_loc.first + "_" + val_loc.second + "_value");
+    return val_name;
+    //if (contains_key(val_loc, consumed_value_names)) {
+      //return map_find(val_loc, consumed_value_names);
+    //}
+    //return val_loc.first + "_value";
   }
 
   void add_function(const std::string& n) {
@@ -2052,7 +2054,7 @@ struct op {
     consumes.insert(b + "[" + loc + "]");
     consume_locs.push_back({b, loc});
     string val_name = c_sanitize(b + "_" + loc + "_value");
-    consumed_value_names[{b, loc}] = val_name;
+    //consumed_value_names[{b, loc}] = val_name;
     return val_name;
   }
 
@@ -2540,25 +2542,6 @@ struct prog {
 
     cout << endl;
     cout << "Result: " << str(sched) << endl;
-
-    // New scheduling algorithm: Build schedule tree
-
-    //isl_schedule_constraints *sc;
-    //sc = isl_schedule_constraints_on_domain(cpy(domain));
-    //sc = isl_schedule_constraints_set_validity(sc, cpy(validity));
-    //sc = isl_schedule_constraints_set_proximity(sc, cpy(proximity));
-
-
-    //isl_schedule *mysched;
-    //isl_schedule_node *node =
-      //isl_schedule_node_from_domain(cpy(domain));
-    //node = isl_schedule_node_child(node, 0);
-    //mysched = isl_schedule_node_get_schedule(node);
-
-
-
-    //cout << "My schedule..." << str(mysched) << endl;
-    //assert(false);
 
     return sched;
   }
@@ -7231,9 +7214,13 @@ void upsample_reduce_test() {
     x_nest->add_nest("yi", 0, 4, "xi", 0, 4);
   reduce_nest->add_op({"I", "3*x + xu, 3*y + yu"}, "id", {"in", "x + xi, y + yi"});
 
-  prg.pretty_print();
+  for (auto c : prg.root->children) {
+    c->pretty_print(cout, 0);
+  }
+  cout << "Consumer maps..." << endl;
+  cout << tab(1) << str(prg.consumer_map()) << endl;
 
-  assert(false);
+  //assert(false);
 }
 
 void blur_and_downsample_test() {
