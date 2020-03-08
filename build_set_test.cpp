@@ -6067,9 +6067,7 @@ struct App {
       // collect all constraints
       vector<QConstraint> all_constraints;
       vector<QConstraint> rate_constraints;
-      //map<string, int> rates;
       for (auto f : sorted_functions) {
-        //rates["q_" + f] = 1;
         cout << f << " schedule constraints: " << endl;
         Box b = map_find(f, domain_boxes);
         Range r = b.intervals.at(i);
@@ -6082,6 +6080,7 @@ struct App {
         QExpr zero = qexpr(0);
         QConstraint start_time{offset, zero};
         all_constraints.push_back(start_time);
+
         cout << "\t" << start_time << endl;
         for (auto arg : app_dag.at(f).srcs) {
           QTerm ft = qterm(f_rate, qvar(dv));

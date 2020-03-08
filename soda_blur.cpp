@@ -2,7 +2,7 @@
 
 #include "hw_classes.h"
 
-struct I_I_id0_6_cache {
+struct I_I_id0_0_cache {
 	// Capacity: 33
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
@@ -75,7 +75,7 @@ struct I_I_id0_6_cache {
 
 };
 
-struct I_I_id1_0_cache {
+struct I_I_id1_10_cache {
 	// Capacity: 33
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
@@ -149,119 +149,119 @@ struct I_I_id1_0_cache {
 };
 
 struct I_cache {
-  I_I_id0_6_cache I_I_id0_6;
-  I_I_id1_0_cache I_I_id1_0;
+  I_I_id0_0_cache I_I_id0_0;
+  I_I_id1_10_cache I_I_id1_10;
 };
 
 
 
-inline void I_I_id0_6_write(hw_uint<16>& I_I_id0_6, I_cache& I) {
-	I.I_I_id0_6.push(I_I_id0_6);
+inline void I_I_id0_0_write(hw_uint<16>& I_I_id0_0, I_cache& I) {
+	I.I_I_id0_0.push(I_I_id0_0);
 }
 
-inline void I_I_id1_0_write(hw_uint<16>& I_I_id1_0, I_cache& I) {
-	I.I_I_id1_0.push(I_I_id1_0);
+inline void I_I_id1_10_write(hw_uint<16>& I_I_id1_10, I_cache& I) {
+	I.I_I_id1_10.push(I_I_id1_10);
 }
 
-inline hw_uint<16> I_out_0_blur_30_10_select(I_cache& I, int root, int xr, int xc) {
+inline hw_uint<16> I_out_0_blur_30_7_select(I_cache& I, int root, int xr, int xc) {
+  // qpd = { out_0_blur_30[root, xr, xc] -> 32 : root = 0 and 0 <= xr <= 29 and 0 < xc <= 14; out_0_blur_30[root, xr, xc] -> (17 + xc) : root = 0 and xc = 15 and 0 <= xr <= 29; out_0_blur_30[root, xr, xc] -> 32 : root = 0 and xc = 0 and 0 <= xr <= 29 }
+	// lexmax events: { out_0_blur_30[root = 0, xr, xc] -> I_id0[root' = 0, ir = xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+  // I_out_0_blur_30_7 read pattern: { out_0_blur_30[root = 0, xr, xc] -> I[xr, 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+  // I_I_id0_0 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
+    // overlap with reads : { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 29 and 0 <= i1 <= 30 }
+  // I_I_id1_10 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
+    // overlap with reads : { I[i0, i1] : false }
+	auto value_I_I_id0_0 = I.I_I_id0_0.peek_32();
+	return value_I_I_id0_0;
+}
+
+inline hw_uint<16> I_out_0_blur_30_8_select(I_cache& I, int root, int xr, int xc) {
   // qpd = { out_0_blur_30[root, xr, xc] -> 16 : root = 0 and 0 <= xr <= 29 and 0 < xc <= 14; out_0_blur_30[root, xr, xc] -> (1 + xc) : root = 0 and xc = 15 and 0 <= xr <= 29; out_0_blur_30[root, xr, xc] -> 16 : root = 0 and xc = 0 and 0 <= xr <= 29 }
 	// lexmax events: { out_0_blur_30[root = 0, xr, xc] -> I_id0[root' = 0, ir = 1 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_out_0_blur_30_10 read pattern: { out_0_blur_30[root = 0, xr, xc] -> I[1 + xr, 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_I_id0_6 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
+  // I_out_0_blur_30_8 read pattern: { out_0_blur_30[root = 0, xr, xc] -> I[1 + xr, 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+  // I_I_id0_0 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
     // overlap with reads : { I[i0, i1] : (i1) mod 2 = 0 and 0 < i0 <= 30 and 0 <= i1 <= 30 }
-  // I_I_id1_0 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
+  // I_I_id1_10 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
     // overlap with reads : { I[i0, i1] : false }
-	auto value_I_I_id0_6 = I.I_I_id0_6.peek_16();
-	return value_I_I_id0_6;
-}
-
-inline hw_uint<16> I_out_0_blur_30_11_select(I_cache& I, int root, int xr, int xc) {
-  // qpd = {  }
-	// lexmax events: { out_0_blur_30[root = 0, xr, xc] -> I_id0[root' = 0, ir = 2 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_out_0_blur_30_11 read pattern: { out_0_blur_30[root = 0, xr, xc] -> I[2 + xr, 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_I_id0_6 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
-    // overlap with reads : { I[i0, i1] : (i1) mod 2 = 0 and 2 <= i0 <= 31 and 0 <= i1 <= 30 }
-  // I_I_id1_0 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
-    // overlap with reads : { I[i0, i1] : false }
-	auto value_I_I_id0_6 = I.I_I_id0_6.peek_0();
-	return value_I_I_id0_6;
+	auto value_I_I_id0_0 = I.I_I_id0_0.peek_16();
+	return value_I_I_id0_0;
 }
 
 inline hw_uint<16> I_out_0_blur_30_9_select(I_cache& I, int root, int xr, int xc) {
-  // qpd = { out_0_blur_30[root, xr, xc] -> 32 : root = 0 and 0 <= xr <= 29 and 0 < xc <= 14; out_0_blur_30[root, xr, xc] -> (17 + xc) : root = 0 and xc = 15 and 0 <= xr <= 29; out_0_blur_30[root, xr, xc] -> 32 : root = 0 and xc = 0 and 0 <= xr <= 29 }
-	// lexmax events: { out_0_blur_30[root = 0, xr, xc] -> I_id0[root' = 0, ir = xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_out_0_blur_30_9 read pattern: { out_0_blur_30[root = 0, xr, xc] -> I[xr, 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_I_id0_6 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
-    // overlap with reads : { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 29 and 0 <= i1 <= 30 }
-  // I_I_id1_0 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
+  // qpd = {  }
+	// lexmax events: { out_0_blur_30[root = 0, xr, xc] -> I_id0[root' = 0, ir = 2 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+  // I_out_0_blur_30_9 read pattern: { out_0_blur_30[root = 0, xr, xc] -> I[2 + xr, 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+  // I_I_id0_0 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
+    // overlap with reads : { I[i0, i1] : (i1) mod 2 = 0 and 2 <= i0 <= 31 and 0 <= i1 <= 30 }
+  // I_I_id1_10 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
     // overlap with reads : { I[i0, i1] : false }
-	auto value_I_I_id0_6 = I.I_I_id0_6.peek_32();
-	return value_I_I_id0_6;
+	auto value_I_I_id0_0 = I.I_I_id0_0.peek_0();
+	return value_I_I_id0_0;
 }
 
 inline hw_uint<16> I_out_1_blur_31_3_select(I_cache& I, int root, int xr, int xc) {
   // qpd = {  }
 	// lexmax events: { out_1_blur_31[root = 0, xr, xc] -> I_id1[root' = 0, ir = xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
   // I_out_1_blur_31_3 read pattern: { out_1_blur_31[root = 0, xr, xc] -> I[xr, 1 + 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_I_id0_6 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
+  // I_I_id0_0 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
     // overlap with reads : { I[i0, i1] : false }
-  // I_I_id1_0 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
+  // I_I_id1_10 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
     // overlap with reads : { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 29 and 0 < i1 <= 31 }
-	auto value_I_I_id1_0 = I.I_I_id1_0.peek_32();
-	return value_I_I_id1_0;
+	auto value_I_I_id1_10 = I.I_I_id1_10.peek_32();
+	return value_I_I_id1_10;
 }
 
 inline hw_uint<16> I_out_1_blur_31_4_select(I_cache& I, int root, int xr, int xc) {
   // qpd = {  }
 	// lexmax events: { out_1_blur_31[root = 0, xr, xc] -> I_id1[root' = 0, ir = 1 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
   // I_out_1_blur_31_4 read pattern: { out_1_blur_31[root = 0, xr, xc] -> I[1 + xr, 1 + 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_I_id0_6 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
+  // I_I_id0_0 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
     // overlap with reads : { I[i0, i1] : false }
-  // I_I_id1_0 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
+  // I_I_id1_10 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
     // overlap with reads : { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 < i0 <= 30 and 0 < i1 <= 31 }
-	auto value_I_I_id1_0 = I.I_I_id1_0.peek_16();
-	return value_I_I_id1_0;
+	auto value_I_I_id1_10 = I.I_I_id1_10.peek_16();
+	return value_I_I_id1_10;
 }
 
 inline hw_uint<16> I_out_1_blur_31_5_select(I_cache& I, int root, int xr, int xc) {
   // qpd = {  }
 	// lexmax events: { out_1_blur_31[root = 0, xr, xc] -> I_id1[root' = 0, ir = 2 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
   // I_out_1_blur_31_5 read pattern: { out_1_blur_31[root = 0, xr, xc] -> I[2 + xr, 1 + 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_I_id0_6 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
+  // I_I_id0_0 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
     // overlap with reads : { I[i0, i1] : false }
-  // I_I_id1_0 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
+  // I_I_id1_10 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
     // overlap with reads : { I[i0, i1] : (1 + i1) mod 2 = 0 and 2 <= i0 <= 31 and 0 < i1 <= 31 }
-	auto value_I_I_id1_0 = I.I_I_id1_0.peek_0();
-	return value_I_I_id1_0;
+	auto value_I_I_id1_10 = I.I_I_id1_10.peek_0();
+	return value_I_I_id1_10;
 }
 
 // # of bundles = 4
 // I_id0_write
-//	I_I_id0_6
+//	I_I_id0_0
 inline void I_I_id0_write_bundle_write(hw_uint<16>& I_id0_write, I_cache& I) {
-	hw_uint<16> I_I_id0_6_res = I_id0_write.extract<0, 15>();
-	I_I_id0_6_write(I_I_id0_6_res, I);
+	hw_uint<16> I_I_id0_0_res = I_id0_write.extract<0, 15>();
+	I_I_id0_0_write(I_I_id0_0_res, I);
 }
 
 // I_id1_write
-//	I_I_id1_0
+//	I_I_id1_10
 inline void I_I_id1_write_bundle_write(hw_uint<16>& I_id1_write, I_cache& I) {
-	hw_uint<16> I_I_id1_0_res = I_id1_write.extract<0, 15>();
-	I_I_id1_0_write(I_I_id1_0_res, I);
+	hw_uint<16> I_I_id1_10_res = I_id1_write.extract<0, 15>();
+	I_I_id1_10_write(I_I_id1_10_res, I);
 }
 
 // out_0_blur_30_read
+//	I_out_0_blur_30_7
+//	I_out_0_blur_30_8
 //	I_out_0_blur_30_9
-//	I_out_0_blur_30_10
-//	I_out_0_blur_30_11
 inline hw_uint<48> I_out_0_blur_30_read_bundle_read(I_cache& I, int root, int xr, int xc) {
 	hw_uint<48> result;
+	hw_uint<16> I_out_0_blur_30_7_res = I_out_0_blur_30_7_select(I, root, xr, xc);
+	set_at<0, 48>(result, I_out_0_blur_30_7_res);
+	hw_uint<16> I_out_0_blur_30_8_res = I_out_0_blur_30_8_select(I, root, xr, xc);
+	set_at<16, 48>(result, I_out_0_blur_30_8_res);
 	hw_uint<16> I_out_0_blur_30_9_res = I_out_0_blur_30_9_select(I, root, xr, xc);
-	set_at<0, 48>(result, I_out_0_blur_30_9_res);
-	hw_uint<16> I_out_0_blur_30_10_res = I_out_0_blur_30_10_select(I, root, xr, xc);
-	set_at<16, 48>(result, I_out_0_blur_30_10_res);
-	hw_uint<16> I_out_0_blur_30_11_res = I_out_0_blur_30_11_select(I, root, xr, xc);
-	set_at<32, 48>(result, I_out_0_blur_30_11_res);
+	set_at<32, 48>(result, I_out_0_blur_30_9_res);
 	return result;
 }
 
@@ -285,12 +285,12 @@ inline hw_uint<48> I_out_1_blur_31_read_bundle_read(I_cache& I, int root, int xr
 
 
 // Operation logic
-inline void I_id1(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in_1, I_cache& I, int root, int ir, int ic) {
-	// Consume: in_1
-	auto in_1_ir_c__ic_value = in_1.read();
-	auto compute_result = id(in_1_ir_c__ic_value);
+inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in_0, I_cache& I, int root, int ir, int ic) {
+	// Consume: in_0
+	auto in_0_ir_c__ic_value = in_0.read();
+	auto compute_result = id(in_0_ir_c__ic_value);
 	// Produce: I
-	I_I_id1_write_bundle_write(compute_result, I);
+	I_I_id0_write_bundle_write(compute_result, I);
 }
 
 inline void out_1_blur_31(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */out_1, int root, int xr, int xc) {
@@ -301,20 +301,20 @@ inline void out_1_blur_31(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num
 	out_1.write(compute_result);
 }
 
-inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in_0, I_cache& I, int root, int ir, int ic) {
-	// Consume: in_0
-	auto in_0_ir_c__ic_value = in_0.read();
-	auto compute_result = id(in_0_ir_c__ic_value);
-	// Produce: I
-	I_I_id0_write_bundle_write(compute_result, I);
-}
-
 inline void out_0_blur_30(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */out_0, int root, int xr, int xc) {
 	// Consume: I
 	auto I_xr__p__0_c__2_m_xc__p__0__p__0_value = I_out_0_blur_30_read_bundle_read(I/* source_delay */, root, xr, xc);
 	auto compute_result = blur_3(I_xr__p__0_c__2_m_xc__p__0__p__0_value);
 	// Produce: out_0
 	out_0.write(compute_result);
+}
+
+inline void I_id1(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in_1, I_cache& I, int root, int ir, int ic) {
+	// Consume: in_1
+	auto in_1_ir_c__ic_value = in_1.read();
+	auto compute_result = id(in_1_ir_c__ic_value);
+	// Produce: I
+	I_I_id1_write_bundle_write(compute_result, I);
 }
 
 // Driver function
