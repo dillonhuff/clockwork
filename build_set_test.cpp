@@ -1906,12 +1906,9 @@ struct op {
   int end_exclusive;
   std::string name;
   std::vector<op*> children;
-  std::set<std::string> produces;
   std::vector<pair<std::string, std::string> > produce_locs;
 
-  std::set<std::string> consumes;
   std::vector<pair<std::string, std::string> > consume_locs;
-  //map<pair<string, string>, string> consumed_value_names;
   std::string func;
   vector<string> func_args;
 
@@ -1928,7 +1925,7 @@ struct op {
       out << tab(level) << "}" << endl;
     } else {
       vector<string> args;
-      out << tab(level) << name << ": " << comma_list(produces) << " = " << func << "(" << comma_list(consumes) << ")" << endl;
+      out << tab(level) << name << ": " << comma_list(produces()) << " = " << func << "(" << comma_list(consumes()) << ")" << endl;
     }
   }
 
@@ -2051,24 +2048,40 @@ struct op {
 
   string add_load(const std::string& b, const std::string& loc) {
     assert(!is_loop);
-    consumes.insert(b + "[" + loc + "]");
+    //consumes.insert(b + "[" + loc + "]");
     consume_locs.push_back({b, loc});
     string val_name = c_sanitize(b + "_" + loc + "_value");
     //consumed_value_names[{b, loc}] = val_name;
     return val_name;
   }
 
+  vector<string> consumes() const {
+    vector<string> ps;
+    for (auto p : consume_locs) {
+      ps.push_back(p.first + "[" + p.second + "]");
+    }
+    return ps;
+  }
+
+  vector<string> produces() const {
+    vector<string> ps;
+    for (auto p : produce_locs) {
+      ps.push_back(p.first + "[" + p.second + "]");
+    }
+    return ps;
+  }
+
   void add_store(const std::string& b, const std::string& loc) {
     assert(!is_loop);
-    produces.insert(b + "[" + loc + "]");
+    //produces.insert(b + "[" + loc + "]");
     produce_locs.push_back({b, loc});
   }
 
-  void add_args(const std::vector<op*>& args) {
-    for (auto a : args) {
-      consumes.insert(a->name);
-    }
-  }
+  //void add_args(const std::vector<op*>& args) {
+    //for (auto a : args) {
+      ////consumes.insert(a->name);
+    //}
+  //}
 
   void populate_iteration_domains(map<op*, vector<string> >& sched_vecs, vector<string>& active_vecs) {
     if (is_loop) {
@@ -2413,7 +2426,7 @@ struct prog {
       auto dom = map_find(op, doms);
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
-      for (auto p : op->produces) {
+      for (auto p : op->produces()) {
         umap* vmap =
           its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
         pmap = unn(pmap, vmap);
@@ -2435,7 +2448,7 @@ struct prog {
       auto dom = map_find(op, doms);
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
-      for (auto p : op->produces) {
+      for (auto p : op->produces()) {
         string buf = take_until(p, "[");
         if (buf == buf_name) {
           umap* vmap =
@@ -2460,7 +2473,7 @@ struct prog {
       auto dom = map_find(op, doms);
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
-      for (auto p : op->consumes) {
+      for (auto p : op->consumes()) {
         string buf = take_until(p, "[");
         if (buf == buf_name) {
           umap* vmap =
@@ -2485,7 +2498,7 @@ struct prog {
       auto dom = map_find(op, doms);
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
-      for (auto p : op->consumes) {
+      for (auto p : op->consumes()) {
         umap* vmap =
           its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
         pmap = unn(pmap, vmap);
