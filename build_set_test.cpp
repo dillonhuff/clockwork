@@ -5912,9 +5912,9 @@ struct App {
       // collect all constraints
       vector<QConstraint> all_constraints;
       vector<QConstraint> rate_constraints;
-      map<string, int> rates;
+      //map<string, int> rates;
       for (auto f : sorted_functions) {
-        rates["q_" + f] = 1;
+        //rates["q_" + f] = 1;
         cout << f << " schedule constraints: " << endl;
         Box b = map_find(f, domain_boxes);
         Range r = b.intervals.at(i);
@@ -5964,6 +5964,11 @@ struct App {
 
           cout << "\t" << start_after_deps << endl;
         }
+      }
+
+      map<string, int> rates;
+      for (auto f : sorted_functions) {
+        rates["q_" + f] = 1;
       }
 
       vector<string> qs;
@@ -6066,7 +6071,6 @@ struct App {
         for (size_t i = 0; i < ds.size(); i++) {
           rates[ds[i]] = delay_coeffs[i];
         }
-        //assert(false);
       }
 
       cout << "Rates..." << endl;
