@@ -5572,6 +5572,161 @@ compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstrain
   return delays;
 }
 
+map<string, QExpr> 
+compute_schedule_for_dim(isl_ctx* ctx, const int i, vector<string>& sorted_functions, const vector<QConstraint>& all_constraints, const vector<QConstraint>& rate_constraints) {
+
+  string dv = "d" + to_string(i);
+  map<string, int> rates;
+  for (auto f : sorted_functions) {
+    rates["q_" + f] = 1;
+  }
+
+  vector<string> qs;
+  for (auto f : sorted_functions) {
+    qs.push_back("q_" + f);
+  }
+  isl_set* rate_space =
+    rdset(ctx, "{ " + sep_list(qs, "[", "]", ", ") + " }");
+  assert(rate_space != nullptr);
+
+  for (auto f : sorted_functions) {
+    string gtzs = set_string(qs, "q_" + f + " > 0");
+    rate_space = its(rate_space, rdset(ctx, gtzs));
+  }
+
+  cout << "Rate constraints..." << endl;
+  vector<QConstraint> rates_only;
+  set<int> denoms;
+  for (auto r : rate_constraints) {
+    r.lhs.delete_terms_without(qvar(dv));
+    r.rhs.delete_terms_without(qvar(dv));
+    r.replace(qvar(dv), qconst(1));
+    cout << "\tbefore simplify: " << r << endl;
+    r.simplify();
+    cout << "\tafter simplify: " << r << endl;
+    rates_only.push_back(r);
+    for (auto t : r.rhs.terms) {
+      for (auto v : t.vals) {
+        if (v.is_num) {
+          denoms.insert(v.denom);
+        }
+      }
+    }
+    for (auto t : r.lhs.terms) {
+      for (auto v : t.vals) {
+        if (v.is_num) {
+          denoms.insert(v.denom);
+        }
+      }
+    }
+  }
+  cout << "Denoms..." << endl;
+  int lcm = 1;
+  for (auto d : denoms) {
+    cout << "\t" << d << endl;
+    lcm *= d;
+  }
+
+  cout << "LCM: " << lcm << endl;
+  for (auto& c : rates_only) {
+    cout << "Pre scaling: " << c << endl;
+    c.scale(lcm);
+    cout << "C: " << c << endl;
+  }
+
+  cout << "After simplification" << endl;
+  for (auto r : rates_only) {
+    string mset = set_string(qs, isl_str(r.lhs) + " = " + isl_str(r.rhs));
+    cout << "\t" << mset << endl;
+    rate_space = its(rate_space, rdset(ctx, mset));
+  }
+
+  cout << "Rate space: " << str(rate_space) << endl;
+
+  {
+    string aff_c = sep_list(qs, "", "", " + ");
+    string aff_str =
+      "{ " +
+      sep_list(qs, "[", "]", ", ") + " -> " +
+      sep_list(qs, "[", "]", " + ") + " }";
+
+    cout << "Aff str: " << aff_str << endl;
+
+    auto obj_func =
+      isl_aff_read_from_str(ctx, aff_str.c_str());
+
+    auto legal_delays = rate_space;
+    auto ds = qs;
+    cout << "Objective: " << str(obj_func) << endl;
+    cout << "Legal delays: " << str(rate_space) << endl;
+    cout << "Legal delay point: " << str(isl_set_sample_point(legal_delays)) << endl;
+
+    auto min_point =
+      isl_set_min_val(cpy(legal_delays), obj_func);
+    string mstring =
+      str(min_point);
+    cout << "Min delays: " << mstring << endl;
+    string os = aff_c;
+    string mset = set_string(ds, os + " = " + mstring);
+    cout << "Min set: " << mset << endl;
+    auto min_set = rdset(ctx, mset.c_str());
+
+    auto mvs = its(min_set, legal_delays);
+    string dp = str(isl_set_sample_point(mvs));
+    cout << "Min pt: " << dp << endl;
+
+    vector<int> delay_coeffs =
+      parse_pt(dp);
+    assert(delay_coeffs.size() == ds.size());
+    for (size_t i = 0; i < ds.size(); i++) {
+      rates[ds[i]] = delay_coeffs[i];
+    }
+  }
+
+  cout << "Rates..." << endl;
+  for (auto r : rates) {
+    cout << "\t" << r.first << " -> " << r.second << endl;
+  }
+  vector<QConstraint> delay_constraints =
+    all_constraints;
+  cout << "Constraints before delay substitution" << endl;
+  for (auto c : delay_constraints) {
+    cout << "\t" << c << endl;
+  }
+
+  for (auto& c : delay_constraints) {
+    for (auto r : rates) {
+      c.replace(qvar(r.first),
+          qconst(map_find(r.first, rates)));
+      c.replace(qvar(dv), qconst(0));
+      c.lhs.simplify();
+      c.rhs.simplify();
+    }
+  }
+
+  map<string, int> delays =
+    compute_delays(ctx, sorted_functions, delay_constraints);
+
+  cout << "Final schedules: " << endl;
+  map<string, QExpr> schedules;
+  for (auto f : sorted_functions) {
+    assert(contains_key("d_" + f, delays));
+    assert(contains_key("q_" + f, rates));
+
+    int delay =
+      map_find("d_" + f, delays);
+    int rate =
+      map_find("q_" + f, rates);
+
+    QTerm rd = qterm(rate, dv);
+    QTerm d = qterm(delay);
+    auto si = qexpr(rd, d);
+    schedules[f] = si;
+  }
+
+  return schedules;
+}
+
 QExpr extract_bound(const int i, const std::string& name, const string& max) {
   QExpr ub;
   regex cm("\\{ (.*)\\[(.*)\\] -> \\[\\((.*)\\)\\] \\}");
@@ -5965,154 +6120,12 @@ struct App {
           cout << "\t" << start_after_deps << endl;
         }
       }
-
-      map<string, int> rates;
-      for (auto f : sorted_functions) {
-        rates["q_" + f] = 1;
-      }
-
-      vector<string> qs;
-      for (auto f : sorted_functions) {
-        qs.push_back("q_" + f);
-      }
-      isl_set* rate_space =
-        rdset(ctx, "{ " + sep_list(qs, "[", "]", ", ") + " }");
-      assert(rate_space != nullptr);
+      map<string, QExpr> dim_schedules =
+        compute_schedule_for_dim(ctx, i, sorted_functions, all_constraints, rate_constraints);
 
       for (auto f : sorted_functions) {
-        string gtzs = set_string(qs, "q_" + f + " > 0");
-        rate_space = its(rate_space, rdset(ctx, gtzs));
+        schedules[f].push_back(dim_schedules.at(f));
       }
-
-      cout << "Rate constraints..." << endl;
-      vector<QConstraint> rates_only;
-      set<int> denoms;
-      for (auto r : rate_constraints) {
-        r.lhs.delete_terms_without(qvar(dv));
-        r.rhs.delete_terms_without(qvar(dv));
-        r.replace(qvar(dv), qconst(1));
-        cout << "\tbefore simplify: " << r << endl;
-        r.simplify();
-        cout << "\tafter simplify: " << r << endl;
-        rates_only.push_back(r);
-        for (auto t : r.rhs.terms) {
-          for (auto v : t.vals) {
-            if (v.is_num) {
-              denoms.insert(v.denom);
-            }
-          }
-        }
-        for (auto t : r.lhs.terms) {
-          for (auto v : t.vals) {
-            if (v.is_num) {
-              denoms.insert(v.denom);
-            }
-          }
-        }
-      }
-      cout << "Denoms..." << endl;
-      int lcm = 1;
-      for (auto d : denoms) {
-        cout << "\t" << d << endl;
-        lcm *= d;
-      }
-
-      cout << "LCM: " << lcm << endl;
-      for (auto& c : rates_only) {
-        cout << "Pre scaling: " << c << endl;
-        c.scale(lcm);
-        cout << "C: " << c << endl;
-      }
-
-      cout << "After simplification" << endl;
-      for (auto r : rates_only) {
-        string mset = set_string(qs, isl_str(r.lhs) + " = " + isl_str(r.rhs));
-        cout << "\t" << mset << endl;
-        rate_space = its(rate_space, rdset(ctx, mset));
-      }
-
-      cout << "Rate space: " << str(rate_space) << endl;
-
-      {
-        string aff_c = sep_list(qs, "", "", " + ");
-        string aff_str =
-          "{ " +
-          sep_list(qs, "[", "]", ", ") + " -> " +
-          sep_list(qs, "[", "]", " + ") + " }";
-
-        cout << "Aff str: " << aff_str << endl;
-
-        auto obj_func =
-          isl_aff_read_from_str(ctx, aff_str.c_str());
-
-        auto legal_delays = rate_space;
-        auto ds = qs;
-        cout << "Objective: " << str(obj_func) << endl;
-        cout << "Legal delays: " << str(rate_space) << endl;
-        cout << "Legal delay point: " << str(isl_set_sample_point(legal_delays)) << endl;
-
-        auto min_point =
-          isl_set_min_val(cpy(legal_delays), obj_func);
-        string mstring =
-          str(min_point);
-        cout << "Min delays: " << mstring << endl;
-        string os = aff_c;
-        string mset = set_string(ds, os + " = " + mstring);
-        cout << "Min set: " << mset << endl;
-        auto min_set = rdset(ctx, mset.c_str());
-
-        auto mvs = its(min_set, legal_delays);
-        string dp = str(isl_set_sample_point(mvs));
-        cout << "Min pt: " << dp << endl;
-
-        vector<int> delay_coeffs =
-          parse_pt(dp);
-        assert(delay_coeffs.size() == ds.size());
-        for (size_t i = 0; i < ds.size(); i++) {
-          rates[ds[i]] = delay_coeffs[i];
-        }
-      }
-
-      cout << "Rates..." << endl;
-      for (auto r : rates) {
-        cout << "\t" << r.first << " -> " << r.second << endl;
-      }
-      vector<QConstraint> delay_constraints =
-        all_constraints;
-      cout << "Constraints before delay substitution" << endl;
-      for (auto c : delay_constraints) {
-        cout << "\t" << c << endl;
-      }
-
-      for (auto& c : delay_constraints) {
-        for (auto r : rates) {
-          c.replace(qvar(r.first),
-              qconst(map_find(r.first, rates)));
-          c.replace(qvar(dv), qconst(0));
-          c.lhs.simplify();
-          c.rhs.simplify();
-        }
-      }
-
-      map<string, int> delays =
-        compute_delays(ctx, sorted_functions, delay_constraints);
-
-      cout << "Final schedules: " << endl;
-      for (auto f : sorted_functions) {
-        assert(contains_key("d_" + f, delays));
-        assert(contains_key("q_" + f, rates));
-
-        int delay =
-          map_find("d_" + f, delays);
-        int rate =
-          map_find("q_" + f, rates);
-
-        QTerm rd = qterm(rate, dv);
-        QTerm d = qterm(delay);
-        auto si = qexpr(rd, d);
-        schedules[f].push_back(si);
-      }
-
   }
 
   Box compute_box(const std::string& name) {
