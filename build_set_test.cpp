@@ -2451,13 +2451,22 @@ struct prog {
 
   umap* validity_deps() {
     umap* naive_sched = unoptimized_schedule();
+    cout << "Naive sched: " << str(naive_sched) << endl;
+
     auto before = lex_lt(naive_sched, naive_sched);
 
+    cout << "Getting iteration domain..."<< endl;
+
     auto domain = whole_iteration_domain();
+
+    cout << "Got domain..." << endl;
+
     auto writes =
       its(producer_map(), domain);
     auto reads =
       its(consumer_map(), domain);
+
+    cout << "Got producer / consumer maps" << endl;
 
     isl_union_map *validity =
       its(dot(writes, inv(reads)), before);
@@ -2471,7 +2480,9 @@ struct prog {
 
 
     auto order_deps = relative_orders();
+    cout << "Getting validity deps..." << endl;
     isl_union_map *raw_deps = validity_deps();
+    cout << "Got validity deps..." << endl;
     auto validity =
       unn(order_deps, raw_deps);
     isl_union_map *proximity =
@@ -3237,30 +3248,54 @@ void memtile_test() {
    * */
 
 
-  auto agg = prg.add_nest("po", 0, 8, "pi", 0, 8);
-  agg->store({"agg", "po, pi"}, {"in", "po,pi"});
-
-  auto sram = prg.add_nest("qo", 0, 8, "qi", 0, 2);
-  sram->store({"sram", "qo, qi*4"}, {"agg", "qo, qi*4"});
-  sram->store({"sram", "qo, qi*4+1"}, {"agg", "qo, qi*4+1"});
-  sram->store({"sram", "qo, qi*4+2"}, {"agg", "qo, qi*4+2"});
-  sram->store({"sram", "qo, qi*4+3"}, {"agg", "qo, qi*4+3"});
+  {
+    auto agg_loop = prg.add_nest("po", 0, 8, "pi", 0, 8);
+    auto agg = agg_loop->add_op("in2agg");
+    agg->add_load("in", "po, pi");
+    agg->add_store("agg", "po, pi");
+  }
 
   {
-  auto tb = prg.add_nest("k", 0, 6, "l", 0, 2, "m", 0, 3);
-  tb->store({"tb", "k, m, l*4"}  , {"sram", "(k+m), l*4"} );
-  tb->store({"tb", "k, m, l*4+1"}, {"sram", "(k+m), l*4+1"});
-  tb->store({"tb", "k, m, l*4+2"}, {"sram", "(k+m), l*4+2"});
-  tb->store({"tb", "k, m, l*4+3"}, {"sram", "(k+m), l*4+3"});
+    auto sram_loop = prg.add_nest("qo", 0, 8, "qi", 0, 2);
+    auto sram = sram_loop->add_op("agg2sram");
+    sram->add_load("agg", "qo, qi*4");
+    sram->add_load("agg", "qo, qi*4+1");
+    sram->add_load("agg", "qo, qi*4+2");
+    sram->add_load("agg", "qo, qi*4+3");
+
+    sram->add_store("sram", "qo, qi*4");
+    sram->add_store("sram", "qo, qi*4+1");
+    sram->add_store("sram", "qo, qi*4+2");
+    sram->add_store("sram", "qo, qi*4+3");
   }
+
   {
-  auto out = prg.add_nest("a", 0, 6, "b", 0, 2, "c", 0, 4);
+    auto tb_loop = prg.add_nest("k", 0, 6, "l", 0, 2, "m", 0, 3);
+    auto tb = tb_loop->add_op("sram2tb");
+    tb->add_load("sram", "(k+m), l*4");
+    tb->add_load("sram", "(k+m), l*4+1");
+    tb->add_load("sram", "(k+m), l*4+2");
+    tb->add_load("sram", "(k+m), l*4+3");
 
-  out->store({"out", "a, 0, 4*b+c"}, {"tb", "a, 0, 4*b + c"});
-  out->store({"out", "a, 1, 4*b+c"}, {"tb", "a, 1, 4*b + c"});
-  out->store({"out", "a, 2, 4*b+c"}, {"tb", "a, 2, 4*b + c"});
 
+    tb->add_store("tb", "k, m, l*4");
+    tb->add_store("tb", "k, m, l*4+1");
+    tb->add_store("tb", "k, m, l*4+2");
+    tb->add_store("tb", "k, m, l*4+3");
   }
+
+  {
+    auto out_loop = prg.add_nest("a", 0, 6, "b", 0, 2, "c", 0, 4);
+    auto out = out_loop->add_op("tb2out");
+    out->add_load("tb", "a, 0, 4*b + c");
+    out->add_load("tb", "a, 1, 4*b + c");
+    out->add_load("tb", "a, 2, 4*b + c");
+
+    out->add_store("out", "a, 0, 4*b+c");
+    out->add_store("out", "a, 1, 4*b+c");
+    out->add_store("out", "a, 2, 4*b+c");
+  }
+
   auto sched = prg.unoptimized_schedule();
   cout << codegen_c(sched) << endl;
 
