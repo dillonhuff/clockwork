@@ -5341,6 +5341,14 @@ QExpr extract_bound(const int i, const std::string& name, const string& max) {
 
         cout << "\t" << start_time << endl;
         assert(contains_key(f, app_dag));
+
+        cout << "srcs of " << f << " in app dag..." << endl;
+        cout << "App dag contents..." << endl;
+        for (auto d : app_dag) {
+          cout << tab(1) << d.first << endl;
+          cout << tab(2) << "has " << d.second.srcs.size() << " sources" << endl;
+        }
+
         for (auto arg : app_dag.at(f).srcs) {
           QTerm ft = qterm(f_rate, qvar(dv));
           QExpr ftime = qexpr(ft, f_delay);
@@ -5380,6 +5388,12 @@ QExpr extract_bound(const int i, const std::string& name, const string& max) {
           cout << "\t" << start_after_deps << endl;
         }
       }
+
+      cout << "Rate constraints before scheduling: " << endl;
+      for (auto r : rate_constraints) {
+        cout << tab(1) << r << endl;
+      }
+      //assert(false);
       map<string, QExpr> dim_schedules =
         compute_schedule_for_dim(ctx, i, sorted_functions, all_constraints, rate_constraints);
 
@@ -7091,6 +7105,7 @@ int main(int argc, char** argv) {
     //synth_lb_test();
 
     memtile_test();
+    //assert(false);
     upsample_reduce_test();
     mismatched_stencil_test();
     //assert(false);
