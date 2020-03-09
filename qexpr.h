@@ -406,3 +406,144 @@ std::ostream& operator<<(std::ostream& out, const QConstraint& c) {
   out << c.lhs << " >= " << c.rhs;
   return out;
 }
+
+
+QTerm parse_qterm(const std::string& str);
+
+QExpr parse_qexpr(const std::string& str) {
+  regex cm("\\{ (.*)\\[(.*)\\] -> \\[\\((.*)\\)\\] \\}");
+  smatch match;
+  auto res = regex_search(str, match, cm);
+
+  assert(res);
+
+  string gp = match[3];
+  regex two_terms("(.*) \\+ (.*)");
+  smatch tt_match;
+  auto tt_res = regex_match(gp, tt_match, two_terms);
+
+  QExpr ub;
+  if (tt_res) {
+    cout << "\tt0 = " << tt_match[1] << endl;
+    cout << "\tt1 = " << tt_match[2] << endl;
+    ub = qexpr(parse_qterm(tt_match[1]), parse_qterm(tt_match[2]));
+    cout << "two term ub = " << ub << endl;
+  } else {
+    cout << "\tg  = " << gp << endl;
+    ub = qexpr(parse_qterm(gp), 0);
+  }
+  cout << "ub = " << ub << endl;
+  return ub;
+}
+
+QTerm parse_term(const std::string& f, const int dim, const std::string& str) {
+  regex floor_reg("floor\\(\\((.*)\\)/(.*)\\)");
+  smatch tt_match;
+  auto tt_res = regex_match(str, tt_match, floor_reg);
+  if (tt_res) {
+    cout << "Group 1: " << tt_match[1] << endl;
+    cout << "Group 2: " << tt_match[2] << endl;
+    return qterm(qvar("q_" + f), qvar("d" + to_string(dim)), qconst(1, safe_stoi(tt_match[2])));
+  }
+
+  regex mul_reg("(\\d+)(.+)");
+  smatch mul_match;
+  auto mul_res = regex_match(str, mul_match, mul_reg);
+  if (mul_res) {
+    return qterm(qconst(safe_stoi(mul_match[1])), qvar("q_" + f), qvar("d" + to_string(dim)));
+  }
+
+  {
+    regex mul_reg("(\\d+)");
+    smatch mul_match;
+    auto mul_res = regex_match(str, mul_match, mul_reg);
+    if (mul_res) {
+      return qterm(qconst(safe_stoi(mul_match[1])), qvar("q_" + f));
+    }
+  }
+
+  return qterm(qconst(safe_stoi("1")), qvar("q_" + f), qvar("d" + to_string(dim)));
+  //cout << "No match for term: " << str << endl;
+  //assert(false);
+  //return qterm(qconst(0));
+}
+
+QTerm offset(QExpr& e) {
+  assert(e.terms.size() == 2);
+
+  e.simplify();
+  QTerm offset = e.const_term();
+  cout << "Offset = " << offset << endl;
+  offset.simplify();
+  cout << "Offset after simplification: " << offset << endl;
+  return offset;
+}
+
+QAV stride(const QExpr& e) {
+  assert(e.terms.size() == 2);
+  for (auto t : e.terms) {
+    if (!t.is_constant()) {
+      QAV c = t.get_coefficient();
+      return c;
+    }
+  }
+
+  cout << "Error: No stride in: " << e << endl;
+  assert(false);
+  return qconst(0);
+}
+
+vector<QAV> strides(vector<QExpr>& mins, vector<QExpr>& maxs) {
+  assert(mins.size() == maxs.size());
+
+  vector<QAV> strides;
+  for (auto m : mins) {
+    QAV s = stride(m);
+    strides.push_back(s);
+  }
+  return strides;
+}
+
+QTerm parse_qterm(const std::string& str) {
+  cout << "Parsing qterm: " << str << endl;
+
+  regex floor_reg("floor\\(\\((.*)\\)/(.*)\\)");
+  smatch tt_match;
+  auto tt_res = regex_match(str, tt_match, floor_reg);
+  if (tt_res) {
+    cout << "Group 1: " << tt_match[1] << endl;
+    cout << "Group 2: " << tt_match[2] << endl;
+    return qterm(qvar(tt_match[1]), qconst(1, safe_stoi(tt_match[2])));
+  }
+
+  regex mul_reg("(\\d+)12234");
+  smatch mul_match;
+  auto mul_res = regex_match(str, mul_match, mul_reg);
+  if (mul_res) {
+    cout << "Matched mul coeff: " << mul_match[1] << endl;
+    string var_name = tt_match[2];
+    cout << "var name = " << var_name << endl;
+    assert(var_name.size() > 0);
+    QAV qv = qvar(var_name);
+    cout << "\tqv = " << qv << endl;
+    return qterm(qconst(safe_stoi(mul_match[1])), qv);
+  }
+
+  {
+    regex mul_reg("(\\d+)");
+    smatch mul_match;
+    auto mul_res = regex_match(str, mul_match, mul_reg);
+    if (mul_res) {
+      return qterm(qconst(safe_stoi(mul_match[1])));
+    }
+  }
+
+  {
+    regex var_reg("(.+)");
+    smatch var_match;
+    auto var_res = regex_match(str, var_match, var_reg);
+    assert(var_res);
+
+    return qterm(qvar(var_match[1]));
+  }
+}
