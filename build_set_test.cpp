@@ -3238,7 +3238,7 @@ void memtile_test() {
 
 
   auto agg = prg.add_nest("po", 0, 8, "pi", 0, 8);
-  agg->store({"agg", "po, pi"}, {"in", "po,pi"});
+  agg->store({"agg", "po, pi"}, {"in", "po, pi"});
 
   auto sram = prg.add_nest("qo", 0, 8, "qi", 0, 2);
   sram->store({"sram", "qo, qi*4"}, {"agg", "qo, qi*4"});
