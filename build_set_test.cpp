@@ -6198,7 +6198,7 @@ struct App {
     //assert(false);
   }
 
-  void schedule_dim(const int i, map<string, vector<QExpr> >& schedules) {
+  void schedule_dim(const int i, map<string, vector<QExpr> >& schedules, vector<string> sorted_functions, map<string, Result> & app_dag) {
     vector<string> sorted_functions = sort_functions();
       string dv = "d" + to_string(i);
       cout << "Scheduling dim: " << i << endl;
@@ -6264,6 +6264,78 @@ struct App {
       for (auto f : sorted_functions) {
         schedules[f].push_back(dim_schedules.at(f));
       }
+
+  }
+
+  void schedule_dim(const int i, map<string, vector<QExpr> >& schedules) {
+
+      vector<string> sorted_functions = sort_functions();
+      schedule_dim(i, schedules, sort_functions(), app_dag);
+/*    vector<string> sorted_functions = sort_functions();
+      string dv = "d" + to_string(i);
+      cout << "Scheduling dim: " << i << endl;
+      // Collect all rate variables and
+      // collect all constraints
+      vector<QConstraint> all_constraints;
+      vector<QConstraint> rate_constraints;
+      for (auto f : sorted_functions) {
+        cout << f << " schedule constraints: " << endl;
+        Box b = map_find(f, domain_boxes);
+        Range r = b.intervals.at(i);
+        int min = r.min;
+        QAV f_rate = qvar("q_" + f);
+        QAV minr = qconst(min);
+        QTerm f_delay = qterm(qvar("d_" + f));
+        QTerm prod = qterm(minr, f_rate);
+        QExpr offset = qexpr(prod, f_delay);
+        QExpr zero = qexpr(0);
+        QConstraint start_time{offset, zero};
+        all_constraints.push_back(start_time);
+
+        cout << "\t" << start_time << endl;
+        for (auto arg : app_dag.at(f).srcs) {
+          QTerm ft = qterm(f_rate, qvar(dv));
+          QExpr ftime = qexpr(ft, f_delay);
+          isl_map* f_cm = inv(compute_map(f));
+          cout << "f_cm: " << str(f_cm) << endl;
+
+          auto data_needed =
+            to_map(arg.needed);
+
+          cout << "data needed: " << str(data_needed) << endl;
+
+          isl_map* pixels_needed =
+            dot(f_cm, data_needed);
+
+          cout << "pixels needed: " << str(pixels_needed) << endl;
+
+          isl_map* a_cm = compute_map(arg.name);
+          cout << "a_cm: " << str(a_cm) << endl;
+
+          isl_map* comps_needed =
+            dot(pixels_needed, a_cm);
+          cout << "comps needed: " << str(comps_needed) << endl;
+          isl_map* last_pix =
+            lexmax(comps_needed);
+          cout << "last comp needed: " << str(last_pix) << endl;
+          auto max = dim_max(comps_needed, i);
+          cout << "max needed in dim " << i << " = " << str(max) << endl;
+
+          QExpr ub = extract_bound(i, arg.name, str(max));
+
+          QConstraint start_after_deps{ftime, ub};
+          all_constraints.push_back(start_after_deps);
+          rate_constraints.push_back(start_after_deps);
+
+          cout << "\t" << start_after_deps << endl;
+        }
+      }
+      map<string, QExpr> dim_schedules =
+        compute_schedule_for_dim(ctx, i, sorted_functions, all_constraints, rate_constraints);
+
+      for (auto f : sorted_functions) {
+        schedules[f].push_back(dim_schedules.at(f));
+      }*/
   }
 
   Box compute_box(const std::string& name) {
