@@ -7356,6 +7356,10 @@ void two_in_window_test() {
 }
 
 void upsample_reduce_test() {
+
+  // Maybe we should build memories using the principle
+  // that total new data for next iteration - total data that dies in this iteration
+  // must be a constant
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
   prg.name = "upsample_reduce_test";
@@ -7376,6 +7380,14 @@ void upsample_reduce_test() {
   prg.pretty_print();
   cout << "Consumer maps..." << endl;
   cout << tab(1) << str(prg.consumer_map()) << endl;
+
+  cout << "Schedules..." << endl;
+  for (auto s : prg.schedules()) {
+    cout << tab(1) << str(s.second) << endl;
+    auto next_op = lexmin(lex_lt(s.second, s.second));
+    cout << "next op: " << str(next_op) << endl;
+  }
+  assert(false);
 
   prog pcpy = duplicate_interface(prg);
   for (auto c : prg.all_loops()) {
@@ -7520,6 +7532,16 @@ int main(int argc, char** argv) {
 
 }
 
+// If we are going to take the "level cache"
+// approach we have to be careful about what
+// value "death" means. I guess one plausible
+// definition is that a value is dead wrt a
+// given level if it will not be read again
+// during an iteration of the current loop?
+// IOW the program will have to exit the current
+// instance of the loop for this level and move
+// to a new value of some outer container loop before
+// that happens?
 
 
 
