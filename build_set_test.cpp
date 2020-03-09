@@ -1898,6 +1898,106 @@ string c_sanitize(const std::string& str) {
   return res;
 }
 
+struct Range {
+  int min;
+  int max;
+
+  string constraint_str(const string& v) {
+    return to_string(min) + " <= " + v + " <= " + to_string(max);
+  }
+};
+
+struct Box {
+  vector<Range> intervals;
+
+  Box() {}
+
+  Box(const int dims) {
+    for (int i = 0; i < dims; i++) {
+      intervals.push_back({0, -1});
+    }
+  }
+
+  isl_set* to_set(isl_ctx* ctx, const string& name) {
+    string s = "{ ";
+    vector<string> names;
+    vector<string> ranges;
+    int i = 0;
+    for (auto r : intervals) {
+      string v = "d" + to_string(i);
+      names.push_back("d" + to_string(i));
+      ranges.push_back(r.constraint_str(v));
+      i++;
+    }
+    s += name + sep_list(names, "[", "]", ", ");
+    s += " : ";
+    s += sep_list(ranges, "", "", " and ");
+    s += " }";
+    return rdset(ctx, s);
+  }
+
+  int length(const int dim) const {
+    return intervals.at(dim).max - intervals.at(dim).min + 1;
+  }
+
+  Box pad_range_to_nearest_multiple(const int unroll_factor) const {
+    assert(unroll_factor > 0);
+
+    Box padded;
+    int r = 0;
+    for (auto i : intervals) {
+      if (r != 0) {
+        padded.intervals.push_back({i.min, i.max});
+      } else {
+        int range = length(0);
+        cout << "Length: " << range << endl;
+        if (range % unroll_factor != 0) {
+          int new_range = range + (unroll_factor - (range % unroll_factor));
+          cout << "new_range = " << new_range << endl;
+          int new_max = i.min + new_range - 1;
+
+          cout << "new_max = " << new_max << endl;
+
+          padded.intervals.push_back({i.min, new_max});
+        } else {
+          padded.intervals.push_back({i.min, i.max});
+        }
+      }
+      r++;
+    }
+    cout << "New length: " << padded.length(0) << endl;
+    assert(padded.length(0) % unroll_factor == 0);
+    return padded;
+  }
+
+  Box pad(const int dim, const int padding) const {
+    assert(padding > 0);
+
+    Box padded;
+    int k = 0;
+    for (auto i : intervals) {
+      if (k == dim) {
+        padded.intervals.push_back({i.min, i.max + padding});
+      } else {
+        padded.intervals.push_back({i.min, i.max});
+      }
+      k++;
+    }
+    return padded;
+  }
+
+  Box pad(const int padding) const {
+    assert(padding > 0);
+
+    Box padded;
+    for (auto i : intervals) {
+      padded.intervals.push_back({i.min - padding, i.max + padding});
+    }
+    return padded;
+  }
+};
+std::ostream& operator<<(std::ostream& out, const Box& b);
+
 struct op {
 
   op* parent;
@@ -1910,11 +2010,27 @@ struct op {
 
   std::vector<pair<std::string, std::string> > consume_locs;
   std::string func;
-  //vector<string> func_args;
 
   isl_ctx* ctx;
 
   op() : parent(nullptr), is_loop(false) {}
+
+  map<op*, Box> get_domain_boxes() {
+      Box empty;
+      map<op*, Box> domain_map;
+      get_domain_boxes(empty, domain_map);
+      return domain_map;
+  }
+
+  void get_domain_boxes(Box b, map<op*, Box> & domain_map) {
+      domain_map[this] = b;
+      if (is_loop) {
+          b.intervals.push_back({start, end_exclusive-1});
+      }
+      for (auto c : children) {
+          c->get_domain_boxes(b, domain_map);
+      }
+  }
 
   void pretty_print(std::ostream& out, int level) const {
 
@@ -2189,6 +2305,11 @@ struct prog {
   map<string, int> buffer_port_widths;
   string compute_unit_file;
   map<string, vector<int> > buffer_bounds;
+
+  map<op*, Box> get_domain_boxes() {
+      return root->get_domain_boxes();
+  }
+
 
   void pretty_print() {
     cout << "program: " << name << endl;
@@ -3384,8 +3505,16 @@ void memtile_test() {
 
   auto sched = prg.unoptimized_schedule();
   cout << codegen_c(sched) << endl;
+  auto itr_domain = prg.whole_iteration_domain();
+  cout << "iter domain = " << str(itr_domain) << endl;
 
-  auto sched_opt = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
+  //auto sched_opt = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
+  auto domain_boxes = prg.get_domain_boxes();
+  for (auto b : domain_boxes) {
+      cout << tab(1) << b.first->name << "->" << b.second << endl;
+  }
+
+  auto sched_opt = its(rdmap(prg.ctx, "{in2agg[root, po, pi] -> [root, po, pi, 0]; agg2sram[root, qo, qi] -> [root, qo, 3+4*qi, 1]}"), prg.whole_iteration_domain());
   cout << "Sched map: " << str(sched_opt) << endl;
  // auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
   cout << codegen_c(sched_opt) << endl;
@@ -3965,10 +4094,10 @@ void aha_talk_print_program_representation(prog& prg) {
   auto reads =
     its(prg.consumer_map(), iter_domain);
   cout << "\tread    = " << str(reads) << endl << endl;
-  
+
   cout << "---- Statements that read each value" << endl;
   cout << "\tread^-1 = " << str(inv(reads)) << endl << endl;
- 
+
   cout << "----- Values written by each statement" << endl;
   auto writes =
     its(prg.producer_map(), iter_domain);
@@ -4701,104 +4830,6 @@ void seidel2d_test() {
   regression_test(prg);
 }
 
-struct Range {
-  int min;
-  int max;
-
-  string constraint_str(const string& v) {
-    return to_string(min) + " <= " + v + " <= " + to_string(max);
-  }
-};
-
-struct Box {
-  vector<Range> intervals;
-
-  Box() {}
-
-  Box(const int dims) {
-    for (int i = 0; i < dims; i++) {
-      intervals.push_back({0, -1});
-    }
-  }
-
-  isl_set* to_set(isl_ctx* ctx, const string& name) {
-    string s = "{ ";
-    vector<string> names;
-    vector<string> ranges;
-    int i = 0;
-    for (auto r : intervals) {
-      string v = "d" + to_string(i);
-      names.push_back("d" + to_string(i));
-      ranges.push_back(r.constraint_str(v));
-      i++;
-    }
-    s += name + sep_list(names, "[", "]", ", ");
-    s += " : ";
-    s += sep_list(ranges, "", "", " and ");
-    s += " }";
-    return rdset(ctx, s);
-  }
-
-  int length(const int dim) const {
-    return intervals.at(dim).max - intervals.at(dim).min + 1;
-  }
-
-  Box pad_range_to_nearest_multiple(const int unroll_factor) const {
-    assert(unroll_factor > 0);
-
-    Box padded;
-    int r = 0;
-    for (auto i : intervals) {
-      if (r != 0) {
-        padded.intervals.push_back({i.min, i.max});
-      } else {
-        int range = length(0);
-        cout << "Length: " << range << endl;
-        if (range % unroll_factor != 0) {
-          int new_range = range + (unroll_factor - (range % unroll_factor));
-          cout << "new_range = " << new_range << endl;
-          int new_max = i.min + new_range - 1;
-
-          cout << "new_max = " << new_max << endl;
-
-          padded.intervals.push_back({i.min, new_max});
-        } else {
-          padded.intervals.push_back({i.min, i.max});
-        }
-      }
-      r++;
-    }
-    cout << "New length: " << padded.length(0) << endl;
-    assert(padded.length(0) % unroll_factor == 0);
-    return padded;
-  }
-
-  Box pad(const int dim, const int padding) const {
-    assert(padding > 0);
-
-    Box padded;
-    int k = 0;
-    for (auto i : intervals) {
-      if (k == dim) {
-        padded.intervals.push_back({i.min, i.max + padding});
-      } else {
-        padded.intervals.push_back({i.min, i.max});
-      }
-      k++;
-    }
-    return padded;
-  }
-
-  Box pad(const int padding) const {
-    assert(padding > 0);
-
-    Box padded;
-    for (auto i : intervals) {
-      padded.intervals.push_back({i.min - padding, i.max + padding});
-    }
-    return padded;
-  }
-};
 
 std::ostream& operator<<(std::ostream& out, const Box& b) {
   vector<string> ranges;
@@ -5602,7 +5633,7 @@ struct Memory {
   map<string, BufferInfo> buffers;
 };
 
-map<string, int> 
+map<string, int>
 compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstraint>& delay_constraints) {
   map<string, int> delays;
 
@@ -5666,7 +5697,7 @@ compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstrain
   return delays;
 }
 
-map<string, QExpr> 
+map<string, QExpr>
 compute_schedule_for_dim(isl_ctx* ctx, const int i, vector<string>& sorted_functions, const vector<QConstraint>& all_constraints, const vector<QConstraint>& rate_constraints) {
 
   string dv = "d" + to_string(i);
@@ -6603,7 +6634,7 @@ struct App {
   umap* schedule() {
     auto schedules = schedule_opt();
     vector<string> sorted_functions = sort_functions();
-    
+
     umap* m = rdmap(ctx, "{}");
     for (auto f : sorted_functions) {
       vector<string> sched_exprs;
@@ -7453,13 +7484,14 @@ int main(int argc, char** argv) {
 
     //synth_lb_test();
 
+    memtile_test();
+    assert(false);
     upsample_reduce_test();
     mismatched_stencil_test();
     //assert(false);
     //mismatched_stencil_test();
     agg_test();
     //assert(false);
-    memtile_test();
     //assert(false);
     conv3x3_app_unrolled_test();
     conv3x3_app_test();
