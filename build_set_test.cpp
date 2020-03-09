@@ -7149,7 +7149,7 @@ void upsample_reduce_test() {
     auto next_op = lexmin(lex_lt(s.second, s.second));
     cout << "next op: " << str(next_op) << endl;
   }
-  assert(false);
+  //assert(false);
 
   prog pcpy = duplicate_interface(prg);
   for (auto c : prg.all_loops()) {
