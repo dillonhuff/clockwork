@@ -5318,8 +5318,10 @@ QExpr extract_bound(const int i, const std::string& name, const string& max) {
   return ub;
 }
 
-void schedule_dim(isl_ctx* ctx, map<string, Box> & domain_boxes, const int i, map<string, vector<QExpr> >& schedules, vector<string> sorted_functions, map<string, Result> & app_dag, map<string, isl_map*> & compute_maps) {
+map<string, map<string, QExpr> > 
+build_compute_deps(isl_ctx* ctx, map<string, Box> & domain_boxes, const int i, map<string, vector<QExpr> >& schedules, vector<string> sorted_functions, map<string, Result> & app_dag, map<string, isl_map*> & compute_maps) {
   string dv = "d" + to_string(i);
+
   map<string, map<string, QExpr> > last_compute_needed;
   for (auto f : sorted_functions) {
     assert(contains_key(f, app_dag));
@@ -5362,6 +5364,13 @@ void schedule_dim(isl_ctx* ctx, map<string, Box> & domain_boxes, const int i, ma
    }
   }
 
+  return last_compute_needed;
+}
+
+void schedule_dim(isl_ctx* ctx, map<string, Box> & domain_boxes, const int i, map<string, vector<QExpr> >& schedules, vector<string> sorted_functions, map<string, Result> & app_dag, map<string, isl_map*> & compute_maps) {
+  string dv = "d" + to_string(i);
+
+  auto last_compute_needed = build_compute_deps(ctx, domain_boxes, i, schedules, sorted_functions, app_dag, compute_maps);
 
   cout << "Scheduling dim: " << i << endl;
   // Collect all rate variables and
