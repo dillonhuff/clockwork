@@ -1,15 +1,7 @@
 #include "isl_utils.h"
+#include "qexpr.h"
 
-#include <stack>
-#include <regex>
-#include <cassert>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <map>
-#include <vector>
 
-#include "utils.h"
 
 vector<int> parse_pt(isl_point* p) {
   return parse_pt(str(p));
@@ -1898,6 +1890,106 @@ string c_sanitize(const std::string& str) {
   return res;
 }
 
+struct Range {
+  int min;
+  int max;
+
+  string constraint_str(const string& v) {
+    return to_string(min) + " <= " + v + " <= " + to_string(max);
+  }
+};
+
+struct Box {
+  vector<Range> intervals;
+
+  Box() {}
+
+  Box(const int dims) {
+    for (int i = 0; i < dims; i++) {
+      intervals.push_back({0, -1});
+    }
+  }
+
+  isl_set* to_set(isl_ctx* ctx, const string& name) {
+    string s = "{ ";
+    vector<string> names;
+    vector<string> ranges;
+    int i = 0;
+    for (auto r : intervals) {
+      string v = "d" + to_string(i);
+      names.push_back("d" + to_string(i));
+      ranges.push_back(r.constraint_str(v));
+      i++;
+    }
+    s += name + sep_list(names, "[", "]", ", ");
+    s += " : ";
+    s += sep_list(ranges, "", "", " and ");
+    s += " }";
+    return rdset(ctx, s);
+  }
+
+  int length(const int dim) const {
+    return intervals.at(dim).max - intervals.at(dim).min + 1;
+  }
+
+  Box pad_range_to_nearest_multiple(const int unroll_factor) const {
+    assert(unroll_factor > 0);
+
+    Box padded;
+    int r = 0;
+    for (auto i : intervals) {
+      if (r != 0) {
+        padded.intervals.push_back({i.min, i.max});
+      } else {
+        int range = length(0);
+        cout << "Length: " << range << endl;
+        if (range % unroll_factor != 0) {
+          int new_range = range + (unroll_factor - (range % unroll_factor));
+          cout << "new_range = " << new_range << endl;
+          int new_max = i.min + new_range - 1;
+
+          cout << "new_max = " << new_max << endl;
+
+          padded.intervals.push_back({i.min, new_max});
+        } else {
+          padded.intervals.push_back({i.min, i.max});
+        }
+      }
+      r++;
+    }
+    cout << "New length: " << padded.length(0) << endl;
+    assert(padded.length(0) % unroll_factor == 0);
+    return padded;
+  }
+
+  Box pad(const int dim, const int padding) const {
+    assert(padding > 0);
+
+    Box padded;
+    int k = 0;
+    for (auto i : intervals) {
+      if (k == dim) {
+        padded.intervals.push_back({i.min, i.max + padding});
+      } else {
+        padded.intervals.push_back({i.min, i.max});
+      }
+      k++;
+    }
+    return padded;
+  }
+
+  Box pad(const int padding) const {
+    assert(padding > 0);
+
+    Box padded;
+    for (auto i : intervals) {
+      padded.intervals.push_back({i.min - padding, i.max + padding});
+    }
+    return padded;
+  }
+};
+std::ostream& operator<<(std::ostream& out, const Box& b);
+
 struct op {
 
   op* parent;
@@ -1910,11 +2002,27 @@ struct op {
 
   std::vector<pair<std::string, std::string> > consume_locs;
   std::string func;
-  //vector<string> func_args;
 
   isl_ctx* ctx;
 
   op() : parent(nullptr), is_loop(false) {}
+
+  map<op*, Box> get_domain_boxes() {
+      Box empty;
+      map<op*, Box> domain_map;
+      get_domain_boxes(empty, domain_map);
+      return domain_map;
+  }
+
+  void get_domain_boxes(Box b, map<op*, Box> & domain_map) {
+      domain_map[this] = b;
+      if (is_loop) {
+          b.intervals.push_back({start, end_exclusive-1});
+      }
+      for (auto c : children) {
+          c->get_domain_boxes(b, domain_map);
+      }
+  }
 
   void pretty_print(std::ostream& out, int level) const {
 
@@ -2179,6 +2287,162 @@ struct op {
 
 typedef op loop;
 
+struct Window {
+  string name;
+  vector<QAV> strides;
+  vector<vector<int> > offsets;
+  umap* needed;
+
+  Window() {}
+
+  Window(const string& name_,
+      const vector<QAV>& strides_,
+      const vector<vector<int > >& offsets_) :
+    name(name_),
+    strides(strides_),
+    offsets(offsets_) {}
+
+  Window(const string& name_,
+      const vector<int>& strides_,
+      const vector<vector<int > >& offsets_) :
+    name(name_),
+    strides({}),
+    offsets(offsets_) {
+      for (auto s : strides_) {
+        strides.push_back(qconst(s));
+      }
+    }
+
+  Window increment(const int diff) const {
+    Window c;
+    c.name = name;
+    c.strides = strides;
+
+    set<vector<int> > unrolled_offsets;
+    for (auto offset : offsets) {
+      vector<int> uoff = offset;
+      uoff[0] = uoff.at(0) + diff;
+      unrolled_offsets.insert(uoff);
+    }
+
+    for (auto u : unrolled_offsets) {
+      c.offsets.push_back(u);
+    }
+
+    return c;
+  }
+
+  Window unroll_cpy(const int factor) const {
+    Window c;
+    c.name = name + "_unrolled";
+    int i = 0;
+    for (auto s : strides) {
+      if (i == 0) {
+        c.strides.push_back(times(factor, s));
+      } else {
+        c.strides.push_back(s);
+      }
+      i++;
+    }
+
+    set<vector<int> > unrolled_offsets;
+    for (int i = 0; i < factor; i++) {
+      for (auto offset : offsets) {
+        vector<int> uoff = offset;
+        uoff[0] = uoff.at(0) + i;
+        unrolled_offsets.insert(uoff);
+      }
+    }
+
+    for (auto u : unrolled_offsets) {
+      c.offsets.push_back(u);
+    }
+
+    return c;
+  }
+
+  vector<vector<QExpr> > pts() const {
+    vector<vector<QExpr> > ps;
+    for (auto s : offsets) {
+      assert(s.size() > 0);
+      vector<QExpr> comps;
+      for (size_t i = 0; i < strides.size(); i++) {
+        QAV dv = qvar("d" + to_string(i));
+        QTerm t = qterm(stride(i), dv);
+        QAV offset = qconst(s.at(i));
+        comps.push_back(qexpr(t, offset));
+      }
+
+      ps.push_back(comps);
+    }
+    return ps;
+  }
+
+  string interval_set_string(const int dim) {
+    assert(dim < strides.size());
+    ostringstream ss;
+    ss << stride(dim);
+    string base = "x*" + ss.str();
+    int min_off = min_offset(dim);
+    int max_off = max_offset(dim);
+
+    return "{ k | " + base + " + " + to_string(min_off) + " <= k <= " + base + " + " + to_string(max_off) + " }";
+  }
+
+  int max_addr(const int dim, const int max_result_addr) {
+    if (stride(dim).is_whole()) {
+      assert(stride(dim).denom == 1);
+      return stride(dim).num*max_result_addr + max_offset(dim);
+    }
+    assert(stride(dim).num == 1);
+    return max_result_addr / stride(dim).denom + max_offset(dim);
+  }
+
+  int min_addr(const int dim, const int max_result_addr) {
+    if (stride(dim).is_whole()) {
+      assert(stride(dim).denom == 1);
+      return stride(dim).num*max_result_addr + min_offset(dim);
+    }
+    assert(stride(dim).num == 1);
+    return max_result_addr / stride(dim).denom + min_offset(dim);
+  }
+
+  QAV stride(const int dim) const {
+    //cout << "Getting stride for dim = " << dim << endl;
+    assert(dim < (int) strides.size());
+    return strides.at(dim);
+  }
+
+  int min_offset(const int dim) {
+    assert((int) strides.size() > dim);
+    int min = 10000;
+    for (auto off : offsets) {
+      if (off.at(dim) < min) {
+        min = off.at(dim);
+      }
+    }
+    return min;
+  }
+
+  int max_offset(const int dim) const {
+    assert((int) strides.size() > dim);
+    int max = -100000;
+    for (auto off : offsets) {
+      if (off.at(dim) > max) {
+        max = off.at(dim);
+      }
+    }
+    return max;
+  }
+};
+
+struct Result {
+  string compute_name;
+  vector<Window> srcs;
+  Window provided;
+  vector<Window> unrolled_srcs;
+};
+
 struct prog {
 
   std::string name;
@@ -2189,6 +2453,11 @@ struct prog {
   map<string, int> buffer_port_widths;
   string compute_unit_file;
   map<string, vector<int> > buffer_bounds;
+
+  map<op*, Box> get_domain_boxes() {
+      return root->get_domain_boxes();
+  }
+
 
   void pretty_print() {
     cout << "program: " << name << endl;
@@ -2455,6 +2724,67 @@ struct prog {
       m = unn(m, pmap);
     }
     return m;
+  }
+
+  map<string, Result> data_demands_maps() {
+    map<string, Result> m;
+    auto ivars = iter_vars();
+    auto doms = domains();
+
+    auto ops = root->all_ops();
+    for (auto op : ops) {
+        if (!op->is_loop) {
+            Window win;
+            string result_buf = "";
+            for (auto p : op->produces()) {
+                result_buf= take_until(p, "[");
+            }
+            assert(result_buf != "");
+
+            auto vars = map_find(op, ivars);
+            //TODO: fix this hack
+            reverse(vars);
+            vars.pop_back();
+            reverse(vars);
+            string ivar_str = sep_list(vars, "[", "]", ", ");
+            auto dom = map_find(op, doms);
+
+            umap* pmap = rdmap(ctx, "{}");
+            for (auto p : op->consumes()) {
+                isl_union_map* vmap =
+                  rdmap(ctx, string("{ " + result_buf + ivar_str + " -> " + p + " }").c_str());
+                pmap = unn(pmap, vmap);
+            }
+            win.needed = pmap;
+            Result res;
+            res.srcs.push_back(win);
+            m[result_buf] = res;
+        }
+    }
+      return m;
+  }
+
+  map<op*, isl_map*> producer_maps() {
+    map<op*, isl_map*> m;
+    auto ivars = iter_vars();
+    auto doms = domains();
+
+    auto ops = root->all_ops();
+    for (auto op : ops) {
+      auto vars = map_find(op, ivars);
+      string ivar_str = sep_list(vars, "[", "]", ", ");
+      auto dom = map_find(op, doms);
+
+      umap* pmap = rdmap(ctx, "{}");
+      for (auto p : op->produces()) {
+          isl_union_map* vmap =
+            its(rdmap(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
+          pmap = unn(pmap, vmap);
+      }
+      m[op] = to_map(pmap);
+    }
+    return m;
+
   }
 
   umap* producer_map(const std::string& buf_name) {
@@ -3313,84 +3643,6 @@ void agg_test() {
 
 }
 
-void memtile_test() {
-
-  prog prg;
-  prg.compute_unit_file = "accumulate_3.h";
-  prg.name = "memtile";
-  prg.add_input("in");
-  prg.add_output("out");
-  //prg.buffer_port_widths["T"] = 32*3;
-  prg.buffer_port_widths["in"] = 32;
-  prg.buffer_port_widths["out"] = 32;
-  prg.buffer_port_widths["agg"] = 32;
-  prg.buffer_port_widths["tb"] = 32;
-  prg.buffer_port_widths["sram"] = 32;
-
-  /* this program will be a test of memory tile flatten,
-   * I hand written the memory access pattern after vectorization
-   * and see if the Polyhedra analysis could figure out the
-   * correct schedule and memory size for me.
-   * */
-
-
-  {
-    auto agg_loop = prg.add_nest("po", 0, 8, "pi", 0, 8);
-    auto agg = agg_loop->add_op("in2agg");
-    agg->add_load("in", "po, pi");
-    agg->add_store("agg", "po, pi");
-  }
-
-  {
-    auto sram_loop = prg.add_nest("qo", 0, 8, "qi", 0, 2);
-    auto sram = sram_loop->add_op("agg2sram");
-    sram->add_load("agg", "qo, qi*4");
-    sram->add_load("agg", "qo, qi*4+1");
-    sram->add_load("agg", "qo, qi*4+2");
-    sram->add_load("agg", "qo, qi*4+3");
-
-    sram->add_store("sram", "qo, qi*4");
-    sram->add_store("sram", "qo, qi*4+1");
-    sram->add_store("sram", "qo, qi*4+2");
-    sram->add_store("sram", "qo, qi*4+3");
-  }
-
-  {
-    auto tb_loop = prg.add_nest("k", 0, 6, "l", 0, 2, "m", 0, 3);
-    auto tb = tb_loop->add_op("sram2tb");
-    tb->add_load("sram", "(k+m), l*4");
-    tb->add_load("sram", "(k+m), l*4+1");
-    tb->add_load("sram", "(k+m), l*4+2");
-    tb->add_load("sram", "(k+m), l*4+3");
-
-
-    tb->add_store("tb", "k, m, l*4");
-    tb->add_store("tb", "k, m, l*4+1");
-    tb->add_store("tb", "k, m, l*4+2");
-    tb->add_store("tb", "k, m, l*4+3");
-  }
-
-  {
-    auto out_loop = prg.add_nest("a", 0, 6, "b", 0, 2, "c", 0, 4);
-    auto out = out_loop->add_op("tb2out");
-    out->add_load("tb", "a, 0, 4*b + c");
-    out->add_load("tb", "a, 1, 4*b + c");
-    out->add_load("tb", "a, 2, 4*b + c");
-
-    out->add_store("out", "a, 0, 4*b+c");
-    out->add_store("out", "a, 1, 4*b+c");
-    out->add_store("out", "a, 2, 4*b+c");
-  }
-
-  auto sched = prg.unoptimized_schedule();
-  cout << codegen_c(sched) << endl;
-
-  auto sched_opt = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
-  cout << "Sched map: " << str(sched_opt) << endl;
- // auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
-  cout << codegen_c(sched_opt) << endl;
-  //aha_talk_print_info(prg);
-}
 
 std::vector<std::string> run_regression_tb(const std::string& name) {
   int res = system(string("g++ -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
@@ -3965,10 +4217,10 @@ void aha_talk_print_program_representation(prog& prg) {
   auto reads =
     its(prg.consumer_map(), iter_domain);
   cout << "\tread    = " << str(reads) << endl << endl;
-  
+
   cout << "---- Statements that read each value" << endl;
   cout << "\tread^-1 = " << str(inv(reads)) << endl << endl;
- 
+
   cout << "----- Values written by each statement" << endl;
   auto writes =
     its(prg.producer_map(), iter_domain);
@@ -4701,104 +4953,6 @@ void seidel2d_test() {
   regression_test(prg);
 }
 
-struct Range {
-  int min;
-  int max;
-
-  string constraint_str(const string& v) {
-    return to_string(min) + " <= " + v + " <= " + to_string(max);
-  }
-};
-
-struct Box {
-  vector<Range> intervals;
-
-  Box() {}
-
-  Box(const int dims) {
-    for (int i = 0; i < dims; i++) {
-      intervals.push_back({0, -1});
-    }
-  }
-
-  isl_set* to_set(isl_ctx* ctx, const string& name) {
-    string s = "{ ";
-    vector<string> names;
-    vector<string> ranges;
-    int i = 0;
-    for (auto r : intervals) {
-      string v = "d" + to_string(i);
-      names.push_back("d" + to_string(i));
-      ranges.push_back(r.constraint_str(v));
-      i++;
-    }
-    s += name + sep_list(names, "[", "]", ", ");
-    s += " : ";
-    s += sep_list(ranges, "", "", " and ");
-    s += " }";
-    return rdset(ctx, s);
-  }
-
-  int length(const int dim) const {
-    return intervals.at(dim).max - intervals.at(dim).min + 1;
-  }
-
-  Box pad_range_to_nearest_multiple(const int unroll_factor) const {
-    assert(unroll_factor > 0);
-
-    Box padded;
-    int r = 0;
-    for (auto i : intervals) {
-      if (r != 0) {
-        padded.intervals.push_back({i.min, i.max});
-      } else {
-        int range = length(0);
-        cout << "Length: " << range << endl;
-        if (range % unroll_factor != 0) {
-          int new_range = range + (unroll_factor - (range % unroll_factor));
-          cout << "new_range = " << new_range << endl;
-          int new_max = i.min + new_range - 1;
-
-          cout << "new_max = " << new_max << endl;
-
-          padded.intervals.push_back({i.min, new_max});
-        } else {
-          padded.intervals.push_back({i.min, i.max});
-        }
-      }
-      r++;
-    }
-    cout << "New length: " << padded.length(0) << endl;
-    assert(padded.length(0) % unroll_factor == 0);
-    return padded;
-  }
-
-  Box pad(const int dim, const int padding) const {
-    assert(padding > 0);
-
-    Box padded;
-    int k = 0;
-    for (auto i : intervals) {
-      if (k == dim) {
-        padded.intervals.push_back({i.min, i.max + padding});
-      } else {
-        padded.intervals.push_back({i.min, i.max});
-      }
-      k++;
-    }
-    return padded;
-  }
-
-  Box pad(const int padding) const {
-    assert(padding > 0);
-
-    Box padded;
-    for (auto i : intervals) {
-      padded.intervals.push_back({i.min - padding, i.max + padding});
-    }
-    return padded;
-  }
-};
 
 std::ostream& operator<<(std::ostream& out, const Box& b) {
   vector<string> ranges;
@@ -4823,557 +4977,7 @@ Box unn(const Box& l, const Box& r) {
   return un;
 }
 
-struct QAV {
-  bool is_num;
-  string name;
-  int num;
-  int denom;
 
-  int to_int() const {
-    assert(is_num);
-    assert(denom == 1);
-    return num;
-  }
-
-  bool is_whole() {
-    return is_num && denom == 1;
-  }
-
-  bool is_zero() const {
-    if (!is_num) {
-      return false;
-    }
-
-    assert(denom != 0);
-    return is_num && (num == 0);
-  }
-
-  bool is_one() const {
-    return is_num && (num == 1 && denom == 1);
-  }
-};
-
-bool operator==(const QAV& l, const QAV& r) {
-  if (l.is_num != r.is_num) {
-    return false;
-  }
-
-  if (l.is_num) {
-    return l.num == r.num && l.denom == r.denom;
-  }
-
-  return l.name == r.name;
-}
-
-std::ostream& operator<<(std::ostream& out, const QAV& c) {
-  if (c.is_num) {
-    assert(c.denom != 0);
-    if (c.denom == 1) {
-      out << c.num;
-    } else {
-      out << "(" << c.num << " / " << c.denom << ")";
-    }
-  } else {
-    out << c.name;
-  }
-  return out;
-}
-
-std::string to_string(const QAV& q) {
-  ostringstream ss;
-  ss << q;
-  return ss.str();
-}
-
-QAV qconst(const int& v, const int& d) {
-  assert(v == 1 || d == 1);
-  return {true, "", v, d};
-}
-
-QAV times(const int s, const QAV& v) {
-  assert(v.is_num);
-  return qconst(s * v.num, v.denom);
-}
-
-QAV qconst(const int& v) {
-  return {true, "", v, 1};
-}
-
-QAV qvar(const std::string& v) {
-  return {false, v};
-}
-
-struct QTerm {
-  vector<QAV> vals;
-
-  int to_int() const {
-
-    assert(is_constant());
-    assert(vals.size() == 1);
-    return vals.at(0).to_int();
-  }
-
-  QAV get_coefficient() const {
-    vector<QAV> const_vals;
-    for (auto v : vals) {
-      if (v.is_num) {
-        const_vals.push_back(v);
-      }
-    }
-
-    assert(const_vals.size() == 1);
-    return const_vals.at(0);
-  }
-
-  bool is_constant() const {
-    for (auto v : vals) {
-      if (!v.is_num) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  bool is_zero() const {
-    for (auto v : vals) {
-      if (!v.is_zero()) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  bool contains(const QAV& v) {
-    for (auto ov : vals) {
-      if (ov == v) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  void simplify() {
-    // Collect constant terms
-    vector<QAV> constants;
-    vector<QAV> vars;
-    for (auto v : vals) {
-      if (v.is_num) {
-        constants.push_back(v);
-      } else {
-        vars.push_back(v);
-      }
-    }
-
-    int n = 1;
-    int d = 1;
-    for (auto c : constants) {
-      assert(c.is_num);
-      n *= c.num;
-      d *= c.denom;
-    }
-
-    if (n != 1) {
-      assert(n % d == 0);
-      n = n / d;
-      d = 1;
-    }
-    vals = {qconst(n, d)};
-    concat(vals, vars);
-
-    vector<QAV> newvals;
-    for (auto v : vals) {
-      if (!v.is_one()) {
-        newvals.push_back(v);
-      }
-    }
-    vals = newvals;
-    if (vals.size() == 0) {
-      vals = {qconst(1)};
-    }
-
-    for (auto v : vals) {
-      if (v.is_zero()) {
-        vals = {qconst(0)};
-      }
-    }
-
-  }
-
-  void replace(const QAV& target, const QAV& replacement) {
-    for (auto& v : vals) {
-      if (v == target) {
-        v = replacement;
-      }
-    }
-  }
-
-};
-
-std::ostream& operator<<(std::ostream& out, const QTerm& c) {
-  assert(c.vals.size() > 0);
-
-  vector<string> strs;
-  for (auto t : c.vals) {
-    ostringstream ss;
-    ss << t;
-    strs.push_back(ss.str());
-  }
-  if (strs.size() == 0) {
-    assert(c.is_zero());
-    out << "0";
-  } else {
-    out << sep_list(strs, "", "", "*");
-  }
-  return out;
-}
-
-QTerm qterm(const QAV& r) {
-  return QTerm{{qconst(1), r}};
-}
-
-QTerm qterm(const string& r) {
-  return qterm(qvar(r));
-}
-
-QTerm qterm(const int& r) {
-  return qterm(qconst(r));
-}
-
-QTerm qterm(const QAV& l, const QAV& r) {
-  return {{l, r}};
-}
-
-QTerm qterm(const int& l, const QAV& r) {
-  return {{qconst(l), r}};
-}
-
-QTerm qterm(const int& l, const string& r) {
-  return {{qconst(l), qvar(r)}};
-}
-
-QTerm qterm(const QAV& a, const QAV& l, const QAV& r) {
-  return {{a, l, r}};
-}
-
-QTerm times(const int s, const QTerm& v) {
-  QTerm t = v;
-  t.vals.push_back(qconst(s));
-  t.simplify();
-  return t;
-}
-
-struct QExpr {
-  vector<QTerm> terms;
-
-  QTerm const_term() const {
-    for (auto t : terms) {
-      if (t.is_constant()) {
-        return t;
-      }
-    }
-
-    return qterm(qconst(0));
-    //cout << "Error: No constant terms in qexpr " << endl;
-    //assert(false);
-    //return qterm(0);
-  }
-
-  void scale(const int v) {
-    for (auto& t : terms) {
-      t.vals.push_back(qconst(v));
-    }
-  }
-
-  void delete_terms_without(const QAV& v) {
-    vector<QTerm> new_terms;
-    for (auto t : terms) {
-      if (t.contains(v)) {
-        new_terms.push_back(t);
-      }
-    }
-    terms = new_terms;
-    if (terms.size() == 0) {
-      terms.push_back(qterm(qconst(0)));
-    }
-  }
-
-  void simplify() {
-    for (auto& t : terms) {
-      t.simplify();
-    }
-  }
-
-  void replace(const QAV& target, const QAV& replacement) {
-    for (auto& t : terms) {
-      t.replace(target, replacement);
-    }
-  }
-};
-
-std::ostream& operator<<(std::ostream& out, const QExpr& c) {
-  vector<string> termstrings;
-  for (auto t : c.terms) {
-    ostringstream ss;
-    ss << t;
-    termstrings.push_back(ss.str());
-  }
-  out << sep_list(termstrings, "", "", " + ");
-  return out;
-}
-
-QExpr qexpr(const int v) {
-  return QExpr{{qterm(qconst(v))}};
-}
-
-QExpr qexpr(const QAV& v) {
-  return QExpr{{qterm(v)}};
-}
-
-QExpr qexpr(const QTerm& l) {
-  return QExpr{{l}};
-}
-
-QExpr qexpr(const QTerm& l, const QAV& r) {
-  return QExpr{{l, qterm(r)}};
-}
-
-QExpr qexpr(const QAV& l, const QAV& r) {
-  return QExpr{{qterm(l), qterm(r)}};
-}
-
-QExpr qexpr(const QAV& l, const QTerm& r) {
-  return QExpr{{qterm(l), r}};
-}
-
-QExpr qexpr(const QTerm& l, const int r) {
-  return QExpr{{l, qterm(r)}};
-}
-
-QExpr qexpr(const QTerm& l, const QTerm& r) {
-  return QExpr{{l, r}};
-}
-
-QExpr qexpr(const QTerm& a, const QTerm& l, const QTerm& r) {
-  return QExpr{{a, l, r}};
-}
-
-string isl_str(QTerm& v) {
-
-  vector<string> tstrings;
-  vector<string> divs;
-  for (auto v : v.vals) {
-    if (!v.is_num || v.is_whole()) {
-      ostringstream ss;
-      ss << v;
-      tstrings.push_back(ss.str());
-    } else {
-      divs.push_back(to_string(v.denom));
-    }
-  }
-  string s = sep_list(tstrings, "", "", "*");
-
-  if (divs.size() == 0) {
-    return s;
-  }
-  vector<string> cfs{"(" + s + ")"};
-  concat(cfs, divs);
-  return sep_list(cfs, "", "", " / ");
-}
-
-string isl_str(QExpr& v) {
-  vector<string> tstrings;
-  for (auto t : v.terms) {
-    t.simplify();
-    tstrings.push_back(isl_str(t));
-  }
-  return sep_list(tstrings, "", "", " + ");
-}
-
-struct Window {
-  string name;
-  vector<QAV> strides;
-  vector<vector<int> > offsets;
-  umap* needed;
-
-  Window() {}
-
-  Window(const string& name_,
-      const vector<QAV>& strides_,
-      const vector<vector<int > >& offsets_) :
-    name(name_),
-    strides(strides_),
-    offsets(offsets_) {}
-
-  Window(const string& name_,
-      const vector<int>& strides_,
-      const vector<vector<int > >& offsets_) :
-    name(name_),
-    strides({}),
-    offsets(offsets_) {
-      for (auto s : strides_) {
-        strides.push_back(qconst(s));
-      }
-    }
-
-  Window increment(const int diff) const {
-    Window c;
-    c.name = name;
-    c.strides = strides;
-
-    set<vector<int> > unrolled_offsets;
-    for (auto offset : offsets) {
-      vector<int> uoff = offset;
-      uoff[0] = uoff.at(0) + diff;
-      unrolled_offsets.insert(uoff);
-    }
-
-    for (auto u : unrolled_offsets) {
-      c.offsets.push_back(u);
-    }
-
-    return c;
-  }
-
-  Window unroll_cpy(const int factor) const {
-    Window c;
-    c.name = name + "_unrolled";
-    int i = 0;
-    for (auto s : strides) {
-      if (i == 0) {
-        c.strides.push_back(times(factor, s));
-      } else {
-        c.strides.push_back(s);
-      }
-      i++;
-    }
-
-    set<vector<int> > unrolled_offsets;
-    for (int i = 0; i < factor; i++) {
-      for (auto offset : offsets) {
-        vector<int> uoff = offset;
-        uoff[0] = uoff.at(0) + i;
-        unrolled_offsets.insert(uoff);
-      }
-    }
-
-    for (auto u : unrolled_offsets) {
-      c.offsets.push_back(u);
-    }
-
-    return c;
-  }
-
-  vector<vector<QExpr> > pts() const {
-    vector<vector<QExpr> > ps;
-    for (auto s : offsets) {
-      assert(s.size() > 0);
-      vector<QExpr> comps;
-      for (size_t i = 0; i < strides.size(); i++) {
-        QAV dv = qvar("d" + to_string(i));
-        QTerm t = qterm(stride(i), dv);
-        QAV offset = qconst(s.at(i));
-        comps.push_back(qexpr(t, offset));
-      }
-
-      ps.push_back(comps);
-    }
-    return ps;
-  }
-
-  string interval_set_string(const int dim) {
-    assert(dim < strides.size());
-    ostringstream ss;
-    ss << stride(dim);
-    string base = "x*" + ss.str();
-    int min_off = min_offset(dim);
-    int max_off = max_offset(dim);
-
-    return "{ k | " + base + " + " + to_string(min_off) + " <= k <= " + base + " + " + to_string(max_off) + " }";
-  }
-
-  int max_addr(const int dim, const int max_result_addr) {
-    if (stride(dim).is_whole()) {
-      assert(stride(dim).denom == 1);
-      return stride(dim).num*max_result_addr + max_offset(dim);
-    }
-    assert(stride(dim).num == 1);
-    return max_result_addr / stride(dim).denom + max_offset(dim);
-  }
-
-  int min_addr(const int dim, const int max_result_addr) {
-    if (stride(dim).is_whole()) {
-      assert(stride(dim).denom == 1);
-      return stride(dim).num*max_result_addr + min_offset(dim);
-    }
-    assert(stride(dim).num == 1);
-    return max_result_addr / stride(dim).denom + min_offset(dim);
-  }
-
-  QAV stride(const int dim) const {
-    //cout << "Getting stride for dim = " << dim << endl;
-    assert(dim < (int) strides.size());
-    return strides.at(dim);
-  }
-
-  int min_offset(const int dim) {
-    assert((int) strides.size() > dim);
-    int min = 10000;
-    for (auto off : offsets) {
-      if (off.at(dim) < min) {
-        min = off.at(dim);
-      }
-    }
-    return min;
-  }
-
-  int max_offset(const int dim) const {
-    assert((int) strides.size() > dim);
-    int max = -100000;
-    for (auto off : offsets) {
-      if (off.at(dim) > max) {
-        max = off.at(dim);
-      }
-    }
-    return max;
-  }
-};
-
-struct QConstraint {
-  QExpr lhs;
-  QExpr rhs;
-
-  void scale(const int v) {
-    lhs.scale(v);
-    rhs.scale(v);
-  }
-
-  void simplify() {
-    lhs.simplify();
-    rhs.simplify();
-  }
-
-  void replace(const QAV& target, const QAV& replacement) {
-    lhs.replace(target, replacement);
-    rhs.replace(target, replacement);
-  }
-};
-
-string isl_str(QConstraint& v) {
-  return isl_str(v.lhs) + " >= " + isl_str(v.rhs);
-}
-
-
-std::ostream& operator<<(std::ostream& out, const QConstraint& c) {
-  out << c.lhs << " >= " << c.rhs;
-  return out;
-}
-
-struct Result {
-  string compute_name;
-  vector<Window> srcs;
-  Window provided;
-  vector<Window> unrolled_srcs;
-};
 
 QExpr upper_bound(const Window& arg, const int dim) {
   string dvar = "d" + to_string(dim);
@@ -5602,7 +5206,7 @@ struct Memory {
   map<string, BufferInfo> buffers;
 };
 
-map<string, int> 
+map<string, int>
 compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstraint>& delay_constraints) {
   map<string, int> delays;
 
@@ -5666,7 +5270,7 @@ compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstrain
   return delays;
 }
 
-map<string, QExpr> 
+map<string, QExpr>
 compute_schedule_for_dim(isl_ctx* ctx, const int i, vector<string>& sorted_functions, const vector<QConstraint>& all_constraints, const vector<QConstraint>& rate_constraints) {
 
   string dv = "d" + to_string(i);
@@ -5851,6 +5455,102 @@ QExpr extract_bound(const int i, const std::string& name, const string& max) {
   return ub;
 }
 
+  void schedule_dim(isl_ctx* ctx, map<string, Box> & domain_boxes, const int i, map<string, vector<QExpr> >& schedules, vector<string> sorted_functions, map<string, Result> & app_dag, map<string, isl_map*> & compute_maps) {
+      string dv = "d" + to_string(i);
+      cout << "Scheduling dim: " << i << endl;
+      // Collect all rate variables and
+      // collect all constraints
+      vector<QConstraint> all_constraints;
+      vector<QConstraint> rate_constraints;
+      for (auto f : sorted_functions) {
+        cout << f << " schedule constraints: " << endl;
+        Box b = map_find(f, domain_boxes);
+        Range r = b.intervals.at(i);
+        int min = r.min;
+        QAV f_rate = qvar("q_" + f);
+        QAV minr = qconst(min);
+        QTerm f_delay = qterm(qvar("d_" + f));
+        QTerm prod = qterm(minr, f_rate);
+        QExpr offset = qexpr(prod, f_delay);
+        QExpr zero = qexpr(0);
+        QConstraint start_time{offset, zero};
+        all_constraints.push_back(start_time);
+
+        cout << "\t" << start_time << endl;
+        assert(contains_key(f, app_dag));
+        for (auto arg : app_dag.at(f).srcs) {
+          QTerm ft = qterm(f_rate, qvar(dv));
+          QExpr ftime = qexpr(ft, f_delay);
+          assert(contains_key(f, compute_maps));
+          isl_map* f_cm = inv(compute_maps.at(f));
+          cout << "f_cm: " << str(f_cm) << endl;
+
+          auto data_needed =
+            to_map(arg.needed);
+
+          cout << "data needed: " << str(data_needed) << endl;
+
+          isl_map* pixels_needed =
+            dot(f_cm, data_needed);
+
+          cout << "pixels needed: " << str(pixels_needed) << endl;
+
+          assert(contains_key(arg.name, compute_maps));
+          isl_map* a_cm = compute_maps.at(arg.name);
+          cout << "a_cm: " << str(a_cm) << endl;
+
+          isl_map* comps_needed =
+            dot(pixels_needed, a_cm);
+          cout << "comps needed: " << str(comps_needed) << endl;
+          isl_map* last_pix =
+            lexmax(comps_needed);
+          cout << "last comp needed: " << str(last_pix) << endl;
+          auto max = dim_max(comps_needed, i);
+          cout << "max needed in dim " << i << " = " << str(max) << endl;
+
+          QExpr ub = extract_bound(i, arg.name, str(max));
+
+          QConstraint start_after_deps{ftime, ub};
+          all_constraints.push_back(start_after_deps);
+          rate_constraints.push_back(start_after_deps);
+
+          cout << "\t" << start_after_deps << endl;
+        }
+      }
+      map<string, QExpr> dim_schedules =
+        compute_schedule_for_dim(ctx, i, sorted_functions, all_constraints, rate_constraints);
+
+      for (auto f : sorted_functions) {
+        schedules[f].push_back(dim_schedules.at(f));
+      }
+
+  }
+
+umap* to_umap(isl_ctx* ctx, map<string, vector<QExpr> > & schedules, vector<string> sorted_functions, const string & suffix) {
+    umap* m = rdmap(ctx, "{}");
+    for (auto f : sorted_functions) {
+      vector<string> sched_exprs;
+      vector<string> var_names;
+      int i = 0;
+      for (auto v : schedules[f]) {
+        string dv = "d" + to_string(i);
+        sched_exprs.push_back(isl_str(v));
+        var_names.push_back(dv);
+        i++;
+      }
+      var_names.pop_back();
+      string map_str = "{ " + f + suffix + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
+      cout << "Map str: " << map_str << endl;
+      auto rm = rdmap(ctx, map_str);
+      m = unn(m, rm);
+      isl_union_map_free(rm);
+      cout << "Unioned" << endl;
+      cout << "m = " << str(m) << endl;
+    }
+
+    cout << "done getting m..." << endl;
+    return m;
+}
 struct App {
 
   isl_ctx* ctx;
@@ -6167,72 +5867,9 @@ struct App {
     //assert(false);
   }
 
+
   void schedule_dim(const int i, map<string, vector<QExpr> >& schedules) {
-    vector<string> sorted_functions = sort_functions();
-      string dv = "d" + to_string(i);
-      cout << "Scheduling dim: " << i << endl;
-      // Collect all rate variables and
-      // collect all constraints
-      vector<QConstraint> all_constraints;
-      vector<QConstraint> rate_constraints;
-      for (auto f : sorted_functions) {
-        cout << f << " schedule constraints: " << endl;
-        Box b = map_find(f, domain_boxes);
-        Range r = b.intervals.at(i);
-        int min = r.min;
-        QAV f_rate = qvar("q_" + f);
-        QAV minr = qconst(min);
-        QTerm f_delay = qterm(qvar("d_" + f));
-        QTerm prod = qterm(minr, f_rate);
-        QExpr offset = qexpr(prod, f_delay);
-        QExpr zero = qexpr(0);
-        QConstraint start_time{offset, zero};
-        all_constraints.push_back(start_time);
-
-        cout << "\t" << start_time << endl;
-        for (auto arg : app_dag.at(f).srcs) {
-          QTerm ft = qterm(f_rate, qvar(dv));
-          QExpr ftime = qexpr(ft, f_delay);
-          isl_map* f_cm = inv(compute_map(f));
-          cout << "f_cm: " << str(f_cm) << endl;
-
-          auto data_needed =
-            to_map(arg.needed);
-
-          cout << "data needed: " << str(data_needed) << endl;
-
-          isl_map* pixels_needed =
-            dot(f_cm, data_needed);
-
-          cout << "pixels needed: " << str(pixels_needed) << endl;
-
-          isl_map* a_cm = compute_map(arg.name);
-          cout << "a_cm: " << str(a_cm) << endl;
-
-          isl_map* comps_needed =
-            dot(pixels_needed, a_cm);
-          cout << "comps needed: " << str(comps_needed) << endl;
-          isl_map* last_pix =
-            lexmax(comps_needed);
-          cout << "last comp needed: " << str(last_pix) << endl;
-          auto max = dim_max(comps_needed, i);
-          cout << "max needed in dim " << i << " = " << str(max) << endl;
-
-          QExpr ub = extract_bound(i, arg.name, str(max));
-
-          QConstraint start_after_deps{ftime, ub};
-          all_constraints.push_back(start_after_deps);
-          rate_constraints.push_back(start_after_deps);
-
-          cout << "\t" << start_after_deps << endl;
-        }
-      }
-      map<string, QExpr> dim_schedules =
-        compute_schedule_for_dim(ctx, i, sorted_functions, all_constraints, rate_constraints);
-
-      for (auto f : sorted_functions) {
-        schedules[f].push_back(dim_schedules.at(f));
-      }
+      ::schedule_dim(ctx, domain_boxes, i, schedules, sort_functions(), app_dag, compute_maps);
   }
 
   Box compute_box(const std::string& name) {
@@ -6603,7 +6240,7 @@ struct App {
   umap* schedule() {
     auto schedules = schedule_opt();
     vector<string> sorted_functions = sort_functions();
-    
+
     umap* m = rdmap(ctx, "{}");
     for (auto f : sorted_functions) {
       vector<string> sched_exprs;
@@ -6783,6 +6420,131 @@ struct App {
   }
 
 };
+
+void memtile_test() {
+
+  prog prg;
+  prg.compute_unit_file = "accumulate_3.h";
+  prg.name = "memtile";
+  prg.add_input("in");
+  prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["agg"] = 32;
+  prg.buffer_port_widths["tb"] = 32;
+  prg.buffer_port_widths["sram"] = 32;
+
+  /* this program will be a test of memory tile flatten,
+   * I hand written the memory access pattern after vectorization
+   * and see if the Polyhedra analysis could figure out the
+   * correct schedule and memory size for me.
+   * */
+
+
+  {
+    auto agg_loop = prg.add_nest("po", 0, 8, "pi", 0, 8);
+    auto agg = agg_loop->add_op("in2agg");
+    agg->add_load("in", "po, pi");
+    agg->add_store("agg", "po, pi");
+  }
+
+  {
+    auto sram_loop = prg.add_nest("qo", 0, 8, "qi", 0, 2);
+    auto sram = sram_loop->add_op("agg2sram");
+    sram->add_load("agg", "qo, qi*4");
+    sram->add_load("agg", "qo, qi*4+1");
+    sram->add_load("agg", "qo, qi*4+2");
+    sram->add_load("agg", "qo, qi*4+3");
+
+    sram->add_store("sram", "qo, qi*4");
+    sram->add_store("sram", "qo, qi*4+1");
+    sram->add_store("sram", "qo, qi*4+2");
+    sram->add_store("sram", "qo, qi*4+3");
+  }
+
+  {
+    auto tb_loop = prg.add_nest("k", 0, 6, "l", 0, 2, "m", 0, 3);
+    auto tb = tb_loop->add_op("sram2tb");
+    tb->add_load("sram", "(k+m), l*4");
+    tb->add_load("sram", "(k+m), l*4+1");
+    tb->add_load("sram", "(k+m), l*4+2");
+    tb->add_load("sram", "(k+m), l*4+3");
+
+
+    tb->add_store("tb", "k, m, l*4");
+    tb->add_store("tb", "k, m, l*4+1");
+    tb->add_store("tb", "k, m, l*4+2");
+    tb->add_store("tb", "k, m, l*4+3");
+  }
+
+  {
+    auto out_loop = prg.add_nest("a", 0, 6, "b", 0, 2, "c", 0, 4);
+    auto out = out_loop->add_op("tb2out");
+    out->add_load("tb", "a, 0, 4*b + c");
+    out->add_load("tb", "a, 1, 4*b + c");
+    out->add_load("tb", "a, 2, 4*b + c");
+
+    out->add_store("out", "a, 0, 4*b+c");
+    out->add_store("out", "a, 1, 4*b+c");
+    out->add_store("out", "a, 2, 4*b+c");
+  }
+
+  auto sched = prg.unoptimized_schedule();
+  cout << codegen_c(sched) << endl;
+  auto itr_domain = prg.whole_iteration_domain();
+  cout << "iter domain = " << str(itr_domain) << endl;
+
+  //auto sched_opt = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
+  auto domain_boxes = prg.get_domain_boxes();
+  map<string, Box> op_boxes;
+  for (auto b : domain_boxes) {
+      op_boxes[b.first->name] = b.second;
+      cout << tab(1) << b.first->name << "->" << b.second << endl;
+  }
+
+  vector<string> sorted_functions = {"in2agg", "agg2sram", "sram2tb", "tb2out"};
+  int ndims = 3;
+  map<string, vector<QExpr> > schedules;
+  map<string, Result> app_dag;
+  for (auto func : sorted_functions) {
+      Result res;
+      app_dag[func] = {};
+  }
+  map<string, isl_map*> compute_maps;
+  for (auto cm : prg.producer_maps()) {
+      compute_maps[cm.first->name] = inv(cm.second);
+      cout << tab(1) << "Producer map: " << cm.first->name << "->" << str(cm.second) << endl;
+  }
+
+  for (auto cm : prg.data_demands_maps()) {
+      app_dag[cm.first] = cm.second;
+      cout << tab(1) << "DATA demands map: " << cm.first<< "->" << str(cm.second.srcs.at(0).needed) << endl;
+  }
+
+  for (int i = ndims - 1; i >= 0; i--) {
+      schedule_dim(prg.ctx, op_boxes, i, schedules, sorted_functions, app_dag,  compute_maps);
+  }
+
+  int pos = 0;
+  cout << "Sorted pipeline..." << endl;
+  for (auto f : sorted_functions) {
+    cout << "\t" << f << endl;
+    schedules[f].push_back(qexpr(pos));
+    pos++;
+  }
+
+  auto sched_opt = its(to_umap(prg.ctx, schedules, sorted_functions, ""), prg.whole_iteration_domain());
+  //auto sched_opt = to_umap(prg.ctx, schedules, sorted_functions, "");
+
+  //auto sched_opt = its(rdmap(prg.ctx, "{in2agg[root, po, pi] -> [root, po, pi, 0]; agg2sram[root, qo, qi] -> [root, qo, 3+4*qi, 1]}"), prg.whole_iteration_domain());
+  cout << "Sched map: " << str(sched_opt) << endl;
+  cout << "Iter Domain: " << str(prg.whole_iteration_domain()) << endl;
+ // auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
+  cout << codegen_c(sched_opt) << endl;
+  //assert(false);
+  //aha_talk_print_info(prg);
+}
 
 Window win(const std::string& name, const std::vector<vector<int > >& offsets) {
   assert(offsets.size() > 0);
@@ -7453,13 +7215,13 @@ int main(int argc, char** argv) {
 
     //synth_lb_test();
 
+    memtile_test();
     upsample_reduce_test();
     mismatched_stencil_test();
     //assert(false);
     //mismatched_stencil_test();
     agg_test();
     //assert(false);
-    memtile_test();
     //assert(false);
     conv3x3_app_unrolled_test();
     conv3x3_app_test();

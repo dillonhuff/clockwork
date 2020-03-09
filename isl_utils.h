@@ -689,6 +689,10 @@ isl_union_map* unn(isl_union_map* const m0, isl_union_map* const m1) {
   return isl_union_map_union(cpy(m0), cpy(m1));
 }
 
+isl_map* unn(isl_map* const m0, isl_map* const m1) {
+  return isl_map_union(cpy(m0), cpy(m1));
+}
+
 isl_set* its(isl_set* const m0, isl_set* const m1) {
   return isl_set_intersect(cpy(m0), cpy(m1));
 }
