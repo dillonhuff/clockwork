@@ -2758,7 +2758,8 @@ struct prog {
             win.needed = pmap;
             Result res;
             res.srcs.push_back(win);
-            m[result_buf] = res;
+            //m[result_buf] = res;
+            m[op->name] = res;
         }
     }
       return m;
@@ -5343,6 +5344,8 @@ build_compute_deps(isl_ctx* ctx, map<string, Box> & domain_boxes, const int i, m
 
       cout << "data needed: " << str(data_needed) << endl;
 
+      cout << "f_cm: " << str(f_cm) << endl;
+
       isl_map* pixels_needed =
         dot(f_cm, data_needed);
 
@@ -5376,6 +5379,8 @@ map<string, QExpr> schedule_dim(isl_ctx* ctx, const int i, map<string, Box>& dom
   vector<QConstraint> all_constraints;
   vector<QConstraint> rate_constraints;
   for (auto f : sorted_functions) {
+  //for (auto fc : domain_boxes) {
+    //string f = fc.first;
     cout << f << " schedule constraints: " << endl;
     Box b = map_find(f, domain_boxes);
     Range r = b.intervals.at(i);
@@ -5390,16 +5395,7 @@ map<string, QExpr> schedule_dim(isl_ctx* ctx, const int i, map<string, Box>& dom
     all_constraints.push_back(start_time);
 
     cout << "\t" << start_time << endl;
-    //assert(contains_key(f, app_dag));
 
-    //cout << "srcs of " << f << " in app dag..." << endl;
-    //cout << "App dag contents..." << endl;
-    //for (auto d : app_dag) {
-      //cout << tab(1) << d.first << endl;
-      //cout << tab(2) << "has " << d.second.srcs.size() << " sources" << endl;
-    //}
-
-    //for (auto arg : app_dag.at(f).srcs) {
     string dv = "d" + to_string(i);
     assert(contains_key(f, last_compute_needed));
     for (auto arg_ub : last_compute_needed.at(f)) {
@@ -6360,14 +6356,14 @@ void memtile_test() {
 
 
   {
-    auto agg_loop = prg.add_nest("po", 0, 8, "pi", 0, 8);
+    auto agg_loop = prg.add_nest("po", 0, 8, "pi", 0, 8, "pdummy", 0, 1);
     auto agg = agg_loop->add_op("in2agg");
     agg->add_load("in", "po, pi");
     agg->add_store("agg", "po, pi");
   }
 
   {
-    auto sram_loop = prg.add_nest("qo", 0, 8, "qi", 0, 2);
+    auto sram_loop = prg.add_nest("qo", 0, 8, "qi", 0, 2, "qdummy", 0, 1);
     auto sram = sram_loop->add_op("agg2sram");
     sram->add_load("agg", "qo, qi*4");
     sram->add_load("agg", "qo, qi*4+1");
@@ -6424,10 +6420,10 @@ void memtile_test() {
   int ndims = 3;
   map<string, vector<QExpr> > schedules;
   map<string, Result> app_dag;
-  for (auto func : sorted_functions) {
-      Result res;
-      app_dag[func] = {};
-  }
+  //for (auto func : sorted_functions) {
+      //Result res;
+      //app_dag[func] = {};
+  //}
   map<string, isl_map*> compute_maps;
   for (auto cm : prg.producer_maps()) {
       compute_maps[cm.first->name] = inv(cm.second);
@@ -6438,6 +6434,8 @@ void memtile_test() {
       app_dag[cm.first] = cm.second;
       cout << tab(1) << "DATA demands map: " << cm.first<< "->" << str(cm.second.srcs.at(0).needed) << endl;
   }
+
+  //assert(false);
 
   for (int i = ndims - 1; i >= 0; i--) {
       schedule_dim(prg.ctx, op_boxes, i, schedules, sorted_functions, app_dag,  compute_maps);
@@ -6451,12 +6449,13 @@ void memtile_test() {
     pos++;
   }
 
-  auto sched_opt = its(to_umap(prg.ctx, schedules, sorted_functions, ""), prg.whole_iteration_domain());
-  //auto sched_opt = to_umap(prg.ctx, schedules, sorted_functions, "");
+  //auto sched_opt = its(to_umap(prg.ctx, schedules, sorted_functions, ""), prg.whole_iteration_domain());
+  auto sched_opt = to_umap(prg.ctx, schedules, sorted_functions, "");
 
   //auto sched_opt = its(rdmap(prg.ctx, "{in2agg[root, po, pi] -> [root, po, pi, 0]; agg2sram[root, qo, qi] -> [root, qo, 3+4*qi, 1]}"), prg.whole_iteration_domain());
   cout << "Sched map: " << str(sched_opt) << endl;
   cout << "Iter Domain: " << str(prg.whole_iteration_domain()) << endl;
+  sched_opt = its(sched_opt, prg.whole_iteration_domain());
  // auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
   cout << codegen_c(sched_opt) << endl;
   //assert(false);
@@ -7145,7 +7144,7 @@ int main(int argc, char** argv) {
     //synth_lb_test();
 
     memtile_test();
-    //assert(false);
+    assert(false);
     upsample_reduce_test();
     mismatched_stencil_test();
     //assert(false);
