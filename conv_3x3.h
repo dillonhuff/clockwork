@@ -188,6 +188,12 @@ hw_uint<32> conv_3_3(hw_uint<32*9>& in) {
 }
 
 static inline
+hw_uint<32> reduce_gauss(hw_uint<32*9>& in) {
+  auto res = conv_3_3(in);
+  return res / 9;
+}
+
+static inline
 hw_uint<32> mag_cu(hw_uint<32>& a, hw_uint<32>& b) {
   return a + b;
 }

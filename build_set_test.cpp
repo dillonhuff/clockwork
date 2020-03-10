@@ -6564,8 +6564,17 @@ void gaussian_pyramid_app_test() {
     last = next;
   }
   gp.realize(last, 32, 32, 1);
+  gp.realize_naive(last, 32, 32);
 
-  assert(false);
+  //std::vector<std::string> naive =
+    //run_regression_tb("level_2_naive");
+  //cout << "Naive    : " << naive << endl;
+  std::vector<std::string> optimized =
+    run_regression_tb("level_2_opt");
+  //cout << "Optimized: " << optimized << endl;
+  //assert(naive == optimized);
+
+  //assert(false);
 }
 
 void denoise2d_test() {
@@ -7170,7 +7179,7 @@ int main(int argc, char** argv) {
 
     gaussian_pyramid_app_test();
 
-    memtile_test();
+    //memtile_test();
     upsample_reduce_test();
     mismatched_stencil_test();
     //assert(false);
