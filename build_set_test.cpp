@@ -6544,6 +6544,30 @@ void mismatched_stencil_test() {
   //assert(false);
 }
 
+void gaussian_pyramid_app_test() {
+  App gp;
+
+  gp.func2d("in_off_chip");
+  gp.func2d("in", "id", pt("in_off_chip"));
+  int n_levels = 3;
+  string last = "in";
+  for (int l = 0; l < n_levels; l++) {
+    string next = "level_" + to_string(l);
+    vector<vector<int > > offsets;
+    for (int r = 0; r < 3; r++) {
+      for (int c = 0; c < 3; c++) {
+        offsets.push_back({c, r});
+      }
+    }
+    Window last_window{last, {qconst(2), qconst(2)}, offsets};
+    gp.func2d(next, "reduce_gauss", last_window);
+    last = next;
+  }
+  gp.realize(last, 32, 32, 1);
+
+  assert(false);
+}
+
 void denoise2d_test() {
   App dn;
 
@@ -7143,8 +7167,10 @@ int main(int argc, char** argv) {
 
     //synth_lb_test();
 
+
+    gaussian_pyramid_app_test();
+
     memtile_test();
-    assert(false);
     upsample_reduce_test();
     mismatched_stencil_test();
     //assert(false);
