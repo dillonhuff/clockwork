@@ -93,6 +93,15 @@ QAV qvar(const std::string& v) {
 struct QTerm {
   vector<QAV> vals;
 
+  bool contains_val(const QAV& target) {
+    for (auto v : vals) {
+      if (v == target) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   int to_int() const {
 
     assert(is_constant());
@@ -252,6 +261,30 @@ QTerm times(const int s, const QTerm& v) {
 struct QExpr {
   vector<QTerm> terms;
 
+  void remove_zero_terms() {
+    vector<QTerm> non_zero;
+    for (auto t : terms) {
+      if (!t.is_zero()) {
+        non_zero.push_back(t);
+      }
+    }
+
+    if (non_zero.size() == 0) {
+      terms = {qterm(0)};
+    } else {
+      terms = non_zero;
+    }
+  }
+
+  bool contains_val(const QAV& target) {
+    for (auto t : terms) {
+      if (t.contains_val(target)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   QTerm const_term() const {
     for (auto t : terms) {
       if (t.is_constant()) {
@@ -288,6 +321,7 @@ struct QExpr {
     for (auto& t : terms) {
       t.simplify();
     }
+    remove_zero_terms();
   }
 
   void replace(const QAV& target, const QAV& replacement) {
@@ -310,6 +344,10 @@ std::ostream& operator<<(std::ostream& out, const QExpr& c) {
 
 QExpr qexpr(const int v) {
   return QExpr{{qterm(qconst(v))}};
+}
+
+QExpr qexpr(const string& r) {
+  return QExpr{{qterm(qvar(r))}};
 }
 
 QExpr qexpr(const QAV& v) {
@@ -391,6 +429,11 @@ struct QConstraint {
     rhs.simplify();
   }
 
+  bool contains_val(const QAV& target) {
+    return lhs.contains_val(target) ||
+      rhs.contains_val(target);
+  }
+
   void replace(const QAV& target, const QAV& replacement) {
     lhs.replace(target, replacement);
     rhs.replace(target, replacement);
@@ -402,6 +445,9 @@ string isl_str(QConstraint& v) {
 }
 
 
+string isl_str_eq(QConstraint& v) {
+  return isl_str(v.lhs) + " = " + isl_str(v.rhs);
+}
 std::ostream& operator<<(std::ostream& out, const QConstraint& c) {
   out << c.lhs << " >= " << c.rhs;
   return out;

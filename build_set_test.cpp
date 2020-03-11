@@ -5072,7 +5072,9 @@ struct Memory {
 };
 
 map<string, int>
-compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstraint>& delay_constraints) {
+compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstraint>& delay_constraints,
+    vector<QConstraint>& offset_constraints) {
+
   map<string, int> delays;
 
   cout << "All delay constraints..." << endl;
@@ -5084,8 +5086,12 @@ compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstrain
   auto* legal_delays = rdset(ctx, "{ " + sep_list(ds, "[", "]", ", ") + " }");
   for (auto c : delay_constraints) {
     cout << "\t" << c << endl;
-    cout << "\tisl str: " << isl_str(c) << endl;
     legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(c) + " }"));
+  }
+
+  for (auto c : offset_constraints) {
+    cout << "\t" << isl_str_eq(c) << endl;
+    legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str_eq(c) + " }"));
   }
 
   string aff_c = sep_list(ds, "", "", " + ");
@@ -5102,6 +5108,7 @@ compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstrain
   cout << "Objective: " << str(obj_func) << endl;
   cout << "Legal delays: " << str(legal_delays) << endl;
   cout << "Legal delay point: " << str(isl_set_sample_point(legal_delays)) << endl;
+  //assert(i == 1);
 
   auto min_point =
     isl_set_min_val(cpy(legal_delays), obj_func);
@@ -5136,7 +5143,15 @@ compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstrain
 }
 
 map<string, QExpr>
-compute_schedule_for_dim(isl_ctx* ctx, const int i, vector<string>& sorted_functions, const vector<QConstraint>& all_constraints, const vector<QConstraint>& rate_constraints) {
+compute_schedule_for_dim(isl_ctx* ctx,
+    const int i,
+    vector<string>& sorted_functions,
+    const vector<QConstraint>& all_constraints,
+    const vector<QConstraint>& rate_constraints,
+    const map<string, map<string, QExpr> >& last_compute_needed) {
+
+  vector<QConstraint> offset_constraints =
+    rate_constraints;
 
   string dv = "d" + to_string(i);
   map<string, int> rates;
@@ -5250,11 +5265,62 @@ compute_schedule_for_dim(isl_ctx* ctx, const int i, vector<string>& sorted_funct
   for (auto r : rates) {
     cout << "\t" << r.first << " -> " << r.second << endl;
   }
+
+
   vector<QConstraint> delay_constraints =
     all_constraints;
   cout << "Constraints before delay substitution" << endl;
   for (auto c : delay_constraints) {
     cout << "\t" << c << endl;
+  }
+
+  //cout << "Last compute needed..." << endl;
+  //vector<QConstraint> cn_constraints;
+  //for (auto fneeds : last_compute_needed) {
+    //string f = fneeds.first;
+    //cout << tab(1) << f << endl;
+    //for (auto cn : fneeds.second) {
+      //auto expr = cn.second;
+      //expr.simplify();
+      //cout << tab(2) << cn.first << " -> " << expr << endl;
+      //QConstraint cn_c;
+      //cn_c.lhs = qexpr("d_" + f);
+      //cn_c.rhs = expr;
+      //cn_constraints.push_back(cn_c);
+    //}
+  //}
+
+  //vector<QConstraint> last_compute_constraints;
+  //for (auto& c : cn_constraints) {
+    //for (auto r : sorted_functions) {
+      //c.replace(qvar("q_" + r), qconst(0));
+      //c.replace(qvar(dv), qconst(0));
+      //c.lhs.simplify();
+      //c.rhs.simplify();
+    //}
+  //}
+  //cout << "cn_constraints..." << endl;
+  //for (auto c : cn_constraints) {
+    //cout << tab(1) << c << endl;
+  //}
+
+  //for (auto c : cn_constraints) {
+    //for (auto r : sorted_functions) {
+      //assert(!c.contains_val(qvar(r)));
+    //}
+  //}
+  //vector<int> pt = sat(last_compute_constraints);
+  //cout << "Satisfying solution: " << pt << endl;
+  //assert(false);
+
+  for (auto& c : offset_constraints) {
+    for (auto r : rates) {
+      c.replace(qvar(r.first),
+          qconst(map_find(r.first, rates)));
+      c.replace(qvar(dv), qconst(0));
+      c.lhs.simplify();
+      c.rhs.simplify();
+    }
   }
 
   for (auto& c : delay_constraints) {
@@ -5268,7 +5334,8 @@ compute_schedule_for_dim(isl_ctx* ctx, const int i, vector<string>& sorted_funct
   }
 
   map<string, int> delays =
-    compute_delays(ctx, sorted_functions, delay_constraints);
+    compute_delays(ctx, sorted_functions, delay_constraints, offset_constraints);
+  //assert(i == 1);
 
   cout << "Final schedules: " << endl;
   map<string, QExpr> schedules;
@@ -5379,8 +5446,6 @@ map<string, QExpr> schedule_dim(isl_ctx* ctx, const int i, map<string, Box>& dom
   vector<QConstraint> all_constraints;
   vector<QConstraint> rate_constraints;
   for (auto f : sorted_functions) {
-  //for (auto fc : domain_boxes) {
-    //string f = fc.first;
     cout << f << " schedule constraints: " << endl;
     Box b = map_find(f, domain_boxes);
     Range r = b.intervals.at(i);
@@ -5419,7 +5484,7 @@ map<string, QExpr> schedule_dim(isl_ctx* ctx, const int i, map<string, Box>& dom
   }
 
   map<string, QExpr> dim_schedules =
-    compute_schedule_for_dim(ctx, i, sorted_functions, all_constraints, rate_constraints);
+    compute_schedule_for_dim(ctx, i, sorted_functions, all_constraints, rate_constraints, last_compute_needed);
 
   return dim_schedules;
 }
@@ -5756,21 +5821,34 @@ struct App {
       cout << "Done with " << next << endl;
     }
 
-    //for (auto d : domain_boxes) {
-      //bool is_edge = !is_input(d.first);
+    vector<string> edge_functions;
+    for (auto d : domain_boxes) {
+      bool is_edge = !is_input(d.first);
 
-      //for (auto p : producers(d.first)) {
-        //if (!is_input(p.name)) {
-          //is_edge = false;
-          //break;
-        //}
-      //}
-      ////if (producers(d.first).size() == 0) {
-      ////if (d.first == "img1") {
-      //if (is_edge) {
-        //domain_boxes[d.first] = d.second.pad(0, 1000);
-      //}
-    //}
+      for (auto p : producers(d.first)) {
+        if (!is_input(p.name)) {
+          is_edge = false;
+          break;
+        }
+      }
+      if (is_edge) {
+        if (d.first == "f") {
+          //assert(false);
+          int ubnd0 = domain_boxes.at("u").length(0);
+          int ubnd1 = domain_boxes.at("u").length(1);
+
+          int diff0 = ubnd0 - domain_boxes.at("f").length(0);
+          int diff1 = ubnd1 - domain_boxes.at("f").length(1);
+
+          domain_boxes[d.first] = d.second.pad(1, diff1);
+          domain_boxes[d.first] = domain_boxes[d.first].pad(0, diff0);
+        }
+        //edge_functions.push_back(d.first);
+        //domain_boxes[d.first] = d.second.pad(1, 10);
+      }
+    }
+
+
 
     cout << "Data domains.." << endl;
     for (auto d : domain_boxes) {
@@ -6539,6 +6617,7 @@ void mismatched_stencil_test() {
     run_regression_tb("mismatched_stencils_opt");
   cout << "Optimized: " << optimized << endl;
   assert(naive == optimized);
+  //assert(false);
   //int res = system("g++ -std=c++11 -c mismatched_stencils_opt.cpp");
   //assert(res == 0);
   //assert(false);
@@ -6609,6 +6688,7 @@ void denoise2d_test() {
     run_regression_tb("denoise2d_naive");
 
   assert(naive == optimized);
+  assert(false);
 }
 
 App unroll(const App& app, const int unroll_factor) {
@@ -7177,11 +7257,12 @@ int main(int argc, char** argv) {
     //synth_lb_test();
 
 
+    mismatched_stencil_test();
+    denoise2d_test();
     gaussian_pyramid_app_test();
 
     //memtile_test();
     upsample_reduce_test();
-    mismatched_stencil_test();
     //assert(false);
     //mismatched_stencil_test();
     agg_test();
@@ -7189,7 +7270,6 @@ int main(int argc, char** argv) {
     //assert(false);
     conv3x3_app_unrolled_test();
     conv3x3_app_test();
-    denoise2d_test();
     conv3x3_app_test();
     //assert(false);
 
