@@ -2,6 +2,21 @@
 #include "qexpr.h"
 
 
+string str(const int i) {
+  return to_string(i);
+}
+
+string extvar(const string& n, const int dim) {
+  return n + "_ext_" + str(dim);
+}
+
+string endvar(const string& n, const int dim) {
+  return n + "_end_" + str(dim);
+}
+
+string startvar(const string& n, const int dim) {
+  return n + "_start_" + str(dim);
+}
 
 vector<int> parse_pt(isl_point* p) {
   return parse_pt(str(p));
@@ -5089,10 +5104,10 @@ compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstrain
     legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(c) + " }"));
   }
 
-  for (auto c : offset_constraints) {
-    cout << "\t" << isl_str_eq(c) << endl;
-    legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str_eq(c) + " }"));
-  }
+  //for (auto c : offset_constraints) {
+    //cout << "\t" << isl_str_eq(c) << endl;
+    //legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str_eq(c) + " }"));
+  //}
 
   string aff_c = sep_list(ds, "", "", " + ");
   string aff_str =
@@ -5456,7 +5471,7 @@ map<string, QExpr> schedule_dim(isl_ctx* ctx, const int i, map<string, Box>& dom
     QTerm prod = qterm(minr, f_rate);
     QExpr offset = qexpr(prod, f_delay);
     QExpr zero = qexpr(0);
-    QConstraint start_time{offset, zero};
+    QConstraint start_time{false, offset, zero};
     all_constraints.push_back(start_time);
 
     cout << "\t" << start_time << endl;
@@ -5470,7 +5485,7 @@ map<string, QExpr> schedule_dim(isl_ctx* ctx, const int i, map<string, Box>& dom
       QTerm ft = qterm(f_rate, qvar(dv));
       QExpr ftime = qexpr(ft, f_delay);
 
-      QConstraint start_after_deps{ftime, ub};
+      QConstraint start_after_deps{false, ftime, ub};
       all_constraints.push_back(start_after_deps);
       rate_constraints.push_back(start_after_deps);
 
@@ -5765,6 +5780,34 @@ struct App {
   }
 
   void fill_data_domain(const std::string& name, const int d0, const int d1, const int unroll_factor) {
+    map<string, vector<string> > extent_start_vars;
+    map<string, vector<string> > extent_end_vars;
+    map<string, vector<string> > extent_vars;
+    
+    vector<QConstraint> bound_constraints;
+    const int ndims = 2;
+    for (auto f : sort_functions()) {
+      for (int i = 0; i < ndims; i++) {
+        extent_start_vars[f].push_back(startvar(f, i));
+        extent_end_vars[f].push_back(endvar(f, i));
+        extent_vars[f].push_back(extvar(f, i));
+        bound_constraints.push_back(eq(qexpr(extvar(f, i)), sub(endvar(f, i), startvar(f, i))));
+      }
+    }
+
+    bound_constraints.push_back(eq(startvar(name, 0), 0));
+    bound_constraints.push_back(eq(startvar(name, 1), 0));
+
+    bound_constraints.push_back(geq(endvar(name, 0), d0 - 1));
+    bound_constraints.push_back(geq(endvar(name, 1), d0 - 1));
+
+    cout << "--- Bound constraints" << endl;
+    for (auto b : bound_constraints) {
+      cout << tab(1) << b << endl;
+    }
+
+    assert(false);
+
     Box sbox;
     sbox.intervals.push_back({0, d0 - 1});
     sbox.intervals.push_back({0, d1 - 1});
@@ -5818,6 +5861,7 @@ struct App {
           search.insert(inputs.name);
         }
       }
+
       cout << "Done with " << next << endl;
     }
 

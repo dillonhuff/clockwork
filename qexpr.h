@@ -93,6 +93,12 @@ QAV qvar(const std::string& v) {
 struct QTerm {
   vector<QAV> vals;
 
+  QTerm scale(const int val) {
+    QTerm cpy = *this;
+    cpy.vals.push_back(qconst(val));
+    return cpy;
+  }
+
   bool contains_val(const QAV& target) {
     for (auto v : vals) {
       if (v == target) {
@@ -416,6 +422,7 @@ string isl_str(QExpr& v) {
 
 
 struct QConstraint {
+  bool is_eq;
   QExpr lhs;
   QExpr rhs;
 
@@ -440,8 +447,24 @@ struct QConstraint {
   }
 };
 
+QConstraint eq(const QExpr& a, const QExpr& b) {
+  return QConstraint{true, a, b};
+}
+
+QConstraint eq(const string& a, const int b) {
+  return QConstraint{true, qexpr(a), qexpr(b)};
+}
+
+QConstraint geq(const QExpr& a, const QExpr& b) {
+  return QConstraint{false, a, b};
+}
+
+QConstraint geq(const string& a, const int b) {
+  return QConstraint{false, qexpr(a), qexpr(b)};
+}
+
 string isl_str(QConstraint& v) {
-  return isl_str(v.lhs) + " >= " + isl_str(v.rhs);
+  return isl_str(v.lhs) + (v.is_eq ? " = " : " >= ") + isl_str(v.rhs);
 }
 
 
@@ -593,3 +616,8 @@ QTerm parse_qterm(const std::string& str) {
     return qterm(qvar(var_match[1]));
   }
 }
+
+QExpr sub(const string& a, const string& b) {
+  return qexpr(qterm(a), qterm(b).scale(-1));
+}
+
