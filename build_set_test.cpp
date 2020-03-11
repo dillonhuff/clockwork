@@ -2738,31 +2738,39 @@ struct prog {
             string result_buf = "";
             for (auto p : op->produces()) {
                 result_buf= take_until(p, "[");
+                cout << "Producer :" << p << endl;
             }
             assert(result_buf != "");
 
             auto vars = map_find(op, ivars);
             //TODO: fix this hack
-            reverse(vars);
-            vars.pop_back();
-            reverse(vars);
+            //reverse(vars);
+            //vars.pop_back();
+            //reverse(vars);
             string ivar_str = sep_list(vars, "[", "]", ", ");
             auto dom = map_find(op, doms);
 
             umap* pmap = rdmap(ctx, "{}");
+            int cnt_ld_st_pair = 0;
+            auto producers = op->produces();
             for (auto p : op->consumes()) {
+                cout << "DEBUG:" << result_buf + ivar_str <<", " << producers[cnt_ld_st_pair] << endl;
                 isl_union_map* vmap =
-                  rdmap(ctx, string("{ " + result_buf + ivar_str + " -> " + p + " }").c_str());
+                  rdmap(ctx, string("{ " + producers[cnt_ld_st_pair] + " -> " + p + " }").c_str());
+                  //rdmap(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str());
                 pmap = unn(pmap, vmap);
+                cnt_ld_st_pair ++;
+                cout << "Consumer map : " << str(pmap) << endl;
             }
             win.needed = pmap;
             Result res;
             res.srcs.push_back(win);
-            m[result_buf] = res;
+            m[op->name] = res;
         }
     }
       return m;
   }
+
 
   map<op*, isl_map*> producer_maps() {
     map<op*, isl_map*> m;
@@ -2782,6 +2790,67 @@ struct prog {
           pmap = unn(pmap, vmap);
       }
       m[op] = to_map(pmap);
+    }
+    return m;
+
+  }
+  //new method for compute producer, write map
+  map<string, isl_map*> producer_maps_new() {
+    map<string, isl_map*> m;
+    auto ivars = iter_vars();
+    auto doms = domains();
+
+    string result_buf = "";
+    auto ops = root->all_ops();
+
+    for (auto op : ops) {
+      auto vars = map_find(op, ivars);
+      string ivar_str = sep_list(vars, "[", "]", ", ");
+      auto dom = map_find(op, doms);
+
+      for (auto p : op->produces()) {
+        result_buf= take_until(p, "[");
+        cout << "Producer :" << p << endl;
+      }
+      assert(result_buf != "");
+
+      umap* pmap = rdmap(ctx, "{}");
+      for (auto p : op->produces()) {
+          isl_union_map* vmap =
+            its(rdmap(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
+          pmap = unn(pmap, vmap);
+      }
+      m[result_buf] = to_map(pmap);
+    }
+    return m;
+  }
+
+  map<op*, pair<isl_map*, string>> consumer_maps_new() {
+    map<op*, pair<isl_map*, string>> m;
+    auto ivars = iter_vars();
+    auto doms = domains();
+
+    auto ops = root->all_ops();
+    for (auto op : ops) {
+      auto vars = map_find(op, ivars);
+      string ivar_str = sep_list(vars, "[", "]", ", ");
+      auto dom = map_find(op, doms);
+      string result_buf;
+
+      //TODO: fix this hack if their are multiple consumer
+      for (auto p : op->consumes()) {
+        result_buf= take_until(p, "[");
+        cout << "Consumers :" << p << endl;
+      }
+      assert(result_buf != "");
+
+      umap* pmap = rdmap(ctx, "{}");
+      for (auto p : op->consumes()) {
+          isl_union_map* vmap =
+            its(rdmap(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
+          pmap = unn(pmap, vmap);
+      }
+      m[op] = make_pair(to_map(pmap), result_buf);
     }
     return m;
 
@@ -5427,7 +5496,7 @@ compute_schedule_for_dim(isl_ctx* ctx, const int i, vector<string>& sorted_funct
 
 QExpr extract_bound(const int i, const std::string& name, const string& max) {
   QExpr ub;
-  regex cm("\\{ (.*)\\[(.*)\\] -> \\[\\((.*)\\)\\] \\}");
+  regex cm("\\{ (.*)\\[(.*)\\] -> \\[\\((.*)\\)\\](.*) \\}");
   smatch match;
   auto res = regex_search(max, match, cm);
 
@@ -5455,6 +5524,100 @@ QExpr extract_bound(const int i, const std::string& name, const string& max) {
   return ub;
 }
 
+  void schedule_dim(isl_ctx* ctx, map<string, Box> & domain_boxes,
+          const int i, map<string, vector<QExpr> >& schedules,
+          vector<string> sorted_functions,
+          map<string, pair<isl_map*, string>> & read_maps,
+          map<string, isl_map*> & compute_maps) {
+      string dv = "d" + to_string(i);
+      cout << "Scheduling dim: " << i << endl;
+      // Collect all rate variables and
+      // collect all constraints
+      vector<QConstraint> all_constraints;
+      vector<QConstraint> rate_constraints;
+      for (auto f : sorted_functions) {
+        cout << f << " schedule constraints: " << endl;
+        Box b = map_find(f, domain_boxes);
+        Range r = b.intervals.at(i);
+        int min = r.min;
+        QAV f_rate = qvar("q_" + f);
+        QAV minr = qconst(min);
+        QTerm f_delay = qterm(qvar("d_" + f));
+        QTerm prod = qterm(minr, f_rate);
+        QExpr offset = qexpr(prod, f_delay);
+        QExpr zero = qexpr(0);
+        QConstraint start_time{offset, zero};
+        all_constraints.push_back(start_time);
+
+        cout << "\t" << start_time << endl;
+        //assert(contains_key(f, app_dag));
+        //assert(app_dag.at(f).srcs.size());
+        //for (auto arg : app_dag.at(f).srcs) {
+
+        //currently only consider the data
+        //TODO: make it more general
+        assert(contains_key(f, read_maps));
+        auto arg_pair = read_maps.at(f);
+
+        string buffer_name = arg_pair.second;
+        auto data_read = arg_pair.first;
+
+        QTerm ft = qterm(f_rate, qvar(dv));
+        QExpr ftime = qexpr(ft, f_delay);
+
+        //first function no predcessor
+        if (!contains_key(buffer_name, compute_maps))
+            continue;
+
+        isl_map* map_write = compute_maps.at(buffer_name);
+        cout << tab(1) << "write map: " << str(map_write) << endl;
+
+        //auto data_needed = to_map(arg.needed);
+
+        cout << tab(1) << "read map: " << str(data_read) << endl;
+
+          isl_map* st_dependency =
+            dot(data_read, map_write);
+
+          cout << "statement dependency: " << str(st_dependency) << endl;
+
+          /*assert(contains_key(arg.name, compute_maps));
+          isl_map* a_cm = compute_maps.at(arg.name);
+          cout << "a_cm: " << str(a_cm) << endl;
+
+          isl_map* comps_needed =
+            dot(pixels_needed, a_cm);
+          cout << "comps needed: " << str(comps_needed) << endl;*/
+          isl_map* last_pix =
+            lexmax(st_dependency);
+          cout << "last comp needed: " << str(last_pix) << endl;
+          auto max = dim_max(st_dependency, i);
+          cout << "max needed in dim " << i << " = " << str(max) << endl;
+          //cout <<"space name: " << domain_name(get_space(inv(st_dependency))) << endl;
+
+          //FIXME: arg name may be the previous statement name
+          //QExpr ub = extract_bound(i, arg.name, str(max));
+          QExpr ub = extract_bound(i, domain_name(get_space(inv(st_dependency))), str(max));
+
+
+          QConstraint start_after_deps{ftime, ub};
+          all_constraints.push_back(start_after_deps);
+          rate_constraints.push_back(start_after_deps);
+
+          cout << "\t" << start_after_deps << endl;
+
+      }
+      map<string, QExpr> dim_schedules =
+        compute_schedule_for_dim(ctx, i, sorted_functions, all_constraints, rate_constraints);
+
+      for (auto f : sorted_functions) {
+        schedules[f].push_back(dim_schedules.at(f));
+      }
+
+
+  }
+
+
   void schedule_dim(isl_ctx* ctx, map<string, Box> & domain_boxes, const int i, map<string, vector<QExpr> >& schedules, vector<string> sorted_functions, map<string, Result> & app_dag, map<string, isl_map*> & compute_maps) {
       string dv = "d" + to_string(i);
       cout << "Scheduling dim: " << i << endl;
@@ -5478,12 +5641,15 @@ QExpr extract_bound(const int i, const std::string& name, const string& max) {
 
         cout << "\t" << start_time << endl;
         assert(contains_key(f, app_dag));
+        assert(app_dag.at(f).srcs.size());
         for (auto arg : app_dag.at(f).srcs) {
+            cout << str(arg.needed) << endl;
           QTerm ft = qterm(f_rate, qvar(dv));
           QExpr ftime = qexpr(ft, f_delay);
           assert(contains_key(f, compute_maps));
           isl_map* f_cm = inv(compute_maps.at(f));
           cout << "f_cm: " << str(f_cm) << endl;
+          cout << "f_cm: " << str(inv(f_cm)) << endl;
 
           auto data_needed =
             to_map(arg.needed);
@@ -6443,14 +6609,14 @@ void memtile_test() {
 
 
   {
-    auto agg_loop = prg.add_nest("po", 0, 8, "pi", 0, 8);
+    auto agg_loop = prg.add_nest("po", 0, 8, "pi", 0, 8, "dummy", 0, 1);
     auto agg = agg_loop->add_op("in2agg");
     agg->add_load("in", "po, pi");
     agg->add_store("agg", "po, pi");
   }
 
   {
-    auto sram_loop = prg.add_nest("qo", 0, 8, "qi", 0, 2);
+    auto sram_loop = prg.add_nest("qo", 0, 8, "qi", 0, 2, "dummy", 0 ,1);
     auto sram = sram_loop->add_op("agg2sram");
     sram->add_load("agg", "qo, qi*4");
     sram->add_load("agg", "qo, qi*4+1");
@@ -6512,18 +6678,24 @@ void memtile_test() {
       app_dag[func] = {};
   }
   map<string, isl_map*> compute_maps;
-  for (auto cm : prg.producer_maps()) {
-      compute_maps[cm.first->name] = inv(cm.second);
-      cout << tab(1) << "Producer map: " << cm.first->name << "->" << str(cm.second) << endl;
+  map<string, pair<isl_map*, string>> read_maps;
+  for (auto cm : prg.producer_maps_new()) {
+      compute_maps[cm.first] = inv(cm.second);
+      cout << tab(1) << "Producer map: " << cm.first << "->" << str(cm.second) << endl;
   }
 
-  for (auto cm : prg.data_demands_maps()) {
+  for (auto cm : prg.consumer_maps_new()) {
+      read_maps[cm.first->name] = cm.second;
+      cout << tab(1) << "Consumer map: " << cm.first->name << "->" << str(cm.second.first) << ", read buffer = " << cm.second.second << endl;
+  }
+
+  /*for (auto cm : prg.data_demands_maps()) {
       app_dag[cm.first] = cm.second;
-      cout << tab(1) << "DATA demands map: " << cm.first<< "->" << str(cm.second.srcs.at(0).needed) << endl;
-  }
+      cout << tab(1) << "DATA demands map: " << cm.first<< "->" << str(app_dag[cm.first].srcs.at(0).needed) << endl;
+  }*/
 
-  for (int i = ndims - 1; i >= 0; i--) {
-      schedule_dim(prg.ctx, op_boxes, i, schedules, sorted_functions, app_dag,  compute_maps);
+  for (int i = ndims - 1; i >= 1; i--) {
+      schedule_dim(prg.ctx, op_boxes, i, schedules, sorted_functions, read_maps,  compute_maps);
   }
 
   int pos = 0;
@@ -6534,15 +6706,17 @@ void memtile_test() {
     pos++;
   }
 
-  auto sched_opt = its(to_umap(prg.ctx, schedules, sorted_functions, ""), prg.whole_iteration_domain());
-  //auto sched_opt = to_umap(prg.ctx, schedules, sorted_functions, "");
+  //auto sched_opt = its(to_umap(prg.ctx, schedules, sorted_functions, ""), prg.whole_iteration_domain());
+  auto sched_opt = to_umap(prg.ctx, schedules, sorted_functions, "");
 
   //auto sched_opt = its(rdmap(prg.ctx, "{in2agg[root, po, pi] -> [root, po, pi, 0]; agg2sram[root, qo, qi] -> [root, qo, 3+4*qi, 1]}"), prg.whole_iteration_domain());
-  cout << "Sched map: " << str(sched_opt) << endl;
-  cout << "Iter Domain: " << str(prg.whole_iteration_domain()) << endl;
+  cout << "Sched map:\n " << str(sched_opt) << endl;
+  cout << "Iter Domain:\n " << str(prg.whole_iteration_domain()) << endl;
+  sched_opt = its(sched_opt, prg.whole_iteration_domain());
+  cout << "After opt Sched map:\n " << str(sched_opt) << endl;
  // auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
   cout << codegen_c(sched_opt) << endl;
-  //assert(false);
+  assert(false);
   //aha_talk_print_info(prg);
 }
 
