@@ -455,6 +455,10 @@ QConstraint eq(const string& a, const int b) {
   return QConstraint{true, qexpr(a), qexpr(b)};
 }
 
+QConstraint eq(const string& a, const string& b) {
+  return QConstraint{true, qexpr(a), qexpr(b)};
+}
+
 QConstraint geq(const QExpr& a, const QExpr& b) {
   return QConstraint{false, a, b};
 }
@@ -472,7 +476,7 @@ string isl_str_eq(QConstraint& v) {
   return isl_str(v.lhs) + " = " + isl_str(v.rhs);
 }
 std::ostream& operator<<(std::ostream& out, const QConstraint& c) {
-  out << c.lhs << " >= " << c.rhs;
+  out << c.lhs << (c.is_eq ? " = " : " >= ") << c.rhs;
   return out;
 }
 

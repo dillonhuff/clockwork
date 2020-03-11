@@ -5801,6 +5801,26 @@ struct App {
     bound_constraints.push_back(geq(endvar(name, 0), d0 - 1));
     bound_constraints.push_back(geq(endvar(name, 1), d0 - 1));
 
+    for (auto f : sort_functions()) {
+      for (auto inputs : producers(f)) {
+        for (int d = 0; d < ndims; d++) {
+
+        }
+      }
+
+      // All producers to the same consumer
+      // must be padded to the same siz
+      for (auto in0 : producers(f)) {
+        for (auto in1 : producers(f)) {
+          if (in0.name != in1.name) {
+            for (int d = 0; d < ndims; d++) {
+              bound_constraints.push_back(eq(extvar(in0.name, d), extvar(in1.name, d)));
+            }
+          }
+        }
+      }
+    }
+
     cout << "--- Bound constraints" << endl;
     for (auto b : bound_constraints) {
       cout << tab(1) << b << endl;
