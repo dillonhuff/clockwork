@@ -2428,7 +2428,7 @@ struct Window {
     return strides.at(dim);
   }
 
-  int min_offset(const int dim) {
+  int min_offset(const int dim) const {
     assert((int) strides.size() > dim);
     int min = 10000;
     for (auto off : offsets) {
@@ -4994,6 +4994,19 @@ Box unn(const Box& l, const Box& r) {
 }
 
 
+QExpr lower_bound(const Window& arg, const int dim) {
+  string dvar = "d" + to_string(dim);
+
+  QAV dv = qvar(dvar);
+  QAV stride = arg.strides.at(dim);
+  QAV max_off = qconst(arg.min_offset(dim));
+  QAV rate = qvar("q_" + arg.name);
+  QTerm dvs = qterm(stride, rate, dv);
+  QTerm qm = qterm(rate, max_off);
+  QTerm delay = qterm("d_" + arg.name);
+  QExpr k = qexpr(dvs, qm, delay);
+  return k;
+}
 
 QExpr upper_bound(const Window& arg, const int dim) {
   string dvar = "d" + to_string(dim);
@@ -5012,6 +5025,37 @@ QExpr upper_bound(const Window& arg, const int dim) {
   return k;
 }
 
+QExpr max_bound(const string& consumer, const Window& arg, const int dim) {
+  string dvar = consumer;
+
+  QAV dv = qvar(dvar);
+  QAV stride = arg.strides.at(dim);
+  QAV max_off = qconst(arg.max_offset(dim));
+  QTerm dvs = qterm(stride, dv);
+
+  QExpr qm = qexpr(dvs, qterm(max_off));
+  return qm;
+
+  //auto bnd = upper_bound(arg, dim);
+  //auto dv = qvar("d" + str(dim));
+  //auto qv = qvar("q_" + arg.name);
+  //bnd.replace(dv, qvar(endvar(consumer, dim)));
+  //bnd.replace(qv, qconst(1));
+  //bnd.simplify();
+  //return bnd;
+}
+
+QExpr min_bound(const string& consumer, const Window& arg, const int dim) {
+  string dvar = consumer;
+
+  QAV dv = qvar(dvar);
+  QAV stride = arg.strides.at(dim);
+  QAV max_off = qconst(arg.min_offset(dim));
+  QTerm dvs = qterm(stride, dv);
+
+  QExpr qm = qexpr(dvs, qterm(max_off));
+  return qm;
+}
 
 vector<vector<int> > build_points(vector<vector<int> >& vals_by_dim, vector<vector<int> >& current, const int i) {
   cout << "Building points: " << i << endl;
@@ -5804,7 +5848,8 @@ struct App {
     for (auto f : sort_functions()) {
       for (auto inputs : producers(f)) {
         for (int d = 0; d < ndims; d++) {
-
+          bound_constraints.push_back(geq(min_bound(startvar(f, d), inputs, d), startvar(inputs.name, d)));
+          bound_constraints.push_back(geq(endvar(inputs.name, d), max_bound(endvar(f, d), inputs, d)));
         }
       }
 
@@ -5825,6 +5870,15 @@ struct App {
     for (auto b : bound_constraints) {
       cout << tab(1) << b << endl;
     }
+
+    QExpr objective;
+    for (auto f : sort_functions()) {
+      for (int d = 0; d < ndims; d++) {
+        objective.terms.push_back(qterm(extvar(f, d)));
+      }
+    }
+
+    cout << "Objective: " << objective << endl;
 
     assert(false);
 

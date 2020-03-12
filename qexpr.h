@@ -463,7 +463,19 @@ QConstraint geq(const QExpr& a, const QExpr& b) {
   return QConstraint{false, a, b};
 }
 
+QConstraint geq(const string& a, const QExpr& b) {
+  return QConstraint{false, qexpr(a), b};
+}
+
+QConstraint geq(const QExpr& a, const string& b) {
+  return QConstraint{false, a, qexpr(b)};
+}
+
 QConstraint geq(const string& a, const int b) {
+  return QConstraint{false, qexpr(a), qexpr(b)};
+}
+
+QConstraint geq(const string& a, const string& b) {
   return QConstraint{false, qexpr(a), qexpr(b)};
 }
 
