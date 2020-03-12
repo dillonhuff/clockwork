@@ -5593,11 +5593,11 @@ map<string, QExpr> schedule_dim(isl_ctx* ctx, const int i, map<string, Box>& dom
     QTerm f_delay = qterm(qvar("d_" + f));
     QTerm prod = qterm(minr, f_rate);
     QExpr offset = qexpr(prod, f_delay);
-    QExpr zero = qexpr(0);
-    QConstraint start_time{false, offset, zero};
-    all_constraints.push_back(start_time);
+    //QExpr zero = qexpr(0);
+    //QConstraint start_time{false, offset, zero};
+    //all_constraints.push_back(start_time);
 
-    cout << "\t" << start_time << endl;
+    //cout << "\t" << start_time << endl;
 
     string dv = "d" + to_string(i);
     assert(contains_key(f, last_compute_needed));
