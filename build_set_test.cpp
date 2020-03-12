@@ -5266,12 +5266,13 @@ compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstrain
     parse_pt(dp);
   assert(delay_coeffs.size() == ds.size());
 
+  int min_delay = min_e(delay_coeffs);
   int p = 0;
   for (auto f : sorted_functions) {
     string fd = "d_" + f;
     for (auto d : ds) {
       if (fd == d) {
-        delays[fd] = delay_coeffs.at(p);
+        delays[fd] = delay_coeffs.at(p) + min_delay;
       }
     }
     p++;
