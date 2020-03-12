@@ -2,6 +2,85 @@
 #include "qexpr.h"
 
 
+map<string, int> minimize(const std::vector<QConstraint>& constraints, QExpr& objective) {
+
+  cout << "All delay constraints..." << endl;
+  vector<string> ds;
+  for (auto c : constraints) {
+    for (auto v : c.vars()) {
+      string name = v.get_name();
+      if (!elem(name, ds)) {
+        ds.push_back(name);
+      }
+    }
+  }
+
+  for (auto v : objective.vars()) {
+    string name = v.get_name();
+    if (!elem(name, ds)) {
+      ds.push_back(name);
+    }
+  }
+
+  isl_ctx* ctx = isl_ctx_alloc();
+
+  string varspx = sep_list(ds, "[", "]", ", ");
+  auto* legal_delays = rdset(ctx, "{ " + sep_list(ds, "[", "]", ", ") + " }");
+  for (auto c : constraints) {
+    cout << "\t" << c << endl;
+    legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(c) + " }"));
+  }
+
+  string aff_c = sep_list(ds, "", "", " + ");
+  //ostringstream oss;
+  //oss << objective;
+
+  string aff_str =
+    "{ " +
+    sep_list(ds, "[", "]", ", ") + " -> " + 
+    "[" + isl_str(objective) + "] }";
+    //oss.str() + " }";
+
+  cout << "Aff str: " << aff_str << endl;
+
+  auto obj_func =
+    isl_aff_read_from_str(ctx, aff_str.c_str());
+
+  cout << "Objective: " << str(obj_func) << endl;
+  cout << "Legal values: " << str(legal_delays) << endl;
+  cout << "Legal value example point: " << str(isl_set_sample_point(legal_delays)) << endl;
+
+  auto min_point =
+    isl_set_min_val(cpy(legal_delays), obj_func);
+  string mstring =
+    str(min_point);
+  cout << "Min delays: " << mstring << endl;
+  string os = aff_c;
+  string mset = set_string(ds, os + " = " + mstring);
+  cout << "Min set: " << mset << endl;
+  auto min_set = rdset(ctx, mset.c_str());
+
+  auto mvs = its(min_set, legal_delays);
+  string dp = str(isl_set_sample_point(mvs));
+  cout << "Min pt: " << dp << endl;
+
+  vector<int> delay_coeffs =
+    parse_pt(dp);
+  assert(delay_coeffs.size() == ds.size());
+
+  //// Extract variable values
+  map<string, int> delays;
+  int pos = 0;
+  for (auto vi : ds) {
+    delays[vi] = delay_coeffs.at(pos);
+    pos++;
+  }
+
+  isl_ctx_free(ctx);
+
+  return delays;
+}
+
 string str(const int i) {
   return to_string(i);
 }
@@ -5148,10 +5227,9 @@ compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstrain
     legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(c) + " }"));
   }
 
-  //for (auto c : offset_constraints) {
-    //cout << "\t" << isl_str_eq(c) << endl;
-    //legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str_eq(c) + " }"));
-  //}
+  string target_func = sorted_functions.back();
+  QConstraint cc = eq(qexpr("d_" + target_func), 100);
+  legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(cc) + " }"));
 
   string aff_c = sep_list(ds, "", "", " + ");
   string aff_str =
@@ -5170,7 +5248,8 @@ compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstrain
   //assert(i == 1);
 
   auto min_point =
-    isl_set_min_val(cpy(legal_delays), obj_func);
+    //isl_set_min_val(cpy(legal_delays), obj_func);
+    isl_set_max_val(cpy(legal_delays), obj_func);
   string mstring =
     str(min_point);
   cout << "Min delays: " << mstring << endl;
@@ -5824,63 +5903,68 @@ struct App {
   }
 
   void fill_data_domain(const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    map<string, vector<string> > extent_start_vars;
-    map<string, vector<string> > extent_end_vars;
-    map<string, vector<string> > extent_vars;
+    //map<string, vector<string> > extent_start_vars;
+    //map<string, vector<string> > extent_end_vars;
+    //map<string, vector<string> > extent_vars;
     
-    vector<QConstraint> bound_constraints;
-    const int ndims = 2;
-    for (auto f : sort_functions()) {
-      for (int i = 0; i < ndims; i++) {
-        extent_start_vars[f].push_back(startvar(f, i));
-        extent_end_vars[f].push_back(endvar(f, i));
-        extent_vars[f].push_back(extvar(f, i));
-        bound_constraints.push_back(eq(qexpr(extvar(f, i)), sub(endvar(f, i), startvar(f, i))));
-      }
-    }
+    //vector<QConstraint> bound_constraints;
+    //const int ndims = 2;
+    //for (auto f : sort_functions()) {
+      //for (int i = 0; i < ndims; i++) {
+        //extent_start_vars[f].push_back(startvar(f, i));
+        //extent_end_vars[f].push_back(endvar(f, i));
+        //extent_vars[f].push_back(extvar(f, i));
+        //bound_constraints.push_back(eq(qexpr(extvar(f, i)), sub(endvar(f, i), startvar(f, i))));
+      //}
+    //}
 
-    bound_constraints.push_back(eq(startvar(name, 0), 0));
-    bound_constraints.push_back(eq(startvar(name, 1), 0));
+    //bound_constraints.push_back(eq(startvar(name, 0), 0));
+    //bound_constraints.push_back(eq(startvar(name, 1), 0));
 
-    bound_constraints.push_back(geq(endvar(name, 0), d0 - 1));
-    bound_constraints.push_back(geq(endvar(name, 1), d0 - 1));
+    //bound_constraints.push_back(geq(endvar(name, 0), d0 - 1));
+    //bound_constraints.push_back(geq(endvar(name, 1), d0 - 1));
 
-    for (auto f : sort_functions()) {
-      for (auto inputs : producers(f)) {
-        for (int d = 0; d < ndims; d++) {
-          bound_constraints.push_back(geq(min_bound(startvar(f, d), inputs, d), startvar(inputs.name, d)));
-          bound_constraints.push_back(geq(endvar(inputs.name, d), max_bound(endvar(f, d), inputs, d)));
-        }
-      }
+    //for (auto f : sort_functions()) {
+      //for (auto inputs : producers(f)) {
+        //for (int d = 0; d < ndims; d++) {
+          //bound_constraints.push_back(geq(min_bound(startvar(f, d), inputs, d), startvar(inputs.name, d)));
+          //bound_constraints.push_back(geq(endvar(inputs.name, d), max_bound(endvar(f, d), inputs, d)));
+        //}
+      //}
 
-      // All producers to the same consumer
-      // must be padded to the same siz
-      for (auto in0 : producers(f)) {
-        for (auto in1 : producers(f)) {
-          if (in0.name != in1.name) {
-            for (int d = 0; d < ndims; d++) {
-              bound_constraints.push_back(eq(extvar(in0.name, d), extvar(in1.name, d)));
-            }
-          }
-        }
-      }
-    }
+      //// All producers to the same consumer
+      //// must be padded to the same siz
+      //for (auto in0 : producers(f)) {
+        //for (auto in1 : producers(f)) {
+          //if (in0.name != in1.name) {
+            //for (int d = 0; d < ndims; d++) {
+              //bound_constraints.push_back(eq(extvar(in0.name, d), extvar(in1.name, d)));
+            //}
+          //}
+        //}
+      //}
+    //}
 
-    cout << "--- Bound constraints" << endl;
-    for (auto b : bound_constraints) {
-      cout << tab(1) << b << endl;
-    }
+    //cout << "--- Bound constraints" << endl;
+    //for (auto b : bound_constraints) {
+      //cout << tab(1) << b << endl;
+    //}
 
-    QExpr objective;
-    for (auto f : sort_functions()) {
-      for (int d = 0; d < ndims; d++) {
-        objective.terms.push_back(qterm(extvar(f, d)));
-      }
-    }
+    //QExpr objective;
+    //for (auto f : sort_functions()) {
+      //for (int d = 0; d < ndims; d++) {
+        //objective.terms.push_back(qterm(extvar(f, d)));
+      //}
+    //}
 
-    cout << "Objective: " << objective << endl;
+    //cout << "Objective: " << objective << endl;
 
-    assert(false);
+    //map<string, int> result = minimize(bound_constraints, objective);
+    //cout << "Result..." << endl;
+    //for (auto r : result) {
+      //cout << tab(1) << r.first << " = " << r.second << endl;
+    //}
+    //assert(false);
 
     Box sbox;
     sbox.intervals.push_back({0, d0 - 1});
@@ -6735,6 +6819,7 @@ void mismatched_stencil_test() {
     run_regression_tb("mismatched_stencils_opt");
   cout << "Optimized: " << optimized << endl;
   assert(naive == optimized);
+
   //assert(false);
   //int res = system("g++ -std=c++11 -c mismatched_stencils_opt.cpp");
   //assert(res == 0);
@@ -6806,7 +6891,7 @@ void denoise2d_test() {
     run_regression_tb("denoise2d_naive");
 
   assert(naive == optimized);
-  assert(false);
+  //assert(false);
 }
 
 App unroll(const App& app, const int unroll_factor) {
@@ -7375,8 +7460,8 @@ int main(int argc, char** argv) {
     //synth_lb_test();
 
 
-    mismatched_stencil_test();
     denoise2d_test();
+    mismatched_stencil_test();
     gaussian_pyramid_app_test();
 
     //memtile_test();

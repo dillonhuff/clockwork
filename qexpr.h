@@ -16,6 +16,10 @@ struct QAV {
   int num;
   int denom;
 
+  string get_name() const {
+    return name;
+  }
+
   int to_int() const {
     assert(is_num);
     assert(denom == 1);
@@ -33,6 +37,10 @@ struct QAV {
 
     assert(denom != 0);
     return is_num && (num == 0);
+  }
+
+  bool is_var() const {
+    return !is_num;
   }
 
   bool is_one() const {
@@ -92,6 +100,16 @@ QAV qvar(const std::string& v) {
 
 struct QTerm {
   vector<QAV> vals;
+
+  vector<QAV> vars() const {
+    vector<QAV> vs;
+    for (auto t : vals) {
+      if (t.is_var()) {
+        vs.push_back(t);
+      }
+    }
+    return vs;
+  }
 
   QTerm scale(const int val) {
     QTerm cpy = *this;
@@ -267,6 +285,14 @@ QTerm times(const int s, const QTerm& v) {
 struct QExpr {
   vector<QTerm> terms;
 
+  vector<QAV> vars() const {
+    vector<QAV> vs;
+    for (auto t : terms) {
+      concat(vs, t.vars());
+    }
+    return vs;
+  }
+
   void remove_zero_terms() {
     vector<QTerm> non_zero;
     for (auto t : terms) {
@@ -426,6 +452,13 @@ struct QConstraint {
   QExpr lhs;
   QExpr rhs;
 
+  vector<QAV> vars() const {
+    vector<QAV> vs;
+    concat(vs, lhs.vars());
+    concat(vs, rhs.vars());
+    return vs;
+  }
+
   void scale(const int v) {
     lhs.scale(v);
     rhs.scale(v);
@@ -449,6 +482,10 @@ struct QConstraint {
 
 QConstraint eq(const QExpr& a, const QExpr& b) {
   return QConstraint{true, a, b};
+}
+
+QConstraint eq(const QExpr& a, const int b) {
+  return QConstraint{true, (a), qexpr(b)};
 }
 
 QConstraint eq(const string& a, const int b) {
