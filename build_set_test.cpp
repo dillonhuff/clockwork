@@ -7459,7 +7459,6 @@ int main(int argc, char** argv) {
 
     //synth_lb_test();
 
-
     denoise2d_test();
     mismatched_stencil_test();
     gaussian_pyramid_app_test();
