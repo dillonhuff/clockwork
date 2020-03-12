@@ -31,14 +31,11 @@ map<string, int> minimize(const std::vector<QConstraint>& constraints, QExpr& ob
   }
 
   string aff_c = sep_list(ds, "", "", " + ");
-  //ostringstream oss;
-  //oss << objective;
 
   string aff_str =
     "{ " +
     sep_list(ds, "[", "]", ", ") + " -> " + 
     "[" + isl_str(objective) + "] }";
-    //oss.str() + " }";
 
   cout << "Aff str: " << aff_str << endl;
 
@@ -5248,7 +5245,6 @@ compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstrain
   //assert(i == 1);
 
   auto min_point =
-    //isl_set_min_val(cpy(legal_delays), obj_func);
     isl_set_max_val(cpy(legal_delays), obj_func);
   string mstring =
     str(min_point);
@@ -5266,18 +5262,27 @@ compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstrain
     parse_pt(dp);
   assert(delay_coeffs.size() == ds.size());
 
-  int min_delay = min_e(delay_coeffs);
   int p = 0;
   for (auto f : sorted_functions) {
     string fd = "d_" + f;
     for (auto d : ds) {
       if (fd == d) {
-        delays[fd] = delay_coeffs.at(p) + min_delay;
+        delays[fd] = delay_coeffs.at(p);
       }
     }
     p++;
   }
 
+  int min_delay = 9999999;
+  for (auto d : delays) {
+    if (d.second < min_delay) {
+      min_delay = d.second;
+    }
+  }
+
+  for (auto& d : delays) {
+    d.second = d.second - min_delay;
+  }
   return delays;
 }
 
