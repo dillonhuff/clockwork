@@ -6859,6 +6859,30 @@ void gaussian_pyramid_app_test() {
   //assert(false);
 }
 
+void jacobi_2d_app_test() {
+  App jac;
+  jac.func2d("t1_arg");
+  jac.func2d("t1", "id", pt("t1_arg"));
+  jac.func2d("t0", "jacobi2d_compute", "t1", {1, 1}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
+
+  jac.realize_naive("t0", 32, 32);
+  jac.realize("t0", 32, 32, 1);
+
+  std::vector<std::string> optimized =
+    run_regression_tb("t0_opt");
+
+  std::vector<std::string> naive =
+    run_regression_tb("t0_naive");
+
+  assert(naive == optimized);
+
+  for (int i = 0; i < 3; i++) {
+    jac.realize("t0", 1024, 1024, pow(2, i));
+  }
+
+  //assert(false);
+}
+
 void denoise2d_test() {
   App dn;
 
@@ -7459,6 +7483,7 @@ int main(int argc, char** argv) {
 
     //synth_lb_test();
 
+    jacobi_2d_app_test();
     denoise2d_test();
     mismatched_stencil_test();
     gaussian_pyramid_app_test();
