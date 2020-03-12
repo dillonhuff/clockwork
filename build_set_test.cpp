@@ -1,7 +1,6 @@
 #include "isl_utils.h"
 #include "qexpr.h"
 
-
 map<string, int> minimize(const std::vector<QConstraint>& constraints, QExpr& objective) {
 
   cout << "All delay constraints..." << endl;
@@ -5228,7 +5227,8 @@ compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstrain
   }
 
   string target_func = sorted_functions.back();
-  QConstraint cc = eq(qexpr("d_" + target_func), 100);
+  //QConstraint cc = eq(qexpr("d_" + target_func), 100);
+  QConstraint cc = eq(qexpr("d_" + target_func), 0);
   legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(cc) + " }"));
 
   string aff_c = sep_list(ds, "", "", " + ");
