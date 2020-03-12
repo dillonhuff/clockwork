@@ -1,6 +1,82 @@
 #include "isl_utils.h"
 #include "qexpr.h"
 
+map<string, int> maximize(const std::vector<QConstraint>& constraints, QExpr& objective) {
+
+  cout << "All delay constraints..." << endl;
+  vector<string> ds;
+  for (auto c : constraints) {
+    for (auto v : c.vars()) {
+      string name = v.get_name();
+      if (!elem(name, ds)) {
+        ds.push_back(name);
+      }
+    }
+  }
+
+  for (auto v : objective.vars()) {
+    string name = v.get_name();
+    if (!elem(name, ds)) {
+      ds.push_back(name);
+    }
+  }
+
+  isl_ctx* ctx = isl_ctx_alloc();
+
+  string varspx = sep_list(ds, "[", "]", ", ");
+  auto* legal_delays = rdset(ctx, "{ " + sep_list(ds, "[", "]", ", ") + " }");
+  for (auto c : constraints) {
+    cout << "\t" << c << endl;
+    legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(c) + " }"));
+  }
+
+  string aff_c = sep_list(ds, "", "", " + ");
+
+  string aff_str =
+    "{ " +
+    sep_list(ds, "[", "]", ", ") + " -> " + 
+    "[" + isl_str(objective) + "] }";
+
+  cout << "Aff str: " << aff_str << endl;
+
+  auto obj_func =
+    isl_aff_read_from_str(ctx, aff_str.c_str());
+
+  cout << "Objective: " << str(obj_func) << endl;
+  cout << "Legal values: " << str(legal_delays) << endl;
+  cout << "Legal value example point: " << str(isl_set_sample_point(legal_delays)) << endl;
+
+  auto min_point =
+    isl_set_max_val(cpy(legal_delays), obj_func);
+  string mstring =
+    str(min_point);
+  cout << "Max delays: " << mstring << endl;
+  string os = aff_c;
+  string mset = set_string(ds, os + " = " + mstring);
+  cout << "Min set: " << mset << endl;
+  auto min_set = rdset(ctx, mset.c_str());
+
+  auto mvs = its(min_set, legal_delays);
+  string dp = str(isl_set_sample_point(mvs));
+  cout << "Min pt: " << dp << endl;
+
+  vector<int> delay_coeffs =
+    parse_pt(dp);
+  assert(delay_coeffs.size() == ds.size());
+
+  //// Extract variable values
+  map<string, int> delays;
+  int pos = 0;
+  for (auto vi : ds) {
+    delays[vi] = delay_coeffs.at(pos);
+    pos++;
+  }
+
+  isl_ctx_free(ctx);
+
+  return delays;
+}
+
 map<string, int> minimize(const std::vector<QConstraint>& constraints, QExpr& objective) {
 
   cout << "All delay constraints..." << endl;
@@ -5206,83 +5282,95 @@ struct Memory {
 };
 
 map<string, int>
-compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstraint>& delay_constraints,
+compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstraint> delay_constraints,
     vector<QConstraint>& offset_constraints) {
 
-  map<string, int> delays;
-
-  cout << "All delay constraints..." << endl;
   vector<string> ds;
   for (auto f : sorted_functions) {
     ds.push_back("d_" + f);
   }
-  string varspx = sep_list(ds, "[", "]", ", ");
-  auto* legal_delays = rdset(ctx, "{ " + sep_list(ds, "[", "]", ", ") + " }");
-  for (auto c : delay_constraints) {
-    cout << "\t" << c << endl;
-    legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(c) + " }"));
-  }
-
-  string target_func = sorted_functions.back();
-  //QConstraint cc = eq(qexpr("d_" + target_func), 100);
-  QConstraint cc = eq(qexpr("d_" + target_func), 0);
-  legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(cc) + " }"));
-
   QExpr objective_expr;
   for (auto d : ds) {
     objective_expr.terms.push_back(qterm(d));
   }
-  ostringstream oss;
-  oss << objective_expr;
-  string aff_str =
-    "{ " +
-    sep_list(ds, "[", "]", ", ") + " -> " +
-    "[ " + oss.str() + " ]" + " }";
 
-  string aff_c = sep_list(ds, "", "", " + ");
+  string target_func = sorted_functions.back();
+  QConstraint cc = eq(qexpr("d_" + target_func), 0);
+  delay_constraints.push_back(cc);
+  map<string, int> delays =
+    maximize(delay_constraints, objective_expr);
+  assert(delays.size() == sorted_functions.size());
+
+  //map<string, int> delays;
+
+  //cout << "All delay constraints..." << endl;
+  //string varspx = sep_list(ds, "[", "]", ", ");
+  //auto* legal_delays = rdset(ctx, "{ " + sep_list(ds, "[", "]", ", ") + " }");
+  //for (auto c : delay_constraints) {
+    //cout << "\t" << c << endl;
+    //legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(c) + " }"));
+  //}
+
+  //string target_func = sorted_functions.back();
+  ////QConstraint cc = eq(qexpr("d_" + target_func), 100);
+  //QConstraint cc = eq(qexpr("d_" + target_func), 0);
+  //legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(cc) + " }"));
+
+  //QExpr objective_expr;
+  //for (auto d : ds) {
+    //objective_expr.terms.push_back(qterm(d));
+  //}
+  //ostringstream oss;
+  //oss << objective_expr;
   //string aff_str =
     //"{ " +
     //sep_list(ds, "[", "]", ", ") + " -> " +
-    //sep_list(ds, "[", "]", " + ") + " }";
+    //"[ " + oss.str() + " ]" + " }";
 
-  cout << "Aff str: " << aff_str << endl;
+  //string aff_c = sep_list(ds, "", "", " + ");
+  ////string aff_str =
+    ////"{ " +
+    ////sep_list(ds, "[", "]", ", ") + " -> " +
+    ////sep_list(ds, "[", "]", " + ") + " }";
 
-  auto obj_func =
-    isl_aff_read_from_str(ctx, aff_str.c_str());
+  //cout << "Aff str: " << aff_str << endl;
 
-  cout << "Objective: " << str(obj_func) << endl;
-  cout << "Legal delays: " << str(legal_delays) << endl;
-  cout << "Legal delay point: " << str(isl_set_sample_point(legal_delays)) << endl;
-  //assert(i == 1);
+  //auto obj_func =
+    //isl_aff_read_from_str(ctx, aff_str.c_str());
 
-  auto min_point =
-    isl_set_max_val(cpy(legal_delays), obj_func);
-  string mstring =
-    str(min_point);
-  cout << "Min delays: " << mstring << endl;
-  string os = aff_c;
-  string mset = set_string(ds, os + " = " + mstring);
-  cout << "Min set: " << mset << endl;
-  auto min_set = rdset(ctx, mset.c_str());
+  //cout << "Objective: " << str(obj_func) << endl;
+  //cout << "Legal delays: " << str(legal_delays) << endl;
+  //cout << "Legal delay point: " << str(isl_set_sample_point(legal_delays)) << endl;
+  ////assert(i == 1);
 
-  auto mvs = its(min_set, legal_delays);
-  string dp = str(isl_set_sample_point(mvs));
-  cout << "Min pt: " << dp << endl;
+  //auto min_point =
+    //isl_set_max_val(cpy(legal_delays), obj_func);
+  //string mstring =
+    //str(min_point);
+  //cout << "Min delays: " << mstring << endl;
+  //string os = aff_c;
+  //string mset = set_string(ds, os + " = " + mstring);
+  //cout << "Min set: " << mset << endl;
+  //auto min_set = rdset(ctx, mset.c_str());
 
-  vector<int> delay_coeffs =
-    parse_pt(dp);
-  assert(delay_coeffs.size() == ds.size());
+  //auto mvs = its(min_set, legal_delays);
+  //string dp = str(isl_set_sample_point(mvs));
+  //cout << "Min pt: " << dp << endl;
 
-  int p = 0;
-  for (auto f : sorted_functions) {
-    string fd = "d_" + f;
-    for (auto d : ds) {
-      if (fd == d) {
-        delays[fd] = delay_coeffs.at(p);
-      }
-    }
-    p++;
-  }
+  //vector<int> delay_coeffs =
+    //parse_pt(dp);
+  //assert(delay_coeffs.size() == ds.size());
+
+  //int p = 0;
+  //for (auto f : sorted_functions) {
+    //string fd = "d_" + f;
+    //for (auto d : ds) {
+      //if (fd == d) {
+        //delays[fd] = delay_coeffs.at(p);
+      //}
+    //}
+    //p++;
+  //}
 
   int min_delay = 9999999;
   for (auto d : delays) {
