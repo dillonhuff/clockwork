@@ -5228,11 +5228,22 @@ compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstrain
   QConstraint cc = eq(qexpr("d_" + target_func), 0);
   legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(cc) + " }"));
 
-  string aff_c = sep_list(ds, "", "", " + ");
+  QExpr objective_expr;
+  for (auto d : ds) {
+    objective_expr.terms.push_back(qterm(d));
+  }
+  ostringstream oss;
+  oss << objective_expr;
   string aff_str =
     "{ " +
     sep_list(ds, "[", "]", ", ") + " -> " +
-    sep_list(ds, "[", "]", " + ") + " }";
+    "[ " + oss.str() + " ]" + " }";
+
+  string aff_c = sep_list(ds, "", "", " + ");
+  //string aff_str =
+    //"{ " +
+    //sep_list(ds, "[", "]", ", ") + " -> " +
+    //sep_list(ds, "[", "]", " + ") + " }";
 
   cout << "Aff str: " << aff_str << endl;
 
