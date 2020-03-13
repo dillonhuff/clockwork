@@ -188,6 +188,10 @@ inline void out_jacobi2d_compute0(I_cache& I, HWStream<hw_uint<32> >& /* buffer_
 // Driver function
 void jacobi2d(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in, HWStream<hw_uint<32> >& /* get_args num ports = 1 */out) {
   I_cache I;
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=I inter false
+#endif // __VIVADO_SYNTH__
+
 	for (int c0 = 0; c0 <= 31; c0 += 1)
 	  for (int c1 = 0; c1 <= 31; c1 += 1) {
 	    I_id0(in, I, 0, c0, c1);

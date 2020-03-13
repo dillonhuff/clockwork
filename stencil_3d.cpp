@@ -666,6 +666,10 @@ inline void out_blur_270(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num 
 // Driver function
 void stencil_3d(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in, HWStream<hw_uint<16> >& /* get_args num ports = 1 */out) {
   I_cache I;
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=I inter false
+#endif // __VIVADO_SYNTH__
+
 	for (int c0 = 0; c0 <= 31; c0 += 1)
 	  for (int c1 = 0; c1 <= 31; c1 += 1)
 	    for (int c2 = 0; c2 <= 31; c2 += 1) {

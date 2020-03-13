@@ -3376,8 +3376,6 @@ void generate_app_code(CodegenOptions& options,
     }
   }
 
-  //assert(false);
-
   conv_out << endl << endl;
   conv_out << "// Operation logic" << endl;
   for (auto op : prg.all_ops()) {
@@ -3460,8 +3458,12 @@ void generate_app_code(CodegenOptions& options,
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
       conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
+      conv_out << "#ifdef __VIVADO_SYNTH__" << endl;
+      conv_out << "#pragma HLS dependence variable=" << b.second.name << " inter false" << endl;
+      conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
     }
   }
+
 
   string code_string = codegen_c(schedmap);
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");

@@ -574,7 +574,15 @@ inline void warped_0_conv_3_30(I_cache& I, warped_0_cache& warped_0, int root, i
 // Driver function
 void warp_and_upsample(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in, HWStream<hw_uint<32> >& /* get_args num ports = 1 */out) {
   I_cache I;
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=I inter false
+#endif // __VIVADO_SYNTH__
+
   warped_0_cache warped_0;
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=warped_0 inter false
+#endif // __VIVADO_SYNTH__
+
 	for (int c0 = 0; c0 <= 63; c0 += 1) {
 	  if (c0 >= 2) {
 	    for (int c1 = 0; c1 <= 1; c1 += 1) {
