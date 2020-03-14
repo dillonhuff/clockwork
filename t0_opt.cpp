@@ -169,7 +169,7 @@ inline hw_uint<160> t1_t0_comp_read_bundle_read(t1_cache& t1, int d0, int d1) {
 
 // t1_comp_write
 //	t1_t1_comp_write0
-inline void t1_t1_comp_write_bundle_write(hw_uint<32>& t1_comp_write, t1_cache& t1) {
+inline void t1_t1_comp_write_bundle_write(hw_uint<32>& t1_comp_write, t1_cache& t1, int d0, int d1) {
 	hw_uint<32>  t1_t1_comp_write0_res = t1_comp_write.extract<0, 31>();
 	t1_t1_comp_write0_write(t1_t1_comp_write0_res, t1);
 }
@@ -184,7 +184,7 @@ inline void t1_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */t1_ar
 	auto t1_arg_0_c__0_value = t1_arg.read();
 	auto compute_result = id(t1_arg_0_c__0_value);
 	// Produce: t1
-	t1_t1_comp_write_bundle_write(compute_result, t1);
+	t1_t1_comp_write_bundle_write(compute_result, t1, d0, d1);
 }
 
 inline void t0_comp(t1_cache& t1, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */t0, int d0, int d1) {

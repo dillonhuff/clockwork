@@ -1301,10 +1301,8 @@ void generate_code_prefix(CodegenOptions& options,
 
   string inpt = buf.get_in_port();
   out << "#include \"hw_classes.h\"" << endl << endl;
-  vector<string> caches;
   for (auto inpt : buf.get_in_ports()) {
     generate_memory_struct(options, out, inpt, buf);
-    caches.push_back(inpt);
   }
 
   out << "struct " << buf.name << "_cache {" << endl;
@@ -1514,45 +1512,48 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
 }
 
 void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
-  // Here I want to add an analysis to check whether a dead value will
-  // ever be at the head of a port. After a bundle is read there should
-  // be a check to see if the read needs to evict data from the input
-  // FIFOs
-
-  //print_death_times(buf);
 
   out << "// # of bundles = " << buf.port_bundles.size() << endl;
+
   for (auto b : buf.port_bundles) {
     out << "// " << b.first << endl;
     for (auto pt : b.second) {
       out << "//\t" << pt << endl;
     }
+
     string rep = pick(b.second);
+    isl_space* s = get_space(buf.domain.at(rep));
+    assert(isl_space_is_set(s));
+    vector<string> dim_decls;
+    vector<string> dim_args;
+    for (int i = 0; i < num_dims(s); i++) {
+      if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
+        string dn = "d" + to_string(i);
+        auto new_id = id(buf.ctx, dn);
+        assert(new_id != nullptr);
+        cout << "setting id: " << str(new_id) << endl;
+        s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
+      }
+      dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
+      dim_args.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
+    }
+
     if (buf.is_out_pt(rep)) {
       out << "inline " << buf.bundle_type_string(b.first) << " " <<  buf.name << "_" << b.first << "_bundle_read(";
-      vector<string> dim_decls;
-      vector<string> dim_args;
-      dim_decls.push_back(buf.name + "_cache& " + buf.name);
-      dim_args.push_back(buf.name);
-      auto outpt = *begin(b.second);
-      isl_space* s = get_space(buf.domain.at(outpt));
-      assert(isl_space_is_set(s));
-      for (int i = 0; i < num_dims(s); i++) {
-        if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
-          string dn = "d" + to_string(i);
-          auto new_id = id(buf.ctx, dn);
-          assert(new_id != nullptr);
-          cout << "setting id: " << str(new_id) << endl;
-          s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
-        }
-        dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
-        dim_args.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
-      }
-      string param_string = sep_list(dim_decls, "", "", ", ");
-      string arg_string = sep_list(dim_args, "", "", ", ");
-      out << param_string;
+      vector<string> all_decls;
+      vector<string> all_args;
 
-      out << ") {" << endl;
+      all_decls.push_back(buf.name + "_cache& " + buf.name);
+      concat(all_decls, dim_decls);
+
+      all_args.push_back(buf.name);
+      concat(all_args, dim_args);
+
+      //auto outpt = *begin(b.second);
+
+      out << sep_list(all_decls, "", "", ", ") << ") {" << endl;
+
+      string arg_string = sep_list(all_args, "", "", ", ");
       out << "\t" << buf.bundle_type_string(b.first) + " result;" << endl;
       int offset = 0;
       for (auto p : b.second) {
@@ -1563,20 +1564,19 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
       out << "\treturn result;" << endl;
     } else {
       out << "inline void " + buf.name + "_" + b.first + "_bundle_write(";
-      vector<string> dim_decls;
-      if (options.internal) {
-        dim_decls.push_back(buf.bundle_type_string(b.first) + "& " + b.first);
-      } else {
-        dim_decls.push_back("InputStream<" + buf.bundle_type_string(b.first)  + " >& " + b.first);
-      }
-      vector<string> dim_args;
-      dim_decls.push_back(buf.name + "_cache& " + buf.name);
-      dim_args.push_back(buf.name);
-      string param_string = sep_list(dim_decls, "", "", ", ");
-      string arg_string = sep_list(dim_args, "", "", ", ");
-      out << param_string;
 
-      out << ") {" << endl;
+      vector<string> all_args;
+
+      if (options.internal) {
+        all_args.push_back(buf.bundle_type_string(b.first) + "& " + b.first);
+      } else {
+        all_args.push_back("InputStream<" + buf.bundle_type_string(b.first)  + " >& " + b.first);
+      }
+
+      all_args.push_back(buf.name + "_cache& " + buf.name);
+      concat(all_args, dim_decls);
+      out << sep_list(all_args, "", "", ", ") << ") {" << endl;
+
       int offset = 0;
       string src = b.first;
       if (!options.internal) {
@@ -1600,13 +1600,9 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
 
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
   string inpt = buf.get_in_port();
-  //cout << "Generating prefix for: " << buf.name << endl;
   generate_code_prefix(options, out, buf);
 
-  //cout << "Generating ports" << endl;
-
   for (auto outpt : buf.get_out_ports()) {
-    //cout << "Generating select for outpt: " << outpt << endl;
     generate_selects(options, out, inpt, outpt, buf);
   }
 
@@ -3441,8 +3437,11 @@ void generate_app_code(CodegenOptions& options,
       assert(contains_key(out_buffer, buffers));
 
       auto& buf = buffers.at(out_buffer);
+      vector<string> arg_names{res, buf.name};
+      concat(arg_names, dim_args);
       conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" <<
-        sep_list({res, buf.name}, "", "", ", ") << ");" << endl;
+        comma_list(arg_names) << ");" << endl;
+        //sep_list({res, buf.name}, "", "", ", ") << ");" << endl;
     }
 
     conv_out << "}" << endl << endl;

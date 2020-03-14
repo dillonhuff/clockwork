@@ -2,7 +2,7 @@
 
 #include "hw_classes.h"
 
-struct M_get_input_4_cache {
+struct M_get_input_0_cache {
 	// Capacity: 3
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -56,54 +56,54 @@ struct M_get_input_4_cache {
 };
 
 struct M_cache {
-  M_get_input_4_cache M_get_input_4;
+  M_get_input_0_cache M_get_input_0;
 };
 
 
 
-inline void M_get_input_4_write(hw_uint<32> & M_get_input_4, M_cache& M) {
-	M.M_get_input_4.push(M_get_input_4);
-}
-
-inline hw_uint<32>  M_compute_output_1_select(M_cache& M, int root, int c) {
-  // qpd = { compute_output[root, c] -> 2 : root = 0 and 0 <= c <= 7 }
-	hw_uint<32>  value_M_get_input_4 = M.M_get_input_4.peek_2();
-	return value_M_get_input_4;
-}
-
-inline hw_uint<32>  M_compute_output_2_select(M_cache& M, int root, int c) {
-  // qpd = { compute_output[root, c] -> 1 : root = 0 and 0 <= c <= 7 }
-	hw_uint<32>  value_M_get_input_4 = M.M_get_input_4.peek_1();
-	return value_M_get_input_4;
+inline void M_get_input_0_write(hw_uint<32> & M_get_input_0, M_cache& M) {
+	M.M_get_input_0.push(M_get_input_0);
 }
 
 inline hw_uint<32>  M_compute_output_3_select(M_cache& M, int root, int c) {
+  // qpd = { compute_output[root, c] -> 2 : root = 0 and 0 <= c <= 7 }
+	hw_uint<32>  value_M_get_input_0 = M.M_get_input_0.peek_2();
+	return value_M_get_input_0;
+}
+
+inline hw_uint<32>  M_compute_output_4_select(M_cache& M, int root, int c) {
+  // qpd = { compute_output[root, c] -> 1 : root = 0 and 0 <= c <= 7 }
+	hw_uint<32>  value_M_get_input_0 = M.M_get_input_0.peek_1();
+	return value_M_get_input_0;
+}
+
+inline hw_uint<32>  M_compute_output_5_select(M_cache& M, int root, int c) {
   // qpd = {  }
-	hw_uint<32>  value_M_get_input_4 = M.M_get_input_4.peek_0();
-	return value_M_get_input_4;
+	hw_uint<32>  value_M_get_input_0 = M.M_get_input_0.peek_0();
+	return value_M_get_input_0;
 }
 
 // # of bundles = 2
 // compute_output_read
-//	M_compute_output_1
-//	M_compute_output_2
 //	M_compute_output_3
+//	M_compute_output_4
+//	M_compute_output_5
 inline hw_uint<96> M_compute_output_read_bundle_read(M_cache& M, int root, int c) {
 	hw_uint<96> result;
-	hw_uint<32>  M_compute_output_1_res = M_compute_output_1_select(M, root, c);
-	set_at<0, 96>(result, M_compute_output_1_res);
-	hw_uint<32>  M_compute_output_2_res = M_compute_output_2_select(M, root, c);
-	set_at<32, 96>(result, M_compute_output_2_res);
 	hw_uint<32>  M_compute_output_3_res = M_compute_output_3_select(M, root, c);
-	set_at<64, 96>(result, M_compute_output_3_res);
+	set_at<0, 96>(result, M_compute_output_3_res);
+	hw_uint<32>  M_compute_output_4_res = M_compute_output_4_select(M, root, c);
+	set_at<32, 96>(result, M_compute_output_4_res);
+	hw_uint<32>  M_compute_output_5_res = M_compute_output_5_select(M, root, c);
+	set_at<64, 96>(result, M_compute_output_5_res);
 	return result;
 }
 
 // get_input_write
-//	M_get_input_4
-inline void M_get_input_write_bundle_write(hw_uint<32>& get_input_write, M_cache& M) {
-	hw_uint<32>  M_get_input_4_res = get_input_write.extract<0, 31>();
-	M_get_input_4_write(M_get_input_4_res, M);
+//	M_get_input_0
+inline void M_get_input_write_bundle_write(hw_uint<32>& get_input_write, M_cache& M, int root, int p) {
+	hw_uint<32>  M_get_input_0_res = get_input_write.extract<0, 31>();
+	M_get_input_0_write(M_get_input_0_res, M);
 }
 
 
@@ -111,19 +111,19 @@ inline void M_get_input_write_bundle_write(hw_uint<32>& get_input_write, M_cache
 
 
 // Operation logic
+inline void get_input(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, M_cache& M, int root, int p) {
+	// Consume: in
+	auto in_p_value = in.read();
+	// Produce: M
+	M_get_input_write_bundle_write(in_p_value, M, root, p);
+}
+
 inline void compute_output(M_cache& M, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */out, int root, int c) {
 	// Consume: M
 	auto M_c_value = M_compute_output_read_bundle_read(M/* source_delay */, root, c);
 	auto compute_result = accumulate_3(M_c_value);
 	// Produce: out
 	out.write(compute_result);
-}
-
-inline void get_input(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, M_cache& M, int root, int p) {
-	// Consume: in
-	auto in_p_value = in.read();
-	// Produce: M
-	M_get_input_write_bundle_write(in_p_value, M);
 }
 
 // Driver function

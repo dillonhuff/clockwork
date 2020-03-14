@@ -106,7 +106,7 @@ inline hw_uint<16> I_out_blur_30_3_select(I_cache& I, int root, int d1, int d0) 
 // # of bundles = 2
 // I_id0_write
 //	I_I_id0_4
-inline void I_I_id0_write_bundle_write(hw_uint<16>& I_id0_write, I_cache& I) {
+inline void I_I_id0_write_bundle_write(hw_uint<16>& I_id0_write, I_cache& I, int root, int id1, int id0) {
 	hw_uint<16> I_I_id0_4_res = I_id0_write.extract<0, 15>();
 	I_I_id0_4_write(I_I_id0_4_res, I);
 }
@@ -144,7 +144,7 @@ inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in, I_c
 	auto in_id0_c__id1_value = in.read();
 	auto compute_result = id(in_id0_c__id1_value);
 	// Produce: I
-	I_I_id0_write_bundle_write(compute_result, I);
+	I_I_id0_write_bundle_write(compute_result, I, root, id1, id0);
 }
 
 // Driver function
