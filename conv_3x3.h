@@ -78,6 +78,13 @@ T diff(T& src, T& a0) {
   return src - a0;
 }
 
+static inline
+hw_uint<32> diff_b(const hw_uint<32*2>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  return diff(v0, v1);
+}
+
 template<typename T>
 static inline
 T inc(T& src, T& a0) {
@@ -169,7 +176,90 @@ hw_uint<32> conv_3_3(hw_uint<32*9>& in) {
   hw_uint<32> v7 = in.extract<224, 255>();
   hw_uint<32> v8 = in.extract<256, 287>();
 
+  //cout << "v0 = " << v0.to_int() << endl;
+  //cout << "v3 = " << v3.to_int() << endl;
+  //cout << "v6 = " << v6.to_int() << endl;
+
+  //assert(false);
+
   return (v0 + v1 + v2 +
     v3 + v4 + v5 +
     v6 + v7 + v8).to_int();
+}
+
+static inline
+hw_uint<32> reduce_gauss(hw_uint<32*9>& in) {
+  auto res = conv_3_3(in);
+  return res / 9;
+}
+
+static inline
+hw_uint<32> mag_cu(hw_uint<32>& a, hw_uint<32>& b) {
+  return a + b;
+}
+
+static inline
+hw_uint<32> sobel_my(hw_uint<192>& a) {
+  return 0;
+}
+
+static inline
+hw_uint<32> sobel_mx(hw_uint<192>& a) {
+  return 0;
+}
+
+static inline
+hw_uint<32> mag_dn2(hw_uint<32>& diff_d_0_c__0_value,
+    hw_uint<32>& diff_l_0_c__0_value,
+    hw_uint<32>& diff_r_0_c__0_value,
+    hw_uint<32>& diff_u_0_c__0_value) {
+  return diff_d_0_c__0_value;
+}
+
+static inline
+hw_uint<64> id_unroll(hw_uint<64>& v) {
+  return v;
+}
+static inline
+hw_uint<64> conv_3_3_unroll(hw_uint<384>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+  
+  hw_uint<32> v3 = in.extract<96, 127>();
+  hw_uint<32> v4 = in.extract<128, 159>();
+  hw_uint<32> v5 = in.extract<160, 191>();
+
+  hw_uint<32> v6 = in.extract<192, 223>();
+  hw_uint<32> v7 = in.extract<224, 255>();
+  hw_uint<32> v8 = in.extract<256, 287>();
+  return (v0 + v1 + v2 +
+    v3 + v4 + v5 +
+    v6 + v7 + v8).to_int();
+}
+
+static inline
+hw_uint<32> comp_r0(hw_uint<32>& a, hw_uint<32>& b) {
+  return a + b;
+}
+
+static inline
+hw_uint<32> r1_comp(hw_uint<32>& a) {
+  return a;
+}
+
+static inline
+hw_uint<32>
+out_comp_dn2d(hw_uint<32>& a, hw_uint<32>& b, hw_uint<128>& c, hw_uint<128>& d) {
+  return a;
+}
+
+static inline
+hw_uint<32>
+contrived(hw_uint<32*3>& in, hw_uint<32*2>& b) {
+  return in.extract<0, 31>() +
+    in.extract<32, 63>() +
+    in.extract<64, 95>() +
+    b.extract<0, 31>() +
+    b.extract<32, 63>();
 }
