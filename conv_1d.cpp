@@ -61,7 +61,7 @@ struct M_cache {
 
 
 
-inline void M_get_input_0_write(hw_uint<32> & M_get_input_0, M_cache& M) {
+inline void M_get_input_0_write(hw_uint<32> & M_get_input_0, M_cache& M, int root, int p) {
 	M.M_get_input_0.push(M_get_input_0);
 }
 
@@ -103,7 +103,7 @@ inline hw_uint<96> M_compute_output_read_bundle_read(M_cache& M, int root, int c
 //	M_get_input_0
 inline void M_get_input_write_bundle_write(hw_uint<32>& get_input_write, M_cache& M, int root, int p) {
 	hw_uint<32>  M_get_input_0_res = get_input_write.extract<0, 31>();
-	M_get_input_0_write(M_get_input_0_res, M);
+	M_get_input_0_write(M_get_input_0_res, M, root, p);
 }
 
 

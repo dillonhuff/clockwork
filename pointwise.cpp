@@ -30,7 +30,7 @@ struct I_cache {
 
 
 
-inline void I_I_id0_2_write(hw_uint<16>& I_I_id0_2, I_cache& I) {
+inline void I_I_id0_2_write(hw_uint<16>& I_I_id0_2, I_cache& I, int root, int id1, int id0) {
 	I.I_I_id0_2.push(I_I_id0_2);
 }
 
@@ -45,7 +45,7 @@ inline hw_uint<16> I_out_plus_one0_1_select(I_cache& I, int root, int d1, int d0
 //	I_I_id0_2
 inline void I_I_id0_write_bundle_write(hw_uint<16>& I_id0_write, I_cache& I, int root, int id1, int id0) {
 	hw_uint<16> I_I_id0_2_res = I_id0_write.extract<0, 15>();
-	I_I_id0_2_write(I_I_id0_2_res, I);
+	I_I_id0_2_write(I_I_id0_2_res, I, root, id1, id0);
 }
 
 // out_plus_one0_read

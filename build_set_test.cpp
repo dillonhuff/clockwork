@@ -1296,6 +1296,26 @@ void generate_memory_struct(CodegenOptions& options, std::ostream& out, const st
 
 }
 
+vector<string> dimension_var_decls(const std::string& pt, UBuffer& buf) {
+  isl_space* s = get_space(buf.domain.at(pt));
+  assert(isl_space_is_set(s));
+
+  vector<string> dim_decls;
+  for (int i = 0; i < num_dims(s); i++) {
+    if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
+      string dn = "d" + to_string(i);
+      auto new_id = id(buf.ctx, dn);
+      assert(new_id != nullptr);
+      s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
+    }
+
+    assert(isl_space_has_dim_name(s, isl_dim_set, i));
+    assert(isl_space_has_dim_id(s, isl_dim_set, i));
+    dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
+  }
+  return dim_decls;
+}
+
 void generate_code_prefix(CodegenOptions& options,
     std::ostream& out, UBuffer& buf) {
 
@@ -1313,9 +1333,15 @@ void generate_code_prefix(CodegenOptions& options,
 
   out << endl << endl;
   for (auto inpt : buf.get_in_ports()) {
+    vector<string> args;
+    args.push_back(buf.port_type_string(inpt) + "& " + inpt);
+    args.push_back(buf.name + "_cache& " + buf.name);
+    concat(args, dimension_var_decls(inpt, buf));
+
     out << "inline void " << inpt << "_write(";
-    out << buf.port_type_string(inpt) + "& ";
-    out << inpt << ", " << buf.name + "_cache& " << buf.name << ") {" << endl;
+    out << comma_list(args) << ") {" << endl;
+    //out << buf.port_type_string(inpt) + "& ";
+    //out << inpt << ", " << buf.name + "_cache& " << buf.name << ") {" << endl;
     out << "\t" + buf.name + "." + inpt + ".push(" + inpt + ");" << endl;
     out << "}" << endl << endl;
   }
@@ -1588,7 +1614,11 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
         out << "\t" + buf.port_type_string() + " " << p << "_res = "
           << src << ".extract<" << offset << ", " << (offset + buf.port_width(p) - 1)
           << ">();" << endl;
-        out << "\t" << p << "_write(" << p << "_res" << ", " << buf.name << ");" << endl;
+        vector<string> args{p + "_res", buf.name};
+        concat(args, dim_args);
+        out << "\t" << p << "_write(" << comma_list(args) << ");" << endl;
+
+        //out << "\t" << p << "_write(" << p << "_res" << ", " << buf.name << ");" << endl;
         offset += buf.port_width(p);
       }
 
@@ -3441,7 +3471,6 @@ void generate_app_code(CodegenOptions& options,
       concat(arg_names, dim_args);
       conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" <<
         comma_list(arg_names) << ");" << endl;
-        //sep_list({res, buf.name}, "", "", ", ") << ");" << endl;
     }
 
     conv_out << "}" << endl << endl;
