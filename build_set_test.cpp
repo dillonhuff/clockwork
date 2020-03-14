@@ -7111,7 +7111,7 @@ void jacobi_2d_app_test() {
 
   for (int i = 0; i < 3; i++) {
     int unroll_factor = pow(2, i);
-    string out_name = "t0_unrolled_" + str(unroll_factor);
+    string out_name = "jacobi2d_unrolled_" + str(unroll_factor);
     jacobi2d(out_name).realize(out_name, 1024, 1024, unroll_factor);
   }
 
