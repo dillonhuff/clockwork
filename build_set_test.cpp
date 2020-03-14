@@ -3843,6 +3843,61 @@ void run_tb(prog& prg) {
   assert(res == 0);
 }
 
+void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
+  ofstream rgtb("regression_tb_" + prg.name + ".cpp");
+  rgtb << "#include <fstream>" << endl;
+  rgtb << "#include \"" << prg.name << ".h\"" << endl << endl;
+
+  rgtb << "int main() {" << endl;
+  rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << ".txt\");" << endl;
+
+  vector<string> unoptimized_streams;
+  vector<string> optimized_streams;
+  for (auto in : prg.ins) {
+    rgtb << tab(1) << "HWStream<" << prg.buffer_element_type_string(in) << " > " << in << ";" << endl;
+    optimized_streams.push_back(in);
+  }
+  for (auto out : prg.outs) {
+    rgtb << tab(1) << "HWStream<" << prg.buffer_element_type_string(out) << " > " << out << ";" << endl;
+    optimized_streams.push_back(out);
+  }
+
+  rgtb << endl << endl;
+
+  rgtb << tab(1) << "// Loading input data" << endl;
+  for (auto in : prg.ins) {
+    auto cmap = prg.consumer_map(in);
+    auto read_map = inv(cmap);
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    int num_pushes = int_upper_bound(range_card);
+
+    rgtb << tab(1) << "// cmap    : " << str(cmap) << endl;
+    rgtb << tab(1) << "// read map: " << str(read_map) << endl;
+    rgtb << tab(1) << "// rng     : " << str(rng) << endl;
+    rgtb << tab(1) << "for (int i = 0; i < " << num_pushes << "; i++) {" << endl;
+    rgtb << tab(2) << in << ".write(i);" << endl;
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+  rgtb << tab(1) << prg.name << "(" << comma_list(optimized_streams) << ");" << endl;
+
+  for (auto in : prg.outs) {
+    // TODO: Compute this from the program
+    auto cmap = prg.producer_map(in);
+    auto read_map = inv(cmap);
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    int num_pops = int_upper_bound(range_card);
+    rgtb << tab(1) << "for (int i = 0; i < " << num_pops << "; i++) {" << endl;
+    rgtb << tab(2) << "int actual = " << in << ".read();" << endl;
+    rgtb << tab(2) << "fout << actual << endl;" << endl;
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+  rgtb << tab(1) << "return 0;" << endl;
+  rgtb << "}" << endl;
+  rgtb.close();
+}
+
 void generate_regression_testbench(prog& prg) {
   ofstream rgtb("regression_tb_" + prg.name + ".cpp");
   rgtb << "#include <fstream>" << endl;
@@ -6645,7 +6700,6 @@ struct App {
   }
 
   void schedule_and_codegen(const std::string& name, const int unroll_factor) {
-    //umap* m = schedule_flat();
     umap* m = schedule();
 
     map<string, UBuffer> buffers = build_buffers(m, unroll_factor);
@@ -6707,7 +6761,8 @@ struct App {
     prg.outs = {name};
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
-    generate_regression_testbench(prg);
+    generate_regression_testbench(prg, buffers);
+    //generate_regression_testbench(prg);
 
     return;
   }
