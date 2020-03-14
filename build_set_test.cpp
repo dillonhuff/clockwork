@@ -6966,15 +6966,18 @@ void gaussian_pyramid_app_test() {
   //assert(false);
 }
 
-void jacobi_2d_app_test() {
+App jacobi2d(const std::string output_name) {
   App jac;
   jac.func2d("t1_arg");
   jac.func2d("t1", "id", pt("t1_arg"));
-  jac.func2d("t0", "jacobi2d_compute", "t1", {1, 1}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
+  jac.func2d(output_name, "jacobi2d_compute", "t1", {1, 1}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
+  return jac;
+}
 
+void jacobi_2d_app_test() {
+  App jac = jacobi2d("t0");
   jac.realize_naive("t0", 32, 32);
   jac.realize("t0", 32, 32, 1);
-
   std::vector<std::string> optimized =
     run_regression_tb("t0_opt");
 
@@ -6984,7 +6987,9 @@ void jacobi_2d_app_test() {
   assert(naive == optimized);
 
   for (int i = 0; i < 3; i++) {
-    jac.realize("t0", 1024, 1024, pow(2, i));
+    int unroll_factor = pow(2, i);
+    string out_name = "t0_unrolled_" + str(unroll_factor);
+    jacobi2d(out_name).realize(out_name, 1024, 1024, unroll_factor);
   }
 
   //assert(false);
