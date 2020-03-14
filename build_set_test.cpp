@@ -3880,6 +3880,8 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
     auto& buf = buffers.at(in);
     assert(buf.get_out_bundles().size() == 1);
     auto bundle = pick(buf.get_out_bundles());
+    int port_width = buf.port_width(in);
+    int bundle_width = buf.port_bundle_width(bundle);
 
     auto cmap = prg.consumer_map(in);
     auto read_map = inv(cmap);
@@ -3895,9 +3897,11 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
     rgtb << tab(1) << "// rng     : " << str(rng) << endl;
 
     rgtb << tab(1) << "for (int i = 0; i < " << num_pushes << "; i++) {" << endl;
-    rgtb << tab(2) << "for (int p = 0; p < " << num_ports << "; p++) {" << endl;
-    rgtb << tab(3) << bundle << ".write(" << num_ports << "*i + p);" << endl;
-    rgtb << tab(2) << "}" << endl << endl;
+    rgtb << tab(2) << buf.bundle_type_string(bundle) << " in_val;" << endl;
+    for (int p = 0; p < num_ports; p++) {
+      rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ">(in_val, " << num_ports << "*i + " << p << ");" << endl;
+    }
+    rgtb << tab(2) << bundle << ".write(in_val);" << endl;
     rgtb << tab(1) << "}" << endl << endl;
   }
 
@@ -3914,15 +3918,27 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
     auto rng = range(read_map);
     auto range_card = card(rng);
     int num_pops = int_upper_bound(range_card);
+    int port_width = buf.port_width(out);
 
     vector<string> pts = buf.port_bundles.at(bundle);
     int num_ports = pts.size();
 
     rgtb << tab(1) << "for (int i = 0; i < " << (num_pops) << "; i++) {" << endl;
-    rgtb << tab(2) << "for (int p = 0; p < " << num_ports << "; p++) {" << endl;
-    rgtb << tab(3) << "int actual = " << bundle << ".read();" << endl;
-    rgtb << tab(3) << "fout << actual << endl;" << endl;
-    rgtb << tab(2) << "}" << endl << endl;
+    rgtb << tab(2) << buf.bundle_type_string(bundle) << " actual = " << bundle << ".read();" << endl;
+    for (int p = 0; p < num_ports; p++) {
+      rgtb << tab(2) << "auto actual_lane_" << p
+        << " = actual.extract<" << p << "*" << port_width << ", "
+        << (p + 1)*port_width - 1 << ">();" << endl;
+
+      //rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ">(in_val, " << num_ports << "*i + " << p << ");" << endl;
+      rgtb << tab(2) << "fout << (int) actual_lane_" << p << " << endl;" << endl;
+    }
+    //rgtb << tab(2) << bundle << ".write(in_val);" << endl;
+
+    //rgtb << tab(2) << "for (int p = 0; p < " << num_ports << "; p++) {" << endl;
+    //rgtb << tab(3) << "int actual = " << bundle << ".read();" << endl;
+    //rgtb << tab(3) << "fout << actual << endl;" << endl;
+    //rgtb << tab(2) << "}" << endl << endl;
     rgtb << tab(1) << "}" << endl << endl;
   }
 
