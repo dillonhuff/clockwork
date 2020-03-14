@@ -3887,11 +3887,17 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
     auto range_card = card(rng);
     int num_pushes = int_upper_bound(range_card);
 
+    vector<string> pts = buf.port_bundles.at(bundle);
+    int num_ports = pts.size();
+
     rgtb << tab(1) << "// cmap    : " << str(cmap) << endl;
     rgtb << tab(1) << "// read map: " << str(read_map) << endl;
     rgtb << tab(1) << "// rng     : " << str(rng) << endl;
+
     rgtb << tab(1) << "for (int i = 0; i < " << num_pushes << "; i++) {" << endl;
-    rgtb << tab(2) << bundle << ".write(i);" << endl;
+    rgtb << tab(2) << "for (int p = 0; p < " << num_ports << "; p++) {" << endl;
+    rgtb << tab(3) << bundle << ".write(" << num_ports << "*i + p);" << endl;
+    rgtb << tab(2) << "}" << endl << endl;
     rgtb << tab(1) << "}" << endl << endl;
   }
 
@@ -3909,9 +3915,14 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
     auto range_card = card(rng);
     int num_pops = int_upper_bound(range_card);
 
-    rgtb << tab(1) << "for (int i = 0; i < " << num_pops << "; i++) {" << endl;
-    rgtb << tab(2) << "int actual = " << bundle << ".read();" << endl;
-    rgtb << tab(2) << "fout << actual << endl;" << endl;
+    vector<string> pts = buf.port_bundles.at(bundle);
+    int num_ports = pts.size();
+
+    rgtb << tab(1) << "for (int i = 0; i < " << (num_pops) << "; i++) {" << endl;
+    rgtb << tab(2) << "for (int p = 0; p < " << num_ports << "; p++) {" << endl;
+    rgtb << tab(3) << "int actual = " << bundle << ".read();" << endl;
+    rgtb << tab(3) << "fout << actual << endl;" << endl;
+    rgtb << tab(2) << "}" << endl << endl;
     rgtb << tab(1) << "}" << endl << endl;
   }
 
