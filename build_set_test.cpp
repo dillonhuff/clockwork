@@ -7130,25 +7130,25 @@ void denoise2d_test() {
   //assert(false);
 }
 
-App unroll(const App& app, const int unroll_factor) {
-  App unrolled;
+//App unroll(const App& app, const int unroll_factor) {
+  //App unrolled;
 
-  for (auto f : app.app_dag) {
-    vector<Window> args;
-    for (auto w : f.second.srcs) {
-      args.push_back(w.unroll_cpy(unroll_factor));
-    }
+  //for (auto f : app.app_dag) {
+    //vector<Window> args;
+    //for (auto w : f.second.srcs) {
+      //args.push_back(w.unroll_cpy(unroll_factor));
+    //}
 
-    string cn = f.second.compute_name + "_unroll";
+    //string cn = f.second.compute_name + "_unroll";
 
-    unrolled.func2d(f.first + "_unrolled", cn, args);
+    //unrolled.func2d(f.first + "_unrolled", cn, args);
 
-    unrolled.app_dag[f.first + "_unrolled"].provided =
-      unrolled.app_dag[f.first + "_unrolled"].provided.unroll_cpy(unroll_factor);
-  }
+    //unrolled.app_dag[f.first + "_unrolled"].provided =
+      //unrolled.app_dag[f.first + "_unrolled"].provided.unroll_cpy(unroll_factor);
+  //}
 
-  return unrolled;
-}
+  //return unrolled;
+//}
 
 void conv3x3_app_unrolled_uneven_test() {
 
@@ -7186,10 +7186,6 @@ void conv3x3_app_unrolled_test() {
   sobel.func2d("conv3x3_app_unrolled", "conv_3_3", "img", {1, 1}, offsets);
 
   sobel.realize("conv3x3_app_unrolled", 30, 30, 2);
-  //sobel.realize("conv3x3_app_unrolled", 32, 32, 8);
-
-  //App ur = unroll(sobel, 2);
-  //ur.realize("conv3x3_app_unrolled", 30, ceil(30 / 2.0), 1);
 
   int res = system("g++ -std=c++11 tb_app_unrolled_conv3x3.cpp conv3x3_app_unrolled_opt.cpp");
   assert(res == 0);
