@@ -204,6 +204,7 @@ void jacobi2d_unrolled_1_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 *
 
 	for (int c0 = -1; c0 <= 1024; c0 += 1)
 	  for (int c1 = -1; c1 <= 1024; c1 += 1) {
+#pragma HLS pipeline II=1
 	    t1_comp(t1_arg, t1, c1, c0);
 	    if (c0 >= 1 && c1 >= 1)
 	      jacobi2d_unrolled_1_comp(t1, jacobi2d_unrolled_1, c1 - 1, c0 - 1);
