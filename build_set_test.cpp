@@ -1326,9 +1326,13 @@ void generate_code_prefix(CodegenOptions& options,
   }
 
   out << "struct " << buf.name << "_cache {" << endl;
-  for (auto inpt : buf.get_in_ports()) {
-    out << tab(1) << inpt << "_cache " << inpt << ";" << endl;
-  }
+  //if (options.all_rams) {
+    //out << tab(1) << "// Fill in RAM here..." << endl;
+  //} else {
+    for (auto inpt : buf.get_in_ports()) {
+      out << tab(1) << inpt << "_cache " << inpt << ";" << endl;
+    }
+  //}
   out << "};" << endl << endl;
 
   out << endl << endl;
@@ -1340,9 +1344,11 @@ void generate_code_prefix(CodegenOptions& options,
 
     out << "inline void " << inpt << "_write(";
     out << comma_list(args) << ") {" << endl;
-    //out << buf.port_type_string(inpt) + "& ";
-    //out << inpt << ", " << buf.name + "_cache& " << buf.name << ") {" << endl;
-    out << "\t" + buf.name + "." + inpt + ".push(" + inpt + ");" << endl;
+    //if (options.all_rams) {
+      //out << tab(1) << "// Fill in RAM write..." << endl;
+    //} else {
+      out << "\t" + buf.name + "." + inpt + ".push(" + inpt + ");" << endl;
+    //}
     out << "}" << endl << endl;
   }
 
@@ -1459,81 +1465,86 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
 void generate_selects(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
   generate_select_decl(options, out, inpt, outpt, buf);
 
-  auto lex_max_events = get_lexmax_events(outpt, buf);
-
-  auto qpd = compute_dd(buf, outpt, inpt);
-  out << tab(1) << "// qpd = " << str(qpd) << endl;
-  if (buf.get_in_ports().size() == 1) {
-    string inpt = *(buf.get_in_ports().begin());
-    string value_str = delay_string(options, inpt, outpt, buf);
-    out << "\t" << buf.port_type_string() << " value_" << inpt << " = " << value_str << ";" << endl;
-    out << "\treturn value_" + inpt + ";" << endl;
+  if (false) {
+  //if (options.all_rams) {
+    out << tab(1) << "// Insert ram read here" << endl;
   } else {
-    cout << "Lexmax events: " << str(lex_max_events) << endl;
-    map<string, string> ms = umap_codegen_c(lex_max_events);
-    out << "\t// lexmax events: " << str(lex_max_events) << endl;
-    out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
-    vector<string> possible_ports;
-    for (auto pt : buf.get_in_ports()) {
-      out << tab(1) << "// " << pt << " stores range: " << str(range(buf.access_map.at(pt))) << endl;
-      out << tab(2) << "// overlap with reads : " << str(its(range(buf.access_map.at(pt)), range(buf.access_map.at(outpt)))) << endl;
-      auto overlap =
-        its(range(buf.access_map.at(pt)), range(buf.access_map.at(outpt)));
 
-      if (!empty(overlap)) {
-        possible_ports.push_back(pt);
+    auto lex_max_events = get_lexmax_events(outpt, buf);
+
+    auto qpd = compute_dd(buf, outpt, inpt);
+    out << tab(1) << "// qpd = " << str(qpd) << endl;
+    if (buf.get_in_ports().size() == 1) {
+      string inpt = *(buf.get_in_ports().begin());
+      string value_str = delay_string(options, inpt, outpt, buf);
+      out << "\t" << buf.port_type_string() << " value_" << inpt << " = " << value_str << ";" << endl;
+      out << "\treturn value_" + inpt + ";" << endl;
+    } else {
+      cout << "Lexmax events: " << str(lex_max_events) << endl;
+      map<string, string> ms = umap_codegen_c(lex_max_events);
+      out << "\t// lexmax events: " << str(lex_max_events) << endl;
+      out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
+      vector<string> possible_ports;
+      for (auto pt : buf.get_in_ports()) {
+        out << tab(1) << "// " << pt << " stores range: " << str(range(buf.access_map.at(pt))) << endl;
+        out << tab(2) << "// overlap with reads : " << str(its(range(buf.access_map.at(pt)), range(buf.access_map.at(outpt)))) << endl;
+        auto overlap =
+          its(range(buf.access_map.at(pt)), range(buf.access_map.at(outpt)));
+
+        if (!empty(overlap)) {
+          possible_ports.push_back(pt);
+        }
       }
-    }
 
-    if (possible_ports.size() == 1) {
-      string inpt = possible_ports.at(0);
-      //string delay_expr = evaluate_dd(buf, outpt, inpt);
-      string peeked_val = delay_string(options, inpt, outpt, buf);
+      if (possible_ports.size() == 1) {
+        string inpt = possible_ports.at(0);
+        //string delay_expr = evaluate_dd(buf, outpt, inpt);
+        string peeked_val = delay_string(options, inpt, outpt, buf);
 
-      out << "\tauto value_" << inpt << " = " << peeked_val << ";\n";
-      out << "\treturn value_" << inpt << ";" << endl;
-      out << "}" << endl << endl;
-      return;
-    }
-    cout << "Done" << endl;
-    for (auto e : ms) {
-      out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
-    }
+        out << "\tauto value_" << inpt << " = " << peeked_val << ";\n";
+        out << "\treturn value_" << inpt << ";" << endl;
+        out << "}" << endl << endl;
+        return;
+      }
+      cout << "Done" << endl;
+      for (auto e : ms) {
+        out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
+      }
 
-    for (auto inpt : buf.get_in_ports()) {
-      //string delay_expr = evaluate_dd(buf, outpt, inpt);
-      string peeked_val = delay_string(options, inpt, outpt, buf);
+      for (auto inpt : buf.get_in_ports()) {
+        //string delay_expr = evaluate_dd(buf, outpt, inpt);
+        string peeked_val = delay_string(options, inpt, outpt, buf);
 
-      if (options.internal) {
-        out << "\t// inpt: " << inpt << endl;
-        bool found_key = false;
-        string k_var = "";
-        for (auto k : ms) {
-          out << "\t// k = " << k.first << endl;
-          string prefix = buf.name + "_" + k.first;
-          if (is_prefix(prefix, inpt)) {
-            found_key = true;
-            k_var = k.first;
+        if (options.internal) {
+          out << "\t// inpt: " << inpt << endl;
+          bool found_key = false;
+          string k_var = "";
+          for (auto k : ms) {
+            out << "\t// k = " << k.first << endl;
+            string prefix = buf.name + "_" + k.first;
+            if (is_prefix(prefix, inpt)) {
+              found_key = true;
+              k_var = k.first;
+            }
           }
-        }
-        if (found_key) {
-          assert(k_var != "");
-          out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
-          out << "\tif (select_" + k_var + ") { return value_"+ inpt + "; }\n";
+          if (found_key) {
+            assert(k_var != "");
+            out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
+            out << "\tif (select_" + k_var + ") { return value_"+ inpt + "; }\n";
+          } else {
+            out << "//\tNo key for: " << inpt << endl;
+          }
         } else {
-          out << "//\tNo key for: " << inpt << endl;
-        }
-      } else {
-        if (contains_key(inpt, ms)) {
-          out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
-          out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
-        }
+          if (contains_key(inpt, ms)) {
+            out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
+            out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
+          }
 
+        }
       }
+      select_debug_assertions(options, out, inpt, outpt, buf);
     }
-    select_debug_assertions(options, out, inpt, outpt, buf);
   }
-
   out << "}" << endl << endl;
 }
 
