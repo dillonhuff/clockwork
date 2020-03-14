@@ -1,4 +1,4 @@
-kernel: jacobi2d
+kernel: jacobi2d_unrolled_1_opt
 burst width: 32
 unroll factor: 1
 input uint32: in(1024, *)

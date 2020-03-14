@@ -3,7 +3,7 @@ cd soda_code
 cd ..
 
 cd our_code
-vivado_hls -f ../../common/our_hls.tcl -tclargs $2
+vivado_hls -f ../../common/our_hls.tcl -tclargs $1
 
 cd ..
 echo "Checking regression results..."
