@@ -3857,23 +3857,30 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
     assert(contains_key(in, buffers));
     auto& buf = buffers.at(in);
     assert(buf.get_out_bundles().size() == 1);
+    auto bundle = pick(buf.get_out_bundles());
 
-    rgtb << tab(1) << "HWStream<" << prg.buffer_element_type_string(in) << " > " << in << ";" << endl;
-    optimized_streams.push_back(in);
+    rgtb << tab(1) << "HWStream<" << buf.bundle_type_string(bundle) << " > " << bundle << ";" << endl;
+    optimized_streams.push_back(bundle);
   }
   for (auto out : prg.outs) {
     assert(contains_key(out, buffers));
     auto& buf = buffers.at(out);
     assert(buf.get_in_bundles().size() == 1);
+    auto bundle = pick(buf.get_in_bundles());
 
-    rgtb << tab(1) << "HWStream<" << prg.buffer_element_type_string(out) << " > " << out << ";" << endl;
-    optimized_streams.push_back(out);
+    rgtb << tab(1) << "HWStream<" << buf.bundle_type_string(bundle) << " > " << bundle << ";" << endl;
+    optimized_streams.push_back(bundle);
   }
 
   rgtb << endl << endl;
 
   rgtb << tab(1) << "// Loading input data" << endl;
   for (auto in : prg.ins) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_out_bundles().size() == 1);
+    auto bundle = pick(buf.get_out_bundles());
+
     auto cmap = prg.consumer_map(in);
     auto read_map = inv(cmap);
     auto rng = range(read_map);
@@ -3884,23 +3891,30 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
     rgtb << tab(1) << "// read map: " << str(read_map) << endl;
     rgtb << tab(1) << "// rng     : " << str(rng) << endl;
     rgtb << tab(1) << "for (int i = 0; i < " << num_pushes << "; i++) {" << endl;
-    rgtb << tab(2) << in << ".write(i);" << endl;
+    rgtb << tab(2) << bundle << ".write(i);" << endl;
     rgtb << tab(1) << "}" << endl << endl;
   }
-  rgtb << tab(1) << prg.name << "(" << comma_list(optimized_streams) << ");" << endl;
 
-  for (auto in : prg.outs) {
-    // TODO: Compute this from the program
-    auto cmap = prg.producer_map(in);
+  rgtb << tab(1) << prg.name << "(" << comma_list(optimized_streams) << ");" << endl << endl;
+
+  for (auto out : prg.outs) {
+    assert(contains_key(out, buffers));
+    auto& buf = buffers.at(out);
+    assert(buf.get_in_bundles().size() == 1);
+    auto bundle = pick(buf.get_in_bundles());
+
+    auto cmap = prg.producer_map(out);
     auto read_map = inv(cmap);
     auto rng = range(read_map);
     auto range_card = card(rng);
     int num_pops = int_upper_bound(range_card);
+
     rgtb << tab(1) << "for (int i = 0; i < " << num_pops << "; i++) {" << endl;
-    rgtb << tab(2) << "int actual = " << in << ".read();" << endl;
+    rgtb << tab(2) << "int actual = " << bundle << ".read();" << endl;
     rgtb << tab(2) << "fout << actual << endl;" << endl;
     rgtb << tab(1) << "}" << endl << endl;
   }
+
   rgtb << tab(1) << "return 0;" << endl;
   rgtb << "}" << endl;
   rgtb.close();
@@ -3944,15 +3958,15 @@ void generate_regression_testbench(prog& prg) {
   }
   rgtb << tab(1) << prg.name << "(" << comma_list(optimized_streams) << ");" << endl;
 
-  for (auto in : prg.outs) {
-    // TODO: Compute this from the program
-    auto cmap = prg.producer_map(in);
+  for (auto out : prg.outs) {
+
+    auto cmap = prg.producer_map(out);
     auto read_map = inv(cmap);
     auto rng = range(read_map);
     auto range_card = card(rng);
     int num_pops = int_upper_bound(range_card);
     rgtb << tab(1) << "for (int i = 0; i < " << num_pops << "; i++) {" << endl;
-    rgtb << tab(2) << "int actual = " << in << ".read();" << endl;
+    rgtb << tab(2) << "int actual = " << out << ".read();" << endl;
     rgtb << tab(2) << "fout << actual << endl;" << endl;
     rgtb << tab(1) << "}" << endl << endl;
   }
