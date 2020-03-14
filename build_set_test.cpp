@@ -5364,25 +5364,6 @@ vector<vector<int> > offsets(vector<QExpr>& mins, vector<QExpr>& maxs) {
   return build_points(vals_by_dim, ps, 0);
 }
 
-struct BundleBinding {
-
-  Window win;
-  map<vector<int>, string> offset_ports;
-
-};
-
-struct BufferInfo {
-
-  UBuffer buf;
-  map<string, BundleBinding> bundles;
-
-};
-
-struct Memory {
-
-  map<string, BufferInfo> buffers;
-};
-
 map<string, int>
 compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstraint> delay_constraints,
     vector<QConstraint>& offset_constraints) {
