@@ -6288,9 +6288,8 @@ struct App {
   }
 
 
-  void schedule_dim(const int i, map<string, vector<QExpr> >& schedules) {
-      ::schedule_dim(ctx, domain_boxes, i, schedules, sort_functions(), app_dag, compute_maps);
-  }
+  //void schedule_dim(const int i, map<string, vector<QExpr> >& schedules) {
+  //}
 
   Box compute_box(const std::string& name) {
     //cout << "Getting box: " << name << ": for " << str(compute_domain(name)) << endl;
@@ -6343,7 +6342,8 @@ struct App {
 
     int ndims = 2;
     for (int i = ndims - 1; i >= 0; i--) {
-      schedule_dim(i, schedules);
+      ::schedule_dim(ctx, domain_boxes, i, schedules, sort_functions(), app_dag, compute_maps);
+      //schedule_dim(i, schedules);
     }
 
     umap* m = rdmap(ctx, "{}");
@@ -6533,6 +6533,7 @@ struct App {
     }
 
 
+    options.all_rams = true;
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
     generate_regression_testbench(prg);
 
@@ -6544,7 +6545,8 @@ struct App {
     int ndims = 2;
     map<string, vector<QExpr> > schedules;
     for (int i = ndims - 1; i >= 0; i--) {
-      schedule_dim(i, schedules);
+      ::schedule_dim(ctx, domain_boxes, i, schedules, sort_functions(), app_dag, compute_maps);
+      //schedule_dim(i, schedules);
     }
 
     int pos = 0;
@@ -6910,6 +6912,9 @@ void memtile_test() {
     out->add_store("out", "a, 2, 4*b+c");
   }
 
+  generate_optimized_code(prg);
+  assert(false);
+
   auto sched = prg.unoptimized_schedule();
   cout << codegen_c(sched) << endl;
   auto itr_domain = prg.whole_iteration_domain();
@@ -6941,8 +6946,6 @@ void memtile_test() {
       app_dag[cm.first] = cm.second;
       cout << tab(1) << "DATA demands map: " << cm.first<< "->" << str(cm.second.srcs.at(0).needed) << endl;
   }
-
-  //assert(false);
 
   for (int i = ndims - 1; i >= 0; i--) {
       schedule_dim(prg.ctx, op_boxes, i, schedules, sorted_functions, app_dag,  compute_maps);
@@ -7075,13 +7078,13 @@ void gaussian_pyramid_app_test() {
   gp.realize(last, 32, 32, 1);
   gp.realize_naive(last, 32, 32);
 
-  //std::vector<std::string> naive =
-    //run_regression_tb("level_2_naive");
+  std::vector<std::string> naive =
+    run_regression_tb("level_2_naive");
   //cout << "Naive    : " << naive << endl;
   std::vector<std::string> optimized =
     run_regression_tb("level_2_opt");
   //cout << "Optimized: " << optimized << endl;
-  //assert(naive == optimized);
+  assert(naive == optimized);
 
   //assert(false);
 }
@@ -7710,13 +7713,14 @@ int main(int argc, char** argv) {
     //assert(false);
 
     //synth_lb_test();
+    
+    //memtile_test();
 
     jacobi_2d_app_test();
     denoise2d_test();
     mismatched_stencil_test();
     gaussian_pyramid_app_test();
 
-    //memtile_test();
     upsample_reduce_test();
     //assert(false);
     //mismatched_stencil_test();
