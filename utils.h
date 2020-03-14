@@ -215,3 +215,8 @@ std::ostream& operator<<(std::ostream& out, vector<T>& v) {
   return out;
 }
 
+static inline
+string str(const int i) {
+  return to_string(i);
+}
+

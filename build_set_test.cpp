@@ -153,10 +153,6 @@ map<string, int> minimize(const std::vector<QConstraint>& constraints, QExpr& ob
   return delays;
 }
 
-string str(const int i) {
-  return to_string(i);
-}
-
 string extvar(const string& n, const int dim) {
   return n + "_ext_" + str(dim);
 }
