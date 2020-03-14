@@ -3854,10 +3854,18 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
   vector<string> unoptimized_streams;
   vector<string> optimized_streams;
   for (auto in : prg.ins) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_out_bundles().size() == 1);
+
     rgtb << tab(1) << "HWStream<" << prg.buffer_element_type_string(in) << " > " << in << ";" << endl;
     optimized_streams.push_back(in);
   }
   for (auto out : prg.outs) {
+    assert(contains_key(out, buffers));
+    auto& buf = buffers.at(out);
+    assert(buf.get_in_bundles().size() == 1);
+
     rgtb << tab(1) << "HWStream<" << prg.buffer_element_type_string(out) << " > " << out << ";" << endl;
     optimized_streams.push_back(out);
   }
