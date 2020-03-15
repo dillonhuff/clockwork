@@ -6577,11 +6577,13 @@ struct App {
       schedule_opt();
     map<string, Box> compute_domains;
     for (auto f : sort_functions()) {
-      compute_domains[f + "_comp"] =
-        compute_box(f);
+      if (app_dag.at(f).srcs.size() != 0) {
+        compute_domains[f + "_comp"] =
+          compute_box(f);
+      }
     }
     cout << "Schedule codegen" << endl;
-    cout << box_codegen(scheds, compute_domains) << endl;
+    cout << box_codegen(sort_functions(), scheds, compute_domains) << endl;
     assert(false);
 
     map<string, UBuffer> buffers = build_buffers(m, unroll_factor);
@@ -7532,8 +7534,8 @@ int main(int argc, char** argv) {
     //
     //duplicate_upsample_test();
 
-    jacobi_2d_app_test();
     denoise2d_test();
+    jacobi_2d_app_test();
     mismatched_stencil_test();
     gaussian_pyramid_app_test();
 

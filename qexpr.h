@@ -799,6 +799,20 @@ Box unn(const Box& l, const Box& r) {
 
 std::ostream& operator<<(std::ostream& out, const Box& b);
 
+static inline
+vector<string> ifconds(vector<string>& vars, Box& range) {
+  vector<string> conds;
+  int d = 0;
+  for (auto v : vars) {
+    auto iv = range.intervals.at(d);
+    conds.push_back("(" + str(iv.min) + " <= " + v + " && " + v + " <= " + str(iv.max) + ")");
+    d++;
+  }
+
+  return conds;
+}
+
+static inline
 void print_loops(int level, ostream& out, const Box& whole_dom, map<string, Box>& index_bounds) {
   int ndims = pick(index_bounds).second.intervals.size();
 
@@ -809,8 +823,21 @@ void print_loops(int level, ostream& out, const Box& whole_dom, map<string, Box>
   out << tab(level) << "for (int " << ivar << " = " << min << "; " << min << " <= " << max << "; " << ivar << "++) {" << endl;
   int next_level = level + 1;
   if (next_level == ndims) {
+
+    out << endl;
+    out << "#ifdef __VIVADO_SYNTH__" << endl;
+    out << "#pragma HLS pipeline II=1" << endl;
+    out << "#endif // __VIVADO_SYNTH__" << endl << endl;
+
+    vector<string> vars;
+    for (int i = 0; i < ndims; i++) {
+      vars.push_back("c" + str(i));
+    }
+
     for (auto f : index_bounds) {
-      out << tab(next_level) << "// " << f.first << " " << f.second << endl;
+      out << tab(next_level) << "if (" << sep_list(ifconds(vars, f.second), "", "", " && ") << ") {" << endl;
+      out << tab(next_level + 1) << f.first << "(" << comma_list(vars) << ");" << endl;
+      out << tab(next_level) << "}" << endl << endl;
     }
   } else {
     print_loops(level + 1, out, whole_dom, index_bounds);
@@ -819,7 +846,9 @@ void print_loops(int level, ostream& out, const Box& whole_dom, map<string, Box>
 }
 
 static inline
-std::string box_codegen(map<string, vector<QExpr> >& scheds, map<string, Box>& compute_domains) {
+std::string box_codegen(const vector<string>& op_order,
+    map<string, vector<QExpr> >& scheds,
+    map<string, Box>& compute_domains) {
   assert(compute_domains.size() > 0);
 
   ostringstream ss;
