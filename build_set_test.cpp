@@ -3373,6 +3373,10 @@ void generate_app_code(CodegenOptions& options,
     code_string = regex_replace(code_string, re, op->name + "(" + args_list + ", $1);");
   }
 
+  conv_out << "/* CUSTOM CODE STRING" << endl;
+  conv_out << options.code_string << endl;
+  conv_out << "*/" << endl;
+
   conv_out << code_string << endl;
 
   conv_out << "}" << endl;
@@ -6581,8 +6585,12 @@ struct App {
   void schedule_and_codegen(const std::string& name, const int unroll_factor) {
     umap* m = schedule();
 
-    auto scheds =
+    auto scheds_n =
       schedule_opt();
+    map<string, vector<QExpr> > scheds;
+    for (auto s : scheds_n) {
+      scheds[s.first + "_comp"] = s.second;
+    }
     map<string, Box> compute_domains;
     vector<string> ops;
     for (auto f : sort_functions()) {
@@ -6610,7 +6618,7 @@ struct App {
 
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    //options.use_custom_code_string = true;
     options.code_string = cgn;
 
     prog prg;

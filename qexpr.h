@@ -101,6 +101,22 @@ QAV qvar(const std::string& v) {
 struct QTerm {
   vector<QAV> vals;
 
+  void fold_ints() {
+    vector<QAV> non_ints;
+    int i = 1;
+    for (auto v : vals) {
+      if (v.is_num && v.is_whole()) {
+        i *= v.num;
+      } else {
+        non_ints.push_back(v);
+      }
+    }
+
+    vals = non_ints;
+    vals.push_back(qconst(i));
+  }
+
+
   vector<QAV> vars() const {
     vector<QAV> vs;
     for (auto t : vals) {
@@ -127,7 +143,6 @@ struct QTerm {
   }
 
   int to_int() const {
-
     assert(is_constant());
     assert(vals.size() == 1);
     return vals.at(0).to_int();
@@ -217,6 +232,7 @@ struct QTerm {
       }
     }
 
+    fold_ints();
   }
 
   void replace(const QAV& target, const QAV& replacement) {
@@ -282,8 +298,30 @@ QTerm times(const int s, const QTerm& v) {
   return t;
 }
 
+struct QExpr;
+std::ostream& operator<<(std::ostream& out, const QExpr& c);
+
 struct QExpr {
   vector<QTerm> terms;
+
+  int const_eval_at(const int val) const {
+    vector<QAV> vs = vars();
+    assert(vs.size() < 2);
+
+    QExpr cpy = *this;
+    cout << "cpy = " << cpy << endl;
+
+    cpy.replace(pick(vs), qconst(val));
+    cpy.simplify();
+    cpy.simplify();
+
+    cout << "After simplification: " << cpy << endl;
+    cout << "# of terms: " << cpy.terms.size() << endl;
+
+    assert(cpy.terms.size() < 2);
+
+    return cpy.const_term().to_int();
+  }
 
   vector<QAV> vars() const {
     vector<QAV> vs;
@@ -291,6 +329,22 @@ struct QExpr {
       concat(vs, t.vars());
     }
     return vs;
+  }
+
+  void fold_constant_terms() {
+    int constant = 0;
+    vector<QTerm> non_const;
+
+    for (auto t : terms) {
+      if (t.is_constant()) {
+        constant += t.to_int();
+      } else {
+        non_const.push_back(t);
+      }
+    }
+
+    terms = {qterm(constant)};
+    concat(terms, non_const);
   }
 
   void remove_zero_terms() {
@@ -353,7 +407,11 @@ struct QExpr {
     for (auto& t : terms) {
       t.simplify();
     }
+    fold_constant_terms();
     remove_zero_terms();
+    for (auto& t : terms) {
+      t.simplify();
+    }
   }
 
   void replace(const QAV& target, const QAV& replacement) {
@@ -862,14 +920,20 @@ std::string box_codegen(const vector<string>& op_order,
 
     auto dom = f.second;
 
+    cout << "Scheds..." << endl;
+    for (auto f : scheds) {
+      cout << tab(1) << f.first << endl;
+    }
+    assert(contains_key(f.first, scheds));
+
     Box bounds;
     for (int d = 0; d < ndims; d++) {
 
-      int domain_min = dom.intervals.at(0).min;
-      int domain_max = dom.intervals.at(0).max;
+      int domain_min = dom.intervals.at(d).min;
+      int domain_max = dom.intervals.at(d).max;
 
-      int sched_min = domain_min;
-      int sched_max = domain_max;
+      int sched_min = scheds.at(f.first).at(d).const_eval_at(domain_min);
+      int sched_max = scheds.at(f.first).at(d).const_eval_at(domain_max);
 
       bounds.intervals.push_back({sched_min, sched_max});
     }
