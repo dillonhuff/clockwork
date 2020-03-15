@@ -173,8 +173,12 @@ struct CodegenOptions {
   bool internal;
   bool all_rams;
   bool add_dependence_pragmas;
+  bool use_custom_code_string;
+  string code_string;
 
-  CodegenOptions() : internal(true), all_rams(false), add_dependence_pragmas(true) {}
+  CodegenOptions() : internal(true), all_rams(false), add_dependence_pragmas(true),
+  use_custom_code_string(false), code_string("") {}
+
 };
 
 class UBuffer {
@@ -3357,7 +3361,11 @@ void generate_app_code(CodegenOptions& options,
   }
 
 
-  string code_string = codegen_c(schedmap);
+  string code_string = options.code_string;
+  if (!options.use_custom_code_string) {
+    code_string = codegen_c(schedmap);
+  }
+
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
   for (auto op : prg.all_ops()) {
     regex re(op->name + "\\((.*)\\);");
@@ -6576,15 +6584,16 @@ struct App {
     auto scheds =
       schedule_opt();
     map<string, Box> compute_domains;
+    vector<string> ops;
     for (auto f : sort_functions()) {
       if (app_dag.at(f).srcs.size() != 0) {
+        ops.push_back(f + "_comp");
         compute_domains[f + "_comp"] =
           compute_box(f);
       }
     }
-    cout << "Schedule codegen" << endl;
-    cout << box_codegen(sort_functions(), scheds, compute_domains) << endl;
-    assert(false);
+
+    string cgn = box_codegen(ops, scheds, compute_domains);
 
     map<string, UBuffer> buffers = build_buffers(m, unroll_factor);
 
@@ -6601,6 +6610,9 @@ struct App {
 
     CodegenOptions options;
     options.internal = true;
+    options.use_custom_code_string = true;
+    options.code_string = cgn;
+
     prog prg;
     prg.name = name + "_opt";
     prg.compute_unit_file = prg.name + "_compute_units.h";

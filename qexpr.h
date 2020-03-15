@@ -813,14 +813,14 @@ vector<string> ifconds(vector<string>& vars, Box& range) {
 }
 
 static inline
-void print_loops(int level, ostream& out, const Box& whole_dom, map<string, Box>& index_bounds) {
+void print_loops(int level, ostream& out, const vector<string>& op_order, const Box& whole_dom, map<string, Box>& index_bounds) {
   int ndims = pick(index_bounds).second.intervals.size();
 
   int min = whole_dom.intervals.at(level).min;
   int max = whole_dom.intervals.at(level).max;
 
   string ivar = "c" + str(level);
-  out << tab(level) << "for (int " << ivar << " = " << min << "; " << min << " <= " << max << "; " << ivar << "++) {" << endl;
+  out << tab(level) << "for (int " << ivar << " = " << min << "; " << ivar << " <= " << max << "; " << ivar << "++) {" << endl;
   int next_level = level + 1;
   if (next_level == ndims) {
 
@@ -834,13 +834,15 @@ void print_loops(int level, ostream& out, const Box& whole_dom, map<string, Box>
       vars.push_back("c" + str(i));
     }
 
-    for (auto f : index_bounds) {
-      out << tab(next_level) << "if (" << sep_list(ifconds(vars, f.second), "", "", " && ") << ") {" << endl;
-      out << tab(next_level + 1) << f.first << "(" << comma_list(vars) << ");" << endl;
+    //for (auto f : index_bounds) {
+    for (auto f : op_order) {
+      auto box = index_bounds.at(f);
+      out << tab(next_level) << "if (" << sep_list(ifconds(vars, box), "", "", " && ") << ") {" << endl;
+      out << tab(next_level + 1) << f << "(" << comma_list(vars) << ");" << endl;
       out << tab(next_level) << "}" << endl << endl;
     }
   } else {
-    print_loops(level + 1, out, whole_dom, index_bounds);
+    print_loops(level + 1, out, op_order, whole_dom, index_bounds);
   }
   out << tab(level) << "}" << endl;
 }
@@ -876,7 +878,7 @@ std::string box_codegen(const vector<string>& op_order,
   }
 
   cout << "Whole domain: " << whole_dom << endl;
-  print_loops(0, ss, whole_dom, index_bounds);
+  print_loops(0, ss, op_order, whole_dom, index_bounds);
 
   return ss.str();
 }
