@@ -101,6 +101,22 @@ QAV qvar(const std::string& v) {
 struct QTerm {
   vector<QAV> vals;
 
+  void fold_ints() {
+    vector<QAV> non_ints;
+    int i = 1;
+    for (auto v : vals) {
+      if (v.is_num && v.is_whole()) {
+        i *= v.num;
+      } else {
+        non_ints.push_back(v);
+      }
+    }
+
+    vals = non_ints;
+    vals.push_back(qconst(i));
+  }
+
+
   vector<QAV> vars() const {
     vector<QAV> vs;
     for (auto t : vals) {
@@ -127,7 +143,6 @@ struct QTerm {
   }
 
   int to_int() const {
-
     assert(is_constant());
     assert(vals.size() == 1);
     return vals.at(0).to_int();
@@ -217,6 +232,7 @@ struct QTerm {
       }
     }
 
+    fold_ints();
   }
 
   void replace(const QAV& target, const QAV& replacement) {
@@ -282,8 +298,30 @@ QTerm times(const int s, const QTerm& v) {
   return t;
 }
 
+struct QExpr;
+std::ostream& operator<<(std::ostream& out, const QExpr& c);
+
 struct QExpr {
   vector<QTerm> terms;
+
+  int const_eval_at(const int val) const {
+    vector<QAV> vs = vars();
+    assert(vs.size() < 2);
+
+    QExpr cpy = *this;
+    cout << "cpy = " << cpy << endl;
+
+    cpy.replace(pick(vs), qconst(val));
+    cpy.simplify();
+    cpy.simplify();
+
+    cout << "After simplification: " << cpy << endl;
+    cout << "# of terms: " << cpy.terms.size() << endl;
+
+    assert(cpy.terms.size() < 2);
+
+    return cpy.const_term().to_int();
+  }
 
   vector<QAV> vars() const {
     vector<QAV> vs;
@@ -291,6 +329,22 @@ struct QExpr {
       concat(vs, t.vars());
     }
     return vs;
+  }
+
+  void fold_constant_terms() {
+    int constant = 0;
+    vector<QTerm> non_const;
+
+    for (auto t : terms) {
+      if (t.is_constant()) {
+        constant += t.to_int();
+      } else {
+        non_const.push_back(t);
+      }
+    }
+
+    terms = {qterm(constant)};
+    concat(terms, non_const);
   }
 
   void remove_zero_terms() {
@@ -353,7 +407,11 @@ struct QExpr {
     for (auto& t : terms) {
       t.simplify();
     }
+    fold_constant_terms();
     remove_zero_terms();
+    for (auto& t : terms) {
+      t.simplify();
+    }
   }
 
   void replace(const QAV& target, const QAV& replacement) {
@@ -674,3 +732,221 @@ QExpr sub(const string& a, const string& b) {
   return qexpr(qterm(a), qterm(b).scale(-1));
 }
 
+struct Range {
+  int min;
+  int max;
+
+  string constraint_str(const string& v) {
+    return to_string(min) + " <= " + v + " <= " + to_string(max);
+  }
+};
+
+struct Box {
+  vector<Range> intervals;
+
+  Box() {}
+
+  Box(const int dims) {
+    for (int i = 0; i < dims; i++) {
+      intervals.push_back({0, -1});
+    }
+  }
+
+  isl_set* to_set(isl_ctx* ctx, const string& name) {
+    string s = "{ ";
+    vector<string> names;
+    vector<string> ranges;
+    int i = 0;
+    for (auto r : intervals) {
+      string v = "d" + to_string(i);
+      names.push_back("d" + to_string(i));
+      ranges.push_back(r.constraint_str(v));
+      i++;
+    }
+    s += name + sep_list(names, "[", "]", ", ");
+    s += " : ";
+    s += sep_list(ranges, "", "", " and ");
+    s += " }";
+    return rdset(ctx, s);
+  }
+
+  int length(const int dim) const {
+    return intervals.at(dim).max - intervals.at(dim).min + 1;
+  }
+
+  Box pad_range_to_nearest_multiple(const int unroll_factor) const {
+    assert(unroll_factor > 0);
+
+    Box padded;
+    int r = 0;
+    for (auto i : intervals) {
+      if (r != 0) {
+        padded.intervals.push_back({i.min, i.max});
+      } else {
+        int range = length(0);
+        cout << "Length: " << range << endl;
+        if (range % unroll_factor != 0) {
+          int new_range = range + (unroll_factor - (range % unroll_factor));
+          cout << "new_range = " << new_range << endl;
+          int new_max = i.min + new_range - 1;
+
+          cout << "new_max = " << new_max << endl;
+
+          padded.intervals.push_back({i.min, new_max});
+        } else {
+          padded.intervals.push_back({i.min, i.max});
+        }
+      }
+      r++;
+    }
+    cout << "New length: " << padded.length(0) << endl;
+    assert(padded.length(0) % unroll_factor == 0);
+    return padded;
+  }
+
+  Box pad(const int dim, const int padding) const {
+    assert(padding > 0);
+
+    Box padded;
+    int k = 0;
+    for (auto i : intervals) {
+      if (k == dim) {
+        padded.intervals.push_back({i.min, i.max + padding});
+      } else {
+        padded.intervals.push_back({i.min, i.max});
+      }
+      k++;
+    }
+    return padded;
+  }
+
+  Box pad(const int padding) const {
+    assert(padding > 0);
+
+    Box padded;
+    for (auto i : intervals) {
+      padded.intervals.push_back({i.min - padding, i.max + padding});
+    }
+    return padded;
+  }
+};
+
+std::ostream& operator<<(std::ostream& out, const Box& b) {
+  vector<string> ranges;
+  for (auto range : b.intervals) {
+    ranges.push_back("[" + to_string(range.min) + ", " + to_string(range.max) + "]");
+  }
+  out << sep_list(ranges, "{", "}", ", ");
+  return out;
+}
+
+Box unn(const Box& l, const Box& r) {
+  cout << "l intervals = " << l.intervals.size() << endl;
+  cout << "r intervals = " << r.intervals.size() << endl;
+
+  assert(l.intervals.size() == r.intervals.size());
+  Box un;
+  for (size_t dim = 0; dim < l.intervals.size(); dim++) {
+    un.intervals.push_back({min(l.intervals.at(dim).min, r.intervals.at(dim).min), max(l.intervals.at(dim).max, r.intervals.at(dim).max)});
+  }
+
+  cout << "Got union" << endl;
+  return un;
+}
+
+
+std::ostream& operator<<(std::ostream& out, const Box& b);
+
+static inline
+vector<string> ifconds(vector<string>& vars, Box& range) {
+  vector<string> conds;
+  int d = 0;
+  for (auto v : vars) {
+    auto iv = range.intervals.at(d);
+    conds.push_back("(" + str(iv.min) + " <= " + v + " && " + v + " <= " + str(iv.max) + ")");
+    d++;
+  }
+
+  return conds;
+}
+
+static inline
+void print_loops(int level, ostream& out, const vector<string>& op_order, const Box& whole_dom, map<string, Box>& index_bounds) {
+  int ndims = pick(index_bounds).second.intervals.size();
+
+  int min = whole_dom.intervals.at(level).min;
+  int max = whole_dom.intervals.at(level).max;
+
+  string ivar = "c" + str(level);
+  out << tab(level) << "for (int " << ivar << " = " << min << "; " << ivar << " <= " << max << "; " << ivar << "++) {" << endl;
+  int next_level = level + 1;
+  if (next_level == ndims) {
+
+    out << endl;
+    out << "#ifdef __VIVADO_SYNTH__" << endl;
+    out << "#pragma HLS pipeline II=1" << endl;
+    out << "#endif // __VIVADO_SYNTH__" << endl << endl;
+
+    vector<string> vars;
+    for (int i = 0; i < ndims; i++) {
+      vars.push_back("c" + str(i));
+    }
+    // NOTE: This is because scheduling reverses order of component variables
+    reverse(vars);
+
+    for (auto f : op_order) {
+      auto box = index_bounds.at(f);
+      out << tab(next_level) << "if (" << sep_list(ifconds(vars, box), "", "", " && ") << ") {" << endl;
+      out << tab(next_level + 1) << f << "(" << comma_list(vars) << ");" << endl;
+      out << tab(next_level) << "}" << endl << endl;
+    }
+  } else {
+    print_loops(level + 1, out, op_order, whole_dom, index_bounds);
+  }
+  out << tab(level) << "}" << endl;
+}
+
+static inline
+std::string box_codegen(const vector<string>& op_order,
+    map<string, vector<QExpr> >& scheds,
+    map<string, Box>& compute_domains) {
+  assert(compute_domains.size() > 0);
+
+  ostringstream ss;
+  int ndims = pick(compute_domains).second.intervals.size();
+
+  map<string, Box> index_bounds;
+  Box whole_dom(ndims);
+  for (auto f : compute_domains) {
+
+    auto dom = f.second;
+
+    cout << "Scheds..." << endl;
+    for (auto f : scheds) {
+      cout << tab(1) << f.first << endl;
+    }
+    assert(contains_key(f.first, scheds));
+
+    Box bounds;
+    for (int d = 0; d < ndims; d++) {
+
+      int domain_min = dom.intervals.at(d).min;
+      int domain_max = dom.intervals.at(d).max;
+
+      // Note: The schedule is from innermost to outermost
+      int sched_min = scheds.at(f.first).at(ndims - d - 1).const_eval_at(domain_min);
+      int sched_max = scheds.at(f.first).at(ndims - d - 1).const_eval_at(domain_max);
+
+      bounds.intervals.push_back({sched_min, sched_max});
+    }
+    index_bounds[f.first] = bounds;
+    whole_dom = unn(whole_dom, bounds);
+  }
+
+  auto& bnds = whole_dom.intervals;
+  reverse(bnds);
+  cout << "Whole domain: " << whole_dom << endl;
+  print_loops(0, ss, op_order, whole_dom, index_bounds);
+
+  return ss.str();
+}

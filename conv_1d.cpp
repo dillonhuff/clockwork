@@ -133,6 +133,9 @@ void conv_1d(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in, H
 #pragma HLS dependence variable=M inter false
 #endif // __VIVADO_SYNTH__
 
+/* CUSTOM CODE STRING
+
+*/
 	for (int c0 = 0; c0 <= 9; c0 += 1) {
 	  get_input(in, M, 0, c0);
 	  if (c0 >= 2)

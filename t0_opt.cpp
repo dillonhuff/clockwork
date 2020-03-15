@@ -603,19 +603,20 @@ inline void t1_t1_comp_write0_write(hw_uint<32> & t1_t1_comp_write0, t1_cache& t
 }
 
 inline hw_uint<32>  t0_rd0_select(t1_cache& t1, int d0, int d1) {
-  // qpd = { t0_comp[d0, d1] -> 36 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // qpd = { t0_comp[d0, d1] -> 36 : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
 	hw_uint<32>  value_t1_t1_comp_write0 = t1.t1_t1_comp_write0.peek_36();
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  t0_rd1_select(t1_cache& t1, int d0, int d1) {
-  // qpd = { t0_comp[d0, d1] -> 69 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // qpd = { t0_comp[d0, d1] -> 69 : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
 	hw_uint<32>  value_t1_t1_comp_write0 = t1.t1_t1_comp_write0.peek_69();
 >>>>>>> origin/master
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  t0_rd2_select(t1_cache& t1, int d0, int d1) {
+<<<<<<< HEAD
 <<<<<<< HEAD
   // qpd = { t0_comp[d0, d1] -> 259 : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
 	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
@@ -631,12 +632,16 @@ inline hw_uint<32>  t0_rd2_select(t1_cache& t1, int d0, int d1) {
 	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0.peek_259();
 =======
   // qpd = { t0_comp[d0, d1] -> 35 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+=======
+  // qpd = { t0_comp[d0, d1] -> 35 : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+>>>>>>> origin/master
 	hw_uint<32>  value_t1_t1_comp_write0 = t1.t1_t1_comp_write0.peek_35();
 >>>>>>> origin/master
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  t0_rd3_select(t1_cache& t1, int d0, int d1) {
+<<<<<<< HEAD
 <<<<<<< HEAD
   // qpd = { t0_comp[d0, d1] -> 1 : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
 	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = d0, d1' = 1 + d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
@@ -652,12 +657,16 @@ inline hw_uint<32>  t0_rd3_select(t1_cache& t1, int d0, int d1) {
 	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0.peek_1();
 =======
   // qpd = { t0_comp[d0, d1] -> 1 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+=======
+  // qpd = { t0_comp[d0, d1] -> 1 : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+>>>>>>> origin/master
 	hw_uint<32>  value_t1_t1_comp_write0 = t1.t1_t1_comp_write0.peek_1();
 >>>>>>> origin/master
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  t0_rd4_select(t1_cache& t1, int d0, int d1) {
+<<<<<<< HEAD
 <<<<<<< HEAD
   // qpd = { t0_comp[d0, d1] -> 517 : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
 	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = d0, d1' = -1 + d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
@@ -754,6 +763,9 @@ inline hw_uint<32>  t0_rd9_select(t1_cache& t1, int d0, int d1) {
 	return value_t1_t1_comp_write2;
 =======
   // qpd = { t0_comp[d0, d1] -> 34 : 0 <= d0 <= 30 and 0 <= d1 <= 31; t0_comp[d0, d1] -> (3 + d0) : d0 = 31 and 0 <= d1 <= 31 }
+=======
+  // qpd = { t0_comp[d0, d1] -> 34 : 0 <= d0 <= 30 and 0 <= d1 <= 27; t0_comp[d0, d1] -> (3 + d0) : d0 = 31 and 0 <= d1 <= 27 }
+>>>>>>> origin/master
 	hw_uint<32>  value_t1_t1_comp_write0 = t1.t1_t1_comp_write0.peek_34();
 	return value_t1_t1_comp_write0;
 >>>>>>> origin/master
@@ -851,6 +863,7 @@ inline void t1_t1_comp_write_bundle_write(hw_uint<32>& t1_comp_write, t1_cache& 
 
 // Operation logic
 <<<<<<< HEAD
+<<<<<<< HEAD
 inline void t0_comp(t1_cache& t1, HWStream<hw_uint<128> >& /* buffer_args num ports = 4 */t0, int d0, int d1) {
 	// Consume: t1
 	auto t1_0_c__0_value = t1_t0_comp_read_bundle_read(t1/* source_delay */, d0, d1);
@@ -864,6 +877,8 @@ inline void t1_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */t1_ar
 	t1_t1_comp_write_bundle_write(compute_result, t1, d0, d1);
 }
 
+=======
+>>>>>>> origin/master
 inline void t0_comp(t1_cache& t1, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */t0, int d0, int d1) {
 	// Consume: t1
 	auto t1_0_c__0_value = t1_t0_comp_read_bundle_read(t1/* source_delay */, d0, d1);
@@ -873,6 +888,7 @@ inline void t0_comp(t1_cache& t1, HWStream<hw_uint<32> >& /* buffer_args num por
 	t0.write(compute_result);
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 inline void t1_comp(HWStream<hw_uint<128> >& /* buffer_args num ports = 4 */t1_arg, t1_cache& t1, int d0, int d1) {
 	// Consume: t1_arg
@@ -891,6 +907,16 @@ void t0_opt_kernel(HWStream<hw_uint<128> >& /* get_args num ports = 4 */t1_arg, 
 	  for (int c1 = -1; c1 <= 256; c1 += 1) {
 #pragma HLS pipeline II=1
 =======
+=======
+inline void t1_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */t1_arg, t1_cache& t1, int d0, int d1) {
+	// Consume: t1_arg
+	auto t1_arg_0_c__0_value = t1_arg.read();
+	auto compute_result = id(t1_arg_0_c__0_value);
+	// Produce: t1
+	t1_t1_comp_write_bundle_write(compute_result, t1, d0, d1);
+}
+
+>>>>>>> origin/master
 // Driver function
 void t0_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */t1_arg, HWStream<hw_uint<32> >& /* get_args num ports = 1 */t0) {
   t1_cache t1;
@@ -898,12 +924,51 @@ void t0_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */t1_arg, HWStream
 #pragma HLS dependence variable=t1 inter false
 #endif // __VIVADO_SYNTH__
 
+<<<<<<< HEAD
 	for (int c0 = -1; c0 <= 32; c0 += 1)
 	  for (int c1 = -1; c1 <= 32; c1 += 1) {
 >>>>>>> origin/master
 	    t1_comp(t1_arg, t1, c1, c0);
 	    if (c0 >= 1 && c1 >= 1)
 	      t0_comp(t1, t0, c1 - 1, c0 - 1);
+=======
+/* CUSTOM CODE STRING
+for (int c0 = -1; c0 <= 28; c0++) {
+  for (int c1 = -1; c1 <= 32; c1++) {
+
+#ifdef __VIVADO_SYNTH__
+#pragma HLS pipeline II=1
+#endif // __VIVADO_SYNTH__
+
+    if ((-1 <= c1 && c1 <= 32) && (-1 <= c0 && c0 <= 28)) {
+      t1_comp(c1, c0);
+    }
+
+    if ((1 <= c1 && c1 <= 32) && (1 <= c0 && c0 <= 28)) {
+      t0_comp(c1, c0);
+    }
+
+  }
+}
+
+*/
+	for (int c0 = -1; c0 <= 28; c0++) {
+	  for (int c1 = -1; c1 <= 32; c1++) {
+	
+	#ifdef __VIVADO_SYNTH__
+	#pragma HLS pipeline II=1
+	#endif // __VIVADO_SYNTH__
+	
+	    if ((-1 <= c1 && c1 <= 32) && (-1 <= c0 && c0 <= 28)) {
+	      t1_comp(t1_arg, t1, c1, c0);
+	    }
+	
+	    if ((1 <= c1 && c1 <= 32) && (1 <= c0 && c0 <= 28)) {
+	      t0_comp(t1, t0, c1, c0);
+	    }
+	
+>>>>>>> origin/master
 	  }
+	}
 	
 }

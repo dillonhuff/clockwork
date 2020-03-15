@@ -173,8 +173,12 @@ struct CodegenOptions {
   bool internal;
   bool all_rams;
   bool add_dependence_pragmas;
+  bool use_custom_code_string;
+  string code_string;
 
-  CodegenOptions() : internal(true), all_rams(false), add_dependence_pragmas(true) {}
+  CodegenOptions() : internal(true), all_rams(false), add_dependence_pragmas(true),
+  use_custom_code_string(false), code_string("") {}
+
 };
 
 class UBuffer {
@@ -1006,52 +1010,9 @@ isl_union_pw_qpolynomial* compute_fifo_addr(UBuffer& buf, const std::string& rea
   //assert(false);
 
   return card(unn(EvictsBtwn, WritesBtwn));
-
-  //umap* last_readers =
-    //last_reads(write_port, buf);
-  //cout << "Last reads: " << str(last_readers) << endl;
-
-  //// I should really compute addresses at a given time
-  //cout << "eviction sched: " << str(evict_sched) << endl;
-  //auto writes = buf.access_map.at(write_port);
-  //cout << "Access map: " << str(writes) << endl;
-  //auto writers = inv(writes);
-
-  //auto EvictsAfterProduction =
-    //lex_lt(dot(writers, wrsched), evict_sched);
-  ////auto EvictsBeforeRead =
-    ////lex_lt
-
-  //cout << "Evictions after production: " << str(EvictsAfterProduction) << endl;
-  ////assert(empty(domain(evict_sched)));
-
-  //auto death_sched = death_schedule(write_port, buf);
-  //auto EvictsBeforeDeath =
-    //lex_gt(death_sched, evict_sched);
-  //cout << "Evictions before death    : " << str(EvictsBeforeDeath) << endl;
-
-  //// TODO: Intersect with evicts after production
-  //auto EvictsInLifetime =
-    ////EvictsBeforeDeath;
-    //its(EvictsBeforeDeath, EvictsAfterProduction);
-
-  //cout << "Evictions in lifetime     : " << str(EvictsInLifetime) << endl;
-  //auto writeTimes = dot(WritesBtwn, sched);
-  //cout << "writeTimes: " << str(writeTimes) << endl;
-  //assert(writers != nullptr);
-  //cout << "writers   : " << str(writers) << endl;
-  //auto evictTimes = dot(EvictsInLifetime, evict_sched);
-  //cout << "EvictTimes: " << str(evictTimes) << endl;
-  //auto shift_times = coalesce(unn(writeTimes, evictTimes));
-  //cout << "shift times: " << str(shift_times) << endl;
-  //auto c = card(shift_times);
-  ////unn(dot(WritesBtwn, sched), EvictsAfterProduction));
-  //cout << "got card" << endl;
-  //return c;
 }
 
 isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
-  //return compute_fifo_addr(buf, read_port, write_port);
 
   isl_union_map* sched = buf.schedule.at(write_port);
   assert(sched != nullptr);
@@ -2088,106 +2049,6 @@ string c_sanitize(const std::string& str) {
   }
   return res;
 }
-
-struct Range {
-  int min;
-  int max;
-
-  string constraint_str(const string& v) {
-    return to_string(min) + " <= " + v + " <= " + to_string(max);
-  }
-};
-
-struct Box {
-  vector<Range> intervals;
-
-  Box() {}
-
-  Box(const int dims) {
-    for (int i = 0; i < dims; i++) {
-      intervals.push_back({0, -1});
-    }
-  }
-
-  isl_set* to_set(isl_ctx* ctx, const string& name) {
-    string s = "{ ";
-    vector<string> names;
-    vector<string> ranges;
-    int i = 0;
-    for (auto r : intervals) {
-      string v = "d" + to_string(i);
-      names.push_back("d" + to_string(i));
-      ranges.push_back(r.constraint_str(v));
-      i++;
-    }
-    s += name + sep_list(names, "[", "]", ", ");
-    s += " : ";
-    s += sep_list(ranges, "", "", " and ");
-    s += " }";
-    return rdset(ctx, s);
-  }
-
-  int length(const int dim) const {
-    return intervals.at(dim).max - intervals.at(dim).min + 1;
-  }
-
-  Box pad_range_to_nearest_multiple(const int unroll_factor) const {
-    assert(unroll_factor > 0);
-
-    Box padded;
-    int r = 0;
-    for (auto i : intervals) {
-      if (r != 0) {
-        padded.intervals.push_back({i.min, i.max});
-      } else {
-        int range = length(0);
-        cout << "Length: " << range << endl;
-        if (range % unroll_factor != 0) {
-          int new_range = range + (unroll_factor - (range % unroll_factor));
-          cout << "new_range = " << new_range << endl;
-          int new_max = i.min + new_range - 1;
-
-          cout << "new_max = " << new_max << endl;
-
-          padded.intervals.push_back({i.min, new_max});
-        } else {
-          padded.intervals.push_back({i.min, i.max});
-        }
-      }
-      r++;
-    }
-    cout << "New length: " << padded.length(0) << endl;
-    assert(padded.length(0) % unroll_factor == 0);
-    return padded;
-  }
-
-  Box pad(const int dim, const int padding) const {
-    assert(padding > 0);
-
-    Box padded;
-    int k = 0;
-    for (auto i : intervals) {
-      if (k == dim) {
-        padded.intervals.push_back({i.min, i.max + padding});
-      } else {
-        padded.intervals.push_back({i.min, i.max});
-      }
-      k++;
-    }
-    return padded;
-  }
-
-  Box pad(const int padding) const {
-    assert(padding > 0);
-
-    Box padded;
-    for (auto i : intervals) {
-      padded.intervals.push_back({i.min - padding, i.max + padding});
-    }
-    return padded;
-  }
-};
-std::ostream& operator<<(std::ostream& out, const Box& b);
 
 struct op {
 
@@ -3500,13 +3361,21 @@ void generate_app_code(CodegenOptions& options,
   }
 
 
-  string code_string = codegen_c(schedmap);
+  string code_string = options.code_string;
+  if (!options.use_custom_code_string) {
+    code_string = codegen_c(schedmap);
+  }
+
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
   for (auto op : prg.all_ops()) {
     regex re(op->name + "\\((.*)\\);");
     string args_list = sep_list(buffer_arg_names(buffers, op, prg), "", "", ", ");
     code_string = regex_replace(code_string, re, op->name + "(" + args_list + ", $1);");
   }
+
+  conv_out << "/* CUSTOM CODE STRING" << endl;
+  conv_out << options.code_string << endl;
+  conv_out << "*/" << endl;
 
   conv_out << code_string << endl;
 
@@ -5222,6 +5091,47 @@ void parse_denoise3d_test() {
   //assert(false);
 }
 
+void duplicate_upsample_test() {
+
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "duplicate_upsample";
+  prg.buffer_port_widths["I"] = 32;
+  prg.buffer_port_widths["MDuplicate"] = 32;
+
+  int rows = 32;
+
+  prg.buffer_bounds["I"] = {rows};
+
+  string in_name = "in";
+  string out_name = "out";
+
+  prg.buffer_port_widths[in_name] = 32;
+  prg.add_input(in_name);
+
+  prg.buffer_port_widths[out_name] = 32;
+  prg.add_output(out_name);
+
+  auto in_nest = prg.add_nest("id1", 0, rows);
+  in_nest->add_op({"I", "id0"}, "id", {in_name, "id0"});
+
+  auto blur_y_nest =
+    prg.add_nest("d1", 0, rows);
+
+  //blur_y_nest->
+    //stencil_op("tmp", "blur_3_32", "I", {"d0", "d1"},
+        //{{-1, 0}, {0, 0}, {1, 0}});
+
+  //auto blur_out_nest=
+    //prg.add_nest("d1", 1, rows - 1, "d0", 1, cols - 1);
+  //blur_out_nest->
+    //stencil_op(out_name, "blur_3_32", "tmp", {"d0", "d1"},
+        //{{0, -1}, {0, 0}, {0, 1}});
+
+  regression_test(prg);
+  assert(false);
+}
+
 void seidel2d_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
@@ -5261,31 +5171,7 @@ void seidel2d_test() {
   regression_test(prg);
 }
 
-
-std::ostream& operator<<(std::ostream& out, const Box& b) {
-  vector<string> ranges;
-  for (auto range : b.intervals) {
-    ranges.push_back("[" + to_string(range.min) + ", " + to_string(range.max) + "]");
-  }
-  out << sep_list(ranges, "{", "}", ", ");
-  return out;
-}
-
-Box unn(const Box& l, const Box& r) {
-  cout << "l intervals = " << l.intervals.size() << endl;
-  cout << "r intervals = " << r.intervals.size() << endl;
-
-  assert(l.intervals.size() == r.intervals.size());
-  Box un;
-  for (size_t dim = 0; dim < l.intervals.size(); dim++) {
-    un.intervals.push_back({min(l.intervals.at(dim).min, r.intervals.at(dim).min), max(l.intervals.at(dim).max, r.intervals.at(dim).max)});
-  }
-
-  cout << "Got union" << endl;
-  return un;
-}
-
-
+static inline
 QExpr lower_bound(const Window& arg, const int dim) {
   string dvar = "d" + to_string(dim);
 
@@ -5300,6 +5186,7 @@ QExpr lower_bound(const Window& arg, const int dim) {
   return k;
 }
 
+static inline
 QExpr upper_bound(const Window& arg, const int dim) {
   string dvar = "d" + to_string(dim);
 
@@ -5422,77 +5309,6 @@ compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstrain
   map<string, int> delays =
     maximize(delay_constraints, objective_expr);
   assert(delays.size() == sorted_functions.size());
-
-  //map<string, int> delays;
-
-  //cout << "All delay constraints..." << endl;
-  //string varspx = sep_list(ds, "[", "]", ", ");
-  //auto* legal_delays = rdset(ctx, "{ " + sep_list(ds, "[", "]", ", ") + " }");
-  //for (auto c : delay_constraints) {
-    //cout << "\t" << c << endl;
-    //legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(c) + " }"));
-  //}
-
-  //string target_func = sorted_functions.back();
-  ////QConstraint cc = eq(qexpr("d_" + target_func), 100);
-  //QConstraint cc = eq(qexpr("d_" + target_func), 0);
-  //legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(cc) + " }"));
-
-  //QExpr objective_expr;
-  //for (auto d : ds) {
-    //objective_expr.terms.push_back(qterm(d));
-  //}
-  //ostringstream oss;
-  //oss << objective_expr;
-  //string aff_str =
-    //"{ " +
-    //sep_list(ds, "[", "]", ", ") + " -> " +
-    //"[ " + oss.str() + " ]" + " }";
-
-  //string aff_c = sep_list(ds, "", "", " + ");
-  ////string aff_str =
-    ////"{ " +
-    ////sep_list(ds, "[", "]", ", ") + " -> " +
-    ////sep_list(ds, "[", "]", " + ") + " }";
-
-  //cout << "Aff str: " << aff_str << endl;
-
-  //auto obj_func =
-    //isl_aff_read_from_str(ctx, aff_str.c_str());
-
-  //cout << "Objective: " << str(obj_func) << endl;
-  //cout << "Legal delays: " << str(legal_delays) << endl;
-  //cout << "Legal delay point: " << str(isl_set_sample_point(legal_delays)) << endl;
-  ////assert(i == 1);
-
-  //auto min_point =
-    //isl_set_max_val(cpy(legal_delays), obj_func);
-  //string mstring =
-    //str(min_point);
-  //cout << "Min delays: " << mstring << endl;
-  //string os = aff_c;
-  //string mset = set_string(ds, os + " = " + mstring);
-  //cout << "Min set: " << mset << endl;
-  //auto min_set = rdset(ctx, mset.c_str());
-
-  //auto mvs = its(min_set, legal_delays);
-  //string dp = str(isl_set_sample_point(mvs));
-  //cout << "Min pt: " << dp << endl;
-
-  //vector<int> delay_coeffs =
-    //parse_pt(dp);
-  //assert(delay_coeffs.size() == ds.size());
-
-  //int p = 0;
-  //for (auto f : sorted_functions) {
-    //string fd = "d_" + f;
-    //for (auto d : ds) {
-      //if (fd == d) {
-        //delays[fd] = delay_coeffs.at(p);
-      //}
-    //}
-    //p++;
-  //}
 
   int min_delay = 9999999;
   for (auto d : delays) {
@@ -6769,6 +6585,24 @@ struct App {
   void schedule_and_codegen(const std::string& name, const int unroll_factor) {
     umap* m = schedule();
 
+    auto scheds_n =
+      schedule_opt();
+    map<string, vector<QExpr> > scheds;
+    for (auto s : scheds_n) {
+      scheds[s.first + "_comp"] = s.second;
+    }
+    map<string, Box> compute_domains;
+    vector<string> ops;
+    for (auto f : sort_functions()) {
+      if (app_dag.at(f).srcs.size() != 0) {
+        ops.push_back(f + "_comp");
+        compute_domains[f + "_comp"] =
+          compute_box(f);
+      }
+    }
+
+    string cgn = box_codegen(ops, scheds, compute_domains);
+
     map<string, UBuffer> buffers = build_buffers(m, unroll_factor);
 
     uset* whole_dom =
@@ -6784,6 +6618,9 @@ struct App {
 
     CodegenOptions options;
     options.internal = true;
+    options.use_custom_code_string = true;
+    options.code_string = cgn;
+
     prog prg;
     prg.name = name + "_opt";
     prg.compute_unit_file = prg.name + "_compute_units.h";
@@ -7099,8 +6936,8 @@ App jacobi2d(const std::string output_name) {
 
 void jacobi_2d_app_test() {
   App jac = jacobi2d("t0");
-  jac.realize_naive("t0", 32, 32);
-  jac.realize("t0", 32, 32, 1);
+  jac.realize_naive("t0", 32, 28);
+  jac.realize("t0", 32, 28, 1);
   std::vector<std::string> optimized =
     run_regression_tb("t0_opt");
 
@@ -7656,7 +7493,6 @@ void blur_and_downsample_test() {
   prg.compute_unit_file = "conv_3x3.h";
   prg.name = "blur_and_downsample";
   prg.add_input("in");
-  //prg.add_output("out");
   prg.buffer_port_widths["I"] = 32;
   int img_size = 15;
   prg.buffer_bounds["I"] = {img_size, img_size};
@@ -7715,9 +7551,12 @@ int main(int argc, char** argv) {
     //synth_lb_test();
     
     //memtile_test();
+    //
+    //duplicate_upsample_test();
 
     jacobi_2d_app_test();
     denoise2d_test();
+    assert(false);
     mismatched_stencil_test();
     gaussian_pyramid_app_test();
 

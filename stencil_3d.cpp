@@ -670,6 +670,9 @@ void stencil_3d(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in
 #pragma HLS dependence variable=I inter false
 #endif // __VIVADO_SYNTH__
 
+/* CUSTOM CODE STRING
+
+*/
 	for (int c0 = 0; c0 <= 31; c0 += 1)
 	  for (int c1 = 0; c1 <= 31; c1 += 1)
 	    for (int c2 = 0; c2 <= 31; c2 += 1) {
