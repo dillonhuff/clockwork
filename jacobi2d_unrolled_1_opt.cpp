@@ -179,20 +179,20 @@ inline void t1_t1_comp_write_bundle_write(hw_uint<32>& t1_comp_write, t1_cache& 
 
 
 // Operation logic
-inline void t1_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */t1_arg, t1_cache& t1, int d0, int d1) {
-	// Consume: t1_arg
-	auto t1_arg_0_c__0_value = t1_arg.read();
-	auto compute_result = id(t1_arg_0_c__0_value);
-	// Produce: t1
-	t1_t1_comp_write_bundle_write(compute_result, t1, d0, d1);
-}
-
 inline void jacobi2d_unrolled_1_comp(t1_cache& t1, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */jacobi2d_unrolled_1, int d0, int d1) {
 	// Consume: t1
 	auto t1_0_c__0_value = t1_jacobi2d_unrolled_1_comp_read_bundle_read(t1/* source_delay */, d0, d1);
 	auto compute_result = jacobi2d_compute(t1_0_c__0_value);
 	// Produce: jacobi2d_unrolled_1
 	jacobi2d_unrolled_1.write(compute_result);
+}
+
+inline void t1_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */t1_arg, t1_cache& t1, int d0, int d1) {
+	// Consume: t1_arg
+	auto t1_arg_0_c__0_value = t1_arg.read();
+	auto compute_result = id(t1_arg_0_c__0_value);
+	// Produce: t1
+	t1_t1_comp_write_bundle_write(compute_result, t1, d0, d1);
 }
 
 // Driver function
@@ -222,22 +222,11 @@ for (int c0 = -1; c0 <= 1024; c0++) {
 }
 
 */
-	for (int c0 = -1; c0 <= 1024; c0++) {
-	  for (int c1 = -1; c1 <= 1024; c1++) {
-	
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS pipeline II=1
-	#endif // __VIVADO_SYNTH__
-	
-	    if ((-1 <= c1 && c1 <= 1024) && (-1 <= c0 && c0 <= 1024)) {
-	      t1_comp(t1_arg, t1, c1, c0);
-	    }
-	
-	    if ((1 <= c1 && c1 <= 1024) && (1 <= c0 && c0 <= 1024)) {
-	      jacobi2d_unrolled_1_comp(t1, jacobi2d_unrolled_1, c1, c0);
-	    }
-	
+	for (int c0 = -1; c0 <= 1024; c0 += 1)
+	  for (int c1 = -1; c1 <= 1024; c1 += 1) {
+	    t1_comp(t1_arg, t1, c1, c0);
+	    if (c0 >= 1 && c1 >= 1)
+	      jacobi2d_unrolled_1_comp(t1, jacobi2d_unrolled_1, c1 - 1, c0 - 1);
 	  }
-	}
 	
 }
