@@ -116,31 +116,31 @@ inline void t1_t1_comp_write0_write(hw_uint<32> & t1_t1_comp_write0, t1_cache& t
 }
 
 inline hw_uint<32>  t0_rd0_select(t1_cache& t1, int d0, int d1) {
-  // qpd = { t0_comp[d0, d1] -> 36 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // qpd = { t0_comp[d0, d1] -> 36 : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
 	hw_uint<32>  value_t1_t1_comp_write0 = t1.t1_t1_comp_write0.peek_36();
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  t0_rd1_select(t1_cache& t1, int d0, int d1) {
-  // qpd = { t0_comp[d0, d1] -> 69 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // qpd = { t0_comp[d0, d1] -> 69 : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
 	hw_uint<32>  value_t1_t1_comp_write0 = t1.t1_t1_comp_write0.peek_69();
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  t0_rd2_select(t1_cache& t1, int d0, int d1) {
-  // qpd = { t0_comp[d0, d1] -> 35 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // qpd = { t0_comp[d0, d1] -> 35 : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
 	hw_uint<32>  value_t1_t1_comp_write0 = t1.t1_t1_comp_write0.peek_35();
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  t0_rd3_select(t1_cache& t1, int d0, int d1) {
-  // qpd = { t0_comp[d0, d1] -> 1 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // qpd = { t0_comp[d0, d1] -> 1 : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
 	hw_uint<32>  value_t1_t1_comp_write0 = t1.t1_t1_comp_write0.peek_1();
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  t0_rd4_select(t1_cache& t1, int d0, int d1) {
-  // qpd = { t0_comp[d0, d1] -> 34 : 0 <= d0 <= 30 and 0 <= d1 <= 31; t0_comp[d0, d1] -> (3 + d0) : d0 = 31 and 0 <= d1 <= 31 }
+  // qpd = { t0_comp[d0, d1] -> 34 : 0 <= d0 <= 30 and 0 <= d1 <= 27; t0_comp[d0, d1] -> (3 + d0) : d0 = 31 and 0 <= d1 <= 27 }
 	hw_uint<32>  value_t1_t1_comp_write0 = t1.t1_t1_comp_write0.peek_34();
 	return value_t1_t1_comp_write0;
 }
@@ -203,30 +203,41 @@ void t0_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */t1_arg, HWStream
 #endif // __VIVADO_SYNTH__
 
 /* CUSTOM CODE STRING
-for (int c0 = -1; c0 <= 32; c0++) {
+for (int c0 = -1; c0 <= 28; c0++) {
   for (int c1 = -1; c1 <= 32; c1++) {
 
 #ifdef __VIVADO_SYNTH__
 #pragma HLS pipeline II=1
 #endif // __VIVADO_SYNTH__
 
-    if ((-1 <= c0 && c0 <= 32) && (-1 <= c1 && c1 <= 32)) {
-      t1_comp(c0, c1);
+    if ((-1 <= c1 && c1 <= 32) && (-1 <= c0 && c0 <= 28)) {
+      t1_comp(c1, c0);
     }
 
-    if ((1 <= c0 && c0 <= 32) && (1 <= c1 && c1 <= 32)) {
-      t0_comp(c0, c1);
+    if ((1 <= c1 && c1 <= 32) && (1 <= c0 && c0 <= 28)) {
+      t0_comp(c1, c0);
     }
 
   }
 }
 
 */
-	for (int c0 = -1; c0 <= 32; c0 += 1)
-	  for (int c1 = -1; c1 <= 32; c1 += 1) {
-	    t1_comp(t1_arg, t1, c1, c0);
-	    if (c0 >= 1 && c1 >= 1)
-	      t0_comp(t1, t0, c1 - 1, c0 - 1);
+	for (int c0 = -1; c0 <= 28; c0++) {
+	  for (int c1 = -1; c1 <= 32; c1++) {
+	
+	#ifdef __VIVADO_SYNTH__
+	#pragma HLS pipeline II=1
+	#endif // __VIVADO_SYNTH__
+	
+	    if ((-1 <= c1 && c1 <= 32) && (-1 <= c0 && c0 <= 28)) {
+	      t1_comp(t1_arg, t1, c1, c0);
+	    }
+	
+	    if ((1 <= c1 && c1 <= 32) && (1 <= c0 && c0 <= 28)) {
+	      t0_comp(t1, t0, c1, c0);
+	    }
+	
 	  }
+	}
 	
 }

@@ -891,8 +891,9 @@ void print_loops(int level, ostream& out, const vector<string>& op_order, const 
     for (int i = 0; i < ndims; i++) {
       vars.push_back("c" + str(i));
     }
+    // NOTE: This is because scheduling reverses order of component variables
+    reverse(vars);
 
-    //for (auto f : index_bounds) {
     for (auto f : op_order) {
       auto box = index_bounds.at(f);
       out << tab(next_level) << "if (" << sep_list(ifconds(vars, box), "", "", " && ") << ") {" << endl;
@@ -932,8 +933,9 @@ std::string box_codegen(const vector<string>& op_order,
       int domain_min = dom.intervals.at(d).min;
       int domain_max = dom.intervals.at(d).max;
 
-      int sched_min = scheds.at(f.first).at(d).const_eval_at(domain_min);
-      int sched_max = scheds.at(f.first).at(d).const_eval_at(domain_max);
+      // Note: The schedule is from innermost to outermost
+      int sched_min = scheds.at(f.first).at(ndims - d - 1).const_eval_at(domain_min);
+      int sched_max = scheds.at(f.first).at(ndims - d - 1).const_eval_at(domain_max);
 
       bounds.intervals.push_back({sched_min, sched_max});
     }
@@ -941,6 +943,8 @@ std::string box_codegen(const vector<string>& op_order,
     whole_dom = unn(whole_dom, bounds);
   }
 
+  auto& bnds = whole_dom.intervals;
+  reverse(bnds);
   cout << "Whole domain: " << whole_dom << endl;
   print_loops(0, ss, op_order, whole_dom, index_bounds);
 

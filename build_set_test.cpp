@@ -6618,7 +6618,7 @@ struct App {
 
     CodegenOptions options;
     options.internal = true;
-    //options.use_custom_code_string = true;
+    options.use_custom_code_string = true;
     options.code_string = cgn;
 
     prog prg;
@@ -6936,8 +6936,8 @@ App jacobi2d(const std::string output_name) {
 
 void jacobi_2d_app_test() {
   App jac = jacobi2d("t0");
-  jac.realize_naive("t0", 32, 32);
-  jac.realize("t0", 32, 32, 1);
+  jac.realize_naive("t0", 32, 28);
+  jac.realize("t0", 32, 28, 1);
   std::vector<std::string> optimized =
     run_regression_tb("t0_opt");
 
@@ -7554,10 +7554,10 @@ int main(int argc, char** argv) {
     //
     //duplicate_upsample_test();
 
-    denoise2d_test();
     jacobi_2d_app_test();
+    denoise2d_test();
     mismatched_stencil_test();
-    gaussian_pyramid_app_test();
+    //gaussian_pyramid_app_test();
 
     upsample_reduce_test();
     //assert(false);
