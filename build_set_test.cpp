@@ -1006,52 +1006,9 @@ isl_union_pw_qpolynomial* compute_fifo_addr(UBuffer& buf, const std::string& rea
   //assert(false);
 
   return card(unn(EvictsBtwn, WritesBtwn));
-
-  //umap* last_readers =
-    //last_reads(write_port, buf);
-  //cout << "Last reads: " << str(last_readers) << endl;
-
-  //// I should really compute addresses at a given time
-  //cout << "eviction sched: " << str(evict_sched) << endl;
-  //auto writes = buf.access_map.at(write_port);
-  //cout << "Access map: " << str(writes) << endl;
-  //auto writers = inv(writes);
-
-  //auto EvictsAfterProduction =
-    //lex_lt(dot(writers, wrsched), evict_sched);
-  ////auto EvictsBeforeRead =
-    ////lex_lt
-
-  //cout << "Evictions after production: " << str(EvictsAfterProduction) << endl;
-  ////assert(empty(domain(evict_sched)));
-
-  //auto death_sched = death_schedule(write_port, buf);
-  //auto EvictsBeforeDeath =
-    //lex_gt(death_sched, evict_sched);
-  //cout << "Evictions before death    : " << str(EvictsBeforeDeath) << endl;
-
-  //// TODO: Intersect with evicts after production
-  //auto EvictsInLifetime =
-    ////EvictsBeforeDeath;
-    //its(EvictsBeforeDeath, EvictsAfterProduction);
-
-  //cout << "Evictions in lifetime     : " << str(EvictsInLifetime) << endl;
-  //auto writeTimes = dot(WritesBtwn, sched);
-  //cout << "writeTimes: " << str(writeTimes) << endl;
-  //assert(writers != nullptr);
-  //cout << "writers   : " << str(writers) << endl;
-  //auto evictTimes = dot(EvictsInLifetime, evict_sched);
-  //cout << "EvictTimes: " << str(evictTimes) << endl;
-  //auto shift_times = coalesce(unn(writeTimes, evictTimes));
-  //cout << "shift times: " << str(shift_times) << endl;
-  //auto c = card(shift_times);
-  ////unn(dot(WritesBtwn, sched), EvictsAfterProduction));
-  //cout << "got card" << endl;
-  //return c;
 }
 
 isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
-  //return compute_fifo_addr(buf, read_port, write_port);
 
   isl_union_map* sched = buf.schedule.at(write_port);
   assert(sched != nullptr);
@@ -5341,77 +5298,6 @@ compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstrain
     maximize(delay_constraints, objective_expr);
   assert(delays.size() == sorted_functions.size());
 
-  //map<string, int> delays;
-
-  //cout << "All delay constraints..." << endl;
-  //string varspx = sep_list(ds, "[", "]", ", ");
-  //auto* legal_delays = rdset(ctx, "{ " + sep_list(ds, "[", "]", ", ") + " }");
-  //for (auto c : delay_constraints) {
-    //cout << "\t" << c << endl;
-    //legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(c) + " }"));
-  //}
-
-  //string target_func = sorted_functions.back();
-  ////QConstraint cc = eq(qexpr("d_" + target_func), 100);
-  //QConstraint cc = eq(qexpr("d_" + target_func), 0);
-  //legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(cc) + " }"));
-
-  //QExpr objective_expr;
-  //for (auto d : ds) {
-    //objective_expr.terms.push_back(qterm(d));
-  //}
-  //ostringstream oss;
-  //oss << objective_expr;
-  //string aff_str =
-    //"{ " +
-    //sep_list(ds, "[", "]", ", ") + " -> " +
-    //"[ " + oss.str() + " ]" + " }";
-
-  //string aff_c = sep_list(ds, "", "", " + ");
-  ////string aff_str =
-    ////"{ " +
-    ////sep_list(ds, "[", "]", ", ") + " -> " +
-    ////sep_list(ds, "[", "]", " + ") + " }";
-
-  //cout << "Aff str: " << aff_str << endl;
-
-  //auto obj_func =
-    //isl_aff_read_from_str(ctx, aff_str.c_str());
-
-  //cout << "Objective: " << str(obj_func) << endl;
-  //cout << "Legal delays: " << str(legal_delays) << endl;
-  //cout << "Legal delay point: " << str(isl_set_sample_point(legal_delays)) << endl;
-  ////assert(i == 1);
-
-  //auto min_point =
-    //isl_set_max_val(cpy(legal_delays), obj_func);
-  //string mstring =
-    //str(min_point);
-  //cout << "Min delays: " << mstring << endl;
-  //string os = aff_c;
-  //string mset = set_string(ds, os + " = " + mstring);
-  //cout << "Min set: " << mset << endl;
-  //auto min_set = rdset(ctx, mset.c_str());
-
-  //auto mvs = its(min_set, legal_delays);
-  //string dp = str(isl_set_sample_point(mvs));
-  //cout << "Min pt: " << dp << endl;
-
-  //vector<int> delay_coeffs =
-    //parse_pt(dp);
-  //assert(delay_coeffs.size() == ds.size());
-
-  //int p = 0;
-  //for (auto f : sorted_functions) {
-    //string fd = "d_" + f;
-    //for (auto d : ds) {
-      //if (fd == d) {
-        //delays[fd] = delay_coeffs.at(p);
-      //}
-    //}
-    //p++;
-  //}
-
   int min_delay = 9999999;
   for (auto d : delays) {
     if (d.second < min_delay) {
@@ -6687,6 +6573,17 @@ struct App {
   void schedule_and_codegen(const std::string& name, const int unroll_factor) {
     umap* m = schedule();
 
+    auto scheds =
+      schedule_opt();
+    map<string, Box> compute_domains;
+    for (auto f : sort_functions()) {
+      compute_domains[f + "_comp"] =
+        compute_box(f);
+    }
+    cout << "Schedule codegen" << endl;
+    cout << box_codegen(scheds, compute_domains) << endl;
+    assert(false);
+
     map<string, UBuffer> buffers = build_buffers(m, unroll_factor);
 
     uset* whole_dom =
@@ -7574,7 +7471,6 @@ void blur_and_downsample_test() {
   prg.compute_unit_file = "conv_3x3.h";
   prg.name = "blur_and_downsample";
   prg.add_input("in");
-  //prg.add_output("out");
   prg.buffer_port_widths["I"] = 32;
   int img_size = 15;
   prg.buffer_bounds["I"] = {img_size, img_size};

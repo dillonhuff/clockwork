@@ -799,3 +799,55 @@ Box unn(const Box& l, const Box& r) {
 
 std::ostream& operator<<(std::ostream& out, const Box& b);
 
+void print_loops(int level, ostream& out, const Box& whole_dom, map<string, Box>& index_bounds) {
+  int ndims = pick(index_bounds).second.intervals.size();
+
+  int min = whole_dom.intervals.at(level).min;
+  int max = whole_dom.intervals.at(level).max;
+
+  string ivar = "c" + str(level);
+  out << tab(level) << "for (int " << ivar << " = " << min << "; " << min << " <= " << max << "; " << ivar << "++) {" << endl;
+  int next_level = level + 1;
+  if (next_level == ndims) {
+    for (auto f : index_bounds) {
+      out << tab(next_level) << "// " << f.first << " " << f.second << endl;
+    }
+  } else {
+    print_loops(level + 1, out, whole_dom, index_bounds);
+  }
+  out << tab(level) << "}" << endl;
+}
+
+static inline
+std::string box_codegen(map<string, vector<QExpr> >& scheds, map<string, Box>& compute_domains) {
+  assert(compute_domains.size() > 0);
+
+  ostringstream ss;
+  int ndims = pick(compute_domains).second.intervals.size();
+
+  map<string, Box> index_bounds;
+  Box whole_dom(ndims);
+  for (auto f : compute_domains) {
+
+    auto dom = f.second;
+
+    Box bounds;
+    for (int d = 0; d < ndims; d++) {
+
+      int domain_min = dom.intervals.at(0).min;
+      int domain_max = dom.intervals.at(0).max;
+
+      int sched_min = domain_min;
+      int sched_max = domain_max;
+
+      bounds.intervals.push_back({sched_min, sched_max});
+    }
+    index_bounds[f.first] = bounds;
+    whole_dom = unn(whole_dom, bounds);
+  }
+
+  cout << "Whole domain: " << whole_dom << endl;
+  print_loops(0, ss, whole_dom, index_bounds);
+
+  return ss.str();
+}
