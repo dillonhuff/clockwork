@@ -213,7 +213,10 @@ hw_uint<32> mag_dn2(hw_uint<32>& diff_d_0_c__0_value,
     hw_uint<32>& diff_l_0_c__0_value,
     hw_uint<32>& diff_r_0_c__0_value,
     hw_uint<32>& diff_u_0_c__0_value) {
-  return diff_d_0_c__0_value;
+  return diff_d_0_c__0_value +
+    diff_l_0_c__0_value +
+    diff_r_0_c__0_value + 
+    diff_u_0_c__0_value;
 }
 
 static inline
@@ -245,13 +248,13 @@ hw_uint<32> comp_r0(hw_uint<32>& a, hw_uint<32>& b) {
 
 static inline
 hw_uint<32> r1_comp(hw_uint<32>& a) {
-  return a;
+  return a*2;
 }
 
 static inline
 hw_uint<32>
 out_comp_dn2d(hw_uint<32>& a, hw_uint<32>& b, hw_uint<128>& c, hw_uint<128>& d) {
-  return a;
+  return a + b + c + d;
 }
 
 static inline
