@@ -6618,7 +6618,7 @@ struct App {
 
     CodegenOptions options;
     options.internal = true;
-    //options.use_custom_code_string = true;
+    options.use_custom_code_string = true;
     options.code_string = cgn;
 
     prog prg;
@@ -7556,6 +7556,7 @@ int main(int argc, char** argv) {
 
     jacobi_2d_app_test();
     denoise2d_test();
+    assert(false);
     mismatched_stencil_test();
     gaussian_pyramid_app_test();
 
