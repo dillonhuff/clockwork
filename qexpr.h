@@ -674,3 +674,128 @@ QExpr sub(const string& a, const string& b) {
   return qexpr(qterm(a), qterm(b).scale(-1));
 }
 
+struct Range {
+  int min;
+  int max;
+
+  string constraint_str(const string& v) {
+    return to_string(min) + " <= " + v + " <= " + to_string(max);
+  }
+};
+
+struct Box {
+  vector<Range> intervals;
+
+  Box() {}
+
+  Box(const int dims) {
+    for (int i = 0; i < dims; i++) {
+      intervals.push_back({0, -1});
+    }
+  }
+
+  isl_set* to_set(isl_ctx* ctx, const string& name) {
+    string s = "{ ";
+    vector<string> names;
+    vector<string> ranges;
+    int i = 0;
+    for (auto r : intervals) {
+      string v = "d" + to_string(i);
+      names.push_back("d" + to_string(i));
+      ranges.push_back(r.constraint_str(v));
+      i++;
+    }
+    s += name + sep_list(names, "[", "]", ", ");
+    s += " : ";
+    s += sep_list(ranges, "", "", " and ");
+    s += " }";
+    return rdset(ctx, s);
+  }
+
+  int length(const int dim) const {
+    return intervals.at(dim).max - intervals.at(dim).min + 1;
+  }
+
+  Box pad_range_to_nearest_multiple(const int unroll_factor) const {
+    assert(unroll_factor > 0);
+
+    Box padded;
+    int r = 0;
+    for (auto i : intervals) {
+      if (r != 0) {
+        padded.intervals.push_back({i.min, i.max});
+      } else {
+        int range = length(0);
+        cout << "Length: " << range << endl;
+        if (range % unroll_factor != 0) {
+          int new_range = range + (unroll_factor - (range % unroll_factor));
+          cout << "new_range = " << new_range << endl;
+          int new_max = i.min + new_range - 1;
+
+          cout << "new_max = " << new_max << endl;
+
+          padded.intervals.push_back({i.min, new_max});
+        } else {
+          padded.intervals.push_back({i.min, i.max});
+        }
+      }
+      r++;
+    }
+    cout << "New length: " << padded.length(0) << endl;
+    assert(padded.length(0) % unroll_factor == 0);
+    return padded;
+  }
+
+  Box pad(const int dim, const int padding) const {
+    assert(padding > 0);
+
+    Box padded;
+    int k = 0;
+    for (auto i : intervals) {
+      if (k == dim) {
+        padded.intervals.push_back({i.min, i.max + padding});
+      } else {
+        padded.intervals.push_back({i.min, i.max});
+      }
+      k++;
+    }
+    return padded;
+  }
+
+  Box pad(const int padding) const {
+    assert(padding > 0);
+
+    Box padded;
+    for (auto i : intervals) {
+      padded.intervals.push_back({i.min - padding, i.max + padding});
+    }
+    return padded;
+  }
+};
+
+std::ostream& operator<<(std::ostream& out, const Box& b) {
+  vector<string> ranges;
+  for (auto range : b.intervals) {
+    ranges.push_back("[" + to_string(range.min) + ", " + to_string(range.max) + "]");
+  }
+  out << sep_list(ranges, "{", "}", ", ");
+  return out;
+}
+
+Box unn(const Box& l, const Box& r) {
+  cout << "l intervals = " << l.intervals.size() << endl;
+  cout << "r intervals = " << r.intervals.size() << endl;
+
+  assert(l.intervals.size() == r.intervals.size());
+  Box un;
+  for (size_t dim = 0; dim < l.intervals.size(); dim++) {
+    un.intervals.push_back({min(l.intervals.at(dim).min, r.intervals.at(dim).min), max(l.intervals.at(dim).max, r.intervals.at(dim).max)});
+  }
+
+  cout << "Got union" << endl;
+  return un;
+}
+
+
+std::ostream& operator<<(std::ostream& out, const Box& b);
+
