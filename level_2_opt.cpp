@@ -1827,20 +1827,20 @@ inline hw_uint<288> level_1_level_2_comp_read_bundle_read(level_1_cache& level_1
 
 
 // Operation logic
-inline void in_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in_off_chip, in_cache& in, int d0, int d1) {
-	// Consume: in_off_chip
-	auto in_off_chip_0_c__0_value = in_off_chip.read();
-	auto compute_result = id(in_off_chip_0_c__0_value);
-	// Produce: in
-	in_in_comp_write_bundle_write(compute_result, in, d0, d1);
-}
-
 inline void level_0_comp(in_cache& in, level_0_cache& level_0, int d0, int d1) {
 	// Consume: in
 	auto in_0_c__0_value = in_level_0_comp_read_bundle_read(in/* source_delay */, d0, d1);
 	auto compute_result = reduce_gauss(in_0_c__0_value);
 	// Produce: level_0
 	level_0_level_0_comp_write_bundle_write(compute_result, level_0, d0, d1);
+}
+
+inline void in_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in_off_chip, in_cache& in, int d0, int d1) {
+	// Consume: in_off_chip
+	auto in_off_chip_0_c__0_value = in_off_chip.read();
+	auto compute_result = id(in_off_chip_0_c__0_value);
+	// Produce: in
+	in_in_comp_write_bundle_write(compute_result, in, d0, d1);
 }
 
 inline void level_1_comp(level_0_cache& level_0, level_1_cache& level_1, int d0, int d1) {
