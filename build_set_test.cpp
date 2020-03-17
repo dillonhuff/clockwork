@@ -5654,6 +5654,8 @@ map<string, map<string, QExpr> >
 build_compute_deps(isl_ctx* ctx, map<string, Box> & domain_boxes, const int i, map<string, vector<QExpr> >& schedules, vector<string> sorted_functions, map<string, Result> & app_dag, map<string, isl_map*> & compute_maps) {
   string dv = "d" + to_string(i);
 
+  cout << "Building compute deps..." << endl;
+
   map<string, map<string, QExpr> > last_compute_needed;
   for (auto f : sorted_functions) {
     assert(contains_key(f, app_dag));
@@ -5699,6 +5701,8 @@ build_compute_deps(isl_ctx* ctx, map<string, Box> & domain_boxes, const int i, m
    }
   }
 
+  //assert(false);
+
   return last_compute_needed;
 }
 
@@ -5718,11 +5722,6 @@ map<string, QExpr> schedule_dim(isl_ctx* ctx, const int i, map<string, Box>& dom
     QTerm f_delay = qterm(qvar("d_" + f));
     QTerm prod = qterm(minr, f_rate);
     QExpr offset = qexpr(prod, f_delay);
-    //QExpr zero = qexpr(0);
-    //QConstraint start_time{false, offset, zero};
-    //all_constraints.push_back(start_time);
-
-    //cout << "\t" << start_time << endl;
 
     string dv = "d" + to_string(i);
     assert(contains_key(f, last_compute_needed));
@@ -5848,7 +5847,11 @@ struct App {
   }
 
   umap* build_needed(const string& name, const Window& w) {
-    cout << "Building: " << w.name << " needed map" << endl;
+    cout << "Building needed map for " << name << " to " << w.name << endl;
+    cout << "Strides..." << endl;
+    for (auto s : w.strides) {
+      cout << tab(1) << s << endl;
+    }
 
     assert(w.strides.size() > 0);
     int ndims = w.strides.size();
@@ -5884,6 +5887,7 @@ struct App {
       int max = maxs[i];
       string base_expr = to_string(stride) + "*" + base_var;
       if (!stride.is_whole()) {
+        //assert(false);
         base_expr = "floor(" + base_var + " / " + to_string(stride.denom) + ")";
       }
       box_strs.push_back(base_expr + " + " + to_string(min) + " <= " + kv + " <= " + base_expr + " + " + to_string(max));
@@ -7016,10 +7020,47 @@ App jacobi2d(const std::string output_name) {
   return jac;
 }
 
+vector<vector<int> > offsets2d(const int d0l, const int d0r, const int d1l, const int d1r) {
+  vector<vector<int> > offs;
+  for (int r = d1l; r < d1r + 1; r++) {
+    for (int c = d0l; c < d0r + 1; c++) {
+      offs.push_back({c, r});
+    }
+  }
+  return offs;
+}
+
+void upsample_stencil_test() {
+  App us;
+  us.func2d("Img_off");
+  us.func2d("Img", "id", pt("Img_off"));
+
+  auto loads = offsets2d(-1, 1, -1, 1);
+  Window imgwin{"Img", {qconst(1, 2), qconst(1, 2)}, loads};
+  cout << "Strides before assignment" << endl;
+  for (auto s : imgwin.strides) {
+    cout << tab(1) << s << endl;
+  }
+  us.func2d("upsample_stencil", "conv_3_3", imgwin);
+
+  us.realize("upsample_stencil", 32, 32, 1);
+  us.realize_naive("upsample_stencil", 32, 32);
+  
+  std::vector<std::string> optimized =
+    run_regression_tb("upsample_stencil_opt");
+
+  std::vector<std::string> naive =
+    run_regression_tb("upsample_stencil_naive");
+
+  assert(optimized == naive);
+  assert(false);
+}
+
 void jacobi_2d_app_test() {
   App jac = jacobi2d("t0");
   jac.realize_naive("t0", 32, 28);
   jac.realize("t0", 32, 28, 1);
+
   std::vector<std::string> optimized =
     run_regression_tb("t0_opt");
 
@@ -7630,8 +7671,8 @@ int main(int argc, char** argv) {
     
     //memtile_test();
     //
-    //duplicate_upsample_test();
 
+    upsample_stencil_test();
     reduce_1d_test();
     jacobi_2d_app_test();
     denoise2d_test();
