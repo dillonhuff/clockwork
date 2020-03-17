@@ -927,20 +927,6 @@ inline void u_u_comp_write_bundle_write(hw_uint<32>& u_comp_write, u_cache& u, i
 
 
 // Operation logic
-inline void denoise2d_comp(r1_cache& r1, f_cache& f, u_cache& u, g_cache& g, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */denoise2d, int d0, int d1) {
-	// Consume: r1
-	auto r1_0_c__0_value = r1_denoise2d_comp_read_bundle_read(r1/* source_delay */, d0, d1);
-	// Consume: f
-	auto f_0_c__0_value = f_denoise2d_comp_read_bundle_read(f/* source_delay */, d0, d1);
-	// Consume: u
-	auto u_0_c__0_value = u_denoise2d_comp_read_bundle_read(u/* source_delay */, d0, d1);
-	// Consume: g
-	auto g_0_c__0_value = g_denoise2d_comp_read_bundle_read(g/* source_delay */, d0, d1);
-	auto compute_result = out_comp_dn2d(r1_0_c__0_value, f_0_c__0_value, u_0_c__0_value, g_0_c__0_value);
-	// Produce: denoise2d
-	denoise2d.write(compute_result);
-}
-
 inline void f_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */f_off_chip, f_cache& f, int d0, int d1) {
 	// Consume: f_off_chip
 	auto f_off_chip_0_c__0_value = f_off_chip.read();
@@ -975,30 +961,6 @@ inline void diff_r_comp(u_cache& u, diff_r_cache& diff_r, int d0, int d1) {
 	diff_r_diff_r_comp_write_bundle_write(compute_result, diff_r, d0, d1);
 }
 
-inline void diff_qwe_comp(u_cache& u, diff_qwe_cache& diff_qwe, int d0, int d1) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_qwe_comp_read_bundle_read(u/* source_delay */, d0, d1);
-	auto compute_result = diff_b(u_0_c__0_value);
-	// Produce: diff_qwe
-	diff_qwe_diff_qwe_comp_write_bundle_write(compute_result, diff_qwe, d0, d1);
-}
-
-inline void diff_l_comp(u_cache& u, diff_l_cache& diff_l, int d0, int d1) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_l_comp_read_bundle_read(u/* source_delay */, d0, d1);
-	auto compute_result = diff_b(u_0_c__0_value);
-	// Produce: diff_l
-	diff_l_diff_l_comp_write_bundle_write(compute_result, diff_l, d0, d1);
-}
-
-inline void r1_comp(r0_cache& r0, r1_cache& r1, int d0, int d1) {
-	// Consume: r0
-	auto r0_0_c__0_value = r0_r1_comp_read_bundle_read(r0/* source_delay */, d0, d1);
-	auto compute_result = r1_comp(r0_0_c__0_value);
-	// Produce: r1
-	r1_r1_comp_write_bundle_write(compute_result, r1, d0, d1);
-}
-
 inline void diff_d_comp(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
 	// Consume: u
 	auto u_0_c__0_value = u_diff_d_comp_read_bundle_read(u/* source_delay */, d0, d1);
@@ -1019,6 +981,44 @@ inline void g_comp(diff_qwe_cache& diff_qwe, diff_d_cache& diff_d, diff_l_cache&
 	auto compute_result = mag_dn2(diff_qwe_0_c__0_value, diff_d_0_c__0_value, diff_l_0_c__0_value, diff_r_0_c__0_value);
 	// Produce: g
 	g_g_comp_write_bundle_write(compute_result, g, d0, d1);
+}
+
+inline void r1_comp(r0_cache& r0, r1_cache& r1, int d0, int d1) {
+	// Consume: r0
+	auto r0_0_c__0_value = r0_r1_comp_read_bundle_read(r0/* source_delay */, d0, d1);
+	auto compute_result = r1_comp(r0_0_c__0_value);
+	// Produce: r1
+	r1_r1_comp_write_bundle_write(compute_result, r1, d0, d1);
+}
+
+inline void denoise2d_comp(r1_cache& r1, f_cache& f, u_cache& u, g_cache& g, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */denoise2d, int d0, int d1) {
+	// Consume: r1
+	auto r1_0_c__0_value = r1_denoise2d_comp_read_bundle_read(r1/* source_delay */, d0, d1);
+	// Consume: f
+	auto f_0_c__0_value = f_denoise2d_comp_read_bundle_read(f/* source_delay */, d0, d1);
+	// Consume: u
+	auto u_0_c__0_value = u_denoise2d_comp_read_bundle_read(u/* source_delay */, d0, d1);
+	// Consume: g
+	auto g_0_c__0_value = g_denoise2d_comp_read_bundle_read(g/* source_delay */, d0, d1);
+	auto compute_result = out_comp_dn2d(r1_0_c__0_value, f_0_c__0_value, u_0_c__0_value, g_0_c__0_value);
+	// Produce: denoise2d
+	denoise2d.write(compute_result);
+}
+
+inline void diff_l_comp(u_cache& u, diff_l_cache& diff_l, int d0, int d1) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_l_comp_read_bundle_read(u/* source_delay */, d0, d1);
+	auto compute_result = diff_b(u_0_c__0_value);
+	// Produce: diff_l
+	diff_l_diff_l_comp_write_bundle_write(compute_result, diff_l, d0, d1);
+}
+
+inline void diff_qwe_comp(u_cache& u, diff_qwe_cache& diff_qwe, int d0, int d1) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_qwe_comp_read_bundle_read(u/* source_delay */, d0, d1);
+	auto compute_result = diff_b(u_0_c__0_value);
+	// Produce: diff_qwe
+	diff_qwe_diff_qwe_comp_write_bundle_write(compute_result, diff_qwe, d0, d1);
 }
 
 // Driver function
@@ -1120,53 +1120,44 @@ for (int c0 = -2; c0 <= 35; c0++) {
 }
 
 */
-	for (int c0 = -2; c0 <= 35; c0++) {
-	  for (int c1 = -2; c1 <= 35; c1++) {
-	
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS pipeline II=1
-	#endif // __VIVADO_SYNTH__
-	
-	    if ((2 <= c1 && c1 <= 35) && (2 <= c0 && c0 <= 35)) {
-	      f_comp(f_off_chip, f, c1, c0);
+	for (int c0 = -2; c0 <= 35; c0 += 1) {
+	  if (c0 >= 2) {
+	    if (c0 <= 31)
+	      for (int c1 = -2; c1 <= 1; c1 += 1) {
+	        u_comp(u_off_chip, u, c1, c0);
+	        if (c1 >= 0) {
+	          diff_r_comp(u, diff_r, c1 - 1, c0 - 1);
+	          diff_qwe_comp(u, diff_qwe, c1 - 1, c0 - 1);
+	          diff_l_comp(u, diff_l, c1 - 1, c0 - 1);
+	          diff_d_comp(u, diff_d, c1 - 1, c0 - 1);
+	          g_comp(diff_qwe, diff_d, diff_l, diff_r, g, c1 - 1, c0 - 1);
+	        }
+	      }
+	    for (int c1 = 2; c1 <= 35; c1 += 1) {
+	      f_comp(f_off_chip, f, c1 - 2, c0 - 2);
+	      if (c0 <= 31 && c1 <= 31) {
+	        u_comp(u_off_chip, u, c1, c0);
+	        r0_comp(u, f, r0, c1 - 2, c0 - 2);
+	        diff_r_comp(u, diff_r, c1 - 1, c0 - 1);
+	        diff_qwe_comp(u, diff_qwe, c1 - 1, c0 - 1);
+	        diff_l_comp(u, diff_l, c1 - 1, c0 - 1);
+	        diff_d_comp(u, diff_d, c1 - 1, c0 - 1);
+	        r1_comp(r0, r1, c1 - 2, c0 - 2);
+	        g_comp(diff_qwe, diff_d, diff_l, diff_r, g, c1 - 1, c0 - 1);
+	        denoise2d_comp(r1, f, u, g, denoise2d, c1 - 2, c0 - 2);
+	      }
 	    }
-	
-	    if ((-2 <= c1 && c1 <= 31) && (-2 <= c0 && c0 <= 31)) {
+	  } else {
+	    for (int c1 = -2; c1 <= 31; c1 += 1) {
 	      u_comp(u_off_chip, u, c1, c0);
+	      if (c0 >= 0 && c1 >= 0) {
+	        diff_r_comp(u, diff_r, c1 - 1, c0 - 1);
+	        diff_qwe_comp(u, diff_qwe, c1 - 1, c0 - 1);
+	        diff_l_comp(u, diff_l, c1 - 1, c0 - 1);
+	        diff_d_comp(u, diff_d, c1 - 1, c0 - 1);
+	        g_comp(diff_qwe, diff_d, diff_l, diff_r, g, c1 - 1, c0 - 1);
+	      }
 	    }
-	
-	    if ((2 <= c1 && c1 <= 31) && (2 <= c0 && c0 <= 31)) {
-	      r0_comp(u, f, r0, c1, c0);
-	    }
-	
-	    if ((0 <= c1 && c1 <= 31) && (0 <= c0 && c0 <= 31)) {
-	      diff_r_comp(u, diff_r, c1, c0);
-	    }
-	
-	    if ((0 <= c1 && c1 <= 31) && (0 <= c0 && c0 <= 31)) {
-	      diff_qwe_comp(u, diff_qwe, c1, c0);
-	    }
-	
-	    if ((0 <= c1 && c1 <= 31) && (0 <= c0 && c0 <= 31)) {
-	      diff_l_comp(u, diff_l, c1, c0);
-	    }
-	
-	    if ((0 <= c1 && c1 <= 31) && (0 <= c0 && c0 <= 31)) {
-	      diff_d_comp(u, diff_d, c1, c0);
-	    }
-	
-	    if ((2 <= c1 && c1 <= 31) && (2 <= c0 && c0 <= 31)) {
-	      r1_comp(r0, r1, c1, c0);
-	    }
-	
-	    if ((0 <= c1 && c1 <= 31) && (0 <= c0 && c0 <= 31)) {
-	      g_comp(diff_qwe, diff_d, diff_l, diff_r, g, c1, c0);
-	    }
-	
-	    if ((2 <= c1 && c1 <= 31) && (2 <= c0 && c0 <= 31)) {
-	      denoise2d_comp(r1, f, u, g, denoise2d, c1, c0);
-	    }
-	
 	  }
 	}
 	

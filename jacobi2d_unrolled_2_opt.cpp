@@ -408,22 +408,11 @@ for (int c0 = -1; c0 <= 1024; c0++) {
 }
 
 */
-	for (int c0 = -1; c0 <= 1024; c0++) {
-	  for (int c1 = -1; c1 <= 512; c1++) {
-	
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS pipeline II=1
-	#endif // __VIVADO_SYNTH__
-	
-	    if ((-1 <= c1 && c1 <= 512) && (-1 <= c0 && c0 <= 1024)) {
-	      t1_comp(t1_arg, t1, c1, c0);
-	    }
-	
-	    if ((1 <= c1 && c1 <= 512) && (1 <= c0 && c0 <= 1024)) {
-	      jacobi2d_unrolled_2_comp(t1, jacobi2d_unrolled_2, c1, c0);
-	    }
-	
+	for (int c0 = -1; c0 <= 1024; c0 += 1)
+	  for (int c1 = -1; c1 <= 512; c1 += 1) {
+	    t1_comp(t1_arg, t1, c1, c0);
+	    if (c0 >= 1 && c1 >= 1)
+	      jacobi2d_unrolled_2_comp(t1, jacobi2d_unrolled_2, c1 - 1, c0 - 1);
 	  }
-	}
 	
 }
