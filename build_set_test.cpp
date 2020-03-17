@@ -1372,14 +1372,14 @@ void generate_code_prefix(CodegenOptions& options,
     generate_stack_bank(options, out, b.second.first, b.second.second, buf);
   }
 
-  for (auto inpt : buf.get_in_ports()) {
-    generate_memory_struct(options, out, inpt, buf);
-  }
+  //for (auto inpt : buf.get_in_ports()) {
+    //generate_memory_struct(options, out, inpt, buf);
+  //}
 
   out << "struct " << buf.name << "_cache {" << endl;
-  for (auto inpt : buf.get_in_ports()) {
-    out << tab(1) << inpt << "_cache " << inpt << ";" << endl;
-  }
+  //for (auto inpt : buf.get_in_ports()) {
+    //out << tab(1) << inpt << "_cache " << inpt << ";" << endl;
+  //}
 
   for (auto b : buf.stack_banks) {
     out << tab(1) << b.second.first << "_to_" << b.second.second << "_cache " << b.first << ";" << endl;
@@ -1397,7 +1397,8 @@ void generate_code_prefix(CodegenOptions& options,
 
     out << "inline void " << inpt << "_write(";
     out << comma_list(args) << ") {" << endl;
-    out << "\t" + buf.name + "." + inpt + ".push(" + inpt + ");" << endl;
+
+    //out << "\t" + buf.name + "." + inpt + ".push(" + inpt + ");" << endl;
 
     for (auto sb : buf.receiver_banks(inpt)) {
       out << tab(1) << buf.name << "." << sb << ".push(" << inpt << ");" << endl;
