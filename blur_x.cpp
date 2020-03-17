@@ -216,6 +216,9 @@ struct I_I_id0_4_cache {
 
 struct I_cache {
   I_I_id0_4_cache I_I_id0_4;
+  I_I_id0_4_to_I_out_blur_30_1_cache bank_I_I_id0_4_to_I_out_blur_30_1;
+  I_I_id0_4_to_I_out_blur_30_2_cache bank_I_I_id0_4_to_I_out_blur_30_2;
+  I_I_id0_4_to_I_out_blur_30_3_cache bank_I_I_id0_4_to_I_out_blur_30_3;
 };
 
 

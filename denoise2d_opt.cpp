@@ -2123,20 +2123,20 @@ inline void r0_comp(u_cache& u, f_cache& f, r0_cache& r0, int d0, int d1) {
 	r0_r0_comp_write_bundle_write(compute_result, r0, d0, d1);
 }
 
-inline void diff_r_comp(u_cache& u, diff_r_cache& diff_r, int d0, int d1) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_r_comp_read_bundle_read(u/* source_delay */, d0, d1);
-	auto compute_result = diff_b(u_0_c__0_value);
-	// Produce: diff_r
-	diff_r_diff_r_comp_write_bundle_write(compute_result, diff_r, d0, d1);
-}
-
 inline void diff_qwe_comp(u_cache& u, diff_qwe_cache& diff_qwe, int d0, int d1) {
 	// Consume: u
 	auto u_0_c__0_value = u_diff_qwe_comp_read_bundle_read(u/* source_delay */, d0, d1);
 	auto compute_result = diff_b(u_0_c__0_value);
 	// Produce: diff_qwe
 	diff_qwe_diff_qwe_comp_write_bundle_write(compute_result, diff_qwe, d0, d1);
+}
+
+inline void diff_r_comp(u_cache& u, diff_r_cache& diff_r, int d0, int d1) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_r_comp_read_bundle_read(u/* source_delay */, d0, d1);
+	auto compute_result = diff_b(u_0_c__0_value);
+	// Produce: diff_r
+	diff_r_diff_r_comp_write_bundle_write(compute_result, diff_r, d0, d1);
 }
 
 inline void diff_l_comp(u_cache& u, diff_l_cache& diff_l, int d0, int d1) {

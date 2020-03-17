@@ -186,6 +186,9 @@ struct M_get_input_0_cache {
 
 struct M_cache {
   M_get_input_0_cache M_get_input_0;
+  M_get_input_0_to_M_compute_output_3_cache bank_M_get_input_0_to_M_compute_output_3;
+  M_get_input_0_to_M_compute_output_4_cache bank_M_get_input_0_to_M_compute_output_4;
+  M_get_input_0_to_M_compute_output_5_cache bank_M_get_input_0_to_M_compute_output_5;
 };
 
 

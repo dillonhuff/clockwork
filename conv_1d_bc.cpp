@@ -2,7 +2,7 @@
 
 #include "hw_classes.h"
 
-struct M_write_4_to_M_read0_1_cache {
+struct M_write_0_to_M_read0_3_cache {
 	// Capacity: 3
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -37,7 +37,7 @@ struct M_write_4_to_M_read0_1_cache {
 			return f4.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in M_write_4_to_M_read0_1_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in M_write_0_to_M_read0_3_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -55,7 +55,7 @@ struct M_write_4_to_M_read0_1_cache {
 
 };
 
-struct M_write_4_to_M_read0_2_cache {
+struct M_write_0_to_M_read0_4_cache {
 	// Capacity: 3
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -81,7 +81,7 @@ struct M_write_4_to_M_read0_2_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in M_write_4_to_M_read0_2_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in M_write_0_to_M_read0_4_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -98,7 +98,7 @@ struct M_write_4_to_M_read0_2_cache {
 
 };
 
-struct M_write_4_to_M_read0_3_cache {
+struct M_write_0_to_M_read0_5_cache {
 	// Capacity: 3
 	// Parition [0, 0] capacity = 1
 	fifo<hw_uint<32> , 1> f1;
@@ -115,7 +115,7 @@ struct M_write_4_to_M_read0_3_cache {
 			return f1.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in M_write_4_to_M_read0_3_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in M_write_0_to_M_read0_5_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -131,7 +131,7 @@ struct M_write_4_to_M_read0_3_cache {
 
 };
 
-struct M_write_4_cache {
+struct M_write_0_cache {
 	// Capacity: 3
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -166,7 +166,7 @@ struct M_write_4_cache {
 			return f4.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in M_write_4_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in M_write_0_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -185,61 +185,64 @@ struct M_write_4_cache {
 };
 
 struct M_cache {
-  M_write_4_cache M_write_4;
+  M_write_0_cache M_write_0;
+  M_write_0_to_M_read0_3_cache bank_M_write_0_to_M_read0_3;
+  M_write_0_to_M_read0_4_cache bank_M_write_0_to_M_read0_4;
+  M_write_0_to_M_read0_5_cache bank_M_write_0_to_M_read0_5;
 };
 
 
 
-inline void M_write_4_write(hw_uint<32> & M_write_4, M_cache& M, int root, int p) {
-	M.M_write_4.push(M_write_4);
-}
-
-inline hw_uint<32>  M_read0_1_select(M_cache& M, int root, int c) {
-  // qpd = { read0[root, c] -> 2 : root = 0 and 0 <= c <= 7; read0[root, c] -> 1 : root = 0 and c = 8 }
-	hw_uint<32>  value_M_write_4 = M.M_write_4.peek(/* Needs general delay string */ (root == 0 && c >= 0 && 7 - c >= 0) ? (2) : (-8 + c == 0 && root == 0) ? (1) : 0);
-	return value_M_write_4;
-}
-
-inline hw_uint<32>  M_read0_2_select(M_cache& M, int root, int c) {
-  // qpd = { read0[root, c] -> 1 : root = 0 and 0 <= c <= 7 }
-	hw_uint<32>  value_M_write_4 = M.M_write_4.peek(/* Needs general delay string */ (root == 0 && c >= 0 && 7 - c >= 0) ? (1) : 0);
-	return value_M_write_4;
+inline void M_write_0_write(hw_uint<32> & M_write_0, M_cache& M, int root, int p) {
+	M.M_write_0.push(M_write_0);
 }
 
 inline hw_uint<32>  M_read0_3_select(M_cache& M, int root, int c) {
+  // qpd = { read0[root, c] -> 2 : root = 0 and 0 <= c <= 7; read0[root, c] -> 1 : root = 0 and c = 8 }
+	hw_uint<32>  value_M_write_0 = M.M_write_0.peek(/* Needs general delay string */ (root == 0 && c >= 0 && 7 - c >= 0) ? (2) : (-8 + c == 0 && root == 0) ? (1) : 0);
+	return value_M_write_0;
+}
+
+inline hw_uint<32>  M_read0_4_select(M_cache& M, int root, int c) {
+  // qpd = { read0[root, c] -> 1 : root = 0 and 0 <= c <= 7 }
+	hw_uint<32>  value_M_write_0 = M.M_write_0.peek(/* Needs general delay string */ (root == 0 && c >= 0 && 7 - c >= 0) ? (1) : 0);
+	return value_M_write_0;
+}
+
+inline hw_uint<32>  M_read0_5_select(M_cache& M, int root, int c) {
   // qpd = {  }
-	hw_uint<32>  value_M_write_4 = M.M_write_4.peek_0();
-	return value_M_write_4;
+	hw_uint<32>  value_M_write_0 = M.M_write_0.peek_0();
+	return value_M_write_0;
 }
 
 // # of bundles = 2
 // read0_read
-//	M_read0_1
-//	M_read0_2
 //	M_read0_3
+//	M_read0_4
+//	M_read0_5
 inline hw_uint<96> M_read0_read_bundle_read(M_cache& M, int root, int c) {
 	hw_uint<96> result;
-	hw_uint<32>  M_read0_1_res = M_read0_1_select(M, root, c);
-	set_at<0, 96>(result, M_read0_1_res);
-	hw_uint<32>  M_read0_2_res = M_read0_2_select(M, root, c);
-	set_at<32, 96>(result, M_read0_2_res);
 	hw_uint<32>  M_read0_3_res = M_read0_3_select(M, root, c);
-	set_at<64, 96>(result, M_read0_3_res);
+	set_at<0, 96>(result, M_read0_3_res);
+	hw_uint<32>  M_read0_4_res = M_read0_4_select(M, root, c);
+	set_at<32, 96>(result, M_read0_4_res);
+	hw_uint<32>  M_read0_5_res = M_read0_5_select(M, root, c);
+	set_at<64, 96>(result, M_read0_5_res);
 	return result;
 }
 
 // write_write
-//	M_write_4
+//	M_write_0
 inline void M_write_write_bundle_write(hw_uint<32>& write_write, M_cache& M, int root, int p) {
-	hw_uint<32>  M_write_4_res = write_write.extract<0, 31>();
-	M_write_4_write(M_write_4_res, M, root, p);
+	hw_uint<32>  M_write_0_res = write_write.extract<0, 31>();
+	M_write_0_write(M_write_0_res, M, root, p);
 }
 
 
 
 #include "hw_classes.h"
 
-struct T_read0_0_to_T_compute_out_7_cache {
+struct T_read0_2_to_T_compute_out_7_cache {
 	// Capacity: 1
 	// Parition [0, 0] capacity = 1
 	fifo<hw_uint<96>, 1> f1;
@@ -256,7 +259,7 @@ struct T_read0_0_to_T_compute_out_7_cache {
 			return f1.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in T_read0_0_to_T_compute_out_7_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in T_read0_2_to_T_compute_out_7_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -272,7 +275,7 @@ struct T_read0_0_to_T_compute_out_7_cache {
 
 };
 
-struct T_read0_0_cache {
+struct T_read0_2_cache {
 	// Capacity: 1
 	fifo<hw_uint<96>, 1> f;
 	inline hw_uint<96> peek(const int offset) {
@@ -295,19 +298,20 @@ struct T_read0_0_cache {
 };
 
 struct T_cache {
-  T_read0_0_cache T_read0_0;
+  T_read0_2_cache T_read0_2;
+  T_read0_2_to_T_compute_out_7_cache bank_T_read0_2_to_T_compute_out_7;
 };
 
 
 
-inline void T_read0_0_write(hw_uint<96>& T_read0_0, T_cache& T, int root, int c) {
-	T.T_read0_0.push(T_read0_0);
+inline void T_read0_2_write(hw_uint<96>& T_read0_2, T_cache& T, int root, int c) {
+	T.T_read0_2.push(T_read0_2);
 }
 
 inline hw_uint<96> T_compute_out_7_select(T_cache& T, int root, int c) {
   // qpd = {  }
-	hw_uint<96> value_T_read0_0 = T.T_read0_0.peek_0();
-	return value_T_read0_0;
+	hw_uint<96> value_T_read0_2 = T.T_read0_2.peek_0();
+	return value_T_read0_2;
 }
 
 // # of bundles = 2
@@ -321,10 +325,10 @@ inline hw_uint<96> T_compute_out_read_bundle_read(T_cache& T, int root, int c) {
 }
 
 // read0_write
-//	T_read0_0
+//	T_read0_2
 inline void T_read0_write_bundle_write(hw_uint<96>& read0_write, T_cache& T, int root, int c) {
-	hw_uint<96> T_read0_0_res = read0_write.extract<0, 95>();
-	T_read0_0_write(T_read0_0_res, T, root, c);
+	hw_uint<96> T_read0_2_res = read0_write.extract<0, 95>();
+	T_read0_2_write(T_read0_2_res, T, root, c);
 }
 
 
@@ -332,18 +336,18 @@ inline void T_read0_write_bundle_write(hw_uint<96>& read0_write, T_cache& T, int
 
 
 // Operation logic
-inline void read0(M_cache& M, T_cache& T, int root, int c) {
-	// Consume: M
-	auto M_min_lp_c_c__9_rp__value = M_read0_read_bundle_read(M/* source_delay */, root, c);
-	// Produce: T
-	T_read0_write_bundle_write(M_min_lp_c_c__9_rp__value, T, root, c);
-}
-
 inline void write(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, M_cache& M, int root, int p) {
 	// Consume: in
 	auto in_p_value = in.read();
 	// Produce: M
 	M_write_write_bundle_write(in_p_value, M, root, p);
+}
+
+inline void read0(M_cache& M, T_cache& T, int root, int c) {
+	// Consume: M
+	auto M_min_lp_c_c__9_rp__value = M_read0_read_bundle_read(M/* source_delay */, root, c);
+	// Produce: T
+	T_read0_write_bundle_write(M_min_lp_c_c__9_rp__value, T, root, c);
 }
 
 inline void compute_out(T_cache& T, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */out, int root, int c) {

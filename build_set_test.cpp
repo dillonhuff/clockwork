@@ -7607,6 +7607,7 @@ int main(int argc, char** argv) {
     //
     //duplicate_upsample_test();
 
+    reduce_1d_test();
     jacobi_2d_app_test();
     denoise2d_test();
     //assert(false);
@@ -7627,7 +7628,6 @@ int main(int argc, char** argv) {
     conv3x3_app_unrolled_test();
     upsample2d_test();
     conv3x3_app_unrolled_uneven_test();
-    reduce_1d_test();
     downsample2d_test();
     updown_merge_test();
     sobel_test();

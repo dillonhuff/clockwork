@@ -54,6 +54,9 @@ class fifo {
 #ifdef __VIVADO_SYNTH__
 #else
       vals = (T*)malloc(sizeof(T)*Depth);
+      for (int i = 0; i < Depth; i++) {
+        vals[i] = 0;
+      }
 #endif // __VIVADO_SYNTH__
     }
 
