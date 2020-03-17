@@ -206,7 +206,7 @@ inline hw_uint<32>  M_read0_5_select(M_cache& M, int root, int c) {
   // M_read0_5 read pattern: { read0[root = 0, c] -> M[c] : 0 <= c <= 9 }
   // M_write_0 stores range: { M[i0] : 0 <= i0 <= 9 }
     // overlap with reads : { M[i0] : 0 <= i0 <= 9 }
-	auto value_M_write_0 = M.M_write_0.peek(/* Needs general delay string */ (root == 0 && c >= 0 && 7 - c >= 0) ? (2) : (-8 + c == 0 && root == 0) ? (1) : 0);
+	auto value_M_write_0 = M.bank_M_write_0_to_M_read0_5.peek(/* Needs general delay string */ (root == 0 && c >= 0 && 7 - c >= 0) ? (2) : (-8 + c == 0 && root == 0) ? (1) : 0);
 	return value_M_write_0;
 }
 
@@ -216,7 +216,7 @@ inline hw_uint<32>  M_read0_6_select(M_cache& M, int root, int c) {
   // M_read0_6 read pattern: { read0[root = 0, c] -> M[1 + c] : 0 <= c <= 8; read0[root = 0, c = 9] -> M[9] }
   // M_write_0 stores range: { M[i0] : 0 <= i0 <= 9 }
     // overlap with reads : { M[i0] : 0 < i0 <= 9; M[9] }
-	auto value_M_write_0 = M.M_write_0.peek(/* Needs general delay string */ (root == 0 && c >= 0 && 7 - c >= 0) ? (1) : 0);
+	auto value_M_write_0 = M.bank_M_write_0_to_M_read0_6.peek(/* Needs general delay string */ (root == 0 && c >= 0 && 7 - c >= 0) ? (1) : 0);
 	return value_M_write_0;
 }
 
@@ -226,7 +226,7 @@ inline hw_uint<32>  M_read0_7_select(M_cache& M, int root, int c) {
   // M_read0_7 read pattern: { read0[root = 0, c] -> M[9] : 8 <= c <= 9; read0[root = 0, c] -> M[2 + c] : 0 <= c <= 7 }
   // M_write_0 stores range: { M[i0] : 0 <= i0 <= 9 }
     // overlap with reads : { M[i0] : 2 <= i0 <= 9; M[9] }
-	auto value_M_write_0 = M.M_write_0.peek_0();
+	auto value_M_write_0 = M.bank_M_write_0_to_M_read0_7.peek_0();
 	return value_M_write_0;
 }
 
@@ -330,7 +330,7 @@ inline hw_uint<96> T_compute_out_3_select(T_cache& T, int root, int c) {
   // T_compute_out_3 read pattern: { compute_out[root = 0, c] -> T[c] : 0 <= c <= 9 }
   // T_read0_4 stores range: { T[i0] : 0 <= i0 <= 9 }
     // overlap with reads : { T[i0] : 0 <= i0 <= 9 }
-	auto value_T_read0_4 = T.T_read0_4.peek_0();
+	auto value_T_read0_4 = T.bank_T_read0_4_to_T_compute_out_3.peek_0();
 	return value_T_read0_4;
 }
 

@@ -197,6 +197,19 @@ class UBuffer {
     map<string, pair<string, string> > stack_banks;
 
 
+    string bank_between(const std::string& inpt, const std::string& outpt) const {
+
+      for (auto bs : stack_banks) {
+        if (bs.second.first == inpt && bs.second.second == outpt) {
+          return bs.first;
+        }
+      }
+
+      cout << "Error: No bank between: " << inpt << " and " << outpt << endl;
+      assert(false);
+      return "";
+    }
+
     set<string> receiver_banks(const std::string& inpt) {
       set<string> bnks;
       for (auto bs : stack_banks) {
@@ -1471,6 +1484,8 @@ void select_debug_assertions(CodegenOptions& options, std::ostream& out, const s
 
 string delay_string(CodegenOptions& options, const string& inpt, const string& outpt, UBuffer& buf) {
 
+  string bank = buf.bank_between(inpt, outpt);
+
   auto out_domain = buf.domain.at(outpt);
   auto qpd = compute_dd(buf, outpt, inpt);
   auto pieces = get_pieces(qpd);
@@ -1482,23 +1497,23 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
   if (opt_const) {
     if (!options.all_rams && is_number(dx)) {
       assert(safe_stoi(dx) >= 0);
-      value_str = inpt + ".peek_" + dx + "()";
+      value_str = bank + ".peek_" + dx + "()";
     } else {
-      value_str = inpt + ".peek" + "( /* is opt const */ " + delay_expr + ")";
+      value_str = bank + ".peek" + "( /* is opt const */ " + delay_expr + ")";
     }
   } else if (pieces.size() == 0 && !options.all_rams) {
-    value_str = inpt + ".peek_0()";
+    value_str = bank + ".peek_0()";
   } else if (pieces.size() == 1 &&
       isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
     string dx = codegen_c(pieces[0].second);
     if (!options.all_rams && is_number(dx)) {
       assert(safe_stoi(dx) >= 0);
-      value_str = inpt + ".peek_" + dx + "()";
+      value_str = bank + ".peek_" + dx + "()";
     } else {
-      value_str = inpt + ".peek" + "(/* is one piece but not a number */" + dx + ")";
+      value_str = bank + ".peek" + "(/* is one piece but not a number */" + dx + ")";
     }
   } else {
-    value_str = inpt + ".peek" + "(/* Needs general delay string */ " + delay_expr + ")";
+    value_str = bank + ".peek" + "(/* Needs general delay string */ " + delay_expr + ")";
   }
   return buf.name + "." + value_str;
 }
@@ -1510,77 +1525,68 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
 
   auto qpd = compute_dd(buf, outpt, inpt);
   out << tab(1) << "// qpd = " << str(qpd) << endl;
-  //if (buf.get_in_ports().size() == 1) {
-  if (false) {
+  cout << "Lexmax events: " << str(lex_max_events) << endl;
+  map<string, string> ms = umap_codegen_c(lex_max_events);
+  out << "\t// lexmax events: " << str(lex_max_events) << endl;
+  out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
+  vector<string> possible_ports;
+  for (auto pt : buf.get_in_ports()) {
+    out << tab(1) << "// " << pt << " stores range: " << str(range(buf.access_map.at(pt))) << endl;
+    out << tab(2) << "// overlap with reads : " << str(its(range(buf.access_map.at(pt)), range(buf.access_map.at(outpt)))) << endl;
+    auto overlap =
+      its(range(buf.access_map.at(pt)), range(buf.access_map.at(outpt)));
 
-    string inpt = *(buf.get_in_ports().begin());
-    string value_str = delay_string(options, inpt, outpt, buf);
-    out << "\t" << buf.port_type_string() << " value_" << inpt << " = " << value_str << ";" << endl;
-    out << "\treturn value_" + inpt + ";" << endl;
-
-  } else {
-    cout << "Lexmax events: " << str(lex_max_events) << endl;
-    map<string, string> ms = umap_codegen_c(lex_max_events);
-    out << "\t// lexmax events: " << str(lex_max_events) << endl;
-    out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
-    vector<string> possible_ports;
-    for (auto pt : buf.get_in_ports()) {
-      out << tab(1) << "// " << pt << " stores range: " << str(range(buf.access_map.at(pt))) << endl;
-      out << tab(2) << "// overlap with reads : " << str(its(range(buf.access_map.at(pt)), range(buf.access_map.at(outpt)))) << endl;
-      auto overlap =
-        its(range(buf.access_map.at(pt)), range(buf.access_map.at(outpt)));
-
-      if (!empty(overlap)) {
-        possible_ports.push_back(pt);
-      }
+    if (!empty(overlap)) {
+      possible_ports.push_back(pt);
     }
-
-    if (possible_ports.size() == 1) {
-      string inpt = possible_ports.at(0);
-      string peeked_val = delay_string(options, inpt, outpt, buf);
-
-      out << "\tauto value_" << inpt << " = " << peeked_val << ";\n";
-      out << "\treturn value_" << inpt << ";" << endl;
-      out << "}" << endl << endl;
-      return;
-    }
-    cout << "Done" << endl;
-    for (auto e : ms) {
-      out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
-    }
-
-    for (auto inpt : buf.get_in_ports()) {
-      string peeked_val = delay_string(options, inpt, outpt, buf);
-
-      if (options.internal) {
-        out << "\t// inpt: " << inpt << endl;
-        bool found_key = false;
-        string k_var = "";
-        for (auto k : ms) {
-          out << "\t// k = " << k.first << endl;
-          string prefix = buf.name + "_" + k.first;
-          if (is_prefix(prefix, inpt)) {
-            found_key = true;
-            k_var = k.first;
-          }
-        }
-        if (found_key) {
-          assert(k_var != "");
-          out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
-          out << "\tif (select_" + k_var + ") { return value_"+ inpt + "; }\n";
-        } else {
-          out << "//\tNo key for: " << inpt << endl;
-        }
-      } else {
-        if (contains_key(inpt, ms)) {
-          out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
-          out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
-        }
-
-      }
-    }
-    select_debug_assertions(options, out, inpt, outpt, buf);
   }
+
+  if (possible_ports.size() == 1) {
+    string inpt = possible_ports.at(0);
+    string peeked_val = delay_string(options, inpt, outpt, buf);
+
+    out << "\tauto value_" << inpt << " = " << peeked_val << ";\n";
+    out << "\treturn value_" << inpt << ";" << endl;
+    out << "}" << endl << endl;
+    return;
+  }
+  cout << "Done" << endl;
+  for (auto e : ms) {
+    out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
+  }
+
+  for (auto inpt : buf.get_in_ports()) {
+    string peeked_val = delay_string(options, inpt, outpt, buf);
+
+    if (options.internal) {
+      out << "\t// inpt: " << inpt << endl;
+      bool found_key = false;
+      string k_var = "";
+      for (auto k : ms) {
+        out << "\t// k = " << k.first << endl;
+        string prefix = buf.name + "_" + k.first;
+        if (is_prefix(prefix, inpt)) {
+          found_key = true;
+          k_var = k.first;
+        }
+      }
+      if (found_key) {
+        assert(k_var != "");
+        out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
+        out << "\tif (select_" + k_var + ") { return value_"+ inpt + "; }\n";
+      } else {
+        out << "//\tNo key for: " << inpt << endl;
+      }
+    } else {
+      if (contains_key(inpt, ms)) {
+        out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
+        out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
+      }
+
+    }
+  }
+
+  select_debug_assertions(options, out, inpt, outpt, buf);
   out << "}" << endl << endl;
 }
 

@@ -206,7 +206,7 @@ inline hw_uint<32>  M_compute_output_3_select(M_cache& M, int root, int c) {
   // M_compute_output_3 read pattern: { compute_output[root = 0, c] -> M[c] : 0 <= c <= 7 }
   // M_get_input_0 stores range: { M[i0] : 0 <= i0 <= 9 }
     // overlap with reads : { M[i0] : 0 <= i0 <= 7 }
-	auto value_M_get_input_0 = M.M_get_input_0.peek_2();
+	auto value_M_get_input_0 = M.bank_M_get_input_0_to_M_compute_output_3.peek_2();
 	return value_M_get_input_0;
 }
 
@@ -216,7 +216,7 @@ inline hw_uint<32>  M_compute_output_4_select(M_cache& M, int root, int c) {
   // M_compute_output_4 read pattern: { compute_output[root = 0, c] -> M[1 + c] : 0 <= c <= 7 }
   // M_get_input_0 stores range: { M[i0] : 0 <= i0 <= 9 }
     // overlap with reads : { M[i0] : 0 < i0 <= 8 }
-	auto value_M_get_input_0 = M.M_get_input_0.peek_1();
+	auto value_M_get_input_0 = M.bank_M_get_input_0_to_M_compute_output_4.peek_1();
 	return value_M_get_input_0;
 }
 
@@ -226,7 +226,7 @@ inline hw_uint<32>  M_compute_output_5_select(M_cache& M, int root, int c) {
   // M_compute_output_5 read pattern: { compute_output[root = 0, c] -> M[2 + c] : 0 <= c <= 7 }
   // M_get_input_0 stores range: { M[i0] : 0 <= i0 <= 9 }
     // overlap with reads : { M[i0] : 2 <= i0 <= 9 }
-	auto value_M_get_input_0 = M.M_get_input_0.peek_0();
+	auto value_M_get_input_0 = M.bank_M_get_input_0_to_M_compute_output_5.peek_0();
 	return value_M_get_input_0;
 }
 
