@@ -1108,11 +1108,26 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
   return maxdelay;
 }
 
-void generate_fifo_cache(CodegenOptions& options,
+struct stack_bank {
+  std::string& name;
+  std::string& pt_type_string;
+  vector<int> read_delays;
+  int num_readers;
+  int maxdelay;
+};
+
+void generate_stack_cache(CodegenOptions& options,
     std::ostream& out,
-    const std::string& name,
-    const std::string& pt_type_string,
-    vector<int> read_delays, const int num_readers, const int maxdelay) {
+    stack_bank& bank) {
+  auto name = bank.name;
+  auto pt_type_string = bank.pt_type_string;
+  auto read_delays = bank.read_delays;
+  auto num_readers = bank.num_readers;
+  auto maxdelay = bank.maxdelay;
+
+    //const std::string& name,
+    //const std::string& pt_type_string,
+    //vector<int> read_delays, const int num_readers, const int maxdelay) {
 
   out << "struct " << name <<  " {" << endl;
   out << "\t// Capacity: " << maxdelay + 1 << endl;
@@ -1261,7 +1276,9 @@ void generate_memory_struct(CodegenOptions& options, std::ostream& out, const st
  
   string pt_type_string = buf.port_type_string();
   string name = inpt + "_cache";
-  generate_fifo_cache(options, out, name, pt_type_string, read_delays, num_readers, maxdelay);
+  stack_bank bank{name, pt_type_string, read_delays, num_readers, maxdelay};
+  generate_stack_cache(options, out, bank);
+  //generate_stack_cache(options, out, name, pt_type_string, read_delays, num_readers, maxdelay);
 
 }
 
