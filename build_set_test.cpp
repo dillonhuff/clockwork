@@ -7040,7 +7040,7 @@ vector<vector<int> > offsets2d(const int d0l, const int d0r, const int d1l, cons
   return offs;
 }
 
-void upsample_stencil_test() {
+void upsample_stencil_1d_test() {
   App us;
   us.func2d("Img_off");
   us.func2d("Img", "id", pt("Img_off"));
@@ -7070,7 +7070,7 @@ void upsample_stencil_test() {
   }
 
   assert(optimized == naive);
-  assert(false);
+  //assert(false);
 }
 
 void jacobi_2d_app_test() {
@@ -7689,7 +7689,7 @@ int main(int argc, char** argv) {
     //memtile_test();
     //
 
-    upsample_stencil_test();
+    upsample_stencil_1d_test();
     reduce_1d_test();
     jacobi_2d_app_test();
     denoise2d_test();

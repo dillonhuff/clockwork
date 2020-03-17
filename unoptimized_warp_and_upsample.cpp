@@ -164,26 +164,7 @@ struct I_store_I_from_in_12_to_I_warped_0_conv_3_30_9_cache {
 
 };
 
-struct I_store_I_from_in_12_cache {
-	// Capacity: 4096
-	fifo<hw_uint<32> , 4096> f;
-	inline hw_uint<32>  peek(const int offset) {
-    return f.peek(4095 - offset);
-  }
-
-
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
-
-};
-
 struct I_cache {
-  I_store_I_from_in_12_cache I_store_I_from_in_12;
   I_store_I_from_in_12_to_I_warped_0_conv_3_30_10_cache bank_I_store_I_from_in_12_to_I_warped_0_conv_3_30_10;
   I_store_I_from_in_12_to_I_warped_0_conv_3_30_11_cache bank_I_store_I_from_in_12_to_I_warped_0_conv_3_30_11;
   I_store_I_from_in_12_to_I_warped_0_conv_3_30_3_cache bank_I_store_I_from_in_12_to_I_warped_0_conv_3_30_3;
@@ -198,7 +179,6 @@ struct I_cache {
 
 
 inline void I_store_I_from_in_12_write(hw_uint<32> & I_store_I_from_in_12, I_cache& I, int root, int pr, int pc) {
-	I.I_store_I_from_in_12.push(I_store_I_from_in_12);
   I.bank_I_store_I_from_in_12_to_I_warped_0_conv_3_30_10.push(I_store_I_from_in_12);
   I.bank_I_store_I_from_in_12_to_I_warped_0_conv_3_30_11.push(I_store_I_from_in_12);
   I.bank_I_store_I_from_in_12_to_I_warped_0_conv_3_30_3.push(I_store_I_from_in_12);
@@ -363,33 +343,13 @@ struct warped_0_warped_0_conv_3_30_2_to_warped_0_out_id0_1_cache {
 
 };
 
-struct warped_0_warped_0_conv_3_30_2_cache {
-	// Capacity: 3844
-	fifo<hw_uint<32> , 3844> f;
-	inline hw_uint<32>  peek(const int offset) {
-    return f.peek(3843 - offset);
-  }
-
-
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
-
-};
-
 struct warped_0_cache {
-  warped_0_warped_0_conv_3_30_2_cache warped_0_warped_0_conv_3_30_2;
   warped_0_warped_0_conv_3_30_2_to_warped_0_out_id0_1_cache bank_warped_0_warped_0_conv_3_30_2_to_warped_0_out_id0_1;
 };
 
 
 
 inline void warped_0_warped_0_conv_3_30_2_write(hw_uint<32> & warped_0_warped_0_conv_3_30_2, warped_0_cache& warped_0, int root, int br, int bc) {
-	warped_0.warped_0_warped_0_conv_3_30_2.push(warped_0_warped_0_conv_3_30_2);
   warped_0.bank_warped_0_warped_0_conv_3_30_2_to_warped_0_out_id0_1.push(warped_0_warped_0_conv_3_30_2);
 }
 

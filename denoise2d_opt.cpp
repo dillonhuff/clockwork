@@ -35,37 +35,13 @@ struct diff_d_diff_d_comp_write0_to_g_rd0_cache {
 
 };
 
-struct diff_d_diff_d_comp_write0_cache {
-	// Capacity: 1
-	fifo<hw_uint<32> , 1> f;
-	inline hw_uint<32>  peek(const int offset) {
-    return f.peek(0 - offset);
-  }
-
-	inline hw_uint<32>  peek_0() {
-		return f.peek(0);
-	}
-
-
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
-
-};
-
 struct diff_d_cache {
-  diff_d_diff_d_comp_write0_cache diff_d_diff_d_comp_write0;
   diff_d_diff_d_comp_write0_to_g_rd0_cache bank_diff_d_diff_d_comp_write0_to_g_rd0;
 };
 
 
 
 inline void diff_d_diff_d_comp_write0_write(hw_uint<32> & diff_d_diff_d_comp_write0, diff_d_cache& diff_d, int d0, int d1) {
-	diff_d.diff_d_diff_d_comp_write0.push(diff_d_diff_d_comp_write0);
   diff_d.bank_diff_d_diff_d_comp_write0_to_g_rd0.push(diff_d_diff_d_comp_write0);
 }
 
@@ -133,37 +109,13 @@ struct diff_l_diff_l_comp_write0_to_g_rd0_cache {
 
 };
 
-struct diff_l_diff_l_comp_write0_cache {
-	// Capacity: 1
-	fifo<hw_uint<32> , 1> f;
-	inline hw_uint<32>  peek(const int offset) {
-    return f.peek(0 - offset);
-  }
-
-	inline hw_uint<32>  peek_0() {
-		return f.peek(0);
-	}
-
-
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
-
-};
-
 struct diff_l_cache {
-  diff_l_diff_l_comp_write0_cache diff_l_diff_l_comp_write0;
   diff_l_diff_l_comp_write0_to_g_rd0_cache bank_diff_l_diff_l_comp_write0_to_g_rd0;
 };
 
 
 
 inline void diff_l_diff_l_comp_write0_write(hw_uint<32> & diff_l_diff_l_comp_write0, diff_l_cache& diff_l, int d0, int d1) {
-	diff_l.diff_l_diff_l_comp_write0.push(diff_l_diff_l_comp_write0);
   diff_l.bank_diff_l_diff_l_comp_write0_to_g_rd0.push(diff_l_diff_l_comp_write0);
 }
 
@@ -231,37 +183,13 @@ struct diff_qwe_diff_qwe_comp_write0_to_g_rd0_cache {
 
 };
 
-struct diff_qwe_diff_qwe_comp_write0_cache {
-	// Capacity: 1
-	fifo<hw_uint<32> , 1> f;
-	inline hw_uint<32>  peek(const int offset) {
-    return f.peek(0 - offset);
-  }
-
-	inline hw_uint<32>  peek_0() {
-		return f.peek(0);
-	}
-
-
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
-
-};
-
 struct diff_qwe_cache {
-  diff_qwe_diff_qwe_comp_write0_cache diff_qwe_diff_qwe_comp_write0;
   diff_qwe_diff_qwe_comp_write0_to_g_rd0_cache bank_diff_qwe_diff_qwe_comp_write0_to_g_rd0;
 };
 
 
 
 inline void diff_qwe_diff_qwe_comp_write0_write(hw_uint<32> & diff_qwe_diff_qwe_comp_write0, diff_qwe_cache& diff_qwe, int d0, int d1) {
-	diff_qwe.diff_qwe_diff_qwe_comp_write0.push(diff_qwe_diff_qwe_comp_write0);
   diff_qwe.bank_diff_qwe_diff_qwe_comp_write0_to_g_rd0.push(diff_qwe_diff_qwe_comp_write0);
 }
 
@@ -329,37 +257,13 @@ struct diff_r_diff_r_comp_write0_to_g_rd0_cache {
 
 };
 
-struct diff_r_diff_r_comp_write0_cache {
-	// Capacity: 1
-	fifo<hw_uint<32> , 1> f;
-	inline hw_uint<32>  peek(const int offset) {
-    return f.peek(0 - offset);
-  }
-
-	inline hw_uint<32>  peek_0() {
-		return f.peek(0);
-	}
-
-
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
-
-};
-
 struct diff_r_cache {
-  diff_r_diff_r_comp_write0_cache diff_r_diff_r_comp_write0;
   diff_r_diff_r_comp_write0_to_g_rd0_cache bank_diff_r_diff_r_comp_write0_to_g_rd0;
 };
 
 
 
 inline void diff_r_diff_r_comp_write0_write(hw_uint<32> & diff_r_diff_r_comp_write0, diff_r_cache& diff_r, int d0, int d1) {
-	diff_r.diff_r_diff_r_comp_write0.push(diff_r_diff_r_comp_write0);
   diff_r.bank_diff_r_diff_r_comp_write0_to_g_rd0.push(diff_r_diff_r_comp_write0);
 }
 
@@ -460,41 +364,7 @@ struct f_f_comp_write0_to_r0_rd0_cache {
 
 };
 
-struct f_f_comp_write0_cache {
-	// Capacity: 1
-	// Parition [0, 0] capacity = 1
-	fifo<hw_uint<32> , 1> f1;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f1.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f1.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in f_f_comp_write0_cache: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f1.push(value);
-	}
-
-};
-
 struct f_cache {
-  f_f_comp_write0_cache f_f_comp_write0;
   f_f_comp_write0_to_denoise2d_rd0_cache bank_f_f_comp_write0_to_denoise2d_rd0;
   f_f_comp_write0_to_r0_rd0_cache bank_f_f_comp_write0_to_r0_rd0;
 };
@@ -502,7 +372,6 @@ struct f_cache {
 
 
 inline void f_f_comp_write0_write(hw_uint<32> & f_f_comp_write0, f_cache& f, int d0, int d1) {
-	f.f_f_comp_write0.push(f_f_comp_write0);
   f.bank_f_f_comp_write0_to_denoise2d_rd0.push(f_f_comp_write0);
   f.bank_f_f_comp_write0_to_r0_rd0.push(f_f_comp_write0);
 }
@@ -759,111 +628,7 @@ struct g_g_comp_write0_to_denoise2d_rd3_cache {
 
 };
 
-struct g_g_comp_write0_cache {
-	// Capacity: 66
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 2) capacity = 1
-	fifo<hw_uint<32> , 1> f2;
-	// Parition [2, 32) capacity = 30
-	fifo<hw_uint<32> , 30> f3;
-	// Parition [32, 33) capacity = 1
-	fifo<hw_uint<32> , 1> f4;
-	// Parition [33, 34) capacity = 1
-	fifo<hw_uint<32> , 1> f5;
-	// Parition [34, 35) capacity = 1
-	fifo<hw_uint<32> , 1> f6;
-	// Parition [35, 65) capacity = 30
-	fifo<hw_uint<32> , 30> f7;
-	// Parition [65, 65] capacity = 1
-	fifo<hw_uint<32> , 1> f8;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f0.back();
-	}
-
-	inline hw_uint<32>  peek_1() {
-		return f2.back();
-	}
-
-	inline hw_uint<32>  peek_31() {
-		return f3.back();
-	}
-
-	inline hw_uint<32>  peek_32() {
-		return f4.back();
-	}
-
-	inline hw_uint<32>  peek_33() {
-		return f5.back();
-	}
-
-	inline hw_uint<32>  peek_34() {
-		return f6.back();
-	}
-
-	inline hw_uint<32>  peek_64() {
-		return f7.back();
-	}
-
-	inline hw_uint<32>  peek_65() {
-		return f8.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 1) {
-			return f2.back();
-		}
-		if (offset == 31) {
-			return f3.back();
-		}
-		if (offset == 32) {
-			return f4.back();
-		}
-		if (offset == 33) {
-			return f5.back();
-		}
-		if (offset == 34) {
-			return f6.back();
-		}
-		if (offset == 64) {
-			return f7.back();
-		}
-		if (offset == 65) {
-			return f8.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in g_g_comp_write0_cache: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f8.push(f7.back());
-		f7.push(f6.back());
-		f6.push(f5.back());
-		f5.push(f4.back());
-		f4.push(f3.back());
-		f3.push(f2.back());
-		f2.push(f0.back());
-		f0.push(value);
-	}
-
-};
-
 struct g_cache {
-  g_g_comp_write0_cache g_g_comp_write0;
   g_g_comp_write0_to_denoise2d_rd0_cache bank_g_g_comp_write0_to_denoise2d_rd0;
   g_g_comp_write0_to_denoise2d_rd1_cache bank_g_g_comp_write0_to_denoise2d_rd1;
   g_g_comp_write0_to_denoise2d_rd2_cache bank_g_g_comp_write0_to_denoise2d_rd2;
@@ -873,7 +638,6 @@ struct g_cache {
 
 
 inline void g_g_comp_write0_write(hw_uint<32> & g_g_comp_write0, g_cache& g, int d0, int d1) {
-	g.g_g_comp_write0.push(g_g_comp_write0);
   g.bank_g_g_comp_write0_to_denoise2d_rd0.push(g_g_comp_write0);
   g.bank_g_g_comp_write0_to_denoise2d_rd1.push(g_g_comp_write0);
   g.bank_g_g_comp_write0_to_denoise2d_rd2.push(g_g_comp_write0);
@@ -983,37 +747,13 @@ struct r0_r0_comp_write0_to_r1_rd0_cache {
 
 };
 
-struct r0_r0_comp_write0_cache {
-	// Capacity: 1
-	fifo<hw_uint<32> , 1> f;
-	inline hw_uint<32>  peek(const int offset) {
-    return f.peek(0 - offset);
-  }
-
-	inline hw_uint<32>  peek_0() {
-		return f.peek(0);
-	}
-
-
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
-
-};
-
 struct r0_cache {
-  r0_r0_comp_write0_cache r0_r0_comp_write0;
   r0_r0_comp_write0_to_r1_rd0_cache bank_r0_r0_comp_write0_to_r1_rd0;
 };
 
 
 
 inline void r0_r0_comp_write0_write(hw_uint<32> & r0_r0_comp_write0, r0_cache& r0, int d0, int d1) {
-	r0.r0_r0_comp_write0.push(r0_r0_comp_write0);
   r0.bank_r0_r0_comp_write0_to_r1_rd0.push(r0_r0_comp_write0);
 }
 
@@ -1081,37 +821,13 @@ struct r1_r1_comp_write0_to_denoise2d_rd0_cache {
 
 };
 
-struct r1_r1_comp_write0_cache {
-	// Capacity: 1
-	fifo<hw_uint<32> , 1> f;
-	inline hw_uint<32>  peek(const int offset) {
-    return f.peek(0 - offset);
-  }
-
-	inline hw_uint<32>  peek_0() {
-		return f.peek(0);
-	}
-
-
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
-
-};
-
 struct r1_cache {
-  r1_r1_comp_write0_cache r1_r1_comp_write0;
   r1_r1_comp_write0_to_denoise2d_rd0_cache bank_r1_r1_comp_write0_to_denoise2d_rd0;
 };
 
 
 
 inline void r1_r1_comp_write0_write(hw_uint<32> & r1_r1_comp_write0, r1_cache& r1, int d0, int d1) {
-	r1.r1_r1_comp_write0.push(r1_r1_comp_write0);
   r1.bank_r1_r1_comp_write0_to_denoise2d_rd0.push(r1_r1_comp_write0);
 }
 
@@ -1825,151 +1541,7 @@ struct u_u_comp_write0_to_r0_rd0_cache {
 
 };
 
-struct u_u_comp_write0_cache {
-	// Capacity: 105
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 2) capacity = 1
-	fifo<hw_uint<32> , 1> f2;
-	// Parition [2, 34) capacity = 32
-	fifo<hw_uint<32> , 32> f3;
-	// Parition [34, 35) capacity = 1
-	fifo<hw_uint<32> , 1> f4;
-	// Parition [35, 36) capacity = 1
-	fifo<hw_uint<32> , 1> f6;
-	// Parition [36, 37) capacity = 1
-	fifo<hw_uint<32> , 1> f8;
-	// Parition [37, 69) capacity = 32
-	fifo<hw_uint<32> , 32> f9;
-	// Parition [69, 70) capacity = 1
-	fifo<hw_uint<32> , 1> f10;
-	// Parition [70, 71) capacity = 1
-	fifo<hw_uint<32> , 1> f12;
-	// Parition [71, 72) capacity = 1
-	fifo<hw_uint<32> , 1> f14;
-	// Parition [72, 104) capacity = 32
-	fifo<hw_uint<32> , 32> f15;
-	// Parition [104, 104] capacity = 1
-	fifo<hw_uint<32> , 1> f16;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f0.back();
-	}
-
-	inline hw_uint<32>  peek_1() {
-		return f2.back();
-	}
-
-	inline hw_uint<32>  peek_33() {
-		return f3.back();
-	}
-
-	inline hw_uint<32>  peek_34() {
-		return f4.back();
-	}
-
-	inline hw_uint<32>  peek_35() {
-		return f6.back();
-	}
-
-	inline hw_uint<32>  peek_36() {
-		return f8.back();
-	}
-
-	inline hw_uint<32>  peek_68() {
-		return f9.back();
-	}
-
-	inline hw_uint<32>  peek_69() {
-		return f10.back();
-	}
-
-	inline hw_uint<32>  peek_70() {
-		return f12.back();
-	}
-
-	inline hw_uint<32>  peek_71() {
-		return f14.back();
-	}
-
-	inline hw_uint<32>  peek_103() {
-		return f15.back();
-	}
-
-	inline hw_uint<32>  peek_104() {
-		return f16.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 1) {
-			return f2.back();
-		}
-		if (offset == 33) {
-			return f3.back();
-		}
-		if (offset == 34) {
-			return f4.back();
-		}
-		if (offset == 35) {
-			return f6.back();
-		}
-		if (offset == 36) {
-			return f8.back();
-		}
-		if (offset == 68) {
-			return f9.back();
-		}
-		if (offset == 69) {
-			return f10.back();
-		}
-		if (offset == 70) {
-			return f12.back();
-		}
-		if (offset == 71) {
-			return f14.back();
-		}
-		if (offset == 103) {
-			return f15.back();
-		}
-		if (offset == 104) {
-			return f16.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in u_u_comp_write0_cache: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f16.push(f15.back());
-		f15.push(f14.back());
-		f14.push(f12.back());
-		f12.push(f10.back());
-		f10.push(f9.back());
-		f9.push(f8.back());
-		f8.push(f6.back());
-		f6.push(f4.back());
-		f4.push(f3.back());
-		f3.push(f2.back());
-		f2.push(f0.back());
-		f0.push(value);
-	}
-
-};
-
 struct u_cache {
-  u_u_comp_write0_cache u_u_comp_write0;
   u_u_comp_write0_to_denoise2d_rd0_cache bank_u_u_comp_write0_to_denoise2d_rd0;
   u_u_comp_write0_to_denoise2d_rd1_cache bank_u_u_comp_write0_to_denoise2d_rd1;
   u_u_comp_write0_to_denoise2d_rd2_cache bank_u_u_comp_write0_to_denoise2d_rd2;
@@ -1988,7 +1560,6 @@ struct u_cache {
 
 
 inline void u_u_comp_write0_write(hw_uint<32> & u_u_comp_write0, u_cache& u, int d0, int d1) {
-	u.u_u_comp_write0.push(u_u_comp_write0);
   u.bank_u_u_comp_write0_to_denoise2d_rd0.push(u_u_comp_write0);
   u.bank_u_u_comp_write0_to_denoise2d_rd1.push(u_u_comp_write0);
   u.bank_u_u_comp_write0_to_denoise2d_rd2.push(u_u_comp_write0);
@@ -2280,6 +1851,14 @@ inline void diff_d_comp(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
 	diff_d_diff_d_comp_write_bundle_write(compute_result, diff_d, d0, d1);
 }
 
+inline void r1_comp(r0_cache& r0, r1_cache& r1, int d0, int d1) {
+	// Consume: r0
+	auto r0_0_c__0_value = r0_r1_comp_read_bundle_read(r0/* source_delay */, d0, d1);
+	auto compute_result = r1_comp(r0_0_c__0_value);
+	// Produce: r1
+	r1_r1_comp_write_bundle_write(compute_result, r1, d0, d1);
+}
+
 inline void g_comp(diff_qwe_cache& diff_qwe, diff_d_cache& diff_d, diff_l_cache& diff_l, diff_r_cache& diff_r, g_cache& g, int d0, int d1) {
 	// Consume: diff_qwe
 	auto diff_qwe_0_c__0_value = diff_qwe_g_comp_read_bundle_read(diff_qwe/* source_delay */, d0, d1);
@@ -2292,14 +1871,6 @@ inline void g_comp(diff_qwe_cache& diff_qwe, diff_d_cache& diff_d, diff_l_cache&
 	auto compute_result = mag_dn2(diff_qwe_0_c__0_value, diff_d_0_c__0_value, diff_l_0_c__0_value, diff_r_0_c__0_value);
 	// Produce: g
 	g_g_comp_write_bundle_write(compute_result, g, d0, d1);
-}
-
-inline void r1_comp(r0_cache& r0, r1_cache& r1, int d0, int d1) {
-	// Consume: r0
-	auto r0_0_c__0_value = r0_r1_comp_read_bundle_read(r0/* source_delay */, d0, d1);
-	auto compute_result = r1_comp(r0_0_c__0_value);
-	// Produce: r1
-	r1_r1_comp_write_bundle_write(compute_result, r1, d0, d1);
 }
 
 inline void denoise2d_comp(r1_cache& r1, f_cache& f, u_cache& u, g_cache& g, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */denoise2d, int d0, int d1) {
