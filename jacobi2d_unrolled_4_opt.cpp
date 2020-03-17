@@ -138,7 +138,7 @@ struct t1_t1_comp_write0_cache {
 			return f10.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1: " << offset << endl;
+		cout << "Error: Unsupported offset: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -241,7 +241,7 @@ struct t1_t1_comp_write1_cache {
 			return f10.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1: " << offset << endl;
+		cout << "Error: Unsupported offset: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -344,7 +344,7 @@ struct t1_t1_comp_write2_cache {
 			return f10.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1: " << offset << endl;
+		cout << "Error: Unsupported offset: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -447,7 +447,7 @@ struct t1_t1_comp_write3_cache {
 			return f10.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1: " << offset << endl;
+		cout << "Error: Unsupported offset: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;

@@ -1108,12 +1108,14 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
   return maxdelay;
 }
 
-void generate_fifo_cache(CodegenOptions& options, std::ostream& out, UBuffer& buf,
+void generate_fifo_cache(CodegenOptions& options,
+    std::ostream& out,
+    const std::string& pt_type_string,
     vector<int> read_delays, const int num_readers, const int maxdelay) {
   if (num_readers == 1 || options.all_rams) {
     int partition_capacity = 1 + maxdelay;
-    out << "\tfifo<" << buf.port_type_string() << ", " << partition_capacity << "> f" << ";" << endl;
-    out << "\tinline " + buf.port_type_string() + " peek(const int offset) {" << endl;
+    out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << ";" << endl;
+    out << "\tinline " + pt_type_string + " peek(const int offset) {" << endl;
     out << tab(2) << "return f.peek(" << partition_capacity - 1 << " - offset);" << endl;
     out << tab(1) << "}" << endl << endl;
 
@@ -1121,13 +1123,13 @@ void generate_fifo_cache(CodegenOptions& options, std::ostream& out, UBuffer& bu
       for (int i = 0; i < partition_capacity; i++) {
         int dv = i;
         assert(dv >= 0);
-        out << "\tinline " << buf.port_type_string() << " peek_" << to_string(dv) << "() {" << endl;
+        out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
         out << "\t\treturn f.peek(" << dv <<");" << endl;
         out << "\t}" << endl << endl;
       }
     }
     out << endl << endl;
-    out << "\tinline void push(const " + buf.port_type_string() + " value) {" << endl;
+    out << "\tinline void push(const " + pt_type_string + " value) {" << endl;
     if (options.add_dependence_pragmas) {
       out << "#ifdef __VIVADO_SYNTH__" << endl;
       out << "#pragma HLS dependence array inter false" << endl;
@@ -1162,14 +1164,14 @@ void generate_fifo_cache(CodegenOptions& options, std::ostream& out, UBuffer& bu
             int next = read_delays[i + 1];
             partition_capacity = next - current;
             out << "\t// Parition [" << current << ", " << next << ") capacity = " << partition_capacity << endl;
-            out << "\tfifo<" << buf.port_type_string() << ", " << partition_capacity << "> f" << i << ";" << endl;
+            out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << i << ";" << endl;
             partitions.push_back("f" + to_string(i));
             end_inds.push_back(current + partition_capacity - 1);
           }
         } else {
           partition_capacity = 1;
           out << "\t// Parition [" << current << ", " << current << "] capacity = " << partition_capacity << endl;
-          out << "\tfifo<" << buf.port_type_string() << ", " << partition_capacity << "> f" << i << ";" << endl;
+          out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << i << ";" << endl;
           partitions.push_back("f" + to_string(i));
           end_inds.push_back(current + partition_capacity - 1);
         }
@@ -1180,14 +1182,14 @@ void generate_fifo_cache(CodegenOptions& options, std::ostream& out, UBuffer& bu
       for (auto p : partitions) {
         int dv = end_inds[nind];
         assert(dv >= 0);
-        out << "\tinline " << buf.port_type_string() << " peek_" << to_string(dv) << "() {" << endl;
+        out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
         out << "\t\treturn " << p << ".back();" << endl;
         out << "\t}" << endl << endl;
         nind++;
       }
       out << endl << endl;
 
-      out << "\tinline " + buf.port_type_string() + " peek(const int offset) {" << endl;
+      out << "\tinline " + pt_type_string + " peek(const int offset) {" << endl;
       nind = 0;
       for (auto p : partitions) {
         int dv = end_inds[nind];
@@ -1197,13 +1199,13 @@ void generate_fifo_cache(CodegenOptions& options, std::ostream& out, UBuffer& bu
         nind++;
       }
       out << "#ifndef __VIVADO_SYNTH__" << endl;
-      out << "\t\tcout << \"Error: Unsupported offset in " << buf.name << ": \" << offset << endl;" << endl;
+      out << "\t\tcout << \"Error: Unsupported offset: \" << offset << endl;" << endl;
       out << "#endif // __VIVADO_SYNTH__" << endl;
       out << "\t\tassert(false);" << endl;
       out << "\t\treturn 0;\n" << endl;
       out << "\t}" << endl << endl;
 
-      out << "\tinline void push(const " + buf.port_type_string() + " value) {" << endl;
+      out << "\tinline void push(const " + pt_type_string + " value) {" << endl;
       if (options.add_dependence_pragmas) {
         out << "#ifdef __VIVADO_SYNTH__" << endl;
         out << "#pragma HLS dependence array inter false" << endl;
@@ -1256,7 +1258,9 @@ void generate_memory_struct(CodegenOptions& options, std::ostream& out, const st
     }
   }
 
-  generate_fifo_cache(options, out, buf, read_delays, num_readers, maxdelay);
+ 
+  string pt_type_string = buf.port_type_string();
+  generate_fifo_cache(options, out, pt_type_string, read_delays, num_readers, maxdelay);
 
 }
 

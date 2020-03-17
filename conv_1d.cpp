@@ -40,7 +40,7 @@ struct M_get_input_4_cache {
 			return f4.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in M: " << offset << endl;
+		cout << "Error: Unsupported offset: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
