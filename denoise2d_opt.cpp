@@ -71,7 +71,11 @@ inline void diff_d_diff_d_comp_write0_write(hw_uint<32> & diff_d_diff_d_comp_wri
 
 inline hw_uint<32>  g_rd0_select(diff_d_cache& diff_d, int d0, int d1) {
   // qpd = {  }
-	hw_uint<32>  value_diff_d_diff_d_comp_write0 = diff_d.diff_d_diff_d_comp_write0.peek_0();
+	// lexmax events: { g_comp[d0, d1] -> diff_d_comp[d0' = d0, d1' = d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // g_rd0 read pattern: { g_comp[d0, d1] -> diff_d[d0, d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // diff_d_diff_d_comp_write0 stores range: { diff_d[i0, i1] : -1 <= i0 <= 30 and -1 <= i1 <= 30 }
+    // overlap with reads : { diff_d[i0, i1] : -1 <= i0 <= 30 and -1 <= i1 <= 30 }
+	auto value_diff_d_diff_d_comp_write0 = diff_d.diff_d_diff_d_comp_write0.peek_0();
 	return value_diff_d_diff_d_comp_write0;
 }
 
@@ -165,7 +169,11 @@ inline void diff_l_diff_l_comp_write0_write(hw_uint<32> & diff_l_diff_l_comp_wri
 
 inline hw_uint<32>  g_rd0_select(diff_l_cache& diff_l, int d0, int d1) {
   // qpd = {  }
-	hw_uint<32>  value_diff_l_diff_l_comp_write0 = diff_l.diff_l_diff_l_comp_write0.peek_0();
+	// lexmax events: { g_comp[d0, d1] -> diff_l_comp[d0' = d0, d1' = d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // g_rd0 read pattern: { g_comp[d0, d1] -> diff_l[d0, d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // diff_l_diff_l_comp_write0 stores range: { diff_l[i0, i1] : -1 <= i0 <= 30 and -1 <= i1 <= 30 }
+    // overlap with reads : { diff_l[i0, i1] : -1 <= i0 <= 30 and -1 <= i1 <= 30 }
+	auto value_diff_l_diff_l_comp_write0 = diff_l.diff_l_diff_l_comp_write0.peek_0();
 	return value_diff_l_diff_l_comp_write0;
 }
 
@@ -259,7 +267,11 @@ inline void diff_qwe_diff_qwe_comp_write0_write(hw_uint<32> & diff_qwe_diff_qwe_
 
 inline hw_uint<32>  g_rd0_select(diff_qwe_cache& diff_qwe, int d0, int d1) {
   // qpd = {  }
-	hw_uint<32>  value_diff_qwe_diff_qwe_comp_write0 = diff_qwe.diff_qwe_diff_qwe_comp_write0.peek_0();
+	// lexmax events: { g_comp[d0, d1] -> diff_qwe_comp[d0' = d0, d1' = d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // g_rd0 read pattern: { g_comp[d0, d1] -> diff_qwe[d0, d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // diff_qwe_diff_qwe_comp_write0 stores range: { diff_qwe[i0, i1] : -1 <= i0 <= 30 and -1 <= i1 <= 30 }
+    // overlap with reads : { diff_qwe[i0, i1] : -1 <= i0 <= 30 and -1 <= i1 <= 30 }
+	auto value_diff_qwe_diff_qwe_comp_write0 = diff_qwe.diff_qwe_diff_qwe_comp_write0.peek_0();
 	return value_diff_qwe_diff_qwe_comp_write0;
 }
 
@@ -353,7 +365,11 @@ inline void diff_r_diff_r_comp_write0_write(hw_uint<32> & diff_r_diff_r_comp_wri
 
 inline hw_uint<32>  g_rd0_select(diff_r_cache& diff_r, int d0, int d1) {
   // qpd = {  }
-	hw_uint<32>  value_diff_r_diff_r_comp_write0 = diff_r.diff_r_diff_r_comp_write0.peek_0();
+	// lexmax events: { g_comp[d0, d1] -> diff_r_comp[d0' = d0, d1' = d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // g_rd0 read pattern: { g_comp[d0, d1] -> diff_r[d0, d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // diff_r_diff_r_comp_write0 stores range: { diff_r[i0, i1] : -1 <= i0 <= 30 and -1 <= i1 <= 30 }
+    // overlap with reads : { diff_r[i0, i1] : -1 <= i0 <= 30 and -1 <= i1 <= 30 }
+	auto value_diff_r_diff_r_comp_write0 = diff_r.diff_r_diff_r_comp_write0.peek_0();
 	return value_diff_r_diff_r_comp_write0;
 }
 
@@ -493,13 +509,21 @@ inline void f_f_comp_write0_write(hw_uint<32> & f_f_comp_write0, f_cache& f, int
 
 inline hw_uint<32>  denoise2d_rd0_select(f_cache& f, int d0, int d1) {
   // qpd = {  }
-	hw_uint<32>  value_f_f_comp_write0 = f.f_f_comp_write0.peek_0();
+	// lexmax events: { denoise2d_comp[d0, d1] -> f_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // denoise2d_rd0 read pattern: { denoise2d_comp[d0, d1] -> f[d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // f_f_comp_write0 stores range: { f[i0, i1] : 0 <= i0 <= 33 and 0 <= i1 <= 33 }
+    // overlap with reads : { f[i0, i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
+	auto value_f_f_comp_write0 = f.f_f_comp_write0.peek_0();
 	return value_f_f_comp_write0;
 }
 
 inline hw_uint<32>  r0_rd0_select(f_cache& f, int d0, int d1) {
   // qpd = {  }
-	hw_uint<32>  value_f_f_comp_write0 = f.f_f_comp_write0.peek_0();
+	// lexmax events: { r0_comp[d0, d1] -> f_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // r0_rd0 read pattern: { r0_comp[d0, d1] -> f[d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // f_f_comp_write0 stores range: { f[i0, i1] : 0 <= i0 <= 33 and 0 <= i1 <= 33 }
+    // overlap with reads : { f[i0, i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
+	auto value_f_f_comp_write0 = f.f_f_comp_write0.peek_0();
 	return value_f_f_comp_write0;
 }
 
@@ -858,25 +882,41 @@ inline void g_g_comp_write0_write(hw_uint<32> & g_g_comp_write0, g_cache& g, int
 
 inline hw_uint<32>  denoise2d_rd0_select(g_cache& g, int d0, int d1) {
   // qpd = { denoise2d_comp[d0, d1] -> 34 : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
-	hw_uint<32>  value_g_g_comp_write0 = g.g_g_comp_write0.peek_34();
+	// lexmax events: { denoise2d_comp[d0, d1] -> g_comp[d0' = -1 + d0, d1' = d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // denoise2d_rd0 read pattern: { denoise2d_comp[d0, d1] -> g[-1 + d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // g_g_comp_write0 stores range: { g[i0, i1] : -1 <= i0 <= 30 and -1 <= i1 <= 30 }
+    // overlap with reads : { g[i0, i1] : -1 <= i0 <= 28 and 0 <= i1 <= 29 }
+	auto value_g_g_comp_write0 = g.g_g_comp_write0.peek_34();
 	return value_g_g_comp_write0;
 }
 
 inline hw_uint<32>  denoise2d_rd1_select(g_cache& g, int d0, int d1) {
   // qpd = { denoise2d_comp[d0, d1] -> 65 : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
-	hw_uint<32>  value_g_g_comp_write0 = g.g_g_comp_write0.peek_65();
+	// lexmax events: { denoise2d_comp[d0, d1] -> g_comp[d0' = d0, d1' = -1 + d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // denoise2d_rd1 read pattern: { denoise2d_comp[d0, d1] -> g[d0, -1 + d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // g_g_comp_write0 stores range: { g[i0, i1] : -1 <= i0 <= 30 and -1 <= i1 <= 30 }
+    // overlap with reads : { g[i0, i1] : 0 <= i0 <= 29 and -1 <= i1 <= 28 }
+	auto value_g_g_comp_write0 = g.g_g_comp_write0.peek_65();
 	return value_g_g_comp_write0;
 }
 
 inline hw_uint<32>  denoise2d_rd2_select(g_cache& g, int d0, int d1) {
   // qpd = { denoise2d_comp[d0, d1] -> 1 : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
-	hw_uint<32>  value_g_g_comp_write0 = g.g_g_comp_write0.peek_1();
+	// lexmax events: { denoise2d_comp[d0, d1] -> g_comp[d0' = d0, d1' = 1 + d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // denoise2d_rd2 read pattern: { denoise2d_comp[d0, d1] -> g[d0, 1 + d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // g_g_comp_write0 stores range: { g[i0, i1] : -1 <= i0 <= 30 and -1 <= i1 <= 30 }
+    // overlap with reads : { g[i0, i1] : 0 <= i0 <= 29 and 0 < i1 <= 30 }
+	auto value_g_g_comp_write0 = g.g_g_comp_write0.peek_1();
 	return value_g_g_comp_write0;
 }
 
 inline hw_uint<32>  denoise2d_rd3_select(g_cache& g, int d0, int d1) {
   // qpd = { denoise2d_comp[d0, d1] -> 32 : 0 <= d0 <= 28 and 0 <= d1 <= 29; denoise2d_comp[d0, d1] -> (3 + d0) : d0 = 29 and 0 <= d1 <= 29 }
-	hw_uint<32>  value_g_g_comp_write0 = g.g_g_comp_write0.peek_32();
+	// lexmax events: { denoise2d_comp[d0, d1] -> g_comp[d0' = 1 + d0, d1' = d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // denoise2d_rd3 read pattern: { denoise2d_comp[d0, d1] -> g[1 + d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // g_g_comp_write0 stores range: { g[i0, i1] : -1 <= i0 <= 30 and -1 <= i1 <= 30 }
+    // overlap with reads : { g[i0, i1] : 0 < i0 <= 30 and 0 <= i1 <= 29 }
+	auto value_g_g_comp_write0 = g.g_g_comp_write0.peek_32();
 	return value_g_g_comp_write0;
 }
 
@@ -979,7 +1019,11 @@ inline void r0_r0_comp_write0_write(hw_uint<32> & r0_r0_comp_write0, r0_cache& r
 
 inline hw_uint<32>  r1_rd0_select(r0_cache& r0, int d0, int d1) {
   // qpd = {  }
-	hw_uint<32>  value_r0_r0_comp_write0 = r0.r0_r0_comp_write0.peek_0();
+	// lexmax events: { r1_comp[d0, d1] -> r0_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // r1_rd0 read pattern: { r1_comp[d0, d1] -> r0[d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // r0_r0_comp_write0 stores range: { r0[i0, i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
+    // overlap with reads : { r0[i0, i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
+	auto value_r0_r0_comp_write0 = r0.r0_r0_comp_write0.peek_0();
 	return value_r0_r0_comp_write0;
 }
 
@@ -1073,7 +1117,11 @@ inline void r1_r1_comp_write0_write(hw_uint<32> & r1_r1_comp_write0, r1_cache& r
 
 inline hw_uint<32>  denoise2d_rd0_select(r1_cache& r1, int d0, int d1) {
   // qpd = {  }
-	hw_uint<32>  value_r1_r1_comp_write0 = r1.r1_r1_comp_write0.peek_0();
+	// lexmax events: { denoise2d_comp[d0, d1] -> r1_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // denoise2d_rd0 read pattern: { denoise2d_comp[d0, d1] -> r1[d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // r1_r1_comp_write0 stores range: { r1[i0, i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
+    // overlap with reads : { r1[i0, i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
+	auto value_r1_r1_comp_write0 = r1.r1_r1_comp_write0.peek_0();
 	return value_r1_r1_comp_write0;
 }
 
@@ -1958,79 +2006,131 @@ inline void u_u_comp_write0_write(hw_uint<32> & u_u_comp_write0, u_cache& u, int
 
 inline hw_uint<32>  denoise2d_rd0_select(u_cache& u, int d0, int d1) {
   // qpd = { denoise2d_comp[d0, d1] -> 71 : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
-	hw_uint<32>  value_u_u_comp_write0 = u.u_u_comp_write0.peek_71();
+	// lexmax events: { denoise2d_comp[d0, d1] -> u_comp[d0' = -1 + d0, d1' = d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // denoise2d_rd0 read pattern: { denoise2d_comp[d0, d1] -> u[-1 + d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // u_u_comp_write0 stores range: { u[i0, i1] : -2 <= i0 <= 31 and -2 <= i1 <= 31 }
+    // overlap with reads : { u[i0, i1] : -1 <= i0 <= 28 and 0 <= i1 <= 29 }
+	auto value_u_u_comp_write0 = u.u_u_comp_write0.peek_71();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  denoise2d_rd1_select(u_cache& u, int d0, int d1) {
   // qpd = { denoise2d_comp[d0, d1] -> 104 : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
-	hw_uint<32>  value_u_u_comp_write0 = u.u_u_comp_write0.peek_104();
+	// lexmax events: { denoise2d_comp[d0, d1] -> u_comp[d0' = d0, d1' = -1 + d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // denoise2d_rd1 read pattern: { denoise2d_comp[d0, d1] -> u[d0, -1 + d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // u_u_comp_write0 stores range: { u[i0, i1] : -2 <= i0 <= 31 and -2 <= i1 <= 31 }
+    // overlap with reads : { u[i0, i1] : 0 <= i0 <= 29 and -1 <= i1 <= 28 }
+	auto value_u_u_comp_write0 = u.u_u_comp_write0.peek_104();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  denoise2d_rd2_select(u_cache& u, int d0, int d1) {
   // qpd = { denoise2d_comp[d0, d1] -> 70 : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
-	hw_uint<32>  value_u_u_comp_write0 = u.u_u_comp_write0.peek_70();
+	// lexmax events: { denoise2d_comp[d0, d1] -> u_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // denoise2d_rd2 read pattern: { denoise2d_comp[d0, d1] -> u[d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // u_u_comp_write0 stores range: { u[i0, i1] : -2 <= i0 <= 31 and -2 <= i1 <= 31 }
+    // overlap with reads : { u[i0, i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
+	auto value_u_u_comp_write0 = u.u_u_comp_write0.peek_70();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  denoise2d_rd3_select(u_cache& u, int d0, int d1) {
   // qpd = { denoise2d_comp[d0, d1] -> 69 : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
-	hw_uint<32>  value_u_u_comp_write0 = u.u_u_comp_write0.peek_69();
+	// lexmax events: { denoise2d_comp[d0, d1] -> u_comp[d0' = 1 + d0, d1' = d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // denoise2d_rd3 read pattern: { denoise2d_comp[d0, d1] -> u[1 + d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // u_u_comp_write0 stores range: { u[i0, i1] : -2 <= i0 <= 31 and -2 <= i1 <= 31 }
+    // overlap with reads : { u[i0, i1] : 0 < i0 <= 30 and 0 <= i1 <= 29 }
+	auto value_u_u_comp_write0 = u.u_u_comp_write0.peek_69();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  diff_d_rd0_select(u_cache& u, int d0, int d1) {
   // qpd = { diff_d_comp[d0, d1] -> 35 : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
-	hw_uint<32>  value_u_u_comp_write0 = u.u_u_comp_write0.peek_35();
+	// lexmax events: { diff_d_comp[d0, d1] -> u_comp[d0' = d0, d1' = d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // diff_d_rd0 read pattern: { diff_d_comp[d0, d1] -> u[d0, d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // u_u_comp_write0 stores range: { u[i0, i1] : -2 <= i0 <= 31 and -2 <= i1 <= 31 }
+    // overlap with reads : { u[i0, i1] : -1 <= i0 <= 30 and -1 <= i1 <= 30 }
+	auto value_u_u_comp_write0 = u.u_u_comp_write0.peek_35();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  diff_d_rd1_select(u_cache& u, int d0, int d1) {
   // qpd = { diff_d_comp[d0, d1] -> 1 : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
-	hw_uint<32>  value_u_u_comp_write0 = u.u_u_comp_write0.peek_1();
+	// lexmax events: { diff_d_comp[d0, d1] -> u_comp[d0' = d0, d1' = 1 + d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // diff_d_rd1 read pattern: { diff_d_comp[d0, d1] -> u[d0, 1 + d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // u_u_comp_write0 stores range: { u[i0, i1] : -2 <= i0 <= 31 and -2 <= i1 <= 31 }
+    // overlap with reads : { u[i0, i1] : -1 <= i0 <= 30 and 0 <= i1 <= 31 }
+	auto value_u_u_comp_write0 = u.u_u_comp_write0.peek_1();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  diff_l_rd0_select(u_cache& u, int d0, int d1) {
   // qpd = { diff_l_comp[d0, d1] -> 36 : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
-	hw_uint<32>  value_u_u_comp_write0 = u.u_u_comp_write0.peek_36();
+	// lexmax events: { diff_l_comp[d0, d1] -> u_comp[d0' = -1 + d0, d1' = d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // diff_l_rd0 read pattern: { diff_l_comp[d0, d1] -> u[-1 + d0, d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // u_u_comp_write0 stores range: { u[i0, i1] : -2 <= i0 <= 31 and -2 <= i1 <= 31 }
+    // overlap with reads : { u[i0, i1] : -2 <= i0 <= 29 and -1 <= i1 <= 30 }
+	auto value_u_u_comp_write0 = u.u_u_comp_write0.peek_36();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  diff_l_rd1_select(u_cache& u, int d0, int d1) {
   // qpd = { diff_l_comp[d0, d1] -> 35 : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
-	hw_uint<32>  value_u_u_comp_write0 = u.u_u_comp_write0.peek_35();
+	// lexmax events: { diff_l_comp[d0, d1] -> u_comp[d0' = d0, d1' = d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // diff_l_rd1 read pattern: { diff_l_comp[d0, d1] -> u[d0, d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // u_u_comp_write0 stores range: { u[i0, i1] : -2 <= i0 <= 31 and -2 <= i1 <= 31 }
+    // overlap with reads : { u[i0, i1] : -1 <= i0 <= 30 and -1 <= i1 <= 30 }
+	auto value_u_u_comp_write0 = u.u_u_comp_write0.peek_35();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  diff_qwe_rd0_select(u_cache& u, int d0, int d1) {
   // qpd = { diff_qwe_comp[d0, d1] -> 69 : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
-	hw_uint<32>  value_u_u_comp_write0 = u.u_u_comp_write0.peek_69();
+	// lexmax events: { diff_qwe_comp[d0, d1] -> u_comp[d0' = d0, d1' = -1 + d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // diff_qwe_rd0 read pattern: { diff_qwe_comp[d0, d1] -> u[d0, -1 + d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // u_u_comp_write0 stores range: { u[i0, i1] : -2 <= i0 <= 31 and -2 <= i1 <= 31 }
+    // overlap with reads : { u[i0, i1] : -1 <= i0 <= 30 and -2 <= i1 <= 29 }
+	auto value_u_u_comp_write0 = u.u_u_comp_write0.peek_69();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  diff_qwe_rd1_select(u_cache& u, int d0, int d1) {
   // qpd = { diff_qwe_comp[d0, d1] -> 35 : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
-	hw_uint<32>  value_u_u_comp_write0 = u.u_u_comp_write0.peek_35();
+	// lexmax events: { diff_qwe_comp[d0, d1] -> u_comp[d0' = d0, d1' = d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // diff_qwe_rd1 read pattern: { diff_qwe_comp[d0, d1] -> u[d0, d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // u_u_comp_write0 stores range: { u[i0, i1] : -2 <= i0 <= 31 and -2 <= i1 <= 31 }
+    // overlap with reads : { u[i0, i1] : -1 <= i0 <= 30 and -1 <= i1 <= 30 }
+	auto value_u_u_comp_write0 = u.u_u_comp_write0.peek_35();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  diff_r_rd0_select(u_cache& u, int d0, int d1) {
   // qpd = { diff_r_comp[d0, d1] -> 35 : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
-	hw_uint<32>  value_u_u_comp_write0 = u.u_u_comp_write0.peek_35();
+	// lexmax events: { diff_r_comp[d0, d1] -> u_comp[d0' = d0, d1' = d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // diff_r_rd0 read pattern: { diff_r_comp[d0, d1] -> u[d0, d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // u_u_comp_write0 stores range: { u[i0, i1] : -2 <= i0 <= 31 and -2 <= i1 <= 31 }
+    // overlap with reads : { u[i0, i1] : -1 <= i0 <= 30 and -1 <= i1 <= 30 }
+	auto value_u_u_comp_write0 = u.u_u_comp_write0.peek_35();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  diff_r_rd1_select(u_cache& u, int d0, int d1) {
   // qpd = { diff_r_comp[d0, d1] -> 34 : -1 <= d0 <= 29 and -1 <= d1 <= 30; diff_r_comp[d0, d1] -> (4 + d0) : d0 = 30 and -1 <= d1 <= 30 }
-	hw_uint<32>  value_u_u_comp_write0 = u.u_u_comp_write0.peek_34();
+	// lexmax events: { diff_r_comp[d0, d1] -> u_comp[d0' = 1 + d0, d1' = d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // diff_r_rd1 read pattern: { diff_r_comp[d0, d1] -> u[1 + d0, d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
+  // u_u_comp_write0 stores range: { u[i0, i1] : -2 <= i0 <= 31 and -2 <= i1 <= 31 }
+    // overlap with reads : { u[i0, i1] : 0 <= i0 <= 31 and -1 <= i1 <= 30 }
+	auto value_u_u_comp_write0 = u.u_u_comp_write0.peek_34();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  r0_rd0_select(u_cache& u, int d0, int d1) {
   // qpd = { r0_comp[d0, d1] -> 70 : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
-	hw_uint<32>  value_u_u_comp_write0 = u.u_u_comp_write0.peek_70();
+	// lexmax events: { r0_comp[d0, d1] -> u_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // r0_rd0 read pattern: { r0_comp[d0, d1] -> u[d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
+  // u_u_comp_write0 stores range: { u[i0, i1] : -2 <= i0 <= 31 and -2 <= i1 <= 31 }
+    // overlap with reads : { u[i0, i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
+	auto value_u_u_comp_write0 = u.u_u_comp_write0.peek_70();
 	return value_u_u_comp_write0;
 }
 
@@ -2122,22 +2222,6 @@ inline void u_u_comp_write_bundle_write(hw_uint<32>& u_comp_write, u_cache& u, i
 
 
 // Operation logic
-inline void f_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */f_off_chip, f_cache& f, int d0, int d1) {
-	// Consume: f_off_chip
-	auto f_off_chip_0_c__0_value = f_off_chip.read();
-	auto compute_result = id(f_off_chip_0_c__0_value);
-	// Produce: f
-	f_f_comp_write_bundle_write(compute_result, f, d0, d1);
-}
-
-inline void u_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_off_chip, u_cache& u, int d0, int d1) {
-	// Consume: u_off_chip
-	auto u_off_chip_0_c__0_value = u_off_chip.read();
-	auto compute_result = id(u_off_chip_0_c__0_value);
-	// Produce: u
-	u_u_comp_write_bundle_write(compute_result, u, d0, d1);
-}
-
 inline void r0_comp(u_cache& u, f_cache& f, r0_cache& r0, int d0, int d1) {
 	// Consume: u
 	auto u_0_c__0_value = u_r0_comp_read_bundle_read(u/* source_delay */, d0, d1);
@@ -2156,14 +2240,6 @@ inline void diff_r_comp(u_cache& u, diff_r_cache& diff_r, int d0, int d1) {
 	diff_r_diff_r_comp_write_bundle_write(compute_result, diff_r, d0, d1);
 }
 
-inline void diff_l_comp(u_cache& u, diff_l_cache& diff_l, int d0, int d1) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_l_comp_read_bundle_read(u/* source_delay */, d0, d1);
-	auto compute_result = diff_b(u_0_c__0_value);
-	// Produce: diff_l
-	diff_l_diff_l_comp_write_bundle_write(compute_result, diff_l, d0, d1);
-}
-
 inline void diff_qwe_comp(u_cache& u, diff_qwe_cache& diff_qwe, int d0, int d1) {
 	// Consume: u
 	auto u_0_c__0_value = u_diff_qwe_comp_read_bundle_read(u/* source_delay */, d0, d1);
@@ -2172,12 +2248,44 @@ inline void diff_qwe_comp(u_cache& u, diff_qwe_cache& diff_qwe, int d0, int d1) 
 	diff_qwe_diff_qwe_comp_write_bundle_write(compute_result, diff_qwe, d0, d1);
 }
 
+inline void f_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */f_off_chip, f_cache& f, int d0, int d1) {
+	// Consume: f_off_chip
+	auto f_off_chip_0_c__0_value = f_off_chip.read();
+	auto compute_result = id(f_off_chip_0_c__0_value);
+	// Produce: f
+	f_f_comp_write_bundle_write(compute_result, f, d0, d1);
+}
+
+inline void u_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_off_chip, u_cache& u, int d0, int d1) {
+	// Consume: u_off_chip
+	auto u_off_chip_0_c__0_value = u_off_chip.read();
+	auto compute_result = id(u_off_chip_0_c__0_value);
+	// Produce: u
+	u_u_comp_write_bundle_write(compute_result, u, d0, d1);
+}
+
+inline void diff_l_comp(u_cache& u, diff_l_cache& diff_l, int d0, int d1) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_l_comp_read_bundle_read(u/* source_delay */, d0, d1);
+	auto compute_result = diff_b(u_0_c__0_value);
+	// Produce: diff_l
+	diff_l_diff_l_comp_write_bundle_write(compute_result, diff_l, d0, d1);
+}
+
 inline void diff_d_comp(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
 	// Consume: u
 	auto u_0_c__0_value = u_diff_d_comp_read_bundle_read(u/* source_delay */, d0, d1);
 	auto compute_result = diff_b(u_0_c__0_value);
 	// Produce: diff_d
 	diff_d_diff_d_comp_write_bundle_write(compute_result, diff_d, d0, d1);
+}
+
+inline void r1_comp(r0_cache& r0, r1_cache& r1, int d0, int d1) {
+	// Consume: r0
+	auto r0_0_c__0_value = r0_r1_comp_read_bundle_read(r0/* source_delay */, d0, d1);
+	auto compute_result = r1_comp(r0_0_c__0_value);
+	// Produce: r1
+	r1_r1_comp_write_bundle_write(compute_result, r1, d0, d1);
 }
 
 inline void g_comp(diff_qwe_cache& diff_qwe, diff_d_cache& diff_d, diff_l_cache& diff_l, diff_r_cache& diff_r, g_cache& g, int d0, int d1) {
@@ -2192,14 +2300,6 @@ inline void g_comp(diff_qwe_cache& diff_qwe, diff_d_cache& diff_d, diff_l_cache&
 	auto compute_result = mag_dn2(diff_qwe_0_c__0_value, diff_d_0_c__0_value, diff_l_0_c__0_value, diff_r_0_c__0_value);
 	// Produce: g
 	g_g_comp_write_bundle_write(compute_result, g, d0, d1);
-}
-
-inline void r1_comp(r0_cache& r0, r1_cache& r1, int d0, int d1) {
-	// Consume: r0
-	auto r0_0_c__0_value = r0_r1_comp_read_bundle_read(r0/* source_delay */, d0, d1);
-	auto compute_result = r1_comp(r0_0_c__0_value);
-	// Produce: r1
-	r1_r1_comp_write_bundle_write(compute_result, r1, d0, d1);
 }
 
 inline void denoise2d_comp(r1_cache& r1, f_cache& f, u_cache& u, g_cache& g, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */denoise2d, int d0, int d1) {

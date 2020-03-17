@@ -71,7 +71,11 @@ inline void I_I_id0_0_write(hw_uint<16>& I_I_id0_0, I_cache& I, int root, int id
 
 inline hw_uint<16> I_out_plus_one0_3_select(I_cache& I, int root, int d1, int d0) {
   // qpd = {  }
-	hw_uint<16> value_I_I_id0_0 = I.I_I_id0_0.peek_0();
+	// lexmax events: { out_plus_one0[root = 0, d1, d0] -> I_id0[root' = 0, id1 = d1, id0 = d0] : 0 <= d1 <= 31 and 0 <= d0 <= 7 }
+  // I_out_plus_one0_3 read pattern: { out_plus_one0[root = 0, d1, d0] -> I[d0, d1] : 0 <= d1 <= 31 and 0 <= d0 <= 7 }
+  // I_I_id0_0 stores range: { I[i0, i1] : 0 <= i0 <= 7 and 0 <= i1 <= 31 }
+    // overlap with reads : { I[i0, i1] : 0 <= i0 <= 7 and 0 <= i1 <= 31 }
+	auto value_I_I_id0_0 = I.I_I_id0_0.peek_0();
 	return value_I_I_id0_0;
 }
 

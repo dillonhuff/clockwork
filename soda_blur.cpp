@@ -2,7 +2,7 @@
 
 #include "hw_classes.h"
 
-struct I_I_id0_10_to_I_out_0_blur_30_5_cache {
+struct I_I_id0_0_to_I_out_0_blur_30_3_cache {
 	// Capacity: 33
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
@@ -37,7 +37,7 @@ struct I_I_id0_10_to_I_out_0_blur_30_5_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_I_id0_10_to_I_out_0_blur_30_5_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_I_id0_0_to_I_out_0_blur_30_3_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -55,7 +55,7 @@ struct I_I_id0_10_to_I_out_0_blur_30_5_cache {
 
 };
 
-struct I_I_id0_10_to_I_out_0_blur_30_6_cache {
+struct I_I_id0_0_to_I_out_0_blur_30_4_cache {
 	// Capacity: 33
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
@@ -90,7 +90,7 @@ struct I_I_id0_10_to_I_out_0_blur_30_6_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_I_id0_10_to_I_out_0_blur_30_6_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_I_id0_0_to_I_out_0_blur_30_4_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -108,7 +108,7 @@ struct I_I_id0_10_to_I_out_0_blur_30_6_cache {
 
 };
 
-struct I_I_id0_10_to_I_out_0_blur_30_7_cache {
+struct I_I_id0_0_to_I_out_0_blur_30_5_cache {
 	// Capacity: 33
 	// Parition [0, 0] capacity = 1
 	fifo<hw_uint<16>, 1> f1;
@@ -125,7 +125,7 @@ struct I_I_id0_10_to_I_out_0_blur_30_7_cache {
 			return f1.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_I_id0_10_to_I_out_0_blur_30_7_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_I_id0_0_to_I_out_0_blur_30_5_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -141,7 +141,7 @@ struct I_I_id0_10_to_I_out_0_blur_30_7_cache {
 
 };
 
-struct I_I_id0_10_to_I_out_1_blur_31_1_cache {
+struct I_I_id0_0_to_I_out_1_blur_31_10_cache {
 	// Capacity: 33
 	// Parition [0, 0] capacity = 1
 	fifo<hw_uint<16>, 1> f1;
@@ -158,7 +158,7 @@ struct I_I_id0_10_to_I_out_1_blur_31_1_cache {
 			return f1.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_I_id0_10_to_I_out_1_blur_31_1_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_I_id0_0_to_I_out_1_blur_31_10_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -174,7 +174,7 @@ struct I_I_id0_10_to_I_out_1_blur_31_1_cache {
 
 };
 
-struct I_I_id0_10_to_I_out_1_blur_31_2_cache {
+struct I_I_id0_0_to_I_out_1_blur_31_11_cache {
 	// Capacity: 33
 	// Parition [0, 0] capacity = 1
 	fifo<hw_uint<16>, 1> f1;
@@ -191,7 +191,7 @@ struct I_I_id0_10_to_I_out_1_blur_31_2_cache {
 			return f1.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_I_id0_10_to_I_out_1_blur_31_2_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_I_id0_0_to_I_out_1_blur_31_11_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -207,7 +207,7 @@ struct I_I_id0_10_to_I_out_1_blur_31_2_cache {
 
 };
 
-struct I_I_id0_10_to_I_out_1_blur_31_3_cache {
+struct I_I_id0_0_to_I_out_1_blur_31_9_cache {
 	// Capacity: 33
 	// Parition [0, 0] capacity = 1
 	fifo<hw_uint<16>, 1> f1;
@@ -224,7 +224,7 @@ struct I_I_id0_10_to_I_out_1_blur_31_3_cache {
 			return f1.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_I_id0_10_to_I_out_1_blur_31_3_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_I_id0_0_to_I_out_1_blur_31_9_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -240,7 +240,7 @@ struct I_I_id0_10_to_I_out_1_blur_31_3_cache {
 
 };
 
-struct I_I_id1_8_to_I_out_0_blur_30_5_cache {
+struct I_I_id1_6_to_I_out_0_blur_30_3_cache {
 	// Capacity: 33
 	// Parition [0, 0] capacity = 1
 	fifo<hw_uint<16>, 1> f1;
@@ -257,7 +257,7 @@ struct I_I_id1_8_to_I_out_0_blur_30_5_cache {
 			return f1.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_I_id1_8_to_I_out_0_blur_30_5_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_I_id1_6_to_I_out_0_blur_30_3_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -273,7 +273,7 @@ struct I_I_id1_8_to_I_out_0_blur_30_5_cache {
 
 };
 
-struct I_I_id1_8_to_I_out_0_blur_30_6_cache {
+struct I_I_id1_6_to_I_out_0_blur_30_4_cache {
 	// Capacity: 33
 	// Parition [0, 0] capacity = 1
 	fifo<hw_uint<16>, 1> f1;
@@ -290,7 +290,7 @@ struct I_I_id1_8_to_I_out_0_blur_30_6_cache {
 			return f1.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_I_id1_8_to_I_out_0_blur_30_6_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_I_id1_6_to_I_out_0_blur_30_4_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -306,7 +306,7 @@ struct I_I_id1_8_to_I_out_0_blur_30_6_cache {
 
 };
 
-struct I_I_id1_8_to_I_out_0_blur_30_7_cache {
+struct I_I_id1_6_to_I_out_0_blur_30_5_cache {
 	// Capacity: 33
 	// Parition [0, 0] capacity = 1
 	fifo<hw_uint<16>, 1> f1;
@@ -323,7 +323,7 @@ struct I_I_id1_8_to_I_out_0_blur_30_7_cache {
 			return f1.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_I_id1_8_to_I_out_0_blur_30_7_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_I_id1_6_to_I_out_0_blur_30_5_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -339,7 +339,93 @@ struct I_I_id1_8_to_I_out_0_blur_30_7_cache {
 
 };
 
-struct I_I_id1_8_to_I_out_1_blur_31_1_cache {
+struct I_I_id1_6_to_I_out_1_blur_31_10_cache {
+	// Capacity: 33
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<16>, 1> f0;
+	// Parition [1, 16) capacity = 15
+	fifo<hw_uint<16>, 15> f1;
+	// Parition [16, 16] capacity = 1
+	fifo<hw_uint<16>, 1> f2;
+
+
+	inline hw_uint<16> peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<16> peek_15() {
+		return f1.back();
+	}
+
+	inline hw_uint<16> peek_16() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<16> peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 15) {
+			return f1.back();
+		}
+		if (offset == 16) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in I_I_id1_6_to_I_out_1_blur_31_10_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct I_I_id1_6_to_I_out_1_blur_31_11_cache {
+	// Capacity: 33
+	// Parition [0, 0] capacity = 1
+	fifo<hw_uint<16>, 1> f1;
+
+
+	inline hw_uint<16> peek_0() {
+		return f1.back();
+	}
+
+
+
+	inline hw_uint<16> peek(const int offset) {
+		if (offset == 0) {
+			return f1.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in I_I_id1_6_to_I_out_1_blur_31_11_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f1.push(value);
+	}
+
+};
+
+struct I_I_id1_6_to_I_out_1_blur_31_9_cache {
 	// Capacity: 33
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
@@ -374,7 +460,7 @@ struct I_I_id1_8_to_I_out_1_blur_31_1_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_I_id1_8_to_I_out_1_blur_31_1_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_I_id1_6_to_I_out_1_blur_31_9_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -392,93 +478,7 @@ struct I_I_id1_8_to_I_out_1_blur_31_1_cache {
 
 };
 
-struct I_I_id1_8_to_I_out_1_blur_31_2_cache {
-	// Capacity: 33
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<16>, 1> f0;
-	// Parition [1, 16) capacity = 15
-	fifo<hw_uint<16>, 15> f1;
-	// Parition [16, 16] capacity = 1
-	fifo<hw_uint<16>, 1> f2;
-
-
-	inline hw_uint<16> peek_0() {
-		return f0.back();
-	}
-
-	inline hw_uint<16> peek_15() {
-		return f1.back();
-	}
-
-	inline hw_uint<16> peek_16() {
-		return f2.back();
-	}
-
-
-
-	inline hw_uint<16> peek(const int offset) {
-		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 15) {
-			return f1.back();
-		}
-		if (offset == 16) {
-			return f2.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_I_id1_8_to_I_out_1_blur_31_2_cache: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f2.push(f1.back());
-		f1.push(f0.back());
-		f0.push(value);
-	}
-
-};
-
-struct I_I_id1_8_to_I_out_1_blur_31_3_cache {
-	// Capacity: 33
-	// Parition [0, 0] capacity = 1
-	fifo<hw_uint<16>, 1> f1;
-
-
-	inline hw_uint<16> peek_0() {
-		return f1.back();
-	}
-
-
-
-	inline hw_uint<16> peek(const int offset) {
-		if (offset == 0) {
-			return f1.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_I_id1_8_to_I_out_1_blur_31_3_cache: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f1.push(value);
-	}
-
-};
-
-struct I_I_id0_10_cache {
+struct I_I_id0_0_cache {
 	// Capacity: 33
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
@@ -531,7 +531,7 @@ struct I_I_id0_10_cache {
 			return f4.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_I_id0_10_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_I_id0_0_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -551,7 +551,7 @@ struct I_I_id0_10_cache {
 
 };
 
-struct I_I_id1_8_cache {
+struct I_I_id1_6_cache {
 	// Capacity: 33
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
@@ -604,7 +604,7 @@ struct I_I_id1_8_cache {
 			return f4.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_I_id1_8_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_I_id1_6_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -625,158 +625,158 @@ struct I_I_id1_8_cache {
 };
 
 struct I_cache {
-  I_I_id0_10_cache I_I_id0_10;
-  I_I_id1_8_cache I_I_id1_8;
-  I_I_id0_10_to_I_out_0_blur_30_5_cache bank_I_I_id0_10_to_I_out_0_blur_30_5;
-  I_I_id0_10_to_I_out_0_blur_30_6_cache bank_I_I_id0_10_to_I_out_0_blur_30_6;
-  I_I_id0_10_to_I_out_0_blur_30_7_cache bank_I_I_id0_10_to_I_out_0_blur_30_7;
-  I_I_id0_10_to_I_out_1_blur_31_1_cache bank_I_I_id0_10_to_I_out_1_blur_31_1;
-  I_I_id0_10_to_I_out_1_blur_31_2_cache bank_I_I_id0_10_to_I_out_1_blur_31_2;
-  I_I_id0_10_to_I_out_1_blur_31_3_cache bank_I_I_id0_10_to_I_out_1_blur_31_3;
-  I_I_id1_8_to_I_out_0_blur_30_5_cache bank_I_I_id1_8_to_I_out_0_blur_30_5;
-  I_I_id1_8_to_I_out_0_blur_30_6_cache bank_I_I_id1_8_to_I_out_0_blur_30_6;
-  I_I_id1_8_to_I_out_0_blur_30_7_cache bank_I_I_id1_8_to_I_out_0_blur_30_7;
-  I_I_id1_8_to_I_out_1_blur_31_1_cache bank_I_I_id1_8_to_I_out_1_blur_31_1;
-  I_I_id1_8_to_I_out_1_blur_31_2_cache bank_I_I_id1_8_to_I_out_1_blur_31_2;
-  I_I_id1_8_to_I_out_1_blur_31_3_cache bank_I_I_id1_8_to_I_out_1_blur_31_3;
+  I_I_id0_0_cache I_I_id0_0;
+  I_I_id1_6_cache I_I_id1_6;
+  I_I_id0_0_to_I_out_0_blur_30_3_cache bank_I_I_id0_0_to_I_out_0_blur_30_3;
+  I_I_id0_0_to_I_out_0_blur_30_4_cache bank_I_I_id0_0_to_I_out_0_blur_30_4;
+  I_I_id0_0_to_I_out_0_blur_30_5_cache bank_I_I_id0_0_to_I_out_0_blur_30_5;
+  I_I_id0_0_to_I_out_1_blur_31_10_cache bank_I_I_id0_0_to_I_out_1_blur_31_10;
+  I_I_id0_0_to_I_out_1_blur_31_11_cache bank_I_I_id0_0_to_I_out_1_blur_31_11;
+  I_I_id0_0_to_I_out_1_blur_31_9_cache bank_I_I_id0_0_to_I_out_1_blur_31_9;
+  I_I_id1_6_to_I_out_0_blur_30_3_cache bank_I_I_id1_6_to_I_out_0_blur_30_3;
+  I_I_id1_6_to_I_out_0_blur_30_4_cache bank_I_I_id1_6_to_I_out_0_blur_30_4;
+  I_I_id1_6_to_I_out_0_blur_30_5_cache bank_I_I_id1_6_to_I_out_0_blur_30_5;
+  I_I_id1_6_to_I_out_1_blur_31_10_cache bank_I_I_id1_6_to_I_out_1_blur_31_10;
+  I_I_id1_6_to_I_out_1_blur_31_11_cache bank_I_I_id1_6_to_I_out_1_blur_31_11;
+  I_I_id1_6_to_I_out_1_blur_31_9_cache bank_I_I_id1_6_to_I_out_1_blur_31_9;
 };
 
 
 
-inline void I_I_id0_10_write(hw_uint<16>& I_I_id0_10, I_cache& I, int root, int ir, int ic) {
-	I.I_I_id0_10.push(I_I_id0_10);
-  I.bank_I_I_id0_10_to_I_out_0_blur_30_5.push(I_I_id0_10);
-  I.bank_I_I_id0_10_to_I_out_0_blur_30_6.push(I_I_id0_10);
-  I.bank_I_I_id0_10_to_I_out_0_blur_30_7.push(I_I_id0_10);
-  I.bank_I_I_id0_10_to_I_out_1_blur_31_1.push(I_I_id0_10);
-  I.bank_I_I_id0_10_to_I_out_1_blur_31_2.push(I_I_id0_10);
-  I.bank_I_I_id0_10_to_I_out_1_blur_31_3.push(I_I_id0_10);
+inline void I_I_id0_0_write(hw_uint<16>& I_I_id0_0, I_cache& I, int root, int ir, int ic) {
+	I.I_I_id0_0.push(I_I_id0_0);
+  I.bank_I_I_id0_0_to_I_out_0_blur_30_3.push(I_I_id0_0);
+  I.bank_I_I_id0_0_to_I_out_0_blur_30_4.push(I_I_id0_0);
+  I.bank_I_I_id0_0_to_I_out_0_blur_30_5.push(I_I_id0_0);
+  I.bank_I_I_id0_0_to_I_out_1_blur_31_10.push(I_I_id0_0);
+  I.bank_I_I_id0_0_to_I_out_1_blur_31_11.push(I_I_id0_0);
+  I.bank_I_I_id0_0_to_I_out_1_blur_31_9.push(I_I_id0_0);
 }
 
-inline void I_I_id1_8_write(hw_uint<16>& I_I_id1_8, I_cache& I, int root, int ir, int ic) {
-	I.I_I_id1_8.push(I_I_id1_8);
-  I.bank_I_I_id1_8_to_I_out_0_blur_30_5.push(I_I_id1_8);
-  I.bank_I_I_id1_8_to_I_out_0_blur_30_6.push(I_I_id1_8);
-  I.bank_I_I_id1_8_to_I_out_0_blur_30_7.push(I_I_id1_8);
-  I.bank_I_I_id1_8_to_I_out_1_blur_31_1.push(I_I_id1_8);
-  I.bank_I_I_id1_8_to_I_out_1_blur_31_2.push(I_I_id1_8);
-  I.bank_I_I_id1_8_to_I_out_1_blur_31_3.push(I_I_id1_8);
+inline void I_I_id1_6_write(hw_uint<16>& I_I_id1_6, I_cache& I, int root, int ir, int ic) {
+	I.I_I_id1_6.push(I_I_id1_6);
+  I.bank_I_I_id1_6_to_I_out_0_blur_30_3.push(I_I_id1_6);
+  I.bank_I_I_id1_6_to_I_out_0_blur_30_4.push(I_I_id1_6);
+  I.bank_I_I_id1_6_to_I_out_0_blur_30_5.push(I_I_id1_6);
+  I.bank_I_I_id1_6_to_I_out_1_blur_31_10.push(I_I_id1_6);
+  I.bank_I_I_id1_6_to_I_out_1_blur_31_11.push(I_I_id1_6);
+  I.bank_I_I_id1_6_to_I_out_1_blur_31_9.push(I_I_id1_6);
+}
+
+inline hw_uint<16> I_out_0_blur_30_3_select(I_cache& I, int root, int xr, int xc) {
+  // qpd = { out_0_blur_30[root, xr, xc] -> 32 : root = 0 and 0 <= xr <= 29 and 0 < xc <= 14; out_0_blur_30[root, xr, xc] -> (17 + xc) : root = 0 and xc = 15 and 0 <= xr <= 29; out_0_blur_30[root, xr, xc] -> 32 : root = 0 and xc = 0 and 0 <= xr <= 29 }
+	// lexmax events: { out_0_blur_30[root = 0, xr, xc] -> I_id0[root' = 0, ir = xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+  // I_out_0_blur_30_3 read pattern: { out_0_blur_30[root = 0, xr, xc] -> I[xr, 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+  // I_I_id0_0 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
+    // overlap with reads : { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 29 and 0 <= i1 <= 30 }
+  // I_I_id1_6 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
+    // overlap with reads : {  }
+	auto value_I_I_id0_0 = I.I_I_id0_0.peek_32();
+	return value_I_I_id0_0;
+}
+
+inline hw_uint<16> I_out_0_blur_30_4_select(I_cache& I, int root, int xr, int xc) {
+  // qpd = { out_0_blur_30[root, xr, xc] -> 16 : root = 0 and 0 <= xr <= 29 and 0 < xc <= 14; out_0_blur_30[root, xr, xc] -> (1 + xc) : root = 0 and xc = 15 and 0 <= xr <= 29; out_0_blur_30[root, xr, xc] -> 16 : root = 0 and xc = 0 and 0 <= xr <= 29 }
+	// lexmax events: { out_0_blur_30[root = 0, xr, xc] -> I_id0[root' = 0, ir = 1 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+  // I_out_0_blur_30_4 read pattern: { out_0_blur_30[root = 0, xr, xc] -> I[1 + xr, 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+  // I_I_id0_0 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
+    // overlap with reads : { I[i0, i1] : (i1) mod 2 = 0 and 0 < i0 <= 30 and 0 <= i1 <= 30 }
+  // I_I_id1_6 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
+    // overlap with reads : {  }
+	auto value_I_I_id0_0 = I.I_I_id0_0.peek_16();
+	return value_I_I_id0_0;
 }
 
 inline hw_uint<16> I_out_0_blur_30_5_select(I_cache& I, int root, int xr, int xc) {
-  // qpd = { out_0_blur_30[root, xr, xc] -> 32 : root = 0 and 0 <= xr <= 29 and 0 < xc <= 14; out_0_blur_30[root, xr, xc] -> (17 + xc) : root = 0 and xc = 15 and 0 <= xr <= 29; out_0_blur_30[root, xr, xc] -> 32 : root = 0 and xc = 0 and 0 <= xr <= 29 }
-	// lexmax events: { out_0_blur_30[root = 0, xr, xc] -> I_id0[root' = 0, ir = xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_out_0_blur_30_5 read pattern: { out_0_blur_30[root = 0, xr, xc] -> I[xr, 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_I_id0_10 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
-    // overlap with reads : { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 29 and 0 <= i1 <= 30 }
-  // I_I_id1_8 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
-    // overlap with reads : {  }
-	auto value_I_I_id0_10 = I.I_I_id0_10.peek_32();
-	return value_I_I_id0_10;
-}
-
-inline hw_uint<16> I_out_0_blur_30_6_select(I_cache& I, int root, int xr, int xc) {
-  // qpd = { out_0_blur_30[root, xr, xc] -> 16 : root = 0 and 0 <= xr <= 29 and 0 < xc <= 14; out_0_blur_30[root, xr, xc] -> (1 + xc) : root = 0 and xc = 15 and 0 <= xr <= 29; out_0_blur_30[root, xr, xc] -> 16 : root = 0 and xc = 0 and 0 <= xr <= 29 }
-	// lexmax events: { out_0_blur_30[root = 0, xr, xc] -> I_id0[root' = 0, ir = 1 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_out_0_blur_30_6 read pattern: { out_0_blur_30[root = 0, xr, xc] -> I[1 + xr, 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_I_id0_10 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
-    // overlap with reads : { I[i0, i1] : (i1) mod 2 = 0 and 0 < i0 <= 30 and 0 <= i1 <= 30 }
-  // I_I_id1_8 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
-    // overlap with reads : {  }
-	auto value_I_I_id0_10 = I.I_I_id0_10.peek_16();
-	return value_I_I_id0_10;
-}
-
-inline hw_uint<16> I_out_0_blur_30_7_select(I_cache& I, int root, int xr, int xc) {
   // qpd = {  }
 	// lexmax events: { out_0_blur_30[root = 0, xr, xc] -> I_id0[root' = 0, ir = 2 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_out_0_blur_30_7 read pattern: { out_0_blur_30[root = 0, xr, xc] -> I[2 + xr, 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_I_id0_10 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
+  // I_out_0_blur_30_5 read pattern: { out_0_blur_30[root = 0, xr, xc] -> I[2 + xr, 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+  // I_I_id0_0 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
     // overlap with reads : { I[i0, i1] : (i1) mod 2 = 0 and 2 <= i0 <= 31 and 0 <= i1 <= 30 }
-  // I_I_id1_8 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
+  // I_I_id1_6 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
     // overlap with reads : {  }
-	auto value_I_I_id0_10 = I.I_I_id0_10.peek_0();
-	return value_I_I_id0_10;
+	auto value_I_I_id0_0 = I.I_I_id0_0.peek_0();
+	return value_I_I_id0_0;
 }
 
-inline hw_uint<16> I_out_1_blur_31_1_select(I_cache& I, int root, int xr, int xc) {
-  // qpd = {  }
-	// lexmax events: { out_1_blur_31[root = 0, xr, xc] -> I_id1[root' = 0, ir = xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_out_1_blur_31_1 read pattern: { out_1_blur_31[root = 0, xr, xc] -> I[xr, 1 + 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_I_id0_10 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
-    // overlap with reads : {  }
-  // I_I_id1_8 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
-    // overlap with reads : { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 29 and 0 < i1 <= 31 }
-	auto value_I_I_id1_8 = I.I_I_id1_8.peek_32();
-	return value_I_I_id1_8;
-}
-
-inline hw_uint<16> I_out_1_blur_31_2_select(I_cache& I, int root, int xr, int xc) {
+inline hw_uint<16> I_out_1_blur_31_10_select(I_cache& I, int root, int xr, int xc) {
   // qpd = {  }
 	// lexmax events: { out_1_blur_31[root = 0, xr, xc] -> I_id1[root' = 0, ir = 1 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_out_1_blur_31_2 read pattern: { out_1_blur_31[root = 0, xr, xc] -> I[1 + xr, 1 + 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_I_id0_10 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
+  // I_out_1_blur_31_10 read pattern: { out_1_blur_31[root = 0, xr, xc] -> I[1 + xr, 1 + 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+  // I_I_id0_0 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
     // overlap with reads : {  }
-  // I_I_id1_8 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
+  // I_I_id1_6 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
     // overlap with reads : { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 < i0 <= 30 and 0 < i1 <= 31 }
-	auto value_I_I_id1_8 = I.I_I_id1_8.peek_16();
-	return value_I_I_id1_8;
+	auto value_I_I_id1_6 = I.I_I_id1_6.peek_16();
+	return value_I_I_id1_6;
 }
 
-inline hw_uint<16> I_out_1_blur_31_3_select(I_cache& I, int root, int xr, int xc) {
+inline hw_uint<16> I_out_1_blur_31_11_select(I_cache& I, int root, int xr, int xc) {
   // qpd = {  }
 	// lexmax events: { out_1_blur_31[root = 0, xr, xc] -> I_id1[root' = 0, ir = 2 + xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_out_1_blur_31_3 read pattern: { out_1_blur_31[root = 0, xr, xc] -> I[2 + xr, 1 + 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
-  // I_I_id0_10 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
+  // I_out_1_blur_31_11 read pattern: { out_1_blur_31[root = 0, xr, xc] -> I[2 + xr, 1 + 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+  // I_I_id0_0 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
     // overlap with reads : {  }
-  // I_I_id1_8 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
+  // I_I_id1_6 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
     // overlap with reads : { I[i0, i1] : (1 + i1) mod 2 = 0 and 2 <= i0 <= 31 and 0 < i1 <= 31 }
-	auto value_I_I_id1_8 = I.I_I_id1_8.peek_0();
-	return value_I_I_id1_8;
+	auto value_I_I_id1_6 = I.I_I_id1_6.peek_0();
+	return value_I_I_id1_6;
+}
+
+inline hw_uint<16> I_out_1_blur_31_9_select(I_cache& I, int root, int xr, int xc) {
+  // qpd = {  }
+	// lexmax events: { out_1_blur_31[root = 0, xr, xc] -> I_id1[root' = 0, ir = xr, ic = xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+  // I_out_1_blur_31_9 read pattern: { out_1_blur_31[root = 0, xr, xc] -> I[xr, 1 + 2xc] : 0 <= xr <= 29 and 0 <= xc <= 15 }
+  // I_I_id0_0 stores range: { I[i0, i1] : (i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 <= i1 <= 30 }
+    // overlap with reads : {  }
+  // I_I_id1_6 stores range: { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 31 and 0 < i1 <= 31 }
+    // overlap with reads : { I[i0, i1] : (1 + i1) mod 2 = 0 and 0 <= i0 <= 29 and 0 < i1 <= 31 }
+	auto value_I_I_id1_6 = I.I_I_id1_6.peek_32();
+	return value_I_I_id1_6;
 }
 
 // # of bundles = 4
 // I_id0_write
-//	I_I_id0_10
+//	I_I_id0_0
 inline void I_I_id0_write_bundle_write(hw_uint<16>& I_id0_write, I_cache& I, int root, int ir, int ic) {
-	hw_uint<16> I_I_id0_10_res = I_id0_write.extract<0, 15>();
-	I_I_id0_10_write(I_I_id0_10_res, I, root, ir, ic);
+	hw_uint<16> I_I_id0_0_res = I_id0_write.extract<0, 15>();
+	I_I_id0_0_write(I_I_id0_0_res, I, root, ir, ic);
 }
 
 // I_id1_write
-//	I_I_id1_8
+//	I_I_id1_6
 inline void I_I_id1_write_bundle_write(hw_uint<16>& I_id1_write, I_cache& I, int root, int ir, int ic) {
-	hw_uint<16> I_I_id1_8_res = I_id1_write.extract<0, 15>();
-	I_I_id1_8_write(I_I_id1_8_res, I, root, ir, ic);
+	hw_uint<16> I_I_id1_6_res = I_id1_write.extract<0, 15>();
+	I_I_id1_6_write(I_I_id1_6_res, I, root, ir, ic);
 }
 
 // out_0_blur_30_read
+//	I_out_0_blur_30_3
+//	I_out_0_blur_30_4
 //	I_out_0_blur_30_5
-//	I_out_0_blur_30_6
-//	I_out_0_blur_30_7
 inline hw_uint<48> I_out_0_blur_30_read_bundle_read(I_cache& I, int root, int xr, int xc) {
 	hw_uint<48> result;
+	hw_uint<16> I_out_0_blur_30_3_res = I_out_0_blur_30_3_select(I, root, xr, xc);
+	set_at<0, 48>(result, I_out_0_blur_30_3_res);
+	hw_uint<16> I_out_0_blur_30_4_res = I_out_0_blur_30_4_select(I, root, xr, xc);
+	set_at<16, 48>(result, I_out_0_blur_30_4_res);
 	hw_uint<16> I_out_0_blur_30_5_res = I_out_0_blur_30_5_select(I, root, xr, xc);
-	set_at<0, 48>(result, I_out_0_blur_30_5_res);
-	hw_uint<16> I_out_0_blur_30_6_res = I_out_0_blur_30_6_select(I, root, xr, xc);
-	set_at<16, 48>(result, I_out_0_blur_30_6_res);
-	hw_uint<16> I_out_0_blur_30_7_res = I_out_0_blur_30_7_select(I, root, xr, xc);
-	set_at<32, 48>(result, I_out_0_blur_30_7_res);
+	set_at<32, 48>(result, I_out_0_blur_30_5_res);
 	return result;
 }
 
 // out_1_blur_31_read
-//	I_out_1_blur_31_1
-//	I_out_1_blur_31_2
-//	I_out_1_blur_31_3
+//	I_out_1_blur_31_9
+//	I_out_1_blur_31_10
+//	I_out_1_blur_31_11
 inline hw_uint<48> I_out_1_blur_31_read_bundle_read(I_cache& I, int root, int xr, int xc) {
 	hw_uint<48> result;
-	hw_uint<16> I_out_1_blur_31_1_res = I_out_1_blur_31_1_select(I, root, xr, xc);
-	set_at<0, 48>(result, I_out_1_blur_31_1_res);
-	hw_uint<16> I_out_1_blur_31_2_res = I_out_1_blur_31_2_select(I, root, xr, xc);
-	set_at<16, 48>(result, I_out_1_blur_31_2_res);
-	hw_uint<16> I_out_1_blur_31_3_res = I_out_1_blur_31_3_select(I, root, xr, xc);
-	set_at<32, 48>(result, I_out_1_blur_31_3_res);
+	hw_uint<16> I_out_1_blur_31_9_res = I_out_1_blur_31_9_select(I, root, xr, xc);
+	set_at<0, 48>(result, I_out_1_blur_31_9_res);
+	hw_uint<16> I_out_1_blur_31_10_res = I_out_1_blur_31_10_select(I, root, xr, xc);
+	set_at<16, 48>(result, I_out_1_blur_31_10_res);
+	hw_uint<16> I_out_1_blur_31_11_res = I_out_1_blur_31_11_select(I, root, xr, xc);
+	set_at<32, 48>(result, I_out_1_blur_31_11_res);
 	return result;
 }
 
@@ -785,12 +785,12 @@ inline hw_uint<48> I_out_1_blur_31_read_bundle_read(I_cache& I, int root, int xr
 
 
 // Operation logic
-inline void out_1_blur_31(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */out_1, int root, int xr, int xc) {
-	// Consume: I
-	auto I_xr__p__0_c__2_m_xc__p__1__p__0_value = I_out_1_blur_31_read_bundle_read(I/* source_delay */, root, xr, xc);
-	auto compute_result = blur_3(I_xr__p__0_c__2_m_xc__p__1__p__0_value);
-	// Produce: out_1
-	out_1.write(compute_result);
+inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in_0, I_cache& I, int root, int ir, int ic) {
+	// Consume: in_0
+	auto in_0_ir_c__ic_value = in_0.read();
+	auto compute_result = id(in_0_ir_c__ic_value);
+	// Produce: I
+	I_I_id0_write_bundle_write(compute_result, I, root, ir, ic);
 }
 
 inline void out_0_blur_30(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */out_0, int root, int xr, int xc) {
@@ -809,12 +809,12 @@ inline void I_id1(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in_1, I
 	I_I_id1_write_bundle_write(compute_result, I, root, ir, ic);
 }
 
-inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in_0, I_cache& I, int root, int ir, int ic) {
-	// Consume: in_0
-	auto in_0_ir_c__ic_value = in_0.read();
-	auto compute_result = id(in_0_ir_c__ic_value);
-	// Produce: I
-	I_I_id0_write_bundle_write(compute_result, I, root, ir, ic);
+inline void out_1_blur_31(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */out_1, int root, int xr, int xc) {
+	// Consume: I
+	auto I_xr__p__0_c__2_m_xc__p__1__p__0_value = I_out_1_blur_31_read_bundle_read(I/* source_delay */, root, xr, xc);
+	auto compute_result = blur_3(I_xr__p__0_c__2_m_xc__p__1__p__0_value);
+	// Produce: out_1
+	out_1.write(compute_result);
 }
 
 // Driver function

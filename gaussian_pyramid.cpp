@@ -2,7 +2,7 @@
 
 #include "hw_classes.h"
 
-struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_1_cache {
+struct I_store_I_from_in_16_to_I_I_blr_conv_3_30_19_cache {
 	// Capacity: 67
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -37,7 +37,7 @@ struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_1_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_store_I_from_in_26_to_I_I_blr_conv_3_30_1_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_store_I_from_in_16_to_I_I_blr_conv_3_30_19_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -55,7 +55,7 @@ struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_1_cache {
 
 };
 
-struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_2_cache {
+struct I_store_I_from_in_16_to_I_I_blr_conv_3_30_20_cache {
 	// Capacity: 67
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -90,7 +90,7 @@ struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_2_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_store_I_from_in_26_to_I_I_blr_conv_3_30_2_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_store_I_from_in_16_to_I_I_blr_conv_3_30_20_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -108,7 +108,7 @@ struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_2_cache {
 
 };
 
-struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_3_cache {
+struct I_store_I_from_in_16_to_I_I_blr_conv_3_30_21_cache {
 	// Capacity: 67
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -143,7 +143,7 @@ struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_3_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_store_I_from_in_26_to_I_I_blr_conv_3_30_3_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_store_I_from_in_16_to_I_I_blr_conv_3_30_21_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -161,7 +161,7 @@ struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_3_cache {
 
 };
 
-struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_4_cache {
+struct I_store_I_from_in_16_to_I_I_blr_conv_3_30_22_cache {
 	// Capacity: 67
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -196,7 +196,7 @@ struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_4_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_store_I_from_in_26_to_I_I_blr_conv_3_30_4_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_store_I_from_in_16_to_I_I_blr_conv_3_30_22_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -214,7 +214,7 @@ struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_4_cache {
 
 };
 
-struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_5_cache {
+struct I_store_I_from_in_16_to_I_I_blr_conv_3_30_23_cache {
 	// Capacity: 67
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -249,7 +249,7 @@ struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_5_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_store_I_from_in_26_to_I_I_blr_conv_3_30_5_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_store_I_from_in_16_to_I_I_blr_conv_3_30_23_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -267,7 +267,7 @@ struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_5_cache {
 
 };
 
-struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_6_cache {
+struct I_store_I_from_in_16_to_I_I_blr_conv_3_30_24_cache {
 	// Capacity: 67
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -302,7 +302,7 @@ struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_6_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_store_I_from_in_26_to_I_I_blr_conv_3_30_6_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_store_I_from_in_16_to_I_I_blr_conv_3_30_24_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -320,7 +320,7 @@ struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_6_cache {
 
 };
 
-struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_7_cache {
+struct I_store_I_from_in_16_to_I_I_blr_conv_3_30_25_cache {
 	// Capacity: 67
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -355,7 +355,7 @@ struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_7_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_store_I_from_in_26_to_I_I_blr_conv_3_30_7_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_store_I_from_in_16_to_I_I_blr_conv_3_30_25_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -373,7 +373,7 @@ struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_7_cache {
 
 };
 
-struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_8_cache {
+struct I_store_I_from_in_16_to_I_I_blr_conv_3_30_26_cache {
 	// Capacity: 67
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -399,7 +399,7 @@ struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_8_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_store_I_from_in_26_to_I_I_blr_conv_3_30_8_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_store_I_from_in_16_to_I_I_blr_conv_3_30_26_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -416,7 +416,7 @@ struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_8_cache {
 
 };
 
-struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_9_cache {
+struct I_store_I_from_in_16_to_I_I_blr_conv_3_30_27_cache {
 	// Capacity: 67
 	// Parition [0, 0] capacity = 1
 	fifo<hw_uint<32> , 1> f1;
@@ -433,7 +433,7 @@ struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_9_cache {
 			return f1.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_store_I_from_in_26_to_I_I_blr_conv_3_30_9_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_store_I_from_in_16_to_I_I_blr_conv_3_30_27_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -449,7 +449,7 @@ struct I_store_I_from_in_26_to_I_I_blr_conv_3_30_9_cache {
 
 };
 
-struct I_store_I_from_in_26_cache {
+struct I_store_I_from_in_16_cache {
 	// Capacity: 67
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -556,7 +556,7 @@ struct I_store_I_from_in_26_cache {
 			return f16.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_store_I_from_in_26_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_store_I_from_in_16_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -583,133 +583,169 @@ struct I_store_I_from_in_26_cache {
 };
 
 struct I_cache {
-  I_store_I_from_in_26_cache I_store_I_from_in_26;
-  I_store_I_from_in_26_to_I_I_blr_conv_3_30_1_cache bank_I_store_I_from_in_26_to_I_I_blr_conv_3_30_1;
-  I_store_I_from_in_26_to_I_I_blr_conv_3_30_2_cache bank_I_store_I_from_in_26_to_I_I_blr_conv_3_30_2;
-  I_store_I_from_in_26_to_I_I_blr_conv_3_30_3_cache bank_I_store_I_from_in_26_to_I_I_blr_conv_3_30_3;
-  I_store_I_from_in_26_to_I_I_blr_conv_3_30_4_cache bank_I_store_I_from_in_26_to_I_I_blr_conv_3_30_4;
-  I_store_I_from_in_26_to_I_I_blr_conv_3_30_5_cache bank_I_store_I_from_in_26_to_I_I_blr_conv_3_30_5;
-  I_store_I_from_in_26_to_I_I_blr_conv_3_30_6_cache bank_I_store_I_from_in_26_to_I_I_blr_conv_3_30_6;
-  I_store_I_from_in_26_to_I_I_blr_conv_3_30_7_cache bank_I_store_I_from_in_26_to_I_I_blr_conv_3_30_7;
-  I_store_I_from_in_26_to_I_I_blr_conv_3_30_8_cache bank_I_store_I_from_in_26_to_I_I_blr_conv_3_30_8;
-  I_store_I_from_in_26_to_I_I_blr_conv_3_30_9_cache bank_I_store_I_from_in_26_to_I_I_blr_conv_3_30_9;
+  I_store_I_from_in_16_cache I_store_I_from_in_16;
+  I_store_I_from_in_16_to_I_I_blr_conv_3_30_19_cache bank_I_store_I_from_in_16_to_I_I_blr_conv_3_30_19;
+  I_store_I_from_in_16_to_I_I_blr_conv_3_30_20_cache bank_I_store_I_from_in_16_to_I_I_blr_conv_3_30_20;
+  I_store_I_from_in_16_to_I_I_blr_conv_3_30_21_cache bank_I_store_I_from_in_16_to_I_I_blr_conv_3_30_21;
+  I_store_I_from_in_16_to_I_I_blr_conv_3_30_22_cache bank_I_store_I_from_in_16_to_I_I_blr_conv_3_30_22;
+  I_store_I_from_in_16_to_I_I_blr_conv_3_30_23_cache bank_I_store_I_from_in_16_to_I_I_blr_conv_3_30_23;
+  I_store_I_from_in_16_to_I_I_blr_conv_3_30_24_cache bank_I_store_I_from_in_16_to_I_I_blr_conv_3_30_24;
+  I_store_I_from_in_16_to_I_I_blr_conv_3_30_25_cache bank_I_store_I_from_in_16_to_I_I_blr_conv_3_30_25;
+  I_store_I_from_in_16_to_I_I_blr_conv_3_30_26_cache bank_I_store_I_from_in_16_to_I_I_blr_conv_3_30_26;
+  I_store_I_from_in_16_to_I_I_blr_conv_3_30_27_cache bank_I_store_I_from_in_16_to_I_I_blr_conv_3_30_27;
 };
 
 
 
-inline void I_store_I_from_in_26_write(hw_uint<32> & I_store_I_from_in_26, I_cache& I, int root, int pr, int pc) {
-	I.I_store_I_from_in_26.push(I_store_I_from_in_26);
-  I.bank_I_store_I_from_in_26_to_I_I_blr_conv_3_30_1.push(I_store_I_from_in_26);
-  I.bank_I_store_I_from_in_26_to_I_I_blr_conv_3_30_2.push(I_store_I_from_in_26);
-  I.bank_I_store_I_from_in_26_to_I_I_blr_conv_3_30_3.push(I_store_I_from_in_26);
-  I.bank_I_store_I_from_in_26_to_I_I_blr_conv_3_30_4.push(I_store_I_from_in_26);
-  I.bank_I_store_I_from_in_26_to_I_I_blr_conv_3_30_5.push(I_store_I_from_in_26);
-  I.bank_I_store_I_from_in_26_to_I_I_blr_conv_3_30_6.push(I_store_I_from_in_26);
-  I.bank_I_store_I_from_in_26_to_I_I_blr_conv_3_30_7.push(I_store_I_from_in_26);
-  I.bank_I_store_I_from_in_26_to_I_I_blr_conv_3_30_8.push(I_store_I_from_in_26);
-  I.bank_I_store_I_from_in_26_to_I_I_blr_conv_3_30_9.push(I_store_I_from_in_26);
+inline void I_store_I_from_in_16_write(hw_uint<32> & I_store_I_from_in_16, I_cache& I, int root, int pr, int pc) {
+	I.I_store_I_from_in_16.push(I_store_I_from_in_16);
+  I.bank_I_store_I_from_in_16_to_I_I_blr_conv_3_30_19.push(I_store_I_from_in_16);
+  I.bank_I_store_I_from_in_16_to_I_I_blr_conv_3_30_20.push(I_store_I_from_in_16);
+  I.bank_I_store_I_from_in_16_to_I_I_blr_conv_3_30_21.push(I_store_I_from_in_16);
+  I.bank_I_store_I_from_in_16_to_I_I_blr_conv_3_30_22.push(I_store_I_from_in_16);
+  I.bank_I_store_I_from_in_16_to_I_I_blr_conv_3_30_23.push(I_store_I_from_in_16);
+  I.bank_I_store_I_from_in_16_to_I_I_blr_conv_3_30_24.push(I_store_I_from_in_16);
+  I.bank_I_store_I_from_in_16_to_I_I_blr_conv_3_30_25.push(I_store_I_from_in_16);
+  I.bank_I_store_I_from_in_16_to_I_I_blr_conv_3_30_26.push(I_store_I_from_in_16);
+  I.bank_I_store_I_from_in_16_to_I_I_blr_conv_3_30_27.push(I_store_I_from_in_16);
 }
 
-inline hw_uint<32>  I_I_blr_conv_3_30_1_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
+inline hw_uint<32>  I_I_blr_conv_3_30_19_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
   // qpd = { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 66 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-	hw_uint<32>  value_I_store_I_from_in_26 = I.I_store_I_from_in_26.peek_66();
-	return value_I_store_I_from_in_26;
+	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = I_blr_r, pc = I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_I_blr_conv_3_30_19 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_store_I_from_in_16 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
+    // overlap with reads : { I[i0, i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
+	auto value_I_store_I_from_in_16 = I.I_store_I_from_in_16.peek_66();
+	return value_I_store_I_from_in_16;
 }
 
-inline hw_uint<32>  I_I_blr_conv_3_30_2_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
+inline hw_uint<32>  I_I_blr_conv_3_30_20_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
   // qpd = { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 65 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-	hw_uint<32>  value_I_store_I_from_in_26 = I.I_store_I_from_in_26.peek_65();
-	return value_I_store_I_from_in_26;
+	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = I_blr_r, pc = 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_I_blr_conv_3_30_20 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[I_blr_r, 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_store_I_from_in_16 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
+    // overlap with reads : { I[i0, i1] : 0 <= i0 <= 29 and 0 < i1 <= 30 }
+	auto value_I_store_I_from_in_16 = I.I_store_I_from_in_16.peek_65();
+	return value_I_store_I_from_in_16;
 }
 
-inline hw_uint<32>  I_I_blr_conv_3_30_3_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
+inline hw_uint<32>  I_I_blr_conv_3_30_21_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
   // qpd = { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 64 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 28; I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> (35 + I_blr_c) : root = 0 and I_blr_c = 29 and 0 <= I_blr_r <= 29 }
-	hw_uint<32>  value_I_store_I_from_in_26 = I.I_store_I_from_in_26.peek_64();
-	return value_I_store_I_from_in_26;
+	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = I_blr_r, pc = 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_I_blr_conv_3_30_21 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[I_blr_r, 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_store_I_from_in_16 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
+    // overlap with reads : { I[i0, i1] : 0 <= i0 <= 29 and 2 <= i1 <= 31 }
+	auto value_I_store_I_from_in_16 = I.I_store_I_from_in_16.peek_64();
+	return value_I_store_I_from_in_16;
 }
 
-inline hw_uint<32>  I_I_blr_conv_3_30_4_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
+inline hw_uint<32>  I_I_blr_conv_3_30_22_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
   // qpd = { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 34 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-	hw_uint<32>  value_I_store_I_from_in_26 = I.I_store_I_from_in_26.peek_34();
-	return value_I_store_I_from_in_26;
+	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = 1 + I_blr_r, pc = I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_I_blr_conv_3_30_22 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[1 + I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_store_I_from_in_16 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
+    // overlap with reads : { I[i0, i1] : 0 < i0 <= 30 and 0 <= i1 <= 29 }
+	auto value_I_store_I_from_in_16 = I.I_store_I_from_in_16.peek_34();
+	return value_I_store_I_from_in_16;
 }
 
-inline hw_uint<32>  I_I_blr_conv_3_30_5_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
+inline hw_uint<32>  I_I_blr_conv_3_30_23_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
   // qpd = { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 33 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-	hw_uint<32>  value_I_store_I_from_in_26 = I.I_store_I_from_in_26.peek_33();
-	return value_I_store_I_from_in_26;
+	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = 1 + I_blr_r, pc = 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_I_blr_conv_3_30_23 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[1 + I_blr_r, 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_store_I_from_in_16 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
+    // overlap with reads : { I[i0, i1] : 0 < i0 <= 30 and 0 < i1 <= 30 }
+	auto value_I_store_I_from_in_16 = I.I_store_I_from_in_16.peek_33();
+	return value_I_store_I_from_in_16;
 }
 
-inline hw_uint<32>  I_I_blr_conv_3_30_6_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
+inline hw_uint<32>  I_I_blr_conv_3_30_24_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
   // qpd = { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 32 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 28; I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> (3 + I_blr_c) : root = 0 and I_blr_c = 29 and 0 <= I_blr_r <= 29 }
-	hw_uint<32>  value_I_store_I_from_in_26 = I.I_store_I_from_in_26.peek_32();
-	return value_I_store_I_from_in_26;
+	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = 1 + I_blr_r, pc = 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_I_blr_conv_3_30_24 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[1 + I_blr_r, 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_store_I_from_in_16 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
+    // overlap with reads : { I[i0, i1] : 0 < i0 <= 30 and 2 <= i1 <= 31 }
+	auto value_I_store_I_from_in_16 = I.I_store_I_from_in_16.peek_32();
+	return value_I_store_I_from_in_16;
 }
 
-inline hw_uint<32>  I_I_blr_conv_3_30_7_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
+inline hw_uint<32>  I_I_blr_conv_3_30_25_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
   // qpd = { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 2 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-	hw_uint<32>  value_I_store_I_from_in_26 = I.I_store_I_from_in_26.peek_2();
-	return value_I_store_I_from_in_26;
+	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = 2 + I_blr_r, pc = I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_I_blr_conv_3_30_25 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[2 + I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_store_I_from_in_16 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
+    // overlap with reads : { I[i0, i1] : 2 <= i0 <= 31 and 0 <= i1 <= 29 }
+	auto value_I_store_I_from_in_16 = I.I_store_I_from_in_16.peek_2();
+	return value_I_store_I_from_in_16;
 }
 
-inline hw_uint<32>  I_I_blr_conv_3_30_8_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
+inline hw_uint<32>  I_I_blr_conv_3_30_26_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
   // qpd = { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 1 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-	hw_uint<32>  value_I_store_I_from_in_26 = I.I_store_I_from_in_26.peek_1();
-	return value_I_store_I_from_in_26;
+	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = 2 + I_blr_r, pc = 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_I_blr_conv_3_30_26 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[2 + I_blr_r, 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_store_I_from_in_16 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
+    // overlap with reads : { I[i0, i1] : 2 <= i0 <= 31 and 0 < i1 <= 30 }
+	auto value_I_store_I_from_in_16 = I.I_store_I_from_in_16.peek_1();
+	return value_I_store_I_from_in_16;
 }
 
-inline hw_uint<32>  I_I_blr_conv_3_30_9_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
+inline hw_uint<32>  I_I_blr_conv_3_30_27_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
   // qpd = {  }
-	hw_uint<32>  value_I_store_I_from_in_26 = I.I_store_I_from_in_26.peek_0();
-	return value_I_store_I_from_in_26;
+	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = 2 + I_blr_r, pc = 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_I_blr_conv_3_30_27 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[2 + I_blr_r, 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_store_I_from_in_16 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
+    // overlap with reads : { I[i0, i1] : 2 <= i0 <= 31 and 2 <= i1 <= 31 }
+	auto value_I_store_I_from_in_16 = I.I_store_I_from_in_16.peek_0();
+	return value_I_store_I_from_in_16;
 }
 
 // # of bundles = 2
 // I_blr_conv_3_30_read
-//	I_I_blr_conv_3_30_1
-//	I_I_blr_conv_3_30_2
-//	I_I_blr_conv_3_30_3
-//	I_I_blr_conv_3_30_4
-//	I_I_blr_conv_3_30_5
-//	I_I_blr_conv_3_30_6
-//	I_I_blr_conv_3_30_7
-//	I_I_blr_conv_3_30_8
-//	I_I_blr_conv_3_30_9
+//	I_I_blr_conv_3_30_19
+//	I_I_blr_conv_3_30_20
+//	I_I_blr_conv_3_30_21
+//	I_I_blr_conv_3_30_22
+//	I_I_blr_conv_3_30_23
+//	I_I_blr_conv_3_30_24
+//	I_I_blr_conv_3_30_25
+//	I_I_blr_conv_3_30_26
+//	I_I_blr_conv_3_30_27
 inline hw_uint<288> I_I_blr_conv_3_30_read_bundle_read(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 	hw_uint<288> result;
-	hw_uint<32>  I_I_blr_conv_3_30_1_res = I_I_blr_conv_3_30_1_select(I, root, I_blr_r, I_blr_c);
-	set_at<0, 288>(result, I_I_blr_conv_3_30_1_res);
-	hw_uint<32>  I_I_blr_conv_3_30_2_res = I_I_blr_conv_3_30_2_select(I, root, I_blr_r, I_blr_c);
-	set_at<32, 288>(result, I_I_blr_conv_3_30_2_res);
-	hw_uint<32>  I_I_blr_conv_3_30_3_res = I_I_blr_conv_3_30_3_select(I, root, I_blr_r, I_blr_c);
-	set_at<64, 288>(result, I_I_blr_conv_3_30_3_res);
-	hw_uint<32>  I_I_blr_conv_3_30_4_res = I_I_blr_conv_3_30_4_select(I, root, I_blr_r, I_blr_c);
-	set_at<96, 288>(result, I_I_blr_conv_3_30_4_res);
-	hw_uint<32>  I_I_blr_conv_3_30_5_res = I_I_blr_conv_3_30_5_select(I, root, I_blr_r, I_blr_c);
-	set_at<128, 288>(result, I_I_blr_conv_3_30_5_res);
-	hw_uint<32>  I_I_blr_conv_3_30_6_res = I_I_blr_conv_3_30_6_select(I, root, I_blr_r, I_blr_c);
-	set_at<160, 288>(result, I_I_blr_conv_3_30_6_res);
-	hw_uint<32>  I_I_blr_conv_3_30_7_res = I_I_blr_conv_3_30_7_select(I, root, I_blr_r, I_blr_c);
-	set_at<192, 288>(result, I_I_blr_conv_3_30_7_res);
-	hw_uint<32>  I_I_blr_conv_3_30_8_res = I_I_blr_conv_3_30_8_select(I, root, I_blr_r, I_blr_c);
-	set_at<224, 288>(result, I_I_blr_conv_3_30_8_res);
-	hw_uint<32>  I_I_blr_conv_3_30_9_res = I_I_blr_conv_3_30_9_select(I, root, I_blr_r, I_blr_c);
-	set_at<256, 288>(result, I_I_blr_conv_3_30_9_res);
+	hw_uint<32>  I_I_blr_conv_3_30_19_res = I_I_blr_conv_3_30_19_select(I, root, I_blr_r, I_blr_c);
+	set_at<0, 288>(result, I_I_blr_conv_3_30_19_res);
+	hw_uint<32>  I_I_blr_conv_3_30_20_res = I_I_blr_conv_3_30_20_select(I, root, I_blr_r, I_blr_c);
+	set_at<32, 288>(result, I_I_blr_conv_3_30_20_res);
+	hw_uint<32>  I_I_blr_conv_3_30_21_res = I_I_blr_conv_3_30_21_select(I, root, I_blr_r, I_blr_c);
+	set_at<64, 288>(result, I_I_blr_conv_3_30_21_res);
+	hw_uint<32>  I_I_blr_conv_3_30_22_res = I_I_blr_conv_3_30_22_select(I, root, I_blr_r, I_blr_c);
+	set_at<96, 288>(result, I_I_blr_conv_3_30_22_res);
+	hw_uint<32>  I_I_blr_conv_3_30_23_res = I_I_blr_conv_3_30_23_select(I, root, I_blr_r, I_blr_c);
+	set_at<128, 288>(result, I_I_blr_conv_3_30_23_res);
+	hw_uint<32>  I_I_blr_conv_3_30_24_res = I_I_blr_conv_3_30_24_select(I, root, I_blr_r, I_blr_c);
+	set_at<160, 288>(result, I_I_blr_conv_3_30_24_res);
+	hw_uint<32>  I_I_blr_conv_3_30_25_res = I_I_blr_conv_3_30_25_select(I, root, I_blr_r, I_blr_c);
+	set_at<192, 288>(result, I_I_blr_conv_3_30_25_res);
+	hw_uint<32>  I_I_blr_conv_3_30_26_res = I_I_blr_conv_3_30_26_select(I, root, I_blr_r, I_blr_c);
+	set_at<224, 288>(result, I_I_blr_conv_3_30_26_res);
+	hw_uint<32>  I_I_blr_conv_3_30_27_res = I_I_blr_conv_3_30_27_select(I, root, I_blr_r, I_blr_c);
+	set_at<256, 288>(result, I_I_blr_conv_3_30_27_res);
 	return result;
 }
 
 // store_I_from_in_write
-//	I_store_I_from_in_26
+//	I_store_I_from_in_16
 inline void I_store_I_from_in_write_bundle_write(hw_uint<32>& store_I_from_in_write, I_cache& I, int root, int pr, int pc) {
-	hw_uint<32>  I_store_I_from_in_26_res = store_I_from_in_write.extract<0, 31>();
-	I_store_I_from_in_26_write(I_store_I_from_in_26_res, I, root, pr, pc);
+	hw_uint<32>  I_store_I_from_in_16_res = store_I_from_in_write.extract<0, 31>();
+	I_store_I_from_in_16_write(I_store_I_from_in_16_res, I, root, pr, pc);
 }
 
 
 
 #include "hw_classes.h"
 
-struct I_blr_I_blr_conv_3_30_0_to_I_blr_I_blr_ds_id0_15_cache {
+struct I_blr_I_blr_conv_3_30_18_to_I_blr_I_blr_ds_id0_15_cache {
 	// Capacity: 1
 	// Parition [0, 0] capacity = 1
 	fifo<hw_uint<32> , 1> f1;
@@ -726,7 +762,7 @@ struct I_blr_I_blr_conv_3_30_0_to_I_blr_I_blr_ds_id0_15_cache {
 			return f1.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_blr_I_blr_conv_3_30_0_to_I_blr_I_blr_ds_id0_15_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_blr_I_blr_conv_3_30_18_to_I_blr_I_blr_ds_id0_15_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -742,7 +778,7 @@ struct I_blr_I_blr_conv_3_30_0_to_I_blr_I_blr_ds_id0_15_cache {
 
 };
 
-struct I_blr_I_blr_conv_3_30_0_cache {
+struct I_blr_I_blr_conv_3_30_18_cache {
 	// Capacity: 1
 	fifo<hw_uint<32> , 1> f;
 	inline hw_uint<32>  peek(const int offset) {
@@ -765,29 +801,33 @@ struct I_blr_I_blr_conv_3_30_0_cache {
 };
 
 struct I_blr_cache {
-  I_blr_I_blr_conv_3_30_0_cache I_blr_I_blr_conv_3_30_0;
-  I_blr_I_blr_conv_3_30_0_to_I_blr_I_blr_ds_id0_15_cache bank_I_blr_I_blr_conv_3_30_0_to_I_blr_I_blr_ds_id0_15;
+  I_blr_I_blr_conv_3_30_18_cache I_blr_I_blr_conv_3_30_18;
+  I_blr_I_blr_conv_3_30_18_to_I_blr_I_blr_ds_id0_15_cache bank_I_blr_I_blr_conv_3_30_18_to_I_blr_I_blr_ds_id0_15;
 };
 
 
 
-inline void I_blr_I_blr_conv_3_30_0_write(hw_uint<32> & I_blr_I_blr_conv_3_30_0, I_blr_cache& I_blr, int root, int I_blr_r, int I_blr_c) {
-	I_blr.I_blr_I_blr_conv_3_30_0.push(I_blr_I_blr_conv_3_30_0);
-  I_blr.bank_I_blr_I_blr_conv_3_30_0_to_I_blr_I_blr_ds_id0_15.push(I_blr_I_blr_conv_3_30_0);
+inline void I_blr_I_blr_conv_3_30_18_write(hw_uint<32> & I_blr_I_blr_conv_3_30_18, I_blr_cache& I_blr, int root, int I_blr_r, int I_blr_c) {
+	I_blr.I_blr_I_blr_conv_3_30_18.push(I_blr_I_blr_conv_3_30_18);
+  I_blr.bank_I_blr_I_blr_conv_3_30_18_to_I_blr_I_blr_ds_id0_15.push(I_blr_I_blr_conv_3_30_18);
 }
 
 inline hw_uint<32>  I_blr_I_blr_ds_id0_15_select(I_blr_cache& I_blr, int root, int I_blr_ds_r, int I_blr_ds_c) {
   // qpd = {  }
-	hw_uint<32>  value_I_blr_I_blr_conv_3_30_0 = I_blr.I_blr_I_blr_conv_3_30_0.peek_0();
-	return value_I_blr_I_blr_conv_3_30_0;
+	// lexmax events: { I_blr_ds_id0[root = 0, I_blr_ds_r, I_blr_ds_c] -> I_blr_conv_3_30[root' = 0, I_blr_r = 2I_blr_ds_r, I_blr_c = 2I_blr_ds_c] : 0 <= I_blr_ds_r <= 14 and 0 <= I_blr_ds_c <= 14 }
+  // I_blr_I_blr_ds_id0_15 read pattern: { I_blr_ds_id0[root = 0, I_blr_ds_r, I_blr_ds_c] -> I_blr[2I_blr_ds_r, 2I_blr_ds_c] : 0 <= I_blr_ds_r <= 14 and 0 <= I_blr_ds_c <= 14 }
+  // I_blr_I_blr_conv_3_30_18 stores range: { I_blr[i0, i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
+    // overlap with reads : { I_blr[i0, i1] : (i0) mod 2 = 0 and (i1) mod 2 = 0 and 0 <= i0 <= 28 and 0 <= i1 <= 28 }
+	auto value_I_blr_I_blr_conv_3_30_18 = I_blr.I_blr_I_blr_conv_3_30_18.peek_0();
+	return value_I_blr_I_blr_conv_3_30_18;
 }
 
 // # of bundles = 2
 // I_blr_conv_3_30_write
-//	I_blr_I_blr_conv_3_30_0
+//	I_blr_I_blr_conv_3_30_18
 inline void I_blr_I_blr_conv_3_30_write_bundle_write(hw_uint<32>& I_blr_conv_3_30_write, I_blr_cache& I_blr, int root, int I_blr_r, int I_blr_c) {
-	hw_uint<32>  I_blr_I_blr_conv_3_30_0_res = I_blr_conv_3_30_write.extract<0, 31>();
-	I_blr_I_blr_conv_3_30_0_write(I_blr_I_blr_conv_3_30_0_res, I_blr, root, I_blr_r, I_blr_c);
+	hw_uint<32>  I_blr_I_blr_conv_3_30_18_res = I_blr_conv_3_30_write.extract<0, 31>();
+	I_blr_I_blr_conv_3_30_18_write(I_blr_I_blr_conv_3_30_18_res, I_blr, root, I_blr_r, I_blr_c);
 }
 
 // I_blr_ds_id0_read
@@ -803,272 +843,7 @@ inline hw_uint<32> I_blr_I_blr_ds_id0_read_bundle_read(I_blr_cache& I_blr, int r
 
 #include "hw_classes.h"
 
-struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_17_cache {
-	// Capacity: 33
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 32) capacity = 31
-	fifo<hw_uint<32> , 31> f1;
-	// Parition [32, 32] capacity = 1
-	fifo<hw_uint<32> , 1> f2;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f0.back();
-	}
-
-	inline hw_uint<32>  peek_31() {
-		return f1.back();
-	}
-
-	inline hw_uint<32>  peek_32() {
-		return f2.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 31) {
-			return f1.back();
-		}
-		if (offset == 32) {
-			return f2.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_17_cache: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f2.push(f1.back());
-		f1.push(f0.back());
-		f0.push(value);
-	}
-
-};
-
-struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_18_cache {
-	// Capacity: 33
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 31) capacity = 30
-	fifo<hw_uint<32> , 30> f1;
-	// Parition [31, 31] capacity = 1
-	fifo<hw_uint<32> , 1> f2;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f0.back();
-	}
-
-	inline hw_uint<32>  peek_30() {
-		return f1.back();
-	}
-
-	inline hw_uint<32>  peek_31() {
-		return f2.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 30) {
-			return f1.back();
-		}
-		if (offset == 31) {
-			return f2.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_18_cache: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f2.push(f1.back());
-		f1.push(f0.back());
-		f0.push(value);
-	}
-
-};
-
-struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_19_cache {
-	// Capacity: 33
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 30) capacity = 29
-	fifo<hw_uint<32> , 29> f1;
-	// Parition [30, 30] capacity = 1
-	fifo<hw_uint<32> , 1> f2;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f0.back();
-	}
-
-	inline hw_uint<32>  peek_29() {
-		return f1.back();
-	}
-
-	inline hw_uint<32>  peek_30() {
-		return f2.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 29) {
-			return f1.back();
-		}
-		if (offset == 30) {
-			return f2.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_19_cache: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f2.push(f1.back());
-		f1.push(f0.back());
-		f0.push(value);
-	}
-
-};
-
-struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_20_cache {
-	// Capacity: 33
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 17) capacity = 16
-	fifo<hw_uint<32> , 16> f1;
-	// Parition [17, 17] capacity = 1
-	fifo<hw_uint<32> , 1> f2;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f0.back();
-	}
-
-	inline hw_uint<32>  peek_16() {
-		return f1.back();
-	}
-
-	inline hw_uint<32>  peek_17() {
-		return f2.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 16) {
-			return f1.back();
-		}
-		if (offset == 17) {
-			return f2.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_20_cache: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f2.push(f1.back());
-		f1.push(f0.back());
-		f0.push(value);
-	}
-
-};
-
-struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_21_cache {
-	// Capacity: 33
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 16) capacity = 15
-	fifo<hw_uint<32> , 15> f1;
-	// Parition [16, 16] capacity = 1
-	fifo<hw_uint<32> , 1> f2;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f0.back();
-	}
-
-	inline hw_uint<32>  peek_15() {
-		return f1.back();
-	}
-
-	inline hw_uint<32>  peek_16() {
-		return f2.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 15) {
-			return f1.back();
-		}
-		if (offset == 16) {
-			return f2.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_21_cache: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f2.push(f1.back());
-		f1.push(f0.back());
-		f0.push(value);
-	}
-
-};
-
-struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_22_cache {
+struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_10_cache {
 	// Capacity: 33
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -1103,7 +878,7 @@ struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_22_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_22_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_10_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -1121,7 +896,7 @@ struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_22_cache {
 
 };
 
-struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_23_cache {
+struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_11_cache {
 	// Capacity: 33
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -1156,7 +931,7 @@ struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_23_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_23_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_11_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -1174,7 +949,7 @@ struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_23_cache {
 
 };
 
-struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_24_cache {
+struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_12_cache {
 	// Capacity: 33
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -1200,7 +975,7 @@ struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_24_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_24_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_12_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -1217,7 +992,7 @@ struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_24_cache {
 
 };
 
-struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_25_cache {
+struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_13_cache {
 	// Capacity: 33
 	// Parition [0, 0] capacity = 1
 	fifo<hw_uint<32> , 1> f1;
@@ -1234,7 +1009,7 @@ struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_25_cache {
 			return f1.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_25_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_13_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -1246,6 +1021,271 @@ struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_25_cache {
 #pragma HLS dependence array inter false
 #endif //__VIVADO_SYNTH__
 		f1.push(value);
+	}
+
+};
+
+struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_5_cache {
+	// Capacity: 33
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 32) capacity = 31
+	fifo<hw_uint<32> , 31> f1;
+	// Parition [32, 32] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_31() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_32() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 31) {
+			return f1.back();
+		}
+		if (offset == 32) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_5_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_6_cache {
+	// Capacity: 33
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 31) capacity = 30
+	fifo<hw_uint<32> , 30> f1;
+	// Parition [31, 31] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_30() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_31() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 30) {
+			return f1.back();
+		}
+		if (offset == 31) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_6_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_7_cache {
+	// Capacity: 33
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 30) capacity = 29
+	fifo<hw_uint<32> , 29> f1;
+	// Parition [30, 30] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_29() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_30() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 29) {
+			return f1.back();
+		}
+		if (offset == 30) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_7_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_8_cache {
+	// Capacity: 33
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 17) capacity = 16
+	fifo<hw_uint<32> , 16> f1;
+	// Parition [17, 17] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_16() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_17() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 16) {
+			return f1.back();
+		}
+		if (offset == 17) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_8_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_9_cache {
+	// Capacity: 33
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 16) capacity = 15
+	fifo<hw_uint<32> , 15> f1;
+	// Parition [16, 16] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_15() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_16() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 15) {
+			return f1.back();
+		}
+		if (offset == 16) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_9_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
 	}
 
 };
@@ -1385,117 +1425,153 @@ struct I_blr_ds_I_blr_ds_id0_14_cache {
 
 struct I_blr_ds_cache {
   I_blr_ds_I_blr_ds_id0_14_cache I_blr_ds_I_blr_ds_id0_14;
-  I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_17_cache bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_17;
-  I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_18_cache bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_18;
-  I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_19_cache bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_19;
-  I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_20_cache bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_20;
-  I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_21_cache bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_21;
-  I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_22_cache bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_22;
-  I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_23_cache bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_23;
-  I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_24_cache bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_24;
-  I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_25_cache bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_25;
+  I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_10_cache bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_10;
+  I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_11_cache bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_11;
+  I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_12_cache bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_12;
+  I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_13_cache bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_13;
+  I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_5_cache bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_5;
+  I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_6_cache bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_6;
+  I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_7_cache bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_7;
+  I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_8_cache bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_8;
+  I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_9_cache bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_9;
 };
 
 
 
 inline void I_blr_ds_I_blr_ds_id0_14_write(hw_uint<32> & I_blr_ds_I_blr_ds_id0_14, I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_r, int I_blr_ds_c) {
 	I_blr_ds.I_blr_ds_I_blr_ds_id0_14.push(I_blr_ds_I_blr_ds_id0_14);
-  I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_17.push(I_blr_ds_I_blr_ds_id0_14);
-  I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_18.push(I_blr_ds_I_blr_ds_id0_14);
-  I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_19.push(I_blr_ds_I_blr_ds_id0_14);
-  I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_20.push(I_blr_ds_I_blr_ds_id0_14);
-  I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_21.push(I_blr_ds_I_blr_ds_id0_14);
-  I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_22.push(I_blr_ds_I_blr_ds_id0_14);
-  I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_23.push(I_blr_ds_I_blr_ds_id0_14);
-  I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_24.push(I_blr_ds_I_blr_ds_id0_14);
-  I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_25.push(I_blr_ds_I_blr_ds_id0_14);
+  I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_10.push(I_blr_ds_I_blr_ds_id0_14);
+  I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_11.push(I_blr_ds_I_blr_ds_id0_14);
+  I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_12.push(I_blr_ds_I_blr_ds_id0_14);
+  I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_13.push(I_blr_ds_I_blr_ds_id0_14);
+  I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_5.push(I_blr_ds_I_blr_ds_id0_14);
+  I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_6.push(I_blr_ds_I_blr_ds_id0_14);
+  I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_7.push(I_blr_ds_I_blr_ds_id0_14);
+  I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_8.push(I_blr_ds_I_blr_ds_id0_14);
+  I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_14_to_I_blr_ds_I_blr_ds_blr_conv_3_30_9.push(I_blr_ds_I_blr_ds_id0_14);
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_17_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-  // qpd = { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 32 : root = 0 and 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-	hw_uint<32>  value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14.peek_32();
-	return value_I_blr_ds_I_blr_ds_id0_14;
-}
-
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_18_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-  // qpd = { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 31 : root = 0 and 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-	hw_uint<32>  value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14.peek_31();
-	return value_I_blr_ds_I_blr_ds_id0_14;
-}
-
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_19_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-  // qpd = { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 30 : root = 0 and 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 11; I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> (18 + I_blr_ds_blr_c) : root = 0 and I_blr_ds_blr_c = 12 and 0 <= I_blr_ds_blr_r <= 12 }
-	hw_uint<32>  value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14.peek_30();
-	return value_I_blr_ds_I_blr_ds_id0_14;
-}
-
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_20_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-  // qpd = { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 17 : root = 0 and 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-	hw_uint<32>  value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14.peek_17();
-	return value_I_blr_ds_I_blr_ds_id0_14;
-}
-
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_21_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-  // qpd = { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 16 : root = 0 and 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-	hw_uint<32>  value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14.peek_16();
-	return value_I_blr_ds_I_blr_ds_id0_14;
-}
-
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_22_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_10_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
   // qpd = { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 15 : root = 0 and 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 11; I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> (3 + I_blr_ds_blr_c) : root = 0 and I_blr_ds_blr_c = 12 and 0 <= I_blr_ds_blr_r <= 12 }
-	hw_uint<32>  value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14.peek_15();
+	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = 1 + I_blr_ds_blr_r, I_blr_ds_c = 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_10 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[1 + I_blr_ds_blr_r, 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_id0_14 stores range: { I_blr_ds[i0, i1] : 0 <= i0 <= 14 and 0 <= i1 <= 14 }
+    // overlap with reads : { I_blr_ds[i0, i1] : 0 < i0 <= 13 and 2 <= i1 <= 14 }
+	auto value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14.peek_15();
 	return value_I_blr_ds_I_blr_ds_id0_14;
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_23_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_11_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
   // qpd = { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 2 : root = 0 and 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-	hw_uint<32>  value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14.peek_2();
+	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = 2 + I_blr_ds_blr_r, I_blr_ds_c = I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_11 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[2 + I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_id0_14 stores range: { I_blr_ds[i0, i1] : 0 <= i0 <= 14 and 0 <= i1 <= 14 }
+    // overlap with reads : { I_blr_ds[i0, i1] : 2 <= i0 <= 14 and 0 <= i1 <= 12 }
+	auto value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14.peek_2();
 	return value_I_blr_ds_I_blr_ds_id0_14;
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_24_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_12_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
   // qpd = { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 1 : root = 0 and 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-	hw_uint<32>  value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14.peek_1();
+	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = 2 + I_blr_ds_blr_r, I_blr_ds_c = 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_12 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[2 + I_blr_ds_blr_r, 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_id0_14 stores range: { I_blr_ds[i0, i1] : 0 <= i0 <= 14 and 0 <= i1 <= 14 }
+    // overlap with reads : { I_blr_ds[i0, i1] : 2 <= i0 <= 14 and 0 < i1 <= 13 }
+	auto value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14.peek_1();
 	return value_I_blr_ds_I_blr_ds_id0_14;
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_25_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_13_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
   // qpd = {  }
-	hw_uint<32>  value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14.peek_0();
+	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = 2 + I_blr_ds_blr_r, I_blr_ds_c = 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_13 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[2 + I_blr_ds_blr_r, 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_id0_14 stores range: { I_blr_ds[i0, i1] : 0 <= i0 <= 14 and 0 <= i1 <= 14 }
+    // overlap with reads : { I_blr_ds[i0, i1] : 2 <= i0 <= 14 and 2 <= i1 <= 14 }
+	auto value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14.peek_0();
+	return value_I_blr_ds_I_blr_ds_id0_14;
+}
+
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_5_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+  // qpd = { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 32 : root = 0 and 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = I_blr_ds_blr_r, I_blr_ds_c = I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_5 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_id0_14 stores range: { I_blr_ds[i0, i1] : 0 <= i0 <= 14 and 0 <= i1 <= 14 }
+    // overlap with reads : { I_blr_ds[i0, i1] : 0 <= i0 <= 12 and 0 <= i1 <= 12 }
+	auto value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14.peek_32();
+	return value_I_blr_ds_I_blr_ds_id0_14;
+}
+
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_6_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+  // qpd = { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 31 : root = 0 and 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = I_blr_ds_blr_r, I_blr_ds_c = 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_6 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[I_blr_ds_blr_r, 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_id0_14 stores range: { I_blr_ds[i0, i1] : 0 <= i0 <= 14 and 0 <= i1 <= 14 }
+    // overlap with reads : { I_blr_ds[i0, i1] : 0 <= i0 <= 12 and 0 < i1 <= 13 }
+	auto value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14.peek_31();
+	return value_I_blr_ds_I_blr_ds_id0_14;
+}
+
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_7_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+  // qpd = { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 30 : root = 0 and 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 11; I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> (18 + I_blr_ds_blr_c) : root = 0 and I_blr_ds_blr_c = 12 and 0 <= I_blr_ds_blr_r <= 12 }
+	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = I_blr_ds_blr_r, I_blr_ds_c = 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_7 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[I_blr_ds_blr_r, 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_id0_14 stores range: { I_blr_ds[i0, i1] : 0 <= i0 <= 14 and 0 <= i1 <= 14 }
+    // overlap with reads : { I_blr_ds[i0, i1] : 0 <= i0 <= 12 and 2 <= i1 <= 14 }
+	auto value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14.peek_30();
+	return value_I_blr_ds_I_blr_ds_id0_14;
+}
+
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_8_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+  // qpd = { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 17 : root = 0 and 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = 1 + I_blr_ds_blr_r, I_blr_ds_c = I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_8 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[1 + I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_id0_14 stores range: { I_blr_ds[i0, i1] : 0 <= i0 <= 14 and 0 <= i1 <= 14 }
+    // overlap with reads : { I_blr_ds[i0, i1] : 0 < i0 <= 13 and 0 <= i1 <= 12 }
+	auto value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14.peek_17();
+	return value_I_blr_ds_I_blr_ds_id0_14;
+}
+
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_9_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+  // qpd = { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 16 : root = 0 and 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = 1 + I_blr_ds_blr_r, I_blr_ds_c = 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_9 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[1 + I_blr_ds_blr_r, 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_id0_14 stores range: { I_blr_ds[i0, i1] : 0 <= i0 <= 14 and 0 <= i1 <= 14 }
+    // overlap with reads : { I_blr_ds[i0, i1] : 0 < i0 <= 13 and 0 < i1 <= 13 }
+	auto value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14.peek_16();
 	return value_I_blr_ds_I_blr_ds_id0_14;
 }
 
 // # of bundles = 2
 // I_blr_ds_blr_conv_3_30_read
-//	I_blr_ds_I_blr_ds_blr_conv_3_30_17
-//	I_blr_ds_I_blr_ds_blr_conv_3_30_18
-//	I_blr_ds_I_blr_ds_blr_conv_3_30_19
-//	I_blr_ds_I_blr_ds_blr_conv_3_30_20
-//	I_blr_ds_I_blr_ds_blr_conv_3_30_21
-//	I_blr_ds_I_blr_ds_blr_conv_3_30_22
-//	I_blr_ds_I_blr_ds_blr_conv_3_30_23
-//	I_blr_ds_I_blr_ds_blr_conv_3_30_24
-//	I_blr_ds_I_blr_ds_blr_conv_3_30_25
+//	I_blr_ds_I_blr_ds_blr_conv_3_30_5
+//	I_blr_ds_I_blr_ds_blr_conv_3_30_6
+//	I_blr_ds_I_blr_ds_blr_conv_3_30_7
+//	I_blr_ds_I_blr_ds_blr_conv_3_30_8
+//	I_blr_ds_I_blr_ds_blr_conv_3_30_9
+//	I_blr_ds_I_blr_ds_blr_conv_3_30_10
+//	I_blr_ds_I_blr_ds_blr_conv_3_30_11
+//	I_blr_ds_I_blr_ds_blr_conv_3_30_12
+//	I_blr_ds_I_blr_ds_blr_conv_3_30_13
 inline hw_uint<288> I_blr_ds_I_blr_ds_blr_conv_3_30_read_bundle_read(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 	hw_uint<288> result;
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_17_res = I_blr_ds_I_blr_ds_blr_conv_3_30_17_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<0, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_17_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_18_res = I_blr_ds_I_blr_ds_blr_conv_3_30_18_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<32, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_18_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_19_res = I_blr_ds_I_blr_ds_blr_conv_3_30_19_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<64, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_19_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_20_res = I_blr_ds_I_blr_ds_blr_conv_3_30_20_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<96, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_20_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_21_res = I_blr_ds_I_blr_ds_blr_conv_3_30_21_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<128, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_21_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_22_res = I_blr_ds_I_blr_ds_blr_conv_3_30_22_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<160, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_22_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_23_res = I_blr_ds_I_blr_ds_blr_conv_3_30_23_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<192, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_23_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_24_res = I_blr_ds_I_blr_ds_blr_conv_3_30_24_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<224, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_24_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_25_res = I_blr_ds_I_blr_ds_blr_conv_3_30_25_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<256, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_25_res);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_5_res = I_blr_ds_I_blr_ds_blr_conv_3_30_5_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	set_at<0, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_5_res);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_6_res = I_blr_ds_I_blr_ds_blr_conv_3_30_6_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	set_at<32, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_6_res);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_7_res = I_blr_ds_I_blr_ds_blr_conv_3_30_7_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	set_at<64, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_7_res);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_8_res = I_blr_ds_I_blr_ds_blr_conv_3_30_8_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	set_at<96, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_8_res);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_9_res = I_blr_ds_I_blr_ds_blr_conv_3_30_9_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	set_at<128, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_9_res);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_10_res = I_blr_ds_I_blr_ds_blr_conv_3_30_10_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	set_at<160, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_10_res);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_11_res = I_blr_ds_I_blr_ds_blr_conv_3_30_11_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	set_at<192, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_11_res);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_12_res = I_blr_ds_I_blr_ds_blr_conv_3_30_12_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	set_at<224, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_12_res);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_13_res = I_blr_ds_I_blr_ds_blr_conv_3_30_13_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	set_at<256, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_13_res);
 	return result;
 }
 
@@ -1510,7 +1586,7 @@ inline void I_blr_ds_I_blr_ds_id0_write_bundle_write(hw_uint<32>& I_blr_ds_id0_w
 
 #include "hw_classes.h"
 
-struct I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_11_cache {
+struct I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_1_cache {
 	// Capacity: 39
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -1869,7 +1945,7 @@ struct I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id
 			return f76.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_11_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_1_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -1923,7 +1999,7 @@ struct I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id
 
 };
 
-struct I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_cache {
+struct I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_cache {
 	// Capacity: 39
 	fifo<hw_uint<32> , 39> f;
 	inline hw_uint<32>  peek(const int offset) {
@@ -2098,37 +2174,41 @@ struct I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_cache {
 };
 
 struct I_blr_ds_blr_cache {
-  I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_cache I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16;
-  I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_11_cache bank_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_11;
+  I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_cache I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4;
+  I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_1_cache bank_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_1;
 };
 
 
 
-inline void I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_write(hw_uint<32> & I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16, I_blr_ds_blr_cache& I_blr_ds_blr, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-	I_blr_ds_blr.I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16.push(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16);
-  I_blr_ds_blr.bank_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_11.push(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16);
+inline void I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_write(hw_uint<32> & I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4, I_blr_ds_blr_cache& I_blr_ds_blr, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+	I_blr_ds_blr.I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4.push(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4);
+  I_blr_ds_blr.bank_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_1.push(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4);
 }
 
-inline hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_ds_id0_11_select(I_blr_ds_blr_cache& I_blr_ds_blr, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
+inline hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_ds_id0_1_select(I_blr_ds_blr_cache& I_blr_ds_blr, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
   // qpd = { I_blr_ds_blr_ds_id0[root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> 2 : root = 0 and I_blr_ds_blr_ds_r = 5 and (1 + I_blr_ds_blr_ds_c) mod 2 = 0 and 0 < I_blr_ds_blr_ds_c <= 2; I_blr_ds_blr_ds_id0[root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> ((2 - I_blr_ds_blr_ds_c) + floor((I_blr_ds_blr_ds_c)/2)) : root = 0 and I_blr_ds_blr_ds_r = 5 and (I_blr_ds_blr_ds_c) mod 2 = 0 and 0 <= I_blr_ds_blr_ds_c <= 2; I_blr_ds_blr_ds_id0[root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> 1 : root = 0 and I_blr_ds_blr_ds_r = 5 and I_blr_ds_blr_ds_c = 3; I_blr_ds_blr_ds_id0[root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> (57/2 - 1/2 * I_blr_ds_blr_ds_c) : root = 0 and (1 + I_blr_ds_blr_ds_r) mod 2 = 0 and (1 + I_blr_ds_blr_ds_c) mod 2 = 0 and 0 < I_blr_ds_blr_ds_r <= 2 and 0 < I_blr_ds_blr_ds_c <= 5; I_blr_ds_blr_ds_id0[root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> (28 - 1/2 * I_blr_ds_blr_ds_c) : root = 0 and (1 + I_blr_ds_blr_ds_r) mod 2 = 0 and (I_blr_ds_blr_ds_c) mod 2 = 0 and 0 < I_blr_ds_blr_ds_r <= 2 and 0 <= I_blr_ds_blr_ds_c <= 5; I_blr_ds_blr_ds_id0[root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> ((38 - 13/2 * I_blr_ds_blr_ds_r) - 2 * I_blr_ds_blr_ds_c) : root = 0 and (I_blr_ds_blr_ds_r) mod 2 = 0 and 0 <= I_blr_ds_blr_ds_r <= 2 and 0 <= I_blr_ds_blr_ds_c <= 5; I_blr_ds_blr_ds_id0[root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> (31/2 - 1/2 * I_blr_ds_blr_ds_c) : root = 0 and I_blr_ds_blr_ds_r = 3 and (1 + I_blr_ds_blr_ds_c) mod 2 = 0 and 0 < I_blr_ds_blr_ds_c <= 5; I_blr_ds_blr_ds_id0[root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> (15 - 1/2 * I_blr_ds_blr_ds_c) : root = 0 and I_blr_ds_blr_ds_r = 3 and (I_blr_ds_blr_ds_c) mod 2 = 0 and 0 <= I_blr_ds_blr_ds_c <= 5; I_blr_ds_blr_ds_id0[root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> (12 - 2 * I_blr_ds_blr_ds_c) : I_blr_ds_blr_ds_r = 4 and root = 0 and 0 <= I_blr_ds_blr_ds_c <= 5 and ((root = 0 and (1 + I_blr_ds_blr_ds_c) mod 2 = 0) or (root = 0 and (I_blr_ds_blr_ds_c) mod 2 = 0)) }
-	hw_uint<32>  value_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16 = I_blr_ds_blr.I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16.peek(/* Needs general delay string */ ((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -5 + I_blr_ds_blr_ds_r == 0 && root == 0 && -1 + I_blr_ds_blr_ds_c >= 0 && 2 - I_blr_ds_blr_ds_c >= 0) ? (2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && -5 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 2 - I_blr_ds_blr_ds_c >= 0) ? (((2 - I_blr_ds_blr_ds_c) + floord(I_blr_ds_blr_ds_c, 2))) : (-3 + I_blr_ds_blr_ds_c == 0 && -5 + I_blr_ds_blr_ds_r == 0 && root == 0) ? (1) : ((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && (-1 - I_blr_ds_blr_ds_r) % 2 == 0 && root == 0 && -1 + I_blr_ds_blr_ds_r >= 0 && 2 - I_blr_ds_blr_ds_r >= 0 && -1 + I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((57 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && (-1 - I_blr_ds_blr_ds_r) % 2 == 0 && root == 0 && -1 + I_blr_ds_blr_ds_r >= 0 && 2 - I_blr_ds_blr_ds_r >= 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((56 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_r) % 2 == 0 && root == 0 && I_blr_ds_blr_ds_r >= 0 && 2 - I_blr_ds_blr_ds_r >= 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? ((((76 - 13 * I_blr_ds_blr_ds_r) - 4 * I_blr_ds_blr_ds_c))/2) : ((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -3 + I_blr_ds_blr_ds_r == 0 && root == 0 && -1 + I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((31 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && -3 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((30 - I_blr_ds_blr_ds_c))/2) : (((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -4 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) || ((-I_blr_ds_blr_ds_c) % 2 == 0 && -4 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0)) ? ((12 - 2 * I_blr_ds_blr_ds_c)) : 0);
-	return value_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16;
+	// lexmax events: { I_blr_ds_blr_ds_id0[root = 0, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> I_blr_ds_blr_conv_3_30[root' = 0, I_blr_ds_blr_r = 2I_blr_ds_blr_ds_r, I_blr_ds_blr_c = 2I_blr_ds_blr_ds_c] : 0 <= I_blr_ds_blr_ds_r <= 4 and 0 <= I_blr_ds_blr_ds_c <= 5; I_blr_ds_blr_ds_id0[root = 0, I_blr_ds_blr_ds_r = 5, I_blr_ds_blr_ds_c] -> I_blr_ds_blr_conv_3_30[root' = 0, I_blr_ds_blr_r = 10, I_blr_ds_blr_c = 2I_blr_ds_blr_ds_c] : 0 <= I_blr_ds_blr_ds_c <= 4; I_blr_ds_blr_ds_id0[root = 0, I_blr_ds_blr_ds_r = 5, I_blr_ds_blr_ds_c = 5] -> I_blr_ds_blr_conv_3_30[root' = 0, I_blr_ds_blr_r = 10, I_blr_ds_blr_c = 10] }
+  // I_blr_ds_blr_I_blr_ds_blr_ds_id0_1 read pattern: { I_blr_ds_blr_ds_id0[root = 0, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> I_blr_ds_blr[2I_blr_ds_blr_ds_r, 2I_blr_ds_blr_ds_c] : 0 <= I_blr_ds_blr_ds_r <= 5 and 0 <= I_blr_ds_blr_ds_c <= 5 }
+  // I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4 stores range: { I_blr_ds_blr[i0, i1] : 0 <= i0 <= 12 and 0 <= i1 <= 12 }
+    // overlap with reads : { I_blr_ds_blr[i0, i1] : (i0) mod 2 = 0 and (i1) mod 2 = 0 and 0 <= i0 <= 10 and 0 <= i1 <= 10 }
+	auto value_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4 = I_blr_ds_blr.I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4.peek(/* Needs general delay string */ ((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -5 + I_blr_ds_blr_ds_r == 0 && root == 0 && -1 + I_blr_ds_blr_ds_c >= 0 && 2 - I_blr_ds_blr_ds_c >= 0) ? (2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && -5 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 2 - I_blr_ds_blr_ds_c >= 0) ? (((2 - I_blr_ds_blr_ds_c) + floord(I_blr_ds_blr_ds_c, 2))) : (-3 + I_blr_ds_blr_ds_c == 0 && -5 + I_blr_ds_blr_ds_r == 0 && root == 0) ? (1) : ((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && (-1 - I_blr_ds_blr_ds_r) % 2 == 0 && root == 0 && -1 + I_blr_ds_blr_ds_r >= 0 && 2 - I_blr_ds_blr_ds_r >= 0 && -1 + I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((57 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && (-1 - I_blr_ds_blr_ds_r) % 2 == 0 && root == 0 && -1 + I_blr_ds_blr_ds_r >= 0 && 2 - I_blr_ds_blr_ds_r >= 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((56 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_r) % 2 == 0 && root == 0 && I_blr_ds_blr_ds_r >= 0 && 2 - I_blr_ds_blr_ds_r >= 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? ((((76 - 13 * I_blr_ds_blr_ds_r) - 4 * I_blr_ds_blr_ds_c))/2) : ((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -3 + I_blr_ds_blr_ds_r == 0 && root == 0 && -1 + I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((31 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && -3 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((30 - I_blr_ds_blr_ds_c))/2) : (((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -4 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) || ((-I_blr_ds_blr_ds_c) % 2 == 0 && -4 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0)) ? ((12 - 2 * I_blr_ds_blr_ds_c)) : 0);
+	return value_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4;
 }
 
 // # of bundles = 2
 // I_blr_ds_blr_conv_3_30_write
-//	I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16
+//	I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4
 inline void I_blr_ds_blr_I_blr_ds_blr_conv_3_30_write_bundle_write(hw_uint<32>& I_blr_ds_blr_conv_3_30_write, I_blr_ds_blr_cache& I_blr_ds_blr, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-	hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_res = I_blr_ds_blr_conv_3_30_write.extract<0, 31>();
-	I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_write(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_res, I_blr_ds_blr, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_res = I_blr_ds_blr_conv_3_30_write.extract<0, 31>();
+	I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_write(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_res, I_blr_ds_blr, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
 }
 
 // I_blr_ds_blr_ds_id0_read
-//	I_blr_ds_blr_I_blr_ds_blr_ds_id0_11
+//	I_blr_ds_blr_I_blr_ds_blr_ds_id0_1
 inline hw_uint<32> I_blr_ds_blr_I_blr_ds_blr_ds_id0_read_bundle_read(I_blr_ds_blr_cache& I_blr_ds_blr, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
 	hw_uint<32> result;
-	hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_ds_id0_11_res = I_blr_ds_blr_I_blr_ds_blr_ds_id0_11_select(I_blr_ds_blr, root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c);
-	set_at<0, 32>(result, I_blr_ds_blr_I_blr_ds_blr_ds_id0_11_res);
+	hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_ds_id0_1_res = I_blr_ds_blr_I_blr_ds_blr_ds_id0_1_select(I_blr_ds_blr, root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c);
+	set_at<0, 32>(result, I_blr_ds_blr_I_blr_ds_blr_ds_id0_1_res);
 	return result;
 }
 
@@ -2136,7 +2216,7 @@ inline hw_uint<32> I_blr_ds_blr_I_blr_ds_blr_ds_id0_read_bundle_read(I_blr_ds_bl
 
 #include "hw_classes.h"
 
-struct I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_13_cache {
+struct I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3_cache {
 	// Capacity: 12
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -2252,7 +2332,7 @@ struct I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10_to_I_blr_ds_blr_ds_store_I_blr_ds_
 			return f22.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_13_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -2279,7 +2359,7 @@ struct I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10_to_I_blr_ds_blr_ds_store_I_blr_ds_
 
 };
 
-struct I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10_cache {
+struct I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_cache {
 	// Capacity: 12
 	fifo<hw_uint<32> , 12> f;
 	inline hw_uint<32>  peek(const int offset) {
@@ -2346,37 +2426,41 @@ struct I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10_cache {
 };
 
 struct I_blr_ds_blr_ds_cache {
-  I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10_cache I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10;
-  I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_13_cache bank_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_13;
+  I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_cache I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0;
+  I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3_cache bank_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3;
 };
 
 
 
-inline void I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10_write(hw_uint<32> & I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10, I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
-	I_blr_ds_blr_ds.I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10.push(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10);
-  I_blr_ds_blr_ds.bank_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_13.push(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10);
+inline void I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_write(hw_uint<32> & I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0, I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
+	I_blr_ds_blr_ds.I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0.push(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0);
+  I_blr_ds_blr_ds.bank_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3.push(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0);
 }
 
-inline hw_uint<32>  I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_13_select(I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, int root, int I_blr_ds_blr_ds_out_r, int I_blr_ds_blr_ds_out_c) {
+inline hw_uint<32>  I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3_select(I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, int root, int I_blr_ds_blr_ds_out_r, int I_blr_ds_blr_ds_out_c) {
   // qpd = { store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> 1 : root = 0 and I_blr_ds_blr_ds_out_r = 5 and 0 <= I_blr_ds_blr_ds_out_c <= 1; store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> 1 : root = 0 and I_blr_ds_blr_ds_out_r = 5 and I_blr_ds_blr_ds_out_c = 2; store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> (11 - I_blr_ds_blr_ds_out_c) : root = 0 and 0 <= I_blr_ds_blr_ds_out_r <= 1 and 0 <= I_blr_ds_blr_ds_out_c <= 4; store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> 6 : root = 0 and I_blr_ds_blr_ds_out_c = 5 and 0 <= I_blr_ds_blr_ds_out_r <= 1; store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> 7 : root = 0 and I_blr_ds_blr_ds_out_r = 2 and (1 + I_blr_ds_blr_ds_out_c) mod 3 = 0 and 2 <= I_blr_ds_blr_ds_out_c <= 4; store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> (8/3 + 2/3 * I_blr_ds_blr_ds_out_c) : root = 0 and I_blr_ds_blr_ds_out_r = 2 and I_blr_ds_blr_ds_out_c = 5; store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> (7 - floor((1 + I_blr_ds_blr_ds_out_c)/3)) : root = 0 and I_blr_ds_blr_ds_out_r = 2 and 0 <= I_blr_ds_blr_ds_out_c <= 4 and 3*floor((1 + I_blr_ds_blr_ds_out_c)/3) <= I_blr_ds_blr_ds_out_c; store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> (5 - I_blr_ds_blr_ds_out_c) : root = 0 and 3 <= I_blr_ds_blr_ds_out_r <= 4 and 0 <= I_blr_ds_blr_ds_out_c <= 4 and ((3*floor((1 + I_blr_ds_blr_ds_out_c)/3) <= I_blr_ds_blr_ds_out_c) or (1 + I_blr_ds_blr_ds_out_c) mod 3 = 0) }
-	hw_uint<32>  value_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10 = I_blr_ds_blr_ds.I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10.peek(/* Needs general delay string */ (-5 + I_blr_ds_blr_ds_out_r == 0 && root == 0 && I_blr_ds_blr_ds_out_c >= 0 && 1 - I_blr_ds_blr_ds_out_c >= 0) ? (1) : (-2 + I_blr_ds_blr_ds_out_c == 0 && -5 + I_blr_ds_blr_ds_out_r == 0 && root == 0) ? (1) : (root == 0 && I_blr_ds_blr_ds_out_r >= 0 && 1 - I_blr_ds_blr_ds_out_r >= 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0) ? ((11 - I_blr_ds_blr_ds_out_c)) : (-5 + I_blr_ds_blr_ds_out_c == 0 && root == 0 && I_blr_ds_blr_ds_out_r >= 0 && 1 - I_blr_ds_blr_ds_out_r >= 0) ? (6) : ((-1 - I_blr_ds_blr_ds_out_c) % 3 == 0 && -2 + I_blr_ds_blr_ds_out_r == 0 && root == 0 && -2 + I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0) ? (7) : (-5 + I_blr_ds_blr_ds_out_c == 0 && -2 + I_blr_ds_blr_ds_out_r == 0 && root == 0) ? (((8 + 2 * I_blr_ds_blr_ds_out_c))/3) : (-2 + I_blr_ds_blr_ds_out_r == 0 && root == 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0 && I_blr_ds_blr_ds_out_c - 3*floord(1 + I_blr_ds_blr_ds_out_c, 3) >= 0) ? ((7 - floord(1 + I_blr_ds_blr_ds_out_c, 3))) : ((root == 0 && -3 + I_blr_ds_blr_ds_out_r >= 0 && 4 - I_blr_ds_blr_ds_out_r >= 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0 && I_blr_ds_blr_ds_out_c - 3*floord(1 + I_blr_ds_blr_ds_out_c, 3) >= 0) || ((-1 - I_blr_ds_blr_ds_out_c) % 3 == 0 && root == 0 && -3 + I_blr_ds_blr_ds_out_r >= 0 && 4 - I_blr_ds_blr_ds_out_r >= 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0)) ? ((5 - I_blr_ds_blr_ds_out_c)) : 0);
-	return value_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10;
+	// lexmax events: { store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root = 0, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> I_blr_ds_blr_ds_id0[root' = 0, I_blr_ds_blr_ds_r = I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_c = I_blr_ds_blr_ds_out_c] : 0 <= I_blr_ds_blr_ds_out_r <= 4 and 0 <= I_blr_ds_blr_ds_out_c <= 5; store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root = 0, I_blr_ds_blr_ds_out_r = 5, I_blr_ds_blr_ds_out_c] -> I_blr_ds_blr_ds_id0[root' = 0, I_blr_ds_blr_ds_r = 5, I_blr_ds_blr_ds_c = I_blr_ds_blr_ds_out_c] : 0 <= I_blr_ds_blr_ds_out_c <= 4; store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root = 0, I_blr_ds_blr_ds_out_r = 5, I_blr_ds_blr_ds_out_c = 5] -> I_blr_ds_blr_ds_id0[root' = 0, I_blr_ds_blr_ds_r = 5, I_blr_ds_blr_ds_c = 5] }
+  // I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3 read pattern: { store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root = 0, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> I_blr_ds_blr_ds[I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] : 0 <= I_blr_ds_blr_ds_out_r <= 5 and 0 <= I_blr_ds_blr_ds_out_c <= 5 }
+  // I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0 stores range: { I_blr_ds_blr_ds[i0, i1] : 0 <= i0 <= 5 and 0 <= i1 <= 5 }
+    // overlap with reads : { I_blr_ds_blr_ds[i0, i1] : 0 <= i0 <= 5 and 0 <= i1 <= 5 }
+	auto value_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0 = I_blr_ds_blr_ds.I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0.peek(/* Needs general delay string */ (-5 + I_blr_ds_blr_ds_out_r == 0 && root == 0 && I_blr_ds_blr_ds_out_c >= 0 && 1 - I_blr_ds_blr_ds_out_c >= 0) ? (1) : (-2 + I_blr_ds_blr_ds_out_c == 0 && -5 + I_blr_ds_blr_ds_out_r == 0 && root == 0) ? (1) : (root == 0 && I_blr_ds_blr_ds_out_r >= 0 && 1 - I_blr_ds_blr_ds_out_r >= 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0) ? ((11 - I_blr_ds_blr_ds_out_c)) : (-5 + I_blr_ds_blr_ds_out_c == 0 && root == 0 && I_blr_ds_blr_ds_out_r >= 0 && 1 - I_blr_ds_blr_ds_out_r >= 0) ? (6) : ((-1 - I_blr_ds_blr_ds_out_c) % 3 == 0 && -2 + I_blr_ds_blr_ds_out_r == 0 && root == 0 && -2 + I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0) ? (7) : (-5 + I_blr_ds_blr_ds_out_c == 0 && -2 + I_blr_ds_blr_ds_out_r == 0 && root == 0) ? (((8 + 2 * I_blr_ds_blr_ds_out_c))/3) : (-2 + I_blr_ds_blr_ds_out_r == 0 && root == 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0 && I_blr_ds_blr_ds_out_c - 3*floord(1 + I_blr_ds_blr_ds_out_c, 3) >= 0) ? ((7 - floord(1 + I_blr_ds_blr_ds_out_c, 3))) : ((root == 0 && -3 + I_blr_ds_blr_ds_out_r >= 0 && 4 - I_blr_ds_blr_ds_out_r >= 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0 && I_blr_ds_blr_ds_out_c - 3*floord(1 + I_blr_ds_blr_ds_out_c, 3) >= 0) || ((-1 - I_blr_ds_blr_ds_out_c) % 3 == 0 && root == 0 && -3 + I_blr_ds_blr_ds_out_r >= 0 && 4 - I_blr_ds_blr_ds_out_r >= 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0)) ? ((5 - I_blr_ds_blr_ds_out_c)) : 0);
+	return value_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0;
 }
 
 // # of bundles = 2
 // I_blr_ds_blr_ds_id0_write
-//	I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10
+//	I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0
 inline void I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_write_bundle_write(hw_uint<32>& I_blr_ds_blr_ds_id0_write, I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
-	hw_uint<32>  I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10_res = I_blr_ds_blr_ds_id0_write.extract<0, 31>();
-	I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10_write(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_10_res, I_blr_ds_blr_ds, root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c);
+	hw_uint<32>  I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_res = I_blr_ds_blr_ds_id0_write.extract<0, 31>();
+	I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_write(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_res, I_blr_ds_blr_ds, root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c);
 }
 
 // store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_read
-//	I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_13
+//	I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3
 inline hw_uint<32> I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_read_bundle_read(I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, int root, int I_blr_ds_blr_ds_out_r, int I_blr_ds_blr_ds_out_c) {
 	hw_uint<32> result;
-	hw_uint<32>  I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_13_res = I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_13_select(I_blr_ds_blr_ds, root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c);
-	set_at<0, 32>(result, I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_13_res);
+	hw_uint<32>  I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3_res = I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3_select(I_blr_ds_blr_ds, root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c);
+	set_at<0, 32>(result, I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3_res);
 	return result;
 }
 
@@ -2385,14 +2469,6 @@ inline hw_uint<32> I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_d
 
 
 // Operation logic
-inline void I_blr_conv_3_30(I_cache& I, I_blr_cache& I_blr, int root, int I_blr_r, int I_blr_c) {
-	// Consume: I
-	auto I_I_blr_r__p__0_c__I_blr_c__p__0_value = I_I_blr_conv_3_30_read_bundle_read(I/* source_delay */, root, I_blr_r, I_blr_c);
-	auto compute_result = conv_3_3(I_I_blr_r__p__0_c__I_blr_c__p__0_value);
-	// Produce: I_blr
-	I_blr_I_blr_conv_3_30_write_bundle_write(compute_result, I_blr, root, I_blr_r, I_blr_c);
-}
-
 inline void I_blr_ds_blr_ds_id0(I_blr_ds_blr_cache& I_blr_ds_blr, I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
 	// Consume: I_blr_ds_blr
 	auto I_blr_ds_blr_2_m_I_blr_ds_blr_ds_r_c__2_m_I_blr_ds_blr_ds_c_value = I_blr_ds_blr_I_blr_ds_blr_ds_id0_read_bundle_read(I_blr_ds_blr/* source_delay */, root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c);
@@ -2408,14 +2484,6 @@ inline void store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds(I_blr_ds_blr_ds_cache
 	I_blr_ds_blr_ds_out.write(I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value);
 }
 
-inline void I_blr_ds_id0(I_blr_cache& I_blr, I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_r, int I_blr_ds_c) {
-	// Consume: I_blr
-	auto I_blr_2_m_I_blr_ds_r_c__2_m_I_blr_ds_c_value = I_blr_I_blr_ds_id0_read_bundle_read(I_blr/* source_delay */, root, I_blr_ds_r, I_blr_ds_c);
-	auto compute_result = id(I_blr_2_m_I_blr_ds_r_c__2_m_I_blr_ds_c_value);
-	// Produce: I_blr_ds
-	I_blr_ds_I_blr_ds_id0_write_bundle_write(compute_result, I_blr_ds, root, I_blr_ds_r, I_blr_ds_c);
-}
-
 inline void I_blr_ds_blr_conv_3_30(I_blr_ds_cache& I_blr_ds, I_blr_ds_blr_cache& I_blr_ds_blr, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 	// Consume: I_blr_ds
 	auto I_blr_ds_I_blr_ds_blr_r__p__0_c__I_blr_ds_blr_c__p__0_value = I_blr_ds_I_blr_ds_blr_conv_3_30_read_bundle_read(I_blr_ds/* source_delay */, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
@@ -2424,11 +2492,27 @@ inline void I_blr_ds_blr_conv_3_30(I_blr_ds_cache& I_blr_ds, I_blr_ds_blr_cache&
 	I_blr_ds_blr_I_blr_ds_blr_conv_3_30_write_bundle_write(compute_result, I_blr_ds_blr, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
 }
 
+inline void I_blr_ds_id0(I_blr_cache& I_blr, I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_r, int I_blr_ds_c) {
+	// Consume: I_blr
+	auto I_blr_2_m_I_blr_ds_r_c__2_m_I_blr_ds_c_value = I_blr_I_blr_ds_id0_read_bundle_read(I_blr/* source_delay */, root, I_blr_ds_r, I_blr_ds_c);
+	auto compute_result = id(I_blr_2_m_I_blr_ds_r_c__2_m_I_blr_ds_c_value);
+	// Produce: I_blr_ds
+	I_blr_ds_I_blr_ds_id0_write_bundle_write(compute_result, I_blr_ds, root, I_blr_ds_r, I_blr_ds_c);
+}
+
 inline void store_I_from_in(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, I_cache& I, int root, int pr, int pc) {
 	// Consume: in
 	auto in_pr_c__pc_value = in.read();
 	// Produce: I
 	I_store_I_from_in_write_bundle_write(in_pr_c__pc_value, I, root, pr, pc);
+}
+
+inline void I_blr_conv_3_30(I_cache& I, I_blr_cache& I_blr, int root, int I_blr_r, int I_blr_c) {
+	// Consume: I
+	auto I_I_blr_r__p__0_c__I_blr_c__p__0_value = I_I_blr_conv_3_30_read_bundle_read(I/* source_delay */, root, I_blr_r, I_blr_c);
+	auto compute_result = conv_3_3(I_I_blr_r__p__0_c__I_blr_c__p__0_value);
+	// Produce: I_blr
+	I_blr_I_blr_conv_3_30_write_bundle_write(compute_result, I_blr, root, I_blr_r, I_blr_c);
 }
 
 // Driver function

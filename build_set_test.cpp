@@ -1510,11 +1510,14 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
 
   auto qpd = compute_dd(buf, outpt, inpt);
   out << tab(1) << "// qpd = " << str(qpd) << endl;
-  if (buf.get_in_ports().size() == 1) {
+  //if (buf.get_in_ports().size() == 1) {
+  if (false) {
+
     string inpt = *(buf.get_in_ports().begin());
     string value_str = delay_string(options, inpt, outpt, buf);
     out << "\t" << buf.port_type_string() << " value_" << inpt << " = " << value_str << ";" << endl;
     out << "\treturn value_" + inpt + ";" << endl;
+
   } else {
     cout << "Lexmax events: " << str(lex_max_events) << endl;
     map<string, string> ms = umap_codegen_c(lex_max_events);
