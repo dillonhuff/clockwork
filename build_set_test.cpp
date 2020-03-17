@@ -1357,6 +1357,11 @@ void generate_code_prefix(CodegenOptions& options,
   for (auto inpt : buf.get_in_ports()) {
     out << tab(1) << inpt << "_cache " << inpt << ";" << endl;
   }
+
+  for (auto b : buf.stack_banks) {
+    out << tab(1) << b.second.first << "_to_" << b.second.second << "_cache " << b.first << ";" << endl;
+  }
+
   out << "};" << endl << endl;
 
   out << endl << endl;

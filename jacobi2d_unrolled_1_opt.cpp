@@ -362,6 +362,11 @@ struct t1_t1_comp_write0_cache {
 
 struct t1_cache {
   t1_t1_comp_write0_cache t1_t1_comp_write0;
+  t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd0_cache bank_t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd0;
+  t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd1_cache bank_t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd1;
+  t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd2_cache bank_t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd2;
+  t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd3_cache bank_t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd3;
+  t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd4_cache bank_t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd4;
 };
 
 

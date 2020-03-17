@@ -44,9 +44,21 @@ class fifo {
     int write_addr;
     int read_addr;
 
+#ifdef __VIVADO_SYNTH__
     T vals[Depth];
+#else
+    T* vals;
+#endif // __VIVADO_SYNTH__
 
-    fifo() : read_addr(0), write_addr(0) {}
+    fifo() : read_addr(0), write_addr(0) {
+#ifdef __VIVADO_SYNTH__
+#else
+      vals = (T*)malloc(sizeof(T)*Depth);
+#endif // __VIVADO_SYNTH__
+    }
+
+    ~fifo() {
+    }
 
     T peek(int offset) {
       assert(offset >= 0);
