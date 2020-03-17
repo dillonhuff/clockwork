@@ -1110,8 +1110,12 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
 
 void generate_fifo_cache(CodegenOptions& options,
     std::ostream& out,
+    const std::string& name,
     const std::string& pt_type_string,
     vector<int> read_delays, const int num_readers, const int maxdelay) {
+
+  out << "struct " << name <<  " {" << endl;
+  out << "\t// Capacity: " << maxdelay + 1 << endl;
   if (num_readers == 1 || options.all_rams) {
     int partition_capacity = 1 + maxdelay;
     out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << ";" << endl;
@@ -1199,7 +1203,7 @@ void generate_fifo_cache(CodegenOptions& options,
         nind++;
       }
       out << "#ifndef __VIVADO_SYNTH__" << endl;
-      out << "\t\tcout << \"Error: Unsupported offset: \" << offset << endl;" << endl;
+      out << "\t\tcout << \"Error: Unsupported offset in " << name << ": \" << offset << endl;" << endl;
       out << "#endif // __VIVADO_SYNTH__" << endl;
       out << "\t\tassert(false);" << endl;
       out << "\t\treturn 0;\n" << endl;
@@ -1231,11 +1235,7 @@ void generate_memory_struct(CodegenOptions& options, std::ostream& out, const st
 
   //cout << buf << endl;
 
-  cout << "Computing max delay..." << endl;
   int maxdelay = compute_max_dd(buf, inpt);
-  cout << "maxdelay: " << maxdelay << endl;
-  out << "struct " + inpt + "_cache {" << endl;
-  out << "\t// Capacity: " << maxdelay + 1 << endl;
   vector<int> read_delays{0};
   int num_readers = 0;
   for (auto outpt : buf.get_out_ports()) {
@@ -1260,7 +1260,8 @@ void generate_memory_struct(CodegenOptions& options, std::ostream& out, const st
 
  
   string pt_type_string = buf.port_type_string();
-  generate_fifo_cache(options, out, pt_type_string, read_delays, num_readers, maxdelay);
+  string name = inpt + "_cache";
+  generate_fifo_cache(options, out, name, pt_type_string, read_delays, num_readers, maxdelay);
 
 }
 

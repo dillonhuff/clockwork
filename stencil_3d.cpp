@@ -352,7 +352,7 @@ struct I_I_id0_0_cache {
 			return f52.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset: " << offset << endl;
+		cout << "Error: Unsupported offset in I_I_id0_0_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
