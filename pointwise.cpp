@@ -2,6 +2,7 @@
 
 #include "hw_classes.h"
 
+  // bank_I_I_id0_0_to_I_out_plus_one0_3
 struct I_I_id0_0_cache {
 	// Capacity: 1
 	fifo<hw_uint<16>, 1> f;

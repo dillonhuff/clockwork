@@ -2,6 +2,22 @@
 
 #include "hw_classes.h"
 
+  // bank_t1_t1_comp_write0_to_jacobi2d_unrolled_2_rd0
+  // bank_t1_t1_comp_write0_to_jacobi2d_unrolled_2_rd1
+  // bank_t1_t1_comp_write0_to_jacobi2d_unrolled_2_rd2
+  // bank_t1_t1_comp_write0_to_jacobi2d_unrolled_2_rd3
+  // bank_t1_t1_comp_write0_to_jacobi2d_unrolled_2_rd4
+  // bank_t1_t1_comp_write0_to_jacobi2d_unrolled_2_rd5
+  // bank_t1_t1_comp_write0_to_jacobi2d_unrolled_2_rd6
+  // bank_t1_t1_comp_write0_to_jacobi2d_unrolled_2_rd7
+  // bank_t1_t1_comp_write1_to_jacobi2d_unrolled_2_rd0
+  // bank_t1_t1_comp_write1_to_jacobi2d_unrolled_2_rd1
+  // bank_t1_t1_comp_write1_to_jacobi2d_unrolled_2_rd2
+  // bank_t1_t1_comp_write1_to_jacobi2d_unrolled_2_rd3
+  // bank_t1_t1_comp_write1_to_jacobi2d_unrolled_2_rd4
+  // bank_t1_t1_comp_write1_to_jacobi2d_unrolled_2_rd5
+  // bank_t1_t1_comp_write1_to_jacobi2d_unrolled_2_rd6
+  // bank_t1_t1_comp_write1_to_jacobi2d_unrolled_2_rd7
 struct t1_t1_comp_write0_cache {
 	// Capacity: 1030
 	// Parition [0, 1) capacity = 1

@@ -2,6 +2,15 @@
 
 #include "hw_classes.h"
 
+  // bank_in_in_comp_write0_to_level_0_rd0
+  // bank_in_in_comp_write0_to_level_0_rd1
+  // bank_in_in_comp_write0_to_level_0_rd2
+  // bank_in_in_comp_write0_to_level_0_rd3
+  // bank_in_in_comp_write0_to_level_0_rd4
+  // bank_in_in_comp_write0_to_level_0_rd5
+  // bank_in_in_comp_write0_to_level_0_rd6
+  // bank_in_in_comp_write0_to_level_0_rd7
+  // bank_in_in_comp_write0_to_level_0_rd8
 struct in_in_comp_write0_cache {
 	// Capacity: 529
 	// Parition [0, 1) capacity = 1
@@ -244,6 +253,15 @@ inline hw_uint<288> in_level_0_comp_read_bundle_read(in_cache& in, int d0, int d
 
 #include "hw_classes.h"
 
+  // bank_level_0_level_0_comp_write0_to_level_1_rd0
+  // bank_level_0_level_0_comp_write0_to_level_1_rd1
+  // bank_level_0_level_0_comp_write0_to_level_1_rd2
+  // bank_level_0_level_0_comp_write0_to_level_1_rd3
+  // bank_level_0_level_0_comp_write0_to_level_1_rd4
+  // bank_level_0_level_0_comp_write0_to_level_1_rd5
+  // bank_level_0_level_0_comp_write0_to_level_1_rd6
+  // bank_level_0_level_0_comp_write0_to_level_1_rd7
+  // bank_level_0_level_0_comp_write0_to_level_1_rd8
 struct level_0_level_0_comp_write0_cache {
 	// Capacity: 265
 	// Parition [0, 1) capacity = 1
@@ -486,6 +504,15 @@ inline hw_uint<288> level_0_level_1_comp_read_bundle_read(level_0_cache& level_0
 
 #include "hw_classes.h"
 
+  // bank_level_1_level_1_comp_write0_to_level_2_rd0
+  // bank_level_1_level_1_comp_write0_to_level_2_rd1
+  // bank_level_1_level_1_comp_write0_to_level_2_rd2
+  // bank_level_1_level_1_comp_write0_to_level_2_rd3
+  // bank_level_1_level_1_comp_write0_to_level_2_rd4
+  // bank_level_1_level_1_comp_write0_to_level_2_rd5
+  // bank_level_1_level_1_comp_write0_to_level_2_rd6
+  // bank_level_1_level_1_comp_write0_to_level_2_rd7
+  // bank_level_1_level_1_comp_write0_to_level_2_rd8
 struct level_1_level_1_comp_write0_cache {
 	// Capacity: 133
 	// Parition [0, 1) capacity = 1
@@ -745,20 +772,20 @@ inline void level_0_comp(in_cache& in, level_0_cache& level_0, int d0, int d1) {
 	level_0_level_0_comp_write_bundle_write(compute_result, level_0, d0, d1);
 }
 
-inline void level_2_comp(level_1_cache& level_1, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */level_2, int d0, int d1) {
-	// Consume: level_1
-	auto level_1_0_c__0_value = level_1_level_2_comp_read_bundle_read(level_1/* source_delay */, d0, d1);
-	auto compute_result = reduce_gauss(level_1_0_c__0_value);
-	// Produce: level_2
-	level_2.write(compute_result);
-}
-
 inline void level_1_comp(level_0_cache& level_0, level_1_cache& level_1, int d0, int d1) {
 	// Consume: level_0
 	auto level_0_0_c__0_value = level_0_level_1_comp_read_bundle_read(level_0/* source_delay */, d0, d1);
 	auto compute_result = reduce_gauss(level_0_0_c__0_value);
 	// Produce: level_1
 	level_1_level_1_comp_write_bundle_write(compute_result, level_1, d0, d1);
+}
+
+inline void level_2_comp(level_1_cache& level_1, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */level_2, int d0, int d1) {
+	// Consume: level_1
+	auto level_1_0_c__0_value = level_1_level_2_comp_read_bundle_read(level_1/* source_delay */, d0, d1);
+	auto compute_result = reduce_gauss(level_1_0_c__0_value);
+	// Produce: level_2
+	level_2.write(compute_result);
 }
 
 // Driver function

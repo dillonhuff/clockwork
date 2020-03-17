@@ -2,6 +2,9 @@
 
 #include "hw_classes.h"
 
+  // bank_I_I_id0_0_to_I_out_blur_30_3
+  // bank_I_I_id0_0_to_I_out_blur_30_4
+  // bank_I_I_id0_0_to_I_out_blur_30_5
 struct I_I_id0_0_cache {
 	// Capacity: 65
 	// Parition [0, 1) capacity = 1

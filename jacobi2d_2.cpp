@@ -2,7 +2,27 @@
 
 #include "hw_classes.h"
 
-struct I_store_I_from_in_0_14_cache {
+  // bank_I_store_I_from_in_0_8_to_I_out_0_jacobi2d_compute0_11
+  // bank_I_store_I_from_in_0_8_to_I_out_0_jacobi2d_compute0_12
+  // bank_I_store_I_from_in_0_8_to_I_out_0_jacobi2d_compute0_13
+  // bank_I_store_I_from_in_0_8_to_I_out_0_jacobi2d_compute0_14
+  // bank_I_store_I_from_in_0_8_to_I_out_0_jacobi2d_compute0_15
+  // bank_I_store_I_from_in_0_8_to_I_out_1_jacobi2d_compute1_1
+  // bank_I_store_I_from_in_0_8_to_I_out_1_jacobi2d_compute1_2
+  // bank_I_store_I_from_in_0_8_to_I_out_1_jacobi2d_compute1_3
+  // bank_I_store_I_from_in_0_8_to_I_out_1_jacobi2d_compute1_4
+  // bank_I_store_I_from_in_0_8_to_I_out_1_jacobi2d_compute1_5
+  // bank_I_store_I_from_in_1_6_to_I_out_0_jacobi2d_compute0_11
+  // bank_I_store_I_from_in_1_6_to_I_out_0_jacobi2d_compute0_12
+  // bank_I_store_I_from_in_1_6_to_I_out_0_jacobi2d_compute0_13
+  // bank_I_store_I_from_in_1_6_to_I_out_0_jacobi2d_compute0_14
+  // bank_I_store_I_from_in_1_6_to_I_out_0_jacobi2d_compute0_15
+  // bank_I_store_I_from_in_1_6_to_I_out_1_jacobi2d_compute1_1
+  // bank_I_store_I_from_in_1_6_to_I_out_1_jacobi2d_compute1_2
+  // bank_I_store_I_from_in_1_6_to_I_out_1_jacobi2d_compute1_3
+  // bank_I_store_I_from_in_1_6_to_I_out_1_jacobi2d_compute1_4
+  // bank_I_store_I_from_in_1_6_to_I_out_1_jacobi2d_compute1_5
+struct I_store_I_from_in_0_8_cache {
 	// Capacity: 33
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
@@ -429,73 +449,25 @@ struct I_store_I_from_in_1_6_cache {
 };
 
 struct I_cache {
-  I_store_I_from_in_0_14_cache I_store_I_from_in_0_14;
+  I_store_I_from_in_0_8_cache I_store_I_from_in_0_8;
   I_store_I_from_in_1_6_cache I_store_I_from_in_1_6;
 };
 
 
 
-inline void I_store_I_from_in_0_14_write(hw_uint<32> & I_store_I_from_in_0_14, I_cache& I, int root, int id1, int id0) {
-	I.I_store_I_from_in_0_14.push(I_store_I_from_in_0_14);
+inline void I_store_I_from_in_0_8_write(hw_uint<32> & I_store_I_from_in_0_8, I_cache& I, int root, int id1, int id0) {
+	I.I_store_I_from_in_0_8.push(I_store_I_from_in_0_8);
 }
 
 inline void I_store_I_from_in_1_6_write(hw_uint<32> & I_store_I_from_in_1_6, I_cache& I, int root, int id1, int id0) {
 	I.I_store_I_from_in_1_6.push(I_store_I_from_in_1_6);
 }
 
-inline hw_uint<32>  I_out_0_jacobi2d_compute0_10_select(I_cache& I, int root, int d1, int d0) {
-  // qpd = { out_0_jacobi2d_compute0[root, d1, d0] -> (31 - d0) : root = 0 and 0 < d1 <= 30 and 0 < d0 <= 14 }
-	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_0[root' = 0, id1 = d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
-  // I_out_0_jacobi2d_compute0_10 read pattern: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> I[2d0, d1] : 0 < d1 <= 30 and 0 < d0 <= 14 }
-  // I_store_I_from_in_0_14 stores range: { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 30 and 0 <= i1 <= 31 }
-    // overlap with reads : { I[i0, i1] : (i0) mod 2 = 0 and 2 <= i0 <= 28 and 0 < i1 <= 30 }
-  // I_store_I_from_in_1_6 stores range: { I[i0, i1] : (1 + i0) mod 2 = 0 and 0 < i0 <= 31 and 0 <= i1 <= 31 }
-    // overlap with reads : {  }
-	auto value_I_store_I_from_in_0_14 = I.I_store_I_from_in_0_14.peek(/* is one piece but not a number */(31 - d0));
-	return value_I_store_I_from_in_0_14;
-}
-
 inline hw_uint<32>  I_out_0_jacobi2d_compute0_11_select(I_cache& I, int root, int d1, int d0) {
   // qpd = {  }
-	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_1[root' = 0, id1 = d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
-  // I_out_0_jacobi2d_compute0_11 read pattern: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> I[-1 + 2d0, d1] : 0 < d1 <= 30 and 0 < d0 <= 14 }
-  // I_store_I_from_in_0_14 stores range: { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 30 and 0 <= i1 <= 31 }
-    // overlap with reads : {  }
-  // I_store_I_from_in_1_6 stores range: { I[i0, i1] : (1 + i0) mod 2 = 0 and 0 < i0 <= 31 and 0 <= i1 <= 31 }
-    // overlap with reads : { I[i0, i1] : (1 + i0) mod 2 = 0 and 0 < i0 <= 27 and 0 < i1 <= 30 }
-	auto value_I_store_I_from_in_1_6 = I.I_store_I_from_in_1_6.peek_16();
-	return value_I_store_I_from_in_1_6;
-}
-
-inline hw_uint<32>  I_out_0_jacobi2d_compute0_12_select(I_cache& I, int root, int d1, int d0) {
-  // qpd = {  }
-	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_1[root' = 0, id1 = -1 + d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
-  // I_out_0_jacobi2d_compute0_12 read pattern: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> I[-1 + 2d0, -1 + d1] : 0 < d1 <= 30 and 0 < d0 <= 14 }
-  // I_store_I_from_in_0_14 stores range: { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 30 and 0 <= i1 <= 31 }
-    // overlap with reads : {  }
-  // I_store_I_from_in_1_6 stores range: { I[i0, i1] : (1 + i0) mod 2 = 0 and 0 < i0 <= 31 and 0 <= i1 <= 31 }
-    // overlap with reads : { I[i0, i1] : (1 + i0) mod 2 = 0 and 0 < i0 <= 27 and 0 <= i1 <= 29 }
-	auto value_I_store_I_from_in_1_6 = I.I_store_I_from_in_1_6.peek_32();
-	return value_I_store_I_from_in_1_6;
-}
-
-inline hw_uint<32>  I_out_0_jacobi2d_compute0_13_select(I_cache& I, int root, int d1, int d0) {
-  // qpd = { out_0_jacobi2d_compute0[root, d1, d0] -> (32 - d0) : root = 0 and 0 < d1 <= 30 and 0 < d0 <= 14 }
-	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_0[root' = 0, id1 = d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
-  // I_out_0_jacobi2d_compute0_13 read pattern: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> I[-2 + 2d0, d1] : 0 < d1 <= 30 and 0 < d0 <= 14 }
-  // I_store_I_from_in_0_14 stores range: { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 30 and 0 <= i1 <= 31 }
-    // overlap with reads : { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 26 and 0 < i1 <= 30 }
-  // I_store_I_from_in_1_6 stores range: { I[i0, i1] : (1 + i0) mod 2 = 0 and 0 < i0 <= 31 and 0 <= i1 <= 31 }
-    // overlap with reads : {  }
-	auto value_I_store_I_from_in_0_14 = I.I_store_I_from_in_0_14.peek(/* is one piece but not a number */(32 - d0));
-	return value_I_store_I_from_in_0_14;
-}
-
-inline hw_uint<32>  I_out_0_jacobi2d_compute0_9_select(I_cache& I, int root, int d1, int d0) {
-  // qpd = {  }
 	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_1[root' = 0, id1 = 1 + d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
-  // I_out_0_jacobi2d_compute0_9 read pattern: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> I[-1 + 2d0, 1 + d1] : 0 < d1 <= 30 and 0 < d0 <= 14 }
-  // I_store_I_from_in_0_14 stores range: { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 30 and 0 <= i1 <= 31 }
+  // I_out_0_jacobi2d_compute0_11 read pattern: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> I[-1 + 2d0, 1 + d1] : 0 < d1 <= 30 and 0 < d0 <= 14 }
+  // I_store_I_from_in_0_8 stores range: { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 30 and 0 <= i1 <= 31 }
     // overlap with reads : {  }
   // I_store_I_from_in_1_6 stores range: { I[i0, i1] : (1 + i0) mod 2 = 0 and 0 < i0 <= 31 and 0 <= i1 <= 31 }
     // overlap with reads : { I[i0, i1] : (1 + i0) mod 2 = 0 and 0 < i0 <= 27 and 2 <= i1 <= 31 }
@@ -503,23 +475,71 @@ inline hw_uint<32>  I_out_0_jacobi2d_compute0_9_select(I_cache& I, int root, int
 	return value_I_store_I_from_in_1_6;
 }
 
+inline hw_uint<32>  I_out_0_jacobi2d_compute0_12_select(I_cache& I, int root, int d1, int d0) {
+  // qpd = { out_0_jacobi2d_compute0[root, d1, d0] -> (31 - d0) : root = 0 and 0 < d1 <= 30 and 0 < d0 <= 14 }
+	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_0[root' = 0, id1 = d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
+  // I_out_0_jacobi2d_compute0_12 read pattern: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> I[2d0, d1] : 0 < d1 <= 30 and 0 < d0 <= 14 }
+  // I_store_I_from_in_0_8 stores range: { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 30 and 0 <= i1 <= 31 }
+    // overlap with reads : { I[i0, i1] : (i0) mod 2 = 0 and 2 <= i0 <= 28 and 0 < i1 <= 30 }
+  // I_store_I_from_in_1_6 stores range: { I[i0, i1] : (1 + i0) mod 2 = 0 and 0 < i0 <= 31 and 0 <= i1 <= 31 }
+    // overlap with reads : {  }
+	auto value_I_store_I_from_in_0_8 = I.I_store_I_from_in_0_8.peek(/* is one piece but not a number */(31 - d0));
+	return value_I_store_I_from_in_0_8;
+}
+
+inline hw_uint<32>  I_out_0_jacobi2d_compute0_13_select(I_cache& I, int root, int d1, int d0) {
+  // qpd = {  }
+	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_1[root' = 0, id1 = d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
+  // I_out_0_jacobi2d_compute0_13 read pattern: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> I[-1 + 2d0, d1] : 0 < d1 <= 30 and 0 < d0 <= 14 }
+  // I_store_I_from_in_0_8 stores range: { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 30 and 0 <= i1 <= 31 }
+    // overlap with reads : {  }
+  // I_store_I_from_in_1_6 stores range: { I[i0, i1] : (1 + i0) mod 2 = 0 and 0 < i0 <= 31 and 0 <= i1 <= 31 }
+    // overlap with reads : { I[i0, i1] : (1 + i0) mod 2 = 0 and 0 < i0 <= 27 and 0 < i1 <= 30 }
+	auto value_I_store_I_from_in_1_6 = I.I_store_I_from_in_1_6.peek_16();
+	return value_I_store_I_from_in_1_6;
+}
+
+inline hw_uint<32>  I_out_0_jacobi2d_compute0_14_select(I_cache& I, int root, int d1, int d0) {
+  // qpd = {  }
+	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_1[root' = 0, id1 = -1 + d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
+  // I_out_0_jacobi2d_compute0_14 read pattern: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> I[-1 + 2d0, -1 + d1] : 0 < d1 <= 30 and 0 < d0 <= 14 }
+  // I_store_I_from_in_0_8 stores range: { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 30 and 0 <= i1 <= 31 }
+    // overlap with reads : {  }
+  // I_store_I_from_in_1_6 stores range: { I[i0, i1] : (1 + i0) mod 2 = 0 and 0 < i0 <= 31 and 0 <= i1 <= 31 }
+    // overlap with reads : { I[i0, i1] : (1 + i0) mod 2 = 0 and 0 < i0 <= 27 and 0 <= i1 <= 29 }
+	auto value_I_store_I_from_in_1_6 = I.I_store_I_from_in_1_6.peek_32();
+	return value_I_store_I_from_in_1_6;
+}
+
+inline hw_uint<32>  I_out_0_jacobi2d_compute0_15_select(I_cache& I, int root, int d1, int d0) {
+  // qpd = { out_0_jacobi2d_compute0[root, d1, d0] -> (32 - d0) : root = 0 and 0 < d1 <= 30 and 0 < d0 <= 14 }
+	// lexmax events: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> store_I_from_in_0[root' = 0, id1 = d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
+  // I_out_0_jacobi2d_compute0_15 read pattern: { out_0_jacobi2d_compute0[root = 0, d1, d0] -> I[-2 + 2d0, d1] : 0 < d1 <= 30 and 0 < d0 <= 14 }
+  // I_store_I_from_in_0_8 stores range: { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 30 and 0 <= i1 <= 31 }
+    // overlap with reads : { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 26 and 0 < i1 <= 30 }
+  // I_store_I_from_in_1_6 stores range: { I[i0, i1] : (1 + i0) mod 2 = 0 and 0 < i0 <= 31 and 0 <= i1 <= 31 }
+    // overlap with reads : {  }
+	auto value_I_store_I_from_in_0_8 = I.I_store_I_from_in_0_8.peek(/* is one piece but not a number */(32 - d0));
+	return value_I_store_I_from_in_0_8;
+}
+
 inline hw_uint<32>  I_out_1_jacobi2d_compute1_1_select(I_cache& I, int root, int d1, int d0) {
   // qpd = {  }
 	// lexmax events: { out_1_jacobi2d_compute1[root = 0, d1, d0] -> store_I_from_in_0[root' = 0, id1 = 1 + d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
   // I_out_1_jacobi2d_compute1_1 read pattern: { out_1_jacobi2d_compute1[root = 0, d1, d0] -> I[2d0, 1 + d1] : 0 < d1 <= 30 and 0 < d0 <= 14 }
-  // I_store_I_from_in_0_14 stores range: { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 30 and 0 <= i1 <= 31 }
+  // I_store_I_from_in_0_8 stores range: { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 30 and 0 <= i1 <= 31 }
     // overlap with reads : { I[i0, i1] : (i0) mod 2 = 0 and 2 <= i0 <= 28 and 2 <= i1 <= 31 }
   // I_store_I_from_in_1_6 stores range: { I[i0, i1] : (1 + i0) mod 2 = 0 and 0 < i0 <= 31 and 0 <= i1 <= 31 }
     // overlap with reads : {  }
-	auto value_I_store_I_from_in_0_14 = I.I_store_I_from_in_0_14.peek_0();
-	return value_I_store_I_from_in_0_14;
+	auto value_I_store_I_from_in_0_8 = I.I_store_I_from_in_0_8.peek_0();
+	return value_I_store_I_from_in_0_8;
 }
 
 inline hw_uint<32>  I_out_1_jacobi2d_compute1_2_select(I_cache& I, int root, int d1, int d0) {
   // qpd = {  }
 	// lexmax events: { out_1_jacobi2d_compute1[root = 0, d1, d0] -> store_I_from_in_1[root' = 0, id1 = d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
   // I_out_1_jacobi2d_compute1_2 read pattern: { out_1_jacobi2d_compute1[root = 0, d1, d0] -> I[1 + 2d0, d1] : 0 < d1 <= 30 and 0 < d0 <= 14 }
-  // I_store_I_from_in_0_14 stores range: { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 30 and 0 <= i1 <= 31 }
+  // I_store_I_from_in_0_8 stores range: { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 30 and 0 <= i1 <= 31 }
     // overlap with reads : {  }
   // I_store_I_from_in_1_6 stores range: { I[i0, i1] : (1 + i0) mod 2 = 0 and 0 < i0 <= 31 and 0 <= i1 <= 31 }
     // overlap with reads : { I[i0, i1] : (1 + i0) mod 2 = 0 and 3 <= i0 <= 29 and 0 < i1 <= 30 }
@@ -531,31 +551,31 @@ inline hw_uint<32>  I_out_1_jacobi2d_compute1_3_select(I_cache& I, int root, int
   // qpd = { out_1_jacobi2d_compute1[root, d1, d0] -> 16 : root = 0 and 0 < d1 <= 30 and 0 < d0 <= 14 }
 	// lexmax events: { out_1_jacobi2d_compute1[root = 0, d1, d0] -> store_I_from_in_0[root' = 0, id1 = d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
   // I_out_1_jacobi2d_compute1_3 read pattern: { out_1_jacobi2d_compute1[root = 0, d1, d0] -> I[2d0, d1] : 0 < d1 <= 30 and 0 < d0 <= 14 }
-  // I_store_I_from_in_0_14 stores range: { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 30 and 0 <= i1 <= 31 }
+  // I_store_I_from_in_0_8 stores range: { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 30 and 0 <= i1 <= 31 }
     // overlap with reads : { I[i0, i1] : (i0) mod 2 = 0 and 2 <= i0 <= 28 and 0 < i1 <= 30 }
   // I_store_I_from_in_1_6 stores range: { I[i0, i1] : (1 + i0) mod 2 = 0 and 0 < i0 <= 31 and 0 <= i1 <= 31 }
     // overlap with reads : {  }
-	auto value_I_store_I_from_in_0_14 = I.I_store_I_from_in_0_14.peek_16();
-	return value_I_store_I_from_in_0_14;
+	auto value_I_store_I_from_in_0_8 = I.I_store_I_from_in_0_8.peek_16();
+	return value_I_store_I_from_in_0_8;
 }
 
 inline hw_uint<32>  I_out_1_jacobi2d_compute1_4_select(I_cache& I, int root, int d1, int d0) {
   // qpd = { out_1_jacobi2d_compute1[root, d1, d0] -> 32 : root = 0 and 0 < d1 <= 30 and 0 < d0 <= 14 }
 	// lexmax events: { out_1_jacobi2d_compute1[root = 0, d1, d0] -> store_I_from_in_0[root' = 0, id1 = -1 + d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
   // I_out_1_jacobi2d_compute1_4 read pattern: { out_1_jacobi2d_compute1[root = 0, d1, d0] -> I[2d0, -1 + d1] : 0 < d1 <= 30 and 0 < d0 <= 14 }
-  // I_store_I_from_in_0_14 stores range: { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 30 and 0 <= i1 <= 31 }
+  // I_store_I_from_in_0_8 stores range: { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 30 and 0 <= i1 <= 31 }
     // overlap with reads : { I[i0, i1] : (i0) mod 2 = 0 and 2 <= i0 <= 28 and 0 <= i1 <= 29 }
   // I_store_I_from_in_1_6 stores range: { I[i0, i1] : (1 + i0) mod 2 = 0 and 0 < i0 <= 31 and 0 <= i1 <= 31 }
     // overlap with reads : {  }
-	auto value_I_store_I_from_in_0_14 = I.I_store_I_from_in_0_14.peek_32();
-	return value_I_store_I_from_in_0_14;
+	auto value_I_store_I_from_in_0_8 = I.I_store_I_from_in_0_8.peek_32();
+	return value_I_store_I_from_in_0_8;
 }
 
 inline hw_uint<32>  I_out_1_jacobi2d_compute1_5_select(I_cache& I, int root, int d1, int d0) {
   // qpd = {  }
 	// lexmax events: { out_1_jacobi2d_compute1[root = 0, d1, d0] -> store_I_from_in_1[root' = 0, id1 = d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 14 }
   // I_out_1_jacobi2d_compute1_5 read pattern: { out_1_jacobi2d_compute1[root = 0, d1, d0] -> I[-1 + 2d0, d1] : 0 < d1 <= 30 and 0 < d0 <= 14 }
-  // I_store_I_from_in_0_14 stores range: { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 30 and 0 <= i1 <= 31 }
+  // I_store_I_from_in_0_8 stores range: { I[i0, i1] : (i0) mod 2 = 0 and 0 <= i0 <= 30 and 0 <= i1 <= 31 }
     // overlap with reads : {  }
   // I_store_I_from_in_1_6 stores range: { I[i0, i1] : (1 + i0) mod 2 = 0 and 0 < i0 <= 31 and 0 <= i1 <= 31 }
     // overlap with reads : { I[i0, i1] : (1 + i0) mod 2 = 0 and 0 < i0 <= 27 and 0 < i1 <= 30 }
@@ -565,23 +585,23 @@ inline hw_uint<32>  I_out_1_jacobi2d_compute1_5_select(I_cache& I, int root, int
 
 // # of bundles = 4
 // out_0_jacobi2d_compute0_read
-//	I_out_0_jacobi2d_compute0_9
-//	I_out_0_jacobi2d_compute0_10
 //	I_out_0_jacobi2d_compute0_11
 //	I_out_0_jacobi2d_compute0_12
 //	I_out_0_jacobi2d_compute0_13
+//	I_out_0_jacobi2d_compute0_14
+//	I_out_0_jacobi2d_compute0_15
 inline hw_uint<160> I_out_0_jacobi2d_compute0_read_bundle_read(I_cache& I, int root, int d1, int d0) {
 	hw_uint<160> result;
-	hw_uint<32>  I_out_0_jacobi2d_compute0_9_res = I_out_0_jacobi2d_compute0_9_select(I, root, d1, d0);
-	set_at<0, 160>(result, I_out_0_jacobi2d_compute0_9_res);
-	hw_uint<32>  I_out_0_jacobi2d_compute0_10_res = I_out_0_jacobi2d_compute0_10_select(I, root, d1, d0);
-	set_at<32, 160>(result, I_out_0_jacobi2d_compute0_10_res);
 	hw_uint<32>  I_out_0_jacobi2d_compute0_11_res = I_out_0_jacobi2d_compute0_11_select(I, root, d1, d0);
-	set_at<64, 160>(result, I_out_0_jacobi2d_compute0_11_res);
+	set_at<0, 160>(result, I_out_0_jacobi2d_compute0_11_res);
 	hw_uint<32>  I_out_0_jacobi2d_compute0_12_res = I_out_0_jacobi2d_compute0_12_select(I, root, d1, d0);
-	set_at<96, 160>(result, I_out_0_jacobi2d_compute0_12_res);
+	set_at<32, 160>(result, I_out_0_jacobi2d_compute0_12_res);
 	hw_uint<32>  I_out_0_jacobi2d_compute0_13_res = I_out_0_jacobi2d_compute0_13_select(I, root, d1, d0);
-	set_at<128, 160>(result, I_out_0_jacobi2d_compute0_13_res);
+	set_at<64, 160>(result, I_out_0_jacobi2d_compute0_13_res);
+	hw_uint<32>  I_out_0_jacobi2d_compute0_14_res = I_out_0_jacobi2d_compute0_14_select(I, root, d1, d0);
+	set_at<96, 160>(result, I_out_0_jacobi2d_compute0_14_res);
+	hw_uint<32>  I_out_0_jacobi2d_compute0_15_res = I_out_0_jacobi2d_compute0_15_select(I, root, d1, d0);
+	set_at<128, 160>(result, I_out_0_jacobi2d_compute0_15_res);
 	return result;
 }
 
@@ -607,10 +627,10 @@ inline hw_uint<160> I_out_1_jacobi2d_compute1_read_bundle_read(I_cache& I, int r
 }
 
 // store_I_from_in_0_write
-//	I_store_I_from_in_0_14
+//	I_store_I_from_in_0_8
 inline void I_store_I_from_in_0_write_bundle_write(hw_uint<32>& store_I_from_in_0_write, I_cache& I, int root, int id1, int id0) {
-	hw_uint<32>  I_store_I_from_in_0_14_res = store_I_from_in_0_write.extract<0, 31>();
-	I_store_I_from_in_0_14_write(I_store_I_from_in_0_14_res, I, root, id1, id0);
+	hw_uint<32>  I_store_I_from_in_0_8_res = store_I_from_in_0_write.extract<0, 31>();
+	I_store_I_from_in_0_8_write(I_store_I_from_in_0_8_res, I, root, id1, id0);
 }
 
 // store_I_from_in_1_write
@@ -640,19 +660,19 @@ inline void store_I_from_in_1(HWStream<hw_uint<32> >& /* buffer_args num ports =
 	I_store_I_from_in_1_write_bundle_write(in_1_id0_c__id1_value, I, root, id1, id0);
 }
 
+inline void store_I_from_in_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in_0, I_cache& I, int root, int id1, int id0) {
+	// Consume: in_0
+	auto in_0_id0_c__id1_value = in_0.read();
+	// Produce: I
+	I_store_I_from_in_0_write_bundle_write(in_0_id0_c__id1_value, I, root, id1, id0);
+}
+
 inline void out_0_jacobi2d_compute0(I_cache& I, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */out_0, int root, int d1, int d0) {
 	// Consume: I
 	auto I_2_m_d0__m__1__p__0_c__d1__p__1_value = I_out_0_jacobi2d_compute0_read_bundle_read(I/* source_delay */, root, d1, d0);
 	auto compute_result = jacobi2d_compute(I_2_m_d0__m__1__p__0_c__d1__p__1_value);
 	// Produce: out_0
 	out_0.write(compute_result);
-}
-
-inline void store_I_from_in_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in_0, I_cache& I, int root, int id1, int id0) {
-	// Consume: in_0
-	auto in_0_id0_c__id1_value = in_0.read();
-	// Produce: I
-	I_store_I_from_in_0_write_bundle_write(in_0_id0_c__id1_value, I, root, id1, id0);
 }
 
 // Driver function

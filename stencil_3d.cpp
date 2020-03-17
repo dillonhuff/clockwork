@@ -2,6 +2,33 @@
 
 #include "hw_classes.h"
 
+  // bank_I_I_id0_28_to_I_out_blur_270_1
+  // bank_I_I_id0_28_to_I_out_blur_270_10
+  // bank_I_I_id0_28_to_I_out_blur_270_11
+  // bank_I_I_id0_28_to_I_out_blur_270_12
+  // bank_I_I_id0_28_to_I_out_blur_270_13
+  // bank_I_I_id0_28_to_I_out_blur_270_14
+  // bank_I_I_id0_28_to_I_out_blur_270_15
+  // bank_I_I_id0_28_to_I_out_blur_270_16
+  // bank_I_I_id0_28_to_I_out_blur_270_17
+  // bank_I_I_id0_28_to_I_out_blur_270_18
+  // bank_I_I_id0_28_to_I_out_blur_270_19
+  // bank_I_I_id0_28_to_I_out_blur_270_2
+  // bank_I_I_id0_28_to_I_out_blur_270_20
+  // bank_I_I_id0_28_to_I_out_blur_270_21
+  // bank_I_I_id0_28_to_I_out_blur_270_22
+  // bank_I_I_id0_28_to_I_out_blur_270_23
+  // bank_I_I_id0_28_to_I_out_blur_270_24
+  // bank_I_I_id0_28_to_I_out_blur_270_25
+  // bank_I_I_id0_28_to_I_out_blur_270_26
+  // bank_I_I_id0_28_to_I_out_blur_270_27
+  // bank_I_I_id0_28_to_I_out_blur_270_3
+  // bank_I_I_id0_28_to_I_out_blur_270_4
+  // bank_I_I_id0_28_to_I_out_blur_270_5
+  // bank_I_I_id0_28_to_I_out_blur_270_6
+  // bank_I_I_id0_28_to_I_out_blur_270_7
+  // bank_I_I_id0_28_to_I_out_blur_270_8
+  // bank_I_I_id0_28_to_I_out_blur_270_9
 struct I_I_id0_28_cache {
 	// Capacity: 2115
 	// Parition [0, 1) capacity = 1

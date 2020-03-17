@@ -194,6 +194,8 @@ class UBuffer {
     std::map<string, isl_union_map*> schedule;
     std::map<string, vector<string> > port_bundles;
 
+    map<string, pair<string, string> > stack_banks;
+
 
     UBuffer() : port_widths(32) {}
 
@@ -1106,7 +1108,7 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
   return maxdelay;
 }
 
-void generate_fifo_cache(CodegenOptions& options, std::ostream& out, const std::string& inpt, UBuffer& buf,
+void generate_fifo_cache(CodegenOptions& options, std::ostream& out, UBuffer& buf,
     vector<int> read_delays, const int num_readers, const int maxdelay) {
   if (num_readers == 1 || options.all_rams) {
     int partition_capacity = 1 + maxdelay;
@@ -1224,6 +1226,7 @@ void generate_fifo_cache(CodegenOptions& options, std::ostream& out, const std::
 void generate_memory_struct(CodegenOptions& options, std::ostream& out, const std::string& inpt, UBuffer& buf) {
 
   cout << "Creating struct for: " << inpt << " on " << buf.name << endl;
+
   //cout << buf << endl;
 
   cout << "Computing max delay..." << endl;
@@ -1253,7 +1256,7 @@ void generate_memory_struct(CodegenOptions& options, std::ostream& out, const st
     }
   }
 
-  generate_fifo_cache(options, out, inpt, buf, read_delays, num_readers, maxdelay);
+  generate_fifo_cache(options, out, buf, read_delays, num_readers, maxdelay);
 
 }
 
@@ -1280,8 +1283,19 @@ vector<string> dimension_var_decls(const std::string& pt, UBuffer& buf) {
 void generate_code_prefix(CodegenOptions& options,
     std::ostream& out, UBuffer& buf) {
 
+  for (auto inpt : buf.get_in_ports()) {
+    for (auto outpt : buf.get_out_ports()) {
+      buf.stack_banks["bank_" + inpt + "_to_" + outpt] =
+      {inpt, outpt};
+    }
+  }
+
   string inpt = buf.get_in_port();
   out << "#include \"hw_classes.h\"" << endl << endl;
+  for (auto b : buf.stack_banks) {
+    out << tab(1) << "// " << b.first << endl;
+  }
+
   for (auto inpt : buf.get_in_ports()) {
     generate_memory_struct(options, out, inpt, buf);
   }
