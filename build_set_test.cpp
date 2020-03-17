@@ -5376,6 +5376,13 @@ map<string, int>
 compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstraint> delay_constraints,
     vector<QConstraint>& offset_constraints) {
 
+  cout << "Delay constraints..." << endl;
+  for (auto d : delay_constraints) {
+    cout << tab(1) << d << endl;
+  }
+
+  //assert(false);
+
   vector<string> ds;
   for (auto f : sorted_functions) {
     ds.push_back("d_" + f);
@@ -6670,6 +6677,8 @@ struct App {
 
   void schedule_and_codegen(const std::string& name, const int unroll_factor) {
     umap* m = schedule();
+    cout << "Schedule: " << str(m) << endl;
+    assert(false);
 
     auto scheds_n =
       schedule_opt();
@@ -6693,7 +6702,6 @@ struct App {
 
     uset* whole_dom =
       isl_union_set_read_from_str(ctx, "{}");
-    //cout << "Whole domain at top of realize " << name << ": " << whole_dom << endl;
     assert(whole_dom != nullptr);
     auto sorted_functions = sort_functions();
     for (auto f : sorted_functions) {
@@ -7035,7 +7043,8 @@ void upsample_stencil_test() {
   us.func2d("Img_off");
   us.func2d("Img", "id", pt("Img_off"));
 
-  auto loads = offsets2d(-1, 1, -1, 1);
+  //auto loads = offsets2d(-1, 1, -1, 1);
+  auto loads = offsets2d(0, 2, 0, 2);
   Window imgwin{"Img", {qconst(1, 2), qconst(1, 2)}, loads};
   cout << "Strides before assignment" << endl;
   for (auto s : imgwin.strides) {
@@ -7051,6 +7060,12 @@ void upsample_stencil_test() {
 
   std::vector<std::string> naive =
     run_regression_tb("upsample_stencil_naive");
+
+  assert(optimized.size() == naive.size());
+  for (size_t i = 0; i < optimized.size(); i++) {
+    cout << tab(1) << "i = " << i << ", opt = " << optimized.at(i) << ", naive = " << naive.at(i) << endl;
+    assert(optimized.at(i) == naive.at(i));
+  }
 
   assert(optimized == naive);
   assert(false);
