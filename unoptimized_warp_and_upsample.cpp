@@ -199,6 +199,15 @@ struct I_cache {
 
 inline void I_store_I_from_in_0_write(hw_uint<32> & I_store_I_from_in_0, I_cache& I, int root, int pr, int pc) {
 	I.I_store_I_from_in_0.push(I_store_I_from_in_0);
+  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_10.push(I_store_I_from_in_0);
+  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_11.push(I_store_I_from_in_0);
+  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_12.push(I_store_I_from_in_0);
+  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_13.push(I_store_I_from_in_0);
+  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_5.push(I_store_I_from_in_0);
+  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_6.push(I_store_I_from_in_0);
+  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_7.push(I_store_I_from_in_0);
+  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_8.push(I_store_I_from_in_0);
+  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_9.push(I_store_I_from_in_0);
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_10_select(I_cache& I, int root, int br, int bc) {
@@ -345,6 +354,7 @@ struct warped_0_cache {
 
 inline void warped_0_warped_0_conv_3_30_4_write(hw_uint<32> & warped_0_warped_0_conv_3_30_4, warped_0_cache& warped_0, int root, int br, int bc) {
 	warped_0.warped_0_warped_0_conv_3_30_4.push(warped_0_warped_0_conv_3_30_4);
+  warped_0.bank_warped_0_warped_0_conv_3_30_4_to_warped_0_out_id0_3.push(warped_0_warped_0_conv_3_30_4);
 }
 
 inline hw_uint<32>  warped_0_out_id0_3_select(warped_0_cache& warped_0, int root, int ur, int kr, int uc, int kc) {

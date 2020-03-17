@@ -66,6 +66,7 @@ struct I_cache {
 
 inline void I_I_id0_0_write(hw_uint<16>& I_I_id0_0, I_cache& I, int root, int id1, int id0) {
 	I.I_I_id0_0.push(I_I_id0_0);
+  I.bank_I_I_id0_0_to_I_out_plus_one0_3.push(I_I_id0_0);
 }
 
 inline hw_uint<16> I_out_plus_one0_3_select(I_cache& I, int root, int d1, int d0) {

@@ -197,6 +197,16 @@ class UBuffer {
     map<string, pair<string, string> > stack_banks;
 
 
+    set<string> receiver_banks(const std::string& inpt) {
+      set<string> bnks;
+      for (auto bs : stack_banks) {
+        if (bs.second.first == inpt) {
+          bnks.insert(bs.first);
+        }
+      }
+      return bnks;
+    }
+
     UBuffer() : port_widths(32) {}
 
     isl_union_map* bundle_access(const std::string& bn) {
@@ -1375,6 +1385,11 @@ void generate_code_prefix(CodegenOptions& options,
     out << "inline void " << inpt << "_write(";
     out << comma_list(args) << ") {" << endl;
     out << "\t" + buf.name + "." + inpt + ".push(" + inpt + ");" << endl;
+
+    for (auto sb : buf.receiver_banks(inpt)) {
+      out << tab(1) << buf.name << "." << sb << ".push(" << inpt << ");" << endl;
+    }
+
     out << "}" << endl << endl;
   }
 

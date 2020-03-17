@@ -3289,18 +3289,74 @@ struct t1_cache {
 
 inline void t1_t1_comp_write0_write(hw_uint<32> & t1_t1_comp_write0, t1_cache& t1, int d0, int d1) {
 	t1.t1_t1_comp_write0.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd0.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd1.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd10.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd11.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd12.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd13.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd2.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd3.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd4.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd5.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd6.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd7.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd8.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd9.push(t1_t1_comp_write0);
 }
 
 inline void t1_t1_comp_write1_write(hw_uint<32> & t1_t1_comp_write1, t1_cache& t1, int d0, int d1) {
 	t1.t1_t1_comp_write1.push(t1_t1_comp_write1);
+  t1.bank_t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd0.push(t1_t1_comp_write1);
+  t1.bank_t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd1.push(t1_t1_comp_write1);
+  t1.bank_t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd10.push(t1_t1_comp_write1);
+  t1.bank_t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd11.push(t1_t1_comp_write1);
+  t1.bank_t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd12.push(t1_t1_comp_write1);
+  t1.bank_t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd13.push(t1_t1_comp_write1);
+  t1.bank_t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd2.push(t1_t1_comp_write1);
+  t1.bank_t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd3.push(t1_t1_comp_write1);
+  t1.bank_t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd4.push(t1_t1_comp_write1);
+  t1.bank_t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd5.push(t1_t1_comp_write1);
+  t1.bank_t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd6.push(t1_t1_comp_write1);
+  t1.bank_t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd7.push(t1_t1_comp_write1);
+  t1.bank_t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd8.push(t1_t1_comp_write1);
+  t1.bank_t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd9.push(t1_t1_comp_write1);
 }
 
 inline void t1_t1_comp_write2_write(hw_uint<32> & t1_t1_comp_write2, t1_cache& t1, int d0, int d1) {
 	t1.t1_t1_comp_write2.push(t1_t1_comp_write2);
+  t1.bank_t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd0.push(t1_t1_comp_write2);
+  t1.bank_t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd1.push(t1_t1_comp_write2);
+  t1.bank_t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd10.push(t1_t1_comp_write2);
+  t1.bank_t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd11.push(t1_t1_comp_write2);
+  t1.bank_t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd12.push(t1_t1_comp_write2);
+  t1.bank_t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd13.push(t1_t1_comp_write2);
+  t1.bank_t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd2.push(t1_t1_comp_write2);
+  t1.bank_t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd3.push(t1_t1_comp_write2);
+  t1.bank_t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd4.push(t1_t1_comp_write2);
+  t1.bank_t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd5.push(t1_t1_comp_write2);
+  t1.bank_t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd6.push(t1_t1_comp_write2);
+  t1.bank_t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd7.push(t1_t1_comp_write2);
+  t1.bank_t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd8.push(t1_t1_comp_write2);
+  t1.bank_t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd9.push(t1_t1_comp_write2);
 }
 
 inline void t1_t1_comp_write3_write(hw_uint<32> & t1_t1_comp_write3, t1_cache& t1, int d0, int d1) {
 	t1.t1_t1_comp_write3.push(t1_t1_comp_write3);
+  t1.bank_t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd0.push(t1_t1_comp_write3);
+  t1.bank_t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd1.push(t1_t1_comp_write3);
+  t1.bank_t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd10.push(t1_t1_comp_write3);
+  t1.bank_t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd11.push(t1_t1_comp_write3);
+  t1.bank_t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd12.push(t1_t1_comp_write3);
+  t1.bank_t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd13.push(t1_t1_comp_write3);
+  t1.bank_t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd2.push(t1_t1_comp_write3);
+  t1.bank_t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd3.push(t1_t1_comp_write3);
+  t1.bank_t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd4.push(t1_t1_comp_write3);
+  t1.bank_t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd5.push(t1_t1_comp_write3);
+  t1.bank_t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd6.push(t1_t1_comp_write3);
+  t1.bank_t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd7.push(t1_t1_comp_write3);
+  t1.bank_t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd8.push(t1_t1_comp_write3);
+  t1.bank_t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd9.push(t1_t1_comp_write3);
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_4_rd0_select(t1_cache& t1, int d0, int d1) {

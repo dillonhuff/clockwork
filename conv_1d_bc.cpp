@@ -195,6 +195,9 @@ struct M_cache {
 
 inline void M_write_0_write(hw_uint<32> & M_write_0, M_cache& M, int root, int p) {
 	M.M_write_0.push(M_write_0);
+  M.bank_M_write_0_to_M_read0_3.push(M_write_0);
+  M.bank_M_write_0_to_M_read0_4.push(M_write_0);
+  M.bank_M_write_0_to_M_read0_5.push(M_write_0);
 }
 
 inline hw_uint<32>  M_read0_3_select(M_cache& M, int root, int c) {
@@ -306,6 +309,7 @@ struct T_cache {
 
 inline void T_read0_2_write(hw_uint<96>& T_read0_2, T_cache& T, int root, int c) {
 	T.T_read0_2.push(T_read0_2);
+  T.bank_T_read0_2_to_T_compute_out_7.push(T_read0_2);
 }
 
 inline hw_uint<96> T_compute_out_7_select(T_cache& T, int root, int c) {

@@ -373,6 +373,11 @@ struct t1_cache {
 
 inline void t1_t1_comp_write0_write(hw_uint<32> & t1_t1_comp_write0, t1_cache& t1, int d0, int d1) {
 	t1.t1_t1_comp_write0.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd0.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd1.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd2.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd3.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd4.push(t1_t1_comp_write0);
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_1_rd0_select(t1_cache& t1, int d0, int d1) {

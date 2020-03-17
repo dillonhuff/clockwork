@@ -66,6 +66,7 @@ struct diff_d_cache {
 
 inline void diff_d_diff_d_comp_write0_write(hw_uint<32> & diff_d_diff_d_comp_write0, diff_d_cache& diff_d, int d0, int d1) {
 	diff_d.diff_d_diff_d_comp_write0.push(diff_d_diff_d_comp_write0);
+  diff_d.bank_diff_d_diff_d_comp_write0_to_g_rd0.push(diff_d_diff_d_comp_write0);
 }
 
 inline hw_uint<32>  g_rd0_select(diff_d_cache& diff_d, int d0, int d1) {
@@ -159,6 +160,7 @@ struct diff_l_cache {
 
 inline void diff_l_diff_l_comp_write0_write(hw_uint<32> & diff_l_diff_l_comp_write0, diff_l_cache& diff_l, int d0, int d1) {
 	diff_l.diff_l_diff_l_comp_write0.push(diff_l_diff_l_comp_write0);
+  diff_l.bank_diff_l_diff_l_comp_write0_to_g_rd0.push(diff_l_diff_l_comp_write0);
 }
 
 inline hw_uint<32>  g_rd0_select(diff_l_cache& diff_l, int d0, int d1) {
@@ -252,6 +254,7 @@ struct diff_qwe_cache {
 
 inline void diff_qwe_diff_qwe_comp_write0_write(hw_uint<32> & diff_qwe_diff_qwe_comp_write0, diff_qwe_cache& diff_qwe, int d0, int d1) {
 	diff_qwe.diff_qwe_diff_qwe_comp_write0.push(diff_qwe_diff_qwe_comp_write0);
+  diff_qwe.bank_diff_qwe_diff_qwe_comp_write0_to_g_rd0.push(diff_qwe_diff_qwe_comp_write0);
 }
 
 inline hw_uint<32>  g_rd0_select(diff_qwe_cache& diff_qwe, int d0, int d1) {
@@ -345,6 +348,7 @@ struct diff_r_cache {
 
 inline void diff_r_diff_r_comp_write0_write(hw_uint<32> & diff_r_diff_r_comp_write0, diff_r_cache& diff_r, int d0, int d1) {
 	diff_r.diff_r_diff_r_comp_write0.push(diff_r_diff_r_comp_write0);
+  diff_r.bank_diff_r_diff_r_comp_write0_to_g_rd0.push(diff_r_diff_r_comp_write0);
 }
 
 inline hw_uint<32>  g_rd0_select(diff_r_cache& diff_r, int d0, int d1) {
@@ -483,6 +487,8 @@ struct f_cache {
 
 inline void f_f_comp_write0_write(hw_uint<32> & f_f_comp_write0, f_cache& f, int d0, int d1) {
 	f.f_f_comp_write0.push(f_f_comp_write0);
+  f.bank_f_f_comp_write0_to_denoise2d_rd0.push(f_f_comp_write0);
+  f.bank_f_f_comp_write0_to_r0_rd0.push(f_f_comp_write0);
 }
 
 inline hw_uint<32>  denoise2d_rd0_select(f_cache& f, int d0, int d1) {
@@ -844,6 +850,10 @@ struct g_cache {
 
 inline void g_g_comp_write0_write(hw_uint<32> & g_g_comp_write0, g_cache& g, int d0, int d1) {
 	g.g_g_comp_write0.push(g_g_comp_write0);
+  g.bank_g_g_comp_write0_to_denoise2d_rd0.push(g_g_comp_write0);
+  g.bank_g_g_comp_write0_to_denoise2d_rd1.push(g_g_comp_write0);
+  g.bank_g_g_comp_write0_to_denoise2d_rd2.push(g_g_comp_write0);
+  g.bank_g_g_comp_write0_to_denoise2d_rd3.push(g_g_comp_write0);
 }
 
 inline hw_uint<32>  denoise2d_rd0_select(g_cache& g, int d0, int d1) {
@@ -964,6 +974,7 @@ struct r0_cache {
 
 inline void r0_r0_comp_write0_write(hw_uint<32> & r0_r0_comp_write0, r0_cache& r0, int d0, int d1) {
 	r0.r0_r0_comp_write0.push(r0_r0_comp_write0);
+  r0.bank_r0_r0_comp_write0_to_r1_rd0.push(r0_r0_comp_write0);
 }
 
 inline hw_uint<32>  r1_rd0_select(r0_cache& r0, int d0, int d1) {
@@ -1057,6 +1068,7 @@ struct r1_cache {
 
 inline void r1_r1_comp_write0_write(hw_uint<32> & r1_r1_comp_write0, r1_cache& r1, int d0, int d1) {
 	r1.r1_r1_comp_write0.push(r1_r1_comp_write0);
+  r1.bank_r1_r1_comp_write0_to_denoise2d_rd0.push(r1_r1_comp_write0);
 }
 
 inline hw_uint<32>  denoise2d_rd0_select(r1_cache& r1, int d0, int d1) {
@@ -1929,6 +1941,19 @@ struct u_cache {
 
 inline void u_u_comp_write0_write(hw_uint<32> & u_u_comp_write0, u_cache& u, int d0, int d1) {
 	u.u_u_comp_write0.push(u_u_comp_write0);
+  u.bank_u_u_comp_write0_to_denoise2d_rd0.push(u_u_comp_write0);
+  u.bank_u_u_comp_write0_to_denoise2d_rd1.push(u_u_comp_write0);
+  u.bank_u_u_comp_write0_to_denoise2d_rd2.push(u_u_comp_write0);
+  u.bank_u_u_comp_write0_to_denoise2d_rd3.push(u_u_comp_write0);
+  u.bank_u_u_comp_write0_to_diff_d_rd0.push(u_u_comp_write0);
+  u.bank_u_u_comp_write0_to_diff_d_rd1.push(u_u_comp_write0);
+  u.bank_u_u_comp_write0_to_diff_l_rd0.push(u_u_comp_write0);
+  u.bank_u_u_comp_write0_to_diff_l_rd1.push(u_u_comp_write0);
+  u.bank_u_u_comp_write0_to_diff_qwe_rd0.push(u_u_comp_write0);
+  u.bank_u_u_comp_write0_to_diff_qwe_rd1.push(u_u_comp_write0);
+  u.bank_u_u_comp_write0_to_diff_r_rd0.push(u_u_comp_write0);
+  u.bank_u_u_comp_write0_to_diff_r_rd1.push(u_u_comp_write0);
+  u.bank_u_u_comp_write0_to_r0_rd0.push(u_u_comp_write0);
 }
 
 inline hw_uint<32>  denoise2d_rd0_select(u_cache& u, int d0, int d1) {
@@ -2123,14 +2148,6 @@ inline void r0_comp(u_cache& u, f_cache& f, r0_cache& r0, int d0, int d1) {
 	r0_r0_comp_write_bundle_write(compute_result, r0, d0, d1);
 }
 
-inline void diff_qwe_comp(u_cache& u, diff_qwe_cache& diff_qwe, int d0, int d1) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_qwe_comp_read_bundle_read(u/* source_delay */, d0, d1);
-	auto compute_result = diff_b(u_0_c__0_value);
-	// Produce: diff_qwe
-	diff_qwe_diff_qwe_comp_write_bundle_write(compute_result, diff_qwe, d0, d1);
-}
-
 inline void diff_r_comp(u_cache& u, diff_r_cache& diff_r, int d0, int d1) {
 	// Consume: u
 	auto u_0_c__0_value = u_diff_r_comp_read_bundle_read(u/* source_delay */, d0, d1);
@@ -2147,20 +2164,20 @@ inline void diff_l_comp(u_cache& u, diff_l_cache& diff_l, int d0, int d1) {
 	diff_l_diff_l_comp_write_bundle_write(compute_result, diff_l, d0, d1);
 }
 
+inline void diff_qwe_comp(u_cache& u, diff_qwe_cache& diff_qwe, int d0, int d1) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_qwe_comp_read_bundle_read(u/* source_delay */, d0, d1);
+	auto compute_result = diff_b(u_0_c__0_value);
+	// Produce: diff_qwe
+	diff_qwe_diff_qwe_comp_write_bundle_write(compute_result, diff_qwe, d0, d1);
+}
+
 inline void diff_d_comp(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
 	// Consume: u
 	auto u_0_c__0_value = u_diff_d_comp_read_bundle_read(u/* source_delay */, d0, d1);
 	auto compute_result = diff_b(u_0_c__0_value);
 	// Produce: diff_d
 	diff_d_diff_d_comp_write_bundle_write(compute_result, diff_d, d0, d1);
-}
-
-inline void r1_comp(r0_cache& r0, r1_cache& r1, int d0, int d1) {
-	// Consume: r0
-	auto r0_0_c__0_value = r0_r1_comp_read_bundle_read(r0/* source_delay */, d0, d1);
-	auto compute_result = r1_comp(r0_0_c__0_value);
-	// Produce: r1
-	r1_r1_comp_write_bundle_write(compute_result, r1, d0, d1);
 }
 
 inline void g_comp(diff_qwe_cache& diff_qwe, diff_d_cache& diff_d, diff_l_cache& diff_l, diff_r_cache& diff_r, g_cache& g, int d0, int d1) {
@@ -2175,6 +2192,14 @@ inline void g_comp(diff_qwe_cache& diff_qwe, diff_d_cache& diff_d, diff_l_cache&
 	auto compute_result = mag_dn2(diff_qwe_0_c__0_value, diff_d_0_c__0_value, diff_l_0_c__0_value, diff_r_0_c__0_value);
 	// Produce: g
 	g_g_comp_write_bundle_write(compute_result, g, d0, d1);
+}
+
+inline void r1_comp(r0_cache& r0, r1_cache& r1, int d0, int d1) {
+	// Consume: r0
+	auto r0_0_c__0_value = r0_r1_comp_read_bundle_read(r0/* source_delay */, d0, d1);
+	auto compute_result = r1_comp(r0_0_c__0_value);
+	// Produce: r1
+	r1_r1_comp_write_bundle_write(compute_result, r1, d0, d1);
 }
 
 inline void denoise2d_comp(r1_cache& r1, f_cache& f, u_cache& u, g_cache& g, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */denoise2d, int d0, int d1) {
