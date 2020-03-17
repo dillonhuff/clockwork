@@ -2,15 +2,453 @@
 
 #include "hw_classes.h"
 
-  // bank_in_in_comp_write0_to_level_0_rd0
-  // bank_in_in_comp_write0_to_level_0_rd1
-  // bank_in_in_comp_write0_to_level_0_rd2
-  // bank_in_in_comp_write0_to_level_0_rd3
-  // bank_in_in_comp_write0_to_level_0_rd4
-  // bank_in_in_comp_write0_to_level_0_rd5
-  // bank_in_in_comp_write0_to_level_0_rd6
-  // bank_in_in_comp_write0_to_level_0_rd7
-  // bank_in_in_comp_write0_to_level_0_rd8
+struct in_in_comp_write0_to_level_0_rd0_cache {
+	// Capacity: 529
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 528) capacity = 527
+	fifo<hw_uint<32> , 527> f1;
+	// Parition [528, 528] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_527() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_528() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 527) {
+			return f1.back();
+		}
+		if (offset == 528) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in in_in_comp_write0_to_level_0_rd0_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct in_in_comp_write0_to_level_0_rd1_cache {
+	// Capacity: 529
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 265) capacity = 264
+	fifo<hw_uint<32> , 264> f1;
+	// Parition [265, 265] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_264() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_265() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 264) {
+			return f1.back();
+		}
+		if (offset == 265) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in in_in_comp_write0_to_level_0_rd1_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct in_in_comp_write0_to_level_0_rd2_cache {
+	// Capacity: 529
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 2) capacity = 1
+	fifo<hw_uint<32> , 1> f1;
+	// Parition [2, 2] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_1() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_2() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 1) {
+			return f1.back();
+		}
+		if (offset == 2) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in in_in_comp_write0_to_level_0_rd2_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct in_in_comp_write0_to_level_0_rd3_cache {
+	// Capacity: 529
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 527) capacity = 526
+	fifo<hw_uint<32> , 526> f1;
+	// Parition [527, 527] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_526() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_527() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 526) {
+			return f1.back();
+		}
+		if (offset == 527) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in in_in_comp_write0_to_level_0_rd3_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct in_in_comp_write0_to_level_0_rd4_cache {
+	// Capacity: 529
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 264) capacity = 263
+	fifo<hw_uint<32> , 263> f1;
+	// Parition [264, 264] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_263() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_264() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 263) {
+			return f1.back();
+		}
+		if (offset == 264) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in in_in_comp_write0_to_level_0_rd4_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct in_in_comp_write0_to_level_0_rd5_cache {
+	// Capacity: 529
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 1] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_1() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 1) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in in_in_comp_write0_to_level_0_rd5_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct in_in_comp_write0_to_level_0_rd6_cache {
+	// Capacity: 529
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 526) capacity = 525
+	fifo<hw_uint<32> , 525> f1;
+	// Parition [526, 526] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_525() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_526() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 525) {
+			return f1.back();
+		}
+		if (offset == 526) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in in_in_comp_write0_to_level_0_rd6_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct in_in_comp_write0_to_level_0_rd7_cache {
+	// Capacity: 529
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 263) capacity = 262
+	fifo<hw_uint<32> , 262> f1;
+	// Parition [263, 263] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_262() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_263() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 262) {
+			return f1.back();
+		}
+		if (offset == 263) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in in_in_comp_write0_to_level_0_rd7_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct in_in_comp_write0_to_level_0_rd8_cache {
+	// Capacity: 529
+	// Parition [0, 0] capacity = 1
+	fifo<hw_uint<32> , 1> f1;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f1.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f1.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in in_in_comp_write0_to_level_0_rd8_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f1.push(value);
+	}
+
+};
+
 struct in_in_comp_write0_cache {
 	// Capacity: 529
 	// Parition [0, 1) capacity = 1
@@ -253,15 +691,453 @@ inline hw_uint<288> in_level_0_comp_read_bundle_read(in_cache& in, int d0, int d
 
 #include "hw_classes.h"
 
-  // bank_level_0_level_0_comp_write0_to_level_1_rd0
-  // bank_level_0_level_0_comp_write0_to_level_1_rd1
-  // bank_level_0_level_0_comp_write0_to_level_1_rd2
-  // bank_level_0_level_0_comp_write0_to_level_1_rd3
-  // bank_level_0_level_0_comp_write0_to_level_1_rd4
-  // bank_level_0_level_0_comp_write0_to_level_1_rd5
-  // bank_level_0_level_0_comp_write0_to_level_1_rd6
-  // bank_level_0_level_0_comp_write0_to_level_1_rd7
-  // bank_level_0_level_0_comp_write0_to_level_1_rd8
+struct level_0_level_0_comp_write0_to_level_1_rd0_cache {
+	// Capacity: 265
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 264) capacity = 263
+	fifo<hw_uint<32> , 263> f1;
+	// Parition [264, 264] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_263() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_264() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 263) {
+			return f1.back();
+		}
+		if (offset == 264) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in level_0_level_0_comp_write0_to_level_1_rd0_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct level_0_level_0_comp_write0_to_level_1_rd1_cache {
+	// Capacity: 265
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 133) capacity = 132
+	fifo<hw_uint<32> , 132> f1;
+	// Parition [133, 133] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_132() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_133() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 132) {
+			return f1.back();
+		}
+		if (offset == 133) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in level_0_level_0_comp_write0_to_level_1_rd1_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct level_0_level_0_comp_write0_to_level_1_rd2_cache {
+	// Capacity: 265
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 2) capacity = 1
+	fifo<hw_uint<32> , 1> f1;
+	// Parition [2, 2] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_1() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_2() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 1) {
+			return f1.back();
+		}
+		if (offset == 2) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in level_0_level_0_comp_write0_to_level_1_rd2_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct level_0_level_0_comp_write0_to_level_1_rd3_cache {
+	// Capacity: 265
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 263) capacity = 262
+	fifo<hw_uint<32> , 262> f1;
+	// Parition [263, 263] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_262() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_263() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 262) {
+			return f1.back();
+		}
+		if (offset == 263) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in level_0_level_0_comp_write0_to_level_1_rd3_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct level_0_level_0_comp_write0_to_level_1_rd4_cache {
+	// Capacity: 265
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 132) capacity = 131
+	fifo<hw_uint<32> , 131> f1;
+	// Parition [132, 132] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_131() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_132() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 131) {
+			return f1.back();
+		}
+		if (offset == 132) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in level_0_level_0_comp_write0_to_level_1_rd4_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct level_0_level_0_comp_write0_to_level_1_rd5_cache {
+	// Capacity: 265
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 1] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_1() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 1) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in level_0_level_0_comp_write0_to_level_1_rd5_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct level_0_level_0_comp_write0_to_level_1_rd6_cache {
+	// Capacity: 265
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 262) capacity = 261
+	fifo<hw_uint<32> , 261> f1;
+	// Parition [262, 262] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_261() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_262() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 261) {
+			return f1.back();
+		}
+		if (offset == 262) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in level_0_level_0_comp_write0_to_level_1_rd6_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct level_0_level_0_comp_write0_to_level_1_rd7_cache {
+	// Capacity: 265
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 131) capacity = 130
+	fifo<hw_uint<32> , 130> f1;
+	// Parition [131, 131] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_130() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_131() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 130) {
+			return f1.back();
+		}
+		if (offset == 131) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in level_0_level_0_comp_write0_to_level_1_rd7_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct level_0_level_0_comp_write0_to_level_1_rd8_cache {
+	// Capacity: 265
+	// Parition [0, 0] capacity = 1
+	fifo<hw_uint<32> , 1> f1;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f1.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f1.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in level_0_level_0_comp_write0_to_level_1_rd8_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f1.push(value);
+	}
+
+};
+
 struct level_0_level_0_comp_write0_cache {
 	// Capacity: 265
 	// Parition [0, 1) capacity = 1
@@ -504,15 +1380,453 @@ inline hw_uint<288> level_0_level_1_comp_read_bundle_read(level_0_cache& level_0
 
 #include "hw_classes.h"
 
-  // bank_level_1_level_1_comp_write0_to_level_2_rd0
-  // bank_level_1_level_1_comp_write0_to_level_2_rd1
-  // bank_level_1_level_1_comp_write0_to_level_2_rd2
-  // bank_level_1_level_1_comp_write0_to_level_2_rd3
-  // bank_level_1_level_1_comp_write0_to_level_2_rd4
-  // bank_level_1_level_1_comp_write0_to_level_2_rd5
-  // bank_level_1_level_1_comp_write0_to_level_2_rd6
-  // bank_level_1_level_1_comp_write0_to_level_2_rd7
-  // bank_level_1_level_1_comp_write0_to_level_2_rd8
+struct level_1_level_1_comp_write0_to_level_2_rd0_cache {
+	// Capacity: 133
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 132) capacity = 131
+	fifo<hw_uint<32> , 131> f1;
+	// Parition [132, 132] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_131() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_132() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 131) {
+			return f1.back();
+		}
+		if (offset == 132) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in level_1_level_1_comp_write0_to_level_2_rd0_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct level_1_level_1_comp_write0_to_level_2_rd1_cache {
+	// Capacity: 133
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 67) capacity = 66
+	fifo<hw_uint<32> , 66> f1;
+	// Parition [67, 67] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_66() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_67() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 66) {
+			return f1.back();
+		}
+		if (offset == 67) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in level_1_level_1_comp_write0_to_level_2_rd1_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct level_1_level_1_comp_write0_to_level_2_rd2_cache {
+	// Capacity: 133
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 2) capacity = 1
+	fifo<hw_uint<32> , 1> f1;
+	// Parition [2, 2] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_1() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_2() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 1) {
+			return f1.back();
+		}
+		if (offset == 2) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in level_1_level_1_comp_write0_to_level_2_rd2_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct level_1_level_1_comp_write0_to_level_2_rd3_cache {
+	// Capacity: 133
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 131) capacity = 130
+	fifo<hw_uint<32> , 130> f1;
+	// Parition [131, 131] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_130() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_131() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 130) {
+			return f1.back();
+		}
+		if (offset == 131) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in level_1_level_1_comp_write0_to_level_2_rd3_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct level_1_level_1_comp_write0_to_level_2_rd4_cache {
+	// Capacity: 133
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 66) capacity = 65
+	fifo<hw_uint<32> , 65> f1;
+	// Parition [66, 66] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_65() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_66() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 65) {
+			return f1.back();
+		}
+		if (offset == 66) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in level_1_level_1_comp_write0_to_level_2_rd4_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct level_1_level_1_comp_write0_to_level_2_rd5_cache {
+	// Capacity: 133
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 1] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_1() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 1) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in level_1_level_1_comp_write0_to_level_2_rd5_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct level_1_level_1_comp_write0_to_level_2_rd6_cache {
+	// Capacity: 133
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 130) capacity = 129
+	fifo<hw_uint<32> , 129> f1;
+	// Parition [130, 130] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_129() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_130() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 129) {
+			return f1.back();
+		}
+		if (offset == 130) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in level_1_level_1_comp_write0_to_level_2_rd6_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct level_1_level_1_comp_write0_to_level_2_rd7_cache {
+	// Capacity: 133
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 65) capacity = 64
+	fifo<hw_uint<32> , 64> f1;
+	// Parition [65, 65] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_64() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_65() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 64) {
+			return f1.back();
+		}
+		if (offset == 65) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in level_1_level_1_comp_write0_to_level_2_rd7_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct level_1_level_1_comp_write0_to_level_2_rd8_cache {
+	// Capacity: 133
+	// Parition [0, 0] capacity = 1
+	fifo<hw_uint<32> , 1> f1;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f1.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f1.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in level_1_level_1_comp_write0_to_level_2_rd8_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f1.push(value);
+	}
+
+};
+
 struct level_1_level_1_comp_write0_cache {
 	// Capacity: 133
 	// Parition [0, 1) capacity = 1

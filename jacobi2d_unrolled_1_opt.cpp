@@ -2,11 +2,261 @@
 
 #include "hw_classes.h"
 
-  // bank_t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd0
-  // bank_t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd1
-  // bank_t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd2
-  // bank_t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd3
-  // bank_t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd4
+struct t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd0_cache {
+	// Capacity: 2054
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 1028) capacity = 1027
+	fifo<hw_uint<32> , 1027> f1;
+	// Parition [1028, 1028] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_1027() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_1028() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 1027) {
+			return f1.back();
+		}
+		if (offset == 1028) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd0_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd1_cache {
+	// Capacity: 2054
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 2053) capacity = 2052
+	fifo<hw_uint<32> , 2052> f1;
+	// Parition [2053, 2053] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_2052() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_2053() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 2052) {
+			return f1.back();
+		}
+		if (offset == 2053) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd1_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd2_cache {
+	// Capacity: 2054
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 1027) capacity = 1026
+	fifo<hw_uint<32> , 1026> f1;
+	// Parition [1027, 1027] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_1026() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_1027() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 1026) {
+			return f1.back();
+		}
+		if (offset == 1027) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd2_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd3_cache {
+	// Capacity: 2054
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 1] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_1() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 1) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd3_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd4_cache {
+	// Capacity: 2054
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 1026) capacity = 1025
+	fifo<hw_uint<32> , 1025> f1;
+	// Parition [1026, 1026] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_1025() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_1026() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 1025) {
+			return f1.back();
+		}
+		if (offset == 1026) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd4_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
 struct t1_t1_comp_write0_cache {
 	// Capacity: 2054
 	// Parition [0, 1) capacity = 1

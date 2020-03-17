@@ -1119,15 +1119,12 @@ struct stack_bank {
 void generate_stack_cache(CodegenOptions& options,
     std::ostream& out,
     stack_bank& bank) {
+
   auto name = bank.name;
   auto pt_type_string = bank.pt_type_string;
   auto read_delays = bank.read_delays;
   auto num_readers = bank.num_readers;
   auto maxdelay = bank.maxdelay;
-
-    //const std::string& name,
-    //const std::string& pt_type_string,
-    //vector<int> read_delays, const int num_readers, const int maxdelay) {
 
   out << "struct " << name <<  " {" << endl;
   out << "\t// Capacity: " << maxdelay + 1 << endl;
@@ -1244,11 +1241,46 @@ void generate_stack_cache(CodegenOptions& options,
   out << "};" << endl << endl;
 }
 
+void generate_stack_bank(CodegenOptions& options,
+    std::ostream& out, 
+    const std::string& inpt, 
+    const std::string& outpt,
+    UBuffer& buf) {
+
+  int maxdelay = compute_max_dd(buf, inpt);
+  vector<int> read_delays{0};
+
+  // NOTE: Just to ensure we dont force everything to be a RAM
+  int num_readers = 10;
+
+  auto in_actions = buf.domain.at(inpt);
+  auto lex_max_events =
+    get_lexmax_events(outpt, buf);
+  auto act_dom =
+    domain(its_range(lex_max_events, to_uset(in_actions)));
+
+  if (!isl_union_set_is_empty(act_dom)) {
+    num_readers++;
+    auto c = compute_dd(buf, outpt, inpt);
+    auto qpd = compute_dd_bound(buf, outpt, inpt);
+    int lb = compute_dd_lower_bound(buf, outpt, inpt);
+
+    for (int i = lb; i < qpd + 1; i++) {
+      read_delays.push_back(i);
+    }
+  }
+
+ 
+  string pt_type_string = buf.port_type_string();
+  string name = inpt + "_to_" + outpt + "_cache";
+  stack_bank bank{name, pt_type_string, read_delays, num_readers, maxdelay};
+
+  generate_stack_cache(options, out, bank);
+}
+
 void generate_memory_struct(CodegenOptions& options, std::ostream& out, const std::string& inpt, UBuffer& buf) {
 
   cout << "Creating struct for: " << inpt << " on " << buf.name << endl;
-
-  //cout << buf << endl;
 
   int maxdelay = compute_max_dd(buf, inpt);
   vector<int> read_delays{0};
@@ -1277,9 +1309,8 @@ void generate_memory_struct(CodegenOptions& options, std::ostream& out, const st
   string pt_type_string = buf.port_type_string();
   string name = inpt + "_cache";
   stack_bank bank{name, pt_type_string, read_delays, num_readers, maxdelay};
-  generate_stack_cache(options, out, bank);
-  //generate_stack_cache(options, out, name, pt_type_string, read_delays, num_readers, maxdelay);
 
+  generate_stack_cache(options, out, bank);
 }
 
 vector<string> dimension_var_decls(const std::string& pt, UBuffer& buf) {
@@ -1315,7 +1346,7 @@ void generate_code_prefix(CodegenOptions& options,
   string inpt = buf.get_in_port();
   out << "#include \"hw_classes.h\"" << endl << endl;
   for (auto b : buf.stack_banks) {
-    out << tab(1) << "// " << b.first << endl;
+    generate_stack_bank(options, out, b.second.first, b.second.second, buf);
   }
 
   for (auto inpt : buf.get_in_ports()) {
