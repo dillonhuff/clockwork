@@ -473,6 +473,7 @@ QExpr qexpr(const QTerm& a, const QTerm& l, const QTerm& r) {
 }
 
 string isl_str(QTerm& v) {
+  v.simplify();
 
   vector<string> tstrings;
   vector<string> divs;
@@ -490,9 +491,12 @@ string isl_str(QTerm& v) {
   if (divs.size() == 0) {
     return s;
   }
-  vector<string> cfs{"(" + s + ")"};
-  concat(cfs, divs);
-  return sep_list(cfs, "", "", " / ");
+
+  assert(divs.size() == 1);
+  return "floor(" + s + " / " + divs.at(0) + ")";
+  //vector<string> cfs{"(" + s + ")"};
+  //concat(cfs, divs);
+  //return sep_list(cfs, "", "", " / ");
 }
 
 string isl_str(QExpr& v) {

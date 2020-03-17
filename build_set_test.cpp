@@ -6356,6 +6356,8 @@ struct App {
       buffers[f] = b;
     }
 
+    //assert(false);
+
     for (auto b : buffers) {
         cout << b.second.name << endl;
         cout << "input_ports..." << endl;
@@ -6678,7 +6680,7 @@ struct App {
   void schedule_and_codegen(const std::string& name, const int unroll_factor) {
     umap* m = schedule();
     cout << "Schedule: " << str(m) << endl;
-    assert(false);
+    //assert(false);
 
     auto scheds_n =
       schedule_opt();
@@ -7044,16 +7046,16 @@ void upsample_stencil_test() {
   us.func2d("Img", "id", pt("Img_off"));
 
   //auto loads = offsets2d(-1, 1, -1, 1);
-  auto loads = offsets2d(0, 2, 0, 2);
-  Window imgwin{"Img", {qconst(1, 2), qconst(1, 2)}, loads};
+  auto loads = offsets2d(0, 2, 0, 0);
+  Window imgwin{"Img", {qconst(1, 2), qconst(1, 1)}, loads};
   cout << "Strides before assignment" << endl;
   for (auto s : imgwin.strides) {
     cout << tab(1) << s << endl;
   }
-  us.func2d("upsample_stencil", "conv_3_3", imgwin);
+  us.func2d("upsample_stencil", "conv_1_3", imgwin);
 
-  us.realize("upsample_stencil", 32, 32, 1);
-  us.realize_naive("upsample_stencil", 32, 32);
+  us.realize("upsample_stencil", 32, 1, 1);
+  us.realize_naive("upsample_stencil", 32, 1);
   
   std::vector<std::string> optimized =
     run_regression_tb("upsample_stencil_opt");
