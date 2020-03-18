@@ -4,6 +4,8 @@
 
 struct I_I_id0_0_to_I_out_blur_270_10_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 2049
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 2049) capacity = 2048
@@ -57,6 +59,8 @@ struct I_I_id0_0_to_I_out_blur_270_10_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_11_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 2048
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 2048) capacity = 2047
@@ -110,6 +114,8 @@ struct I_I_id0_0_to_I_out_blur_270_11_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_12_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 1090
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 1090) capacity = 1089
@@ -163,6 +169,8 @@ struct I_I_id0_0_to_I_out_blur_270_12_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_13_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 1089
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 1089) capacity = 1088
@@ -216,6 +224,8 @@ struct I_I_id0_0_to_I_out_blur_270_13_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_14_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 1088
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 1088) capacity = 1087
@@ -269,6 +279,8 @@ struct I_I_id0_0_to_I_out_blur_270_14_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_15_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 1058
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 1058) capacity = 1057
@@ -322,6 +334,8 @@ struct I_I_id0_0_to_I_out_blur_270_15_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_16_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 1057
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 1057) capacity = 1056
@@ -375,6 +389,8 @@ struct I_I_id0_0_to_I_out_blur_270_16_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_17_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 1056
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 1056) capacity = 1055
@@ -428,6 +444,8 @@ struct I_I_id0_0_to_I_out_blur_270_17_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_18_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 1026
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 1026) capacity = 1025
@@ -481,6 +499,8 @@ struct I_I_id0_0_to_I_out_blur_270_18_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_19_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 1025
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 1025) capacity = 1024
@@ -534,6 +554,8 @@ struct I_I_id0_0_to_I_out_blur_270_19_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_20_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 1024
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 1024) capacity = 1023
@@ -587,6 +609,8 @@ struct I_I_id0_0_to_I_out_blur_270_20_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_21_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 66
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 66) capacity = 65
@@ -640,6 +664,8 @@ struct I_I_id0_0_to_I_out_blur_270_21_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_22_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 65
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 65) capacity = 64
@@ -693,6 +719,8 @@ struct I_I_id0_0_to_I_out_blur_270_22_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_23_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 64
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 64) capacity = 63
@@ -746,6 +774,8 @@ struct I_I_id0_0_to_I_out_blur_270_23_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_24_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 34
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 34) capacity = 33
@@ -799,6 +829,8 @@ struct I_I_id0_0_to_I_out_blur_270_24_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_25_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 33
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 33) capacity = 32
@@ -852,6 +884,8 @@ struct I_I_id0_0_to_I_out_blur_270_25_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_26_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 32
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 32) capacity = 31
@@ -905,6 +939,8 @@ struct I_I_id0_0_to_I_out_blur_270_26_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_27_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 2
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 2) capacity = 1
@@ -958,6 +994,8 @@ struct I_I_id0_0_to_I_out_blur_270_27_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_28_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 1
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 1] capacity = 1
@@ -1001,6 +1039,8 @@ struct I_I_id0_0_to_I_out_blur_270_28_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_29_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 0
 	// Parition [0, 0] capacity = 1
 	fifo<hw_uint<16>, 1> f1;
 
@@ -1034,6 +1074,8 @@ struct I_I_id0_0_to_I_out_blur_270_29_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_3_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 2114
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 2114) capacity = 2113
@@ -1087,6 +1129,8 @@ struct I_I_id0_0_to_I_out_blur_270_3_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_4_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 2113
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 2113) capacity = 2112
@@ -1140,6 +1184,8 @@ struct I_I_id0_0_to_I_out_blur_270_4_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_5_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 2112
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 2112) capacity = 2111
@@ -1193,6 +1239,8 @@ struct I_I_id0_0_to_I_out_blur_270_5_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_6_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 2082
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 2082) capacity = 2081
@@ -1246,6 +1294,8 @@ struct I_I_id0_0_to_I_out_blur_270_6_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_7_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 2081
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 2081) capacity = 2080
@@ -1299,6 +1349,8 @@ struct I_I_id0_0_to_I_out_blur_270_7_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_8_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 2080
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 2080) capacity = 2079
@@ -1352,6 +1404,8 @@ struct I_I_id0_0_to_I_out_blur_270_8_cache {
 
 struct I_I_id0_0_to_I_out_blur_270_9_cache {
 	// Capacity: 2115
+	// # of read delays: 2
+	// read delays: 0, 2050
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 2050) capacity = 2049

@@ -4,6 +4,8 @@
 
 struct t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd0_cache {
 	// Capacity: 2054
+	// # of read delays: 2
+	// read delays: 0, 1028
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 1028) capacity = 1027
@@ -57,6 +59,8 @@ struct t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd0_cache {
 
 struct t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd1_cache {
 	// Capacity: 2054
+	// # of read delays: 2
+	// read delays: 0, 2053
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 2053) capacity = 2052
@@ -110,6 +114,8 @@ struct t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd1_cache {
 
 struct t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd2_cache {
 	// Capacity: 2054
+	// # of read delays: 2
+	// read delays: 0, 1027
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 1027) capacity = 1026
@@ -163,6 +169,8 @@ struct t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd2_cache {
 
 struct t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd3_cache {
 	// Capacity: 2054
+	// # of read delays: 2
+	// read delays: 0, 1
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 1] capacity = 1
@@ -206,6 +214,8 @@ struct t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd3_cache {
 
 struct t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd4_cache {
 	// Capacity: 2054
+	// # of read delays: 2
+	// read delays: 0, 1026
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 1026) capacity = 1025

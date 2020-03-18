@@ -4,6 +4,8 @@
 
 struct Img_Img_comp_write0_to_upsample_stencil_rd0_cache {
 	// Capacity: 54
+	// # of read delays: 18
+	// read delays: 0, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 37) capacity = 36
@@ -217,6 +219,8 @@ struct Img_Img_comp_write0_to_upsample_stencil_rd0_cache {
 
 struct Img_Img_comp_write0_to_upsample_stencil_rd1_cache {
 	// Capacity: 54
+	// # of read delays: 18
+	// read delays: 0, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 19) capacity = 18
@@ -430,6 +434,8 @@ struct Img_Img_comp_write0_to_upsample_stencil_rd1_cache {
 
 struct Img_Img_comp_write0_to_upsample_stencil_rd2_cache {
 	// Capacity: 54
+	// # of read delays: 18
+	// read delays: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 2) capacity = 1
@@ -633,6 +639,8 @@ struct Img_Img_comp_write0_to_upsample_stencil_rd2_cache {
 
 struct Img_Img_comp_write0_to_upsample_stencil_rd3_cache {
 	// Capacity: 54
+	// # of read delays: 18
+	// read delays: 0, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 36) capacity = 35
@@ -846,6 +854,8 @@ struct Img_Img_comp_write0_to_upsample_stencil_rd3_cache {
 
 struct Img_Img_comp_write0_to_upsample_stencil_rd4_cache {
 	// Capacity: 54
+	// # of read delays: 18
+	// read delays: 0, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 18) capacity = 17
@@ -1059,6 +1069,8 @@ struct Img_Img_comp_write0_to_upsample_stencil_rd4_cache {
 
 struct Img_Img_comp_write0_to_upsample_stencil_rd5_cache {
 	// Capacity: 54
+	// # of read delays: 18
+	// read delays: 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 2) capacity = 1
@@ -1252,6 +1264,8 @@ struct Img_Img_comp_write0_to_upsample_stencil_rd5_cache {
 
 struct Img_Img_comp_write0_to_upsample_stencil_rd6_cache {
 	// Capacity: 54
+	// # of read delays: 17
+	// read delays: 0, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 36) capacity = 35
@@ -1455,6 +1469,8 @@ struct Img_Img_comp_write0_to_upsample_stencil_rd6_cache {
 
 struct Img_Img_comp_write0_to_upsample_stencil_rd7_cache {
 	// Capacity: 54
+	// # of read delays: 17
+	// read delays: 0, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 18) capacity = 17
@@ -1658,6 +1674,8 @@ struct Img_Img_comp_write0_to_upsample_stencil_rd7_cache {
 
 struct Img_Img_comp_write0_to_upsample_stencil_rd8_cache {
 	// Capacity: 54
+	// # of read delays: 17
+	// read delays: 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 2) capacity = 1
@@ -1974,20 +1992,20 @@ inline hw_uint<288> Img_upsample_stencil_comp_read_bundle_read(Img_cache& Img, i
 
 
 // Operation logic
-inline void Img_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */Img_off, Img_cache& Img, int d0, int d1) {
-	// Consume: Img_off
-	auto Img_off_0_c__0_value = Img_off.read();
-	auto compute_result = id(Img_off_0_c__0_value);
-	// Produce: Img
-	Img_Img_comp_write_bundle_write(compute_result, Img, d0, d1);
-}
-
 inline void upsample_stencil_comp(Img_cache& Img, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */upsample_stencil, int d0, int d1) {
 	// Consume: Img
 	auto Img_0_c__0_value = Img_upsample_stencil_comp_read_bundle_read(Img/* source_delay */, d0, d1);
 	auto compute_result = conv_3_3(Img_0_c__0_value);
 	// Produce: upsample_stencil
 	upsample_stencil.write(compute_result);
+}
+
+inline void Img_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */Img_off, Img_cache& Img, int d0, int d1) {
+	// Consume: Img_off
+	auto Img_off_0_c__0_value = Img_off.read();
+	auto compute_result = id(Img_off_0_c__0_value);
+	// Produce: Img
+	Img_Img_comp_write_bundle_write(compute_result, Img, d0, d1);
 }
 
 // Driver function

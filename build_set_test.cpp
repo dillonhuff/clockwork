@@ -244,6 +244,7 @@ class UBuffer {
       for (auto bs : stack_banks) {
         if (bs.first.first == inpt) {
           bnks.push_back(bs.second);
+          assert(bnks.back().read_delays.size() == bs.second.read_delays.size());
         }
       }
       return bnks;
@@ -1172,6 +1173,8 @@ void generate_stack_cache(CodegenOptions& options,
 
   out << "struct " << name << "_cache" <<  " {" << endl;
   out << "\t// Capacity: " << maxdelay + 1 << endl;
+  out << "\t// # of read delays: " << read_delays.size() << endl;
+  out << "\t// read delays: " << comma_list(read_delays) << endl;
   if (num_readers == 1 || options.all_rams) {
     int partition_capacity = 1 + maxdelay;
     out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << ";" << endl;

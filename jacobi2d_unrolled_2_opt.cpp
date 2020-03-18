@@ -4,6 +4,8 @@
 
 struct t1_t1_comp_write0_to_jacobi2d_unrolled_2_rd1_cache {
 	// Capacity: 1030
+	// # of read delays: 2
+	// read delays: 0, 1029
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 1029) capacity = 1028
@@ -57,6 +59,8 @@ struct t1_t1_comp_write0_to_jacobi2d_unrolled_2_rd1_cache {
 
 struct t1_t1_comp_write0_to_jacobi2d_unrolled_2_rd2_cache {
 	// Capacity: 1030
+	// # of read delays: 2
+	// read delays: 0, 515
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 515) capacity = 514
@@ -110,6 +114,8 @@ struct t1_t1_comp_write0_to_jacobi2d_unrolled_2_rd2_cache {
 
 struct t1_t1_comp_write0_to_jacobi2d_unrolled_2_rd3_cache {
 	// Capacity: 1030
+	// # of read delays: 2
+	// read delays: 0, 1
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 1] capacity = 1
@@ -153,6 +159,8 @@ struct t1_t1_comp_write0_to_jacobi2d_unrolled_2_rd3_cache {
 
 struct t1_t1_comp_write0_to_jacobi2d_unrolled_2_rd7_cache {
 	// Capacity: 1030
+	// # of read delays: 2
+	// read delays: 0, 514
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 514) capacity = 513
@@ -206,6 +214,8 @@ struct t1_t1_comp_write0_to_jacobi2d_unrolled_2_rd7_cache {
 
 struct t1_t1_comp_write1_to_jacobi2d_unrolled_2_rd0_cache {
 	// Capacity: 1030
+	// # of read delays: 2
+	// read delays: 0, 516
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 516) capacity = 515
@@ -259,6 +269,8 @@ struct t1_t1_comp_write1_to_jacobi2d_unrolled_2_rd0_cache {
 
 struct t1_t1_comp_write1_to_jacobi2d_unrolled_2_rd4_cache {
 	// Capacity: 1030
+	// # of read delays: 2
+	// read delays: 0, 1029
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 1029) capacity = 1028
@@ -312,6 +324,8 @@ struct t1_t1_comp_write1_to_jacobi2d_unrolled_2_rd4_cache {
 
 struct t1_t1_comp_write1_to_jacobi2d_unrolled_2_rd5_cache {
 	// Capacity: 1030
+	// # of read delays: 2
+	// read delays: 0, 515
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 515) capacity = 514
@@ -365,6 +379,8 @@ struct t1_t1_comp_write1_to_jacobi2d_unrolled_2_rd5_cache {
 
 struct t1_t1_comp_write1_to_jacobi2d_unrolled_2_rd6_cache {
 	// Capacity: 1030
+	// # of read delays: 2
+	// read delays: 0, 1
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 1] capacity = 1
@@ -535,20 +551,20 @@ inline void t1_t1_comp_write_bundle_write(hw_uint<64>& t1_comp_write, t1_cache& 
 
 
 // Operation logic
-inline void t1_comp(HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */t1_arg, t1_cache& t1, int d0, int d1) {
-	// Consume: t1_arg
-	auto t1_arg_0_c__0_value = t1_arg.read();
-	auto compute_result = id_unrolled_2(t1_arg_0_c__0_value);
-	// Produce: t1
-	t1_t1_comp_write_bundle_write(compute_result, t1, d0, d1);
-}
-
 inline void jacobi2d_unrolled_2_comp(t1_cache& t1, HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */jacobi2d_unrolled_2, int d0, int d1) {
 	// Consume: t1
 	auto t1_0_c__0_value = t1_jacobi2d_unrolled_2_comp_read_bundle_read(t1/* source_delay */, d0, d1);
 	auto compute_result = jacobi2d_compute_unrolled_2(t1_0_c__0_value);
 	// Produce: jacobi2d_unrolled_2
 	jacobi2d_unrolled_2.write(compute_result);
+}
+
+inline void t1_comp(HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */t1_arg, t1_cache& t1, int d0, int d1) {
+	// Consume: t1_arg
+	auto t1_arg_0_c__0_value = t1_arg.read();
+	auto compute_result = id_unrolled_2(t1_arg_0_c__0_value);
+	// Produce: t1
+	t1_t1_comp_write_bundle_write(compute_result, t1, d0, d1);
 }
 
 // Driver function

@@ -4,6 +4,8 @@
 
 struct t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd1_cache {
 	// Capacity: 518
+	// # of read delays: 2
+	// read delays: 0, 517
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 517) capacity = 516
@@ -57,6 +59,8 @@ struct t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd1_cache {
 
 struct t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd13_cache {
 	// Capacity: 518
+	// # of read delays: 2
+	// read delays: 0, 258
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 258) capacity = 257
@@ -110,6 +114,8 @@ struct t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd13_cache {
 
 struct t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd2_cache {
 	// Capacity: 518
+	// # of read delays: 2
+	// read delays: 0, 259
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 259) capacity = 258
@@ -163,6 +169,8 @@ struct t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd2_cache {
 
 struct t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd3_cache {
 	// Capacity: 518
+	// # of read delays: 2
+	// read delays: 0, 1
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 1] capacity = 1
@@ -206,6 +214,8 @@ struct t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd3_cache {
 
 struct t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd4_cache {
 	// Capacity: 518
+	// # of read delays: 2
+	// read delays: 0, 517
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 517) capacity = 516
@@ -259,6 +269,8 @@ struct t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd4_cache {
 
 struct t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd5_cache {
 	// Capacity: 518
+	// # of read delays: 2
+	// read delays: 0, 259
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 259) capacity = 258
@@ -312,6 +324,8 @@ struct t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd5_cache {
 
 struct t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd6_cache {
 	// Capacity: 518
+	// # of read delays: 2
+	// read delays: 0, 1
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 1] capacity = 1
@@ -355,6 +369,8 @@ struct t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd6_cache {
 
 struct t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd7_cache {
 	// Capacity: 518
+	// # of read delays: 2
+	// read delays: 0, 517
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 517) capacity = 516
@@ -408,6 +424,8 @@ struct t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd7_cache {
 
 struct t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd8_cache {
 	// Capacity: 518
+	// # of read delays: 2
+	// read delays: 0, 259
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 259) capacity = 258
@@ -461,6 +479,8 @@ struct t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd8_cache {
 
 struct t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd9_cache {
 	// Capacity: 518
+	// # of read delays: 2
+	// read delays: 0, 1
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 1] capacity = 1
@@ -504,6 +524,8 @@ struct t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd9_cache {
 
 struct t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd0_cache {
 	// Capacity: 518
+	// # of read delays: 2
+	// read delays: 0, 260
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 260) capacity = 259
@@ -557,6 +579,8 @@ struct t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd0_cache {
 
 struct t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd10_cache {
 	// Capacity: 518
+	// # of read delays: 2
+	// read delays: 0, 517
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 517) capacity = 516
@@ -610,6 +634,8 @@ struct t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd10_cache {
 
 struct t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd11_cache {
 	// Capacity: 518
+	// # of read delays: 2
+	// read delays: 0, 259
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 259) capacity = 258
@@ -663,6 +689,8 @@ struct t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd11_cache {
 
 struct t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd12_cache {
 	// Capacity: 518
+	// # of read delays: 2
+	// read delays: 0, 1
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 1] capacity = 1

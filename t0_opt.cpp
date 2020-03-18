@@ -4,6 +4,8 @@
 
 struct t1_t1_comp_write0_to_t0_rd0_cache {
 	// Capacity: 70
+	// # of read delays: 2
+	// read delays: 0, 36
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 36) capacity = 35
@@ -57,6 +59,8 @@ struct t1_t1_comp_write0_to_t0_rd0_cache {
 
 struct t1_t1_comp_write0_to_t0_rd1_cache {
 	// Capacity: 70
+	// # of read delays: 2
+	// read delays: 0, 69
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 69) capacity = 68
@@ -110,6 +114,8 @@ struct t1_t1_comp_write0_to_t0_rd1_cache {
 
 struct t1_t1_comp_write0_to_t0_rd2_cache {
 	// Capacity: 70
+	// # of read delays: 2
+	// read delays: 0, 35
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 35) capacity = 34
@@ -163,6 +169,8 @@ struct t1_t1_comp_write0_to_t0_rd2_cache {
 
 struct t1_t1_comp_write0_to_t0_rd3_cache {
 	// Capacity: 70
+	// # of read delays: 2
+	// read delays: 0, 1
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 1] capacity = 1
@@ -206,6 +214,8 @@ struct t1_t1_comp_write0_to_t0_rd3_cache {
 
 struct t1_t1_comp_write0_to_t0_rd4_cache {
 	// Capacity: 70
+	// # of read delays: 2
+	// read delays: 0, 34
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 34) capacity = 33

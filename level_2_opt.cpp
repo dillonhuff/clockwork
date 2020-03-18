@@ -4,6 +4,8 @@
 
 struct in_in_comp_write0_to_level_0_rd0_cache {
 	// Capacity: 529
+	// # of read delays: 2
+	// read delays: 0, 528
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 528) capacity = 527
@@ -57,6 +59,8 @@ struct in_in_comp_write0_to_level_0_rd0_cache {
 
 struct in_in_comp_write0_to_level_0_rd1_cache {
 	// Capacity: 529
+	// # of read delays: 2
+	// read delays: 0, 265
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 265) capacity = 264
@@ -110,6 +114,8 @@ struct in_in_comp_write0_to_level_0_rd1_cache {
 
 struct in_in_comp_write0_to_level_0_rd2_cache {
 	// Capacity: 529
+	// # of read delays: 2
+	// read delays: 0, 2
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 2) capacity = 1
@@ -163,6 +169,8 @@ struct in_in_comp_write0_to_level_0_rd2_cache {
 
 struct in_in_comp_write0_to_level_0_rd3_cache {
 	// Capacity: 529
+	// # of read delays: 2
+	// read delays: 0, 527
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 527) capacity = 526
@@ -216,6 +224,8 @@ struct in_in_comp_write0_to_level_0_rd3_cache {
 
 struct in_in_comp_write0_to_level_0_rd4_cache {
 	// Capacity: 529
+	// # of read delays: 2
+	// read delays: 0, 264
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 264) capacity = 263
@@ -269,6 +279,8 @@ struct in_in_comp_write0_to_level_0_rd4_cache {
 
 struct in_in_comp_write0_to_level_0_rd5_cache {
 	// Capacity: 529
+	// # of read delays: 2
+	// read delays: 0, 1
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 1] capacity = 1
@@ -312,6 +324,8 @@ struct in_in_comp_write0_to_level_0_rd5_cache {
 
 struct in_in_comp_write0_to_level_0_rd6_cache {
 	// Capacity: 529
+	// # of read delays: 2
+	// read delays: 0, 526
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 526) capacity = 525
@@ -365,6 +379,8 @@ struct in_in_comp_write0_to_level_0_rd6_cache {
 
 struct in_in_comp_write0_to_level_0_rd7_cache {
 	// Capacity: 529
+	// # of read delays: 2
+	// read delays: 0, 263
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 263) capacity = 262
@@ -418,6 +434,8 @@ struct in_in_comp_write0_to_level_0_rd7_cache {
 
 struct in_in_comp_write0_to_level_0_rd8_cache {
 	// Capacity: 529
+	// # of read delays: 2
+	// read delays: 0, 0
 	// Parition [0, 0] capacity = 1
 	fifo<hw_uint<32> , 1> f1;
 
@@ -585,6 +603,8 @@ inline hw_uint<288> in_level_0_comp_read_bundle_read(in_cache& in, int d0, int d
 
 struct level_0_level_0_comp_write0_to_level_1_rd0_cache {
 	// Capacity: 265
+	// # of read delays: 2
+	// read delays: 0, 264
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 264) capacity = 263
@@ -638,6 +658,8 @@ struct level_0_level_0_comp_write0_to_level_1_rd0_cache {
 
 struct level_0_level_0_comp_write0_to_level_1_rd1_cache {
 	// Capacity: 265
+	// # of read delays: 2
+	// read delays: 0, 133
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 133) capacity = 132
@@ -691,6 +713,8 @@ struct level_0_level_0_comp_write0_to_level_1_rd1_cache {
 
 struct level_0_level_0_comp_write0_to_level_1_rd2_cache {
 	// Capacity: 265
+	// # of read delays: 2
+	// read delays: 0, 2
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 2) capacity = 1
@@ -744,6 +768,8 @@ struct level_0_level_0_comp_write0_to_level_1_rd2_cache {
 
 struct level_0_level_0_comp_write0_to_level_1_rd3_cache {
 	// Capacity: 265
+	// # of read delays: 2
+	// read delays: 0, 263
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 263) capacity = 262
@@ -797,6 +823,8 @@ struct level_0_level_0_comp_write0_to_level_1_rd3_cache {
 
 struct level_0_level_0_comp_write0_to_level_1_rd4_cache {
 	// Capacity: 265
+	// # of read delays: 2
+	// read delays: 0, 132
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 132) capacity = 131
@@ -850,6 +878,8 @@ struct level_0_level_0_comp_write0_to_level_1_rd4_cache {
 
 struct level_0_level_0_comp_write0_to_level_1_rd5_cache {
 	// Capacity: 265
+	// # of read delays: 2
+	// read delays: 0, 1
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 1] capacity = 1
@@ -893,6 +923,8 @@ struct level_0_level_0_comp_write0_to_level_1_rd5_cache {
 
 struct level_0_level_0_comp_write0_to_level_1_rd6_cache {
 	// Capacity: 265
+	// # of read delays: 2
+	// read delays: 0, 262
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 262) capacity = 261
@@ -946,6 +978,8 @@ struct level_0_level_0_comp_write0_to_level_1_rd6_cache {
 
 struct level_0_level_0_comp_write0_to_level_1_rd7_cache {
 	// Capacity: 265
+	// # of read delays: 2
+	// read delays: 0, 131
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 131) capacity = 130
@@ -999,6 +1033,8 @@ struct level_0_level_0_comp_write0_to_level_1_rd7_cache {
 
 struct level_0_level_0_comp_write0_to_level_1_rd8_cache {
 	// Capacity: 265
+	// # of read delays: 2
+	// read delays: 0, 0
 	// Parition [0, 0] capacity = 1
 	fifo<hw_uint<32> , 1> f1;
 
@@ -1166,6 +1202,8 @@ inline hw_uint<288> level_0_level_1_comp_read_bundle_read(level_0_cache& level_0
 
 struct level_1_level_1_comp_write0_to_level_2_rd0_cache {
 	// Capacity: 133
+	// # of read delays: 2
+	// read delays: 0, 132
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 132) capacity = 131
@@ -1219,6 +1257,8 @@ struct level_1_level_1_comp_write0_to_level_2_rd0_cache {
 
 struct level_1_level_1_comp_write0_to_level_2_rd1_cache {
 	// Capacity: 133
+	// # of read delays: 2
+	// read delays: 0, 67
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 67) capacity = 66
@@ -1272,6 +1312,8 @@ struct level_1_level_1_comp_write0_to_level_2_rd1_cache {
 
 struct level_1_level_1_comp_write0_to_level_2_rd2_cache {
 	// Capacity: 133
+	// # of read delays: 2
+	// read delays: 0, 2
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 2) capacity = 1
@@ -1325,6 +1367,8 @@ struct level_1_level_1_comp_write0_to_level_2_rd2_cache {
 
 struct level_1_level_1_comp_write0_to_level_2_rd3_cache {
 	// Capacity: 133
+	// # of read delays: 2
+	// read delays: 0, 131
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 131) capacity = 130
@@ -1378,6 +1422,8 @@ struct level_1_level_1_comp_write0_to_level_2_rd3_cache {
 
 struct level_1_level_1_comp_write0_to_level_2_rd4_cache {
 	// Capacity: 133
+	// # of read delays: 2
+	// read delays: 0, 66
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 66) capacity = 65
@@ -1431,6 +1477,8 @@ struct level_1_level_1_comp_write0_to_level_2_rd4_cache {
 
 struct level_1_level_1_comp_write0_to_level_2_rd5_cache {
 	// Capacity: 133
+	// # of read delays: 2
+	// read delays: 0, 1
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 1] capacity = 1
@@ -1474,6 +1522,8 @@ struct level_1_level_1_comp_write0_to_level_2_rd5_cache {
 
 struct level_1_level_1_comp_write0_to_level_2_rd6_cache {
 	// Capacity: 133
+	// # of read delays: 2
+	// read delays: 0, 130
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 130) capacity = 129
@@ -1527,6 +1577,8 @@ struct level_1_level_1_comp_write0_to_level_2_rd6_cache {
 
 struct level_1_level_1_comp_write0_to_level_2_rd7_cache {
 	// Capacity: 133
+	// # of read delays: 2
+	// read delays: 0, 65
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 65) capacity = 64
@@ -1580,6 +1632,8 @@ struct level_1_level_1_comp_write0_to_level_2_rd7_cache {
 
 struct level_1_level_1_comp_write0_to_level_2_rd8_cache {
 	// Capacity: 133
+	// # of read delays: 2
+	// read delays: 0, 0
 	// Parition [0, 0] capacity = 1
 	fifo<hw_uint<32> , 1> f1;
 
@@ -1746,14 +1800,6 @@ inline hw_uint<288> level_1_level_2_comp_read_bundle_read(level_1_cache& level_1
 
 
 // Operation logic
-inline void level_0_comp(in_cache& in, level_0_cache& level_0, int d0, int d1) {
-	// Consume: in
-	auto in_0_c__0_value = in_level_0_comp_read_bundle_read(in/* source_delay */, d0, d1);
-	auto compute_result = reduce_gauss(in_0_c__0_value);
-	// Produce: level_0
-	level_0_level_0_comp_write_bundle_write(compute_result, level_0, d0, d1);
-}
-
 inline void in_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in_off_chip, in_cache& in, int d0, int d1) {
 	// Consume: in_off_chip
 	auto in_off_chip_0_c__0_value = in_off_chip.read();
@@ -1768,6 +1814,14 @@ inline void level_1_comp(level_0_cache& level_0, level_1_cache& level_1, int d0,
 	auto compute_result = reduce_gauss(level_0_0_c__0_value);
 	// Produce: level_1
 	level_1_level_1_comp_write_bundle_write(compute_result, level_1, d0, d1);
+}
+
+inline void level_0_comp(in_cache& in, level_0_cache& level_0, int d0, int d1) {
+	// Consume: in
+	auto in_0_c__0_value = in_level_0_comp_read_bundle_read(in/* source_delay */, d0, d1);
+	auto compute_result = reduce_gauss(in_0_c__0_value);
+	// Produce: level_0
+	level_0_level_0_comp_write_bundle_write(compute_result, level_0, d0, d1);
 }
 
 inline void level_2_comp(level_1_cache& level_1, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */level_2, int d0, int d1) {

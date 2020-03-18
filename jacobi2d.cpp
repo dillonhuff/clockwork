@@ -4,6 +4,8 @@
 
 struct I_I_id0_0_to_I_out_jacobi2d_compute0_3_cache {
 	// Capacity: 65
+	// # of read delays: 2
+	// read delays: 0, 0
 	// Parition [0, 0] capacity = 1
 	fifo<hw_uint<32> , 1> f1;
 
@@ -37,6 +39,8 @@ struct I_I_id0_0_to_I_out_jacobi2d_compute0_3_cache {
 
 struct I_I_id0_0_to_I_out_jacobi2d_compute0_4_cache {
 	// Capacity: 65
+	// # of read delays: 2
+	// read delays: 0, 31
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 31) capacity = 30
@@ -90,6 +94,8 @@ struct I_I_id0_0_to_I_out_jacobi2d_compute0_4_cache {
 
 struct I_I_id0_0_to_I_out_jacobi2d_compute0_5_cache {
 	// Capacity: 65
+	// # of read delays: 2
+	// read delays: 0, 32
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 32) capacity = 31
@@ -143,6 +149,8 @@ struct I_I_id0_0_to_I_out_jacobi2d_compute0_5_cache {
 
 struct I_I_id0_0_to_I_out_jacobi2d_compute0_6_cache {
 	// Capacity: 65
+	// # of read delays: 2
+	// read delays: 0, 64
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 64) capacity = 63
@@ -196,6 +204,8 @@ struct I_I_id0_0_to_I_out_jacobi2d_compute0_6_cache {
 
 struct I_I_id0_0_to_I_out_jacobi2d_compute0_7_cache {
 	// Capacity: 65
+	// # of read delays: 2
+	// read delays: 0, 33
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 33) capacity = 32

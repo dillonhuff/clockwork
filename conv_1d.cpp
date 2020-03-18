@@ -4,6 +4,8 @@
 
 struct M_get_input_0_to_M_compute_output_3_cache {
 	// Capacity: 3
+	// # of read delays: 2
+	// read delays: 0, 2
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 2) capacity = 1
@@ -57,6 +59,8 @@ struct M_get_input_0_to_M_compute_output_3_cache {
 
 struct M_get_input_0_to_M_compute_output_4_cache {
 	// Capacity: 3
+	// # of read delays: 2
+	// read delays: 0, 1
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 1] capacity = 1
@@ -100,6 +104,8 @@ struct M_get_input_0_to_M_compute_output_4_cache {
 
 struct M_get_input_0_to_M_compute_output_5_cache {
 	// Capacity: 3
+	// # of read delays: 2
+	// read delays: 0, 0
 	// Parition [0, 0] capacity = 1
 	fifo<hw_uint<32> , 1> f1;
 
