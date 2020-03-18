@@ -2,41 +2,56 @@
 
 #include "hw_classes.h"
 
-struct I_I_id0_0_cache {
+struct I_I_id0_0_to_I_out_plus_one0_3_cache {
 	// Capacity: 1
-	fifo<hw_uint<16>, 1> f;
-	inline hw_uint<16> peek(const int offset) {
-    return f.peek(0 - offset);
-  }
+	// Parition [0, 0] capacity = 1
+	fifo<hw_uint<16>, 1> f1;
+
 
 	inline hw_uint<16> peek_0() {
-		return f.peek(0);
+		return f1.back();
 	}
 
 
+
+	inline hw_uint<16> peek(const int offset) {
+		if (offset == 0) {
+			return f1.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in I_I_id0_0_to_I_out_plus_one0_3_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence array inter false
 #endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
+		f1.push(value);
+	}
 
 };
 
 struct I_cache {
-  I_I_id0_0_cache I_I_id0_0;
+  I_I_id0_0_to_I_out_plus_one0_3_cache bank_I_I_id0_0_to_I_out_plus_one0_3;
 };
 
 
 
 inline void I_I_id0_0_write(hw_uint<16>& I_I_id0_0, I_cache& I, int root, int id1, int id0) {
-	I.I_I_id0_0.push(I_I_id0_0);
+  I.bank_I_I_id0_0_to_I_out_plus_one0_3.push(I_I_id0_0);
 }
 
 inline hw_uint<16> I_out_plus_one0_3_select(I_cache& I, int root, int d1, int d0) {
   // qpd = {  }
-	hw_uint<16> value_I_I_id0_0 = I.I_I_id0_0.peek_0();
+	// lexmax events: { out_plus_one0[root = 0, d1, d0] -> I_id0[root' = 0, id1 = d1, id0 = d0] : 0 <= d1 <= 31 and 0 <= d0 <= 7 }
+  // I_out_plus_one0_3 read pattern: { out_plus_one0[root = 0, d1, d0] -> I[d0, d1] : 0 <= d1 <= 31 and 0 <= d0 <= 7 }
+  // I_I_id0_0 stores range: { I[i0, i1] : 0 <= i0 <= 7 and 0 <= i1 <= 31 }
+    // overlap with reads : { I[i0, i1] : 0 <= i0 <= 7 and 0 <= i1 <= 31 }
+	auto value_I_I_id0_0 = I.bank_I_I_id0_0_to_I_out_plus_one0_3.peek_0();
 	return value_I_I_id0_0;
 }
 

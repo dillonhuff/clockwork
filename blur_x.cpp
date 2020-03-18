@@ -2,18 +2,67 @@
 
 #include "hw_classes.h"
 
-struct I_I_id0_0_cache {
+struct I_I_id0_0_to_I_out_blur_30_3_cache {
+	// Capacity: 65
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<16>, 1> f0;
+	// Parition [1, 64) capacity = 63
+	fifo<hw_uint<16>, 63> f1;
+	// Parition [64, 64] capacity = 1
+	fifo<hw_uint<16>, 1> f2;
+
+
+	inline hw_uint<16> peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<16> peek_63() {
+		return f1.back();
+	}
+
+	inline hw_uint<16> peek_64() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<16> peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 63) {
+			return f1.back();
+		}
+		if (offset == 64) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in I_I_id0_0_to_I_out_blur_30_3_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct I_I_id0_0_to_I_out_blur_30_4_cache {
 	// Capacity: 65
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 32) capacity = 31
 	fifo<hw_uint<16>, 31> f1;
-	// Parition [32, 33) capacity = 1
+	// Parition [32, 32] capacity = 1
 	fifo<hw_uint<16>, 1> f2;
-	// Parition [33, 64) capacity = 31
-	fifo<hw_uint<16>, 31> f3;
-	// Parition [64, 64] capacity = 1
-	fifo<hw_uint<16>, 1> f4;
 
 
 	inline hw_uint<16> peek_0() {
@@ -28,14 +77,6 @@ struct I_I_id0_0_cache {
 		return f2.back();
 	}
 
-	inline hw_uint<16> peek_63() {
-		return f3.back();
-	}
-
-	inline hw_uint<16> peek_64() {
-		return f4.back();
-	}
-
 
 
 	inline hw_uint<16> peek(const int offset) {
@@ -48,14 +89,8 @@ struct I_I_id0_0_cache {
 		if (offset == 32) {
 			return f2.back();
 		}
-		if (offset == 63) {
-			return f3.back();
-		}
-		if (offset == 64) {
-			return f4.back();
-		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I: " << offset << endl;
+		cout << "Error: Unsupported offset in I_I_id0_0_to_I_out_blur_30_4_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -66,8 +101,6 @@ struct I_I_id0_0_cache {
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence array inter false
 #endif //__VIVADO_SYNTH__
-		f4.push(f3.back());
-		f3.push(f2.back());
 		f2.push(f1.back());
 		f1.push(f0.back());
 		f0.push(value);
@@ -75,31 +108,80 @@ struct I_I_id0_0_cache {
 
 };
 
+struct I_I_id0_0_to_I_out_blur_30_5_cache {
+	// Capacity: 65
+	// Parition [0, 0] capacity = 1
+	fifo<hw_uint<16>, 1> f1;
+
+
+	inline hw_uint<16> peek_0() {
+		return f1.back();
+	}
+
+
+
+	inline hw_uint<16> peek(const int offset) {
+		if (offset == 0) {
+			return f1.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in I_I_id0_0_to_I_out_blur_30_5_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f1.push(value);
+	}
+
+};
+
 struct I_cache {
-  I_I_id0_0_cache I_I_id0_0;
+  I_I_id0_0_to_I_out_blur_30_3_cache bank_I_I_id0_0_to_I_out_blur_30_3;
+  I_I_id0_0_to_I_out_blur_30_4_cache bank_I_I_id0_0_to_I_out_blur_30_4;
+  I_I_id0_0_to_I_out_blur_30_5_cache bank_I_I_id0_0_to_I_out_blur_30_5;
 };
 
 
 
 inline void I_I_id0_0_write(hw_uint<16>& I_I_id0_0, I_cache& I, int root, int id1, int id0) {
-	I.I_I_id0_0.push(I_I_id0_0);
+  I.bank_I_I_id0_0_to_I_out_blur_30_3.push(I_I_id0_0);
+  I.bank_I_I_id0_0_to_I_out_blur_30_4.push(I_I_id0_0);
+  I.bank_I_I_id0_0_to_I_out_blur_30_5.push(I_I_id0_0);
 }
 
 inline hw_uint<16> I_out_blur_30_3_select(I_cache& I, int root, int d1, int d0) {
   // qpd = { out_blur_30[root, d1, d0] -> 64 : root = 0 and 0 <= d1 <= 5 and 0 < d0 <= 30; out_blur_30[root, d1, d0] -> (33 + d0) : root = 0 and d0 = 31 and 0 <= d1 <= 5; out_blur_30[root, d1, d0] -> 64 : root = 0 and d0 = 0 and 0 <= d1 <= 5 }
-	hw_uint<16> value_I_I_id0_0 = I.I_I_id0_0.peek_64();
+	// lexmax events: { out_blur_30[root = 0, d1, d0] -> I_id0[root' = 0, id1 = d1, id0 = d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
+  // I_out_blur_30_3 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
+  // I_I_id0_0 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 7 }
+    // overlap with reads : { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 5 }
+	auto value_I_I_id0_0 = I.bank_I_I_id0_0_to_I_out_blur_30_3.peek_64();
 	return value_I_I_id0_0;
 }
 
 inline hw_uint<16> I_out_blur_30_4_select(I_cache& I, int root, int d1, int d0) {
   // qpd = { out_blur_30[root, d1, d0] -> 32 : root = 0 and 0 <= d1 <= 5 and 0 < d0 <= 30; out_blur_30[root, d1, d0] -> (1 + d0) : root = 0 and d0 = 31 and 0 <= d1 <= 5; out_blur_30[root, d1, d0] -> 32 : root = 0 and d0 = 0 and 0 <= d1 <= 5 }
-	hw_uint<16> value_I_I_id0_0 = I.I_I_id0_0.peek_32();
+	// lexmax events: { out_blur_30[root = 0, d1, d0] -> I_id0[root' = 0, id1 = 1 + d1, id0 = d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
+  // I_out_blur_30_4 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, 1 + d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
+  // I_I_id0_0 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 7 }
+    // overlap with reads : { I[i0, i1] : 0 <= i0 <= 31 and 0 < i1 <= 6 }
+	auto value_I_I_id0_0 = I.bank_I_I_id0_0_to_I_out_blur_30_4.peek_32();
 	return value_I_I_id0_0;
 }
 
 inline hw_uint<16> I_out_blur_30_5_select(I_cache& I, int root, int d1, int d0) {
   // qpd = {  }
-	hw_uint<16> value_I_I_id0_0 = I.I_I_id0_0.peek_0();
+	// lexmax events: { out_blur_30[root = 0, d1, d0] -> I_id0[root' = 0, id1 = 2 + d1, id0 = d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
+  // I_out_blur_30_5 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, 2 + d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
+  // I_I_id0_0 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 7 }
+    // overlap with reads : { I[i0, i1] : 0 <= i0 <= 31 and 2 <= i1 <= 7 }
+	auto value_I_I_id0_0 = I.bank_I_I_id0_0_to_I_out_blur_30_5.peek_0();
 	return value_I_I_id0_0;
 }
 

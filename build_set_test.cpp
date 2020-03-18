@@ -194,6 +194,31 @@ class UBuffer {
     std::map<string, isl_union_map*> schedule;
     std::map<string, vector<string> > port_bundles;
 
+    map<string, pair<string, string> > stack_banks;
+
+
+    string bank_between(const std::string& inpt, const std::string& outpt) const {
+
+      for (auto bs : stack_banks) {
+        if (bs.second.first == inpt && bs.second.second == outpt) {
+          return bs.first;
+        }
+      }
+
+      cout << "Error: No bank between: " << inpt << " and " << outpt << endl;
+      assert(false);
+      return "";
+    }
+
+    set<string> receiver_banks(const std::string& inpt) {
+      set<string> bnks;
+      for (auto bs : stack_banks) {
+        if (bs.second.first == inpt) {
+          bnks.insert(bs.first);
+        }
+      }
+      return bnks;
+    }
 
     UBuffer() : port_widths(32) {}
 
@@ -1106,12 +1131,30 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
   return maxdelay;
 }
 
-void generate_fifo_cache(CodegenOptions& options, std::ostream& out, const std::string& inpt, UBuffer& buf,
-    vector<int> read_delays, const int num_readers, const int maxdelay) {
+struct stack_bank {
+  std::string& name;
+  std::string& pt_type_string;
+  vector<int> read_delays;
+  int num_readers;
+  int maxdelay;
+};
+
+void generate_stack_cache(CodegenOptions& options,
+    std::ostream& out,
+    stack_bank& bank) {
+
+  auto name = bank.name;
+  auto pt_type_string = bank.pt_type_string;
+  auto read_delays = bank.read_delays;
+  auto num_readers = bank.num_readers;
+  auto maxdelay = bank.maxdelay;
+
+  out << "struct " << name <<  " {" << endl;
+  out << "\t// Capacity: " << maxdelay + 1 << endl;
   if (num_readers == 1 || options.all_rams) {
     int partition_capacity = 1 + maxdelay;
-    out << "\tfifo<" << buf.port_type_string() << ", " << partition_capacity << "> f" << ";" << endl;
-    out << "\tinline " + buf.port_type_string() + " peek(const int offset) {" << endl;
+    out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << ";" << endl;
+    out << "\tinline " + pt_type_string + " peek(const int offset) {" << endl;
     out << tab(2) << "return f.peek(" << partition_capacity - 1 << " - offset);" << endl;
     out << tab(1) << "}" << endl << endl;
 
@@ -1119,13 +1162,13 @@ void generate_fifo_cache(CodegenOptions& options, std::ostream& out, const std::
       for (int i = 0; i < partition_capacity; i++) {
         int dv = i;
         assert(dv >= 0);
-        out << "\tinline " << buf.port_type_string() << " peek_" << to_string(dv) << "() {" << endl;
+        out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
         out << "\t\treturn f.peek(" << dv <<");" << endl;
         out << "\t}" << endl << endl;
       }
     }
     out << endl << endl;
-    out << "\tinline void push(const " + buf.port_type_string() + " value) {" << endl;
+    out << "\tinline void push(const " + pt_type_string + " value) {" << endl;
     if (options.add_dependence_pragmas) {
       out << "#ifdef __VIVADO_SYNTH__" << endl;
       out << "#pragma HLS dependence array inter false" << endl;
@@ -1160,14 +1203,14 @@ void generate_fifo_cache(CodegenOptions& options, std::ostream& out, const std::
             int next = read_delays[i + 1];
             partition_capacity = next - current;
             out << "\t// Parition [" << current << ", " << next << ") capacity = " << partition_capacity << endl;
-            out << "\tfifo<" << buf.port_type_string() << ", " << partition_capacity << "> f" << i << ";" << endl;
+            out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << i << ";" << endl;
             partitions.push_back("f" + to_string(i));
             end_inds.push_back(current + partition_capacity - 1);
           }
         } else {
           partition_capacity = 1;
           out << "\t// Parition [" << current << ", " << current << "] capacity = " << partition_capacity << endl;
-          out << "\tfifo<" << buf.port_type_string() << ", " << partition_capacity << "> f" << i << ";" << endl;
+          out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << i << ";" << endl;
           partitions.push_back("f" + to_string(i));
           end_inds.push_back(current + partition_capacity - 1);
         }
@@ -1178,14 +1221,14 @@ void generate_fifo_cache(CodegenOptions& options, std::ostream& out, const std::
       for (auto p : partitions) {
         int dv = end_inds[nind];
         assert(dv >= 0);
-        out << "\tinline " << buf.port_type_string() << " peek_" << to_string(dv) << "() {" << endl;
+        out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
         out << "\t\treturn " << p << ".back();" << endl;
         out << "\t}" << endl << endl;
         nind++;
       }
       out << endl << endl;
 
-      out << "\tinline " + buf.port_type_string() + " peek(const int offset) {" << endl;
+      out << "\tinline " + pt_type_string + " peek(const int offset) {" << endl;
       nind = 0;
       for (auto p : partitions) {
         int dv = end_inds[nind];
@@ -1195,13 +1238,13 @@ void generate_fifo_cache(CodegenOptions& options, std::ostream& out, const std::
         nind++;
       }
       out << "#ifndef __VIVADO_SYNTH__" << endl;
-      out << "\t\tcout << \"Error: Unsupported offset in " << buf.name << ": \" << offset << endl;" << endl;
+      out << "\t\tcout << \"Error: Unsupported offset in " << name << ": \" << offset << endl;" << endl;
       out << "#endif // __VIVADO_SYNTH__" << endl;
       out << "\t\tassert(false);" << endl;
       out << "\t\treturn 0;\n" << endl;
       out << "\t}" << endl << endl;
 
-      out << "\tinline void push(const " + buf.port_type_string() + " value) {" << endl;
+      out << "\tinline void push(const " + pt_type_string + " value) {" << endl;
       if (options.add_dependence_pragmas) {
         out << "#ifdef __VIVADO_SYNTH__" << endl;
         out << "#pragma HLS dependence array inter false" << endl;
@@ -1221,16 +1264,48 @@ void generate_fifo_cache(CodegenOptions& options, std::ostream& out, const std::
   out << "};" << endl << endl;
 }
 
+void generate_stack_bank(CodegenOptions& options,
+    std::ostream& out, 
+    const std::string& inpt, 
+    const std::string& outpt,
+    UBuffer& buf) {
+
+  int maxdelay = compute_max_dd(buf, inpt);
+  vector<int> read_delays{0};
+
+  // NOTE: Just to ensure we dont force everything to be a RAM
+  int num_readers = 10;
+
+  auto in_actions = buf.domain.at(inpt);
+  auto lex_max_events =
+    get_lexmax_events(outpt, buf);
+  auto act_dom =
+    domain(its_range(lex_max_events, to_uset(in_actions)));
+
+  if (!isl_union_set_is_empty(act_dom)) {
+    num_readers++;
+    auto c = compute_dd(buf, outpt, inpt);
+    auto qpd = compute_dd_bound(buf, outpt, inpt);
+    int lb = compute_dd_lower_bound(buf, outpt, inpt);
+
+    for (int i = lb; i < qpd + 1; i++) {
+      read_delays.push_back(i);
+    }
+  }
+
+ 
+  string pt_type_string = buf.port_type_string();
+  string name = inpt + "_to_" + outpt + "_cache";
+  stack_bank bank{name, pt_type_string, read_delays, num_readers, maxdelay};
+
+  generate_stack_cache(options, out, bank);
+}
+
 void generate_memory_struct(CodegenOptions& options, std::ostream& out, const std::string& inpt, UBuffer& buf) {
 
   cout << "Creating struct for: " << inpt << " on " << buf.name << endl;
-  //cout << buf << endl;
 
-  cout << "Computing max delay..." << endl;
   int maxdelay = compute_max_dd(buf, inpt);
-  cout << "maxdelay: " << maxdelay << endl;
-  out << "struct " + inpt + "_cache {" << endl;
-  out << "\t// Capacity: " << maxdelay + 1 << endl;
   vector<int> read_delays{0};
   int num_readers = 0;
   for (auto outpt : buf.get_out_ports()) {
@@ -1253,8 +1328,12 @@ void generate_memory_struct(CodegenOptions& options, std::ostream& out, const st
     }
   }
 
-  generate_fifo_cache(options, out, inpt, buf, read_delays, num_readers, maxdelay);
+ 
+  string pt_type_string = buf.port_type_string();
+  string name = inpt + "_cache";
+  stack_bank bank{name, pt_type_string, read_delays, num_readers, maxdelay};
 
+  generate_stack_cache(options, out, bank);
 }
 
 vector<string> dimension_var_decls(const std::string& pt, UBuffer& buf) {
@@ -1280,23 +1359,36 @@ vector<string> dimension_var_decls(const std::string& pt, UBuffer& buf) {
 void generate_code_prefix(CodegenOptions& options,
     std::ostream& out, UBuffer& buf) {
 
-  string inpt = buf.get_in_port();
-  out << "#include \"hw_classes.h\"" << endl << endl;
   for (auto inpt : buf.get_in_ports()) {
-    generate_memory_struct(options, out, inpt, buf);
+    for (auto outpt : buf.get_out_ports()) {
+      buf.stack_banks["bank_" + inpt + "_to_" + outpt] =
+      {inpt, outpt};
+    }
   }
 
-  out << "struct " << buf.name << "_cache {" << endl;
-  //if (options.all_rams) {
-    //out << tab(1) << "// Fill in RAM here..." << endl;
-  //} else {
-    for (auto inpt : buf.get_in_ports()) {
-      out << tab(1) << inpt << "_cache " << inpt << ";" << endl;
-    }
+  string inpt = buf.get_in_port();
+  out << "#include \"hw_classes.h\"" << endl << endl;
+  for (auto b : buf.stack_banks) {
+    generate_stack_bank(options, out, b.second.first, b.second.second, buf);
+  }
+
+  //for (auto inpt : buf.get_in_ports()) {
+    //generate_memory_struct(options, out, inpt, buf);
   //}
+
+  out << "struct " << buf.name << "_cache {" << endl;
+  //for (auto inpt : buf.get_in_ports()) {
+    //out << tab(1) << inpt << "_cache " << inpt << ";" << endl;
+  //}
+
+  for (auto b : buf.stack_banks) {
+    out << tab(1) << b.second.first << "_to_" << b.second.second << "_cache " << b.first << ";" << endl;
+  }
+
   out << "};" << endl << endl;
 
   out << endl << endl;
+
   for (auto inpt : buf.get_in_ports()) {
     vector<string> args;
     args.push_back(buf.port_type_string(inpt) + "& " + inpt);
@@ -1305,11 +1397,13 @@ void generate_code_prefix(CodegenOptions& options,
 
     out << "inline void " << inpt << "_write(";
     out << comma_list(args) << ") {" << endl;
-    //if (options.all_rams) {
-      //out << tab(1) << "// Fill in RAM write..." << endl;
-    //} else {
-      out << "\t" + buf.name + "." + inpt + ".push(" + inpt + ");" << endl;
-    //}
+
+    //out << "\t" + buf.name + "." + inpt + ".push(" + inpt + ");" << endl;
+
+    for (auto sb : buf.receiver_banks(inpt)) {
+      out << tab(1) << buf.name << "." << sb << ".push(" << inpt << ");" << endl;
+    }
+
     out << "}" << endl << endl;
   }
 
@@ -1391,6 +1485,8 @@ void select_debug_assertions(CodegenOptions& options, std::ostream& out, const s
 
 string delay_string(CodegenOptions& options, const string& inpt, const string& outpt, UBuffer& buf) {
 
+  string bank = buf.bank_between(inpt, outpt);
+
   auto out_domain = buf.domain.at(outpt);
   auto qpd = compute_dd(buf, outpt, inpt);
   auto pieces = get_pieces(qpd);
@@ -1402,23 +1498,23 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
   if (opt_const) {
     if (!options.all_rams && is_number(dx)) {
       assert(safe_stoi(dx) >= 0);
-      value_str = inpt + ".peek_" + dx + "()";
+      value_str = bank + ".peek_" + dx + "()";
     } else {
-      value_str = inpt + ".peek" + "( /* is opt const */ " + delay_expr + ")";
+      value_str = bank + ".peek" + "( /* is opt const */ " + delay_expr + ")";
     }
   } else if (pieces.size() == 0 && !options.all_rams) {
-    value_str = inpt + ".peek_0()";
+    value_str = bank + ".peek_0()";
   } else if (pieces.size() == 1 &&
       isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
     string dx = codegen_c(pieces[0].second);
     if (!options.all_rams && is_number(dx)) {
       assert(safe_stoi(dx) >= 0);
-      value_str = inpt + ".peek_" + dx + "()";
+      value_str = bank + ".peek_" + dx + "()";
     } else {
-      value_str = inpt + ".peek" + "(/* is one piece but not a number */" + dx + ")";
+      value_str = bank + ".peek" + "(/* is one piece but not a number */" + dx + ")";
     }
   } else {
-    value_str = inpt + ".peek" + "(/* Needs general delay string */ " + delay_expr + ")";
+    value_str = bank + ".peek" + "(/* Needs general delay string */ " + delay_expr + ")";
   }
   return buf.name + "." + value_str;
 }
@@ -1426,86 +1522,72 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
 void generate_selects(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
   generate_select_decl(options, out, inpt, outpt, buf);
 
-  if (false) {
-  //if (options.all_rams) {
-    out << tab(1) << "// Insert ram read here" << endl;
-  } else {
+  auto lex_max_events = get_lexmax_events(outpt, buf);
 
-    auto lex_max_events = get_lexmax_events(outpt, buf);
+  auto qpd = compute_dd(buf, outpt, inpt);
+  out << tab(1) << "// qpd = " << str(qpd) << endl;
+  cout << "Lexmax events: " << str(lex_max_events) << endl;
+  map<string, string> ms = umap_codegen_c(lex_max_events);
+  out << "\t// lexmax events: " << str(lex_max_events) << endl;
+  out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
+  vector<string> possible_ports;
+  for (auto pt : buf.get_in_ports()) {
+    out << tab(1) << "// " << pt << " stores range: " << str(range(buf.access_map.at(pt))) << endl;
+    out << tab(2) << "// overlap with reads : " << str(its(range(buf.access_map.at(pt)), range(buf.access_map.at(outpt)))) << endl;
+    auto overlap =
+      its(range(buf.access_map.at(pt)), range(buf.access_map.at(outpt)));
 
-    auto qpd = compute_dd(buf, outpt, inpt);
-    out << tab(1) << "// qpd = " << str(qpd) << endl;
-    if (buf.get_in_ports().size() == 1) {
-      string inpt = *(buf.get_in_ports().begin());
-      string value_str = delay_string(options, inpt, outpt, buf);
-      out << "\t" << buf.port_type_string() << " value_" << inpt << " = " << value_str << ";" << endl;
-      out << "\treturn value_" + inpt + ";" << endl;
-    } else {
-      cout << "Lexmax events: " << str(lex_max_events) << endl;
-      map<string, string> ms = umap_codegen_c(lex_max_events);
-      out << "\t// lexmax events: " << str(lex_max_events) << endl;
-      out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
-      vector<string> possible_ports;
-      for (auto pt : buf.get_in_ports()) {
-        out << tab(1) << "// " << pt << " stores range: " << str(range(buf.access_map.at(pt))) << endl;
-        out << tab(2) << "// overlap with reads : " << str(its(range(buf.access_map.at(pt)), range(buf.access_map.at(outpt)))) << endl;
-        auto overlap =
-          its(range(buf.access_map.at(pt)), range(buf.access_map.at(outpt)));
-
-        if (!empty(overlap)) {
-          possible_ports.push_back(pt);
-        }
-      }
-
-      if (possible_ports.size() == 1) {
-        string inpt = possible_ports.at(0);
-        //string delay_expr = evaluate_dd(buf, outpt, inpt);
-        string peeked_val = delay_string(options, inpt, outpt, buf);
-
-        out << "\tauto value_" << inpt << " = " << peeked_val << ";\n";
-        out << "\treturn value_" << inpt << ";" << endl;
-        out << "}" << endl << endl;
-        return;
-      }
-      cout << "Done" << endl;
-      for (auto e : ms) {
-        out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
-      }
-
-      for (auto inpt : buf.get_in_ports()) {
-        //string delay_expr = evaluate_dd(buf, outpt, inpt);
-        string peeked_val = delay_string(options, inpt, outpt, buf);
-
-        if (options.internal) {
-          out << "\t// inpt: " << inpt << endl;
-          bool found_key = false;
-          string k_var = "";
-          for (auto k : ms) {
-            out << "\t// k = " << k.first << endl;
-            string prefix = buf.name + "_" + k.first;
-            if (is_prefix(prefix, inpt)) {
-              found_key = true;
-              k_var = k.first;
-            }
-          }
-          if (found_key) {
-            assert(k_var != "");
-            out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
-            out << "\tif (select_" + k_var + ") { return value_"+ inpt + "; }\n";
-          } else {
-            out << "//\tNo key for: " << inpt << endl;
-          }
-        } else {
-          if (contains_key(inpt, ms)) {
-            out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
-            out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
-          }
-
-        }
-      }
-      select_debug_assertions(options, out, inpt, outpt, buf);
+    if (!empty(overlap)) {
+      possible_ports.push_back(pt);
     }
   }
+
+  if (possible_ports.size() == 1) {
+    string inpt = possible_ports.at(0);
+    string peeked_val = delay_string(options, inpt, outpt, buf);
+
+    out << "\tauto value_" << inpt << " = " << peeked_val << ";\n";
+    out << "\treturn value_" << inpt << ";" << endl;
+    out << "}" << endl << endl;
+    return;
+  }
+  cout << "Done" << endl;
+  for (auto e : ms) {
+    out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
+  }
+
+  for (auto inpt : buf.get_in_ports()) {
+    string peeked_val = delay_string(options, inpt, outpt, buf);
+
+    if (options.internal) {
+      out << "\t// inpt: " << inpt << endl;
+      bool found_key = false;
+      string k_var = "";
+      for (auto k : ms) {
+        out << "\t// k = " << k.first << endl;
+        string prefix = buf.name + "_" + k.first;
+        if (is_prefix(prefix, inpt)) {
+          found_key = true;
+          k_var = k.first;
+        }
+      }
+      if (found_key) {
+        assert(k_var != "");
+        out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
+        out << "\tif (select_" + k_var + ") { return value_"+ inpt + "; }\n";
+      } else {
+        out << "//\tNo key for: " << inpt << endl;
+      }
+    } else {
+      if (contains_key(inpt, ms)) {
+        out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
+        out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
+      }
+
+    }
+  }
+
+  select_debug_assertions(options, out, inpt, outpt, buf);
   out << "}" << endl << endl;
 }
 
@@ -5294,6 +5376,13 @@ map<string, int>
 compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstraint> delay_constraints,
     vector<QConstraint>& offset_constraints) {
 
+  cout << "Delay constraints..." << endl;
+  for (auto d : delay_constraints) {
+    cout << tab(1) << d << endl;
+  }
+
+  //assert(false);
+
   vector<string> ds;
   for (auto f : sorted_functions) {
     ds.push_back("d_" + f);
@@ -5572,6 +5661,8 @@ map<string, map<string, QExpr> >
 build_compute_deps(isl_ctx* ctx, map<string, Box> & domain_boxes, const int i, map<string, vector<QExpr> >& schedules, vector<string> sorted_functions, map<string, Result> & app_dag, map<string, isl_map*> & compute_maps) {
   string dv = "d" + to_string(i);
 
+  cout << "Building compute deps..." << endl;
+
   map<string, map<string, QExpr> > last_compute_needed;
   for (auto f : sorted_functions) {
     assert(contains_key(f, app_dag));
@@ -5617,6 +5708,8 @@ build_compute_deps(isl_ctx* ctx, map<string, Box> & domain_boxes, const int i, m
    }
   }
 
+  //assert(false);
+
   return last_compute_needed;
 }
 
@@ -5636,11 +5729,6 @@ map<string, QExpr> schedule_dim(isl_ctx* ctx, const int i, map<string, Box>& dom
     QTerm f_delay = qterm(qvar("d_" + f));
     QTerm prod = qterm(minr, f_rate);
     QExpr offset = qexpr(prod, f_delay);
-    //QExpr zero = qexpr(0);
-    //QConstraint start_time{false, offset, zero};
-    //all_constraints.push_back(start_time);
-
-    //cout << "\t" << start_time << endl;
 
     string dv = "d" + to_string(i);
     assert(contains_key(f, last_compute_needed));
@@ -5766,7 +5854,11 @@ struct App {
   }
 
   umap* build_needed(const string& name, const Window& w) {
-    cout << "Building: " << w.name << " needed map" << endl;
+    cout << "Building needed map for " << name << " to " << w.name << endl;
+    cout << "Strides..." << endl;
+    for (auto s : w.strides) {
+      cout << tab(1) << s << endl;
+    }
 
     assert(w.strides.size() > 0);
     int ndims = w.strides.size();
@@ -5802,6 +5894,7 @@ struct App {
       int max = maxs[i];
       string base_expr = to_string(stride) + "*" + base_var;
       if (!stride.is_whole()) {
+        //assert(false);
         base_expr = "floor(" + base_var + " / " + to_string(stride.denom) + ")";
       }
       box_strs.push_back(base_expr + " + " + to_string(min) + " <= " + kv + " <= " + base_expr + " + " + to_string(max));
@@ -6263,6 +6356,8 @@ struct App {
       buffers[f] = b;
     }
 
+    //assert(false);
+
     for (auto b : buffers) {
         cout << b.second.name << endl;
         cout << "input_ports..." << endl;
@@ -6584,6 +6679,8 @@ struct App {
 
   void schedule_and_codegen(const std::string& name, const int unroll_factor) {
     umap* m = schedule();
+    cout << "Schedule: " << str(m) << endl;
+    //assert(false);
 
     auto scheds_n =
       schedule_opt();
@@ -6598,16 +6695,17 @@ struct App {
         ops.push_back(f + "_comp");
         compute_domains[f + "_comp"] =
           compute_box(f);
+        //cout << "Compute domain of " << f << " = " << str(compute_domain(f)) << endl;
       }
     }
 
+    //assert(false);
     string cgn = box_codegen(ops, scheds, compute_domains);
 
     map<string, UBuffer> buffers = build_buffers(m, unroll_factor);
 
     uset* whole_dom =
       isl_union_set_read_from_str(ctx, "{}");
-    //cout << "Whole domain at top of realize " << name << ": " << whole_dom << endl;
     assert(whole_dom != nullptr);
     auto sorted_functions = sort_functions();
     for (auto f : sorted_functions) {
@@ -6934,10 +7032,87 @@ App jacobi2d(const std::string output_name) {
   return jac;
 }
 
+vector<vector<int> > offsets2d(const int d0l, const int d0r, const int d1l, const int d1r) {
+  vector<vector<int> > offs;
+  for (int r = d1l; r < d1r + 1; r++) {
+    for (int c = d0l; c < d0r + 1; c++) {
+      offs.push_back({c, r});
+    }
+  }
+  return offs;
+}
+
+void upsample_stencil_2d_test() {
+  App us;
+  us.func2d("Img_off");
+  us.func2d("Img", "id", pt("Img_off"));
+
+  auto loads = offsets2d(-1, 1, -1, 1);
+  //auto loads = offsets2d(0, 2, 0, 0);
+  Window imgwin{"Img", {qconst(1, 2), qconst(1, 2)}, loads};
+  cout << "Strides before assignment" << endl;
+  for (auto s : imgwin.strides) {
+    cout << tab(1) << s << endl;
+  }
+  us.func2d("upsample_stencil", "conv_3_3", imgwin);
+
+  us.realize("upsample_stencil", 32, 32, 1);
+  us.realize_naive("upsample_stencil", 32, 32);
+  
+  std::vector<std::string> optimized =
+    run_regression_tb("upsample_stencil_opt");
+
+  std::vector<std::string> naive =
+    run_regression_tb("upsample_stencil_naive");
+
+  assert(optimized.size() == naive.size());
+  for (size_t i = 0; i < optimized.size(); i++) {
+    cout << tab(1) << "i = " << i << ", opt = " << optimized.at(i) << ", naive = " << naive.at(i) << endl;
+    assert(optimized.at(i) == naive.at(i));
+  }
+
+  assert(optimized == naive);
+  //assert(false);
+}
+
+void upsample_stencil_1d_test() {
+  App us;
+  us.func2d("Img_off");
+  us.func2d("Img", "id", pt("Img_off"));
+
+  //auto loads = offsets2d(-1, 1, -1, 1);
+  auto loads = offsets2d(0, 2, 0, 0);
+  Window imgwin{"Img", {qconst(1, 2), qconst(1, 1)}, loads};
+  cout << "Strides before assignment" << endl;
+  for (auto s : imgwin.strides) {
+    cout << tab(1) << s << endl;
+  }
+  us.func2d("upsample_stencil_1d", "conv_1_3", imgwin);
+
+  us.realize("upsample_stencil_1d", 32, 1, 1);
+  us.realize_naive("upsample_stencil_1d", 32, 1);
+  
+  std::vector<std::string> optimized =
+    run_regression_tb("upsample_stencil_1d_opt");
+
+  std::vector<std::string> naive =
+    run_regression_tb("upsample_stencil_1d_naive");
+
+  assert(optimized.size() == naive.size());
+  for (size_t i = 0; i < optimized.size(); i++) {
+    cout << tab(1) << "i = " << i << ", opt = " << optimized.at(i) << ", naive = " << naive.at(i) << endl;
+    assert(optimized.at(i) == naive.at(i));
+  }
+
+  assert(optimized == naive);
+  //assert(false);
+}
+
 void jacobi_2d_app_test() {
   App jac = jacobi2d("t0");
   jac.realize_naive("t0", 32, 28);
   jac.realize("t0", 32, 28, 1);
+
   std::vector<std::string> optimized =
     run_regression_tb("t0_opt");
 
@@ -7548,29 +7723,27 @@ int main(int argc, char** argv) {
     
     //memtile_test();
     //
-    //duplicate_upsample_test();
 
-    jacobi_2d_app_test();
-    denoise2d_test();
-    assert(false);
-    mismatched_stencil_test();
+    upsample_stencil_1d_test();
+    upsample_stencil_2d_test();
+
     gaussian_pyramid_app_test();
 
+    reduce_1d_test();
+    jacobi_2d_app_test();
+    denoise2d_test();
+    mismatched_stencil_test();
+
     upsample_reduce_test();
-    //assert(false);
     //mismatched_stencil_test();
     agg_test();
-    //assert(false);
-    //assert(false);
     conv3x3_app_unrolled_test();
     conv3x3_app_test();
     conv3x3_app_test();
-    //assert(false);
 
     conv3x3_app_unrolled_test();
     upsample2d_test();
     conv3x3_app_unrolled_uneven_test();
-    reduce_1d_test();
     downsample2d_test();
     updown_merge_test();
     sobel_test();

@@ -2,16 +2,23 @@
 
 #include "hw_classes.h"
 
+<<<<<<< HEAD
 struct t1_t1_comp_write0_cache {
 <<<<<<< HEAD
 	// Capacity: 518
 =======
+=======
+struct t1_t1_comp_write0_to_t0_rd0_cache {
+>>>>>>> origin/master
 	// Capacity: 70
 >>>>>>> origin/master
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 2) capacity = 1
+	// Parition [1, 36) capacity = 35
+	fifo<hw_uint<32> , 35> f1;
+	// Parition [36, 36] capacity = 1
 	fifo<hw_uint<32> , 1> f2;
+<<<<<<< HEAD
 <<<<<<< HEAD
 	// Parition [2, 258) capacity = 256
 	fifo<hw_uint<32> , 256> f3;
@@ -38,16 +45,19 @@ struct t1_t1_comp_write0_cache {
 	// Parition [69, 69] capacity = 1
 >>>>>>> origin/master
 	fifo<hw_uint<32> , 1> f10;
+=======
+>>>>>>> origin/master
 
 
 	inline hw_uint<32>  peek_0() {
 		return f0.back();
 	}
 
-	inline hw_uint<32>  peek_1() {
-		return f2.back();
+	inline hw_uint<32>  peek_35() {
+		return f1.back();
 	}
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 	inline hw_uint<32>  peek_257() {
 		return f3.back();
@@ -73,27 +83,10 @@ struct t1_t1_comp_write0_cache {
 =======
 	inline hw_uint<32>  peek_33() {
 		return f3.back();
-	}
-
-	inline hw_uint<32>  peek_34() {
-		return f4.back();
-	}
-
-	inline hw_uint<32>  peek_35() {
-		return f6.back();
-	}
-
+=======
 	inline hw_uint<32>  peek_36() {
-		return f8.back();
-	}
-
-	inline hw_uint<32>  peek_68() {
-		return f9.back();
-	}
-
-	inline hw_uint<32>  peek_69() {
+		return f2.back();
 >>>>>>> origin/master
-		return f10.back();
 	}
 
 
@@ -102,9 +95,71 @@ struct t1_t1_comp_write0_cache {
 		if (offset == 0) {
 			return f0.back();
 		}
-		if (offset == 1) {
+		if (offset == 35) {
+			return f1.back();
+		}
+		if (offset == 36) {
 			return f2.back();
 		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd0_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct t1_t1_comp_write0_to_t0_rd1_cache {
+	// Capacity: 70
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 69) capacity = 68
+	fifo<hw_uint<32> , 68> f1;
+	// Parition [69, 69] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_68() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_69() {
+<<<<<<< HEAD
+>>>>>>> origin/master
+		return f10.back();
+=======
+		return f2.back();
+>>>>>>> origin/master
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 68) {
+			return f1.back();
+		}
+		if (offset == 69) {
+			return f2.back();
+		}
+<<<<<<< HEAD
 <<<<<<< HEAD
 		if (offset == 257) {
 			return f3.back();
@@ -126,6 +181,10 @@ struct t1_t1_comp_write0_cache {
 		}
 #ifndef __VIVADO_SYNTH__
 		cout << "Error: Unsupported offset in t1: " << offset << endl;
+=======
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd1_cache: " << offset << endl;
+>>>>>>> origin/master
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -136,6 +195,7 @@ struct t1_t1_comp_write0_cache {
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence array inter false
 #endif //__VIVADO_SYNTH__
+<<<<<<< HEAD
 		f10.push(f9.back());
 		f9.push(f8.back());
 		f8.push(f6.back());
@@ -143,11 +203,16 @@ struct t1_t1_comp_write0_cache {
 		f4.push(f3.back());
 		f3.push(f2.back());
 		f2.push(f0.back());
+=======
+		f2.push(f1.back());
+		f1.push(f0.back());
+>>>>>>> origin/master
 		f0.push(value);
 	}
 
 };
 
+<<<<<<< HEAD
 struct t1_t1_comp_write1_cache {
 	// Capacity: 518
 	// Parition [0, 1) capacity = 1
@@ -166,12 +231,23 @@ struct t1_t1_comp_write1_cache {
 	fifo<hw_uint<32> , 256> f9;
 	// Parition [517, 517] capacity = 1
 	fifo<hw_uint<32> , 1> f10;
+=======
+struct t1_t1_comp_write0_to_t0_rd2_cache {
+	// Capacity: 70
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 35) capacity = 34
+	fifo<hw_uint<32> , 34> f1;
+	// Parition [35, 35] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+>>>>>>> origin/master
 
 
 	inline hw_uint<32>  peek_0() {
 		return f0.back();
 	}
 
+<<<<<<< HEAD
 	inline hw_uint<32>  peek_1() {
 		return f2.back();
 	}
@@ -406,11 +482,22 @@ struct t1_t1_comp_write3_cache {
 		return f10.back();
 	}
 
+=======
+	inline hw_uint<32>  peek_34() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_35() {
+		return f2.back();
+	}
+
+>>>>>>> origin/master
 
 
 	inline hw_uint<32>  peek(const int offset) {
 		if (offset == 0) {
 			return f0.back();
+<<<<<<< HEAD
 		}
 		if (offset == 1) {
 			return f2.back();
@@ -434,25 +521,17 @@ struct t1_t1_comp_write3_cache {
 =======
 		if (offset == 33) {
 			return f3.back();
+=======
+>>>>>>> origin/master
 		}
 		if (offset == 34) {
-			return f4.back();
+			return f1.back();
 		}
 		if (offset == 35) {
-			return f6.back();
-		}
-		if (offset == 36) {
-			return f8.back();
-		}
-		if (offset == 68) {
-			return f9.back();
-		}
-		if (offset == 69) {
->>>>>>> origin/master
-			return f10.back();
+			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd2_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -463,25 +542,130 @@ struct t1_t1_comp_write3_cache {
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence array inter false
 #endif //__VIVADO_SYNTH__
-		f10.push(f9.back());
-		f9.push(f8.back());
-		f8.push(f6.back());
-		f6.push(f4.back());
-		f4.push(f3.back());
-		f3.push(f2.back());
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
+struct t1_t1_comp_write0_to_t0_rd3_cache {
+	// Capacity: 70
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 1] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_1() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+<<<<<<< HEAD
+		if (offset == 69) {
+>>>>>>> origin/master
+			return f10.back();
+=======
+		if (offset == 1) {
+			return f2.back();
+>>>>>>> origin/master
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd3_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
 		f2.push(f0.back());
 		f0.push(value);
 	}
 
 };
 
+struct t1_t1_comp_write0_to_t0_rd4_cache {
+	// Capacity: 70
+	// Parition [0, 1) capacity = 1
+	fifo<hw_uint<32> , 1> f0;
+	// Parition [1, 34) capacity = 33
+	fifo<hw_uint<32> , 33> f1;
+	// Parition [34, 34] capacity = 1
+	fifo<hw_uint<32> , 1> f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0.back();
+	}
+
+	inline hw_uint<32>  peek_33() {
+		return f1.back();
+	}
+
+	inline hw_uint<32>  peek_34() {
+		return f2.back();
+	}
+
+
+
+	inline hw_uint<32>  peek(const int offset) {
+		if (offset == 0) {
+			return f0.back();
+		}
+		if (offset == 33) {
+			return f1.back();
+		}
+		if (offset == 34) {
+			return f2.back();
+		}
+#ifndef __VIVADO_SYNTH__
+		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd4_cache: " << offset << endl;
+#endif // __VIVADO_SYNTH__
+		assert(false);
+		return 0;
+
+	}
+
+	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+		f2.push(f1.back());
+		f1.push(f0.back());
+		f0.push(value);
+	}
+
+};
+
 struct t1_cache {
+<<<<<<< HEAD
   t1_t1_comp_write0_cache t1_t1_comp_write0;
 <<<<<<< HEAD
   t1_t1_comp_write1_cache t1_t1_comp_write1;
   t1_t1_comp_write2_cache t1_t1_comp_write2;
   t1_t1_comp_write3_cache t1_t1_comp_write3;
 =======
+>>>>>>> origin/master
+=======
+  t1_t1_comp_write0_to_t0_rd0_cache bank_t1_t1_comp_write0_to_t0_rd0;
+  t1_t1_comp_write0_to_t0_rd1_cache bank_t1_t1_comp_write0_to_t0_rd1;
+  t1_t1_comp_write0_to_t0_rd2_cache bank_t1_t1_comp_write0_to_t0_rd2;
+  t1_t1_comp_write0_to_t0_rd3_cache bank_t1_t1_comp_write0_to_t0_rd3;
+  t1_t1_comp_write0_to_t0_rd4_cache bank_t1_t1_comp_write0_to_t0_rd4;
 >>>>>>> origin/master
 };
 
@@ -599,18 +783,34 @@ inline hw_uint<32>  t0_rd13_select(t1_cache& t1, int d0, int d1) {
 	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0.peek_258();
 =======
 inline void t1_t1_comp_write0_write(hw_uint<32> & t1_t1_comp_write0, t1_cache& t1, int d0, int d1) {
-	t1.t1_t1_comp_write0.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_t0_rd0.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_t0_rd1.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_t0_rd2.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_t0_rd3.push(t1_t1_comp_write0);
+  t1.bank_t1_t1_comp_write0_to_t0_rd4.push(t1_t1_comp_write0);
 }
 
 inline hw_uint<32>  t0_rd0_select(t1_cache& t1, int d0, int d1) {
   // qpd = { t0_comp[d0, d1] -> 36 : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-	hw_uint<32>  value_t1_t1_comp_write0 = t1.t1_t1_comp_write0.peek_36();
+	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = -1 + d0, d1' = d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+  // t0_rd0 read pattern: { t0_comp[d0, d1] -> t1[-1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+  // t1_t1_comp_write0 stores range: { t1[i0, i1] : -1 <= i0 <= 32 and -1 <= i1 <= 28 }
+    // overlap with reads : { t1[i0, i1] : -1 <= i0 <= 30 and 0 <= i1 <= 27 }
+	auto value_t1_t1_comp_write0 = t1.bank_t1_t1_comp_write0_to_t0_rd0.peek_36();
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  t0_rd1_select(t1_cache& t1, int d0, int d1) {
   // qpd = { t0_comp[d0, d1] -> 69 : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+<<<<<<< HEAD
 	hw_uint<32>  value_t1_t1_comp_write0 = t1.t1_t1_comp_write0.peek_69();
+>>>>>>> origin/master
+=======
+	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = d0, d1' = -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+  // t0_rd1 read pattern: { t0_comp[d0, d1] -> t1[d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+  // t1_t1_comp_write0 stores range: { t1[i0, i1] : -1 <= i0 <= 32 and -1 <= i1 <= 28 }
+    // overlap with reads : { t1[i0, i1] : 0 <= i0 <= 31 and -1 <= i1 <= 26 }
+	auto value_t1_t1_comp_write0 = t1.bank_t1_t1_comp_write0_to_t0_rd1.peek_69();
 >>>>>>> origin/master
 	return value_t1_t1_comp_write0;
 }
@@ -634,8 +834,16 @@ inline hw_uint<32>  t0_rd2_select(t1_cache& t1, int d0, int d1) {
   // qpd = { t0_comp[d0, d1] -> 35 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
 =======
   // qpd = { t0_comp[d0, d1] -> 35 : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+<<<<<<< HEAD
 >>>>>>> origin/master
 	hw_uint<32>  value_t1_t1_comp_write0 = t1.t1_t1_comp_write0.peek_35();
+>>>>>>> origin/master
+=======
+	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+  // t0_rd2 read pattern: { t0_comp[d0, d1] -> t1[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+  // t1_t1_comp_write0 stores range: { t1[i0, i1] : -1 <= i0 <= 32 and -1 <= i1 <= 28 }
+    // overlap with reads : { t1[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 27 }
+	auto value_t1_t1_comp_write0 = t1.bank_t1_t1_comp_write0_to_t0_rd2.peek_35();
 >>>>>>> origin/master
 	return value_t1_t1_comp_write0;
 }
@@ -659,8 +867,16 @@ inline hw_uint<32>  t0_rd3_select(t1_cache& t1, int d0, int d1) {
   // qpd = { t0_comp[d0, d1] -> 1 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
 =======
   // qpd = { t0_comp[d0, d1] -> 1 : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+<<<<<<< HEAD
 >>>>>>> origin/master
 	hw_uint<32>  value_t1_t1_comp_write0 = t1.t1_t1_comp_write0.peek_1();
+>>>>>>> origin/master
+=======
+	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = d0, d1' = 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+  // t0_rd3 read pattern: { t0_comp[d0, d1] -> t1[d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+  // t1_t1_comp_write0 stores range: { t1[i0, i1] : -1 <= i0 <= 32 and -1 <= i1 <= 28 }
+    // overlap with reads : { t1[i0, i1] : 0 <= i0 <= 31 and 0 < i1 <= 28 }
+	auto value_t1_t1_comp_write0 = t1.bank_t1_t1_comp_write0_to_t0_rd3.peek_1();
 >>>>>>> origin/master
 	return value_t1_t1_comp_write0;
 }
@@ -765,8 +981,16 @@ inline hw_uint<32>  t0_rd9_select(t1_cache& t1, int d0, int d1) {
   // qpd = { t0_comp[d0, d1] -> 34 : 0 <= d0 <= 30 and 0 <= d1 <= 31; t0_comp[d0, d1] -> (3 + d0) : d0 = 31 and 0 <= d1 <= 31 }
 =======
   // qpd = { t0_comp[d0, d1] -> 34 : 0 <= d0 <= 30 and 0 <= d1 <= 27; t0_comp[d0, d1] -> (3 + d0) : d0 = 31 and 0 <= d1 <= 27 }
+<<<<<<< HEAD
 >>>>>>> origin/master
 	hw_uint<32>  value_t1_t1_comp_write0 = t1.t1_t1_comp_write0.peek_34();
+=======
+	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = 1 + d0, d1' = d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+  // t0_rd4 read pattern: { t0_comp[d0, d1] -> t1[1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+  // t1_t1_comp_write0 stores range: { t1[i0, i1] : -1 <= i0 <= 32 and -1 <= i1 <= 28 }
+    // overlap with reads : { t1[i0, i1] : 0 < i0 <= 32 and 0 <= i1 <= 27 }
+	auto value_t1_t1_comp_write0 = t1.bank_t1_t1_comp_write0_to_t0_rd4.peek_34();
+>>>>>>> origin/master
 	return value_t1_t1_comp_write0;
 >>>>>>> origin/master
 }
@@ -954,12 +1178,12 @@ for (int c0 = -1; c0 <= 28; c0++) {
 #pragma HLS pipeline II=1
 #endif // __VIVADO_SYNTH__
 
-    if ((-1 <= c1 && c1 <= 32) && (-1 <= c0 && c0 <= 28)) {
-      t1_comp(c1, c0);
+    if ((-1 <= c1 && c1 <= 32) && ((c1 - 0) % 1 == 0) && (-1 <= c0 && c0 <= 28) && ((c0 - 0) % 1 == 0)) {
+      t1_comp((c1 - 0) / 1, (c0 - 0) / 1);
     }
 
-    if ((1 <= c1 && c1 <= 32) && (1 <= c0 && c0 <= 28)) {
-      t0_comp(c1, c0);
+    if ((1 <= c1 && c1 <= 32) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 28) && ((c0 - 1) % 1 == 0)) {
+      t0_comp((c1 - 1) / 1, (c0 - 1) / 1);
     }
 
   }
@@ -973,12 +1197,12 @@ for (int c0 = -1; c0 <= 28; c0++) {
 	#pragma HLS pipeline II=1
 	#endif // __VIVADO_SYNTH__
 	
-	    if ((-1 <= c1 && c1 <= 32) && (-1 <= c0 && c0 <= 28)) {
-	      t1_comp(t1_arg, t1, c1, c0);
+	    if ((-1 <= c1 && c1 <= 32) && ((c1 - 0) % 1 == 0) && (-1 <= c0 && c0 <= 28) && ((c0 - 0) % 1 == 0)) {
+	      t1_comp(t1_arg, t1, (c1 - 0) / 1, (c0 - 0) / 1);
 	    }
 	
-	    if ((1 <= c1 && c1 <= 32) && (1 <= c0 && c0 <= 28)) {
-	      t0_comp(t1, t0, c1, c0);
+	    if ((1 <= c1 && c1 <= 32) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 28) && ((c0 - 1) % 1 == 0)) {
+	      t0_comp(t1, t0, (c1 - 1) / 1, (c0 - 1) / 1);
 	    }
 	
 >>>>>>> origin/master

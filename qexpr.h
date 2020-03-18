@@ -98,6 +98,9 @@ QAV qvar(const std::string& v) {
   return {false, v};
 }
 
+struct QTerm;
+std::ostream& operator<<(std::ostream& out, const QTerm& c);
+
 struct QTerm {
   vector<QAV> vals;
 
@@ -144,6 +147,9 @@ struct QTerm {
 
   int to_int() const {
     assert(is_constant());
+    if (vals.size() != 1) {
+      cout << *this << endl;
+    }
     assert(vals.size() == 1);
     return vals.at(0).to_int();
   }
@@ -188,6 +194,8 @@ struct QTerm {
   }
 
   void simplify() {
+    //cout << "Simplifying: " << *this << endl;
+
     // Collect constant terms
     vector<QAV> constants;
     vector<QAV> vars;
@@ -215,6 +223,7 @@ struct QTerm {
     vals = {qconst(n, d)};
     concat(vals, vars);
 
+
     vector<QAV> newvals;
     for (auto v : vals) {
       if (!v.is_one()) {
@@ -222,9 +231,13 @@ struct QTerm {
       }
     }
     vals = newvals;
+
     if (vals.size() == 0) {
+      //cout << "No values after simplifying" << endl;
       vals = {qconst(1)};
     }
+
+    //cout << "After folding constants: " << *this << endl;
 
     for (auto v : vals) {
       if (v.is_zero()) {
@@ -304,19 +317,32 @@ std::ostream& operator<<(std::ostream& out, const QExpr& c);
 struct QExpr {
   vector<QTerm> terms;
 
+  int linear_coeff_int() const {
+    auto ct = const_term();
+    ct.simplify();
+    int c = ct.to_int();
+
+    return const_eval_at(1) - c;
+  }
+
   int const_eval_at(const int val) const {
     vector<QAV> vs = vars();
     assert(vs.size() < 2);
 
+    if (vs.size() == 0) {
+      auto ct = const_term();
+      ct.simplify();
+      return ct.to_int();
+    }
+
     QExpr cpy = *this;
-    cout << "cpy = " << cpy << endl;
 
     cpy.replace(pick(vs), qconst(val));
     cpy.simplify();
     cpy.simplify();
 
-    cout << "After simplification: " << cpy << endl;
-    cout << "# of terms: " << cpy.terms.size() << endl;
+    //cout << "After simplification: " << cpy << endl;
+    //cout << "# of terms: " << cpy.terms.size() << endl;
 
     assert(cpy.terms.size() < 2);
 
@@ -407,8 +433,17 @@ struct QExpr {
     for (auto& t : terms) {
       t.simplify();
     }
+
+    //cout << "After simplifying individual terms: " << *this << endl;
+
     fold_constant_terms();
+
+    //cout << "After folding constant terms: " << *this << endl;
+
     remove_zero_terms();
+
+    //cout << "After remvoing zero terms: " << *this << endl;
+
     for (auto& t : terms) {
       t.simplify();
     }
@@ -473,6 +508,7 @@ QExpr qexpr(const QTerm& a, const QTerm& l, const QTerm& r) {
 }
 
 string isl_str(QTerm& v) {
+  v.simplify();
 
   vector<string> tstrings;
   vector<string> divs;
@@ -490,9 +526,12 @@ string isl_str(QTerm& v) {
   if (divs.size() == 0) {
     return s;
   }
-  vector<string> cfs{"(" + s + ")"};
-  concat(cfs, divs);
-  return sep_list(cfs, "", "", " / ");
+
+  assert(divs.size() == 1);
+  return "floor(" + s + " / " + divs.at(0) + ")";
+  //vector<string> cfs{"(" + s + ")"};
+  //concat(cfs, divs);
+  //return sep_list(cfs, "", "", " / ");
 }
 
 string isl_str(QExpr& v) {
@@ -858,12 +897,17 @@ Box unn(const Box& l, const Box& r) {
 std::ostream& operator<<(std::ostream& out, const Box& b);
 
 static inline
-vector<string> ifconds(vector<string>& vars, Box& range) {
+vector<string> ifconds(vector<string>& vars, Box& range, vector<int>& rates, vector<int>& delays) {
   vector<string> conds;
   int d = 0;
   for (auto v : vars) {
     auto iv = range.intervals.at(d);
     conds.push_back("(" + str(iv.min) + " <= " + v + " && " + v + " <= " + str(iv.max) + ")");
+
+    assert(rates.at(d) != 0);
+
+    auto delay = delays.at(d);
+    conds.push_back("((" + v + " - " + str(delay) + ")" + " % " + str(rates.at(d)) + " == 0)");
     d++;
   }
 
@@ -871,7 +915,13 @@ vector<string> ifconds(vector<string>& vars, Box& range) {
 }
 
 static inline
-void print_loops(int level, ostream& out, const vector<string>& op_order, const Box& whole_dom, map<string, Box>& index_bounds) {
+void print_loops(int level,
+    ostream& out,
+    const vector<string>& op_order,
+    const Box& whole_dom,
+    map<string, Box>& index_bounds,
+    map<string, vector<QExpr> >& scheds) {
+
   int ndims = pick(index_bounds).second.intervals.size();
 
   int min = whole_dom.intervals.at(level).min;
@@ -896,12 +946,36 @@ void print_loops(int level, ostream& out, const vector<string>& op_order, const 
 
     for (auto f : op_order) {
       auto box = index_bounds.at(f);
-      out << tab(next_level) << "if (" << sep_list(ifconds(vars, box), "", "", " && ") << ") {" << endl;
-      out << tab(next_level + 1) << f << "(" << comma_list(vars) << ");" << endl;
+      vector<int> rates;
+      vector<int> delays;
+      for (auto s : scheds.at(f)) {
+        rates.push_back(s.linear_coeff_int());
+        auto ct = s.const_term();
+        ct.simplify();
+        delays.push_back(ct.to_int());
+      }
+
+      assert(delays.size() == vars.size() + 1);
+      assert(rates.size() == vars.size() + 1);
+
+      delays.pop_back();
+      reverse(delays);
+      rates.pop_back();
+      reverse(rates);
+
+      out << tab(next_level) << "if (" << sep_list(ifconds(vars, box, rates, delays), "", "", " && ") << ") {" << endl;
+
+      vector<string> var_exprs;
+
+      for (int i = 0; i < vars.size(); i++) {
+        var_exprs.push_back("(" + vars.at(i) + " - " + str(delays.at(i)) + ") / " + str(rates.at(i)));
+      }
+
+      out << tab(next_level + 1) << f << "(" << comma_list(var_exprs) << ");" << endl;
       out << tab(next_level) << "}" << endl << endl;
     }
   } else {
-    print_loops(level + 1, out, op_order, whole_dom, index_bounds);
+    print_loops(level + 1, out, op_order, whole_dom, index_bounds, scheds);
   }
   out << tab(level) << "}" << endl;
 }
@@ -920,6 +994,7 @@ std::string box_codegen(const vector<string>& op_order,
   for (auto f : compute_domains) {
 
     auto dom = f.second;
+    cout << "Processing " << f.first << endl;
 
     cout << "Scheds..." << endl;
     for (auto f : scheds) {
@@ -932,6 +1007,9 @@ std::string box_codegen(const vector<string>& op_order,
 
       int domain_min = dom.intervals.at(d).min;
       int domain_max = dom.intervals.at(d).max;
+
+      cout << "Domain min: " << domain_min << endl;
+      cout << "Domain max: " << domain_max << endl;
 
       // Note: The schedule is from innermost to outermost
       int sched_min = scheds.at(f.first).at(ndims - d - 1).const_eval_at(domain_min);
@@ -946,7 +1024,8 @@ std::string box_codegen(const vector<string>& op_order,
   auto& bnds = whole_dom.intervals;
   reverse(bnds);
   cout << "Whole domain: " << whole_dom << endl;
-  print_loops(0, ss, op_order, whole_dom, index_bounds);
+  //assert(false);
+  print_loops(0, ss, op_order, whole_dom, index_bounds, scheds);
 
   return ss.str();
 }
