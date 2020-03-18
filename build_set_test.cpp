@@ -1274,8 +1274,8 @@ void generate_stack_bank(CodegenOptions& options,
   vector<int> read_delays{0};
 
   // NOTE: Just to ensure we dont force everything to be a RAM
-  //int num_readers = 10;
-  int num_readers = 0;
+  int num_readers = 10;
+  //int num_readers = 0;
 
   auto in_actions = buf.domain.at(inpt);
   auto lex_max_events =
@@ -6717,7 +6717,7 @@ struct App {
 
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    //options.use_custom_code_string = true;
     options.code_string = cgn;
 
     prog prg;
@@ -7725,6 +7725,7 @@ int main(int argc, char** argv) {
     //memtile_test();
     //
 
+    jacobi_2d_app_test();
     upsample_stencil_1d_test();
     upsample_stencil_2d_test();
     //assert(false);
@@ -7732,7 +7733,6 @@ int main(int argc, char** argv) {
     gaussian_pyramid_app_test();
 
     reduce_1d_test();
-    jacobi_2d_app_test();
     denoise2d_test();
     mismatched_stencil_test();
 
