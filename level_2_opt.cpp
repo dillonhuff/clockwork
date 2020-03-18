@@ -1827,14 +1827,6 @@ inline hw_uint<288> level_1_level_2_comp_read_bundle_read(level_1_cache& level_1
 
 
 // Operation logic
-inline void level_0_comp(in_cache& in, level_0_cache& level_0, int d0, int d1) {
-	// Consume: in
-	auto in_0_c__0_value = in_level_0_comp_read_bundle_read(in/* source_delay */, d0, d1);
-	auto compute_result = reduce_gauss(in_0_c__0_value);
-	// Produce: level_0
-	level_0_level_0_comp_write_bundle_write(compute_result, level_0, d0, d1);
-}
-
 inline void in_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in_off_chip, in_cache& in, int d0, int d1) {
 	// Consume: in_off_chip
 	auto in_off_chip_0_c__0_value = in_off_chip.read();
@@ -1849,6 +1841,14 @@ inline void level_1_comp(level_0_cache& level_0, level_1_cache& level_1, int d0,
 	auto compute_result = reduce_gauss(level_0_0_c__0_value);
 	// Produce: level_1
 	level_1_level_1_comp_write_bundle_write(compute_result, level_1, d0, d1);
+}
+
+inline void level_0_comp(in_cache& in, level_0_cache& level_0, int d0, int d1) {
+	// Consume: in
+	auto in_0_c__0_value = in_level_0_comp_read_bundle_read(in/* source_delay */, d0, d1);
+	auto compute_result = reduce_gauss(in_0_c__0_value);
+	// Produce: level_0
+	level_0_level_0_comp_write_bundle_write(compute_result, level_0, d0, d1);
 }
 
 inline void level_2_comp(level_1_cache& level_1, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */level_2, int d0, int d1) {
@@ -1885,19 +1885,19 @@ for (int c0 = 0; c0 <= 262; c0++) {
 #endif // __VIVADO_SYNTH__
 
     if ((0 <= c1 && c1 <= 262) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 262) && ((c0 - 0) % 1 == 0)) {
-      in_comp(c1, c0);
+      in_comp((c1 - 0) / 1, (c0 - 0) / 1);
     }
 
     if ((2 <= c1 && c1 <= 262) && ((c1 - 2) % 2 == 0) && (2 <= c0 && c0 <= 262) && ((c0 - 2) % 2 == 0)) {
-      level_0_comp(c1, c0);
+      level_0_comp((c1 - 2) / 2, (c0 - 2) / 2);
     }
 
     if ((6 <= c1 && c1 <= 262) && ((c1 - 6) % 4 == 0) && (6 <= c0 && c0 <= 262) && ((c0 - 6) % 4 == 0)) {
-      level_1_comp(c1, c0);
+      level_1_comp((c1 - 6) / 4, (c0 - 6) / 4);
     }
 
     if ((14 <= c1 && c1 <= 262) && ((c1 - 14) % 8 == 0) && (14 <= c0 && c0 <= 262) && ((c0 - 14) % 8 == 0)) {
-      level_2_comp(c1, c0);
+      level_2_comp((c1 - 14) / 8, (c0 - 14) / 8);
     }
 
   }
@@ -1912,19 +1912,19 @@ for (int c0 = 0; c0 <= 262; c0++) {
 	#endif // __VIVADO_SYNTH__
 	
 	    if ((0 <= c1 && c1 <= 262) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 262) && ((c0 - 0) % 1 == 0)) {
-	      in_comp(in_off_chip, in, c1, c0);
+	      in_comp(in_off_chip, in, (c1 - 0) / 1, (c0 - 0) / 1);
 	    }
 	
 	    if ((2 <= c1 && c1 <= 262) && ((c1 - 2) % 2 == 0) && (2 <= c0 && c0 <= 262) && ((c0 - 2) % 2 == 0)) {
-	      level_0_comp(in, level_0, c1, c0);
+	      level_0_comp(in, level_0, (c1 - 2) / 2, (c0 - 2) / 2);
 	    }
 	
 	    if ((6 <= c1 && c1 <= 262) && ((c1 - 6) % 4 == 0) && (6 <= c0 && c0 <= 262) && ((c0 - 6) % 4 == 0)) {
-	      level_1_comp(level_0, level_1, c1, c0);
+	      level_1_comp(level_0, level_1, (c1 - 6) / 4, (c0 - 6) / 4);
 	    }
 	
 	    if ((14 <= c1 && c1 <= 262) && ((c1 - 14) % 8 == 0) && (14 <= c0 && c0 <= 262) && ((c0 - 14) % 8 == 0)) {
-	      level_2_comp(level_1, level_2, c1, c0);
+	      level_2_comp(level_1, level_2, (c1 - 14) / 8, (c0 - 14) / 8);
 	    }
 	
 	  }

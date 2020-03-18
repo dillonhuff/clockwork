@@ -391,11 +391,11 @@ for (int c0 = -1; c0 <= 1024; c0++) {
 #endif // __VIVADO_SYNTH__
 
     if ((-1 <= c1 && c1 <= 1024) && ((c1 - 0) % 1 == 0) && (-1 <= c0 && c0 <= 1024) && ((c0 - 0) % 1 == 0)) {
-      t1_comp(c1, c0);
+      t1_comp((c1 - 0) / 1, (c0 - 0) / 1);
     }
 
     if ((1 <= c1 && c1 <= 1024) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 1024) && ((c0 - 1) % 1 == 0)) {
-      jacobi2d_unrolled_1_comp(c1, c0);
+      jacobi2d_unrolled_1_comp((c1 - 1) / 1, (c0 - 1) / 1);
     }
 
   }
@@ -410,11 +410,11 @@ for (int c0 = -1; c0 <= 1024; c0++) {
 	#endif // __VIVADO_SYNTH__
 	
 	    if ((-1 <= c1 && c1 <= 1024) && ((c1 - 0) % 1 == 0) && (-1 <= c0 && c0 <= 1024) && ((c0 - 0) % 1 == 0)) {
-	      t1_comp(t1_arg, t1, c1, c0);
+	      t1_comp(t1_arg, t1, (c1 - 0) / 1, (c0 - 0) / 1);
 	    }
 	
 	    if ((1 <= c1 && c1 <= 1024) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 1024) && ((c0 - 1) % 1 == 0)) {
-	      jacobi2d_unrolled_1_comp(t1, jacobi2d_unrolled_1, c1, c0);
+	      jacobi2d_unrolled_1_comp(t1, jacobi2d_unrolled_1, (c1 - 1) / 1, (c0 - 1) / 1);
 	    }
 	
 	  }

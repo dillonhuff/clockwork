@@ -194,6 +194,8 @@ struct QTerm {
   }
 
   void simplify() {
+    //cout << "Simplifying: " << *this << endl;
+
     // Collect constant terms
     vector<QAV> constants;
     vector<QAV> vars;
@@ -221,6 +223,7 @@ struct QTerm {
     vals = {qconst(n, d)};
     concat(vals, vars);
 
+
     vector<QAV> newvals;
     for (auto v : vals) {
       if (!v.is_one()) {
@@ -228,9 +231,13 @@ struct QTerm {
       }
     }
     vals = newvals;
+
     if (vals.size() == 0) {
+      //cout << "No values after simplifying" << endl;
       vals = {qconst(1)};
     }
+
+    //cout << "After folding constants: " << *this << endl;
 
     for (auto v : vals) {
       if (v.is_zero()) {
@@ -329,14 +336,13 @@ struct QExpr {
     }
 
     QExpr cpy = *this;
-    cout << "cpy = " << cpy << endl;
 
     cpy.replace(pick(vs), qconst(val));
     cpy.simplify();
     cpy.simplify();
 
-    cout << "After simplification: " << cpy << endl;
-    cout << "# of terms: " << cpy.terms.size() << endl;
+    //cout << "After simplification: " << cpy << endl;
+    //cout << "# of terms: " << cpy.terms.size() << endl;
 
     assert(cpy.terms.size() < 2);
 
@@ -427,8 +433,17 @@ struct QExpr {
     for (auto& t : terms) {
       t.simplify();
     }
+
+    //cout << "After simplifying individual terms: " << *this << endl;
+
     fold_constant_terms();
+
+    //cout << "After folding constant terms: " << *this << endl;
+
     remove_zero_terms();
+
+    //cout << "After remvoing zero terms: " << *this << endl;
+
     for (auto& t : terms) {
       t.simplify();
     }
@@ -940,8 +955,23 @@ void print_loops(int level,
         delays.push_back(ct.to_int());
       }
 
+      assert(delays.size() == vars.size() + 1);
+      assert(rates.size() == vars.size() + 1);
+
+      delays.pop_back();
+      reverse(delays);
+      rates.pop_back();
+      reverse(rates);
+
       out << tab(next_level) << "if (" << sep_list(ifconds(vars, box, rates, delays), "", "", " && ") << ") {" << endl;
-      out << tab(next_level + 1) << f << "(" << comma_list(vars) << ");" << endl;
+
+      vector<string> var_exprs;
+
+      for (int i = 0; i < vars.size(); i++) {
+        var_exprs.push_back("(" + vars.at(i) + " - " + str(delays.at(i)) + ") / " + str(rates.at(i)));
+      }
+
+      out << tab(next_level + 1) << f << "(" << comma_list(var_exprs) << ");" << endl;
       out << tab(next_level) << "}" << endl << endl;
     }
   } else {
@@ -964,6 +994,7 @@ std::string box_codegen(const vector<string>& op_order,
   for (auto f : compute_domains) {
 
     auto dom = f.second;
+    cout << "Processing " << f.first << endl;
 
     cout << "Scheds..." << endl;
     for (auto f : scheds) {
@@ -976,6 +1007,9 @@ std::string box_codegen(const vector<string>& op_order,
 
       int domain_min = dom.intervals.at(d).min;
       int domain_max = dom.intervals.at(d).max;
+
+      cout << "Domain min: " << domain_min << endl;
+      cout << "Domain max: " << domain_max << endl;
 
       // Note: The schedule is from innermost to outermost
       int sched_min = scheds.at(f.first).at(ndims - d - 1).const_eval_at(domain_min);
@@ -990,6 +1024,7 @@ std::string box_codegen(const vector<string>& op_order,
   auto& bnds = whole_dom.intervals;
   reverse(bnds);
   cout << "Whole domain: " << whole_dom << endl;
+  //assert(false);
   print_loops(0, ss, op_order, whole_dom, index_bounds, scheds);
 
   return ss.str();

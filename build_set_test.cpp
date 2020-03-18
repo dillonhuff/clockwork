@@ -6695,9 +6695,11 @@ struct App {
         ops.push_back(f + "_comp");
         compute_domains[f + "_comp"] =
           compute_box(f);
+        //cout << "Compute domain of " << f << " = " << str(compute_domain(f)) << endl;
       }
     }
 
+    //assert(false);
     string cgn = box_codegen(ops, scheds, compute_domains);
 
     map<string, UBuffer> buffers = build_buffers(m, unroll_factor);
@@ -7722,10 +7724,10 @@ int main(int argc, char** argv) {
     //memtile_test();
     //
 
-    gaussian_pyramid_app_test();
+    upsample_stencil_1d_test();
+    upsample_stencil_2d_test();
 
-    //upsample_stencil_1d_test();
-    //upsample_stencil_2d_test();
+    gaussian_pyramid_app_test();
 
     reduce_1d_test();
     jacobi_2d_app_test();
