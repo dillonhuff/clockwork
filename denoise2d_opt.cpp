@@ -1942,43 +1942,43 @@ for (int c0 = -2; c0 <= 35; c0++) {
 #pragma HLS pipeline II=1
 #endif // __VIVADO_SYNTH__
 
-    if ((2 <= c1 && c1 <= 35) && (2 <= c0 && c0 <= 35)) {
+    if ((2 <= c1 && c1 <= 35) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 35) && ((c0 - 2) % 1 == 0)) {
       f_comp(c1, c0);
     }
 
-    if ((-2 <= c1 && c1 <= 31) && (-2 <= c0 && c0 <= 31)) {
+    if ((-2 <= c1 && c1 <= 31) && ((c1 - 0) % 1 == 0) && (-2 <= c0 && c0 <= 31) && ((c0 - 0) % 1 == 0)) {
       u_comp(c1, c0);
     }
 
-    if ((2 <= c1 && c1 <= 31) && (2 <= c0 && c0 <= 31)) {
+    if ((2 <= c1 && c1 <= 31) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 31) && ((c0 - 2) % 1 == 0)) {
       r0_comp(c1, c0);
     }
 
-    if ((0 <= c1 && c1 <= 31) && (0 <= c0 && c0 <= 31)) {
+    if ((0 <= c1 && c1 <= 31) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 31) && ((c0 - 1) % 1 == 0)) {
       diff_r_comp(c1, c0);
     }
 
-    if ((0 <= c1 && c1 <= 31) && (0 <= c0 && c0 <= 31)) {
+    if ((0 <= c1 && c1 <= 31) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 31) && ((c0 - 1) % 1 == 0)) {
       diff_qwe_comp(c1, c0);
     }
 
-    if ((0 <= c1 && c1 <= 31) && (0 <= c0 && c0 <= 31)) {
+    if ((0 <= c1 && c1 <= 31) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 31) && ((c0 - 1) % 1 == 0)) {
       diff_l_comp(c1, c0);
     }
 
-    if ((0 <= c1 && c1 <= 31) && (0 <= c0 && c0 <= 31)) {
+    if ((0 <= c1 && c1 <= 31) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 31) && ((c0 - 1) % 1 == 0)) {
       diff_d_comp(c1, c0);
     }
 
-    if ((2 <= c1 && c1 <= 31) && (2 <= c0 && c0 <= 31)) {
+    if ((2 <= c1 && c1 <= 31) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 31) && ((c0 - 2) % 1 == 0)) {
       r1_comp(c1, c0);
     }
 
-    if ((0 <= c1 && c1 <= 31) && (0 <= c0 && c0 <= 31)) {
+    if ((0 <= c1 && c1 <= 31) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 31) && ((c0 - 1) % 1 == 0)) {
       g_comp(c1, c0);
     }
 
-    if ((2 <= c1 && c1 <= 31) && (2 <= c0 && c0 <= 31)) {
+    if ((2 <= c1 && c1 <= 31) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 31) && ((c0 - 2) % 1 == 0)) {
       denoise2d_comp(c1, c0);
     }
 
@@ -1986,44 +1986,53 @@ for (int c0 = -2; c0 <= 35; c0++) {
 }
 
 */
-	for (int c0 = -2; c0 <= 35; c0 += 1) {
-	  if (c0 >= 2) {
-	    if (c0 <= 31)
-	      for (int c1 = -2; c1 <= 1; c1 += 1) {
-	        u_comp(u_off_chip, u, c1, c0);
-	        if (c1 >= 0) {
-	          diff_r_comp(u, diff_r, c1 - 1, c0 - 1);
-	          diff_qwe_comp(u, diff_qwe, c1 - 1, c0 - 1);
-	          diff_l_comp(u, diff_l, c1 - 1, c0 - 1);
-	          diff_d_comp(u, diff_d, c1 - 1, c0 - 1);
-	          g_comp(diff_qwe, diff_d, diff_l, diff_r, g, c1 - 1, c0 - 1);
-	        }
-	      }
-	    for (int c1 = 2; c1 <= 35; c1 += 1) {
-	      f_comp(f_off_chip, f, c1 - 2, c0 - 2);
-	      if (c0 <= 31 && c1 <= 31) {
-	        u_comp(u_off_chip, u, c1, c0);
-	        r0_comp(u, f, r0, c1 - 2, c0 - 2);
-	        diff_r_comp(u, diff_r, c1 - 1, c0 - 1);
-	        diff_qwe_comp(u, diff_qwe, c1 - 1, c0 - 1);
-	        diff_l_comp(u, diff_l, c1 - 1, c0 - 1);
-	        diff_d_comp(u, diff_d, c1 - 1, c0 - 1);
-	        r1_comp(r0, r1, c1 - 2, c0 - 2);
-	        g_comp(diff_qwe, diff_d, diff_l, diff_r, g, c1 - 1, c0 - 1);
-	        denoise2d_comp(r1, f, u, g, denoise2d, c1 - 2, c0 - 2);
-	      }
+	for (int c0 = -2; c0 <= 35; c0++) {
+	  for (int c1 = -2; c1 <= 35; c1++) {
+	
+	#ifdef __VIVADO_SYNTH__
+	#pragma HLS pipeline II=1
+	#endif // __VIVADO_SYNTH__
+	
+	    if ((2 <= c1 && c1 <= 35) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 35) && ((c0 - 2) % 1 == 0)) {
+	      f_comp(f_off_chip, f, c1, c0);
 	    }
-	  } else {
-	    for (int c1 = -2; c1 <= 31; c1 += 1) {
+	
+	    if ((-2 <= c1 && c1 <= 31) && ((c1 - 0) % 1 == 0) && (-2 <= c0 && c0 <= 31) && ((c0 - 0) % 1 == 0)) {
 	      u_comp(u_off_chip, u, c1, c0);
-	      if (c0 >= 0 && c1 >= 0) {
-	        diff_r_comp(u, diff_r, c1 - 1, c0 - 1);
-	        diff_qwe_comp(u, diff_qwe, c1 - 1, c0 - 1);
-	        diff_l_comp(u, diff_l, c1 - 1, c0 - 1);
-	        diff_d_comp(u, diff_d, c1 - 1, c0 - 1);
-	        g_comp(diff_qwe, diff_d, diff_l, diff_r, g, c1 - 1, c0 - 1);
-	      }
 	    }
+	
+	    if ((2 <= c1 && c1 <= 31) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 31) && ((c0 - 2) % 1 == 0)) {
+	      r0_comp(u, f, r0, c1, c0);
+	    }
+	
+	    if ((0 <= c1 && c1 <= 31) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 31) && ((c0 - 1) % 1 == 0)) {
+	      diff_r_comp(u, diff_r, c1, c0);
+	    }
+	
+	    if ((0 <= c1 && c1 <= 31) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 31) && ((c0 - 1) % 1 == 0)) {
+	      diff_qwe_comp(u, diff_qwe, c1, c0);
+	    }
+	
+	    if ((0 <= c1 && c1 <= 31) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 31) && ((c0 - 1) % 1 == 0)) {
+	      diff_l_comp(u, diff_l, c1, c0);
+	    }
+	
+	    if ((0 <= c1 && c1 <= 31) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 31) && ((c0 - 1) % 1 == 0)) {
+	      diff_d_comp(u, diff_d, c1, c0);
+	    }
+	
+	    if ((2 <= c1 && c1 <= 31) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 31) && ((c0 - 2) % 1 == 0)) {
+	      r1_comp(r0, r1, c1, c0);
+	    }
+	
+	    if ((0 <= c1 && c1 <= 31) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 31) && ((c0 - 1) % 1 == 0)) {
+	      g_comp(diff_qwe, diff_d, diff_l, diff_r, g, c1, c0);
+	    }
+	
+	    if ((2 <= c1 && c1 <= 31) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 31) && ((c0 - 2) % 1 == 0)) {
+	      denoise2d_comp(r1, f, u, g, denoise2d, c1, c0);
+	    }
+	
 	  }
 	}
 	

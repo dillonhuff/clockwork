@@ -7722,25 +7722,22 @@ int main(int argc, char** argv) {
     //memtile_test();
     //
 
-    upsample_stencil_1d_test();
-    upsample_stencil_2d_test();
+    gaussian_pyramid_app_test();
+
+    //upsample_stencil_1d_test();
+    //upsample_stencil_2d_test();
+
     reduce_1d_test();
     jacobi_2d_app_test();
     denoise2d_test();
-    //assert(false);
     mismatched_stencil_test();
-    gaussian_pyramid_app_test();
 
     upsample_reduce_test();
-    //assert(false);
     //mismatched_stencil_test();
     agg_test();
-    //assert(false);
-    //assert(false);
     conv3x3_app_unrolled_test();
     conv3x3_app_test();
     conv3x3_app_test();
-    //assert(false);
 
     conv3x3_app_unrolled_test();
     upsample2d_test();
