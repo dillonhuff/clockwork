@@ -1171,7 +1171,7 @@ void generate_stack_cache(CodegenOptions& options,
     out << "\tinline void push(const " + pt_type_string + " value) {" << endl;
     if (options.add_dependence_pragmas) {
       out << "#ifdef __VIVADO_SYNTH__" << endl;
-      out << "#pragma HLS dependence array inter false" << endl;
+      out << "#pragma HLS dependence variable=f inter false" << endl;
       out << "#endif //__VIVADO_SYNTH__" << endl;
     }
     out << tab(2) << "return f.push(value);" << endl;

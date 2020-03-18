@@ -229,7 +229,7 @@ struct Img_Img_comp_write0_to_upsample_stencil_rd0_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
+#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.push(value);
   }
@@ -463,7 +463,7 @@ struct Img_Img_comp_write0_to_upsample_stencil_rd1_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
+#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.push(value);
   }
@@ -697,7 +697,7 @@ struct Img_Img_comp_write0_to_upsample_stencil_rd2_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
+#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.push(value);
   }
@@ -931,7 +931,7 @@ struct Img_Img_comp_write0_to_upsample_stencil_rd3_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
+#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.push(value);
   }
@@ -1165,7 +1165,7 @@ struct Img_Img_comp_write0_to_upsample_stencil_rd4_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
+#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.push(value);
   }
@@ -1399,7 +1399,7 @@ struct Img_Img_comp_write0_to_upsample_stencil_rd5_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
+#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.push(value);
   }
@@ -1633,7 +1633,7 @@ struct Img_Img_comp_write0_to_upsample_stencil_rd6_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
+#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.push(value);
   }
@@ -1867,7 +1867,7 @@ struct Img_Img_comp_write0_to_upsample_stencil_rd7_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
+#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.push(value);
   }
@@ -2101,7 +2101,7 @@ struct Img_Img_comp_write0_to_upsample_stencil_rd8_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
+#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.push(value);
   }
