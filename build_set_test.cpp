@@ -1274,7 +1274,8 @@ void generate_stack_bank(CodegenOptions& options,
   vector<int> read_delays{0};
 
   // NOTE: Just to ensure we dont force everything to be a RAM
-  int num_readers = 10;
+  //int num_readers = 10;
+  int num_readers = 0;
 
   auto in_actions = buf.domain.at(inpt);
   auto lex_max_events =
@@ -7726,6 +7727,7 @@ int main(int argc, char** argv) {
 
     upsample_stencil_1d_test();
     upsample_stencil_2d_test();
+    assert(false);
 
     gaussian_pyramid_app_test();
 
