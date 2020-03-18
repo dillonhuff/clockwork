@@ -37,7 +37,7 @@ struct t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd1_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd1_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd1: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -90,7 +90,7 @@ struct t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd13_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd13_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd13: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -143,7 +143,7 @@ struct t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd2_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd2_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd2: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -187,7 +187,7 @@ struct t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd3_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd3_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd3: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -239,7 +239,7 @@ struct t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd4_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd4_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd4: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -292,7 +292,7 @@ struct t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd5_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd5_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd5: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -336,7 +336,7 @@ struct t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd6_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd6_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd6: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -388,7 +388,7 @@ struct t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd7_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd7_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd7: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -441,7 +441,7 @@ struct t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd8_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd8_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd8: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -485,7 +485,7 @@ struct t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd9_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd9_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd9: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -537,7 +537,7 @@ struct t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd0_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd0_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd0: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -590,7 +590,7 @@ struct t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd10_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd10_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd10: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -643,7 +643,7 @@ struct t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd11_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd11_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd11: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -687,7 +687,7 @@ struct t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd12_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd12_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd12: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -705,145 +705,145 @@ struct t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd12_cache {
 };
 
 struct t1_cache {
-  t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd1_cache t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd1_cache;
-  t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd13_cache t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd13_cache;
-  t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd2_cache t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd2_cache;
-  t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd3_cache t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd3_cache;
-  t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd4_cache t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd4_cache;
-  t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd5_cache t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd5_cache;
-  t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd6_cache t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd6_cache;
-  t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd7_cache t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd7_cache;
-  t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd8_cache t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd8_cache;
-  t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd9_cache t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd9_cache;
-  t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd0_cache t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd0_cache;
-  t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd10_cache t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd10_cache;
-  t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd11_cache t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd11_cache;
-  t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd12_cache t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd12_cache;
+  t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd1_cache t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd1;
+  t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd13_cache t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd13;
+  t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd2_cache t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd2;
+  t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd3_cache t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd3;
+  t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd4_cache t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd4;
+  t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd5_cache t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd5;
+  t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd6_cache t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd6;
+  t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd7_cache t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd7;
+  t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd8_cache t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd8;
+  t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd9_cache t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd9;
+  t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd0_cache t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd0;
+  t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd10_cache t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd10;
+  t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd11_cache t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd11;
+  t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd12_cache t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd12;
 };
 
 
 
 inline void t1_t1_comp_write0_write(hw_uint<32> & t1_t1_comp_write0, t1_cache& t1, int d0, int d1) {
-  t1.t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd13_cache.push(t1_t1_comp_write0);
-  t1.t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd1_cache.push(t1_t1_comp_write0);
-  t1.t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd2_cache.push(t1_t1_comp_write0);
-  t1.t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd3_cache.push(t1_t1_comp_write0);
+  t1.t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd1.push(t1_t1_comp_write0);
+  t1.t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd13.push(t1_t1_comp_write0);
+  t1.t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd2.push(t1_t1_comp_write0);
+  t1.t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd3.push(t1_t1_comp_write0);
 }
 
 inline void t1_t1_comp_write1_write(hw_uint<32> & t1_t1_comp_write1, t1_cache& t1, int d0, int d1) {
-  t1.t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd4_cache.push(t1_t1_comp_write1);
-  t1.t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd5_cache.push(t1_t1_comp_write1);
-  t1.t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd6_cache.push(t1_t1_comp_write1);
+  t1.t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd4.push(t1_t1_comp_write1);
+  t1.t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd5.push(t1_t1_comp_write1);
+  t1.t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd6.push(t1_t1_comp_write1);
 }
 
 inline void t1_t1_comp_write2_write(hw_uint<32> & t1_t1_comp_write2, t1_cache& t1, int d0, int d1) {
-  t1.t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd7_cache.push(t1_t1_comp_write2);
-  t1.t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd8_cache.push(t1_t1_comp_write2);
-  t1.t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd9_cache.push(t1_t1_comp_write2);
+  t1.t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd7.push(t1_t1_comp_write2);
+  t1.t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd8.push(t1_t1_comp_write2);
+  t1.t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd9.push(t1_t1_comp_write2);
 }
 
 inline void t1_t1_comp_write3_write(hw_uint<32> & t1_t1_comp_write3, t1_cache& t1, int d0, int d1) {
-  t1.t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd0_cache.push(t1_t1_comp_write3);
-  t1.t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd10_cache.push(t1_t1_comp_write3);
-  t1.t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd11_cache.push(t1_t1_comp_write3);
-  t1.t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd12_cache.push(t1_t1_comp_write3);
+  t1.t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd0.push(t1_t1_comp_write3);
+  t1.t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd10.push(t1_t1_comp_write3);
+  t1.t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd11.push(t1_t1_comp_write3);
+  t1.t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd12.push(t1_t1_comp_write3);
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_4_rd0_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { jacobi2d_unrolled_4_comp[d0, d1] -> t1_comp[d0' = -1 + d0, d1' = d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_4_rd0 read pattern: { jacobi2d_unrolled_4_comp[d0, d1] -> t1[-1 + 4d0, d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
-	auto value_t1_t1_comp_write3 = t1.t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd0_cache.peek_260();
+	auto value_t1_t1_comp_write3 = t1.t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd0.peek_260();
 	return value_t1_t1_comp_write3;
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_4_rd1_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { jacobi2d_unrolled_4_comp[d0, d1] -> t1_comp[d0' = d0, d1' = -1 + d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_4_rd1 read pattern: { jacobi2d_unrolled_4_comp[d0, d1] -> t1[4d0, -1 + d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
-	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd1_cache.peek_517();
+	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd1.peek_517();
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_4_rd10_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { jacobi2d_unrolled_4_comp[d0, d1] -> t1_comp[d0' = d0, d1' = -1 + d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_4_rd10 read pattern: { jacobi2d_unrolled_4_comp[d0, d1] -> t1[3 + 4d0, -1 + d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
-	auto value_t1_t1_comp_write3 = t1.t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd10_cache.peek_517();
+	auto value_t1_t1_comp_write3 = t1.t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd10.peek_517();
 	return value_t1_t1_comp_write3;
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_4_rd11_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { jacobi2d_unrolled_4_comp[d0, d1] -> t1_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_4_rd11 read pattern: { jacobi2d_unrolled_4_comp[d0, d1] -> t1[3 + 4d0, d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
-	auto value_t1_t1_comp_write3 = t1.t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd11_cache.peek_259();
+	auto value_t1_t1_comp_write3 = t1.t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd11.peek_259();
 	return value_t1_t1_comp_write3;
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_4_rd12_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { jacobi2d_unrolled_4_comp[d0, d1] -> t1_comp[d0' = d0, d1' = 1 + d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_4_rd12 read pattern: { jacobi2d_unrolled_4_comp[d0, d1] -> t1[3 + 4d0, 1 + d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
-	auto value_t1_t1_comp_write3 = t1.t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd12_cache.peek_1();
+	auto value_t1_t1_comp_write3 = t1.t1_t1_comp_write3_to_jacobi2d_unrolled_4_rd12.peek_1();
 	return value_t1_t1_comp_write3;
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_4_rd13_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { jacobi2d_unrolled_4_comp[d0, d1] -> t1_comp[d0' = 1 + d0, d1' = d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_4_rd13 read pattern: { jacobi2d_unrolled_4_comp[d0, d1] -> t1[4 + 4d0, d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
-	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd13_cache.peek_258();
+	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd13.peek_258();
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_4_rd2_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { jacobi2d_unrolled_4_comp[d0, d1] -> t1_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_4_rd2 read pattern: { jacobi2d_unrolled_4_comp[d0, d1] -> t1[4d0, d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
-	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd2_cache.peek_259();
+	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd2.peek_259();
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_4_rd3_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { jacobi2d_unrolled_4_comp[d0, d1] -> t1_comp[d0' = d0, d1' = 1 + d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_4_rd3 read pattern: { jacobi2d_unrolled_4_comp[d0, d1] -> t1[4d0, 1 + d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
-	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd3_cache.peek_1();
+	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_jacobi2d_unrolled_4_rd3.peek_1();
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_4_rd4_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { jacobi2d_unrolled_4_comp[d0, d1] -> t1_comp[d0' = d0, d1' = -1 + d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_4_rd4 read pattern: { jacobi2d_unrolled_4_comp[d0, d1] -> t1[1 + 4d0, -1 + d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
-	auto value_t1_t1_comp_write1 = t1.t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd4_cache.peek_517();
+	auto value_t1_t1_comp_write1 = t1.t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd4.peek_517();
 	return value_t1_t1_comp_write1;
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_4_rd5_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { jacobi2d_unrolled_4_comp[d0, d1] -> t1_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_4_rd5 read pattern: { jacobi2d_unrolled_4_comp[d0, d1] -> t1[1 + 4d0, d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
-	auto value_t1_t1_comp_write1 = t1.t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd5_cache.peek_259();
+	auto value_t1_t1_comp_write1 = t1.t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd5.peek_259();
 	return value_t1_t1_comp_write1;
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_4_rd6_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { jacobi2d_unrolled_4_comp[d0, d1] -> t1_comp[d0' = d0, d1' = 1 + d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_4_rd6 read pattern: { jacobi2d_unrolled_4_comp[d0, d1] -> t1[1 + 4d0, 1 + d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
-	auto value_t1_t1_comp_write1 = t1.t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd6_cache.peek_1();
+	auto value_t1_t1_comp_write1 = t1.t1_t1_comp_write1_to_jacobi2d_unrolled_4_rd6.peek_1();
 	return value_t1_t1_comp_write1;
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_4_rd7_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { jacobi2d_unrolled_4_comp[d0, d1] -> t1_comp[d0' = d0, d1' = -1 + d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_4_rd7 read pattern: { jacobi2d_unrolled_4_comp[d0, d1] -> t1[2 + 4d0, -1 + d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
-	auto value_t1_t1_comp_write2 = t1.t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd7_cache.peek_517();
+	auto value_t1_t1_comp_write2 = t1.t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd7.peek_517();
 	return value_t1_t1_comp_write2;
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_4_rd8_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { jacobi2d_unrolled_4_comp[d0, d1] -> t1_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_4_rd8 read pattern: { jacobi2d_unrolled_4_comp[d0, d1] -> t1[2 + 4d0, d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
-	auto value_t1_t1_comp_write2 = t1.t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd8_cache.peek_259();
+	auto value_t1_t1_comp_write2 = t1.t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd8.peek_259();
 	return value_t1_t1_comp_write2;
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_4_rd9_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { jacobi2d_unrolled_4_comp[d0, d1] -> t1_comp[d0' = d0, d1' = 1 + d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_4_rd9 read pattern: { jacobi2d_unrolled_4_comp[d0, d1] -> t1[2 + 4d0, 1 + d1] : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
-	auto value_t1_t1_comp_write2 = t1.t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd9_cache.peek_1();
+	auto value_t1_t1_comp_write2 = t1.t1_t1_comp_write2_to_jacobi2d_unrolled_4_rd9.peek_1();
 	return value_t1_t1_comp_write2;
 }
 
@@ -917,20 +917,20 @@ inline void t1_t1_comp_write_bundle_write(hw_uint<128>& t1_comp_write, t1_cache&
 
 
 // Operation logic
-inline void jacobi2d_unrolled_4_comp(t1_cache& t1, HWStream<hw_uint<128> >& /* buffer_args num ports = 4 */jacobi2d_unrolled_4, int d0, int d1) {
-	// Consume: t1
-	auto t1_0_c__0_value = t1_jacobi2d_unrolled_4_comp_read_bundle_read(t1/* source_delay */, d0, d1);
-	auto compute_result = jacobi2d_compute_unrolled_4(t1_0_c__0_value);
-	// Produce: jacobi2d_unrolled_4
-	jacobi2d_unrolled_4.write(compute_result);
-}
-
 inline void t1_comp(HWStream<hw_uint<128> >& /* buffer_args num ports = 4 */t1_arg, t1_cache& t1, int d0, int d1) {
 	// Consume: t1_arg
 	auto t1_arg_0_c__0_value = t1_arg.read();
 	auto compute_result = id_unrolled_4(t1_arg_0_c__0_value);
 	// Produce: t1
 	t1_t1_comp_write_bundle_write(compute_result, t1, d0, d1);
+}
+
+inline void jacobi2d_unrolled_4_comp(t1_cache& t1, HWStream<hw_uint<128> >& /* buffer_args num ports = 4 */jacobi2d_unrolled_4, int d0, int d1) {
+	// Consume: t1
+	auto t1_0_c__0_value = t1_jacobi2d_unrolled_4_comp_read_bundle_read(t1/* source_delay */, d0, d1);
+	auto compute_result = jacobi2d_compute_unrolled_4(t1_0_c__0_value);
+	// Produce: jacobi2d_unrolled_4
+	jacobi2d_unrolled_4.write(compute_result);
 }
 
 // Driver function

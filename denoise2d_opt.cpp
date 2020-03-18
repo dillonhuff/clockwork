@@ -19,7 +19,7 @@ struct diff_d_diff_d_comp_write0_to_g_rd0_cache {
 			return f1.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in diff_d_diff_d_comp_write0_to_g_rd0_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in diff_d_diff_d_comp_write0_to_g_rd0: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -36,19 +36,19 @@ struct diff_d_diff_d_comp_write0_to_g_rd0_cache {
 };
 
 struct diff_d_cache {
-  diff_d_diff_d_comp_write0_to_g_rd0_cache diff_d_diff_d_comp_write0_to_g_rd0_cache;
+  diff_d_diff_d_comp_write0_to_g_rd0_cache diff_d_diff_d_comp_write0_to_g_rd0;
 };
 
 
 
 inline void diff_d_diff_d_comp_write0_write(hw_uint<32> & diff_d_diff_d_comp_write0, diff_d_cache& diff_d, int d0, int d1) {
-  diff_d.diff_d_diff_d_comp_write0_to_g_rd0_cache.push(diff_d_diff_d_comp_write0);
+  diff_d.diff_d_diff_d_comp_write0_to_g_rd0.push(diff_d_diff_d_comp_write0);
 }
 
 inline hw_uint<32>  g_rd0_select(diff_d_cache& diff_d, int d0, int d1) {
 	// lexmax events: { g_comp[d0, d1] -> diff_d_comp[d0' = d0, d1' = d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
   // g_rd0 read pattern: { g_comp[d0, d1] -> diff_d[d0, d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
-	auto value_diff_d_diff_d_comp_write0 = diff_d.diff_d_diff_d_comp_write0_to_g_rd0_cache.peek_0();
+	auto value_diff_d_diff_d_comp_write0 = diff_d.diff_d_diff_d_comp_write0_to_g_rd0.peek_0();
 	return value_diff_d_diff_d_comp_write0;
 }
 
@@ -90,7 +90,7 @@ struct diff_l_diff_l_comp_write0_to_g_rd0_cache {
 			return f1.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in diff_l_diff_l_comp_write0_to_g_rd0_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in diff_l_diff_l_comp_write0_to_g_rd0: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -107,19 +107,19 @@ struct diff_l_diff_l_comp_write0_to_g_rd0_cache {
 };
 
 struct diff_l_cache {
-  diff_l_diff_l_comp_write0_to_g_rd0_cache diff_l_diff_l_comp_write0_to_g_rd0_cache;
+  diff_l_diff_l_comp_write0_to_g_rd0_cache diff_l_diff_l_comp_write0_to_g_rd0;
 };
 
 
 
 inline void diff_l_diff_l_comp_write0_write(hw_uint<32> & diff_l_diff_l_comp_write0, diff_l_cache& diff_l, int d0, int d1) {
-  diff_l.diff_l_diff_l_comp_write0_to_g_rd0_cache.push(diff_l_diff_l_comp_write0);
+  diff_l.diff_l_diff_l_comp_write0_to_g_rd0.push(diff_l_diff_l_comp_write0);
 }
 
 inline hw_uint<32>  g_rd0_select(diff_l_cache& diff_l, int d0, int d1) {
 	// lexmax events: { g_comp[d0, d1] -> diff_l_comp[d0' = d0, d1' = d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
   // g_rd0 read pattern: { g_comp[d0, d1] -> diff_l[d0, d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
-	auto value_diff_l_diff_l_comp_write0 = diff_l.diff_l_diff_l_comp_write0_to_g_rd0_cache.peek_0();
+	auto value_diff_l_diff_l_comp_write0 = diff_l.diff_l_diff_l_comp_write0_to_g_rd0.peek_0();
 	return value_diff_l_diff_l_comp_write0;
 }
 
@@ -161,7 +161,7 @@ struct diff_qwe_diff_qwe_comp_write0_to_g_rd0_cache {
 			return f1.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in diff_qwe_diff_qwe_comp_write0_to_g_rd0_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in diff_qwe_diff_qwe_comp_write0_to_g_rd0: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -178,19 +178,19 @@ struct diff_qwe_diff_qwe_comp_write0_to_g_rd0_cache {
 };
 
 struct diff_qwe_cache {
-  diff_qwe_diff_qwe_comp_write0_to_g_rd0_cache diff_qwe_diff_qwe_comp_write0_to_g_rd0_cache;
+  diff_qwe_diff_qwe_comp_write0_to_g_rd0_cache diff_qwe_diff_qwe_comp_write0_to_g_rd0;
 };
 
 
 
 inline void diff_qwe_diff_qwe_comp_write0_write(hw_uint<32> & diff_qwe_diff_qwe_comp_write0, diff_qwe_cache& diff_qwe, int d0, int d1) {
-  diff_qwe.diff_qwe_diff_qwe_comp_write0_to_g_rd0_cache.push(diff_qwe_diff_qwe_comp_write0);
+  diff_qwe.diff_qwe_diff_qwe_comp_write0_to_g_rd0.push(diff_qwe_diff_qwe_comp_write0);
 }
 
 inline hw_uint<32>  g_rd0_select(diff_qwe_cache& diff_qwe, int d0, int d1) {
 	// lexmax events: { g_comp[d0, d1] -> diff_qwe_comp[d0' = d0, d1' = d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
   // g_rd0 read pattern: { g_comp[d0, d1] -> diff_qwe[d0, d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
-	auto value_diff_qwe_diff_qwe_comp_write0 = diff_qwe.diff_qwe_diff_qwe_comp_write0_to_g_rd0_cache.peek_0();
+	auto value_diff_qwe_diff_qwe_comp_write0 = diff_qwe.diff_qwe_diff_qwe_comp_write0_to_g_rd0.peek_0();
 	return value_diff_qwe_diff_qwe_comp_write0;
 }
 
@@ -232,7 +232,7 @@ struct diff_r_diff_r_comp_write0_to_g_rd0_cache {
 			return f1.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in diff_r_diff_r_comp_write0_to_g_rd0_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in diff_r_diff_r_comp_write0_to_g_rd0: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -249,19 +249,19 @@ struct diff_r_diff_r_comp_write0_to_g_rd0_cache {
 };
 
 struct diff_r_cache {
-  diff_r_diff_r_comp_write0_to_g_rd0_cache diff_r_diff_r_comp_write0_to_g_rd0_cache;
+  diff_r_diff_r_comp_write0_to_g_rd0_cache diff_r_diff_r_comp_write0_to_g_rd0;
 };
 
 
 
 inline void diff_r_diff_r_comp_write0_write(hw_uint<32> & diff_r_diff_r_comp_write0, diff_r_cache& diff_r, int d0, int d1) {
-  diff_r.diff_r_diff_r_comp_write0_to_g_rd0_cache.push(diff_r_diff_r_comp_write0);
+  diff_r.diff_r_diff_r_comp_write0_to_g_rd0.push(diff_r_diff_r_comp_write0);
 }
 
 inline hw_uint<32>  g_rd0_select(diff_r_cache& diff_r, int d0, int d1) {
 	// lexmax events: { g_comp[d0, d1] -> diff_r_comp[d0' = d0, d1' = d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
   // g_rd0 read pattern: { g_comp[d0, d1] -> diff_r[d0, d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
-	auto value_diff_r_diff_r_comp_write0 = diff_r.diff_r_diff_r_comp_write0_to_g_rd0_cache.peek_0();
+	auto value_diff_r_diff_r_comp_write0 = diff_r.diff_r_diff_r_comp_write0_to_g_rd0.peek_0();
 	return value_diff_r_diff_r_comp_write0;
 }
 
@@ -303,7 +303,7 @@ struct f_f_comp_write0_to_denoise2d_rd0_cache {
 			return f1.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in f_f_comp_write0_to_denoise2d_rd0_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in f_f_comp_write0_to_denoise2d_rd0: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -336,7 +336,7 @@ struct f_f_comp_write0_to_r0_rd0_cache {
 			return f1.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in f_f_comp_write0_to_r0_rd0_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in f_f_comp_write0_to_r0_rd0: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -353,28 +353,28 @@ struct f_f_comp_write0_to_r0_rd0_cache {
 };
 
 struct f_cache {
-  f_f_comp_write0_to_denoise2d_rd0_cache f_f_comp_write0_to_denoise2d_rd0_cache;
-  f_f_comp_write0_to_r0_rd0_cache f_f_comp_write0_to_r0_rd0_cache;
+  f_f_comp_write0_to_denoise2d_rd0_cache f_f_comp_write0_to_denoise2d_rd0;
+  f_f_comp_write0_to_r0_rd0_cache f_f_comp_write0_to_r0_rd0;
 };
 
 
 
 inline void f_f_comp_write0_write(hw_uint<32> & f_f_comp_write0, f_cache& f, int d0, int d1) {
-  f.f_f_comp_write0_to_denoise2d_rd0_cache.push(f_f_comp_write0);
-  f.f_f_comp_write0_to_r0_rd0_cache.push(f_f_comp_write0);
+  f.f_f_comp_write0_to_denoise2d_rd0.push(f_f_comp_write0);
+  f.f_f_comp_write0_to_r0_rd0.push(f_f_comp_write0);
 }
 
 inline hw_uint<32>  denoise2d_rd0_select(f_cache& f, int d0, int d1) {
 	// lexmax events: { denoise2d_comp[d0, d1] -> f_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
   // denoise2d_rd0 read pattern: { denoise2d_comp[d0, d1] -> f[d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
-	auto value_f_f_comp_write0 = f.f_f_comp_write0_to_denoise2d_rd0_cache.peek_0();
+	auto value_f_f_comp_write0 = f.f_f_comp_write0_to_denoise2d_rd0.peek_0();
 	return value_f_f_comp_write0;
 }
 
 inline hw_uint<32>  r0_rd0_select(f_cache& f, int d0, int d1) {
 	// lexmax events: { r0_comp[d0, d1] -> f_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
   // r0_rd0 read pattern: { r0_comp[d0, d1] -> f[d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
-	auto value_f_f_comp_write0 = f.f_f_comp_write0_to_r0_rd0_cache.peek_0();
+	auto value_f_f_comp_write0 = f.f_f_comp_write0_to_r0_rd0.peek_0();
 	return value_f_f_comp_write0;
 }
 
@@ -443,7 +443,7 @@ struct g_g_comp_write0_to_denoise2d_rd0_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in g_g_comp_write0_to_denoise2d_rd0_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in g_g_comp_write0_to_denoise2d_rd0: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -496,7 +496,7 @@ struct g_g_comp_write0_to_denoise2d_rd1_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in g_g_comp_write0_to_denoise2d_rd1_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in g_g_comp_write0_to_denoise2d_rd1: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -540,7 +540,7 @@ struct g_g_comp_write0_to_denoise2d_rd2_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in g_g_comp_write0_to_denoise2d_rd2_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in g_g_comp_write0_to_denoise2d_rd2: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -592,7 +592,7 @@ struct g_g_comp_write0_to_denoise2d_rd3_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in g_g_comp_write0_to_denoise2d_rd3_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in g_g_comp_write0_to_denoise2d_rd3: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -611,46 +611,46 @@ struct g_g_comp_write0_to_denoise2d_rd3_cache {
 };
 
 struct g_cache {
-  g_g_comp_write0_to_denoise2d_rd0_cache g_g_comp_write0_to_denoise2d_rd0_cache;
-  g_g_comp_write0_to_denoise2d_rd1_cache g_g_comp_write0_to_denoise2d_rd1_cache;
-  g_g_comp_write0_to_denoise2d_rd2_cache g_g_comp_write0_to_denoise2d_rd2_cache;
-  g_g_comp_write0_to_denoise2d_rd3_cache g_g_comp_write0_to_denoise2d_rd3_cache;
+  g_g_comp_write0_to_denoise2d_rd0_cache g_g_comp_write0_to_denoise2d_rd0;
+  g_g_comp_write0_to_denoise2d_rd1_cache g_g_comp_write0_to_denoise2d_rd1;
+  g_g_comp_write0_to_denoise2d_rd2_cache g_g_comp_write0_to_denoise2d_rd2;
+  g_g_comp_write0_to_denoise2d_rd3_cache g_g_comp_write0_to_denoise2d_rd3;
 };
 
 
 
 inline void g_g_comp_write0_write(hw_uint<32> & g_g_comp_write0, g_cache& g, int d0, int d1) {
-  g.g_g_comp_write0_to_denoise2d_rd0_cache.push(g_g_comp_write0);
-  g.g_g_comp_write0_to_denoise2d_rd1_cache.push(g_g_comp_write0);
-  g.g_g_comp_write0_to_denoise2d_rd2_cache.push(g_g_comp_write0);
-  g.g_g_comp_write0_to_denoise2d_rd3_cache.push(g_g_comp_write0);
+  g.g_g_comp_write0_to_denoise2d_rd0.push(g_g_comp_write0);
+  g.g_g_comp_write0_to_denoise2d_rd1.push(g_g_comp_write0);
+  g.g_g_comp_write0_to_denoise2d_rd2.push(g_g_comp_write0);
+  g.g_g_comp_write0_to_denoise2d_rd3.push(g_g_comp_write0);
 }
 
 inline hw_uint<32>  denoise2d_rd0_select(g_cache& g, int d0, int d1) {
 	// lexmax events: { denoise2d_comp[d0, d1] -> g_comp[d0' = -1 + d0, d1' = d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
   // denoise2d_rd0 read pattern: { denoise2d_comp[d0, d1] -> g[-1 + d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
-	auto value_g_g_comp_write0 = g.g_g_comp_write0_to_denoise2d_rd0_cache.peek_34();
+	auto value_g_g_comp_write0 = g.g_g_comp_write0_to_denoise2d_rd0.peek_34();
 	return value_g_g_comp_write0;
 }
 
 inline hw_uint<32>  denoise2d_rd1_select(g_cache& g, int d0, int d1) {
 	// lexmax events: { denoise2d_comp[d0, d1] -> g_comp[d0' = d0, d1' = -1 + d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
   // denoise2d_rd1 read pattern: { denoise2d_comp[d0, d1] -> g[d0, -1 + d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
-	auto value_g_g_comp_write0 = g.g_g_comp_write0_to_denoise2d_rd1_cache.peek_65();
+	auto value_g_g_comp_write0 = g.g_g_comp_write0_to_denoise2d_rd1.peek_65();
 	return value_g_g_comp_write0;
 }
 
 inline hw_uint<32>  denoise2d_rd2_select(g_cache& g, int d0, int d1) {
 	// lexmax events: { denoise2d_comp[d0, d1] -> g_comp[d0' = d0, d1' = 1 + d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
   // denoise2d_rd2 read pattern: { denoise2d_comp[d0, d1] -> g[d0, 1 + d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
-	auto value_g_g_comp_write0 = g.g_g_comp_write0_to_denoise2d_rd2_cache.peek_1();
+	auto value_g_g_comp_write0 = g.g_g_comp_write0_to_denoise2d_rd2.peek_1();
 	return value_g_g_comp_write0;
 }
 
 inline hw_uint<32>  denoise2d_rd3_select(g_cache& g, int d0, int d1) {
 	// lexmax events: { denoise2d_comp[d0, d1] -> g_comp[d0' = 1 + d0, d1' = d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
   // denoise2d_rd3 read pattern: { denoise2d_comp[d0, d1] -> g[1 + d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
-	auto value_g_g_comp_write0 = g.g_g_comp_write0_to_denoise2d_rd3_cache.peek_32();
+	auto value_g_g_comp_write0 = g.g_g_comp_write0_to_denoise2d_rd3.peek_32();
 	return value_g_g_comp_write0;
 }
 
@@ -701,7 +701,7 @@ struct r0_r0_comp_write0_to_r1_rd0_cache {
 			return f1.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in r0_r0_comp_write0_to_r1_rd0_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in r0_r0_comp_write0_to_r1_rd0: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -718,19 +718,19 @@ struct r0_r0_comp_write0_to_r1_rd0_cache {
 };
 
 struct r0_cache {
-  r0_r0_comp_write0_to_r1_rd0_cache r0_r0_comp_write0_to_r1_rd0_cache;
+  r0_r0_comp_write0_to_r1_rd0_cache r0_r0_comp_write0_to_r1_rd0;
 };
 
 
 
 inline void r0_r0_comp_write0_write(hw_uint<32> & r0_r0_comp_write0, r0_cache& r0, int d0, int d1) {
-  r0.r0_r0_comp_write0_to_r1_rd0_cache.push(r0_r0_comp_write0);
+  r0.r0_r0_comp_write0_to_r1_rd0.push(r0_r0_comp_write0);
 }
 
 inline hw_uint<32>  r1_rd0_select(r0_cache& r0, int d0, int d1) {
 	// lexmax events: { r1_comp[d0, d1] -> r0_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
   // r1_rd0 read pattern: { r1_comp[d0, d1] -> r0[d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
-	auto value_r0_r0_comp_write0 = r0.r0_r0_comp_write0_to_r1_rd0_cache.peek_0();
+	auto value_r0_r0_comp_write0 = r0.r0_r0_comp_write0_to_r1_rd0.peek_0();
 	return value_r0_r0_comp_write0;
 }
 
@@ -772,7 +772,7 @@ struct r1_r1_comp_write0_to_denoise2d_rd0_cache {
 			return f1.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in r1_r1_comp_write0_to_denoise2d_rd0_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in r1_r1_comp_write0_to_denoise2d_rd0: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -789,19 +789,19 @@ struct r1_r1_comp_write0_to_denoise2d_rd0_cache {
 };
 
 struct r1_cache {
-  r1_r1_comp_write0_to_denoise2d_rd0_cache r1_r1_comp_write0_to_denoise2d_rd0_cache;
+  r1_r1_comp_write0_to_denoise2d_rd0_cache r1_r1_comp_write0_to_denoise2d_rd0;
 };
 
 
 
 inline void r1_r1_comp_write0_write(hw_uint<32> & r1_r1_comp_write0, r1_cache& r1, int d0, int d1) {
-  r1.r1_r1_comp_write0_to_denoise2d_rd0_cache.push(r1_r1_comp_write0);
+  r1.r1_r1_comp_write0_to_denoise2d_rd0.push(r1_r1_comp_write0);
 }
 
 inline hw_uint<32>  denoise2d_rd0_select(r1_cache& r1, int d0, int d1) {
 	// lexmax events: { denoise2d_comp[d0, d1] -> r1_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
   // denoise2d_rd0 read pattern: { denoise2d_comp[d0, d1] -> r1[d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
-	auto value_r1_r1_comp_write0 = r1.r1_r1_comp_write0_to_denoise2d_rd0_cache.peek_0();
+	auto value_r1_r1_comp_write0 = r1.r1_r1_comp_write0_to_denoise2d_rd0.peek_0();
 	return value_r1_r1_comp_write0;
 }
 
@@ -861,7 +861,7 @@ struct u_u_comp_write0_to_denoise2d_rd0_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in u_u_comp_write0_to_denoise2d_rd0_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in u_u_comp_write0_to_denoise2d_rd0: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -914,7 +914,7 @@ struct u_u_comp_write0_to_denoise2d_rd1_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in u_u_comp_write0_to_denoise2d_rd1_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in u_u_comp_write0_to_denoise2d_rd1: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -967,7 +967,7 @@ struct u_u_comp_write0_to_denoise2d_rd2_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in u_u_comp_write0_to_denoise2d_rd2_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in u_u_comp_write0_to_denoise2d_rd2: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -1020,7 +1020,7 @@ struct u_u_comp_write0_to_denoise2d_rd3_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in u_u_comp_write0_to_denoise2d_rd3_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in u_u_comp_write0_to_denoise2d_rd3: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -1073,7 +1073,7 @@ struct u_u_comp_write0_to_diff_d_rd0_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in u_u_comp_write0_to_diff_d_rd0_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in u_u_comp_write0_to_diff_d_rd0: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -1117,7 +1117,7 @@ struct u_u_comp_write0_to_diff_d_rd1_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in u_u_comp_write0_to_diff_d_rd1_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in u_u_comp_write0_to_diff_d_rd1: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -1169,7 +1169,7 @@ struct u_u_comp_write0_to_diff_l_rd0_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in u_u_comp_write0_to_diff_l_rd0_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in u_u_comp_write0_to_diff_l_rd0: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -1222,7 +1222,7 @@ struct u_u_comp_write0_to_diff_l_rd1_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in u_u_comp_write0_to_diff_l_rd1_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in u_u_comp_write0_to_diff_l_rd1: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -1275,7 +1275,7 @@ struct u_u_comp_write0_to_diff_qwe_rd0_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in u_u_comp_write0_to_diff_qwe_rd0_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in u_u_comp_write0_to_diff_qwe_rd0: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -1328,7 +1328,7 @@ struct u_u_comp_write0_to_diff_qwe_rd1_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in u_u_comp_write0_to_diff_qwe_rd1_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in u_u_comp_write0_to_diff_qwe_rd1: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -1381,7 +1381,7 @@ struct u_u_comp_write0_to_diff_r_rd0_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in u_u_comp_write0_to_diff_r_rd0_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in u_u_comp_write0_to_diff_r_rd0: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -1434,7 +1434,7 @@ struct u_u_comp_write0_to_diff_r_rd1_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in u_u_comp_write0_to_diff_r_rd1_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in u_u_comp_write0_to_diff_r_rd1: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -1487,7 +1487,7 @@ struct u_u_comp_write0_to_r0_rd0_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in u_u_comp_write0_to_r0_rd0_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in u_u_comp_write0_to_r0_rd0: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -1506,127 +1506,127 @@ struct u_u_comp_write0_to_r0_rd0_cache {
 };
 
 struct u_cache {
-  u_u_comp_write0_to_denoise2d_rd0_cache u_u_comp_write0_to_denoise2d_rd0_cache;
-  u_u_comp_write0_to_denoise2d_rd1_cache u_u_comp_write0_to_denoise2d_rd1_cache;
-  u_u_comp_write0_to_denoise2d_rd2_cache u_u_comp_write0_to_denoise2d_rd2_cache;
-  u_u_comp_write0_to_denoise2d_rd3_cache u_u_comp_write0_to_denoise2d_rd3_cache;
-  u_u_comp_write0_to_diff_d_rd0_cache u_u_comp_write0_to_diff_d_rd0_cache;
-  u_u_comp_write0_to_diff_d_rd1_cache u_u_comp_write0_to_diff_d_rd1_cache;
-  u_u_comp_write0_to_diff_l_rd0_cache u_u_comp_write0_to_diff_l_rd0_cache;
-  u_u_comp_write0_to_diff_l_rd1_cache u_u_comp_write0_to_diff_l_rd1_cache;
-  u_u_comp_write0_to_diff_qwe_rd0_cache u_u_comp_write0_to_diff_qwe_rd0_cache;
-  u_u_comp_write0_to_diff_qwe_rd1_cache u_u_comp_write0_to_diff_qwe_rd1_cache;
-  u_u_comp_write0_to_diff_r_rd0_cache u_u_comp_write0_to_diff_r_rd0_cache;
-  u_u_comp_write0_to_diff_r_rd1_cache u_u_comp_write0_to_diff_r_rd1_cache;
-  u_u_comp_write0_to_r0_rd0_cache u_u_comp_write0_to_r0_rd0_cache;
+  u_u_comp_write0_to_denoise2d_rd0_cache u_u_comp_write0_to_denoise2d_rd0;
+  u_u_comp_write0_to_denoise2d_rd1_cache u_u_comp_write0_to_denoise2d_rd1;
+  u_u_comp_write0_to_denoise2d_rd2_cache u_u_comp_write0_to_denoise2d_rd2;
+  u_u_comp_write0_to_denoise2d_rd3_cache u_u_comp_write0_to_denoise2d_rd3;
+  u_u_comp_write0_to_diff_d_rd0_cache u_u_comp_write0_to_diff_d_rd0;
+  u_u_comp_write0_to_diff_d_rd1_cache u_u_comp_write0_to_diff_d_rd1;
+  u_u_comp_write0_to_diff_l_rd0_cache u_u_comp_write0_to_diff_l_rd0;
+  u_u_comp_write0_to_diff_l_rd1_cache u_u_comp_write0_to_diff_l_rd1;
+  u_u_comp_write0_to_diff_qwe_rd0_cache u_u_comp_write0_to_diff_qwe_rd0;
+  u_u_comp_write0_to_diff_qwe_rd1_cache u_u_comp_write0_to_diff_qwe_rd1;
+  u_u_comp_write0_to_diff_r_rd0_cache u_u_comp_write0_to_diff_r_rd0;
+  u_u_comp_write0_to_diff_r_rd1_cache u_u_comp_write0_to_diff_r_rd1;
+  u_u_comp_write0_to_r0_rd0_cache u_u_comp_write0_to_r0_rd0;
 };
 
 
 
 inline void u_u_comp_write0_write(hw_uint<32> & u_u_comp_write0, u_cache& u, int d0, int d1) {
-  u.u_u_comp_write0_to_denoise2d_rd0_cache.push(u_u_comp_write0);
-  u.u_u_comp_write0_to_denoise2d_rd1_cache.push(u_u_comp_write0);
-  u.u_u_comp_write0_to_denoise2d_rd2_cache.push(u_u_comp_write0);
-  u.u_u_comp_write0_to_denoise2d_rd3_cache.push(u_u_comp_write0);
-  u.u_u_comp_write0_to_diff_d_rd0_cache.push(u_u_comp_write0);
-  u.u_u_comp_write0_to_diff_d_rd1_cache.push(u_u_comp_write0);
-  u.u_u_comp_write0_to_diff_l_rd0_cache.push(u_u_comp_write0);
-  u.u_u_comp_write0_to_diff_l_rd1_cache.push(u_u_comp_write0);
-  u.u_u_comp_write0_to_diff_qwe_rd0_cache.push(u_u_comp_write0);
-  u.u_u_comp_write0_to_diff_qwe_rd1_cache.push(u_u_comp_write0);
-  u.u_u_comp_write0_to_diff_r_rd0_cache.push(u_u_comp_write0);
-  u.u_u_comp_write0_to_diff_r_rd1_cache.push(u_u_comp_write0);
-  u.u_u_comp_write0_to_r0_rd0_cache.push(u_u_comp_write0);
+  u.u_u_comp_write0_to_denoise2d_rd0.push(u_u_comp_write0);
+  u.u_u_comp_write0_to_denoise2d_rd1.push(u_u_comp_write0);
+  u.u_u_comp_write0_to_denoise2d_rd2.push(u_u_comp_write0);
+  u.u_u_comp_write0_to_denoise2d_rd3.push(u_u_comp_write0);
+  u.u_u_comp_write0_to_diff_d_rd0.push(u_u_comp_write0);
+  u.u_u_comp_write0_to_diff_d_rd1.push(u_u_comp_write0);
+  u.u_u_comp_write0_to_diff_l_rd0.push(u_u_comp_write0);
+  u.u_u_comp_write0_to_diff_l_rd1.push(u_u_comp_write0);
+  u.u_u_comp_write0_to_diff_qwe_rd0.push(u_u_comp_write0);
+  u.u_u_comp_write0_to_diff_qwe_rd1.push(u_u_comp_write0);
+  u.u_u_comp_write0_to_diff_r_rd0.push(u_u_comp_write0);
+  u.u_u_comp_write0_to_diff_r_rd1.push(u_u_comp_write0);
+  u.u_u_comp_write0_to_r0_rd0.push(u_u_comp_write0);
 }
 
 inline hw_uint<32>  denoise2d_rd0_select(u_cache& u, int d0, int d1) {
 	// lexmax events: { denoise2d_comp[d0, d1] -> u_comp[d0' = -1 + d0, d1' = d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
   // denoise2d_rd0 read pattern: { denoise2d_comp[d0, d1] -> u[-1 + d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
-	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_denoise2d_rd0_cache.peek_71();
+	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_denoise2d_rd0.peek_71();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  denoise2d_rd1_select(u_cache& u, int d0, int d1) {
 	// lexmax events: { denoise2d_comp[d0, d1] -> u_comp[d0' = d0, d1' = -1 + d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
   // denoise2d_rd1 read pattern: { denoise2d_comp[d0, d1] -> u[d0, -1 + d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
-	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_denoise2d_rd1_cache.peek_104();
+	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_denoise2d_rd1.peek_104();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  denoise2d_rd2_select(u_cache& u, int d0, int d1) {
 	// lexmax events: { denoise2d_comp[d0, d1] -> u_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
   // denoise2d_rd2 read pattern: { denoise2d_comp[d0, d1] -> u[d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
-	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_denoise2d_rd2_cache.peek_70();
+	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_denoise2d_rd2.peek_70();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  denoise2d_rd3_select(u_cache& u, int d0, int d1) {
 	// lexmax events: { denoise2d_comp[d0, d1] -> u_comp[d0' = 1 + d0, d1' = d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
   // denoise2d_rd3 read pattern: { denoise2d_comp[d0, d1] -> u[1 + d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
-	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_denoise2d_rd3_cache.peek_69();
+	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_denoise2d_rd3.peek_69();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  diff_d_rd0_select(u_cache& u, int d0, int d1) {
 	// lexmax events: { diff_d_comp[d0, d1] -> u_comp[d0' = d0, d1' = d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
   // diff_d_rd0 read pattern: { diff_d_comp[d0, d1] -> u[d0, d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
-	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_diff_d_rd0_cache.peek_35();
+	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_diff_d_rd0.peek_35();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  diff_d_rd1_select(u_cache& u, int d0, int d1) {
 	// lexmax events: { diff_d_comp[d0, d1] -> u_comp[d0' = d0, d1' = 1 + d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
   // diff_d_rd1 read pattern: { diff_d_comp[d0, d1] -> u[d0, 1 + d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
-	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_diff_d_rd1_cache.peek_1();
+	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_diff_d_rd1.peek_1();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  diff_l_rd0_select(u_cache& u, int d0, int d1) {
 	// lexmax events: { diff_l_comp[d0, d1] -> u_comp[d0' = -1 + d0, d1' = d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
   // diff_l_rd0 read pattern: { diff_l_comp[d0, d1] -> u[-1 + d0, d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
-	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_diff_l_rd0_cache.peek_36();
+	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_diff_l_rd0.peek_36();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  diff_l_rd1_select(u_cache& u, int d0, int d1) {
 	// lexmax events: { diff_l_comp[d0, d1] -> u_comp[d0' = d0, d1' = d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
   // diff_l_rd1 read pattern: { diff_l_comp[d0, d1] -> u[d0, d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
-	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_diff_l_rd1_cache.peek_35();
+	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_diff_l_rd1.peek_35();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  diff_qwe_rd0_select(u_cache& u, int d0, int d1) {
 	// lexmax events: { diff_qwe_comp[d0, d1] -> u_comp[d0' = d0, d1' = -1 + d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
   // diff_qwe_rd0 read pattern: { diff_qwe_comp[d0, d1] -> u[d0, -1 + d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
-	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_diff_qwe_rd0_cache.peek_69();
+	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_diff_qwe_rd0.peek_69();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  diff_qwe_rd1_select(u_cache& u, int d0, int d1) {
 	// lexmax events: { diff_qwe_comp[d0, d1] -> u_comp[d0' = d0, d1' = d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
   // diff_qwe_rd1 read pattern: { diff_qwe_comp[d0, d1] -> u[d0, d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
-	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_diff_qwe_rd1_cache.peek_35();
+	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_diff_qwe_rd1.peek_35();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  diff_r_rd0_select(u_cache& u, int d0, int d1) {
 	// lexmax events: { diff_r_comp[d0, d1] -> u_comp[d0' = d0, d1' = d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
   // diff_r_rd0 read pattern: { diff_r_comp[d0, d1] -> u[d0, d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
-	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_diff_r_rd0_cache.peek_35();
+	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_diff_r_rd0.peek_35();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  diff_r_rd1_select(u_cache& u, int d0, int d1) {
 	// lexmax events: { diff_r_comp[d0, d1] -> u_comp[d0' = 1 + d0, d1' = d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
   // diff_r_rd1 read pattern: { diff_r_comp[d0, d1] -> u[1 + d0, d1] : -1 <= d0 <= 30 and -1 <= d1 <= 30 }
-	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_diff_r_rd1_cache.peek_34();
+	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_diff_r_rd1.peek_34();
 	return value_u_u_comp_write0;
 }
 
 inline hw_uint<32>  r0_rd0_select(u_cache& u, int d0, int d1) {
 	// lexmax events: { r0_comp[d0, d1] -> u_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
   // r0_rd0 read pattern: { r0_comp[d0, d1] -> u[d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
-	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_r0_rd0_cache.peek_70();
+	auto value_u_u_comp_write0 = u.u_u_comp_write0_to_r0_rd0.peek_70();
 	return value_u_u_comp_write0;
 }
 
@@ -1718,14 +1718,6 @@ inline void u_u_comp_write_bundle_write(hw_uint<32>& u_comp_write, u_cache& u, i
 
 
 // Operation logic
-inline void f_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */f_off_chip, f_cache& f, int d0, int d1) {
-	// Consume: f_off_chip
-	auto f_off_chip_0_c__0_value = f_off_chip.read();
-	auto compute_result = id(f_off_chip_0_c__0_value);
-	// Produce: f
-	f_f_comp_write_bundle_write(compute_result, f, d0, d1);
-}
-
 inline void r0_comp(u_cache& u, f_cache& f, r0_cache& r0, int d0, int d1) {
 	// Consume: u
 	auto u_0_c__0_value = u_r0_comp_read_bundle_read(u/* source_delay */, d0, d1);
@@ -1734,14 +1726,6 @@ inline void r0_comp(u_cache& u, f_cache& f, r0_cache& r0, int d0, int d1) {
 	auto compute_result = comp_r0(u_0_c__0_value, f_0_c__0_value);
 	// Produce: r0
 	r0_r0_comp_write_bundle_write(compute_result, r0, d0, d1);
-}
-
-inline void u_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_off_chip, u_cache& u, int d0, int d1) {
-	// Consume: u_off_chip
-	auto u_off_chip_0_c__0_value = u_off_chip.read();
-	auto compute_result = id(u_off_chip_0_c__0_value);
-	// Produce: u
-	u_u_comp_write_bundle_write(compute_result, u, d0, d1);
 }
 
 inline void diff_r_comp(u_cache& u, diff_r_cache& diff_r, int d0, int d1) {
@@ -1766,6 +1750,20 @@ inline void diff_l_comp(u_cache& u, diff_l_cache& diff_l, int d0, int d1) {
 	auto compute_result = diff_b(u_0_c__0_value);
 	// Produce: diff_l
 	diff_l_diff_l_comp_write_bundle_write(compute_result, diff_l, d0, d1);
+}
+
+inline void g_comp(diff_qwe_cache& diff_qwe, diff_d_cache& diff_d, diff_l_cache& diff_l, diff_r_cache& diff_r, g_cache& g, int d0, int d1) {
+	// Consume: diff_qwe
+	auto diff_qwe_0_c__0_value = diff_qwe_g_comp_read_bundle_read(diff_qwe/* source_delay */, d0, d1);
+	// Consume: diff_d
+	auto diff_d_0_c__0_value = diff_d_g_comp_read_bundle_read(diff_d/* source_delay */, d0, d1);
+	// Consume: diff_l
+	auto diff_l_0_c__0_value = diff_l_g_comp_read_bundle_read(diff_l/* source_delay */, d0, d1);
+	// Consume: diff_r
+	auto diff_r_0_c__0_value = diff_r_g_comp_read_bundle_read(diff_r/* source_delay */, d0, d1);
+	auto compute_result = mag_dn2(diff_qwe_0_c__0_value, diff_d_0_c__0_value, diff_l_0_c__0_value, diff_r_0_c__0_value);
+	// Produce: g
+	g_g_comp_write_bundle_write(compute_result, g, d0, d1);
 }
 
 inline void diff_d_comp(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
@@ -1798,18 +1796,20 @@ inline void denoise2d_comp(r1_cache& r1, f_cache& f, u_cache& u, g_cache& g, HWS
 	denoise2d.write(compute_result);
 }
 
-inline void g_comp(diff_qwe_cache& diff_qwe, diff_d_cache& diff_d, diff_l_cache& diff_l, diff_r_cache& diff_r, g_cache& g, int d0, int d1) {
-	// Consume: diff_qwe
-	auto diff_qwe_0_c__0_value = diff_qwe_g_comp_read_bundle_read(diff_qwe/* source_delay */, d0, d1);
-	// Consume: diff_d
-	auto diff_d_0_c__0_value = diff_d_g_comp_read_bundle_read(diff_d/* source_delay */, d0, d1);
-	// Consume: diff_l
-	auto diff_l_0_c__0_value = diff_l_g_comp_read_bundle_read(diff_l/* source_delay */, d0, d1);
-	// Consume: diff_r
-	auto diff_r_0_c__0_value = diff_r_g_comp_read_bundle_read(diff_r/* source_delay */, d0, d1);
-	auto compute_result = mag_dn2(diff_qwe_0_c__0_value, diff_d_0_c__0_value, diff_l_0_c__0_value, diff_r_0_c__0_value);
-	// Produce: g
-	g_g_comp_write_bundle_write(compute_result, g, d0, d1);
+inline void f_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */f_off_chip, f_cache& f, int d0, int d1) {
+	// Consume: f_off_chip
+	auto f_off_chip_0_c__0_value = f_off_chip.read();
+	auto compute_result = id(f_off_chip_0_c__0_value);
+	// Produce: f
+	f_f_comp_write_bundle_write(compute_result, f, d0, d1);
+}
+
+inline void u_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_off_chip, u_cache& u, int d0, int d1) {
+	// Consume: u_off_chip
+	auto u_off_chip_0_c__0_value = u_off_chip.read();
+	auto compute_result = id(u_off_chip_0_c__0_value);
+	// Produce: u
+	u_u_comp_write_bundle_write(compute_result, u, d0, d1);
 }
 
 // Driver function

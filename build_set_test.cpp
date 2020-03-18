@@ -202,7 +202,6 @@ class UBuffer {
     std::map<string, isl_union_map*> schedule;
     std::map<string, vector<string> > port_bundles;
 
-    //map<string, pair<string, string> > stack_banks;
     map<pair<string, string>, stack_bank > stack_banks;
 
     vector<stack_bank> get_banks() {
@@ -240,11 +239,11 @@ class UBuffer {
       return "";
     }
 
-    set<string> receiver_banks(const std::string& inpt) {
-      set<string> bnks;
+    vector<stack_bank> receiver_banks(const std::string& inpt) {
+      vector<stack_bank> bnks;
       for (auto bs : stack_banks) {
         if (bs.first.first == inpt) {
-          bnks.insert(bs.second.name);
+          bnks.push_back(bs.second);
         }
       }
       return bnks;
@@ -1171,7 +1170,7 @@ void generate_stack_cache(CodegenOptions& options,
   auto num_readers = bank.num_readers;
   auto maxdelay = bank.maxdelay;
 
-  out << "struct " << name <<  " {" << endl;
+  out << "struct " << name << "_cache" <<  " {" << endl;
   out << "\t// Capacity: " << maxdelay + 1 << endl;
   if (num_readers == 1 || options.all_rams) {
     int partition_capacity = 1 + maxdelay;
@@ -1317,7 +1316,7 @@ stack_bank compute_stack_bank_info(
 
  
   string pt_type_string = buf.port_type_string();
-  string name = inpt + "_to_" + outpt + "_cache";
+  string name = inpt + "_to_" + outpt;
   cout << "inpt  = " << inpt << endl;
   cout << "outpt = " << outpt << endl;
   cout << "name of bank = " << name << endl;
@@ -1341,40 +1340,40 @@ void generate_stack_bank(CodegenOptions& options,
   generate_stack_cache(options, out, bank);
 }
 
-void generate_memory_struct(CodegenOptions& options, std::ostream& out, const std::string& inpt, UBuffer& buf) {
+//void generate_memory_struct(CodegenOptions& options, std::ostream& out, const std::string& inpt, UBuffer& buf) {
 
-  cout << "Creating struct for: " << inpt << " on " << buf.name << endl;
+  //cout << "Creating struct for: " << inpt << " on " << buf.name << endl;
 
-  int maxdelay = compute_max_dd(buf, inpt);
-  vector<int> read_delays{0};
-  int num_readers = 0;
-  for (auto outpt : buf.get_out_ports()) {
+  //int maxdelay = compute_max_dd(buf, inpt);
+  //vector<int> read_delays{0};
+  //int num_readers = 0;
+  //for (auto outpt : buf.get_out_ports()) {
 
-    auto in_actions = buf.domain.at(inpt);
-    auto lex_max_events =
-      get_lexmax_events(outpt, buf);
-    auto act_dom =
-      domain(its_range(lex_max_events, to_uset(in_actions)));
+    //auto in_actions = buf.domain.at(inpt);
+    //auto lex_max_events =
+      //get_lexmax_events(outpt, buf);
+    //auto act_dom =
+      //domain(its_range(lex_max_events, to_uset(in_actions)));
 
-    if (!isl_union_set_is_empty(act_dom)) {
-      num_readers++;
-      auto c = compute_dd(buf, outpt, inpt);
-      auto qpd = compute_dd_bound(buf, outpt, inpt);
-      int lb = compute_dd_lower_bound(buf, outpt, inpt);
+    //if (!isl_union_set_is_empty(act_dom)) {
+      //num_readers++;
+      //auto c = compute_dd(buf, outpt, inpt);
+      //auto qpd = compute_dd_bound(buf, outpt, inpt);
+      //int lb = compute_dd_lower_bound(buf, outpt, inpt);
 
-      for (int i = lb; i < qpd + 1; i++) {
-        read_delays.push_back(i);
-      }
-    }
-  }
+      //for (int i = lb; i < qpd + 1; i++) {
+        //read_delays.push_back(i);
+      //}
+    //}
+  //}
 
  
-  string pt_type_string = buf.port_type_string();
-  string name = inpt + "_cache";
-  stack_bank bank{name, pt_type_string, read_delays, num_readers, maxdelay};
+  //string pt_type_string = buf.port_type_string();
+  //string name = inpt + "_cache";
+  //stack_bank bank{name, pt_type_string, read_delays, num_readers, maxdelay};
 
-  generate_stack_cache(options, out, bank);
-}
+  //generate_stack_cache(options, out, bank);
+//}
 
 vector<string> dimension_var_decls(const std::string& pt, UBuffer& buf) {
   isl_space* s = get_space(buf.domain.at(pt));
@@ -1407,34 +1406,36 @@ void generate_code_prefix(CodegenOptions& options,
       if (!empty(overlap)) {
         stack_bank bank = compute_stack_bank_info(inpt, outpt, buf);
         buf.add_bank_between(inpt, outpt, bank);
-        //buf.stack_banks["bank_" + inpt + "_to_" + outpt] =
-        //{inpt, outpt};
       }
     }
   }
 
   // TODO: Add code to sort and merge buffer addresses
+  for (auto inpt : buf.get_in_ports()) {
+    vector<stack_bank> receivers = buf.receiver_banks(inpt);
+    cout << "Receiver banks for " << inpt << endl;
+    for (auto bnk : receivers) {
+      cout << tab(1) << bnk.name << ", # read offsets: " << bnk.read_delays.size() << endl;
+      for (auto elem : bnk.read_delays) {
+        cout << tab(2) << elem << endl;
+      }
+    }
+  }
+  //assert(false);
 
   string inpt = buf.get_in_port();
   out << "#include \"hw_classes.h\"" << endl << endl;
-  //vector<stack_bank> banks;
-  //for (auto b : buf.stack_banks) {
-    //auto inpt = b.second.first;
-    //auto outpt = b.second.second;
-    //stack_bank bank = compute_stack_bank_info(inpt, outpt, buf);
-    //banks.push_back(bank);
-  //}
-
-  //for (auto b : buf.stack_banks) {
   for (auto b : buf.get_banks()) {
     generate_stack_cache(options, out, b);
-    //generate_stack_bank(options, out, b.second.first, b.second.second, buf);
   }
 
   out << "struct " << buf.name << "_cache {" << endl;
 
   for (auto b : buf.stack_banks) {
-    out << tab(1) << b.first.first << "_to_" << b.first.second << "_cache " << b.second.name << ";" << endl;
+    out << tab(1)
+      << b.first.first << "_to_" << b.first.second << "_cache "
+      << b.second.name
+      << ";" << endl;
   }
 
   out << "};" << endl << endl;
@@ -1451,7 +1452,7 @@ void generate_code_prefix(CodegenOptions& options,
     out << comma_list(args) << ") {" << endl;
 
     for (auto sb : buf.receiver_banks(inpt)) {
-      out << tab(1) << buf.name << "." << sb << ".push(" << inpt << ");" << endl;
+      out << tab(1) << buf.name << "." << sb.name << ".push(" << inpt << ");" << endl;
     }
 
     out << "}" << endl << endl;
@@ -7767,6 +7768,7 @@ int main(int argc, char** argv) {
     //
 
     jacobi_2d_app_test();
+
     upsample_stencil_1d_test();
     upsample_stencil_2d_test();
     //assert(false);

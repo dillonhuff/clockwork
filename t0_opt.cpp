@@ -37,7 +37,7 @@ struct t1_t1_comp_write0_to_t0_rd0_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd0_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd0: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -90,7 +90,7 @@ struct t1_t1_comp_write0_to_t0_rd1_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd1_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd1: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -143,7 +143,7 @@ struct t1_t1_comp_write0_to_t0_rd2_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd2_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd2: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -187,7 +187,7 @@ struct t1_t1_comp_write0_to_t0_rd3_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd3_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd3: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -239,7 +239,7 @@ struct t1_t1_comp_write0_to_t0_rd4_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd4_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd4: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -258,55 +258,55 @@ struct t1_t1_comp_write0_to_t0_rd4_cache {
 };
 
 struct t1_cache {
-  t1_t1_comp_write0_to_t0_rd0_cache t1_t1_comp_write0_to_t0_rd0_cache;
-  t1_t1_comp_write0_to_t0_rd1_cache t1_t1_comp_write0_to_t0_rd1_cache;
-  t1_t1_comp_write0_to_t0_rd2_cache t1_t1_comp_write0_to_t0_rd2_cache;
-  t1_t1_comp_write0_to_t0_rd3_cache t1_t1_comp_write0_to_t0_rd3_cache;
-  t1_t1_comp_write0_to_t0_rd4_cache t1_t1_comp_write0_to_t0_rd4_cache;
+  t1_t1_comp_write0_to_t0_rd0_cache t1_t1_comp_write0_to_t0_rd0;
+  t1_t1_comp_write0_to_t0_rd1_cache t1_t1_comp_write0_to_t0_rd1;
+  t1_t1_comp_write0_to_t0_rd2_cache t1_t1_comp_write0_to_t0_rd2;
+  t1_t1_comp_write0_to_t0_rd3_cache t1_t1_comp_write0_to_t0_rd3;
+  t1_t1_comp_write0_to_t0_rd4_cache t1_t1_comp_write0_to_t0_rd4;
 };
 
 
 
 inline void t1_t1_comp_write0_write(hw_uint<32> & t1_t1_comp_write0, t1_cache& t1, int d0, int d1) {
-  t1.t1_t1_comp_write0_to_t0_rd0_cache.push(t1_t1_comp_write0);
-  t1.t1_t1_comp_write0_to_t0_rd1_cache.push(t1_t1_comp_write0);
-  t1.t1_t1_comp_write0_to_t0_rd2_cache.push(t1_t1_comp_write0);
-  t1.t1_t1_comp_write0_to_t0_rd3_cache.push(t1_t1_comp_write0);
-  t1.t1_t1_comp_write0_to_t0_rd4_cache.push(t1_t1_comp_write0);
+  t1.t1_t1_comp_write0_to_t0_rd0.push(t1_t1_comp_write0);
+  t1.t1_t1_comp_write0_to_t0_rd1.push(t1_t1_comp_write0);
+  t1.t1_t1_comp_write0_to_t0_rd2.push(t1_t1_comp_write0);
+  t1.t1_t1_comp_write0_to_t0_rd3.push(t1_t1_comp_write0);
+  t1.t1_t1_comp_write0_to_t0_rd4.push(t1_t1_comp_write0);
 }
 
 inline hw_uint<32>  t0_rd0_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = -1 + d0, d1' = d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
   // t0_rd0 read pattern: { t0_comp[d0, d1] -> t1[-1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_t0_rd0_cache.peek_36();
+	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_t0_rd0.peek_36();
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  t0_rd1_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = d0, d1' = -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
   // t0_rd1 read pattern: { t0_comp[d0, d1] -> t1[d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_t0_rd1_cache.peek_69();
+	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_t0_rd1.peek_69();
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  t0_rd2_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
   // t0_rd2 read pattern: { t0_comp[d0, d1] -> t1[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_t0_rd2_cache.peek_35();
+	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_t0_rd2.peek_35();
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  t0_rd3_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = d0, d1' = 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
   // t0_rd3 read pattern: { t0_comp[d0, d1] -> t1[d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_t0_rd3_cache.peek_1();
+	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_t0_rd3.peek_1();
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  t0_rd4_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = 1 + d0, d1' = d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
   // t0_rd4 read pattern: { t0_comp[d0, d1] -> t1[1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_t0_rd4_cache.peek_34();
+	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_t0_rd4.peek_34();
 	return value_t1_t1_comp_write0;
 }
 
