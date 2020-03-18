@@ -1868,8 +1868,6 @@ inline void Img_Img_comp_write0_write(hw_uint<32> & Img_Img_comp_write0, Img_cac
 inline hw_uint<32>  upsample_stencil_rd0_select(Img_cache& Img, int d0, int d1) {
 	// lexmax events: { upsample_stencil_comp[d0, d1] -> Img_comp[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 <= d0' <= 16 and -3 + d0 <= 2d0' <= -2 + d0 and -1 <= d1' <= 16 and -3 + d1 <= 2d1' <= -2 + d1 }
   // upsample_stencil_rd0 read pattern: { upsample_stencil_comp[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -3 + d0 <= 2o0 <= -2 + d0 and -3 + d1 <= 2o1 <= -2 + d1 }
-  // Img_Img_comp_write0 stores range: { Img[i0, i1] : -1 <= i0 <= 16 and -1 <= i1 <= 16 }
-    // overlap with reads : { Img[i0, i1] : -1 <= i0 <= 14 and -1 <= i1 <= 14 }
 	auto value_Img_Img_comp_write0 = Img.bank_Img_Img_comp_write0_to_upsample_stencil_rd0.peek(/* Needs general delay string */ ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 30 - d0 >= 0 && -2 + d1 >= 0 && 30 - d1 >= 0) ? (38) : ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 30 - d0 >= 0 && d1 >= 0 && 1 - d1 >= 0) ? (38) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && -2 + d1 >= 0 && 30 - d1 >= 0) ? (38) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 1 - d1 >= 0) ? (38) : ((-1 - d1) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && -2 + d1 >= 0 && 31 - d1 >= 0) ? ((53 - floord(d0, 2))) : ((-1 - d1) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 1 - d1 >= 0) ? ((53 - floord(d0, 2))) : 0);
 	return value_Img_Img_comp_write0;
 }
@@ -1877,8 +1875,6 @@ inline hw_uint<32>  upsample_stencil_rd0_select(Img_cache& Img, int d0, int d1) 
 inline hw_uint<32>  upsample_stencil_rd1_select(Img_cache& Img, int d0, int d1) {
 	// lexmax events: { upsample_stencil_comp[d0, d1] -> Img_comp[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 <= d0' <= 16 and -3 + d0 <= 2d0' <= -2 + d0 and -1 <= d1' <= 16 and -1 + d1 <= 2d1' <= d1 }
   // upsample_stencil_rd1 read pattern: { upsample_stencil_comp[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -3 + d0 <= 2o0 <= -2 + d0 and -1 + d1 <= 2o1 <= d1 }
-  // Img_Img_comp_write0 stores range: { Img[i0, i1] : -1 <= i0 <= 16 and -1 <= i1 <= 16 }
-    // overlap with reads : { Img[i0, i1] : -1 <= i0 <= 14 and 0 <= i1 <= 15 }
 	auto value_Img_Img_comp_write0 = Img.bank_Img_Img_comp_write0_to_upsample_stencil_rd1.peek(/* Needs general delay string */ ((-1 - d1) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && -1 + d1 >= 0 && 31 - d1 >= 0) ? ((35 - floord(d0, 2))) : ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 30 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (20) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (20) : 0);
 	return value_Img_Img_comp_write0;
 }
@@ -1886,8 +1882,6 @@ inline hw_uint<32>  upsample_stencil_rd1_select(Img_cache& Img, int d0, int d1) 
 inline hw_uint<32>  upsample_stencil_rd2_select(Img_cache& Img, int d0, int d1) {
 	// lexmax events: { upsample_stencil_comp[d0, d1] -> Img_comp[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -3 + d0 <= 2d0' <= -2 + d0 and d1 <= 2d1' <= 2 + d1 and (((d1) mod 2 = 0 and d1 <= 30 and 2d1' > d1) or ((1 + d1) mod 2 = 0 and 2d1' <= 1 + d1)) }
   // upsample_stencil_rd2 read pattern: { upsample_stencil_comp[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -3 + d0 <= 2o0 <= -2 + d0 and d1 < 2o1 <= 2 + d1 }
-  // Img_Img_comp_write0 stores range: { Img[i0, i1] : -1 <= i0 <= 16 and -1 <= i1 <= 16 }
-    // overlap with reads : { Img[i0, i1] : -1 <= i0 <= 14 and 0 < i1 <= 16 }
 	auto value_Img_Img_comp_write0 = Img.bank_Img_Img_comp_write0_to_upsample_stencil_rd2.peek(/* Needs general delay string */ ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 30 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (2) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (((1 + d0) - 2 * floord(2*d0, 4))) : ((-1 - d1) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && -1 + d1 >= 0 && 31 - d1 >= 0) ? ((17 - floord(2*d0, 4))) : 0);
 	return value_Img_Img_comp_write0;
 }
@@ -1895,8 +1889,6 @@ inline hw_uint<32>  upsample_stencil_rd2_select(Img_cache& Img, int d0, int d1) 
 inline hw_uint<32>  upsample_stencil_rd3_select(Img_cache& Img, int d0, int d1) {
 	// lexmax events: { upsample_stencil_comp[d0, d1] -> Img_comp[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 <= d0' <= 16 and -1 + d0 <= 2d0' <= d0 and -1 <= d1' <= 16 and -3 + d1 <= 2d1' <= -2 + d1 }
   // upsample_stencil_rd3 read pattern: { upsample_stencil_comp[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 + d0 <= 2o0 <= d0 and -3 + d1 <= 2o1 <= -2 + d1 }
-  // Img_Img_comp_write0 stores range: { Img[i0, i1] : -1 <= i0 <= 16 and -1 <= i1 <= 16 }
-    // overlap with reads : { Img[i0, i1] : 0 <= i0 <= 15 and -1 <= i1 <= 14 }
 	auto value_Img_Img_comp_write0 = Img.bank_Img_Img_comp_write0_to_upsample_stencil_rd3.peek(/* Needs general delay string */ ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 30 - d0 >= 0 && -2 + d1 >= 0 && 30 - d1 >= 0) ? (37) : ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 30 - d0 >= 0 && d1 >= 0 && 1 - d1 >= 0) ? (37) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && -2 + d1 >= 0 && 30 - d1 >= 0) ? (37) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 1 - d1 >= 0) ? (37) : ((-1 - d1) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && -2 + d1 >= 0 && 31 - d1 >= 0) ? ((52 - floord(d0, 2))) : ((-1 - d1) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 1 - d1 >= 0) ? ((52 - floord(d0, 2))) : 0);
 	return value_Img_Img_comp_write0;
 }
@@ -1904,8 +1896,6 @@ inline hw_uint<32>  upsample_stencil_rd3_select(Img_cache& Img, int d0, int d1) 
 inline hw_uint<32>  upsample_stencil_rd4_select(Img_cache& Img, int d0, int d1) {
 	// lexmax events: { upsample_stencil_comp[d0, d1] -> Img_comp[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 <= d0' <= 16 and -1 + d0 <= 2d0' <= d0 and -1 <= d1' <= 16 and -1 + d1 <= 2d1' <= d1 }
   // upsample_stencil_rd4 read pattern: { upsample_stencil_comp[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 + d0 <= 2o0 <= d0 and -1 + d1 <= 2o1 <= d1 }
-  // Img_Img_comp_write0 stores range: { Img[i0, i1] : -1 <= i0 <= 16 and -1 <= i1 <= 16 }
-    // overlap with reads : { Img[i0, i1] : 0 <= i0 <= 15 and 0 <= i1 <= 15 }
 	auto value_Img_Img_comp_write0 = Img.bank_Img_Img_comp_write0_to_upsample_stencil_rd4.peek(/* Needs general delay string */ ((-1 - d1) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && -1 + d1 >= 0 && 31 - d1 >= 0) ? ((34 - floord(d0, 2))) : ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 30 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (19) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (19) : 0);
 	return value_Img_Img_comp_write0;
 }
@@ -1913,8 +1903,6 @@ inline hw_uint<32>  upsample_stencil_rd4_select(Img_cache& Img, int d0, int d1) 
 inline hw_uint<32>  upsample_stencil_rd5_select(Img_cache& Img, int d0, int d1) {
 	// lexmax events: { upsample_stencil_comp[d0, d1] -> Img_comp[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 + d0 <= 2d0' <= d0 and d1 <= 2d1' <= 2 + d1 and (((d1) mod 2 = 0 and d1 <= 30 and 2d1' > d1) or ((1 + d1) mod 2 = 0 and 2d1' <= 1 + d1)) }
   // upsample_stencil_rd5 read pattern: { upsample_stencil_comp[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 + d0 <= 2o0 <= d0 and d1 < 2o1 <= 2 + d1 }
-  // Img_Img_comp_write0 stores range: { Img[i0, i1] : -1 <= i0 <= 16 and -1 <= i1 <= 16 }
-    // overlap with reads : { Img[i0, i1] : 0 <= i0 <= 15 and 0 < i1 <= 16 }
 	auto value_Img_Img_comp_write0 = Img.bank_Img_Img_comp_write0_to_upsample_stencil_rd5.peek(/* Needs general delay string */ ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && -1 + d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (1) : ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 30 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (1) : ((-1 - d1) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && -1 + d1 >= 0 && 31 - d1 >= 0) ? ((16 - floord(2*d0, 4))) : 0);
 	return value_Img_Img_comp_write0;
 }
@@ -1922,8 +1910,6 @@ inline hw_uint<32>  upsample_stencil_rd5_select(Img_cache& Img, int d0, int d1) 
 inline hw_uint<32>  upsample_stencil_rd6_select(Img_cache& Img, int d0, int d1) {
 	// lexmax events: { upsample_stencil_comp[d0, d1] -> Img_comp[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 <= d0' <= 16 and d0 < 2d0' <= 2 + d0 and -1 <= d1' <= 16 and -3 + d1 <= 2d1' <= -2 + d1 }
   // upsample_stencil_rd6 read pattern: { upsample_stencil_comp[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and d0 < 2o0 <= 2 + d0 and -3 + d1 <= 2o1 <= -2 + d1 }
-  // Img_Img_comp_write0 stores range: { Img[i0, i1] : -1 <= i0 <= 16 and -1 <= i1 <= 16 }
-    // overlap with reads : { Img[i0, i1] : 0 < i0 <= 16 and -1 <= i1 <= 14 }
 	auto value_Img_Img_comp_write0 = Img.bank_Img_Img_comp_write0_to_upsample_stencil_rd6.peek(/* Needs general delay string */ ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 29 - d0 >= 0 && -2 + d1 >= 0 && 30 - d1 >= 0) ? (36) : ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 29 - d0 >= 0 && d1 >= 0 && 1 - d1 >= 0) ? (36) : ((-d1) % 2 == 0 && -30 + d0 == 0 && d1 >= 0 && 30 - d1 >= 0) ? (((42 + d0))/2) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && d0 >= 0 && 29 - d0 >= 0 && -2 + d1 >= 0 && 30 - d1 >= 0) ? (36) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && d0 >= 0 && 29 - d0 >= 0 && d1 >= 0 && 1 - d1 >= 0) ? (36) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && -30 + d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (((20 + d0) - floord(2*d0, 4))) : ((-1 - d1) % 2 == 0 && d0 >= 0 && 29 - d0 >= 0 && -2 + d1 >= 0 && 31 - d1 >= 0) ? ((51 - floord(d0, 2))) : ((-1 - d1) % 2 == 0 && d0 >= 0 && 29 - d0 >= 0 && d1 >= 0 && 1 - d1 >= 0) ? ((51 - floord(d0, 2))) : ((-1 - d1) % 2 == 0 && -30 + d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 31 - d1 >= 0) ? (((18 + 18 * d1) - 36 * floord(d1, 2))) : 0);
 	return value_Img_Img_comp_write0;
 }
@@ -1931,8 +1917,6 @@ inline hw_uint<32>  upsample_stencil_rd6_select(Img_cache& Img, int d0, int d1) 
 inline hw_uint<32>  upsample_stencil_rd7_select(Img_cache& Img, int d0, int d1) {
 	// lexmax events: { upsample_stencil_comp[d0, d1] -> Img_comp[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 <= d0' <= 16 and d0 < 2d0' <= 2 + d0 and -1 <= d1' <= 16 and -1 + d1 <= 2d1' <= d1 }
   // upsample_stencil_rd7 read pattern: { upsample_stencil_comp[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and d0 < 2o0 <= 2 + d0 and -1 + d1 <= 2o1 <= d1 }
-  // Img_Img_comp_write0 stores range: { Img[i0, i1] : -1 <= i0 <= 16 and -1 <= i1 <= 16 }
-    // overlap with reads : { Img[i0, i1] : 0 < i0 <= 16 and 0 <= i1 <= 15 }
 	auto value_Img_Img_comp_write0 = Img.bank_Img_Img_comp_write0_to_upsample_stencil_rd7.peek(/* Needs general delay string */ ((-1 - d1) % 2 == 0 && d0 >= 0 && 29 - d0 >= 0 && -1 + d1 >= 0 && 31 - d1 >= 0) ? ((33 - floord(d0, 2))) : ((-1 - d1) % 2 == 0 && -30 + d0 >= 0 && 31 - d0 >= 0 && -1 + d1 >= 0 && 31 - d1 >= 0) ? (18) : ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 29 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (18) : ((-d1) % 2 == 0 && -30 + d0 == 0 && d1 >= 0 && 30 - d1 >= 0) ? (((6 + d0))/2) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && d0 >= 0 && 29 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (18) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && -30 + d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (((2 + d0) - floord(2*d0, 4))) : 0);
 	return value_Img_Img_comp_write0;
 }
@@ -1940,8 +1924,6 @@ inline hw_uint<32>  upsample_stencil_rd7_select(Img_cache& Img, int d0, int d1) 
 inline hw_uint<32>  upsample_stencil_rd8_select(Img_cache& Img, int d0, int d1) {
 	// lexmax events: { upsample_stencil_comp[d0, d1] -> Img_comp[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and d0 <= 2d0' <= 2 + d0 and d1 <= 2d1' <= 2 + d1 and (((d0) mod 2 = 0 and (d1) mod 2 = 0 and d0 <= 30 and d1 <= 30 and 2d0' > d0 and 2d1' > d1) or ((1 + d1) mod 2 = 0 and 2d0' > d0 and 2d1' <= 1 + d1) or ((1 + d0) mod 2 = 0 and (d1) mod 2 = 0 and d1 <= 30 and 2d0' <= 1 + d0 and 2d1' > d1)) }
   // upsample_stencil_rd8 read pattern: { upsample_stencil_comp[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and d0 < 2o0 <= 2 + d0 and d1 < 2o1 <= 2 + d1 }
-  // Img_Img_comp_write0 stores range: { Img[i0, i1] : -1 <= i0 <= 16 and -1 <= i1 <= 16 }
-    // overlap with reads : { Img[i0, i1] : 0 < i0 <= 16 and 0 < i1 <= 16 }
 	auto value_Img_Img_comp_write0 = Img.bank_Img_Img_comp_write0_to_upsample_stencil_rd8.peek(/* Needs general delay string */ ((-1 - d1) % 2 == 0 && d0 >= 0 && 29 - d0 >= 0 && -1 + d1 >= 0 && 31 - d1 >= 0) ? ((15 - floord(2*d0, 4))) : 0);
 	return value_Img_Img_comp_write0;
 }

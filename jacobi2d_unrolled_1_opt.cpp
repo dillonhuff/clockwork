@@ -278,8 +278,6 @@ inline void t1_t1_comp_write0_write(hw_uint<32> & t1_t1_comp_write0, t1_cache& t
 inline hw_uint<32>  jacobi2d_unrolled_1_rd0_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { jacobi2d_unrolled_1_comp[d0, d1] -> t1_comp[d0' = -1 + d0, d1' = d1] : 0 <= d0 <= 1023 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_1_rd0 read pattern: { jacobi2d_unrolled_1_comp[d0, d1] -> t1[-1 + d0, d1] : 0 <= d0 <= 1023 and 0 <= d1 <= 1023 }
-  // t1_t1_comp_write0 stores range: { t1[i0, i1] : -1 <= i0 <= 1024 and -1 <= i1 <= 1024 }
-    // overlap with reads : { t1[i0, i1] : -1 <= i0 <= 1022 and 0 <= i1 <= 1023 }
 	auto value_t1_t1_comp_write0 = t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd0.peek_1028();
 	return value_t1_t1_comp_write0;
 }
@@ -287,8 +285,6 @@ inline hw_uint<32>  jacobi2d_unrolled_1_rd0_select(t1_cache& t1, int d0, int d1)
 inline hw_uint<32>  jacobi2d_unrolled_1_rd1_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { jacobi2d_unrolled_1_comp[d0, d1] -> t1_comp[d0' = d0, d1' = -1 + d1] : 0 <= d0 <= 1023 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_1_rd1 read pattern: { jacobi2d_unrolled_1_comp[d0, d1] -> t1[d0, -1 + d1] : 0 <= d0 <= 1023 and 0 <= d1 <= 1023 }
-  // t1_t1_comp_write0 stores range: { t1[i0, i1] : -1 <= i0 <= 1024 and -1 <= i1 <= 1024 }
-    // overlap with reads : { t1[i0, i1] : 0 <= i0 <= 1023 and -1 <= i1 <= 1022 }
 	auto value_t1_t1_comp_write0 = t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd1.peek_2053();
 	return value_t1_t1_comp_write0;
 }
@@ -296,8 +292,6 @@ inline hw_uint<32>  jacobi2d_unrolled_1_rd1_select(t1_cache& t1, int d0, int d1)
 inline hw_uint<32>  jacobi2d_unrolled_1_rd2_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { jacobi2d_unrolled_1_comp[d0, d1] -> t1_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 1023 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_1_rd2 read pattern: { jacobi2d_unrolled_1_comp[d0, d1] -> t1[d0, d1] : 0 <= d0 <= 1023 and 0 <= d1 <= 1023 }
-  // t1_t1_comp_write0 stores range: { t1[i0, i1] : -1 <= i0 <= 1024 and -1 <= i1 <= 1024 }
-    // overlap with reads : { t1[i0, i1] : 0 <= i0 <= 1023 and 0 <= i1 <= 1023 }
 	auto value_t1_t1_comp_write0 = t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd2.peek_1027();
 	return value_t1_t1_comp_write0;
 }
@@ -305,8 +299,6 @@ inline hw_uint<32>  jacobi2d_unrolled_1_rd2_select(t1_cache& t1, int d0, int d1)
 inline hw_uint<32>  jacobi2d_unrolled_1_rd3_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { jacobi2d_unrolled_1_comp[d0, d1] -> t1_comp[d0' = d0, d1' = 1 + d1] : 0 <= d0 <= 1023 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_1_rd3 read pattern: { jacobi2d_unrolled_1_comp[d0, d1] -> t1[d0, 1 + d1] : 0 <= d0 <= 1023 and 0 <= d1 <= 1023 }
-  // t1_t1_comp_write0 stores range: { t1[i0, i1] : -1 <= i0 <= 1024 and -1 <= i1 <= 1024 }
-    // overlap with reads : { t1[i0, i1] : 0 <= i0 <= 1023 and 0 < i1 <= 1024 }
 	auto value_t1_t1_comp_write0 = t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd3.peek_1();
 	return value_t1_t1_comp_write0;
 }
@@ -314,8 +306,6 @@ inline hw_uint<32>  jacobi2d_unrolled_1_rd3_select(t1_cache& t1, int d0, int d1)
 inline hw_uint<32>  jacobi2d_unrolled_1_rd4_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { jacobi2d_unrolled_1_comp[d0, d1] -> t1_comp[d0' = 1 + d0, d1' = d1] : 0 <= d0 <= 1023 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_1_rd4 read pattern: { jacobi2d_unrolled_1_comp[d0, d1] -> t1[1 + d0, d1] : 0 <= d0 <= 1023 and 0 <= d1 <= 1023 }
-  // t1_t1_comp_write0 stores range: { t1[i0, i1] : -1 <= i0 <= 1024 and -1 <= i1 <= 1024 }
-    // overlap with reads : { t1[i0, i1] : 0 < i0 <= 1024 and 0 <= i1 <= 1023 }
 	auto value_t1_t1_comp_write0 = t1.bank_t1_t1_comp_write0_to_jacobi2d_unrolled_1_rd4.peek_1026();
 	return value_t1_t1_comp_write0;
 }

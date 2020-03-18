@@ -268,8 +268,6 @@ inline void I_I_id0_6_write(hw_uint<32> & I_I_id0_6, I_cache& I, int root, int i
 inline hw_uint<32>  I_out_jacobi2d_compute0_1_select(I_cache& I, int root, int d1, int d0) {
 	// lexmax events: { out_jacobi2d_compute0[root = 0, d1, d0] -> I_id0[root' = 0, id1 = 1 + d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 30 }
   // I_out_jacobi2d_compute0_1 read pattern: { out_jacobi2d_compute0[root = 0, d1, d0] -> I[d0, 1 + d1] : 0 < d1 <= 30 and 0 < d0 <= 30 }
-  // I_I_id0_6 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
-    // overlap with reads : { I[i0, i1] : 0 < i0 <= 30 and 2 <= i1 <= 31 }
 	auto value_I_I_id0_6 = I.bank_I_I_id0_6_to_I_out_jacobi2d_compute0_1.peek_0();
 	return value_I_I_id0_6;
 }
@@ -277,8 +275,6 @@ inline hw_uint<32>  I_out_jacobi2d_compute0_1_select(I_cache& I, int root, int d
 inline hw_uint<32>  I_out_jacobi2d_compute0_2_select(I_cache& I, int root, int d1, int d0) {
 	// lexmax events: { out_jacobi2d_compute0[root = 0, d1, d0] -> I_id0[root' = 0, id1 = d1, id0 = 1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 30 }
   // I_out_jacobi2d_compute0_2 read pattern: { out_jacobi2d_compute0[root = 0, d1, d0] -> I[1 + d0, d1] : 0 < d1 <= 30 and 0 < d0 <= 30 }
-  // I_I_id0_6 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
-    // overlap with reads : { I[i0, i1] : 2 <= i0 <= 31 and 0 < i1 <= 30 }
 	auto value_I_I_id0_6 = I.bank_I_I_id0_6_to_I_out_jacobi2d_compute0_2.peek_31();
 	return value_I_I_id0_6;
 }
@@ -286,8 +282,6 @@ inline hw_uint<32>  I_out_jacobi2d_compute0_2_select(I_cache& I, int root, int d
 inline hw_uint<32>  I_out_jacobi2d_compute0_3_select(I_cache& I, int root, int d1, int d0) {
 	// lexmax events: { out_jacobi2d_compute0[root = 0, d1, d0] -> I_id0[root' = 0, id1 = d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 30 }
   // I_out_jacobi2d_compute0_3 read pattern: { out_jacobi2d_compute0[root = 0, d1, d0] -> I[d0, d1] : 0 < d1 <= 30 and 0 < d0 <= 30 }
-  // I_I_id0_6 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
-    // overlap with reads : { I[i0, i1] : 0 < i0 <= 30 and 0 < i1 <= 30 }
 	auto value_I_I_id0_6 = I.bank_I_I_id0_6_to_I_out_jacobi2d_compute0_3.peek_32();
 	return value_I_I_id0_6;
 }
@@ -295,8 +289,6 @@ inline hw_uint<32>  I_out_jacobi2d_compute0_3_select(I_cache& I, int root, int d
 inline hw_uint<32>  I_out_jacobi2d_compute0_4_select(I_cache& I, int root, int d1, int d0) {
 	// lexmax events: { out_jacobi2d_compute0[root = 0, d1, d0] -> I_id0[root' = 0, id1 = -1 + d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 30 }
   // I_out_jacobi2d_compute0_4 read pattern: { out_jacobi2d_compute0[root = 0, d1, d0] -> I[d0, -1 + d1] : 0 < d1 <= 30 and 0 < d0 <= 30 }
-  // I_I_id0_6 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
-    // overlap with reads : { I[i0, i1] : 0 < i0 <= 30 and 0 <= i1 <= 29 }
 	auto value_I_I_id0_6 = I.bank_I_I_id0_6_to_I_out_jacobi2d_compute0_4.peek_64();
 	return value_I_I_id0_6;
 }
@@ -304,8 +296,6 @@ inline hw_uint<32>  I_out_jacobi2d_compute0_4_select(I_cache& I, int root, int d
 inline hw_uint<32>  I_out_jacobi2d_compute0_5_select(I_cache& I, int root, int d1, int d0) {
 	// lexmax events: { out_jacobi2d_compute0[root = 0, d1, d0] -> I_id0[root' = 0, id1 = d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 30 }
   // I_out_jacobi2d_compute0_5 read pattern: { out_jacobi2d_compute0[root = 0, d1, d0] -> I[-1 + d0, d1] : 0 < d1 <= 30 and 0 < d0 <= 30 }
-  // I_I_id0_6 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
-    // overlap with reads : { I[i0, i1] : 0 <= i0 <= 29 and 0 < i1 <= 30 }
 	auto value_I_I_id0_6 = I.bank_I_I_id0_6_to_I_out_jacobi2d_compute0_5.peek_33();
 	return value_I_I_id0_6;
 }

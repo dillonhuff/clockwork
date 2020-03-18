@@ -478,8 +478,6 @@ inline void in_in_comp_write0_write(hw_uint<32> & in_in_comp_write0, in_cache& i
 inline hw_uint<32>  level_0_rd0_select(in_cache& in, int d0, int d1) {
 	// lexmax events: { level_0_comp[d0, d1] -> in_comp[d0' = 2d0, d1' = 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
   // level_0_rd0 read pattern: { level_0_comp[d0, d1] -> in[2d0, 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
-  // in_in_comp_write0 stores range: { in[i0, i1] : 0 <= i0 <= 262 and 0 <= i1 <= 262 }
-    // overlap with reads : { in[i0, i1] : (i0) mod 2 = 0 and (i1) mod 2 = 0 and 0 <= i0 <= 260 and 0 <= i1 <= 260 }
 	auto value_in_in_comp_write0 = in.bank_in_in_comp_write0_to_level_0_rd0.peek_528();
 	return value_in_in_comp_write0;
 }
@@ -487,8 +485,6 @@ inline hw_uint<32>  level_0_rd0_select(in_cache& in, int d0, int d1) {
 inline hw_uint<32>  level_0_rd1_select(in_cache& in, int d0, int d1) {
 	// lexmax events: { level_0_comp[d0, d1] -> in_comp[d0' = 2d0, d1' = 1 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
   // level_0_rd1 read pattern: { level_0_comp[d0, d1] -> in[2d0, 1 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
-  // in_in_comp_write0 stores range: { in[i0, i1] : 0 <= i0 <= 262 and 0 <= i1 <= 262 }
-    // overlap with reads : { in[i0, i1] : (i0) mod 2 = 0 and (1 + i1) mod 2 = 0 and 0 <= i0 <= 260 and 0 < i1 <= 261 }
 	auto value_in_in_comp_write0 = in.bank_in_in_comp_write0_to_level_0_rd1.peek_265();
 	return value_in_in_comp_write0;
 }
@@ -496,8 +492,6 @@ inline hw_uint<32>  level_0_rd1_select(in_cache& in, int d0, int d1) {
 inline hw_uint<32>  level_0_rd2_select(in_cache& in, int d0, int d1) {
 	// lexmax events: { level_0_comp[d0, d1] -> in_comp[d0' = 2d0, d1' = 2 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
   // level_0_rd2 read pattern: { level_0_comp[d0, d1] -> in[2d0, 2 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
-  // in_in_comp_write0 stores range: { in[i0, i1] : 0 <= i0 <= 262 and 0 <= i1 <= 262 }
-    // overlap with reads : { in[i0, i1] : (i0) mod 2 = 0 and (i1) mod 2 = 0 and 0 <= i0 <= 260 and 2 <= i1 <= 262 }
 	auto value_in_in_comp_write0 = in.bank_in_in_comp_write0_to_level_0_rd2.peek_2();
 	return value_in_in_comp_write0;
 }
@@ -505,8 +499,6 @@ inline hw_uint<32>  level_0_rd2_select(in_cache& in, int d0, int d1) {
 inline hw_uint<32>  level_0_rd3_select(in_cache& in, int d0, int d1) {
 	// lexmax events: { level_0_comp[d0, d1] -> in_comp[d0' = 1 + 2d0, d1' = 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
   // level_0_rd3 read pattern: { level_0_comp[d0, d1] -> in[1 + 2d0, 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
-  // in_in_comp_write0 stores range: { in[i0, i1] : 0 <= i0 <= 262 and 0 <= i1 <= 262 }
-    // overlap with reads : { in[i0, i1] : (1 + i0) mod 2 = 0 and (i1) mod 2 = 0 and 0 < i0 <= 261 and 0 <= i1 <= 260 }
 	auto value_in_in_comp_write0 = in.bank_in_in_comp_write0_to_level_0_rd3.peek_527();
 	return value_in_in_comp_write0;
 }
@@ -514,8 +506,6 @@ inline hw_uint<32>  level_0_rd3_select(in_cache& in, int d0, int d1) {
 inline hw_uint<32>  level_0_rd4_select(in_cache& in, int d0, int d1) {
 	// lexmax events: { level_0_comp[d0, d1] -> in_comp[d0' = 1 + 2d0, d1' = 1 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
   // level_0_rd4 read pattern: { level_0_comp[d0, d1] -> in[1 + 2d0, 1 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
-  // in_in_comp_write0 stores range: { in[i0, i1] : 0 <= i0 <= 262 and 0 <= i1 <= 262 }
-    // overlap with reads : { in[i0, i1] : (1 + i0) mod 2 = 0 and (1 + i1) mod 2 = 0 and 0 < i0 <= 261 and 0 < i1 <= 261 }
 	auto value_in_in_comp_write0 = in.bank_in_in_comp_write0_to_level_0_rd4.peek_264();
 	return value_in_in_comp_write0;
 }
@@ -523,8 +513,6 @@ inline hw_uint<32>  level_0_rd4_select(in_cache& in, int d0, int d1) {
 inline hw_uint<32>  level_0_rd5_select(in_cache& in, int d0, int d1) {
 	// lexmax events: { level_0_comp[d0, d1] -> in_comp[d0' = 1 + 2d0, d1' = 2 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
   // level_0_rd5 read pattern: { level_0_comp[d0, d1] -> in[1 + 2d0, 2 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
-  // in_in_comp_write0 stores range: { in[i0, i1] : 0 <= i0 <= 262 and 0 <= i1 <= 262 }
-    // overlap with reads : { in[i0, i1] : (1 + i0) mod 2 = 0 and (i1) mod 2 = 0 and 0 < i0 <= 261 and 2 <= i1 <= 262 }
 	auto value_in_in_comp_write0 = in.bank_in_in_comp_write0_to_level_0_rd5.peek_1();
 	return value_in_in_comp_write0;
 }
@@ -532,8 +520,6 @@ inline hw_uint<32>  level_0_rd5_select(in_cache& in, int d0, int d1) {
 inline hw_uint<32>  level_0_rd6_select(in_cache& in, int d0, int d1) {
 	// lexmax events: { level_0_comp[d0, d1] -> in_comp[d0' = 2 + 2d0, d1' = 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
   // level_0_rd6 read pattern: { level_0_comp[d0, d1] -> in[2 + 2d0, 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
-  // in_in_comp_write0 stores range: { in[i0, i1] : 0 <= i0 <= 262 and 0 <= i1 <= 262 }
-    // overlap with reads : { in[i0, i1] : (i0) mod 2 = 0 and (i1) mod 2 = 0 and 2 <= i0 <= 262 and 0 <= i1 <= 260 }
 	auto value_in_in_comp_write0 = in.bank_in_in_comp_write0_to_level_0_rd6.peek_526();
 	return value_in_in_comp_write0;
 }
@@ -541,8 +527,6 @@ inline hw_uint<32>  level_0_rd6_select(in_cache& in, int d0, int d1) {
 inline hw_uint<32>  level_0_rd7_select(in_cache& in, int d0, int d1) {
 	// lexmax events: { level_0_comp[d0, d1] -> in_comp[d0' = 2 + 2d0, d1' = 1 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
   // level_0_rd7 read pattern: { level_0_comp[d0, d1] -> in[2 + 2d0, 1 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
-  // in_in_comp_write0 stores range: { in[i0, i1] : 0 <= i0 <= 262 and 0 <= i1 <= 262 }
-    // overlap with reads : { in[i0, i1] : (i0) mod 2 = 0 and (1 + i1) mod 2 = 0 and 2 <= i0 <= 262 and 0 < i1 <= 261 }
 	auto value_in_in_comp_write0 = in.bank_in_in_comp_write0_to_level_0_rd7.peek_263();
 	return value_in_in_comp_write0;
 }
@@ -550,8 +534,6 @@ inline hw_uint<32>  level_0_rd7_select(in_cache& in, int d0, int d1) {
 inline hw_uint<32>  level_0_rd8_select(in_cache& in, int d0, int d1) {
 	// lexmax events: { level_0_comp[d0, d1] -> in_comp[d0' = 2 + 2d0, d1' = 2 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
   // level_0_rd8 read pattern: { level_0_comp[d0, d1] -> in[2 + 2d0, 2 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
-  // in_in_comp_write0 stores range: { in[i0, i1] : 0 <= i0 <= 262 and 0 <= i1 <= 262 }
-    // overlap with reads : { in[i0, i1] : (i0) mod 2 = 0 and (i1) mod 2 = 0 and 2 <= i0 <= 262 and 2 <= i1 <= 262 }
 	auto value_in_in_comp_write0 = in.bank_in_in_comp_write0_to_level_0_rd8.peek_0();
 	return value_in_in_comp_write0;
 }
@@ -1077,8 +1059,6 @@ inline void level_0_level_0_comp_write0_write(hw_uint<32> & level_0_level_0_comp
 inline hw_uint<32>  level_1_rd0_select(level_0_cache& level_0, int d0, int d1) {
 	// lexmax events: { level_1_comp[d0, d1] -> level_0_comp[d0' = 2d0, d1' = 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
   // level_1_rd0 read pattern: { level_1_comp[d0, d1] -> level_0[2d0, 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
-  // level_0_level_0_comp_write0 stores range: { level_0[i0, i1] : 0 <= i0 <= 130 and 0 <= i1 <= 130 }
-    // overlap with reads : { level_0[i0, i1] : (i0) mod 2 = 0 and (i1) mod 2 = 0 and 0 <= i0 <= 128 and 0 <= i1 <= 128 }
 	auto value_level_0_level_0_comp_write0 = level_0.bank_level_0_level_0_comp_write0_to_level_1_rd0.peek_264();
 	return value_level_0_level_0_comp_write0;
 }
@@ -1086,8 +1066,6 @@ inline hw_uint<32>  level_1_rd0_select(level_0_cache& level_0, int d0, int d1) {
 inline hw_uint<32>  level_1_rd1_select(level_0_cache& level_0, int d0, int d1) {
 	// lexmax events: { level_1_comp[d0, d1] -> level_0_comp[d0' = 2d0, d1' = 1 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
   // level_1_rd1 read pattern: { level_1_comp[d0, d1] -> level_0[2d0, 1 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
-  // level_0_level_0_comp_write0 stores range: { level_0[i0, i1] : 0 <= i0 <= 130 and 0 <= i1 <= 130 }
-    // overlap with reads : { level_0[i0, i1] : (i0) mod 2 = 0 and (1 + i1) mod 2 = 0 and 0 <= i0 <= 128 and 0 < i1 <= 129 }
 	auto value_level_0_level_0_comp_write0 = level_0.bank_level_0_level_0_comp_write0_to_level_1_rd1.peek_133();
 	return value_level_0_level_0_comp_write0;
 }
@@ -1095,8 +1073,6 @@ inline hw_uint<32>  level_1_rd1_select(level_0_cache& level_0, int d0, int d1) {
 inline hw_uint<32>  level_1_rd2_select(level_0_cache& level_0, int d0, int d1) {
 	// lexmax events: { level_1_comp[d0, d1] -> level_0_comp[d0' = 2d0, d1' = 2 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
   // level_1_rd2 read pattern: { level_1_comp[d0, d1] -> level_0[2d0, 2 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
-  // level_0_level_0_comp_write0 stores range: { level_0[i0, i1] : 0 <= i0 <= 130 and 0 <= i1 <= 130 }
-    // overlap with reads : { level_0[i0, i1] : (i0) mod 2 = 0 and (i1) mod 2 = 0 and 0 <= i0 <= 128 and 2 <= i1 <= 130 }
 	auto value_level_0_level_0_comp_write0 = level_0.bank_level_0_level_0_comp_write0_to_level_1_rd2.peek_2();
 	return value_level_0_level_0_comp_write0;
 }
@@ -1104,8 +1080,6 @@ inline hw_uint<32>  level_1_rd2_select(level_0_cache& level_0, int d0, int d1) {
 inline hw_uint<32>  level_1_rd3_select(level_0_cache& level_0, int d0, int d1) {
 	// lexmax events: { level_1_comp[d0, d1] -> level_0_comp[d0' = 1 + 2d0, d1' = 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
   // level_1_rd3 read pattern: { level_1_comp[d0, d1] -> level_0[1 + 2d0, 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
-  // level_0_level_0_comp_write0 stores range: { level_0[i0, i1] : 0 <= i0 <= 130 and 0 <= i1 <= 130 }
-    // overlap with reads : { level_0[i0, i1] : (1 + i0) mod 2 = 0 and (i1) mod 2 = 0 and 0 < i0 <= 129 and 0 <= i1 <= 128 }
 	auto value_level_0_level_0_comp_write0 = level_0.bank_level_0_level_0_comp_write0_to_level_1_rd3.peek_263();
 	return value_level_0_level_0_comp_write0;
 }
@@ -1113,8 +1087,6 @@ inline hw_uint<32>  level_1_rd3_select(level_0_cache& level_0, int d0, int d1) {
 inline hw_uint<32>  level_1_rd4_select(level_0_cache& level_0, int d0, int d1) {
 	// lexmax events: { level_1_comp[d0, d1] -> level_0_comp[d0' = 1 + 2d0, d1' = 1 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
   // level_1_rd4 read pattern: { level_1_comp[d0, d1] -> level_0[1 + 2d0, 1 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
-  // level_0_level_0_comp_write0 stores range: { level_0[i0, i1] : 0 <= i0 <= 130 and 0 <= i1 <= 130 }
-    // overlap with reads : { level_0[i0, i1] : (1 + i0) mod 2 = 0 and (1 + i1) mod 2 = 0 and 0 < i0 <= 129 and 0 < i1 <= 129 }
 	auto value_level_0_level_0_comp_write0 = level_0.bank_level_0_level_0_comp_write0_to_level_1_rd4.peek_132();
 	return value_level_0_level_0_comp_write0;
 }
@@ -1122,8 +1094,6 @@ inline hw_uint<32>  level_1_rd4_select(level_0_cache& level_0, int d0, int d1) {
 inline hw_uint<32>  level_1_rd5_select(level_0_cache& level_0, int d0, int d1) {
 	// lexmax events: { level_1_comp[d0, d1] -> level_0_comp[d0' = 1 + 2d0, d1' = 2 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
   // level_1_rd5 read pattern: { level_1_comp[d0, d1] -> level_0[1 + 2d0, 2 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
-  // level_0_level_0_comp_write0 stores range: { level_0[i0, i1] : 0 <= i0 <= 130 and 0 <= i1 <= 130 }
-    // overlap with reads : { level_0[i0, i1] : (1 + i0) mod 2 = 0 and (i1) mod 2 = 0 and 0 < i0 <= 129 and 2 <= i1 <= 130 }
 	auto value_level_0_level_0_comp_write0 = level_0.bank_level_0_level_0_comp_write0_to_level_1_rd5.peek_1();
 	return value_level_0_level_0_comp_write0;
 }
@@ -1131,8 +1101,6 @@ inline hw_uint<32>  level_1_rd5_select(level_0_cache& level_0, int d0, int d1) {
 inline hw_uint<32>  level_1_rd6_select(level_0_cache& level_0, int d0, int d1) {
 	// lexmax events: { level_1_comp[d0, d1] -> level_0_comp[d0' = 2 + 2d0, d1' = 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
   // level_1_rd6 read pattern: { level_1_comp[d0, d1] -> level_0[2 + 2d0, 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
-  // level_0_level_0_comp_write0 stores range: { level_0[i0, i1] : 0 <= i0 <= 130 and 0 <= i1 <= 130 }
-    // overlap with reads : { level_0[i0, i1] : (i0) mod 2 = 0 and (i1) mod 2 = 0 and 2 <= i0 <= 130 and 0 <= i1 <= 128 }
 	auto value_level_0_level_0_comp_write0 = level_0.bank_level_0_level_0_comp_write0_to_level_1_rd6.peek_262();
 	return value_level_0_level_0_comp_write0;
 }
@@ -1140,8 +1108,6 @@ inline hw_uint<32>  level_1_rd6_select(level_0_cache& level_0, int d0, int d1) {
 inline hw_uint<32>  level_1_rd7_select(level_0_cache& level_0, int d0, int d1) {
 	// lexmax events: { level_1_comp[d0, d1] -> level_0_comp[d0' = 2 + 2d0, d1' = 1 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
   // level_1_rd7 read pattern: { level_1_comp[d0, d1] -> level_0[2 + 2d0, 1 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
-  // level_0_level_0_comp_write0 stores range: { level_0[i0, i1] : 0 <= i0 <= 130 and 0 <= i1 <= 130 }
-    // overlap with reads : { level_0[i0, i1] : (i0) mod 2 = 0 and (1 + i1) mod 2 = 0 and 2 <= i0 <= 130 and 0 < i1 <= 129 }
 	auto value_level_0_level_0_comp_write0 = level_0.bank_level_0_level_0_comp_write0_to_level_1_rd7.peek_131();
 	return value_level_0_level_0_comp_write0;
 }
@@ -1149,8 +1115,6 @@ inline hw_uint<32>  level_1_rd7_select(level_0_cache& level_0, int d0, int d1) {
 inline hw_uint<32>  level_1_rd8_select(level_0_cache& level_0, int d0, int d1) {
 	// lexmax events: { level_1_comp[d0, d1] -> level_0_comp[d0' = 2 + 2d0, d1' = 2 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
   // level_1_rd8 read pattern: { level_1_comp[d0, d1] -> level_0[2 + 2d0, 2 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
-  // level_0_level_0_comp_write0 stores range: { level_0[i0, i1] : 0 <= i0 <= 130 and 0 <= i1 <= 130 }
-    // overlap with reads : { level_0[i0, i1] : (i0) mod 2 = 0 and (i1) mod 2 = 0 and 2 <= i0 <= 130 and 2 <= i1 <= 130 }
 	auto value_level_0_level_0_comp_write0 = level_0.bank_level_0_level_0_comp_write0_to_level_1_rd8.peek_0();
 	return value_level_0_level_0_comp_write0;
 }
@@ -1676,8 +1640,6 @@ inline void level_1_level_1_comp_write0_write(hw_uint<32> & level_1_level_1_comp
 inline hw_uint<32>  level_2_rd0_select(level_1_cache& level_1, int d0, int d1) {
 	// lexmax events: { level_2_comp[d0, d1] -> level_1_comp[d0' = 2d0, d1' = 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // level_2_rd0 read pattern: { level_2_comp[d0, d1] -> level_1[2d0, 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // level_1_level_1_comp_write0 stores range: { level_1[i0, i1] : 0 <= i0 <= 64 and 0 <= i1 <= 64 }
-    // overlap with reads : { level_1[i0, i1] : (i0) mod 2 = 0 and (i1) mod 2 = 0 and 0 <= i0 <= 62 and 0 <= i1 <= 62 }
 	auto value_level_1_level_1_comp_write0 = level_1.bank_level_1_level_1_comp_write0_to_level_2_rd0.peek_132();
 	return value_level_1_level_1_comp_write0;
 }
@@ -1685,8 +1647,6 @@ inline hw_uint<32>  level_2_rd0_select(level_1_cache& level_1, int d0, int d1) {
 inline hw_uint<32>  level_2_rd1_select(level_1_cache& level_1, int d0, int d1) {
 	// lexmax events: { level_2_comp[d0, d1] -> level_1_comp[d0' = 2d0, d1' = 1 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // level_2_rd1 read pattern: { level_2_comp[d0, d1] -> level_1[2d0, 1 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // level_1_level_1_comp_write0 stores range: { level_1[i0, i1] : 0 <= i0 <= 64 and 0 <= i1 <= 64 }
-    // overlap with reads : { level_1[i0, i1] : (i0) mod 2 = 0 and (1 + i1) mod 2 = 0 and 0 <= i0 <= 62 and 0 < i1 <= 63 }
 	auto value_level_1_level_1_comp_write0 = level_1.bank_level_1_level_1_comp_write0_to_level_2_rd1.peek_67();
 	return value_level_1_level_1_comp_write0;
 }
@@ -1694,8 +1654,6 @@ inline hw_uint<32>  level_2_rd1_select(level_1_cache& level_1, int d0, int d1) {
 inline hw_uint<32>  level_2_rd2_select(level_1_cache& level_1, int d0, int d1) {
 	// lexmax events: { level_2_comp[d0, d1] -> level_1_comp[d0' = 2d0, d1' = 2 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // level_2_rd2 read pattern: { level_2_comp[d0, d1] -> level_1[2d0, 2 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // level_1_level_1_comp_write0 stores range: { level_1[i0, i1] : 0 <= i0 <= 64 and 0 <= i1 <= 64 }
-    // overlap with reads : { level_1[i0, i1] : (i0) mod 2 = 0 and (i1) mod 2 = 0 and 0 <= i0 <= 62 and 2 <= i1 <= 64 }
 	auto value_level_1_level_1_comp_write0 = level_1.bank_level_1_level_1_comp_write0_to_level_2_rd2.peek_2();
 	return value_level_1_level_1_comp_write0;
 }
@@ -1703,8 +1661,6 @@ inline hw_uint<32>  level_2_rd2_select(level_1_cache& level_1, int d0, int d1) {
 inline hw_uint<32>  level_2_rd3_select(level_1_cache& level_1, int d0, int d1) {
 	// lexmax events: { level_2_comp[d0, d1] -> level_1_comp[d0' = 1 + 2d0, d1' = 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // level_2_rd3 read pattern: { level_2_comp[d0, d1] -> level_1[1 + 2d0, 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // level_1_level_1_comp_write0 stores range: { level_1[i0, i1] : 0 <= i0 <= 64 and 0 <= i1 <= 64 }
-    // overlap with reads : { level_1[i0, i1] : (1 + i0) mod 2 = 0 and (i1) mod 2 = 0 and 0 < i0 <= 63 and 0 <= i1 <= 62 }
 	auto value_level_1_level_1_comp_write0 = level_1.bank_level_1_level_1_comp_write0_to_level_2_rd3.peek_131();
 	return value_level_1_level_1_comp_write0;
 }
@@ -1712,8 +1668,6 @@ inline hw_uint<32>  level_2_rd3_select(level_1_cache& level_1, int d0, int d1) {
 inline hw_uint<32>  level_2_rd4_select(level_1_cache& level_1, int d0, int d1) {
 	// lexmax events: { level_2_comp[d0, d1] -> level_1_comp[d0' = 1 + 2d0, d1' = 1 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // level_2_rd4 read pattern: { level_2_comp[d0, d1] -> level_1[1 + 2d0, 1 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // level_1_level_1_comp_write0 stores range: { level_1[i0, i1] : 0 <= i0 <= 64 and 0 <= i1 <= 64 }
-    // overlap with reads : { level_1[i0, i1] : (1 + i0) mod 2 = 0 and (1 + i1) mod 2 = 0 and 0 < i0 <= 63 and 0 < i1 <= 63 }
 	auto value_level_1_level_1_comp_write0 = level_1.bank_level_1_level_1_comp_write0_to_level_2_rd4.peek_66();
 	return value_level_1_level_1_comp_write0;
 }
@@ -1721,8 +1675,6 @@ inline hw_uint<32>  level_2_rd4_select(level_1_cache& level_1, int d0, int d1) {
 inline hw_uint<32>  level_2_rd5_select(level_1_cache& level_1, int d0, int d1) {
 	// lexmax events: { level_2_comp[d0, d1] -> level_1_comp[d0' = 1 + 2d0, d1' = 2 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // level_2_rd5 read pattern: { level_2_comp[d0, d1] -> level_1[1 + 2d0, 2 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // level_1_level_1_comp_write0 stores range: { level_1[i0, i1] : 0 <= i0 <= 64 and 0 <= i1 <= 64 }
-    // overlap with reads : { level_1[i0, i1] : (1 + i0) mod 2 = 0 and (i1) mod 2 = 0 and 0 < i0 <= 63 and 2 <= i1 <= 64 }
 	auto value_level_1_level_1_comp_write0 = level_1.bank_level_1_level_1_comp_write0_to_level_2_rd5.peek_1();
 	return value_level_1_level_1_comp_write0;
 }
@@ -1730,8 +1682,6 @@ inline hw_uint<32>  level_2_rd5_select(level_1_cache& level_1, int d0, int d1) {
 inline hw_uint<32>  level_2_rd6_select(level_1_cache& level_1, int d0, int d1) {
 	// lexmax events: { level_2_comp[d0, d1] -> level_1_comp[d0' = 2 + 2d0, d1' = 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // level_2_rd6 read pattern: { level_2_comp[d0, d1] -> level_1[2 + 2d0, 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // level_1_level_1_comp_write0 stores range: { level_1[i0, i1] : 0 <= i0 <= 64 and 0 <= i1 <= 64 }
-    // overlap with reads : { level_1[i0, i1] : (i0) mod 2 = 0 and (i1) mod 2 = 0 and 2 <= i0 <= 64 and 0 <= i1 <= 62 }
 	auto value_level_1_level_1_comp_write0 = level_1.bank_level_1_level_1_comp_write0_to_level_2_rd6.peek_130();
 	return value_level_1_level_1_comp_write0;
 }
@@ -1739,8 +1689,6 @@ inline hw_uint<32>  level_2_rd6_select(level_1_cache& level_1, int d0, int d1) {
 inline hw_uint<32>  level_2_rd7_select(level_1_cache& level_1, int d0, int d1) {
 	// lexmax events: { level_2_comp[d0, d1] -> level_1_comp[d0' = 2 + 2d0, d1' = 1 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // level_2_rd7 read pattern: { level_2_comp[d0, d1] -> level_1[2 + 2d0, 1 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // level_1_level_1_comp_write0 stores range: { level_1[i0, i1] : 0 <= i0 <= 64 and 0 <= i1 <= 64 }
-    // overlap with reads : { level_1[i0, i1] : (i0) mod 2 = 0 and (1 + i1) mod 2 = 0 and 2 <= i0 <= 64 and 0 < i1 <= 63 }
 	auto value_level_1_level_1_comp_write0 = level_1.bank_level_1_level_1_comp_write0_to_level_2_rd7.peek_65();
 	return value_level_1_level_1_comp_write0;
 }
@@ -1748,8 +1696,6 @@ inline hw_uint<32>  level_2_rd7_select(level_1_cache& level_1, int d0, int d1) {
 inline hw_uint<32>  level_2_rd8_select(level_1_cache& level_1, int d0, int d1) {
 	// lexmax events: { level_2_comp[d0, d1] -> level_1_comp[d0' = 2 + 2d0, d1' = 2 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // level_2_rd8 read pattern: { level_2_comp[d0, d1] -> level_1[2 + 2d0, 2 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // level_1_level_1_comp_write0 stores range: { level_1[i0, i1] : 0 <= i0 <= 64 and 0 <= i1 <= 64 }
-    // overlap with reads : { level_1[i0, i1] : (i0) mod 2 = 0 and (i1) mod 2 = 0 and 2 <= i0 <= 64 and 2 <= i1 <= 64 }
 	auto value_level_1_level_1_comp_write0 = level_1.bank_level_1_level_1_comp_write0_to_level_2_rd8.peek_0();
 	return value_level_1_level_1_comp_write0;
 }
@@ -1800,14 +1746,6 @@ inline hw_uint<288> level_1_level_2_comp_read_bundle_read(level_1_cache& level_1
 
 
 // Operation logic
-inline void level_0_comp(in_cache& in, level_0_cache& level_0, int d0, int d1) {
-	// Consume: in
-	auto in_0_c__0_value = in_level_0_comp_read_bundle_read(in/* source_delay */, d0, d1);
-	auto compute_result = reduce_gauss(in_0_c__0_value);
-	// Produce: level_0
-	level_0_level_0_comp_write_bundle_write(compute_result, level_0, d0, d1);
-}
-
 inline void in_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in_off_chip, in_cache& in, int d0, int d1) {
 	// Consume: in_off_chip
 	auto in_off_chip_0_c__0_value = in_off_chip.read();
@@ -1816,12 +1754,12 @@ inline void in_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in_of
 	in_in_comp_write_bundle_write(compute_result, in, d0, d1);
 }
 
-inline void level_1_comp(level_0_cache& level_0, level_1_cache& level_1, int d0, int d1) {
-	// Consume: level_0
-	auto level_0_0_c__0_value = level_0_level_1_comp_read_bundle_read(level_0/* source_delay */, d0, d1);
-	auto compute_result = reduce_gauss(level_0_0_c__0_value);
-	// Produce: level_1
-	level_1_level_1_comp_write_bundle_write(compute_result, level_1, d0, d1);
+inline void level_0_comp(in_cache& in, level_0_cache& level_0, int d0, int d1) {
+	// Consume: in
+	auto in_0_c__0_value = in_level_0_comp_read_bundle_read(in/* source_delay */, d0, d1);
+	auto compute_result = reduce_gauss(in_0_c__0_value);
+	// Produce: level_0
+	level_0_level_0_comp_write_bundle_write(compute_result, level_0, d0, d1);
 }
 
 inline void level_2_comp(level_1_cache& level_1, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */level_2, int d0, int d1) {
@@ -1830,6 +1768,14 @@ inline void level_2_comp(level_1_cache& level_1, HWStream<hw_uint<32> >& /* buff
 	auto compute_result = reduce_gauss(level_1_0_c__0_value);
 	// Produce: level_2
 	level_2.write(compute_result);
+}
+
+inline void level_1_comp(level_0_cache& level_0, level_1_cache& level_1, int d0, int d1) {
+	// Consume: level_0
+	auto level_0_0_c__0_value = level_0_level_1_comp_read_bundle_read(level_0/* source_delay */, d0, d1);
+	auto compute_result = reduce_gauss(level_0_0_c__0_value);
+	// Produce: level_1
+	level_1_level_1_comp_write_bundle_write(compute_result, level_1, d0, d1);
 }
 
 // Driver function

@@ -478,8 +478,6 @@ inline void I_store_I_from_in_14_write(hw_uint<32> & I_store_I_from_in_14, I_cac
 inline hw_uint<32>  I_I_blr_conv_3_30_17_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = I_blr_r, pc = I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // I_I_blr_conv_3_30_17 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  // I_store_I_from_in_14 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
-    // overlap with reads : { I[i0, i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
 	auto value_I_store_I_from_in_14 = I.bank_I_store_I_from_in_14_to_I_I_blr_conv_3_30_17.peek_66();
 	return value_I_store_I_from_in_14;
 }
@@ -487,8 +485,6 @@ inline hw_uint<32>  I_I_blr_conv_3_30_17_select(I_cache& I, int root, int I_blr_
 inline hw_uint<32>  I_I_blr_conv_3_30_18_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = I_blr_r, pc = 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // I_I_blr_conv_3_30_18 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[I_blr_r, 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  // I_store_I_from_in_14 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
-    // overlap with reads : { I[i0, i1] : 0 <= i0 <= 29 and 0 < i1 <= 30 }
 	auto value_I_store_I_from_in_14 = I.bank_I_store_I_from_in_14_to_I_I_blr_conv_3_30_18.peek_65();
 	return value_I_store_I_from_in_14;
 }
@@ -496,8 +492,6 @@ inline hw_uint<32>  I_I_blr_conv_3_30_18_select(I_cache& I, int root, int I_blr_
 inline hw_uint<32>  I_I_blr_conv_3_30_19_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = I_blr_r, pc = 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // I_I_blr_conv_3_30_19 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[I_blr_r, 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  // I_store_I_from_in_14 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
-    // overlap with reads : { I[i0, i1] : 0 <= i0 <= 29 and 2 <= i1 <= 31 }
 	auto value_I_store_I_from_in_14 = I.bank_I_store_I_from_in_14_to_I_I_blr_conv_3_30_19.peek_64();
 	return value_I_store_I_from_in_14;
 }
@@ -505,8 +499,6 @@ inline hw_uint<32>  I_I_blr_conv_3_30_19_select(I_cache& I, int root, int I_blr_
 inline hw_uint<32>  I_I_blr_conv_3_30_20_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = 1 + I_blr_r, pc = I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // I_I_blr_conv_3_30_20 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[1 + I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  // I_store_I_from_in_14 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
-    // overlap with reads : { I[i0, i1] : 0 < i0 <= 30 and 0 <= i1 <= 29 }
 	auto value_I_store_I_from_in_14 = I.bank_I_store_I_from_in_14_to_I_I_blr_conv_3_30_20.peek_34();
 	return value_I_store_I_from_in_14;
 }
@@ -514,8 +506,6 @@ inline hw_uint<32>  I_I_blr_conv_3_30_20_select(I_cache& I, int root, int I_blr_
 inline hw_uint<32>  I_I_blr_conv_3_30_21_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = 1 + I_blr_r, pc = 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // I_I_blr_conv_3_30_21 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[1 + I_blr_r, 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  // I_store_I_from_in_14 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
-    // overlap with reads : { I[i0, i1] : 0 < i0 <= 30 and 0 < i1 <= 30 }
 	auto value_I_store_I_from_in_14 = I.bank_I_store_I_from_in_14_to_I_I_blr_conv_3_30_21.peek_33();
 	return value_I_store_I_from_in_14;
 }
@@ -523,8 +513,6 @@ inline hw_uint<32>  I_I_blr_conv_3_30_21_select(I_cache& I, int root, int I_blr_
 inline hw_uint<32>  I_I_blr_conv_3_30_22_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = 1 + I_blr_r, pc = 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // I_I_blr_conv_3_30_22 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[1 + I_blr_r, 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  // I_store_I_from_in_14 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
-    // overlap with reads : { I[i0, i1] : 0 < i0 <= 30 and 2 <= i1 <= 31 }
 	auto value_I_store_I_from_in_14 = I.bank_I_store_I_from_in_14_to_I_I_blr_conv_3_30_22.peek_32();
 	return value_I_store_I_from_in_14;
 }
@@ -532,8 +520,6 @@ inline hw_uint<32>  I_I_blr_conv_3_30_22_select(I_cache& I, int root, int I_blr_
 inline hw_uint<32>  I_I_blr_conv_3_30_23_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = 2 + I_blr_r, pc = I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // I_I_blr_conv_3_30_23 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[2 + I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  // I_store_I_from_in_14 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
-    // overlap with reads : { I[i0, i1] : 2 <= i0 <= 31 and 0 <= i1 <= 29 }
 	auto value_I_store_I_from_in_14 = I.bank_I_store_I_from_in_14_to_I_I_blr_conv_3_30_23.peek_2();
 	return value_I_store_I_from_in_14;
 }
@@ -541,8 +527,6 @@ inline hw_uint<32>  I_I_blr_conv_3_30_23_select(I_cache& I, int root, int I_blr_
 inline hw_uint<32>  I_I_blr_conv_3_30_24_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = 2 + I_blr_r, pc = 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // I_I_blr_conv_3_30_24 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[2 + I_blr_r, 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  // I_store_I_from_in_14 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
-    // overlap with reads : { I[i0, i1] : 2 <= i0 <= 31 and 0 < i1 <= 30 }
 	auto value_I_store_I_from_in_14 = I.bank_I_store_I_from_in_14_to_I_I_blr_conv_3_30_24.peek_1();
 	return value_I_store_I_from_in_14;
 }
@@ -550,8 +534,6 @@ inline hw_uint<32>  I_I_blr_conv_3_30_24_select(I_cache& I, int root, int I_blr_
 inline hw_uint<32>  I_I_blr_conv_3_30_25_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = 2 + I_blr_r, pc = 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // I_I_blr_conv_3_30_25 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[2 + I_blr_r, 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  // I_store_I_from_in_14 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 31 }
-    // overlap with reads : { I[i0, i1] : 2 <= i0 <= 31 and 2 <= i1 <= 31 }
 	auto value_I_store_I_from_in_14 = I.bank_I_store_I_from_in_14_to_I_I_blr_conv_3_30_25.peek_0();
 	return value_I_store_I_from_in_14;
 }
@@ -647,8 +629,6 @@ inline void I_blr_I_blr_conv_3_30_16_write(hw_uint<32> & I_blr_I_blr_conv_3_30_1
 inline hw_uint<32>  I_blr_I_blr_ds_id0_13_select(I_blr_cache& I_blr, int root, int I_blr_ds_r, int I_blr_ds_c) {
 	// lexmax events: { I_blr_ds_id0[root = 0, I_blr_ds_r, I_blr_ds_c] -> I_blr_conv_3_30[root' = 0, I_blr_r = 2I_blr_ds_r, I_blr_c = 2I_blr_ds_c] : 0 <= I_blr_ds_r <= 14 and 0 <= I_blr_ds_c <= 14 }
   // I_blr_I_blr_ds_id0_13 read pattern: { I_blr_ds_id0[root = 0, I_blr_ds_r, I_blr_ds_c] -> I_blr[2I_blr_ds_r, 2I_blr_ds_c] : 0 <= I_blr_ds_r <= 14 and 0 <= I_blr_ds_c <= 14 }
-  // I_blr_I_blr_conv_3_30_16 stores range: { I_blr[i0, i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
-    // overlap with reads : { I_blr[i0, i1] : (i0) mod 2 = 0 and (i1) mod 2 = 0 and 0 <= i0 <= 28 and 0 <= i1 <= 28 }
 	auto value_I_blr_I_blr_conv_3_30_16 = I_blr.bank_I_blr_I_blr_conv_3_30_16_to_I_blr_I_blr_ds_id0_13.peek_0();
 	return value_I_blr_I_blr_conv_3_30_16;
 }
@@ -1150,8 +1130,6 @@ inline void I_blr_ds_I_blr_ds_id0_12_write(hw_uint<32> & I_blr_ds_I_blr_ds_id0_1
 inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_1_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = I_blr_ds_blr_r, I_blr_ds_c = I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // I_blr_ds_I_blr_ds_blr_conv_3_30_1 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-  // I_blr_ds_I_blr_ds_id0_12 stores range: { I_blr_ds[i0, i1] : 0 <= i0 <= 14 and 0 <= i1 <= 14 }
-    // overlap with reads : { I_blr_ds[i0, i1] : 0 <= i0 <= 12 and 0 <= i1 <= 12 }
 	auto value_I_blr_ds_I_blr_ds_id0_12 = I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_12_to_I_blr_ds_I_blr_ds_blr_conv_3_30_1.peek_32();
 	return value_I_blr_ds_I_blr_ds_id0_12;
 }
@@ -1159,8 +1137,6 @@ inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_1_select(I_blr_ds_cache& I_b
 inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_2_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = I_blr_ds_blr_r, I_blr_ds_c = 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // I_blr_ds_I_blr_ds_blr_conv_3_30_2 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[I_blr_ds_blr_r, 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-  // I_blr_ds_I_blr_ds_id0_12 stores range: { I_blr_ds[i0, i1] : 0 <= i0 <= 14 and 0 <= i1 <= 14 }
-    // overlap with reads : { I_blr_ds[i0, i1] : 0 <= i0 <= 12 and 0 < i1 <= 13 }
 	auto value_I_blr_ds_I_blr_ds_id0_12 = I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_12_to_I_blr_ds_I_blr_ds_blr_conv_3_30_2.peek_31();
 	return value_I_blr_ds_I_blr_ds_id0_12;
 }
@@ -1168,8 +1144,6 @@ inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_2_select(I_blr_ds_cache& I_b
 inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_3_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = I_blr_ds_blr_r, I_blr_ds_c = 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // I_blr_ds_I_blr_ds_blr_conv_3_30_3 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[I_blr_ds_blr_r, 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-  // I_blr_ds_I_blr_ds_id0_12 stores range: { I_blr_ds[i0, i1] : 0 <= i0 <= 14 and 0 <= i1 <= 14 }
-    // overlap with reads : { I_blr_ds[i0, i1] : 0 <= i0 <= 12 and 2 <= i1 <= 14 }
 	auto value_I_blr_ds_I_blr_ds_id0_12 = I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_12_to_I_blr_ds_I_blr_ds_blr_conv_3_30_3.peek_30();
 	return value_I_blr_ds_I_blr_ds_id0_12;
 }
@@ -1177,8 +1151,6 @@ inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_3_select(I_blr_ds_cache& I_b
 inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_4_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = 1 + I_blr_ds_blr_r, I_blr_ds_c = I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // I_blr_ds_I_blr_ds_blr_conv_3_30_4 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[1 + I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-  // I_blr_ds_I_blr_ds_id0_12 stores range: { I_blr_ds[i0, i1] : 0 <= i0 <= 14 and 0 <= i1 <= 14 }
-    // overlap with reads : { I_blr_ds[i0, i1] : 0 < i0 <= 13 and 0 <= i1 <= 12 }
 	auto value_I_blr_ds_I_blr_ds_id0_12 = I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_12_to_I_blr_ds_I_blr_ds_blr_conv_3_30_4.peek_17();
 	return value_I_blr_ds_I_blr_ds_id0_12;
 }
@@ -1186,8 +1158,6 @@ inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_4_select(I_blr_ds_cache& I_b
 inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_5_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = 1 + I_blr_ds_blr_r, I_blr_ds_c = 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // I_blr_ds_I_blr_ds_blr_conv_3_30_5 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[1 + I_blr_ds_blr_r, 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-  // I_blr_ds_I_blr_ds_id0_12 stores range: { I_blr_ds[i0, i1] : 0 <= i0 <= 14 and 0 <= i1 <= 14 }
-    // overlap with reads : { I_blr_ds[i0, i1] : 0 < i0 <= 13 and 0 < i1 <= 13 }
 	auto value_I_blr_ds_I_blr_ds_id0_12 = I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_12_to_I_blr_ds_I_blr_ds_blr_conv_3_30_5.peek_16();
 	return value_I_blr_ds_I_blr_ds_id0_12;
 }
@@ -1195,8 +1165,6 @@ inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_5_select(I_blr_ds_cache& I_b
 inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_6_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = 1 + I_blr_ds_blr_r, I_blr_ds_c = 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // I_blr_ds_I_blr_ds_blr_conv_3_30_6 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[1 + I_blr_ds_blr_r, 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-  // I_blr_ds_I_blr_ds_id0_12 stores range: { I_blr_ds[i0, i1] : 0 <= i0 <= 14 and 0 <= i1 <= 14 }
-    // overlap with reads : { I_blr_ds[i0, i1] : 0 < i0 <= 13 and 2 <= i1 <= 14 }
 	auto value_I_blr_ds_I_blr_ds_id0_12 = I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_12_to_I_blr_ds_I_blr_ds_blr_conv_3_30_6.peek_15();
 	return value_I_blr_ds_I_blr_ds_id0_12;
 }
@@ -1204,8 +1172,6 @@ inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_6_select(I_blr_ds_cache& I_b
 inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_7_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = 2 + I_blr_ds_blr_r, I_blr_ds_c = I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // I_blr_ds_I_blr_ds_blr_conv_3_30_7 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[2 + I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-  // I_blr_ds_I_blr_ds_id0_12 stores range: { I_blr_ds[i0, i1] : 0 <= i0 <= 14 and 0 <= i1 <= 14 }
-    // overlap with reads : { I_blr_ds[i0, i1] : 2 <= i0 <= 14 and 0 <= i1 <= 12 }
 	auto value_I_blr_ds_I_blr_ds_id0_12 = I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_12_to_I_blr_ds_I_blr_ds_blr_conv_3_30_7.peek_2();
 	return value_I_blr_ds_I_blr_ds_id0_12;
 }
@@ -1213,8 +1179,6 @@ inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_7_select(I_blr_ds_cache& I_b
 inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_8_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = 2 + I_blr_ds_blr_r, I_blr_ds_c = 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // I_blr_ds_I_blr_ds_blr_conv_3_30_8 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[2 + I_blr_ds_blr_r, 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-  // I_blr_ds_I_blr_ds_id0_12 stores range: { I_blr_ds[i0, i1] : 0 <= i0 <= 14 and 0 <= i1 <= 14 }
-    // overlap with reads : { I_blr_ds[i0, i1] : 2 <= i0 <= 14 and 0 < i1 <= 13 }
 	auto value_I_blr_ds_I_blr_ds_id0_12 = I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_12_to_I_blr_ds_I_blr_ds_blr_conv_3_30_8.peek_1();
 	return value_I_blr_ds_I_blr_ds_id0_12;
 }
@@ -1222,8 +1186,6 @@ inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_8_select(I_blr_ds_cache& I_b
 inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_9_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = 2 + I_blr_ds_blr_r, I_blr_ds_c = 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // I_blr_ds_I_blr_ds_blr_conv_3_30_9 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[2 + I_blr_ds_blr_r, 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-  // I_blr_ds_I_blr_ds_id0_12 stores range: { I_blr_ds[i0, i1] : 0 <= i0 <= 14 and 0 <= i1 <= 14 }
-    // overlap with reads : { I_blr_ds[i0, i1] : 2 <= i0 <= 14 and 2 <= i1 <= 14 }
 	auto value_I_blr_ds_I_blr_ds_id0_12 = I_blr_ds.bank_I_blr_ds_I_blr_ds_id0_12_to_I_blr_ds_I_blr_ds_blr_conv_3_30_9.peek_0();
 	return value_I_blr_ds_I_blr_ds_id0_12;
 }
@@ -1699,8 +1661,6 @@ inline void I_blr_ds_blr_I_blr_ds_blr_conv_3_30_0_write(hw_uint<32> & I_blr_ds_b
 inline hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_ds_id0_27_select(I_blr_ds_blr_cache& I_blr_ds_blr, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
 	// lexmax events: { I_blr_ds_blr_ds_id0[root = 0, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> I_blr_ds_blr_conv_3_30[root' = 0, I_blr_ds_blr_r = 2I_blr_ds_blr_ds_r, I_blr_ds_blr_c = 2I_blr_ds_blr_ds_c] : 0 <= I_blr_ds_blr_ds_r <= 4 and 0 <= I_blr_ds_blr_ds_c <= 5; I_blr_ds_blr_ds_id0[root = 0, I_blr_ds_blr_ds_r = 5, I_blr_ds_blr_ds_c] -> I_blr_ds_blr_conv_3_30[root' = 0, I_blr_ds_blr_r = 10, I_blr_ds_blr_c = 2I_blr_ds_blr_ds_c] : 0 <= I_blr_ds_blr_ds_c <= 4; I_blr_ds_blr_ds_id0[root = 0, I_blr_ds_blr_ds_r = 5, I_blr_ds_blr_ds_c = 5] -> I_blr_ds_blr_conv_3_30[root' = 0, I_blr_ds_blr_r = 10, I_blr_ds_blr_c = 10] }
   // I_blr_ds_blr_I_blr_ds_blr_ds_id0_27 read pattern: { I_blr_ds_blr_ds_id0[root = 0, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> I_blr_ds_blr[2I_blr_ds_blr_ds_r, 2I_blr_ds_blr_ds_c] : 0 <= I_blr_ds_blr_ds_r <= 5 and 0 <= I_blr_ds_blr_ds_c <= 5 }
-  // I_blr_ds_blr_I_blr_ds_blr_conv_3_30_0 stores range: { I_blr_ds_blr[i0, i1] : 0 <= i0 <= 12 and 0 <= i1 <= 12 }
-    // overlap with reads : { I_blr_ds_blr[i0, i1] : (i0) mod 2 = 0 and (i1) mod 2 = 0 and 0 <= i0 <= 10 and 0 <= i1 <= 10 }
 	auto value_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_0 = I_blr_ds_blr.bank_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_0_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_27.peek(/* Needs general delay string */ ((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -5 + I_blr_ds_blr_ds_r == 0 && root == 0 && -1 + I_blr_ds_blr_ds_c >= 0 && 2 - I_blr_ds_blr_ds_c >= 0) ? (2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && -5 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 2 - I_blr_ds_blr_ds_c >= 0) ? (((2 - I_blr_ds_blr_ds_c) + floord(I_blr_ds_blr_ds_c, 2))) : (-3 + I_blr_ds_blr_ds_c == 0 && -5 + I_blr_ds_blr_ds_r == 0 && root == 0) ? (1) : ((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && (-1 - I_blr_ds_blr_ds_r) % 2 == 0 && root == 0 && -1 + I_blr_ds_blr_ds_r >= 0 && 2 - I_blr_ds_blr_ds_r >= 0 && -1 + I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((57 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && (-1 - I_blr_ds_blr_ds_r) % 2 == 0 && root == 0 && -1 + I_blr_ds_blr_ds_r >= 0 && 2 - I_blr_ds_blr_ds_r >= 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((56 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_r) % 2 == 0 && root == 0 && I_blr_ds_blr_ds_r >= 0 && 2 - I_blr_ds_blr_ds_r >= 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? ((((76 - 13 * I_blr_ds_blr_ds_r) - 4 * I_blr_ds_blr_ds_c))/2) : ((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -3 + I_blr_ds_blr_ds_r == 0 && root == 0 && -1 + I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((31 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && -3 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((30 - I_blr_ds_blr_ds_c))/2) : (((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -4 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) || ((-I_blr_ds_blr_ds_c) % 2 == 0 && -4 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0)) ? ((12 - 2 * I_blr_ds_blr_ds_c)) : 0);
 	return value_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_0;
 }
@@ -1882,8 +1842,6 @@ inline void I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26_write(hw_uint<32> & I_blr_ds_
 inline hw_uint<32>  I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_11_select(I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, int root, int I_blr_ds_blr_ds_out_r, int I_blr_ds_blr_ds_out_c) {
 	// lexmax events: { store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root = 0, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> I_blr_ds_blr_ds_id0[root' = 0, I_blr_ds_blr_ds_r = I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_c = I_blr_ds_blr_ds_out_c] : 0 <= I_blr_ds_blr_ds_out_r <= 4 and 0 <= I_blr_ds_blr_ds_out_c <= 5; store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root = 0, I_blr_ds_blr_ds_out_r = 5, I_blr_ds_blr_ds_out_c] -> I_blr_ds_blr_ds_id0[root' = 0, I_blr_ds_blr_ds_r = 5, I_blr_ds_blr_ds_c = I_blr_ds_blr_ds_out_c] : 0 <= I_blr_ds_blr_ds_out_c <= 4; store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root = 0, I_blr_ds_blr_ds_out_r = 5, I_blr_ds_blr_ds_out_c = 5] -> I_blr_ds_blr_ds_id0[root' = 0, I_blr_ds_blr_ds_r = 5, I_blr_ds_blr_ds_c = 5] }
   // I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_11 read pattern: { store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root = 0, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> I_blr_ds_blr_ds[I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] : 0 <= I_blr_ds_blr_ds_out_r <= 5 and 0 <= I_blr_ds_blr_ds_out_c <= 5 }
-  // I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26 stores range: { I_blr_ds_blr_ds[i0, i1] : 0 <= i0 <= 5 and 0 <= i1 <= 5 }
-    // overlap with reads : { I_blr_ds_blr_ds[i0, i1] : 0 <= i0 <= 5 and 0 <= i1 <= 5 }
 	auto value_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26 = I_blr_ds_blr_ds.bank_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_11.peek(/* Needs general delay string */ (-5 + I_blr_ds_blr_ds_out_r == 0 && root == 0 && I_blr_ds_blr_ds_out_c >= 0 && 1 - I_blr_ds_blr_ds_out_c >= 0) ? (1) : (-2 + I_blr_ds_blr_ds_out_c == 0 && -5 + I_blr_ds_blr_ds_out_r == 0 && root == 0) ? (1) : (root == 0 && I_blr_ds_blr_ds_out_r >= 0 && 1 - I_blr_ds_blr_ds_out_r >= 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0) ? ((11 - I_blr_ds_blr_ds_out_c)) : (-5 + I_blr_ds_blr_ds_out_c == 0 && root == 0 && I_blr_ds_blr_ds_out_r >= 0 && 1 - I_blr_ds_blr_ds_out_r >= 0) ? (6) : ((-1 - I_blr_ds_blr_ds_out_c) % 3 == 0 && -2 + I_blr_ds_blr_ds_out_r == 0 && root == 0 && -2 + I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0) ? (7) : (-5 + I_blr_ds_blr_ds_out_c == 0 && -2 + I_blr_ds_blr_ds_out_r == 0 && root == 0) ? (((8 + 2 * I_blr_ds_blr_ds_out_c))/3) : (-2 + I_blr_ds_blr_ds_out_r == 0 && root == 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0 && I_blr_ds_blr_ds_out_c - 3*floord(1 + I_blr_ds_blr_ds_out_c, 3) >= 0) ? ((7 - floord(1 + I_blr_ds_blr_ds_out_c, 3))) : ((root == 0 && -3 + I_blr_ds_blr_ds_out_r >= 0 && 4 - I_blr_ds_blr_ds_out_r >= 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0 && I_blr_ds_blr_ds_out_c - 3*floord(1 + I_blr_ds_blr_ds_out_c, 3) >= 0) || ((-1 - I_blr_ds_blr_ds_out_c) % 3 == 0 && root == 0 && -3 + I_blr_ds_blr_ds_out_r >= 0 && 4 - I_blr_ds_blr_ds_out_r >= 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0)) ? ((5 - I_blr_ds_blr_ds_out_c)) : 0);
 	return value_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26;
 }

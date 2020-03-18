@@ -1142,8 +1142,8 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
 }
 
 struct stack_bank {
-  std::string& name;
-  std::string& pt_type_string;
+  std::string name;
+  std::string pt_type_string;
   vector<int> read_delays;
   int num_readers;
   int maxdelay;
@@ -1274,8 +1274,7 @@ void generate_stack_cache(CodegenOptions& options,
   out << "};" << endl << endl;
 }
 
-void generate_stack_bank(CodegenOptions& options,
-    std::ostream& out, 
+stack_bank compute_stack_bank_info(
     const std::string& inpt, 
     const std::string& outpt,
     UBuffer& buf) {
@@ -1307,7 +1306,25 @@ void generate_stack_bank(CodegenOptions& options,
  
   string pt_type_string = buf.port_type_string();
   string name = inpt + "_to_" + outpt + "_cache";
+  cout << "inpt  = " << inpt << endl;
+  cout << "outpt = " << outpt << endl;
+  cout << "name of bank = " << name << endl;
   stack_bank bank{name, pt_type_string, read_delays, num_readers, maxdelay};
+  return bank;
+}
+
+
+void generate_stack_bank(CodegenOptions& options,
+    std::ostream& out, 
+    const std::string& inpt, 
+    const std::string& outpt,
+    UBuffer& buf) {
+
+  cout << tab(1) << "Creating bank from " << inpt << " to " << outpt << endl;
+
+  stack_bank bank = compute_stack_bank_info(inpt, outpt, buf);
+
+  cout << "bank name = " << bank.name << endl;
 
   generate_stack_cache(options, out, bank);
 }
@@ -1372,10 +1389,17 @@ void generate_code_prefix(CodegenOptions& options,
 
   for (auto inpt : buf.get_in_ports()) {
     for (auto outpt : buf.get_out_ports()) {
-      buf.stack_banks["bank_" + inpt + "_to_" + outpt] =
-      {inpt, outpt};
+      auto overlap =
+        its(range(buf.access_map.at(inpt)), range(buf.access_map.at(outpt)));
+
+      if (!empty(overlap)) {
+        buf.stack_banks["bank_" + inpt + "_to_" + outpt] =
+        {inpt, outpt};
+      }
     }
   }
+
+  // TODO: Add code to sort and merge buffer addresses
 
   string inpt = buf.get_in_port();
   out << "#include \"hw_classes.h\"" << endl << endl;
@@ -1526,20 +1550,13 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
 
   auto lex_max_events = get_lexmax_events(outpt, buf);
 
-  //auto qpd = compute_dd(buf, outpt, inpt);
-  //out << tab(1) << "// qpd = " << str(qpd) << endl;
   cout << "Lexmax events: " << str(lex_max_events) << endl;
   map<string, string> ms = umap_codegen_c(lex_max_events);
   out << "\t// lexmax events: " << str(lex_max_events) << endl;
   out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
   vector<string> possible_ports;
   for (auto pt : buf.get_in_ports()) {
-    out << tab(1) << "// " << pt << " stores range: " << str(range(buf.access_map.at(pt))) << endl;
-    out << tab(2) << "// overlap with reads : " << str(its(range(buf.access_map.at(pt)), range(buf.access_map.at(outpt)))) << endl;
-    auto overlap =
-      its(range(buf.access_map.at(pt)), range(buf.access_map.at(outpt)));
-
-    if (!empty(overlap)) {
+    if (buf.has_bank_between(pt, outpt)) {
       possible_ports.push_back(pt);
     }
   }
@@ -1685,7 +1702,6 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
 }
 
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
-  //string inpt = buf.get_in_port();
   generate_code_prefix(options, out, buf);
 
   for (auto outpt : buf.get_out_ports()) {
