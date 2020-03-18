@@ -854,7 +854,6 @@ inline void t1_t1_comp_write1_write(hw_uint<32> & t1_t1_comp_write1, t1_cache& t
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_2_rd0_select(t1_cache& t1, int d0, int d1) {
-  // qpd = { jacobi2d_unrolled_2_comp[d0, d1] -> 516 : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
 	// lexmax events: { jacobi2d_unrolled_2_comp[d0, d1] -> t1_comp[d0' = -1 + d0, d1' = d1] : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_2_rd0 read pattern: { jacobi2d_unrolled_2_comp[d0, d1] -> t1[-1 + 2d0, d1] : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
   // t1_t1_comp_write0 stores range: { t1[i0, i1] : (i0) mod 2 = 0 and -2 <= i0 <= 1024 and -1 <= i1 <= 1024 }
@@ -866,7 +865,6 @@ inline hw_uint<32>  jacobi2d_unrolled_2_rd0_select(t1_cache& t1, int d0, int d1)
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_2_rd1_select(t1_cache& t1, int d0, int d1) {
-  // qpd = { jacobi2d_unrolled_2_comp[d0, d1] -> 1029 : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
 	// lexmax events: { jacobi2d_unrolled_2_comp[d0, d1] -> t1_comp[d0' = d0, d1' = -1 + d1] : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_2_rd1 read pattern: { jacobi2d_unrolled_2_comp[d0, d1] -> t1[2d0, -1 + d1] : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
   // t1_t1_comp_write0 stores range: { t1[i0, i1] : (i0) mod 2 = 0 and -2 <= i0 <= 1024 and -1 <= i1 <= 1024 }
@@ -878,7 +876,6 @@ inline hw_uint<32>  jacobi2d_unrolled_2_rd1_select(t1_cache& t1, int d0, int d1)
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_2_rd2_select(t1_cache& t1, int d0, int d1) {
-  // qpd = { jacobi2d_unrolled_2_comp[d0, d1] -> 515 : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
 	// lexmax events: { jacobi2d_unrolled_2_comp[d0, d1] -> t1_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_2_rd2 read pattern: { jacobi2d_unrolled_2_comp[d0, d1] -> t1[2d0, d1] : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
   // t1_t1_comp_write0 stores range: { t1[i0, i1] : (i0) mod 2 = 0 and -2 <= i0 <= 1024 and -1 <= i1 <= 1024 }
@@ -890,7 +887,6 @@ inline hw_uint<32>  jacobi2d_unrolled_2_rd2_select(t1_cache& t1, int d0, int d1)
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_2_rd3_select(t1_cache& t1, int d0, int d1) {
-  // qpd = { jacobi2d_unrolled_2_comp[d0, d1] -> 1 : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
 	// lexmax events: { jacobi2d_unrolled_2_comp[d0, d1] -> t1_comp[d0' = d0, d1' = 1 + d1] : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_2_rd3 read pattern: { jacobi2d_unrolled_2_comp[d0, d1] -> t1[2d0, 1 + d1] : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
   // t1_t1_comp_write0 stores range: { t1[i0, i1] : (i0) mod 2 = 0 and -2 <= i0 <= 1024 and -1 <= i1 <= 1024 }
@@ -902,7 +898,6 @@ inline hw_uint<32>  jacobi2d_unrolled_2_rd3_select(t1_cache& t1, int d0, int d1)
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_2_rd4_select(t1_cache& t1, int d0, int d1) {
-  // qpd = { jacobi2d_unrolled_2_comp[d0, d1] -> 1029 : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
 	// lexmax events: { jacobi2d_unrolled_2_comp[d0, d1] -> t1_comp[d0' = d0, d1' = -1 + d1] : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_2_rd4 read pattern: { jacobi2d_unrolled_2_comp[d0, d1] -> t1[1 + 2d0, -1 + d1] : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
   // t1_t1_comp_write0 stores range: { t1[i0, i1] : (i0) mod 2 = 0 and -2 <= i0 <= 1024 and -1 <= i1 <= 1024 }
@@ -914,7 +909,6 @@ inline hw_uint<32>  jacobi2d_unrolled_2_rd4_select(t1_cache& t1, int d0, int d1)
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_2_rd5_select(t1_cache& t1, int d0, int d1) {
-  // qpd = { jacobi2d_unrolled_2_comp[d0, d1] -> 515 : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
 	// lexmax events: { jacobi2d_unrolled_2_comp[d0, d1] -> t1_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_2_rd5 read pattern: { jacobi2d_unrolled_2_comp[d0, d1] -> t1[1 + 2d0, d1] : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
   // t1_t1_comp_write0 stores range: { t1[i0, i1] : (i0) mod 2 = 0 and -2 <= i0 <= 1024 and -1 <= i1 <= 1024 }
@@ -926,7 +920,6 @@ inline hw_uint<32>  jacobi2d_unrolled_2_rd5_select(t1_cache& t1, int d0, int d1)
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_2_rd6_select(t1_cache& t1, int d0, int d1) {
-  // qpd = { jacobi2d_unrolled_2_comp[d0, d1] -> 1 : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
 	// lexmax events: { jacobi2d_unrolled_2_comp[d0, d1] -> t1_comp[d0' = d0, d1' = 1 + d1] : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_2_rd6 read pattern: { jacobi2d_unrolled_2_comp[d0, d1] -> t1[1 + 2d0, 1 + d1] : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
   // t1_t1_comp_write0 stores range: { t1[i0, i1] : (i0) mod 2 = 0 and -2 <= i0 <= 1024 and -1 <= i1 <= 1024 }
@@ -938,7 +931,6 @@ inline hw_uint<32>  jacobi2d_unrolled_2_rd6_select(t1_cache& t1, int d0, int d1)
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_2_rd7_select(t1_cache& t1, int d0, int d1) {
-  // qpd = { jacobi2d_unrolled_2_comp[d0, d1] -> 514 : 0 <= d0 <= 510 and 0 <= d1 <= 1023; jacobi2d_unrolled_2_comp[d0, d1] -> (3 + d0) : d0 = 511 and 0 <= d1 <= 1023 }
 	// lexmax events: { jacobi2d_unrolled_2_comp[d0, d1] -> t1_comp[d0' = 1 + d0, d1' = d1] : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
   // jacobi2d_unrolled_2_rd7 read pattern: { jacobi2d_unrolled_2_comp[d0, d1] -> t1[2 + 2d0, d1] : 0 <= d0 <= 511 and 0 <= d1 <= 1023 }
   // t1_t1_comp_write0 stores range: { t1[i0, i1] : (i0) mod 2 = 0 and -2 <= i0 <= 1024 and -1 <= i1 <= 1024 }

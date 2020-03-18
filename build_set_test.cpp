@@ -196,6 +196,16 @@ class UBuffer {
 
     map<string, pair<string, string> > stack_banks;
 
+    bool has_bank_between(const std::string& inpt, const std::string& outpt) const {
+
+      for (auto bs : stack_banks) {
+        if (bs.second.first == inpt && bs.second.second == outpt) {
+          return true;
+        }
+      }
+
+      return false;
+    }
 
     string bank_between(const std::string& inpt, const std::string& outpt) const {
 
@@ -1373,14 +1383,7 @@ void generate_code_prefix(CodegenOptions& options,
     generate_stack_bank(options, out, b.second.first, b.second.second, buf);
   }
 
-  //for (auto inpt : buf.get_in_ports()) {
-    //generate_memory_struct(options, out, inpt, buf);
-  //}
-
   out << "struct " << buf.name << "_cache {" << endl;
-  //for (auto inpt : buf.get_in_ports()) {
-    //out << tab(1) << inpt << "_cache " << inpt << ";" << endl;
-  //}
 
   for (auto b : buf.stack_banks) {
     out << tab(1) << b.second.first << "_to_" << b.second.second << "_cache " << b.first << ";" << endl;
@@ -1398,8 +1401,6 @@ void generate_code_prefix(CodegenOptions& options,
 
     out << "inline void " << inpt << "_write(";
     out << comma_list(args) << ") {" << endl;
-
-    //out << "\t" + buf.name + "." + inpt + ".push(" + inpt + ");" << endl;
 
     for (auto sb : buf.receiver_banks(inpt)) {
       out << tab(1) << buf.name << "." << sb << ".push(" << inpt << ");" << endl;
@@ -1433,7 +1434,7 @@ bool is_optimizable_constant_dd(const string& inpt, const string& outpt, UBuffer
   return false;
 }
 
-void generate_select_decl(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
+void generate_select_decl(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
   out << "inline " + buf.port_type_string() + " " + outpt + "_select(";
   size_t nargs = 0;
   out << buf.name << "_cache& " << buf.name << ", ";
@@ -1462,7 +1463,7 @@ void generate_select_decl(CodegenOptions& options, std::ostream& out, const stri
   cout << "Created dim decls" << endl;
 }
 
-void select_debug_assertions(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
+void select_debug_assertions(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
   // ------------ Error printouts only
   vector<string> offset_printouts;
   isl_space* s = get_space(buf.domain.at(outpt));
@@ -1520,13 +1521,13 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
   return buf.name + "." + value_str;
 }
 
-void generate_selects(CodegenOptions& options, std::ostream& out, const string& inpt, const string& outpt, UBuffer& buf) {
-  generate_select_decl(options, out, inpt, outpt, buf);
+void generate_selects(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
+  generate_select_decl(options, out, outpt, buf);
 
   auto lex_max_events = get_lexmax_events(outpt, buf);
 
-  auto qpd = compute_dd(buf, outpt, inpt);
-  out << tab(1) << "// qpd = " << str(qpd) << endl;
+  //auto qpd = compute_dd(buf, outpt, inpt);
+  //out << tab(1) << "// qpd = " << str(qpd) << endl;
   cout << "Lexmax events: " << str(lex_max_events) << endl;
   map<string, string> ms = umap_codegen_c(lex_max_events);
   out << "\t// lexmax events: " << str(lex_max_events) << endl;
@@ -1588,7 +1589,7 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     }
   }
 
-  select_debug_assertions(options, out, inpt, outpt, buf);
+  select_debug_assertions(options, out, outpt, buf);
   out << "}" << endl << endl;
 }
 
@@ -1684,11 +1685,11 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
 }
 
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
-  string inpt = buf.get_in_port();
+  //string inpt = buf.get_in_port();
   generate_code_prefix(options, out, buf);
 
   for (auto outpt : buf.get_out_ports()) {
-    generate_selects(options, out, inpt, outpt, buf);
+    generate_selects(options, out, outpt, buf);
   }
 
   generate_bundles(options, out, buf);

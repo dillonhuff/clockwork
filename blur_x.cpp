@@ -156,7 +156,6 @@ inline void I_I_id0_4_write(hw_uint<16>& I_I_id0_4, I_cache& I, int root, int id
 }
 
 inline hw_uint<16> I_out_blur_30_1_select(I_cache& I, int root, int d1, int d0) {
-  // qpd = { out_blur_30[root, d1, d0] -> 64 : root = 0 and 0 <= d1 <= 5 and 0 < d0 <= 30; out_blur_30[root, d1, d0] -> (33 + d0) : root = 0 and d0 = 31 and 0 <= d1 <= 5; out_blur_30[root, d1, d0] -> 64 : root = 0 and d0 = 0 and 0 <= d1 <= 5 }
 	// lexmax events: { out_blur_30[root = 0, d1, d0] -> I_id0[root' = 0, id1 = d1, id0 = d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // I_out_blur_30_1 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // I_I_id0_4 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 7 }
@@ -166,7 +165,6 @@ inline hw_uint<16> I_out_blur_30_1_select(I_cache& I, int root, int d1, int d0) 
 }
 
 inline hw_uint<16> I_out_blur_30_2_select(I_cache& I, int root, int d1, int d0) {
-  // qpd = { out_blur_30[root, d1, d0] -> 32 : root = 0 and 0 <= d1 <= 5 and 0 < d0 <= 30; out_blur_30[root, d1, d0] -> (1 + d0) : root = 0 and d0 = 31 and 0 <= d1 <= 5; out_blur_30[root, d1, d0] -> 32 : root = 0 and d0 = 0 and 0 <= d1 <= 5 }
 	// lexmax events: { out_blur_30[root = 0, d1, d0] -> I_id0[root' = 0, id1 = 1 + d1, id0 = d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // I_out_blur_30_2 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, 1 + d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // I_I_id0_4 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 7 }
@@ -176,7 +174,6 @@ inline hw_uint<16> I_out_blur_30_2_select(I_cache& I, int root, int d1, int d0) 
 }
 
 inline hw_uint<16> I_out_blur_30_3_select(I_cache& I, int root, int d1, int d0) {
-  // qpd = {  }
 	// lexmax events: { out_blur_30[root = 0, d1, d0] -> I_id0[root' = 0, id1 = 2 + d1, id0 = d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // I_out_blur_30_3 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, 2 + d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // I_I_id0_4 stores range: { I[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 7 }
