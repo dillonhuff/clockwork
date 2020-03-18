@@ -181,6 +181,14 @@ struct CodegenOptions {
 
 };
 
+struct stack_bank {
+  std::string name;
+  std::string pt_type_string;
+  vector<int> read_delays;
+  int num_readers;
+  int maxdelay;
+};
+
 class UBuffer {
 
   public:
@@ -194,12 +202,24 @@ class UBuffer {
     std::map<string, isl_union_map*> schedule;
     std::map<string, vector<string> > port_bundles;
 
-    map<string, pair<string, string> > stack_banks;
+    //map<string, pair<string, string> > stack_banks;
+    map<pair<string, string>, stack_bank > stack_banks;
+
+    vector<stack_bank> get_banks() {
+      vector<stack_bank> bnk;
+      for (auto bs : stack_banks) {
+        bnk.push_back(bs.second);
+      }
+      return bnk;
+    }
+
+    void add_bank_between(const std::string& inpt, const std::string& outpt, stack_bank& bank) {
+      stack_banks[{inpt, outpt}] = bank;
+    }
 
     bool has_bank_between(const std::string& inpt, const std::string& outpt) const {
-
       for (auto bs : stack_banks) {
-        if (bs.second.first == inpt && bs.second.second == outpt) {
+        if (bs.first.first == inpt && bs.first.second == outpt) {
           return true;
         }
       }
@@ -210,8 +230,8 @@ class UBuffer {
     string bank_between(const std::string& inpt, const std::string& outpt) const {
 
       for (auto bs : stack_banks) {
-        if (bs.second.first == inpt && bs.second.second == outpt) {
-          return bs.first;
+        if (bs.first.first == inpt && bs.first.second == outpt) {
+          return bs.second.name;
         }
       }
 
@@ -223,8 +243,8 @@ class UBuffer {
     set<string> receiver_banks(const std::string& inpt) {
       set<string> bnks;
       for (auto bs : stack_banks) {
-        if (bs.second.first == inpt) {
-          bnks.insert(bs.first);
+        if (bs.first.first == inpt) {
+          bnks.insert(bs.second.name);
         }
       }
       return bnks;
@@ -1141,14 +1161,6 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
   return maxdelay;
 }
 
-struct stack_bank {
-  std::string name;
-  std::string pt_type_string;
-  vector<int> read_delays;
-  int num_readers;
-  int maxdelay;
-};
-
 void generate_stack_cache(CodegenOptions& options,
     std::ostream& out,
     stack_bank& bank) {
@@ -1393,8 +1405,10 @@ void generate_code_prefix(CodegenOptions& options,
         its(range(buf.access_map.at(inpt)), range(buf.access_map.at(outpt)));
 
       if (!empty(overlap)) {
-        buf.stack_banks["bank_" + inpt + "_to_" + outpt] =
-        {inpt, outpt};
+        stack_bank bank = compute_stack_bank_info(inpt, outpt, buf);
+        buf.add_bank_between(inpt, outpt, bank);
+        //buf.stack_banks["bank_" + inpt + "_to_" + outpt] =
+        //{inpt, outpt};
       }
     }
   }
@@ -1403,16 +1417,16 @@ void generate_code_prefix(CodegenOptions& options,
 
   string inpt = buf.get_in_port();
   out << "#include \"hw_classes.h\"" << endl << endl;
-  vector<stack_bank> banks;
-  for (auto b : buf.stack_banks) {
-    auto inpt = b.second.first;
-    auto outpt = b.second.second;
-    stack_bank bank = compute_stack_bank_info(inpt, outpt, buf);
-    banks.push_back(bank);
-  }
+  //vector<stack_bank> banks;
+  //for (auto b : buf.stack_banks) {
+    //auto inpt = b.second.first;
+    //auto outpt = b.second.second;
+    //stack_bank bank = compute_stack_bank_info(inpt, outpt, buf);
+    //banks.push_back(bank);
+  //}
 
   //for (auto b : buf.stack_banks) {
-  for (auto b : banks) {
+  for (auto b : buf.get_banks()) {
     generate_stack_cache(options, out, b);
     //generate_stack_bank(options, out, b.second.first, b.second.second, buf);
   }
@@ -1420,7 +1434,7 @@ void generate_code_prefix(CodegenOptions& options,
   out << "struct " << buf.name << "_cache {" << endl;
 
   for (auto b : buf.stack_banks) {
-    out << tab(1) << b.second.first << "_to_" << b.second.second << "_cache " << b.first << ";" << endl;
+    out << tab(1) << b.first.first << "_to_" << b.first.second << "_cache " << b.second.name << ";" << endl;
   }
 
   out << "};" << endl << endl;

@@ -165,91 +165,91 @@ struct I_store_I_from_in_0_to_I_warped_0_conv_3_30_9_cache {
 };
 
 struct I_cache {
-  I_store_I_from_in_0_to_I_warped_0_conv_3_30_10_cache bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_10;
-  I_store_I_from_in_0_to_I_warped_0_conv_3_30_11_cache bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_11;
-  I_store_I_from_in_0_to_I_warped_0_conv_3_30_3_cache bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_3;
-  I_store_I_from_in_0_to_I_warped_0_conv_3_30_4_cache bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_4;
-  I_store_I_from_in_0_to_I_warped_0_conv_3_30_5_cache bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_5;
-  I_store_I_from_in_0_to_I_warped_0_conv_3_30_6_cache bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_6;
-  I_store_I_from_in_0_to_I_warped_0_conv_3_30_7_cache bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_7;
-  I_store_I_from_in_0_to_I_warped_0_conv_3_30_8_cache bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_8;
-  I_store_I_from_in_0_to_I_warped_0_conv_3_30_9_cache bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_9;
+  I_store_I_from_in_0_to_I_warped_0_conv_3_30_10_cache I_store_I_from_in_0_to_I_warped_0_conv_3_30_10_cache;
+  I_store_I_from_in_0_to_I_warped_0_conv_3_30_11_cache I_store_I_from_in_0_to_I_warped_0_conv_3_30_11_cache;
+  I_store_I_from_in_0_to_I_warped_0_conv_3_30_3_cache I_store_I_from_in_0_to_I_warped_0_conv_3_30_3_cache;
+  I_store_I_from_in_0_to_I_warped_0_conv_3_30_4_cache I_store_I_from_in_0_to_I_warped_0_conv_3_30_4_cache;
+  I_store_I_from_in_0_to_I_warped_0_conv_3_30_5_cache I_store_I_from_in_0_to_I_warped_0_conv_3_30_5_cache;
+  I_store_I_from_in_0_to_I_warped_0_conv_3_30_6_cache I_store_I_from_in_0_to_I_warped_0_conv_3_30_6_cache;
+  I_store_I_from_in_0_to_I_warped_0_conv_3_30_7_cache I_store_I_from_in_0_to_I_warped_0_conv_3_30_7_cache;
+  I_store_I_from_in_0_to_I_warped_0_conv_3_30_8_cache I_store_I_from_in_0_to_I_warped_0_conv_3_30_8_cache;
+  I_store_I_from_in_0_to_I_warped_0_conv_3_30_9_cache I_store_I_from_in_0_to_I_warped_0_conv_3_30_9_cache;
 };
 
 
 
 inline void I_store_I_from_in_0_write(hw_uint<32> & I_store_I_from_in_0, I_cache& I, int root, int pr, int pc) {
-  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_10.push(I_store_I_from_in_0);
-  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_11.push(I_store_I_from_in_0);
-  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_3.push(I_store_I_from_in_0);
-  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_4.push(I_store_I_from_in_0);
-  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_5.push(I_store_I_from_in_0);
-  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_6.push(I_store_I_from_in_0);
-  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_7.push(I_store_I_from_in_0);
-  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_8.push(I_store_I_from_in_0);
-  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_9.push(I_store_I_from_in_0);
+  I.I_store_I_from_in_0_to_I_warped_0_conv_3_30_10_cache.push(I_store_I_from_in_0);
+  I.I_store_I_from_in_0_to_I_warped_0_conv_3_30_11_cache.push(I_store_I_from_in_0);
+  I.I_store_I_from_in_0_to_I_warped_0_conv_3_30_3_cache.push(I_store_I_from_in_0);
+  I.I_store_I_from_in_0_to_I_warped_0_conv_3_30_4_cache.push(I_store_I_from_in_0);
+  I.I_store_I_from_in_0_to_I_warped_0_conv_3_30_5_cache.push(I_store_I_from_in_0);
+  I.I_store_I_from_in_0_to_I_warped_0_conv_3_30_6_cache.push(I_store_I_from_in_0);
+  I.I_store_I_from_in_0_to_I_warped_0_conv_3_30_7_cache.push(I_store_I_from_in_0);
+  I.I_store_I_from_in_0_to_I_warped_0_conv_3_30_8_cache.push(I_store_I_from_in_0);
+  I.I_store_I_from_in_0_to_I_warped_0_conv_3_30_9_cache.push(I_store_I_from_in_0);
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_10_select(I_cache& I, int root, int br, int bc) {
 	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = 2 + br, pc = 1 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
   // I_warped_0_conv_3_30_10 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[2 + br, 1 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-	auto value_I_store_I_from_in_0 = I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_10.peek(/* Needs general delay string */ (root == 0 && br >= 0 && 60 - br >= 0 && bc >= 0 && 61 - bc >= 0) ? (((3966 - 64 * br) - bc)) : (-61 + br == 0 && root == 0 && bc >= 0 && 61 - bc >= 0) ? ((62 - bc)) : 0);
+	auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_to_I_warped_0_conv_3_30_10_cache.peek(/* Needs general delay string */ (root == 0 && br >= 0 && 60 - br >= 0 && bc >= 0 && 61 - bc >= 0) ? (((3966 - 64 * br) - bc)) : (-61 + br == 0 && root == 0 && bc >= 0 && 61 - bc >= 0) ? ((62 - bc)) : 0);
 	return value_I_store_I_from_in_0;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_11_select(I_cache& I, int root, int br, int bc) {
 	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = 2 + br, pc = 2 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
   // I_warped_0_conv_3_30_11 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[2 + br, 2 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-	auto value_I_store_I_from_in_0 = I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_11.peek(/* Needs general delay string */ (root == 0 && br >= 0 && 60 - br >= 0 && bc >= 0 && 60 - bc >= 0) ? (((3965 - 64 * br) - bc)) : (-61 + bc == 0 && root == 0 && br >= 0 && 60 - br >= 0) ? ((3904 - 64 * br)) : (-61 + br == 0 && root == 0 && bc >= 0 && 60 - bc >= 0) ? ((61 - bc)) : 0);
+	auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_to_I_warped_0_conv_3_30_11_cache.peek(/* Needs general delay string */ (root == 0 && br >= 0 && 60 - br >= 0 && bc >= 0 && 60 - bc >= 0) ? (((3965 - 64 * br) - bc)) : (-61 + bc == 0 && root == 0 && br >= 0 && 60 - br >= 0) ? ((3904 - 64 * br)) : (-61 + br == 0 && root == 0 && bc >= 0 && 60 - bc >= 0) ? ((61 - bc)) : 0);
 	return value_I_store_I_from_in_0;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_3_select(I_cache& I, int root, int br, int bc) {
 	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = br, pc = bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
   // I_warped_0_conv_3_30_3 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-	auto value_I_store_I_from_in_0 = I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_3.peek(/* is one piece but not a number */((4095 - 64 * br) - bc));
+	auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_to_I_warped_0_conv_3_30_3_cache.peek(/* is one piece but not a number */((4095 - 64 * br) - bc));
 	return value_I_store_I_from_in_0;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_4_select(I_cache& I, int root, int br, int bc) {
 	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = br, pc = 1 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
   // I_warped_0_conv_3_30_4 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[br, 1 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-	auto value_I_store_I_from_in_0 = I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_4.peek(/* is one piece but not a number */((4094 - 64 * br) - bc));
+	auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_to_I_warped_0_conv_3_30_4_cache.peek(/* is one piece but not a number */((4094 - 64 * br) - bc));
 	return value_I_store_I_from_in_0;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_5_select(I_cache& I, int root, int br, int bc) {
 	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = br, pc = 2 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
   // I_warped_0_conv_3_30_5 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[br, 2 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-	auto value_I_store_I_from_in_0 = I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_5.peek(/* Needs general delay string */ (root == 0 && br >= 0 && 61 - br >= 0 && bc >= 0 && 60 - bc >= 0) ? (((4093 - 64 * br) - bc)) : (-61 + bc == 0 && root == 0 && br >= 0 && 61 - br >= 0) ? ((4032 - 64 * br)) : 0);
+	auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_to_I_warped_0_conv_3_30_5_cache.peek(/* Needs general delay string */ (root == 0 && br >= 0 && 61 - br >= 0 && bc >= 0 && 60 - bc >= 0) ? (((4093 - 64 * br) - bc)) : (-61 + bc == 0 && root == 0 && br >= 0 && 61 - br >= 0) ? ((4032 - 64 * br)) : 0);
 	return value_I_store_I_from_in_0;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_6_select(I_cache& I, int root, int br, int bc) {
 	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = 1 + br, pc = bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
   // I_warped_0_conv_3_30_6 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[1 + br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-	auto value_I_store_I_from_in_0 = I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_6.peek(/* is one piece but not a number */((4031 - 64 * br) - bc));
+	auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_to_I_warped_0_conv_3_30_6_cache.peek(/* is one piece but not a number */((4031 - 64 * br) - bc));
 	return value_I_store_I_from_in_0;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_7_select(I_cache& I, int root, int br, int bc) {
 	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = 1 + br, pc = 1 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
   // I_warped_0_conv_3_30_7 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[1 + br, 1 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-	auto value_I_store_I_from_in_0 = I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_7.peek(/* is one piece but not a number */((4030 - 64 * br) - bc));
+	auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_to_I_warped_0_conv_3_30_7_cache.peek(/* is one piece but not a number */((4030 - 64 * br) - bc));
 	return value_I_store_I_from_in_0;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_8_select(I_cache& I, int root, int br, int bc) {
 	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = 1 + br, pc = 2 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
   // I_warped_0_conv_3_30_8 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[1 + br, 2 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-	auto value_I_store_I_from_in_0 = I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_8.peek(/* Needs general delay string */ (root == 0 && br >= 0 && 61 - br >= 0 && bc >= 0 && 60 - bc >= 0) ? (((4029 - 64 * br) - bc)) : (-61 + bc == 0 && root == 0 && br >= 0 && 61 - br >= 0) ? ((3968 - 64 * br)) : 0);
+	auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_to_I_warped_0_conv_3_30_8_cache.peek(/* Needs general delay string */ (root == 0 && br >= 0 && 61 - br >= 0 && bc >= 0 && 60 - bc >= 0) ? (((4029 - 64 * br) - bc)) : (-61 + bc == 0 && root == 0 && br >= 0 && 61 - br >= 0) ? ((3968 - 64 * br)) : 0);
 	return value_I_store_I_from_in_0;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_9_select(I_cache& I, int root, int br, int bc) {
 	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = 2 + br, pc = bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
   // I_warped_0_conv_3_30_9 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[2 + br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-	auto value_I_store_I_from_in_0 = I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_9.peek(/* Needs general delay string */ (root == 0 && br >= 0 && 60 - br >= 0 && bc >= 0 && 61 - bc >= 0) ? (((3967 - 64 * br) - bc)) : (-61 + br == 0 && root == 0 && bc >= 0 && 61 - bc >= 0) ? ((63 - bc)) : 0);
+	auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_to_I_warped_0_conv_3_30_9_cache.peek(/* Needs general delay string */ (root == 0 && br >= 0 && 60 - br >= 0 && bc >= 0 && 61 - bc >= 0) ? (((3967 - 64 * br) - bc)) : (-61 + br == 0 && root == 0 && bc >= 0 && 61 - bc >= 0) ? ((63 - bc)) : 0);
 	return value_I_store_I_from_in_0;
 }
 
@@ -317,19 +317,19 @@ struct warped_0_warped_0_conv_3_30_2_to_warped_0_out_id0_13_cache {
 };
 
 struct warped_0_cache {
-  warped_0_warped_0_conv_3_30_2_to_warped_0_out_id0_13_cache bank_warped_0_warped_0_conv_3_30_2_to_warped_0_out_id0_13;
+  warped_0_warped_0_conv_3_30_2_to_warped_0_out_id0_13_cache warped_0_warped_0_conv_3_30_2_to_warped_0_out_id0_13_cache;
 };
 
 
 
 inline void warped_0_warped_0_conv_3_30_2_write(hw_uint<32> & warped_0_warped_0_conv_3_30_2, warped_0_cache& warped_0, int root, int br, int bc) {
-  warped_0.bank_warped_0_warped_0_conv_3_30_2_to_warped_0_out_id0_13.push(warped_0_warped_0_conv_3_30_2);
+  warped_0.warped_0_warped_0_conv_3_30_2_to_warped_0_out_id0_13_cache.push(warped_0_warped_0_conv_3_30_2);
 }
 
 inline hw_uint<32>  warped_0_out_id0_13_select(warped_0_cache& warped_0, int root, int ur, int kr, int uc, int kc) {
 	// lexmax events: { out_id0[root = 0, ur, kr, uc, kc] -> warped_0_conv_3_30[root' = 0, br = ur, bc = uc] : 0 <= ur <= 61 and 0 <= kr <= 1 and 0 <= uc <= 61 and 0 <= kc <= 1 }
   // warped_0_out_id0_13 read pattern: { out_id0[root = 0, ur, kr, uc, kc] -> warped_0[ur, uc] : 0 <= ur <= 61 and 0 <= kr <= 1 and 0 <= uc <= 61 and 0 <= kc <= 1 }
-	auto value_warped_0_warped_0_conv_3_30_2 = warped_0.bank_warped_0_warped_0_conv_3_30_2_to_warped_0_out_id0_13.peek(/* Needs general delay string */ (root == 0 && ur >= 0 && 60 - ur >= 0 && kr >= 0 && 1 - kr >= 0 && uc >= 0 && 60 - uc >= 0 && kc >= 0 && 1 - kc >= 0) ? (((3843 - 62 * ur) - uc)) : (-61 + uc == 0 && root == 0 && ur >= 0 && 60 - ur >= 0 && kr >= 0 && 1 - kr >= 0 && kc >= 0 && 1 - kc >= 0) ? ((3782 - 62 * ur)) : (-61 + ur == 0 && root == 0 && kc >= 0 && 1 - kc >= 0 && kr >= 0 && 1 - kr >= 0 && uc >= 0 && 60 - uc >= 0) ? ((61 - uc)) : 0);
+	auto value_warped_0_warped_0_conv_3_30_2 = warped_0.warped_0_warped_0_conv_3_30_2_to_warped_0_out_id0_13_cache.peek(/* Needs general delay string */ (root == 0 && ur >= 0 && 60 - ur >= 0 && kr >= 0 && 1 - kr >= 0 && uc >= 0 && 60 - uc >= 0 && kc >= 0 && 1 - kc >= 0) ? (((3843 - 62 * ur) - uc)) : (-61 + uc == 0 && root == 0 && ur >= 0 && 60 - ur >= 0 && kr >= 0 && 1 - kr >= 0 && kc >= 0 && 1 - kc >= 0) ? ((3782 - 62 * ur)) : (-61 + ur == 0 && root == 0 && kc >= 0 && 1 - kc >= 0 && kr >= 0 && 1 - kr >= 0 && uc >= 0 && 60 - uc >= 0) ? ((61 - uc)) : 0);
 	return value_warped_0_warped_0_conv_3_30_2;
 }
 

@@ -142,37 +142,37 @@ struct I_I_id0_4_to_I_out_blur_30_3_cache {
 };
 
 struct I_cache {
-  I_I_id0_4_to_I_out_blur_30_1_cache bank_I_I_id0_4_to_I_out_blur_30_1;
-  I_I_id0_4_to_I_out_blur_30_2_cache bank_I_I_id0_4_to_I_out_blur_30_2;
-  I_I_id0_4_to_I_out_blur_30_3_cache bank_I_I_id0_4_to_I_out_blur_30_3;
+  I_I_id0_4_to_I_out_blur_30_1_cache I_I_id0_4_to_I_out_blur_30_1_cache;
+  I_I_id0_4_to_I_out_blur_30_2_cache I_I_id0_4_to_I_out_blur_30_2_cache;
+  I_I_id0_4_to_I_out_blur_30_3_cache I_I_id0_4_to_I_out_blur_30_3_cache;
 };
 
 
 
 inline void I_I_id0_4_write(hw_uint<16>& I_I_id0_4, I_cache& I, int root, int id1, int id0) {
-  I.bank_I_I_id0_4_to_I_out_blur_30_1.push(I_I_id0_4);
-  I.bank_I_I_id0_4_to_I_out_blur_30_2.push(I_I_id0_4);
-  I.bank_I_I_id0_4_to_I_out_blur_30_3.push(I_I_id0_4);
+  I.I_I_id0_4_to_I_out_blur_30_1_cache.push(I_I_id0_4);
+  I.I_I_id0_4_to_I_out_blur_30_2_cache.push(I_I_id0_4);
+  I.I_I_id0_4_to_I_out_blur_30_3_cache.push(I_I_id0_4);
 }
 
 inline hw_uint<16> I_out_blur_30_1_select(I_cache& I, int root, int d1, int d0) {
 	// lexmax events: { out_blur_30[root = 0, d1, d0] -> I_id0[root' = 0, id1 = d1, id0 = d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // I_out_blur_30_1 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
-	auto value_I_I_id0_4 = I.bank_I_I_id0_4_to_I_out_blur_30_1.peek_64();
+	auto value_I_I_id0_4 = I.I_I_id0_4_to_I_out_blur_30_1_cache.peek_64();
 	return value_I_I_id0_4;
 }
 
 inline hw_uint<16> I_out_blur_30_2_select(I_cache& I, int root, int d1, int d0) {
 	// lexmax events: { out_blur_30[root = 0, d1, d0] -> I_id0[root' = 0, id1 = 1 + d1, id0 = d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // I_out_blur_30_2 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, 1 + d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
-	auto value_I_I_id0_4 = I.bank_I_I_id0_4_to_I_out_blur_30_2.peek_32();
+	auto value_I_I_id0_4 = I.I_I_id0_4_to_I_out_blur_30_2_cache.peek_32();
 	return value_I_I_id0_4;
 }
 
 inline hw_uint<16> I_out_blur_30_3_select(I_cache& I, int root, int d1, int d0) {
 	// lexmax events: { out_blur_30[root = 0, d1, d0] -> I_id0[root' = 0, id1 = 2 + d1, id0 = d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // I_out_blur_30_3 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, 2 + d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
-	auto value_I_I_id0_4 = I.bank_I_I_id0_4_to_I_out_blur_30_3.peek_0();
+	auto value_I_I_id0_4 = I.I_I_id0_4_to_I_out_blur_30_3_cache.peek_0();
 	return value_I_I_id0_4;
 }
 

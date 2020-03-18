@@ -450,91 +450,91 @@ struct in_in_comp_write0_to_level_0_rd8_cache {
 };
 
 struct in_cache {
-  in_in_comp_write0_to_level_0_rd0_cache bank_in_in_comp_write0_to_level_0_rd0;
-  in_in_comp_write0_to_level_0_rd1_cache bank_in_in_comp_write0_to_level_0_rd1;
-  in_in_comp_write0_to_level_0_rd2_cache bank_in_in_comp_write0_to_level_0_rd2;
-  in_in_comp_write0_to_level_0_rd3_cache bank_in_in_comp_write0_to_level_0_rd3;
-  in_in_comp_write0_to_level_0_rd4_cache bank_in_in_comp_write0_to_level_0_rd4;
-  in_in_comp_write0_to_level_0_rd5_cache bank_in_in_comp_write0_to_level_0_rd5;
-  in_in_comp_write0_to_level_0_rd6_cache bank_in_in_comp_write0_to_level_0_rd6;
-  in_in_comp_write0_to_level_0_rd7_cache bank_in_in_comp_write0_to_level_0_rd7;
-  in_in_comp_write0_to_level_0_rd8_cache bank_in_in_comp_write0_to_level_0_rd8;
+  in_in_comp_write0_to_level_0_rd0_cache in_in_comp_write0_to_level_0_rd0_cache;
+  in_in_comp_write0_to_level_0_rd1_cache in_in_comp_write0_to_level_0_rd1_cache;
+  in_in_comp_write0_to_level_0_rd2_cache in_in_comp_write0_to_level_0_rd2_cache;
+  in_in_comp_write0_to_level_0_rd3_cache in_in_comp_write0_to_level_0_rd3_cache;
+  in_in_comp_write0_to_level_0_rd4_cache in_in_comp_write0_to_level_0_rd4_cache;
+  in_in_comp_write0_to_level_0_rd5_cache in_in_comp_write0_to_level_0_rd5_cache;
+  in_in_comp_write0_to_level_0_rd6_cache in_in_comp_write0_to_level_0_rd6_cache;
+  in_in_comp_write0_to_level_0_rd7_cache in_in_comp_write0_to_level_0_rd7_cache;
+  in_in_comp_write0_to_level_0_rd8_cache in_in_comp_write0_to_level_0_rd8_cache;
 };
 
 
 
 inline void in_in_comp_write0_write(hw_uint<32> & in_in_comp_write0, in_cache& in, int d0, int d1) {
-  in.bank_in_in_comp_write0_to_level_0_rd0.push(in_in_comp_write0);
-  in.bank_in_in_comp_write0_to_level_0_rd1.push(in_in_comp_write0);
-  in.bank_in_in_comp_write0_to_level_0_rd2.push(in_in_comp_write0);
-  in.bank_in_in_comp_write0_to_level_0_rd3.push(in_in_comp_write0);
-  in.bank_in_in_comp_write0_to_level_0_rd4.push(in_in_comp_write0);
-  in.bank_in_in_comp_write0_to_level_0_rd5.push(in_in_comp_write0);
-  in.bank_in_in_comp_write0_to_level_0_rd6.push(in_in_comp_write0);
-  in.bank_in_in_comp_write0_to_level_0_rd7.push(in_in_comp_write0);
-  in.bank_in_in_comp_write0_to_level_0_rd8.push(in_in_comp_write0);
+  in.in_in_comp_write0_to_level_0_rd0_cache.push(in_in_comp_write0);
+  in.in_in_comp_write0_to_level_0_rd1_cache.push(in_in_comp_write0);
+  in.in_in_comp_write0_to_level_0_rd2_cache.push(in_in_comp_write0);
+  in.in_in_comp_write0_to_level_0_rd3_cache.push(in_in_comp_write0);
+  in.in_in_comp_write0_to_level_0_rd4_cache.push(in_in_comp_write0);
+  in.in_in_comp_write0_to_level_0_rd5_cache.push(in_in_comp_write0);
+  in.in_in_comp_write0_to_level_0_rd6_cache.push(in_in_comp_write0);
+  in.in_in_comp_write0_to_level_0_rd7_cache.push(in_in_comp_write0);
+  in.in_in_comp_write0_to_level_0_rd8_cache.push(in_in_comp_write0);
 }
 
 inline hw_uint<32>  level_0_rd0_select(in_cache& in, int d0, int d1) {
 	// lexmax events: { level_0_comp[d0, d1] -> in_comp[d0' = 2d0, d1' = 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
   // level_0_rd0 read pattern: { level_0_comp[d0, d1] -> in[2d0, 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
-	auto value_in_in_comp_write0 = in.bank_in_in_comp_write0_to_level_0_rd0.peek_528();
+	auto value_in_in_comp_write0 = in.in_in_comp_write0_to_level_0_rd0_cache.peek_528();
 	return value_in_in_comp_write0;
 }
 
 inline hw_uint<32>  level_0_rd1_select(in_cache& in, int d0, int d1) {
 	// lexmax events: { level_0_comp[d0, d1] -> in_comp[d0' = 2d0, d1' = 1 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
   // level_0_rd1 read pattern: { level_0_comp[d0, d1] -> in[2d0, 1 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
-	auto value_in_in_comp_write0 = in.bank_in_in_comp_write0_to_level_0_rd1.peek_265();
+	auto value_in_in_comp_write0 = in.in_in_comp_write0_to_level_0_rd1_cache.peek_265();
 	return value_in_in_comp_write0;
 }
 
 inline hw_uint<32>  level_0_rd2_select(in_cache& in, int d0, int d1) {
 	// lexmax events: { level_0_comp[d0, d1] -> in_comp[d0' = 2d0, d1' = 2 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
   // level_0_rd2 read pattern: { level_0_comp[d0, d1] -> in[2d0, 2 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
-	auto value_in_in_comp_write0 = in.bank_in_in_comp_write0_to_level_0_rd2.peek_2();
+	auto value_in_in_comp_write0 = in.in_in_comp_write0_to_level_0_rd2_cache.peek_2();
 	return value_in_in_comp_write0;
 }
 
 inline hw_uint<32>  level_0_rd3_select(in_cache& in, int d0, int d1) {
 	// lexmax events: { level_0_comp[d0, d1] -> in_comp[d0' = 1 + 2d0, d1' = 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
   // level_0_rd3 read pattern: { level_0_comp[d0, d1] -> in[1 + 2d0, 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
-	auto value_in_in_comp_write0 = in.bank_in_in_comp_write0_to_level_0_rd3.peek_527();
+	auto value_in_in_comp_write0 = in.in_in_comp_write0_to_level_0_rd3_cache.peek_527();
 	return value_in_in_comp_write0;
 }
 
 inline hw_uint<32>  level_0_rd4_select(in_cache& in, int d0, int d1) {
 	// lexmax events: { level_0_comp[d0, d1] -> in_comp[d0' = 1 + 2d0, d1' = 1 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
   // level_0_rd4 read pattern: { level_0_comp[d0, d1] -> in[1 + 2d0, 1 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
-	auto value_in_in_comp_write0 = in.bank_in_in_comp_write0_to_level_0_rd4.peek_264();
+	auto value_in_in_comp_write0 = in.in_in_comp_write0_to_level_0_rd4_cache.peek_264();
 	return value_in_in_comp_write0;
 }
 
 inline hw_uint<32>  level_0_rd5_select(in_cache& in, int d0, int d1) {
 	// lexmax events: { level_0_comp[d0, d1] -> in_comp[d0' = 1 + 2d0, d1' = 2 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
   // level_0_rd5 read pattern: { level_0_comp[d0, d1] -> in[1 + 2d0, 2 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
-	auto value_in_in_comp_write0 = in.bank_in_in_comp_write0_to_level_0_rd5.peek_1();
+	auto value_in_in_comp_write0 = in.in_in_comp_write0_to_level_0_rd5_cache.peek_1();
 	return value_in_in_comp_write0;
 }
 
 inline hw_uint<32>  level_0_rd6_select(in_cache& in, int d0, int d1) {
 	// lexmax events: { level_0_comp[d0, d1] -> in_comp[d0' = 2 + 2d0, d1' = 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
   // level_0_rd6 read pattern: { level_0_comp[d0, d1] -> in[2 + 2d0, 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
-	auto value_in_in_comp_write0 = in.bank_in_in_comp_write0_to_level_0_rd6.peek_526();
+	auto value_in_in_comp_write0 = in.in_in_comp_write0_to_level_0_rd6_cache.peek_526();
 	return value_in_in_comp_write0;
 }
 
 inline hw_uint<32>  level_0_rd7_select(in_cache& in, int d0, int d1) {
 	// lexmax events: { level_0_comp[d0, d1] -> in_comp[d0' = 2 + 2d0, d1' = 1 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
   // level_0_rd7 read pattern: { level_0_comp[d0, d1] -> in[2 + 2d0, 1 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
-	auto value_in_in_comp_write0 = in.bank_in_in_comp_write0_to_level_0_rd7.peek_263();
+	auto value_in_in_comp_write0 = in.in_in_comp_write0_to_level_0_rd7_cache.peek_263();
 	return value_in_in_comp_write0;
 }
 
 inline hw_uint<32>  level_0_rd8_select(in_cache& in, int d0, int d1) {
 	// lexmax events: { level_0_comp[d0, d1] -> in_comp[d0' = 2 + 2d0, d1' = 2 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
   // level_0_rd8 read pattern: { level_0_comp[d0, d1] -> in[2 + 2d0, 2 + 2d1] : 0 <= d0 <= 130 and 0 <= d1 <= 130 }
-	auto value_in_in_comp_write0 = in.bank_in_in_comp_write0_to_level_0_rd8.peek_0();
+	auto value_in_in_comp_write0 = in.in_in_comp_write0_to_level_0_rd8_cache.peek_0();
 	return value_in_in_comp_write0;
 }
 
@@ -1031,91 +1031,91 @@ struct level_0_level_0_comp_write0_to_level_1_rd8_cache {
 };
 
 struct level_0_cache {
-  level_0_level_0_comp_write0_to_level_1_rd0_cache bank_level_0_level_0_comp_write0_to_level_1_rd0;
-  level_0_level_0_comp_write0_to_level_1_rd1_cache bank_level_0_level_0_comp_write0_to_level_1_rd1;
-  level_0_level_0_comp_write0_to_level_1_rd2_cache bank_level_0_level_0_comp_write0_to_level_1_rd2;
-  level_0_level_0_comp_write0_to_level_1_rd3_cache bank_level_0_level_0_comp_write0_to_level_1_rd3;
-  level_0_level_0_comp_write0_to_level_1_rd4_cache bank_level_0_level_0_comp_write0_to_level_1_rd4;
-  level_0_level_0_comp_write0_to_level_1_rd5_cache bank_level_0_level_0_comp_write0_to_level_1_rd5;
-  level_0_level_0_comp_write0_to_level_1_rd6_cache bank_level_0_level_0_comp_write0_to_level_1_rd6;
-  level_0_level_0_comp_write0_to_level_1_rd7_cache bank_level_0_level_0_comp_write0_to_level_1_rd7;
-  level_0_level_0_comp_write0_to_level_1_rd8_cache bank_level_0_level_0_comp_write0_to_level_1_rd8;
+  level_0_level_0_comp_write0_to_level_1_rd0_cache level_0_level_0_comp_write0_to_level_1_rd0_cache;
+  level_0_level_0_comp_write0_to_level_1_rd1_cache level_0_level_0_comp_write0_to_level_1_rd1_cache;
+  level_0_level_0_comp_write0_to_level_1_rd2_cache level_0_level_0_comp_write0_to_level_1_rd2_cache;
+  level_0_level_0_comp_write0_to_level_1_rd3_cache level_0_level_0_comp_write0_to_level_1_rd3_cache;
+  level_0_level_0_comp_write0_to_level_1_rd4_cache level_0_level_0_comp_write0_to_level_1_rd4_cache;
+  level_0_level_0_comp_write0_to_level_1_rd5_cache level_0_level_0_comp_write0_to_level_1_rd5_cache;
+  level_0_level_0_comp_write0_to_level_1_rd6_cache level_0_level_0_comp_write0_to_level_1_rd6_cache;
+  level_0_level_0_comp_write0_to_level_1_rd7_cache level_0_level_0_comp_write0_to_level_1_rd7_cache;
+  level_0_level_0_comp_write0_to_level_1_rd8_cache level_0_level_0_comp_write0_to_level_1_rd8_cache;
 };
 
 
 
 inline void level_0_level_0_comp_write0_write(hw_uint<32> & level_0_level_0_comp_write0, level_0_cache& level_0, int d0, int d1) {
-  level_0.bank_level_0_level_0_comp_write0_to_level_1_rd0.push(level_0_level_0_comp_write0);
-  level_0.bank_level_0_level_0_comp_write0_to_level_1_rd1.push(level_0_level_0_comp_write0);
-  level_0.bank_level_0_level_0_comp_write0_to_level_1_rd2.push(level_0_level_0_comp_write0);
-  level_0.bank_level_0_level_0_comp_write0_to_level_1_rd3.push(level_0_level_0_comp_write0);
-  level_0.bank_level_0_level_0_comp_write0_to_level_1_rd4.push(level_0_level_0_comp_write0);
-  level_0.bank_level_0_level_0_comp_write0_to_level_1_rd5.push(level_0_level_0_comp_write0);
-  level_0.bank_level_0_level_0_comp_write0_to_level_1_rd6.push(level_0_level_0_comp_write0);
-  level_0.bank_level_0_level_0_comp_write0_to_level_1_rd7.push(level_0_level_0_comp_write0);
-  level_0.bank_level_0_level_0_comp_write0_to_level_1_rd8.push(level_0_level_0_comp_write0);
+  level_0.level_0_level_0_comp_write0_to_level_1_rd0_cache.push(level_0_level_0_comp_write0);
+  level_0.level_0_level_0_comp_write0_to_level_1_rd1_cache.push(level_0_level_0_comp_write0);
+  level_0.level_0_level_0_comp_write0_to_level_1_rd2_cache.push(level_0_level_0_comp_write0);
+  level_0.level_0_level_0_comp_write0_to_level_1_rd3_cache.push(level_0_level_0_comp_write0);
+  level_0.level_0_level_0_comp_write0_to_level_1_rd4_cache.push(level_0_level_0_comp_write0);
+  level_0.level_0_level_0_comp_write0_to_level_1_rd5_cache.push(level_0_level_0_comp_write0);
+  level_0.level_0_level_0_comp_write0_to_level_1_rd6_cache.push(level_0_level_0_comp_write0);
+  level_0.level_0_level_0_comp_write0_to_level_1_rd7_cache.push(level_0_level_0_comp_write0);
+  level_0.level_0_level_0_comp_write0_to_level_1_rd8_cache.push(level_0_level_0_comp_write0);
 }
 
 inline hw_uint<32>  level_1_rd0_select(level_0_cache& level_0, int d0, int d1) {
 	// lexmax events: { level_1_comp[d0, d1] -> level_0_comp[d0' = 2d0, d1' = 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
   // level_1_rd0 read pattern: { level_1_comp[d0, d1] -> level_0[2d0, 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
-	auto value_level_0_level_0_comp_write0 = level_0.bank_level_0_level_0_comp_write0_to_level_1_rd0.peek_264();
+	auto value_level_0_level_0_comp_write0 = level_0.level_0_level_0_comp_write0_to_level_1_rd0_cache.peek_264();
 	return value_level_0_level_0_comp_write0;
 }
 
 inline hw_uint<32>  level_1_rd1_select(level_0_cache& level_0, int d0, int d1) {
 	// lexmax events: { level_1_comp[d0, d1] -> level_0_comp[d0' = 2d0, d1' = 1 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
   // level_1_rd1 read pattern: { level_1_comp[d0, d1] -> level_0[2d0, 1 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
-	auto value_level_0_level_0_comp_write0 = level_0.bank_level_0_level_0_comp_write0_to_level_1_rd1.peek_133();
+	auto value_level_0_level_0_comp_write0 = level_0.level_0_level_0_comp_write0_to_level_1_rd1_cache.peek_133();
 	return value_level_0_level_0_comp_write0;
 }
 
 inline hw_uint<32>  level_1_rd2_select(level_0_cache& level_0, int d0, int d1) {
 	// lexmax events: { level_1_comp[d0, d1] -> level_0_comp[d0' = 2d0, d1' = 2 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
   // level_1_rd2 read pattern: { level_1_comp[d0, d1] -> level_0[2d0, 2 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
-	auto value_level_0_level_0_comp_write0 = level_0.bank_level_0_level_0_comp_write0_to_level_1_rd2.peek_2();
+	auto value_level_0_level_0_comp_write0 = level_0.level_0_level_0_comp_write0_to_level_1_rd2_cache.peek_2();
 	return value_level_0_level_0_comp_write0;
 }
 
 inline hw_uint<32>  level_1_rd3_select(level_0_cache& level_0, int d0, int d1) {
 	// lexmax events: { level_1_comp[d0, d1] -> level_0_comp[d0' = 1 + 2d0, d1' = 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
   // level_1_rd3 read pattern: { level_1_comp[d0, d1] -> level_0[1 + 2d0, 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
-	auto value_level_0_level_0_comp_write0 = level_0.bank_level_0_level_0_comp_write0_to_level_1_rd3.peek_263();
+	auto value_level_0_level_0_comp_write0 = level_0.level_0_level_0_comp_write0_to_level_1_rd3_cache.peek_263();
 	return value_level_0_level_0_comp_write0;
 }
 
 inline hw_uint<32>  level_1_rd4_select(level_0_cache& level_0, int d0, int d1) {
 	// lexmax events: { level_1_comp[d0, d1] -> level_0_comp[d0' = 1 + 2d0, d1' = 1 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
   // level_1_rd4 read pattern: { level_1_comp[d0, d1] -> level_0[1 + 2d0, 1 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
-	auto value_level_0_level_0_comp_write0 = level_0.bank_level_0_level_0_comp_write0_to_level_1_rd4.peek_132();
+	auto value_level_0_level_0_comp_write0 = level_0.level_0_level_0_comp_write0_to_level_1_rd4_cache.peek_132();
 	return value_level_0_level_0_comp_write0;
 }
 
 inline hw_uint<32>  level_1_rd5_select(level_0_cache& level_0, int d0, int d1) {
 	// lexmax events: { level_1_comp[d0, d1] -> level_0_comp[d0' = 1 + 2d0, d1' = 2 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
   // level_1_rd5 read pattern: { level_1_comp[d0, d1] -> level_0[1 + 2d0, 2 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
-	auto value_level_0_level_0_comp_write0 = level_0.bank_level_0_level_0_comp_write0_to_level_1_rd5.peek_1();
+	auto value_level_0_level_0_comp_write0 = level_0.level_0_level_0_comp_write0_to_level_1_rd5_cache.peek_1();
 	return value_level_0_level_0_comp_write0;
 }
 
 inline hw_uint<32>  level_1_rd6_select(level_0_cache& level_0, int d0, int d1) {
 	// lexmax events: { level_1_comp[d0, d1] -> level_0_comp[d0' = 2 + 2d0, d1' = 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
   // level_1_rd6 read pattern: { level_1_comp[d0, d1] -> level_0[2 + 2d0, 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
-	auto value_level_0_level_0_comp_write0 = level_0.bank_level_0_level_0_comp_write0_to_level_1_rd6.peek_262();
+	auto value_level_0_level_0_comp_write0 = level_0.level_0_level_0_comp_write0_to_level_1_rd6_cache.peek_262();
 	return value_level_0_level_0_comp_write0;
 }
 
 inline hw_uint<32>  level_1_rd7_select(level_0_cache& level_0, int d0, int d1) {
 	// lexmax events: { level_1_comp[d0, d1] -> level_0_comp[d0' = 2 + 2d0, d1' = 1 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
   // level_1_rd7 read pattern: { level_1_comp[d0, d1] -> level_0[2 + 2d0, 1 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
-	auto value_level_0_level_0_comp_write0 = level_0.bank_level_0_level_0_comp_write0_to_level_1_rd7.peek_131();
+	auto value_level_0_level_0_comp_write0 = level_0.level_0_level_0_comp_write0_to_level_1_rd7_cache.peek_131();
 	return value_level_0_level_0_comp_write0;
 }
 
 inline hw_uint<32>  level_1_rd8_select(level_0_cache& level_0, int d0, int d1) {
 	// lexmax events: { level_1_comp[d0, d1] -> level_0_comp[d0' = 2 + 2d0, d1' = 2 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
   // level_1_rd8 read pattern: { level_1_comp[d0, d1] -> level_0[2 + 2d0, 2 + 2d1] : 0 <= d0 <= 64 and 0 <= d1 <= 64 }
-	auto value_level_0_level_0_comp_write0 = level_0.bank_level_0_level_0_comp_write0_to_level_1_rd8.peek_0();
+	auto value_level_0_level_0_comp_write0 = level_0.level_0_level_0_comp_write0_to_level_1_rd8_cache.peek_0();
 	return value_level_0_level_0_comp_write0;
 }
 
@@ -1612,91 +1612,91 @@ struct level_1_level_1_comp_write0_to_level_2_rd8_cache {
 };
 
 struct level_1_cache {
-  level_1_level_1_comp_write0_to_level_2_rd0_cache bank_level_1_level_1_comp_write0_to_level_2_rd0;
-  level_1_level_1_comp_write0_to_level_2_rd1_cache bank_level_1_level_1_comp_write0_to_level_2_rd1;
-  level_1_level_1_comp_write0_to_level_2_rd2_cache bank_level_1_level_1_comp_write0_to_level_2_rd2;
-  level_1_level_1_comp_write0_to_level_2_rd3_cache bank_level_1_level_1_comp_write0_to_level_2_rd3;
-  level_1_level_1_comp_write0_to_level_2_rd4_cache bank_level_1_level_1_comp_write0_to_level_2_rd4;
-  level_1_level_1_comp_write0_to_level_2_rd5_cache bank_level_1_level_1_comp_write0_to_level_2_rd5;
-  level_1_level_1_comp_write0_to_level_2_rd6_cache bank_level_1_level_1_comp_write0_to_level_2_rd6;
-  level_1_level_1_comp_write0_to_level_2_rd7_cache bank_level_1_level_1_comp_write0_to_level_2_rd7;
-  level_1_level_1_comp_write0_to_level_2_rd8_cache bank_level_1_level_1_comp_write0_to_level_2_rd8;
+  level_1_level_1_comp_write0_to_level_2_rd0_cache level_1_level_1_comp_write0_to_level_2_rd0_cache;
+  level_1_level_1_comp_write0_to_level_2_rd1_cache level_1_level_1_comp_write0_to_level_2_rd1_cache;
+  level_1_level_1_comp_write0_to_level_2_rd2_cache level_1_level_1_comp_write0_to_level_2_rd2_cache;
+  level_1_level_1_comp_write0_to_level_2_rd3_cache level_1_level_1_comp_write0_to_level_2_rd3_cache;
+  level_1_level_1_comp_write0_to_level_2_rd4_cache level_1_level_1_comp_write0_to_level_2_rd4_cache;
+  level_1_level_1_comp_write0_to_level_2_rd5_cache level_1_level_1_comp_write0_to_level_2_rd5_cache;
+  level_1_level_1_comp_write0_to_level_2_rd6_cache level_1_level_1_comp_write0_to_level_2_rd6_cache;
+  level_1_level_1_comp_write0_to_level_2_rd7_cache level_1_level_1_comp_write0_to_level_2_rd7_cache;
+  level_1_level_1_comp_write0_to_level_2_rd8_cache level_1_level_1_comp_write0_to_level_2_rd8_cache;
 };
 
 
 
 inline void level_1_level_1_comp_write0_write(hw_uint<32> & level_1_level_1_comp_write0, level_1_cache& level_1, int d0, int d1) {
-  level_1.bank_level_1_level_1_comp_write0_to_level_2_rd0.push(level_1_level_1_comp_write0);
-  level_1.bank_level_1_level_1_comp_write0_to_level_2_rd1.push(level_1_level_1_comp_write0);
-  level_1.bank_level_1_level_1_comp_write0_to_level_2_rd2.push(level_1_level_1_comp_write0);
-  level_1.bank_level_1_level_1_comp_write0_to_level_2_rd3.push(level_1_level_1_comp_write0);
-  level_1.bank_level_1_level_1_comp_write0_to_level_2_rd4.push(level_1_level_1_comp_write0);
-  level_1.bank_level_1_level_1_comp_write0_to_level_2_rd5.push(level_1_level_1_comp_write0);
-  level_1.bank_level_1_level_1_comp_write0_to_level_2_rd6.push(level_1_level_1_comp_write0);
-  level_1.bank_level_1_level_1_comp_write0_to_level_2_rd7.push(level_1_level_1_comp_write0);
-  level_1.bank_level_1_level_1_comp_write0_to_level_2_rd8.push(level_1_level_1_comp_write0);
+  level_1.level_1_level_1_comp_write0_to_level_2_rd0_cache.push(level_1_level_1_comp_write0);
+  level_1.level_1_level_1_comp_write0_to_level_2_rd1_cache.push(level_1_level_1_comp_write0);
+  level_1.level_1_level_1_comp_write0_to_level_2_rd2_cache.push(level_1_level_1_comp_write0);
+  level_1.level_1_level_1_comp_write0_to_level_2_rd3_cache.push(level_1_level_1_comp_write0);
+  level_1.level_1_level_1_comp_write0_to_level_2_rd4_cache.push(level_1_level_1_comp_write0);
+  level_1.level_1_level_1_comp_write0_to_level_2_rd5_cache.push(level_1_level_1_comp_write0);
+  level_1.level_1_level_1_comp_write0_to_level_2_rd6_cache.push(level_1_level_1_comp_write0);
+  level_1.level_1_level_1_comp_write0_to_level_2_rd7_cache.push(level_1_level_1_comp_write0);
+  level_1.level_1_level_1_comp_write0_to_level_2_rd8_cache.push(level_1_level_1_comp_write0);
 }
 
 inline hw_uint<32>  level_2_rd0_select(level_1_cache& level_1, int d0, int d1) {
 	// lexmax events: { level_2_comp[d0, d1] -> level_1_comp[d0' = 2d0, d1' = 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // level_2_rd0 read pattern: { level_2_comp[d0, d1] -> level_1[2d0, 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-	auto value_level_1_level_1_comp_write0 = level_1.bank_level_1_level_1_comp_write0_to_level_2_rd0.peek_132();
+	auto value_level_1_level_1_comp_write0 = level_1.level_1_level_1_comp_write0_to_level_2_rd0_cache.peek_132();
 	return value_level_1_level_1_comp_write0;
 }
 
 inline hw_uint<32>  level_2_rd1_select(level_1_cache& level_1, int d0, int d1) {
 	// lexmax events: { level_2_comp[d0, d1] -> level_1_comp[d0' = 2d0, d1' = 1 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // level_2_rd1 read pattern: { level_2_comp[d0, d1] -> level_1[2d0, 1 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-	auto value_level_1_level_1_comp_write0 = level_1.bank_level_1_level_1_comp_write0_to_level_2_rd1.peek_67();
+	auto value_level_1_level_1_comp_write0 = level_1.level_1_level_1_comp_write0_to_level_2_rd1_cache.peek_67();
 	return value_level_1_level_1_comp_write0;
 }
 
 inline hw_uint<32>  level_2_rd2_select(level_1_cache& level_1, int d0, int d1) {
 	// lexmax events: { level_2_comp[d0, d1] -> level_1_comp[d0' = 2d0, d1' = 2 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // level_2_rd2 read pattern: { level_2_comp[d0, d1] -> level_1[2d0, 2 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-	auto value_level_1_level_1_comp_write0 = level_1.bank_level_1_level_1_comp_write0_to_level_2_rd2.peek_2();
+	auto value_level_1_level_1_comp_write0 = level_1.level_1_level_1_comp_write0_to_level_2_rd2_cache.peek_2();
 	return value_level_1_level_1_comp_write0;
 }
 
 inline hw_uint<32>  level_2_rd3_select(level_1_cache& level_1, int d0, int d1) {
 	// lexmax events: { level_2_comp[d0, d1] -> level_1_comp[d0' = 1 + 2d0, d1' = 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // level_2_rd3 read pattern: { level_2_comp[d0, d1] -> level_1[1 + 2d0, 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-	auto value_level_1_level_1_comp_write0 = level_1.bank_level_1_level_1_comp_write0_to_level_2_rd3.peek_131();
+	auto value_level_1_level_1_comp_write0 = level_1.level_1_level_1_comp_write0_to_level_2_rd3_cache.peek_131();
 	return value_level_1_level_1_comp_write0;
 }
 
 inline hw_uint<32>  level_2_rd4_select(level_1_cache& level_1, int d0, int d1) {
 	// lexmax events: { level_2_comp[d0, d1] -> level_1_comp[d0' = 1 + 2d0, d1' = 1 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // level_2_rd4 read pattern: { level_2_comp[d0, d1] -> level_1[1 + 2d0, 1 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-	auto value_level_1_level_1_comp_write0 = level_1.bank_level_1_level_1_comp_write0_to_level_2_rd4.peek_66();
+	auto value_level_1_level_1_comp_write0 = level_1.level_1_level_1_comp_write0_to_level_2_rd4_cache.peek_66();
 	return value_level_1_level_1_comp_write0;
 }
 
 inline hw_uint<32>  level_2_rd5_select(level_1_cache& level_1, int d0, int d1) {
 	// lexmax events: { level_2_comp[d0, d1] -> level_1_comp[d0' = 1 + 2d0, d1' = 2 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // level_2_rd5 read pattern: { level_2_comp[d0, d1] -> level_1[1 + 2d0, 2 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-	auto value_level_1_level_1_comp_write0 = level_1.bank_level_1_level_1_comp_write0_to_level_2_rd5.peek_1();
+	auto value_level_1_level_1_comp_write0 = level_1.level_1_level_1_comp_write0_to_level_2_rd5_cache.peek_1();
 	return value_level_1_level_1_comp_write0;
 }
 
 inline hw_uint<32>  level_2_rd6_select(level_1_cache& level_1, int d0, int d1) {
 	// lexmax events: { level_2_comp[d0, d1] -> level_1_comp[d0' = 2 + 2d0, d1' = 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // level_2_rd6 read pattern: { level_2_comp[d0, d1] -> level_1[2 + 2d0, 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-	auto value_level_1_level_1_comp_write0 = level_1.bank_level_1_level_1_comp_write0_to_level_2_rd6.peek_130();
+	auto value_level_1_level_1_comp_write0 = level_1.level_1_level_1_comp_write0_to_level_2_rd6_cache.peek_130();
 	return value_level_1_level_1_comp_write0;
 }
 
 inline hw_uint<32>  level_2_rd7_select(level_1_cache& level_1, int d0, int d1) {
 	// lexmax events: { level_2_comp[d0, d1] -> level_1_comp[d0' = 2 + 2d0, d1' = 1 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // level_2_rd7 read pattern: { level_2_comp[d0, d1] -> level_1[2 + 2d0, 1 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-	auto value_level_1_level_1_comp_write0 = level_1.bank_level_1_level_1_comp_write0_to_level_2_rd7.peek_65();
+	auto value_level_1_level_1_comp_write0 = level_1.level_1_level_1_comp_write0_to_level_2_rd7_cache.peek_65();
 	return value_level_1_level_1_comp_write0;
 }
 
 inline hw_uint<32>  level_2_rd8_select(level_1_cache& level_1, int d0, int d1) {
 	// lexmax events: { level_2_comp[d0, d1] -> level_1_comp[d0' = 2 + 2d0, d1' = 2 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // level_2_rd8 read pattern: { level_2_comp[d0, d1] -> level_1[2 + 2d0, 2 + 2d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-	auto value_level_1_level_1_comp_write0 = level_1.bank_level_1_level_1_comp_write0_to_level_2_rd8.peek_0();
+	auto value_level_1_level_1_comp_write0 = level_1.level_1_level_1_comp_write0_to_level_2_rd8_cache.peek_0();
 	return value_level_1_level_1_comp_write0;
 }
 
@@ -1746,22 +1746,6 @@ inline hw_uint<288> level_1_level_2_comp_read_bundle_read(level_1_cache& level_1
 
 
 // Operation logic
-inline void level_1_comp(level_0_cache& level_0, level_1_cache& level_1, int d0, int d1) {
-	// Consume: level_0
-	auto level_0_0_c__0_value = level_0_level_1_comp_read_bundle_read(level_0/* source_delay */, d0, d1);
-	auto compute_result = reduce_gauss(level_0_0_c__0_value);
-	// Produce: level_1
-	level_1_level_1_comp_write_bundle_write(compute_result, level_1, d0, d1);
-}
-
-inline void level_2_comp(level_1_cache& level_1, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */level_2, int d0, int d1) {
-	// Consume: level_1
-	auto level_1_0_c__0_value = level_1_level_2_comp_read_bundle_read(level_1/* source_delay */, d0, d1);
-	auto compute_result = reduce_gauss(level_1_0_c__0_value);
-	// Produce: level_2
-	level_2.write(compute_result);
-}
-
 inline void in_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in_off_chip, in_cache& in, int d0, int d1) {
 	// Consume: in_off_chip
 	auto in_off_chip_0_c__0_value = in_off_chip.read();
@@ -1776,6 +1760,22 @@ inline void level_0_comp(in_cache& in, level_0_cache& level_0, int d0, int d1) {
 	auto compute_result = reduce_gauss(in_0_c__0_value);
 	// Produce: level_0
 	level_0_level_0_comp_write_bundle_write(compute_result, level_0, d0, d1);
+}
+
+inline void level_1_comp(level_0_cache& level_0, level_1_cache& level_1, int d0, int d1) {
+	// Consume: level_0
+	auto level_0_0_c__0_value = level_0_level_1_comp_read_bundle_read(level_0/* source_delay */, d0, d1);
+	auto compute_result = reduce_gauss(level_0_0_c__0_value);
+	// Produce: level_1
+	level_1_level_1_comp_write_bundle_write(compute_result, level_1, d0, d1);
+}
+
+inline void level_2_comp(level_1_cache& level_1, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */level_2, int d0, int d1) {
+	// Consume: level_1
+	auto level_1_0_c__0_value = level_1_level_2_comp_read_bundle_read(level_1/* source_delay */, d0, d1);
+	auto compute_result = reduce_gauss(level_1_0_c__0_value);
+	// Produce: level_2
+	level_2.write(compute_result);
 }
 
 // Driver function

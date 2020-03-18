@@ -248,55 +248,55 @@ struct I_I_id0_0_to_I_out_jacobi2d_compute0_7_cache {
 };
 
 struct I_cache {
-  I_I_id0_0_to_I_out_jacobi2d_compute0_3_cache bank_I_I_id0_0_to_I_out_jacobi2d_compute0_3;
-  I_I_id0_0_to_I_out_jacobi2d_compute0_4_cache bank_I_I_id0_0_to_I_out_jacobi2d_compute0_4;
-  I_I_id0_0_to_I_out_jacobi2d_compute0_5_cache bank_I_I_id0_0_to_I_out_jacobi2d_compute0_5;
-  I_I_id0_0_to_I_out_jacobi2d_compute0_6_cache bank_I_I_id0_0_to_I_out_jacobi2d_compute0_6;
-  I_I_id0_0_to_I_out_jacobi2d_compute0_7_cache bank_I_I_id0_0_to_I_out_jacobi2d_compute0_7;
+  I_I_id0_0_to_I_out_jacobi2d_compute0_3_cache I_I_id0_0_to_I_out_jacobi2d_compute0_3_cache;
+  I_I_id0_0_to_I_out_jacobi2d_compute0_4_cache I_I_id0_0_to_I_out_jacobi2d_compute0_4_cache;
+  I_I_id0_0_to_I_out_jacobi2d_compute0_5_cache I_I_id0_0_to_I_out_jacobi2d_compute0_5_cache;
+  I_I_id0_0_to_I_out_jacobi2d_compute0_6_cache I_I_id0_0_to_I_out_jacobi2d_compute0_6_cache;
+  I_I_id0_0_to_I_out_jacobi2d_compute0_7_cache I_I_id0_0_to_I_out_jacobi2d_compute0_7_cache;
 };
 
 
 
 inline void I_I_id0_0_write(hw_uint<32> & I_I_id0_0, I_cache& I, int root, int id1, int id0) {
-  I.bank_I_I_id0_0_to_I_out_jacobi2d_compute0_3.push(I_I_id0_0);
-  I.bank_I_I_id0_0_to_I_out_jacobi2d_compute0_4.push(I_I_id0_0);
-  I.bank_I_I_id0_0_to_I_out_jacobi2d_compute0_5.push(I_I_id0_0);
-  I.bank_I_I_id0_0_to_I_out_jacobi2d_compute0_6.push(I_I_id0_0);
-  I.bank_I_I_id0_0_to_I_out_jacobi2d_compute0_7.push(I_I_id0_0);
+  I.I_I_id0_0_to_I_out_jacobi2d_compute0_3_cache.push(I_I_id0_0);
+  I.I_I_id0_0_to_I_out_jacobi2d_compute0_4_cache.push(I_I_id0_0);
+  I.I_I_id0_0_to_I_out_jacobi2d_compute0_5_cache.push(I_I_id0_0);
+  I.I_I_id0_0_to_I_out_jacobi2d_compute0_6_cache.push(I_I_id0_0);
+  I.I_I_id0_0_to_I_out_jacobi2d_compute0_7_cache.push(I_I_id0_0);
 }
 
 inline hw_uint<32>  I_out_jacobi2d_compute0_3_select(I_cache& I, int root, int d1, int d0) {
 	// lexmax events: { out_jacobi2d_compute0[root = 0, d1, d0] -> I_id0[root' = 0, id1 = 1 + d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 30 }
   // I_out_jacobi2d_compute0_3 read pattern: { out_jacobi2d_compute0[root = 0, d1, d0] -> I[d0, 1 + d1] : 0 < d1 <= 30 and 0 < d0 <= 30 }
-	auto value_I_I_id0_0 = I.bank_I_I_id0_0_to_I_out_jacobi2d_compute0_3.peek_0();
+	auto value_I_I_id0_0 = I.I_I_id0_0_to_I_out_jacobi2d_compute0_3_cache.peek_0();
 	return value_I_I_id0_0;
 }
 
 inline hw_uint<32>  I_out_jacobi2d_compute0_4_select(I_cache& I, int root, int d1, int d0) {
 	// lexmax events: { out_jacobi2d_compute0[root = 0, d1, d0] -> I_id0[root' = 0, id1 = d1, id0 = 1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 30 }
   // I_out_jacobi2d_compute0_4 read pattern: { out_jacobi2d_compute0[root = 0, d1, d0] -> I[1 + d0, d1] : 0 < d1 <= 30 and 0 < d0 <= 30 }
-	auto value_I_I_id0_0 = I.bank_I_I_id0_0_to_I_out_jacobi2d_compute0_4.peek_31();
+	auto value_I_I_id0_0 = I.I_I_id0_0_to_I_out_jacobi2d_compute0_4_cache.peek_31();
 	return value_I_I_id0_0;
 }
 
 inline hw_uint<32>  I_out_jacobi2d_compute0_5_select(I_cache& I, int root, int d1, int d0) {
 	// lexmax events: { out_jacobi2d_compute0[root = 0, d1, d0] -> I_id0[root' = 0, id1 = d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 30 }
   // I_out_jacobi2d_compute0_5 read pattern: { out_jacobi2d_compute0[root = 0, d1, d0] -> I[d0, d1] : 0 < d1 <= 30 and 0 < d0 <= 30 }
-	auto value_I_I_id0_0 = I.bank_I_I_id0_0_to_I_out_jacobi2d_compute0_5.peek_32();
+	auto value_I_I_id0_0 = I.I_I_id0_0_to_I_out_jacobi2d_compute0_5_cache.peek_32();
 	return value_I_I_id0_0;
 }
 
 inline hw_uint<32>  I_out_jacobi2d_compute0_6_select(I_cache& I, int root, int d1, int d0) {
 	// lexmax events: { out_jacobi2d_compute0[root = 0, d1, d0] -> I_id0[root' = 0, id1 = -1 + d1, id0 = d0] : 0 < d1 <= 30 and 0 < d0 <= 30 }
   // I_out_jacobi2d_compute0_6 read pattern: { out_jacobi2d_compute0[root = 0, d1, d0] -> I[d0, -1 + d1] : 0 < d1 <= 30 and 0 < d0 <= 30 }
-	auto value_I_I_id0_0 = I.bank_I_I_id0_0_to_I_out_jacobi2d_compute0_6.peek_64();
+	auto value_I_I_id0_0 = I.I_I_id0_0_to_I_out_jacobi2d_compute0_6_cache.peek_64();
 	return value_I_I_id0_0;
 }
 
 inline hw_uint<32>  I_out_jacobi2d_compute0_7_select(I_cache& I, int root, int d1, int d0) {
 	// lexmax events: { out_jacobi2d_compute0[root = 0, d1, d0] -> I_id0[root' = 0, id1 = d1, id0 = -1 + d0] : 0 < d1 <= 30 and 0 < d0 <= 30 }
   // I_out_jacobi2d_compute0_7 read pattern: { out_jacobi2d_compute0[root = 0, d1, d0] -> I[-1 + d0, d1] : 0 < d1 <= 30 and 0 < d0 <= 30 }
-	auto value_I_I_id0_0 = I.bank_I_I_id0_0_to_I_out_jacobi2d_compute0_7.peek_33();
+	auto value_I_I_id0_0 = I.I_I_id0_0_to_I_out_jacobi2d_compute0_7_cache.peek_33();
 	return value_I_I_id0_0;
 }
 
