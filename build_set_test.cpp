@@ -7727,7 +7727,7 @@ int main(int argc, char** argv) {
 
     upsample_stencil_1d_test();
     upsample_stencil_2d_test();
-    assert(false);
+    //assert(false);
 
     gaussian_pyramid_app_test();
 
