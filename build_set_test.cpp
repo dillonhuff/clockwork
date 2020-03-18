@@ -1403,8 +1403,18 @@ void generate_code_prefix(CodegenOptions& options,
 
   string inpt = buf.get_in_port();
   out << "#include \"hw_classes.h\"" << endl << endl;
+  vector<stack_bank> banks;
   for (auto b : buf.stack_banks) {
-    generate_stack_bank(options, out, b.second.first, b.second.second, buf);
+    auto inpt = b.second.first;
+    auto outpt = b.second.second;
+    stack_bank bank = compute_stack_bank_info(inpt, outpt, buf);
+    banks.push_back(bank);
+  }
+
+  //for (auto b : buf.stack_banks) {
+  for (auto b : banks) {
+    generate_stack_cache(options, out, b);
+    //generate_stack_bank(options, out, b.second.first, b.second.second, buf);
   }
 
   out << "struct " << buf.name << "_cache {" << endl;
