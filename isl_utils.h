@@ -25,8 +25,13 @@ typedef isl_union_map umap;
 typedef isl_union_set uset;
 
 #include <vector>
+#include <map>
+#include <string>
 
 using std::vector;
+using std::pair;
+using std::map;
+using std::string;
 
 isl_pw_aff* cpy(isl_pw_aff* const s) {
   return isl_pw_aff_copy(s);
@@ -123,6 +128,7 @@ isl_space* get_space(isl_map* const m) {
 isl_space* get_space(isl_set* const m) {
   return isl_set_get_space(m);
 }
+
 int dim(isl_space* const s) {
   assert(false);
   return 0;
@@ -176,6 +182,94 @@ std::string str(umap* const m) {
 
   return r;
 }
+
+std::string str(isl_pw_multi_aff* const pma) {
+  auto ctx = isl_pw_multi_aff_get_ctx(pma);
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_print_pw_multi_aff(p, cpy(pma));
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  std::string r(rs);
+  free(rs);
+
+  return r;
+}
+
+//TODO: not consider pw affine, should add a condition on the set
+isl_stat isl_pw_aff_get_coefficient( isl_set *set,  isl_aff *aff, void *user) {
+    auto* coef_list = (map<string, int>*) user;
+
+    int const_ = isl_val_get_num_si(isl_aff_get_constant_val(aff));
+    //add the constant item to the coefficient matrix
+    coef_list->insert(std::make_pair("const", const_));
+
+	int n_div = isl_aff_dim(aff, isl_dim_in);
+	for (int i = 0; i < n_div; ++i) {
+
+		if (!isl_aff_involves_dims(aff, isl_dim_in, i, 1))
+        {
+			continue;
+        }
+		auto dim_name = isl_aff_get_dim_name(aff, isl_dim_in, i);
+		isl_val *v = isl_aff_get_coefficient_val(aff, isl_dim_in, i);
+        int int_v =  isl_val_get_num_si(v);
+        coef_list->insert(std::make_pair(string(dim_name), int_v));
+	}
+    return isl_stat_ok;
+}
+
+
+isl_stat isl_pw_aff_get_const( isl_set *set,  isl_aff *aff, void *user) {
+    auto* const_ = (int*) user;
+
+    *const_ = isl_val_get_num_si(isl_aff_get_constant_val(aff));
+    return isl_stat_ok;
+}
+
+isl_stat isl_pw_aff_get_var_id( isl_set *set,  isl_aff *aff, void *user) {
+    auto* name2idx_related = (map<string, int>*) user;
+
+	int n_div = isl_aff_dim(aff, isl_dim_in);
+	for (int i = 0; i < n_div; ++i) {
+
+		if (!isl_aff_involves_dims(aff, isl_dim_in, i, 1))
+        {
+			continue;
+        }
+		auto dim_name = isl_aff_get_dim_name(aff, isl_dim_in, i);
+        //0 is reserved for constant
+        name2idx_related->insert(std::make_pair(string(dim_name), i));
+	}
+    return isl_stat_ok;
+}
+
+int get_dim_min(isl_set* const m, int pos) {
+    int min;
+    isl_pw_aff_foreach_piece(isl_set_dim_min(cpy(m), pos), isl_pw_aff_get_const, &min);
+    return min;
+}
+
+
+int get_dim_max(isl_set* const m, int pos) {
+    int max;
+    isl_pw_aff_foreach_piece(isl_set_dim_max(cpy(m), pos), isl_pw_aff_get_const, &max);
+    return max;
+}
+
+int get_dim_min(isl_map* const m, int pos) {
+    int min;
+    isl_pw_aff_foreach_piece(isl_map_dim_min(cpy(m), pos), isl_pw_aff_get_const, &min);
+    return min;
+}
+
+
+int get_dim_max(isl_map* const m, int pos) {
+    int max;
+    isl_pw_aff_foreach_piece(isl_map_dim_max(cpy(m), pos), isl_pw_aff_get_const, &max);
+    return max;
+}
+
 
 std::string str(isl_map* const m) {
   auto ctx = isl_map_get_ctx(m);
@@ -656,6 +750,11 @@ isl_map* lexmin(isl_map* const m0) {
   return isl_map_lexmin(cpy(m0));
 }
 
+
+isl_union_set* lexmax(isl_union_set* const m0) {
+  return isl_union_set_lexmax(cpy(m0));
+}
+
 isl_set* lexmax(isl_set* const m0) {
   return isl_set_lexmax(cpy(m0));
 }
@@ -682,6 +781,10 @@ isl_union_set* unn(isl_union_set* const m0, isl_union_set* const m1) {
 
 isl_union_map* unn(isl_union_map* const m0, isl_union_map* const m1) {
   return isl_union_map_union(cpy(m0), cpy(m1));
+}
+
+isl_map* unn(isl_map* const m0, isl_map* const m1) {
+  return isl_map_union(cpy(m0), cpy(m1));
 }
 
 isl_set* its(isl_set* const m0, isl_set* const m1) {
@@ -864,6 +967,16 @@ std::string codegen_c(isl_pw_qpolynomial* pqp) {
   free(rs);
   return r;
 
+}
+
+//add this to the header file
+int bnd_int(isl_union_pw_qpolynomial_fold* bound);
+int int_lower_bound(isl_union_pw_qpolynomial* range_card);
+int int_upper_bound(isl_union_pw_qpolynomial* range_card);
+
+isl_union_pw_qpolynomial* get_out_range(isl_map* m, int dim) {
+    auto* pw_aff_on_dim_i = isl_map_dim_max(cpy(m), dim);
+    return card(to_uset(isl_map_range(isl_map_from_pw_aff(pw_aff_on_dim_i))));
 }
 
 isl_union_pw_qpolynomial_fold* lower_bound(isl_union_pw_qpolynomial* range_card) {
