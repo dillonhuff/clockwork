@@ -2526,6 +2526,7 @@ struct FiniteRegion {
   protected:
 
   vector<QAV> strides;
+  vector<QAV> reduce_var_strides;
 
   public:
 
@@ -2684,7 +2685,8 @@ struct Result {
   string compute_name;
   vector<Window> srcs;
   Window provided;
-  vector<Window> unrolled_srcs;
+  //vector<Window> unrolled_srcs;
+  Box reduce_var_domains;
 };
 
 struct prog {
@@ -6165,13 +6167,13 @@ struct App {
   void fill_compute_domain(const int unroll_factor) {
     int ndims = max_dimensions();
 
-    for (auto s : app_dag) {
-      string name = s.first;
-      for (auto w : s.second.srcs) {
-        app_dag[name].unrolled_srcs.
-          push_back(w.unroll_cpy(unroll_factor));
-      }
-    }
+    //for (auto s : app_dag) {
+      //string name = s.first;
+      //for (auto w : s.second.srcs) {
+        //app_dag[name].unrolled_srcs.
+          //push_back(w.unroll_cpy(unroll_factor));
+      //}
+    //}
 
     for (auto s : app_dag) {
       vector<string> dimvars;
