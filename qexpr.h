@@ -104,6 +104,12 @@ std::ostream& operator<<(std::ostream& out, const QTerm& c);
 struct QTerm {
   vector<QAV> vals;
 
+  void move_constants_to_front() {
+    sort(begin(vals), end(vals), [](const QAV& a, const QAV& b) {
+        return a.is_num && !b.is_num;
+        });
+  }
+
   void fold_ints() {
     vector<QAV> non_ints;
     int i = 1;
@@ -509,6 +515,7 @@ QExpr qexpr(const QTerm& a, const QTerm& l, const QTerm& r) {
 
 string isl_str(QTerm& v) {
   v.simplify();
+  v.move_constants_to_front();
 
   vector<string> tstrings;
   vector<string> divs;

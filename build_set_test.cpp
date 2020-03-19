@@ -5547,21 +5547,26 @@ compute_schedule_for_dim(isl_ctx* ctx,
     cout << "\tbefore simplify: " << r << endl;
     r.simplify();
     cout << "\tafter simplify: " << r << endl;
-    rates_only.push_back(r);
-    for (auto t : r.rhs.terms) {
-      for (auto v : t.vals) {
-        if (v.is_num) {
-          denoms.insert(v.denom);
+    if (r.lhs.contains_val(qvar(dv)) &&
+        r.rhs.contains_val(qvar(dv))) {
+      rates_only.push_back(r);
+      for (auto t : r.rhs.terms) {
+        for (auto v : t.vals) {
+          if (v.is_num) {
+            denoms.insert(v.denom);
+          }
         }
       }
-    }
-    for (auto t : r.lhs.terms) {
-      for (auto v : t.vals) {
-        if (v.is_num) {
-          denoms.insert(v.denom);
+      for (auto t : r.lhs.terms) {
+        for (auto v : t.vals) {
+          if (v.is_num) {
+            denoms.insert(v.denom);
+          }
         }
       }
+
     }
+
   }
   cout << "Denoms..." << endl;
   int lcm = 1;
@@ -6373,6 +6378,12 @@ struct App {
 
   map<string, UBuffer> build_buffers(umap* m, const int unroll_factor) {
     auto sorted_functions = sort_functions();
+    vector<string> var_names;
+    for (int i = 0; i < max_dimensions(); i++) {
+      string dv = "d" + to_string(i);
+      var_names.push_back(dv);
+    }
+
     // Generate re-use buffers
     map<string, UBuffer> buffers;
     for (auto f : sorted_functions) {
@@ -6395,7 +6406,7 @@ struct App {
         }
         cout << "Coeffs: " << sep_list(coeffs, "[", "]", ", ") << endl;
         auto access_map =
-          rdmap(ctx, "{ " + f + "_comp[d0, d1] -> " +
+          rdmap(ctx, "{ " + f + "_comp[" + comma_list(var_names) + "] -> " +
               f + sep_list(coeffs, "[", "]", ", ") + " }");
         string pt_name = f + "_" + f + "_comp_write" + to_string(i);
         b.add_in_pt(pt_name, domain, its(to_map(access_map), domain), sched);
@@ -6422,7 +6433,7 @@ struct App {
           }
           cout << "Coeffs: " << sep_list(coeffs, "[", "]", ", ") << endl;
           auto access_map =
-            rdmap(ctx, "{ " + consumer + "_comp[d0, d1] -> " +
+            rdmap(ctx, "{ " + consumer + "_comp[" + comma_list(var_names) + "] -> " +
                 f + sep_list(coeffs, "[", "]", ", ") + " }");
           cout << "Access map: " << str(access_map) << endl;
           string pt_name = consumer + "_rd" + to_string(i);
@@ -7828,9 +7839,8 @@ int main(int argc, char** argv) {
     //synth_lb_test();
     
     //memtile_test();
-    //
 
-    //grayscale_conversion_test();
+    grayscale_conversion_test();
     jacobi_2d_app_test();
 
     upsample_stencil_1d_test();
