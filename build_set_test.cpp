@@ -2535,6 +2535,10 @@ struct FiniteRegion {
 
   FiniteRegion() {}
 
+  int total_dimension() const {
+    return strides.size() + reduce_var_strides.size();
+  }
+
   int dimension() const {
     return strides.size();
   }
@@ -6201,7 +6205,7 @@ struct App {
   }
 
   void fill_compute_domain(const int unroll_factor) {
-    int ndims = max_dimensions();
+    int ndims = data_dimension();
 
     for (auto s : app_dag) {
       vector<string> dimvars;
@@ -6233,8 +6237,21 @@ struct App {
   void fill_data_domain(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     fill_data_domain(name, {d0, d1}, unroll_factor);
   }
+  
+  int schedule_dimension() const {
+    int max_dims = -1;
+    for (auto f : sort_functions()) {
+      for (auto w : producers(f)) {
+        int dm = w.total_dimension();
+        if (dm > max_dims) {
+          max_dims = dm;
+        }
+      }
+    }
+    return max_dims;
+  }
 
-  int max_dimensions() const {
+  int data_dimension() const {
     int max_dims = -1;
     for (auto f : sort_functions()) {
       for (auto w : producers(f)) {
@@ -6249,7 +6266,7 @@ struct App {
 
   void fill_data_domain(const std::string& name, const vector<int>& dims, const int unroll_factor) {
     Box sbox;
-    int max_dims = max_dimensions();
+    int max_dims = data_dimension();
 
     for (auto f : sort_functions()) {
       for (auto w : producers(f)) {
@@ -6379,7 +6396,7 @@ struct App {
       pos++;
     }
 
-    int ndims = max_dimensions();
+    int ndims = schedule_dimension();
     for (int i = ndims - 1; i >= 0; i--) {
       ::schedule_dim(ctx, domain_boxes, i, schedules, sort_functions(), app_dag, compute_maps);
     }
@@ -6409,7 +6426,6 @@ struct App {
 
     cout << "done getting m..." << endl;
 
-    //assert(false);
     return m;
   }
 
@@ -6424,7 +6440,7 @@ struct App {
   map<string, UBuffer> build_buffers(umap* m, const int unroll_factor) {
     auto sorted_functions = sort_functions();
     vector<string> var_names;
-    for (int i = 0; i < max_dimensions(); i++) {
+    for (int i = 0; i < schedule_dimension(); i++) {
       string dv = "d" + to_string(i);
       var_names.push_back(dv);
     }
@@ -6591,7 +6607,7 @@ struct App {
 
   map<string, vector<QExpr> > schedule_opt() {
     vector<string> sorted_functions = sort_functions();
-    int ndims = max_dimensions();
+    int ndims = schedule_dimension();
     map<string, vector<QExpr> > schedules;
     for (int i = ndims - 1; i >= 0; i--) {
       ::schedule_dim(ctx, domain_boxes, i, schedules, sort_functions(), app_dag, compute_maps);
@@ -7899,7 +7915,7 @@ int main(int argc, char** argv) {
     
     //memtile_test();
 
-    conv_app_rolled_reduce_test();
+    //conv_app_rolled_reduce_test();
     gaussian_pyramid_app_test();
     //assert(false);
     grayscale_conversion_test();
