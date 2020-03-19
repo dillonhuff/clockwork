@@ -3798,11 +3798,13 @@ struct memtile_config {
    int agg_in_0_out_sched_0;
 
    int bank_num;
-   int tile_capacity;
+   int bank_capacity;
 
    vector<tb_config> tb_config_vec;
    vector<sram_config> sram_config_output;
    vector<sram_config> sram_config_input;
+   vector<int> tb_sync_group;
+
    memtile_config():
        agg_align_0_line_length(64),
        agg_in_0_in_period(1),
@@ -3839,6 +3841,9 @@ struct memtile_config {
        }
        for (int bank = 0; bank < bank_num; bank ++) {
            out << "input_addr_ctrl_offsets_cfg_0_" << bank << "," <<bank*bank_capacity << endl;
+       }
+       for (size_t grp = 0; grp < tb_sync_group.size(); grp ++) {
+           out << "sync_grp_sync_group_" << grp << "," << tb_sync_group[grp] << endl;
        }
 
        out.close();
@@ -7045,6 +7050,7 @@ void memtile_test() {
                 tb_config tmp;
                 auto acc_pattern = buf.access_pattern.at(outpt);
                 acc_pattern.init_flatten_stride({2, 1, 0});
+                memtile.tb_sync_group.push_back(1);
                 if (acc_pattern.merge_lastdim()) {
                     tmp.range_outer = acc_pattern.in_range.back();
                     tmp.stride = acc_pattern.stride.back();
