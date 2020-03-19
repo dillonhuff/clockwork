@@ -5674,45 +5674,6 @@ compute_schedule_for_dim(isl_ctx* ctx,
     cout << "\t" << c << endl;
   }
 
-  //cout << "Last compute needed..." << endl;
-  //vector<QConstraint> cn_constraints;
-  //for (auto fneeds : last_compute_needed) {
-    //string f = fneeds.first;
-    //cout << tab(1) << f << endl;
-    //for (auto cn : fneeds.second) {
-      //auto expr = cn.second;
-      //expr.simplify();
-      //cout << tab(2) << cn.first << " -> " << expr << endl;
-      //QConstraint cn_c;
-      //cn_c.lhs = qexpr("d_" + f);
-      //cn_c.rhs = expr;
-      //cn_constraints.push_back(cn_c);
-    //}
-  //}
-
-  //vector<QConstraint> last_compute_constraints;
-  //for (auto& c : cn_constraints) {
-    //for (auto r : sorted_functions) {
-      //c.replace(qvar("q_" + r), qconst(0));
-      //c.replace(qvar(dv), qconst(0));
-      //c.lhs.simplify();
-      //c.rhs.simplify();
-    //}
-  //}
-  //cout << "cn_constraints..." << endl;
-  //for (auto c : cn_constraints) {
-    //cout << tab(1) << c << endl;
-  //}
-
-  //for (auto c : cn_constraints) {
-    //for (auto r : sorted_functions) {
-      //assert(!c.contains_val(qvar(r)));
-    //}
-  //}
-  //vector<int> pt = sat(last_compute_constraints);
-  //cout << "Satisfying solution: " << pt << endl;
-  //assert(false);
-
   for (auto& c : offset_constraints) {
     for (auto r : rates) {
       c.replace(qvar(r.first),
@@ -5791,7 +5752,6 @@ map<string, map<string, QExpr> >
 build_compute_deps(isl_ctx* ctx,
     map<string, Box> & domain_boxes,
     const int i,
-    //map<string, vector<QExpr> >& schedules,
     vector<string> sorted_functions,
     map<string, Result> & app_dag,
     map<string, isl_map*> & compute_maps) {
