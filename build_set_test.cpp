@@ -110,7 +110,6 @@ class AccessPattern {
 
       //one of the rewrite rule
       void get_flatten_stride(vector<int>& st, const vector<int>& dim_sequence) {
-          cout  << "enter here, " << var_dim << endl;
           st = vector<int>(var_dim-1, 0);
           vector<int> sorted_out_range(addr_dim, 1);
 
@@ -118,10 +117,13 @@ class AccessPattern {
               int tmp = sorted_out_range[*it] * out_range[*it];
               sorted_out_range[*(it+1)] = tmp;
           }
-          for_each(out_range.begin(), out_range.end(), [](int val) {cout <<"\t" << val;});
-          cout << endl;
-          for_each(sorted_out_range.begin(), sorted_out_range.end(), [](int val) {cout <<"\t" << val;});
-          cout << endl;
+
+          //cout << "out_range: ";
+          //for_each(out_range.begin(), out_range.end(), [](int val) {cout <<"\t" << val;});
+          //cout << endl;
+          //cout << "dim_stride: ";
+          //for_each(sorted_out_range.begin(), sorted_out_range.end(), [](int val) {cout <<"\t" << val;});
+          //cout << endl;
 
           //matrix multiply with the linearization vector
           for (int addr_it = 0; addr_it < addr_dim; addr_it ++) {
@@ -139,6 +141,13 @@ class AccessPattern {
               int tmp = sorted_out_range[*it] * out_range[*it];
               sorted_out_range[*(it+1)] = tmp;
           }
+          /*
+          cout << "out_range: ";
+          for_each(out_range.begin(), out_range.end(), [](int val) {cout <<"\t" << val;});
+          cout << endl;
+          cout << "dim_stride_: ";
+          for_each(sorted_out_range.begin(), sorted_out_range.end(), [](int val) {cout <<"\t" << val;});
+          cout << endl;*/
 
           //matrix multiply with the linearization vector
           for (int addr_it = 0; addr_it < addr_dim; addr_it ++) {
@@ -146,6 +155,10 @@ class AccessPattern {
                   stride[var_it] += sorted_out_range[addr_it] * access_matrix[addr_it][var_it+1];
               }
           }
+
+          //cout << "flatten stride: " << endl;
+          //for_each(stride.begin(), stride.end(), [](int val) {cout <<"\t" << val;});
+          //cout << endl;
       }
 
       void get_flatten_offset(int& start_addr, const vector<int>& dim_sequence) {
@@ -164,8 +177,9 @@ class AccessPattern {
       }
 
       bool merge_lastdim() {
-          if (in_range.back() == *(stride.rbegin()++)) {
-              *(in_range.rbegin()++) *= in_range.back();
+          //cout << "inner most range: " << in_range.back() << ", stride above: " << *(stride.rbegin()+1)<< endl;
+          if (in_range.back() == *(stride.rbegin()+1)) {
+              *(in_range.rbegin()+1) *= in_range.back();
               in_range.pop_back();
               stride.pop_back();
               stride.back() = 1;
@@ -6997,13 +7011,10 @@ void memtile_test() {
             string outpt_sram = pick(buf.get_out_ports());
             auto acc_pattern = buf.access_pattern.at(outpt_sram);
             int output_port_size = acc_pattern.in_range.back();
-            cout << outpt_sram << endl;
-            for_each(acc_pattern.in_range.begin(), acc_pattern.in_range.end(), [](int range) {cout << "\t" << range;});
-            cout << "\t Total output port num = " << output_port_size << endl;
             sram_config tmp_out;
             for(int i = 0; i < output_port_size; i ++){
                 //FIXME: this dimension drop is specific for this case need a more general solution
-                cout << "\t\t Port no." << i << endl;
+                //drop the last dimension, since that will be handle by the handshake
                 tmp_out.dimensionality = acc_pattern.var_dim - 1 - 1;
                 tmp_out.range = acc_pattern.in_range;
                 tmp_out.range.pop_back();
@@ -7018,7 +7029,8 @@ void memtile_test() {
                 memtile.sram_config_output.push_back(tmp_out);
             }
         }
-        if (buffer.first == "TB") {
+        if (buffer.first == "tb") {
+            cout << "\tConfig TB address stream" << endl;
             auto buf = buffer.second;
             auto output_pt_map = buf.get_out_ports();
             for (string outpt : output_pt_map) {
