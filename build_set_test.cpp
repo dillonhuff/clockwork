@@ -3797,6 +3797,9 @@ struct memtile_config {
    int agg_in_0_out_period;
    int agg_in_0_out_sched_0;
 
+   int bank_num;
+   int tile_capacity;
+
    vector<tb_config> tb_config_vec;
    vector<sram_config> sram_config_output;
    vector<sram_config> sram_config_input;
@@ -3805,7 +3808,9 @@ struct memtile_config {
        agg_in_0_in_period(1),
        agg_in_0_out_period(1),
        agg_in_0_in_sched_0(0),
-       agg_in_0_out_sched_0(0){}
+       agg_in_0_out_sched_0(0),
+       bank_num(1),
+       bank_capacity(512){}
 
    void emit_config_file_csv(string fname) {
        ofstream out(fname + ".csv");
@@ -3831,6 +3836,9 @@ struct memtile_config {
        for (auto tb_config : tb_config_vec) {
            out << tb_config.csv_config_str(i);
            i ++;
+       }
+       for (int bank = 0; bank < bank_num; bank ++) {
+           out << "input_addr_ctrl_offsets_cfg_0_" << bank << "," <<bank*bank_capacity << endl;
        }
 
        out.close();
