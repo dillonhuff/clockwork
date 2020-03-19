@@ -99,7 +99,7 @@ T pick(const std::set<T>& s) {
 static inline
 std::string sep_list(const std::vector<std::string>& strs, const std::string& ldelim, const std::string& rdelim, const std::string& sep) {
 
-  cout << "Starting sep list" << endl;
+  //cout << "Starting sep list" << endl;
   string res = ldelim;
 
   if (strs.size() > 0) {
@@ -112,7 +112,7 @@ std::string sep_list(const std::vector<std::string>& strs, const std::string& ld
   }
   res += rdelim;
 
-  cout << "Done with sep list" << endl;
+  //cout << "Done with sep list" << endl;
 
   return res;
 }

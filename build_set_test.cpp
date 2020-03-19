@@ -2528,6 +2528,10 @@ struct Window {
 
   Window() {}
 
+  int dimension() const {
+    return strides.size();
+  }
+
   Window(const string& name_,
       const vector<QAV>& strides_,
       const vector<vector<int > >& offsets_) :
@@ -6167,10 +6171,23 @@ struct App {
 
   void fill_data_domain(const std::string& name, const vector<int>& dims, const int unroll_factor) {
     Box sbox;
+    int max_dims = dims.size();
+    for (auto f : sort_functions()) {
+      for (auto w : producers(f)) {
+        int dm = w.dimension();
+        if (dm > max_dims) {
+          max_dims = dm;
+        }
+      }
+    }
+
     for (auto d : dims) {
       sbox.intervals.push_back({0, d - 1});
     }
-    //sbox.intervals.push_back({0, d1 - 1});
+    for (int i = dims.size(); i < max_dims; i++) {
+      sbox.intervals.push_back({0, 0});
+    }
+
     sbox = sbox.pad_range_to_nearest_multiple(unroll_factor);
 
     string n = name;
@@ -6197,7 +6214,7 @@ struct App {
         Window win = inputs;
 
         if (!contains_key(inputs.name, domain_boxes)) {
-          domain_boxes[inputs.name] = Box(2);
+          domain_boxes[inputs.name] = Box(max_dims);
         }
         Box in_box;
         int dim = 0;
@@ -6210,6 +6227,7 @@ struct App {
           dim++;
           in_box.intervals.push_back({min_input_addr, max_input_addr});
         }
+
         cout << "Data: " << inputs.name << " to " << next << endl;
         domain_boxes[inputs.name] = unn(domain_boxes[inputs.name], in_box);
         domain_boxes[inputs.name] = domain_boxes[inputs.name].pad_range_to_nearest_multiple(unroll_factor);
@@ -6230,7 +6248,7 @@ struct App {
       cout << d.first << " = " << d.second << endl;
     }
 
-    //assert(false);
+    assert(false);
   }
 
 
@@ -7783,7 +7801,7 @@ int main(int argc, char** argv) {
     //memtile_test();
     //
 
-    //grayscale_conversion_test();
+    grayscale_conversion_test();
     jacobi_2d_app_test();
 
     upsample_stencil_1d_test();
