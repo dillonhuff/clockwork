@@ -2035,19 +2035,21 @@ for (int c0 = -2; c0 <= 33; c0++) {
 }
 
 */
-	for (int c0 = -2; c0 <= 33; c0 += 1) {
-	  if (c0 >= 2) {
-	    if (c0 % 2 == 0)
-	      for (int c1 = -1; c1 <= 0; c1 += 1)
-	        Img_comp(Img_off, Img, c1, c0 / 2);
-	    for (int c1 = 2; c1 <= 33; c1 += 1) {
-	      if (c0 % 2 == 0 && c1 % 2 == 0)
-	        Img_comp(Img_off, Img, c1 / 2, c0 / 2);
-	      upsample_stencil_comp(Img, upsample_stencil, c1 - 2, c0 - 2);
+	for (int c0 = -2; c0 <= 33; c0++) {
+	  for (int c1 = -2; c1 <= 33; c1++) {
+	
+	#ifdef __VIVADO_SYNTH__
+	#pragma HLS pipeline II=1
+	#endif // __VIVADO_SYNTH__
+	
+	    if ((-2 <= c1 && c1 <= 32) && ((c1 - 0) % 2 == 0) && (-2 <= c0 && c0 <= 32) && ((c0 - 0) % 2 == 0)) {
+	      Img_comp(Img_off, Img, (c1 - 0) / 2, (c0 - 0) / 2);
 	    }
-	  } else if (c0 % 2 == 0) {
-	    for (int c1 = -1; c1 <= 16; c1 += 1)
-	      Img_comp(Img_off, Img, c1, c0 / 2);
+	
+	    if ((2 <= c1 && c1 <= 33) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 33) && ((c0 - 2) % 1 == 0)) {
+	      upsample_stencil_comp(Img, upsample_stencil, (c1 - 2) / 1, (c0 - 2) / 1);
+	    }
+	
 	  }
 	}
 	

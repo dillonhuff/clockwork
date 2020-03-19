@@ -57,7 +57,7 @@ struct M_write_6_to_M_read0_3_cache {
 
 };
 
-struct M_write_6_to_M_read0_4_cache {
+struct M_write_6_merged_banks_2_cache {
 	// Capacity: 3
 	// # of read delays: 2
 	// read delays: 0, 1
@@ -85,7 +85,7 @@ struct M_write_6_to_M_read0_4_cache {
 			return f2.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in M_write_6_to_M_read0_4: " << offset << endl;
+		cout << "Error: Unsupported offset in M_write_6_merged_banks_2: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -102,53 +102,16 @@ struct M_write_6_to_M_read0_4_cache {
 
 };
 
-struct M_write_6_to_M_read0_5_cache {
-	// Capacity: 3
-	// # of read delays: 2
-	// read delays: 0, 0
-	// Parition [0, 0] capacity = 1
-	fifo<hw_uint<32> , 1> f1;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f1.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f1.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in M_write_6_to_M_read0_5: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f1.push(value);
-	}
-
-};
-
 struct M_cache {
   M_write_6_to_M_read0_3_cache M_write_6_to_M_read0_3;
-  M_write_6_to_M_read0_4_cache M_write_6_to_M_read0_4;
-  M_write_6_to_M_read0_5_cache M_write_6_to_M_read0_5;
+  M_write_6_merged_banks_2_cache M_write_6_merged_banks_2;
 };
 
 
 
 inline void M_write_6_write(hw_uint<32> & M_write_6, M_cache& M, int root, int p) {
   M.M_write_6_to_M_read0_3.push(M_write_6);
-  M.M_write_6_to_M_read0_4.push(M_write_6);
-  M.M_write_6_to_M_read0_5.push(M_write_6);
+  M.M_write_6_merged_banks_2.push(M_write_6);
 }
 
 inline hw_uint<32>  M_read0_3_select(M_cache& M, int root, int c) {
@@ -161,14 +124,14 @@ inline hw_uint<32>  M_read0_3_select(M_cache& M, int root, int c) {
 inline hw_uint<32>  M_read0_4_select(M_cache& M, int root, int c) {
 	// lexmax events: { read0[root = 0, c] -> write[root' = 0, p = 1 + c] : 0 <= c <= 8; read0[root = 0, c = 9] -> write[root' = 0, p = 9] }
   // M_read0_4 read pattern: { read0[root = 0, c] -> M[1 + c] : 0 <= c <= 8; read0[root = 0, c = 9] -> M[9] }
-	auto value_M_write_6 = M.M_write_6_to_M_read0_4.peek(/* Needs general delay string */ (root == 0 && c >= 0 && 7 - c >= 0) ? (1) : 0);
+	auto value_M_write_6 = M.M_write_6_merged_banks_2.peek(/* Needs general delay string */ (root == 0 && c >= 0 && 7 - c >= 0) ? (1) : 0);
 	return value_M_write_6;
 }
 
 inline hw_uint<32>  M_read0_5_select(M_cache& M, int root, int c) {
 	// lexmax events: { read0[root = 0, c] -> write[root' = 0, p = 9] : 8 <= c <= 9; read0[root = 0, c] -> write[root' = 0, p = 2 + c] : 0 <= c <= 7 }
   // M_read0_5 read pattern: { read0[root = 0, c] -> M[9] : 8 <= c <= 9; read0[root = 0, c] -> M[2 + c] : 0 <= c <= 7 }
-	auto value_M_write_6 = M.M_write_6_to_M_read0_5.peek_0();
+	auto value_M_write_6 = M.M_write_6_merged_banks_2.peek_0();
 	return value_M_write_6;
 }
 
@@ -199,55 +162,44 @@ inline void M_write_write_bundle_write(hw_uint<32>& write_write, M_cache& M, int
 
 #include "hw_classes.h"
 
-struct T_read0_2_to_T_compute_out_1_cache {
+struct T_read0_2_merged_banks_1_cache {
 	// Capacity: 1
-	// # of read delays: 2
-	// read delays: 0, 0
-	// Parition [0, 0] capacity = 1
-	fifo<hw_uint<96>, 1> f1;
-
+	// # of read delays: 1
+	// read delays: 0
+	fifo<hw_uint<96>, 1> f;
+	inline hw_uint<96> peek(const int offset) {
+    return f.peek(0 - offset);
+  }
 
 	inline hw_uint<96> peek_0() {
-		return f1.back();
+		return f.peek(0);
 	}
 
 
-
-	inline hw_uint<96> peek(const int offset) {
-		if (offset == 0) {
-			return f1.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in T_read0_2_to_T_compute_out_1: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
 
 	inline void push(const hw_uint<96> value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
+#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
-		f1.push(value);
-	}
+    return f.push(value);
+  }
 
 };
 
 struct T_cache {
-  T_read0_2_to_T_compute_out_1_cache T_read0_2_to_T_compute_out_1;
+  T_read0_2_merged_banks_1_cache T_read0_2_merged_banks_1;
 };
 
 
 
 inline void T_read0_2_write(hw_uint<96>& T_read0_2, T_cache& T, int root, int c) {
-  T.T_read0_2_to_T_compute_out_1.push(T_read0_2);
+  T.T_read0_2_merged_banks_1.push(T_read0_2);
 }
 
 inline hw_uint<96> T_compute_out_1_select(T_cache& T, int root, int c) {
 	// lexmax events: { compute_out[root = 0, c] -> read0[root' = 0, c' = c] : 0 <= c <= 9 }
   // T_compute_out_1 read pattern: { compute_out[root = 0, c] -> T[c] : 0 <= c <= 9 }
-	auto value_T_read0_2 = T.T_read0_2_to_T_compute_out_1.peek_0();
+	auto value_T_read0_2 = T.T_read0_2_merged_banks_1.peek_0();
 	return value_T_read0_2;
 }
 

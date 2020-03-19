@@ -2,16 +2,16 @@
 
 #include "hw_classes.h"
 
-struct M_get_input_0_to_M_compute_output_3_cache {
+struct M_get_input_0_merged_banks_3_cache {
 	// Capacity: 3
-	// # of read delays: 2
-	// read delays: 0, 2
+	// # of read delays: 3
+	// read delays: 0, 1, 2
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 2) capacity = 1
-	fifo<hw_uint<32> , 1> f1;
-	// Parition [2, 2] capacity = 1
 	fifo<hw_uint<32> , 1> f2;
+	// Parition [2, 2] capacity = 1
+	fifo<hw_uint<32> , 1> f4;
 
 
 	inline hw_uint<32>  peek_0() {
@@ -19,11 +19,11 @@ struct M_get_input_0_to_M_compute_output_3_cache {
 	}
 
 	inline hw_uint<32>  peek_1() {
-		return f1.back();
+		return f2.back();
 	}
 
 	inline hw_uint<32>  peek_2() {
-		return f2.back();
+		return f4.back();
 	}
 
 
@@ -33,13 +33,13 @@ struct M_get_input_0_to_M_compute_output_3_cache {
 			return f0.back();
 		}
 		if (offset == 1) {
-			return f1.back();
+			return f2.back();
 		}
 		if (offset == 2) {
-			return f2.back();
+			return f4.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in M_get_input_0_to_M_compute_output_3: " << offset << endl;
+		cout << "Error: Unsupported offset in M_get_input_0_merged_banks_3: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -50,125 +50,41 @@ struct M_get_input_0_to_M_compute_output_3_cache {
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence array inter false
 #endif //__VIVADO_SYNTH__
-		f2.push(f1.back());
-		f1.push(f0.back());
-		f0.push(value);
-	}
-
-};
-
-struct M_get_input_0_to_M_compute_output_4_cache {
-	// Capacity: 3
-	// # of read delays: 2
-	// read delays: 0, 1
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 1] capacity = 1
-	fifo<hw_uint<32> , 1> f2;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f0.back();
-	}
-
-	inline hw_uint<32>  peek_1() {
-		return f2.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 1) {
-			return f2.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in M_get_input_0_to_M_compute_output_4: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
+		f4.push(f2.back());
 		f2.push(f0.back());
 		f0.push(value);
 	}
 
 };
 
-struct M_get_input_0_to_M_compute_output_5_cache {
-	// Capacity: 3
-	// # of read delays: 2
-	// read delays: 0, 0
-	// Parition [0, 0] capacity = 1
-	fifo<hw_uint<32> , 1> f1;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f1.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f1.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in M_get_input_0_to_M_compute_output_5: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f1.push(value);
-	}
-
-};
-
 struct M_cache {
-  M_get_input_0_to_M_compute_output_3_cache M_get_input_0_to_M_compute_output_3;
-  M_get_input_0_to_M_compute_output_4_cache M_get_input_0_to_M_compute_output_4;
-  M_get_input_0_to_M_compute_output_5_cache M_get_input_0_to_M_compute_output_5;
+  M_get_input_0_merged_banks_3_cache M_get_input_0_merged_banks_3;
 };
 
 
 
 inline void M_get_input_0_write(hw_uint<32> & M_get_input_0, M_cache& M, int root, int p) {
-  M.M_get_input_0_to_M_compute_output_3.push(M_get_input_0);
-  M.M_get_input_0_to_M_compute_output_4.push(M_get_input_0);
-  M.M_get_input_0_to_M_compute_output_5.push(M_get_input_0);
+  M.M_get_input_0_merged_banks_3.push(M_get_input_0);
 }
 
 inline hw_uint<32>  M_compute_output_3_select(M_cache& M, int root, int c) {
 	// lexmax events: { compute_output[root = 0, c] -> get_input[root' = 0, p = c] : 0 <= c <= 7 }
   // M_compute_output_3 read pattern: { compute_output[root = 0, c] -> M[c] : 0 <= c <= 7 }
-	auto value_M_get_input_0 = M.M_get_input_0_to_M_compute_output_3.peek_2();
+	auto value_M_get_input_0 = M.M_get_input_0_merged_banks_3.peek_2();
 	return value_M_get_input_0;
 }
 
 inline hw_uint<32>  M_compute_output_4_select(M_cache& M, int root, int c) {
 	// lexmax events: { compute_output[root = 0, c] -> get_input[root' = 0, p = 1 + c] : 0 <= c <= 7 }
   // M_compute_output_4 read pattern: { compute_output[root = 0, c] -> M[1 + c] : 0 <= c <= 7 }
-	auto value_M_get_input_0 = M.M_get_input_0_to_M_compute_output_4.peek_1();
+	auto value_M_get_input_0 = M.M_get_input_0_merged_banks_3.peek_1();
 	return value_M_get_input_0;
 }
 
 inline hw_uint<32>  M_compute_output_5_select(M_cache& M, int root, int c) {
 	// lexmax events: { compute_output[root = 0, c] -> get_input[root' = 0, p = 2 + c] : 0 <= c <= 7 }
   // M_compute_output_5 read pattern: { compute_output[root = 0, c] -> M[2 + c] : 0 <= c <= 7 }
-	auto value_M_get_input_0 = M.M_get_input_0_to_M_compute_output_5.peek_0();
+	auto value_M_get_input_0 = M.M_get_input_0_merged_banks_3.peek_0();
 	return value_M_get_input_0;
 }
 

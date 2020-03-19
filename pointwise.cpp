@@ -2,55 +2,44 @@
 
 #include "hw_classes.h"
 
-struct I_I_id0_2_to_I_out_plus_one0_1_cache {
+struct I_I_id0_2_merged_banks_1_cache {
 	// Capacity: 1
-	// # of read delays: 2
-	// read delays: 0, 0
-	// Parition [0, 0] capacity = 1
-	fifo<hw_uint<16>, 1> f1;
-
+	// # of read delays: 1
+	// read delays: 0
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+    return f.peek(0 - offset);
+  }
 
 	inline hw_uint<16> peek_0() {
-		return f1.back();
+		return f.peek(0);
 	}
 
 
-
-	inline hw_uint<16> peek(const int offset) {
-		if (offset == 0) {
-			return f1.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_I_id0_2_to_I_out_plus_one0_1: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
+#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
-		f1.push(value);
-	}
+    return f.push(value);
+  }
 
 };
 
 struct I_cache {
-  I_I_id0_2_to_I_out_plus_one0_1_cache I_I_id0_2_to_I_out_plus_one0_1;
+  I_I_id0_2_merged_banks_1_cache I_I_id0_2_merged_banks_1;
 };
 
 
 
 inline void I_I_id0_2_write(hw_uint<16>& I_I_id0_2, I_cache& I, int root, int id1, int id0) {
-  I.I_I_id0_2_to_I_out_plus_one0_1.push(I_I_id0_2);
+  I.I_I_id0_2_merged_banks_1.push(I_I_id0_2);
 }
 
 inline hw_uint<16> I_out_plus_one0_1_select(I_cache& I, int root, int d1, int d0) {
 	// lexmax events: { out_plus_one0[root = 0, d1, d0] -> I_id0[root' = 0, id1 = d1, id0 = d0] : 0 <= d1 <= 31 and 0 <= d0 <= 7 }
   // I_out_plus_one0_1 read pattern: { out_plus_one0[root = 0, d1, d0] -> I[d0, d1] : 0 <= d1 <= 31 and 0 <= d0 <= 7 }
-	auto value_I_I_id0_2 = I.I_I_id0_2_to_I_out_plus_one0_1.peek_0();
+	auto value_I_I_id0_2 = I.I_I_id0_2_merged_banks_1.peek_0();
 	return value_I_I_id0_2;
 }
 

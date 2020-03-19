@@ -2,179 +2,26 @@
 
 #include "hw_classes.h"
 
-struct t1_t1_comp_write0_to_t0_rd0_cache {
+struct t1_t1_comp_write0_merged_banks_5_cache {
 	// Capacity: 70
-	// # of read delays: 2
-	// read delays: 0, 36
+	// # of read delays: 6
+	// read delays: 0, 1, 34, 35, 36, 69
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 36) capacity = 35
-	fifo<hw_uint<32> , 35> f1;
-	// Parition [36, 36] capacity = 1
+	// Parition [1, 2) capacity = 1
 	fifo<hw_uint<32> , 1> f2;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f0.back();
-	}
-
-	inline hw_uint<32>  peek_35() {
-		return f1.back();
-	}
-
-	inline hw_uint<32>  peek_36() {
-		return f2.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 35) {
-			return f1.back();
-		}
-		if (offset == 36) {
-			return f2.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd0: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f2.push(f1.back());
-		f1.push(f0.back());
-		f0.push(value);
-	}
-
-};
-
-struct t1_t1_comp_write0_to_t0_rd1_cache {
-	// Capacity: 70
-	// # of read delays: 2
-	// read delays: 0, 69
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 69) capacity = 68
-	fifo<hw_uint<32> , 68> f1;
+	// Parition [2, 34) capacity = 32
+	fifo<hw_uint<32> , 32> f3;
+	// Parition [34, 35) capacity = 1
+	fifo<hw_uint<32> , 1> f4;
+	// Parition [35, 36) capacity = 1
+	fifo<hw_uint<32> , 1> f6;
+	// Parition [36, 37) capacity = 1
+	fifo<hw_uint<32> , 1> f8;
+	// Parition [37, 69) capacity = 32
+	fifo<hw_uint<32> , 32> f9;
 	// Parition [69, 69] capacity = 1
-	fifo<hw_uint<32> , 1> f2;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f0.back();
-	}
-
-	inline hw_uint<32>  peek_68() {
-		return f1.back();
-	}
-
-	inline hw_uint<32>  peek_69() {
-		return f2.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 68) {
-			return f1.back();
-		}
-		if (offset == 69) {
-			return f2.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd1: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f2.push(f1.back());
-		f1.push(f0.back());
-		f0.push(value);
-	}
-
-};
-
-struct t1_t1_comp_write0_to_t0_rd2_cache {
-	// Capacity: 70
-	// # of read delays: 2
-	// read delays: 0, 35
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 35) capacity = 34
-	fifo<hw_uint<32> , 34> f1;
-	// Parition [35, 35] capacity = 1
-	fifo<hw_uint<32> , 1> f2;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f0.back();
-	}
-
-	inline hw_uint<32>  peek_34() {
-		return f1.back();
-	}
-
-	inline hw_uint<32>  peek_35() {
-		return f2.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 34) {
-			return f1.back();
-		}
-		if (offset == 35) {
-			return f2.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd2: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f2.push(f1.back());
-		f1.push(f0.back());
-		f0.push(value);
-	}
-
-};
-
-struct t1_t1_comp_write0_to_t0_rd3_cache {
-	// Capacity: 70
-	// # of read delays: 2
-	// read delays: 0, 1
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 1] capacity = 1
-	fifo<hw_uint<32> , 1> f2;
+	fifo<hw_uint<32> , 1> f10;
 
 
 	inline hw_uint<32>  peek_0() {
@@ -183,6 +30,30 @@ struct t1_t1_comp_write0_to_t0_rd3_cache {
 
 	inline hw_uint<32>  peek_1() {
 		return f2.back();
+	}
+
+	inline hw_uint<32>  peek_33() {
+		return f3.back();
+	}
+
+	inline hw_uint<32>  peek_34() {
+		return f4.back();
+	}
+
+	inline hw_uint<32>  peek_35() {
+		return f6.back();
+	}
+
+	inline hw_uint<32>  peek_36() {
+		return f8.back();
+	}
+
+	inline hw_uint<32>  peek_68() {
+		return f9.back();
+	}
+
+	inline hw_uint<32>  peek_69() {
+		return f10.back();
 	}
 
 
@@ -194,8 +65,26 @@ struct t1_t1_comp_write0_to_t0_rd3_cache {
 		if (offset == 1) {
 			return f2.back();
 		}
+		if (offset == 33) {
+			return f3.back();
+		}
+		if (offset == 34) {
+			return f4.back();
+		}
+		if (offset == 35) {
+			return f6.back();
+		}
+		if (offset == 36) {
+			return f8.back();
+		}
+		if (offset == 68) {
+			return f9.back();
+		}
+		if (offset == 69) {
+			return f10.back();
+		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd3: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write0_merged_banks_5: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -206,117 +95,60 @@ struct t1_t1_comp_write0_to_t0_rd3_cache {
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence array inter false
 #endif //__VIVADO_SYNTH__
+		f10.push(f9.back());
+		f9.push(f8.back());
+		f8.push(f6.back());
+		f6.push(f4.back());
+		f4.push(f3.back());
+		f3.push(f2.back());
 		f2.push(f0.back());
 		f0.push(value);
 	}
 
 };
 
-struct t1_t1_comp_write0_to_t0_rd4_cache {
-	// Capacity: 70
-	// # of read delays: 2
-	// read delays: 0, 34
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 34) capacity = 33
-	fifo<hw_uint<32> , 33> f1;
-	// Parition [34, 34] capacity = 1
-	fifo<hw_uint<32> , 1> f2;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f0.back();
-	}
-
-	inline hw_uint<32>  peek_33() {
-		return f1.back();
-	}
-
-	inline hw_uint<32>  peek_34() {
-		return f2.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 33) {
-			return f1.back();
-		}
-		if (offset == 34) {
-			return f2.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd4: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f2.push(f1.back());
-		f1.push(f0.back());
-		f0.push(value);
-	}
-
-};
-
 struct t1_cache {
-  t1_t1_comp_write0_to_t0_rd0_cache t1_t1_comp_write0_to_t0_rd0;
-  t1_t1_comp_write0_to_t0_rd1_cache t1_t1_comp_write0_to_t0_rd1;
-  t1_t1_comp_write0_to_t0_rd2_cache t1_t1_comp_write0_to_t0_rd2;
-  t1_t1_comp_write0_to_t0_rd3_cache t1_t1_comp_write0_to_t0_rd3;
-  t1_t1_comp_write0_to_t0_rd4_cache t1_t1_comp_write0_to_t0_rd4;
+  t1_t1_comp_write0_merged_banks_5_cache t1_t1_comp_write0_merged_banks_5;
 };
 
 
 
 inline void t1_t1_comp_write0_write(hw_uint<32> & t1_t1_comp_write0, t1_cache& t1, int d0, int d1) {
-  t1.t1_t1_comp_write0_to_t0_rd0.push(t1_t1_comp_write0);
-  t1.t1_t1_comp_write0_to_t0_rd1.push(t1_t1_comp_write0);
-  t1.t1_t1_comp_write0_to_t0_rd2.push(t1_t1_comp_write0);
-  t1.t1_t1_comp_write0_to_t0_rd3.push(t1_t1_comp_write0);
-  t1.t1_t1_comp_write0_to_t0_rd4.push(t1_t1_comp_write0);
+  t1.t1_t1_comp_write0_merged_banks_5.push(t1_t1_comp_write0);
 }
 
 inline hw_uint<32>  t0_rd0_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = -1 + d0, d1' = d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
   // t0_rd0 read pattern: { t0_comp[d0, d1] -> t1[-1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_t0_rd0.peek_36();
+	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_merged_banks_5.peek_36();
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  t0_rd1_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = d0, d1' = -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
   // t0_rd1 read pattern: { t0_comp[d0, d1] -> t1[d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_t0_rd1.peek_69();
+	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_merged_banks_5.peek_69();
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  t0_rd2_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
   // t0_rd2 read pattern: { t0_comp[d0, d1] -> t1[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_t0_rd2.peek_35();
+	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_merged_banks_5.peek_35();
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  t0_rd3_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = d0, d1' = 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
   // t0_rd3 read pattern: { t0_comp[d0, d1] -> t1[d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_t0_rd3.peek_1();
+	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_merged_banks_5.peek_1();
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  t0_rd4_select(t1_cache& t1, int d0, int d1) {
 	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = 1 + d0, d1' = d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
   // t0_rd4 read pattern: { t0_comp[d0, d1] -> t1[1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_to_t0_rd4.peek_34();
+	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_merged_banks_5.peek_34();
 	return value_t1_t1_comp_write0;
 }
 
@@ -397,11 +229,22 @@ for (int c0 = -1; c0 <= 28; c0++) {
 }
 
 */
-	for (int c0 = -1; c0 <= 28; c0 += 1)
-	  for (int c1 = -1; c1 <= 32; c1 += 1) {
-	    t1_comp(t1_arg, t1, c1, c0);
-	    if (c0 >= 1 && c1 >= 1)
-	      t0_comp(t1, t0, c1 - 1, c0 - 1);
+	for (int c0 = -1; c0 <= 28; c0++) {
+	  for (int c1 = -1; c1 <= 32; c1++) {
+	
+	#ifdef __VIVADO_SYNTH__
+	#pragma HLS pipeline II=1
+	#endif // __VIVADO_SYNTH__
+	
+	    if ((-1 <= c1 && c1 <= 32) && ((c1 - 0) % 1 == 0) && (-1 <= c0 && c0 <= 28) && ((c0 - 0) % 1 == 0)) {
+	      t1_comp(t1_arg, t1, (c1 - 0) / 1, (c0 - 0) / 1);
+	    }
+	
+	    if ((1 <= c1 && c1 <= 32) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 28) && ((c0 - 1) % 1 == 0)) {
+	      t0_comp(t1, t0, (c1 - 1) / 1, (c0 - 1) / 1);
+	    }
+	
 	  }
+	}
 	
 }

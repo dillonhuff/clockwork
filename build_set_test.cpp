@@ -204,10 +204,23 @@ class UBuffer {
 
     map<pair<string, string>, stack_bank > stack_banks;
 
+    void replace_bank(stack_bank& target, stack_bank& replacement) {
+      for (auto bnk : stack_banks) {
+        if (bnk.second.name == target.name) {
+          stack_banks[bnk.first] = replacement;
+          break;
+        }
+      }
+    }
+
     vector<stack_bank> get_banks() {
       vector<stack_bank> bnk;
+      set<string> done;
       for (auto bs : stack_banks) {
-        bnk.push_back(bs.second);
+        if (!elem(bs.second.name, done)) {
+          bnk.push_back(bs.second);
+          done.insert(bs.second.name);
+        }
       }
       return bnk;
     }
@@ -241,9 +254,15 @@ class UBuffer {
 
     vector<stack_bank> receiver_banks(const std::string& inpt) {
       vector<stack_bank> bnks;
+      vector<string> done;
       for (auto bs : stack_banks) {
         if (bs.first.first == inpt) {
-          bnks.push_back(bs.second);
+
+          if (!elem(bs.second.name, done)) {
+            bnks.push_back(bs.second);
+            done.push_back(bs.second.name);
+          }
+
           assert(bnks.back().read_delays.size() == bs.second.read_delays.size());
         }
       }
@@ -1413,18 +1432,42 @@ void generate_code_prefix(CodegenOptions& options,
     }
   }
 
-  // TODO: Add code to sort and merge buffer addresses
   for (auto inpt : buf.get_in_ports()) {
     vector<stack_bank> receivers = buf.receiver_banks(inpt);
     cout << "Receiver banks for " << inpt << endl;
+    vector<stack_bank> mergeable;
     for (auto bnk : receivers) {
       cout << tab(1) << bnk.name << ", # read offsets: " << bnk.read_delays.size() << endl;
-      for (auto elem : bnk.read_delays) {
-        cout << tab(2) << elem << endl;
+      if (bnk.read_delays.size() == 2) {
+        assert(bnk.read_delays[0] == 0);
+        mergeable.push_back(bnk);
+      }
+
+    }
+
+    if (mergeable.size() > 0) {
+      stack_bank merged;
+      merged.name =
+        inpt + "_merged_banks_" + str(mergeable.size());
+      merged.pt_type_string =
+        mergeable.at(0).pt_type_string;
+      merged.num_readers = mergeable.size();
+      merged.maxdelay = -1;
+      for (auto m : mergeable) {
+        if (m.maxdelay > merged.maxdelay) {
+          merged.maxdelay = m.maxdelay;
+        }
+        for (auto mrd : m.read_delays) {
+          merged.read_delays.push_back(mrd);
+        }
+      }
+      merged.read_delays = sort_unique(merged.read_delays);
+
+      for (auto to_replace : mergeable) {
+        buf.replace_bank(to_replace, merged);
       }
     }
   }
-  //assert(false);
 
   string inpt = buf.get_in_port();
   out << "#include \"hw_classes.h\"" << endl << endl;
@@ -1434,10 +1477,12 @@ void generate_code_prefix(CodegenOptions& options,
 
   out << "struct " << buf.name << "_cache {" << endl;
 
-  for (auto b : buf.stack_banks) {
+  //for (auto b : buf.stack_banks) {
+  for (auto b : buf.get_banks()) {
     out << tab(1)
-      << b.first.first << "_to_" << b.first.second << "_cache "
-      << b.second.name
+      //<< b.first.first << "_to_" << b.first.second << "_cache "
+      << b.name << "_cache "
+      << b.name
       << ";" << endl;
   }
 
@@ -6762,7 +6807,7 @@ struct App {
 
     CodegenOptions options;
     options.internal = true;
-    //options.use_custom_code_string = true;
+    options.use_custom_code_string = true;
     options.code_string = cgn;
 
     prog prg;
