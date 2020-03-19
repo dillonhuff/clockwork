@@ -2520,26 +2520,32 @@ struct op {
 
 typedef op loop;
 
-struct Window {
+struct FiniteRegion {
   string name;
+
+  protected:
+
   vector<QAV> strides;
+
+  public:
+
   vector<vector<int> > offsets;
   umap* needed;
 
-  Window() {}
+  FiniteRegion() {}
 
   int dimension() const {
     return strides.size();
   }
 
-  Window(const string& name_,
+  FiniteRegion(const string& name_,
       const vector<QAV>& strides_,
       const vector<vector<int > >& offsets_) :
     name(name_),
     strides(strides_),
     offsets(offsets_) {}
 
-  Window(const string& name_,
+  FiniteRegion(const string& name_,
       const vector<int>& strides_,
       const vector<vector<int > >& offsets_) :
     name(name_),
@@ -2550,8 +2556,8 @@ struct Window {
       }
     }
 
-  Window increment(const int diff) const {
-    Window c;
+  FiniteRegion increment(const int diff) const {
+    FiniteRegion c;
     c.name = name;
     c.strides = strides;
 
@@ -2569,8 +2575,8 @@ struct Window {
     return c;
   }
 
-  Window unroll_cpy(const int factor) const {
-    Window c;
+  FiniteRegion unroll_cpy(const int factor) const {
+    FiniteRegion c;
     c.name = name + "_unrolled";
     int i = 0;
     for (auto s : strides) {
@@ -2603,7 +2609,7 @@ struct Window {
     for (auto s : offsets) {
       assert(s.size() > 0);
       vector<QExpr> comps;
-      for (size_t i = 0; i < strides.size(); i++) {
+      for (size_t i = 0; i < dimension(); i++) {
         QAV dv = qvar("d" + to_string(i));
         QTerm t = qterm(stride(i), dv);
         QAV offset = qconst(s.at(i));
@@ -2616,7 +2622,7 @@ struct Window {
   }
 
   string interval_set_string(const int dim) {
-    assert(dim < strides.size());
+    assert(dim < dimension());
     ostringstream ss;
     ss << stride(dim);
     string base = "x*" + ss.str();
@@ -2645,13 +2651,12 @@ struct Window {
   }
 
   QAV stride(const int dim) const {
-    //cout << "Getting stride for dim = " << dim << endl;
-    assert(dim < (int) strides.size());
+    assert(dim < (int) dimension());
     return strides.at(dim);
   }
 
   int min_offset(const int dim) const {
-    assert((int) strides.size() > dim);
+    assert((int) dimension() > dim);
     int min = 10000;
     for (auto off : offsets) {
       if (off.at(dim) < min) {
@@ -2662,7 +2667,7 @@ struct Window {
   }
 
   int max_offset(const int dim) const {
-    assert((int) strides.size() > dim);
+    assert((int) dimension() > dim);
     int max = -100000;
     for (auto off : offsets) {
       if (off.at(dim) > max) {
@@ -2672,6 +2677,8 @@ struct Window {
     return max;
   }
 };
+
+typedef FiniteRegion Window;
 
 struct Result {
   string compute_name;
@@ -5353,7 +5360,8 @@ QExpr lower_bound(const Window& arg, const int dim) {
   string dvar = "d" + to_string(dim);
 
   QAV dv = qvar(dvar);
-  QAV stride = arg.strides.at(dim);
+  QAV stride = arg.stride(dim);
+  //strides.at(dim);
   QAV max_off = qconst(arg.min_offset(dim));
   QAV rate = qvar("q_" + arg.name);
   QTerm dvs = qterm(stride, rate, dv);
@@ -5368,8 +5376,8 @@ QExpr upper_bound(const Window& arg, const int dim) {
   string dvar = "d" + to_string(dim);
 
   QAV dv = qvar(dvar);
-  //QAV stride = qconst(arg.strides.at(dim));
-  QAV stride = arg.strides.at(dim);
+  QAV stride = arg.stride(dim);
+    //arg.strides.at(dim);
   QAV max_off = qconst(arg.max_offset(dim));
   QAV rate = qvar("q_" + arg.name);
   cout << "Max ffset = " << arg.max_offset(dim) << endl;
@@ -5385,7 +5393,8 @@ QExpr max_bound(const string& consumer, const Window& arg, const int dim) {
   string dvar = consumer;
 
   QAV dv = qvar(dvar);
-  QAV stride = arg.strides.at(dim);
+  QAV stride = arg.stride(dim);
+    //arg.strides.at(dim);
   QAV max_off = qconst(arg.max_offset(dim));
   QTerm dvs = qterm(stride, dv);
 
@@ -5405,7 +5414,8 @@ QExpr min_bound(const string& consumer, const Window& arg, const int dim) {
   string dvar = consumer;
 
   QAV dv = qvar(dvar);
-  QAV stride = arg.strides.at(dim);
+  QAV stride = arg.stride(dim);
+    //arg.strides.at(dim);
   QAV max_off = qconst(arg.min_offset(dim));
   QTerm dvs = qterm(stride, dv);
 
@@ -5993,13 +6003,13 @@ struct App {
 
   umap* build_needed(const string& name, const Window& w) {
     cout << "Building needed map for " << name << " to " << w.name << endl;
-    cout << "Strides..." << endl;
-    for (auto s : w.strides) {
-      cout << tab(1) << s << endl;
-    }
+    //cout << "Strides..." << endl;
+    //for (auto s : w.strides) {
+      //cout << tab(1) << s << endl;
+    //}
 
-    assert(w.strides.size() > 0);
-    int ndims = w.strides.size();
+    assert(w.dimension() > 0);
+    int ndims = w.dimension();
 
     vector<int> mins;
     vector<int> maxs;
@@ -7152,10 +7162,10 @@ void upsample_stencil_2d_test() {
   auto loads = offsets2d(-1, 1, -1, 1);
   //auto loads = offsets2d(0, 2, 0, 0);
   Window imgwin{"Img", {qconst(1, 2), qconst(1, 2)}, loads};
-  cout << "Strides before assignment" << endl;
-  for (auto s : imgwin.strides) {
-    cout << tab(1) << s << endl;
-  }
+  //cout << "Strides before assignment" << endl;
+  //for (auto s : imgwin.strides) {
+    //cout << tab(1) << s << endl;
+  //}
   us.func2d("upsample_stencil", "conv_3_3", imgwin);
 
   us.realize("upsample_stencil", 32, 32, 1);
@@ -7206,10 +7216,10 @@ void upsample_stencil_1d_test() {
   //auto loads = offsets2d(-1, 1, -1, 1);
   auto loads = offsets2d(0, 2, 0, 0);
   Window imgwin{"Img", {qconst(1, 2), qconst(1, 1)}, loads};
-  cout << "Strides before assignment" << endl;
-  for (auto s : imgwin.strides) {
-    cout << tab(1) << s << endl;
-  }
+  //cout << "Strides before assignment" << endl;
+  //for (auto s : imgwin.strides) {
+    //cout << tab(1) << s << endl;
+  //}
   us.func2d("upsample_stencil_1d", "conv_1_3", imgwin);
 
   us.realize("upsample_stencil_1d", 32, 1, 1);
