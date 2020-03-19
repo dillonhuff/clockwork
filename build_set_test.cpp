@@ -2547,6 +2547,15 @@ struct FiniteRegion {
     offsets(offsets_) {}
 
   FiniteRegion(const string& name_,
+      const vector<QAV>& strides_,
+      const vector<QAV>& reduce_var_strides_,
+      const vector<vector<int > >& offsets_) :
+    name(name_),
+    strides(strides_),
+    reduce_var_strides(reduce_var_strides_),
+    offsets(offsets_) {}
+
+  FiniteRegion(const string& name_,
       const vector<int>& strides_,
       const vector<vector<int > >& offsets_) :
     name(name_),
@@ -2685,8 +2694,7 @@ struct Result {
   string compute_name;
   vector<Window> srcs;
   Window provided;
-  //vector<Window> unrolled_srcs;
-  Box reduce_var_domains;
+  Box reduce_var_domain;
 };
 
 struct prog {
@@ -5935,6 +5943,31 @@ struct App {
     isl_ctx_free(ctx);
   }
 
+  string func2d(const std::string& name,
+      const string& reduce_op,
+      const std::string& reduce_init,
+      const std::string& compute,
+      const vector<Window>& windows,
+      const Box& reduce_ranges) {
+
+    functions.insert(name);
+    Result res{compute};
+    for (auto w : windows) {
+      w.needed = build_needed(name, w);
+      res.srcs.push_back(w);
+    }
+
+    assert(res.srcs.size() == windows.size());
+    res.provided =
+      Window(name, {1, 1}, {{0, 0}});
+
+    res.reduce_var_domain = reduce_ranges;
+
+    app_dag[name] = res;
+
+    return name;
+  }
+
   bool is_input(const std::string& name) const {
     return producers(name).size() == 0;
   }
@@ -7099,10 +7132,25 @@ void mismatched_stencil_test() {
   cout << "Optimized: " << optimized << endl;
   assert(naive == optimized);
 
-  //assert(false);
-  //int res = system("g++ -std=c++11 -c mismatched_stencils_opt.cpp");
-  //assert(res == 0);
-  //assert(false);
+}
+
+void conv_app_rolled_reduce_test() {
+  App cv;
+  cv.func2d("Img_off_chip");
+  cv.func2d("Img", "id", pt("Img_off_chip"));
+
+  vector<QAV> dim_strides{qconst(1), qconst(1)};
+  vector<QAV> reduce_strides{qconst(1), qconst(1)};
+  vector<vector<int> > offsets{{0, 0}};
+  Box reduce_ranges;
+  reduce_ranges.intervals.push_back({0, 2});
+  reduce_ranges.intervals.push_back({0, 2});
+  Window img_win{"Img", dim_strides, reduce_strides, offsets};
+
+  cv.func2d("reduce_conv", "add", "0", "mul_2", {img_win}, reduce_ranges);
+  cv.realize("reduce_conv", 32, 32, 1);
+
+  assert(false);
 }
 
 void gaussian_pyramid_app_test() {
@@ -7858,6 +7906,7 @@ int main(int argc, char** argv) {
     
     //memtile_test();
 
+    conv_app_rolled_reduce_test();
     gaussian_pyramid_app_test();
     //assert(false);
     grayscale_conversion_test();
