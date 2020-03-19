@@ -6078,7 +6078,7 @@ struct App {
     return {};
   }
 
-  set<string> consumers(const string& f) {
+  set<string> consumers(const string& f) const {
     set<string> cons;
     for (auto other_func : app_dag) {
       for (auto d : other_func.second.srcs) {
@@ -6104,7 +6104,7 @@ struct App {
   }
 
 
-  vector<string> sort_functions() {
+  vector<string> sort_functions() const {
     vector<string> sorted;
 
     while (sorted.size() != app_dag.size()) {
@@ -6142,6 +6142,8 @@ struct App {
   }
 
   void fill_compute_domain(const int unroll_factor) {
+    int ndims = max_dimensions();
+
     for (auto s : app_dag) {
       string name = s.first;
       for (auto w : s.second.srcs) {
@@ -6151,11 +6153,23 @@ struct App {
     }
 
     for (auto s : app_dag) {
+      vector<string> dimvars;
+      vector<string> later_vars;
+      for (int i = 0; i < ndims; i++) {
+        dimvars.push_back("d" + str(i));
+        if (i > 0) {
+          later_vars.push_back("d" + str(i));
+        }
+      }
+
       compute_maps[s.first] =
-        to_map(rdmap(ctx, "{ " + s.first + "[d0, d1] -> " + s.first + "_comp[floor(d0 / " + to_string(unroll_factor) + "), d1] }"));
+        to_map(rdmap(ctx, "{ " + s.first + "[" + comma_list(dimvars) + " ] -> " +
+              s.first + "_comp[floor(d0 / " + to_string(unroll_factor) + "), " + comma_list(later_vars) + "] }"));
+
       cout << "Compute map for " << s.first << ": " << str(compute_maps[s.first]) << endl;
       cout << "Data domain: " <<
         str(data_domain(s.first).to_set(ctx, s.first)) << endl;
+
       compute_sets[s.first] =
         range(its(
             compute_maps[s.first],
@@ -6169,9 +6183,23 @@ struct App {
     fill_data_domain(name, {d0, d1}, unroll_factor);
   }
 
+  int max_dimensions() const {
+    int max_dims = -1;
+    for (auto f : sort_functions()) {
+      for (auto w : producers(f)) {
+        int dm = w.dimension();
+        if (dm > max_dims) {
+          max_dims = dm;
+        }
+      }
+    }
+    return max_dims;
+  }
+
   void fill_data_domain(const std::string& name, const vector<int>& dims, const int unroll_factor) {
     Box sbox;
-    int max_dims = dims.size();
+    int max_dims = max_dimensions();
+
     for (auto f : sort_functions()) {
       for (auto w : producers(f)) {
         int dm = w.dimension();
@@ -6248,7 +6276,7 @@ struct App {
       cout << d.first << " = " << d.second << endl;
     }
 
-    assert(false);
+    //assert(false);
   }
 
 
@@ -6301,10 +6329,9 @@ struct App {
       pos++;
     }
 
-    int ndims = 2;
+    int ndims = max_dimensions();
     for (int i = ndims - 1; i >= 0; i--) {
       ::schedule_dim(ctx, domain_boxes, i, schedules, sort_functions(), app_dag, compute_maps);
-      //schedule_dim(i, schedules);
     }
 
     umap* m = rdmap(ctx, "{}");
@@ -6443,6 +6470,9 @@ struct App {
 
     umap* m = schedule_naive();
 
+    cout << "Schedule: " << str(m) << endl;
+    assert(false);
+
     map<string, UBuffer> buffers = build_buffers(m);
 
     auto sorted_functions = sort_functions();
@@ -6505,11 +6535,10 @@ struct App {
 
   map<string, vector<QExpr> > schedule_opt() {
     vector<string> sorted_functions = sort_functions();
-    int ndims = 2;
+    int ndims = max_dimensions();
     map<string, vector<QExpr> > schedules;
     for (int i = ndims - 1; i >= 0; i--) {
       ::schedule_dim(ctx, domain_boxes, i, schedules, sort_functions(), app_dag, compute_maps);
-      //schedule_dim(i, schedules);
     }
 
     int pos = 0;
@@ -6592,7 +6621,7 @@ struct App {
     schedules = flatten(schedules);
     vector<string> sorted_functions = sort_functions();
 
-    int ndims = 2;
+    int ndims = max_dimensions();
     umap* m = rdmap(ctx, "{}");
     for (auto f : sorted_functions) {
 
@@ -7140,8 +7169,8 @@ void grayscale_conversion_test() {
   gs.func2d("gray", "avg", inwindow); 
 
   gs.realize_naive("gray", 32, 32);
-
   gs.realize("gray", 32, 32, 1);
+
   std::vector<std::string> optimized =
     run_regression_tb("gray_opt");
 
