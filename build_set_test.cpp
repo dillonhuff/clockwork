@@ -5912,10 +5912,42 @@ struct App {
     return producers(name).size() == 0;
   }
 
+  string func3d(const std::string& name) {
+    functions.insert(name);
+    app_dag[name] = {};
+    app_dag[name].provided = Window(name, {1, 1, 1}, {{0, 0, 0}});
+    return name;
+  }
+
   string func2d(const std::string& name) {
     functions.insert(name);
     app_dag[name] = {};
     app_dag[name].provided = Window(name, {1, 1}, {{0, 0}});
+    return name;
+  }
+  
+  string func3d(const std::string& name,
+      const string& compute,
+      const Window& window) {
+    vector<Window> windows{window};
+    return func3d(name, compute, windows);
+  }
+
+  string func3d(const std::string& name,
+      const string& compute,
+      const vector<Window>& windows) {
+    functions.insert(name);
+    Result res{compute};
+    for (auto w : windows) {
+      w.needed = build_needed(name, w);
+      res.srcs.push_back(w);
+    }
+
+    assert(res.srcs.size() == windows.size());
+    res.provided =
+      Window(name, {1, 1, 1}, {{0, 0, 0}});
+
+    app_dag[name] = res;
     return name;
   }
 
@@ -6130,69 +6162,6 @@ struct App {
   }
 
   void fill_data_domain(const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    //map<string, vector<string> > extent_start_vars;
-    //map<string, vector<string> > extent_end_vars;
-    //map<string, vector<string> > extent_vars;
-    
-    //vector<QConstraint> bound_constraints;
-    //const int ndims = 2;
-    //for (auto f : sort_functions()) {
-      //for (int i = 0; i < ndims; i++) {
-        //extent_start_vars[f].push_back(startvar(f, i));
-        //extent_end_vars[f].push_back(endvar(f, i));
-        //extent_vars[f].push_back(extvar(f, i));
-        //bound_constraints.push_back(eq(qexpr(extvar(f, i)), sub(endvar(f, i), startvar(f, i))));
-      //}
-    //}
-
-    //bound_constraints.push_back(eq(startvar(name, 0), 0));
-    //bound_constraints.push_back(eq(startvar(name, 1), 0));
-
-    //bound_constraints.push_back(geq(endvar(name, 0), d0 - 1));
-    //bound_constraints.push_back(geq(endvar(name, 1), d0 - 1));
-
-    //for (auto f : sort_functions()) {
-      //for (auto inputs : producers(f)) {
-        //for (int d = 0; d < ndims; d++) {
-          //bound_constraints.push_back(geq(min_bound(startvar(f, d), inputs, d), startvar(inputs.name, d)));
-          //bound_constraints.push_back(geq(endvar(inputs.name, d), max_bound(endvar(f, d), inputs, d)));
-        //}
-      //}
-
-      //// All producers to the same consumer
-      //// must be padded to the same siz
-      //for (auto in0 : producers(f)) {
-        //for (auto in1 : producers(f)) {
-          //if (in0.name != in1.name) {
-            //for (int d = 0; d < ndims; d++) {
-              //bound_constraints.push_back(eq(extvar(in0.name, d), extvar(in1.name, d)));
-            //}
-          //}
-        //}
-      //}
-    //}
-
-    //cout << "--- Bound constraints" << endl;
-    //for (auto b : bound_constraints) {
-      //cout << tab(1) << b << endl;
-    //}
-
-    //QExpr objective;
-    //for (auto f : sort_functions()) {
-      //for (int d = 0; d < ndims; d++) {
-        //objective.terms.push_back(qterm(extvar(f, d)));
-      //}
-    //}
-
-    //cout << "Objective: " << objective << endl;
-
-    //map<string, int> result = minimize(bound_constraints, objective);
-    //cout << "Result..." << endl;
-    //for (auto r : result) {
-      //cout << tab(1) << r.first << " = " << r.second << endl;
-    //}
-    //assert(false);
-
     Box sbox;
     sbox.intervals.push_back({0, d0 - 1});
     sbox.intervals.push_back({0, d1 - 1});
@@ -6250,32 +6219,32 @@ struct App {
       cout << "Done with " << next << endl;
     }
 
-    vector<string> edge_functions;
-    for (auto d : domain_boxes) {
-      bool is_edge = !is_input(d.first);
+    //vector<string> edge_functions;
+    //for (auto d : domain_boxes) {
+      //bool is_edge = !is_input(d.first);
 
-      for (auto p : producers(d.first)) {
-        if (!is_input(p.name)) {
-          is_edge = false;
-          break;
-        }
-      }
-      if (is_edge) {
-        if (d.first == "f") {
-          //assert(false);
-          int ubnd0 = domain_boxes.at("u").length(0);
-          int ubnd1 = domain_boxes.at("u").length(1);
+      //for (auto p : producers(d.first)) {
+        //if (!is_input(p.name)) {
+          //is_edge = false;
+          //break;
+        //}
+      //}
+      //if (is_edge) {
+        //if (d.first == "f") {
+          ////assert(false);
+          //int ubnd0 = domain_boxes.at("u").length(0);
+          //int ubnd1 = domain_boxes.at("u").length(1);
 
-          int diff0 = ubnd0 - domain_boxes.at("f").length(0);
-          int diff1 = ubnd1 - domain_boxes.at("f").length(1);
+          //int diff0 = ubnd0 - domain_boxes.at("f").length(0);
+          //int diff1 = ubnd1 - domain_boxes.at("f").length(1);
 
-          domain_boxes[d.first] = d.second.pad(1, diff1);
-          domain_boxes[d.first] = domain_boxes[d.first].pad(0, diff0);
-        }
-        //edge_functions.push_back(d.first);
-        //domain_boxes[d.first] = d.second.pad(1, 10);
-      }
-    }
+          //domain_boxes[d.first] = d.second.pad(1, diff1);
+          //domain_boxes[d.first] = domain_boxes[d.first].pad(0, diff0);
+        //}
+        ////edge_functions.push_back(d.first);
+        ////domain_boxes[d.first] = d.second.pad(1, 10);
+      //}
+    //}
 
 
 
@@ -7012,6 +6981,10 @@ Window pt(const std::string& name) {
   return Window{name, {1, 1}, {{0, 0}}};
 }
 
+Window pt3(const std::string& name) {
+  return Window{name, {1, 1, 1}, {{0, 0, 0}}};
+}
+
 void updown_merge_test() {
   App ds;
   ds.func2d("A_off");
@@ -7164,6 +7137,27 @@ void upsample_stencil_2d_test() {
 
   assert(optimized == naive);
   //assert(false);
+}
+
+void grayscale_conversion_test() {
+  App gs;
+  gs.func3d("Img_off");
+  gs.func3d("Img", "id", pt3("Img_off"));
+
+  Window inwindow{"Img", {{qconst(1), qconst(1), qconst(0)}}, {{0, 0, 0}, {0, 0, 1}, {0, 0, 2}}};
+  gs.func2d("gray", "avg", inwindow); 
+
+  gs.realize_naive("gray", 32, 32);
+
+  gs.realize("gray", 32, 32, 1);
+  std::vector<std::string> optimized =
+    run_regression_tb("gray_opt");
+
+  std::vector<std::string> naive =
+    run_regression_tb("gray_naive");
+
+  assert(naive == optimized);
+
 }
 
 void upsample_stencil_1d_test() {
@@ -7815,6 +7809,7 @@ int main(int argc, char** argv) {
     //memtile_test();
     //
 
+    //grayscale_conversion_test();
     jacobi_2d_app_test();
 
     upsample_stencil_1d_test();

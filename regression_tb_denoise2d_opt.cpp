@@ -9,10 +9,10 @@ int main() {
 
 
   // Loading input data
-  // cmap    : { f_comp[root = 0, f_0, f_1] -> f_off_chip[0, 0] : 0 <= f_0 <= 33 and 0 <= f_1 <= 33 }
-  // read map: { f_off_chip[0, 0] -> f_comp[root = 0, f_0, f_1] : 0 <= f_0 <= 33 and 0 <= f_1 <= 33 }
-  // rng     : { f_comp[root = 0, f_0, f_1] : 0 <= f_0 <= 33 and 0 <= f_1 <= 33 }
-  for (int i = 0; i < 1156; i++) {
+  // cmap    : { f_comp[root = 0, f_0, f_1] -> f_off_chip[0, 0] : 0 <= f_0 <= 29 and 0 <= f_1 <= 29 }
+  // read map: { f_off_chip[0, 0] -> f_comp[root = 0, f_0, f_1] : 0 <= f_0 <= 29 and 0 <= f_1 <= 29 }
+  // rng     : { f_comp[root = 0, f_0, f_1] : 0 <= f_0 <= 29 and 0 <= f_1 <= 29 }
+  for (int i = 0; i < 900; i++) {
     hw_uint<32> in_val;
     set_at<0*32, 32>(in_val, 1*i + 0);
     f_comp_read.write(in_val);
