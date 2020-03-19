@@ -6037,11 +6037,6 @@ struct App {
   }
 
   umap* build_needed(const string& name, const Window& w) {
-    cout << "Building needed map for " << name << " to " << w.name << endl;
-    //cout << "Strides..." << endl;
-    //for (auto s : w.strides) {
-      //cout << tab(1) << s << endl;
-    //}
 
     assert(w.dimension() > 0);
     int ndims = w.dimension();
@@ -6077,7 +6072,6 @@ struct App {
       int max = maxs[i];
       string base_expr = to_string(stride) + "*" + base_var;
       if (!stride.is_whole()) {
-        //assert(false);
         base_expr = "floor(" + base_var + " / " + to_string(stride.denom) + ")";
       }
       box_strs.push_back(base_expr + " + " + to_string(min) + " <= " + kv + " <= " + base_expr + " + " + to_string(max));
@@ -6199,14 +6193,6 @@ struct App {
 
   void fill_compute_domain(const int unroll_factor) {
     int ndims = max_dimensions();
-
-    //for (auto s : app_dag) {
-      //string name = s.first;
-      //for (auto w : s.second.srcs) {
-        //app_dag[name].unrolled_srcs.
-          //push_back(w.unroll_cpy(unroll_factor));
-      //}
-    //}
 
     for (auto s : app_dag) {
       vector<string> dimvars;
@@ -6353,7 +6339,6 @@ struct App {
       b.intervals.push_back({min_pt.at(i), max_pt.at(i)});
     }
     return b;
-    //return map_find(name, compute_boxes);
   }
 
   isl_map* compute_map(const std::string& f) {
@@ -6613,105 +6598,105 @@ struct App {
     return schedules;
   }
 
-  int inner_range(const std::string& f, const int dim) {
-    cout << "Inner range of " << f << " for " << dim << endl;
-    int total = 1;
-    for (int d = dim - 1; d >= 0; d--) {
-      int max_comp = -1;
-      for (auto f : sort_functions()) {
-        int c = compute_box(f).length(d);
-        if (c > max_comp) {
-          max_comp = c;
-        }
-      }
-      total *= max_comp;
-      cout << "total = " << total << endl;
-    }
-    cout << total << endl;
-    return total;
-  }
+  //int inner_range(const std::string& f, const int dim) {
+    //cout << "Inner range of " << f << " for " << dim << endl;
+    //int total = 1;
+    //for (int d = dim - 1; d >= 0; d--) {
+      //int max_comp = -1;
+      //for (auto f : sort_functions()) {
+        //int c = compute_box(f).length(d);
+        //if (c > max_comp) {
+          //max_comp = c;
+        //}
+      //}
+      //total *= max_comp;
+      //cout << "total = " << total << endl;
+    //}
+    //cout << total << endl;
+    //return total;
+  //}
 
-  QExpr flatten(const std::string& f,
-      const vector<QExpr>& s) {
-    cout << "Flattening: " << f << endl;
-    cout << tab(1) << "compute box: " << compute_box(f) << endl;
-    QExpr flat;
-    int sched_dim = s.size() - 1;
-    int ndims = s.size() - 1;
-    int num_funcs = sort_functions().size();
-    for (auto t : s) {
-      if (sched_dim == 0) {
-        for (auto v : t.terms) {
-          int range = 1;
-          flat.terms.push_back(times(range, v));
-        }
-      } else {
-        int dim = sched_dim - 1;
-        //ndims - sched_dim;
-        for (auto v : t.terms) {
-          int range =
-            num_funcs*inner_range(f, dim);
-          flat.terms.push_back(times(range, v));
-        }
-      }
-      sched_dim--;
-    }
-    cout << "Flattened: " << flat << endl;
-    return flat;
-  }
+  //QExpr flatten(const std::string& f,
+      //const vector<QExpr>& s) {
+    //cout << "Flattening: " << f << endl;
+    //cout << tab(1) << "compute box: " << compute_box(f) << endl;
+    //QExpr flat;
+    //int sched_dim = s.size() - 1;
+    //int ndims = s.size() - 1;
+    //int num_funcs = sort_functions().size();
+    //for (auto t : s) {
+      //if (sched_dim == 0) {
+        //for (auto v : t.terms) {
+          //int range = 1;
+          //flat.terms.push_back(times(range, v));
+        //}
+      //} else {
+        //int dim = sched_dim - 1;
+        ////ndims - sched_dim;
+        //for (auto v : t.terms) {
+          //int range =
+            //num_funcs*inner_range(f, dim);
+          //flat.terms.push_back(times(range, v));
+        //}
+      //}
+      //sched_dim--;
+    //}
+    //cout << "Flattened: " << flat << endl;
+    //return flat;
+  //}
 
-  map<string, vector<QExpr> > flatten(const map<string, vector<QExpr> >& s) {
-    map<string, vector<QExpr> > flattened;
-    for (auto t : s) {
-      flattened[t.first] =
-      {flatten(t.first, t.second)};
-    }
-    cout << "Flattened schedules size: " << flattened.size() << endl;
-    for (auto f : flattened) {
-      assert(f.second.size() > 0);
-      cout << tab(1) << f.first << endl;
-      for (auto k : f.second) {
-        cout << tab(2) << k << endl;
-      }
-    }
-    //assert(false);
-    return flattened;
-  }
+  //map<string, vector<QExpr> > flatten(const map<string, vector<QExpr> >& s) {
+    //map<string, vector<QExpr> > flattened;
+    //for (auto t : s) {
+      //flattened[t.first] =
+      //{flatten(t.first, t.second)};
+    //}
+    //cout << "Flattened schedules size: " << flattened.size() << endl;
+    //for (auto f : flattened) {
+      //assert(f.second.size() > 0);
+      //cout << tab(1) << f.first << endl;
+      //for (auto k : f.second) {
+        //cout << tab(2) << k << endl;
+      //}
+    //}
+    ////assert(false);
+    //return flattened;
+  //}
 
-  umap* schedule_flat() {
-    auto schedules = schedule_opt();
-    schedules = flatten(schedules);
-    vector<string> sorted_functions = sort_functions();
+  //umap* schedule_flat() {
+    //auto schedules = schedule_opt();
+    //schedules = flatten(schedules);
+    //vector<string> sorted_functions = sort_functions();
 
-    int ndims = max_dimensions();
-    umap* m = rdmap(ctx, "{}");
-    for (auto f : sorted_functions) {
+    //int ndims = max_dimensions();
+    //umap* m = rdmap(ctx, "{}");
+    //for (auto f : sorted_functions) {
 
-      vector<string> var_names;
-      for (int i = 0; i < ndims; i++) {
-        string dv = "d" + to_string(i);
-        var_names.push_back(dv);
-      }
+      //vector<string> var_names;
+      //for (int i = 0; i < ndims; i++) {
+        //string dv = "d" + to_string(i);
+        //var_names.push_back(dv);
+      //}
 
-      vector<string> sched_exprs;
-      for (auto v : schedules[f]) {
-        sched_exprs.push_back(isl_str(v));
-      }
-      cout << "var names: " << var_names << endl;
-      string map_str = "{ " + f + "_comp" + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
-      cout << "Map str: " << map_str << endl;
-      auto rm = rdmap(ctx, map_str);
-      m = unn(m, rm);
-      isl_union_map_free(rm);
-      cout << "Unioned" << endl;
-      cout << "m = " << str(m) << endl;
-    }
+      //vector<string> sched_exprs;
+      //for (auto v : schedules[f]) {
+        //sched_exprs.push_back(isl_str(v));
+      //}
+      //cout << "var names: " << var_names << endl;
+      //string map_str = "{ " + f + "_comp" + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
+      //cout << "Map str: " << map_str << endl;
+      //auto rm = rdmap(ctx, map_str);
+      //m = unn(m, rm);
+      //isl_union_map_free(rm);
+      //cout << "Unioned" << endl;
+      //cout << "m = " << str(m) << endl;
+    //}
 
-    cout << "done getting m..." << endl;
+    //cout << "done getting m..." << endl;
 
 
-    return m;
-  }
+    //return m;
+  //}
 
   umap* schedule() {
     auto schedules = schedule_opt();
@@ -6907,7 +6892,6 @@ struct App {
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
     generate_regression_testbench(prg, buffers);
-    //generate_regression_testbench(prg);
 
     return;
   }
@@ -7150,7 +7134,7 @@ void conv_app_rolled_reduce_test() {
   cv.func2d("reduce_conv", "add", "0", "mul_2", {img_win}, reduce_ranges);
   cv.realize("reduce_conv", 32, 32, 1);
 
-  assert(false);
+  //assert(false);
 }
 
 void gaussian_pyramid_app_test() {
