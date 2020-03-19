@@ -15,6 +15,168 @@ struct CodegenOptions {
   CodegenOptions() : internal(true), all_rams(false), add_dependence_pragmas(true) {}
 };
 
+class AccessPattern {
+  public:
+      int var_dim;
+      vector<int> in_range;
+      vector<int> stride;
+      map<string, int> name2idx;
+
+      int addr_dim;
+      vector<int> out_range;
+      vector<int> start_addr;
+      vector<int> vec_stride_in_addr;
+
+      //y is output dim, x is input dim
+      vector<vector<int> > access_matrix;
+
+      AccessPattern(){}
+
+      void initial_access_mat(isl_map* access_map, isl_set* domain) {
+          cout << "\t\tProduced: " << str(access_map) << endl;
+          auto mpa = isl_pw_multi_aff_from_map(access_map);
+          addr_dim = isl_pw_multi_aff_dim(mpa, isl_dim_out);
+          map<string, int> var_related;
+          for (int i = 0; i < addr_dim; i ++) {
+              auto pa = isl_pw_multi_aff_get_pw_aff(mpa, i);
+              isl_pw_aff_foreach_piece(pa, &isl_pw_aff_get_var_id, &var_related);
+          }
+          var_related["const"] = -1;
+
+          vector<pair<string, int>> pairs;
+          for (auto itr : var_related)
+              pairs.push_back(itr);
+
+          sort(pairs.begin(), pairs.end(),
+                  [=](std::pair<string, int>& a, std::pair<string, int>& b){
+                  return a.second < b.second;
+                  });
+
+          int cnt = 0;
+          for (auto itr: pairs) {
+              name2idx[itr.first] = cnt++;
+          }
+
+          var_dim = name2idx.size();
+
+          //iniital the input var range
+          in_range = vector<int>(var_dim - 1, 0);
+          for (auto it = pairs.begin(); it != pairs.end(); it ++) {
+              if (it->first == "const")
+                  continue;
+              int min, max;
+              min = get_dim_min(domain, it->second);
+              max = get_dim_max(domain, it->second);
+              cout << "Domain space on <"<< it->first;
+              cout << "> is: [" << min << ", " << max <<"]"<< endl;
+              assert(min == 0);
+              int offset = it - pairs.begin()-1;
+              in_range[offset] = max - min + 1;
+          }
+
+          //initial the output addr range
+          out_range = vector<int>(addr_dim, 0);
+          start_addr = vector<int>(addr_dim, 0);
+          for(int i = 0; i < addr_dim; i ++) {
+              int min, max;
+              //cout << int_upper_bound(card(to_uset(isl_map_range(isl_map_from_pw_aff(isl_map_dim_max(cpy(access_map), i))))))<< endl;
+              int range_val = int_upper_bound(get_out_range(access_map, i));
+              out_range[i] = range_val;
+              auto vec_stride = isl_set_get_stride(isl_map_range(cpy(access_map)), i);
+              vec_stride_in_addr.push_back(isl_val_get_num_si(vec_stride));
+              int range_max = get_dim_max(isl_map_domain(inv(access_map)),i);
+              if (range_val == 1) {
+                  start_addr[i] = range_max;
+              }
+              else {
+                  start_addr[i] = range_max % isl_val_get_num_si(vec_stride);
+              }
+              cout << "ADDR dim <" << i << "> range: " << range_val << ", offset: " << start_addr[i] << endl;
+              //TODO: save stride in the upper level data struct when we bundle those port
+          }
+
+          access_matrix = vector<vector<int>>(addr_dim, vector<int>(var_dim, 0));
+          for (int i = 0; i < addr_dim; i++) {
+              auto pa = isl_pw_multi_aff_get_pw_aff(mpa, i);
+              map<string,  int> coef;
+              isl_pw_aff_foreach_piece(pa, isl_pw_aff_get_coefficient, &coef);
+              cout << "output_dim: " << i << endl;
+              for (auto cc: coef) {
+                  cout << "\tvar_name: " << cc.first <<", idx: " << name2idx[cc.first] << ", coef: " << cc.second << endl;
+                  access_matrix[i][name2idx[cc.first]] = cc.second / vec_stride_in_addr[i];
+              }
+          }
+      }
+
+      //one of the rewrite rule
+      void get_flatten_stride(vector<int>& st, const vector<int>& dim_sequence) {
+          cout  << "enter here, " << var_dim << endl;
+          st = vector<int>(var_dim-1, 0);
+          vector<int> sorted_out_range(addr_dim, 1);
+
+          for (auto it = dim_sequence.begin(); it != dim_sequence.end() - 1; it ++) {
+              int tmp = sorted_out_range[*it] * out_range[*it];
+              sorted_out_range[*(it+1)] = tmp;
+          }
+          for_each(out_range.begin(), out_range.end(), [](int val) {cout <<"\t" << val;});
+          cout << endl;
+          for_each(sorted_out_range.begin(), sorted_out_range.end(), [](int val) {cout <<"\t" << val;});
+          cout << endl;
+
+          //matrix multiply with the linearization vector
+          for (int addr_it = 0; addr_it < addr_dim; addr_it ++) {
+              for (int var_it = 0; var_it < var_dim-1; var_it ++) {
+                  st[var_it] += sorted_out_range[addr_it] * access_matrix[addr_it][var_it+1];
+              }
+          }
+      }
+
+      void init_flatten_stride(const vector<int>& dim_sequence) {
+          stride = vector<int>(var_dim-1, 0);
+          vector<int> sorted_out_range(addr_dim, 1);
+
+          for (auto it = dim_sequence.begin(); it != dim_sequence.end() - 1; it ++) {
+              int tmp = sorted_out_range[*it] * out_range[*it];
+              sorted_out_range[*(it+1)] = tmp;
+          }
+
+          //matrix multiply with the linearization vector
+          for (int addr_it = 0; addr_it < addr_dim; addr_it ++) {
+              for (int var_it = 0; var_it < var_dim-1; var_it ++) {
+                  stride[var_it] += sorted_out_range[addr_it] * access_matrix[addr_it][var_it+1];
+              }
+          }
+      }
+
+      void get_flatten_offset(int& start_addr, const vector<int>& dim_sequence) {
+          start_addr = 0;
+          vector<int> sorted_out_range(addr_dim, 1);
+
+          for (auto it = dim_sequence.begin(); it != dim_sequence.end() - 1; it ++) {
+              int tmp = sorted_out_range[*it] * out_range[*it];
+              sorted_out_range[*(it+1)] = tmp;
+          }
+
+          //matrix multiply with the linearization vector
+          for (int addr_it = 0; addr_it < addr_dim; addr_dim ++) {
+              start_addr += sorted_out_range[addr_it] * access_matrix[addr_it][0];
+          }
+      }
+
+      bool merge_lastdim() {
+          if (in_range.back() == *(stride.rbegin()++)) {
+              *(in_range.rbegin()++) *= in_range.back();
+              in_range.pop_back();
+              stride.pop_back();
+              stride.back() = 1;
+              return true;
+          }
+          else
+              return false;
+      }
+
+};
+
 class UBuffer {
 
   public:
@@ -27,6 +189,8 @@ class UBuffer {
     std::map<string, umap*> access_map;
     std::map<string, isl_union_map*> schedule;
     std::map<string, vector<string> > port_bundles;
+    //post processed access map
+    std::map<string, AccessPattern> access_pattern;
 
 
     UBuffer() : port_widths(32) {}
@@ -116,6 +280,16 @@ class UBuffer {
       access_map[name] = to_umap(access);
       schedule[name] = (sched);
       isIn[name] = false;
+    }
+
+    void add_access_pattern(const std::string& name,
+            isl_map* access,
+            isl_set* dm) {
+        auto io = isIn[name]? "input" : "output";
+        cout << "\tAdding access pattern for " << io  <<" port: " << name << "in buf: " << this->name <<  endl;
+        AccessPattern acc_p;
+        acc_p.initial_access_mat(access, dm);
+        access_pattern[name] = acc_p;
     }
 
     void add_in_pt(const std::string& name,
@@ -3053,6 +3227,7 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
   auto domains = prg.domains();
   for (auto op : prg.all_ops()) {
 
+    cout << "# of produced locations: " << op->produce_locs.size() << endl;
     for (auto produced : op->produce_locs) {
       string name = produced.first;
 
@@ -3078,6 +3253,12 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
         its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + produced.second + "]" + " }").c_str()), cpy(domains.at(op)));
 
       buf.add_in_pt(pt_name, domains.at(op), produced_here, its(opt_sched, domains.at(op)));
+      buf.add_access_pattern(pt_name, produced_here, domains.at(op));
+
+      vector<string> inpt = buf.get_in_ports();
+      cout << "current in port name: " << endl;
+      for_each(inpt.begin(), inpt.end(), [](string pt_name){cout <<"\t" << pt_name;});
+      cout << endl;
 
       usuffix++;
     }
@@ -3111,6 +3292,12 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       cout << "\tAdding output port: " << pt_name << endl;
       cout << "\t\tConsumed: " << str(consumed_here) << endl;
       buf.add_out_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
+      buf.add_access_pattern(pt_name, consumed_here, domains.at(op));
+
+      vector<string> inpt = buf.get_out_ports();
+      cout << "current out port name: " << endl;
+      for_each(inpt.begin(), inpt.end(), [](string pt_name){cout <<"\t" << pt_name;});
+      cout << endl;
 
       usuffix++;
     }
@@ -3537,13 +3724,53 @@ struct tb_config {
     string csv_config_str(int tb_cnt) {
         ostringstream out;
         int pos = 0;
-        for (int index : indices) {
-            out << "tba_" << tb_cnt << "_tb_0_indices_"  << pos << "," << index<< endl;
-            pos ++;
+        if (indices.size()) {
+            for (int index : indices) {
+                out << "tba_" << tb_cnt << "_tb_0_indices_"  << pos << "," << index<< endl;
+                pos ++;
+            }
+            out << "tba_" << tb_cnt << "_tb_0_range_inner," << range_inner << endl;
+            out << "tba_" << tb_cnt << "_tb_0_range_outer," << range_outer<< endl;
+            out << "tba_" << tb_cnt << "_tb_0_stride," << stride<< endl;
+            out << "tba_" << tb_cnt << "_tb_0_dimensionality," << 2<< endl;
         }
-        out << "tba_" << tb_cnt << "_tb_0_range_inner," << range_inner << endl;
-        out << "tba_" << tb_cnt << "_tb_0_range_outer," << range_outer<< endl;
-        out << "tba_" << tb_cnt << "_tb_0_stride," << stride<< endl;
+        else {
+            out << "tba_" << tb_cnt << "_tb_0_range_outer," << range_outer<< endl;
+            out << "tba_" << tb_cnt << "_tb_0_stride," << stride << endl;
+            out << "tba_" << tb_cnt << "_tb_0_dimensionality," << 1<< endl;
+        }
+        return out.str();
+    }
+};
+
+struct sram_config {
+    vector<int> range;
+    vector<int> stride;
+    int dimensionality;
+    int start_addr;
+    string IO;
+
+    void initial_sequential_access(int num_itr) {
+        range.push_back(num_itr);
+        dimensionality = 1;
+        stride.push_back(1);
+        start_addr = 0;
+    }
+
+    void configIO(string io_config) {
+        IO = io_config;
+    }
+
+    string csv_config_str(int port_cnt) {
+        ostringstream out;
+        int pos = 0;
+
+        out << IO << "_addr_ctrl_address_gen_" << port_cnt << "_dimensionality," << dimensionality << endl;
+        out << IO << "_addr_ctrl_address_gen_" << port_cnt << "_starting_addr," << start_addr << endl;
+        for (int loop_dim = 0; loop_dim < dimensionality; loop_dim ++) {
+            out << IO << "_addr_ctrl_address_gen_" << port_cnt << "_ranges_" << loop_dim << "," << range[loop_dim] << endl;
+            out << IO << "_addr_ctrl_address_gen_" << port_cnt << "_strides_" << loop_dim << "," << stride[loop_dim] << endl;
+        }
         return out.str();
     }
 };
@@ -3556,30 +3783,15 @@ struct memtile_config {
    int agg_in_0_out_period;
    int agg_in_0_out_sched_0;
 
-   int input_addr_ctrl_address_gen_0_dimensionality;
-   int input_addr_ctrl_address_gen_0_ranges_0;
-   int input_addr_ctrl_address_gen_0_starting_addr;
-   int input_addr_ctrl_address_gen_0_strides_0;
-
-
-  int output_addr_ctrl_address_gen_0_dimensionality;
-  int output_addr_ctrl_address_gen_0_ranges_0;
-
-  map<string, int> config_map;
-
-
    vector<tb_config> tb_config_vec;
+   vector<sram_config> sram_config_output;
+   vector<sram_config> sram_config_input;
    memtile_config():
        agg_align_0_line_length(64),
-       agg_in_0_in_period(0),
-       agg_in_0_out_period(0),
+       agg_in_0_in_period(1),
+       agg_in_0_out_period(1),
        agg_in_0_in_sched_0(0),
-       agg_in_0_out_sched_0(0){
-           config_map["output_addr_ctrl_address_gen_0_starting_addr"] = 0;
-           config_map["output_addr_ctrl_address_gen_0_stride_0"] = 1;
-           config_map["input_addr_ctrl_offsets_cfg_0_0"] = 0;
-           config_map["sync_grp_sync_group_0"] = 1;
-       }
+       agg_in_0_out_sched_0(0){}
 
    void emit_config_file_csv(string fname) {
        ofstream out(fname + ".csv");
@@ -3588,20 +3800,23 @@ struct memtile_config {
        out << "agg_in_0_in_sched_0," << agg_in_0_in_sched_0 << endl;
        out << "agg_in_0_out_period," << agg_in_0_in_period << endl;
        out << "agg_in_0_out_sched_0," << agg_in_0_out_sched_0 << endl;
-       out << "input_addr_ctrl_address_gen_0_dimensionality," << input_addr_ctrl_address_gen_0_dimensionality << endl;
-       out << "input_addr_ctrl_address_gen_0_ranges_0," << input_addr_ctrl_address_gen_0_ranges_0 << endl;
-       out << "input_addr_ctrl_address_gen_0_starting_addr," << input_addr_ctrl_address_gen_0_starting_addr << endl;
-       out << "input_addr_ctrl_address_gen_0_strides_0," << input_addr_ctrl_address_gen_0_strides_0 << endl;
-       out << "output_addr_ctrl_address_gen_0_dimensionality," << output_addr_ctrl_address_gen_0_dimensionality << endl;
-       out << "output_addr_ctrl_address_gen_0_ranges_0," << output_addr_ctrl_address_gen_0_ranges_0 << endl;
+
        int i = 0;
+       for (auto sram_in: sram_config_input) {
+           out << sram_in.csv_config_str(i);
+           i++;
+       }
+
+       i = 0;
+       for (auto sram_out: sram_config_output) {
+           out << sram_out.csv_config_str(i);
+           i++;
+       }
+
+       i = 0;
        for (auto tb_config : tb_config_vec) {
            out << tb_config.csv_config_str(i);
            i ++;
-       }
-
-       for (auto it : config_map) {
-           out << it.first << "," << it.second << endl;
        }
 
        out.close();
@@ -3671,6 +3886,9 @@ void agg_test() {
   //aha_talk_print_info(prg);
   //hardcode some configuration registers
   memtile_config memtile;
+  //TODO: rewrite this siso test
+
+  /*
   memtile.input_addr_ctrl_address_gen_0_dimensionality = 1;
   memtile.input_addr_ctrl_address_gen_0_starting_addr = 0;
   memtile.input_addr_ctrl_address_gen_0_strides_0 = 1;
@@ -3709,7 +3927,7 @@ void agg_test() {
   memtile.tb_config_vec.push_back(tb);
 
   memtile.emit_config_file_csv("lake_memtile_config");
-
+*/
 }
 
 
@@ -6609,14 +6827,18 @@ void memtile_test() {
 
 
   {
-    auto agg_loop = prg.add_nest("po", 0, 8, "pi", 0, 8, "dummy", 0, 1);
+    auto agg_loop = prg.add_nest("po", 0, 8, "pi", 0, 2, "dummy", 0, 4);
+    //auto agg_loop = prg.add_nest("po", 0, 8, "pi", 0, 8);
     auto agg = agg_loop->add_op("in2agg");
-    agg->add_load("in", "po, pi");
-    agg->add_store("agg", "po, pi");
+    agg->add_load("in", "po, 4*pi+dummy");
+    agg->add_store("agg", "po, 4*pi+dummy");
+    //agg->add_load("in", "po, pi");
+    //agg->add_store("agg", "po, pi");
   }
 
   {
-    auto sram_loop = prg.add_nest("qo", 0, 8, "qi", 0, 2, "dummy", 0 ,1);
+    //auto sram_loop = prg.add_nest("qo", 0, 8, "qi", 0, 2, "dummy0", 0 ,1);
+    auto sram_loop = prg.add_nest("qo", 0, 8, "qi", 0, 2);
     auto sram = sram_loop->add_op("agg2sram");
     sram->add_load("agg", "qo, qi*4");
     sram->add_load("agg", "qo, qi*4+1");
@@ -6694,8 +6916,130 @@ void memtile_test() {
       cout << tab(1) << "DATA demands map: " << cm.first<< "->" << str(app_dag[cm.first].srcs.at(0).needed) << endl;
   }*/
 
-  for (int i = ndims - 1; i >= 1; i--) {
-      schedule_dim(prg.ctx, op_boxes, i, schedules, sorted_functions, read_maps,  compute_maps);
+  umap* compute_deps = rdmap(prg.ctx, "{}");
+
+  for (auto f : sorted_functions) {
+        assert(contains_key(f, read_maps));
+        auto arg_pair = read_maps.at(f);
+
+        string buffer_name = arg_pair.second;
+        auto data_read = arg_pair.first;
+
+        //first function no predcessor
+        if (!contains_key(buffer_name, compute_maps))
+            continue;
+
+        isl_map* map_write = compute_maps.at(buffer_name);
+        cout << tab(1) << "write map: " << str(map_write) << endl;
+
+        //auto data_needed = to_map(arg.needed);
+
+        cout << tab(1) << "read map: " << str(data_read) << endl;
+
+        isl_map* st_dependency =
+            dot(data_read, map_write);
+
+          cout << "statement dependency: " << str(st_dependency) << endl;
+
+          /*assert(contains_key(arg.name, compute_maps));
+          isl_map* a_cm = compute_maps.at(arg.name);
+          cout << "a_cm: " << str(a_cm) << endl;
+
+          isl_map* comps_needed =
+            dot(pixels_needed, a_cm);
+          cout << "comps needed: " << str(comps_needed) << endl;*/
+          isl_map* last_pix =
+            lexmax(st_dependency);
+          cout << "last comp needed: " << str(last_pix) << endl;
+          compute_deps = unn(compute_deps, to_umap(inv(st_dependency)));
+          //auto max = dim_max(st_dependency, i);
+          //cout << "max needed in dim " << i << " = " << str(max) << endl;
+  }
+  {
+    cout<<endl << "Compute dependency: " << str(compute_deps) << endl << endl;
+    auto validity = cpy(unn(compute_deps, prg.relative_orders()));
+    auto proximity = cpy(compute_deps);
+    auto operations = prg.whole_iteration_domain();
+    //cout << "operations: " << str(operations) << endl;
+    //cout << "number of nodes in opteration graph: " << str(card(operations)) << endl;
+    auto sched_opt_tree = isl_union_set_compute_schedule(operations, validity, proximity);
+    auto sched_opt = isl_schedule_get_map(sched_opt_tree);
+    sched_opt = its(sched_opt, prg.whole_iteration_domain());
+    cout << codegen_c(sched_opt) << endl;
+    /*for (int i = ndims - 1; i >= 1; i--) {
+        schedule_dim(prg.ctx, op_boxes, i, schedules, sorted_functions, read_maps,  compute_maps);
+    }*/
+
+    //Start generate the config
+    //TODO: hacky first try, based on my understanding of the configuration register
+    //FIXME: there is config register related to the memory size, no need to use schedule result
+    auto buffers = build_buffers(prg, sched_opt);
+
+    cout << "\n***Dump configuration file into CSV***" << endl;
+    memtile_config memtile;
+    for (auto buffer : buffers) {
+        if (buffer.first == "sram") {
+            auto buf = buffer.second;
+
+            //generate the input port configuration, currently assume all write is consecutive
+            cout << "\tConfig input addr stream" << endl;
+            string inpt = pick(buf.get_in_ports());
+            int num_reads = int_upper_bound(card((domain(buf.access_map.at(inpt)))));
+            cout <<"total data input: " << num_reads << endl;
+            sram_config tmp;
+            tmp.initial_sequential_access(num_reads);
+            tmp.configIO("input");
+            memtile.sram_config_input.push_back(tmp);
+
+            //generate the output configuration register
+            cout << "\tConfig output addr stream" << endl;
+            string outpt_sram = pick(buf.get_out_ports());
+            auto acc_pattern = buf.access_pattern.at(outpt_sram);
+            int output_port_size = acc_pattern.in_range.back();
+            cout << outpt_sram << endl;
+            for_each(acc_pattern.in_range.begin(), acc_pattern.in_range.end(), [](int range) {cout << "\t" << range;});
+            cout << "\t Total output port num = " << output_port_size << endl;
+            sram_config tmp_out;
+            for(int i = 0; i < output_port_size; i ++){
+                //FIXME: this dimension drop is specific for this case need a more general solution
+                cout << "\t\t Port no." << i << endl;
+                tmp_out.dimensionality = acc_pattern.var_dim - 1 - 1;
+                tmp_out.range = acc_pattern.in_range;
+                tmp_out.range.pop_back();
+                std::reverse(tmp_out.range.begin(),tmp_out.range.end());
+                vector<int> stride;
+                acc_pattern.get_flatten_stride(stride, {1, 0});
+                tmp_out.start_addr = stride.back() * i;
+                stride.pop_back();
+                tmp_out.stride = stride;
+                std::reverse(tmp_out.stride.begin(),tmp_out.stride.end());
+                tmp_out.IO = string("output");
+                memtile.sram_config_output.push_back(tmp_out);
+            }
+        }
+        if (buffer.first == "TB") {
+            auto buf = buffer.second;
+            auto output_pt_map = buf.get_out_ports();
+            for (string outpt : output_pt_map) {
+                tb_config tmp;
+                auto acc_pattern = buf.access_pattern.at(outpt);
+                acc_pattern.init_flatten_stride({2, 1, 0});
+                if (acc_pattern.merge_lastdim()) {
+                    tmp.range_outer = acc_pattern.in_range.back();
+                    tmp.stride = acc_pattern.stride.back();
+                }
+                else {
+                    cout << "NOT IMPLEMENTED" << endl;
+                    assert(false);
+                }
+                memtile.tb_config_vec.push_back(tmp);
+            }
+        }
+
+        //cout << buffer.first << "_______________________________ \n " << buffer.second<< endl;
+  }
+  memtile.emit_config_file_csv("lake_memtile_config_conv33");
+  assert(false);
   }
 
   int pos = 0;
@@ -6707,14 +7051,15 @@ void memtile_test() {
   }
 
   //auto sched_opt = its(to_umap(prg.ctx, schedules, sorted_functions, ""), prg.whole_iteration_domain());
-  auto sched_opt = to_umap(prg.ctx, schedules, sorted_functions, "");
+  /*auto sched_opt = to_umap(prg.ctx, schedules, sorted_functions, "");
 
   //auto sched_opt = its(rdmap(prg.ctx, "{in2agg[root, po, pi] -> [root, po, pi, 0]; agg2sram[root, qo, qi] -> [root, qo, 3+4*qi, 1]}"), prg.whole_iteration_domain());
   cout << "Sched map:\n " << str(sched_opt) << endl;
   cout << "Iter Domain:\n " << str(prg.whole_iteration_domain()) << endl;
   sched_opt = its(sched_opt, prg.whole_iteration_domain());
-  cout << "After opt Sched map:\n " << str(sched_opt) << endl;
- // auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
+  cout << "After opt Sched map:\n " << str(sched_opt) << endl;*/
+  auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
+  sched_opt = its(sched_opt, prg.whole_iteration_domain());
   cout << codegen_c(sched_opt) << endl;
   assert(false);
   //aha_talk_print_info(prg);
