@@ -98,6 +98,8 @@ T pick(const std::set<T>& s) {
 
 static inline
 std::string sep_list(const std::vector<std::string>& strs, const std::string& ldelim, const std::string& rdelim, const std::string& sep) {
+
+  cout << "Starting sep list" << endl;
   string res = ldelim;
 
   if (strs.size() > 0) {
@@ -109,6 +111,8 @@ std::string sep_list(const std::vector<std::string>& strs, const std::string& ld
     }
   }
   res += rdelim;
+
+  cout << "Done with sep list" << endl;
 
   return res;
 }
@@ -132,7 +136,13 @@ std::string comma_list(const std::vector<std::string>& strs) {
 
 template<typename T>
 static inline
-std::string comma_list(const std::vector<T>& strs) {
+std::string comma_list(const std::vector<T>& vals) {
+  vector<string> strs;
+  for (auto v : vals) {
+    ostringstream ss;
+    ss << v;
+    strs.push_back(ss.str());
+  }
   return sep_list(strs, "", "", ", ");
 }
 

@@ -3,6 +3,7 @@
 #include "hw_classes.h"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 struct t1_t1_comp_write0_cache {
 <<<<<<< HEAD
 	// Capacity: 518
@@ -12,12 +13,17 @@ struct t1_t1_comp_write0_to_t0_rd0_cache {
 >>>>>>> origin/master
 	// Capacity: 70
 >>>>>>> origin/master
+=======
+struct t1_t1_comp_write0_merged_banks_5_cache {
+	// Capacity: 70
+	// # of read delays: 6
+	// read delays: 0, 1, 34, 35, 36, 69
+>>>>>>> origin/master
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 36) capacity = 35
-	fifo<hw_uint<32> , 35> f1;
-	// Parition [36, 36] capacity = 1
+	// Parition [1, 2) capacity = 1
 	fifo<hw_uint<32> , 1> f2;
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 	// Parition [2, 258) capacity = 256
@@ -32,6 +38,8 @@ struct t1_t1_comp_write0_to_t0_rd0_cache {
 	fifo<hw_uint<32> , 256> f9;
 	// Parition [517, 517] capacity = 1
 =======
+=======
+>>>>>>> origin/master
 	// Parition [2, 34) capacity = 32
 	fifo<hw_uint<32> , 32> f3;
 	// Parition [34, 35) capacity = 1
@@ -43,9 +51,13 @@ struct t1_t1_comp_write0_to_t0_rd0_cache {
 	// Parition [37, 69) capacity = 32
 	fifo<hw_uint<32> , 32> f9;
 	// Parition [69, 69] capacity = 1
+<<<<<<< HEAD
 >>>>>>> origin/master
 	fifo<hw_uint<32> , 1> f10;
 =======
+>>>>>>> origin/master
+=======
+	fifo<hw_uint<32> , 1> f10;
 >>>>>>> origin/master
 
 
@@ -53,6 +65,7 @@ struct t1_t1_comp_write0_to_t0_rd0_cache {
 		return f0.back();
 	}
 
+<<<<<<< HEAD
 	inline hw_uint<32>  peek_35() {
 		return f1.back();
 	}
@@ -85,66 +98,44 @@ struct t1_t1_comp_write0_to_t0_rd0_cache {
 		return f3.back();
 =======
 	inline hw_uint<32>  peek_36() {
+=======
+	inline hw_uint<32>  peek_1() {
+>>>>>>> origin/master
 		return f2.back();
 >>>>>>> origin/master
 	}
 
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 35) {
-			return f1.back();
-		}
-		if (offset == 36) {
-			return f2.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd0_cache: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
+	inline hw_uint<32>  peek_33() {
+		return f3.back();
 	}
 
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f2.push(f1.back());
-		f1.push(f0.back());
-		f0.push(value);
+	inline hw_uint<32>  peek_34() {
+		return f4.back();
 	}
 
-};
+	inline hw_uint<32>  peek_35() {
+		return f6.back();
+	}
 
-struct t1_t1_comp_write0_to_t0_rd1_cache {
-	// Capacity: 70
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 69) capacity = 68
-	fifo<hw_uint<32> , 68> f1;
-	// Parition [69, 69] capacity = 1
-	fifo<hw_uint<32> , 1> f2;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f0.back();
+	inline hw_uint<32>  peek_36() {
+		return f8.back();
 	}
 
 	inline hw_uint<32>  peek_68() {
-		return f1.back();
+		return f9.back();
 	}
 
 	inline hw_uint<32>  peek_69() {
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> origin/master
 		return f10.back();
 =======
 		return f2.back();
 >>>>>>> origin/master
+=======
+		return f10.back();
+>>>>>>> origin/master
 	}
 
 
@@ -153,12 +144,10 @@ struct t1_t1_comp_write0_to_t0_rd1_cache {
 		if (offset == 0) {
 			return f0.back();
 		}
-		if (offset == 68) {
-			return f1.back();
-		}
-		if (offset == 69) {
+		if (offset == 1) {
 			return f2.back();
 		}
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 		if (offset == 257) {
@@ -523,13 +512,18 @@ struct t1_t1_comp_write3_cache {
 			return f3.back();
 =======
 >>>>>>> origin/master
+=======
+		if (offset == 33) {
+			return f3.back();
+>>>>>>> origin/master
 		}
 		if (offset == 34) {
-			return f1.back();
+			return f4.back();
 		}
 		if (offset == 35) {
-			return f2.back();
+			return f6.back();
 		}
+<<<<<<< HEAD
 #ifndef __VIVADO_SYNTH__
 		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd2_cache: " << offset << endl;
 #endif // __VIVADO_SYNTH__
@@ -625,15 +619,19 @@ struct t1_t1_comp_write0_to_t0_rd4_cache {
 	inline hw_uint<32>  peek(const int offset) {
 		if (offset == 0) {
 			return f0.back();
+=======
+		if (offset == 36) {
+			return f8.back();
+>>>>>>> origin/master
 		}
-		if (offset == 33) {
-			return f1.back();
+		if (offset == 68) {
+			return f9.back();
 		}
-		if (offset == 34) {
-			return f2.back();
+		if (offset == 69) {
+			return f10.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write0_to_t0_rd4_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_comp_write0_merged_banks_5: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -644,14 +642,20 @@ struct t1_t1_comp_write0_to_t0_rd4_cache {
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence array inter false
 #endif //__VIVADO_SYNTH__
-		f2.push(f1.back());
-		f1.push(f0.back());
+		f10.push(f9.back());
+		f9.push(f8.back());
+		f8.push(f6.back());
+		f6.push(f4.back());
+		f4.push(f3.back());
+		f3.push(f2.back());
+		f2.push(f0.back());
 		f0.push(value);
 	}
 
 };
 
 struct t1_cache {
+<<<<<<< HEAD
 <<<<<<< HEAD
   t1_t1_comp_write0_cache t1_t1_comp_write0;
 <<<<<<< HEAD
@@ -666,6 +670,9 @@ struct t1_cache {
   t1_t1_comp_write0_to_t0_rd2_cache bank_t1_t1_comp_write0_to_t0_rd2;
   t1_t1_comp_write0_to_t0_rd3_cache bank_t1_t1_comp_write0_to_t0_rd3;
   t1_t1_comp_write0_to_t0_rd4_cache bank_t1_t1_comp_write0_to_t0_rd4;
+>>>>>>> origin/master
+=======
+  t1_t1_comp_write0_merged_banks_5_cache t1_t1_comp_write0_merged_banks_5;
 >>>>>>> origin/master
 };
 
@@ -783,24 +790,18 @@ inline hw_uint<32>  t0_rd13_select(t1_cache& t1, int d0, int d1) {
 	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0.peek_258();
 =======
 inline void t1_t1_comp_write0_write(hw_uint<32> & t1_t1_comp_write0, t1_cache& t1, int d0, int d1) {
-  t1.bank_t1_t1_comp_write0_to_t0_rd0.push(t1_t1_comp_write0);
-  t1.bank_t1_t1_comp_write0_to_t0_rd1.push(t1_t1_comp_write0);
-  t1.bank_t1_t1_comp_write0_to_t0_rd2.push(t1_t1_comp_write0);
-  t1.bank_t1_t1_comp_write0_to_t0_rd3.push(t1_t1_comp_write0);
-  t1.bank_t1_t1_comp_write0_to_t0_rd4.push(t1_t1_comp_write0);
+  t1.t1_t1_comp_write0_merged_banks_5.push(t1_t1_comp_write0);
 }
 
 inline hw_uint<32>  t0_rd0_select(t1_cache& t1, int d0, int d1) {
-  // qpd = { t0_comp[d0, d1] -> 36 : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
 	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = -1 + d0, d1' = d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
   // t0_rd0 read pattern: { t0_comp[d0, d1] -> t1[-1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-  // t1_t1_comp_write0 stores range: { t1[i0, i1] : -1 <= i0 <= 32 and -1 <= i1 <= 28 }
-    // overlap with reads : { t1[i0, i1] : -1 <= i0 <= 30 and 0 <= i1 <= 27 }
-	auto value_t1_t1_comp_write0 = t1.bank_t1_t1_comp_write0_to_t0_rd0.peek_36();
+	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_merged_banks_5.peek_36();
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  t0_rd1_select(t1_cache& t1, int d0, int d1) {
+<<<<<<< HEAD
   // qpd = { t0_comp[d0, d1] -> 69 : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
 <<<<<<< HEAD
 	hw_uint<32>  value_t1_t1_comp_write0 = t1.t1_t1_comp_write0.peek_69();
@@ -812,10 +813,16 @@ inline hw_uint<32>  t0_rd1_select(t1_cache& t1, int d0, int d1) {
     // overlap with reads : { t1[i0, i1] : 0 <= i0 <= 31 and -1 <= i1 <= 26 }
 	auto value_t1_t1_comp_write0 = t1.bank_t1_t1_comp_write0_to_t0_rd1.peek_69();
 >>>>>>> origin/master
+=======
+	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = d0, d1' = -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+  // t0_rd1 read pattern: { t0_comp[d0, d1] -> t1[d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_merged_banks_5.peek_69();
+>>>>>>> origin/master
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  t0_rd2_select(t1_cache& t1, int d0, int d1) {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
   // qpd = { t0_comp[d0, d1] -> 259 : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
@@ -845,10 +852,16 @@ inline hw_uint<32>  t0_rd2_select(t1_cache& t1, int d0, int d1) {
     // overlap with reads : { t1[i0, i1] : 0 <= i0 <= 31 and 0 <= i1 <= 27 }
 	auto value_t1_t1_comp_write0 = t1.bank_t1_t1_comp_write0_to_t0_rd2.peek_35();
 >>>>>>> origin/master
+=======
+	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+  // t0_rd2 read pattern: { t0_comp[d0, d1] -> t1[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_merged_banks_5.peek_35();
+>>>>>>> origin/master
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  t0_rd3_select(t1_cache& t1, int d0, int d1) {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
   // qpd = { t0_comp[d0, d1] -> 1 : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
@@ -878,10 +891,16 @@ inline hw_uint<32>  t0_rd3_select(t1_cache& t1, int d0, int d1) {
     // overlap with reads : { t1[i0, i1] : 0 <= i0 <= 31 and 0 < i1 <= 28 }
 	auto value_t1_t1_comp_write0 = t1.bank_t1_t1_comp_write0_to_t0_rd3.peek_1();
 >>>>>>> origin/master
+=======
+	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = d0, d1' = 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+  // t0_rd3 read pattern: { t0_comp[d0, d1] -> t1[d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_merged_banks_5.peek_1();
+>>>>>>> origin/master
 	return value_t1_t1_comp_write0;
 }
 
 inline hw_uint<32>  t0_rd4_select(t1_cache& t1, int d0, int d1) {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
   // qpd = { t0_comp[d0, d1] -> 517 : 0 <= d0 <= 255 and 0 <= d1 <= 1023 }
@@ -990,6 +1009,11 @@ inline hw_uint<32>  t0_rd9_select(t1_cache& t1, int d0, int d1) {
   // t1_t1_comp_write0 stores range: { t1[i0, i1] : -1 <= i0 <= 32 and -1 <= i1 <= 28 }
     // overlap with reads : { t1[i0, i1] : 0 < i0 <= 32 and 0 <= i1 <= 27 }
 	auto value_t1_t1_comp_write0 = t1.bank_t1_t1_comp_write0_to_t0_rd4.peek_34();
+>>>>>>> origin/master
+=======
+	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = 1 + d0, d1' = d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+  // t0_rd4 read pattern: { t0_comp[d0, d1] -> t1[1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_merged_banks_5.peek_34();
 >>>>>>> origin/master
 	return value_t1_t1_comp_write0;
 >>>>>>> origin/master

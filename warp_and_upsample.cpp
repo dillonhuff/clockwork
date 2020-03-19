@@ -2,12 +2,32 @@
 
 #include "hw_classes.h"
 
-struct I_store_I_from_in_0_to_I_warped_0_conv_3_30_10_cache {
+struct I_store_I_from_in_12_merged_banks_9_cache {
 	// Capacity: 131
+	// # of read delays: 9
+	// read delays: 0, 1, 2, 64, 65, 66, 128, 129, 130
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 1] capacity = 1
+	// Parition [1, 2) capacity = 1
 	fifo<hw_uint<32> , 1> f2;
+	// Parition [2, 3) capacity = 1
+	fifo<hw_uint<32> , 1> f4;
+	// Parition [3, 64) capacity = 61
+	fifo<hw_uint<32> , 61> f5;
+	// Parition [64, 65) capacity = 1
+	fifo<hw_uint<32> , 1> f6;
+	// Parition [65, 66) capacity = 1
+	fifo<hw_uint<32> , 1> f8;
+	// Parition [66, 67) capacity = 1
+	fifo<hw_uint<32> , 1> f10;
+	// Parition [67, 128) capacity = 61
+	fifo<hw_uint<32> , 61> f11;
+	// Parition [128, 129) capacity = 1
+	fifo<hw_uint<32> , 1> f12;
+	// Parition [129, 130) capacity = 1
+	fifo<hw_uint<32> , 1> f14;
+	// Parition [130, 130] capacity = 1
+	fifo<hw_uint<32> , 1> f16;
 
 
 	inline hw_uint<32>  peek_0() {
@@ -16,6 +36,42 @@ struct I_store_I_from_in_0_to_I_warped_0_conv_3_30_10_cache {
 
 	inline hw_uint<32>  peek_1() {
 		return f2.back();
+	}
+
+	inline hw_uint<32>  peek_2() {
+		return f4.back();
+	}
+
+	inline hw_uint<32>  peek_63() {
+		return f5.back();
+	}
+
+	inline hw_uint<32>  peek_64() {
+		return f6.back();
+	}
+
+	inline hw_uint<32>  peek_65() {
+		return f8.back();
+	}
+
+	inline hw_uint<32>  peek_66() {
+		return f10.back();
+	}
+
+	inline hw_uint<32>  peek_127() {
+		return f11.back();
+	}
+
+	inline hw_uint<32>  peek_128() {
+		return f12.back();
+	}
+
+	inline hw_uint<32>  peek_129() {
+		return f14.back();
+	}
+
+	inline hw_uint<32>  peek_130() {
+		return f16.back();
 	}
 
 
@@ -27,8 +83,35 @@ struct I_store_I_from_in_0_to_I_warped_0_conv_3_30_10_cache {
 		if (offset == 1) {
 			return f2.back();
 		}
+		if (offset == 2) {
+			return f4.back();
+		}
+		if (offset == 63) {
+			return f5.back();
+		}
+		if (offset == 64) {
+			return f6.back();
+		}
+		if (offset == 65) {
+			return f8.back();
+		}
+		if (offset == 66) {
+			return f10.back();
+		}
+		if (offset == 127) {
+			return f11.back();
+		}
+		if (offset == 128) {
+			return f12.back();
+		}
+		if (offset == 129) {
+			return f14.back();
+		}
+		if (offset == 130) {
+			return f16.back();
+		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_store_I_from_in_0_to_I_warped_0_conv_3_30_10_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in I_store_I_from_in_12_merged_banks_9: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -39,541 +122,105 @@ struct I_store_I_from_in_0_to_I_warped_0_conv_3_30_10_cache {
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence array inter false
 #endif //__VIVADO_SYNTH__
+		f16.push(f14.back());
+		f14.push(f12.back());
+		f12.push(f11.back());
+		f11.push(f10.back());
+		f10.push(f8.back());
+		f8.push(f6.back());
+		f6.push(f5.back());
+		f5.push(f4.back());
+		f4.push(f2.back());
 		f2.push(f0.back());
 		f0.push(value);
 	}
 
 };
 
-struct I_store_I_from_in_0_to_I_warped_0_conv_3_30_11_cache {
-	// Capacity: 131
-	// Parition [0, 0] capacity = 1
-	fifo<hw_uint<32> , 1> f1;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f1.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f1.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_store_I_from_in_0_to_I_warped_0_conv_3_30_11_cache: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f1.push(value);
-	}
-
-};
-
-struct I_store_I_from_in_0_to_I_warped_0_conv_3_30_3_cache {
-	// Capacity: 131
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 130) capacity = 129
-	fifo<hw_uint<32> , 129> f1;
-	// Parition [130, 130] capacity = 1
-	fifo<hw_uint<32> , 1> f2;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f0.back();
-	}
-
-	inline hw_uint<32>  peek_129() {
-		return f1.back();
-	}
-
-	inline hw_uint<32>  peek_130() {
-		return f2.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 129) {
-			return f1.back();
-		}
-		if (offset == 130) {
-			return f2.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_store_I_from_in_0_to_I_warped_0_conv_3_30_3_cache: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f2.push(f1.back());
-		f1.push(f0.back());
-		f0.push(value);
-	}
-
-};
-
-struct I_store_I_from_in_0_to_I_warped_0_conv_3_30_4_cache {
-	// Capacity: 131
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 129) capacity = 128
-	fifo<hw_uint<32> , 128> f1;
-	// Parition [129, 129] capacity = 1
-	fifo<hw_uint<32> , 1> f2;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f0.back();
-	}
-
-	inline hw_uint<32>  peek_128() {
-		return f1.back();
-	}
-
-	inline hw_uint<32>  peek_129() {
-		return f2.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 128) {
-			return f1.back();
-		}
-		if (offset == 129) {
-			return f2.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_store_I_from_in_0_to_I_warped_0_conv_3_30_4_cache: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f2.push(f1.back());
-		f1.push(f0.back());
-		f0.push(value);
-	}
-
-};
-
-struct I_store_I_from_in_0_to_I_warped_0_conv_3_30_5_cache {
-	// Capacity: 131
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 128) capacity = 127
-	fifo<hw_uint<32> , 127> f1;
-	// Parition [128, 128] capacity = 1
-	fifo<hw_uint<32> , 1> f2;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f0.back();
-	}
-
-	inline hw_uint<32>  peek_127() {
-		return f1.back();
-	}
-
-	inline hw_uint<32>  peek_128() {
-		return f2.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 127) {
-			return f1.back();
-		}
-		if (offset == 128) {
-			return f2.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_store_I_from_in_0_to_I_warped_0_conv_3_30_5_cache: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f2.push(f1.back());
-		f1.push(f0.back());
-		f0.push(value);
-	}
-
-};
-
-struct I_store_I_from_in_0_to_I_warped_0_conv_3_30_6_cache {
-	// Capacity: 131
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 66) capacity = 65
-	fifo<hw_uint<32> , 65> f1;
-	// Parition [66, 66] capacity = 1
-	fifo<hw_uint<32> , 1> f2;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f0.back();
-	}
-
-	inline hw_uint<32>  peek_65() {
-		return f1.back();
-	}
-
-	inline hw_uint<32>  peek_66() {
-		return f2.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 65) {
-			return f1.back();
-		}
-		if (offset == 66) {
-			return f2.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_store_I_from_in_0_to_I_warped_0_conv_3_30_6_cache: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f2.push(f1.back());
-		f1.push(f0.back());
-		f0.push(value);
-	}
-
-};
-
-struct I_store_I_from_in_0_to_I_warped_0_conv_3_30_7_cache {
-	// Capacity: 131
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 65) capacity = 64
-	fifo<hw_uint<32> , 64> f1;
-	// Parition [65, 65] capacity = 1
-	fifo<hw_uint<32> , 1> f2;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f0.back();
-	}
-
-	inline hw_uint<32>  peek_64() {
-		return f1.back();
-	}
-
-	inline hw_uint<32>  peek_65() {
-		return f2.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 64) {
-			return f1.back();
-		}
-		if (offset == 65) {
-			return f2.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_store_I_from_in_0_to_I_warped_0_conv_3_30_7_cache: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f2.push(f1.back());
-		f1.push(f0.back());
-		f0.push(value);
-	}
-
-};
-
-struct I_store_I_from_in_0_to_I_warped_0_conv_3_30_8_cache {
-	// Capacity: 131
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 64) capacity = 63
-	fifo<hw_uint<32> , 63> f1;
-	// Parition [64, 64] capacity = 1
-	fifo<hw_uint<32> , 1> f2;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f0.back();
-	}
-
-	inline hw_uint<32>  peek_63() {
-		return f1.back();
-	}
-
-	inline hw_uint<32>  peek_64() {
-		return f2.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 63) {
-			return f1.back();
-		}
-		if (offset == 64) {
-			return f2.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_store_I_from_in_0_to_I_warped_0_conv_3_30_8_cache: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f2.push(f1.back());
-		f1.push(f0.back());
-		f0.push(value);
-	}
-
-};
-
-struct I_store_I_from_in_0_to_I_warped_0_conv_3_30_9_cache {
-	// Capacity: 131
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<32> , 1> f0;
-	// Parition [1, 2) capacity = 1
-	fifo<hw_uint<32> , 1> f1;
-	// Parition [2, 2] capacity = 1
-	fifo<hw_uint<32> , 1> f2;
-
-
-	inline hw_uint<32>  peek_0() {
-		return f0.back();
-	}
-
-	inline hw_uint<32>  peek_1() {
-		return f1.back();
-	}
-
-	inline hw_uint<32>  peek_2() {
-		return f2.back();
-	}
-
-
-
-	inline hw_uint<32>  peek(const int offset) {
-		if (offset == 0) {
-			return f0.back();
-		}
-		if (offset == 1) {
-			return f1.back();
-		}
-		if (offset == 2) {
-			return f2.back();
-		}
-#ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_store_I_from_in_0_to_I_warped_0_conv_3_30_9_cache: " << offset << endl;
-#endif // __VIVADO_SYNTH__
-		assert(false);
-		return 0;
-
-	}
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-		f2.push(f1.back());
-		f1.push(f0.back());
-		f0.push(value);
-	}
-
-};
-
 struct I_cache {
-  I_store_I_from_in_0_to_I_warped_0_conv_3_30_10_cache bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_10;
-  I_store_I_from_in_0_to_I_warped_0_conv_3_30_11_cache bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_11;
-  I_store_I_from_in_0_to_I_warped_0_conv_3_30_3_cache bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_3;
-  I_store_I_from_in_0_to_I_warped_0_conv_3_30_4_cache bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_4;
-  I_store_I_from_in_0_to_I_warped_0_conv_3_30_5_cache bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_5;
-  I_store_I_from_in_0_to_I_warped_0_conv_3_30_6_cache bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_6;
-  I_store_I_from_in_0_to_I_warped_0_conv_3_30_7_cache bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_7;
-  I_store_I_from_in_0_to_I_warped_0_conv_3_30_8_cache bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_8;
-  I_store_I_from_in_0_to_I_warped_0_conv_3_30_9_cache bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_9;
+  I_store_I_from_in_12_merged_banks_9_cache I_store_I_from_in_12_merged_banks_9;
 };
 
 
 
-inline void I_store_I_from_in_0_write(hw_uint<32> & I_store_I_from_in_0, I_cache& I, int root, int pr, int pc) {
-  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_10.push(I_store_I_from_in_0);
-  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_11.push(I_store_I_from_in_0);
-  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_3.push(I_store_I_from_in_0);
-  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_4.push(I_store_I_from_in_0);
-  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_5.push(I_store_I_from_in_0);
-  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_6.push(I_store_I_from_in_0);
-  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_7.push(I_store_I_from_in_0);
-  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_8.push(I_store_I_from_in_0);
-  I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_9.push(I_store_I_from_in_0);
+inline void I_store_I_from_in_12_write(hw_uint<32> & I_store_I_from_in_12, I_cache& I, int root, int pr, int pc) {
+  I.I_store_I_from_in_12_merged_banks_9.push(I_store_I_from_in_12);
 }
 
-inline hw_uint<32>  I_warped_0_conv_3_30_10_select(I_cache& I, int root, int br, int bc) {
-  // qpd = { warped_0_conv_3_30[root, br, bc] -> 1 : root = 0 and 0 <= br <= 61 and 0 <= bc <= 61 }
-	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = 2 + br, pc = 1 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-  // I_warped_0_conv_3_30_10 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[2 + br, 1 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-  // I_store_I_from_in_0 stores range: { I[i0, i1] : 0 <= i0 <= 63 and 0 <= i1 <= 63 }
-    // overlap with reads : { I[i0, i1] : 2 <= i0 <= 63 and 0 < i1 <= 62 }
-	auto value_I_store_I_from_in_0 = I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_10.peek_1();
-	return value_I_store_I_from_in_0;
+inline hw_uint<32>  I_warped_0_conv_3_30_1_select(I_cache& I, int root, int br, int bc) {
+	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = br, pc = bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
+  // I_warped_0_conv_3_30_1 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
+	auto value_I_store_I_from_in_12 = I.I_store_I_from_in_12_merged_banks_9.peek_130();
+	return value_I_store_I_from_in_12;
 }
 
-inline hw_uint<32>  I_warped_0_conv_3_30_11_select(I_cache& I, int root, int br, int bc) {
-  // qpd = {  }
-	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = 2 + br, pc = 2 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-  // I_warped_0_conv_3_30_11 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[2 + br, 2 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-  // I_store_I_from_in_0 stores range: { I[i0, i1] : 0 <= i0 <= 63 and 0 <= i1 <= 63 }
-    // overlap with reads : { I[i0, i1] : 2 <= i0 <= 63 and 2 <= i1 <= 63 }
-	auto value_I_store_I_from_in_0 = I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_11.peek_0();
-	return value_I_store_I_from_in_0;
+inline hw_uint<32>  I_warped_0_conv_3_30_2_select(I_cache& I, int root, int br, int bc) {
+	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = br, pc = 1 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
+  // I_warped_0_conv_3_30_2 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[br, 1 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
+	auto value_I_store_I_from_in_12 = I.I_store_I_from_in_12_merged_banks_9.peek_129();
+	return value_I_store_I_from_in_12;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_3_select(I_cache& I, int root, int br, int bc) {
-  // qpd = { warped_0_conv_3_30[root, br, bc] -> 130 : root = 0 and 0 <= br <= 61 and 0 <= bc <= 61 }
-	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = br, pc = bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-  // I_warped_0_conv_3_30_3 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-  // I_store_I_from_in_0 stores range: { I[i0, i1] : 0 <= i0 <= 63 and 0 <= i1 <= 63 }
-    // overlap with reads : { I[i0, i1] : 0 <= i0 <= 61 and 0 <= i1 <= 61 }
-	auto value_I_store_I_from_in_0 = I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_3.peek_130();
-	return value_I_store_I_from_in_0;
+	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = br, pc = 2 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
+  // I_warped_0_conv_3_30_3 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[br, 2 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
+	auto value_I_store_I_from_in_12 = I.I_store_I_from_in_12_merged_banks_9.peek_128();
+	return value_I_store_I_from_in_12;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_4_select(I_cache& I, int root, int br, int bc) {
-  // qpd = { warped_0_conv_3_30[root, br, bc] -> 129 : root = 0 and 0 <= br <= 61 and 0 <= bc <= 61 }
-	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = br, pc = 1 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-  // I_warped_0_conv_3_30_4 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[br, 1 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-  // I_store_I_from_in_0 stores range: { I[i0, i1] : 0 <= i0 <= 63 and 0 <= i1 <= 63 }
-    // overlap with reads : { I[i0, i1] : 0 <= i0 <= 61 and 0 < i1 <= 62 }
-	auto value_I_store_I_from_in_0 = I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_4.peek_129();
-	return value_I_store_I_from_in_0;
+	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = 1 + br, pc = bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
+  // I_warped_0_conv_3_30_4 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[1 + br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
+	auto value_I_store_I_from_in_12 = I.I_store_I_from_in_12_merged_banks_9.peek_66();
+	return value_I_store_I_from_in_12;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_5_select(I_cache& I, int root, int br, int bc) {
-  // qpd = { warped_0_conv_3_30[root, br, bc] -> 128 : root = 0 and 0 <= br <= 61 and 0 <= bc <= 60; warped_0_conv_3_30[root, br, bc] -> (67 + bc) : root = 0 and bc = 61 and 0 <= br <= 61 }
-	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = br, pc = 2 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-  // I_warped_0_conv_3_30_5 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[br, 2 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-  // I_store_I_from_in_0 stores range: { I[i0, i1] : 0 <= i0 <= 63 and 0 <= i1 <= 63 }
-    // overlap with reads : { I[i0, i1] : 0 <= i0 <= 61 and 2 <= i1 <= 63 }
-	auto value_I_store_I_from_in_0 = I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_5.peek_128();
-	return value_I_store_I_from_in_0;
+	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = 1 + br, pc = 1 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
+  // I_warped_0_conv_3_30_5 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[1 + br, 1 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
+	auto value_I_store_I_from_in_12 = I.I_store_I_from_in_12_merged_banks_9.peek_65();
+	return value_I_store_I_from_in_12;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_6_select(I_cache& I, int root, int br, int bc) {
-  // qpd = { warped_0_conv_3_30[root, br, bc] -> 66 : root = 0 and 0 <= br <= 61 and 0 <= bc <= 61 }
-	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = 1 + br, pc = bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-  // I_warped_0_conv_3_30_6 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[1 + br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-  // I_store_I_from_in_0 stores range: { I[i0, i1] : 0 <= i0 <= 63 and 0 <= i1 <= 63 }
-    // overlap with reads : { I[i0, i1] : 0 < i0 <= 62 and 0 <= i1 <= 61 }
-	auto value_I_store_I_from_in_0 = I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_6.peek_66();
-	return value_I_store_I_from_in_0;
+	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = 1 + br, pc = 2 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
+  // I_warped_0_conv_3_30_6 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[1 + br, 2 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
+	auto value_I_store_I_from_in_12 = I.I_store_I_from_in_12_merged_banks_9.peek_64();
+	return value_I_store_I_from_in_12;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_7_select(I_cache& I, int root, int br, int bc) {
-  // qpd = { warped_0_conv_3_30[root, br, bc] -> 65 : root = 0 and 0 <= br <= 61 and 0 <= bc <= 61 }
-	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = 1 + br, pc = 1 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-  // I_warped_0_conv_3_30_7 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[1 + br, 1 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-  // I_store_I_from_in_0 stores range: { I[i0, i1] : 0 <= i0 <= 63 and 0 <= i1 <= 63 }
-    // overlap with reads : { I[i0, i1] : 0 < i0 <= 62 and 0 < i1 <= 62 }
-	auto value_I_store_I_from_in_0 = I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_7.peek_65();
-	return value_I_store_I_from_in_0;
+	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = 2 + br, pc = bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
+  // I_warped_0_conv_3_30_7 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[2 + br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
+	auto value_I_store_I_from_in_12 = I.I_store_I_from_in_12_merged_banks_9.peek_2();
+	return value_I_store_I_from_in_12;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_8_select(I_cache& I, int root, int br, int bc) {
-  // qpd = { warped_0_conv_3_30[root, br, bc] -> 64 : root = 0 and 0 <= br <= 61 and 0 <= bc <= 60; warped_0_conv_3_30[root, br, bc] -> (3 + bc) : root = 0 and bc = 61 and 0 <= br <= 61 }
-	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = 1 + br, pc = 2 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-  // I_warped_0_conv_3_30_8 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[1 + br, 2 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-  // I_store_I_from_in_0 stores range: { I[i0, i1] : 0 <= i0 <= 63 and 0 <= i1 <= 63 }
-    // overlap with reads : { I[i0, i1] : 0 < i0 <= 62 and 2 <= i1 <= 63 }
-	auto value_I_store_I_from_in_0 = I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_8.peek_64();
-	return value_I_store_I_from_in_0;
+	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = 2 + br, pc = 1 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
+  // I_warped_0_conv_3_30_8 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[2 + br, 1 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
+	auto value_I_store_I_from_in_12 = I.I_store_I_from_in_12_merged_banks_9.peek_1();
+	return value_I_store_I_from_in_12;
 }
 
 inline hw_uint<32>  I_warped_0_conv_3_30_9_select(I_cache& I, int root, int br, int bc) {
-  // qpd = { warped_0_conv_3_30[root, br, bc] -> 2 : root = 0 and 0 <= br <= 61 and 0 <= bc <= 61 }
-	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = 2 + br, pc = bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-  // I_warped_0_conv_3_30_9 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[2 + br, bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
-  // I_store_I_from_in_0 stores range: { I[i0, i1] : 0 <= i0 <= 63 and 0 <= i1 <= 63 }
-    // overlap with reads : { I[i0, i1] : 2 <= i0 <= 63 and 0 <= i1 <= 61 }
-	auto value_I_store_I_from_in_0 = I.bank_I_store_I_from_in_0_to_I_warped_0_conv_3_30_9.peek_2();
-	return value_I_store_I_from_in_0;
+	// lexmax events: { warped_0_conv_3_30[root = 0, br, bc] -> store_I_from_in[root' = 0, pr = 2 + br, pc = 2 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
+  // I_warped_0_conv_3_30_9 read pattern: { warped_0_conv_3_30[root = 0, br, bc] -> I[2 + br, 2 + bc] : 0 <= br <= 61 and 0 <= bc <= 61 }
+	auto value_I_store_I_from_in_12 = I.I_store_I_from_in_12_merged_banks_9.peek_0();
+	return value_I_store_I_from_in_12;
 }
 
 // # of bundles = 2
 // store_I_from_in_write
-//	I_store_I_from_in_0
+//	I_store_I_from_in_12
 inline void I_store_I_from_in_write_bundle_write(hw_uint<32>& store_I_from_in_write, I_cache& I, int root, int pr, int pc) {
-	hw_uint<32>  I_store_I_from_in_0_res = store_I_from_in_write.extract<0, 31>();
-	I_store_I_from_in_0_write(I_store_I_from_in_0_res, I, root, pr, pc);
+	hw_uint<32>  I_store_I_from_in_12_res = store_I_from_in_write.extract<0, 31>();
+	I_store_I_from_in_12_write(I_store_I_from_in_12_res, I, root, pr, pc);
 }
 
 // warped_0_conv_3_30_read
+//	I_warped_0_conv_3_30_1
+//	I_warped_0_conv_3_30_2
 //	I_warped_0_conv_3_30_3
 //	I_warped_0_conv_3_30_4
 //	I_warped_0_conv_3_30_5
@@ -581,28 +228,26 @@ inline void I_store_I_from_in_write_bundle_write(hw_uint<32>& store_I_from_in_wr
 //	I_warped_0_conv_3_30_7
 //	I_warped_0_conv_3_30_8
 //	I_warped_0_conv_3_30_9
-//	I_warped_0_conv_3_30_10
-//	I_warped_0_conv_3_30_11
 inline hw_uint<288> I_warped_0_conv_3_30_read_bundle_read(I_cache& I, int root, int br, int bc) {
 	hw_uint<288> result;
+	hw_uint<32>  I_warped_0_conv_3_30_1_res = I_warped_0_conv_3_30_1_select(I, root, br, bc);
+	set_at<0, 288>(result, I_warped_0_conv_3_30_1_res);
+	hw_uint<32>  I_warped_0_conv_3_30_2_res = I_warped_0_conv_3_30_2_select(I, root, br, bc);
+	set_at<32, 288>(result, I_warped_0_conv_3_30_2_res);
 	hw_uint<32>  I_warped_0_conv_3_30_3_res = I_warped_0_conv_3_30_3_select(I, root, br, bc);
-	set_at<0, 288>(result, I_warped_0_conv_3_30_3_res);
+	set_at<64, 288>(result, I_warped_0_conv_3_30_3_res);
 	hw_uint<32>  I_warped_0_conv_3_30_4_res = I_warped_0_conv_3_30_4_select(I, root, br, bc);
-	set_at<32, 288>(result, I_warped_0_conv_3_30_4_res);
+	set_at<96, 288>(result, I_warped_0_conv_3_30_4_res);
 	hw_uint<32>  I_warped_0_conv_3_30_5_res = I_warped_0_conv_3_30_5_select(I, root, br, bc);
-	set_at<64, 288>(result, I_warped_0_conv_3_30_5_res);
+	set_at<128, 288>(result, I_warped_0_conv_3_30_5_res);
 	hw_uint<32>  I_warped_0_conv_3_30_6_res = I_warped_0_conv_3_30_6_select(I, root, br, bc);
-	set_at<96, 288>(result, I_warped_0_conv_3_30_6_res);
+	set_at<160, 288>(result, I_warped_0_conv_3_30_6_res);
 	hw_uint<32>  I_warped_0_conv_3_30_7_res = I_warped_0_conv_3_30_7_select(I, root, br, bc);
-	set_at<128, 288>(result, I_warped_0_conv_3_30_7_res);
+	set_at<192, 288>(result, I_warped_0_conv_3_30_7_res);
 	hw_uint<32>  I_warped_0_conv_3_30_8_res = I_warped_0_conv_3_30_8_select(I, root, br, bc);
-	set_at<160, 288>(result, I_warped_0_conv_3_30_8_res);
+	set_at<224, 288>(result, I_warped_0_conv_3_30_8_res);
 	hw_uint<32>  I_warped_0_conv_3_30_9_res = I_warped_0_conv_3_30_9_select(I, root, br, bc);
-	set_at<192, 288>(result, I_warped_0_conv_3_30_9_res);
-	hw_uint<32>  I_warped_0_conv_3_30_10_res = I_warped_0_conv_3_30_10_select(I, root, br, bc);
-	set_at<224, 288>(result, I_warped_0_conv_3_30_10_res);
-	hw_uint<32>  I_warped_0_conv_3_30_11_res = I_warped_0_conv_3_30_11_select(I, root, br, bc);
-	set_at<256, 288>(result, I_warped_0_conv_3_30_11_res);
+	set_at<256, 288>(result, I_warped_0_conv_3_30_9_res);
 	return result;
 }
 
@@ -610,8 +255,10 @@ inline hw_uint<288> I_warped_0_conv_3_30_read_bundle_read(I_cache& I, int root, 
 
 #include "hw_classes.h"
 
-struct warped_0_warped_0_conv_3_30_2_to_warped_0_out_id0_13_cache {
+struct warped_0_warped_0_conv_3_30_0_to_warped_0_out_id0_11_cache {
 	// Capacity: 62
+	// # of read delays: 62
+	// read delays: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 2) capacity = 1
@@ -1176,7 +823,7 @@ struct warped_0_warped_0_conv_3_30_2_to_warped_0_out_id0_13_cache {
 			return f122.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in warped_0_warped_0_conv_3_30_2_to_warped_0_out_id0_13_cache: " << offset << endl;
+		cout << "Error: Unsupported offset in warped_0_warped_0_conv_3_30_0_to_warped_0_out_id0_11: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -1254,40 +901,37 @@ struct warped_0_warped_0_conv_3_30_2_to_warped_0_out_id0_13_cache {
 };
 
 struct warped_0_cache {
-  warped_0_warped_0_conv_3_30_2_to_warped_0_out_id0_13_cache bank_warped_0_warped_0_conv_3_30_2_to_warped_0_out_id0_13;
+  warped_0_warped_0_conv_3_30_0_to_warped_0_out_id0_11_cache warped_0_warped_0_conv_3_30_0_to_warped_0_out_id0_11;
 };
 
 
 
-inline void warped_0_warped_0_conv_3_30_2_write(hw_uint<32> & warped_0_warped_0_conv_3_30_2, warped_0_cache& warped_0, int root, int br, int bc) {
-  warped_0.bank_warped_0_warped_0_conv_3_30_2_to_warped_0_out_id0_13.push(warped_0_warped_0_conv_3_30_2);
+inline void warped_0_warped_0_conv_3_30_0_write(hw_uint<32> & warped_0_warped_0_conv_3_30_0, warped_0_cache& warped_0, int root, int br, int bc) {
+  warped_0.warped_0_warped_0_conv_3_30_0_to_warped_0_out_id0_11.push(warped_0_warped_0_conv_3_30_0);
 }
 
-inline hw_uint<32>  warped_0_out_id0_13_select(warped_0_cache& warped_0, int root, int ur, int kr, int uc, int kc) {
-  // qpd = { out_id0[root, ur, kr, uc, kc] -> (61 - uc) : root = 0 and kr = 1 and 0 <= ur <= 61 and 0 <= uc <= 60 and 0 <= kc <= 1 }
+inline hw_uint<32>  warped_0_out_id0_11_select(warped_0_cache& warped_0, int root, int ur, int kr, int uc, int kc) {
 	// lexmax events: { out_id0[root = 0, ur, kr = 1, uc, kc] -> warped_0_conv_3_30[root' = 0, br = ur, bc = uc] : 0 <= ur <= 61 and 0 <= uc <= 61 and 0 <= kc <= 1; out_id0[root = 0, ur, kr = 0, uc, kc = 1] -> warped_0_conv_3_30[root' = 0, br = ur, bc = uc] : 0 <= ur <= 61 and 0 <= uc <= 61; out_id0[root = 0, ur, kr = 0, uc, kc = 0] -> warped_0_conv_3_30[root' = 0, br = ur, bc = uc] : 0 <= ur <= 61 and 0 <= uc <= 61 }
-  // warped_0_out_id0_13 read pattern: { out_id0[root = 0, ur, kr, uc, kc] -> warped_0[ur, uc] : 0 <= ur <= 61 and 0 <= kr <= 1 and 0 <= uc <= 61 and 0 <= kc <= 1 }
-  // warped_0_warped_0_conv_3_30_2 stores range: { warped_0[i0, i1] : 0 <= i0 <= 61 and 0 <= i1 <= 61 }
-    // overlap with reads : { warped_0[i0, i1] : 0 <= i0 <= 61 and 0 <= i1 <= 61 }
-	auto value_warped_0_warped_0_conv_3_30_2 = warped_0.bank_warped_0_warped_0_conv_3_30_2_to_warped_0_out_id0_13.peek(/* Needs general delay string */ (-1 + kr == 0 && root == 0 && ur >= 0 && 61 - ur >= 0 && uc >= 0 && 60 - uc >= 0 && kc >= 0 && 1 - kc >= 0) ? ((61 - uc)) : 0);
-	return value_warped_0_warped_0_conv_3_30_2;
+  // warped_0_out_id0_11 read pattern: { out_id0[root = 0, ur, kr, uc, kc] -> warped_0[ur, uc] : 0 <= ur <= 61 and 0 <= kr <= 1 and 0 <= uc <= 61 and 0 <= kc <= 1 }
+	auto value_warped_0_warped_0_conv_3_30_0 = warped_0.warped_0_warped_0_conv_3_30_0_to_warped_0_out_id0_11.peek(/* Needs general delay string */ (-1 + kr == 0 && root == 0 && ur >= 0 && 61 - ur >= 0 && uc >= 0 && 60 - uc >= 0 && kc >= 0 && 1 - kc >= 0) ? ((61 - uc)) : 0);
+	return value_warped_0_warped_0_conv_3_30_0;
 }
 
 // # of bundles = 2
 // out_id0_read
-//	warped_0_out_id0_13
+//	warped_0_out_id0_11
 inline hw_uint<32> warped_0_out_id0_read_bundle_read(warped_0_cache& warped_0, int root, int ur, int kr, int uc, int kc) {
 	hw_uint<32> result;
-	hw_uint<32>  warped_0_out_id0_13_res = warped_0_out_id0_13_select(warped_0, root, ur, kr, uc, kc);
-	set_at<0, 32>(result, warped_0_out_id0_13_res);
+	hw_uint<32>  warped_0_out_id0_11_res = warped_0_out_id0_11_select(warped_0, root, ur, kr, uc, kc);
+	set_at<0, 32>(result, warped_0_out_id0_11_res);
 	return result;
 }
 
 // warped_0_conv_3_30_write
-//	warped_0_warped_0_conv_3_30_2
+//	warped_0_warped_0_conv_3_30_0
 inline void warped_0_warped_0_conv_3_30_write_bundle_write(hw_uint<32>& warped_0_conv_3_30_write, warped_0_cache& warped_0, int root, int br, int bc) {
-	hw_uint<32>  warped_0_warped_0_conv_3_30_2_res = warped_0_conv_3_30_write.extract<0, 31>();
-	warped_0_warped_0_conv_3_30_2_write(warped_0_warped_0_conv_3_30_2_res, warped_0, root, br, bc);
+	hw_uint<32>  warped_0_warped_0_conv_3_30_0_res = warped_0_conv_3_30_write.extract<0, 31>();
+	warped_0_warped_0_conv_3_30_0_write(warped_0_warped_0_conv_3_30_0_res, warped_0, root, br, bc);
 }
 
 
@@ -1295,13 +939,6 @@ inline void warped_0_warped_0_conv_3_30_write_bundle_write(hw_uint<32>& warped_0
 
 
 // Operation logic
-inline void store_I_from_in(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, I_cache& I, int root, int pr, int pc) {
-	// Consume: in
-	auto in_pr_c__pc_value = in.read();
-	// Produce: I
-	I_store_I_from_in_write_bundle_write(in_pr_c__pc_value, I, root, pr, pc);
-}
-
 inline void warped_0_conv_3_30(I_cache& I, warped_0_cache& warped_0, int root, int br, int bc) {
 	// Consume: I
 	auto I_br__p__0_c__bc__p__0_value = I_warped_0_conv_3_30_read_bundle_read(I/* source_delay */, root, br, bc);
@@ -1316,6 +953,13 @@ inline void out_id0(warped_0_cache& warped_0, HWStream<hw_uint<32> >& /* buffer_
 	auto compute_result = id(warped_0_ur_c__uc_value);
 	// Produce: out
 	out.write(compute_result);
+}
+
+inline void store_I_from_in(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, I_cache& I, int root, int pr, int pc) {
+	// Consume: in
+	auto in_pr_c__pc_value = in.read();
+	// Produce: I
+	I_store_I_from_in_write_bundle_write(in_pr_c__pc_value, I, root, pr, pc);
 }
 
 // Driver function
