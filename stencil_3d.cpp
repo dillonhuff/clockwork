@@ -2,7 +2,7 @@
 
 #include "hw_classes.h"
 
-struct I_I_id0_0_merged_banks_27_cache {
+struct I_I_id0_28_merged_banks_27_cache {
 	// Capacity: 2115
 	// # of read delays: 27
 	// read delays: 0, 1, 2, 32, 33, 34, 64, 65, 66, 1024, 1025, 1026, 1056, 1057, 1058, 1088, 1089, 1090, 2048, 2049, 2050, 2080, 2081, 2082, 2112, 2113, 2114
@@ -327,7 +327,7 @@ struct I_I_id0_0_merged_banks_27_cache {
 			return f52.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_I_id0_0_merged_banks_27: " << offset << endl;
+		cout << "Error: Unsupported offset in I_I_id0_28_merged_banks_27: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -378,213 +378,215 @@ struct I_I_id0_0_merged_banks_27_cache {
 };
 
 struct I_cache {
-  I_I_id0_0_merged_banks_27_cache I_I_id0_0_merged_banks_27;
+  I_I_id0_28_merged_banks_27_cache I_I_id0_28_merged_banks_27;
 };
 
 
 
-inline void I_I_id0_0_write(hw_uint<16>& I_I_id0_0, I_cache& I, int root, int ir, int ic, int ib) {
-  I.I_I_id0_0_merged_banks_27.push(I_I_id0_0);
+inline void I_I_id0_28_write(hw_uint<16>& I_I_id0_28, I_cache& I, int root, int ir, int ic, int ib) {
+  I.I_I_id0_28_merged_banks_27.push(I_I_id0_28);
+}
+
+inline hw_uint<16> I_out_blur_270_1_select(I_cache& I, int root, int xr, int xc, int xb) {
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = xr, ic = xc, ib = xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_1 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[xr, xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_2114();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_10_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = xr, ic = 2 + xc, ib = 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_10 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[xr, 2 + xc, 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_2049();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 1 + xr, ic = xc, ib = xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_10 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[1 + xr, xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_1090();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_11_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = xr, ic = 2 + xc, ib = 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_11 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[xr, 2 + xc, 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_2048();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 1 + xr, ic = xc, ib = 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_11 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[1 + xr, xc, 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_1089();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_12_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 1 + xr, ic = xc, ib = xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_12 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[1 + xr, xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_1090();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 1 + xr, ic = xc, ib = 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_12 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[1 + xr, xc, 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_1088();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_13_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 1 + xr, ic = xc, ib = 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_13 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[1 + xr, xc, 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_1089();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 1 + xr, ic = 1 + xc, ib = xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_13 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[1 + xr, 1 + xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_1058();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_14_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 1 + xr, ic = xc, ib = 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_14 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[1 + xr, xc, 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_1088();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 1 + xr, ic = 1 + xc, ib = 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_14 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[1 + xr, 1 + xc, 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_1057();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_15_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 1 + xr, ic = 1 + xc, ib = xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_15 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[1 + xr, 1 + xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_1058();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 1 + xr, ic = 1 + xc, ib = 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_15 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[1 + xr, 1 + xc, 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_1056();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_16_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 1 + xr, ic = 1 + xc, ib = 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_16 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[1 + xr, 1 + xc, 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_1057();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 1 + xr, ic = 2 + xc, ib = xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_16 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[1 + xr, 2 + xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_1026();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_17_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 1 + xr, ic = 1 + xc, ib = 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_17 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[1 + xr, 1 + xc, 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_1056();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 1 + xr, ic = 2 + xc, ib = 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_17 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[1 + xr, 2 + xc, 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_1025();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_18_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 1 + xr, ic = 2 + xc, ib = xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_18 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[1 + xr, 2 + xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_1026();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 1 + xr, ic = 2 + xc, ib = 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_18 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[1 + xr, 2 + xc, 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_1024();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_19_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 1 + xr, ic = 2 + xc, ib = 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_19 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[1 + xr, 2 + xc, 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_1025();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 2 + xr, ic = xc, ib = xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_19 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[2 + xr, xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_66();
+	return value_I_I_id0_28;
+}
+
+inline hw_uint<16> I_out_blur_270_2_select(I_cache& I, int root, int xr, int xc, int xb) {
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = xr, ic = xc, ib = 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_2 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[xr, xc, 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_2113();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_20_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 1 + xr, ic = 2 + xc, ib = 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_20 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[1 + xr, 2 + xc, 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_1024();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 2 + xr, ic = xc, ib = 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_20 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[2 + xr, xc, 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_65();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_21_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 2 + xr, ic = xc, ib = xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_21 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[2 + xr, xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_66();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 2 + xr, ic = xc, ib = 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_21 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[2 + xr, xc, 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_64();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_22_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 2 + xr, ic = xc, ib = 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_22 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[2 + xr, xc, 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_65();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 2 + xr, ic = 1 + xc, ib = xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_22 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[2 + xr, 1 + xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_34();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_23_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 2 + xr, ic = xc, ib = 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_23 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[2 + xr, xc, 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_64();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 2 + xr, ic = 1 + xc, ib = 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_23 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[2 + xr, 1 + xc, 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_33();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_24_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 2 + xr, ic = 1 + xc, ib = xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_24 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[2 + xr, 1 + xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_34();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 2 + xr, ic = 1 + xc, ib = 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_24 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[2 + xr, 1 + xc, 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_32();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_25_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 2 + xr, ic = 1 + xc, ib = 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_25 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[2 + xr, 1 + xc, 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_33();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 2 + xr, ic = 2 + xc, ib = xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_25 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[2 + xr, 2 + xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_2();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_26_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 2 + xr, ic = 1 + xc, ib = 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_26 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[2 + xr, 1 + xc, 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_32();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 2 + xr, ic = 2 + xc, ib = 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_26 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[2 + xr, 2 + xc, 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_1();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_27_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 2 + xr, ic = 2 + xc, ib = xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_27 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[2 + xr, 2 + xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_2();
-	return value_I_I_id0_0;
-}
-
-inline hw_uint<16> I_out_blur_270_28_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 2 + xr, ic = 2 + xc, ib = 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_28 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[2 + xr, 2 + xc, 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_1();
-	return value_I_I_id0_0;
-}
-
-inline hw_uint<16> I_out_blur_270_29_select(I_cache& I, int root, int xr, int xc, int xb) {
 	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = 2 + xr, ic = 2 + xc, ib = 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_29 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[2 + xr, 2 + xc, 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_0();
-	return value_I_I_id0_0;
+  // I_out_blur_270_27 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[2 + xr, 2 + xc, 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_0();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_3_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = xr, ic = xc, ib = xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_3 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[xr, xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_2114();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = xr, ic = xc, ib = 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_3 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[xr, xc, 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_2112();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_4_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = xr, ic = xc, ib = 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_4 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[xr, xc, 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_2113();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = xr, ic = 1 + xc, ib = xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_4 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[xr, 1 + xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_2082();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_5_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = xr, ic = xc, ib = 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_5 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[xr, xc, 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_2112();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = xr, ic = 1 + xc, ib = 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_5 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[xr, 1 + xc, 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_2081();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_6_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = xr, ic = 1 + xc, ib = xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_6 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[xr, 1 + xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_2082();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = xr, ic = 1 + xc, ib = 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_6 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[xr, 1 + xc, 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_2080();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_7_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = xr, ic = 1 + xc, ib = 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_7 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[xr, 1 + xc, 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_2081();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = xr, ic = 2 + xc, ib = xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_7 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[xr, 2 + xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_2050();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_8_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = xr, ic = 1 + xc, ib = 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_8 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[xr, 1 + xc, 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_2080();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = xr, ic = 2 + xc, ib = 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_8 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[xr, 2 + xc, 1 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_2049();
+	return value_I_I_id0_28;
 }
 
 inline hw_uint<16> I_out_blur_270_9_select(I_cache& I, int root, int xr, int xc, int xb) {
-	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = xr, ic = 2 + xc, ib = xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-  // I_out_blur_270_9 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[xr, 2 + xc, xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
-	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_27.peek_2050();
-	return value_I_I_id0_0;
+	// lexmax events: { out_blur_270[root = 0, xr, xc, xb] -> I_id0[root' = 0, ir = xr, ic = 2 + xc, ib = 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+  // I_out_blur_270_9 read pattern: { out_blur_270[root = 0, xr, xc, xb] -> I[xr, 2 + xc, 2 + xb] : 0 <= xr <= 29 and 0 <= xc <= 29 and 0 <= xb <= 29 }
+	auto value_I_I_id0_28 = I.I_I_id0_28_merged_banks_27.peek_2048();
+	return value_I_I_id0_28;
 }
 
 // # of bundles = 2
 // I_id0_write
-//	I_I_id0_0
+//	I_I_id0_28
 inline void I_I_id0_write_bundle_write(hw_uint<16>& I_id0_write, I_cache& I, int root, int ir, int ic, int ib) {
-	hw_uint<16> I_I_id0_0_res = I_id0_write.extract<0, 15>();
-	I_I_id0_0_write(I_I_id0_0_res, I, root, ir, ic, ib);
+	hw_uint<16> I_I_id0_28_res = I_id0_write.extract<0, 15>();
+	I_I_id0_28_write(I_I_id0_28_res, I, root, ir, ic, ib);
 }
 
 // out_blur_270_read
+//	I_out_blur_270_1
+//	I_out_blur_270_2
 //	I_out_blur_270_3
 //	I_out_blur_270_4
 //	I_out_blur_270_5
@@ -610,64 +612,62 @@ inline void I_I_id0_write_bundle_write(hw_uint<16>& I_id0_write, I_cache& I, int
 //	I_out_blur_270_25
 //	I_out_blur_270_26
 //	I_out_blur_270_27
-//	I_out_blur_270_28
-//	I_out_blur_270_29
 inline hw_uint<432> I_out_blur_270_read_bundle_read(I_cache& I, int root, int xr, int xc, int xb) {
 	hw_uint<432> result;
+	hw_uint<16> I_out_blur_270_1_res = I_out_blur_270_1_select(I, root, xr, xc, xb);
+	set_at<0, 432>(result, I_out_blur_270_1_res);
+	hw_uint<16> I_out_blur_270_2_res = I_out_blur_270_2_select(I, root, xr, xc, xb);
+	set_at<16, 432>(result, I_out_blur_270_2_res);
 	hw_uint<16> I_out_blur_270_3_res = I_out_blur_270_3_select(I, root, xr, xc, xb);
-	set_at<0, 432>(result, I_out_blur_270_3_res);
+	set_at<32, 432>(result, I_out_blur_270_3_res);
 	hw_uint<16> I_out_blur_270_4_res = I_out_blur_270_4_select(I, root, xr, xc, xb);
-	set_at<16, 432>(result, I_out_blur_270_4_res);
+	set_at<48, 432>(result, I_out_blur_270_4_res);
 	hw_uint<16> I_out_blur_270_5_res = I_out_blur_270_5_select(I, root, xr, xc, xb);
-	set_at<32, 432>(result, I_out_blur_270_5_res);
+	set_at<64, 432>(result, I_out_blur_270_5_res);
 	hw_uint<16> I_out_blur_270_6_res = I_out_blur_270_6_select(I, root, xr, xc, xb);
-	set_at<48, 432>(result, I_out_blur_270_6_res);
+	set_at<80, 432>(result, I_out_blur_270_6_res);
 	hw_uint<16> I_out_blur_270_7_res = I_out_blur_270_7_select(I, root, xr, xc, xb);
-	set_at<64, 432>(result, I_out_blur_270_7_res);
+	set_at<96, 432>(result, I_out_blur_270_7_res);
 	hw_uint<16> I_out_blur_270_8_res = I_out_blur_270_8_select(I, root, xr, xc, xb);
-	set_at<80, 432>(result, I_out_blur_270_8_res);
+	set_at<112, 432>(result, I_out_blur_270_8_res);
 	hw_uint<16> I_out_blur_270_9_res = I_out_blur_270_9_select(I, root, xr, xc, xb);
-	set_at<96, 432>(result, I_out_blur_270_9_res);
+	set_at<128, 432>(result, I_out_blur_270_9_res);
 	hw_uint<16> I_out_blur_270_10_res = I_out_blur_270_10_select(I, root, xr, xc, xb);
-	set_at<112, 432>(result, I_out_blur_270_10_res);
+	set_at<144, 432>(result, I_out_blur_270_10_res);
 	hw_uint<16> I_out_blur_270_11_res = I_out_blur_270_11_select(I, root, xr, xc, xb);
-	set_at<128, 432>(result, I_out_blur_270_11_res);
+	set_at<160, 432>(result, I_out_blur_270_11_res);
 	hw_uint<16> I_out_blur_270_12_res = I_out_blur_270_12_select(I, root, xr, xc, xb);
-	set_at<144, 432>(result, I_out_blur_270_12_res);
+	set_at<176, 432>(result, I_out_blur_270_12_res);
 	hw_uint<16> I_out_blur_270_13_res = I_out_blur_270_13_select(I, root, xr, xc, xb);
-	set_at<160, 432>(result, I_out_blur_270_13_res);
+	set_at<192, 432>(result, I_out_blur_270_13_res);
 	hw_uint<16> I_out_blur_270_14_res = I_out_blur_270_14_select(I, root, xr, xc, xb);
-	set_at<176, 432>(result, I_out_blur_270_14_res);
+	set_at<208, 432>(result, I_out_blur_270_14_res);
 	hw_uint<16> I_out_blur_270_15_res = I_out_blur_270_15_select(I, root, xr, xc, xb);
-	set_at<192, 432>(result, I_out_blur_270_15_res);
+	set_at<224, 432>(result, I_out_blur_270_15_res);
 	hw_uint<16> I_out_blur_270_16_res = I_out_blur_270_16_select(I, root, xr, xc, xb);
-	set_at<208, 432>(result, I_out_blur_270_16_res);
+	set_at<240, 432>(result, I_out_blur_270_16_res);
 	hw_uint<16> I_out_blur_270_17_res = I_out_blur_270_17_select(I, root, xr, xc, xb);
-	set_at<224, 432>(result, I_out_blur_270_17_res);
+	set_at<256, 432>(result, I_out_blur_270_17_res);
 	hw_uint<16> I_out_blur_270_18_res = I_out_blur_270_18_select(I, root, xr, xc, xb);
-	set_at<240, 432>(result, I_out_blur_270_18_res);
+	set_at<272, 432>(result, I_out_blur_270_18_res);
 	hw_uint<16> I_out_blur_270_19_res = I_out_blur_270_19_select(I, root, xr, xc, xb);
-	set_at<256, 432>(result, I_out_blur_270_19_res);
+	set_at<288, 432>(result, I_out_blur_270_19_res);
 	hw_uint<16> I_out_blur_270_20_res = I_out_blur_270_20_select(I, root, xr, xc, xb);
-	set_at<272, 432>(result, I_out_blur_270_20_res);
+	set_at<304, 432>(result, I_out_blur_270_20_res);
 	hw_uint<16> I_out_blur_270_21_res = I_out_blur_270_21_select(I, root, xr, xc, xb);
-	set_at<288, 432>(result, I_out_blur_270_21_res);
+	set_at<320, 432>(result, I_out_blur_270_21_res);
 	hw_uint<16> I_out_blur_270_22_res = I_out_blur_270_22_select(I, root, xr, xc, xb);
-	set_at<304, 432>(result, I_out_blur_270_22_res);
+	set_at<336, 432>(result, I_out_blur_270_22_res);
 	hw_uint<16> I_out_blur_270_23_res = I_out_blur_270_23_select(I, root, xr, xc, xb);
-	set_at<320, 432>(result, I_out_blur_270_23_res);
+	set_at<352, 432>(result, I_out_blur_270_23_res);
 	hw_uint<16> I_out_blur_270_24_res = I_out_blur_270_24_select(I, root, xr, xc, xb);
-	set_at<336, 432>(result, I_out_blur_270_24_res);
+	set_at<368, 432>(result, I_out_blur_270_24_res);
 	hw_uint<16> I_out_blur_270_25_res = I_out_blur_270_25_select(I, root, xr, xc, xb);
-	set_at<352, 432>(result, I_out_blur_270_25_res);
+	set_at<384, 432>(result, I_out_blur_270_25_res);
 	hw_uint<16> I_out_blur_270_26_res = I_out_blur_270_26_select(I, root, xr, xc, xb);
-	set_at<368, 432>(result, I_out_blur_270_26_res);
+	set_at<400, 432>(result, I_out_blur_270_26_res);
 	hw_uint<16> I_out_blur_270_27_res = I_out_blur_270_27_select(I, root, xr, xc, xb);
-	set_at<384, 432>(result, I_out_blur_270_27_res);
-	hw_uint<16> I_out_blur_270_28_res = I_out_blur_270_28_select(I, root, xr, xc, xb);
-	set_at<400, 432>(result, I_out_blur_270_28_res);
-	hw_uint<16> I_out_blur_270_29_res = I_out_blur_270_29_select(I, root, xr, xc, xb);
-	set_at<416, 432>(result, I_out_blur_270_29_res);
+	set_at<416, 432>(result, I_out_blur_270_27_res);
 	return result;
 }
 
@@ -676,20 +676,20 @@ inline hw_uint<432> I_out_blur_270_read_bundle_read(I_cache& I, int root, int xr
 
 
 // Operation logic
-inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in, I_cache& I, int root, int ir, int ic, int ib) {
-	// Consume: in
-	auto in_ir_c__ic_c__ib_value = in.read();
-	auto compute_result = id(in_ir_c__ic_c__ib_value);
-	// Produce: I
-	I_I_id0_write_bundle_write(compute_result, I, root, ir, ic, ib);
-}
-
 inline void out_blur_270(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */out, int root, int xr, int xc, int xb) {
 	// Consume: I
 	auto I_xr__p__0_c__xc__p__0_c__xb__p__0_value = I_out_blur_270_read_bundle_read(I/* source_delay */, root, xr, xc, xb);
 	auto compute_result = blur_27(I_xr__p__0_c__xc__p__0_c__xb__p__0_value);
 	// Produce: out
 	out.write(compute_result);
+}
+
+inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in, I_cache& I, int root, int ir, int ic, int ib) {
+	// Consume: in
+	auto in_ir_c__ic_c__ib_value = in.read();
+	auto compute_result = id(in_ir_c__ic_c__ib_value);
+	// Produce: I
+	I_I_id0_write_bundle_write(compute_result, I, root, ir, ic, ib);
 }
 
 // Driver function

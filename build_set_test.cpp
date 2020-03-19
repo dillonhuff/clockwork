@@ -5541,14 +5541,18 @@ compute_schedule_for_dim(isl_ctx* ctx,
   vector<QConstraint> rates_only;
   set<int> denoms;
   for (auto r : rate_constraints) {
-    r.lhs.delete_terms_without(qvar(dv));
-    r.rhs.delete_terms_without(qvar(dv));
-    r.replace(qvar(dv), qconst(1));
-    cout << "\tbefore simplify: " << r << endl;
-    r.simplify();
-    cout << "\tafter simplify: " << r << endl;
+    cout << "R = " << r << endl;
+
     if (r.lhs.contains_val(qvar(dv)) &&
         r.rhs.contains_val(qvar(dv))) {
+
+      r.lhs.delete_terms_without(qvar(dv));
+      r.rhs.delete_terms_without(qvar(dv));
+      r.replace(qvar(dv), qconst(1));
+      cout << "\tbefore simplify: " << r << endl;
+      r.simplify();
+      cout << "\tafter simplify: " << r << endl;
+
       rates_only.push_back(r);
       for (auto t : r.rhs.terms) {
         for (auto v : t.vals) {
@@ -5565,6 +5569,8 @@ compute_schedule_for_dim(isl_ctx* ctx,
         }
       }
 
+    } else {
+      //assert(false);
     }
 
   }
@@ -7840,14 +7846,14 @@ int main(int argc, char** argv) {
     
     //memtile_test();
 
+    gaussian_pyramid_app_test();
+    //assert(false);
     grayscale_conversion_test();
     jacobi_2d_app_test();
 
     upsample_stencil_1d_test();
     upsample_stencil_2d_test();
-    //assert(false);
 
-    gaussian_pyramid_app_test();
 
     reduce_1d_test();
     denoise2d_test();
@@ -7876,7 +7882,6 @@ int main(int argc, char** argv) {
 
     //synth_reduce_test();
     jacobi_2d_2_test();
-    //assert(false);
     jacobi_2d_test();
     parse_denoise3d_test();
     seidel2d_test();
