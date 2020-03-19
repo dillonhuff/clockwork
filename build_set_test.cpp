@@ -6162,9 +6162,15 @@ struct App {
   }
 
   void fill_data_domain(const std::string& name, const int d0, const int d1, const int unroll_factor) {
+    fill_data_domain(name, {d0, d1}, unroll_factor);
+  }
+
+  void fill_data_domain(const std::string& name, const vector<int>& dims, const int unroll_factor) {
     Box sbox;
-    sbox.intervals.push_back({0, d0 - 1});
-    sbox.intervals.push_back({0, d1 - 1});
+    for (auto d : dims) {
+      sbox.intervals.push_back({0, d - 1});
+    }
+    //sbox.intervals.push_back({0, d1 - 1});
     sbox = sbox.pad_range_to_nearest_multiple(unroll_factor);
 
     string n = name;
@@ -6219,35 +6225,6 @@ struct App {
       cout << "Done with " << next << endl;
     }
 
-    //vector<string> edge_functions;
-    //for (auto d : domain_boxes) {
-      //bool is_edge = !is_input(d.first);
-
-      //for (auto p : producers(d.first)) {
-        //if (!is_input(p.name)) {
-          //is_edge = false;
-          //break;
-        //}
-      //}
-      //if (is_edge) {
-        //if (d.first == "f") {
-          ////assert(false);
-          //int ubnd0 = domain_boxes.at("u").length(0);
-          //int ubnd1 = domain_boxes.at("u").length(1);
-
-          //int diff0 = ubnd0 - domain_boxes.at("f").length(0);
-          //int diff1 = ubnd1 - domain_boxes.at("f").length(1);
-
-          //domain_boxes[d.first] = d.second.pad(1, diff1);
-          //domain_boxes[d.first] = domain_boxes[d.first].pad(0, diff0);
-        //}
-        ////edge_functions.push_back(d.first);
-        ////domain_boxes[d.first] = d.second.pad(1, 10);
-      //}
-    //}
-
-
-
     cout << "Data domains.." << endl;
     for (auto d : domain_boxes) {
       cout << d.first << " = " << d.second << endl;
@@ -6256,9 +6233,6 @@ struct App {
     //assert(false);
   }
 
-
-  //void schedule_dim(const int i, map<string, vector<QExpr> >& schedules) {
-  //}
 
   Box compute_box(const std::string& name) {
     //cout << "Getting box: " << name << ": for " << str(compute_domain(name)) << endl;
