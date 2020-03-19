@@ -6471,7 +6471,7 @@ struct App {
     umap* m = schedule_naive();
 
     cout << "Schedule: " << str(m) << endl;
-    assert(false);
+    //assert(false);
 
     map<string, UBuffer> buffers = build_buffers(m);
 
@@ -7830,7 +7830,7 @@ int main(int argc, char** argv) {
     //memtile_test();
     //
 
-    grayscale_conversion_test();
+    //grayscale_conversion_test();
     jacobi_2d_app_test();
 
     upsample_stencil_1d_test();
