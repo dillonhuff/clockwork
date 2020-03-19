@@ -6981,6 +6981,7 @@ void memtile_test() {
         if (buffer.first == "sram") {
             auto buf = buffer.second;
 
+            //TODO: put this into a function
             //generate the input port configuration, currently assume all write is consecutive
             cout << "\tConfig input addr stream" << endl;
             string inpt = pick(buf.get_in_ports());
