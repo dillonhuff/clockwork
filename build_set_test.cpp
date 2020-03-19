@@ -6142,16 +6142,16 @@ struct App {
     return cons;
   }
 
-  umap* ws_map(const std::string& producer, const std::string& consumer) {
-    for (auto w : app_dag.at(consumer).srcs) {
-      if (w.name == producer) {
-        return w.needed;
-      }
-    }
-    cout << "No map from: " << producer << " to " << consumer << endl;
-    assert(false);
-    return nullptr;
-  }
+  //umap* ws_map(const std::string& producer, const std::string& consumer) {
+    //for (auto w : app_dag.at(consumer).srcs) {
+      //if (w.name == producer) {
+        //return w.needed;
+      //}
+    //}
+    //cout << "No map from: " << producer << " to " << consumer << endl;
+    //assert(false);
+    //return nullptr;
+  //}
 
 
   vector<string> sort_functions() const {
