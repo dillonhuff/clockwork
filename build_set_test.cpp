@@ -6232,10 +6232,14 @@ struct App {
         m.second;
     }
     map<string, Box> op_domains;
-    for (auto b : domain_boxes) {
-      op_domains[b.first + "_comp"] =
-        b.second;
+    for (auto f : sort_functions()) {
+      op_domains[f + "_comp"] =
+        compute_box(f);
     }
+    //for (auto b : domain_boxes) {
+      //op_domains[b.first + "_comp"] =
+        //b.second;
+    //}
     auto last_compute_needed = build_compute_deps(
         ndims,
         sorted_operations,
@@ -6291,70 +6295,15 @@ struct App {
     }
 
     return m;
-    //vector<string> sorted_functions = sort_functions();
-    //int pos = 0;
-    //cout << "Sorted pipeline..." << endl;
-    //for (auto f : sorted_functions) {
-      //cout << "\t" << f << endl;
-      //schedules[f].push_back(qexpr(pos));
-      //pos++;
-    //}
-
-    //int ndims = schedule_dimension();
-    //map<string, map<string, umap*> > pixels_needed;
-    //for (auto r : app_dag) {
-      //pixels_needed[r.first] = {};
-      //for (auto w : r.second.srcs) {
-        //pixels_needed[r.first][w.name] = w.needed;
-      //}
-    //}
-    //auto last_compute_needed = build_compute_deps(
-        //ndims,
-        //sorted_functions,
-        //pixels_needed,
-        //compute_maps);
-    //for (int i = ndims - 1; i >= 0; i--) {
-      //auto dim_schedules =
-        //schedule_dim(ctx, i, domain_boxes, sorted_functions, last_compute_needed);
-
-      //for (auto f : sorted_functions) {
-        //schedules[f].push_back(dim_schedules.at(f));
-      //}
-    //}
-
-    //umap* m = rdmap(ctx, "{}");
-    //for (auto f : sorted_functions) {
-      //vector<string> sched_exprs;
-      //vector<string> var_names;
-      //for (int i = 0; i < ndims; i++) {
-        //string dv = "d" + to_string(i);
-        //var_names.push_back(dv);
-      //}
-
-      //for (auto v : schedules[f]) {
-        //sched_exprs.push_back(isl_str(v));
-      //}
-      //cout << "naive vars: " << var_names << endl;
-
-      //string map_str = "{ " + f + "_comp" + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
-      //cout << "Map str: " << map_str << endl;
-      //auto rm = rdmap(ctx, map_str);
-      //m = unn(m, rm);
-      //isl_union_map_free(rm);
-      //cout << "Unioned" << endl;
-      //cout << "m = " << str(m) << endl;
-    //}
-
-    //cout << "done getting m..." << endl;
-
-    return m;
   }
 
   Window data_window_provided_by_compute(const std::string& f, const int unroll_factor) {
     return map_find(f, app_dag).provided.unroll_cpy(unroll_factor);
   }
 
-  Window data_window_needed_by_compute(const std::string& consumer, const std::string& producer, const int unroll_factor) {
+  Window data_window_needed_by_compute(const std::string& consumer,
+      const std::string& producer,
+      const int unroll_factor) {
     return box_touched(consumer, producer).unroll_cpy(unroll_factor);
   }
 
@@ -6428,8 +6377,6 @@ struct App {
       buffers[f] = b;
     }
 
-    //assert(false);
-
     for (auto b : buffers) {
         cout << b.second.name << endl;
         cout << "input_ports..." << endl;
@@ -6446,7 +6393,6 @@ struct App {
             cout << endl;
         }
     }
-    //assert(false);
 
     return buffers;
   }
