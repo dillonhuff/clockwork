@@ -6254,62 +6254,98 @@ struct App {
   }
 
   umap* schedule_naive() {
-    vector<string> sorted_functions = sort_functions();
+    
+    map<string, vector<QExpr> > rect_schedules =
+      rectangular_schedules();
+
     map<string, vector<QExpr> > schedules;
     int pos = 0;
-    cout << "Sorted pipeline..." << endl;
-    for (auto f : sorted_functions) {
-      cout << "\t" << f << endl;
+    for (auto f : sort_operations()) {
       schedules[f].push_back(qexpr(pos));
       pos++;
     }
-
-    int ndims = schedule_dimension();
-    map<string, map<string, umap*> > pixels_needed;
-    for (auto r : app_dag) {
-      pixels_needed[r.first] = {};
-      for (auto w : r.second.srcs) {
-        pixels_needed[r.first][w.name] = w.needed;
-      }
-    }
-    auto last_compute_needed = build_compute_deps(
-        ndims,
-        sorted_functions,
-        pixels_needed,
-        compute_maps);
-    for (int i = ndims - 1; i >= 0; i--) {
-      auto dim_schedules =
-        schedule_dim(ctx, i, domain_boxes, sorted_functions, last_compute_needed);
-
-      for (auto f : sorted_functions) {
-        schedules[f].push_back(dim_schedules.at(f));
+    for (auto& s : schedules) {
+      for (auto v : rect_schedules.at(s.first)) {
+        s.second.push_back(v);
       }
     }
 
     umap* m = rdmap(ctx, "{}");
-    for (auto f : sorted_functions) {
+    for (auto fn : schedules) {
+      string f = fn.first;
       vector<string> sched_exprs;
       vector<string> var_names;
-      for (int i = 0; i < ndims; i++) {
+      int i = 0;
+      for (auto v : map_find(f, schedules)) {
         string dv = "d" + to_string(i);
-        var_names.push_back(dv);
-      }
-
-      for (auto v : schedules[f]) {
         sched_exprs.push_back(isl_str(v));
+        var_names.push_back(dv);
+        i++;
       }
-      cout << "naive vars: " << var_names << endl;
+      var_names.pop_back();
+      string map_str = "{ " + f + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
 
-      string map_str = "{ " + f + "_comp" + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
-      cout << "Map str: " << map_str << endl;
       auto rm = rdmap(ctx, map_str);
       m = unn(m, rm);
       isl_union_map_free(rm);
-      cout << "Unioned" << endl;
-      cout << "m = " << str(m) << endl;
     }
 
-    cout << "done getting m..." << endl;
+    return m;
+    //vector<string> sorted_functions = sort_functions();
+    //int pos = 0;
+    //cout << "Sorted pipeline..." << endl;
+    //for (auto f : sorted_functions) {
+      //cout << "\t" << f << endl;
+      //schedules[f].push_back(qexpr(pos));
+      //pos++;
+    //}
+
+    //int ndims = schedule_dimension();
+    //map<string, map<string, umap*> > pixels_needed;
+    //for (auto r : app_dag) {
+      //pixels_needed[r.first] = {};
+      //for (auto w : r.second.srcs) {
+        //pixels_needed[r.first][w.name] = w.needed;
+      //}
+    //}
+    //auto last_compute_needed = build_compute_deps(
+        //ndims,
+        //sorted_functions,
+        //pixels_needed,
+        //compute_maps);
+    //for (int i = ndims - 1; i >= 0; i--) {
+      //auto dim_schedules =
+        //schedule_dim(ctx, i, domain_boxes, sorted_functions, last_compute_needed);
+
+      //for (auto f : sorted_functions) {
+        //schedules[f].push_back(dim_schedules.at(f));
+      //}
+    //}
+
+    //umap* m = rdmap(ctx, "{}");
+    //for (auto f : sorted_functions) {
+      //vector<string> sched_exprs;
+      //vector<string> var_names;
+      //for (int i = 0; i < ndims; i++) {
+        //string dv = "d" + to_string(i);
+        //var_names.push_back(dv);
+      //}
+
+      //for (auto v : schedules[f]) {
+        //sched_exprs.push_back(isl_str(v));
+      //}
+      //cout << "naive vars: " << var_names << endl;
+
+      //string map_str = "{ " + f + "_comp" + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
+      //cout << "Map str: " << map_str << endl;
+      //auto rm = rdmap(ctx, map_str);
+      //m = unn(m, rm);
+      //isl_union_map_free(rm);
+      //cout << "Unioned" << endl;
+      //cout << "m = " << str(m) << endl;
+    //}
+
+    //cout << "done getting m..." << endl;
 
     return m;
   }
@@ -6505,7 +6541,6 @@ struct App {
 
   umap* schedule() {
     auto schedules = schedule_opt();
-    vector<string> sorted_functions = sort_functions();
 
     umap* m = rdmap(ctx, "{}");
     for (auto fn : schedules) {
