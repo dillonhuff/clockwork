@@ -5633,48 +5633,73 @@ isl_map* last_comp_needed(isl_map* pixel_to_producer,
   return last_pix;
 }
 
-map<string, map<string, QExpr> > 
+//map<string, map<string, QExpr> > 
+map<string, map<string, vector<QExpr> > > 
 build_compute_deps(isl_ctx* ctx,
     map<string, Box> & domain_boxes,
-    const int i,
+    //const int i,
     vector<string> sorted_functions,
     map<string, Result> & app_dag,
     map<string, isl_map*> & compute_maps) {
 
-  string dv = "d" + to_string(i);
+  assert(domain_boxes.size() > 0);
 
-  cout << "Building compute deps..." << endl;
+  cout << "Getting schedule dim" << endl;
 
-  map<string, map<string, QExpr> > last_compute_needed;
+  int schedule_dim = pick(domain_boxes).second.dimension();
+
+  cout << "Got schedule dim" << endl;
+
+  map<string, map<string, vector<QExpr> > > last_compute_needed;
+
   for (auto f : sorted_functions) {
     assert(contains_key(f, app_dag));
     last_compute_needed[f] = {};
 
+    cout << "Getting last compute for " << f << endl;
     for (auto arg : app_dag.at(f).srcs) {
-      QAV f_rate = qvar("q_" + f);
-      QTerm f_delay = qterm(qvar("d_" + f));
-
-      QTerm ft = qterm(f_rate, qvar(dv));
-      QExpr ftime = qexpr(ft, f_delay);
       assert(contains_key(f, compute_maps));
       isl_map* comps_needed =
         last_comp_needed(compute_maps.at(f),
             compute_maps.at(arg.name),
             arg.needed);
-      auto max = dim_max(comps_needed, i);
-      cout << "max needed in dim " << i << " = " << str(max) << endl;
 
-      QExpr ub = extract_bound(i, arg.name, str(max));
-      last_compute_needed[f][arg.name] = ub;
-   }
+      last_compute_needed[f][arg.name] = {};
+      for (int i = 0; i < schedule_dim; i++) {
+        auto max = dim_max(comps_needed, i);
+        cout << "max needed in dim " << i << " = " << str(max) << endl;
+        QExpr ub = extract_bound(i, arg.name, str(max));
+        //last_compute_needed[f][arg.name] = ub;
+        last_compute_needed[f][arg.name].push_back(ub);
+      }
+    }
   }
 
-  //assert(false);
+  cout << "Done getting last compute needed" << endl;
 
   return last_compute_needed;
 }
 
-map<string, QExpr> schedule_dim(isl_ctx* ctx, const int i, map<string, Box>& domain_boxes, vector<string>& sorted_functions, map<string, map<string, QExpr> >& last_compute_needed) {
+map<string, QExpr>
+schedule_dim(isl_ctx* ctx,
+    const int i,
+    map<string, Box>& domain_boxes,
+    vector<string>& sorted_functions,
+    map<string, map<string, vector<QExpr> > >& last_compute_needed_in_each_dim) {
+
+  map<string, map<string, QExpr> > last_compute_needed;
+  for (auto s : last_compute_needed_in_each_dim) {
+    string fname = s.first;
+
+    map<string, QExpr> last_needs;
+    for (auto v : s.second) {
+      last_needs[v.first] = v.second.at(i);
+    }
+
+    last_compute_needed[fname] = last_needs;
+  }
+  //assert(false);
+
   cout << "Scheduling dim: " << i << endl;
   // Collect all rate variables and
   // collect all constraints
@@ -5718,22 +5743,6 @@ map<string, QExpr> schedule_dim(isl_ctx* ctx, const int i, map<string, Box>& dom
 
   return dim_schedules;
 }
-
-//void schedule_dim(isl_ctx* ctx, map<string, Box> & domain_boxes, const int i, map<string, vector<QExpr> >& schedules, vector<string> sorted_functions, map<string, Result> & app_dag, map<string, isl_map*> & compute_maps) {
-  //string dv = "d" + to_string(i);
-
-  //auto last_compute_needed = build_compute_deps(ctx, domain_boxes, i,
-      //sorted_functions, app_dag, compute_maps);
-
-  //map<string, QExpr> dim_schedules =
-    //schedule_dim(ctx, i, domain_boxes, sorted_functions, last_compute_needed);
-
-
-  //for (auto f : sorted_functions) {
-    //schedules[f].push_back(dim_schedules.at(f));
-  //}
-
-//}
 
 umap* to_umap(isl_ctx* ctx, map<string, vector<QExpr> > & schedules, vector<string> sorted_functions, const string & suffix) {
     umap* m = rdmap(ctx, "{}");
@@ -6223,9 +6232,9 @@ struct App {
     }
 
     int ndims = schedule_dimension();
+    auto last_compute_needed = build_compute_deps(ctx, domain_boxes, 
+        sorted_functions, app_dag, compute_maps);
     for (int i = ndims - 1; i >= 0; i--) {
-      auto last_compute_needed = build_compute_deps(ctx, domain_boxes, i,
-          sorted_functions, app_dag, compute_maps);
       auto dim_schedules =
         schedule_dim(ctx, i, domain_boxes, sorted_functions, last_compute_needed);
 
@@ -6441,9 +6450,9 @@ struct App {
     int ndims = schedule_dimension();
     map<string, vector<QExpr> > schedules;
 
+    auto last_compute_needed = build_compute_deps(ctx, domain_boxes,
+        sorted_functions, app_dag, compute_maps);
     for (int i = ndims - 1; i >= 0; i--) {
-      auto last_compute_needed = build_compute_deps(ctx, domain_boxes, i,
-          sorted_functions, app_dag, compute_maps);
       auto dim_schedules =
         schedule_dim(ctx, i, domain_boxes, sorted_functions, last_compute_needed);
 
