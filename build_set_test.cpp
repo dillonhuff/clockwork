@@ -5600,6 +5600,38 @@ QExpr extract_bound(const int i, const std::string& name, const string& max) {
   return ub;
 }
 
+isl_map* last_comp_needed(isl_map* pixel_to_producer,
+    isl_map* pixels_needed_to_producer,
+    umap* pixel_to_pixels_needed) {
+  isl_map* f_cm = inv(pixel_to_producer);
+  cout << "f_cm: " << str(f_cm) << endl;
+
+  auto data_needed =
+    to_map(pixel_to_pixels_needed);
+
+  cout << "data needed: " << str(data_needed) << endl;
+
+  cout << "f_cm: " << str(f_cm) << endl;
+
+  isl_map* pixels_needed =
+    dot(f_cm, data_needed);
+
+  cout << "pixels needed: " << str(pixels_needed) << endl;
+
+  isl_map* a_cm = pixels_needed_to_producer;
+  cout << "a_cm: " << str(a_cm) << endl;
+
+  isl_map* comps_needed =
+    dot(pixels_needed, a_cm);
+  cout << "comps needed: " << str(comps_needed) << endl;
+  // TODO: Change this to be last in the schedule to support non-raster order designs
+  isl_map* last_pix =
+    lexmax(comps_needed);
+  cout << "last comp needed: " << str(last_pix) << endl;
+
+  return last_pix;
+}
+
 map<string, map<string, QExpr> > 
 build_compute_deps(isl_ctx* ctx,
     map<string, Box> & domain_boxes,
@@ -5624,31 +5656,10 @@ build_compute_deps(isl_ctx* ctx,
       QTerm ft = qterm(f_rate, qvar(dv));
       QExpr ftime = qexpr(ft, f_delay);
       assert(contains_key(f, compute_maps));
-      isl_map* f_cm = inv(compute_maps.at(f));
-      cout << "f_cm: " << str(f_cm) << endl;
-
-      auto data_needed =
-        to_map(arg.needed);
-
-      cout << "data needed: " << str(data_needed) << endl;
-
-      cout << "f_cm: " << str(f_cm) << endl;
-
-      isl_map* pixels_needed =
-        dot(f_cm, data_needed);
-
-      cout << "pixels needed: " << str(pixels_needed) << endl;
-
-      assert(contains_key(arg.name, compute_maps));
-      isl_map* a_cm = compute_maps.at(arg.name);
-      cout << "a_cm: " << str(a_cm) << endl;
-
       isl_map* comps_needed =
-        dot(pixels_needed, a_cm);
-      cout << "comps needed: " << str(comps_needed) << endl;
-      isl_map* last_pix =
-        lexmax(comps_needed);
-      cout << "last comp needed: " << str(last_pix) << endl;
+        last_comp_needed(compute_maps.at(f),
+            compute_maps.at(arg.name),
+            arg.needed);
       auto max = dim_max(comps_needed, i);
       cout << "max needed in dim " << i << " = " << str(max) << endl;
 
@@ -6020,7 +6031,6 @@ struct App {
   void fill_compute_domain(const int unroll_factor) {
     int ndims = data_dimension();
 
-    //for (auto s : app_dag) {
     for (auto f : sort_functions()) {
       vector<string> data_vars;
       vector<string> later_data_vars;
