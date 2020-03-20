@@ -153,3 +153,11 @@ map<string, int> minimize(const std::vector<QConstraint>& constraints, QExpr& ob
   return delays;
 }
 
+vector<int> soda_offsets(const App& app) {
+  // What is the right way to figure out the offsets
+  // for this pipeline?
+  // Need realization bounds
+  // Need to know the sequence of stencils
+  // Q: Do we need to know the schedule as well?
+  return {};
+}
