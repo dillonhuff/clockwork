@@ -6227,7 +6227,6 @@ struct App {
       pixels_needed[r.first] = {};
       for (auto w : r.second.srcs) {
         pixels_needed[r.first][w.name] = w.needed;
-        //pixels_needed[r.first + "_comp"][w.name + "_comp"] = w.needed;
       }
     }
     auto last_compute_needed = build_compute_deps(
@@ -6452,7 +6451,6 @@ struct App {
     vector<string> sorted_operations;
     for (auto f : sorted_functions) {
       sorted_operations.push_back(f + "_comp");
-      //sorted_operations.push_back(f);
     }
 
     int ndims = schedule_dimension();
@@ -6463,7 +6461,6 @@ struct App {
       pixels_needed[r.first + "_comp"] = {};
       for (auto w : r.second.srcs) {
         pixels_needed[r.first + "_comp"][w.name + "_comp"] = w.needed;
-        //pixels_needed[r.first][w.name] = w.needed;
       }
     }
     map<string, isl_map*> op_compute_maps;
@@ -6481,12 +6478,10 @@ struct App {
         sorted_operations,
         pixels_needed,
         op_compute_maps);
-        //compute_maps);
     for (int i = ndims - 1; i >= 0; i--) {
       auto dim_schedules =
         schedule_dim(ctx, i, op_domains, sorted_operations, last_compute_needed);
 
-      //for (auto f : sorted_functions) {
       for (auto f : sorted_operations) {
         schedules[f].push_back(dim_schedules.at(f));
       }
@@ -6508,14 +6503,11 @@ struct App {
     vector<string> sorted_functions = sort_functions();
 
     umap* m = rdmap(ctx, "{}");
-    //for (auto f : sorted_functions) {
-    //for (auto f : sort_operations()) {
     for (auto fn : schedules) {
       string f = fn.first;
       vector<string> sched_exprs;
       vector<string> var_names;
       int i = 0;
-      //for (auto v : schedules[f]) {
       for (auto v : map_find(f, schedules)) {
         string dv = "d" + to_string(i);
         sched_exprs.push_back(isl_str(v));
@@ -6523,18 +6515,12 @@ struct App {
         i++;
       }
       var_names.pop_back();
-      //string map_str = "{ " + f + "_comp" + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
       string map_str = "{ " + f + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
 
-      //cout << "Map str: " << map_str << endl;
       auto rm = rdmap(ctx, map_str);
       m = unn(m, rm);
       isl_union_map_free(rm);
-      //cout << "Unioned" << endl;
-      //cout << "m = " << str(m) << endl;
     }
-
-    //cout << "done getting m..." << endl;
 
     return m;
   }
