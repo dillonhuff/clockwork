@@ -189,6 +189,9 @@ class AccessPattern {
               return false;
       }
 
+      bool is_1D_contigous_access() {
+          return (in_range.size() == 1) && (stride.back() == 1);
+      }
 };
 
 class UBuffer {
@@ -3842,16 +3845,20 @@ struct memtile_config {
                 for(int i = 0; i < output_port_size; i ++){
                     //FIXME: this dimension drop is specific for this case need a more general solution
                     //drop the last dimension, since that will be handle by the handshake
-                    tmp_out.dimensionality = acc_pattern.var_dim - 1 - 1;
                     tmp_out.range = acc_pattern.in_range;
-                    if (tmp_out.range.size() > 1)
+                    if (acc_pattern.var_dim > 2) {
+                        tmp_out.dimensionality = acc_pattern.var_dim - 1 - 1;
                         tmp_out.range.pop_back();
+                    }
+                    else
+                        tmp_out.dimensionality = acc_pattern.var_dim - 1;
                     std::reverse(tmp_out.range.begin(),tmp_out.range.end());
 
                     vector<int> stride;
                     vector<int> dim_ref;
                     for (int i = 0; i < tmp_out.dimensionality; i ++)
                         dim_ref.push_back(i);
+
                     std::reverse(dim_ref.begin(), dim_ref.end());
                     acc_pattern.get_flatten_stride(stride, dim_ref);
                     tmp_out.start_addr = stride.back() * i;
@@ -3868,6 +3875,7 @@ struct memtile_config {
                 cout << "\tConfig TB address stream" << endl;
                 auto buf = buffer.second;
                 auto output_pt_map = buf.get_out_ports();
+                auto fetch_width = buf.get_in_ports().size();
                 for (string outpt : output_pt_map) {
                     tb_config tmp;
                     auto acc_pattern = buf.access_pattern.at(outpt);
@@ -3877,7 +3885,11 @@ struct memtile_config {
                     std::reverse(dim_ref.begin(), dim_ref.end());
                     acc_pattern.init_flatten_stride(dim_ref);
                     tb_sync_group.push_back(1);
-                    if (acc_pattern.merge_lastdim()) {
+                    if (acc_pattern.is_1D_contigous_access()) {
+                        tmp.range_outer = acc_pattern.in_range.back() / fetch_width;
+                        tmp.stride = 1;
+                    }
+                    else if (acc_pattern.merge_lastdim()) {
                         tmp.range_outer = acc_pattern.in_range.back();
                         tmp.stride = acc_pattern.stride.back();
                     }
@@ -3991,48 +4003,10 @@ void agg_test() {
   //aha_talk_print_info(prg);
   //hardcode some configuration registers
   memtile_config memtile;
-  //TODO: rewrite this siso test
-
-  /*
-  memtile.input_addr_ctrl_address_gen_0_dimensionality = 1;
-  memtile.input_addr_ctrl_address_gen_0_starting_addr = 0;
-  memtile.input_addr_ctrl_address_gen_0_strides_0 = 1;
-
-  memtile.output_addr_ctrl_address_gen_0_dimensionality = 1;
-
   auto buffers = build_buffers(prg, sched_opt);
-  for (auto buffer : buffers) {
-      if (buffer.first == "out") {
-          auto buf = buffer.second;
-          assert(buf.get_in_ports().size() == 1);
-          string inpt = pick(buf.get_in_ports());
-          int total_data =
-              int_upper_bound(card(to_uset(buf.domain.at(inpt))));
-          cout << "total data: " << total_data << endl;
-          memtile.input_addr_ctrl_address_gen_0_ranges_0 = total_data;
-      }
-      if (buffer.first == "sram") {
-          auto buf = buffer.second;
-          string inpt = pick(buf.get_out_ports());
-          int num_reads =
-              int_upper_bound(card((domain(buf.access_map.at(inpt)))));
-          cout <<"total read: " << num_reads << endl;
-          memtile.output_addr_ctrl_address_gen_0_ranges_0 = num_reads;
-      }
-      cout << buffer.second.name << endl;
-  }
-
-  tb_config tb;
-  for (int i = 0; i < 4; i ++) {
-      tb.indices.push_back(i);
-  }
-  tb.stride = 4;
-  tb.range_inner = 4;
-  tb.range_outer = 3;
-  memtile.tb_config_vec.push_back(tb);
-
+  memtile.extract_config(buffers);
   memtile.emit_config_file_csv("lake_memtile_config");
-*/
+  //assert(false);
 }
 
 std::vector<std::string> run_regression_tb(const std::string& name) {
@@ -7083,7 +7057,7 @@ void memtile_test() {
     memtile_config memtile;
     memtile.extract_config(buffers);
     memtile.emit_config_file_csv("lake_memtile_config_conv33");
-    assert(false);
+    //assert(false);
   }
 
   int pos = 0;
@@ -7105,7 +7079,7 @@ void memtile_test() {
   auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
   sched_opt = its(sched_opt, prg.whole_iteration_domain());
   cout << codegen_c(sched_opt) << endl;
-  assert(false);
+  //assert(false);
   //aha_talk_print_info(prg);
 }
 
@@ -7778,12 +7752,13 @@ int main(int argc, char** argv) {
 
     //synth_lb_test();
 
+    agg_test();
     memtile_test();
+    assert(false);
     upsample_reduce_test();
     mismatched_stencil_test();
     //assert(false);
     //mismatched_stencil_test();
-    agg_test();
     //assert(false);
     //assert(false);
     conv3x3_app_unrolled_test();
@@ -7800,7 +7775,6 @@ int main(int argc, char** argv) {
     updown_merge_test();
     sobel_test();
 
-    agg_test();
 
     heat_3d_test();
 
