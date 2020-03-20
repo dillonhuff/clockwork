@@ -7890,13 +7890,11 @@ int main(int argc, char** argv) {
     upsample_stencil_1d_test();
     upsample_stencil_2d_test();
 
-
     reduce_1d_test();
     denoise2d_test();
     mismatched_stencil_test();
 
     upsample_reduce_test();
-    //mismatched_stencil_test();
     agg_test();
     conv3x3_app_unrolled_test();
     conv3x3_app_test();
@@ -7908,8 +7906,6 @@ int main(int argc, char** argv) {
     downsample2d_test();
     updown_merge_test();
     sobel_test();
-
-    agg_test();
 
     heat_3d_test();
 
