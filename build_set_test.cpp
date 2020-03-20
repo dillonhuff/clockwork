@@ -3814,6 +3814,84 @@ struct memtile_config {
        bank_num(1),
        bank_capacity(512){}
 
+    void extract_config(map<string, UBuffer> &buffers) {
+
+        for (auto buffer : buffers) {
+            if (buffer.first == "sram") {
+                auto buf = buffer.second;
+
+                //TODO: put this into a function
+                //generate the input port configuration, currently assume all write is consecutive
+                cout << "\tConfig input addr stream" << endl;
+                string inpt = pick(buf.get_in_ports());
+                int num_reads = int_upper_bound(card((domain(buf.access_map.at(inpt)))));
+                cout <<"total data input: " << num_reads << endl;
+                sram_config tmp;
+                tmp.initial_sequential_access(num_reads);
+                tmp.configIO("input");
+                sram_config_input.push_back(tmp);
+
+                //generate the output configuration register
+                cout << "\tConfig output addr stream" << endl;
+
+                //the backend will suto schedule the parallel access
+                string outpt_sram = pick(buf.get_out_ports());
+                auto acc_pattern = buf.access_pattern.at(outpt_sram);
+                int output_port_size = acc_pattern.in_range.back();
+                sram_config tmp_out;
+                for(int i = 0; i < output_port_size; i ++){
+                    //FIXME: this dimension drop is specific for this case need a more general solution
+                    //drop the last dimension, since that will be handle by the handshake
+                    tmp_out.dimensionality = acc_pattern.var_dim - 1 - 1;
+                    tmp_out.range = acc_pattern.in_range;
+                    if (tmp_out.range.size() > 1)
+                        tmp_out.range.pop_back();
+                    std::reverse(tmp_out.range.begin(),tmp_out.range.end());
+
+                    vector<int> stride;
+                    vector<int> dim_ref;
+                    for (int i = 0; i < tmp_out.dimensionality; i ++)
+                        dim_ref.push_back(i);
+                    std::reverse(dim_ref.begin(), dim_ref.end());
+                    acc_pattern.get_flatten_stride(stride, dim_ref);
+                    tmp_out.start_addr = stride.back() * i;
+                    tmp_out.stride = stride;
+                    if (tmp_out.stride.size() > 1)
+                        tmp_out.stride.pop_back();
+                    std::reverse(tmp_out.stride.begin(),tmp_out.stride.end());
+
+                    tmp_out.IO = string("output");
+                    sram_config_output.push_back(tmp_out);
+                }
+            }
+            if (buffer.first == "tb") {
+                cout << "\tConfig TB address stream" << endl;
+                auto buf = buffer.second;
+                auto output_pt_map = buf.get_out_ports();
+                for (string outpt : output_pt_map) {
+                    tb_config tmp;
+                    auto acc_pattern = buf.access_pattern.at(outpt);
+                    vector<int> dim_ref;
+                    for (int i = 0; i < acc_pattern.addr_dim; i ++)
+                        dim_ref.push_back(i);
+                    std::reverse(dim_ref.begin(), dim_ref.end());
+                    acc_pattern.init_flatten_stride(dim_ref);
+                    tb_sync_group.push_back(1);
+                    if (acc_pattern.merge_lastdim()) {
+                        tmp.range_outer = acc_pattern.in_range.back();
+                        tmp.stride = acc_pattern.stride.back();
+                    }
+                    else {
+                        cout << "NOT IMPLEMENTED" << endl;
+                        assert(false);
+                    }
+                    tb_config_vec.push_back(tmp);
+                }
+            }
+
+            //cout << buffer.first << "_______________________________ \n " << buffer.second<< endl;
+        }
+    }
    void emit_config_file_csv(string fname) {
        ofstream out(fname + ".csv");
        out << "agg_align_0_line_length," << agg_align_0_line_length << endl;
@@ -7003,69 +7081,9 @@ void memtile_test() {
 
     cout << "\n***Dump configuration file into CSV***" << endl;
     memtile_config memtile;
-    for (auto buffer : buffers) {
-        if (buffer.first == "sram") {
-            auto buf = buffer.second;
-
-            //TODO: put this into a function
-            //generate the input port configuration, currently assume all write is consecutive
-            cout << "\tConfig input addr stream" << endl;
-            string inpt = pick(buf.get_in_ports());
-            int num_reads = int_upper_bound(card((domain(buf.access_map.at(inpt)))));
-            cout <<"total data input: " << num_reads << endl;
-            sram_config tmp;
-            tmp.initial_sequential_access(num_reads);
-            tmp.configIO("input");
-            memtile.sram_config_input.push_back(tmp);
-
-            //generate the output configuration register
-            cout << "\tConfig output addr stream" << endl;
-            string outpt_sram = pick(buf.get_out_ports());
-            auto acc_pattern = buf.access_pattern.at(outpt_sram);
-            int output_port_size = acc_pattern.in_range.back();
-            sram_config tmp_out;
-            for(int i = 0; i < output_port_size; i ++){
-                //FIXME: this dimension drop is specific for this case need a more general solution
-                //drop the last dimension, since that will be handle by the handshake
-                tmp_out.dimensionality = acc_pattern.var_dim - 1 - 1;
-                tmp_out.range = acc_pattern.in_range;
-                tmp_out.range.pop_back();
-                std::reverse(tmp_out.range.begin(),tmp_out.range.end());
-                vector<int> stride;
-                acc_pattern.get_flatten_stride(stride, {1, 0});
-                tmp_out.start_addr = stride.back() * i;
-                stride.pop_back();
-                tmp_out.stride = stride;
-                std::reverse(tmp_out.stride.begin(),tmp_out.stride.end());
-                tmp_out.IO = string("output");
-                memtile.sram_config_output.push_back(tmp_out);
-            }
-        }
-        if (buffer.first == "tb") {
-            cout << "\tConfig TB address stream" << endl;
-            auto buf = buffer.second;
-            auto output_pt_map = buf.get_out_ports();
-            for (string outpt : output_pt_map) {
-                tb_config tmp;
-                auto acc_pattern = buf.access_pattern.at(outpt);
-                acc_pattern.init_flatten_stride({2, 1, 0});
-                memtile.tb_sync_group.push_back(1);
-                if (acc_pattern.merge_lastdim()) {
-                    tmp.range_outer = acc_pattern.in_range.back();
-                    tmp.stride = acc_pattern.stride.back();
-                }
-                else {
-                    cout << "NOT IMPLEMENTED" << endl;
-                    assert(false);
-                }
-                memtile.tb_config_vec.push_back(tmp);
-            }
-        }
-
-        //cout << buffer.first << "_______________________________ \n " << buffer.second<< endl;
-  }
-  memtile.emit_config_file_csv("lake_memtile_config_conv33");
-  assert(false);
+    memtile.extract_config(buffers);
+    memtile.emit_config_file_csv("lake_memtile_config_conv33");
+    assert(false);
   }
 
   int pos = 0;
