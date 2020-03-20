@@ -5567,6 +5567,8 @@ compute_schedule_for_dim(isl_ctx* ctx,
     schedules[f] = si;
   }
 
+  cout << "done with schedules..." << endl;
+
   return schedules;
 }
 
@@ -5639,26 +5641,16 @@ build_compute_deps(
     int schedule_dim,
     vector<string> sorted_functions,
     map<string, map<string, umap*> > pixels_needed,
-    //map<string, Result> & app_dag,
     map<string, isl_map*> & compute_maps) {
-
-  //assert(domain_boxes.size() > 0);
-
-  //cout << "Getting schedule dim" << endl;
-
-  //int schedule_dim = pick(domain_boxes).second.dimension();
-
-  //cout << "Got schedule dim" << endl;
 
   map<string, map<string, vector<QExpr> > > last_compute_needed;
 
   for (auto f : sorted_functions) {
-    //assert(contains_key(f, app_dag));
+    cout << "f = " << f << endl;
     assert(contains_key(f, pixels_needed));
     last_compute_needed[f] = {};
 
     cout << "Getting last compute for " << f << endl;
-    //for (auto arg : app_dag.at(f).srcs) {
     for (auto arg : pixels_needed.at(f)) {
       assert(contains_key(f, compute_maps));
       isl_map* comps_needed =
@@ -5666,17 +5658,11 @@ build_compute_deps(
             compute_maps.at(arg.first),
             arg.second);
 
-            //compute_maps.at(arg.name),
-            //arg.needed);
-
-      //last_compute_needed[f][arg.name] = {};
       last_compute_needed[f][arg.first] = {};
       for (int i = 0; i < schedule_dim; i++) {
         auto max = dim_max(comps_needed, i);
         QExpr ub = extract_bound(i, arg.first, str(max));
         last_compute_needed[f][arg.first].push_back(ub);
-        //QExpr ub = extract_bound(i, arg.name, str(max));
-        //last_compute_needed[f][arg.name].push_back(ub);
       }
     }
   }
@@ -6241,13 +6227,13 @@ struct App {
       pixels_needed[r.first] = {};
       for (auto w : r.second.srcs) {
         pixels_needed[r.first][w.name] = w.needed;
+        //pixels_needed[r.first + "_comp"][w.name + "_comp"] = w.needed;
       }
     }
     auto last_compute_needed = build_compute_deps(
         ndims,
         sorted_functions,
         pixels_needed,
-        //app_dag,
         compute_maps);
     for (int i = ndims - 1; i >= 0; i--) {
       auto dim_schedules =
@@ -6465,8 +6451,8 @@ struct App {
     vector<string> sorted_functions = sort_functions();
     vector<string> sorted_operations;
     for (auto f : sorted_functions) {
-      //sorted_operations.push_back(f + "_comp");
-      sorted_operations.push_back(f);
+      sorted_operations.push_back(f + "_comp");
+      //sorted_operations.push_back(f);
     }
 
     int ndims = schedule_dimension();
@@ -6474,29 +6460,42 @@ struct App {
 
     map<string, map<string, umap*> > pixels_needed;
     for (auto r : app_dag) {
-      pixels_needed[r.first] = {};
+      pixels_needed[r.first + "_comp"] = {};
       for (auto w : r.second.srcs) {
-        pixels_needed[r.first][w.name] = w.needed;
+        pixels_needed[r.first + "_comp"][w.name + "_comp"] = w.needed;
+        //pixels_needed[r.first][w.name] = w.needed;
       }
+    }
+    map<string, isl_map*> op_compute_maps;
+    for (auto m : compute_maps) {
+      op_compute_maps[m.first + "_comp"] =
+        m.second;
+    }
+    map<string, Box> op_domains;
+    for (auto b : domain_boxes) {
+      op_domains[b.first + "_comp"] =
+        b.second;
     }
     auto last_compute_needed = build_compute_deps(
         ndims,
         sorted_operations,
         pixels_needed,
-        //app_dag,
-        compute_maps);
+        op_compute_maps);
+        //compute_maps);
     for (int i = ndims - 1; i >= 0; i--) {
       auto dim_schedules =
-        schedule_dim(ctx, i, domain_boxes, sorted_operations, last_compute_needed);
+        schedule_dim(ctx, i, op_domains, sorted_operations, last_compute_needed);
 
-      for (auto f : sorted_functions) {
+      //for (auto f : sorted_functions) {
+      for (auto f : sorted_operations) {
         schedules[f].push_back(dim_schedules.at(f));
       }
     }
 
     int pos = 0;
     cout << "Sorted pipeline..." << endl;
-    for (auto f : sorted_functions) {
+    //for (auto f : sorted_functions) {
+    for (auto f : sorted_operations) {
       cout << "\t" << f << endl;
       schedules[f].push_back(qexpr(pos));
       pos++;
@@ -6509,19 +6508,23 @@ struct App {
     vector<string> sorted_functions = sort_functions();
 
     umap* m = rdmap(ctx, "{}");
-    for (auto f : sorted_functions) {
+    //for (auto f : sorted_functions) {
+    //for (auto f : sort_operations()) {
+    for (auto fn : schedules) {
+      string f = fn.first;
       vector<string> sched_exprs;
       vector<string> var_names;
       int i = 0;
-      for (auto v : schedules[f]) {
+      //for (auto v : schedules[f]) {
+      for (auto v : map_find(f, schedules)) {
         string dv = "d" + to_string(i);
         sched_exprs.push_back(isl_str(v));
         var_names.push_back(dv);
         i++;
       }
       var_names.pop_back();
-      string map_str = "{ " + f + "_comp" + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
-      //string map_str = "{ " + f + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
+      //string map_str = "{ " + f + "_comp" + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
+      string map_str = "{ " + f + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
 
       //cout << "Map str: " << map_str << endl;
       auto rm = rdmap(ctx, map_str);
