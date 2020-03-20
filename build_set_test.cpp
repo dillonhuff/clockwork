@@ -6056,7 +6056,6 @@ struct App {
       //cout << "Compute domain for " << s.first << " is " << str(compute_sets[s.first]) << endl;
     }
     cout << "Got compute domain" << endl;
-    //assert(false);
   }
 
   void fill_data_domain(const std::string& name, const int d0, const int d1, const int unroll_factor) {
@@ -6208,6 +6207,50 @@ struct App {
     }
     assert(false);
     return {};
+  }
+
+  map<string, vector<QExpr> > rectangular_schedules() {
+    vector<string> sorted_functions = sort_functions();
+    vector<string> sorted_operations;
+    for (auto f : sorted_functions) {
+      sorted_operations.push_back(f + "_comp");
+    }
+
+    int ndims = schedule_dimension();
+    map<string, vector<QExpr> > schedules;
+
+    map<string, map<string, umap*> > pixels_needed;
+    for (auto r : app_dag) {
+      pixels_needed[r.first + "_comp"] = {};
+      for (auto w : r.second.srcs) {
+        pixels_needed[r.first + "_comp"][w.name + "_comp"] = w.needed;
+      }
+    }
+    map<string, isl_map*> op_compute_maps;
+    for (auto m : compute_maps) {
+      op_compute_maps[m.first + "_comp"] =
+        m.second;
+    }
+    map<string, Box> op_domains;
+    for (auto b : domain_boxes) {
+      op_domains[b.first + "_comp"] =
+        b.second;
+    }
+    auto last_compute_needed = build_compute_deps(
+        ndims,
+        sorted_operations,
+        pixels_needed,
+        op_compute_maps);
+    for (int i = ndims - 1; i >= 0; i--) {
+      auto dim_schedules =
+        schedule_dim(ctx, i, op_domains, sorted_operations, last_compute_needed);
+
+      for (auto f : sorted_operations) {
+        schedules[f].push_back(dim_schedules.at(f));
+      }
+    }
+
+    return schedules;
   }
 
   umap* schedule_naive() {
@@ -6447,50 +6490,12 @@ struct App {
 
   map<string, vector<QExpr> > schedule_opt() {
 
-    vector<string> sorted_functions = sort_functions();
-    vector<string> sorted_operations;
-    for (auto f : sorted_functions) {
-      sorted_operations.push_back(f + "_comp");
-    }
-
-    int ndims = schedule_dimension();
-    map<string, vector<QExpr> > schedules;
-
-    map<string, map<string, umap*> > pixels_needed;
-    for (auto r : app_dag) {
-      pixels_needed[r.first + "_comp"] = {};
-      for (auto w : r.second.srcs) {
-        pixels_needed[r.first + "_comp"][w.name + "_comp"] = w.needed;
-      }
-    }
-    map<string, isl_map*> op_compute_maps;
-    for (auto m : compute_maps) {
-      op_compute_maps[m.first + "_comp"] =
-        m.second;
-    }
-    map<string, Box> op_domains;
-    for (auto b : domain_boxes) {
-      op_domains[b.first + "_comp"] =
-        b.second;
-    }
-    auto last_compute_needed = build_compute_deps(
-        ndims,
-        sorted_operations,
-        pixels_needed,
-        op_compute_maps);
-    for (int i = ndims - 1; i >= 0; i--) {
-      auto dim_schedules =
-        schedule_dim(ctx, i, op_domains, sorted_operations, last_compute_needed);
-
-      for (auto f : sorted_operations) {
-        schedules[f].push_back(dim_schedules.at(f));
-      }
-    }
+    map<string, vector<QExpr> > schedules =
+      rectangular_schedules();
 
     int pos = 0;
     cout << "Sorted pipeline..." << endl;
-    //for (auto f : sorted_functions) {
-    for (auto f : sorted_operations) {
+    for (auto f : sort_operations()) {
       cout << "\t" << f << endl;
       schedules[f].push_back(qexpr(pos));
       pos++;
