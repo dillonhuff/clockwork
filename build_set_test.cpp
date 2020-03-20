@@ -5937,15 +5937,12 @@ QExpr extract_bound(const int i, const std::string& name, const string& max) {
 
         cout << "\t" << start_time << endl;
         assert(contains_key(f, app_dag));
-        assert(app_dag.at(f).srcs.size());
         for (auto arg : app_dag.at(f).srcs) {
-            cout << str(arg.needed) << endl;
           QTerm ft = qterm(f_rate, qvar(dv));
           QExpr ftime = qexpr(ft, f_delay);
           assert(contains_key(f, compute_maps));
           isl_map* f_cm = inv(compute_maps.at(f));
           cout << "f_cm: " << str(f_cm) << endl;
-          cout << "f_cm: " << str(inv(f_cm)) << endl;
 
           auto data_needed =
             to_map(arg.needed);
@@ -7754,7 +7751,6 @@ int main(int argc, char** argv) {
 
     agg_test();
     memtile_test();
-    assert(false);
     upsample_reduce_test();
     mismatched_stencil_test();
     //assert(false);
