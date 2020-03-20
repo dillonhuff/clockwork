@@ -2699,6 +2699,11 @@ struct Result {
   vector<Window> srcs;
   Window provided;
   Box reduce_var_domain;
+
+  bool is_reduce() const {
+    return reduce_var_domain.dimension() > 0;
+  }
+
 };
 
 struct prog {
@@ -5897,6 +5902,7 @@ umap* to_umap(isl_ctx* ctx, map<string, vector<QExpr> > & schedules, vector<stri
     cout << "done getting m..." << endl;
     return m;
 }
+
 struct App {
 
   isl_ctx* ctx;
@@ -6115,17 +6121,18 @@ struct App {
     return cons;
   }
 
-  //umap* ws_map(const std::string& producer, const std::string& consumer) {
-    //for (auto w : app_dag.at(consumer).srcs) {
-      //if (w.name == producer) {
-        //return w.needed;
-      //}
-    //}
-    //cout << "No map from: " << producer << " to " << consumer << endl;
-    //assert(false);
-    //return nullptr;
-  //}
-
+  vector<string> sort_operations() const {
+    auto functions = sort_functions();
+    vector<string> operations;
+    for (auto f : functions) {
+      Result r = app_dag.at(f);
+      operations.push_back(f + "_comp");
+      if (r.is_reduce()) {
+        operations.push_back(f + "_reduce");
+      }
+    }
+    return operations;
+  }
 
   vector<string> sort_functions() const {
     vector<string> sorted;
@@ -6168,18 +6175,18 @@ struct App {
     int ndims = data_dimension();
 
     for (auto s : app_dag) {
-      vector<string> dimvars;
-      vector<string> later_vars;
+      vector<string> data_vars;
+      vector<string> later_data_vars;
       for (int i = 0; i < ndims; i++) {
-        dimvars.push_back("d" + str(i));
+        data_vars.push_back("d" + str(i));
         if (i > 0) {
-          later_vars.push_back("d" + str(i));
+          later_data_vars.push_back("d" + str(i));
         }
       }
 
       compute_maps[s.first] =
-        to_map(rdmap(ctx, "{ " + s.first + "[" + comma_list(dimvars) + " ] -> " +
-              s.first + "_comp[floor(d0 / " + to_string(unroll_factor) + "), " + comma_list(later_vars) + "] }"));
+        to_map(rdmap(ctx, "{ " + s.first + "[" + comma_list(data_vars) + " ] -> " +
+              s.first + "_comp[floor(d0 / " + to_string(unroll_factor) + "), " + comma_list(later_data_vars) + "] }"));
 
       cout << "Compute map for " << s.first << ": " << str(compute_maps[s.first]) << endl;
       cout << "Data domain: " <<
@@ -6192,6 +6199,7 @@ struct App {
       cout << "Compute domain for " << s.first << " is " << str(compute_sets[s.first]) << endl;
     }
     cout << "Got compute domain" << endl;
+    //assert(false);
   }
 
   void fill_data_domain(const std::string& name, const int d0, const int d1, const int unroll_factor) {
@@ -6503,7 +6511,6 @@ struct App {
     umap* m = schedule_naive();
 
     cout << "Schedule: " << str(m) << endl;
-    //assert(false);
 
     map<string, UBuffer> buffers = build_buffers(m);
 
@@ -6556,7 +6563,6 @@ struct App {
           compute_domain(f);
       }
     }
-
 
     options.all_rams = true;
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);

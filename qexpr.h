@@ -875,6 +875,11 @@ struct Box {
     }
     return padded;
   }
+
+  int dimension() const {
+    return intervals.size();
+  }
+
 };
 
 std::ostream& operator<<(std::ostream& out, const Box& b) {
