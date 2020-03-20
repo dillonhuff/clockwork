@@ -5711,7 +5711,6 @@ void schedule_dim(isl_ctx* ctx, map<string, Box> & domain_boxes, const int i, ma
   string dv = "d" + to_string(i);
 
   auto last_compute_needed = build_compute_deps(ctx, domain_boxes, i,
-      //schedules,
       sorted_functions, app_dag, compute_maps);
 
   map<string, QExpr> dim_schedules =
@@ -6021,7 +6020,8 @@ struct App {
   void fill_compute_domain(const int unroll_factor) {
     int ndims = data_dimension();
 
-    for (auto s : app_dag) {
+    //for (auto s : app_dag) {
+    for (auto f : sort_functions()) {
       vector<string> data_vars;
       vector<string> later_data_vars;
       for (int i = 0; i < ndims; i++) {
@@ -6030,20 +6030,20 @@ struct App {
           later_data_vars.push_back("d" + str(i));
         }
       }
+      
+      compute_maps[f] =
+        to_map(rdmap(ctx, "{ " + f + "[" + comma_list(data_vars) + " ] -> " +
+              f + "_comp[floor(d0 / " + to_string(unroll_factor) + "), " + comma_list(later_data_vars) + "] }"));
 
-      compute_maps[s.first] =
-        to_map(rdmap(ctx, "{ " + s.first + "[" + comma_list(data_vars) + " ] -> " +
-              s.first + "_comp[floor(d0 / " + to_string(unroll_factor) + "), " + comma_list(later_data_vars) + "] }"));
+      //cout << "Compute map for " << s.first << ": " << str(compute_maps[s.first]) << endl;
+      //cout << "Data domain: " <<
+        //str(data_domain(s.first).to_set(ctx, s.first)) << endl;
 
-      cout << "Compute map for " << s.first << ": " << str(compute_maps[s.first]) << endl;
-      cout << "Data domain: " <<
-        str(data_domain(s.first).to_set(ctx, s.first)) << endl;
-
-      compute_sets[s.first] =
+      compute_sets[f] =
         range(its(
-            compute_maps[s.first],
-            data_domain(s.first).to_set(ctx, s.first)));
-      cout << "Compute domain for " << s.first << " is " << str(compute_sets[s.first]) << endl;
+            compute_maps[f],
+            data_domain(f).to_set(ctx, f)));
+      //cout << "Compute domain for " << s.first << " is " << str(compute_sets[s.first]) << endl;
     }
     cout << "Got compute domain" << endl;
     //assert(false);
