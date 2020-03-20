@@ -5635,20 +5635,19 @@ isl_map* last_comp_needed(isl_map* pixel_to_producer,
 
 //map<string, map<string, QExpr> > 
 map<string, map<string, vector<QExpr> > > 
-build_compute_deps(isl_ctx* ctx,
-    map<string, Box> & domain_boxes,
-    //const int i,
+build_compute_deps(
+    int schedule_dim,
     vector<string> sorted_functions,
     map<string, Result> & app_dag,
     map<string, isl_map*> & compute_maps) {
 
-  assert(domain_boxes.size() > 0);
+  //assert(domain_boxes.size() > 0);
 
-  cout << "Getting schedule dim" << endl;
+  //cout << "Getting schedule dim" << endl;
 
-  int schedule_dim = pick(domain_boxes).second.dimension();
+  //int schedule_dim = pick(domain_boxes).second.dimension();
 
-  cout << "Got schedule dim" << endl;
+  //cout << "Got schedule dim" << endl;
 
   map<string, map<string, vector<QExpr> > > last_compute_needed;
 
@@ -5667,15 +5666,11 @@ build_compute_deps(isl_ctx* ctx,
       last_compute_needed[f][arg.name] = {};
       for (int i = 0; i < schedule_dim; i++) {
         auto max = dim_max(comps_needed, i);
-        cout << "max needed in dim " << i << " = " << str(max) << endl;
         QExpr ub = extract_bound(i, arg.name, str(max));
-        //last_compute_needed[f][arg.name] = ub;
         last_compute_needed[f][arg.name].push_back(ub);
       }
     }
   }
-
-  cout << "Done getting last compute needed" << endl;
 
   return last_compute_needed;
 }
@@ -6232,8 +6227,11 @@ struct App {
     }
 
     int ndims = schedule_dimension();
-    auto last_compute_needed = build_compute_deps(ctx, domain_boxes, 
-        sorted_functions, app_dag, compute_maps);
+    auto last_compute_needed = build_compute_deps(
+        ndims,
+        sorted_functions,
+        app_dag,
+        compute_maps);
     for (int i = ndims - 1; i >= 0; i--) {
       auto dim_schedules =
         schedule_dim(ctx, i, domain_boxes, sorted_functions, last_compute_needed);
@@ -6446,15 +6444,23 @@ struct App {
   }
 
   map<string, vector<QExpr> > schedule_opt() {
+
     vector<string> sorted_functions = sort_functions();
+    vector<string> sorted_operations;
+    for (auto f : sorted_functions) {
+      //sorted_operations.push_back(f + "_comp");
+      sorted_operations.push_back(f);
+    }
+
     int ndims = schedule_dimension();
     map<string, vector<QExpr> > schedules;
 
-    auto last_compute_needed = build_compute_deps(ctx, domain_boxes,
-        sorted_functions, app_dag, compute_maps);
+    auto last_compute_needed = build_compute_deps(
+        ndims,
+        sorted_operations, app_dag, compute_maps);
     for (int i = ndims - 1; i >= 0; i--) {
       auto dim_schedules =
-        schedule_dim(ctx, i, domain_boxes, sorted_functions, last_compute_needed);
+        schedule_dim(ctx, i, domain_boxes, sorted_operations, last_compute_needed);
 
       for (auto f : sorted_functions) {
         schedules[f].push_back(dim_schedules.at(f));
@@ -6487,17 +6493,18 @@ struct App {
         i++;
       }
       var_names.pop_back();
-      string map_str = "{ " + f + "_comp" + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
-      cout << "Map str: " << map_str << endl;
+      //string map_str = "{ " + f + "_comp" + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
+      string map_str = "{ " + f + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
+
+      //cout << "Map str: " << map_str << endl;
       auto rm = rdmap(ctx, map_str);
       m = unn(m, rm);
       isl_union_map_free(rm);
-      cout << "Unioned" << endl;
-      cout << "m = " << str(m) << endl;
+      //cout << "Unioned" << endl;
+      //cout << "m = " << str(m) << endl;
     }
 
-    cout << "done getting m..." << endl;
-
+    //cout << "done getting m..." << endl;
 
     return m;
   }
@@ -6596,7 +6603,6 @@ struct App {
         ops.push_back(f + "_comp");
         compute_domains[f + "_comp"] =
           compute_box(f);
-        //cout << "Compute domain of " << f << " = " << str(compute_domain(f)) << endl;
       }
     }
 
@@ -6610,7 +6616,6 @@ struct App {
     assert(whole_dom != nullptr);
     auto sorted_functions = sort_functions();
     for (auto f : sorted_functions) {
-      //cout << "Whole dom: " << str(whole_dom) << endl;
       whole_dom =
         unn(whole_dom, to_uset(compute_domain(f)));
     }
