@@ -2,6 +2,8 @@
 
 
 #include "algorithm.h"
+#include <sstream>
+#include <regex>
 
 using namespace dbhc;
 using namespace std;
@@ -152,6 +154,7 @@ std::string comma_list(const std::set<std::string>& strs) {
   return sep_list(strv, "", "", ", ");
 }
 
+static inline
 std::string ReplaceString(std::string subject, const std::string& search,
                           const std::string& replace) {
     size_t pos = 0;
