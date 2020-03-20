@@ -986,20 +986,6 @@ inline void u_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_off_
 	u_u_comp_write_bundle_write(compute_result, u, d0, d1);
 }
 
-inline void denoise2d_comp(r1_cache& r1, f_cache& f, u_cache& u, g_cache& g, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */denoise2d, int d0, int d1) {
-	// Consume: r1
-	auto r1_0_c__0_value = r1_denoise2d_comp_read_bundle_read(r1/* source_delay */, d0, d1);
-	// Consume: f
-	auto f_0_c__0_value = f_denoise2d_comp_read_bundle_read(f/* source_delay */, d0, d1);
-	// Consume: u
-	auto u_0_c__0_value = u_denoise2d_comp_read_bundle_read(u/* source_delay */, d0, d1);
-	// Consume: g
-	auto g_0_c__0_value = g_denoise2d_comp_read_bundle_read(g/* source_delay */, d0, d1);
-	auto compute_result = out_comp_dn2d(r1_0_c__0_value, f_0_c__0_value, u_0_c__0_value, g_0_c__0_value);
-	// Produce: denoise2d
-	denoise2d.write(compute_result);
-}
-
 inline void r0_comp(u_cache& u, f_cache& f, r0_cache& r0, int d0, int d1) {
 	// Consume: u
 	auto u_0_c__0_value = u_r0_comp_read_bundle_read(u/* source_delay */, d0, d1);
@@ -1010,20 +996,20 @@ inline void r0_comp(u_cache& u, f_cache& f, r0_cache& r0, int d0, int d1) {
 	r0_r0_comp_write_bundle_write(compute_result, r0, d0, d1);
 }
 
-inline void diff_qwe_comp(u_cache& u, diff_qwe_cache& diff_qwe, int d0, int d1) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_qwe_comp_read_bundle_read(u/* source_delay */, d0, d1);
-	auto compute_result = diff_b(u_0_c__0_value);
-	// Produce: diff_qwe
-	diff_qwe_diff_qwe_comp_write_bundle_write(compute_result, diff_qwe, d0, d1);
-}
-
 inline void diff_r_comp(u_cache& u, diff_r_cache& diff_r, int d0, int d1) {
 	// Consume: u
 	auto u_0_c__0_value = u_diff_r_comp_read_bundle_read(u/* source_delay */, d0, d1);
 	auto compute_result = diff_b(u_0_c__0_value);
 	// Produce: diff_r
 	diff_r_diff_r_comp_write_bundle_write(compute_result, diff_r, d0, d1);
+}
+
+inline void diff_qwe_comp(u_cache& u, diff_qwe_cache& diff_qwe, int d0, int d1) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_qwe_comp_read_bundle_read(u/* source_delay */, d0, d1);
+	auto compute_result = diff_b(u_0_c__0_value);
+	// Produce: diff_qwe
+	diff_qwe_diff_qwe_comp_write_bundle_write(compute_result, diff_qwe, d0, d1);
 }
 
 inline void diff_l_comp(u_cache& u, diff_l_cache& diff_l, int d0, int d1) {
@@ -1042,6 +1028,14 @@ inline void diff_d_comp(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
 	diff_d_diff_d_comp_write_bundle_write(compute_result, diff_d, d0, d1);
 }
 
+inline void r1_comp(r0_cache& r0, r1_cache& r1, int d0, int d1) {
+	// Consume: r0
+	auto r0_0_c__0_value = r0_r1_comp_read_bundle_read(r0/* source_delay */, d0, d1);
+	auto compute_result = r1_comp(r0_0_c__0_value);
+	// Produce: r1
+	r1_r1_comp_write_bundle_write(compute_result, r1, d0, d1);
+}
+
 inline void g_comp(diff_qwe_cache& diff_qwe, diff_d_cache& diff_d, diff_l_cache& diff_l, diff_r_cache& diff_r, g_cache& g, int d0, int d1) {
 	// Consume: diff_qwe
 	auto diff_qwe_0_c__0_value = diff_qwe_g_comp_read_bundle_read(diff_qwe/* source_delay */, d0, d1);
@@ -1056,12 +1050,18 @@ inline void g_comp(diff_qwe_cache& diff_qwe, diff_d_cache& diff_d, diff_l_cache&
 	g_g_comp_write_bundle_write(compute_result, g, d0, d1);
 }
 
-inline void r1_comp(r0_cache& r0, r1_cache& r1, int d0, int d1) {
-	// Consume: r0
-	auto r0_0_c__0_value = r0_r1_comp_read_bundle_read(r0/* source_delay */, d0, d1);
-	auto compute_result = r1_comp(r0_0_c__0_value);
-	// Produce: r1
-	r1_r1_comp_write_bundle_write(compute_result, r1, d0, d1);
+inline void denoise2d_comp(r1_cache& r1, f_cache& f, u_cache& u, g_cache& g, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */denoise2d, int d0, int d1) {
+	// Consume: r1
+	auto r1_0_c__0_value = r1_denoise2d_comp_read_bundle_read(r1/* source_delay */, d0, d1);
+	// Consume: f
+	auto f_0_c__0_value = f_denoise2d_comp_read_bundle_read(f/* source_delay */, d0, d1);
+	// Consume: u
+	auto u_0_c__0_value = u_denoise2d_comp_read_bundle_read(u/* source_delay */, d0, d1);
+	// Consume: g
+	auto g_0_c__0_value = g_denoise2d_comp_read_bundle_read(g/* source_delay */, d0, d1);
+	auto compute_result = out_comp_dn2d(r1_0_c__0_value, f_0_c__0_value, u_0_c__0_value, g_0_c__0_value);
+	// Produce: denoise2d
+	denoise2d.write(compute_result);
 }
 
 // Driver function
