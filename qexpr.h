@@ -1064,6 +1064,7 @@ std::string box_codegen(const vector<string>& op_order,
     for (auto f : scheds) {
       cout << tab(1) << f.first << endl;
     }
+
     assert(contains_key(f.first, scheds));
 
     Box bounds;

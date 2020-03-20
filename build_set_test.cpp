@@ -6637,7 +6637,8 @@ struct App {
     }
 
     //assert(false);
-    string cgn = box_codegen(ops, scheds, compute_domains);
+    //string cgn = box_codegen(ops, scheds, compute_domains);
+    string cgn = "";
 
     map<string, UBuffer> buffers = build_buffers(m, unroll_factor);
 
@@ -6652,7 +6653,7 @@ struct App {
 
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    //options.use_custom_code_string = true;
     options.code_string = cgn;
 
     prog prg;

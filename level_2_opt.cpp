@@ -762,14 +762,6 @@ inline hw_uint<288> level_1_level_2_comp_read_bundle_read(level_1_cache& level_1
 
 
 // Operation logic
-inline void in_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in_off_chip, in_cache& in, int d0, int d1) {
-	// Consume: in_off_chip
-	auto in_off_chip_0_c__0_value = in_off_chip.read();
-	auto compute_result = id(in_off_chip_0_c__0_value);
-	// Produce: in
-	in_in_comp_write_bundle_write(compute_result, in, d0, d1);
-}
-
 inline void level_1_comp(level_0_cache& level_0, level_1_cache& level_1, int d0, int d1) {
 	// Consume: level_0
 	auto level_0_0_c__0_value = level_0_level_1_comp_read_bundle_read(level_0/* source_delay */, d0, d1);
@@ -794,6 +786,14 @@ inline void level_0_comp(in_cache& in, level_0_cache& level_0, int d0, int d1) {
 	level_0_level_0_comp_write_bundle_write(compute_result, level_0, d0, d1);
 }
 
+inline void in_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in_off_chip, in_cache& in, int d0, int d1) {
+	// Consume: in_off_chip
+	auto in_off_chip_0_c__0_value = in_off_chip.read();
+	auto compute_result = id(in_off_chip_0_c__0_value);
+	// Produce: in
+	in_in_comp_write_bundle_write(compute_result, in, d0, d1);
+}
+
 // Driver function
 void level_2_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */in_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */level_2) {
   in_cache in;
@@ -812,57 +812,19 @@ void level_2_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */in_off_chip
 #endif // __VIVADO_SYNTH__
 
 /* CUSTOM CODE STRING
-for (int c0 = 0; c0 <= 262; c0++) {
-  for (int c1 = 0; c1 <= 262; c1++) {
-
-#ifdef __VIVADO_SYNTH__
-#pragma HLS pipeline II=1
-#endif // __VIVADO_SYNTH__
-
-    if ((0 <= c1 && c1 <= 262) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 262) && ((c0 - 0) % 1 == 0)) {
-      in_comp((c1 - 0) / 1, (c0 - 0) / 1);
-    }
-
-    if ((2 <= c1 && c1 <= 262) && ((c1 - 2) % 2 == 0) && (2 <= c0 && c0 <= 262) && ((c0 - 2) % 2 == 0)) {
-      level_0_comp((c1 - 2) / 2, (c0 - 2) / 2);
-    }
-
-    if ((6 <= c1 && c1 <= 262) && ((c1 - 6) % 4 == 0) && (6 <= c0 && c0 <= 262) && ((c0 - 6) % 4 == 0)) {
-      level_1_comp((c1 - 6) / 4, (c0 - 6) / 4);
-    }
-
-    if ((14 <= c1 && c1 <= 262) && ((c1 - 14) % 8 == 0) && (14 <= c0 && c0 <= 262) && ((c0 - 14) % 8 == 0)) {
-      level_2_comp((c1 - 14) / 8, (c0 - 14) / 8);
-    }
-
-  }
-}
 
 */
-	for (int c0 = 0; c0 <= 262; c0++) {
-	  for (int c1 = 0; c1 <= 262; c1++) {
-	
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS pipeline II=1
-	#endif // __VIVADO_SYNTH__
-	
-	    if ((0 <= c1 && c1 <= 262) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 262) && ((c0 - 0) % 1 == 0)) {
-	      in_comp(in_off_chip, in, (c1 - 0) / 1, (c0 - 0) / 1);
+	for (int c0 = 0; c0 <= 262; c0 += 1)
+	  for (int c1 = 0; c1 <= 262; c1 += 1) {
+	    in_comp(in_off_chip, in, c1, c0);
+	    if (c0 >= 2 && c1 >= 2 && c0 % 2 == 0 && c1 % 2 == 0) {
+	      level_0_comp(in, level_0, (c1 / 2) - 1, (c0 / 2) - 1);
+	      if (c0 >= 6 && c1 >= 6 && (c0 + 2) % 4 == 0 && (c1 + 2) % 4 == 0) {
+	        level_1_comp(level_0, level_1, (c1 - 6) / 4, (c0 - 6) / 4);
+	        if (c0 >= 14 && c1 >= 14 && (c0 + 2) % 8 == 0 && (c1 + 2) % 8 == 0)
+	          level_2_comp(level_1, level_2, (c1 - 14) / 8, (c0 - 14) / 8);
+	      }
 	    }
-	
-	    if ((2 <= c1 && c1 <= 262) && ((c1 - 2) % 2 == 0) && (2 <= c0 && c0 <= 262) && ((c0 - 2) % 2 == 0)) {
-	      level_0_comp(in, level_0, (c1 - 2) / 2, (c0 - 2) / 2);
-	    }
-	
-	    if ((6 <= c1 && c1 <= 262) && ((c1 - 6) % 4 == 0) && (6 <= c0 && c0 <= 262) && ((c0 - 6) % 4 == 0)) {
-	      level_1_comp(level_0, level_1, (c1 - 6) / 4, (c0 - 6) / 4);
-	    }
-	
-	    if ((14 <= c1 && c1 <= 262) && ((c1 - 14) % 8 == 0) && (14 <= c0 && c0 <= 262) && ((c0 - 14) % 8 == 0)) {
-	      level_2_comp(level_1, level_2, (c1 - 14) / 8, (c0 - 14) / 8);
-	    }
-	
 	  }
-	}
 	
 }
