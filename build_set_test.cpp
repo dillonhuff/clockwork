@@ -5603,6 +5603,7 @@ QExpr extract_bound(const int i, const std::string& name, const string& max) {
 isl_map* last_comp_needed(isl_map* pixel_to_producer,
     isl_map* pixels_needed_to_producer,
     umap* pixel_to_pixels_needed) {
+
   isl_map* f_cm = inv(pixel_to_producer);
   cout << "f_cm: " << str(f_cm) << endl;
 
@@ -5718,21 +5719,21 @@ map<string, QExpr> schedule_dim(isl_ctx* ctx, const int i, map<string, Box>& dom
   return dim_schedules;
 }
 
-void schedule_dim(isl_ctx* ctx, map<string, Box> & domain_boxes, const int i, map<string, vector<QExpr> >& schedules, vector<string> sorted_functions, map<string, Result> & app_dag, map<string, isl_map*> & compute_maps) {
-  string dv = "d" + to_string(i);
+//void schedule_dim(isl_ctx* ctx, map<string, Box> & domain_boxes, const int i, map<string, vector<QExpr> >& schedules, vector<string> sorted_functions, map<string, Result> & app_dag, map<string, isl_map*> & compute_maps) {
+  //string dv = "d" + to_string(i);
 
-  auto last_compute_needed = build_compute_deps(ctx, domain_boxes, i,
-      sorted_functions, app_dag, compute_maps);
+  //auto last_compute_needed = build_compute_deps(ctx, domain_boxes, i,
+      //sorted_functions, app_dag, compute_maps);
 
-  map<string, QExpr> dim_schedules =
-    schedule_dim(ctx, i, domain_boxes, sorted_functions, last_compute_needed);
+  //map<string, QExpr> dim_schedules =
+    //schedule_dim(ctx, i, domain_boxes, sorted_functions, last_compute_needed);
 
 
-  for (auto f : sorted_functions) {
-    schedules[f].push_back(dim_schedules.at(f));
-  }
+  //for (auto f : sorted_functions) {
+    //schedules[f].push_back(dim_schedules.at(f));
+  //}
 
-}
+//}
 
 umap* to_umap(isl_ctx* ctx, map<string, vector<QExpr> > & schedules, vector<string> sorted_functions, const string & suffix) {
     umap* m = rdmap(ctx, "{}");
@@ -6223,7 +6224,14 @@ struct App {
 
     int ndims = schedule_dimension();
     for (int i = ndims - 1; i >= 0; i--) {
-      ::schedule_dim(ctx, domain_boxes, i, schedules, sort_functions(), app_dag, compute_maps);
+      auto last_compute_needed = build_compute_deps(ctx, domain_boxes, i,
+          sorted_functions, app_dag, compute_maps);
+      auto dim_schedules =
+        schedule_dim(ctx, i, domain_boxes, sorted_functions, last_compute_needed);
+
+      for (auto f : sorted_functions) {
+        schedules[f].push_back(dim_schedules.at(f));
+      }
     }
 
     umap* m = rdmap(ctx, "{}");
@@ -6432,8 +6440,16 @@ struct App {
     vector<string> sorted_functions = sort_functions();
     int ndims = schedule_dimension();
     map<string, vector<QExpr> > schedules;
+
     for (int i = ndims - 1; i >= 0; i--) {
-      ::schedule_dim(ctx, domain_boxes, i, schedules, sort_functions(), app_dag, compute_maps);
+      auto last_compute_needed = build_compute_deps(ctx, domain_boxes, i,
+          sorted_functions, app_dag, compute_maps);
+      auto dim_schedules =
+        schedule_dim(ctx, i, domain_boxes, sorted_functions, last_compute_needed);
+
+      for (auto f : sorted_functions) {
+        schedules[f].push_back(dim_schedules.at(f));
+      }
     }
 
     int pos = 0;
@@ -6445,106 +6461,6 @@ struct App {
     }
     return schedules;
   }
-
-  //int inner_range(const std::string& f, const int dim) {
-    //cout << "Inner range of " << f << " for " << dim << endl;
-    //int total = 1;
-    //for (int d = dim - 1; d >= 0; d--) {
-      //int max_comp = -1;
-      //for (auto f : sort_functions()) {
-        //int c = compute_box(f).length(d);
-        //if (c > max_comp) {
-          //max_comp = c;
-        //}
-      //}
-      //total *= max_comp;
-      //cout << "total = " << total << endl;
-    //}
-    //cout << total << endl;
-    //return total;
-  //}
-
-  //QExpr flatten(const std::string& f,
-      //const vector<QExpr>& s) {
-    //cout << "Flattening: " << f << endl;
-    //cout << tab(1) << "compute box: " << compute_box(f) << endl;
-    //QExpr flat;
-    //int sched_dim = s.size() - 1;
-    //int ndims = s.size() - 1;
-    //int num_funcs = sort_functions().size();
-    //for (auto t : s) {
-      //if (sched_dim == 0) {
-        //for (auto v : t.terms) {
-          //int range = 1;
-          //flat.terms.push_back(times(range, v));
-        //}
-      //} else {
-        //int dim = sched_dim - 1;
-        ////ndims - sched_dim;
-        //for (auto v : t.terms) {
-          //int range =
-            //num_funcs*inner_range(f, dim);
-          //flat.terms.push_back(times(range, v));
-        //}
-      //}
-      //sched_dim--;
-    //}
-    //cout << "Flattened: " << flat << endl;
-    //return flat;
-  //}
-
-  //map<string, vector<QExpr> > flatten(const map<string, vector<QExpr> >& s) {
-    //map<string, vector<QExpr> > flattened;
-    //for (auto t : s) {
-      //flattened[t.first] =
-      //{flatten(t.first, t.second)};
-    //}
-    //cout << "Flattened schedules size: " << flattened.size() << endl;
-    //for (auto f : flattened) {
-      //assert(f.second.size() > 0);
-      //cout << tab(1) << f.first << endl;
-      //for (auto k : f.second) {
-        //cout << tab(2) << k << endl;
-      //}
-    //}
-    ////assert(false);
-    //return flattened;
-  //}
-
-  //umap* schedule_flat() {
-    //auto schedules = schedule_opt();
-    //schedules = flatten(schedules);
-    //vector<string> sorted_functions = sort_functions();
-
-    //int ndims = max_dimensions();
-    //umap* m = rdmap(ctx, "{}");
-    //for (auto f : sorted_functions) {
-
-      //vector<string> var_names;
-      //for (int i = 0; i < ndims; i++) {
-        //string dv = "d" + to_string(i);
-        //var_names.push_back(dv);
-      //}
-
-      //vector<string> sched_exprs;
-      //for (auto v : schedules[f]) {
-        //sched_exprs.push_back(isl_str(v));
-      //}
-      //cout << "var names: " << var_names << endl;
-      //string map_str = "{ " + f + "_comp" + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
-      //cout << "Map str: " << map_str << endl;
-      //auto rm = rdmap(ctx, map_str);
-      //m = unn(m, rm);
-      //isl_union_map_free(rm);
-      //cout << "Unioned" << endl;
-      //cout << "m = " << str(m) << endl;
-    //}
-
-    //cout << "done getting m..." << endl;
-
-
-    //return m;
-  //}
 
   umap* schedule() {
     auto schedules = schedule_opt();
@@ -6753,19 +6669,19 @@ struct App {
 
 };
 
-void memtile_test() {
+//void memtile_test() {
 
-  prog prg;
-  prg.compute_unit_file = "accumulate_3.h";
-  prg.name = "memtile";
-  prg.add_input("in");
-  prg.add_output("out");
-  //prg.buffer_port_widths["T"] = 32*3;
-  prg.buffer_port_widths["in"] = 32;
-  prg.buffer_port_widths["out"] = 32;
-  prg.buffer_port_widths["agg"] = 32;
-  prg.buffer_port_widths["tb"] = 32;
-  prg.buffer_port_widths["sram"] = 32;
+  //prog prg;
+  //prg.compute_unit_file = "accumulate_3.h";
+  //prg.name = "memtile";
+  //prg.add_input("in");
+  //prg.add_output("out");
+  ////prg.buffer_port_widths["T"] = 32*3;
+  //prg.buffer_port_widths["in"] = 32;
+  //prg.buffer_port_widths["out"] = 32;
+  //prg.buffer_port_widths["agg"] = 32;
+  //prg.buffer_port_widths["tb"] = 32;
+  //prg.buffer_port_widths["sram"] = 32;
 
   /* this program will be a test of memory tile flatten,
    * I hand written the memory access pattern after vectorization
@@ -6774,113 +6690,113 @@ void memtile_test() {
    * */
 
 
-  {
-    auto agg_loop = prg.add_nest("po", 0, 8, "pi", 0, 8, "pdummy", 0, 1);
-    auto agg = agg_loop->add_op("in2agg");
-    agg->add_load("in", "po, pi");
-    agg->add_store("agg", "po, pi");
-  }
-
-  {
-    auto sram_loop = prg.add_nest("qo", 0, 8, "qi", 0, 2, "qdummy", 0, 1);
-    auto sram = sram_loop->add_op("agg2sram");
-    sram->add_load("agg", "qo, qi*4");
-    sram->add_load("agg", "qo, qi*4+1");
-    sram->add_load("agg", "qo, qi*4+2");
-    sram->add_load("agg", "qo, qi*4+3");
-
-    sram->add_store("sram", "qo, qi*4");
-    sram->add_store("sram", "qo, qi*4+1");
-    sram->add_store("sram", "qo, qi*4+2");
-    sram->add_store("sram", "qo, qi*4+3");
-  }
-
-  {
-    auto tb_loop = prg.add_nest("k", 0, 6, "l", 0, 2, "m", 0, 3);
-    auto tb = tb_loop->add_op("sram2tb");
-    tb->add_load("sram", "(k+m), l*4");
-    tb->add_load("sram", "(k+m), l*4+1");
-    tb->add_load("sram", "(k+m), l*4+2");
-    tb->add_load("sram", "(k+m), l*4+3");
-
-
-    tb->add_store("tb", "k, m, l*4");
-    tb->add_store("tb", "k, m, l*4+1");
-    tb->add_store("tb", "k, m, l*4+2");
-    tb->add_store("tb", "k, m, l*4+3");
-  }
-
-  {
-    auto out_loop = prg.add_nest("a", 0, 6, "b", 0, 2, "c", 0, 4);
-    auto out = out_loop->add_op("tb2out");
-    out->add_load("tb", "a, 0, 4*b + c");
-    out->add_load("tb", "a, 1, 4*b + c");
-    out->add_load("tb", "a, 2, 4*b + c");
-
-    out->add_store("out", "a, 0, 4*b+c");
-    out->add_store("out", "a, 1, 4*b+c");
-    out->add_store("out", "a, 2, 4*b+c");
-  }
-
-  generate_optimized_code(prg);
-  assert(false);
-
-  auto sched = prg.unoptimized_schedule();
-  cout << codegen_c(sched) << endl;
-  auto itr_domain = prg.whole_iteration_domain();
-  cout << "iter domain = " << str(itr_domain) << endl;
-
-  //auto sched_opt = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
-  auto domain_boxes = prg.get_domain_boxes();
-  map<string, Box> op_boxes;
-  for (auto b : domain_boxes) {
-      op_boxes[b.first->name] = b.second;
-      cout << tab(1) << b.first->name << "->" << b.second << endl;
-  }
-
-  vector<string> sorted_functions = {"in2agg", "agg2sram", "sram2tb", "tb2out"};
-  int ndims = 3;
-  map<string, vector<QExpr> > schedules;
-  map<string, Result> app_dag;
-  //for (auto func : sorted_functions) {
-      //Result res;
-      //app_dag[func] = {};
+  //{
+    //auto agg_loop = prg.add_nest("po", 0, 8, "pi", 0, 8, "pdummy", 0, 1);
+    //auto agg = agg_loop->add_op("in2agg");
+    //agg->add_load("in", "po, pi");
+    //agg->add_store("agg", "po, pi");
   //}
-  map<string, isl_map*> compute_maps;
-  for (auto cm : prg.producer_maps()) {
-      compute_maps[cm.first->name] = inv(cm.second);
-      cout << tab(1) << "Producer map: " << cm.first->name << "->" << str(cm.second) << endl;
-  }
 
-  for (auto cm : prg.data_demands_maps()) {
-      app_dag[cm.first] = cm.second;
-      cout << tab(1) << "DATA demands map: " << cm.first<< "->" << str(cm.second.srcs.at(0).needed) << endl;
-  }
+  //{
+    //auto sram_loop = prg.add_nest("qo", 0, 8, "qi", 0, 2, "qdummy", 0, 1);
+    //auto sram = sram_loop->add_op("agg2sram");
+    //sram->add_load("agg", "qo, qi*4");
+    //sram->add_load("agg", "qo, qi*4+1");
+    //sram->add_load("agg", "qo, qi*4+2");
+    //sram->add_load("agg", "qo, qi*4+3");
 
-  for (int i = ndims - 1; i >= 0; i--) {
-      schedule_dim(prg.ctx, op_boxes, i, schedules, sorted_functions, app_dag,  compute_maps);
-  }
+    //sram->add_store("sram", "qo, qi*4");
+    //sram->add_store("sram", "qo, qi*4+1");
+    //sram->add_store("sram", "qo, qi*4+2");
+    //sram->add_store("sram", "qo, qi*4+3");
+  //}
 
-  int pos = 0;
-  cout << "Sorted pipeline..." << endl;
-  for (auto f : sorted_functions) {
-    cout << "\t" << f << endl;
-    schedules[f].push_back(qexpr(pos));
-    pos++;
-  }
+  //{
+    //auto tb_loop = prg.add_nest("k", 0, 6, "l", 0, 2, "m", 0, 3);
+    //auto tb = tb_loop->add_op("sram2tb");
+    //tb->add_load("sram", "(k+m), l*4");
+    //tb->add_load("sram", "(k+m), l*4+1");
+    //tb->add_load("sram", "(k+m), l*4+2");
+    //tb->add_load("sram", "(k+m), l*4+3");
 
-  //auto sched_opt = its(to_umap(prg.ctx, schedules, sorted_functions, ""), prg.whole_iteration_domain());
-  auto sched_opt = to_umap(prg.ctx, schedules, sorted_functions, "");
 
-  //auto sched_opt = its(rdmap(prg.ctx, "{in2agg[root, po, pi] -> [root, po, pi, 0]; agg2sram[root, qo, qi] -> [root, qo, 3+4*qi, 1]}"), prg.whole_iteration_domain());
-  cout << "Sched map: " << str(sched_opt) << endl;
-  cout << "Iter Domain: " << str(prg.whole_iteration_domain()) << endl;
-  sched_opt = its(sched_opt, prg.whole_iteration_domain());
- // auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
-  cout << codegen_c(sched_opt) << endl;
+    //tb->add_store("tb", "k, m, l*4");
+    //tb->add_store("tb", "k, m, l*4+1");
+    //tb->add_store("tb", "k, m, l*4+2");
+    //tb->add_store("tb", "k, m, l*4+3");
+  //}
+
+  //{
+    //auto out_loop = prg.add_nest("a", 0, 6, "b", 0, 2, "c", 0, 4);
+    //auto out = out_loop->add_op("tb2out");
+    //out->add_load("tb", "a, 0, 4*b + c");
+    //out->add_load("tb", "a, 1, 4*b + c");
+    //out->add_load("tb", "a, 2, 4*b + c");
+
+    //out->add_store("out", "a, 0, 4*b+c");
+    //out->add_store("out", "a, 1, 4*b+c");
+    //out->add_store("out", "a, 2, 4*b+c");
+  //}
+
+  //generate_optimized_code(prg);
   //assert(false);
-  //aha_talk_print_info(prg);
-}
+
+  //auto sched = prg.unoptimized_schedule();
+  //cout << codegen_c(sched) << endl;
+  //auto itr_domain = prg.whole_iteration_domain();
+  //cout << "iter domain = " << str(itr_domain) << endl;
+
+  ////auto sched_opt = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
+  //auto domain_boxes = prg.get_domain_boxes();
+  //map<string, Box> op_boxes;
+  //for (auto b : domain_boxes) {
+      //op_boxes[b.first->name] = b.second;
+      //cout << tab(1) << b.first->name << "->" << b.second << endl;
+  //}
+
+  //vector<string> sorted_functions = {"in2agg", "agg2sram", "sram2tb", "tb2out"};
+  //int ndims = 3;
+  //map<string, vector<QExpr> > schedules;
+  //map<string, Result> app_dag;
+  ////for (auto func : sorted_functions) {
+      ////Result res;
+      ////app_dag[func] = {};
+  ////}
+  //map<string, isl_map*> compute_maps;
+  //for (auto cm : prg.producer_maps()) {
+      //compute_maps[cm.first->name] = inv(cm.second);
+      //cout << tab(1) << "Producer map: " << cm.first->name << "->" << str(cm.second) << endl;
+  //}
+
+  //for (auto cm : prg.data_demands_maps()) {
+      //app_dag[cm.first] = cm.second;
+      //cout << tab(1) << "DATA demands map: " << cm.first<< "->" << str(cm.second.srcs.at(0).needed) << endl;
+  //}
+
+  //for (int i = ndims - 1; i >= 0; i--) {
+      //schedule_dim(prg.ctx, op_boxes, i, schedules, sorted_functions, app_dag,  compute_maps);
+  //}
+
+  //int pos = 0;
+  //cout << "Sorted pipeline..." << endl;
+  //for (auto f : sorted_functions) {
+    //cout << "\t" << f << endl;
+    //schedules[f].push_back(qexpr(pos));
+    //pos++;
+  //}
+
+  ////auto sched_opt = its(to_umap(prg.ctx, schedules, sorted_functions, ""), prg.whole_iteration_domain());
+  //auto sched_opt = to_umap(prg.ctx, schedules, sorted_functions, "");
+
+  ////auto sched_opt = its(rdmap(prg.ctx, "{in2agg[root, po, pi] -> [root, po, pi, 0]; agg2sram[root, qo, qi] -> [root, qo, 3+4*qi, 1]}"), prg.whole_iteration_domain());
+  //cout << "Sched map: " << str(sched_opt) << endl;
+  //cout << "Iter Domain: " << str(prg.whole_iteration_domain()) << endl;
+  //sched_opt = its(sched_opt, prg.whole_iteration_domain());
+ //// auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
+  //cout << codegen_c(sched_opt) << endl;
+  ////assert(false);
+  ////aha_talk_print_info(prg);
+//}
 
 Window win(const std::string& name, const std::vector<vector<int > >& offsets) {
   assert(offsets.size() > 0);
