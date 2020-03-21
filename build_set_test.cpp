@@ -6414,22 +6414,22 @@ struct App {
       buffers[f] = b;
     }
 
-    for (auto b : buffers) {
-        cout << b.second.name << endl;
-        cout << "input_ports..." << endl;
-        for (auto in_port: b.second.get_in_ports()) {
-            cout << "\t" << in_port << " access map: " << str(b.second.access_map.at(in_port)) << endl;
-            cout << "\t" << in_port << " schedule  : " << str(b.second.schedule.at(in_port)) << endl;
-            cout << endl;
-        }
+    //for (auto b : buffers) {
+        //cout << b.second.name << endl;
+        //cout << "input_ports..." << endl;
+        //for (auto in_port: b.second.get_in_ports()) {
+            //cout << "\t" << in_port << " access map: " << str(b.second.access_map.at(in_port)) << endl;
+            //cout << "\t" << in_port << " schedule  : " << str(b.second.schedule.at(in_port)) << endl;
+            //cout << endl;
+        //}
 
-        cout << "output_ports..." << endl;
-        for (auto in_port: b.second.get_out_ports()) {
-            cout << "\t" << in_port << " access map: " << str(b.second.access_map.at(in_port)) << endl;
-            cout << "\t" << in_port << " schedule  : " << str(b.second.schedule.at(in_port)) << endl;
-            cout << endl;
-        }
-    }
+        //cout << "output_ports..." << endl;
+        //for (auto in_port: b.second.get_out_ports()) {
+            //cout << "\t" << in_port << " access map: " << str(b.second.access_map.at(in_port)) << endl;
+            //cout << "\t" << in_port << " schedule  : " << str(b.second.schedule.at(in_port)) << endl;
+            //cout << endl;
+        //}
+    //}
 
     return buffers;
   }
