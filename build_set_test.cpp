@@ -1,6 +1,7 @@
 #include "app.h"
 
 vector<int> parse_pt(isl_point* p) {
+  assert(p != nullptr);
   return parse_pt(str(p));
 }
 
@@ -5013,17 +5014,6 @@ struct App {
 
   string func2d(const std::string& name, const std::string& init) {
     Result res;
-    //{init};
-    //for (auto w : windows) {
-      //w.needed = build_needed(name, w);
-      //res.srcs.push_back(w);
-    //}
-
-    //assert(res.srcs.size() == windows.size());
-    //res.provided =
-      //Window(name, {1, 1}, {{0, 0}});
-
-    //res.reduce_var_domain = reduce_ranges;
 
     app_dag[name] = res;
 
@@ -5041,7 +5031,6 @@ struct App {
       const vector<Window>& windows) {
 
     Result res;
-    //{compute};
     for (auto w : windows) {
       w.needed = build_needed(name, w);
       res.srcs.push_back(w);
@@ -5054,10 +5043,10 @@ struct App {
       pt.push_back(0);
     }
 
+    res.provided = Window(name, strides, {pt});
     res.add_init_update(name, compute, res.srcs);
 
     app_dag[name] = res;
-    app_dag[name].provided = Window(name, strides, {pt});
 
     return name;
   }
@@ -5248,30 +5237,34 @@ struct App {
 
   void fill_compute_domain(const int unroll_factor) {
     int ndims = data_dimension();
+    vector<string> data_vars;
+    vector<string> later_data_vars;
+    for (int i = 0; i < ndims; i++) {
+      data_vars.push_back("d" + str(i));
+      if (i > 0) {
+        later_data_vars.push_back("d" + str(i));
+      }
+    }
 
     for (auto f : sort_functions()) {
-      vector<string> data_vars;
-      vector<string> later_data_vars;
-      for (int i = 0; i < ndims; i++) {
-        data_vars.push_back("d" + str(i));
-        if (i > 0) {
-          later_data_vars.push_back("d" + str(i));
-        }
-      }
-      
-      compute_maps[f] =
-        to_map(rdmap(ctx, "{ " + f + "[" + comma_list(data_vars) + " ] -> " +
-              f + "_comp[floor(d0 / " + to_string(unroll_factor) + "), " + comma_list(later_data_vars) + "] }"));
 
-      //cout << "Compute map for " << s.first << ": " << str(compute_maps[s.first]) << endl;
-      //cout << "Data domain: " <<
+      for (auto update : app_dag.at(f).updates) {
+        compute_maps[update.name()] =
+          to_map(rdmap(ctx, "{ " + f + "[" + comma_list(data_vars) + " ] -> " +
+                update.name() + "[floor(d0 / " + to_string(unroll_factor) + "), " + comma_list(later_data_vars) + "] }"));
+          //to_map(rdmap(ctx, "{ " + f + "[" + comma_list(data_vars) + " ] -> " +
+                //f + "_comp[floor(d0 / " + to_string(unroll_factor) + "), " + comma_list(later_data_vars) + "] }"));
+
+        //cout << "Compute map for " << s.first << ": " << str(compute_maps[s.first]) << endl;
+        //cout << "Data domain: " <<
         //str(data_domain(s.first).to_set(ctx, s.first)) << endl;
 
-      compute_sets[f] =
-        range(its(
-            compute_maps[f],
-            data_domain(f).to_set(ctx, f)));
-      //cout << "Compute domain for " << s.first << " is " << str(compute_sets[s.first]) << endl;
+        compute_sets[update.name()] =
+          range(its(
+                compute_maps[update.name()],
+                data_domain(f).to_set(ctx, f)));
+        //cout << "Compute domain for " << s.first << " is " << str(compute_sets[s.first]) << endl;
+      }
     }
     cout << "Got compute domain" << endl;
   }
@@ -5391,7 +5384,7 @@ struct App {
 
 
   Box compute_box(const std::string& name) {
-    //cout << "Getting box: " << name << ": for " << str(compute_domain(name)) << endl;
+    cout << "Getting box: " << name << endl;
     //cout << tab(1) << "lexmin: " << str(lexmin(compute_domain(name))) << endl;
     //cout << tab(1) << "lexmax: " << str(lexmax(compute_domain(name))) << endl;
 
@@ -5430,9 +5423,19 @@ struct App {
   map<string, vector<QExpr> > rectangular_schedules() {
     vector<string> sorted_functions = sort_functions();
     vector<string> sorted_operations;
+
+    map<string, Box> op_domains;
     for (auto f : sorted_functions) {
-      sorted_operations.push_back(f + "_comp");
+      for (auto u : app_dag.at(f).updates) {
+        sorted_operations.push_back(u.name());
+        op_domains[u.name()] =
+          compute_box(u.name());
+      }
     }
+
+    //for (auto f : sorted_functions) {
+      //sorted_operations.push_back(f + "_comp");
+    //}
 
     int ndims = schedule_dimension();
     map<string, vector<QExpr> > schedules;
@@ -5449,11 +5452,10 @@ struct App {
       op_compute_maps[m.first + "_comp"] =
         m.second;
     }
-    map<string, Box> op_domains;
-    for (auto f : sort_functions()) {
-      op_domains[f + "_comp"] =
-        compute_box(f);
-    }
+    //for (auto f : sort_functions()) {
+      //op_domains[f + "_comp"] =
+        //compute_box(f);
+    //}
     auto last_compute_needed = build_compute_deps(
         ndims,
         sorted_operations,
@@ -5512,7 +5514,7 @@ struct App {
   }
 
   Window data_window_provided_by_compute(const std::string& f, const int unroll_factor) {
-    return map_find(f, app_dag).provided.unroll_cpy(unroll_factor);
+    return map_find(f, app_dag).get_provided().unroll_cpy(unroll_factor);
   }
 
   Window data_window_needed_by_compute(const std::string& consumer,

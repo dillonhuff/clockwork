@@ -196,6 +196,15 @@ struct Update {
   Box reduce_var_domain;
   vector<Window> srcs;
 
+  std::string name() const { return operation_name; }
+
+  vector<Window> get_srcs() const {
+    return srcs;
+  }
+
+  Window get_provided() const {
+    return provided;
+  }
   bool is_reduce() const {
     return is_reduction;
   }
@@ -203,7 +212,6 @@ struct Update {
 };
 
 struct Result {
-  //string comp_name;
   vector<Window> srcs;
   Window provided;
 
@@ -211,12 +219,12 @@ struct Result {
 
   vector<Window> get_srcs() const {
     assert(updates.size() > 0);
-    return updates.at(0).srcs;
+    return updates.at(0).get_srcs();
   }
 
   Window get_provided() const {
     assert(updates.size() > 0);
-    return updates.at(0).provided;
+    return updates.at(0).get_provided();
   }
 
   string compute_name() const {
