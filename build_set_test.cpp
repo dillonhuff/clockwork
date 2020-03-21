@@ -5820,7 +5820,7 @@ struct App {
     res.provided =
       Window(name, {1, 1}, {{0, 0}});
 
-    res.reduce_var_domain = reduce_ranges;
+    //res.reduce_var_domain = reduce_ranges;
 
     app_dag[name] = res;
 
@@ -7669,7 +7669,7 @@ int main(int argc, char** argv) {
     
     //memtile_test();
 
-    conv_app_rolled_reduce_test();
+    //conv_app_rolled_reduce_test();
     gaussian_pyramid_app_test();
     //assert(false);
     grayscale_conversion_test();
