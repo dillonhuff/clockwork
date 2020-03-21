@@ -2565,11 +2565,14 @@ struct Result {
   string compute_name;
   vector<Window> srcs;
   Window provided;
-  Box reduce_var_domain;
 
-  bool is_reduce() const {
-    return reduce_var_domain.dimension() > 0;
-  }
+  vector<Update> updates;
+
+  //Box reduce_var_domain;
+
+  //bool is_reduce() const {
+    //return reduce_var_domain.dimension() > 0;
+  //}
 
 };
 
@@ -6004,9 +6007,9 @@ struct App {
     for (auto f : functions) {
       Result r = app_dag.at(f);
       operations.push_back(f + "_comp");
-      if (r.is_reduce()) {
-        operations.push_back(f + "_reduce");
-      }
+      //if (r.is_reduce()) {
+        //operations.push_back(f + "_reduce");
+      //}
     }
     return operations;
   }
