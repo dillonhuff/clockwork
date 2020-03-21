@@ -5109,6 +5109,12 @@ struct App {
     return func2d(name, compute, {w});
   }
 
+  Update last_update(const string& func) const {
+    assert(contains_key(func, app_dag));
+    assert(app_dag.at(func).updates.size() > 0);
+    return app_dag.at(func).updates.back();
+  }
+
   umap* build_needed(const string& name, const Window& w) {
 
     assert(w.dimension() > 0);
@@ -5425,11 +5431,22 @@ struct App {
     vector<string> sorted_operations;
 
     map<string, Box> op_domains;
+    map<string, vector<QExpr> > schedules;
+    map<string, isl_map*> op_compute_maps;
+    map<string, map<string, umap*> > pixels_needed;
+
     for (auto f : sorted_functions) {
       for (auto u : app_dag.at(f).updates) {
         sorted_operations.push_back(u.name());
+
         op_domains[u.name()] =
           compute_box(u.name());
+        pixels_needed[u.name()] = {};
+        for (auto w : u.get_srcs()) {
+          pixels_needed[u.name()][last_update(w.name).name()] = w.needed;
+        }
+
+        op_compute_maps[u.name()] = compute_map(u.name());
       }
     }
 
@@ -5438,20 +5455,19 @@ struct App {
     //}
 
     int ndims = schedule_dimension();
-    map<string, vector<QExpr> > schedules;
 
-    map<string, map<string, umap*> > pixels_needed;
-    for (auto r : app_dag) {
-      pixels_needed[r.first + "_comp"] = {};
-      for (auto w : r.second.get_srcs()) {
-        pixels_needed[r.first + "_comp"][w.name + "_comp"] = w.needed;
-      }
-    }
-    map<string, isl_map*> op_compute_maps;
-    for (auto m : compute_maps) {
-      op_compute_maps[m.first + "_comp"] =
-        m.second;
-    }
+    //map<string, map<string, umap*> > pixels_needed;
+    //for (auto r : app_dag) {
+      //pixels_needed[r.first + "_comp"] = {};
+      //for (auto w : r.second.get_srcs()) {
+        //pixels_needed[r.first + "_comp"][w.name + "_comp"] = w.needed;
+      //}
+    //}
+
+    //for (auto m : compute_maps) {
+      //op_compute_maps[m.first + "_comp"] =
+        //m.second;
+    //}
     //for (auto f : sort_functions()) {
       //op_domains[f + "_comp"] =
         //compute_box(f);
@@ -5469,6 +5485,12 @@ struct App {
         schedules[f].push_back(dim_schedules.at(f));
       }
     }
+
+    cout << "Final schedule.." << endl;
+    for (auto s : schedules) {
+      cout << tab(1) << s.first << " -> " << comma_list(s.second) << endl;
+    }
+    assert(false);
 
     return schedules;
   }
@@ -5805,10 +5827,13 @@ struct App {
 
   void schedule_and_codegen(const std::string& name, const int unroll_factor) {
     umap* m = schedule();
+    assert(m != nullptr);
+
     cout << "Schedule: " << str(m) << endl;
 
     auto scheds_n =
       schedule_opt();
+
     map<string, vector<QExpr> > scheds;
     for (auto s : scheds_n) {
       scheds[s.first + "_comp"] = s.second;
