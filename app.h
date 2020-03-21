@@ -210,7 +210,10 @@ struct Result {
   vector<Update> updates;
 
 
-  string compute_name() const { return comp_name; }
+  string compute_name() const {
+    assert(updates.size() > 0);
+    return updates.at(0).compute_function_name;
+  }
 
   void add_init_update(const string& name, const string& compute, const vector<Window>& args) {
     string update_name = provided.name + "_update_" + str(updates.size());
