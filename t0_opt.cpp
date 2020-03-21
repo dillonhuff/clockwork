@@ -2,7 +2,7 @@
 
 #include "hw_classes.h"
 
-struct t1_t1_comp_write0_merged_banks_5_cache {
+struct t1_t1_update_0_write0_merged_banks_5_cache {
 	// Capacity: 70
 	// # of read delays: 6
 	// read delays: 0, 1, 34, 35, 36, 69
@@ -84,7 +84,7 @@ struct t1_t1_comp_write0_merged_banks_5_cache {
 			return f10.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in t1_t1_comp_write0_merged_banks_5: " << offset << endl;
+		cout << "Error: Unsupported offset in t1_t1_update_0_write0_merged_banks_5: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -108,58 +108,58 @@ struct t1_t1_comp_write0_merged_banks_5_cache {
 };
 
 struct t1_cache {
-  t1_t1_comp_write0_merged_banks_5_cache t1_t1_comp_write0_merged_banks_5;
+  t1_t1_update_0_write0_merged_banks_5_cache t1_t1_update_0_write0_merged_banks_5;
 };
 
 
 
-inline void t1_t1_comp_write0_write(hw_uint<32> & t1_t1_comp_write0, t1_cache& t1, int d0, int d1) {
-  t1.t1_t1_comp_write0_merged_banks_5.push(t1_t1_comp_write0);
+inline void t1_t1_update_0_write0_write(hw_uint<32> & t1_t1_update_0_write0, t1_cache& t1, int d0, int d1) {
+  t1.t1_t1_update_0_write0_merged_banks_5.push(t1_t1_update_0_write0);
 }
 
 inline hw_uint<32>  t0_rd0_select(t1_cache& t1, int d0, int d1) {
-	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = -1 + d0, d1' = d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-  // t0_rd0 read pattern: { t0_comp[d0, d1] -> t1[-1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_merged_banks_5.peek_36();
-	return value_t1_t1_comp_write0;
+	// lexmax events: { t0_update_0[d0, d1] -> t1_update_0[d0' = -1 + d0, d1' = d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+  // t0_rd0 read pattern: { t0_update_0[d0, d1] -> t1[-1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+	auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_36();
+	return value_t1_t1_update_0_write0;
 }
 
 inline hw_uint<32>  t0_rd1_select(t1_cache& t1, int d0, int d1) {
-	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = d0, d1' = -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-  // t0_rd1 read pattern: { t0_comp[d0, d1] -> t1[d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_merged_banks_5.peek_69();
-	return value_t1_t1_comp_write0;
+	// lexmax events: { t0_update_0[d0, d1] -> t1_update_0[d0' = d0, d1' = -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+  // t0_rd1 read pattern: { t0_update_0[d0, d1] -> t1[d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+	auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_69();
+	return value_t1_t1_update_0_write0;
 }
 
 inline hw_uint<32>  t0_rd2_select(t1_cache& t1, int d0, int d1) {
-	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = d0, d1' = d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-  // t0_rd2 read pattern: { t0_comp[d0, d1] -> t1[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_merged_banks_5.peek_35();
-	return value_t1_t1_comp_write0;
+	// lexmax events: { t0_update_0[d0, d1] -> t1_update_0[d0' = d0, d1' = d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+  // t0_rd2 read pattern: { t0_update_0[d0, d1] -> t1[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+	auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_35();
+	return value_t1_t1_update_0_write0;
 }
 
 inline hw_uint<32>  t0_rd3_select(t1_cache& t1, int d0, int d1) {
-	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = d0, d1' = 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-  // t0_rd3 read pattern: { t0_comp[d0, d1] -> t1[d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_merged_banks_5.peek_1();
-	return value_t1_t1_comp_write0;
+	// lexmax events: { t0_update_0[d0, d1] -> t1_update_0[d0' = d0, d1' = 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+  // t0_rd3 read pattern: { t0_update_0[d0, d1] -> t1[d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+	auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_1();
+	return value_t1_t1_update_0_write0;
 }
 
 inline hw_uint<32>  t0_rd4_select(t1_cache& t1, int d0, int d1) {
-	// lexmax events: { t0_comp[d0, d1] -> t1_comp[d0' = 1 + d0, d1' = d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-  // t0_rd4 read pattern: { t0_comp[d0, d1] -> t1[1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
-	auto value_t1_t1_comp_write0 = t1.t1_t1_comp_write0_merged_banks_5.peek_34();
-	return value_t1_t1_comp_write0;
+	// lexmax events: { t0_update_0[d0, d1] -> t1_update_0[d0' = 1 + d0, d1' = d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+  // t0_rd4 read pattern: { t0_update_0[d0, d1] -> t1[1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 27 }
+	auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_34();
+	return value_t1_t1_update_0_write0;
 }
 
 // # of bundles = 2
-// t0_comp_read
+// t0_update_0_read
 //	t0_rd0
 //	t0_rd1
 //	t0_rd2
 //	t0_rd3
 //	t0_rd4
-inline hw_uint<160> t1_t0_comp_read_bundle_read(t1_cache& t1, int d0, int d1) {
+inline hw_uint<160> t1_t0_update_0_read_bundle_read(t1_cache& t1, int d0, int d1) {
 	hw_uint<160> result;
 	hw_uint<32>  t0_rd0_res = t0_rd0_select(t1, d0, d1);
 	set_at<0, 160>(result, t0_rd0_res);
@@ -174,11 +174,11 @@ inline hw_uint<160> t1_t0_comp_read_bundle_read(t1_cache& t1, int d0, int d1) {
 	return result;
 }
 
-// t1_comp_write
-//	t1_t1_comp_write0
-inline void t1_t1_comp_write_bundle_write(hw_uint<32>& t1_comp_write, t1_cache& t1, int d0, int d1) {
-	hw_uint<32>  t1_t1_comp_write0_res = t1_comp_write.extract<0, 31>();
-	t1_t1_comp_write0_write(t1_t1_comp_write0_res, t1, d0, d1);
+// t1_update_0_write
+//	t1_t1_update_0_write0
+inline void t1_t1_update_0_write_bundle_write(hw_uint<32>& t1_update_0_write, t1_cache& t1, int d0, int d1) {
+	hw_uint<32>  t1_t1_update_0_write0_res = t1_update_0_write.extract<0, 31>();
+	t1_t1_update_0_write0_write(t1_t1_update_0_write0_res, t1, d0, d1);
 }
 
 
@@ -186,20 +186,20 @@ inline void t1_t1_comp_write_bundle_write(hw_uint<32>& t1_comp_write, t1_cache& 
 
 
 // Operation logic
-inline void t1_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */t1_arg, t1_cache& t1, int d0, int d1) {
+inline void t0_update_0(t1_cache& t1, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */t0, int d0, int d1) {
+	// Consume: t1
+	auto t1_0_c__0_value = t1_t0_update_0_read_bundle_read(t1/* source_delay */, d0, d1);
+	auto compute_result = jacobi2d_compute(t1_0_c__0_value);
+	// Produce: t0
+	t0.write(compute_result);
+}
+
+inline void t1_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */t1_arg, t1_cache& t1, int d0, int d1) {
 	// Consume: t1_arg
 	auto t1_arg_0_c__0_value = t1_arg.read();
 	auto compute_result = id(t1_arg_0_c__0_value);
 	// Produce: t1
-	t1_t1_comp_write_bundle_write(compute_result, t1, d0, d1);
-}
-
-inline void t0_comp(t1_cache& t1, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */t0, int d0, int d1) {
-	// Consume: t1
-	auto t1_0_c__0_value = t1_t0_comp_read_bundle_read(t1/* source_delay */, d0, d1);
-	auto compute_result = jacobi2d_compute(t1_0_c__0_value);
-	// Produce: t0
-	t0.write(compute_result);
+	t1_t1_update_0_write_bundle_write(compute_result, t1, d0, d1);
 }
 
 // Driver function
@@ -214,9 +214,9 @@ void t0_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */t1_arg, HWStream
 */
 	for (int c0 = -1; c0 <= 28; c0 += 1)
 	  for (int c1 = -1; c1 <= 32; c1 += 1) {
-	    t1_comp(t1_arg, t1, c1, c0);
+	    t1_update_0(t1_arg, t1, c1, c0);
 	    if (c0 >= 1 && c1 >= 1)
-	      t0_comp(t1, t0, c1 - 1, c0 - 1);
+	      t0_update_0(t1, t0, c1 - 1, c0 - 1);
 	  }
 	
 }
