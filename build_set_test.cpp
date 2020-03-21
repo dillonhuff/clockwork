@@ -2834,10 +2834,6 @@ struct prog {
             win.needed = pmap;
             Result res;
             res.srcs.push_back(win);
-<<<<<<< HEAD
-            //m[result_buf] = res;
-=======
->>>>>>> origin/memtile_test
             m[op->name] = res;
         }
     }
