@@ -7628,6 +7628,82 @@ void blur_and_downsample_test() {
   regression_test(prg);
 }
 
+void application_tests() {
+  //jacobi_2d_4_test();
+  //assert(false);
+
+  //synth_lb_test();
+
+  //memtile_test();
+
+  //conv_app_rolled_reduce_test();
+  seidel2d_test();
+  gaussian_pyramid_app_test();
+  grayscale_conversion_test();
+  jacobi_2d_app_test();
+
+  upsample_stencil_1d_test();
+  upsample_stencil_2d_test();
+
+  heat_3d_test();
+  //synth_reduce_test();
+  jacobi_2d_2_test();
+  jacobi_2d_test();
+  parse_denoise3d_test();
+
+  reduce_1d_test();
+  denoise2d_test();
+  mismatched_stencil_test();
+
+  upsample_reduce_test();
+
+  conv3x3_app_unrolled_test();
+  conv3x3_app_test();
+  conv3x3_app_test();
+
+  conv3x3_app_unrolled_test();
+  upsample2d_test();
+  conv3x3_app_unrolled_uneven_test();
+  downsample2d_test();
+  updown_merge_test();
+  sobel_test();
+
+
+  blur_and_downsample_test();
+  downsample_and_blur_test();
+
+
+  blur_x_test();
+  pointwise_test();
+
+  stencil_3d_test();
+  soda_blur_test();
+  two_in_window_test();
+  two_in_conv2d_test();
+  gaussian_pyramid_test();
+  warp_and_upsample_test();
+
+  conv_1d_rolled_test();
+  //synth_upsample_test();
+  unsharp_test();
+  conv_2d_rolled_test();
+  reduce_2d_test();
+  conv_1d_test();
+  conv_2d_bc_test();
+  mobilenet_test();
+  pyramid_2d_test();
+  pyramid_test();
+  conv_1d_bc_test();
+  //synth_wire_test();
+  //synth_sr_boundary_condition_test();
+}
+
+void memory_tile_tests() {
+  agg_test();
+  memtile_test();
+
+}
+
 int main(int argc, char** argv) {
 
   if (argc > 1) {
@@ -7668,76 +7744,10 @@ int main(int argc, char** argv) {
     assert(false);
 
   } else if (argc == 1) {
-    //jacobi_2d_4_test();
-    //assert(false);
-
-    //synth_lb_test();
     
-    //memtile_test();
+    memory_tile_tests();
+    application_tests();
 
-    //conv_app_rolled_reduce_test();
-    agg_test();
-    memtile_test();
-
-    heat_3d_test();
-    //synth_reduce_test();
-    jacobi_2d_2_test();
-    jacobi_2d_test();
-    parse_denoise3d_test();
-
-    seidel2d_test();
-    gaussian_pyramid_app_test();
-    grayscale_conversion_test();
-    jacobi_2d_app_test();
-
-    upsample_stencil_1d_test();
-    upsample_stencil_2d_test();
-
-    reduce_1d_test();
-    denoise2d_test();
-    mismatched_stencil_test();
-
-    upsample_reduce_test();
-
-    conv3x3_app_unrolled_test();
-    conv3x3_app_test();
-    conv3x3_app_test();
-
-    conv3x3_app_unrolled_test();
-    upsample2d_test();
-    conv3x3_app_unrolled_uneven_test();
-    downsample2d_test();
-    updown_merge_test();
-    sobel_test();
-
-
-    blur_and_downsample_test();
-    downsample_and_blur_test();
-
-
-    blur_x_test();
-    pointwise_test();
-
-    stencil_3d_test();
-    soda_blur_test();
-    two_in_window_test();
-    two_in_conv2d_test();
-    gaussian_pyramid_test();
-    warp_and_upsample_test();
-
-    conv_1d_rolled_test();
-    //synth_upsample_test();
-    unsharp_test();
-    conv_2d_rolled_test();
-    reduce_2d_test();
-    conv_1d_test();
-    conv_2d_bc_test();
-    mobilenet_test();
-    pyramid_2d_test();
-    pyramid_test();
-    conv_1d_bc_test();
-    //synth_wire_test();
-    //synth_sr_boundary_condition_test();
   } else {
     assert(false);
   }
