@@ -5763,7 +5763,7 @@ umap* to_umap(isl_ctx* ctx, map<string, vector<QExpr> > & schedules, vector<stri
 struct App {
 
   isl_ctx* ctx;
-  set<string> functions;
+  //set<string> functions;
   map<string, Result> app_dag;
   map<string, Box> domain_boxes;
   // Map from functions to compute invocations of
@@ -5786,7 +5786,7 @@ struct App {
       const vector<Window>& windows,
       const Box& reduce_ranges) {
 
-    functions.insert(name);
+    //functions.insert(name);
     Result res{compute};
     for (auto w : windows) {
       w.needed = build_needed(name, w);
@@ -5809,14 +5809,14 @@ struct App {
   }
 
   string func3d(const std::string& name) {
-    functions.insert(name);
+    //functions.insert(name);
     app_dag[name] = {};
     app_dag[name].provided = Window(name, {1, 1, 1}, {{0, 0, 0}});
     return name;
   }
 
   string func2d(const std::string& name) {
-    functions.insert(name);
+    //functions.insert(name);
     app_dag[name] = {};
     app_dag[name].provided = Window(name, {1, 1}, {{0, 0}});
     return name;
@@ -5832,7 +5832,7 @@ struct App {
   string func3d(const std::string& name,
       const string& compute,
       const vector<Window>& windows) {
-    functions.insert(name);
+    //functions.insert(name);
     Result res{compute};
     for (auto w : windows) {
       w.needed = build_needed(name, w);
@@ -5857,7 +5857,7 @@ struct App {
   string func2d(const std::string& name,
       const string& compute,
       const vector<Window>& windows) {
-    functions.insert(name);
+    //functions.insert(name);
     Result res{compute};
     for (auto w : windows) {
       w.needed = build_needed(name, w);
@@ -5941,7 +5941,7 @@ struct App {
 
     Window w{arg, strides, offsets};
 
-    functions.insert(name);
+    //functions.insert(name);
     w.needed = build_needed(name, w);
     Result res{compute, {w}};
     res.provided =
@@ -6236,10 +6236,6 @@ struct App {
       op_domains[f + "_comp"] =
         compute_box(f);
     }
-    //for (auto b : domain_boxes) {
-      //op_domains[b.first + "_comp"] =
-        //b.second;
-    //}
     auto last_compute_needed = build_compute_deps(
         ndims,
         sorted_operations,
@@ -6590,7 +6586,6 @@ struct App {
   void schedule_and_codegen(const std::string& name, const int unroll_factor) {
     umap* m = schedule();
     cout << "Schedule: " << str(m) << endl;
-    //assert(false);
 
     auto scheds_n =
       schedule_opt();
@@ -7671,7 +7666,7 @@ int main(int argc, char** argv) {
     
     //memtile_test();
 
-    //conv_app_rolled_reduce_test();
+    conv_app_rolled_reduce_test();
     gaussian_pyramid_app_test();
     //assert(false);
     grayscale_conversion_test();

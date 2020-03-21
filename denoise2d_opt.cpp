@@ -978,6 +978,20 @@ inline void f_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */f_off_
 	f_f_comp_write_bundle_write(compute_result, f, d0, d1);
 }
 
+inline void g_comp(diff_qwe_cache& diff_qwe, diff_d_cache& diff_d, diff_l_cache& diff_l, diff_r_cache& diff_r, g_cache& g, int d0, int d1) {
+	// Consume: diff_qwe
+	auto diff_qwe_0_c__0_value = diff_qwe_g_comp_read_bundle_read(diff_qwe/* source_delay */, d0, d1);
+	// Consume: diff_d
+	auto diff_d_0_c__0_value = diff_d_g_comp_read_bundle_read(diff_d/* source_delay */, d0, d1);
+	// Consume: diff_l
+	auto diff_l_0_c__0_value = diff_l_g_comp_read_bundle_read(diff_l/* source_delay */, d0, d1);
+	// Consume: diff_r
+	auto diff_r_0_c__0_value = diff_r_g_comp_read_bundle_read(diff_r/* source_delay */, d0, d1);
+	auto compute_result = mag_dn2(diff_qwe_0_c__0_value, diff_d_0_c__0_value, diff_l_0_c__0_value, diff_r_0_c__0_value);
+	// Produce: g
+	g_g_comp_write_bundle_write(compute_result, g, d0, d1);
+}
+
 inline void u_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_off_chip, u_cache& u, int d0, int d1) {
 	// Consume: u_off_chip
 	auto u_off_chip_0_c__0_value = u_off_chip.read();
@@ -986,14 +1000,20 @@ inline void u_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_off_
 	u_u_comp_write_bundle_write(compute_result, u, d0, d1);
 }
 
-inline void r0_comp(u_cache& u, f_cache& f, r0_cache& r0, int d0, int d1) {
+inline void diff_d_comp(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
 	// Consume: u
-	auto u_0_c__0_value = u_r0_comp_read_bundle_read(u/* source_delay */, d0, d1);
-	// Consume: f
-	auto f_0_c__0_value = f_r0_comp_read_bundle_read(f/* source_delay */, d0, d1);
-	auto compute_result = comp_r0(u_0_c__0_value, f_0_c__0_value);
-	// Produce: r0
-	r0_r0_comp_write_bundle_write(compute_result, r0, d0, d1);
+	auto u_0_c__0_value = u_diff_d_comp_read_bundle_read(u/* source_delay */, d0, d1);
+	auto compute_result = diff_b(u_0_c__0_value);
+	// Produce: diff_d
+	diff_d_diff_d_comp_write_bundle_write(compute_result, diff_d, d0, d1);
+}
+
+inline void r1_comp(r0_cache& r0, r1_cache& r1, int d0, int d1) {
+	// Consume: r0
+	auto r0_0_c__0_value = r0_r1_comp_read_bundle_read(r0/* source_delay */, d0, d1);
+	auto compute_result = r1_comp(r0_0_c__0_value);
+	// Produce: r1
+	r1_r1_comp_write_bundle_write(compute_result, r1, d0, d1);
 }
 
 inline void diff_r_comp(u_cache& u, diff_r_cache& diff_r, int d0, int d1) {
@@ -1020,20 +1040,14 @@ inline void diff_l_comp(u_cache& u, diff_l_cache& diff_l, int d0, int d1) {
 	diff_l_diff_l_comp_write_bundle_write(compute_result, diff_l, d0, d1);
 }
 
-inline void diff_d_comp(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
+inline void r0_comp(u_cache& u, f_cache& f, r0_cache& r0, int d0, int d1) {
 	// Consume: u
-	auto u_0_c__0_value = u_diff_d_comp_read_bundle_read(u/* source_delay */, d0, d1);
-	auto compute_result = diff_b(u_0_c__0_value);
-	// Produce: diff_d
-	diff_d_diff_d_comp_write_bundle_write(compute_result, diff_d, d0, d1);
-}
-
-inline void r1_comp(r0_cache& r0, r1_cache& r1, int d0, int d1) {
-	// Consume: r0
-	auto r0_0_c__0_value = r0_r1_comp_read_bundle_read(r0/* source_delay */, d0, d1);
-	auto compute_result = r1_comp(r0_0_c__0_value);
-	// Produce: r1
-	r1_r1_comp_write_bundle_write(compute_result, r1, d0, d1);
+	auto u_0_c__0_value = u_r0_comp_read_bundle_read(u/* source_delay */, d0, d1);
+	// Consume: f
+	auto f_0_c__0_value = f_r0_comp_read_bundle_read(f/* source_delay */, d0, d1);
+	auto compute_result = comp_r0(u_0_c__0_value, f_0_c__0_value);
+	// Produce: r0
+	r0_r0_comp_write_bundle_write(compute_result, r0, d0, d1);
 }
 
 inline void denoise2d_comp(r1_cache& r1, f_cache& f, u_cache& u, g_cache& g, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */denoise2d, int d0, int d1) {
@@ -1048,20 +1062,6 @@ inline void denoise2d_comp(r1_cache& r1, f_cache& f, u_cache& u, g_cache& g, HWS
 	auto compute_result = out_comp_dn2d(r1_0_c__0_value, f_0_c__0_value, u_0_c__0_value, g_0_c__0_value);
 	// Produce: denoise2d
 	denoise2d.write(compute_result);
-}
-
-inline void g_comp(diff_qwe_cache& diff_qwe, diff_d_cache& diff_d, diff_l_cache& diff_l, diff_r_cache& diff_r, g_cache& g, int d0, int d1) {
-	// Consume: diff_qwe
-	auto diff_qwe_0_c__0_value = diff_qwe_g_comp_read_bundle_read(diff_qwe/* source_delay */, d0, d1);
-	// Consume: diff_d
-	auto diff_d_0_c__0_value = diff_d_g_comp_read_bundle_read(diff_d/* source_delay */, d0, d1);
-	// Consume: diff_l
-	auto diff_l_0_c__0_value = diff_l_g_comp_read_bundle_read(diff_l/* source_delay */, d0, d1);
-	// Consume: diff_r
-	auto diff_r_0_c__0_value = diff_r_g_comp_read_bundle_read(diff_r/* source_delay */, d0, d1);
-	auto compute_result = mag_dn2(diff_qwe_0_c__0_value, diff_d_0_c__0_value, diff_l_0_c__0_value, diff_r_0_c__0_value);
-	// Produce: g
-	g_g_comp_write_bundle_write(compute_result, g, d0, d1);
 }
 
 // Driver function
