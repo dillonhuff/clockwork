@@ -2947,6 +2947,7 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
 vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg) {
   vector<string> args;
   for (auto& b : prg.ins) {
+    cout << "Trying to find " << b << " in buffers" << endl;
     assert(contains_key(b, buffers));
     auto& buf = buffers.at(b);
 
@@ -5811,58 +5812,60 @@ struct App {
         continue;
       }
 
-      int fwidth = 32;
-      int out_width = unroll_factor*fwidth;
-      vector<pair<int, string> > args_and_widths;
-      for (auto p : producers(f)) {
-        int arg_width = 32;
-        args_and_widths.push_back({arg_width*data_window_needed_by_compute(f, p.name, unroll_factor).pts().size(), p.name});
-      }
-
-      vector<string> arg_decls;
-      for (auto a : args_and_widths) {
-        arg_decls.push_back("hw_uint<" + to_string(a.first) + ">& " + a.second);
-      }
-
-      string out_type_string = "hw_uint<" + to_string(out_width) + "> ";
-      cfile << out_type_string << " " << compute_name(f) << "_unrolled_" << unroll_factor << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
-      cfile << tab(1) << "hw_uint<" << out_width << "> whole_result;" << endl;
-      for (int lane = 0; lane < unroll_factor; lane++) {
-        vector<string> arg_names;
-        for (auto arg : args_and_widths) {
-
+      for (auto u : app_dag.at(f).updates) {
+        int fwidth = 32;
+        int out_width = unroll_factor*fwidth;
+        vector<pair<int, string> > args_and_widths;
+        for (auto p : producers(f)) {
           int arg_width = 32;
-
-          string p = arg.second;
-          Window arg_input_window = data_window_needed_by_compute(f, p, unroll_factor);
-          string arg_name = "lane_" + to_string(lane) + "_" + p;
-
-          arg_names.push_back(arg_name);
-          Window win_needed =
-            data_window_needed_by_compute(f, p, 1).increment(lane);
-
-          cfile << tab(1) << "hw_uint<" << win_needed.pts().size()*arg_width << "> " << arg_name << ";" << endl;
-          int win_pos = 0;
-          for (auto off : win_needed.offsets) {
-            cfile << tab(1) << "// Need offset: " << str(off) << endl;
-            int npts = win_needed.pts().size()*arg_width;
-            for (int i = 0; i < arg_input_window.offsets.size(); i++) {
-              if (arg_input_window.offsets.at(i) == off) {
-                int base = i*arg_width;
-                int end = (i + 1)*arg_width - 1;
-                cfile << tab(1) << "set_at<" << win_pos*arg_width << ", " << npts << ">(" << arg_name << ", " << p << ".extract<" << base << ", " << end << ">());" << endl;
-              }
-            }
-            win_pos++;
-          }
+          args_and_widths.push_back({arg_width*data_window_needed_by_compute(u.name(), p.name, unroll_factor).pts().size(), p.name});
         }
-        cfile << tab(1) << "auto result_" << lane << " = " << compute_name(f) << "(" << comma_list(arg_names) << ");" << endl;
-        cfile << tab(1) << "set_at<" << fwidth*lane << ", " << out_width << ">(whole_result, result_" << lane << ");" << endl;
-      }
-      cfile << tab(1) << " return whole_result;" << endl;
-      cfile << "}" << endl << endl;
 
-      already_seen.insert(compute_name(f));
+        vector<string> arg_decls;
+        for (auto a : args_and_widths) {
+          arg_decls.push_back("hw_uint<" + to_string(a.first) + ">& " + a.second);
+        }
+
+        string out_type_string = "hw_uint<" + to_string(out_width) + "> ";
+        cfile << out_type_string << " " << compute_name(f) << "_unrolled_" << unroll_factor << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+        cfile << tab(1) << "hw_uint<" << out_width << "> whole_result;" << endl;
+        for (int lane = 0; lane < unroll_factor; lane++) {
+          vector<string> arg_names;
+          for (auto arg : args_and_widths) {
+
+            int arg_width = 32;
+
+            string p = arg.second;
+            Window arg_input_window = data_window_needed_by_compute(u.name(), p, unroll_factor);
+            string arg_name = "lane_" + to_string(lane) + "_" + p;
+
+            arg_names.push_back(arg_name);
+            Window win_needed =
+              data_window_needed_by_compute(u.name(), p, 1).increment(lane);
+
+            cfile << tab(1) << "hw_uint<" << win_needed.pts().size()*arg_width << "> " << arg_name << ";" << endl;
+            int win_pos = 0;
+            for (auto off : win_needed.offsets) {
+              cfile << tab(1) << "// Need offset: " << str(off) << endl;
+              int npts = win_needed.pts().size()*arg_width;
+              for (int i = 0; i < arg_input_window.offsets.size(); i++) {
+                if (arg_input_window.offsets.at(i) == off) {
+                  int base = i*arg_width;
+                  int end = (i + 1)*arg_width - 1;
+                  cfile << tab(1) << "set_at<" << win_pos*arg_width << ", " << npts << ">(" << arg_name << ", " << p << ".extract<" << base << ", " << end << ">());" << endl;
+                }
+              }
+              win_pos++;
+            }
+          }
+          cfile << tab(1) << "auto result_" << lane << " = " << compute_name(f) << "(" << comma_list(arg_names) << ");" << endl;
+          cfile << tab(1) << "set_at<" << fwidth*lane << ", " << out_width << ">(whole_result, result_" << lane << ");" << endl;
+        }
+        cfile << tab(1) << " return whole_result;" << endl;
+        cfile << "}" << endl << endl;
+
+        already_seen.insert(compute_name(f));
+      }
     }
 
     cfile.close();
@@ -5932,37 +5935,41 @@ struct App {
     auto action_domain = cpy(whole_dom);
     map<string, isl_set*> domain_map;
     for (auto f : sorted_functions) {
-      if (app_dag.at(f).get_srcs().size() == 0) {
-        prg.ins.insert(f);
-        action_domain =
-          isl_union_set_subtract(action_domain,
-              to_uset(compute_domain(f)));
-      } else {
-        Box compute_b =
-          compute_box(f);
-        op* nest = prg.root;
-        int i = 0;
-        for (auto r : compute_b.intervals) {
-          nest = nest->add_nest(f + "_" + to_string(i), r.min, r.max + 1);
-          i++;
-        }
-        auto op = nest->add_op(f + "_comp");
-        op->add_store(f, "0, 0");
-
-        vector<string> fargs;
-        for (auto p : app_dag.at(f).get_srcs()) {
-          op->add_load(p.name, "0, 0");
-          if (!elem(p.name, fargs)) {
-            fargs.push_back(p.name);
-          }
-        }
-        if (unroll_factor == 1) {
-          op->add_function(app_dag.at(f).compute_name());
+      for (auto u : app_dag.at(f).updates) {
+        if (u.get_srcs().size() == 0) {
+          prg.ins.insert(f);
+          //u.name());
+          action_domain =
+            isl_union_set_subtract(action_domain,
+                to_uset(compute_domain(u.name())));
         } else {
-          op->add_function(app_dag.at(f).compute_name() + "_unrolled_" + to_string(unroll_factor));
+          Box compute_b =
+            compute_box(u.name());
+          op* nest = prg.root;
+          int i = 0;
+          for (auto r : compute_b.intervals) {
+            nest = nest->add_nest(f + "_" + to_string(i), r.min, r.max + 1);
+            i++;
+          }
+          auto op = nest->add_op(u.name());
+          // TODO: Replace with real description of apps
+          op->add_store(f, "0, 0");
+
+          vector<string> fargs;
+          for (auto p : u.get_srcs()) {
+            op->add_load(p.name, "0, 0");
+            if (!elem(p.name, fargs)) {
+              fargs.push_back(p.name);
+            }
+          }
+          if (unroll_factor == 1) {
+            op->add_function(u.compute_name());
+          } else {
+            op->add_function(u.compute_name() + "_unrolled_" + to_string(unroll_factor));
+          }
+          domain_map[u.name()] =
+            compute_domain(u.name());
         }
-        domain_map[f + "_comp"] =
-          compute_domain(f);
       }
     }
     prg.outs = {name};

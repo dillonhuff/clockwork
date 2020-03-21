@@ -197,6 +197,7 @@ struct Update {
   vector<Window> srcs;
 
   std::string name() const { return operation_name; }
+  std::string compute_name() const { return compute_function_name; }
 
   vector<Window> get_srcs() const {
     return srcs;
