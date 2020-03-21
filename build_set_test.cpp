@@ -5191,6 +5191,16 @@ struct App {
     return cons;
   }
 
+  vector<string> sort_updates() const {
+    vector<string> updates;
+    for (auto f : sort_functions()) {
+      for (auto u : app_dag.at(f).updates) {
+        updates.push_back(u.name());
+      }
+    }
+    return updates;
+  }
+
   vector<string> sort_operations() const {
     auto functions = sort_functions();
     vector<string> operations;
@@ -5417,13 +5427,29 @@ struct App {
   }
 
   Window box_touched(const std::string& consumer, const std::string& producer) {
-    for (auto s : app_dag.at(consumer).get_srcs()) {
-      if (s.name == producer) {
-        return s;
+    cout << "Getting box of " << producer << " touched by " << consumer << endl;
+    //assert(contains_key(consumer, app_dag));
+
+    for (auto f : app_dag) {
+      for (auto up : f.second.updates) {
+        if (up.name() == consumer) {
+          for (auto src : up.get_srcs()) {
+            if (src.name == producer) {
+              return src;
+            }
+          }
+        }
       }
     }
     assert(false);
     return {};
+    //for (auto s : app_dag.at(consumer).get_srcs()) {
+      //if (s.name == producer) {
+        //return s;
+      //}
+    //}
+    //assert(false);
+    //return {};
   }
 
   map<string, vector<QExpr> > rectangular_schedules() {
@@ -5490,7 +5516,7 @@ struct App {
     for (auto s : schedules) {
       cout << tab(1) << s.first << " -> " << comma_list(s.second) << endl;
     }
-    assert(false);
+    //assert(false);
 
     return schedules;
   }
@@ -5502,7 +5528,7 @@ struct App {
 
     map<string, vector<QExpr> > schedules;
     int pos = 0;
-    for (auto f : sort_operations()) {
+    for (auto f : sort_updates()) {
       schedules[f].push_back(qexpr(pos));
       pos++;
     }
@@ -5535,8 +5561,18 @@ struct App {
     return m;
   }
 
-  Window data_window_provided_by_compute(const std::string& f, const int unroll_factor) {
-    return map_find(f, app_dag).get_provided().unroll_cpy(unroll_factor);
+  Window data_window_provided_by_compute(const std::string& update, const int unroll_factor) {
+    for (auto f : app_dag) {
+      for (auto u : f.second.updates) {
+        if (u.name() == update) {
+          return u.get_provided().unroll_cpy(unroll_factor);
+        }
+      }
+    }
+    cout << "Error: No update named " << update << " in app" << endl;
+    assert(false);
+    return {};
+    //return map_find(f, app_dag).get_provided().unroll_cpy(unroll_factor);
   }
 
   Window data_window_needed_by_compute(const std::string& consumer,
@@ -5560,55 +5596,62 @@ struct App {
       UBuffer b;
       b.ctx = ctx;
       b.name = f;
-      isl_set* domain =
-        compute_domain(f);
-      isl_union_map* sched =
-        its(m, domain);
 
-      Window write_box = data_window_provided_by_compute(f, unroll_factor);
-      int i = 0;
-      cout << "Write box for: " << f << " has " << write_box.pts().size() << " points in it" << endl;
-      for (auto p : write_box.pts()) {
-        vector<string> coeffs;
-        for (auto e : p) {
-          coeffs.push_back(isl_str(e));
-        }
-        cout << "Coeffs: " << sep_list(coeffs, "[", "]", ", ") << endl;
-        auto access_map =
-          rdmap(ctx, "{ " + f + "_comp[" + comma_list(var_names) + "] -> " +
-              f + sep_list(coeffs, "[", "]", ", ") + " }");
-        string pt_name = f + "_" + f + "_comp_write" + to_string(i);
-        b.add_in_pt(pt_name, domain, its(to_map(access_map), domain), sched);
-        i++;
-        b.port_bundles[f + "_comp_write"].push_back(pt_name);
-      }
-      cout << "Port bundle has " << b.port_bundles[f + "_comp_write"].size() << " ports in it" << endl;
-
-      for (auto consumer : consumers(f)) {
+      // Create write ports
+      for (auto u : app_dag.at(f).updates) {
         isl_set* domain =
-          compute_domain(consumer);
+          compute_domain(u.name());
         isl_union_map* sched =
           its(m, domain);
 
-        cout << "Getting map from " << f << " to " << consumer << endl;
-
-        Window f_win = data_window_needed_by_compute(consumer, f, unroll_factor);
-
+        Window write_box = data_window_provided_by_compute(u.name(), unroll_factor);
         int i = 0;
-        for (auto p : f_win.pts()) {
+        cout << "Write box for: " << f << " has " << write_box.pts().size() << " points in it" << endl;
+        for (auto p : write_box.pts()) {
           vector<string> coeffs;
           for (auto e : p) {
             coeffs.push_back(isl_str(e));
           }
           cout << "Coeffs: " << sep_list(coeffs, "[", "]", ", ") << endl;
           auto access_map =
-            rdmap(ctx, "{ " + consumer + "_comp[" + comma_list(var_names) + "] -> " +
+            rdmap(ctx, "{ " + u.name() + "[" + comma_list(var_names) + "] -> " +
                 f + sep_list(coeffs, "[", "]", ", ") + " }");
-          cout << "Access map: " << str(access_map) << endl;
-          string pt_name = consumer + "_rd" + to_string(i);
-          b.add_out_pt(pt_name, domain, its(to_map(access_map), domain), sched);
+          string pt_name = f + "_" + u.name() + "_write" + to_string(i);
+          b.add_in_pt(pt_name, domain, its(to_map(access_map), domain), sched);
           i++;
-          b.port_bundles[consumer + "_comp_read"].push_back(pt_name);
+          b.port_bundles[u.name() + "_write"].push_back(pt_name);
+        }
+        cout << "Port bundle has " << b.port_bundles[u.name() + "_write"].size() << " ports in it" << endl;
+      }
+
+      for (auto consumer : consumers(f)) {
+        cout << "Getting consumer compute domain: " << consumer << endl;
+        for (auto u : app_dag.at(consumer).updates) {
+          isl_set* domain =
+            compute_domain(u.name());
+          isl_union_map* sched =
+            its(m, domain);
+
+          cout << "Getting map from " << u.name() << " to " << consumer << endl;
+
+          Window f_win = data_window_needed_by_compute(u.name(), f, unroll_factor);
+
+          int i = 0;
+          for (auto p : f_win.pts()) {
+            vector<string> coeffs;
+            for (auto e : p) {
+              coeffs.push_back(isl_str(e));
+            }
+            cout << "Coeffs: " << sep_list(coeffs, "[", "]", ", ") << endl;
+            auto access_map =
+              rdmap(ctx, "{ " + u.name() + "[" + comma_list(var_names) + "] -> " +
+                  f + sep_list(coeffs, "[", "]", ", ") + " }");
+            cout << "Access map: " << str(access_map) << endl;
+            string pt_name = consumer + "_rd" + to_string(i);
+            b.add_out_pt(pt_name, domain, its(to_map(access_map), domain), sched);
+            i++;
+            b.port_bundles[u.name() + "_read"].push_back(pt_name);
+          }
         }
       }
 
@@ -5715,7 +5758,7 @@ struct App {
 
     int pos = 0;
     cout << "Sorted pipeline..." << endl;
-    for (auto f : sort_operations()) {
+    for (auto f : sort_updates()) {
       cout << "\t" << f << endl;
       schedules[f].push_back(qexpr(pos));
       pos++;
@@ -5831,22 +5874,30 @@ struct App {
 
     cout << "Schedule: " << str(m) << endl;
 
-    auto scheds_n =
-      schedule_opt();
+    //auto scheds_n =
+      //schedule_opt();
 
-    map<string, vector<QExpr> > scheds;
-    for (auto s : scheds_n) {
-      scheds[s.first + "_comp"] = s.second;
-    }
+    map<string, vector<QExpr> > scheds =
+      schedule_opt();
+    //for (auto s : scheds_n) {
+      ////scheds[s.first + "_comp"] = s.second;
+      //scheds[s.first] = s.second;
+    //}
+    
     map<string, Box> compute_domains;
     vector<string> ops;
-    for (auto f : sort_functions()) {
-      if (app_dag.at(f).get_srcs().size() != 0) {
-        ops.push_back(f + "_comp");
-        compute_domains[f + "_comp"] =
-          compute_box(f);
-      }
+    for (auto u : sort_updates()) {
+        ops.push_back(u);
+        compute_domains[u] = compute_box(u);
     }
+
+    //for (auto f : sort_functions()) {
+      //if (app_dag.at(f).get_srcs().size() != 0) {
+        //ops.push_back(f + "_comp");
+        //compute_domains[f + "_comp"] =
+          //compute_box(f);
+      //}
+    //}
 
     //assert(false);
     //string cgn = box_codegen(ops, scheds, compute_domains);
@@ -5858,10 +5909,15 @@ struct App {
       isl_union_set_read_from_str(ctx, "{}");
     assert(whole_dom != nullptr);
     auto sorted_functions = sort_functions();
-    for (auto f : sorted_functions) {
+    for (auto u : sort_updates()) {
       whole_dom =
-        unn(whole_dom, to_uset(compute_domain(f)));
+        unn(whole_dom, to_uset(compute_domain(u)));
     }
+    //auto sorted_functions = sort_functions();
+    //for (auto f : sorted_functions) {
+      //whole_dom =
+        //unn(whole_dom, to_uset(compute_domain(f)));
+    //}
 
     CodegenOptions options;
     options.internal = true;
