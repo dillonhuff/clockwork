@@ -2541,6 +2541,26 @@ struct FiniteRegion {
 
 typedef FiniteRegion Window;
 
+struct Update {
+
+  bool is_reduction;
+  bool is_constant_init;
+
+  string operation_name;
+
+  Window provided;
+
+  string compute_function_name;
+
+  Box reduce_var_domain;
+  vector<Window> srcs;
+
+  bool is_reduce() const {
+    return is_reduction;
+  }
+
+};
+
 struct Result {
   string compute_name;
   vector<Window> srcs;
@@ -5763,9 +5783,9 @@ umap* to_umap(isl_ctx* ctx, map<string, vector<QExpr> > & schedules, vector<stri
 struct App {
 
   isl_ctx* ctx;
-  //set<string> functions;
   map<string, Result> app_dag;
   map<string, Box> domain_boxes;
+
   // Map from functions to compute invocations of
   // other functions that they need
   map<string, isl_set*> compute_sets;
@@ -7103,26 +7123,6 @@ void denoise2d_test() {
   assert(naive == optimized);
   //assert(false);
 }
-
-//App unroll(const App& app, const int unroll_factor) {
-  //App unrolled;
-
-  //for (auto f : app.app_dag) {
-    //vector<Window> args;
-    //for (auto w : f.second.srcs) {
-      //args.push_back(w.unroll_cpy(unroll_factor));
-    //}
-
-    //string cn = f.second.compute_name + "_unroll";
-
-    //unrolled.func2d(f.first + "_unrolled", cn, args);
-
-    //unrolled.app_dag[f.first + "_unrolled"].provided =
-      //unrolled.app_dag[f.first + "_unrolled"].provided.unroll_cpy(unroll_factor);
-  //}
-
-  //return unrolled;
-//}
 
 void conv3x3_app_unrolled_uneven_test() {
 
