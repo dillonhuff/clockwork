@@ -5081,18 +5081,6 @@ struct App {
       const string& compute,
       const vector<Window>& windows) {
     return add_func(name, compute, 3, windows);
-    //Result res{compute};
-    //for (auto w : windows) {
-      //w.needed = build_needed(name, w);
-      //res.srcs.push_back(w);
-    //}
-
-    //assert(res.srcs.size() == windows.size());
-    //res.provided =
-      //Window(name, {1, 1, 1}, {{0, 0, 0}});
-
-    //app_dag[name] = res;
-    //return name;
   }
 
   string func2d(const std::string& name,
@@ -5106,18 +5094,6 @@ struct App {
       const string& compute,
       const vector<Window>& windows) {
     return add_func(name, compute, 2, windows);
-    //Result res{compute};
-    //for (auto w : windows) {
-      //w.needed = build_needed(name, w);
-      //res.srcs.push_back(w);
-    //}
-
-    //assert(res.srcs.size() == windows.size());
-    //res.provided =
-      //Window(name, {1, 1}, {{0, 0}});
-
-    //app_dag[name] = res;
-    //return name;
   }
 
   string func2d(const std::string& name,
@@ -5142,13 +5118,6 @@ struct App {
     Window w{arg, strides, offsets};
 
     return func2d(name, compute, {w});
-    ////functions.insert(name);
-    //w.needed = build_needed(name, w);
-    //Result res{compute, {w}};
-    //res.provided =
-      //Window(name, {1, 1}, {{0, 0}});
-    //app_dag[name] = res;
-    //return name;
   }
 
   umap* build_needed(const string& name, const Window& w) {
@@ -5206,7 +5175,7 @@ struct App {
       for (auto s : app_dag) {
         cout << "\t" << s.first << endl;
       }
-      auto res = map_find(f, app_dag).srcs;
+      auto res = map_find(f, app_dag).get_srcs();
       cout << "Got res from map" << endl;
       return res;
     }
@@ -5216,7 +5185,7 @@ struct App {
   set<string> consumers(const string& f) const {
     set<string> cons;
     for (auto other_func : app_dag) {
-      for (auto d : other_func.second.srcs) {
+      for (auto d : other_func.second.get_srcs()) {
         if (d.name == f) {
           cons.insert(other_func.first);
           break;
@@ -5449,7 +5418,7 @@ struct App {
   }
 
   Window box_touched(const std::string& consumer, const std::string& producer) {
-    for (auto s : app_dag.at(consumer).srcs) {
+    for (auto s : app_dag.at(consumer).get_srcs()) {
       if (s.name == producer) {
         return s;
       }
@@ -5471,7 +5440,7 @@ struct App {
     map<string, map<string, umap*> > pixels_needed;
     for (auto r : app_dag) {
       pixels_needed[r.first + "_comp"] = {};
-      for (auto w : r.second.srcs) {
+      for (auto w : r.second.get_srcs()) {
         pixels_needed[r.first + "_comp"][w.name + "_comp"] = w.needed;
       }
     }
@@ -5678,7 +5647,7 @@ struct App {
     map<string, isl_set*> domain_map;
 
     for (auto f : sorted_functions) {
-      if (app_dag.at(f).srcs.size() == 0) {
+      if (app_dag.at(f).get_srcs().size() == 0) {
         prg.ins.insert(f);
         action_domain =
           isl_union_set_subtract(action_domain,
@@ -5696,7 +5665,7 @@ struct App {
         op->add_store(f, "f_0, f_1");
 
         vector<string> fargs;
-        for (auto p : app_dag.at(f).srcs) {
+        for (auto p : app_dag.at(f).get_srcs()) {
           op->add_load(p.name, "0, 0");
           if (!elem(p.name, fargs)) {
             fargs.push_back(p.name);
@@ -5845,7 +5814,7 @@ struct App {
     map<string, Box> compute_domains;
     vector<string> ops;
     for (auto f : sort_functions()) {
-      if (app_dag.at(f).srcs.size() != 0) {
+      if (app_dag.at(f).get_srcs().size() != 0) {
         ops.push_back(f + "_comp");
         compute_domains[f + "_comp"] =
           compute_box(f);
@@ -5880,7 +5849,7 @@ struct App {
     auto action_domain = cpy(whole_dom);
     map<string, isl_set*> domain_map;
     for (auto f : sorted_functions) {
-      if (app_dag.at(f).srcs.size() == 0) {
+      if (app_dag.at(f).get_srcs().size() == 0) {
         prg.ins.insert(f);
         action_domain =
           isl_union_set_subtract(action_domain,
@@ -5898,7 +5867,7 @@ struct App {
         op->add_store(f, "0, 0");
 
         vector<string> fargs;
-        for (auto p : app_dag.at(f).srcs) {
+        for (auto p : app_dag.at(f).get_srcs()) {
           op->add_load(p.name, "0, 0");
           if (!elem(p.name, fargs)) {
             fargs.push_back(p.name);
