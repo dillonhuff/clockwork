@@ -5012,7 +5012,8 @@ struct App {
   }
 
   string func2d(const std::string& name, const std::string& init) {
-    Result res{init};
+    Result res;
+    //{init};
     //for (auto w : windows) {
       //w.needed = build_needed(name, w);
       //res.srcs.push_back(w);
@@ -5039,7 +5040,8 @@ struct App {
       const int ndims,
       const vector<Window>& windows) {
 
-    Result res{compute};
+    Result res;
+    //{compute};
     for (auto w : windows) {
       w.needed = build_needed(name, w);
       res.srcs.push_back(w);

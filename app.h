@@ -203,12 +203,21 @@ struct Update {
 };
 
 struct Result {
-  string comp_name;
+  //string comp_name;
   vector<Window> srcs;
   Window provided;
 
   vector<Update> updates;
 
+  vector<Window> get_srcs() const {
+    assert(updates.size() > 0);
+    return updates.at(0).srcs;
+  }
+
+  Window get_provided() const {
+    assert(updates.size() > 0);
+    return updates.at(0).provided;
+  }
 
   string compute_name() const {
     assert(updates.size() > 0);
