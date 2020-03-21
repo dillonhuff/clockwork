@@ -215,6 +215,14 @@ inline hw_uint<64> img1_mismatched_stencils_update_0_read_bundle_read(img1_cache
 
 
 // Operation logic
+inline void img0_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */off_chip_img0, img0_cache& img0, int d0, int d1) {
+	// Consume: off_chip_img0
+	auto off_chip_img0_0_c__0_value = off_chip_img0.read();
+	auto compute_result = id(off_chip_img0_0_c__0_value);
+	// Produce: img0
+	img0_img0_update_0_write_bundle_write(compute_result, img0, d0, d1);
+}
+
 inline void img1_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */off_chip_img1, img1_cache& img1, int d0, int d1) {
 	// Consume: off_chip_img1
 	auto off_chip_img1_0_c__0_value = off_chip_img1.read();
@@ -231,14 +239,6 @@ inline void mismatched_stencils_update_0(img0_cache& img0, img1_cache& img1, HWS
 	auto compute_result = contrived(img0_0_c__0_value, img1_0_c__0_value);
 	// Produce: mismatched_stencils
 	mismatched_stencils.write(compute_result);
-}
-
-inline void img0_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */off_chip_img0, img0_cache& img0, int d0, int d1) {
-	// Consume: off_chip_img0
-	auto off_chip_img0_0_c__0_value = off_chip_img0.read();
-	auto compute_result = id(off_chip_img0_0_c__0_value);
-	// Produce: img0
-	img0_img0_update_0_write_bundle_write(compute_result, img0, d0, d1);
 }
 
 // Driver function

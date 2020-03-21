@@ -178,16 +178,6 @@ inline hw_uint<32> B_C_update_0_read_bundle_read(B_cache& B, int d0, int d1) {
 
 
 // Operation logic
-inline void C_update_0(A_cache& A, B_cache& B, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */C, int d0, int d1) {
-	// Consume: A
-	auto A_0_c__0_value = A_C_update_0_read_bundle_read(A/* source_delay */, d0, d1);
-	// Consume: B
-	auto B_0_c__0_value = B_C_update_0_read_bundle_read(B/* source_delay */, d0, d1);
-	auto compute_result = diff(A_0_c__0_value, B_0_c__0_value);
-	// Produce: C
-	C.write(compute_result);
-}
-
 inline void B_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */B_off, B_cache& B, int d0, int d1) {
 	// Consume: B_off
 	auto B_off_0_c__0_value = B_off.read();
@@ -202,6 +192,16 @@ inline void A_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */A_
 	auto compute_result = id(A_off_0_c__0_value);
 	// Produce: A
 	A_A_update_0_write_bundle_write(compute_result, A, d0, d1);
+}
+
+inline void C_update_0(A_cache& A, B_cache& B, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */C, int d0, int d1) {
+	// Consume: A
+	auto A_0_c__0_value = A_C_update_0_read_bundle_read(A/* source_delay */, d0, d1);
+	// Consume: B
+	auto B_0_c__0_value = B_C_update_0_read_bundle_read(B/* source_delay */, d0, d1);
+	auto compute_result = diff(A_0_c__0_value, B_0_c__0_value);
+	// Produce: C
+	C.write(compute_result);
 }
 
 // Driver function

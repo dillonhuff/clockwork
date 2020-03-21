@@ -79,7 +79,7 @@ class AccessPattern {
               max = get_dim_max(domain, it->second);
               cout << "Domain space on <"<< it->first;
               cout << "> is: [" << min << ", " << max <<"]"<< endl;
-              assert(min == 0);
+              //assert(min == 0);
               int offset = it - pairs.begin()-1;
               in_range[offset] = max - min + 1;
           }
@@ -7679,6 +7679,13 @@ int main(int argc, char** argv) {
     agg_test();
     memtile_test();
 
+    heat_3d_test();
+    //synth_reduce_test();
+    jacobi_2d_2_test();
+    jacobi_2d_test();
+    parse_denoise3d_test();
+
+    seidel2d_test();
     gaussian_pyramid_app_test();
     grayscale_conversion_test();
     jacobi_2d_app_test();
@@ -7703,16 +7710,10 @@ int main(int argc, char** argv) {
     updown_merge_test();
     sobel_test();
 
-    heat_3d_test();
 
     blur_and_downsample_test();
     downsample_and_blur_test();
 
-    //synth_reduce_test();
-    jacobi_2d_2_test();
-    jacobi_2d_test();
-    parse_denoise3d_test();
-    seidel2d_test();
 
     blur_x_test();
     pointwise_test();
