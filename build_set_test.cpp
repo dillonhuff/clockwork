@@ -5700,7 +5700,7 @@ struct App {
             fargs.push_back(p.name);
           }
         }
-        op->add_function(app_dag.at(f).compute_name);
+        op->add_function(app_dag.at(f).compute_name());
         domain_map[f + "_comp"] =
           compute_domain(f);
       }
@@ -5755,7 +5755,7 @@ struct App {
   }
 
   string compute_name(const string& f) {
-    return map_find(f, app_dag).compute_name;
+    return map_find(f, app_dag).compute_name();
   }
 
   void generate_compute_unit_file(const std::string& filename, const int unroll_factor) {
@@ -5903,9 +5903,9 @@ struct App {
           }
         }
         if (unroll_factor == 1) {
-          op->add_function(app_dag.at(f).compute_name);
+          op->add_function(app_dag.at(f).compute_name());
         } else {
-          op->add_function(app_dag.at(f).compute_name + "_unrolled_" + to_string(unroll_factor));
+          op->add_function(app_dag.at(f).compute_name() + "_unrolled_" + to_string(unroll_factor));
         }
         domain_map[f + "_comp"] =
           compute_domain(f);

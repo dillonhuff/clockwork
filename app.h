@@ -203,11 +203,14 @@ struct Update {
 };
 
 struct Result {
-  string compute_name;
+  string comp_name;
   vector<Window> srcs;
   Window provided;
 
   vector<Update> updates;
+
+
+  string compute_name() const { return comp_name; }
 
   void add_init_update(const string& name, const string& compute, const vector<Window>& args) {
     string update_name = provided.name + "_update_" + str(updates.size());
