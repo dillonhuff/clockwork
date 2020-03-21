@@ -5853,28 +5853,32 @@ struct App {
     return producers(name).size() == 0;
   }
 
-  string add_func(const std::string& name, const int ndims) {
+  string add_func(const std::string& name,
+      const std::string compute,
+      const int ndims) {
+    Result res{compute};
     vector<QAV> strides;
     vector<int> pt;
     for (int i = 0; i < ndims; i++) {
       strides.push_back(qconst(1));
       pt.push_back(0);
     }
-    app_dag[name] = {};
+    app_dag[name] = res;
+    //app_dag[name] = name;
     app_dag[name].provided = Window(name, strides, {pt});
       //Window(name, {1, 1, 1}, {{0, 0, 0}});
     return name;
   }
 
   string func3d(const std::string& name) {
-    return add_func(name, 3);
+    return add_func(name, "", 3);
     //app_dag[name] = {};
     //app_dag[name].provided = Window(name, {1, 1, 1}, {{0, 0, 0}});
     //return name;
   }
 
   string func2d(const std::string& name) {
-    return add_func(name, 2);
+    return add_func(name, "", 2);
     //app_dag[name] = {};
     //app_dag[name].provided = Window(name, {1, 1}, {{0, 0}});
     //return name;
