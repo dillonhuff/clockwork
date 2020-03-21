@@ -2544,12 +2544,12 @@ typedef FiniteRegion Window;
 struct Update {
 
   bool is_reduction;
-  bool is_constant_init;
 
   string operation_name;
 
   Window provided;
 
+  string update_function_name;
   string compute_function_name;
 
   Box reduce_var_domain;
@@ -2568,11 +2568,10 @@ struct Result {
 
   vector<Update> updates;
 
-  //Box reduce_var_domain;
-
-  //bool is_reduce() const {
-    //return reduce_var_domain.dimension() > 0;
-  //}
+  void add_init_update(const string& name, const string& compute, const vector<Window>& args) {
+    string update_name = provided.name + "_update_" + str(updates.size());
+    updates.push_back({false, update_name, provided, "", compute, {}, args});
+  }
 
 };
 
@@ -5846,23 +5845,21 @@ struct App {
       strides.push_back(qconst(1));
       pt.push_back(0);
     }
+
+    res.add_init_update(name, compute, res.srcs);
+
     app_dag[name] = res;
     app_dag[name].provided = Window(name, strides, {pt});
+
     return name;
   }
 
   string func3d(const std::string& name) {
     return add_func(name, "", 3, {});
-    //app_dag[name] = {};
-    //app_dag[name].provided = Window(name, {1, 1, 1}, {{0, 0, 0}});
-    //return name;
   }
 
   string func2d(const std::string& name) {
     return add_func(name, "", 2, {});
-    //app_dag[name] = {};
-    //app_dag[name].provided = Window(name, {1, 1}, {{0, 0}});
-    //return name;
   }
   
   string func3d(const std::string& name,
@@ -5915,6 +5912,37 @@ struct App {
     //return name;
   }
 
+  string func2d(const std::string& name,
+      const string& compute,
+      const string& arg,
+      const vector<vector<int> >& offsets) {
+    assert(offsets.size() > 0);
+    size_t ndims = offsets.at(0).size();
+    vector<int> strides;
+    for (size_t i = 0; i < ndims; i++) {
+      strides.push_back(1);
+    }
+    return func2d(name, compute, arg, strides, offsets);
+  }
+
+  string func2d(const std::string& name,
+      const string& compute,
+      const string& arg,
+      const vector<int>& strides,
+      const vector<vector<int> >& offsets) {
+
+    Window w{arg, strides, offsets};
+
+    return func2d(name, compute, {w});
+    ////functions.insert(name);
+    //w.needed = build_needed(name, w);
+    //Result res{compute, {w}};
+    //res.provided =
+      //Window(name, {1, 1}, {{0, 0}});
+    //app_dag[name] = res;
+    //return name;
+  }
+
   umap* build_needed(const string& name, const Window& w) {
 
     assert(w.dimension() > 0);
@@ -5961,36 +5989,6 @@ struct App {
     cout << "Map       : " << str(m) << endl;
 
     return m;
-  }
-
-  string func2d(const std::string& name,
-      const string& compute,
-      const string& arg,
-      const vector<vector<int> >& offsets) {
-    assert(offsets.size() > 0);
-    size_t ndims = offsets.at(0).size();
-    vector<int> strides;
-    for (size_t i = 0; i < ndims; i++) {
-      strides.push_back(1);
-    }
-    return func2d(name, compute, arg, strides, offsets);
-  }
-
-  string func2d(const std::string& name,
-      const string& compute,
-      const string& arg,
-      const vector<int>& strides,
-      const vector<vector<int> >& offsets) {
-
-    Window w{arg, strides, offsets};
-
-    //functions.insert(name);
-    w.needed = build_needed(name, w);
-    Result res{compute, {w}};
-    res.provided =
-      Window(name, {1, 1}, {{0, 0}});
-    app_dag[name] = res;
-    return name;
   }
 
   vector<Window> producers(const string& f) const {
