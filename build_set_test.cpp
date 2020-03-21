@@ -5802,6 +5802,29 @@ struct App {
     isl_ctx_free(ctx);
   }
 
+  string func2d(const std::string& name, const std::string& init) {
+    Result res{init};
+    //for (auto w : windows) {
+      //w.needed = build_needed(name, w);
+      //res.srcs.push_back(w);
+    //}
+
+    //assert(res.srcs.size() == windows.size());
+    //res.provided =
+      //Window(name, {1, 1}, {{0, 0}});
+
+    //res.reduce_var_domain = reduce_ranges;
+
+    app_dag[name] = res;
+
+    return name;
+
+  }
+
+  void update(const string& func, const string& accum, const string& compute, const vector<Window>& args, Box reduce_ranges) {
+
+  }
+
   string func2d(const std::string& name,
       const string& reduce_op,
       const std::string& reduce_init,
@@ -5809,7 +5832,6 @@ struct App {
       const vector<Window>& windows,
       const Box& reduce_ranges) {
 
-    //functions.insert(name);
     Result res{compute};
     for (auto w : windows) {
       w.needed = build_needed(name, w);
@@ -5832,14 +5854,12 @@ struct App {
   }
 
   string func3d(const std::string& name) {
-    //functions.insert(name);
     app_dag[name] = {};
     app_dag[name].provided = Window(name, {1, 1, 1}, {{0, 0, 0}});
     return name;
   }
 
   string func2d(const std::string& name) {
-    //functions.insert(name);
     app_dag[name] = {};
     app_dag[name].provided = Window(name, {1, 1}, {{0, 0}});
     return name;
@@ -5855,7 +5875,6 @@ struct App {
   string func3d(const std::string& name,
       const string& compute,
       const vector<Window>& windows) {
-    //functions.insert(name);
     Result res{compute};
     for (auto w : windows) {
       w.needed = build_needed(name, w);
@@ -5880,7 +5899,6 @@ struct App {
   string func2d(const std::string& name,
       const string& compute,
       const vector<Window>& windows) {
-    //functions.insert(name);
     Result res{compute};
     for (auto w : windows) {
       w.needed = build_needed(name, w);
@@ -6930,7 +6948,8 @@ void conv_app_rolled_reduce_test() {
   reduce_ranges.intervals.push_back({0, 2});
   Window img_win{"Img", dim_strides, reduce_strides, offsets};
 
-  cv.func2d("reduce_conv", "add", "0", "mul_2", {img_win}, reduce_ranges);
+  cv.func2d("reduce_conv", "0");
+  cv.update("reduce_conv", "add", "id", {img_win}, reduce_ranges);
   cv.realize("reduce_conv", 32, 32, 1);
 
   //assert(false);
