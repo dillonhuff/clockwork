@@ -5855,8 +5855,15 @@ struct App {
 
   string add_func(const std::string& name,
       const std::string compute,
-      const int ndims) {
+      const int ndims,
+      const vector<Window>& windows) {
+
     Result res{compute};
+    for (auto w : windows) {
+      w.needed = build_needed(name, w);
+      res.srcs.push_back(w);
+    }
+
     vector<QAV> strides;
     vector<int> pt;
     for (int i = 0; i < ndims; i++) {
@@ -5864,21 +5871,19 @@ struct App {
       pt.push_back(0);
     }
     app_dag[name] = res;
-    //app_dag[name] = name;
     app_dag[name].provided = Window(name, strides, {pt});
-      //Window(name, {1, 1, 1}, {{0, 0, 0}});
     return name;
   }
 
   string func3d(const std::string& name) {
-    return add_func(name, "", 3);
+    return add_func(name, "", 3, {});
     //app_dag[name] = {};
     //app_dag[name].provided = Window(name, {1, 1, 1}, {{0, 0, 0}});
     //return name;
   }
 
   string func2d(const std::string& name) {
-    return add_func(name, "", 2);
+    return add_func(name, "", 2, {});
     //app_dag[name] = {};
     //app_dag[name].provided = Window(name, {1, 1}, {{0, 0}});
     //return name;
@@ -5894,6 +5899,7 @@ struct App {
   string func3d(const std::string& name,
       const string& compute,
       const vector<Window>& windows) {
+    return add_func(name, compute, 3, windows);
     Result res{compute};
     for (auto w : windows) {
       w.needed = build_needed(name, w);
