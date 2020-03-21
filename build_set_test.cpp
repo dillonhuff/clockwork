@@ -5802,6 +5802,10 @@ struct App {
     isl_ctx_free(ctx);
   }
 
+  void update(const string& func, const string& accum, const string& compute, const vector<Window>& args, Box reduce_ranges) {
+
+  }
+
   string func2d(const std::string& name, const std::string& init) {
     Result res{init};
     //for (auto w : windows) {
@@ -5819,34 +5823,6 @@ struct App {
 
     return name;
 
-  }
-
-  void update(const string& func, const string& accum, const string& compute, const vector<Window>& args, Box reduce_ranges) {
-
-  }
-
-  string func2d(const std::string& name,
-      const string& reduce_op,
-      const std::string& reduce_init,
-      const std::string& compute,
-      const vector<Window>& windows,
-      const Box& reduce_ranges) {
-
-    Result res{compute};
-    for (auto w : windows) {
-      w.needed = build_needed(name, w);
-      res.srcs.push_back(w);
-    }
-
-    assert(res.srcs.size() == windows.size());
-    res.provided =
-      Window(name, {1, 1}, {{0, 0}});
-
-    //res.reduce_var_domain = reduce_ranges;
-
-    app_dag[name] = res;
-
-    return name;
   }
 
   bool is_input(const std::string& name) const {
@@ -5900,18 +5876,18 @@ struct App {
       const string& compute,
       const vector<Window>& windows) {
     return add_func(name, compute, 3, windows);
-    Result res{compute};
-    for (auto w : windows) {
-      w.needed = build_needed(name, w);
-      res.srcs.push_back(w);
-    }
+    //Result res{compute};
+    //for (auto w : windows) {
+      //w.needed = build_needed(name, w);
+      //res.srcs.push_back(w);
+    //}
 
-    assert(res.srcs.size() == windows.size());
-    res.provided =
-      Window(name, {1, 1, 1}, {{0, 0, 0}});
+    //assert(res.srcs.size() == windows.size());
+    //res.provided =
+      //Window(name, {1, 1, 1}, {{0, 0, 0}});
 
-    app_dag[name] = res;
-    return name;
+    //app_dag[name] = res;
+    //return name;
   }
 
   string func2d(const std::string& name,
@@ -5924,18 +5900,19 @@ struct App {
   string func2d(const std::string& name,
       const string& compute,
       const vector<Window>& windows) {
-    Result res{compute};
-    for (auto w : windows) {
-      w.needed = build_needed(name, w);
-      res.srcs.push_back(w);
-    }
+    return add_func(name, compute, 2, windows);
+    //Result res{compute};
+    //for (auto w : windows) {
+      //w.needed = build_needed(name, w);
+      //res.srcs.push_back(w);
+    //}
 
-    assert(res.srcs.size() == windows.size());
-    res.provided =
-      Window(name, {1, 1}, {{0, 0}});
+    //assert(res.srcs.size() == windows.size());
+    //res.provided =
+      //Window(name, {1, 1}, {{0, 0}});
 
-    app_dag[name] = res;
-    return name;
+    //app_dag[name] = res;
+    //return name;
   }
 
   umap* build_needed(const string& name, const Window& w) {

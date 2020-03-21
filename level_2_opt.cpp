@@ -770,20 +770,20 @@ inline void in_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in_of
 	in_in_comp_write_bundle_write(compute_result, in, d0, d1);
 }
 
-inline void level_0_comp(in_cache& in, level_0_cache& level_0, int d0, int d1) {
-	// Consume: in
-	auto in_0_c__0_value = in_level_0_comp_read_bundle_read(in/* source_delay */, d0, d1);
-	auto compute_result = reduce_gauss(in_0_c__0_value);
-	// Produce: level_0
-	level_0_level_0_comp_write_bundle_write(compute_result, level_0, d0, d1);
-}
-
 inline void level_1_comp(level_0_cache& level_0, level_1_cache& level_1, int d0, int d1) {
 	// Consume: level_0
 	auto level_0_0_c__0_value = level_0_level_1_comp_read_bundle_read(level_0/* source_delay */, d0, d1);
 	auto compute_result = reduce_gauss(level_0_0_c__0_value);
 	// Produce: level_1
 	level_1_level_1_comp_write_bundle_write(compute_result, level_1, d0, d1);
+}
+
+inline void level_0_comp(in_cache& in, level_0_cache& level_0, int d0, int d1) {
+	// Consume: in
+	auto in_0_c__0_value = in_level_0_comp_read_bundle_read(in/* source_delay */, d0, d1);
+	auto compute_result = reduce_gauss(in_0_c__0_value);
+	// Produce: level_0
+	level_0_level_0_comp_write_bundle_write(compute_result, level_0, d0, d1);
 }
 
 inline void level_2_comp(level_1_cache& level_1, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */level_2, int d0, int d1) {
