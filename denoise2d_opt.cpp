@@ -970,14 +970,6 @@ inline void u_u_comp_write_bundle_write(hw_uint<32>& u_comp_write, u_cache& u, i
 
 
 // Operation logic
-inline void diff_d_comp(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_d_comp_read_bundle_read(u/* source_delay */, d0, d1);
-	auto compute_result = diff_b(u_0_c__0_value);
-	// Produce: diff_d
-	diff_d_diff_d_comp_write_bundle_write(compute_result, diff_d, d0, d1);
-}
-
 inline void f_comp(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */f_off_chip, f_cache& f, int d0, int d1) {
 	// Consume: f_off_chip
 	auto f_off_chip_0_c__0_value = f_off_chip.read();
@@ -1034,6 +1026,14 @@ inline void r1_comp(r0_cache& r0, r1_cache& r1, int d0, int d1) {
 	auto compute_result = r1_comp(r0_0_c__0_value);
 	// Produce: r1
 	r1_r1_comp_write_bundle_write(compute_result, r1, d0, d1);
+}
+
+inline void diff_d_comp(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_d_comp_read_bundle_read(u/* source_delay */, d0, d1);
+	auto compute_result = diff_b(u_0_c__0_value);
+	// Produce: diff_d
+	diff_d_diff_d_comp_write_bundle_write(compute_result, diff_d, d0, d1);
 }
 
 inline void g_comp(diff_qwe_cache& diff_qwe, diff_d_cache& diff_d, diff_l_cache& diff_l, diff_r_cache& diff_r, g_cache& g, int d0, int d1) {
