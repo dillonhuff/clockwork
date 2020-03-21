@@ -5579,7 +5579,6 @@ struct App {
     return operations;
   }
 
-<<<<<<< HEAD
   vector<string> sort_functions() const {
 =======
   for (auto f : sorted_functions) {
@@ -6983,14 +6982,6 @@ struct App {
    * */
 
 
-<<<<<<< HEAD
-  //{
-    //auto agg_loop = prg.add_nest("po", 0, 8, "pi", 0, 8, "pdummy", 0, 1);
-    //auto agg = agg_loop->add_op("in2agg");
-    //agg->add_load("in", "po, pi");
-    //agg->add_store("agg", "po, pi");
-  //}
-=======
   {
     auto agg_loop = prg.add_nest("po", 0, 8, "pi", 0, 2, "dummy", 0, 4);
     //auto agg_loop = prg.add_nest("po", 0, 8, "pi", 0, 8);
@@ -7009,7 +7000,6 @@ struct App {
     sram->add_load("agg", "qo, qi*4+1");
     sram->add_load("agg", "qo, qi*4+2");
     sram->add_load("agg", "qo, qi*4+3");
->>>>>>> origin/memtile_test
 
   //{
     //auto sram_loop = prg.add_nest("qo", 0, 8, "qi", 0, 2, "qdummy", 0, 1);
@@ -7068,30 +7058,6 @@ struct App {
       //cout << tab(1) << b.first->name << "->" << b.second << endl;
   //}
 
-<<<<<<< HEAD
-  //vector<string> sorted_functions = {"in2agg", "agg2sram", "sram2tb", "tb2out"};
-  //int ndims = 3;
-  //map<string, vector<QExpr> > schedules;
-  //map<string, Result> app_dag;
-  ////for (auto func : sorted_functions) {
-      ////Result res;
-      ////app_dag[func] = {};
-  ////}
-  //map<string, isl_map*> compute_maps;
-  //for (auto cm : prg.producer_maps()) {
-      //compute_maps[cm.first->name] = inv(cm.second);
-      //cout << tab(1) << "Producer map: " << cm.first->name << "->" << str(cm.second) << endl;
-  //}
-
-  //for (auto cm : prg.data_demands_maps()) {
-      //app_dag[cm.first] = cm.second;
-      //cout << tab(1) << "DATA demands map: " << cm.first<< "->" << str(cm.second.srcs.at(0).needed) << endl;
-  //}
-
-  //for (int i = ndims - 1; i >= 0; i--) {
-      //schedule_dim(prg.ctx, op_boxes, i, schedules, sorted_functions, app_dag,  compute_maps);
-  //}
-=======
   vector<string> sorted_functions = {"in2agg", "agg2sram", "sram2tb", "tb2out"};
   int ndims = 3;
   map<string, vector<QExpr> > schedules;
@@ -7182,7 +7148,6 @@ struct App {
     memtile.emit_config_file_csv("lake_memtile_config_conv33");
     //assert(false);
   }
->>>>>>> origin/memtile_test
 
   //int pos = 0;
   //cout << "Sorted pipeline..." << endl;
@@ -7192,20 +7157,6 @@ struct App {
     //pos++;
   //}
 
-<<<<<<< HEAD
-  ////auto sched_opt = its(to_umap(prg.ctx, schedules, sorted_functions, ""), prg.whole_iteration_domain());
-  //auto sched_opt = to_umap(prg.ctx, schedules, sorted_functions, "");
-
-  ////auto sched_opt = its(rdmap(prg.ctx, "{in2agg[root, po, pi] -> [root, po, pi, 0]; agg2sram[root, qo, qi] -> [root, qo, 3+4*qi, 1]}"), prg.whole_iteration_domain());
-  //cout << "Sched map: " << str(sched_opt) << endl;
-  //cout << "Iter Domain: " << str(prg.whole_iteration_domain()) << endl;
-  //sched_opt = its(sched_opt, prg.whole_iteration_domain());
- //// auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
-  //cout << codegen_c(sched_opt) << endl;
-  ////assert(false);
-  ////aha_talk_print_info(prg);
-//}
-=======
   //auto sched_opt = its(to_umap(prg.ctx, schedules, sorted_functions, ""), prg.whole_iteration_domain());
   /*auto sched_opt = to_umap(prg.ctx, schedules, sorted_functions, "");
 
@@ -7220,7 +7171,6 @@ struct App {
   //assert(false);
   //aha_talk_print_info(prg);
 }
->>>>>>> origin/memtile_test
 
 Window win(const std::string& name, const std::vector<vector<int > >& offsets) {
   assert(offsets.size() > 0);
