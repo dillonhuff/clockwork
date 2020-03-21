@@ -1,17 +1,5 @@
 #include "app.h"
 
-string extvar(const string& n, const int dim) {
-  return n + "_ext_" + str(dim);
-}
-
-string endvar(const string& n, const int dim) {
-  return n + "_end_" + str(dim);
-}
-
-string startvar(const string& n, const int dim) {
-  return n + "_start_" + str(dim);
-}
-
 vector<int> parse_pt(isl_point* p) {
   return parse_pt(str(p));
 }
@@ -1208,41 +1196,6 @@ void generate_stack_bank(CodegenOptions& options,
 
   generate_stack_cache(options, out, bank);
 }
-
-//void generate_memory_struct(CodegenOptions& options, std::ostream& out, const std::string& inpt, UBuffer& buf) {
-
-  //cout << "Creating struct for: " << inpt << " on " << buf.name << endl;
-
-  //int maxdelay = compute_max_dd(buf, inpt);
-  //vector<int> read_delays{0};
-  //int num_readers = 0;
-  //for (auto outpt : buf.get_out_ports()) {
-
-    //auto in_actions = buf.domain.at(inpt);
-    //auto lex_max_events =
-      //get_lexmax_events(outpt, buf);
-    //auto act_dom =
-      //domain(its_range(lex_max_events, to_uset(in_actions)));
-
-    //if (!isl_union_set_is_empty(act_dom)) {
-      //num_readers++;
-      //auto c = compute_dd(buf, outpt, inpt);
-      //auto qpd = compute_dd_bound(buf, outpt, inpt);
-      //int lb = compute_dd_lower_bound(buf, outpt, inpt);
-
-      //for (int i = lb; i < qpd + 1; i++) {
-        //read_delays.push_back(i);
-      //}
-    //}
-  //}
-
- 
-  //string pt_type_string = buf.port_type_string();
-  //string name = inpt + "_cache";
-  //stack_bank bank{name, pt_type_string, read_delays, num_readers, maxdelay};
-
-  //generate_stack_cache(options, out, bank);
-//}
 
 vector<string> dimension_var_decls(const std::string& pt, UBuffer& buf) {
   isl_space* s = get_space(buf.domain.at(pt));
