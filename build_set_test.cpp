@@ -4981,7 +4981,7 @@ struct App {
       cout << d.first << " = " << d.second << endl;
     }
 
-    assert(false);
+    //assert(false);
   }
 
 
@@ -6859,8 +6859,7 @@ void application_tests() {
 
   //memtile_test();
 
-  conv_app_rolled_reduce_test();
-  assert(false);
+  //conv_app_rolled_reduce_test();
   seidel2d_test();
   gaussian_pyramid_app_test();
   grayscale_conversion_test();
