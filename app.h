@@ -135,22 +135,49 @@ struct FiniteRegion {
     return "{ k | " + base + " + " + to_string(min_off) + " <= k <= " + base + " + " + to_string(max_off) + " }";
   }
 
+  int reduce_max(const int dim) const {
+    assert(dim < reduce_var_ranges.dimension());
+    return reduce_var_ranges.intervals.at(dim).max;
+  }
+
+  int reduce_min(const int dim) const {
+    assert(dim < reduce_var_ranges.dimension());
+    return reduce_var_ranges.intervals.at(dim).min;
+  }
+
   int max_addr(const int dim, const int max_result_addr) {
-    if (stride(dim).is_whole()) {
-      assert(stride(dim).denom == 1);
-      return stride(dim).num*max_result_addr + max_offset(dim);
-    }
-    assert(stride(dim).num == 1);
-    return max_result_addr / stride(dim).denom + max_offset(dim);
+    return times_int(stride(dim), max_result_addr)
+      + times_int(reduce_var_stride(dim), reduce_min(dim))
+      + max_offset(dim);
+    //if (stride(dim).is_whole()) {
+      //assert(stride(dim).denom == 1);
+      //return stride(dim).num*max_result_addr + max_offset(dim);
+    //}
+    //assert(stride(dim).num == 1);
+    //return max_result_addr / stride(dim).denom + max_offset(dim);
   }
 
   int min_addr(const int dim, const int max_result_addr) {
-    if (stride(dim).is_whole()) {
-      assert(stride(dim).denom == 1);
-      return stride(dim).num*max_result_addr + min_offset(dim);
+    return times_int(stride(dim), max_result_addr)
+      + times_int(reduce_var_stride(dim), reduce_max(dim))
+      + min_offset(dim);
+  }
+
+  int times_int(const QAV& v, const int max_result_addr) {
+    if ((v).is_whole()) {
+      assert(v.denom == 1);
+      return v.num*max_result_addr;
     }
-    assert(stride(dim).num == 1);
-    return max_result_addr / stride(dim).denom + min_offset(dim);
+    assert(v.num == 1);
+    return max_result_addr / v.denom;
+  }
+  
+  QAV reduce_var_stride(const int dim) const {
+    cout << "Name = " << name << endl;
+    cout << "Reduce var ranges = " << reduce_var_ranges.dimension() << endl;
+    cout << "dim = " << dim << endl;
+    assert(dim < (int) reduce_var_ranges.dimension());
+    return reduce_var_strides.at(dim);
   }
 
   QAV stride(const int dim) const {
@@ -242,6 +269,9 @@ struct Result {
       assert(a.reduce_var_ranges == reduce_ranges);
     }
 
+    for (auto a : args) {
+      cout << "reduce range of " << a.name << " = " << a.reduce_var_ranges << endl;
+    }
     string update_name = provided.name + "_update_" + str(updates.size());
     updates.push_back({false, update_name, provided, accum, compute, reduce_ranges, args});
   }

@@ -4570,6 +4570,7 @@ struct App {
       const vector<Window>& args,
       Box reduce_ranges) {
 
+    assert(reduce_ranges.dimension() > 0);
     assert(contains_key(func, app_dag));
     vector<Window> rargs;
     for (auto a : args) {

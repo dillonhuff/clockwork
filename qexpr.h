@@ -27,7 +27,7 @@ struct QAV {
     return num;
   }
 
-  bool is_whole() {
+  bool is_whole() const {
     return is_num && denom == 1;
   }
 
