@@ -217,15 +217,49 @@ void C_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */A_off, HWStream<h
 #endif // __VIVADO_SYNTH__
 
 /* CUSTOM CODE STRING
+for (int c0 = 0; c0 <= 27; c0++) {
+  for (int c1 = 0; c1 <= 36; c1++) {
+
+#ifdef __VIVADO_SYNTH__
+#pragma HLS pipeline II=1
+#endif // __VIVADO_SYNTH__
+
+    if ((0 <= c1 && c1 <= 36) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 27) && ((c0 - 0) % 1 == 0)) {
+      B_update_0((c1 - 0) / 1, (c0 - 0) / 1);
+    }
+
+    if ((0 <= c1 && c1 <= 32) && ((c1 - 0) % 8 == 0) && (0 <= c0 && c0 <= 15) && ((c0 - 0) % 15 == 0)) {
+      A_update_0((c1 - 0) / 8, (c0 - 0) / 15);
+    }
+
+    if ((0 <= c1 && c1 <= 36) && ((c1 - 0) % 4 == 0) && (0 <= c0 && c0 <= 27) && ((c0 - 0) % 3 == 0)) {
+      C_update_0((c1 - 0) / 4, (c0 - 0) / 3);
+    }
+
+  }
+}
 
 */
-	for (int c0 = 0; c0 <= 27; c0 += 1)
-	  for (int c1 = 0; c1 <= 36; c1 += 1) {
-	    B_update_0(B_off, B, c1, c0);
-	    if (c0 % 15 == 0 && c1 % 8 == 0)
-	      A_update_0(A_off, A, c1 / 8, c0 / 15);
-	    if (c0 % 3 == 0 && c1 % 4 == 0)
-	      C_update_0(A, B, C, c1 / 4, c0 / 3);
+	for (int c0 = 0; c0 <= 27; c0++) {
+	  for (int c1 = 0; c1 <= 36; c1++) {
+	
+	#ifdef __VIVADO_SYNTH__
+	#pragma HLS pipeline II=1
+	#endif // __VIVADO_SYNTH__
+	
+	    if ((0 <= c1 && c1 <= 36) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 27) && ((c0 - 0) % 1 == 0)) {
+	      B_update_0(B_off, B, (c1 - 0) / 1, (c0 - 0) / 1);
+	    }
+	
+	    if ((0 <= c1 && c1 <= 32) && ((c1 - 0) % 8 == 0) && (0 <= c0 && c0 <= 15) && ((c0 - 0) % 15 == 0)) {
+	      A_update_0(A_off, A, (c1 - 0) / 8, (c0 - 0) / 15);
+	    }
+	
+	    if ((0 <= c1 && c1 <= 36) && ((c1 - 0) % 4 == 0) && (0 <= c0 && c0 <= 27) && ((c0 - 0) % 3 == 0)) {
+	      C_update_0(A, B, C, (c1 - 0) / 4, (c0 - 0) / 3);
+	    }
+	
 	  }
+	}
 	
 }

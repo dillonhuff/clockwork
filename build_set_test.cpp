@@ -5560,6 +5560,20 @@ struct App {
     cfile.close();
   }
 
+  bool is_external(const string& update) {
+    for (auto f : app_dag) {
+      for (auto u : f.second.updates) {
+        if (u.name() == update) {
+          return u.get_srcs().size() == 0;
+        }
+      }
+    }
+
+    cout << "No source for update " << update << endl;
+    assert(false);
+    return false;
+  }
+
   void schedule_and_codegen(const std::string& name, const int unroll_factor) {
     umap* m = schedule();
     assert(m != nullptr);
@@ -5579,8 +5593,10 @@ struct App {
     map<string, Box> compute_domains;
     vector<string> ops;
     for (auto u : sort_updates()) {
+      if (!is_external(u)) {
         ops.push_back(u);
         compute_domains[u] = compute_box(u);
+      }
     }
 
     //for (auto f : sort_functions()) {
@@ -5592,8 +5608,8 @@ struct App {
     //}
 
     //assert(false);
-    //string cgn = box_codegen(ops, scheds, compute_domains);
-    string cgn = "";
+    string cgn = box_codegen(ops, scheds, compute_domains);
+    //string cgn = "";
 
     map<string, UBuffer> buffers = build_buffers(m, unroll_factor);
 
@@ -5613,7 +5629,7 @@ struct App {
 
     CodegenOptions options;
     options.internal = true;
-    //options.use_custom_code_string = true;
+    options.use_custom_code_string = true;
     options.code_string = cgn;
 
     prog prg;
