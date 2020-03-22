@@ -736,7 +736,7 @@ isl_map* last_comp_needed(isl_map* pixel_to_producer,
   // TODO: Change this to be last in the schedule to support non-raster order designs
   isl_map* last_pix =
     lexmax(comps_needed);
-  cout << "last comp needed: " << str(last_pix) << endl;
+  //cout << "last comp needed: " << str(last_pix) << endl;
 
   return last_pix;
 }

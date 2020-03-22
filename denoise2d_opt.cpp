@@ -970,20 +970,12 @@ inline void u_u_update_0_write_bundle_write(hw_uint<32>& u_update_0_write, u_cac
 
 
 // Operation logic
-inline void diff_r_update_0(u_cache& u, diff_r_cache& diff_r, int d0, int d1) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_r_update_0_read_bundle_read(u/* source_delay */, d0, d1);
-	auto compute_result = diff_b(u_0_c__0_value);
-	// Produce: diff_r
-	diff_r_diff_r_update_0_write_bundle_write(compute_result, diff_r, d0, d1);
-}
-
-inline void diff_qwe_update_0(u_cache& u, diff_qwe_cache& diff_qwe, int d0, int d1) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_qwe_update_0_read_bundle_read(u/* source_delay */, d0, d1);
-	auto compute_result = diff_b(u_0_c__0_value);
-	// Produce: diff_qwe
-	diff_qwe_diff_qwe_update_0_write_bundle_write(compute_result, diff_qwe, d0, d1);
+inline void f_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */f_off_chip, f_cache& f, int d0, int d1) {
+	// Consume: f_off_chip
+	auto f_off_chip_0_c__0_value = f_off_chip.read();
+	auto compute_result = id(f_off_chip_0_c__0_value);
+	// Produce: f
+	f_f_update_0_write_bundle_write(compute_result, f, d0, d1);
 }
 
 inline void r0_update_0(u_cache& u, f_cache& f, r0_cache& r0, int d0, int d1) {
@@ -996,6 +988,14 @@ inline void r0_update_0(u_cache& u, f_cache& f, r0_cache& r0, int d0, int d1) {
 	r0_r0_update_0_write_bundle_write(compute_result, r0, d0, d1);
 }
 
+inline void diff_r_update_0(u_cache& u, diff_r_cache& diff_r, int d0, int d1) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_r_update_0_read_bundle_read(u/* source_delay */, d0, d1);
+	auto compute_result = diff_b(u_0_c__0_value);
+	// Produce: diff_r
+	diff_r_diff_r_update_0_write_bundle_write(compute_result, diff_r, d0, d1);
+}
+
 inline void diff_l_update_0(u_cache& u, diff_l_cache& diff_l, int d0, int d1) {
 	// Consume: u
 	auto u_0_c__0_value = u_diff_l_update_0_read_bundle_read(u/* source_delay */, d0, d1);
@@ -1004,12 +1004,20 @@ inline void diff_l_update_0(u_cache& u, diff_l_cache& diff_l, int d0, int d1) {
 	diff_l_diff_l_update_0_write_bundle_write(compute_result, diff_l, d0, d1);
 }
 
-inline void f_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */f_off_chip, f_cache& f, int d0, int d1) {
-	// Consume: f_off_chip
-	auto f_off_chip_0_c__0_value = f_off_chip.read();
-	auto compute_result = id(f_off_chip_0_c__0_value);
-	// Produce: f
-	f_f_update_0_write_bundle_write(compute_result, f, d0, d1);
+inline void diff_d_update_0(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_d_update_0_read_bundle_read(u/* source_delay */, d0, d1);
+	auto compute_result = diff_b(u_0_c__0_value);
+	// Produce: diff_d
+	diff_d_diff_d_update_0_write_bundle_write(compute_result, diff_d, d0, d1);
+}
+
+inline void diff_qwe_update_0(u_cache& u, diff_qwe_cache& diff_qwe, int d0, int d1) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_qwe_update_0_read_bundle_read(u/* source_delay */, d0, d1);
+	auto compute_result = diff_b(u_0_c__0_value);
+	// Produce: diff_qwe
+	diff_qwe_diff_qwe_update_0_write_bundle_write(compute_result, diff_qwe, d0, d1);
 }
 
 inline void u_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_off_chip, u_cache& u, int d0, int d1) {
@@ -1018,14 +1026,6 @@ inline void u_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_
 	auto compute_result = id(u_off_chip_0_c__0_value);
 	// Produce: u
 	u_u_update_0_write_bundle_write(compute_result, u, d0, d1);
-}
-
-inline void diff_d_update_0(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_d_update_0_read_bundle_read(u/* source_delay */, d0, d1);
-	auto compute_result = diff_b(u_0_c__0_value);
-	// Produce: diff_d
-	diff_d_diff_d_update_0_write_bundle_write(compute_result, diff_d, d0, d1);
 }
 
 inline void r1_update_0(r0_cache& r0, r1_cache& r1, int d0, int d1) {
