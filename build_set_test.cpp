@@ -5106,7 +5106,7 @@ struct App {
     for (auto op : op_domains) {
       cout << tab(1) << op.first << " -> " << (op.second) << endl;
     }
-    assert(false);
+    //assert(false);
 
     auto last_compute_needed = build_compute_deps(
         ndims,
