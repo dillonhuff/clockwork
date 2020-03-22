@@ -4835,27 +4835,41 @@ struct App {
       }
     }
 
+    int sdims = schedule_dimension();
+    assert(sdims >= ndims);
+
+    vector<string> sched_vars;
+    vector<string> later_sched_vars;
+    for (int i = 0; i < ndims; i++) {
+      sched_vars.push_back("d" + str(i));
+      if (i > 0) {
+        later_sched_vars.push_back("d" + str(i));
+      }
+    }
+    for (int i = ndims; i < sdims; i++) {
+      sched_vars.push_back("s" + str(i));
+      if (i > 0) {
+        later_sched_vars.push_back("s" + str(i));
+      }
+    }
+
     for (auto f : sort_functions()) {
 
       for (auto update : app_dag.at(f).updates) {
         compute_maps[update.name()] =
           to_map(rdmap(ctx, "{ " + f + "[" + comma_list(data_vars) + " ] -> " +
-                update.name() + "[floor(d0 / " + to_string(unroll_factor) + "), " + comma_list(later_data_vars) + "] }"));
-          //to_map(rdmap(ctx, "{ " + f + "[" + comma_list(data_vars) + " ] -> " +
-                //f + "_comp[floor(d0 / " + to_string(unroll_factor) + "), " + comma_list(later_data_vars) + "] }"));
+                update.name() + "[floor(d0 / " + to_string(unroll_factor) + "), " + comma_list(later_sched_vars) + "] }"));
 
-        //cout << "Compute map for " << s.first << ": " << str(compute_maps[s.first]) << endl;
-        //cout << "Data domain: " <<
-        //str(data_domain(s.first).to_set(ctx, s.first)) << endl;
-
+        cout << "compute map for " << update.name() << " is " << str(compute_maps[update.name()]) << endl;
         compute_sets[update.name()] =
           range(its(
                 compute_maps[update.name()],
                 data_domain(f).to_set(ctx, f)));
-        //cout << "Compute domain for " << s.first << " is " << str(compute_sets[s.first]) << endl;
+        cout << "Compute domain for " << update.name() << " is " << str(compute_sets[update.name()]) << endl;
       }
     }
     cout << "Got compute domain" << endl;
+    assert(false);
   }
 
   void fill_data_domain(const std::string& name, const int d0, const int d1, const int unroll_factor) {
@@ -5060,6 +5074,10 @@ struct App {
     cout << "Computations..." << endl;
     for (auto op : op_compute_maps) {
       cout << tab(1) << op.first << " -> " << str(op.second) << endl;
+    }
+    cout << "Compute domains..." << endl;
+    for (auto op : op_domains) {
+      cout << tab(1) << op.first << " -> " << (op.second) << endl;
     }
     assert(false);
 
