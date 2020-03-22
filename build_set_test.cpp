@@ -5284,7 +5284,7 @@ struct App {
     return build_buffers(m, 1);
   }
 
-  void populate_program(prog& prg, const string& name, const int unroll_factor) {
+  void populate_program(CodegenOptions& options, prog& prg, const string& name, umap* m, map<string, UBuffer>& buffers, const int unroll_factor) {
 
     uset* whole_dom =
       isl_union_set_read_from_str(ctx, "{}");
@@ -5300,7 +5300,6 @@ struct App {
     for (auto f : sorted_functions) {
       for (auto u : app_dag.at(f).updates) {
         if (u.get_srcs().size() == 0) {
-          // TODO: Populate ins and outs by checking if there are no updates
           prg.ins.insert(f);
           //u.name());
           action_domain =
@@ -5337,6 +5336,11 @@ struct App {
       }
     }
     prg.outs = {name};
+
+    generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
+    generate_regression_testbench(prg);
+
+
   }
 
   void realize_naive(const std::string& name, const int d0, const int d1) {
@@ -5361,67 +5365,14 @@ struct App {
         //unn(whole_dom, to_uset(compute_domain(f)));
     //}
 
-    uset* whole_dom =
-      isl_union_set_read_from_str(ctx, "{}");
-    assert(whole_dom != nullptr);
-    auto sorted_functions = sort_functions();
-    for (auto u : sort_updates()) {
-      whole_dom =
-        unn(whole_dom, to_uset(compute_domain(u)));
-    }
-
     CodegenOptions options;
     options.internal = true;
+    options.all_rams = true;
+
     prog prg;
     prg.name = name + "_naive";
     prg.compute_unit_file = "conv_3x3.h";
-    //populate_program(prg, name, 1);
-
-    auto action_domain = cpy(whole_dom);
-    map<string, isl_set*> domain_map;
-    for (auto f : sorted_functions) {
-      for (auto u : app_dag.at(f).updates) {
-        if (u.get_srcs().size() == 0) {
-          prg.ins.insert(f);
-          //u.name());
-          action_domain =
-            isl_union_set_subtract(action_domain,
-                to_uset(compute_domain(u.name())));
-        } else {
-          Box compute_b =
-            compute_box(u.name());
-          op* nest = prg.root;
-          int i = 0;
-          for (auto r : compute_b.intervals) {
-            nest = nest->add_nest(f + "_" + to_string(i), r.min, r.max + 1);
-            i++;
-          }
-          auto op = nest->add_op(u.name());
-          // TODO: Replace with real description of apps
-          op->add_store(f, "0, 0");
-
-          vector<string> fargs;
-          for (auto p : u.get_srcs()) {
-            op->add_load(p.name, "0, 0");
-            if (!elem(p.name, fargs)) {
-              fargs.push_back(p.name);
-            }
-          }
-          if (unroll_factor == 1) {
-            op->add_function(u.compute_name());
-          } else {
-            op->add_function(u.compute_name() + "_unrolled_" + to_string(unroll_factor));
-          }
-          domain_map[u.name()] =
-            compute_domain(u.name());
-        }
-      }
-    }
-    prg.outs = {name};
-
-    options.all_rams = true;
-    generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
-    generate_regression_testbench(prg);
+    populate_program(options, prg, name, m, buffers, 1);
 
     return;
   }
