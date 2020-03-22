@@ -4888,7 +4888,20 @@ struct App {
     return max_dims;
   }
 
+  void canonicalize_reduce_ranges() {
+    // TODO: Make this something we check
+    int max_reduce_dimension = 2;
+    for (auto& f : app_dag) {
+      auto& res = f.second;
+      for (auto& u : res.updates) {
+        u.pad_reduce_dimension(max_reduce_dimension);
+      }
+    }
+  }
+
   void fill_data_domain(const std::string& name, const vector<int>& dims, const int unroll_factor) {
+    //canonicalize_reduce_ranges();
+
     Box sbox;
     int max_dims = data_dimension();
 
@@ -4968,7 +4981,7 @@ struct App {
       cout << d.first << " = " << d.second << endl;
     }
 
-    assert(false);
+    //assert(false);
   }
 
 
@@ -6846,7 +6859,7 @@ void application_tests() {
 
   //memtile_test();
 
-  conv_app_rolled_reduce_test();
+  //conv_app_rolled_reduce_test();
   seidel2d_test();
   gaussian_pyramid_app_test();
   grayscale_conversion_test();

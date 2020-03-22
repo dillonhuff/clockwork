@@ -24,6 +24,15 @@ struct FiniteRegion {
 
   FiniteRegion() {}
 
+  void add_reduce_dimension(const int s, const int e_inclusive, const QAV& stride) {
+    reduce_var_ranges.intervals.push_back({s, e_inclusive});
+    reduce_var_strides.push_back(stride);
+  }
+
+  int reduce_dimension() const {
+    return reduce_var_strides.size();
+  }
+
   int total_dimension() const {
     return strides.size() + reduce_var_strides.size();
   }
@@ -136,11 +145,17 @@ struct FiniteRegion {
   }
 
   int reduce_max(const int dim) const {
+    if (dim >= reduce_var_ranges.dimension()) {
+      return 0;
+    }
     assert(dim < reduce_var_ranges.dimension());
     return reduce_var_ranges.intervals.at(dim).max;
   }
 
   int reduce_min(const int dim) const {
+     if (dim >= reduce_var_ranges.dimension()) {
+      return 0;
+    }
     assert(dim < reduce_var_ranges.dimension());
     return reduce_var_ranges.intervals.at(dim).min;
   }
@@ -173,6 +188,9 @@ struct FiniteRegion {
   }
   
   QAV reduce_var_stride(const int dim) const {
+    if (dim >= reduce_var_ranges.dimension()) {
+      return qconst(0);
+    }
     cout << "Name = " << name << endl;
     cout << "Reduce var ranges = " << reduce_var_ranges.dimension() << endl;
     cout << "dim = " << dim << endl;
@@ -224,6 +242,17 @@ struct Update {
   Box reduce_var_domain;
   vector<Window> srcs;
 
+  void pad_reduce_dimension(const int max_reduce_dimension) {
+    for (auto& win : srcs) {
+      if (win.reduce_dimension() < max_reduce_dimension) {
+        for (int i = win.reduce_dimension(); i < max_reduce_dimension; i++) {
+          //cout << "Adding reduce dimensio nto " << win.name << endl;
+          win.add_reduce_dimension(0, -1, qconst(0));
+        }
+      }
+    }
+  }
+
   std::string name() const { return operation_name; }
   std::string compute_name() const { return compute_function_name; }
 
@@ -248,7 +277,11 @@ struct Result {
 
   vector<Window> get_srcs() const {
     assert(updates.size() > 0);
-    return updates.at(0).get_srcs();
+    vector<Window> all_srcs;
+    for (auto u : updates) {
+      concat(all_srcs, u.get_srcs());
+    }
+    return all_srcs;
   }
 
   Window get_provided() const {
