@@ -5125,21 +5125,25 @@ struct App {
 
   umap* schedule_naive() {
     
-    map<string, vector<QExpr> > rect_schedules =
-      rectangular_schedules();
+    //map<string, vector<QExpr> > rect_schedules =
+      //rectangular_schedules();
 
     map<string, vector<QExpr> > schedules;
     int pos = 0;
     for (auto f : sort_updates()) {
       schedules[f].push_back(qexpr(pos));
+      for (int i = 0; i < schedule_dimension(); i++) {
+        schedules[f].push_back(qexpr("d" + str(schedule_dimension() - i - 1)));
+      }
       pos++;
     }
-    for (auto& s : schedules) {
-      for (auto v : rect_schedules.at(s.first)) {
-        s.second.push_back(v);
-      }
-    }
+    //for (auto& s : schedules) {
+      //for (auto v : rect_schedules.at(s.first)) {
+        //s.second.push_back(v);
+      //}
+    //}
 
+    // TODO: Replace with umap
     umap* m = rdmap(ctx, "{}");
     for (auto fn : schedules) {
       string f = fn.first;
@@ -5354,16 +5358,6 @@ struct App {
     cout << "Schedule: " << str(m) << endl;
 
     map<string, UBuffer> buffers = build_buffers(m);
-
-    //auto sorted_functions = sort_functions();
-    //uset* whole_dom =
-      //isl_union_set_read_from_str(ctx, "{}");
-    //assert(whole_dom != nullptr);
-    //for (auto f : sorted_functions) {
-      //cout << "Whole dom: " << str(whole_dom) << endl;
-      //whole_dom =
-        //unn(whole_dom, to_uset(compute_domain(f)));
-    //}
 
     CodegenOptions options;
     options.internal = true;
