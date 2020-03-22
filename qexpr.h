@@ -848,6 +848,9 @@ struct Box {
     }
   }
 
+  int min(const int dim) const { return intervals.at(dim).min; }
+  int max(const int dim) const { return intervals.at(dim).max; }
+
   isl_set* to_set(isl_ctx* ctx, const string& name) {
     string s = "{ ";
     vector<string> names;

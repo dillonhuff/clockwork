@@ -4865,11 +4865,38 @@ struct App {
           range(its(
                 compute_maps[update.name()],
                 data_domain(f).to_set(ctx, f)));
+        //for (int i = 0; i < update.reduce_var_domain.dimension(); i++) {
+        for (int i = 0; i < sdims - ndims; i++) {
+          string uv = "s" + str(i + ndims);
+          if (i < update.reduce_var_domain.dimension()) {
+            string limited_set =
+              "{ " + update.name() + sep_list(sched_vars, "[", "]", ", ") + " : " +
+              str(update.reduce_var_domain.min(i)) + " <= " + uv + " <= " + str(update.reduce_var_domain.max(i)) +
+              " }";
+            cout << "Limit set: " << limited_set << endl;
+
+            compute_sets[update.name()] =
+              its(compute_sets[update.name()],
+                  rdset(ctx, limited_set));
+          } else {
+            string limited_set =
+              "{ " + update.name() + sep_list(sched_vars, "[", "]", ", ") + " : " +
+              " 0 <= " + uv + " <= 0" +
+              " }";
+            cout << "Limit set: " << limited_set << endl;
+
+            compute_sets[update.name()] =
+              its(compute_sets[update.name()],
+                  rdset(ctx, limited_set));
+
+          }
+        }
+
         cout << "Compute domain for " << update.name() << " is " << str(compute_sets[update.name()]) << endl;
       }
     }
     cout << "Got compute domain" << endl;
-    assert(false);
+    //assert(false);
   }
 
   void fill_data_domain(const std::string& name, const int d0, const int d1, const int unroll_factor) {
