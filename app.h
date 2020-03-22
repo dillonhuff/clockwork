@@ -233,6 +233,14 @@ struct Result {
     return updates.at(0).compute_function_name;
   }
 
+  void add_reduce_update(const string& accum,
+      const string& compute,
+      const vector<Window>& args,
+      const Box& reduce_ranges) {
+    string update_name = provided.name + "_update_" + str(updates.size());
+    updates.push_back({false, update_name, provided, accum, compute, reduce_ranges, args});
+  }
+
   void add_init_update(const string& name, const string& compute, const vector<Window>& args) {
     string update_name = provided.name + "_update_" + str(updates.size());
     updates.push_back({false, update_name, provided, "", compute, {}, args});

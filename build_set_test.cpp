@@ -4564,7 +4564,14 @@ struct App {
     isl_ctx_free(ctx);
   }
 
-  void update(const string& func, const string& accum, const string& compute, const vector<Window>& args, Box reduce_ranges) {
+  void update(const string& func,
+      const string& accum,
+      const string& compute,
+      const vector<Window>& args,
+      Box reduce_ranges) {
+
+    assert(contains_key(func, app_dag));
+    app_dag.at(func).add_reduce_update(accum, compute, args, reduce_ranges);
 
   }
 
@@ -4720,15 +4727,19 @@ struct App {
   }
 
   vector<Window> producers(const string& f) const {
-    cout << "Getting producers for: " << f << endl;
+    //cout << "Getting producers for: " << f << endl;
     if (contains_key(f, app_dag)) {
-      cout << "In app dag: " << f << endl;
-      for (auto s : app_dag) {
-        cout << "\t" << s.first << endl;
+      //cout << "In app dag: " << f << endl;
+      //for (auto s : app_dag) {
+        //cout << "\t" << s.first << endl;
+      //}
+      vector<Window> sources;
+      for (auto u : map_find(f, app_dag).updates) {
+        concat(sources, u.get_srcs());
       }
-      auto res = map_find(f, app_dag).get_srcs();
-      cout << "Got res from map" << endl;
-      return res;
+      //auto res = map_find(f, app_dag).get_srcs();
+      //cout << "Got res from map" << endl;
+      return sources;
     }
     return {};
   }
@@ -4951,7 +4962,7 @@ struct App {
       cout << d.first << " = " << d.second << endl;
     }
 
-    //assert(false);
+    assert(false);
   }
 
 
@@ -6120,13 +6131,15 @@ void conv_app_rolled_reduce_test() {
 
   vector<QAV> dim_strides{qconst(1), qconst(1)};
   vector<QAV> reduce_strides{qconst(1), qconst(1)};
+
   vector<vector<int> > offsets{{0, 0}};
   Box reduce_ranges;
   reduce_ranges.intervals.push_back({0, 2});
   reduce_ranges.intervals.push_back({0, 2});
   Window img_win{"Img", dim_strides, reduce_strides, offsets};
 
-  cv.func2d("reduce_conv", "0");
+  vector<Window> empty;
+  cv.func2d("reduce_conv", "zero", empty);
   cv.update("reduce_conv", "add", "id", {img_win}, reduce_ranges);
   cv.realize("reduce_conv", 32, 32, 1);
 
@@ -6827,7 +6840,7 @@ void application_tests() {
 
   //memtile_test();
 
-  //conv_app_rolled_reduce_test();
+  conv_app_rolled_reduce_test();
   seidel2d_test();
   gaussian_pyramid_app_test();
   grayscale_conversion_test();
@@ -6936,8 +6949,8 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
     
-    memory_tile_tests();
     application_tests();
+    memory_tile_tests();
 
   } else {
     assert(false);
