@@ -149,7 +149,10 @@ struct FiniteRegion {
       return 0;
     }
     assert(dim < reduce_var_ranges.dimension());
-    return reduce_var_ranges.intervals.at(dim).max;
+
+    int max = reduce_var_ranges.intervals.at(dim).max;
+    cout << "###### REDUCE MAX = " << max << endl;
+    return max;
   }
 
   int reduce_min(const int dim) const {
@@ -162,7 +165,7 @@ struct FiniteRegion {
 
   int max_addr(const int dim, const int max_result_addr) {
     return times_int(stride(dim), max_result_addr)
-      + times_int(reduce_var_stride(dim), reduce_min(dim))
+      + times_int(reduce_var_stride(dim), reduce_max(dim))
       + max_offset(dim);
     //if (stride(dim).is_whole()) {
       //assert(stride(dim).denom == 1);
@@ -174,7 +177,7 @@ struct FiniteRegion {
 
   int min_addr(const int dim, const int max_result_addr) {
     return times_int(stride(dim), max_result_addr)
-      + times_int(reduce_var_stride(dim), reduce_max(dim))
+      + times_int(reduce_var_stride(dim), reduce_min(dim))
       + min_offset(dim);
   }
 
@@ -194,6 +197,7 @@ struct FiniteRegion {
     cout << "Name = " << name << endl;
     cout << "Reduce var ranges = " << reduce_var_ranges.dimension() << endl;
     cout << "dim = " << dim << endl;
+    cout << "###### has reduce stride: " << reduce_var_strides.at(dim) << endl;
     assert(dim < (int) reduce_var_ranges.dimension());
     return reduce_var_strides.at(dim);
   }
