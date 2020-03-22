@@ -5029,13 +5029,6 @@ struct App {
     }
     assert(false);
     return {};
-    //for (auto s : app_dag.at(consumer).get_srcs()) {
-      //if (s.name == producer) {
-        //return s;
-      //}
-    //}
-    //assert(false);
-    //return {};
   }
 
   map<string, vector<QExpr> > rectangular_schedules() {
@@ -5062,28 +5055,14 @@ struct App {
       }
     }
 
-    //for (auto f : sorted_functions) {
-      //sorted_operations.push_back(f + "_comp");
-    //}
-
     int ndims = schedule_dimension();
+    cout << "Dimensions to schedule: " << ndims << endl;
+    cout << "Computations..." << endl;
+    for (auto op : op_compute_maps) {
+      cout << tab(1) << op.first << " -> " << str(op.second) << endl;
+    }
+    assert(false);
 
-    //map<string, map<string, umap*> > pixels_needed;
-    //for (auto r : app_dag) {
-      //pixels_needed[r.first + "_comp"] = {};
-      //for (auto w : r.second.get_srcs()) {
-        //pixels_needed[r.first + "_comp"][w.name + "_comp"] = w.needed;
-      //}
-    //}
-
-    //for (auto m : compute_maps) {
-      //op_compute_maps[m.first + "_comp"] =
-        //m.second;
-    //}
-    //for (auto f : sort_functions()) {
-      //op_domains[f + "_comp"] =
-        //compute_box(f);
-    //}
     auto last_compute_needed = build_compute_deps(
         ndims,
         sorted_operations,
@@ -6859,7 +6838,7 @@ void application_tests() {
 
   //memtile_test();
 
-  //conv_app_rolled_reduce_test();
+  conv_app_rolled_reduce_test();
   seidel2d_test();
   gaussian_pyramid_app_test();
   grayscale_conversion_test();
