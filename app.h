@@ -20,6 +20,7 @@ struct FiniteRegion {
 
   vector<vector<int> > offsets;
   umap* needed;
+  Box reduce_var_ranges;
 
   FiniteRegion() {}
 
@@ -237,6 +238,10 @@ struct Result {
       const string& compute,
       const vector<Window>& args,
       const Box& reduce_ranges) {
+    for (auto a : args) {
+      assert(a.reduce_var_ranges == reduce_ranges);
+    }
+
     string update_name = provided.name + "_update_" + str(updates.size());
     updates.push_back({false, update_name, provided, accum, compute, reduce_ranges, args});
   }

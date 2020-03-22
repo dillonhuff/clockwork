@@ -4571,7 +4571,12 @@ struct App {
       Box reduce_ranges) {
 
     assert(contains_key(func, app_dag));
-    app_dag.at(func).add_reduce_update(accum, compute, args, reduce_ranges);
+    vector<Window> rargs;
+    for (auto a : args) {
+      a.reduce_var_ranges = reduce_ranges;
+      rargs.push_back(a);
+    }
+    app_dag.at(func).add_reduce_update(accum, compute, rargs, reduce_ranges);
 
   }
 

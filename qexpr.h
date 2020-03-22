@@ -933,6 +933,24 @@ struct Box {
 };
 
 static inline
+bool operator==(const Box& a, const Box& b) {
+  if (a.dimension() != b.dimension()) {
+    return false;
+  }
+  for (int i = 0; i < a.dimension(); i++) {
+    if (a.intervals.at(i).min !=
+        b.intervals.at(i).min) {
+      return false;
+    }
+    if (a.intervals.at(i).max !=
+        b.intervals.at(i).max) {
+      return false;
+    }
+  }
+  return true;
+}
+
+static inline
 std::ostream& operator<<(std::ostream& out, const Box& b) {
   vector<string> ranges;
   for (auto range : b.intervals) {
