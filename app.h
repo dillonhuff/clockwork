@@ -167,12 +167,6 @@ struct FiniteRegion {
     return times_int(stride(dim), max_result_addr)
       + times_int(reduce_var_stride(dim), reduce_max(dim))
       + max_offset(dim);
-    //if (stride(dim).is_whole()) {
-      //assert(stride(dim).denom == 1);
-      //return stride(dim).num*max_result_addr + max_offset(dim);
-    //}
-    //assert(stride(dim).num == 1);
-    //return max_result_addr / stride(dim).denom + max_offset(dim);
   }
 
   int min_addr(const int dim, const int max_result_addr) {
@@ -187,7 +181,7 @@ struct FiniteRegion {
       return v.num*max_result_addr;
     }
     assert(v.num == 1);
-    return max_result_addr / v.denom;
+    return floor(max_result_addr / (float) v.denom);
   }
   
   QAV reduce_var_stride(const int dim) const {
