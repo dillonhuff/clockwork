@@ -5087,33 +5087,18 @@ struct App {
 
         op_domains[u.name()] =
           compute_box(u.name());
+
         pixels_needed[u.name()] = {};
         for (auto w : u.get_srcs()) {
           pixels_needed[u.name()][last_update(w.name).name()] = w.needed;
         }
 
         op_compute_maps[u.name()] = compute_map(u.name());
+        //op_compute_maps[u.name()] = its_range(compute_map(u.name()), compute_domain(u.name()));
       }
     }
 
     int ndims = schedule_dimension();
-    //cout << "Dimensions to schedule: " << ndims << endl;
-    //cout << "Data needed..." << endl;
-    //for (auto u : pixels_needed) {
-      //cout << tab(1) << u.first << endl;
-      //for (auto d : u.second) {
-        //cout << tab(2) << d.first << " -> " << str(d.second) << endl;
-      //}
-    //}
-    //cout << "Computations..." << endl;
-    //for (auto op : op_compute_maps) {
-      //cout << tab(1) << op.first << " -> " << str(op.second) << endl;
-    //}
-    //cout << "Compute domains..." << endl;
-    //for (auto op : op_domains) {
-      //cout << tab(1) << op.first << " -> " << (op.second) << endl;
-    //}
-    //assert(false);
 
     auto last_compute_needed = build_compute_deps(
         ndims,

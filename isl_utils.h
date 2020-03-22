@@ -250,6 +250,7 @@ isl_union_map* its(isl_map* const m0, isl_union_map* const m1);
 isl_map* its(isl_map* const m0, isl_map* const m1);
 
 isl_union_map* its_range(isl_union_map* const m0, isl_union_set* const m1);
+isl_map* its_range(isl_map* const m0, isl_set* const m1);
 
 isl_union_set* its(isl_union_set* const m0, isl_union_set* const m1);
 

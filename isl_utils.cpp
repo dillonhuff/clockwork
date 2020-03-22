@@ -133,6 +133,7 @@ isl_union_set* to_uset(isl_set* const m) {
 }
 
 isl_stat get_maps(isl_map* m, void* user) {
+  cout << "Getting map" << endl;
   auto* vm = (vector<isl_map*>*) user;
   vm->push_back(m);
   return isl_stat_ok;
@@ -253,8 +254,15 @@ std::string str(isl_map* const m) {
 }
 
 isl_map* to_map(isl_union_map* const m) {
+  assert(m != nullptr);
+
+  cout << "Converting to map" << endl;
   vector<isl_map*> map_vec;
+  cout << "Initialized map vec" << endl;
   isl_union_map_foreach_map(m, get_maps, &map_vec);
+
+  cout << "map vec size = " << map_vec.size() << endl;
+
   if (map_vec.size() != 1) {
     std::cout << "Error: Several maps in: " << str(m) << std::endl;
   }
@@ -773,6 +781,10 @@ isl_map* its(isl_map* const m0, isl_map* const m1) {
 
 isl_union_map* its_range(isl_union_map* const m0, isl_union_set* const m1) {
   return isl_union_map_intersect_range(cpy(m0), cpy(m1));
+}
+
+isl_map* its_range(isl_map* const m0, isl_set* const m1) {
+  return isl_map_intersect_range(cpy(m0), cpy(m1));
 }
 
 isl_union_set* its(isl_union_set* const m0, isl_union_set* const m1) {

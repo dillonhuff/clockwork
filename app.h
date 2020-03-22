@@ -674,6 +674,7 @@ static inline
 QExpr extract_bound(const int i, const std::string& name, const string& max) {
   QExpr ub;
   regex cm("\\{ (.*)\\[(.*)\\] -> \\[\\((.*)\\)\\] \\}");
+  //regex cm("\\{ (.*)\\[(.*)\\] -> \\[\\((.*)\\)\\] : (.*) \\}");
   smatch match;
   auto res = regex_search(max, match, cm);
 
@@ -702,7 +703,8 @@ QExpr extract_bound(const int i, const std::string& name, const string& max) {
 }
 
 static inline
-isl_map* last_comp_needed(isl_map* pixel_to_producer,
+isl_map* last_comp_needed(
+    isl_map* pixel_to_producer,
     isl_map* pixels_needed_to_producer,
     umap* pixel_to_pixels_needed) {
 
@@ -730,6 +732,7 @@ isl_map* last_comp_needed(isl_map* pixel_to_producer,
   // TODO: Change this to be last in the schedule to support non-raster order designs
   isl_map* last_pix =
     lexmax(comps_needed);
+  cout << "got last pix" << endl;
   //cout << "last comp needed: " << str(last_pix) << endl;
 
   return last_pix;
@@ -760,7 +763,9 @@ build_compute_deps(
 
       last_compute_needed[f][arg.first] = {};
       for (int i = 0; i < schedule_dim; i++) {
+        cout << "Comps needed: " << str(comps_needed) << endl;
         auto max = dim_max(comps_needed, i);
+        cout << "dim max = " << str(max) << endl;
         QExpr ub = extract_bound(i, arg.first, str(max));
         last_compute_needed[f][arg.first].push_back(ub);
       }
@@ -836,7 +841,11 @@ schedule_dim(isl_ctx* ctx,
 }
 
 static inline
-umap* to_umap(isl_ctx* ctx, map<string, vector<QExpr> > & schedules, vector<string> sorted_functions, const string & suffix) {
+umap* to_umap(isl_ctx* ctx,
+    map<string, vector<QExpr> > & schedules,
+    vector<string> sorted_functions,
+    const string & suffix) {
+
     umap* m = rdmap(ctx, "{}");
     for (auto f : sorted_functions) {
       vector<string> sched_exprs;
