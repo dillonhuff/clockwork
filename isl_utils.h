@@ -333,3 +333,14 @@ isl_pw_aff* dim_min(isl_map* const m, const int d);
 
 isl_pw_aff* dim_max(isl_map* const m, const int d);
 
+vector<pair<isl_set*, isl_qpolynomial*> >
+get_pieces(isl_union_pw_qpolynomial* p);
+
+vector<isl_pw_qpolynomial_fold*>
+get_polynomial_folds(isl_union_pw_qpolynomial_fold* p);
+
+vector<isl_pw_qpolynomial*>
+get_polynomials(isl_union_pw_qpolynomial* p);
+
+
+map<string, string> umap_codegen_c(umap* const um);
