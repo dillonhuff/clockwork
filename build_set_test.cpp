@@ -6339,8 +6339,9 @@ void laplacian_pyramid_app_test() {
 
   lp.func2d("blended", "blend_levels", blended);
 
-  lp.realize("blended", 4, 4, 1);
-  lp.realize_naive("blended", 4, 4);
+  int blend_dims = 32;
+  lp.realize("blended", 32, 32, 1);
+  lp.realize_naive("blended", 32, 32);
 
   std::vector<std::string> naive =
     run_regression_tb("laplace_diff_2_naive");
