@@ -30,6 +30,22 @@ class AccessPattern {
 
       AccessPattern(){}
 
+      isl_set* get_domain(isl_ctx* ctx, string op_name) {
+          isl_set* new_d = isl_set_read_from_str(ctx, "{  }");
+          vector<string> var_list(var_dim-1);
+          vector<string> bd_list(var_dim-1);
+          for (auto itr: name2idx) {
+              if (itr.first == "const")
+                  continue;
+              var_list[itr.second-1] = itr.first;
+              string bd = "0 <= " + itr.first + " <= " + std::to_string(in_range[itr.second-1]-1);
+              bd_list[itr.second-1] = bd;
+          }
+          auto vars = sep_list(var_list, "[", "]", "," );
+          auto ds = sep_list(bd_list, "", "", " and ");
+          return isl_set_read_from_str(ctx, string("{ " + op_name + vars + " : " + ds + "}").c_str());
+      }
+
       void initial_access_mat(isl_map* access_map, isl_set* domain) {
           cout << "\t\tProduced: " << str(access_map) << endl;
           auto mpa = isl_pw_multi_aff_from_map(access_map);

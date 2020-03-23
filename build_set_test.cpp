@@ -2340,6 +2340,9 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
 
       buf.add_in_pt(pt_name, domains.at(op), produced_here, its(opt_sched, domains.at(op)));
       buf.add_access_pattern(pt_name, produced_here, domains.at(op));
+      auto acc_pt = buf.access_pattern.at(pt_name);
+      auto domain_from_acc_pt = acc_pt.get_domain(buf.ctx, op->name);
+      cout << "Domain retrace from access pattern: " << str(domain_from_acc_pt) << endl;
 
       vector<string> inpt = buf.get_in_ports();
       cout << "current in port name: " << endl;
@@ -3132,7 +3135,6 @@ void vec_test() {
 
   }
   cout << str(dot(produced, acc_map));
-  assert(false);
   //auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
   //cout << "Sched map: " << str(sched_opt) << endl;
   //cout << codegen_c(sched_opt) << endl;
@@ -7024,8 +7026,10 @@ void application_tests() {
 }
 
 void memory_tile_tests() {
+  vec_test();
   agg_test();
   memtile_test();
+  assert(false);
 
 }
 
@@ -7069,9 +7073,8 @@ int main(int argc, char** argv) {
     assert(false);
 
   } else if (argc == 1) {
-    vec_test();
-    application_tests();
     memory_tile_tests();
+    application_tests();
 
   } else {
     assert(false);
