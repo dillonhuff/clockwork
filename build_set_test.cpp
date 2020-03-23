@@ -3125,9 +3125,9 @@ void vec_test() {
   isl_union_map* produced;
   for (int i = 0; i < 4; i ++) {
       if (i == 0)
-          produced = to_umap(isl_map_read_from_str(prg.ctx, string("{ pass_vec[root=0,po, p_vec] -> pass[0, po,4*p_vec+"+to_string(i)+"] : 0 <=po<=8 and 0 <= p_vec <= 2 }").c_str()));
+          produced = to_umap(isl_map_read_from_str(prg.ctx, string("{ pass_vec[root=0,po, p_vec] -> pass[0, po,4*p_vec+"+to_string(i)+"] : 0 <=po<=8 and 0 <= p_vec <= 1 }").c_str()));
       else
-        produced = unn(produced, to_umap(isl_map_read_from_str(prg.ctx, string("{ pass_vec[root=0, po, p_vec] -> pass[0,po,4*p_vec+"+to_string(i)+"] : 0<= po <= 8 and 0 <= p_vec <= 2 }").c_str())));
+        produced = unn(produced, to_umap(isl_map_read_from_str(prg.ctx, string("{ pass_vec[root=0, po, p_vec] -> pass[0,po,4*p_vec+"+to_string(i)+"] : 0<= po <= 8 and 0 <= p_vec <= 1 }").c_str())));
     cout << str(produced) << endl;
 
   }
