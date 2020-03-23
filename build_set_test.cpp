@@ -2342,7 +2342,9 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       buf.add_access_pattern(pt_name, produced_here, domains.at(op));
       auto acc_pt = buf.access_pattern.at(pt_name);
       auto domain_from_acc_pt = acc_pt.get_domain(buf.ctx, op->name);
+      auto acc_map_from_acc_pt = acc_pt.get_access_map(buf.ctx, op->name, buf.name);
       cout << "Domain retrace from access pattern: " << str(domain_from_acc_pt) << endl;
+      cout << "Access map retrace from access pattern: " << str(acc_map_from_acc_pt) << endl;
 
       vector<string> inpt = buf.get_in_ports();
       cout << "current in port name: " << endl;

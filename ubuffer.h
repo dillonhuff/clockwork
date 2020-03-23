@@ -31,7 +31,6 @@ class AccessPattern {
       AccessPattern(){}
 
       isl_set* get_domain(isl_ctx* ctx, string op_name) {
-          isl_set* new_d = isl_set_read_from_str(ctx, "{  }");
           vector<string> var_list(var_dim-1);
           vector<string> bd_list(var_dim-1);
           for (auto itr: name2idx) {
@@ -44,6 +43,45 @@ class AccessPattern {
           auto vars = sep_list(var_list, "[", "]", "," );
           auto ds = sep_list(bd_list, "", "", " and ");
           return isl_set_read_from_str(ctx, string("{ " + op_name + vars + " : " + ds + "}").c_str());
+      }
+
+      isl_map* get_access_map(isl_ctx* ctx, string op_name, string buf_name) {
+          vector<string> var_list(var_dim-1);
+          vector<string> expr_list;
+          for (auto itr: name2idx) {
+              if (itr.first == "const")
+                  continue;
+              var_list[itr.second-1] = itr.first;
+          }
+          auto vars = sep_list(var_list, "[", "]", "," );
+          vector<string> nd_expr;
+          for (auto row: access_matrix) {
+              vector<string> sum_list;
+              for (auto itr = row.begin()+1; itr != row.end(); itr ++ ){
+                  int item = *itr;
+                  int cnt = itr - row.begin() - 1;
+                  if (item == 0 ) {
+                      continue;
+                  }
+                  else if(item == 1) {
+                      sum_list.push_back(var_list[cnt]);
+                  }
+                  else{
+                      sum_list.push_back(std::to_string(item) + "*" + var_list[cnt]);
+                  }
+              }
+
+              //const
+              if (sum_list.size() == 0 || (row.front() != 0)) {
+                  sum_list.push_back(std::to_string(row.front()));
+              }
+              nd_expr.push_back(sep_list(sum_list, "", "", "+"));
+          }
+          string nd_expr_str = sep_list(nd_expr, "[", "]", ", ");
+          cout << "access map expr:" << nd_expr_str << endl;
+          auto access_map = isl_map_read_from_str(ctx, string("{ " + op_name + vars + " -> " + buf_name + nd_expr_str + "}").c_str());
+          auto domain = get_domain(ctx, op_name);
+          return its(access_map, domain);
       }
 
       void initial_access_mat(isl_map* access_map, isl_set* domain) {
