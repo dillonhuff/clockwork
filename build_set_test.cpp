@@ -4759,7 +4759,7 @@ struct App {
         }
       }
     }
-    cout << "# of consumers of " << f << " = " << cons.size() << endl;
+    //cout << "# of consumers of " << f << " = " << cons.size() << endl;
     return cons;
   }
 
@@ -5139,7 +5139,7 @@ struct App {
     Update up = get_update(u);
     umap* read = rdmap(ctx, "{}");
     for (auto s : up.get_srcs()) {
-      read = dot(pixels_written(u), unn(read, s.needed));
+      read = unn(read, dot(pixels_written(u), unn(read, s.needed)));
     }
     return read;
   }
@@ -5162,6 +5162,7 @@ struct App {
     for (auto u : sort_updates()) {
       writes =
         unn(writes, to_umap(pixels_written(u)));
+      cout << "Pixels read by " << u << " = " << str(pixels_read(u)) << endl;
       reads =
         unn(reads, pixels_read(u));
       domain =
@@ -5188,7 +5189,9 @@ struct App {
 
     isl_union_map *validity =
       its(dot(writes, inv(reads)), before);
-    validity = unn(validity, rel_order);
+    cout << "validity: " << str(validity) << endl;
+    //assert(false);
+    //validity = unn(validity, rel_order);
 
     isl_union_map *proximity =
       cpy(validity);
@@ -6246,7 +6249,7 @@ void gaussian_pyramid_app_test() {
   //cout << "Optimized: " << optimized << endl;
   assert(naive == optimized);
 
-  assert(false);
+  //assert(false);
 }
 
 App jacobi2d(const std::string output_name) {
@@ -6911,6 +6914,8 @@ void application_tests() {
   //memtile_test();
 
   //conv_app_rolled_reduce_test();
+  
+  mismatched_stencil_test();
   denoise2d_test();
   gaussian_pyramid_app_test();
   grayscale_conversion_test();
@@ -6927,7 +6932,6 @@ void application_tests() {
   parse_denoise3d_test();
 
   reduce_1d_test();
-  mismatched_stencil_test();
 
   upsample_reduce_test();
 
