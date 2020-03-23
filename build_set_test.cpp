@@ -4669,6 +4669,16 @@ struct App {
   string func2d(const std::string& name,
       const string& compute,
       const string& arg,
+      const vector<QAV>& strides,
+      const vector<vector<int> >& offsets) {
+    Window w{arg, strides, offsets};
+
+    return func2d(name, compute, {w});
+  }
+
+  string func2d(const std::string& name,
+      const string& compute,
+      const string& arg,
       const vector<int>& strides,
       const vector<vector<int> >& offsets) {
 
@@ -6219,6 +6229,44 @@ void conv_app_rolled_reduce_test() {
   //assert(false);
 }
 
+void laplacian_pyramid_app_test() {
+  App lp;
+  lp.func2d("in_off_chip");
+  lp.func2d("in", "id", pt("in_off_chip"));
+
+  int n_levels = 4;
+  string last = "in";
+  for (int l = 0; l < n_levels; l++) {
+    string next_blur = "gauss_blur_" + str(l);
+    string next_out = "gauss_ds_" + str(l);
+
+    vector<vector<int > > offsets;
+    for (int r = 0; r < 3; r++) {
+      for (int c = 0; c < 3; c++) {
+        offsets.push_back({c, r});
+      }
+    }
+
+    Window blur_window{last, {qconst(1), qconst(1)}, offsets};
+    lp.func2d(next_blur, "reduce_gauss", blur_window);
+    lp.func2d(next_out, "id", next_blur, {qconst(2), qconst(2)}, {{0, 0}});
+ 
+    last = next_out;
+  }
+
+  lp.realize(last, 32, 32, 1);
+  lp.realize_naive(last, 32, 32);
+
+  std::vector<std::string> naive =
+    run_regression_tb("gauss_ds_3_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb("gauss_ds_3_opt");
+  assert(naive == optimized);
+
+  assert(false);
+
+}
+
 void gaussian_pyramid_app_test() {
   App gp;
 
@@ -6921,7 +6969,8 @@ void application_tests() {
   //memtile_test();
 
   //conv_app_rolled_reduce_test();
-  
+
+  laplacian_pyramid_app_test();
   denoise2d_test();
   mismatched_stencil_test();
   gaussian_pyramid_app_test();
