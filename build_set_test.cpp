@@ -4759,6 +4759,19 @@ struct App {
     return {};
   }
 
+  vector<pair<string, Window> > consumer_windows(const string& f) const {
+    vector<pair<string, Window> > cons;
+    for (auto other_func : app_dag) {
+      for (auto d : other_func.second.get_srcs()) {
+        if (d.name == f) {
+          cons.push_back({other_func.first, d});
+          break;
+        }
+      }
+    }
+    return cons;
+  }
+
   set<string> consumers(const string& f) const {
     set<string> cons;
     for (auto other_func : app_dag) {
@@ -4974,32 +4987,27 @@ struct App {
 
     sbox = sbox.pad_range_to_nearest_multiple(unroll_factor);
 
+    vector<string> buffers = sort_functions();
+    assert(buffers.size() > 0);
+
+    reverse(buffers);
+
+    assert(buffers.at(0) == name);
     string n = name;
     domain_boxes = {};
     domain_boxes[n] = sbox;
 
-    set<string> search{n};
-    set<string> considered;
-    while (search.size() > 0) {
-      string next = pick(search);
-      search.erase(next);
-      considered.insert(next);
+    for (int i = 1; i < (int) buffers.size(); i++) {
+      string next = buffers.at(i);
+      cout << next << " has consumers " << endl;
+      map<string, Box> needed_windows;
+      for (auto consumer_data : consumer_windows(next)) {
+        string consumer = consumer_data.first;
+        Window win = consumer_data.second;
 
-      cout << "Next = " << next << endl;
-      assert(contains_key(next, app_dag));
-      assert(contains_key(next, domain_boxes));
+        Box consumer_domain =
+          map_find(consumer, domain_boxes);
 
-      Box consumer_domain =
-        map_find(next, domain_boxes);
-
-      cout << "Adding " << next << " to domain boxes" << endl;
-      for (auto inputs : producers(next)) {
-        cout << "Getting producers..." << endl;
-        Window win = inputs;
-
-        if (!contains_key(inputs.name, domain_boxes)) {
-          domain_boxes[inputs.name] = Box(max_dims);
-        }
         Box in_box;
         int dim = 0;
         for (auto range : consumer_domain.intervals) {
@@ -5012,24 +5020,74 @@ struct App {
           in_box.intervals.push_back({min_input_addr, max_input_addr});
         }
 
-        cout << tab(1) << "Data: " << inputs.name << " to " << next << endl;
-        domain_boxes[inputs.name] = unn(domain_boxes[inputs.name], in_box);
-        domain_boxes[inputs.name] = domain_boxes[inputs.name].pad_range_to_nearest_multiple(unroll_factor);
-
-        cout << tab(1) << "Added " << next << " domain to boxes" << endl;
-        assert(contains_key(next, domain_boxes));
-
-        if (!elem(inputs.name, considered)) {
-          search.insert(inputs.name);
-        } else {
-          cout << tab(1) << "Ignoring " << inputs.name << ", already considered" << endl;
-        }
+        cout << tab(1) << consumer << " needs: " << in_box << endl;
+        needed_windows[consumer] = in_box;
       }
+      Box final_dom(max_dims);
+      for (auto nn : needed_windows) {
+        final_dom = unn(final_dom, nn.second);
+      }
+      final_dom = final_dom.pad_range_to_nearest_multiple(unroll_factor);
 
-      cout << "Done with " << next << endl;
+      domain_boxes[next] = final_dom;
     }
 
-    cout << "Data domains.." << endl;
+    //string n = name;
+    //domain_boxes = {};
+    //domain_boxes[n] = sbox;
+
+    //set<string> search{n};
+    //set<string> considered;
+    //while (search.size() > 0) {
+      //string next = pick(search);
+      //search.erase(next);
+      //considered.insert(next);
+
+      //cout << "Next = " << next << endl;
+      //assert(contains_key(next, app_dag));
+      //assert(contains_key(next, domain_boxes));
+
+      //Box consumer_domain =
+        //map_find(next, domain_boxes);
+
+      //cout << "Adding " << next << " to domain boxes" << endl;
+      //for (auto inputs : producers(next)) {
+        //cout << "Getting producers..." << endl;
+        //Window win = inputs;
+
+        //if (!contains_key(inputs.name, domain_boxes)) {
+          //domain_boxes[inputs.name] = Box(max_dims);
+        //}
+        //Box in_box;
+        //int dim = 0;
+        //for (auto range : consumer_domain.intervals) {
+          //int min_result_addr = range.min;
+          //int max_result_addr = range.max;
+
+          //int min_input_addr = win.min_addr(dim, min_result_addr);
+          //int max_input_addr = win.max_addr(dim, max_result_addr);
+          //dim++;
+          //in_box.intervals.push_back({min_input_addr, max_input_addr});
+        //}
+
+        //cout << tab(1) << "Data: " << inputs.name << " to " << next << endl;
+        //domain_boxes[inputs.name] = unn(domain_boxes[inputs.name], in_box);
+        //domain_boxes[inputs.name] = domain_boxes[inputs.name].pad_range_to_nearest_multiple(unroll_factor);
+
+        //cout << tab(1) << "Added " << next << " domain to boxes" << endl;
+        //assert(contains_key(next, domain_boxes));
+
+        //if (!elem(inputs.name, considered)) {
+          //search.insert(inputs.name);
+        //} else {
+          //cout << tab(1) << "Ignoring " << inputs.name << ", already considered" << endl;
+        //}
+      //}
+
+      //cout << "Done with " << next << endl;
+    //}
+
+    cout << domain_boxes.size() << " data domains.." << endl;
     for (auto d : domain_boxes) {
       cout << d.first << " = " << d.second << endl;
     }
@@ -6269,9 +6327,14 @@ void laplacian_pyramid_app_test() {
   }
 
   vector<Window> blended;
+  int level_num = 0;
   for (auto l : laplace_levels) {
     Window lw = pt(l);
-    blended.push_back(lw);
+    int factor = pow(2, level_num);
+    string blend_us = "blend_us_" + l;
+    lp.func2d(blend_us, "id", l, {qconst(1, factor), qconst(1, factor)}, {{0, 0}});
+    blended.push_back(pt(blend_us));
+    level_num++;
   }
 
   lp.func2d("blended", "blend_levels", blended);
