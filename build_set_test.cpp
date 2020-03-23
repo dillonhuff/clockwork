@@ -5092,7 +5092,7 @@ struct App {
       cout << d.first << " = " << d.second << endl;
     }
 
-    assert(false);
+    //assert(false);
   }
 
 
@@ -6344,9 +6344,9 @@ void laplacian_pyramid_app_test() {
   lp.realize_naive("blended", 32, 32);
 
   std::vector<std::string> naive =
-    run_regression_tb("laplace_diff_2_naive");
+    run_regression_tb("blended_naive");
   std::vector<std::string> optimized =
-    run_regression_tb("laplace_diff_2_opt");
+    run_regression_tb("blended_opt");
   assert(naive == optimized);
 
   assert(false);
