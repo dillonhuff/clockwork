@@ -526,7 +526,7 @@ void generate_stack_cache(CodegenOptions& options,
 }
 
 stack_bank compute_stack_bank_info(
-    const std::string& inpt, 
+    const std::string& inpt,
     const std::string& outpt,
     UBuffer& buf) {
 
@@ -554,7 +554,7 @@ stack_bank compute_stack_bank_info(
     }
   }
 
- 
+
   string pt_type_string = buf.port_type_string();
   string name = inpt + "_to_" + outpt;
   cout << "inpt  = " << inpt << endl;
@@ -566,8 +566,8 @@ stack_bank compute_stack_bank_info(
 
 
 void generate_stack_bank(CodegenOptions& options,
-    std::ostream& out, 
-    const std::string& inpt, 
+    std::ostream& out,
+    const std::string& inpt,
     const std::string& outpt,
     UBuffer& buf) {
 
@@ -3091,6 +3091,61 @@ void agg_test() {
   //assert(false);
 }
 
+
+void vec_test() {
+
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "vec";
+  prg.add_input("in");
+  prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+
+  auto p = prg.add_nest("po", 0, 8, "pi", 0, 8);
+  auto write = p->add_op("pass");
+  write->add_load("in", "po, pi");
+  write->add_store("out", "po, pi");
+
+  //auto sched = prg.unoptimized_schedule();
+  //cout << codegen_c(sched) << endl;
+
+  auto sched_opt = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
+
+  isl_union_map* acc_map;
+  auto buffers = build_buffers(prg);
+  for (auto buf : buffers){
+     for (auto pt: buf.second.get_out_ports()) {
+         acc_map = buf.second.access_map.at(pt);
+         cout << str(acc_map) << endl;
+     }
+
+  }
+  isl_union_map* produced;
+  for (int i = 0; i < 4; i ++) {
+      if (i == 0)
+          produced = to_umap(isl_map_read_from_str(prg.ctx, string("{ pass_vec[root=0,po, p_vec] -> pass[0, po,4*p_vec+"+to_string(i)+"] : 0 <=po<=8 and 0 <= p_vec <= 2 }").c_str()));
+      else
+        produced = unn(produced, to_umap(isl_map_read_from_str(prg.ctx, string("{ pass_vec[root=0, po, p_vec] -> pass[0,po,4*p_vec+"+to_string(i)+"] : 0<= po <= 8 and 0 <= p_vec <= 2 }").c_str())));
+    cout << str(produced) << endl;
+
+  }
+  cout << str(dot(produced, acc_map));
+  assert(false);
+  //auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
+  //cout << "Sched map: " << str(sched_opt) << endl;
+  //cout << codegen_c(sched_opt) << endl;
+  //assert(false);
+  //aha_talk_print_info(prg);
+  //hardcode some configuration registers
+  //memtile_config memtile;
+  //auto buffers = build_buffers(prg, sched_opt);
+  //memtile.extract_config(buffers);
+  //memtile.emit_config_file_csv("lake_memtile_config");
+  //assert(false);
+}
+
 std::vector<std::string> run_regression_tb(const std::string& name) {
   int res = system(string("g++ -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
   assert(res == 0);
@@ -4627,7 +4682,7 @@ struct App {
   string func2d(const std::string& name) {
     return add_func(name, "", 2, {});
   }
-  
+
   string func3d(const std::string& name,
       const string& compute,
       const Window& window) {
@@ -4902,7 +4957,7 @@ struct App {
   void fill_data_domain(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     fill_data_domain(name, {d0, d1}, unroll_factor);
   }
-  
+
   int schedule_dimension() const {
     int max_dims = -1;
     for (auto f : sort_functions()) {
@@ -5139,7 +5194,7 @@ struct App {
   }
 
   umap* schedule_naive() {
-    
+
     map<string, vector<QExpr> > rect_schedules =
       rectangular_schedules();
 
@@ -5589,7 +5644,7 @@ struct App {
       ////scheds[s.first + "_comp"] = s.second;
       //scheds[s.first] = s.second;
     //}
-    
+
     map<string, Box> compute_domains;
     vector<string> ops;
     for (auto u : sort_updates()) {
@@ -6279,7 +6334,7 @@ void upsample_stencil_2d_test() {
 
   us.realize("upsample_stencil", 32, 32, 1);
   us.realize_naive("upsample_stencil", 32, 32);
-  
+
   std::vector<std::string> optimized =
     run_regression_tb("upsample_stencil_opt");
 
@@ -6302,7 +6357,7 @@ void grayscale_conversion_test() {
   gs.func3d("Img", "id", pt3("Img_off"));
 
   Window inwindow{"Img", {{qconst(1), qconst(1), qconst(0)}}, {{0, 0, 0}, {0, 0, 1}, {0, 0, 2}}};
-  gs.func2d("gray", "avg", inwindow); 
+  gs.func2d("gray", "avg", inwindow);
 
   gs.realize_naive("gray", 32, 32);
   gs.realize("gray", 32, 32, 1);
@@ -6333,7 +6388,7 @@ void upsample_stencil_1d_test() {
 
   us.realize("upsample_stencil_1d", 32, 1, 1);
   us.realize_naive("upsample_stencil_1d", 32, 1);
-  
+
   std::vector<std::string> optimized =
     run_regression_tb("upsample_stencil_1d_opt");
 
@@ -7014,7 +7069,7 @@ int main(int argc, char** argv) {
     assert(false);
 
   } else if (argc == 1) {
-    
+    vec_test();
     application_tests();
     memory_tile_tests();
 
