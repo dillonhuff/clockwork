@@ -5191,7 +5191,7 @@ struct App {
       its(dot(writes, inv(reads)), before);
     cout << "validity: " << str(validity) << endl;
     //assert(false);
-    //validity = unn(validity, rel_order);
+    validity = unn(validity, rel_order);
 
     isl_union_map *proximity =
       cpy(validity);
@@ -5636,7 +5636,7 @@ struct App {
 
     CodegenOptions options;
     options.internal = true;
-    options.use_custom_code_string = true;
+    //options.use_custom_code_string = true;
     options.code_string = cgn;
 
     prog prg;
@@ -6406,6 +6406,13 @@ void denoise2d_test() {
   std::vector<std::string> naive =
     run_regression_tb("denoise2d_naive");
 
+  assert(optimized.size() == naive.size());
+  for (size_t i = 0; i < optimized.size(); i++) {
+    cout << tab(1) << "i = " << i << ", opt = " << optimized.at(i) << ", naive = " << naive.at(i) << endl;
+    assert(optimized.at(i) == naive.at(i));
+  }
+
+
   assert(naive == optimized);
   //assert(false);
 }
@@ -6915,8 +6922,8 @@ void application_tests() {
 
   //conv_app_rolled_reduce_test();
   
-  mismatched_stencil_test();
   denoise2d_test();
+  mismatched_stencil_test();
   gaussian_pyramid_app_test();
   grayscale_conversion_test();
   jacobi_2d_app_test();
