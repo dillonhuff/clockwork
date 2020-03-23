@@ -965,8 +965,8 @@ std::ostream& operator<<(std::ostream& out, const Box& b) {
 
 static inline
 Box unn(const Box& l, const Box& r) {
-  cout << "l intervals = " << l.intervals.size() << endl;
-  cout << "r intervals = " << r.intervals.size() << endl;
+  //cout << "l intervals = " << l.intervals.size() << endl;
+  //cout << "r intervals = " << r.intervals.size() << endl;
 
   assert(l.intervals.size() == r.intervals.size());
   Box un;
@@ -974,7 +974,7 @@ Box unn(const Box& l, const Box& r) {
     un.intervals.push_back({min(l.intervals.at(dim).min, r.intervals.at(dim).min), max(l.intervals.at(dim).max, r.intervals.at(dim).max)});
   }
 
-  cout << "Got union" << endl;
+  //cout << "Got union" << endl;
   return un;
 }
 

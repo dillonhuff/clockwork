@@ -4951,19 +4951,7 @@ struct App {
     return max_dims;
   }
 
-  void canonicalize_reduce_ranges() {
-    // TODO: Make this something we check
-    int max_reduce_dimension = 2;
-    for (auto& f : app_dag) {
-      auto& res = f.second;
-      for (auto& u : res.updates) {
-        u.pad_reduce_dimension(max_reduce_dimension);
-      }
-    }
-  }
-
   void fill_data_domain(const std::string& name, const vector<int>& dims, const int unroll_factor) {
-    //canonicalize_reduce_ranges();
 
     Box sbox;
     int max_dims = data_dimension();
@@ -5024,15 +5012,17 @@ struct App {
           in_box.intervals.push_back({min_input_addr, max_input_addr});
         }
 
-        cout << "Data: " << inputs.name << " to " << next << endl;
+        cout << tab(1) << "Data: " << inputs.name << " to " << next << endl;
         domain_boxes[inputs.name] = unn(domain_boxes[inputs.name], in_box);
         domain_boxes[inputs.name] = domain_boxes[inputs.name].pad_range_to_nearest_multiple(unroll_factor);
 
-        cout << "Added " << next << " domain to boxes" << endl;
+        cout << tab(1) << "Added " << next << " domain to boxes" << endl;
         assert(contains_key(next, domain_boxes));
 
         if (!elem(inputs.name, considered)) {
           search.insert(inputs.name);
+        } else {
+          cout << tab(1) << "Ignoring " << inputs.name << ", already considered" << endl;
         }
       }
 
@@ -5044,7 +5034,7 @@ struct App {
       cout << d.first << " = " << d.second << endl;
     }
 
-    //assert(false);
+    assert(false);
   }
 
 
@@ -6236,7 +6226,9 @@ void laplacian_pyramid_app_test() {
 
   int n_levels = 4;
   string last = "in";
-  for (int l = 0; l < n_levels; l++) {
+  vector<string> gauss_levels;
+  gauss_levels.push_back("in");
+  for (int l = 1; l < n_levels + 1; l++) {
     string next_blur = "gauss_blur_" + str(l);
     string next_out = "gauss_ds_" + str(l);
 
@@ -6252,15 +6244,45 @@ void laplacian_pyramid_app_test() {
     lp.func2d(next_out, "id", next_blur, {qconst(2), qconst(2)}, {{0, 0}});
  
     last = next_out;
+    gauss_levels.push_back(last);
   }
 
-  lp.realize(last, 32, 32, 1);
-  lp.realize_naive(last, 32, 32);
+  assert(gauss_levels.size() == n_levels + 1);
+
+  vector<string> laplace_levels;
+  for (int l = 0; l < n_levels; l++) {
+    string larger_image = gauss_levels.at(l);
+    string smaller_image = gauss_levels.at(l + 1);
+
+    string next_us = "laplace_us_" + str(l);
+    string next_out = "laplace_diff_" + str(l);
+   
+    // Upsample the image
+    lp.func2d(next_us, "id", smaller_image, {qconst(1, 2), qconst(1, 2)}, {{0, 0}});
+
+    Window ad{larger_image, {qconst(1), qconst(1)}, {{0, 0}}};
+    Window ud{next_us, {qconst(1), qconst(1)}, {{0, 0}}};
+    lp.func2d(next_out, "diff", {ad, ud});
+ 
+    last = next_out;
+    laplace_levels.push_back(last);
+  }
+
+  vector<Window> blended;
+  for (auto l : laplace_levels) {
+    Window lw = pt(l);
+    blended.push_back(lw);
+  }
+
+  lp.func2d("blended", "blend_levels", blended);
+
+  lp.realize("blended", 4, 4, 1);
+  lp.realize_naive("blended", 4, 4);
 
   std::vector<std::string> naive =
-    run_regression_tb("gauss_ds_3_naive");
+    run_regression_tb("laplace_diff_2_naive");
   std::vector<std::string> optimized =
-    run_regression_tb("gauss_ds_3_opt");
+    run_regression_tb("laplace_diff_2_opt");
   assert(naive == optimized);
 
   assert(false);
