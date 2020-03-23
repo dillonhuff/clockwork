@@ -2194,7 +2194,6 @@ struct prog {
     for (auto op : schedules()) {
       auto op_sched = to_umap(op.second);
       auto op_order = lex_lt(op_sched, op_sched);
-      //validity = unn(validity, op_order);
       rel_order = unn(rel_order, op_order);
     }
 
@@ -4764,6 +4763,19 @@ struct App {
     return cons;
   }
 
+  Update get_update(const std::string& u) const {
+    for (auto f : sort_functions()) {
+      for (auto other : app_dag.at(f).updates) {
+        if (other.name() == u) {
+          return other;
+        }
+      }
+    }
+    cout << "Error: No update named " << u << endl;
+    assert(false);
+    return {};
+  }
+
   vector<string> sort_updates() const {
     vector<string> updates;
     for (auto f : sort_functions()) {
@@ -5123,11 +5135,77 @@ struct App {
     return schedules;
   }
 
+  umap* pixels_read(const std::string& u) {
+    Update up = get_update(u);
+    umap* read = rdmap(ctx, "{}");
+    for (auto s : up.get_srcs()) {
+      read = dot(pixels_written(u), unn(read, s.needed));
+    }
+    return read;
+  }
+
+  isl_map* pixels_written(const std::string& u) {
+    return inv(compute_map(u));
+  }
+
+  umap* schedule_isl() {
+    isl_options_set_schedule_algorithm(ctx, ISL_SCHEDULE_ALGORITHM_ISL);
+
+    umap* naive_sched = schedule_naive();
+    auto before = lex_lt(naive_sched, naive_sched);
+
+    cout << "Naive sched = " << str(naive_sched) << endl;
+    umap* writes = rdmap(ctx, "{}");
+    umap* reads = rdmap(ctx, "{}");
+    uset* domain = isl_union_set_read_from_str(ctx, "{}");
+
+    for (auto u : sort_updates()) {
+      writes =
+        unn(writes, to_umap(pixels_written(u)));
+      reads =
+        unn(reads, pixels_read(u));
+      domain =
+        unn(domain, to_uset(compute_domain(u)));
+    }
+
+    assert(domain != nullptr);
+    assert(writes != nullptr);
+    assert(reads != nullptr);
+
+    cout << "reads  :" << str(reads) << endl;
+    cout << "writes :" << str(writes) << endl;
+
+    // Relative order of accesses for each op must be the same
+    umap* rel_order = isl_union_map_read_from_str(ctx, "{}");
+    for (auto update : sort_updates()) {
+      auto op_sched = its(naive_sched, compute_domain(update));
+      auto op_order = lex_lt(op_sched, op_sched);
+      rel_order = unn(rel_order, op_order);
+    }
+
+    cout << "rel order: " << str(rel_order) << endl;
+    //assert(false);
+
+    isl_union_map *validity =
+      its(dot(writes, inv(reads)), before);
+    validity = unn(validity, rel_order);
+
+    isl_union_map *proximity =
+      cpy(validity);
+
+    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+    auto schedmap = its(isl_schedule_get_map(sched), domain);
+
+    assert(schedmap != nullptr);
+    cout << "Final isl schedule: " << str(schedmap) << endl;
+    
+    isl_options_set_schedule_algorithm(ctx, ISL_SCHEDULE_ALGORITHM_ISL);
+
+    return schedmap;
+  }
+
   umap* schedule_naive() {
     
-    //map<string, vector<QExpr> > rect_schedules =
-      //rectangular_schedules();
-
     map<string, vector<QExpr> > schedules;
     int pos = 0;
     for (auto f : sort_updates()) {
@@ -5137,11 +5215,6 @@ struct App {
       }
       pos++;
     }
-    //for (auto& s : schedules) {
-      //for (auto v : rect_schedules.at(s.first)) {
-        //s.second.push_back(v);
-      //}
-    //}
 
     // TODO: Replace with umap
     umap* m = rdmap(ctx, "{}");
@@ -5353,7 +5426,8 @@ struct App {
     fill_data_domain(name, d0, d1, unroll_factor);
     fill_compute_domain(unroll_factor);
 
-    umap* m = schedule_naive();
+    umap* m = schedule_isl();
+      //schedule_naive();
 
     cout << "Schedule: " << str(m) << endl;
 
@@ -6147,7 +6221,7 @@ void gaussian_pyramid_app_test() {
 
   gp.func2d("in_off_chip");
   gp.func2d("in", "id", pt("in_off_chip"));
-  int n_levels = 3;
+  int n_levels = 4;
   string last = "in";
   for (int l = 0; l < n_levels; l++) {
     string next = "level_" + to_string(l);
@@ -6172,7 +6246,7 @@ void gaussian_pyramid_app_test() {
   //cout << "Optimized: " << optimized << endl;
   assert(naive == optimized);
 
-  //assert(false);
+  assert(false);
 }
 
 App jacobi2d(const std::string output_name) {
@@ -6837,10 +6911,11 @@ void application_tests() {
   //memtile_test();
 
   //conv_app_rolled_reduce_test();
-  seidel2d_test();
+  denoise2d_test();
   gaussian_pyramid_app_test();
   grayscale_conversion_test();
   jacobi_2d_app_test();
+  seidel2d_test();
 
   upsample_stencil_1d_test();
   upsample_stencil_2d_test();
@@ -6852,7 +6927,6 @@ void application_tests() {
   parse_denoise3d_test();
 
   reduce_1d_test();
-  denoise2d_test();
   mismatched_stencil_test();
 
   upsample_reduce_test();
