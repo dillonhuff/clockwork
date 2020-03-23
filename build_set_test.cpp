@@ -5636,7 +5636,7 @@ struct App {
 
     CodegenOptions options;
     options.internal = true;
-    //options.use_custom_code_string = true;
+    options.use_custom_code_string = true;
     options.code_string = cgn;
 
     prog prg;
