@@ -6395,40 +6395,41 @@ void exposure_fusion() {
   lp.func2d("dark_weights_normed", "f_divide", pt("dark_weights"), pt("weight_sums"));
 
 
-  string image = 
-    lp.func2d("merged", "merge_exposures", {pt("bright"), pt("dark"), pt("bright_weights_normed"), pt("dark_weights_normed")});
-  lp.func2d("synthetic_exposure_fusion", "id", pt(image));
-
-  //// Create weight pyramids
-  //auto dark_weight_pyramid = gauss_pyramid(4, "dark_weights_normed", lp);
-  //auto bright_weight_pyramid = gauss_pyramid(4, "bright_weights_normed", lp);
-
-  //auto dark_pyramid = laplace_pyramid(4, "dark", lp);
-  //auto bright_pyramid = laplace_pyramid(4, "bright", lp);
-
-  //// Merge weighted pyramids
-  //vector<string> merged_images;
-  //for (int i = 0; i < dark_pyramid.size(); i++) {
-    //string fused = "fused_level_" + str(i);
-    //lp.func2d(fused, "merge_exposures", {pt(bright_pyramid.at(i)),
-        //pt(dark_pyramid.at(i)), pt(bright_weight_pyramid.at(i)), pt(dark_weight_pyramid.at(i))});
-    //merged_images.push_back(fused);
-  //}
-
-  //// Collapse the blended LP into a single design
-  //assert(merged_images.size() == 4);
-  //string image = merged_images.back();
-  //for (int i = merged_images.size() - 2; i >= 0; i--) {
-    //string merged_level = "final_merged_" + str(i);
-    //lp.func2d(merged_level, "add", {upsample(2, image), pt(merged_images.at(i))});
-    //image = merged_level;
-  //}
-
+  // This works on camera pipeline
+  //string image = 
+    //lp.func2d("merged", "merge_exposures", {pt("bright"), pt("dark"), pt("bright_weights_normed"), pt("dark_weights_normed")});
   //lp.func2d("synthetic_exposure_fusion", "id", pt(image));
+
+  // Create weight pyramids
+  auto dark_weight_pyramid = gauss_pyramid(4, "dark_weights_normed", lp);
+  auto bright_weight_pyramid = gauss_pyramid(4, "bright_weights_normed", lp);
+
+  auto dark_pyramid = laplace_pyramid(4, "dark", lp);
+  auto bright_pyramid = laplace_pyramid(4, "bright", lp);
+
+  // Merge weighted pyramids
+  vector<string> merged_images;
+  for (int i = 0; i < dark_pyramid.size(); i++) {
+    string fused = "fused_level_" + str(i);
+    lp.func2d(fused, "merge_exposures", {pt(bright_pyramid.at(i)),
+        pt(dark_pyramid.at(i)), pt(bright_weight_pyramid.at(i)), pt(dark_weight_pyramid.at(i))});
+    merged_images.push_back(fused);
+  }
+
+  // Collapse the blended LP into a single design
+  assert(merged_images.size() == 4);
+  string image = merged_images.back();
+  for (int i = merged_images.size() - 2; i >= 0; i--) {
+    string merged_level = "final_merged_" + str(i);
+    lp.func2d(merged_level, "add", {upsample(2, image), pt(merged_images.at(i))});
+    image = merged_level;
+  }
+
+  lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
   //lp.func2d("synthetic_exposure_fusion", "id", pt("in"));
   //lp.realize("synthetic_exposure_fusion", 1250, 1250, 1);
-  lp.realize_naive("synthetic_exposure_fusion", 1250, 1250);
+  lp.realize_naive("pyramid_synthetic_exposure_fusion", 1250, 1250);
 
   assert(false);
 }
