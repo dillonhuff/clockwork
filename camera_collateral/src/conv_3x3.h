@@ -75,7 +75,10 @@ int max_zero(const int& val) {
 template<typename T>
 static inline
 T merge_exposures(T& bright, T& dark, T& bw, T& dw) {
-  return (bw*bright) + (dw*dark);
+  //cout << "bw = " << bw << endl;
+  //cout << "dw = " << dw << endl;
+  //cout << "bright = " << bright << endl;
+  return ((bw*bright) + (dw*dark)) / 255;
 }
 
 template<typename T>
@@ -87,7 +90,11 @@ T scale_exposure(T& src) {
 template<typename T>
 static inline
 T exposure_weight(T& src) {
-  return 2.0*src;
+  return 125;
+  //float f = ((float) src) / 255.0;
+  //float w = (float) exp(-1*(pow(f - 0.5, 2) / (2*pow(0.2, 2))));
+  //float nw = 255.0f * w;
+  //return (int) nw;
 }
 
 template<typename T>

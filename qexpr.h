@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "utils.h"
+#include "isl_utils.h"
 
 struct QAV {
   bool is_num;
@@ -26,7 +27,7 @@ struct QAV {
     return num;
   }
 
-  bool is_whole() {
+  bool is_whole() const {
     return is_num && denom == 1;
   }
 
@@ -48,6 +49,7 @@ struct QAV {
   }
 };
 
+static inline
 bool operator==(const QAV& l, const QAV& r) {
   if (l.is_num != r.is_num) {
     return false;
@@ -60,6 +62,7 @@ bool operator==(const QAV& l, const QAV& r) {
   return l.name == r.name;
 }
 
+static inline
 std::ostream& operator<<(std::ostream& out, const QAV& c) {
   if (c.is_num) {
     assert(c.denom != 0);
@@ -74,35 +77,45 @@ std::ostream& operator<<(std::ostream& out, const QAV& c) {
   return out;
 }
 
+static inline
 std::string to_string(const QAV& q) {
   ostringstream ss;
   ss << q;
   return ss.str();
 }
 
+static inline
 QAV qconst(const int& v, const int& d) {
   assert(v == 1 || d == 1);
   return {true, "", v, d};
 }
 
+static inline
 QAV times(const int s, const QAV& v) {
   assert(v.is_num);
   return qconst(s * v.num, v.denom);
 }
-
+static inline
 QAV qconst(const int& v) {
   return {true, "", v, 1};
 }
-
+static inline
 QAV qvar(const std::string& v) {
   return {false, v};
 }
 
 struct QTerm;
+static inline
 std::ostream& operator<<(std::ostream& out, const QTerm& c);
 
 struct QTerm {
   vector<QAV> vals;
+
+  void move_constants_to_front() {
+    sort(begin(vals), end(vals), [](const QAV& a, const QAV& b) {
+        return a.is_num && !b.is_num;
+        });
+  }
 
   void fold_ints() {
     vector<QAV> non_ints;
@@ -258,6 +271,7 @@ struct QTerm {
 
 };
 
+static inline
 std::ostream& operator<<(std::ostream& out, const QTerm& c) {
   assert(c.vals.size() > 0);
 
@@ -276,34 +290,42 @@ std::ostream& operator<<(std::ostream& out, const QTerm& c) {
   return out;
 }
 
+static inline
 QTerm qterm(const QAV& r) {
   return QTerm{{qconst(1), r}};
 }
 
+static inline
 QTerm qterm(const string& r) {
   return qterm(qvar(r));
 }
 
+static inline
 QTerm qterm(const int& r) {
   return qterm(qconst(r));
 }
 
+static inline
 QTerm qterm(const QAV& l, const QAV& r) {
   return {{l, r}};
 }
 
+static inline
 QTerm qterm(const int& l, const QAV& r) {
   return {{qconst(l), r}};
 }
 
+static inline
 QTerm qterm(const int& l, const string& r) {
   return {{qconst(l), qvar(r)}};
 }
 
+static inline
 QTerm qterm(const QAV& a, const QAV& l, const QAV& r) {
   return {{a, l, r}};
 }
 
+static inline
 QTerm times(const int s, const QTerm& v) {
   QTerm t = v;
   t.vals.push_back(qconst(s));
@@ -312,6 +334,8 @@ QTerm times(const int s, const QTerm& v) {
 }
 
 struct QExpr;
+
+static inline
 std::ostream& operator<<(std::ostream& out, const QExpr& c);
 
 struct QExpr {
@@ -456,6 +480,7 @@ struct QExpr {
   }
 };
 
+static inline
 std::ostream& operator<<(std::ostream& out, const QExpr& c) {
   vector<string> termstrings;
   for (auto t : c.terms) {
@@ -467,48 +492,60 @@ std::ostream& operator<<(std::ostream& out, const QExpr& c) {
   return out;
 }
 
+static inline
 QExpr qexpr(const int v) {
   return QExpr{{qterm(qconst(v))}};
 }
 
+static inline
 QExpr qexpr(const string& r) {
   return QExpr{{qterm(qvar(r))}};
 }
 
+static inline
 QExpr qexpr(const QAV& v) {
   return QExpr{{qterm(v)}};
 }
 
+static inline
 QExpr qexpr(const QTerm& l) {
   return QExpr{{l}};
 }
 
+static inline
 QExpr qexpr(const QTerm& l, const QAV& r) {
   return QExpr{{l, qterm(r)}};
 }
 
+static inline
 QExpr qexpr(const QAV& l, const QAV& r) {
   return QExpr{{qterm(l), qterm(r)}};
 }
 
+static inline
 QExpr qexpr(const QAV& l, const QTerm& r) {
   return QExpr{{qterm(l), r}};
 }
 
+static inline
 QExpr qexpr(const QTerm& l, const int r) {
   return QExpr{{l, qterm(r)}};
 }
 
+static inline
 QExpr qexpr(const QTerm& l, const QTerm& r) {
   return QExpr{{l, r}};
 }
 
+static inline
 QExpr qexpr(const QTerm& a, const QTerm& l, const QTerm& r) {
   return QExpr{{a, l, r}};
 }
 
+static inline
 string isl_str(QTerm& v) {
   v.simplify();
+  v.move_constants_to_front();
 
   vector<string> tstrings;
   vector<string> divs;
@@ -534,6 +571,7 @@ string isl_str(QTerm& v) {
   //return sep_list(cfs, "", "", " / ");
 }
 
+static inline
 string isl_str(QExpr& v) {
   vector<string> tstrings;
   for (auto t : v.terms) {
@@ -576,59 +614,72 @@ struct QConstraint {
     rhs.replace(target, replacement);
   }
 };
-
+static inline
 QConstraint eq(const QExpr& a, const QExpr& b) {
   return QConstraint{true, a, b};
 }
 
+static inline
 QConstraint eq(const QExpr& a, const int b) {
   return QConstraint{true, (a), qexpr(b)};
 }
 
+static inline
 QConstraint eq(const string& a, const int b) {
   return QConstraint{true, qexpr(a), qexpr(b)};
 }
 
+static inline
 QConstraint eq(const string& a, const string& b) {
   return QConstraint{true, qexpr(a), qexpr(b)};
 }
 
+static inline
 QConstraint geq(const QExpr& a, const QExpr& b) {
   return QConstraint{false, a, b};
 }
 
+static inline
 QConstraint geq(const string& a, const QExpr& b) {
   return QConstraint{false, qexpr(a), b};
 }
 
+static inline
 QConstraint geq(const QExpr& a, const string& b) {
   return QConstraint{false, a, qexpr(b)};
 }
 
+static inline
 QConstraint geq(const string& a, const int b) {
   return QConstraint{false, qexpr(a), qexpr(b)};
 }
 
+static inline
 QConstraint geq(const string& a, const string& b) {
   return QConstraint{false, qexpr(a), qexpr(b)};
 }
 
+static inline
 string isl_str(QConstraint& v) {
   return isl_str(v.lhs) + (v.is_eq ? " = " : " >= ") + isl_str(v.rhs);
 }
 
-
+static inline
 string isl_str_eq(QConstraint& v) {
   return isl_str(v.lhs) + " = " + isl_str(v.rhs);
 }
+
+static inline
 std::ostream& operator<<(std::ostream& out, const QConstraint& c) {
   out << c.lhs << (c.is_eq ? " = " : " >= ") << c.rhs;
   return out;
 }
 
 
+static inline
 QTerm parse_qterm(const std::string& str);
 
+static inline
 QExpr parse_qexpr(const std::string& str) {
   regex cm("\\{ (.*)\\[(.*)\\] -> \\[\\((.*)\\)\\] \\}");
   smatch match;
@@ -655,6 +706,7 @@ QExpr parse_qexpr(const std::string& str) {
   return ub;
 }
 
+static inline
 QTerm parse_term(const std::string& f, const int dim, const std::string& str) {
   regex floor_reg("floor\\(\\((.*)\\)/(.*)\\)");
   smatch tt_match;
@@ -687,6 +739,7 @@ QTerm parse_term(const std::string& f, const int dim, const std::string& str) {
   //return qterm(qconst(0));
 }
 
+static inline
 QTerm offset(QExpr& e) {
   assert(e.terms.size() == 2);
 
@@ -698,6 +751,7 @@ QTerm offset(QExpr& e) {
   return offset;
 }
 
+static inline
 QAV stride(const QExpr& e) {
   assert(e.terms.size() == 2);
   for (auto t : e.terms) {
@@ -712,6 +766,7 @@ QAV stride(const QExpr& e) {
   return qconst(0);
 }
 
+static inline
 vector<QAV> strides(vector<QExpr>& mins, vector<QExpr>& maxs) {
   assert(mins.size() == maxs.size());
 
@@ -723,6 +778,7 @@ vector<QAV> strides(vector<QExpr>& mins, vector<QExpr>& maxs) {
   return strides;
 }
 
+static inline
 QTerm parse_qterm(const std::string& str) {
   cout << "Parsing qterm: " << str << endl;
 
@@ -767,6 +823,7 @@ QTerm parse_qterm(const std::string& str) {
   }
 }
 
+static inline
 QExpr sub(const string& a, const string& b) {
   return qexpr(qterm(a), qterm(b).scale(-1));
 }
@@ -790,6 +847,9 @@ struct Box {
       intervals.push_back({0, -1});
     }
   }
+
+  int min(const int dim) const { return intervals.at(dim).min; }
+  int max(const int dim) const { return intervals.at(dim).max; }
 
   isl_set* to_set(isl_ctx* ctx, const string& name) {
     string s = "{ ";
@@ -868,8 +928,32 @@ struct Box {
     }
     return padded;
   }
+
+  int dimension() const {
+    return intervals.size();
+  }
+
 };
 
+static inline
+bool operator==(const Box& a, const Box& b) {
+  if (a.dimension() != b.dimension()) {
+    return false;
+  }
+  for (int i = 0; i < a.dimension(); i++) {
+    if (a.intervals.at(i).min !=
+        b.intervals.at(i).min) {
+      return false;
+    }
+    if (a.intervals.at(i).max !=
+        b.intervals.at(i).max) {
+      return false;
+    }
+  }
+  return true;
+}
+
+static inline
 std::ostream& operator<<(std::ostream& out, const Box& b) {
   vector<string> ranges;
   for (auto range : b.intervals) {
@@ -879,9 +963,10 @@ std::ostream& operator<<(std::ostream& out, const Box& b) {
   return out;
 }
 
+static inline
 Box unn(const Box& l, const Box& r) {
-  cout << "l intervals = " << l.intervals.size() << endl;
-  cout << "r intervals = " << r.intervals.size() << endl;
+  //cout << "l intervals = " << l.intervals.size() << endl;
+  //cout << "r intervals = " << r.intervals.size() << endl;
 
   assert(l.intervals.size() == r.intervals.size());
   Box un;
@@ -889,7 +974,7 @@ Box unn(const Box& l, const Box& r) {
     un.intervals.push_back({min(l.intervals.at(dim).min, r.intervals.at(dim).min), max(l.intervals.at(dim).max, r.intervals.at(dim).max)});
   }
 
-  cout << "Got union" << endl;
+  //cout << "Got union" << endl;
   return un;
 }
 
@@ -1000,6 +1085,7 @@ std::string box_codegen(const vector<string>& op_order,
     for (auto f : scheds) {
       cout << tab(1) << f.first << endl;
     }
+
     assert(contains_key(f.first, scheds));
 
     Box bounds;
