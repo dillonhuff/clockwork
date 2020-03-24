@@ -4649,6 +4649,14 @@ struct App {
 
   string func2d(const std::string& name,
       const string& compute,
+      const Window& a,
+      const Window& b) {
+    vector<Window> windows{a, b};
+    return func2d(name, compute, windows);
+  }
+
+  string func2d(const std::string& name,
+      const string& compute,
       const Window& window) {
     vector<Window> windows{window};
     return func2d(name, compute, windows);
@@ -6204,6 +6212,10 @@ Window win(const std::string& name, const std::vector<vector<int > >& offsets) {
   return Window{name, strides, offsets};
 }
 
+Window upsample(const int factor, const std::string& name) {
+  return Window{name, {qconst(1, factor), qconst(1, factor)}, {{0, 0}}};
+}
+
 Window pt(const std::string& name) {
   return Window{name, {1, 1}, {{0, 0}}};
 }
@@ -6318,25 +6330,59 @@ void exposure_fusion_simple_average() {
   // TODO: Add linear blending at each level by weights
   // Collapse the blended LP into a single design
 }
+
+vector<string> gauss_pyramid(const int num_levels, const string& func, App& app) {
+  return {};
+}
+
+vector<string> laplace_pyramid(const int num_levels, const string& func, App& app) {
+  return {};
+}
+
 void exposure_fusion() {
   App lp;
   lp.func2d("in_off_chip");
   lp.func2d("in", "id", pt("in_off_chip"));
 
+  // Create synthetic exposures
   lp.func2d("bright", "id", pt("in"));
   lp.func2d("dark", "scale_exposure", pt("in"));
 
+  // Compute weights
   lp.func2d("bright_weights", "exposure_weight", pt("bright"));
   lp.func2d("dark_weights", "exposure_weight", pt("dark"));
 
-  //auto dark_weight_pyramid = gauss_pyramid(4, "dark_weights");
-  //auto bright_weight_pyramid = gauss_pyramid(4, "bright_weights");
+  // Normalize weights
+  lp.func2d("weight_sums", "add", {pt("dark_weights"), pt("bright_weights")});
+  lp.func2d("bright_weights_normed", "div", pt("bright_weights"), pt("weight_sums"));
+  lp.func2d("dark_weights_normed", "div", pt("dark_weights"), pt("weight_sums"));
 
-  //auto dark_pyramid = laplace_pyramid(4, "dark");
-  //auto bright_pyramid = laplace_pyramid(4, "bright");
+  // Create weight pyramids
+  auto dark_weight_pyramid = gauss_pyramid(4, "dark_weights_normed", lp);
+  auto bright_weight_pyramid = gauss_pyramid(4, "bright_weights_normed", lp);
 
-  // TODO: Add linear blending at each level by weights
+  auto dark_pyramid = laplace_pyramid(4, "dark", lp);
+  auto bright_pyramid = laplace_pyramid(4, "bright", lp);
+
+  // Merge weighted pyramids
+  vector<string> merged_images;
+  for (int i = 0; i < dark_pyramid.size(); i++) {
+    string fused = "fused_level_" + str(i);
+    lp.func2d(fused, "merge_exposures", {pt(bright_pyramid.at(i)),
+        pt(dark_pyramid.at(i)), pt(bright_weight_pyramid.at(i)), pt(dark_weight_pyramid.at(i))});
+    merged_images.push_back(fused);
+  }
+
   // Collapse the blended LP into a single design
+  assert(merged_images.size() == 4);
+  string image = merged_images.back();
+  for (int i = merged_images.size() - 2; i >= 0; i--) {
+    string merged_level = "final_merged_" + str(i);
+    lp.func2d(merged_level, "add", {upsample(2, image), pt(merged_images.at(i))});
+    image = merged_level;
+  }
+
+  assert(false);
 }
 
 void laplacian_pyramid_app_test() {
