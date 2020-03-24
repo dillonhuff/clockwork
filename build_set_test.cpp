@@ -534,8 +534,8 @@ stack_bank compute_stack_bank_info(
   vector<int> read_delays{0};
 
   // NOTE: Just to ensure we dont force everything to be a RAM
-  int num_readers = 10;
-  //int num_readers = 0;
+  //int num_readers = 10;
+  int num_readers = 0;
 
   auto in_actions = buf.domain.at(inpt);
   auto lex_max_events =
@@ -6428,7 +6428,7 @@ void exposure_fusion() {
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
   //lp.func2d("synthetic_exposure_fusion", "id", pt("in"));
-  //lp.realize("synthetic_exposure_fusion", 1250, 1250, 1);
+  lp.realize("pyramid_synthetic_exposure_fusion", 1250, 1250, 1);
   lp.realize_naive("pyramid_synthetic_exposure_fusion", 1250, 1250);
 
   assert(false);
