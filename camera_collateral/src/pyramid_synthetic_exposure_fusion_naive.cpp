@@ -5585,5 +5585,7 @@ for (int c0 = 0; c0 <= 1263; c0 += 1) {
 	    }
 	  }
 	}
+
+cout << "Done with pyramid c++ simulation" << endl;
 	
 }
