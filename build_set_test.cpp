@@ -411,7 +411,7 @@ void generate_stack_cache(CodegenOptions& options,
   out << "struct " << name << "_cache" <<  " {" << endl;
   out << "\t// Capacity: " << maxdelay + 1 << endl;
   out << "\t// # of read delays: " << read_delays.size() << endl;
-  out << "\t// read delays: " << comma_list(read_delays) << endl;
+  //out << "\t// read delays: " << comma_list(read_delays) << endl;
   if (num_readers == 1 || options.all_rams) {
     int partition_capacity = 1 + maxdelay;
     out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << ";" << endl;
@@ -2647,13 +2647,20 @@ void generate_app_code(CodegenOptions& options,
     code_string = codegen_c(schedmap);
   }
 
+  string original_isl_code_string = code_string;
+
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
   for (auto op : prg.all_ops()) {
-    regex re(op->name + "\\((.*)\\);");
+    regex re("\n\t\\s+" + op->name + "\\((.*)\\);");
     string args_list = sep_list(buffer_arg_names(buffers, op, prg), "", "", ", ");
-    code_string = regex_replace(code_string, re, op->name + "(" + args_list + ", $1);");
+    conv_out << "// arg list for " << op->name << " = " << args_list << endl;
+    code_string = regex_replace(code_string, re, "\n\t" + op->name + "(" + args_list + ", $1);");
   }
 
+  //assert(false);
+  conv_out << "/* ISL CODE STRING" << endl;
+  conv_out << original_isl_code_string << endl;
+  conv_out << "*/" << endl;
   conv_out << "/* CUSTOM CODE STRING" << endl;
   conv_out << options.code_string << endl;
   conv_out << "*/" << endl;
@@ -5453,11 +5460,13 @@ struct App {
             i++;
           }
           auto op = nest->add_op(u.name());
+          cout << "added op " << op->name << endl;
           // TODO: Replace with real description of apps
           op->add_store(f, "0, 0");
 
           vector<string> fargs;
           for (auto p : u.get_srcs()) {
+            cout << tab(1) << " op loads " << p.name << endl;
             op->add_load(p.name, "0, 0");
             if (!elem(p.name, fargs)) {
               fargs.push_back(p.name);
@@ -5473,6 +5482,20 @@ struct App {
         }
       }
     }
+
+    cout << "Op consume / produce locs..." << endl;
+    for (auto op : prg.all_ops()) {
+      cout << "### " << op->name << endl;
+      for (auto l : op->produce_locs) {
+        cout << tab(1) << l.first << endl;
+      }
+      //cout << "Consume..." << endl;
+      for (auto l : op->consume_locs) {
+        cout << tab(1) << l.first << endl;
+      }
+    }
+
+    //assert(false);
     prg.outs = {name};
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
@@ -6349,7 +6372,7 @@ void laplacian_pyramid_app_test() {
     run_regression_tb("blended_opt");
   assert(naive == optimized);
 
-  assert(false);
+  //assert(false);
 
 }
 
@@ -7056,9 +7079,9 @@ void application_tests() {
 
   //conv_app_rolled_reduce_test();
 
+  mismatched_stencil_test();
   laplacian_pyramid_app_test();
   denoise2d_test();
-  mismatched_stencil_test();
   gaussian_pyramid_app_test();
   grayscale_conversion_test();
   jacobi_2d_app_test();

@@ -143,13 +143,13 @@ int conv_1_3_16(hw_uint<16*3>& in) {
 }
 
 static inline
-hw_uint<32> blend_levels(hw_uint<32*4>& in) {
-  hw_uint<32> v0 = in.extract<0, 31>();
-  hw_uint<32> v1 = in.extract<32, 63>();
-  hw_uint<32> v2 = in.extract<64, 95>();
-  hw_uint<32> v2 = in.extract<96, 127>();
+hw_uint<32> blend_levels(hw_uint<32>& v0,
+    hw_uint<32>& v1,
+    hw_uint<32>& v2,
+    hw_uint<32>& v3
+    ) {
 
-  return (v0 + v1 + v2) / 4;
+  return (v0 + v1 + v2 + v3) / 4;
 }
 
 static inline

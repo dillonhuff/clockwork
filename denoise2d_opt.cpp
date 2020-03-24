@@ -5,7 +5,6 @@
 struct diff_d_diff_d_update_0_write0_merged_banks_1_cache {
 	// Capacity: 1
 	// # of read delays: 1
-	// read delays: 0
 	fifo<hw_uint<32> , 1> f;
 	inline hw_uint<32>  peek(const int offset) {
     return f.peek(0 - offset);
@@ -67,7 +66,6 @@ inline hw_uint<32> diff_d_g_update_0_read_bundle_read(diff_d_cache& diff_d, int 
 struct diff_l_diff_l_update_0_write0_merged_banks_1_cache {
 	// Capacity: 1
 	// # of read delays: 1
-	// read delays: 0
 	fifo<hw_uint<32> , 1> f;
 	inline hw_uint<32>  peek(const int offset) {
     return f.peek(0 - offset);
@@ -129,7 +127,6 @@ inline hw_uint<32> diff_l_g_update_0_read_bundle_read(diff_l_cache& diff_l, int 
 struct diff_qwe_diff_qwe_update_0_write0_merged_banks_1_cache {
 	// Capacity: 1
 	// # of read delays: 1
-	// read delays: 0
 	fifo<hw_uint<32> , 1> f;
 	inline hw_uint<32>  peek(const int offset) {
     return f.peek(0 - offset);
@@ -191,7 +188,6 @@ inline hw_uint<32> diff_qwe_g_update_0_read_bundle_read(diff_qwe_cache& diff_qwe
 struct diff_r_diff_r_update_0_write0_merged_banks_1_cache {
 	// Capacity: 1
 	// # of read delays: 1
-	// read delays: 0
 	fifo<hw_uint<32> , 1> f;
 	inline hw_uint<32>  peek(const int offset) {
     return f.peek(0 - offset);
@@ -253,7 +249,6 @@ inline hw_uint<32> diff_r_g_update_0_read_bundle_read(diff_r_cache& diff_r, int 
 struct f_f_update_0_write0_merged_banks_2_cache {
 	// Capacity: 1
 	// # of read delays: 1
-	// read delays: 0
 	// Parition [0, 0] capacity = 1
 	fifo<hw_uint<32> , 1> f1;
 
@@ -342,7 +337,6 @@ inline hw_uint<32> f_r0_update_0_read_bundle_read(f_cache& f, int d0, int d1) {
 struct g_g_update_0_write0_merged_banks_4_cache {
 	// Capacity: 66
 	// # of read delays: 5
-	// read delays: 0, 1, 32, 34, 65
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 2) capacity = 1
@@ -515,7 +509,6 @@ inline void g_g_update_0_write_bundle_write(hw_uint<32>& g_update_0_write, g_cac
 struct r0_r0_update_0_write0_merged_banks_1_cache {
 	// Capacity: 1
 	// # of read delays: 1
-	// read delays: 0
 	fifo<hw_uint<32> , 1> f;
 	inline hw_uint<32>  peek(const int offset) {
     return f.peek(0 - offset);
@@ -577,7 +570,6 @@ inline hw_uint<32> r0_r1_update_0_read_bundle_read(r0_cache& r0, int d0, int d1)
 struct r1_r1_update_0_write0_merged_banks_1_cache {
 	// Capacity: 1
 	// # of read delays: 1
-	// read delays: 0
 	fifo<hw_uint<32> , 1> f;
 	inline hw_uint<32>  peek(const int offset) {
     return f.peek(0 - offset);
@@ -639,7 +631,6 @@ inline void r1_r1_update_0_write_bundle_write(hw_uint<32>& r1_update_0_write, r1
 struct u_u_update_0_write0_merged_banks_13_cache {
 	// Capacity: 105
 	// # of read delays: 9
-	// read delays: 0, 1, 34, 35, 36, 69, 70, 71, 104
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 2) capacity = 1
@@ -988,12 +979,18 @@ inline void r0_update_0(u_cache& u, f_cache& f, r0_cache& r0, int d0, int d1) {
 	r0_r0_update_0_write_bundle_write(compute_result, r0, d0, d1);
 }
 
-inline void diff_r_update_0(u_cache& u, diff_r_cache& diff_r, int d0, int d1) {
+inline void denoise2d_update_0(r1_cache& r1, f_cache& f, u_cache& u, g_cache& g, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */denoise2d, int d0, int d1) {
+	// Consume: r1
+	auto r1_0_c__0_value = r1_denoise2d_update_0_read_bundle_read(r1/* source_delay */, d0, d1);
+	// Consume: f
+	auto f_0_c__0_value = f_denoise2d_update_0_read_bundle_read(f/* source_delay */, d0, d1);
 	// Consume: u
-	auto u_0_c__0_value = u_diff_r_update_0_read_bundle_read(u/* source_delay */, d0, d1);
-	auto compute_result = diff_b(u_0_c__0_value);
-	// Produce: diff_r
-	diff_r_diff_r_update_0_write_bundle_write(compute_result, diff_r, d0, d1);
+	auto u_0_c__0_value = u_denoise2d_update_0_read_bundle_read(u/* source_delay */, d0, d1);
+	// Consume: g
+	auto g_0_c__0_value = g_denoise2d_update_0_read_bundle_read(g/* source_delay */, d0, d1);
+	auto compute_result = out_comp_dn2d(r1_0_c__0_value, f_0_c__0_value, u_0_c__0_value, g_0_c__0_value);
+	// Produce: denoise2d
+	denoise2d.write(compute_result);
 }
 
 inline void diff_qwe_update_0(u_cache& u, diff_qwe_cache& diff_qwe, int d0, int d1) {
@@ -1020,6 +1017,14 @@ inline void diff_d_update_0(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
 	diff_d_diff_d_update_0_write_bundle_write(compute_result, diff_d, d0, d1);
 }
 
+inline void f_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */f_off_chip, f_cache& f, int d0, int d1) {
+	// Consume: f_off_chip
+	auto f_off_chip_0_c__0_value = f_off_chip.read();
+	auto compute_result = id(f_off_chip_0_c__0_value);
+	// Produce: f
+	f_f_update_0_write_bundle_write(compute_result, f, d0, d1);
+}
+
 inline void r1_update_0(r0_cache& r0, r1_cache& r1, int d0, int d1) {
 	// Consume: r0
 	auto r0_0_c__0_value = r0_r1_update_0_read_bundle_read(r0/* source_delay */, d0, d1);
@@ -1028,26 +1033,12 @@ inline void r1_update_0(r0_cache& r0, r1_cache& r1, int d0, int d1) {
 	r1_r1_update_0_write_bundle_write(compute_result, r1, d0, d1);
 }
 
-inline void denoise2d_update_0(r1_cache& r1, f_cache& f, u_cache& u, g_cache& g, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */denoise2d, int d0, int d1) {
-	// Consume: r1
-	auto r1_0_c__0_value = r1_denoise2d_update_0_read_bundle_read(r1/* source_delay */, d0, d1);
-	// Consume: f
-	auto f_0_c__0_value = f_denoise2d_update_0_read_bundle_read(f/* source_delay */, d0, d1);
+inline void diff_r_update_0(u_cache& u, diff_r_cache& diff_r, int d0, int d1) {
 	// Consume: u
-	auto u_0_c__0_value = u_denoise2d_update_0_read_bundle_read(u/* source_delay */, d0, d1);
-	// Consume: g
-	auto g_0_c__0_value = g_denoise2d_update_0_read_bundle_read(g/* source_delay */, d0, d1);
-	auto compute_result = out_comp_dn2d(r1_0_c__0_value, f_0_c__0_value, u_0_c__0_value, g_0_c__0_value);
-	// Produce: denoise2d
-	denoise2d.write(compute_result);
-}
-
-inline void f_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */f_off_chip, f_cache& f, int d0, int d1) {
-	// Consume: f_off_chip
-	auto f_off_chip_0_c__0_value = f_off_chip.read();
-	auto compute_result = id(f_off_chip_0_c__0_value);
-	// Produce: f
-	f_f_update_0_write_bundle_write(compute_result, f, d0, d1);
+	auto u_0_c__0_value = u_diff_r_update_0_read_bundle_read(u/* source_delay */, d0, d1);
+	auto compute_result = diff_b(u_0_c__0_value);
+	// Produce: diff_r
+	diff_r_diff_r_update_0_write_bundle_write(compute_result, diff_r, d0, d1);
 }
 
 inline void g_update_0(diff_qwe_cache& diff_qwe, diff_d_cache& diff_d, diff_l_cache& diff_l, diff_r_cache& diff_r, g_cache& g, int d0, int d1) {
@@ -1111,6 +1102,68 @@ void denoise2d_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chi
 #pragma HLS dependence variable=u inter false
 #endif // __VIVADO_SYNTH__
 
+// arg list for u_update_0 = u_off_chip, u
+// arg list for r0_update_0 = u, f, r0
+// arg list for denoise2d_update_0 = r1, f, u, g, denoise2d
+// arg list for diff_qwe_update_0 = u, diff_qwe
+// arg list for diff_l_update_0 = u, diff_l
+// arg list for diff_d_update_0 = u, diff_d
+// arg list for f_update_0 = f_off_chip, f
+// arg list for r1_update_0 = r0, r1
+// arg list for diff_r_update_0 = u, diff_r
+// arg list for g_update_0 = diff_qwe, diff_d, diff_l, diff_r, g
+/* ISL CODE STRING
+for (int c0 = -2; c0 <= 31; c0++) {
+  for (int c1 = -2; c1 <= 31; c1++) {
+
+#ifdef __VIVADO_SYNTH__
+#pragma HLS pipeline II=1
+#endif // __VIVADO_SYNTH__
+
+    if ((2 <= c1 && c1 <= 31) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 31) && ((c0 - 2) % 1 == 0)) {
+      f_update_0((c1 - 2) / 1, (c0 - 2) / 1);
+    }
+
+    if ((-2 <= c1 && c1 <= 31) && ((c1 - 0) % 1 == 0) && (-2 <= c0 && c0 <= 31) && ((c0 - 0) % 1 == 0)) {
+      u_update_0((c1 - 0) / 1, (c0 - 0) / 1);
+    }
+
+    if ((2 <= c1 && c1 <= 31) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 31) && ((c0 - 2) % 1 == 0)) {
+      r0_update_0((c1 - 2) / 1, (c0 - 2) / 1);
+    }
+
+    if ((0 <= c1 && c1 <= 31) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 31) && ((c0 - 1) % 1 == 0)) {
+      diff_r_update_0((c1 - 1) / 1, (c0 - 1) / 1);
+    }
+
+    if ((0 <= c1 && c1 <= 31) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 31) && ((c0 - 1) % 1 == 0)) {
+      diff_qwe_update_0((c1 - 1) / 1, (c0 - 1) / 1);
+    }
+
+    if ((0 <= c1 && c1 <= 31) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 31) && ((c0 - 1) % 1 == 0)) {
+      diff_l_update_0((c1 - 1) / 1, (c0 - 1) / 1);
+    }
+
+    if ((0 <= c1 && c1 <= 31) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 31) && ((c0 - 1) % 1 == 0)) {
+      diff_d_update_0((c1 - 1) / 1, (c0 - 1) / 1);
+    }
+
+    if ((2 <= c1 && c1 <= 31) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 31) && ((c0 - 2) % 1 == 0)) {
+      r1_update_0((c1 - 2) / 1, (c0 - 2) / 1);
+    }
+
+    if ((0 <= c1 && c1 <= 31) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 31) && ((c0 - 1) % 1 == 0)) {
+      g_update_0((c1 - 1) / 1, (c0 - 1) / 1);
+    }
+
+    if ((2 <= c1 && c1 <= 31) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 31) && ((c0 - 2) % 1 == 0)) {
+      denoise2d_update_0((c1 - 2) / 1, (c0 - 2) / 1);
+    }
+
+  }
+}
+
+*/
 /* CUSTOM CODE STRING
 for (int c0 = -2; c0 <= 31; c0++) {
   for (int c1 = -2; c1 <= 31; c1++) {
@@ -1171,43 +1224,43 @@ for (int c0 = -2; c0 <= 31; c0++) {
 	#endif // __VIVADO_SYNTH__
 	
 	    if ((2 <= c1 && c1 <= 31) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 31) && ((c0 - 2) % 1 == 0)) {
-	      f_update_0(f_off_chip, f, (c1 - 2) / 1, (c0 - 2) / 1);
+	f_update_0(f_off_chip, f, (c1 - 2) / 1, (c0 - 2) / 1);
 	    }
 	
 	    if ((-2 <= c1 && c1 <= 31) && ((c1 - 0) % 1 == 0) && (-2 <= c0 && c0 <= 31) && ((c0 - 0) % 1 == 0)) {
-	      u_update_0(u_off_chip, u, (c1 - 0) / 1, (c0 - 0) / 1);
+	u_update_0(u_off_chip, u, (c1 - 0) / 1, (c0 - 0) / 1);
 	    }
 	
 	    if ((2 <= c1 && c1 <= 31) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 31) && ((c0 - 2) % 1 == 0)) {
-	      r0_update_0(u, f, r0, (c1 - 2) / 1, (c0 - 2) / 1);
+	r0_update_0(u, f, r0, (c1 - 2) / 1, (c0 - 2) / 1);
 	    }
 	
 	    if ((0 <= c1 && c1 <= 31) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 31) && ((c0 - 1) % 1 == 0)) {
-	      diff_r_update_0(u, diff_r, (c1 - 1) / 1, (c0 - 1) / 1);
+	diff_r_update_0(u, diff_r, (c1 - 1) / 1, (c0 - 1) / 1);
 	    }
 	
 	    if ((0 <= c1 && c1 <= 31) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 31) && ((c0 - 1) % 1 == 0)) {
-	      diff_qwe_update_0(u, diff_qwe, (c1 - 1) / 1, (c0 - 1) / 1);
+	diff_qwe_update_0(u, diff_qwe, (c1 - 1) / 1, (c0 - 1) / 1);
 	    }
 	
 	    if ((0 <= c1 && c1 <= 31) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 31) && ((c0 - 1) % 1 == 0)) {
-	      diff_l_update_0(u, diff_l, (c1 - 1) / 1, (c0 - 1) / 1);
+	diff_l_update_0(u, diff_l, (c1 - 1) / 1, (c0 - 1) / 1);
 	    }
 	
 	    if ((0 <= c1 && c1 <= 31) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 31) && ((c0 - 1) % 1 == 0)) {
-	      diff_d_update_0(u, diff_d, (c1 - 1) / 1, (c0 - 1) / 1);
+	diff_d_update_0(u, diff_d, (c1 - 1) / 1, (c0 - 1) / 1);
 	    }
 	
 	    if ((2 <= c1 && c1 <= 31) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 31) && ((c0 - 2) % 1 == 0)) {
-	      r1_update_0(r0, r1, (c1 - 2) / 1, (c0 - 2) / 1);
+	r1_update_0(r0, r1, (c1 - 2) / 1, (c0 - 2) / 1);
 	    }
 	
 	    if ((0 <= c1 && c1 <= 31) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 31) && ((c0 - 1) % 1 == 0)) {
-	      g_update_0(diff_qwe, diff_d, diff_l, diff_r, g, (c1 - 1) / 1, (c0 - 1) / 1);
+	g_update_0(diff_qwe, diff_d, diff_l, diff_r, g, (c1 - 1) / 1, (c0 - 1) / 1);
 	    }
 	
 	    if ((2 <= c1 && c1 <= 31) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 31) && ((c0 - 2) % 1 == 0)) {
-	      denoise2d_update_0(r1, f, u, g, denoise2d, (c1 - 2) / 1, (c0 - 2) / 1);
+	denoise2d_update_0(r1, f, u, g, denoise2d, (c1 - 2) / 1, (c0 - 2) / 1);
 	    }
 	
 	  }

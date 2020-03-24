@@ -5,7 +5,6 @@
 struct A_A_update_0_write0_to_C_rd0_cache {
 	// Capacity: 5
 	// # of read delays: 6
-	// read delays: 0, 0, 1, 2, 3, 4
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 2) capacity = 1
@@ -118,7 +117,6 @@ inline hw_uint<32> A_C_update_0_read_bundle_read(A_cache& A, int d0, int d1) {
 struct B_B_update_0_write0_merged_banks_1_cache {
 	// Capacity: 1
 	// # of read delays: 1
-	// read delays: 0
 	fifo<hw_uint<32> , 1> f;
 	inline hw_uint<32>  peek(const int offset) {
     return f.peek(0 - offset);
@@ -178,6 +176,16 @@ inline hw_uint<32> B_C_update_0_read_bundle_read(B_cache& B, int d0, int d1) {
 
 
 // Operation logic
+inline void C_update_0(A_cache& A, B_cache& B, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */C, int d0, int d1) {
+	// Consume: A
+	auto A_0_c__0_value = A_C_update_0_read_bundle_read(A/* source_delay */, d0, d1);
+	// Consume: B
+	auto B_0_c__0_value = B_C_update_0_read_bundle_read(B/* source_delay */, d0, d1);
+	auto compute_result = diff(A_0_c__0_value, B_0_c__0_value);
+	// Produce: C
+	C.write(compute_result);
+}
+
 inline void B_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */B_off, B_cache& B, int d0, int d1) {
 	// Consume: B_off
 	auto B_off_0_c__0_value = B_off.read();
@@ -194,16 +202,6 @@ inline void A_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */A_
 	A_A_update_0_write_bundle_write(compute_result, A, d0, d1);
 }
 
-inline void C_update_0(A_cache& A, B_cache& B, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */C, int d0, int d1) {
-	// Consume: A
-	auto A_0_c__0_value = A_C_update_0_read_bundle_read(A/* source_delay */, d0, d1);
-	// Consume: B
-	auto B_0_c__0_value = B_C_update_0_read_bundle_read(B/* source_delay */, d0, d1);
-	auto compute_result = diff(A_0_c__0_value, B_0_c__0_value);
-	// Produce: C
-	C.write(compute_result);
-}
-
 // Driver function
 void C_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */A_off, HWStream<hw_uint<32> >& /* get_args num ports = 1 */B_off, HWStream<hw_uint<32> >& /* get_args num ports = 1 */C) {
   A_cache A;
@@ -216,6 +214,33 @@ void C_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */A_off, HWStream<h
 #pragma HLS dependence variable=B inter false
 #endif // __VIVADO_SYNTH__
 
+// arg list for C_update_0 = A, B, C
+// arg list for B_update_0 = B_off, B
+// arg list for A_update_0 = A_off, A
+/* ISL CODE STRING
+for (int c0 = 0; c0 <= 27; c0++) {
+  for (int c1 = 0; c1 <= 36; c1++) {
+
+#ifdef __VIVADO_SYNTH__
+#pragma HLS pipeline II=1
+#endif // __VIVADO_SYNTH__
+
+    if ((0 <= c1 && c1 <= 36) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 27) && ((c0 - 0) % 1 == 0)) {
+      B_update_0((c1 - 0) / 1, (c0 - 0) / 1);
+    }
+
+    if ((0 <= c1 && c1 <= 32) && ((c1 - 0) % 8 == 0) && (0 <= c0 && c0 <= 15) && ((c0 - 0) % 15 == 0)) {
+      A_update_0((c1 - 0) / 8, (c0 - 0) / 15);
+    }
+
+    if ((0 <= c1 && c1 <= 36) && ((c1 - 0) % 4 == 0) && (0 <= c0 && c0 <= 27) && ((c0 - 0) % 3 == 0)) {
+      C_update_0((c1 - 0) / 4, (c0 - 0) / 3);
+    }
+
+  }
+}
+
+*/
 /* CUSTOM CODE STRING
 for (int c0 = 0; c0 <= 27; c0++) {
   for (int c1 = 0; c1 <= 36; c1++) {
@@ -248,15 +273,15 @@ for (int c0 = 0; c0 <= 27; c0++) {
 	#endif // __VIVADO_SYNTH__
 	
 	    if ((0 <= c1 && c1 <= 36) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 27) && ((c0 - 0) % 1 == 0)) {
-	      B_update_0(B_off, B, (c1 - 0) / 1, (c0 - 0) / 1);
+	B_update_0(B_off, B, (c1 - 0) / 1, (c0 - 0) / 1);
 	    }
 	
 	    if ((0 <= c1 && c1 <= 32) && ((c1 - 0) % 8 == 0) && (0 <= c0 && c0 <= 15) && ((c0 - 0) % 15 == 0)) {
-	      A_update_0(A_off, A, (c1 - 0) / 8, (c0 - 0) / 15);
+	A_update_0(A_off, A, (c1 - 0) / 8, (c0 - 0) / 15);
 	    }
 	
 	    if ((0 <= c1 && c1 <= 36) && ((c1 - 0) % 4 == 0) && (0 <= c0 && c0 <= 27) && ((c0 - 0) % 3 == 0)) {
-	      C_update_0(A, B, C, (c1 - 0) / 4, (c0 - 0) / 3);
+	C_update_0(A, B, C, (c1 - 0) / 4, (c0 - 0) / 3);
 	    }
 	
 	  }
