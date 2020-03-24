@@ -6332,7 +6332,31 @@ void exposure_fusion_simple_average() {
 }
 
 vector<string> gauss_pyramid(const int num_levels, const string& func, App& app) {
-  return {};
+  string last = func;
+  vector<string> gauss_levels;
+  gauss_levels.push_back("in");
+  for (int l = 1; l < num_levels + 1; l++) {
+    string next_blur = "gauss_blur_" + str(l);
+    string next_out = "gauss_ds_" + str(l);
+
+    vector<vector<int > > offsets;
+    for (int r = 0; r < 3; r++) {
+      for (int c = 0; c < 3; c++) {
+        offsets.push_back({c, r});
+      }
+    }
+
+    Window blur_window{last, {qconst(1), qconst(1)}, offsets};
+    app.func2d(next_blur, "reduce_gauss", blur_window);
+    app.func2d(next_out, "id", next_blur, {qconst(2), qconst(2)}, {{0, 0}});
+ 
+    last = next_out;
+    gauss_levels.push_back(last);
+  }
+
+  assert(gauss_levels.size() == num_levels);
+
+  return gauss_levels;
 }
 
 vector<string> laplace_pyramid(const int num_levels, const string& func, App& app) {
