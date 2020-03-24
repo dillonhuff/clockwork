@@ -4604,6 +4604,7 @@ struct App {
       const std::string compute,
       const int ndims,
       const vector<Window>& windows) {
+    assert(!contains_key(name, app_dag));
 
     Result res;
     for (auto w : windows) {
@@ -5007,6 +5008,11 @@ struct App {
 
     reverse(buffers);
 
+    cout << "Buffers..." << endl;
+    for (auto b : buffers) {
+      cout << tab(1) << b << endl;
+    }
+
     assert(buffers.at(0) == name);
     string n = name;
     domain_boxes = {};
@@ -5103,8 +5109,10 @@ struct App {
     //}
 
     cout << domain_boxes.size() << " data domains.." << endl;
-    for (auto d : domain_boxes) {
-      cout << d.first << " = " << d.second << endl;
+    assert(domain_boxes.size() == sort_functions().size());
+    for (auto f : sort_functions()) {
+      auto d = domain_boxes.at(f);
+      cout << f << " = " << d << endl;
     }
 
     //assert(false);
@@ -6312,32 +6320,13 @@ void conv_app_rolled_reduce_test() {
   //assert(false);
 }
 
-void exposure_fusion_simple_average() {
-  App lp;
-  lp.func2d("in_off_chip");
-  lp.func2d("in", "id", pt("in_off_chip"));
-
-  lp.func2d("bright", "id", pt("in"));
-  lp.func2d("dark", "scale_exposure", pt("in"));
-
-  lp.func2d("bright_weights", "exposure_weight", pt("bright"));
-  lp.func2d("dark_weights", "exposure_weight", pt("dark"));
-
-  lp.func2d("average_fuse", "merge_exposures", {pt("bright"), pt("dark"), pt("bright_weights"), pt("dark_weights")});
-
-  lp.realize("average_fuse", 1250, 1120, 1);
-
-  // TODO: Add linear blending at each level by weights
-  // Collapse the blended LP into a single design
-}
-
 vector<string> gauss_pyramid(const int num_levels, const string& func, App& app) {
   string last = func;
   vector<string> gauss_levels;
-  gauss_levels.push_back("in");
-  for (int l = 1; l < num_levels + 1; l++) {
-    string next_blur = "gauss_blur_" + str(l);
-    string next_out = "gauss_ds_" + str(l);
+  gauss_levels.push_back(last);
+  for (int l = 1; l < num_levels; l++) {
+    string next_blur = func + "_gauss_blur_" + str(l);
+    string next_out = func + "_gauss_ds_" + str(l);
 
     vector<vector<int > > offsets;
     for (int r = 0; r < 3; r++) {
@@ -6360,7 +6349,31 @@ vector<string> gauss_pyramid(const int num_levels, const string& func, App& app)
 }
 
 vector<string> laplace_pyramid(const int num_levels, const string& func, App& app) {
-  return {};
+  auto gauss_levels = gauss_pyramid(num_levels, func, app);
+
+  vector<string> laplace_levels;
+  for (int l = 0; l < num_levels - 1; l++) {
+    string larger_image = gauss_levels.at(l);
+    string smaller_image = gauss_levels.at(l + 1);
+
+    string next_us = func + "_laplace_us_" + str(l);
+    string next_out = func + "_laplace_diff_" + str(l);
+   
+    // Upsample the image
+    app.func2d(next_us, "id", smaller_image, {qconst(1, 2), qconst(1, 2)}, {{0, 0}});
+
+    Window ad{larger_image, {qconst(1), qconst(1)}, {{0, 0}}};
+    Window ud{next_us, {qconst(1), qconst(1)}, {{0, 0}}};
+    app.func2d(next_out, "diff", {ad, ud});
+ 
+    laplace_levels.push_back(next_out);
+  }
+
+  laplace_levels.push_back(gauss_levels.back());
+
+  assert(laplace_levels.size() == num_levels);
+
+  return laplace_levels;
 }
 
 void exposure_fusion() {
@@ -6378,33 +6391,44 @@ void exposure_fusion() {
 
   // Normalize weights
   lp.func2d("weight_sums", "add", {pt("dark_weights"), pt("bright_weights")});
-  lp.func2d("bright_weights_normed", "div", pt("bright_weights"), pt("weight_sums"));
-  lp.func2d("dark_weights_normed", "div", pt("dark_weights"), pt("weight_sums"));
+  lp.func2d("bright_weights_normed", "f_divide", pt("bright_weights"), pt("weight_sums"));
+  lp.func2d("dark_weights_normed", "f_divide", pt("dark_weights"), pt("weight_sums"));
 
-  // Create weight pyramids
-  auto dark_weight_pyramid = gauss_pyramid(4, "dark_weights_normed", lp);
-  auto bright_weight_pyramid = gauss_pyramid(4, "bright_weights_normed", lp);
 
-  auto dark_pyramid = laplace_pyramid(4, "dark", lp);
-  auto bright_pyramid = laplace_pyramid(4, "bright", lp);
+  string image = 
+    lp.func2d("merged", "merge_exposures", {pt("bright"), pt("dark"), pt("bright_weights_normed"), pt("dark_weights_normed")});
+  lp.func2d("synthetic_exposure_fusion", "id", pt(image));
 
-  // Merge weighted pyramids
-  vector<string> merged_images;
-  for (int i = 0; i < dark_pyramid.size(); i++) {
-    string fused = "fused_level_" + str(i);
-    lp.func2d(fused, "merge_exposures", {pt(bright_pyramid.at(i)),
-        pt(dark_pyramid.at(i)), pt(bright_weight_pyramid.at(i)), pt(dark_weight_pyramid.at(i))});
-    merged_images.push_back(fused);
-  }
+  //// Create weight pyramids
+  //auto dark_weight_pyramid = gauss_pyramid(4, "dark_weights_normed", lp);
+  //auto bright_weight_pyramid = gauss_pyramid(4, "bright_weights_normed", lp);
 
-  // Collapse the blended LP into a single design
-  assert(merged_images.size() == 4);
-  string image = merged_images.back();
-  for (int i = merged_images.size() - 2; i >= 0; i--) {
-    string merged_level = "final_merged_" + str(i);
-    lp.func2d(merged_level, "add", {upsample(2, image), pt(merged_images.at(i))});
-    image = merged_level;
-  }
+  //auto dark_pyramid = laplace_pyramid(4, "dark", lp);
+  //auto bright_pyramid = laplace_pyramid(4, "bright", lp);
+
+  //// Merge weighted pyramids
+  //vector<string> merged_images;
+  //for (int i = 0; i < dark_pyramid.size(); i++) {
+    //string fused = "fused_level_" + str(i);
+    //lp.func2d(fused, "merge_exposures", {pt(bright_pyramid.at(i)),
+        //pt(dark_pyramid.at(i)), pt(bright_weight_pyramid.at(i)), pt(dark_weight_pyramid.at(i))});
+    //merged_images.push_back(fused);
+  //}
+
+  //// Collapse the blended LP into a single design
+  //assert(merged_images.size() == 4);
+  //string image = merged_images.back();
+  //for (int i = merged_images.size() - 2; i >= 0; i--) {
+    //string merged_level = "final_merged_" + str(i);
+    //lp.func2d(merged_level, "add", {upsample(2, image), pt(merged_images.at(i))});
+    //image = merged_level;
+  //}
+
+  //lp.func2d("synthetic_exposure_fusion", "id", pt(image));
+
+  //lp.func2d("synthetic_exposure_fusion", "id", pt("in"));
+  //lp.realize("synthetic_exposure_fusion", 1250, 1250, 1);
+  lp.realize_naive("synthetic_exposure_fusion", 1250, 1250);
 
   assert(false);
 }
@@ -7188,8 +7212,8 @@ void application_tests() {
 
   //conv_app_rolled_reduce_test();
 
-  exposure_fusion_simple_average();
   exposure_fusion();
+  //exposure_fusion_simple_average();
   laplacian_pyramid_app_test();
   mismatched_stencil_test();
   denoise2d_test();

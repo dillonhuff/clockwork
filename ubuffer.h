@@ -268,7 +268,7 @@ class UBuffer {
             done.push_back(bs.second.name);
           }
 
-          assert(bnks.back().read_delays.size() == bs.second.read_delays.size());
+          //assert(bnks.back().read_delays.size() == bs.second.read_delays.size());
         }
       }
       return bnks;
