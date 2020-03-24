@@ -6300,6 +6300,27 @@ void conv_app_rolled_reduce_test() {
   //assert(false);
 }
 
+void exposure_fusion() {
+  App lp;
+  lp.func2d("in_off_chip");
+  lp.func2d("in", "id", pt("in_off_chip"));
+
+  lp.func2d("bright", "id", pt("in"));
+  lp.func2d("dark", "scale_exposure", pt("in"));
+
+  lp.func2d("bright_weights", "exposure_weight", pt("bright"));
+  lp.func2d("dark_weights", "exposure_weight", pt("dark"));
+
+  auto dark_weight_pyramid = gauss_pyramid(4, "dark_weights");
+  auto bright_weight_pyramid = gauss_pyramid(4, "bright_weights");
+
+  auto dark_pyramid = laplace_pyramid(4, "dark");
+  auto bright_pyramid = laplace_pyramid(4, "bright");
+
+  // TODO: Add linear blending at each level by weights
+  // Collapse the blended LP into a single design
+}
+
 void laplacian_pyramid_app_test() {
   App lp;
   lp.func2d("in_off_chip");
@@ -7079,8 +7100,8 @@ void application_tests() {
 
   //conv_app_rolled_reduce_test();
 
-  mismatched_stencil_test();
   laplacian_pyramid_app_test();
+  mismatched_stencil_test();
   denoise2d_test();
   gaussian_pyramid_app_test();
   grayscale_conversion_test();
