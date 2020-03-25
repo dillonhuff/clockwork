@@ -3,7 +3,7 @@
 #include "hw_classes.h"
 
 struct diff_d_diff_d_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {}
+	// RAM Box: {[-1, 30], [-1, 30]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -65,7 +65,7 @@ inline hw_uint<32> diff_d_g_update_0_read_bundle_read(diff_d_cache& diff_d, int 
 #include "hw_classes.h"
 
 struct diff_l_diff_l_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {}
+	// RAM Box: {[-1, 30], [-1, 30]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -127,7 +127,7 @@ inline hw_uint<32> diff_l_g_update_0_read_bundle_read(diff_l_cache& diff_l, int 
 #include "hw_classes.h"
 
 struct diff_qwe_diff_qwe_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {}
+	// RAM Box: {[-1, 30], [-1, 30]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -189,7 +189,7 @@ inline hw_uint<32> diff_qwe_g_update_0_read_bundle_read(diff_qwe_cache& diff_qwe
 #include "hw_classes.h"
 
 struct diff_r_diff_r_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {}
+	// RAM Box: {[-1, 30], [-1, 30]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -251,7 +251,7 @@ inline hw_uint<32> diff_r_g_update_0_read_bundle_read(diff_r_cache& diff_r, int 
 #include "hw_classes.h"
 
 struct f_f_update_0_write0_merged_banks_2_cache {
-	// RAM Box: {}
+	// RAM Box: {[0, 29], [0, 29]}
 	// Capacity: 1
 	// # of read delays: 1
 	// Parition [0, 0] capacity = 1
@@ -340,7 +340,7 @@ inline hw_uint<32> f_r0_update_0_read_bundle_read(f_cache& f, int d0, int d1) {
 #include "hw_classes.h"
 
 struct g_g_update_0_write0_merged_banks_4_cache {
-	// RAM Box: {}
+	// RAM Box: {[-1, 30], [-1, 30]}
 	// Capacity: 66
 	// # of read delays: 5
 	// Parition [0, 1) capacity = 1
@@ -513,7 +513,7 @@ inline void g_g_update_0_write_bundle_write(hw_uint<32>& g_update_0_write, g_cac
 #include "hw_classes.h"
 
 struct r0_r0_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {}
+	// RAM Box: {[0, 29], [0, 29]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -575,7 +575,7 @@ inline hw_uint<32> r0_r1_update_0_read_bundle_read(r0_cache& r0, int d0, int d1)
 #include "hw_classes.h"
 
 struct r1_r1_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {}
+	// RAM Box: {[0, 29], [0, 29]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -637,7 +637,7 @@ inline void r1_r1_update_0_write_bundle_write(hw_uint<32>& r1_update_0_write, r1
 #include "hw_classes.h"
 
 struct u_u_update_0_write0_merged_banks_13_cache {
-	// RAM Box: {}
+	// RAM Box: {[-2, 31], [-2, 31]}
 	// Capacity: 105
 	// # of read delays: 9
 	// Parition [0, 1) capacity = 1
@@ -980,20 +980,12 @@ inline void r0_update_0(u_cache& u, f_cache& f, r0_cache& r0, int d0, int d1) {
 	r0_r0_update_0_write_bundle_write(compute_result, r0, d0, d1);
 }
 
-inline void u_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_off_chip, u_cache& u, int d0, int d1) {
-	// Consume: u_off_chip
-	auto u_off_chip_0_c__0_value = u_off_chip.read();
-	auto compute_result = id(u_off_chip_0_c__0_value);
-	// Produce: u
-	u_u_update_0_write_bundle_write(compute_result, u, d0, d1);
-}
-
-inline void r1_update_0(r0_cache& r0, r1_cache& r1, int d0, int d1) {
-	// Consume: r0
-	auto r0_0_c__0_value = r0_r1_update_0_read_bundle_read(r0/* source_delay */, d0, d1);
-	auto compute_result = r1_comp(r0_0_c__0_value);
-	// Produce: r1
-	r1_r1_update_0_write_bundle_write(compute_result, r1, d0, d1);
+inline void diff_l_update_0(u_cache& u, diff_l_cache& diff_l, int d0, int d1) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_l_update_0_read_bundle_read(u/* source_delay */, d0, d1);
+	auto compute_result = diff_b(u_0_c__0_value);
+	// Produce: diff_l
+	diff_l_diff_l_update_0_write_bundle_write(compute_result, diff_l, d0, d1);
 }
 
 inline void g_update_0(diff_qwe_cache& diff_qwe, diff_d_cache& diff_d, diff_l_cache& diff_l, diff_r_cache& diff_r, g_cache& g, int d0, int d1) {
@@ -1010,20 +1002,36 @@ inline void g_update_0(diff_qwe_cache& diff_qwe, diff_d_cache& diff_d, diff_l_ca
 	g_g_update_0_write_bundle_write(compute_result, g, d0, d1);
 }
 
-inline void diff_qwe_update_0(u_cache& u, diff_qwe_cache& diff_qwe, int d0, int d1) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_qwe_update_0_read_bundle_read(u/* source_delay */, d0, d1);
-	auto compute_result = diff_b(u_0_c__0_value);
-	// Produce: diff_qwe
-	diff_qwe_diff_qwe_update_0_write_bundle_write(compute_result, diff_qwe, d0, d1);
-}
-
 inline void f_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */f_off_chip, f_cache& f, int d0, int d1) {
 	// Consume: f_off_chip
 	auto f_off_chip_0_c__0_value = f_off_chip.read();
 	auto compute_result = id(f_off_chip_0_c__0_value);
 	// Produce: f
 	f_f_update_0_write_bundle_write(compute_result, f, d0, d1);
+}
+
+inline void u_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_off_chip, u_cache& u, int d0, int d1) {
+	// Consume: u_off_chip
+	auto u_off_chip_0_c__0_value = u_off_chip.read();
+	auto compute_result = id(u_off_chip_0_c__0_value);
+	// Produce: u
+	u_u_update_0_write_bundle_write(compute_result, u, d0, d1);
+}
+
+inline void diff_r_update_0(u_cache& u, diff_r_cache& diff_r, int d0, int d1) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_r_update_0_read_bundle_read(u/* source_delay */, d0, d1);
+	auto compute_result = diff_b(u_0_c__0_value);
+	// Produce: diff_r
+	diff_r_diff_r_update_0_write_bundle_write(compute_result, diff_r, d0, d1);
+}
+
+inline void diff_qwe_update_0(u_cache& u, diff_qwe_cache& diff_qwe, int d0, int d1) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_qwe_update_0_read_bundle_read(u/* source_delay */, d0, d1);
+	auto compute_result = diff_b(u_0_c__0_value);
+	// Produce: diff_qwe
+	diff_qwe_diff_qwe_update_0_write_bundle_write(compute_result, diff_qwe, d0, d1);
 }
 
 inline void diff_d_update_0(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
@@ -1034,12 +1042,12 @@ inline void diff_d_update_0(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
 	diff_d_diff_d_update_0_write_bundle_write(compute_result, diff_d, d0, d1);
 }
 
-inline void diff_r_update_0(u_cache& u, diff_r_cache& diff_r, int d0, int d1) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_r_update_0_read_bundle_read(u/* source_delay */, d0, d1);
-	auto compute_result = diff_b(u_0_c__0_value);
-	// Produce: diff_r
-	diff_r_diff_r_update_0_write_bundle_write(compute_result, diff_r, d0, d1);
+inline void r1_update_0(r0_cache& r0, r1_cache& r1, int d0, int d1) {
+	// Consume: r0
+	auto r0_0_c__0_value = r0_r1_update_0_read_bundle_read(r0/* source_delay */, d0, d1);
+	auto compute_result = r1_comp(r0_0_c__0_value);
+	// Produce: r1
+	r1_r1_update_0_write_bundle_write(compute_result, r1, d0, d1);
 }
 
 inline void denoise2d_update_0(r1_cache& r1, f_cache& f, u_cache& u, g_cache& g, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */denoise2d, int d0, int d1) {
@@ -1054,14 +1062,6 @@ inline void denoise2d_update_0(r1_cache& r1, f_cache& f, u_cache& u, g_cache& g,
 	auto compute_result = out_comp_dn2d(r1_0_c__0_value, f_0_c__0_value, u_0_c__0_value, g_0_c__0_value);
 	// Produce: denoise2d
 	denoise2d.write(compute_result);
-}
-
-inline void diff_l_update_0(u_cache& u, diff_l_cache& diff_l, int d0, int d1) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_l_update_0_read_bundle_read(u/* source_delay */, d0, d1);
-	auto compute_result = diff_b(u_0_c__0_value);
-	// Produce: diff_l
-	diff_l_diff_l_update_0_write_bundle_write(compute_result, diff_l, d0, d1);
 }
 
 // Driver function
@@ -1112,15 +1112,15 @@ void denoise2d_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chi
 #endif // __VIVADO_SYNTH__
 
 // arg list for r0_update_0 = u, f, r0
-// arg list for u_update_0 = u_off_chip, u
-// arg list for r1_update_0 = r0, r1
-// arg list for g_update_0 = diff_qwe, diff_d, diff_l, diff_r, g
-// arg list for diff_qwe_update_0 = u, diff_qwe
-// arg list for f_update_0 = f_off_chip, f
-// arg list for diff_d_update_0 = u, diff_d
-// arg list for diff_r_update_0 = u, diff_r
-// arg list for denoise2d_update_0 = r1, f, u, g, denoise2d
 // arg list for diff_l_update_0 = u, diff_l
+// arg list for g_update_0 = diff_qwe, diff_d, diff_l, diff_r, g
+// arg list for f_update_0 = f_off_chip, f
+// arg list for u_update_0 = u_off_chip, u
+// arg list for diff_r_update_0 = u, diff_r
+// arg list for diff_qwe_update_0 = u, diff_qwe
+// arg list for diff_d_update_0 = u, diff_d
+// arg list for r1_update_0 = r0, r1
+// arg list for denoise2d_update_0 = r1, f, u, g, denoise2d
 /* ISL CODE STRING
 for (int c0 = -2; c0 <= 31; c0++) {
   for (int c1 = -2; c1 <= 31; c1++) {

@@ -3,7 +3,7 @@
 #include "hw_classes.h"
 
 struct I_I_id0_4_merged_banks_3_cache {
-	// RAM Box: {}
+	// RAM Box: {[0, 31], [0, 7]}
 	// Capacity: 65
 	// # of read delays: 3
 	// Parition [0, 1) capacity = 1

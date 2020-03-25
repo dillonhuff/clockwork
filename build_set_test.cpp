@@ -3676,78 +3676,78 @@ void reduce_2d_test() {
   regression_test(prg);
 }
 
-void mobilenet_test() {
+//void mobilenet_test() {
 
-  prog prg;
-  prg.compute_unit_file = "mobilenet_compute.h";
-  prg.name = "mobilenet";
-  prg.add_input("in");
-  prg.add_input("weights");
-  prg.add_output("out");
-  prg.buffer_port_widths["in"] = 32;
-  prg.buffer_port_widths["out"] = 32;
-  prg.buffer_port_widths["dw_conv"] = 32;
-  prg.buffer_port_widths["weights"] = 32;
-  prg.buffer_port_widths["I"] = 32;
+  //prog prg;
+  //prg.compute_unit_file = "mobilenet_compute.h";
+  //prg.name = "mobilenet";
+  //prg.add_input("in");
+  //prg.add_input("weights");
+  //prg.add_output("out");
+  //prg.buffer_port_widths["in"] = 32;
+  //prg.buffer_port_widths["out"] = 32;
+  //prg.buffer_port_widths["dw_conv"] = 32;
+  //prg.buffer_port_widths["weights"] = 32;
+  //prg.buffer_port_widths["I"] = 32;
 
-  {
-    auto read_in = prg.add_nest("px", 0, 14, "py", 0, 14, "pc", 0, 4);
-    auto write = read_in->add_op("read_input_stream");
-    write->add_load("in", "px, py, pc");
-    write->add_store("I", "px, py, pc");
-  }
+  //{
+    //auto read_in = prg.add_nest("px", 0, 14, "py", 0, 14, "pc", 0, 4);
+    //auto write = read_in->add_op("read_input_stream");
+    //write->add_load("in", "px, py, pc");
+    //write->add_store("I", "px, py, pc");
+  //}
 
-  {
-    auto read_in = prg.add_nest("px", 0, 14, "py", 0, 14, "pc", 0, 4);
-    auto write = read_in->add_op("read_weight_input_stream");
-    write->add_load("weights", "px, py, pc");
-    write->add_store("weight_buffer", "px, py, pc");
-  }
+  //{
+    //auto read_in = prg.add_nest("px", 0, 14, "py", 0, 14, "pc", 0, 4);
+    //auto write = read_in->add_op("read_weight_input_stream");
+    //write->add_load("weights", "px, py, pc");
+    //write->add_store("weight_buffer", "px, py, pc");
+  //}
 
-  {
-    // dw_conv
-    auto set_dw = prg.add_nest("dwx", 0, 14 - 2, "dwy", 0, 14 - 2, "dwc", 0, 4);
-    auto init_dw = set_dw->add_op("init_dw");
-    init_dw->add_store("dw_conv", "dwx, dwy, dwz");
-    init_dw->add_function("set_zero_32");
-    // Set dw_conv to be
-    auto update_dw = set_dw->add_nest("rx", 0, 3, "ry", 0, 3);
-    auto rdw = update_dw->add_op("rdw");
-    auto l1 = rdw->add_load("I", "dwx + rx, dwy + ry, dwc");
-    auto w = rdw->add_load("weight_buffer", "dwx + rx, dwy + ry, dwc");
-    auto l2 = rdw->add_load("dw_conv", "dwx, dwy, dwc");
-    rdw->add_function("fma", {l1, w, l2});
-    rdw->add_store("dw_conv", "dwx, dwy, dwc");
-  }
+  //{
+    //// dw_conv
+    //auto set_dw = prg.add_nest("dwx", 0, 14 - 2, "dwy", 0, 14 - 2, "dwc", 0, 4);
+    //auto init_dw = set_dw->add_op("init_dw");
+    //init_dw->add_store("dw_conv", "dwx, dwy, dwz");
+    //init_dw->add_function("set_zero_32");
+    //// Set dw_conv to be
+    //auto update_dw = set_dw->add_nest("rx", 0, 3, "ry", 0, 3);
+    //auto rdw = update_dw->add_op("rdw");
+    //auto l1 = rdw->add_load("I", "dwx + rx, dwy + ry, dwc");
+    //auto w = rdw->add_load("weight_buffer", "dwx + rx, dwy + ry, dwc");
+    //auto l2 = rdw->add_load("dw_conv", "dwx, dwy, dwc");
+    //rdw->add_function("fma", {l1, w, l2});
+    //rdw->add_store("dw_conv", "dwx, dwy, dwc");
+  //}
 
-  {
-    auto read_in = prg.add_nest("ox", 0, 14 - 2, "oy", 0, 14 - 2, "ok", 0, 4);
-    auto write = read_in->add_op("write_max_out");
-    write->add_load("dw_conv", "ox, oy, ok");
-    write->add_function("max_zero");
-    write->add_store("out", "ox, oy, ok");
-  }
+  //{
+    //auto read_in = prg.add_nest("ox", 0, 14 - 2, "oy", 0, 14 - 2, "ok", 0, 4);
+    //auto write = read_in->add_op("write_max_out");
+    //write->add_load("dw_conv", "ox, oy, ok");
+    //write->add_function("max_zero");
+    //write->add_store("out", "ox, oy, ok");
+  //}
 
-  cout << "Program code without optimization..." << endl;
-  prg.unoptimized_codegen();
+  //cout << "Program code without optimization..." << endl;
+  //prg.unoptimized_codegen();
 
-  umap* opt_sched = prg.optimized_codegen();
-  auto domain = prg.whole_iteration_domain();
-  auto schedmap = its(opt_sched, domain);
-  cout << "Optimized schedule..." << endl;
-  cout << codegen_c(schedmap);
+  //umap* opt_sched = prg.optimized_codegen();
+  //auto domain = prg.whole_iteration_domain();
+  //auto schedmap = its(opt_sched, domain);
+  //cout << "Optimized schedule..." << endl;
+  //cout << codegen_c(schedmap);
 
-  auto buffers = build_buffers(prg);
-  generate_app_code(buffers, prg);
+  //auto buffers = build_buffers(prg);
+  //generate_app_code(buffers, prg);
 
-  int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
-  assert(res == 0);
+  //int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
+  //assert(res == 0);
 
-  res = system("./a.out");
-  assert(res == 0);
+  //res = system("./a.out");
+  //assert(res == 0);
 
-  //assert(false);
-}
+  ////assert(false);
+//}
 
 
 umap* input_chunk(UBuffer& buf, const std::string& out_bundle) {
@@ -7246,10 +7246,9 @@ void application_tests() {
   //conv_app_rolled_reduce_test();
 
   //exposure_fusion_simple_average();
-  mismatched_stencil_test();
-  assert(false);
-  laplacian_pyramid_app_test();
   exposure_fusion();
+  mismatched_stencil_test();
+  laplacian_pyramid_app_test();
   denoise2d_test();
   gaussian_pyramid_app_test();
   grayscale_conversion_test();
@@ -7302,7 +7301,7 @@ void application_tests() {
   reduce_2d_test();
   conv_1d_test();
   conv_2d_bc_test();
-  mobilenet_test();
+  //mobilenet_test();
   pyramid_2d_test();
   pyramid_test();
   conv_1d_bc_test();
