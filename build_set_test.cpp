@@ -560,7 +560,7 @@ stack_bank compute_stack_bank_info(
   cout << "inpt  = " << inpt << endl;
   cout << "outpt = " << outpt << endl;
   cout << "name of bank = " << name << endl;
-  stack_bank bank{name, pt_type_string, read_delays, num_readers, maxdelay};
+  stack_bank bank{name, BANK_TYPE_STACK, pt_type_string, read_delays, num_readers, maxdelay};
   return bank;
 }
 
@@ -660,10 +660,8 @@ void generate_code_prefix(CodegenOptions& options,
 
   out << "struct " << buf.name << "_cache {" << endl;
 
-  //for (auto b : buf.stack_banks) {
   for (auto b : buf.get_banks()) {
     out << tab(1)
-      //<< b.first.first << "_to_" << b.first.second << "_cache "
       << b.name << "_cache "
       << b.name
       << ";" << endl;
@@ -5115,7 +5113,7 @@ struct App {
       cout << f << " = " << d << endl;
     }
 
-    assert(false);
+    //assert(false);
   }
 
 
@@ -6431,7 +6429,7 @@ void exposure_fusion() {
   lp.realize("pyramid_synthetic_exposure_fusion", 1250, 1250, 1);
   lp.realize_naive("pyramid_synthetic_exposure_fusion", 1250, 1250);
 
-  assert(false);
+  //assert(false);
 }
 
 void laplacian_pyramid_app_test() {

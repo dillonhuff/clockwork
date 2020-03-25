@@ -5,8 +5,14 @@
 
 using namespace std;
 
+enum bank_type {
+  BANK_TYPE_STACK,
+  BANK_TYPE_RAM
+};
+
 struct bank {
   std::string name;
+  bank_type tp;
 
   // Stack bank properties
   std::string pt_type_string;
