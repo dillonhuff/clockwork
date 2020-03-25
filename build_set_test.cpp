@@ -6426,8 +6426,15 @@ void exposure_fusion() {
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
   //lp.func2d("synthetic_exposure_fusion", "id", pt("in"));
-  lp.realize("pyramid_synthetic_exposure_fusion", 1250, 1250, 1);
-  lp.realize_naive("pyramid_synthetic_exposure_fusion", 1250, 1250);
+  int size = 16;
+  lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
+  lp.realize_naive("pyramid_synthetic_exposure_fusion", size, size);
+
+  std::vector<std::string> naive =
+    run_regression_tb("pyramid_synthetic_exposure_fusion_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb("pyramid_synthetic_exposure_fusion_opt");
+  assert(naive == optimized);
 
   //assert(false);
 }
