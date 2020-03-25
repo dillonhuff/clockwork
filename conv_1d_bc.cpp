@@ -6,6 +6,16 @@ struct M_write_4_to_M_read0_1_cache {
 	// RAM Box: {[0, 9]}
 	// Capacity: 3
 	// # of read delays: 3
+#ifdef __VIVADO_SYNTH__
+  hw_uint<32>  M_write_4_to_M_read0_1_store[10];
+
+#else
+  hw_uint<32> * M_write_4_to_M_read0_1_store;
+#endif // __VIVADO_SYNTH__
+  hw_uint<32>  read(int d0) {    return 0;  }
+
+  void write(hw_uint<32> & value, int d0) { }
+
 	fifo<hw_uint<32> , 3> f;
 	inline hw_uint<32>  peek(const int offset) {
     return f.peek(2 - offset);
@@ -38,6 +48,16 @@ struct M_write_4_merged_banks_2_cache {
 	// RAM Box: {[0, 9]}
 	// Capacity: 3
 	// # of read delays: 2
+#ifdef __VIVADO_SYNTH__
+  hw_uint<32>  M_write_4_merged_banks_2_store[10];
+
+#else
+  hw_uint<32> * M_write_4_merged_banks_2_store;
+#endif // __VIVADO_SYNTH__
+  hw_uint<32>  read(int d0) {    return 0;  }
+
+  void write(hw_uint<32> & value, int d0) { }
+
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<32> , 1> f0;
 	// Parition [1, 1] capacity = 1
@@ -143,6 +163,16 @@ struct T_read0_0_merged_banks_1_cache {
 	// RAM Box: {[0, 9]}
 	// Capacity: 1
 	// # of read delays: 1
+#ifdef __VIVADO_SYNTH__
+  hw_uint<96> T_read0_0_merged_banks_1_store[10];
+
+#else
+  hw_uint<96>* T_read0_0_merged_banks_1_store;
+#endif // __VIVADO_SYNTH__
+  hw_uint<96> read(int d0) {    return 0;  }
+
+  void write(hw_uint<96>& value, int d0) { }
+
 	fifo<hw_uint<96>, 1> f;
 	inline hw_uint<96> peek(const int offset) {
     return f.peek(0 - offset);

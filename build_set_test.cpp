@@ -403,14 +403,21 @@ void generate_ram_bank(CodegenOptions& options,
     stack_bank& bank) {
 
   string ram = bank.name + "_store";
+
+  out << "#ifdef __VIVADO_SYNTH__" << endl;
   out << tab(1) << bank.pt_type_string << " " << ram
     << "[" << bank.layout.cardinality() << "];" << endl << endl;
+  out << "#else" << endl;
+  out << tab(1) << bank.pt_type_string << "* " << ram << ";" << endl;
+  out << "#endif // __VIVADO_SYNTH__" << endl;
 
   vector<string> vars;
+  vector<string> decls;
   for (int i = 0; i < bank.layout.dimension(); i++) {
     vars.push_back("d" + str(i));
+    decls.push_back("int d" + str(i));
   }
-  string arg_list = comma_list(vars);
+  string arg_list = comma_list(decls);
 
   out << tab(1) << bank.pt_type_string << " read(" << arg_list << ") {";
   out << tab(2) << "return 0;";
@@ -7270,6 +7277,7 @@ void application_tests() {
   //conv_app_rolled_reduce_test();
 
   //exposure_fusion_simple_average();
+  heat_3d_test();
   mismatched_stencil_test();
   exposure_fusion();
   laplacian_pyramid_app_test();
@@ -7282,7 +7290,6 @@ void application_tests() {
   upsample_stencil_1d_test();
   upsample_stencil_2d_test();
 
-  heat_3d_test();
   //synth_reduce_test();
   jacobi_2d_2_test();
   jacobi_2d_test();
