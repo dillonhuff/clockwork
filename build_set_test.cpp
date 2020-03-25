@@ -527,6 +527,7 @@ void generate_stack_cache(CodegenOptions& options,
 }
 
 Box extract_box(uset* rddom) {
+  cout << "extracting box from " << str(rddom) << endl;
   auto min_pt =
     parse_pt(sample(lexmin(rddom)));
   auto max_pt =
@@ -538,6 +539,7 @@ Box extract_box(uset* rddom) {
   for (size_t i = 0; i < min_pt.size(); i++) {
     b.intervals.push_back({min_pt.at(i), max_pt.at(i)});
   }
+  cout << tab(1) << "result = " << b << endl;
   return b;
 }
 
@@ -578,7 +580,7 @@ bank compute_bank_info(
   cout << "name of bank = " << name << endl;
 
   auto rddom =
-    its(range(buf.access_map.at(inpt)),
+    unn(range(buf.access_map.at(inpt)),
         range(buf.access_map.at(outpt)));
   Box mem_box = extract_box(rddom);
 
@@ -588,20 +590,20 @@ bank compute_bank_info(
 }
 
 
-void generate_stack_bank(CodegenOptions& options,
-    std::ostream& out, 
-    const std::string& inpt, 
-    const std::string& outpt,
-    UBuffer& buf) {
+//void generate_stack_bank(CodegenOptions& options,
+    //std::ostream& out, 
+    //const std::string& inpt, 
+    //const std::string& outpt,
+    //UBuffer& buf) {
 
-  cout << tab(1) << "Creating bank from " << inpt << " to " << outpt << endl;
+  //cout << tab(1) << "Creating bank from " << inpt << " to " << outpt << endl;
 
-  stack_bank bank = compute_bank_info(inpt, outpt, buf);
+  //stack_bank bank = compute_bank_info(inpt, outpt, buf);
 
-  cout << "bank name = " << bank.name << endl;
+  //cout << "bank name = " << bank.name << endl;
 
-  generate_stack_cache(options, out, bank);
-}
+  //generate_stack_cache(options, out, bank);
+//}
 
 vector<string> dimension_var_decls(const std::string& pt, UBuffer& buf) {
   isl_space* s = get_space(buf.domain.at(pt));
@@ -653,6 +655,7 @@ void generate_code_prefix(CodegenOptions& options,
 
     if (mergeable.size() > 0) {
       stack_bank merged;
+      merged.layout = Box(mergeable.at(0).layout.dimension());
       merged.name =
         inpt + "_merged_banks_" + str(mergeable.size());
       merged.pt_type_string =
@@ -660,6 +663,7 @@ void generate_code_prefix(CodegenOptions& options,
       merged.num_readers = mergeable.size();
       merged.maxdelay = -1;
       for (auto m : mergeable) {
+        merged.layout = unn(merged.layout, m.layout);
         if (m.maxdelay > merged.maxdelay) {
           merged.maxdelay = m.maxdelay;
         }
@@ -7242,8 +7246,9 @@ void application_tests() {
   //conv_app_rolled_reduce_test();
 
   //exposure_fusion_simple_average();
-  laplacian_pyramid_app_test();
   mismatched_stencil_test();
+  assert(false);
+  laplacian_pyramid_app_test();
   exposure_fusion();
   denoise2d_test();
   gaussian_pyramid_app_test();
