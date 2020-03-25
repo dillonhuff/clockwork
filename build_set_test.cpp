@@ -5115,7 +5115,7 @@ struct App {
       cout << f << " = " << d << endl;
     }
 
-    //assert(false);
+    assert(false);
   }
 
 

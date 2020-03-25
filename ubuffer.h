@@ -5,13 +5,22 @@
 
 using namespace std;
 
-struct stack_bank {
+struct bank {
   std::string name;
+
+  // Stack bank properties
   std::string pt_type_string;
   vector<int> read_delays;
   int num_readers;
   int maxdelay;
+
+  // RAM bank properties
+  int capacity;
+  int ndims;
+  vector<int> dim_widths;
 };
+
+typedef bank stack_bank;
 
 class AccessPattern {
   public:
