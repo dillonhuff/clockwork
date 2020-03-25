@@ -981,6 +981,10 @@ umap* rdmap(isl_ctx* ctx, const std::string& str) {
   return isl_union_map_read_from_str(ctx, str.c_str());
 }
 
+isl_point* sample(isl_union_set* s) {
+  return isl_union_set_sample_point(cpy(s));
+}
+
 isl_point* sample(isl_set* s) {
   return isl_set_sample_point(cpy(s));
 }

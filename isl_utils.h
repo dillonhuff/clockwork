@@ -329,6 +329,7 @@ isl_set* rdset(isl_ctx* ctx, const std::string& str);
 umap* rdmap(isl_ctx* ctx, const std::string& str);
 
 isl_point* sample(isl_set* s);
+isl_point* sample(isl_union_set* s);
 
 isl_pw_aff* dim_min(isl_map* const m, const int d);
 

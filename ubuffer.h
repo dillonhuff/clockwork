@@ -1,7 +1,6 @@
 #pragma once
 
-#include "isl_utils.h"
-#include "utils.h"
+#include "qexpr.h"
 
 using namespace std;
 
@@ -21,9 +20,7 @@ struct bank {
   int maxdelay;
 
   // RAM bank properties
-  int capacity;
-  int ndims;
-  vector<int> dim_widths;
+  Box layout;
 };
 
 typedef bank stack_bank;

@@ -409,6 +409,7 @@ void generate_stack_cache(CodegenOptions& options,
   auto maxdelay = bank.maxdelay;
 
   out << "struct " << name << "_cache" <<  " {" << endl;
+  out << "\t// RAM Box: " << bank.layout << endl;
   out << "\t// Capacity: " << maxdelay + 1 << endl;
   out << "\t// # of read delays: " << read_delays.size() << endl;
   //out << "\t// read delays: " << comma_list(read_delays) << endl;
@@ -525,7 +526,22 @@ void generate_stack_cache(CodegenOptions& options,
   out << "};" << endl << endl;
 }
 
-stack_bank compute_stack_bank_info(
+Box extract_box(uset* rddom) {
+  auto min_pt =
+    parse_pt(sample(lexmin(rddom)));
+  auto max_pt =
+    parse_pt(sample(lexmax(rddom)));
+
+  assert(min_pt.size() == max_pt.size());
+
+  Box b;
+  for (size_t i = 0; i < min_pt.size(); i++) {
+    b.intervals.push_back({min_pt.at(i), max_pt.at(i)});
+  }
+  return b;
+}
+
+bank compute_bank_info(
     const std::string& inpt, 
     const std::string& outpt,
     UBuffer& buf) {
@@ -560,7 +576,14 @@ stack_bank compute_stack_bank_info(
   cout << "inpt  = " << inpt << endl;
   cout << "outpt = " << outpt << endl;
   cout << "name of bank = " << name << endl;
-  stack_bank bank{name, BANK_TYPE_STACK, pt_type_string, read_delays, num_readers, maxdelay};
+
+  auto rddom =
+    its(range(buf.access_map.at(inpt)),
+        range(buf.access_map.at(outpt)));
+  Box mem_box = extract_box(rddom);
+
+  stack_bank bank{name, BANK_TYPE_STACK, pt_type_string, read_delays, num_readers, maxdelay, mem_box};
+
   return bank;
 }
 
@@ -573,7 +596,7 @@ void generate_stack_bank(CodegenOptions& options,
 
   cout << tab(1) << "Creating bank from " << inpt << " to " << outpt << endl;
 
-  stack_bank bank = compute_stack_bank_info(inpt, outpt, buf);
+  stack_bank bank = compute_bank_info(inpt, outpt, buf);
 
   cout << "bank name = " << bank.name << endl;
 
@@ -609,7 +632,7 @@ void generate_code_prefix(CodegenOptions& options,
         its(range(buf.access_map.at(inpt)), range(buf.access_map.at(outpt)));
 
       if (!empty(overlap)) {
-        stack_bank bank = compute_stack_bank_info(inpt, outpt, buf);
+        stack_bank bank = compute_bank_info(inpt, outpt, buf);
         buf.add_bank_between(inpt, outpt, bank);
       }
     }
@@ -7218,10 +7241,10 @@ void application_tests() {
 
   //conv_app_rolled_reduce_test();
 
-  exposure_fusion();
   //exposure_fusion_simple_average();
   laplacian_pyramid_app_test();
   mismatched_stencil_test();
+  exposure_fusion();
   denoise2d_test();
   gaussian_pyramid_app_test();
   grayscale_conversion_test();
