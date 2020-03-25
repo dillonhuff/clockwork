@@ -398,6 +398,27 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
   return maxdelay;
 }
 
+void generate_ram_bank(CodegenOptions& options,
+    std::ostream& out,
+    stack_bank& bank) {
+
+  string ram = bank.name + "_store";
+  out << tab(1) << bank.pt_type_string << " " << ram
+    << "[" << bank.layout.cardinality() << "];" << endl << endl;
+
+  vector<string> vars;
+  for (int i = 0; i < bank.layout.dimension(); i++) {
+    vars.push_back("d" + str(i));
+  }
+  string arg_list = comma_list(vars);
+
+  out << tab(1) << bank.pt_type_string << " read(" << arg_list << ") {";
+  out << tab(2) << "return 0;";
+  out << tab(1) << "}" << endl << endl;
+  out << tab(1) << "void write(" << bank.pt_type_string << "& value, " << arg_list << ") { }" << endl << endl;
+
+}
+
 void generate_stack_cache(CodegenOptions& options,
     std::ostream& out,
     stack_bank& bank) {
@@ -412,6 +433,9 @@ void generate_stack_cache(CodegenOptions& options,
   out << "\t// RAM Box: " << bank.layout << endl;
   out << "\t// Capacity: " << maxdelay + 1 << endl;
   out << "\t// # of read delays: " << read_delays.size() << endl;
+
+  generate_ram_bank(options, out, bank);
+
   //out << "\t// read delays: " << comma_list(read_delays) << endl;
   if (num_readers == 1 || options.all_rams) {
     int partition_capacity = 1 + maxdelay;
@@ -7246,8 +7270,8 @@ void application_tests() {
   //conv_app_rolled_reduce_test();
 
   //exposure_fusion_simple_average();
-  exposure_fusion();
   mismatched_stencil_test();
+  exposure_fusion();
   laplacian_pyramid_app_test();
   denoise2d_test();
   gaussian_pyramid_app_test();
