@@ -646,6 +646,43 @@ bank compute_bank_info(
   return bank;
 }
 
+vector<string> space_var_decls(isl_space* s) {
+  assert(isl_space_is_set(s));
+
+  vector<string> dim_decls;
+  for (int i = 0; i < num_dims(s); i++) {
+    if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
+      string dn = "d" + to_string(i);
+      auto new_id = id(ctx(s), dn);
+      assert(new_id != nullptr);
+      s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
+    }
+
+    assert(isl_space_has_dim_name(s, isl_dim_set, i));
+    assert(isl_space_has_dim_id(s, isl_dim_set, i));
+    dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
+  }
+  return dim_decls;
+}
+
+vector<string> space_var_args(isl_space* s) {
+  assert(isl_space_is_set(s));
+
+  vector<string> dim_decls;
+  for (int i = 0; i < num_dims(s); i++) {
+    if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
+      string dn = "d" + to_string(i);
+      auto new_id = id(ctx(s), dn);
+      assert(new_id != nullptr);
+      s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
+    }
+
+    assert(isl_space_has_dim_name(s, isl_dim_set, i));
+    assert(isl_space_has_dim_id(s, isl_dim_set, i));
+    dim_decls.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
+  }
+  return dim_decls;
+}
 vector<string> dimension_var_args(const std::string& pt, UBuffer& buf) {
   isl_space* s = get_space(buf.domain.at(pt));
   assert(isl_space_is_set(s));
@@ -1040,7 +1077,6 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
         concat(args, dim_args);
         out << "\t" << p << "_write(" << comma_list(args) << ");" << endl;
 
-        //out << "\t" << p << "_write(" << p << "_res" << ", " << buf.name << ");" << endl;
         offset += buf.port_width(p);
       }
 
@@ -2651,19 +2687,25 @@ void generate_app_code(CodegenOptions& options,
     concat(buf_srcs, buffer_args(buffers, op, prg));
 
     auto s = get_space(domain_map.at(op->name));
-    assert(isl_space_is_set(s));
     vector<string> dim_args;
-    for (int i = 0; i < num_dims(s); i++) {
-      if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
-        string dn = "d" + to_string(i);
-        auto new_id = id(ctx(s), dn);
-        assert(new_id != nullptr);
-        cout << "setting id: " << str(new_id) << endl;
-        s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
-      }
-      buf_srcs.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
-      dim_args.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
+    for (auto a : space_var_args(s)) {
+      dim_args.push_back(a);
     }
+    for (auto a : space_var_decls(s)) {
+      buf_srcs.push_back(a);
+    }
+    //assert(isl_space_is_set(s));
+    //for (int i = 0; i < num_dims(s); i++) {
+      //if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
+        //string dn = "d" + to_string(i);
+        //auto new_id = id(ctx(s), dn);
+        //assert(new_id != nullptr);
+        //cout << "setting id: " << str(new_id) << endl;
+        //s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
+      //}
+      //buf_srcs.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
+      //dim_args.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
+    //}
     conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
     vector<pair<string, string> > in_buffers;
     set<string> distinct;
@@ -2750,7 +2792,6 @@ void generate_app_code(CodegenOptions& options,
     code_string = regex_replace(code_string, re, "\n\t" + op->name + "(" + args_list + ", $1);");
   }
 
-  //assert(false);
   conv_out << "/* ISL CODE STRING" << endl;
   conv_out << original_isl_code_string << endl;
   conv_out << "*/" << endl;
