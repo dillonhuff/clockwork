@@ -7359,6 +7359,9 @@ void application_tests() {
 
   //exposure_fusion_simple_average();
   mismatched_stencil_test();
+  upsample_stencil_1d_test();
+  upsample_stencil_2d_test();
+
   heat_3d_test();
   exposure_fusion();
   laplacian_pyramid_app_test();
@@ -7367,9 +7370,6 @@ void application_tests() {
   grayscale_conversion_test();
   jacobi_2d_app_test();
   seidel2d_test();
-
-  upsample_stencil_1d_test();
-  upsample_stencil_2d_test();
 
   //synth_reduce_test();
   jacobi_2d_2_test();

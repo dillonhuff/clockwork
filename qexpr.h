@@ -1,4 +1,5 @@
 #pragma once
+
 #include <stack>
 #include <regex>
 #include <cassert>
@@ -1093,7 +1094,7 @@ std::string box_codegen(const vector<string>& op_order,
   reverse(bnds);
   cout << "Whole domain: " << whole_dom << endl;
   //assert(false);
-  print_loops(0, ss, op_order, whole_dom, index_bounds, scheds);
+  //print_loops(0, ss, op_order, whole_dom, index_bounds, scheds);
   print_while_loop(0, ss, op_order, whole_dom, index_bounds, scheds);
 
   return ss.str();
