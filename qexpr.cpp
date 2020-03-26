@@ -36,7 +36,12 @@ void print_while_loop(int level,
   }
 
   for (int i = 0; i < whole_dom.dimension(); i++) {
-    string all_at_max = "1";
+    vector<string> all_below_at_max{"1"};
+    for (int j = i + 1; j < whole_dom.dimension(); j++) {
+      all_below_at_max.push_back(loop_counters.at(j) + "_at_max");
+    }
+    string all_at_max = sep_list(all_below_at_max, "", "", " && ");
+
     out << tab(2) << "if (" << all_at_max << ") {" << endl;
     out << tab(3) << "if (" << loop_counters.at(i) << "_at_max" << ") {" << endl;
     out << tab(4) << loop_counters.at(i) << " = " << whole_dom.min(i) << ";" << endl;
