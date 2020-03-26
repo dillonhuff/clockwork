@@ -448,6 +448,9 @@ void generate_stack_cache(CodegenOptions& options,
     int partition_capacity = 1 + maxdelay;
     out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << ";" << endl;
     out << "\tinline " + pt_type_string + " peek(const int offset) {" << endl;
+    out << "#ifdef __VIVADO_SYNTH__" << endl;
+    out << "#pragma HLS dependence variable=f inter false" << endl;
+    out << "#endif //__VIVADO_SYNTH__" << endl;
     out << tab(2) << "return f.peek(" << partition_capacity - 1 << " - offset);" << endl;
     out << tab(1) << "}" << endl << endl;
 
@@ -456,6 +459,9 @@ void generate_stack_cache(CodegenOptions& options,
         int dv = i;
         assert(dv >= 0);
         out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
+        out << "#ifdef __VIVADO_SYNTH__" << endl;
+        out << "#pragma HLS dependence variable=f inter false" << endl;
+        out << "#endif //__VIVADO_SYNTH__" << endl;
         out << "\t\treturn f.peek(" << dv <<");" << endl;
         out << "\t}" << endl << endl;
       }
