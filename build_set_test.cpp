@@ -851,22 +851,23 @@ void generate_select_decl(CodegenOptions& options, std::ostream& out, const stri
   nargs++;
   cout << "Getting space..." << endl;
   isl_space* s = get_space(buf.domain.at(outpt));
-  assert(isl_space_is_set(s));
-  cout << "Got set space: " << str(s) << endl;
-  vector<string> dim_decls;
-  for (int i = 0; i < num_dims(s); i++) {
-    if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
-      string dn = "d" + to_string(i);
-      auto new_id = id(buf.ctx, dn);
-      assert(new_id != nullptr);
-      cout << "setting id: " << str(new_id) << endl;
-      s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
-    }
+  auto dim_decls = space_var_decls(s);
+  //assert(isl_space_is_set(s));
+  //cout << "Got set space: " << str(s) << endl;
+  //vector<string> dim_decls;
+  //for (int i = 0; i < num_dims(s); i++) {
+    //if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
+      //string dn = "d" + to_string(i);
+      //auto new_id = id(buf.ctx, dn);
+      //assert(new_id != nullptr);
+      //cout << "setting id: " << str(new_id) << endl;
+      //s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
+    //}
 
-    assert(isl_space_has_dim_name(s, isl_dim_set, i));
-    assert(isl_space_has_dim_id(s, isl_dim_set, i));
-    dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
-  }
+    //assert(isl_space_has_dim_name(s, isl_dim_set, i));
+    //assert(isl_space_has_dim_id(s, isl_dim_set, i));
+    //dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
+  //}
   out << sep_list(dim_decls, "", "", ", ");
 
   out << ") {" << endl;
@@ -877,18 +878,20 @@ void select_debug_assertions(CodegenOptions& options, std::ostream& out, const s
   // ------------ Error printouts only
   vector<string> offset_printouts;
   isl_space* s = get_space(buf.domain.at(outpt));
+  auto vars = space_var_args(s);
+
   assert(isl_space_is_set(s));
   for (int i = 0; i < num_dims(s); i++) {
-    if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
-      string dn = "d" + to_string(i);
-      auto new_id = id(buf.ctx, dn);
-      assert(new_id != nullptr);
-      cout << "setting id: " << str(new_id) << endl;
-      s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
-    }
-    string name =
-      str(isl_space_get_dim_id(s, isl_dim_set, i));
-    offset_printouts.push_back("\" " + name + " = \" << " + name + " ");
+    //if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
+      //string dn = "d" + to_string(i);
+      //auto new_id = id(buf.ctx, dn);
+      //assert(new_id != nullptr);
+      //cout << "setting id: " << str(new_id) << endl;
+      //s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
+    //}
+    //string name =
+      //str(isl_space_get_dim_id(s, isl_dim_set, i));
+    offset_printouts.push_back("\" " + vars.at(i) + " = \" << " + vars.at(i) + " ");
   }
 
   out << "\tcout << \"Error: Unsupported offsets: \" << " << sep_list(offset_printouts, "", "", " << ") << " << endl;" << endl;
