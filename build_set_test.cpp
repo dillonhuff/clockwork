@@ -419,10 +419,23 @@ void generate_ram_bank(CodegenOptions& options,
   }
   string arg_list = comma_list(decls);
 
+  vector<string> addr;
+  for (int i = 0; i < vars.size(); i++) {
+    vector<string> offset{vars.at(i)};
+    for (int j = 0; j < i; j++) {
+      offset.push_back(str(bank.layout.length(j)));
+    }
+    addr.push_back(sep_list(offset, "", "", "*"));
+  }
+
+  string addr_str = sep_list(addr, "(", ")", " + ");
+
   out << tab(1) << bank.pt_type_string << " read(" << arg_list << ") {";
-  out << tab(2) << "return 0;";
+  out << tab(2) << "return " << ram << "[" << addr_str << "];";
   out << tab(1) << "}" << endl << endl;
-  out << tab(1) << "void write(" << bank.pt_type_string << "& value, " << arg_list << ") { }" << endl << endl;
+  out << tab(1) << "void write(" << bank.pt_type_string << "& value, " << arg_list << ") {" << endl;
+  out << tab(2) << ram << "[" << addr_str << "] = value;" << endl;
+  out << tab(1) << "}" << endl << endl;
 
 }
 

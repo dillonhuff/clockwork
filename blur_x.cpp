@@ -12,9 +12,11 @@ struct I_I_id0_4_merged_banks_3_cache {
 #else
   hw_uint<16>* I_I_id0_4_merged_banks_3_store;
 #endif // __VIVADO_SYNTH__
-  hw_uint<16> read(int d0, int d1) {    return 0;  }
+  hw_uint<16> read(int d0, int d1) {    return I_I_id0_4_merged_banks_3_store[(d0 + d1*32)];  }
 
-  void write(hw_uint<16>& value, int d0, int d1) { }
+  void write(hw_uint<16>& value, int d0, int d1) {
+    I_I_id0_4_merged_banks_3_store[(d0 + d1*32)] = value;
+  }
 
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
@@ -29,28 +31,46 @@ struct I_I_id0_4_merged_banks_3_cache {
 
 
 	inline hw_uint<16> peek_0() {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f inter false
+#endif //__VIVADO_SYNTH__
 		return f0.back();
 	}
 
 	inline hw_uint<16> peek_31() {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f inter false
+#endif //__VIVADO_SYNTH__
 		return f1.back();
 	}
 
 	inline hw_uint<16> peek_32() {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f inter false
+#endif //__VIVADO_SYNTH__
 		return f2.back();
 	}
 
 	inline hw_uint<16> peek_63() {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f inter false
+#endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
 	inline hw_uint<16> peek_64() {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f inter false
+#endif //__VIVADO_SYNTH__
 		return f4.back();
 	}
 
 
 
 	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f inter false
+#endif //__VIVADO_SYNTH__
 		if (offset == 0) {
 			return f0.back();
 		}
