@@ -3,8 +3,19 @@
 #include "hw_classes.h"
 
 struct I_I_id0_4_merged_banks_3_cache {
+	// RAM Box: {[0, 31], [0, 7]}
 	// Capacity: 65
 	// # of read delays: 3
+#ifdef __VIVADO_SYNTH__
+  hw_uint<16> I_I_id0_4_merged_banks_3_store[256];
+
+#else
+  hw_uint<16>* I_I_id0_4_merged_banks_3_store;
+#endif // __VIVADO_SYNTH__
+  hw_uint<16> read(int d0, int d1) {    return 0;  }
+
+  void write(hw_uint<16>& value, int d0, int d1) { }
+
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
 	// Parition [1, 32) capacity = 31

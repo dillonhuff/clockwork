@@ -848,6 +848,15 @@ struct Box {
     }
   }
 
+  int cardinality() const {
+    int c = 1;
+    for (int i = 0; i < dimension(); i++) {
+      c *= length(i);
+    }
+
+    return c;
+  }
+
   int min(const int dim) const { return intervals.at(dim).min; }
   int max(const int dim) const { return intervals.at(dim).max; }
 

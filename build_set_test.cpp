@@ -398,6 +398,34 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
   return maxdelay;
 }
 
+void generate_ram_bank(CodegenOptions& options,
+    std::ostream& out,
+    stack_bank& bank) {
+
+  string ram = bank.name + "_store";
+
+  out << "#ifdef __VIVADO_SYNTH__" << endl;
+  out << tab(1) << bank.pt_type_string << " " << ram
+    << "[" << bank.layout.cardinality() << "];" << endl << endl;
+  out << "#else" << endl;
+  out << tab(1) << bank.pt_type_string << "* " << ram << ";" << endl;
+  out << "#endif // __VIVADO_SYNTH__" << endl;
+
+  vector<string> vars;
+  vector<string> decls;
+  for (int i = 0; i < bank.layout.dimension(); i++) {
+    vars.push_back("d" + str(i));
+    decls.push_back("int d" + str(i));
+  }
+  string arg_list = comma_list(decls);
+
+  out << tab(1) << bank.pt_type_string << " read(" << arg_list << ") {";
+  out << tab(2) << "return 0;";
+  out << tab(1) << "}" << endl << endl;
+  out << tab(1) << "void write(" << bank.pt_type_string << "& value, " << arg_list << ") { }" << endl << endl;
+
+}
+
 void generate_stack_cache(CodegenOptions& options,
     std::ostream& out,
     stack_bank& bank) {
@@ -409,13 +437,20 @@ void generate_stack_cache(CodegenOptions& options,
   auto maxdelay = bank.maxdelay;
 
   out << "struct " << name << "_cache" <<  " {" << endl;
+  out << "\t// RAM Box: " << bank.layout << endl;
   out << "\t// Capacity: " << maxdelay + 1 << endl;
   out << "\t// # of read delays: " << read_delays.size() << endl;
+
+  generate_ram_bank(options, out, bank);
+
   //out << "\t// read delays: " << comma_list(read_delays) << endl;
   if (num_readers == 1 || options.all_rams) {
     int partition_capacity = 1 + maxdelay;
     out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << ";" << endl;
     out << "\tinline " + pt_type_string + " peek(const int offset) {" << endl;
+    out << "#ifdef __VIVADO_SYNTH__" << endl;
+    out << "#pragma HLS dependence variable=f inter false" << endl;
+    out << "#endif //__VIVADO_SYNTH__" << endl;
     out << tab(2) << "return f.peek(" << partition_capacity - 1 << " - offset);" << endl;
     out << tab(1) << "}" << endl << endl;
 
@@ -424,6 +459,9 @@ void generate_stack_cache(CodegenOptions& options,
         int dv = i;
         assert(dv >= 0);
         out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
+        out << "#ifdef __VIVADO_SYNTH__" << endl;
+        out << "#pragma HLS dependence variable=f inter false" << endl;
+        out << "#endif //__VIVADO_SYNTH__" << endl;
         out << "\t\treturn f.peek(" << dv <<");" << endl;
         out << "\t}" << endl << endl;
       }
@@ -525,7 +563,24 @@ void generate_stack_cache(CodegenOptions& options,
   out << "};" << endl << endl;
 }
 
-stack_bank compute_stack_bank_info(
+Box extract_box(uset* rddom) {
+  cout << "extracting box from " << str(rddom) << endl;
+  auto min_pt =
+    parse_pt(sample(lexmin(rddom)));
+  auto max_pt =
+    parse_pt(sample(lexmax(rddom)));
+
+  assert(min_pt.size() == max_pt.size());
+
+  Box b;
+  for (size_t i = 0; i < min_pt.size(); i++) {
+    b.intervals.push_back({min_pt.at(i), max_pt.at(i)});
+  }
+  cout << tab(1) << "result = " << b << endl;
+  return b;
+}
+
+bank compute_bank_info(
     const std::string& inpt, 
     const std::string& outpt,
     UBuffer& buf) {
@@ -560,25 +615,32 @@ stack_bank compute_stack_bank_info(
   cout << "inpt  = " << inpt << endl;
   cout << "outpt = " << outpt << endl;
   cout << "name of bank = " << name << endl;
-  stack_bank bank{name, pt_type_string, read_delays, num_readers, maxdelay};
+
+  auto rddom =
+    unn(range(buf.access_map.at(inpt)),
+        range(buf.access_map.at(outpt)));
+  Box mem_box = extract_box(rddom);
+
+  stack_bank bank{name, BANK_TYPE_STACK, pt_type_string, read_delays, num_readers, maxdelay, mem_box};
+
   return bank;
 }
 
 
-void generate_stack_bank(CodegenOptions& options,
-    std::ostream& out, 
-    const std::string& inpt, 
-    const std::string& outpt,
-    UBuffer& buf) {
+//void generate_stack_bank(CodegenOptions& options,
+    //std::ostream& out, 
+    //const std::string& inpt, 
+    //const std::string& outpt,
+    //UBuffer& buf) {
 
-  cout << tab(1) << "Creating bank from " << inpt << " to " << outpt << endl;
+  //cout << tab(1) << "Creating bank from " << inpt << " to " << outpt << endl;
 
-  stack_bank bank = compute_stack_bank_info(inpt, outpt, buf);
+  //stack_bank bank = compute_bank_info(inpt, outpt, buf);
 
-  cout << "bank name = " << bank.name << endl;
+  //cout << "bank name = " << bank.name << endl;
 
-  generate_stack_cache(options, out, bank);
-}
+  //generate_stack_cache(options, out, bank);
+//}
 
 vector<string> dimension_var_decls(const std::string& pt, UBuffer& buf) {
   isl_space* s = get_space(buf.domain.at(pt));
@@ -609,7 +671,7 @@ void generate_code_prefix(CodegenOptions& options,
         its(range(buf.access_map.at(inpt)), range(buf.access_map.at(outpt)));
 
       if (!empty(overlap)) {
-        stack_bank bank = compute_stack_bank_info(inpt, outpt, buf);
+        stack_bank bank = compute_bank_info(inpt, outpt, buf);
         buf.add_bank_between(inpt, outpt, bank);
       }
     }
@@ -630,6 +692,7 @@ void generate_code_prefix(CodegenOptions& options,
 
     if (mergeable.size() > 0) {
       stack_bank merged;
+      merged.layout = Box(mergeable.at(0).layout.dimension());
       merged.name =
         inpt + "_merged_banks_" + str(mergeable.size());
       merged.pt_type_string =
@@ -637,6 +700,7 @@ void generate_code_prefix(CodegenOptions& options,
       merged.num_readers = mergeable.size();
       merged.maxdelay = -1;
       for (auto m : mergeable) {
+        merged.layout = unn(merged.layout, m.layout);
         if (m.maxdelay > merged.maxdelay) {
           merged.maxdelay = m.maxdelay;
         }
@@ -660,10 +724,8 @@ void generate_code_prefix(CodegenOptions& options,
 
   out << "struct " << buf.name << "_cache {" << endl;
 
-  //for (auto b : buf.stack_banks) {
   for (auto b : buf.get_banks()) {
     out << tab(1)
-      //<< b.first.first << "_to_" << b.first.second << "_cache "
       << b.name << "_cache "
       << b.name
       << ";" << endl;
@@ -3651,78 +3713,78 @@ void reduce_2d_test() {
   regression_test(prg);
 }
 
-void mobilenet_test() {
+//void mobilenet_test() {
 
-  prog prg;
-  prg.compute_unit_file = "mobilenet_compute.h";
-  prg.name = "mobilenet";
-  prg.add_input("in");
-  prg.add_input("weights");
-  prg.add_output("out");
-  prg.buffer_port_widths["in"] = 32;
-  prg.buffer_port_widths["out"] = 32;
-  prg.buffer_port_widths["dw_conv"] = 32;
-  prg.buffer_port_widths["weights"] = 32;
-  prg.buffer_port_widths["I"] = 32;
+  //prog prg;
+  //prg.compute_unit_file = "mobilenet_compute.h";
+  //prg.name = "mobilenet";
+  //prg.add_input("in");
+  //prg.add_input("weights");
+  //prg.add_output("out");
+  //prg.buffer_port_widths["in"] = 32;
+  //prg.buffer_port_widths["out"] = 32;
+  //prg.buffer_port_widths["dw_conv"] = 32;
+  //prg.buffer_port_widths["weights"] = 32;
+  //prg.buffer_port_widths["I"] = 32;
 
-  {
-    auto read_in = prg.add_nest("px", 0, 14, "py", 0, 14, "pc", 0, 4);
-    auto write = read_in->add_op("read_input_stream");
-    write->add_load("in", "px, py, pc");
-    write->add_store("I", "px, py, pc");
-  }
+  //{
+    //auto read_in = prg.add_nest("px", 0, 14, "py", 0, 14, "pc", 0, 4);
+    //auto write = read_in->add_op("read_input_stream");
+    //write->add_load("in", "px, py, pc");
+    //write->add_store("I", "px, py, pc");
+  //}
 
-  {
-    auto read_in = prg.add_nest("px", 0, 14, "py", 0, 14, "pc", 0, 4);
-    auto write = read_in->add_op("read_weight_input_stream");
-    write->add_load("weights", "px, py, pc");
-    write->add_store("weight_buffer", "px, py, pc");
-  }
+  //{
+    //auto read_in = prg.add_nest("px", 0, 14, "py", 0, 14, "pc", 0, 4);
+    //auto write = read_in->add_op("read_weight_input_stream");
+    //write->add_load("weights", "px, py, pc");
+    //write->add_store("weight_buffer", "px, py, pc");
+  //}
 
-  {
-    // dw_conv
-    auto set_dw = prg.add_nest("dwx", 0, 14 - 2, "dwy", 0, 14 - 2, "dwc", 0, 4);
-    auto init_dw = set_dw->add_op("init_dw");
-    init_dw->add_store("dw_conv", "dwx, dwy, dwz");
-    init_dw->add_function("set_zero_32");
-    // Set dw_conv to be
-    auto update_dw = set_dw->add_nest("rx", 0, 3, "ry", 0, 3);
-    auto rdw = update_dw->add_op("rdw");
-    auto l1 = rdw->add_load("I", "dwx + rx, dwy + ry, dwc");
-    auto w = rdw->add_load("weight_buffer", "dwx + rx, dwy + ry, dwc");
-    auto l2 = rdw->add_load("dw_conv", "dwx, dwy, dwc");
-    rdw->add_function("fma", {l1, w, l2});
-    rdw->add_store("dw_conv", "dwx, dwy, dwc");
-  }
+  //{
+    //// dw_conv
+    //auto set_dw = prg.add_nest("dwx", 0, 14 - 2, "dwy", 0, 14 - 2, "dwc", 0, 4);
+    //auto init_dw = set_dw->add_op("init_dw");
+    //init_dw->add_store("dw_conv", "dwx, dwy, dwz");
+    //init_dw->add_function("set_zero_32");
+    //// Set dw_conv to be
+    //auto update_dw = set_dw->add_nest("rx", 0, 3, "ry", 0, 3);
+    //auto rdw = update_dw->add_op("rdw");
+    //auto l1 = rdw->add_load("I", "dwx + rx, dwy + ry, dwc");
+    //auto w = rdw->add_load("weight_buffer", "dwx + rx, dwy + ry, dwc");
+    //auto l2 = rdw->add_load("dw_conv", "dwx, dwy, dwc");
+    //rdw->add_function("fma", {l1, w, l2});
+    //rdw->add_store("dw_conv", "dwx, dwy, dwc");
+  //}
 
-  {
-    auto read_in = prg.add_nest("ox", 0, 14 - 2, "oy", 0, 14 - 2, "ok", 0, 4);
-    auto write = read_in->add_op("write_max_out");
-    write->add_load("dw_conv", "ox, oy, ok");
-    write->add_function("max_zero");
-    write->add_store("out", "ox, oy, ok");
-  }
+  //{
+    //auto read_in = prg.add_nest("ox", 0, 14 - 2, "oy", 0, 14 - 2, "ok", 0, 4);
+    //auto write = read_in->add_op("write_max_out");
+    //write->add_load("dw_conv", "ox, oy, ok");
+    //write->add_function("max_zero");
+    //write->add_store("out", "ox, oy, ok");
+  //}
 
-  cout << "Program code without optimization..." << endl;
-  prg.unoptimized_codegen();
+  //cout << "Program code without optimization..." << endl;
+  //prg.unoptimized_codegen();
 
-  umap* opt_sched = prg.optimized_codegen();
-  auto domain = prg.whole_iteration_domain();
-  auto schedmap = its(opt_sched, domain);
-  cout << "Optimized schedule..." << endl;
-  cout << codegen_c(schedmap);
+  //umap* opt_sched = prg.optimized_codegen();
+  //auto domain = prg.whole_iteration_domain();
+  //auto schedmap = its(opt_sched, domain);
+  //cout << "Optimized schedule..." << endl;
+  //cout << codegen_c(schedmap);
 
-  auto buffers = build_buffers(prg);
-  generate_app_code(buffers, prg);
+  //auto buffers = build_buffers(prg);
+  //generate_app_code(buffers, prg);
 
-  int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
-  assert(res == 0);
+  //int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
+  //assert(res == 0);
 
-  res = system("./a.out");
-  assert(res == 0);
+  //res = system("./a.out");
+  //assert(res == 0);
 
-  //assert(false);
-}
+  ////assert(false);
+//}
 
 
 umap* input_chunk(UBuffer& buf, const std::string& out_bundle) {
@@ -6428,10 +6490,17 @@ void exposure_fusion() {
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
   //lp.func2d("synthetic_exposure_fusion", "id", pt("in"));
-  lp.realize("pyramid_synthetic_exposure_fusion", 1250, 1250, 1);
-  lp.realize_naive("pyramid_synthetic_exposure_fusion", 1250, 1250);
+  int size = 16;
+  lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
+  lp.realize_naive("pyramid_synthetic_exposure_fusion", size, size);
 
-  assert(false);
+  std::vector<std::string> naive =
+    run_regression_tb("pyramid_synthetic_exposure_fusion_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb("pyramid_synthetic_exposure_fusion_opt");
+  assert(naive == optimized);
+
+  //assert(false);
 }
 
 void laplacian_pyramid_app_test() {
@@ -7213,10 +7282,11 @@ void application_tests() {
 
   //conv_app_rolled_reduce_test();
 
-  exposure_fusion();
   //exposure_fusion_simple_average();
-  laplacian_pyramid_app_test();
+  heat_3d_test();
   mismatched_stencil_test();
+  exposure_fusion();
+  laplacian_pyramid_app_test();
   denoise2d_test();
   gaussian_pyramid_app_test();
   grayscale_conversion_test();
@@ -7226,7 +7296,6 @@ void application_tests() {
   upsample_stencil_1d_test();
   upsample_stencil_2d_test();
 
-  heat_3d_test();
   //synth_reduce_test();
   jacobi_2d_2_test();
   jacobi_2d_test();
@@ -7269,7 +7338,7 @@ void application_tests() {
   reduce_2d_test();
   conv_1d_test();
   conv_2d_bc_test();
-  mobilenet_test();
+  //mobilenet_test();
   pyramid_2d_test();
   pyramid_test();
   conv_1d_bc_test();

@@ -1,17 +1,29 @@
 #pragma once
 
-#include "isl_utils.h"
-#include "utils.h"
+#include "qexpr.h"
 
 using namespace std;
 
-struct stack_bank {
+enum bank_type {
+  BANK_TYPE_STACK,
+  BANK_TYPE_RAM
+};
+
+struct bank {
   std::string name;
+  bank_type tp;
+
+  // Stack bank properties
   std::string pt_type_string;
   vector<int> read_delays;
   int num_readers;
   int maxdelay;
+
+  // RAM bank properties
+  Box layout;
 };
+
+typedef bank stack_bank;
 
 class AccessPattern {
   public:
