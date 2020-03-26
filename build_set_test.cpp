@@ -521,6 +521,9 @@ void generate_stack_cache(CodegenOptions& options,
         int dv = end_inds[nind];
         assert(dv >= 0);
         out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
+        out << "#ifdef __VIVADO_SYNTH__" << endl;
+        out << "#pragma HLS dependence variable=f inter false" << endl;
+        out << "#endif //__VIVADO_SYNTH__" << endl;
         out << "\t\treturn " << p << ".back();" << endl;
         out << "\t}" << endl << endl;
         nind++;
@@ -528,6 +531,9 @@ void generate_stack_cache(CodegenOptions& options,
       out << endl << endl;
 
       out << "\tinline " + pt_type_string + " peek(const int offset) {" << endl;
+      out << "#ifdef __VIVADO_SYNTH__" << endl;
+      out << "#pragma HLS dependence variable=f inter false" << endl;
+      out << "#endif //__VIVADO_SYNTH__" << endl;
       nind = 0;
       for (auto p : partitions) {
         int dv = end_inds[nind];
