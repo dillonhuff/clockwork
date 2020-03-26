@@ -7358,8 +7358,8 @@ void application_tests() {
   //conv_app_rolled_reduce_test();
 
   //exposure_fusion_simple_average();
-  heat_3d_test();
   mismatched_stencil_test();
+  heat_3d_test();
   exposure_fusion();
   laplacian_pyramid_app_test();
   denoise2d_test();

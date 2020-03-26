@@ -1008,6 +1008,20 @@ vector<string> ifconds(vector<string>& vars, Box& range, vector<int>& rates, vec
   return conds;
 }
 
+void print_while_loop(int level,
+    ostream& out,
+    const vector<string>& op_order,
+    const Box& whole_dom,
+    map<string, Box>& index_bounds,
+    map<string, vector<QExpr> >& scheds);
+
+void print_body(int level,
+    ostream& out,
+    const vector<string>& op_order,
+    const Box& whole_dom,
+    map<string, Box>& index_bounds,
+    map<string, vector<QExpr> >& scheds);
+
 static inline
 void print_loops(int level,
     ostream& out,
@@ -1025,49 +1039,8 @@ void print_loops(int level,
   out << tab(level) << "for (int " << ivar << " = " << min << "; " << ivar << " <= " << max << "; " << ivar << "++) {" << endl;
   int next_level = level + 1;
   if (next_level == ndims) {
+    print_body(level, out, op_order, whole_dom, index_bounds, scheds);
 
-    out << endl;
-    out << "#ifdef __VIVADO_SYNTH__" << endl;
-    out << "#pragma HLS pipeline II=1" << endl;
-    out << "#endif // __VIVADO_SYNTH__" << endl << endl;
-
-    vector<string> vars;
-    for (int i = 0; i < ndims; i++) {
-      vars.push_back("c" + str(i));
-    }
-    // NOTE: This is because scheduling reverses order of component variables
-    reverse(vars);
-
-    for (auto f : op_order) {
-      auto box = index_bounds.at(f);
-      vector<int> rates;
-      vector<int> delays;
-      for (auto s : scheds.at(f)) {
-        rates.push_back(s.linear_coeff_int());
-        auto ct = s.const_term();
-        ct.simplify();
-        delays.push_back(ct.to_int());
-      }
-
-      assert(delays.size() == vars.size() + 1);
-      assert(rates.size() == vars.size() + 1);
-
-      delays.pop_back();
-      reverse(delays);
-      rates.pop_back();
-      reverse(rates);
-
-      out << tab(next_level) << "if (" << sep_list(ifconds(vars, box, rates, delays), "", "", " && ") << ") {" << endl;
-
-      vector<string> var_exprs;
-
-      for (int i = 0; i < vars.size(); i++) {
-        var_exprs.push_back("(" + vars.at(i) + " - " + str(delays.at(i)) + ") / " + str(rates.at(i)));
-      }
-
-      out << tab(next_level + 1) << f << "(" << comma_list(var_exprs) << ");" << endl;
-      out << tab(next_level) << "}" << endl << endl;
-    }
   } else {
     print_loops(level + 1, out, op_order, whole_dom, index_bounds, scheds);
   }
@@ -1121,6 +1094,7 @@ std::string box_codegen(const vector<string>& op_order,
   cout << "Whole domain: " << whole_dom << endl;
   //assert(false);
   print_loops(0, ss, op_order, whole_dom, index_bounds, scheds);
+  print_while_loop(0, ss, op_order, whole_dom, index_bounds, scheds);
 
   return ss.str();
 }
