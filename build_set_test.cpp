@@ -641,25 +641,30 @@ bank compute_bank_info(
   Box mem_box = extract_box(rddom);
 
   stack_bank bank{name, BANK_TYPE_STACK, pt_type_string, read_delays, num_readers, maxdelay, mem_box};
+  //stack_bank bank{name, BANK_TYPE_RAM, pt_type_string, read_delays, num_readers, maxdelay, mem_box};
 
   return bank;
 }
 
+vector<string> dimension_var_args(const std::string& pt, UBuffer& buf) {
+  isl_space* s = get_space(buf.domain.at(pt));
+  assert(isl_space_is_set(s));
 
-//void generate_stack_bank(CodegenOptions& options,
-    //std::ostream& out, 
-    //const std::string& inpt, 
-    //const std::string& outpt,
-    //UBuffer& buf) {
+  vector<string> dim_decls;
+  for (int i = 0; i < num_dims(s); i++) {
+    if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
+      string dn = "d" + to_string(i);
+      auto new_id = id(buf.ctx, dn);
+      assert(new_id != nullptr);
+      s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
+    }
 
-  //cout << tab(1) << "Creating bank from " << inpt << " to " << outpt << endl;
-
-  //stack_bank bank = compute_bank_info(inpt, outpt, buf);
-
-  //cout << "bank name = " << bank.name << endl;
-
-  //generate_stack_cache(options, out, bank);
-//}
+    assert(isl_space_has_dim_name(s, isl_dim_set, i));
+    assert(isl_space_has_dim_id(s, isl_dim_set, i));
+    dim_decls.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
+  }
+  return dim_decls;
+}
 
 vector<string> dimension_var_decls(const std::string& pt, UBuffer& buf) {
   isl_space* s = get_space(buf.domain.at(pt));
@@ -711,6 +716,7 @@ void generate_code_prefix(CodegenOptions& options,
 
     if (mergeable.size() > 0) {
       stack_bank merged;
+      merged.tp = BANK_TYPE_STACK;
       merged.layout = Box(mergeable.at(0).layout.dimension());
       merged.name =
         inpt + "_merged_banks_" + str(mergeable.size());
@@ -759,12 +765,18 @@ void generate_code_prefix(CodegenOptions& options,
     args.push_back(buf.port_type_string(inpt) + "& " + inpt);
     args.push_back(buf.name + "_cache& " + buf.name);
     concat(args, dimension_var_decls(inpt, buf));
+    string var_args = comma_list(dimension_var_args(inpt, buf));
 
     out << "inline void " << inpt << "_write(";
     out << comma_list(args) << ") {" << endl;
 
     for (auto sb : buf.receiver_banks(inpt)) {
-      out << tab(1) << buf.name << "." << sb.name << ".push(" << inpt << ");" << endl;
+      if (sb.tp == BANK_TYPE_STACK) {
+        out << tab(1) << buf.name << "." << sb.name << ".push(" << inpt << ");" << endl;
+      } else {
+        assert(false);
+        out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt << ", " << var_args << ");" << endl;
+      }
     }
 
     out << "}" << endl << endl;
