@@ -419,10 +419,23 @@ void generate_ram_bank(CodegenOptions& options,
   }
   string arg_list = comma_list(decls);
 
+  vector<string> addr;
+  for (int i = 0; i < vars.size(); i++) {
+    vector<string> offset{vars.at(i)};
+    for (int j = 0; j < i; j++) {
+      offset.push_back(str(bank.layout.length(j)));
+    }
+    addr.push_back(sep_list(offset, "", "", "*"));
+  }
+
+  string addr_str = sep_list(addr, "(", ")", " + ");
+
   out << tab(1) << bank.pt_type_string << " read(" << arg_list << ") {";
-  out << tab(2) << "return 0;";
+  out << tab(2) << "return " << ram << "[" << addr_str << "];";
   out << tab(1) << "}" << endl << endl;
-  out << tab(1) << "void write(" << bank.pt_type_string << "& value, " << arg_list << ") { }" << endl << endl;
+  out << tab(1) << "void write(" << bank.pt_type_string << "& value, " << arg_list << ") {" << endl;
+  out << tab(2) << ram << "[" << addr_str << "] = value;" << endl;
+  out << tab(1) << "}" << endl << endl;
 
 }
 
@@ -521,6 +534,9 @@ void generate_stack_cache(CodegenOptions& options,
         int dv = end_inds[nind];
         assert(dv >= 0);
         out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
+        out << "#ifdef __VIVADO_SYNTH__" << endl;
+        out << "#pragma HLS dependence variable=f inter false" << endl;
+        out << "#endif //__VIVADO_SYNTH__" << endl;
         out << "\t\treturn " << p << ".back();" << endl;
         out << "\t}" << endl << endl;
         nind++;
@@ -528,6 +544,9 @@ void generate_stack_cache(CodegenOptions& options,
       out << endl << endl;
 
       out << "\tinline " + pt_type_string + " peek(const int offset) {" << endl;
+      out << "#ifdef __VIVADO_SYNTH__" << endl;
+      out << "#pragma HLS dependence variable=f inter false" << endl;
+      out << "#endif //__VIVADO_SYNTH__" << endl;
       nind = 0;
       for (auto p : partitions) {
         int dv = end_inds[nind];
@@ -622,25 +641,67 @@ bank compute_bank_info(
   Box mem_box = extract_box(rddom);
 
   stack_bank bank{name, BANK_TYPE_STACK, pt_type_string, read_delays, num_readers, maxdelay, mem_box};
+  //stack_bank bank{name, BANK_TYPE_RAM, pt_type_string, read_delays, num_readers, maxdelay, mem_box};
 
   return bank;
 }
 
+vector<string> space_var_decls(isl_space* s) {
+  assert(isl_space_is_set(s));
 
-//void generate_stack_bank(CodegenOptions& options,
-    //std::ostream& out, 
-    //const std::string& inpt, 
-    //const std::string& outpt,
-    //UBuffer& buf) {
+  vector<string> dim_decls;
+  for (int i = 0; i < num_dims(s); i++) {
+    if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
+      string dn = "d" + to_string(i);
+      auto new_id = id(ctx(s), dn);
+      assert(new_id != nullptr);
+      s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
+    }
 
-  //cout << tab(1) << "Creating bank from " << inpt << " to " << outpt << endl;
+    assert(isl_space_has_dim_name(s, isl_dim_set, i));
+    assert(isl_space_has_dim_id(s, isl_dim_set, i));
+    dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
+  }
+  return dim_decls;
+}
 
-  //stack_bank bank = compute_bank_info(inpt, outpt, buf);
+vector<string> space_var_args(isl_space* s) {
+  assert(isl_space_is_set(s));
 
-  //cout << "bank name = " << bank.name << endl;
+  vector<string> dim_decls;
+  for (int i = 0; i < num_dims(s); i++) {
+    if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
+      string dn = "d" + to_string(i);
+      auto new_id = id(ctx(s), dn);
+      assert(new_id != nullptr);
+      s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
+    }
 
-  //generate_stack_cache(options, out, bank);
-//}
+    assert(isl_space_has_dim_name(s, isl_dim_set, i));
+    assert(isl_space_has_dim_id(s, isl_dim_set, i));
+    dim_decls.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
+  }
+  return dim_decls;
+}
+vector<string> dimension_var_args(const std::string& pt, UBuffer& buf) {
+  isl_space* s = get_space(buf.domain.at(pt));
+  assert(isl_space_is_set(s));
+
+  vector<string> dim_decls;
+  for (int i = 0; i < num_dims(s); i++) {
+    if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
+      string dn = "d" + to_string(i);
+      auto new_id = id(buf.ctx, dn);
+      assert(new_id != nullptr);
+      s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
+    }
+
+    assert(isl_space_has_dim_name(s, isl_dim_set, i));
+    assert(isl_space_has_dim_id(s, isl_dim_set, i));
+    dim_decls.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
+  }
+  return dim_decls;
+}
 
 vector<string> dimension_var_decls(const std::string& pt, UBuffer& buf) {
   isl_space* s = get_space(buf.domain.at(pt));
@@ -692,6 +753,7 @@ void generate_code_prefix(CodegenOptions& options,
 
     if (mergeable.size() > 0) {
       stack_bank merged;
+      merged.tp = BANK_TYPE_STACK;
       merged.layout = Box(mergeable.at(0).layout.dimension());
       merged.name =
         inpt + "_merged_banks_" + str(mergeable.size());
@@ -740,12 +802,18 @@ void generate_code_prefix(CodegenOptions& options,
     args.push_back(buf.port_type_string(inpt) + "& " + inpt);
     args.push_back(buf.name + "_cache& " + buf.name);
     concat(args, dimension_var_decls(inpt, buf));
+    string var_args = comma_list(dimension_var_args(inpt, buf));
 
     out << "inline void " << inpt << "_write(";
     out << comma_list(args) << ") {" << endl;
 
     for (auto sb : buf.receiver_banks(inpt)) {
-      out << tab(1) << buf.name << "." << sb.name << ".push(" << inpt << ");" << endl;
+      if (sb.tp == BANK_TYPE_STACK) {
+        out << tab(1) << buf.name << "." << sb.name << ".push(" << inpt << ");" << endl;
+      } else {
+        assert(false);
+        out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt << ", " << var_args << ");" << endl;
+      }
     }
 
     out << "}" << endl << endl;
@@ -783,22 +851,23 @@ void generate_select_decl(CodegenOptions& options, std::ostream& out, const stri
   nargs++;
   cout << "Getting space..." << endl;
   isl_space* s = get_space(buf.domain.at(outpt));
-  assert(isl_space_is_set(s));
-  cout << "Got set space: " << str(s) << endl;
-  vector<string> dim_decls;
-  for (int i = 0; i < num_dims(s); i++) {
-    if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
-      string dn = "d" + to_string(i);
-      auto new_id = id(buf.ctx, dn);
-      assert(new_id != nullptr);
-      cout << "setting id: " << str(new_id) << endl;
-      s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
-    }
+  auto dim_decls = space_var_decls(s);
+  //assert(isl_space_is_set(s));
+  //cout << "Got set space: " << str(s) << endl;
+  //vector<string> dim_decls;
+  //for (int i = 0; i < num_dims(s); i++) {
+    //if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
+      //string dn = "d" + to_string(i);
+      //auto new_id = id(buf.ctx, dn);
+      //assert(new_id != nullptr);
+      //cout << "setting id: " << str(new_id) << endl;
+      //s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
+    //}
 
-    assert(isl_space_has_dim_name(s, isl_dim_set, i));
-    assert(isl_space_has_dim_id(s, isl_dim_set, i));
-    dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
-  }
+    //assert(isl_space_has_dim_name(s, isl_dim_set, i));
+    //assert(isl_space_has_dim_id(s, isl_dim_set, i));
+    //dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
+  //}
   out << sep_list(dim_decls, "", "", ", ");
 
   out << ") {" << endl;
@@ -809,18 +878,20 @@ void select_debug_assertions(CodegenOptions& options, std::ostream& out, const s
   // ------------ Error printouts only
   vector<string> offset_printouts;
   isl_space* s = get_space(buf.domain.at(outpt));
+  auto vars = space_var_args(s);
+
   assert(isl_space_is_set(s));
   for (int i = 0; i < num_dims(s); i++) {
-    if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
-      string dn = "d" + to_string(i);
-      auto new_id = id(buf.ctx, dn);
-      assert(new_id != nullptr);
-      cout << "setting id: " << str(new_id) << endl;
-      s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
-    }
-    string name =
-      str(isl_space_get_dim_id(s, isl_dim_set, i));
-    offset_printouts.push_back("\" " + name + " = \" << " + name + " ");
+    //if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
+      //string dn = "d" + to_string(i);
+      //auto new_id = id(buf.ctx, dn);
+      //assert(new_id != nullptr);
+      //cout << "setting id: " << str(new_id) << endl;
+      //s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
+    //}
+    //string name =
+      //str(isl_space_get_dim_id(s, isl_dim_set, i));
+    offset_printouts.push_back("\" " + vars.at(i) + " = \" << " + vars.at(i) + " ");
   }
 
   out << "\tcout << \"Error: Unsupported offsets: \" << " << sep_list(offset_printouts, "", "", " << ") << " << endl;" << endl;
@@ -1009,7 +1080,6 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
         concat(args, dim_args);
         out << "\t" << p << "_write(" << comma_list(args) << ");" << endl;
 
-        //out << "\t" << p << "_write(" << p << "_res" << ", " << buf.name << ");" << endl;
         offset += buf.port_width(p);
       }
 
@@ -2620,19 +2690,14 @@ void generate_app_code(CodegenOptions& options,
     concat(buf_srcs, buffer_args(buffers, op, prg));
 
     auto s = get_space(domain_map.at(op->name));
-    assert(isl_space_is_set(s));
     vector<string> dim_args;
-    for (int i = 0; i < num_dims(s); i++) {
-      if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
-        string dn = "d" + to_string(i);
-        auto new_id = id(ctx(s), dn);
-        assert(new_id != nullptr);
-        cout << "setting id: " << str(new_id) << endl;
-        s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
-      }
-      buf_srcs.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
-      dim_args.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
+    for (auto a : space_var_args(s)) {
+      dim_args.push_back(a);
     }
+    for (auto a : space_var_decls(s)) {
+      buf_srcs.push_back(a);
+    }
+
     conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
     vector<pair<string, string> > in_buffers;
     set<string> distinct;
@@ -2691,6 +2756,7 @@ void generate_app_code(CodegenOptions& options,
     conv_out << "}" << endl << endl;
   }
 
+  conv_out << "#ifndef __SYSTEMC_SYNTH__" << endl;
   conv_out << "// Driver function" << endl;
   string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
   conv_out << "void " << prg.name << arg_buffers << " {" << endl;
@@ -2715,21 +2781,52 @@ void generate_app_code(CodegenOptions& options,
   for (auto op : prg.all_ops()) {
     regex re("\n\t\\s+" + op->name + "\\((.*)\\);");
     string args_list = sep_list(buffer_arg_names(buffers, op, prg), "", "", ", ");
-    conv_out << "// arg list for " << op->name << " = " << args_list << endl;
+    //conv_out << "// arg list for " << op->name << " = " << args_list << endl;
     code_string = regex_replace(code_string, re, "\n\t" + op->name + "(" + args_list + ", $1);");
   }
 
-  //assert(false);
-  conv_out << "/* ISL CODE STRING" << endl;
-  conv_out << original_isl_code_string << endl;
-  conv_out << "*/" << endl;
-  conv_out << "/* CUSTOM CODE STRING" << endl;
-  conv_out << options.code_string << endl;
-  conv_out << "*/" << endl;
+  //conv_out << "/* ISL CODE STRING" << endl;
+  //conv_out << original_isl_code_string << endl;
+  //conv_out << "*/" << endl;
+  //conv_out << "/* CUSTOM CODE STRING" << endl;
+  //conv_out << options.code_string << endl;
+  //conv_out << "*/" << endl;
 
   conv_out << code_string << endl;
 
   conv_out << "}" << endl;
+
+  conv_out << "#else // __SYSTEMC_SYNTH__" << endl << endl;
+  conv_out << "// Driver module" << endl;
+  //string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
+  conv_out << "SC_MODULE(" << prg.name << ") {" << endl;
+  conv_out << tab(1) << "sc_in<bool> clk, rst;" << endl;
+  conv_out << "SC_CTHREAD(" << prg.name << "_process) {}" << endl << endl;
+  for (auto& b : buffers) {
+    if (!prg.is_boundary(b.first)) {
+      conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
+      //conv_out << "#ifdef __VIVADO_SYNTH__" << endl;
+      //conv_out << "#pragma HLS dependence variable=" << b.second.name << " inter false" << endl;
+      //conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
+    }
+  }
+
+  conv_out << tab(1) << "SC_CTOR(" << prg.name << ") {" << endl;
+  conv_out << tab(1) << "}" << endl << endl;
+  conv_out << tab(1) << "SC_CTHREAD(" << prg.name << "_process) {" << endl;
+  for (auto& b : buffers) {
+    if (!prg.is_boundary(b.first)) {
+      //conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
+      conv_out << "#ifdef __VIVADO_SYNTH__" << endl;
+      conv_out << "#pragma HLS dependence variable=" << b.second.name << " inter false" << endl;
+      conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
+    }
+  }
+  conv_out << code_string << endl;
+  conv_out << tab(1) << "}" << endl << endl;
+  conv_out << "};" << endl << endl;
+  conv_out << "#endif //__SYSTEMC_SYNTH__" << endl;
+
 
   generate_app_code_header(buffers, prg);
 }
@@ -7283,8 +7380,12 @@ void application_tests() {
   //conv_app_rolled_reduce_test();
 
   //exposure_fusion_simple_average();
-  heat_3d_test();
+  upsample_stencil_1d_test();
+  upsample_stencil_2d_test();
+  assert(false);
   mismatched_stencil_test();
+
+  heat_3d_test();
   exposure_fusion();
   laplacian_pyramid_app_test();
   denoise2d_test();
@@ -7292,9 +7393,6 @@ void application_tests() {
   grayscale_conversion_test();
   jacobi_2d_app_test();
   seidel2d_test();
-
-  upsample_stencil_1d_test();
-  upsample_stencil_2d_test();
 
   //synth_reduce_test();
   jacobi_2d_2_test();

@@ -2,19 +2,21 @@
 
 #include "hw_classes.h"
 
-struct I_I_id0_4_merged_banks_3_cache {
+struct I_I_id0_0_merged_banks_3_cache {
 	// RAM Box: {[0, 31], [0, 7]}
 	// Capacity: 65
 	// # of read delays: 3
 #ifdef __VIVADO_SYNTH__
-  hw_uint<16> I_I_id0_4_merged_banks_3_store[256];
+  hw_uint<16> I_I_id0_0_merged_banks_3_store[256];
 
 #else
-  hw_uint<16>* I_I_id0_4_merged_banks_3_store;
+  hw_uint<16>* I_I_id0_0_merged_banks_3_store;
 #endif // __VIVADO_SYNTH__
-  hw_uint<16> read(int d0, int d1) {    return 0;  }
+  hw_uint<16> read(int d0, int d1) {    return I_I_id0_0_merged_banks_3_store[(d0 + d1*32)];  }
 
-  void write(hw_uint<16>& value, int d0, int d1) { }
+  void write(hw_uint<16>& value, int d0, int d1) {
+    I_I_id0_0_merged_banks_3_store[(d0 + d1*32)] = value;
+  }
 
 	// Parition [0, 1) capacity = 1
 	fifo<hw_uint<16>, 1> f0;
@@ -29,28 +31,46 @@ struct I_I_id0_4_merged_banks_3_cache {
 
 
 	inline hw_uint<16> peek_0() {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f inter false
+#endif //__VIVADO_SYNTH__
 		return f0.back();
 	}
 
 	inline hw_uint<16> peek_31() {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f inter false
+#endif //__VIVADO_SYNTH__
 		return f1.back();
 	}
 
 	inline hw_uint<16> peek_32() {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f inter false
+#endif //__VIVADO_SYNTH__
 		return f2.back();
 	}
 
 	inline hw_uint<16> peek_63() {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f inter false
+#endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
 	inline hw_uint<16> peek_64() {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f inter false
+#endif //__VIVADO_SYNTH__
 		return f4.back();
 	}
 
 
 
 	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f inter false
+#endif //__VIVADO_SYNTH__
 		if (offset == 0) {
 			return f0.back();
 		}
@@ -67,7 +87,7 @@ struct I_I_id0_4_merged_banks_3_cache {
 			return f4.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_I_id0_4_merged_banks_3: " << offset << endl;
+		cout << "Error: Unsupported offset in I_I_id0_0_merged_banks_3: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -88,56 +108,56 @@ struct I_I_id0_4_merged_banks_3_cache {
 };
 
 struct I_cache {
-  I_I_id0_4_merged_banks_3_cache I_I_id0_4_merged_banks_3;
+  I_I_id0_0_merged_banks_3_cache I_I_id0_0_merged_banks_3;
 };
 
 
 
-inline void I_I_id0_4_write(hw_uint<16>& I_I_id0_4, I_cache& I, int root, int id1, int id0) {
-  I.I_I_id0_4_merged_banks_3.push(I_I_id0_4);
-}
-
-inline hw_uint<16> I_out_blur_30_1_select(I_cache& I, int root, int d1, int d0) {
-	// lexmax events: { out_blur_30[root = 0, d1, d0] -> I_id0[root' = 0, id1 = d1, id0 = d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
-  // I_out_blur_30_1 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
-	auto value_I_I_id0_4 = I.I_I_id0_4_merged_banks_3.peek_64();
-	return value_I_I_id0_4;
-}
-
-inline hw_uint<16> I_out_blur_30_2_select(I_cache& I, int root, int d1, int d0) {
-	// lexmax events: { out_blur_30[root = 0, d1, d0] -> I_id0[root' = 0, id1 = 1 + d1, id0 = d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
-  // I_out_blur_30_2 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, 1 + d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
-	auto value_I_I_id0_4 = I.I_I_id0_4_merged_banks_3.peek_32();
-	return value_I_I_id0_4;
+inline void I_I_id0_0_write(hw_uint<16>& I_I_id0_0, I_cache& I, int root, int id1, int id0) {
+  I.I_I_id0_0_merged_banks_3.push(I_I_id0_0);
 }
 
 inline hw_uint<16> I_out_blur_30_3_select(I_cache& I, int root, int d1, int d0) {
+	// lexmax events: { out_blur_30[root = 0, d1, d0] -> I_id0[root' = 0, id1 = d1, id0 = d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
+  // I_out_blur_30_3 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
+	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_3.peek_64();
+	return value_I_I_id0_0;
+}
+
+inline hw_uint<16> I_out_blur_30_4_select(I_cache& I, int root, int d1, int d0) {
+	// lexmax events: { out_blur_30[root = 0, d1, d0] -> I_id0[root' = 0, id1 = 1 + d1, id0 = d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
+  // I_out_blur_30_4 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, 1 + d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
+	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_3.peek_32();
+	return value_I_I_id0_0;
+}
+
+inline hw_uint<16> I_out_blur_30_5_select(I_cache& I, int root, int d1, int d0) {
 	// lexmax events: { out_blur_30[root = 0, d1, d0] -> I_id0[root' = 0, id1 = 2 + d1, id0 = d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
-  // I_out_blur_30_3 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, 2 + d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
-	auto value_I_I_id0_4 = I.I_I_id0_4_merged_banks_3.peek_0();
-	return value_I_I_id0_4;
+  // I_out_blur_30_5 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, 2 + d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
+	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_3.peek_0();
+	return value_I_I_id0_0;
 }
 
 // # of bundles = 2
 // I_id0_write
-//	I_I_id0_4
+//	I_I_id0_0
 inline void I_I_id0_write_bundle_write(hw_uint<16>& I_id0_write, I_cache& I, int root, int id1, int id0) {
-	hw_uint<16> I_I_id0_4_res = I_id0_write.extract<0, 15>();
-	I_I_id0_4_write(I_I_id0_4_res, I, root, id1, id0);
+	hw_uint<16> I_I_id0_0_res = I_id0_write.extract<0, 15>();
+	I_I_id0_0_write(I_I_id0_0_res, I, root, id1, id0);
 }
 
 // out_blur_30_read
-//	I_out_blur_30_1
-//	I_out_blur_30_2
 //	I_out_blur_30_3
+//	I_out_blur_30_4
+//	I_out_blur_30_5
 inline hw_uint<48> I_out_blur_30_read_bundle_read(I_cache& I, int root, int d1, int d0) {
 	hw_uint<48> result;
-	hw_uint<16> I_out_blur_30_1_res = I_out_blur_30_1_select(I, root, d1, d0);
-	set_at<0, 48>(result, I_out_blur_30_1_res);
-	hw_uint<16> I_out_blur_30_2_res = I_out_blur_30_2_select(I, root, d1, d0);
-	set_at<16, 48>(result, I_out_blur_30_2_res);
 	hw_uint<16> I_out_blur_30_3_res = I_out_blur_30_3_select(I, root, d1, d0);
-	set_at<32, 48>(result, I_out_blur_30_3_res);
+	set_at<0, 48>(result, I_out_blur_30_3_res);
+	hw_uint<16> I_out_blur_30_4_res = I_out_blur_30_4_select(I, root, d1, d0);
+	set_at<16, 48>(result, I_out_blur_30_4_res);
+	hw_uint<16> I_out_blur_30_5_res = I_out_blur_30_5_select(I, root, d1, d0);
+	set_at<32, 48>(result, I_out_blur_30_5_res);
 	return result;
 }
 
@@ -146,14 +166,6 @@ inline hw_uint<48> I_out_blur_30_read_bundle_read(I_cache& I, int root, int d1, 
 
 
 // Operation logic
-inline void out_blur_30(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */out, int root, int d1, int d0) {
-	// Consume: I
-	auto I_d0__p__0_c__d1__p__0_value = I_out_blur_30_read_bundle_read(I/* source_delay */, root, d1, d0);
-	auto compute_result = blur_3(I_d0__p__0_c__d1__p__0_value);
-	// Produce: out
-	out.write(compute_result);
-}
-
 inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in, I_cache& I, int root, int id1, int id0) {
 	// Consume: in
 	auto in_id0_c__id1_value = in.read();
@@ -162,6 +174,15 @@ inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in, I_c
 	I_I_id0_write_bundle_write(compute_result, I, root, id1, id0);
 }
 
+inline void out_blur_30(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */out, int root, int d1, int d0) {
+	// Consume: I
+	auto I_d0__p__0_c__d1__p__0_value = I_out_blur_30_read_bundle_read(I/* source_delay */, root, d1, d0);
+	auto compute_result = blur_3(I_d0__p__0_c__d1__p__0_value);
+	// Produce: out
+	out.write(compute_result);
+}
+
+#ifndef __SYSTEMC_SYNTH__
 // Driver function
 void blur_x(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in, HWStream<hw_uint<16> >& /* get_args num ports = 1 */out) {
   I_cache I;
@@ -169,20 +190,6 @@ void blur_x(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in, HW
 #pragma HLS dependence variable=I inter false
 #endif // __VIVADO_SYNTH__
 
-// arg list for out_blur_30 = I, out
-// arg list for I_id0 = in, I
-/* ISL CODE STRING
-for (int c0 = 0; c0 <= 7; c0 += 1)
-  for (int c1 = 0; c1 <= 31; c1 += 1) {
-    I_id0(0, c0, c1);
-    if (c0 >= 2)
-      out_blur_30(0, c0 - 2, c1);
-  }
-
-*/
-/* CUSTOM CODE STRING
-
-*/
 	for (int c0 = 0; c0 <= 7; c0 += 1)
 	  for (int c1 = 0; c1 <= 31; c1 += 1) {
 	I_id0(in, I, 0, c0, c1);
@@ -191,3 +198,6 @@ for (int c0 = 0; c0 <= 7; c0 += 1)
 	  }
 	
 }
+#else // __SYSTEMC_SYNTH__
+
+#endif //__SYSTEMC_SYNTH__
