@@ -1,5 +1,58 @@
 #include "qexpr.h"
 
+string nba(const string& val, const string& res) {
+  return "assign " + val + " = " + res + ";";
+} 
+string vdecl(const int width, const string name) {
+  return "logic [" + str(width - 1) + " : 0] " + name + ";";
+} 
+
+struct BoxSet {
+  vector<string> vars;
+  Box domain;
+};
+
+struct LinearController {
+  BoxSet time_domain;
+  vector<int> IIs;
+
+  int pipeline_depth;
+};
+
+void emit_verilog(ostream& out, LinearController& c) {
+  vector<string> ii_counters;
+  //vector<string> ii_counters_at_max;
+  vector<string> should_inc_time;
+
+  for (auto v : c.time_domain.vars) {
+    out << tab(1) << vdecl(32, v) << endl;
+    string ii_count = v + "_ii";
+    ii_counters.push_back(ii_count);
+    //ii_counters_at_max.push_back(ii_count + "_at_max");
+    should_inc_time.push_back("should_increment_" + v);
+
+    out << tab(1) << vdecl(32, ii_count) << endl;
+  }
+
+  assert(should_inc_time.size() == ii_counters.size());
+
+  for (int i = 0; i < should_inc_time.size(); i++) {
+    auto w = should_inc_time.at(i);
+    auto ii_count = ii_counters.at(i);
+    int max = c.IIs.at(i) - 1;
+    assert(max >= 0);
+    out << tab(1) << vdecl(1, w) << endl;
+    out << tab(1) << nba(w, ii_count + " == " + str(max)) << endl;
+  }
+
+  out << tab(1) << "always @(posedge clk) begin" << endl;
+  out << tab(2) << "if (rst) begin" << endl;
+  out << tab(2) << "else begin" << endl;
+  out << tab(3) << "if (!stall) begin" << endl;
+  out << tab(3) << "end" << endl;
+  out << tab(2) << "end" << endl;
+  out << tab(1) << "end" << endl;
+}
 
 void print_while_loop(int level,
     ostream& out,
@@ -8,6 +61,7 @@ void print_while_loop(int level,
     map<string, Box>& index_bounds,
     map<string, vector<QExpr> >& scheds) {
 
+
   int max_time = whole_dom.cardinality();
   vector<string> loop_counters;
   for (int i = 0; i < whole_dom.dimension(); i++) {
@@ -15,6 +69,12 @@ void print_while_loop(int level,
     loop_counters.push_back(next);
     out << tab(1) << "int " << next << " = " << whole_dom.min(i) << ";" << endl;
   }
+
+  //out << "/*" << endl;
+  //out << "Verilog string..." << endl;
+  //LinearController c{loop_counters, whole_dom, {4, 1}};
+  //emit_verilog(out, c);
+  //out << "*/" << endl;
 
   out << tab(1) << "int global_time = 0;" << endl;
 

@@ -182,6 +182,7 @@ inline void out_blur_30(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num p
 	out.write(compute_result);
 }
 
+#ifndef __SYSTEMC_SYNTH__
 // Driver function
 void blur_x(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in, HWStream<hw_uint<16> >& /* get_args num ports = 1 */out) {
   I_cache I;
@@ -189,20 +190,6 @@ void blur_x(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in, HW
 #pragma HLS dependence variable=I inter false
 #endif // __VIVADO_SYNTH__
 
-// arg list for I_id0 = in, I
-// arg list for out_blur_30 = I, out
-/* ISL CODE STRING
-for (int c0 = 0; c0 <= 7; c0 += 1)
-  for (int c1 = 0; c1 <= 31; c1 += 1) {
-    I_id0(0, c0, c1);
-    if (c0 >= 2)
-      out_blur_30(0, c0 - 2, c1);
-  }
-
-*/
-/* CUSTOM CODE STRING
-
-*/
 	for (int c0 = 0; c0 <= 7; c0 += 1)
 	  for (int c1 = 0; c1 <= 31; c1 += 1) {
 	I_id0(in, I, 0, c0, c1);
@@ -211,3 +198,6 @@ for (int c0 = 0; c0 <= 7; c0 += 1)
 	  }
 	
 }
+#else // __SYSTEMC_SYNTH__
+
+#endif //__SYSTEMC_SYNTH__

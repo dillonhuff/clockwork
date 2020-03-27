@@ -2697,18 +2697,7 @@ void generate_app_code(CodegenOptions& options,
     for (auto a : space_var_decls(s)) {
       buf_srcs.push_back(a);
     }
-    //assert(isl_space_is_set(s));
-    //for (int i = 0; i < num_dims(s); i++) {
-      //if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
-        //string dn = "d" + to_string(i);
-        //auto new_id = id(ctx(s), dn);
-        //assert(new_id != nullptr);
-        //cout << "setting id: " << str(new_id) << endl;
-        //s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
-      //}
-      //buf_srcs.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
-      //dim_args.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
-    //}
+
     conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
     vector<pair<string, string> > in_buffers;
     set<string> distinct;
@@ -2767,6 +2756,7 @@ void generate_app_code(CodegenOptions& options,
     conv_out << "}" << endl << endl;
   }
 
+  conv_out << "#ifndef __SYSTEMC_SYNTH__" << endl;
   conv_out << "// Driver function" << endl;
   string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
   conv_out << "void " << prg.name << arg_buffers << " {" << endl;
@@ -2791,20 +2781,52 @@ void generate_app_code(CodegenOptions& options,
   for (auto op : prg.all_ops()) {
     regex re("\n\t\\s+" + op->name + "\\((.*)\\);");
     string args_list = sep_list(buffer_arg_names(buffers, op, prg), "", "", ", ");
-    conv_out << "// arg list for " << op->name << " = " << args_list << endl;
+    //conv_out << "// arg list for " << op->name << " = " << args_list << endl;
     code_string = regex_replace(code_string, re, "\n\t" + op->name + "(" + args_list + ", $1);");
   }
 
-  conv_out << "/* ISL CODE STRING" << endl;
-  conv_out << original_isl_code_string << endl;
-  conv_out << "*/" << endl;
-  conv_out << "/* CUSTOM CODE STRING" << endl;
-  conv_out << options.code_string << endl;
-  conv_out << "*/" << endl;
+  //conv_out << "/* ISL CODE STRING" << endl;
+  //conv_out << original_isl_code_string << endl;
+  //conv_out << "*/" << endl;
+  //conv_out << "/* CUSTOM CODE STRING" << endl;
+  //conv_out << options.code_string << endl;
+  //conv_out << "*/" << endl;
 
   conv_out << code_string << endl;
 
   conv_out << "}" << endl;
+
+  conv_out << "#else // __SYSTEMC_SYNTH__" << endl << endl;
+  conv_out << "// Driver module" << endl;
+  //string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
+  conv_out << "SC_MODULE(" << prg.name << ") {" << endl;
+  conv_out << tab(1) << "sc_in<bool> clk, rst;" << endl;
+  conv_out << "SC_CTHREAD(" << prg.name << "_process) {}" << endl << endl;
+  for (auto& b : buffers) {
+    if (!prg.is_boundary(b.first)) {
+      conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
+      //conv_out << "#ifdef __VIVADO_SYNTH__" << endl;
+      //conv_out << "#pragma HLS dependence variable=" << b.second.name << " inter false" << endl;
+      //conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
+    }
+  }
+
+  conv_out << tab(1) << "SC_CTOR(" << prg.name << ") {" << endl;
+  conv_out << tab(1) << "}" << endl << endl;
+  conv_out << tab(1) << "SC_CTHREAD(" << prg.name << "_process) {" << endl;
+  for (auto& b : buffers) {
+    if (!prg.is_boundary(b.first)) {
+      //conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
+      conv_out << "#ifdef __VIVADO_SYNTH__" << endl;
+      conv_out << "#pragma HLS dependence variable=" << b.second.name << " inter false" << endl;
+      conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
+    }
+  }
+  conv_out << code_string << endl;
+  conv_out << tab(1) << "}" << endl << endl;
+  conv_out << "};" << endl << endl;
+  conv_out << "#endif //__SYSTEMC_SYNTH__" << endl;
+
 
   generate_app_code_header(buffers, prg);
 }
@@ -7358,9 +7380,10 @@ void application_tests() {
   //conv_app_rolled_reduce_test();
 
   //exposure_fusion_simple_average();
-  mismatched_stencil_test();
   upsample_stencil_1d_test();
   upsample_stencil_2d_test();
+  assert(false);
+  mismatched_stencil_test();
 
   heat_3d_test();
   exposure_fusion();
