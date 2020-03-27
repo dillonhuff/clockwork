@@ -118,6 +118,9 @@ inline void I_I_id0_0_write(hw_uint<16>& I_I_id0_0, I_cache& I, int root, int id
 }
 
 inline hw_uint<16> I_out_blur_30_3_select(I_cache& I, int root, int d1, int d0) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
 	// lexmax events: { out_blur_30[root = 0, d1, d0] -> I_id0[root' = 0, id1 = d1, id0 = d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // I_out_blur_30_3 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
 	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_3.peek_64();
@@ -125,6 +128,9 @@ inline hw_uint<16> I_out_blur_30_3_select(I_cache& I, int root, int d1, int d0) 
 }
 
 inline hw_uint<16> I_out_blur_30_4_select(I_cache& I, int root, int d1, int d0) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
 	// lexmax events: { out_blur_30[root = 0, d1, d0] -> I_id0[root' = 0, id1 = 1 + d1, id0 = d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // I_out_blur_30_4 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, 1 + d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
 	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_3.peek_32();
@@ -132,6 +138,9 @@ inline hw_uint<16> I_out_blur_30_4_select(I_cache& I, int root, int d1, int d0) 
 }
 
 inline hw_uint<16> I_out_blur_30_5_select(I_cache& I, int root, int d1, int d0) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
 	// lexmax events: { out_blur_30[root = 0, d1, d0] -> I_id0[root' = 0, id1 = 2 + d1, id0 = d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // I_out_blur_30_5 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, 2 + d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
 	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_3.peek_0();

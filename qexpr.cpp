@@ -109,7 +109,9 @@ void print_while_loop(int level,
     out << tab(4) << loop_counters.at(i) << "++;" << endl;
     out << tab(3) << "}" << endl;
     out << tab(2) << "}" << endl;
+    out << "#ifndef __VIVADO_SYNTH__" << endl;
     out << tab(2) << "cout << \"" << loop_counters.at(i) << " = \" << " << loop_counters.at(i) << " << endl;" << endl;
+    out << "#endif //__VIVADO_SYNTH__" << endl;
   }
   out << tab(2) << "global_time++;" << endl;
   out << tab(1) << "}" << endl;
