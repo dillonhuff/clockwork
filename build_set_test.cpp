@@ -472,9 +472,9 @@ void generate_stack_cache(CodegenOptions& options,
         int dv = i;
         assert(dv >= 0);
         out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
-        out << "#ifdef __VIVADO_SYNTH__" << endl;
-        out << "#pragma HLS dependence variable=f inter false" << endl;
-        out << "#endif //__VIVADO_SYNTH__" << endl;
+        //out << "#ifdef __VIVADO_SYNTH__" << endl;
+        //out << "#pragma HLS dependence variable=f inter false" << endl;
+        //out << "#endif //__VIVADO_SYNTH__" << endl;
         out << "\t\treturn f.peek(" << dv <<");" << endl;
         out << "\t}" << endl << endl;
       }
@@ -534,9 +534,9 @@ void generate_stack_cache(CodegenOptions& options,
         int dv = end_inds[nind];
         assert(dv >= 0);
         out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
-        out << "#ifdef __VIVADO_SYNTH__" << endl;
-        out << "#pragma HLS dependence variable=f inter false" << endl;
-        out << "#endif //__VIVADO_SYNTH__" << endl;
+        //out << "#ifdef __VIVADO_SYNTH__" << endl;
+        //out << "#pragma HLS dependence variable=f inter false" << endl;
+        //out << "#endif //__VIVADO_SYNTH__" << endl;
         out << "\t\treturn " << p << ".back();" << endl;
         out << "\t}" << endl << endl;
         nind++;
@@ -852,28 +852,12 @@ void generate_select_decl(CodegenOptions& options, std::ostream& out, const stri
   cout << "Getting space..." << endl;
   isl_space* s = get_space(buf.domain.at(outpt));
   auto dim_decls = space_var_decls(s);
-  //assert(isl_space_is_set(s));
-  //cout << "Got set space: " << str(s) << endl;
-  //vector<string> dim_decls;
-  //for (int i = 0; i < num_dims(s); i++) {
-    //if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
-      //string dn = "d" + to_string(i);
-      //auto new_id = id(buf.ctx, dn);
-      //assert(new_id != nullptr);
-      //cout << "setting id: " << str(new_id) << endl;
-      //s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
-    //}
-
-    //assert(isl_space_has_dim_name(s, isl_dim_set, i));
-    //assert(isl_space_has_dim_id(s, isl_dim_set, i));
-    //dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
-  //}
   out << sep_list(dim_decls, "", "", ", ");
 
   out << ") {" << endl;
-  out << "#ifdef __VIVADO_SYNTH__" << endl;
-  out << "#pragma HLS dependence array inter false" << endl;
-  out << "#endif //__VIVADO_SYNTH__" << endl;
+  //out << "#ifdef __VIVADO_SYNTH__" << endl;
+  //out << "#pragma HLS dependence array inter false" << endl;
+  //out << "#endif //__VIVADO_SYNTH__" << endl;
   cout << "Created dim decls" << endl;
 }
 
@@ -885,15 +869,6 @@ void select_debug_assertions(CodegenOptions& options, std::ostream& out, const s
 
   assert(isl_space_is_set(s));
   for (int i = 0; i < num_dims(s); i++) {
-    //if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
-      //string dn = "d" + to_string(i);
-      //auto new_id = id(buf.ctx, dn);
-      //assert(new_id != nullptr);
-      //cout << "setting id: " << str(new_id) << endl;
-      //s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
-    //}
-    //string name =
-      //str(isl_space_get_dim_id(s, isl_dim_set, i));
     offset_printouts.push_back("\" " + vars.at(i) + " = \" << " + vars.at(i) + " ");
   }
 
@@ -2800,37 +2775,37 @@ void generate_app_code(CodegenOptions& options,
   conv_out << "}" << endl;
 
   conv_out << "#else // __SYSTEMC_SYNTH__" << endl << endl;
-  conv_out << "#include <systemc.h>" << endl << endl;
+  //conv_out << "#include <systemc.h>" << endl << endl;
 
-  conv_out << "// Driver module" << endl;
-  //string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
-  conv_out << "SC_MODULE(" << prg.name << ") {" << endl;
-  conv_out << tab(1) << "sc_in<bool> clk, rst;" << endl << endl;
+  //conv_out << "// Driver module" << endl;
+  ////string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
+  //conv_out << "SC_MODULE(" << prg.name << ") {" << endl;
+  //conv_out << tab(1) << "sc_in<bool> clk, rst;" << endl << endl;
 
-  for (auto& b : buffers) {
-    if (!prg.is_boundary(b.first)) {
-      conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
+  //for (auto& b : buffers) {
+    //if (!prg.is_boundary(b.first)) {
+      //conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
+      ////conv_out << "#ifdef __VIVADO_SYNTH__" << endl;
+      ////conv_out << "#pragma HLS dependence variable=" << b.second.name << " inter false" << endl;
+      ////conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
+    //}
+  //}
+
+  //conv_out << tab(1) << "SC_CTOR(" << prg.name << ") {" << endl;
+
+  //conv_out << tab(1) << "}" << endl << endl;
+  //conv_out << tab(1) << "void " << prg.name << "_process() {" << endl;
+  //for (auto& b : buffers) {
+    //if (!prg.is_boundary(b.first)) {
+      ////conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
       //conv_out << "#ifdef __VIVADO_SYNTH__" << endl;
       //conv_out << "#pragma HLS dependence variable=" << b.second.name << " inter false" << endl;
       //conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
-    }
-  }
-
-  conv_out << tab(1) << "SC_CTOR(" << prg.name << ") {" << endl;
-
-  conv_out << tab(1) << "}" << endl << endl;
-  conv_out << tab(1) << "void " << prg.name << "_process() {" << endl;
-  for (auto& b : buffers) {
-    if (!prg.is_boundary(b.first)) {
-      //conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
-      conv_out << "#ifdef __VIVADO_SYNTH__" << endl;
-      conv_out << "#pragma HLS dependence variable=" << b.second.name << " inter false" << endl;
-      conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
-    }
-  }
-  conv_out << code_string << endl;
-  conv_out << tab(1) << "}" << endl << endl;
-  conv_out << "};" << endl << endl;
+    //}
+  //}
+  //conv_out << code_string << endl;
+  //conv_out << tab(1) << "}" << endl << endl;
+  //conv_out << "};" << endl << endl;
   conv_out << "#endif //__SYSTEMC_SYNTH__" << endl;
 
 

@@ -2,20 +2,20 @@
 
 #include "hw_classes.h"
 
-struct I_store_I_from_in_0_merged_banks_9_cache {
+struct I_store_I_from_in_16_merged_banks_9_cache {
 	// RAM Box: {[0, 31], [0, 31]}
 	// Capacity: 67
 	// # of read delays: 9
 #ifdef __VIVADO_SYNTH__
-  hw_uint<32>  I_store_I_from_in_0_merged_banks_9_store[1024];
+  hw_uint<32>  I_store_I_from_in_16_merged_banks_9_store[1024];
 
 #else
-  hw_uint<32> * I_store_I_from_in_0_merged_banks_9_store;
+  hw_uint<32> * I_store_I_from_in_16_merged_banks_9_store;
 #endif // __VIVADO_SYNTH__
-  hw_uint<32>  read(int d0, int d1) {    return I_store_I_from_in_0_merged_banks_9_store[(d0 + d1*32)];  }
+  hw_uint<32>  read(int d0, int d1) {    return I_store_I_from_in_16_merged_banks_9_store[(d0 + d1*32)];  }
 
   void write(hw_uint<32> & value, int d0, int d1) {
-    I_store_I_from_in_0_merged_banks_9_store[(d0 + d1*32)] = value;
+    I_store_I_from_in_16_merged_banks_9_store[(d0 + d1*32)] = value;
   }
 
 	// Parition [0, 1) capacity = 1
@@ -43,79 +43,46 @@ struct I_store_I_from_in_0_merged_banks_9_cache {
 
 
 	inline hw_uint<32>  peek_0() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f0.back();
 	}
 
 	inline hw_uint<32>  peek_1() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f2.back();
 	}
 
 	inline hw_uint<32>  peek_2() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f4.back();
 	}
 
 	inline hw_uint<32>  peek_31() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f5.back();
 	}
 
 	inline hw_uint<32>  peek_32() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f6.back();
 	}
 
 	inline hw_uint<32>  peek_33() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f8.back();
 	}
 
 	inline hw_uint<32>  peek_34() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f10.back();
 	}
 
 	inline hw_uint<32>  peek_63() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f11.back();
 	}
 
 	inline hw_uint<32>  peek_64() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f12.back();
 	}
 
 	inline hw_uint<32>  peek_65() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f14.back();
 	}
 
 	inline hw_uint<32>  peek_66() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f16.back();
 	}
 
@@ -159,7 +126,7 @@ struct I_store_I_from_in_0_merged_banks_9_cache {
 			return f16.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_store_I_from_in_0_merged_banks_9: " << offset << endl;
+		cout << "Error: Unsupported offset in I_store_I_from_in_16_merged_banks_9: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -186,164 +153,137 @@ struct I_store_I_from_in_0_merged_banks_9_cache {
 };
 
 struct I_cache {
-  I_store_I_from_in_0_merged_banks_9_cache I_store_I_from_in_0_merged_banks_9;
+  I_store_I_from_in_16_merged_banks_9_cache I_store_I_from_in_16_merged_banks_9;
 };
 
 
 
-inline void I_store_I_from_in_0_write(hw_uint<32> & I_store_I_from_in_0, I_cache& I, int root, int pr, int pc) {
-  I.I_store_I_from_in_0_merged_banks_9.push(I_store_I_from_in_0);
+inline void I_store_I_from_in_16_write(hw_uint<32> & I_store_I_from_in_16, I_cache& I, int root, int pr, int pc) {
+  I.I_store_I_from_in_16_merged_banks_9.push(I_store_I_from_in_16);
 }
 
-inline hw_uint<32>  I_I_blr_conv_3_30_10_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = 2 + I_blr_r, pc = 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  // I_I_blr_conv_3_30_10 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[2 + I_blr_r, 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-	auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_merged_banks_9.peek_1();
-	return value_I_store_I_from_in_0;
-}
-
-inline hw_uint<32>  I_I_blr_conv_3_30_11_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = 2 + I_blr_r, pc = 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  // I_I_blr_conv_3_30_11 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[2 + I_blr_r, 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-	auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_merged_banks_9.peek_0();
-	return value_I_store_I_from_in_0;
-}
-
-inline hw_uint<32>  I_I_blr_conv_3_30_3_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
+inline hw_uint<32>  I_I_blr_conv_3_30_19_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = I_blr_r, pc = I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  // I_I_blr_conv_3_30_3 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-	auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_merged_banks_9.peek_66();
-	return value_I_store_I_from_in_0;
+  // I_I_blr_conv_3_30_19 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+	auto value_I_store_I_from_in_16 = I.I_store_I_from_in_16_merged_banks_9.peek_66();
+	return value_I_store_I_from_in_16;
 }
 
-inline hw_uint<32>  I_I_blr_conv_3_30_4_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
+inline hw_uint<32>  I_I_blr_conv_3_30_20_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = I_blr_r, pc = 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  // I_I_blr_conv_3_30_4 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[I_blr_r, 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-	auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_merged_banks_9.peek_65();
-	return value_I_store_I_from_in_0;
+  // I_I_blr_conv_3_30_20 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[I_blr_r, 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+	auto value_I_store_I_from_in_16 = I.I_store_I_from_in_16_merged_banks_9.peek_65();
+	return value_I_store_I_from_in_16;
 }
 
-inline hw_uint<32>  I_I_blr_conv_3_30_5_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
+inline hw_uint<32>  I_I_blr_conv_3_30_21_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = I_blr_r, pc = 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  // I_I_blr_conv_3_30_5 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[I_blr_r, 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-	auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_merged_banks_9.peek_64();
-	return value_I_store_I_from_in_0;
+  // I_I_blr_conv_3_30_21 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[I_blr_r, 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+	auto value_I_store_I_from_in_16 = I.I_store_I_from_in_16_merged_banks_9.peek_64();
+	return value_I_store_I_from_in_16;
 }
 
-inline hw_uint<32>  I_I_blr_conv_3_30_6_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
+inline hw_uint<32>  I_I_blr_conv_3_30_22_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = 1 + I_blr_r, pc = I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  // I_I_blr_conv_3_30_6 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[1 + I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-	auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_merged_banks_9.peek_34();
-	return value_I_store_I_from_in_0;
+  // I_I_blr_conv_3_30_22 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[1 + I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+	auto value_I_store_I_from_in_16 = I.I_store_I_from_in_16_merged_banks_9.peek_34();
+	return value_I_store_I_from_in_16;
 }
 
-inline hw_uint<32>  I_I_blr_conv_3_30_7_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
+inline hw_uint<32>  I_I_blr_conv_3_30_23_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = 1 + I_blr_r, pc = 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  // I_I_blr_conv_3_30_7 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[1 + I_blr_r, 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-	auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_merged_banks_9.peek_33();
-	return value_I_store_I_from_in_0;
+  // I_I_blr_conv_3_30_23 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[1 + I_blr_r, 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+	auto value_I_store_I_from_in_16 = I.I_store_I_from_in_16_merged_banks_9.peek_33();
+	return value_I_store_I_from_in_16;
 }
 
-inline hw_uint<32>  I_I_blr_conv_3_30_8_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
+inline hw_uint<32>  I_I_blr_conv_3_30_24_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = 1 + I_blr_r, pc = 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  // I_I_blr_conv_3_30_8 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[1 + I_blr_r, 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-	auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_merged_banks_9.peek_32();
-	return value_I_store_I_from_in_0;
+  // I_I_blr_conv_3_30_24 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[1 + I_blr_r, 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+	auto value_I_store_I_from_in_16 = I.I_store_I_from_in_16_merged_banks_9.peek_32();
+	return value_I_store_I_from_in_16;
 }
 
-inline hw_uint<32>  I_I_blr_conv_3_30_9_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
+inline hw_uint<32>  I_I_blr_conv_3_30_25_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = 2 + I_blr_r, pc = I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  // I_I_blr_conv_3_30_9 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[2 + I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-	auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_merged_banks_9.peek_2();
-	return value_I_store_I_from_in_0;
+  // I_I_blr_conv_3_30_25 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[2 + I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+	auto value_I_store_I_from_in_16 = I.I_store_I_from_in_16_merged_banks_9.peek_2();
+	return value_I_store_I_from_in_16;
+}
+
+inline hw_uint<32>  I_I_blr_conv_3_30_26_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
+	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = 2 + I_blr_r, pc = 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_I_blr_conv_3_30_26 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[2 + I_blr_r, 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+	auto value_I_store_I_from_in_16 = I.I_store_I_from_in_16_merged_banks_9.peek_1();
+	return value_I_store_I_from_in_16;
+}
+
+inline hw_uint<32>  I_I_blr_conv_3_30_27_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
+	// lexmax events: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> store_I_from_in[root' = 0, pr = 2 + I_blr_r, pc = 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_I_blr_conv_3_30_27 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[2 + I_blr_r, 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+	auto value_I_store_I_from_in_16 = I.I_store_I_from_in_16_merged_banks_9.peek_0();
+	return value_I_store_I_from_in_16;
 }
 
 // # of bundles = 2
 // I_blr_conv_3_30_read
-//	I_I_blr_conv_3_30_3
-//	I_I_blr_conv_3_30_4
-//	I_I_blr_conv_3_30_5
-//	I_I_blr_conv_3_30_6
-//	I_I_blr_conv_3_30_7
-//	I_I_blr_conv_3_30_8
-//	I_I_blr_conv_3_30_9
-//	I_I_blr_conv_3_30_10
-//	I_I_blr_conv_3_30_11
+//	I_I_blr_conv_3_30_19
+//	I_I_blr_conv_3_30_20
+//	I_I_blr_conv_3_30_21
+//	I_I_blr_conv_3_30_22
+//	I_I_blr_conv_3_30_23
+//	I_I_blr_conv_3_30_24
+//	I_I_blr_conv_3_30_25
+//	I_I_blr_conv_3_30_26
+//	I_I_blr_conv_3_30_27
 inline hw_uint<288> I_I_blr_conv_3_30_read_bundle_read(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 	hw_uint<288> result;
-	hw_uint<32>  I_I_blr_conv_3_30_3_res = I_I_blr_conv_3_30_3_select(I, root, I_blr_r, I_blr_c);
-	set_at<0, 288>(result, I_I_blr_conv_3_30_3_res);
-	hw_uint<32>  I_I_blr_conv_3_30_4_res = I_I_blr_conv_3_30_4_select(I, root, I_blr_r, I_blr_c);
-	set_at<32, 288>(result, I_I_blr_conv_3_30_4_res);
-	hw_uint<32>  I_I_blr_conv_3_30_5_res = I_I_blr_conv_3_30_5_select(I, root, I_blr_r, I_blr_c);
-	set_at<64, 288>(result, I_I_blr_conv_3_30_5_res);
-	hw_uint<32>  I_I_blr_conv_3_30_6_res = I_I_blr_conv_3_30_6_select(I, root, I_blr_r, I_blr_c);
-	set_at<96, 288>(result, I_I_blr_conv_3_30_6_res);
-	hw_uint<32>  I_I_blr_conv_3_30_7_res = I_I_blr_conv_3_30_7_select(I, root, I_blr_r, I_blr_c);
-	set_at<128, 288>(result, I_I_blr_conv_3_30_7_res);
-	hw_uint<32>  I_I_blr_conv_3_30_8_res = I_I_blr_conv_3_30_8_select(I, root, I_blr_r, I_blr_c);
-	set_at<160, 288>(result, I_I_blr_conv_3_30_8_res);
-	hw_uint<32>  I_I_blr_conv_3_30_9_res = I_I_blr_conv_3_30_9_select(I, root, I_blr_r, I_blr_c);
-	set_at<192, 288>(result, I_I_blr_conv_3_30_9_res);
-	hw_uint<32>  I_I_blr_conv_3_30_10_res = I_I_blr_conv_3_30_10_select(I, root, I_blr_r, I_blr_c);
-	set_at<224, 288>(result, I_I_blr_conv_3_30_10_res);
-	hw_uint<32>  I_I_blr_conv_3_30_11_res = I_I_blr_conv_3_30_11_select(I, root, I_blr_r, I_blr_c);
-	set_at<256, 288>(result, I_I_blr_conv_3_30_11_res);
+	hw_uint<32>  I_I_blr_conv_3_30_19_res = I_I_blr_conv_3_30_19_select(I, root, I_blr_r, I_blr_c);
+	set_at<0, 288>(result, I_I_blr_conv_3_30_19_res);
+	hw_uint<32>  I_I_blr_conv_3_30_20_res = I_I_blr_conv_3_30_20_select(I, root, I_blr_r, I_blr_c);
+	set_at<32, 288>(result, I_I_blr_conv_3_30_20_res);
+	hw_uint<32>  I_I_blr_conv_3_30_21_res = I_I_blr_conv_3_30_21_select(I, root, I_blr_r, I_blr_c);
+	set_at<64, 288>(result, I_I_blr_conv_3_30_21_res);
+	hw_uint<32>  I_I_blr_conv_3_30_22_res = I_I_blr_conv_3_30_22_select(I, root, I_blr_r, I_blr_c);
+	set_at<96, 288>(result, I_I_blr_conv_3_30_22_res);
+	hw_uint<32>  I_I_blr_conv_3_30_23_res = I_I_blr_conv_3_30_23_select(I, root, I_blr_r, I_blr_c);
+	set_at<128, 288>(result, I_I_blr_conv_3_30_23_res);
+	hw_uint<32>  I_I_blr_conv_3_30_24_res = I_I_blr_conv_3_30_24_select(I, root, I_blr_r, I_blr_c);
+	set_at<160, 288>(result, I_I_blr_conv_3_30_24_res);
+	hw_uint<32>  I_I_blr_conv_3_30_25_res = I_I_blr_conv_3_30_25_select(I, root, I_blr_r, I_blr_c);
+	set_at<192, 288>(result, I_I_blr_conv_3_30_25_res);
+	hw_uint<32>  I_I_blr_conv_3_30_26_res = I_I_blr_conv_3_30_26_select(I, root, I_blr_r, I_blr_c);
+	set_at<224, 288>(result, I_I_blr_conv_3_30_26_res);
+	hw_uint<32>  I_I_blr_conv_3_30_27_res = I_I_blr_conv_3_30_27_select(I, root, I_blr_r, I_blr_c);
+	set_at<256, 288>(result, I_I_blr_conv_3_30_27_res);
 	return result;
 }
 
 // store_I_from_in_write
-//	I_store_I_from_in_0
+//	I_store_I_from_in_16
 inline void I_store_I_from_in_write_bundle_write(hw_uint<32>& store_I_from_in_write, I_cache& I, int root, int pr, int pc) {
-	hw_uint<32>  I_store_I_from_in_0_res = store_I_from_in_write.extract<0, 31>();
-	I_store_I_from_in_0_write(I_store_I_from_in_0_res, I, root, pr, pc);
+	hw_uint<32>  I_store_I_from_in_16_res = store_I_from_in_write.extract<0, 31>();
+	I_store_I_from_in_16_write(I_store_I_from_in_16_res, I, root, pr, pc);
 }
 
 
 
 #include "hw_classes.h"
 
-struct I_blr_I_blr_conv_3_30_2_merged_banks_1_cache {
+struct I_blr_I_blr_conv_3_30_18_merged_banks_1_cache {
 	// RAM Box: {[0, 29], [0, 29]}
 	// Capacity: 1
 	// # of read delays: 1
 #ifdef __VIVADO_SYNTH__
-  hw_uint<32>  I_blr_I_blr_conv_3_30_2_merged_banks_1_store[900];
+  hw_uint<32>  I_blr_I_blr_conv_3_30_18_merged_banks_1_store[900];
 
 #else
-  hw_uint<32> * I_blr_I_blr_conv_3_30_2_merged_banks_1_store;
+  hw_uint<32> * I_blr_I_blr_conv_3_30_18_merged_banks_1_store;
 #endif // __VIVADO_SYNTH__
-  hw_uint<32>  read(int d0, int d1) {    return I_blr_I_blr_conv_3_30_2_merged_banks_1_store[(d0 + d1*30)];  }
+  hw_uint<32>  read(int d0, int d1) {    return I_blr_I_blr_conv_3_30_18_merged_banks_1_store[(d0 + d1*30)];  }
 
   void write(hw_uint<32> & value, int d0, int d1) {
-    I_blr_I_blr_conv_3_30_2_merged_banks_1_store[(d0 + d1*30)] = value;
+    I_blr_I_blr_conv_3_30_18_merged_banks_1_store[(d0 + d1*30)] = value;
   }
 
 	fifo<hw_uint<32> , 1> f;
@@ -355,9 +295,6 @@ struct I_blr_I_blr_conv_3_30_2_merged_banks_1_cache {
   }
 
 	inline hw_uint<32>  peek_0() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(0);
 	}
 
@@ -373,39 +310,36 @@ struct I_blr_I_blr_conv_3_30_2_merged_banks_1_cache {
 };
 
 struct I_blr_cache {
-  I_blr_I_blr_conv_3_30_2_merged_banks_1_cache I_blr_I_blr_conv_3_30_2_merged_banks_1;
+  I_blr_I_blr_conv_3_30_18_merged_banks_1_cache I_blr_I_blr_conv_3_30_18_merged_banks_1;
 };
 
 
 
-inline void I_blr_I_blr_conv_3_30_2_write(hw_uint<32> & I_blr_I_blr_conv_3_30_2, I_blr_cache& I_blr, int root, int I_blr_r, int I_blr_c) {
-  I_blr.I_blr_I_blr_conv_3_30_2_merged_banks_1.push(I_blr_I_blr_conv_3_30_2);
+inline void I_blr_I_blr_conv_3_30_18_write(hw_uint<32> & I_blr_I_blr_conv_3_30_18, I_blr_cache& I_blr, int root, int I_blr_r, int I_blr_c) {
+  I_blr.I_blr_I_blr_conv_3_30_18_merged_banks_1.push(I_blr_I_blr_conv_3_30_18);
 }
 
-inline hw_uint<32>  I_blr_I_blr_ds_id0_13_select(I_blr_cache& I_blr, int root, int I_blr_ds_r, int I_blr_ds_c) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
+inline hw_uint<32>  I_blr_I_blr_ds_id0_15_select(I_blr_cache& I_blr, int root, int I_blr_ds_r, int I_blr_ds_c) {
 	// lexmax events: { I_blr_ds_id0[root = 0, I_blr_ds_r, I_blr_ds_c] -> I_blr_conv_3_30[root' = 0, I_blr_r = 2I_blr_ds_r, I_blr_c = 2I_blr_ds_c] : 0 <= I_blr_ds_r <= 14 and 0 <= I_blr_ds_c <= 14 }
-  // I_blr_I_blr_ds_id0_13 read pattern: { I_blr_ds_id0[root = 0, I_blr_ds_r, I_blr_ds_c] -> I_blr[2I_blr_ds_r, 2I_blr_ds_c] : 0 <= I_blr_ds_r <= 14 and 0 <= I_blr_ds_c <= 14 }
-	auto value_I_blr_I_blr_conv_3_30_2 = I_blr.I_blr_I_blr_conv_3_30_2_merged_banks_1.peek_0();
-	return value_I_blr_I_blr_conv_3_30_2;
+  // I_blr_I_blr_ds_id0_15 read pattern: { I_blr_ds_id0[root = 0, I_blr_ds_r, I_blr_ds_c] -> I_blr[2I_blr_ds_r, 2I_blr_ds_c] : 0 <= I_blr_ds_r <= 14 and 0 <= I_blr_ds_c <= 14 }
+	auto value_I_blr_I_blr_conv_3_30_18 = I_blr.I_blr_I_blr_conv_3_30_18_merged_banks_1.peek_0();
+	return value_I_blr_I_blr_conv_3_30_18;
 }
 
 // # of bundles = 2
 // I_blr_conv_3_30_write
-//	I_blr_I_blr_conv_3_30_2
+//	I_blr_I_blr_conv_3_30_18
 inline void I_blr_I_blr_conv_3_30_write_bundle_write(hw_uint<32>& I_blr_conv_3_30_write, I_blr_cache& I_blr, int root, int I_blr_r, int I_blr_c) {
-	hw_uint<32>  I_blr_I_blr_conv_3_30_2_res = I_blr_conv_3_30_write.extract<0, 31>();
-	I_blr_I_blr_conv_3_30_2_write(I_blr_I_blr_conv_3_30_2_res, I_blr, root, I_blr_r, I_blr_c);
+	hw_uint<32>  I_blr_I_blr_conv_3_30_18_res = I_blr_conv_3_30_write.extract<0, 31>();
+	I_blr_I_blr_conv_3_30_18_write(I_blr_I_blr_conv_3_30_18_res, I_blr, root, I_blr_r, I_blr_c);
 }
 
 // I_blr_ds_id0_read
-//	I_blr_I_blr_ds_id0_13
+//	I_blr_I_blr_ds_id0_15
 inline hw_uint<32> I_blr_I_blr_ds_id0_read_bundle_read(I_blr_cache& I_blr, int root, int I_blr_ds_r, int I_blr_ds_c) {
 	hw_uint<32> result;
-	hw_uint<32>  I_blr_I_blr_ds_id0_13_res = I_blr_I_blr_ds_id0_13_select(I_blr, root, I_blr_ds_r, I_blr_ds_c);
-	set_at<0, 32>(result, I_blr_I_blr_ds_id0_13_res);
+	hw_uint<32>  I_blr_I_blr_ds_id0_15_res = I_blr_I_blr_ds_id0_15_select(I_blr, root, I_blr_ds_r, I_blr_ds_c);
+	set_at<0, 32>(result, I_blr_I_blr_ds_id0_15_res);
 	return result;
 }
 
@@ -413,20 +347,20 @@ inline hw_uint<32> I_blr_I_blr_ds_id0_read_bundle_read(I_blr_cache& I_blr, int r
 
 #include "hw_classes.h"
 
-struct I_blr_ds_I_blr_ds_id0_12_merged_banks_9_cache {
+struct I_blr_ds_I_blr_ds_id0_14_merged_banks_9_cache {
 	// RAM Box: {[0, 14], [0, 14]}
 	// Capacity: 33
 	// # of read delays: 9
 #ifdef __VIVADO_SYNTH__
-  hw_uint<32>  I_blr_ds_I_blr_ds_id0_12_merged_banks_9_store[225];
+  hw_uint<32>  I_blr_ds_I_blr_ds_id0_14_merged_banks_9_store[225];
 
 #else
-  hw_uint<32> * I_blr_ds_I_blr_ds_id0_12_merged_banks_9_store;
+  hw_uint<32> * I_blr_ds_I_blr_ds_id0_14_merged_banks_9_store;
 #endif // __VIVADO_SYNTH__
-  hw_uint<32>  read(int d0, int d1) {    return I_blr_ds_I_blr_ds_id0_12_merged_banks_9_store[(d0 + d1*15)];  }
+  hw_uint<32>  read(int d0, int d1) {    return I_blr_ds_I_blr_ds_id0_14_merged_banks_9_store[(d0 + d1*15)];  }
 
   void write(hw_uint<32> & value, int d0, int d1) {
-    I_blr_ds_I_blr_ds_id0_12_merged_banks_9_store[(d0 + d1*15)] = value;
+    I_blr_ds_I_blr_ds_id0_14_merged_banks_9_store[(d0 + d1*15)] = value;
   }
 
 	// Parition [0, 1) capacity = 1
@@ -454,79 +388,46 @@ struct I_blr_ds_I_blr_ds_id0_12_merged_banks_9_cache {
 
 
 	inline hw_uint<32>  peek_0() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f0.back();
 	}
 
 	inline hw_uint<32>  peek_1() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f2.back();
 	}
 
 	inline hw_uint<32>  peek_2() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f4.back();
 	}
 
 	inline hw_uint<32>  peek_14() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f5.back();
 	}
 
 	inline hw_uint<32>  peek_15() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f6.back();
 	}
 
 	inline hw_uint<32>  peek_16() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f8.back();
 	}
 
 	inline hw_uint<32>  peek_17() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f10.back();
 	}
 
 	inline hw_uint<32>  peek_29() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f11.back();
 	}
 
 	inline hw_uint<32>  peek_30() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f12.back();
 	}
 
 	inline hw_uint<32>  peek_31() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f14.back();
 	}
 
 	inline hw_uint<32>  peek_32() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f16.back();
 	}
 
@@ -570,7 +471,7 @@ struct I_blr_ds_I_blr_ds_id0_12_merged_banks_9_cache {
 			return f16.back();
 		}
 #ifndef __VIVADO_SYNTH__
-		cout << "Error: Unsupported offset in I_blr_ds_I_blr_ds_id0_12_merged_banks_9: " << offset << endl;
+		cout << "Error: Unsupported offset in I_blr_ds_I_blr_ds_id0_14_merged_banks_9: " << offset << endl;
 #endif // __VIVADO_SYNTH__
 		assert(false);
 		return 0;
@@ -597,164 +498,137 @@ struct I_blr_ds_I_blr_ds_id0_12_merged_banks_9_cache {
 };
 
 struct I_blr_ds_cache {
-  I_blr_ds_I_blr_ds_id0_12_merged_banks_9_cache I_blr_ds_I_blr_ds_id0_12_merged_banks_9;
+  I_blr_ds_I_blr_ds_id0_14_merged_banks_9_cache I_blr_ds_I_blr_ds_id0_14_merged_banks_9;
 };
 
 
 
-inline void I_blr_ds_I_blr_ds_id0_12_write(hw_uint<32> & I_blr_ds_I_blr_ds_id0_12, I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_r, int I_blr_ds_c) {
-  I_blr_ds.I_blr_ds_I_blr_ds_id0_12_merged_banks_9.push(I_blr_ds_I_blr_ds_id0_12);
+inline void I_blr_ds_I_blr_ds_id0_14_write(hw_uint<32> & I_blr_ds_I_blr_ds_id0_14, I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_r, int I_blr_ds_c) {
+  I_blr_ds.I_blr_ds_I_blr_ds_id0_14_merged_banks_9.push(I_blr_ds_I_blr_ds_id0_14);
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_17_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = I_blr_ds_blr_r, I_blr_ds_c = I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-  // I_blr_ds_I_blr_ds_blr_conv_3_30_17 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-	auto value_I_blr_ds_I_blr_ds_id0_12 = I_blr_ds.I_blr_ds_I_blr_ds_id0_12_merged_banks_9.peek_32();
-	return value_I_blr_ds_I_blr_ds_id0_12;
-}
-
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_18_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = I_blr_ds_blr_r, I_blr_ds_c = 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-  // I_blr_ds_I_blr_ds_blr_conv_3_30_18 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[I_blr_ds_blr_r, 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-	auto value_I_blr_ds_I_blr_ds_id0_12 = I_blr_ds.I_blr_ds_I_blr_ds_id0_12_merged_banks_9.peek_31();
-	return value_I_blr_ds_I_blr_ds_id0_12;
-}
-
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_19_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = I_blr_ds_blr_r, I_blr_ds_c = 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-  // I_blr_ds_I_blr_ds_blr_conv_3_30_19 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[I_blr_ds_blr_r, 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-	auto value_I_blr_ds_I_blr_ds_id0_12 = I_blr_ds.I_blr_ds_I_blr_ds_id0_12_merged_banks_9.peek_30();
-	return value_I_blr_ds_I_blr_ds_id0_12;
-}
-
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_20_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = 1 + I_blr_ds_blr_r, I_blr_ds_c = I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-  // I_blr_ds_I_blr_ds_blr_conv_3_30_20 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[1 + I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-	auto value_I_blr_ds_I_blr_ds_id0_12 = I_blr_ds.I_blr_ds_I_blr_ds_id0_12_merged_banks_9.peek_17();
-	return value_I_blr_ds_I_blr_ds_id0_12;
-}
-
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_21_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
-	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = 1 + I_blr_ds_blr_r, I_blr_ds_c = 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-  // I_blr_ds_I_blr_ds_blr_conv_3_30_21 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[1 + I_blr_ds_blr_r, 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-	auto value_I_blr_ds_I_blr_ds_id0_12 = I_blr_ds.I_blr_ds_I_blr_ds_id0_12_merged_banks_9.peek_16();
-	return value_I_blr_ds_I_blr_ds_id0_12;
-}
-
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_22_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_10_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = 1 + I_blr_ds_blr_r, I_blr_ds_c = 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-  // I_blr_ds_I_blr_ds_blr_conv_3_30_22 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[1 + I_blr_ds_blr_r, 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-	auto value_I_blr_ds_I_blr_ds_id0_12 = I_blr_ds.I_blr_ds_I_blr_ds_id0_12_merged_banks_9.peek_15();
-	return value_I_blr_ds_I_blr_ds_id0_12;
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_10 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[1 + I_blr_ds_blr_r, 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+	auto value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14_merged_banks_9.peek_15();
+	return value_I_blr_ds_I_blr_ds_id0_14;
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_23_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_11_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = 2 + I_blr_ds_blr_r, I_blr_ds_c = I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-  // I_blr_ds_I_blr_ds_blr_conv_3_30_23 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[2 + I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-	auto value_I_blr_ds_I_blr_ds_id0_12 = I_blr_ds.I_blr_ds_I_blr_ds_id0_12_merged_banks_9.peek_2();
-	return value_I_blr_ds_I_blr_ds_id0_12;
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_11 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[2 + I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+	auto value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14_merged_banks_9.peek_2();
+	return value_I_blr_ds_I_blr_ds_id0_14;
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_24_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_12_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = 2 + I_blr_ds_blr_r, I_blr_ds_c = 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-  // I_blr_ds_I_blr_ds_blr_conv_3_30_24 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[2 + I_blr_ds_blr_r, 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-	auto value_I_blr_ds_I_blr_ds_id0_12 = I_blr_ds.I_blr_ds_I_blr_ds_id0_12_merged_banks_9.peek_1();
-	return value_I_blr_ds_I_blr_ds_id0_12;
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_12 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[2 + I_blr_ds_blr_r, 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+	auto value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14_merged_banks_9.peek_1();
+	return value_I_blr_ds_I_blr_ds_id0_14;
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_25_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_13_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = 2 + I_blr_ds_blr_r, I_blr_ds_c = 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-  // I_blr_ds_I_blr_ds_blr_conv_3_30_25 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[2 + I_blr_ds_blr_r, 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
-	auto value_I_blr_ds_I_blr_ds_id0_12 = I_blr_ds.I_blr_ds_I_blr_ds_id0_12_merged_banks_9.peek_0();
-	return value_I_blr_ds_I_blr_ds_id0_12;
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_13 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[2 + I_blr_ds_blr_r, 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+	auto value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14_merged_banks_9.peek_0();
+	return value_I_blr_ds_I_blr_ds_id0_14;
+}
+
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_5_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = I_blr_ds_blr_r, I_blr_ds_c = I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_5 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+	auto value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14_merged_banks_9.peek_32();
+	return value_I_blr_ds_I_blr_ds_id0_14;
+}
+
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_6_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = I_blr_ds_blr_r, I_blr_ds_c = 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_6 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[I_blr_ds_blr_r, 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+	auto value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14_merged_banks_9.peek_31();
+	return value_I_blr_ds_I_blr_ds_id0_14;
+}
+
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_7_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = I_blr_ds_blr_r, I_blr_ds_c = 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_7 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[I_blr_ds_blr_r, 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+	auto value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14_merged_banks_9.peek_30();
+	return value_I_blr_ds_I_blr_ds_id0_14;
+}
+
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_8_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = 1 + I_blr_ds_blr_r, I_blr_ds_c = I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_8 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[1 + I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+	auto value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14_merged_banks_9.peek_17();
+	return value_I_blr_ds_I_blr_ds_id0_14;
+}
+
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_9_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+	// lexmax events: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds_id0[root' = 0, I_blr_ds_r = 1 + I_blr_ds_blr_r, I_blr_ds_c = 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_9 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[1 + I_blr_ds_blr_r, 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+	auto value_I_blr_ds_I_blr_ds_id0_14 = I_blr_ds.I_blr_ds_I_blr_ds_id0_14_merged_banks_9.peek_16();
+	return value_I_blr_ds_I_blr_ds_id0_14;
 }
 
 // # of bundles = 2
 // I_blr_ds_blr_conv_3_30_read
-//	I_blr_ds_I_blr_ds_blr_conv_3_30_17
-//	I_blr_ds_I_blr_ds_blr_conv_3_30_18
-//	I_blr_ds_I_blr_ds_blr_conv_3_30_19
-//	I_blr_ds_I_blr_ds_blr_conv_3_30_20
-//	I_blr_ds_I_blr_ds_blr_conv_3_30_21
-//	I_blr_ds_I_blr_ds_blr_conv_3_30_22
-//	I_blr_ds_I_blr_ds_blr_conv_3_30_23
-//	I_blr_ds_I_blr_ds_blr_conv_3_30_24
-//	I_blr_ds_I_blr_ds_blr_conv_3_30_25
+//	I_blr_ds_I_blr_ds_blr_conv_3_30_5
+//	I_blr_ds_I_blr_ds_blr_conv_3_30_6
+//	I_blr_ds_I_blr_ds_blr_conv_3_30_7
+//	I_blr_ds_I_blr_ds_blr_conv_3_30_8
+//	I_blr_ds_I_blr_ds_blr_conv_3_30_9
+//	I_blr_ds_I_blr_ds_blr_conv_3_30_10
+//	I_blr_ds_I_blr_ds_blr_conv_3_30_11
+//	I_blr_ds_I_blr_ds_blr_conv_3_30_12
+//	I_blr_ds_I_blr_ds_blr_conv_3_30_13
 inline hw_uint<288> I_blr_ds_I_blr_ds_blr_conv_3_30_read_bundle_read(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 	hw_uint<288> result;
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_17_res = I_blr_ds_I_blr_ds_blr_conv_3_30_17_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<0, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_17_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_18_res = I_blr_ds_I_blr_ds_blr_conv_3_30_18_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<32, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_18_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_19_res = I_blr_ds_I_blr_ds_blr_conv_3_30_19_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<64, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_19_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_20_res = I_blr_ds_I_blr_ds_blr_conv_3_30_20_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<96, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_20_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_21_res = I_blr_ds_I_blr_ds_blr_conv_3_30_21_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<128, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_21_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_22_res = I_blr_ds_I_blr_ds_blr_conv_3_30_22_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<160, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_22_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_23_res = I_blr_ds_I_blr_ds_blr_conv_3_30_23_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<192, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_23_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_24_res = I_blr_ds_I_blr_ds_blr_conv_3_30_24_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<224, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_24_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_25_res = I_blr_ds_I_blr_ds_blr_conv_3_30_25_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<256, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_25_res);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_5_res = I_blr_ds_I_blr_ds_blr_conv_3_30_5_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	set_at<0, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_5_res);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_6_res = I_blr_ds_I_blr_ds_blr_conv_3_30_6_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	set_at<32, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_6_res);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_7_res = I_blr_ds_I_blr_ds_blr_conv_3_30_7_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	set_at<64, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_7_res);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_8_res = I_blr_ds_I_blr_ds_blr_conv_3_30_8_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	set_at<96, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_8_res);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_9_res = I_blr_ds_I_blr_ds_blr_conv_3_30_9_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	set_at<128, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_9_res);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_10_res = I_blr_ds_I_blr_ds_blr_conv_3_30_10_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	set_at<160, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_10_res);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_11_res = I_blr_ds_I_blr_ds_blr_conv_3_30_11_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	set_at<192, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_11_res);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_12_res = I_blr_ds_I_blr_ds_blr_conv_3_30_12_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	set_at<224, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_12_res);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_13_res = I_blr_ds_I_blr_ds_blr_conv_3_30_13_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	set_at<256, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_13_res);
 	return result;
 }
 
 // I_blr_ds_id0_write
-//	I_blr_ds_I_blr_ds_id0_12
+//	I_blr_ds_I_blr_ds_id0_14
 inline void I_blr_ds_I_blr_ds_id0_write_bundle_write(hw_uint<32>& I_blr_ds_id0_write, I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_r, int I_blr_ds_c) {
-	hw_uint<32>  I_blr_ds_I_blr_ds_id0_12_res = I_blr_ds_id0_write.extract<0, 31>();
-	I_blr_ds_I_blr_ds_id0_12_write(I_blr_ds_I_blr_ds_id0_12_res, I_blr_ds, root, I_blr_ds_r, I_blr_ds_c);
+	hw_uint<32>  I_blr_ds_I_blr_ds_id0_14_res = I_blr_ds_id0_write.extract<0, 31>();
+	I_blr_ds_I_blr_ds_id0_14_write(I_blr_ds_I_blr_ds_id0_14_res, I_blr_ds, root, I_blr_ds_r, I_blr_ds_c);
 }
 
 
 
 #include "hw_classes.h"
 
-struct I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_15_cache {
+struct I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_1_cache {
 	// RAM Box: {[0, 12], [0, 12]}
 	// Capacity: 39
 	// # of read delays: 39
 #ifdef __VIVADO_SYNTH__
-  hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_15_store[169];
+  hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_1_store[169];
 
 #else
-  hw_uint<32> * I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_15_store;
+  hw_uint<32> * I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_1_store;
 #endif // __VIVADO_SYNTH__
-  hw_uint<32>  read(int d0, int d1) {    return I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_15_store[(d0 + d1*13)];  }
+  hw_uint<32>  read(int d0, int d1) {    return I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_1_store[(d0 + d1*13)];  }
 
   void write(hw_uint<32> & value, int d0, int d1) {
-    I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_15_store[(d0 + d1*13)] = value;
+    I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_1_store[(d0 + d1*13)] = value;
   }
 
 	fifo<hw_uint<32> , 39> f;
@@ -766,275 +640,158 @@ struct I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id
   }
 
 	inline hw_uint<32>  peek_0() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(0);
 	}
 
 	inline hw_uint<32>  peek_1() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(1);
 	}
 
 	inline hw_uint<32>  peek_2() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(2);
 	}
 
 	inline hw_uint<32>  peek_3() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(3);
 	}
 
 	inline hw_uint<32>  peek_4() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(4);
 	}
 
 	inline hw_uint<32>  peek_5() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(5);
 	}
 
 	inline hw_uint<32>  peek_6() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(6);
 	}
 
 	inline hw_uint<32>  peek_7() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(7);
 	}
 
 	inline hw_uint<32>  peek_8() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(8);
 	}
 
 	inline hw_uint<32>  peek_9() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(9);
 	}
 
 	inline hw_uint<32>  peek_10() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(10);
 	}
 
 	inline hw_uint<32>  peek_11() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(11);
 	}
 
 	inline hw_uint<32>  peek_12() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(12);
 	}
 
 	inline hw_uint<32>  peek_13() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(13);
 	}
 
 	inline hw_uint<32>  peek_14() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(14);
 	}
 
 	inline hw_uint<32>  peek_15() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(15);
 	}
 
 	inline hw_uint<32>  peek_16() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(16);
 	}
 
 	inline hw_uint<32>  peek_17() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(17);
 	}
 
 	inline hw_uint<32>  peek_18() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(18);
 	}
 
 	inline hw_uint<32>  peek_19() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(19);
 	}
 
 	inline hw_uint<32>  peek_20() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(20);
 	}
 
 	inline hw_uint<32>  peek_21() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(21);
 	}
 
 	inline hw_uint<32>  peek_22() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(22);
 	}
 
 	inline hw_uint<32>  peek_23() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(23);
 	}
 
 	inline hw_uint<32>  peek_24() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(24);
 	}
 
 	inline hw_uint<32>  peek_25() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(25);
 	}
 
 	inline hw_uint<32>  peek_26() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(26);
 	}
 
 	inline hw_uint<32>  peek_27() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(27);
 	}
 
 	inline hw_uint<32>  peek_28() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(28);
 	}
 
 	inline hw_uint<32>  peek_29() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(29);
 	}
 
 	inline hw_uint<32>  peek_30() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(30);
 	}
 
 	inline hw_uint<32>  peek_31() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(31);
 	}
 
 	inline hw_uint<32>  peek_32() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(32);
 	}
 
 	inline hw_uint<32>  peek_33() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(33);
 	}
 
 	inline hw_uint<32>  peek_34() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(34);
 	}
 
 	inline hw_uint<32>  peek_35() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(35);
 	}
 
 	inline hw_uint<32>  peek_36() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(36);
 	}
 
 	inline hw_uint<32>  peek_37() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(37);
 	}
 
 	inline hw_uint<32>  peek_38() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(38);
 	}
 
@@ -1050,39 +807,36 @@ struct I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id
 };
 
 struct I_blr_ds_blr_cache {
-  I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_15_cache I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_15;
+  I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_1_cache I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_1;
 };
 
 
 
-inline void I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_write(hw_uint<32> & I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16, I_blr_ds_blr_cache& I_blr_ds_blr, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-  I_blr_ds_blr.I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_15.push(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16);
+inline void I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_write(hw_uint<32> & I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4, I_blr_ds_blr_cache& I_blr_ds_blr, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+  I_blr_ds_blr.I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_1.push(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4);
 }
 
-inline hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_ds_id0_15_select(I_blr_ds_blr_cache& I_blr_ds_blr, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
+inline hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_ds_id0_1_select(I_blr_ds_blr_cache& I_blr_ds_blr, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
 	// lexmax events: { I_blr_ds_blr_ds_id0[root = 0, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> I_blr_ds_blr_conv_3_30[root' = 0, I_blr_ds_blr_r = 2I_blr_ds_blr_ds_r, I_blr_ds_blr_c = 2I_blr_ds_blr_ds_c] : 0 <= I_blr_ds_blr_ds_r <= 4 and 0 <= I_blr_ds_blr_ds_c <= 5; I_blr_ds_blr_ds_id0[root = 0, I_blr_ds_blr_ds_r = 5, I_blr_ds_blr_ds_c] -> I_blr_ds_blr_conv_3_30[root' = 0, I_blr_ds_blr_r = 10, I_blr_ds_blr_c = 2I_blr_ds_blr_ds_c] : 0 <= I_blr_ds_blr_ds_c <= 4; I_blr_ds_blr_ds_id0[root = 0, I_blr_ds_blr_ds_r = 5, I_blr_ds_blr_ds_c = 5] -> I_blr_ds_blr_conv_3_30[root' = 0, I_blr_ds_blr_r = 10, I_blr_ds_blr_c = 10] }
-  // I_blr_ds_blr_I_blr_ds_blr_ds_id0_15 read pattern: { I_blr_ds_blr_ds_id0[root = 0, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> I_blr_ds_blr[2I_blr_ds_blr_ds_r, 2I_blr_ds_blr_ds_c] : 0 <= I_blr_ds_blr_ds_r <= 5 and 0 <= I_blr_ds_blr_ds_c <= 5 }
-	auto value_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16 = I_blr_ds_blr.I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_15.peek(/* Needs general delay string */ ((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -5 + I_blr_ds_blr_ds_r == 0 && root == 0 && -1 + I_blr_ds_blr_ds_c >= 0 && 2 - I_blr_ds_blr_ds_c >= 0) ? (2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && -5 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 2 - I_blr_ds_blr_ds_c >= 0) ? (((2 - I_blr_ds_blr_ds_c) + floord(I_blr_ds_blr_ds_c, 2))) : (-3 + I_blr_ds_blr_ds_c == 0 && -5 + I_blr_ds_blr_ds_r == 0 && root == 0) ? (1) : ((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && (-1 - I_blr_ds_blr_ds_r) % 2 == 0 && root == 0 && -1 + I_blr_ds_blr_ds_r >= 0 && 2 - I_blr_ds_blr_ds_r >= 0 && -1 + I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((57 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && (-1 - I_blr_ds_blr_ds_r) % 2 == 0 && root == 0 && -1 + I_blr_ds_blr_ds_r >= 0 && 2 - I_blr_ds_blr_ds_r >= 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((56 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_r) % 2 == 0 && root == 0 && I_blr_ds_blr_ds_r >= 0 && 2 - I_blr_ds_blr_ds_r >= 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? ((((76 - 13 * I_blr_ds_blr_ds_r) - 4 * I_blr_ds_blr_ds_c))/2) : ((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -3 + I_blr_ds_blr_ds_r == 0 && root == 0 && -1 + I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((31 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && -3 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((30 - I_blr_ds_blr_ds_c))/2) : (((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -4 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) || ((-I_blr_ds_blr_ds_c) % 2 == 0 && -4 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0)) ? ((12 - 2 * I_blr_ds_blr_ds_c)) : 0);
-	return value_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16;
+  // I_blr_ds_blr_I_blr_ds_blr_ds_id0_1 read pattern: { I_blr_ds_blr_ds_id0[root = 0, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> I_blr_ds_blr[2I_blr_ds_blr_ds_r, 2I_blr_ds_blr_ds_c] : 0 <= I_blr_ds_blr_ds_r <= 5 and 0 <= I_blr_ds_blr_ds_c <= 5 }
+	auto value_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4 = I_blr_ds_blr.I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_1.peek(/* Needs general delay string */ ((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -5 + I_blr_ds_blr_ds_r == 0 && root == 0 && -1 + I_blr_ds_blr_ds_c >= 0 && 2 - I_blr_ds_blr_ds_c >= 0) ? (2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && -5 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 2 - I_blr_ds_blr_ds_c >= 0) ? (((2 - I_blr_ds_blr_ds_c) + floord(I_blr_ds_blr_ds_c, 2))) : (-3 + I_blr_ds_blr_ds_c == 0 && -5 + I_blr_ds_blr_ds_r == 0 && root == 0) ? (1) : ((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && (-1 - I_blr_ds_blr_ds_r) % 2 == 0 && root == 0 && -1 + I_blr_ds_blr_ds_r >= 0 && 2 - I_blr_ds_blr_ds_r >= 0 && -1 + I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((57 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && (-1 - I_blr_ds_blr_ds_r) % 2 == 0 && root == 0 && -1 + I_blr_ds_blr_ds_r >= 0 && 2 - I_blr_ds_blr_ds_r >= 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((56 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_r) % 2 == 0 && root == 0 && I_blr_ds_blr_ds_r >= 0 && 2 - I_blr_ds_blr_ds_r >= 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? ((((76 - 13 * I_blr_ds_blr_ds_r) - 4 * I_blr_ds_blr_ds_c))/2) : ((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -3 + I_blr_ds_blr_ds_r == 0 && root == 0 && -1 + I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((31 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && -3 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) ? (((30 - I_blr_ds_blr_ds_c))/2) : (((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -4 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0) || ((-I_blr_ds_blr_ds_c) % 2 == 0 && -4 + I_blr_ds_blr_ds_r == 0 && root == 0 && I_blr_ds_blr_ds_c >= 0 && 5 - I_blr_ds_blr_ds_c >= 0)) ? ((12 - 2 * I_blr_ds_blr_ds_c)) : 0);
+	return value_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4;
 }
 
 // # of bundles = 2
 // I_blr_ds_blr_conv_3_30_write
-//	I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16
+//	I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4
 inline void I_blr_ds_blr_I_blr_ds_blr_conv_3_30_write_bundle_write(hw_uint<32>& I_blr_ds_blr_conv_3_30_write, I_blr_ds_blr_cache& I_blr_ds_blr, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-	hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_res = I_blr_ds_blr_conv_3_30_write.extract<0, 31>();
-	I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_write(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_res, I_blr_ds_blr, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_res = I_blr_ds_blr_conv_3_30_write.extract<0, 31>();
+	I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_write(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_4_res, I_blr_ds_blr, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
 }
 
 // I_blr_ds_blr_ds_id0_read
-//	I_blr_ds_blr_I_blr_ds_blr_ds_id0_15
+//	I_blr_ds_blr_I_blr_ds_blr_ds_id0_1
 inline hw_uint<32> I_blr_ds_blr_I_blr_ds_blr_ds_id0_read_bundle_read(I_blr_ds_blr_cache& I_blr_ds_blr, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
 	hw_uint<32> result;
-	hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_ds_id0_15_res = I_blr_ds_blr_I_blr_ds_blr_ds_id0_15_select(I_blr_ds_blr, root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c);
-	set_at<0, 32>(result, I_blr_ds_blr_I_blr_ds_blr_ds_id0_15_res);
+	hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_ds_id0_1_res = I_blr_ds_blr_I_blr_ds_blr_ds_id0_1_select(I_blr_ds_blr, root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c);
+	set_at<0, 32>(result, I_blr_ds_blr_I_blr_ds_blr_ds_id0_1_res);
 	return result;
 }
 
@@ -1090,20 +844,20 @@ inline hw_uint<32> I_blr_ds_blr_I_blr_ds_blr_ds_id0_read_bundle_read(I_blr_ds_bl
 
 #include "hw_classes.h"
 
-struct I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_27_cache {
+struct I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3_cache {
 	// RAM Box: {[0, 5], [0, 5]}
 	// Capacity: 12
 	// # of read delays: 12
 #ifdef __VIVADO_SYNTH__
-  hw_uint<32>  I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_27_store[36];
+  hw_uint<32>  I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3_store[36];
 
 #else
-  hw_uint<32> * I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_27_store;
+  hw_uint<32> * I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3_store;
 #endif // __VIVADO_SYNTH__
-  hw_uint<32>  read(int d0, int d1) {    return I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_27_store[(d0 + d1*6)];  }
+  hw_uint<32>  read(int d0, int d1) {    return I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3_store[(d0 + d1*6)];  }
 
   void write(hw_uint<32> & value, int d0, int d1) {
-    I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_27_store[(d0 + d1*6)] = value;
+    I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3_store[(d0 + d1*6)] = value;
   }
 
 	fifo<hw_uint<32> , 12> f;
@@ -1115,86 +869,50 @@ struct I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_to_I_blr_ds_blr_ds_store_I_blr_ds_
   }
 
 	inline hw_uint<32>  peek_0() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(0);
 	}
 
 	inline hw_uint<32>  peek_1() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(1);
 	}
 
 	inline hw_uint<32>  peek_2() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(2);
 	}
 
 	inline hw_uint<32>  peek_3() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(3);
 	}
 
 	inline hw_uint<32>  peek_4() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(4);
 	}
 
 	inline hw_uint<32>  peek_5() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(5);
 	}
 
 	inline hw_uint<32>  peek_6() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(6);
 	}
 
 	inline hw_uint<32>  peek_7() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(7);
 	}
 
 	inline hw_uint<32>  peek_8() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(8);
 	}
 
 	inline hw_uint<32>  peek_9() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(9);
 	}
 
 	inline hw_uint<32>  peek_10() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(10);
 	}
 
 	inline hw_uint<32>  peek_11() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		return f.peek(11);
 	}
 
@@ -1210,39 +928,36 @@ struct I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_to_I_blr_ds_blr_ds_store_I_blr_ds_
 };
 
 struct I_blr_ds_blr_ds_cache {
-  I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_27_cache I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_27;
+  I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3_cache I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3;
 };
 
 
 
-inline void I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_write(hw_uint<32> & I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14, I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
-  I_blr_ds_blr_ds.I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_27.push(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14);
+inline void I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_write(hw_uint<32> & I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0, I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
+  I_blr_ds_blr_ds.I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3.push(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0);
 }
 
-inline hw_uint<32>  I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_27_select(I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, int root, int I_blr_ds_blr_ds_out_r, int I_blr_ds_blr_ds_out_c) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
+inline hw_uint<32>  I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3_select(I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, int root, int I_blr_ds_blr_ds_out_r, int I_blr_ds_blr_ds_out_c) {
 	// lexmax events: { store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root = 0, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> I_blr_ds_blr_ds_id0[root' = 0, I_blr_ds_blr_ds_r = I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_c = I_blr_ds_blr_ds_out_c] : 0 <= I_blr_ds_blr_ds_out_r <= 4 and 0 <= I_blr_ds_blr_ds_out_c <= 5; store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root = 0, I_blr_ds_blr_ds_out_r = 5, I_blr_ds_blr_ds_out_c] -> I_blr_ds_blr_ds_id0[root' = 0, I_blr_ds_blr_ds_r = 5, I_blr_ds_blr_ds_c = I_blr_ds_blr_ds_out_c] : 0 <= I_blr_ds_blr_ds_out_c <= 4; store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root = 0, I_blr_ds_blr_ds_out_r = 5, I_blr_ds_blr_ds_out_c = 5] -> I_blr_ds_blr_ds_id0[root' = 0, I_blr_ds_blr_ds_r = 5, I_blr_ds_blr_ds_c = 5] }
-  // I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_27 read pattern: { store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root = 0, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> I_blr_ds_blr_ds[I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] : 0 <= I_blr_ds_blr_ds_out_r <= 5 and 0 <= I_blr_ds_blr_ds_out_c <= 5 }
-	auto value_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14 = I_blr_ds_blr_ds.I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_27.peek(/* Needs general delay string */ (-5 + I_blr_ds_blr_ds_out_r == 0 && root == 0 && I_blr_ds_blr_ds_out_c >= 0 && 1 - I_blr_ds_blr_ds_out_c >= 0) ? (1) : (-2 + I_blr_ds_blr_ds_out_c == 0 && -5 + I_blr_ds_blr_ds_out_r == 0 && root == 0) ? (1) : (root == 0 && I_blr_ds_blr_ds_out_r >= 0 && 1 - I_blr_ds_blr_ds_out_r >= 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0) ? ((11 - I_blr_ds_blr_ds_out_c)) : (-5 + I_blr_ds_blr_ds_out_c == 0 && root == 0 && I_blr_ds_blr_ds_out_r >= 0 && 1 - I_blr_ds_blr_ds_out_r >= 0) ? (6) : ((-1 - I_blr_ds_blr_ds_out_c) % 3 == 0 && -2 + I_blr_ds_blr_ds_out_r == 0 && root == 0 && -2 + I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0) ? (7) : (-5 + I_blr_ds_blr_ds_out_c == 0 && -2 + I_blr_ds_blr_ds_out_r == 0 && root == 0) ? (((8 + 2 * I_blr_ds_blr_ds_out_c))/3) : (-2 + I_blr_ds_blr_ds_out_r == 0 && root == 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0 && I_blr_ds_blr_ds_out_c - 3*floord(1 + I_blr_ds_blr_ds_out_c, 3) >= 0) ? ((7 - floord(1 + I_blr_ds_blr_ds_out_c, 3))) : ((root == 0 && -3 + I_blr_ds_blr_ds_out_r >= 0 && 4 - I_blr_ds_blr_ds_out_r >= 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0 && I_blr_ds_blr_ds_out_c - 3*floord(1 + I_blr_ds_blr_ds_out_c, 3) >= 0) || ((-1 - I_blr_ds_blr_ds_out_c) % 3 == 0 && root == 0 && -3 + I_blr_ds_blr_ds_out_r >= 0 && 4 - I_blr_ds_blr_ds_out_r >= 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0)) ? ((5 - I_blr_ds_blr_ds_out_c)) : 0);
-	return value_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14;
+  // I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3 read pattern: { store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root = 0, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> I_blr_ds_blr_ds[I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] : 0 <= I_blr_ds_blr_ds_out_r <= 5 and 0 <= I_blr_ds_blr_ds_out_c <= 5 }
+	auto value_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0 = I_blr_ds_blr_ds.I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3.peek(/* Needs general delay string */ (-5 + I_blr_ds_blr_ds_out_r == 0 && root == 0 && I_blr_ds_blr_ds_out_c >= 0 && 1 - I_blr_ds_blr_ds_out_c >= 0) ? (1) : (-2 + I_blr_ds_blr_ds_out_c == 0 && -5 + I_blr_ds_blr_ds_out_r == 0 && root == 0) ? (1) : (root == 0 && I_blr_ds_blr_ds_out_r >= 0 && 1 - I_blr_ds_blr_ds_out_r >= 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0) ? ((11 - I_blr_ds_blr_ds_out_c)) : (-5 + I_blr_ds_blr_ds_out_c == 0 && root == 0 && I_blr_ds_blr_ds_out_r >= 0 && 1 - I_blr_ds_blr_ds_out_r >= 0) ? (6) : ((-1 - I_blr_ds_blr_ds_out_c) % 3 == 0 && -2 + I_blr_ds_blr_ds_out_r == 0 && root == 0 && -2 + I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0) ? (7) : (-5 + I_blr_ds_blr_ds_out_c == 0 && -2 + I_blr_ds_blr_ds_out_r == 0 && root == 0) ? (((8 + 2 * I_blr_ds_blr_ds_out_c))/3) : (-2 + I_blr_ds_blr_ds_out_r == 0 && root == 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0 && I_blr_ds_blr_ds_out_c - 3*floord(1 + I_blr_ds_blr_ds_out_c, 3) >= 0) ? ((7 - floord(1 + I_blr_ds_blr_ds_out_c, 3))) : ((root == 0 && -3 + I_blr_ds_blr_ds_out_r >= 0 && 4 - I_blr_ds_blr_ds_out_r >= 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0 && I_blr_ds_blr_ds_out_c - 3*floord(1 + I_blr_ds_blr_ds_out_c, 3) >= 0) || ((-1 - I_blr_ds_blr_ds_out_c) % 3 == 0 && root == 0 && -3 + I_blr_ds_blr_ds_out_r >= 0 && 4 - I_blr_ds_blr_ds_out_r >= 0 && I_blr_ds_blr_ds_out_c >= 0 && 4 - I_blr_ds_blr_ds_out_c >= 0)) ? ((5 - I_blr_ds_blr_ds_out_c)) : 0);
+	return value_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0;
 }
 
 // # of bundles = 2
 // I_blr_ds_blr_ds_id0_write
-//	I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14
+//	I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0
 inline void I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_write_bundle_write(hw_uint<32>& I_blr_ds_blr_ds_id0_write, I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
-	hw_uint<32>  I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_res = I_blr_ds_blr_ds_id0_write.extract<0, 31>();
-	I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_write(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_14_res, I_blr_ds_blr_ds, root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c);
+	hw_uint<32>  I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_res = I_blr_ds_blr_ds_id0_write.extract<0, 31>();
+	I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_write(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_0_res, I_blr_ds_blr_ds, root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c);
 }
 
 // store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_read
-//	I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_27
+//	I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3
 inline hw_uint<32> I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_read_bundle_read(I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, int root, int I_blr_ds_blr_ds_out_r, int I_blr_ds_blr_ds_out_c) {
 	hw_uint<32> result;
-	hw_uint<32>  I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_27_res = I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_27_select(I_blr_ds_blr_ds, root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c);
-	set_at<0, 32>(result, I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_27_res);
+	hw_uint<32>  I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3_res = I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3_select(I_blr_ds_blr_ds, root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c);
+	set_at<0, 32>(result, I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_3_res);
 	return result;
 }
 
@@ -1251,6 +966,37 @@ inline hw_uint<32> I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_d
 
 
 // Operation logic
+inline void I_blr_ds_blr_ds_id0(I_blr_ds_blr_cache& I_blr_ds_blr, I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
+	// Consume: I_blr_ds_blr
+	auto I_blr_ds_blr_2_m_I_blr_ds_blr_ds_r_c__2_m_I_blr_ds_blr_ds_c_value = I_blr_ds_blr_I_blr_ds_blr_ds_id0_read_bundle_read(I_blr_ds_blr/* source_delay */, root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c);
+	auto compute_result = id(I_blr_ds_blr_2_m_I_blr_ds_blr_ds_r_c__2_m_I_blr_ds_blr_ds_c_value);
+	// Produce: I_blr_ds_blr_ds
+	I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_write_bundle_write(compute_result, I_blr_ds_blr_ds, root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c);
+}
+
+inline void store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds(I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */I_blr_ds_blr_ds_out, int root, int I_blr_ds_blr_ds_out_r, int I_blr_ds_blr_ds_out_c) {
+	// Consume: I_blr_ds_blr_ds
+	auto I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value = I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_read_bundle_read(I_blr_ds_blr_ds/* source_delay */, root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c);
+	// Produce: I_blr_ds_blr_ds_out
+	I_blr_ds_blr_ds_out.write(I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value);
+}
+
+inline void I_blr_ds_blr_conv_3_30(I_blr_ds_cache& I_blr_ds, I_blr_ds_blr_cache& I_blr_ds_blr, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+	// Consume: I_blr_ds
+	auto I_blr_ds_I_blr_ds_blr_r__p__0_c__I_blr_ds_blr_c__p__0_value = I_blr_ds_I_blr_ds_blr_conv_3_30_read_bundle_read(I_blr_ds/* source_delay */, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	auto compute_result = conv_3_3(I_blr_ds_I_blr_ds_blr_r__p__0_c__I_blr_ds_blr_c__p__0_value);
+	// Produce: I_blr_ds_blr
+	I_blr_ds_blr_I_blr_ds_blr_conv_3_30_write_bundle_write(compute_result, I_blr_ds_blr, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+}
+
+inline void I_blr_ds_id0(I_blr_cache& I_blr, I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_r, int I_blr_ds_c) {
+	// Consume: I_blr
+	auto I_blr_2_m_I_blr_ds_r_c__2_m_I_blr_ds_c_value = I_blr_I_blr_ds_id0_read_bundle_read(I_blr/* source_delay */, root, I_blr_ds_r, I_blr_ds_c);
+	auto compute_result = id(I_blr_2_m_I_blr_ds_r_c__2_m_I_blr_ds_c_value);
+	// Produce: I_blr_ds
+	I_blr_ds_I_blr_ds_id0_write_bundle_write(compute_result, I_blr_ds, root, I_blr_ds_r, I_blr_ds_c);
+}
+
 inline void store_I_from_in(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, I_cache& I, int root, int pr, int pc) {
 	// Consume: in
 	auto in_pr_c__pc_value = in.read();
@@ -1264,37 +1010,6 @@ inline void I_blr_conv_3_30(I_cache& I, I_blr_cache& I_blr, int root, int I_blr_
 	auto compute_result = conv_3_3(I_I_blr_r__p__0_c__I_blr_c__p__0_value);
 	// Produce: I_blr
 	I_blr_I_blr_conv_3_30_write_bundle_write(compute_result, I_blr, root, I_blr_r, I_blr_c);
-}
-
-inline void I_blr_ds_id0(I_blr_cache& I_blr, I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_r, int I_blr_ds_c) {
-	// Consume: I_blr
-	auto I_blr_2_m_I_blr_ds_r_c__2_m_I_blr_ds_c_value = I_blr_I_blr_ds_id0_read_bundle_read(I_blr/* source_delay */, root, I_blr_ds_r, I_blr_ds_c);
-	auto compute_result = id(I_blr_2_m_I_blr_ds_r_c__2_m_I_blr_ds_c_value);
-	// Produce: I_blr_ds
-	I_blr_ds_I_blr_ds_id0_write_bundle_write(compute_result, I_blr_ds, root, I_blr_ds_r, I_blr_ds_c);
-}
-
-inline void I_blr_ds_blr_ds_id0(I_blr_ds_blr_cache& I_blr_ds_blr, I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
-	// Consume: I_blr_ds_blr
-	auto I_blr_ds_blr_2_m_I_blr_ds_blr_ds_r_c__2_m_I_blr_ds_blr_ds_c_value = I_blr_ds_blr_I_blr_ds_blr_ds_id0_read_bundle_read(I_blr_ds_blr/* source_delay */, root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c);
-	auto compute_result = id(I_blr_ds_blr_2_m_I_blr_ds_blr_ds_r_c__2_m_I_blr_ds_blr_ds_c_value);
-	// Produce: I_blr_ds_blr_ds
-	I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_write_bundle_write(compute_result, I_blr_ds_blr_ds, root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c);
-}
-
-inline void I_blr_ds_blr_conv_3_30(I_blr_ds_cache& I_blr_ds, I_blr_ds_blr_cache& I_blr_ds_blr, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-	// Consume: I_blr_ds
-	auto I_blr_ds_I_blr_ds_blr_r__p__0_c__I_blr_ds_blr_c__p__0_value = I_blr_ds_I_blr_ds_blr_conv_3_30_read_bundle_read(I_blr_ds/* source_delay */, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	auto compute_result = conv_3_3(I_blr_ds_I_blr_ds_blr_r__p__0_c__I_blr_ds_blr_c__p__0_value);
-	// Produce: I_blr_ds_blr
-	I_blr_ds_blr_I_blr_ds_blr_conv_3_30_write_bundle_write(compute_result, I_blr_ds_blr, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-}
-
-inline void store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds(I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */I_blr_ds_blr_ds_out, int root, int I_blr_ds_blr_ds_out_r, int I_blr_ds_blr_ds_out_c) {
-	// Consume: I_blr_ds_blr_ds
-	auto I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value = I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_read_bundle_read(I_blr_ds_blr_ds/* source_delay */, root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c);
-	// Produce: I_blr_ds_blr_ds_out
-	I_blr_ds_blr_ds_out.write(I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value);
 }
 
 #ifndef __SYSTEMC_SYNTH__
