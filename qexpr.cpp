@@ -126,6 +126,7 @@ void print_body(int level,
   int next_level = level + 1;
     out << endl;
     out << "#ifdef __VIVADO_SYNTH__" << endl;
+    out << "#pragma HLS dependence inter false" << endl;
     out << "#pragma HLS pipeline II=1" << endl;
     out << "#endif // __VIVADO_SYNTH__" << endl << endl;
 

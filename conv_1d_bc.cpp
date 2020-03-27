@@ -312,4 +312,37 @@ void conv_1d_bc(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in
 }
 #else // __SYSTEMC_SYNTH__
 
+#include <systemc.h>
+
+// Driver module
+SC_MODULE(conv_1d_bc) {
+  sc_in<bool> clk, rst;
+
+  M_cache M;
+  T_cache T;
+  SC_CTOR(conv_1d_bc) {
+  }
+
+  void conv_1d_bc_process() {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=M inter false
+#endif // __VIVADO_SYNTH__
+
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=T inter false
+#endif // __VIVADO_SYNTH__
+
+	for (int c0 = 0; c0 <= 11; c0 += 1) {
+	  if (c0 <= 9)
+	write(in, M, 0, c0);
+	  if (c0 >= 2) {
+	read0(M, T, 0, c0 - 2);
+	compute_out(T, out, 0, c0 - 2);
+	  }
+	}
+	
+  }
+
+};
+
 #endif //__SYSTEMC_SYNTH__
