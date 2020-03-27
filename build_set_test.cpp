@@ -871,6 +871,9 @@ void generate_select_decl(CodegenOptions& options, std::ostream& out, const stri
   out << sep_list(dim_decls, "", "", ", ");
 
   out << ") {" << endl;
+  out << "#ifdef __VIVADO_SYNTH__" << endl;
+  out << "#pragma HLS dependence array inter false" << endl;
+  out << "#endif //__VIVADO_SYNTH__" << endl;
   cout << "Created dim decls" << endl;
 }
 
@@ -2797,11 +2800,13 @@ void generate_app_code(CodegenOptions& options,
   conv_out << "}" << endl;
 
   conv_out << "#else // __SYSTEMC_SYNTH__" << endl << endl;
+  conv_out << "#include <systemc.h>" << endl << endl;
+
   conv_out << "// Driver module" << endl;
   //string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
   conv_out << "SC_MODULE(" << prg.name << ") {" << endl;
-  conv_out << tab(1) << "sc_in<bool> clk, rst;" << endl;
-  conv_out << "SC_CTHREAD(" << prg.name << "_process) {}" << endl << endl;
+  conv_out << tab(1) << "sc_in<bool> clk, rst;" << endl << endl;
+
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
       conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
@@ -2812,8 +2817,9 @@ void generate_app_code(CodegenOptions& options,
   }
 
   conv_out << tab(1) << "SC_CTOR(" << prg.name << ") {" << endl;
+
   conv_out << tab(1) << "}" << endl << endl;
-  conv_out << tab(1) << "SC_CTHREAD(" << prg.name << "_process) {" << endl;
+  conv_out << tab(1) << "void " << prg.name << "_process() {" << endl;
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
       //conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
@@ -7382,7 +7388,7 @@ void application_tests() {
   //exposure_fusion_simple_average();
   upsample_stencil_1d_test();
   upsample_stencil_2d_test();
-  assert(false);
+  //assert(false);
   mismatched_stencil_test();
 
   heat_3d_test();

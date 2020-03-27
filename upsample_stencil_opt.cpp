@@ -3746,6 +3746,9 @@ inline void Img_Img_update_0_write0_write(hw_uint<32> & Img_Img_update_0_write0,
 }
 
 inline hw_uint<32>  upsample_stencil_rd0_select(Img_cache& Img, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
 	// lexmax events: { upsample_stencil_update_0[d0, d1] -> Img_update_0[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 <= d0' <= 16 and -3 + d0 <= 2d0' <= -2 + d0 and -1 <= d1' <= 16 and -3 + d1 <= 2d1' <= -2 + d1 }
   // upsample_stencil_rd0 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -3 + d0 <= 2o0 <= -2 + d0 and -3 + d1 <= 2o1 <= -2 + d1 }
 	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd0.peek(/* Needs general delay string */ ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 30 - d0 >= 0 && -2 + d1 >= 0 && 30 - d1 >= 0) ? (38) : ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 30 - d0 >= 0 && d1 >= 0 && 1 - d1 >= 0) ? (38) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && -2 + d1 >= 0 && 30 - d1 >= 0) ? (38) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 1 - d1 >= 0) ? (38) : ((-1 - d1) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && -2 + d1 >= 0 && 31 - d1 >= 0) ? ((53 - floord(d0, 2))) : ((-1 - d1) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 1 - d1 >= 0) ? ((53 - floord(d0, 2))) : 0);
@@ -3753,6 +3756,9 @@ inline hw_uint<32>  upsample_stencil_rd0_select(Img_cache& Img, int d0, int d1) 
 }
 
 inline hw_uint<32>  upsample_stencil_rd1_select(Img_cache& Img, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
 	// lexmax events: { upsample_stencil_update_0[d0, d1] -> Img_update_0[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 <= d0' <= 16 and -3 + d0 <= 2d0' <= -2 + d0 and -1 <= d1' <= 16 and -1 + d1 <= 2d1' <= d1 }
   // upsample_stencil_rd1 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -3 + d0 <= 2o0 <= -2 + d0 and -1 + d1 <= 2o1 <= d1 }
 	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd1.peek(/* Needs general delay string */ ((-1 - d1) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && -1 + d1 >= 0 && 31 - d1 >= 0) ? ((35 - floord(d0, 2))) : ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 30 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (20) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (20) : 0);
@@ -3760,6 +3766,9 @@ inline hw_uint<32>  upsample_stencil_rd1_select(Img_cache& Img, int d0, int d1) 
 }
 
 inline hw_uint<32>  upsample_stencil_rd2_select(Img_cache& Img, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
 	// lexmax events: { upsample_stencil_update_0[d0, d1] -> Img_update_0[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -3 + d0 <= 2d0' <= -2 + d0 and d1 <= 2d1' <= 2 + d1 and (((d1) mod 2 = 0 and d1 <= 30 and 2d1' > d1) or ((1 + d1) mod 2 = 0 and 2d1' <= 1 + d1)) }
   // upsample_stencil_rd2 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -3 + d0 <= 2o0 <= -2 + d0 and d1 < 2o1 <= 2 + d1 }
 	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd2.peek(/* Needs general delay string */ ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 30 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (2) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (((1 + d0) - 2 * floord(2*d0, 4))) : ((-1 - d1) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && -1 + d1 >= 0 && 31 - d1 >= 0) ? ((17 - floord(2*d0, 4))) : 0);
@@ -3767,6 +3776,9 @@ inline hw_uint<32>  upsample_stencil_rd2_select(Img_cache& Img, int d0, int d1) 
 }
 
 inline hw_uint<32>  upsample_stencil_rd3_select(Img_cache& Img, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
 	// lexmax events: { upsample_stencil_update_0[d0, d1] -> Img_update_0[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 <= d0' <= 16 and -1 + d0 <= 2d0' <= d0 and -1 <= d1' <= 16 and -3 + d1 <= 2d1' <= -2 + d1 }
   // upsample_stencil_rd3 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 + d0 <= 2o0 <= d0 and -3 + d1 <= 2o1 <= -2 + d1 }
 	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd3.peek(/* Needs general delay string */ ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 30 - d0 >= 0 && -2 + d1 >= 0 && 30 - d1 >= 0) ? (37) : ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 30 - d0 >= 0 && d1 >= 0 && 1 - d1 >= 0) ? (37) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && -2 + d1 >= 0 && 30 - d1 >= 0) ? (37) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 1 - d1 >= 0) ? (37) : ((-1 - d1) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && -2 + d1 >= 0 && 31 - d1 >= 0) ? ((52 - floord(d0, 2))) : ((-1 - d1) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 1 - d1 >= 0) ? ((52 - floord(d0, 2))) : 0);
@@ -3774,6 +3786,9 @@ inline hw_uint<32>  upsample_stencil_rd3_select(Img_cache& Img, int d0, int d1) 
 }
 
 inline hw_uint<32>  upsample_stencil_rd4_select(Img_cache& Img, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
 	// lexmax events: { upsample_stencil_update_0[d0, d1] -> Img_update_0[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 <= d0' <= 16 and -1 + d0 <= 2d0' <= d0 and -1 <= d1' <= 16 and -1 + d1 <= 2d1' <= d1 }
   // upsample_stencil_rd4 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 + d0 <= 2o0 <= d0 and -1 + d1 <= 2o1 <= d1 }
 	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd4.peek(/* Needs general delay string */ ((-1 - d1) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && -1 + d1 >= 0 && 31 - d1 >= 0) ? ((34 - floord(d0, 2))) : ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 30 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (19) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (19) : 0);
@@ -3781,6 +3796,9 @@ inline hw_uint<32>  upsample_stencil_rd4_select(Img_cache& Img, int d0, int d1) 
 }
 
 inline hw_uint<32>  upsample_stencil_rd5_select(Img_cache& Img, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
 	// lexmax events: { upsample_stencil_update_0[d0, d1] -> Img_update_0[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 + d0 <= 2d0' <= d0 and d1 <= 2d1' <= 2 + d1 and (((d1) mod 2 = 0 and d1 <= 30 and 2d1' > d1) or ((1 + d1) mod 2 = 0 and 2d1' <= 1 + d1)) }
   // upsample_stencil_rd5 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 + d0 <= 2o0 <= d0 and d1 < 2o1 <= 2 + d1 }
 	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd5.peek(/* Needs general delay string */ ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && -1 + d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (1) : ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 30 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (1) : ((-1 - d1) % 2 == 0 && d0 >= 0 && 31 - d0 >= 0 && -1 + d1 >= 0 && 31 - d1 >= 0) ? ((16 - floord(2*d0, 4))) : 0);
@@ -3788,6 +3806,9 @@ inline hw_uint<32>  upsample_stencil_rd5_select(Img_cache& Img, int d0, int d1) 
 }
 
 inline hw_uint<32>  upsample_stencil_rd6_select(Img_cache& Img, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
 	// lexmax events: { upsample_stencil_update_0[d0, d1] -> Img_update_0[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 <= d0' <= 16 and d0 < 2d0' <= 2 + d0 and -1 <= d1' <= 16 and -3 + d1 <= 2d1' <= -2 + d1 }
   // upsample_stencil_rd6 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and d0 < 2o0 <= 2 + d0 and -3 + d1 <= 2o1 <= -2 + d1 }
 	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd6.peek(/* Needs general delay string */ ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 29 - d0 >= 0 && -2 + d1 >= 0 && 30 - d1 >= 0) ? (36) : ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 29 - d0 >= 0 && d1 >= 0 && 1 - d1 >= 0) ? (36) : ((-d1) % 2 == 0 && -30 + d0 == 0 && d1 >= 0 && 30 - d1 >= 0) ? (((42 + d0))/2) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && d0 >= 0 && 29 - d0 >= 0 && -2 + d1 >= 0 && 30 - d1 >= 0) ? (36) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && d0 >= 0 && 29 - d0 >= 0 && d1 >= 0 && 1 - d1 >= 0) ? (36) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && -30 + d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (((20 + d0) - floord(2*d0, 4))) : ((-1 - d1) % 2 == 0 && d0 >= 0 && 29 - d0 >= 0 && -2 + d1 >= 0 && 31 - d1 >= 0) ? ((51 - floord(d0, 2))) : ((-1 - d1) % 2 == 0 && d0 >= 0 && 29 - d0 >= 0 && d1 >= 0 && 1 - d1 >= 0) ? ((51 - floord(d0, 2))) : ((-1 - d1) % 2 == 0 && -30 + d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 31 - d1 >= 0) ? (((18 + 18 * d1) - 36 * floord(d1, 2))) : 0);
@@ -3795,6 +3816,9 @@ inline hw_uint<32>  upsample_stencil_rd6_select(Img_cache& Img, int d0, int d1) 
 }
 
 inline hw_uint<32>  upsample_stencil_rd7_select(Img_cache& Img, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
 	// lexmax events: { upsample_stencil_update_0[d0, d1] -> Img_update_0[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 <= d0' <= 16 and d0 < 2d0' <= 2 + d0 and -1 <= d1' <= 16 and -1 + d1 <= 2d1' <= d1 }
   // upsample_stencil_rd7 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and d0 < 2o0 <= 2 + d0 and -1 + d1 <= 2o1 <= d1 }
 	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd7.peek(/* Needs general delay string */ ((-1 - d1) % 2 == 0 && d0 >= 0 && 29 - d0 >= 0 && -1 + d1 >= 0 && 31 - d1 >= 0) ? ((33 - floord(d0, 2))) : ((-1 - d1) % 2 == 0 && -30 + d0 >= 0 && 31 - d0 >= 0 && -1 + d1 >= 0 && 31 - d1 >= 0) ? (18) : ((-d1) % 2 == 0 && (-d0) % 2 == 0 && d0 >= 0 && 29 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (18) : ((-d1) % 2 == 0 && -30 + d0 == 0 && d1 >= 0 && 30 - d1 >= 0) ? (((6 + d0))/2) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && d0 >= 0 && 29 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (18) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && -30 + d0 >= 0 && 31 - d0 >= 0 && d1 >= 0 && 30 - d1 >= 0) ? (((2 + d0) - floord(2*d0, 4))) : 0);
@@ -3802,6 +3826,9 @@ inline hw_uint<32>  upsample_stencil_rd7_select(Img_cache& Img, int d0, int d1) 
 }
 
 inline hw_uint<32>  upsample_stencil_rd8_select(Img_cache& Img, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
 	// lexmax events: { upsample_stencil_update_0[d0, d1] -> Img_update_0[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and d0 <= 2d0' <= 2 + d0 and d1 <= 2d1' <= 2 + d1 and (((d0) mod 2 = 0 and (d1) mod 2 = 0 and d0 <= 30 and d1 <= 30 and 2d0' > d0 and 2d1' > d1) or ((1 + d1) mod 2 = 0 and 2d0' > d0 and 2d1' <= 1 + d1) or ((1 + d0) mod 2 = 0 and (d1) mod 2 = 0 and d1 <= 30 and 2d0' <= 1 + d0 and 2d1' > d1)) }
   // upsample_stencil_rd8 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and d0 < 2o0 <= 2 + d0 and d1 < 2o1 <= 2 + d1 }
 	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd8.peek(/* Needs general delay string */ ((-1 - d1) % 2 == 0 && d0 >= 0 && 29 - d0 >= 0 && -1 + d1 >= 0 && 31 - d1 >= 0) ? ((15 - floord(2*d0, 4))) : 0);
@@ -3880,24 +3907,6 @@ void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Im
 
 	  int c0 = -2;
 	  int c1 = -2;
-	/*
-	Verilog string...
-	  logic [31 : 0] c0;
-	  logic [31 : 0] c0_ii;
-	  logic [31 : 0] c1;
-	  logic [31 : 0] c1_ii;
-	  logic [0 : 0] should_increment_c0;
-	  assign should_increment_c0 = c0_ii == 3;
-	  logic [0 : 0] should_increment_c1;
-	  assign should_increment_c1 = c1_ii == 0;
-	  always @(posedge clk) begin
-	    if (rst) begin
-	    else begin
-	      if (!stall) begin
-	      end
-	    end
-	  end
-	*/
 	  int global_time = 0;
 	#ifdef __VIVADO_SYNTH__
 	  while(true) {
@@ -3906,6 +3915,7 @@ void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Im
 	#endif // __VIVADO_SYNTH__
 	
 	#ifdef __VIVADO_SYNTH__
+	#pragma HLS dependence inter false
 	#pragma HLS pipeline II=1
 	#endif // __VIVADO_SYNTH__
 	
@@ -3941,40 +3951,23 @@ void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Im
 }
 #else // __SYSTEMC_SYNTH__
 
+#include <systemc.h>
+
 // Driver module
 SC_MODULE(upsample_stencil_opt) {
   sc_in<bool> clk, rst;
-SC_CTHREAD(upsample_stencil_opt_process) {}
 
   Img_cache Img;
   SC_CTOR(upsample_stencil_opt) {
   }
 
-  SC_CTHREAD(upsample_stencil_opt_process) {
+  void upsample_stencil_opt_process() {
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=Img inter false
 #endif // __VIVADO_SYNTH__
 
 	  int c0 = -2;
 	  int c1 = -2;
-	/*
-	Verilog string...
-	  logic [31 : 0] c0;
-	  logic [31 : 0] c0_ii;
-	  logic [31 : 0] c1;
-	  logic [31 : 0] c1_ii;
-	  logic [0 : 0] should_increment_c0;
-	  assign should_increment_c0 = c0_ii == 3;
-	  logic [0 : 0] should_increment_c1;
-	  assign should_increment_c1 = c1_ii == 0;
-	  always @(posedge clk) begin
-	    if (rst) begin
-	    else begin
-	      if (!stall) begin
-	      end
-	    end
-	  end
-	*/
 	  int global_time = 0;
 	#ifdef __VIVADO_SYNTH__
 	  while(true) {
@@ -3983,6 +3976,7 @@ SC_CTHREAD(upsample_stencil_opt_process) {}
 	#endif // __VIVADO_SYNTH__
 	
 	#ifdef __VIVADO_SYNTH__
+	#pragma HLS dependence inter false
 	#pragma HLS pipeline II=1
 	#endif // __VIVADO_SYNTH__
 	
