@@ -979,6 +979,9 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
   if (possible_ports.size() == 1) {
     string inpt = possible_ports.at(0);
     string peeked_val = delay_string(options, inpt, outpt, buf);
+    string delay_expr = evaluate_dd(buf, outpt, inpt);
+    string simplified_peek_val = simplified_delay_string(options, inpt, outpt, buf);
+    out << tab(1) << "assert((" << delay_expr << ") == (" << simplified_peek_val << "));" << endl;
 
     out << "\tauto value_" << inpt << " = " << peeked_val << ";\n";
     out << "\treturn value_" << inpt << ";" << endl;
@@ -992,6 +995,9 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
 
   for (auto inpt : buf.get_in_ports()) {
     string peeked_val = delay_string(options, inpt, outpt, buf);
+    string delay_expr = evaluate_dd(buf, outpt, inpt);
+    string simplified_peek_val = simplified_delay_string(options, inpt, outpt, buf);
+    out << tab(1) << "assert((" << delay_expr << ") == (" << simplified_peek_val << "));" << endl;
 
     if (options.internal) {
       out << "\t// inpt: " << inpt << endl;
