@@ -12,9 +12,10 @@ struct CodegenOptions {
   bool add_dependence_pragmas;
   bool use_custom_code_string;
   string code_string;
+  bool simplify_address_expressions;
 
   CodegenOptions() : internal(true), all_rams(false), add_dependence_pragmas(true),
-  use_custom_code_string(false), code_string("") {}
+  use_custom_code_string(false), code_string(""), simplify_address_expressions(true) {}
 
 };
 
@@ -881,8 +882,26 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
   string bank = buf.bank_between(inpt, outpt);
 
   auto out_domain = buf.domain.at(outpt);
+  cout << "Out domain: " << str(out_domain) << endl;
   auto qpd = compute_dd(buf, outpt, inpt);
+  cout << "Pieces of " << str(qpd) << endl;
   auto pieces = get_pieces(qpd);
+  for (auto p : pieces) {
+    cout << tab(1) << str(p.first) << " -> " << str(p.second) << endl << endl;
+    cout << tab(1) << "Constraints..." << endl;
+    auto cs = constraints(p.first);
+    for (auto c : cs) {
+      cout << tab(2) << str(c) << endl;
+      isl_set* cs = isl_set_universe(get_space(out_domain));
+      cs = isl_set_add_constraint(cs, cpy(c));
+
+      cout << tab(3) << "set: " << str(cs) << endl;
+      if (subset(out_domain, cs)) {
+        cout << tab(4) << " IS REDUNDANT" << endl;
+      }
+    }
+  }
+  assert(false);
 
   string dx = to_string(int_upper_bound(qpd));
   string delay_expr = evaluate_dd(buf, outpt, inpt);
@@ -7361,9 +7380,9 @@ void application_tests() {
   //conv_app_rolled_reduce_test();
 
   //exposure_fusion_simple_average();
-  upsample_stencil_1d_test();
   upsample_stencil_2d_test();
-  //assert(false);
+  assert(false);
+  upsample_stencil_1d_test();
   mismatched_stencil_test();
 
   heat_3d_test();

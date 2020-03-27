@@ -301,6 +301,7 @@ isl_set* range(isl_map* const m);
 isl_set* domain(isl_map* const m);
 
 isl_bool subset(isl_union_set* const s0, uset* s1);
+isl_bool subset(isl_set* const s0, isl_set* s1);
 
 isl_basic_set* domain(isl_basic_map* const m);
 
@@ -344,5 +345,6 @@ get_polynomial_folds(isl_union_pw_qpolynomial_fold* p);
 vector<isl_pw_qpolynomial*>
 get_polynomials(isl_union_pw_qpolynomial* p);
 
+vector<isl_constraint*> constraints(isl_set* s);
 
 map<string, string> umap_codegen_c(umap* const um);

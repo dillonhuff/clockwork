@@ -887,6 +887,10 @@ isl_bool subset(isl_union_set* const s0, uset* s1) {
   return isl_union_set_is_subset(cpy(s0), cpy(s1));
 }
 
+isl_bool subset(isl_set* const s0, isl_set* s1) {
+  return isl_set_is_subset(cpy(s0), cpy(s1));
+}
+
 isl_basic_set* domain(isl_basic_map* const m) {
   return isl_basic_map_domain(cpy(m));
 }
@@ -1083,6 +1087,12 @@ isl_stat bmap_codegen_c(isl_basic_map* m, void* user) {
   return isl_stat_ok;
 }
 
+vector<isl_constraint*> constraints(isl_set* s) {
+  vector<isl_constraint*> code_holder;
+  isl_set_foreach_basic_set(s, bset_collect_constraints, &code_holder);
+  return code_holder;
+
+}
 std::string codegen_c(isl_set* s) {
   vector<isl_constraint*> code_holder;
   isl_set_foreach_basic_set(s, bset_collect_constraints, &code_holder);
