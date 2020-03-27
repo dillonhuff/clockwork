@@ -134,6 +134,7 @@ isl_ctx* ctx(isl_point* const m);
 isl_ctx* ctx(isl_constraint* const m);
 
 isl_ctx* ctx(isl_basic_set* const m);
+isl_ctx* ctx(isl_set* const m);
 
 isl_ctx* ctx(isl_space* const m);
 
@@ -158,6 +159,7 @@ isl_ctx* ctx(isl_pw_qpolynomial_fold* const m);
 
 isl_ctx* ctx(isl_pw_qpolynomial* const m);
 
+std::string codegen_c(isl_set* const bset);
 std::string codegen_c(isl_constraint* const bset);
 
 std::string codegen_c(isl_schedule* const bset);

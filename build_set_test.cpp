@@ -15,7 +15,7 @@ struct CodegenOptions {
   bool simplify_address_expressions;
 
   CodegenOptions() : internal(true), all_rams(false), add_dependence_pragmas(true),
-  use_custom_code_string(false), code_string(""), simplify_address_expressions(true) {}
+  use_custom_code_string(false), code_string(""), simplify_address_expressions(false) {}
 
 };
 
@@ -877,8 +877,7 @@ void select_debug_assertions(CodegenOptions& options, std::ostream& out, const s
   out << "\tassert(false);\n\treturn 0;\n";
 }
 
-string delay_string(CodegenOptions& options, const string& inpt, const string& outpt, UBuffer& buf) {
-
+string simplified_delay_string(CodegenOptions& options, const string& inpt, const string& outpt, UBuffer& buf) {
   string bank = buf.bank_between(inpt, outpt);
 
   auto out_domain = buf.domain.at(outpt);
@@ -907,12 +906,31 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
     simplified_pieces[simplified] = p.second;
   }
 
+  //if (options.simplify_address_expressions) {
+  string simple_addr_str = "0";
   cout << "Simplified pieces" << endl;
   for (auto p : simplified_pieces) {
     cout << tab(1) << str(p.first) << " -> " << str(p.second) << endl << endl;
-
+    simple_addr_str = "(" + codegen_c(p.first) + " ? " + codegen_c(p.second) + " : " + simple_addr_str + ")";
+    if (subset(out_domain, p.first)) {
+      simple_addr_str = codegen_c(p.second);
+      break;
+      //return buf.name + "." + bank + ".peek(/* simplified address string */" + codegen_c(p.second) + ")";
+    }
   }
-  assert(false);
+
+  return simple_addr_str;
+}
+
+string delay_string(CodegenOptions& options, const string& inpt, const string& outpt, UBuffer& buf) {
+
+  string bank = buf.bank_between(inpt, outpt);
+
+  auto out_domain = buf.domain.at(outpt);
+  cout << "Out domain: " << str(out_domain) << endl;
+  auto qpd = compute_dd(buf, outpt, inpt);
+  cout << "Pieces of " << str(qpd) << endl;
+  auto pieces = get_pieces(qpd);
 
   string dx = to_string(int_upper_bound(qpd));
   string delay_expr = evaluate_dd(buf, outpt, inpt);
@@ -5903,6 +5921,7 @@ struct App {
 
     CodegenOptions options;
     options.internal = true;
+    options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
     options.code_string = cgn;
 
@@ -7389,16 +7408,17 @@ void application_tests() {
   //memtile_test();
 
   //conv_app_rolled_reduce_test();
-
   //exposure_fusion_simple_average();
-  upsample_stencil_2d_test();
-  assert(false);
-  upsample_stencil_1d_test();
+ 
+
+  laplacian_pyramid_app_test();
   mismatched_stencil_test();
+  upsample_stencil_2d_test();
+  //assert(false);
+  upsample_stencil_1d_test();
 
   heat_3d_test();
   exposure_fusion();
-  laplacian_pyramid_app_test();
   denoise2d_test();
   gaussian_pyramid_app_test();
   grayscale_conversion_test();
@@ -7425,10 +7445,8 @@ void application_tests() {
   updown_merge_test();
   sobel_test();
 
-
   blur_and_downsample_test();
   downsample_and_blur_test();
-
 
   blur_x_test();
   pointwise_test();
