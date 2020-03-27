@@ -1269,3 +1269,10 @@ int int_upper_bound(isl_union_pw_qpolynomial* range_card) {
   return bnd_int(bound);
 }
 
+isl_set* universe(isl_space* s) {
+  return isl_set_universe(s);
+}
+
+isl_set* add_constraint(isl_set* s, isl_constraint* c) {
+  return isl_set_add_constraint(cpy(s), cpy(c));
+}

@@ -348,3 +348,6 @@ get_polynomials(isl_union_pw_qpolynomial* p);
 vector<isl_constraint*> constraints(isl_set* s);
 
 map<string, string> umap_codegen_c(umap* const um);
+
+isl_set* universe(isl_space* s);
+isl_set* add_constraint(isl_set* s, isl_constraint* c);
