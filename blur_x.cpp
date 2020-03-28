@@ -105,8 +105,6 @@ inline void I_I_id0_0_write(hw_uint<16>& I_I_id0_0, I_cache& I, int root, int id
 inline hw_uint<16> I_out_blur_30_3_select(I_cache& I, int root, int d1, int d0) {
 	// lexmax events: { out_blur_30[root = 0, d1, d0] -> I_id0[root' = 0, id1 = d1, id0 = d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // I_out_blur_30_3 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
-  cout << "(-1 + d0 >= 0 && 30 - d0 >= 0) ? (64) : (-31 + d0 == 0) ? (64) : (d0 == 0) ? (64) : 0 = " << ((-1 + d0 >= 0 && 30 - d0 >= 0) ? (64) : (-31 + d0 == 0) ? (64) : (d0 == 0) ? (64) : 0) << endl;
-  cout << "(((d0 == 0) && (root == 0) && (d1 >= 0) && (5 - d1 >= 0)) ? 64 : (((-31 + d0 == 0) && (root == 0) && (d1 >= 0) && (5 - d1 >= 0)) ? (33 + d0) : (((root == 0) && (d1 >= 0) && (5 - d1 >= 0) && (-1 + d0 >= 0) && (30 - d0 >= 0)) ? 64 : 0))) = " << ((((d0 == 0) && (root == 0) && (d1 >= 0) && (5 - d1 >= 0)) ? 64 : (((-31 + d0 == 0) && (root == 0) && (d1 >= 0) && (5 - d1 >= 0)) ? (33 + d0) : (((root == 0) && (d1 >= 0) && (5 - d1 >= 0) && (-1 + d0 >= 0) && (30 - d0 >= 0)) ? 64 : 0)))) << endl;
 	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_3.peek_64();
 	return value_I_I_id0_0;
 }
@@ -114,8 +112,6 @@ inline hw_uint<16> I_out_blur_30_3_select(I_cache& I, int root, int d1, int d0) 
 inline hw_uint<16> I_out_blur_30_4_select(I_cache& I, int root, int d1, int d0) {
 	// lexmax events: { out_blur_30[root = 0, d1, d0] -> I_id0[root' = 0, id1 = 1 + d1, id0 = d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // I_out_blur_30_4 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, 1 + d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
-  cout << "(-1 + d0 >= 0 && 30 - d0 >= 0) ? (32) : (-31 + d0 == 0) ? (32) : (d0 == 0) ? (32) : 0 = " << ((-1 + d0 >= 0 && 30 - d0 >= 0) ? (32) : (-31 + d0 == 0) ? (32) : (d0 == 0) ? (32) : 0) << endl;
-  cout << "(((root == 0) && (d1 >= 0) && (5 - d1 >= 0) && (-1 + d0 >= 0) && (30 - d0 >= 0)) ? 32 : (((-31 + d0 == 0) && (root == 0) && (d1 >= 0) && (5 - d1 >= 0)) ? (1 + d0) : (((d0 == 0) && (root == 0) && (d1 >= 0) && (5 - d1 >= 0)) ? 32 : 0))) = " << ((((root == 0) && (d1 >= 0) && (5 - d1 >= 0) && (-1 + d0 >= 0) && (30 - d0 >= 0)) ? 32 : (((-31 + d0 == 0) && (root == 0) && (d1 >= 0) && (5 - d1 >= 0)) ? (1 + d0) : (((d0 == 0) && (root == 0) && (d1 >= 0) && (5 - d1 >= 0)) ? 32 : 0)))) << endl;
 	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_3.peek_32();
 	return value_I_I_id0_0;
 }
@@ -123,8 +119,6 @@ inline hw_uint<16> I_out_blur_30_4_select(I_cache& I, int root, int d1, int d0) 
 inline hw_uint<16> I_out_blur_30_5_select(I_cache& I, int root, int d1, int d0) {
 	// lexmax events: { out_blur_30[root = 0, d1, d0] -> I_id0[root' = 0, id1 = 2 + d1, id0 = d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // I_out_blur_30_5 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, 2 + d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
-  cout << "0 = " << (0) << endl;
-  cout << "0 = " << (0) << endl;
 	auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_3.peek_0();
 	return value_I_I_id0_0;
 }

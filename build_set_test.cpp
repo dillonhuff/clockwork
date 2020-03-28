@@ -993,8 +993,8 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     string delay_expr = evaluate_dd(buf, outpt, inpt);
     string simplified_peek_val = simplified_delay_string(options, inpt, outpt, buf);
 
-    out << tab(1) << "cout << \"" << delay_expr << " = \" << (" << delay_expr << ") << endl;" << endl;
-    out << tab(1) << "cout << \"" << simplified_peek_val << " = \" << (" << simplified_peek_val<< ") << endl;" << endl;
+    //out << tab(1) << "cout << \"" << delay_expr << " = \" << (" << delay_expr << ") << endl;" << endl;
+    //out << tab(1) << "cout << \"" << simplified_peek_val << " = \" << (" << simplified_peek_val<< ") << endl;" << endl;
     //out << tab(1) << "assert((" << delay_expr << ") == (" << simplified_peek_val << "));" << endl;
 
     out << "\tauto value_" << inpt << " = " << peeked_val << ";\n";
