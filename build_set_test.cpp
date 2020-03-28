@@ -1,5 +1,6 @@
 #include "app.h"
 #include "ubuffer.h"
+#include "codegen.h"
 
 vector<int> parse_pt(isl_point* p) {
   assert(p != nullptr);
