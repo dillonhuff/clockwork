@@ -2290,56 +2290,56 @@ inline void Img_Img_update_0_write0_write(hw_uint<32> & Img_Img_update_0_write0,
 inline hw_uint<32>  upsample_stencil_rd0_select(Img_cache& Img, int d0, int d1) {
 	// lexmax events: { upsample_stencil_update_0[d0, d1] -> Img_update_0[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 <= d0' <= 16 and -3 + d0 <= 2d0' <= -2 + d0 and -1 <= d1' <= 16 and -3 + d1 <= 2d1' <= -2 + d1 }
   // upsample_stencil_rd0 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -3 + d0 <= 2o0 <= -2 + d0 and -3 + d1 <= 2o1 <= -2 + d1 }
-	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd0.peek(/* Needs general delay string */ ((-d1) % 2 == 0 && (-d0) % 2 == 0 && -2 + d1 >= 0) ? (38) : ((-d0) % 2 == 0 && d1 == 0) ? (38) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && -2 + d1 >= 0) ? (38) : ((-1 - d0) % 2 == 0 && d1 == 0) ? (38) : ((-1 - d1) % 2 == 0 && -3 + d1 >= 0) ? ((53 - floord(d0, 2))) : (-1 + d1 == 0) ? ((53 - floord(d0, 2))) : 0);
+	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd0.peek(/* Needs general delay string */ (-1 + d1 == 0) ? ((53 - floord(d0, 2))) : (d1 == 0) ? (38) : ((-1 - d1) % 2 == 0 && -3 + d1 >= 0) ? ((53 - floord(d0, 2))) : ((-d1) % 2 == 0 && -2 + d1 >= 0) ? (38) : 0);
 	return value_Img_Img_update_0_write0;
 }
 
 inline hw_uint<32>  upsample_stencil_rd1_select(Img_cache& Img, int d0, int d1) {
 	// lexmax events: { upsample_stencil_update_0[d0, d1] -> Img_update_0[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 <= d0' <= 16 and -3 + d0 <= 2d0' <= -2 + d0 and -1 <= d1' <= 16 and -1 + d1 <= 2d1' <= d1 }
   // upsample_stencil_rd1 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -3 + d0 <= 2o0 <= -2 + d0 and -1 + d1 <= 2o1 <= d1 }
-	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd1.peek(/* Needs general delay string */ ((-1 - d1) % 2 == 0) ? ((35 - floord(d0, 2))) : ((-d1) % 2 == 0 && (-d0) % 2 == 0) ? (20) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0) ? (20) : 0);
+	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd1.peek(/* Needs general delay string */ ((-1 - d1) % 2 == 0) ? ((35 - floord(d0, 2))) : ((-d1) % 2 == 0) ? (20) : 0);
 	return value_Img_Img_update_0_write0;
 }
 
 inline hw_uint<32>  upsample_stencil_rd2_select(Img_cache& Img, int d0, int d1) {
 	// lexmax events: { upsample_stencil_update_0[d0, d1] -> Img_update_0[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -3 + d0 <= 2d0' <= -2 + d0 and d1 <= 2d1' <= 2 + d1 and (((d1) mod 2 = 0 and d1 <= 30 and 2d1' > d1) or ((1 + d1) mod 2 = 0 and 2d1' <= 1 + d1)) }
   // upsample_stencil_rd2 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -3 + d0 <= 2o0 <= -2 + d0 and d1 < 2o1 <= 2 + d1 }
-	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd2.peek(/* Needs general delay string */ ((-d1) % 2 == 0 && (-d0) % 2 == 0) ? (2) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0) ? (2) : ((-1 - d1) % 2 == 0) ? ((17 - floord(2*d0, 4))) : 0);
+	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd2.peek(/* Needs general delay string */ ((-d1) % 2 == 0 && (-d0) % 2 == 0) ? (2) : ((-1 - d1) % 2 == 0) ? ((17 - floord(2*d0, 4))) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0) ? (2) : 0);
 	return value_Img_Img_update_0_write0;
 }
 
 inline hw_uint<32>  upsample_stencil_rd3_select(Img_cache& Img, int d0, int d1) {
 	// lexmax events: { upsample_stencil_update_0[d0, d1] -> Img_update_0[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 <= d0' <= 16 and -1 + d0 <= 2d0' <= d0 and -1 <= d1' <= 16 and -3 + d1 <= 2d1' <= -2 + d1 }
   // upsample_stencil_rd3 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 + d0 <= 2o0 <= d0 and -3 + d1 <= 2o1 <= -2 + d1 }
-	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd3.peek(/* Needs general delay string */ ((-d1) % 2 == 0 && (-d0) % 2 == 0 && -2 + d1 >= 0) ? (37) : ((-d0) % 2 == 0 && d1 == 0) ? (37) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && -2 + d1 >= 0) ? (37) : ((-1 - d0) % 2 == 0 && d1 == 0) ? (37) : ((-1 - d1) % 2 == 0 && -3 + d1 >= 0) ? ((52 - floord(d0, 2))) : (-1 + d1 == 0) ? ((52 - floord(d0, 2))) : 0);
+	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd3.peek(/* Needs general delay string */ (-1 + d1 == 0) ? ((52 - floord(d0, 2))) : (d1 == 0) ? (37) : ((-1 - d1) % 2 == 0 && -3 + d1 >= 0) ? ((52 - floord(d0, 2))) : ((-d1) % 2 == 0 && -2 + d1 >= 0) ? (37) : 0);
 	return value_Img_Img_update_0_write0;
 }
 
 inline hw_uint<32>  upsample_stencil_rd4_select(Img_cache& Img, int d0, int d1) {
 	// lexmax events: { upsample_stencil_update_0[d0, d1] -> Img_update_0[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 <= d0' <= 16 and -1 + d0 <= 2d0' <= d0 and -1 <= d1' <= 16 and -1 + d1 <= 2d1' <= d1 }
   // upsample_stencil_rd4 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 + d0 <= 2o0 <= d0 and -1 + d1 <= 2o1 <= d1 }
-	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd4.peek(/* Needs general delay string */ ((-1 - d1) % 2 == 0) ? ((34 - floord(d0, 2))) : ((-d1) % 2 == 0 && (-d0) % 2 == 0) ? (19) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0) ? (19) : 0);
+	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd4.peek(/* Needs general delay string */ ((-1 - d1) % 2 == 0) ? ((34 - floord(d0, 2))) : ((-d1) % 2 == 0) ? (19) : 0);
 	return value_Img_Img_update_0_write0;
 }
 
 inline hw_uint<32>  upsample_stencil_rd5_select(Img_cache& Img, int d0, int d1) {
 	// lexmax events: { upsample_stencil_update_0[d0, d1] -> Img_update_0[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 + d0 <= 2d0' <= d0 and d1 <= 2d1' <= 2 + d1 and (((d1) mod 2 = 0 and d1 <= 30 and 2d1' > d1) or ((1 + d1) mod 2 = 0 and 2d1' <= 1 + d1)) }
   // upsample_stencil_rd5 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 + d0 <= 2o0 <= d0 and d1 < 2o1 <= 2 + d1 }
-	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd5.peek(/* Needs general delay string */ ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0) ? (1) : ((-d1) % 2 == 0 && (-d0) % 2 == 0) ? (1) : ((-1 - d1) % 2 == 0) ? ((16 - floord(2*d0, 4))) : 0);
+	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd5.peek(/* Needs general delay string */ ((-d1) % 2 == 0) ? (1) : ((-1 - d1) % 2 == 0) ? ((16 - floord(2*d0, 4))) : 0);
 	return value_Img_Img_update_0_write0;
 }
 
 inline hw_uint<32>  upsample_stencil_rd6_select(Img_cache& Img, int d0, int d1) {
 	// lexmax events: { upsample_stencil_update_0[d0, d1] -> Img_update_0[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 <= d0' <= 16 and d0 < 2d0' <= 2 + d0 and -1 <= d1' <= 16 and -3 + d1 <= 2d1' <= -2 + d1 }
   // upsample_stencil_rd6 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and d0 < 2o0 <= 2 + d0 and -3 + d1 <= 2o1 <= -2 + d1 }
-	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd6.peek(/* Needs general delay string */ ((-d1) % 2 == 0 && (-d0) % 2 == 0 && 28 - d0 >= 0 && -2 + d1 >= 0) ? (36) : ((-d0) % 2 == 0 && d1 == 0 && 28 - d0 >= 0) ? (36) : ((-d1) % 2 == 0 && -30 + d0 == 0) ? (36) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && 29 - d0 >= 0 && -2 + d1 >= 0) ? (36) : ((-1 - d0) % 2 == 0 && d1 == 0 && 29 - d0 >= 0) ? (36) : ((-d1) % 2 == 0 && -31 + d0 == 0) ? (36) : ((-1 - d1) % 2 == 0 && 29 - d0 >= 0 && -3 + d1 >= 0) ? ((51 - floord(d0, 2))) : (-1 + d1 == 0 && 29 - d0 >= 0) ? ((51 - floord(d0, 2))) : ((-1 - d1) % 2 == 0 && -30 + d0 >= 0) ? (36) : 0);
+	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd6.peek(/* Needs general delay string */ (-1 + d1 == 0 && 29 - d0 >= 0) ? ((51 - floord(d0, 2))) : ((-1 - d1) % 2 == 0 && -30 + d0 >= 0) ? (36) : (d1 == 0 && 29 - d0 >= 0) ? (36) : ((-1 - d1) % 2 == 0 && 29 - d0 >= 0 && -3 + d1 >= 0) ? ((51 - floord(d0, 2))) : ((-d1) % 2 == 0 && -30 + d0 == 0) ? (36) : ((-d1) % 2 == 0 && -31 + d0 == 0) ? (36) : ((-d1) % 2 == 0 && 29 - d0 >= 0 && -2 + d1 >= 0) ? (36) : 0);
 	return value_Img_Img_update_0_write0;
 }
 
 inline hw_uint<32>  upsample_stencil_rd7_select(Img_cache& Img, int d0, int d1) {
 	// lexmax events: { upsample_stencil_update_0[d0, d1] -> Img_update_0[d0', d1'] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 <= d0' <= 16 and d0 < 2d0' <= 2 + d0 and -1 <= d1' <= 16 and -1 + d1 <= 2d1' <= d1 }
   // upsample_stencil_rd7 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and d0 < 2o0 <= 2 + d0 and -1 + d1 <= 2o1 <= d1 }
-	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd7.peek(/* Needs general delay string */ ((-1 - d1) % 2 == 0 && 29 - d0 >= 0) ? ((33 - floord(d0, 2))) : ((-1 - d1) % 2 == 0 && -30 + d0 >= 0) ? (18) : ((-d1) % 2 == 0 && (-d0) % 2 == 0 && 28 - d0 >= 0) ? (18) : ((-d1) % 2 == 0 && -30 + d0 == 0) ? (18) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0 && 29 - d0 >= 0) ? (18) : ((-d1) % 2 == 0 && -31 + d0 == 0) ? (18) : 0);
+	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd7.peek(/* Needs general delay string */ ((-1 - d1) % 2 == 0 && -30 + d0 >= 0) ? (18) : ((-1 - d1) % 2 == 0 && 29 - d0 >= 0) ? ((33 - floord(d0, 2))) : ((-d1) % 2 == 0 && -30 + d0 == 0) ? (18) : ((-d1) % 2 == 0 && -31 + d0 == 0) ? (18) : ((-d1) % 2 == 0 && 29 - d0 >= 0) ? (18) : 0);
 	return value_Img_Img_update_0_write0;
 }
 
@@ -2396,20 +2396,20 @@ inline hw_uint<288> Img_upsample_stencil_update_0_read_bundle_read(Img_cache& Im
 
 
 // Operation logic
-inline void Img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */Img_off, Img_cache& Img, int d0, int d1) {
-	// Consume: Img_off
-	auto Img_off_0_c__0_value = Img_off.read();
-	auto compute_result = id(Img_off_0_c__0_value);
-	// Produce: Img
-	Img_Img_update_0_write_bundle_write(compute_result, Img, d0, d1);
-}
-
 inline void upsample_stencil_update_0(Img_cache& Img, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */upsample_stencil, int d0, int d1) {
 	// Consume: Img
 	auto Img_0_c__0_value = Img_upsample_stencil_update_0_read_bundle_read(Img/* source_delay */, d0, d1);
 	auto compute_result = conv_3_3(Img_0_c__0_value);
 	// Produce: upsample_stencil
 	upsample_stencil.write(compute_result);
+}
+
+inline void Img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */Img_off, Img_cache& Img, int d0, int d1) {
+	// Consume: Img_off
+	auto Img_off_0_c__0_value = Img_off.read();
+	auto compute_result = id(Img_off_0_c__0_value);
+	// Produce: Img
+	Img_Img_update_0_write_bundle_write(compute_result, Img, d0, d1);
 }
 
 #ifndef __SYSTEMC_SYNTH__

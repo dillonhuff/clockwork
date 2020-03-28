@@ -354,6 +354,8 @@ int compute_dd_bound(UBuffer& buf, const std::string& read_port, const std::stri
 
 string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
   auto c = compute_dd(buf, read_port, write_port);
+  c = coalesce(c);
+  //c = simplify(c);
   auto out_domain = buf.domain.at(read_port);
   c = isl_union_pw_qpolynomial_gist(c, to_uset(out_domain));
 
@@ -7430,7 +7432,6 @@ void application_tests() {
   //conv_app_rolled_reduce_test();
   //exposure_fusion_simple_average();
  
-
   laplacian_pyramid_app_test();
   mismatched_stencil_test();
   upsample_stencil_2d_test();

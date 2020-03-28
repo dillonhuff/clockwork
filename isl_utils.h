@@ -278,6 +278,7 @@ isl_union_map* dot(isl_union_map* const m0, isl_map* const m1);
 isl_map* dot(isl_map* const m0, isl_map* const m1);
 
 isl_union_set* simplify(uset* const m);
+isl_union_pw_qpolynomial* coalesce(isl_union_pw_qpolynomial* const m);
 
 isl_union_set* coalesce(isl_union_set* const m0);
 

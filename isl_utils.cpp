@@ -868,6 +868,10 @@ isl_union_set* simplify(uset* const m) {
   return isl_union_set_remove_redundancies(cpy(m));
 }
 
+isl_union_pw_qpolynomial* coalesce(isl_union_pw_qpolynomial* const m) {
+  return isl_union_pw_qpolynomial_coalesce(cpy(m));
+}
+
 isl_union_set* coalesce(isl_union_set* const m0) {
   return isl_union_set_coalesce(cpy(m0));
 }
