@@ -825,6 +825,23 @@ void generate_code_prefix(CodegenOptions& options,
     out << "}" << endl << endl;
   }
 
+  minihls::block blk;
+  vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
+  for (auto inpt : buf.get_in_ports()) {
+    ports.push_back({inpt, buf.port_width(inpt), true});
+  }
+  for (auto outpt : buf.get_out_ports()) {
+    ports.push_back({inpt, buf.port_width(outpt), false});
+  }
+  auto ubufmod =
+    blk.add_module_type(buf.name, ports);
+
+  cout << "Creating verilog for " << buf.name << endl;
+  ofstream buf_file("./verilog_output/" + buf.name + ".v");
+  buf_file << ubufmod->verilog_decl_string() << endl;
+  buf_file.close();
+
+  assert(false);
 }
 
 bool is_optimizable_constant_dd(const string& inpt, const string& outpt, UBuffer& buf) {
@@ -7433,8 +7450,8 @@ void application_tests() {
   //conv_app_rolled_reduce_test();
   //exposure_fusion_simple_average();
  
-  laplacian_pyramid_app_test();
   mismatched_stencil_test();
+  laplacian_pyramid_app_test();
   upsample_stencil_2d_test();
   //assert(false);
   upsample_stencil_1d_test();

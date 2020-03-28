@@ -39,3 +39,4 @@ conv3x3_*
 level_2_*
 mismatched_*
 C_opt*
+*.v
