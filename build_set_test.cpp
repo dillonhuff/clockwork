@@ -354,6 +354,8 @@ int compute_dd_bound(UBuffer& buf, const std::string& read_port, const std::stri
 
 string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
   auto c = compute_dd(buf, read_port, write_port);
+  auto out_domain = buf.domain.at(read_port);
+  c = isl_union_pw_qpolynomial_gist(c, to_uset(out_domain));
 
   auto folds  = get_polynomials(c);
   if (folds.size() == 1) {
@@ -887,7 +889,9 @@ string simplified_delay_string(CodegenOptions& options, const string& inpt, cons
   auto pieces = get_pieces(qpd);
   map<isl_set*, isl_qpolynomial*> simplified_pieces;
   for (auto p : pieces) {
-    isl_set* simplified = isl_set_gist(cpy(p.first), cpy(out_domain));
+    isl_set* simplified = cpy(p.first);
+    //isl_set_gist(cpy(p.first), cpy(out_domain));
+    //isl_set* simplified = isl_set_gist(cpy(p.first), cpy(out_domain));
 
     //isl_set* simplified = universe(get_space(out_domain));
     //auto orig = coalesce(p);
@@ -909,7 +913,7 @@ string simplified_delay_string(CodegenOptions& options, const string& inpt, cons
     //}
     cout << "simplified; " << str(simplified) << endl;
     assert(!empty(simplified));
-    simplified_pieces[simplified] = p.second;
+    simplified_pieces[simplified] = cpy(p.second);
   }
 
   //if (options.simplify_address_expressions) {
@@ -937,6 +941,7 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
   auto qpd = compute_dd(buf, outpt, inpt);
   cout << "Pieces of " << str(qpd) << endl;
   auto pieces = get_pieces(qpd);
+  //assert(false);
 
   string dx = to_string(int_upper_bound(qpd));
   string delay_expr = evaluate_dd(buf, outpt, inpt);
@@ -987,7 +992,10 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     string peeked_val = delay_string(options, inpt, outpt, buf);
     string delay_expr = evaluate_dd(buf, outpt, inpt);
     string simplified_peek_val = simplified_delay_string(options, inpt, outpt, buf);
-    out << tab(1) << "assert((" << delay_expr << ") == (" << simplified_peek_val << "));" << endl;
+
+    out << tab(1) << "cout << \"" << delay_expr << " = \" << (" << delay_expr << ") << endl;" << endl;
+    out << tab(1) << "cout << \"" << simplified_peek_val << " = \" << (" << simplified_peek_val<< ") << endl;" << endl;
+    //out << tab(1) << "assert((" << delay_expr << ") == (" << simplified_peek_val << "));" << endl;
 
     out << "\tauto value_" << inpt << " = " << peeked_val << ";\n";
     out << "\treturn value_" << inpt << ";" << endl;
@@ -1003,7 +1011,7 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     string peeked_val = delay_string(options, inpt, outpt, buf);
     string delay_expr = evaluate_dd(buf, outpt, inpt);
     string simplified_peek_val = simplified_delay_string(options, inpt, outpt, buf);
-    out << tab(1) << "assert((" << delay_expr << ") == (" << simplified_peek_val << "));" << endl;
+    //out << tab(1) << "assert((" << delay_expr << ") == (" << simplified_peek_val << "));" << endl;
 
     if (options.internal) {
       out << "\t// inpt: " << inpt << endl;

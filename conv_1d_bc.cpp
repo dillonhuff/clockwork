@@ -124,20 +124,26 @@ inline void M_write_6_write(hw_uint<32> & M_write_6, M_cache& M, int root, int p
 inline hw_uint<32>  M_read0_3_select(M_cache& M, int root, int c) {
 	// lexmax events: { read0[root = 0, c] -> write[root' = 0, p = c] : 0 <= c <= 9 }
   // M_read0_3 read pattern: { read0[root = 0, c] -> M[c] : 0 <= c <= 9 }
-	auto value_M_write_6 = M.M_write_6_to_M_read0_3.peek(/* Needs general delay string */ (root == 0 && c >= 0 && 7 - c >= 0) ? (2) : (-8 + c == 0 && root == 0) ? (1) : 0);
+  cout << "(7 - c >= 0) ? (2) : (-8 + c == 0) ? (1) : 0 = " << ((7 - c >= 0) ? (2) : (-8 + c == 0) ? (1) : 0) << endl;
+  cout << "(((-8 + c == 0) && (root == 0)) ? 1 : (((root == 0) && (c >= 0) && (7 - c >= 0)) ? 2 : 0)) = " << ((((-8 + c == 0) && (root == 0)) ? 1 : (((root == 0) && (c >= 0) && (7 - c >= 0)) ? 2 : 0))) << endl;
+	auto value_M_write_6 = M.M_write_6_to_M_read0_3.peek(/* Needs general delay string */ (7 - c >= 0) ? (2) : (-8 + c == 0) ? (1) : 0);
 	return value_M_write_6;
 }
 
 inline hw_uint<32>  M_read0_4_select(M_cache& M, int root, int c) {
 	// lexmax events: { read0[root = 0, c] -> write[root' = 0, p = 1 + c] : 0 <= c <= 8; read0[root = 0, c = 9] -> write[root' = 0, p = 9] }
   // M_read0_4 read pattern: { read0[root = 0, c] -> M[1 + c] : 0 <= c <= 8; read0[root = 0, c = 9] -> M[9] }
-	auto value_M_write_6 = M.M_write_6_merged_banks_2.peek(/* Needs general delay string */ (root == 0 && c >= 0 && 7 - c >= 0) ? (1) : 0);
+  cout << "(7 - c >= 0) ? (1) : 0 = " << ((7 - c >= 0) ? (1) : 0) << endl;
+  cout << "(((root == 0) && (c >= 0) && (7 - c >= 0)) ? 1 : 0) = " << ((((root == 0) && (c >= 0) && (7 - c >= 0)) ? 1 : 0)) << endl;
+	auto value_M_write_6 = M.M_write_6_merged_banks_2.peek(/* Needs general delay string */ (7 - c >= 0) ? (1) : 0);
 	return value_M_write_6;
 }
 
 inline hw_uint<32>  M_read0_5_select(M_cache& M, int root, int c) {
 	// lexmax events: { read0[root = 0, c] -> write[root' = 0, p = 9] : 8 <= c <= 9; read0[root = 0, c] -> write[root' = 0, p = 2 + c] : 0 <= c <= 7 }
   // M_read0_5 read pattern: { read0[root = 0, c] -> M[9] : 8 <= c <= 9; read0[root = 0, c] -> M[2 + c] : 0 <= c <= 7 }
+  cout << "0 = " << (0) << endl;
+  cout << "0 = " << (0) << endl;
 	auto value_M_write_6 = M.M_write_6_merged_banks_2.peek_0();
 	return value_M_write_6;
 }
@@ -221,6 +227,8 @@ inline void T_read0_2_write(hw_uint<96>& T_read0_2, T_cache& T, int root, int c)
 inline hw_uint<96> T_compute_out_1_select(T_cache& T, int root, int c) {
 	// lexmax events: { compute_out[root = 0, c] -> read0[root' = 0, c' = c] : 0 <= c <= 9 }
   // T_compute_out_1 read pattern: { compute_out[root = 0, c] -> T[c] : 0 <= c <= 9 }
+  cout << "0 = " << (0) << endl;
+  cout << "0 = " << (0) << endl;
 	auto value_T_read0_2 = T.T_read0_2_merged_banks_1.peek_0();
 	return value_T_read0_2;
 }
@@ -293,38 +301,5 @@ void conv_1d_bc(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in
 	
 }
 #else // __SYSTEMC_SYNTH__
-
-#include <systemc.h>
-
-// Driver module
-SC_MODULE(conv_1d_bc) {
-  sc_in<bool> clk, rst;
-
-  M_cache M;
-  T_cache T;
-  SC_CTOR(conv_1d_bc) {
-  }
-
-  void conv_1d_bc_process() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=M inter false
-#endif // __VIVADO_SYNTH__
-
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=T inter false
-#endif // __VIVADO_SYNTH__
-
-	for (int c0 = 0; c0 <= 11; c0 += 1) {
-	  if (c0 <= 9)
-	write(in, M, 0, c0);
-	  if (c0 >= 2) {
-	read0(M, T, 0, c0 - 2);
-	compute_out(T, out, 0, c0 - 2);
-	  }
-	}
-	
-  }
-
-};
 
 #endif //__SYSTEMC_SYNTH__
