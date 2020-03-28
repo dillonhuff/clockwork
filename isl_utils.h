@@ -83,6 +83,7 @@ isl_space* get_space(isl_set* const m);
 int dim(isl_space* const s);
 
 bool empty(uset* const s);
+bool empty(isl_set* const s);
 
 int num_dims(isl_space* const s);
 

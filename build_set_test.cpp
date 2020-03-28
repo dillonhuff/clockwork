@@ -887,22 +887,28 @@ string simplified_delay_string(CodegenOptions& options, const string& inpt, cons
   auto pieces = get_pieces(qpd);
   map<isl_set*, isl_qpolynomial*> simplified_pieces;
   for (auto p : pieces) {
-    isl_set* simplified = universe(get_space(out_domain));
-    cout << tab(1) << str(p.first) << " -> " << str(p.second) << endl << endl;
-    cout << tab(1) << "Constraints..." << endl;
-    auto cs = constraints(p.first);
-    for (auto c : cs) {
-      cout << tab(2) << str(c) << endl;
-      isl_set* cs = isl_set_universe(get_space(out_domain));
-      cs = add_constraint(cs, c);
+    isl_set* simplified = isl_set_gist(cpy(p.first), cpy(out_domain));
 
-      cout << tab(3) << "set: " << str(cs) << endl;
-      if (subset(out_domain, cs)) {
-        cout << tab(4) << " IS REDUNDANT" << endl;
-      } else {
-        simplified = add_constraint(simplified, c);
-      }
-    }
+    //isl_set* simplified = universe(get_space(out_domain));
+    //auto orig = coalesce(p);
+    //cout << tab(1) << str(orig) << " -> " << str(p.second) << endl << endl;
+    //cout << tab(1) << "Constraints..." << endl;
+    //auto cs = constraints(orig);
+    //for (auto c : cs) {
+      //cout << tab(2) << str(c) << endl;
+      //isl_set* cs = isl_set_universe(get_space(out_domain));
+      //cs = add_constraint(cs, c);
+
+      //cout << tab(3) << "set: " << str(cs) << endl;
+      ////if (subset(out_domain, cs)) {
+        ////cout << tab(4) << " IS REDUNDANT" << endl;
+      ////} else {
+        ////simplified = add_constraint(simplified, c);
+      ////}
+      //simplified = add_constraint(simplified, c);
+    //}
+    cout << "simplified; " << str(simplified) << endl;
+    assert(!empty(simplified));
     simplified_pieces[simplified] = p.second;
   }
 
