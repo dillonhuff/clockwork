@@ -1111,8 +1111,6 @@ void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf)
   }
 
   generate_bundles(options, out, buf);
-
-
 }
 
 void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
@@ -2683,85 +2681,99 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
   return buf_srcs;
 }
 
-void generate_compute_op(ostream& conv_out, prog& prg, op* op, map<string, UBuffer>& buffers,
+struct compute_kernel {
+  string name;
+  vector<pair<string, string> > input_buffers;
+  vector<string> iteration_variables;
+  string functional_unit;
+  pair<string, string> output_buffer;
+};
+
+compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<string, UBuffer>& buffers,
     map<string, isl_set*>& domain_map) {
 
-    vector<string> buf_srcs;
-    concat(buf_srcs, buffer_args(buffers, op, prg));
+  compute_kernel kernel;
+  kernel.name = op->name;
+  kernel.functional_unit = op->func;
 
-    auto s = get_space(domain_map.at(op->name));
-    vector<string> dim_args;
-    for (auto a : space_var_args(s)) {
-      dim_args.push_back(a);
+  vector<string> buf_srcs;
+  concat(buf_srcs, buffer_args(buffers, op, prg));
+
+  auto s = get_space(domain_map.at(op->name));
+  vector<string> dim_args;
+  for (auto a : space_var_args(s)) {
+    dim_args.push_back(a);
+    kernel.iteration_variables.push_back(a);
+  }
+  for (auto a : space_var_decls(s)) {
+    buf_srcs.push_back(a);
+  }
+
+  conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
+  vector<pair<string, string> > in_buffers;
+  set<string> distinct;
+  for (auto con : op->consume_locs) {
+    if (!elem(con.first, distinct)) {
+      in_buffers.push_back(con);
+      distinct.insert(con.first);
     }
-    for (auto a : space_var_decls(s)) {
-      buf_srcs.push_back(a);
-    }
+  }
 
-    conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
-    vector<pair<string, string> > in_buffers;
-    set<string> distinct;
-    for (auto con : op->consume_locs) {
-      if (!elem(con.first, distinct)) {
-        in_buffers.push_back(con);
-        distinct.insert(con.first);
-      }
-    }
+  string res;
+  vector<string> buf_args;
 
-    string res;
-    vector<string> buf_args;
+  for (auto ib : in_buffers) {
+    auto in_buffer = ib.first;
+    conv_out << "\t// Consume: " << in_buffer << endl;
+    string value_name = op->consumed_value_name(ib);
+    conv_out << "\tauto " << value_name << " = ";
 
-    for (auto ib : in_buffers) {
-      auto in_buffer = ib.first;
-      conv_out << "\t// Consume: " << in_buffer << endl;
-      string value_name = op->consumed_value_name(ib);
-      conv_out << "\tauto " << value_name << " = ";
+    string bundle_name = op->name + "_read";
+    kernel.input_buffers.push_back({in_buffer, bundle_name});
 
-      if (prg.is_boundary(in_buffer)) {
-        conv_out << in_buffer << ".read();" << endl;
-      } else {
-        vector<string> source_delays{in_buffer};
-        cout << "op = " << op->name << endl;
-        conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
-      }
-      buf_args.push_back(value_name);
-      res = value_name;
-    }
-
-    if (op->func != "") {
-      conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(buf_args) << ");" << endl;
-      res = "compute_result";
-    }
-
-    set<string> out_buffers;
-    for (auto con : op->produce_locs) {
-      //blk->add_external_module_instance(con.first,
-          //map_find(con.first, buffer_mods));
-
-      out_buffers.insert(con.first);
-    }
-    assert(out_buffers.size() == 1);
-    string out_buffer = pick(out_buffers);
-
-    //blk->add_external_module_instance("output_" + out_buffer,
-        //map_find(out_buffer, buffer_mods));
-
-    conv_out << "\t// Produce: " << out_buffer << endl;
-
-    if (prg.is_boundary(out_buffer)) {
-      conv_out << "\t" << out_buffer << ".write(" << res << ");" << endl;
+    if (prg.is_boundary(in_buffer)) {
+      conv_out << in_buffer << ".read();" << endl;
     } else {
-      assert(contains_key(out_buffer, buffers));
-
-      auto& buf = buffers.at(out_buffer);
-      vector<string> arg_names{res, buf.name};
-      concat(arg_names, dim_args);
-      conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" <<
-        comma_list(arg_names) << ");" << endl;
+      vector<string> source_delays{in_buffer};
+      cout << "op = " << op->name << endl;
+      conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
     }
+    buf_args.push_back(value_name);
+    res = value_name;
+  }
 
-    conv_out << "}" << endl << endl;
+  if (op->func != "") {
+    conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(buf_args) << ");" << endl;
+    res = "compute_result";
+  }
 
+  set<string> out_buffers;
+  for (auto con : op->produce_locs) {
+    out_buffers.insert(con.first);
+  }
+  assert(out_buffers.size() == 1);
+  string out_buffer = pick(out_buffers);
+
+  conv_out << "\t// Produce: " << out_buffer << endl;
+
+  string bundle_name = op->name + "_write";
+  kernel.output_buffer = {out_buffer, bundle_name};
+
+  if (prg.is_boundary(out_buffer)) {
+    conv_out << "\t" << out_buffer << ".write(" << res << ");" << endl;
+  } else {
+    assert(contains_key(out_buffer, buffers));
+
+    auto& buf = buffers.at(out_buffer);
+    vector<string> arg_names{res, buf.name};
+    concat(arg_names, dim_args);
+    conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" <<
+      comma_list(arg_names) << ");" << endl;
+  }
+
+  conv_out << "}" << endl << endl;
+
+  return kernel;
 }
 
 void generate_verilog_code(CodegenOptions& options,
