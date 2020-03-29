@@ -30,6 +30,20 @@ class AccessPattern {
 
       AccessPattern(){}
 
+      AccessPattern(const AccessPattern & a) {
+          var_dim = a.var_dim;
+          in_range = a.in_range;
+          stride = a.stride;
+          name2idx = a.name2idx;
+
+          addr_dim = a.addr_dim;
+          out_range = a.out_range;
+          start_addr = a.start_addr;
+          vec_stride_in_addr = a.vec_stride_in_addr;
+
+          access_matrix = a.access_matrix;
+      }
+
       isl_set* get_domain(isl_ctx* ctx, string op_name) {
           vector<string> var_list(var_dim-1);
           vector<string> bd_list(var_dim-1);
@@ -243,6 +257,68 @@ class AccessPattern {
 
       bool is_1D_contigous_access() {
           return (in_range.size() == 1) && (stride.back() == 1);
+      }
+
+      bool is_access_matrix_col_empty(int id) {
+          for (size_t i = 0; i < addr_dim; i ++) {
+              if (access_matrix[i][id])
+                  return false;
+          }
+          return true;
+      }
+
+      void remove_access_matrix_column(int id) {
+          for (size_t i = 0; i < addr_dim; i ++) {
+              auto row = access_matrix[i];
+              row.erase(row.begin() + id);
+          }
+      }
+
+      vector<AccessPattern> vectorization(int dim_id, int fetch_width) {
+          AccessPattern origin(*this);
+          vector<int> & stride_in_target = access_matrix[dim_id];
+          vector<int> var_list;
+          for (size_t i = 1; i < stride_in_target.size(); i ++) {
+              if (stride_in_target[i] == 0)
+                  continue;
+              if (stride_in_target[i] < fetch_width) {
+                  var_list.push_back(i);
+                  cout << "var need to be vectorize: " << i << endl;
+              }
+          }
+          assert(var_list.size()  > 0);
+          for (size_t i = 0; i < var_list.size(); i ++) {
+            //Currently just support divisible
+            int id = var_list[i];
+            if (i == 0) {
+                //the first variable
+                assert(fetch_width % stride_in_target[id] == 0);
+                int factor =  fetch_width / stride_in_target[id];
+                stride_in_target[id] = fetch_width;
+                assert(in_range[id - 1] % factor== 0);
+                in_range[id - 1] /= factor;
+
+            }
+            else {
+                //all the other stride should be strip off
+                if (is_access_matrix_col_empty(id)) {
+                    remove_access_matrix_column(id);
+                    in_range.erase(in_range.begin() + id - 1);
+                }
+            }
+          }
+
+          vector<AccessPattern> access_pattern_vec;
+          for (size_t i = 0; i < fetch_width; i ++) {
+            access_matrix[dim_id][0] = i;
+            //update out_range after we have the new access map
+
+            access_pattern_vec.push_back(AccessPattern(*this));
+          }
+
+          //assign the original value
+          *this = origin;
+          return access_pattern_vec;
       }
 };
 
@@ -561,9 +637,41 @@ class UBuffer {
       assert(false);
     }
 
+    void vectorization(int dim_id, int fetch_width);
+
 };
 
 int compute_max_dd(UBuffer& buf, const string& inpt);
+
+template <typename T>
+std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
+    if ( !v.empty()  ) {
+        out << '[';
+        std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
+        out << "\b\b]";
+    }
+    return out;
+}
+
+static inline
+std::ostream& operator<<(std::ostream& out, const AccessPattern& acc_pattern) {
+  out << "--- Variable Dimension: " << acc_pattern.var_dim << endl;
+  out << "\t---nameid map: " << endl;
+  for (auto it: acc_pattern.name2idx) {
+      out << "\t\t name: " << it.first << "\t id: " << it.second << endl;
+  }
+  out << "\t---- In range: " << acc_pattern.in_range << endl;
+  out << "\t---- Out range: "<< acc_pattern.out_range << endl;
+  out << "\t---- Stride: "<< acc_pattern.stride << endl;
+  out << "\t---- Start Addr: "<< acc_pattern.start_addr << endl;
+  out << "\t---- Access Matrix: " << endl << "\t\t[";
+  for (const auto & row : acc_pattern.access_matrix) {
+      out<< row << "\n\t\t";
+  }
+  out << "]" << endl;
+  return out;
+}
+
 
 static inline
 std::ostream& operator<<(std::ostream& out, UBuffer& buf) {

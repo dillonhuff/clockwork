@@ -2398,6 +2398,20 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
   return buffers;
 }
 
+void buffer_vectorization(string vec_buf_name, int dim_id, int fetch_width, map<string, UBuffer> & buffers) {
+    /* Function to vectorize the buffer access, will rewrite the buffer access pattern,
+     * generate the new domain and access map and also add two other buffer on
+     * both input and output side
+     * */
+    for(auto it : buffers) {
+        if (it.first == vec_buf_name) {
+            auto target_buffer = it.second;
+            target_buffer.vectorization(dim_id, fetch_width);
+
+        }
+    }
+}
+
 void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap);
 
 void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* sched) {
@@ -3148,6 +3162,40 @@ void vec_test() {
   //memtile.extract_config(buffers);
   //memtile.emit_config_file_csv("lake_memtile_config");
   //assert(false);
+}
+
+void auto_vec_test() {
+
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "vec";
+  prg.add_input("in");
+  prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+
+  auto p = prg.add_nest("po", 0, 8, "pi", 0, 8);
+  auto write = p->add_op("input");
+  write->add_load("in", "po, pi");
+  write->add_store("buf", "po, pi");
+
+  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 8);
+  auto read = q->add_op("output");
+  read->add_load("buf", "qo, qi");
+  read->add_load("buf", "qo+1, qi");
+  read->add_load("buf", "qo+2, qi");
+  read->add_store("out", "qo, qi");
+
+
+  //auto sched = prg.unoptimized_schedule();
+  //cout << codegen_c(sched) << endl;
+
+  auto sched_opt = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
+
+  auto buffers = build_buffers(prg);
+  int fetch_width = 4;
+  buffer_vectorization("buf", 1, fetch_width, buffers);
 }
 
 std::vector<std::string> run_regression_tb(const std::string& name) {
@@ -7028,10 +7076,10 @@ void application_tests() {
 }
 
 void memory_tile_tests() {
-  vec_test();
+  auto_vec_test();
+  assert(false);
   agg_test();
   memtile_test();
-  assert(false);
 
 }
 
