@@ -1016,6 +1016,8 @@ void generate_select(CodegenOptions& options, std::ostream& out, const string& o
     }
   }
 
+  assert(possible_ports.size() == 1);
+
   if (possible_ports.size() == 1) {
     string inpt = possible_ports.at(0);
     string peeked_val = delay_string(options, inpt, outpt, buf);
@@ -1081,16 +1083,25 @@ void generate_select(CodegenOptions& options, std::ostream& out, const string& o
     select_debug_assertions(options, out, outpt, buf);
     out << "}" << endl << endl;
   }
+
   minihls::block blk;
   vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
   for (auto pt : sel.vars) {
     ports.push_back(minihls::inpt(pt, 32));
   }
+  ports.push_back(minihls::outpt("out", 32));
 
+  ostringstream body;
+  for (int i = 0; i < sel.bank_conditions.size(); i++) {
+    body << tab(1) << "always @(*) begin" << endl;
+    body << tab(2) << "if (" << sel.bank_conditions.at(i) << ") begin" << endl;
+    body << tab(3) << "out = " << sel.inner_bank_offsets.at(i) << ";" << endl;
+    body << tab(2) << "end" << endl;
+    body << tab(1) << "end" << endl;
+  }
   auto ubufmod =
-    blk.add_module_type(sel.name, ports);
+    blk.add_module_type(sel.name, ports, body.str());
 
-  cout << "Creating verilog for " << buf.name << endl;
   ofstream buf_file("./verilog_output/" + sel.name + ".v");
   buf_file << ubufmod->verilog_decl_string() << endl;
   buf_file.close();
@@ -7481,7 +7492,7 @@ void application_tests() {
   //conv_app_rolled_reduce_test();
   //exposure_fusion_simple_average();
  
-  reduce_1d_test();
+  //reduce_1d_test();
   mismatched_stencil_test();
   laplacian_pyramid_app_test();
   upsample_stencil_2d_test();
@@ -7528,11 +7539,11 @@ void application_tests() {
   gaussian_pyramid_test();
   warp_and_upsample_test();
 
-  conv_1d_rolled_test();
+  //conv_1d_rolled_test();
   //synth_upsample_test();
   unsharp_test();
-  conv_2d_rolled_test();
-  reduce_2d_test();
+  //conv_2d_rolled_test();
+  //reduce_2d_test();
   conv_1d_test();
   conv_2d_bc_test();
   //mobilenet_test();
