@@ -2681,14 +2681,6 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
   return buf_srcs;
 }
 
-struct compute_kernel {
-  string name;
-  vector<pair<string, string> > input_buffers;
-  vector<string> iteration_variables;
-  string functional_unit;
-  pair<string, string> output_buffer;
-};
-
 compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<string, UBuffer>& buffers,
     map<string, isl_set*>& domain_map) {
 
@@ -2780,7 +2772,9 @@ void generate_verilog_code(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
     umap* schedmap,
-    map<string, isl_set*>& domain_map) {
+    map<string, isl_set*>& domain_map,
+    vector<compute_kernel>& kernels) {
+
   minihls::context minigen;
 
   map<string, minihls::module_type*> buffer_mods;
@@ -2856,8 +2850,9 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out << endl << endl;
   conv_out << "// Operation logic" << endl;
+  vector<compute_kernel> kernels;
   for (auto op : prg.all_ops()) {
-    generate_compute_op(conv_out, prg, op, buffers, domain_map);
+    kernels.push_back(generate_compute_op(conv_out, prg, op, buffers, domain_map));
   }
 
   conv_out << "// Driver function" << endl;
@@ -2900,7 +2895,7 @@ void generate_app_code(CodegenOptions& options,
   conv_out << "}" << endl;
 
   generate_app_code_header(buffers, prg);
-  generate_verilog_code(options, buffers, prg, schedmap, domain_map);
+  generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
 }
 
 void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap) {

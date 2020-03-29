@@ -4,11 +4,12 @@
 #include "minihls.h"
 #include "ubuffer.h"
 
-struct compute_unit {
-  vector<string> input_buffers;
-  vector<string> index_variables;
-  string operation;
-  string output;
+struct compute_kernel {
+  string name;
+  vector<pair<string, string> > input_buffers;
+  vector<string> iteration_variables;
+  string functional_unit;
+  pair<string, string> output_buffer;
 };
 
 minihls::instruction_type* reduce(minihls::context& c, map<string, minihls::module_type*>& buffers, vector<string>& index_variables);
