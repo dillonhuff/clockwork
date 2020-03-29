@@ -122,21 +122,18 @@ inline void M_write_0_write(hw_uint<32> & M_write_0, M_cache& M, int root, int p
 }
 
 inline hw_uint<32>  M_read0_3_select(M_cache& M, int root, int c) {
-	// lexmax events: { read0[root = 0, c] -> write[root' = 0, p = c] : 0 <= c <= 9 }
   // M_read0_3 read pattern: { read0[root = 0, c] -> M[c] : 0 <= c <= 9 }
 	auto value_M_write_0 = M.M_write_0_to_M_read0_3.peek(/* Needs general delay string */ (-8 + c == 0) ? (1) : (7 - c >= 0) ? (2) : 0);
 	return value_M_write_0;
 }
 
 inline hw_uint<32>  M_read0_4_select(M_cache& M, int root, int c) {
-	// lexmax events: { read0[root = 0, c] -> write[root' = 0, p = 1 + c] : 0 <= c <= 8; read0[root = 0, c = 9] -> write[root' = 0, p = 9] }
   // M_read0_4 read pattern: { read0[root = 0, c] -> M[1 + c] : 0 <= c <= 8; read0[root = 0, c = 9] -> M[9] }
 	auto value_M_write_0 = M.M_write_0_merged_banks_2.peek(/* Needs general delay string */ (7 - c >= 0) ? (1) : 0);
 	return value_M_write_0;
 }
 
 inline hw_uint<32>  M_read0_5_select(M_cache& M, int root, int c) {
-	// lexmax events: { read0[root = 0, c] -> write[root' = 0, p = 9] : 8 <= c <= 9; read0[root = 0, c] -> write[root' = 0, p = 2 + c] : 0 <= c <= 7 }
   // M_read0_5 read pattern: { read0[root = 0, c] -> M[9] : 8 <= c <= 9; read0[root = 0, c] -> M[2 + c] : 0 <= c <= 7 }
 	auto value_M_write_0 = M.M_write_0_merged_banks_2.peek_0();
 	return value_M_write_0;
@@ -219,7 +216,6 @@ inline void T_read0_2_write(hw_uint<96>& T_read0_2, T_cache& T, int root, int c)
 }
 
 inline hw_uint<96> T_compute_out_7_select(T_cache& T, int root, int c) {
-	// lexmax events: { compute_out[root = 0, c] -> read0[root' = 0, c' = c] : 0 <= c <= 9 }
   // T_compute_out_7 read pattern: { compute_out[root = 0, c] -> T[c] : 0 <= c <= 9 }
 	auto value_T_read0_2 = T.T_read0_2_merged_banks_1.peek_0();
 	return value_T_read0_2;

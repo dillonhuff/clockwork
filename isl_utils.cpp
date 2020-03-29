@@ -94,6 +94,7 @@ isl_space* get_space(isl_map* const m) {
 }
 
 isl_space* get_space(isl_set* const m) {
+  assert(m != nullptr);
   return isl_set_get_space(m);
 }
 
@@ -133,7 +134,7 @@ std::string range_name(isl_space* const s) {
 }
 
 isl_union_set* to_uset(isl_set* const m) {
-  return isl_union_set_from_set(m);
+  return isl_union_set_from_set(cpy(m));
 }
 
 isl_stat get_maps(isl_map* m, void* user) {
@@ -717,6 +718,7 @@ std::string str(isl_union_set* const m) {
 }
 
 std::string str(isl_set* const m) {
+  assert(m != nullptr);
   auto ctx = isl_set_get_ctx(m);
   isl_printer *p;
   p = isl_printer_to_str(ctx);

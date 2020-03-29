@@ -1003,11 +1003,11 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
 void generate_select(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
   selector sel = generate_select_decl(options, out, outpt, buf);
 
-  auto lex_max_events = get_lexmax_events(outpt, buf);
+  //auto lex_max_events = get_lexmax_events(outpt, buf);
 
-  cout << "Lexmax events: " << str(lex_max_events) << endl;
-  map<string, string> ms = umap_codegen_c(lex_max_events);
-  out << "\t// lexmax events: " << str(lex_max_events) << endl;
+  //cout << "Lexmax events: " << str(lex_max_events) << endl;
+  //map<string, string> ms = umap_codegen_c(lex_max_events);
+  //out << "\t// lexmax events: " << str(lex_max_events) << endl;
   out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
   vector<string> possible_ports;
   for (auto pt : buf.get_in_ports()) {
@@ -1018,71 +1018,14 @@ void generate_select(CodegenOptions& options, std::ostream& out, const string& o
 
   assert(possible_ports.size() == 1);
 
-  if (possible_ports.size() == 1) {
-    string inpt = possible_ports.at(0);
-    string peeked_val = delay_string(options, inpt, outpt, buf);
-    //string delay_expr = evaluate_dd(buf, outpt, inpt);
-    //string simplified_peek_val = simplified_delay_string(options, inpt, outpt, buf);
-    sel.bank_conditions.push_back("1");
-    sel.inner_bank_offsets.push_back(peeked_val);
+  string inpt = possible_ports.at(0);
+  string peeked_val = delay_string(options, inpt, outpt, buf);
+  sel.bank_conditions.push_back("1");
+  sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, inpt));
 
-    //out << tab(1) << "cout << \"" << delay_expr << " = \" << (" << delay_expr << ") << endl;" << endl;
-    //out << tab(1) << "cout << \"" << simplified_peek_val << " = \" << (" << simplified_peek_val<< ") << endl;" << endl;
-    //out << tab(1) << "assert((" << delay_expr << ") == (" << simplified_peek_val << "));" << endl;
-
-    out << "\tauto value_" << inpt << " = " << peeked_val << ";\n";
-    out << "\treturn value_" << inpt << ";" << endl;
-    out << "}" << endl << endl;
-  } else {
-
-    //assert(false);
-
-    cout << "Done" << endl;
-    for (auto e : ms) {
-      out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
-    }
-
-    for (auto inpt : buf.get_in_ports()) {
-      string peeked_val = delay_string(options, inpt, outpt, buf);
-      string delay_expr = evaluate_dd(buf, outpt, inpt);
-      string simplified_peek_val = simplified_delay_string(options, inpt, outpt, buf);
-      //out << tab(1) << "assert((" << delay_expr << ") == (" << simplified_peek_val << "));" << endl;
-
-      if (options.internal) {
-        out << "\t// inpt: " << inpt << endl;
-        bool found_key = false;
-        string k_var = "";
-        for (auto k : ms) {
-          out << "\t// k = " << k.first << endl;
-          string prefix = buf.name + "_" + k.first;
-          if (is_prefix(prefix, inpt)) {
-            found_key = true;
-            k_var = k.first;
-          }
-        }
-        if (found_key) {
-          assert(k_var != "");
-          sel.bank_conditions.push_back("select_" + k_var);
-          sel.inner_bank_offsets.push_back(peeked_val);
-          out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
-          out << "\tif (select_" + k_var + ") { return value_"+ inpt + "; }\n";
-        } else {
-          out << "//\tNo key for: " << inpt << endl;
-        }
-      } else {
-        if (contains_key(inpt, ms)) {
-          sel.bank_conditions.push_back("select_" + inpt);
-          sel.inner_bank_offsets.push_back(peeked_val);
-          out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
-          out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
-        }
-
-      }
-    }
-
-    select_debug_assertions(options, out, outpt, buf);
-    out << "}" << endl << endl;
-  }
+  out << "\tauto value_" << inpt << " = " << peeked_val << ";\n";
+  out << "\treturn value_" << inpt << ";" << endl;
+  out << "}" << endl << endl;
 
   minihls::block blk;
   vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
