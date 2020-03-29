@@ -79,6 +79,7 @@ isl_space* get_space(isl_union_map* const m);
 isl_space* get_space(isl_map* const m);
 
 isl_space* get_space(isl_set* const m);
+isl_space* get_space(isl_union_set* const m);
 
 int dim(isl_space* const s);
 

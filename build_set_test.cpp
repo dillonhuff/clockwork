@@ -5503,11 +5503,15 @@ struct App {
     isl_union_map *proximity =
       cpy(validity);
 
+    auto finite_domain = cpy(domain);
+    domain = unn(domain, isl_union_set_universe(cpy(domain)));
     isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
-    auto schedmap = its(isl_schedule_get_map(sched), domain);
+    auto schedmap = its(isl_schedule_get_map(sched), finite_domain);
 
     assert(schedmap != nullptr);
     cout << "Final isl schedule: " << str(schedmap) << endl;
+    cout << "C code; " << codegen_c(schedmap) << endl;
+    assert(false);
     
     isl_options_set_schedule_algorithm(ctx, ISL_SCHEDULE_ALGORITHM_ISL);
 
@@ -6655,9 +6659,9 @@ void exposure_fusion() {
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
   //lp.func2d("synthetic_exposure_fusion", "id", pt("in"));
-  int size = 16;
-  lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
+  int size = 1920;
   lp.realize_naive("pyramid_synthetic_exposure_fusion", size, size);
+  lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
 
   std::vector<std::string> naive =
     run_regression_tb("pyramid_synthetic_exposure_fusion_naive");
@@ -7449,15 +7453,15 @@ void application_tests() {
   //exposure_fusion_simple_average();
  
   //reduce_1d_test();
+  exposure_fusion();
+  laplacian_pyramid_app_test();
   mismatched_stencil_test();
   //assert(false);
-  laplacian_pyramid_app_test();
   upsample_stencil_2d_test();
   //assert(false);
   upsample_stencil_1d_test();
 
   heat_3d_test();
-  exposure_fusion();
   denoise2d_test();
   gaussian_pyramid_app_test();
   grayscale_conversion_test();

@@ -93,6 +93,11 @@ isl_space* get_space(isl_map* const m) {
   return isl_map_get_space(m);
 }
 
+isl_space* get_space(isl_union_set* const m) {
+  assert(m != nullptr);
+  return isl_union_set_get_space(m);
+}
+
 isl_space* get_space(isl_set* const m) {
   assert(m != nullptr);
   return isl_set_get_space(m);
