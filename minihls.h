@@ -740,7 +740,7 @@ namespace minihls {
       return contains_key(name, context->module_types);
     }
 
-    module_instance* add_external_inst(const std::string& name, module_type* tp) {
+    module_instance* add_external_module_instance(const std::string& name, module_type* tp) {
       auto inst = new module_instance();
       inst->name = name;
       inst->tp = tp;

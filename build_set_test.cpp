@@ -2749,7 +2749,6 @@ void generate_app_code(CodegenOptions& options,
   map<string, minihls::module_type*> operation_mods;
   for (auto op : prg.all_ops()) {
     minihls::block* blk = minigen.add_block(op->name);
-    operation_mods[op->name] = minigen.compile(blk);
 
     vector<string> buf_srcs;
     concat(buf_srcs, buffer_args(buffers, op, prg));
@@ -2800,6 +2799,9 @@ void generate_app_code(CodegenOptions& options,
 
     set<string> out_buffers;
     for (auto con : op->produce_locs) {
+      blk->add_external_module_instance(con.first,
+          map_find(con.first, buffer_mods));
+
       out_buffers.insert(con.first);
     }
     assert(out_buffers.size() == 1);
@@ -2819,6 +2821,8 @@ void generate_app_code(CodegenOptions& options,
     }
 
     conv_out << "}" << endl << endl;
+
+    operation_mods[op->name] = minigen.compile(blk);
   }
 
   conv_out << "#ifndef __SYSTEMC_SYNTH__" << endl;
