@@ -2,6 +2,7 @@
 #include <cassert>
 #include <fstream>
 #include <vector>
+#include <map>
 
 using namespace std;
 
@@ -36,14 +37,17 @@ int main(const int argc, const char** argv) {
   vector<string> target_lines = read_lines(target_file);
   cout << "# of target lines: " << target_lines.size() << endl;
 
+  assert(reference_lines.size() > 0);
   assert(reference_lines.size() <= target_lines.size());
 
   int reference_position = 0;
+  map<int, int> alignment;
   for (int i = 0; i < target_lines.size(); i++) {
     string ref = reference_lines.at(reference_position);
     string target = target_lines.at(i);
 
     if (ref == target) {
+      alignment[reference_position] = i;
       reference_position++;
     }
 
@@ -57,6 +61,7 @@ int main(const int argc, const char** argv) {
     assert(false);
   } else {
     cout << "Sequences align!" << endl;
+    cout << "  " << "Start delay: " << alignment.at(0) << endl;
   }
 
   return 0;
