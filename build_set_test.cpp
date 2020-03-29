@@ -825,23 +825,6 @@ void generate_code_prefix(CodegenOptions& options,
     out << "}" << endl << endl;
   }
 
-  //minihls::block blk;
-  //vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
-  //for (auto inpt : buf.get_in_ports()) {
-    //ports.push_back({inpt, buf.port_width(inpt), true});
-  //}
-  //for (auto outpt : buf.get_out_ports()) {
-    //ports.push_back({inpt, buf.port_width(outpt), false});
-  //}
-  //auto ubufmod =
-    //blk.add_module_type(buf.name, ports);
-
-  //cout << "Creating verilog for " << buf.name << endl;
-  //ofstream buf_file("./verilog_output/" + buf.name + ".v");
-  //buf_file << ubufmod->verilog_decl_string() << endl;
-  //buf_file.close();
-
-  //assert(false);
 }
 
 bool is_optimizable_constant_dd(const string& inpt, const string& outpt, UBuffer& buf) {
@@ -2718,6 +2701,13 @@ void generate_app_code(CodegenOptions& options,
     }
 
     minihls::block* blk = minigen.add_block(b.first);
+    for (auto bank : b.second.get_banks()) {
+      minihls::module_type* bnk_mod =
+        gen_bank(*blk, bank);
+
+      blk->add_module_instance(bank.name,
+          bnk_mod);
+    }
     for (auto osel : b.second.selectors) {
       selector sel = osel.second;
       vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
@@ -2806,6 +2796,10 @@ void generate_app_code(CodegenOptions& options,
     }
     assert(out_buffers.size() == 1);
     string out_buffer = pick(out_buffers);
+
+    blk->add_external_module_instance("output_" + out_buffer,
+        map_find(out_buffer, buffer_mods));
+
     conv_out << "\t// Produce: " << out_buffer << endl;
 
     if (prg.is_boundary(out_buffer)) {
@@ -2825,7 +2819,6 @@ void generate_app_code(CodegenOptions& options,
     operation_mods[op->name] = minigen.compile(blk);
   }
 
-  conv_out << "#ifndef __SYSTEMC_SYNTH__" << endl;
   conv_out << "// Driver function" << endl;
   string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
   conv_out << "void " << prg.name << arg_buffers << " {" << endl;
@@ -2877,41 +2870,6 @@ void generate_app_code(CodegenOptions& options,
   conv_out << code_string << endl;
 
   conv_out << "}" << endl;
-
-  conv_out << "#else // __SYSTEMC_SYNTH__" << endl << endl;
-  //conv_out << "#include <systemc.h>" << endl << endl;
-
-  //conv_out << "// Driver module" << endl;
-  ////string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
-  //conv_out << "SC_MODULE(" << prg.name << ") {" << endl;
-  //conv_out << tab(1) << "sc_in<bool> clk, rst;" << endl << endl;
-
-  //for (auto& b : buffers) {
-    //if (!prg.is_boundary(b.first)) {
-      //conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
-      ////conv_out << "#ifdef __VIVADO_SYNTH__" << endl;
-      ////conv_out << "#pragma HLS dependence variable=" << b.second.name << " inter false" << endl;
-      ////conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
-    //}
-  //}
-
-  //conv_out << tab(1) << "SC_CTOR(" << prg.name << ") {" << endl;
-
-  //conv_out << tab(1) << "}" << endl << endl;
-  //conv_out << tab(1) << "void " << prg.name << "_process() {" << endl;
-  //for (auto& b : buffers) {
-    //if (!prg.is_boundary(b.first)) {
-      ////conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
-      //conv_out << "#ifdef __VIVADO_SYNTH__" << endl;
-      //conv_out << "#pragma HLS dependence variable=" << b.second.name << " inter false" << endl;
-      //conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
-    //}
-  //}
-  //conv_out << code_string << endl;
-  //conv_out << tab(1) << "}" << endl << endl;
-  //conv_out << "};" << endl << endl;
-  conv_out << "#endif //__SYSTEMC_SYNTH__" << endl;
-
 
   generate_app_code_header(buffers, prg);
 }
@@ -7468,6 +7426,7 @@ void application_tests() {
  
   //reduce_1d_test();
   mismatched_stencil_test();
+  assert(false);
   laplacian_pyramid_app_test();
   upsample_stencil_2d_test();
   //assert(false);
