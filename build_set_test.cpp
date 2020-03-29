@@ -2683,6 +2683,153 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
   return buf_srcs;
 }
 
+void generate_compute_op(ostream& conv_out, prog& prg, op* op, map<string, UBuffer>& buffers,
+    map<string, isl_set*>& domain_map) {
+
+    vector<string> buf_srcs;
+    concat(buf_srcs, buffer_args(buffers, op, prg));
+
+    auto s = get_space(domain_map.at(op->name));
+    vector<string> dim_args;
+    for (auto a : space_var_args(s)) {
+      dim_args.push_back(a);
+    }
+    for (auto a : space_var_decls(s)) {
+      buf_srcs.push_back(a);
+    }
+
+    conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
+    vector<pair<string, string> > in_buffers;
+    set<string> distinct;
+    for (auto con : op->consume_locs) {
+      if (!elem(con.first, distinct)) {
+        in_buffers.push_back(con);
+        distinct.insert(con.first);
+      }
+    }
+
+    string res;
+    vector<string> buf_args;
+
+    for (auto ib : in_buffers) {
+      auto in_buffer = ib.first;
+      conv_out << "\t// Consume: " << in_buffer << endl;
+      string value_name = op->consumed_value_name(ib);
+      conv_out << "\tauto " << value_name << " = ";
+
+      if (prg.is_boundary(in_buffer)) {
+        conv_out << in_buffer << ".read();" << endl;
+      } else {
+        vector<string> source_delays{in_buffer};
+        cout << "op = " << op->name << endl;
+        conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
+      }
+      buf_args.push_back(value_name);
+      res = value_name;
+    }
+
+    if (op->func != "") {
+      conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(buf_args) << ");" << endl;
+      res = "compute_result";
+    }
+
+    set<string> out_buffers;
+    for (auto con : op->produce_locs) {
+      //blk->add_external_module_instance(con.first,
+          //map_find(con.first, buffer_mods));
+
+      out_buffers.insert(con.first);
+    }
+    assert(out_buffers.size() == 1);
+    string out_buffer = pick(out_buffers);
+
+    //blk->add_external_module_instance("output_" + out_buffer,
+        //map_find(out_buffer, buffer_mods));
+
+    conv_out << "\t// Produce: " << out_buffer << endl;
+
+    if (prg.is_boundary(out_buffer)) {
+      conv_out << "\t" << out_buffer << ".write(" << res << ");" << endl;
+    } else {
+      assert(contains_key(out_buffer, buffers));
+
+      auto& buf = buffers.at(out_buffer);
+      vector<string> arg_names{res, buf.name};
+      concat(arg_names, dim_args);
+      conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" <<
+        comma_list(arg_names) << ");" << endl;
+    }
+
+    conv_out << "}" << endl << endl;
+
+}
+
+void generate_verilog_code(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    map<string, isl_set*>& domain_map) {
+  minihls::context minigen;
+
+  map<string, minihls::module_type*> buffer_mods;
+  for (auto& b : buffers) {
+    minihls::block* blk = minigen.add_block(b.first);
+    for (auto bank : b.second.get_banks()) {
+      minihls::module_type* bnk_mod =
+        gen_bank(*blk, bank);
+
+      blk->add_module_instance(bank.name,
+          bnk_mod);
+    }
+    for (auto osel : b.second.selectors) {
+      selector sel = osel.second;
+      vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
+      for (auto pt : sel.vars) {
+        ports.push_back(minihls::inpt(pt, 32));
+      }
+      ports.push_back(minihls::outpt("out", 32));
+
+      ostringstream body;
+      for (int i = 0; i < sel.bank_conditions.size(); i++) {
+        body << tab(1) << "always @(*) begin" << endl;
+        body << tab(2) << "if (" << sel.bank_conditions.at(i) << ") begin" << endl;
+        body << tab(3) << "out = " << sel.inner_bank_offsets.at(i) << ";" << endl;
+        body << tab(2) << "end" << endl;
+        body << tab(1) << "end" << endl;
+      }
+      auto ubufmod =
+        blk->add_module_type(sel.name, ports, body.str());
+      blk->add_module_instance("selector_" + sel.name,
+          ubufmod);
+    }
+
+    buffer_mods[b.first] = minigen.compile(blk);
+    
+  }
+
+  map<string, minihls::module_type*> operation_mods;
+  for (auto op : prg.all_ops()) {
+    generate_compute_op(conv_out, prg, op, buffers, domain_map);
+
+    minihls::block* blk = minigen.add_block(op->name);
+
+
+    operation_mods[op->name] = minigen.compile(blk);
+  }
+
+
+  auto main_blk = minigen.add_block(prg.name);
+  for (auto b : buffer_mods) {
+    main_blk->add_module_instance("buf_" + b.second->get_name(), b.second);
+  }
+
+  for (auto b : operation_mods) {
+    main_blk->add_module_instance("op_" + b.second->get_name(), b.second);
+  }
+
+  compile(*main_blk);
+}
+
 void generate_app_code(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -2738,83 +2885,10 @@ void generate_app_code(CodegenOptions& options,
   conv_out << "// Operation logic" << endl;
   map<string, minihls::module_type*> operation_mods;
   for (auto op : prg.all_ops()) {
+    generate_compute_op(conv_out, prg, op, buffers, domain_map);
+
     minihls::block* blk = minigen.add_block(op->name);
 
-    vector<string> buf_srcs;
-    concat(buf_srcs, buffer_args(buffers, op, prg));
-
-    auto s = get_space(domain_map.at(op->name));
-    vector<string> dim_args;
-    for (auto a : space_var_args(s)) {
-      dim_args.push_back(a);
-    }
-    for (auto a : space_var_decls(s)) {
-      buf_srcs.push_back(a);
-    }
-
-    conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
-    vector<pair<string, string> > in_buffers;
-    set<string> distinct;
-    for (auto con : op->consume_locs) {
-      if (!elem(con.first, distinct)) {
-        in_buffers.push_back(con);
-        distinct.insert(con.first);
-      }
-    }
-
-    string res;
-    vector<string> buf_args;
-
-    for (auto ib : in_buffers) {
-      auto in_buffer = ib.first;
-      conv_out << "\t// Consume: " << in_buffer << endl;
-      string value_name = op->consumed_value_name(ib);
-      conv_out << "\tauto " << value_name << " = ";
-
-      if (prg.is_boundary(in_buffer)) {
-        conv_out << in_buffer << ".read();" << endl;
-      } else {
-        vector<string> source_delays{in_buffer};
-        cout << "op = " << op->name << endl;
-        conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
-      }
-      buf_args.push_back(value_name);
-      res = value_name;
-    }
-
-    if (op->func != "") {
-      conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(buf_args) << ");" << endl;
-      res = "compute_result";
-    }
-
-    set<string> out_buffers;
-    for (auto con : op->produce_locs) {
-      blk->add_external_module_instance(con.first,
-          map_find(con.first, buffer_mods));
-
-      out_buffers.insert(con.first);
-    }
-    assert(out_buffers.size() == 1);
-    string out_buffer = pick(out_buffers);
-
-    blk->add_external_module_instance("output_" + out_buffer,
-        map_find(out_buffer, buffer_mods));
-
-    conv_out << "\t// Produce: " << out_buffer << endl;
-
-    if (prg.is_boundary(out_buffer)) {
-      conv_out << "\t" << out_buffer << ".write(" << res << ");" << endl;
-    } else {
-      assert(contains_key(out_buffer, buffers));
-
-      auto& buf = buffers.at(out_buffer);
-      vector<string> arg_names{res, buf.name};
-      concat(arg_names, dim_args);
-      conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" <<
-        comma_list(arg_names) << ");" << endl;
-    }
-
-    conv_out << "}" << endl << endl;
 
     operation_mods[op->name] = minigen.compile(blk);
   }
@@ -2872,6 +2946,7 @@ void generate_app_code(CodegenOptions& options,
   conv_out << "}" << endl;
 
   generate_app_code_header(buffers, prg);
+  generate_verilog_code(options, buffers, prg, schedmap, domain_map);
 }
 
 void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap) {

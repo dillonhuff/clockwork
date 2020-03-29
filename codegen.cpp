@@ -93,3 +93,10 @@ minihls::module_type* gen_bank(minihls::block& blk, const bank& bnk) {
 
   return blk.add_module_type(name, pts, body);
 }
+
+minihls::instruction_type* reduce(minihls::context& c,
+    map<string, module_type*>& buffers,
+    vector<string>& index_variables) {
+  assert(false);
+  return nullptr;
+}
