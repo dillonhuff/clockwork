@@ -230,6 +230,7 @@ class UBuffer {
     std::map<string, AccessPattern> access_pattern;
 
     map<pair<string, string>, stack_bank > stack_banks;
+    map<string, selector> selectors;
 
     void replace_bank(stack_bank& target, stack_bank& replacement) {
       for (auto bnk : stack_banks) {

@@ -11,6 +11,9 @@ using namespace std;
 #define INT_INF 999999
 
 namespace minihls {
+
+  class context;
+
   static inline
     std::string str(const int i) {
       return to_string(i);
@@ -389,6 +392,7 @@ namespace minihls {
 
     public:
 
+    context* context;
     micro_architecture arch;
     string name;
 
@@ -708,7 +712,7 @@ namespace minihls {
       return inst;
     }
 
-    module_instance* add_inst(const std::string& name, module_type* tp) {
+    module_instance* add_module_instance(const std::string& name, module_type* tp) {
       auto inst = new module_instance();
       inst->name = name;
       inst->tp = tp;
@@ -743,6 +747,19 @@ namespace minihls {
       return out;
     }
 
+  class context {
+
+    map<string, block*> blocks;
+
+    block* add_block(const std::string& name) {
+      auto blk = new block();
+      blk->name = name;
+      blk->context = this;
+      blocks[name] = blk;
+      return blk;
+    }
+  };
+
   static inline
     void schedule_block(block& blk) {
       blk.make_schedule();
@@ -759,7 +776,7 @@ namespace minihls {
             cout << "Trying binding: " << binding->get_name() << endl;
 
             if (binding->target_instr() == instr->get_type()) {
-              instr->bind_unit(blk.add_inst(
+              instr->bind_unit(blk.add_module_instance(
                     blk.unique_name(instr->get_name()),
                     binding->mod_type()));
               instr->bind_procedure(binding);

@@ -1000,7 +1000,7 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
   return buf.name + "." + value_str;
 }
 
-void generate_select(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
+selector generate_select(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
   selector sel = generate_select_decl(options, out, outpt, buf);
 
   //auto lex_max_events = get_lexmax_events(outpt, buf);
@@ -1027,27 +1027,7 @@ void generate_select(CodegenOptions& options, std::ostream& out, const string& o
   out << "\treturn value_" << inpt << ";" << endl;
   out << "}" << endl << endl;
 
-  minihls::block blk;
-  vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
-  for (auto pt : sel.vars) {
-    ports.push_back(minihls::inpt(pt, 32));
-  }
-  ports.push_back(minihls::outpt("out", 32));
-
-  ostringstream body;
-  for (int i = 0; i < sel.bank_conditions.size(); i++) {
-    body << tab(1) << "always @(*) begin" << endl;
-    body << tab(2) << "if (" << sel.bank_conditions.at(i) << ") begin" << endl;
-    body << tab(3) << "out = " << sel.inner_bank_offsets.at(i) << ";" << endl;
-    body << tab(2) << "end" << endl;
-    body << tab(1) << "end" << endl;
-  }
-  auto ubufmod =
-    blk.add_module_type(sel.name, ports, body.str());
-
-  ofstream buf_file("./verilog_output/" + sel.name + ".v");
-  buf_file << ubufmod->verilog_decl_string() << endl;
-  buf_file.close();
+  return sel;
 }
 
 void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
@@ -1144,11 +1124,12 @@ void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf)
   generate_code_prefix(options, out, buf);
 
   for (auto outpt : buf.get_out_ports()) {
-    generate_select(options, out, outpt, buf);
+    buf.selectors[outpt] = generate_select(options, out, outpt, buf);
   }
 
   generate_bundles(options, out, buf);
-  out << endl << endl;
+
+
 }
 
 void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
@@ -2725,10 +2706,38 @@ void generate_app_code(CodegenOptions& options,
     umap* schedmap,
     map<string, isl_set*>& domain_map) {
 
+  minihls::context minigen;
+
   ofstream conv_out(prg.name + ".cpp");
 
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
   for (auto& b : buffers) {
+    //minihls::block blk;
+    //blk.name = buf.name;
+    //for (auto osel : buf.selectors) {
+      //selector sel = osel.second;
+      //vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
+      //for (auto pt : sel.vars) {
+        //ports.push_back(minihls::inpt(pt, 32));
+      //}
+      //ports.push_back(minihls::outpt("out", 32));
+
+      //ostringstream body;
+      //for (int i = 0; i < sel.bank_conditions.size(); i++) {
+        //body << tab(1) << "always @(*) begin" << endl;
+        //body << tab(2) << "if (" << sel.bank_conditions.at(i) << ") begin" << endl;
+        //body << tab(3) << "out = " << sel.inner_bank_offsets.at(i) << ";" << endl;
+        //body << tab(2) << "end" << endl;
+        //body << tab(1) << "end" << endl;
+      //}
+      //auto ubufmod =
+        //blk.add_module_type(sel.name, ports, body.str());
+      //blk.add_module_instance("selector_" + sel.name,
+          //ubufmod);
+    //}
+
+    //compile(blk);
+    
     if (!prg.is_boundary(b.first)) {
       generate_hls_code(options, conv_out, b.second);
     }

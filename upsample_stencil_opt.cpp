@@ -2384,8 +2384,6 @@ inline hw_uint<288> Img_upsample_stencil_update_0_read_bundle_read(Img_cache& Im
 
 
 
-
-
 // Operation logic
 inline void upsample_stencil_update_0(Img_cache& Img, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */upsample_stencil, int d0, int d1) {
 	// Consume: Img
