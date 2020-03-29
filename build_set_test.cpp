@@ -991,7 +991,7 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
   return buf.name + "." + value_str;
 }
 
-void generate_selects(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
+void generate_select(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
   generate_select_decl(options, out, outpt, buf);
 
   auto lex_max_events = get_lexmax_events(outpt, buf);
@@ -1022,6 +1022,9 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     out << "}" << endl << endl;
     return;
   }
+
+  assert(false);
+
   cout << "Done" << endl;
   for (auto e : ms) {
     out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
@@ -1159,7 +1162,7 @@ void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf)
   generate_code_prefix(options, out, buf);
 
   for (auto outpt : buf.get_out_ports()) {
-    generate_selects(options, out, outpt, buf);
+    generate_select(options, out, outpt, buf);
   }
 
   generate_bundles(options, out, buf);
@@ -7450,6 +7453,7 @@ void application_tests() {
   //conv_app_rolled_reduce_test();
   //exposure_fusion_simple_average();
  
+  reduce_1d_test();
   mismatched_stencil_test();
   laplacian_pyramid_app_test();
   upsample_stencil_2d_test();
@@ -7469,7 +7473,6 @@ void application_tests() {
   jacobi_2d_test();
   parse_denoise3d_test();
 
-  reduce_1d_test();
 
   upsample_reduce_test();
 

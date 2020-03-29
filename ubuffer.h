@@ -9,6 +9,14 @@ enum bank_type {
   BANK_TYPE_RAM
 };
 
+struct select {
+  string buf_name;
+  string name;
+  vector<string> possible_banks;
+  vector<string> bank_conditions;
+  vector<string> inner_bank_offsets;
+};
+
 struct bank {
   std::string name;
   bank_type tp;
