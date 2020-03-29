@@ -5504,7 +5504,7 @@ struct App {
       cpy(validity);
 
     auto finite_domain = cpy(domain);
-    domain = unn(domain, isl_union_set_universe(cpy(domain)));
+    //domain = unn(domain, isl_union_set_universe(cpy(domain)));
     isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
     auto schedmap = its(isl_schedule_get_map(sched), finite_domain);
 
@@ -6659,7 +6659,8 @@ void exposure_fusion() {
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
   //lp.func2d("synthetic_exposure_fusion", "id", pt("in"));
-  int size = 1920;
+  int size = 64;
+  //1920;
   lp.realize_naive("pyramid_synthetic_exposure_fusion", size, size);
   lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
 
@@ -7454,8 +7455,8 @@ void application_tests() {
  
   //reduce_1d_test();
   exposure_fusion();
-  laplacian_pyramid_app_test();
   mismatched_stencil_test();
+  laplacian_pyramid_app_test();
   //assert(false);
   upsample_stencil_2d_test();
   //assert(false);
