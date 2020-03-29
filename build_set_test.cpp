@@ -867,14 +867,21 @@ bool is_optimizable_constant_dd(const string& inpt, const string& outpt, UBuffer
   return false;
 }
 
-void generate_select_decl(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
+selector generate_select_decl(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
+  isl_space* s = get_space(buf.domain.at(outpt));
+  auto dim_decls = space_var_decls(s);
+
+  selector sel;
+  sel.name = outpt + "_select";
+  sel.buf_name = buf.name;
+  sel.pt_type = buf.port_type_string();
+  sel.out_port = outpt;
+  sel.vars = space_var_args(s);
+
   out << "inline " + buf.port_type_string() + " " + outpt + "_select(";
   size_t nargs = 0;
   out << buf.name << "_cache& " << buf.name << ", ";
   nargs++;
-  cout << "Getting space..." << endl;
-  isl_space* s = get_space(buf.domain.at(outpt));
-  auto dim_decls = space_var_decls(s);
   out << sep_list(dim_decls, "", "", ", ");
 
   out << ") {" << endl;
@@ -882,6 +889,8 @@ void generate_select_decl(CodegenOptions& options, std::ostream& out, const stri
   //out << "#pragma HLS dependence array inter false" << endl;
   //out << "#endif //__VIVADO_SYNTH__" << endl;
   cout << "Created dim decls" << endl;
+
+  return sel;
 }
 
 void select_debug_assertions(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
@@ -992,7 +1001,7 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
 }
 
 void generate_select(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
-  generate_select_decl(options, out, outpt, buf);
+  selector sel = generate_select_decl(options, out, outpt, buf);
 
   auto lex_max_events = get_lexmax_events(outpt, buf);
 
@@ -1010,8 +1019,10 @@ void generate_select(CodegenOptions& options, std::ostream& out, const string& o
   if (possible_ports.size() == 1) {
     string inpt = possible_ports.at(0);
     string peeked_val = delay_string(options, inpt, outpt, buf);
-    string delay_expr = evaluate_dd(buf, outpt, inpt);
-    string simplified_peek_val = simplified_delay_string(options, inpt, outpt, buf);
+    //string delay_expr = evaluate_dd(buf, outpt, inpt);
+    //string simplified_peek_val = simplified_delay_string(options, inpt, outpt, buf);
+    sel.bank_conditions.push_back("1");
+    sel.inner_bank_offsets.push_back(peeked_val);
 
     //out << tab(1) << "cout << \"" << delay_expr << " = \" << (" << delay_expr << ") << endl;" << endl;
     //out << tab(1) << "cout << \"" << simplified_peek_val << " = \" << (" << simplified_peek_val<< ") << endl;" << endl;
@@ -1020,52 +1031,69 @@ void generate_select(CodegenOptions& options, std::ostream& out, const string& o
     out << "\tauto value_" << inpt << " = " << peeked_val << ";\n";
     out << "\treturn value_" << inpt << ";" << endl;
     out << "}" << endl << endl;
-    return;
-  }
+  } else {
 
-  assert(false);
+    //assert(false);
 
-  cout << "Done" << endl;
-  for (auto e : ms) {
-    out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
-  }
-
-  for (auto inpt : buf.get_in_ports()) {
-    string peeked_val = delay_string(options, inpt, outpt, buf);
-    string delay_expr = evaluate_dd(buf, outpt, inpt);
-    string simplified_peek_val = simplified_delay_string(options, inpt, outpt, buf);
-    //out << tab(1) << "assert((" << delay_expr << ") == (" << simplified_peek_val << "));" << endl;
-
-    if (options.internal) {
-      out << "\t// inpt: " << inpt << endl;
-      bool found_key = false;
-      string k_var = "";
-      for (auto k : ms) {
-        out << "\t// k = " << k.first << endl;
-        string prefix = buf.name + "_" + k.first;
-        if (is_prefix(prefix, inpt)) {
-          found_key = true;
-          k_var = k.first;
-        }
-      }
-      if (found_key) {
-        assert(k_var != "");
-        out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
-        out << "\tif (select_" + k_var + ") { return value_"+ inpt + "; }\n";
-      } else {
-        out << "//\tNo key for: " << inpt << endl;
-      }
-    } else {
-      if (contains_key(inpt, ms)) {
-        out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
-        out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
-      }
-
+    cout << "Done" << endl;
+    for (auto e : ms) {
+      out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
     }
+
+    for (auto inpt : buf.get_in_ports()) {
+      string peeked_val = delay_string(options, inpt, outpt, buf);
+      string delay_expr = evaluate_dd(buf, outpt, inpt);
+      string simplified_peek_val = simplified_delay_string(options, inpt, outpt, buf);
+      //out << tab(1) << "assert((" << delay_expr << ") == (" << simplified_peek_val << "));" << endl;
+
+      if (options.internal) {
+        out << "\t// inpt: " << inpt << endl;
+        bool found_key = false;
+        string k_var = "";
+        for (auto k : ms) {
+          out << "\t// k = " << k.first << endl;
+          string prefix = buf.name + "_" + k.first;
+          if (is_prefix(prefix, inpt)) {
+            found_key = true;
+            k_var = k.first;
+          }
+        }
+        if (found_key) {
+          assert(k_var != "");
+          sel.bank_conditions.push_back("select_" + k_var);
+          sel.inner_bank_offsets.push_back(peeked_val);
+          out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
+          out << "\tif (select_" + k_var + ") { return value_"+ inpt + "; }\n";
+        } else {
+          out << "//\tNo key for: " << inpt << endl;
+        }
+      } else {
+        if (contains_key(inpt, ms)) {
+          sel.bank_conditions.push_back("select_" + inpt);
+          sel.inner_bank_offsets.push_back(peeked_val);
+          out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
+          out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
+        }
+
+      }
+    }
+
+    select_debug_assertions(options, out, outpt, buf);
+    out << "}" << endl << endl;
+  }
+  minihls::block blk;
+  vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
+  for (auto pt : sel.vars) {
+    ports.push_back(minihls::inpt(pt, 32));
   }
 
-  select_debug_assertions(options, out, outpt, buf);
-  out << "}" << endl << endl;
+  auto ubufmod =
+    blk.add_module_type(sel.name, ports);
+
+  cout << "Creating verilog for " << buf.name << endl;
+  ofstream buf_file("./verilog_output/" + sel.name + ".v");
+  buf_file << ubufmod->verilog_decl_string() << endl;
+  buf_file.close();
 }
 
 void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) {

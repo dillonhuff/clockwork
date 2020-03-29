@@ -9,10 +9,12 @@ enum bank_type {
   BANK_TYPE_RAM
 };
 
-struct select {
+struct selector {
   string buf_name;
+  string pt_type;
+  string out_port;
   string name;
-  vector<string> possible_banks;
+  vector<string> vars;
   vector<string> bank_conditions;
   vector<string> inner_bank_offsets;
 };
