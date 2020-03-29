@@ -926,6 +926,8 @@ namespace minihls {
               out << tab(1) << "assign " << m->get_name() + "_" + pt.name + " = clk;" << endl;
             } else if (pt.name == "rst") {
               out << tab(1) << "assign " << m->get_name() + "_" + pt.name + " = rst;" << endl;
+            } else if (pt.name == "start") {
+              out << tab(1) << "assign " << m->get_name() + "_" + pt.name + " = start;" << endl;
             }
           }
         }

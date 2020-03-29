@@ -2853,8 +2853,8 @@ void generate_app_code(CodegenOptions& options,
   }
 
   compile(*main_blk);
-  cout << "Just compiled " << main_blk->get_name() << endl;
-  assert(false);
+  //cout << "Just compiled " << main_blk->get_name() << endl;
+  //assert(false);
 
   for (auto op : prg.all_ops()) {
     regex re("\n\t\\s+" + op->name + "\\((.*)\\);");
