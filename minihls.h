@@ -12,7 +12,8 @@ using namespace std;
 
 namespace minihls {
 
-  class context;
+  class module_type;
+  class block;
 
   static inline
     std::string str(const int i) {
@@ -107,12 +108,41 @@ namespace minihls {
       return {s, w, true};
     }
 
+  static inline
+    port reverse(const port p) {
+      return {p.name, p.width, !p.is_in};
+    }
+
+  class context {
+
+    map<string, block*> blocks;
+
+    public:
+
+    map<string, module_type*> module_types;
+
+    module_type* add_module_type(const std::string& name, const vector<port>& pts, const std::string& body);
+
+    module_type* compile(block* const blkc);
+
+    block* add_block(const std::string& name);
+  };
+
   class module_type {
     public:
 
       string name;
       vector<port> ports;
       string body;
+
+      bool has_port(const std::string& pname) const {
+        for (auto p : ports) {
+          if (p.name == pname) {
+            return true;
+          }
+        }
+        return false;
+      }
 
       port get_port(const std::string& pname) const {
         for (auto p : ports) {
@@ -149,6 +179,17 @@ namespace minihls {
       bool internal;
 
       module_type* get_type() const { return tp; }
+
+      bool has_port(const std::string& name) const {
+        return tp->has_port(name);
+      }
+
+      port external(const port pt) const {
+        assert(has_port(pt.name));
+        port rev = reverse(pt);
+        rev.name = get_name() + "_" + rev.name;
+        return rev;
+      }
 
       port get_port(const string& n) const {
         for (auto p : tp->ports) {
@@ -384,7 +425,6 @@ namespace minihls {
 
     map<string, instr*> instrs;
     map<string, module_instance*> instances;
-    map<string, module_type*> module_types;
     map<string, instruction_binding*> instruction_bindings;
     map<string, instruction_type*> instruction_types;
 
@@ -397,6 +437,8 @@ namespace minihls {
     string name;
 
     block() : un(0) {}
+
+    string get_name() const { return name; }
 
     void eq(const string& a, const string& b, const int d) {
       extra_constraints.push_back({a, b, d});
@@ -675,32 +717,27 @@ namespace minihls {
 
     set<module_type*> module_type_set() const {
       set<module_type*> ms;
-      for (auto mt : module_types) {
+      for (auto mt : context->module_types) {
         ms.insert(mt.second);
       }
       return ms;
     }
 
-    module_type* add_module_type(const std::string& name, const vector<port>& pts) {
-      return add_module_type(name, pts, "");
+    module_type* add_module_type(const std::string& name, const vector<port>& pts, const std::string& body) {
+      return context->add_module_type(name, pts, body);
     }
 
-    module_type* add_module_type(const std::string& name, const vector<port>& pts, const std::string& body) {
-      auto inst = new module_type();
-      inst->name = name;
-      inst->ports = pts;
-      inst->body = body;
-      module_types[name] = inst;
-      return inst;
+    module_type* add_module_type(const std::string& name, const vector<port>& pts) {
+      return context->add_module_type(name, pts, "");
     }
 
     module_type* get_module_type(const std::string& name) const {
       assert(has_module_type(name));
-      return map_find(name, module_types);
+      return map_find(name, context->module_types);
     }
 
     bool has_module_type(const std::string& name) const {
-      return contains_key(name, module_types);
+      return contains_key(name, context->module_types);
     }
 
     module_instance* add_external_inst(const std::string& name, module_type* tp) {
@@ -746,22 +783,6 @@ namespace minihls {
 
       return out;
     }
-
-  class context {
-
-    map<string, block*> blocks;
-
-    public:
-
-
-    block* add_block(const std::string& name) {
-      auto blk = new block();
-      blk->name = name;
-      blk->context = this;
-      blocks[name] = blk;
-      return blk;
-    }
-  };
 
   static inline
     void schedule_block(block& blk) {

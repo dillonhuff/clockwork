@@ -2711,8 +2711,12 @@ void generate_app_code(CodegenOptions& options,
   ofstream conv_out(prg.name + ".cpp");
 
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
-  map<string, minihls::module_instance*> buffer_mods;
+  map<string, minihls::module_type*> buffer_mods;
   for (auto& b : buffers) {
+    if (!prg.is_boundary(b.first)) {
+      generate_hls_code(options, conv_out, b.second);
+    }
+
     minihls::block* blk = minigen.add_block(b.first);
     for (auto osel : b.second.selectors) {
       selector sel = osel.second;
@@ -2736,16 +2740,13 @@ void generate_app_code(CodegenOptions& options,
           ubufmod);
     }
 
-    buffer_mods[b.name] = minigen.compile(blk);
+    buffer_mods[b.first] = minigen.compile(blk);
     
-    if (!prg.is_boundary(b.first)) {
-      generate_hls_code(options, conv_out, b.second);
-    }
   }
 
   conv_out << endl << endl;
   conv_out << "// Operation logic" << endl;
-  map<string, minihls::module_instance*> operation_mods;
+  map<string, minihls::module_type*> operation_mods;
   for (auto op : prg.all_ops()) {
     minihls::block* blk = minigen.add_block(op->name);
     operation_mods[op->name] = minigen.compile(blk);
@@ -2842,7 +2843,7 @@ void generate_app_code(CodegenOptions& options,
   string original_isl_code_string = code_string;
 
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
-  auto main_blk = minigen.block(prg.name);
+  auto main_blk = minigen.add_block(prg.name);
   for (auto b : buffer_mods) {
     main_blk->add_module_instance("buf_" + b.second->get_name(), b.second);
   }
@@ -2850,6 +2851,10 @@ void generate_app_code(CodegenOptions& options,
   for (auto b : operation_mods) {
     main_blk->add_module_instance("op_" + b.second->get_name(), b.second);
   }
+
+  compile(*main_blk);
+  cout << "Just compiled " << main_blk->get_name() << endl;
+  assert(false);
 
   for (auto op : prg.all_ops()) {
     regex re("\n\t\\s+" + op->name + "\\((.*)\\);");
