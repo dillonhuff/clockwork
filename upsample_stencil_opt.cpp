@@ -2401,7 +2401,6 @@ inline void Img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */
 	Img_Img_update_0_write_bundle_write(compute_result, Img, d0, d1);
 }
 
-#ifndef __SYSTEMC_SYNTH__
 // Driver function
 void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Img_off, HWStream<hw_uint<32> >& /* get_args num ports = 1 */upsample_stencil) {
   Img_cache Img;
@@ -2457,6 +2456,3 @@ void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Im
 	  }
 	
 }
-#else // __SYSTEMC_SYNTH__
-
-#endif //__SYSTEMC_SYNTH__

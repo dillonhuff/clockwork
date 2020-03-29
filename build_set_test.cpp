@@ -7426,7 +7426,7 @@ void application_tests() {
  
   //reduce_1d_test();
   mismatched_stencil_test();
-  assert(false);
+  //assert(false);
   laplacian_pyramid_app_test();
   upsample_stencil_2d_test();
   //assert(false);
