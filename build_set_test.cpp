@@ -2711,32 +2711,32 @@ void generate_app_code(CodegenOptions& options,
   ofstream conv_out(prg.name + ".cpp");
 
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
+  map<string, minihls::module_instance*> buffer_mods;
   for (auto& b : buffers) {
-    //minihls::block blk;
-    //blk.name = buf.name;
-    //for (auto osel : buf.selectors) {
-      //selector sel = osel.second;
-      //vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
-      //for (auto pt : sel.vars) {
-        //ports.push_back(minihls::inpt(pt, 32));
-      //}
-      //ports.push_back(minihls::outpt("out", 32));
+    minihls::block* blk = minigen.add_block(b.first);
+    for (auto osel : b.second.selectors) {
+      selector sel = osel.second;
+      vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
+      for (auto pt : sel.vars) {
+        ports.push_back(minihls::inpt(pt, 32));
+      }
+      ports.push_back(minihls::outpt("out", 32));
 
-      //ostringstream body;
-      //for (int i = 0; i < sel.bank_conditions.size(); i++) {
-        //body << tab(1) << "always @(*) begin" << endl;
-        //body << tab(2) << "if (" << sel.bank_conditions.at(i) << ") begin" << endl;
-        //body << tab(3) << "out = " << sel.inner_bank_offsets.at(i) << ";" << endl;
-        //body << tab(2) << "end" << endl;
-        //body << tab(1) << "end" << endl;
-      //}
-      //auto ubufmod =
-        //blk.add_module_type(sel.name, ports, body.str());
-      //blk.add_module_instance("selector_" + sel.name,
-          //ubufmod);
-    //}
+      ostringstream body;
+      for (int i = 0; i < sel.bank_conditions.size(); i++) {
+        body << tab(1) << "always @(*) begin" << endl;
+        body << tab(2) << "if (" << sel.bank_conditions.at(i) << ") begin" << endl;
+        body << tab(3) << "out = " << sel.inner_bank_offsets.at(i) << ";" << endl;
+        body << tab(2) << "end" << endl;
+        body << tab(1) << "end" << endl;
+      }
+      auto ubufmod =
+        blk->add_module_type(sel.name, ports, body.str());
+      blk->add_module_instance("selector_" + sel.name,
+          ubufmod);
+    }
 
-    //compile(blk);
+    buffer_mods[b.name] = minigen.compile(blk);
     
     if (!prg.is_boundary(b.first)) {
       generate_hls_code(options, conv_out, b.second);
@@ -2745,7 +2745,11 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out << endl << endl;
   conv_out << "// Operation logic" << endl;
+  map<string, minihls::module_instance*> operation_mods;
   for (auto op : prg.all_ops()) {
+    minihls::block* blk = minigen.add_block(op->name);
+    operation_mods[op->name] = minigen.compile(blk);
+
     vector<string> buf_srcs;
     concat(buf_srcs, buffer_args(buffers, op, prg));
 
@@ -2838,6 +2842,15 @@ void generate_app_code(CodegenOptions& options,
   string original_isl_code_string = code_string;
 
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
+  auto main_blk = minigen.block(prg.name);
+  for (auto b : buffer_mods) {
+    main_blk->add_module_instance("buf_" + b.second->get_name(), b.second);
+  }
+
+  for (auto b : operation_mods) {
+    main_blk->add_module_instance("op_" + b.second->get_name(), b.second);
+  }
+
   for (auto op : prg.all_ops()) {
     regex re("\n\t\\s+" + op->name + "\\((.*)\\);");
     string args_list = sep_list(buffer_arg_names(buffers, op, prg), "", "", ", ");

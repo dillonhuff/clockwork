@@ -751,6 +751,9 @@ namespace minihls {
 
     map<string, block*> blocks;
 
+    public:
+
+
     block* add_block(const std::string& name) {
       auto blk = new block();
       blk->name = name;
