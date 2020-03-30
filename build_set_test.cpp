@@ -2763,6 +2763,7 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
       comma_list(arg_names) << ");" << endl;
   }
 
+  conv_out << tab(1) << "*global_debug_handle << \"" << op->name << ",\" << compute_result << endl;" << endl;
   conv_out << "}" << endl << endl;
 
   return kernel;
@@ -2840,6 +2841,11 @@ void generate_app_code(CodegenOptions& options,
 
   ofstream conv_out(prg.name + ".cpp");
 
+  conv_out << "#include <fstream>" << endl;
+  conv_out << "using namespace std;" << endl << endl;
+  conv_out << tab(1) << "// Debug utility" << endl;
+  conv_out << tab(1) << "ofstream* global_debug_handle;" << endl << endl;
+
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
@@ -2857,7 +2863,11 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out << "// Driver function" << endl;
   string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
-  conv_out << "void " << prg.name << arg_buffers << " {" << endl;
+  conv_out << "void " << prg.name << arg_buffers << " {" << endl << endl;
+
+  conv_out << tab(1) << "ofstream debug_file(\"" << prg.name + "_debug.csv\");" << endl;
+  conv_out << tab(1) << "global_debug_handle = &debug_file;" << endl;
+
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
       conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
@@ -2892,6 +2902,7 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out << code_string << endl;
 
+  conv_out << tab(1) << "debug_file.close();" << endl;
   conv_out << "}" << endl;
 
   generate_app_code_header(buffers, prg);
@@ -7490,6 +7501,7 @@ void application_tests() {
   //exposure_fusion_simple_average();
  
   //reduce_1d_test();
+  denoise2d_test();
   mismatched_stencil_test();
   jacobi_2d_app_test();
   grayscale_conversion_test();
@@ -7508,7 +7520,6 @@ void application_tests() {
   updown_merge_test();
   sobel_test();
 
-  denoise2d_test();
 
   exposure_fusion();
   laplacian_pyramid_app_test();
