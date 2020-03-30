@@ -44,7 +44,7 @@ map<string, int> maximize(const std::vector<QConstraint>& constraints, QExpr& ob
 
   cout << "Objective: " << str(obj_func) << endl;
   cout << "Legal values: " << str(legal_delays) << endl;
-  cout << "Legal value example point: " << str(isl_set_sample_point(legal_delays)) << endl;
+  cout << "Legal value example point: " << str(isl_set_sample_point(cpy(legal_delays))) << endl;
 
   auto min_point =
     isl_set_max_val(cpy(legal_delays), obj_func);

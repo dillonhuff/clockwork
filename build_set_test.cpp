@@ -5756,7 +5756,8 @@ struct App {
     fill_data_domain(name, d0, d1, unroll_factor);
     fill_compute_domain(unroll_factor);
 
-    umap* m = schedule_isl();
+    umap* m =
+      schedule_isl();
       //schedule_naive();
 
     cout << "Schedule: " << str(m) << endl;
@@ -5765,7 +5766,7 @@ struct App {
 
     CodegenOptions options;
     options.internal = true;
-    options.all_rams = true;
+    //options.all_rams = true;
 
     prog prg;
     prg.name = name + "_naive";
@@ -6659,7 +6660,7 @@ void exposure_fusion() {
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
   //lp.func2d("synthetic_exposure_fusion", "id", pt("in"));
-  int size = 32;
+  int size = 1920;
   //1920;
   lp.realize_naive("pyramid_synthetic_exposure_fusion", size, size);
   lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
@@ -6735,9 +6736,9 @@ void laplacian_pyramid_app_test() {
 
   lp.func2d("blended", "blend_levels", blended);
 
-  int blend_dims = 32;
-  lp.realize("blended", 32, 32, 1);
-  lp.realize_naive("blended", 32, 32);
+  int size = 32;
+  lp.realize("blended", size, size, 1);
+  lp.realize_naive("blended", size, size);
 
   std::vector<std::string> naive =
     run_regression_tb("blended_naive");
@@ -7490,9 +7491,9 @@ void application_tests() {
  
   //reduce_1d_test();
   exposure_fusion();
+  laplacian_pyramid_app_test();
   jacobi_2d_app_test();
   mismatched_stencil_test();
-  laplacian_pyramid_app_test();
   //assert(false);
   upsample_stencil_2d_test();
   //assert(false);

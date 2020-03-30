@@ -464,6 +464,7 @@ compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstrain
   QConstraint cc = eq(qexpr("d_" + target_func), 0);
   delay_constraints.push_back(cc);
   map<string, int> delays =
+    //minimize(delay_constraints, objective_expr);
     maximize(delay_constraints, objective_expr);
   assert(delays.size() == sorted_functions.size());
 
