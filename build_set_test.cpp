@@ -6659,7 +6659,7 @@ void exposure_fusion() {
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
   //lp.func2d("synthetic_exposure_fusion", "id", pt("in"));
-  int size = 64;
+  int size = 32;
   //1920;
   lp.realize_naive("pyramid_synthetic_exposure_fusion", size, size);
   lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
@@ -6782,11 +6782,57 @@ void gaussian_pyramid_app_test() {
   //assert(false);
 }
 
+App sobel(const std::string output_name) {
+  App sobel;
+  sobel.func2d("off_chip_img");
+  sobel.func2d("img", "id", "off_chip_img", {1, 1}, {{0, 0}});
+  sobel.func2d("mag_x", "sobel_mx", "img", {1, 1},
+      {{1, -1}, {-1, -1}, {1, 0}, {-1, 0}, {1, 1}, {-1, 1}});
+  sobel.func2d("mag_y", "sobel_my", "img", {1, 1},
+      {{-1, 1}, {-1, -1}, {0, 1}, {0, -1}, {1, 1}, {1, -1}});
+
+  Window xwindow{"mag_x", {1, 1}, {{0, 0}}};
+  Window ywindow{"mag_y", {1, 1}, {{0, 0}}};
+  sobel.func2d("mag", "mag_cu", {xwindow, ywindow});
+
+  return sobel;
+}
+
+App seidel(const std::string output_name) {
+  App jac;
+  jac.func2d("input_arg");
+  jac.func2d("input", "id", pt("input_arg"));
+  jac.func2d("tmp", "seidel_tmp_comp", "input", {1, 1}, {{-1, 0}, {0, 0}, {1, 0}});
+  jac.func2d(output_name, "seidel_output_comp", "input", {1, 1}, {{0, -1}, {0, 0}, {0, 1}});
+  return jac;
+}
+
+App blurxy(const std::string output_name) {
+  App jac;
+  jac.func2d("input_arg");
+  jac.func2d("input", "id", pt("input_arg"));
+  jac.func2d("blurx", "blurx_comp", "input", {1, 1}, {{0, 0}, {0, 1}, {0, 2}});
+  jac.func2d(output_name, "blury_comp", "input", {1, 1}, {{0, 0}, {1, 0}, {2, 0}});
+  return jac;
+}
+
 App jacobi2d(const std::string output_name) {
   App jac;
   jac.func2d("t1_arg");
   jac.func2d("t1", "id", pt("t1_arg"));
   jac.func2d(output_name, "jacobi2d_compute", "t1", {1, 1}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
+  return jac;
+}
+
+App jacobi3d(const std::string output_name) {
+  App jac;
+  jac.func2d("t1_arg");
+  jac.func2d("t1", "id", pt("t1_arg"));
+  jac.func2d(output_name, "jacobi3d_compute", "t1", {1, 1, 1},
+      {{0, 0, 0},
+      {1, 0, 0}, {-1, 0, 0}, 
+      {0, 1, 0}, {0, -1, 0}, 
+      {0, 0, 1}, {0, 0, -1}});
   return jac;
 }
 
@@ -6906,7 +6952,7 @@ void jacobi_2d_app_test() {
     jacobi2d(out_name).realize(out_name, 1024, 1024, unroll_factor);
   }
 
-  assert(false);
+  //assert(false);
 }
 
 void denoise2d_test() {
@@ -7015,20 +7061,9 @@ void conv3x3_app_test() {
 }
 
 void sobel_test() {
-  App sobel;
+  App sobela = sobel("mag");
 
-  sobel.func2d("off_chip_img");
-  sobel.func2d("img", "id", "off_chip_img", {1, 1}, {{0, 0}});
-  sobel.func2d("mag_x", "sobel_mx", "img", {1, 1},
-      {{1, -1}, {-1, -1}, {1, 0}, {-1, 0}, {1, 1}, {-1, 1}});
-  sobel.func2d("mag_y", "sobel_my", "img", {1, 1},
-      {{-1, 1}, {-1, -1}, {0, 1}, {0, -1}, {1, 1}, {1, -1}});
-
-  Window xwindow{"mag_x", {1, 1}, {{0, 0}}};
-  Window ywindow{"mag_y", {1, 1}, {{0, 0}}};
-  sobel.func2d("mag", "mag_cu", {xwindow, ywindow});
-
-  sobel.realize("mag", 30, 30, 1);
+  sobela.realize("mag", 30, 30, 1);
 
   int res = system("g++ -std=c++11 -c mag_opt.cpp");
   assert(res == 0);
@@ -7454,8 +7489,8 @@ void application_tests() {
   //exposure_fusion_simple_average();
  
   //reduce_1d_test();
-  jacobi_2d_app_test();
   exposure_fusion();
+  jacobi_2d_app_test();
   mismatched_stencil_test();
   laplacian_pyramid_app_test();
   //assert(false);
