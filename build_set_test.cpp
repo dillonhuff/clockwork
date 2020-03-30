@@ -2346,7 +2346,6 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       cout << "Domain retrace from access pattern: " << str(domain_from_acc_pt) << endl;
       auto acc_map_from_acc_pt = acc_pt.get_access_map(buf.ctx);
       cout << "Access map retrace from access pattern: " << str(acc_map_from_acc_pt) << endl;
-      assert(false);
 
       vector<string> inpt = buf.get_in_ports();
       cout << "current in port name: " << endl;

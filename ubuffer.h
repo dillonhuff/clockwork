@@ -59,7 +59,6 @@ class AccessPattern {
           }
           auto vars = sep_list(var_list, "[", "]", "," );
           auto ds = sep_list(bd_list, "", "", " and ");
-          cout << "Finished Create all essential" << endl;
           return isl_set_read_from_str(ctx, string("{ " + op_name + vars + " : " + ds + "}").c_str());
       }
 
@@ -515,7 +514,7 @@ class UBuffer {
         isl_union_map* sched) {
       domain[name] = dm;
       access_map[name] = to_umap(access);
-      schedule[name] = (sched);
+      schedule[name] = NULL;
       isIn[name] = true;
     }
 
@@ -525,7 +524,7 @@ class UBuffer {
       domain[name] = acc_pattern.get_domain(ctx);
       access_map[name] = acc_pattern.get_access_map(ctx);
       access_pattern[name] = acc_pattern;
-      //schedule[name] = (sched);
+      schedule[name] = NULL;
       isIn[name] = true;
     }
 
@@ -708,8 +707,8 @@ std::ostream& operator<<(std::ostream& out, UBuffer& buf) {
     out << "\t\t" << inpt << endl;
     out << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
     out << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
-    out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
-    out << "\t\t\tbuffer capacity: " << compute_max_dd(buf, inpt) << endl;
+    //out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
+    //out << "\t\t\tbuffer capacity: " << compute_max_dd(buf, inpt) << endl;
     out << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
     out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
   }
@@ -719,7 +718,7 @@ std::ostream& operator<<(std::ostream& out, UBuffer& buf) {
     out << "\t\t" << inpt << endl;
     out << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
     out << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
-    out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
+    //out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
     out << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
     out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
   }
