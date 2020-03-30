@@ -1,5 +1,6 @@
 #include "app.h"
 #include "ubuffer.h"
+#include "codegen.h"
 
 vector<int> parse_pt(isl_point* p) {
   assert(p != nullptr);
@@ -12,9 +13,10 @@ struct CodegenOptions {
   bool add_dependence_pragmas;
   bool use_custom_code_string;
   string code_string;
+  bool simplify_address_expressions;
 
   CodegenOptions() : internal(true), all_rams(false), add_dependence_pragmas(true),
-  use_custom_code_string(false), code_string("") {}
+  use_custom_code_string(false), code_string(""), simplify_address_expressions(false) {}
 
 };
 
@@ -353,6 +355,10 @@ int compute_dd_bound(UBuffer& buf, const std::string& read_port, const std::stri
 
 string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
   auto c = compute_dd(buf, read_port, write_port);
+  c = coalesce(c);
+  //c = simplify(c);
+  auto out_domain = buf.domain.at(read_port);
+  c = isl_union_pw_qpolynomial_gist(c, to_uset(out_domain));
 
   auto folds  = get_polynomials(c);
   if (folds.size() == 1) {
@@ -472,9 +478,9 @@ void generate_stack_cache(CodegenOptions& options,
         int dv = i;
         assert(dv >= 0);
         out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
-        out << "#ifdef __VIVADO_SYNTH__" << endl;
-        out << "#pragma HLS dependence variable=f inter false" << endl;
-        out << "#endif //__VIVADO_SYNTH__" << endl;
+        //out << "#ifdef __VIVADO_SYNTH__" << endl;
+        //out << "#pragma HLS dependence variable=f inter false" << endl;
+        //out << "#endif //__VIVADO_SYNTH__" << endl;
         out << "\t\treturn f.peek(" << dv <<");" << endl;
         out << "\t}" << endl << endl;
       }
@@ -534,9 +540,9 @@ void generate_stack_cache(CodegenOptions& options,
         int dv = end_inds[nind];
         assert(dv >= 0);
         out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
-        out << "#ifdef __VIVADO_SYNTH__" << endl;
-        out << "#pragma HLS dependence variable=f inter false" << endl;
-        out << "#endif //__VIVADO_SYNTH__" << endl;
+        //out << "#ifdef __VIVADO_SYNTH__" << endl;
+        //out << "#pragma HLS dependence variable=f inter false" << endl;
+        //out << "#endif //__VIVADO_SYNTH__" << endl;
         out << "\t\treturn " << p << ".back();" << endl;
         out << "\t}" << endl << endl;
         nind++;
@@ -844,37 +850,30 @@ bool is_optimizable_constant_dd(const string& inpt, const string& outpt, UBuffer
   return false;
 }
 
-void generate_select_decl(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
+selector generate_select_decl(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
+  isl_space* s = get_space(buf.domain.at(outpt));
+  auto dim_decls = space_var_decls(s);
+
+  selector sel;
+  sel.name = outpt + "_select";
+  sel.buf_name = buf.name;
+  sel.pt_type = buf.port_type_string();
+  sel.out_port = outpt;
+  sel.vars = space_var_args(s);
+
   out << "inline " + buf.port_type_string() + " " + outpt + "_select(";
   size_t nargs = 0;
   out << buf.name << "_cache& " << buf.name << ", ";
   nargs++;
-  cout << "Getting space..." << endl;
-  isl_space* s = get_space(buf.domain.at(outpt));
-  auto dim_decls = space_var_decls(s);
-  //assert(isl_space_is_set(s));
-  //cout << "Got set space: " << str(s) << endl;
-  //vector<string> dim_decls;
-  //for (int i = 0; i < num_dims(s); i++) {
-    //if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
-      //string dn = "d" + to_string(i);
-      //auto new_id = id(buf.ctx, dn);
-      //assert(new_id != nullptr);
-      //cout << "setting id: " << str(new_id) << endl;
-      //s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
-    //}
-
-    //assert(isl_space_has_dim_name(s, isl_dim_set, i));
-    //assert(isl_space_has_dim_id(s, isl_dim_set, i));
-    //dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
-  //}
   out << sep_list(dim_decls, "", "", ", ");
 
   out << ") {" << endl;
-  out << "#ifdef __VIVADO_SYNTH__" << endl;
-  out << "#pragma HLS dependence array inter false" << endl;
-  out << "#endif //__VIVADO_SYNTH__" << endl;
+  //out << "#ifdef __VIVADO_SYNTH__" << endl;
+  //out << "#pragma HLS dependence array inter false" << endl;
+  //out << "#endif //__VIVADO_SYNTH__" << endl;
   cout << "Created dim decls" << endl;
+
+  return sel;
 }
 
 void select_debug_assertions(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
@@ -885,15 +884,6 @@ void select_debug_assertions(CodegenOptions& options, std::ostream& out, const s
 
   assert(isl_space_is_set(s));
   for (int i = 0; i < num_dims(s); i++) {
-    //if (!isl_space_has_dim_id(s, isl_dim_set, i)) {
-      //string dn = "d" + to_string(i);
-      //auto new_id = id(buf.ctx, dn);
-      //assert(new_id != nullptr);
-      //cout << "setting id: " << str(new_id) << endl;
-      //s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
-    //}
-    //string name =
-      //str(isl_space_get_dim_id(s, isl_dim_set, i));
     offset_printouts.push_back("\" " + vars.at(i) + " = \" << " + vars.at(i) + " ");
   }
 
@@ -901,13 +891,69 @@ void select_debug_assertions(CodegenOptions& options, std::ostream& out, const s
   out << "\tassert(false);\n\treturn 0;\n";
 }
 
+string simplified_delay_string(CodegenOptions& options, const string& inpt, const string& outpt, UBuffer& buf) {
+  string bank = buf.bank_between(inpt, outpt);
+
+  auto out_domain = buf.domain.at(outpt);
+  cout << "Out domain: " << str(out_domain) << endl;
+  auto qpd = compute_dd(buf, outpt, inpt);
+  cout << "Pieces of " << str(qpd) << endl;
+  auto pieces = get_pieces(qpd);
+  map<isl_set*, isl_qpolynomial*> simplified_pieces;
+  for (auto p : pieces) {
+    isl_set* simplified = cpy(p.first);
+    //isl_set_gist(cpy(p.first), cpy(out_domain));
+    //isl_set* simplified = isl_set_gist(cpy(p.first), cpy(out_domain));
+
+    //isl_set* simplified = universe(get_space(out_domain));
+    //auto orig = coalesce(p);
+    //cout << tab(1) << str(orig) << " -> " << str(p.second) << endl << endl;
+    //cout << tab(1) << "Constraints..." << endl;
+    //auto cs = constraints(orig);
+    //for (auto c : cs) {
+      //cout << tab(2) << str(c) << endl;
+      //isl_set* cs = isl_set_universe(get_space(out_domain));
+      //cs = add_constraint(cs, c);
+
+      //cout << tab(3) << "set: " << str(cs) << endl;
+      ////if (subset(out_domain, cs)) {
+        ////cout << tab(4) << " IS REDUNDANT" << endl;
+      ////} else {
+        ////simplified = add_constraint(simplified, c);
+      ////}
+      //simplified = add_constraint(simplified, c);
+    //}
+    cout << "simplified; " << str(simplified) << endl;
+    assert(!empty(simplified));
+    simplified_pieces[simplified] = cpy(p.second);
+  }
+
+  //if (options.simplify_address_expressions) {
+  string simple_addr_str = "0";
+  cout << "Simplified pieces" << endl;
+  for (auto p : simplified_pieces) {
+    cout << tab(1) << str(p.first) << " -> " << str(p.second) << endl << endl;
+    simple_addr_str = "(" + codegen_c(p.first) + " ? " + codegen_c(p.second) + " : " + simple_addr_str + ")";
+    if (subset(out_domain, p.first)) {
+      simple_addr_str = codegen_c(p.second);
+      break;
+      //return buf.name + "." + bank + ".peek(/* simplified address string */" + codegen_c(p.second) + ")";
+    }
+  }
+
+  return simple_addr_str;
+}
+
 string delay_string(CodegenOptions& options, const string& inpt, const string& outpt, UBuffer& buf) {
 
   string bank = buf.bank_between(inpt, outpt);
 
   auto out_domain = buf.domain.at(outpt);
+  cout << "Out domain: " << str(out_domain) << endl;
   auto qpd = compute_dd(buf, outpt, inpt);
+  cout << "Pieces of " << str(qpd) << endl;
   auto pieces = get_pieces(qpd);
+  //assert(false);
 
   string dx = to_string(int_upper_bound(qpd));
   string delay_expr = evaluate_dd(buf, outpt, inpt);
@@ -937,14 +983,14 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
   return buf.name + "." + value_str;
 }
 
-void generate_selects(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
-  generate_select_decl(options, out, outpt, buf);
+selector generate_select(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
+  selector sel = generate_select_decl(options, out, outpt, buf);
 
-  auto lex_max_events = get_lexmax_events(outpt, buf);
+  //auto lex_max_events = get_lexmax_events(outpt, buf);
 
-  cout << "Lexmax events: " << str(lex_max_events) << endl;
-  map<string, string> ms = umap_codegen_c(lex_max_events);
-  out << "\t// lexmax events: " << str(lex_max_events) << endl;
+  //cout << "Lexmax events: " << str(lex_max_events) << endl;
+  //map<string, string> ms = umap_codegen_c(lex_max_events);
+  //out << "\t// lexmax events: " << str(lex_max_events) << endl;
   out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
   vector<string> possible_ports;
   for (auto pt : buf.get_in_ports()) {
@@ -953,53 +999,18 @@ void generate_selects(CodegenOptions& options, std::ostream& out, const string& 
     }
   }
 
-  if (possible_ports.size() == 1) {
-    string inpt = possible_ports.at(0);
-    string peeked_val = delay_string(options, inpt, outpt, buf);
+  assert(possible_ports.size() == 1);
 
-    out << "\tauto value_" << inpt << " = " << peeked_val << ";\n";
-    out << "\treturn value_" << inpt << ";" << endl;
-    out << "}" << endl << endl;
-    return;
-  }
-  cout << "Done" << endl;
-  for (auto e : ms) {
-    out << "\tbool select_" << e.first << " = " << e.second << ";" << endl;
-  }
+  string inpt = possible_ports.at(0);
+  string peeked_val = delay_string(options, inpt, outpt, buf);
+  sel.bank_conditions.push_back("1");
+  sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, inpt));
 
-  for (auto inpt : buf.get_in_ports()) {
-    string peeked_val = delay_string(options, inpt, outpt, buf);
-
-    if (options.internal) {
-      out << "\t// inpt: " << inpt << endl;
-      bool found_key = false;
-      string k_var = "";
-      for (auto k : ms) {
-        out << "\t// k = " << k.first << endl;
-        string prefix = buf.name + "_" + k.first;
-        if (is_prefix(prefix, inpt)) {
-          found_key = true;
-          k_var = k.first;
-        }
-      }
-      if (found_key) {
-        assert(k_var != "");
-        out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
-        out << "\tif (select_" + k_var + ") { return value_"+ inpt + "; }\n";
-      } else {
-        out << "//\tNo key for: " << inpt << endl;
-      }
-    } else {
-      if (contains_key(inpt, ms)) {
-        out << "\tint value_" << inpt << " = " << peeked_val << ";\n";
-        out << "\tif (select_" + inpt + ") { return value_"+ inpt + "; }\n";
-      }
-
-    }
-  }
-
-  select_debug_assertions(options, out, outpt, buf);
+  out << "\tauto value_" << inpt << " = " << peeked_val << ";\n";
+  out << "\treturn value_" << inpt << ";" << endl;
   out << "}" << endl << endl;
+
+  return sel;
 }
 
 void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
@@ -1096,11 +1107,10 @@ void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf)
   generate_code_prefix(options, out, buf);
 
   for (auto outpt : buf.get_out_ports()) {
-    generate_selects(options, out, outpt, buf);
+    buf.selectors[outpt] = generate_select(options, out, outpt, buf);
   }
 
   generate_bundles(options, out, buf);
-  out << endl << endl;
 }
 
 void generate_hls_code_internal(std::ostream& out, UBuffer& buf) {
@@ -2671,6 +2681,157 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
   return buf_srcs;
 }
 
+compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<string, UBuffer>& buffers,
+    map<string, isl_set*>& domain_map) {
+
+  compute_kernel kernel;
+  kernel.name = op->name;
+  kernel.functional_unit = op->func;
+
+  vector<string> buf_srcs;
+  concat(buf_srcs, buffer_args(buffers, op, prg));
+
+  auto s = get_space(domain_map.at(op->name));
+  vector<string> dim_args;
+  for (auto a : space_var_args(s)) {
+    dim_args.push_back(a);
+    kernel.iteration_variables.push_back(a);
+  }
+  for (auto a : space_var_decls(s)) {
+    buf_srcs.push_back(a);
+  }
+
+  conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
+  vector<pair<string, string> > in_buffers;
+  set<string> distinct;
+  for (auto con : op->consume_locs) {
+    if (!elem(con.first, distinct)) {
+      in_buffers.push_back(con);
+      distinct.insert(con.first);
+    }
+  }
+
+  string res;
+  vector<string> buf_args;
+
+  for (auto ib : in_buffers) {
+    auto in_buffer = ib.first;
+    conv_out << "\t// Consume: " << in_buffer << endl;
+    string value_name = op->consumed_value_name(ib);
+    conv_out << "\tauto " << value_name << " = ";
+
+    string bundle_name = op->name + "_read";
+    kernel.input_buffers.push_back({in_buffer, bundle_name});
+
+    if (prg.is_boundary(in_buffer)) {
+      conv_out << in_buffer << ".read();" << endl;
+    } else {
+      vector<string> source_delays{in_buffer};
+      cout << "op = " << op->name << endl;
+      conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
+    }
+    buf_args.push_back(value_name);
+    res = value_name;
+  }
+
+  if (op->func != "") {
+    conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(buf_args) << ");" << endl;
+    res = "compute_result";
+  }
+
+  set<string> out_buffers;
+  for (auto con : op->produce_locs) {
+    out_buffers.insert(con.first);
+  }
+  assert(out_buffers.size() == 1);
+  string out_buffer = pick(out_buffers);
+
+  conv_out << "\t// Produce: " << out_buffer << endl;
+
+  string bundle_name = op->name + "_write";
+  kernel.output_buffer = {out_buffer, bundle_name};
+
+  if (prg.is_boundary(out_buffer)) {
+    conv_out << "\t" << out_buffer << ".write(" << res << ");" << endl;
+  } else {
+    assert(contains_key(out_buffer, buffers));
+
+    auto& buf = buffers.at(out_buffer);
+    vector<string> arg_names{res, buf.name};
+    concat(arg_names, dim_args);
+    conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" <<
+      comma_list(arg_names) << ");" << endl;
+  }
+
+  conv_out << "}" << endl << endl;
+
+  return kernel;
+}
+
+void generate_verilog_code(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    map<string, isl_set*>& domain_map,
+    vector<compute_kernel>& kernels) {
+
+  minihls::context minigen;
+
+  map<string, minihls::module_type*> buffer_mods;
+  for (auto& b : buffers) {
+    minihls::block* blk = minigen.add_block(b.first);
+    for (auto bank : b.second.get_banks()) {
+      minihls::module_type* bnk_mod =
+        gen_bank(*blk, bank);
+
+      blk->add_module_instance(bank.name,
+          bnk_mod);
+    }
+    for (auto osel : b.second.selectors) {
+      selector sel = osel.second;
+      vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
+      for (auto pt : sel.vars) {
+        ports.push_back(minihls::inpt(pt, 32));
+      }
+      ports.push_back(minihls::outpt("out", 32));
+
+      ostringstream body;
+      for (int i = 0; i < sel.bank_conditions.size(); i++) {
+        body << tab(1) << "always @(*) begin" << endl;
+        body << tab(2) << "if (" << sel.bank_conditions.at(i) << ") begin" << endl;
+        body << tab(3) << "out = " << sel.inner_bank_offsets.at(i) << ";" << endl;
+        body << tab(2) << "end" << endl;
+        body << tab(1) << "end" << endl;
+      }
+      auto ubufmod =
+        blk->add_module_type(sel.name, ports, body.str());
+      blk->add_module_instance("selector_" + sel.name,
+          ubufmod);
+    }
+
+    buffer_mods[b.first] = minigen.compile(blk);
+    
+  }
+
+  map<string, minihls::module_type*> operation_mods;
+  for (auto op : prg.all_ops()) {
+    minihls::block* blk = minigen.add_block(op->name);
+    operation_mods[op->name] = minigen.compile(blk);
+  }
+
+
+  auto main_blk = minigen.add_block(prg.name);
+  for (auto b : buffer_mods) {
+    main_blk->add_module_instance("buf_" + b.second->get_name(), b.second);
+  }
+
+  for (auto b : operation_mods) {
+    main_blk->add_module_instance("op_" + b.second->get_name(), b.second);
+  }
+
+  compile(*main_blk);
+}
+
 void generate_app_code(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -2684,82 +2845,16 @@ void generate_app_code(CodegenOptions& options,
     if (!prg.is_boundary(b.first)) {
       generate_hls_code(options, conv_out, b.second);
     }
+
   }
 
   conv_out << endl << endl;
   conv_out << "// Operation logic" << endl;
+  vector<compute_kernel> kernels;
   for (auto op : prg.all_ops()) {
-    vector<string> buf_srcs;
-    concat(buf_srcs, buffer_args(buffers, op, prg));
-
-    auto s = get_space(domain_map.at(op->name));
-    vector<string> dim_args;
-    for (auto a : space_var_args(s)) {
-      dim_args.push_back(a);
-    }
-    for (auto a : space_var_decls(s)) {
-      buf_srcs.push_back(a);
-    }
-
-    conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
-    vector<pair<string, string> > in_buffers;
-    set<string> distinct;
-    for (auto con : op->consume_locs) {
-      if (!elem(con.first, distinct)) {
-        in_buffers.push_back(con);
-        distinct.insert(con.first);
-      }
-    }
-
-    string res;
-    vector<string> buf_args;
-
-    for (auto ib : in_buffers) {
-      auto in_buffer = ib.first;
-      conv_out << "\t// Consume: " << in_buffer << endl;
-      string value_name = op->consumed_value_name(ib);
-      conv_out << "\tauto " << value_name << " = ";
-
-      if (prg.is_boundary(in_buffer)) {
-        conv_out << in_buffer << ".read();" << endl;
-      } else {
-        vector<string> source_delays{in_buffer};
-        cout << "op = " << op->name << endl;
-        conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
-      }
-      buf_args.push_back(value_name);
-      res = value_name;
-    }
-
-    if (op->func != "") {
-      conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(buf_args) << ");" << endl;
-      res = "compute_result";
-    }
-
-    set<string> out_buffers;
-    for (auto con : op->produce_locs) {
-      out_buffers.insert(con.first);
-    }
-    assert(out_buffers.size() == 1);
-    string out_buffer = pick(out_buffers);
-    conv_out << "\t// Produce: " << out_buffer << endl;
-
-    if (prg.is_boundary(out_buffer)) {
-      conv_out << "\t" << out_buffer << ".write(" << res << ");" << endl;
-    } else {
-      assert(contains_key(out_buffer, buffers));
-
-      auto& buf = buffers.at(out_buffer);
-      vector<string> arg_names{res, buf.name};
-      concat(arg_names, dim_args);
-      conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" <<
-        comma_list(arg_names) << ");" << endl;
-    }
-
-    conv_out << "}" << endl << endl;
+    kernels.push_back(generate_compute_op(conv_out, prg, op, buffers, domain_map));
   }
 
-  conv_out << "#ifndef __SYSTEMC_SYNTH__" << endl;
   conv_out << "// Driver function" << endl;
   string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
   conv_out << "void " << prg.name << arg_buffers << " {" << endl;
@@ -2781,10 +2876,10 @@ void generate_app_code(CodegenOptions& options,
   string original_isl_code_string = code_string;
 
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
+
   for (auto op : prg.all_ops()) {
     regex re("\n\t\\s+" + op->name + "\\((.*)\\);");
     string args_list = sep_list(buffer_arg_names(buffers, op, prg), "", "", ", ");
-    //conv_out << "// arg list for " << op->name << " = " << args_list << endl;
     code_string = regex_replace(code_string, re, "\n\t" + op->name + "(" + args_list + ", $1);");
   }
 
@@ -2799,42 +2894,8 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out << "}" << endl;
 
-  conv_out << "#else // __SYSTEMC_SYNTH__" << endl << endl;
-  conv_out << "#include <systemc.h>" << endl << endl;
-
-  conv_out << "// Driver module" << endl;
-  //string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
-  conv_out << "SC_MODULE(" << prg.name << ") {" << endl;
-  conv_out << tab(1) << "sc_in<bool> clk, rst;" << endl << endl;
-
-  for (auto& b : buffers) {
-    if (!prg.is_boundary(b.first)) {
-      conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
-      //conv_out << "#ifdef __VIVADO_SYNTH__" << endl;
-      //conv_out << "#pragma HLS dependence variable=" << b.second.name << " inter false" << endl;
-      //conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
-    }
-  }
-
-  conv_out << tab(1) << "SC_CTOR(" << prg.name << ") {" << endl;
-
-  conv_out << tab(1) << "}" << endl << endl;
-  conv_out << tab(1) << "void " << prg.name << "_process() {" << endl;
-  for (auto& b : buffers) {
-    if (!prg.is_boundary(b.first)) {
-      //conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
-      conv_out << "#ifdef __VIVADO_SYNTH__" << endl;
-      conv_out << "#pragma HLS dependence variable=" << b.second.name << " inter false" << endl;
-      conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
-    }
-  }
-  conv_out << code_string << endl;
-  conv_out << tab(1) << "}" << endl << endl;
-  conv_out << "};" << endl << endl;
-  conv_out << "#endif //__SYSTEMC_SYNTH__" << endl;
-
-
   generate_app_code_header(buffers, prg);
+  generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
 }
 
 void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap) {
@@ -5442,11 +5503,15 @@ struct App {
     isl_union_map *proximity =
       cpy(validity);
 
+    auto finite_domain = cpy(domain);
+    //domain = unn(domain, isl_union_set_universe(cpy(domain)));
     isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
-    auto schedmap = its(isl_schedule_get_map(sched), domain);
+    auto schedmap = its(isl_schedule_get_map(sched), finite_domain);
 
     assert(schedmap != nullptr);
     cout << "Final isl schedule: " << str(schedmap) << endl;
+    cout << "C code; " << codegen_c(schedmap) << endl;
+    //assert(false);
     
     isl_options_set_schedule_algorithm(ctx, ISL_SCHEDULE_ALGORITHM_ISL);
 
@@ -5898,6 +5963,7 @@ struct App {
 
     CodegenOptions options;
     options.internal = true;
+    options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
     options.code_string = cgn;
 
@@ -6593,9 +6659,10 @@ void exposure_fusion() {
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
   //lp.func2d("synthetic_exposure_fusion", "id", pt("in"));
-  int size = 16;
-  lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
+  int size = 64;
+  //1920;
   lp.realize_naive("pyramid_synthetic_exposure_fusion", size, size);
+  lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
 
   std::vector<std::string> naive =
     run_regression_tb("pyramid_synthetic_exposure_fusion_naive");
@@ -6839,7 +6906,7 @@ void jacobi_2d_app_test() {
     jacobi2d(out_name).realize(out_name, 1024, 1024, unroll_factor);
   }
 
-  //assert(false);
+  assert(false);
 }
 
 void denoise2d_test() {
@@ -7384,16 +7451,19 @@ void application_tests() {
   //memtile_test();
 
   //conv_app_rolled_reduce_test();
-
   //exposure_fusion_simple_average();
-  upsample_stencil_1d_test();
+ 
+  //reduce_1d_test();
+  jacobi_2d_app_test();
+  exposure_fusion();
+  mismatched_stencil_test();
+  laplacian_pyramid_app_test();
+  //assert(false);
   upsample_stencil_2d_test();
   //assert(false);
-  mismatched_stencil_test();
+  upsample_stencil_1d_test();
 
   heat_3d_test();
-  exposure_fusion();
-  laplacian_pyramid_app_test();
   denoise2d_test();
   gaussian_pyramid_app_test();
   grayscale_conversion_test();
@@ -7405,7 +7475,6 @@ void application_tests() {
   jacobi_2d_test();
   parse_denoise3d_test();
 
-  reduce_1d_test();
 
   upsample_reduce_test();
 
@@ -7420,10 +7489,8 @@ void application_tests() {
   updown_merge_test();
   sobel_test();
 
-
   blur_and_downsample_test();
   downsample_and_blur_test();
-
 
   blur_x_test();
   pointwise_test();
@@ -7435,11 +7502,11 @@ void application_tests() {
   gaussian_pyramid_test();
   warp_and_upsample_test();
 
-  conv_1d_rolled_test();
+  //conv_1d_rolled_test();
   //synth_upsample_test();
   unsharp_test();
-  conv_2d_rolled_test();
-  reduce_2d_test();
+  //conv_2d_rolled_test();
+  //reduce_2d_test();
   conv_1d_test();
   conv_2d_bc_test();
   //mobilenet_test();

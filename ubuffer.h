@@ -9,6 +9,16 @@ enum bank_type {
   BANK_TYPE_RAM
 };
 
+struct selector {
+  string buf_name;
+  string pt_type;
+  string out_port;
+  string name;
+  vector<string> vars;
+  vector<string> bank_conditions;
+  vector<string> inner_bank_offsets;
+};
+
 struct bank {
   std::string name;
   bank_type tp;
@@ -220,6 +230,7 @@ class UBuffer {
     std::map<string, AccessPattern> access_pattern;
 
     map<pair<string, string>, stack_bank > stack_banks;
+    map<string, selector> selectors;
 
     void replace_bank(stack_bank& target, stack_bank& replacement) {
       for (auto bnk : stack_banks) {
