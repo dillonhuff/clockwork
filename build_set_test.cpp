@@ -2339,12 +2339,14 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
         its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + produced.second + "]" + " }").c_str()), cpy(domains.at(op)));
 
       buf.add_in_pt(pt_name, domains.at(op), produced_here, its(opt_sched, domains.at(op)));
-      buf.add_access_pattern(pt_name, produced_here, domains.at(op));
+      buf.add_access_pattern(pt_name, op->name, buf.name);
+      cout << "Finished add access pattern!" << endl;
       auto acc_pt = buf.access_pattern.at(pt_name);
-      auto domain_from_acc_pt = acc_pt.get_domain(buf.ctx, op->name);
-      auto acc_map_from_acc_pt = acc_pt.get_access_map(buf.ctx, op->name, buf.name);
+      auto domain_from_acc_pt = acc_pt.get_domain(buf.ctx);
       cout << "Domain retrace from access pattern: " << str(domain_from_acc_pt) << endl;
+      auto acc_map_from_acc_pt = acc_pt.get_access_map(buf.ctx);
       cout << "Access map retrace from access pattern: " << str(acc_map_from_acc_pt) << endl;
+      assert(false);
 
       vector<string> inpt = buf.get_in_ports();
       cout << "current in port name: " << endl;
@@ -2383,7 +2385,7 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       cout << "\tAdding output port: " << pt_name << endl;
       cout << "\t\tConsumed: " << str(consumed_here) << endl;
       buf.add_out_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
-      buf.add_access_pattern(pt_name, consumed_here, domains.at(op));
+      buf.add_access_pattern(pt_name, op->name, buf.name);
 
       vector<string> inpt = buf.get_out_ports();
       cout << "current out port name: " << endl;
@@ -2403,11 +2405,11 @@ void buffer_vectorization(string vec_buf_name, int dim_id, int fetch_width, map<
      * generate the new domain and access map and also add two other buffer on
      * both input and output side
      * */
+    UBuffer agg, tb;
     for(auto it : buffers) {
         if (it.first == vec_buf_name) {
             auto target_buffer = it.second;
-            target_buffer.vectorization(dim_id, fetch_width);
-
+            target_buffer.vectorization(dim_id, fetch_width, agg, tb);
         }
     }
 }

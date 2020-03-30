@@ -15,6 +15,8 @@ struct stack_bank {
 
 class AccessPattern {
   public:
+      string buf_name, op_name;
+
       int var_dim;
       vector<int> in_range;
       vector<int> stride;
@@ -29,6 +31,7 @@ class AccessPattern {
       vector<vector<int> > access_matrix;
 
       AccessPattern(){}
+      AccessPattern(string buf, string op):buf_name(buf), op_name(op){}
 
       AccessPattern(const AccessPattern & a) {
           var_dim = a.var_dim;
@@ -44,7 +47,7 @@ class AccessPattern {
           access_matrix = a.access_matrix;
       }
 
-      isl_set* get_domain(isl_ctx* ctx, string op_name) {
+      isl_set* get_domain(isl_ctx* ctx) {
           vector<string> var_list(var_dim-1);
           vector<string> bd_list(var_dim-1);
           for (auto itr: name2idx) {
@@ -56,10 +59,11 @@ class AccessPattern {
           }
           auto vars = sep_list(var_list, "[", "]", "," );
           auto ds = sep_list(bd_list, "", "", " and ");
+          cout << "Finished Create all essential" << endl;
           return isl_set_read_from_str(ctx, string("{ " + op_name + vars + " : " + ds + "}").c_str());
       }
 
-      isl_map* get_access_map(isl_ctx* ctx, string op_name, string buf_name) {
+      umap* get_access_map(isl_ctx* ctx) {
           vector<string> var_list(var_dim-1);
           vector<string> expr_list;
           for (auto itr: name2idx) {
@@ -94,8 +98,8 @@ class AccessPattern {
           string nd_expr_str = sep_list(nd_expr, "[", "]", ", ");
           cout << "access map expr:" << nd_expr_str << endl;
           auto access_map = isl_map_read_from_str(ctx, string("{ " + op_name + vars + " -> " + buf_name + nd_expr_str + "}").c_str());
-          auto domain = get_domain(ctx, op_name);
-          return its(access_map, domain);
+          auto domain = get_domain(ctx);
+          return to_umap(its(access_map, domain));
       }
 
       void initial_access_mat(isl_map* access_map, isl_set* domain) {
@@ -493,14 +497,16 @@ class UBuffer {
       isIn[name] = false;
     }
 
-    void add_access_pattern(const std::string& name,
-            isl_map* access,
-            isl_set* dm) {
-        auto io = isIn[name]? "input" : "output";
-        cout << "\tAdding access pattern for " << io  <<" port: " << name << "in buf: " << this->name <<  endl;
-        AccessPattern acc_p;
+    void add_access_pattern(const std::string& pt_name,
+            const std::string & op_name,
+            const std::string & buf_name) {
+        auto io = isIn.at(pt_name)? "input" : "output";
+        isl_map* access = to_map(access_map.at(pt_name));
+        isl_set* dm = domain.at(pt_name);
+        cout << "\tAdding access pattern for " << io  <<" port: " << pt_name << "in buf: " << this->name <<  endl;
+        AccessPattern acc_p(buf_name, op_name);
         acc_p.initial_access_mat(access, dm);
-        access_pattern[name] = acc_p;
+        access_pattern[pt_name] = acc_p;
     }
 
     void add_in_pt(const std::string& name,
@@ -511,6 +517,26 @@ class UBuffer {
       access_map[name] = to_umap(access);
       schedule[name] = (sched);
       isIn[name] = true;
+    }
+
+    void add_in_pt_with_access_pattern(
+            const std::string& name,
+            AccessPattern & acc_pattern ) {
+      domain[name] = acc_pattern.get_domain(ctx);
+      access_map[name] = acc_pattern.get_access_map(ctx);
+      access_pattern[name] = acc_pattern;
+      //schedule[name] = (sched);
+      isIn[name] = true;
+    }
+
+    void add_out_pt_with_access_pattern(
+            const std::string& name,
+            AccessPattern & acc_pattern ) {
+      domain[name] = acc_pattern.get_domain(ctx);
+      access_map[name] = acc_pattern.get_access_map(ctx);
+      access_pattern[name] = acc_pattern;
+      //schedule[name] = (sched);
+      isIn[name] = false;
     }
 
     void add_out_pt(const std::string& name,
@@ -637,7 +663,8 @@ class UBuffer {
       assert(false);
     }
 
-    void vectorization(int dim_id, int fetch_width);
+    //change the input and output and return the agg and tb ubuffer stucture
+    void vectorization(int dim_id, int fetch_width, UBuffer& agg, UBuffer& tb);
 
 };
 
