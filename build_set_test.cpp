@@ -5511,7 +5511,7 @@ struct App {
     assert(schedmap != nullptr);
     cout << "Final isl schedule: " << str(schedmap) << endl;
     cout << "C code; " << codegen_c(schedmap) << endl;
-    assert(false);
+    //assert(false);
     
     isl_options_set_schedule_algorithm(ctx, ISL_SCHEDULE_ALGORITHM_ISL);
 
@@ -6906,7 +6906,7 @@ void jacobi_2d_app_test() {
     jacobi2d(out_name).realize(out_name, 1024, 1024, unroll_factor);
   }
 
-  //assert(false);
+  assert(false);
 }
 
 void denoise2d_test() {
@@ -7454,6 +7454,7 @@ void application_tests() {
   //exposure_fusion_simple_average();
  
   //reduce_1d_test();
+  jacobi_2d_app_test();
   exposure_fusion();
   mismatched_stencil_test();
   laplacian_pyramid_app_test();
