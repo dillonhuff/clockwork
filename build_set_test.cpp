@@ -5757,8 +5757,8 @@ struct App {
     fill_compute_domain(unroll_factor);
 
     umap* m =
-      //schedule_isl();
-      schedule_naive();
+      schedule_isl();
+      //schedule_naive();
 
     cout << "Schedule: " << str(m) << endl;
 
@@ -7490,30 +7490,13 @@ void application_tests() {
   //exposure_fusion_simple_average();
  
   //reduce_1d_test();
-  denoise2d_test();
-  exposure_fusion();
-  laplacian_pyramid_app_test();
-  jacobi_2d_app_test();
   mismatched_stencil_test();
-  //assert(false);
-  upsample_stencil_2d_test();
-  //assert(false);
-  upsample_stencil_1d_test();
-
-  heat_3d_test();
-  gaussian_pyramid_app_test();
-  grayscale_conversion_test();
   jacobi_2d_app_test();
+  grayscale_conversion_test();
   seidel2d_test();
-
-  //synth_reduce_test();
   jacobi_2d_2_test();
   jacobi_2d_test();
   parse_denoise3d_test();
-
-
-  upsample_reduce_test();
-
   conv3x3_app_unrolled_test();
   conv3x3_app_test();
   conv3x3_app_test();
@@ -7524,6 +7507,21 @@ void application_tests() {
   downsample2d_test();
   updown_merge_test();
   sobel_test();
+
+  denoise2d_test();
+
+  exposure_fusion();
+  laplacian_pyramid_app_test();
+  upsample_stencil_2d_test();
+  upsample_stencil_1d_test();
+
+  heat_3d_test();
+  gaussian_pyramid_app_test();
+
+  //synth_reduce_test();
+
+  upsample_reduce_test();
+
 
   blur_and_downsample_test();
   downsample_and_blur_test();
