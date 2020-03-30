@@ -5766,7 +5766,7 @@ struct App {
 
     CodegenOptions options;
     options.internal = true;
-    //options.all_rams = true;
+    options.all_rams = true;
 
     prog prg;
     prg.name = name + "_naive";
@@ -6660,7 +6660,7 @@ void exposure_fusion() {
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
   //lp.func2d("synthetic_exposure_fusion", "id", pt("in"));
-  int size = 1920;
+  int size = 200;
   //1920;
   lp.realize_naive("pyramid_synthetic_exposure_fusion", size, size);
   lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
@@ -6973,9 +6973,9 @@ void denoise2d_test() {
   dn.func2d("r1", "r1_comp", pt("r0"));
   dn.func2d("denoise2d", "out_comp_dn2d", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
 
-  dn.realize("denoise2d", 30, 30, 1);
-
-  dn.realize_naive("denoise2d", 30, 30);
+  int size = 30;
+  dn.realize("denoise2d", size, size, 1);
+  dn.realize_naive("denoise2d", size, size);
 
   std::vector<std::string> optimized =
     run_regression_tb("denoise2d_opt");
@@ -6991,7 +6991,7 @@ void denoise2d_test() {
 
 
   assert(naive == optimized);
-  //assert(false);
+  assert(false);
 }
 
 void conv3x3_app_unrolled_uneven_test() {
@@ -7490,6 +7490,7 @@ void application_tests() {
   //exposure_fusion_simple_average();
  
   //reduce_1d_test();
+  denoise2d_test();
   exposure_fusion();
   laplacian_pyramid_app_test();
   jacobi_2d_app_test();
@@ -7500,7 +7501,6 @@ void application_tests() {
   upsample_stencil_1d_test();
 
   heat_3d_test();
-  denoise2d_test();
   gaussian_pyramid_app_test();
   grayscale_conversion_test();
   jacobi_2d_app_test();
