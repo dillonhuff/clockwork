@@ -2763,7 +2763,11 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
       comma_list(arg_names) << ");" << endl;
   }
 
-  conv_out << tab(1) << "*global_debug_handle << \"" << op->name << ",\" << compute_result << endl;" << endl;
+  conv_out << tab(1) << "*global_debug_handle << \"" << op->name << ",\" << ";
+  for (auto v : kernel.iteration_variables) {
+    conv_out << v << "<< \",\" << ";
+  }
+  conv_out << " compute_result << endl;" << endl;
   conv_out << "}" << endl << endl;
 
   return kernel;
@@ -5777,7 +5781,7 @@ struct App {
 
     CodegenOptions options;
     options.internal = true;
-    options.all_rams = false;
+    options.all_rams = true;
 
     prog prg;
     prg.name = name + "_naive";
