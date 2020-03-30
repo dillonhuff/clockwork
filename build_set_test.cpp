@@ -5757,8 +5757,8 @@ struct App {
     fill_compute_domain(unroll_factor);
 
     umap* m =
-      schedule_isl();
-      //schedule_naive();
+      //schedule_isl();
+      schedule_naive();
 
     cout << "Schedule: " << str(m) << endl;
 
@@ -5766,7 +5766,7 @@ struct App {
 
     CodegenOptions options;
     options.internal = true;
-    options.all_rams = true;
+    options.all_rams = false;
 
     prog prg;
     prg.name = name + "_naive";
