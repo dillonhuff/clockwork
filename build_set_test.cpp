@@ -2759,8 +2759,8 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
     conv_out << v << "<< \",\" << ";
   }
   conv_out << " " << res << " << endl;" << endl;
-  conv_out << "}" << endl << endl;
   close_debug_scope(conv_out);
+  conv_out << "}" << endl << endl;
 
   return kernel;
 }
@@ -6680,8 +6680,8 @@ void exposure_fusion() {
   //lp.func2d("synthetic_exposure_fusion", "id", pt("in"));
   int size = 200;
   //1920;
-  lp.realize_naive("pyramid_synthetic_exposure_fusion", size, size);
   lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
+  lp.realize_naive("pyramid_synthetic_exposure_fusion", size, size);
 
   std::vector<std::string> naive =
     run_regression_tb("pyramid_synthetic_exposure_fusion_naive");
@@ -7534,9 +7534,9 @@ void application_tests() {
   //reduce_1d_test();
 
   // Known to fail with all rams off
+  exposure_fusion();
   denoise2d_test();
 
-  exposure_fusion();
   //cout << "Exposure fusion passed" << endl;
   //assert(false);
 
