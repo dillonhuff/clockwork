@@ -2729,6 +2729,13 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
       vector<string> source_delays{in_buffer};
       cout << "op = " << op->name << endl;
       conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
+
+      conv_out << tab(1) << "*global_debug_handle << \"" << op->name << "_" << in_buffer << ",\" << ";
+      for (auto v : kernel.iteration_variables) {
+        conv_out << v << "<< \",\" << ";
+      }
+      conv_out << " " << value_name << " << endl;" << endl;
+
     }
     buf_args.push_back(value_name);
     res = value_name;
@@ -5778,10 +5785,15 @@ struct App {
     cout << "Schedule: " << str(m) << endl;
 
     map<string, UBuffer> buffers = build_buffers(m);
+    for (auto b : buffers) {
+      cout << b.second << endl;
+      cout << endl << endl;
+    }
+    //assert(false);
 
     CodegenOptions options;
     options.internal = true;
-    options.all_rams = true;
+    options.all_rams = false;
 
     prog prg;
     prg.name = name + "_naive";
@@ -7508,7 +7520,7 @@ void application_tests() {
   //reduce_1d_test();
 
   // Known to fail with all rams off
-  //denoise2d_test();
+  denoise2d_test();
 
   exposure_fusion();
   cout << "Exposure fusion passed" << endl;
