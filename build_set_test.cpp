@@ -2404,11 +2404,12 @@ void buffer_vectorization(string vec_buf_name, int dim_id, int fetch_width, map<
      * generate the new domain and access map and also add two other buffer on
      * both input and output side
      * */
-    UBuffer agg, tb;
+    //TODO: add SRAM, do not overwrite the original sram
+    UBuffer agg, tb, sram;
     for(auto it : buffers) {
         if (it.first == vec_buf_name) {
             auto target_buffer = it.second;
-            target_buffer.vectorization(dim_id, fetch_width, agg, tb);
+            target_buffer.vectorization(dim_id, fetch_width, agg, sram, tb);
         }
     }
 }
@@ -3138,20 +3139,25 @@ void vec_test() {
   for (auto buf : buffers){
      for (auto pt: buf.second.get_out_ports()) {
          acc_map = buf.second.access_map.at(pt);
-         cout << str(acc_map) << endl;
+         cout << "\tAccess map: " << str(acc_map) << endl;
      }
 
   }
   isl_union_map* produced;
+  /*
   for (int i = 0; i < 4; i ++) {
       if (i == 0)
-          produced = to_umap(isl_map_read_from_str(prg.ctx, string("{ pass_vec[root=0,po, p_vec] -> pass[0, po,4*p_vec+"+to_string(i)+"] : 0 <=po<=8 and 0 <= p_vec <= 1 }").c_str()));
+          produced = to_umap(isl_map_read_from_str(prg.ctx, string("{ pass_vec[root=0,po, p_vec] -> pass[0, po,4*p_vec+"+to_string(i)+"]} ").c_str()));
       else
-        produced = unn(produced, to_umap(isl_map_read_from_str(prg.ctx, string("{ pass_vec[root=0, po, p_vec] -> pass[0,po,4*p_vec+"+to_string(i)+"] : 0<= po <= 8 and 0 <= p_vec <= 1 }").c_str())));
+        produced = unn(produced, to_umap(isl_map_read_from_str(prg.ctx, string("{ pass_vec[root=0, po, p_vec] -> pass[0,po,4*p_vec+"+to_string(i)+"]}").c_str())));
     cout << str(produced) << endl;
 
-  }
-  cout << str(dot(produced, acc_map));
+  }*/
+  string read_string = "{pass[root, po, pi] -> pass_vec[root, po, floor(pi / 4)]}";
+  isl_union_map* vectorized_map = isl_union_map_read_from_str(prg.ctx, read_string.c_str());
+  auto vectorized_access = dot(inv(acc_map), vectorized_map);
+  cout << "vectorize map" << str(vectorized_access) << endl;
+  cout << "vectorize range: " << str(range(vectorized_access)) << "\n vectorize domain" << str(domain(vectorized_access)) << endl;
   //auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
   //cout << "Sched map: " << str(sched_opt) << endl;
   //cout << codegen_c(sched_opt) << endl;
@@ -3164,6 +3170,7 @@ void vec_test() {
   //memtile.emit_config_file_csv("lake_memtile_config");
   //assert(false);
 }
+
 
 void auto_vec_test() {
 
@@ -3193,8 +3200,24 @@ void auto_vec_test() {
   //cout << codegen_c(sched) << endl;
 
   auto sched_opt = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
+  auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
 
-  auto buffers = build_buffers(prg);
+  auto buffers = build_buffers(prg, sched_naive);
+
+  auto buffer = buffers["buf"];
+  auto acc_map = buffer.access_map.at(pick(buffer.get_out_ports()));
+  cout << "\tAccess map: " << str(acc_map) << endl;
+  string read_string = "{output[root, qo, qi] -> output_vec[root, qo, floor(qi/4)]}";
+  string tf_string = "{buf[i0, i1] -> buf[i0, 4*floor(i1/4)]}";
+  isl_union_map* pick_pt = rdmap(prg.ctx, tf_string.c_str());
+  isl_union_map* vectorized_map = isl_union_map_read_from_str(prg.ctx, read_string.c_str());
+  auto vectorized_access = dot(inv(acc_map), vectorized_map);
+  cout << "buffer mapping" << str(pick_pt) << endl;
+  cout << "vectorize map" << str(vectorized_access) << endl;
+  cout << "vectorize map" << str(isl_map_from_pw_multi_aff(isl_pw_multi_aff_from_map(to_map(dot(inv(vectorized_access), pick_pt))))) << endl;
+  cout << "vectorize range: " << str(range(vectorized_access)) << "\n vectorize domain" << str(domain(vectorized_access)) << endl;
+
+  cout << "\tUnoptimized Buffer: " << pick(buffers).second << endl;
   int fetch_width = 4;
   buffer_vectorization("buf", 1, fetch_width, buffers);
 }
@@ -7077,8 +7100,8 @@ void application_tests() {
 }
 
 void memory_tile_tests() {
+  vec_test();
   auto_vec_test();
-  assert(false);
   agg_test();
   memtile_test();
 

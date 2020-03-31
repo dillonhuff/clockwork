@@ -102,6 +102,8 @@ std::string str(umap* const m);
 
 std::string str(isl_pw_multi_aff* const pma);
 
+std::string str(isl_multi_union_pw_aff* const pma);
+
 //TODO: not consider pw affine, should add a condition on the set
 isl_stat isl_pw_aff_get_coefficient( isl_set *set,  isl_aff *aff, void *user);
 

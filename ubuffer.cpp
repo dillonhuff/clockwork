@@ -1,6 +1,6 @@
 #include "ubuffer.h"
 
-void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuffer& tb) {
+void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuffer& sram, UBuffer& tb) {
 
     agg_buf.name = name + "_agg";
     agg_buf.ctx = ctx;
@@ -13,6 +13,11 @@ void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuff
            auto acc_pattern = access_pattern.at(in_pt_name);
            auto acc_pattern_vec = acc_pattern.vectorization(dim_id, fetch_width);
            std::cout << "before rewrite: " << acc_pattern << endl;
+           isl_map* op_trans = acc_pattern.get_op_transform(ctx, dim_id, fetch_width);
+           std::cout << "transform rewrite: " << str(op_trans) << endl;
+           assert(false);
+
+
 
            agg_buf.add_in_pt_with_access_pattern(in_pt_name + "_in", acc_pattern);
            agg_buf.port_bundles[bd_name + "_in"].push_back(in_pt_name + "_in");

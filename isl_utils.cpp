@@ -1,6 +1,10 @@
 #include "isl_utils.h"
 #include "utils.h"
 
+isl_multi_union_pw_aff* cpy(isl_multi_union_pw_aff* const s) {
+  return isl_multi_union_pw_aff_copy(s);
+}
+
 isl_pw_aff* cpy(isl_pw_aff* const s) {
   return isl_pw_aff_copy(s);
 }
@@ -156,6 +160,19 @@ std::string str(isl_pw_multi_aff* const pma) {
   isl_printer *p;
   p = isl_printer_to_str(ctx);
   p = isl_printer_print_pw_multi_aff(p, cpy(pma));
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  std::string r(rs);
+  free(rs);
+
+  return r;
+}
+
+std::string str(isl_multi_union_pw_aff* const mupa) {
+  auto ctx = isl_multi_union_pw_aff_get_ctx(mupa);
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_print_multi_union_pw_aff(p, cpy(mupa));
   char* rs = isl_printer_get_str(p);
   isl_printer_free(p);
   std::string r(rs);

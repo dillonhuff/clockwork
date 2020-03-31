@@ -34,6 +34,8 @@ class AccessPattern {
       AccessPattern(string buf, string op):buf_name(buf), op_name(op){}
 
       AccessPattern(const AccessPattern & a) {
+          op_name = a.op_name;
+          buf_name = a.buf_name;
           var_dim = a.var_dim;
           in_range = a.in_range;
           stride = a.stride;
@@ -277,6 +279,32 @@ class AccessPattern {
           }
       }
 
+      isl_map* get_op_transform(isl_ctx* ctx, int dim_id, int fetch_width) {
+          AccessPattern origin(*this);
+          vector<int> & stride_in_target = access_matrix[dim_id];
+          vector<string> var_list(var_dim-1);
+          vector<string> origin_var_list(var_dim-1);
+          //TODO: handle reuse pattern
+          for (auto it: name2idx) {
+              if (it.first == "const")
+                  continue;
+              int id = it.second;
+              if (stride_in_target[id] != 0 && (stride_in_target[id] < 4)) {
+                  string trans = "floor("+ it.first + "/" + to_string(fetch_width) + ")";
+                  var_list[it.second-1] = trans;
+                  origin_var_list[it.second-1] = it.first;
+              }
+              else {
+                  var_list[it.second-1] = it.first;
+                  origin_var_list[it.second-1] = it.first;
+              }
+          }
+          auto vars = sep_list(var_list, "[", "]", "," );
+          auto origin_vars = sep_list(origin_var_list, "[", "]", "," );
+          cout <<"OP name: " << op_name << endl;
+          return to_map(rdmap(ctx, string("{ " + op_name + origin_vars + " -> " + op_name +"_vec" + vars + "}").c_str()));
+      }
+
       vector<AccessPattern> vectorization(int dim_id, int fetch_width) {
           AccessPattern origin(*this);
           vector<int> & stride_in_target = access_matrix[dim_id];
@@ -503,6 +531,7 @@ class UBuffer {
         isl_map* access = to_map(access_map.at(pt_name));
         isl_set* dm = domain.at(pt_name);
         cout << "\tAdding access pattern for " << io  <<" port: " << pt_name << "in buf: " << this->name <<  endl;
+        cout << "\top name :" << op_name << endl;
         AccessPattern acc_p(buf_name, op_name);
         acc_p.initial_access_mat(access, dm);
         access_pattern[pt_name] = acc_p;
@@ -663,7 +692,7 @@ class UBuffer {
     }
 
     //change the input and output and return the agg and tb ubuffer stucture
-    void vectorization(int dim_id, int fetch_width, UBuffer& agg, UBuffer& tb);
+    void vectorization(int dim_id, int fetch_width, UBuffer& agg, UBuffer& sram, UBuffer& tb);
 
 };
 
@@ -700,7 +729,7 @@ std::ostream& operator<<(std::ostream& out, const AccessPattern& acc_pattern) {
 
 
 static inline
-std::ostream& operator<<(std::ostream& out, UBuffer& buf) {
+std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
   out << "--- " << buf.name << endl;
   out << "\t---- In ports" << endl;
   for (auto inpt : buf.get_in_ports()) {
