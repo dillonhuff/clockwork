@@ -1,3 +1,9 @@
+#include <fstream>
+using namespace std;
+
+  // Debug utility
+  ofstream* global_debug_handle;
+
 #include "upsample_stencil_opt_compute_units.h"
 
 #include "hw_classes.h"
@@ -2385,24 +2391,29 @@ inline hw_uint<288> Img_upsample_stencil_update_0_read_bundle_read(Img_cache& Im
 
 
 // Operation logic
-inline void Img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */Img_off, Img_cache& Img, int d0, int d1) {
-	// Consume: Img_off
-	auto Img_off_0_c__0_value = Img_off.read();
-	auto compute_result = id(Img_off_0_c__0_value);
-	// Produce: Img
-	Img_Img_update_0_write_bundle_write(compute_result, Img, d0, d1);
-}
-
 inline void upsample_stencil_update_0(Img_cache& Img, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */upsample_stencil, int d0, int d1) {
 	// Consume: Img
 	auto Img_0_c__0_value = Img_upsample_stencil_update_0_read_bundle_read(Img/* source_delay */, d0, d1);
 	auto compute_result = conv_3_3(Img_0_c__0_value);
 	// Produce: upsample_stencil
 	upsample_stencil.write(compute_result);
+  *global_debug_handle << "upsample_stencil_update_0," << d0<< "," << d1<< "," <<  compute_result << endl;
+}
+
+inline void Img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */Img_off, Img_cache& Img, int d0, int d1) {
+	// Consume: Img_off
+	auto Img_off_0_c__0_value = Img_off.read();
+	auto compute_result = id(Img_off_0_c__0_value);
+	// Produce: Img
+	Img_Img_update_0_write_bundle_write(compute_result, Img, d0, d1);
+  *global_debug_handle << "Img_update_0," << d0<< "," << d1<< "," <<  compute_result << endl;
 }
 
 // Driver function
 void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Img_off, HWStream<hw_uint<32> >& /* get_args num ports = 1 */upsample_stencil) {
+
+  ofstream debug_file("upsample_stencil_opt_debug.csv");
+  global_debug_handle = &debug_file;
   Img_cache Img;
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=Img inter false
@@ -2455,4 +2466,5 @@ void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Im
 	    global_time++;
 	  }
 	
+  debug_file.close();
 }

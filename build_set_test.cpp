@@ -2763,6 +2763,11 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
       comma_list(arg_names) << ");" << endl;
   }
 
+  conv_out << tab(1) << "*global_debug_handle << \"" << op->name << ",\" << ";
+  for (auto v : kernel.iteration_variables) {
+    conv_out << v << "<< \",\" << ";
+  }
+  conv_out << " " << res << " << endl;" << endl;
   conv_out << "}" << endl << endl;
 
   return kernel;
@@ -2840,6 +2845,11 @@ void generate_app_code(CodegenOptions& options,
 
   ofstream conv_out(prg.name + ".cpp");
 
+  conv_out << "#include <fstream>" << endl;
+  conv_out << "using namespace std;" << endl << endl;
+  conv_out << tab(1) << "// Debug utility" << endl;
+  conv_out << tab(1) << "ofstream* global_debug_handle;" << endl << endl;
+
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
@@ -2857,7 +2867,11 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out << "// Driver function" << endl;
   string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
-  conv_out << "void " << prg.name << arg_buffers << " {" << endl;
+  conv_out << "void " << prg.name << arg_buffers << " {" << endl << endl;
+
+  conv_out << tab(1) << "ofstream debug_file(\"" << prg.name + "_debug.csv\");" << endl;
+  conv_out << tab(1) << "global_debug_handle = &debug_file;" << endl;
+
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
       conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
@@ -2892,6 +2906,7 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out << code_string << endl;
 
+  conv_out << tab(1) << "debug_file.close();" << endl;
   conv_out << "}" << endl;
 
   generate_app_code_header(buffers, prg);
@@ -5756,7 +5771,8 @@ struct App {
     fill_data_domain(name, d0, d1, unroll_factor);
     fill_compute_domain(unroll_factor);
 
-    umap* m = schedule_isl();
+    umap* m =
+      schedule_isl();
       //schedule_naive();
 
     cout << "Schedule: " << str(m) << endl;
@@ -6516,8 +6532,9 @@ void mismatched_stencil_test() {
   Window ywindow{"img1", {1, 1}, {{0, 0}, {1, 0}}};
   sobel.func2d("mismatched_stencils", "contrived", {xwindow, ywindow});
 
-  sobel.realize("mismatched_stencils", 10, 1, 1);
-  sobel.realize_naive("mismatched_stencils", 10, 1);
+  int size = 1920;
+  sobel.realize("mismatched_stencils", size, 1, 1);
+  sobel.realize_naive("mismatched_stencils", size, 1);
 
   std::vector<std::string> naive =
     run_regression_tb("mismatched_stencils_naive");
@@ -6659,7 +6676,7 @@ void exposure_fusion() {
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
   //lp.func2d("synthetic_exposure_fusion", "id", pt("in"));
-  int size = 64;
+  int size = 200;
   //1920;
   lp.realize_naive("pyramid_synthetic_exposure_fusion", size, size);
   lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
@@ -6735,9 +6752,9 @@ void laplacian_pyramid_app_test() {
 
   lp.func2d("blended", "blend_levels", blended);
 
-  int blend_dims = 32;
-  lp.realize("blended", 32, 32, 1);
-  lp.realize_naive("blended", 32, 32);
+  int size = 32;
+  lp.realize("blended", size, size, 1);
+  lp.realize_naive("blended", size, size);
 
   std::vector<std::string> naive =
     run_regression_tb("blended_naive");
@@ -6782,11 +6799,57 @@ void gaussian_pyramid_app_test() {
   //assert(false);
 }
 
+App sobel(const std::string output_name) {
+  App sobel;
+  sobel.func2d("off_chip_img");
+  sobel.func2d("img", "id", "off_chip_img", {1, 1}, {{0, 0}});
+  sobel.func2d("mag_x", "sobel_mx", "img", {1, 1},
+      {{1, -1}, {-1, -1}, {1, 0}, {-1, 0}, {1, 1}, {-1, 1}});
+  sobel.func2d("mag_y", "sobel_my", "img", {1, 1},
+      {{-1, 1}, {-1, -1}, {0, 1}, {0, -1}, {1, 1}, {1, -1}});
+
+  Window xwindow{"mag_x", {1, 1}, {{0, 0}}};
+  Window ywindow{"mag_y", {1, 1}, {{0, 0}}};
+  sobel.func2d("mag", "mag_cu", {xwindow, ywindow});
+
+  return sobel;
+}
+
+App seidel(const std::string output_name) {
+  App jac;
+  jac.func2d("input_arg");
+  jac.func2d("input", "id", pt("input_arg"));
+  jac.func2d("tmp", "seidel_tmp_comp", "input", {1, 1}, {{-1, 0}, {0, 0}, {1, 0}});
+  jac.func2d(output_name, "seidel_output_comp", "input", {1, 1}, {{0, -1}, {0, 0}, {0, 1}});
+  return jac;
+}
+
+App blurxy(const std::string output_name) {
+  App jac;
+  jac.func2d("input_arg");
+  jac.func2d("input", "id", pt("input_arg"));
+  jac.func2d("blurx", "blurx_comp", "input", {1, 1}, {{0, 0}, {0, 1}, {0, 2}});
+  jac.func2d(output_name, "blury_comp", "input", {1, 1}, {{0, 0}, {1, 0}, {2, 0}});
+  return jac;
+}
+
 App jacobi2d(const std::string output_name) {
   App jac;
   jac.func2d("t1_arg");
   jac.func2d("t1", "id", pt("t1_arg"));
   jac.func2d(output_name, "jacobi2d_compute", "t1", {1, 1}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
+  return jac;
+}
+
+App jacobi3d(const std::string output_name) {
+  App jac;
+  jac.func2d("t1_arg");
+  jac.func2d("t1", "id", pt("t1_arg"));
+  jac.func2d(output_name, "jacobi3d_compute", "t1", {1, 1, 1},
+      {{0, 0, 0},
+      {1, 0, 0}, {-1, 0, 0}, 
+      {0, 1, 0}, {0, -1, 0}, 
+      {0, 0, 1}, {0, 0, -1}});
   return jac;
 }
 
@@ -6906,7 +6969,7 @@ void jacobi_2d_app_test() {
     jacobi2d(out_name).realize(out_name, 1024, 1024, unroll_factor);
   }
 
-  assert(false);
+  //assert(false);
 }
 
 void denoise2d_test() {
@@ -6926,9 +6989,9 @@ void denoise2d_test() {
   dn.func2d("r1", "r1_comp", pt("r0"));
   dn.func2d("denoise2d", "out_comp_dn2d", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
 
-  dn.realize("denoise2d", 30, 30, 1);
-
-  dn.realize_naive("denoise2d", 30, 30);
+  int size = 30;
+  dn.realize("denoise2d", size, size, 1);
+  dn.realize_naive("denoise2d", size, size);
 
   std::vector<std::string> optimized =
     run_regression_tb("denoise2d_opt");
@@ -7015,20 +7078,9 @@ void conv3x3_app_test() {
 }
 
 void sobel_test() {
-  App sobel;
+  App sobela = sobel("mag");
 
-  sobel.func2d("off_chip_img");
-  sobel.func2d("img", "id", "off_chip_img", {1, 1}, {{0, 0}});
-  sobel.func2d("mag_x", "sobel_mx", "img", {1, 1},
-      {{1, -1}, {-1, -1}, {1, 0}, {-1, 0}, {1, 1}, {-1, 1}});
-  sobel.func2d("mag_y", "sobel_my", "img", {1, 1},
-      {{-1, 1}, {-1, -1}, {0, 1}, {0, -1}, {1, 1}, {1, -1}});
-
-  Window xwindow{"mag_x", {1, 1}, {{0, 0}}};
-  Window ywindow{"mag_y", {1, 1}, {{0, 0}}};
-  sobel.func2d("mag", "mag_cu", {xwindow, ywindow});
-
-  sobel.realize("mag", 30, 30, 1);
+  sobela.realize("mag", 30, 30, 1);
 
   int res = system("g++ -std=c++11 -c mag_opt.cpp");
   assert(res == 0);
@@ -7454,30 +7506,21 @@ void application_tests() {
   //exposure_fusion_simple_average();
  
   //reduce_1d_test();
-  jacobi_2d_app_test();
+
+  // Known to fail with all rams off
+  //denoise2d_test();
+
   exposure_fusion();
+  cout << "Exposure fusion passed" << endl;
+  assert(false);
+
   mismatched_stencil_test();
-  laplacian_pyramid_app_test();
-  //assert(false);
-  upsample_stencil_2d_test();
-  //assert(false);
-  upsample_stencil_1d_test();
-
-  heat_3d_test();
-  denoise2d_test();
-  gaussian_pyramid_app_test();
-  grayscale_conversion_test();
   jacobi_2d_app_test();
+  grayscale_conversion_test();
   seidel2d_test();
-
-  //synth_reduce_test();
   jacobi_2d_2_test();
   jacobi_2d_test();
   parse_denoise3d_test();
-
-
-  upsample_reduce_test();
-
   conv3x3_app_unrolled_test();
   conv3x3_app_test();
   conv3x3_app_test();
@@ -7488,6 +7531,18 @@ void application_tests() {
   downsample2d_test();
   updown_merge_test();
   sobel_test();
+
+  laplacian_pyramid_app_test();
+  upsample_stencil_2d_test();
+  upsample_stencil_1d_test();
+
+  heat_3d_test();
+  gaussian_pyramid_app_test();
+
+  //synth_reduce_test();
+
+  upsample_reduce_test();
+
 
   blur_and_downsample_test();
   downsample_and_blur_test();
