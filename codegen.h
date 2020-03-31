@@ -31,3 +31,14 @@ void ignore_inter_deps_array(std::ostream& out) {
   out << "#pragma HLS dependence array inter false" << endl;
   out << "#endif //__VIVADO_SYNTH__" << endl;
 }
+
+
+static inline
+void open_debug_scope(std::ostream& out) {
+  out << "#ifndef __VIVADO_SYNTH__" << endl;
+}
+
+static inline
+void close_debug_scope(std::ostream& out) {
+  out << "#endif //__VIVADO_SYNTH__" << endl;
+}
