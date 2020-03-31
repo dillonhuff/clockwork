@@ -469,7 +469,7 @@ void generate_bank(CodegenOptions& options,
     int partition_capacity = 1 + maxdelay;
     out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << ";" << endl;
     out << "\tinline " + pt_type_string + " peek(const int offset) {" << endl;
-    ignore_inter_deps(out, "f");
+    //ignore_inter_deps(out, "f");
     out << tab(2) << "return f.peek(" << partition_capacity - 1 << " - offset);" << endl;
     out << tab(1) << "}" << endl << endl;
 
@@ -2711,11 +2711,13 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
       cout << "op = " << op->name << endl;
       conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
 
+      open_debug_scope(conv_out);
       conv_out << tab(1) << "*global_debug_handle << \"" << op->name << "_" << in_buffer << ",\" << ";
       for (auto v : kernel.iteration_variables) {
         conv_out << v << "<< \",\" << ";
       }
       conv_out << " " << value_name << " << endl;" << endl;
+      close_debug_scope(conv_out);
 
     }
     buf_args.push_back(value_name);
@@ -2751,12 +2753,14 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
       comma_list(arg_names) << ");" << endl;
   }
 
+  open_debug_scope(conv_out);
   conv_out << tab(1) << "*global_debug_handle << \"" << op->name << ",\" << ";
   for (auto v : kernel.iteration_variables) {
     conv_out << v << "<< \",\" << ";
   }
   conv_out << " " << res << " << endl;" << endl;
   conv_out << "}" << endl << endl;
+  close_debug_scope(conv_out);
 
   return kernel;
 }
@@ -2833,10 +2837,12 @@ void generate_app_code(CodegenOptions& options,
 
   ofstream conv_out(prg.name + ".cpp");
 
+  open_debug_scope(conv_out);
   conv_out << "#include <fstream>" << endl;
   conv_out << "using namespace std;" << endl << endl;
   conv_out << tab(1) << "// Debug utility" << endl;
   conv_out << tab(1) << "ofstream* global_debug_handle;" << endl << endl;
+  close_debug_scope(conv_out);
 
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
   for (auto& b : buffers) {
@@ -2857,8 +2863,10 @@ void generate_app_code(CodegenOptions& options,
   string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
   conv_out << "void " << prg.name << arg_buffers << " {" << endl << endl;
 
+  open_debug_scope(conv_out);
   conv_out << tab(1) << "ofstream debug_file(\"" << prg.name + "_debug.csv\");" << endl;
   conv_out << tab(1) << "global_debug_handle = &debug_file;" << endl;
+  close_debug_scope(conv_out);
 
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
