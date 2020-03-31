@@ -481,7 +481,8 @@ void generate_stack_cache(CodegenOptions& options,
         //out << "#ifdef __VIVADO_SYNTH__" << endl;
         //out << "#pragma HLS dependence variable=f inter false" << endl;
         //out << "#endif //__VIVADO_SYNTH__" << endl;
-        out << "\t\treturn f.peek(" << dv <<");" << endl;
+        //out << "\t\treturn f.peek(" << dv <<");" << endl;
+        out << "\t\treturn peek(" << dv <<");" << endl;
         out << "\t}" << endl << endl;
       }
     }
