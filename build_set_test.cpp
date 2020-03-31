@@ -462,6 +462,8 @@ void generate_stack_cache(CodegenOptions& options,
 
   generate_ram_bank(options, out, bank);
 
+  read_delays = sort_unique(read_delays);
+
   //out << "\t// read delays: " << comma_list(read_delays) << endl;
   if (num_readers == 1 || options.all_rams) {
     int partition_capacity = 1 + maxdelay;
@@ -472,13 +474,19 @@ void generate_stack_cache(CodegenOptions& options,
     out << tab(1) << "}" << endl << endl;
 
     if (!options.all_rams) {
-      for (int i = 0; i < partition_capacity; i++) {
-        int dv = i;
-        assert(dv >= 0);
-        out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
-        out << "\t\treturn peek(" << dv <<");" << endl;
+      for (auto delay : read_delays) {
+        out << "\tinline " << pt_type_string << " peek_" << delay << "() {" << endl;
+        out << "\t\treturn " << "f" << ".peek(" << delay << ");" << endl;
         out << "\t}" << endl << endl;
       }
+
+      //for (int i = 0; i < partition_capacity; i++) {
+        //int dv = i;
+        //assert(dv >= 0);
+        //out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
+        //out << "\t\treturn peek(" << dv <<");" << endl;
+        //out << "\t}" << endl << endl;
+      //}
     }
     out << endl << endl;
     out << "\tinline void push(const " + pt_type_string + " value) {" << endl;
@@ -488,7 +496,6 @@ void generate_stack_cache(CodegenOptions& options,
     out << tab(2) << "return f.push(value);" << endl;
     out << tab(1) << "}" << endl << endl;
   } else {
-    read_delays = sort_unique(read_delays);
     auto break_points = bank.get_break_points();
     read_delays = break_points;
 
@@ -910,7 +917,6 @@ string simplified_delay_string(CodegenOptions& options, const string& inpt, cons
     if (subset(out_domain, p.first)) {
       simple_addr_str = codegen_c(p.second);
       break;
-      //return buf.name + "." + bank + ".peek(/* simplified address string */" + codegen_c(p.second) + ")";
     }
   }
 

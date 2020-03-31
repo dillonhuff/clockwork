@@ -33,219 +33,75 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd0_cache {
   }
 
 	inline hw_uint<32>  peek_0() {
-		return peek(0);
-	}
-
-	inline hw_uint<32>  peek_1() {
-		return peek(1);
-	}
-
-	inline hw_uint<32>  peek_2() {
-		return peek(2);
-	}
-
-	inline hw_uint<32>  peek_3() {
-		return peek(3);
-	}
-
-	inline hw_uint<32>  peek_4() {
-		return peek(4);
-	}
-
-	inline hw_uint<32>  peek_5() {
-		return peek(5);
-	}
-
-	inline hw_uint<32>  peek_6() {
-		return peek(6);
-	}
-
-	inline hw_uint<32>  peek_7() {
-		return peek(7);
-	}
-
-	inline hw_uint<32>  peek_8() {
-		return peek(8);
-	}
-
-	inline hw_uint<32>  peek_9() {
-		return peek(9);
-	}
-
-	inline hw_uint<32>  peek_10() {
-		return peek(10);
-	}
-
-	inline hw_uint<32>  peek_11() {
-		return peek(11);
-	}
-
-	inline hw_uint<32>  peek_12() {
-		return peek(12);
-	}
-
-	inline hw_uint<32>  peek_13() {
-		return peek(13);
-	}
-
-	inline hw_uint<32>  peek_14() {
-		return peek(14);
-	}
-
-	inline hw_uint<32>  peek_15() {
-		return peek(15);
-	}
-
-	inline hw_uint<32>  peek_16() {
-		return peek(16);
-	}
-
-	inline hw_uint<32>  peek_17() {
-		return peek(17);
-	}
-
-	inline hw_uint<32>  peek_18() {
-		return peek(18);
-	}
-
-	inline hw_uint<32>  peek_19() {
-		return peek(19);
-	}
-
-	inline hw_uint<32>  peek_20() {
-		return peek(20);
-	}
-
-	inline hw_uint<32>  peek_21() {
-		return peek(21);
-	}
-
-	inline hw_uint<32>  peek_22() {
-		return peek(22);
-	}
-
-	inline hw_uint<32>  peek_23() {
-		return peek(23);
-	}
-
-	inline hw_uint<32>  peek_24() {
-		return peek(24);
-	}
-
-	inline hw_uint<32>  peek_25() {
-		return peek(25);
-	}
-
-	inline hw_uint<32>  peek_26() {
-		return peek(26);
-	}
-
-	inline hw_uint<32>  peek_27() {
-		return peek(27);
-	}
-
-	inline hw_uint<32>  peek_28() {
-		return peek(28);
-	}
-
-	inline hw_uint<32>  peek_29() {
-		return peek(29);
-	}
-
-	inline hw_uint<32>  peek_30() {
-		return peek(30);
-	}
-
-	inline hw_uint<32>  peek_31() {
-		return peek(31);
-	}
-
-	inline hw_uint<32>  peek_32() {
-		return peek(32);
-	}
-
-	inline hw_uint<32>  peek_33() {
-		return peek(33);
-	}
-
-	inline hw_uint<32>  peek_34() {
-		return peek(34);
-	}
-
-	inline hw_uint<32>  peek_35() {
-		return peek(35);
-	}
-
-	inline hw_uint<32>  peek_36() {
-		return peek(36);
+		return f.peek(0);
 	}
 
 	inline hw_uint<32>  peek_37() {
-		return peek(37);
+		return f.peek(37);
 	}
 
 	inline hw_uint<32>  peek_38() {
-		return peek(38);
+		return f.peek(38);
 	}
 
 	inline hw_uint<32>  peek_39() {
-		return peek(39);
+		return f.peek(39);
 	}
 
 	inline hw_uint<32>  peek_40() {
-		return peek(40);
+		return f.peek(40);
 	}
 
 	inline hw_uint<32>  peek_41() {
-		return peek(41);
+		return f.peek(41);
 	}
 
 	inline hw_uint<32>  peek_42() {
-		return peek(42);
+		return f.peek(42);
 	}
 
 	inline hw_uint<32>  peek_43() {
-		return peek(43);
+		return f.peek(43);
 	}
 
 	inline hw_uint<32>  peek_44() {
-		return peek(44);
+		return f.peek(44);
 	}
 
 	inline hw_uint<32>  peek_45() {
-		return peek(45);
+		return f.peek(45);
 	}
 
 	inline hw_uint<32>  peek_46() {
-		return peek(46);
+		return f.peek(46);
 	}
 
 	inline hw_uint<32>  peek_47() {
-		return peek(47);
+		return f.peek(47);
 	}
 
 	inline hw_uint<32>  peek_48() {
-		return peek(48);
+		return f.peek(48);
 	}
 
 	inline hw_uint<32>  peek_49() {
-		return peek(49);
+		return f.peek(49);
 	}
 
 	inline hw_uint<32>  peek_50() {
-		return peek(50);
+		return f.peek(50);
 	}
 
 	inline hw_uint<32>  peek_51() {
-		return peek(51);
+		return f.peek(51);
 	}
 
 	inline hw_uint<32>  peek_52() {
-		return peek(52);
+		return f.peek(52);
 	}
 
 	inline hw_uint<32>  peek_53() {
-		return peek(53);
+		return f.peek(53);
 	}
 
 
@@ -284,147 +140,75 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd1_cache {
   }
 
 	inline hw_uint<32>  peek_0() {
-		return peek(0);
-	}
-
-	inline hw_uint<32>  peek_1() {
-		return peek(1);
-	}
-
-	inline hw_uint<32>  peek_2() {
-		return peek(2);
-	}
-
-	inline hw_uint<32>  peek_3() {
-		return peek(3);
-	}
-
-	inline hw_uint<32>  peek_4() {
-		return peek(4);
-	}
-
-	inline hw_uint<32>  peek_5() {
-		return peek(5);
-	}
-
-	inline hw_uint<32>  peek_6() {
-		return peek(6);
-	}
-
-	inline hw_uint<32>  peek_7() {
-		return peek(7);
-	}
-
-	inline hw_uint<32>  peek_8() {
-		return peek(8);
-	}
-
-	inline hw_uint<32>  peek_9() {
-		return peek(9);
-	}
-
-	inline hw_uint<32>  peek_10() {
-		return peek(10);
-	}
-
-	inline hw_uint<32>  peek_11() {
-		return peek(11);
-	}
-
-	inline hw_uint<32>  peek_12() {
-		return peek(12);
-	}
-
-	inline hw_uint<32>  peek_13() {
-		return peek(13);
-	}
-
-	inline hw_uint<32>  peek_14() {
-		return peek(14);
-	}
-
-	inline hw_uint<32>  peek_15() {
-		return peek(15);
-	}
-
-	inline hw_uint<32>  peek_16() {
-		return peek(16);
-	}
-
-	inline hw_uint<32>  peek_17() {
-		return peek(17);
-	}
-
-	inline hw_uint<32>  peek_18() {
-		return peek(18);
+		return f.peek(0);
 	}
 
 	inline hw_uint<32>  peek_19() {
-		return peek(19);
+		return f.peek(19);
 	}
 
 	inline hw_uint<32>  peek_20() {
-		return peek(20);
+		return f.peek(20);
 	}
 
 	inline hw_uint<32>  peek_21() {
-		return peek(21);
+		return f.peek(21);
 	}
 
 	inline hw_uint<32>  peek_22() {
-		return peek(22);
+		return f.peek(22);
 	}
 
 	inline hw_uint<32>  peek_23() {
-		return peek(23);
+		return f.peek(23);
 	}
 
 	inline hw_uint<32>  peek_24() {
-		return peek(24);
+		return f.peek(24);
 	}
 
 	inline hw_uint<32>  peek_25() {
-		return peek(25);
+		return f.peek(25);
 	}
 
 	inline hw_uint<32>  peek_26() {
-		return peek(26);
+		return f.peek(26);
 	}
 
 	inline hw_uint<32>  peek_27() {
-		return peek(27);
+		return f.peek(27);
 	}
 
 	inline hw_uint<32>  peek_28() {
-		return peek(28);
+		return f.peek(28);
 	}
 
 	inline hw_uint<32>  peek_29() {
-		return peek(29);
+		return f.peek(29);
 	}
 
 	inline hw_uint<32>  peek_30() {
-		return peek(30);
+		return f.peek(30);
 	}
 
 	inline hw_uint<32>  peek_31() {
-		return peek(31);
+		return f.peek(31);
 	}
 
 	inline hw_uint<32>  peek_32() {
-		return peek(32);
+		return f.peek(32);
 	}
 
 	inline hw_uint<32>  peek_33() {
-		return peek(33);
+		return f.peek(33);
 	}
 
 	inline hw_uint<32>  peek_34() {
-		return peek(34);
+		return f.peek(34);
 	}
 
 	inline hw_uint<32>  peek_35() {
-		return peek(35);
+		return f.peek(35);
 	}
 
 
@@ -463,75 +247,75 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd2_cache {
   }
 
 	inline hw_uint<32>  peek_0() {
-		return peek(0);
+		return f.peek(0);
 	}
 
 	inline hw_uint<32>  peek_1() {
-		return peek(1);
+		return f.peek(1);
 	}
 
 	inline hw_uint<32>  peek_2() {
-		return peek(2);
+		return f.peek(2);
 	}
 
 	inline hw_uint<32>  peek_3() {
-		return peek(3);
+		return f.peek(3);
 	}
 
 	inline hw_uint<32>  peek_4() {
-		return peek(4);
+		return f.peek(4);
 	}
 
 	inline hw_uint<32>  peek_5() {
-		return peek(5);
+		return f.peek(5);
 	}
 
 	inline hw_uint<32>  peek_6() {
-		return peek(6);
+		return f.peek(6);
 	}
 
 	inline hw_uint<32>  peek_7() {
-		return peek(7);
+		return f.peek(7);
 	}
 
 	inline hw_uint<32>  peek_8() {
-		return peek(8);
+		return f.peek(8);
 	}
 
 	inline hw_uint<32>  peek_9() {
-		return peek(9);
+		return f.peek(9);
 	}
 
 	inline hw_uint<32>  peek_10() {
-		return peek(10);
+		return f.peek(10);
 	}
 
 	inline hw_uint<32>  peek_11() {
-		return peek(11);
+		return f.peek(11);
 	}
 
 	inline hw_uint<32>  peek_12() {
-		return peek(12);
+		return f.peek(12);
 	}
 
 	inline hw_uint<32>  peek_13() {
-		return peek(13);
+		return f.peek(13);
 	}
 
 	inline hw_uint<32>  peek_14() {
-		return peek(14);
+		return f.peek(14);
 	}
 
 	inline hw_uint<32>  peek_15() {
-		return peek(15);
+		return f.peek(15);
 	}
 
 	inline hw_uint<32>  peek_16() {
-		return peek(16);
+		return f.peek(16);
 	}
 
 	inline hw_uint<32>  peek_17() {
-		return peek(17);
+		return f.peek(17);
 	}
 
 
@@ -570,215 +354,75 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd3_cache {
   }
 
 	inline hw_uint<32>  peek_0() {
-		return peek(0);
-	}
-
-	inline hw_uint<32>  peek_1() {
-		return peek(1);
-	}
-
-	inline hw_uint<32>  peek_2() {
-		return peek(2);
-	}
-
-	inline hw_uint<32>  peek_3() {
-		return peek(3);
-	}
-
-	inline hw_uint<32>  peek_4() {
-		return peek(4);
-	}
-
-	inline hw_uint<32>  peek_5() {
-		return peek(5);
-	}
-
-	inline hw_uint<32>  peek_6() {
-		return peek(6);
-	}
-
-	inline hw_uint<32>  peek_7() {
-		return peek(7);
-	}
-
-	inline hw_uint<32>  peek_8() {
-		return peek(8);
-	}
-
-	inline hw_uint<32>  peek_9() {
-		return peek(9);
-	}
-
-	inline hw_uint<32>  peek_10() {
-		return peek(10);
-	}
-
-	inline hw_uint<32>  peek_11() {
-		return peek(11);
-	}
-
-	inline hw_uint<32>  peek_12() {
-		return peek(12);
-	}
-
-	inline hw_uint<32>  peek_13() {
-		return peek(13);
-	}
-
-	inline hw_uint<32>  peek_14() {
-		return peek(14);
-	}
-
-	inline hw_uint<32>  peek_15() {
-		return peek(15);
-	}
-
-	inline hw_uint<32>  peek_16() {
-		return peek(16);
-	}
-
-	inline hw_uint<32>  peek_17() {
-		return peek(17);
-	}
-
-	inline hw_uint<32>  peek_18() {
-		return peek(18);
-	}
-
-	inline hw_uint<32>  peek_19() {
-		return peek(19);
-	}
-
-	inline hw_uint<32>  peek_20() {
-		return peek(20);
-	}
-
-	inline hw_uint<32>  peek_21() {
-		return peek(21);
-	}
-
-	inline hw_uint<32>  peek_22() {
-		return peek(22);
-	}
-
-	inline hw_uint<32>  peek_23() {
-		return peek(23);
-	}
-
-	inline hw_uint<32>  peek_24() {
-		return peek(24);
-	}
-
-	inline hw_uint<32>  peek_25() {
-		return peek(25);
-	}
-
-	inline hw_uint<32>  peek_26() {
-		return peek(26);
-	}
-
-	inline hw_uint<32>  peek_27() {
-		return peek(27);
-	}
-
-	inline hw_uint<32>  peek_28() {
-		return peek(28);
-	}
-
-	inline hw_uint<32>  peek_29() {
-		return peek(29);
-	}
-
-	inline hw_uint<32>  peek_30() {
-		return peek(30);
-	}
-
-	inline hw_uint<32>  peek_31() {
-		return peek(31);
-	}
-
-	inline hw_uint<32>  peek_32() {
-		return peek(32);
-	}
-
-	inline hw_uint<32>  peek_33() {
-		return peek(33);
-	}
-
-	inline hw_uint<32>  peek_34() {
-		return peek(34);
-	}
-
-	inline hw_uint<32>  peek_35() {
-		return peek(35);
+		return f.peek(0);
 	}
 
 	inline hw_uint<32>  peek_36() {
-		return peek(36);
+		return f.peek(36);
 	}
 
 	inline hw_uint<32>  peek_37() {
-		return peek(37);
+		return f.peek(37);
 	}
 
 	inline hw_uint<32>  peek_38() {
-		return peek(38);
+		return f.peek(38);
 	}
 
 	inline hw_uint<32>  peek_39() {
-		return peek(39);
+		return f.peek(39);
 	}
 
 	inline hw_uint<32>  peek_40() {
-		return peek(40);
+		return f.peek(40);
 	}
 
 	inline hw_uint<32>  peek_41() {
-		return peek(41);
+		return f.peek(41);
 	}
 
 	inline hw_uint<32>  peek_42() {
-		return peek(42);
+		return f.peek(42);
 	}
 
 	inline hw_uint<32>  peek_43() {
-		return peek(43);
+		return f.peek(43);
 	}
 
 	inline hw_uint<32>  peek_44() {
-		return peek(44);
+		return f.peek(44);
 	}
 
 	inline hw_uint<32>  peek_45() {
-		return peek(45);
+		return f.peek(45);
 	}
 
 	inline hw_uint<32>  peek_46() {
-		return peek(46);
+		return f.peek(46);
 	}
 
 	inline hw_uint<32>  peek_47() {
-		return peek(47);
+		return f.peek(47);
 	}
 
 	inline hw_uint<32>  peek_48() {
-		return peek(48);
+		return f.peek(48);
 	}
 
 	inline hw_uint<32>  peek_49() {
-		return peek(49);
+		return f.peek(49);
 	}
 
 	inline hw_uint<32>  peek_50() {
-		return peek(50);
+		return f.peek(50);
 	}
 
 	inline hw_uint<32>  peek_51() {
-		return peek(51);
+		return f.peek(51);
 	}
 
 	inline hw_uint<32>  peek_52() {
-		return peek(52);
+		return f.peek(52);
 	}
 
 
@@ -817,143 +461,75 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd4_cache {
   }
 
 	inline hw_uint<32>  peek_0() {
-		return peek(0);
-	}
-
-	inline hw_uint<32>  peek_1() {
-		return peek(1);
-	}
-
-	inline hw_uint<32>  peek_2() {
-		return peek(2);
-	}
-
-	inline hw_uint<32>  peek_3() {
-		return peek(3);
-	}
-
-	inline hw_uint<32>  peek_4() {
-		return peek(4);
-	}
-
-	inline hw_uint<32>  peek_5() {
-		return peek(5);
-	}
-
-	inline hw_uint<32>  peek_6() {
-		return peek(6);
-	}
-
-	inline hw_uint<32>  peek_7() {
-		return peek(7);
-	}
-
-	inline hw_uint<32>  peek_8() {
-		return peek(8);
-	}
-
-	inline hw_uint<32>  peek_9() {
-		return peek(9);
-	}
-
-	inline hw_uint<32>  peek_10() {
-		return peek(10);
-	}
-
-	inline hw_uint<32>  peek_11() {
-		return peek(11);
-	}
-
-	inline hw_uint<32>  peek_12() {
-		return peek(12);
-	}
-
-	inline hw_uint<32>  peek_13() {
-		return peek(13);
-	}
-
-	inline hw_uint<32>  peek_14() {
-		return peek(14);
-	}
-
-	inline hw_uint<32>  peek_15() {
-		return peek(15);
-	}
-
-	inline hw_uint<32>  peek_16() {
-		return peek(16);
-	}
-
-	inline hw_uint<32>  peek_17() {
-		return peek(17);
+		return f.peek(0);
 	}
 
 	inline hw_uint<32>  peek_18() {
-		return peek(18);
+		return f.peek(18);
 	}
 
 	inline hw_uint<32>  peek_19() {
-		return peek(19);
+		return f.peek(19);
 	}
 
 	inline hw_uint<32>  peek_20() {
-		return peek(20);
+		return f.peek(20);
 	}
 
 	inline hw_uint<32>  peek_21() {
-		return peek(21);
+		return f.peek(21);
 	}
 
 	inline hw_uint<32>  peek_22() {
-		return peek(22);
+		return f.peek(22);
 	}
 
 	inline hw_uint<32>  peek_23() {
-		return peek(23);
+		return f.peek(23);
 	}
 
 	inline hw_uint<32>  peek_24() {
-		return peek(24);
+		return f.peek(24);
 	}
 
 	inline hw_uint<32>  peek_25() {
-		return peek(25);
+		return f.peek(25);
 	}
 
 	inline hw_uint<32>  peek_26() {
-		return peek(26);
+		return f.peek(26);
 	}
 
 	inline hw_uint<32>  peek_27() {
-		return peek(27);
+		return f.peek(27);
 	}
 
 	inline hw_uint<32>  peek_28() {
-		return peek(28);
+		return f.peek(28);
 	}
 
 	inline hw_uint<32>  peek_29() {
-		return peek(29);
+		return f.peek(29);
 	}
 
 	inline hw_uint<32>  peek_30() {
-		return peek(30);
+		return f.peek(30);
 	}
 
 	inline hw_uint<32>  peek_31() {
-		return peek(31);
+		return f.peek(31);
 	}
 
 	inline hw_uint<32>  peek_32() {
-		return peek(32);
+		return f.peek(32);
 	}
 
 	inline hw_uint<32>  peek_33() {
-		return peek(33);
+		return f.peek(33);
 	}
 
 	inline hw_uint<32>  peek_34() {
-		return peek(34);
+		return f.peek(34);
 	}
 
 
@@ -992,71 +568,71 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd5_cache {
   }
 
 	inline hw_uint<32>  peek_0() {
-		return peek(0);
+		return f.peek(0);
 	}
 
 	inline hw_uint<32>  peek_1() {
-		return peek(1);
+		return f.peek(1);
 	}
 
 	inline hw_uint<32>  peek_2() {
-		return peek(2);
+		return f.peek(2);
 	}
 
 	inline hw_uint<32>  peek_3() {
-		return peek(3);
+		return f.peek(3);
 	}
 
 	inline hw_uint<32>  peek_4() {
-		return peek(4);
+		return f.peek(4);
 	}
 
 	inline hw_uint<32>  peek_5() {
-		return peek(5);
+		return f.peek(5);
 	}
 
 	inline hw_uint<32>  peek_6() {
-		return peek(6);
+		return f.peek(6);
 	}
 
 	inline hw_uint<32>  peek_7() {
-		return peek(7);
+		return f.peek(7);
 	}
 
 	inline hw_uint<32>  peek_8() {
-		return peek(8);
+		return f.peek(8);
 	}
 
 	inline hw_uint<32>  peek_9() {
-		return peek(9);
+		return f.peek(9);
 	}
 
 	inline hw_uint<32>  peek_10() {
-		return peek(10);
+		return f.peek(10);
 	}
 
 	inline hw_uint<32>  peek_11() {
-		return peek(11);
+		return f.peek(11);
 	}
 
 	inline hw_uint<32>  peek_12() {
-		return peek(12);
+		return f.peek(12);
 	}
 
 	inline hw_uint<32>  peek_13() {
-		return peek(13);
+		return f.peek(13);
 	}
 
 	inline hw_uint<32>  peek_14() {
-		return peek(14);
+		return f.peek(14);
 	}
 
 	inline hw_uint<32>  peek_15() {
-		return peek(15);
+		return f.peek(15);
 	}
 
 	inline hw_uint<32>  peek_16() {
-		return peek(16);
+		return f.peek(16);
 	}
 
 
@@ -1095,211 +671,71 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd6_cache {
   }
 
 	inline hw_uint<32>  peek_0() {
-		return peek(0);
-	}
-
-	inline hw_uint<32>  peek_1() {
-		return peek(1);
-	}
-
-	inline hw_uint<32>  peek_2() {
-		return peek(2);
-	}
-
-	inline hw_uint<32>  peek_3() {
-		return peek(3);
-	}
-
-	inline hw_uint<32>  peek_4() {
-		return peek(4);
-	}
-
-	inline hw_uint<32>  peek_5() {
-		return peek(5);
-	}
-
-	inline hw_uint<32>  peek_6() {
-		return peek(6);
-	}
-
-	inline hw_uint<32>  peek_7() {
-		return peek(7);
-	}
-
-	inline hw_uint<32>  peek_8() {
-		return peek(8);
-	}
-
-	inline hw_uint<32>  peek_9() {
-		return peek(9);
-	}
-
-	inline hw_uint<32>  peek_10() {
-		return peek(10);
-	}
-
-	inline hw_uint<32>  peek_11() {
-		return peek(11);
-	}
-
-	inline hw_uint<32>  peek_12() {
-		return peek(12);
-	}
-
-	inline hw_uint<32>  peek_13() {
-		return peek(13);
-	}
-
-	inline hw_uint<32>  peek_14() {
-		return peek(14);
-	}
-
-	inline hw_uint<32>  peek_15() {
-		return peek(15);
-	}
-
-	inline hw_uint<32>  peek_16() {
-		return peek(16);
-	}
-
-	inline hw_uint<32>  peek_17() {
-		return peek(17);
-	}
-
-	inline hw_uint<32>  peek_18() {
-		return peek(18);
-	}
-
-	inline hw_uint<32>  peek_19() {
-		return peek(19);
-	}
-
-	inline hw_uint<32>  peek_20() {
-		return peek(20);
-	}
-
-	inline hw_uint<32>  peek_21() {
-		return peek(21);
-	}
-
-	inline hw_uint<32>  peek_22() {
-		return peek(22);
-	}
-
-	inline hw_uint<32>  peek_23() {
-		return peek(23);
-	}
-
-	inline hw_uint<32>  peek_24() {
-		return peek(24);
-	}
-
-	inline hw_uint<32>  peek_25() {
-		return peek(25);
-	}
-
-	inline hw_uint<32>  peek_26() {
-		return peek(26);
-	}
-
-	inline hw_uint<32>  peek_27() {
-		return peek(27);
-	}
-
-	inline hw_uint<32>  peek_28() {
-		return peek(28);
-	}
-
-	inline hw_uint<32>  peek_29() {
-		return peek(29);
-	}
-
-	inline hw_uint<32>  peek_30() {
-		return peek(30);
-	}
-
-	inline hw_uint<32>  peek_31() {
-		return peek(31);
-	}
-
-	inline hw_uint<32>  peek_32() {
-		return peek(32);
-	}
-
-	inline hw_uint<32>  peek_33() {
-		return peek(33);
-	}
-
-	inline hw_uint<32>  peek_34() {
-		return peek(34);
-	}
-
-	inline hw_uint<32>  peek_35() {
-		return peek(35);
+		return f.peek(0);
 	}
 
 	inline hw_uint<32>  peek_36() {
-		return peek(36);
+		return f.peek(36);
 	}
 
 	inline hw_uint<32>  peek_37() {
-		return peek(37);
+		return f.peek(37);
 	}
 
 	inline hw_uint<32>  peek_38() {
-		return peek(38);
+		return f.peek(38);
 	}
 
 	inline hw_uint<32>  peek_39() {
-		return peek(39);
+		return f.peek(39);
 	}
 
 	inline hw_uint<32>  peek_40() {
-		return peek(40);
+		return f.peek(40);
 	}
 
 	inline hw_uint<32>  peek_41() {
-		return peek(41);
+		return f.peek(41);
 	}
 
 	inline hw_uint<32>  peek_42() {
-		return peek(42);
+		return f.peek(42);
 	}
 
 	inline hw_uint<32>  peek_43() {
-		return peek(43);
+		return f.peek(43);
 	}
 
 	inline hw_uint<32>  peek_44() {
-		return peek(44);
+		return f.peek(44);
 	}
 
 	inline hw_uint<32>  peek_45() {
-		return peek(45);
+		return f.peek(45);
 	}
 
 	inline hw_uint<32>  peek_46() {
-		return peek(46);
+		return f.peek(46);
 	}
 
 	inline hw_uint<32>  peek_47() {
-		return peek(47);
+		return f.peek(47);
 	}
 
 	inline hw_uint<32>  peek_48() {
-		return peek(48);
+		return f.peek(48);
 	}
 
 	inline hw_uint<32>  peek_49() {
-		return peek(49);
+		return f.peek(49);
 	}
 
 	inline hw_uint<32>  peek_50() {
-		return peek(50);
+		return f.peek(50);
 	}
 
 	inline hw_uint<32>  peek_51() {
-		return peek(51);
+		return f.peek(51);
 	}
 
 
@@ -1338,139 +774,71 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd7_cache {
   }
 
 	inline hw_uint<32>  peek_0() {
-		return peek(0);
-	}
-
-	inline hw_uint<32>  peek_1() {
-		return peek(1);
-	}
-
-	inline hw_uint<32>  peek_2() {
-		return peek(2);
-	}
-
-	inline hw_uint<32>  peek_3() {
-		return peek(3);
-	}
-
-	inline hw_uint<32>  peek_4() {
-		return peek(4);
-	}
-
-	inline hw_uint<32>  peek_5() {
-		return peek(5);
-	}
-
-	inline hw_uint<32>  peek_6() {
-		return peek(6);
-	}
-
-	inline hw_uint<32>  peek_7() {
-		return peek(7);
-	}
-
-	inline hw_uint<32>  peek_8() {
-		return peek(8);
-	}
-
-	inline hw_uint<32>  peek_9() {
-		return peek(9);
-	}
-
-	inline hw_uint<32>  peek_10() {
-		return peek(10);
-	}
-
-	inline hw_uint<32>  peek_11() {
-		return peek(11);
-	}
-
-	inline hw_uint<32>  peek_12() {
-		return peek(12);
-	}
-
-	inline hw_uint<32>  peek_13() {
-		return peek(13);
-	}
-
-	inline hw_uint<32>  peek_14() {
-		return peek(14);
-	}
-
-	inline hw_uint<32>  peek_15() {
-		return peek(15);
-	}
-
-	inline hw_uint<32>  peek_16() {
-		return peek(16);
-	}
-
-	inline hw_uint<32>  peek_17() {
-		return peek(17);
+		return f.peek(0);
 	}
 
 	inline hw_uint<32>  peek_18() {
-		return peek(18);
+		return f.peek(18);
 	}
 
 	inline hw_uint<32>  peek_19() {
-		return peek(19);
+		return f.peek(19);
 	}
 
 	inline hw_uint<32>  peek_20() {
-		return peek(20);
+		return f.peek(20);
 	}
 
 	inline hw_uint<32>  peek_21() {
-		return peek(21);
+		return f.peek(21);
 	}
 
 	inline hw_uint<32>  peek_22() {
-		return peek(22);
+		return f.peek(22);
 	}
 
 	inline hw_uint<32>  peek_23() {
-		return peek(23);
+		return f.peek(23);
 	}
 
 	inline hw_uint<32>  peek_24() {
-		return peek(24);
+		return f.peek(24);
 	}
 
 	inline hw_uint<32>  peek_25() {
-		return peek(25);
+		return f.peek(25);
 	}
 
 	inline hw_uint<32>  peek_26() {
-		return peek(26);
+		return f.peek(26);
 	}
 
 	inline hw_uint<32>  peek_27() {
-		return peek(27);
+		return f.peek(27);
 	}
 
 	inline hw_uint<32>  peek_28() {
-		return peek(28);
+		return f.peek(28);
 	}
 
 	inline hw_uint<32>  peek_29() {
-		return peek(29);
+		return f.peek(29);
 	}
 
 	inline hw_uint<32>  peek_30() {
-		return peek(30);
+		return f.peek(30);
 	}
 
 	inline hw_uint<32>  peek_31() {
-		return peek(31);
+		return f.peek(31);
 	}
 
 	inline hw_uint<32>  peek_32() {
-		return peek(32);
+		return f.peek(32);
 	}
 
 	inline hw_uint<32>  peek_33() {
-		return peek(33);
+		return f.peek(33);
 	}
 
 
@@ -1509,67 +877,67 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd8_cache {
   }
 
 	inline hw_uint<32>  peek_0() {
-		return peek(0);
+		return f.peek(0);
 	}
 
 	inline hw_uint<32>  peek_1() {
-		return peek(1);
+		return f.peek(1);
 	}
 
 	inline hw_uint<32>  peek_2() {
-		return peek(2);
+		return f.peek(2);
 	}
 
 	inline hw_uint<32>  peek_3() {
-		return peek(3);
+		return f.peek(3);
 	}
 
 	inline hw_uint<32>  peek_4() {
-		return peek(4);
+		return f.peek(4);
 	}
 
 	inline hw_uint<32>  peek_5() {
-		return peek(5);
+		return f.peek(5);
 	}
 
 	inline hw_uint<32>  peek_6() {
-		return peek(6);
+		return f.peek(6);
 	}
 
 	inline hw_uint<32>  peek_7() {
-		return peek(7);
+		return f.peek(7);
 	}
 
 	inline hw_uint<32>  peek_8() {
-		return peek(8);
+		return f.peek(8);
 	}
 
 	inline hw_uint<32>  peek_9() {
-		return peek(9);
+		return f.peek(9);
 	}
 
 	inline hw_uint<32>  peek_10() {
-		return peek(10);
+		return f.peek(10);
 	}
 
 	inline hw_uint<32>  peek_11() {
-		return peek(11);
+		return f.peek(11);
 	}
 
 	inline hw_uint<32>  peek_12() {
-		return peek(12);
+		return f.peek(12);
 	}
 
 	inline hw_uint<32>  peek_13() {
-		return peek(13);
+		return f.peek(13);
 	}
 
 	inline hw_uint<32>  peek_14() {
-		return peek(14);
+		return f.peek(14);
 	}
 
 	inline hw_uint<32>  peek_15() {
-		return peek(15);
+		return f.peek(15);
 	}
 
 
@@ -1707,15 +1075,6 @@ inline hw_uint<288> Img_upsample_stencil_update_0_read_bundle_read(Img_cache& Im
 
 
 // Operation logic
-inline void Img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */Img_off, Img_cache& Img, int d0, int d1) {
-	// Consume: Img_off
-	auto Img_off_0_c__0_value = Img_off.read();
-	auto compute_result = id(Img_off_0_c__0_value);
-	// Produce: Img
-	Img_Img_update_0_write_bundle_write(compute_result, Img, d0, d1);
-  *global_debug_handle << "Img_update_0," << d0<< "," << d1<< "," <<  compute_result << endl;
-}
-
 inline void upsample_stencil_update_0(Img_cache& Img, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */upsample_stencil, int d0, int d1) {
 	// Consume: Img
 	auto Img_0_c__0_value = Img_upsample_stencil_update_0_read_bundle_read(Img/* source_delay */, d0, d1);
@@ -1724,6 +1083,15 @@ inline void upsample_stencil_update_0(Img_cache& Img, HWStream<hw_uint<32> >& /*
 	// Produce: upsample_stencil
 	upsample_stencil.write(compute_result);
   *global_debug_handle << "upsample_stencil_update_0," << d0<< "," << d1<< "," <<  compute_result << endl;
+}
+
+inline void Img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */Img_off, Img_cache& Img, int d0, int d1) {
+	// Consume: Img_off
+	auto Img_off_0_c__0_value = Img_off.read();
+	auto compute_result = id(Img_off_0_c__0_value);
+	// Produce: Img
+	Img_Img_update_0_write_bundle_write(compute_result, Img, d0, d1);
+  *global_debug_handle << "Img_update_0," << d0<< "," << d1<< "," <<  compute_result << endl;
 }
 
 // Driver function
