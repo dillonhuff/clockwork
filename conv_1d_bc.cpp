@@ -33,15 +33,15 @@ struct M_write_6_to_M_read0_3_cache {
   }
 
 	inline hw_uint<32>  peek_0() {
-		return f.peek(0);
+		return peek(0);
 	}
 
 	inline hw_uint<32>  peek_1() {
-		return f.peek(1);
+		return peek(1);
 	}
 
 	inline hw_uint<32>  peek_2() {
-		return f.peek(2);
+		return peek(2);
 	}
 
 
@@ -195,7 +195,7 @@ struct T_read0_2_merged_banks_1_cache {
   }
 
 	inline hw_uint<96> peek_0() {
-		return f.peek(0);
+		return peek(0);
 	}
 
 
@@ -248,6 +248,7 @@ inline void T_read0_write_bundle_write(hw_uint<96>& read0_write, T_cache& T, int
 inline void compute_out(T_cache& T, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */out, int root, int c) {
 	// Consume: T
 	auto T_c_value = T_compute_out_read_bundle_read(T/* source_delay */, root, c);
+  *global_debug_handle << "compute_out_T," << root<< "," << c<< "," <<  T_c_value << endl;
 	auto compute_result = accumulate_3(T_c_value);
 	// Produce: out
 	out.write(compute_result);
@@ -257,6 +258,7 @@ inline void compute_out(T_cache& T, HWStream<hw_uint<32> >& /* buffer_args num p
 inline void read0(M_cache& M, T_cache& T, int root, int c) {
 	// Consume: M
 	auto M_min_lp_c_c__9_rp__value = M_read0_read_bundle_read(M/* source_delay */, root, c);
+  *global_debug_handle << "read0_M," << root<< "," << c<< "," <<  M_min_lp_c_c__9_rp__value << endl;
 	// Produce: T
 	T_read0_write_bundle_write(M_min_lp_c_c__9_rp__value, T, root, c);
   *global_debug_handle << "read0," << root<< "," << c<< "," <<  M_min_lp_c_c__9_rp__value << endl;
