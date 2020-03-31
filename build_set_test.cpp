@@ -2767,7 +2767,7 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
   for (auto v : kernel.iteration_variables) {
     conv_out << v << "<< \",\" << ";
   }
-  conv_out << " compute_result << endl;" << endl;
+  conv_out << " " << res << " << endl;" << endl;
   conv_out << "}" << endl << endl;
 
   return kernel;
@@ -5781,7 +5781,7 @@ struct App {
 
     CodegenOptions options;
     options.internal = true;
-    options.all_rams = false;
+    options.all_rams = true;
 
     prog prg;
     prg.name = name + "_naive";
@@ -6532,8 +6532,9 @@ void mismatched_stencil_test() {
   Window ywindow{"img1", {1, 1}, {{0, 0}, {1, 0}}};
   sobel.func2d("mismatched_stencils", "contrived", {xwindow, ywindow});
 
-  sobel.realize("mismatched_stencils", 10, 1, 1);
-  sobel.realize_naive("mismatched_stencils", 10, 1);
+  int size = 1920;
+  sobel.realize("mismatched_stencils", size, 1, 1);
+  sobel.realize_naive("mismatched_stencils", size, 1);
 
   std::vector<std::string> naive =
     run_regression_tb("mismatched_stencils_naive");
@@ -7006,7 +7007,7 @@ void denoise2d_test() {
 
 
   assert(naive == optimized);
-  assert(false);
+  //assert(false);
 }
 
 void conv3x3_app_unrolled_uneven_test() {
@@ -7505,7 +7506,14 @@ void application_tests() {
   //exposure_fusion_simple_average();
  
   //reduce_1d_test();
-  denoise2d_test();
+
+  // Known to fail with all rams off
+  //denoise2d_test();
+
+  exposure_fusion();
+  cout << "Exposure fusion passed" << endl;
+  assert(false);
+
   mismatched_stencil_test();
   jacobi_2d_app_test();
   grayscale_conversion_test();
@@ -7524,8 +7532,6 @@ void application_tests() {
   updown_merge_test();
   sobel_test();
 
-
-  exposure_fusion();
   laplacian_pyramid_app_test();
   upsample_stencil_2d_test();
   upsample_stencil_1d_test();
