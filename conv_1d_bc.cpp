@@ -32,18 +32,6 @@ struct M_write_6_to_M_read0_3_cache {
     return f.peek(2 - offset);
   }
 
-	inline hw_uint<32>  peek_0() {
-		return f.peek(0);
-	}
-
-	inline hw_uint<32>  peek_1() {
-		return f.peek(1);
-	}
-
-	inline hw_uint<32>  peek_2() {
-		return f.peek(2);
-	}
-
 
 
 	inline void push(const hw_uint<32>  value) {
@@ -57,7 +45,7 @@ struct M_write_6_to_M_read0_3_cache {
 
 struct M_write_6_merged_banks_2_cache {
 	// RAM Box: {[0, 9]}
-	// Capacity: 3
+	// Capacity: 2
 	// # of read delays: 2
 #ifdef __VIVADO_SYNTH__
   hw_uint<32>  M_write_6_merged_banks_2_store[10];
@@ -129,7 +117,7 @@ inline void M_write_6_write(hw_uint<32> & M_write_6, M_cache& M, int root, int p
 
 inline hw_uint<32>  M_read0_3_select(M_cache& M, int root, int c) {
   // M_read0_3 read pattern: { read0[root = 0, c] -> M[c] : 0 <= c <= 9 }
-	auto value_M_write_6 = M.M_write_6_to_M_read0_3.peek(/* Needs general delay string */ (-8 + c == 0) ? (1) : (7 - c >= 0) ? (2) : 0);
+	auto value_M_write_6 = M.M_write_6_to_M_read0_3.peek(/* one reader or all rams */ (-8 + c == 0) ? (1) : (7 - c >= 0) ? (2) : 0);
 	return value_M_write_6;
 }
 
@@ -194,10 +182,6 @@ struct T_read0_2_merged_banks_1_cache {
     return f.peek(0 - offset);
   }
 
-	inline hw_uint<96> peek_0() {
-		return f.peek(0);
-	}
-
 
 
 	inline void push(const hw_uint<96> value) {
@@ -221,7 +205,7 @@ inline void T_read0_2_write(hw_uint<96>& T_read0_2, T_cache& T, int root, int c)
 
 inline hw_uint<96> T_compute_out_1_select(T_cache& T, int root, int c) {
   // T_compute_out_1 read pattern: { compute_out[root = 0, c] -> T[c] : 0 <= c <= 9 }
-	auto value_T_read0_2 = T.T_read0_2_merged_banks_1.peek_0();
+	auto value_T_read0_2 = T.T_read0_2_merged_banks_1.peek(/* one reader or all rams */ 0);
 	return value_T_read0_2;
 }
 
@@ -248,6 +232,7 @@ inline void T_read0_write_bundle_write(hw_uint<96>& read0_write, T_cache& T, int
 inline void compute_out(T_cache& T, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */out, int root, int c) {
 	// Consume: T
 	auto T_c_value = T_compute_out_read_bundle_read(T/* source_delay */, root, c);
+  *global_debug_handle << "compute_out_T," << root<< "," << c<< "," <<  T_c_value << endl;
 	auto compute_result = accumulate_3(T_c_value);
 	// Produce: out
 	out.write(compute_result);
@@ -257,6 +242,7 @@ inline void compute_out(T_cache& T, HWStream<hw_uint<32> >& /* buffer_args num p
 inline void read0(M_cache& M, T_cache& T, int root, int c) {
 	// Consume: M
 	auto M_min_lp_c_c__9_rp__value = M_read0_read_bundle_read(M/* source_delay */, root, c);
+  *global_debug_handle << "read0_M," << root<< "," << c<< "," <<  M_min_lp_c_c__9_rp__value << endl;
 	// Produce: T
 	T_read0_write_bundle_write(M_min_lp_c_c__9_rp__value, T, root, c);
   *global_debug_handle << "read0," << root<< "," << c<< "," <<  M_min_lp_c_c__9_rp__value << endl;
@@ -278,13 +264,11 @@ void conv_1d_bc(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in
   M_cache M;
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=M inter false
-#endif // __VIVADO_SYNTH__
-
+#endif //__VIVADO_SYNTH__
   T_cache T;
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=T inter false
-#endif // __VIVADO_SYNTH__
-
+#endif //__VIVADO_SYNTH__
 	for (int c0 = 0; c0 <= 11; c0 += 1) {
 	  if (c0 <= 9)
 	write(in, M, 0, c0);

@@ -445,7 +445,7 @@ void generate_ram_bank(CodegenOptions& options,
 
 }
 
-void generate_stack_cache(CodegenOptions& options,
+void generate_bank(CodegenOptions& options,
     std::ostream& out,
     stack_bank& bank) {
 
@@ -462,52 +462,41 @@ void generate_stack_cache(CodegenOptions& options,
 
   generate_ram_bank(options, out, bank);
 
+  read_delays = sort_unique(read_delays);
+
   //out << "\t// read delays: " << comma_list(read_delays) << endl;
   if (num_readers == 1 || options.all_rams) {
     int partition_capacity = 1 + maxdelay;
     out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << ";" << endl;
     out << "\tinline " + pt_type_string + " peek(const int offset) {" << endl;
-    out << "#ifdef __VIVADO_SYNTH__" << endl;
-    out << "#pragma HLS dependence variable=f inter false" << endl;
-    out << "#endif //__VIVADO_SYNTH__" << endl;
+    ignore_inter_deps(out, "f");
     out << tab(2) << "return f.peek(" << partition_capacity - 1 << " - offset);" << endl;
     out << tab(1) << "}" << endl << endl;
 
     if (!options.all_rams) {
-      for (int i = 0; i < partition_capacity; i++) {
-        int dv = i;
-        assert(dv >= 0);
-        out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
-        //out << "#ifdef __VIVADO_SYNTH__" << endl;
-        //out << "#pragma HLS dependence variable=f inter false" << endl;
-        //out << "#endif //__VIVADO_SYNTH__" << endl;
-        out << "\t\treturn f.peek(" << dv <<");" << endl;
-        out << "\t}" << endl << endl;
-      }
+      //for (auto delay : read_delays) {
+        //out << "\tinline " << pt_type_string << " peek_" << delay << "() {" << endl;
+        //out << "\t\treturn " << "f" << ".peek(" << delay << ");" << endl;
+        //out << "\t}" << endl << endl;
+      //}
+
+      //for (int i = 0; i < partition_capacity; i++) {
+        //int dv = i;
+        //assert(dv >= 0);
+        //out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
+        //out << "\t\treturn peek(" << dv <<");" << endl;
+        //out << "\t}" << endl << endl;
+      //}
     }
     out << endl << endl;
     out << "\tinline void push(const " + pt_type_string + " value) {" << endl;
     if (options.add_dependence_pragmas) {
-      out << "#ifdef __VIVADO_SYNTH__" << endl;
-      out << "#pragma HLS dependence variable=f inter false" << endl;
-      out << "#endif //__VIVADO_SYNTH__" << endl;
+      ignore_inter_deps(out, "f");
     }
     out << tab(2) << "return f.push(value);" << endl;
     out << tab(1) << "}" << endl << endl;
   } else {
-    read_delays = sort_unique(read_delays);
-
-    vector<int> break_points;
-    if (read_delays.size() == 1) {
-      break_points = {read_delays[0], read_delays[0]};
-    } else {
-      for (size_t i = 0; i < read_delays.size(); i++) {
-        break_points.push_back(read_delays[i]);
-        if (i < read_delays.size() - 1 && read_delays[i] != read_delays[i + 1] + 1) {
-          break_points.push_back(read_delays[i] + 1);
-        }
-      }
-    }
+    auto break_points = bank.get_break_points();
     read_delays = break_points;
 
     vector<string> partitions;
@@ -540,9 +529,6 @@ void generate_stack_cache(CodegenOptions& options,
         int dv = end_inds[nind];
         assert(dv >= 0);
         out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
-        //out << "#ifdef __VIVADO_SYNTH__" << endl;
-        //out << "#pragma HLS dependence variable=f inter false" << endl;
-        //out << "#endif //__VIVADO_SYNTH__" << endl;
         out << "\t\treturn " << p << ".back();" << endl;
         out << "\t}" << endl << endl;
         nind++;
@@ -550,9 +536,7 @@ void generate_stack_cache(CodegenOptions& options,
       out << endl << endl;
 
       out << "\tinline " + pt_type_string + " peek(const int offset) {" << endl;
-      out << "#ifdef __VIVADO_SYNTH__" << endl;
-      out << "#pragma HLS dependence variable=f inter false" << endl;
-      out << "#endif //__VIVADO_SYNTH__" << endl;
+      ignore_inter_deps(out, "f");
       nind = 0;
       for (auto p : partitions) {
         int dv = end_inds[nind];
@@ -570,9 +554,7 @@ void generate_stack_cache(CodegenOptions& options,
 
       out << "\tinline void push(const " + pt_type_string + " value) {" << endl;
       if (options.add_dependence_pragmas) {
-        out << "#ifdef __VIVADO_SYNTH__" << endl;
-        out << "#pragma HLS dependence array inter false" << endl;
-        out << "#endif //__VIVADO_SYNTH__" << endl;
+        ignore_inter_deps_array(out);
       }
       if (partitions.size() > 0) {
         for (size_t i = partitions.size() - 1; i >= 1; i--) {
@@ -610,7 +592,8 @@ bank compute_bank_info(
     const std::string& outpt,
     UBuffer& buf) {
 
-  int maxdelay = compute_max_dd(buf, inpt);
+  int maxdelay = compute_dd_bound(buf, outpt, inpt);
+  //int maxdelay = compute_max_dd(buf, inpt);
   vector<int> read_delays{0};
 
   // NOTE: Just to ensure we dont force everything to be a RAM
@@ -787,7 +770,7 @@ void generate_code_prefix(CodegenOptions& options,
   string inpt = buf.get_in_port();
   out << "#include \"hw_classes.h\"" << endl << endl;
   for (auto b : buf.get_banks()) {
-    generate_stack_cache(options, out, b);
+    generate_bank(options, out, b);
   }
 
   out << "struct " << buf.name << "_cache {" << endl;
@@ -868,9 +851,6 @@ selector generate_select_decl(CodegenOptions& options, std::ostream& out, const 
   out << sep_list(dim_decls, "", "", ", ");
 
   out << ") {" << endl;
-  //out << "#ifdef __VIVADO_SYNTH__" << endl;
-  //out << "#pragma HLS dependence array inter false" << endl;
-  //out << "#endif //__VIVADO_SYNTH__" << endl;
   cout << "Created dim decls" << endl;
 
   return sel;
@@ -937,7 +917,6 @@ string simplified_delay_string(CodegenOptions& options, const string& inpt, cons
     if (subset(out_domain, p.first)) {
       simple_addr_str = codegen_c(p.second);
       break;
-      //return buf.name + "." + bank + ".peek(/* simplified address string */" + codegen_c(p.second) + ")";
     }
   }
 
@@ -959,7 +938,9 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
   string delay_expr = evaluate_dd(buf, outpt, inpt);
   string value_str = "";
   bool opt_const = is_optimizable_constant_dd(inpt, outpt, buf);
-  if (opt_const) {
+  if (options.all_rams || buf.get_bank(bank).num_readers == 1) {
+    value_str = bank + ".peek(/* one reader or all rams */ " + delay_expr + ")";
+  } else if (opt_const) {
     if (!options.all_rams && is_number(dx)) {
       assert(safe_stoi(dx) >= 0);
       value_str = bank + ".peek_" + dx + "()";
@@ -2729,6 +2710,13 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
       vector<string> source_delays{in_buffer};
       cout << "op = " << op->name << endl;
       conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
+
+      conv_out << tab(1) << "*global_debug_handle << \"" << op->name << "_" << in_buffer << ",\" << ";
+      for (auto v : kernel.iteration_variables) {
+        conv_out << v << "<< \",\" << ";
+      }
+      conv_out << " " << value_name << " << endl;" << endl;
+
     }
     buf_args.push_back(value_name);
     res = value_name;
@@ -2875,9 +2863,7 @@ void generate_app_code(CodegenOptions& options,
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
       conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
-      conv_out << "#ifdef __VIVADO_SYNTH__" << endl;
-      conv_out << "#pragma HLS dependence variable=" << b.second.name << " inter false" << endl;
-      conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
+      ignore_inter_deps(conv_out, b.second.name);
     }
   }
 
@@ -5765,7 +5751,7 @@ struct App {
 
   }
 
-  void realize_naive(const std::string& name, const int d0, const int d1) {
+  void realize_naive(CodegenOptions& options, const std::string& name, const int d0, const int d1) {
     const int unroll_factor = 1;
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     fill_data_domain(name, d0, d1, unroll_factor);
@@ -5778,10 +5764,10 @@ struct App {
     cout << "Schedule: " << str(m) << endl;
 
     map<string, UBuffer> buffers = build_buffers(m);
-
-    CodegenOptions options;
-    options.internal = true;
-    options.all_rams = true;
+    for (auto b : buffers) {
+      cout << b.second << endl;
+      cout << endl << endl;
+    }
 
     prog prg;
     prg.name = name + "_naive";
@@ -5789,6 +5775,14 @@ struct App {
     populate_program(options, prg, name, m, buffers, 1);
 
     return;
+  }
+
+  void realize_naive(const std::string& name, const int d0, const int d1) {
+    CodegenOptions options;
+    options.internal = true;
+    options.all_rams = true;
+
+    realize_naive(options, name, d0, d1);
   }
 
   map<string, vector<QExpr> > schedule_opt() {
@@ -6991,22 +6985,46 @@ void denoise2d_test() {
 
   int size = 30;
   dn.realize("denoise2d", size, size, 1);
-  dn.realize_naive("denoise2d", size, size);
 
   std::vector<std::string> optimized =
     run_regression_tb("denoise2d_opt");
 
-  std::vector<std::string> naive =
-    run_regression_tb("denoise2d_naive");
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.all_rams = false;
+    dn.realize_naive(options, "denoise2d", size, size);
 
-  assert(optimized.size() == naive.size());
-  for (size_t i = 0; i < optimized.size(); i++) {
-    cout << tab(1) << "i = " << i << ", opt = " << optimized.at(i) << ", naive = " << naive.at(i) << endl;
-    assert(optimized.at(i) == naive.at(i));
+    std::vector<std::string> naive =
+      run_regression_tb("denoise2d_naive");
+
+    assert(optimized.size() == naive.size());
+    for (size_t i = 0; i < optimized.size(); i++) {
+      cout << tab(1) << "i = " << i << ", opt = " << optimized.at(i) << ", naive = " << naive.at(i) << endl;
+      assert(optimized.at(i) == naive.at(i));
+    }
+
+    assert(naive == optimized);
   }
 
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.all_rams = true;
+    dn.realize_naive(options, "denoise2d", size, size);
 
-  assert(naive == optimized);
+    std::vector<std::string> naive =
+      run_regression_tb("denoise2d_naive");
+
+    assert(optimized.size() == naive.size());
+    for (size_t i = 0; i < optimized.size(); i++) {
+      cout << tab(1) << "i = " << i << ", opt = " << optimized.at(i) << ", naive = " << naive.at(i) << endl;
+      assert(optimized.at(i) == naive.at(i));
+    }
+
+    assert(naive == optimized);
+  }
+
   //assert(false);
 }
 
@@ -7508,11 +7526,11 @@ void application_tests() {
   //reduce_1d_test();
 
   // Known to fail with all rams off
-  //denoise2d_test();
+  denoise2d_test();
 
   exposure_fusion();
-  cout << "Exposure fusion passed" << endl;
-  assert(false);
+  //cout << "Exposure fusion passed" << endl;
+  //assert(false);
 
   mismatched_stencil_test();
   jacobi_2d_app_test();
