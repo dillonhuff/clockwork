@@ -5773,7 +5773,7 @@ struct App {
 
   }
 
-  void realize_naive(const std::string& name, const int d0, const int d1) {
+  void realize_naive(CodegenOptions& options, const std::string& name, const int d0, const int d1) {
     const int unroll_factor = 1;
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     fill_data_domain(name, d0, d1, unroll_factor);
@@ -5790,11 +5790,6 @@ struct App {
       cout << b.second << endl;
       cout << endl << endl;
     }
-    //assert(false);
-
-    CodegenOptions options;
-    options.internal = true;
-    options.all_rams = false;
 
     prog prg;
     prg.name = name + "_naive";
@@ -5802,6 +5797,14 @@ struct App {
     populate_program(options, prg, name, m, buffers, 1);
 
     return;
+  }
+
+  void realize_naive(const std::string& name, const int d0, const int d1) {
+    CodegenOptions options;
+    options.internal = true;
+    options.all_rams = true;
+
+    realize_naive(options, name, d0, d1);
   }
 
   map<string, vector<QExpr> > schedule_opt() {
@@ -7004,22 +7007,46 @@ void denoise2d_test() {
 
   int size = 30;
   dn.realize("denoise2d", size, size, 1);
-  dn.realize_naive("denoise2d", size, size);
 
   std::vector<std::string> optimized =
     run_regression_tb("denoise2d_opt");
 
-  std::vector<std::string> naive =
-    run_regression_tb("denoise2d_naive");
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.all_rams = false;
+    dn.realize_naive(options, "denoise2d", size, size);
 
-  assert(optimized.size() == naive.size());
-  for (size_t i = 0; i < optimized.size(); i++) {
-    cout << tab(1) << "i = " << i << ", opt = " << optimized.at(i) << ", naive = " << naive.at(i) << endl;
-    assert(optimized.at(i) == naive.at(i));
+    std::vector<std::string> naive =
+      run_regression_tb("denoise2d_naive");
+
+    assert(optimized.size() == naive.size());
+    for (size_t i = 0; i < optimized.size(); i++) {
+      cout << tab(1) << "i = " << i << ", opt = " << optimized.at(i) << ", naive = " << naive.at(i) << endl;
+      assert(optimized.at(i) == naive.at(i));
+    }
+
+    assert(naive == optimized);
   }
 
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.all_rams = true;
+    dn.realize_naive(options, "denoise2d", size, size);
 
-  assert(naive == optimized);
+    std::vector<std::string> naive =
+      run_regression_tb("denoise2d_naive");
+
+    assert(optimized.size() == naive.size());
+    for (size_t i = 0; i < optimized.size(); i++) {
+      cout << tab(1) << "i = " << i << ", opt = " << optimized.at(i) << ", naive = " << naive.at(i) << endl;
+      assert(optimized.at(i) == naive.at(i));
+    }
+
+    assert(naive == optimized);
+  }
+
   //assert(false);
 }
 
@@ -7524,8 +7551,8 @@ void application_tests() {
   denoise2d_test();
 
   exposure_fusion();
-  cout << "Exposure fusion passed" << endl;
-  assert(false);
+  //cout << "Exposure fusion passed" << endl;
+  //assert(false);
 
   mismatched_stencil_test();
   jacobi_2d_app_test();
