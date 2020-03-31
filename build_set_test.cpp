@@ -5781,7 +5781,7 @@ struct App {
 
     CodegenOptions options;
     options.internal = true;
-    options.all_rams = true;
+    options.all_rams = false;
 
     prog prg;
     prg.name = name + "_naive";
