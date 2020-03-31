@@ -536,7 +536,7 @@ void generate_bank(CodegenOptions& options,
       out << endl << endl;
 
       out << "\tinline " + pt_type_string + " peek(const int offset) {" << endl;
-      ignore_inter_deps(out, "f");
+      //ignore_inter_deps(out, "f");
       nind = 0;
       for (auto p : partitions) {
         int dv = end_inds[nind];
@@ -2900,7 +2900,10 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out << code_string << endl;
 
+  open_debug_scope(conv_out);
   conv_out << tab(1) << "debug_file.close();" << endl;
+  close_debug_scope(conv_out);
+
   conv_out << "}" << endl;
 
   generate_app_code_header(buffers, prg);
