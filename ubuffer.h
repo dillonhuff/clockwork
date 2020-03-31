@@ -31,6 +31,22 @@ struct bank {
 
   // RAM bank properties
   Box layout;
+
+  vector<int> get_break_points() const {
+    auto delays = sort_unique(read_delays);
+    vector<int> break_points;
+    if (delays.size() == 1) {
+      break_points = {delays[0], delays[0]};
+    } else {
+      for (size_t i = 0; i < delays.size(); i++) {
+        break_points.push_back(delays[i]);
+        if (i < delays.size() - 1 && delays[i] != delays[i + 1] + 1) {
+          break_points.push_back(delays[i] + 1);
+        }
+      }
+    }
+    return break_points;
+  }
 };
 
 typedef bank stack_bank;

@@ -489,18 +489,7 @@ void generate_stack_cache(CodegenOptions& options,
     out << tab(1) << "}" << endl << endl;
   } else {
     read_delays = sort_unique(read_delays);
-
-    vector<int> break_points;
-    if (read_delays.size() == 1) {
-      break_points = {read_delays[0], read_delays[0]};
-    } else {
-      for (size_t i = 0; i < read_delays.size(); i++) {
-        break_points.push_back(read_delays[i]);
-        if (i < read_delays.size() - 1 && read_delays[i] != read_delays[i + 1] + 1) {
-          break_points.push_back(read_delays[i] + 1);
-        }
-      }
-    }
+    auto break_points = bank.get_break_points();
     read_delays = break_points;
 
     vector<string> partitions;
