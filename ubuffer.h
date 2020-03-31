@@ -248,6 +248,17 @@ class UBuffer {
     map<pair<string, string>, stack_bank > stack_banks;
     map<string, selector> selectors;
 
+    bank get_bank(const std::string& name) const {
+      for (auto b : stack_banks) {
+        if (b.second.name == name) {
+          return b.second;
+        }
+      }
+      cout << "Error: No such bank as: " << name << endl;
+      assert(false);
+      return {};
+    }
+
     void replace_bank(stack_bank& target, stack_bank& replacement) {
       for (auto bnk : stack_banks) {
         if (bnk.second.name == target.name) {

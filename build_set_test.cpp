@@ -445,7 +445,7 @@ void generate_ram_bank(CodegenOptions& options,
 
 }
 
-void generate_stack_cache(CodegenOptions& options,
+void generate_bank(CodegenOptions& options,
     std::ostream& out,
     stack_bank& bank) {
 
@@ -474,11 +474,11 @@ void generate_stack_cache(CodegenOptions& options,
     out << tab(1) << "}" << endl << endl;
 
     if (!options.all_rams) {
-      for (auto delay : read_delays) {
-        out << "\tinline " << pt_type_string << " peek_" << delay << "() {" << endl;
-        out << "\t\treturn " << "f" << ".peek(" << delay << ");" << endl;
-        out << "\t}" << endl << endl;
-      }
+      //for (auto delay : read_delays) {
+        //out << "\tinline " << pt_type_string << " peek_" << delay << "() {" << endl;
+        //out << "\t\treturn " << "f" << ".peek(" << delay << ");" << endl;
+        //out << "\t}" << endl << endl;
+      //}
 
       //for (int i = 0; i < partition_capacity; i++) {
         //int dv = i;
@@ -770,7 +770,7 @@ void generate_code_prefix(CodegenOptions& options,
   string inpt = buf.get_in_port();
   out << "#include \"hw_classes.h\"" << endl << endl;
   for (auto b : buf.get_banks()) {
-    generate_stack_cache(options, out, b);
+    generate_bank(options, out, b);
   }
 
   out << "struct " << buf.name << "_cache {" << endl;
@@ -938,7 +938,9 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
   string delay_expr = evaluate_dd(buf, outpt, inpt);
   string value_str = "";
   bool opt_const = is_optimizable_constant_dd(inpt, outpt, buf);
-  if (opt_const) {
+  if (options.all_rams || buf.get_bank(bank).num_readers == 1) {
+    value_str = bank + ".peek(/* one reader or all rams */ " + delay_expr + ")";
+  } else if (opt_const) {
     if (!options.all_rams && is_number(dx)) {
       assert(safe_stoi(dx) >= 0);
       value_str = bank + ".peek_" + dx + "()";
