@@ -467,9 +467,7 @@ void generate_stack_cache(CodegenOptions& options,
     int partition_capacity = 1 + maxdelay;
     out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << ";" << endl;
     out << "\tinline " + pt_type_string + " peek(const int offset) {" << endl;
-    out << "#ifdef __VIVADO_SYNTH__" << endl;
-    out << "#pragma HLS dependence variable=f inter false" << endl;
-    out << "#endif //__VIVADO_SYNTH__" << endl;
+    ignore_inter_deps(out, "f");
     out << tab(2) << "return f.peek(" << partition_capacity - 1 << " - offset);" << endl;
     out << tab(1) << "}" << endl << endl;
 
@@ -478,10 +476,6 @@ void generate_stack_cache(CodegenOptions& options,
         int dv = i;
         assert(dv >= 0);
         out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
-        //out << "#ifdef __VIVADO_SYNTH__" << endl;
-        //out << "#pragma HLS dependence variable=f inter false" << endl;
-        //out << "#endif //__VIVADO_SYNTH__" << endl;
-        //out << "\t\treturn f.peek(" << dv <<");" << endl;
         out << "\t\treturn peek(" << dv <<");" << endl;
         out << "\t}" << endl << endl;
       }
@@ -489,9 +483,7 @@ void generate_stack_cache(CodegenOptions& options,
     out << endl << endl;
     out << "\tinline void push(const " + pt_type_string + " value) {" << endl;
     if (options.add_dependence_pragmas) {
-      out << "#ifdef __VIVADO_SYNTH__" << endl;
-      out << "#pragma HLS dependence variable=f inter false" << endl;
-      out << "#endif //__VIVADO_SYNTH__" << endl;
+      ignore_inter_deps(out, "f");
     }
     out << tab(2) << "return f.push(value);" << endl;
     out << tab(1) << "}" << endl << endl;
@@ -541,9 +533,6 @@ void generate_stack_cache(CodegenOptions& options,
         int dv = end_inds[nind];
         assert(dv >= 0);
         out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
-        //out << "#ifdef __VIVADO_SYNTH__" << endl;
-        //out << "#pragma HLS dependence variable=f inter false" << endl;
-        //out << "#endif //__VIVADO_SYNTH__" << endl;
         out << "\t\treturn " << p << ".back();" << endl;
         out << "\t}" << endl << endl;
         nind++;
@@ -551,9 +540,7 @@ void generate_stack_cache(CodegenOptions& options,
       out << endl << endl;
 
       out << "\tinline " + pt_type_string + " peek(const int offset) {" << endl;
-      out << "#ifdef __VIVADO_SYNTH__" << endl;
-      out << "#pragma HLS dependence variable=f inter false" << endl;
-      out << "#endif //__VIVADO_SYNTH__" << endl;
+      ignore_inter_deps(out, "f");
       nind = 0;
       for (auto p : partitions) {
         int dv = end_inds[nind];
@@ -571,9 +558,7 @@ void generate_stack_cache(CodegenOptions& options,
 
       out << "\tinline void push(const " + pt_type_string + " value) {" << endl;
       if (options.add_dependence_pragmas) {
-        out << "#ifdef __VIVADO_SYNTH__" << endl;
-        out << "#pragma HLS dependence array inter false" << endl;
-        out << "#endif //__VIVADO_SYNTH__" << endl;
+        ignore_inter_deps_array(out);
       }
       if (partitions.size() > 0) {
         for (size_t i = partitions.size() - 1; i >= 1; i--) {
@@ -869,9 +854,6 @@ selector generate_select_decl(CodegenOptions& options, std::ostream& out, const 
   out << sep_list(dim_decls, "", "", ", ");
 
   out << ") {" << endl;
-  //out << "#ifdef __VIVADO_SYNTH__" << endl;
-  //out << "#pragma HLS dependence array inter false" << endl;
-  //out << "#endif //__VIVADO_SYNTH__" << endl;
   cout << "Created dim decls" << endl;
 
   return sel;
@@ -2883,9 +2865,7 @@ void generate_app_code(CodegenOptions& options,
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
       conv_out << tab(1) << b.first << "_cache " << b.second.name << ";" << endl;
-      conv_out << "#ifdef __VIVADO_SYNTH__" << endl;
-      conv_out << "#pragma HLS dependence variable=" << b.second.name << " inter false" << endl;
-      conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
+      ignore_inter_deps(conv_out, b.second.name);
     }
   }
 
