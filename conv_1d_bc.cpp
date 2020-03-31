@@ -57,7 +57,7 @@ struct M_write_0_to_M_read0_5_cache {
 
 struct M_write_0_merged_banks_2_cache {
 	// RAM Box: {[0, 9]}
-	// Capacity: 3
+	// Capacity: 2
 	// # of read delays: 2
 #ifdef __VIVADO_SYNTH__
   hw_uint<32>  M_write_0_merged_banks_2_store[10];
@@ -280,13 +280,11 @@ void conv_1d_bc(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in
   M_cache M;
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=M inter false
-#endif // __VIVADO_SYNTH__
-
+#endif //__VIVADO_SYNTH__
   T_cache T;
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=T inter false
-#endif // __VIVADO_SYNTH__
-
+#endif //__VIVADO_SYNTH__
 	for (int c0 = 0; c0 <= 11; c0 += 1) {
 	  if (c0 <= 9)
 	write(in, M, 0, c0);

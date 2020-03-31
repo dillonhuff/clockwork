@@ -596,7 +596,8 @@ bank compute_bank_info(
     const std::string& outpt,
     UBuffer& buf) {
 
-  int maxdelay = compute_max_dd(buf, inpt);
+  int maxdelay = compute_dd_bound(buf, outpt, inpt);
+  //int maxdelay = compute_max_dd(buf, inpt);
   vector<int> read_delays{0};
 
   // NOTE: Just to ensure we dont force everything to be a RAM

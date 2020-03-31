@@ -261,7 +261,7 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd0_cache {
 
 struct Img_Img_update_0_write0_to_upsample_stencil_rd1_cache {
 	// RAM Box: {[-1, 16], [-1, 16]}
-	// Capacity: 54
+	// Capacity: 36
 	// # of read delays: 18
 #ifdef __VIVADO_SYNTH__
   hw_uint<32>  Img_Img_update_0_write0_to_upsample_stencil_rd1_store[324];
@@ -275,12 +275,12 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd1_cache {
     Img_Img_update_0_write0_to_upsample_stencil_rd1_store[(d0 + d1*18)] = value;
   }
 
-	fifo<hw_uint<32> , 54> f;
+	fifo<hw_uint<32> , 36> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
-    return f.peek(53 - offset);
+    return f.peek(35 - offset);
   }
 
 	inline hw_uint<32>  peek_0() {
@@ -425,78 +425,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd1_cache {
 
 	inline hw_uint<32>  peek_35() {
 		return peek(35);
-	}
-
-	inline hw_uint<32>  peek_36() {
-		return peek(36);
-	}
-
-	inline hw_uint<32>  peek_37() {
-		return peek(37);
-	}
-
-	inline hw_uint<32>  peek_38() {
-		return peek(38);
-	}
-
-	inline hw_uint<32>  peek_39() {
-		return peek(39);
-	}
-
-	inline hw_uint<32>  peek_40() {
-		return peek(40);
-	}
-
-	inline hw_uint<32>  peek_41() {
-		return peek(41);
-	}
-
-	inline hw_uint<32>  peek_42() {
-		return peek(42);
-	}
-
-	inline hw_uint<32>  peek_43() {
-		return peek(43);
-	}
-
-	inline hw_uint<32>  peek_44() {
-		return peek(44);
-	}
-
-	inline hw_uint<32>  peek_45() {
-		return peek(45);
-	}
-
-	inline hw_uint<32>  peek_46() {
-		return peek(46);
-	}
-
-	inline hw_uint<32>  peek_47() {
-		return peek(47);
-	}
-
-	inline hw_uint<32>  peek_48() {
-		return peek(48);
-	}
-
-	inline hw_uint<32>  peek_49() {
-		return peek(49);
-	}
-
-	inline hw_uint<32>  peek_50() {
-		return peek(50);
-	}
-
-	inline hw_uint<32>  peek_51() {
-		return peek(51);
-	}
-
-	inline hw_uint<32>  peek_52() {
-		return peek(52);
-	}
-
-	inline hw_uint<32>  peek_53() {
-		return peek(53);
 	}
 
 
@@ -512,7 +440,7 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd1_cache {
 
 struct Img_Img_update_0_write0_to_upsample_stencil_rd2_cache {
 	// RAM Box: {[-1, 16], [-1, 16]}
-	// Capacity: 54
+	// Capacity: 18
 	// # of read delays: 18
 #ifdef __VIVADO_SYNTH__
   hw_uint<32>  Img_Img_update_0_write0_to_upsample_stencil_rd2_store[324];
@@ -526,12 +454,12 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd2_cache {
     Img_Img_update_0_write0_to_upsample_stencil_rd2_store[(d0 + d1*18)] = value;
   }
 
-	fifo<hw_uint<32> , 54> f;
+	fifo<hw_uint<32> , 18> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
-    return f.peek(53 - offset);
+    return f.peek(17 - offset);
   }
 
 	inline hw_uint<32>  peek_0() {
@@ -604,150 +532,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd2_cache {
 
 	inline hw_uint<32>  peek_17() {
 		return peek(17);
-	}
-
-	inline hw_uint<32>  peek_18() {
-		return peek(18);
-	}
-
-	inline hw_uint<32>  peek_19() {
-		return peek(19);
-	}
-
-	inline hw_uint<32>  peek_20() {
-		return peek(20);
-	}
-
-	inline hw_uint<32>  peek_21() {
-		return peek(21);
-	}
-
-	inline hw_uint<32>  peek_22() {
-		return peek(22);
-	}
-
-	inline hw_uint<32>  peek_23() {
-		return peek(23);
-	}
-
-	inline hw_uint<32>  peek_24() {
-		return peek(24);
-	}
-
-	inline hw_uint<32>  peek_25() {
-		return peek(25);
-	}
-
-	inline hw_uint<32>  peek_26() {
-		return peek(26);
-	}
-
-	inline hw_uint<32>  peek_27() {
-		return peek(27);
-	}
-
-	inline hw_uint<32>  peek_28() {
-		return peek(28);
-	}
-
-	inline hw_uint<32>  peek_29() {
-		return peek(29);
-	}
-
-	inline hw_uint<32>  peek_30() {
-		return peek(30);
-	}
-
-	inline hw_uint<32>  peek_31() {
-		return peek(31);
-	}
-
-	inline hw_uint<32>  peek_32() {
-		return peek(32);
-	}
-
-	inline hw_uint<32>  peek_33() {
-		return peek(33);
-	}
-
-	inline hw_uint<32>  peek_34() {
-		return peek(34);
-	}
-
-	inline hw_uint<32>  peek_35() {
-		return peek(35);
-	}
-
-	inline hw_uint<32>  peek_36() {
-		return peek(36);
-	}
-
-	inline hw_uint<32>  peek_37() {
-		return peek(37);
-	}
-
-	inline hw_uint<32>  peek_38() {
-		return peek(38);
-	}
-
-	inline hw_uint<32>  peek_39() {
-		return peek(39);
-	}
-
-	inline hw_uint<32>  peek_40() {
-		return peek(40);
-	}
-
-	inline hw_uint<32>  peek_41() {
-		return peek(41);
-	}
-
-	inline hw_uint<32>  peek_42() {
-		return peek(42);
-	}
-
-	inline hw_uint<32>  peek_43() {
-		return peek(43);
-	}
-
-	inline hw_uint<32>  peek_44() {
-		return peek(44);
-	}
-
-	inline hw_uint<32>  peek_45() {
-		return peek(45);
-	}
-
-	inline hw_uint<32>  peek_46() {
-		return peek(46);
-	}
-
-	inline hw_uint<32>  peek_47() {
-		return peek(47);
-	}
-
-	inline hw_uint<32>  peek_48() {
-		return peek(48);
-	}
-
-	inline hw_uint<32>  peek_49() {
-		return peek(49);
-	}
-
-	inline hw_uint<32>  peek_50() {
-		return peek(50);
-	}
-
-	inline hw_uint<32>  peek_51() {
-		return peek(51);
-	}
-
-	inline hw_uint<32>  peek_52() {
-		return peek(52);
-	}
-
-	inline hw_uint<32>  peek_53() {
-		return peek(53);
 	}
 
 
@@ -763,7 +547,7 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd2_cache {
 
 struct Img_Img_update_0_write0_to_upsample_stencil_rd3_cache {
 	// RAM Box: {[-1, 16], [-1, 16]}
-	// Capacity: 54
+	// Capacity: 53
 	// # of read delays: 18
 #ifdef __VIVADO_SYNTH__
   hw_uint<32>  Img_Img_update_0_write0_to_upsample_stencil_rd3_store[324];
@@ -777,12 +561,12 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd3_cache {
     Img_Img_update_0_write0_to_upsample_stencil_rd3_store[(d0 + d1*18)] = value;
   }
 
-	fifo<hw_uint<32> , 54> f;
+	fifo<hw_uint<32> , 53> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
-    return f.peek(53 - offset);
+    return f.peek(52 - offset);
   }
 
 	inline hw_uint<32>  peek_0() {
@@ -995,10 +779,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd3_cache {
 
 	inline hw_uint<32>  peek_52() {
 		return peek(52);
-	}
-
-	inline hw_uint<32>  peek_53() {
-		return peek(53);
 	}
 
 
@@ -1014,7 +794,7 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd3_cache {
 
 struct Img_Img_update_0_write0_to_upsample_stencil_rd4_cache {
 	// RAM Box: {[-1, 16], [-1, 16]}
-	// Capacity: 54
+	// Capacity: 35
 	// # of read delays: 18
 #ifdef __VIVADO_SYNTH__
   hw_uint<32>  Img_Img_update_0_write0_to_upsample_stencil_rd4_store[324];
@@ -1028,12 +808,12 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd4_cache {
     Img_Img_update_0_write0_to_upsample_stencil_rd4_store[(d0 + d1*18)] = value;
   }
 
-	fifo<hw_uint<32> , 54> f;
+	fifo<hw_uint<32> , 35> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
-    return f.peek(53 - offset);
+    return f.peek(34 - offset);
   }
 
 	inline hw_uint<32>  peek_0() {
@@ -1174,82 +954,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd4_cache {
 
 	inline hw_uint<32>  peek_34() {
 		return peek(34);
-	}
-
-	inline hw_uint<32>  peek_35() {
-		return peek(35);
-	}
-
-	inline hw_uint<32>  peek_36() {
-		return peek(36);
-	}
-
-	inline hw_uint<32>  peek_37() {
-		return peek(37);
-	}
-
-	inline hw_uint<32>  peek_38() {
-		return peek(38);
-	}
-
-	inline hw_uint<32>  peek_39() {
-		return peek(39);
-	}
-
-	inline hw_uint<32>  peek_40() {
-		return peek(40);
-	}
-
-	inline hw_uint<32>  peek_41() {
-		return peek(41);
-	}
-
-	inline hw_uint<32>  peek_42() {
-		return peek(42);
-	}
-
-	inline hw_uint<32>  peek_43() {
-		return peek(43);
-	}
-
-	inline hw_uint<32>  peek_44() {
-		return peek(44);
-	}
-
-	inline hw_uint<32>  peek_45() {
-		return peek(45);
-	}
-
-	inline hw_uint<32>  peek_46() {
-		return peek(46);
-	}
-
-	inline hw_uint<32>  peek_47() {
-		return peek(47);
-	}
-
-	inline hw_uint<32>  peek_48() {
-		return peek(48);
-	}
-
-	inline hw_uint<32>  peek_49() {
-		return peek(49);
-	}
-
-	inline hw_uint<32>  peek_50() {
-		return peek(50);
-	}
-
-	inline hw_uint<32>  peek_51() {
-		return peek(51);
-	}
-
-	inline hw_uint<32>  peek_52() {
-		return peek(52);
-	}
-
-	inline hw_uint<32>  peek_53() {
-		return peek(53);
 	}
 
 
@@ -1265,7 +969,7 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd4_cache {
 
 struct Img_Img_update_0_write0_to_upsample_stencil_rd5_cache {
 	// RAM Box: {[-1, 16], [-1, 16]}
-	// Capacity: 54
+	// Capacity: 17
 	// # of read delays: 18
 #ifdef __VIVADO_SYNTH__
   hw_uint<32>  Img_Img_update_0_write0_to_upsample_stencil_rd5_store[324];
@@ -1279,12 +983,12 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd5_cache {
     Img_Img_update_0_write0_to_upsample_stencil_rd5_store[(d0 + d1*18)] = value;
   }
 
-	fifo<hw_uint<32> , 54> f;
+	fifo<hw_uint<32> , 17> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
-    return f.peek(53 - offset);
+    return f.peek(16 - offset);
   }
 
 	inline hw_uint<32>  peek_0() {
@@ -1353,154 +1057,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd5_cache {
 
 	inline hw_uint<32>  peek_16() {
 		return peek(16);
-	}
-
-	inline hw_uint<32>  peek_17() {
-		return peek(17);
-	}
-
-	inline hw_uint<32>  peek_18() {
-		return peek(18);
-	}
-
-	inline hw_uint<32>  peek_19() {
-		return peek(19);
-	}
-
-	inline hw_uint<32>  peek_20() {
-		return peek(20);
-	}
-
-	inline hw_uint<32>  peek_21() {
-		return peek(21);
-	}
-
-	inline hw_uint<32>  peek_22() {
-		return peek(22);
-	}
-
-	inline hw_uint<32>  peek_23() {
-		return peek(23);
-	}
-
-	inline hw_uint<32>  peek_24() {
-		return peek(24);
-	}
-
-	inline hw_uint<32>  peek_25() {
-		return peek(25);
-	}
-
-	inline hw_uint<32>  peek_26() {
-		return peek(26);
-	}
-
-	inline hw_uint<32>  peek_27() {
-		return peek(27);
-	}
-
-	inline hw_uint<32>  peek_28() {
-		return peek(28);
-	}
-
-	inline hw_uint<32>  peek_29() {
-		return peek(29);
-	}
-
-	inline hw_uint<32>  peek_30() {
-		return peek(30);
-	}
-
-	inline hw_uint<32>  peek_31() {
-		return peek(31);
-	}
-
-	inline hw_uint<32>  peek_32() {
-		return peek(32);
-	}
-
-	inline hw_uint<32>  peek_33() {
-		return peek(33);
-	}
-
-	inline hw_uint<32>  peek_34() {
-		return peek(34);
-	}
-
-	inline hw_uint<32>  peek_35() {
-		return peek(35);
-	}
-
-	inline hw_uint<32>  peek_36() {
-		return peek(36);
-	}
-
-	inline hw_uint<32>  peek_37() {
-		return peek(37);
-	}
-
-	inline hw_uint<32>  peek_38() {
-		return peek(38);
-	}
-
-	inline hw_uint<32>  peek_39() {
-		return peek(39);
-	}
-
-	inline hw_uint<32>  peek_40() {
-		return peek(40);
-	}
-
-	inline hw_uint<32>  peek_41() {
-		return peek(41);
-	}
-
-	inline hw_uint<32>  peek_42() {
-		return peek(42);
-	}
-
-	inline hw_uint<32>  peek_43() {
-		return peek(43);
-	}
-
-	inline hw_uint<32>  peek_44() {
-		return peek(44);
-	}
-
-	inline hw_uint<32>  peek_45() {
-		return peek(45);
-	}
-
-	inline hw_uint<32>  peek_46() {
-		return peek(46);
-	}
-
-	inline hw_uint<32>  peek_47() {
-		return peek(47);
-	}
-
-	inline hw_uint<32>  peek_48() {
-		return peek(48);
-	}
-
-	inline hw_uint<32>  peek_49() {
-		return peek(49);
-	}
-
-	inline hw_uint<32>  peek_50() {
-		return peek(50);
-	}
-
-	inline hw_uint<32>  peek_51() {
-		return peek(51);
-	}
-
-	inline hw_uint<32>  peek_52() {
-		return peek(52);
-	}
-
-	inline hw_uint<32>  peek_53() {
-		return peek(53);
 	}
 
 
@@ -1516,7 +1072,7 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd5_cache {
 
 struct Img_Img_update_0_write0_to_upsample_stencil_rd6_cache {
 	// RAM Box: {[-1, 16], [-1, 16]}
-	// Capacity: 54
+	// Capacity: 52
 	// # of read delays: 17
 #ifdef __VIVADO_SYNTH__
   hw_uint<32>  Img_Img_update_0_write0_to_upsample_stencil_rd6_store[324];
@@ -1530,12 +1086,12 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd6_cache {
     Img_Img_update_0_write0_to_upsample_stencil_rd6_store[(d0 + d1*18)] = value;
   }
 
-	fifo<hw_uint<32> , 54> f;
+	fifo<hw_uint<32> , 52> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
-    return f.peek(53 - offset);
+    return f.peek(51 - offset);
   }
 
 	inline hw_uint<32>  peek_0() {
@@ -1744,14 +1300,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd6_cache {
 
 	inline hw_uint<32>  peek_51() {
 		return peek(51);
-	}
-
-	inline hw_uint<32>  peek_52() {
-		return peek(52);
-	}
-
-	inline hw_uint<32>  peek_53() {
-		return peek(53);
 	}
 
 
@@ -1767,7 +1315,7 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd6_cache {
 
 struct Img_Img_update_0_write0_to_upsample_stencil_rd7_cache {
 	// RAM Box: {[-1, 16], [-1, 16]}
-	// Capacity: 54
+	// Capacity: 34
 	// # of read delays: 17
 #ifdef __VIVADO_SYNTH__
   hw_uint<32>  Img_Img_update_0_write0_to_upsample_stencil_rd7_store[324];
@@ -1781,12 +1329,12 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd7_cache {
     Img_Img_update_0_write0_to_upsample_stencil_rd7_store[(d0 + d1*18)] = value;
   }
 
-	fifo<hw_uint<32> , 54> f;
+	fifo<hw_uint<32> , 34> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
-    return f.peek(53 - offset);
+    return f.peek(33 - offset);
   }
 
 	inline hw_uint<32>  peek_0() {
@@ -1923,86 +1471,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd7_cache {
 
 	inline hw_uint<32>  peek_33() {
 		return peek(33);
-	}
-
-	inline hw_uint<32>  peek_34() {
-		return peek(34);
-	}
-
-	inline hw_uint<32>  peek_35() {
-		return peek(35);
-	}
-
-	inline hw_uint<32>  peek_36() {
-		return peek(36);
-	}
-
-	inline hw_uint<32>  peek_37() {
-		return peek(37);
-	}
-
-	inline hw_uint<32>  peek_38() {
-		return peek(38);
-	}
-
-	inline hw_uint<32>  peek_39() {
-		return peek(39);
-	}
-
-	inline hw_uint<32>  peek_40() {
-		return peek(40);
-	}
-
-	inline hw_uint<32>  peek_41() {
-		return peek(41);
-	}
-
-	inline hw_uint<32>  peek_42() {
-		return peek(42);
-	}
-
-	inline hw_uint<32>  peek_43() {
-		return peek(43);
-	}
-
-	inline hw_uint<32>  peek_44() {
-		return peek(44);
-	}
-
-	inline hw_uint<32>  peek_45() {
-		return peek(45);
-	}
-
-	inline hw_uint<32>  peek_46() {
-		return peek(46);
-	}
-
-	inline hw_uint<32>  peek_47() {
-		return peek(47);
-	}
-
-	inline hw_uint<32>  peek_48() {
-		return peek(48);
-	}
-
-	inline hw_uint<32>  peek_49() {
-		return peek(49);
-	}
-
-	inline hw_uint<32>  peek_50() {
-		return peek(50);
-	}
-
-	inline hw_uint<32>  peek_51() {
-		return peek(51);
-	}
-
-	inline hw_uint<32>  peek_52() {
-		return peek(52);
-	}
-
-	inline hw_uint<32>  peek_53() {
-		return peek(53);
 	}
 
 
@@ -2018,7 +1486,7 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd7_cache {
 
 struct Img_Img_update_0_write0_to_upsample_stencil_rd8_cache {
 	// RAM Box: {[-1, 16], [-1, 16]}
-	// Capacity: 54
+	// Capacity: 16
 	// # of read delays: 17
 #ifdef __VIVADO_SYNTH__
   hw_uint<32>  Img_Img_update_0_write0_to_upsample_stencil_rd8_store[324];
@@ -2032,12 +1500,12 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd8_cache {
     Img_Img_update_0_write0_to_upsample_stencil_rd8_store[(d0 + d1*18)] = value;
   }
 
-	fifo<hw_uint<32> , 54> f;
+	fifo<hw_uint<32> , 16> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
-    return f.peek(53 - offset);
+    return f.peek(15 - offset);
   }
 
 	inline hw_uint<32>  peek_0() {
@@ -2102,158 +1570,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd8_cache {
 
 	inline hw_uint<32>  peek_15() {
 		return peek(15);
-	}
-
-	inline hw_uint<32>  peek_16() {
-		return peek(16);
-	}
-
-	inline hw_uint<32>  peek_17() {
-		return peek(17);
-	}
-
-	inline hw_uint<32>  peek_18() {
-		return peek(18);
-	}
-
-	inline hw_uint<32>  peek_19() {
-		return peek(19);
-	}
-
-	inline hw_uint<32>  peek_20() {
-		return peek(20);
-	}
-
-	inline hw_uint<32>  peek_21() {
-		return peek(21);
-	}
-
-	inline hw_uint<32>  peek_22() {
-		return peek(22);
-	}
-
-	inline hw_uint<32>  peek_23() {
-		return peek(23);
-	}
-
-	inline hw_uint<32>  peek_24() {
-		return peek(24);
-	}
-
-	inline hw_uint<32>  peek_25() {
-		return peek(25);
-	}
-
-	inline hw_uint<32>  peek_26() {
-		return peek(26);
-	}
-
-	inline hw_uint<32>  peek_27() {
-		return peek(27);
-	}
-
-	inline hw_uint<32>  peek_28() {
-		return peek(28);
-	}
-
-	inline hw_uint<32>  peek_29() {
-		return peek(29);
-	}
-
-	inline hw_uint<32>  peek_30() {
-		return peek(30);
-	}
-
-	inline hw_uint<32>  peek_31() {
-		return peek(31);
-	}
-
-	inline hw_uint<32>  peek_32() {
-		return peek(32);
-	}
-
-	inline hw_uint<32>  peek_33() {
-		return peek(33);
-	}
-
-	inline hw_uint<32>  peek_34() {
-		return peek(34);
-	}
-
-	inline hw_uint<32>  peek_35() {
-		return peek(35);
-	}
-
-	inline hw_uint<32>  peek_36() {
-		return peek(36);
-	}
-
-	inline hw_uint<32>  peek_37() {
-		return peek(37);
-	}
-
-	inline hw_uint<32>  peek_38() {
-		return peek(38);
-	}
-
-	inline hw_uint<32>  peek_39() {
-		return peek(39);
-	}
-
-	inline hw_uint<32>  peek_40() {
-		return peek(40);
-	}
-
-	inline hw_uint<32>  peek_41() {
-		return peek(41);
-	}
-
-	inline hw_uint<32>  peek_42() {
-		return peek(42);
-	}
-
-	inline hw_uint<32>  peek_43() {
-		return peek(43);
-	}
-
-	inline hw_uint<32>  peek_44() {
-		return peek(44);
-	}
-
-	inline hw_uint<32>  peek_45() {
-		return peek(45);
-	}
-
-	inline hw_uint<32>  peek_46() {
-		return peek(46);
-	}
-
-	inline hw_uint<32>  peek_47() {
-		return peek(47);
-	}
-
-	inline hw_uint<32>  peek_48() {
-		return peek(48);
-	}
-
-	inline hw_uint<32>  peek_49() {
-		return peek(49);
-	}
-
-	inline hw_uint<32>  peek_50() {
-		return peek(50);
-	}
-
-	inline hw_uint<32>  peek_51() {
-		return peek(51);
-	}
-
-	inline hw_uint<32>  peek_52() {
-		return peek(52);
-	}
-
-	inline hw_uint<32>  peek_53() {
-		return peek(53);
 	}
 
 
@@ -2391,15 +1707,6 @@ inline hw_uint<288> Img_upsample_stencil_update_0_read_bundle_read(Img_cache& Im
 
 
 // Operation logic
-inline void Img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */Img_off, Img_cache& Img, int d0, int d1) {
-	// Consume: Img_off
-	auto Img_off_0_c__0_value = Img_off.read();
-	auto compute_result = id(Img_off_0_c__0_value);
-	// Produce: Img
-	Img_Img_update_0_write_bundle_write(compute_result, Img, d0, d1);
-  *global_debug_handle << "Img_update_0," << d0<< "," << d1<< "," <<  compute_result << endl;
-}
-
 inline void upsample_stencil_update_0(Img_cache& Img, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */upsample_stencil, int d0, int d1) {
 	// Consume: Img
 	auto Img_0_c__0_value = Img_upsample_stencil_update_0_read_bundle_read(Img/* source_delay */, d0, d1);
@@ -2410,6 +1717,15 @@ inline void upsample_stencil_update_0(Img_cache& Img, HWStream<hw_uint<32> >& /*
   *global_debug_handle << "upsample_stencil_update_0," << d0<< "," << d1<< "," <<  compute_result << endl;
 }
 
+inline void Img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */Img_off, Img_cache& Img, int d0, int d1) {
+	// Consume: Img_off
+	auto Img_off_0_c__0_value = Img_off.read();
+	auto compute_result = id(Img_off_0_c__0_value);
+	// Produce: Img
+	Img_Img_update_0_write_bundle_write(compute_result, Img, d0, d1);
+  *global_debug_handle << "Img_update_0," << d0<< "," << d1<< "," <<  compute_result << endl;
+}
+
 // Driver function
 void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Img_off, HWStream<hw_uint<32> >& /* get_args num ports = 1 */upsample_stencil) {
 
@@ -2418,8 +1734,7 @@ void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Im
   Img_cache Img;
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=Img inter false
-#endif // __VIVADO_SYNTH__
-
+#endif //__VIVADO_SYNTH__
 	  int c0 = -2;
 	  int c1 = -2;
 	  int global_time = 0;
