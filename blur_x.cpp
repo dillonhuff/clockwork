@@ -1,9 +1,11 @@
+#ifndef __VIVADO_SYNTH__
 #include <fstream>
 using namespace std;
 
   // Debug utility
   ofstream* global_debug_handle;
 
+#endif //__VIVADO_SYNTH__
 #include "conv_3x3.h"
 
 #include "hw_classes.h"
@@ -59,9 +61,6 @@ struct I_I_id0_0_merged_banks_3_cache {
 
 
 	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
 		if (offset == 0) {
 			return f0.back();
 		}
@@ -158,24 +157,32 @@ inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in, I_c
 	auto compute_result = id(in_id0_c__id1_value);
 	// Produce: I
 	I_I_id0_write_bundle_write(compute_result, I, root, id1, id0);
+#ifndef __VIVADO_SYNTH__
   *global_debug_handle << "I_id0," << root<< "," << id1<< "," << id0<< "," <<  compute_result << endl;
+#endif //__VIVADO_SYNTH__
 }
 
 inline void out_blur_30(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */out, int root, int d1, int d0) {
 	// Consume: I
 	auto I_d0__p__0_c__d1__p__0_value = I_out_blur_30_read_bundle_read(I/* source_delay */, root, d1, d0);
+#ifndef __VIVADO_SYNTH__
   *global_debug_handle << "out_blur_30_I," << root<< "," << d1<< "," << d0<< "," <<  I_d0__p__0_c__d1__p__0_value << endl;
+#endif //__VIVADO_SYNTH__
 	auto compute_result = blur_3(I_d0__p__0_c__d1__p__0_value);
 	// Produce: out
 	out.write(compute_result);
+#ifndef __VIVADO_SYNTH__
   *global_debug_handle << "out_blur_30," << root<< "," << d1<< "," << d0<< "," <<  compute_result << endl;
+#endif //__VIVADO_SYNTH__
 }
 
 // Driver function
 void blur_x(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in, HWStream<hw_uint<16> >& /* get_args num ports = 1 */out) {
 
+#ifndef __VIVADO_SYNTH__
   ofstream debug_file("blur_x_debug.csv");
   global_debug_handle = &debug_file;
+#endif //__VIVADO_SYNTH__
   I_cache I;
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=I inter false
@@ -187,5 +194,7 @@ void blur_x(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in, HW
 	out_blur_30(I, out, 0, c0 - 2, c1);
 	  }
 	
+#ifndef __VIVADO_SYNTH__
   debug_file.close();
+#endif //__VIVADO_SYNTH__
 }

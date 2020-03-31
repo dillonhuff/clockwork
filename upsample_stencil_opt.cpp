@@ -1,9 +1,11 @@
+#ifndef __VIVADO_SYNTH__
 #include <fstream>
 using namespace std;
 
   // Debug utility
   ofstream* global_debug_handle;
 
+#endif //__VIVADO_SYNTH__
 #include "upsample_stencil_opt_compute_units.h"
 
 #include "hw_classes.h"
@@ -26,9 +28,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd0_cache {
 
 	fifo<hw_uint<32> , 54> f;
 	inline hw_uint<32>  peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
     return f.peek(53 - offset);
   }
 
@@ -61,9 +60,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd1_cache {
 
 	fifo<hw_uint<32> , 36> f;
 	inline hw_uint<32>  peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
     return f.peek(35 - offset);
   }
 
@@ -96,9 +92,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd2_cache {
 
 	fifo<hw_uint<32> , 18> f;
 	inline hw_uint<32>  peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
     return f.peek(17 - offset);
   }
 
@@ -131,9 +124,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd3_cache {
 
 	fifo<hw_uint<32> , 53> f;
 	inline hw_uint<32>  peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
     return f.peek(52 - offset);
   }
 
@@ -166,9 +156,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd4_cache {
 
 	fifo<hw_uint<32> , 35> f;
 	inline hw_uint<32>  peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
     return f.peek(34 - offset);
   }
 
@@ -201,9 +188,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd5_cache {
 
 	fifo<hw_uint<32> , 17> f;
 	inline hw_uint<32>  peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
     return f.peek(16 - offset);
   }
 
@@ -236,9 +220,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd6_cache {
 
 	fifo<hw_uint<32> , 52> f;
 	inline hw_uint<32>  peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
     return f.peek(51 - offset);
   }
 
@@ -271,9 +252,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd7_cache {
 
 	fifo<hw_uint<32> , 34> f;
 	inline hw_uint<32>  peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
     return f.peek(33 - offset);
   }
 
@@ -306,9 +284,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd8_cache {
 
 	fifo<hw_uint<32> , 16> f;
 	inline hw_uint<32>  peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
-#endif //__VIVADO_SYNTH__
     return f.peek(15 - offset);
   }
 
@@ -453,24 +428,32 @@ inline void Img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */
 	auto compute_result = id(Img_off_0_c__0_value);
 	// Produce: Img
 	Img_Img_update_0_write_bundle_write(compute_result, Img, d0, d1);
+#ifndef __VIVADO_SYNTH__
   *global_debug_handle << "Img_update_0," << d0<< "," << d1<< "," <<  compute_result << endl;
+#endif //__VIVADO_SYNTH__
 }
 
 inline void upsample_stencil_update_0(Img_cache& Img, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */upsample_stencil, int d0, int d1) {
 	// Consume: Img
 	auto Img_0_c__0_value = Img_upsample_stencil_update_0_read_bundle_read(Img/* source_delay */, d0, d1);
+#ifndef __VIVADO_SYNTH__
   *global_debug_handle << "upsample_stencil_update_0_Img," << d0<< "," << d1<< "," <<  Img_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
 	auto compute_result = conv_3_3(Img_0_c__0_value);
 	// Produce: upsample_stencil
 	upsample_stencil.write(compute_result);
+#ifndef __VIVADO_SYNTH__
   *global_debug_handle << "upsample_stencil_update_0," << d0<< "," << d1<< "," <<  compute_result << endl;
+#endif //__VIVADO_SYNTH__
 }
 
 // Driver function
 void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Img_off, HWStream<hw_uint<32> >& /* get_args num ports = 1 */upsample_stencil) {
 
+#ifndef __VIVADO_SYNTH__
   ofstream debug_file("upsample_stencil_opt_debug.csv");
   global_debug_handle = &debug_file;
+#endif //__VIVADO_SYNTH__
   Img_cache Img;
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=Img inter false
@@ -522,5 +505,7 @@ void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Im
 	    global_time++;
 	  }
 	
+#ifndef __VIVADO_SYNTH__
   debug_file.close();
+#endif //__VIVADO_SYNTH__
 }
