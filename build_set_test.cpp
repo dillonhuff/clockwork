@@ -2821,12 +2821,6 @@ void generate_verilog_code(CodegenOptions& options,
 
       auto bankmod = minigen.compile(bankprog);
       blk->add_module_instance(bank_struct.name, bankmod);
-
-      //minihls::module_type* bnk_mod =
-        //gen_bank(*blk, bank);
-
-      //blk->add_module_instance(bank.name,
-          //bnk_mod);
     }
 
     for (auto osel : b.second.selectors) {

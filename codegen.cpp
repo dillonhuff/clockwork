@@ -2,6 +2,8 @@
 
 using namespace minihls;
 
+#define US + "_" + 
+
 module_type* sr_buffer(block& blk, const int width, const int depth) {
   string name = "sr_buffer_" + to_string(width) + "_" + minihls::str(depth);
   if (blk.has_module_type(name)) {
@@ -43,7 +45,22 @@ module_type* sr_buffer(block& blk, const int width, const int depth) {
 
   string body = ss.str();
 
-  return blk.add_module_type(name, pts, body);
+  // Instructions to write front and read back
+  auto sr_type = blk.add_module_type(name, pts, body);
+  string write_back = name US "write_back" US "instr";
+  auto wb = blk.add_instruction_type(write_back);
+
+  string wb_binding_name = name US "write_back_binding";
+  auto write_back_binding =
+    blk.add_instruction_binding(name,
+        wb,
+        sr_type,
+        "",
+        {{0, "wdata"}});
+  write_back_binding->latency = 1;
+  write_back_binding->en = "wen";
+
+  return sr_type;
 }
 
 minihls::module_type* gen_bank(minihls::block& blk, const bank& bnk) {
