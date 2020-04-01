@@ -14,18 +14,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd0_cache {
 	// RAM Box: {[-1, 16], [-1, 16]}
 	// Capacity: 54
 	// # of read delays: 18
-#ifdef __VIVADO_SYNTH__
-  hw_uint<32>  Img_Img_update_0_write0_to_upsample_stencil_rd0_store[324];
-
-#else
-  hw_uint<32> * Img_Img_update_0_write0_to_upsample_stencil_rd0_store;
-#endif // __VIVADO_SYNTH__
-  hw_uint<32>  read(int d0, int d1) {    return Img_Img_update_0_write0_to_upsample_stencil_rd0_store[(d0 + d1*18)];  }
-
-  void write(hw_uint<32> & value, int d0, int d1) {
-    Img_Img_update_0_write0_to_upsample_stencil_rd0_store[(d0 + d1*18)] = value;
-  }
-
 	fifo<hw_uint<32> , 54> f;
 	inline hw_uint<32>  peek(const int offset) {
     return f.peek(53 - offset);
@@ -46,18 +34,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd1_cache {
 	// RAM Box: {[-1, 16], [-1, 16]}
 	// Capacity: 36
 	// # of read delays: 18
-#ifdef __VIVADO_SYNTH__
-  hw_uint<32>  Img_Img_update_0_write0_to_upsample_stencil_rd1_store[324];
-
-#else
-  hw_uint<32> * Img_Img_update_0_write0_to_upsample_stencil_rd1_store;
-#endif // __VIVADO_SYNTH__
-  hw_uint<32>  read(int d0, int d1) {    return Img_Img_update_0_write0_to_upsample_stencil_rd1_store[(d0 + d1*18)];  }
-
-  void write(hw_uint<32> & value, int d0, int d1) {
-    Img_Img_update_0_write0_to_upsample_stencil_rd1_store[(d0 + d1*18)] = value;
-  }
-
 	fifo<hw_uint<32> , 36> f;
 	inline hw_uint<32>  peek(const int offset) {
     return f.peek(35 - offset);
@@ -78,18 +54,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd2_cache {
 	// RAM Box: {[-1, 16], [-1, 16]}
 	// Capacity: 18
 	// # of read delays: 18
-#ifdef __VIVADO_SYNTH__
-  hw_uint<32>  Img_Img_update_0_write0_to_upsample_stencil_rd2_store[324];
-
-#else
-  hw_uint<32> * Img_Img_update_0_write0_to_upsample_stencil_rd2_store;
-#endif // __VIVADO_SYNTH__
-  hw_uint<32>  read(int d0, int d1) {    return Img_Img_update_0_write0_to_upsample_stencil_rd2_store[(d0 + d1*18)];  }
-
-  void write(hw_uint<32> & value, int d0, int d1) {
-    Img_Img_update_0_write0_to_upsample_stencil_rd2_store[(d0 + d1*18)] = value;
-  }
-
 	fifo<hw_uint<32> , 18> f;
 	inline hw_uint<32>  peek(const int offset) {
     return f.peek(17 - offset);
@@ -110,18 +74,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd3_cache {
 	// RAM Box: {[-1, 16], [-1, 16]}
 	// Capacity: 53
 	// # of read delays: 18
-#ifdef __VIVADO_SYNTH__
-  hw_uint<32>  Img_Img_update_0_write0_to_upsample_stencil_rd3_store[324];
-
-#else
-  hw_uint<32> * Img_Img_update_0_write0_to_upsample_stencil_rd3_store;
-#endif // __VIVADO_SYNTH__
-  hw_uint<32>  read(int d0, int d1) {    return Img_Img_update_0_write0_to_upsample_stencil_rd3_store[(d0 + d1*18)];  }
-
-  void write(hw_uint<32> & value, int d0, int d1) {
-    Img_Img_update_0_write0_to_upsample_stencil_rd3_store[(d0 + d1*18)] = value;
-  }
-
 	fifo<hw_uint<32> , 53> f;
 	inline hw_uint<32>  peek(const int offset) {
     return f.peek(52 - offset);
@@ -142,18 +94,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd4_cache {
 	// RAM Box: {[-1, 16], [-1, 16]}
 	// Capacity: 35
 	// # of read delays: 18
-#ifdef __VIVADO_SYNTH__
-  hw_uint<32>  Img_Img_update_0_write0_to_upsample_stencil_rd4_store[324];
-
-#else
-  hw_uint<32> * Img_Img_update_0_write0_to_upsample_stencil_rd4_store;
-#endif // __VIVADO_SYNTH__
-  hw_uint<32>  read(int d0, int d1) {    return Img_Img_update_0_write0_to_upsample_stencil_rd4_store[(d0 + d1*18)];  }
-
-  void write(hw_uint<32> & value, int d0, int d1) {
-    Img_Img_update_0_write0_to_upsample_stencil_rd4_store[(d0 + d1*18)] = value;
-  }
-
 	fifo<hw_uint<32> , 35> f;
 	inline hw_uint<32>  peek(const int offset) {
     return f.peek(34 - offset);
@@ -174,18 +114,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd5_cache {
 	// RAM Box: {[-1, 16], [-1, 16]}
 	// Capacity: 17
 	// # of read delays: 18
-#ifdef __VIVADO_SYNTH__
-  hw_uint<32>  Img_Img_update_0_write0_to_upsample_stencil_rd5_store[324];
-
-#else
-  hw_uint<32> * Img_Img_update_0_write0_to_upsample_stencil_rd5_store;
-#endif // __VIVADO_SYNTH__
-  hw_uint<32>  read(int d0, int d1) {    return Img_Img_update_0_write0_to_upsample_stencil_rd5_store[(d0 + d1*18)];  }
-
-  void write(hw_uint<32> & value, int d0, int d1) {
-    Img_Img_update_0_write0_to_upsample_stencil_rd5_store[(d0 + d1*18)] = value;
-  }
-
 	fifo<hw_uint<32> , 17> f;
 	inline hw_uint<32>  peek(const int offset) {
     return f.peek(16 - offset);
@@ -206,18 +134,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd6_cache {
 	// RAM Box: {[-1, 16], [-1, 16]}
 	// Capacity: 52
 	// # of read delays: 17
-#ifdef __VIVADO_SYNTH__
-  hw_uint<32>  Img_Img_update_0_write0_to_upsample_stencil_rd6_store[324];
-
-#else
-  hw_uint<32> * Img_Img_update_0_write0_to_upsample_stencil_rd6_store;
-#endif // __VIVADO_SYNTH__
-  hw_uint<32>  read(int d0, int d1) {    return Img_Img_update_0_write0_to_upsample_stencil_rd6_store[(d0 + d1*18)];  }
-
-  void write(hw_uint<32> & value, int d0, int d1) {
-    Img_Img_update_0_write0_to_upsample_stencil_rd6_store[(d0 + d1*18)] = value;
-  }
-
 	fifo<hw_uint<32> , 52> f;
 	inline hw_uint<32>  peek(const int offset) {
     return f.peek(51 - offset);
@@ -238,18 +154,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd7_cache {
 	// RAM Box: {[-1, 16], [-1, 16]}
 	// Capacity: 34
 	// # of read delays: 17
-#ifdef __VIVADO_SYNTH__
-  hw_uint<32>  Img_Img_update_0_write0_to_upsample_stencil_rd7_store[324];
-
-#else
-  hw_uint<32> * Img_Img_update_0_write0_to_upsample_stencil_rd7_store;
-#endif // __VIVADO_SYNTH__
-  hw_uint<32>  read(int d0, int d1) {    return Img_Img_update_0_write0_to_upsample_stencil_rd7_store[(d0 + d1*18)];  }
-
-  void write(hw_uint<32> & value, int d0, int d1) {
-    Img_Img_update_0_write0_to_upsample_stencil_rd7_store[(d0 + d1*18)] = value;
-  }
-
 	fifo<hw_uint<32> , 34> f;
 	inline hw_uint<32>  peek(const int offset) {
     return f.peek(33 - offset);
@@ -270,18 +174,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd8_cache {
 	// RAM Box: {[-1, 16], [-1, 16]}
 	// Capacity: 16
 	// # of read delays: 17
-#ifdef __VIVADO_SYNTH__
-  hw_uint<32>  Img_Img_update_0_write0_to_upsample_stencil_rd8_store[324];
-
-#else
-  hw_uint<32> * Img_Img_update_0_write0_to_upsample_stencil_rd8_store;
-#endif // __VIVADO_SYNTH__
-  hw_uint<32>  read(int d0, int d1) {    return Img_Img_update_0_write0_to_upsample_stencil_rd8_store[(d0 + d1*18)];  }
-
-  void write(hw_uint<32> & value, int d0, int d1) {
-    Img_Img_update_0_write0_to_upsample_stencil_rd8_store[(d0 + d1*18)] = value;
-  }
-
 	fifo<hw_uint<32> , 16> f;
 	inline hw_uint<32>  peek(const int offset) {
     return f.peek(15 - offset);
