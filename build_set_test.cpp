@@ -5377,6 +5377,7 @@ struct App {
           for (auto src : up.get_srcs()) {
             cout << "src: " << src << endl;
             if (src.name == producer) {
+              cout << "Got box" << endl;
               return src;
             }
           }
@@ -5626,6 +5627,7 @@ struct App {
 
           //Window f_win = data_window_needed_by_compute(u.name(), f, unroll_factor);
           Window f_win = data_window_needed_by_compute(u.name(), f, u.unroll_factor);
+          cout << "f_win = " << f_win << endl;
 
           int i = 0;
           for (auto p : f_win.pts()) {
@@ -5877,8 +5879,10 @@ struct App {
             string arg_name = "lane_" + to_string(lane) + "_" + p;
 
             arg_names.push_back(arg_name);
+            cout << "getting window for " << u.name() << endl;
             Window win_needed =
               data_window_needed_by_compute(u.name(), p, 1).increment(lane);
+            cout << "Win needed: " << win_needed << endl;
 
             cfile << tab(1) << "hw_uint<" << win_needed.pts().size()*arg_width << "> " << arg_name << ";" << endl;
             int win_pos = 0;

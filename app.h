@@ -88,6 +88,7 @@ struct FiniteRegion {
   }
 
   FiniteRegion unroll_cpy(const int factor) const {
+    cout << "Unrolling by factor: " << factor << endl;
     FiniteRegion c;
     c.name = name + "_unrolled";
     int i = 0;
