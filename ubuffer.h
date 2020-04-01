@@ -58,10 +58,10 @@ struct bank {
     return end_inds;
   }
 
-  vector<string> get_partitions() const {
+  vector<pair<string, int> > get_partitions() const {
     auto break_points = get_break_points();
 
-    vector<string> partitions;
+    vector<pair<string, int> > partitions;
     if (break_points.size() > 0) {
       for (size_t i = 0; i < break_points.size(); i++) {
         int current = break_points[i];
@@ -70,11 +70,11 @@ struct bank {
           if (break_points[i] != break_points[i + 1]) {
             int next = break_points[i + 1];
             partition_capacity = next - current;
-            partitions.push_back("f" + to_string(i));
+            partitions.push_back({"f" + to_string(i), partition_capacity});
           }
         } else {
           partition_capacity = 1;
-          partitions.push_back("f" + to_string(i));
+          partitions.push_back({"f" + to_string(i), partition_capacity});
         }
       }
     }

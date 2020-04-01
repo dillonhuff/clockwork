@@ -473,58 +473,82 @@ void generate_bank(CodegenOptions& options,
     auto break_points = bank.get_break_points();
     read_delays = break_points;
 
-    vector<string> partitions =
+    auto partitions =
       bank.get_partitions();
     vector<int> end_inds =
       bank.get_end_inds();
 
-    if (read_delays.size() > 0) {
-      for (size_t i = 0; i < read_delays.size(); i++) {
-        int current = read_delays[i];
-        int partition_capacity = -1;
-        if (i < read_delays.size() - 1) {
-          if (read_delays[i] != read_delays[i + 1]) {
-            int next = read_delays[i + 1];
-            partition_capacity = next - current;
-            out << "\t// Parition [" << current << ", " << next << ") capacity = " << partition_capacity << endl;
-            out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << i << ";" << endl;
-          }
-        } else {
-          partition_capacity = 1;
-          out << "\t// Parition [" << current << ", " << current << "] capacity = " << partition_capacity << endl;
-          out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << i << ";" << endl;
-        }
+    for (auto p : partitions) {
+
+      auto partition_capacity = p.second;
+      //out << "\t// Parition [" << current.first << ", " << next.first << ") capacity = " << partition_capacity << endl;
+      if (partition_capacity > 1) {
+        out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> " << p.first << ";" << endl;
+      } else {
+        out << "\t" << pt_type_string << " " << p.first << ";" << endl;
       }
+    }
 
-      out << endl << endl;
-      int nind = 0;
-      for (auto p : partitions) {
-        int dv = end_inds[nind];
-        assert(dv >= 0);
-        out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
-        ignore_inter_deps(out, p);
-        out << "\t\treturn " << p << ".back();" << endl;
-        out << "\t}" << endl << endl;
-        nind++;
-      }
-      out << endl << endl;
+    //vector<int> capacities;
+    //for (size_t i = 0; i < read_delays.size(); i++) {
+      //int current = read_delays[i];
+      //int partition_capacity = -1;
+      //int next = -1;
+      //if (i < (int) read_delays.size() - 1 &&
+          //read_delays[i] != read_delays[i + 1]) {
+        //next = read_delays[i + 1];
+        //partition_capacity = next - current;
+      //} else {
+        //partition_capacity = 1;
+      //}
+      //capacities.push_back(partition_capacity);
 
-      out << "\tinline void push(const " + pt_type_string + " value) {" << endl;
-      if (partitions.size() > 0) {
-        for (size_t i = partitions.size() - 1; i >= 1; i--) {
-          auto current = partitions[i];
-          auto prior = partitions[i - 1];
+      //out << "\t// Parition [" << current << ", " << next << ") capacity = " << partition_capacity << endl;
+      //if (partition_capacity > 1) {
+        //out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << i << ";" << endl;
+      //} else {
+        //out << "\t" << pt_type_string << " f" << i << ";" << endl;
+      //}
+    //}
 
-          if (options.add_dependence_pragmas) {
-            ignore_inter_deps(out, current);
-          }
+    //assert(capacities.size() == partitions.size());
 
-          out << "\t\t" << current << ".push(" << prior << ".back());" << endl;
-        }
-        out << "\t\t" << partitions[0] << ".push(value);" << endl;
+    out << endl << endl;
+    int nind = 0;
+    for (auto p : partitions) {
+      int dv = end_inds[nind];
+      //int capacity = capacities.at(nind);
+      int capacity = p.second;
+      assert(dv >= 0);
+      out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
+      if (capacity > 1) {
+        ignore_inter_deps(out, p.first);
+        out << "\t\treturn " << p.first << ".back();" << endl;
+      } else {
+        out << "\t\treturn " << p.first << ";" << endl;
       }
       out << "\t}" << endl << endl;
+      nind++;
     }
+    out << endl << endl;
+
+    out << "\tinline void push(const " + pt_type_string + " value) {" << endl;
+    for (size_t i = partitions.size() - 1; i >= 1; i--) {
+      auto current = partitions[i];
+      auto prior = partitions[i - 1];
+      auto last_capacity = prior.second;
+      auto capacity = current.second;
+
+      if (options.add_dependence_pragmas) {
+        ignore_inter_deps(out, current.first);
+      }
+
+      out << tab(2) << "// cap: " << capacity << " reading from capacity: " << last_capacity << endl;
+      out << tab(2) << write_partition(current.first, capacity, read_partition(prior.first, last_capacity)) << ";" << endl;
+    }
+    out << tab(2) << "// cap: " << partitions.at(0).second << endl;
+    out << tab(2) << write_partition(partitions.at(0).first, partitions.at(0).second, "value") << ";" << endl;
+    out << "\t}" << endl << endl;
   }
   out << "};" << endl << endl;
 }
@@ -7332,8 +7356,8 @@ void application_tests() {
   //reduce_1d_test();
 
   // Known to fail with all rams off
-  exposure_fusion();
   denoise2d_test();
+  exposure_fusion();
 
   //cout << "Exposure fusion passed" << endl;
   //assert(false);

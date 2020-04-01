@@ -14,23 +14,15 @@ struct I_I_id0_4_merged_banks_3_cache {
 	// RAM Box: {[0, 31], [0, 7]}
 	// Capacity: 65
 	// # of read delays: 3
-	// Parition [0, 1) capacity = 1
-	fifo<hw_uint<16>, 1> f0;
-	// Parition [1, 32) capacity = 31
+	hw_uint<16> f0;
 	fifo<hw_uint<16>, 31> f1;
-	// Parition [32, 33) capacity = 1
-	fifo<hw_uint<16>, 1> f2;
-	// Parition [33, 64) capacity = 31
+	hw_uint<16> f2;
 	fifo<hw_uint<16>, 31> f3;
-	// Parition [64, 64] capacity = 1
-	fifo<hw_uint<16>, 1> f4;
+	hw_uint<16> f4;
 
 
 	inline hw_uint<16> peek_0() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f0 inter false
-#endif //__VIVADO_SYNTH__
-		return f0.back();
+		return f0;
 	}
 
 	inline hw_uint<16> peek_31() {
@@ -41,10 +33,7 @@ struct I_I_id0_4_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_32() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f2 inter false
-#endif //__VIVADO_SYNTH__
-		return f2.back();
+		return f2;
 	}
 
 	inline hw_uint<16> peek_63() {
@@ -55,10 +44,7 @@ struct I_I_id0_4_merged_banks_3_cache {
 	}
 
 	inline hw_uint<16> peek_64() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f4 inter false
-#endif //__VIVADO_SYNTH__
-		return f4.back();
+		return f4;
 	}
 
 
@@ -67,20 +53,25 @@ struct I_I_id0_4_merged_banks_3_cache {
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=f4 inter false
 #endif //__VIVADO_SYNTH__
-		f4.push(f3.back());
+    // cap: 1 reading from capacity: 31
+    f4 = f3.back();
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=f3 inter false
 #endif //__VIVADO_SYNTH__
-		f3.push(f2.back());
+    // cap: 31 reading from capacity: 1
+    f3.push(f2);
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=f2 inter false
 #endif //__VIVADO_SYNTH__
-		f2.push(f1.back());
+    // cap: 1 reading from capacity: 31
+    f2 = f1.back();
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=f1 inter false
 #endif //__VIVADO_SYNTH__
-		f1.push(f0.back());
-		f0.push(value);
+    // cap: 31 reading from capacity: 1
+    f1.push(f0);
+    // cap: 1
+    f0 = value;
 	}
 
 };
