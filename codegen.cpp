@@ -60,6 +60,17 @@ module_type* sr_buffer(block& blk, const int width, const int depth) {
   write_back_binding->latency = 1;
   write_back_binding->en = "wen";
 
+  auto read = name US "read" US "instr";
+  auto rinstr = blk.add_instruction_type(read);
+  string rd_binding_name = read US "binding";
+  auto rd_binding =
+    blk.add_instruction_binding(name,
+        rinstr,
+        sr_type,
+        "rdata",
+        {{0, "raddr"}});
+  rd_binding->latency = 1;
+
   return sr_type;
 }
 
