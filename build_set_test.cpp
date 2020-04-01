@@ -6827,6 +6827,7 @@ void jacobi2d_app_test() {
     system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
     system(("mv " + out_name + "*.h " + synth_dir).c_str());
     system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
+    system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
   }
 
   assert(false);
