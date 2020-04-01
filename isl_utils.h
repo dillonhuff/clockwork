@@ -111,6 +111,8 @@ isl_stat isl_pw_aff_get_const( isl_set *set,  isl_aff *aff, void *user);
 
 isl_stat isl_pw_aff_get_var_id( isl_set *set,  isl_aff *aff, void *user);
 
+isl_stat isl_pw_aff_set_var_name( isl_set *set,  isl_aff *aff, void *user);
+
 int get_dim_min(isl_set* const m, int pos);
 
 
@@ -276,6 +278,10 @@ isl_union_map* dot(isl_union_map* const m0, isl_map* const m1);
 isl_map* dot(isl_map* const m0, isl_map* const m1);
 
 isl_union_set* simplify(uset* const m);
+
+isl_map* simplify(isl_map* const m);
+
+umap* simplify(umap* const m);
 
 isl_union_set* coalesce(isl_union_set* const m0);
 

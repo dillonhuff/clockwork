@@ -106,10 +106,12 @@ class AccessPattern {
       void initial_access_mat(isl_map* access_map, isl_set* domain) {
           cout << "\t\tProduced: " << str(access_map) << endl;
           auto mpa = isl_pw_multi_aff_from_map(access_map);
+          cout << str(mpa) << endl;
           addr_dim = isl_pw_multi_aff_dim(mpa, isl_dim_out);
           map<string, int> var_related;
           for (int i = 0; i < addr_dim; i ++) {
               auto pa = isl_pw_multi_aff_get_pw_aff(mpa, i);
+              cout << i << str(pa) << endl;
               isl_pw_aff_foreach_piece(pa, &isl_pw_aff_get_var_id, &var_related);
           }
           var_related["const"] = -1;
@@ -280,10 +282,11 @@ class AccessPattern {
       }
 
       isl_map* get_op_transform(isl_ctx* ctx, int dim_id, int fetch_width) {
-          AccessPattern origin(*this);
           vector<int> & stride_in_target = access_matrix[dim_id];
-          vector<string> var_list(var_dim-1);
-          vector<string> origin_var_list(var_dim-1);
+          vector<string> var_list(var_dim);
+          vector<string> origin_var_list(var_dim);
+          var_list.front() = "root";
+          origin_var_list.front() = "root";
           //TODO: handle reuse pattern
           for (auto it: name2idx) {
               if (it.first == "const")
@@ -291,19 +294,41 @@ class AccessPattern {
               int id = it.second;
               if (stride_in_target[id] != 0 && (stride_in_target[id] < 4)) {
                   string trans = "floor("+ it.first + "/" + to_string(fetch_width) + ")";
-                  var_list[it.second-1] = trans;
-                  origin_var_list[it.second-1] = it.first;
+                  var_list[it.second] = trans;
+                  origin_var_list[it.second] = it.first;
               }
               else {
-                  var_list[it.second-1] = it.first;
-                  origin_var_list[it.second-1] = it.first;
+                  var_list[it.second] = it.first;
+                  origin_var_list[it.second] = it.first;
               }
           }
           auto vars = sep_list(var_list, "[", "]", "," );
           auto origin_vars = sep_list(origin_var_list, "[", "]", "," );
           cout <<"OP name: " << op_name << endl;
-          return to_map(rdmap(ctx, string("{ " + op_name + origin_vars + " -> " + op_name +"_vec" + vars + "}").c_str()));
+          isl_map* multi_map = to_map(rdmap(ctx, string("{ " + op_name + origin_vars + " -> " + op_name +"_vec" + vars + "}").c_str()));
+          return multi_map;
       }
+
+      /*
+       * This Function create a vector of map of the constraints on output buffer,
+       * and map that to each port*/
+      vector<isl_map*> get_buf_slice(isl_ctx* ctx, string suffix, int dim_id, int fetch_width) {
+          vector<string> var_list;
+          vector<isl_map*> slices;
+          for (size_t dim = 0; dim < addr_dim; dim ++) {
+              var_list.push_back("p" + to_string(dim));
+          }
+
+          auto vars = sep_list(var_list, "[", "]", ",");
+          for(size_t i = 0; i < fetch_width; i ++) {
+              string new_buf_name = buf_name + "_" + suffix;
+              string constraint = "p" + to_string(dim_id) + "%" + to_string(fetch_width) + "=" + to_string(i);
+              isl_map* slice_constriant = to_map(rdmap(ctx, string("{" + buf_name + vars + " -> " + new_buf_name + vars + ":" +constraint + "}" ).c_str()));
+              slices.push_back(slice_constriant);
+          }
+          return slices;
+      }
+
 
       vector<AccessPattern> vectorization(int dim_id, int fetch_width) {
           AccessPattern origin(*this);
@@ -693,6 +718,8 @@ class UBuffer {
 
     //change the input and output and return the agg and tb ubuffer stucture
     void vectorization(int dim_id, int fetch_width, UBuffer& agg, UBuffer& sram, UBuffer& tb);
+
+    void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out);
 
 };
 

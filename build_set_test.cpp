@@ -3208,13 +3208,15 @@ void auto_vec_test() {
   auto acc_map = buffer.access_map.at(pick(buffer.get_out_ports()));
   cout << "\tAccess map: " << str(acc_map) << endl;
   string read_string = "{output[root, qo, qi] -> output_vec[root, qo, floor(qi/4)]}";
-  string tf_string = "{buf[i0, i1] -> buf[i0, 4*floor(i1/4)]}";
-  isl_union_map* pick_pt = rdmap(prg.ctx, tf_string.c_str());
+  //string tf_string = "{buf[i0, i1] -> buf[i0, 4*floor(i1/4)]}";
+  string tf_string = "{buf[i0, i1] -> buf[i0, i1]: i1 % 4 = 0}";
+  isl_union_map* pick_pt = isl_union_map_read_from_str(prg.ctx, tf_string.c_str());
   isl_union_map* vectorized_map = isl_union_map_read_from_str(prg.ctx, read_string.c_str());
   auto vectorized_access = dot(inv(acc_map), vectorized_map);
   cout << "buffer mapping" << str(pick_pt) << endl;
   cout << "vectorize map" << str(vectorized_access) << endl;
-  cout << "vectorize map" << str(isl_map_from_pw_multi_aff(isl_pw_multi_aff_from_map(to_map(dot(inv(vectorized_access), pick_pt))))) << endl;
+  cout << "vectorize map" << str(to_map(dot(inv(vectorized_access), pick_pt))) << endl;
+  cout << "simplify vectorize map" << str(isl_map_from_pw_multi_aff(isl_pw_multi_aff_from_map(to_map(dot(inv(vectorized_access), pick_pt))))) << endl;
   cout << "vectorize range: " << str(range(vectorized_access)) << "\n vectorize domain" << str(domain(vectorized_access)) << endl;
 
   cout << "\tUnoptimized Buffer: " << pick(buffers).second << endl;

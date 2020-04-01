@@ -217,14 +217,26 @@ isl_stat isl_pw_aff_get_var_id( isl_set *set,  isl_aff *aff, void *user) {
 
 	int n_div = isl_aff_dim(aff, isl_dim_in);
 	for (int i = 0; i < n_div; ++i) {
+        std::cout << i << "out of" << n_div <<  endl;
 
 		if (!isl_aff_involves_dims(aff, isl_dim_in, i, 1))
         {
 			continue;
         }
+        std::cout << "reach here" << endl;
 		auto dim_name = isl_aff_get_dim_name(aff, isl_dim_in, i);
+        std::cout << dim_name << endl;
         //0 is reserved for constant
         name2idx_related->insert(std::make_pair(string(dim_name), i));
+	}
+    return isl_stat_ok;
+}
+
+isl_stat isl_pw_aff_set_var_name( isl_set *set, isl_aff *aff, void *user) {
+    auto* name_vec = (vector<string>*) user;
+	int n_div = isl_aff_dim(aff, isl_dim_in);
+	for (int i = 0; i < n_div; ++i) {
+		isl_aff_set_dim_name(aff, isl_dim_in, i, (*name_vec)[i].c_str());
 	}
     return isl_stat_ok;
 }
@@ -838,6 +850,14 @@ isl_map* dot(isl_map* const m0, isl_map* const m1) {
 
 isl_union_set* simplify(uset* const m) {
   return isl_union_set_remove_redundancies(cpy(m));
+}
+
+isl_map* simplify(isl_map* const m) {
+  return isl_map_from_pw_multi_aff(isl_pw_multi_aff_from_map(cpy(m)));
+}
+
+umap* simplify(umap* const m) {
+  return to_umap(isl_map_from_pw_multi_aff(isl_pw_multi_aff_from_map(to_map(cpy(m)))));
 }
 
 isl_union_set* coalesce(isl_union_set* const m0) {
