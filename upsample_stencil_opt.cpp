@@ -16,6 +16,9 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd0_cache {
 	// # of read delays: 18
 	fifo<hw_uint<32> , 54> f;
 	inline hw_uint<32>  peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f inter false
+#endif //__VIVADO_SYNTH__
     return f.peek(53 - offset);
   }
 
@@ -36,6 +39,9 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd1_cache {
 	// # of read delays: 18
 	fifo<hw_uint<32> , 36> f;
 	inline hw_uint<32>  peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f inter false
+#endif //__VIVADO_SYNTH__
     return f.peek(35 - offset);
   }
 
@@ -56,6 +62,9 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd2_cache {
 	// # of read delays: 18
 	fifo<hw_uint<32> , 18> f;
 	inline hw_uint<32>  peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f inter false
+#endif //__VIVADO_SYNTH__
     return f.peek(17 - offset);
   }
 
@@ -76,6 +85,9 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd3_cache {
 	// # of read delays: 18
 	fifo<hw_uint<32> , 53> f;
 	inline hw_uint<32>  peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f inter false
+#endif //__VIVADO_SYNTH__
     return f.peek(52 - offset);
   }
 
@@ -96,6 +108,9 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd4_cache {
 	// # of read delays: 18
 	fifo<hw_uint<32> , 35> f;
 	inline hw_uint<32>  peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f inter false
+#endif //__VIVADO_SYNTH__
     return f.peek(34 - offset);
   }
 
@@ -116,6 +131,9 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd5_cache {
 	// # of read delays: 18
 	fifo<hw_uint<32> , 17> f;
 	inline hw_uint<32>  peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f inter false
+#endif //__VIVADO_SYNTH__
     return f.peek(16 - offset);
   }
 
@@ -136,6 +154,9 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd6_cache {
 	// # of read delays: 17
 	fifo<hw_uint<32> , 52> f;
 	inline hw_uint<32>  peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f inter false
+#endif //__VIVADO_SYNTH__
     return f.peek(51 - offset);
   }
 
@@ -156,6 +177,9 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd7_cache {
 	// # of read delays: 17
 	fifo<hw_uint<32> , 34> f;
 	inline hw_uint<32>  peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f inter false
+#endif //__VIVADO_SYNTH__
     return f.peek(33 - offset);
   }
 
@@ -176,6 +200,9 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd8_cache {
 	// # of read delays: 17
 	fifo<hw_uint<32> , 16> f;
 	inline hw_uint<32>  peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f inter false
+#endif //__VIVADO_SYNTH__
     return f.peek(15 - offset);
   }
 
