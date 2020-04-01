@@ -2807,13 +2807,28 @@ void generate_verilog_code(CodegenOptions& options,
   map<string, minihls::module_type*> buffer_mods;
   for (auto& b : buffers) {
     minihls::block* blk = minigen.add_block(b.first);
-    for (auto bank : b.second.get_banks()) {
-      minihls::module_type* bnk_mod =
-        gen_bank(*blk, bank);
+    for (auto bank_struct : b.second.get_banks()) {
+      auto bankprog = minigen.add_block(bank_struct.name);
 
-      blk->add_module_instance(bank.name,
-          bnk_mod);
+      map<string, minihls::module_instance*> partitions;
+      for (auto part : bank_struct.get_partitions()) {
+        auto part_tp = sr_buffer(*bankprog,
+            32,
+            part.second);
+        partitions[part.first] =
+          bankprog->add_module_instance(part.first, part_tp);
+      }
+
+      auto bankmod = minigen.compile(bankprog);
+      blk->add_module_instance(bank_struct.name, bankmod);
+
+      //minihls::module_type* bnk_mod =
+        //gen_bank(*blk, bank);
+
+      //blk->add_module_instance(bank.name,
+          //bnk_mod);
     }
+
     for (auto osel : b.second.selectors) {
       selector sel = osel.second;
       vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
@@ -7388,6 +7403,8 @@ void application_tests() {
   //reduce_1d_test();
 
   //up_stencil_down_unrolled_test();
+  mismatched_stencil_test();
+  assert(false);
   jacobi2d_app_test();
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
@@ -7395,7 +7412,6 @@ void application_tests() {
   denoise2d_test();
   exposure_fusion();
 
-  mismatched_stencil_test();
   grayscale_conversion_test();
   seidel2d_test();
   jacobi_2d_2_test();
