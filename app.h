@@ -239,6 +239,7 @@ struct Update {
 
   Box reduce_var_domain;
   vector<Window> srcs;
+  int unroll_factor;
 
   void pad_reduce_dimension(const int max_reduce_dimension) {
     for (auto& win : srcs) {
@@ -304,12 +305,12 @@ struct Result {
       cout << "reduce range of " << a.name << " = " << a.reduce_var_ranges << endl;
     }
     string update_name = provided.name + "_update_" + str(updates.size());
-    updates.push_back({false, update_name, provided, accum, compute, reduce_ranges, args});
+    updates.push_back({false, update_name, provided, accum, compute, reduce_ranges, args, 1});
   }
 
   void add_init_update(const string& name, const string& compute, const vector<Window>& args) {
     string update_name = provided.name + "_update_" + str(updates.size());
-    updates.push_back({false, update_name, provided, "", compute, {}, args});
+    updates.push_back({false, update_name, provided, "", compute, {}, args, 1});
   }
 
 };

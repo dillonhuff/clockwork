@@ -5322,60 +5322,6 @@ struct App {
       domain_boxes[next] = final_dom;
     }
 
-    //string n = name;
-    //domain_boxes = {};
-    //domain_boxes[n] = sbox;
-
-    //set<string> search{n};
-    //set<string> considered;
-    //while (search.size() > 0) {
-      //string next = pick(search);
-      //search.erase(next);
-      //considered.insert(next);
-
-      //cout << "Next = " << next << endl;
-      //assert(contains_key(next, app_dag));
-      //assert(contains_key(next, domain_boxes));
-
-      //Box consumer_domain =
-        //map_find(next, domain_boxes);
-
-      //cout << "Adding " << next << " to domain boxes" << endl;
-      //for (auto inputs : producers(next)) {
-        //cout << "Getting producers..." << endl;
-        //Window win = inputs;
-
-        //if (!contains_key(inputs.name, domain_boxes)) {
-          //domain_boxes[inputs.name] = Box(max_dims);
-        //}
-        //Box in_box;
-        //int dim = 0;
-        //for (auto range : consumer_domain.intervals) {
-          //int min_result_addr = range.min;
-          //int max_result_addr = range.max;
-
-          //int min_input_addr = win.min_addr(dim, min_result_addr);
-          //int max_input_addr = win.max_addr(dim, max_result_addr);
-          //dim++;
-          //in_box.intervals.push_back({min_input_addr, max_input_addr});
-        //}
-
-        //cout << tab(1) << "Data: " << inputs.name << " to " << next << endl;
-        //domain_boxes[inputs.name] = unn(domain_boxes[inputs.name], in_box);
-        //domain_boxes[inputs.name] = domain_boxes[inputs.name].pad_range_to_nearest_multiple(unroll_factor);
-
-        //cout << tab(1) << "Added " << next << " domain to boxes" << endl;
-        //assert(contains_key(next, domain_boxes));
-
-        //if (!elem(inputs.name, considered)) {
-          //search.insert(inputs.name);
-        //} else {
-          //cout << tab(1) << "Ignoring " << inputs.name << ", already considered" << endl;
-        //}
-      //}
-
-      //cout << "Done with " << next << endl;
-    //}
 
     cout << domain_boxes.size() << " data domains.." << endl;
     assert(domain_boxes.size() == sort_functions().size());
@@ -5608,7 +5554,6 @@ struct App {
     cout << "Error: No update named " << update << " in app" << endl;
     assert(false);
     return {};
-    //return map_find(f, app_dag).get_provided().unroll_cpy(unroll_factor);
   }
 
   Window data_window_needed_by_compute(const std::string& consumer,
