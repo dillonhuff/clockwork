@@ -5547,7 +5547,8 @@ struct App {
     for (auto f : app_dag) {
       for (auto u : f.second.updates) {
         if (u.name() == update) {
-          return u.get_provided().unroll_cpy(unroll_factor);
+          //return u.get_provided().unroll_cpy(unroll_factor);
+          return u.get_provided().unroll_cpy(u.unroll_factor);
         }
       }
     }
@@ -5585,7 +5586,8 @@ struct App {
         isl_union_map* sched =
           its(m, domain);
 
-        Window write_box = data_window_provided_by_compute(u.name(), unroll_factor);
+        //Window write_box = data_window_provided_by_compute(u.name(), unroll_factor);
+        Window write_box = data_window_provided_by_compute(u.name(), u.unroll_factor);
         int i = 0;
         cout << "Write box for: " << f << " has " << write_box.pts().size() << " points in it" << endl;
         for (auto p : write_box.pts()) {
@@ -5615,7 +5617,8 @@ struct App {
 
           cout << "Getting map from " << u.name() << " to " << consumer << endl;
 
-          Window f_win = data_window_needed_by_compute(u.name(), f, unroll_factor);
+          //Window f_win = data_window_needed_by_compute(u.name(), f, unroll_factor);
+          Window f_win = data_window_needed_by_compute(u.name(), f, u.unroll_factor);
 
           int i = 0;
           for (auto p : f_win.pts()) {
@@ -5706,10 +5709,12 @@ struct App {
               fargs.push_back(p.name);
             }
           }
-          if (unroll_factor == 1) {
+          //if (unroll_factor == 1) {
+          if (u.unroll_factor == 1) {
             op->add_function(u.compute_name());
           } else {
-            op->add_function(u.compute_name() + "_unrolled_" + to_string(unroll_factor));
+            //op->add_function(u.compute_name() + "_unrolled_" + to_string(unroll_factor));
+            op->add_function(u.compute_name() + "_unrolled_" + str(u.unroll_factor));
           }
           domain_map[u.name()] =
             compute_domain(u.name());
@@ -5740,6 +5745,7 @@ struct App {
 
   void realize_naive(CodegenOptions& options, const std::string& name, const int d0, const int d1) {
     const int unroll_factor = 1;
+    set_unroll_factors(unroll_factor);
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     fill_data_domain(name, d0, d1, unroll_factor);
     fill_compute_domain(unroll_factor);
@@ -5838,7 +5844,8 @@ struct App {
         vector<pair<int, string> > args_and_widths;
         for (auto p : producers(f)) {
           int arg_width = 32;
-          args_and_widths.push_back({arg_width*data_window_needed_by_compute(u.name(), p.name, unroll_factor).pts().size(), p.name});
+          //args_and_widths.push_back({arg_width*data_window_needed_by_compute(u.name(), p.name, unroll_factor).pts().size(), p.name});
+          args_and_widths.push_back({arg_width*data_window_needed_by_compute(u.name(), p.name, u.unroll_factor).pts().size(), p.name});
         }
 
         vector<string> arg_decls;
@@ -5847,16 +5854,19 @@ struct App {
         }
 
         string out_type_string = "hw_uint<" + to_string(out_width) + "> ";
-        cfile << out_type_string << " " << compute_name(f) << "_unrolled_" << unroll_factor << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+        //cfile << out_type_string << " " << compute_name(f) << "_unrolled_" << unroll_factor << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+        cfile << out_type_string << " " << compute_name(f) << "_unrolled_" << u.unroll_factor << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
         cfile << tab(1) << "hw_uint<" << out_width << "> whole_result;" << endl;
-        for (int lane = 0; lane < unroll_factor; lane++) {
+        //for (int lane = 0; lane < unroll_factor; lane++) {
+        for (int lane = 0; lane < u.unroll_factor; lane++) {
           vector<string> arg_names;
           for (auto arg : args_and_widths) {
 
             int arg_width = 32;
 
             string p = arg.second;
-            Window arg_input_window = data_window_needed_by_compute(u.name(), p, unroll_factor);
+            //Window arg_input_window = data_window_needed_by_compute(u.name(), p, unroll_factor);
+            Window arg_input_window = data_window_needed_by_compute(u.name(), p, u.unroll_factor);
             string arg_name = "lane_" + to_string(lane) + "_" + p;
 
             arg_names.push_back(arg_name);
@@ -6017,8 +6027,17 @@ struct App {
     return;
   }
 
+  void set_unroll_factors(const int unroll_factor) {
+    for (auto& r : app_dag) {
+      for (auto& u : r.second.updates) {
+        u.unroll_factor = unroll_factor;
+      }
+    }
+  }
+
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
+    set_unroll_factors(unroll_factor);
     fill_data_domain(name, d0, d1, unroll_factor);
     fill_compute_domain(unroll_factor);
     schedule_and_codegen(name, unroll_factor);
@@ -7307,6 +7326,8 @@ void application_tests() {
   //cout << "Exposure fusion passed" << endl;
   //assert(false);
 
+  conv3x3_app_unrolled_test();
+  conv3x3_app_unrolled_uneven_test();
   mismatched_stencil_test();
   jacobi_2d_app_test();
   grayscale_conversion_test();
@@ -7314,13 +7335,11 @@ void application_tests() {
   jacobi_2d_2_test();
   jacobi_2d_test();
   parse_denoise3d_test();
-  conv3x3_app_unrolled_test();
   conv3x3_app_test();
   conv3x3_app_test();
 
   conv3x3_app_unrolled_test();
   upsample2d_test();
-  conv3x3_app_unrolled_uneven_test();
   downsample2d_test();
   updown_merge_test();
   sobel_test();
