@@ -5150,7 +5150,8 @@ struct App {
     return map_find(f, domain_boxes);
   }
 
-  void fill_compute_domain(const int unroll_factor) {
+  //void fill_compute_domain(const int unroll_factor) {
+  void fill_compute_domain() {
     int ndims = data_dimension();
     vector<string> data_vars;
     vector<string> later_data_vars;
@@ -5184,7 +5185,7 @@ struct App {
       for (auto update : app_dag.at(f).updates) {
         compute_maps[update.name()] =
           to_map(rdmap(ctx, "{ " + f + "[" + comma_list(data_vars) + " ] -> " +
-                update.name() + "[floor(d0 / " + to_string(unroll_factor) + "), " + comma_list(later_sched_vars) + "] }"));
+                update.name() + "[floor(d0 / " + to_string(update.unroll_factor) + "), " + comma_list(later_sched_vars) + "] }"));
 
         cout << "compute map for " << update.name() << " is " << str(compute_maps[update.name()]) << endl;
         compute_sets[update.name()] =
@@ -5256,6 +5257,7 @@ struct App {
   }
 
   void fill_data_domain(const std::string& name, const vector<int>& dims, const int unroll_factor) {
+  //void fill_data_domain(const std::string& name, const vector<int>& dims) {
 
     Box sbox;
     int max_dims = data_dimension();
@@ -5757,7 +5759,8 @@ struct App {
     set_unroll_factors(unroll_factor);
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     fill_data_domain(name, d0, d1, unroll_factor);
-    fill_compute_domain(unroll_factor);
+    //fill_compute_domain(unroll_factor);
+    fill_compute_domain();
 
     umap* m =
       schedule_isl();
@@ -6049,9 +6052,9 @@ struct App {
   void realize(const std::string& name, const int d0, const int d1) {
     // TODO: REPLACE THIS
     const int unroll_factor = 1;
-    cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
+    //cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     fill_data_domain(name, d0, d1, unroll_factor);
-    fill_compute_domain(unroll_factor);
+    fill_compute_domain();
     schedule_and_codegen(name, unroll_factor);
   }
 
@@ -6059,9 +6062,6 @@ struct App {
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     set_unroll_factors(unroll_factor);
     realize(name, d0, d1);
-    //fill_data_domain(name, d0, d1, unroll_factor);
-    //fill_compute_domain(unroll_factor);
-    //schedule_and_codegen(name, unroll_factor);
   }
 
 };
@@ -7373,7 +7373,7 @@ void application_tests() {
  
   //reduce_1d_test();
 
-  up_stencil_down_unrolled_test();
+  //up_stencil_down_unrolled_test();
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
 
