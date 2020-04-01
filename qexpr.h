@@ -87,6 +87,9 @@ std::string to_string(const QAV& q) {
 
 static inline
 QAV qconst(const int& v, const int& d) {
+  if (!(v == 1 || d == 1)) {
+    cout << "v == " << v << ", d == " << d << endl;
+  }
   assert(v == 1 || d == 1);
   return {true, "", v, d};
 }

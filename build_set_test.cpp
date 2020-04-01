@@ -4972,6 +4972,12 @@ struct App {
     return func2d(name, compute, {w});
   }
 
+  void unroll(const string& func, const int unroll_factor) {
+    assert(unroll_factor > 0);
+    assert(contains_key(func, app_dag));
+    app_dag.at(func).updates[0].unroll_factor = unroll_factor;
+  }
+
   Update last_update(const string& func) const {
     assert(contains_key(func, app_dag));
     assert(app_dag.at(func).updates.size() > 0);
@@ -5369,6 +5375,7 @@ struct App {
       for (auto up : f.second.updates) {
         if (up.name() == consumer) {
           for (auto src : up.get_srcs()) {
+            cout << "src: " << src << endl;
             if (src.name == producer) {
               return src;
             }
@@ -6035,12 +6042,22 @@ struct App {
     }
   }
 
-  void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
+  void realize(const std::string& name, const int d0, const int d1) {
+    // TODO: REPLACE THIS
+    const int unroll_factor = 1;
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
-    set_unroll_factors(unroll_factor);
     fill_data_domain(name, d0, d1, unroll_factor);
     fill_compute_domain(unroll_factor);
     schedule_and_codegen(name, unroll_factor);
+  }
+
+  void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
+    cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
+    set_unroll_factors(unroll_factor);
+    realize(name, d0, d1);
+    //fill_data_domain(name, d0, d1, unroll_factor);
+    //fill_compute_domain(unroll_factor);
+    //schedule_and_codegen(name, unroll_factor);
   }
 
 };
@@ -6256,6 +6273,20 @@ Window win(const std::string& name, const std::vector<vector<int > >& offsets) {
   return Window{name, strides, offsets};
 }
 
+Window stencil(int xl, int xr, int yl, int yr, const std::string& name) {
+  vector<vector<int> > offsets;
+  for (int i = xl; i <= xr; i++) {
+    for (int j = yl; j <= yr; j++) {
+      offsets.push_back({i, j});
+    }
+  }
+  return Window{name, {1, 1}, offsets};
+}
+
+Window downsample(const int factor, const std::string& name) {
+  return Window{name, {qconst(factor), qconst(factor)}, {{0, 0}}};
+}
+
 Window upsample(const int factor, const std::string& name) {
   return Window{name, {qconst(1, factor), qconst(1, factor)}, {{0, 0}}};
 }
@@ -6411,6 +6442,29 @@ vector<string> laplace_pyramid(const int num_levels, const string& func, App& ap
   assert(laplace_levels.size() == num_levels);
 
   return laplace_levels;
+}
+
+void up_stencil_down_unrolled_test() {
+  App lp;
+  lp.func2d("in_off_chip");
+  lp.func2d("in", "id", {pt("in_off_chip")});
+
+  lp.func2d("us", "id", {upsample(2, "in")});
+  lp.func2d("stencil", "conv_3_3", {stencil(-1, 1, -1, 1, "us")});
+  lp.func2d("ds", "id", {downsample(2, "stencil")});
+
+  int size = 16;
+  lp.realize_naive("ds", size, size);
+  auto naive = run_regression_tb("ds_naive");
+
+  lp.unroll("us", 4);
+  lp.unroll("stencil", 2);
+
+  lp.realize("ds", size, size);
+  auto opt = run_regression_tb("ds_opt");
+
+  assert(opt == naive);
+  assert(false);
 }
 
 void exposure_fusion() {
@@ -7308,26 +7362,20 @@ void blur_and_downsample_test() {
 }
 
 void application_tests() {
-  //jacobi_2d_4_test();
-  //assert(false);
 
   //synth_lb_test();
 
-  //memtile_test();
-
   //conv_app_rolled_reduce_test();
-  //exposure_fusion_simple_average();
  
   //reduce_1d_test();
+
+  up_stencil_down_unrolled_test();
+  conv3x3_app_unrolled_test();
+  conv3x3_app_unrolled_uneven_test();
 
   denoise2d_test();
   exposure_fusion();
 
-  //cout << "Exposure fusion passed" << endl;
-  //assert(false);
-
-  conv3x3_app_unrolled_test();
-  conv3x3_app_unrolled_uneven_test();
   mismatched_stencil_test();
   jacobi_2d_app_test();
   grayscale_conversion_test();

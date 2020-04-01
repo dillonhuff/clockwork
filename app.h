@@ -224,6 +224,22 @@ struct FiniteRegion {
   }
 };
 
+static inline
+std::ostream& operator<<(std::ostream& out, const FiniteRegion& r) {
+  vector<QAV> strides;
+  for (int i = 0; i < r.dimension(); i++) {
+    strides.push_back(r.stride(i));
+  }
+  vector<string> offstrs;
+  for (auto off : r.offsets) {
+    //ostringstream ss;
+    //ss << off;
+    //offstrs.push_back(ss.str());
+  }
+  out << r.name << "{ " << comma_list(strides) << " + <" + comma_list(offstrs) + "> }";
+  return out;
+}
+
 typedef FiniteRegion Window;
 
 struct Update {
