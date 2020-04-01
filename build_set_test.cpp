@@ -835,6 +835,7 @@ selector generate_select_decl(CodegenOptions& options, std::ostream& out, const 
 
   out << ") {" << endl;
   cout << "Created dim decls" << endl;
+  ignore_inter_deps(out, buf.name);
 
   return sel;
 }
@@ -7355,7 +7356,6 @@ void application_tests() {
  
   //reduce_1d_test();
 
-  // Known to fail with all rams off
   denoise2d_test();
   exposure_fusion();
 
