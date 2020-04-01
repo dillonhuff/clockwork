@@ -458,7 +458,7 @@ void generate_bank(CodegenOptions& options,
     int partition_capacity = 1 + maxdelay;
     out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << ";" << endl;
     out << "\tinline " + pt_type_string + " peek(const int offset) {" << endl;
-    //ignore_inter_deps(out, "f");
+    ignore_inter_deps(out, "f");
     out << tab(2) << "return f.peek(" << partition_capacity - 1 << " - offset);" << endl;
     out << tab(1) << "}" << endl << endl;
 
@@ -478,8 +478,6 @@ void generate_bank(CodegenOptions& options,
     vector<int> end_inds =
       bank.get_end_inds();
 
-    //vector<string> partitions;
-    //vector<int> end_inds;
     if (read_delays.size() > 0) {
       for (size_t i = 0; i < read_delays.size(); i++) {
         int current = read_delays[i];
@@ -490,15 +488,11 @@ void generate_bank(CodegenOptions& options,
             partition_capacity = next - current;
             out << "\t// Parition [" << current << ", " << next << ") capacity = " << partition_capacity << endl;
             out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << i << ";" << endl;
-            //partitions.push_back("f" + to_string(i));
-            //end_inds.push_back(current + partition_capacity - 1);
           }
         } else {
           partition_capacity = 1;
           out << "\t// Parition [" << current << ", " << current << "] capacity = " << partition_capacity << endl;
           out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << i << ";" << endl;
-          //partitions.push_back("f" + to_string(i));
-          //end_inds.push_back(current + partition_capacity - 1);
         }
       }
 
@@ -508,37 +502,23 @@ void generate_bank(CodegenOptions& options,
         int dv = end_inds[nind];
         assert(dv >= 0);
         out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
+        ignore_inter_deps(out, p);
         out << "\t\treturn " << p << ".back();" << endl;
         out << "\t}" << endl << endl;
         nind++;
       }
       out << endl << endl;
 
-      out << "\tinline " + pt_type_string + " peek(const int offset) {" << endl;
-      //ignore_inter_deps(out, "f");
-      nind = 0;
-      for (auto p : partitions) {
-        int dv = end_inds[nind];
-        out << "\t\tif (offset == " << dv << ") {" << endl;
-        out << "\t\t\treturn " << p << ".back();" << endl;
-        out << "\t\t}" << endl;
-        nind++;
-      }
-      out << "#ifndef __VIVADO_SYNTH__" << endl;
-      out << "\t\tcout << \"Error: Unsupported offset in " << name << ": \" << offset << endl;" << endl;
-      out << "#endif // __VIVADO_SYNTH__" << endl;
-      out << "\t\tassert(false);" << endl;
-      out << "\t\treturn 0;\n" << endl;
-      out << "\t}" << endl << endl;
-
       out << "\tinline void push(const " + pt_type_string + " value) {" << endl;
-      if (options.add_dependence_pragmas) {
-        ignore_inter_deps_array(out);
-      }
       if (partitions.size() > 0) {
         for (size_t i = partitions.size() - 1; i >= 1; i--) {
           auto current = partitions[i];
           auto prior = partitions[i - 1];
+
+          if (options.add_dependence_pragmas) {
+            ignore_inter_deps(out, current);
+          }
+
           out << "\t\t" << current << ".push(" << prior << ".back());" << endl;
         }
         out << "\t\t" << partitions[0] << ".push(value);" << endl;
@@ -7411,7 +7391,7 @@ void application_tests() {
   //mobilenet_test();
   pyramid_2d_test();
   pyramid_test();
-  conv_1d_bc_test();
+  //conv_1d_bc_test();
   //synth_wire_test();
   //synth_sr_boundary_condition_test();
 }

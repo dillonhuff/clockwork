@@ -32,6 +32,39 @@ module pyramid_synthetic_exposure_fusion_opt(input clk, input rst, input start, 
 
 
   // Data processing units...
+  // buf_bright
+  logic [0:0] buf_bright_clk;
+  logic [0:0] buf_bright_rst;
+  logic [0:0] buf_bright_start;
+  logic [0:0] buf_bright_done;
+  bright buf_bright(.clk(buf_bright_clk), .rst(buf_bright_rst), .start(buf_bright_start), .done(buf_bright_done));
+  assign buf_bright_clk = clk;
+  assign buf_bright_rst = rst;
+  assign buf_bright_start = start;
+  // Bindings to buf_bright
+
+  // buf_bright_gauss_ds_1
+  logic [0:0] buf_bright_gauss_ds_1_clk;
+  logic [0:0] buf_bright_gauss_ds_1_rst;
+  logic [0:0] buf_bright_gauss_ds_1_start;
+  logic [0:0] buf_bright_gauss_ds_1_done;
+  bright_gauss_ds_1 buf_bright_gauss_ds_1(.clk(buf_bright_gauss_ds_1_clk), .rst(buf_bright_gauss_ds_1_rst), .start(buf_bright_gauss_ds_1_start), .done(buf_bright_gauss_ds_1_done));
+  assign buf_bright_gauss_ds_1_clk = clk;
+  assign buf_bright_gauss_ds_1_rst = rst;
+  assign buf_bright_gauss_ds_1_start = start;
+  // Bindings to buf_bright_gauss_ds_1
+
+  // buf_bright_laplace_us_0
+  logic [0:0] buf_bright_laplace_us_0_clk;
+  logic [0:0] buf_bright_laplace_us_0_rst;
+  logic [0:0] buf_bright_laplace_us_0_start;
+  logic [0:0] buf_bright_laplace_us_0_done;
+  bright_laplace_us_0 buf_bright_laplace_us_0(.clk(buf_bright_laplace_us_0_clk), .rst(buf_bright_laplace_us_0_rst), .start(buf_bright_laplace_us_0_start), .done(buf_bright_laplace_us_0_done));
+  assign buf_bright_laplace_us_0_clk = clk;
+  assign buf_bright_laplace_us_0_rst = rst;
+  assign buf_bright_laplace_us_0_start = start;
+  // Bindings to buf_bright_laplace_us_0
+
   // buf_bright_laplace_us_1
   logic [0:0] buf_bright_laplace_us_1_clk;
   logic [0:0] buf_bright_laplace_us_1_rst;
@@ -142,60 +175,16 @@ module pyramid_synthetic_exposure_fusion_opt(input clk, input rst, input start, 
   assign buf_bright_weights_normed_gauss_ds_2_start = start;
   // Bindings to buf_bright_weights_normed_gauss_ds_2
 
-  // buf_bright_gauss_blur_3
-  logic [0:0] buf_bright_gauss_blur_3_clk;
-  logic [0:0] buf_bright_gauss_blur_3_rst;
-  logic [0:0] buf_bright_gauss_blur_3_start;
-  logic [0:0] buf_bright_gauss_blur_3_done;
-  bright_gauss_blur_3 buf_bright_gauss_blur_3(.clk(buf_bright_gauss_blur_3_clk), .rst(buf_bright_gauss_blur_3_rst), .start(buf_bright_gauss_blur_3_start), .done(buf_bright_gauss_blur_3_done));
-  assign buf_bright_gauss_blur_3_clk = clk;
-  assign buf_bright_gauss_blur_3_rst = rst;
-  assign buf_bright_gauss_blur_3_start = start;
-  // Bindings to buf_bright_gauss_blur_3
-
-  // buf_bright_gauss_ds_2
-  logic [0:0] buf_bright_gauss_ds_2_clk;
-  logic [0:0] buf_bright_gauss_ds_2_rst;
-  logic [0:0] buf_bright_gauss_ds_2_start;
-  logic [0:0] buf_bright_gauss_ds_2_done;
-  bright_gauss_ds_2 buf_bright_gauss_ds_2(.clk(buf_bright_gauss_ds_2_clk), .rst(buf_bright_gauss_ds_2_rst), .start(buf_bright_gauss_ds_2_start), .done(buf_bright_gauss_ds_2_done));
-  assign buf_bright_gauss_ds_2_clk = clk;
-  assign buf_bright_gauss_ds_2_rst = rst;
-  assign buf_bright_gauss_ds_2_start = start;
-  // Bindings to buf_bright_gauss_ds_2
-
-  // buf_bright_gauss_ds_3
-  logic [0:0] buf_bright_gauss_ds_3_clk;
-  logic [0:0] buf_bright_gauss_ds_3_rst;
-  logic [0:0] buf_bright_gauss_ds_3_start;
-  logic [0:0] buf_bright_gauss_ds_3_done;
-  bright_gauss_ds_3 buf_bright_gauss_ds_3(.clk(buf_bright_gauss_ds_3_clk), .rst(buf_bright_gauss_ds_3_rst), .start(buf_bright_gauss_ds_3_start), .done(buf_bright_gauss_ds_3_done));
-  assign buf_bright_gauss_ds_3_clk = clk;
-  assign buf_bright_gauss_ds_3_rst = rst;
-  assign buf_bright_gauss_ds_3_start = start;
-  // Bindings to buf_bright_gauss_ds_3
-
-  // buf_bright
-  logic [0:0] buf_bright_clk;
-  logic [0:0] buf_bright_rst;
-  logic [0:0] buf_bright_start;
-  logic [0:0] buf_bright_done;
-  bright buf_bright(.clk(buf_bright_clk), .rst(buf_bright_rst), .start(buf_bright_start), .done(buf_bright_done));
-  assign buf_bright_clk = clk;
-  assign buf_bright_rst = rst;
-  assign buf_bright_start = start;
-  // Bindings to buf_bright
-
-  // buf_bright_gauss_ds_1
-  logic [0:0] buf_bright_gauss_ds_1_clk;
-  logic [0:0] buf_bright_gauss_ds_1_rst;
-  logic [0:0] buf_bright_gauss_ds_1_start;
-  logic [0:0] buf_bright_gauss_ds_1_done;
-  bright_gauss_ds_1 buf_bright_gauss_ds_1(.clk(buf_bright_gauss_ds_1_clk), .rst(buf_bright_gauss_ds_1_rst), .start(buf_bright_gauss_ds_1_start), .done(buf_bright_gauss_ds_1_done));
-  assign buf_bright_gauss_ds_1_clk = clk;
-  assign buf_bright_gauss_ds_1_rst = rst;
-  assign buf_bright_gauss_ds_1_start = start;
-  // Bindings to buf_bright_gauss_ds_1
+  // buf_bright_gauss_blur_2
+  logic [0:0] buf_bright_gauss_blur_2_clk;
+  logic [0:0] buf_bright_gauss_blur_2_rst;
+  logic [0:0] buf_bright_gauss_blur_2_start;
+  logic [0:0] buf_bright_gauss_blur_2_done;
+  bright_gauss_blur_2 buf_bright_gauss_blur_2(.clk(buf_bright_gauss_blur_2_clk), .rst(buf_bright_gauss_blur_2_rst), .start(buf_bright_gauss_blur_2_start), .done(buf_bright_gauss_blur_2_done));
+  assign buf_bright_gauss_blur_2_clk = clk;
+  assign buf_bright_gauss_blur_2_rst = rst;
+  assign buf_bright_gauss_blur_2_start = start;
+  // Bindings to buf_bright_gauss_blur_2
 
   // buf_bright_gauss_blur_1
   logic [0:0] buf_bright_gauss_blur_1_clk;
@@ -207,17 +196,6 @@ module pyramid_synthetic_exposure_fusion_opt(input clk, input rst, input start, 
   assign buf_bright_gauss_blur_1_rst = rst;
   assign buf_bright_gauss_blur_1_start = start;
   // Bindings to buf_bright_gauss_blur_1
-
-  // buf_bright_gauss_blur_2
-  logic [0:0] buf_bright_gauss_blur_2_clk;
-  logic [0:0] buf_bright_gauss_blur_2_rst;
-  logic [0:0] buf_bright_gauss_blur_2_start;
-  logic [0:0] buf_bright_gauss_blur_2_done;
-  bright_gauss_blur_2 buf_bright_gauss_blur_2(.clk(buf_bright_gauss_blur_2_clk), .rst(buf_bright_gauss_blur_2_rst), .start(buf_bright_gauss_blur_2_start), .done(buf_bright_gauss_blur_2_done));
-  assign buf_bright_gauss_blur_2_clk = clk;
-  assign buf_bright_gauss_blur_2_rst = rst;
-  assign buf_bright_gauss_blur_2_start = start;
-  // Bindings to buf_bright_gauss_blur_2
 
   // buf_bright_weights
   logic [0:0] buf_bright_weights_clk;
@@ -263,16 +241,38 @@ module pyramid_synthetic_exposure_fusion_opt(input clk, input rst, input start, 
   assign buf_bright_laplace_diff_2_start = start;
   // Bindings to buf_bright_laplace_diff_2
 
-  // buf_bright_laplace_us_0
-  logic [0:0] buf_bright_laplace_us_0_clk;
-  logic [0:0] buf_bright_laplace_us_0_rst;
-  logic [0:0] buf_bright_laplace_us_0_start;
-  logic [0:0] buf_bright_laplace_us_0_done;
-  bright_laplace_us_0 buf_bright_laplace_us_0(.clk(buf_bright_laplace_us_0_clk), .rst(buf_bright_laplace_us_0_rst), .start(buf_bright_laplace_us_0_start), .done(buf_bright_laplace_us_0_done));
-  assign buf_bright_laplace_us_0_clk = clk;
-  assign buf_bright_laplace_us_0_rst = rst;
-  assign buf_bright_laplace_us_0_start = start;
-  // Bindings to buf_bright_laplace_us_0
+  // buf_bright_gauss_blur_3
+  logic [0:0] buf_bright_gauss_blur_3_clk;
+  logic [0:0] buf_bright_gauss_blur_3_rst;
+  logic [0:0] buf_bright_gauss_blur_3_start;
+  logic [0:0] buf_bright_gauss_blur_3_done;
+  bright_gauss_blur_3 buf_bright_gauss_blur_3(.clk(buf_bright_gauss_blur_3_clk), .rst(buf_bright_gauss_blur_3_rst), .start(buf_bright_gauss_blur_3_start), .done(buf_bright_gauss_blur_3_done));
+  assign buf_bright_gauss_blur_3_clk = clk;
+  assign buf_bright_gauss_blur_3_rst = rst;
+  assign buf_bright_gauss_blur_3_start = start;
+  // Bindings to buf_bright_gauss_blur_3
+
+  // buf_bright_gauss_ds_2
+  logic [0:0] buf_bright_gauss_ds_2_clk;
+  logic [0:0] buf_bright_gauss_ds_2_rst;
+  logic [0:0] buf_bright_gauss_ds_2_start;
+  logic [0:0] buf_bright_gauss_ds_2_done;
+  bright_gauss_ds_2 buf_bright_gauss_ds_2(.clk(buf_bright_gauss_ds_2_clk), .rst(buf_bright_gauss_ds_2_rst), .start(buf_bright_gauss_ds_2_start), .done(buf_bright_gauss_ds_2_done));
+  assign buf_bright_gauss_ds_2_clk = clk;
+  assign buf_bright_gauss_ds_2_rst = rst;
+  assign buf_bright_gauss_ds_2_start = start;
+  // Bindings to buf_bright_gauss_ds_2
+
+  // buf_bright_gauss_ds_3
+  logic [0:0] buf_bright_gauss_ds_3_clk;
+  logic [0:0] buf_bright_gauss_ds_3_rst;
+  logic [0:0] buf_bright_gauss_ds_3_start;
+  logic [0:0] buf_bright_gauss_ds_3_done;
+  bright_gauss_ds_3 buf_bright_gauss_ds_3(.clk(buf_bright_gauss_ds_3_clk), .rst(buf_bright_gauss_ds_3_rst), .start(buf_bright_gauss_ds_3_start), .done(buf_bright_gauss_ds_3_done));
+  assign buf_bright_gauss_ds_3_clk = clk;
+  assign buf_bright_gauss_ds_3_rst = rst;
+  assign buf_bright_gauss_ds_3_start = start;
+  // Bindings to buf_bright_gauss_ds_3
 
   // buf_bright_weights_normed_gauss_ds_3
   logic [0:0] buf_bright_weights_normed_gauss_ds_3_clk;
