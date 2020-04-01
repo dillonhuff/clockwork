@@ -42,3 +42,21 @@ static inline
 void close_debug_scope(std::ostream& out) {
   out << "#endif //__VIVADO_SYNTH__" << endl;
 }
+
+static inline
+string read_partition(const string& p, const int cap) {
+  if (cap > 1) {
+    return p + ".back()";
+  } else {
+    return p;
+  }
+}
+
+static inline
+string write_partition(const string& p, const int cap, const string& val) {
+  if (cap > 1) {
+    return p + ".push(" + val + ")";
+  } else {
+    return p + " = " + val;
+  }
+}
