@@ -5573,7 +5573,8 @@ struct App {
     return box_touched(consumer, producer).unroll_cpy(unroll_factor);
   }
 
-  map<string, UBuffer> build_buffers(umap* m, const int unroll_factor) {
+  //map<string, UBuffer> build_buffers(umap* m, const int unroll_factor) {
+  map<string, UBuffer> build_buffers(umap* m) {
     auto sorted_functions = sort_functions();
     vector<string> var_names;
     for (int i = 0; i < schedule_dimension(); i++) {
@@ -5673,11 +5674,12 @@ struct App {
     return buffers;
   }
 
-  map<string, UBuffer> build_buffers(umap* m) {
-    return build_buffers(m, 1);
-  }
+  //map<string, UBuffer> build_buffers(umap* m) {
+    //return build_buffers(m, 1);
+  //}
 
-  void populate_program(CodegenOptions& options, prog& prg, const string& name, umap* m, map<string, UBuffer>& buffers, const int unroll_factor) {
+  //void populate_program(CodegenOptions& options, prog& prg, const string& name, umap* m, map<string, UBuffer>& buffers, const int unroll_factor) {
+  void populate_program(CodegenOptions& options, prog& prg, const string& name, umap* m, map<string, UBuffer>& buffers) {
 
     uset* whole_dom =
       isl_union_set_read_from_str(ctx, "{}");
@@ -5777,7 +5779,7 @@ struct App {
     prog prg;
     prg.name = name + "_naive";
     prg.compute_unit_file = "conv_3x3.h";
-    populate_program(options, prg, name, m, buffers, 1);
+    populate_program(options, prg, name, m, buffers);
 
     return;
   }
@@ -5966,7 +5968,8 @@ struct App {
     string cgn = box_codegen(ops, scheds, compute_domains);
     //string cgn = "";
 
-    map<string, UBuffer> buffers = build_buffers(m, unroll_factor);
+    map<string, UBuffer> buffers = build_buffers(m);
+     //, unroll_factor);
 
     uset* whole_dom =
       isl_union_set_read_from_str(ctx, "{}");
@@ -6050,6 +6053,7 @@ struct App {
   }
 
   void realize(const std::string& name, const int d0, const int d1) {
+    assert(false);
     // TODO: REPLACE THIS
     const int unroll_factor = 1;
     //cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
@@ -6061,7 +6065,10 @@ struct App {
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     set_unroll_factors(unroll_factor);
-    realize(name, d0, d1);
+    fill_data_domain(name, d0, d1, unroll_factor);
+    fill_compute_domain();
+    schedule_and_codegen(name, unroll_factor);
+    //realize(name, d0, d1);
   }
 
 };
@@ -6797,7 +6804,7 @@ void upsample_stencil_1d_test() {
   //assert(false);
 }
 
-void jacobi_2d_app_test() {
+void jacobi2d_app_test() {
   App jac = jacobi2d("t0");
   jac.realize_naive("t0", 32, 28);
   jac.realize("t0", 32, 28, 1);
@@ -6813,10 +6820,16 @@ void jacobi_2d_app_test() {
   for (int i = 0; i < 3; i++) {
     int unroll_factor = pow(2, i);
     string out_name = "jacobi2d_unrolled_" + str(unroll_factor);
-    jacobi2d(out_name).realize(out_name, 1024, 1024, unroll_factor);
+    jacobi2d(out_name).realize(out_name, 1920, 1080, unroll_factor);
+    string synth_dir = 
+      "./synth_examples/" + out_name;
+    system(("mkdir " + synth_dir).c_str());
+    system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
+    system(("mv " + out_name + "*.h " + synth_dir).c_str());
+    system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
   }
 
-  //assert(false);
+  assert(false);
 }
 
 void denoise2d_test() {
@@ -7374,6 +7387,7 @@ void application_tests() {
   //reduce_1d_test();
 
   //up_stencil_down_unrolled_test();
+  jacobi2d_app_test();
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
 
@@ -7381,7 +7395,6 @@ void application_tests() {
   exposure_fusion();
 
   mismatched_stencil_test();
-  jacobi_2d_app_test();
   grayscale_conversion_test();
   seidel2d_test();
   jacobi_2d_2_test();
