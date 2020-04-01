@@ -21,23 +21,15 @@ struct CodegenOptions {
 };
 
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
-  //cout << "Getting lexmax events for " << outpt << endl;
   umap* src_map = nullptr;
   for (auto inpt : buf.get_in_ports()) {
-    //cout << "outpt sched: " << str(buf.schedule.at(outpt)) << endl;
-    //cout << "inpt sched : " << str(buf.schedule.at(inpt)) << endl;
     auto beforeAcc = lex_gt(buf.schedule.at(outpt), buf.schedule.at(inpt));
-    //cout << "Got beforeacc" << endl;
-    //cout << "\t" << str(beforeAcc) << endl;
     if (src_map == nullptr) {
       auto outmap = buf.access_map.at(outpt);
       auto inmap = buf.access_map.at(inpt);
-      //cout << "outmap: " << str(outmap) << endl;
-      //cout << "inmap : " << str(inmap) << endl;
       src_map =
         its(dot(outmap,
               inv(inmap)), beforeAcc);
-      //cout << "Got first srcmap" << endl;
     } else {
       src_map =
         unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
@@ -460,11 +452,8 @@ void generate_bank(CodegenOptions& options,
   out << "\t// Capacity: " << maxdelay + 1 << endl;
   out << "\t// # of read delays: " << read_delays.size() << endl;
 
-  generate_ram_bank(options, out, bank);
-
   read_delays = sort_unique(read_delays);
 
-  //out << "\t// read delays: " << comma_list(read_delays) << endl;
   if (num_readers == 1 || options.all_rams) {
     int partition_capacity = 1 + maxdelay;
     out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << ";" << endl;
@@ -473,21 +462,6 @@ void generate_bank(CodegenOptions& options,
     out << tab(2) << "return f.peek(" << partition_capacity - 1 << " - offset);" << endl;
     out << tab(1) << "}" << endl << endl;
 
-    if (!options.all_rams) {
-      //for (auto delay : read_delays) {
-        //out << "\tinline " << pt_type_string << " peek_" << delay << "() {" << endl;
-        //out << "\t\treturn " << "f" << ".peek(" << delay << ");" << endl;
-        //out << "\t}" << endl << endl;
-      //}
-
-      //for (int i = 0; i < partition_capacity; i++) {
-        //int dv = i;
-        //assert(dv >= 0);
-        //out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
-        //out << "\t\treturn peek(" << dv <<");" << endl;
-        //out << "\t}" << endl << endl;
-      //}
-    }
     out << endl << endl;
     out << "\tinline void push(const " + pt_type_string + " value) {" << endl;
     if (options.add_dependence_pragmas) {
@@ -499,8 +473,13 @@ void generate_bank(CodegenOptions& options,
     auto break_points = bank.get_break_points();
     read_delays = break_points;
 
-    vector<string> partitions;
-    vector<int> end_inds;
+    vector<string> partitions =
+      bank.get_partitions();
+    vector<int> end_inds =
+      bank.get_end_inds();
+
+    //vector<string> partitions;
+    //vector<int> end_inds;
     if (read_delays.size() > 0) {
       for (size_t i = 0; i < read_delays.size(); i++) {
         int current = read_delays[i];
@@ -511,15 +490,15 @@ void generate_bank(CodegenOptions& options,
             partition_capacity = next - current;
             out << "\t// Parition [" << current << ", " << next << ") capacity = " << partition_capacity << endl;
             out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << i << ";" << endl;
-            partitions.push_back("f" + to_string(i));
-            end_inds.push_back(current + partition_capacity - 1);
+            //partitions.push_back("f" + to_string(i));
+            //end_inds.push_back(current + partition_capacity - 1);
           }
         } else {
           partition_capacity = 1;
           out << "\t// Parition [" << current << ", " << current << "] capacity = " << partition_capacity << endl;
           out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << i << ";" << endl;
-          partitions.push_back("f" + to_string(i));
-          end_inds.push_back(current + partition_capacity - 1);
+          //partitions.push_back("f" + to_string(i));
+          //end_inds.push_back(current + partition_capacity - 1);
         }
       }
 
@@ -2594,6 +2573,52 @@ vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg) {
   return args;
 }
 
+void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
+
+  ofstream out("tb_soda_" + prg.name + ".cpp");
+  out << "#include \"soda_" + prg.name + ".h\"" << endl;
+  out << "#include <cstdlib>" << endl;
+  out << "#include <cstring>" << endl;
+  out << "#include \"hw_classes.h\"" << endl;
+  out << "#include <iostream>" << endl;
+  out << "#include \"ap_int.h\"" << endl;
+  out << "#include \"soda_" + prg.name + "_kernel.h\"" << endl;
+  out << "#include <fstream>" << endl << endl;
+
+  out << "using namespace std;" << endl << endl;
+
+  out <<"int main() {" << endl;
+  cout << "starting" << endl;
+
+  //out const int ncols = 1024;
+  //const int nrows = 1024;
+
+  out << tab(1) << "const int img_size = 1920*1080;" << endl;
+  out << tab(1) << "ap_uint<32>* buf =" << endl;
+  out << tab(2) << "(ap_uint<32>*)malloc(sizeof(ap_uint<32>)*img_size);" << endl;
+
+  out << tab(1) << "for (int i = 0; i < img_size; i++) {" << endl;
+  out << tab(2) << "buf[i] = i;" << endl;
+  out << tab(1) << "}" << endl;
+
+  out << tab(1) << "ap_uint<32>* blur_y =" << endl;
+  out << tab(2) << "(ap_uint<32>*)malloc(sizeof(ap_uint<32>)*img_size);" << endl;
+
+  out << tab(1) << prg.name << "_kernel(blur_y, buf, img_size);" << endl;
+
+  out << tab(1) << "ofstream soda_regression_out(\"regression_result_soda_" << prg.name << ".txt\");" << endl;
+  out << tab(1) << "for (int i = 0; i < img_size; i++) {" << endl;
+  out << tab(2) << "soda_regression_out<< (int) blur_y[i] << endl;" << endl;
+  out << tab(1) << "}" << endl;
+
+  out << tab(1) << "soda_regression_out.close();" << endl;
+  out << tab(1) << "free(buf);" << endl;
+  out << tab(1) << "free(blur_y);" << endl;
+
+  out <<"}" << endl;
+  out.close();
+}
+
 void generate_app_code_header(const map<string, UBuffer>& buffers, prog& prg) {
   string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
   ofstream of(prg.name + ".h");
@@ -2907,6 +2932,7 @@ void generate_app_code(CodegenOptions& options,
   conv_out << "}" << endl;
 
   generate_app_code_header(buffers, prg);
+  generate_soda_tb(buffers, prg);
   generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
 }
 
@@ -6250,217 +6276,6 @@ void memtile_test() {
   //assert(false);
   //aha_talk_print_info(prg);
 }
-
-////void memtile_test() {
-
-  ////prog prg;
-  ////prg.compute_unit_file = "accumulate_3.h";
-  ////prg.name = "memtile";
-  ////prg.add_input("in");
-  ////prg.add_output("out");
-  //////prg.buffer_port_widths["T"] = 32*3;
-  ////prg.buffer_port_widths["in"] = 32;
-  ////prg.buffer_port_widths["out"] = 32;
-  ////prg.buffer_port_widths["agg"] = 32;
-  ////prg.buffer_port_widths["tb"] = 32;
-  ////prg.buffer_port_widths["sram"] = 32;
-
-  /* this program will be a test of memory tile flatten,
-   * I hand written the memory access pattern after vectorization
-   * and see if the Polyhedra analysis could figure out the
-   * correct schedule and memory size for me.
-   * */
-
-
-  //{
-    //auto agg_loop = prg.add_nest("po", 0, 8, "pi", 0, 2, "dummy", 0, 4);
-    ////auto agg_loop = prg.add_nest("po", 0, 8, "pi", 0, 8);
-    //auto agg = agg_loop->add_op("in2agg");
-    //agg->add_load("in", "po, 4*pi+dummy");
-    //agg->add_store("agg", "po, 4*pi+dummy");
-    ////agg->add_load("in", "po, pi");
-    ////agg->add_store("agg", "po, pi");
-  //}
-
-  //{
-    ////auto sram_loop = prg.add_nest("qo", 0, 8, "qi", 0, 2, "dummy0", 0 ,1);
-    //auto sram_loop = prg.add_nest("qo", 0, 8, "qi", 0, 2);
-    //auto sram = sram_loop->add_op("agg2sram");
-    //sram->add_load("agg", "qo, qi*4");
-    //sram->add_load("agg", "qo, qi*4+1");
-    //sram->add_load("agg", "qo, qi*4+2");
-    //sram->add_load("agg", "qo, qi*4+3");
-
-  ////{
-    ////auto sram_loop = prg.add_nest("qo", 0, 8, "qi", 0, 2, "qdummy", 0, 1);
-    ////auto sram = sram_loop->add_op("agg2sram");
-    ////sram->add_load("agg", "qo, qi*4");
-    ////sram->add_load("agg", "qo, qi*4+1");
-    ////sram->add_load("agg", "qo, qi*4+2");
-    ////sram->add_load("agg", "qo, qi*4+3");
-
-    ////sram->add_store("sram", "qo, qi*4");
-    ////sram->add_store("sram", "qo, qi*4+1");
-    ////sram->add_store("sram", "qo, qi*4+2");
-    ////sram->add_store("sram", "qo, qi*4+3");
-  ////}
-
-  ////{
-    ////auto tb_loop = prg.add_nest("k", 0, 6, "l", 0, 2, "m", 0, 3);
-    ////auto tb = tb_loop->add_op("sram2tb");
-    ////tb->add_load("sram", "(k+m), l*4");
-    ////tb->add_load("sram", "(k+m), l*4+1");
-    ////tb->add_load("sram", "(k+m), l*4+2");
-    ////tb->add_load("sram", "(k+m), l*4+3");
-
-
-    ////tb->add_store("tb", "k, m, l*4");
-    ////tb->add_store("tb", "k, m, l*4+1");
-    ////tb->add_store("tb", "k, m, l*4+2");
-    ////tb->add_store("tb", "k, m, l*4+3");
-  ////}
-
-  ////{
-    ////auto out_loop = prg.add_nest("a", 0, 6, "b", 0, 2, "c", 0, 4);
-    ////auto out = out_loop->add_op("tb2out");
-    ////out->add_load("tb", "a, 0, 4*b + c");
-    ////out->add_load("tb", "a, 1, 4*b + c");
-    ////out->add_load("tb", "a, 2, 4*b + c");
-
-    ////out->add_store("out", "a, 0, 4*b+c");
-    ////out->add_store("out", "a, 1, 4*b+c");
-    ////out->add_store("out", "a, 2, 4*b+c");
-  ////}
-
-  ////generate_optimized_code(prg);
-  ////assert(false);
-
-  ////auto sched = prg.unoptimized_schedule();
-  ////cout << codegen_c(sched) << endl;
-  ////auto itr_domain = prg.whole_iteration_domain();
-  ////cout << "iter domain = " << str(itr_domain) << endl;
-
-  //////auto sched_opt = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
-  ////auto domain_boxes = prg.get_domain_boxes();
-  ////map<string, Box> op_boxes;
-  ////for (auto b : domain_boxes) {
-      ////op_boxes[b.first->name] = b.second;
-      ////cout << tab(1) << b.first->name << "->" << b.second << endl;
-  ////}
-
-  //vector<string> sorted_functions = {"in2agg", "agg2sram", "sram2tb", "tb2out"};
-  //int ndims = 3;
-  //map<string, vector<QExpr> > schedules;
-  //map<string, Result> app_dag;
-  //for (auto func : sorted_functions) {
-      //Result res;
-      //app_dag[func] = {};
-  //}
-  //map<string, isl_map*> compute_maps;
-  //map<string, pair<isl_map*, string>> read_maps;
-  //for (auto cm : prg.producer_maps_new()) {
-      //compute_maps[cm.first] = inv(cm.second);
-      //cout << tab(1) << "Producer map: " << cm.first << "->" << str(cm.second) << endl;
-  //}
-
-  //for (auto cm : prg.consumer_maps_new()) {
-      //read_maps[cm.first->name] = cm.second;
-      //cout << tab(1) << "Consumer map: " << cm.first->name << "->" << str(cm.second.first) << ", read buffer = " << cm.second.second << endl;
-  //}
-
-  //[>for (auto cm : prg.data_demands_maps()) {
-      //app_dag[cm.first] = cm.second;
-      //cout << tab(1) << "DATA demands map: " << cm.first<< "->" << str(app_dag[cm.first].srcs.at(0).needed) << endl;
-  //}*/
-
-  //umap* compute_deps = rdmap(prg.ctx, "{}");
-
-  //for (auto f : sorted_functions) {
-        //assert(contains_key(f, read_maps));
-        //auto arg_pair = read_maps.at(f);
-
-        //string buffer_name = arg_pair.second;
-        //auto data_read = arg_pair.first;
-
-        ////first function no predcessor
-        //if (!contains_key(buffer_name, compute_maps))
-            //continue;
-
-        //isl_map* map_write = compute_maps.at(buffer_name);
-        //cout << tab(1) << "write map: " << str(map_write) << endl;
-
-        ////auto data_needed = to_map(arg.needed);
-
-        //cout << tab(1) << "read map: " << str(data_read) << endl;
-
-        //isl_map* st_dependency =
-            //dot(data_read, map_write);
-
-          //cout << "statement dependency: " << str(st_dependency) << endl;
-
-          //[>assert(contains_key(arg.name, compute_maps));
-          //isl_map* a_cm = compute_maps.at(arg.name);
-          //cout << "a_cm: " << str(a_cm) << endl;
-
-          //isl_map* comps_needed =
-            //dot(pixels_needed, a_cm);
-          //cout << "comps needed: " << str(comps_needed) << endl;*/
-          //isl_map* last_pix =
-            //lexmax(st_dependency);
-          //cout << "last comp needed: " << str(last_pix) << endl;
-          //compute_deps = unn(compute_deps, to_umap(inv(st_dependency)));
-          ////auto max = dim_max(st_dependency, i);
-          ////cout << "max needed in dim " << i << " = " << str(max) << endl;
-  //}
-  //{
-    //cout<<endl << "Compute dependency: " << str(compute_deps) << endl << endl;
-    //auto validity = cpy(unn(compute_deps, prg.relative_orders()));
-    //auto proximity = cpy(compute_deps);
-    //auto operations = prg.whole_iteration_domain();
-    ////cout << "operations: " << str(operations) << endl;
-    ////cout << "number of nodes in opteration graph: " << str(card(operations)) << endl;
-    //auto sched_opt_tree = isl_union_set_compute_schedule(operations, validity, proximity);
-    //auto sched_opt = isl_schedule_get_map(sched_opt_tree);
-    //sched_opt = its(sched_opt, prg.whole_iteration_domain());
-    //cout << codegen_c(sched_opt) << endl;
-    //[>for (int i = ndims - 1; i >= 1; i--) {
-        //schedule_dim(prg.ctx, op_boxes, i, schedules, sorted_functions, read_maps,  compute_maps);
-    //}*/
-
-    ////Start generate the config
-    ////TODO: hacky first try, based on my understanding of the configuration register
-    ////FIXME: there is config register related to the memory size, no need to use schedule result
-    //auto buffers = build_buffers(prg, sched_opt);
-
-    //cout << "\n***Dump configuration file into CSV***" << endl;
-    //memtile_config memtile;
-    //memtile.extract_config(buffers);
-    //memtile.emit_config_file_csv("lake_memtile_config_conv33");
-    ////assert(false);
-  //}
-
-  ////int pos = 0;
-  ////cout << "Sorted pipeline..." << endl;
-  ////for (auto f : sorted_functions) {
-    ////cout << "\t" << f << endl;
-    ////schedules[f].push_back(qexpr(pos));
-    ////pos++;
-  ////}
-
-  ////auto sched_opt = its(to_umap(prg.ctx, schedules, sorted_functions, ""), prg.whole_iteration_domain());
-  //[>auto sched_opt = to_umap(prg.ctx, schedules, sorted_functions, "");
-
-  ////auto sched_opt = its(rdmap(prg.ctx, "{in2agg[root, po, pi] -> [root, po, pi, 0]; agg2sram[root, qo, qi] -> [root, qo, 3+4*qi, 1]}"), prg.whole_iteration_domain());
-  //cout << "Sched map:\n " << str(sched_opt) << endl;
-  //cout << "Iter Domain:\n " << str(prg.whole_iteration_domain()) << endl;
-  //sched_opt = its(sched_opt, prg.whole_iteration_domain());
-  //cout << "After opt Sched map:\n " << str(sched_opt) << endl;*/
-  //auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
-  //sched_opt = its(sched_opt, prg.whole_iteration_domain());
-  //cout << codegen_c(sched_opt) << endl;
-  ////assert(false);
-  ////aha_talk_print_info(prg);
-//}
 
 Window win(const std::string& name, const std::vector<vector<int > >& offsets) {
   assert(offsets.size() > 0);

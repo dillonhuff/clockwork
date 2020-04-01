@@ -32,6 +32,55 @@ struct bank {
   // RAM bank properties
   Box layout;
 
+  vector<int> get_end_inds() const {
+    auto break_points = get_break_points();
+
+    vector<string> partitions;
+    vector<int> end_inds;
+    if (break_points.size() > 0) {
+      for (size_t i = 0; i < break_points.size(); i++) {
+        int current = break_points[i];
+        int partition_capacity = -1;
+        if (i < break_points.size() - 1) {
+          if (break_points[i] != break_points[i + 1]) {
+            int next = break_points[i + 1];
+            partition_capacity = next - current;
+            partitions.push_back("f" + to_string(i));
+            end_inds.push_back(current + partition_capacity - 1);
+          }
+        } else {
+          partition_capacity = 1;
+          partitions.push_back("f" + to_string(i));
+          end_inds.push_back(current + partition_capacity - 1);
+        }
+      }
+    }
+    return end_inds;
+  }
+
+  vector<string> get_partitions() const {
+    auto break_points = get_break_points();
+
+    vector<string> partitions;
+    if (break_points.size() > 0) {
+      for (size_t i = 0; i < break_points.size(); i++) {
+        int current = break_points[i];
+        int partition_capacity = -1;
+        if (i < break_points.size() - 1) {
+          if (break_points[i] != break_points[i + 1]) {
+            int next = break_points[i + 1];
+            partition_capacity = next - current;
+            partitions.push_back("f" + to_string(i));
+          }
+        } else {
+          partition_capacity = 1;
+          partitions.push_back("f" + to_string(i));
+        }
+      }
+    }
+    return partitions;
+  }
+
   vector<int> get_break_points() const {
     auto delays = sort_unique(read_delays);
     vector<int> break_points;
