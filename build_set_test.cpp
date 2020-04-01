@@ -2594,6 +2594,52 @@ vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg) {
   return args;
 }
 
+void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
+
+  ofstream out("tb_soda_" + prg.name + ".cpp");
+  out << "#include \"soda_" + prg.name + ".h\"" << endl;
+  out << "#include <cstdlib>" << endl;
+  out << "#include <cstring>" << endl;
+  out << "#include \"hw_classes.h\"" << endl;
+  out << "#include <iostream>" << endl;
+  out << "#include \"ap_int.h\"" << endl;
+  out << "#include \"soda_" + prg.name + "_kernel.h\"" << endl;
+  out << "#include <fstream>" << endl << endl;
+
+  out << "using namespace std;" << endl << endl;
+
+  out <<"int main() {" << endl;
+  cout << "starting" << endl;
+
+  //out const int ncols = 1024;
+  //const int nrows = 1024;
+
+  out << tab(1) << "const int img_size = 1920*1080;" << endl;
+  out << tab(1) << "ap_uint<32>* buf =" << endl;
+  out << tab(2) << "(ap_uint<32>*)malloc(sizeof(ap_uint<32>)*img_size);" << endl;
+
+  out << tab(1) << "for (int i = 0; i < img_size; i++) {" << endl;
+  out << tab(2) << "buf[i] = i;" << endl;
+  out << tab(1) << "}" << endl;
+
+  out << tab(1) << "ap_uint<32>* blur_y =" << endl;
+  out << tab(2) << "(ap_uint<32>*)malloc(sizeof(ap_uint<32>)*img_size);" << endl;
+
+  out << tab(1) << prg.name << "_kernel(blur_y, buf, img_size);" << endl;
+
+  out << tab(1) << "ofstream soda_regression_out(\"regression_result_soda_" << prg.name << ".txt\");" << endl;
+  out << tab(1) << "for (int i = 0; i < img_size; i++) {" << endl;
+  out << tab(2) << "soda_regression_out<< (int) blur_y[i] << endl;" << endl;
+  out << tab(1) << "}" << endl;
+
+  out << tab(1) << "soda_regression_out.close();" << endl;
+  out << tab(1) << "free(buf);" << endl;
+  out << tab(1) << "free(blur_y);" << endl;
+
+  out <<"}" << endl;
+  out.close();
+}
+
 void generate_app_code_header(const map<string, UBuffer>& buffers, prog& prg) {
   string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
   ofstream of(prg.name + ".h");
@@ -2907,6 +2953,7 @@ void generate_app_code(CodegenOptions& options,
   conv_out << "}" << endl;
 
   generate_app_code_header(buffers, prg);
+  generate_soda_tb(buffers, prg);
   generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
 }
 
