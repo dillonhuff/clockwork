@@ -6151,7 +6151,6 @@ struct App {
     fill_data_domain(name, d0, d1, unroll_factor);
     fill_compute_domain();
     schedule_and_codegen(name, unroll_factor);
-    //realize(name, d0, d1);
   }
 
 };
