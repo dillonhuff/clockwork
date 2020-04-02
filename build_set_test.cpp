@@ -2897,7 +2897,7 @@ void generate_verilog_code(CodegenOptions& options,
   for (auto op : kernels) {
     minihls::block* blk = minigen.add_block(op.name);
     auto res = wire_read(*blk, "src", 32);
-    wire_write(*blk, "out", 32, res);
+    out_wire_write(*blk, "out", 32, res);
 
     operation_mods[op.name] = minigen.compile(blk);
     auto blkmod = operation_mods[op.name];
@@ -2908,7 +2908,7 @@ void generate_verilog_code(CodegenOptions& options,
       blk->add_instruction_binding(op.name US "apply_binding",
           apply_instr,
           blkmod,
-          "out_in",
+          "out",
           {});
     apply_bind->latency = 1;
   }

@@ -22,7 +22,7 @@ module_type* out_wire_type(block& blk, const string& wname, const int width) {
     return blk.get_module_type(name);
   }
 
-  vector<port> pts{inpt(name, width)};
+  vector<port> pts{inpt(wname, width)};
   return blk.add_module_type(name, pts);
 }
 

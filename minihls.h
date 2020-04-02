@@ -110,6 +110,12 @@ namespace minihls {
   };
 
   static inline
+    std::ostream& operator<<(std::ostream& out, const port pt) {
+      out << pt.system_verilog_decl_string() << " " << pt.name;
+      return out;
+    }
+
+  static inline
     port outpt(const string& s, const int w) {
       return {s, w, false};
     }
@@ -190,6 +196,12 @@ namespace minihls {
       string name;
       module_type* tp;
       bool internal;
+      bool print_name_at_interface;
+
+      module_instance() {
+        internal = false;
+        print_name_at_interface = true;
+      }
 
       module_type* get_type() const { return tp; }
 
@@ -210,7 +222,11 @@ namespace minihls {
             return p;
           }
         }
-        cout << "Error: No port named " << n << endl;
+        cout << "Error: No port named " << n << " in " << get_name() << " of type " << tp->get_name() << endl;
+        cout << tab(1) << "ports..." << endl;
+        for (auto p : tp->ports) {
+          cout << tab(2) << p << endl;
+        }
         assert(false);
       }
 
@@ -937,7 +953,11 @@ namespace minihls {
       for (auto m : blk.instance_set()) {
         if (m->is_external()) {
           for (auto pt : m->ports()) {
-            pts.push_back(pt.system_verilog_type_string() + " " + m->get_name() + "_" + pt.get_name());
+            if (m->print_name_at_interface) {
+              pts.push_back(pt.system_verilog_type_string() + " " + m->get_name() + "_" + pt.get_name());
+            } else {
+              pts.push_back(pt.system_verilog_type_string() + "_" + pt.get_name());
+            }
           }
         }
       }
