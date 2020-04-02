@@ -4,6 +4,8 @@ using namespace minihls;
 
 
 module_type* sr_buffer(block& blk, const int width, const int depth) {
+  assert(depth >= 1);
+
   string name = "sr_buffer_" + to_string(width) + "_" + minihls::str(depth);
   if (blk.has_module_type(name)) {
     return blk.get_module_type(name);

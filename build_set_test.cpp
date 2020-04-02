@@ -2840,7 +2840,7 @@ module_type* generate_rtl_buffer(CodegenOptions& options,
 
 
   for (auto out_bundle : buffer.get_in_bundles()) {
-    in_wire_read(*blk, out_bundle US "wen", buffer.port_bundle_width(out_bundle));
+    in_wire_read(*blk, out_bundle US "wen", 1);
     in_wire_read(*blk, out_bundle US "wdata", buffer.port_bundle_width(out_bundle));
   }
   

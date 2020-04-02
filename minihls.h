@@ -33,7 +33,14 @@ namespace minihls {
 
   static inline
     int clog2(const int val) {
-      return ceil(log2(val));
+      if (val == 1) { return 1; }
+
+      int v = ceil(log2(val));
+      if (!(v >= 1)) {
+        cout << "clog2(" << val << ") = " << v << endl;
+      }
+      assert(v >= 1);
+      return v;
     }
 
   static inline
