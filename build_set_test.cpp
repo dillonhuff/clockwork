@@ -2840,6 +2840,13 @@ module_type* generate_rtl_buffer(CodegenOptions& options,
 
   auto wen_res = wire_read(*blk, "wen", 1);
 
+  for (auto out_bundle : buffer.get_in_bundles()) {
+    wire_write(*blk, out_bundle US "wdata", buffer.port_bundle_width(out_bundle), wen_res);
+  }
+  
+  for (auto out_bundle : buffer.get_out_bundles()) {
+    wire_read(*blk, out_bundle US "rdata", buffer.port_bundle_width(out_bundle));
+  }
   auto mod = minigen.compile(blk);
 
   for (auto out_bundle : buffer.get_in_bundles()) {
@@ -2862,7 +2869,7 @@ module_type* generate_rtl_buffer(CodegenOptions& options,
       blk->add_instruction_binding(buffer.name US bundle US "read_binding",
           rd_bundle,
           mod,
-          bundle US "in",
+          bundle US "rdata_in",
           {});
     rd_bind->latency = 0;
   }
@@ -2932,7 +2939,7 @@ void generate_verilog_code(CodegenOptions& options,
   }
 
   compile(*main_blk);
-  assert(false);
+  //assert(false);
 }
 
 void generate_app_code(CodegenOptions& options,
@@ -6906,7 +6913,7 @@ void jacobi2d_app_test() {
     system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
   }
 
-  assert(false);
+  //assert(false);
 }
 
 void denoise2d_test() {
