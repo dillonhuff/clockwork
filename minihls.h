@@ -497,7 +497,7 @@ namespace minihls {
     }
 
     instruction_instance* call(const std::string& instance_name, const std::string& instr_substring) {
-      module_instance* mod_inst = get_module_instance(instance_name);
+      module_instance* mod_inst = get_module_instance_imprecise(instance_name);
       instruction_type* instr_tp =
         find_instruction_type(mod_inst->tp, instr_substring);
       auto inst = add_instr(unique_name(instr_tp->get_name()), instr_tp);
@@ -841,6 +841,24 @@ namespace minihls {
 
     module_instance* get_inst(const std::string& name) const {
       return get_module_instance(name);
+    }
+
+    module_instance*
+      get_module_instance_imprecise(const std::string& substring) const {
+        vector<module_instance*> candidates;
+      for (auto n : instances) {
+        if (contains(n.first, substring)) {
+          candidates.push_back(n.second);
+        }
+      }
+      if (!(candidates.size() == 1)) {
+        cout << "Error: " << candidates.size() << " module instances containing substring " << substring << endl;
+        for (auto c : candidates) {
+          cout << tab(1) << c->get_name() << endl;
+        }
+      }
+      assert(candidates.size() == 1);
+      return candidates.at(0);
     }
 
     module_instance* get_module_instance(const std::string& name) const {

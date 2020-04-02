@@ -2910,8 +2910,7 @@ void generate_verilog_code(CodegenOptions& options,
           blkmod,
           "out_in",
           {});
-    apply_bind->latency = 5;
-    //blk->latency();
+    apply_bind->latency = 1;
   }
 
   auto main_blk = minigen.add_block(prg.name);
@@ -2923,7 +2922,17 @@ void generate_verilog_code(CodegenOptions& options,
   for (auto instr : kernels) {
     auto instr_tp = map_find(instr.name, kernel_instrs);
 
+    map<pair<string, string>, minihls::instruction_instance*> reads;
+    for (auto inbuf : instr.input_buffers) {
+      reads[inbuf] =
+        main_blk->call("buf_" + inbuf.first, inbuf.second);
+    }
+
     auto instr_inst = main_blk->add_instruction_instance(instr.name, instr_tp);
+    for (auto rd : reads) {
+      main_blk->add_data_dependence(rd.second, instr_inst, 0);
+    }
+
     for (auto earlier_inst : earlier) {
       main_blk->add_data_dependence(earlier_inst, instr_inst, 0);
     }
@@ -2936,10 +2945,10 @@ void generate_verilog_code(CodegenOptions& options,
     main_blk->add_data_dependence(instr_inst, write_inst, 0);
 
     earlier.push_back(instr_inst);
+    earlier.push_back(write_inst);
   }
 
   compile(*main_blk);
-  //assert(false);
 }
 
 void generate_app_code(CodegenOptions& options,
@@ -7469,6 +7478,7 @@ void application_tests() {
 
   //up_stencil_down_unrolled_test();
   mismatched_stencil_test();
+  assert(false);
   jacobi2d_app_test();
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
