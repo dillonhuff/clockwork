@@ -12,9 +12,19 @@ using namespace std;
 
 namespace minihls {
 
+  static inline
+    bool contains(const std::string& str, const std::string& sub) {
+      if (str.find(sub) != std::string::npos) {
+        return true;
+      }
+      return false;
+    }
+
+
   class module_type;
   class block;
   class instruction_binding;
+  class instruction_type;
 
   static inline
     std::string str(const int i) {
@@ -122,6 +132,7 @@ namespace minihls {
 
     map<string, module_type*> module_types;
     map<string, instruction_binding*> instruction_bindings;
+    map<string, instruction_type*> instruction_types;
 
     module_type* add_module_type(const std::string& name, const vector<port>& pts, const std::string& body);
 
@@ -431,8 +442,6 @@ namespace minihls {
 
     map<string, instr*> instrs;
     map<string, module_instance*> instances;
-    //map<string, instruction_binding*> instruction_bindings;
-    map<string, instruction_type*> instruction_types;
 
     vector<constraint> extra_constraints;
 
@@ -443,6 +452,59 @@ namespace minihls {
     string name;
 
     block() : un(0) {}
+
+    vector<instruction_binding*> get_bindings(instruction_type* tp) const {
+      vector<instruction_binding*> candidates;
+      for (auto binding : context->instruction_bindings) {
+        cout << "binding: " << binding.second->get_name() << endl;
+        if (binding.second->target_instr() == tp) {
+          candidates.push_back(binding.second);
+        }
+      }
+      return candidates;
+    }
+
+    instruction_binding* get_binding(instruction_type* tp) const {
+      auto candidates = get_bindings(tp);
+      assert(candidates.size() == 1);
+      return candidates.at(0);
+    }
+
+    instruction_type* find_instruction_type(module_type* tp, const std::string& instr_substring) {
+      vector<instruction_type*> candidates;
+      for (auto it : context->instruction_types) {
+        if (contains(it.first, instr_substring)) {
+
+          vector<instruction_binding*> bindings =
+            get_bindings(it.second);
+          for (auto b : bindings) {
+            if (b->mod_type() == tp) {
+              candidates.push_back(it.second);
+            }
+          }
+        }
+      }
+
+      if (candidates.size() != 1) {
+        cout << "Error: " << candidates.size() << " potential instruction types containing " << instr_substring << " on " << tp->get_name() << endl;
+        cout << tab(1) << "candidates..." << endl;
+        for (auto c : candidates) {
+          cout << tab(2) << c->get_name() << endl;
+        }
+      }
+      assert(candidates.size() == 1);
+      return candidates.at(0);
+    }
+
+    instruction_instance* call(const std::string& instance_name, const std::string& instr_substring) {
+      module_instance* mod_inst = get_module_instance(instance_name);
+      instruction_type* instr_tp =
+        find_instruction_type(mod_inst->tp, instr_substring);
+      auto inst = add_instr(unique_name(instr_tp->get_name()), instr_tp);
+      inst->bind_procedure(get_binding(instr_tp));
+      inst->bind_unit(mod_inst);
+      return inst;
+    }
 
     string get_name() const { return name; }
 
@@ -720,17 +782,17 @@ namespace minihls {
     instruction_type* add_instruction_type(const std::string& name) {
       auto inst = new instruction_type();
       inst->name = name;
-      instruction_types[name] = inst;
+      context->instruction_types[name] = inst;
       return inst;
     }
 
     instruction_type* get_instruction_type(const std::string& name) const {
       assert(has_instruction_type(name));
-      return map_find(name, instruction_types);
+      return map_find(name, context->instruction_types);
     }
 
     bool has_instruction_type(const std::string& name) const {
-      return contains_key(name, instruction_types);
+      return contains_key(name, context->instruction_types);
     }
 
     set<module_type*> module_type_set() const {
@@ -778,6 +840,17 @@ namespace minihls {
     }
 
     module_instance* get_inst(const std::string& name) const {
+      return get_module_instance(name);
+    }
+
+    module_instance* get_module_instance(const std::string& name) const {
+      if (!has_inst(name)) {
+        cout << "Error: No module named: " << name << endl;
+        cout << tab(1) << "candidates..." << endl;
+        for (auto inst : instances) {
+          cout << tab(2) << inst.first << endl;
+        }
+      }
       assert(has_inst(name));
       return map_find(name, instances);
     }
@@ -1014,4 +1087,5 @@ namespace minihls {
       emit_verilog(blk);
       emit_techlib(blk);
     }
+
 }

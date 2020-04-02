@@ -2864,6 +2864,7 @@ module_type* generate_rtl_buffer(CodegenOptions& options,
           mod,
           bundle US "in",
           {});
+    rd_bind->latency = 0;
   }
 
   return mod;
@@ -2911,14 +2912,22 @@ void generate_verilog_code(CodegenOptions& options,
     main_blk->add_module_instance("buf_" + b.second->get_name(), b.second);
   }
 
-  //for (auto b : operation_mods) {
   vector<minihls::instruction_instance*> earlier;
   for (auto instr : kernels) {
     auto instr_tp = map_find(instr.name, kernel_instrs);
+
     auto instr_inst = main_blk->add_instruction_instance(instr.name, instr_tp);
     for (auto earlier_inst : earlier) {
       main_blk->add_data_dependence(earlier_inst, instr_inst, 0);
     }
+
+    // Store the output to the result buffer
+    string out_buf = "buf_" + instr.output_buffer.first;
+    string out_bundle = instr.output_buffer.second;
+
+    auto write_inst = main_blk->call(out_buf, out_bundle);
+    main_blk->add_data_dependence(instr_inst, write_inst, 0);
+
     earlier.push_back(instr_inst);
   }
 
