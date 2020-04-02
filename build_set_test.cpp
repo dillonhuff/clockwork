@@ -2840,12 +2840,16 @@ module_type* generate_rtl_buffer(CodegenOptions& options,
 
 
   for (auto out_bundle : buffer.get_in_bundles()) {
+    // Here I need to get all banks which receive data from this bundle
+    // and write to them
     in_wire_read(*blk, out_bundle US "wen", 1);
     in_wire_read(*blk, out_bundle US "wdata", buffer.port_bundle_width(out_bundle));
   }
   
   for (auto out_bundle : buffer.get_out_bundles()) {
     auto dummy = in_wire_read(*blk, out_bundle US "dummy", buffer.port_bundle_width(out_bundle));
+    // Here I need to get all sources of this bundle and concatenate
+    // them together
     out_wire_write(*blk, out_bundle US "rdata", buffer.port_bundle_width(out_bundle), dummy);
   }
 
@@ -2962,7 +2966,7 @@ void generate_verilog_code(CodegenOptions& options,
   vector<minihls::instruction_instance*> earlier;
   map<string, set<minihls::instruction_instance*> > earlier_writes;
   map<pair<string, string>, minihls::instruction_instance*> reads;
-  map<string, minihls::instruction_instance*> reads_from_buffers;
+  map<string, set<minihls::instruction_instance*> > reads_from_buffers;
   for (auto instr : sorted_kernels) {
     cout << "Kernel = " << instr.name << endl;
     auto instr_tp = map_find(instr.name, kernel_instrs);
@@ -2970,7 +2974,7 @@ void generate_verilog_code(CodegenOptions& options,
     for (auto inbuf : instr.input_buffers) {
       reads[inbuf] =
         main_blk->call("buf_" + inbuf.first, inbuf.second);
-      reads_from_buffers[inbuf.first] = reads.at(inbuf);
+      reads_from_buffers[inbuf.first].insert(reads.at(inbuf));
     }
 
     auto instr_inst = main_blk->add_instruction_instance(instr.name, instr_tp);
@@ -2994,16 +2998,16 @@ void generate_verilog_code(CodegenOptions& options,
     earlier.push_back(write_inst);
   }
 
-  //cout << "Earlier writes..." << endl;
-
-  for (auto rd : reads_from_buffers) {
-    for (auto wr : earlier_writes[rd.first]) {
-      main_blk->add_data_dependence(wr, rd.second, 0);
+  for (auto rds : reads_from_buffers) {
+    for (auto rd : rds.second) {
+      for (auto wr : earlier_writes[rds.first]) {
+        main_blk->add_data_dependence(wr, rd, 0);
+      }
     }
   }
 
   compile(*main_blk);
-  //assert(false);
+  assert(false);
 }
 
 void generate_app_code(CodegenOptions& options,
