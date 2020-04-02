@@ -2838,10 +2838,35 @@ module_type* generate_rtl_buffer(CodegenOptions& options,
         ubufmod);
   }
 
-
   auto wen_res = wire_read(*blk, "wen", 1);
 
-  return minigen.compile(blk);
+  auto mod = minigen.compile(blk);
+
+  for (auto out_bundle : buffer.get_in_bundles()) {
+    auto wr_bundle =
+      blk->add_instruction_type(buffer.name US out_bundle US "write");
+    auto wr_bind =
+      blk->add_instruction_binding(buffer.name US out_bundle US "write_binding",
+          wr_bundle,
+          mod,
+          out_bundle US "wdata_out",
+          {});
+    wr_bind->latency = 1;
+    wr_bind->en = "wen";
+  }
+
+  for (auto bundle : buffer.get_out_bundles()) {
+    auto rd_bundle =
+      blk->add_instruction_type(buffer.name US bundle US "read");
+    auto rd_bind =
+      blk->add_instruction_binding(buffer.name US bundle US "read_binding",
+          rd_bundle,
+          mod,
+          bundle US "in",
+          {});
+  }
+
+  return mod;
 }
 
 void generate_verilog_code(CodegenOptions& options,
@@ -2877,7 +2902,7 @@ void generate_verilog_code(CodegenOptions& options,
           blkmod,
           "out_in",
           {});
-    apply_bind->latency = 1;
+    apply_bind->latency = 5;
     //blk->latency();
   }
 
@@ -2898,6 +2923,7 @@ void generate_verilog_code(CodegenOptions& options,
   }
 
   compile(*main_blk);
+  assert(false);
 }
 
 void generate_app_code(CodegenOptions& options,
@@ -7430,7 +7456,6 @@ void application_tests() {
 
   //up_stencil_down_unrolled_test();
   mismatched_stencil_test();
-  assert(false);
   jacobi2d_app_test();
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
