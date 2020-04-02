@@ -12,7 +12,7 @@ void UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2
         if (is_out) {
             string pt_name = origin_pt_name + "_out_" + std::to_string(new_pt_cnt);
             target_buf.port_bundles[bd_name + "_out"].push_back(pt_name);
-            //cout << "Original Schedule:"<< str(schedule.at(origin_pt_name)) << endl;
+            cout << "Original Schedule:"<< str(schedule.at(origin_pt_name)) << endl;
             target_buf.add_out_pt(pt_name, range(to_map(rewrite_buf2op)), to_map(rewrite_access_map), schedule.at(origin_pt_name));
         //FIXME: access pattern cannot be extracted because of the dim has no name
         target_buf.add_access_pattern(pt_name, acc_pattern.op_name+"_vec", target_buf.name);

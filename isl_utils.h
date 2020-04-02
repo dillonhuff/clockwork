@@ -79,10 +79,12 @@ isl_space* get_space(isl_union_map* const m);
 isl_space* get_space(isl_map* const m);
 
 isl_space* get_space(isl_set* const m);
+isl_space* get_space(isl_union_set* const m);
 
 int dim(isl_space* const s);
 
 bool empty(uset* const s);
+bool empty(isl_set* const s);
 
 int num_dims(isl_space* const s);
 
@@ -140,6 +142,7 @@ isl_ctx* ctx(isl_point* const m);
 isl_ctx* ctx(isl_constraint* const m);
 
 isl_ctx* ctx(isl_basic_set* const m);
+isl_ctx* ctx(isl_set* const m);
 
 isl_ctx* ctx(isl_space* const m);
 
@@ -164,6 +167,7 @@ isl_ctx* ctx(isl_pw_qpolynomial_fold* const m);
 
 isl_ctx* ctx(isl_pw_qpolynomial* const m);
 
+std::string codegen_c(isl_set* const bset);
 std::string codegen_c(isl_constraint* const bset);
 
 std::string codegen_c(isl_schedule* const bset);
@@ -256,6 +260,7 @@ isl_union_map* its(isl_map* const m0, isl_union_map* const m1);
 isl_map* its(isl_map* const m0, isl_map* const m1);
 
 isl_union_map* its_range(isl_union_map* const m0, isl_union_set* const m1);
+isl_map* its_range(isl_map* const m0, isl_set* const m1);
 
 isl_union_set* its(isl_union_set* const m0, isl_union_set* const m1);
 
@@ -284,6 +289,7 @@ isl_union_set* simplify(uset* const m);
 isl_map* simplify(isl_map* const m);
 
 umap* simplify(umap* const m);
+isl_union_pw_qpolynomial* coalesce(isl_union_pw_qpolynomial* const m);
 
 isl_union_set* coalesce(isl_union_set* const m0);
 
@@ -310,6 +316,7 @@ isl_set* range(isl_map* const m);
 isl_set* domain(isl_map* const m);
 
 isl_bool subset(isl_union_set* const s0, uset* s1);
+isl_bool subset(isl_set* const s0, isl_set* s1);
 
 isl_basic_set* domain(isl_basic_map* const m);
 
@@ -338,6 +345,7 @@ isl_set* rdset(isl_ctx* ctx, const std::string& str);
 umap* rdmap(isl_ctx* ctx, const std::string& str);
 
 isl_point* sample(isl_set* s);
+isl_point* sample(isl_union_set* s);
 
 isl_pw_aff* dim_min(isl_map* const m, const int d);
 
@@ -352,5 +360,9 @@ get_polynomial_folds(isl_union_pw_qpolynomial_fold* p);
 vector<isl_pw_qpolynomial*>
 get_polynomials(isl_union_pw_qpolynomial* p);
 
+vector<isl_constraint*> constraints(isl_set* s);
 
 map<string, string> umap_codegen_c(umap* const um);
+
+isl_set* universe(isl_space* s);
+isl_set* add_constraint(isl_set* s, isl_constraint* c);

@@ -575,7 +575,7 @@ class UBuffer {
         isl_union_map* sched) {
       domain[name] = dm;
       access_map[name] = to_umap(access);
-      schedule[name] = NULL;
+      schedule[name] = sched;
       isIn[name] = true;
     }
 
