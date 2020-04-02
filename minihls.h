@@ -209,6 +209,18 @@ namespace minihls {
         return tp->has_port(name);
       }
 
+      string external_name(const std::string& pt) const {
+        return external(get_port(pt)).name;
+      }
+
+      string external_name(const port& pt) const {
+        return external(pt).name;
+      }
+
+      port external(const std::string& pt) const {
+        return external(get_port(pt));
+      }
+
       port external(const port pt) const {
         assert(has_port(pt.name));
         port rev = reverse(pt);
