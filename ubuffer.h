@@ -103,8 +103,16 @@ class AccessPattern {
           return to_umap(its(access_map, domain));
       }
 
-      void initial_access_mat(isl_map* access_map, isl_set* domain) {
+      void initial_access_mat(isl_map* access_map, isl_set* domain, isl_ctx* ctx) {
           cout << "\t\tProduced: " << str(access_map) << endl;
+
+          for (size_t i = 0; i < isl_map_dim(access_map, isl_dim_in); i++) {
+              if (!isl_map_has_dim_id(access_map, isl_dim_in, i)) {
+                  access_map = set_map_dim_name(ctx, access_map, i, "p"+to_string(i));
+              }
+              cout << "has id:" << str(isl_map_get_dim_id(access_map, isl_dim_in, i)) << endl;
+          }
+
           auto mpa = isl_pw_multi_aff_from_map(access_map);
           cout << str(mpa) << endl;
           addr_dim = isl_pw_multi_aff_dim(mpa, isl_dim_out);
@@ -312,7 +320,7 @@ class AccessPattern {
       /*
        * This Function create a vector of map of the constraints on output buffer,
        * and map that to each port*/
-      vector<isl_map*> get_buf_slice(isl_ctx* ctx, string suffix, int dim_id, int fetch_width) {
+      vector<isl_map*> get_buf_slice(isl_ctx* ctx, string new_buf_name, int dim_id, int fetch_width) {
           vector<string> var_list;
           vector<isl_map*> slices;
           for (size_t dim = 0; dim < addr_dim; dim ++) {
@@ -321,7 +329,6 @@ class AccessPattern {
 
           auto vars = sep_list(var_list, "[", "]", ",");
           for(size_t i = 0; i < fetch_width; i ++) {
-              string new_buf_name = buf_name + "_" + suffix;
               string constraint = "p" + to_string(dim_id) + "%" + to_string(fetch_width) + "=" + to_string(i);
               isl_map* slice_constriant = to_map(rdmap(ctx, string("{" + buf_name + vars + " -> " + new_buf_name + vars + ":" +constraint + "}" ).c_str()));
               slices.push_back(slice_constriant);
@@ -558,7 +565,7 @@ class UBuffer {
         cout << "\tAdding access pattern for " << io  <<" port: " << pt_name << "in buf: " << this->name <<  endl;
         cout << "\top name :" << op_name << endl;
         AccessPattern acc_p(buf_name, op_name);
-        acc_p.initial_access_mat(access, dm);
+        acc_p.initial_access_mat(access, dm, ctx);
         access_pattern[pt_name] = acc_p;
     }
 

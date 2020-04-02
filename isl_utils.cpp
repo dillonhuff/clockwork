@@ -241,6 +241,11 @@ isl_stat isl_pw_aff_set_var_name( isl_set *set, isl_aff *aff, void *user) {
     return isl_stat_ok;
 }
 
+isl_map* set_map_dim_name(isl_ctx* ctx, isl_map* m, unsigned pos, const string& name) {
+    isl_id* name_id = id(ctx, name);
+    return isl_map_set_dim_id(m, isl_dim_in, pos, name_id);
+}
+
 int get_dim_min(isl_set* const m, int pos) {
     int min;
     isl_pw_aff_foreach_piece(isl_set_dim_min(cpy(m), pos), isl_pw_aff_get_const, &min);

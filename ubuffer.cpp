@@ -3,7 +3,7 @@
 void UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out) {
 
     AccessPattern acc_pattern = access_pattern.at(origin_pt_name);
-    auto constraint_slices = acc_pattern.get_buf_slice(ctx, "agg", dim_id, fetch_width);
+    auto constraint_slices = acc_pattern.get_buf_slice(ctx, target_buf.name, dim_id, fetch_width);
     size_t new_pt_cnt = 0;
     for (auto slice : constraint_slices) {
         cout << "Constraint: " << str(slice) << endl;
@@ -12,15 +12,16 @@ void UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2
         if (is_out) {
             string pt_name = origin_pt_name + "_out_" + std::to_string(new_pt_cnt);
             target_buf.port_bundles[bd_name + "_out"].push_back(pt_name);
+            //cout << "Original Schedule:"<< str(schedule.at(origin_pt_name)) << endl;
             target_buf.add_out_pt(pt_name, range(to_map(rewrite_buf2op)), to_map(rewrite_access_map), schedule.at(origin_pt_name));
+        //FIXME: access pattern cannot be extracted because of the dim has no name
+        target_buf.add_access_pattern(pt_name, acc_pattern.op_name+"_vec", target_buf.name);
         }
         else {
             string pt_name = origin_pt_name + "_in_" + std::to_string(new_pt_cnt);
             target_buf.port_bundles[bd_name + "_in"].push_back(pt_name);
             target_buf.add_in_pt(pt_name, range(to_map(rewrite_buf2op)), to_map(rewrite_access_map), schedule.at(origin_pt_name));
         }
-        //FIXME: access pattern cannot be extracted because of the dim has no name
-        //agg_buf.add_access_pattern(pt_name, op_name+"_vec", agg_buf.name);
         new_pt_cnt ++;
     }
 }
@@ -60,6 +61,7 @@ void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuff
             add_vectorized_pt_to_ubuf(agg_buf, rewrite_buf2op, in_pt_name, bd_name, dim_id, fetch_width, true);
             //add in port to sram
             add_vectorized_pt_to_ubuf(sram, rewrite_buf2op, in_pt_name, bd_name, dim_id, fetch_width, false);
+
             //Put this into a function
             /*auto constraint_slices = acc_pattern.get_buf_slice(ctx, "agg", dim_id, fetch_width);
             size_t new_pt_cnt = 0;
