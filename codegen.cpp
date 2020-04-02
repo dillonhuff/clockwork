@@ -2,7 +2,6 @@
 
 using namespace minihls;
 
-#define US + "_" + 
 
 module_type* sr_buffer(block& blk, const int width, const int depth) {
   string name = "sr_buffer_" + to_string(width) + "_" + minihls::str(depth);

@@ -3,6 +3,8 @@
 #include "minihls.h"
 #include "ubuffer.h"
 
+#define US + "_" + 
+
 using minihls::outpt;
 using minihls::inpt;
 using minihls::block;

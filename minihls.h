@@ -328,6 +328,10 @@ namespace minihls {
         return utime;
       }
 
+      int latency() const {
+        return num_stages()  - 1;
+      }
+
       int num_stages() const {
         int ns = 0;
         for (auto e : end_times) {
@@ -439,6 +443,8 @@ namespace minihls {
     block() : un(0) {}
 
     string get_name() const { return name; }
+
+    int latency() const { return arch.sched.latency(); }
 
     void eq(const string& a, const string& b, const int d) {
       extra_constraints.push_back({a, b, d});

@@ -2797,56 +2797,51 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
 
 module_type* generate_rtl_buffer(CodegenOptions& options,
     minihls::context& minigen,
-    UBuffer& buffer,
-    prog& prg,
-    umap* schedmap,
-    map<string, isl_set*>& domain_map,
-    vector<compute_kernel>& kernels) {
+    UBuffer& buffer) {
 
+  minihls::block* blk = minigen.add_block(buffer.name);
+  for (auto bank_struct : buffer.get_banks()) {
+    auto bankprog = minigen.add_block(bank_struct.name);
 
-    minihls::block* blk = minigen.add_block(buffer.name);
-    for (auto bank_struct : buffer.get_banks()) {
-      auto bankprog = minigen.add_block(bank_struct.name);
-
-      map<string, minihls::module_instance*> partitions;
-      for (auto part : bank_struct.get_partitions()) {
-        auto part_tp = sr_buffer(*bankprog,
-            32,
-            part.second);
-        partitions[part.first] =
-          bankprog->add_module_instance(part.first, part_tp);
-      }
-
-      auto bankmod = minigen.compile(bankprog);
-      blk->add_module_instance(bank_struct.name, bankmod);
+    map<string, minihls::module_instance*> partitions;
+    for (auto part : bank_struct.get_partitions()) {
+      auto part_tp = sr_buffer(*bankprog,
+          32,
+          part.second);
+      partitions[part.first] =
+        bankprog->add_module_instance(part.first, part_tp);
     }
 
-    for (auto osel : buffer.selectors) {
-      selector sel = osel.second;
-      vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
-      for (auto pt : sel.vars) {
-        ports.push_back(minihls::inpt(pt, 32));
-      }
-      ports.push_back(minihls::outpt("out", 32));
+    auto bankmod = minigen.compile(bankprog);
+    blk->add_module_instance(bank_struct.name, bankmod);
+  }
 
-      ostringstream body;
-      for (int i = 0; i < sel.bank_conditions.size(); i++) {
-        body << tab(1) << "always @(*) begin" << endl;
-        body << tab(2) << "if (" << sel.bank_conditions.at(i) << ") begin" << endl;
-        body << tab(3) << "out = " << sel.inner_bank_offsets.at(i) << ";" << endl;
-        body << tab(2) << "end" << endl;
-        body << tab(1) << "end" << endl;
-      }
-      auto ubufmod =
-        blk->add_module_type(sel.name, ports, body.str());
-      blk->add_module_instance("selector_" + sel.name,
-          ubufmod);
+  for (auto osel : buffer.selectors) {
+    selector sel = osel.second;
+    vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
+    for (auto pt : sel.vars) {
+      ports.push_back(minihls::inpt(pt, 32));
     }
+    ports.push_back(minihls::outpt("out", 32));
+
+    ostringstream body;
+    for (int i = 0; i < sel.bank_conditions.size(); i++) {
+      body << tab(1) << "always @(*) begin" << endl;
+      body << tab(2) << "if (" << sel.bank_conditions.at(i) << ") begin" << endl;
+      body << tab(3) << "out = " << sel.inner_bank_offsets.at(i) << ";" << endl;
+      body << tab(2) << "end" << endl;
+      body << tab(1) << "end" << endl;
+    }
+    auto ubufmod =
+      blk->add_module_type(sel.name, ports, body.str());
+    blk->add_module_instance("selector_" + sel.name,
+        ubufmod);
+  }
 
 
-    auto wen_res = wire_read(*blk, "wen", 1);
+  auto wen_res = wire_read(*blk, "wen", 1);
 
-    return minigen.compile(blk);
+  return minigen.compile(blk);
 }
 
 void generate_verilog_code(CodegenOptions& options,
@@ -2861,15 +2856,25 @@ void generate_verilog_code(CodegenOptions& options,
   map<string, minihls::module_type*> buffer_mods;
   for (auto& b : buffers) {
     buffer_mods[b.first] =
-      generate_rtl_buffer(options, minigen, b.second, prg, schedmap, domain_map, kernels);
+      generate_rtl_buffer(options, minigen, b.second);
   }
 
   map<string, minihls::module_type*> operation_mods;
-  for (auto op : prg.all_ops()) {
-    minihls::block* blk = minigen.add_block(op->name);
-    operation_mods[op->name] = minigen.compile(blk);
+  //for (auto op : prg.all_ops()) {
+  for (auto op : kernels) {
+    minihls::block* blk = minigen.add_block(op.name);
+    operation_mods[op.name] = minigen.compile(blk);
+    auto blkmod = operation_mods[op.name];
+    auto apply_instr =
+      blk->add_instruction_type(op.name US "apply");
+    auto apply_bind =
+      blk->add_instruction_binding(op.name US "apply_binding",
+          apply_instr,
+          blkmod,
+          "out",
+          {});
+    apply_bind->latency = blk->latency();
   }
-
 
   auto main_blk = minigen.add_block(prg.name);
   for (auto b : buffer_mods) {
