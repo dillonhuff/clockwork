@@ -2838,14 +2838,15 @@ module_type* generate_rtl_buffer(CodegenOptions& options,
         ubufmod);
   }
 
-  auto wen_res = wire_read(*blk, "wen", 1);
 
   for (auto out_bundle : buffer.get_in_bundles()) {
-    wire_write(*blk, out_bundle US "wdata", buffer.port_bundle_width(out_bundle), wen_res);
+    in_wire_read(*blk, out_bundle US "wen", buffer.port_bundle_width(out_bundle));
+    in_wire_read(*blk, out_bundle US "wdata", buffer.port_bundle_width(out_bundle));
   }
   
   for (auto out_bundle : buffer.get_out_bundles()) {
-    wire_read(*blk, out_bundle US "rdata", buffer.port_bundle_width(out_bundle));
+    auto dummy = in_wire_read(*blk, out_bundle US "dummy", buffer.port_bundle_width(out_bundle));
+    out_wire_write(*blk, out_bundle US "rdata", buffer.port_bundle_width(out_bundle), dummy);
   }
   auto mod = minigen.compile(blk);
 
@@ -2856,10 +2857,10 @@ module_type* generate_rtl_buffer(CodegenOptions& options,
       blk->add_instruction_binding(buffer.name US out_bundle US "write_binding",
           wr_bundle,
           mod,
-          out_bundle US "wdata_out",
+          out_bundle US "wdata",
           {});
     wr_bind->latency = 1;
-    wr_bind->en = "wen";
+    wr_bind->en = out_bundle US "wen";
   }
 
   for (auto bundle : buffer.get_out_bundles()) {
@@ -2869,7 +2870,7 @@ module_type* generate_rtl_buffer(CodegenOptions& options,
       blk->add_instruction_binding(buffer.name US bundle US "read_binding",
           rd_bundle,
           mod,
-          bundle US "rdata_in",
+          bundle US "rdata",
           {});
     rd_bind->latency = 0;
   }
