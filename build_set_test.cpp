@@ -2915,7 +2915,11 @@ void generate_verilog_code(CodegenOptions& options,
 
   auto main_blk = minigen.add_block(prg.name);
   for (auto b : buffer_mods) {
-    main_blk->add_module_instance("buf_" + b.second->get_name(), b.second);
+    if (prg.is_boundary(b.first)) {
+      main_blk->add_external_module_instance("buf_" + b.second->get_name(), b.second);
+    } else {
+      main_blk->add_module_instance("buf_" + b.second->get_name(), b.second);
+    }
   }
 
   vector<minihls::instruction_instance*> earlier;
