@@ -16,14 +16,76 @@ using minihls::module_instance;
 using minihls::port;
 
 static inline
-module_type* in_wire_type(block& blk, const string& name, const int width) {
-  string name = "in_wire_" + name;
+module_type* out_wire_type(block& blk, const string& wname, const int width) {
+  string name = "out_wire_" + wname;
   if (blk.has_module_type(name)) {
     return blk.get_module_type(name);
   }
 
-  vector<port> pts{outpt(name, width)};
-  return blk.add_module_type(name, pts, body);
+  vector<port> pts{inpt(name, width)};
+  return blk.add_module_type(name, pts);
+}
+
+static inline
+module_instance* get_out_wire(block& blk, const string& name, int width) {
+  if (blk.has_inst(name)) {
+    return blk.get_inst(name);
+  }
+
+  module_type* wtp = out_wire_type(blk, name, width);
+
+  return blk.add_external_module_instance(name, wtp);
+}
+
+static inline
+instruction_type* wr_out_wire_instr(block& blk, const std::string& arg_name, int width) {
+  string name = "wr_out_wire_instr_" + arg_name + "_" + to_string(width);
+  if (blk.has_instruction_type(name)) {
+    return blk.get_instruction_type(name);
+  }
+
+  return blk.add_instruction_type(name);
+}
+
+static inline
+instruction_binding* wr_out_wire_binding(block& blk, const std::string& wire_name, int width) {
+  string name = "wr_out_wire_binding_" + wire_name + "_" + str(width);
+  if (blk.has_instruction_binding(name)) {
+    return blk.get_instruction_binding(name);
+  }
+
+  return blk.add_instruction_binding(name,
+      wr_out_wire_instr(blk, wire_name, width),
+      out_wire_type(blk, wire_name, width), "", {{0, wire_name}});
+}
+
+static inline
+instr* out_wire_write(block& blk, const string& arg_name, int width, instr* arg) {
+  module_instance* arg_wire =
+    get_out_wire(blk, arg_name, width);
+
+  instruction_binding* rd_wire = 
+    wr_out_wire_binding(blk, arg_name, width);
+
+  instruction_type* instr_tp =
+    wr_out_wire_instr(blk, arg_name, width);
+
+  auto instr = blk.add_instr(blk.unique_name("wr"), instr_tp, {arg});
+  instr->bind_procedure(rd_wire);
+  instr->bind_unit(arg_wire);
+
+  return instr;
+}
+
+static inline
+module_type* in_wire_type(block& blk, const string& arg_name, const int width) {
+  string name = "in_wire_" + arg_name;
+  if (blk.has_module_type(name)) {
+    return blk.get_module_type(name);
+  }
+
+  vector<port> pts{outpt(arg_name, width)};
+  return blk.add_module_type(name, pts);
 }
 
 static inline
