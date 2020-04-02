@@ -2795,19 +2795,17 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
   return kernel;
 }
 
-void generate_verilog_code(CodegenOptions& options,
-    map<string, UBuffer>& buffers,
+module_type* generate_rtl_buffer(CodegenOptions& options,
+    minihls::context& minigen,
+    UBuffer& buffer,
     prog& prg,
     umap* schedmap,
     map<string, isl_set*>& domain_map,
     vector<compute_kernel>& kernels) {
 
-  minihls::context minigen;
 
-  map<string, minihls::module_type*> buffer_mods;
-  for (auto& b : buffers) {
-    minihls::block* blk = minigen.add_block(b.first);
-    for (auto bank_struct : b.second.get_banks()) {
+    minihls::block* blk = minigen.add_block(buffer.name);
+    for (auto bank_struct : buffer.get_banks()) {
       auto bankprog = minigen.add_block(bank_struct.name);
 
       map<string, minihls::module_instance*> partitions;
@@ -2823,7 +2821,7 @@ void generate_verilog_code(CodegenOptions& options,
       blk->add_module_instance(bank_struct.name, bankmod);
     }
 
-    for (auto osel : b.second.selectors) {
+    for (auto osel : buffer.selectors) {
       selector sel = osel.second;
       vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
       for (auto pt : sel.vars) {
@@ -2845,8 +2843,25 @@ void generate_verilog_code(CodegenOptions& options,
           ubufmod);
     }
 
-    buffer_mods[b.first] = minigen.compile(blk);
-    
+
+    auto wen_res = wire_read(*blk, "wen", 1);
+
+    return minigen.compile(blk);
+}
+
+void generate_verilog_code(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    map<string, isl_set*>& domain_map,
+    vector<compute_kernel>& kernels) {
+
+  minihls::context minigen;
+
+  map<string, minihls::module_type*> buffer_mods;
+  for (auto& b : buffers) {
+    buffer_mods[b.first] =
+      generate_rtl_buffer(options, minigen, b.second, prg, schedmap, domain_map, kernels);
   }
 
   map<string, minihls::module_type*> operation_mods;

@@ -3,6 +3,74 @@
 #include "minihls.h"
 #include "ubuffer.h"
 
+using minihls::outpt;
+using minihls::inpt;
+using minihls::block;
+using minihls::instr;
+using minihls::instruction_binding;
+using minihls::instruction_type;
+using minihls::module_type;
+using minihls::module_instance;
+using minihls::port;
+
+static inline
+module_type* wire_type(block& blk, const int width) {
+  string name = "wire_" + to_string(width);
+  if (blk.has_module_type(name)) {
+    return blk.get_module_type(name);
+  }
+
+  vector<port> pts{inpt("in", width), outpt("out", width)};
+  string body = tab(1) + "assign out = in;";
+  return blk.add_module_type(name, pts, body);
+}
+static inline
+instruction_type* rd_wire_instr(block& blk, int width) {
+  string name = "rd_wire_instr_" + to_string(width);
+  if (blk.has_instruction_type(name)) {
+    return blk.get_instruction_type(name);
+  }
+
+  return blk.add_instruction_type(name);
+}
+
+static inline
+instruction_binding* rd_wire_binding(block& blk, int width) {
+  string name = "rd_wire_binding_" + to_string(width);
+  if (blk.has_instruction_binding(name)) {
+    return blk.get_instruction_binding(name);
+  }
+
+  return blk.add_instruction_binding(name, rd_wire_instr(blk, width), wire_type(blk, width), "out", {});
+}
+
+static inline
+module_instance* get_wire(block& blk, const string& name, int width) {
+  if (blk.has_inst(name)) {
+    return blk.get_inst(name);
+  }
+
+  module_type* wtp = wire_type(blk, width);
+
+  return blk.add_external_module_instance(name, wtp);
+}
+static inline
+instr* wire_read(block& blk, const string& arg_name, int width) {
+  module_instance* arg_wire =
+    get_wire(blk, arg_name, width);
+
+  instruction_binding* rd_wire = 
+    rd_wire_binding(blk, width);
+
+  instruction_type* instr_tp =
+    rd_wire_instr(blk, width);
+
+  auto instr = blk.add_instr(blk.unique_name("rd"), instr_tp);
+  instr->bind_procedure(rd_wire);
+  instr->bind_unit(arg_wire);
+
+  return instr;
+}
 struct compute_kernel {
   string name;
   vector<pair<string, string> > input_buffers;

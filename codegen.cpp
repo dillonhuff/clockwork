@@ -12,7 +12,7 @@ module_type* sr_buffer(block& blk, const int width, const int depth) {
 
   int addr_width = clog2(depth);
   vector<port> pts{
-    inpt("raddr", addr_width),
+    //inpt("raddr", addr_width),
     inpt("wen", 1),
     inpt("wdata", width),
     inpt("clk", 1),
@@ -25,7 +25,9 @@ module_type* sr_buffer(block& blk, const int width, const int depth) {
   ss << minihls::tab(1) << "reg [" << width - 1 << ":0] data [" << depth - 1 << ":0];" << endl << endl;
   ss << minihls::tab(1) << "reg [" << width - 1 << ":0] rdata_d;" << endl << endl;
   ss << minihls::tab(1) << "reg [" << addr_width - 1 << ":0] waddr;" << endl << endl;
+  ss << minihls::tab(1) << "wire [" << addr_width - 1 << ":0] raddr;" << endl << endl;
 
+  ss << minihls::tab(1) << "assign raddr = DEPTH - 1;" << endl << endl;
   ss << minihls::tab(1) << "assign rdata = rdata_d;" << endl << endl;
   ss << minihls::tab(1) << "always @(posedge clk) begin" << endl;
 
@@ -68,7 +70,7 @@ module_type* sr_buffer(block& blk, const int width, const int depth) {
         rinstr,
         sr_type,
         "rdata",
-        {{0, "raddr"}});
+        {});
   rd_binding->latency = 1;
 
   return sr_type;
