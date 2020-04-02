@@ -6563,32 +6563,32 @@ void up_stencil_down_unrolled_test() {
 
 void exposure_fusion() {
   App lp;
+  // The off chip input we are reading from
   lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
   lp.func2d("in", "id", pt("in_off_chip"));
 
-  // Create synthetic exposures
+  // Two synthetic exposures
   lp.func2d("bright", "id", pt("in"));
   lp.func2d("dark", "scale_exposure", pt("in"));
 
-  // Compute weights
+  // Compute weights which measure the "quality" of
+  // pixels in each image
   lp.func2d("bright_weights", "exposure_weight", pt("bright"));
   lp.func2d("dark_weights", "exposure_weight", pt("dark"));
 
-  // Normalize weights
+  // Normalize weights so that the weight matrices entries sum to one
   lp.func2d("weight_sums", "add", {pt("dark_weights"), pt("bright_weights")});
   lp.func2d("bright_weights_normed", "f_divide", pt("bright_weights"), pt("weight_sums"));
   lp.func2d("dark_weights_normed", "f_divide", pt("dark_weights"), pt("weight_sums"));
 
 
-  // This works on camera pipeline
-  //string image = 
-    //lp.func2d("merged", "merge_exposures", {pt("bright"), pt("dark"), pt("bright_weights_normed"), pt("dark_weights_normed")});
-  //lp.func2d("synthetic_exposure_fusion", "id", pt(image));
-
-  // Create weight pyramids
+  // Create pyramids of the weights
   auto dark_weight_pyramid = gauss_pyramid(4, "dark_weights_normed", lp);
   auto bright_weight_pyramid = gauss_pyramid(4, "bright_weights_normed", lp);
 
+  // Create laplacian pyramids of the synthetic exposures
   auto dark_pyramid = laplace_pyramid(4, "dark", lp);
   auto bright_pyramid = laplace_pyramid(4, "bright", lp);
 
@@ -6601,7 +6601,7 @@ void exposure_fusion() {
     merged_images.push_back(fused);
   }
 
-  // Collapse the blended LP into a single design
+  // Collapse the blended pyramid into a single image
   assert(merged_images.size() == 4);
   string image = merged_images.back();
   for (int i = merged_images.size() - 2; i >= 0; i--) {
@@ -6612,9 +6612,7 @@ void exposure_fusion() {
 
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
-  //lp.func2d("synthetic_exposure_fusion", "id", pt("in"));
   int size = 200;
-  //1920;
   lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
   lp.realize_naive("pyramid_synthetic_exposure_fusion", size, size);
 
