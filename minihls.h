@@ -351,6 +351,12 @@ namespace minihls {
       }
   };
 
+  static inline
+    std::ostream& operator<<(std::ostream& out, const instruction_instance& instr) {
+      out << instr.get_name() << " = " << instr.tp->get_name();
+      return out;
+    }
+
   typedef instruction_instance instr;
 
   class schedule {
@@ -495,7 +501,7 @@ namespace minihls {
     vector<instruction_binding*> get_bindings(instruction_type* tp) const {
       vector<instruction_binding*> candidates;
       for (auto binding : context->instruction_bindings) {
-        cout << "binding: " << binding.second->get_name() << endl;
+        //cout << "binding: " << binding.second->get_name() << endl;
         if (binding.second->target_instr() == tp) {
           candidates.push_back(binding.second);
         }
@@ -548,6 +554,7 @@ namespace minihls {
     string get_name() const { return name; }
 
     int latency() const { return arch.sched.latency(); }
+    int num_stages() const { return arch.sched.num_stages(); }
 
     void eq(const string& a, const string& b, const int d) {
       extra_constraints.push_back({a, b, d});
@@ -747,6 +754,8 @@ namespace minihls {
           }
         }
       }
+
+      cout << "# of stages = " << num_stages() << endl;
     }
 
     instr* add_instr(const std::string& name, instruction_type* tp,
@@ -767,6 +776,9 @@ namespace minihls {
     instr* add_instruction_instance(const std::string& name, instruction_type* tp,
         const vector<instr*>& args) {
 
+      if (contains_key(name, instrs)) {
+        cout << "Error: Already have instruction named: " << name << endl;
+      }
       assert(!contains_key(name, instrs));
 
       auto instr = new instruction_instance();
@@ -884,6 +896,9 @@ namespace minihls {
 
     module_instance*
       get_module_instance_imprecise(const std::string& substring) const {
+        if (has_inst(substring)) {
+          return get_inst(substring);
+        }
         vector<module_instance*> candidates;
       for (auto n : instances) {
         if (contains(n.first, substring)) {

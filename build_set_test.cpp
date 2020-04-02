@@ -2848,6 +2848,7 @@ module_type* generate_rtl_buffer(CodegenOptions& options,
     auto dummy = in_wire_read(*blk, out_bundle US "dummy", buffer.port_bundle_width(out_bundle));
     out_wire_write(*blk, out_bundle US "rdata", buffer.port_bundle_width(out_bundle), dummy);
   }
+
   auto mod = minigen.compile(blk);
 
   for (auto out_bundle : buffer.get_in_bundles()) {
@@ -2872,10 +2873,20 @@ module_type* generate_rtl_buffer(CodegenOptions& options,
           mod,
           bundle US "rdata",
           {});
-    rd_bind->latency = 0;
+    rd_bind->latency = 1;
   }
 
   return mod;
+}
+
+vector<compute_kernel> writers(vector<compute_kernel>& kernels, const std::string& in_buf) {
+  vector<compute_kernel> ws;
+  for (auto k : kernels) {
+    if (k.output_buffer.first == in_buf) {
+      ws.push_back(k);
+    }
+  }
+  return ws;
 }
 
 void generate_verilog_code(CodegenOptions& options,
@@ -2884,6 +2895,31 @@ void generate_verilog_code(CodegenOptions& options,
     umap* schedmap,
     map<string, isl_set*>& domain_map,
     vector<compute_kernel>& kernels) {
+
+  vector<compute_kernel> sorted_kernels;
+  set<string> done;
+  while (sorted_kernels.size() < kernels.size()) {
+
+    for (auto k : kernels) {
+      if (!elem(k.name, done)) {
+        bool all_args_scheduled = true;
+        for (auto in_buf : k.input_buffers) {
+          for (auto writer : writers(kernels, in_buf.first)) {
+            if (!elem(writer.name, done)) {
+              all_args_scheduled = false;
+              break;
+            }
+          }
+        }
+        if (all_args_scheduled) {
+          sorted_kernels.push_back(k);
+          done.insert(k.name);
+        }
+      }
+    }
+
+    cout << "sorted kernels size = " << sorted_kernels.size() << endl;
+  }
 
   minihls::context minigen;
 
@@ -2895,7 +2931,7 @@ void generate_verilog_code(CodegenOptions& options,
 
   map<string, minihls::module_type*> operation_mods;
   map<string, minihls::instruction_type*> kernel_instrs;
-  for (auto op : kernels) {
+  for (auto op : sorted_kernels) {
     minihls::block* blk = minigen.add_block(op.name);
     auto res = wire_read(*blk, "src", 32);
     out_wire_write(*blk, "out", 32, res);
@@ -2924,13 +2960,17 @@ void generate_verilog_code(CodegenOptions& options,
   }
 
   vector<minihls::instruction_instance*> earlier;
-  for (auto instr : kernels) {
+  map<string, set<minihls::instruction_instance*> > earlier_writes;
+  map<pair<string, string>, minihls::instruction_instance*> reads;
+  map<string, minihls::instruction_instance*> reads_from_buffers;
+  for (auto instr : sorted_kernels) {
+    cout << "Kernel = " << instr.name << endl;
     auto instr_tp = map_find(instr.name, kernel_instrs);
 
-    map<pair<string, string>, minihls::instruction_instance*> reads;
     for (auto inbuf : instr.input_buffers) {
       reads[inbuf] =
         main_blk->call("buf_" + inbuf.first, inbuf.second);
+      reads_from_buffers[inbuf.first] = reads.at(inbuf);
     }
 
     auto instr_inst = main_blk->add_instruction_instance(instr.name, instr_tp);
@@ -2947,13 +2987,23 @@ void generate_verilog_code(CodegenOptions& options,
     string out_bundle = instr.output_buffer.second;
 
     auto write_inst = main_blk->call(out_buf, out_bundle);
+    earlier_writes[instr.output_buffer.first].insert(write_inst);
     main_blk->add_data_dependence(instr_inst, write_inst, 0);
 
     earlier.push_back(instr_inst);
     earlier.push_back(write_inst);
   }
 
+  //cout << "Earlier writes..." << endl;
+
+  for (auto rd : reads_from_buffers) {
+    for (auto wr : earlier_writes[rd.first]) {
+      main_blk->add_data_dependence(wr, rd.second, 0);
+    }
+  }
+
   compile(*main_blk);
+  //assert(false);
 }
 
 void generate_app_code(CodegenOptions& options,
@@ -7482,13 +7532,13 @@ void application_tests() {
   //reduce_1d_test();
 
   //up_stencil_down_unrolled_test();
+  denoise2d_test();
   mismatched_stencil_test();
-  assert(false);
+  //assert(false);
   jacobi2d_app_test();
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
 
-  denoise2d_test();
   exposure_fusion();
 
   grayscale_conversion_test();
