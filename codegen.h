@@ -34,7 +34,9 @@ module_instance* get_out_wire(block& blk, const string& name, int width) {
 
   module_type* wtp = out_wire_type(blk, name, width);
 
-  return blk.add_external_module_instance(name, wtp);
+  auto winst = blk.add_external_module_instance(name, wtp);
+  winst->print_name_at_interface = false;
+  return winst;
 }
 
 static inline

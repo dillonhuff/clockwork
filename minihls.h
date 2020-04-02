@@ -212,7 +212,11 @@ namespace minihls {
       port external(const port pt) const {
         assert(has_port(pt.name));
         port rev = reverse(pt);
-        rev.name = get_name() + "_" + rev.name;
+        if (print_name_at_interface) {
+          rev.name = get_name() + "_" + rev.name;
+        } else {
+          rev.name = rev.name;
+        }
         return rev;
       }
 

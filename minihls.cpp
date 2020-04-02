@@ -23,7 +23,6 @@ namespace minihls {
         if (m->is_external()) {
           for (auto pt : m->ports()) {
             pts.push_back(m->external(pt));
-            //pts.push_back(pt.system_verilog_type_string() + " " + m->get_name() + "_" + pt.get_name());
           }
         }
       }
