@@ -16,6 +16,17 @@ using minihls::module_instance;
 using minihls::port;
 
 static inline
+module_type* in_wire_type(block& blk, const string& name, const int width) {
+  string name = "in_wire_" + name;
+  if (blk.has_module_type(name)) {
+    return blk.get_module_type(name);
+  }
+
+  vector<port> pts{outpt(name, width)};
+  return blk.add_module_type(name, pts, body);
+}
+
+static inline
 module_type* wire_type(block& blk, const int width) {
   string name = "wire_" + to_string(width);
   if (blk.has_module_type(name)) {
@@ -26,6 +37,7 @@ module_type* wire_type(block& blk, const int width) {
   string body = tab(1) + "assign out = in;";
   return blk.add_module_type(name, pts, body);
 }
+
 static inline
 instruction_type* wr_wire_instr(block& blk, int width) {
   string name = "wr_wire_instr_" + to_string(width);

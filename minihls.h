@@ -942,7 +942,7 @@ namespace minihls {
         }
       }
 
-      out << "module " << blk.name << "(" << comma_list(pts) << ");" << endl;
+      out << "module " << blk.name << "(\n\t" << sep_list(pts, "", "", ",\n\t") << ");" << endl;
       out << endl;
 
       for (auto instr : blk.all_instrs()) {
