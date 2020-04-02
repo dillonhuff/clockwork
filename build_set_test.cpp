@@ -2860,20 +2860,25 @@ void generate_verilog_code(CodegenOptions& options,
   }
 
   map<string, minihls::module_type*> operation_mods;
-  //for (auto op : prg.all_ops()) {
+  map<string, minihls::instruction_type*> kernel_instrs;
   for (auto op : kernels) {
     minihls::block* blk = minigen.add_block(op.name);
+    auto res = wire_read(*blk, "src", 32);
+    wire_write(*blk, "out", 32, res);
+
     operation_mods[op.name] = minigen.compile(blk);
     auto blkmod = operation_mods[op.name];
     auto apply_instr =
       blk->add_instruction_type(op.name US "apply");
+    kernel_instrs[op.name] = apply_instr;
     auto apply_bind =
       blk->add_instruction_binding(op.name US "apply_binding",
           apply_instr,
           blkmod,
-          "out",
+          "out_in",
           {});
-    apply_bind->latency = blk->latency();
+    apply_bind->latency = 1;
+    //blk->latency();
   }
 
   auto main_blk = minigen.add_block(prg.name);
@@ -2881,8 +2886,15 @@ void generate_verilog_code(CodegenOptions& options,
     main_blk->add_module_instance("buf_" + b.second->get_name(), b.second);
   }
 
-  for (auto b : operation_mods) {
-    main_blk->add_module_instance("op_" + b.second->get_name(), b.second);
+  //for (auto b : operation_mods) {
+  vector<minihls::instruction_instance*> earlier;
+  for (auto instr : kernels) {
+    auto instr_tp = map_find(instr.name, kernel_instrs);
+    auto instr_inst = main_blk->add_instruction_instance(instr.name, instr_tp);
+    for (auto earlier_inst : earlier) {
+      main_blk->add_data_dependence(earlier_inst, instr_inst, 0);
+    }
+    earlier.push_back(instr_inst);
   }
 
   compile(*main_blk);

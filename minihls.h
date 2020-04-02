@@ -14,6 +14,7 @@ namespace minihls {
 
   class module_type;
   class block;
+  class instruction_binding;
 
   static inline
     std::string str(const int i) {
@@ -120,6 +121,7 @@ namespace minihls {
     public:
 
     map<string, module_type*> module_types;
+    map<string, instruction_binding*> instruction_bindings;
 
     module_type* add_module_type(const std::string& name, const vector<port>& pts, const std::string& body);
 
@@ -429,7 +431,7 @@ namespace minihls {
 
     map<string, instr*> instrs;
     map<string, module_instance*> instances;
-    map<string, instruction_binding*> instruction_bindings;
+    //map<string, instruction_binding*> instruction_bindings;
     map<string, instruction_type*> instruction_types;
 
     vector<constraint> extra_constraints;
@@ -489,7 +491,7 @@ namespace minihls {
 
     set<instruction_binding*> all_bindings() const {
       set<instruction_binding*> bs;
-      for (auto b : instruction_bindings) {
+      for (auto b : context->instruction_bindings) {
         bs.insert(b.second);
       }
       return bs;
@@ -646,12 +648,22 @@ namespace minihls {
       }
     }
 
-    instr* add_instr(const std::string& name, instruction_type* tp) {
-      vector<instr*> noargs;
-      return add_instr(name, tp, noargs);
+    instr* add_instr(const std::string& name, instruction_type* tp,
+        const vector<instr*>& args) {
+      return add_instruction_instance(name, tp, args);
     }
 
-    instr* add_instr(const std::string& name, instruction_type* tp,
+    instr* add_instr(const std::string& name, instruction_type* tp) {
+      vector<instr*> noargs;
+      return add_instruction_instance(name, tp, noargs);
+    }
+
+    instr* add_instruction_instance(const std::string& name, instruction_type* tp) {
+      vector<instr*> noargs;
+      return add_instruction_instance(name, tp, noargs);
+    }
+
+    instr* add_instruction_instance(const std::string& name, instruction_type* tp,
         const vector<instr*>& args) {
 
       assert(!contains_key(name, instrs));
@@ -692,17 +704,17 @@ namespace minihls {
         inst->output_wire = output_wire;
         inst->arg_map = arg_map;
         inst->latency = latency;
-        instruction_bindings[name] = inst;
+        context->instruction_bindings[name] = inst;
         return inst;
       }
 
     instruction_binding* get_instruction_binding(const std::string& name) const {
       assert(has_instruction_binding(name));
-      return map_find(name, instruction_bindings);
+      return map_find(name, context->instruction_bindings);
     }
 
     bool has_instruction_binding(const std::string& name) const {
-      return contains_key(name, instruction_bindings);
+      return contains_key(name, context->instruction_bindings);
     }
 
     instruction_type* add_instruction_type(const std::string& name) {
@@ -817,6 +829,10 @@ namespace minihls {
 
           if (!bound) {
             cout << "Error: No binding for " << instr->get_name() << endl;
+            cout << tab(1) << "Bindings considered..." << endl;
+            for (auto binding : blk.all_bindings()) {
+              cout << tab(2) << binding->get_name() << endl;
+            }
           }
           assert(bound);
         }

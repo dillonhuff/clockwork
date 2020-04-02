@@ -27,6 +27,26 @@ module_type* wire_type(block& blk, const int width) {
   return blk.add_module_type(name, pts, body);
 }
 static inline
+instruction_type* wr_wire_instr(block& blk, int width) {
+  string name = "wr_wire_instr_" + to_string(width);
+  if (blk.has_instruction_type(name)) {
+    return blk.get_instruction_type(name);
+  }
+
+  return blk.add_instruction_type(name);
+}
+
+static inline
+instruction_binding* wr_wire_binding(block& blk, int width) {
+  string name = "wr_wire_binding_" + to_string(width);
+  if (blk.has_instruction_binding(name)) {
+    return blk.get_instruction_binding(name);
+  }
+
+  return blk.add_instruction_binding(name, wr_wire_instr(blk, width), wire_type(blk, width), "", {{0, "in"}});
+}
+
+static inline
 instruction_type* rd_wire_instr(block& blk, int width) {
   string name = "rd_wire_instr_" + to_string(width);
   if (blk.has_instruction_type(name)) {
@@ -56,6 +76,25 @@ module_instance* get_wire(block& blk, const string& name, int width) {
 
   return blk.add_external_module_instance(name, wtp);
 }
+
+static inline
+instr* wire_write(block& blk, const string& arg_name, int width, instr* arg) {
+  module_instance* arg_wire =
+    get_wire(blk, arg_name, width);
+
+  instruction_binding* rd_wire = 
+    wr_wire_binding(blk, width);
+
+  instruction_type* instr_tp =
+    wr_wire_instr(blk, width);
+
+  auto instr = blk.add_instr(blk.unique_name("wr"), instr_tp, {arg});
+  instr->bind_procedure(rd_wire);
+  instr->bind_unit(arg_wire);
+
+  return instr;
+}
+
 static inline
 instr* wire_read(block& blk, const string& arg_name, int width) {
   module_instance* arg_wire =
