@@ -7547,9 +7547,10 @@ void application_tests() {
   //reduce_1d_test();
 
   //up_stencil_down_unrolled_test();
+  exposure_fusion();
+  assert(false);
   jacobi2d_app_test();
   //assert(false);
-  exposure_fusion();
   denoise2d_test();
   mismatched_stencil_test();
   //assert(false);
