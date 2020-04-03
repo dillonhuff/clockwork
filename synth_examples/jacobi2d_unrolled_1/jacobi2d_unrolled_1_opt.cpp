@@ -233,52 +233,24 @@ void jacobi2d_unrolled_1_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 *
 	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
 	
-	  int c0 = -1;
-	  int c1 = -1;
-	  int global_time = 0;
-	#ifdef __VIVADO_SYNTH__
-	  while(true) {
-	#else
-	  while(global_time < 2079604) {
-	#endif // __VIVADO_SYNTH__
+	for (int c0 = -1; c0 <= 1080; c0++) {
+	  for (int c1 = -1; c1 <= 1920; c1++) {
 	
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS dependence inter false
 	#pragma HLS pipeline II=1
 	#endif // __VIVADO_SYNTH__
 	
-	      if ((-1 <= c1 && c1 <= 1920) && ((c1 - 0) % 1 == 0) && (-1 <= c0 && c0 <= 1080) && ((c0 - 0) % 1 == 0)) {
+	    if ((-1 <= c1 && c1 <= 1920) && ((c1 - 0) % 1 == 0) && (-1 <= c0 && c0 <= 1080) && ((c0 - 0) % 1 == 0)) {
 	t1_update_0(t1_arg, t1, (c1 - 0) / 1, (c0 - 0) / 1);
-	      }
+	    }
 	
-	      if ((1 <= c1 && c1 <= 1920) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 1080) && ((c0 - 1) % 1 == 0)) {
+	    if ((1 <= c1 && c1 <= 1920) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 1080) && ((c0 - 1) % 1 == 0)) {
 	jacobi2d_unrolled_1_update_0(t1, jacobi2d_unrolled_1, (c1 - 1) / 1, (c0 - 1) / 1);
-	      }
+	    }
 	
-	    bool c0_at_max = c0 == 1080;
-	    bool c1_at_max = c1 == 1920;
-	    if (1 && c1_at_max) {
-	      if (c0_at_max) {
-	        c0 = -1;
-	      } else {
-	        c0++;
-	      }
-	    }
-	#ifndef __VIVADO_SYNTH__
-	    cout << "c0 = " << c0 << endl;
-	#endif //__VIVADO_SYNTH__
-	    if (1) {
-	      if (c1_at_max) {
-	        c1 = -1;
-	      } else {
-	        c1++;
-	      }
-	    }
-	#ifndef __VIVADO_SYNTH__
-	    cout << "c1 = " << c1 << endl;
-	#endif //__VIVADO_SYNTH__
-	    global_time++;
 	  }
+	}
 	
 #ifndef __VIVADO_SYNTH__
   debug_file.close();
