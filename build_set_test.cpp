@@ -2812,8 +2812,8 @@ module_type* generate_rtl_buffer(CodegenOptions& options,
       partitions[part.first] =
         bankprog->add_module_instance(part.first, part_tp);
 
-      read_partitions[part.first] =
-        bankprog->call(part.first, "read_instr");
+      //read_partitions[part.first] =
+        //bankprog->call(part.first, "read_instr");
     }
 
     auto bankmod = minigen.compile(bankprog);
@@ -7547,9 +7547,10 @@ void application_tests() {
   //reduce_1d_test();
 
   //up_stencil_down_unrolled_test();
-  jacobi2d_app_test();
-  assert(false);
   exposure_fusion();
+  assert(false);
+  jacobi2d_app_test();
+  //assert(false);
   denoise2d_test();
   mismatched_stencil_test();
   //assert(false);

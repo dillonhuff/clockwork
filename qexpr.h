@@ -1103,8 +1103,11 @@ std::string box_codegen(const vector<string>& op_order,
   reverse(bnds);
   cout << "Whole domain: " << whole_dom << endl;
   //assert(false);
-  //print_loops(0, ss, op_order, whole_dom, index_bounds, scheds);
-  print_while_loop(0, ss, op_order, whole_dom, index_bounds, scheds);
+  ss << "#ifdef __VIVADO_SYNTH__" << endl;
+  ss << "#pragma HLS inline recursive" << endl;
+  ss << "#endif // __VIVADO_SYNTH__" << endl << endl;
+  print_loops(0, ss, op_order, whole_dom, index_bounds, scheds);
+  //print_while_loop(0, ss, op_order, whole_dom, index_bounds, scheds);
 
   return ss.str();
 }
