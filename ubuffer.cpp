@@ -12,15 +12,15 @@ void UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2
         if (is_out) {
             string pt_name = origin_pt_name + "_out_" + std::to_string(new_pt_cnt);
             target_buf.port_bundles[bd_name].push_back(pt_name);
-            cout << "Original Schedule:"<< str(schedule.at(origin_pt_name)) << endl;
+            //cout << "Original Schedule:"<< str(schedule.at(origin_pt_name)) << endl;
             target_buf.add_out_pt(pt_name, range(to_map(rewrite_buf2op)), to_map(rewrite_access_map), schedule.at(origin_pt_name));
-        //FIXME: access pattern cannot be extracted because of the dim has no name
-        target_buf.add_access_pattern(pt_name, acc_pattern.op_name+"_vec", target_buf.name);
+            target_buf.add_access_pattern(pt_name, acc_pattern.op_name+"_vec", target_buf.name);
         }
         else {
             string pt_name = origin_pt_name + "_in_" + std::to_string(new_pt_cnt);
             target_buf.port_bundles[bd_name].push_back(pt_name);
             target_buf.add_in_pt(pt_name, range(to_map(rewrite_buf2op)), to_map(rewrite_access_map), schedule.at(origin_pt_name));
+            target_buf.add_access_pattern(pt_name, acc_pattern.op_name+"_vec", target_buf.name);
         }
         new_pt_cnt ++;
     }
@@ -74,8 +74,26 @@ void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuff
         for (auto out_pt_name : port_bundles.at(bd_name) ) {
             cout << "\tVectorize output port: " << out_pt_name << endl;
             auto acc_pattern = access_pattern.at(out_pt_name);
-            umap* outpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id);
+
+            auto acc_pattern_vec = acc_pattern.vectorization(dim_id, fetch_width);
+            std::cout << "before rewrite: " << acc_pattern << endl;
+
+            //produce the operation transfomation
+            isl_map* op_trans = acc_pattern.get_op_transform(ctx, dim_id, fetch_width);
+            std::cout << "transform rewrite: " << str(op_trans) << endl;
+
+            auto rewrite_buf2op = dot(inv(access_map.at(out_pt_name)), op_trans);
+            cout << "rewrite buffer to op map: " << str(access_map.at(out_pt_name)) << endl;
+
+            auto outpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id);
             cout << "Access map decouple reuse: " << str(outpt_acc_map) << endl;
+            tb.add_out_pt(out_pt_name+"_out", domain.at(out_pt_name), outpt_acc_map, access_map.at(out_pt_name));
+            tb.port_bundles[bd_name].push_back(out_pt_name + "_out");
+
+            //add out port to agg_buf
+            add_vectorized_pt_to_ubuf(tb, rewrite_buf2op, out_pt_name, bd_name, dim_id, fetch_width, false);
+            //add in port to sram
+            add_vectorized_pt_to_ubuf(sram, rewrite_buf2op, out_pt_name, bd_name, dim_id, fetch_width, true);
         }
     }
     assert(false);

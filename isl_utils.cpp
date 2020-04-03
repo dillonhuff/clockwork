@@ -236,15 +236,15 @@ isl_stat isl_pw_aff_get_var_id( isl_set *set,  isl_aff *aff, void *user) {
 
 	int n_div = isl_aff_dim(aff, isl_dim_in);
 	for (int i = 0; i < n_div; ++i) {
-        std::cout << i << "out of" << n_div <<  endl;
+        //std::cout << i << "out of" << n_div <<  endl;
 
 		if (!isl_aff_involves_dims(aff, isl_dim_in, i, 1))
         {
 			continue;
         }
-        std::cout << "reach here" << endl;
+        //std::cout << "reach here" << endl;
 		auto dim_name = isl_aff_get_dim_name(aff, isl_dim_in, i);
-        std::cout << dim_name << endl;
+        //std::cout << dim_name << endl;
         //0 is reserved for constant
         name2idx_related->insert(std::make_pair(string(dim_name), i));
 	}

@@ -106,7 +106,7 @@ class AccessPattern {
           return to_umap(its(access_map, domain));
       }
 
-      umap* get_access_map_and_decouple_reuse(isl_ctx* ctx, int dim_id) {
+      isl_map* get_access_map_and_decouple_reuse(isl_ctx* ctx, int dim_id) {
           vector<string> var_list(var_dim - 1);
           for (auto itr: name2idx) {
               if (itr.first == "const")
@@ -146,7 +146,7 @@ class AccessPattern {
           cout << "access map expr:" << nd_expr_str << endl;
           auto access_map = isl_map_read_from_str(ctx, string("{ " + op_name + vars + " -> " + buf_name + nd_expr_str + "}").c_str());
           auto domain = get_domain(ctx);
-          return to_umap(its(access_map, domain));
+          return its(access_map, domain);
       }
 
       void initial_access_mat(isl_map* access_map, isl_set* domain, isl_ctx* ctx) {
@@ -156,16 +156,14 @@ class AccessPattern {
               if (!isl_map_has_dim_id(access_map, isl_dim_in, i)) {
                   access_map = set_map_dim_name(ctx, access_map, i, "p"+to_string(i));
               }
-              cout << "has id:" << str(isl_map_get_dim_id(access_map, isl_dim_in, i)) << endl;
+              //cout << "has id:" << str(isl_map_get_dim_id(access_map, isl_dim_in, i)) << endl;
           }
 
           auto mpa = isl_pw_multi_aff_from_map(access_map);
-          cout << str(mpa) << endl;
           addr_dim = isl_pw_multi_aff_dim(mpa, isl_dim_out);
           map<string, int> var_related;
           for (int i = 0; i < addr_dim; i ++) {
               auto pa = isl_pw_multi_aff_get_pw_aff(mpa, i);
-              cout << i << str(pa) << endl;
               isl_pw_aff_foreach_piece(pa, &isl_pw_aff_get_var_id, &var_related);
           }
           var_related["const"] = -1;
@@ -211,7 +209,8 @@ class AccessPattern {
               out_range[i] = range_val;
               auto vec_stride = isl_set_get_stride(isl_map_range(cpy(access_map)), i);
               vec_stride_in_addr.push_back(isl_val_get_num_si(vec_stride));
-              int range_max = get_dim_max(isl_map_domain(inv(access_map)),i);
+              //int range_max = get_dim_max(isl_map_domain(inv(access_map)),i);
+              int range_max = get_dim_max(range(access_map),i);
               if (range_val == 1) {
                   start_addr[i] = range_max;
               }
