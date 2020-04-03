@@ -6690,7 +6690,8 @@ void exposure_fusion() {
 
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
-  int size = 200;
+  int size = 1250;
+    //200;
   lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
   lp.realize_naive("pyramid_synthetic_exposure_fusion", size, size);
 
