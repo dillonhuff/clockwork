@@ -2,7 +2,10 @@
 
 using namespace minihls;
 
+
 module_type* sr_buffer(block& blk, const int width, const int depth) {
+  assert(depth >= 1);
+
   string name = "sr_buffer_" + to_string(width) + "_" + minihls::str(depth);
   if (blk.has_module_type(name)) {
     return blk.get_module_type(name);
@@ -10,7 +13,7 @@ module_type* sr_buffer(block& blk, const int width, const int depth) {
 
   int addr_width = clog2(depth);
   vector<port> pts{
-    inpt("raddr", addr_width),
+    //inpt("raddr", addr_width),
     inpt("wen", 1),
     inpt("wdata", width),
     inpt("clk", 1),
@@ -23,7 +26,9 @@ module_type* sr_buffer(block& blk, const int width, const int depth) {
   ss << minihls::tab(1) << "reg [" << width - 1 << ":0] data [" << depth - 1 << ":0];" << endl << endl;
   ss << minihls::tab(1) << "reg [" << width - 1 << ":0] rdata_d;" << endl << endl;
   ss << minihls::tab(1) << "reg [" << addr_width - 1 << ":0] waddr;" << endl << endl;
+  ss << minihls::tab(1) << "wire [" << addr_width - 1 << ":0] raddr;" << endl << endl;
 
+  ss << minihls::tab(1) << "assign raddr = DEPTH - 1;" << endl << endl;
   ss << minihls::tab(1) << "assign rdata = rdata_d;" << endl << endl;
   ss << minihls::tab(1) << "always @(posedge clk) begin" << endl;
 
@@ -43,7 +48,33 @@ module_type* sr_buffer(block& blk, const int width, const int depth) {
 
   string body = ss.str();
 
-  return blk.add_module_type(name, pts, body);
+  // Instructions to write front and read back
+  auto sr_type = blk.add_module_type(name, pts, body);
+  string write_back = name US "write_back" US "instr";
+  auto wb = blk.add_instruction_type(write_back);
+
+  string wb_binding_name = name US "write_back_binding";
+  auto write_back_binding =
+    blk.add_instruction_binding(name,
+        wb,
+        sr_type,
+        "",
+        {{0, "wdata"}});
+  write_back_binding->latency = 1;
+  write_back_binding->en = "wen";
+
+  auto read = name US "read" US "instr";
+  auto rinstr = blk.add_instruction_type(read);
+  string rd_binding_name = read US "binding";
+  auto rd_binding =
+    blk.add_instruction_binding(name,
+        rinstr,
+        sr_type,
+        "rdata",
+        {});
+  rd_binding->latency = 1;
+
+  return sr_type;
 }
 
 minihls::module_type* gen_bank(minihls::block& blk, const bank& bnk) {

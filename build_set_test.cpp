@@ -2795,6 +2795,104 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
   return kernel;
 }
 
+module_type* generate_rtl_buffer(CodegenOptions& options,
+    minihls::context& minigen,
+    UBuffer& buffer) {
+
+  minihls::block* blk = minigen.add_block(buffer.name);
+  for (auto bank_struct : buffer.get_banks()) {
+    auto bankprog = minigen.add_block(bank_struct.name);
+
+    map<string, minihls::module_instance*> partitions;
+    for (auto part : bank_struct.get_partitions()) {
+      auto part_tp = sr_buffer(*bankprog,
+          32,
+          part.second);
+      partitions[part.first] =
+        bankprog->add_module_instance(part.first, part_tp);
+    }
+
+    auto bankmod = minigen.compile(bankprog);
+    blk->add_module_instance(bank_struct.name, bankmod);
+  }
+
+  for (auto osel : buffer.selectors) {
+    selector sel = osel.second;
+    vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
+    for (auto pt : sel.vars) {
+      ports.push_back(minihls::inpt(pt, 32));
+    }
+    ports.push_back(minihls::outpt("out", 32));
+
+    ostringstream body;
+    for (int i = 0; i < sel.bank_conditions.size(); i++) {
+      body << tab(1) << "always @(*) begin" << endl;
+      body << tab(2) << "if (" << sel.bank_conditions.at(i) << ") begin" << endl;
+      body << tab(3) << "out = " << sel.inner_bank_offsets.at(i) << ";" << endl;
+      body << tab(2) << "end" << endl;
+      body << tab(1) << "end" << endl;
+    }
+    auto ubufmod =
+      blk->add_module_type(sel.name, ports, body.str());
+    blk->add_module_instance("selector_" + sel.name,
+        ubufmod);
+  }
+
+
+  for (auto out_bundle : buffer.get_in_bundles()) {
+    // Here I need to get all banks which receive data from this bundle
+    // and write to them
+    in_wire_read(*blk, out_bundle US "wen", 1);
+    in_wire_read(*blk, out_bundle US "wdata", buffer.port_bundle_width(out_bundle));
+  }
+  
+  for (auto out_bundle : buffer.get_out_bundles()) {
+    auto dummy = in_wire_read(*blk, out_bundle US "dummy", buffer.port_bundle_width(out_bundle));
+    // Here I need to get all sources of this bundle and concatenate
+    // them together
+    out_wire_write(*blk, out_bundle US "rdata", buffer.port_bundle_width(out_bundle), dummy);
+  }
+
+  auto mod = minigen.compile(blk);
+
+  for (auto out_bundle : buffer.get_in_bundles()) {
+    auto wr_bundle =
+      blk->add_instruction_type(buffer.name US out_bundle US "write");
+    auto wr_bind =
+      blk->add_instruction_binding(buffer.name US out_bundle US "write_binding",
+          wr_bundle,
+          mod,
+          out_bundle US "wdata",
+          {});
+    wr_bind->latency = 1;
+    wr_bind->en = out_bundle US "wen";
+  }
+
+  for (auto bundle : buffer.get_out_bundles()) {
+    auto rd_bundle =
+      blk->add_instruction_type(buffer.name US bundle US "read");
+    auto rd_bind =
+      blk->add_instruction_binding(buffer.name US bundle US "read_binding",
+          rd_bundle,
+          mod,
+          bundle US "rdata",
+          {});
+    rd_bind->latency = 1;
+  }
+
+  return mod;
+}
+
+vector<compute_kernel> writers(vector<compute_kernel>& kernels, const std::string& in_buf) {
+  vector<compute_kernel> ws;
+  for (auto k : kernels) {
+    if (k.output_buffer.first == in_buf) {
+      ws.push_back(k);
+    }
+  }
+  return ws;
+}
+
 void generate_verilog_code(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -2802,61 +2900,121 @@ void generate_verilog_code(CodegenOptions& options,
     map<string, isl_set*>& domain_map,
     vector<compute_kernel>& kernels) {
 
+  vector<compute_kernel> sorted_kernels;
+  set<string> done;
+  while (sorted_kernels.size() < kernels.size()) {
+
+    for (auto k : kernels) {
+      if (!elem(k.name, done)) {
+        bool all_args_scheduled = true;
+        for (auto in_buf : k.input_buffers) {
+          for (auto writer : writers(kernels, in_buf.first)) {
+            if (!elem(writer.name, done)) {
+              all_args_scheduled = false;
+              break;
+            }
+          }
+        }
+        if (all_args_scheduled) {
+          sorted_kernels.push_back(k);
+          done.insert(k.name);
+        }
+      }
+    }
+
+    cout << "sorted kernels size = " << sorted_kernels.size() << endl;
+  }
+
   minihls::context minigen;
 
   map<string, minihls::module_type*> buffer_mods;
   for (auto& b : buffers) {
-    minihls::block* blk = minigen.add_block(b.first);
-    for (auto bank : b.second.get_banks()) {
-      minihls::module_type* bnk_mod =
-        gen_bank(*blk, bank);
-
-      blk->add_module_instance(bank.name,
-          bnk_mod);
-    }
-    for (auto osel : b.second.selectors) {
-      selector sel = osel.second;
-      vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
-      for (auto pt : sel.vars) {
-        ports.push_back(minihls::inpt(pt, 32));
-      }
-      ports.push_back(minihls::outpt("out", 32));
-
-      ostringstream body;
-      for (int i = 0; i < sel.bank_conditions.size(); i++) {
-        body << tab(1) << "always @(*) begin" << endl;
-        body << tab(2) << "if (" << sel.bank_conditions.at(i) << ") begin" << endl;
-        body << tab(3) << "out = " << sel.inner_bank_offsets.at(i) << ";" << endl;
-        body << tab(2) << "end" << endl;
-        body << tab(1) << "end" << endl;
-      }
-      auto ubufmod =
-        blk->add_module_type(sel.name, ports, body.str());
-      blk->add_module_instance("selector_" + sel.name,
-          ubufmod);
-    }
-
-    buffer_mods[b.first] = minigen.compile(blk);
-    
+    buffer_mods[b.first] =
+      generate_rtl_buffer(options, minigen, b.second);
   }
 
   map<string, minihls::module_type*> operation_mods;
-  for (auto op : prg.all_ops()) {
-    minihls::block* blk = minigen.add_block(op->name);
-    operation_mods[op->name] = minigen.compile(blk);
-  }
+  map<string, minihls::instruction_type*> kernel_instrs;
+  for (auto op : sorted_kernels) {
+    minihls::block* blk = minigen.add_block(op.name);
+    auto res = wire_read(*blk, "src", 32);
+    out_wire_write(*blk, "out", 32, res);
 
+    operation_mods[op.name] = minigen.compile(blk);
+    auto blkmod = operation_mods[op.name];
+    auto apply_instr =
+      blk->add_instruction_type(op.name US "apply");
+    kernel_instrs[op.name] = apply_instr;
+    auto apply_bind =
+      blk->add_instruction_binding(op.name US "apply_binding",
+          apply_instr,
+          blkmod,
+          "out",
+          {});
+    apply_bind->latency = 1;
+  }
 
   auto main_blk = minigen.add_block(prg.name);
   for (auto b : buffer_mods) {
-    main_blk->add_module_instance("buf_" + b.second->get_name(), b.second);
+    if (prg.is_boundary(b.first)) {
+      main_blk->add_external_module_instance("buf_" + b.second->get_name(), b.second);
+    } else {
+      main_blk->add_module_instance("buf_" + b.second->get_name(), b.second);
+    }
   }
 
-  for (auto b : operation_mods) {
-    main_blk->add_module_instance("op_" + b.second->get_name(), b.second);
+  vector<minihls::instruction_instance*> earlier;
+  map<string, set<minihls::instruction_instance*> > earlier_writes;
+  map<pair<string, string>, minihls::instruction_instance*> reads;
+  map<string, set<minihls::instruction_instance*> > reads_from_buffers;
+  for (auto instr : sorted_kernels) {
+    cout << "Kernel = " << instr.name << endl;
+    auto instr_tp = map_find(instr.name, kernel_instrs);
+
+    for (auto inbuf : instr.input_buffers) {
+      reads[inbuf] =
+        main_blk->call("buf_" + inbuf.first, inbuf.second);
+      reads_from_buffers[inbuf.first].insert(reads.at(inbuf));
+    }
+
+    auto instr_inst = main_blk->add_instruction_instance(instr.name, instr_tp);
+    //for (auto rd : reads) {
+      //main_blk->add_data_dependence(rd.second, instr_inst, 0);
+    //}
+
+    //for (auto earlier_inst : earlier) {
+      //main_blk->add_data_dependence(earlier_inst, instr_inst, 0);
+    //}
+
+    // Store the output to the result buffer
+    string out_buf = "buf_" + instr.output_buffer.first;
+    string out_bundle = instr.output_buffer.second;
+
+    auto write_inst = main_blk->call(out_buf, out_bundle);
+    earlier_writes[instr.output_buffer.first].insert(write_inst);
+    //main_blk->add_data_dependence(instr_inst, write_inst, 0);
+
+    earlier.push_back(instr_inst);
+    earlier.push_back(write_inst);
   }
+
+  auto instrs = main_blk->instruction_list();
+  for (int i = 0; i < instrs.size() - 1; i++) {
+    auto current = instrs[i];
+    auto next = instrs[i + 1];
+    main_blk->add_data_dependence(current, next, 0);
+  }
+
+  //for (auto rds : reads_from_buffers) {
+    //for (auto rd : rds.second) {
+      //for (auto wr : earlier_writes[rds.first]) {
+        //main_blk->add_data_dependence(wr, rd, 0);
+      //}
+    //}
+  //}
 
   compile(*main_blk);
+  //assert(false);
 }
 
 void generate_app_code(CodegenOptions& options,
@@ -4972,6 +5130,12 @@ struct App {
     return func2d(name, compute, {w});
   }
 
+  void unroll(const string& func, const int unroll_factor) {
+    assert(unroll_factor > 0);
+    assert(contains_key(func, app_dag));
+    app_dag.at(func).updates[0].unroll_factor = unroll_factor;
+  }
+
   Update last_update(const string& func) const {
     assert(contains_key(func, app_dag));
     assert(app_dag.at(func).updates.size() > 0);
@@ -5144,7 +5308,8 @@ struct App {
     return map_find(f, domain_boxes);
   }
 
-  void fill_compute_domain(const int unroll_factor) {
+  //void fill_compute_domain(const int unroll_factor) {
+  void fill_compute_domain() {
     int ndims = data_dimension();
     vector<string> data_vars;
     vector<string> later_data_vars;
@@ -5178,7 +5343,7 @@ struct App {
       for (auto update : app_dag.at(f).updates) {
         compute_maps[update.name()] =
           to_map(rdmap(ctx, "{ " + f + "[" + comma_list(data_vars) + " ] -> " +
-                update.name() + "[floor(d0 / " + to_string(unroll_factor) + "), " + comma_list(later_sched_vars) + "] }"));
+                update.name() + "[floor(d0 / " + to_string(update.unroll_factor) + "), " + comma_list(later_sched_vars) + "] }"));
 
         cout << "compute map for " << update.name() << " is " << str(compute_maps[update.name()]) << endl;
         compute_sets[update.name()] =
@@ -5250,6 +5415,7 @@ struct App {
   }
 
   void fill_data_domain(const std::string& name, const vector<int>& dims, const int unroll_factor) {
+  //void fill_data_domain(const std::string& name, const vector<int>& dims) {
 
     Box sbox;
     int max_dims = data_dimension();
@@ -5322,60 +5488,6 @@ struct App {
       domain_boxes[next] = final_dom;
     }
 
-    //string n = name;
-    //domain_boxes = {};
-    //domain_boxes[n] = sbox;
-
-    //set<string> search{n};
-    //set<string> considered;
-    //while (search.size() > 0) {
-      //string next = pick(search);
-      //search.erase(next);
-      //considered.insert(next);
-
-      //cout << "Next = " << next << endl;
-      //assert(contains_key(next, app_dag));
-      //assert(contains_key(next, domain_boxes));
-
-      //Box consumer_domain =
-        //map_find(next, domain_boxes);
-
-      //cout << "Adding " << next << " to domain boxes" << endl;
-      //for (auto inputs : producers(next)) {
-        //cout << "Getting producers..." << endl;
-        //Window win = inputs;
-
-        //if (!contains_key(inputs.name, domain_boxes)) {
-          //domain_boxes[inputs.name] = Box(max_dims);
-        //}
-        //Box in_box;
-        //int dim = 0;
-        //for (auto range : consumer_domain.intervals) {
-          //int min_result_addr = range.min;
-          //int max_result_addr = range.max;
-
-          //int min_input_addr = win.min_addr(dim, min_result_addr);
-          //int max_input_addr = win.max_addr(dim, max_result_addr);
-          //dim++;
-          //in_box.intervals.push_back({min_input_addr, max_input_addr});
-        //}
-
-        //cout << tab(1) << "Data: " << inputs.name << " to " << next << endl;
-        //domain_boxes[inputs.name] = unn(domain_boxes[inputs.name], in_box);
-        //domain_boxes[inputs.name] = domain_boxes[inputs.name].pad_range_to_nearest_multiple(unroll_factor);
-
-        //cout << tab(1) << "Added " << next << " domain to boxes" << endl;
-        //assert(contains_key(next, domain_boxes));
-
-        //if (!elem(inputs.name, considered)) {
-          //search.insert(inputs.name);
-        //} else {
-          //cout << tab(1) << "Ignoring " << inputs.name << ", already considered" << endl;
-        //}
-      //}
-
-      //cout << "Done with " << next << endl;
-    //}
 
     cout << domain_boxes.size() << " data domains.." << endl;
     assert(domain_boxes.size() == sort_functions().size());
@@ -5423,7 +5535,9 @@ struct App {
       for (auto up : f.second.updates) {
         if (up.name() == consumer) {
           for (auto src : up.get_srcs()) {
+            cout << "src: " << src << endl;
             if (src.name == producer) {
+              cout << "Got box" << endl;
               return src;
             }
           }
@@ -5601,14 +5715,14 @@ struct App {
     for (auto f : app_dag) {
       for (auto u : f.second.updates) {
         if (u.name() == update) {
-          return u.get_provided().unroll_cpy(unroll_factor);
+          //return u.get_provided().unroll_cpy(unroll_factor);
+          return u.get_provided().unroll_cpy(u.unroll_factor);
         }
       }
     }
     cout << "Error: No update named " << update << " in app" << endl;
     assert(false);
     return {};
-    //return map_find(f, app_dag).get_provided().unroll_cpy(unroll_factor);
   }
 
   Window data_window_needed_by_compute(const std::string& consumer,
@@ -5617,7 +5731,8 @@ struct App {
     return box_touched(consumer, producer).unroll_cpy(unroll_factor);
   }
 
-  map<string, UBuffer> build_buffers(umap* m, const int unroll_factor) {
+  //map<string, UBuffer> build_buffers(umap* m, const int unroll_factor) {
+  map<string, UBuffer> build_buffers(umap* m) {
     auto sorted_functions = sort_functions();
     vector<string> var_names;
     for (int i = 0; i < schedule_dimension(); i++) {
@@ -5640,7 +5755,8 @@ struct App {
         isl_union_map* sched =
           its(m, domain);
 
-        Window write_box = data_window_provided_by_compute(u.name(), unroll_factor);
+        //Window write_box = data_window_provided_by_compute(u.name(), unroll_factor);
+        Window write_box = data_window_provided_by_compute(u.name(), u.unroll_factor);
         int i = 0;
         cout << "Write box for: " << f << " has " << write_box.pts().size() << " points in it" << endl;
         for (auto p : write_box.pts()) {
@@ -5670,7 +5786,9 @@ struct App {
 
           cout << "Getting map from " << u.name() << " to " << consumer << endl;
 
-          Window f_win = data_window_needed_by_compute(u.name(), f, unroll_factor);
+          //Window f_win = data_window_needed_by_compute(u.name(), f, unroll_factor);
+          Window f_win = data_window_needed_by_compute(u.name(), f, u.unroll_factor);
+          cout << "f_win = " << f_win << endl;
 
           int i = 0;
           for (auto p : f_win.pts()) {
@@ -5714,11 +5832,12 @@ struct App {
     return buffers;
   }
 
-  map<string, UBuffer> build_buffers(umap* m) {
-    return build_buffers(m, 1);
-  }
+  //map<string, UBuffer> build_buffers(umap* m) {
+    //return build_buffers(m, 1);
+  //}
 
-  void populate_program(CodegenOptions& options, prog& prg, const string& name, umap* m, map<string, UBuffer>& buffers, const int unroll_factor) {
+  //void populate_program(CodegenOptions& options, prog& prg, const string& name, umap* m, map<string, UBuffer>& buffers, const int unroll_factor) {
+  void populate_program(CodegenOptions& options, prog& prg, const string& name, umap* m, map<string, UBuffer>& buffers) {
 
     uset* whole_dom =
       isl_union_set_read_from_str(ctx, "{}");
@@ -5761,10 +5880,12 @@ struct App {
               fargs.push_back(p.name);
             }
           }
-          if (unroll_factor == 1) {
+          //if (unroll_factor == 1) {
+          if (u.unroll_factor == 1) {
             op->add_function(u.compute_name());
           } else {
-            op->add_function(u.compute_name() + "_unrolled_" + to_string(unroll_factor));
+            //op->add_function(u.compute_name() + "_unrolled_" + to_string(unroll_factor));
+            op->add_function(u.compute_name() + "_unrolled_" + str(u.unroll_factor));
           }
           domain_map[u.name()] =
             compute_domain(u.name());
@@ -5795,9 +5916,11 @@ struct App {
 
   void realize_naive(CodegenOptions& options, const std::string& name, const int d0, const int d1) {
     const int unroll_factor = 1;
+    set_unroll_factors(unroll_factor);
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     fill_data_domain(name, d0, d1, unroll_factor);
-    fill_compute_domain(unroll_factor);
+    //fill_compute_domain(unroll_factor);
+    fill_compute_domain();
 
     umap* m =
       schedule_isl();
@@ -5814,7 +5937,7 @@ struct App {
     prog prg;
     prg.name = name + "_naive";
     prg.compute_unit_file = "conv_3x3.h";
-    populate_program(options, prg, name, m, buffers, 1);
+    populate_program(options, prg, name, m, buffers);
 
     return;
   }
@@ -5893,7 +6016,8 @@ struct App {
         vector<pair<int, string> > args_and_widths;
         for (auto p : producers(f)) {
           int arg_width = 32;
-          args_and_widths.push_back({arg_width*data_window_needed_by_compute(u.name(), p.name, unroll_factor).pts().size(), p.name});
+          //args_and_widths.push_back({arg_width*data_window_needed_by_compute(u.name(), p.name, unroll_factor).pts().size(), p.name});
+          args_and_widths.push_back({arg_width*data_window_needed_by_compute(u.name(), p.name, u.unroll_factor).pts().size(), p.name});
         }
 
         vector<string> arg_decls;
@@ -5902,21 +6026,26 @@ struct App {
         }
 
         string out_type_string = "hw_uint<" + to_string(out_width) + "> ";
-        cfile << out_type_string << " " << compute_name(f) << "_unrolled_" << unroll_factor << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+        //cfile << out_type_string << " " << compute_name(f) << "_unrolled_" << unroll_factor << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+        cfile << out_type_string << " " << compute_name(f) << "_unrolled_" << u.unroll_factor << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
         cfile << tab(1) << "hw_uint<" << out_width << "> whole_result;" << endl;
-        for (int lane = 0; lane < unroll_factor; lane++) {
+        //for (int lane = 0; lane < unroll_factor; lane++) {
+        for (int lane = 0; lane < u.unroll_factor; lane++) {
           vector<string> arg_names;
           for (auto arg : args_and_widths) {
 
             int arg_width = 32;
 
             string p = arg.second;
-            Window arg_input_window = data_window_needed_by_compute(u.name(), p, unroll_factor);
+            //Window arg_input_window = data_window_needed_by_compute(u.name(), p, unroll_factor);
+            Window arg_input_window = data_window_needed_by_compute(u.name(), p, u.unroll_factor);
             string arg_name = "lane_" + to_string(lane) + "_" + p;
 
             arg_names.push_back(arg_name);
+            cout << "getting window for " << u.name() << endl;
             Window win_needed =
               data_window_needed_by_compute(u.name(), p, 1).increment(lane);
+            cout << "Win needed: " << win_needed << endl;
 
             cfile << tab(1) << "hw_uint<" << win_needed.pts().size()*arg_width << "> " << arg_name << ";" << endl;
             int win_pos = 0;
@@ -5997,7 +6126,8 @@ struct App {
     string cgn = box_codegen(ops, scheds, compute_domains);
     //string cgn = "";
 
-    map<string, UBuffer> buffers = build_buffers(m, unroll_factor);
+    map<string, UBuffer> buffers = build_buffers(m);
+     //, unroll_factor);
 
     uset* whole_dom =
       isl_union_set_read_from_str(ctx, "{}");
@@ -6072,10 +6202,29 @@ struct App {
     return;
   }
 
+  void set_unroll_factors(const int unroll_factor) {
+    for (auto& r : app_dag) {
+      for (auto& u : r.second.updates) {
+        u.unroll_factor = unroll_factor;
+      }
+    }
+  }
+
+  void realize(const std::string& name, const int d0, const int d1) {
+    assert(false);
+    // TODO: REPLACE THIS
+    const int unroll_factor = 1;
+    //cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
+    fill_data_domain(name, d0, d1, unroll_factor);
+    fill_compute_domain();
+    schedule_and_codegen(name, unroll_factor);
+  }
+
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
+    set_unroll_factors(unroll_factor);
     fill_data_domain(name, d0, d1, unroll_factor);
-    fill_compute_domain(unroll_factor);
+    fill_compute_domain();
     schedule_and_codegen(name, unroll_factor);
   }
 
@@ -6292,6 +6441,20 @@ Window win(const std::string& name, const std::vector<vector<int > >& offsets) {
   return Window{name, strides, offsets};
 }
 
+Window stencil(int xl, int xr, int yl, int yr, const std::string& name) {
+  vector<vector<int> > offsets;
+  for (int i = xl; i <= xr; i++) {
+    for (int j = yl; j <= yr; j++) {
+      offsets.push_back({i, j});
+    }
+  }
+  return Window{name, {1, 1}, offsets};
+}
+
+Window downsample(const int factor, const std::string& name) {
+  return Window{name, {qconst(factor), qconst(factor)}, {{0, 0}}};
+}
+
 Window upsample(const int factor, const std::string& name) {
   return Window{name, {qconst(1, factor), qconst(1, factor)}, {{0, 0}}};
 }
@@ -6449,34 +6612,57 @@ vector<string> laplace_pyramid(const int num_levels, const string& func, App& ap
   return laplace_levels;
 }
 
-void exposure_fusion() {
+void up_stencil_down_unrolled_test() {
   App lp;
   lp.func2d("in_off_chip");
+  lp.func2d("in", "id", {pt("in_off_chip")});
+
+  lp.func2d("us", "id", {upsample(2, "in")});
+  lp.func2d("stencil", "conv_3_3", {stencil(-1, 1, -1, 1, "us")});
+  lp.func2d("ds", "id", {downsample(2, "stencil")});
+
+  int size = 16;
+  lp.realize_naive("ds", size, size);
+  auto naive = run_regression_tb("ds_naive");
+
+  lp.unroll("us", 4);
+  lp.unroll("stencil", 2);
+
+  lp.realize("ds", size, size);
+  auto opt = run_regression_tb("ds_opt");
+
+  assert(opt == naive);
+  assert(false);
+}
+
+void exposure_fusion() {
+  App lp;
+  // The off chip input we are reading from
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
   lp.func2d("in", "id", pt("in_off_chip"));
 
-  // Create synthetic exposures
+  // Two synthetic exposures
   lp.func2d("bright", "id", pt("in"));
   lp.func2d("dark", "scale_exposure", pt("in"));
 
-  // Compute weights
+  // Compute weights which measure the "quality" of
+  // pixels in each image
   lp.func2d("bright_weights", "exposure_weight", pt("bright"));
   lp.func2d("dark_weights", "exposure_weight", pt("dark"));
 
-  // Normalize weights
+  // Normalize weights so that the weight matrices entries sum to one
   lp.func2d("weight_sums", "add", {pt("dark_weights"), pt("bright_weights")});
   lp.func2d("bright_weights_normed", "f_divide", pt("bright_weights"), pt("weight_sums"));
   lp.func2d("dark_weights_normed", "f_divide", pt("dark_weights"), pt("weight_sums"));
 
 
-  // This works on camera pipeline
-  //string image = 
-    //lp.func2d("merged", "merge_exposures", {pt("bright"), pt("dark"), pt("bright_weights_normed"), pt("dark_weights_normed")});
-  //lp.func2d("synthetic_exposure_fusion", "id", pt(image));
-
-  // Create weight pyramids
+  // Create pyramids of the weights
   auto dark_weight_pyramid = gauss_pyramid(4, "dark_weights_normed", lp);
   auto bright_weight_pyramid = gauss_pyramid(4, "bright_weights_normed", lp);
 
+  // Create laplacian pyramids of the synthetic exposures
   auto dark_pyramid = laplace_pyramid(4, "dark", lp);
   auto bright_pyramid = laplace_pyramid(4, "bright", lp);
 
@@ -6489,7 +6675,7 @@ void exposure_fusion() {
     merged_images.push_back(fused);
   }
 
-  // Collapse the blended LP into a single design
+  // Collapse the blended pyramid into a single image
   assert(merged_images.size() == 4);
   string image = merged_images.back();
   for (int i = merged_images.size() - 2; i >= 0; i--) {
@@ -6500,9 +6686,7 @@ void exposure_fusion() {
 
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
-  //lp.func2d("synthetic_exposure_fusion", "id", pt("in"));
   int size = 200;
-  //1920;
   lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
   lp.realize_naive("pyramid_synthetic_exposure_fusion", size, size);
 
@@ -6775,7 +6959,7 @@ void upsample_stencil_1d_test() {
   //assert(false);
 }
 
-void jacobi_2d_app_test() {
+void jacobi2d_app_test() {
   App jac = jacobi2d("t0");
   jac.realize_naive("t0", 32, 28);
   jac.realize("t0", 32, 28, 1);
@@ -6791,7 +6975,14 @@ void jacobi_2d_app_test() {
   for (int i = 0; i < 3; i++) {
     int unroll_factor = pow(2, i);
     string out_name = "jacobi2d_unrolled_" + str(unroll_factor);
-    jacobi2d(out_name).realize(out_name, 1024, 1024, unroll_factor);
+    jacobi2d(out_name).realize(out_name, 1920, 1080, unroll_factor);
+    string synth_dir = 
+      "./synth_examples/" + out_name;
+    system(("mkdir " + synth_dir).c_str());
+    system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
+    system(("mv " + out_name + "*.h " + synth_dir).c_str());
+    system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
+    system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
   }
 
   //assert(false);
@@ -7344,38 +7535,33 @@ void blur_and_downsample_test() {
 }
 
 void application_tests() {
-  //jacobi_2d_4_test();
-  //assert(false);
 
   //synth_lb_test();
 
-  //memtile_test();
-
   //conv_app_rolled_reduce_test();
-  //exposure_fusion_simple_average();
  
   //reduce_1d_test();
 
-  denoise2d_test();
+  //up_stencil_down_unrolled_test();
   exposure_fusion();
-
-  //cout << "Exposure fusion passed" << endl;
-  //assert(false);
-
+  denoise2d_test();
   mismatched_stencil_test();
-  jacobi_2d_app_test();
+  //assert(false);
+  jacobi2d_app_test();
+  conv3x3_app_unrolled_test();
+  conv3x3_app_unrolled_uneven_test();
+
+
   grayscale_conversion_test();
   seidel2d_test();
   jacobi_2d_2_test();
   jacobi_2d_test();
   parse_denoise3d_test();
-  conv3x3_app_unrolled_test();
   conv3x3_app_test();
   conv3x3_app_test();
 
   conv3x3_app_unrolled_test();
   upsample2d_test();
-  conv3x3_app_unrolled_uneven_test();
   downsample2d_test();
   updown_merge_test();
   sobel_test();

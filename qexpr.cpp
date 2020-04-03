@@ -62,6 +62,10 @@ void print_while_loop(int level,
     map<string, vector<QExpr> >& scheds) {
 
 
+  out << "#ifdef __VIVADO_SYNTH__" << endl;
+  out << "#pragma HLS inline recursive" << endl;
+  out << "#endif // __VIVADO_SYNTH__" << endl << endl;
+
   int max_time = whole_dom.cardinality();
   vector<string> loop_counters;
   for (int i = 0; i < whole_dom.dimension(); i++) {

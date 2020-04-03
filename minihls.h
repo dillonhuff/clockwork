@@ -12,8 +12,19 @@ using namespace std;
 
 namespace minihls {
 
+  static inline
+    bool contains(const std::string& str, const std::string& sub) {
+      if (str.find(sub) != std::string::npos) {
+        return true;
+      }
+      return false;
+    }
+
+
   class module_type;
   class block;
+  class instruction_binding;
+  class instruction_type;
 
   static inline
     std::string str(const int i) {
@@ -22,7 +33,14 @@ namespace minihls {
 
   static inline
     int clog2(const int val) {
-      return ceil(log2(val));
+      if (val == 1) { return 1; }
+
+      int v = ceil(log2(val));
+      if (!(v >= 1)) {
+        cout << "clog2(" << val << ") = " << v << endl;
+      }
+      assert(v >= 1);
+      return v;
     }
 
   static inline
@@ -99,6 +117,12 @@ namespace minihls {
   };
 
   static inline
+    std::ostream& operator<<(std::ostream& out, const port pt) {
+      out << pt.system_verilog_decl_string() << " " << pt.name;
+      return out;
+    }
+
+  static inline
     port outpt(const string& s, const int w) {
       return {s, w, false};
     }
@@ -120,6 +144,8 @@ namespace minihls {
     public:
 
     map<string, module_type*> module_types;
+    map<string, instruction_binding*> instruction_bindings;
+    map<string, instruction_type*> instruction_types;
 
     module_type* add_module_type(const std::string& name, const vector<port>& pts, const std::string& body);
 
@@ -177,6 +203,12 @@ namespace minihls {
       string name;
       module_type* tp;
       bool internal;
+      bool print_name_at_interface;
+
+      module_instance() {
+        internal = false;
+        print_name_at_interface = true;
+      }
 
       module_type* get_type() const { return tp; }
 
@@ -184,10 +216,26 @@ namespace minihls {
         return tp->has_port(name);
       }
 
+      string external_name(const std::string& pt) const {
+        return external(get_port(pt)).name;
+      }
+
+      string external_name(const port& pt) const {
+        return external(pt).name;
+      }
+
+      port external(const std::string& pt) const {
+        return external(get_port(pt));
+      }
+
       port external(const port pt) const {
         assert(has_port(pt.name));
         port rev = reverse(pt);
-        rev.name = get_name() + "_" + rev.name;
+        if (print_name_at_interface) {
+          rev.name = get_name() + "_" + rev.name;
+        } else {
+          rev.name = rev.name;
+        }
         return rev;
       }
 
@@ -197,7 +245,11 @@ namespace minihls {
             return p;
           }
         }
-        cout << "Error: No port named " << n << endl;
+        cout << "Error: No port named " << n << " in " << get_name() << " of type " << tp->get_name() << endl;
+        cout << tab(1) << "ports..." << endl;
+        for (auto p : tp->ports) {
+          cout << tab(2) << p << endl;
+        }
         assert(false);
       }
 
@@ -299,6 +351,12 @@ namespace minihls {
       }
   };
 
+  static inline
+    std::ostream& operator<<(std::ostream& out, const instruction_instance& instr) {
+      out << instr.get_name() << " = " << instr.tp->get_name();
+      return out;
+    }
+
   typedef instruction_instance instr;
 
   class schedule {
@@ -326,6 +384,10 @@ namespace minihls {
         assert(utime >= 0);
 
         return utime;
+      }
+
+      int latency() const {
+        return num_stages()  - 1;
       }
 
       int num_stages() const {
@@ -425,8 +487,6 @@ namespace minihls {
 
     map<string, instr*> instrs;
     map<string, module_instance*> instances;
-    map<string, instruction_binding*> instruction_bindings;
-    map<string, instruction_type*> instruction_types;
 
     vector<constraint> extra_constraints;
 
@@ -438,7 +498,63 @@ namespace minihls {
 
     block() : un(0) {}
 
+    vector<instruction_binding*> get_bindings(instruction_type* tp) const {
+      vector<instruction_binding*> candidates;
+      for (auto binding : context->instruction_bindings) {
+        //cout << "binding: " << binding.second->get_name() << endl;
+        if (binding.second->target_instr() == tp) {
+          candidates.push_back(binding.second);
+        }
+      }
+      return candidates;
+    }
+
+    instruction_binding* get_binding(instruction_type* tp) const {
+      auto candidates = get_bindings(tp);
+      assert(candidates.size() == 1);
+      return candidates.at(0);
+    }
+
+    instruction_type* find_instruction_type(module_type* tp, const std::string& instr_substring) {
+      vector<instruction_type*> candidates;
+      for (auto it : context->instruction_types) {
+        if (contains(it.first, instr_substring)) {
+
+          vector<instruction_binding*> bindings =
+            get_bindings(it.second);
+          for (auto b : bindings) {
+            if (b->mod_type() == tp) {
+              candidates.push_back(it.second);
+            }
+          }
+        }
+      }
+
+      if (candidates.size() != 1) {
+        cout << "Error: " << candidates.size() << " potential instruction types containing " << instr_substring << " on " << tp->get_name() << endl;
+        cout << tab(1) << "candidates..." << endl;
+        for (auto c : candidates) {
+          cout << tab(2) << c->get_name() << endl;
+        }
+      }
+      assert(candidates.size() == 1);
+      return candidates.at(0);
+    }
+
+    instruction_instance* call(const std::string& instance_name, const std::string& instr_substring) {
+      module_instance* mod_inst = get_module_instance_imprecise(instance_name);
+      instruction_type* instr_tp =
+        find_instruction_type(mod_inst->tp, instr_substring);
+      auto inst = add_instr(unique_name(instr_tp->get_name()), instr_tp);
+      inst->bind_procedure(get_binding(instr_tp));
+      inst->bind_unit(mod_inst);
+      return inst;
+    }
+
     string get_name() const { return name; }
+
+    int latency() const { return arch.sched.latency(); }
+    int num_stages() const { return arch.sched.num_stages(); }
 
     void eq(const string& a, const string& b, const int d) {
       extra_constraints.push_back({a, b, d});
@@ -483,7 +599,7 @@ namespace minihls {
 
     set<instruction_binding*> all_bindings() const {
       set<instruction_binding*> bs;
-      for (auto b : instruction_bindings) {
+      for (auto b : context->instruction_bindings) {
         bs.insert(b.second);
       }
       return bs;
@@ -638,16 +754,31 @@ namespace minihls {
           }
         }
       }
-    }
 
-    instr* add_instr(const std::string& name, instruction_type* tp) {
-      vector<instr*> noargs;
-      return add_instr(name, tp, noargs);
+      cout << "# of stages = " << num_stages() << endl;
     }
 
     instr* add_instr(const std::string& name, instruction_type* tp,
         const vector<instr*>& args) {
+      return add_instruction_instance(name, tp, args);
+    }
 
+    instr* add_instr(const std::string& name, instruction_type* tp) {
+      vector<instr*> noargs;
+      return add_instruction_instance(name, tp, noargs);
+    }
+
+    instr* add_instruction_instance(const std::string& name, instruction_type* tp) {
+      vector<instr*> noargs;
+      return add_instruction_instance(name, tp, noargs);
+    }
+
+    instr* add_instruction_instance(const std::string& name, instruction_type* tp,
+        const vector<instr*>& args) {
+
+      if (contains_key(name, instrs)) {
+        cout << "Error: Already have instruction named: " << name << endl;
+      }
       assert(!contains_key(name, instrs));
 
       auto instr = new instruction_instance();
@@ -686,33 +817,33 @@ namespace minihls {
         inst->output_wire = output_wire;
         inst->arg_map = arg_map;
         inst->latency = latency;
-        instruction_bindings[name] = inst;
+        context->instruction_bindings[name] = inst;
         return inst;
       }
 
     instruction_binding* get_instruction_binding(const std::string& name) const {
       assert(has_instruction_binding(name));
-      return map_find(name, instruction_bindings);
+      return map_find(name, context->instruction_bindings);
     }
 
     bool has_instruction_binding(const std::string& name) const {
-      return contains_key(name, instruction_bindings);
+      return contains_key(name, context->instruction_bindings);
     }
 
     instruction_type* add_instruction_type(const std::string& name) {
       auto inst = new instruction_type();
       inst->name = name;
-      instruction_types[name] = inst;
+      context->instruction_types[name] = inst;
       return inst;
     }
 
     instruction_type* get_instruction_type(const std::string& name) const {
       assert(has_instruction_type(name));
-      return map_find(name, instruction_types);
+      return map_find(name, context->instruction_types);
     }
 
     bool has_instruction_type(const std::string& name) const {
-      return contains_key(name, instruction_types);
+      return contains_key(name, context->instruction_types);
     }
 
     set<module_type*> module_type_set() const {
@@ -760,6 +891,38 @@ namespace minihls {
     }
 
     module_instance* get_inst(const std::string& name) const {
+      return get_module_instance(name);
+    }
+
+    module_instance*
+      get_module_instance_imprecise(const std::string& substring) const {
+        if (has_inst(substring)) {
+          return get_inst(substring);
+        }
+        vector<module_instance*> candidates;
+      for (auto n : instances) {
+        if (contains(n.first, substring)) {
+          candidates.push_back(n.second);
+        }
+      }
+      if (!(candidates.size() == 1)) {
+        cout << "Error: " << candidates.size() << " module instances containing substring " << substring << endl;
+        for (auto c : candidates) {
+          cout << tab(1) << c->get_name() << endl;
+        }
+      }
+      assert(candidates.size() == 1);
+      return candidates.at(0);
+    }
+
+    module_instance* get_module_instance(const std::string& name) const {
+      if (!has_inst(name)) {
+        cout << "Error: No module named: " << name << endl;
+        cout << tab(1) << "candidates..." << endl;
+        for (auto inst : instances) {
+          cout << tab(2) << inst.first << endl;
+        }
+      }
       assert(has_inst(name));
       return map_find(name, instances);
     }
@@ -811,6 +974,10 @@ namespace minihls {
 
           if (!bound) {
             cout << "Error: No binding for " << instr->get_name() << endl;
+            cout << tab(1) << "Bindings considered..." << endl;
+            for (auto binding : blk.all_bindings()) {
+              cout << tab(2) << binding->get_name() << endl;
+            }
           }
           assert(bound);
         }
@@ -824,12 +991,16 @@ namespace minihls {
       for (auto m : blk.instance_set()) {
         if (m->is_external()) {
           for (auto pt : m->ports()) {
-            pts.push_back(pt.system_verilog_type_string() + " " + m->get_name() + "_" + pt.get_name());
+            if (m->print_name_at_interface) {
+              pts.push_back(pt.system_verilog_type_string() + " " + m->get_name() + "_" + pt.get_name());
+            } else {
+              pts.push_back(pt.system_verilog_type_string() + "_" + pt.get_name());
+            }
           }
         }
       }
 
-      out << "module " << blk.name << "(" << comma_list(pts) << ");" << endl;
+      out << "module " << blk.name << "(\n\t" << sep_list(pts, "", "", ",\n\t") << ");" << endl;
       out << endl;
 
       for (auto instr : blk.all_instrs()) {
@@ -992,4 +1163,5 @@ namespace minihls {
       emit_verilog(blk);
       emit_techlib(blk);
     }
+
 }

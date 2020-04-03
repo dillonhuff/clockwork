@@ -23,7 +23,6 @@ namespace minihls {
         if (m->is_external()) {
           for (auto pt : m->ports()) {
             pts.push_back(m->external(pt));
-            //pts.push_back(pt.system_verilog_type_string() + " " + m->get_name() + "_" + pt.get_name());
           }
         }
       }
@@ -136,7 +135,8 @@ namespace minihls {
           auto binding = bound_instr->get_binding();
 
           if (binding->output_wire != "") {
-            out << tab(1) << "assign " << bound_instr->get_name() << " = " << bound_instr->get_unit()->get_name() << "_" << binding->output_wire << ";" << endl;
+            //out << tab(1) << "assign " << bound_instr->get_name() << " = " << bound_instr->get_unit()->get_name() << "_" << binding->output_wire << ";" << endl;
+            out << tab(1) << "assign " << bound_instr->get_name() << " = " << bound_instr->get_unit()->external_name(binding->output_wire) << ";" << endl;
           }
 
           if (binding->en!= "") {
@@ -147,7 +147,8 @@ namespace minihls {
           for (auto b : binding->arg_map) {
             assert(bound_instr->operands.size() >= b.first);
             out << tab(1) << "assign "
-              << bound_instr->get_unit()->get_name() << "_" << b.second
+              << bound_instr->get_unit()->external_name(b.second)
+              //<< bound_instr->get_unit()->get_name() << "_" << b.second
               << " = "
               << blk.wire_at(bound_instr, bound_instr->operands.at(b.first))
               << ";" << endl;
@@ -181,5 +182,6 @@ namespace minihls {
       blocks[name] = blk;
       return blk;
     }
+
 
 }
