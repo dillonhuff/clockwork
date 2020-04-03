@@ -47,7 +47,6 @@ void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuff
             cout << "\tvectorize input port: " << in_pt_name << endl;
             auto acc_pattern = access_pattern.at(in_pt_name);
             auto acc_pattern_vec = acc_pattern.vectorization(dim_id, fetch_width);
-            string op_name = acc_pattern.op_name;
             std::cout << "before rewrite: " << acc_pattern << endl;
 
             //produce the operation transfomation
@@ -66,34 +65,20 @@ void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuff
             add_vectorized_pt_to_ubuf(agg_buf, rewrite_buf2op, in_pt_name, bd_name, dim_id, fetch_width, true);
             //add in port to sram
             add_vectorized_pt_to_ubuf(sram, rewrite_buf2op, in_pt_name, bd_name, dim_id, fetch_width, false);
-
-            //Put this into a function
-            /*auto constraint_slices = acc_pattern.get_buf_slice(ctx, "agg", dim_id, fetch_width);
-            size_t new_pt_cnt = 0;
-            for (auto slice : constraint_slices) {
-                cout << "Constraint: " << str(slice) << endl;
-                cout << "Rewrited Access Map" << str(simplify(dot(inv(rewrite_buf2op), slice))) << endl;
-                //rewrite_access_map.push_back(dot(inv(rewrite_buf2op), slice));
-                auto rewrite_access_map = dot(inv(rewrite_buf2op), slice);
-                auto pma = isl_pw_multi_aff_from_map(to_map(rewrite_access_map));
-                vector<string> var_list = {"root", "po", "pi_vec"};
-                for (int i = 0; i < 2; i ++) {
-                    auto pa = isl_pw_multi_aff_get_pw_aff(pma, i);
-                    isl_pw_aff_foreach_piece(pa, &isl_pw_aff_set_var_name, &var_list);
-                    cout << str(pa) << endl << str(pma) << endl;
-                }
-                string pt_name = in_pt_name + "_out_" + std::to_string(new_pt_cnt);
-
-                agg_buf.add_out_pt(pt_name, range(to_map(rewrite_buf2op)), to_map(rewrite_access_map), schedule.at(in_pt_name));
-                //FIXME: access pattern cannot be extracted because of the dim has no name
-                //agg_buf.add_access_pattern(pt_name, op_name+"_vec", agg_buf.name);
-                new_pt_cnt ++;
-                agg_buf.port_bundles[bd_name + "_out"].push_back(pt_name);
-            }*/
-            assert(false);
-
        }
     }
+
+    vector<string> out_bundle = get_out_bundles();
+    for (auto bd_name: out_bundle) {
+        cout << "Vectorize output port bundle: " << bd_name << endl;
+        for (auto out_pt_name : port_bundles.at(bd_name) ) {
+            cout << "\tVectorize output port: " << out_pt_name << endl;
+            auto acc_pattern = access_pattern.at(out_pt_name);
+            umap* outpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id);
+            cout << "Access map decouple reuse: " << str(outpt_acc_map) << endl;
+        }
+    }
+    assert(false);
     //TODO: need create a pass to get schedule
     cout << agg_buf.get_out_ports() << endl;
     cout <<"\tAGG buffer param:" << agg_buf << endl;

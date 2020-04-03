@@ -64,9 +64,17 @@ class AccessPattern {
           return isl_set_read_from_str(ctx, string("{ " + op_name + vars + " : " + ds + "}").c_str());
       }
 
+      string get_expr(size_t item, size_t cnt, vector<string> var_list) {
+          if (item == 1) {
+              return var_list[cnt];
+          }
+          else {
+              return std::to_string(item) + "*" + var_list[cnt];
+          }
+      }
+
       umap* get_access_map(isl_ctx* ctx) {
           vector<string> var_list(var_dim-1);
-          vector<string> expr_list;
           for (auto itr: name2idx) {
               if (itr.first == "const")
                   continue;
@@ -82,12 +90,7 @@ class AccessPattern {
                   if (item == 0 ) {
                       continue;
                   }
-                  else if(item == 1) {
-                      sum_list.push_back(var_list[cnt]);
-                  }
-                  else{
-                      sum_list.push_back(std::to_string(item) + "*" + var_list[cnt]);
-                  }
+                  sum_list.push_back(get_expr(item, cnt, var_list));
               }
 
               //const
@@ -95,6 +98,49 @@ class AccessPattern {
                   sum_list.push_back(std::to_string(row.front()));
               }
               nd_expr.push_back(sep_list(sum_list, "", "", "+"));
+          }
+          string nd_expr_str = sep_list(nd_expr, "[", "]", ", ");
+          cout << "access map expr:" << nd_expr_str << endl;
+          auto access_map = isl_map_read_from_str(ctx, string("{ " + op_name + vars + " -> " + buf_name + nd_expr_str + "}").c_str());
+          auto domain = get_domain(ctx);
+          return to_umap(its(access_map, domain));
+      }
+
+      umap* get_access_map_and_decouple_reuse(isl_ctx* ctx, int dim_id) {
+          vector<string> var_list(var_dim - 1);
+          for (auto itr: name2idx) {
+              if (itr.first == "const")
+                  continue;
+              var_list[itr.second-1] = itr.first;
+          }
+          auto vars = sep_list(var_list, "[", "]", "," );
+          vector<string> nd_expr;
+          for (size_t row_cnt = 0; row_cnt < access_matrix.size(); row_cnt ++) {
+              auto row = access_matrix[row_cnt];
+              vector<string> sum_list;
+              for(auto itr = row.begin() + 1; itr != row.end(); itr ++) {
+                  int item = *itr;
+                  int cnt = itr - row.begin() - 1;
+                  if (item == 0)
+                      continue;
+                  if (row_cnt < dim_id) {
+                      nd_expr.push_back(get_expr(item, cnt, var_list));
+                  }
+                  else {
+                    sum_list.push_back(get_expr(item, cnt, var_list));
+                  }
+              }
+              if (row_cnt >= dim_id) {
+                //only add const offset when it inside the vectorize dimension const
+                if (sum_list.size() == 0 || (row.front() != 0)) {
+                  sum_list.push_back(std::to_string(row.front()));
+                }
+                nd_expr.push_back(sep_list(sum_list, "", "", "+"));
+              }
+              else {
+                  if (sum_list.size() == 0 || (row.front() != 0))
+                      nd_expr.push_back(std::to_string(row.front()));
+              }
           }
           string nd_expr_str = sep_list(nd_expr, "[", "]", ", ");
           cout << "access map expr:" << nd_expr_str << endl;
