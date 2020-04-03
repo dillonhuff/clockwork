@@ -2338,6 +2338,9 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       isl_map* produced_here =
         its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + produced.second + "]" + " }").c_str()), cpy(domains.at(op)));
 
+      //cout << get_out_dim(produced_here) << get_in_dim(produced_here) << endl << domain_name(produced_here) << ", " << range_name(produced_here)<< endl;
+      //assert(false);
+
       buf.add_in_pt(pt_name, domains.at(op), produced_here, its(opt_sched, domains.at(op)));
       buf.add_access_pattern(pt_name, op->name, buf.name);
       cout << "Finished add access pattern!" << endl;

@@ -96,6 +96,10 @@ std::string domain_name(isl_space* const s);
 
 std::string range_name(isl_space* const s);
 
+std::string domain_name(isl_map* const m);
+
+std::string range_name(isl_map* const m);
+
 isl_union_set* to_uset(isl_set* const m);
 
 isl_stat get_maps(isl_map* m, void* user);
@@ -116,6 +120,10 @@ isl_stat isl_pw_aff_get_var_id( isl_set *set,  isl_aff *aff, void *user);
 isl_stat isl_pw_aff_set_var_name( isl_set *set,  isl_aff *aff, void *user);
 
 isl_map* set_map_dim_name(isl_ctx* ctx, isl_map* m, unsigned pos, const string& name);
+
+unsigned get_in_dim(isl_map* const m);
+
+unsigned get_out_dim(isl_map* const m);
 
 int get_dim_min(isl_set* const m, int pos);
 
@@ -289,6 +297,7 @@ isl_union_set* simplify(uset* const m);
 isl_map* simplify(isl_map* const m);
 
 umap* simplify(umap* const m);
+
 isl_union_pw_qpolynomial* coalesce(isl_union_pw_qpolynomial* const m);
 
 isl_union_set* coalesce(isl_union_set* const m0);

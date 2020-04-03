@@ -142,6 +142,14 @@ std::string range_name(isl_space* const s) {
   return std::string(isl_id_to_str(isl_space_get_tuple_id(s, isl_dim_out)));
 }
 
+std::string domain_name(isl_map* const m) {
+    return std::string(isl_id_to_str(isl_map_get_tuple_id(m, isl_dim_in)));
+}
+
+std::string range_name(isl_map* const m) {
+    return std::string(isl_id_to_str(isl_map_get_tuple_id(m, isl_dim_out)));
+}
+
 isl_union_set* to_uset(isl_set* const m) {
   return isl_union_set_from_set(cpy(m));
 }
@@ -255,6 +263,14 @@ isl_stat isl_pw_aff_set_var_name( isl_set *set, isl_aff *aff, void *user) {
 isl_map* set_map_dim_name(isl_ctx* ctx, isl_map* m, unsigned pos, const string& name) {
     isl_id* name_id = id(ctx, name);
     return isl_map_set_dim_id(m, isl_dim_in, pos, name_id);
+}
+
+unsigned get_in_dim(isl_map* const m) {
+    return isl_map_dim(cpy(m), isl_dim_in);
+}
+
+unsigned get_out_dim(isl_map* const m) {
+    return isl_map_dim(cpy(m), isl_dim_out);
 }
 
 int get_dim_min(isl_set* const m, int pos) {
@@ -964,6 +980,7 @@ isl_union_set* range(isl_union_map* const m) {
 isl_set* range(isl_map* const m) {
   return isl_map_range(cpy(m));
 }
+
 
 isl_set* domain(isl_map* const m) {
   return isl_map_domain(cpy(m));

@@ -723,6 +723,19 @@ class UBuffer {
       assert(false);
     }
 
+    //ppint the same access pattern to a different buffer domain
+    isl_map* remap_access_to_new_buffer(string pt_name, string suffix) {
+        auto origin_map = access_map.at(pt_name);
+        string new_buf_name = name + suffix;
+        vector<string> addr_var;
+        for (size_t i = 0; i < get_out_dim(to_map(origin_map)); i ++) {
+            addr_var.push_back("p" + to_string(i));
+        }
+        string vars = sep_list(addr_var, "[", "]", ",");
+        isl_map* buf_map = isl_map_read_from_str(ctx, string("{" + name + vars + " -> " + new_buf_name + vars + "}").c_str());
+        return to_map(dot(origin_map, buf_map));
+    }
+
     //change the input and output and return the agg and tb ubuffer stucture
     void vectorization(int dim_id, int fetch_width, UBuffer& agg, UBuffer& sram, UBuffer& tb);
 
