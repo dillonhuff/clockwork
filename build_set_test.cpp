@@ -2978,13 +2978,13 @@ void generate_verilog_code(CodegenOptions& options,
     }
 
     auto instr_inst = main_blk->add_instruction_instance(instr.name, instr_tp);
-    for (auto rd : reads) {
-      main_blk->add_data_dependence(rd.second, instr_inst, 0);
-    }
+    //for (auto rd : reads) {
+      //main_blk->add_data_dependence(rd.second, instr_inst, 0);
+    //}
 
-    for (auto earlier_inst : earlier) {
-      main_blk->add_data_dependence(earlier_inst, instr_inst, 0);
-    }
+    //for (auto earlier_inst : earlier) {
+      //main_blk->add_data_dependence(earlier_inst, instr_inst, 0);
+    //}
 
     // Store the output to the result buffer
     string out_buf = "buf_" + instr.output_buffer.first;
@@ -2992,19 +2992,26 @@ void generate_verilog_code(CodegenOptions& options,
 
     auto write_inst = main_blk->call(out_buf, out_bundle);
     earlier_writes[instr.output_buffer.first].insert(write_inst);
-    main_blk->add_data_dependence(instr_inst, write_inst, 0);
+    //main_blk->add_data_dependence(instr_inst, write_inst, 0);
 
     earlier.push_back(instr_inst);
     earlier.push_back(write_inst);
   }
 
-  for (auto rds : reads_from_buffers) {
-    for (auto rd : rds.second) {
-      for (auto wr : earlier_writes[rds.first]) {
-        main_blk->add_data_dependence(wr, rd, 0);
-      }
-    }
+  auto instrs = main_blk->instruction_list();
+  for (int i = 0; i < instrs.size() - 1; i++) {
+    auto current = instrs[i];
+    auto next = instrs[i + 1];
+    main_blk->add_data_dependence(current, next, 0);
   }
+
+  //for (auto rds : reads_from_buffers) {
+    //for (auto rd : rds.second) {
+      //for (auto wr : earlier_writes[rds.first]) {
+        //main_blk->add_data_dependence(wr, rd, 0);
+      //}
+    //}
+  //}
 
   compile(*main_blk);
   assert(false);
