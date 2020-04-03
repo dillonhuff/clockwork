@@ -589,6 +589,10 @@ void jacobi2d_unrolled_4_opt(HWStream<hw_uint<128> >& /* get_args num ports = 4 
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=t1 inter false
 #endif //__VIVADO_SYNTH__
+	#ifdef __VIVADO_SYNTH__
+	#pragma HLS inline recursive
+	#endif // __VIVADO_SYNTH__
+	
 	  int c0 = -1;
 	  int c1 = -1;
 	  int global_time = 0;

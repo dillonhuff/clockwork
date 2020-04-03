@@ -657,7 +657,7 @@ namespace minihls {
       }
 
       for (pair<string, instr*> instr : instrs) {
-        cout << "Adding instruction to graph" << endl;
+        //cout << "Adding instruction to graph" << endl;
         auto i = instr.second;
         constraints.add_node(startstr(i));
         constraints.add_node(endstr(i));

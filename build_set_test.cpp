@@ -2804,12 +2804,16 @@ module_type* generate_rtl_buffer(CodegenOptions& options,
     auto bankprog = minigen.add_block(bank_struct.name);
 
     map<string, minihls::module_instance*> partitions;
+    map<string, minihls::instruction_instance*> read_partitions;
     for (auto part : bank_struct.get_partitions()) {
       auto part_tp = sr_buffer(*bankprog,
           32,
           part.second);
       partitions[part.first] =
         bankprog->add_module_instance(part.first, part_tp);
+
+      read_partitions[part.first] =
+        bankprog->call(part.first, "read_instr");
     }
 
     auto bankmod = minigen.compile(bankprog);
@@ -7543,11 +7547,12 @@ void application_tests() {
   //reduce_1d_test();
 
   //up_stencil_down_unrolled_test();
+  jacobi2d_app_test();
+  assert(false);
   exposure_fusion();
   denoise2d_test();
   mismatched_stencil_test();
   //assert(false);
-  jacobi2d_app_test();
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
 

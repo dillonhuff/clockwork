@@ -314,6 +314,9 @@ inline void t1_t1_update_0_write_bundle_write(hw_uint<64>& t1_update_0_write, t1
 
 // Operation logic
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/master
 inline void t1_update_0(HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */t1_arg, t1_cache& t1, int d0, int d1) {
 	// Consume: t1_arg
 	auto t1_arg_0_c__0_value = t1_arg.read();
@@ -325,6 +328,9 @@ inline void t1_update_0(HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */t
 #endif //__VIVADO_SYNTH__
 }
 
+<<<<<<< HEAD
+=======
+>>>>>>> origin/master
 =======
 >>>>>>> origin/master
 inline void jacobi2d_unrolled_2_update_0(t1_cache& t1, HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */jacobi2d_unrolled_2, int d0, int d1) {
@@ -342,6 +348,7 @@ inline void jacobi2d_unrolled_2_update_0(t1_cache& t1, HWStream<hw_uint<64> >& /
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 inline void t1_update_0(HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */t1_arg, t1_cache& t1, int d0, int d1) {
 	// Consume: t1_arg
@@ -355,6 +362,8 @@ inline void t1_update_0(HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */t
 }
 
 >>>>>>> origin/master
+=======
+>>>>>>> origin/master
 // Driver function
 void jacobi2d_unrolled_2_opt(HWStream<hw_uint<64> >& /* get_args num ports = 2 */t1_arg, HWStream<hw_uint<64> >& /* get_args num ports = 2 */jacobi2d_unrolled_2) {
 
@@ -366,6 +375,10 @@ void jacobi2d_unrolled_2_opt(HWStream<hw_uint<64> >& /* get_args num ports = 2 *
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=t1 inter false
 #endif //__VIVADO_SYNTH__
+	#ifdef __VIVADO_SYNTH__
+	#pragma HLS inline recursive
+	#endif // __VIVADO_SYNTH__
+	
 	  int c0 = -1;
 	  int c1 = -1;
 	  int global_time = 0;
