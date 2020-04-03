@@ -3014,7 +3014,7 @@ void generate_verilog_code(CodegenOptions& options,
   //}
 
   compile(*main_blk);
-  assert(false);
+  //assert(false);
 }
 
 void generate_app_code(CodegenOptions& options,
@@ -7543,6 +7543,7 @@ void application_tests() {
   //reduce_1d_test();
 
   //up_stencil_down_unrolled_test();
+  exposure_fusion();
   denoise2d_test();
   mismatched_stencil_test();
   //assert(false);
@@ -7550,7 +7551,6 @@ void application_tests() {
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
 
-  exposure_fusion();
 
   grayscale_conversion_test();
   seidel2d_test();
