@@ -1211,13 +1211,12 @@ std::string codegen_c(isl_set* const s) {
   isl_set_foreach_basic_set(s, bset_collect_constraints, &code_holder);
   vector<string> set_strings;
   for (auto hc : code_holder) {
-    //set_strings.push_back(codegen_c_constraint(hc));
     set_strings.push_back(codegen_c(hc));
   }
   if (set_strings.size() == 0) {
     return "true";
   }
-  return sep_list(set_strings, "(", ")", " && ");
+  return sep_list(set_strings, "(", ")", " || ");
 }
 
 std::string codegen_c(isl_union_set* s) {

@@ -164,6 +164,7 @@ isl_ctx* ctx(isl_pw_qpolynomial_fold* const m);
 
 isl_ctx* ctx(isl_pw_qpolynomial* const m);
 
+std::string codegen_c(isl_union_set* s);
 std::string codegen_c(isl_set* const bset);
 std::string codegen_c(isl_constraint* const bset);
 

@@ -986,6 +986,7 @@ selector generate_select(CodegenOptions& options, std::ostream& out, const strin
     cout << tab(2) << "read overlap  : " << str(overlapped_reads) << endl;
     cout << tab(2) << "overlap set   : " << str(overlapped_read_set) << endl;
     cout << tab(2) << "overlap test  : " << str(overlapped_read_condition) << endl;
+    cout << tab(2) << "overlap C     : " << codegen_c(overlapped_read_condition) << endl;
     //auto deps = dot(buf.access_map.at(inpt), inv(buf.access_map.at(outpt)));
     //cout << tab(2) << "deps: " << str(deps) << endl;
   }
