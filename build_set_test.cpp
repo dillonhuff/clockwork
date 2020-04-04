@@ -5729,10 +5729,16 @@ struct App {
     return {};
   }
 
+  Window data_window_needed_by_one_compute_lane(const std::string& consumer,
+      const std::string& producer) {
+    return box_touched(consumer, producer);
+  }
+
   Window data_window_needed_by_compute(const std::string& consumer,
-      const std::string& producer,
-      const int unroll_factor) {
-    return box_touched(consumer, producer).unroll_cpy(unroll_factor);
+      const std::string& producer) {
+      //const int unroll_factor) {
+    //return box_touched(consumer, producer).unroll_cpy(unroll_factor);
+    return box_touched(consumer, producer).unroll_cpy(get_update(consumer).unroll_factor);
   }
 
   //map<string, UBuffer> build_buffers(umap* m, const int unroll_factor) {
@@ -5792,7 +5798,7 @@ struct App {
           cout << "Getting map from " << u.name() << " to " << consumer << endl;
 
           //Window f_win = data_window_needed_by_compute(u.name(), f, unroll_factor);
-          Window f_win = data_window_needed_by_compute(u.name(), f, u.unroll_factor);
+          Window f_win = data_window_needed_by_compute(u.name(), f);
           cout << "f_win = " << f_win << endl;
 
           int i = 0;
@@ -6018,6 +6024,7 @@ struct App {
       }
 
       for (auto u : app_dag.at(f).updates) {
+        cfile << tab(1) << "// " << u.name() << " unroll factor: " << u.unroll_factor << endl;
         int fwidth = 32;
         //int out_width = unroll_factor*fwidth;
         int out_width = u.unroll_factor*fwidth;
@@ -6025,7 +6032,7 @@ struct App {
         for (auto p : producers(f)) {
           int arg_width = 32;
           //args_and_widths.push_back({arg_width*data_window_needed_by_compute(u.name(), p.name, unroll_factor).pts().size(), p.name});
-          args_and_widths.push_back({arg_width*data_window_needed_by_compute(u.name(), p.name, u.unroll_factor).pts().size(), p.name});
+          args_and_widths.push_back({arg_width*data_window_needed_by_compute(u.name(), p.name).pts().size(), p.name});
         }
 
         vector<string> arg_decls;
@@ -6046,13 +6053,13 @@ struct App {
 
             string p = arg.second;
             //Window arg_input_window = data_window_needed_by_compute(u.name(), p, unroll_factor);
-            Window arg_input_window = data_window_needed_by_compute(u.name(), p, u.unroll_factor);
+            Window arg_input_window = data_window_needed_by_compute(u.name(), p);
             string arg_name = "lane_" + to_string(lane) + "_" + p;
 
             arg_names.push_back(arg_name);
             cout << "getting window for " << u.name() << endl;
             Window win_needed =
-              data_window_needed_by_compute(u.name(), p, 1).increment(lane);
+              data_window_needed_by_one_compute_lane(u.name(), p).increment(lane);
             cout << "Win needed: " << win_needed << endl;
 
             cfile << tab(1) << "hw_uint<" << win_needed.pts().size()*arg_width << "> " << arg_name << ";" << endl;

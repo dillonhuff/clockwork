@@ -2,6 +2,7 @@
 
 #include "conv_3x3.h"
 
+  // f_update_0 unroll factor: 1
 hw_uint<32>  id_unrolled_1(hw_uint<32>& f_off_chip) {
   hw_uint<32> whole_result;
   hw_uint<32> lane_0_f_off_chip;
@@ -12,6 +13,7 @@ hw_uint<32>  id_unrolled_1(hw_uint<32>& f_off_chip) {
    return whole_result;
 }
 
+  // r0_update_0 unroll factor: 1
 hw_uint<32>  comp_r0_unrolled_1(hw_uint<32>& u, hw_uint<32>& f) {
   hw_uint<32> whole_result;
   hw_uint<32> lane_0_u;
@@ -25,6 +27,7 @@ hw_uint<32>  comp_r0_unrolled_1(hw_uint<32>& u, hw_uint<32>& f) {
    return whole_result;
 }
 
+  // diff_r_update_0 unroll factor: 1
 hw_uint<32>  diff_b_unrolled_1(hw_uint<64>& u) {
   hw_uint<32> whole_result;
   hw_uint<64> lane_0_u;
@@ -37,6 +40,7 @@ hw_uint<32>  diff_b_unrolled_1(hw_uint<64>& u) {
    return whole_result;
 }
 
+  // r1_update_0 unroll factor: 1
 hw_uint<32>  r1_comp_unrolled_1(hw_uint<32>& r0) {
   hw_uint<32> whole_result;
   hw_uint<32> lane_0_r0;
@@ -47,6 +51,7 @@ hw_uint<32>  r1_comp_unrolled_1(hw_uint<32>& r0) {
    return whole_result;
 }
 
+  // g_update_0 unroll factor: 1
 hw_uint<32>  mag_dn2_unrolled_1(hw_uint<32>& diff_qwe, hw_uint<32>& diff_d, hw_uint<32>& diff_l, hw_uint<32>& diff_r) {
   hw_uint<32> whole_result;
   hw_uint<32> lane_0_diff_qwe;
@@ -66,6 +71,7 @@ hw_uint<32>  mag_dn2_unrolled_1(hw_uint<32>& diff_qwe, hw_uint<32>& diff_d, hw_u
    return whole_result;
 }
 
+  // denoise2d_update_0 unroll factor: 1
 hw_uint<32>  out_comp_dn2d_unrolled_1(hw_uint<32>& r1, hw_uint<32>& f, hw_uint<128>& u, hw_uint<128>& g) {
   hw_uint<32> whole_result;
   hw_uint<32> lane_0_r1;
