@@ -368,6 +368,17 @@ inline hw_uint<288> Img_upsample_stencil_update_0_read_bundle_read(Img_cache& Im
 
 
 // Operation logic
+inline void Img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */Img_off, Img_cache& Img, int d0, int d1) {
+	// Consume: Img_off
+	auto Img_off_0_c__0_value = Img_off.read();
+	auto compute_result = id(Img_off_0_c__0_value);
+	// Produce: Img
+	Img_Img_update_0_write_bundle_write(compute_result, Img, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "Img_update_0," << d0<< "," << d1<< "," <<  compute_result << endl;
+#endif //__VIVADO_SYNTH__
+}
+
 inline void upsample_stencil_update_0(Img_cache& Img, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */upsample_stencil, int d0, int d1) {
 	// Consume: Img
 	auto Img_0_c__0_value = Img_upsample_stencil_update_0_read_bundle_read(Img/* source_delay */, d0, d1);
@@ -382,17 +393,6 @@ inline void upsample_stencil_update_0(Img_cache& Img, HWStream<hw_uint<32> >& /*
 #endif //__VIVADO_SYNTH__
 }
 
-inline void Img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */Img_off, Img_cache& Img, int d0, int d1) {
-	// Consume: Img_off
-	auto Img_off_0_c__0_value = Img_off.read();
-	auto compute_result = id(Img_off_0_c__0_value);
-	// Produce: Img
-	Img_Img_update_0_write_bundle_write(compute_result, Img, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "Img_update_0," << d0<< "," << d1<< "," <<  compute_result << endl;
-#endif //__VIVADO_SYNTH__
-}
-
 // Driver function
 void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Img_off, HWStream<hw_uint<32> >& /* get_args num ports = 1 */upsample_stencil) {
 
@@ -404,52 +404,28 @@ void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Im
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=Img inter false
 #endif //__VIVADO_SYNTH__
-	  int c0 = -2;
-	  int c1 = -2;
-	  int global_time = 0;
 	#ifdef __VIVADO_SYNTH__
-	  while(true) {
-	#else
-	  while(global_time < 1296) {
+	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
+	
+	for (int c0 = -2; c0 <= 33; c0++) {
+	  for (int c1 = -2; c1 <= 33; c1++) {
 	
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS dependence inter false
 	#pragma HLS pipeline II=1
 	#endif // __VIVADO_SYNTH__
 	
-	      if ((-2 <= c1 && c1 <= 32) && ((c1 - 0) % 2 == 0) && (-2 <= c0 && c0 <= 32) && ((c0 - 0) % 2 == 0)) {
+	    if ((-2 <= c1 && c1 <= 32) && ((c1 - 0) % 2 == 0) && (-2 <= c0 && c0 <= 32) && ((c0 - 0) % 2 == 0)) {
 	Img_update_0(Img_off, Img, (c1 - 0) / 2, (c0 - 0) / 2);
-	      }
+	    }
 	
-	      if ((2 <= c1 && c1 <= 33) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 33) && ((c0 - 2) % 1 == 0)) {
+	    if ((2 <= c1 && c1 <= 33) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 33) && ((c0 - 2) % 1 == 0)) {
 	upsample_stencil_update_0(Img, upsample_stencil, (c1 - 2) / 1, (c0 - 2) / 1);
-	      }
+	    }
 	
-	    bool c0_at_max = c0 == 33;
-	    bool c1_at_max = c1 == 33;
-	    if (1 && c1_at_max) {
-	      if (c0_at_max) {
-	        c0 = -2;
-	      } else {
-	        c0++;
-	      }
-	    }
-	#ifndef __VIVADO_SYNTH__
-	    cout << "c0 = " << c0 << endl;
-	#endif //__VIVADO_SYNTH__
-	    if (1) {
-	      if (c1_at_max) {
-	        c1 = -2;
-	      } else {
-	        c1++;
-	      }
-	    }
-	#ifndef __VIVADO_SYNTH__
-	    cout << "c1 = " << c1 << endl;
-	#endif //__VIVADO_SYNTH__
-	    global_time++;
 	  }
+	}
 	
 #ifndef __VIVADO_SYNTH__
   debug_file.close();

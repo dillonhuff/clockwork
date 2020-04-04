@@ -5714,7 +5714,8 @@ struct App {
     return m;
   }
 
-  Window data_window_provided_by_compute(const std::string& update, const int unroll_factor) {
+  //Window data_window_provided_by_compute(const std::string& update, const int unroll_factor) {
+  Window data_window_provided_by_compute(const std::string& update) {
     for (auto f : app_dag) {
       for (auto u : f.second.updates) {
         if (u.name() == update) {
@@ -5759,7 +5760,8 @@ struct App {
           its(m, domain);
 
         //Window write_box = data_window_provided_by_compute(u.name(), unroll_factor);
-        Window write_box = data_window_provided_by_compute(u.name(), u.unroll_factor);
+        //Window write_box = data_window_provided_by_compute(u.name(), u.unroll_factor);
+        Window write_box = data_window_provided_by_compute(u.name());
         int i = 0;
         cout << "Write box for: " << f << " has " << write_box.pts().size() << " points in it" << endl;
         for (auto p : write_box.pts()) {
@@ -5999,7 +6001,8 @@ struct App {
     return map_find(f, app_dag).compute_name();
   }
 
-  void generate_compute_unit_file(const std::string& filename, const int unroll_factor) {
+  //void generate_compute_unit_file(const std::string& filename, const int unroll_factor) {
+  void generate_compute_unit_file(const std::string& filename) {
     ofstream cfile(filename);
     cfile << "#pragma once" << endl << endl;
     cfile << "#include \"conv_3x3.h\"" << endl << endl;
@@ -6016,7 +6019,8 @@ struct App {
 
       for (auto u : app_dag.at(f).updates) {
         int fwidth = 32;
-        int out_width = unroll_factor*fwidth;
+        //int out_width = unroll_factor*fwidth;
+        int out_width = u.unroll_factor*fwidth;
         vector<pair<int, string> > args_and_widths;
         for (auto p : producers(f)) {
           int arg_width = 32;
@@ -6156,7 +6160,8 @@ struct App {
     prog prg;
     prg.name = name + "_opt";
     prg.compute_unit_file = prg.name + "_compute_units.h";
-    generate_compute_unit_file(prg.compute_unit_file, unroll_factor);
+    //generate_compute_unit_file(prg.compute_unit_file, unroll_factor);
+    generate_compute_unit_file(prg.compute_unit_file);
 
     auto action_domain = cpy(whole_dom);
     map<string, isl_set*> domain_map;
