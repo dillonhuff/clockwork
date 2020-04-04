@@ -5312,7 +5312,6 @@ struct App {
     return map_find(f, domain_boxes);
   }
 
-  //void fill_compute_domain(const int unroll_factor) {
   void fill_compute_domain() {
     int ndims = data_dimension();
     vector<string> data_vars;
@@ -5388,8 +5387,9 @@ struct App {
     //assert(false);
   }
 
-  void fill_data_domain(const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    fill_data_domain(name, {d0, d1}, unroll_factor);
+  void fill_data_domain(const std::string& name, const int d0, const int d1) {
+    ////fill_data_domain(name, {d0, d1}, unroll_factor);
+    fill_data_domain(name, {d0, d1});
   }
   
   int schedule_dimension() const {
@@ -5418,8 +5418,8 @@ struct App {
     return max_dims;
   }
 
-  void fill_data_domain(const std::string& name, const vector<int>& dims, const int unroll_factor) {
-  //void fill_data_domain(const std::string& name, const vector<int>& dims) {
+  //void fill_data_domain(const std::string& name, const vector<int>& dims, const int unroll_factor) {
+  void fill_data_domain(const std::string& name, const vector<int>& dims) {
 
     Box sbox;
     int max_dims = data_dimension();
@@ -5440,7 +5440,7 @@ struct App {
       sbox.intervals.push_back({0, 0});
     }
 
-    sbox = sbox.pad_range_to_nearest_multiple(unroll_factor);
+    sbox = sbox.pad_range_to_nearest_multiple(last_update(name).unroll_factor);
 
     vector<string> buffers = sort_functions();
     assert(buffers.size() > 0);
@@ -5487,11 +5487,10 @@ struct App {
       for (auto nn : needed_windows) {
         final_dom = unn(final_dom, nn.second);
       }
-      final_dom = final_dom.pad_range_to_nearest_multiple(unroll_factor);
+      final_dom = final_dom.pad_range_to_nearest_multiple(last_update(next).unroll_factor);
 
       domain_boxes[next] = final_dom;
     }
-
 
     cout << domain_boxes.size() << " data domains.." << endl;
     assert(domain_boxes.size() == sort_functions().size());
@@ -5922,7 +5921,8 @@ struct App {
     const int unroll_factor = 1;
     set_unroll_factors(unroll_factor);
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
-    fill_data_domain(name, d0, d1, unroll_factor);
+    //fill_data_domain(name, d0, d1, unroll_factor);
+    fill_data_domain(name, d0, d1);
     //fill_compute_domain(unroll_factor);
     fill_compute_domain();
 
@@ -6219,7 +6219,8 @@ struct App {
     // TODO: REPLACE THIS
     const int unroll_factor = 1;
     //cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
-    fill_data_domain(name, d0, d1, unroll_factor);
+    //fill_data_domain(name, d0, d1, unroll_factor);
+    fill_data_domain(name, d0, d1);
     fill_compute_domain();
     schedule_and_codegen(name, unroll_factor);
   }
@@ -6227,7 +6228,8 @@ struct App {
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     set_unroll_factors(unroll_factor);
-    fill_data_domain(name, d0, d1, unroll_factor);
+    //fill_data_domain(name, d0, d1, unroll_factor);
+    fill_data_domain(name, d0, d1);
     fill_compute_domain();
     schedule_and_codegen(name, unroll_factor);
   }
@@ -6690,7 +6692,8 @@ void exposure_fusion() {
 
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
-  int size = 1250;
+  int size = 100;
+    //1250;
     //200;
   lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
   lp.realize_naive("pyramid_synthetic_exposure_fusion", size, size);
@@ -7548,16 +7551,13 @@ void application_tests() {
   //reduce_1d_test();
 
   //up_stencil_down_unrolled_test();
-  exposure_fusion();
-  assert(false);
-  jacobi2d_app_test();
-  //assert(false);
-  denoise2d_test();
-  mismatched_stencil_test();
-  //assert(false);
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
 
+  exposure_fusion();
+  jacobi2d_app_test();
+  denoise2d_test();
+  mismatched_stencil_test();
 
   grayscale_conversion_test();
   seidel2d_test();
