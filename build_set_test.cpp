@@ -6104,7 +6104,8 @@ struct App {
     return false;
   }
 
-  void schedule_and_codegen(const std::string& name, const int unroll_factor) {
+  //void schedule_and_codegen(const std::string& name, const int unroll_factor) {
+  void schedule_and_codegen(const std::string& name) {
     umap* m = schedule();
     assert(m != nullptr);
 
@@ -6200,10 +6201,10 @@ struct App {
               fargs.push_back(p.name);
             }
           }
-          if (unroll_factor == 1) {
+          if (u.unroll_factor == 1) {
             op->add_function(u.compute_name());
           } else {
-            op->add_function(u.compute_name() + "_unrolled_" + to_string(unroll_factor));
+            op->add_function(u.compute_name() + "_unrolled_" + to_string(u.unroll_factor));
           }
           domain_map[u.name()] =
             compute_domain(u.name());
@@ -6234,7 +6235,8 @@ struct App {
     //fill_data_domain(name, d0, d1, unroll_factor);
     fill_data_domain(name, d0, d1);
     fill_compute_domain();
-    schedule_and_codegen(name, unroll_factor);
+    //schedule_and_codegen(name, unroll_factor);
+    schedule_and_codegen(name);
   }
 
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
@@ -6243,7 +6245,8 @@ struct App {
     //fill_data_domain(name, d0, d1, unroll_factor);
     fill_data_domain(name, d0, d1);
     fill_compute_domain();
-    schedule_and_codegen(name, unroll_factor);
+    //schedule_and_codegen(name, unroll_factor);
+    schedule_and_codegen(name);
   }
 
 };
