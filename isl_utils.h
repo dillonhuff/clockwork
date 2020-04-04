@@ -175,7 +175,11 @@ isl_ctx* ctx(isl_pw_qpolynomial_fold* const m);
 
 isl_ctx* ctx(isl_pw_qpolynomial* const m);
 
+vector<std::string> collect_sched_vec(isl_set* const bset);
+vector<std::string> collect_sched_vec(isl_union_set* const bset);
+
 std::string codegen_c(isl_set* const bset);
+std::string codegen_c(isl_union_set* bset);
 std::string codegen_c(isl_constraint* const bset);
 
 std::string codegen_c(isl_schedule* const bset);

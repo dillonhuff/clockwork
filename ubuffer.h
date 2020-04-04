@@ -50,15 +50,16 @@ class AccessPattern {
       }
 
       isl_set* get_domain(isl_ctx* ctx) {
-          vector<string> var_list(var_dim-1);
+          vector<string> var_list(var_dim);
           vector<string> bd_list(var_dim-1);
           for (auto itr: name2idx) {
               if (itr.first == "const")
                   continue;
-              var_list[itr.second-1] = itr.first;
+              var_list[itr.second] = itr.first;
               string bd = "0 <= " + itr.first + " <= " + std::to_string(in_range[itr.second-1]-1);
               bd_list[itr.second-1] = bd;
           }
+          var_list[0] = "root=0";
           auto vars = sep_list(var_list, "[", "]", "," );
           auto ds = sep_list(bd_list, "", "", " and ");
           return isl_set_read_from_str(ctx, string("{ " + op_name + vars + " : " + ds + "}").c_str());
@@ -74,19 +75,20 @@ class AccessPattern {
       }
 
       umap* get_access_map(isl_ctx* ctx) {
-          vector<string> var_list(var_dim-1);
+          vector<string> var_list(var_dim);
           for (auto itr: name2idx) {
               if (itr.first == "const")
                   continue;
-              var_list[itr.second-1] = itr.first;
+              var_list[itr.second] = itr.first;
           }
+          var_list[0] = "root=0";
           auto vars = sep_list(var_list, "[", "]", "," );
           vector<string> nd_expr;
           for (auto row: access_matrix) {
               vector<string> sum_list;
               for (auto itr = row.begin()+1; itr != row.end(); itr ++ ){
                   int item = *itr;
-                  int cnt = itr - row.begin() - 1;
+                  int cnt = itr - row.begin() ;
                   if (item == 0 ) {
                       continue;
                   }
@@ -107,12 +109,13 @@ class AccessPattern {
       }
 
       isl_map* get_access_map_and_decouple_reuse(isl_ctx* ctx, int dim_id) {
-          vector<string> var_list(var_dim - 1);
+          vector<string> var_list(var_dim);
           for (auto itr: name2idx) {
               if (itr.first == "const")
                   continue;
-              var_list[itr.second-1] = itr.first;
+              var_list[itr.second] = itr.first;
           }
+          var_list[0] = "root=0";
           auto vars = sep_list(var_list, "[", "]", "," );
           vector<string> nd_expr;
           for (size_t row_cnt = 0; row_cnt < access_matrix.size(); row_cnt ++) {
@@ -120,7 +123,7 @@ class AccessPattern {
               vector<string> sum_list;
               for(auto itr = row.begin() + 1; itr != row.end(); itr ++) {
                   int item = *itr;
-                  int cnt = itr - row.begin() - 1;
+                  int cnt = itr - row.begin() ;
                   if (item == 0)
                       continue;
                   if (row_cnt < dim_id) {

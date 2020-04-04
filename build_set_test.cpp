@@ -3205,6 +3205,9 @@ void auto_vec_test() {
   auto sched_opt = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
   auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
 
+  //cout << str(range(sched_naive)) << endl;
+  //cout << codegen_c(range(sched_naive))<< endl;
+  //assert(false);
   auto buffers = build_buffers(prg, sched_naive);
 
   auto buffer = buffers["buf"];

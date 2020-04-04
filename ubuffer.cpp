@@ -12,7 +12,9 @@ void UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2
         if (is_out) {
             string pt_name = origin_pt_name + "_out_" + std::to_string(new_pt_cnt);
             target_buf.port_bundles[bd_name].push_back(pt_name);
-            //cout << "Original Schedule:"<< str(schedule.at(origin_pt_name)) << endl;
+            auto schedule_origin = schedule.at(origin_pt_name) ;
+            cout << "Original Schedule:"<< collect_sched_vec(range(schedule_origin)) << endl;
+            assert(false);
             target_buf.add_out_pt(pt_name, range(to_map(rewrite_buf2op)), to_map(rewrite_access_map), schedule.at(origin_pt_name));
             target_buf.add_access_pattern(pt_name, acc_pattern.op_name+"_vec", target_buf.name);
         }
@@ -58,6 +60,7 @@ void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuff
 
             //add in port to agg_buf
             auto inpt_acc_map = remap_access_to_new_buffer(in_pt_name, "_agg");
+            cout << "Access map add to agg_in: " << str(inpt_acc_map) << endl;
             agg_buf.add_in_pt(in_pt_name+"_in", domain.at(in_pt_name), inpt_acc_map, access_map.at(in_pt_name));
             agg_buf.port_bundles[bd_name].push_back(in_pt_name + "_in");
 

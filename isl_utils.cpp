@@ -432,6 +432,7 @@ std::string codegen_c(isl_constraint* const bset) {
   std::string r(rs);
   free(rs);
 
+  cout << "\tString in isl_constraint: " << r << endl;
   regex cm("\\{ (.*)\\[(.*)\\] : (.*) \\}");
   smatch match;
   auto res = regex_search(r, match, cm);
@@ -925,7 +926,7 @@ isl_union_set* simplify(uset* const m) {
   return isl_union_set_remove_redundancies(cpy(m));
 }
 
-isl_map* simplify(isl_map* const m) {
+isl_map* simplify_expr(isl_map* const m) {
   return isl_map_from_pw_multi_aff(isl_pw_multi_aff_from_map(cpy(m)));
 }
 
@@ -1208,6 +1209,7 @@ vector<isl_constraint*> constraints(isl_set* s) {
 
 }
 
+
 std::string codegen_c(isl_set* const s) {
   if (empty(s)) {
     return "false";
@@ -1226,6 +1228,34 @@ std::string codegen_c(isl_set* const s) {
   return sep_list(set_strings, "(", ")", " && ");
 }
 
+vector<string> collect_sched_vec(isl_set* const s) {
+  if (empty(s)) {
+    return {};
+  }
+
+  vector<isl_constraint*> code_holder;
+  isl_set_foreach_basic_set(s, bset_collect_constraints, &code_holder);
+  //all sched vec has the same dimesnion
+  size_t vec_dim = isl_constraint_dim(pick(code_holder), isl_dim_set);
+  vector<string> sched_vec(vec_dim);
+
+  for (auto hc : code_holder) {
+      cout << str(hc) <<  endl;
+      for (size_t i = 0; i < vec_dim; i ++) {
+          bool involve =  isl_constraint_involves_dims(hc, isl_dim_set, i, 1);
+          if (involve) {
+              if (isl_constraint_is_equality(hc))
+                  sched_vec[i] = to_string(isl_val_get_num_si(isl_constraint_get_constant_val(hc)));
+              else {
+                  sched_vec[i] = "i" + to_string(i);
+              }
+              cout << isl_constraint_is_equality(hc) << isl_constraint_is_lower_bound(hc, isl_dim_set, i) << isl_constraint_is_upper_bound(hc, isl_dim_set, i) << endl;
+          }
+      }
+  }
+  return sched_vec;
+}
+
 std::string codegen_c(isl_union_set* s) {
   vector<isl_set*> code_holder;
   isl_union_set_foreach_set(s, uset_collect_set, &code_holder);
@@ -1234,6 +1264,15 @@ std::string codegen_c(isl_union_set* s) {
     set_strings.push_back(codegen_c(hc));
   }
   return sep_list(set_strings, "(", ")", " || ");
+}
+
+vector<string> collect_sched_vec(isl_union_set* s) {
+  vector<isl_set*> code_holder;
+  isl_union_set_foreach_set(s, uset_collect_set, &code_holder);
+  vector<string> sched_vec;
+  assert(code_holder.size() == 1);
+  sched_vec = collect_sched_vec(pick(code_holder));
+  return sched_vec;
 }
 
 isl_stat return_piece(isl_set* domain, isl_qpolynomial* val, void* user) {
@@ -1336,6 +1375,7 @@ isl_stat map_codegen_c(isl_map* m, void* user) {
 
   return isl_stat_ok;
 }
+
 
 isl_stat umap_codegen_c_comp(isl_map* m, void* user) {
   map<string, string>& mc = *((map<string, string>*) user);
