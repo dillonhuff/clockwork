@@ -966,10 +966,10 @@ selector generate_select(CodegenOptions& options, std::ostream& out, const strin
 
   map<string, string> in_ports_to_conditions;
 
-  cout << possible_ports.size() << " possible ports for " << outpt << " on buffer: " << endl << buf << endl;
-  cout << "lexmax = " << str(lex_max_events) << endl;
+  //cout << possible_ports.size() << " possible ports for " << outpt << " on buffer: " << endl << buf << endl;
+  //cout << "lexmax = " << str(lex_max_events) << endl;
   for (auto inpt : possible_ports) {
-    cout << tab(1) << inpt << endl;
+    //cout << tab(1) << inpt << endl;
     auto write_ops =
       domain(buf.access_map.at(outpt));
     auto written =
@@ -6049,6 +6049,10 @@ struct App {
     return m;
   }
 
+  string unrolled_compute_name(const string& f) {
+    return map_find(f, app_dag).unrolled_compute_name();
+  }
+
   string compute_name(const string& f) {
     return map_find(f, app_dag).compute_name();
   }
@@ -6065,7 +6069,7 @@ struct App {
         continue;
       }
 
-      if (elem(compute_name(f), already_seen)) {
+      if (elem(unrolled_compute_name(f), already_seen)) {
         continue;
       }
 
@@ -6088,7 +6092,8 @@ struct App {
 
         string out_type_string = "hw_uint<" + to_string(out_width) + "> ";
         //cfile << out_type_string << " " << compute_name(f) << "_unrolled_" << unroll_factor << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
-        cfile << out_type_string << " " << compute_name(f) << "_unrolled_" << u.unroll_factor << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+        //cfile << out_type_string << " " << compute_name(f) << "_unrolled_" << u.unroll_factor << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+        cfile << out_type_string << " " << unrolled_compute_name(f) << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
         cfile << tab(1) << "hw_uint<" << out_width << "> whole_result;" << endl;
         //for (int lane = 0; lane < unroll_factor; lane++) {
         for (int lane = 0; lane < u.unroll_factor; lane++) {
@@ -6129,7 +6134,7 @@ struct App {
         cfile << tab(1) << " return whole_result;" << endl;
         cfile << "}" << endl << endl;
 
-        already_seen.insert(compute_name(f));
+        already_seen.insert(unrolled_compute_name(f));
       }
     }
 
@@ -7663,7 +7668,7 @@ void playground() {
 
 void application_tests() {
 
-  playground();
+  //playground();
 
   //synth_lb_test();
 
@@ -7671,7 +7676,7 @@ void application_tests() {
  
   //reduce_1d_test();
 
-  up_stencil_down_unrolled_test();
+  //up_stencil_down_unrolled_test();
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
 

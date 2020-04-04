@@ -271,6 +271,7 @@ struct Update {
 
   std::string name() const { return operation_name; }
   std::string compute_name() const { return compute_function_name; }
+  std::string unrolled_compute_name() const { return compute_name() + "_unrolled_" + str(unroll_factor); }
 
   vector<Window> get_srcs() const {
     return srcs;
@@ -305,9 +306,14 @@ struct Result {
     return updates.at(0).get_provided();
   }
 
+  string unrolled_compute_name() const {
+    assert(updates.size() > 0);
+    return updates.at(0).unrolled_compute_name();
+  }
+
   string compute_name() const {
     assert(updates.size() > 0);
-    return updates.at(0).compute_function_name;
+    return updates.at(0).compute_name();
   }
 
   void add_reduce_update(const string& accum,
