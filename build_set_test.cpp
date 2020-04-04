@@ -7677,6 +7677,7 @@ void application_tests() {
   //reduce_1d_test();
 
   //up_stencil_down_unrolled_test();
+
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
 
