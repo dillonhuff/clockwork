@@ -271,7 +271,7 @@ isl_union_pw_qpolynomial* compute_fifo_addr(UBuffer& buf, const std::string& rea
   auto WritesBtwn = its_range((its(WritesAfterProduction, WritesBeforeRead)),
       to_uset(buf.domain.at(write_port)));
 
-  cout << "WritesBtwn: " << str(WritesBtwn) << endl;
+  //cout << "WritesBtwn: " << str(WritesBtwn) << endl;
 
   // Also need: evictsbetween?
   // img_comp -> imgs evicted?
@@ -320,10 +320,10 @@ isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port,
   auto WritesBtwn = its_range((its(WritesAfterProduction, WritesBeforeRead)),
       to_uset(buf.domain.at(write_port)));
 
-  cout << "WritesBtwn: " << str(WritesBtwn) << endl;
+  //cout << "WritesBtwn: " << str(WritesBtwn) << endl;
 
   auto c = card(WritesBtwn);
-  cout << "got card" << endl;
+  //cout << "got card" << endl;
   return c;
 }
 
@@ -338,7 +338,7 @@ int compute_dd_lower_bound(UBuffer& buf, const std::string& read_port, const std
 
 int compute_dd_bound(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
   auto c = compute_dd(buf, read_port, write_port);
-  cout << "DD: " << str(c) << endl;
+  //cout << "DD: " << str(c) << endl;
   int tight;
   int* b = &tight;
   auto bound = isl_union_pw_qpolynomial_bound(c, isl_fold_max, b);
@@ -387,7 +387,7 @@ void generate_vivado_tcl(UBuffer& buf) {
 int compute_max_dd(UBuffer& buf, const string& inpt) {
   int maxdelay = 0;
   for (auto outpt : buf.get_out_ports()) {
-    cout << "computing dd bound for " << inpt << " -> " << outpt << " on " << buf.name << endl;
+    //cout << "computing dd bound for " << inpt << " -> " << outpt << " on " << buf.name << endl;
     int r0 = compute_dd_bound(buf, outpt, inpt);
     if (r0 > maxdelay) {
       maxdelay = r0;
@@ -951,7 +951,7 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
 selector generate_select(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
   selector sel = generate_select_decl(options, out, outpt, buf);
 
-  //auto lex_max_events = get_lexmax_events(outpt, buf);
+  auto lex_max_events = get_lexmax_events(outpt, buf);
 
   //cout << "Lexmax events: " << str(lex_max_events) << endl;
   //map<string, string> ms = umap_codegen_c(lex_max_events);
@@ -964,6 +964,31 @@ selector generate_select(CodegenOptions& options, std::ostream& out, const strin
     }
   }
 
+  cout << possible_ports.size() << " possible ports for " << outpt << " on buffer: " << endl << buf << endl;
+  cout << "lexmax = " << str(lex_max_events) << endl;
+  for (auto inpt : possible_ports) {
+    cout << tab(1) << inpt << endl;
+    auto write_ops =
+      domain(buf.access_map.at(outpt));
+    auto written =
+      range(buf.access_map.at(inpt));
+    auto read =
+      range(buf.access_map.at(outpt));
+    auto overlap = its(written, read);
+    auto overlapped_reads = its_range(buf.access_map.at(outpt), overlap);
+    auto overlapped_read_set = domain(overlapped_reads);
+    auto overlapped_read_condition =
+      gist(overlapped_read_set, (write_ops));
+
+    cout << tab(2) << "values written: " << str(range(buf.access_map.at(inpt))) << endl;
+    cout << tab(2) << "values read   : " << str(range(buf.access_map.at(outpt))) << endl;
+    cout << tab(2) << "port overlap  : " << str(its(written, read)) << endl;
+    cout << tab(2) << "read overlap  : " << str(overlapped_reads) << endl;
+    cout << tab(2) << "overlap set   : " << str(overlapped_read_set) << endl;
+    cout << tab(2) << "overlap test  : " << str(overlapped_read_condition) << endl;
+    //auto deps = dot(buf.access_map.at(inpt), inv(buf.access_map.at(outpt)));
+    //cout << tab(2) << "deps: " << str(deps) << endl;
+  }
   assert(possible_ports.size() == 1);
 
   string inpt = possible_ports.at(0);
@@ -2904,121 +2929,121 @@ void generate_verilog_code(CodegenOptions& options,
     map<string, isl_set*>& domain_map,
     vector<compute_kernel>& kernels) {
 
-  vector<compute_kernel> sorted_kernels;
-  set<string> done;
-  while (sorted_kernels.size() < kernels.size()) {
+  //vector<compute_kernel> sorted_kernels;
+  //set<string> done;
+  //while (sorted_kernels.size() < kernels.size()) {
 
-    for (auto k : kernels) {
-      if (!elem(k.name, done)) {
-        bool all_args_scheduled = true;
-        for (auto in_buf : k.input_buffers) {
-          for (auto writer : writers(kernels, in_buf.first)) {
-            if (!elem(writer.name, done)) {
-              all_args_scheduled = false;
-              break;
-            }
-          }
-        }
-        if (all_args_scheduled) {
-          sorted_kernels.push_back(k);
-          done.insert(k.name);
-        }
-      }
-    }
-
-    cout << "sorted kernels size = " << sorted_kernels.size() << endl;
-  }
-
-  minihls::context minigen;
-
-  map<string, minihls::module_type*> buffer_mods;
-  for (auto& b : buffers) {
-    buffer_mods[b.first] =
-      generate_rtl_buffer(options, minigen, b.second);
-  }
-
-  map<string, minihls::module_type*> operation_mods;
-  map<string, minihls::instruction_type*> kernel_instrs;
-  for (auto op : sorted_kernels) {
-    minihls::block* blk = minigen.add_block(op.name);
-    auto res = wire_read(*blk, "src", 32);
-    out_wire_write(*blk, "out", 32, res);
-
-    operation_mods[op.name] = minigen.compile(blk);
-    auto blkmod = operation_mods[op.name];
-    auto apply_instr =
-      blk->add_instruction_type(op.name US "apply");
-    kernel_instrs[op.name] = apply_instr;
-    auto apply_bind =
-      blk->add_instruction_binding(op.name US "apply_binding",
-          apply_instr,
-          blkmod,
-          "out",
-          {});
-    apply_bind->latency = 1;
-  }
-
-  auto main_blk = minigen.add_block(prg.name);
-  for (auto b : buffer_mods) {
-    if (prg.is_boundary(b.first)) {
-      main_blk->add_external_module_instance("buf_" + b.second->get_name(), b.second);
-    } else {
-      main_blk->add_module_instance("buf_" + b.second->get_name(), b.second);
-    }
-  }
-
-  vector<minihls::instruction_instance*> earlier;
-  map<string, set<minihls::instruction_instance*> > earlier_writes;
-  map<pair<string, string>, minihls::instruction_instance*> reads;
-  map<string, set<minihls::instruction_instance*> > reads_from_buffers;
-  for (auto instr : sorted_kernels) {
-    cout << "Kernel = " << instr.name << endl;
-    auto instr_tp = map_find(instr.name, kernel_instrs);
-
-    for (auto inbuf : instr.input_buffers) {
-      reads[inbuf] =
-        main_blk->call("buf_" + inbuf.first, inbuf.second);
-      reads_from_buffers[inbuf.first].insert(reads.at(inbuf));
-    }
-
-    auto instr_inst = main_blk->add_instruction_instance(instr.name, instr_tp);
-    //for (auto rd : reads) {
-      //main_blk->add_data_dependence(rd.second, instr_inst, 0);
-    //}
-
-    //for (auto earlier_inst : earlier) {
-      //main_blk->add_data_dependence(earlier_inst, instr_inst, 0);
-    //}
-
-    // Store the output to the result buffer
-    string out_buf = "buf_" + instr.output_buffer.first;
-    string out_bundle = instr.output_buffer.second;
-
-    auto write_inst = main_blk->call(out_buf, out_bundle);
-    earlier_writes[instr.output_buffer.first].insert(write_inst);
-    //main_blk->add_data_dependence(instr_inst, write_inst, 0);
-
-    earlier.push_back(instr_inst);
-    earlier.push_back(write_inst);
-  }
-
-  auto instrs = main_blk->instruction_list();
-  for (int i = 0; i < instrs.size() - 1; i++) {
-    auto current = instrs[i];
-    auto next = instrs[i + 1];
-    main_blk->add_data_dependence(current, next, 0);
-  }
-
-  //for (auto rds : reads_from_buffers) {
-    //for (auto rd : rds.second) {
-      //for (auto wr : earlier_writes[rds.first]) {
-        //main_blk->add_data_dependence(wr, rd, 0);
+    //for (auto k : kernels) {
+      //if (!elem(k.name, done)) {
+        //bool all_args_scheduled = true;
+        //for (auto in_buf : k.input_buffers) {
+          //for (auto writer : writers(kernels, in_buf.first)) {
+            //if (!elem(writer.name, done)) {
+              //all_args_scheduled = false;
+              //break;
+            //}
+          //}
+        //}
+        //if (all_args_scheduled) {
+          //sorted_kernels.push_back(k);
+          //done.insert(k.name);
+        //}
       //}
+    //}
+
+    //cout << "sorted kernels size = " << sorted_kernels.size() << endl;
+  //}
+
+  //minihls::context minigen;
+
+  //map<string, minihls::module_type*> buffer_mods;
+  //for (auto& b : buffers) {
+    //buffer_mods[b.first] =
+      //generate_rtl_buffer(options, minigen, b.second);
+  //}
+
+  //map<string, minihls::module_type*> operation_mods;
+  //map<string, minihls::instruction_type*> kernel_instrs;
+  //for (auto op : sorted_kernels) {
+    //minihls::block* blk = minigen.add_block(op.name);
+    //auto res = wire_read(*blk, "src", 32);
+    //out_wire_write(*blk, "out", 32, res);
+
+    //operation_mods[op.name] = minigen.compile(blk);
+    //auto blkmod = operation_mods[op.name];
+    //auto apply_instr =
+      //blk->add_instruction_type(op.name US "apply");
+    //kernel_instrs[op.name] = apply_instr;
+    //auto apply_bind =
+      //blk->add_instruction_binding(op.name US "apply_binding",
+          //apply_instr,
+          //blkmod,
+          //"out",
+          //{});
+    //apply_bind->latency = 1;
+  //}
+
+  //auto main_blk = minigen.add_block(prg.name);
+  //for (auto b : buffer_mods) {
+    //if (prg.is_boundary(b.first)) {
+      //main_blk->add_external_module_instance("buf_" + b.second->get_name(), b.second);
+    //} else {
+      //main_blk->add_module_instance("buf_" + b.second->get_name(), b.second);
     //}
   //}
 
-  compile(*main_blk);
-  //assert(false);
+  //vector<minihls::instruction_instance*> earlier;
+  //map<string, set<minihls::instruction_instance*> > earlier_writes;
+  //map<pair<string, string>, minihls::instruction_instance*> reads;
+  //map<string, set<minihls::instruction_instance*> > reads_from_buffers;
+  //for (auto instr : sorted_kernels) {
+    //cout << "Kernel = " << instr.name << endl;
+    //auto instr_tp = map_find(instr.name, kernel_instrs);
+
+    //for (auto inbuf : instr.input_buffers) {
+      //reads[inbuf] =
+        //main_blk->call("buf_" + inbuf.first, inbuf.second);
+      //reads_from_buffers[inbuf.first].insert(reads.at(inbuf));
+    //}
+
+    //auto instr_inst = main_blk->add_instruction_instance(instr.name, instr_tp);
+    ////for (auto rd : reads) {
+      ////main_blk->add_data_dependence(rd.second, instr_inst, 0);
+    ////}
+
+    ////for (auto earlier_inst : earlier) {
+      ////main_blk->add_data_dependence(earlier_inst, instr_inst, 0);
+    ////}
+
+    //// Store the output to the result buffer
+    //string out_buf = "buf_" + instr.output_buffer.first;
+    //string out_bundle = instr.output_buffer.second;
+
+    //auto write_inst = main_blk->call(out_buf, out_bundle);
+    //earlier_writes[instr.output_buffer.first].insert(write_inst);
+    ////main_blk->add_data_dependence(instr_inst, write_inst, 0);
+
+    //earlier.push_back(instr_inst);
+    //earlier.push_back(write_inst);
+  //}
+
+  //auto instrs = main_blk->instruction_list();
+  //for (int i = 0; i < instrs.size() - 1; i++) {
+    //auto current = instrs[i];
+    //auto next = instrs[i + 1];
+    //main_blk->add_data_dependence(current, next, 0);
+  //}
+
+  ////for (auto rds : reads_from_buffers) {
+    ////for (auto rd : rds.second) {
+      ////for (auto wr : earlier_writes[rds.first]) {
+        ////main_blk->add_data_dependence(wr, rd, 0);
+      ////}
+    ////}
+  ////}
+
+  //compile(*main_blk);
+  ////assert(false);
 }
 
 void generate_app_code(CodegenOptions& options,
@@ -6228,14 +6253,8 @@ struct App {
   }
 
   void realize(const std::string& name, const int d0, const int d1) {
-    assert(false);
-    // TODO: REPLACE THIS
-    const int unroll_factor = 1;
-    //cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
-    //fill_data_domain(name, d0, d1, unroll_factor);
     fill_data_domain(name, d0, d1);
     fill_compute_domain();
-    //schedule_and_codegen(name, unroll_factor);
     schedule_and_codegen(name);
   }
 
@@ -7565,7 +7584,13 @@ void playground() {
 
   isl_ctx* ct = isl_ctx_alloc();
 
-  isl_aff* aff = rdaff(ct, "{ [a, b] -> [(a + b) / 2] }");
+  isl_aff* zero = rdaff(ct, "{ [a, b] -> [0] }");
+  isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor((a + 3b + floor(2a - 7b / 9)) / 2)] }");
+
+  //isl_aff* aff = rdaff(ct, "{ [a, b] -> [3 a / 2 + 2 b / 15] }");
+  //isl_aff* aff = rdaff(ct, "{ [a, b] -> [(a + b) % 2] }");
+  //isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor((a + 3b) / 2)] }");
+  //isl_aff* aff = rdaff(ct, "{ [a, b] -> [(a + 3b) % 2 + a / 6] }");
   cout << "aff = " << str(aff) << endl;
   cout << "const = " << str(constant(aff)) << endl;
   int in_dims = num_in_dims(aff);
@@ -7573,9 +7598,46 @@ void playground() {
   int out_dims = num_out_dims(aff);
   cout << "output dimension: " << out_dims << endl;
 
+  isl_local_space* ls = isl_aff_get_local_space(aff);
+  int div_dims = isl_local_space_dim(ls, isl_dim_div);
+  cout << "div dimension   : " << isl_local_space_dim(ls, isl_dim_div) << endl;
+  cout << "all dimensions  : " << isl_local_space_dim(ls, isl_dim_all) << endl;
+  cout << "Local space: " << str(ls) << endl;
+
+  for (int i = 0; i < in_dims; i++) {
+    cout << i << "th coeff: " << str(isl_aff_get_coefficient_val(aff, isl_dim_in, i)) << endl;
+  }
+  //for (int i = 0; i < out_dims; i++) {
+    //cout << i << "th div  : " << str(isl_aff_get_div(aff, i)) << endl;
+  //}
+  for (int i = 0; i < div_dims; i++) {
+    cout << i << "th div      : " << str(isl_aff_get_div(aff, i)) << endl;
+    cout << i << "th div coeff: " << str(isl_aff_get_coefficient_val(aff, isl_dim_div, i)) << endl;
+  }
+
+  isl_basic_set* bset = isl_aff_eq_basic_set(cpy(aff), cpy(zero));
+    //isl_basic_set_read_from_str(ct, "{ [a, b] }");
+    //isl_basic_set_universe(get_space(aff));
+
+
+  cout << "bset: " << str(bset) << endl;
+
+  auto prev = rdaff(ct, "{ [x] -> [floor(x / 2)] }");
+  auto next = rdaff(ct, "{ [x] -> [floor((x + 1) / 2)] }");
+
+  cout << "prev: " << str(prev) << endl;
+  cout << "next: " << str(next) << endl;
+  cout << "diff: " << str(isl_aff_sub(cpy(next), cpy(prev))) << endl;
+
+  auto comps_set = isl_set_read_from_str(ct, "{ [a, b] : 0 <= a <= 10 and 0 <= b <= 11 }");
+  auto flat_set = isl_set_flatten(cpy(comps_set));
+  cout << "comps_set: " << str(comps_set) << endl;
+  cout << "flat_set : " << str(flat_set) << endl;
+
+  //isl_mat* matrix = aff->ls->div;
   isl_ctx_free(ct);
 
-  assert(false);
+  //assert(false);
 }
 
 void application_tests() {
@@ -7588,7 +7650,7 @@ void application_tests() {
  
   //reduce_1d_test();
 
-  //up_stencil_down_unrolled_test();
+  up_stencil_down_unrolled_test();
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
 

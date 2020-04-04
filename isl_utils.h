@@ -91,7 +91,9 @@ int num_dims(isl_space* const s);
 
 isl_id* id(isl_ctx* c, const std::string& s);
 
+std::string str(isl_basic_set* const id);
 std::string str(isl_id* const id);
+std::string str(isl_local_space* const id);
 
 std::string domain_name(isl_space* const s);
 
@@ -367,3 +369,5 @@ int num_in_dims(isl_space* const s);
 int num_in_dims(isl_aff* const s);
 
 int num_out_dims(isl_aff* const s);
+
+uset* gist(uset* base, uset* context);

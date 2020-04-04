@@ -1,6 +1,10 @@
 #include "isl_utils.h"
 #include "utils.h"
 
+isl_local_space* cpy(isl_local_space* const s) {
+  return isl_local_space_copy(s);
+}
+
 isl_pw_aff* cpy(isl_pw_aff* const s) {
   return isl_pw_aff_copy(s);
 }
@@ -46,10 +50,6 @@ isl_point* cpy(isl_point* const s) {
 
 isl_space* cpy(isl_space* const s) {
   return isl_space_copy(s);
-}
-
-isl_local_space* cpy(isl_local_space* const s) {
-  return isl_local_space_copy(s);
 }
 
 isl_basic_set* cpy(isl_basic_set* const b) {
@@ -172,6 +172,18 @@ isl_stat get_maps(isl_map* m, void* user) {
   return isl_stat_ok;
 }
 
+std::string str(isl_local_space* const m) {
+  auto ctx = isl_local_space_get_ctx(m);
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_print_local_space(p, cpy(m));
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  std::string r(rs);
+  free(rs);
+
+  return r;
+}
 std::string str(umap* const m) {
   auto ctx = isl_union_map_get_ctx(m);
   isl_printer *p;
@@ -737,6 +749,20 @@ std::string str(isl_union_set* const m) {
   isl_printer *p;
   p = isl_printer_to_str(ctx);
   p = isl_printer_print_union_set(p, cpy(m));
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  std::string r(rs);
+  free(rs);
+
+  return r;
+}
+
+std::string str(isl_basic_set* const m) {
+  assert(m != nullptr);
+  auto ctx = isl_basic_set_get_ctx(m);
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_print_basic_set(p, cpy(m));
   char* rs = isl_printer_get_str(p);
   isl_printer_free(p);
   std::string r(rs);
@@ -1330,7 +1356,7 @@ int bnd_int(isl_union_pw_qpolynomial_fold* bound) {
   } else {
     assert(folds.size() == 1);
     string str_bnd = codegen_c(folds[0]);
-    cout << "\tbound: " << str_bnd << endl;
+    //cout << "\tbound: " << str_bnd << endl;
 
     if (is_number(str_bnd)) {
       bint = safe_stoi(str_bnd);
@@ -1366,4 +1392,8 @@ isl_set* universe(isl_space* s) {
 
 isl_set* add_constraint(isl_set* s, isl_constraint* c) {
   return isl_set_add_constraint(cpy(s), cpy(c));
+}
+
+uset* gist(uset* base, uset* context) {
+  return isl_union_set_gist(cpy(base), cpy(context));
 }
