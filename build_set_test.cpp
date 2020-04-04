@@ -964,6 +964,8 @@ selector generate_select(CodegenOptions& options, std::ostream& out, const strin
     }
   }
 
+  map<string, string> in_ports_to_conditions;
+
   cout << possible_ports.size() << " possible ports for " << outpt << " on buffer: " << endl << buf << endl;
   cout << "lexmax = " << str(lex_max_events) << endl;
   for (auto inpt : possible_ports) {
@@ -980,25 +982,43 @@ selector generate_select(CodegenOptions& options, std::ostream& out, const strin
     auto overlapped_read_condition =
       gist(overlapped_read_set, (write_ops));
 
-    cout << tab(2) << "values written: " << str(range(buf.access_map.at(inpt))) << endl;
-    cout << tab(2) << "values read   : " << str(range(buf.access_map.at(outpt))) << endl;
-    cout << tab(2) << "port overlap  : " << str(its(written, read)) << endl;
-    cout << tab(2) << "read overlap  : " << str(overlapped_reads) << endl;
-    cout << tab(2) << "overlap set   : " << str(overlapped_read_set) << endl;
-    cout << tab(2) << "overlap test  : " << str(overlapped_read_condition) << endl;
-    cout << tab(2) << "overlap C     : " << codegen_c(overlapped_read_condition) << endl;
+    //cout << tab(2) << "values written: " << str(range(buf.access_map.at(inpt))) << endl;
+    //cout << tab(2) << "values read   : " << str(range(buf.access_map.at(outpt))) << endl;
+    //cout << tab(2) << "port overlap  : " << str(its(written, read)) << endl;
+    //cout << tab(2) << "read overlap  : " << str(overlapped_reads) << endl;
+    //cout << tab(2) << "overlap set   : " << str(overlapped_read_set) << endl;
+    //cout << tab(2) << "overlap test  : " << str(overlapped_read_condition) << endl;
+    //cout << tab(2) << "overlap C     : " << codegen_c(overlapped_read_condition) << endl;
+    in_ports_to_conditions[inpt] =
+      codegen_c(overlapped_read_condition);
     //auto deps = dot(buf.access_map.at(inpt), inv(buf.access_map.at(outpt)));
     //cout << tab(2) << "deps: " << str(deps) << endl;
   }
-  assert(possible_ports.size() == 1);
 
-  string inpt = possible_ports.at(0);
-  string peeked_val = delay_string(options, inpt, outpt, buf);
-  sel.bank_conditions.push_back("1");
-  sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, inpt));
+  if (possible_ports.size() == 1) {
+    string inpt = possible_ports.at(0);
+    string peeked_val = delay_string(options, inpt, outpt, buf);
+    sel.bank_conditions.push_back("1");
+    sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, inpt));
 
-  out << "\tauto value_" << inpt << " = " << peeked_val << ";\n";
-  out << "\treturn value_" << inpt << ";" << endl;
+    out << tab(1) << "auto value_" << inpt << " = " << peeked_val << ";" << endl;
+    out << tab(1) << "return value_" << inpt << ";" << endl;
+  } else {
+    for (auto port : possible_ports) {
+      out << tab(1) << "if (" << map_find(port, in_ports_to_conditions) << ") {" << endl;
+      string inpt = possible_ports.at(0);
+      string peeked_val = delay_string(options, inpt, outpt, buf);
+      sel.bank_conditions.push_back("1");
+      sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, inpt));
+
+      out << tab(2) << "auto value_" << inpt << " = " << peeked_val << ";" << endl;
+      out << tab(2) << "return value_" << inpt << ";" << endl;
+      out << tab(1) << "}" << endl << endl;
+      out << tab(1) << endl;
+    }
+  }
+
+  select_debug_assertions(options, out, outpt, buf);
   out << "}" << endl << endl;
 
   return sel;
