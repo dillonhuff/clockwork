@@ -80,6 +80,9 @@ isl_aff* cpy(isl_aff* const b) {
   return isl_aff_copy(b);
 }
 
+isl_space* get_space(isl_aff* const m) {
+  return isl_aff_get_space(m);
+}
 
 isl_space* get_space(isl_constraint* const m) {
   return isl_constraint_get_space(m);
@@ -114,6 +117,26 @@ bool empty(isl_set* const s) {
 
 bool empty(uset* const s) {
   return isl_union_set_is_empty(s);
+}
+
+int num_out_dims(isl_space* const s) {
+  assert(isl_space_is_map(s));
+  int ndims = isl_space_dim(s, isl_dim_out);
+  return ndims;
+}
+
+int num_in_dims(isl_space* const s) {
+  assert(isl_space_is_map(s));
+  int ndims = isl_space_dim(s, isl_dim_in);
+  return ndims;
+}
+
+int num_in_dims(isl_aff* const s) {
+  return num_in_dims(get_space((s)));
+}
+
+int num_out_dims(isl_aff* const s) {
+  return num_out_dims(get_space((s)));
 }
 
 int num_dims(isl_space* const s) {
@@ -1023,6 +1046,10 @@ isl_union_pw_qpolynomial_fold* upper_bound(isl_union_pw_qpolynomial* range_card)
 
 isl_set* rdset(isl_ctx* ctx, const std::string& str) {
   return isl_set_read_from_str(ctx, str.c_str());
+}
+
+isl_aff* rdaff(isl_ctx* ctx, const std::string& str) {
+  return isl_aff_read_from_str(ctx, str.c_str());
 }
 
 umap* rdmap(isl_ctx* ctx, const std::string& str) {

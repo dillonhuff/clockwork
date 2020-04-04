@@ -80,6 +80,7 @@ isl_space* get_space(isl_map* const m);
 
 isl_space* get_space(isl_set* const m);
 isl_space* get_space(isl_union_set* const m);
+isl_space* get_space(isl_aff* const m);
 
 int dim(isl_space* const s);
 
@@ -333,6 +334,7 @@ isl_union_pw_qpolynomial_fold* upper_bound(isl_union_pw_qpolynomial* range_card)
 isl_set* rdset(isl_ctx* ctx, const std::string& str);
 
 umap* rdmap(isl_ctx* ctx, const std::string& str);
+isl_aff* rdaff(isl_ctx* ctx, const std::string& str);
 
 isl_point* sample(isl_set* s);
 isl_point* sample(isl_union_set* s);
@@ -356,3 +358,12 @@ map<string, string> umap_codegen_c(umap* const um);
 
 isl_set* universe(isl_space* s);
 isl_set* add_constraint(isl_set* s, isl_constraint* c);
+
+
+int num_out_dims(isl_space* const s);
+
+int num_in_dims(isl_space* const s);
+
+int num_in_dims(isl_aff* const s);
+
+int num_out_dims(isl_aff* const s);

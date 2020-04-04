@@ -7557,7 +7557,30 @@ void blur_and_downsample_test() {
   regression_test(prg);
 }
 
+isl_val* constant(isl_aff* a) {
+  return isl_aff_get_constant_val(a);
+}
+
+void playground() {
+
+  isl_ctx* ct = isl_ctx_alloc();
+
+  isl_aff* aff = rdaff(ct, "{ [a, b] -> [(a + b) / 2] }");
+  cout << "aff = " << str(aff) << endl;
+  cout << "const = " << str(constant(aff)) << endl;
+  int in_dims = num_in_dims(aff);
+  cout << "input dimension: " << in_dims << endl;
+  int out_dims = num_out_dims(aff);
+  cout << "output dimension: " << out_dims << endl;
+
+  isl_ctx_free(ct);
+
+  assert(false);
+}
+
 void application_tests() {
+
+  playground();
 
   //synth_lb_test();
 
