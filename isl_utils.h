@@ -95,13 +95,17 @@ std::string str(isl_basic_set* const id);
 std::string str(isl_id* const id);
 std::string str(isl_local_space* const id);
 
-std::string domain_name(isl_space* const s);
+std::string domain_name(isl_map* const s);
+std::string range_name(isl_map* const s);
 
+std::string domain_name(isl_space* const s);
 std::string range_name(isl_space* const s);
 
 isl_union_set* to_uset(isl_set* const m);
 
 isl_stat get_maps(isl_map* m, void* user);
+vector<isl_map*> get_maps(isl_union_map* m);
+vector<isl_basic_map*> get_basic_maps(isl_map* m);
 
 std::string str(umap* const m);
 

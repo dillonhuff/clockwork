@@ -5703,11 +5703,19 @@ struct App {
     isl_union_map *validity =
       its(dot(writes, inv(reads)), before);
     cout << "validity: " << str(validity) << endl;
+
+    cout << "validity maps..." << endl;
+    for (auto m : get_maps(validity)) {
+      cout << tab(1) << str(m) << endl;
+      cout << tab(2) << str(lexmin(m)) << endl;
+    }
     //assert(false);
     validity = unn(validity, rel_order);
 
     isl_union_map *proximity =
       cpy(validity);
+
+    //auto opt_map = experimental_opt(domain, validity, proximity);
 
     auto finite_domain = cpy(domain);
     //domain = unn(domain, isl_union_set_universe(cpy(domain)));
@@ -5971,26 +5979,41 @@ struct App {
 
   }
 
-  void realize_naive(CodegenOptions& options, const std::string& name, const int d0, const int d1) {
+  umap* realize_opt_schedule(const std::string& name, const int d0, const int d1) {
     const int unroll_factor = 1;
     set_unroll_factors(unroll_factor);
-    cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
-    //fill_data_domain(name, d0, d1, unroll_factor);
     fill_data_domain(name, d0, d1);
-    //fill_compute_domain(unroll_factor);
+    fill_compute_domain();
+
+    umap* m =
+      schedule();
+    return m;
+  }
+
+  umap* realize_isl_schedule(const std::string& name, const int d0, const int d1)  {
+    const int unroll_factor = 1;
+    set_unroll_factors(unroll_factor);
+    fill_data_domain(name, d0, d1);
     fill_compute_domain();
 
     umap* m =
       schedule_isl();
-      //schedule_naive();
+    return m;
+  }
+
+  void realize_naive(CodegenOptions& options, const std::string& name, const int d0, const int d1) {
+    const int unroll_factor = 1;
+    set_unroll_factors(unroll_factor);
+    cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
+    fill_data_domain(name, d0, d1);
+    fill_compute_domain();
+
+    umap* m =
+      schedule_isl();
 
     cout << "Schedule: " << str(m) << endl;
 
     map<string, UBuffer> buffers = build_buffers(m);
-    for (auto b : buffers) {
-      cout << b.second << endl;
-      cout << endl << endl;
-    }
 
     prog prg;
     prg.name = name + "_naive";
@@ -6752,9 +6775,51 @@ void exposure_fusion() {
 
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
-  int size = 100;
-    //1250;
+  int size =
+    //100;
+    1250;
     //200;
+
+  auto isl_sched = lp.realize_isl_schedule("pyramid_synthetic_exposure_fusion", size, size);
+  auto isl_maps = get_maps(isl_sched);
+
+  auto opt_sched = lp.realize_opt_schedule("pyramid_synthetic_exposure_fusion", size, size);
+  auto opt_maps = get_maps(opt_sched);
+
+  cout << "--- ISL Schedule" << endl;
+  for (auto m : isl_maps) {
+    cout << tab(1) << str(m) <<  endl;
+  }
+  cout << endl << endl;
+
+  cout << "--- OPT Schedule" << endl;
+  for (auto m : opt_maps) {
+    cout << tab(1) << str(m) <<  endl;
+  }
+  cout << endl << endl;
+
+  assert(isl_maps.size() == opt_maps.size());
+  cout << "--- MATCHED Schedules" << endl;
+  for (auto opt : opt_maps) {
+    isl_map* imap = nullptr;
+    for (auto isl : isl_maps) {
+      if (domain_name(isl) == domain_name(opt)) {
+        imap = isl;
+        break;
+      }
+    }
+    assert(imap != nullptr);
+
+    cout << tab(1) << "opt: " << str(opt) << endl;
+    cout << tab(1) << "isl: " << str(imap) << endl;
+    cout << endl;
+  }
+
+  //cout << "isl schedule: " << str(isl_sched) << endl;
+  //cout << "opt schedule: " << str(opt_sched) << endl;
+
+  assert(false);
+
   lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
   lp.realize_naive("pyramid_synthetic_exposure_fusion", size, size);
 
@@ -7611,8 +7676,8 @@ void playground() {
   isl_ctx* ct = isl_ctx_alloc();
 
   isl_aff* zero = rdaff(ct, "{ [a, b] -> [0] }");
-  isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor((a + 3b + floor(2a - 7b / 9)) / 2)] }");
-
+  isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor(a/2) + 3] }");
+  //isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor((a + 3b + floor(2a - 7b / 9)) / 2)] }");
   //isl_aff* aff = rdaff(ct, "{ [a, b] -> [3 a / 2 + 2 b / 15] }");
   //isl_aff* aff = rdaff(ct, "{ [a, b] -> [(a + b) % 2] }");
   //isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor((a + 3b) / 2)] }");
@@ -7647,6 +7712,21 @@ void playground() {
 
 
   cout << "bset: " << str(bset) << endl;
+  auto mat = isl_basic_set_equalities_matrix(bset, isl_dim_cst, isl_dim_param, isl_dim_set, isl_dim_div);
+  cout << "Eq Rows: " << isl_mat_rows(mat) << endl;
+  cout << "Eq Cols: " << isl_mat_cols(mat) << endl;
+
+  auto ineqmat = isl_basic_set_inequalities_matrix(bset, isl_dim_cst, isl_dim_param, isl_dim_set, isl_dim_div);
+  cout << "Ineq Rows: " << isl_mat_rows(ineqmat) << endl;
+  cout << "Ineq Cols: " << isl_mat_cols(ineqmat) << endl;
+  for (int r = 0; r < isl_mat_rows(ineqmat); r++) {
+    for (int c = 0; c < isl_mat_cols(ineqmat); c++) {
+      cout << str(isl_mat_get_element_val(ineqmat, r, c)) << " ";
+    }
+    cout << endl;
+  }
+
+  assert(false);
 
   auto prev = rdaff(ct, "{ [x] -> [floor(x / 2)] }");
   auto next = rdaff(ct, "{ [x] -> [floor((x + 1) / 2)] }");
@@ -7663,7 +7743,7 @@ void playground() {
   //isl_mat* matrix = aff->ls->div;
   isl_ctx_free(ct);
 
-  //assert(false);
+  assert(false);
 }
 
 void application_tests() {
@@ -7676,12 +7756,12 @@ void application_tests() {
  
   //reduce_1d_test();
 
+  exposure_fusion();
   //up_stencil_down_unrolled_test();
 
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
 
-  exposure_fusion();
   jacobi2d_app_test();
   denoise2d_test();
   mismatched_stencil_test();

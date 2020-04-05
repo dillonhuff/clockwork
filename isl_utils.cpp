@@ -153,6 +153,14 @@ std::string str(isl_id* const id) {
   return std::string(isl_id_to_str(id));
 }
 
+std::string domain_name(isl_map* const s) {
+  return domain_name(get_space(s));
+}
+
+std::string range_name(isl_map* const s) {
+  return range_name(get_space(s));
+}
+
 std::string domain_name(isl_space* const s) {
   return std::string(isl_id_to_str(isl_space_get_tuple_id(s, isl_dim_in)));
 }
@@ -165,8 +173,32 @@ isl_union_set* to_uset(isl_set* const m) {
   return isl_union_set_from_set(cpy(m));
 }
 
+isl_stat get_basic_map(isl_basic_map* m, void* user) {
+  //cout << "Getting map" << endl;
+  auto* vm = (vector<isl_basic_map*>*) user;
+  vm->push_back(m);
+  return isl_stat_ok;
+}
+
+vector<isl_basic_map*> get_basic_maps(isl_map* m) {
+  assert(m != nullptr);
+
+  vector<isl_basic_map*> map_vec;
+  isl_map_foreach_basic_map(m, get_basic_map, &map_vec);
+
+  return map_vec;
+}
+vector<isl_map*> get_maps(isl_union_map* m) {
+  assert(m != nullptr);
+
+  vector<isl_map*> map_vec;
+  isl_union_map_foreach_map(m, get_maps, &map_vec);
+
+  return map_vec;
+}
+
 isl_stat get_maps(isl_map* m, void* user) {
-  cout << "Getting map" << endl;
+  //cout << "Getting map" << endl;
   auto* vm = (vector<isl_map*>*) user;
   vm->push_back(m);
   return isl_stat_ok;

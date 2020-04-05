@@ -896,3 +896,4 @@ umap* to_umap(isl_ctx* ctx,
     return m;
 }
 
+umap* experimental_opt(uset* domain, umap* validity, umap* proximity);
