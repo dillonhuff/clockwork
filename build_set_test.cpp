@@ -5715,7 +5715,7 @@ struct App {
     isl_union_map *proximity =
       cpy(validity);
 
-    auto opt_map = experimental_opt(domain, validity, proximity);
+    //auto opt_map = experimental_opt(domain, validity, proximity);
 
     auto finite_domain = cpy(domain);
     //domain = unn(domain, isl_union_set_universe(cpy(domain)));
@@ -7758,7 +7758,7 @@ void playground() {
 
 void application_tests() {
 
-  playground();
+  //playground();
 
   //synth_lb_test();
 

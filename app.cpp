@@ -423,10 +423,6 @@ umap* experimental_opt(uset* domain,
 
   assert(constraints_entered == total_constraints);
 
-  //A(0, 0) = qexpr(1);
-  //A(0, 1) = qexpr(-1);
-  //A(1, 0) = qexpr(-1);
-  //A(1, 1) = qexpr(1);
   cout << A << endl << endl;
 
   sym_matrix<QExpr> system =
