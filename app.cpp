@@ -319,6 +319,11 @@ umap* experimental_opt(uset* domain,
   }
 
   sym_matrix<QExpr> L(num_dependence_edges, num_constraints);
+  for (int r = 0; r < L.num_rows(); r++) {
+    for (int c = 0; c < L.num_cols(); c++) {
+      L(r, c) = qexpr("L_" + str(r) + "_" + str(c));
+    }
+  }
   sym_matrix<QExpr> A(num_constraints, num_spaces + num_divs);
 
   cout << "S..." << S.num_rows() << ", " << S.num_cols() << endl;
@@ -328,6 +333,11 @@ umap* experimental_opt(uset* domain,
   cout << L << endl << endl;
 
   cout << "A..." << A.num_rows() << ", " << A.num_cols() << endl;
+  // TODO: Actually write in constraints
+  A(0, 0) = qexpr(1);
+  A(0, 1) = qexpr(-1);
+  A(1, 0) = qexpr(-1);
+  A(1, 1) = qexpr(1);
   cout << A << endl << endl;
 
   assert(false);
