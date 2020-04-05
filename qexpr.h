@@ -851,6 +851,19 @@ QExpr sub(const string& a, const string& b) {
 }
 
 static inline
+QExpr operator*(const QExpr& a, const QExpr& b) {
+  QExpr prod;
+  for (auto t : a.terms) {
+    vector<QTerm> bterms = b.terms;
+    for (QTerm& ot : bterms) {
+      concat(ot.vals, t.vals);
+      prod.terms.push_back(ot);
+    }
+  }
+  return prod;
+}
+
+static inline
 QExpr operator-(const QExpr& a, const QExpr& b) {
   QExpr bc = b;
   bc.scale(-1);

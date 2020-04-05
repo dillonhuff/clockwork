@@ -1,5 +1,46 @@
 #include "app.h"
 
+template<typename T>
+struct sym_matrix {
+  vector<vector<T> > rows;
+
+  sym_matrix(const int r, const int c) {
+    rows.resize(r);
+    for (int ri = 0; ri < r; ri++) {
+      rows.at(ri).resize(c);
+    }
+  }
+
+  int num_rows() const {
+    return rows.size();
+  }
+
+  int num_cols() const {
+    assert(rows.size() > 0);
+    return rows.at(0).size();
+  }
+
+  T& operator()(const int r, const int c) {
+    return rows.at(r).at(c);
+  }
+
+  const T& operator()(const int r, const int c) const {
+    return rows.at(r).at(c);
+  }
+
+};
+
+template<typename T>
+ostream& operator<<(ostream& out, const sym_matrix<T>& m) {
+
+  for (int r = 0; r < m.num_rows(); r++) {
+    for (int c = 0; c < m.num_cols(); c++) {
+      out << m(r, c) << " ";
+    }
+    out << endl;
+  }
+  return out;
+}
 
 map<string, int> maximize(const std::vector<QConstraint>& constraints, QExpr& objective) {
 
@@ -162,6 +203,21 @@ vector<int> soda_offsets(const int app) {
   return {};
 }
 
+string str(isl_mat* const ineqmat) {
+  ostringstream out;
+  for (int r = 0; r < isl_mat_rows(ineqmat); r++) {
+    for (int c = 0; c < isl_mat_cols(ineqmat); c++) {
+      out << str(isl_mat_get_element_val(ineqmat, r, c)) << " ";
+    }
+    out << endl;
+  }
+  return out.str();
+}
+
+QExpr schedvar(const string& n) {
+  return qexpr("s_" + n);
+}
+
 umap* experimental_opt(uset* domain,
     umap* validity,
     umap* proximity) {
@@ -237,55 +293,86 @@ umap* experimental_opt(uset* domain,
 
     cout << endl << endl;
   }
+
+  int num_dependence_edges = deps.size();
+  int num_constraints = total_constraints;
+  int num_divs = total_divs;
+  int num_spaces = space_offset;
+
+  sym_matrix<QExpr> S(num_dependence_edges, num_spaces + num_divs);
+  map<isl_map*, int> edge_rows;
+  int constraint_row = 0;
+  for (auto d : deps) {
+    edge_rows[d] = constraint_row;
+
+    string producer = domain_name(d);
+    string consumer = range_name(d);
+
+    int producer_sched_col = map_find(producer, space_var_offsets);
+    int consumer_sched_col = map_find(consumer, space_var_offsets);
+
+
+    S(constraint_row, producer_sched_col) = qexpr(-1) * schedvar(producer);
+    S(constraint_row, consumer_sched_col) = qexpr(1) * schedvar(consumer);
+
+    constraint_row++;
+  }
+
+  sym_matrix<QExpr> L(num_dependence_edges, num_constraints);
+  sym_matrix<QExpr> A(num_constraints, num_spaces + num_divs);
+
+  cout << "S..." << S.num_rows() << ", " << S.num_cols() << endl;
+  cout << S << endl << endl;
+
+  cout << "L..." << L.num_rows() << ", " << L.num_cols() << endl;
+  cout << L << endl << endl;
+
+  cout << "A..." << A.num_rows() << ", " << A.num_cols() << endl;
+  cout << A << endl << endl;
+
+  assert(false);
+
   cout << "Total constraints: " << total_constraints << endl;
   cout << "Total divs       : " << total_divs << endl;
   cout << "Total sched vars : " << space_offset << endl;
-  cout << "Total Farkas vars: " << total_constraints*space_var_offsets.size() << endl;
+  int num_farkas_multipliers = total_constraints*deps.size();
+  cout << "Total Farkas vars: " << num_farkas_multipliers << endl;
 
   assert(total_divs == 0);
 
   // # of variables in scheduling ILP:
   //  # farkas + # divs + space offset
-  int total_rate_vars = total_constraints*space_var_offsets.size() +
+  int total_rate_vars = num_farkas_multipliers +
     total_divs +
     space_offset;
 
+  int ilp_rows = deps.size();
+  int ilp_cols = total_rate_vars;
 
-  cout << "Total rate vars: " << endl;
   auto ct = ctx(domain);
+  auto ilp_matrix = isl_mat_alloc(ct, ilp_rows, ilp_cols);
+  cout << "Total rate vars: " << endl;
   isl_space* ilp_space = isl_space_set_alloc(ct, 0, total_rate_vars);
   cout << "ILP Space: " << str(ilp_space) << endl;
   isl_basic_set* ilp = isl_basic_set_universe(ilp_space);
   cout << "ILP Set  : " << str(ilp) << endl;
-  assert(false);
+
   // For each dep we are going to add one group of farkas constraints
   cout << "Space var offsets..." << endl;
   for (auto off : space_var_offsets) {
     cout << tab(1) << off.first << " -> " << off.second << endl;
   }
 
-  cout << "Div offsets..." << endl;
-  for (auto d : div_offsets) {
-    cout << tab(1) << d.second << endl;
-  }
+  //cout << "Div offsets..." << endl;
+  //for (auto d : div_offsets) {
+    //cout << tab(1) << d.second << endl;
+  //}
 
   // Build explicit farkas constraints
   cout << "Schedule function constraints..." << endl;
-  vector<QExpr> schedule_diffs;
-  for (auto d : deps) {
-    string producer = domain_name(d);
-    string consumer = range_name(d);
-    
-    QExpr producer_schedule = qexpr(producer + "_sched");
-    QExpr consumer_schedule = qexpr(consumer + "_sched");
-    QExpr diff_eq = consumer_schedule - producer_schedule;
-    schedule_diffs.push_back(diff_eq);
-  }
 
-  for (auto sd : schedule_diffs) {
-    cout << tab(1) << sd << endl;
-  }
-
+  cout << str(ilp_matrix) << endl;
   assert(false);
+
   return nullptr;
 }
