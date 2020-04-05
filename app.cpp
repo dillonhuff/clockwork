@@ -378,11 +378,55 @@ umap* experimental_opt(uset* domain,
   cout << L << endl << endl;
 
   cout << "A..." << A.num_rows() << ", " << A.num_cols() << endl;
-  // TODO: Actually write in constraints
-  A(0, 0) = qexpr(1);
-  A(0, 1) = qexpr(-1);
-  A(1, 0) = qexpr(-1);
-  A(1, 1) = qexpr(1);
+  int constraints_entered = 0;
+  for (auto dr : edge_rows) {
+    isl_map* dep_edge = dr.first;
+
+    vector<isl_basic_map*> basics = get_basic_maps(dep_edge);
+    assert(basics.size() == 1);
+
+    auto bm = basics.at(0);
+    auto eqmat = isl_basic_map_equalities_matrix(bm,
+        isl_dim_cst,
+        isl_dim_in,
+        isl_dim_out,
+        isl_dim_div,
+        isl_dim_param);
+    cout << "Eq Rows: " << isl_mat_rows(eqmat) << endl;
+    cout << "Eq Cols: " << isl_mat_cols(eqmat) << endl;
+
+    assert(isl_mat_cols(eqmat) == 3);
+
+    string producer = domain_name(dep_edge);
+    string consumer = range_name(dep_edge);
+
+    for (int r = 0; r < isl_mat_rows(eqmat); r++) {
+      isl_val* producer_coeff = isl_mat_get_element_val(eqmat, r, 1);
+      isl_val* consumer_coeff = isl_mat_get_element_val(eqmat, r, 2);
+
+      int pc = stoi(str(producer_coeff));
+      A(constraints_entered, map_find(producer, space_var_offsets)) =
+        qexpr(pc);
+      int cc = stoi(str(consumer_coeff));
+      A(constraints_entered, map_find(consumer, space_var_offsets)) =
+        qexpr(cc);
+      constraints_entered++;
+
+      A(constraints_entered, map_find(producer, space_var_offsets)) =
+        qexpr(-pc);
+      A(constraints_entered, map_find(consumer, space_var_offsets)) =
+        qexpr(-cc);
+      constraints_entered++;
+    }
+
+  }
+
+  assert(constraints_entered == total_constraints);
+
+  //A(0, 0) = qexpr(1);
+  //A(0, 1) = qexpr(-1);
+  //A(1, 0) = qexpr(-1);
+  //A(1, 1) = qexpr(1);
   cout << A << endl << endl;
 
   sym_matrix<QExpr> system =
@@ -416,48 +460,6 @@ umap* experimental_opt(uset* domain,
     cout << tab(1) << r.first << " = " << r.second << endl;
   }
 
-  assert(false);
-
-  cout << "Total constraints: " << total_constraints << endl;
-  cout << "Total divs       : " << total_divs << endl;
-  cout << "Total sched vars : " << space_offset << endl;
-  int num_farkas_multipliers = total_constraints*deps.size();
-  cout << "Total Farkas vars: " << num_farkas_multipliers << endl;
-
-  assert(total_divs == 0);
-
-  // # of variables in scheduling ILP:
-  //  # farkas + # divs + space offset
-  int total_rate_vars = num_farkas_multipliers +
-    total_divs +
-    space_offset;
-
-  int ilp_rows = deps.size();
-  int ilp_cols = total_rate_vars;
-
-  auto ct = ctx(domain);
-  auto ilp_matrix = isl_mat_alloc(ct, ilp_rows, ilp_cols);
-  cout << "Total rate vars: " << endl;
-  isl_space* ilp_space = isl_space_set_alloc(ct, 0, total_rate_vars);
-  cout << "ILP Space: " << str(ilp_space) << endl;
-  isl_basic_set* ilp = isl_basic_set_universe(ilp_space);
-  cout << "ILP Set  : " << str(ilp) << endl;
-
-  // For each dep we are going to add one group of farkas constraints
-  cout << "Space var offsets..." << endl;
-  for (auto off : space_var_offsets) {
-    cout << tab(1) << off.first << " -> " << off.second << endl;
-  }
-
-  //cout << "Div offsets..." << endl;
-  //for (auto d : div_offsets) {
-    //cout << tab(1) << d.second << endl;
-  //}
-
-  // Build explicit farkas constraints
-  cout << "Schedule function constraints..." << endl;
-
-  cout << str(ilp_matrix) << endl;
   assert(false);
 
   return nullptr;
