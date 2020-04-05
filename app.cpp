@@ -33,13 +33,57 @@ struct sym_matrix {
 template<typename T>
 ostream& operator<<(ostream& out, const sym_matrix<T>& m) {
 
+  cout << "Printing..." << "nrows = " << m.num_rows() << ", num cols = " << m.num_cols() << endl;
   for (int r = 0; r < m.num_rows(); r++) {
     for (int c = 0; c < m.num_cols(); c++) {
       out << m(r, c) << " ";
     }
     out << endl;
   }
+  cout << "Done printing" << endl;
   return out;
+}
+
+template<typename T>
+sym_matrix<T> operator*(const sym_matrix<T>& a, const sym_matrix<T>& b) {
+  assert(a.num_cols() == b.num_rows());
+
+  cout << "Multiplying..." << endl;
+
+  sym_matrix<T> res(a.num_rows(), b.num_cols());
+
+  for (int r = 0; r < a.num_rows(); r++) {
+    for (int c = 0; c < b.num_cols(); c++) {
+      cout << "r = " << r << ", c = " << c << endl;
+
+      // TODO: Generalize to other types
+      res(r, c) = qexpr(0);
+
+      for (int k = 0; k < a.num_cols(); k++) {
+        cout << "a(" << r << ", " << k << ") = " << a(r, k) << endl;
+        res(r, c) = res(r, c) + a(r, k) * b(k, c);
+      }
+    }
+  }
+
+  cout << "Done: " << endl << res << endl;
+  return res;
+}
+
+template<typename T>
+sym_matrix<T> operator-(const sym_matrix<T>& a, const sym_matrix<T>& b) {
+  assert(a.num_rows() == b.num_rows());
+  assert(a.num_cols() == b.num_cols());
+
+  sym_matrix<T> res(a.num_rows(), a.num_cols());
+
+  for (int r = 0; r < a.num_rows(); r++) {
+    for (int c = 0; c < a.num_cols(); c++) {
+      res(r, c) = a(r, c) - b(r, c);
+    }
+  }
+
+  return res;
 }
 
 map<string, int> maximize(const std::vector<QConstraint>& constraints, QExpr& objective) {
@@ -94,12 +138,13 @@ map<string, int> maximize(const std::vector<QConstraint>& constraints, QExpr& ob
   cout << "Max delays: " << mstring << endl;
   string os = aff_c;
   string mset = set_string(ds, os + " = " + mstring);
-  cout << "Min set: " << mset << endl;
+  cout << "Max set: " << mset << endl;
   auto min_set = rdset(ctx, mset.c_str());
+  cout << "Max set parsed: " << str(min_set) << endl;
 
   auto mvs = its(min_set, legal_delays);
   string dp = str(isl_set_sample_point(mvs));
-  cout << "Min pt: " << dp << endl;
+  cout << "Max pt: " << dp << endl;
 
   vector<int> delay_coeffs =
     parse_pt(dp);
@@ -168,8 +213,8 @@ map<string, int> minimize(const std::vector<QConstraint>& constraints, QExpr& ob
   string mstring =
     str(min_point);
   cout << "Min delays: " << mstring << endl;
-  string os = aff_c;
-  string mset = set_string(ds, os + " = " + mstring);
+  //string os = aff_c;
+  string mset = set_string(ds, isl_str(objective) + " = " + mstring);
   cout << "Min set: " << mset << endl;
   auto min_set = rdset(ctx, mset.c_str());
 
@@ -339,6 +384,37 @@ umap* experimental_opt(uset* domain,
   A(1, 0) = qexpr(-1);
   A(1, 1) = qexpr(1);
   cout << A << endl << endl;
+
+  sym_matrix<QExpr> system =
+    S - L*A;
+
+  cout << "system(" << system.num_rows() << ", " << system.num_cols() << ")" << endl;
+  cout << system << endl;
+
+  cout << "Scheduling system..." << endl;
+  vector<QConstraint> cs;
+  for (int r = 0; r < L.num_rows(); r++) {
+    for (int c = 0; c < L.num_cols(); c++) {
+      cs.push_back(geq(L(r, c), qexpr(0)));
+    }
+  }
+
+  for (int r = 0; r < system.num_rows(); r++) {
+    for (int c = 0; c < system.num_cols(); c++) {
+      cs.push_back(eq(system(r, c), qexpr(0)));
+    }
+  }
+  QExpr objective = qexpr(0);
+  for (auto s : space_var_offsets) {
+    cs.push_back(geq(schedvar(s.first), qexpr(1)));
+    objective = objective + schedvar(s.first);
+  }
+
+  map<string, int> result = minimize(cs, objective);
+  cout << "Result: " << endl;
+  for (auto r : result) {
+    cout << tab(1) << r.first << " = " << r.second << endl;
+  }
 
   assert(false);
 

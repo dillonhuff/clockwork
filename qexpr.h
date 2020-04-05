@@ -864,6 +864,12 @@ QExpr operator*(const QExpr& a, const QExpr& b) {
 }
 
 static inline
+QExpr operator+(const QExpr& a, const QExpr& b) {
+  QExpr bc = b;
+  return concat_terms(a, bc);
+}
+
+static inline
 QExpr operator-(const QExpr& a, const QExpr& b) {
   QExpr bc = b;
   bc.scale(-1);
