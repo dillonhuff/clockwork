@@ -100,6 +100,11 @@ std::string domain_name(isl_map* const m);
 
 std::string range_name(isl_map* const m);
 
+isl_map* set_range_name(isl_map* const m, string new_name);
+
+isl_map* add_range_suffix(isl_map* const m, string suffix);
+
+
 isl_union_set* to_uset(isl_set* const m);
 
 isl_stat get_maps(isl_map* m, void* user);

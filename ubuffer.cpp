@@ -81,6 +81,16 @@ void UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2
             target_buf.port_bundles[bd_name].push_back(pt_name);
             target_buf.add_in_pt(pt_name, dom, to_map(rewrite_access_map), sched_new);
             target_buf.add_access_pattern(pt_name, acc_pattern.op_name+"_vec", target_buf.name);
+
+            //TODO: change this hack, decouple reuse into more formal way
+            size_t found = target_buf.name.find("tb");
+            if(found != string::npos) {
+                auto acc_pt = target_buf.access_pattern.at(pt_name);
+                auto decouple_acc_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id);
+                //cout << "\tdecoupled map:" << str(decouple_acc_map) << endl;
+                target_buf.access_map[pt_name] = to_umap(decouple_acc_map);
+                target_buf.add_access_pattern(pt_name, acc_pattern.op_name+"_vec", target_buf.name);
+            }
         }
         new_pt_cnt ++;
     }
@@ -156,24 +166,40 @@ void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuff
             cout << "rewrite buffer to op map: " << str(access_map.at(out_pt_name)) << endl;
 
             auto outpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id);
+            outpt_acc_map = add_range_suffix(outpt_acc_map, "_tb");
             cout << "Access map decouple reuse: " << str(outpt_acc_map) << endl;
             tb.add_out_pt(out_pt_name+"_out", domain.at(out_pt_name), outpt_acc_map, its(new_sched.at(acc_pattern.op_name), domain.at(out_pt_name)));
             tb.port_bundles[bd_name].push_back(out_pt_name + "_out");
 
-            //add out port to agg_buf
+            //add out port to tb
             add_vectorized_pt_to_ubuf(tb, rewrite_buf2op, new_sched, out_pt_name, bd_name, dim_id, fetch_width, false);
+
             //add in port to sram
             add_vectorized_pt_to_ubuf(sram, rewrite_buf2op, new_sched, out_pt_name, bd_name, dim_id, fetch_width, true);
         }
     }
-    cout << "AGG: " << str(agg_buf.global_schedule()) << endl;
-    cout << "SRAM: " << str(sram.global_schedule()) << endl;
-    cout << "TB: " << str(tb.global_schedule())  << endl;
+
+    cout << "AGG : " << agg_buf << endl;
+    cout << "SRAM: " << sram << endl;
+    cout << "TB  : " << tb << endl;
+    cout << "AGG Schedule: " << str(agg_buf.global_schedule()) << endl;
+    cout << "SRAM Schedule: " << str(sram.global_schedule()) << endl;
+    cout << "TB Schedule: " << str(tb.global_schedule())  << endl;
     auto global_sched = unn(agg_buf.global_schedule(), unn(sram.global_schedule(), tb.global_schedule()));
     //cout << str(lex_lt(global_sched, global_sched)) << endl;
-    auto rel_order = get_rel_order(ctx, global_sched);
-    assert(false);
-    //TODO: need create a pass to get schedule
-    cout << agg_buf.get_out_ports() << endl;
-    cout <<"\tAGG buffer param:" << agg_buf << endl;
+    auto order_deps = get_rel_order(ctx, global_sched);
+
+
+    auto global_p_map = unn(agg_buf.producer_map(), unn(sram.producer_map(), tb.producer_map()));
+    auto global_c_map = unn(agg_buf.consumer_map(), unn(sram.consumer_map(), tb.consumer_map()));
+
+    auto raw_deps = its( inv(dot(global_c_map, inv(global_p_map))), lex_lt(global_sched, global_sched));
+    cout << "Raw_deps: " << str(raw_deps) << endl;
+    auto domain = unn(agg_buf.global_domain(), unn(sram.global_domain(), tb.global_domain()));
+    auto validity = unn(order_deps, raw_deps);
+    auto proximity = cpy(raw_deps);
+    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+    auto sched_map = its(isl_schedule_get_map(sched), domain);
+    //TODO: Add input and output dependency
+    cout << codegen_c(sched_map) << endl;
 }

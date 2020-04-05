@@ -150,6 +150,16 @@ std::string range_name(isl_map* const m) {
     return std::string(isl_id_to_str(isl_map_get_tuple_id(m, isl_dim_out)));
 }
 
+isl_map* set_range_name(isl_map* const m, string new_name) {
+    return isl_map_set_tuple_name(m, isl_dim_out, new_name.c_str());
+}
+
+isl_map* add_range_suffix(isl_map* const m, string suffix) {
+    string origin_name = range_name(m);
+    string new_name = origin_name + suffix;
+    return isl_map_set_tuple_name(m, isl_dim_out, new_name.c_str());
+}
+
 isl_union_set* to_uset(isl_set* const m) {
   return isl_union_set_from_set(cpy(m));
 }

@@ -147,7 +147,7 @@ class AccessPattern {
           }
           string nd_expr_str = sep_list(nd_expr, "[", "]", ", ");
           cout << "access map expr:" << nd_expr_str << endl;
-          auto access_map = isl_map_read_from_str(ctx, string("{ " + op_name + vars + " -> " + buf_name + nd_expr_str + "}").c_str());
+          auto access_map = isl_map_read_from_str(ctx, string("{ " + op_name + vars + " -> " + buf_name  + nd_expr_str + "}").c_str());
           auto domain = get_domain(ctx);
           return its(access_map, domain);
       }
@@ -587,6 +587,22 @@ class UBuffer {
         s = unn(s, (cpy(other.second)));
       }
 
+      return s;
+    }
+
+    isl_union_map* producer_map() {
+      umap* s = isl_union_map_read_from_str(ctx, "{ }");
+      for (auto pt: get_in_ports()) {
+        s = unn(s, access_map.at(pt));
+      }
+      return s;
+    }
+
+    isl_union_map* consumer_map() {
+      umap* s = isl_union_map_read_from_str(ctx, "{ }");
+      for (auto pt: get_out_ports()) {
+        s = unn(s, access_map.at(pt));
+      }
       return s;
     }
 

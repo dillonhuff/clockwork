@@ -2402,6 +2402,31 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
   return buffers;
 }
 
+isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers) {
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_set* domain = isl_union_set_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        string buf_name = it.first;
+        auto buf = it.second;
+        global_sched = unn(buf.global_schedule(), global_sched);
+        global_p_map = unn(buf.producer_map(), global_p_map);
+        global_c_map = unn(buf.consumer_map(), global_c_map);
+        domain = unn(buf.global_domain(), domain);
+    }
+    cout << str(global_sched) << "\n\n" << str(domain) << "\n\n" <<str(global_p_map) <<"\n\n" << str(global_c_map) << endl;
+    auto order_deps = get_rel_order(ctx, global_sched);
+    auto raw_deps = dot(global_p_map, inv(global_c_map));
+    cout << "Raw_deps: " << str(raw_deps) << endl;
+    auto validity = unn(order_deps, raw_deps);
+    auto proximity = cpy(raw_deps);
+    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+    auto sched_map = its(isl_schedule_get_map(sched), domain);
+    return sched_map;
+}
+
 void buffer_vectorization(string vec_buf_name, int dim_id, int fetch_width, map<string, UBuffer> & buffers) {
     /* Function to vectorize the buffer access, will rewrite the buffer access pattern,
      * generate the new domain and access map and also add two other buffer on
@@ -2413,8 +2438,13 @@ void buffer_vectorization(string vec_buf_name, int dim_id, int fetch_width, map<
         if (it.first == vec_buf_name) {
             auto target_buffer = it.second;
             target_buffer.vectorization(dim_id, fetch_width, agg, sram, tb);
+            break;
         }
     }
+    buffers.erase(vec_buf_name);
+    buffers[agg.name] = agg;
+    buffers[sram.name] = sram;
+    buffers[tb.name] = tb;
 }
 
 void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap);
@@ -3228,6 +3258,10 @@ void auto_vec_test() {
   cout << "\tUnoptimized Buffer: " << pick(buffers).second << endl;
   int fetch_width = 4;
   buffer_vectorization("buf", 1, fetch_width, buffers);
+
+  auto opt_sched = optimized_schedule_from_buffers(buffers);
+  cout << codegen_c(opt_sched) << endl;
+  assert(false);
 }
 
 std::vector<std::string> run_regression_tb(const std::string& name) {
