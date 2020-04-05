@@ -787,9 +787,9 @@ class UBuffer {
     //change the input and output and return the agg and tb ubuffer stucture
     void vectorization(int dim_id, int fetch_width, UBuffer& agg, UBuffer& sram, UBuffer& tb);
 
-    void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out);
+    void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, map<string, isl_map*> sched_map, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out);
 
-    map<string, isl_union_map*> produce_vectorized_schedule(string in_pt, string out_pt);
+    map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
 };
 
 int compute_max_dd(UBuffer& buf, const string& inpt);
@@ -828,12 +828,15 @@ static inline
 std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
   out << "--- " << buf.name << endl;
   out << "\t---- In ports" << endl;
+
+  //add a copy for compute_max_dd function
+  UBuffer tmp = buf;
   for (auto inpt : buf.get_in_ports()) {
     out << "\t\t" << inpt << endl;
     out << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
     out << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
-    //out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
-    //out << "\t\t\tbuffer capacity: " << compute_max_dd(buf, inpt) << endl;
+    out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
+    out << "\t\t\tbuffer capacity: " << compute_max_dd(tmp, inpt) << endl;
     out << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
     out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
   }
@@ -843,7 +846,7 @@ std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
     out << "\t\t" << inpt << endl;
     out << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
     out << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
-    //out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
+    out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
     out << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
     out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
   }
