@@ -121,6 +121,8 @@ isl_stat isl_pw_aff_set_var_name( isl_set *set,  isl_aff *aff, void *user);
 
 isl_map* set_map_dim_name(isl_ctx* ctx, isl_map* m, unsigned pos, const string& name);
 
+isl_map* gen_map_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string op_name);
+
 unsigned get_in_dim(isl_map* const m);
 
 unsigned get_out_dim(isl_map* const m);
@@ -177,6 +179,7 @@ isl_ctx* ctx(isl_pw_qpolynomial* const m);
 
 vector<std::string> collect_sched_vec(isl_set* const bset);
 vector<std::string> collect_sched_vec(isl_union_set* const bset);
+vector<string> collect_sched_vec(isl_union_map* const um);
 
 std::string codegen_c(isl_set* const bset);
 std::string codegen_c(isl_union_set* bset);

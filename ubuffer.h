@@ -789,6 +789,7 @@ class UBuffer {
 
     void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out);
 
+    map<string, isl_union_map*> produce_vectorized_schedule(string in_pt, string out_pt);
 };
 
 int compute_max_dd(UBuffer& buf, const string& inpt);

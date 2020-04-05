@@ -1,5 +1,31 @@
 #include "ubuffer.h"
 
+map<string, isl_union_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name) {
+    /*
+     * Previously we have two ops, input and output.In order to do the vectorization
+     * we need to create 2 other ops, input_vec and output_vec
+     * */
+    string in_pt_name = pick(port_bundles.at(in_bd_name));
+    string out_pt_name = pick(port_bundles.at(out_bd_name));
+    cout << in_pt_name << out_pt_name << endl;
+    string in_op = access_pattern.at(in_pt_name).op_name;
+    string out_op = access_pattern.at(out_pt_name).op_name;
+    auto in_sched = schedule.at(in_pt_name);
+    auto out_sched = schedule.at(out_pt_name);
+    auto in_sched_vec = collect_sched_vec(in_sched);
+    auto out_sched_vec = collect_sched_vec(out_sched);
+    cout << "\tin vec: " << in_sched_vec << "\n\tout vec: " << out_sched_vec << endl;
+    auto in_sched_new = gen_map_from_sched_vec(ctx, in_sched_vec, in_op);
+    auto out_sched_new = gen_map_from_sched_vec(ctx, out_sched_vec, out_op);
+    cout << "\tin sched: " << str(in_sched_new) << "\n\tout sched: " << str(out_sched_new) << endl;
+    cout << "\tin domain: " << str(its(in_sched_new, domain.at(in_pt_name)))  << "\n\tout domain: " << str(its(out_sched_new, domain.at(out_pt_name))) << endl;
+    assert(false);
+
+    map<string, isl_union_map*> new_sched;
+    return new_sched;
+}
+
+
 void UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out) {
 
     AccessPattern acc_pattern = access_pattern.at(origin_pt_name);
@@ -42,7 +68,16 @@ void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuff
     sram.name = name + "_sram";
     sram.ctx = ctx;
     sram.port_widths = port_widths;
+
     vector<string> in_bundle = get_in_bundles();
+    vector<string> out_bundle = get_out_bundles();
+
+    //Only test bundle size = 1
+    assert(in_bundle.size() == 1 && out_bundle.size() == 1);
+
+    //produce naive schedule for the rewrited buffer
+    map<string, isl_union_map*> new_sched =  produce_vectorized_schedule(pick(in_bundle), pick(out_bundle));
+
     for (auto bd_name : in_bundle) {
         cout << "Vectorize input port bundle: " << bd_name << endl;
         for (auto in_pt_name : port_bundles.at(bd_name) ) {
@@ -71,7 +106,6 @@ void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuff
        }
     }
 
-    vector<string> out_bundle = get_out_bundles();
     for (auto bd_name: out_bundle) {
         cout << "Vectorize output port bundle: " << bd_name << endl;
         for (auto out_pt_name : port_bundles.at(bd_name) ) {

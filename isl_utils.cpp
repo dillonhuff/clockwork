@@ -265,6 +265,19 @@ isl_map* set_map_dim_name(isl_ctx* ctx, isl_map* m, unsigned pos, const string& 
     return isl_map_set_dim_id(m, isl_dim_in, pos, name_id);
 }
 
+isl_map* gen_map_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string op_name) {
+    vector<string> var_list;
+    var_list.push_back("root");
+    for (string it : sched_vec) {
+        if (!is_number(it) ){
+            var_list.push_back(it);
+        }
+    }
+    string vars = sep_list(var_list, "[", "]", ",");
+    string sched = sep_list(sched_vec, "[", "]", ",");
+    return isl_map_read_from_str(ctx, string("{" + op_name + vars + " -> " + sched + "}").c_str());
+}
+
 unsigned get_in_dim(isl_map* const m) {
     return isl_map_dim(cpy(m), isl_dim_in);
 }
@@ -1245,7 +1258,7 @@ vector<string> collect_sched_vec(isl_set* const s) {
           bool involve =  isl_constraint_involves_dims(hc, isl_dim_set, i, 1);
           if (involve) {
               if (isl_constraint_is_equality(hc))
-                  sched_vec[i] = to_string(isl_val_get_num_si(isl_constraint_get_constant_val(hc)));
+                  sched_vec[i] = to_string(-isl_val_get_num_si(isl_constraint_get_constant_val(hc)));
               else {
                   sched_vec[i] = "i" + to_string(i);
               }
@@ -1273,6 +1286,10 @@ vector<string> collect_sched_vec(isl_union_set* s) {
   assert(code_holder.size() == 1);
   sched_vec = collect_sched_vec(pick(code_holder));
   return sched_vec;
+}
+
+vector<string> collect_sched_vec(isl_union_map* um) {
+    return collect_sched_vec(range(um));
 }
 
 isl_stat return_piece(isl_set* domain, isl_qpolynomial* val, void* user) {
