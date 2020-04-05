@@ -264,6 +264,9 @@ isl_union_set* unn(isl_union_set* const m0, isl_union_set* const m1);
 
 isl_union_map* unn(isl_union_map* const m0, isl_union_map* const m1);
 
+isl_union_map* get_rel_order(isl_ctx* ctx, isl_union_map* const m0);
+isl_stat umap_lex_lt(isl_map* s,  void* user);
+
 isl_map* unn(isl_map* const m0, isl_map* const m1);
 
 isl_set* its(isl_set* const m0, isl_set* const m1);

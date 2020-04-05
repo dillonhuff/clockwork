@@ -166,9 +166,12 @@ void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuff
             add_vectorized_pt_to_ubuf(sram, rewrite_buf2op, new_sched, out_pt_name, bd_name, dim_id, fetch_width, true);
         }
     }
-    cout << "AGG: " << agg_buf << endl;
-    cout << "SRAM: " << sram<< endl;
-    cout << "TB: " << tb << endl;
+    cout << "AGG: " << str(agg_buf.global_schedule()) << endl;
+    cout << "SRAM: " << str(sram.global_schedule()) << endl;
+    cout << "TB: " << str(tb.global_schedule())  << endl;
+    auto global_sched = unn(agg_buf.global_schedule(), unn(sram.global_schedule(), tb.global_schedule()));
+    //cout << str(lex_lt(global_sched, global_sched)) << endl;
+    auto rel_order = get_rel_order(ctx, global_sched);
     assert(false);
     //TODO: need create a pass to get schedule
     cout << agg_buf.get_out_ports() << endl;

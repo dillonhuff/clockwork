@@ -1025,6 +1025,23 @@ std::string codegen_c(isl_union_map* res) {
   return code_string;
 }
 
+isl_union_map* get_rel_order(isl_ctx* ctx, isl_union_map* const um) {
+  vector<umap*> cm;
+  isl_union_map_foreach_map(um, umap_lex_lt, (void*) (&cm));
+  umap* ret = isl_union_map_read_from_str(ctx, "{}");
+  for (auto it : cm) {
+      ret = unn(ret, it);
+  }
+  return ret;
+}
+
+isl_stat umap_lex_lt(isl_map* s,  void* user) {
+  vector<umap*>* vals = (vector<umap*>*) user;
+  vals->push_back(to_umap(lex_lt(s, s)));
+  return isl_stat_ok;
+}
+
+
 std::string codegen_c(isl_qpolynomial* qp) {
   auto ctx = isl_qpolynomial_get_ctx(qp);
   isl_printer *p;
