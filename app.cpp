@@ -239,9 +239,26 @@ umap* experimental_opt(uset* domain,
   }
   cout << "Total constraints: " << total_constraints << endl;
   cout << "Total divs       : " << total_divs << endl;
-  cout << "Total space vars : " << space_offset << endl;
+  cout << "Total sched vars : " << space_offset << endl;
   cout << "Total Farkas vars: " << total_constraints*space_var_offsets.size() << endl;
 
+  assert(total_divs == 0);
+
+  // # of variables in scheduling ILP:
+  //  # farkas + # divs + space offset
+  int total_rate_vars = total_constraints*space_var_offsets.size() +
+    total_divs +
+    space_offset;
+
+
+  cout << "Total rate vars: " << endl;
+  auto ct = ctx(domain);
+  isl_space* ilp_space = isl_space_set_alloc(ct, 0, total_rate_vars);
+  cout << "ILP Space: " << str(ilp_space) << endl;
+  isl_basic_set* ilp = isl_basic_set_universe(ilp_space);
+  cout << "ILP Set  : " << str(ilp) << endl;
+  assert(false);
+  // For each dep we are going to add one group of farkas constraints
   cout << "Space var offsets..." << endl;
   for (auto off : space_var_offsets) {
     cout << tab(1) << off.first << " -> " << off.second << endl;
@@ -252,6 +269,22 @@ umap* experimental_opt(uset* domain,
     cout << tab(1) << d.second << endl;
   }
 
+  // Build explicit farkas constraints
+  cout << "Schedule function constraints..." << endl;
+  vector<QExpr> schedule_diffs;
+  for (auto d : deps) {
+    string producer = domain_name(d);
+    string consumer = range_name(d);
+    
+    QExpr producer_schedule = qexpr(producer + "_sched");
+    QExpr consumer_schedule = qexpr(consumer + "_sched");
+    QExpr diff_eq = consumer_schedule - producer_schedule;
+    schedule_diffs.push_back(diff_eq);
+  }
+
+  for (auto sd : schedule_diffs) {
+    cout << tab(1) << sd << endl;
+  }
 
   assert(false);
   return nullptr;

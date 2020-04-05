@@ -834,8 +834,27 @@ QTerm parse_qterm(const std::string& str) {
 }
 
 static inline
+QExpr concat_terms(const QExpr& a, const QExpr& b) {
+  QExpr expr;
+  for (auto t : a.terms) {
+    expr.terms.push_back(t);
+  }
+  for (auto t : b.terms) {
+    expr.terms.push_back(t);
+  }
+  return expr;
+}
+
+static inline
 QExpr sub(const string& a, const string& b) {
   return qexpr(qterm(a), qterm(b).scale(-1));
+}
+
+static inline
+QExpr operator-(const QExpr& a, const QExpr& b) {
+  QExpr bc = b;
+  bc.scale(-1);
+  return concat_terms(a, bc);
 }
 
 struct Range {

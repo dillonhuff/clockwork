@@ -5715,7 +5715,7 @@ struct App {
     isl_union_map *proximity =
       cpy(validity);
 
-    //auto opt_map = experimental_opt(domain, validity, proximity);
+    auto opt_map = experimental_opt(domain, validity, proximity);
 
     auto finite_domain = cpy(domain);
     //domain = unn(domain, isl_union_set_universe(cpy(domain)));
@@ -7675,6 +7675,16 @@ void playground() {
 
   isl_ctx* ct = isl_ctx_alloc();
 
+  uset* dom = isl_union_set_read_from_str(ct, "{ P[x] : 0 <= x <= 10; C[x] : 0 <= x <= 10 }");
+  umap* validity =
+    rdmap(ct, "{ P[x] -> C[x] }");
+  umap* proximity =
+    cpy(validity);
+
+  experimental_opt(dom, validity, proximity);
+
+  assert(false);
+
   isl_aff* zero = rdaff(ct, "{ [a, b] -> [0] }");
   isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor(a/2) + 3] }");
   //isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor((a + 3b + floor(2a - 7b / 9)) / 2)] }");
@@ -7748,7 +7758,7 @@ void playground() {
 
 void application_tests() {
 
-  //playground();
+  playground();
 
   //synth_lb_test();
 
@@ -7756,8 +7766,8 @@ void application_tests() {
  
   //reduce_1d_test();
 
+  up_stencil_down_unrolled_test();
   exposure_fusion();
-  //up_stencil_down_unrolled_test();
 
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
