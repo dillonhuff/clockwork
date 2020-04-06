@@ -5715,11 +5715,13 @@ struct App {
     isl_union_map *proximity =
       cpy(validity);
 
-    //auto opt_map = experimental_opt(domain, validity, proximity);
 
     auto finite_domain = cpy(domain);
     //domain = unn(domain, isl_union_set_universe(cpy(domain)));
+    //experimental_opt(cpy(domain), cpy(validity), cpy(proximity));
+    //assert(false);
     isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+
     auto schedmap = its(isl_schedule_get_map(sched), finite_domain);
 
     assert(schedmap != nullptr);
@@ -7688,7 +7690,7 @@ void playground() {
 
   experimental_opt(dom, validity, proximity);
 
-  assert(false);
+  //assert(false);
 
   isl_aff* zero = rdaff(ct, "{ [a, b] -> [0] }");
   isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor(a/2) + 3] }");
@@ -7763,7 +7765,7 @@ void playground() {
 
 void application_tests() {
 
-  playground();
+  //playground();
 
   //synth_lb_test();
 
@@ -7772,14 +7774,19 @@ void application_tests() {
   //reduce_1d_test();
 
   //up_stencil_down_unrolled_test();
+  
   grayscale_conversion_test();
+  jacobi2d_app_test();
+  upsample2d_test();
+  downsample2d_test();
+  updown_merge_test();
+  sobel_test();
+  denoise2d_test();
   exposure_fusion();
 
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
 
-  jacobi2d_app_test();
-  denoise2d_test();
   mismatched_stencil_test();
 
   seidel2d_test();
@@ -7790,10 +7797,6 @@ void application_tests() {
   conv3x3_app_test();
 
   conv3x3_app_unrolled_test();
-  upsample2d_test();
-  downsample2d_test();
-  updown_merge_test();
-  sobel_test();
 
   laplacian_pyramid_app_test();
   upsample_stencil_2d_test();

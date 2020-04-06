@@ -9,6 +9,11 @@ struct sym_matrix {
     for (int ri = 0; ri < r; ri++) {
       rows.at(ri).resize(c);
     }
+    for (int r = 0; r < num_rows(); r++) {
+      for (int c = 0; c < num_cols(); c++) {
+        (*this)(r, c) = qexpr(0);
+      }
+    }
   }
 
   int num_rows() const {
@@ -108,6 +113,7 @@ map<string, int> maximize(const std::vector<QConstraint>& constraints, QExpr& ob
 
   string varspx = sep_list(ds, "[", "]", ", ");
   auto* legal_delays = rdset(ctx, "{ " + sep_list(ds, "[", "]", ", ") + " }");
+  cout << "Creating intersection constraints" << endl;
   for (auto c : constraints) {
     cout << "\t" << c << endl;
     legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(c) + " }"));
@@ -566,7 +572,7 @@ umap* opt_schedule_dimension(vector<isl_map*> deps) {
     }
 
     map<string, int> result = minimize(cs, objective);
-    cout << "Delay result" << endl;
+    cout << "####### Delay result" << endl;
     for (auto r : result) {
       cout << tab(1) << r.first << " = " << r.second << endl;
     }
@@ -588,13 +594,17 @@ umap* experimental_opt(uset* domain,
 
   cout << "Domain: " << str(domain) << endl;
   vector<isl_map*> deps;
-  for (auto m : get_maps(validity)) {
+  auto finite_validity = its_range(its(validity, domain), domain);
+  for (auto m : get_maps(finite_validity)) {
+    assert(m != nullptr);
+
     //cout << tab(1) << str(m) << endl;
     // Schedule respects intra-dependencies by construction
     if (domain_name(m) != range_name(m)) {
       deps.push_back(m);
     }
   }
+  cout << "Got deps" << endl;
 
   assert(deps.size() > 0);
 
@@ -611,6 +621,6 @@ umap* experimental_opt(uset* domain,
     opt_schedule_dimension(projected_deps);
   }
 
-  assert(false);
+  //assert(false);
   return nullptr;
 }

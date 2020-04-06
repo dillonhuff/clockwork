@@ -188,6 +188,7 @@ vector<isl_basic_map*> get_basic_maps(isl_map* m) {
 
   return map_vec;
 }
+
 vector<isl_map*> get_maps(isl_union_map* m) {
   assert(m != nullptr);
 
@@ -200,7 +201,7 @@ vector<isl_map*> get_maps(isl_union_map* m) {
 isl_stat get_maps(isl_map* m, void* user) {
   //cout << "Getting map" << endl;
   auto* vm = (vector<isl_map*>*) user;
-  vm->push_back(m);
+  vm->push_back((m));
   return isl_stat_ok;
 }
 
