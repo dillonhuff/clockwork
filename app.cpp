@@ -1,11 +1,15 @@
 #include "app.h"
 
+string sched_var_name(const string& n) {
+  return "s_" + n;
+}
+
 QExpr delayvar(const string& n) {
   return qexpr("delay_" + n);
 }
 
 QExpr schedvar(const string& n) {
-  return qexpr("s_" + n);
+  return qexpr(sched_var_name(n));
 }
 
 template<typename T>
@@ -737,8 +741,8 @@ umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
   vector<QConstraint> rate_constraints;
   QExpr objective = qexpr(0);
   for (auto s : schedule_params) {
-    string producer = domain_name(s.first);
-    string consumer = range_name(s.first);
+    string consumer = domain_name(s.first);
+    string producer = range_name(s.first);
 
     auto qp = schedvar(producer);
     auto qc = schedvar(consumer);
@@ -765,7 +769,39 @@ umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
     cout << tab(1) << r.first << " = " << r.second << endl;
   }
 
-  assert(false);
+  vector<QConstraint> delay_constraints;
+  QExpr delay_objective = qexpr(0);
+  for (auto s : schedule_params) {
+    string consumer = domain_name(s.first);
+    string producer = range_name(s.first);
+
+    auto qp = schedvar(producer);
+    auto dp = delayvar(producer);
+
+    auto dc = delayvar(consumer);
+
+    delay_constraints.push_back(eq(qp, qexpr(map_find(sched_var_name(producer), result))));
+    delay_constraints.push_back(geq(dp, qexpr(0)));
+    delay_constraints.push_back(geq(dc, qexpr(0)));
+
+    for (auto sv : s.second) {
+
+      QExpr b = qe(sv.second);
+
+      delay_constraints.push_back(geq(dc - qp*b - dp, qexpr(0)));
+
+      //delay_objective = delay_objective + (dp - dc);
+      delay_objective = delay_objective + dp + dc;
+    }
+  }
+
+  auto delay_result = minimize(delay_constraints, delay_objective);
+  cout << "Delay result..." << endl;
+  for (auto dr : delay_result) {
+    cout << tab(1) << dr.first << " = " << dr.second << endl;
+  }
+
+  //assert(false);
   return nullptr;
 }
 
