@@ -528,6 +528,12 @@ umap* experimental_opt(uset* domain,
   cout << "L values..." << endl;
   cout << const_L << endl;
 
+  sym_matrix<QExpr> delay_system =
+    d - const_L*b + l;
+
+  cout << "Delay system..." << endl;
+  cout << delay_system << endl;
+
   assert(false);
 
   return nullptr;
