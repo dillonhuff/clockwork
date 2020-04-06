@@ -1319,6 +1319,20 @@ vector<string> collect_sched_vec(isl_union_map* um) {
     return collect_sched_vec(range(um));
 }
 
+umap* pad_one_more_dim_to_sched_map(isl_ctx* ctx, umap* const um, string pad_val) {
+    vector<string> sched_vec;
+    sched_vec = collect_sched_vec(cpy(um));
+    string op = range_name(to_map(um));
+    for (size_t dim = 0; dim < sched_vec.size(); dim ++) {
+        if (!is_number(sched_vec[dim])) {
+            auto it = sched_vec.begin() + dim;
+            sched_vec.insert(it, pad_val);
+            break;
+        }
+    }
+    return to_umap(gen_map_from_sched_vec(ctx, sched_vec, op));
+}
+
 isl_stat return_piece(isl_set* domain, isl_qpolynomial* val, void* user) {
   vector<pair<isl_set*, isl_qpolynomial*> >* v = (vector<pair<isl_set*, isl_qpolynomial*> >*) user;
   v->push_back({domain, val});

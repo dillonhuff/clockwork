@@ -15,8 +15,10 @@ map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, st
     auto out_sched_vec = collect_sched_vec(out_sched);
     assert(in_sched_vec.size() == out_sched_vec.size());
 
-    vector<string> in_vectorized_sched_vec, out_vectorized_sched_vec;
+    //the new generated schedule vectors
+    vector<string> in_vectorized_sched_vec, out_vectorized_sched_vec, in_new_sched_vec, out_new_sched_vec;
     bool find_sched_dim = false;
+    size_t sched_dim = 0;
     for (size_t dim = 0; dim < in_sched_vec.size(); dim ++) {
         if (!(is_number(in_sched_vec[dim]) || find_sched_dim)) {
             assert(dim > 0);
@@ -24,9 +26,11 @@ map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, st
             int in_sched_stamp = safe_stoi(in_sched_vec[dim-1]);
             int out_sched_stamp = safe_stoi(out_sched_vec[dim-1]);
             if (in_sched_stamp == out_sched_stamp - 1) {
-                in_vectorized_sched_vec[dim - 1] = to_string(in_sched_stamp + 1);
-                out_vectorized_sched_vec[dim - 1] = to_string(in_sched_stamp + 2);
-                out_sched_vec[dim - 1] = to_string(in_sched_stamp + 3);
+                in_new_sched_vec.push_back("0");
+                in_vectorized_sched_vec.push_back( "1" );
+                out_vectorized_sched_vec[dim-1] = to_string(in_sched_stamp);
+                out_vectorized_sched_vec.push_back( "2");
+                out_new_sched_vec.push_back("0");
             }
             else {
                 cout << "ERROR: The schedule is not considered\n\tin vec: " << in_sched_vec << "\n\tout vec: " << out_sched_vec << endl;
@@ -34,15 +38,17 @@ map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, st
             }
         }
         in_vectorized_sched_vec.push_back(in_sched_vec[dim]);
+        in_new_sched_vec.push_back(in_sched_vec[dim]);
         out_vectorized_sched_vec.push_back(out_sched_vec[dim]);
+        out_new_sched_vec.push_back(out_sched_vec[dim]);
     }
 
-    cout << "\tin: " << in_sched_vec << "\n\tout: " << out_sched_vec << endl;
+    cout << "\tin: " << in_new_sched_vec << "\n\tout: " << out_new_sched_vec << endl;
     cout << "\tin vec: " << in_vectorized_sched_vec << "\n\tout vec: " << out_vectorized_sched_vec << endl;
     map<string, isl_map*> new_sched;
-    auto in_sched_new = gen_map_from_sched_vec(ctx, in_sched_vec, in_op);
+    auto in_sched_new = gen_map_from_sched_vec(ctx, in_new_sched_vec, in_op);
     new_sched.insert(make_pair(in_op, in_sched_new));
-    auto out_sched_new = gen_map_from_sched_vec(ctx, out_sched_vec, out_op);
+    auto out_sched_new = gen_map_from_sched_vec(ctx, out_new_sched_vec, out_op);
     new_sched.insert(make_pair(out_op, out_sched_new));
     auto in_vec_sched = gen_map_from_sched_vec(ctx, in_vectorized_sched_vec, in_op + "_vec");
     new_sched.insert(make_pair(in_op + "_vec", in_vec_sched));
@@ -193,10 +199,11 @@ void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuff
     auto global_p_map = unn(agg_buf.producer_map(), unn(sram.producer_map(), tb.producer_map()));
     auto global_c_map = unn(agg_buf.consumer_map(), unn(sram.consumer_map(), tb.consumer_map()));
 
-    auto raw_deps = its( inv(dot(global_c_map, inv(global_p_map))), lex_lt(global_sched, global_sched));
+    auto raw_deps = its( dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
     cout << "Raw_deps: " << str(raw_deps) << endl;
     auto domain = unn(agg_buf.global_domain(), unn(sram.global_domain(), tb.global_domain()));
     auto validity = unn(order_deps, raw_deps);
+    cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
     auto proximity = cpy(raw_deps);
     isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
     auto sched_map = its(isl_schedule_get_map(sched), domain);

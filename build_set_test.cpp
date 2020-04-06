@@ -2418,10 +2418,12 @@ isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffe
     }
     cout << str(global_sched) << "\n\n" << str(domain) << "\n\n" <<str(global_p_map) <<"\n\n" << str(global_c_map) << endl;
     auto order_deps = get_rel_order(ctx, global_sched);
-    auto raw_deps = dot(global_p_map, inv(global_c_map));
+    cout << str(order_deps) << endl;
+    auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
     cout << "Raw_deps: " << str(raw_deps) << endl;
     auto validity = unn(order_deps, raw_deps);
     auto proximity = cpy(raw_deps);
+    cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
     isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
     auto sched_map = its(isl_schedule_get_map(sched), domain);
     return sched_map;
@@ -2439,6 +2441,15 @@ void buffer_vectorization(string vec_buf_name, int dim_id, int fetch_width, map<
             auto target_buffer = it.second;
             target_buffer.vectorization(dim_id, fetch_width, agg, sram, tb);
             break;
+        }
+        else {
+            //add extra dimension in the schedule vector
+            auto buffer = it.second;
+            for(auto it_sched : buffer.schedule) {
+                umap* sched = it_sched.second;
+                string key = it_sched.first;
+                buffer.schedule[key] = pad_one_more_dim_to_sched_map(buffer.ctx, sched, "0");
+            }
         }
     }
     buffers.erase(vec_buf_name);
