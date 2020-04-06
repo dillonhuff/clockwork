@@ -135,6 +135,11 @@ int num_in_dims(isl_space* const s) {
   return ndims;
 }
 
+int num_div_dims(isl_aff* const s) {
+  auto ls = isl_aff_get_local_space(s);
+  return isl_local_space_dim(ls, isl_dim_div);
+}
+
 int num_in_dims(isl_aff* const s) {
   return num_in_dims(get_space((s)));
 }

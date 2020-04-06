@@ -628,6 +628,28 @@ umap* opt_schedule_dimension(vector<isl_map*> deps) {
   return nullptr;
 }
 
+pair<isl_val*, isl_val*>
+extract_linear_rational_approximation(isl_aff* aff_bound) {
+  int in_dims = num_in_dims(aff_bound);
+  int out_dims = num_out_dims(aff_bound);
+  int div_dims = num_div_dims(aff_bound);
+
+  cout << "in_dims  = " << in_dims << endl;
+  cout << "out_dims = " << out_dims << endl;
+  cout << "div_dims = " << div_dims << endl;
+
+  assert(in_dims == 1);
+  assert(out_dims == 1);
+  assert(div_dims == 0);
+
+  isl_val* b = isl_aff_get_constant_val(aff_bound);
+  isl_val* k = isl_aff_get_coefficient_val(aff_bound, isl_dim_in, 0);
+  cout << "b = " << str(b) << endl;
+  cout << "k = " << str(k) << endl;
+
+  return {k, b};
+}
+
 umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
   cout << "Deps..." << endl;
   vector<isl_map*> consumed_data;
@@ -638,6 +660,7 @@ umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
 
   cout << "Consumed data..." << endl;
   map<isl_map*, isl_aff*> latest_dep;
+  map<isl_map*, pair<isl_val*, isl_val*> > schedule_params;
   for (auto c : consumed_data) {
     auto lm = isl_map_lexmax_pw_multi_aff(cpy(c));
     cout << tab(1) << str(c) << endl;
@@ -653,6 +676,9 @@ umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
     cout << tab(2) << "affine upper bound on data needed: " << str(aff_bound) << endl;
     cout << tab(3) << "domain of bound: " << str(pieces.at(0).first) << endl;
     latest_dep[c] = aff_bound;
+    pair<isl_val*, isl_val*> kb =
+      extract_linear_rational_approximation(aff_bound);
+    schedule_params[c] = kb;
   }
 
   assert(false);

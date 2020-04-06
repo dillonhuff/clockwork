@@ -376,7 +376,7 @@ int num_out_dims(isl_space* const s);
 int num_in_dims(isl_space* const s);
 
 int num_in_dims(isl_aff* const s);
-
+int num_div_dims(isl_aff* const s);
 int num_out_dims(isl_aff* const s);
 
 uset* gist(uset* base, uset* context);
