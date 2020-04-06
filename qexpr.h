@@ -1149,3 +1149,14 @@ std::string box_codegen(const vector<string>& op_order,
 
   return ss.str();
 }
+
+static inline 
+QExpr qe(isl_val* v) {
+  if (isl_val_is_int(v)) {
+    return qexpr(safe_stoi(str(v)));
+  }
+
+  assert(isl_val_is_rat(v));
+
+  return qexpr(qconst(isl_val_get_num_si(v), isl_val_get_den_si(v)));
+}

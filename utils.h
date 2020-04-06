@@ -9,6 +9,31 @@ using namespace dbhc;
 using namespace std;
 
 static inline
+string c_sanitize(const std::string& str) {
+  string res = "";
+  for (auto c : str) {
+    if (c == '+') {
+      res += "_p_";
+    } else if (c == ')') {
+      res += "_rp_";
+    } else if (c == '(') {
+      res += "_lp_";
+    } else if (c == '*') {
+      res += "_m_";
+    } else if (c == ' ') {
+      res += "_";
+    } else if (c == ',') {
+      res += "_c_";
+    } else if (c == '-') {
+      res += "_m_";
+    } else {
+      res += c;
+    }
+  }
+  return res;
+}
+
+static inline
 vector<string> split_at(const string& t, const string& delimiter) {
   string s = t;
   size_t pos = 0;

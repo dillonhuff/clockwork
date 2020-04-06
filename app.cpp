@@ -1,5 +1,13 @@
 #include "app.h"
 
+QExpr delayvar(const string& n) {
+  return qexpr("delay_" + n);
+}
+
+QExpr schedvar(const string& n) {
+  return qexpr("s_" + n);
+}
+
 template<typename T>
 struct sym_matrix {
   vector<vector<T> > rows;
@@ -285,14 +293,6 @@ string str(isl_mat* const ineqmat) {
     out << endl;
   }
   return out.str();
-}
-
-QExpr delayvar(const string& n) {
-  return qexpr("delay_" + n);
-}
-
-QExpr schedvar(const string& n) {
-  return qexpr("s_" + n);
 }
 
 umap* opt_schedule_dimension(vector<isl_map*> deps) {
@@ -710,7 +710,6 @@ umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
   }
 
   cout << "Consumed data..." << endl;
-  //map<isl_map*, isl_aff*> latest_dep;
   map<isl_map*, vector<pair<isl_val*, isl_val*> > > schedule_params;
   for (auto c : consumed_data) {
     auto lm = isl_map_lexmax_pw_multi_aff(cpy(c));
@@ -719,7 +718,6 @@ umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
       get_pieces(lm);
     for (auto piece : pieces) {
-      //assert(pieces.size() == 1);
 
       isl_multi_aff* bound = piece.second;
       assert(get_size(bound) == 1);
@@ -727,16 +725,47 @@ umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
         isl_multi_aff_get_aff(bound, 0);
       cout << tab(2) << "affine upper bound on data needed: " << str(aff_bound) << endl;
       cout << tab(3) << "domain of bound: " << str(pieces.at(0).first) << endl;
-      //latest_dep[c] = aff_bound;
       pair<isl_val*, isl_val*> kb =
         extract_linear_rational_approximation(aff_bound);
       schedule_params[c].push_back(kb);
     }
   }
 
-  // Now: 
+  // Now: Collect schedule constraints for the problem and solve for
+  // rates and delays?
 
-  //assert(false);
+  vector<QConstraint> rate_constraints;
+  QExpr objective = qexpr(0);
+  for (auto s : schedule_params) {
+    string producer = domain_name(s.first);
+    string consumer = range_name(s.first);
+
+    auto qp = schedvar(producer);
+    auto qc = schedvar(consumer);
+
+    for (auto sv : s.second) {
+      rate_constraints.push_back(geq(qp, qexpr(1)));
+      rate_constraints.push_back(geq(qc, qexpr(1)));
+
+      if (isl_val_is_zero(sv.first)) {
+        continue;
+      }
+
+      QExpr k = qe(sv.first);
+
+      rate_constraints.push_back(eq(qc - qc*k, qexpr(0)));
+
+      objective = objective + qp + qc;
+    }
+  }
+
+  auto result = minimize(rate_constraints, objective);
+  cout << "Result.." << endl;
+  for (auto r : result) {
+    cout << tab(1) << r.first << " = " << r.second << endl;
+  }
+
+  assert(false);
   return nullptr;
 }
 
@@ -752,6 +781,7 @@ umap* clockwork_schedule(uset* domain,
 
     // Schedule respects intra-dependencies by construction
     if (domain_name(m) != range_name(m)) {
+      cout << tab(1) << "Dep = " << str(m) << endl;
       deps.push_back(m);
     }
   }
