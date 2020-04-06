@@ -529,10 +529,54 @@ umap* experimental_opt(uset* domain,
   cout << const_L << endl;
 
   sym_matrix<QExpr> delay_system =
-    d - const_L*b + l;
+    d - const_L*b - l;
 
   cout << "Delay system..." << endl;
   cout << delay_system << endl;
+
+
+  {
+    cout << "Scheduling system..." << endl;
+
+    vector<QConstraint> cs;
+    for (int r = 0; r < delay_system.num_rows(); r++) {
+      for (int c = 0; c < delay_system.num_cols(); c++) {
+        cs.push_back(eq(delay_system(r, c), qexpr(0)));
+      }
+    }
+
+    for (int r = 0; r < l.num_rows(); r++) {
+      for (int c = 0; c < l.num_cols(); c++) {
+        cout << "Getting l " << r << ", " << c << endl;
+        cs.push_back(geq(l(r, c), qexpr(0)));
+      }
+    }
+
+    cout << "Setting delay var limits" << endl;
+    for (auto d : deps) {
+      cout << "D = " << str(d) << endl;
+      auto r = range_name(d);
+      cout << "r = " << r << endl;
+      auto c = domain_name(d);
+      cout << "c = " << c << endl;
+
+      cs.push_back(geq(delayvar(r), qexpr(0)));
+      cs.push_back(geq(delayvar(c), qexpr(0)));
+    }
+
+    cout << "creating objective" << endl;
+
+    QExpr objective = qexpr(0);
+    for (int r = 0; r < d.num_rows(); r++) {
+      objective = objective + d(r, 0);
+    }
+
+    map<string, int> result = minimize(cs, objective);
+    cout << "Delay result" << endl;
+    for (auto r : result) {
+      cout << tab(1) << r.first << " = " << r.second << endl;
+    }
+  }
 
   assert(false);
 
