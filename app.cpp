@@ -265,18 +265,11 @@ QExpr schedvar(const string& n) {
   return qexpr("s_" + n);
 }
 
-umap* experimental_opt(uset* domain,
-    umap* validity,
-    umap* proximity) {
+umap* opt_schedule_dimension(vector<isl_map*> deps) {
 
-  cout << "Domain: " << str(domain) << endl;
-  vector<isl_map*> deps;
-  for (auto m : get_maps(validity)) {
-    //cout << tab(1) << str(m) << endl;
-    // Schedule respects intra-dependencies by construction
-    if (domain_name(m) != range_name(m)) {
-      deps.push_back(m);
-    }
+  cout << "Deps..." << endl;
+  for (auto d : deps) {
+    cout << tab(1) << str(d) << endl;
   }
 
   int next_column = 0;
@@ -506,6 +499,7 @@ umap* experimental_opt(uset* domain,
     }
 
   }
+  auto rate_result = result;
 
 
   for (auto dep : deps) {
@@ -576,9 +570,47 @@ umap* experimental_opt(uset* domain,
     for (auto r : result) {
       cout << tab(1) << r.first << " = " << r.second << endl;
     }
+    cout << endl;
+    cout << "Rate result" << endl;
+    for (auto r : rate_result) {
+      cout << tab(1) << r.first << " = " << r.second << endl;
+    }
+  }
+
+  //assert(false);
+
+  return nullptr;
+}
+
+umap* experimental_opt(uset* domain,
+    umap* validity,
+    umap* proximity) {
+
+  cout << "Domain: " << str(domain) << endl;
+  vector<isl_map*> deps;
+  for (auto m : get_maps(validity)) {
+    //cout << tab(1) << str(m) << endl;
+    // Schedule respects intra-dependencies by construction
+    if (domain_name(m) != range_name(m)) {
+      deps.push_back(m);
+    }
+  }
+
+  assert(deps.size() > 0);
+
+  int schedule_dim =
+    num_in_dims(get_space(deps.at(0)));
+
+  cout << "Schedule dim = " << schedule_dim << endl;
+  for (int d = schedule_dim - 1; d >= 0; d--) {
+    vector<isl_map*> projected_deps;
+    for (auto dmap : deps) {
+      isl_map* projected = project_all_but(dmap, d);
+      projected_deps.push_back(projected);
+    }
+    opt_schedule_dimension(projected_deps);
   }
 
   assert(false);
-
   return nullptr;
 }

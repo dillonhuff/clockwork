@@ -7675,9 +7675,12 @@ void playground() {
 
   isl_ctx* ct = isl_ctx_alloc();
 
-  uset* dom = isl_union_set_read_from_str(ct, "{ P[x] : 0 <= x <= 10; C[x] : 0 <= x <= 10 }");
+  //uset* dom = isl_union_set_read_from_str(ct, "{ P[x] : 0 <= x <= 10; C[x] : 0 <= x <= 10 }");
+  uset* dom =
+    isl_union_set_read_from_str(ct, "{ P[x, k] : 0 <= x <= 10 and 0 <= k <= 10; C[x, k] : 0 <= x <= 10 and 0 <= k <= 10 }");
   umap* validity =
-    rdmap(ct, "{ P[x] -> C[y] : x = 2y + 3 }");
+    rdmap(ct, "{ P[x, k] -> C[y, l] : k = l and x = 2y + 3 }");
+    //rdmap(ct, "{ P[x] -> C[y] : x = 2y + 3 }");
     //rdmap(ct, "{ P[x] -> C[y] : x = floor(y/2) }");
     //rdmap(ct, "{ P[x] -> C[x] }");
   umap* proximity =
@@ -7760,7 +7763,7 @@ void playground() {
 
 void application_tests() {
 
-  //playground();
+  playground();
 
   //synth_lb_test();
 

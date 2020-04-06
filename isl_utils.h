@@ -376,3 +376,4 @@ int num_in_dims(isl_aff* const s);
 int num_out_dims(isl_aff* const s);
 
 uset* gist(uset* base, uset* context);
+isl_map* project_all_but(isl_map* const dmap, const int d);
