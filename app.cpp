@@ -33,14 +33,12 @@ struct sym_matrix {
 template<typename T>
 ostream& operator<<(ostream& out, const sym_matrix<T>& m) {
 
-  cout << "Printing..." << "nrows = " << m.num_rows() << ", num cols = " << m.num_cols() << endl;
   for (int r = 0; r < m.num_rows(); r++) {
     for (int c = 0; c < m.num_cols(); c++) {
       out << m(r, c) << " ";
     }
     out << endl;
   }
-  cout << "Done printing" << endl;
   return out;
 }
 
@@ -259,6 +257,10 @@ string str(isl_mat* const ineqmat) {
   return out.str();
 }
 
+QExpr delayvar(const string& n) {
+  return qexpr("delay_" + n);
+}
+
 QExpr schedvar(const string& n) {
   return qexpr("s_" + n);
 }
@@ -369,7 +371,9 @@ umap* experimental_opt(uset* domain,
       L(r, c) = qexpr("L_" + str(r) + "_" + str(c));
     }
   }
+
   sym_matrix<QExpr> A(num_constraints, num_spaces + num_divs);
+  sym_matrix<QExpr> b(num_constraints, 1);
 
   cout << "S..." << S.num_rows() << ", " << S.num_cols() << endl;
   cout << S << endl << endl;
@@ -406,12 +410,17 @@ umap* experimental_opt(uset* domain,
       isl_val* consumer_coeff = isl_mat_get_element_val(eqmat, r, 2);
 
       int pc = stoi(str(producer_coeff));
+      isl_val* cv = isl_mat_get_element_val(eqmat, r, 0);
+      b(constraints_entered, 0) = qexpr(stoi(str(cv)));
+
       A(constraints_entered, map_find(producer, space_var_offsets)) =
         qexpr(pc);
       int cc = stoi(str(consumer_coeff));
       A(constraints_entered, map_find(consumer, space_var_offsets)) =
         qexpr(cc);
       constraints_entered++;
+
+      b(constraints_entered, 0) = qexpr(-1*stoi(str(cv)));
 
       A(constraints_entered, map_find(producer, space_var_offsets)) =
         qexpr(-pc);
@@ -432,6 +441,9 @@ umap* experimental_opt(uset* domain,
     assert(isl_mat_cols(ineqmat) == 3);
 
     for (int r = 0; r < isl_mat_rows(ineqmat); r++) {
+      isl_val* cv = isl_mat_get_element_val(ineqmat, r, 0);
+      b(constraints_entered, 0) = qexpr(stoi(str(cv)));
+
       isl_val* producer_coeff = isl_mat_get_element_val(ineqmat, r, 1);
       isl_val* consumer_coeff = isl_mat_get_element_val(ineqmat, r, 2);
 
@@ -477,10 +489,44 @@ umap* experimental_opt(uset* domain,
   }
 
   map<string, int> result = minimize(cs, objective);
+  // Compute delays
+  sym_matrix<QExpr> l(num_dependence_edges, 1);
+  sym_matrix<QExpr> d(num_dependence_edges, 1);
+  sym_matrix<QExpr> const_L(num_dependence_edges, num_constraints);
+
   cout << "Result: " << endl;
   for (auto r : result) {
     cout << tab(1) << r.first << " = " << r.second << endl;
+    vector<string> strs = split_at(r.first, "_");
+    if (strs.at(0) == "L") {
+      assert(strs.size() == 3);
+      int row = stoi(strs.at(1));
+      int col = stoi(strs.at(2));
+      const_L(row, col) = qexpr(r.second);
+    }
+
   }
+
+
+  for (auto dep : deps) {
+    string producer = domain_name(dep);
+    string consumer = range_name(dep);
+    d(map_find(dep, edge_rows), 0) = delayvar(consumer) - delayvar(producer);
+    l(map_find(dep, edge_rows), 0) = qexpr("Lc_" + str(map_find(dep, edge_rows)));
+  }
+
+
+  cout << "Delays..." << endl;
+  cout << d << endl;
+
+  cout << "B values..." << endl;
+  cout << b << endl;
+
+  cout << "l values..." << endl;
+  cout << l << endl;
+
+  cout << "L values..." << endl;
+  cout << const_L << endl;
 
   assert(false);
 
