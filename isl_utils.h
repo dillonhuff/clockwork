@@ -82,6 +82,8 @@ isl_space* get_space(isl_set* const m);
 isl_space* get_space(isl_union_set* const m);
 isl_space* get_space(isl_aff* const m);
 
+int get_size(isl_multi_aff* const m);
+
 int dim(isl_space* const s);
 
 bool empty(uset* const s);
@@ -349,6 +351,8 @@ isl_point* sample(isl_union_set* s);
 isl_pw_aff* dim_min(isl_map* const m, const int d);
 
 isl_pw_aff* dim_max(isl_map* const m, const int d);
+
+vector<pair<isl_set*, isl_multi_aff*> > get_pieces(isl_pw_multi_aff* lm);
 
 vector<pair<isl_set*, isl_qpolynomial*> >
 get_pieces(isl_union_pw_qpolynomial* p);

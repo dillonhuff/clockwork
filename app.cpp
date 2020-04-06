@@ -191,10 +191,33 @@ map<string, int> minimize(const std::vector<QConstraint>& constraints, QExpr& ob
 
   cout << "# of variables: " << ds.size() << endl;
   string varspx = sep_list(ds, "[", "]", ", ");
-  auto* legal_delays = rdset(ctx, "{ " + sep_list(ds, "[", "]", ", ") + " }");
+  //auto* legal_delay_basic =
+    //rd_basic_set(ctx, "{ " + sep_list(ds, "[", "]", ", ") + " }");
+  isl_set* legal_delays =
+    isl_set_read_from_str(ctx, ("{ " + sep_list(ds, "[", "]", ", ") + " }").c_str());
+    //rdset(ctx, "{ " + sep_list(ds, "[", "]", ", ") + " }");
   for (auto c : constraints) {
     cout << "\tits with: " << c << endl;
-    legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(c) + " }"));
+    QConstraint normed = c;
+    normed.lhs = normed.lhs - normed.rhs;
+
+    string lhs_str = isl_str(normed.lhs);
+    cout << tab(1) << lhs_str << endl;
+    auto affc = rdaff(ctx,
+        "{ " + varspx + " -> [" + lhs_str + "] }");
+    isl_constraint* cc = nullptr;
+    if (normed.is_eq) {
+      cc = 
+        isl_equality_from_aff(affc);
+    } else {
+      cc = 
+        isl_inequality_from_aff(affc);
+    }
+    assert(cc != nullptr);
+
+    legal_delays =
+      isl_set_add_constraint(legal_delays, cc);
+      //its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(c) + " }"));
   }
 
   string aff_c = sep_list(ds, "", "", " + ");
@@ -466,8 +489,24 @@ umap* opt_schedule_dimension(vector<isl_map*> deps) {
   sym_matrix<QExpr> system =
     S - L*A;
 
+  for (int r = 0; r < system.num_rows(); r++) {
+    for (int c = 0; c < system.num_cols(); c++) {
+      system(r, c).simplify();
+    }
+  }
+
+  set<string> vars;
+  for (int r = 0; r < system.num_rows(); r++) {
+    for (int c = 0; c < system.num_cols(); c++) {
+      for (auto v : system(r, c).vars()) {
+        vars.insert(v.get_name());
+      }
+    }
+  }
+  cout << "# of vars: " << vars.size() << endl;
   cout << "system(" << system.num_rows() << ", " << system.num_cols() << ")" << endl;
   cout << system << endl;
+  assert(false);
 
   cout << "Scheduling system..." << endl;
   vector<QConstraint> cs;
@@ -586,6 +625,72 @@ umap* opt_schedule_dimension(vector<isl_map*> deps) {
 
   //assert(false);
 
+  return nullptr;
+}
+
+umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
+  cout << "Deps..." << endl;
+  vector<isl_map*> consumed_data;
+  for (auto d : deps) {
+    cout << tab(1) << str(d) << endl;
+    consumed_data.push_back(inv(d));
+  }
+
+  cout << "Consumed data..." << endl;
+  map<isl_map*, isl_aff*> latest_dep;
+  for (auto c : consumed_data) {
+    auto lm = isl_map_lexmax_pw_multi_aff(cpy(c));
+    cout << tab(1) << str(c) << endl;
+    cout << tab(2) << "lexmax: " << str(lm) << endl;
+    vector<pair<isl_set*, isl_multi_aff*> > pieces =
+      get_pieces(lm);
+    assert(pieces.size() == 1);
+
+    isl_multi_aff* bound = pieces.at(0).second;
+    assert(get_size(bound) == 1);
+    isl_aff* aff_bound =
+      isl_multi_aff_get_aff(bound, 0);
+    cout << tab(2) << "affine upper bound on data needed: " << str(aff_bound) << endl;
+    cout << tab(3) << "domain of bound: " << str(pieces.at(0).first) << endl;
+    latest_dep[c] = aff_bound;
+  }
+
+  assert(false);
+}
+
+umap* clockwork_schedule(uset* domain,
+    umap* validity,
+    umap* proximity) {
+
+  cout << "Domain: " << str(domain) << endl;
+  vector<isl_map*> deps;
+  auto finite_validity = its_range(its(validity, domain), domain);
+  for (auto m : get_maps(finite_validity)) {
+    assert(m != nullptr);
+
+    // Schedule respects intra-dependencies by construction
+    if (domain_name(m) != range_name(m)) {
+      deps.push_back(m);
+    }
+  }
+  cout << "Got deps" << endl;
+
+  assert(deps.size() > 0);
+
+  int schedule_dim =
+    num_in_dims(get_space(deps.at(0)));
+
+  cout << "Schedule dim = " << schedule_dim << endl;
+  for (int d = schedule_dim - 1; d >= 0; d--) {
+    vector<isl_map*> projected_deps;
+    for (auto dmap : deps) {
+      isl_map* projected = project_all_but(dmap, d);
+      projected_deps.push_back(projected);
+    }
+    clockwork_schedule_dimension(projected_deps);
+  }
+
+  assert(false);
   return nullptr;
 }
 

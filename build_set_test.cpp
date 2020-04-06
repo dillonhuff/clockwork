@@ -7681,14 +7681,16 @@ void playground() {
   uset* dom =
     isl_union_set_read_from_str(ct, "{ P[x, k] : 0 <= x <= 10 and 0 <= k <= 10; C[x, k] : 0 <= x <= 10 and 0 <= k <= 10 }");
   umap* validity =
-    rdmap(ct, "{ P[x, k] -> C[y, l] : k = l and x = 2y + 3 }");
+    rdmap(ct, "{ P[x, k] -> C[y, l] : x = 2y + 3 }");
+    //rdmap(ct, "{ P[x, k] -> C[y, l] : k = l and x = 2y + 3 }");
     //rdmap(ct, "{ P[x] -> C[y] : x = 2y + 3 }");
     //rdmap(ct, "{ P[x] -> C[y] : x = floor(y/2) }");
     //rdmap(ct, "{ P[x] -> C[x] }");
   umap* proximity =
     cpy(validity);
 
-  experimental_opt(dom, validity, proximity);
+  clockwork_schedule(dom, validity, proximity);
+  //experimental_opt(dom, validity, proximity);
 
   //assert(false);
 
@@ -7765,7 +7767,7 @@ void playground() {
 
 void application_tests() {
 
-  //playground();
+  playground();
 
   //synth_lb_test();
 
@@ -7775,13 +7777,13 @@ void application_tests() {
 
   //up_stencil_down_unrolled_test();
   
+  denoise2d_test();
   grayscale_conversion_test();
   jacobi2d_app_test();
   upsample2d_test();
   downsample2d_test();
   updown_merge_test();
   sobel_test();
-  denoise2d_test();
   exposure_fusion();
 
   conv3x3_app_unrolled_test();

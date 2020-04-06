@@ -896,4 +896,6 @@ umap* to_umap(isl_ctx* ctx,
     return m;
 }
 
+umap* clockwork_schedule(uset* domain, umap* validity, umap* proximity);
+
 umap* experimental_opt(uset* domain, umap* validity, umap* proximity);

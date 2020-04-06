@@ -1,6 +1,10 @@
 #include "isl_utils.h"
 #include "utils.h"
 
+int get_size(isl_multi_aff* const m) {
+  return isl_multi_aff_dim(m, isl_dim_out);
+}
+
 isl_local_space* cpy(isl_local_space* const s) {
   return isl_local_space_copy(s);
 }
@@ -1262,10 +1266,25 @@ std::string codegen_c(isl_union_set* s) {
   return sep_list(set_strings, "(", ")", " || ");
 }
 
+isl_stat get_pw_multi_aff_piece(isl_set* dom, isl_multi_aff* domain, void* user) {
+  vector<pair<isl_set*, isl_multi_aff*> >* v =
+    (vector<pair<isl_set*, isl_multi_aff*> >*) user;
+  v->push_back({dom, domain});
+  return isl_stat_ok;
+}
+
 isl_stat return_piece(isl_set* domain, isl_qpolynomial* val, void* user) {
   vector<pair<isl_set*, isl_qpolynomial*> >* v = (vector<pair<isl_set*, isl_qpolynomial*> >*) user;
   v->push_back({domain, val});
   return isl_stat_ok;
+}
+
+vector<pair<isl_set*, isl_multi_aff*> >
+get_pieces(isl_pw_multi_aff* lm) {
+  assert(lm != nullptr);
+  vector<pair<isl_set*, isl_multi_aff*> > pieces;
+  isl_pw_multi_aff_foreach_piece(lm, get_pw_multi_aff_piece, &pieces);
+  return pieces;
 }
 
 vector<pair<isl_set*, isl_qpolynomial*> >
