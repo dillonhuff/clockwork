@@ -629,6 +629,28 @@ umap* opt_schedule_dimension(vector<isl_map*> deps) {
 }
 
 pair<isl_val*, isl_val*>
+extract_div_free_linear_rational_approximation(isl_aff* aff_bound) {
+  int in_dims = num_in_dims(aff_bound);
+  int out_dims = num_out_dims(aff_bound);
+  int div_dims = num_div_dims(aff_bound);
+
+  cout << "in_dims  = " << in_dims << endl;
+  cout << "out_dims = " << out_dims << endl;
+  cout << "div_dims = " << div_dims << endl;
+
+  assert(in_dims == 1);
+  assert(out_dims == 1);
+  //assert(div_dims == 0);
+
+  isl_val* b = isl_aff_get_constant_val(aff_bound);
+  isl_val* k = isl_aff_get_coefficient_val(aff_bound, isl_dim_in, 0);
+  cout << "b = " << str(b) << endl;
+  cout << "k = " << str(k) << endl;
+
+  return {k, b};
+}
+
+pair<isl_val*, isl_val*>
 extract_linear_rational_approximation(isl_aff* aff_bound) {
   int in_dims = num_in_dims(aff_bound);
   int out_dims = num_out_dims(aff_bound);
@@ -640,14 +662,38 @@ extract_linear_rational_approximation(isl_aff* aff_bound) {
 
   assert(in_dims == 1);
   assert(out_dims == 1);
-  assert(div_dims == 0);
 
-  isl_val* b = isl_aff_get_constant_val(aff_bound);
-  isl_val* k = isl_aff_get_coefficient_val(aff_bound, isl_dim_in, 0);
-  cout << "b = " << str(b) << endl;
-  cout << "k = " << str(k) << endl;
+  if (div_dims == 0) {
+    auto dkb = extract_div_free_linear_rational_approximation(aff_bound);
+    auto k = dkb.first;
+    auto b = dkb.second;
+    cout << "b = " << str(b) << endl;
+    cout << "k = " << str(k) << endl;
 
-  return {k, b};
+    return {k, b};
+  } else {
+    assert(div_dims == 1);
+    cout << "Getting div bound for: " << str(aff_bound) << endl;
+
+    isl_val* k = isl_aff_get_coefficient_val(aff_bound, isl_dim_in, 0);
+    isl_val* b = isl_aff_get_constant_val(aff_bound);
+
+    isl_aff* div_expr = isl_aff_get_div(aff_bound, 0);
+    cout << "Div: " << str(div_expr) << endl;
+    auto dkb = extract_div_free_linear_rational_approximation(div_expr);
+    cout << "div k = " << str(dkb.first) << endl;
+    cout << "div b = " << str(dkb.second) << endl;
+
+    assert(isl_val_is_zero(dkb.second));
+    assert(isl_val_is_zero(k));
+
+    cout << "final k = " << str(dkb.first) << endl;
+    cout << "final b = " << str(b) << endl;
+
+    assert(false);
+
+    return {dkb.first, b};
+  }
 }
 
 umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
@@ -681,7 +727,10 @@ umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
     schedule_params[c] = kb;
   }
 
-  assert(false);
+  // Now: 
+
+  //assert(false);
+  return nullptr;
 }
 
 umap* clockwork_schedule(uset* domain,
@@ -716,7 +765,6 @@ umap* clockwork_schedule(uset* domain,
     clockwork_schedule_dimension(projected_deps);
   }
 
-  assert(false);
   return nullptr;
 }
 

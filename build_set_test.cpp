@@ -5715,10 +5715,10 @@ struct App {
     isl_union_map *proximity =
       cpy(validity);
 
-
     auto finite_domain = cpy(domain);
     //domain = unn(domain, isl_union_set_universe(cpy(domain)));
     //experimental_opt(cpy(domain), cpy(validity), cpy(proximity));
+    clockwork_schedule(cpy(domain), cpy(validity), cpy(proximity));
     //assert(false);
     isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
 
@@ -7767,7 +7767,7 @@ void playground() {
 
 void application_tests() {
 
-  playground();
+  //playground();
 
   //synth_lb_test();
 
@@ -7777,6 +7777,7 @@ void application_tests() {
 
   //up_stencil_down_unrolled_test();
   
+  exposure_fusion();
   denoise2d_test();
   grayscale_conversion_test();
   jacobi2d_app_test();
@@ -7784,7 +7785,6 @@ void application_tests() {
   downsample2d_test();
   updown_merge_test();
   sobel_test();
-  exposure_fusion();
 
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
