@@ -115,7 +115,7 @@ map<string, int> maximize(const std::vector<QConstraint>& constraints, QExpr& ob
   auto* legal_delays = rdset(ctx, "{ " + sep_list(ds, "[", "]", ", ") + " }");
   cout << "Creating intersection constraints" << endl;
   for (auto c : constraints) {
-    cout << "\t" << c << endl;
+    cout << "\tits with: " << c << endl;
     legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(c) + " }"));
   }
 
@@ -189,10 +189,11 @@ map<string, int> minimize(const std::vector<QConstraint>& constraints, QExpr& ob
 
   isl_ctx* ctx = isl_ctx_alloc();
 
+  cout << "# of variables: " << ds.size() << endl;
   string varspx = sep_list(ds, "[", "]", ", ");
   auto* legal_delays = rdset(ctx, "{ " + sep_list(ds, "[", "]", ", ") + " }");
   for (auto c : constraints) {
-    cout << "\t" << c << endl;
+    cout << "\tits with: " << c << endl;
     legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(c) + " }"));
   }
 
