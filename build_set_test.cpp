@@ -5704,11 +5704,11 @@ struct App {
       its(dot(writes, inv(reads)), before);
     cout << "validity: " << str(validity) << endl;
 
-    cout << "validity maps..." << endl;
-    for (auto m : get_maps(validity)) {
-      cout << tab(1) << str(m) << endl;
-      cout << tab(2) << str(lexmin(m)) << endl;
-    }
+    //cout << "validity maps..." << endl;
+    //for (auto m : get_maps(validity)) {
+      //cout << tab(1) << str(m) << endl;
+      //cout << tab(2) << str(lexmin(m)) << endl;
+    //}
     //assert(false);
     validity = unn(validity, rel_order);
 
@@ -6776,8 +6776,8 @@ void exposure_fusion() {
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
   int size =
-    //100;
-    1250;
+    100;
+    //1250;
     //200;
 
   auto isl_sched = lp.realize_isl_schedule("pyramid_synthetic_exposure_fusion", size, size);
@@ -6818,7 +6818,7 @@ void exposure_fusion() {
   //cout << "isl schedule: " << str(isl_sched) << endl;
   //cout << "opt schedule: " << str(opt_sched) << endl;
 
-  assert(false);
+  //assert(false);
 
   lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
   lp.realize_naive("pyramid_synthetic_exposure_fusion", size, size);
@@ -7760,7 +7760,7 @@ void playground() {
 
 void application_tests() {
 
-  playground();
+  //playground();
 
   //synth_lb_test();
 
@@ -7768,7 +7768,8 @@ void application_tests() {
  
   //reduce_1d_test();
 
-  up_stencil_down_unrolled_test();
+  //up_stencil_down_unrolled_test();
+  grayscale_conversion_test();
   exposure_fusion();
 
   conv3x3_app_unrolled_test();
@@ -7778,7 +7779,6 @@ void application_tests() {
   denoise2d_test();
   mismatched_stencil_test();
 
-  grayscale_conversion_test();
   seidel2d_test();
   jacobi_2d_2_test();
   jacobi_2d_test();
