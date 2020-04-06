@@ -386,6 +386,7 @@ umap* experimental_opt(uset* domain,
     assert(basics.size() == 1);
 
     auto bm = basics.at(0);
+
     auto eqmat = isl_basic_map_equalities_matrix(bm,
         isl_dim_cst,
         isl_dim_in,
@@ -419,8 +420,33 @@ umap* experimental_opt(uset* domain,
       constraints_entered++;
     }
 
+    auto ineqmat = isl_basic_map_inequalities_matrix(bm,
+        isl_dim_cst,
+        isl_dim_in,
+        isl_dim_out,
+        isl_dim_div,
+        isl_dim_param);
+    cout << "InEq Rows: " << isl_mat_rows(ineqmat) << endl;
+    cout << "InEq Cols: " << isl_mat_cols(ineqmat) << endl;
+
+    assert(isl_mat_cols(ineqmat) == 3);
+
+    for (int r = 0; r < isl_mat_rows(ineqmat); r++) {
+      isl_val* producer_coeff = isl_mat_get_element_val(ineqmat, r, 1);
+      isl_val* consumer_coeff = isl_mat_get_element_val(ineqmat, r, 2);
+
+      int pc = stoi(str(producer_coeff));
+      A(constraints_entered, map_find(producer, space_var_offsets)) =
+        qexpr(pc);
+      int cc = stoi(str(consumer_coeff));
+      A(constraints_entered, map_find(consumer, space_var_offsets)) =
+        qexpr(cc);
+      constraints_entered++;
+    }
   }
 
+  cout << "Constraints entered: " << constraints_entered << endl;
+  cout << "Total constraints  : " << total_constraints << endl;
   assert(constraints_entered == total_constraints);
 
   cout << A << endl << endl;

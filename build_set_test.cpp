@@ -7677,7 +7677,8 @@ void playground() {
 
   uset* dom = isl_union_set_read_from_str(ct, "{ P[x] : 0 <= x <= 10; C[x] : 0 <= x <= 10 }");
   umap* validity =
-    rdmap(ct, "{ P[x] -> C[x] }");
+    rdmap(ct, "{ P[x] -> C[y] : x = floor(y/2) }");
+    //rdmap(ct, "{ P[x] -> C[x] }");
   umap* proximity =
     cpy(validity);
 
@@ -7758,7 +7759,7 @@ void playground() {
 
 void application_tests() {
 
-  //playground();
+  playground();
 
   //synth_lb_test();
 
