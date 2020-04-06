@@ -642,6 +642,11 @@ extract_div_free_linear_rational_approximation(isl_aff* aff_bound) {
   assert(out_dims == 1);
   //assert(div_dims == 0);
 
+  for (int i = 0; i < div_dims; i++) {
+    auto dc = isl_aff_get_coefficient_val(aff_bound, isl_dim_div, i);
+    assert(isl_val_is_zero(dc));
+  }
+
   isl_val* b = isl_aff_get_constant_val(aff_bound);
   isl_val* k = isl_aff_get_coefficient_val(aff_bound, isl_dim_in, 0);
   cout << "b = " << str(b) << endl;
@@ -690,7 +695,7 @@ extract_linear_rational_approximation(isl_aff* aff_bound) {
     cout << "final k = " << str(dkb.first) << endl;
     cout << "final b = " << str(b) << endl;
 
-    assert(false);
+    //assert(false);
 
     return {dkb.first, b};
   }
@@ -705,26 +710,28 @@ umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
   }
 
   cout << "Consumed data..." << endl;
-  map<isl_map*, isl_aff*> latest_dep;
-  map<isl_map*, pair<isl_val*, isl_val*> > schedule_params;
+  //map<isl_map*, isl_aff*> latest_dep;
+  map<isl_map*, vector<pair<isl_val*, isl_val*> > > schedule_params;
   for (auto c : consumed_data) {
     auto lm = isl_map_lexmax_pw_multi_aff(cpy(c));
     cout << tab(1) << str(c) << endl;
     cout << tab(2) << "lexmax: " << str(lm) << endl;
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
       get_pieces(lm);
-    assert(pieces.size() == 1);
+    for (auto piece : pieces) {
+      //assert(pieces.size() == 1);
 
-    isl_multi_aff* bound = pieces.at(0).second;
-    assert(get_size(bound) == 1);
-    isl_aff* aff_bound =
-      isl_multi_aff_get_aff(bound, 0);
-    cout << tab(2) << "affine upper bound on data needed: " << str(aff_bound) << endl;
-    cout << tab(3) << "domain of bound: " << str(pieces.at(0).first) << endl;
-    latest_dep[c] = aff_bound;
-    pair<isl_val*, isl_val*> kb =
-      extract_linear_rational_approximation(aff_bound);
-    schedule_params[c] = kb;
+      isl_multi_aff* bound = piece.second;
+      assert(get_size(bound) == 1);
+      isl_aff* aff_bound =
+        isl_multi_aff_get_aff(bound, 0);
+      cout << tab(2) << "affine upper bound on data needed: " << str(aff_bound) << endl;
+      cout << tab(3) << "domain of bound: " << str(pieces.at(0).first) << endl;
+      //latest_dep[c] = aff_bound;
+      pair<isl_val*, isl_val*> kb =
+        extract_linear_rational_approximation(aff_bound);
+      schedule_params[c].push_back(kb);
+    }
   }
 
   // Now: 
