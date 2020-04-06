@@ -2416,13 +2416,11 @@ isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffe
         global_c_map = unn(buf.consumer_map(), global_c_map);
         domain = unn(buf.global_domain(), domain);
     }
-    cout << str(global_sched) << "\n\n" << str(domain) << "\n\n" <<str(global_p_map) <<"\n\n" << str(global_c_map) << endl;
     auto order_deps = get_rel_order(ctx, global_sched);
-    cout << str(order_deps) << endl;
     auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
-    cout << "Raw_deps: " << str(raw_deps) << endl;
     auto validity = unn(order_deps, raw_deps);
     auto proximity = cpy(raw_deps);
+    cout << "Raw_deps: " << str(raw_deps) << endl;
     cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
     isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
     auto sched_map = its(isl_schedule_get_map(sched), domain);
@@ -3239,40 +3237,14 @@ void auto_vec_test() {
   read->add_load("buf", "qo+2, qi");
   read->add_store("out", "qo, qi");
 
-
-  //auto sched = prg.unoptimized_schedule();
-  //cout << codegen_c(sched) << endl;
-
-  auto sched_opt = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
   auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
 
-  //cout << str(range(sched_naive)) << endl;
-  //cout << codegen_c(range(sched_naive))<< endl;
-  //assert(false);
   auto buffers = build_buffers(prg, sched_naive);
-
-  auto buffer = buffers["buf"];
-  auto acc_map = buffer.access_map.at(pick(buffer.get_out_ports()));
-  cout << "\tAccess map: " << str(acc_map) << endl;
-  string read_string = "{output[root, qo, qi] -> output_vec[root, qo, floor(qi/4)]}";
-  //string tf_string = "{buf[i0, i1] -> buf[i0, 4*floor(i1/4)]}";
-  string tf_string = "{buf[i0, i1] -> buf[i0, i1]: i1 % 4 = 0}";
-  isl_union_map* pick_pt = isl_union_map_read_from_str(prg.ctx, tf_string.c_str());
-  isl_union_map* vectorized_map = isl_union_map_read_from_str(prg.ctx, read_string.c_str());
-  auto vectorized_access = dot(inv(acc_map), vectorized_map);
-  cout << "buffer mapping" << str(pick_pt) << endl;
-  cout << "vectorize map" << str(vectorized_access) << endl;
-  cout << "vectorize map" << str(to_map(dot(inv(vectorized_access), pick_pt))) << endl;
-  cout << "simplify vectorize map" << str(isl_map_from_pw_multi_aff(isl_pw_multi_aff_from_map(to_map(dot(inv(vectorized_access), pick_pt))))) << endl;
-  cout << "vectorize range: " << str(range(vectorized_access)) << "\n vectorize domain" << str(domain(vectorized_access)) << endl;
-
-  cout << "\tUnoptimized Buffer: " << pick(buffers).second << endl;
   int fetch_width = 4;
   buffer_vectorization("buf", 1, fetch_width, buffers);
 
   auto opt_sched = optimized_schedule_from_buffers(buffers);
   cout << codegen_c(opt_sched) << endl;
-  assert(false);
 }
 
 std::vector<std::string> run_regression_tb(const std::string& name) {

@@ -54,6 +54,7 @@ map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, st
     new_sched.insert(make_pair(in_op + "_vec", in_vec_sched));
     auto out_vec_sched = gen_map_from_sched_vec(ctx, out_vectorized_sched_vec, out_op + "_vec");
     new_sched.insert(make_pair(out_op + "_vec", out_vec_sched));
+
     cout << "\tnew in map: " << str(in_sched_new)
     << "\n\tvec in map: " << str(in_vec_sched)
     << "\n\tnew out map: " << str(out_sched_new)
@@ -88,7 +89,7 @@ void UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2
             target_buf.add_in_pt(pt_name, dom, to_map(rewrite_access_map), sched_new);
             target_buf.add_access_pattern(pt_name, acc_pattern.op_name+"_vec", target_buf.name);
 
-            //TODO: change this hack, decouple reuse into more formal way
+            //LOOK at the name to judge if we need to remap the buffer
             size_t found = target_buf.name.find("tb");
             if(found != string::npos) {
                 auto acc_pt = target_buf.access_pattern.at(pt_name);
@@ -191,22 +192,4 @@ void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuff
     cout << "AGG Schedule: " << str(agg_buf.global_schedule()) << endl;
     cout << "SRAM Schedule: " << str(sram.global_schedule()) << endl;
     cout << "TB Schedule: " << str(tb.global_schedule())  << endl;
-    auto global_sched = unn(agg_buf.global_schedule(), unn(sram.global_schedule(), tb.global_schedule()));
-    //cout << str(lex_lt(global_sched, global_sched)) << endl;
-    auto order_deps = get_rel_order(ctx, global_sched);
-
-
-    auto global_p_map = unn(agg_buf.producer_map(), unn(sram.producer_map(), tb.producer_map()));
-    auto global_c_map = unn(agg_buf.consumer_map(), unn(sram.consumer_map(), tb.consumer_map()));
-
-    auto raw_deps = its( dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
-    cout << "Raw_deps: " << str(raw_deps) << endl;
-    auto domain = unn(agg_buf.global_domain(), unn(sram.global_domain(), tb.global_domain()));
-    auto validity = unn(order_deps, raw_deps);
-    cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
-    auto proximity = cpy(raw_deps);
-    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
-    auto sched_map = its(isl_schedule_get_map(sched), domain);
-    //TODO: Add input and output dependency
-    cout << codegen_c(sched_map) << endl;
 }
