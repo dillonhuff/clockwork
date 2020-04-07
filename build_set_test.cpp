@@ -3839,7 +3839,7 @@ void up_down_unrolled_test() {
   lp.func2d("ds", "id", {downsample(2, "us")});
 
   int size = 16;
-  lp.unroll("us", 2);
+  lp.unroll("us", 4);
 
   lp.realize("ds", size, size);
   auto opt = run_regression_tb("ds_opt");
@@ -3851,7 +3851,6 @@ void up_down_unrolled_test() {
 
   lp.realize_naive(options, "ds", size, size);
   auto naive = run_regression_tb("ds_naive");
-
 
   assert(opt == naive);
   assert(false);
