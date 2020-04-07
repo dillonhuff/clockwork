@@ -882,7 +882,7 @@ struct prog {
 // and emits HLS C++ code for the program
 void generate_unoptimized_code(prog& prg);
 
-// Re-schedules all loops in using ISL 
+// Re-schedules all loops using ISL 
 // and then emits HLS C++ code for the program
 void generate_optimized_code(prog& prg);
 
