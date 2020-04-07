@@ -4834,7 +4834,7 @@ struct App {
     auto finite_domain = cpy(domain);
     //domain = unn(domain, isl_union_set_universe(cpy(domain)));
     //experimental_opt(cpy(domain), cpy(validity), cpy(proximity));
-    //clockwork_schedule(cpy(domain), cpy(validity), cpy(proximity));
+    clockwork_schedule(cpy(domain), cpy(validity), cpy(proximity));
     //assert(false);
     isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
 

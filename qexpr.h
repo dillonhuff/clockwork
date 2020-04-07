@@ -238,7 +238,14 @@ struct QTerm {
       d *= c.denom;
     }
 
+    if (n == -1) {
+      n = -n;
+      d = -d;
+    }
+
     if (n != 1) {
+      cout << "n = " << n << endl;
+      cout << "d = " << d << endl;
       assert(n % d == 0);
       n = n / d;
       d = 1;

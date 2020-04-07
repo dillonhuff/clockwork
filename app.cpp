@@ -12,6 +12,19 @@ QExpr schedvar(const string& n) {
   return qexpr(sched_var_name(n));
 }
 
+struct ilp_builder {
+
+  isl_ctx* ctx;
+  isl_basic_set* s;
+
+  ilp_builder(isl_ctx* ctx_) : ctx(ctx_) {
+    auto init_space = isl_space_alloc(ctx, 0, 0, 0);
+    s = isl_basic_set_universe(init_space);
+  }
+
+
+};
+
 template<typename T>
 struct sym_matrix {
   vector<vector<T> > rows;
