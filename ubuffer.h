@@ -432,6 +432,7 @@ class UBuffer {
     }
 
     int port_bundle_width(const std::string& bundle_name) {
+      assert(contains_key(bundle_name, port_bundles));
       int len = 0;
       for (auto pt : map_find(bundle_name, port_bundles)) {
         len += port_width(pt);

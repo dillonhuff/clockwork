@@ -3023,11 +3023,6 @@ struct App {
     return buffers;
   }
 
-  //map<string, UBuffer> build_buffers(umap* m) {
-    //return build_buffers(m, 1);
-  //}
-
-  //void populate_program(CodegenOptions& options, prog& prg, const string& name, umap* m, map<string, UBuffer>& buffers, const int unroll_factor) {
   void populate_program(CodegenOptions& options, prog& prg, const string& name, umap* m, map<string, UBuffer>& buffers) {
 
     uset* whole_dom =
@@ -3045,7 +3040,6 @@ struct App {
       for (auto u : app_dag.at(f).updates) {
         if (u.get_srcs().size() == 0) {
           prg.ins.insert(f);
-          //u.name());
           action_domain =
             isl_union_set_subtract(action_domain,
                 to_uset(compute_domain(u.name())));
@@ -3071,12 +3065,11 @@ struct App {
               fargs.push_back(p.name);
             }
           }
-          //if (unroll_factor == 1) {
           if (u.unroll_factor == 1) {
             op->add_function(u.compute_name());
           } else {
-            //op->add_function(u.compute_name() + "_unrolled_" + to_string(unroll_factor));
             op->add_function(u.compute_name() + "_unrolled_" + str(u.unroll_factor));
+            op->unroll_factor = u.unroll_factor;
           }
           domain_map[u.name()] =
             compute_domain(u.name());
@@ -3209,7 +3202,6 @@ struct App {
     return map_find(f, app_dag).compute_name();
   }
 
-  //void generate_compute_unit_file(const std::string& filename, const int unroll_factor) {
   void generate_compute_unit_file(const std::string& filename) {
     ofstream cfile(filename);
     cfile << "#pragma once" << endl << endl;
@@ -3307,7 +3299,6 @@ struct App {
     return false;
   }
 
-  //void schedule_and_codegen(const std::string& name, const int unroll_factor) {
   void schedule_and_codegen(const std::string& name) {
     umap* m = schedule();
     assert(m != nullptr);
@@ -3319,10 +3310,6 @@ struct App {
 
     map<string, vector<QExpr> > scheds =
       schedule_opt();
-    //for (auto s : scheds_n) {
-      ////scheds[s.first + "_comp"] = s.second;
-      //scheds[s.first] = s.second;
-    //}
     
     map<string, Box> compute_domains;
     vector<string> ops;
@@ -3333,20 +3320,9 @@ struct App {
       }
     }
 
-    //for (auto f : sort_functions()) {
-      //if (app_dag.at(f).get_srcs().size() != 0) {
-        //ops.push_back(f + "_comp");
-        //compute_domains[f + "_comp"] =
-          //compute_box(f);
-      //}
-    //}
-
-    //assert(false);
     string cgn = box_codegen(ops, scheds, compute_domains);
-    //string cgn = "";
 
     map<string, UBuffer> buffers = build_buffers(m);
-     //, unroll_factor);
 
     uset* whole_dom =
       isl_union_set_read_from_str(ctx, "{}");
@@ -3356,11 +3332,6 @@ struct App {
       whole_dom =
         unn(whole_dom, to_uset(compute_domain(u)));
     }
-    //auto sorted_functions = sort_functions();
-    //for (auto f : sorted_functions) {
-      //whole_dom =
-        //unn(whole_dom, to_uset(compute_domain(f)));
-    //}
 
     CodegenOptions options;
     options.internal = true;
@@ -3371,7 +3342,6 @@ struct App {
     prog prg;
     prg.name = name + "_opt";
     prg.compute_unit_file = prg.name + "_compute_units.h";
-    //generate_compute_unit_file(prg.compute_unit_file, unroll_factor);
     generate_compute_unit_file(prg.compute_unit_file);
 
     auto action_domain = cpy(whole_dom);
@@ -3380,7 +3350,6 @@ struct App {
       for (auto u : app_dag.at(f).updates) {
         if (u.get_srcs().size() == 0) {
           prg.ins.insert(f);
-          //u.name());
           action_domain =
             isl_union_set_subtract(action_domain,
                 to_uset(compute_domain(u.name())));
@@ -3408,6 +3377,7 @@ struct App {
             op->add_function(u.compute_name());
           } else {
             op->add_function(u.compute_name() + "_unrolled_" + to_string(u.unroll_factor));
+            op->unroll_factor = u.unroll_factor;
           }
           domain_map[u.name()] =
             compute_domain(u.name());
@@ -3828,6 +3798,30 @@ vector<string> laplace_pyramid(const int num_levels, const string& func, App& ap
   assert(laplace_levels.size() == num_levels);
 
   return laplace_levels;
+}
+
+void up_unrolled_test() {
+  App lp;
+  lp.func2d("in_off_chip");
+  lp.func2d("in", "id", {pt("in_off_chip")});
+  lp.func2d("us", "id", {upsample(2, "in")});
+
+  int size = 16;
+  lp.unroll("us", 4);
+
+  lp.realize("us", size, size);
+  auto opt = run_regression_tb("us_opt");
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  options.unroll_factors_as_pad = true;
+
+  lp.realize_naive(options, "us", size, size);
+  auto naive = run_regression_tb("us_naive");
+
+  assert(opt == naive);
+  assert(false);
 }
 
 void up_down_unrolled_test() {
@@ -4934,8 +4928,9 @@ void application_tests() {
  
   //reduce_1d_test();
 
-  //up_down_unrolled_test();
-  //up_stencil_down_unrolled_test();
+  up_unrolled_test();
+  up_down_unrolled_test();
+  up_stencil_down_unrolled_test();
   
   denoise2d_test();
   exposure_fusion();

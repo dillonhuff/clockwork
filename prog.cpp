@@ -1,6 +1,28 @@
 #include "prog.h"
 #include "codegen.h"
 
+vector<string>
+split_bv(const int indent,
+    ostream& conv_out,
+    const string& value,
+    const int lane_width,
+    const int nlanes) {
+
+  vector<string> lanes;
+  for (int i = 0; i < nlanes; i++) {
+    string ln = value + "_lane_" + str(i);
+    int base = i*lane_width;
+    int end = (i + 1)*lane_width- 1;
+    conv_out << tab(indent) << "hw_uint<" << lane_width << "> " << ln << ";" << endl;
+    conv_out << tab(indent)
+      << "set_at<0, " << lane_width << ">(" << ln << ", " << value << ".extract<" << base << ", " << end << ">());" << endl;
+
+    lanes.push_back(ln);
+  }
+
+  return lanes;
+}
+
 prog duplicate_interface(prog& p) {
   prog pcpy;
   pcpy.name = p.name;
@@ -406,11 +428,33 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
   }
 
   open_debug_scope(conv_out);
-  conv_out << tab(1) << "*global_debug_handle << \"" << op->name << ",\" << ";
-  for (auto v : kernel.iteration_variables) {
-    conv_out << v << "<< \",\" << ";
+
+  auto& buf = buffers.at(out_buffer);
+  int bundle_width = buf.port_bundle_width(bundle_name);
+  int nlanes = buf.port_bundles.at(bundle_name).size();
+
+  assert(nlanes == op->unroll_factor);
+  assert(bundle_width % nlanes == 0);
+
+  int element_width = bundle_width / nlanes;
+
+  vector<string> lane_values =
+    split_bv(1, conv_out, res, element_width, nlanes);
+  for (int lane = 0; lane < nlanes; lane++) {
+    conv_out << tab(1) << "*global_debug_handle << \"" << op->name << ",\" << ";
+    int i = 0;
+    for (auto v : kernel.iteration_variables) {
+      if (i == 0) {
+        conv_out << "(" << nlanes << "*" << v << " + " << lane << ") << \", \" << ";
+      } else {
+        conv_out << v << "<< \",\" << ";
+      }
+      i++;
+    }
+    conv_out << " " << lane_values.at(lane) << " << endl;" << endl;
+    //conv_out << " " << res << " << endl;" << endl;
   }
-  conv_out << " " << res << " << endl;" << endl;
+
   close_debug_scope(conv_out);
   conv_out << "}" << endl << endl;
 
