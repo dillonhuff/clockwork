@@ -3128,10 +3128,13 @@ struct App {
   }
 
   void realize_naive(CodegenOptions& options, const std::string& name, const int d0, const int d1) {
-    const int unroll_factor = 1;
-    set_unroll_factors(unroll_factor);
-    cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
+    if (!options.unroll_factors_as_pad) {
+      const int unroll_factor = 1;
+      set_unroll_factors(unroll_factor);
+    }
+    //cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     fill_data_domain(name, d0, d1);
+    set_unroll_factors(1);
     fill_compute_domain();
 
     umap* m =
@@ -3827,6 +3830,33 @@ vector<string> laplace_pyramid(const int num_levels, const string& func, App& ap
   return laplace_levels;
 }
 
+void up_down_unrolled_test() {
+  App lp;
+  lp.func2d("in_off_chip");
+  lp.func2d("in", "id", {pt("in_off_chip")});
+
+  lp.func2d("us", "id", {upsample(2, "in")});
+  lp.func2d("ds", "id", {downsample(2, "us")});
+
+  int size = 16;
+  lp.unroll("us", 2);
+
+  lp.realize("ds", size, size);
+  auto opt = run_regression_tb("ds_opt");
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  options.unroll_factors_as_pad = true;
+
+  lp.realize_naive(options, "ds", size, size);
+  auto naive = run_regression_tb("ds_naive");
+
+
+  assert(opt == naive);
+  assert(false);
+}
+
 void up_stencil_down_unrolled_test() {
   App lp;
   lp.func2d("in_off_chip");
@@ -3837,14 +3867,20 @@ void up_stencil_down_unrolled_test() {
   lp.func2d("ds", "id", {downsample(2, "stencil")});
 
   int size = 16;
-  lp.realize_naive("ds", size, size);
-  auto naive = run_regression_tb("ds_naive");
-
   lp.unroll("us", 4);
   lp.unroll("stencil", 2);
 
   lp.realize("ds", size, size);
   auto opt = run_regression_tb("ds_opt");
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  options.unroll_factors_as_pad = true;
+
+  lp.realize_naive(options, "ds", size, size);
+  auto naive = run_regression_tb("ds_naive");
+
 
   assert(opt == naive);
   assert(false);
@@ -4899,7 +4935,8 @@ void application_tests() {
  
   //reduce_1d_test();
 
-  //up_stencil_down_unrolled_test();
+  up_down_unrolled_test();
+  up_stencil_down_unrolled_test();
   
   denoise2d_test();
   exposure_fusion();
