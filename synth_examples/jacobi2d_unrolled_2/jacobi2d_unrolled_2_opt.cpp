@@ -337,17 +337,6 @@ inline void t1_t1_update_0_write_bundle_write(hw_uint<64>& t1_update_0_write, t1
 
 
 // Operation logic
-inline void t1_update_0(HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */t1_arg, t1_cache& t1, int d0, int d1) {
-	// Consume: t1_arg
-	auto t1_arg_0_c__0_value = t1_arg.read();
-	auto compute_result = id_unrolled_2(t1_arg_0_c__0_value);
-	// Produce: t1
-	t1_t1_update_0_write_bundle_write(compute_result, t1, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "t1_update_0," << d0<< "," << d1<< "," <<  compute_result << endl;
-#endif //__VIVADO_SYNTH__
-}
-
 inline void jacobi2d_unrolled_2_update_0(t1_cache& t1, HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */jacobi2d_unrolled_2, int d0, int d1) {
 	// Consume: t1
 	auto t1_0_c__0_value = t1_jacobi2d_unrolled_2_update_0_read_bundle_read(t1/* source_delay */, d0, d1);
@@ -359,6 +348,17 @@ inline void jacobi2d_unrolled_2_update_0(t1_cache& t1, HWStream<hw_uint<64> >& /
 	jacobi2d_unrolled_2.write(compute_result);
 #ifndef __VIVADO_SYNTH__
   *global_debug_handle << "jacobi2d_unrolled_2_update_0," << d0<< "," << d1<< "," <<  compute_result << endl;
+#endif //__VIVADO_SYNTH__
+}
+
+inline void t1_update_0(HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */t1_arg, t1_cache& t1, int d0, int d1) {
+	// Consume: t1_arg
+	auto t1_arg_0_c__0_value = t1_arg.read();
+	auto compute_result = id_unrolled_2(t1_arg_0_c__0_value);
+	// Produce: t1
+	t1_t1_update_0_write_bundle_write(compute_result, t1, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "t1_update_0," << d0<< "," << d1<< "," <<  compute_result << endl;
 #endif //__VIVADO_SYNTH__
 }
 

@@ -1486,3 +1486,9 @@ isl_map* project_all_but(isl_map* const dmap,
 
   return m;
 }
+
+vector<int> parse_pt(isl_point* p) {
+  assert(p != nullptr);
+  return parse_pt(str(p));
+}
+

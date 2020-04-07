@@ -4,6 +4,27 @@
 
 using namespace std;
 
+struct DebugOptions {
+  bool expect_all_linebuffers;
+
+  DebugOptions() : expect_all_linebuffers(false) {}
+};
+
+struct CodegenOptions {
+  bool internal;
+  bool all_rams;
+  bool add_dependence_pragmas;
+  bool use_custom_code_string;
+  string code_string;
+  bool simplify_address_expressions;
+
+  DebugOptions debug_options;
+
+  CodegenOptions() : internal(true), all_rams(false), add_dependence_pragmas(true),
+  use_custom_code_string(false), code_string(""), simplify_address_expressions(false) {}
+
+};
+
 enum bank_type {
   BANK_TYPE_STACK,
   BANK_TYPE_RAM
@@ -664,3 +685,23 @@ int compute_dd_lower_bound(UBuffer& buf, const std::string& read_port, const std
 int compute_dd_bound(UBuffer& buf, const std::string& read_port, const std::string& write_port);
 
 string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port);
+
+
+int compute_max_dd(UBuffer& buf, const string& inpt);
+
+void generate_ram_bank(CodegenOptions& options,
+    std::ostream& out,
+    stack_bank& bank);
+
+void generate_bank(CodegenOptions& options,
+    std::ostream& out,
+    stack_bank& bank);
+
+
+Box extract_box(uset* rddom);
+bank compute_bank_info(
+    const std::string& inpt, 
+    const std::string& outpt,
+    UBuffer& buf);
+
+

@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "algorithm.h"
 #include <sstream>
 #include <regex>
