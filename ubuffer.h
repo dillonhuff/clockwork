@@ -653,3 +653,14 @@ std::ostream& operator<<(std::ostream& out, UBuffer& buf) {
   return out;
 }
 
+umap* get_lexmax_events(const std::string& outpt, UBuffer& buf);
+
+umap* last_reads(const string& inpt, UBuffer& buf);
+
+isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port);
+
+int compute_dd_lower_bound(UBuffer& buf, const std::string& read_port, const std::string& write_port);
+
+int compute_dd_bound(UBuffer& buf, const std::string& read_port, const std::string& write_port);
+
+string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port);
