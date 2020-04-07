@@ -4,10 +4,15 @@
 #include "utils.h"
 #include "qexpr.h"
 #include "app.h"
+#include "ubuffer.h"
 
-struct op {
+struct ir_node;
+typedef ir_node op;
+typedef op loop;
 
-  op* parent;
+struct ir_node {
+
+  ir_node* parent;
   bool is_loop;
   int start;
   int end_exclusive;
@@ -20,7 +25,7 @@ struct op {
 
   isl_ctx* ctx;
 
-  op() : parent(nullptr), is_loop(false) {}
+  ir_node() : parent(nullptr), is_loop(false) {}
 
   map<op*, Box> get_domain_boxes() {
       Box empty;
@@ -300,17 +305,20 @@ struct op {
 
 };
 
-typedef op loop;
 
 struct prog {
 
   std::string name;
   struct isl_ctx* ctx;
-  op* root;
+
+  ir_node* root;
+
   set<string> ins;
   set<string> outs;
   map<string, int> buffer_port_widths;
+
   string compute_unit_file;
+
   map<string, vector<int> > buffer_bounds;
 
   map<op*, Box> get_domain_boxes() {
@@ -866,3 +874,28 @@ struct prog {
   }
 };
 
+
+void generate_unoptimized_code(prog& prg);
+
+void generate_optimized_code(prog& prg);
+
+// Variants on code generation functions
+void generate_app_code(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap,
+    map<string, isl_set*>& domain_map);
+
+void generate_app_code(map<string, UBuffer>& buffers, prog& prg, umap* sched);
+
+void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap);
+
+void generate_app_code(map<string, UBuffer>& buffers, prog& prg);
+
+map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched);
+
+map<string, UBuffer> build_buffers(prog& prg);
+
+void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap);
+
+prog duplicate_interface(prog& p);

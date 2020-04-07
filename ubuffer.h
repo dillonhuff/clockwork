@@ -705,3 +705,10 @@ bank compute_bank_info(
     UBuffer& buf);
 
 
+vector<string> dimension_var_decls(const std::string& pt, UBuffer& buf);
+vector<string> dimension_var_args(const std::string& pt, UBuffer& buf);
+
+
+void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);
+void generate_hls_code(std::ostream& out, UBuffer& buf);
+void generate_hls_code(UBuffer& buf);
