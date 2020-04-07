@@ -7,20 +7,34 @@
 #include "ubuffer.h"
 
 struct ir_node;
+struct prog;
+
 typedef ir_node op;
 typedef op loop;
+typedef std::string buffer_name;
+typedef std::string address;
 
 struct ir_node {
 
   ir_node* parent;
+
+  // Every ir_node is either a loop or an operation
   bool is_loop;
+
+  // Loop bounds
   int start;
   int end_exclusive;
-  std::string name;
-  std::vector<op*> children;
-  std::vector<pair<std::string, std::string> > produce_locs;
 
-  std::vector<pair<std::string, std::string> > consume_locs;
+  // Operations / other loops contained in this loop nest
+  std::vector<op*> children;
+
+  // Operation fields
+  std::string name;
+  // Locations written
+  std::vector<pair<buffer_name, address> > produce_locs;
+  // Locations read
+  std::vector<pair<buffer_name, address> > consume_locs;
+  // The name of the HL C++ function that this op invokes
   std::string func;
 
   isl_ctx* ctx;
@@ -61,10 +75,6 @@ struct ir_node {
   string consumed_value_name(pair<string, string>& val_loc) {
     string val_name = c_sanitize(val_loc.first + "_" + val_loc.second + "_value");
     return val_name;
-    //if (contains_key(val_loc, consumed_value_names)) {
-      //return map_find(val_loc, consumed_value_names);
-    //}
-    //return val_loc.first + "_value";
   }
 
   void add_function(const std::string& n) {
@@ -177,10 +187,8 @@ struct ir_node {
 
   string add_load(const std::string& b, const std::string& loc) {
     assert(!is_loop);
-    //consumes.insert(b + "[" + loc + "]");
     consume_locs.push_back({b, loc});
     string val_name = c_sanitize(b + "_" + loc + "_value");
-    //consumed_value_names[{b, loc}] = val_name;
     return val_name;
   }
 
@@ -202,15 +210,8 @@ struct ir_node {
 
   void add_store(const std::string& b, const std::string& loc) {
     assert(!is_loop);
-    //produces.insert(b + "[" + loc + "]");
     produce_locs.push_back({b, loc});
   }
-
-  //void add_args(const std::vector<op*>& args) {
-    //for (auto a : args) {
-      ////consumes.insert(a->name);
-    //}
-  //}
 
   void populate_iteration_domains(map<op*, vector<string> >& sched_vecs, vector<string>& active_vecs) {
     if (is_loop) {
@@ -313,10 +314,13 @@ struct prog {
 
   ir_node* root;
 
+  // Names of input and output buffers
   set<string> ins;
   set<string> outs;
   map<string, int> buffer_port_widths;
 
+  // The C++ source file which holds HLS code
+  // for the compute unit implementations
   string compute_unit_file;
 
   map<string, vector<int> > buffer_bounds;
@@ -874,9 +878,12 @@ struct prog {
   }
 };
 
-
+// Schedules all loops in sequential order
+// and emits HLS C++ code for the program
 void generate_unoptimized_code(prog& prg);
 
+// Re-schedules all loops in using ISL 
+// and then emits HLS C++ code for the program
 void generate_optimized_code(prog& prg);
 
 // Variants on code generation functions
