@@ -438,8 +438,11 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
 
   int element_width = bundle_width / nlanes;
 
+
+  string dbg_res_name = "debug_" + res;
+  conv_out << tab(1) << "hw_uint<" << bundle_width << "> " << dbg_res_name << "(" << res << ");" << endl;
   vector<string> lane_values =
-    split_bv(1, conv_out, res, element_width, nlanes);
+    split_bv(1, conv_out, dbg_res_name, element_width, nlanes);
   for (int lane = 0; lane < nlanes; lane++) {
     conv_out << tab(1) << "*global_debug_handle << \"" << op->name << ",\" << ";
     int i = 0;

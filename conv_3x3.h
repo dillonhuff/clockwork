@@ -146,7 +146,7 @@ int conv_1_3(hw_uint<32*3>& in) {
 }
 
 static inline
-int avg(hw_uint<32*3>& in) {
+hw_uint<32> avg(hw_uint<32*3>& in) {
   hw_uint<32> v0 = in.extract<0, 31>();
   hw_uint<32> v1 = in.extract<32, 63>();
   hw_uint<32> v2 = in.extract<64, 95>();

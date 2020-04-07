@@ -4928,13 +4928,13 @@ void application_tests() {
  
   //reduce_1d_test();
 
-  up_unrolled_test();
-  up_down_unrolled_test();
-  up_stencil_down_unrolled_test();
+  //up_unrolled_test();
+  //up_down_unrolled_test();
+  //up_stencil_down_unrolled_test();
   
+  grayscale_conversion_test();
   denoise2d_test();
   exposure_fusion();
-  grayscale_conversion_test();
   jacobi2d_app_test();
   upsample2d_test();
   downsample2d_test();
