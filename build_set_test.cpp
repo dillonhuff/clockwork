@@ -4934,8 +4934,8 @@ void application_tests() {
  
   //reduce_1d_test();
 
-  up_down_unrolled_test();
-  up_stencil_down_unrolled_test();
+  //up_down_unrolled_test();
+  //up_stencil_down_unrolled_test();
   
   denoise2d_test();
   exposure_fusion();
