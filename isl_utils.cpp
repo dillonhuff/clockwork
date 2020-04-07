@@ -84,6 +84,10 @@ isl_aff* cpy(isl_aff* const b) {
   return isl_aff_copy(b);
 }
 
+isl_local_space* get_local_space(isl_basic_set* const m) {
+  return isl_basic_set_get_local_space(m);
+}
+
 isl_space* get_space(isl_aff* const m) {
   return isl_aff_get_space(m);
 }

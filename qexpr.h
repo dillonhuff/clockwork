@@ -238,7 +238,10 @@ struct QTerm {
       d *= c.denom;
     }
 
-    if (n == -1) {
+    if (abs(n) == 1 && abs(d) == 1) {
+      n = n / d;
+      d = 1;
+    } else if (n == -1) {
       n = -n;
       d = -d;
     }

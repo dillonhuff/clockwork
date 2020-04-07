@@ -72,6 +72,7 @@ isl_val* cpy(isl_val* const b);
 
 isl_aff* cpy(isl_aff* const b);
 
+isl_local_space* get_local_space(isl_basic_set* const m);
 isl_space* get_space(isl_constraint* const m);
 
 isl_space* get_space(isl_union_map* const m);

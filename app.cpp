@@ -16,12 +16,57 @@ struct ilp_builder {
 
   isl_ctx* ctx;
   isl_basic_set* s;
+  map<string, int> variable_positions;
 
   ilp_builder(isl_ctx* ctx_) : ctx(ctx_) {
-    auto init_space = isl_space_alloc(ctx, 0, 0, 0);
+    auto init_space = isl_space_set_alloc(ctx, 0, 0);
     s = isl_basic_set_universe(init_space);
   }
 
+  void add_geq(const std::map<string, isl_val*>& coeffs, isl_val* constant) {
+    for (auto v : coeffs) {
+      if (!contains_key(v.first, variable_positions)) {
+        int next_pos = num_dims(isl_basic_set_get_space(s));
+        variable_positions[v.first] = next_pos;
+        s = isl_basic_set_add_dims(s, isl_dim_set, 1);
+      }
+    }
+
+    isl_constraint* c = isl_constraint_alloc_inequality(get_local_space(s));
+    isl_constraint_set_constant_val(c, constant);
+
+    for (auto v : coeffs) {
+      int index = map_find(v.first, variable_positions);
+
+      cout << "Index = " << index << endl;
+
+      isl_constraint_set_coefficient_val(c,
+          isl_dim_set,
+          index,
+          v.second);
+    }
+
+    s = isl_basic_set_add_constraint(s, c);
+  }
+  void add_eq(const std::map<string, isl_val*>& coeffs, isl_val* constant) {
+    for (auto v : coeffs) {
+      if (!contains_key(v.first, variable_positions)) {
+        int next_pos = num_dims(isl_basic_set_get_space(s));
+        variable_positions[v.first] = next_pos;
+        s = isl_basic_set_add_dims(s, isl_dim_set, 1);
+      }
+    }
+
+    isl_constraint* c = isl_constraint_alloc_equality(get_local_space(s));
+    isl_constraint_set_constant_val(c, constant);
+
+    for (auto v : coeffs) {
+      cout << "index = " << map_find(v.first, variable_positions) << endl;
+      isl_constraint_set_coefficient_val(c, isl_dim_set, map_find(v.first, variable_positions), v.second);
+    }
+
+    s = isl_basic_set_add_constraint(s, c);
+  }
 
 };
 
@@ -720,6 +765,8 @@ extract_linear_rational_approximation(isl_aff* aff_bound) {
 
 umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
   cout << "Deps..." << endl;
+  assert(deps.size() > 0);
+  isl_ctx* ct = ctx(deps.at(0));
   vector<isl_map*> consumed_data;
   for (auto d : deps) {
     cout << tab(1) << str(d) << endl;
@@ -751,6 +798,7 @@ umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
   // Now: Collect schedule constraints for the problem and solve for
   // rates and delays?
 
+  ilp_builder ilp(ct);
   vector<QConstraint> rate_constraints;
   QExpr objective = qexpr(0);
   for (auto s : schedule_params) {
@@ -771,48 +819,53 @@ umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
       QExpr k = qe(sv.first);
 
       rate_constraints.push_back(eq(qc - qc*k, qexpr(0)));
+      ilp.add_eq({{sched_var_name(consumer), isl_val_one(ct)},
+          {sched_var_name(producer), isl_val_neg(sv.first)}},
+          isl_val_zero(ct));
 
       objective = objective + qp + qc;
     }
   }
 
-  auto result = minimize(rate_constraints, objective);
-  cout << "Result.." << endl;
-  for (auto r : result) {
-    cout << tab(1) << r.first << " = " << r.second << endl;
-  }
+  //ilp.optimize(objective);
 
-  vector<QConstraint> delay_constraints;
-  QExpr delay_objective = qexpr(0);
-  for (auto s : schedule_params) {
-    string consumer = domain_name(s.first);
-    string producer = range_name(s.first);
+  //auto result = minimize(rate_constraints, objective);
+  //cout << "Result.." << endl;
+  //for (auto r : result) {
+    //cout << tab(1) << r.first << " = " << r.second << endl;
+  //}
 
-    auto qp = schedvar(producer);
-    auto dp = delayvar(producer);
+  //vector<QConstraint> delay_constraints;
+  //QExpr delay_objective = qexpr(0);
+  //for (auto s : schedule_params) {
+    //string consumer = domain_name(s.first);
+    //string producer = range_name(s.first);
 
-    auto dc = delayvar(consumer);
+    //auto qp = schedvar(producer);
+    //auto dp = delayvar(producer);
 
-    delay_constraints.push_back(eq(qp, qexpr(map_find(sched_var_name(producer), result))));
-    delay_constraints.push_back(geq(dp, qexpr(0)));
-    delay_constraints.push_back(geq(dc, qexpr(0)));
+    //auto dc = delayvar(consumer);
 
-    for (auto sv : s.second) {
+    //delay_constraints.push_back(eq(qp, qexpr(map_find(sched_var_name(producer), result))));
+    //delay_constraints.push_back(geq(dp, qexpr(0)));
+    //delay_constraints.push_back(geq(dc, qexpr(0)));
 
-      QExpr b = qe(sv.second);
+    //for (auto sv : s.second) {
 
-      delay_constraints.push_back(geq(dc - qp*b - dp, qexpr(0)));
+      //QExpr b = qe(sv.second);
 
-      //delay_objective = delay_objective + (dp - dc);
-      delay_objective = delay_objective + dp + dc;
-    }
-  }
+      //delay_constraints.push_back(geq(dc - qp*b - dp, qexpr(0)));
 
-  auto delay_result = minimize(delay_constraints, delay_objective);
-  cout << "Delay result..." << endl;
-  for (auto dr : delay_result) {
-    cout << tab(1) << dr.first << " = " << dr.second << endl;
-  }
+      ////delay_objective = delay_objective + (dp - dc);
+      //delay_objective = delay_objective + dp + dc;
+    //}
+  //}
+
+  //auto delay_result = minimize(delay_constraints, delay_objective);
+  //cout << "Delay result..." << endl;
+  //for (auto dr : delay_result) {
+    //cout << tab(1) << dr.first << " = " << dr.second << endl;
+  //}
 
   //assert(false);
   return nullptr;
