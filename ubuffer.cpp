@@ -113,7 +113,6 @@ int compute_dd_bound(UBuffer& buf, const std::string& read_port, const std::stri
 string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port) {
   auto c = compute_dd(buf, read_port, write_port);
   c = coalesce(c);
-  //c = simplify(c);
   auto out_domain = buf.domain.at(read_port);
   c = isl_union_pw_qpolynomial_gist(c, to_uset(out_domain));
 
@@ -565,7 +564,11 @@ void select_debug_assertions(CodegenOptions& options, std::ostream& out, const s
   out << "\tassert(false);\n\treturn 0;\n";
 }
 
-string delay_string(CodegenOptions& options, const string& inpt, const string& outpt, UBuffer& buf) {
+string delay_string(CodegenOptions& options,
+    ostream& out,
+    const string& inpt,
+    const string& outpt,
+    UBuffer& buf) {
 
   string bank = buf.bank_between(inpt, outpt);
 
@@ -577,6 +580,12 @@ string delay_string(CodegenOptions& options, const string& inpt, const string& o
   //assert(false);
 
   string dx = to_string(int_upper_bound(qpd));
+  auto dd_fold = compute_dd(buf, outpt, inpt);
+
+  out << tab(1) << "// Read schedule : " << str(buf.schedule.at(outpt)) << endl;
+  out << tab(1) << "// Write schedule: " << str(buf.schedule.at(inpt)) << endl;
+
+  out << tab(1) << "// DD fold: " << str(dd_fold) << endl;
   string delay_expr = evaluate_dd(buf, outpt, inpt);
   string value_str = "";
   bool opt_const = is_optimizable_constant_dd(inpt, outpt, buf);
@@ -655,7 +664,7 @@ selector generate_select(CodegenOptions& options, std::ostream& out, const strin
 
   if (possible_ports.size() == 1) {
     string inpt = possible_ports.at(0);
-    string peeked_val = delay_string(options, inpt, outpt, buf);
+    string peeked_val = delay_string(options, out, inpt, outpt, buf);
     sel.bank_conditions.push_back("1");
     sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, inpt));
 
@@ -665,7 +674,7 @@ selector generate_select(CodegenOptions& options, std::ostream& out, const strin
     for (auto port : possible_ports) {
       out << tab(1) << "if (" << map_find(port, in_ports_to_conditions) << ") {" << endl;
       string inpt = possible_ports.at(0);
-      string peeked_val = delay_string(options, inpt, outpt, buf);
+      string peeked_val = delay_string(options, out, inpt, outpt, buf);
       sel.bank_conditions.push_back("1");
       sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, inpt));
 

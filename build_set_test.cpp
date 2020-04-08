@@ -2743,7 +2743,6 @@ struct App {
         }
 
         op_compute_maps[u.name()] = compute_map(u.name());
-        //op_compute_maps[u.name()] = its_range(compute_map(u.name()), compute_domain(u.name()));
       }
     }
 
@@ -2916,12 +2915,9 @@ struct App {
 
   Window data_window_needed_by_compute(const std::string& consumer,
       const std::string& producer) {
-      //const int unroll_factor) {
-    //return box_touched(consumer, producer).unroll_cpy(unroll_factor);
     return box_touched(consumer, producer).unroll_cpy(get_update(consumer).unroll_factor);
   }
 
-  //map<string, UBuffer> build_buffers(umap* m, const int unroll_factor) {
   map<string, UBuffer> build_buffers(umap* m) {
     auto sorted_functions = sort_functions();
     vector<string> var_names;
@@ -3807,7 +3803,7 @@ void up_unrolled_test() {
   lp.func2d("us", "id", {upsample(2, "in")});
 
   int size = 16;
-  lp.unroll("us", 4);
+  lp.unroll("us", 2);
 
   lp.realize("us", size, size);
   auto opt = run_regression_tb("us_opt");
@@ -4928,9 +4924,10 @@ void application_tests() {
  
   //reduce_1d_test();
 
-  //up_unrolled_test();
-  //up_down_unrolled_test();
-  //up_stencil_down_unrolled_test();
+  up_unrolled_test();
+  assert(false);
+  up_down_unrolled_test();
+  up_stencil_down_unrolled_test();
   
   grayscale_conversion_test();
   denoise2d_test();

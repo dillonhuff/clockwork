@@ -247,8 +247,8 @@ struct QTerm {
     }
 
     if (n != 1) {
-      cout << "n = " << n << endl;
-      cout << "d = " << d << endl;
+      //cout << "n = " << n << endl;
+      //cout << "d = " << d << endl;
       assert(n % d == 0);
       n = n / d;
       d = 1;

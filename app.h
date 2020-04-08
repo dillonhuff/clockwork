@@ -465,8 +465,9 @@ vector<vector<int> > offsets(vector<QExpr>& mins, vector<QExpr>& maxs) {
 
 static inline
 map<string, int>
-compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstraint> delay_constraints,
-    vector<QConstraint>& offset_constraints) {
+compute_delays(isl_ctx* ctx,
+    vector<string>& sorted_functions,
+    vector<QConstraint> delay_constraints) {
 
   cout << "Delay constraints..." << endl;
   for (auto d : delay_constraints) {
@@ -488,7 +489,6 @@ compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstrain
   QConstraint cc = eq(qexpr("d_" + target_func), 0);
   delay_constraints.push_back(cc);
   map<string, int> delays =
-    //minimize(delay_constraints, objective_expr);
     maximize(delay_constraints, objective_expr);
   assert(delays.size() == sorted_functions.size());
 
@@ -499,8 +499,10 @@ compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstrain
     }
   }
 
+  cout << "Delays..." << endl;
   for (auto& d : delays) {
     d.second = d.second - min_delay;
+    cout << tab(1) << d.first << " = " << d.second << endl;
   }
   return delays;
 }
@@ -513,6 +515,11 @@ compute_schedule_for_dim(isl_ctx* ctx,
     const vector<QConstraint>& all_constraints,
     const vector<QConstraint>& rate_constraints,
     const map<string, map<string, QExpr> >& last_compute_needed) {
+
+  cout << "### All constraints..." << endl;
+  for (auto c : all_constraints) {
+    cout << tab(1) << c << endl;
+  }
 
   vector<QConstraint> offset_constraints =
     rate_constraints;
@@ -670,7 +677,8 @@ compute_schedule_for_dim(isl_ctx* ctx,
   }
 
   map<string, int> delays =
-    compute_delays(ctx, sorted_functions, delay_constraints, offset_constraints);
+    compute_delays(ctx, sorted_functions, delay_constraints);
+    //compute_delays(ctx, sorted_functions, delay_constraints, offset_constraints);
   //assert(i == 1);
 
   cout << "Final schedules: " << endl;
@@ -687,11 +695,17 @@ compute_schedule_for_dim(isl_ctx* ctx,
     QTerm rd = qterm(rate, dv);
     QTerm d = qterm(delay);
     auto si = qexpr(rd, d);
+
+    cout << tab(1) << "s_" << f << " = " << si << endl;
+
     schedules[f] = si;
   }
 
   cout << "done with schedules..." << endl;
 
+  //if (i == 0) {
+    //assert(false);
+  //}
   return schedules;
 }
 
@@ -786,6 +800,7 @@ build_compute_deps(
             compute_maps.at(arg.first),
             arg.second);
 
+      cout << tab(1) << "comps_needed by " << f << " from " << arg.first << " " << str(comps_needed) << endl;
       last_compute_needed[f][arg.first] = {};
       for (int i = 0; i < schedule_dim; i++) {
         cout << "Comps needed: " << str(comps_needed) << endl;
@@ -818,6 +833,14 @@ schedule_dim(isl_ctx* ctx,
     }
 
     last_compute_needed[fname] = last_needs;
+  }
+
+  cout << "## last compute needed in dim " << i << endl;
+  for (auto c : last_compute_needed) {
+    cout << tab(1) << c.first << endl;
+    for (auto qc : c.second) {
+      cout << tab(2) << qc.first << " -> " << qc.second << endl;
+    }
   }
   //assert(false);
 
