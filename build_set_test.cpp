@@ -4430,10 +4430,15 @@ void jacobi2d_app_test() {
 
   assert(naive == optimized);
 
+  //int cols = 1920;
+  //int rows = 1080;
+
+  int cols = 16;
+  int rows = 16;
   for (int i = 0; i < 3; i++) {
     int unroll_factor = pow(2, i);
     string out_name = "jacobi2d_unrolled_" + str(unroll_factor);
-    jacobi2d(out_name).realize(out_name, 1920, 1080, unroll_factor);
+    jacobi2d(out_name).realize(out_name, cols, rows, unroll_factor);
     string synth_dir =
       "./synth_examples/" + out_name;
     system(("mkdir " + synth_dir).c_str());
@@ -4443,7 +4448,7 @@ void jacobi2d_app_test() {
     system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
   }
 
-  //assert(false);
+  assert(false);
 }
 
 void denoise2d_test() {
@@ -5213,8 +5218,9 @@ int main(int argc, char** argv) {
     assert(false);
 
   } else if (argc == 1) {
-    memory_tile_tests();
+
     application_tests();
+    memory_tile_tests();
 
   } else {
     assert(false);

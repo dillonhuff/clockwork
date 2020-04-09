@@ -8,10 +8,10 @@ int main() {
 
 
   // Loading input data
-  // cmap    : { t1_update_0[root = 0, t1_0, t1_1] -> t1_arg[0, 0] : -1 <= t1_0 <= 960 and -1 <= t1_1 <= 1080 }
-  // read map: { t1_arg[0, 0] -> t1_update_0[root = 0, t1_0, t1_1] : -1 <= t1_0 <= 960 and -1 <= t1_1 <= 1080 }
-  // rng     : { t1_update_0[root = 0, t1_0, t1_1] : -1 <= t1_0 <= 960 and -1 <= t1_1 <= 1080 }
-  for (int i = 0; i < 1040884; i++) {
+  // cmap    : { t1_update_0[root = 0, t1_0, t1_1] -> t1_arg[0, 0] : -1 <= t1_0 <= 8 and -1 <= t1_1 <= 16 }
+  // read map: { t1_arg[0, 0] -> t1_update_0[root = 0, t1_0, t1_1] : -1 <= t1_0 <= 8 and -1 <= t1_1 <= 16 }
+  // rng     : { t1_update_0[root = 0, t1_0, t1_1] : -1 <= t1_0 <= 8 and -1 <= t1_1 <= 16 }
+  for (int i = 0; i < 180; i++) {
     hw_uint<64> in_val;
     set_at<0*32, 64>(in_val, 2*i + 0);
     set_at<1*32, 64>(in_val, 2*i + 1);
@@ -20,7 +20,7 @@ int main() {
 
   jacobi2d_unrolled_2_opt(t1_update_0_read, jacobi2d_unrolled_2_update_0_write);
 
-  for (int i = 0; i < 1036800; i++) {
+  for (int i = 0; i < 128; i++) {
     hw_uint<64> actual = jacobi2d_unrolled_2_update_0_write.read();
     auto actual_lane_0 = actual.extract<0*32, 31>();
     fout << (int) actual_lane_0 << endl;
