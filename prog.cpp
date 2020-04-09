@@ -91,6 +91,7 @@ void generate_xilinx_accel_wrapper(map<string, UBuffer>& buffers, prog& prg) {
   }
 
   out << "}" << endl;
+  out << "}" << endl;
 
   out.close();
 }
