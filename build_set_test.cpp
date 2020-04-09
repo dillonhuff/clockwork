@@ -5166,8 +5166,8 @@ void application_tests() {
 }
 
 void memory_tile_tests() {
-  vec_test();
   auto_vec_test();
+  vec_test();
   agg_test();
   memtile_test();
 
