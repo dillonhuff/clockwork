@@ -1,0 +1,575 @@
+<ENTRY>
+{
+ "session": {
+  "name": "v++_link_jacobi2d_unrolled_1_opt",
+  "pid": "0",
+  "uuid": "31e7a8ed-19de-4069-82a4-53cf055ec84a",
+  "description": "",
+  "timestamp": "0",
+  "outputFiles": [
+   {
+    "type": "JSON",
+    "mode": "CLIENT_ONLY",
+    "path": "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/.tlog/v++_link_jacobi2d_unrolled_1_opt.xtl",
+    "continuous": true
+   },
+   {
+    "type": "JSON",
+    "mode": "LOCAL_IF_NO_CONNECT",
+    "path": "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt.xclbin.link_summary",
+    "continuous": true
+   },
+   {
+    "type": "BINARY_PROTOBUF",
+    "mode": "LOCAL_IF_NO_CONNECT",
+    "path": "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt.xclbin.link_summary.pb",
+    "continuous": true
+   }
+  ]
+ },
+ "thisFile": "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt.xclbin.link_summary",
+ "connectId": "",
+ "serverToken": "",
+ "timestamp": "0"
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_CmdStep",
+ "dateTimestamp": "Thu Apr  9 03:17:24 2020",
+ "timestampMillis": "1586402244574",
+ "buildStep": {
+  "cmdId": "a29210cd-85ae-4a2c-94b4-902b052c9560",
+  "name": "v++",
+  "logFile": "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/link.steps.log",
+  "commandLine": "/opt/Xilinx/Vitis/2019.2/bin/unwrapped/lnx64.o/v++ --xp param:compiler.lockFlowCritSlackThreshold=0 --xp vivado_param:hd.routingContainmentAreaExpansion=true --xp vivado_param:hd.supportClockNetCrossDiffReconfigurablePartitions=1 --xp vivado_param:bitstream.enablePR=4123 --xp vivado_param:physynth.ultraRAMOptOutput=false --xp vivado_prop:run.__KERNEL__.{STEPS.SYNTH_DESIGN.ARGS.MAX_URAM_CASCADE_HEIGHT}={1} --xp vivado_param:synth.elaboration.rodinMoreOptions={rt::set_parameter disableOregPackingUram true}  --xp \"vivado_prop:run.__KERNEL__.{STEPS.SYNTH_DESIGN.ARGS.MORE OPTIONS}={-directive sdx_optimization_effort_high}\" --xp \"misc:report=type report_timing_summary name impl_report_timing_summary_route_design_summary steps {route_design} runs {impl_1} options {-max_paths 10}\" --xp \"misc:report=type report_timing_summary name impl_report_timing_summary_post_route_phys_opt_design_summary steps {post_route_phys_opt_design} runs {impl_1} options {-max_paths 10}\" -D__VIVADO_SYNTH__ -t sw_emu --platform /home/centos/aws-fpga/Vitis/aws_platform/xilinx_aws-vu9p-f1_shell-v04261818_201920_1/xilinx_aws-vu9p-f1_shell-v04261818_201920_1.xpfm --save-temps -g --temp_dir ./build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1 -l -obuild_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt.xclbin _x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt.xo ",
+  "args": [
+   "--xp",
+   "param:compiler.lockFlowCritSlackThreshold=0",
+   "--xp",
+   "vivado_param:hd.routingContainmentAreaExpansion=true",
+   "--xp",
+   "vivado_param:hd.supportClockNetCrossDiffReconfigurablePartitions=1",
+   "--xp",
+   "vivado_param:bitstream.enablePR=4123",
+   "--xp",
+   "vivado_param:physynth.ultraRAMOptOutput=false",
+   "--xp",
+   "vivado_prop:run.__KERNEL__.{STEPS.SYNTH_DESIGN.ARGS.MAX_URAM_CASCADE_HEIGHT}={1}",
+   "--xp",
+   "vivado_param:synth.elaboration.rodinMoreOptions={rt::set_parameter disableOregPackingUram true}",
+   "-D__VIVADO_SYNTH__",
+   "-t",
+   "sw_emu",
+   "--platform",
+   "/home/centos/aws-fpga/Vitis/aws_platform/xilinx_aws-vu9p-f1_shell-v04261818_201920_1/xilinx_aws-vu9p-f1_shell-v04261818_201920_1.xpfm",
+   "--save-temps",
+   "-g",
+   "--temp_dir",
+   "./build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1",
+   "-l",
+   "-obuild_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt.xclbin",
+   "_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt.xo"
+  ],
+  "iniFiles": []
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Thu Apr  9 03:17:24 2020",
+ "timestampMillis": "1586402244575",
+ "status": {
+  "cmdId": "a29210cd-85ae-4a2c-94b4-902b052c9560",
+  "state": "CS_RUNNING"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_FlowMetaData",
+ "dateTimestamp": "Thu Apr  9 03:17:29 2020",
+ "timestampMillis": "1586402249254",
+ "buildSummary": {
+  "hardwarePlatform": "xilinx_aws-vu9p-f1_shell-v04261818_201920_1.xpfm",
+  "hardwareDsa": "xilinx_aws-vu9p-f1_shell-v04261818_201920_1.xsa",
+  "platformDirectory": "/home/centos/aws-fpga/Vitis/aws_platform/xilinx_aws-vu9p-f1_shell-v04261818_201920_1",
+  "runtime": "OpenCL",
+  "systemConfig": "Linux",
+  "flow": "BF_LINK",
+  "target": "TT_SW_EMU",
+  "binaryContainer": {
+   "base": {
+    "type": "BT_UKNOWN",
+    "name": "jacobi2d_unrolled_1_opt",
+    "file": "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt.xclbin",
+    "reports": []
+   },
+   "kernels": []
+  },
+  "kernels": [
+   {
+    "base": {
+     "type": "KERNEL",
+     "name": "jacobi2d_unrolled_1_opt",
+     "file": "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt.xo",
+     "reports": []
+    },
+    "sources": [
+     "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/xo/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/cpu_sources/jacobi2d_unrolled_1_opt.cpp"
+    ],
+    "cuNames": [
+     "jacobi2d_unrolled_1_opt_1"
+    ]
+   }
+  ]
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_SubCmdStep",
+ "dateTimestamp": "Thu Apr  9 03:17:29 2020",
+ "timestampMillis": "1586402249258",
+ "buildStep": {
+  "cmdId": "f7a86b73-c246-48d4-b702-02a229c93cbb",
+  "name": "regiongen",
+  "logFile": "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt_regiongen.log",
+  "commandLine": "/opt/Xilinx/Vitis/2019.2/bin/../runtime/bin/regiongen_new -v -m /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt.xml -t alg -o xcl_top",
+  "args": [
+   "-v",
+   "-m",
+   "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt.xml",
+   "-t",
+   "alg",
+   "-o",
+   "xcl_top"
+  ],
+  "iniFiles": []
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Thu Apr  9 03:17:29 2020",
+ "timestampMillis": "1586402249258",
+ "status": {
+  "cmdId": "f7a86b73-c246-48d4-b702-02a229c93cbb",
+  "state": "CS_RUNNING"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Thu Apr  9 03:17:30 2020",
+ "timestampMillis": "1586402250266",
+ "status": {
+  "cmdId": "f7a86b73-c246-48d4-b702-02a229c93cbb",
+  "state": "CS_PASSED"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_SubCmdStep",
+ "dateTimestamp": "Thu Apr  9 03:17:30 2020",
+ "timestampMillis": "1586402250267",
+ "buildStep": {
+  "cmdId": "c94c510c-3f04-4f9c-bd43-fd5a5fb47478",
+  "name": "gcc",
+  "logFile": "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt_kernel_gcc.log",
+  "commandLine": "/opt/Xilinx/Vivado/2019.2/tps/lnx64/gcc-6.2.0/bin/gcc -I . -I /opt/Xilinx/Vivado/2019.2/bin/../include -I /opt/Xilinx/Vivado/2019.2/bin/../lnx64/tools/auto_cc/include -I /opt/Xilinx/Vivado/2019.2/bin/../common/technology/autopilot/opencl -I /opt/Xilinx/Vitis/2019.2/bin/../common/technology/autopilot/opencl -std=c++11 -g -D __VIVADO_SYNTH__ -I /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src -g -fPIC -g -c -DHLS_STREAM_THREAD_SAFE -MD -MT obj/jacobi2d_unrolled_1_opt.o -MP -MF obj/jacobi2d_unrolled_1_opt.Cd /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/xo/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/cpu_sources/jacobi2d_unrolled_1_opt.cpp -o obj/jacobi2d_unrolled_1_opt.o",
+  "args": [
+   "-I",
+   ".",
+   "-I",
+   "/opt/Xilinx/Vivado/2019.2/bin/../include",
+   "-I",
+   "/opt/Xilinx/Vivado/2019.2/bin/../lnx64/tools/auto_cc/include",
+   "-I",
+   "/opt/Xilinx/Vivado/2019.2/bin/../common/technology/autopilot/opencl",
+   "-I",
+   "/opt/Xilinx/Vitis/2019.2/bin/../common/technology/autopilot/opencl",
+   "-std=c++11",
+   "-g",
+   "-D",
+   "__VIVADO_SYNTH__",
+   "-I",
+   "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src",
+   "-g",
+   "-fPIC",
+   "-g",
+   "-c",
+   "-DHLS_STREAM_THREAD_SAFE",
+   "-MD",
+   "-MT",
+   "obj/jacobi2d_unrolled_1_opt.o",
+   "-MP",
+   "-MF",
+   "obj/jacobi2d_unrolled_1_opt.Cd",
+   "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/xo/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/cpu_sources/jacobi2d_unrolled_1_opt.cpp",
+   "-o",
+   "obj/jacobi2d_unrolled_1_opt.o"
+  ],
+  "iniFiles": []
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Thu Apr  9 03:17:30 2020",
+ "timestampMillis": "1586402250268",
+ "status": {
+  "cmdId": "c94c510c-3f04-4f9c-bd43-fd5a5fb47478",
+  "state": "CS_RUNNING"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Thu Apr  9 03:17:31 2020",
+ "timestampMillis": "1586402251357",
+ "status": {
+  "cmdId": "c94c510c-3f04-4f9c-bd43-fd5a5fb47478",
+  "state": "CS_PASSED"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_SubCmdStep",
+ "dateTimestamp": "Thu Apr  9 03:17:31 2020",
+ "timestampMillis": "1586402251357",
+ "buildStep": {
+  "cmdId": "91bdb270-8f82-4637-b15c-809538b2ec04",
+  "name": "ar",
+  "logFile": "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt_ar.log",
+  "commandLine": "/opt/Xilinx/Vivado/2019.2/tps/lnx64/binutils-2.26/bin/ar -cr /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt.csim_cu.a /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt/obj/jacobi2d_unrolled_1_opt.o",
+  "args": [
+   "-cr",
+   "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt.csim_cu.a",
+   "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt/obj/jacobi2d_unrolled_1_opt.o"
+  ],
+  "iniFiles": []
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Thu Apr  9 03:17:31 2020",
+ "timestampMillis": "1586402251358",
+ "status": {
+  "cmdId": "91bdb270-8f82-4637-b15c-809538b2ec04",
+  "state": "CS_RUNNING"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Thu Apr  9 03:17:31 2020",
+ "timestampMillis": "1586402251362",
+ "status": {
+  "cmdId": "91bdb270-8f82-4637-b15c-809538b2ec04",
+  "state": "CS_PASSED"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_SubCmdStep",
+ "dateTimestamp": "Thu Apr  9 03:17:31 2020",
+ "timestampMillis": "1586402251362",
+ "buildStep": {
+  "cmdId": "7095ff97-df71-4dee-8a68-7d2b157ca00d",
+  "name": "g++",
+  "logFile": "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt_xcl_top_gpp.log",
+  "commandLine": "/opt/Xilinx/Vivado/2019.2/tps/lnx64/gcc-6.2.0/bin/g++ -I . -I /opt/Xilinx/Vivado/2019.2/bin/../include -I /opt/Xilinx/Vivado/2019.2/bin/../common/technology/autopilot/opencl -I /opt/Xilinx/Vitis/2019.2/bin/../common/technology/autopilot/opencl -I /opt/Xilinx/Vitis/2019.2/bin/../data/emulation/include -I /opt/Xilinx/Vivado/2019.2/bin/../lnx64/tools/auto_cc/include -fPIC -g -DHLS_STREAM_THREAD_SAFE -std=c++11 -fpermissive -c -MD -MT obj/xcl_top.o -MP -MF obj/xcl_top.CXXd xcl_top.cpp -o obj/xcl_top.o",
+  "args": [
+   "-I",
+   ".",
+   "-I",
+   "/opt/Xilinx/Vivado/2019.2/bin/../include",
+   "-I",
+   "/opt/Xilinx/Vivado/2019.2/bin/../common/technology/autopilot/opencl",
+   "-I",
+   "/opt/Xilinx/Vitis/2019.2/bin/../common/technology/autopilot/opencl",
+   "-I",
+   "/opt/Xilinx/Vitis/2019.2/bin/../data/emulation/include",
+   "-I",
+   "/opt/Xilinx/Vivado/2019.2/bin/../lnx64/tools/auto_cc/include",
+   "-fPIC",
+   "-g",
+   "-DHLS_STREAM_THREAD_SAFE",
+   "-std=c++11",
+   "-fpermissive",
+   "-c",
+   "-MD",
+   "-MT",
+   "obj/xcl_top.o",
+   "-MP",
+   "-MF",
+   "obj/xcl_top.CXXd",
+   "xcl_top.cpp",
+   "-o",
+   "obj/xcl_top.o"
+  ],
+  "iniFiles": []
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Thu Apr  9 03:17:31 2020",
+ "timestampMillis": "1586402251363",
+ "status": {
+  "cmdId": "7095ff97-df71-4dee-8a68-7d2b157ca00d",
+  "state": "CS_RUNNING"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Thu Apr  9 03:17:32 2020",
+ "timestampMillis": "1586402252252",
+ "status": {
+  "cmdId": "7095ff97-df71-4dee-8a68-7d2b157ca00d",
+  "state": "CS_PASSED"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_SubCmdStep",
+ "dateTimestamp": "Thu Apr  9 03:17:32 2020",
+ "timestampMillis": "1586402252253",
+ "buildStep": {
+  "cmdId": "c10a0181-c6c3-4848-ba52-e51ce77e0bba",
+  "name": "g++",
+  "logFile": "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt_top_gpp.log",
+  "commandLine": "/opt/Xilinx/Vivado/2019.2/tps/lnx64/gcc-6.2.0/bin/g++ -fPIC -DHLS_STREAM_THREAD_SAFE -std=c++11 -Wall -shared -Wl,--whole-archive,-soname,jacobi2d_unrolled_1_opt.so -o jacobi2d_unrolled_1_opt.so jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt.csim_cu.a obj/xcl_top.o -Wl,--no-whole-archive -Wl,--as-needed -L /opt/Xilinx/Vivado/2019.2/bin/../lib/lnx64.o -lhlsmathsim -L /opt/Xilinx/Vivado/2019.2/bin/../lnx64/tools/fpo_v7_0 -lgmp -lmpfr -lIp_floating_point_v7_0_bitacc_cmodel -Wl,-rpath,/opt/Xilinx/Vivado/2019.2/bin/../lnx64/tools/fpo_v7_0 -L /opt/Xilinx/Vivado/2019.2/bin/../lnx64/tools/fft_v9_1 -lIp_xfft_v9_1_bitacc_cmodel -L /opt/Xilinx/Vivado/2019.2/bin/../lnx64/tools/fir_v7_0 -lgmp -lIp_fir_compiler_v7_2_bitacc_cmodel -L /opt/Xilinx/Vivado/2019.2/bin/../lnx64/lib/csim -lhlsmc++-GCC46",
+  "args": [
+   "-fPIC",
+   "-DHLS_STREAM_THREAD_SAFE",
+   "-std=c++11",
+   "-Wall",
+   "-shared",
+   "-Wl,--whole-archive,-soname,jacobi2d_unrolled_1_opt.so",
+   "-o",
+   "jacobi2d_unrolled_1_opt.so",
+   "jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt.csim_cu.a",
+   "obj/xcl_top.o",
+   "-Wl,--no-whole-archive",
+   "-Wl,--as-needed",
+   "-L",
+   "/opt/Xilinx/Vivado/2019.2/bin/../lib/lnx64.o",
+   "-lhlsmathsim",
+   "-L",
+   "/opt/Xilinx/Vivado/2019.2/bin/../lnx64/tools/fpo_v7_0",
+   "-lgmp",
+   "-lmpfr",
+   "-lIp_floating_point_v7_0_bitacc_cmodel",
+   "-Wl,-rpath,/opt/Xilinx/Vivado/2019.2/bin/../lnx64/tools/fpo_v7_0",
+   "-L",
+   "/opt/Xilinx/Vivado/2019.2/bin/../lnx64/tools/fft_v9_1",
+   "-lIp_xfft_v9_1_bitacc_cmodel",
+   "-L",
+   "/opt/Xilinx/Vivado/2019.2/bin/../lnx64/tools/fir_v7_0",
+   "-lgmp",
+   "-lIp_fir_compiler_v7_2_bitacc_cmodel",
+   "-L",
+   "/opt/Xilinx/Vivado/2019.2/bin/../lnx64/lib/csim",
+   "-lhlsmc++-GCC46"
+  ],
+  "iniFiles": []
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Thu Apr  9 03:17:32 2020",
+ "timestampMillis": "1586402252253",
+ "status": {
+  "cmdId": "c10a0181-c6c3-4848-ba52-e51ce77e0bba",
+  "state": "CS_RUNNING"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Thu Apr  9 03:17:32 2020",
+ "timestampMillis": "1586402252317",
+ "status": {
+  "cmdId": "c10a0181-c6c3-4848-ba52-e51ce77e0bba",
+  "state": "CS_PASSED"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "Thu Apr  9 03:17:32 2020",
+ "timestampMillis": "1586402252318",
+ "report": {
+  "path": "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt_xml.rtd",
+  "name": "",
+  "fileType": "JSON",
+  "reportType": "XCLBIN_INFO"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_SubCmdStep",
+ "dateTimestamp": "Thu Apr  9 03:17:32 2020",
+ "timestampMillis": "1586402252319",
+ "buildStep": {
+  "cmdId": "473283eb-2382-45bc-8a1e-8e34bfbce6e4",
+  "name": "xclbinutil",
+  "logFile": "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt_xclbinutil.log",
+  "commandLine": "/opt/xilinx/xrt/bin/xclbinutil --add-section BITSTREAM:RAW:/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt.so --force --key-value SYS:mode:sw_emu --add-section CLOCK_FREQ_TOPOLOGY:JSON:/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt_xml.rtd --add-section BUILD_METADATA:JSON:/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt_build.rtd --add-section EMBEDDED_METADATA:RAW:/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt.xml --add-section DEBUG_DATA:RAW:/dev/null --output /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt.xcp",
+  "args": [
+   "--add-section",
+   "BITSTREAM:RAW:/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt.so",
+   "--force",
+   "--key-value",
+   "SYS:mode:sw_emu",
+   "--add-section",
+   "CLOCK_FREQ_TOPOLOGY:JSON:/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt_xml.rtd",
+   "--add-section",
+   "BUILD_METADATA:JSON:/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt_build.rtd",
+   "--add-section",
+   "EMBEDDED_METADATA:RAW:/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt.xml",
+   "--add-section",
+   "DEBUG_DATA:RAW:/dev/null",
+   "--output",
+   "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt.xcp"
+  ],
+  "iniFiles": []
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Thu Apr  9 03:17:32 2020",
+ "timestampMillis": "1586402252320",
+ "status": {
+  "cmdId": "473283eb-2382-45bc-8a1e-8e34bfbce6e4",
+  "state": "CS_RUNNING"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Thu Apr  9 03:17:32 2020",
+ "timestampMillis": "1586402252324",
+ "status": {
+  "cmdId": "473283eb-2382-45bc-8a1e-8e34bfbce6e4",
+  "state": "CS_PASSED"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_SubCmdStep",
+ "dateTimestamp": "Thu Apr  9 03:17:32 2020",
+ "timestampMillis": "1586402252324",
+ "buildStep": {
+  "cmdId": "983665e1-99f6-4f98-8865-23d44caef178",
+  "name": "xclbinutil",
+  "logFile": "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt.xclbin.info",
+  "commandLine": "/opt/xilinx/xrt/bin/xclbinutil --quiet --info --input /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt.xcp",
+  "args": [
+   "--quiet",
+   "--info",
+   "--input",
+   "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/link/int/jacobi2d_unrolled_1_opt.xcp"
+  ],
+  "iniFiles": []
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Thu Apr  9 03:17:32 2020",
+ "timestampMillis": "1586402252325",
+ "status": {
+  "cmdId": "983665e1-99f6-4f98-8865-23d44caef178",
+  "state": "CS_RUNNING"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Thu Apr  9 03:17:32 2020",
+ "timestampMillis": "1586402252331",
+ "status": {
+  "cmdId": "983665e1-99f6-4f98-8865-23d44caef178",
+  "state": "CS_PASSED"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "Thu Apr  9 03:17:32 2020",
+ "timestampMillis": "1586402252371",
+ "report": {
+  "path": "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/reports/link/v++_link_jacobi2d_unrolled_1_opt_guidance.html",
+  "name": "",
+  "fileType": "HTML",
+  "reportType": "GLOBAL_RULECHECK_GUIDANCE"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "Thu Apr  9 03:17:32 2020",
+ "timestampMillis": "1586402252371",
+ "report": {
+  "path": "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/v++_link_jacobi2d_unrolled_1_opt_guidance.pb",
+  "name": "",
+  "fileType": "BINARY_PROTOBUF",
+  "reportType": "GLOBAL_RULECHECK_GUIDANCE"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Report",
+ "dateTimestamp": "Thu Apr  9 03:17:32 2020",
+ "timestampMillis": "1586402252373",
+ "report": {
+  "path": "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/logs/optraceViewer.html",
+  "name": "",
+  "fileType": "HTML",
+  "reportType": "OPERATION_TRACE"
+ }
+}
+</ENTRY>
+<ENTRY>
+{
+ "type": "ET_Status",
+ "dateTimestamp": "Thu Apr  9 03:17:32 2020",
+ "timestampMillis": "1586402252374",
+ "status": {
+  "cmdId": "a29210cd-85ae-4a2c-94b4-902b052c9560",
+  "state": "CS_PASSED"
+ }
+}
+</ENTRY>
