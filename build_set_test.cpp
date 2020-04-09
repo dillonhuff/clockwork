@@ -4448,7 +4448,7 @@ void jacobi2d_app_test() {
     system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
   }
 
-  assert(false);
+  //assert(false);
 }
 
 void denoise2d_test() {
