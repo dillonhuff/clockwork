@@ -4955,6 +4955,7 @@ void application_tests() {
   //up_stencil_down_unrolled_test();
   
   jacobi2d_app_test();
+  //assert(false);
   grayscale_conversion_test();
   denoise2d_test();
   exposure_fusion();

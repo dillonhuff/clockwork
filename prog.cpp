@@ -23,9 +23,9 @@ split_bv(const int indent,
   return lanes;
 }
 
-void generate_xilinx_accell_wrapper(map<string, UBuffer>& buffers, prog& prg) {
+void generate_xilinx_accel_wrapper(map<string, UBuffer>& buffers, prog& prg) {
 
-  string driver_func = prog.name + "_accel";
+  string driver_func = prg.name + "_accel";
 
   ofstream out(driver_func + ".cpp");
   out << "#include \"" << prg.name << ".h\"" << endl << endl;
@@ -33,7 +33,8 @@ void generate_xilinx_accell_wrapper(map<string, UBuffer>& buffers, prog& prg) {
 
   out << "extern \"C\" {" << endl << endl;
 
-  vector<string> args;
+  vector<string> buf_args;
+  vector<string> buffer_args;
   for (auto in : prg.ins) {
     assert(contains_key(in, buffers));
     auto& buf = buffers.at(in);
@@ -41,8 +42,10 @@ void generate_xilinx_accell_wrapper(map<string, UBuffer>& buffers, prog& prg) {
     auto bundle = pick(buf.get_out_bundles());
 
     //rgtb << tab(1) << "HWStream<" << buf.bundle_type_string(bundle) << " > " << bundle << ";" << endl;
-    args.push_back(bundle);
+    buf_args.push_back("int* " + bundle + "_arg");
+    buffer_args.push_back(buf.name);
   }
+
   for (auto out : prg.outs) {
     assert(contains_key(out, buffers));
     auto& buf = buffers.at(out);
@@ -50,17 +53,38 @@ void generate_xilinx_accell_wrapper(map<string, UBuffer>& buffers, prog& prg) {
     auto bundle = pick(buf.get_in_bundles());
 
     //rgtb << tab(1) << "HWStream<" << buf.bundle_type_string(bundle) << " > " << bundle << ";" << endl;
-    args.push_back(bundle);
+    buf_args.push_back("int* " + bundle + "_arg");
+    buffer_args.push_back(buf.name);
   }
 
+  vector<string> args = buf_args;
   args.push_back("const int size");
 
-  out << "void " << driver_func << comma_list(args) << "{ " << endl;
+  out << "void " << driver_func << "(" << comma_list(args) << ") { " << endl;
   out << "#pragma HLS dataflow" << endl;
+
+  for (auto pt : buf_args) {
+    out << "#pragma HLS INTERFACE m_axi port = " << pt << " offset = slave bundle = gmem" << endl;
+  }
+  for (auto pt : args) {
+    out << "#pragma HLS INTERFACE m_axilite port = " << pt << " offset = slave bundle = control" << endl;
+  }
+  out << endl;
+
+  for (auto in : prg.ins) {
+    out << tab(1) << "hls::stream<int> " << in << ";" << endl;
+  }
+
+  for (auto in : prg.outs) {
+    out << tab(1) << "hls::stream<int> " << in << ";" << endl;
+  }
+  out << endl;
 
   for (auto in : prg.ins) {
     out << tab(1) << "read_input(" << in << "_arg" << ", " << in << ", size);" << endl;
   }
+
+  out << endl << tab(1) << prg.name << "(" << comma_list(buffer_args) << ");" << endl << endl;
 
   for (auto in : prg.outs) {
     out << tab(1) << "write_output(" << in << "_arg" << ", " << in << ", size);" << endl;
@@ -817,7 +841,7 @@ void generate_app_code(CodegenOptions& options,
 
   generate_app_code_header(buffers, prg);
   generate_soda_tb(buffers, prg);
-  generate_xilinx_accell_wrapper(buffers, prg);
+  generate_xilinx_accel_wrapper(buffers, prg);
   generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
 }
 
