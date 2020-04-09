@@ -736,7 +736,7 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
   rgtb << "int main() {" << endl;
   rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << ".txt\");" << endl;
 
-  vector<string> unoptimized_streams;
+  //vector<string> unoptimized_streams;
   vector<string> optimized_streams;
   for (auto in : prg.ins) {
     assert(contains_key(in, buffers));
@@ -840,7 +840,7 @@ void generate_regression_testbench(prog& prg) {
   rgtb << "int main() {" << endl;
   rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << ".txt\");" << endl;
 
-  vector<string> unoptimized_streams;
+  //vector<string> unoptimized_streams;
   vector<string> optimized_streams;
   for (auto in : prg.ins) {
     rgtb << tab(1) << "HWStream<" << prg.buffer_element_type_string(in) << " > " << in << ";" << endl;
@@ -4942,7 +4942,6 @@ void playground() {
 }
 
 void application_tests() {
-
   //playground();
 
   //synth_lb_test();

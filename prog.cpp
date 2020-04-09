@@ -23,6 +23,54 @@ split_bv(const int indent,
   return lanes;
 }
 
+void generate_xilinx_accell_wrapper(map<string, UBuffer>& buffers, prog& prg) {
+
+  string driver_func = prog.name + "_accel";
+
+  ofstream out(driver_func + ".cpp");
+  out << "#include \"" << prg.name << ".h\"" << endl << endl;
+
+
+  out << "extern \"C\" {" << endl << endl;
+
+  vector<string> args;
+  for (auto in : prg.ins) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_out_bundles().size() == 1);
+    auto bundle = pick(buf.get_out_bundles());
+
+    //rgtb << tab(1) << "HWStream<" << buf.bundle_type_string(bundle) << " > " << bundle << ";" << endl;
+    args.push_back(bundle);
+  }
+  for (auto out : prg.outs) {
+    assert(contains_key(out, buffers));
+    auto& buf = buffers.at(out);
+    assert(buf.get_in_bundles().size() == 1);
+    auto bundle = pick(buf.get_in_bundles());
+
+    //rgtb << tab(1) << "HWStream<" << buf.bundle_type_string(bundle) << " > " << bundle << ";" << endl;
+    args.push_back(bundle);
+  }
+
+  args.push_back("const int size");
+
+  out << "void " << driver_func << comma_list(args) << "{ " << endl;
+  out << "#pragma HLS dataflow" << endl;
+
+  for (auto in : prg.ins) {
+    out << tab(1) << "read_input(" << in << "_arg" << ", " << in << ", size);" << endl;
+  }
+
+  for (auto in : prg.outs) {
+    out << tab(1) << "write_output(" << in << "_arg" << ", " << in << ", size);" << endl;
+  }
+
+  out << "}" << endl;
+
+  out.close();
+}
+
 prog duplicate_interface(prog& p) {
   prog pcpy;
   pcpy.name = p.name;
@@ -769,6 +817,7 @@ void generate_app_code(CodegenOptions& options,
 
   generate_app_code_header(buffers, prg);
   generate_soda_tb(buffers, prg);
+  generate_xilinx_accell_wrapper(buffers, prg);
   generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
 }
 
