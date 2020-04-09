@@ -67,7 +67,7 @@ void generate_xilinx_accel_wrapper(map<string, UBuffer>& buffers, prog& prg) {
     out << "#pragma HLS INTERFACE m_axi port = " << pt << " offset = slave bundle = gmem" << endl;
   }
   for (auto pt : args) {
-    out << "#pragma HLS INTERFACE m_axilite port = " << pt << " offset = slave bundle = control" << endl;
+    out << "#pragma HLS INTERFACE s_axilite port = " << pt << " bundle = control" << endl;
   }
   out << endl;
 
