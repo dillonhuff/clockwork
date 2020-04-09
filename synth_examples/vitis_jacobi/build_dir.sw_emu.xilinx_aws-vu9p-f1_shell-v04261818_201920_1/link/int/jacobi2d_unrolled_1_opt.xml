@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="jacobi2d_unrolled_1_opt">
+  <platform vendor="xilinx" boardid="aws-vu9p-f1" name="shell-v04261818" featureRomTime="0">
+    <version major="201920" minor="1"/>
+    <description/>
+    <board name="" vendor="amazon" fpga="">
+      <interfaces>
+        <interface id="int1" name="PCIe" type="gen3x16"/>
+      </interfaces>
+      <memories>
+        <memory name="mem0" type="ddr4" size="16GB"/>
+        <memory name="mem1" type="ddr4" size="16GB"/>
+        <memory name="mem2" type="ddr4" size="16GB"/>
+        <memory name="mem3" type="ddr4" size="16GB"/>
+      </memories>
+      <images>
+        <image name="" type="HDPI"/>
+        <image name="" type="MDPI"/>
+        <image name="" type="LDPI"/>
+      </images>
+      <id>
+        <vendor/>
+        <device/>
+        <subsystem/>
+      </id>
+    </board>
+    <build_flow/>
+    <host architecture="x86_64"/>
+    <device name="fpga0" fpgaDevice="virtexuplus:xcvu9p:flgb2104:-2:i" addrWidth="0">
+      <core name="OCL_REGION_0" target="csim" type="clc_region" clockFreq="0MHz" numComputeUnits="60">
+        <kernel name="jacobi2d_unrolled_1_opt" language="c" vlnv="xilinx.com:hls:jacobi2d_unrolled_1_opt:1.0" preferredWorkGroupSizeMultiple="1" workGroupSize="1" debug="true" interrupt="true" hwControlProtocol="ap_ctrl_hs">
+          <port name="M_AXI_GMEM" mode="master" range="0xFFFFFFFF" dataWidth="32" portType="addressable" base="0x0"/>
+          <port name="S_AXI_CONTROL" mode="slave" range="0x1000" dataWidth="32" portType="addressable" base="0x0"/>
+          <arg name="in1" addressQualifier="1" id="0" port="M_AXI_GMEM" size="0x8" offset="0x10" hostOffset="0x0" hostSize="0x8" type="unsigned int const *"/>
+          <arg name="in2" addressQualifier="1" id="1" port="M_AXI_GMEM" size="0x8" offset="0x1C" hostOffset="0x0" hostSize="0x8" type="unsigned int const *"/>
+          <arg name="out_r" addressQualifier="1" id="2" port="M_AXI_GMEM" size="0x8" offset="0x28" hostOffset="0x0" hostSize="0x8" type="unsigned int*"/>
+          <arg name="size" addressQualifier="0" id="3" port="S_AXI_CONTROL" size="0x4" offset="0x34" hostOffset="0x0" hostSize="0x4" type="int"/>
+          <compileWorkGroupSize x="1" y="1" z="1"/>
+          <maxWorkGroupSize x="1" y="1" z="1"/>
+          <string_table/>
+          <instance name="jacobi2d_unrolled_1_opt_1">
+            <addrRemap base="0x00000000" port="S_AXI_CONTROL"/>
+          </instance>
+        </kernel>
+      </core>
+    </device>
+  </platform>
+</project>

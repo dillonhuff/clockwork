@@ -1,0 +1,11 @@
+{
+    "schema_version": {
+        "major": "1",
+        "minor": "0",
+        "patch": "0"
+    },
+    "clock_freq_topology": {
+        "m_count": "0",
+        "m_clock_freq": ""
+    }
+}

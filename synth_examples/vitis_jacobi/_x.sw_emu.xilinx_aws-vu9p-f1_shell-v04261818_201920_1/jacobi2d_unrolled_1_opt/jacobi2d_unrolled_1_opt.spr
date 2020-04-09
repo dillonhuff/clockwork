@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="jacobi2d_unrolled_1_opt" dir="">
+  <FileSets>
+    <FileSet Name="kernel_jacobi2d_unrolled_1_opt" Type="DesignSrcs">
+      <File Path="/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp"/>
+      <Config/>
+    </FileSet>
+  </FileSets>
+  <Runs/>
+</project>

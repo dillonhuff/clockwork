@@ -1,0 +1,57 @@
+{
+    "name": "Hello World (HLS C/C++ Kernel)", 
+    "description": [
+        "This is simple example of vector addition to describe how to use HLS kernels in Vitis Environment."
+    ],
+    "keywords": [
+        "gmem", 
+        "bundle", 
+        "#pragma HLS INTERFACE", 
+        "m_axi", 
+        "s_axilite"
+    ], 
+    "key_concepts": [
+        "HLS C Kernel", 
+        "OpenCL Host APIs"
+    ], 
+    "os": [
+        "Linux"
+    ], 
+    "runtime": [
+        "OpenCL"
+    ], 
+    "host": {
+        "host_exe": "host", 
+        "compiler": {
+            "sources": [
+                "REPO_DIR/common/includes/xcl2"
+            ], 
+            "includepaths": [
+                "REPO_DIR/common/includes/xcl2"
+            ]
+        }
+    }, 
+    "containers": [
+        {
+            "accelerators": [
+                {
+                    "name": "vadd", 
+                    "location": "src/vadd.cpp"
+                }
+            ], 
+            "name": "vadd"
+        }
+    ],
+    "launch": [
+        {
+            "cmd_args": "BUILD/vadd.xclbin", 
+            "name": "generic launch for all flows"
+        }
+    ], 
+    "contributors": [
+        {
+            "url": "http://www.xilinx.com", 
+            "group": "Xilinx"
+        }
+    ] 
+}

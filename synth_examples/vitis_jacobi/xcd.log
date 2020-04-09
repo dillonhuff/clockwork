@@ -1,0 +1,11 @@
+Thu Apr  9 03:17:25 2020: Server was asked to start on port: '43045'
+Thu Apr  9 03:17:25 2020: Server is using token UUID: 'c451571e-9079-4914-b502-f2a849bd2a8f'
+Thu Apr  9 03:17:25 2020: SESSION_MGR: creating session with session uuid: '6d04a3e9-ade5-4ab9-8d63-1f78fcd2ec76' and name 'default'
+Thu Apr  9 03:17:25 2020: Attempting to start server on port '43045'
+Thu Apr  9 03:17:25 2020: XCD main fifo: created main fifo '/tmp/xcdmainc451571e-9079-4914-b502-f2a849bd2a8f', fd read = 12
+Thu Apr  9 03:17:25 2020: Running Dispatch Server
+Thu Apr  9 03:17:25 2020: Version 1.0.1
+Thu Apr  9 03:17:25 2020: Dispatch Server: Accepted socket connection from client
+Thu Apr  9 03:17:25 2020: EXCHANGE_TOKEN received, server token: c451571e-9079-4914-b502-f2a849bd2a8f, passed token: c451571e-9079-4914-b502-f2a849bd2a8f
+Thu Apr  9 03:17:25 2020: SESSION_MGR: creating session with session uuid: '31e7a8ed-19de-4069-82a4-53cf055ec84a' and name 'v++_link_jacobi2d_unrolled_1_opt'
+Thu Apr  9 03:17:32 2020: SESSION_MGR: closing session for UUID '31e7a8ed-19de-4069-82a4-53cf055ec84a' with name 'v++_link_jacobi2d_unrolled_1_opt'

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Messages>
+	<Message severity="INFO" prefix="[SCHED 204-61]" key="SCHED_PIPELINING_STATUS_631" tag="SCHEDULE" content="Option &apos;relax_ii_for_timing&apos; is enabled, will increase II to preserve clock frequency constraints."/>
+	<Message severity="INFO" prefix="[HLS 200-10]" key="HLS_10_1312" tag="" content="Analyzing design file &apos;/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/vadd.cpp&apos; ..."/>
+	<Message severity="WARNING" prefix="[HLS 200-40]" key="HLS_40_1378" tag="" content="/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/vadd.cpp:9:10: fatal error: &apos;jacobi2d_unrolled_1_opt_compute_units.h&apos; file not found
+#include &quot;jacobi2d_unrolled_1_opt_compute_units.h&quot;
+         ^
+1 error generated."/>
+</Messages>
