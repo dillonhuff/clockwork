@@ -4439,6 +4439,8 @@ void jacobi2d_app_test() {
     int unroll_factor = pow(2, i);
     string out_name = "jacobi2d_unrolled_" + str(unroll_factor);
     jacobi2d(out_name).realize(out_name, cols, rows, unroll_factor);
+    std::vector<std::string> optimized =
+      run_regression_tb(out_name + "_opt");
     string synth_dir =
       "./synth_examples/" + out_name;
     system(("mkdir " + synth_dir).c_str());
@@ -4448,7 +4450,7 @@ void jacobi2d_app_test() {
     system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
   }
 
-  //assert(false);
+  assert(false);
 }
 
 void denoise2d_test() {
