@@ -202,11 +202,16 @@ inline hw_uint<32>  jacobi2d_unrolled_2_rd0_select(t1_cache& t1, int d0, int d1)
 #pragma HLS dependence variable=t1 inter false
 #endif //__VIVADO_SYNTH__
   // jacobi2d_unrolled_2_rd0 read pattern: { jacobi2d_unrolled_2_update_0[d0, d1] -> t1[-1 + 2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
+  // Read schedule : { jacobi2d_unrolled_2_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
+  // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 960 and -1 <= d1 <= 1080 }
+  // DD fold: { jacobi2d_unrolled_2_update_0[d0, d1] -> 964 : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
   auto value_t1_t1_update_0_write1 = t1.t1_t1_update_0_write1_merged_banks_4.peek_964();
   return value_t1_t1_update_0_write1;
+#ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
 	return 0;
+#endif //__VIVADO_SYNTH__
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_2_rd1_select(t1_cache& t1, int d0, int d1) {
@@ -214,11 +219,16 @@ inline hw_uint<32>  jacobi2d_unrolled_2_rd1_select(t1_cache& t1, int d0, int d1)
 #pragma HLS dependence variable=t1 inter false
 #endif //__VIVADO_SYNTH__
   // jacobi2d_unrolled_2_rd1 read pattern: { jacobi2d_unrolled_2_update_0[d0, d1] -> t1[2d0, -1 + d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
+  // Read schedule : { jacobi2d_unrolled_2_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
+  // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 960 and -1 <= d1 <= 1080 }
+  // DD fold: { jacobi2d_unrolled_2_update_0[d0, d1] -> 1925 : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
   auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_4.peek_1925();
   return value_t1_t1_update_0_write0;
+#ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
 	return 0;
+#endif //__VIVADO_SYNTH__
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_2_rd2_select(t1_cache& t1, int d0, int d1) {
@@ -226,11 +236,16 @@ inline hw_uint<32>  jacobi2d_unrolled_2_rd2_select(t1_cache& t1, int d0, int d1)
 #pragma HLS dependence variable=t1 inter false
 #endif //__VIVADO_SYNTH__
   // jacobi2d_unrolled_2_rd2 read pattern: { jacobi2d_unrolled_2_update_0[d0, d1] -> t1[2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
+  // Read schedule : { jacobi2d_unrolled_2_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
+  // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 960 and -1 <= d1 <= 1080 }
+  // DD fold: { jacobi2d_unrolled_2_update_0[d0, d1] -> 963 : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
   auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_4.peek_963();
   return value_t1_t1_update_0_write0;
+#ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
 	return 0;
+#endif //__VIVADO_SYNTH__
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_2_rd3_select(t1_cache& t1, int d0, int d1) {
@@ -238,11 +253,16 @@ inline hw_uint<32>  jacobi2d_unrolled_2_rd3_select(t1_cache& t1, int d0, int d1)
 #pragma HLS dependence variable=t1 inter false
 #endif //__VIVADO_SYNTH__
   // jacobi2d_unrolled_2_rd3 read pattern: { jacobi2d_unrolled_2_update_0[d0, d1] -> t1[2d0, 1 + d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
+  // Read schedule : { jacobi2d_unrolled_2_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
+  // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 960 and -1 <= d1 <= 1080 }
+  // DD fold: { jacobi2d_unrolled_2_update_0[d0, d1] -> 1 : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
   auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_4.peek_1();
   return value_t1_t1_update_0_write0;
+#ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
 	return 0;
+#endif //__VIVADO_SYNTH__
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_2_rd4_select(t1_cache& t1, int d0, int d1) {
@@ -250,11 +270,16 @@ inline hw_uint<32>  jacobi2d_unrolled_2_rd4_select(t1_cache& t1, int d0, int d1)
 #pragma HLS dependence variable=t1 inter false
 #endif //__VIVADO_SYNTH__
   // jacobi2d_unrolled_2_rd4 read pattern: { jacobi2d_unrolled_2_update_0[d0, d1] -> t1[1 + 2d0, -1 + d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
+  // Read schedule : { jacobi2d_unrolled_2_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
+  // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 960 and -1 <= d1 <= 1080 }
+  // DD fold: { jacobi2d_unrolled_2_update_0[d0, d1] -> 1925 : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
   auto value_t1_t1_update_0_write1 = t1.t1_t1_update_0_write1_merged_banks_4.peek_1925();
   return value_t1_t1_update_0_write1;
+#ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
 	return 0;
+#endif //__VIVADO_SYNTH__
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_2_rd5_select(t1_cache& t1, int d0, int d1) {
@@ -262,11 +287,16 @@ inline hw_uint<32>  jacobi2d_unrolled_2_rd5_select(t1_cache& t1, int d0, int d1)
 #pragma HLS dependence variable=t1 inter false
 #endif //__VIVADO_SYNTH__
   // jacobi2d_unrolled_2_rd5 read pattern: { jacobi2d_unrolled_2_update_0[d0, d1] -> t1[1 + 2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
+  // Read schedule : { jacobi2d_unrolled_2_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
+  // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 960 and -1 <= d1 <= 1080 }
+  // DD fold: { jacobi2d_unrolled_2_update_0[d0, d1] -> 963 : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
   auto value_t1_t1_update_0_write1 = t1.t1_t1_update_0_write1_merged_banks_4.peek_963();
   return value_t1_t1_update_0_write1;
+#ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
 	return 0;
+#endif //__VIVADO_SYNTH__
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_2_rd6_select(t1_cache& t1, int d0, int d1) {
@@ -274,11 +304,16 @@ inline hw_uint<32>  jacobi2d_unrolled_2_rd6_select(t1_cache& t1, int d0, int d1)
 #pragma HLS dependence variable=t1 inter false
 #endif //__VIVADO_SYNTH__
   // jacobi2d_unrolled_2_rd6 read pattern: { jacobi2d_unrolled_2_update_0[d0, d1] -> t1[1 + 2d0, 1 + d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
+  // Read schedule : { jacobi2d_unrolled_2_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
+  // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 960 and -1 <= d1 <= 1080 }
+  // DD fold: { jacobi2d_unrolled_2_update_0[d0, d1] -> 1 : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
   auto value_t1_t1_update_0_write1 = t1.t1_t1_update_0_write1_merged_banks_4.peek_1();
   return value_t1_t1_update_0_write1;
+#ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
 	return 0;
+#endif //__VIVADO_SYNTH__
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_2_rd7_select(t1_cache& t1, int d0, int d1) {
@@ -286,11 +321,16 @@ inline hw_uint<32>  jacobi2d_unrolled_2_rd7_select(t1_cache& t1, int d0, int d1)
 #pragma HLS dependence variable=t1 inter false
 #endif //__VIVADO_SYNTH__
   // jacobi2d_unrolled_2_rd7 read pattern: { jacobi2d_unrolled_2_update_0[d0, d1] -> t1[2 + 2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
+  // Read schedule : { jacobi2d_unrolled_2_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
+  // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 960 and -1 <= d1 <= 1080 }
+  // DD fold: { jacobi2d_unrolled_2_update_0[d0, d1] -> 962 : 0 <= d0 <= 958 and 0 <= d1 <= 1079; jacobi2d_unrolled_2_update_0[d0, d1] -> (3 + d0) : d0 = 959 and 0 <= d1 <= 1079 }
   auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_4.peek_962();
   return value_t1_t1_update_0_write0;
+#ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
 	return 0;
+#endif //__VIVADO_SYNTH__
 }
 
 // # of bundles = 2
@@ -337,23 +377,6 @@ inline void t1_t1_update_0_write_bundle_write(hw_uint<64>& t1_update_0_write, t1
 
 
 // Operation logic
-inline void t1_update_0(HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */t1_arg, t1_cache& t1, int d0, int d1) {
-	// Consume: t1_arg
-	auto t1_arg_0_c__0_value = t1_arg.read();
-	auto compute_result = id_unrolled_2(t1_arg_0_c__0_value);
-	// Produce: t1
-	t1_t1_update_0_write_bundle_write(compute_result, t1, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  hw_uint<64> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  hw_uint<32> debug_compute_result_lane_1;
-  set_at<0, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
-  *global_debug_handle << "t1_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "t1_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-#endif //__VIVADO_SYNTH__
-}
-
 inline void jacobi2d_unrolled_2_update_0(t1_cache& t1, HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */jacobi2d_unrolled_2, int d0, int d1) {
 	// Consume: t1
 	auto t1_0_c__0_value = t1_jacobi2d_unrolled_2_update_0_read_bundle_read(t1/* source_delay */, d0, d1);
@@ -371,6 +394,23 @@ inline void jacobi2d_unrolled_2_update_0(t1_cache& t1, HWStream<hw_uint<64> >& /
   set_at<0, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
   *global_debug_handle << "jacobi2d_unrolled_2_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
   *global_debug_handle << "jacobi2d_unrolled_2_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+#endif //__VIVADO_SYNTH__
+}
+
+inline void t1_update_0(HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */t1_arg, t1_cache& t1, int d0, int d1) {
+	// Consume: t1_arg
+	auto t1_arg_0_c__0_value = t1_arg.read();
+	auto compute_result = id_unrolled_2(t1_arg_0_c__0_value);
+	// Produce: t1
+	t1_t1_update_0_write_bundle_write(compute_result, t1, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  hw_uint<64> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  hw_uint<32> debug_compute_result_lane_1;
+  set_at<0, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
+  *global_debug_handle << "t1_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "t1_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
 #endif //__VIVADO_SYNTH__
 }
 

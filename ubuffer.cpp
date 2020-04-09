@@ -560,8 +560,10 @@ void select_debug_assertions(CodegenOptions& options, std::ostream& out, const s
     offset_printouts.push_back("\" " + vars.at(i) + " = \" << " + vars.at(i) + " ");
   }
 
+  open_debug_scope(out);
   out << "\tcout << \"Error: Unsupported offsets: \" << " << sep_list(offset_printouts, "", "", " << ") << " << endl;" << endl;
   out << "\tassert(false);\n\treturn 0;\n";
+  close_debug_scope(out);
 }
 
 string delay_string(CodegenOptions& options,

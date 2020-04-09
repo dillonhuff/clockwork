@@ -139,6 +139,14 @@ int num_in_dims(isl_space* const s) {
   return ndims;
 }
 
+int num_out_dims(isl_map* const m) {
+  return num_out_dims(get_space(m));
+}
+
+int num_in_dims(isl_map* const s) {
+  return num_in_dims(get_space((s)));
+}
+
 int num_div_dims(isl_aff* const s) {
   auto ls = isl_aff_get_local_space(s);
   return isl_local_space_dim(ls, isl_dim_div);
@@ -202,6 +210,20 @@ vector<isl_basic_map*> get_basic_maps(isl_map* m) {
   return map_vec;
 }
 
+isl_stat get_point(isl_point* m, void* user) {
+  auto* vm = (vector<isl_point*>*) user;
+  vm->push_back((m));
+  return isl_stat_ok;
+}
+
+vector<isl_point*> get_points(isl_set* m) {
+  assert(m != nullptr);
+
+  vector<isl_point*> map_vec;
+  isl_set_foreach_point(m, get_point, &map_vec);
+
+  return map_vec;
+}
 vector<isl_map*> get_maps(isl_union_map* m) {
   assert(m != nullptr);
 

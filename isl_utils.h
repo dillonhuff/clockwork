@@ -106,6 +106,8 @@ std::string range_name(isl_space* const s);
 
 isl_union_set* to_uset(isl_set* const m);
 
+vector<isl_point*> get_points(isl_set* m);
+
 isl_stat get_maps(isl_map* m, void* user);
 vector<isl_map*> get_maps(isl_union_map* m);
 vector<isl_basic_map*> get_basic_maps(isl_map* m);
@@ -373,12 +375,14 @@ isl_set* add_constraint(isl_set* s, isl_constraint* c);
 
 
 int num_out_dims(isl_space* const s);
-
 int num_in_dims(isl_space* const s);
 
 int num_in_dims(isl_aff* const s);
 int num_div_dims(isl_aff* const s);
 int num_out_dims(isl_aff* const s);
+
+int num_out_dims(isl_map* const s);
+int num_in_dims(isl_map* const s);
 
 vector<int> parse_pt(isl_point* p);
 

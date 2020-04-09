@@ -2915,7 +2915,31 @@ struct App {
 
   Window data_window_needed_by_compute(const std::string& consumer,
       const std::string& producer) {
-    return box_touched(consumer, producer).unroll_cpy(get_update(consumer).unroll_factor);
+    Window w = box_touched(consumer, producer).unroll_cpy(get_update(consumer).unroll_factor);
+    return w;
+    //auto pix_read = to_map(pixels_read(consumer));
+    //cout << "Pixels read = " << str(pix_read) << endl;
+    //int in_dims = num_in_dims(pix_read);
+    //vector<string> zeros;
+    //for (int i = 0; i < in_dims; i++) {
+      //zeros.push_back("0");
+    //}
+    //string zero_str = "{ " + domain_name(pix_read) + sep_list(zeros, "[", "]", ",") + " }";
+    //isl_set* zr = isl_set_read_from_str(ctx, zero_str.c_str());
+    //cout << "zr = " << str(zr) << endl;
+    //isl_map* d = its(pix_read, zr);
+    //cout << "d  = " << str(d) << endl;
+    //isl_set* offsets = range(d);
+    //cout << "offsets = " << str(offsets) << endl;
+    //vector<isl_point*> offset_pts = get_points(offsets);
+    //Window w = box_touched(consumer, producer).unroll_cpy(get_update(consumer).unroll_factor);
+    //w.offsets = {};
+    //vector<vector<int> > offset_vals;
+    //for (auto pt : offset_pts) {
+      //w.offsets.push_back(parse_pt(pt));
+    //}
+    //return w;
+    //return box_touched(consumer, producer).unroll_cpy(get_update(consumer).unroll_factor);
   }
 
   map<string, UBuffer> build_buffers(umap* m) {
@@ -2975,8 +2999,11 @@ struct App {
 
           //Window f_win = data_window_needed_by_compute(u.name(), f, unroll_factor);
           Window f_win = data_window_needed_by_compute(u.name(), f);
-          cout << "f_win = " << f_win << endl;
+          cout << "### Window of " << f << " needed by " << u.name() << " = " << f_win << endl;
 
+
+          auto pr = pixels_read(u.name());
+          cout << tab(1) << "pixels read: " << str(pr) << endl;
           int i = 0;
           for (auto p : f_win.pts()) {
             vector<string> coeffs;
@@ -4924,15 +4951,14 @@ void application_tests() {
  
   //reduce_1d_test();
 
-  up_unrolled_test();
-  assert(false);
-  up_down_unrolled_test();
-  up_stencil_down_unrolled_test();
+  //up_unrolled_test();
+  //up_down_unrolled_test();
+  //up_stencil_down_unrolled_test();
   
+  jacobi2d_app_test();
   grayscale_conversion_test();
   denoise2d_test();
   exposure_fusion();
-  jacobi2d_app_test();
   upsample2d_test();
   downsample2d_test();
   updown_merge_test();

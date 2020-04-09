@@ -233,9 +233,13 @@ std::ostream& operator<<(std::ostream& out, const FiniteRegion& r) {
   }
   vector<string> offstrs;
   for (auto off : r.offsets) {
-    //ostringstream ss;
-    //ss << off;
-    //offstrs.push_back(ss.str());
+    ostringstream ss;
+    ss << "(";
+    for (auto ff : off) {
+      ss << ff << ", ";
+    }
+    ss << ")";
+    offstrs.push_back(ss.str());
   }
   out << r.name << "{ " << comma_list(strides) << " + <" + comma_list(offstrs) + "> }";
   return out;
