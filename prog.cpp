@@ -165,7 +165,7 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
         its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + produced.second + "]" + " }").c_str()), cpy(domains.at(op)));
 
       buf.add_in_pt(pt_name, domains.at(op), produced_here, its(opt_sched, domains.at(op)));
-      buf.add_access_pattern(pt_name, produced_here, domains.at(op));
+      buf.add_access_pattern(pt_name, op->name, name);
 
       vector<string> inpt = buf.get_in_ports();
       cout << "current in port name: " << endl;
@@ -204,7 +204,7 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       cout << "\tAdding output port: " << pt_name << endl;
       cout << "\t\tConsumed: " << str(consumed_here) << endl;
       buf.add_out_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
-      buf.add_access_pattern(pt_name, consumed_here, domains.at(op));
+      buf.add_access_pattern(pt_name, op->name, name);
 
       vector<string> inpt = buf.get_out_ports();
       cout << "current out port name: " << endl;
@@ -590,7 +590,7 @@ module_type* generate_rtl_buffer(CodegenOptions& options,
     in_wire_read(*blk, out_bundle US "wen", 1);
     in_wire_read(*blk, out_bundle US "wdata", buffer.port_bundle_width(out_bundle));
   }
-  
+
   for (auto out_bundle : buffer.get_out_bundles()) {
     auto dummy = in_wire_read(*blk, out_bundle US "dummy", buffer.port_bundle_width(out_bundle));
     // Here I need to get all sources of this bundle and concatenate

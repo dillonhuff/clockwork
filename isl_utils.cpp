@@ -194,13 +194,6 @@ std::string range_name(isl_space* const s) {
   return std::string(isl_id_to_str(isl_space_get_tuple_id(s, isl_dim_out)));
 }
 
-std::string domain_name(isl_map* const m) {
-    return std::string(isl_id_to_str(isl_map_get_tuple_id(m, isl_dim_in)));
-}
-
-std::string range_name(isl_map* const m) {
-    return std::string(isl_id_to_str(isl_map_get_tuple_id(m, isl_dim_out)));
-}
 
 isl_map* set_range_name(isl_map* const m, string new_name) {
     return isl_map_set_tuple_name(m, isl_dim_out, new_name.c_str());
