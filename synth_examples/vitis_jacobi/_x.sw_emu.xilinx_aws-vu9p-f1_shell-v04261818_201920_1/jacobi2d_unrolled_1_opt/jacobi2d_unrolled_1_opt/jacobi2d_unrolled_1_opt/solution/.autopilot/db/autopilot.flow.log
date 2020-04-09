@@ -1,0 +1,263 @@
+INFO-FLOW: Workspace /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution opened at Thu Apr 09 03:17:12 UTC 2020
+Execute     set_part xcvu9p-flgb2104-2-i 
+Execute       ap_part_info -name xcvu9p-flgb2104-2-i -data single -quiet 
+Command       ap_part_info done; 0.67 sec.
+Execute       ap_part_info -name xcvu9p-flgb2104-2-i -data info 
+Execute       add_library xilinx/virtexuplus/virtexuplus:xcvu9p:-flgb2104:-2-i 
+Execute         get_default_platform 
+Execute         open_platform DefaultPlatform 
+Execute         import_lib /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/virtexuplus/virtexuplus 
+Execute           source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/xilinx.lib 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/xilinx_interface.lib 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/plb46.lib 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/fsl.lib 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/axi4.lib 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/maxi.lib 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/saxilite.lib 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/dsp48.lib 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/ip/xfir.lib 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/ip/xfft.lib 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/ip/dds_compiler.lib 
+Execute           source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/xilinx.hlp 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/target_info.tcl 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/xilinx_interface.hlp 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/maxi.hlp 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/saxilite.hlp 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/dsp48.hlp 
+Execute           source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/virtexuplus/dsp48e2.hlp 
+Execute           source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/xilinx.hlp 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/target_info.tcl 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/xilinx_interface.hlp 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/maxi.hlp 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/saxilite.hlp 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/dsp48.hlp 
+Execute         source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/virtexuplus/virtexuplus.gen 
+Execute           source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/xilinx.gen 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/plb46.gen 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/fsl.gen 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/axi4.gen 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/nativeAXI4.gen 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/saxilite.gen 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/maxi.gen 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/scripts/xilinxcoregen.gen 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/XilEDKCoreGen.gen 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/ip/dds_compiler.gen 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/ip/util.gen 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/ip/xfft.gen 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/ip/xfir.gen 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/dsp48.gen 
+Execute         ap_part_info -data single -name xcvu9p-flgb2104-2-i 
+Execute         ap_part_info -name xcvu9p-flgb2104-2-i -data resources 
+Execute         ap_part_info -name xcvu9p-flgb2104-2-i -data info 
+Execute         ap_part_info -name xcvu9p-flgb2104-2-i -data info 
+Execute         config_chip_info -quiet -resource {SLICE 147780} {LUT 1182240} {FF 2364480} {DSP48E 6840} {BRAM 4320} {URAM 960} {SLR 3} 
+Execute         ap_part_info -name xcvu9p-flgb2104-2-i -data info 
+Execute         config_chip_info -quiet -speed medium 
+Execute       add_library xilinx/virtexuplus/virtexuplus_fpv7 
+Execute         get_default_platform 
+Execute         open_platform DefaultPlatform 
+Execute         import_lib /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/virtexuplus/virtexuplus_fpv7 
+Execute           source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/xilinx_fp.lib 
+Execute           source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/xilinx_fp.hlp 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/xilinx.hlp 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/target_info.tcl 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/xilinx_interface.hlp 
+Execute                 source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/maxi.hlp 
+Execute                 source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/saxilite.hlp 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/dsp48.hlp 
+Execute         source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/virtexuplus/virtexuplus_fpv7.gen 
+Execute           source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/xilinx_fp.gen 
+INFO: [HLS 200-10] Setting target device to 'xcvu9p-flgb2104-2-i'
+Execute       ap_part_info -name xcvu9p-flgb2104-2-i -data info 
+Execute       get_default_platform 
+Command     set_part done; 0.83 sec.
+Execute     create_clock -period 250.000000MHz -name default 
+Execute       config_clock -quiet -name default -period 4 -unit ns -default=false 
+INFO: [SYN 201-201] Setting up clock 'default' with a period of 4ns.
+Execute     config_sdx -target xocc 
+Execute       send_msg_by_id INFO @200-435@%s%s 'config_sdx -target' config_export -vivado_optimization_level=0 
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: config_export -vivado_optimization_level=0
+Execute       config_export -vivado_optimization_level=0 
+Execute         get_config_export -vivado_impl_strategy 
+Execute         get_config_export -vivado_phys_opt 
+Execute         send_msg_by_id INFO @200-435@%s%s 'config_export -vivado_optimization_level' config_export -vivado_phys_opt=none 
+INFO: [HLS 200-435] Setting 'config_export -vivado_optimization_level' configuration: config_export -vivado_phys_opt=none
+Execute         config_export -vivado_phys_opt=none 
+Execute       get_config_compile -pipeline_loops 
+Execute       send_msg_by_id INFO @200-435@%s%s 'config_sdx -target' config_compile -pipeline_loops=64 
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: config_compile -pipeline_loops=64
+Execute       config_compile -pipeline_loops=64 
+INFO: [XFORM 203-1171] Pipeline the innermost loop with trip count more than 64 or its parent loop when its trip count is less than or equal 64.
+Execute       get_config_compile -name_max_length 
+Execute       send_msg_by_id INFO @200-435@%s%s 'config_sdx -target' config_compile -name_max_length=80 
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: config_compile -name_max_length=80
+Execute       config_compile -name_max_length=80 
+INFO: [XFORM 203-1161] The maximum of name length is set into 80.
+Execute       get_config_schedule -enable_dsp_full_reg 
+Execute       send_msg_by_id INFO @200-435@%s%s 'config_sdx -target' config_schedule -enable_dsp_full_reg=1 
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: config_schedule -enable_dsp_full_reg=1
+Execute       config_schedule -enable_dsp_full_reg=1 
+Execute       get_config_rtl -register_reset_num 
+Execute       send_msg_by_id INFO @200-435@%s%s 'config_sdx -target' config_rtl -register_reset_num=3 
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: config_rtl -register_reset_num=3
+Execute       config_rtl -register_reset_num=3 
+Execute       get_config_rtl -module_auto_prefix 
+Execute       send_msg_by_id INFO @200-435@%s%s 'config_sdx -target' config_rtl -module_auto_prefix=1 
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: config_rtl -module_auto_prefix=1
+Execute       config_rtl -module_auto_prefix=1 
+Execute       get_config_interface -m_axi_addr64 
+Execute       send_msg_by_id INFO @200-435@%s%s 'config_sdx -target' config_interface -m_axi_addr64=1 
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: config_interface -m_axi_addr64=1
+Execute       config_interface -m_axi_addr64=1 
+Execute       send_msg_by_id INFO @200-435@%s%s 'config_sdx -target' set_clock_uncertainty 27% 
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: set_clock_uncertainty 27%
+Execute       set_clock_uncertainty 27% 
+Execute         get_clock_period -default -name=default 
+Execute         config_clock -quiet -name default -uncertainty 1.08 -unit % 
+INFO: [SYN 201-201] Setting up clock 'default' with an uncertainty of 1.08ns.
+Execute     config_rtl -kernel_profile 
+Execute     config_export -vivado_optimization_level 0 
+Execute       get_config_export -vivado_impl_strategy 
+Execute       get_config_export -vivado_phys_opt 
+Execute     config_dataflow -strict_mode warning 
+Execute     config_debug -enable 
+Execute     set_clock_uncertainty 27.000000% 
+Execute       get_clock_period -default -name=default 
+Execute       config_clock -quiet -name default -uncertainty 1.08 -unit % 
+INFO: [SYN 201-201] Setting up clock 'default' with an uncertainty of 1.08ns.
+Execute     config_rtl -enable_maxiConservative=1 
+Execute     config_interface -m_axi_addr64 
+Execute     config_compile -skip_transform 
+Execute     config_export -format ip_catalog -ipname jacobi2d_unrolled_1_opt 
+Execute     csynth_design 
+Execute       get_config_compile -dump_cfg 
+Execute       get_config_compile -effort 
+Execute       get_config_compile -enable_clang39 
+Execute       get_config_compile -g 
+Execute       get_config_compile -ng 
+Execute       get_config_compile -opt_fp 
+Execute       get_config_compile -skip_cdt 
+Execute       get_config_compile -skip_syncheck 
+Execute       get_config_compile -skip_transform 
+Execute       get_config_compile -keep_printf 
+Execute       elaborate -effort=medium -skip_syncheck=0 -keep_printf=0 -skip_cdt=0 -skip_transform=1 -ng=0 -g=0 -opt_fp=0 -from_csynth_design=1 
+Execute         get_config_schedule -relax_ii_for_timing 
+INFO: [SCHED 204-61] Option 'relax_ii_for_timing' is enabled, will increase II to preserve clock frequency constraints.
+Execute         get_config_schedule -suppress_dependence_error_break 
+INFO: [HLS 200-10] Analyzing design file '/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp' ... 
+INFO-FLOW: Compiling one TU...
+Execute         is_m_axi_addr64 
+INFO-FLOW: Handling /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp as C++
+Execute         ap_part_info -name xcvu9p-flgb2104-2-i -data info 
+Execute         is_encrypted /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp 
+Execute         ap_part_info -name xcvu9p-flgb2104-2-i -data info 
+INFO-FLOW: Running: GCC PP
+INFO-FLOW: Source preprocessing
+Execute         clang  -fno-limit-debug-info -gcc-toolchain "/opt/Xilinx/Vivado/2019.2/lnx64/tools/gcc" -hls  -fno-exceptions  -D__llvm__  -E "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp"   -g -D__VIVADO_SYNTH__ -I/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src  -fno-math-errno -c -emit-llvm -O0  -mllvm -disable-llvm-optzns -fno-threadsafe-statics  -fno-use-cxa-atexit  -fno-threadsafe-statics -fno-use-cxa-atexit -D__CLANG_3_1__ -DAESL_SYN -D__SYNTHESIS__ -D__HLS_SYN__ -I "/opt/Xilinx/Vivado/2019.2/common/technology/autopilot" -I "/opt/Xilinx/Vivado/2019.2/common/technology/autopilot/ap_sysc" -include etc/autopilot_ssdm_op.h -D__DSP48E2__  -o "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.pp.0.cpp" 
+INFO-FLOW: exec /opt/Xilinx/Vivado/2019.2/lnx64/tools/clang/bin/clang -fno-limit-debug-info -gcc-toolchain /opt/Xilinx/Vivado/2019.2/lnx64/tools/gcc -hls -fno-exceptions -D__llvm__ -E /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp -g -D__VIVADO_SYNTH__ -I/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src -fno-math-errno -c -emit-llvm -O0 -mllvm -disable-llvm-optzns -fno-threadsafe-statics -fno-use-cxa-atexit -fno-threadsafe-statics -fno-use-cxa-atexit -D__CLANG_3_1__ -DAESL_SYN -D__SYNTHESIS__ -D__HLS_SYN__ -I /opt/Xilinx/Vivado/2019.2/common/technology/autopilot -I /opt/Xilinx/Vivado/2019.2/common/technology/autopilot/ap_sysc -include etc/autopilot_ssdm_op.h -D__DSP48E2__ -o /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.pp.0.cpp
+Command         clang done; 1.41 sec.
+Execute         tidy_31 xilinx-xfmat-array-geometry /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.pp.0.cpp std=gnu++98 
+INFO-FLOW: exec /opt/Xilinx/Vivado/2019.2/lnx64/tools/clang-3.9-csynth/bin/tidy-3.1 -header-filter=.* -checks=-*,xilinx-xfmat-array-geometry -quiet -fix /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.pp.0.cpp -- -std=gnu++98 -fhls -ferror-limit=0
+Command         tidy_31 done; 0.54 sec.
+INFO-FLOW: Syntax Checking before pre-processing...
+Execute         clang -syntaxcheck -src /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.pp.0.cpp  -fno-limit-debug-info -gcc-toolchain "/opt/Xilinx/Vivado/2019.2/lnx64/tools/gcc" -hls  -g -D__VIVADO_SYNTH__ -I/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src  -fno-math-errno -c -emit-llvm -O0  -mllvm -disable-llvm-optzns -fno-threadsafe-statics  -fno-use-cxa-atexit  -fno-threadsafe-statics -fno-use-cxa-atexit -D__CLANG_3_1__ -DAESL_SYN -D__SYNTHESIS__ -D__HLS_SYN__ -I "/opt/Xilinx/Vivado/2019.2/common/technology/autopilot" -I "/opt/Xilinx/Vivado/2019.2/common/technology/autopilot/ap_sysc" -include etc/autopilot_ssdm_op.h -D__DSP48E2__  "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.pp.0.cpp"  -o "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/useless.bc"  
+INFO-FLOW: exec /opt/Xilinx/Vivado/2019.2/lnx64/tools/clang/bin/clang -fno-limit-debug-info -gcc-toolchain /opt/Xilinx/Vivado/2019.2/lnx64/tools/gcc -hls -g -D__VIVADO_SYNTH__ -I/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src -fno-math-errno -c -emit-llvm -O0 -mllvm -disable-llvm-optzns -fno-threadsafe-statics -fno-use-cxa-atexit -fno-threadsafe-statics -fno-use-cxa-atexit -D__CLANG_3_1__ -DAESL_SYN -D__SYNTHESIS__ -D__HLS_SYN__ -I /opt/Xilinx/Vivado/2019.2/common/technology/autopilot -I /opt/Xilinx/Vivado/2019.2/common/technology/autopilot/ap_sysc -include etc/autopilot_ssdm_op.h -D__DSP48E2__ /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.pp.0.cpp -o /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/useless.bc
+WARNING: [HLS 200-40] In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:1:
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:9:
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt_compute_units.h:3:
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/conv_3x3.h:3:
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/hw_classes.h:366:21: warning: alias declarations are a C++11 extension [-Wc++11-extensions]
+using InputStream = HWStream<T>;
+                    ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/hw_classes.h:369:22: warning: alias declarations are a C++11 extension [-Wc++11-extensions]
+using OutputStream = HWStream<T>;
+                     ^
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:1:
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:9:
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt_compute_units.h:3:
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/conv_3x3.h:241:3: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+  auto res = conv_3_3(in);
+  ^
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:1:
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:9:
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt_compute_units.h:11:3: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+  auto result_0 = id(lane_0_t1_arg);
+  ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt_compute_units.h:30:3: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+  auto result_0 = jacobi2d_compute(lane_0_t1);
+  ^
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:1:
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:124:2: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+ auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_1924();
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:133:2: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+ auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_3845();
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:142:2: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+ auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_1923();
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:151:2: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+ auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_1();
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:160:2: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+ auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_1922();
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:198:2: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+ auto t1_0_c__0_value = t1_jacobi2d_unrolled_1_update_0_read_bundle_read(t1 , d0, d1);
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:202:2: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+ auto compute_result = jacobi2d_compute(t1_0_c__0_value);
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:215:2: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+ auto t1_arg_0_c__0_value = t1_arg.read();
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:216:2: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+ auto compute_result = id(t1_arg_0_c__0_value);
+ ^
+14 warnings generated.
+Command         clang done; 1.71 sec.
+INFO-FLOW: Done: GCC PP time: 3.7 seconds per iteration
+Execute         source /opt/Xilinx/Vivado/2019.2/tps/tcl/tcllib1.11.1/yaml/huddle.tcl 
+Execute         source /opt/Xilinx/Vivado/2019.2/tps/tcl/tcllib1.11.1/yaml/json2huddle.tcl 
+Execute           source /opt/Xilinx/Vivado/2019.2/tps/tcl/tcllib1.11.1/try/try.tcl 
+Execute         list_core -type functional_unit 
+Execute         tidy_31 xilinx-systemc-detector /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.pp.0.cpp std=gnu++98 -directive=/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/.systemc_flag 
+INFO-FLOW: exec /opt/Xilinx/Vivado/2019.2/lnx64/tools/clang-3.9-csynth/bin/tidy-3.1 -header-filter=.* -checks=-*,xilinx-systemc-detector -import-directive=/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/.systemc_flag -quiet -fix-errors /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.pp.0.cpp -- -std=gnu++98 -fhls -ferror-limit=0
+Command         tidy_31 done; 0.49 sec.
+INFO-FLOW: Running: tidy-3.1 CDT preprocess
+Execute         tidy_31 xilinx-directive2pragma /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.pp.0.cpp std=gnu++98 -directive=/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/all.directive.json 
+INFO-FLOW: exec /opt/Xilinx/Vivado/2019.2/lnx64/tools/clang-3.9-csynth/bin/tidy-3.1 -header-filter=.* -checks=-*,xilinx-directive2pragma -import-directive=/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/all.directive.json -quiet -fix-errors /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.pp.0.cpp -- -std=gnu++98 -fhls -ferror-limit=0
+Command         tidy_31 done; 0.48 sec.
+Execute         get_config_dataflow -strict_mode 
+Execute         ap_eval exec -ignorestderr /opt/Xilinx/Vivado/2019.2/lnx64/tools/clang-3.9-csynth/bin/xilinx-dataflow-lawyer -export-fixes=/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/xilinx-dataflow-lawyer.jacobi2d_unrolled_1_opt.pp.0.cpp.diag.yml /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.pp.0.cpp -- -std=gnu++98 -fhls -ferror-limit=0 -fstrict-dataflow > /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/xilinx-dataflow-lawyer.jacobi2d_unrolled_1_opt.pp.0.cpp.out.log 2> /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/xilinx-dataflow-lawyer.jacobi2d_unrolled_1_opt.pp.0.cpp.err.log 
+Command         ap_eval done; 0.54 sec.
+Execute         tidy_31 -errorcheck xilinx-constantarray-param,xilinx-resource-pragma-transformer,xilinx-xfmat-array-geometry /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.pp.0.cpp std=gnu++98 
+Execute           ap_eval exec -ignorestderr /opt/Xilinx/Vivado/2019.2/lnx64/tools/clang-3.9-csynth/bin/tidy-3.1 -export-fixes=/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/tidy-3.1.jacobi2d_unrolled_1_opt.pp.0.cpp.diag.yml -header-filter=.* -checks=-*,xilinx-constantarray-param,xilinx-resource-pragma-transformer,xilinx-xfmat-array-geometry -quiet -fix-errors /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.pp.0.cpp -- -std=gnu++98 -fhls -ferror-limit=0 > /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/tidy-3.1.jacobi2d_unrolled_1_opt.pp.0.cpp.out.log 2> /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/tidy-3.1.jacobi2d_unrolled_1_opt.pp.0.cpp.err.log 
+Command           ap_eval done; 0.61 sec.
+Execute           ap_eval exec -ignorestderr /opt/Xilinx/Vivado/2019.2/lnx64/tools/clang-3.9-csynth/bin/xilinx-legacy-rewriter /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.pp.0.cpp -- -std=gnu++98 -fhls -ferror-limit=0 > /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/xilinx-legacy-rewriter.jacobi2d_unrolled_1_opt.pp.0.cpp.out.log 2> /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/xilinx-legacy-rewriter.jacobi2d_unrolled_1_opt.pp.0.cpp.err.log 
+Command           ap_eval done; 0.47 sec.
+Command         tidy_31 done; 1.09 sec.
+INFO-FLOW: Done: tidy-3.1 CDT preprocess time: 2.1 seconds per iteration
+INFO-FLOW: Pragma Handling...
+Execute         tidy_31 xilinx-ssdm-intrinsics-arguments /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.pragma.1.cpp std=gnu++98 
+INFO-FLOW: exec /opt/Xilinx/Vivado/2019.2/lnx64/tools/clang-3.9-csynth/bin/tidy-3.1 -header-filter=.* -checks=-*,xilinx-ssdm-intrinsics-arguments -quiet -fix-errors /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.pragma.1.cpp -- -std=gnu++98 -fhls -ferror-limit=0
+Command         tidy_31 done; 0.99 sec.
+Execute         ap_part_info -name xcvu9p-flgb2104-2-i -data info 
+INFO-FLOW: Processing labels
+Execute         clang -src /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.pragma.2.cpp  -fno-limit-debug-info -gcc-toolchain /opt/Xilinx/Vivado/2019.2/lnx64/tools/gcc -hls -hls-analyze-label -hls-analyze-pragma -fno-exceptions  -D__llvm__  -w  "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.pragma.2.cpp"  -g -D__VIVADO_SYNTH__ -I/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src  -fno-math-errno -c -emit-llvm -O0  -mllvm -disable-llvm-optzns -fno-threadsafe-statics  -fno-use-cxa-atexit -DAESL_SYN -D__SYNTHESIS__ -D__HLS_SYN__ -I "/opt/Xilinx/Vivado/2019.2/common/technology/autopilot" -I "/opt/Xilinx/Vivado/2019.2/common/technology/autopilot/ap_sysc" -include etc/autopilot_ssdm_op.h -D__DSP48E2__ -g -o "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.bc" 
+INFO-FLOW: exec /opt/Xilinx/Vivado/2019.2/lnx64/tools/clang/bin/clang -fno-limit-debug-info -gcc-toolchain /opt/Xilinx/Vivado/2019.2/lnx64/tools/gcc -hls -hls-analyze-label -hls-analyze-pragma -fno-exceptions -D__llvm__ -w /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.pragma.2.cpp -g -D__VIVADO_SYNTH__ -I/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src -fno-math-errno -c -emit-llvm -O0 -mllvm -disable-llvm-optzns -fno-threadsafe-statics -fno-use-cxa-atexit -DAESL_SYN -D__SYNTHESIS__ -D__HLS_SYN__ -I /opt/Xilinx/Vivado/2019.2/common/technology/autopilot -I /opt/Xilinx/Vivado/2019.2/common/technology/autopilot/ap_sysc -include etc/autopilot_ssdm_op.h -D__DSP48E2__ -g -o /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.bc
+Command         clang done; 1.72 sec.
+INFO-FLOW: Linking Debug ...
+Execute         llvm-ld /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/jacobi2d_unrolled_1_opt.g.bc -hls-opt -except-internalize jacobi2d_unrolled_1_opt -L/opt/Xilinx/Vivado/2019.2/lnx64/lib -lhlsm -lhlsmc++ -o /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/a.g 
+Command         llvm-ld done; 0.71 sec.
+INFO: [HLS 200-111] Finished Linking Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 983.102 ; gain = 463.160 ; free physical = 60754 ; free virtual = 83131
+INFO: [HLS 200-111] Finished Checking Pragmas Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 983.102 ; gain = 463.160 ; free physical = 60754 ; free virtual = 83131
+Execute         get_config_sdx -target 
+Execute         get_config_rtl -kernel_profile 
+INFO-FLOW: Generating Kernel XML ...
+Execute         transform -hls -top=jacobi2d_unrolled_1_opt -xcl-target=hls -xcl-xmlinfo=/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/../../../kernel.xml -xcl-profiletype=stall -mem2reg -hlskernelxml /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/a.g.bc -o /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/a.cl.xml.bc -f 
+INFO-FLOW: DBG:CMD: Copying raw kernel.xml: /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/../../../kernel.xml -> /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt/solution/.autopilot/db/kernel.internal.xml
+Command       elaborate done; 9.81 sec.
+Command     csynth_design done; 9.81 sec.
+Execute     close_project 
+Execute     cleanup_all 

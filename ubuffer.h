@@ -1,17 +1,127 @@
 #pragma once
 
-#include "isl_utils.h"
-#include "utils.h"
+#include "qexpr.h"
 
 using namespace std;
 
-struct stack_bank {
+struct DebugOptions {
+  bool expect_all_linebuffers;
+
+  DebugOptions() : expect_all_linebuffers(false) {}
+};
+
+struct CodegenOptions {
+  bool internal;
+  bool all_rams;
+  bool add_dependence_pragmas;
+  bool use_custom_code_string;
+  string code_string;
+  bool simplify_address_expressions;
+  bool unroll_factors_as_pad;
+
+  DebugOptions debug_options;
+
+  CodegenOptions() : internal(true), all_rams(false), add_dependence_pragmas(true),
+  use_custom_code_string(false), code_string(""), simplify_address_expressions(false),
+  unroll_factors_as_pad(false) {}
+
+};
+
+enum bank_type {
+  BANK_TYPE_STACK,
+  BANK_TYPE_RAM
+};
+
+struct selector {
+  string buf_name;
+  string pt_type;
+  string out_port;
+  string name;
+  vector<string> vars;
+  vector<string> bank_conditions;
+  vector<string> inner_bank_offsets;
+};
+
+struct bank {
   std::string name;
+  bank_type tp;
+
+  // Stack bank properties
   std::string pt_type_string;
   vector<int> read_delays;
   int num_readers;
   int maxdelay;
+
+  // RAM bank properties
+  Box layout;
+
+  vector<int> get_end_inds() const {
+    auto break_points = get_break_points();
+
+    vector<string> partitions;
+    vector<int> end_inds;
+    if (break_points.size() > 0) {
+      for (size_t i = 0; i < break_points.size(); i++) {
+        int current = break_points[i];
+        int partition_capacity = -1;
+        if (i < break_points.size() - 1) {
+          if (break_points[i] != break_points[i + 1]) {
+            int next = break_points[i + 1];
+            partition_capacity = next - current;
+            partitions.push_back("f" + to_string(i));
+            end_inds.push_back(current + partition_capacity - 1);
+          }
+        } else {
+          partition_capacity = 1;
+          partitions.push_back("f" + to_string(i));
+          end_inds.push_back(current + partition_capacity - 1);
+        }
+      }
+    }
+    return end_inds;
+  }
+
+  vector<pair<string, int> > get_partitions() const {
+    auto break_points = get_break_points();
+
+    vector<pair<string, int> > partitions;
+    if (break_points.size() > 0) {
+      for (size_t i = 0; i < break_points.size(); i++) {
+        int current = break_points[i];
+        int partition_capacity = -1;
+        if (i < break_points.size() - 1) {
+          if (break_points[i] != break_points[i + 1]) {
+            int next = break_points[i + 1];
+            partition_capacity = next - current;
+            partitions.push_back({"f" + to_string(i), partition_capacity});
+          }
+        } else {
+          partition_capacity = 1;
+          partitions.push_back({"f" + to_string(i), partition_capacity});
+        }
+      }
+    }
+    return partitions;
+  }
+
+  vector<int> get_break_points() const {
+    auto delays = sort_unique(read_delays);
+    vector<int> break_points;
+    if (delays.size() == 1) {
+      break_points = {delays[0], delays[0]};
+    } else {
+      for (size_t i = 0; i < delays.size(); i++) {
+        break_points.push_back(delays[i]);
+        if (i < delays.size() - 1 && delays[i] != delays[i + 1] + 1) {
+          break_points.push_back(delays[i] + 1);
+        }
+      }
+    }
+    return break_points;
+  }
 };
+
+typedef bank stack_bank;
 
 class AccessPattern {
   public:
@@ -449,6 +559,18 @@ class UBuffer {
     std::map<string, AccessPattern> access_pattern;
 
     map<pair<string, string>, stack_bank > stack_banks;
+    map<string, selector> selectors;
+
+    bank get_bank(const std::string& name) const {
+      for (auto b : stack_banks) {
+        if (b.second.name == name) {
+          return b.second;
+        }
+      }
+      cout << "Error: No such bank as: " << name << endl;
+      assert(false);
+      return {};
+    }
 
     void replace_bank(stack_bank& target, stack_bank& replacement) {
       for (auto bnk : stack_banks) {
@@ -509,7 +631,7 @@ class UBuffer {
             done.push_back(bs.second.name);
           }
 
-          assert(bnks.back().read_delays.size() == bs.second.read_delays.size());
+          //assert(bnks.back().read_delays.size() == bs.second.read_delays.size());
         }
       }
       return bnks;
@@ -551,6 +673,7 @@ class UBuffer {
     }
 
     int port_bundle_width(const std::string& bundle_name) {
+      assert(contains_key(bundle_name, port_bundles));
       int len = 0;
       for (auto pt : map_find(bundle_name, port_bundles)) {
         len += port_width(pt);
@@ -886,3 +1009,41 @@ std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
   return out;
 }
 
+umap* get_lexmax_events(const std::string& outpt, UBuffer& buf);
+
+umap* last_reads(const string& inpt, UBuffer& buf);
+
+isl_union_pw_qpolynomial* compute_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port);
+
+int compute_dd_lower_bound(UBuffer& buf, const std::string& read_port, const std::string& write_port);
+
+int compute_dd_bound(UBuffer& buf, const std::string& read_port, const std::string& write_port);
+
+string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string& write_port);
+
+
+int compute_max_dd(UBuffer& buf, const string& inpt);
+
+void generate_ram_bank(CodegenOptions& options,
+    std::ostream& out,
+    stack_bank& bank);
+
+void generate_bank(CodegenOptions& options,
+    std::ostream& out,
+    stack_bank& bank);
+
+
+Box extract_box(uset* rddom);
+bank compute_bank_info(
+    const std::string& inpt, 
+    const std::string& outpt,
+    UBuffer& buf);
+
+
+vector<string> dimension_var_decls(const std::string& pt, UBuffer& buf);
+vector<string> dimension_var_args(const std::string& pt, UBuffer& buf);
+
+
+void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);
+void generate_hls_code(std::ostream& out, UBuffer& buf);
+void generate_hls_code(UBuffer& buf);

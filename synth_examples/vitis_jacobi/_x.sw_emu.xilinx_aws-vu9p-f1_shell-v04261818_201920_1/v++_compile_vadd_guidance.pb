@@ -1,0 +1,3 @@
+
+Â
+v++_compile_vadd$07d70b1a-7196-454c-9fe0-31d3a5378678—v++  -t sw_emu --platform /home/centos/aws-fpga/Vitis/aws_platform/xilinx_aws-vu9p-f1_shell-v04261818_201920_1/xilinx_aws-vu9p-f1_shell-v04261818_201920_1.xpfm --save-temps -g --temp_dir ./_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1 -c -k vadd -Isrc -o_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/vadd.xo src/vadd.cpp *±"¨/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/reports/vadd/v++_compile_vadd_guidance.html2¢"ù/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/v++_compile_vadd_guidance.pb

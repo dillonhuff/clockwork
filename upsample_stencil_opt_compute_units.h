@@ -2,6 +2,7 @@
 
 #include "conv_3x3.h"
 
+  // Img_update_0 unroll factor: 1
 hw_uint<32>  id_unrolled_1(hw_uint<32>& Img_off) {
   hw_uint<32> whole_result;
   hw_uint<32> lane_0_Img_off;
@@ -12,6 +13,7 @@ hw_uint<32>  id_unrolled_1(hw_uint<32>& Img_off) {
    return whole_result;
 }
 
+  // upsample_stencil_update_0 unroll factor: 1
 hw_uint<32>  conv_3_3_unrolled_1(hw_uint<288>& Img) {
   hw_uint<32> whole_result;
   hw_uint<288> lane_0_Img;

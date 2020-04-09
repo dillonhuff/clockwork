@@ -39,3 +39,9 @@ conv3x3_*
 level_2_*
 mismatched_*
 C_opt*
+*.v
+synthetic_*
+pyramid_*
+camera_collateral*
+*.csv
+tb_soda_*

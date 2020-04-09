@@ -1,4 +1,5 @@
 #pragma once
+
 #include <stack>
 #include <regex>
 #include <cassert>
@@ -86,8 +87,17 @@ std::string to_string(const QAV& q) {
 
 static inline
 QAV qconst(const int& v, const int& d) {
-  assert(v == 1 || d == 1);
-  return {true, "", v, d};
+  assert(v == 1 || v % d == 0);
+  //if (!(v == 1 || d == 1)) {
+    //cout << "v == " << v << ", d == " << d << endl;
+  //}
+  //assert(v == 1 || d == 1);
+  if (v == 1) {
+    return {true, "", v, d};
+  } else {
+    return {true, "", v / d, 1};
+  }
+
 }
 
 static inline
@@ -228,7 +238,17 @@ struct QTerm {
       d *= c.denom;
     }
 
+    if (abs(n) == 1 && abs(d) == 1) {
+      n = n / d;
+      d = 1;
+    } else if (n == -1) {
+      n = -n;
+      d = -d;
+    }
+
     if (n != 1) {
+      //cout << "n = " << n << endl;
+      //cout << "d = " << d << endl;
       assert(n % d == 0);
       n = n / d;
       d = 1;
@@ -824,8 +844,46 @@ QTerm parse_qterm(const std::string& str) {
 }
 
 static inline
+QExpr concat_terms(const QExpr& a, const QExpr& b) {
+  QExpr expr;
+  for (auto t : a.terms) {
+    expr.terms.push_back(t);
+  }
+  for (auto t : b.terms) {
+    expr.terms.push_back(t);
+  }
+  return expr;
+}
+
+static inline
 QExpr sub(const string& a, const string& b) {
   return qexpr(qterm(a), qterm(b).scale(-1));
+}
+
+static inline
+QExpr operator*(const QExpr& a, const QExpr& b) {
+  QExpr prod;
+  for (auto t : a.terms) {
+    vector<QTerm> bterms = b.terms;
+    for (QTerm& ot : bterms) {
+      concat(ot.vals, t.vals);
+      prod.terms.push_back(ot);
+    }
+  }
+  return prod;
+}
+
+static inline
+QExpr operator+(const QExpr& a, const QExpr& b) {
+  QExpr bc = b;
+  return concat_terms(a, bc);
+}
+
+static inline
+QExpr operator-(const QExpr& a, const QExpr& b) {
+  QExpr bc = b;
+  bc.scale(-1);
+  return concat_terms(a, bc);
 }
 
 struct Range {
@@ -846,6 +904,15 @@ struct Box {
     for (int i = 0; i < dims; i++) {
       intervals.push_back({0, -1});
     }
+  }
+
+  int cardinality() const {
+    int c = 1;
+    for (int i = 0; i < dimension(); i++) {
+      c *= length(i);
+    }
+
+    return c;
   }
 
   int min(const int dim) const { return intervals.at(dim).min; }
@@ -965,8 +1032,8 @@ std::ostream& operator<<(std::ostream& out, const Box& b) {
 
 static inline
 Box unn(const Box& l, const Box& r) {
-  cout << "l intervals = " << l.intervals.size() << endl;
-  cout << "r intervals = " << r.intervals.size() << endl;
+  //cout << "l intervals = " << l.intervals.size() << endl;
+  //cout << "r intervals = " << r.intervals.size() << endl;
 
   assert(l.intervals.size() == r.intervals.size());
   Box un;
@@ -974,7 +1041,7 @@ Box unn(const Box& l, const Box& r) {
     un.intervals.push_back({min(l.intervals.at(dim).min, r.intervals.at(dim).min), max(l.intervals.at(dim).max, r.intervals.at(dim).max)});
   }
 
-  cout << "Got union" << endl;
+  //cout << "Got union" << endl;
   return un;
 }
 
@@ -999,6 +1066,20 @@ vector<string> ifconds(vector<string>& vars, Box& range, vector<int>& rates, vec
   return conds;
 }
 
+void print_while_loop(int level,
+    ostream& out,
+    const vector<string>& op_order,
+    const Box& whole_dom,
+    map<string, Box>& index_bounds,
+    map<string, vector<QExpr> >& scheds);
+
+void print_body(int level,
+    ostream& out,
+    const vector<string>& op_order,
+    const Box& whole_dom,
+    map<string, Box>& index_bounds,
+    map<string, vector<QExpr> >& scheds);
+
 static inline
 void print_loops(int level,
     ostream& out,
@@ -1016,49 +1097,8 @@ void print_loops(int level,
   out << tab(level) << "for (int " << ivar << " = " << min << "; " << ivar << " <= " << max << "; " << ivar << "++) {" << endl;
   int next_level = level + 1;
   if (next_level == ndims) {
+    print_body(level, out, op_order, whole_dom, index_bounds, scheds);
 
-    out << endl;
-    out << "#ifdef __VIVADO_SYNTH__" << endl;
-    out << "#pragma HLS pipeline II=1" << endl;
-    out << "#endif // __VIVADO_SYNTH__" << endl << endl;
-
-    vector<string> vars;
-    for (int i = 0; i < ndims; i++) {
-      vars.push_back("c" + str(i));
-    }
-    // NOTE: This is because scheduling reverses order of component variables
-    reverse(vars);
-
-    for (auto f : op_order) {
-      auto box = index_bounds.at(f);
-      vector<int> rates;
-      vector<int> delays;
-      for (auto s : scheds.at(f)) {
-        rates.push_back(s.linear_coeff_int());
-        auto ct = s.const_term();
-        ct.simplify();
-        delays.push_back(ct.to_int());
-      }
-
-      assert(delays.size() == vars.size() + 1);
-      assert(rates.size() == vars.size() + 1);
-
-      delays.pop_back();
-      reverse(delays);
-      rates.pop_back();
-      reverse(rates);
-
-      out << tab(next_level) << "if (" << sep_list(ifconds(vars, box, rates, delays), "", "", " && ") << ") {" << endl;
-
-      vector<string> var_exprs;
-
-      for (int i = 0; i < vars.size(); i++) {
-        var_exprs.push_back("(" + vars.at(i) + " - " + str(delays.at(i)) + ") / " + str(rates.at(i)));
-      }
-
-      out << tab(next_level + 1) << f << "(" << comma_list(var_exprs) << ");" << endl;
-      out << tab(next_level) << "}" << endl << endl;
-    }
   } else {
     print_loops(level + 1, out, op_order, whole_dom, index_bounds, scheds);
   }
@@ -1111,7 +1151,22 @@ std::string box_codegen(const vector<string>& op_order,
   reverse(bnds);
   cout << "Whole domain: " << whole_dom << endl;
   //assert(false);
+  ss << "#ifdef __VIVADO_SYNTH__" << endl;
+  ss << "#pragma HLS inline recursive" << endl;
+  ss << "#endif // __VIVADO_SYNTH__" << endl << endl;
   print_loops(0, ss, op_order, whole_dom, index_bounds, scheds);
+  //print_while_loop(0, ss, op_order, whole_dom, index_bounds, scheds);
 
   return ss.str();
+}
+
+static inline 
+QExpr qe(isl_val* v) {
+  if (isl_val_is_int(v)) {
+    return qexpr(safe_stoi(str(v)));
+  }
+
+  assert(isl_val_is_rat(v));
+
+  return qexpr(qconst(isl_val_get_num_si(v), isl_val_get_den_si(v)));
 }

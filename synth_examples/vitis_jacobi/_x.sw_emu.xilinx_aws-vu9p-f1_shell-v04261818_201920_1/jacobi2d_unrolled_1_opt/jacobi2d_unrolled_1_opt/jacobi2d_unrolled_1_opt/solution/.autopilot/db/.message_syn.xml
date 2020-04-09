@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Messages>
+	<Message severity="INFO" prefix="[SCHED 204-61]" key="SCHED_PIPELINING_STATUS_631" tag="SCHEDULE" content="Option &apos;relax_ii_for_timing&apos; is enabled, will increase II to preserve clock frequency constraints."/>
+	<Message severity="INFO" prefix="[HLS 200-10]" key="HLS_10_1312" tag="" content="Analyzing design file &apos;/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp&apos; ..."/>
+	<Message severity="WARNING" prefix="[HLS 200-40]" key="HLS_40_1378" tag="" content="In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:1:
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:9:
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt_compute_units.h:3:
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/conv_3x3.h:3:
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/hw_classes.h:366:21: warning: alias declarations are a C++11 extension [-Wc++11-extensions]
+using InputStream = HWStream&lt;T&gt;;
+                    ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/hw_classes.h:369:22: warning: alias declarations are a C++11 extension [-Wc++11-extensions]
+using OutputStream = HWStream&lt;T&gt;;
+                     ^
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:1:
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:9:
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt_compute_units.h:3:
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/conv_3x3.h:241:3: warning: &apos;auto&apos; type specifier is a C++11 extension [-Wc++11-extensions]
+  auto res = conv_3_3(in);
+  ^
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:1:
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:9:
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt_compute_units.h:11:3: warning: &apos;auto&apos; type specifier is a C++11 extension [-Wc++11-extensions]
+  auto result_0 = id(lane_0_t1_arg);
+  ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt_compute_units.h:30:3: warning: &apos;auto&apos; type specifier is a C++11 extension [-Wc++11-extensions]
+  auto result_0 = jacobi2d_compute(lane_0_t1);
+  ^
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:1:
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:124:2: warning: &apos;auto&apos; type specifier is a C++11 extension [-Wc++11-extensions]
+ auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_1924();
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:133:2: warning: &apos;auto&apos; type specifier is a C++11 extension [-Wc++11-extensions]
+ auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_3845();
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:142:2: warning: &apos;auto&apos; type specifier is a C++11 extension [-Wc++11-extensions]
+ auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_1923();
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:151:2: warning: &apos;auto&apos; type specifier is a C++11 extension [-Wc++11-extensions]
+ auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_1();
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:160:2: warning: &apos;auto&apos; type specifier is a C++11 extension [-Wc++11-extensions]
+ auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_1922();
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:198:2: warning: &apos;auto&apos; type specifier is a C++11 extension [-Wc++11-extensions]
+ auto t1_0_c__0_value = t1_jacobi2d_unrolled_1_update_0_read_bundle_read(t1 , d0, d1);
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:202:2: warning: &apos;auto&apos; type specifier is a C++11 extension [-Wc++11-extensions]
+ auto compute_result = jacobi2d_compute(t1_0_c__0_value);
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:215:2: warning: &apos;auto&apos; type specifier is a C++11 extension [-Wc++11-extensions]
+ auto t1_arg_0_c__0_value = t1_arg.read();
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:216:2: warning: &apos;auto&apos; type specifier is a C++11 extension [-Wc++11-extensions]
+ auto compute_result = id(t1_arg_0_c__0_value);
+ ^
+14 warnings generated."/>
+	<Message severity="INFO" prefix="[HLS 200-111]" key="HLS_111_965" tag="" content="Finished Linking Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 983.102 ; gain = 463.160 ; free physical = 60754 ; free virtual = 83131"/>
+	<Message severity="INFO" prefix="[HLS 200-111]" key="HLS_111_965" tag="" content="Finished Checking Pragmas Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 983.102 ; gain = 463.160 ; free physical = 60754 ; free virtual = 83131"/>
+</Messages>
