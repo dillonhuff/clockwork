@@ -16,6 +16,7 @@ typedef uint8_t  bv_uint8;
 typedef uint16_t bv_uint16;
 typedef uint32_t bv_uint32;
 typedef uint64_t bv_uint64;
+using uint = unsigned int;
 
 #define QBV_UNKNOWN_VALUE 2
 #define QBV_HIGH_IMPEDANCE_VALUE 3
@@ -60,7 +61,7 @@ namespace bsim {
       return "xxxx";
     case 'z':
       return "zzzz";
-      
+
     default:
       assert(false);
     }
@@ -98,14 +99,14 @@ namespace bsim {
     bool is_high_impedance() const {
       return (value == QBV_HIGH_IMPEDANCE_VALUE);
     }
-    
+
     quad_value plus(const quad_value& other) const {
       assert(other.is_binary());
       assert(is_binary());
 
       return quad_value((other.binary_value() + binary_value()) & 0x01);
     }
-    
+
     bool equals(const quad_value& other) const {
       if ((value == QBV_UNKNOWN_VALUE) ||
           (other.value == QBV_UNKNOWN_VALUE)) {
@@ -238,7 +239,7 @@ namespace bsim {
 
     return a.binary_value() < b.binary_value();
   }
-  
+
   static inline quad_value operator~(const quad_value& a) {
 
     assert(!a.is_high_impedance());
@@ -246,12 +247,12 @@ namespace bsim {
     if(a.is_unknown()) {
       return quad_value(QBV_UNKNOWN_VALUE);
     }
-    
+
     assert(a.is_binary());
 
     return quad_value((~a.binary_value()) & 0x01);
   }
-  
+
   static inline bool operator==(const quad_value& a,
                                 const quad_value& b) {
     assert(!a.is_high_impedance());
@@ -376,7 +377,7 @@ namespace bsim {
     //   }
     //   assert(num_digits <= N);
 
-    //   int len = str.size();      
+    //   int len = str.size();
 
     //   //bits.resize(N);
     //   for (int i = len - 1; i >= 0; i--) {
@@ -408,7 +409,7 @@ namespace bsim {
         }
       }
     }
-                                                  
+
 
     //Note: Need to check that all digits in each clump that
     //contain 'x' or 'z' values are 'x' or 'z' values
@@ -451,7 +452,7 @@ namespace bsim {
       std::reverse(std::begin(hex_digits), std::end(hex_digits));
       return hex + hex_digits;
     }
-    
+
     static_quad_value_bit_vector(const static_quad_value_bit_vector<N>& other) {
       //bits.resize(other.bits.size());
       //N = other.bitLength();
@@ -485,7 +486,7 @@ namespace bsim {
       }
       return true;
     }
-    
+
     std::string binary_string() const {
       std::string str = "";
       for (int i = N - 1; i >= 0; i--) {
@@ -494,7 +495,7 @@ namespace bsim {
 
       return str;
     }
-    
+
     inline void set(const int ind, const int v) {
       // if ((v != 0) && (v != 1)) {
       //   std::cout << "\tv = " << (int) v << std::endl;
@@ -552,14 +553,14 @@ namespace bsim {
       return tmp;
       // ConvType tmp = *(const_cast<ConvType*>((const ConvType*) (&(bits[0]))));
       // //TODO FIXME I am a sketchy hack.
-      // ConvType mask = sizeof(ConvType) > bits.size() ? (1<<N)-1 : -1; 
+      // ConvType mask = sizeof(ConvType) > bits.size() ? (1<<N)-1 : -1;
       // return tmp & mask;
     }
 
     inline bv_uint64 as_native_int32() const {
       return to_type<bv_sint32>();
     }
-    
+
     inline bv_uint64 as_native_uint64() const {
       return to_type<bv_uint64>();
     }
@@ -579,7 +580,7 @@ namespace bsim {
     inline int bitLength() const {
       return N;
     }
-    
+
   };
 
   // static inline bool same_representation(const static_quad_value_bit_vector<N>& a,
@@ -678,7 +679,7 @@ namespace bsim {
 
   	int j = i + 1;
 
-  	diff.set(i, 1);	  
+  	diff.set(i, 1);
 
   	// Modify to carry
   	while ((j < Width) && (a_cpy.get(j) != 1)) {
@@ -702,7 +703,7 @@ namespace bsim {
     }
 
     return diff;
-  }    
+  }
 
   template<int N>
   static inline
@@ -732,7 +733,7 @@ namespace bsim {
     }
 
     return res;
-  }    
+  }
 
   template<int N>
   class static_quad_value_bit_vector_operations {
@@ -758,7 +759,7 @@ namespace bsim {
       return not_a;
 
     }
-      
+
     static inline static_quad_value_bit_vector<N> lor(const static_quad_value_bit_vector<N>& a,
         				 const static_quad_value_bit_vector<N>& b) {
       static_quad_value_bit_vector<N> a_or_b(a.bitLength());
@@ -779,7 +780,7 @@ namespace bsim {
       return a_or_b;
 
     }
-    
+
   };
 
   template<int N>
@@ -907,7 +908,7 @@ namespace bsim {
 
   //   return static_quad_value_bit_vector<N>(1, "1");
   // }
-  
+
   // static inline bool
   // signed_gt(const static_quad_value_bit_vector<N>& a,
   //           const static_quad_value_bit_vector<N>& b) {
@@ -915,7 +916,7 @@ namespace bsim {
   //   if (!a.is_binary() || !b.is_binary()) {
   //     return false;
   //   }
-    
+
   //   assert(a.bitLength() == b.bitLength());
 
   //   int N = a.bitLength();
@@ -986,7 +987,7 @@ namespace bsim {
   //   if (!a.is_binary() || !shift_amount.is_binary()) {
   //     return unknown_bv(a.bitLength());
   //   }
-    
+
   //   static_quad_value_bit_vector<N> res(a.bitLength());
 
   //   bv_uint64 shift_int = get_shift_int(shift_amount);
@@ -1016,7 +1017,7 @@ namespace bsim {
   //   if (!a.is_binary() || !shift_amount.is_binary()) {
   //     return unknown_bv(a.bitLength());
   //   }
-    
+
   //   if (shift_amount == static_quad_value_bit_vector<N>(shift_amount.bitLength(), 0)) {
   //     return a;
   //   }
@@ -1037,7 +1038,7 @@ namespace bsim {
 
   //   return res;
   // }
-  
+
   // static inline
   // static_quad_value_bit_vector<N>
   // shl(const static_quad_value_bit_vector<N>& a,
@@ -1049,7 +1050,7 @@ namespace bsim {
 
   //   static_quad_value_bit_vector<N> res(a.bitLength());
 
-  //   bv_uint64 shift_int = get_shift_int(shift_amount);    
+  //   bv_uint64 shift_int = get_shift_int(shift_amount);
   //   for (int i = shift_int; i < a.bitLength(); i++) {
   //     res.set(i, a.get(i - shift_int));
   //   }
@@ -1071,7 +1072,7 @@ namespace bsim {
 
   //   return res;
   // }
-  
+
   // static inline
   // static_quad_value_bit_vector<N>
   // slice(const static_quad_value_bit_vector<N>& a,
@@ -1084,7 +1085,7 @@ namespace bsim {
   //   }
   //   return res;
   // }
-  
+
 
   // static inline
   // static_quad_value_bit_vector<N>
@@ -1109,5 +1110,5 @@ namespace bsim {
 
     return res;
   }
-  
+
 }

@@ -125,6 +125,8 @@ typedef bank stack_bank;
 
 class AccessPattern {
   public:
+      string buf_name, op_name;
+
       int var_dim;
       vector<int> in_range;
       vector<int> stride;
@@ -139,9 +141,137 @@ class AccessPattern {
       vector<vector<int> > access_matrix;
 
       AccessPattern(){}
+      AccessPattern(string buf, string op):buf_name(buf), op_name(op){}
 
-      void initial_access_mat(isl_map* access_map, isl_set* domain) {
+      AccessPattern(const AccessPattern & a) {
+          op_name = a.op_name;
+          buf_name = a.buf_name;
+          var_dim = a.var_dim;
+          in_range = a.in_range;
+          stride = a.stride;
+          name2idx = a.name2idx;
+
+          addr_dim = a.addr_dim;
+          out_range = a.out_range;
+          start_addr = a.start_addr;
+          vec_stride_in_addr = a.vec_stride_in_addr;
+
+          access_matrix = a.access_matrix;
+      }
+
+      isl_set* get_domain(isl_ctx* ctx) {
+          vector<string> var_list(var_dim);
+          vector<string> bd_list(var_dim-1);
+          for (auto itr: name2idx) {
+              if (itr.first == "const")
+                  continue;
+              var_list[itr.second] = itr.first;
+              string bd = "0 <= " + itr.first + " <= " + std::to_string(in_range[itr.second-1]-1);
+              bd_list[itr.second-1] = bd;
+          }
+          var_list[0] = "root=0";
+          auto vars = sep_list(var_list, "[", "]", "," );
+          auto ds = sep_list(bd_list, "", "", " and ");
+          return isl_set_read_from_str(ctx, string("{ " + op_name + vars + " : " + ds + "}").c_str());
+      }
+
+      string get_expr(size_t item, size_t cnt, vector<string> var_list) {
+          if (item == 1) {
+              return var_list[cnt];
+          }
+          else {
+              return std::to_string(item) + "*" + var_list[cnt];
+          }
+      }
+
+      umap* get_access_map(isl_ctx* ctx) {
+          vector<string> var_list(var_dim);
+          for (auto itr: name2idx) {
+              if (itr.first == "const")
+                  continue;
+              var_list[itr.second] = itr.first;
+          }
+          var_list[0] = "root=0";
+          auto vars = sep_list(var_list, "[", "]", "," );
+          vector<string> nd_expr;
+          for (auto row: access_matrix) {
+              vector<string> sum_list;
+              for (auto itr = row.begin()+1; itr != row.end(); itr ++ ){
+                  int item = *itr;
+                  int cnt = itr - row.begin() ;
+                  if (item == 0 ) {
+                      continue;
+                  }
+                  sum_list.push_back(get_expr(item, cnt, var_list));
+              }
+
+              //const
+              if (sum_list.size() == 0 || (row.front() != 0)) {
+                  sum_list.push_back(std::to_string(row.front()));
+              }
+              nd_expr.push_back(sep_list(sum_list, "", "", "+"));
+          }
+          string nd_expr_str = sep_list(nd_expr, "[", "]", ", ");
+          cout << "access map expr:" << nd_expr_str << endl;
+          auto access_map = isl_map_read_from_str(ctx, string("{ " + op_name + vars + " -> " + buf_name + nd_expr_str + "}").c_str());
+          auto domain = get_domain(ctx);
+          return to_umap(its(access_map, domain));
+      }
+
+      isl_map* get_access_map_and_decouple_reuse(isl_ctx* ctx, int dim_id) {
+          vector<string> var_list(var_dim);
+          for (auto itr: name2idx) {
+              if (itr.first == "const")
+                  continue;
+              var_list[itr.second] = itr.first;
+          }
+          var_list[0] = "root=0";
+          auto vars = sep_list(var_list, "[", "]", "," );
+          vector<string> nd_expr;
+          for (size_t row_cnt = 0; row_cnt < access_matrix.size(); row_cnt ++) {
+              auto row = access_matrix[row_cnt];
+              vector<string> sum_list;
+              for(auto itr = row.begin() + 1; itr != row.end(); itr ++) {
+                  int item = *itr;
+                  int cnt = itr - row.begin() ;
+                  if (item == 0)
+                      continue;
+                  if (row_cnt < dim_id) {
+                      nd_expr.push_back(get_expr(item, cnt, var_list));
+                  }
+                  else {
+                    sum_list.push_back(get_expr(item, cnt, var_list));
+                  }
+              }
+              if (row_cnt >= dim_id) {
+                //only add const offset when it inside the vectorize dimension const
+                if (sum_list.size() == 0 || (row.front() != 0)) {
+                  sum_list.push_back(std::to_string(row.front()));
+                }
+                nd_expr.push_back(sep_list(sum_list, "", "", "+"));
+              }
+              else {
+                  if (sum_list.size() == 0 || (row.front() != 0))
+                      nd_expr.push_back(std::to_string(row.front()));
+              }
+          }
+          string nd_expr_str = sep_list(nd_expr, "[", "]", ", ");
+          cout << "access map expr:" << nd_expr_str << endl;
+          auto access_map = isl_map_read_from_str(ctx, string("{ " + op_name + vars + " -> " + buf_name  + nd_expr_str + "}").c_str());
+          auto domain = get_domain(ctx);
+          return its(access_map, domain);
+      }
+
+      void initial_access_mat(isl_map* access_map, isl_set* domain, isl_ctx* ctx) {
           cout << "\t\tProduced: " << str(access_map) << endl;
+
+          for (size_t i = 0; i < isl_map_dim(access_map, isl_dim_in); i++) {
+              if (!isl_map_has_dim_id(access_map, isl_dim_in, i)) {
+                  access_map = set_map_dim_name(ctx, access_map, i, "p"+to_string(i));
+              }
+              //cout << "has id:" << str(isl_map_get_dim_id(access_map, isl_dim_in, i)) << endl;
+          }
+
           auto mpa = isl_pw_multi_aff_from_map(access_map);
           addr_dim = isl_pw_multi_aff_dim(mpa, isl_dim_out);
           map<string, int> var_related;
@@ -192,7 +322,8 @@ class AccessPattern {
               out_range[i] = range_val;
               auto vec_stride = isl_set_get_stride(isl_map_range(cpy(access_map)), i);
               vec_stride_in_addr.push_back(isl_val_get_num_si(vec_stride));
-              int range_max = get_dim_max(isl_map_domain(inv(access_map)),i);
+              //int range_max = get_dim_max(isl_map_domain(inv(access_map)),i);
+              int range_max = get_dim_max(range(access_map),i);
               if (range_val == 1) {
                   start_addr[i] = range_max;
               }
@@ -299,6 +430,116 @@ class AccessPattern {
 
       bool is_1D_contigous_access() {
           return (in_range.size() == 1) && (stride.back() == 1);
+      }
+
+      bool is_access_matrix_col_empty(int id) {
+          for (size_t i = 0; i < addr_dim; i ++) {
+              if (access_matrix[i][id])
+                  return false;
+          }
+          return true;
+      }
+
+      void remove_access_matrix_column(int id) {
+          for (size_t i = 0; i < addr_dim; i ++) {
+              auto row = access_matrix[i];
+              row.erase(row.begin() + id);
+          }
+      }
+
+      isl_map* get_op_transform(isl_ctx* ctx, int dim_id, int fetch_width) {
+          vector<int> & stride_in_target = access_matrix[dim_id];
+          vector<string> var_list(var_dim);
+          vector<string> origin_var_list(var_dim);
+          var_list.front() = "root";
+          origin_var_list.front() = "root";
+          //TODO: handle reuse pattern
+          for (auto it: name2idx) {
+              if (it.first == "const")
+                  continue;
+              int id = it.second;
+              if (stride_in_target[id] != 0 && (stride_in_target[id] < 4)) {
+                  string trans = "floor("+ it.first + "/" + to_string(fetch_width) + ")";
+                  var_list[it.second] = trans;
+                  origin_var_list[it.second] = it.first;
+              }
+              else {
+                  var_list[it.second] = it.first;
+                  origin_var_list[it.second] = it.first;
+              }
+          }
+          auto vars = sep_list(var_list, "[", "]", "," );
+          auto origin_vars = sep_list(origin_var_list, "[", "]", "," );
+          cout <<"OP name: " << op_name << endl;
+          isl_map* multi_map = to_map(rdmap(ctx, string("{ " + op_name + origin_vars + " -> " + op_name +"_vec" + vars + "}").c_str()));
+          return multi_map;
+      }
+
+      /*
+       * This Function create a vector of map of the constraints on output buffer,
+       * and map that to each port*/
+      vector<isl_map*> get_buf_slice(isl_ctx* ctx, string new_buf_name, int dim_id, int fetch_width) {
+          vector<string> var_list;
+          vector<isl_map*> slices;
+          for (size_t dim = 0; dim < addr_dim; dim ++) {
+              var_list.push_back("p" + to_string(dim));
+          }
+
+          auto vars = sep_list(var_list, "[", "]", ",");
+          for(size_t i = 0; i < fetch_width; i ++) {
+              string constraint = "p" + to_string(dim_id) + "%" + to_string(fetch_width) + "=" + to_string(i);
+              isl_map* slice_constriant = to_map(rdmap(ctx, string("{" + buf_name + vars + " -> " + new_buf_name + vars + ":" +constraint + "}" ).c_str()));
+              slices.push_back(slice_constriant);
+          }
+          return slices;
+      }
+
+
+      vector<AccessPattern> vectorization(int dim_id, int fetch_width) {
+          AccessPattern origin(*this);
+          vector<int> & stride_in_target = access_matrix[dim_id];
+          vector<int> var_list;
+          for (size_t i = 1; i < stride_in_target.size(); i ++) {
+              if (stride_in_target[i] == 0)
+                  continue;
+              if (stride_in_target[i] < fetch_width) {
+                  var_list.push_back(i);
+                  cout << "var need to be vectorize: " << i << endl;
+              }
+          }
+          assert(var_list.size()  > 0);
+          for (size_t i = 0; i < var_list.size(); i ++) {
+            //Currently just support divisible
+            int id = var_list[i];
+            if (i == 0) {
+                //the first variable
+                assert(fetch_width % stride_in_target[id] == 0);
+                int factor =  fetch_width / stride_in_target[id];
+                stride_in_target[id] = fetch_width;
+                assert(in_range[id - 1] % factor== 0);
+                in_range[id - 1] /= factor;
+
+            }
+            else {
+                //all the other stride should be strip off
+                if (is_access_matrix_col_empty(id)) {
+                    remove_access_matrix_column(id);
+                    in_range.erase(in_range.begin() + id - 1);
+                }
+            }
+          }
+
+          vector<AccessPattern> access_pattern_vec;
+          for (size_t i = 0; i < fetch_width; i ++) {
+            access_matrix[dim_id][0] = i;
+            //update out_range after we have the new access map
+
+            access_pattern_vec.push_back(AccessPattern(*this));
+          }
+
+          //assign the original value
+          *this = origin;
+          return access_pattern_vec;
       }
 };
 
@@ -472,6 +713,22 @@ class UBuffer {
       return s;
     }
 
+    isl_union_map* producer_map() {
+      umap* s = isl_union_map_read_from_str(ctx, "{ }");
+      for (auto pt: get_in_ports()) {
+        s = unn(s, access_map.at(pt));
+      }
+      return s;
+    }
+
+    isl_union_map* consumer_map() {
+      umap* s = isl_union_map_read_from_str(ctx, "{ }");
+      for (auto pt: get_out_ports()) {
+        s = unn(s, access_map.at(pt));
+      }
+      return s;
+    }
+
     bool is_out_pt(const std::string& name) const {
       return !isIn.at(name);
     }
@@ -486,14 +743,17 @@ class UBuffer {
       isIn[name] = false;
     }
 
-    void add_access_pattern(const std::string& name,
-            isl_map* access,
-            isl_set* dm) {
-        auto io = isIn[name]? "input" : "output";
-        cout << "\tAdding access pattern for " << io  <<" port: " << name << "in buf: " << this->name <<  endl;
-        AccessPattern acc_p;
-        acc_p.initial_access_mat(access, dm);
-        access_pattern[name] = acc_p;
+    void add_access_pattern(const std::string& pt_name,
+            const std::string & op_name,
+            const std::string & buf_name) {
+        auto io = isIn.at(pt_name)? "input" : "output";
+        isl_map* access = to_map(access_map.at(pt_name));
+        isl_set* dm = domain.at(pt_name);
+        cout << "\tAdding access pattern for " << io  <<" port: " << pt_name << "in buf: " << this->name <<  endl;
+        cout << "\top name :" << op_name << endl;
+        AccessPattern acc_p(buf_name, op_name);
+        acc_p.initial_access_mat(access, dm, ctx);
+        access_pattern[pt_name] = acc_p;
     }
 
     void add_in_pt(const std::string& name,
@@ -502,8 +762,28 @@ class UBuffer {
         isl_union_map* sched) {
       domain[name] = dm;
       access_map[name] = to_umap(access);
-      schedule[name] = (sched);
+      schedule[name] = sched;
       isIn[name] = true;
+    }
+
+    void add_in_pt_with_access_pattern(
+            const std::string& name,
+            AccessPattern & acc_pattern ) {
+      domain[name] = acc_pattern.get_domain(ctx);
+      access_map[name] = acc_pattern.get_access_map(ctx);
+      access_pattern[name] = acc_pattern;
+      schedule[name] = NULL;
+      isIn[name] = true;
+    }
+
+    void add_out_pt_with_access_pattern(
+            const std::string& name,
+            AccessPattern & acc_pattern ) {
+      domain[name] = acc_pattern.get_domain(ctx);
+      access_map[name] = acc_pattern.get_access_map(ctx);
+      access_pattern[name] = acc_pattern;
+      //schedule[name] = (sched);
+      isIn[name] = false;
     }
 
     void add_out_pt(const std::string& name,
@@ -630,20 +910,72 @@ class UBuffer {
       assert(false);
     }
 
+    //ppint the same access pattern to a different buffer domain
+    isl_map* remap_access_to_new_buffer(string pt_name, string suffix) {
+        auto origin_map = access_map.at(pt_name);
+        string new_buf_name = name + suffix;
+        vector<string> addr_var;
+        for (size_t i = 0; i < get_out_dim(to_map(origin_map)); i ++) {
+            addr_var.push_back("p" + to_string(i));
+        }
+        string vars = sep_list(addr_var, "[", "]", ",");
+        isl_map* buf_map = isl_map_read_from_str(ctx, string("{" + name + vars + " -> " + new_buf_name + vars + "}").c_str());
+        return to_map(dot(origin_map, buf_map));
+    }
+
+    //change the input and output and return the agg and tb ubuffer stucture
+    void vectorization(int dim_id, int fetch_width, UBuffer& agg, UBuffer& sram, UBuffer& tb);
+
+    void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, map<string, isl_map*> sched_map, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out);
+
+    map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
 };
 
 int compute_max_dd(UBuffer& buf, const string& inpt);
 
+template <typename T>
+std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
+    if ( !v.empty()  ) {
+        out << '[';
+        std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
+        out << "\b\b]";
+    }
+    return out;
+}
+
 static inline
-std::ostream& operator<<(std::ostream& out, UBuffer& buf) {
+std::ostream& operator<<(std::ostream& out, const AccessPattern& acc_pattern) {
+  out << "--- Variable Dimension: " << acc_pattern.var_dim << endl;
+  out << "\t---nameid map: " << endl;
+  for (auto it: acc_pattern.name2idx) {
+      out << "\t\t name: " << it.first << "\t id: " << it.second << endl;
+  }
+  out << "\t---- In range: " << acc_pattern.in_range << endl;
+  out << "\t---- Out range: "<< acc_pattern.out_range << endl;
+  out << "\t---- Stride: "<< acc_pattern.stride << endl;
+  out << "\t---- Start Addr: "<< acc_pattern.start_addr << endl;
+  out << "\t---- Access Matrix: " << endl << "\t\t[";
+  for (const auto & row : acc_pattern.access_matrix) {
+      out<< row << "\n\t\t";
+  }
+  out << "]" << endl;
+  return out;
+}
+
+
+static inline
+std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
   out << "--- " << buf.name << endl;
   out << "\t---- In ports" << endl;
+
+  //add a copy for compute_max_dd function
+  UBuffer tmp = buf;
   for (auto inpt : buf.get_in_ports()) {
     out << "\t\t" << inpt << endl;
     out << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
     out << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
     out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
-    out << "\t\t\tbuffer capacity: " << compute_max_dd(buf, inpt) << endl;
+    out << "\t\t\tbuffer capacity: " << compute_max_dd(tmp, inpt) << endl;
     out << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
     out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
   }

@@ -58,7 +58,7 @@ string take_until(const std::string& s, const std::string& delim) {
 }
 
 static inline
-bool is_number(string s) { 
+bool is_number(string s) {
 
   if (s[0] != '-' && !isdigit(s[0])) {
     return false;
@@ -66,11 +66,11 @@ bool is_number(string s) {
 
   for (int i = 1; i < s.length(); i++)  {
     if (isdigit(s[i]) == false) {
-      return false; 
+      return false;
     }
-  }  
-  return true; 
-} 
+  }
+  return true;
+}
 
 static inline
 int safe_stoi(const string s) {

@@ -285,6 +285,61 @@ void synth_lb_test() {
   isl_ctx_free(buf.ctx);
 }
 
+void buffer_vectorization(string vec_buf_name, int dim_id, int fetch_width, map<string, UBuffer> & buffers) {
+    /* Function to vectorize the buffer access, will rewrite the buffer access pattern,
+     * generate the new domain and access map and also add two other buffer on
+     * both input and output side
+     * */
+    //TODO: add SRAM, do not overwrite the original sram
+    UBuffer agg, tb, sram;
+    for(auto it : buffers) {
+        if (it.first == vec_buf_name) {
+            auto target_buffer = it.second;
+            target_buffer.vectorization(dim_id, fetch_width, agg, sram, tb);
+            break;
+        }
+        else {
+            //add extra dimension in the schedule vector
+            auto buffer = it.second;
+            for(auto it_sched : buffer.schedule) {
+                umap* sched = it_sched.second;
+                string key = it_sched.first;
+                buffer.schedule[key] = pad_one_more_dim_to_sched_map(buffer.ctx, sched, "0");
+            }
+        }
+    }
+    buffers.erase(vec_buf_name);
+    buffers[agg.name] = agg;
+    buffers[sram.name] = sram;
+    buffers[tb.name] = tb;
+}
+
+isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers) {
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_set* domain = isl_union_set_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        string buf_name = it.first;
+        auto buf = it.second;
+        global_sched = unn(buf.global_schedule(), global_sched);
+        global_p_map = unn(buf.producer_map(), global_p_map);
+        global_c_map = unn(buf.consumer_map(), global_c_map);
+        domain = unn(buf.global_domain(), domain);
+    }
+    auto order_deps = get_rel_order(ctx, global_sched);
+    auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
+    auto validity = unn(order_deps, raw_deps);
+    auto proximity = cpy(raw_deps);
+    cout << "Raw_deps: " << str(raw_deps) << endl;
+    cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
+    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+    auto sched_map = its(isl_schedule_get_map(sched), domain);
+    return sched_map;
+
+}
+
 void permute_test() {
 
   struct isl_ctx *ctx;
@@ -696,6 +751,99 @@ void agg_test() {
   memtile.extract_config(buffers);
   memtile.emit_config_file_csv("lake_memtile_config");
   //assert(false);
+}
+
+
+void vec_test() {
+
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "vec";
+  prg.add_input("in");
+  prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+
+  auto p = prg.add_nest("po", 0, 8, "pi", 0, 8);
+  auto write = p->add_op("pass");
+  write->add_load("in", "po, pi");
+  write->add_store("out", "po, pi");
+
+  //auto sched = prg.unoptimized_schedule();
+  //cout << codegen_c(sched) << endl;
+
+  auto sched_opt = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
+
+  isl_union_map* acc_map;
+  auto buffers = build_buffers(prg);
+  for (auto buf : buffers){
+     for (auto pt: buf.second.get_out_ports()) {
+         acc_map = buf.second.access_map.at(pt);
+         cout << "\tAccess map: " << str(acc_map) << endl;
+     }
+
+  }
+  isl_union_map* produced;
+  /*
+  for (int i = 0; i < 4; i ++) {
+      if (i == 0)
+          produced = to_umap(isl_map_read_from_str(prg.ctx, string("{ pass_vec[root=0,po, p_vec] -> pass[0, po,4*p_vec+"+to_string(i)+"]} ").c_str()));
+      else
+        produced = unn(produced, to_umap(isl_map_read_from_str(prg.ctx, string("{ pass_vec[root=0, po, p_vec] -> pass[0,po,4*p_vec+"+to_string(i)+"]}").c_str())));
+    cout << str(produced) << endl;
+
+  }*/
+  string read_string = "{pass[root, po, pi] -> pass_vec[root, po, floor(pi / 4)]}";
+  isl_union_map* vectorized_map = isl_union_map_read_from_str(prg.ctx, read_string.c_str());
+  auto vectorized_access = dot(inv(acc_map), vectorized_map);
+  cout << "vectorize map" << str(vectorized_access) << endl;
+  cout << "vectorize range: " << str(range(vectorized_access)) << "\n vectorize domain" << str(domain(vectorized_access)) << endl;
+  //auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
+  //cout << "Sched map: " << str(sched_opt) << endl;
+  //cout << codegen_c(sched_opt) << endl;
+  //assert(false);
+  //aha_talk_print_info(prg);
+  //hardcode some configuration registers
+  //memtile_config memtile;
+  //auto buffers = build_buffers(prg, sched_opt);
+  //memtile.extract_config(buffers);
+  //memtile.emit_config_file_csv("lake_memtile_config");
+  //assert(false);
+}
+
+
+void auto_vec_test() {
+
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "vec";
+  prg.add_input("in");
+  prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+
+  auto p = prg.add_nest("po", 0, 8, "pi", 0, 8);
+  auto write = p->add_op("input");
+  write->add_load("in", "po, pi");
+  write->add_store("buf", "po, pi");
+
+  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 8);
+  auto read = q->add_op("output");
+  read->add_load("buf", "qo, qi");
+  read->add_load("buf", "qo+1, qi");
+  read->add_load("buf", "qo+2, qi");
+  read->add_store("out", "qo, qi");
+
+  auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
+
+  auto buffers = build_buffers(prg, sched_naive);
+  int fetch_width = 4;
+  buffer_vectorization("buf", 1, fetch_width, buffers);
+
+  auto opt_sched = optimized_schedule_from_buffers(buffers);
+  cout << codegen_c(opt_sched) << endl;
 }
 
 std::vector<std::string> run_regression_tb(const std::string& name) {
@@ -2235,7 +2383,7 @@ struct App {
   string func2d(const std::string& name) {
     return add_func(name, "", 2, {});
   }
-  
+
   string func3d(const std::string& name,
       const string& compute,
       const Window& window) {
@@ -2561,7 +2709,7 @@ struct App {
     ////fill_data_domain(name, {d0, d1}, unroll_factor);
     fill_data_domain(name, {d0, d1});
   }
-  
+
   int schedule_dimension() const {
     int max_dims = -1;
     for (auto f : sort_functions()) {
@@ -2851,14 +2999,14 @@ struct App {
     cout << "Final isl schedule: " << str(schedmap) << endl;
     cout << "C code; " << codegen_c(schedmap) << endl;
     //assert(false);
-    
+
     isl_options_set_schedule_algorithm(ctx, ISL_SCHEDULE_ALGORITHM_ISL);
 
     return schedmap;
   }
 
   umap* schedule_naive() {
-    
+
     map<string, vector<QExpr> > schedules;
     int pos = 0;
     for (auto f : sort_updates()) {
@@ -3333,7 +3481,6 @@ struct App {
 
     map<string, vector<QExpr> > scheds =
       schedule_opt();
-    
     map<string, Box> compute_domains;
     vector<string> ops;
     for (auto u : sort_updates()) {
@@ -3785,7 +3932,7 @@ vector<string> gauss_pyramid(const int num_levels, const string& func, App& app)
     Window blur_window{last, {qconst(1), qconst(1)}, offsets};
     app.func2d(next_blur, "reduce_gauss", blur_window);
     app.func2d(next_out, "id", next_blur, {qconst(2), qconst(2)}, {{0, 0}});
- 
+
     last = next_out;
     gauss_levels.push_back(last);
   }
@@ -3805,14 +3952,14 @@ vector<string> laplace_pyramid(const int num_levels, const string& func, App& ap
 
     string next_us = func + "_laplace_us_" + str(l);
     string next_out = func + "_laplace_diff_" + str(l);
-   
+
     // Upsample the image
     app.func2d(next_us, "id", smaller_image, {qconst(1, 2), qconst(1, 2)}, {{0, 0}});
 
     Window ad{larger_image, {qconst(1), qconst(1)}, {{0, 0}}};
     Window ud{next_us, {qconst(1), qconst(1)}, {{0, 0}}};
     app.func2d(next_out, "diff", {ad, ud});
- 
+
     laplace_levels.push_back(next_out);
   }
 
@@ -4033,7 +4180,7 @@ void laplacian_pyramid_app_test() {
     Window blur_window{last, {qconst(1), qconst(1)}, offsets};
     lp.func2d(next_blur, "reduce_gauss", blur_window);
     lp.func2d(next_out, "id", next_blur, {qconst(2), qconst(2)}, {{0, 0}});
- 
+
     last = next_out;
     gauss_levels.push_back(last);
   }
@@ -4047,14 +4194,14 @@ void laplacian_pyramid_app_test() {
 
     string next_us = "laplace_us_" + str(l);
     string next_out = "laplace_diff_" + str(l);
-   
+
     // Upsample the image
     lp.func2d(next_us, "id", smaller_image, {qconst(1, 2), qconst(1, 2)}, {{0, 0}});
 
     Window ad{larger_image, {qconst(1), qconst(1)}, {{0, 0}}};
     Window ud{next_us, {qconst(1), qconst(1)}, {{0, 0}}};
     lp.func2d(next_out, "diff", {ad, ud});
- 
+
     last = next_out;
     laplace_levels.push_back(last);
   }
@@ -4167,8 +4314,8 @@ App jacobi3d(const std::string output_name) {
   jac.func2d("t1", "id", pt("t1_arg"));
   jac.func2d(output_name, "jacobi3d_compute", "t1", {1, 1, 1},
       {{0, 0, 0},
-      {1, 0, 0}, {-1, 0, 0}, 
-      {0, 1, 0}, {0, -1, 0}, 
+      {1, 0, 0}, {-1, 0, 0},
+      {0, 1, 0}, {0, -1, 0},
       {0, 0, 1}, {0, 0, -1}});
   return jac;
 }
@@ -4199,7 +4346,7 @@ void upsample_stencil_2d_test() {
 
   us.realize("upsample_stencil", 32, 32, 1);
   us.realize_naive("upsample_stencil", 32, 32);
-  
+
   std::vector<std::string> optimized =
     run_regression_tb("upsample_stencil_opt");
 
@@ -4222,7 +4369,7 @@ void grayscale_conversion_test() {
   gs.func3d("Img", "id", pt3("Img_off"));
 
   Window inwindow{"Img", {{qconst(1), qconst(1), qconst(0)}}, {{0, 0, 0}, {0, 0, 1}, {0, 0, 2}}};
-  gs.func2d("gray", "avg", inwindow); 
+  gs.func2d("gray", "avg", inwindow);
 
   gs.realize_naive("gray", 32, 32);
   gs.realize("gray", 32, 32, 1);
@@ -4253,7 +4400,7 @@ void upsample_stencil_1d_test() {
 
   us.realize("upsample_stencil_1d", 32, 1, 1);
   us.realize_naive("upsample_stencil_1d", 32, 1);
-  
+
   std::vector<std::string> optimized =
     run_regression_tb("upsample_stencil_1d_opt");
 
@@ -4287,7 +4434,7 @@ void jacobi2d_app_test() {
     int unroll_factor = pow(2, i);
     string out_name = "jacobi2d_unrolled_" + str(unroll_factor);
     jacobi2d(out_name).realize(out_name, 1920, 1080, unroll_factor);
-    string synth_dir = 
+    string synth_dir =
       "./synth_examples/" + out_name;
     system(("mkdir " + synth_dir).c_str());
     system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
@@ -4947,13 +5094,13 @@ void application_tests() {
   //synth_lb_test();
 
   //conv_app_rolled_reduce_test();
- 
+
   //reduce_1d_test();
 
   //up_unrolled_test();
   //up_down_unrolled_test();
   //up_stencil_down_unrolled_test();
-  
+
   jacobi2d_app_test();
   //assert(false);
   grayscale_conversion_test();
@@ -5019,6 +5166,8 @@ void application_tests() {
 }
 
 void memory_tile_tests() {
+  auto_vec_test();
+  vec_test();
   agg_test();
   memtile_test();
 
@@ -5064,9 +5213,8 @@ int main(int argc, char** argv) {
     assert(false);
 
   } else if (argc == 1) {
-    
-    application_tests();
     memory_tile_tests();
+    application_tests();
 
   } else {
     assert(false);
