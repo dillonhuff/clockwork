@@ -3161,13 +3161,26 @@ struct App {
 
           cout << "Getting map from " << u.name() << " to " << consumer << endl;
 
-          //Window f_win = data_window_needed_by_compute(u.name(), f, unroll_factor);
           Window f_win = data_window_needed_by_compute(u.name(), f);
           cout << "### Window of " << f << " needed by " << u.name() << " = " << f_win << endl;
 
-
           auto pr = pixels_read(u.name());
           cout << tab(1) << "pixels read: " << str(pr) << endl;
+          cout << "Pixels read by each compute unit" << endl;
+          for (int i = 0; i < u.unroll_factor; i++) {
+            isl_map* lane_select =
+              to_map(rdmap(ctx, "{ " + u.name() +
+                  "_lane_" + str(i) +
+                  "[l0, l1] -> " +
+                  u.name() + "[d0, l1] : d0 % " + str(u.unroll_factor) + " = " + str(i) + " }"));
+            //isl_map* mselect = isl_map_universe(get_space(pr));
+
+            cout << tab(1) << "lane selector: " << str(lane_select) << endl;
+            auto data_needed_by_lane =
+              dot(lane_select, pr);
+            cout << tab(1) << "lane data    : " << str(data_needed_by_lane) << endl;
+          }
+
           int i = 0;
           for (auto p : f_win.pts()) {
             vector<string> coeffs;
