@@ -74,6 +74,21 @@ struct ilp_builder {
 
   }
 
+  isl_val* minimize(const std::map<string, isl_val*>& obj) {
+    isl_aff* objective = isl_aff_zero_on_domain(get_local_space(s));
+    cout << "Objective: " << str(objective) << endl;
+    for (auto coeff : obj) {
+      cout << "Coeff: " << coeff.first << endl;
+      int index = map_find(coeff.first, variable_positions);
+      isl_val* cn = mul(isl_val_negone(ctx), coeff.second);
+      cout << "cn = " << str(cn) << endl;
+      objective = isl_aff_set_coefficient_val(objective, isl_dim_in, index, cn);
+      cout << "objective: " << str(objective) << endl;
+    }
+    cout << "objective: " << str(objective) << endl;
+    return isl_basic_set_max_val(cpy(s), objective);
+  }
+
   void add_eq(const std::map<string, isl_val*>& coeffs, isl_val* constant) {
     vector<isl_val*> denoms;
     if (isl_val_is_rat(constant)) {
@@ -892,6 +907,9 @@ umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
       ilp.add_geq({{sched_var_name(consumer), isl_val_one(ct)}}, isl_val_negone(ct));
       ilp.add_geq({{sched_var_name(producer), isl_val_one(ct)}}, isl_val_negone(ct));
 
+      obj.insert({sched_var_name(consumer), isl_val_one(ct)});
+      obj.insert({sched_var_name(producer), isl_val_one(ct)});
+
       objective = objective + qp + qc;
     }
   }
@@ -899,8 +917,10 @@ umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
   cout << "ILP Problem: " << str(ilp.s) << endl;
 
   auto pt = sample(ilp.s);
-  cout << tab(1) << "sample point: " << str(pt) << endl;
-  assert(false);
+  auto opt_pt = ilp.minimize(obj);
+  cout << tab(1) << "legal point  : " << str(pt) << endl;
+  cout << tab(1) << "minimal point: " << str(opt_pt) << endl;
+  //assert(false);
 
   return nullptr;
 }

@@ -4466,7 +4466,7 @@ void jacobi2d_app_test() {
     system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
   }
 
-  assert(false);
+  //assert(false);
 }
 
 void denoise2d_test() {
@@ -5124,11 +5124,8 @@ void application_tests() {
   //up_down_unrolled_test();
   //up_stencil_down_unrolled_test();
 
-  exposure_fusion();
-  //assert(false);
-  mismatched_stencil_test();
   jacobi2d_app_test();
-  //assert(false);
+  mismatched_stencil_test();
   grayscale_conversion_test();
   denoise2d_test();
   upsample2d_test();
@@ -5139,6 +5136,7 @@ void application_tests() {
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
 
+  exposure_fusion();
 
   seidel2d_test();
   jacobi_2d_2_test();

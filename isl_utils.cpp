@@ -694,6 +694,8 @@ std::string str(isl_qpolynomial* const bset) {
 }
 
 std::string str(isl_aff* const bset) {
+  assert(bset != nullptr);
+
   auto context = ctx(bset);
   isl_printer *p;
   p = isl_printer_to_str(context);
