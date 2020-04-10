@@ -22,6 +22,8 @@ struct ir_node {
   bool is_loop;
 
   // Loop bounds
+  // TODO: Change these to either strings or QExprs
+  // so that we can do automatic bounds analysis
   int start;
   int end_exclusive;
 

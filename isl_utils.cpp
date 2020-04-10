@@ -1242,6 +1242,10 @@ umap* rdmap(isl_ctx* ctx, const std::string& str) {
   return isl_union_map_read_from_str(ctx, str.c_str());
 }
 
+isl_point* sample(isl_basic_set* s) {
+  return isl_basic_set_sample_point(cpy(s));
+}
+
 isl_point* sample(isl_union_set* s) {
   return isl_union_set_sample_point(cpy(s));
 }
@@ -1700,3 +1704,6 @@ vector<string> space_var_args(isl_space* s) {
   return dim_decls;
 }
 
+isl_val* mul(isl_val* a, isl_val* b) {
+  return isl_val_mul(cpy(a), cpy(b));
+}

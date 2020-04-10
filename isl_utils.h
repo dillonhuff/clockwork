@@ -384,6 +384,7 @@ isl_set* rdset(isl_ctx* ctx, const std::string& str);
 umap* rdmap(isl_ctx* ctx, const std::string& str);
 isl_aff* rdaff(isl_ctx* ctx, const std::string& str);
 
+isl_point* sample(isl_basic_set* s);
 isl_point* sample(isl_set* s);
 isl_point* sample(isl_union_set* s);
 
@@ -428,3 +429,5 @@ isl_map* project_all_but(isl_map* const dmap, const int d);
 
 vector<string> space_var_args(isl_space* s);
 vector<string> space_var_decls(isl_space* s);
+
+isl_val* mul(isl_val* a, isl_val* b);

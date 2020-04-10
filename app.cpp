@@ -24,6 +24,27 @@ struct ilp_builder {
   }
 
   void add_geq(const std::map<string, isl_val*>& coeffs, isl_val* constant) {
+    vector<isl_val*> denoms;
+    if (isl_val_is_rat(constant)) {
+      denoms.push_back(isl_val_get_den_val(constant));
+    }
+    for (auto v : coeffs) {
+      if (isl_val_is_rat(v.second)) {
+        auto dv = isl_val_get_den_val(v.second);
+        assert(isl_val_is_pos(dv));
+        denoms.push_back(isl_val_get_den_val(dv));
+      }
+    }
+
+    cout << "Denoms..." << endl;
+    isl_val* dn = isl_val_one(ctx);
+    for (auto v : denoms) {
+      cout << tab(1) << str(v) << endl;
+      dn = mul(dn, v);
+    }
+    assert(isl_val_is_int(dn));
+
+    cout << "Denom: " << str(dn) << endl;
     for (auto v : coeffs) {
       if (!contains_key(v.first, variable_positions)) {
         int next_pos = num_dims(isl_basic_set_get_space(s));
@@ -33,23 +54,53 @@ struct ilp_builder {
     }
 
     isl_constraint* c = isl_constraint_alloc_inequality(get_local_space(s));
-    isl_constraint_set_constant_val(c, constant);
+    isl_constraint_set_constant_val(c, mul(dn, constant));
 
     for (auto v : coeffs) {
-      int index = map_find(v.first, variable_positions);
-
-      cout << "Index = " << index << endl;
+      cout << "index = " << map_find(v.first, variable_positions) << endl;
+      auto m = mul(dn, v.second);
+      cout << "dn = " << str(dn) << endl;
+      cout << "m  = " << str(m) << endl;
+      assert(isl_val_is_int(m));
 
       isl_constraint_set_coefficient_val(c,
           isl_dim_set,
-          index,
-          v.second);
+          map_find(v.first, variable_positions),
+          m);
     }
 
     s = isl_basic_set_add_constraint(s, c);
+    assert(isl_val_is_int(constant));
+
   }
+
   void add_eq(const std::map<string, isl_val*>& coeffs, isl_val* constant) {
+    vector<isl_val*> denoms;
+    if (isl_val_is_rat(constant)) {
+      denoms.push_back(isl_val_get_den_val(constant));
+    }
     for (auto v : coeffs) {
+      if (isl_val_is_rat(v.second)) {
+        auto dv = isl_val_get_den_val(v.second);
+        assert(isl_val_is_pos(dv));
+        denoms.push_back(dv);
+        cout << tab(1) << "rational    : " << str(v.second) << endl;
+      } else {
+        cout << tab(1) << "non-rational: " << str(v.second) << endl;
+      }
+    }
+
+    cout << "Denoms..." << endl;
+    isl_val* dn = isl_val_one(ctx);
+    for (auto v : denoms) {
+      cout << tab(1) << str(v) << endl;
+      dn = mul(dn, v);
+    }
+    //assert(isl_val_is_int(constant));
+
+    cout << "Denom: " << str(dn) << endl;
+    for (auto v : coeffs) {
+      //assert(isl_val_is_int(v.second));
       if (!contains_key(v.first, variable_positions)) {
         int next_pos = num_dims(isl_basic_set_get_space(s));
         variable_positions[v.first] = next_pos;
@@ -58,11 +109,23 @@ struct ilp_builder {
     }
 
     isl_constraint* c = isl_constraint_alloc_equality(get_local_space(s));
-    isl_constraint_set_constant_val(c, constant);
+    auto cv = mul(dn, constant);
+    cout << "cv = " << str(cv) << endl;
+    cout << "dn = " << str(dn) << endl;
+    assert(isl_val_is_int(cv));
+
+    isl_constraint_set_constant_val(c, cv);
 
     for (auto v : coeffs) {
       cout << "index = " << map_find(v.first, variable_positions) << endl;
-      isl_constraint_set_coefficient_val(c, isl_dim_set, map_find(v.first, variable_positions), v.second);
+      auto m = mul(dn, v.second);
+      cout << "dn = " << str(dn) << endl;
+      cout << "m = " << str(m) << endl;
+      assert(isl_val_is_int(m));
+      isl_constraint_set_coefficient_val(c,
+          isl_dim_set,
+          map_find(v.first, variable_positions),
+          m);
     }
 
     s = isl_basic_set_add_constraint(s, c);
@@ -801,6 +864,8 @@ umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
   ilp_builder ilp(ct);
   vector<QConstraint> rate_constraints;
   QExpr objective = qexpr(0);
+
+  map<string, isl_val*> obj;
   for (auto s : schedule_params) {
     string consumer = domain_name(s.first);
     string producer = range_name(s.first);
@@ -819,55 +884,24 @@ umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
       QExpr k = qe(sv.first);
 
       rate_constraints.push_back(eq(qc - qc*k, qexpr(0)));
+
       ilp.add_eq({{sched_var_name(consumer), isl_val_one(ct)},
           {sched_var_name(producer), isl_val_neg(sv.first)}},
           isl_val_zero(ct));
+
+      ilp.add_geq({{sched_var_name(consumer), isl_val_one(ct)}}, isl_val_negone(ct));
+      ilp.add_geq({{sched_var_name(producer), isl_val_one(ct)}}, isl_val_negone(ct));
 
       objective = objective + qp + qc;
     }
   }
 
-  //ilp.optimize(objective);
+  cout << "ILP Problem: " << str(ilp.s) << endl;
 
-  //auto result = minimize(rate_constraints, objective);
-  //cout << "Result.." << endl;
-  //for (auto r : result) {
-    //cout << tab(1) << r.first << " = " << r.second << endl;
-  //}
+  auto pt = sample(ilp.s);
+  cout << tab(1) << "sample point: " << str(pt) << endl;
+  assert(false);
 
-  //vector<QConstraint> delay_constraints;
-  //QExpr delay_objective = qexpr(0);
-  //for (auto s : schedule_params) {
-    //string consumer = domain_name(s.first);
-    //string producer = range_name(s.first);
-
-    //auto qp = schedvar(producer);
-    //auto dp = delayvar(producer);
-
-    //auto dc = delayvar(consumer);
-
-    //delay_constraints.push_back(eq(qp, qexpr(map_find(sched_var_name(producer), result))));
-    //delay_constraints.push_back(geq(dp, qexpr(0)));
-    //delay_constraints.push_back(geq(dc, qexpr(0)));
-
-    //for (auto sv : s.second) {
-
-      //QExpr b = qe(sv.second);
-
-      //delay_constraints.push_back(geq(dc - qp*b - dp, qexpr(0)));
-
-      ////delay_objective = delay_objective + (dp - dc);
-      //delay_objective = delay_objective + dp + dc;
-    //}
-  //}
-
-  //auto delay_result = minimize(delay_constraints, delay_objective);
-  //cout << "Delay result..." << endl;
-  //for (auto dr : delay_result) {
-    //cout << tab(1) << dr.first << " = " << dr.second << endl;
-  //}
-
-  //assert(false);
   return nullptr;
 }
 

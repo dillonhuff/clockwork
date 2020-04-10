@@ -2935,6 +2935,9 @@ struct App {
   umap* schedule_isl() {
     isl_options_set_schedule_algorithm(ctx, ISL_SCHEDULE_ALGORITHM_ISL);
 
+    //isl_options_set_schedule_outer_coincidence(ctx, 1);
+    isl_options_set_schedule_outer_coincidence(ctx, 1);
+
     umap* naive_sched = schedule_naive();
     auto before = lex_lt(naive_sched, naive_sched);
 
@@ -2986,12 +2989,25 @@ struct App {
     isl_union_map *proximity =
       cpy(validity);
 
+    isl_union_map *coincidence =
+      cpy(validity);
+
     auto finite_domain = cpy(domain);
+
+    clockwork_schedule(cpy(domain), cpy(validity), cpy(proximity));
+
+    isl_schedule_constraints* constraints =
+      isl_schedule_constraints_on_domain(domain);
+    constraints = isl_schedule_constraints_set_validity(constraints, validity);
+    constraints = isl_schedule_constraints_set_proximity(constraints, proximity);
+    constraints = isl_schedule_constraints_set_coincidence(constraints, coincidence);
+    auto sched = isl_schedule_constraints_compute_schedule(constraints);
+
     //domain = unn(domain, isl_union_set_universe(cpy(domain)));
     //experimental_opt(cpy(domain), cpy(validity), cpy(proximity));
-    //clockwork_schedule(cpy(domain), cpy(validity), cpy(proximity));
     //assert(false);
-    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+    //isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+
 
     auto schedmap = its(isl_schedule_get_map(sched), finite_domain);
 
@@ -5108,11 +5124,13 @@ void application_tests() {
   //up_down_unrolled_test();
   //up_stencil_down_unrolled_test();
 
+  exposure_fusion();
+  //assert(false);
+  mismatched_stencil_test();
   jacobi2d_app_test();
   //assert(false);
   grayscale_conversion_test();
   denoise2d_test();
-  exposure_fusion();
   upsample2d_test();
   downsample2d_test();
   updown_merge_test();
@@ -5121,7 +5139,6 @@ void application_tests() {
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
 
-  mismatched_stencil_test();
 
   seidel2d_test();
   jacobi_2d_2_test();
