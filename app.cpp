@@ -110,7 +110,7 @@ struct ilp_builder {
     isl_val* max = isl_basic_set_max_val(cpy(s), objective);
     isl_basic_set* max_loc =
       isl_aff_eq_basic_set(objective,
-          isl_aff_val_on_domain(get_local_space(s), max));
+          aff_on_domain(get_local_space(s), max));
     solved = true;
     cout << "max loc = " << str(max_loc) << endl;
     cout << "s       = " << str(s) << endl;
@@ -949,6 +949,7 @@ umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
   // Compute delays
   assert(ilp.solved);
 
+  cout << "Building delay constraints" << endl;
   ilp_builder delay_problem(ct);
   for (auto s : schedule_params) {
     string consumer = domain_name(s.first);
@@ -1015,7 +1016,7 @@ umap* clockwork_schedule(uset* domain,
     }
     clockwork_schedule_dimension(projected_deps);
     if (d == 0) {
-      //assert(false);
+      assert(false);
     }
   }
 

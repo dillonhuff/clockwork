@@ -437,3 +437,7 @@ vector<string> space_var_decls(isl_space* s);
 
 isl_val* mul(isl_val* a, isl_val* b);
 isl_val* neg(isl_val* a);
+
+
+isl_aff* aff_on_domain(isl_local_space* ls, isl_val* max);
+

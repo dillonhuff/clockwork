@@ -1737,3 +1737,6 @@ isl_val* negone(isl_ctx* c) {
   return isl_val_negone(c);
 }
 
+isl_aff* aff_on_domain(isl_local_space* ls, isl_val* max) {
+  return isl_aff_val_on_domain(cpy(ls), cpy(max));
+}
