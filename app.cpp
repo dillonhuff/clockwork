@@ -31,6 +31,7 @@ struct ilp_builder {
   }
 
   isl_val* value(const std::string& var) {
+    //cout << "Getting value for: " << var << endl;
     assert(solved);
     assert(solution_point != nullptr);
     assert(contains_key(var, variable_positions));
@@ -876,7 +877,7 @@ extract_linear_rational_approximation(isl_aff* aff_bound) {
   }
 }
 
-umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
+map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps) {
   cout << "Deps..." << endl;
   assert(deps.size() > 0);
   isl_ctx* ct = ctx(deps.at(0));
@@ -951,14 +952,22 @@ umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
 
   cout << "Building delay constraints" << endl;
   ilp_builder delay_problem(ct);
+  set<string> operation_names;
+  map<string, isl_val*> delay_obj;
   for (auto s : schedule_params) {
     string consumer = domain_name(s.first);
     string producer = range_name(s.first);
+
+    operation_names.insert(consumer);
+    operation_names.insert(producer);
 
     isl_val* qp = ilp.value(sched_var_name(producer));
 
     string dc = delay_var_name(consumer);
     string dp = delay_var_name(producer);
+
+    delay_obj[dc] = one(ct);
+    delay_obj[dp] = one(ct);
 
     for (auto sv : s.second) {
 
@@ -976,12 +985,23 @@ umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
 
   cout << "Delay constraints" << endl;
   auto sample_delay = sample(delay_problem.s);
-  //auto opt_pt = ilp.minimize(obj);
-  cout << tab(1) << "legal point  : " << str(sample_delay) << endl;
-  //assert(false);
-  //cout << tab(1) << "minimal point: " << str(opt_pt) << endl;
+  auto opt_delay = delay_problem.minimize(delay_obj);
+  cout << tab(1) << "legal delays  : " << str(sample_delay) << endl;
+  cout << tab(1) << "optimal delays: " << str(opt_delay) << endl;
 
-  return nullptr;
+  map<string, isl_aff*> schedule_functions;
+  for (auto f : operation_names) {
+    isl_val* rate = ilp.value(sched_var_name(f));
+    isl_val* delay = delay_problem.value(delay_var_name(f));
+    cout << "f rate: " << str(rate) << ", delay: " << str(delay) << endl;
+    string aff_str = 
+      "{ [i] -> [(" + str(rate) + "*i + " + str(delay) + ")]}";
+    cout << tab(1) << "aff str: " << aff_str << endl;
+    schedule_functions[f] = rdaff(ct, aff_str);
+  }
+
+  cout << "Done with schedule" << endl;
+  return schedule_functions;
 }
 
 umap* clockwork_schedule(uset* domain,
@@ -1014,7 +1034,11 @@ umap* clockwork_schedule(uset* domain,
       isl_map* projected = project_all_but(dmap, d);
       projected_deps.push_back(projected);
     }
-    clockwork_schedule_dimension(projected_deps);
+    auto schedules = clockwork_schedule_dimension(projected_deps);
+    cout << "Clockwork schedules..." << endl;
+    for (auto s : schedules) {
+      cout << tab(1) << s.first << ": " << str(s.second) << endl;
+    }
     if (d == 0) {
       //assert(false);
     }
