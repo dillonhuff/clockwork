@@ -90,14 +90,15 @@ void generate_xilinx_accel_wrapper(map<string, UBuffer>& buffers, prog& prg) {
   out << endl;
 
   for (auto in : prg.ins) {
-    out << tab(1) << "static hls::stream<int> " << in << ";" << endl;
+    out << tab(1) << "static hls::stream<hw_uint<32> > " << in << ";" << endl;
   }
 
   for (auto in : prg.outs) {
-    out << tab(1) << "static hls::stream<int> " << in << ";" << endl;
+    out << tab(1) << "static hls::stream<hw_uint<32> > " << in << ";" << endl;
   }
   out << endl;
 
+  // TODO: Change to bundle names!!
   for (auto in : prg.ins) {
     out << tab(1) << "read_input(" << in << "_arg" << ", " << in << ", size);" << endl;
   }

@@ -88,6 +88,10 @@ isl_aff* cpy(isl_aff* const b) {
   return isl_aff_copy(b);
 }
 
+isl_local_space* get_local_space(isl_aff* const m) {
+  return isl_aff_get_local_space(m);
+}
+
 isl_local_space* get_local_space(isl_basic_set* const m) {
   return isl_basic_set_get_local_space(m);
 }
@@ -121,6 +125,10 @@ isl_space* get_space(isl_set* const m) {
 int dim(isl_space* const s) {
   assert(false);
   return 0;
+}
+
+bool empty(isl_basic_set* const s) {
+  return isl_basic_set_is_empty(s);
 }
 
 bool empty(isl_set* const s) {
@@ -175,6 +183,7 @@ isl_id* id(isl_ctx* c, const std::string& s) {
 }
 
 std::string str(isl_id* const id) {
+  assert(id != nullptr);
   return std::string(isl_id_to_str(id));
 }
 
@@ -774,6 +783,8 @@ std::string str(isl_pw_qpolynomial* const bset) {
   return r;
 }
 std::string str(isl_val* const bset) {
+  assert(bset != nullptr);
+
   auto context = ctx(bset);
   isl_printer *p;
   p = isl_printer_to_str(context);
@@ -986,6 +997,10 @@ isl_union_map* unn(isl_union_map* const m0, isl_union_map* const m1) {
 
 isl_map* unn(isl_map* const m0, isl_map* const m1) {
   return isl_map_union(cpy(m0), cpy(m1));
+}
+
+isl_basic_set* its(isl_basic_set* const m0, isl_basic_set* const m1) {
+  return isl_basic_set_intersect(cpy(m0), cpy(m1));
 }
 
 isl_set* its(isl_set* const m0, isl_set* const m1) {
@@ -1706,6 +1721,19 @@ vector<string> space_var_args(isl_space* s) {
   return dim_decls;
 }
 
+isl_val* neg(isl_val* a) {
+  return isl_val_neg(cpy(a));
+}
+
 isl_val* mul(isl_val* a, isl_val* b) {
   return isl_val_mul(cpy(a), cpy(b));
 }
+
+isl_val* one(isl_ctx* c) {
+  return isl_val_one(c);
+}
+
+isl_val* negone(isl_ctx* c) {
+  return isl_val_negone(c);
+}
+

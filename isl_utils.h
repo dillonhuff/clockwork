@@ -70,9 +70,12 @@ isl_map* cpy(isl_map* const b);
 
 isl_val* cpy(isl_val* const b);
 
+isl_val* one(isl_ctx* c);
+isl_val* negone(isl_ctx* c);
 isl_aff* cpy(isl_aff* const b);
 
 isl_local_space* get_local_space(isl_basic_set* const m);
+isl_local_space* get_local_space(isl_aff* const m);
 isl_space* get_space(isl_constraint* const m);
 
 isl_space* get_space(isl_union_map* const m);
@@ -87,6 +90,7 @@ int get_size(isl_multi_aff* const m);
 
 int dim(isl_space* const s);
 
+bool empty(isl_basic_set* const s);
 bool empty(uset* const s);
 bool empty(isl_set* const s);
 
@@ -288,6 +292,7 @@ isl_stat umap_lex_lt(isl_map* s,  void* user);
 
 isl_map* unn(isl_map* const m0, isl_map* const m1);
 
+isl_basic_set* its(isl_basic_set* const m0, isl_basic_set* const m1);
 isl_set* its(isl_set* const m0, isl_set* const m1);
 
 isl_map* its(isl_map* const m0, isl_set* const m1);
@@ -431,3 +436,4 @@ vector<string> space_var_args(isl_space* s);
 vector<string> space_var_decls(isl_space* s);
 
 isl_val* mul(isl_val* a, isl_val* b);
+isl_val* neg(isl_val* a);

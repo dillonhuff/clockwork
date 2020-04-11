@@ -4,8 +4,11 @@ string sched_var_name(const string& n) {
   return "s_" + n;
 }
 
+string delay_var_name(const string& n) {
+  return "delay_" + n;
+}
 QExpr delayvar(const string& n) {
-  return qexpr("delay_" + n);
+  return qexpr(delay_var_name(n));
 }
 
 QExpr schedvar(const string& n) {
@@ -17,10 +20,30 @@ struct ilp_builder {
   isl_ctx* ctx;
   isl_basic_set* s;
   map<string, int> variable_positions;
+  bool solved;
+  isl_point* solution_point;
 
   ilp_builder(isl_ctx* ctx_) : ctx(ctx_) {
     auto init_space = isl_space_set_alloc(ctx, 0, 0);
     s = isl_basic_set_universe(init_space);
+    solved = false;
+    solution_point = nullptr;
+  }
+
+  isl_val* value(const std::string& var) {
+    assert(solved);
+    assert(solution_point != nullptr);
+    assert(contains_key(var, variable_positions));
+
+    return isl_point_get_coordinate_val(solution_point,
+        isl_dim_set,
+        map_find(var, variable_positions));
+  }
+
+  void add_variable(const std::string& name) {
+    int next_pos = num_dims(isl_basic_set_get_space(s));
+    variable_positions[name] = next_pos;
+    s = isl_basic_set_add_dims(s, isl_dim_set, 1);
   }
 
   void add_geq(const std::map<string, isl_val*>& coeffs, isl_val* constant) {
@@ -47,9 +70,7 @@ struct ilp_builder {
     cout << "Denom: " << str(dn) << endl;
     for (auto v : coeffs) {
       if (!contains_key(v.first, variable_positions)) {
-        int next_pos = num_dims(isl_basic_set_get_space(s));
-        variable_positions[v.first] = next_pos;
-        s = isl_basic_set_add_dims(s, isl_dim_set, 1);
+        add_variable(v.first);
       }
     }
 
@@ -86,7 +107,21 @@ struct ilp_builder {
       cout << "objective: " << str(objective) << endl;
     }
     cout << "objective: " << str(objective) << endl;
-    return isl_basic_set_max_val(cpy(s), objective);
+    isl_val* max = isl_basic_set_max_val(cpy(s), objective);
+    isl_basic_set* max_loc =
+      isl_aff_eq_basic_set(objective,
+          isl_aff_val_on_domain(get_local_space(s), max));
+    solved = true;
+    cout << "max loc = " << str(max_loc) << endl;
+    cout << "s       = " << str(s) << endl;
+    auto max_loc_pts = its(max_loc, s);
+    cout << "max pts = " << str(max_loc_pts) << endl;
+
+    assert(!empty(max_loc_pts));
+
+    solution_point = sample(its(max_loc, s));
+    assert(solution_point != nullptr);
+    return max;
   }
 
   void add_eq(const std::map<string, isl_val*>& coeffs, isl_val* constant) {
@@ -873,9 +908,6 @@ umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
     }
   }
 
-  // Now: Collect schedule constraints for the problem and solve for
-  // rates and delays?
-
   ilp_builder ilp(ct);
   vector<QConstraint> rate_constraints;
   QExpr objective = qexpr(0);
@@ -889,23 +921,16 @@ umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
     auto qc = schedvar(consumer);
 
     for (auto sv : s.second) {
-      rate_constraints.push_back(geq(qp, qexpr(1)));
-      rate_constraints.push_back(geq(qc, qexpr(1)));
+      ilp.add_geq({{sched_var_name(consumer), isl_val_one(ct)}}, isl_val_negone(ct));
+      ilp.add_geq({{sched_var_name(producer), isl_val_one(ct)}}, isl_val_negone(ct));
 
       if (isl_val_is_zero(sv.first)) {
         continue;
       }
 
-      QExpr k = qe(sv.first);
-
-      rate_constraints.push_back(eq(qc - qc*k, qexpr(0)));
-
       ilp.add_eq({{sched_var_name(consumer), isl_val_one(ct)},
           {sched_var_name(producer), isl_val_neg(sv.first)}},
           isl_val_zero(ct));
-
-      ilp.add_geq({{sched_var_name(consumer), isl_val_one(ct)}}, isl_val_negone(ct));
-      ilp.add_geq({{sched_var_name(producer), isl_val_one(ct)}}, isl_val_negone(ct));
 
       obj.insert({sched_var_name(consumer), isl_val_one(ct)});
       obj.insert({sched_var_name(producer), isl_val_one(ct)});
@@ -920,7 +945,40 @@ umap* clockwork_schedule_dimension(vector<isl_map*> deps) {
   auto opt_pt = ilp.minimize(obj);
   cout << tab(1) << "legal point  : " << str(pt) << endl;
   cout << tab(1) << "minimal point: " << str(opt_pt) << endl;
+
+  // Compute delays
+  assert(ilp.solved);
+
+  ilp_builder delay_problem(ct);
+  for (auto s : schedule_params) {
+    string consumer = domain_name(s.first);
+    string producer = range_name(s.first);
+
+    isl_val* qp = ilp.value(sched_var_name(producer));
+
+    string dc = delay_var_name(consumer);
+    string dp = delay_var_name(producer);
+
+    for (auto sv : s.second) {
+
+      delay_problem.add_geq({{dc, one(ct)}}, isl_val_zero(ct));
+      delay_problem.add_geq({{dp, one(ct)}}, isl_val_zero(ct));
+
+      auto b = sv.second;
+      auto neg_qpb = neg(mul(qp, b));
+      delay_problem.add_geq({{dc, one(ct)}, {dp, negone(ct)}}, neg_qpb);
+
+      //obj.insert({sched_var_name(consumer), isl_val_one(ct)});
+      //obj.insert({sched_var_name(producer), isl_val_one(ct)});
+    }
+  }
+
+  cout << "Delay constraints" << endl;
+  auto sample_delay = sample(delay_problem.s);
+  //auto opt_pt = ilp.minimize(obj);
+  cout << tab(1) << "legal point  : " << str(sample_delay) << endl;
   //assert(false);
+  //cout << tab(1) << "minimal point: " << str(opt_pt) << endl;
 
   return nullptr;
 }
@@ -956,6 +1014,9 @@ umap* clockwork_schedule(uset* domain,
       projected_deps.push_back(projected);
     }
     clockwork_schedule_dimension(projected_deps);
+    if (d == 0) {
+      //assert(false);
+    }
   }
 
   return nullptr;

@@ -5137,7 +5137,7 @@ void application_tests() {
 
   mismatched_stencil_test();
   exposure_fusion();
-  assert(false);
+  //assert(false);
   gaussian_pyramid_app_test();
   //assert(false);
   jacobi2d_app_test();
