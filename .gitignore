@@ -45,3 +45,4 @@ pyramid_*
 camera_collateral*
 *.csv
 tb_soda_*
+user_settings/durst_settings.sh
