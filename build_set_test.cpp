@@ -3056,7 +3056,6 @@ struct App {
     return m;
   }
 
-  //Window data_window_provided_by_compute(const std::string& update, const int unroll_factor) {
   Window data_window_provided_by_compute(const std::string& update) {
     for (auto f : app_dag) {
       for (auto u : f.second.updates) {
@@ -3128,8 +3127,6 @@ struct App {
         isl_union_map* sched =
           its(m, domain);
 
-        //Window write_box = data_window_provided_by_compute(u.name(), unroll_factor);
-        //Window write_box = data_window_provided_by_compute(u.name(), u.unroll_factor);
         Window write_box = data_window_provided_by_compute(u.name());
         int i = 0;
         cout << "Write box for: " << f << " has " << write_box.pts().size() << " points in it" << endl;
@@ -3161,29 +3158,28 @@ struct App {
           cout << "Getting map from " << u.name() << " to " << consumer << endl;
 
           Window f_win = data_window_needed_by_compute(u.name(), f);
+          Window lane_window = data_window_needed_by_one_compute_lane(u.name(), f);
           cout << "### Window of " << f << " needed by " << u.name() << " = " << f_win << endl;
+          auto* lane_data_needed =
+            lane_window.needed;
+          cout << tab(1) << "Window needed by a single lane: " << u.name() << " = " << str(lane_data_needed) << endl;
 
-          //auto pr = pixels_read(u.name());
-          //cout << tab(1) << "pixels read: " << str(pr) << endl;
-          //cout << "Pixels read by each compute unit" << endl;
-          //for (int i = 0; i < u.unroll_factor; i++) {
-            //string lane_select_str =
-              //"{ " + u.name() + "[d0, l1] -> lane[l] : d0 % " + str(u.unroll_factor) + " = " + str(i) + " }";
-            //cout << "lane select str = " << lane_select_str << endl;
+          cout << tab(1) << "unroll factor: " << u.unroll_factor << endl;
+          for (int i = 0; i < u.unroll_factor; i++) {
+            string lane_select_str =
+              "{ " + u.provided.name + "[d0, l1] -> lane[l] : d0 % " + str(u.unroll_factor) + " = " + str(i) + " }";
+            cout << tab(1) << "lane select str = " << lane_select_str << endl;
 
-            //isl_map* lane_select =
-              //to_map(rdmap(ctx, lane_select_str));
+            isl_map* lane_select =
+              to_map(rdmap(ctx, lane_select_str));
 
-            //auto needed = box_touched(u.name(), last_update(f).name());
-            //cout << tab(1) << "pixels needed: " << str(needed.needed) << endl;
-            //cout << tab(1) << "lane selector: " << str(lane_select) << endl;
-            //assert(false);
+            cout << tab(1) << "lane selector: " << str(lane_select) << endl << endl;
 
-            ////auto data_needed_by_lane =
-              ////dot(inv(lane_select), needed);
+            auto data_needed_by_lane =
+              dot(inv(lane_select), lane_data_needed);
 
-            ////cout << tab(1) << "lane data    : " << str(data_needed_by_lane) << endl;
-          //}
+            cout << tab(1) << "lane " << i << " data    : " << str(data_needed_by_lane) << endl;
+          }
 
           int i = 0;
           for (auto p : f_win.pts()) {
@@ -3207,37 +3203,13 @@ struct App {
       buffers[f] = b;
     }
 
-    //for (auto b : buffers) {
-        //cout << b.second.name << endl;
-        //cout << "input_ports..." << endl;
-        //for (auto in_port: b.second.get_in_ports()) {
-            //cout << "\t" << in_port << " access map: " << str(b.second.access_map.at(in_port)) << endl;
-            //cout << "\t" << in_port << " schedule  : " << str(b.second.schedule.at(in_port)) << endl;
-            //cout << endl;
-        //}
-
-        //cout << "output_ports..." << endl;
-        //for (auto in_port: b.second.get_out_ports()) {
-            //cout << "\t" << in_port << " access map: " << str(b.second.access_map.at(in_port)) << endl;
-            //cout << "\t" << in_port << " schedule  : " << str(b.second.schedule.at(in_port)) << endl;
-            //cout << endl;
-        //}
-    //}
-
     return buffers;
   }
 
   void populate_program(CodegenOptions& options, prog& prg, const string& name, umap* m, map<string, UBuffer>& buffers) {
 
     uset* whole_dom = whole_compute_domain();
-    //uset* whole_dom =
-      //isl_union_set_read_from_str(ctx, "{}");
-    //assert(whole_dom != nullptr);
     auto sorted_functions = sort_functions();
-    //for (auto u : sort_updates()) {
-      //whole_dom =
-        //unn(whole_dom, to_uset(compute_domain(u)));
-    //}
 
     auto action_domain = cpy(whole_dom);
     map<string, isl_set*> domain_map;
@@ -3299,8 +3271,6 @@ struct App {
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
     generate_regression_testbench(prg);
-
-
   }
 
   umap* realize_opt_schedule(const std::string& name, const int d0, const int d1) {
@@ -5147,9 +5117,9 @@ void application_tests() {
 
   //reduce_1d_test();
 
-  //up_unrolled_test();
-  //up_down_unrolled_test();
-  //up_stencil_down_unrolled_test();
+  up_unrolled_test();
+  up_down_unrolled_test();
+  up_stencil_down_unrolled_test();
 
   jacobi2d_app_test();
   conv3x3_app_unrolled_test();

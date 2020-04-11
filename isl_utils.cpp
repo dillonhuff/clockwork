@@ -444,12 +444,12 @@ std::string str(isl_map* const m) {
 isl_map* to_map(isl_union_map* const m) {
   assert(m != nullptr);
 
-  cout << "Converting to map" << endl;
+  //cout << "Converting to map" << endl;
   vector<isl_map*> map_vec;
-  cout << "Initialized map vec" << endl;
+  //cout << "Initialized map vec" << endl;
   isl_union_map_foreach_map(m, get_maps, &map_vec);
 
-  cout << "map vec size = " << map_vec.size() << endl;
+  //cout << "map vec size = " << map_vec.size() << endl;
 
   if (map_vec.size() != 1) {
     std::cout << "Error: Several maps in: " << str(m) << std::endl;
