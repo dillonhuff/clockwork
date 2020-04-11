@@ -30,10 +30,25 @@ void generate_xilinx_accel_wrapper(map<string, UBuffer>& buffers, prog& prg) {
   ofstream out(driver_func + ".cpp");
   out << "#include \"" << prg.name << ".h\"" << endl << endl;
 
+  out << "#define INPUT_SIZE (18*18)" << endl;
+  out << "#define OUTPUT_SIZE (16*16)" << endl << endl;
 
   out << "extern \"C\" {" << endl << endl;
 
-  vector<string> buf_args;
+  out << "static void read_input(int* input, hls::stream<hw_uint<32> >& v, const int size) {" << endl;
+  out << tab(1) << "for (int i = 0; i < INPUT_SIZE; i++) {" << endl;
+  out << tab(2) << "v.write(input[i]);" << endl;
+  out << tab(1) << "}" << endl;
+  out << "}" << endl << endl;
+
+  out << "static void write_output(int* output, hls::stream<hw_uint<32> >& v, const int size) {" << endl;
+  out << tab(1) << "for (int i = 0; i < OUTPUT_SIZE; i++) {" << endl;
+  out << tab(2) << "output[i] = v.read();" << endl;
+  out << tab(1) << "}" << endl;
+  out << "}" << endl << endl;
+
+  vector<string> ptr_args;
+  vector<string> ptr_arg_decls;
   vector<string> buffer_args;
   for (auto in : prg.ins) {
     assert(contains_key(in, buffers));
@@ -41,8 +56,8 @@ void generate_xilinx_accel_wrapper(map<string, UBuffer>& buffers, prog& prg) {
     assert(buf.get_out_bundles().size() == 1);
     auto bundle = pick(buf.get_out_bundles());
 
-    //rgtb << tab(1) << "HWStream<" << buf.bundle_type_string(bundle) << " > " << bundle << ";" << endl;
-    buf_args.push_back("int* " + bundle + "_arg");
+    ptr_arg_decls.push_back("int* " + bundle + "_arg");
+    ptr_args.push_back(bundle);
     buffer_args.push_back(buf.name);
   }
 
@@ -52,13 +67,13 @@ void generate_xilinx_accel_wrapper(map<string, UBuffer>& buffers, prog& prg) {
     assert(buf.get_in_bundles().size() == 1);
     auto bundle = pick(buf.get_in_bundles());
 
-    //rgtb << tab(1) << "HWStream<" << buf.bundle_type_string(bundle) << " > " << bundle << ";" << endl;
-    buf_args.push_back("int* " + bundle + "_arg");
+    ptr_arg_decls.push_back("int* " + bundle + "_arg");
+    ptr_args.push_back(bundle);
     buffer_args.push_back(buf.name);
   }
 
-  vector<string> args = buf_args;
-  args.push_back("const int size");
+  vector<string> all_arg_decls = buf_args;
+  all_arg_decls.push_back("const int size");
 
   out << "void " << driver_func << "(" << comma_list(args) << ") { " << endl;
   out << "#pragma HLS dataflow" << endl;
@@ -69,10 +84,11 @@ void generate_xilinx_accel_wrapper(map<string, UBuffer>& buffers, prog& prg) {
   for (auto pt : args) {
     out << "#pragma HLS INTERFACE s_axilite port = " << pt << " bundle = control" << endl;
   }
+  cout << "#pragma HLS INTERFACE s_axilite port = return bundle = control" << endl;
   out << endl;
 
   for (auto in : prg.ins) {
-    out << tab(1) << "hls::stream<int> " << in << ";" << endl;
+    out << tab(1) << "static hls::stream<int> " << in << ";" << endl;
   }
 
   for (auto in : prg.outs) {
@@ -90,7 +106,7 @@ void generate_xilinx_accel_wrapper(map<string, UBuffer>& buffers, prog& prg) {
     out << tab(1) << "write_output(" << in << "_arg" << ", " << in << ", size);" << endl;
   }
 
-  out << "}" << endl;
+  out << "}" << endl << endl;
   out << "}" << endl;
 
   out.close();
