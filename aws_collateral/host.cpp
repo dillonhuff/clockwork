@@ -41,8 +41,8 @@ int main(int argc, char **argv) {
 
   std::string binaryFile = argv[1];
   std::string kernel_name = argv[2];
-  const int DATA_SIZE = argv[3];
-  const int OUT_DATA_SIZE = argv[4];
+  const int DATA_SIZE = stoi(argv[3]);
+  const int OUT_DATA_SIZE = stoi(argv[4]);
 
   size_t vector_size_bytes = sizeof(int) * DATA_SIZE;
   cl_int err;
