@@ -72,19 +72,21 @@ void generate_xilinx_accel_wrapper(map<string, UBuffer>& buffers, prog& prg) {
     buffer_args.push_back(buf.name);
   }
 
-  vector<string> all_arg_decls = buf_args;
+  vector<string> all_arg_decls = ptr_arg_decls;
   all_arg_decls.push_back("const int size");
 
-  out << "void " << driver_func << "(" << comma_list(args) << ") { " << endl;
+  out << "void " << driver_func << "(" << comma_list(all_arg_decls) << ") { " << endl;
   out << "#pragma HLS dataflow" << endl;
 
-  for (auto pt : buf_args) {
+  for (auto pt : ptr_args) {
     out << "#pragma HLS INTERFACE m_axi port = " << pt << " offset = slave bundle = gmem" << endl;
   }
-  for (auto pt : args) {
+  out << endl;
+  for (auto pt : ptr_args) {
     out << "#pragma HLS INTERFACE s_axilite port = " << pt << " bundle = control" << endl;
   }
-  cout << "#pragma HLS INTERFACE s_axilite port = return bundle = control" << endl;
+  out << "#pragma HLS INTERFACE s_axilite port = size bundle = control" << endl;
+  out << "#pragma HLS INTERFACE s_axilite port = return bundle = control" << endl;
   out << endl;
 
   for (auto in : prg.ins) {
@@ -92,7 +94,7 @@ void generate_xilinx_accel_wrapper(map<string, UBuffer>& buffers, prog& prg) {
   }
 
   for (auto in : prg.outs) {
-    out << tab(1) << "hls::stream<int> " << in << ";" << endl;
+    out << tab(1) << "static hls::stream<int> " << in << ";" << endl;
   }
   out << endl;
 

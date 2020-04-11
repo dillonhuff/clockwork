@@ -4128,8 +4128,7 @@ void exposure_fusion() {
 
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
-  int size =
-    100;
+  int size = 64;
     //1250;
     //200;
 
@@ -5137,6 +5136,8 @@ void application_tests() {
   //up_stencil_down_unrolled_test();
 
   mismatched_stencil_test();
+  exposure_fusion();
+  assert(false);
   gaussian_pyramid_app_test();
   //assert(false);
   jacobi2d_app_test();
@@ -5150,7 +5151,6 @@ void application_tests() {
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
 
-  exposure_fusion();
 
   seidel2d_test();
   jacobi_2d_2_test();
