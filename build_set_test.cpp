@@ -1019,7 +1019,6 @@ void generate_regression_testbench(prog& prg) {
   rgtb << tab(1) << prg.name << "(" << comma_list(optimized_streams) << ");" << endl;
 
   for (auto out : prg.outs) {
-
     auto cmap = prg.producer_map(out);
     auto read_map = inv(cmap);
     auto rng = range(read_map);
@@ -4285,10 +4284,10 @@ void gaussian_pyramid_app_test() {
   gp.realize_naive(last, 32, 32);
 
   std::vector<std::string> naive =
-    run_regression_tb("level_2_naive");
+    run_regression_tb("level_3_naive");
   //cout << "Naive    : " << naive << endl;
   std::vector<std::string> optimized =
-    run_regression_tb("level_2_opt");
+    run_regression_tb("level_3_opt");
   //cout << "Optimized: " << optimized << endl;
   assert(naive == optimized);
 
@@ -5137,8 +5136,10 @@ void application_tests() {
   //up_down_unrolled_test();
   //up_stencil_down_unrolled_test();
 
-  jacobi2d_app_test();
   mismatched_stencil_test();
+  gaussian_pyramid_app_test();
+  //assert(false);
+  jacobi2d_app_test();
   grayscale_conversion_test();
   denoise2d_test();
   upsample2d_test();
@@ -5165,7 +5166,6 @@ void application_tests() {
   upsample_stencil_1d_test();
 
   heat_3d_test();
-  gaussian_pyramid_app_test();
 
   //synth_reduce_test();
 
