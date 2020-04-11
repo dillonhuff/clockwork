@@ -1016,7 +1016,7 @@ umap* clockwork_schedule(uset* domain,
     }
     clockwork_schedule_dimension(projected_deps);
     if (d == 0) {
-      assert(false);
+      //assert(false);
     }
   }
 
