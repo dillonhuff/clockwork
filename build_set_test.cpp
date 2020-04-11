@@ -2579,18 +2579,18 @@ struct App {
     return updates;
   }
 
-  vector<string> sort_operations() const {
-    auto functions = sort_functions();
-    vector<string> operations;
-    for (auto f : functions) {
-      Result r = app_dag.at(f);
-      operations.push_back(f + "_comp");
-      //if (r.is_reduce()) {
-        //operations.push_back(f + "_reduce");
-      //}
-    }
-    return operations;
-  }
+  //vector<string> sort_operations() const {
+    //auto functions = sort_functions();
+    //vector<string> operations;
+    //for (auto f : functions) {
+      //Result r = app_dag.at(f);
+      //operations.push_back(f + "_comp");
+      ////if (r.is_reduce()) {
+        ////operations.push_back(f + "_reduce");
+      ////}
+    //}
+    //return operations;
+  //}
 
   vector<string> sort_functions() const {
     vector<string> sorted;
@@ -2661,6 +2661,7 @@ struct App {
     for (auto f : sort_functions()) {
 
       for (auto update : app_dag.at(f).updates) {
+
         compute_maps[update.name()] =
           to_map(rdmap(ctx, "{ " + f + "[" + comma_list(data_vars) + " ] -> " +
                 update.name() + "[floor(d0 / " + to_string(update.unroll_factor) + "), " + comma_list(later_sched_vars) + "] }"));
@@ -2671,31 +2672,31 @@ struct App {
                 compute_maps[update.name()],
                 data_domain(f).to_set(ctx, f)));
         //for (int i = 0; i < update.reduce_var_domain.dimension(); i++) {
-        for (int i = 0; i < sdims - ndims; i++) {
-          string uv = "s" + str(i + ndims);
-          if (i < update.reduce_var_domain.dimension()) {
-            string limited_set =
-              "{ " + update.name() + sep_list(sched_vars, "[", "]", ", ") + " : " +
-              str(update.reduce_var_domain.min(i)) + " <= " + uv + " <= " + str(update.reduce_var_domain.max(i)) +
-              " }";
-            cout << "Limit set: " << limited_set << endl;
+        //for (int i = 0; i < sdims - ndims; i++) {
+          //string uv = "s" + str(i + ndims);
+          //if (i < update.reduce_var_domain.dimension()) {
+            //string limited_set =
+              //"{ " + update.name() + sep_list(sched_vars, "[", "]", ", ") + " : " +
+              //str(update.reduce_var_domain.min(i)) + " <= " + uv + " <= " + str(update.reduce_var_domain.max(i)) +
+              //" }";
+            //cout << "Limit set: " << limited_set << endl;
 
-            compute_sets[update.name()] =
-              its(compute_sets[update.name()],
-                  rdset(ctx, limited_set));
-          } else {
-            string limited_set =
-              "{ " + update.name() + sep_list(sched_vars, "[", "]", ", ") + " : " +
-              " 0 <= " + uv + " <= 0" +
-              " }";
-            cout << "Limit set: " << limited_set << endl;
+            //compute_sets[update.name()] =
+              //its(compute_sets[update.name()],
+                  //rdset(ctx, limited_set));
+          //} else {
+            //string limited_set =
+              //"{ " + update.name() + sep_list(sched_vars, "[", "]", ", ") + " : " +
+              //" 0 <= " + uv + " <= 0" +
+              //" }";
+            //cout << "Limit set: " << limited_set << endl;
 
-            compute_sets[update.name()] =
-              its(compute_sets[update.name()],
-                  rdset(ctx, limited_set));
+            //compute_sets[update.name()] =
+              //its(compute_sets[update.name()],
+                  //rdset(ctx, limited_set));
 
-          }
-        }
+          //}
+        //}
 
         cout << "Compute domain for " << update.name() << " is " << str(compute_sets[update.name()]) << endl;
       }
@@ -2705,7 +2706,6 @@ struct App {
   }
 
   void fill_data_domain(const std::string& name, const int d0, const int d1) {
-    ////fill_data_domain(name, {d0, d1}, unroll_factor);
     fill_data_domain(name, {d0, d1});
   }
 
@@ -2735,7 +2735,6 @@ struct App {
     return max_dims;
   }
 
-  //void fill_data_domain(const std::string& name, const vector<int>& dims, const int unroll_factor) {
   void fill_data_domain(const std::string& name, const vector<int>& dims) {
 
     Box sbox;
@@ -2839,6 +2838,7 @@ struct App {
     return b;
   }
 
+  // Too vague of a name
   isl_map* compute_map(const std::string& f) {
     return map_find(f, compute_maps);
   }
@@ -2935,7 +2935,7 @@ struct App {
     isl_options_set_schedule_algorithm(ctx, ISL_SCHEDULE_ALGORITHM_ISL);
 
     //isl_options_set_schedule_outer_coincidence(ctx, 1);
-    isl_options_set_schedule_outer_coincidence(ctx, 1);
+    //isl_options_set_schedule_outer_coincidence(ctx, 1);
 
     umap* naive_sched = schedule_naive();
     auto before = lex_lt(naive_sched, naive_sched);
@@ -3163,22 +3163,27 @@ struct App {
           Window f_win = data_window_needed_by_compute(u.name(), f);
           cout << "### Window of " << f << " needed by " << u.name() << " = " << f_win << endl;
 
-          auto pr = pixels_read(u.name());
-          cout << tab(1) << "pixels read: " << str(pr) << endl;
-          cout << "Pixels read by each compute unit" << endl;
-          for (int i = 0; i < u.unroll_factor; i++) {
-            isl_map* lane_select =
-              to_map(rdmap(ctx, "{ " + u.name() +
-                  "_lane_" + str(i) +
-                  "[l0, l1] -> " +
-                  u.name() + "[d0, l1] : d0 % " + str(u.unroll_factor) + " = " + str(i) + " }"));
-            //isl_map* mselect = isl_map_universe(get_space(pr));
+          //auto pr = pixels_read(u.name());
+          //cout << tab(1) << "pixels read: " << str(pr) << endl;
+          //cout << "Pixels read by each compute unit" << endl;
+          //for (int i = 0; i < u.unroll_factor; i++) {
+            //string lane_select_str =
+              //"{ " + u.name() + "[d0, l1] -> lane[l] : d0 % " + str(u.unroll_factor) + " = " + str(i) + " }";
+            //cout << "lane select str = " << lane_select_str << endl;
 
-            cout << tab(1) << "lane selector: " << str(lane_select) << endl;
-            auto data_needed_by_lane =
-              dot(lane_select, pr);
-            cout << tab(1) << "lane data    : " << str(data_needed_by_lane) << endl;
-          }
+            //isl_map* lane_select =
+              //to_map(rdmap(ctx, lane_select_str));
+
+            //auto needed = box_touched(u.name(), last_update(f).name());
+            //cout << tab(1) << "pixels needed: " << str(needed.needed) << endl;
+            //cout << tab(1) << "lane selector: " << str(lane_select) << endl;
+            //assert(false);
+
+            ////auto data_needed_by_lane =
+              ////dot(inv(lane_select), needed);
+
+            ////cout << tab(1) << "lane data    : " << str(data_needed_by_lane) << endl;
+          //}
 
           int i = 0;
           for (auto p : f_win.pts()) {
@@ -3224,14 +3229,15 @@ struct App {
 
   void populate_program(CodegenOptions& options, prog& prg, const string& name, umap* m, map<string, UBuffer>& buffers) {
 
-    uset* whole_dom =
-      isl_union_set_read_from_str(ctx, "{}");
-    assert(whole_dom != nullptr);
+    uset* whole_dom = whole_compute_domain();
+    //uset* whole_dom =
+      //isl_union_set_read_from_str(ctx, "{}");
+    //assert(whole_dom != nullptr);
     auto sorted_functions = sort_functions();
-    for (auto u : sort_updates()) {
-      whole_dom =
-        unn(whole_dom, to_uset(compute_domain(u)));
-    }
+    //for (auto u : sort_updates()) {
+      //whole_dom =
+        //unn(whole_dom, to_uset(compute_domain(u)));
+    //}
 
     auto action_domain = cpy(whole_dom);
     map<string, isl_set*> domain_map;
@@ -3330,7 +3336,8 @@ struct App {
     fill_compute_domain();
 
     umap* m =
-      schedule_isl();
+      schedule_naive();
+      //schedule_isl();
 
     cout << "Schedule: " << str(m) << endl;
 
@@ -3498,6 +3505,18 @@ struct App {
     return false;
   }
 
+  uset* whole_compute_domain() {
+    uset* whole_dom =
+      isl_union_set_read_from_str(ctx, "{}");
+    assert(whole_dom != nullptr);
+    for (auto u : sort_updates()) {
+      whole_dom =
+        unn(whole_dom, to_uset(compute_domain(u)));
+    }
+
+    return whole_dom;
+  }
+
   void schedule_and_codegen(const std::string& name) {
     umap* m = schedule();
     assert(m != nullptr);
@@ -3523,13 +3542,8 @@ struct App {
     map<string, UBuffer> buffers = build_buffers(m);
 
     uset* whole_dom =
-      isl_union_set_read_from_str(ctx, "{}");
-    assert(whole_dom != nullptr);
+      whole_compute_domain();
     auto sorted_functions = sort_functions();
-    for (auto u : sort_updates()) {
-      whole_dom =
-        unn(whole_dom, to_uset(compute_domain(u)));
-    }
 
     CodegenOptions options;
     options.internal = true;
@@ -3541,6 +3555,8 @@ struct App {
     prg.name = name + "_opt";
     prg.compute_unit_file = prg.name + "_compute_units.h";
     generate_compute_unit_file(prg.compute_unit_file);
+
+    //populate_program(options, prg, name, m, buffers);
 
     auto action_domain = cpy(whole_dom);
     map<string, isl_set*> domain_map;
@@ -5135,21 +5151,21 @@ void application_tests() {
   //up_down_unrolled_test();
   //up_stencil_down_unrolled_test();
 
+  jacobi2d_app_test();
+  conv3x3_app_unrolled_test();
+  conv3x3_app_unrolled_uneven_test();
+
   mismatched_stencil_test();
   exposure_fusion();
   //assert(false);
   gaussian_pyramid_app_test();
   //assert(false);
-  jacobi2d_app_test();
   grayscale_conversion_test();
   denoise2d_test();
   upsample2d_test();
   downsample2d_test();
   updown_merge_test();
   sobel_test();
-
-  conv3x3_app_unrolled_test();
-  conv3x3_app_unrolled_uneven_test();
 
 
   seidel2d_test();
