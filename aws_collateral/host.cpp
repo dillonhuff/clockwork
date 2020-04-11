@@ -32,16 +32,18 @@
 #include <fstream>
 #include <vector>
 
-#define DATA_SIZE (18*18)
-#define OUT_DATA_SIZE (16*16)
-
 int main(int argc, char **argv) {
-  if (argc != 2) {
-    std::cout << "Usage: " << argv[0] << " <XCLBIN File>" << std::endl;
+
+  if (argc != 5) {
+    std::cout << "Usage: " << argv[0] << " <XCLBIN File> <Kernel Name> <input size> <output size>" << std::endl;
     return EXIT_FAILURE;
   }
 
   std::string binaryFile = argv[1];
+  std::string kernel_name = argv[2];
+  const int DATA_SIZE = argv[3];
+  const int OUT_DATA_SIZE = argv[4];
+
   size_t vector_size_bytes = sizeof(int) * DATA_SIZE;
   cl_int err;
   cl::Context context;
@@ -96,7 +98,7 @@ int main(int argc, char **argv) {
         << "] with xclbin file!\n";
     } else {
       std::cout << "Device[" << i << "]: program successful!\n";
-      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, "jacobi2d_unrolled_1_opt_accel", &err));
+      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, kernel_name, &err));
       valid_device++;
       break; // we break because we found a valid device
     }
@@ -154,7 +156,7 @@ int main(int argc, char **argv) {
 
   // Compare the results of the Device to the simulation
   //bool match = true;
-  std::ofstream regression_result("accel_result.csv");
+  std::ofstream regression_result(kernel_name + "_accel_result.csv");
   for (int i = 0; i < OUT_DATA_SIZE; i++) {
     regression_result << source_hw_results[i] << std::endl;
   }
