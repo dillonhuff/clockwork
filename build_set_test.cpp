@@ -3495,6 +3495,12 @@ struct App {
     assert(m != nullptr);
 
     cout << "Schedule: " << str(m) << endl;
+    cout << "Maps..." << endl;
+    auto ms = get_maps(m);
+    for (auto m : ms) {
+      cout << tab(1) << str(m) << endl;
+    }
+    assert(false);
 
     //auto scheds_n =
       //schedule_opt();
@@ -3521,9 +3527,10 @@ struct App {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    //options.use_custom_code_string = true;
+    options.use_custom_code_string = false;
     options.code_string = cgn;
-    //options.all_rams = true;
+    options.all_rams = true;
 
     prog prg;
     prg.name = name + "_opt";
@@ -3597,10 +3604,8 @@ struct App {
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     set_unroll_factors(unroll_factor);
-    //fill_data_domain(name, d0, d1, unroll_factor);
     fill_data_domain(name, d0, d1);
     fill_compute_domain();
-    //schedule_and_codegen(name, unroll_factor);
     schedule_and_codegen(name);
   }
 
@@ -4060,6 +4065,31 @@ void up_down_unrolled_test() {
   //assert(false);
 }
 
+void up_stencil_down_test() {
+  App lp;
+  lp.func2d("in_off_chip");
+  lp.func2d("in", "id", {pt("in_off_chip")});
+
+  lp.func2d("us", "id", {upsample(2, "in")});
+  lp.func2d("stencil", "conv_3_3", {stencil(-1, 1, -1, 1, "us")});
+  lp.func2d("ds", "id", {downsample(2, "stencil")});
+
+  int size = 16;
+
+  lp.realize("ds", size, size);
+  auto opt = run_regression_tb("ds_opt");
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  //options.unroll_factors_as_pad = true;
+
+  lp.realize_naive(options, "ds", size, size);
+  auto naive = run_regression_tb("ds_naive");
+
+  assert(opt == naive);
+}
+
 void up_stencil_down_unrolled_test() {
   App lp;
   lp.func2d("in_off_chip");
@@ -4070,8 +4100,8 @@ void up_stencil_down_unrolled_test() {
   lp.func2d("ds", "id", {downsample(2, "stencil")});
 
   int size = 16;
-  //lp.unroll("us", 4);
-  //lp.unroll("stencil", 2);
+  lp.unroll("us", 4);
+  lp.unroll("stencil", 2);
 
   lp.realize("ds", size, size);
   auto opt = run_regression_tb("ds_opt");
@@ -5142,7 +5172,8 @@ void application_tests() {
 
   //reduce_1d_test();
 
-  //up_stencil_down_unrolled_test();
+  up_stencil_down_test();
+  up_stencil_down_unrolled_test();
   up_unrolled_test();
   up_unrolled_4_test();
   up_down_unrolled_test();
@@ -5150,7 +5181,6 @@ void application_tests() {
   jacobi2d_app_test();
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
-
 
   mismatched_stencil_test();
   exposure_fusion();
