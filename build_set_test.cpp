@@ -847,7 +847,7 @@ void auto_vec_test() {
 }
 
 std::vector<std::string> run_regression_tb(const std::string& name) {
-  int res = system(string("g++ -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
+  int res = system(string("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
   assert(res == 0);
 
   res = system("./a.out");
@@ -3314,8 +3314,8 @@ struct App {
     fill_compute_domain();
 
     umap* m =
-      //schedule_naive();
-      schedule_isl();
+      schedule_naive();
+      //schedule_isl();
 
     cout << "Schedule: " << str(m) << endl;
 
@@ -5196,8 +5196,10 @@ void application_tests() {
 
   //reduce_1d_test();
 
-  up_stencil_down_test();
-  up_stencil_down_unrolled_test();
+  blur_x_test();
+
+  //up_stencil_down_test();
+  //up_stencil_down_unrolled_test();
   up_unrolled_test();
   up_unrolled_4_test();
   up_down_unrolled_test();
@@ -5242,7 +5244,6 @@ void application_tests() {
   blur_and_downsample_test();
   downsample_and_blur_test();
 
-  blur_x_test();
   pointwise_test();
 
   stencil_3d_test();

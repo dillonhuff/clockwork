@@ -291,15 +291,16 @@ void set_at(hw_uint<Len>& i, const int value) {
 #endif
 }
 
-template<int offset, int Len>
-void set_at(hw_uint<Len>& i, const hw_uint<Len>& value) {
+template<int offset, int Len, int OtherLen>
+void set_at(hw_uint<Len>& i, const hw_uint<OtherLen>& value) {
 #ifdef __VIVADO_SYNTH__
-  for (int v = offset; v < offset + Len; v++) {
+  for (int v = offset; v < offset + OtherLen; v++) {
 #pragma HLS unroll
     i.val[v] = value.val[v - offset];
   }
 #else
-  for (int v = offset; v < offset + Len; v++) {
+  //assert(false);
+  for (int v = offset; v < offset + OtherLen; v++) {
     i.val.set(v, value.val.get(v - offset));
   }
 #endif
