@@ -2356,6 +2356,7 @@ struct App {
 
     Result res;
     for (auto w : windows) {
+      assert(contains_key(w.name, app_dag));
       w.needed = build_needed(name, w);
       res.srcs.push_back(w);
     }
@@ -4068,6 +4069,29 @@ void up_down_unrolled_test() {
   //assert(false);
 }
 
+void neg_stencil_test() {
+  App lp;
+  lp.func2d("in_off_chip");
+  lp.func2d("in", "id", {pt("in_off_chip")});
+
+  lp.func2d("neg_stencil", "conv_3_3", {stencil(-1, 1, -1, 1, "in")});
+
+  int size = 16;
+
+  lp.realize("neg_stencil", size, size);
+  auto opt = run_regression_tb("neg_stencil_opt");
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  //options.unroll_factors_as_pad = true;
+
+  lp.realize_naive(options, "neg_stencil", size, size);
+  auto naive = run_regression_tb("neg_stencil_naive");
+
+  assert(opt == naive);
+}
+
 void up_stencil_test() {
   App lp;
   lp.func2d("in_off_chip");
@@ -5241,6 +5265,7 @@ void application_tests() {
 
   //reduce_1d_test();
 
+  neg_stencil_test();
   blur_x_test();
 
   up_stencil_test();
