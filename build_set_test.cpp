@@ -4010,6 +4010,29 @@ void up_unrolled_test() {
   assert(opt == naive);
 }
 
+void up_unrolled_4_test() {
+  App lp;
+  lp.func2d("in_off_chip");
+  lp.func2d("in", "id", {pt("in_off_chip")});
+  lp.func2d("us", "id", {upsample(2, "in")});
+
+  int size = 16;
+  lp.unroll("us", 4);
+
+  lp.realize("us", size, size);
+  auto opt = run_regression_tb("us_opt");
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  options.unroll_factors_as_pad = true;
+
+  lp.realize_naive(options, "us", size, size);
+  auto naive = run_regression_tb("us_naive");
+
+  assert(opt == naive);
+}
+
 void up_down_unrolled_test() {
   App lp;
   lp.func2d("in_off_chip");
@@ -4033,7 +4056,7 @@ void up_down_unrolled_test() {
   auto naive = run_regression_tb("ds_naive");
 
   assert(opt == naive);
-  assert(false);
+  //assert(false);
 }
 
 void up_stencil_down_unrolled_test() {
@@ -5119,13 +5142,15 @@ void application_tests() {
 
   //reduce_1d_test();
 
+  up_unrolled_test();
+  up_unrolled_4_test();
+  up_down_unrolled_test();
+
+  up_stencil_down_unrolled_test();
   jacobi2d_app_test();
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
 
-  up_unrolled_test();
-  //up_down_unrolled_test();
-  //up_stencil_down_unrolled_test();
 
   mismatched_stencil_test();
   exposure_fusion();
