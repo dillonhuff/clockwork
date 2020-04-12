@@ -2458,6 +2458,9 @@ struct App {
   }
 
   Update last_update(const string& func) const {
+    if (!(contains_key(func, app_dag))) {
+      cout << tab(1) << "No key " << func << " in app dag" << endl;
+    }
     assert(contains_key(func, app_dag));
     assert(app_dag.at(func).updates.size() > 0);
     return app_dag.at(func).updates.back();
@@ -3311,8 +3314,8 @@ struct App {
     fill_compute_domain();
 
     umap* m =
-      schedule_naive();
-      //schedule_isl();
+      //schedule_naive();
+      schedule_isl();
 
     cout << "Schedule: " << str(m) << endl;
 
@@ -3494,13 +3497,13 @@ struct App {
     umap* m = schedule();
     assert(m != nullptr);
 
-    cout << "Schedule: " << str(m) << endl;
-    cout << "Maps..." << endl;
-    auto ms = get_maps(m);
-    for (auto m : ms) {
-      cout << tab(1) << str(m) << endl;
-    }
-    assert(false);
+    //cout << "Schedule: " << str(m) << endl;
+    //cout << "Maps..." << endl;
+    //auto ms = get_maps(m);
+    //for (auto m : ms) {
+      //cout << tab(1) << str(m) << endl;
+    //}
+    //assert(false);
 
     //auto scheds_n =
       //schedule_opt();
@@ -4075,6 +4078,26 @@ void up_stencil_down_test() {
   lp.func2d("ds", "id", {downsample(2, "stencil")});
 
   int size = 16;
+
+  auto isl_sched = lp.realize_isl_schedule("ds", size, size);
+  auto isl_maps = get_maps(isl_sched);
+
+  auto opt_sched = lp.realize_opt_schedule("ds", size, size);
+  auto opt_maps = get_maps(opt_sched);
+
+  cout << "--- ISL Schedule" << endl;
+  for (auto m : isl_maps) {
+    cout << tab(1) << str(m) <<  endl;
+  }
+  cout << endl << endl;
+
+  cout << "--- OPT Schedule" << endl;
+  for (auto m : opt_maps) {
+    cout << tab(1) << str(m) <<  endl;
+  }
+  cout << endl << endl;
+
+  assert(false);
 
   lp.realize("ds", size, size);
   auto opt = run_regression_tb("ds_opt");
