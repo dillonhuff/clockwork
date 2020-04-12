@@ -344,6 +344,16 @@ inline hw_uint<32>  jacobi2d_unrolled_2_rd7_select(t1_cache& t1, int d0, int d1)
 //	jacobi2d_unrolled_2_rd6
 //	jacobi2d_unrolled_2_rd7
 inline hw_uint<256> t1_jacobi2d_unrolled_2_update_0_read_bundle_read(t1_cache& t1, int d0, int d1) {
+  // # of ports in bundle: 8
+    // jacobi2d_unrolled_2_rd0
+    // jacobi2d_unrolled_2_rd1
+    // jacobi2d_unrolled_2_rd2
+    // jacobi2d_unrolled_2_rd3
+    // jacobi2d_unrolled_2_rd4
+    // jacobi2d_unrolled_2_rd5
+    // jacobi2d_unrolled_2_rd6
+    // jacobi2d_unrolled_2_rd7
+
 	hw_uint<256> result;
 	hw_uint<32>  jacobi2d_unrolled_2_rd0_res = jacobi2d_unrolled_2_rd0_select(t1, d0, d1);
 	set_at<0, 256>(result, jacobi2d_unrolled_2_rd0_res);

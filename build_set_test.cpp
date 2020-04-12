@@ -4008,7 +4008,6 @@ void up_unrolled_test() {
   auto naive = run_regression_tb("us_naive");
 
   assert(opt == naive);
-  //assert(false);
 }
 
 void up_down_unrolled_test() {
@@ -5120,13 +5119,13 @@ void application_tests() {
 
   //reduce_1d_test();
 
-  up_unrolled_test();
-  up_down_unrolled_test();
-  up_stencil_down_unrolled_test();
-
   jacobi2d_app_test();
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
+
+  up_unrolled_test();
+  up_down_unrolled_test();
+  up_stencil_down_unrolled_test();
 
   mismatched_stencil_test();
   exposure_fusion();

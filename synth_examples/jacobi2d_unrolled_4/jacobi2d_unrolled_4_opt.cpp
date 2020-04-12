@@ -614,6 +614,22 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd9_select(t1_cache& t1, int d0, int d1)
 //	jacobi2d_unrolled_4_rd12
 //	jacobi2d_unrolled_4_rd13
 inline hw_uint<448> t1_jacobi2d_unrolled_4_update_0_read_bundle_read(t1_cache& t1, int d0, int d1) {
+  // # of ports in bundle: 14
+    // jacobi2d_unrolled_4_rd0
+    // jacobi2d_unrolled_4_rd1
+    // jacobi2d_unrolled_4_rd2
+    // jacobi2d_unrolled_4_rd3
+    // jacobi2d_unrolled_4_rd4
+    // jacobi2d_unrolled_4_rd5
+    // jacobi2d_unrolled_4_rd6
+    // jacobi2d_unrolled_4_rd7
+    // jacobi2d_unrolled_4_rd8
+    // jacobi2d_unrolled_4_rd9
+    // jacobi2d_unrolled_4_rd10
+    // jacobi2d_unrolled_4_rd11
+    // jacobi2d_unrolled_4_rd12
+    // jacobi2d_unrolled_4_rd13
+
 	hw_uint<448> result;
 	hw_uint<32>  jacobi2d_unrolled_4_rd0_res = jacobi2d_unrolled_4_rd0_select(t1, d0, d1);
 	set_at<0, 448>(result, jacobi2d_unrolled_4_rd0_res);
