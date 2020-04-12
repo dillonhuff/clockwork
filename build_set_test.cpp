@@ -3406,7 +3406,6 @@ struct App {
         vector<pair<int, string> > args_and_widths;
         for (auto p : producers(f)) {
           int arg_width = 32;
-          //args_and_widths.push_back({arg_width*data_window_needed_by_compute(u.name(), p.name, unroll_factor).pts().size(), p.name});
           args_and_widths.push_back({arg_width*data_window_needed_by_compute(u.name(), p.name).pts().size(), p.name});
         }
 
@@ -3416,11 +3415,9 @@ struct App {
         }
 
         string out_type_string = "hw_uint<" + to_string(out_width) + "> ";
-        //cfile << out_type_string << " " << compute_name(f) << "_unrolled_" << unroll_factor << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
-        //cfile << out_type_string << " " << compute_name(f) << "_unrolled_" << u.unroll_factor << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
         cfile << out_type_string << " " << unrolled_compute_name(f) << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
         cfile << tab(1) << "hw_uint<" << out_width << "> whole_result;" << endl;
-        //for (int lane = 0; lane < unroll_factor; lane++) {
+
         for (int lane = 0; lane < u.unroll_factor; lane++) {
           vector<string> arg_names;
           for (auto arg : args_and_widths) {
@@ -3428,14 +3425,15 @@ struct App {
             int arg_width = 32;
 
             string p = arg.second;
-            //Window arg_input_window = data_window_needed_by_compute(u.name(), p, unroll_factor);
             Window arg_input_window = data_window_needed_by_compute(u.name(), p);
             string arg_name = "lane_" + to_string(lane) + "_" + p;
 
             arg_names.push_back(arg_name);
             cout << "getting window for " << u.name() << endl;
+            Window orig_dw =
+              data_window_needed_by_one_compute_lane(u.name(), p);
             Window win_needed =
-              data_window_needed_by_one_compute_lane(u.name(), p).increment(lane);
+              data_window_needed_by_one_compute_lane(u.name(), p).increment(orig_dw.stride(0), lane);
             cout << "Win needed: " << win_needed << endl;
 
             cfile << tab(1) << "hw_uint<" << win_needed.pts().size()*arg_width << "> " << arg_name << ";" << endl;
@@ -4010,7 +4008,7 @@ void up_unrolled_test() {
   auto naive = run_regression_tb("us_naive");
 
   assert(opt == naive);
-  assert(false);
+  //assert(false);
 }
 
 void up_down_unrolled_test() {

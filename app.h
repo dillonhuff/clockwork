@@ -68,6 +68,25 @@ struct FiniteRegion {
       }
     }
 
+  FiniteRegion increment(const QAV& stride, const int diff) const {
+    FiniteRegion c;
+    c.name = name;
+    c.strides = strides;
+
+    set<vector<int> > unrolled_offsets;
+    for (auto offset : offsets) {
+      vector<int> uoff = offset;
+      uoff[0] = uoff.at(0) + times_int(stride, diff);
+      unrolled_offsets.insert(uoff);
+    }
+
+    for (auto u : unrolled_offsets) {
+      c.offsets.push_back(u);
+    }
+
+    return c;
+  }
+
   FiniteRegion increment(const int diff) const {
     FiniteRegion c;
     c.name = name;
@@ -105,7 +124,7 @@ struct FiniteRegion {
     for (int i = 0; i < factor; i++) {
       for (auto offset : offsets) {
         vector<int> uoff = offset;
-        uoff[0] = uoff.at(0) + i;
+        uoff[0] = uoff.at(0) + times_int(stride(0), i);
         unrolled_offsets.insert(uoff);
       }
     }
@@ -176,7 +195,7 @@ struct FiniteRegion {
       + min_offset(dim);
   }
 
-  int times_int(const QAV& v, const int max_result_addr) {
+  int times_int(const QAV& v, const int max_result_addr) const {
     if ((v).is_whole()) {
       assert(v.denom == 1);
       return v.num*max_result_addr;

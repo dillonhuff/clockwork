@@ -734,6 +734,11 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
       //auto outpt = *begin(b.second);
 
       out << sep_list(all_decls, "", "", ", ") << ") {" << endl;
+      out << tab(1) << "// # of ports in bundle: " << map_find(b.first, buf.port_bundles).size() << endl;
+      for (auto pt : map_find(b.first, buf.port_bundles)) {
+        out << tab(2) << "// " << pt << endl;
+      }
+      out << endl;
 
       string arg_string = sep_list(all_args, "", "", ", ");
       out << "\t" << buf.bundle_type_string(b.first) + " result;" << endl;
