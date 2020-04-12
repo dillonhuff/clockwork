@@ -896,7 +896,6 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps) {
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
       get_pieces(lm);
     for (auto piece : pieces) {
-
       isl_multi_aff* bound = piece.second;
       assert(get_size(bound) == 1);
       isl_aff* aff_bound =
