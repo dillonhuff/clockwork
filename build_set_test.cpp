@@ -4079,25 +4079,25 @@ void up_stencil_down_test() {
 
   int size = 16;
 
-  auto isl_sched = lp.realize_isl_schedule("ds", size, size);
-  auto isl_maps = get_maps(isl_sched);
+  //auto isl_sched = lp.realize_isl_schedule("ds", size, size);
+  //auto isl_maps = get_maps(isl_sched);
 
-  auto opt_sched = lp.realize_opt_schedule("ds", size, size);
-  auto opt_maps = get_maps(opt_sched);
+  //auto opt_sched = lp.realize_opt_schedule("ds", size, size);
+  //auto opt_maps = get_maps(opt_sched);
 
-  cout << "--- ISL Schedule" << endl;
-  for (auto m : isl_maps) {
-    cout << tab(1) << str(m) <<  endl;
-  }
-  cout << endl << endl;
+  //cout << "--- ISL Schedule" << endl;
+  //for (auto m : isl_maps) {
+    //cout << tab(1) << str(m) <<  endl;
+  //}
+  //cout << endl << endl;
 
-  cout << "--- OPT Schedule" << endl;
-  for (auto m : opt_maps) {
-    cout << tab(1) << str(m) <<  endl;
-  }
-  cout << endl << endl;
+  //cout << "--- OPT Schedule" << endl;
+  //for (auto m : opt_maps) {
+    //cout << tab(1) << str(m) <<  endl;
+  //}
+  //cout << endl << endl;
 
-  assert(false);
+  //assert(false);
 
   lp.realize("ds", size, size);
   auto opt = run_regression_tb("ds_opt");
@@ -4111,6 +4111,7 @@ void up_stencil_down_test() {
   auto naive = run_regression_tb("ds_naive");
 
   assert(opt == naive);
+  assert(false);
 }
 
 void up_stencil_down_unrolled_test() {
