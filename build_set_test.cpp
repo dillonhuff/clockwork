@@ -5124,8 +5124,8 @@ void application_tests() {
   conv3x3_app_unrolled_uneven_test();
 
   up_unrolled_test();
-  up_down_unrolled_test();
-  up_stencil_down_unrolled_test();
+  //up_down_unrolled_test();
+  //up_stencil_down_unrolled_test();
 
   mismatched_stencil_test();
   exposure_fusion();
