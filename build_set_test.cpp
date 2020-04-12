@@ -2460,7 +2460,7 @@ struct App {
 
   Update last_update(const string& func) const {
     if (!(contains_key(func, app_dag))) {
-      cout << tab(1) << "No key " << func << " in app dag" << endl;
+      cout << tab(1) << "Error: No key " << func << " in app dag" << endl;
     }
     assert(contains_key(func, app_dag));
     assert(app_dag.at(func).updates.size() > 0);
@@ -2663,7 +2663,6 @@ struct App {
     }
 
     for (auto f : sort_functions()) {
-
       for (auto update : app_dag.at(f).updates) {
 
         compute_maps[update.name()] =
@@ -2675,33 +2674,6 @@ struct App {
           range(its(
                 compute_maps[update.name()],
                 data_domain(f).to_set(ctx, f)));
-        //for (int i = 0; i < update.reduce_var_domain.dimension(); i++) {
-        //for (int i = 0; i < sdims - ndims; i++) {
-          //string uv = "s" + str(i + ndims);
-          //if (i < update.reduce_var_domain.dimension()) {
-            //string limited_set =
-              //"{ " + update.name() + sep_list(sched_vars, "[", "]", ", ") + " : " +
-              //str(update.reduce_var_domain.min(i)) + " <= " + uv + " <= " + str(update.reduce_var_domain.max(i)) +
-              //" }";
-            //cout << "Limit set: " << limited_set << endl;
-
-            //compute_sets[update.name()] =
-              //its(compute_sets[update.name()],
-                  //rdset(ctx, limited_set));
-          //} else {
-            //string limited_set =
-              //"{ " + update.name() + sep_list(sched_vars, "[", "]", ", ") + " : " +
-              //" 0 <= " + uv + " <= 0" +
-              //" }";
-            //cout << "Limit set: " << limited_set << endl;
-
-            //compute_sets[update.name()] =
-              //its(compute_sets[update.name()],
-                  //rdset(ctx, limited_set));
-
-          //}
-        //}
-
         cout << "Compute domain for " << update.name() << " is " << str(compute_sets[update.name()]) << endl;
       }
     }
@@ -4098,27 +4070,29 @@ void up_stencil_test() {
   lp.func2d("in", "id", {pt("in_off_chip")});
 
   lp.func2d("us", "id", {upsample(2, "in")});
-  lp.func2d("up_stencil", "conv_3_3", {stencil(-1, 1, -1, 1, "us")});
+  lp.func2d("up_stencil", "conv_3_3", {stencil(-2, 0, -2, 0, "us")});
+  //lp.func2d("up_stencil", "conv_3_3", {stencil(-1, 1, -1, 1, "us")});
+  //lp.func2d("up_stencil", "conv_3_3", {stencil(0, 2, 0, 2, "us")});
 
   int size = 16;
 
-  //auto isl_sched = lp.realize_isl_schedule("ds", size, size);
-  //auto isl_maps = get_maps(isl_sched);
+  auto isl_sched = lp.realize_isl_schedule("up_stencil", size, size);
+  auto isl_maps = get_maps(isl_sched);
 
-  //auto opt_sched = lp.realize_opt_schedule("ds", size, size);
-  //auto opt_maps = get_maps(opt_sched);
+  auto opt_sched = lp.realize_opt_schedule("up_stencil", size, size);
+  auto opt_maps = get_maps(opt_sched);
 
-  //cout << "--- ISL Schedule" << endl;
-  //for (auto m : isl_maps) {
-    //cout << tab(1) << str(m) <<  endl;
-  //}
-  //cout << endl << endl;
+  cout << "--- ISL Schedule" << endl;
+  for (auto m : isl_maps) {
+    cout << tab(1) << str(m) <<  endl;
+  }
+  cout << endl << endl;
 
-  //cout << "--- OPT Schedule" << endl;
-  //for (auto m : opt_maps) {
-    //cout << tab(1) << str(m) <<  endl;
-  //}
-  //cout << endl << endl;
+  cout << "--- OPT Schedule" << endl;
+  for (auto m : opt_maps) {
+    cout << tab(1) << str(m) <<  endl;
+  }
+  cout << endl << endl;
 
   //assert(false);
 
