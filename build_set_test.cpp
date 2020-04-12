@@ -3523,6 +3523,7 @@ struct App {
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
     options.code_string = cgn;
+    //options.all_rams = true;
 
     prog prg;
     prg.name = name + "_opt";
@@ -4069,8 +4070,8 @@ void up_stencil_down_unrolled_test() {
   lp.func2d("ds", "id", {downsample(2, "stencil")});
 
   int size = 16;
-  lp.unroll("us", 4);
-  lp.unroll("stencil", 2);
+  //lp.unroll("us", 4);
+  //lp.unroll("stencil", 2);
 
   lp.realize("ds", size, size);
   auto opt = run_regression_tb("ds_opt");
@@ -4078,7 +4079,7 @@ void up_stencil_down_unrolled_test() {
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
-  options.unroll_factors_as_pad = true;
+  //options.unroll_factors_as_pad = true;
 
   lp.realize_naive(options, "ds", size, size);
   auto naive = run_regression_tb("ds_naive");
@@ -5141,10 +5142,10 @@ void application_tests() {
 
   //reduce_1d_test();
 
+  //up_stencil_down_unrolled_test();
   up_unrolled_test();
   up_unrolled_4_test();
   up_down_unrolled_test();
-  //up_stencil_down_unrolled_test();
   
   jacobi2d_app_test();
   conv3x3_app_unrolled_test();
