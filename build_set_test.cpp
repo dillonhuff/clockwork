@@ -4085,7 +4085,6 @@ void up_stencil_down_unrolled_test() {
 
 
   assert(opt == naive);
-  assert(false);
 }
 
 void exposure_fusion() {
@@ -5145,8 +5144,8 @@ void application_tests() {
   up_unrolled_test();
   up_unrolled_4_test();
   up_down_unrolled_test();
-
-  up_stencil_down_unrolled_test();
+  //up_stencil_down_unrolled_test();
+  
   jacobi2d_app_test();
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
