@@ -4068,6 +4068,51 @@ void up_down_unrolled_test() {
   //assert(false);
 }
 
+void up_stencil_test() {
+  App lp;
+  lp.func2d("in_off_chip");
+  lp.func2d("in", "id", {pt("in_off_chip")});
+
+  lp.func2d("us", "id", {upsample(2, "in")});
+  lp.func2d("up_stencil", "conv_3_3", {stencil(-1, 1, -1, 1, "us")});
+
+  int size = 16;
+
+  //auto isl_sched = lp.realize_isl_schedule("ds", size, size);
+  //auto isl_maps = get_maps(isl_sched);
+
+  //auto opt_sched = lp.realize_opt_schedule("ds", size, size);
+  //auto opt_maps = get_maps(opt_sched);
+
+  //cout << "--- ISL Schedule" << endl;
+  //for (auto m : isl_maps) {
+    //cout << tab(1) << str(m) <<  endl;
+  //}
+  //cout << endl << endl;
+
+  //cout << "--- OPT Schedule" << endl;
+  //for (auto m : opt_maps) {
+    //cout << tab(1) << str(m) <<  endl;
+  //}
+  //cout << endl << endl;
+
+  //assert(false);
+
+  lp.realize("up_stencil", size, size);
+  auto opt = run_regression_tb("up_stencil_opt");
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  //options.unroll_factors_as_pad = true;
+
+  lp.realize_naive(options, "up_stencil", size, size);
+  auto naive = run_regression_tb("up_stencil_naive");
+
+  assert(opt == naive);
+  assert(false);
+}
+
 void up_stencil_down_test() {
   App lp;
   lp.func2d("in_off_chip");
@@ -5198,6 +5243,7 @@ void application_tests() {
 
   blur_x_test();
 
+  up_stencil_test();
   //up_stencil_down_test();
   //up_stencil_down_unrolled_test();
   up_unrolled_test();
