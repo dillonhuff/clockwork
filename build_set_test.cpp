@@ -3812,6 +3812,11 @@ Window downsample(const int factor, const std::string& name) {
   return Window{name, {qconst(factor), qconst(factor)}, {{0, 0}}};
 }
 
+Window upsample0(const int factor, const std::string& name) {
+  return Window{name, {qconst(1, factor), qconst(1)}, {{0, 0}}};
+}
+
+
 Window upsample(const int factor, const std::string& name) {
   return Window{name, {qconst(1, factor), qconst(1, factor)}, {{0, 0}}};
 }
@@ -4069,17 +4074,18 @@ void up_stencil_test() {
   lp.func2d("in_off_chip");
   lp.func2d("in", "id", {pt("in_off_chip")});
 
-  lp.func2d("us", "id", {upsample(2, "in")});
-  lp.func2d("up_stencil", "conv_3_3", {stencil(-2, 0, -2, 0, "us")});
+  lp.func2d("us", "id", {upsample0(2, "in")});
+  //lp.func2d("up_stencil", "conv_3_3", {stencil(-2, 0, -2, 0, "us")});
   //lp.func2d("up_stencil", "conv_3_3", {stencil(-1, 1, -1, 1, "us")});
+  lp.func2d("up_stencil", "conv_1_3", {stencil(-1, 1, 0, 0, "us")});
   //lp.func2d("up_stencil", "conv_3_3", {stencil(0, 2, 0, 2, "us")});
 
-  int size = 16;
+  int size = 4;
 
-  auto isl_sched = lp.realize_isl_schedule("up_stencil", size, size);
+  auto isl_sched = lp.realize_isl_schedule("up_stencil", size, 1);
   auto isl_maps = get_maps(isl_sched);
 
-  auto opt_sched = lp.realize_opt_schedule("up_stencil", size, size);
+  auto opt_sched = lp.realize_opt_schedule("up_stencil", size, 1);
   auto opt_maps = get_maps(opt_sched);
 
   cout << "--- ISL Schedule" << endl;
@@ -4108,7 +4114,7 @@ void up_stencil_test() {
   auto naive = run_regression_tb("up_stencil_naive");
 
   assert(opt == naive);
-  assert(false);
+  //assert(false);
 }
 
 void up_stencil_down_test() {
@@ -4154,7 +4160,7 @@ void up_stencil_down_test() {
   auto naive = run_regression_tb("ds_naive");
 
   assert(opt == naive);
-  assert(false);
+  //assert(false);
 }
 
 void up_stencil_down_unrolled_test() {
@@ -5239,15 +5245,15 @@ void application_tests() {
 
   //reduce_1d_test();
 
+  up_stencil_test();
+  up_stencil_down_test();
   neg_stencil_test();
   blur_x_test();
 
-  up_stencil_test();
-  //up_stencil_down_test();
-  //up_stencil_down_unrolled_test();
   up_unrolled_test();
   up_unrolled_4_test();
   up_down_unrolled_test();
+  //up_stencil_down_unrolled_test();
   
   jacobi2d_app_test();
   conv3x3_app_unrolled_test();
