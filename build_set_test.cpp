@@ -2901,8 +2901,8 @@ struct App {
     }
 
     // schedule is dN, ..., d1, d0
-    for (auto& s : sched) {
-      //reverse(s.second);
+    for (auto& s : scheds) {
+      reverse(s.second);
     }
 
     cout << "Final schedule..." << endl;
@@ -5322,7 +5322,7 @@ void application_tests() {
   //reduce_1d_test();
 
   denoise2d_test();
-  assert(false);
+  //assert(false);
   mismatched_stencil_test();
   up_stencil_down_test();
   up_stencil_down_unrolled_test();
