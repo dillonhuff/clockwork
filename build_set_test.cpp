@@ -2845,53 +2845,100 @@ struct App {
   }
 
   map<string, vector<QExpr> > rectangular_schedules() {
-    vector<string> sorted_functions = sort_functions();
-    vector<string> sorted_operations;
 
-    map<string, Box> op_domains;
-    map<string, vector<QExpr> > schedules;
-    map<string, isl_map*> op_compute_maps;
-    map<string, map<string, umap*> > pixels_needed;
+    umap* writes = rdmap(ctx, "{}");
+    umap* reads = rdmap(ctx, "{}");
+    
+    for (auto u : sort_updates()) {
+      writes =
+        unn(writes, to_umap(pixels_written(u)));
+      reads =
+        unn(reads, pixels_read(u));
+    }
 
-    for (auto f : sorted_functions) {
-      for (auto u : app_dag.at(f).updates) {
-        sorted_operations.push_back(u.name());
+    assert(writes != nullptr);
+    assert(reads != nullptr);
 
-        op_domains[u.name()] =
-          compute_box(u.name());
+    uset* domain = whole_compute_domain();
+    assert(domain != nullptr);
 
-        pixels_needed[u.name()] = {};
-        for (auto w : u.get_srcs()) {
-          pixels_needed[u.name()][last_update(w.name).name()] = w.needed;
-        }
+    umap* naive_sched = schedule_naive();
+    auto before = lex_lt(naive_sched, naive_sched);
 
-        op_compute_maps[u.name()] = compute_map(u.name());
+    isl_union_map *validity =
+      its(dot(writes, inv(reads)), before);
+    cout << "validity: " << str(validity) << endl;
+
+    isl_union_map *proximity =
+      cpy(validity);
+
+    isl_union_map *coincidence =
+      cpy(validity);
+
+    map<string, vector<isl_aff*> > sched =
+      clockwork_schedule(domain, validity, proximity);
+
+    map<string, vector<QExpr> > scheds;
+    for (auto s : sched) {
+      string name = s.first;
+      vector<isl_aff*> vals = s.second;
+      // schedule is dN, ..., d1, d0
+      reverse(vals);
+      scheds[name] = {};
+      for (auto v : vals) {
+        QExpr expr;
+        scheds[name].push_back(expr);
       }
     }
 
-    int ndims = schedule_dimension();
+    return scheds;
+    //vector<string> sorted_functions = sort_functions();
+    //vector<string> sorted_operations;
 
-    auto last_compute_needed = build_compute_deps(
-        ndims,
-        sorted_operations,
-        pixels_needed,
-        op_compute_maps);
-    for (int i = ndims - 1; i >= 0; i--) {
-      auto dim_schedules =
-        schedule_dim(ctx, i, op_domains, sorted_operations, last_compute_needed);
+    //map<string, Box> op_domains;
+    //map<string, vector<QExpr> > schedules;
+    //map<string, isl_map*> op_compute_maps;
+    //map<string, map<string, umap*> > pixels_needed;
 
-      for (auto f : sorted_operations) {
-        schedules[f].push_back(dim_schedules.at(f));
-      }
-    }
+    //for (auto f : sorted_functions) {
+      //for (auto u : app_dag.at(f).updates) {
+        //sorted_operations.push_back(u.name());
 
-    cout << "Final schedule.." << endl;
-    for (auto s : schedules) {
-      cout << tab(1) << s.first << " -> " << comma_list(s.second) << endl;
-    }
-    //assert(false);
+        //op_domains[u.name()] =
+          //compute_box(u.name());
 
-    return schedules;
+        //pixels_needed[u.name()] = {};
+        //for (auto w : u.get_srcs()) {
+          //pixels_needed[u.name()][last_update(w.name).name()] = w.needed;
+        //}
+
+        //op_compute_maps[u.name()] = compute_map(u.name());
+      //}
+    //}
+
+    //int ndims = schedule_dimension();
+
+    //auto last_compute_needed = build_compute_deps(
+        //ndims,
+        //sorted_operations,
+        //pixels_needed,
+        //op_compute_maps);
+    //for (int i = ndims - 1; i >= 0; i--) {
+      //auto dim_schedules =
+        //schedule_dim(ctx, i, op_domains, sorted_operations, last_compute_needed);
+
+      //for (auto f : sorted_operations) {
+        //schedules[f].push_back(dim_schedules.at(f));
+      //}
+    //}
+
+    //cout << "Final schedule.." << endl;
+    //for (auto s : schedules) {
+      //cout << tab(1) << s.first << " -> " << comma_list(s.second) << endl;
+    //}
+    ////assert(false);
+
+    //return schedules;
   }
 
   umap* pixels_read(const std::string& u) {
@@ -2910,21 +2957,8 @@ struct App {
   umap* schedule_isl() {
     isl_options_set_schedule_algorithm(ctx, ISL_SCHEDULE_ALGORITHM_ISL);
 
-    //isl_options_set_schedule_outer_coincidence(ctx, 1);
-    //isl_options_set_schedule_outer_coincidence(ctx, 1);
-
-    cout << "Creating naive schedule" << endl;
-
-    umap* naive_sched = schedule_naive();
-
-    cout << "Done with naive schedule" << endl;
-
-    auto before = lex_lt(naive_sched, naive_sched);
-
-    cout << "Naive sched = " << str(naive_sched) << endl;
     umap* writes = rdmap(ctx, "{}");
     umap* reads = rdmap(ctx, "{}");
-    uset* domain = whole_compute_domain();
     
     //uset* domain = isl_union_set_read_from_str(ctx, "{}");
 
@@ -2938,7 +2972,6 @@ struct App {
       cout << "Got all reads" << endl;
     }
 
-    assert(domain != nullptr);
     assert(writes != nullptr);
     assert(reads != nullptr);
 
@@ -2946,12 +2979,18 @@ struct App {
     cout << "writes :" << str(writes) << endl;
 
     // Relative order of accesses for each op must be the same
+    umap* naive_sched = schedule_naive();
+    auto before = lex_lt(naive_sched, naive_sched);
+
     umap* rel_order = isl_union_map_read_from_str(ctx, "{}");
     for (auto update : sort_updates()) {
       auto op_sched = its(naive_sched, compute_domain(update));
       auto op_order = lex_lt(op_sched, op_sched);
       rel_order = unn(rel_order, op_order);
     }
+
+    uset* domain = whole_compute_domain();
+    assert(domain != nullptr);
 
     cout << "rel order: " << str(rel_order) << endl;
     //assert(false);
@@ -5255,8 +5294,8 @@ void application_tests() {
   //conv_app_rolled_reduce_test();
   //reduce_1d_test();
 
-  exposure_fusion();
   up_stencil_down_unrolled_test();
+  exposure_fusion();
 
   up_stencil_test();
   up_stencil_down_test();

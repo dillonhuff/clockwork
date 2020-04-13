@@ -435,6 +435,7 @@ isl_map* project_all_but(isl_map* const dmap, const int d);
 vector<string> space_var_args(isl_space* s);
 vector<string> space_var_decls(isl_space* s);
 
+isl_val* add(isl_val* a, isl_val* b);
 isl_val* mul(isl_val* a, isl_val* b);
 isl_val* neg(isl_val* a);
 

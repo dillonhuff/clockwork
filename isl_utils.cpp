@@ -1725,6 +1725,10 @@ isl_val* neg(isl_val* a) {
   return isl_val_neg(cpy(a));
 }
 
+isl_val* add(isl_val* a, isl_val* b) {
+  return isl_val_add(cpy(a), cpy(b));
+}
+
 isl_val* mul(isl_val* a, isl_val* b) {
   return isl_val_mul(cpy(a), cpy(b));
 }

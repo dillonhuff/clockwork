@@ -865,15 +865,16 @@ extract_linear_rational_approximation(isl_aff* aff_bound) {
     cout << "div k = " << str(dkb.first) << endl;
     cout << "div b = " << str(dkb.second) << endl;
 
-    assert(isl_val_is_zero(dkb.second));
+    //assert(isl_val_is_zero(dkb.second));
     assert(isl_val_is_zero(k));
 
+    isl_val* final_b = add(dkb.second, b);
     cout << "final k = " << str(dkb.first) << endl;
-    cout << "final b = " << str(b) << endl;
+    cout << "final b = " << str(final_b) << endl;
 
     //assert(false);
 
-    return {dkb.first, b};
+    return {dkb.first, final_b};
   }
 }
 
