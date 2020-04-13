@@ -3584,7 +3584,7 @@ struct App {
     //options.use_custom_code_string = true;
     options.use_custom_code_string = false;
     options.code_string = cgn;
-    //options.all_rams = true;
+    options.all_rams = true;
 
     prog prg;
     prg.name = name + "_opt";
