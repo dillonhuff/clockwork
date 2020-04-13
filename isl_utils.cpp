@@ -1744,3 +1744,18 @@ isl_val* negone(isl_ctx* c) {
 isl_aff* aff_on_domain(isl_local_space* ls, isl_val* max) {
   return isl_aff_val_on_domain(cpy(ls), cpy(max));
 }
+
+int to_int(isl_val* a) {
+  assert(isl_val_is_int(a));
+  return stoi(str(a));
+}
+
+int int_coeff(isl_aff* const a, const int pos) {
+  return to_int(isl_aff_get_coefficient_val(a, isl_dim_in, pos));
+}
+
+int int_const_coeff(isl_aff* const a) {
+  return to_int(isl_aff_get_constant_val(a));
+}
+
+

@@ -439,6 +439,10 @@ isl_val* add(isl_val* a, isl_val* b);
 isl_val* mul(isl_val* a, isl_val* b);
 isl_val* neg(isl_val* a);
 
+int to_int(isl_val* a);
+
+int int_coeff(isl_aff* const a, const int pos);
+int int_const_coeff(isl_aff* const a);
 
 isl_aff* aff_on_domain(isl_local_space* ls, isl_val* max);
 

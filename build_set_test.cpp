@@ -2882,15 +2882,39 @@ struct App {
     for (auto s : sched) {
       string name = s.first;
       vector<isl_aff*> vals = s.second;
-      // schedule is dN, ..., d1, d0
-      reverse(vals);
+
       scheds[name] = {};
+      int i = 0;
       for (auto v : vals) {
-        QExpr expr;
+        QExpr rate = qexpr("d" + str(i));
+          //qexpr(qvar("q_" + name));
+        auto rate_coeff =
+          qexpr(int_coeff(v, 0));
+        auto delay =
+          qexpr(int_const_coeff(v));
+
+        QExpr expr =
+          rate_coeff*rate + delay;
         scheds[name].push_back(expr);
+        i++;
       }
     }
 
+    // schedule is dN, ..., d1, d0
+    for (auto& s : sched) {
+      //reverse(s.second);
+    }
+
+    cout << "Final schedule..." << endl;
+    for (auto s : scheds) {
+      cout << tab(1) << s.first << endl;
+      for (auto v : s.second) {
+        cout << tab(2) << v << endl;
+      }
+      cout << endl;
+    }
+
+    //assert(false);
     return scheds;
     //vector<string> sorted_functions = sort_functions();
     //vector<string> sorted_operations;
@@ -3388,13 +3412,16 @@ struct App {
       for (auto v : map_find(f, schedules)) {
         string dv = "d" + to_string(i);
         sched_exprs.push_back(isl_str(v));
+        cout << "Sched expr: " << sched_exprs.back() << endl;
         var_names.push_back(dv);
         i++;
       }
       var_names.pop_back();
       string map_str = "{ " + f + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
 
+      cout << "Map str: " << map_str << endl;
       auto rm = rdmap(ctx, map_str);
+      cout << "map got str" << endl;
       m = unn(m, rm);
       isl_union_map_free(rm);
     }
@@ -5294,11 +5321,14 @@ void application_tests() {
   //conv_app_rolled_reduce_test();
   //reduce_1d_test();
 
+  denoise2d_test();
+  assert(false);
+  mismatched_stencil_test();
+  up_stencil_down_test();
   up_stencil_down_unrolled_test();
   exposure_fusion();
 
   up_stencil_test();
-  up_stencil_down_test();
   neg_stencil_test();
   blur_x_test();
 
@@ -5310,12 +5340,10 @@ void application_tests() {
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
 
-  mismatched_stencil_test();
   //assert(false);
   gaussian_pyramid_app_test();
   //assert(false);
   grayscale_conversion_test();
-  denoise2d_test();
   upsample2d_test();
   downsample2d_test();
   updown_merge_test();
