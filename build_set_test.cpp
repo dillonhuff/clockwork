@@ -3584,7 +3584,7 @@ struct App {
     //options.use_custom_code_string = true;
     options.use_custom_code_string = false;
     options.code_string = cgn;
-    options.all_rams = true;
+    //options.all_rams = true;
 
     prog prg;
     prg.name = name + "_opt";
@@ -5321,12 +5321,8 @@ void application_tests() {
   //conv_app_rolled_reduce_test();
   //reduce_1d_test();
 
-  denoise2d_test();
-  //assert(false);
-  mismatched_stencil_test();
+  //up_stencil_down_unrolled_test();
   up_stencil_down_test();
-  up_stencil_down_unrolled_test();
-  exposure_fusion();
 
   up_stencil_test();
   neg_stencil_test();
@@ -5339,16 +5335,18 @@ void application_tests() {
   jacobi2d_app_test();
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
+  
+  denoise2d_test();
+  //assert(false);
+  mismatched_stencil_test();
+  exposure_fusion();
 
-  //assert(false);
   gaussian_pyramid_app_test();
-  //assert(false);
   grayscale_conversion_test();
   upsample2d_test();
   downsample2d_test();
   updown_merge_test();
   sobel_test();
-
 
   seidel2d_test();
   jacobi_2d_2_test();

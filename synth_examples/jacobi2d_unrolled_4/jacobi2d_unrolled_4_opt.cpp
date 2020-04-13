@@ -14,22 +14,85 @@ struct t1_t1_update_0_write0_merged_banks_4_cache {
 	// RAM Box: {[-4, 16], [-1, 16]}
 	// Capacity: 14
 	// # of read delays: 5
-	fifo<hw_uint<32> , 14> f;
-	inline hw_uint<32>  peek(const int offset) {
+	hw_uint<32>  f0;
+	hw_uint<32>  f2;
+	fifo<hw_uint<32> , 4> f3;
+	hw_uint<32>  f4;
+	hw_uint<32>  f6;
+	fifo<hw_uint<32> , 5> f7;
+	hw_uint<32>  f8;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0;
+	}
+
+	inline hw_uint<32>  peek_1() {
+		return f2;
+	}
+
+	inline hw_uint<32>  peek_5() {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
+#pragma HLS dependence variable=f3 inter false
 #endif //__VIVADO_SYNTH__
-    return f.peek(13 - offset);
-  }
+		return f3.back();
+	}
+
+	inline hw_uint<32>  peek_6() {
+		return f4;
+	}
+
+	inline hw_uint<32>  peek_7() {
+		return f6;
+	}
+
+	inline hw_uint<32>  peek_12() {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f7 inter false
+#endif //__VIVADO_SYNTH__
+		return f7.back();
+	}
+
+	inline hw_uint<32>  peek_13() {
+		return f8;
+	}
 
 
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
+#pragma HLS dependence variable=f8 inter false
 #endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
+    // cap: 1 reading from capacity: 5
+    f8 = f7.back();
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f7 inter false
+#endif //__VIVADO_SYNTH__
+    // cap: 5 reading from capacity: 1
+    f7.push(f6);
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f6 inter false
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 1
+    f6 = f4;
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f4 inter false
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 4
+    f4 = f3.back();
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f3 inter false
+#endif //__VIVADO_SYNTH__
+    // cap: 4 reading from capacity: 1
+    f3.push(f2);
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f2 inter false
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 1
+    f2 = f0;
+    // cap: 1
+    f0 = value;
+	}
 
 };
 
@@ -37,22 +100,75 @@ struct t1_t1_update_0_write1_merged_banks_3_cache {
 	// RAM Box: {[-3, 17], [-1, 16]}
 	// Capacity: 14
 	// # of read delays: 4
-	fifo<hw_uint<32> , 14> f;
-	inline hw_uint<32>  peek(const int offset) {
+	hw_uint<32>  f0;
+	hw_uint<32>  f2;
+	fifo<hw_uint<32> , 5> f3;
+	hw_uint<32>  f4;
+	fifo<hw_uint<32> , 5> f5;
+	hw_uint<32>  f6;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0;
+	}
+
+	inline hw_uint<32>  peek_1() {
+		return f2;
+	}
+
+	inline hw_uint<32>  peek_6() {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
+#pragma HLS dependence variable=f3 inter false
 #endif //__VIVADO_SYNTH__
-    return f.peek(13 - offset);
-  }
+		return f3.back();
+	}
+
+	inline hw_uint<32>  peek_7() {
+		return f4;
+	}
+
+	inline hw_uint<32>  peek_12() {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f5 inter false
+#endif //__VIVADO_SYNTH__
+		return f5.back();
+	}
+
+	inline hw_uint<32>  peek_13() {
+		return f6;
+	}
 
 
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
+#pragma HLS dependence variable=f6 inter false
 #endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
+    // cap: 1 reading from capacity: 5
+    f6 = f5.back();
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f5 inter false
+#endif //__VIVADO_SYNTH__
+    // cap: 5 reading from capacity: 1
+    f5.push(f4);
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f4 inter false
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 5
+    f4 = f3.back();
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f3 inter false
+#endif //__VIVADO_SYNTH__
+    // cap: 5 reading from capacity: 1
+    f3.push(f2);
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f2 inter false
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 1
+    f2 = f0;
+    // cap: 1
+    f0 = value;
+	}
 
 };
 
@@ -60,22 +176,75 @@ struct t1_t1_update_0_write2_merged_banks_3_cache {
 	// RAM Box: {[-2, 18], [-1, 16]}
 	// Capacity: 14
 	// # of read delays: 4
-	fifo<hw_uint<32> , 14> f;
-	inline hw_uint<32>  peek(const int offset) {
+	hw_uint<32>  f0;
+	hw_uint<32>  f2;
+	fifo<hw_uint<32> , 5> f3;
+	hw_uint<32>  f4;
+	fifo<hw_uint<32> , 5> f5;
+	hw_uint<32>  f6;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0;
+	}
+
+	inline hw_uint<32>  peek_1() {
+		return f2;
+	}
+
+	inline hw_uint<32>  peek_6() {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
+#pragma HLS dependence variable=f3 inter false
 #endif //__VIVADO_SYNTH__
-    return f.peek(13 - offset);
-  }
+		return f3.back();
+	}
+
+	inline hw_uint<32>  peek_7() {
+		return f4;
+	}
+
+	inline hw_uint<32>  peek_12() {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f5 inter false
+#endif //__VIVADO_SYNTH__
+		return f5.back();
+	}
+
+	inline hw_uint<32>  peek_13() {
+		return f6;
+	}
 
 
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
+#pragma HLS dependence variable=f6 inter false
 #endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
+    // cap: 1 reading from capacity: 5
+    f6 = f5.back();
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f5 inter false
+#endif //__VIVADO_SYNTH__
+    // cap: 5 reading from capacity: 1
+    f5.push(f4);
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f4 inter false
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 5
+    f4 = f3.back();
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f3 inter false
+#endif //__VIVADO_SYNTH__
+    // cap: 5 reading from capacity: 1
+    f3.push(f2);
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f2 inter false
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 1
+    f2 = f0;
+    // cap: 1
+    f0 = value;
+	}
 
 };
 
@@ -83,22 +252,85 @@ struct t1_t1_update_0_write3_merged_banks_4_cache {
 	// RAM Box: {[-1, 19], [-1, 16]}
 	// Capacity: 14
 	// # of read delays: 5
-	fifo<hw_uint<32> , 14> f;
-	inline hw_uint<32>  peek(const int offset) {
+	hw_uint<32>  f0;
+	hw_uint<32>  f2;
+	fifo<hw_uint<32> , 5> f3;
+	hw_uint<32>  f4;
+	hw_uint<32>  f6;
+	fifo<hw_uint<32> , 4> f7;
+	hw_uint<32>  f8;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0;
+	}
+
+	inline hw_uint<32>  peek_1() {
+		return f2;
+	}
+
+	inline hw_uint<32>  peek_6() {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
+#pragma HLS dependence variable=f3 inter false
 #endif //__VIVADO_SYNTH__
-    return f.peek(13 - offset);
-  }
+		return f3.back();
+	}
+
+	inline hw_uint<32>  peek_7() {
+		return f4;
+	}
+
+	inline hw_uint<32>  peek_8() {
+		return f6;
+	}
+
+	inline hw_uint<32>  peek_12() {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f7 inter false
+#endif //__VIVADO_SYNTH__
+		return f7.back();
+	}
+
+	inline hw_uint<32>  peek_13() {
+		return f8;
+	}
 
 
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
+#pragma HLS dependence variable=f8 inter false
 #endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
+    // cap: 1 reading from capacity: 4
+    f8 = f7.back();
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f7 inter false
+#endif //__VIVADO_SYNTH__
+    // cap: 4 reading from capacity: 1
+    f7.push(f6);
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f6 inter false
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 1
+    f6 = f4;
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f4 inter false
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 5
+    f4 = f3.back();
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f3 inter false
+#endif //__VIVADO_SYNTH__
+    // cap: 5 reading from capacity: 1
+    f3.push(f2);
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence variable=f2 inter false
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 1
+    f2 = f0;
+    // cap: 1
+    f0 = value;
+	}
 
 };
 
@@ -135,7 +367,7 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd0_select(t1_cache& t1, int d0, int d1)
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
   // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 8 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write3 = t1.t1_t1_update_0_write3_merged_banks_4.peek(/* one reader or all rams */ 8);
+  auto value_t1_t1_update_0_write3 = t1.t1_t1_update_0_write3_merged_banks_4.peek_8();
   return value_t1_t1_update_0_write3;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -152,7 +384,7 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd1_select(t1_cache& t1, int d0, int d1)
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
   // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 13 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_4.peek(/* one reader or all rams */ 13);
+  auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_4.peek_13();
   return value_t1_t1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -169,7 +401,7 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd10_select(t1_cache& t1, int d0, int d1
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
   // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 13 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write3 = t1.t1_t1_update_0_write3_merged_banks_4.peek(/* one reader or all rams */ 13);
+  auto value_t1_t1_update_0_write3 = t1.t1_t1_update_0_write3_merged_banks_4.peek_13();
   return value_t1_t1_update_0_write3;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -186,7 +418,7 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd11_select(t1_cache& t1, int d0, int d1
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
   // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 7 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write3 = t1.t1_t1_update_0_write3_merged_banks_4.peek(/* one reader or all rams */ 7);
+  auto value_t1_t1_update_0_write3 = t1.t1_t1_update_0_write3_merged_banks_4.peek_7();
   return value_t1_t1_update_0_write3;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -203,7 +435,7 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd12_select(t1_cache& t1, int d0, int d1
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
   // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 1 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write3 = t1.t1_t1_update_0_write3_merged_banks_4.peek(/* one reader or all rams */ 1);
+  auto value_t1_t1_update_0_write3 = t1.t1_t1_update_0_write3_merged_banks_4.peek_1();
   return value_t1_t1_update_0_write3;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -220,7 +452,7 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd13_select(t1_cache& t1, int d0, int d1
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
   // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 6 : 0 <= d0 <= 2 and 0 <= d1 <= 15; jacobi2d_unrolled_4_update_0[d0, d1] -> (3 + d0) : d0 = 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_4.peek(/* one reader or all rams */ (2 - d0 >= 0) ? (6) : (-3 + d0 == 0) ? (6) : 0);
+  auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_4.peek_6();
   return value_t1_t1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -237,7 +469,7 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd2_select(t1_cache& t1, int d0, int d1)
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
   // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 7 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_4.peek(/* one reader or all rams */ 7);
+  auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_4.peek_7();
   return value_t1_t1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -254,7 +486,7 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd3_select(t1_cache& t1, int d0, int d1)
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
   // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 1 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_4.peek(/* one reader or all rams */ 1);
+  auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_4.peek_1();
   return value_t1_t1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -271,7 +503,7 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd4_select(t1_cache& t1, int d0, int d1)
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
   // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 13 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write1 = t1.t1_t1_update_0_write1_merged_banks_3.peek(/* one reader or all rams */ 13);
+  auto value_t1_t1_update_0_write1 = t1.t1_t1_update_0_write1_merged_banks_3.peek_13();
   return value_t1_t1_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -288,7 +520,7 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd5_select(t1_cache& t1, int d0, int d1)
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
   // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 7 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write1 = t1.t1_t1_update_0_write1_merged_banks_3.peek(/* one reader or all rams */ 7);
+  auto value_t1_t1_update_0_write1 = t1.t1_t1_update_0_write1_merged_banks_3.peek_7();
   return value_t1_t1_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -305,7 +537,7 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd6_select(t1_cache& t1, int d0, int d1)
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
   // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 1 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write1 = t1.t1_t1_update_0_write1_merged_banks_3.peek(/* one reader or all rams */ 1);
+  auto value_t1_t1_update_0_write1 = t1.t1_t1_update_0_write1_merged_banks_3.peek_1();
   return value_t1_t1_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -322,7 +554,7 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd7_select(t1_cache& t1, int d0, int d1)
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
   // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 13 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write2 = t1.t1_t1_update_0_write2_merged_banks_3.peek(/* one reader or all rams */ 13);
+  auto value_t1_t1_update_0_write2 = t1.t1_t1_update_0_write2_merged_banks_3.peek_13();
   return value_t1_t1_update_0_write2;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -339,7 +571,7 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd8_select(t1_cache& t1, int d0, int d1)
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
   // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 7 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write2 = t1.t1_t1_update_0_write2_merged_banks_3.peek(/* one reader or all rams */ 7);
+  auto value_t1_t1_update_0_write2 = t1.t1_t1_update_0_write2_merged_banks_3.peek_7();
   return value_t1_t1_update_0_write2;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -356,7 +588,7 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd9_select(t1_cache& t1, int d0, int d1)
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
   // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 1 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write2 = t1.t1_t1_update_0_write2_merged_banks_3.peek(/* one reader or all rams */ 1);
+  auto value_t1_t1_update_0_write2 = t1.t1_t1_update_0_write2_merged_banks_3.peek_1();
   return value_t1_t1_update_0_write2;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
