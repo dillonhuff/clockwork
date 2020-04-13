@@ -1003,7 +1003,8 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps) {
   return schedule_functions;
 }
 
-umap* clockwork_schedule(uset* domain,
+map<string, vector<isl_aff*> >
+clockwork_schedule(uset* domain,
     umap* validity,
     umap* proximity) {
 
@@ -1026,24 +1027,24 @@ umap* clockwork_schedule(uset* domain,
   int schedule_dim =
     num_in_dims(get_space(deps.at(0)));
 
+  map<string, vector<isl_aff*> > scheds;
   cout << "Schedule dim = " << schedule_dim << endl;
-  for (int d = schedule_dim - 1; d >= 0; d--) {
+  for (int d = 0; d < schedule_dim; d++) {
     vector<isl_map*> projected_deps;
     for (auto dmap : deps) {
       isl_map* projected = project_all_but(dmap, d);
       projected_deps.push_back(projected);
     }
+
     auto schedules = clockwork_schedule_dimension(projected_deps);
     cout << "Clockwork schedules..." << endl;
     for (auto s : schedules) {
       cout << tab(1) << s.first << ": " << str(s.second) << endl;
-    }
-    if (d == 0) {
-      //assert(false);
+      scheds[s.first].push_back(s.second);
     }
   }
 
-  return nullptr;
+  return scheds;
 }
 
 umap* experimental_opt(uset* domain,

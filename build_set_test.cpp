@@ -2913,22 +2913,29 @@ struct App {
     //isl_options_set_schedule_outer_coincidence(ctx, 1);
     //isl_options_set_schedule_outer_coincidence(ctx, 1);
 
+    cout << "Creating naive schedule" << endl;
+
     umap* naive_sched = schedule_naive();
+
+    cout << "Done with naive schedule" << endl;
+
     auto before = lex_lt(naive_sched, naive_sched);
 
     cout << "Naive sched = " << str(naive_sched) << endl;
     umap* writes = rdmap(ctx, "{}");
     umap* reads = rdmap(ctx, "{}");
-    uset* domain = isl_union_set_read_from_str(ctx, "{}");
+    uset* domain = whole_compute_domain();
+    
+    //uset* domain = isl_union_set_read_from_str(ctx, "{}");
 
     for (auto u : sort_updates()) {
       writes =
         unn(writes, to_umap(pixels_written(u)));
-      cout << "Pixels read by " << u << " = " << str(pixels_read(u)) << endl;
+      cout << "Pixels read by " << endl;
+      //u << " = " << str(pixels_read(u)) << endl;
       reads =
         unn(reads, pixels_read(u));
-      domain =
-        unn(domain, to_uset(compute_domain(u)));
+      cout << "Got all reads" << endl;
     }
 
     assert(domain != nullptr);
@@ -3000,13 +3007,17 @@ struct App {
 
     map<string, vector<QExpr> > schedules;
     int pos = 0;
+    int dim = schedule_dimension();
     for (auto f : sort_updates()) {
+      cout << "schedule for: " << f << endl;
       schedules[f].push_back(qexpr(pos));
-      for (int i = 0; i < schedule_dimension(); i++) {
-        schedules[f].push_back(qexpr("d" + str(schedule_dimension() - i - 1)));
+      for (int i = 0; i < dim; i++) {
+        schedules[f].push_back(qexpr("d" + str(dim - i - 1)));
       }
       pos++;
     }
+
+    cout << "Creating umap" << endl;
 
     // TODO: Replace with umap
     umap* m = rdmap(ctx, "{}");
@@ -3027,6 +3038,7 @@ struct App {
       auto rm = rdmap(ctx, map_str);
       m = unn(m, rm);
       isl_union_map_free(rm);
+      cout << "union" << endl;
     }
 
     return m;
@@ -3287,8 +3299,8 @@ struct App {
     fill_compute_domain();
 
     umap* m =
-      schedule_naive();
-      //schedule_isl();
+      //schedule_naive();
+      schedule_isl();
 
     cout << "Schedule: " << str(m) << endl;
 
@@ -5243,6 +5255,7 @@ void application_tests() {
   //conv_app_rolled_reduce_test();
   //reduce_1d_test();
 
+  exposure_fusion();
   up_stencil_down_unrolled_test();
 
   up_stencil_test();
@@ -5259,7 +5272,6 @@ void application_tests() {
   conv3x3_app_unrolled_uneven_test();
 
   mismatched_stencil_test();
-  exposure_fusion();
   //assert(false);
   gaussian_pyramid_app_test();
   //assert(false);
