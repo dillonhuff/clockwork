@@ -4169,11 +4169,13 @@ void up_stencil_down_unrolled_test() {
   lp.func2d("in", "id", {pt("in_off_chip")});
 
   lp.func2d("us", "id", {upsample(2, "in")});
-  lp.func2d("stencil", "conv_3_3", {stencil(-1, 1, -1, 1, "us")});
+  //lp.func2d("stencil", "conv_3_3", {stencil(-1, 1, -1, 1, "us")});
+  lp.func2d("stencil", "conv_3_3", {stencil(0, 2, 0, 2, "us")});
   lp.func2d("ds", "id", {downsample(2, "stencil")});
 
   int size = 16;
   lp.unroll("us", 4);
+  //lp.unroll("us", 2);
   lp.unroll("stencil", 2);
 
   lp.realize("ds", size, size);
@@ -4186,7 +4188,6 @@ void up_stencil_down_unrolled_test() {
 
   lp.realize_naive(options, "ds", size, size);
   auto naive = run_regression_tb("ds_naive");
-
 
   assert(opt == naive);
 }
@@ -5245,6 +5246,7 @@ void application_tests() {
 
   //reduce_1d_test();
 
+  //up_stencil_down_unrolled_test();
   up_stencil_test();
   up_stencil_down_test();
   neg_stencil_test();
@@ -5253,7 +5255,6 @@ void application_tests() {
   up_unrolled_test();
   up_unrolled_4_test();
   up_down_unrolled_test();
-  //up_stencil_down_unrolled_test();
   
   jacobi2d_app_test();
   conv3x3_app_unrolled_test();
