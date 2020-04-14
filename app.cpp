@@ -1026,17 +1026,42 @@ clockwork_schedule(uset* domain,
   cout << "Max dimension: " << max_dim << endl;
   cout << "# of different dimensions..." << different_dims.size() << endl;
   map<string, int> pad_factor;
-  map<string, isl_set*> padded;
+  map<string, isl_set*> padded_sets;
   for (auto s : get_sets(domain)) {
     cout << "padding set: " << str(s) << endl;
     int pad_factor = max_dim - num_dims(s);
-    auto pad = isl_set_add_dims(cpy(s), isl_dim_set, pad_factor);
-    cout << "Padded set" << str(pad) << endl;
-    pad = isl_set_set_tuple_id(pad, id(ct, name(s)));
-    padded[name(s)] = pad;
+    int original_dim = num_dims(s);
+
+    isl_set* padded = isl_set_empty(get_space(s));
+    padded = isl_set_add_dims(padded, isl_dim_set, pad_factor);
+
+    for (auto bset : get_basic_sets(s)) {
+
+      auto pad = isl_basic_set_add_dims(cpy(bset), isl_dim_set, pad_factor);
+      cout << "Pad set before zero constraints: " << str(pad) << endl;
+
+      for (int i = original_dim; i < num_dims(pad); i++) {
+        auto ls = isl_local_space_from_space(cpy(get_space(padded)));
+
+        auto is_zero = isl_constraint_alloc_equality(ls);
+        is_zero = isl_constraint_set_constant_val(is_zero, zero(ct));
+        is_zero = isl_constraint_set_coefficient_val(is_zero, isl_dim_set, i, one(ct));
+        pad = isl_basic_set_add_constraint(pad, is_zero);
+      }
+
+      cout << "Padded bset: " << str(pad) << endl;
+      isl_set* pbset = to_set(pad);
+      cout << "Padded  set: " << str(pbset) << endl;
+      padded = unn(padded, pbset);
+      cout << "Padded: " << str(padded) << endl;
+    }
+
+    cout << "Final Padded set" << str(padded) << endl;
+    padded = isl_set_set_tuple_id(padded, id(ct, name(s)));
+    padded_sets[name(s)] = padded;
   }
   cout << "After padding..." << endl;
-  for (auto p : padded) {
+  for (auto p : padded_sets) {
     cout << tab(1) << str(p.second) << endl;
   }
 

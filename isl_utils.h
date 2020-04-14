@@ -73,6 +73,7 @@ isl_val* cpy(isl_val* const b);
 
 isl_val* one(isl_ctx* c);
 isl_val* negone(isl_ctx* c);
+isl_val* zero(isl_ctx* c);
 isl_aff* cpy(isl_aff* const b);
 
 isl_local_space* get_local_space(isl_basic_set* const m);
@@ -84,6 +85,7 @@ isl_space* get_space(isl_union_map* const m);
 isl_space* get_space(isl_map* const m);
 
 isl_space* get_space(isl_set* const m);
+isl_space* get_space(isl_basic_set* const m);
 isl_space* get_space(isl_union_set* const m);
 isl_space* get_space(isl_aff* const m);
 
@@ -97,6 +99,7 @@ bool empty(isl_set* const s);
 
 int num_dims(isl_space* const s);
 int num_dims(isl_set* const s);
+int num_dims(isl_basic_set* const s);
 
 isl_id* id(isl_ctx* c, const std::string& s);
 
@@ -120,6 +123,7 @@ isl_map* add_range_suffix(isl_map* const m, string suffix);
 
 
 isl_union_set* to_uset(isl_set* const m);
+isl_set* to_set(isl_basic_set* const m);
 
 vector<isl_point*> get_points(isl_set* m);
 
@@ -127,6 +131,7 @@ isl_stat get_maps(isl_map* m, void* user);
 vector<isl_map*> get_maps(isl_union_map* m);
 vector<isl_set*> get_sets(isl_union_set* m);
 vector<isl_basic_map*> get_basic_maps(isl_map* m);
+vector<isl_basic_set*> get_basic_sets(isl_set* m);
 
 std::string str(umap* const m);
 

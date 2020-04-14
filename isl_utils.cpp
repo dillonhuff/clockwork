@@ -103,6 +103,10 @@ isl_local_space* get_local_space(isl_basic_set* const m) {
   return isl_basic_set_get_local_space(m);
 }
 
+isl_space* get_space(isl_basic_set* const m) {
+  return isl_basic_set_get_space(m);
+}
+
 isl_space* get_space(isl_aff* const m) {
   return isl_aff_get_space(m);
 }
@@ -179,6 +183,10 @@ int num_out_dims(isl_aff* const s) {
   return num_out_dims(get_space((s)));
 }
 
+int num_dims(isl_basic_set* const s) {
+  return num_dims(get_space(s));
+}
+
 int num_dims(isl_set* const s) {
   return num_dims(get_space(s));
 }
@@ -233,8 +241,27 @@ isl_map* add_range_suffix(isl_map* const m, string suffix) {
     return isl_map_set_tuple_name(m, isl_dim_out, new_name.c_str());
 }
 
+isl_set* to_set(isl_basic_set* const m) {
+  return isl_set_from_basic_set(cpy(m));
+}
+
 isl_union_set* to_uset(isl_set* const m) {
   return isl_union_set_from_set(cpy(m));
+}
+
+isl_stat get_basic_set(isl_basic_set* m, void* user) {
+  //cout << "Getting map" << endl;
+  auto* vm = (vector<isl_basic_set*>*) user;
+  vm->push_back(m);
+  return isl_stat_ok;
+}
+vector<isl_basic_set*> get_basic_sets(isl_set* m) {
+  assert(m != nullptr);
+
+  vector<isl_basic_set*> map_vec;
+  isl_set_foreach_basic_set(m, get_basic_set, &map_vec);
+
+  return map_vec;
 }
 
 isl_stat get_basic_map(isl_basic_map* m, void* user) {
@@ -1013,6 +1040,7 @@ isl_map* inv(isl_map* const m0) {
 }
 
 isl_set* unn(isl_set* const m0, isl_set* const m1) {
+  cout << "Taking set union" << endl;
   return isl_set_union(cpy(m0), cpy(m1));
 }
 
@@ -1766,6 +1794,9 @@ isl_val* one(isl_ctx* c) {
   return isl_val_one(c);
 }
 
+isl_val* zero(isl_ctx* c) {
+  return isl_val_zero(c);
+}
 isl_val* negone(isl_ctx* c) {
   return isl_val_negone(c);
 }
