@@ -1022,26 +1022,26 @@ isl_map* pad_map(isl_map* s, const int max_dim) {
   padded = isl_map_set_tuple_id(padded, isl_dim_out, id(ct, range_name(s)));
 
 
-  //for (auto bset : get_basic_sets(s)) {
+  for (auto bmap : get_basic_maps(s)) {
 
-  //auto pad = isl_basic_set_add_dims(cpy(bset), isl_dim_set, pad_factor);
-  //cout << "Pad set before zero constraints: " << str(pad) << endl;
+    auto pad = isl_basic_map_add_dims(cpy(bmap), isl_dim_in, in_pad_factor);
+    pad = isl_basic_map_add_dims(pad, isl_dim_out, out_pad_factor);
+    //cout << "Pad set before zero constraints: " << str(pad) << endl;
 
-  //for (int i = original_dim; i < num_dims(pad); i++) {
-  //auto ls = isl_local_space_from_space(cpy(get_space(padded)));
-
-  //auto is_zero = isl_constraint_alloc_equality(ls);
-  //is_zero = isl_constraint_set_constant_val(is_zero, zero(ct));
-  //is_zero = isl_constraint_set_coefficient_val(is_zero, isl_dim_set, i, one(ct));
-  //pad = isl_basic_set_add_constraint(pad, is_zero);
-  //}
+    for (int i = original_in_dim; i < num_in_dims(padded); i++) {
+      auto ls = isl_local_space_from_space(cpy(get_space(padded)));
+      auto is_zero = isl_constraint_alloc_equality(ls);
+      is_zero = isl_constraint_set_constant_val(is_zero, zero(ct));
+      is_zero = isl_constraint_set_coefficient_val(is_zero, isl_dim_in, i, one(ct));
+      pad = isl_basic_map_add_constraint(pad, is_zero);
+    }
 
   //cout << "Padded bset: " << str(pad) << endl;
-  //isl_set* pbset = to_set(pad);
+  isl_map* pbset = to_map(pad);
   //cout << "Padded  set: " << str(pbset) << endl;
-  //padded = unn(padded, pbset);
+  padded = unn(padded, pbset);
   //cout << "Padded: " << str(padded) << endl;
-  //}
+  }
 
   //assert(false);
   
@@ -1072,38 +1072,9 @@ umap* pad_map(umap* unpadded) {
 
   vector<isl_map*> padded_maps;
   for (auto s : get_maps(unpadded)) {
+    cout << "Padding: " << str(s) << endl;
     isl_map* m = pad_map(s, max_dim);
     padded_maps.push_back(m);
-
-    //cout << "padding set: " << str(s) << endl;
-    //int pad_factor = max_dim - num_dims(s);
-    //int original_dim = num_dims(s);
-
-    //padded = isl_set_add_dims(padded, isl_dim_set, pad_factor);
-
-    //for (auto bset : get_basic_sets(s)) {
-
-      //auto pad = isl_basic_set_add_dims(cpy(bset), isl_dim_set, pad_factor);
-      //cout << "Pad set before zero constraints: " << str(pad) << endl;
-
-      //for (int i = original_dim; i < num_dims(pad); i++) {
-        //auto ls = isl_local_space_from_space(cpy(get_space(padded)));
-
-        //auto is_zero = isl_constraint_alloc_equality(ls);
-        //is_zero = isl_constraint_set_constant_val(is_zero, zero(ct));
-        //is_zero = isl_constraint_set_coefficient_val(is_zero, isl_dim_set, i, one(ct));
-        //pad = isl_basic_set_add_constraint(pad, is_zero);
-      //}
-
-      //cout << "Padded bset: " << str(pad) << endl;
-      //isl_set* pbset = to_set(pad);
-      //cout << "Padded  set: " << str(pbset) << endl;
-      //padded = unn(padded, pbset);
-      //cout << "Padded: " << str(padded) << endl;
-    //}
-
-    //cout << "Final Padded set" << str(padded) << endl;
-  
   }
 
   cout << "After padding..." << endl;
@@ -1190,6 +1161,7 @@ clockwork_schedule(uset* domain,
 
   vector<isl_map*> deps;
   auto finite_validity = its_range(its(padded_validity, padded_domain), padded_domain);
+  cout << "Finite validity: " << str(finite_validity) << endl;
   for (auto m : get_maps(finite_validity)) {
     assert(m != nullptr);
 
@@ -1230,7 +1202,8 @@ umap* experimental_opt(uset* domain,
     umap* validity,
     umap* proximity) {
 
-  cout << "Domain: " << str(domain) << endl;
+  cout << "Domain  : " << str(domain) << endl;
+  cout << "Validity: " << str(validity) << endl;
   vector<isl_map*> deps;
   auto finite_validity = its_range(its(validity, domain), domain);
   for (auto m : get_maps(finite_validity)) {

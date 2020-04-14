@@ -497,6 +497,10 @@ std::string str(isl_map* const m) {
   return r;
 }
 
+isl_map* to_map(isl_basic_map* const m) {
+  return isl_map_from_basic_map(m);
+}
+
 isl_map* to_map(isl_union_map* const m) {
   assert(m != nullptr);
 

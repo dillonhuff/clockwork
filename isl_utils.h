@@ -169,6 +169,7 @@ int get_dim_max(isl_map* const m, int pos);
 std::string str(isl_map* const m);
 
 isl_map* to_map(isl_union_map* const m);
+isl_map* to_map(isl_basic_map* const m);
 
 isl_union_map* to_umap(isl_map* const m);
 
