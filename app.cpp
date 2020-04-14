@@ -1009,6 +1009,7 @@ clockwork_schedule(uset* domain,
     umap* validity,
     umap* proximity) {
 
+  auto ct = ctx(domain);
   cout << "Domain: " << str(domain) << endl;
   int max_dim = -1;
   set<int> different_dims;
@@ -1027,10 +1028,12 @@ clockwork_schedule(uset* domain,
   map<string, int> pad_factor;
   map<string, isl_set*> padded;
   for (auto s : get_sets(domain)) {
+    cout << "padding set: " << str(s) << endl;
     int pad_factor = max_dim - num_dims(s);
-    s = isl_set_add_dims(s, isl_dim_set, pad_factor);
-    //s = isl_set_set_dim_id(s, isl_dim_set, );
-    padded[name(s)] = s;
+    auto pad = isl_set_add_dims(cpy(s), isl_dim_set, pad_factor);
+    cout << "Padded set" << str(pad) << endl;
+    pad = isl_set_set_tuple_id(pad, id(ct, name(s)));
+    padded[name(s)] = pad;
   }
   cout << "After padding..." << endl;
   for (auto p : padded) {
