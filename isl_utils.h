@@ -33,6 +33,7 @@ using std::pair;
 using std::map;
 using std::string;
 
+std::string name(isl_space* const s);
 isl_pw_aff* cpy(isl_pw_aff* const s);
 
 isl_constraint* cpy(isl_constraint* const s);
@@ -95,6 +96,7 @@ bool empty(uset* const s);
 bool empty(isl_set* const s);
 
 int num_dims(isl_space* const s);
+int num_dims(isl_set* const s);
 
 isl_id* id(isl_ctx* c, const std::string& s);
 
@@ -123,6 +125,7 @@ vector<isl_point*> get_points(isl_set* m);
 
 isl_stat get_maps(isl_map* m, void* user);
 vector<isl_map*> get_maps(isl_union_map* m);
+vector<isl_set*> get_sets(isl_union_set* m);
 vector<isl_basic_map*> get_basic_maps(isl_map* m);
 
 std::string str(umap* const m);
@@ -259,6 +262,7 @@ void print(struct isl_ctx* const ctx, isl_union_map* const m);
 std::string str(isl_union_set* const m);
 
 std::string str(isl_set* const m);
+std::string name(isl_set* const m);
 
 void print(struct isl_ctx* const ctx, isl_map* const m);
 

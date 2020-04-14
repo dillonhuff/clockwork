@@ -60,15 +60,15 @@ struct ilp_builder {
       }
     }
 
-    cout << "Denoms..." << endl;
+    //cout << "Denoms..." << endl;
     isl_val* dn = isl_val_one(ctx);
     for (auto v : denoms) {
-      cout << tab(1) << str(v) << endl;
+      //cout << tab(1) << str(v) << endl;
       dn = mul(dn, v);
     }
     assert(isl_val_is_int(dn));
 
-    cout << "Denom: " << str(dn) << endl;
+    //cout << "Denom: " << str(dn) << endl;
     for (auto v : coeffs) {
       if (!contains_key(v.first, variable_positions)) {
         add_variable(v.first);
@@ -79,10 +79,10 @@ struct ilp_builder {
     isl_constraint_set_constant_val(c, mul(dn, constant));
 
     for (auto v : coeffs) {
-      cout << "index = " << map_find(v.first, variable_positions) << endl;
+      //cout << "index = " << map_find(v.first, variable_positions) << endl;
       auto m = mul(dn, v.second);
-      cout << "dn = " << str(dn) << endl;
-      cout << "m  = " << str(m) << endl;
+      //cout << "dn = " << str(dn) << endl;
+      //cout << "m  = " << str(m) << endl;
       assert(isl_val_is_int(m));
 
       isl_constraint_set_coefficient_val(c,
@@ -810,9 +810,9 @@ extract_div_free_linear_rational_approximation(isl_aff* aff_bound) {
   int out_dims = num_out_dims(aff_bound);
   int div_dims = num_div_dims(aff_bound);
 
-  cout << "in_dims  = " << in_dims << endl;
-  cout << "out_dims = " << out_dims << endl;
-  cout << "div_dims = " << div_dims << endl;
+  //cout << "in_dims  = " << in_dims << endl;
+  //cout << "out_dims = " << out_dims << endl;
+  //cout << "div_dims = " << div_dims << endl;
 
   assert(in_dims == 1);
   assert(out_dims == 1);
@@ -825,8 +825,8 @@ extract_div_free_linear_rational_approximation(isl_aff* aff_bound) {
 
   isl_val* b = isl_aff_get_constant_val(aff_bound);
   isl_val* k = isl_aff_get_coefficient_val(aff_bound, isl_dim_in, 0);
-  cout << "b = " << str(b) << endl;
-  cout << "k = " << str(k) << endl;
+  //cout << "b = " << str(b) << endl;
+  //cout << "k = " << str(k) << endl;
 
   return {k, b};
 }
@@ -837,9 +837,9 @@ extract_linear_rational_approximation(isl_aff* aff_bound) {
   int out_dims = num_out_dims(aff_bound);
   int div_dims = num_div_dims(aff_bound);
 
-  cout << "in_dims  = " << in_dims << endl;
-  cout << "out_dims = " << out_dims << endl;
-  cout << "div_dims = " << div_dims << endl;
+  //cout << "in_dims  = " << in_dims << endl;
+  //cout << "out_dims = " << out_dims << endl;
+  //cout << "div_dims = " << div_dims << endl;
 
   assert(in_dims == 1);
   assert(out_dims == 1);
@@ -848,29 +848,29 @@ extract_linear_rational_approximation(isl_aff* aff_bound) {
     auto dkb = extract_div_free_linear_rational_approximation(aff_bound);
     auto k = dkb.first;
     auto b = dkb.second;
-    cout << "b = " << str(b) << endl;
-    cout << "k = " << str(k) << endl;
+    //cout << "b = " << str(b) << endl;
+    //cout << "k = " << str(k) << endl;
 
     return {k, b};
   } else {
     assert(div_dims == 1);
-    cout << "Getting div bound for: " << str(aff_bound) << endl;
+    //cout << "Getting div bound for: " << str(aff_bound) << endl;
 
     isl_val* k = isl_aff_get_coefficient_val(aff_bound, isl_dim_in, 0);
     isl_val* b = isl_aff_get_constant_val(aff_bound);
 
     isl_aff* div_expr = isl_aff_get_div(aff_bound, 0);
-    cout << "Div: " << str(div_expr) << endl;
+    //cout << "Div: " << str(div_expr) << endl;
     auto dkb = extract_div_free_linear_rational_approximation(div_expr);
-    cout << "div k = " << str(dkb.first) << endl;
-    cout << "div b = " << str(dkb.second) << endl;
+    //cout << "div k = " << str(dkb.first) << endl;
+    //cout << "div b = " << str(dkb.second) << endl;
 
     //assert(isl_val_is_zero(dkb.second));
     assert(isl_val_is_zero(k));
 
     isl_val* final_b = add(dkb.second, b);
-    cout << "final k = " << str(dkb.first) << endl;
-    cout << "final b = " << str(final_b) << endl;
+    //cout << "final k = " << str(dkb.first) << endl;
+    //cout << "final b = " << str(final_b) << endl;
 
     //assert(false);
 
@@ -1010,6 +1010,35 @@ clockwork_schedule(uset* domain,
     umap* proximity) {
 
   cout << "Domain: " << str(domain) << endl;
+  int max_dim = -1;
+  set<int> different_dims;
+  cout << "sets..." << endl;
+  for (auto s : get_sets(domain)) {
+    cout << tab(1) << str(s) << endl;
+    int new_dim = num_dims(s);
+    if (new_dim > max_dim) {
+      max_dim = new_dim;
+    }
+    different_dims.insert(new_dim);
+  }
+
+  cout << "Max dimension: " << max_dim << endl;
+  cout << "# of different dimensions..." << different_dims.size() << endl;
+  map<string, int> pad_factor;
+  map<string, isl_set*> padded;
+  for (auto s : get_sets(domain)) {
+    int pad_factor = max_dim - num_dims(s);
+    s = isl_set_add_dims(s, isl_dim_set, pad_factor);
+    //s = isl_set_set_dim_id(s, isl_dim_set, );
+    padded[name(s)] = s;
+  }
+  cout << "After padding..." << endl;
+  for (auto p : padded) {
+    cout << tab(1) << str(p.second) << endl;
+  }
+
+  assert(different_dims.size() == 1);
+
   vector<isl_map*> deps;
   auto finite_validity = its_range(its(validity, domain), domain);
   for (auto m : get_maps(finite_validity)) {

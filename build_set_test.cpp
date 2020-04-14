@@ -4321,8 +4321,9 @@ void exposure_fusion() {
 
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
-  int size = 64;
-    //1250;
+  int size =
+    //64;
+    1250;
     //200;
 
   auto isl_sched = lp.realize_isl_schedule("pyramid_synthetic_exposure_fusion", size, size);
@@ -4363,7 +4364,7 @@ void exposure_fusion() {
   //cout << "isl schedule: " << str(isl_sched) << endl;
   //cout << "opt schedule: " << str(opt_sched) << endl;
 
-  //assert(false);
+  assert(false);
 
   lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
   lp.realize_naive("pyramid_synthetic_exposure_fusion", size, size);
@@ -5225,102 +5226,175 @@ isl_val* constant(isl_aff* a) {
 
 void playground() {
 
-  isl_ctx* ct = isl_ctx_alloc();
+  prog prg;
+  prg.compute_unit_file = "mobilenet_compute.h";
+  prg.name = "reduce_2d";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["I"] = 32;
+  prg.buffer_port_widths["tmp"] = 32;
 
-  //uset* dom = isl_union_set_read_from_str(ct, "{ P[x] : 0 <= x <= 10; C[x] : 0 <= x <= 10 }");
-  uset* dom =
-    isl_union_set_read_from_str(ct, "{ P[x, k] : 0 <= x <= 10 and 0 <= k <= 10; C[x, k] : 0 <= x <= 10 and 0 <= k <= 10 }");
-  umap* validity =
-    rdmap(ct, "{ P[x, k] -> C[y, l] : x = 2y + 3 }");
-    //rdmap(ct, "{ P[x, k] -> C[y, l] : k = l and x = 2y + 3 }");
-    //rdmap(ct, "{ P[x] -> C[y] : x = 2y + 3 }");
-    //rdmap(ct, "{ P[x] -> C[y] : x = floor(y/2) }");
-    //rdmap(ct, "{ P[x] -> C[x] }");
-  umap* proximity =
-    cpy(validity);
+  auto read_in = prg.add_nest("rd_r", 0, 3, "rd_c", 0, 3)->add_op({"I", "rd_r, rd_c"}, "id", {"in", "rd_r, rd_c"});
 
-  clockwork_schedule(dom, validity, proximity);
-  //experimental_opt(dom, validity, proximity);
+  {
+    auto init = prg.add_op("set_z");
+    init->add_function("set_zero_32");
+    init->add_store("tmp", "0");
 
-  //assert(false);
+    auto accum_loop = prg.add_nest("ar", 0, 3, "ac", 0, 3);
+    auto accum = accum_loop->add_op("accumulate");
+    auto tmp = accum->add_load("tmp", "0");
+    auto next = accum->add_load("I", "ar, ac");
+    accum->add_function("inc", {tmp, next});
+    accum->add_store("tmp", "0");
 
-  isl_aff* zero = rdaff(ct, "{ [a, b] -> [0] }");
-  isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor(a/2) + 3] }");
-  //isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor((a + 3b + floor(2a - 7b / 9)) / 2)] }");
-  //isl_aff* aff = rdaff(ct, "{ [a, b] -> [3 a / 2 + 2 b / 15] }");
-  //isl_aff* aff = rdaff(ct, "{ [a, b] -> [(a + b) % 2] }");
-  //isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor((a + 3b) / 2)] }");
-  //isl_aff* aff = rdaff(ct, "{ [a, b] -> [(a + 3b) % 2 + a / 6] }");
-  cout << "aff = " << str(aff) << endl;
-  cout << "const = " << str(constant(aff)) << endl;
-  int in_dims = num_in_dims(aff);
-  cout << "input dimension: " << in_dims << endl;
-  int out_dims = num_out_dims(aff);
-  cout << "output dimension: " << out_dims << endl;
-
-  isl_local_space* ls = isl_aff_get_local_space(aff);
-  int div_dims = isl_local_space_dim(ls, isl_dim_div);
-  cout << "div dimension   : " << isl_local_space_dim(ls, isl_dim_div) << endl;
-  cout << "all dimensions  : " << isl_local_space_dim(ls, isl_dim_all) << endl;
-  cout << "Local space: " << str(ls) << endl;
-
-  for (int i = 0; i < in_dims; i++) {
-    cout << i << "th coeff: " << str(isl_aff_get_coefficient_val(aff, isl_dim_in, i)) << endl;
-  }
-  //for (int i = 0; i < out_dims; i++) {
-    //cout << i << "th div  : " << str(isl_aff_get_div(aff, i)) << endl;
-  //}
-  for (int i = 0; i < div_dims; i++) {
-    cout << i << "th div      : " << str(isl_aff_get_div(aff, i)) << endl;
-    cout << i << "th div coeff: " << str(isl_aff_get_coefficient_val(aff, isl_dim_div, i)) << endl;
+    auto write_out = prg.add_op("output");
+    write_out->add_load("tmp", "0");
+    write_out->add_store("out", "0");
   }
 
-  isl_basic_set* bset = isl_aff_eq_basic_set(cpy(aff), cpy(zero));
-    //isl_basic_set_read_from_str(ct, "{ [a, b] }");
-    //isl_basic_set_universe(get_space(aff));
+  cout << "Original program" << endl;
+  prg.pretty_print();
+  cout << endl;
 
+  auto domain = prg.whole_iteration_domain();
 
-  cout << "bset: " << str(bset) << endl;
-  auto mat = isl_basic_set_equalities_matrix(bset, isl_dim_cst, isl_dim_param, isl_dim_set, isl_dim_div);
-  cout << "Eq Rows: " << isl_mat_rows(mat) << endl;
-  cout << "Eq Cols: " << isl_mat_cols(mat) << endl;
+  auto order_deps = prg.relative_orders();
+  cout << "Getting validity deps..." << endl;
+  isl_union_map *raw_deps = prg.validity_deps();
+  cout << "Got validity deps..." << endl;
+  cout << "Validity: " << str(raw_deps) << endl;
+  auto validity =
+    unn(order_deps, raw_deps);
+  isl_union_map *proximity =
+    cpy(raw_deps);
 
-  auto ineqmat = isl_basic_set_inequalities_matrix(bset, isl_dim_cst, isl_dim_param, isl_dim_set, isl_dim_div);
-  cout << "Ineq Rows: " << isl_mat_rows(ineqmat) << endl;
-  cout << "Ineq Cols: " << isl_mat_cols(ineqmat) << endl;
-  for (int r = 0; r < isl_mat_rows(ineqmat); r++) {
-    for (int c = 0; c < isl_mat_cols(ineqmat); c++) {
-      cout << str(isl_mat_get_element_val(ineqmat, r, c)) << " ";
+  auto clksched = clockwork_schedule(domain, validity, proximity);
+  cout << "---- Clockwork schedule:" << endl;
+  for (auto s : clksched) {
+    cout << tab(1) << s.first << " -> ";
+    for (auto v : s.second) {
+      cout << str(v) << ", ";
     }
     cout << endl;
   }
-
   assert(false);
 
-  auto prev = rdaff(ct, "{ [x] -> [floor(x / 2)] }");
-  auto next = rdaff(ct, "{ [x] -> [floor((x + 1) / 2)] }");
+  //cout << "Program code without optimization..." << endl;
+  //prg.unoptimized_codegen();
+  //cout << endl;
 
-  cout << "prev: " << str(prev) << endl;
-  cout << "next: " << str(next) << endl;
-  cout << "diff: " << str(isl_aff_sub(cpy(next), cpy(prev))) << endl;
+  //cout << "Program with optimized schedule..." << endl;
+  //umap* opt_sched = prg.optimized_codegen();
+  //cout << "Consumer maps..." << endl;
+  //cout << tab(1) << str(prg.consumer_map()) << endl;
 
-  auto comps_set = isl_set_read_from_str(ct, "{ [a, b] : 0 <= a <= 10 and 0 <= b <= 11 }");
-  auto flat_set = isl_set_flatten(cpy(comps_set));
-  cout << "comps_set: " << str(comps_set) << endl;
-  cout << "flat_set : " << str(flat_set) << endl;
+  //cout << "Schedules..." << endl;
+  //for (auto s : prg.schedules()) {
+    //cout << tab(1) << str(s.second) << endl;
+    //auto next_op = lexmin(lex_lt(s.second, s.second));
+    //cout << "next op: " << str(next_op) << endl;
+  //}
 
-  //isl_mat* matrix = aff->ls->div;
-  isl_ctx_free(ct);
+  //isl_ctx* ct = isl_ctx_alloc();
 
-  assert(false);
+  ////uset* dom = isl_union_set_read_from_str(ct, "{ P[x] : 0 <= x <= 10; C[x] : 0 <= x <= 10 }");
+  //uset* dom =
+    //isl_union_set_read_from_str(ct, "{ P[x, k] : 0 <= x <= 10 and 0 <= k <= 10; C[x, k] : 0 <= x <= 10 and 0 <= k <= 10 }");
+  //umap* validity =
+    //rdmap(ct, "{ P[x, k] -> C[y, l] : x = 2y + 3 }");
+    ////rdmap(ct, "{ P[x, k] -> C[y, l] : k = l and x = 2y + 3 }");
+    ////rdmap(ct, "{ P[x] -> C[y] : x = 2y + 3 }");
+    ////rdmap(ct, "{ P[x] -> C[y] : x = floor(y/2) }");
+    ////rdmap(ct, "{ P[x] -> C[x] }");
+  //umap* proximity =
+    //cpy(validity);
+
+  //clockwork_schedule(dom, validity, proximity);
+  ////experimental_opt(dom, validity, proximity);
+
+  ////assert(false);
+
+  //isl_aff* zero = rdaff(ct, "{ [a, b] -> [0] }");
+  //isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor(a/2) + 3] }");
+  ////isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor((a + 3b + floor(2a - 7b / 9)) / 2)] }");
+  ////isl_aff* aff = rdaff(ct, "{ [a, b] -> [3 a / 2 + 2 b / 15] }");
+  ////isl_aff* aff = rdaff(ct, "{ [a, b] -> [(a + b) % 2] }");
+  ////isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor((a + 3b) / 2)] }");
+  ////isl_aff* aff = rdaff(ct, "{ [a, b] -> [(a + 3b) % 2 + a / 6] }");
+  //cout << "aff = " << str(aff) << endl;
+  //cout << "const = " << str(constant(aff)) << endl;
+  //int in_dims = num_in_dims(aff);
+  //cout << "input dimension: " << in_dims << endl;
+  //int out_dims = num_out_dims(aff);
+  //cout << "output dimension: " << out_dims << endl;
+
+  //isl_local_space* ls = isl_aff_get_local_space(aff);
+  //int div_dims = isl_local_space_dim(ls, isl_dim_div);
+  //cout << "div dimension   : " << isl_local_space_dim(ls, isl_dim_div) << endl;
+  //cout << "all dimensions  : " << isl_local_space_dim(ls, isl_dim_all) << endl;
+  //cout << "Local space: " << str(ls) << endl;
+
+  //for (int i = 0; i < in_dims; i++) {
+    //cout << i << "th coeff: " << str(isl_aff_get_coefficient_val(aff, isl_dim_in, i)) << endl;
+  //}
+  ////for (int i = 0; i < out_dims; i++) {
+    ////cout << i << "th div  : " << str(isl_aff_get_div(aff, i)) << endl;
+  ////}
+  //for (int i = 0; i < div_dims; i++) {
+    //cout << i << "th div      : " << str(isl_aff_get_div(aff, i)) << endl;
+    //cout << i << "th div coeff: " << str(isl_aff_get_coefficient_val(aff, isl_dim_div, i)) << endl;
+  //}
+
+  //isl_basic_set* bset = isl_aff_eq_basic_set(cpy(aff), cpy(zero));
+    ////isl_basic_set_read_from_str(ct, "{ [a, b] }");
+    ////isl_basic_set_universe(get_space(aff));
+
+
+  //cout << "bset: " << str(bset) << endl;
+  //auto mat = isl_basic_set_equalities_matrix(bset, isl_dim_cst, isl_dim_param, isl_dim_set, isl_dim_div);
+  //cout << "Eq Rows: " << isl_mat_rows(mat) << endl;
+  //cout << "Eq Cols: " << isl_mat_cols(mat) << endl;
+
+  //auto ineqmat = isl_basic_set_inequalities_matrix(bset, isl_dim_cst, isl_dim_param, isl_dim_set, isl_dim_div);
+  //cout << "Ineq Rows: " << isl_mat_rows(ineqmat) << endl;
+  //cout << "Ineq Cols: " << isl_mat_cols(ineqmat) << endl;
+  //for (int r = 0; r < isl_mat_rows(ineqmat); r++) {
+    //for (int c = 0; c < isl_mat_cols(ineqmat); c++) {
+      //cout << str(isl_mat_get_element_val(ineqmat, r, c)) << " ";
+    //}
+    //cout << endl;
+  //}
+
+  //assert(false);
+
+  //auto prev = rdaff(ct, "{ [x] -> [floor(x / 2)] }");
+  //auto next = rdaff(ct, "{ [x] -> [floor((x + 1) / 2)] }");
+
+  //cout << "prev: " << str(prev) << endl;
+  //cout << "next: " << str(next) << endl;
+  //cout << "diff: " << str(isl_aff_sub(cpy(next), cpy(prev))) << endl;
+
+  //auto comps_set = isl_set_read_from_str(ct, "{ [a, b] : 0 <= a <= 10 and 0 <= b <= 11 }");
+  //auto flat_set = isl_set_flatten(cpy(comps_set));
+  //cout << "comps_set: " << str(comps_set) << endl;
+  //cout << "flat_set : " << str(flat_set) << endl;
+
+  ////isl_mat* matrix = aff->ls->div;
+  //isl_ctx_free(ct);
+
+  //assert(false);
 }
 
 void application_tests() {
-  //playground();
+  playground();
   //synth_lb_test();
   //conv_app_rolled_reduce_test();
   //reduce_1d_test();
 
+  exposure_fusion();
   //up_stencil_down_unrolled_test();
   up_stencil_down_test();
 
@@ -5339,7 +5413,6 @@ void application_tests() {
   denoise2d_test();
   //assert(false);
   mismatched_stencil_test();
-  exposure_fusion();
 
   gaussian_pyramid_app_test();
   grayscale_conversion_test();

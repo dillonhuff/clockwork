@@ -1,6 +1,13 @@
 #include "isl_utils.h"
 #include "utils.h"
 
+isl_stat get_set(isl_set* m, void* user) {
+  //cout << "Getting map" << endl;
+  auto* vm = (vector<isl_set*>*) user;
+  vm->push_back((m));
+  return isl_stat_ok;
+}
+
 isl_multi_union_pw_aff* cpy(isl_multi_union_pw_aff* const s) {
   return isl_multi_union_pw_aff_copy(s);
 }
@@ -172,6 +179,10 @@ int num_out_dims(isl_aff* const s) {
   return num_out_dims(get_space((s)));
 }
 
+int num_dims(isl_set* const s) {
+  return num_dims(get_space(s));
+}
+
 int num_dims(isl_space* const s) {
   assert(isl_space_is_set(s));
   int ndims = isl_space_dim(s, isl_dim_set);
@@ -187,12 +198,20 @@ std::string str(isl_id* const id) {
   return std::string(isl_id_to_str(id));
 }
 
+std::string name(isl_set* const s) {
+  return name(get_space(s));
+}
+
 std::string domain_name(isl_map* const s) {
   return domain_name(get_space(s));
 }
 
 std::string range_name(isl_map* const s) {
   return range_name(get_space(s));
+}
+
+std::string name(isl_space* const s) {
+  return std::string(isl_id_to_str(isl_space_get_tuple_id(s, isl_dim_set)));
 }
 
 std::string domain_name(isl_space* const s) {
@@ -248,6 +267,16 @@ vector<isl_point*> get_points(isl_set* m) {
 
   return map_vec;
 }
+
+vector<isl_set*> get_sets(isl_union_set* m) {
+  assert(m != nullptr);
+
+  vector<isl_set*> map_vec;
+  isl_union_set_foreach_set(m, get_set, &map_vec);
+
+  return map_vec;
+}
+
 vector<isl_map*> get_maps(isl_union_map* m) {
   assert(m != nullptr);
 

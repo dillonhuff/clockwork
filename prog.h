@@ -845,7 +845,6 @@ struct prog {
   isl_schedule* optimized_schedule() {
     auto domain = whole_iteration_domain();
 
-
     auto order_deps = relative_orders();
     cout << "Getting validity deps..." << endl;
     isl_union_map *raw_deps = validity_deps();
