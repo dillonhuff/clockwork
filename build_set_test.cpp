@@ -5430,7 +5430,7 @@ void playground() {
 }
 
 void application_tests() {
-  //playground();
+  playground();
   //synth_lb_test();
   //conv_app_rolled_reduce_test();
   //reduce_1d_test();

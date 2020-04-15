@@ -104,6 +104,7 @@ int num_dims(isl_basic_set* const s);
 isl_id* id(isl_ctx* c, const std::string& s);
 
 std::string str(isl_basic_set* const id);
+std::string str(isl_basic_map* const id);
 std::string str(isl_id* const id);
 std::string str(isl_local_space* const id);
 

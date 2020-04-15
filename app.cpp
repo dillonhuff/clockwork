@@ -1007,6 +1007,8 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps) {
 isl_map* pad_map(isl_map* s, const int max_dim) {
   auto ct = ctx(s);
 
+  cout << "padding map, s: " << str(s) << endl;
+
   int in_pad_factor = max_dim - num_in_dims(s);
   int out_pad_factor = max_dim - num_out_dims(s);
 
@@ -1021,12 +1023,17 @@ isl_map* pad_map(isl_map* s, const int max_dim) {
   padded = isl_map_set_tuple_id(padded, isl_dim_in, id(ct, domain_name(s)));
   padded = isl_map_set_tuple_id(padded, isl_dim_out, id(ct, range_name(s)));
 
+  cout << "Getting basic maps..." << endl;
 
   for (auto bmap : get_basic_maps(s)) {
 
     auto pad = isl_basic_map_add_dims(cpy(bmap), isl_dim_in, in_pad_factor);
     pad = isl_basic_map_add_dims(pad, isl_dim_out, out_pad_factor);
-    //cout << "Pad set before zero constraints: " << str(pad) << endl;
+
+    pad = isl_basic_map_set_tuple_id(pad, isl_dim_in, id(ct, domain_name(s)));
+    pad = isl_basic_map_set_tuple_id(pad, isl_dim_out, id(ct, range_name(s)));
+
+    cout << "Pad map before zero constraints: " << str(pad) << endl;
 
     for (int i = original_in_dim; i < num_in_dims(padded); i++) {
       auto ls = isl_local_space_from_space(cpy(get_space(padded)));
@@ -1036,11 +1043,17 @@ isl_map* pad_map(isl_map* s, const int max_dim) {
       pad = isl_basic_map_add_constraint(pad, is_zero);
     }
 
-  //cout << "Padded bset: " << str(pad) << endl;
-  isl_map* pbset = to_map(pad);
-  //cout << "Padded  set: " << str(pbset) << endl;
-  padded = unn(padded, pbset);
-  //cout << "Padded: " << str(padded) << endl;
+    for (int i = original_out_dim; i < num_out_dims(padded); i++) {
+      auto ls = isl_local_space_from_space(cpy(get_space(padded)));
+      auto is_zero = isl_constraint_alloc_equality(ls);
+      is_zero = isl_constraint_set_constant_val(is_zero, zero(ct));
+      is_zero = isl_constraint_set_coefficient_val(is_zero, isl_dim_out, i, one(ct));
+      pad = isl_basic_map_add_constraint(pad, is_zero);
+    }
+
+    cout << "Pad amp after zero constraints: " << str(pad) << endl;
+    isl_map* pbset = to_map(pad);
+    padded = unn(padded, pbset);
   }
 
   //assert(false);
@@ -1051,7 +1064,7 @@ isl_map* pad_map(isl_map* s, const int max_dim) {
 umap* pad_map(umap* unpadded) {
   auto ct = ctx(unpadded);
 
-  cout << "Padding: " << str(unpadded) << endl;
+  cout << "Padding union map: " << str(unpadded) << endl;
 
   int max_dim = -1;
   for (auto s : get_maps(unpadded)) {

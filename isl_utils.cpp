@@ -483,6 +483,18 @@ int get_dim_max(isl_map* const m, int pos) {
     return max;
 }
 
+std::string str(isl_basic_map* const m) {
+  auto ctx = isl_basic_map_get_ctx(m);
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_print_basic_map(p, cpy(m));
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  std::string r(rs);
+  free(rs);
+
+  return r;
+}
 
 std::string str(isl_map* const m) {
   auto ctx = isl_map_get_ctx(m);
