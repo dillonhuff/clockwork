@@ -4322,8 +4322,8 @@ void exposure_fusion() {
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
   int size =
-    //64;
-    1250;
+    64;
+    //1250;
     //200;
 
   auto isl_sched = lp.realize_isl_schedule("pyramid_synthetic_exposure_fusion", size, size);
@@ -4364,7 +4364,7 @@ void exposure_fusion() {
   //cout << "isl schedule: " << str(isl_sched) << endl;
   //cout << "opt schedule: " << str(opt_sched) << endl;
 
-  assert(false);
+  //assert(false);
 
   lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
   lp.realize_naive("pyramid_synthetic_exposure_fusion", size, size);
@@ -5430,7 +5430,7 @@ void playground() {
 }
 
 void application_tests() {
-  playground();
+  //playground();
   //synth_lb_test();
   //conv_app_rolled_reduce_test();
   //reduce_1d_test();
