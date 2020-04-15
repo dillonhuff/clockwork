@@ -4541,6 +4541,47 @@ App jacobi3d(const std::string output_name) {
   return jac;
 }
 
+App denoise2d() {
+  App dn;
+
+  dn.func2d("f_off_chip");
+  dn.func2d("u_off_chip");
+  dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
+  dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
+  dn.func2d("diff_qwe", "fdiff", "u", {{0, 0}, {0, -1}});
+  dn.func2d("diff_d", "fdiff", "u", {{0, 0}, {0, 1}});
+  dn.func2d("diff_l", "fdiff", "u", {{0, 0}, {-1, 0}});
+  dn.func2d("diff_r", "fdiff", "u", {{0, 0}, {1, 0}});
+
+  dn.func2d("g", "fmag_dn2", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
+  dn.func2d("r0", "comp_r0", {pt("u"), pt("f")});
+  dn.func2d("r1", "r1_comp", pt("r0"));
+  dn.func2d("denoise2d", "out_comp_dn2d", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
+
+  return dn;
+}
+
+
+App denoise3d() {
+  App dn;
+
+  dn.func2d("f_off_chip");
+  dn.func2d("u_off_chip");
+  dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
+  dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
+  dn.func2d("diff_qwe", "diff_b", "u", {{0, 0}, {0, -1}});
+  dn.func2d("diff_d", "diff_b", "u", {{0, 0}, {0, 1}});
+  dn.func2d("diff_l", "diff_b", "u", {{0, 0}, {-1, 0}});
+  dn.func2d("diff_r", "diff_b", "u", {{0, 0}, {1, 0}});
+
+  dn.func2d("g", "mag_dn2", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
+  dn.func2d("r0", "comp_r0", {pt("u"), pt("f")});
+  dn.func2d("r1", "r1_comp", pt("r0"));
+  dn.func2d("denoise2d", "out_comp_dn2d", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
+
+  return dn;
+}
+
 vector<vector<int> > offsets2d(const int d0l, const int d0r, const int d1l, const int d1r) {
   vector<vector<int> > offs;
   for (int r = d1l; r < d1r + 1; r++) {
@@ -5389,12 +5430,11 @@ void playground() {
 }
 
 void application_tests() {
-  playground();
+  //playground();
   //synth_lb_test();
   //conv_app_rolled_reduce_test();
   //reduce_1d_test();
 
-  exposure_fusion();
   //up_stencil_down_unrolled_test();
   up_stencil_down_test();
 
@@ -5402,6 +5442,7 @@ void application_tests() {
   neg_stencil_test();
   blur_x_test();
 
+  exposure_fusion();
   up_unrolled_test();
   up_unrolled_4_test();
   up_down_unrolled_test();
