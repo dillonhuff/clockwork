@@ -561,6 +561,14 @@ class UBuffer {
     map<pair<string, string>, stack_bank > stack_banks;
     map<string, selector> selectors;
 
+    int num_dims() const {
+      assert(access_map.size() > 0);
+      auto maps =
+        get_maps(pick(access_map).second);
+      assert(maps.size() > 0);
+      return num_out_dims(maps.at(0));
+    }
+
     bank get_bank(const std::string& name) const {
       for (auto b : stack_banks) {
         if (b.second.name == name) {
@@ -697,6 +705,12 @@ class UBuffer {
       return string(input_bundle ? "Input" : "Output") + "Stream<" + bundle_type_str + " >& " + bundle_name;
     }
 
+    isl_union_set* all_memory() {
+      auto m =
+        unn(producer_map(), consumer_map());
+      return range(m);
+    }
+
     isl_union_set* global_domain() {
       uset* s = isl_union_set_read_from_str(ctx, "{ }");
       for (auto other : domain) {
@@ -704,6 +718,7 @@ class UBuffer {
       }
       return s;
     }
+
     isl_union_map* global_schedule() {
       umap* s = isl_union_map_read_from_str(ctx, "{ }");
       for (auto other : schedule) {

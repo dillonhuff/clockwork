@@ -37,12 +37,14 @@ void generate_xilinx_accel_wrapper(map<string, UBuffer>& buffers, prog& prg) {
 
   out << "static void read_input(int* input, hls::stream<hw_uint<32> >& v, const int size) {" << endl;
   out << tab(1) << "for (int i = 0; i < INPUT_SIZE; i++) {" << endl;
+  out << tab(2) << "#pragma HLS pipeline II=1" << endl;
   out << tab(2) << "v.write(input[i]);" << endl;
   out << tab(1) << "}" << endl;
   out << "}" << endl << endl;
 
   out << "static void write_output(int* output, hls::stream<hw_uint<32> >& v, const int size) {" << endl;
   out << tab(1) << "for (int i = 0; i < OUTPUT_SIZE; i++) {" << endl;
+  out << tab(2) << "#pragma HLS pipeline II=1" << endl;
   out << tab(2) << "output[i] = v.read();" << endl;
   out << tab(1) << "}" << endl;
   out << "}" << endl << endl;
@@ -327,6 +329,17 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
   out << "#include <fstream>" << endl << endl;
 
   out << "using namespace std;" << endl << endl;
+
+  for (auto b : buffers) {
+    if (prg.is_input(b.first)) {
+      out << "// " << b.first << " dimensions..." << endl;
+      int dim = b.second.num_dims();
+      out << tab(1) << "// " << str(b.second.all_memory()) << endl;
+      //for (int i = 0; i < dim; i++) {
+        //out << tab(1) << "// " << str(b.second.range(i)) << endl;
+      //}
+    }
+  }
 
   out <<"int main() {" << endl;
   cout << "starting" << endl;

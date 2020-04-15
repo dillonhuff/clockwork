@@ -7,12 +7,14 @@ extern "C" {
 
 static void read_input(int* input, hls::stream<hw_uint<32> >& v, const int size) {
   for (int i = 0; i < INPUT_SIZE; i++) {
+    #pragma HLS pipeline II=1
     v.write(input[i]);
   }
 }
 
 static void write_output(int* output, hls::stream<hw_uint<32> >& v, const int size) {
   for (int i = 0; i < OUTPUT_SIZE; i++) {
+    #pragma HLS pipeline II=1
     output[i] = v.read();
   }
 }

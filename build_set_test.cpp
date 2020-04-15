@@ -1960,21 +1960,58 @@ struct Token {
   string txt;
 };
 
+ostream& operator<<(ostream& out, const Token& e) {
+  out << e.txt;
+  return out;
+}
+
 struct Expr {
   vector<Token> tokens;
 };
+
+struct FloatConst : public Expr {
+  bool neg;
+  string l;
+  string r;
+};
+
+struct IntConst : public Expr {
+  bool neg;
+  string val;
+};
+
+struct Binop : public Expr {
+  string op;
+  Expr* l;
+  Expr* r;
+};
+
+struct Unop : public Expr {
+  string op;
+  Expr* arg;
+};
+
+ostream& operator<<(ostream& out, const Expr& e) {
+  out << comma_list(e.tokens);
+  return out;
+}
 
 struct BaseExpr {
   string name;
   vector<Token> dims;
 };
 
+ostream& operator<<(ostream& out, const BaseExpr& e) {
+  out << e.name << "(" << comma_list(e.dims) << ")";
+  return out;
+}
+
 struct StencilProgram {
   string name;
   int burst_width;
   int unroll_factor;
 
-  vector<pair<BaseExpr, Expr> > operations;
+  vector<pair<BaseExpr, Expr*> > operations;
 };
 
 bool is_isolated_token(const char nextc) {
@@ -2128,12 +2165,34 @@ bool done(vector<Token>& tokens, size_t& pos) {
   return tokens.size() <= pos;
 }
 
-Expr parse_expr(vector<Token>& tokens, size_t& pos) {
-  stack<Token> op_stack;
-  Expr e;
-  while (!done(tokens, pos) && expr_start(peek(tokens, pos))) {
-    e.tokens.push_back(next(tokens, pos));
-  }
+Expr* parse_expr(vector<Token>& tokens, size_t& pos) {
+  //stack<Token> op_stack;
+  //deque<Token> tokens;
+  //while (!done(tokens, pos) && expr_start(peek(tokens, pos))) {
+    //tokens.push_back(next(tokens, pos));
+  //}
+
+  //deque<Token> op_stack;
+  //deque<Expr*> output_queue;
+  //while (tokens.size() > 0) {
+    //Token t = tokens.pop_front();
+    //if (is_float(t)) {
+      //output_queue.push_back(new FloatConst());
+    //} else if (is_int(t)) {
+      //output_queue.push_back(new IntConst(t.txt));
+    //} else if (is_function_call(t)) {
+      //op_stack.push_back(t);
+    //} else if (is_function_separator(t)) {
+      //// Pop off stack building expression
+      //assert(false);
+    //} else if (is_operator(t)) {
+      //// Pop higher precedence operators off the stack
+      //op_stack.push_back(t);
+      //assert(false);
+    //}
+  //}
+
+  Expr* e = new Expr();
   return e;
 }
 
@@ -2181,7 +2240,7 @@ StencilProgram parse_soda_program(istream& in) {
       cout << " )" << endl;
 
       consume(tokens, pos, "=");
-      Expr e = parse_expr(tokens, pos);
+      Expr* e = parse_expr(tokens, pos);
       cout << "After expr: " <<
         endl;
       for (size_t i = pos; i < tokens.size(); i++) {
@@ -2197,13 +2256,14 @@ StencilProgram parse_soda_program(istream& in) {
   cout << "Program: " << program.name << endl;
   for (auto op : program.operations) {
     BaseExpr b = op.first;
-    Expr e = op.second;
     cout << b.name << "(";
     for (auto e : b.dims) {
       cout << e.txt << ", ";
     }
     cout << " ) = ";
-    for (auto t : e.tokens) {
+
+    Expr* e = op.second;
+    for (auto t : e->tokens) {
       cout << t.txt << " ";
     }
     cout << endl;
@@ -2215,6 +2275,12 @@ StencilProgram parse_soda_program(istream& in) {
 void parse_denoise3d_test() {
   ifstream in("denoise3d.soda");
   auto prg = parse_soda_program(in);
+  cout << "Name: " << prg.name << endl;
+  cout << "Burst width: " << prg.burst_width << endl;
+  cout << "Operations..." << endl;
+  for (auto op : prg.operations) {
+    cout << tab(1) << op.first << " = " << *(op.second) << endl;
+  }
 
   //assert(false);
 }
@@ -3508,7 +3574,7 @@ struct App {
           cfile << tab(1) << "auto result_" << lane << " = " << compute_name(f) << "(" << comma_list(arg_names) << ");" << endl;
           cfile << tab(1) << "set_at<" << fwidth*lane << ", " << out_width << ">(whole_result, result_" << lane << ");" << endl;
         }
-        cfile << tab(1) << " return whole_result;" << endl;
+        cfile << tab(1) << "return whole_result;" << endl;
         cfile << "}" << endl << endl;
 
         already_seen.insert(unrolled_compute_name(f));
@@ -4512,7 +4578,7 @@ App seidel(const std::string output_name) {
   return jac;
 }
 
-App blurxy(const std::string output_name) {
+App blur_xy(const std::string output_name) {
   App jac;
   jac.func2d("input_arg");
   jac.func2d("input", "id", pt("input_arg"));
@@ -4677,6 +4743,24 @@ void upsample_stencil_1d_test() {
 
   assert(optimized == naive);
   //assert(false);
+}
+
+void blur_xy_app_test() {
+  int cols = 1920;
+  int rows = 1080;
+  //for (int i = 0; i < 5; i++) {
+  int unroll_factor = pow(2, 4);
+  string out_name = "blur_xy_unrolled_" + str(unroll_factor);
+  jacobi2d(out_name).realize(out_name, cols, rows, unroll_factor);
+  string synth_dir =
+    "./synth_examples/" + out_name;
+  system(("mkdir " + synth_dir).c_str());
+  system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
+  system(("mv " + out_name + "*.h " + synth_dir).c_str());
+  system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
+  system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
+  //}
+
 }
 
 void jacobi2d_app_test() {
@@ -5430,10 +5514,16 @@ void playground() {
 }
 
 void application_tests() {
+  blur_xy_app_test();
+  assert(false);
+
   //playground();
   //synth_lb_test();
   //conv_app_rolled_reduce_test();
   //reduce_1d_test();
+
+  //parse_denoise3d_test();
+  //assert(false);
 
   //up_stencil_down_unrolled_test();
   up_stencil_down_test();
@@ -5465,7 +5555,6 @@ void application_tests() {
   seidel2d_test();
   jacobi_2d_2_test();
   jacobi_2d_test();
-  parse_denoise3d_test();
   conv3x3_app_test();
   conv3x3_app_test();
 

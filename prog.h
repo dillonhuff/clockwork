@@ -428,6 +428,14 @@ struct prog {
       const std::string& c, int c_min, int c_max) {
     return root->add_nest(x, x_min, x_max, y, y_min, y_max, c, c_min, c_max);
   }
+  
+  bool is_output(const std::string& name) {
+    return elem(name, outs);
+  }
+
+  bool is_input(const std::string& name) {
+    return elem(name, ins);
+  }
 
   bool is_boundary(const std::string& name) {
     return elem(name, ins) || elem(name, outs);
