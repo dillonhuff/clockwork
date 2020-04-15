@@ -332,20 +332,26 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
 
   for (auto b : buffers) {
     if (prg.is_input(b.first)) {
-      out << "// " << b.first << " dimensions..." << endl;
+      out << "// In : " << b.first << " dimensions..." << endl;
       int dim = b.second.num_dims();
-      out << tab(1) << "// " << str(b.second.all_memory()) << endl;
-      //for (int i = 0; i < dim; i++) {
-        //out << tab(1) << "// " << str(b.second.range(i)) << endl;
-      //}
+      auto all_mem = coalesce(b.second.all_memory());
+      out << tab(1) << "// " << str(all_mem) << endl;
+      out << tab(1) << "// Min: " << str(lexmin(all_mem)) << endl;
+      out << tab(1) << "// Max: " << str(lexmax(all_mem)) << endl;
+    }
+
+    if (prg.is_output(b.first)) {
+      out << "// Out: " << b.first << " dimensions..." << endl;
+      int dim = b.second.num_dims();
+      auto all_mem = coalesce(b.second.all_memory());
+      out << tab(1) << "// " << str(all_mem) << endl;
+      out << tab(1) << "// Min: " << str(lexmin(all_mem)) << endl;
+      out << tab(1) << "// Max: " << str(lexmax(all_mem)) << endl;
     }
   }
 
   out <<"int main() {" << endl;
   cout << "starting" << endl;
-
-  //out const int ncols = 1024;
-  //const int nrows = 1024;
 
   out << tab(1) << "const int img_size = 1920*1080;" << endl;
   out << tab(1) << "ap_uint<32>* buf =" << endl;
