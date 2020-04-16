@@ -3,34 +3,40 @@
 #include <iostream>
 #include <fstream>
 
-#define BURST_WIDTH 256
+#define BURST_WIDTH 16
+#define PIXEL_WIDTH 16
 
 using namespace std;
 
 int main() {
 
-  const int nrows = 33;
-  const int ncols = 64;
+  const int nrows = 32;
+  const int ncols = 32;
 
   uint64_t img_pixels=
     nrows*ncols;
 
-  const uint64_t bits_per_pixel = 32;
+  const uint64_t bits_per_pixel = PIXEL_WIDTH;
   uint64_t img_bits =
     bits_per_pixel*img_pixels;
 
   const uint64_t num_transfers =
     img_bits / BURST_WIDTH;
 
-  cout << "num transfers: " << num_transfers << endl;
+  const uint64_t pixels_per_burst =
+    BURST_WIDTH / bits_per_pixel;
 
-  const uint64_t transfer_cols = ncols / (BURST_WIDTH / bits_per_pixel);
+  cout << "num transfers    : " << num_transfers << endl;
+  cout << "pixels / transfer: " << pixels_per_burst << endl;
 
-  ap_uint<512>* y_res =
-    (ap_uint<512>*) malloc(sizeof(ap_uint<512>) * num_transfers);
-  ap_uint<512>* input =
-    (ap_uint<512>*) malloc(sizeof(ap_uint<512>) * num_transfers);
+  const uint64_t transfer_cols =
+    ncols / pixels_per_burst;
 
+  ap_uint<BURST_WIDTH>* y_res =
+    (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>) * num_transfers);
+  ap_uint<BURST_WIDTH>* input =
+    (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>) * num_transfers);
+  ofstream in("input_pixels.csv");
   for (int r = 0; r < nrows; r++) {
     for (int c = 0; c < transfer_cols; c++) {
 
@@ -38,13 +44,16 @@ int main() {
       auto offset = r*transfer_cols + c;
       //cout << "offset = " << offset << endl;
 
-      ap_uint<512>* val = &(input[offset]);
+      ap_uint<BURST_WIDTH>* val = &(input[offset]);
       for (int l = 0; l < (BURST_WIDTH / bits_per_pixel); l++) {
-        (*val)(l*bits_per_pixel + bits_per_pixel - 1, l*bits_per_pixel) = r*ncols + c + l;
+        ap_uint<PIXEL_WIDTH> next_pix = r*ncols + c + l;
+        in << next_pix << endl;
+        (*val)(l*bits_per_pixel + bits_per_pixel - 1, l*bits_per_pixel) = next_pix;
       }
     }
   }
 
+  in.close();
   blur_kernel(y_res,
       input,
       num_transfers);
@@ -58,7 +67,7 @@ int main() {
       auto offset = r*transfer_cols + c;
       //cout << "offset = " << offset << endl;
 
-      ap_uint<512>* val = &(y_res[offset]);
+      ap_uint<BURST_WIDTH>* val = &(y_res[offset]);
       for (int l = 0; l < (BURST_WIDTH / bits_per_pixel); l++) {
         out << (*val)(l*bits_per_pixel + bits_per_pixel - 1, l*bits_per_pixel) << endl;
       }
