@@ -76,6 +76,15 @@ int main() {
   uint64_t img_pixels=
     nrows*ncols;
 
+  Image<32> input(ncols, nrows);
+  for (int r = 0; r < nrows; r++) {
+    for (int c = 0; c < ncols; c++) {
+      input(c, r) = r*ncols + c;
+    }
+  }
+
+  Image<512> packed = input.pack_pixels<16>();
+
   const uint64_t bits_per_pixel = PIXEL_WIDTH;
   uint64_t img_bits =
     bits_per_pixel*img_pixels;
@@ -123,9 +132,7 @@ int main() {
   for (int r = 0; r < nrows; r++) {
     for (int c = 0; c < transfer_cols; c++) {
 
-      //cout << "r = " << r << ", c = " << c << endl;
       auto offset = r*transfer_cols + c;
-      //cout << "offset = " << offset << endl;
 
       ap_uint<BURST_WIDTH>* val = &(y_res[offset]);
       for (int l = 0; l < (BURST_WIDTH / bits_per_pixel); l++) {
@@ -133,9 +140,7 @@ int main() {
       }
 
     }
-    //cout << endl;
   }
   out.close();
   cout << "Done" << endl;
-
 }
