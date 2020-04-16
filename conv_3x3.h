@@ -137,6 +137,24 @@ int set_zero() {
 }
 
 static inline
+hw_uint<32> blury_comp(hw_uint<32*3>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+
+  return v0 + v1 + v2;
+}
+
+static inline
+hw_uint<32> blurx_comp(hw_uint<32*3>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+
+  return v0 + v1 + v2;
+}
+
+static inline
 int conv_1_3(hw_uint<32*3>& in) {
   hw_uint<32> v0 = in.extract<0, 31>();
   hw_uint<32> v1 = in.extract<32, 63>();

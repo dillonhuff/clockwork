@@ -2863,8 +2863,8 @@ struct App {
 
   Box compute_box(const std::string& name) {
     cout << "Getting box: " << name << endl;
-    //cout << tab(1) << "lexmin: " << str(lexmin(compute_domain(name))) << endl;
-    //cout << tab(1) << "lexmax: " << str(lexmax(compute_domain(name))) << endl;
+    cout << tab(1) << "lexmin: " << str(lexmin(compute_domain(name))) << endl;
+    cout << tab(1) << "lexmax: " << str(lexmax(compute_domain(name))) << endl;
 
     auto min_pt =
       parse_pt(sample(lexmin(compute_domain(name))));
@@ -4583,7 +4583,7 @@ App blur_xy(const std::string output_name) {
   jac.func2d("input_arg");
   jac.func2d("input", "id", pt("input_arg"));
   jac.func2d("blurx", "blurx_comp", "input", {1, 1}, {{0, 0}, {0, 1}, {0, 2}});
-  jac.func2d(output_name, "blury_comp", "input", {1, 1}, {{0, 0}, {1, 0}, {2, 0}});
+  jac.func2d(output_name, "blury_comp", "blurx", {1, 1}, {{0, 0}, {1, 0}, {2, 0}});
   return jac;
 }
 
@@ -4746,12 +4746,17 @@ void upsample_stencil_1d_test() {
 }
 
 void blur_xy_app_test() {
-  int cols = 1920;
-  int rows = 1080;
-  //for (int i = 0; i < 5; i++) {
-  int unroll_factor = pow(2, 4);
+  int cols = 32;
+  int rows = 32;
+  
+  //int unroll_factor = pow(2, 4);
+  int unroll_factor = pow(2, 0);
   string out_name = "blur_xy_unrolled_" + str(unroll_factor);
-  jacobi2d(out_name).realize(out_name, cols, rows, unroll_factor);
+  blur_xy(out_name).realize(out_name, cols, rows, unroll_factor);
+
+  std::vector<std::string> optimized =
+    run_regression_tb(out_name + "_opt");
+
   string synth_dir =
     "./synth_examples/" + out_name;
   system(("mkdir " + synth_dir).c_str());
@@ -5515,6 +5520,7 @@ void playground() {
 
 void application_tests() {
   blur_xy_app_test();
+
   assert(false);
 
   //playground();
