@@ -43,13 +43,26 @@ struct Image {
     return padded;
   }
 
-  template<int packed_width>
-  Image<packed_width> pack_pixels(const int multiple) const {
-    assert(false);
-    //int leftover = ncols - (ncols / multiple)*multiple;
-    Image<packed_width> packed(ncols, nrows);
+  template<int pixels_per_pack>
+  Image<pixel_width*pixels_per_pack> pack_pixels() const {
 
-    //assert(padded.ncols % multiple == 0);
+    const int packed_width = pixels_per_pack*pixel_width;
+    Image<pixel_width> padded = pad_cols(pixels_per_pack);
+    
+    assert(padded.ncols % pixels_per_pack == 0);
+
+    Image<packed_width> packed(padded.ncols / pixels_per_pack, padded.nrows);
+    for (int r = 0; r < packed.nrows; r++) {
+      for (int c = 0; c < packed.ncols; c++) {
+
+        ap_uint<packed_width>* val = &(packed(r, c));
+
+        for (int l = 0; l < pixels_per_pack; l++) {
+          ap_uint<pixel_width> next_pix = padded(c + l, r);
+          (*val)((l + 1)*pixel_width - 1, l*pixel_width) = next_pix;
+        }
+      }
+    }
 
     return packed;
   }
