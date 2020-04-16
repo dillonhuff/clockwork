@@ -8,6 +8,53 @@
 
 using namespace std;
 
+
+template<int pixel_width>
+struct Image {
+
+  int nrows;
+  int ncols;
+  ap_uint<pixel_width>* pixels;
+
+  Image(const int ncols_, const int nrows_) : ncols(ncols_), nrows(nrows_) {
+    pixels = new ap_uint<pixel_width>(ncols*nrows);
+  }
+
+  ~Image() {
+    delete pixels;
+  }
+
+  ap_uint<pixel_width>& operator()(const int c, const int r) {
+    return pixels.at(r*ncols + c);
+  }
+
+  Image<pixel_width> pad_cols(const int multiple) const {
+    int leftover = ncols - (ncols / multiple)*multiple;
+    Image<pixel_width> padded(ncols + leftover, nrows);
+
+    assert(padded.ncols % multiple == 0);
+
+    for (int r = 0; r < nrows; r++) {
+      for (int c = 0; c < ncols; c++) {
+        padded(c, r) = (*this)(c, r);
+      }
+    }
+
+    return padded;
+  }
+
+  template<int packed_width>
+  Image<packed_width> pack_pixels(const int multiple) const {
+    assert(false);
+    //int leftover = ncols - (ncols / multiple)*multiple;
+    Image<packed_width> packed(ncols, nrows);
+
+    //assert(padded.ncols % multiple == 0);
+
+    return packed;
+  }
+};
+
 int main() {
 
   const int nrows = 32;
