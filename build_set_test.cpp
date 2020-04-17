@@ -882,9 +882,9 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
   rgtb << "#include \"" << prg.name << ".h\"" << endl << endl;
 
   rgtb << "int main() {" << endl;
+  rgtb << tab(1) << "ofstream in_pix(\"" << "input_pixels_regression_result_" << prg.name << ".txt\");" << endl;
   rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << ".txt\");" << endl;
 
-  //vector<string> unoptimized_streams;
   vector<string> optimized_streams;
   for (auto in : prg.ins) {
     assert(contains_key(in, buffers));
@@ -934,6 +934,7 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
     for (int p = 0; p < num_ports; p++) {
       rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ">(in_val, " << num_ports << "*i + " << p << ");" << endl;
     }
+    rgtb << tab(2) << "in_pix << in_val.to_int() << endl;" << endl;
     rgtb << tab(2) << bundle << ".write(in_val);" << endl;
     rgtb << tab(1) << "}" << endl << endl;
   }
@@ -963,18 +964,14 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
         << " = actual.extract<" << p << "*" << port_width << ", "
         << (p + 1)*port_width - 1 << ">();" << endl;
 
-      //rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ">(in_val, " << num_ports << "*i + " << p << ");" << endl;
       rgtb << tab(2) << "fout << (int) actual_lane_" << p << " << endl;" << endl;
     }
-    //rgtb << tab(2) << bundle << ".write(in_val);" << endl;
 
-    //rgtb << tab(2) << "for (int p = 0; p < " << num_ports << "; p++) {" << endl;
-    //rgtb << tab(3) << "int actual = " << bundle << ".read();" << endl;
-    //rgtb << tab(3) << "fout << actual << endl;" << endl;
-    //rgtb << tab(2) << "}" << endl << endl;
     rgtb << tab(1) << "}" << endl << endl;
   }
 
+  rgtb << tab(1) << "in_pix.close();" << endl;
+  rgtb << tab(1) << "fout.close();" << endl;
   rgtb << tab(1) << "return 0;" << endl;
   rgtb << "}" << endl;
   rgtb.close();
@@ -4756,8 +4753,8 @@ void blur_xy_app_test() {
     string out_name = "blur_xy_unrolled_" + str(unroll_factor);
     blur_xy(out_name).realize(out_name, cols, rows, unroll_factor);
 
-    std::vector<std::string> optimized =
-      run_regression_tb(out_name + "_opt");
+    //std::vector<std::string> optimized =
+      //run_regression_tb(out_name + "_opt");
 
     string synth_dir =
       "./synth_examples/" + out_name;
