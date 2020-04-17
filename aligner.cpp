@@ -46,7 +46,7 @@ bool find_alignment(vector<string>& reference_lines, vector<string>& target_line
   }
 
   if (reference_position != reference_lines.size()) {
-    cout << tab(1) << "ERROR: Could not align after reference element " << reference_position << ": " << reference_lines.at(reference_position) << endl;
+    cout << tab(1) << "ERROR: Could not align reference element " << reference_position << ": " << reference_lines.at(reference_position) << endl;
     return false;
   } else {
     cout << tab(1) << "Sequences align!" << endl;

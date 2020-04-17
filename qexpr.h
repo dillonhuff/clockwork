@@ -238,7 +238,17 @@ struct QTerm {
       d *= c.denom;
     }
 
+    if (abs(n) == 1 && abs(d) == 1) {
+      n = n / d;
+      d = 1;
+    } else if (n == -1) {
+      n = -n;
+      d = -d;
+    }
+
     if (n != 1) {
+      //cout << "n = " << n << endl;
+      //cout << "d = " << d << endl;
       assert(n % d == 0);
       n = n / d;
       d = 1;
@@ -834,8 +844,46 @@ QTerm parse_qterm(const std::string& str) {
 }
 
 static inline
+QExpr concat_terms(const QExpr& a, const QExpr& b) {
+  QExpr expr;
+  for (auto t : a.terms) {
+    expr.terms.push_back(t);
+  }
+  for (auto t : b.terms) {
+    expr.terms.push_back(t);
+  }
+  return expr;
+}
+
+static inline
 QExpr sub(const string& a, const string& b) {
   return qexpr(qterm(a), qterm(b).scale(-1));
+}
+
+static inline
+QExpr operator*(const QExpr& a, const QExpr& b) {
+  QExpr prod;
+  for (auto t : a.terms) {
+    vector<QTerm> bterms = b.terms;
+    for (QTerm& ot : bterms) {
+      concat(ot.vals, t.vals);
+      prod.terms.push_back(ot);
+    }
+  }
+  return prod;
+}
+
+static inline
+QExpr operator+(const QExpr& a, const QExpr& b) {
+  QExpr bc = b;
+  return concat_terms(a, bc);
+}
+
+static inline
+QExpr operator-(const QExpr& a, const QExpr& b) {
+  QExpr bc = b;
+  bc.scale(-1);
+  return concat_terms(a, bc);
 }
 
 struct Range {
@@ -1110,4 +1158,15 @@ std::string box_codegen(const vector<string>& op_order,
   //print_while_loop(0, ss, op_order, whole_dom, index_bounds, scheds);
 
   return ss.str();
+}
+
+static inline 
+QExpr qe(isl_val* v) {
+  if (isl_val_is_int(v)) {
+    return qexpr(safe_stoi(str(v)));
+  }
+
+  assert(isl_val_is_rat(v));
+
+  return qexpr(qconst(isl_val_get_num_si(v), isl_val_get_den_si(v)));
 }

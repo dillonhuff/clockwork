@@ -77,10 +77,10 @@ store_epoch:
   }
 }
 void Module0Func(
-  /*output*/ hls::stream<Data<uint16_t>>* fifo_st_0, 
-  /*output*/ hls::stream<Data<uint16_t>>* fifo_st_1, 
-  /*output*/ hls::stream<Data<uint16_t>>* fifo_st_2, 
-  /*output*/ hls::stream<Data<uint16_t>>* fifo_st_3, 
+  /*output*/ hls::stream<Data<uint16_t>>* fifo_st_0,
+  /*output*/ hls::stream<Data<uint16_t>>* fifo_st_1,
+  /*output*/ hls::stream<Data<uint16_t>>* fifo_st_2,
+  /*output*/ hls::stream<Data<uint16_t>>* fifo_st_3,
   /* input*/ hls::stream<Data<ap_uint<64>>>* dram_input_bank_1_fifo)
 {
 #pragma HLS data_pack variable = fifo_st_0
@@ -106,7 +106,7 @@ module_0_epoch:
   } // for module_0_epoch
 } // Module0Func
 void Module1Func(
-  /*output*/ hls::stream<Data<uint16_t>>* fifo_st_0, 
+  /*output*/ hls::stream<Data<uint16_t>>* fifo_st_0,
   /* input*/ hls::stream<Data<uint16_t>>* fifo_ld_0)
 {
 #pragma HLS data_pack variable = fifo_st_0
@@ -126,7 +126,7 @@ module_1_epoch:
   } // for module_1_epoch
 } // Module1Func
 void Module2Func(
-  /*output*/ hls::stream<Data<uint16_t>>* fifo_st_0, 
+  /*output*/ hls::stream<Data<uint16_t>>* fifo_st_0,
   /* input*/ hls::stream<Data<uint16_t>>* fifo_ld_0)
 {
 #pragma HLS data_pack variable = fifo_st_0
@@ -146,10 +146,10 @@ module_2_epoch:
   } // for module_2_epoch
 } // Module2Func
 void Module3Func(
-  /*output*/ hls::stream<Data<ap_uint<64>>>* dram_pointwise_bank_1_fifo, 
-  /* input*/ hls::stream<Data<uint16_t>>* fifo_ld_0, 
-  /* input*/ hls::stream<Data<uint16_t>>* fifo_ld_1, 
-  /* input*/ hls::stream<Data<uint16_t>>* fifo_ld_2, 
+  /*output*/ hls::stream<Data<ap_uint<64>>>* dram_pointwise_bank_1_fifo,
+  /* input*/ hls::stream<Data<uint16_t>>* fifo_ld_0,
+  /* input*/ hls::stream<Data<uint16_t>>* fifo_ld_1,
+  /* input*/ hls::stream<Data<uint16_t>>* fifo_ld_2,
   /* input*/ hls::stream<Data<uint16_t>>* fifo_ld_3)
 {
 #pragma HLS data_pack variable = dram_pointwise_bank_1_fifo
@@ -245,40 +245,40 @@ void pointwise_kernel(
 #pragma HLS dataflow
   BurstRead(&bank_1_input_buf, bank_1_input, coalesced_data_num);
   Module0Func(
-    /*output*/ &from_super_source_to_input_offset_0, 
-    /*output*/ &from_super_source_to_input_offset_1, 
-    /*output*/ &from_super_source_to_input_offset_2, 
-    /*output*/ &from_super_source_to_input_offset_3, 
+    /*output*/ &from_super_source_to_input_offset_0,
+    /*output*/ &from_super_source_to_input_offset_1,
+    /*output*/ &from_super_source_to_input_offset_2,
+    /*output*/ &from_super_source_to_input_offset_3,
     /* input*/ &bank_1_input_buf);
   Module1Func(
-    /*output*/ &from_input_offset_0_to_pointwise_pe_3, 
+    /*output*/ &from_input_offset_0_to_pointwise_pe_3,
     /* input*/ &from_super_source_to_input_offset_0);
   Module1Func(
-    /*output*/ &from_input_offset_1_to_pointwise_pe_2, 
+    /*output*/ &from_input_offset_1_to_pointwise_pe_2,
     /* input*/ &from_super_source_to_input_offset_1);
   Module1Func(
-    /*output*/ &from_input_offset_2_to_pointwise_pe_1, 
+    /*output*/ &from_input_offset_2_to_pointwise_pe_1,
     /* input*/ &from_super_source_to_input_offset_2);
   Module1Func(
-    /*output*/ &from_input_offset_3_to_pointwise_pe_0, 
+    /*output*/ &from_input_offset_3_to_pointwise_pe_0,
     /* input*/ &from_super_source_to_input_offset_3);
   Module2Func(
-    /*output*/ &from_pointwise_pe_3_to_super_sink, 
+    /*output*/ &from_pointwise_pe_3_to_super_sink,
     /* input*/ &from_input_offset_0_to_pointwise_pe_3);
   Module2Func(
-    /*output*/ &from_pointwise_pe_2_to_super_sink, 
+    /*output*/ &from_pointwise_pe_2_to_super_sink,
     /* input*/ &from_input_offset_1_to_pointwise_pe_2);
   Module2Func(
-    /*output*/ &from_pointwise_pe_1_to_super_sink, 
+    /*output*/ &from_pointwise_pe_1_to_super_sink,
     /* input*/ &from_input_offset_2_to_pointwise_pe_1);
   Module2Func(
-    /*output*/ &from_pointwise_pe_0_to_super_sink, 
+    /*output*/ &from_pointwise_pe_0_to_super_sink,
     /* input*/ &from_input_offset_3_to_pointwise_pe_0);
   Module3Func(
-    /*output*/ &bank_1_pointwise_buf, 
-    /* input*/ &from_pointwise_pe_3_to_super_sink, 
-    /* input*/ &from_pointwise_pe_2_to_super_sink, 
-    /* input*/ &from_pointwise_pe_1_to_super_sink, 
+    /*output*/ &bank_1_pointwise_buf,
+    /* input*/ &from_pointwise_pe_3_to_super_sink,
+    /* input*/ &from_pointwise_pe_2_to_super_sink,
+    /* input*/ &from_pointwise_pe_1_to_super_sink,
     /* input*/ &from_pointwise_pe_0_to_super_sink);
   BurstWrite(bank_1_pointwise, &bank_1_pointwise_buf, coalesced_data_num);
 }

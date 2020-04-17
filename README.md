@@ -1,5 +1,5 @@
-# Polyhedral Analysis for Hardware Accelerators Talk
+# Clockwork: Polyhedral Analysis for Hardware Accelerators
 
-This is the repo for my aha group talk on 01-29-2019.
+## Dependencies
 
-Synthesis results are in .synth_results/
+barvinok-0.41

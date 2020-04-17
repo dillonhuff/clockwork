@@ -1,0 +1,29 @@
+<AutoPilot:solution xmlns:AutoPilot="com.autoesl.autopilot.solution">
+    <name>
+        <value string="solution"/>
+    </name>
+    <project>
+        <value string="vadd"/>
+    </project>
+    <targetInfo>
+        <TargetInfo value="xcvu9p:-flgb2104:-2-i"/>
+    </targetInfo>
+    <libraryList>
+        <library value="xilinx/virtexuplus/virtexuplus" name="DefaultPlatform"/>
+        <library value="xilinx/virtexuplus/virtexuplus_fpv7" name="DefaultPlatform"/>
+    </libraryList>
+    <config>
+        <config_sdx target="xocc"/>
+        <config_export vivado_optimization_level="0" vivado_phys_opt="none" format="ip_catalog" ipname="vadd"/>
+        <config_compile pipeline_loops="64" name_max_length="80" skip_transform="1"/>
+        <config_schedule enable_dsp_full_reg="1"/>
+        <config_rtl register_reset_num="3" module_auto_prefix="1" kernel_profile="1" enable_maxiConservative="1"/>
+        <config_interface m_axi_addr64="1"/>
+        <config_dataflow strict_mode="warning"/>
+        <config_debug enable="1"/>
+    </config>
+    <clockList>
+        <clock name="default" default="false" uncertainty="27.000000%" period="250.000000MHz"/>
+    </clockList>
+</AutoPilot:solution>
+

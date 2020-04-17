@@ -2,6 +2,7 @@
 
 #include "conv_3x3.h"
 
+  // t1_update_0 unroll factor: 2
 hw_uint<64>  id_unrolled_2(hw_uint<64>& t1_arg) {
   hw_uint<64> whole_result;
   hw_uint<32> lane_0_t1_arg;
@@ -17,6 +18,7 @@ hw_uint<64>  id_unrolled_2(hw_uint<64>& t1_arg) {
    return whole_result;
 }
 
+  // jacobi2d_unrolled_2_update_0 unroll factor: 2
 hw_uint<64>  jacobi2d_compute_unrolled_2(hw_uint<256>& t1) {
   hw_uint<64> whole_result;
   hw_uint<160> lane_0_t1;

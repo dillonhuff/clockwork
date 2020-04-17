@@ -2,6 +2,7 @@
 
 #include "conv_3x3.h"
 
+  // B_update_0 unroll factor: 1
 hw_uint<32>  id_unrolled_1(hw_uint<32>& B_off) {
   hw_uint<32> whole_result;
   hw_uint<32> lane_0_B_off;
@@ -12,6 +13,7 @@ hw_uint<32>  id_unrolled_1(hw_uint<32>& B_off) {
    return whole_result;
 }
 
+  // C_update_0 unroll factor: 1
 hw_uint<32>  diff_unrolled_1(hw_uint<32>& A, hw_uint<32>& B) {
   hw_uint<32> whole_result;
   hw_uint<32> lane_0_A;

@@ -1,0 +1,25 @@
+INFO: [v++ 60-897] Reading --xp value from platform: param:compiler.lockFlowCritSlackThreshold=0
+INFO: [v++ 60-897] Reading --xp value from platform: vivado_param:hd.routingContainmentAreaExpansion=true
+INFO: [v++ 60-897] Reading --xp value from platform: vivado_param:hd.supportClockNetCrossDiffReconfigurablePartitions=1
+INFO: [v++ 60-897] Reading --xp value from platform: vivado_param:bitstream.enablePR=4123
+INFO: [v++ 60-897] Reading --xp value from platform: vivado_param:physynth.ultraRAMOptOutput=false
+INFO: [v++ 60-897] Reading --xp value from platform: vivado_prop:run.__KERNEL__.{STEPS.SYNTH_DESIGN.ARGS.MAX_URAM_CASCADE_HEIGHT}={1}
+INFO: [v++ 60-897] Reading --xp value from platform: vivado_param:synth.elaboration.rodinMoreOptions={rt::set_parameter disableOregPackingUram true}
+WARNING: [v++ 60-642] Deprecated parameter name: compiler.lockFlowCritSlackThreshold
+INFO: [v++ 60-1306] Additional information associated with this v++ link can be found at:
+	Reports: /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/reports/link
+	Log files: /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/logs/link
+INFO: [v++ 60-1548] Creating build summary session with primary output /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt.xclbin.link_summary, at Thu Apr  9 03:17:25 2020
+INFO: [v++ 60-1316] Initiating connection to rulecheck server, at Thu Apr  9 03:17:25 2020
+INFO: [v++ 60-1315] Creating rulecheck session with output '/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/reports/link/v++_link_jacobi2d_unrolled_1_opt_guidance.html', at Thu Apr  9 03:17:26 2020
+INFO: [v++ 60-895]   Target platform: /home/centos/aws-fpga/Vitis/aws_platform/xilinx_aws-vu9p-f1_shell-v04261818_201920_1/xilinx_aws-vu9p-f1_shell-v04261818_201920_1.xpfm
+INFO: [v++ 60-1578]   This platform contains Xilinx Shell Archive '/home/centos/aws-fpga/Vitis/aws_platform/xilinx_aws-vu9p-f1_shell-v04261818_201920_1/hw/xilinx_aws-vu9p-f1_shell-v04261818_201920_1.xsa'
+INFO: [v++ 60-629] Linking for software emulation target
+INFO: [v++ 60-423]   Target device: xilinx_aws-vu9p-f1_shell-v04261818_201920_1
+INFO: [v++ 60-645] kernel flags are '-g -D __VIVADO_SYNTH__ -I /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src -g'
+INFO: [v++ 60-586] Created build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt.xclbin
+INFO: [v++ 60-1307] Run completed. Additional information can be found in:
+	Guidance: /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/reports/link/v++_link_jacobi2d_unrolled_1_opt_guidance.html
+	Steps Log File: /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/build_dir.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/logs/link/link.steps.log
+
+INFO: [v++ 60-791] Total elapsed time: 0h 0m 7s

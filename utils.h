@@ -1,12 +1,36 @@
 #pragma once
 
-
 #include "algorithm.h"
 #include <sstream>
 #include <regex>
 
 using namespace dbhc;
 using namespace std;
+
+static inline
+string c_sanitize(const std::string& str) {
+  string res = "";
+  for (auto c : str) {
+    if (c == '+') {
+      res += "_p_";
+    } else if (c == ')') {
+      res += "_rp_";
+    } else if (c == '(') {
+      res += "_lp_";
+    } else if (c == '*') {
+      res += "_m_";
+    } else if (c == ' ') {
+      res += "_";
+    } else if (c == ',') {
+      res += "_c_";
+    } else if (c == '-') {
+      res += "_m_";
+    } else {
+      res += c;
+    }
+  }
+  return res;
+}
 
 static inline
 vector<string> split_at(const string& t, const string& delimiter) {
@@ -34,7 +58,7 @@ string take_until(const std::string& s, const std::string& delim) {
 }
 
 static inline
-bool is_number(string s) { 
+bool is_number(string s) {
 
   if (s[0] != '-' && !isdigit(s[0])) {
     return false;
@@ -42,11 +66,11 @@ bool is_number(string s) {
 
   for (int i = 1; i < s.length(); i++)  {
     if (isdigit(s[i]) == false) {
-      return false; 
+      return false;
     }
-  }  
-  return true; 
-} 
+  }
+  return true;
+}
 
 static inline
 int safe_stoi(const string s) {

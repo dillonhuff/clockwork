@@ -43,3 +43,5 @@ C_opt*
 synthetic_*
 pyramid_*
 camera_collateral*
+*.csv
+tb_soda_*

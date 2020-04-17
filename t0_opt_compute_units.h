@@ -3,9 +3,13 @@
 #include "conv_3x3.h"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 hw_uint<128>  id_unrolled_4(hw_uint<128>& t1_arg) {
   hw_uint<128> whole_result;
 =======
+=======
+  // t1_update_0 unroll factor: 1
+>>>>>>> origin/master
 hw_uint<32>  id_unrolled_1(hw_uint<32>& t1_arg) {
   hw_uint<32> whole_result;
 >>>>>>> origin/master
@@ -40,6 +44,7 @@ hw_uint<128>  jacobi2d_compute_unrolled_4(hw_uint<448>& t1) {
    return whole_result;
 }
 
+  // t0_update_0 unroll factor: 1
 hw_uint<32>  jacobi2d_compute_unrolled_1(hw_uint<160>& t1) {
   hw_uint<32> whole_result;
 >>>>>>> origin/master

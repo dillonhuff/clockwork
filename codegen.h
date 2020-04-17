@@ -297,3 +297,6 @@ string write_partition(const string& p, const int cap, const string& val) {
     return p + " = " + val;
   }
 }
+
+
+void generate_vivado_tcl(std::string& name);

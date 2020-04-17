@@ -1,0 +1,192 @@
+INFO-FLOW: Workspace /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/vadd/vadd/vadd/solution opened at Thu Apr 09 02:49:09 UTC 2020
+Command     open_solution done; 0.12 sec.
+Execute     set_part xcvu9p-flgb2104-2-i 
+Execute       ap_part_info -name xcvu9p-flgb2104-2-i -data single -quiet 
+Command       ap_part_info done; 16.27 sec.
+Execute       ap_part_info -name xcvu9p-flgb2104-2-i -data info 
+Execute       add_library xilinx/virtexuplus/virtexuplus:xcvu9p:-flgb2104:-2-i 
+Execute         get_default_platform 
+Execute         open_platform DefaultPlatform 
+Execute         import_lib /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/virtexuplus/virtexuplus 
+Execute           source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/xilinx.lib 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/xilinx_interface.lib 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/plb46.lib 
+Command               ap_source done; 0.22 sec.
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/fsl.lib 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/axi4.lib 
+Command               ap_source done; 0.33 sec.
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/maxi.lib 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/saxilite.lib 
+Command             ap_source done; 0.81 sec.
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/dsp48.lib 
+Command             ap_source done; 0.15 sec.
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/ip/xfir.lib 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/ip/xfft.lib 
+Command             ap_source done; 0.32 sec.
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/ip/dds_compiler.lib 
+Command             ap_source done; 0.26 sec.
+Command           ap_source done; 2.06 sec.
+Execute           source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/xilinx.hlp 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/target_info.tcl 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/xilinx_interface.hlp 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/maxi.hlp 
+Command               ap_source done; 0.12 sec.
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/saxilite.hlp 
+Command             ap_source done; 0.21 sec.
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/dsp48.hlp 
+Command             ap_source done; 0.15 sec.
+Command           ap_source done; 0.66 sec.
+Execute           source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/virtexuplus/dsp48e2.hlp 
+Execute           source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/xilinx.hlp 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/target_info.tcl 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/xilinx_interface.hlp 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/maxi.hlp 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/saxilite.hlp 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/dsp48.hlp 
+Command         import_lib done; 2.88 sec.
+Execute         source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/virtexuplus/virtexuplus.gen 
+Execute           source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/xilinx.gen 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/plb46.gen 
+Command             ap_source done; 0.14 sec.
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/fsl.gen 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/axi4.gen 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/nativeAXI4.gen 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/saxilite.gen 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/maxi.gen 
+Command               ap_source done; 0.3 sec.
+Command             ap_source done; 0.54 sec.
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/scripts/xilinxcoregen.gen 
+Command             ap_source done; 0.28 sec.
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/XilEDKCoreGen.gen 
+Command             ap_source done; 0.36 sec.
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/ip/dds_compiler.gen 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/ip/util.gen 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/ip/xfft.gen 
+Command             ap_source done; 0.15 sec.
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/ip/xfir.gen 
+Command             ap_source done; 0.16 sec.
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/dsp48.gen 
+Command           ap_source done; 1.63 sec.
+Command         ap_source done; 1.71 sec.
+Execute         ap_part_info -data single -name xcvu9p-flgb2104-2-i 
+Execute         ap_part_info -name xcvu9p-flgb2104-2-i -data resources 
+Execute         ap_part_info -name xcvu9p-flgb2104-2-i -data info 
+Execute         ap_part_info -name xcvu9p-flgb2104-2-i -data info 
+Execute         config_chip_info -quiet -resource {SLICE 147780} {LUT 1182240} {FF 2364480} {DSP48E 6840} {BRAM 4320} {URAM 960} {SLR 3} 
+Execute         ap_part_info -name xcvu9p-flgb2104-2-i -data info 
+Execute         config_chip_info -quiet -speed medium 
+Command       add_library done; 4.82 sec.
+Execute       add_library xilinx/virtexuplus/virtexuplus_fpv7 
+Execute         get_default_platform 
+Execute         open_platform DefaultPlatform 
+Execute         import_lib /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/virtexuplus/virtexuplus_fpv7 
+Execute           source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/xilinx_fp.lib 
+Execute           source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/xilinx_fp.hlp 
+Execute             source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/xilinx.hlp 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/target_info.tcl 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/xilinx_interface.hlp 
+Execute                 source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/maxi.hlp 
+Execute                 source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/interface/saxilite.hlp 
+Execute               source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/dsp48.hlp 
+Execute         source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/virtexuplus/virtexuplus_fpv7.gen 
+Execute           source /opt/Xilinx/Vivado/2019.2/common/technology/xilinx/common/xilinx_fp.gen 
+INFO: [HLS 200-10] Setting target device to 'xcvu9p-flgb2104-2-i'
+Execute       ap_part_info -name xcvu9p-flgb2104-2-i -data info 
+Execute       get_default_platform 
+Command     set_part done; 21.22 sec.
+Execute     create_clock -period 250.000000MHz -name default 
+Execute       config_clock -quiet -name default -period 4 -unit ns -default=false 
+INFO: [SYN 201-201] Setting up clock 'default' with a period of 4ns.
+Execute     config_sdx -target xocc 
+Execute       send_msg_by_id INFO @200-435@%s%s 'config_sdx -target' config_export -vivado_optimization_level=0 
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: config_export -vivado_optimization_level=0
+Command       send_msg_by_id done; 0.19 sec.
+Execute       config_export -vivado_optimization_level=0 
+Execute         get_config_export -vivado_impl_strategy 
+Execute         get_config_export -vivado_phys_opt 
+Execute         send_msg_by_id INFO @200-435@%s%s 'config_export -vivado_optimization_level' config_export -vivado_phys_opt=none 
+INFO: [HLS 200-435] Setting 'config_export -vivado_optimization_level' configuration: config_export -vivado_phys_opt=none
+Execute         config_export -vivado_phys_opt=none 
+Execute       get_config_compile -pipeline_loops 
+Execute       send_msg_by_id INFO @200-435@%s%s 'config_sdx -target' config_compile -pipeline_loops=64 
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: config_compile -pipeline_loops=64
+Execute       config_compile -pipeline_loops=64 
+INFO: [XFORM 203-1171] Pipeline the innermost loop with trip count more than 64 or its parent loop when its trip count is less than or equal 64.
+Execute       get_config_compile -name_max_length 
+Execute       send_msg_by_id INFO @200-435@%s%s 'config_sdx -target' config_compile -name_max_length=80 
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: config_compile -name_max_length=80
+Execute       config_compile -name_max_length=80 
+INFO: [XFORM 203-1161] The maximum of name length is set into 80.
+Execute       get_config_schedule -enable_dsp_full_reg 
+Execute       send_msg_by_id INFO @200-435@%s%s 'config_sdx -target' config_schedule -enable_dsp_full_reg=1 
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: config_schedule -enable_dsp_full_reg=1
+Execute       config_schedule -enable_dsp_full_reg=1 
+Execute       get_config_rtl -register_reset_num 
+Execute       send_msg_by_id INFO @200-435@%s%s 'config_sdx -target' config_rtl -register_reset_num=3 
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: config_rtl -register_reset_num=3
+Execute       config_rtl -register_reset_num=3 
+Execute       get_config_rtl -module_auto_prefix 
+Execute       send_msg_by_id INFO @200-435@%s%s 'config_sdx -target' config_rtl -module_auto_prefix=1 
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: config_rtl -module_auto_prefix=1
+Execute       config_rtl -module_auto_prefix=1 
+Command       config_rtl done; 0.12 sec.
+Execute       get_config_interface -m_axi_addr64 
+Execute       send_msg_by_id INFO @200-435@%s%s 'config_sdx -target' config_interface -m_axi_addr64=1 
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: config_interface -m_axi_addr64=1
+Execute       config_interface -m_axi_addr64=1 
+Execute       send_msg_by_id INFO @200-435@%s%s 'config_sdx -target' set_clock_uncertainty 27% 
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: set_clock_uncertainty 27%
+Execute       set_clock_uncertainty 27% 
+Execute         get_clock_period -default -name=default 
+Execute         config_clock -quiet -name default -uncertainty 1.08 -unit % 
+INFO: [SYN 201-201] Setting up clock 'default' with an uncertainty of 1.08ns.
+Command     config_sdx done; 0.47 sec.
+Execute     config_rtl -kernel_profile 
+Execute     config_export -vivado_optimization_level 0 
+Execute       get_config_export -vivado_impl_strategy 
+Execute       get_config_export -vivado_phys_opt 
+Execute     config_dataflow -strict_mode warning 
+Execute     config_debug -enable 
+Execute     set_clock_uncertainty 27.000000% 
+Execute       get_clock_period -default -name=default 
+Execute       config_clock -quiet -name default -uncertainty 1.08 -unit % 
+INFO: [SYN 201-201] Setting up clock 'default' with an uncertainty of 1.08ns.
+Execute     config_rtl -enable_maxiConservative=1 
+Execute     config_interface -m_axi_addr64 
+Execute     config_compile -skip_transform 
+Execute     config_export -format ip_catalog -ipname vadd 
+Execute     csynth_design 
+Execute       get_config_compile -dump_cfg 
+Execute       get_config_compile -effort 
+Execute       get_config_compile -enable_clang39 
+Execute       get_config_compile -g 
+Execute       get_config_compile -ng 
+Execute       get_config_compile -opt_fp 
+Execute       get_config_compile -skip_cdt 
+Execute       get_config_compile -skip_syncheck 
+Execute       get_config_compile -skip_transform 
+Execute       get_config_compile -keep_printf 
+Execute       elaborate -effort=medium -skip_syncheck=0 -keep_printf=0 -skip_cdt=0 -skip_transform=1 -ng=0 -g=0 -opt_fp=0 -from_csynth_design=1 
+Execute         get_config_schedule -relax_ii_for_timing 
+INFO: [SCHED 204-61] Option 'relax_ii_for_timing' is enabled, will increase II to preserve clock frequency constraints.
+Execute         get_config_schedule -suppress_dependence_error_break 
+INFO: [HLS 200-10] Analyzing design file '/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/vadd.cpp' ... 
+INFO-FLOW: Compiling one TU...
+Execute         is_m_axi_addr64 
+INFO-FLOW: Handling /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/vadd.cpp as C++
+Execute         ap_part_info -name xcvu9p-flgb2104-2-i -data info 
+Execute         is_encrypted /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/vadd.cpp 
+Execute         ap_part_info -name xcvu9p-flgb2104-2-i -data info 
+INFO-FLOW: Running: GCC PP
+INFO-FLOW: Source preprocessing
+Execute         clang  -fno-limit-debug-info -gcc-toolchain "/opt/Xilinx/Vivado/2019.2/lnx64/tools/gcc" -hls  -fno-exceptions  -D__llvm__  -E "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/vadd.cpp"   -g -I/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src  -fno-math-errno -c -emit-llvm -O0  -mllvm -disable-llvm-optzns -fno-threadsafe-statics  -fno-use-cxa-atexit  -fno-threadsafe-statics -fno-use-cxa-atexit -D__CLANG_3_1__ -DAESL_SYN -D__SYNTHESIS__ -D__HLS_SYN__ -I "/opt/Xilinx/Vivado/2019.2/common/technology/autopilot" -I "/opt/Xilinx/Vivado/2019.2/common/technology/autopilot/ap_sysc" -include etc/autopilot_ssdm_op.h -D__DSP48E2__  -o "/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/vadd/vadd/vadd/solution/.autopilot/db/vadd.pp.0.cpp" 
+INFO-FLOW: exec /opt/Xilinx/Vivado/2019.2/lnx64/tools/clang/bin/clang -fno-limit-debug-info -gcc-toolchain /opt/Xilinx/Vivado/2019.2/lnx64/tools/gcc -hls -fno-exceptions -D__llvm__ -E /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/vadd.cpp -g -I/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src -fno-math-errno -c -emit-llvm -O0 -mllvm -disable-llvm-optzns -fno-threadsafe-statics -fno-use-cxa-atexit -fno-threadsafe-statics -fno-use-cxa-atexit -D__CLANG_3_1__ -DAESL_SYN -D__SYNTHESIS__ -D__HLS_SYN__ -I /opt/Xilinx/Vivado/2019.2/common/technology/autopilot -I /opt/Xilinx/Vivado/2019.2/common/technology/autopilot/ap_sysc -include etc/autopilot_ssdm_op.h -D__DSP48E2__ -o /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/vadd/vadd/vadd/solution/.autopilot/db/vadd.pp.0.cpp
+WARNING: [HLS 200-40] /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/vadd.cpp:9:10: fatal error: 'jacobi2d_unrolled_1_opt_compute_units.h' file not found
+#include "jacobi2d_unrolled_1_opt_compute_units.h"
+         ^
+1 error generated.
+Command         clang done; error code: 2; 9.81 sec.
+Command       elaborate done; error code: 2; 9.92 sec.
+Command     csynth_design done; error code: 2; 9.92 sec.
+Command   ap_source done; error code: 1; 31.73 sec.
+Execute   cleanup_all 

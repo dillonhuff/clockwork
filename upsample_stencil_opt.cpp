@@ -248,8 +248,16 @@ inline hw_uint<32>  upsample_stencil_rd0_select(Img_cache& Img, int d0, int d1) 
 #pragma HLS dependence variable=Img inter false
 #endif //__VIVADO_SYNTH__
   // upsample_stencil_rd0 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -3 + d0 <= 2o0 <= -2 + d0 and -3 + d1 <= 2o1 <= -2 + d1 }
-	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd0.peek(/* one reader or all rams */ (-1 + d1 == 0) ? ((53 - floord(d0, 2))) : (d1 == 0) ? (38) : ((-1 - d1) % 2 == 0 && -3 + d1 >= 0) ? ((53 - floord(d0, 2))) : ((-d1) % 2 == 0 && -2 + d1 >= 0) ? (38) : 0);
-	return value_Img_Img_update_0_write0;
+  // Read schedule : { upsample_stencil_update_0[d0, d1] -> [2 + d1, 2 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { Img_update_0[d0, d1] -> [2d1, 2d0, 1] : -1 <= d0 <= 16 and -1 <= d1 <= 16 }
+  // DD fold: { upsample_stencil_update_0[d0, d1] -> 38 : (d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 <= d0 <= 30 and 2 <= d1 <= 30; upsample_stencil_update_0[d0, d1] -> 38 : (d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 <= d0 <= 30 and 0 <= d1 <= 1; upsample_stencil_update_0[d0, d1] -> 38 : (1 + d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 <= d0 <= 31 and 2 <= d1 <= 30; upsample_stencil_update_0[d0, d1] -> 38 : (1 + d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 <= d0 <= 31 and 0 <= d1 <= 1; upsample_stencil_update_0[d0, d1] -> (53 - floor((d0)/2)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 31 and 2 <= d1 <= 31; upsample_stencil_update_0[d0, d1] -> (53 - floor((d0)/2)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 31 and 0 <= d1 <= 1 }
+  auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd0.peek(/* one reader or all rams */ (-1 + d1 == 0) ? ((53 - floord(d0, 2))) : (d1 == 0) ? (38) : ((-1 - d1) % 2 == 0 && -3 + d1 >= 0) ? ((53 - floord(d0, 2))) : ((-d1) % 2 == 0 && -2 + d1 >= 0) ? (38) : 0);
+  return value_Img_Img_update_0_write0;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
 }
 
 inline hw_uint<32>  upsample_stencil_rd1_select(Img_cache& Img, int d0, int d1) {
@@ -257,8 +265,16 @@ inline hw_uint<32>  upsample_stencil_rd1_select(Img_cache& Img, int d0, int d1) 
 #pragma HLS dependence variable=Img inter false
 #endif //__VIVADO_SYNTH__
   // upsample_stencil_rd1 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -3 + d0 <= 2o0 <= -2 + d0 and -1 + d1 <= 2o1 <= d1 }
-	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd1.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0) ? ((35 - floord(d0, 2))) : ((-d1) % 2 == 0) ? (20) : 0);
-	return value_Img_Img_update_0_write0;
+  // Read schedule : { upsample_stencil_update_0[d0, d1] -> [2 + d1, 2 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { Img_update_0[d0, d1] -> [2d1, 2d0, 1] : -1 <= d0 <= 16 and -1 <= d1 <= 16 }
+  // DD fold: { upsample_stencil_update_0[d0, d1] -> (35 - floor((d0)/2)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 31 and 0 < d1 <= 31; upsample_stencil_update_0[d0, d1] -> 20 : (d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 <= d0 <= 30 and 0 <= d1 <= 30; upsample_stencil_update_0[d0, d1] -> 20 : (1 + d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 <= d0 <= 31 and 0 <= d1 <= 30 }
+  auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd1.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0) ? ((35 - floord(d0, 2))) : ((-d1) % 2 == 0) ? (20) : 0);
+  return value_Img_Img_update_0_write0;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
 }
 
 inline hw_uint<32>  upsample_stencil_rd2_select(Img_cache& Img, int d0, int d1) {
@@ -266,8 +282,16 @@ inline hw_uint<32>  upsample_stencil_rd2_select(Img_cache& Img, int d0, int d1) 
 #pragma HLS dependence variable=Img inter false
 #endif //__VIVADO_SYNTH__
   // upsample_stencil_rd2 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -3 + d0 <= 2o0 <= -2 + d0 and d1 < 2o1 <= 2 + d1 }
-	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd2.peek(/* one reader or all rams */ ((-d1) % 2 == 0 && (-d0) % 2 == 0) ? (2) : ((-1 - d1) % 2 == 0) ? ((17 - floord(2*d0, 4))) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0) ? (2) : 0);
-	return value_Img_Img_update_0_write0;
+  // Read schedule : { upsample_stencil_update_0[d0, d1] -> [2 + d1, 2 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { Img_update_0[d0, d1] -> [2d1, 2d0, 1] : -1 <= d0 <= 16 and -1 <= d1 <= 16 }
+  // DD fold: { upsample_stencil_update_0[d0, d1] -> 2 : (d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 <= d0 <= 30 and 0 <= d1 <= 30; upsample_stencil_update_0[d0, d1] -> ((1 + d0) - 2 * floor((2d0)/4)) : (1 + d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 <= d0 <= 31 and 0 <= d1 <= 30; upsample_stencil_update_0[d0, d1] -> (17 - floor((2d0)/4)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 31 and 0 < d1 <= 31 }
+  auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd2.peek(/* one reader or all rams */ ((-d1) % 2 == 0 && (-d0) % 2 == 0) ? (2) : ((-1 - d1) % 2 == 0) ? ((17 - floord(2*d0, 4))) : ((-d1) % 2 == 0 && (-1 - d0) % 2 == 0) ? (2) : 0);
+  return value_Img_Img_update_0_write0;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
 }
 
 inline hw_uint<32>  upsample_stencil_rd3_select(Img_cache& Img, int d0, int d1) {
@@ -275,8 +299,16 @@ inline hw_uint<32>  upsample_stencil_rd3_select(Img_cache& Img, int d0, int d1) 
 #pragma HLS dependence variable=Img inter false
 #endif //__VIVADO_SYNTH__
   // upsample_stencil_rd3 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 + d0 <= 2o0 <= d0 and -3 + d1 <= 2o1 <= -2 + d1 }
-	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd3.peek(/* one reader or all rams */ (-1 + d1 == 0) ? ((52 - floord(d0, 2))) : (d1 == 0) ? (37) : ((-1 - d1) % 2 == 0 && -3 + d1 >= 0) ? ((52 - floord(d0, 2))) : ((-d1) % 2 == 0 && -2 + d1 >= 0) ? (37) : 0);
-	return value_Img_Img_update_0_write0;
+  // Read schedule : { upsample_stencil_update_0[d0, d1] -> [2 + d1, 2 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { Img_update_0[d0, d1] -> [2d1, 2d0, 1] : -1 <= d0 <= 16 and -1 <= d1 <= 16 }
+  // DD fold: { upsample_stencil_update_0[d0, d1] -> 37 : (d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 <= d0 <= 30 and 2 <= d1 <= 30; upsample_stencil_update_0[d0, d1] -> 37 : (d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 <= d0 <= 30 and 0 <= d1 <= 1; upsample_stencil_update_0[d0, d1] -> 37 : (1 + d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 <= d0 <= 31 and 2 <= d1 <= 30; upsample_stencil_update_0[d0, d1] -> 37 : (1 + d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 <= d0 <= 31 and 0 <= d1 <= 1; upsample_stencil_update_0[d0, d1] -> (52 - floor((d0)/2)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 31 and 2 <= d1 <= 31; upsample_stencil_update_0[d0, d1] -> (52 - floor((d0)/2)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 31 and 0 <= d1 <= 1 }
+  auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd3.peek(/* one reader or all rams */ (-1 + d1 == 0) ? ((52 - floord(d0, 2))) : (d1 == 0) ? (37) : ((-1 - d1) % 2 == 0 && -3 + d1 >= 0) ? ((52 - floord(d0, 2))) : ((-d1) % 2 == 0 && -2 + d1 >= 0) ? (37) : 0);
+  return value_Img_Img_update_0_write0;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
 }
 
 inline hw_uint<32>  upsample_stencil_rd4_select(Img_cache& Img, int d0, int d1) {
@@ -284,8 +316,16 @@ inline hw_uint<32>  upsample_stencil_rd4_select(Img_cache& Img, int d0, int d1) 
 #pragma HLS dependence variable=Img inter false
 #endif //__VIVADO_SYNTH__
   // upsample_stencil_rd4 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 + d0 <= 2o0 <= d0 and -1 + d1 <= 2o1 <= d1 }
-	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd4.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0) ? ((34 - floord(d0, 2))) : ((-d1) % 2 == 0) ? (19) : 0);
-	return value_Img_Img_update_0_write0;
+  // Read schedule : { upsample_stencil_update_0[d0, d1] -> [2 + d1, 2 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { Img_update_0[d0, d1] -> [2d1, 2d0, 1] : -1 <= d0 <= 16 and -1 <= d1 <= 16 }
+  // DD fold: { upsample_stencil_update_0[d0, d1] -> (34 - floor((d0)/2)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 31 and 0 < d1 <= 31; upsample_stencil_update_0[d0, d1] -> 19 : (d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 <= d0 <= 30 and 0 <= d1 <= 30; upsample_stencil_update_0[d0, d1] -> 19 : (1 + d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 <= d0 <= 31 and 0 <= d1 <= 30 }
+  auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd4.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0) ? ((34 - floord(d0, 2))) : ((-d1) % 2 == 0) ? (19) : 0);
+  return value_Img_Img_update_0_write0;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
 }
 
 inline hw_uint<32>  upsample_stencil_rd5_select(Img_cache& Img, int d0, int d1) {
@@ -293,8 +333,16 @@ inline hw_uint<32>  upsample_stencil_rd5_select(Img_cache& Img, int d0, int d1) 
 #pragma HLS dependence variable=Img inter false
 #endif //__VIVADO_SYNTH__
   // upsample_stencil_rd5 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 + d0 <= 2o0 <= d0 and d1 < 2o1 <= 2 + d1 }
-	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd5.peek(/* one reader or all rams */ ((-d1) % 2 == 0) ? (1) : ((-1 - d1) % 2 == 0) ? ((16 - floord(2*d0, 4))) : 0);
-	return value_Img_Img_update_0_write0;
+  // Read schedule : { upsample_stencil_update_0[d0, d1] -> [2 + d1, 2 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { Img_update_0[d0, d1] -> [2d1, 2d0, 1] : -1 <= d0 <= 16 and -1 <= d1 <= 16 }
+  // DD fold: { upsample_stencil_update_0[d0, d1] -> 1 : (1 + d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 < d0 <= 31 and 0 <= d1 <= 30; upsample_stencil_update_0[d0, d1] -> 1 : (d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 <= d0 <= 30 and 0 <= d1 <= 30; upsample_stencil_update_0[d0, d1] -> (16 - floor((2d0)/4)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 31 and 0 < d1 <= 31 }
+  auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd5.peek(/* one reader or all rams */ ((-d1) % 2 == 0) ? (1) : ((-1 - d1) % 2 == 0) ? ((16 - floord(2*d0, 4))) : 0);
+  return value_Img_Img_update_0_write0;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
 }
 
 inline hw_uint<32>  upsample_stencil_rd6_select(Img_cache& Img, int d0, int d1) {
@@ -302,8 +350,16 @@ inline hw_uint<32>  upsample_stencil_rd6_select(Img_cache& Img, int d0, int d1) 
 #pragma HLS dependence variable=Img inter false
 #endif //__VIVADO_SYNTH__
   // upsample_stencil_rd6 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and d0 < 2o0 <= 2 + d0 and -3 + d1 <= 2o1 <= -2 + d1 }
-	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd6.peek(/* one reader or all rams */ (-1 + d1 == 0 && 29 - d0 >= 0) ? ((51 - floord(d0, 2))) : ((-1 - d1) % 2 == 0 && -30 + d0 >= 0) ? (36) : (d1 == 0 && 29 - d0 >= 0) ? (36) : ((-1 - d1) % 2 == 0 && 29 - d0 >= 0 && -3 + d1 >= 0) ? ((51 - floord(d0, 2))) : ((-d1) % 2 == 0 && -30 + d0 == 0) ? (36) : ((-d1) % 2 == 0 && -31 + d0 == 0) ? (36) : ((-d1) % 2 == 0 && 29 - d0 >= 0 && -2 + d1 >= 0) ? (36) : 0);
-	return value_Img_Img_update_0_write0;
+  // Read schedule : { upsample_stencil_update_0[d0, d1] -> [2 + d1, 2 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { Img_update_0[d0, d1] -> [2d1, 2d0, 1] : -1 <= d0 <= 16 and -1 <= d1 <= 16 }
+  // DD fold: { upsample_stencil_update_0[d0, d1] -> 36 : (d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 <= d0 <= 29 and 2 <= d1 <= 30; upsample_stencil_update_0[d0, d1] -> 36 : (d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 <= d0 <= 29 and 0 <= d1 <= 1; upsample_stencil_update_0[d0, d1] -> (21 + 1/2 * d0) : d0 = 30 and (d1) mod 2 = 0 and 0 <= d1 <= 30; upsample_stencil_update_0[d0, d1] -> 36 : (1 + d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 <= d0 <= 29 and 2 <= d1 <= 30; upsample_stencil_update_0[d0, d1] -> 36 : (1 + d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 <= d0 <= 29 and 0 <= d1 <= 1; upsample_stencil_update_0[d0, d1] -> ((20 + d0) - floor((2d0)/4)) : (1 + d0) mod 2 = 0 and (d1) mod 2 = 0 and 30 <= d0 <= 31 and 0 <= d1 <= 30; upsample_stencil_update_0[d0, d1] -> (51 - floor((d0)/2)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 29 and 2 <= d1 <= 31; upsample_stencil_update_0[d0, d1] -> (51 - floor((d0)/2)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 29 and 0 <= d1 <= 1; upsample_stencil_update_0[d0, d1] -> ((18 + 18 * d1) - 36 * floor((d1)/2)) : (1 + d1) mod 2 = 0 and 30 <= d0 <= 31 and 0 <= d1 <= 31 }
+  auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd6.peek(/* one reader or all rams */ (-1 + d1 == 0 && 29 - d0 >= 0) ? ((51 - floord(d0, 2))) : ((-1 - d1) % 2 == 0 && -30 + d0 >= 0) ? (36) : (d1 == 0 && 29 - d0 >= 0) ? (36) : ((-1 - d1) % 2 == 0 && 29 - d0 >= 0 && -3 + d1 >= 0) ? ((51 - floord(d0, 2))) : ((-d1) % 2 == 0 && -30 + d0 == 0) ? (36) : ((-d1) % 2 == 0 && -31 + d0 == 0) ? (36) : ((-d1) % 2 == 0 && 29 - d0 >= 0 && -2 + d1 >= 0) ? (36) : 0);
+  return value_Img_Img_update_0_write0;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
 }
 
 inline hw_uint<32>  upsample_stencil_rd7_select(Img_cache& Img, int d0, int d1) {
@@ -311,8 +367,16 @@ inline hw_uint<32>  upsample_stencil_rd7_select(Img_cache& Img, int d0, int d1) 
 #pragma HLS dependence variable=Img inter false
 #endif //__VIVADO_SYNTH__
   // upsample_stencil_rd7 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and d0 < 2o0 <= 2 + d0 and -1 + d1 <= 2o1 <= d1 }
-	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd7.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0 && -30 + d0 >= 0) ? (18) : ((-1 - d1) % 2 == 0 && 29 - d0 >= 0) ? ((33 - floord(d0, 2))) : ((-d1) % 2 == 0 && -30 + d0 == 0) ? (18) : ((-d1) % 2 == 0 && -31 + d0 == 0) ? (18) : ((-d1) % 2 == 0 && 29 - d0 >= 0) ? (18) : 0);
-	return value_Img_Img_update_0_write0;
+  // Read schedule : { upsample_stencil_update_0[d0, d1] -> [2 + d1, 2 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { Img_update_0[d0, d1] -> [2d1, 2d0, 1] : -1 <= d0 <= 16 and -1 <= d1 <= 16 }
+  // DD fold: { upsample_stencil_update_0[d0, d1] -> (33 - floor((d0)/2)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 29 and 0 < d1 <= 31; upsample_stencil_update_0[d0, d1] -> 18 : (1 + d1) mod 2 = 0 and 30 <= d0 <= 31 and 0 < d1 <= 31; upsample_stencil_update_0[d0, d1] -> 18 : (d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 <= d0 <= 29 and 0 <= d1 <= 30; upsample_stencil_update_0[d0, d1] -> (3 + 1/2 * d0) : d0 = 30 and (d1) mod 2 = 0 and 0 <= d1 <= 30; upsample_stencil_update_0[d0, d1] -> 18 : (1 + d0) mod 2 = 0 and (d1) mod 2 = 0 and 0 <= d0 <= 29 and 0 <= d1 <= 30; upsample_stencil_update_0[d0, d1] -> ((2 + d0) - floor((2d0)/4)) : (1 + d0) mod 2 = 0 and (d1) mod 2 = 0 and 30 <= d0 <= 31 and 0 <= d1 <= 30 }
+  auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd7.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0 && -30 + d0 >= 0) ? (18) : ((-1 - d1) % 2 == 0 && 29 - d0 >= 0) ? ((33 - floord(d0, 2))) : ((-d1) % 2 == 0 && -30 + d0 == 0) ? (18) : ((-d1) % 2 == 0 && -31 + d0 == 0) ? (18) : ((-d1) % 2 == 0 && 29 - d0 >= 0) ? (18) : 0);
+  return value_Img_Img_update_0_write0;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
 }
 
 inline hw_uint<32>  upsample_stencil_rd8_select(Img_cache& Img, int d0, int d1) {
@@ -320,8 +384,16 @@ inline hw_uint<32>  upsample_stencil_rd8_select(Img_cache& Img, int d0, int d1) 
 #pragma HLS dependence variable=Img inter false
 #endif //__VIVADO_SYNTH__
   // upsample_stencil_rd8 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and d0 < 2o0 <= 2 + d0 and d1 < 2o1 <= 2 + d1 }
-	auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd8.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0 && 29 - d0 >= 0) ? ((15 - floord(2*d0, 4))) : 0);
-	return value_Img_Img_update_0_write0;
+  // Read schedule : { upsample_stencil_update_0[d0, d1] -> [2 + d1, 2 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { Img_update_0[d0, d1] -> [2d1, 2d0, 1] : -1 <= d0 <= 16 and -1 <= d1 <= 16 }
+  // DD fold: { upsample_stencil_update_0[d0, d1] -> (15 - floor((2d0)/4)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 29 and 0 < d1 <= 31 }
+  auto value_Img_Img_update_0_write0 = Img.Img_Img_update_0_write0_to_upsample_stencil_rd8.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0 && 29 - d0 >= 0) ? ((15 - floord(2*d0, 4))) : 0);
+  return value_Img_Img_update_0_write0;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
 }
 
 // # of bundles = 2
@@ -343,6 +415,17 @@ inline void Img_Img_update_0_write_bundle_write(hw_uint<32>& Img_update_0_write,
 //	upsample_stencil_rd7
 //	upsample_stencil_rd8
 inline hw_uint<288> Img_upsample_stencil_update_0_read_bundle_read(Img_cache& Img, int d0, int d1) {
+  // # of ports in bundle: 9
+    // upsample_stencil_rd0
+    // upsample_stencil_rd1
+    // upsample_stencil_rd2
+    // upsample_stencil_rd3
+    // upsample_stencil_rd4
+    // upsample_stencil_rd5
+    // upsample_stencil_rd6
+    // upsample_stencil_rd7
+    // upsample_stencil_rd8
+
 	hw_uint<288> result;
 	hw_uint<32>  upsample_stencil_rd0_res = upsample_stencil_rd0_select(Img, d0, d1);
 	set_at<0, 288>(result, upsample_stencil_rd0_res);
@@ -378,7 +461,10 @@ inline void upsample_stencil_update_0(Img_cache& Img, HWStream<hw_uint<32> >& /*
 	// Produce: upsample_stencil
 	upsample_stencil.write(compute_result);
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "upsample_stencil_update_0," << d0<< "," << d1<< "," <<  compute_result << endl;
+  hw_uint<32> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  *global_debug_handle << "upsample_stencil_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 }
 
@@ -389,7 +475,10 @@ inline void Img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */
 	// Produce: Img
 	Img_Img_update_0_write_bundle_write(compute_result, Img, d0, d1);
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "Img_update_0," << d0<< "," << d1<< "," <<  compute_result << endl;
+  hw_uint<32> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  *global_debug_handle << "Img_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 }
 
@@ -404,52 +493,21 @@ void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Im
 #ifdef __VIVADO_SYNTH__
 #pragma HLS dependence variable=Img inter false
 #endif //__VIVADO_SYNTH__
-	  int c0 = -2;
-	  int c1 = -2;
-	  int global_time = 0;
-	#ifdef __VIVADO_SYNTH__
-	  while(true) {
-	#else
-	  while(global_time < 1296) {
-	#endif // __VIVADO_SYNTH__
-	
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS dependence inter false
-	#pragma HLS pipeline II=1
-	#endif // __VIVADO_SYNTH__
-	
-	      if ((-2 <= c1 && c1 <= 32) && ((c1 - 0) % 2 == 0) && (-2 <= c0 && c0 <= 32) && ((c0 - 0) % 2 == 0)) {
-	Img_update_0(Img_off, Img, (c1 - 0) / 2, (c0 - 0) / 2);
-	      }
-	
-	      if ((2 <= c1 && c1 <= 33) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 33) && ((c0 - 2) % 1 == 0)) {
-	upsample_stencil_update_0(Img, upsample_stencil, (c1 - 2) / 1, (c0 - 2) / 1);
-	      }
-	
-	    bool c0_at_max = c0 == 33;
-	    bool c1_at_max = c1 == 33;
-	    if (1 && c1_at_max) {
-	      if (c0_at_max) {
-	        c0 = -2;
-	      } else {
-	        c0++;
-	      }
+	for (int c0 = -2; c0 <= 33; c0 += 1) {
+	  if (c0 >= 2) {
+	    if (c0 % 2 == 0)
+	      for (int c1 = -1; c1 <= 0; c1 += 1)
+	Img_update_0(Img_off, Img, c1, c0 / 2);
+	    for (int c1 = 2; c1 <= 33; c1 += 1) {
+	      if (c0 % 2 == 0 && c1 % 2 == 0)
+	Img_update_0(Img_off, Img, c1 / 2, c0 / 2);
+	upsample_stencil_update_0(Img, upsample_stencil, c1 - 2, c0 - 2);
 	    }
-	#ifndef __VIVADO_SYNTH__
-	    cout << "c0 = " << c0 << endl;
-	#endif //__VIVADO_SYNTH__
-	    if (1) {
-	      if (c1_at_max) {
-	        c1 = -2;
-	      } else {
-	        c1++;
-	      }
-	    }
-	#ifndef __VIVADO_SYNTH__
-	    cout << "c1 = " << c1 << endl;
-	#endif //__VIVADO_SYNTH__
-	    global_time++;
+	  } else if (c0 % 2 == 0) {
+	    for (int c1 = -1; c1 <= 16; c1 += 1)
+	Img_update_0(Img_off, Img, c1, c0 / 2);
 	  }
+	}
 	
 #ifndef __VIVADO_SYNTH__
   debug_file.close();

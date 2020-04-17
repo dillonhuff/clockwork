@@ -1,0 +1,74 @@
+==============================================================
+Vivado(TM) HLS - High-Level Synthesis from C, C++ and SystemC v2019.2 (64-bit)
+Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
+==============================================================
+INFO: [HLS 200-10] Setting target device to 'xcvu9p-flgb2104-2-i'
+INFO: [SYN 201-201] Setting up clock 'default' with a period of 4ns.
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: config_export -vivado_optimization_level=0
+INFO: [HLS 200-435] Setting 'config_export -vivado_optimization_level' configuration: config_export -vivado_phys_opt=none
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: config_compile -pipeline_loops=64
+INFO: [XFORM 203-1171] Pipeline the innermost loop with trip count more than 64 or its parent loop when its trip count is less than or equal 64.
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: config_compile -name_max_length=80
+INFO: [XFORM 203-1161] The maximum of name length is set into 80.
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: config_schedule -enable_dsp_full_reg=1
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: config_rtl -register_reset_num=3
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: config_rtl -module_auto_prefix=1
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: config_interface -m_axi_addr64=1
+INFO: [HLS 200-435] Setting 'config_sdx -target' configuration: set_clock_uncertainty 27%
+INFO: [SYN 201-201] Setting up clock 'default' with an uncertainty of 1.08ns.
+INFO: [SYN 201-201] Setting up clock 'default' with an uncertainty of 1.08ns.
+INFO: [SCHED 204-61] Option 'relax_ii_for_timing' is enabled, will increase II to preserve clock frequency constraints.
+INFO: [HLS 200-10] Analyzing design file '/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp' ... 
+WARNING: [HLS 200-40] In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:1:
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:9:
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt_compute_units.h:3:
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/conv_3x3.h:3:
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/hw_classes.h:366:21: warning: alias declarations are a C++11 extension [-Wc++11-extensions]
+using InputStream = HWStream<T>;
+                    ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/hw_classes.h:369:22: warning: alias declarations are a C++11 extension [-Wc++11-extensions]
+using OutputStream = HWStream<T>;
+                     ^
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:1:
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:9:
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt_compute_units.h:3:
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/conv_3x3.h:241:3: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+  auto res = conv_3_3(in);
+  ^
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:1:
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:9:
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt_compute_units.h:11:3: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+  auto result_0 = id(lane_0_t1_arg);
+  ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt_compute_units.h:30:3: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+  auto result_0 = jacobi2d_compute(lane_0_t1);
+  ^
+In file included from /home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:1:
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:124:2: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+ auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_1924();
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:133:2: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+ auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_3845();
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:142:2: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+ auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_1923();
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:151:2: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+ auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_1();
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:160:2: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+ auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_1922();
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:198:2: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+ auto t1_0_c__0_value = t1_jacobi2d_unrolled_1_update_0_read_bundle_read(t1 , d0, d1);
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:202:2: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+ auto compute_result = jacobi2d_compute(t1_0_c__0_value);
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:215:2: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+ auto t1_arg_0_c__0_value = t1_arg.read();
+ ^
+/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/src/jacobi2d_unrolled_1_opt.cpp:216:2: warning: 'auto' type specifier is a C++11 extension [-Wc++11-extensions]
+ auto compute_result = id(t1_arg_0_c__0_value);
+ ^
+14 warnings generated.

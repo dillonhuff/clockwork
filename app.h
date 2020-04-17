@@ -68,6 +68,25 @@ struct FiniteRegion {
       }
     }
 
+  FiniteRegion increment(const QAV& stride, const int diff) const {
+    FiniteRegion c;
+    c.name = name;
+    c.strides = strides;
+
+    set<vector<int> > unrolled_offsets;
+    for (auto offset : offsets) {
+      vector<int> uoff = offset;
+      uoff[0] = uoff.at(0) + times_int(stride, diff);
+      unrolled_offsets.insert(uoff);
+    }
+
+    for (auto u : unrolled_offsets) {
+      c.offsets.push_back(u);
+    }
+
+    return c;
+  }
+
   FiniteRegion increment(const int diff) const {
     FiniteRegion c;
     c.name = name;
@@ -105,7 +124,7 @@ struct FiniteRegion {
     for (int i = 0; i < factor; i++) {
       for (auto offset : offsets) {
         vector<int> uoff = offset;
-        uoff[0] = uoff.at(0) + i;
+        uoff[0] = uoff.at(0) + times_int(stride(0), i);
         unrolled_offsets.insert(uoff);
       }
     }
@@ -176,7 +195,7 @@ struct FiniteRegion {
       + min_offset(dim);
   }
 
-  int times_int(const QAV& v, const int max_result_addr) {
+  int times_int(const QAV& v, const int max_result_addr) const {
     if ((v).is_whole()) {
       assert(v.denom == 1);
       return v.num*max_result_addr;
@@ -233,9 +252,13 @@ std::ostream& operator<<(std::ostream& out, const FiniteRegion& r) {
   }
   vector<string> offstrs;
   for (auto off : r.offsets) {
-    //ostringstream ss;
-    //ss << off;
-    //offstrs.push_back(ss.str());
+    ostringstream ss;
+    ss << "(";
+    for (auto ff : off) {
+      ss << ff << ", ";
+    }
+    ss << ")";
+    offstrs.push_back(ss.str());
   }
   out << r.name << "{ " << comma_list(strides) << " + <" + comma_list(offstrs) + "> }";
   return out;
@@ -271,6 +294,7 @@ struct Update {
 
   std::string name() const { return operation_name; }
   std::string compute_name() const { return compute_function_name; }
+  std::string unrolled_compute_name() const { return compute_name() + "_unrolled_" + str(unroll_factor); }
 
   vector<Window> get_srcs() const {
     return srcs;
@@ -305,9 +329,14 @@ struct Result {
     return updates.at(0).get_provided();
   }
 
+  string unrolled_compute_name() const {
+    assert(updates.size() > 0);
+    return updates.at(0).unrolled_compute_name();
+  }
+
   string compute_name() const {
     assert(updates.size() > 0);
-    return updates.at(0).compute_function_name;
+    return updates.at(0).compute_name();
   }
 
   void add_reduce_update(const string& accum,
@@ -459,8 +488,9 @@ vector<vector<int> > offsets(vector<QExpr>& mins, vector<QExpr>& maxs) {
 
 static inline
 map<string, int>
-compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstraint> delay_constraints,
-    vector<QConstraint>& offset_constraints) {
+compute_delays(isl_ctx* ctx,
+    vector<string>& sorted_functions,
+    vector<QConstraint> delay_constraints) {
 
   cout << "Delay constraints..." << endl;
   for (auto d : delay_constraints) {
@@ -482,7 +512,6 @@ compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstrain
   QConstraint cc = eq(qexpr("d_" + target_func), 0);
   delay_constraints.push_back(cc);
   map<string, int> delays =
-    //minimize(delay_constraints, objective_expr);
     maximize(delay_constraints, objective_expr);
   assert(delays.size() == sorted_functions.size());
 
@@ -493,8 +522,10 @@ compute_delays(isl_ctx* ctx, vector<string>& sorted_functions, vector<QConstrain
     }
   }
 
+  cout << "Delays..." << endl;
   for (auto& d : delays) {
     d.second = d.second - min_delay;
+    cout << tab(1) << d.first << " = " << d.second << endl;
   }
   return delays;
 }
@@ -507,6 +538,11 @@ compute_schedule_for_dim(isl_ctx* ctx,
     const vector<QConstraint>& all_constraints,
     const vector<QConstraint>& rate_constraints,
     const map<string, map<string, QExpr> >& last_compute_needed) {
+
+  cout << "### All constraints..." << endl;
+  for (auto c : all_constraints) {
+    cout << tab(1) << c << endl;
+  }
 
   vector<QConstraint> offset_constraints =
     rate_constraints;
@@ -664,7 +700,8 @@ compute_schedule_for_dim(isl_ctx* ctx,
   }
 
   map<string, int> delays =
-    compute_delays(ctx, sorted_functions, delay_constraints, offset_constraints);
+    compute_delays(ctx, sorted_functions, delay_constraints);
+    //compute_delays(ctx, sorted_functions, delay_constraints, offset_constraints);
   //assert(i == 1);
 
   cout << "Final schedules: " << endl;
@@ -681,11 +718,17 @@ compute_schedule_for_dim(isl_ctx* ctx,
     QTerm rd = qterm(rate, dv);
     QTerm d = qterm(delay);
     auto si = qexpr(rd, d);
+
+    cout << tab(1) << "s_" << f << " = " << si << endl;
+
     schedules[f] = si;
   }
 
   cout << "done with schedules..." << endl;
 
+  //if (i == 0) {
+    //assert(false);
+  //}
   return schedules;
 }
 
@@ -780,6 +823,7 @@ build_compute_deps(
             compute_maps.at(arg.first),
             arg.second);
 
+      cout << tab(1) << "comps_needed by " << f << " from " << arg.first << " " << str(comps_needed) << endl;
       last_compute_needed[f][arg.first] = {};
       for (int i = 0; i < schedule_dim; i++) {
         cout << "Comps needed: " << str(comps_needed) << endl;
@@ -812,6 +856,14 @@ schedule_dim(isl_ctx* ctx,
     }
 
     last_compute_needed[fname] = last_needs;
+  }
+
+  cout << "## last compute needed in dim " << i << endl;
+  for (auto c : last_compute_needed) {
+    cout << tab(1) << c.first << endl;
+    for (auto qc : c.second) {
+      cout << tab(2) << qc.first << " -> " << qc.second << endl;
+    }
   }
   //assert(false);
 
@@ -890,3 +942,7 @@ umap* to_umap(isl_ctx* ctx,
     return m;
 }
 
+map<string, vector<isl_aff*> >
+clockwork_schedule(uset* domain, umap* validity, umap* proximity);
+
+umap* experimental_opt(uset* domain, umap* validity, umap* proximity);
