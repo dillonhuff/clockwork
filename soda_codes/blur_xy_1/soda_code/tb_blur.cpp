@@ -3,8 +3,8 @@
 #include <iostream>
 #include <fstream>
 
-#define BURST_WIDTH 16
-#define PIXEL_WIDTH 16
+#define BURST_WIDTH 32
+#define PIXEL_WIDTH 32
 
 using namespace std;
 
@@ -70,20 +70,20 @@ struct Image {
 
 int main() {
 
-  const int nrows = 32;
-  const int ncols = 32;
+  const int nrows = 1082;
+  const int ncols = 1922;
 
   uint64_t img_pixels=
     nrows*ncols;
 
-  Image<32> input(ncols, nrows);
-  for (int r = 0; r < nrows; r++) {
-    for (int c = 0; c < ncols; c++) {
-      input(c, r) = r*ncols + c;
-    }
-  }
+  //Image<32> input(ncols, nrows);
+  //for (int r = 0; r < nrows; r++) {
+    //for (int c = 0; c < ncols; c++) {
+      //input(c, r) = r*ncols + c;
+    //}
+  //}
 
-  Image<512> packed = input.pack_pixels<16>();
+  //Image<512> packed = input.pack_pixels<16>();
 
   const uint64_t bits_per_pixel = PIXEL_WIDTH;
   uint64_t img_bits =

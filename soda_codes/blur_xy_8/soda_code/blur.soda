@@ -1,9 +1,9 @@
 kernel: blur
-burst width: 128
+burst width: 256
 unroll factor: 8
-input uint16: input(32, *)
-local uint16:
-  blur_x(0, 0) = (input(0, 0) + input(0, 1) + input(0, 2)) / 3
-output uint16:
-  blur_y(0, 0) = (blur_x(0, 0) + blur_x(1, 0) + blur_x(2, 0)) / 3
+input uint32: input(1928, *)
+local uint32:
+  blur_x(0, 0) = (input(0, 0) + input(0, 1) + input(0, 2))
+output uint32:
+  blur_y(0, 0) = (blur_x(0, 0) + blur_x(1, 0) + blur_x(2, 0))
 iterate: 1
