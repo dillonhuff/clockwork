@@ -26,9 +26,9 @@ int main() {
   for (int i = 0; i < 128; i++) {
     hw_uint<64> actual = jacobi2d_unrolled_2_update_0_write.read();
     auto actual_lane_0 = actual.extract<0*32, 31>();
-    fout << (uint64_t) actual_lane_0 << endl;
+    fout << actual_lane_0 << endl;
     auto actual_lane_1 = actual.extract<1*32, 63>();
-    fout << (uint64_t) actual_lane_1 << endl;
+    fout << actual_lane_1 << endl;
   }
 
   in_pix.close();

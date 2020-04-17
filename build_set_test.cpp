@@ -965,7 +965,8 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
         << " = actual.extract<" << p << "*" << port_width << ", "
         << (p + 1)*port_width - 1 << ">();" << endl;
 
-      rgtb << tab(2) << "fout << (uint64_t) actual_lane_" << p << " << endl;" << endl;
+      rgtb << tab(2) << "fout << actual_lane_" << p << " << endl;" << endl;
+      //rgtb << tab(2) << "fout << (uint64_t) actual_lane_" << p << " << endl;" << endl;
     }
 
     rgtb << tab(1) << "}" << endl << endl;
@@ -3390,7 +3391,7 @@ struct App {
     prg.outs = {name};
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
-    generate_regression_testbench(prg);
+    generate_regression_testbench(prg, buffers);
   }
 
   umap* realize_opt_schedule(const std::string& name, const int d0, const int d1) {
@@ -5547,20 +5548,6 @@ void playground() {
 }
 
 void application_tests() {
-  //sobel_app_test();
-  //assert(false);
-
-  //blur_xy_app_test();
-
-  //playground();
-  //synth_lb_test();
-  //conv_app_rolled_reduce_test();
-  //reduce_1d_test();
-
-  //parse_denoise3d_test();
-  //assert(false);
-
-  //up_stencil_down_unrolled_test();
   up_stencil_down_test();
 
   up_stencil_test();
@@ -5595,16 +5582,12 @@ void application_tests() {
 
   conv3x3_app_unrolled_test();
 
-  //laplacian_pyramid_app_test();
   upsample_stencil_2d_test();
   upsample_stencil_1d_test();
 
   heat_3d_test();
 
-  //synth_reduce_test();
-
   upsample_reduce_test();
-
 
   blur_and_downsample_test();
   downsample_and_blur_test();
@@ -5631,6 +5614,21 @@ void application_tests() {
   //conv_1d_bc_test();
   //synth_wire_test();
   //synth_sr_boundary_condition_test();
+  //sobel_app_test();
+  //assert(false);
+
+  //blur_xy_app_test();
+
+  //playground();
+  //synth_lb_test();
+  //conv_app_rolled_reduce_test();
+  //reduce_1d_test();
+
+  //parse_denoise3d_test();
+  //assert(false);
+
+  //up_stencil_down_unrolled_test();
+  //laplacian_pyramid_app_test();
 }
 
 void memory_tile_tests() {

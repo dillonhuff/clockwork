@@ -30,13 +30,13 @@ int main() {
   for (int i = 0; i < 64; i++) {
     hw_uint<128> actual = jacobi2d_unrolled_4_update_0_write.read();
     auto actual_lane_0 = actual.extract<0*32, 31>();
-    fout << (uint64_t) actual_lane_0 << endl;
+    fout << actual_lane_0 << endl;
     auto actual_lane_1 = actual.extract<1*32, 63>();
-    fout << (uint64_t) actual_lane_1 << endl;
+    fout << actual_lane_1 << endl;
     auto actual_lane_2 = actual.extract<2*32, 95>();
-    fout << (uint64_t) actual_lane_2 << endl;
+    fout << actual_lane_2 << endl;
     auto actual_lane_3 = actual.extract<3*32, 127>();
-    fout << (uint64_t) actual_lane_3 << endl;
+    fout << actual_lane_3 << endl;
   }
 
   in_pix.close();
