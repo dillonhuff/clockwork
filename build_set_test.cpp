@@ -5547,8 +5547,8 @@ void playground() {
 }
 
 void application_tests() {
-  sobel_app_test();
-  assert(false);
+  //sobel_app_test();
+  //assert(false);
 
   //blur_xy_app_test();
 
@@ -5595,7 +5595,7 @@ void application_tests() {
 
   conv3x3_app_unrolled_test();
 
-  laplacian_pyramid_app_test();
+  //laplacian_pyramid_app_test();
   upsample_stencil_2d_test();
   upsample_stencil_1d_test();
 
