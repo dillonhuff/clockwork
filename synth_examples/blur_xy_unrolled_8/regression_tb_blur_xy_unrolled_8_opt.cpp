@@ -2,6 +2,7 @@
 #include "blur_xy_unrolled_8_opt.h"
 
 int main() {
+  ofstream in_pix("input_pixels_regression_result_blur_xy_unrolled_8_opt.txt");
   ofstream fout("regression_result_blur_xy_unrolled_8_opt.txt");
   HWStream<hw_uint<256> > input_update_0_read;
   HWStream<hw_uint<256> > blur_xy_unrolled_8_update_0_write;
@@ -21,6 +22,7 @@ int main() {
     set_at<5*32, 256>(in_val, 8*i + 5);
     set_at<6*32, 256>(in_val, 8*i + 6);
     set_at<7*32, 256>(in_val, 8*i + 7);
+    in_pix << in_val.to_int() << endl;
     input_update_0_read.write(in_val);
   }
 
@@ -46,5 +48,7 @@ int main() {
     fout << (int) actual_lane_7 << endl;
   }
 
+  in_pix.close();
+  fout.close();
   return 0;
 }
