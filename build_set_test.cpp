@@ -5548,6 +5548,12 @@ void playground() {
 }
 
 void application_tests() {
+  sobel_app_test();
+  assert(false);
+
+  //blur_xy_app_test();
+
+  //playground();
   up_stencil_down_test();
 
   up_stencil_test();
@@ -5614,12 +5620,6 @@ void application_tests() {
   //conv_1d_bc_test();
   //synth_wire_test();
   //synth_sr_boundary_condition_test();
-  //sobel_app_test();
-  //assert(false);
-
-  //blur_xy_app_test();
-
-  //playground();
   //synth_lb_test();
   //conv_app_rolled_reduce_test();
   //reduce_1d_test();
