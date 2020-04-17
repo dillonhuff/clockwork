@@ -4570,13 +4570,13 @@ App sobel(const std::string output_name) {
   sobel.func2d("img", "id", "off_chip_img", {1, 1}, {{0, 0}});
   sobel.func2d("mag_x", "sobel_mx", "img", {1, 1},
       {{1, -1}, {-1, -1}, {1, 0}, {-1, 0}, {1, 1}, {-1, 1}});
-  sobel.func2d("mag_y", "sobel_mx", "img", {1, 1},
+  sobel.func2d("mag_y", "sobel_mx", "mag_x", {1, 1},
       {{-1, 1}, {-1, -1}, {0, 1}, {0, -1}, {1, 1}, {1, -1}});
 
   Window xwindow{"mag_x", {1, 1}, {{0, 0}}};
   Window ywindow{"mag_y", {1, 1}, {{0, 0}}};
   sobel.func2d(output_name, "mag_cu", {xwindow, ywindow});
-  sobel.set_all_widths(16);
+  //sobel.set_all_widths(16);
 
   return sobel;
 }
@@ -5561,8 +5561,8 @@ void playground() {
 }
 
 void application_tests() {
-  //sobel_app_test();
-  //assert(false);
+  sobel_app_test();
+  assert(false);
 
   //blur_xy_app_test();
 
