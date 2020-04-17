@@ -261,8 +261,9 @@ hw_uint<32> reduce_gauss(hw_uint<32*9>& in) {
 }
 
 static inline
-hw_uint<32> mag_cu(hw_uint<32>& a, hw_uint<32>& b) {
-  return a + b;
+hw_uint<32> mag_cu(hw_uint<32>& mx,
+    hw_uint<32>& my) {
+  return 65535 - (mx*mx + my*my);
 }
 
 static inline
@@ -272,7 +273,10 @@ hw_uint<32> sobel_my(hw_uint<192>& a) {
 
 static inline
 hw_uint<32> sobel_mx(hw_uint<192>& a) {
-  return 0;
+  hw_uint<32> r0 = a.get<32, 0>() - a.get<32, 1>();
+  hw_uint<32> r1 = 3*(a.get<32, 2>() - a.get<32, 3>());
+  hw_uint<32> r2 = a.get<32, 4>() - a.get<32, 5>();
+  return r0 + r1 + r2;
 }
 
 static inline

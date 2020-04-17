@@ -6,18 +6,25 @@ read_verilog [ glob ./soda_jacobi2d_4_proj/solution1/impl/verilog/*.v ]
 read_xdc full_xdc.xdc
 #./soda_jacobi2d_4_proj/solution1/impl/ip/constraints/jacobi2d_4_kernel_ooc.xdc
 
+<<<<<<< HEAD
 #set Device "xc7k70tfbg676-2"
 set Device "xc7vx485tffg1761-2"
+=======
+set Device "xc7k70tfbg676-2"
+>>>>>>> origin/master
 synth_design -top jacobi2d_4_kernel -part $Device
 
 write_checkpoint -force $outputDir/post_synth.dcp
 report_timing_summary -file $outputDir/post_synth_timing.rpt
 report_utilization -file $outputDir/post_synth_util.rpt
 
+<<<<<<< HEAD
 puts [get_ports *]
 
 place_ports [get_ports *]
 
+=======
+>>>>>>> origin/master
 opt_design
 place_design
 
