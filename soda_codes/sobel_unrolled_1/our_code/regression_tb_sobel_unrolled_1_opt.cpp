@@ -24,7 +24,7 @@ int main() {
   for (int i = 0; i < 2073600; i++) {
     hw_uint<32> actual = sobel_unrolled_1_update_0_write.read();
     auto actual_lane_0 = actual.extract<0*32, 31>();
-    fout << (int) actual_lane_0 << endl;
+    fout << (uint64_t) actual_lane_0 << endl;
   }
 
   in_pix.close();

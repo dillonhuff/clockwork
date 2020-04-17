@@ -965,7 +965,7 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
         << " = actual.extract<" << p << "*" << port_width << ", "
         << (p + 1)*port_width - 1 << ">();" << endl;
 
-      rgtb << tab(2) << "fout << (int) actual_lane_" << p << " << endl;" << endl;
+      rgtb << tab(2) << "fout << (uint64_t) actual_lane_" << p << " << endl;" << endl;
     }
 
     rgtb << tab(1) << "}" << endl << endl;
@@ -5547,8 +5547,8 @@ void playground() {
 }
 
 void application_tests() {
-  //sobel_app_test();
-  //assert(false);
+  sobel_app_test();
+  assert(false);
 
   //blur_xy_app_test();
 
