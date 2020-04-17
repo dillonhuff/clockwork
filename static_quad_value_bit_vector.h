@@ -16,7 +16,8 @@ typedef uint8_t  bv_uint8;
 typedef uint16_t bv_uint16;
 typedef uint32_t bv_uint32;
 typedef uint64_t bv_uint64;
-using uint = unsigned int;
+typedef unsigned int uint;
+//using uint = unsigned int;
 
 #define QBV_UNKNOWN_VALUE 2
 #define QBV_HIGH_IMPEDANCE_VALUE 3
