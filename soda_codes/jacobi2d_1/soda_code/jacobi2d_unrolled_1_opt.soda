@@ -1,0 +1,10 @@
+kernel: jacobi2d_unrolled_1_opt
+burst width: 32
+unroll factor: 1
+input uint32: in(1024, *)
+output uint32: t0(0, 0) = (
+    in( 0,  1) + in( 1,  0) + in( 0,  0) + in( 0, -1) + in(-1,  0)) / 5
+
+iterate: 1
+
+

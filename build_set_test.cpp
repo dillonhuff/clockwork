@@ -4562,7 +4562,7 @@ App sobel(const std::string output_name) {
 
   Window xwindow{"mag_x", {1, 1}, {{0, 0}}};
   Window ywindow{"mag_y", {1, 1}, {{0, 0}}};
-  sobel.func2d("mag", "mag_cu", {xwindow, ywindow});
+  sobel.func2d(output_name, "mag_cu", {xwindow, ywindow});
 
   return sobel;
 }
@@ -4743,6 +4743,31 @@ void upsample_stencil_1d_test() {
   //assert(false);
 }
 
+void sobel_app_test() {
+  int cols = 1920;
+  int rows = 1080;
+ 
+  cout << "sobel" << endl;
+  for (int i = 0; i < 5; i++) {
+    int unroll_factor = pow(2, i);
+    cout << tab(1) << "unroll factor: " << unroll_factor << endl;
+    string out_name = "sobel_unrolled_" + str(unroll_factor);
+    sobel(out_name).realize(out_name, cols, rows, unroll_factor);
+
+    string app_dir =
+      "./soda_codes/" + out_name;
+    string synth_dir =
+      "./soda_codes/" + out_name + "/our_code/";
+
+    system(("mkdir " + app_dir).c_str());
+    system(("mkdir " + synth_dir).c_str());
+    system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
+    system(("mv " + out_name + "*.h " + synth_dir).c_str());
+    system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
+    system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
+  }
+
+}
 void blur_xy_app_test() {
   int cols = 1920;
   int rows = 1080;
@@ -5519,9 +5544,10 @@ void playground() {
 }
 
 void application_tests() {
-  blur_xy_app_test();
-
+  sobel_app_test();
   assert(false);
+
+  blur_xy_app_test();
 
   //playground();
   //synth_lb_test();
