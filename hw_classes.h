@@ -175,7 +175,7 @@ class hw_uint {
 
     template<int width, int index>
       hw_uint<width> get() const {
-        return extract<width*index, width*(index + 1)>();
+        return extract<width*index, width*(index + 1) - 1>();
       }
 
 #ifdef __VIVADO_SYNTH__
