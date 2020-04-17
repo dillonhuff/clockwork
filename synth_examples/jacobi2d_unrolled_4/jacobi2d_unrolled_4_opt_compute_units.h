@@ -25,7 +25,7 @@ hw_uint<128>  id_unrolled_4(hw_uint<128>& t1_arg) {
   set_at<0, 32>(lane_3_t1_arg, t1_arg.extract<96, 127>());
   auto result_3 = id(lane_3_t1_arg);
   set_at<96, 128>(whole_result, result_3);
-   return whole_result;
+  return whole_result;
 }
 
   // jacobi2d_unrolled_4_update_0 unroll factor: 4
@@ -83,6 +83,6 @@ hw_uint<128>  jacobi2d_compute_unrolled_4(hw_uint<448>& t1) {
   set_at<128, 160>(lane_3_t1, t1.extract<416, 447>());
   auto result_3 = jacobi2d_compute(lane_3_t1);
   set_at<96, 128>(whole_result, result_3);
-   return whole_result;
+  return whole_result;
 }
 

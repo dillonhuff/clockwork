@@ -9,6 +9,14 @@
 
 using namespace std;
 
+// Out: jacobi2d_unrolled_1 dimensions...
+  // { jacobi2d_unrolled_1[i0, i1] : 0 <= i0 <= 15 and 0 <= i1 <= 15 }
+  // Min: { jacobi2d_unrolled_1[0, 0] }
+  // Max: { jacobi2d_unrolled_1[15, 15] }
+// In : t1_arg dimensions...
+  // { t1_arg[i0, i1] : -1 <= i0 <= 16 and -1 <= i1 <= 16 }
+  // Min: { t1_arg[-1, -1] }
+  // Max: { t1_arg[16, 16] }
 int main() {
   const int img_size = 1920*1080;
   ap_uint<32>* buf =
