@@ -4557,7 +4557,7 @@ App sobel(const std::string output_name) {
   sobel.func2d("img", "id", "off_chip_img", {1, 1}, {{0, 0}});
   sobel.func2d("mag_x", "sobel_mx", "img", {1, 1},
       {{1, -1}, {-1, -1}, {1, 0}, {-1, 0}, {1, 1}, {-1, 1}});
-  sobel.func2d("mag_y", "sobel_my", "img", {1, 1},
+  sobel.func2d("mag_y", "sobel_mx", "img", {1, 1},
       {{-1, 1}, {-1, -1}, {0, 1}, {0, -1}, {1, 1}, {1, -1}});
 
   Window xwindow{"mag_x", {1, 1}, {{0, 0}}};
