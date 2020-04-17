@@ -932,9 +932,10 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
     rgtb << tab(1) << "for (int i = 0; i < " << num_pushes << "; i++) {" << endl;
     rgtb << tab(2) << buf.bundle_type_string(bundle) << " in_val;" << endl;
     for (int p = 0; p < num_ports; p++) {
-      rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ">(in_val, " << num_ports << "*i + " << p << ");" << endl;
+      string next_val = str(num_ports) + "*i + " + str(p);
+      rgtb << tab(2) << "in_pix << " << next_val << " << endl;" << endl;
+      rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ">(in_val, " << next_val << ");" << endl;
     }
-    rgtb << tab(2) << "in_pix << in_val.to_int() << endl;" << endl;
     rgtb << tab(2) << bundle << ".write(in_val);" << endl;
     rgtb << tab(1) << "}" << endl << endl;
   }
