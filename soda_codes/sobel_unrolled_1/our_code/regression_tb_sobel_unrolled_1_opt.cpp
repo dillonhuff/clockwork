@@ -14,9 +14,12 @@ int main() {
   // rng     : { img_update_0[root = 0, img_0, img_1] : -1 <= img_0 <= 1920 and -1 <= img_1 <= 1080 }
   for (int i = 0; i < 2079604; i++) {
     hw_uint<32> in_val;
-    in_pix << 1*i + 0 << endl;
-    set_at<0*32, 32>(in_val, 1*i + 0);
+    in_pix << 1 << endl;
+    set_at<0*32, 32>(in_val, 1);
     img_update_0_read.write(in_val);
+    //in_pix << 1*i + 0 << endl;
+    //set_at<0*32, 32>(in_val, 1*i + 0);
+    //img_update_0_read.write(in_val);
   }
 
   sobel_unrolled_1_opt(img_update_0_read, sobel_unrolled_1_update_0_write);
