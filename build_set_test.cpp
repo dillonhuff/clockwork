@@ -3,30 +3,30 @@
 #include "codegen.h"
 #include "prog.h"
 
-void dead_push_test() {
+//void dead_push_test() {
 
-  struct isl_ctx *ctx;
-  ctx = isl_ctx_alloc();
+  //struct isl_ctx *ctx;
+  //ctx = isl_ctx_alloc();
 
-  UBuffer buf;
-  buf.name = "dead_push";
-  buf.ctx = ctx;
+  //UBuffer buf;
+  //buf.name = "dead_push";
+  //buf.ctx = ctx;
 
-  buf.add_in_pt("init",
-    "{ init[i, j] : 0 <= i <= 8 and 0 <= j <= 8 }",
-    "{ init[i, j] -> M[i, j] }",
-    "{ init[i, j] -> [i, j, 0] }");
+  //buf.add_in_pt("init",
+    //"{ init[i, j] : 0 <= i <= 8 and 0 <= j <= 8 }",
+    //"{ init[i, j] -> M[i, j] }",
+    //"{ init[i, j] -> [i, j, 0] }");
 
-  buf.add_out_pt("read0",
-    "{ read0[i, j] : 0 <= i <= 8 and 0 <= j <= 8 }",
-    "{ read0[i, j] -> M[floor(i / 2), floor(j / 2)] }",
-    "{ read0[i, j] -> [i, j, 1] }");
+  //buf.add_out_pt("read0",
+    //"{ read0[i, j] : 0 <= i <= 8 and 0 <= j <= 8 }",
+    //"{ read0[i, j] -> M[floor(i / 2), floor(j / 2)] }",
+    //"{ read0[i, j] -> [i, j, 1] }");
 
-  generate_hls_code(buf);
+  //generate_hls_code(buf);
 
-  isl_ctx_free(buf.ctx);
-  assert(false);
-}
+  //isl_ctx_free(buf.ctx);
+  //assert(false);
+//}
 
 void synth_reduce_test() {
 
@@ -2517,6 +2517,18 @@ struct App {
     return func2d(name, compute, {w});
   }
 
+  void set_all_widths(const int width) {
+    for (auto a : app_dag) {
+      set_width(a.first, width);
+    }
+  }
+
+  void set_width(const string& func, const int width) {
+    assert(width > 0);
+    assert(contains_key(func, app_dag));
+    app_dag.at(func).pixel_width = width;
+  }
+  
   void unroll(const string& func, const int unroll_factor) {
     assert(unroll_factor > 0);
     assert(contains_key(func, app_dag));
@@ -4564,6 +4576,7 @@ App sobel(const std::string output_name) {
   Window xwindow{"mag_x", {1, 1}, {{0, 0}}};
   Window ywindow{"mag_y", {1, 1}, {{0, 0}}};
   sobel.func2d(output_name, "mag_cu", {xwindow, ywindow});
+  sobel.set_all_widths(16);
 
   return sobel;
 }
@@ -5548,8 +5561,8 @@ void playground() {
 }
 
 void application_tests() {
-  //sobel_app_test();
-  //assert(false);
+  sobel_app_test();
+  assert(false);
 
   //blur_xy_app_test();
 
