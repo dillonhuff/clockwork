@@ -5561,8 +5561,8 @@ void playground() {
 }
 
 void application_tests() {
-  sobel_app_test();
-  assert(false);
+  //sobel_app_test();
+  //assert(false);
 
   //blur_xy_app_test();
 
