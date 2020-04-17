@@ -4754,8 +4754,8 @@ void sobel_app_test() {
     string out_name = "sobel_unrolled_" + str(unroll_factor);
     sobel(out_name).realize(out_name, cols, rows, unroll_factor);
     
-    std::vector<std::string> optimized =
-      run_regression_tb(out_name + "_opt");
+    //std::vector<std::string> optimized =
+      //run_regression_tb(out_name + "_opt");
 
     string app_dir =
       "./soda_codes/" + out_name;
@@ -5547,10 +5547,10 @@ void playground() {
 }
 
 void application_tests() {
-  sobel_app_test();
-  assert(false);
+  //sobel_app_test();
+  //assert(false);
 
-  blur_xy_app_test();
+  //blur_xy_app_test();
 
   //playground();
   //synth_lb_test();
