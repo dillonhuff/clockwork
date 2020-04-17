@@ -4753,6 +4753,9 @@ void sobel_app_test() {
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
     string out_name = "sobel_unrolled_" + str(unroll_factor);
     sobel(out_name).realize(out_name, cols, rows, unroll_factor);
+    
+    std::vector<std::string> optimized =
+      run_regression_tb(out_name + "_opt");
 
     string app_dir =
       "./soda_codes/" + out_name;
