@@ -3228,13 +3228,13 @@ struct App {
       var_names.push_back(dv);
     }
 
-    // Generate re-use buffers
     map<string, UBuffer> buffers;
     for (auto f : sorted_functions) {
       cout << "Adding buffer: " << f << endl;
       UBuffer b;
       b.ctx = ctx;
       b.name = f;
+      b.port_widths = app_dag.at(f).pixel_width;
 
       // Create write ports
       for (auto u : app_dag.at(f).updates) {
@@ -5548,8 +5548,8 @@ void playground() {
 }
 
 void application_tests() {
-  sobel_app_test();
-  assert(false);
+  //sobel_app_test();
+  //assert(false);
 
   //blur_xy_app_test();
 

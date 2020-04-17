@@ -310,8 +310,11 @@ struct Update {
 };
 
 struct Result {
+  int pixel_width;
   vector<Window> srcs;
   Window provided;
+
+  Result() : pixel_width(32) {}
 
   vector<Update> updates;
 
