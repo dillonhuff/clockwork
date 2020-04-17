@@ -173,17 +173,17 @@ template<int Len>
 class hw_uint {
   public:
 
+    template<int width, int index>
+      hw_uint<width> get() const {
+        return extract<width*index, width*(index + 1)>();
+      }
+
 #ifdef __VIVADO_SYNTH__
     ap_int<Len> val;
 
     hw_uint(const hw_uint<Len>& v) : val(v.val) {}
     hw_uint(const int v) : val(v) {}
     hw_uint() : val(0) {}
-
-    template<int width, int index>
-      hw_uint<width> get() const {
-        return extract<width*index, width*(index + 1)>();
-      }
 
     hw_uint<E_inclusive - S + 1> extract() const {
     template<int S, int E_inclusive>
