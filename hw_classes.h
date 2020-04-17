@@ -379,11 +379,11 @@ class HWStream {
 #endif // __VIVADO_SYNTH__
 };
 
-template<typename T>
-using InputStream = HWStream<T>;
+//template<typename T>
+//using InputStream = HWStream<T>;
 
-template<typename T>
-using OutputStream = HWStream<T>;
+//template<typename T>
+//using OutputStream = HWStream<T>;
 
 
 
