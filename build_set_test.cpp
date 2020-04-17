@@ -4746,25 +4746,27 @@ void upsample_stencil_1d_test() {
 }
 
 void blur_xy_app_test() {
-  int cols = 32;
-  int rows = 32;
-  
-  //int unroll_factor = pow(2, 4);
-  int unroll_factor = pow(2, 0);
-  string out_name = "blur_xy_unrolled_" + str(unroll_factor);
-  blur_xy(out_name).realize(out_name, cols, rows, unroll_factor);
+  int cols = 1920;
+  int rows = 1080;
+ 
+  cout << "blur_xy" << endl;
+  for (int i = 0; i < 5; i++) {
+    int unroll_factor = pow(2, i);
+    cout << tab(1) << "unroll factor: " << unroll_factor << endl;
+    string out_name = "blur_xy_unrolled_" + str(unroll_factor);
+    blur_xy(out_name).realize(out_name, cols, rows, unroll_factor);
 
-  std::vector<std::string> optimized =
-    run_regression_tb(out_name + "_opt");
+    std::vector<std::string> optimized =
+      run_regression_tb(out_name + "_opt");
 
-  string synth_dir =
-    "./synth_examples/" + out_name;
-  system(("mkdir " + synth_dir).c_str());
-  system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
-  system(("mv " + out_name + "*.h " + synth_dir).c_str());
-  system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
-  system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
-  //}
+    string synth_dir =
+      "./synth_examples/" + out_name;
+    system(("mkdir " + synth_dir).c_str());
+    system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
+    system(("mv " + out_name + "*.h " + synth_dir).c_str());
+    system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
+    system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
+  }
 
 }
 
