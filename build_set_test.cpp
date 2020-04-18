@@ -3737,6 +3737,7 @@ struct App {
     //options.use_custom_code_string = true;
     options.use_custom_code_string = false;
     //options.all_rams = true;
+    options.debug_options.expect_all_linebuffers = true;
 
     fill_data_domain(name, d0, d1);
     fill_compute_domain();

@@ -928,7 +928,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps) {
     consumed_data.push_back(inv(d));
   }
 
-  assert(false);
+  //assert(false);
 
   cout << "Consumed data..." << endl;
   map<isl_map*, vector<pair<isl_val*, isl_val*> > > schedule_params;
