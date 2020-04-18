@@ -946,6 +946,9 @@ umap* to_umap(isl_ctx* ctx,
 }
 
 map<string, vector<isl_aff*> >
+clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, vector<string> >& high_bandwidth_deps);
+
+map<string, vector<isl_aff*> >
 clockwork_schedule(uset* domain, umap* validity, umap* proximity);
 
 umap* experimental_opt(uset* domain, umap* validity, umap* proximity);
