@@ -3043,6 +3043,21 @@ struct App {
     isl_union_map *coincidence =
       cpy(validity);
 
+    map<string, vector<string> > high_bandwidth_deps;
+    for (auto un : sort_updates()) {
+      auto u = get_update(un);
+      for (auto w : u.get_srcs()) {
+        if (w.pts().size() > 1) {
+          high_bandwidth_deps[u.name()].push_back(last_update(w.name).name());
+        }
+      }
+    }
+    cout << "High bandwidth deps..." << endl;
+    for (auto b : high_bandwidth_deps) {
+      cout << tab(1) << b.first << endl;
+      cout << tab(2) << comma_list(b.second) << endl;
+    }
+    assert(false);
     map<string, vector<isl_aff*> > sched =
       clockwork_schedule(domain, validity, proximity);
 
@@ -5613,6 +5628,7 @@ void playground() {
 void application_tests() {
 
   denoise2d_test();
+  conv3x3_app_unrolled_test();
 
   //sobel_app_test();
   sobel_mag_x_test();
@@ -5634,7 +5650,6 @@ void application_tests() {
   up_unrolled_4_test();
   up_down_unrolled_test();
   
-  conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
   
   //assert(false);
