@@ -3207,29 +3207,6 @@ struct App {
       const std::string& producer) {
     Window w = box_touched(consumer, producer).unroll_cpy(get_update(consumer).unroll_factor);
     return w;
-    //auto pix_read = to_map(pixels_read(consumer));
-    //cout << "Pixels read = " << str(pix_read) << endl;
-    //int in_dims = num_in_dims(pix_read);
-    //vector<string> zeros;
-    //for (int i = 0; i < in_dims; i++) {
-      //zeros.push_back("0");
-    //}
-    //string zero_str = "{ " + domain_name(pix_read) + sep_list(zeros, "[", "]", ",") + " }";
-    //isl_set* zr = isl_set_read_from_str(ctx, zero_str.c_str());
-    //cout << "zr = " << str(zr) << endl;
-    //isl_map* d = its(pix_read, zr);
-    //cout << "d  = " << str(d) << endl;
-    //isl_set* offsets = range(d);
-    //cout << "offsets = " << str(offsets) << endl;
-    //vector<isl_point*> offset_pts = get_points(offsets);
-    //Window w = box_touched(consumer, producer).unroll_cpy(get_update(consumer).unroll_factor);
-    //w.offsets = {};
-    //vector<vector<int> > offset_vals;
-    //for (auto pt : offset_pts) {
-      //w.offsets.push_back(parse_pt(pt));
-    //}
-    //return w;
-    //return box_touched(consumer, producer).unroll_cpy(get_update(consumer).unroll_factor);
   }
 
   map<string, UBuffer> build_buffers(umap* m) {
@@ -3668,52 +3645,52 @@ struct App {
     prg.compute_unit_file = prg.name + "_compute_units.h";
     generate_compute_unit_file(prg.compute_unit_file);
 
-    //populate_program(options, prg, name, m, buffers);
+    populate_program(options, prg, name, m, buffers);
 
-    auto action_domain = cpy(whole_dom);
-    map<string, isl_set*> domain_map;
-    for (auto f : sorted_functions) {
-      for (auto u : app_dag.at(f).updates) {
-        if (u.get_srcs().size() == 0) {
-          prg.ins.insert(f);
-          action_domain =
-            isl_union_set_subtract(action_domain,
-                to_uset(compute_domain(u.name())));
-        } else {
-          Box compute_b =
-            compute_box(u.name());
-          op* nest = prg.root;
-          int i = 0;
-          for (auto r : compute_b.intervals) {
-            nest = nest->add_nest(f + "_" + to_string(i), r.min, r.max + 1);
-            i++;
-          }
-          auto op = nest->add_op(u.name());
-          // TODO: Replace with real description of apps
-          op->add_store(f, "0, 0");
+    //auto action_domain = cpy(whole_dom);
+    //map<string, isl_set*> domain_map;
+    //for (auto f : sorted_functions) {
+      //for (auto u : app_dag.at(f).updates) {
+        //if (u.get_srcs().size() == 0) {
+          //prg.ins.insert(f);
+          //action_domain =
+            //isl_union_set_subtract(action_domain,
+                //to_uset(compute_domain(u.name())));
+        //} else {
+          //Box compute_b =
+            //compute_box(u.name());
+          //op* nest = prg.root;
+          //int i = 0;
+          //for (auto r : compute_b.intervals) {
+            //nest = nest->add_nest(f + "_" + to_string(i), r.min, r.max + 1);
+            //i++;
+          //}
+          //auto op = nest->add_op(u.name());
+          //// TODO: Replace with real description of apps
+          //op->add_store(f, "0, 0");
 
-          vector<string> fargs;
-          for (auto p : u.get_srcs()) {
-            op->add_load(p.name, "0, 0");
-            if (!elem(p.name, fargs)) {
-              fargs.push_back(p.name);
-            }
-          }
-          if (u.unroll_factor == 1) {
-            op->add_function(u.compute_name());
-          } else {
-            op->add_function(u.compute_name() + "_unrolled_" + to_string(u.unroll_factor));
-            op->unroll_factor = u.unroll_factor;
-          }
-          domain_map[u.name()] =
-            compute_domain(u.name());
-        }
-      }
-    }
-    prg.outs = {name};
+          //vector<string> fargs;
+          //for (auto p : u.get_srcs()) {
+            //op->add_load(p.name, "0, 0");
+            //if (!elem(p.name, fargs)) {
+              //fargs.push_back(p.name);
+            //}
+          //}
+          //if (u.unroll_factor == 1) {
+            //op->add_function(u.compute_name());
+          //} else {
+            //op->add_function(u.compute_name() + "_unrolled_" + to_string(u.unroll_factor));
+            //op->unroll_factor = u.unroll_factor;
+          //}
+          //domain_map[u.name()] =
+            //compute_domain(u.name());
+        //}
+      //}
+    //}
+    //prg.outs = {name};
 
-    generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
-    generate_regression_testbench(prg, buffers);
+    //generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
+    //generate_regression_testbench(prg, buffers);
 
     return;
   }
@@ -5596,12 +5573,14 @@ void playground() {
 
 void application_tests() {
   //sobel_app_test();
-  sobel_mag_x_test();
-  assert(false);
+  //sobel_mag_x_test();
+  //assert(false);
 
   //blur_xy_app_test();
 
   //playground();
+  
+  jacobi2d_app_test();
   up_stencil_down_test();
 
   up_stencil_test();
@@ -5613,7 +5592,6 @@ void application_tests() {
   up_unrolled_4_test();
   up_down_unrolled_test();
   
-  jacobi2d_app_test();
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
   
