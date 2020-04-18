@@ -102,27 +102,18 @@ struct ilp_builder {
     isl_basic_set* max_loc = cpy(s);
     for (auto obj : objectives) {
       isl_aff* objective = isl_aff_zero_on_domain(get_local_space(s));
-      //cout << "Objective: " << str(objective) << endl;
       for (auto coeff : obj) {
-        //cout << "Coeff: " << coeff.first << endl;
         int index = map_find(coeff.first, variable_positions);
         isl_val* cn = mul(isl_val_negone(ctx), coeff.second);
-        //cout << "cn = " << str(cn) << endl;
         objective = isl_aff_set_coefficient_val(objective, isl_dim_in, index, cn);
-        //cout << "objective: " << str(objective) << endl;
       }
-      //cout << "objective: " << str(objective) << endl;
       isl_val* max = isl_basic_set_max_val(cpy(max_loc), objective);
       values.push_back(max);
 
       auto max_loc_s =
         isl_aff_eq_basic_set(objective,
             aff_on_domain(get_local_space(s), max));
-      //cout << "max loc = " << str(max_loc) << endl;
-      //cout << "s       = " << str(s) << endl;
       max_loc = its(max_loc, max_loc_s);
-      //auto max_loc_pts = its(max_loc, s);
-      //cout << "max pts = " << str(max_loc_pts) << endl;
 
       assert(!empty(max_loc));
     }
@@ -944,7 +935,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
   vector<isl_map*> consumed_data;
   for (auto d : deps) {
     cout << tab(1) << str(d) << endl;
-    cout << tab(2) << str(card((d))) << endl;
+    //cout << tab(2) << str(card((d))) << endl;
     consumed_data.push_back(inv(d));
   }
 
@@ -1015,7 +1006,23 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
   cout << "Building delay constraints" << endl;
   ilp_builder delay_problem(ct);
   set<string> operation_names;
-  
+
+  set<string> consumers;
+  for (auto dep : deps) {
+    string consumer = range_name(dep);
+    consumers.insert(consumer);
+  }
+  for (auto dep : deps) {
+    consumers.erase(domain_name(dep));
+  }
+
+  assert(consumers.size() > 0);
+
+  map<string, isl_val*> pipeline_delay;
+  for (auto c : consumers) {
+    pipeline_delay[delay_var_name(c)] = one(ct);
+  }
+
   vector<pair<string, isl_val*> > linebuffer_obj_terms;
 
   for (auto b : high_bandwidth_deps) {
@@ -1042,8 +1049,11 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
     string dc = delay_var_name(consumer);
     string dp = delay_var_name(producer);
 
-    delay_obj[dc] = one(ct);
-    delay_obj[dp] = one(ct);
+    delay_obj[dc] = negone(ct);
+    delay_obj[dp] = negone(ct);
+    
+    //delay_obj[dc] = one(ct);
+    //delay_obj[dp] = one(ct);
 
     for (auto sv : s.second) {
 
@@ -1058,11 +1068,8 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
   }
 
   cout << "Delay constraints" << endl;
-  //auto sample_delay = sample(delay_problem.s);
-  //auto opt_delay = delay_problem.minimize(delay_obj);
-  auto opt_delay = delay_problem.lex_minimize({linebuffer_obj, delay_obj});
-  //cout << tab(1) << "legal delays  : " << str(sample_delay) << endl;
-  //cout << tab(1) << "optimal delays: " << str(opt_delay) << endl;
+  auto opt_delay = delay_problem.lex_minimize({pipeline_delay, delay_obj});
+  //auto opt_delay = delay_problem.lex_minimize({linebuffer_obj, delay_obj});
 
   map<string, isl_aff*> schedule_functions;
   for (auto f : operation_names) {
