@@ -3507,7 +3507,6 @@ struct App {
     fill_compute_domain();
 
     umap* m =
-      //schedule_naive();
       schedule_isl();
 
     cout << "Schedule: " << str(m) << endl;
@@ -3689,20 +3688,9 @@ struct App {
     return whole_dom;
   }
 
-  void schedule_and_codegen(const std::string& name) {
+  void schedule_and_codegen(CodegenOptions& options, const std::string& name) {
     umap* m = schedule();
     assert(m != nullptr);
-
-    //cout << "Schedule: " << str(m) << endl;
-    //cout << "Maps..." << endl;
-    //auto ms = get_maps(m);
-    //for (auto m : ms) {
-      //cout << tab(1) << str(m) << endl;
-    //}
-    //assert(false);
-
-    //auto scheds_n =
-      //schedule_opt();
 
     map<string, vector<QExpr> > scheds =
       schedule_opt();
@@ -3716,6 +3704,7 @@ struct App {
     }
 
     string cgn = box_codegen(ops, scheds, compute_domains);
+    options.code_string = cgn;
 
     map<string, UBuffer> buffers = build_buffers(m);
 
@@ -3723,65 +3712,12 @@ struct App {
       whole_compute_domain();
     auto sorted_functions = sort_functions();
 
-    CodegenOptions options;
-    options.internal = true;
-    options.simplify_address_expressions = true;
-    //options.use_custom_code_string = true;
-    options.use_custom_code_string = false;
-    options.code_string = cgn;
-    //options.all_rams = true;
-
     prog prg;
     prg.name = name + "_opt";
     prg.compute_unit_file = prg.name + "_compute_units.h";
     generate_compute_unit_file(prg.compute_unit_file);
 
     populate_program(options, prg, name, m, buffers);
-
-    //auto action_domain = cpy(whole_dom);
-    //map<string, isl_set*> domain_map;
-    //for (auto f : sorted_functions) {
-      //for (auto u : app_dag.at(f).updates) {
-        //if (u.get_srcs().size() == 0) {
-          //prg.ins.insert(f);
-          //action_domain =
-            //isl_union_set_subtract(action_domain,
-                //to_uset(compute_domain(u.name())));
-        //} else {
-          //Box compute_b =
-            //compute_box(u.name());
-          //op* nest = prg.root;
-          //int i = 0;
-          //for (auto r : compute_b.intervals) {
-            //nest = nest->add_nest(f + "_" + to_string(i), r.min, r.max + 1);
-            //i++;
-          //}
-          //auto op = nest->add_op(u.name());
-          //// TODO: Replace with real description of apps
-          //op->add_store(f, "0, 0");
-
-          //vector<string> fargs;
-          //for (auto p : u.get_srcs()) {
-            //op->add_load(p.name, "0, 0");
-            //if (!elem(p.name, fargs)) {
-              //fargs.push_back(p.name);
-            //}
-          //}
-          //if (u.unroll_factor == 1) {
-            //op->add_function(u.compute_name());
-          //} else {
-            //op->add_function(u.compute_name() + "_unrolled_" + to_string(u.unroll_factor));
-            //op->unroll_factor = u.unroll_factor;
-          //}
-          //domain_map[u.name()] =
-            //compute_domain(u.name());
-        //}
-      //}
-    //}
-    //prg.outs = {name};
-
-    //generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
-    //generate_regression_testbench(prg, buffers);
 
     return;
   }
@@ -3795,17 +3731,22 @@ struct App {
   }
 
   void realize(const std::string& name, const int d0, const int d1) {
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    //options.use_custom_code_string = true;
+    options.use_custom_code_string = false;
+    //options.all_rams = true;
+
     fill_data_domain(name, d0, d1);
     fill_compute_domain();
-    schedule_and_codegen(name);
+
+    schedule_and_codegen(options, name);
   }
 
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     set_unroll_factors(unroll_factor);
-    fill_data_domain(name, d0, d1);
-    fill_compute_domain();
-    schedule_and_codegen(name);
+    realize(name, d0, d1);
   }
 
 };
@@ -5669,6 +5610,9 @@ void playground() {
 }
 
 void application_tests() {
+
+  denoise2d_test();
+
   //sobel_app_test();
   sobel_mag_x_test();
   //assert(false);
@@ -5692,7 +5636,6 @@ void application_tests() {
   conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
   
-  denoise2d_test();
   //assert(false);
   mismatched_stencil_test();
 

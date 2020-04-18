@@ -96,6 +96,46 @@ struct ilp_builder {
 
   }
 
+  vector<isl_val*> lex_minimize(const vector<std::map<string, isl_val*> >& objectives) {
+    vector<isl_val*> values;
+
+    isl_basic_set* max_loc = cpy(s);
+    for (auto obj : objectives) {
+      isl_aff* objective = isl_aff_zero_on_domain(get_local_space(s));
+      //cout << "Objective: " << str(objective) << endl;
+      for (auto coeff : obj) {
+        //cout << "Coeff: " << coeff.first << endl;
+        int index = map_find(coeff.first, variable_positions);
+        isl_val* cn = mul(isl_val_negone(ctx), coeff.second);
+        //cout << "cn = " << str(cn) << endl;
+        objective = isl_aff_set_coefficient_val(objective, isl_dim_in, index, cn);
+        //cout << "objective: " << str(objective) << endl;
+      }
+      //cout << "objective: " << str(objective) << endl;
+      isl_val* max = isl_basic_set_max_val(cpy(max_loc), objective);
+      values.push_back(max);
+
+      auto max_loc_s =
+        isl_aff_eq_basic_set(objective,
+            aff_on_domain(get_local_space(s), max));
+      //cout << "max loc = " << str(max_loc) << endl;
+      //cout << "s       = " << str(s) << endl;
+      max_loc = its(max_loc, max_loc_s);
+      //auto max_loc_pts = its(max_loc, s);
+      //cout << "max pts = " << str(max_loc_pts) << endl;
+
+      assert(!empty(max_loc));
+    }
+
+    assert(solution_point != nullptr);
+    assert(values.size() == objectives.size());
+
+    solution_point = sample(max_loc);
+    solved = true;
+
+    return values;
+  }
+
   isl_val* minimize(const std::map<string, isl_val*>& obj) {
     isl_aff* objective = isl_aff_zero_on_domain(get_local_space(s));
     cout << "Objective: " << str(objective) << endl;
@@ -887,6 +927,8 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps) {
     cout << tab(1) << str(d) << endl;
     consumed_data.push_back(inv(d));
   }
+
+  assert(false);
 
   cout << "Consumed data..." << endl;
   map<isl_map*, vector<pair<isl_val*, isl_val*> > > schedule_params;
