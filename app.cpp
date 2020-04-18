@@ -1068,6 +1068,8 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
   }
 
   cout << "Delay constraints" << endl;
+  //auto opt_delay = delay_problem.lex_minimize({delay_obj});
+  //auto opt_delay = delay_problem.lex_minimize({pipeline_delay});
   auto opt_delay = delay_problem.lex_minimize({pipeline_delay, delay_obj});
   //auto opt_delay = delay_problem.lex_minimize({linebuffer_obj, delay_obj});
 

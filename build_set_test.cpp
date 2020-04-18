@@ -3750,15 +3750,21 @@ struct App {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    //options.use_custom_code_string = true;
     options.use_custom_code_string = false;
-    //options.all_rams = true;
     //options.debug_options.expect_all_linebuffers = true;
+    realize(options, name, d0, d1);
+  }
 
+  void realize(CodegenOptions& options, const std::string& name, const int d0, const int d1) {
     fill_data_domain(name, d0, d1);
     fill_compute_domain();
 
     schedule_and_codegen(options, name);
+  }
+
+  void realize(CodegenOptions& options, const std::string& name, const int d0, const int d1, const int unroll_factor) {
+    set_unroll_factors(unroll_factor);
+    realize(options, name, d0, d1);
   }
 
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
@@ -4879,7 +4885,13 @@ void blur_xy_app_test() {
 void jacobi2d_app_test() {
   App jac = jacobi2d("t0");
   jac.realize_naive("t0", 32, 28);
-  jac.realize("t0", 32, 28, 1);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = false;
+  options.debug_options.expect_all_linebuffers = true;
+  jac.realize(options, "t0", 32, 28, 1);
 
   std::vector<std::string> optimized =
     run_regression_tb("t0_opt");
@@ -4897,7 +4909,12 @@ void jacobi2d_app_test() {
   for (int i = 0; i < 3; i++) {
     int unroll_factor = pow(2, i);
     string out_name = "jacobi2d_unrolled_" + str(unroll_factor);
-    jacobi2d(out_name).realize(out_name, cols, rows, unroll_factor);
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = false;
+    options.debug_options.expect_all_linebuffers = true;
+    jacobi2d(out_name).realize(options, out_name, cols, rows, unroll_factor);
     std::vector<std::string> optimized =
       run_regression_tb(out_name + "_opt");
     string synth_dir =
@@ -4930,7 +4947,13 @@ void denoise2d_test() {
   dn.func2d("denoise2d", "out_comp_dn2d", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
 
   int size = 30;
-  dn.realize("denoise2d", size, size, 1);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = false;
+  options.debug_options.expect_all_linebuffers = true;
+  dn.realize(options, "denoise2d", size, size);
 
   std::vector<std::string> optimized =
     run_regression_tb("denoise2d_opt");
@@ -4988,7 +5011,12 @@ void conv3x3_app_unrolled_uneven_test() {
   }
   sobel.func2d("conv3x3_app_unrolled_uneven", "conv_3_3", "img", {1, 1}, offsets);
 
-  sobel.realize("conv3x3_app_unrolled_uneven", 30, 30, 7);
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = false;
+  options.debug_options.expect_all_linebuffers = true;
+  sobel.realize(options, "conv3x3_app_unrolled_uneven", 30, 30, 7);
 
   int res = system("g++ -std=c++11 conv3x3_app_unrolled_uneven_opt.cpp -c ");
   assert(res == 0);
@@ -5009,7 +5037,12 @@ void conv3x3_app_unrolled_test() {
   }
   sobel.func2d("conv3x3_app_unrolled", "conv_3_3", "img", {1, 1}, offsets);
 
-  sobel.realize("conv3x3_app_unrolled", 30, 30, 2);
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = false;
+  options.debug_options.expect_all_linebuffers = true;
+  sobel.realize(options, "conv3x3_app_unrolled", 30, 30, 2);
 
   int res = system("g++ -std=c++11 tb_app_unrolled_conv3x3.cpp conv3x3_app_unrolled_opt.cpp");
   assert(res == 0);
@@ -5032,7 +5065,12 @@ void conv3x3_app_test() {
   }
   sobel.func2d("conv3x3_app", "conv_3_3", "img", {1, 1}, offsets);
 
-  sobel.realize("conv3x3_app", 30, 30, 1);
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = false;
+  options.debug_options.expect_all_linebuffers = true;
+  sobel.realize(options, "conv3x3_app", 30, 30);
 
   int res = system("g++ -std=c++11 tb_app_conv3x3.cpp conv3x3_app_opt.cpp");
   assert(res == 0);
