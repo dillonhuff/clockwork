@@ -4633,9 +4633,9 @@ void gaussian_pyramid_app_test() {
 }
 
 App sobel_mag_x() {
-  Expr* res =
-    parse_expr("(img(1, -1)) + -3 * img(1, 1)");
-  assert(false);
+  //Expr* res =
+    //parse_expr("(img(1, -1)) + (-3) * img(1, 1)");
+  //assert(false);
   //Expr* res =
     //parse_expr("(img(1, -1) + -img(-1, -1)) + (img(1,  0) + -img(-1,  0)) * 3 + (img(1,  1) + -img(-1,  1))");
   //assert(false);
@@ -5671,7 +5671,7 @@ void playground() {
 void application_tests() {
   //sobel_app_test();
   sobel_mag_x_test();
-  assert(false);
+  //assert(false);
 
   //blur_xy_app_test();
 

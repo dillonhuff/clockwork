@@ -273,12 +273,12 @@ hw_uint<32> sobel_my(hw_uint<192>& a) {
 
 static inline
 hw_uint<32> sobel_mx(hw_uint<192>& a) {
-  auto m1m1 = a.get<32, 0>();
-  auto m10 = a.get<32, 1>();
-  auto m10 = a.get<32, 2>();
-  auto 1m1 = a.get<32, 3>();
-  auto z1 = a.get<32, 4>();
-  auto oneone = a.get<32, 5>();
+  //auto m1m1 = a.get<32, 0>();
+  //auto m10 = a.get<32, 1>();
+  //auto m10 = a.get<32, 2>();
+  //auto 1m1 = a.get<32, 3>();
+  //auto z1 = a.get<32, 4>();
+  //auto oneone = a.get<32, 5>();
 
   hw_uint<32> r0 = a.get<32, 0>() - a.get<32, 1>();
   hw_uint<32> r1 = 3*(a.get<32, 2>() - a.get<32, 3>());
