@@ -1952,6 +1952,9 @@ struct FloatConst : public Expr {
 struct IntConst : public Expr {
   bool neg;
   string val;
+
+  IntConst(std::string& val_) : val(val_) {}
+
 };
 
 struct Binop : public Expr {
@@ -2139,35 +2142,148 @@ bool done(vector<Token>& tokens, size_t& pos) {
   return tokens.size() <= pos;
 }
 
-Expr* parse_expr(vector<Token>& tokens, size_t& pos) {
-  //stack<Token> op_stack;
-  //deque<Token> tokens;
-  //while (!done(tokens, pos) && expr_start(peek(tokens, pos))) {
-    //tokens.push_back(next(tokens, pos));
-  //}
+bool is_int(const Token& t) {
+  return is_number(t.txt);
+}
 
-  //deque<Token> op_stack;
-  //deque<Expr*> output_queue;
-  //while (tokens.size() > 0) {
-    //Token t = tokens.pop_front();
-    //if (is_float(t)) {
-      //output_queue.push_back(new FloatConst());
-    //} else if (is_int(t)) {
-      //output_queue.push_back(new IntConst(t.txt));
-    //} else if (is_function_call(t)) {
-      //op_stack.push_back(t);
-    //} else if (is_function_separator(t)) {
-      //// Pop off stack building expression
-      //assert(false);
-    //} else if (is_operator(t)) {
-      //// Pop higher precedence operators off the stack
-      //op_stack.push_back(t);
-      //assert(false);
-    //}
-  //}
+bool is_float(const Token& t) {
+  return false;
+}
 
+vector<string> all_operators() {
+  return {"-", "+", "*", "/"};
+}
+
+vector<string> unary_operators() {
+  return {"-"};
+}
+
+map<string, int> precedences() {
+  return {{"-", 500}, {"+", 100}, {"*", 200}, {"/", 200}};
+}
+
+int precedence(const Token& t) {
+  return map_find(t.txt, precedences());
+}
+
+
+bool is_higher_prec(const Token& t, const Token& l) {
+  return precedence(t) > precedence(l);
+}
+
+bool is_unary(const Token& t) {
+  return elem(t.txt, unary_operators());
+}
+bool is_operator(const Token& t) {
+  return elem(t.txt, all_operators());
+}
+
+bool is_function_call(const Token& t) {
+  return isalpha(t.txt.at(0));
+}
+
+bool is_function_separator(const Token& t) {
+  return t.txt == ",";
+}
+
+Expr* parse_expr(vector<Token>& orig_tokens, size_t& pos) {
+  deque<Token> tokens;
+  while (!done(orig_tokens, pos) && expr_start(peek(orig_tokens, pos))) {
+    tokens.push_back(next(orig_tokens, pos));
+  }
+
+  deque<Token> op_stack;
+  deque<Token> output;
+  while (tokens.size() > 0) {
+    Token t = tokens.front();
+    tokens.pop_front();
+
+    cout << "T = " << t << endl;
+    if (is_float(t)) {
+      cout << tab(1) << " is float" << endl;
+      output.push_back(t);
+    } else if (is_int(t)) {
+      cout << tab(1) << " is number" << endl;
+      output.push_back(t);
+    } else if (is_function_call(t)) {
+      cout << tab(1) << " is function call" << endl;
+      op_stack.push_back(t);
+    } else if (is_function_separator(t)) {
+      cout << tab(1) << " is function separator" << endl;
+      while (op_stack.back().txt != "(") {
+        output.push_back(op_stack.back());
+        op_stack.pop_back();
+      }
+    } else if (is_operator(t)) {
+      cout << tab(1) << " is function operator" << endl;
+      if (!is_unary(t)) {
+        // Pop higher precedence operators off the stack
+        while (op_stack.size() > 0 &&
+            is_operator(op_stack.back()) &&
+            is_higher_prec(op_stack.back(), t)) {
+          output.push_back(op_stack.back());
+          op_stack.pop_back();
+        }
+      } else {
+        // Pop higher precedence operators off the stack
+        while (op_stack.size() > 0 &&
+            is_operator(op_stack.back()) &&
+            is_unary(op_stack.back()) &&
+            is_higher_prec(op_stack.back(), t)) {
+          output.push_back(op_stack.back());
+          op_stack.pop_back();
+        }
+      }
+      op_stack.push_back(t);
+    } else if (t.txt == "(") {
+      op_stack.push_back(t);
+    } else if (t.txt == ")") {
+      cout << "Popping off lparen" << endl;
+      cout << "Current stack..." << endl;
+      for (auto elem : op_stack) {
+        cout << tab(1) << elem << endl;
+      }
+      while (op_stack.size() > 0 && op_stack.back().txt != "(") {
+        output.push_back(op_stack.back());
+        op_stack.pop_back();
+      }
+
+      assert((op_stack.size() > 0));
+      assert((op_stack.back().txt == "("));
+
+      op_stack.pop_back();
+    } else {
+      cout << "Error: Unsupported token: " << t << ", len: " << t.txt.size() << endl;
+      assert(false);
+    }
+  }
+
+  while (op_stack.size() > 0) {
+    auto next = op_stack.back();
+    op_stack.pop_back();
+
+    assert(next.txt != ")");
+    assert(next.txt != "(");
+
+    output.push_back(next);
+  }
+  assert(op_stack.size() == 0);
+
+  cout << "Output..." << endl;
+  for (auto out : output) {
+    cout << out << " ";
+  }
+  cout << endl;
   Expr* e = new Expr();
   return e;
+}
+
+Expr* parse_expr(const std::string& input) {
+  stringstream instr;
+  instr << input;
+  vector<Token> tokens = tokenize(instr);
+  size_t pos = 0;
+  return parse_expr(tokens, pos);
 }
 
 StencilProgram parse_soda_program(istream& in) {
@@ -4517,6 +4633,12 @@ void gaussian_pyramid_app_test() {
 }
 
 App sobel_mag_x() {
+  Expr* res =
+    parse_expr("(img(1, -1)) + -3 * img(1, 1)");
+  assert(false);
+  //Expr* res =
+    //parse_expr("(img(1, -1) + -img(-1, -1)) + (img(1,  0) + -img(-1,  0)) * 3 + (img(1,  1) + -img(-1,  1))");
+  //assert(false);
   App sobel;
   sobel.func2d("off_chip_img");
   sobel.func2d("img", "id", "off_chip_img", {1, 1}, {{0, 0}});
