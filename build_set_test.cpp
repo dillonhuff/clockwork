@@ -3,31 +3,6 @@
 #include "codegen.h"
 #include "prog.h"
 
-//void dead_push_test() {
-
-  //struct isl_ctx *ctx;
-  //ctx = isl_ctx_alloc();
-
-  //UBuffer buf;
-  //buf.name = "dead_push";
-  //buf.ctx = ctx;
-
-  //buf.add_in_pt("init",
-    //"{ init[i, j] : 0 <= i <= 8 and 0 <= j <= 8 }",
-    //"{ init[i, j] -> M[i, j] }",
-    //"{ init[i, j] -> [i, j, 0] }");
-
-  //buf.add_out_pt("read0",
-    //"{ read0[i, j] : 0 <= i <= 8 and 0 <= j <= 8 }",
-    //"{ read0[i, j] -> M[floor(i / 2), floor(j / 2)] }",
-    //"{ read0[i, j] -> [i, j, 1] }");
-
-  //generate_hls_code(buf);
-
-  //isl_ctx_free(buf.ctx);
-  //assert(false);
-//}
-
 void synth_reduce_test() {
 
   struct isl_ctx *ctx;
@@ -5573,8 +5548,8 @@ void playground() {
 
 void application_tests() {
   //sobel_app_test();
-  //sobel_mag_x_test();
-  //assert(false);
+  sobel_mag_x_test();
+  assert(false);
 
   //blur_xy_app_test();
 
