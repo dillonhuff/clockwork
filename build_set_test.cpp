@@ -5666,6 +5666,7 @@ void playground() {
 
 void application_tests() {
 
+  exposure_fusion();
   denoise2d_test();
   conv3x3_app_unrolled_test();
 
@@ -5684,7 +5685,6 @@ void application_tests() {
   neg_stencil_test();
   blur_x_test();
 
-  exposure_fusion();
   up_unrolled_test();
   up_unrolled_4_test();
   up_down_unrolled_test();
