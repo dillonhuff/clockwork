@@ -4564,13 +4564,23 @@ void gaussian_pyramid_app_test() {
   //assert(false);
 }
 
+App sobel_mag_x() {
+  App sobel;
+  sobel.func2d("off_chip_img");
+  sobel.func2d("img", "id", "off_chip_img", {1, 1}, {{0, 0}});
+  sobel.func2d("mag_x", "sobel_mx", "img", {1, 1},
+      {{1, -1}, {-1, -1}, {1, 0}, {-1, 0}, {1, 1}, {-1, 1}});
+
+  return sobel;
+}
+
 App sobel(const std::string output_name) {
   App sobel;
   sobel.func2d("off_chip_img");
   sobel.func2d("img", "id", "off_chip_img", {1, 1}, {{0, 0}});
   sobel.func2d("mag_x", "sobel_mx", "img", {1, 1},
       {{1, -1}, {-1, -1}, {1, 0}, {-1, 0}, {1, 1}, {-1, 1}});
-  sobel.func2d("mag_y", "sobel_mx", "mag_x", {1, 1},
+  sobel.func2d("mag_y", "sobel_mx", "img", {1, 1},
       {{-1, 1}, {-1, -1}, {0, 1}, {0, -1}, {1, 1}, {1, -1}});
 
   Window xwindow{"mag_x", {1, 1}, {{0, 0}}};
@@ -4755,6 +4765,30 @@ void upsample_stencil_1d_test() {
 
   assert(optimized == naive);
   //assert(false);
+}
+
+void sobel_mag_x_test() {
+  int cols = 32;
+  int rows = 32;
+
+  string out_name = "mag_x";
+  cout << "sobel" << endl;
+  sobel_mag_x().realize("mag_x", cols, rows, 1);
+
+  //std::vector<std::string> optimized =
+  //run_regression_tb(out_name + "_opt");
+
+  string app_dir =
+    "./soda_codes/sobel_stage_1";
+  string synth_dir =
+    "./soda_codes/sobel_stage_1/our_code/";
+
+  system(("mkdir " + app_dir).c_str());
+  system(("mkdir " + synth_dir).c_str());
+  system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
+  system(("mv " + out_name + "*.h " + synth_dir).c_str());
+  system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
+  system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
 }
 
 void sobel_app_test() {
@@ -5561,7 +5595,8 @@ void playground() {
 }
 
 void application_tests() {
-  sobel_app_test();
+  //sobel_app_test();
+  sobel_mag_x_test();
   assert(false);
 
   //blur_xy_app_test();
