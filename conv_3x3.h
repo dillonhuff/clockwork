@@ -268,18 +268,14 @@ hw_uint<32> mag_cu(hw_uint<32>& mx,
 
 static inline
 hw_uint<32> sobel_my(hw_uint<192>& a) {
-  return 0;
+  hw_uint<32> r0 = a.get<32, 1>() - a.get<32, 0>();
+  hw_uint<32> r1 = 3*(a.get<32, 3>() - a.get<32, 2>());
+  hw_uint<32> r2 = a.get<32, 5>() - a.get<32, 4>();
+  return r0 + r1 + r2;
 }
 
 static inline
 hw_uint<32> sobel_mx(hw_uint<192>& a) {
-  //auto m1m1 = a.get<32, 0>();
-  //auto m10 = a.get<32, 1>();
-  //auto m10 = a.get<32, 2>();
-  //auto 1m1 = a.get<32, 3>();
-  //auto z1 = a.get<32, 4>();
-  //auto oneone = a.get<32, 5>();
-
   hw_uint<32> r0 = a.get<32, 3>() - a.get<32, 0>();
   hw_uint<32> r1 = 3*(a.get<32, 4>() - a.get<32, 1>());
   hw_uint<32> r2 = a.get<32, 5>() - a.get<32, 2>();
