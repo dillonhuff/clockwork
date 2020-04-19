@@ -3658,14 +3658,16 @@ struct App {
         continue;
       }
 
+      int fwidth = app_dag.at(f).pixel_width;
+
       for (auto u : app_dag.at(f).updates) {
         cfile << tab(1) << "// " << u.name() << " unroll factor: " << u.unroll_factor << endl;
-        int fwidth = 32;
-        //int out_width = unroll_factor*fwidth;
+
         int out_width = u.unroll_factor*fwidth;
         vector<pair<int, string> > args_and_widths;
         for (auto p : producers(f)) {
-          int arg_width = 32;
+          int arg_width = app_dag.at(p.name).pixel_width;
+
           args_and_widths.push_back({arg_width*data_window_needed_by_compute(u.name(), p.name).pts().size(), p.name});
         }
 
@@ -3682,7 +3684,7 @@ struct App {
           vector<string> arg_names;
           for (auto arg : args_and_widths) {
 
-            int arg_width = 32;
+            int arg_width = app_dag.at(arg.second).pixel_width;
 
             string p = arg.second;
             Window arg_input_window = data_window_needed_by_compute(u.name(), p);
@@ -5711,7 +5713,7 @@ void playground() {
 
 void application_tests() {
 
-  sobel_mag_x_test();
+  //sobel_mag_x_test();
   denoise2d_test();
   conv3x3_app_unrolled_test();
   exposure_fusion();

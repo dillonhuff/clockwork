@@ -10,9 +10,9 @@
 using namespace std;
 
 // In : off_chip_img dimensions...
-  // { off_chip_img[i0, i1] : -2 <= i0 <= 1921 and -2 <= i1 <= 1081 }
-  // Min: { off_chip_img[-2, -2] }
-  // Max: { off_chip_img[1921, 1081] }
+  // { off_chip_img[i0, i1] : -1 <= i0 <= 1920 and -1 <= i1 <= 1080 }
+  // Min: { off_chip_img[-1, -1] }
+  // Max: { off_chip_img[1920, 1080] }
 // Out: sobel_unrolled_1 dimensions...
   // { sobel_unrolled_1[i0, i1] : 0 <= i0 <= 1919 and 0 <= i1 <= 1079 }
   // Min: { sobel_unrolled_1[0, 0] }
