@@ -3425,6 +3425,8 @@ struct App {
 
   void populate_program(CodegenOptions& options, prog& prg, const string& name, umap* m, map<string, UBuffer>& buffers) {
 
+    generate_compute_unit_file(prg.compute_unit_file);
+
     uset* whole_dom = whole_compute_domain();
     auto sorted_functions = sort_functions();
 
@@ -3459,12 +3461,16 @@ struct App {
               fargs.push_back(p.name);
             }
           }
-          if (u.unroll_factor == 1) {
-            op->add_function(u.compute_name());
-          } else {
-            op->add_function(u.compute_name() + "_unrolled_" + str(u.unroll_factor));
-            op->unroll_factor = u.unroll_factor;
-          }
+
+          op->add_function(u.compute_name() + "_unrolled_" + str(u.unroll_factor));
+          op->unroll_factor = u.unroll_factor;
+
+          //if (u.unroll_factor == 1) {
+            //op->add_function(u.compute_name());
+          //} else {
+            //op->add_function(u.compute_name() + "_unrolled_" + str(u.unroll_factor));
+            //op->unroll_factor = u.unroll_factor;
+          //}
           domain_map[u.name()] =
             compute_domain(u.name());
         }
@@ -3531,7 +3537,8 @@ struct App {
 
     prog prg;
     prg.name = name + "_naive";
-    prg.compute_unit_file = "conv_3x3.h";
+    prg.compute_unit_file = prg.name + "_compute_units.h";
+    //prg.compute_unit_file = "conv_3x3.h";
     populate_program(options, prg, name, m, buffers);
 
     return;
@@ -3731,7 +3738,6 @@ struct App {
     prog prg;
     prg.name = name + "_opt";
     prg.compute_unit_file = prg.name + "_compute_units.h";
-    generate_compute_unit_file(prg.compute_unit_file);
 
     populate_program(options, prg, name, m, buffers);
 
@@ -5666,10 +5672,10 @@ void playground() {
 
 void application_tests() {
 
-  exposure_fusion();
   denoise2d_test();
   conv3x3_app_unrolled_test();
 
+  exposure_fusion();
   //sobel_app_test();
   sobel_mag_x_test();
   //assert(false);
