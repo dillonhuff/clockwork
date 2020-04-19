@@ -281,6 +281,8 @@ struct Update {
   vector<Window> srcs;
   int unroll_factor;
 
+  string compute_unit_impl;
+
   void pad_reduce_dimension(const int max_reduce_dimension) {
     for (auto& win : srcs) {
       if (win.reduce_dimension() < max_reduce_dimension) {

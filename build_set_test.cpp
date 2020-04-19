@@ -2530,7 +2530,10 @@ struct App {
 
   }
 
-  string func2d(const std::string& name, const std::string& init) {
+  string func2d(const std::string& name, const std::string& def) {
+    Expr* e = parse_expr(def);
+    //assert(false);
+    //map<Expr*, vector<int> > offsets
     Result res;
 
     app_dag[name] = res;
@@ -3683,7 +3686,6 @@ struct App {
         for (int lane = 0; lane < u.unroll_factor; lane++) {
           vector<string> arg_names;
           for (auto arg : args_and_widths) {
-
             int arg_width = app_dag.at(arg.second).pixel_width;
 
             string p = arg.second;
@@ -4644,9 +4646,9 @@ void gaussian_pyramid_app_test() {
 }
 
 App sobel_mag_x() {
-  Expr* res =
-    parse_expr("(img(1, -1)) + (-3) * img(1, 1)");
-  assert(false);
+  //Expr* res =
+    //parse_expr("(img(1, -1)) + (-3) * img(1, 1)");
+  //assert(false);
   //Expr* res =
     //parse_expr("(img(1, -1) + -img(-1, -1)) + (img(1,  0) + -img(-1,  0)) * 3 + (img(1,  1) + -img(-1,  1))");
   //assert(false);
@@ -4654,7 +4656,8 @@ App sobel_mag_x() {
   sobel.func2d("off_chip_img");
   sobel.func2d("img", "id", "off_chip_img", {1, 1}, {{0, 0}});
   sobel.func2d("mag_x", "sobel_mx", "img", {1, 1},
-      {{1, -1}, {-1, -1}, {1, 0}, {-1, 0}, {1, 1}, {-1, 1}});
+      {{-1, -1}, {-1, 0}, {-1, 1}, {1, -1}, {1, 0}, {1, 1}});
+      //{{1, -1}, {-1, -1}, {1, 0}, {-1, 0}, {1, 1}, {-1, 1}});
 
   return sobel;
 }
@@ -5713,7 +5716,7 @@ void playground() {
 
 void application_tests() {
 
-  //sobel_mag_x_test();
+  sobel_mag_x_test();
   denoise2d_test();
   conv3x3_app_unrolled_test();
   exposure_fusion();

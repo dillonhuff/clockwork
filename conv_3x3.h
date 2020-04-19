@@ -280,9 +280,9 @@ hw_uint<32> sobel_mx(hw_uint<192>& a) {
   //auto z1 = a.get<32, 4>();
   //auto oneone = a.get<32, 5>();
 
-  hw_uint<32> r0 = a.get<32, 0>() - a.get<32, 1>();
-  hw_uint<32> r1 = 3*(a.get<32, 2>() - a.get<32, 3>());
-  hw_uint<32> r2 = a.get<32, 4>() - a.get<32, 5>();
+  hw_uint<32> r0 = a.get<32, 3>() - a.get<32, 0>();
+  hw_uint<32> r1 = 3*(a.get<32, 4>() - a.get<32, 1>());
+  hw_uint<32> r2 = a.get<32, 5>() - a.get<32, 2>();
   return r0 + r1 + r2;
 }
 
