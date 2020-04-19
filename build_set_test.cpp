@@ -3,31 +3,6 @@
 #include "codegen.h"
 #include "prog.h"
 
-//void dead_push_test() {
-
-  //struct isl_ctx *ctx;
-  //ctx = isl_ctx_alloc();
-
-  //UBuffer buf;
-  //buf.name = "dead_push";
-  //buf.ctx = ctx;
-
-  //buf.add_in_pt("init",
-    //"{ init[i, j] : 0 <= i <= 8 and 0 <= j <= 8 }",
-    //"{ init[i, j] -> M[i, j] }",
-    //"{ init[i, j] -> [i, j, 0] }");
-
-  //buf.add_out_pt("read0",
-    //"{ read0[i, j] : 0 <= i <= 8 and 0 <= j <= 8 }",
-    //"{ read0[i, j] -> M[floor(i / 2), floor(j / 2)] }",
-    //"{ read0[i, j] -> [i, j, 1] }");
-
-  //generate_hls_code(buf);
-
-  //isl_ctx_free(buf.ctx);
-  //assert(false);
-//}
-
 void synth_reduce_test() {
 
   struct isl_ctx *ctx;
@@ -1977,13 +1952,29 @@ struct FloatConst : public Expr {
 struct IntConst : public Expr {
   bool neg;
   string val;
+
+  IntConst(std::string& val_) : val(val_) {}
+
+};
+
+struct FunctionCall : public Expr {
+  string name;
+  vector<Expr*> args;
+
+  FunctionCall(const string& n_, const vector<Expr*> args_) :
+    name(n_), args(args_) {}
+
 };
 
 struct Binop : public Expr {
   string op;
   Expr* l;
   Expr* r;
-};
+
+  Binop(const string& op_, Expr* l_, Expr* r_) :
+    op(op_), l(l_), r(r_) {}
+
+}; 
 
 struct Unop : public Expr {
   string op;
@@ -2164,35 +2155,174 @@ bool done(vector<Token>& tokens, size_t& pos) {
   return tokens.size() <= pos;
 }
 
-Expr* parse_expr(vector<Token>& tokens, size_t& pos) {
-  //stack<Token> op_stack;
-  //deque<Token> tokens;
-  //while (!done(tokens, pos) && expr_start(peek(tokens, pos))) {
-    //tokens.push_back(next(tokens, pos));
-  //}
+bool is_int(const Token& t) {
+  return is_number(t.txt);
+}
 
-  //deque<Token> op_stack;
-  //deque<Expr*> output_queue;
-  //while (tokens.size() > 0) {
-    //Token t = tokens.pop_front();
-    //if (is_float(t)) {
-      //output_queue.push_back(new FloatConst());
-    //} else if (is_int(t)) {
-      //output_queue.push_back(new IntConst(t.txt));
-    //} else if (is_function_call(t)) {
-      //op_stack.push_back(t);
-    //} else if (is_function_separator(t)) {
-      //// Pop off stack building expression
-      //assert(false);
-    //} else if (is_operator(t)) {
-      //// Pop higher precedence operators off the stack
-      //op_stack.push_back(t);
-      //assert(false);
-    //}
-  //}
+bool is_float(const Token& t) {
+  return false;
+}
 
-  Expr* e = new Expr();
+vector<string> all_operators() {
+  return {"-", "+", "*", "/"};
+}
+
+vector<string> unary_operators() {
+  return {"-"};
+}
+
+map<string, int> precedences() {
+  return {{"-", 500}, {"+", 100}, {"*", 200}, {"/", 200}};
+}
+
+int precedence(const Token& t) {
+  return map_find(t.txt, precedences());
+}
+
+
+bool is_higher_prec(const Token& t, const Token& l) {
+  return precedence(t) > precedence(l);
+}
+
+bool is_unary(const Token& t) {
+  return elem(t.txt, unary_operators());
+}
+bool is_operator(const Token& t) {
+  return elem(t.txt, all_operators());
+}
+
+bool is_function_call(const Token& t) {
+  return isalpha(t.txt.at(0));
+}
+
+bool is_function_separator(const Token& t) {
+  return t.txt == ",";
+}
+
+Expr* evaluate(deque<Token>& output) {
+  assert(output.size() > 0);
+
+  Token next = pop(output);
+  if (is_int(next)) {
+    return new IntConst(next.txt);
+  }
+
+  if (is_function_call(next)) {
+    auto arg0 = evaluate(output);
+    auto arg1 = evaluate(output);
+    return new FunctionCall(next.txt, {arg0, arg1});
+  }
+  
+  if (is_operator(next)) {
+    auto arg0 = evaluate(output);
+    auto arg1 = evaluate(output);
+    return new Binop(next.txt, arg0, arg1);
+  }
+
+  assert(false);
+}
+
+Expr* parse_expr(vector<Token>& orig_tokens, size_t& pos) {
+  deque<Token> tokens;
+  while (!done(orig_tokens, pos) && expr_start(peek(orig_tokens, pos))) {
+    tokens.push_back(next(orig_tokens, pos));
+  }
+
+  deque<Token> op_stack;
+  deque<Token> output;
+  while (tokens.size() > 0) {
+    Token t = tokens.front();
+    tokens.pop_front();
+
+    cout << "T = " << t << endl;
+    if (is_float(t)) {
+      cout << tab(1) << " is float" << endl;
+      output.push_back(t);
+    } else if (is_int(t)) {
+      cout << tab(1) << " is number" << endl;
+      output.push_back(t);
+    } else if (is_function_call(t)) {
+      cout << tab(1) << " is function call" << endl;
+      op_stack.push_back(t);
+    } else if (is_function_separator(t)) {
+      cout << tab(1) << " is function separator" << endl;
+      while (op_stack.back().txt != "(") {
+        output.push_back(op_stack.back());
+        op_stack.pop_back();
+      }
+    } else if (is_operator(t)) {
+      cout << tab(1) << " is function operator" << endl;
+      if (!is_unary(t)) {
+        // Pop higher precedence operators off the stack
+        while (op_stack.size() > 0 &&
+            is_operator(op_stack.back()) &&
+            is_higher_prec(op_stack.back(), t)) {
+          output.push_back(op_stack.back());
+          op_stack.pop_back();
+        }
+      } else {
+        // Pop higher precedence operators off the stack
+        while (op_stack.size() > 0 &&
+            is_operator(op_stack.back()) &&
+            is_unary(op_stack.back()) &&
+            is_higher_prec(op_stack.back(), t)) {
+          output.push_back(op_stack.back());
+          op_stack.pop_back();
+        }
+      }
+      op_stack.push_back(t);
+    } else if (t.txt == "(") {
+      op_stack.push_back(t);
+    } else if (t.txt == ")") {
+      cout << "Popping off lparen" << endl;
+      cout << "Current stack..." << endl;
+      for (auto elem : op_stack) {
+        cout << tab(1) << elem << endl;
+      }
+      while (op_stack.size() > 0 && op_stack.back().txt != "(") {
+        output.push_back(op_stack.back());
+        op_stack.pop_back();
+      }
+
+      assert((op_stack.size() > 0));
+      assert((op_stack.back().txt == "("));
+
+      op_stack.pop_back();
+    } else {
+      cout << "Error: Unsupported token: " << t << ", len: " << t.txt.size() << endl;
+      assert(false);
+    }
+  }
+
+  while (op_stack.size() > 0) {
+    auto next = op_stack.back();
+    op_stack.pop_back();
+
+    assert(next.txt != ")");
+    assert(next.txt != "(");
+
+    output.push_back(next);
+  }
+  assert(op_stack.size() == 0);
+
+  cout << "Output..." << endl;
+  for (auto out : output) {
+    cout << out << " ";
+  }
+  cout << endl;
+
+  assert(output.size() > 0);
+
+  Expr* e = evaluate(output);
   return e;
+}
+
+Expr* parse_expr(const std::string& input) {
+  stringstream instr;
+  instr << input;
+  vector<Token> tokens = tokenize(instr);
+  size_t pos = 0;
+  return parse_expr(tokens, pos);
 }
 
 StencilProgram parse_soda_program(istream& in) {
@@ -2400,7 +2530,10 @@ struct App {
 
   }
 
-  string func2d(const std::string& name, const std::string& init) {
+  string func2d(const std::string& name, const std::string& def) {
+    Expr* e = parse_expr(def);
+    //assert(false);
+    //map<Expr*, vector<int> > offsets
     Result res;
 
     app_dag[name] = res;
@@ -2952,8 +3085,24 @@ struct App {
     isl_union_map *coincidence =
       cpy(validity);
 
+    map<string, vector<string> > high_bandwidth_deps;
+    for (auto un : sort_updates()) {
+      auto u = get_update(un);
+      for (auto w : u.get_srcs()) {
+        if (w.pts().size() > 1) {
+          high_bandwidth_deps[u.name()].push_back(last_update(w.name).name());
+        }
+      }
+    }
+    cout << "High bandwidth deps..." << endl;
+    for (auto b : high_bandwidth_deps) {
+      cout << tab(1) << b.first << endl;
+      cout << tab(2) << comma_list(b.second) << endl;
+    }
+
+    //assert(false);
     map<string, vector<isl_aff*> > sched =
-      clockwork_schedule(domain, validity, proximity);
+      clockwork_schedule(domain, validity, proximity, high_bandwidth_deps);
 
     map<string, vector<QExpr> > scheds;
     for (auto s : sched) {
@@ -3207,29 +3356,6 @@ struct App {
       const std::string& producer) {
     Window w = box_touched(consumer, producer).unroll_cpy(get_update(consumer).unroll_factor);
     return w;
-    //auto pix_read = to_map(pixels_read(consumer));
-    //cout << "Pixels read = " << str(pix_read) << endl;
-    //int in_dims = num_in_dims(pix_read);
-    //vector<string> zeros;
-    //for (int i = 0; i < in_dims; i++) {
-      //zeros.push_back("0");
-    //}
-    //string zero_str = "{ " + domain_name(pix_read) + sep_list(zeros, "[", "]", ",") + " }";
-    //isl_set* zr = isl_set_read_from_str(ctx, zero_str.c_str());
-    //cout << "zr = " << str(zr) << endl;
-    //isl_map* d = its(pix_read, zr);
-    //cout << "d  = " << str(d) << endl;
-    //isl_set* offsets = range(d);
-    //cout << "offsets = " << str(offsets) << endl;
-    //vector<isl_point*> offset_pts = get_points(offsets);
-    //Window w = box_touched(consumer, producer).unroll_cpy(get_update(consumer).unroll_factor);
-    //w.offsets = {};
-    //vector<vector<int> > offset_vals;
-    //for (auto pt : offset_pts) {
-      //w.offsets.push_back(parse_pt(pt));
-    //}
-    //return w;
-    //return box_touched(consumer, producer).unroll_cpy(get_update(consumer).unroll_factor);
   }
 
   map<string, UBuffer> build_buffers(umap* m) {
@@ -3341,6 +3467,8 @@ struct App {
 
   void populate_program(CodegenOptions& options, prog& prg, const string& name, umap* m, map<string, UBuffer>& buffers) {
 
+    generate_compute_unit_file(prg.compute_unit_file);
+
     uset* whole_dom = whole_compute_domain();
     auto sorted_functions = sort_functions();
 
@@ -3375,12 +3503,16 @@ struct App {
               fargs.push_back(p.name);
             }
           }
-          if (u.unroll_factor == 1) {
-            op->add_function(u.compute_name());
-          } else {
-            op->add_function(u.compute_name() + "_unrolled_" + str(u.unroll_factor));
-            op->unroll_factor = u.unroll_factor;
-          }
+
+          op->add_function(u.compute_name() + "_unrolled_" + str(u.unroll_factor));
+          op->unroll_factor = u.unroll_factor;
+
+          //if (u.unroll_factor == 1) {
+            //op->add_function(u.compute_name());
+          //} else {
+            //op->add_function(u.compute_name() + "_unrolled_" + str(u.unroll_factor));
+            //op->unroll_factor = u.unroll_factor;
+          //}
           domain_map[u.name()] =
             compute_domain(u.name());
         }
@@ -3439,7 +3571,6 @@ struct App {
     fill_compute_domain();
 
     umap* m =
-      //schedule_naive();
       schedule_isl();
 
     cout << "Schedule: " << str(m) << endl;
@@ -3448,7 +3579,8 @@ struct App {
 
     prog prg;
     prg.name = name + "_naive";
-    prg.compute_unit_file = "conv_3x3.h";
+    prg.compute_unit_file = prg.name + "_compute_units.h";
+    //prg.compute_unit_file = "conv_3x3.h";
     populate_program(options, prg, name, m, buffers);
 
     return;
@@ -3529,14 +3661,16 @@ struct App {
         continue;
       }
 
+      int fwidth = app_dag.at(f).pixel_width;
+
       for (auto u : app_dag.at(f).updates) {
         cfile << tab(1) << "// " << u.name() << " unroll factor: " << u.unroll_factor << endl;
-        int fwidth = 32;
-        //int out_width = unroll_factor*fwidth;
+
         int out_width = u.unroll_factor*fwidth;
         vector<pair<int, string> > args_and_widths;
         for (auto p : producers(f)) {
-          int arg_width = 32;
+          int arg_width = app_dag.at(p.name).pixel_width;
+
           args_and_widths.push_back({arg_width*data_window_needed_by_compute(u.name(), p.name).pts().size(), p.name});
         }
 
@@ -3552,8 +3686,7 @@ struct App {
         for (int lane = 0; lane < u.unroll_factor; lane++) {
           vector<string> arg_names;
           for (auto arg : args_and_widths) {
-
-            int arg_width = 32;
+            int arg_width = app_dag.at(arg.second).pixel_width;
 
             string p = arg.second;
             Window arg_input_window = data_window_needed_by_compute(u.name(), p);
@@ -3621,20 +3754,9 @@ struct App {
     return whole_dom;
   }
 
-  void schedule_and_codegen(const std::string& name) {
+  void schedule_and_codegen(CodegenOptions& options, const std::string& name) {
     umap* m = schedule();
     assert(m != nullptr);
-
-    //cout << "Schedule: " << str(m) << endl;
-    //cout << "Maps..." << endl;
-    //auto ms = get_maps(m);
-    //for (auto m : ms) {
-      //cout << tab(1) << str(m) << endl;
-    //}
-    //assert(false);
-
-    //auto scheds_n =
-      //schedule_opt();
 
     map<string, vector<QExpr> > scheds =
       schedule_opt();
@@ -3648,6 +3770,7 @@ struct App {
     }
 
     string cgn = box_codegen(ops, scheds, compute_domains);
+    options.code_string = cgn;
 
     map<string, UBuffer> buffers = build_buffers(m);
 
@@ -3655,65 +3778,11 @@ struct App {
       whole_compute_domain();
     auto sorted_functions = sort_functions();
 
-    CodegenOptions options;
-    options.internal = true;
-    options.simplify_address_expressions = true;
-    //options.use_custom_code_string = true;
-    options.use_custom_code_string = false;
-    options.code_string = cgn;
-    //options.all_rams = true;
-
     prog prg;
     prg.name = name + "_opt";
     prg.compute_unit_file = prg.name + "_compute_units.h";
-    generate_compute_unit_file(prg.compute_unit_file);
 
-    //populate_program(options, prg, name, m, buffers);
-
-    auto action_domain = cpy(whole_dom);
-    map<string, isl_set*> domain_map;
-    for (auto f : sorted_functions) {
-      for (auto u : app_dag.at(f).updates) {
-        if (u.get_srcs().size() == 0) {
-          prg.ins.insert(f);
-          action_domain =
-            isl_union_set_subtract(action_domain,
-                to_uset(compute_domain(u.name())));
-        } else {
-          Box compute_b =
-            compute_box(u.name());
-          op* nest = prg.root;
-          int i = 0;
-          for (auto r : compute_b.intervals) {
-            nest = nest->add_nest(f + "_" + to_string(i), r.min, r.max + 1);
-            i++;
-          }
-          auto op = nest->add_op(u.name());
-          // TODO: Replace with real description of apps
-          op->add_store(f, "0, 0");
-
-          vector<string> fargs;
-          for (auto p : u.get_srcs()) {
-            op->add_load(p.name, "0, 0");
-            if (!elem(p.name, fargs)) {
-              fargs.push_back(p.name);
-            }
-          }
-          if (u.unroll_factor == 1) {
-            op->add_function(u.compute_name());
-          } else {
-            op->add_function(u.compute_name() + "_unrolled_" + to_string(u.unroll_factor));
-            op->unroll_factor = u.unroll_factor;
-          }
-          domain_map[u.name()] =
-            compute_domain(u.name());
-        }
-      }
-    }
-    prg.outs = {name};
-
-    generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
-    generate_regression_testbench(prg, buffers);
+    populate_program(options, prg, name, m, buffers);
 
     return;
   }
@@ -3727,17 +3796,29 @@ struct App {
   }
 
   void realize(const std::string& name, const int d0, const int d1) {
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = false;
+    //options.debug_options.expect_all_linebuffers = true;
+    realize(options, name, d0, d1);
+  }
+
+  void realize(CodegenOptions& options, const std::string& name, const int d0, const int d1) {
     fill_data_domain(name, d0, d1);
     fill_compute_domain();
-    schedule_and_codegen(name);
+
+    schedule_and_codegen(options, name);
+  }
+
+  void realize(CodegenOptions& options, const std::string& name, const int d0, const int d1, const int unroll_factor) {
+    set_unroll_factors(unroll_factor);
+    realize(options, name, d0, d1);
   }
 
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     set_unroll_factors(unroll_factor);
-    fill_data_domain(name, d0, d1);
-    fill_compute_domain();
-    schedule_and_codegen(name);
+    realize(name, d0, d1);
   }
 
 };
@@ -4565,11 +4646,18 @@ void gaussian_pyramid_app_test() {
 }
 
 App sobel_mag_x() {
+  //Expr* res =
+    //parse_expr("(img(1, -1)) + (-3) * img(1, 1)");
+  //assert(false);
+  //Expr* res =
+    //parse_expr("(img(1, -1) + -img(-1, -1)) + (img(1,  0) + -img(-1,  0)) * 3 + (img(1,  1) + -img(-1,  1))");
+  //assert(false);
   App sobel;
   sobel.func2d("off_chip_img");
   sobel.func2d("img", "id", "off_chip_img", {1, 1}, {{0, 0}});
   sobel.func2d("mag_x", "sobel_mx", "img", {1, 1},
-      {{1, -1}, {-1, -1}, {1, 0}, {-1, 0}, {1, 1}, {-1, 1}});
+      {{-1, -1}, {-1, 0}, {-1, 1}, {1, -1}, {1, 0}, {1, 1}});
+      //{{1, -1}, {-1, -1}, {1, 0}, {-1, 0}, {1, 1}, {-1, 1}});
 
   return sobel;
 }
@@ -4847,7 +4935,13 @@ void blur_xy_app_test() {
 void jacobi2d_app_test() {
   App jac = jacobi2d("t0");
   jac.realize_naive("t0", 32, 28);
-  jac.realize("t0", 32, 28, 1);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = false;
+  options.debug_options.expect_all_linebuffers = true;
+  jac.realize(options, "t0", 32, 28, 1);
 
   std::vector<std::string> optimized =
     run_regression_tb("t0_opt");
@@ -4865,7 +4959,12 @@ void jacobi2d_app_test() {
   for (int i = 0; i < 3; i++) {
     int unroll_factor = pow(2, i);
     string out_name = "jacobi2d_unrolled_" + str(unroll_factor);
-    jacobi2d(out_name).realize(out_name, cols, rows, unroll_factor);
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = false;
+    options.debug_options.expect_all_linebuffers = true;
+    jacobi2d(out_name).realize(options, out_name, cols, rows, unroll_factor);
     std::vector<std::string> optimized =
       run_regression_tb(out_name + "_opt");
     string synth_dir =
@@ -4898,7 +4997,13 @@ void denoise2d_test() {
   dn.func2d("denoise2d", "out_comp_dn2d", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
 
   int size = 30;
-  dn.realize("denoise2d", size, size, 1);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = false;
+  options.debug_options.expect_all_linebuffers = true;
+  dn.realize(options, "denoise2d", size, size);
 
   std::vector<std::string> optimized =
     run_regression_tb("denoise2d_opt");
@@ -4956,7 +5061,12 @@ void conv3x3_app_unrolled_uneven_test() {
   }
   sobel.func2d("conv3x3_app_unrolled_uneven", "conv_3_3", "img", {1, 1}, offsets);
 
-  sobel.realize("conv3x3_app_unrolled_uneven", 30, 30, 7);
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = false;
+  options.debug_options.expect_all_linebuffers = true;
+  sobel.realize(options, "conv3x3_app_unrolled_uneven", 30, 30, 7);
 
   int res = system("g++ -std=c++11 conv3x3_app_unrolled_uneven_opt.cpp -c ");
   assert(res == 0);
@@ -4977,7 +5087,12 @@ void conv3x3_app_unrolled_test() {
   }
   sobel.func2d("conv3x3_app_unrolled", "conv_3_3", "img", {1, 1}, offsets);
 
-  sobel.realize("conv3x3_app_unrolled", 30, 30, 2);
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = false;
+  options.debug_options.expect_all_linebuffers = true;
+  sobel.realize(options, "conv3x3_app_unrolled", 30, 30, 2);
 
   int res = system("g++ -std=c++11 tb_app_unrolled_conv3x3.cpp conv3x3_app_unrolled_opt.cpp");
   assert(res == 0);
@@ -5000,7 +5115,12 @@ void conv3x3_app_test() {
   }
   sobel.func2d("conv3x3_app", "conv_3_3", "img", {1, 1}, offsets);
 
-  sobel.realize("conv3x3_app", 30, 30, 1);
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = false;
+  options.debug_options.expect_all_linebuffers = true;
+  sobel.realize(options, "conv3x3_app", 30, 30);
 
   int res = system("g++ -std=c++11 tb_app_conv3x3.cpp conv3x3_app_opt.cpp");
   assert(res == 0);
@@ -5595,30 +5715,30 @@ void playground() {
 }
 
 void application_tests() {
-  //sobel_app_test();
+
   sobel_mag_x_test();
-  assert(false);
+  denoise2d_test();
+  conv3x3_app_unrolled_test();
+  exposure_fusion();
+  sobel_app_test();
 
   //blur_xy_app_test();
 
   //playground();
+  
+  jacobi2d_app_test();
   up_stencil_down_test();
 
   up_stencil_test();
   neg_stencil_test();
   blur_x_test();
 
-  exposure_fusion();
   up_unrolled_test();
   up_unrolled_4_test();
   up_down_unrolled_test();
   
-  jacobi2d_app_test();
-  conv3x3_app_unrolled_test();
   conv3x3_app_unrolled_uneven_test();
   
-  denoise2d_test();
-  //assert(false);
   mismatched_stencil_test();
 
   gaussian_pyramid_app_test();
@@ -5665,6 +5785,7 @@ void application_tests() {
   //mobilenet_test();
   pyramid_2d_test();
   pyramid_test();
+
   //conv_1d_bc_test();
   //synth_wire_test();
   //synth_sr_boundary_condition_test();
@@ -5673,7 +5794,6 @@ void application_tests() {
   //reduce_1d_test();
 
   //parse_denoise3d_test();
-  //assert(false);
 
   //up_stencil_down_unrolled_test();
   //laplacian_pyramid_app_test();

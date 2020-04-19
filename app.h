@@ -281,6 +281,8 @@ struct Update {
   vector<Window> srcs;
   int unroll_factor;
 
+  string compute_unit_impl;
+
   void pad_reduce_dimension(const int max_reduce_dimension) {
     for (auto& win : srcs) {
       if (win.reduce_dimension() < max_reduce_dimension) {
@@ -944,6 +946,9 @@ umap* to_umap(isl_ctx* ctx,
     cout << "done getting m..." << endl;
     return m;
 }
+
+map<string, vector<isl_aff*> >
+clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, vector<string> >& high_bandwidth_deps);
 
 map<string, vector<isl_aff*> >
 clockwork_schedule(uset* domain, umap* validity, umap* proximity);

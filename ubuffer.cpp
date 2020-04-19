@@ -425,6 +425,10 @@ void generate_code_prefix(CodegenOptions& options,
     vector<stack_bank> mergeable;
     for (auto bnk : receivers) {
       cout << tab(1) << bnk.name << ", # read offsets: " << bnk.read_delays.size() << endl;
+
+      if (options.debug_options.expect_all_linebuffers) {
+        assert(bnk.read_delays.size() == 2);
+      }
       if (bnk.read_delays.size() == 2) {
         assert(bnk.read_delays[0] == 0);
         mergeable.push_back(bnk);
