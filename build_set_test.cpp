@@ -5718,11 +5718,12 @@ void playground() {
 
 void application_tests() {
 
+  sobel_app_test();
+  assert(false);
   sobel_mag_x_test();
   denoise2d_test();
   conv3x3_app_unrolled_test();
   exposure_fusion();
-  sobel_app_test();
 
   //blur_xy_app_test();
 
