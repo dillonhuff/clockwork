@@ -1957,11 +1957,24 @@ struct IntConst : public Expr {
 
 };
 
+struct FunctionCall : public Expr {
+  string name;
+  vector<Expr*> args;
+
+  FunctionCall(const string& n_, const vector<Expr*> args_) :
+    name(n_), args(args_) {}
+
+};
+
 struct Binop : public Expr {
   string op;
   Expr* l;
   Expr* r;
-};
+
+  Binop(const string& op_, Expr* l_, Expr* r_) :
+    op(op_), l(l_), r(r_) {}
+
+}; 
 
 struct Unop : public Expr {
   string op;
@@ -2186,6 +2199,29 @@ bool is_function_separator(const Token& t) {
   return t.txt == ",";
 }
 
+Expr* evaluate(deque<Token>& output) {
+  assert(output.size() > 0);
+
+  Token next = pop(output);
+  if (is_int(next)) {
+    return new IntConst(next.txt);
+  }
+
+  if (is_function_call(next)) {
+    auto arg0 = evaluate(output);
+    auto arg1 = evaluate(output);
+    return new FunctionCall(next.txt, {arg0, arg1});
+  }
+  
+  if (is_operator(next)) {
+    auto arg0 = evaluate(output);
+    auto arg1 = evaluate(output);
+    return new Binop(next.txt, arg0, arg1);
+  }
+
+  assert(false);
+}
+
 Expr* parse_expr(vector<Token>& orig_tokens, size_t& pos) {
   deque<Token> tokens;
   while (!done(orig_tokens, pos) && expr_start(peek(orig_tokens, pos))) {
@@ -2274,7 +2310,10 @@ Expr* parse_expr(vector<Token>& orig_tokens, size_t& pos) {
     cout << out << " ";
   }
   cout << endl;
-  Expr* e = new Expr();
+
+  assert(output.size() > 0);
+
+  Expr* e = evaluate(output);
   return e;
 }
 
@@ -4603,9 +4642,9 @@ void gaussian_pyramid_app_test() {
 }
 
 App sobel_mag_x() {
-  //Expr* res =
-    //parse_expr("(img(1, -1)) + (-3) * img(1, 1)");
-  //assert(false);
+  Expr* res =
+    parse_expr("(img(1, -1)) + (-3) * img(1, 1)");
+  assert(false);
   //Expr* res =
     //parse_expr("(img(1, -1) + -img(-1, -1)) + (img(1,  0) + -img(-1,  0)) * 3 + (img(1,  1) + -img(-1,  1))");
   //assert(false);
@@ -5672,11 +5711,11 @@ void playground() {
 
 void application_tests() {
 
+  sobel_mag_x_test();
   denoise2d_test();
   conv3x3_app_unrolled_test();
   exposure_fusion();
   sobel_app_test();
-  sobel_mag_x_test();
 
   //blur_xy_app_test();
 

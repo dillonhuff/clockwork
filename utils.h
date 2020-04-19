@@ -7,6 +7,14 @@
 using namespace dbhc;
 using namespace std;
 
+template<typename T>
+static inline
+T pop(deque<T>& d) {
+  auto v = d.back();
+  d.pop_back();
+  return v;
+}
+
 static inline
 string c_sanitize(const std::string& str) {
   string res = "";
