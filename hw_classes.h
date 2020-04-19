@@ -244,6 +244,19 @@ std::ostream& operator<<(std::ostream& out, hw_uint<Len>& v) {
 #endif
 
 template<int Len>
+hw_uint<Len> operator*(const hw_uint<Len>& a, const hw_uint<Len>& b) {
+#ifdef __VIVADO_SYNTH__
+  hw_uint<Len> v;
+  v.val = a.val + b.val;
+  return v;
+#else
+  hw_uint<Len> res;
+  res.val = bsim::mul_general_width_bv(a.val, b.val);
+  return res;
+#endif
+}
+
+template<int Len>
 hw_uint<Len> operator/(const hw_uint<Len>& a, const hw_uint<Len>& b) {
 #ifdef __VIVADO_SYNTH__
   hw_uint<Len> v;
@@ -265,6 +278,19 @@ bool operator==(const hw_uint<Len>& a, const hw_uint<Len>& b) {
 #else
   hw_uint<Len> res;
   res.val = a.val == b.val;
+  return res;
+#endif
+}
+
+template<int Len>
+hw_uint<Len> operator-(const hw_uint<Len>& a, const hw_uint<Len>& b) {
+#ifdef __VIVADO_SYNTH__
+  hw_uint<Len> v;
+  v.val = a.val + b.val;
+  return v;
+#else
+  hw_uint<Len> res;
+  res.val = bsim::sub_general_width_bv(a.val, b.val);
   return res;
 #endif
 }
