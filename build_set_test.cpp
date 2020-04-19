@@ -5674,11 +5674,9 @@ void application_tests() {
 
   denoise2d_test();
   conv3x3_app_unrolled_test();
-
   exposure_fusion();
-  //sobel_app_test();
+  sobel_app_test();
   sobel_mag_x_test();
-  //assert(false);
 
   //blur_xy_app_test();
 
@@ -5697,7 +5695,6 @@ void application_tests() {
   
   conv3x3_app_unrolled_uneven_test();
   
-  //assert(false);
   mismatched_stencil_test();
 
   gaussian_pyramid_app_test();
@@ -5744,6 +5741,7 @@ void application_tests() {
   //mobilenet_test();
   pyramid_2d_test();
   pyramid_test();
+
   //conv_1d_bc_test();
   //synth_wire_test();
   //synth_sr_boundary_condition_test();
@@ -5752,7 +5750,6 @@ void application_tests() {
   //reduce_1d_test();
 
   //parse_denoise3d_test();
-  //assert(false);
 
   //up_stencil_down_unrolled_test();
   //laplacian_pyramid_app_test();
