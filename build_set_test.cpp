@@ -4646,12 +4646,6 @@ void gaussian_pyramid_app_test() {
 }
 
 App sobel_mag_x() {
-  //Expr* res =
-    //parse_expr("(img(1, -1)) + (-3) * img(1, 1)");
-  //assert(false);
-  //Expr* res =
-    //parse_expr("(img(1, -1) + -img(-1, -1)) + (img(1,  0) + -img(-1,  0)) * 3 + (img(1,  1) + -img(-1,  1))");
-  //assert(false);
   App sobel;
   sobel.func2d("off_chip_img");
   sobel.func2d("img", "id", "off_chip_img", {1, 1}, {{0, 0}});
@@ -4662,13 +4656,22 @@ App sobel_mag_x() {
   return sobel;
 }
 
+App sobel_mag_y() {
+  App sobel;
+  sobel.func2d("off_chip_img");
+  sobel.func2d("img", "id", "off_chip_img", {1, 1}, {{0, 0}});
+  sobel.func2d("mag_y", "sobel_my", "img", {1, 1},
+      {{-1, -1}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 1}});
+
+  return sobel;
+}
+
 App sobel(const std::string output_name) {
   App sobel;
   sobel.func2d("off_chip_img");
   sobel.func2d("img", "id", "off_chip_img", {1, 1}, {{0, 0}});
   sobel.func2d("mag_x", "sobel_mx", "img", {1, 1},
       {{-1, -1}, {-1, 0}, {-1, 1}, {1, -1}, {1, 0}, {1, 1}});
-      //{{1, -1}, {-1, -1}, {1, 0}, {-1, 0}, {1, 1}, {-1, 1}});
   sobel.func2d("mag_y", "sobel_my", "img", {1, 1},
       {{-1, -1}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 1}});
       //{{-1, 1}, {-1, -1}, {0, 1}, {0, - 1}, {1, 1}, {1, -1}});
@@ -4855,6 +4858,26 @@ void upsample_stencil_1d_test() {
 
   assert(optimized == naive);
   //assert(false);
+}
+
+void sobel_mag_y_test() {
+  int cols = 32;
+  int rows = 32;
+
+  string out_name = "mag_y";
+  sobel_mag_y().realize("mag_y", cols, rows, 1);
+
+  string app_dir =
+    "./soda_codes/sobel_stage_2";
+  string synth_dir =
+    "./soda_codes/sobel_stage_2/our_code/";
+
+  system(("mkdir " + app_dir).c_str());
+  system(("mkdir " + synth_dir).c_str());
+  system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
+  system(("mv " + out_name + "*.h " + synth_dir).c_str());
+  system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
+  system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
 }
 
 void sobel_mag_x_test() {
@@ -5718,8 +5741,10 @@ void playground() {
 
 void application_tests() {
 
-  sobel_app_test();
+  sobel_mag_y_test();
   assert(false);
+
+  sobel_app_test();
   sobel_mag_x_test();
   denoise2d_test();
   conv3x3_app_unrolled_test();
