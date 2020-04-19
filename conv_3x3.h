@@ -263,7 +263,9 @@ hw_uint<32> reduce_gauss(hw_uint<32*9>& in) {
 static inline
 hw_uint<32> mag_cu(hw_uint<32>& mx,
     hw_uint<32>& my) {
-  return 65535 - (mx*mx + my*my);
+  return mx + my;
+  //65535 - (mx*mx + my*my);
+  //return 65535 - (mx*mx + my*my);
 }
 
 static inline
