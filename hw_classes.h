@@ -195,7 +195,6 @@ class hw_uint {
     hw_uint(const int v) : val(v) {}
     hw_uint() : val(0) {}
 
-    hw_uint<E_inclusive - S + 1> extract() const {
     template<int S, int E_inclusive>
     hw_uint<E_inclusive - S + 1> extract() const {
       hw_uint<E_inclusive - S + 1> extr;
