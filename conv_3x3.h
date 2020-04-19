@@ -273,9 +273,15 @@ hw_uint<32> sobel_my(hw_uint<192>& a) {
 
 static inline
 hw_uint<32> sobel_mx(hw_uint<192>& a) {
+  cout << "0, 0 = " << a.get<32, 0>().to_int() << endl;
+  cout << "0, 1 = " << a.get<32, 1>().to_int() << endl;
+  assert(false);
   hw_uint<32> r0 = a.get<32, 0>() - a.get<32, 1>();
   hw_uint<32> r1 = 3*(a.get<32, 2>() - a.get<32, 3>());
   hw_uint<32> r2 = a.get<32, 4>() - a.get<32, 5>();
+  cout << "r0 = " << r0.to_int() << endl;
+  cout << "r1 = " << r1.to_int() << endl;
+  cout << "r2 = " << r2.to_int() << endl;
   return r0 + r1 + r2;
 }
 
