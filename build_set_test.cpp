@@ -4886,15 +4886,18 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   string out_name = app_name;
   string app_dir =
     "./soda_codes/" + app_name;
+  string soda_dir =
+    "./soda_codes/" + app_name + "/soda_code/";
   string synth_dir =
     "./soda_codes/" + app_name + "/our_code/";
 
   system(("mkdir " + app_dir).c_str());
   system(("mkdir " + synth_dir).c_str());
+  system(("mkdir " + soda_dir).c_str());
   system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
   system(("mv " + out_name + "*.h " + synth_dir).c_str());
   system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
-  system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
+  system(("mv tb_soda_" + out_name + "*.cpp " + soda_dir).c_str());
 }
 
 void sobel_mag_y_test() {
@@ -5130,7 +5133,6 @@ void denoise2d_test() {
   }
 
   move_to_benchmarks_folder("denoise2d");
-  assert(false);
 }
 
 void conv3x3_app_unrolled_uneven_test() {
