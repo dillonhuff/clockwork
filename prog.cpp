@@ -382,6 +382,24 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
   out.close();
 }
 
+void generate_tb_compare_scripts(prog& prg) {
+  ofstream of("compare_regressions.sh");
+  of << "app_name=sum_float" << endl;
+
+  of << "cd soda_code" << endl;
+  of << "./run_tb.sh || { echo 'soda compilation failed'; exit 1; }" << endl;
+  of << "cd .." << endl;
+
+  of << "cd our_code" << endl;
+  of << "./run_tb_${app_name}_opt.sh || { echo 'our compilation failed'; exit 1; }" << endl;
+  of << "cd .." << endl;
+
+  of << "cd ../../" << endl;
+  of << "./run_aligner.sh ./soda_codes/${app_name}/our_code/regression_result_${app_name}_opt.txt ./soda_codes/${app_name}/soda_code/soda_${app_name}_regression_result.csv" << endl;
+
+  of.close();
+}
+
 void generate_tb_run_scripts(prog& prg) {
   ofstream of("run_tb_" + prg.name + ".sh");
   of << "g++ -std=c++0x regression_tb_" << prg.name << ".cpp " << prg.name << ".cpp -I ../../.. -I /cad/xilinx/vivado/2017.2/Vivado_HLS/2017.2/include/ || { echo 'testbench compilation failed'; exit 1; }" << endl;
@@ -894,6 +912,7 @@ void generate_app_code(CodegenOptions& options,
   generate_xilinx_accel_wrapper(buffers, prg);
   generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
   generate_tb_run_scripts(prg);
+  generate_tb_compare_scripts(prg);
 }
 
 void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap) {
