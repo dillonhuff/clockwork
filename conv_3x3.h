@@ -29,6 +29,20 @@ comp_r02d(const hw_uint<32>& u,
   return u*f*5;
 }
 
+static inline
+hw_uint<32>
+fmag2d(const hw_uint<32>& ub,
+    const hw_uint<32>& db,
+    const hw_uint<32>& lb,
+    const hw_uint<32>& rb) {
+
+  auto u = to_float(ub);
+  auto d = to_float(db);
+  auto l = to_float(lb);
+  auto r = to_float(rb);
+  return to_bits(u*u + d*d + l*l + r*r);
+}
+
 
 static inline
 hw_uint<32>
@@ -365,6 +379,22 @@ hw_uint<32> r1_comp(hw_uint<32>& a) {
 
 static inline
 hw_uint<32>
+out_comp_fadd(hw_uint<32>& r1,
+    hw_uint<32>& f,
+    hw_uint<128>& u,
+    hw_uint<128>& g) {
+
+  float prod =
+    to_float(u.get<32, 0>()) * to_float(g.get<32, 0>()) +
+    to_float(u.get<32, 1>()) * to_float(g.get<32, 1>()) +
+    to_float(u.get<32, 2>()) * to_float(g.get<32, 2>()) +
+    to_float(u.get<32, 3>()) * to_float(g.get<32, 3>());
+
+  return to_bits(to_float(r1) + to_float(f) + prod);
+}
+
+static inline
+hw_uint<32>
 out_comp_dn2d(hw_uint<32>& r1,
     hw_uint<32>& f,
     hw_uint<128>& u,
@@ -388,7 +418,7 @@ hw_uint<32> fadd2(const hw_uint<32>& a, const hw_uint<32>& b) {
 static inline
 hw_uint<32> fadd(const hw_uint<64>& a) {
   return to_bits(to_float(a.get<32, 0>()) +
-      to_float(a.get<32, 1>());
+      to_float(a.get<32, 1>()));
 }
 
 static inline
