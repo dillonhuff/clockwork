@@ -367,6 +367,12 @@ hw_uint<32> r1_comp(hw_uint<32>& a) {
 
 static inline
 hw_uint<32>
+fadd(hw_uint<64>& a) {
+  return to_bits(to_float(a.get<32, 0>()) + to_float(a.get<32, 1>()));
+}
+
+static inline
+hw_uint<32>
 out_comp_dn2d(hw_uint<32>& r1,
     hw_uint<32>& f,
     hw_uint<128>& u,

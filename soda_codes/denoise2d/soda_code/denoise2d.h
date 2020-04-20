@@ -1,3 +1,4 @@
+#include "ap_int.h"
 
 extern "C"
 {
