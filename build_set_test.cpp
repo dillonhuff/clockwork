@@ -5067,6 +5067,37 @@ void jacobi2d_app_test() {
   //assert(false);
 }
 
+void sum_diffs_test() {
+  App dn;
+
+  string out_name = "sum_diffs";
+  dn.func2d("f_off_chip");
+  dn.func2d("u_off_chip");
+  dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
+  dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
+  dn.func2d("diff_qwe", "fadd", "u", {{0, 0}, {0, -1}});
+  dn.func2d("diff_d", "fadd", "u", {{0, 0}, {0, 1}});
+  dn.func2d("diff_l", "fadd", "u", {{0, 0}, {-1, 0}});
+  dn.func2d("diff_r", "fadd", "u", {{0, 0}, {1, 0}});
+
+  dn.func2d("magval", "mag_dn2", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
+  dn.func2d(out_name, "fadd2", {pt("magval"), pt("f")});
+
+  int size = 30;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = false;
+  options.debug_options.expect_all_linebuffers = true;
+  dn.realize(options, out_name, size, size);
+    std::vector<std::string> optimized =
+      run_regression_tb(out_name + "_opt");
+
+  move_to_benchmarks_folder(out_name);
+  assert(false);
+}
+
 void sum_float_test() {
   App dn;
 
@@ -5830,12 +5861,11 @@ void playground() {
 
 void application_tests() {
 
+  sum_diffs_test();
+  assert(false);
   sum_float_test();
-  assert(false);
   sum_denoise_test();
-  assert(false);
   denoise2d_test();
-  assert(false);
 
   sobel_mag_y_test();
   sobel_app_test();
