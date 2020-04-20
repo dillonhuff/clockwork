@@ -1,0 +1,31 @@
+kernel: denoise2d
+burst width: 32
+unroll factor: 1
+iterate: 1
+
+input float: f(31, *)
+input float: u(34, *)
+local float: diff_u(0, 0) = u(0, 0) - u( 0, -1)
+local float: diff_d(0, 0) = u(0, 0) - u( 0,  1)
+local float: diff_l(0, 0) = u(0, 0) - u(-1,  0)
+local float: diff_r(0, 0) = u(0, 0) - u( 1,  0)
+local float: g(0, 0) = 1.0f / sqrt(1.0f+
+    diff_u(0, 0) * diff_u(0, 0)+
+    diff_d(0, 0) * diff_d(0, 0)+
+    diff_l(0, 0) * diff_l(0, 0)+
+    diff_r(0, 0) * diff_r(0, 0))
+local float: r0(0, 0) = u(0, 0) * f(0, 0) * 4.9f
+local float:
+    r1(0, 0) = (r0(0, 0) * (2.5f + r0(0, 0) * (10.2f + r0(0, 0))))*
+        (4.3f + r0(0, 0) * (5.4f + r0(0, 0) * ( 6.3f + r0(0, 0))))
+output float:
+    output(0, 0) = (u(0, 0) + 7.7f *
+        (u( 0,  1) * g( 0,  1) +
+         u( 0, -1) * g( 0, -1) +
+         u(-1,  0) * g(-1,  0) +
+         u( 1,  0) * g( 1,  0) +
+        5.7f * f(0, 0) * r1(0, 0))) * (11.1f + 7.7f *
+        (g( 0,  1) +
+         g( 0, -1) +
+         g(-1,  0) +
+         g( 1,  0) + 5.7f))
