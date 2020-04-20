@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+
+using namespace std;
 
 template<int width>
 string binary_string(ap_uint<width>& val) {
@@ -10,12 +13,12 @@ string binary_string(ap_uint<width>& val) {
   return ss.str();
 }
 
+template<int bits_per_pixel>
 static
 void fill_array(ofstream& in,
-    ap_uint<BURST_WIDTH>* val,
+    ap_uint<BURST_WIDTH>* input,
     const int nrows,
     const int ncols,
-    const int bits_per_pixel,
     const int transfer_cols) {
 
   for (int r = 0; r < nrows; r++) {
@@ -35,12 +38,12 @@ void fill_array(ofstream& in,
   in.close();
 }
 
+template<int bits_per_pixel>
 static
 void write_results(ofstream& out,
     ap_uint<BURST_WIDTH>* y_res,
     const int nrows,
     const int ncols,
-    const int bits_per_pixel,
     const int transfer_cols) {
 
   for (int r = 0; r < nrows; r++) {
