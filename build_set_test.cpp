@@ -4778,7 +4778,7 @@ App sum_denoise2d(const std::string& outname) {
   dn.func2d("diff_r", "fadd", "u", {{0, 0}, {1, 0}});
 
   dn.func2d("g", "fmag2d", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
-  dn.func2d("r0", "fadd", {pt("u"), pt("f")});
+  dn.func2d("r0", "fadd2", {pt("u"), pt("f")});
   dn.func2d("r1", "id", pt("r0"));
   dn.func2d(outname, "out_comp_fadd", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
 

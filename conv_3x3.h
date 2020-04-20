@@ -380,6 +380,18 @@ out_comp_dn2d(hw_uint<32>& r1,
 }
 
 static inline
+hw_uint<32> fadd2(const hw_uint<32>& a, const hw_uint<32>& b) {
+  return to_bits(float_bits(a) +
+      float_bits(b));
+}
+
+static inline
+hw_uint<32> fadd(const hw_uint<64>& a) {
+  return to_bits(float_bits(a.get<32, 0>()) +
+      float_bits(b.get<32, 1>());
+}
+
+static inline
 hw_uint<32>
 contrived(hw_uint<32*3>& in, hw_uint<32*2>& b) {
   return in.extract<0, 31>() +
