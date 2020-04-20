@@ -381,14 +381,14 @@ out_comp_dn2d(hw_uint<32>& r1,
 
 static inline
 hw_uint<32> fadd2(const hw_uint<32>& a, const hw_uint<32>& b) {
-  return to_bits(float_bits(a) +
-      float_bits(b));
+  return to_bits(to_float(a) +
+      to_float(b));
 }
 
 static inline
 hw_uint<32> fadd(const hw_uint<64>& a) {
-  return to_bits(float_bits(a.get<32, 0>()) +
-      float_bits(b.get<32, 1>());
+  return to_bits(to_float(a.get<32, 0>()) +
+      to_float(a.get<32, 1>());
 }
 
 static inline
