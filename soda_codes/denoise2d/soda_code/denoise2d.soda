@@ -3,7 +3,7 @@ burst width: 32
 unroll factor: 1
 iterate: 1
 
-input float: f(31, *)
+input float: f
 input float: u(34, *)
 local float: diff_u(0, 0) = u(0, 0) - u( 0, -1)
 local float: diff_d(0, 0) = u(0, 0) - u( 0,  1)
