@@ -405,7 +405,8 @@ void generate_vivado_tcl(UBuffer& buf) {
 }
 
 void generate_code_prefix(CodegenOptions& options,
-    std::ostream& out, UBuffer& buf) {
+    std::ostream& out,
+    UBuffer& buf) {
 
   for (auto inpt : buf.get_in_ports()) {
     for (auto outpt : buf.get_out_ports()) {

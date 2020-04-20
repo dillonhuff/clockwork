@@ -328,6 +328,9 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
   out << "#include \"soda_" + prg.name + "_kernel.h\"" << endl;
   out << "#include <fstream>" << endl << endl;
 
+  out << "#define PIXEL_WIDTH " << 32 << endl;
+  out << "#define BURST_WIDTH " << 32 << endl;
+
   out << "using namespace std;" << endl << endl;
 
   for (auto b : buffers) {
