@@ -301,9 +301,7 @@ hw_uint<32> reduce_gauss(hw_uint<32*9>& in) {
 static inline
 hw_uint<32> mag_cu(hw_uint<32>& mx,
     hw_uint<32>& my) {
-  return mx*mx + my*my;
-  //65535 - (mx*mx + my*my);
-  //return 65535 - (mx*mx + my*my);
+  return 65535 - (mx*mx + my*my);
 }
 
 static inline
@@ -367,12 +365,6 @@ hw_uint<32> r1_comp(hw_uint<32>& a) {
 
 static inline
 hw_uint<32>
-fadd(hw_uint<64>& a) {
-  return to_bits(to_float(a.get<32, 0>()) + to_float(a.get<32, 1>()));
-}
-
-static inline
-hw_uint<32>
 out_comp_dn2d(hw_uint<32>& r1,
     hw_uint<32>& f,
     hw_uint<128>& u,
@@ -385,6 +377,18 @@ out_comp_dn2d(hw_uint<32>& r1,
     u.get<32, 3>() * g.get<32, 3>();
 
   return r1 + f + prod;
+}
+
+static inline
+hw_uint<32> fadd2(const hw_uint<32>& a, const hw_uint<32>& b) {
+  return to_bits(float_bits(a) +
+      float_bits(b));
+}
+
+static inline
+hw_uint<32> fadd(const hw_uint<64>& a) {
+  return to_bits(float_bits(a.get<32, 0>()) +
+      float_bits(b.get<32, 1>());
 }
 
 static inline
