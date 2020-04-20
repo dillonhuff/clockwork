@@ -14,7 +14,7 @@ hw_uint<32>  id_unrolled_1(hw_uint<32>& f_off_chip) {
 }
 
   // r0_update_0 unroll factor: 1
-hw_uint<32>  comp_r0_unrolled_1(hw_uint<32>& u, hw_uint<32>& f) {
+hw_uint<32>  comp_r02d_unrolled_1(hw_uint<32>& u, hw_uint<32>& f) {
   hw_uint<32> whole_result;
   hw_uint<32> lane_0_u;
   // Need offset: 0, 0
@@ -22,37 +22,76 @@ hw_uint<32>  comp_r0_unrolled_1(hw_uint<32>& u, hw_uint<32>& f) {
   hw_uint<32> lane_0_f;
   // Need offset: 0, 0
   set_at<0, 32>(lane_0_f, f.extract<0, 31>());
-  auto result_0 = comp_r0(lane_0_u, lane_0_f);
+  auto result_0 = comp_r02d(lane_0_u, lane_0_f);
   set_at<0, 32>(whole_result, result_0);
   return whole_result;
 }
 
   // diff_r_update_0 unroll factor: 1
-hw_uint<32>  diff_b_unrolled_1(hw_uint<64>& u) {
+hw_uint<32>  diff_r2d_unrolled_1(hw_uint<64>& u) {
   hw_uint<32> whole_result;
   hw_uint<64> lane_0_u;
   // Need offset: 0, 0
   set_at<0, 64>(lane_0_u, u.extract<0, 31>());
   // Need offset: 1, 0
   set_at<32, 64>(lane_0_u, u.extract<32, 63>());
-  auto result_0 = diff_b(lane_0_u);
+  auto result_0 = diff_r2d(lane_0_u);
+  set_at<0, 32>(whole_result, result_0);
+  return whole_result;
+}
+
+  // diff_qwe_update_0 unroll factor: 1
+hw_uint<32>  diff_qwe2d_unrolled_1(hw_uint<64>& u) {
+  hw_uint<32> whole_result;
+  hw_uint<64> lane_0_u;
+  // Need offset: 0, -1
+  set_at<0, 64>(lane_0_u, u.extract<0, 31>());
+  // Need offset: 0, 0
+  set_at<32, 64>(lane_0_u, u.extract<32, 63>());
+  auto result_0 = diff_qwe2d(lane_0_u);
+  set_at<0, 32>(whole_result, result_0);
+  return whole_result;
+}
+
+  // diff_l_update_0 unroll factor: 1
+hw_uint<32>  diff_l2d_unrolled_1(hw_uint<64>& u) {
+  hw_uint<32> whole_result;
+  hw_uint<64> lane_0_u;
+  // Need offset: -1, 0
+  set_at<0, 64>(lane_0_u, u.extract<0, 31>());
+  // Need offset: 0, 0
+  set_at<32, 64>(lane_0_u, u.extract<32, 63>());
+  auto result_0 = diff_l2d(lane_0_u);
+  set_at<0, 32>(whole_result, result_0);
+  return whole_result;
+}
+
+  // diff_d_update_0 unroll factor: 1
+hw_uint<32>  diff_d2d_unrolled_1(hw_uint<64>& u) {
+  hw_uint<32> whole_result;
+  hw_uint<64> lane_0_u;
+  // Need offset: 0, 0
+  set_at<0, 64>(lane_0_u, u.extract<0, 31>());
+  // Need offset: 0, 1
+  set_at<32, 64>(lane_0_u, u.extract<32, 63>());
+  auto result_0 = diff_d2d(lane_0_u);
   set_at<0, 32>(whole_result, result_0);
   return whole_result;
 }
 
   // r1_update_0 unroll factor: 1
-hw_uint<32>  r1_comp_unrolled_1(hw_uint<32>& r0) {
+hw_uint<32>  r1_comp2d_unrolled_1(hw_uint<32>& r0) {
   hw_uint<32> whole_result;
   hw_uint<32> lane_0_r0;
   // Need offset: 0, 0
   set_at<0, 32>(lane_0_r0, r0.extract<0, 31>());
-  auto result_0 = r1_comp(lane_0_r0);
+  auto result_0 = r1_comp2d(lane_0_r0);
   set_at<0, 32>(whole_result, result_0);
   return whole_result;
 }
 
   // g_update_0 unroll factor: 1
-hw_uint<32>  mag_dn2_unrolled_1(hw_uint<32>& diff_qwe, hw_uint<32>& diff_d, hw_uint<32>& diff_l, hw_uint<32>& diff_r) {
+hw_uint<32>  mag_dn2d_unrolled_1(hw_uint<32>& diff_qwe, hw_uint<32>& diff_d, hw_uint<32>& diff_l, hw_uint<32>& diff_r) {
   hw_uint<32> whole_result;
   hw_uint<32> lane_0_diff_qwe;
   // Need offset: 0, 0
@@ -66,7 +105,7 @@ hw_uint<32>  mag_dn2_unrolled_1(hw_uint<32>& diff_qwe, hw_uint<32>& diff_d, hw_u
   hw_uint<32> lane_0_diff_r;
   // Need offset: 0, 0
   set_at<0, 32>(lane_0_diff_r, diff_r.extract<0, 31>());
-  auto result_0 = mag_dn2(lane_0_diff_qwe, lane_0_diff_d, lane_0_diff_l, lane_0_diff_r);
+  auto result_0 = mag_dn2d(lane_0_diff_qwe, lane_0_diff_d, lane_0_diff_l, lane_0_diff_r);
   set_at<0, 32>(whole_result, result_0);
   return whole_result;
 }

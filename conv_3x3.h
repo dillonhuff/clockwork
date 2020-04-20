@@ -16,16 +16,54 @@ hw_uint<32> to_bits(const float& f) {
   return *ip;
 }
 
-//static inline
-//hw_uint<32> jacobi2d_compute(const hw_uint<32*5>& in) {
-  //hw_uint<32> v0 = in.extract<0, 31>();
-  //hw_uint<32> v1 = in.extract<32, 63>();
-  //hw_uint<32> v2 = in.extract<64, 95>();
-  //hw_uint<32> v3 = in.extract<96, 127>();
-  //hw_uint<32> v4 = in.extract<128, 159>();
+static inline
+hw_uint<32>
+r1_comp2d(const hw_uint<32>& r0) {
+  return r0*r0*r0;
+}
 
-  //return to_bits((to_float(v0) + to_float(v1) + to_float(v2) + to_float(v3) + to_float(v4)) * ((float) 0.2));
-//}
+static inline
+hw_uint<32>
+comp_r02d(const hw_uint<32>& u,
+    const hw_uint<32>& f) {
+  return u*f*5;
+}
+
+
+static inline
+hw_uint<32>
+mag_dn2d(const hw_uint<32>& u,
+    const hw_uint<32>& d,
+    const hw_uint<32>& l,
+    const hw_uint<32>& r) {
+
+  // TODO: Replace with square root
+  return u*u + d*d + l*l + r*r;
+}
+
+static inline
+hw_uint<32>
+diff_qwe2d(const hw_uint<32*2>& in) {
+  return in.get<32, 1>() - in.get<32, 0>();
+}
+
+static inline
+hw_uint<32>
+diff_d2d(const hw_uint<32*2>& in) {
+  return in.get<32, 0>() - in.get<32, 1>();
+}
+
+static inline
+hw_uint<32>
+diff_l2d(const hw_uint<32*2>& in) {
+  return in.get<32, 1>() - in.get<32, 0>();
+}
+
+static inline
+hw_uint<32>
+diff_r2d(const hw_uint<32*2>& in) {
+  return in.get<32, 0>() - in.get<32, 1>();
+}
 
 static inline
 hw_uint<32> heat3d_compute(const hw_uint<32*9>& in) {
@@ -329,8 +367,18 @@ hw_uint<32> r1_comp(hw_uint<32>& a) {
 
 static inline
 hw_uint<32>
-out_comp_dn2d(hw_uint<32>& a, hw_uint<32>& b, hw_uint<128>& c, hw_uint<128>& d) {
-  return a + b + c + d;
+out_comp_dn2d(hw_uint<32>& r1,
+    hw_uint<32>& f,
+    hw_uint<128>& u,
+    hw_uint<128>& g) {
+
+  auto prod =
+    u.get<32, 0>() * g.get<32, 0>() +
+    u.get<32, 1>() * g.get<32, 1>() +
+    u.get<32, 2>() * g.get<32, 2>() +
+    u.get<32, 3>() * g.get<32, 3>();
+
+  return r1 + f + prod;
 }
 
 static inline

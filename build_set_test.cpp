@@ -5011,15 +5011,37 @@ void denoise2d_test() {
   dn.func2d("u_off_chip");
   dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
   dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
-  dn.func2d("diff_qwe", "diff_b", "u", {{0, 0}, {0, -1}});
-  dn.func2d("diff_d", "diff_b", "u", {{0, 0}, {0, 1}});
-  dn.func2d("diff_l", "diff_b", "u", {{0, 0}, {-1, 0}});
-  dn.func2d("diff_r", "diff_b", "u", {{0, 0}, {1, 0}});
 
-  dn.func2d("g", "mag_dn2", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
-  dn.func2d("r0", "comp_r0", {pt("u"), pt("f")});
-  dn.func2d("r1", "r1_comp", pt("r0"));
-  dn.func2d("denoise2d", "out_comp_dn2d", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
+  dn.func2d("diff_qwe", "diff_qwe2d", "u", {
+      {0, -1},
+      {0, 0}
+      });
+  dn.func2d("diff_d", "diff_d2d", "u", {{0, 0}, {0, 1}});
+  dn.func2d("diff_l", "diff_l2d", "u", {
+      {-1, 0},
+      {0, 0}
+      });
+  dn.func2d("diff_r", "diff_r2d", "u", {{0, 0}, {1, 0}});
+
+  dn.func2d("g", "mag_dn2d", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
+  dn.func2d("r0", "comp_r02d", {pt("u"), pt("f")});
+  dn.func2d("r1", "r1_comp2d", pt("r0"));
+  dn.func2d("denoise2d",
+      "out_comp_dn2d",
+      {pt("r1"),
+      pt("f"),
+      win("u", {
+          {-1, 0},
+          {0, -1},
+          {0, 0},
+          {1, 0}
+          }),
+      win("g", {
+          {-1, 0},
+          {0, -1},
+          {0, 1},
+          {1, 0}
+          })});
 
   int size = 30;
 
@@ -5741,12 +5763,12 @@ void playground() {
 
 void application_tests() {
 
-  sobel_mag_y_test();
-  assert(false);
+  denoise2d_test();
+  //assert(false);
 
+  sobel_mag_y_test();
   sobel_app_test();
   sobel_mag_x_test();
-  denoise2d_test();
   conv3x3_app_unrolled_test();
   exposure_fusion();
 
