@@ -15,12 +15,13 @@ string binary_string(ap_uint<width>& val) {
 
 template<int bits_per_pixel>
 static
-void fill_array(ofstream& in,
+void fill_array(const string& in_name,
     ap_uint<BURST_WIDTH>* input,
     const int nrows,
     const int ncols,
     const int transfer_cols) {
 
+  ofstream in(in_name);
   for (int r = 0; r < nrows; r++) {
     for (int c = 0; c < transfer_cols; c++) {
 
@@ -40,12 +41,13 @@ void fill_array(ofstream& in,
 
 template<int bits_per_pixel>
 static
-void write_results(ofstream& out,
+void write_results(const std::string& out_name,
     ap_uint<BURST_WIDTH>* y_res,
     const int nrows,
     const int ncols,
     const int transfer_cols) {
 
+  ofstream out(out_name);
   for (int r = 0; r < nrows; r++) {
     for (int c = 0; c < transfer_cols; c++) {
 
