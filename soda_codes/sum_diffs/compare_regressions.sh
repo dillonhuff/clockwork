@@ -1,4 +1,4 @@
-app_name=sum_float
+app_name=sum_diffs_opt
 cd soda_code
 ./run_tb.sh || { echo 'soda compilation failed'; exit 1; }
 cd ..

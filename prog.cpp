@@ -384,7 +384,7 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
 
 void generate_tb_compare_scripts(prog& prg) {
   ofstream of("compare_regressions.sh");
-  of << "app_name=sum_float" << endl;
+  of << "app_name=" << prg.name << endl;
 
   of << "cd soda_code" << endl;
   of << "./run_tb.sh || { echo 'soda compilation failed'; exit 1; }" << endl;
