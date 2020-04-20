@@ -5076,6 +5076,8 @@ void sum_denoise_test() {
   options.use_custom_code_string = false;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, "sum_denoise2d", size, size);
+    std::vector<std::string> optimized =
+      run_regression_tb("sum_denoise2d_opt");
 
   move_to_benchmarks_folder("sum_denoise2d");
   assert(false);

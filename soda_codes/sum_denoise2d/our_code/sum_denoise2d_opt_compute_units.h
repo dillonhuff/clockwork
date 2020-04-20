@@ -14,7 +14,7 @@ hw_uint<32>  id_unrolled_1(hw_uint<32>& f_off_chip) {
 }
 
   // r0_update_0 unroll factor: 1
-hw_uint<32>  fadd_unrolled_1(hw_uint<32>& u, hw_uint<32>& f) {
+hw_uint<32>  fadd2_unrolled_1(hw_uint<32>& u, hw_uint<32>& f) {
   hw_uint<32> whole_result;
   hw_uint<32> lane_0_u;
   // Need offset: 0, 0
@@ -22,7 +22,20 @@ hw_uint<32>  fadd_unrolled_1(hw_uint<32>& u, hw_uint<32>& f) {
   hw_uint<32> lane_0_f;
   // Need offset: 0, 0
   set_at<0, 32>(lane_0_f, f.extract<0, 31>());
-  auto result_0 = fadd(lane_0_u, lane_0_f);
+  auto result_0 = fadd2(lane_0_u, lane_0_f);
+  set_at<0, 32>(whole_result, result_0);
+  return whole_result;
+}
+
+  // diff_r_update_0 unroll factor: 1
+hw_uint<32>  fadd_unrolled_1(hw_uint<64>& u) {
+  hw_uint<32> whole_result;
+  hw_uint<64> lane_0_u;
+  // Need offset: 0, 0
+  set_at<0, 64>(lane_0_u, u.extract<0, 31>());
+  // Need offset: 1, 0
+  set_at<32, 64>(lane_0_u, u.extract<32, 63>());
+  auto result_0 = fadd(lane_0_u);
   set_at<0, 32>(whole_result, result_0);
   return whole_result;
 }
