@@ -5066,6 +5066,30 @@ void jacobi2d_app_test() {
   //assert(false);
 }
 
+void sum_float_test() {
+  App dn;
+
+  string out_name = "sum_float";
+  dn.func2d("f_off_chip");
+  dn.func2d("u_off_chip");
+  dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
+  dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
+  dn.func2d(out_name, "fadd2", {pt("f"), pt("u")});
+  int size = 30;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = false;
+  options.debug_options.expect_all_linebuffers = true;
+  dn.realize(options, out_name, size, size);
+    std::vector<std::string> optimized =
+      run_regression_tb(out_name + "_opt");
+
+  move_to_benchmarks_folder(out_name);
+  assert(false);
+}
+
 void sum_denoise_test() {
   App dn = sum_denoise2d("sum_denoise2d");
   int size = 30;
@@ -5805,6 +5829,8 @@ void playground() {
 
 void application_tests() {
 
+  sum_float_test();
+  assert(false);
   sum_denoise_test();
   assert(false);
   denoise2d_test();
