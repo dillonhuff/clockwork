@@ -382,6 +382,14 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
   out.close();
 }
 
+void generate_tb_run_scripts(prog& prg) {
+  ofstream of("run_tb_" + prg.name + ".sh");
+  of << "g++ -std=c++0x regression_tb_" << prg.name << ".cpp " << prg.name << ".cpp -I ../../.. -I /cad/xilinx/vivado/2017.2/Vivado_HLS/2017.2/include/ || { echo 'testbench compilation failed'; exit 1; }" << endl;
+  of << "./a.out" << endl;
+
+  of.close();
+}
+
 void generate_app_code_header(const map<string, UBuffer>& buffers, prog& prg) {
   string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
   ofstream of(prg.name + ".h");
@@ -885,6 +893,7 @@ void generate_app_code(CodegenOptions& options,
   generate_soda_tb(buffers, prg);
   generate_xilinx_accel_wrapper(buffers, prg);
   generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
+  generate_tb_run_scripts(prg);
 }
 
 void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap) {

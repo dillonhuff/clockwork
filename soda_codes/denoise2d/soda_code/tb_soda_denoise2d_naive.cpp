@@ -7,6 +7,8 @@
 #include "soda_denoise2d_naive_kernel.h"
 #include <fstream>
 
+#define PIXEL_WIDTH 32
+#define BURST_WIDTH 32
 using namespace std;
 
 // Out: denoise2d dimensions...

@@ -4897,6 +4897,8 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
   system(("mv " + out_name + "*.h " + synth_dir).c_str());
   system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
+  system(("mv run_tb_" + out_name + "*.sh " + synth_dir).c_str());
+  
   system(("mv tb_soda_" + out_name + "*.cpp " + soda_dir).c_str());
 }
 
@@ -5805,7 +5807,7 @@ void playground() {
 void application_tests() {
 
   denoise2d_test();
-  //assert(false);
+  assert(false);
 
   sobel_mag_y_test();
   sobel_app_test();
