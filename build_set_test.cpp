@@ -4722,22 +4722,44 @@ App jacobi3d(const std::string output_name) {
   return jac;
 }
 
-App denoise2d() {
+App denoise2d(const std::string& name) {
   App dn;
 
   dn.func2d("f_off_chip");
   dn.func2d("u_off_chip");
   dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
   dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
-  dn.func2d("diff_qwe", "fdiff", "u", {{0, 0}, {0, -1}});
-  dn.func2d("diff_d", "fdiff", "u", {{0, 0}, {0, 1}});
-  dn.func2d("diff_l", "fdiff", "u", {{0, 0}, {-1, 0}});
-  dn.func2d("diff_r", "fdiff", "u", {{0, 0}, {1, 0}});
 
-  dn.func2d("g", "fmag_dn2", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
-  dn.func2d("r0", "comp_r0", {pt("u"), pt("f")});
-  dn.func2d("r1", "r1_comp", pt("r0"));
-  dn.func2d("denoise2d", "out_comp_dn2d", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
+  dn.func2d("diff_qwe", "diff_qwe2d", "u", {
+      {0, -1},
+      {0, 0}
+      });
+  dn.func2d("diff_d", "diff_d2d", "u", {{0, 0}, {0, 1}});
+  dn.func2d("diff_l", "diff_l2d", "u", {
+      {-1, 0},
+      {0, 0}
+      });
+  dn.func2d("diff_r", "diff_r2d", "u", {{0, 0}, {1, 0}});
+
+  dn.func2d("g", "mag_dn2d", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
+  dn.func2d("r0", "comp_r02d", {pt("u"), pt("f")});
+  dn.func2d("r1", "r1_comp2d", pt("r0"));
+  dn.func2d(name,
+      "out_comp_dn2d",
+      {pt("r1"),
+      pt("f"),
+      win("u", {
+          {-1, 0},
+          {0, -1},
+          {0, 0},
+          {1, 0}
+          }),
+      win("g", {
+          {-1, 0},
+          {0, -1},
+          {0, 1},
+          {1, 0}
+          })});
 
   return dn;
 }
@@ -4858,6 +4880,21 @@ void upsample_stencil_1d_test() {
 
   assert(optimized == naive);
   //assert(false);
+}
+
+void move_to_benchmarks_folder(const std::string& app_name) {
+  string out_name = app_name;
+  string app_dir =
+    "./soda_codes/" + app_name;
+  string synth_dir =
+    "./soda_codes/" + app_name + "/our_code/";
+
+  system(("mkdir " + app_dir).c_str());
+  system(("mkdir " + synth_dir).c_str());
+  system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
+  system(("mv " + out_name + "*.h " + synth_dir).c_str());
+  system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
+  system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
 }
 
 void sobel_mag_y_test() {
@@ -5005,43 +5042,44 @@ void jacobi2d_app_test() {
 }
 
 void denoise2d_test() {
-  App dn;
+  App dn = denoise2d("denoise2d");
+  //App dn;
 
-  dn.func2d("f_off_chip");
-  dn.func2d("u_off_chip");
-  dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
-  dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
+  //dn.func2d("f_off_chip");
+  //dn.func2d("u_off_chip");
+  //dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
+  //dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
 
-  dn.func2d("diff_qwe", "diff_qwe2d", "u", {
-      {0, -1},
-      {0, 0}
-      });
-  dn.func2d("diff_d", "diff_d2d", "u", {{0, 0}, {0, 1}});
-  dn.func2d("diff_l", "diff_l2d", "u", {
-      {-1, 0},
-      {0, 0}
-      });
-  dn.func2d("diff_r", "diff_r2d", "u", {{0, 0}, {1, 0}});
+  //dn.func2d("diff_qwe", "diff_qwe2d", "u", {
+      //{0, -1},
+      //{0, 0}
+      //});
+  //dn.func2d("diff_d", "diff_d2d", "u", {{0, 0}, {0, 1}});
+  //dn.func2d("diff_l", "diff_l2d", "u", {
+      //{-1, 0},
+      //{0, 0}
+      //});
+  //dn.func2d("diff_r", "diff_r2d", "u", {{0, 0}, {1, 0}});
 
-  dn.func2d("g", "mag_dn2d", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
-  dn.func2d("r0", "comp_r02d", {pt("u"), pt("f")});
-  dn.func2d("r1", "r1_comp2d", pt("r0"));
-  dn.func2d("denoise2d",
-      "out_comp_dn2d",
-      {pt("r1"),
-      pt("f"),
-      win("u", {
-          {-1, 0},
-          {0, -1},
-          {0, 0},
-          {1, 0}
-          }),
-      win("g", {
-          {-1, 0},
-          {0, -1},
-          {0, 1},
-          {1, 0}
-          })});
+  //dn.func2d("g", "mag_dn2d", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
+  //dn.func2d("r0", "comp_r02d", {pt("u"), pt("f")});
+  //dn.func2d("r1", "r1_comp2d", pt("r0"));
+  //dn.func2d("denoise2d",
+      //"out_comp_dn2d",
+      //{pt("r1"),
+      //pt("f"),
+      //win("u", {
+          //{-1, 0},
+          //{0, -1},
+          //{0, 0},
+          //{1, 0}
+          //}),
+      //win("g", {
+          //{-1, 0},
+          //{0, -1},
+          //{0, 1},
+          //{1, 0}
+          //})});
 
   int size = 30;
 
@@ -5091,7 +5129,8 @@ void denoise2d_test() {
     assert(naive == optimized);
   }
 
-  //assert(false);
+  move_to_benchmarks_folder("denoise2d");
+  assert(false);
 }
 
 void conv3x3_app_unrolled_uneven_test() {
