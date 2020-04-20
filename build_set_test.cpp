@@ -4765,6 +4765,26 @@ App denoise2d(const std::string& name) {
 }
 
 
+App sum_denoise2d(const std::string& outname) {
+  App dn;
+
+  dn.func2d("f_off_chip");
+  dn.func2d("u_off_chip");
+  dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
+  dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
+  dn.func2d("diff_qwe", "fadd", "u", {{0, 0}, {0, -1}});
+  dn.func2d("diff_d", "fadd", "u", {{0, 0}, {0, 1}});
+  dn.func2d("diff_l", "fadd", "u", {{0, 0}, {-1, 0}});
+  dn.func2d("diff_r", "fadd", "u", {{0, 0}, {1, 0}});
+
+  dn.func2d("g", "fmag2d", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
+  dn.func2d("r0", "fadd", {pt("u"), pt("f")});
+  dn.func2d("r1", "id", pt("r0"));
+  dn.func2d(outname, "out_comp_fadd", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
+
+  return dn;
+}
+
 App denoise3d() {
   App dn;
 
@@ -5046,46 +5066,23 @@ void jacobi2d_app_test() {
   //assert(false);
 }
 
+void sum_denoise_test() {
+  App dn = sum_denoise2d("sum_denoise2d");
+  int size = 30;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = false;
+  options.debug_options.expect_all_linebuffers = true;
+  dn.realize(options, "sum_denoise2d", size, size);
+
+  move_to_benchmarks_folder("sum_denoise2d");
+  assert(false);
+}
+
 void denoise2d_test() {
   App dn = denoise2d("denoise2d");
-  //App dn;
-
-  //dn.func2d("f_off_chip");
-  //dn.func2d("u_off_chip");
-  //dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
-  //dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
-
-  //dn.func2d("diff_qwe", "diff_qwe2d", "u", {
-      //{0, -1},
-      //{0, 0}
-      //});
-  //dn.func2d("diff_d", "diff_d2d", "u", {{0, 0}, {0, 1}});
-  //dn.func2d("diff_l", "diff_l2d", "u", {
-      //{-1, 0},
-      //{0, 0}
-      //});
-  //dn.func2d("diff_r", "diff_r2d", "u", {{0, 0}, {1, 0}});
-
-  //dn.func2d("g", "mag_dn2d", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
-  //dn.func2d("r0", "comp_r02d", {pt("u"), pt("f")});
-  //dn.func2d("r1", "r1_comp2d", pt("r0"));
-  //dn.func2d("denoise2d",
-      //"out_comp_dn2d",
-      //{pt("r1"),
-      //pt("f"),
-      //win("u", {
-          //{-1, 0},
-          //{0, -1},
-          //{0, 0},
-          //{1, 0}
-          //}),
-      //win("g", {
-          //{-1, 0},
-          //{0, -1},
-          //{0, 1},
-          //{1, 0}
-          //})});
-
   int size = 30;
 
   CodegenOptions options;
@@ -5806,6 +5803,8 @@ void playground() {
 
 void application_tests() {
 
+  sum_denoise_test();
+  assert(false);
   denoise2d_test();
   assert(false);
 
