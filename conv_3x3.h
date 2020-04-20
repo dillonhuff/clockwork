@@ -365,8 +365,18 @@ hw_uint<32> r1_comp(hw_uint<32>& a) {
 
 static inline
 hw_uint<32>
-out_comp_dn2d(hw_uint<32>& a, hw_uint<32>& b, hw_uint<128>& c, hw_uint<128>& d) {
-  return a + b + c + d;
+out_comp_dn2d(hw_uint<32>& r1,
+    hw_uint<32>& f,
+    hw_uint<128>& u,
+    hw_uint<128>& g) {
+
+  auto prod =
+    u.get<32, 0>() * g.get<32, 0>() +
+    u.get<32, 1>() * g.get<32, 1>() +
+    u.get<32, 2>() * g.get<32, 2>() +
+    u.get<32, 3>() * g.get<32, 3>();
+
+  return r1 + f + prod;
 }
 
 static inline
