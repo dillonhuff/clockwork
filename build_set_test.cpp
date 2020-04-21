@@ -4986,6 +4986,14 @@ Expr* v(const std::string& name,
       new IntConst(bstr)});
 }
 
+Expr* v(const std::string& name) {
+  return v(name, 0, 0);
+}
+
+Expr* add(Expr* const a, Expr* const b) {
+  return new Binop("+", a, b);
+}
+
 Expr* sub(Expr* const a, Expr* const b) {
   return new Binop("-", a, b);
 }
@@ -5362,6 +5370,32 @@ void sum_diffs_test() {
 
   move_to_benchmarks_folder(out_name);
   //assert(false);
+}
+
+void one_input_mag_test() {
+  App dn;
+  string out_name = "one_input_mag";
+  dn.func2d("u_off_chip");
+  dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
+  dn.func2d("diff_u", sub(v("u", 0, 0), v("u", 0, -1)));
+  dn.func2d("diff_d", sub(v("u", 0, 0), v("u", 0, 1)));
+  dn.func2d("diff_l", sub(v("u", 0, 0), v("u", -1, 0)));
+  dn.func2d("diff_r", sub(v("u", 0, 0), v("u", 1, 0)));
+
+  dn.func2d(out_name, add(add(v("diff_u"), v("diff_d")), add(v("diff_l"), v("diff_r"))));
+
+  int size = 30;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = false;
+  options.debug_options.expect_all_linebuffers = true;
+  dn.realize(options, out_name, size, size);
+    std::vector<std::string> optimized =
+      run_regression_tb(out_name + "_opt");
+
+  move_to_benchmarks_folder(out_name);
 }
 
 void sum_float_test() {
@@ -6128,12 +6162,13 @@ void playground() {
 void application_tests() {
   //parse_denoise3d_test();
 
-  denoise2d_test();
-  //assert(false);
+  one_input_mag_test();
+  assert(false);
   sum_diffs_test();
   //assert(false);
   sum_float_test();
   sum_denoise_test();
+  denoise2d_test();
 
   sobel_mag_y_test();
   sobel_app_test();
