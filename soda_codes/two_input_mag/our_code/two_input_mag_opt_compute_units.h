@@ -3,17 +3,29 @@
 #include "conv_3x3.h"
 
 // Generated compute units...
-hw_uint<32> diff_r_generated_compute(hw_uint<32*2> u){ return u.get<32, 0>()-u.get<32, 1>(); }
+hw_uint<32> diff_r_generated_compute(hw_uint<32*2> u) {
+  return (u.get<32, 0>() - u.get<32, 1>());
+}
 
-hw_uint<32> diff_l_generated_compute(hw_uint<32*2> u){ return u.get<32, 1>()-u.get<32, 0>(); }
+hw_uint<32> diff_l_generated_compute(hw_uint<32*2> u) {
+  return (u.get<32, 1>() - u.get<32, 0>());
+}
 
-hw_uint<32> diff_d_generated_compute(hw_uint<32*2> u){ return u.get<32, 0>()-u.get<32, 1>(); }
+hw_uint<32> diff_d_generated_compute(hw_uint<32*2> u) {
+  return (u.get<32, 0>() - u.get<32, 1>());
+}
 
-hw_uint<32> diff_u_generated_compute(hw_uint<32*2> u){ return u.get<32, 1>()-u.get<32, 0>(); }
+hw_uint<32> diff_u_generated_compute(hw_uint<32*2> u) {
+  return (u.get<32, 1>() - u.get<32, 0>());
+}
 
-hw_uint<32> diff_sums_generated_compute(hw_uint<32*1> diff_d, hw_uint<32*1> diff_l, hw_uint<32*1> diff_r, hw_uint<32*1> diff_u){ return diff_u.get<32, 0>()+diff_d.get<32, 0>()+diff_l.get<32, 0>()+diff_r.get<32, 0>(); }
+hw_uint<32> diff_sums_generated_compute(hw_uint<32*1> diff_d, hw_uint<32*1> diff_l, hw_uint<32*1> diff_r, hw_uint<32*1> diff_u) {
+  return ((diff_u.get<32, 0>() + diff_d.get<32, 0>()) + (diff_l.get<32, 0>() + diff_r.get<32, 0>()));
+}
 
-hw_uint<32> two_input_mag_generated_compute(hw_uint<32*1> diff_sums, hw_uint<32*5> f){ return diff_sums.get<32, 0>()+f.get<32, 2>()+f.get<32, 0>()+f.get<32, 4>()+f.get<32, 1>()+f.get<32, 3>(); }
+hw_uint<32> two_input_mag_generated_compute(hw_uint<32*1> diff_sums, hw_uint<32*5> f) {
+  return (((((diff_sums.get<32, 0>() + f.get<32, 2>()) + f.get<32, 0>()) + f.get<32, 4>()) + f.get<32, 1>()) + f.get<32, 3>());
+}
 
 
 
