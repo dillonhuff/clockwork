@@ -15,17 +15,13 @@ using namespace std;
   // { denoise2d[i0, i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
   // Min: { denoise2d[0, 0] }
   // Max: { denoise2d[29, 29] }
-// In : diff_qwe dimensions...
-  // { diff_qwe[i0, i1] : -1 <= i0 <= 30 and -1 <= i1 <= 30 }
-  // Min: { diff_qwe[-1, -1] }
-  // Max: { diff_qwe[30, 30] }
 // In : f_off_chip dimensions...
   // { f_off_chip[i0, i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
   // Min: { f_off_chip[0, 0] }
   // Max: { f_off_chip[29, 29] }
 // In : u_off_chip dimensions...
-  // { u_off_chip[i0, i1] : -2 <= i0 <= 31 and -1 <= i1 <= 31 }
-  // Min: { u_off_chip[-2, -1] }
+  // { u_off_chip[i0, i1] : -2 <= i0 <= 31 and -2 <= i1 <= 31 }
+  // Min: { u_off_chip[-2, -2] }
   // Max: { u_off_chip[31, 31] }
 int main() {
   const int img_size = 1920*1080;

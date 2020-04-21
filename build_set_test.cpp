@@ -2651,8 +2651,18 @@ string compute_string(Expr* def, map<string, vector<pair<FunctionCall*, vector<i
     assert(def->is_function_call());
     auto call = (FunctionCall*) def;
     assert(contains_key(call->name, offset_map));
-    int oned_offset = 12;
-    return call->name + ".get<32, " + str(oned_offset) + ">()";
+
+    int offset = 0;
+    bool found_offset = false;
+    for (auto off : offset_map[call->name]) {
+      if (off.first == call) {
+        found_offset = true;
+        break;
+      }
+      offset++;
+    }
+    assert(found_offset);
+    return call->name + ".get<32, " + str(offset) + ">()";
   }
 
   assert(false);
@@ -2778,6 +2788,14 @@ struct App {
         offsets.push_back(offset);
         offset_map[window_name].push_back({off, offset});
       }
+
+      vector<pair<FunctionCall*, vector<int> > > offset_vec = offset_map[window_name];
+      sort_lt(offset_vec,
+          [](const pair<FunctionCall*, vector<int> >& a) {
+          return a.second;
+          });
+
+      offset_map[window_name] = offset_vec;
       Window w{window_name, strides, offsets};
       // Normalize positions of each offset
       windows.push_back(w);
@@ -6111,7 +6129,7 @@ void application_tests() {
   //parse_denoise3d_test();
 
   denoise2d_test();
-  assert(false);
+  //assert(false);
   sum_diffs_test();
   //assert(false);
   sum_float_test();

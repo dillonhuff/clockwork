@@ -2,6 +2,10 @@
 
 #include "conv_3x3.h"
 
+// Generated compute units...
+
+
+// Compute unit banks...
   // t1_update_0 unroll factor: 4
 hw_uint<128>  id_unrolled_4(hw_uint<128>& t1_arg) {
   hw_uint<128> whole_result;
