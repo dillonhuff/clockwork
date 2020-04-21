@@ -2646,7 +2646,7 @@ string compute_string(Expr* def, map<string, vector<pair<FunctionCall*, vector<i
     return ((IntConst*)def)->val;
   } else if (def->is_binop()) {
     auto op = (Binop*) def;
-    return compute_string(op->l, offset_map) + op->op + compute_string(op->r, offset_map);
+    return parens(compute_string(op->l, offset_map) + " " + op->op + " " + compute_string(op->r, offset_map));
   } else {
     assert(def->is_function_call());
     auto call = (FunctionCall*) def;
@@ -2674,7 +2674,7 @@ string compute_unit_string(const string& name, vector<Window>& windows, Expr* de
   for (auto w : windows) {
     args.push_back("hw_uint<32*" + str(w.offsets.size()) + "> " + w.name);
   }
-  return "hw_uint<32> " + name + sep_list(args, "(", ")", ", ") + "{ return " + compute_string(def, offset_map) + "; }";
+  return "hw_uint<32> " + name + sep_list(args, "(", ")", ", ") + " {\n" + tab(1) + "return " + compute_string(def, offset_map) + ";\n}";
 }
 
 struct App {
@@ -6209,7 +6209,7 @@ void application_tests() {
   //parse_denoise3d_test();
 
   two_input_mag_test();
-  assert(false);
+  //assert(false);
   one_input_mag_test();
   sum_diffs_test();
   //assert(false);
