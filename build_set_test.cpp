@@ -5372,6 +5372,38 @@ void sum_diffs_test() {
   //assert(false);
 }
 
+void two_input_mag_test() {
+  App dn;
+  string out_name = "two_input_mag";
+
+  dn.func2d("u_off_chip");
+  dn.func2d("f_off_chip");
+
+  dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
+  dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
+
+  dn.func2d("diff_u", sub(v("u", 0, 0), v("u", 0, -1)));
+  dn.func2d("diff_d", sub(v("u", 0, 0), v("u", 0, 1)));
+  dn.func2d("diff_l", sub(v("u", 0, 0), v("u", -1, 0)));
+  dn.func2d("diff_r", sub(v("u", 0, 0), v("u", 1, 0)));
+
+  dn.func2d("diff_sums", add(add(v("diff_u"), v("diff_d")), add(v("diff_l"), v("diff_r"))));
+  dn.func2d(out_name, add(v("diff_sums"), v("f")));
+
+  int size = 30;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = false;
+  options.debug_options.expect_all_linebuffers = true;
+  dn.realize(options, out_name, size, size);
+    std::vector<std::string> optimized =
+      run_regression_tb(out_name + "_opt");
+
+  move_to_benchmarks_folder(out_name);
+}
+
 void one_input_mag_test() {
   App dn;
   string out_name = "one_input_mag";
@@ -6162,8 +6194,9 @@ void playground() {
 void application_tests() {
   //parse_denoise3d_test();
 
-  one_input_mag_test();
+  two_input_mag_test();
   assert(false);
+  one_input_mag_test();
   sum_diffs_test();
   //assert(false);
   sum_float_test();
