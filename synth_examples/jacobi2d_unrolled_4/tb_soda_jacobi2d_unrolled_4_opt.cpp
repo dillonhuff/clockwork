@@ -7,6 +7,8 @@
 #include "soda_jacobi2d_unrolled_4_opt_kernel.h"
 #include <fstream>
 
+#define PIXEL_WIDTH 32
+#define BURST_WIDTH 32
 using namespace std;
 
 // Out: jacobi2d_unrolled_4 dimensions...

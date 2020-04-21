@@ -1932,6 +1932,9 @@ void jacobi_2d_test() {
 
 struct Token {
   string txt;
+
+  Token() : txt("") {}
+  Token(const std::string& txt_) : txt(txt_) {}
 };
 
 ostream& operator<<(ostream& out, const Token& e) {
@@ -2083,70 +2086,6 @@ void add_token(vector<Token>& toks, const string& t) {
   toks.push_back({t});
 }
 
-
-vector<Token> tokenize(istream& in) {
-  vector<Token> toks;
-  char nextc;
-  string next;
-  while (in.get(nextc)) {
-    cout << "Next = " << nextc << endl;
-    if (is_token_break(nextc)) {
-      add_token(toks, next);
-      next = "";
-      if (!isspace(nextc)) {
-        if (is_isolated_token(nextc)) {
-          string n = "";
-          n += nextc;
-          add_token(toks, {n});
-        } else {
-          next += (nextc);
-        }
-      }
-    } else {
-      next += nextc;
-    }
-  }
-  add_token(toks, next);
-  //in.close();
-  return toks;
-}
-
-Token consume(vector<Token>& tokens, size_t& pos, const string& next) {
-  assert(pos < tokens.size());
-  pos++;
-  assert(tokens.at(pos - 1).txt == next);
-  return tokens.at(pos - 1);
-}
-
-Token peek(vector<Token>& tokens, size_t& pos) {
-  assert(pos < tokens.size());
-  return tokens.at(pos);
-}
-
-Token next(vector<Token>& tokens, size_t& pos) {
-  assert(pos < tokens.size());
-  pos++;
-  return tokens.at(pos - 1);
-}
-
-BaseExpr parse_base(vector<Token>& tokens, size_t& pos) {
-  string name = next(tokens, pos).txt;
-  vector<Token> tks;
-  if (peek(tokens, pos).txt == "(") {
-    next(tokens, pos);
-    while (peek(tokens, pos).txt != ")") {
-      tks.push_back(next(tokens, pos));
-      if (peek(tokens, pos).txt == ",") {
-        consume(tokens, pos, ",");
-      } else {
-        break;
-      }
-    }
-    consume(tokens, pos, ")");
-  }
-  return BaseExpr{name, tks};
-}
-
 bool expr_start(const Token& t) {
   return t.txt != "local" && t.txt != "input" && t.txt != "output";
 }
@@ -2199,6 +2138,99 @@ bool is_function_separator(const Token& t) {
   return t.txt == ",";
 }
 
+vector<Token> merge_floats(const vector<Token>& toks) {
+  vector<Token> merged;
+  int i = 0;
+  while (i < toks.size()) {
+    Token next_tok = toks.at(i);
+    if (!is_int(next_tok)) {
+      merged.push_back(next_tok);
+      i++;
+    } else {
+      Token middle_tok = toks.at(i + 1);
+      if (middle_tok.txt != ".") {
+        merged.push_back(next_tok);
+        i++;
+      } else {
+        Token right = toks.at(i + 2);
+        cout << "Right tok = " << right << endl;
+        if (isdigit(right.txt.at(0)) &&
+            right.txt.back() == 'f') {
+          merged.push_back(Token(next_tok.txt + "." + right.txt));
+          i += 3;
+        } else {
+          merged.push_back(next_tok);
+          i++;
+        }
+      }
+    }
+  }
+
+  return merged;
+}
+
+vector<Token> tokenize(istream& in) {
+  vector<Token> toks;
+  char nextc;
+  string next;
+  while (in.get(nextc)) {
+    cout << "Next = " << nextc << endl;
+    if (is_token_break(nextc)) {
+      add_token(toks, next);
+      next = "";
+      if (!isspace(nextc)) {
+        if (is_isolated_token(nextc)) {
+          string n = "";
+          n += nextc;
+          add_token(toks, {n});
+        } else {
+          next += (nextc);
+        }
+      }
+    } else {
+      next += nextc;
+    }
+  }
+  add_token(toks, next);
+  return merge_floats(toks);
+}
+
+Token consume(vector<Token>& tokens, size_t& pos, const string& next) {
+  assert(pos < tokens.size());
+  pos++;
+  assert(tokens.at(pos - 1).txt == next);
+  return tokens.at(pos - 1);
+}
+
+Token peek(vector<Token>& tokens, size_t& pos) {
+  assert(pos < tokens.size());
+  return tokens.at(pos);
+}
+
+Token next(vector<Token>& tokens, size_t& pos) {
+  assert(pos < tokens.size());
+  pos++;
+  return tokens.at(pos - 1);
+}
+
+BaseExpr parse_base(vector<Token>& tokens, size_t& pos) {
+  string name = next(tokens, pos).txt;
+  vector<Token> tks;
+  if (peek(tokens, pos).txt == "(") {
+    next(tokens, pos);
+    while (peek(tokens, pos).txt != ")") {
+      tks.push_back(next(tokens, pos));
+      if (peek(tokens, pos).txt == ",") {
+        consume(tokens, pos, ",");
+      } else {
+        break;
+      }
+    }
+    consume(tokens, pos, ")");
+  }
+  return BaseExpr{name, tks};
+}
+
 Expr* evaluate(deque<Token>& output) {
   assert(output.size() > 0);
 
@@ -2227,6 +2259,8 @@ Expr* parse_expr(vector<Token>& orig_tokens, size_t& pos) {
   while (!done(orig_tokens, pos) && expr_start(peek(orig_tokens, pos))) {
     tokens.push_back(next(orig_tokens, pos));
   }
+
+
 
   deque<Token> op_stack;
   deque<Token> output;
@@ -2411,7 +2445,7 @@ void parse_denoise3d_test() {
     cout << tab(1) << op.first << " = " << *(op.second) << endl;
   }
 
-  //assert(false);
+  assert(false);
 }
 
 void duplicate_upsample_test() {
@@ -5080,7 +5114,7 @@ void sum_diffs_test() {
   dn.func2d("diff_l", "fadd", "u", {{0, 0}, {-1, 0}});
   dn.func2d("diff_r", "fadd", "u", {{0, 0}, {1, 0}});
 
-  dn.func2d("magval", "mag_dn2", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
+  dn.func2d("magval", "fmag2d", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
   dn.func2d(out_name, "fadd2", {pt("magval"), pt("f")});
 
   int size = 30;
@@ -5095,7 +5129,7 @@ void sum_diffs_test() {
       run_regression_tb(out_name + "_opt");
 
   move_to_benchmarks_folder(out_name);
-  assert(false);
+  //assert(false);
 }
 
 void sum_float_test() {
@@ -5119,7 +5153,7 @@ void sum_float_test() {
       run_regression_tb(out_name + "_opt");
 
   move_to_benchmarks_folder(out_name);
-  assert(false);
+  //assert(false);
 }
 
 void sum_denoise_test() {
@@ -5136,7 +5170,7 @@ void sum_denoise_test() {
       run_regression_tb("sum_denoise2d_opt");
 
   move_to_benchmarks_folder("sum_denoise2d");
-  assert(false);
+  //assert(false);
 }
 
 void denoise2d_test() {
@@ -5751,7 +5785,7 @@ void playground() {
     }
     cout << endl;
   }
-  assert(false);
+  //assert(false);
 
   //cout << "Program code without optimization..." << endl;
   //prg.unoptimized_codegen();
@@ -5860,9 +5894,10 @@ void playground() {
 }
 
 void application_tests() {
+  parse_denoise3d_test();
 
   sum_diffs_test();
-  assert(false);
+  //assert(false);
   sum_float_test();
   sum_denoise_test();
   denoise2d_test();
@@ -5944,7 +5979,6 @@ void application_tests() {
   //conv_app_rolled_reduce_test();
   //reduce_1d_test();
 
-  //parse_denoise3d_test();
 
   //up_stencil_down_unrolled_test();
   //laplacian_pyramid_app_test();

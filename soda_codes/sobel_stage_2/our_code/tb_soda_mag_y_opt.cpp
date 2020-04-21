@@ -7,6 +7,8 @@
 #include "soda_mag_y_opt_kernel.h"
 #include <fstream>
 
+#define PIXEL_WIDTH 32
+#define BURST_WIDTH 32
 using namespace std;
 
 // Out: mag_y dimensions...
