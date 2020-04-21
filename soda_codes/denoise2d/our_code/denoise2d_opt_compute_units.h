@@ -40,19 +40,6 @@ hw_uint<32>  diff_r2d_unrolled_1(hw_uint<64>& u) {
   return whole_result;
 }
 
-  // diff_qwe_update_0 unroll factor: 1
-hw_uint<32>  diff_qwe2d_unrolled_1(hw_uint<64>& u) {
-  hw_uint<32> whole_result;
-  hw_uint<64> lane_0_u;
-  // Need offset: 0, -1
-  set_at<0, 64>(lane_0_u, u.extract<0, 31>());
-  // Need offset: 0, 0
-  set_at<32, 64>(lane_0_u, u.extract<32, 63>());
-  auto result_0 = diff_qwe2d(lane_0_u);
-  set_at<0, 32>(whole_result, result_0);
-  return whole_result;
-}
-
   // diff_l_update_0 unroll factor: 1
 hw_uint<32>  diff_l2d_unrolled_1(hw_uint<64>& u) {
   hw_uint<32> whole_result;

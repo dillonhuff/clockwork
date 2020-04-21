@@ -1839,9 +1839,6 @@ void jacobi_2d_4_test() {
   auto in_nest = prg.add_nest("id1", 0, rows, "id0", 0, cols / unroll);
   for (size_t i = 0; i < inputs.size(); i++) {
     string in_name_0 = inputs.at(i);
-    cout << "Creating in nest: " << i << endl;
-    //in_nest->add_op
-      //({"I", us + "*id0 + " + to_string(i) + ", id1"}, "conv", {in_name_0, "id0, id1"});
     in_nest->add_op({"I", us + "*id0 + " + to_string(i) + ", id1"}, "id", {in_name_0, "id0, id1"});
   }
 
@@ -1944,6 +1941,9 @@ ostream& operator<<(ostream& out, const Token& e) {
 
 struct Expr {
   vector<Token> tokens;
+
+  virtual bool is_function_call() const { return false; }
+  virtual set<Expr*> children() const { return {}; }
 };
 
 struct FloatConst : public Expr {
@@ -1956,7 +1956,8 @@ struct IntConst : public Expr {
   bool neg;
   string val;
 
-  IntConst(std::string& val_) : val(val_) {}
+  IntConst(std::string& val_) : neg(false), val(val_) {}
+  IntConst() : neg(false), val("") {}
 
 };
 
@@ -1967,6 +1968,8 @@ struct FunctionCall : public Expr {
   FunctionCall(const string& n_, const vector<Expr*> args_) :
     name(n_), args(args_) {}
 
+  virtual bool is_function_call() const { return true; }
+  virtual set<Expr*> children() const { return set<Expr*>(begin(args), end(args)); }
 };
 
 struct Binop : public Expr {
@@ -1977,11 +1980,13 @@ struct Binop : public Expr {
   Binop(const string& op_, Expr* l_, Expr* r_) :
     op(op_), l(l_), r(r_) {}
 
+  virtual set<Expr*> children() const { return {l, r}; }
 }; 
 
 struct Unop : public Expr {
   string op;
   Expr* arg;
+  virtual set<Expr*> children() const { return {arg}; }
 };
 
 ostream& operator<<(ostream& out, const Expr& e) {
@@ -2618,6 +2623,17 @@ void seidel2d_test() {
   regression_test(prg);
 }
 
+template<typename F>
+void visit_function_calls(Expr* e, F f) {
+  if (e->is_function_call()) {
+    f((FunctionCall*)e);
+  }
+
+  for (auto v : e->children()) {
+    visit_function_calls(v, f);
+  }
+}
+
 struct App {
 
   isl_ctx* ctx;
@@ -2654,17 +2670,17 @@ struct App {
 
   }
 
-  string func2d(const std::string& name, const std::string& def) {
-    Expr* e = parse_expr(def);
-    //assert(false);
-    //map<Expr*, vector<int> > offsets
-    Result res;
+  //string func2d(const std::string& name, const std::string& def) {
+    //Expr* e = parse_expr(def);
+    ////assert(false);
+    ////map<Expr*, vector<int> > offsets
+    //Result res;
 
-    app_dag[name] = res;
+    //app_dag[name] = res;
 
-    return name;
+    //return name;
 
-  }
+  //}
 
   bool is_input(const std::string& name) const {
     return producers(name).size() == 0;
@@ -2695,6 +2711,36 @@ struct App {
 
     app_dag[name] = res;
 
+    return name;
+  }
+
+  string func2d(const std::string& name, Expr* def) {
+    cout << "Creating function " << name << endl;
+    Result res;
+
+    string compute_name = name + "_generated_compute";
+
+    vector<FunctionCall*> calls;
+    visit_function_calls(def, [this, &calls](FunctionCall* c) {
+        if (contains_key(c->name, app_dag)) {
+        calls.push_back(c);
+        }
+        });
+
+    cout << "Function calls..." << endl;
+    for (auto c : calls) {
+      cout << tab(1) << c->name << endl;
+    }
+
+    assert(false);
+    vector<Window> windows;
+    add_func(name,
+        compute_name,
+        2,
+        windows);
+
+    app_dag[name].updates.back().compute_unit_impl =
+      "<ERROR ADD COMPUTE UNIT HERE>";
     return name;
   }
 
@@ -4846,6 +4892,20 @@ App jacobi3d(const std::string output_name) {
   return jac;
 }
 
+Expr* v(const std::string& name,
+    const int a,
+    const int b) {
+
+  auto astr = str(a);
+  auto bstr = str(b);
+  return new FunctionCall(name, {new IntConst(astr),
+      new IntConst(bstr)});
+}
+
+Expr* sub(Expr* const a, Expr* const b) {
+  return new Binop("-", a, b);
+}
+
 App denoise2d(const std::string& name) {
   App dn;
 
@@ -4854,10 +4914,8 @@ App denoise2d(const std::string& name) {
   dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
   dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
 
-  dn.func2d("diff_qwe", "diff_qwe2d", "u", {
-      {0, -1},
-      {0, 0}
-      });
+  Expr* diff = sub(v("u", 0, -1), v("u", 0, 0));
+  dn.func2d("diff_qwe", diff);
   dn.func2d("diff_d", "diff_d2d", "u", {{0, 0}, {0, 1}});
   dn.func2d("diff_l", "diff_l2d", "u", {
       {-1, 0},
@@ -5986,11 +6044,12 @@ void playground() {
 void application_tests() {
   //parse_denoise3d_test();
 
+  denoise2d_test();
+  assert(false);
   sum_diffs_test();
   //assert(false);
   sum_float_test();
   sum_denoise_test();
-  denoise2d_test();
 
   sobel_mag_y_test();
   sobel_app_test();
