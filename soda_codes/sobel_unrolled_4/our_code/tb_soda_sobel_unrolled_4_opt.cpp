@@ -7,6 +7,8 @@
 #include "soda_sobel_unrolled_4_opt_kernel.h"
 #include <fstream>
 
+#define PIXEL_WIDTH 32
+#define BURST_WIDTH 32
 using namespace std;
 
 // In : off_chip_img dimensions...

@@ -1839,9 +1839,6 @@ void jacobi_2d_4_test() {
   auto in_nest = prg.add_nest("id1", 0, rows, "id0", 0, cols / unroll);
   for (size_t i = 0; i < inputs.size(); i++) {
     string in_name_0 = inputs.at(i);
-    cout << "Creating in nest: " << i << endl;
-    //in_nest->add_op
-      //({"I", us + "*id0 + " + to_string(i) + ", id1"}, "conv", {in_name_0, "id0, id1"});
     in_nest->add_op({"I", us + "*id0 + " + to_string(i) + ", id1"}, "id", {in_name_0, "id0, id1"});
   }
 
@@ -1932,6 +1929,9 @@ void jacobi_2d_test() {
 
 struct Token {
   string txt;
+
+  Token() : txt("") {}
+  Token(const std::string& txt_) : txt(txt_) {}
 };
 
 ostream& operator<<(ostream& out, const Token& e) {
@@ -1941,6 +1941,11 @@ ostream& operator<<(ostream& out, const Token& e) {
 
 struct Expr {
   vector<Token> tokens;
+
+  virtual bool is_function_call() const { return false; }
+  virtual bool is_binop() const { return false; }
+  virtual bool is_int_const() const { return false; }
+  virtual set<Expr*> children() const { return {}; }
 };
 
 struct FloatConst : public Expr {
@@ -1950,10 +1955,14 @@ struct FloatConst : public Expr {
 };
 
 struct IntConst : public Expr {
-  bool neg;
   string val;
 
   IntConst(std::string& val_) : val(val_) {}
+  IntConst() : val("") {}
+
+  virtual bool is_int_const() const { return true; }
+
+  int int_value() const { return safe_stoi(val); }
 
 };
 
@@ -1964,6 +1973,8 @@ struct FunctionCall : public Expr {
   FunctionCall(const string& n_, const vector<Expr*> args_) :
     name(n_), args(args_) {}
 
+  virtual bool is_function_call() const { return true; }
+  virtual set<Expr*> children() const { return set<Expr*>(begin(args), end(args)); }
 };
 
 struct Binop : public Expr {
@@ -1974,11 +1985,15 @@ struct Binop : public Expr {
   Binop(const string& op_, Expr* l_, Expr* r_) :
     op(op_), l(l_), r(r_) {}
 
+  virtual bool is_binop() const { return true; }
+
+  virtual set<Expr*> children() const { return {l, r}; }
 }; 
 
 struct Unop : public Expr {
   string op;
   Expr* arg;
+  virtual set<Expr*> children() const { return {arg}; }
 };
 
 ostream& operator<<(ostream& out, const Expr& e) {
@@ -2083,70 +2098,6 @@ void add_token(vector<Token>& toks, const string& t) {
   toks.push_back({t});
 }
 
-
-vector<Token> tokenize(istream& in) {
-  vector<Token> toks;
-  char nextc;
-  string next;
-  while (in.get(nextc)) {
-    cout << "Next = " << nextc << endl;
-    if (is_token_break(nextc)) {
-      add_token(toks, next);
-      next = "";
-      if (!isspace(nextc)) {
-        if (is_isolated_token(nextc)) {
-          string n = "";
-          n += nextc;
-          add_token(toks, {n});
-        } else {
-          next += (nextc);
-        }
-      }
-    } else {
-      next += nextc;
-    }
-  }
-  add_token(toks, next);
-  //in.close();
-  return toks;
-}
-
-Token consume(vector<Token>& tokens, size_t& pos, const string& next) {
-  assert(pos < tokens.size());
-  pos++;
-  assert(tokens.at(pos - 1).txt == next);
-  return tokens.at(pos - 1);
-}
-
-Token peek(vector<Token>& tokens, size_t& pos) {
-  assert(pos < tokens.size());
-  return tokens.at(pos);
-}
-
-Token next(vector<Token>& tokens, size_t& pos) {
-  assert(pos < tokens.size());
-  pos++;
-  return tokens.at(pos - 1);
-}
-
-BaseExpr parse_base(vector<Token>& tokens, size_t& pos) {
-  string name = next(tokens, pos).txt;
-  vector<Token> tks;
-  if (peek(tokens, pos).txt == "(") {
-    next(tokens, pos);
-    while (peek(tokens, pos).txt != ")") {
-      tks.push_back(next(tokens, pos));
-      if (peek(tokens, pos).txt == ",") {
-        consume(tokens, pos, ",");
-      } else {
-        break;
-      }
-    }
-    consume(tokens, pos, ")");
-  }
-  return BaseExpr{name, tks};
-}
-
 bool expr_start(const Token& t) {
   return t.txt != "local" && t.txt != "input" && t.txt != "output";
 }
@@ -2199,6 +2150,99 @@ bool is_function_separator(const Token& t) {
   return t.txt == ",";
 }
 
+vector<Token> merge_floats(const vector<Token>& toks) {
+  vector<Token> merged;
+  int i = 0;
+  while (i < toks.size()) {
+    Token next_tok = toks.at(i);
+    if (!is_int(next_tok)) {
+      merged.push_back(next_tok);
+      i++;
+    } else {
+      Token middle_tok = toks.at(i + 1);
+      if (middle_tok.txt != ".") {
+        merged.push_back(next_tok);
+        i++;
+      } else {
+        Token right = toks.at(i + 2);
+        cout << "Right tok = " << right << endl;
+        if (isdigit(right.txt.at(0)) &&
+            right.txt.back() == 'f') {
+          merged.push_back(Token(next_tok.txt + "." + right.txt));
+          i += 3;
+        } else {
+          merged.push_back(next_tok);
+          i++;
+        }
+      }
+    }
+  }
+
+  return merged;
+}
+
+vector<Token> tokenize(istream& in) {
+  vector<Token> toks;
+  char nextc;
+  string next;
+  while (in.get(nextc)) {
+    cout << "Next = " << nextc << endl;
+    if (is_token_break(nextc)) {
+      add_token(toks, next);
+      next = "";
+      if (!isspace(nextc)) {
+        if (is_isolated_token(nextc)) {
+          string n = "";
+          n += nextc;
+          add_token(toks, {n});
+        } else {
+          next += (nextc);
+        }
+      }
+    } else {
+      next += nextc;
+    }
+  }
+  add_token(toks, next);
+  return merge_floats(toks);
+}
+
+Token consume(vector<Token>& tokens, size_t& pos, const string& next) {
+  assert(pos < tokens.size());
+  pos++;
+  assert(tokens.at(pos - 1).txt == next);
+  return tokens.at(pos - 1);
+}
+
+Token peek(vector<Token>& tokens, size_t& pos) {
+  assert(pos < tokens.size());
+  return tokens.at(pos);
+}
+
+Token next(vector<Token>& tokens, size_t& pos) {
+  assert(pos < tokens.size());
+  pos++;
+  return tokens.at(pos - 1);
+}
+
+BaseExpr parse_base(vector<Token>& tokens, size_t& pos) {
+  string name = next(tokens, pos).txt;
+  vector<Token> tks;
+  if (peek(tokens, pos).txt == "(") {
+    next(tokens, pos);
+    while (peek(tokens, pos).txt != ")") {
+      tks.push_back(next(tokens, pos));
+      if (peek(tokens, pos).txt == ",") {
+        consume(tokens, pos, ",");
+      } else {
+        break;
+      }
+    }
+    consume(tokens, pos, ")");
+  }
+  return BaseExpr{name, tks};
+}
+
 Expr* evaluate(deque<Token>& output) {
   assert(output.size() > 0);
 
@@ -2222,99 +2266,190 @@ Expr* evaluate(deque<Token>& output) {
   assert(false);
 }
 
+#define FINISH(arg) if ((arg) != nullptr) { return arg; }
+
+#define CONSUME(token, toks, pos) if (!done(toks, pos) && peek(toks, pos).txt == (token)) { next(toks, pos); } else { return nullptr; }
+
+bool comma_token(vector<Token>& orig_tokens, size_t& pos) {
+  if (!done(orig_tokens, pos) && peek(orig_tokens, pos).txt == ",") {
+    next(orig_tokens, pos);
+    return true;
+  }
+  return false;
+}
+
+template<typename Sep, typename E>
+vector<Expr*> sep_list(Sep s, E e, vector<Token>& orig_tokens, size_t& pos) {
+  vector<Expr*> es;
+  do {
+    es.push_back(e(orig_tokens, pos));
+    cout << "tokens: " << comma_list(orig_tokens) << endl;
+  } while (s(orig_tokens, pos));
+
+  return es;
+}
+
+template<typename F>
+Expr* try_parse(F f, vector<Token>& orig_tokens, size_t& pos) {
+  auto old = pos;
+  auto res = f(orig_tokens, pos);
+  if (res == nullptr) {
+    pos = old;
+  }
+  return res;
+}
+
+Expr* parse_paren_expr(vector<Token>& orig_tokens, size_t& pos);
+
+Expr* parse_expression(vector<Token>& orig_tokens, size_t& pos);
+Expr* parse_operator_expr(vector<Token>& orig_tokens, size_t& pos) {
+  return nullptr;
+}
+
+Expr* parse_base_expr(vector<Token>& orig_tokens, size_t& pos) {
+  cout << "Parsing base expr: " << comma_list(orig_tokens) << endl;
+  if (!done(orig_tokens, pos) && is_function_call(peek(orig_tokens, pos))) {
+    cout << tab(1) << "Next token is funcall" << endl;
+    auto name = next(orig_tokens, pos);
+    CONSUME("(", orig_tokens, pos);
+    vector<Expr*> args =
+      sep_list(comma_token, parse_expression, orig_tokens, pos);
+    CONSUME(")", orig_tokens, pos);
+    return new FunctionCall(name.txt, args);
+  }
+
+  cout << "Got base expr" << endl;
+
+  if (is_int(peek(orig_tokens, pos))) {
+    string val = next(orig_tokens, pos).txt;
+    return new IntConst(val);
+  }
+
+  return nullptr;
+}
+
+Expr* parse_expression(vector<Token>& orig_tokens, size_t& pos) {
+  auto paren = try_parse(parse_paren_expr, orig_tokens, pos);
+
+  FINISH(paren);
+  
+  auto op = try_parse(parse_operator_expr, orig_tokens, pos);
+
+  FINISH(op);
+    
+  auto basic = try_parse(parse_base_expr, orig_tokens, pos);
+
+  FINISH(basic);
+
+  return nullptr;
+}
+
+Expr* parse_paren_expr(vector<Token>& orig_tokens, size_t& pos) {
+  CONSUME("(", orig_tokens, pos);
+  auto res = try_parse(parse_expression, orig_tokens, pos);
+  CONSUME(")", orig_tokens, pos);
+
+  cout << "Got paren expr: " << comma_list(orig_tokens) << endl;
+  return res;
+}
+
 Expr* parse_expr(vector<Token>& orig_tokens, size_t& pos) {
-  deque<Token> tokens;
+  vector<Token> tokens;
   while (!done(orig_tokens, pos) && expr_start(peek(orig_tokens, pos))) {
     tokens.push_back(next(orig_tokens, pos));
   }
 
-  deque<Token> op_stack;
-  deque<Token> output;
-  while (tokens.size() > 0) {
-    Token t = tokens.front();
-    tokens.pop_front();
+  cout << "Parsing expr: " << comma_list(tokens) << endl;
 
-    cout << "T = " << t << endl;
-    if (is_float(t)) {
-      cout << tab(1) << " is float" << endl;
-      output.push_back(t);
-    } else if (is_int(t)) {
-      cout << tab(1) << " is number" << endl;
-      output.push_back(t);
-    } else if (is_function_call(t)) {
-      cout << tab(1) << " is function call" << endl;
-      op_stack.push_back(t);
-    } else if (is_function_separator(t)) {
-      cout << tab(1) << " is function separator" << endl;
-      while (op_stack.back().txt != "(") {
-        output.push_back(op_stack.back());
-        op_stack.pop_back();
-      }
-    } else if (is_operator(t)) {
-      cout << tab(1) << " is function operator" << endl;
-      if (!is_unary(t)) {
-        // Pop higher precedence operators off the stack
-        while (op_stack.size() > 0 &&
-            is_operator(op_stack.back()) &&
-            is_higher_prec(op_stack.back(), t)) {
-          output.push_back(op_stack.back());
-          op_stack.pop_back();
-        }
-      } else {
-        // Pop higher precedence operators off the stack
-        while (op_stack.size() > 0 &&
-            is_operator(op_stack.back()) &&
-            is_unary(op_stack.back()) &&
-            is_higher_prec(op_stack.back(), t)) {
-          output.push_back(op_stack.back());
-          op_stack.pop_back();
-        }
-      }
-      op_stack.push_back(t);
-    } else if (t.txt == "(") {
-      op_stack.push_back(t);
-    } else if (t.txt == ")") {
-      cout << "Popping off lparen" << endl;
-      cout << "Current stack..." << endl;
-      for (auto elem : op_stack) {
-        cout << tab(1) << elem << endl;
-      }
-      while (op_stack.size() > 0 && op_stack.back().txt != "(") {
-        output.push_back(op_stack.back());
-        op_stack.pop_back();
-      }
+  return parse_expression(tokens, pos);
 
-      assert((op_stack.size() > 0));
-      assert((op_stack.back().txt == "("));
+  //deque<Token> op_stack;
+  //deque<Token> output;
+  //while (tokens.size() > 0) {
+    //Token t = tokens.front();
+    //tokens.pop_front();
 
-      op_stack.pop_back();
-    } else {
-      cout << "Error: Unsupported token: " << t << ", len: " << t.txt.size() << endl;
-      assert(false);
-    }
-  }
+    //cout << "T = " << t << endl;
+    //if (is_float(t)) {
+      //cout << tab(1) << " is float" << endl;
+      //output.push_back(t);
+    //} else if (is_int(t)) {
+      //cout << tab(1) << " is number" << endl;
+      //output.push_back(t);
+    //} else if (is_function_call(t)) {
+      //cout << tab(1) << " is function call" << endl;
+      //op_stack.push_back(t);
+    //} else if (is_function_separator(t)) {
+      //cout << tab(1) << " is function separator" << endl;
+      //while (op_stack.back().txt != "(") {
+        //output.push_back(op_stack.back());
+        //op_stack.pop_back();
+      //}
+    //} else if (is_operator(t)) {
+      //cout << tab(1) << " is function operator" << endl;
+      //if (!is_unary(t)) {
+        //// Pop higher precedence operators off the stack
+        //while (op_stack.size() > 0 &&
+            //is_operator(op_stack.back()) &&
+            //is_higher_prec(op_stack.back(), t)) {
+          //output.push_back(op_stack.back());
+          //op_stack.pop_back();
+        //}
+      //} else {
+        //// Pop higher precedence operators off the stack
+        //while (op_stack.size() > 0 &&
+            //is_operator(op_stack.back()) &&
+            //is_unary(op_stack.back()) &&
+            //is_higher_prec(op_stack.back(), t)) {
+          //output.push_back(op_stack.back());
+          //op_stack.pop_back();
+        //}
+      //}
+      //op_stack.push_back(t);
+    //} else if (t.txt == "(") {
+      //op_stack.push_back(t);
+    //} else if (t.txt == ")") {
+      //cout << "Popping off lparen" << endl;
+      //cout << "Current stack..." << endl;
+      //for (auto elem : op_stack) {
+        //cout << tab(1) << elem << endl;
+      //}
+      //while (op_stack.size() > 0 && op_stack.back().txt != "(") {
+        //output.push_back(op_stack.back());
+        //op_stack.pop_back();
+      //}
 
-  while (op_stack.size() > 0) {
-    auto next = op_stack.back();
-    op_stack.pop_back();
+      //assert((op_stack.size() > 0));
+      //assert((op_stack.back().txt == "("));
 
-    assert(next.txt != ")");
-    assert(next.txt != "(");
+      //op_stack.pop_back();
+    //} else {
+      //cout << "Error: Unsupported token: " << t << ", len: " << t.txt.size() << endl;
+      //assert(false);
+    //}
+  //}
 
-    output.push_back(next);
-  }
-  assert(op_stack.size() == 0);
+  //while (op_stack.size() > 0) {
+    //auto next = op_stack.back();
+    //op_stack.pop_back();
 
-  cout << "Output..." << endl;
-  for (auto out : output) {
-    cout << out << " ";
-  }
-  cout << endl;
+    //assert(next.txt != ")");
+    //assert(next.txt != "(");
 
-  assert(output.size() > 0);
+    //output.push_back(next);
+  //}
+  //assert(op_stack.size() == 0);
 
-  Expr* e = evaluate(output);
-  return e;
+  //cout << "Output..." << endl;
+  //for (auto out : output) {
+    //cout << out << " ";
+  //}
+  //cout << endl;
+
+  //assert(output.size() > 0);
+
+  //Expr* e = evaluate(output);
+  //return e;
 }
 
 Expr* parse_expr(const std::string& input) {
@@ -2370,6 +2505,7 @@ StencilProgram parse_soda_program(istream& in) {
 
       consume(tokens, pos, "=");
       Expr* e = parse_expr(tokens, pos);
+      assert(e != nullptr);
       cout << "After expr: " <<
         endl;
       for (size_t i = pos; i < tokens.size(); i++) {
@@ -2411,7 +2547,7 @@ void parse_denoise3d_test() {
     cout << tab(1) << op.first << " = " << *(op.second) << endl;
   }
 
-  //assert(false);
+  assert(false);
 }
 
 void duplicate_upsample_test() {
@@ -2494,6 +2630,53 @@ void seidel2d_test() {
   regression_test(prg);
 }
 
+template<typename F>
+void visit_function_calls(Expr* e, F f) {
+  if (e->is_function_call()) {
+    f((FunctionCall*)e);
+  }
+
+  for (auto v : e->children()) {
+    visit_function_calls(v, f);
+  }
+}
+
+string compute_string(Expr* def, map<string, vector<pair<FunctionCall*, vector<int> > > >& offset_map) {
+  if (def->is_int_const()) {
+    return ((IntConst*)def)->val;
+  } else if (def->is_binop()) {
+    auto op = (Binop*) def;
+    return compute_string(op->l, offset_map) + op->op + compute_string(op->r, offset_map);
+  } else {
+    assert(def->is_function_call());
+    auto call = (FunctionCall*) def;
+    assert(contains_key(call->name, offset_map));
+
+    int offset = 0;
+    bool found_offset = false;
+    for (auto off : offset_map[call->name]) {
+      if (off.first == call) {
+        found_offset = true;
+        break;
+      }
+      offset++;
+    }
+    assert(found_offset);
+    return call->name + ".get<32, " + str(offset) + ">()";
+  }
+
+  assert(false);
+  return "ERROR NO COMPUTE FOR EXPRESSION";
+}
+
+string compute_unit_string(const string& name, vector<Window>& windows, Expr* def, map<string, vector<pair<FunctionCall*, vector<int> > > >& offset_map) {
+  vector<string> args;
+  for (auto w : windows) {
+    args.push_back("hw_uint<32*" + str(w.offsets.size()) + "> " + w.name);
+  }
+  return "hw_uint<32> " + name + sep_list(args, "(", ")", ", ") + "{ return " + compute_string(def, offset_map) + "; }";
+}
+
 struct App {
 
   isl_ctx* ctx;
@@ -2530,17 +2713,17 @@ struct App {
 
   }
 
-  string func2d(const std::string& name, const std::string& def) {
-    Expr* e = parse_expr(def);
-    //assert(false);
-    //map<Expr*, vector<int> > offsets
-    Result res;
+  //string func2d(const std::string& name, const std::string& def) {
+    //Expr* e = parse_expr(def);
+    ////assert(false);
+    ////map<Expr*, vector<int> > offsets
+    //Result res;
 
-    app_dag[name] = res;
+    //app_dag[name] = res;
 
-    return name;
+    //return name;
 
-  }
+  //}
 
   bool is_input(const std::string& name) const {
     return producers(name).size() == 0;
@@ -2554,6 +2737,9 @@ struct App {
 
     Result res;
     for (auto w : windows) {
+      if (!contains_key(w.name, app_dag)) {
+        cout << "Error: App dag already contains: " << w.name << endl;
+      }
       assert(contains_key(w.name, app_dag));
       w.needed = build_needed(name, w);
       res.srcs.push_back(w);
@@ -2571,6 +2757,65 @@ struct App {
 
     app_dag[name] = res;
 
+    return name;
+  }
+
+  string func2d(const std::string& name, Expr* def) {
+    Result res;
+
+    string compute_name = name + "_generated_compute";
+
+    map<string, vector<FunctionCall*> > calls;
+    visit_function_calls(def, [this, &calls](FunctionCall* c) {
+        if (contains_key(c->name, app_dag)) {
+        calls[c->name].push_back(c);
+        }
+        });
+
+    vector<Window> windows;
+    map<string, vector<pair<FunctionCall*, vector<int> > > > offset_map;
+    for (auto c : calls) {
+      //cout << tab(1) << c->name << endl;
+      string window_name = c.first;
+      vector<QAV> strides{qconst(1), qconst(1)};
+      vector<vector<int> > offsets;
+      for (auto off : c.second) {
+        vector<int> offset;
+        for (auto arg : off->args) {
+          assert(arg->is_int_const());
+          offset.push_back(((IntConst*) arg)->int_value());
+        }
+        offsets.push_back(offset);
+        offset_map[window_name].push_back({off, offset});
+      }
+
+      vector<pair<FunctionCall*, vector<int> > > offset_vec = offset_map[window_name];
+      sort_lt(offset_vec,
+          [](const pair<FunctionCall*, vector<int> >& a) {
+          return a.second;
+          });
+
+      offset_map[window_name] = offset_vec;
+      Window w{window_name, strides, offsets};
+      // Normalize positions of each offset
+      windows.push_back(w);
+    }
+
+    cout << "Windows..." << endl;
+    for (auto w : windows) {
+      cout << tab(1) << w << endl;
+    }
+
+    // Now what?
+    //  - Create windows from each call...?
+    
+    add_func(name,
+        compute_name,
+        2,
+        windows);
+
+    app_dag[name].updates.back().compute_unit_impl =
+      compute_unit_string(compute_name, windows, def, offset_map);
     return name;
   }
 
@@ -3651,6 +3896,15 @@ struct App {
     cfile << "#pragma once" << endl << endl;
     cfile << "#include \"conv_3x3.h\"" << endl << endl;
 
+    cfile << "// Generated compute units..." << endl;
+    for (auto u : sort_updates()) {
+      if (get_update(u).compute_unit_impl != "") {
+        cfile << get_update(u).compute_unit_impl << endl << endl;
+      }
+    }
+    cfile << endl << endl;
+
+    cfile << "// Compute unit banks..." << endl;
     set<string> already_seen;
     for (auto f : sort_functions()) {
       if (producers(f).size() == 0) {
@@ -4722,6 +4976,28 @@ App jacobi3d(const std::string output_name) {
   return jac;
 }
 
+Expr* v(const std::string& name,
+    const int a,
+    const int b) {
+
+  auto astr = str(a);
+  auto bstr = str(b);
+  return new FunctionCall(name, {new IntConst(astr),
+      new IntConst(bstr)});
+}
+
+Expr* v(const std::string& name) {
+  return v(name, 0, 0);
+}
+
+Expr* add(Expr* const a, Expr* const b) {
+  return new Binop("+", a, b);
+}
+
+Expr* sub(Expr* const a, Expr* const b) {
+  return new Binop("-", a, b);
+}
+
 App denoise2d(const std::string& name) {
   App dn;
 
@@ -4730,10 +5006,8 @@ App denoise2d(const std::string& name) {
   dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
   dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
 
-  dn.func2d("diff_qwe", "diff_qwe2d", "u", {
-      {0, -1},
-      {0, 0}
-      });
+  Expr* diff = sub(v("u", 0, -1), v("u", 0, 0));
+  dn.func2d("diff_qwe", diff);
   dn.func2d("diff_d", "diff_d2d", "u", {{0, 0}, {0, 1}});
   dn.func2d("diff_l", "diff_l2d", "u", {
       {-1, 0},
@@ -5080,7 +5354,7 @@ void sum_diffs_test() {
   dn.func2d("diff_l", "fadd", "u", {{0, 0}, {-1, 0}});
   dn.func2d("diff_r", "fadd", "u", {{0, 0}, {1, 0}});
 
-  dn.func2d("magval", "mag_dn2", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
+  dn.func2d("magval", "fmag2d", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
   dn.func2d(out_name, "fadd2", {pt("magval"), pt("f")});
 
   int size = 30;
@@ -5095,7 +5369,33 @@ void sum_diffs_test() {
       run_regression_tb(out_name + "_opt");
 
   move_to_benchmarks_folder(out_name);
-  assert(false);
+  //assert(false);
+}
+
+void one_input_mag_test() {
+  App dn;
+  string out_name = "one_input_mag";
+  dn.func2d("u_off_chip");
+  dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
+  dn.func2d("diff_u", sub(v("u", 0, 0), v("u", 0, -1)));
+  dn.func2d("diff_d", sub(v("u", 0, 0), v("u", 0, 1)));
+  dn.func2d("diff_l", sub(v("u", 0, 0), v("u", -1, 0)));
+  dn.func2d("diff_r", sub(v("u", 0, 0), v("u", 1, 0)));
+
+  dn.func2d(out_name, add(add(v("diff_u"), v("diff_d")), add(v("diff_l"), v("diff_r"))));
+
+  int size = 30;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = false;
+  options.debug_options.expect_all_linebuffers = true;
+  dn.realize(options, out_name, size, size);
+    std::vector<std::string> optimized =
+      run_regression_tb(out_name + "_opt");
+
+  move_to_benchmarks_folder(out_name);
 }
 
 void sum_float_test() {
@@ -5119,7 +5419,7 @@ void sum_float_test() {
       run_regression_tb(out_name + "_opt");
 
   move_to_benchmarks_folder(out_name);
-  assert(false);
+  //assert(false);
 }
 
 void sum_denoise_test() {
@@ -5136,7 +5436,7 @@ void sum_denoise_test() {
       run_regression_tb("sum_denoise2d_opt");
 
   move_to_benchmarks_folder("sum_denoise2d");
-  assert(false);
+  //assert(false);
 }
 
 void denoise2d_test() {
@@ -5751,7 +6051,7 @@ void playground() {
     }
     cout << endl;
   }
-  assert(false);
+  //assert(false);
 
   //cout << "Program code without optimization..." << endl;
   //prg.unoptimized_codegen();
@@ -5860,9 +6160,12 @@ void playground() {
 }
 
 void application_tests() {
+  //parse_denoise3d_test();
 
-  sum_diffs_test();
+  one_input_mag_test();
   assert(false);
+  sum_diffs_test();
+  //assert(false);
   sum_float_test();
   sum_denoise_test();
   denoise2d_test();
@@ -5944,7 +6247,6 @@ void application_tests() {
   //conv_app_rolled_reduce_test();
   //reduce_1d_test();
 
-  //parse_denoise3d_test();
 
   //up_stencil_down_unrolled_test();
   //laplacian_pyramid_app_test();

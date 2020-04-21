@@ -4,10 +4,17 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 hw_uint<128>  id_unrolled_4(hw_uint<128>& t1_arg) {
   hw_uint<128> whole_result;
 =======
 =======
+=======
+// Generated compute units...
+
+
+// Compute unit banks...
+>>>>>>> origin/master
   // t1_update_0 unroll factor: 1
 >>>>>>> origin/master
 hw_uint<32>  id_unrolled_1(hw_uint<32>& t1_arg) {
