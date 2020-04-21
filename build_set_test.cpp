@@ -1943,6 +1943,7 @@ struct Expr {
   vector<Token> tokens;
 
   virtual bool is_function_call() const { return false; }
+  virtual bool is_binop() const { return false; }
   virtual bool is_int_const() const { return false; }
   virtual set<Expr*> children() const { return {}; }
 };
@@ -1983,6 +1984,8 @@ struct Binop : public Expr {
 
   Binop(const string& op_, Expr* l_, Expr* r_) :
     op(op_), l(l_), r(r_) {}
+
+  virtual bool is_binop() const { return true; }
 
   virtual set<Expr*> children() const { return {l, r}; }
 }; 
@@ -2638,6 +2641,32 @@ void visit_function_calls(Expr* e, F f) {
   }
 }
 
+string compute_string(Expr* def, map<string, vector<pair<FunctionCall*, vector<int> > > >& offset_map) {
+  if (def->is_int_const()) {
+    return ((IntConst*)def)->val;
+  } else if (def->is_binop()) {
+    auto op = (Binop*) def;
+    return compute_string(op->l, offset_map) + op->op + compute_string(op->r, offset_map);
+  } else {
+    assert(def->is_function_call());
+    auto call = (FunctionCall*) def;
+    assert(contains_key(call->name, offset_map));
+    int oned_offset = 12;
+    return call->name + ".get<32, " + str(oned_offset) + ">()";
+  }
+
+  assert(false);
+  return "ERROR NO COMPUTE FOR EXPRESSION";
+}
+
+string compute_unit_string(const string& name, vector<Window>& windows, Expr* def, map<string, vector<pair<FunctionCall*, vector<int> > > >& offset_map) {
+  vector<string> args;
+  for (auto w : windows) {
+    args.push_back("hw_uint<32*" + str(w.offsets.size()) + "> " + w.name);
+  }
+  return "hw_uint<32> " + name + sep_list(args, "(", ")", ", ") + "{ return " + compute_string(def, offset_map) + "; }";
+}
+
 struct App {
 
   isl_ctx* ctx;
@@ -2734,6 +2763,7 @@ struct App {
         });
 
     vector<Window> windows;
+    map<string, vector<pair<FunctionCall*, vector<int> > > > offset_map;
     for (auto c : calls) {
       //cout << tab(1) << c->name << endl;
       string window_name = c.first;
@@ -2746,6 +2776,7 @@ struct App {
           offset.push_back(((IntConst*) arg)->int_value());
         }
         offsets.push_back(offset);
+        offset_map[window_name].push_back({off, offset});
       }
       Window w{window_name, strides, offsets};
       // Normalize positions of each offset
@@ -2766,7 +2797,7 @@ struct App {
         windows);
 
     app_dag[name].updates.back().compute_unit_impl =
-      "<ERROR ADD COMPUTE UNIT HERE>";
+      compute_unit_string(compute_name, windows, def, offset_map);
     return name;
   }
 
