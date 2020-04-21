@@ -2641,7 +2641,16 @@ void visit_function_calls(Expr* e, F f) {
   }
 }
 
-string compute_string(Expr* def, map<string, vector<pair<FunctionCall*, vector<int> > > >& offset_map) {
+vector<int> get_offset(FunctionCall* off) {
+  vector<int> offset;
+  for (auto arg : off->args) {
+    assert(arg->is_int_const());
+    offset.push_back(((IntConst*) arg)->int_value());
+  }
+  return offset;
+}
+
+string compute_string(Expr* def, map<string, vector<vector<int> > >& offset_map) {
   if (def->is_int_const()) {
     return ((IntConst*)def)->val;
   } else if (def->is_binop()) {
@@ -2652,10 +2661,11 @@ string compute_string(Expr* def, map<string, vector<pair<FunctionCall*, vector<i
     auto call = (FunctionCall*) def;
     assert(contains_key(call->name, offset_map));
 
+    auto offsets = get_offset(call);
     int offset = 0;
     bool found_offset = false;
     for (auto off : offset_map[call->name]) {
-      if (off.first == call) {
+      if (off == offsets) {
         found_offset = true;
         break;
       }
@@ -2669,16 +2679,10 @@ string compute_string(Expr* def, map<string, vector<pair<FunctionCall*, vector<i
   return "ERROR NO COMPUTE FOR EXPRESSION";
 }
 
-vector<int> get_offset(FunctionCall* off) {
-  vector<int> offset;
-  for (auto arg : off->args) {
-    assert(arg->is_int_const());
-    offset.push_back(((IntConst*) arg)->int_value());
-  }
-  return offset;
-}
-
-string compute_unit_string(const string& name, vector<Window>& windows, Expr* def, map<string, vector<pair<FunctionCall*, vector<int> > > >& offset_map) {
+string compute_unit_string(const string& name,
+    vector<Window>& windows,
+    Expr* def,
+    map<string, vector<vector<int> > >& offset_map) {
   vector<string> args;
   for (auto w : windows) {
     args.push_back("hw_uint<32*" + str(w.offsets.size()) + "> " + w.name);
@@ -2687,7 +2691,6 @@ string compute_unit_string(const string& name, vector<Window>& windows, Expr* de
 }
 
 struct App {
-
   isl_ctx* ctx;
   map<string, Result> app_dag;
   map<string, Box> domain_boxes;
@@ -2782,7 +2785,7 @@ struct App {
         });
 
     vector<Window> windows;
-    map<string, vector<pair<FunctionCall*, vector<int> > > > offset_map;
+    map<string, vector<vector<int> > > offset_map;
     for (auto c : calls) {
       string window_name = c.first;
       vector<QAV> strides{qconst(1), qconst(1)};
@@ -2790,17 +2793,18 @@ struct App {
       for (auto off : c.second) {
         vector<int> offset = get_offset(off);
         offsets.insert(offset);
-        offset_map[window_name].push_back({off, offset});
+        //offset_map[window_name].push_back({off, offset});
       }
 
-      vector<pair<FunctionCall*, vector<int> > > offset_vec = offset_map[window_name];
-      sort_lt(offset_vec,
-          [](const pair<FunctionCall*, vector<int> >& a) {
-          return a.second;
-          });
+      //vector<pair<FunctionCall*, vector<int> > > offset_vec = offset_map[window_name];
+      //sort_lt(offset_vec,
+          //[](const pair<FunctionCall*, vector<int> >& a) {
+          //return a.second;
+          //});
 
-      offset_map[window_name] = offset_vec;
-      Window w{window_name, strides, vector<vector<int> >(begin(offsets), end(offsets))};
+      vector<vector<int> > offsets_vec(begin(offsets), end(offsets));
+      offset_map[window_name] = offsets_vec;
+      Window w{window_name, strides, offsets_vec};
       // Normalize positions of each offset
       windows.push_back(w);
     }
