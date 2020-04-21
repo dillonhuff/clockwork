@@ -12,9 +12,9 @@
 using namespace std;
 
 // In : f_off_chip dimensions...
-  // { f_off_chip[i0, i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
-  // Min: { f_off_chip[0, 0] }
-  // Max: { f_off_chip[29, 29] }
+  // { f_off_chip[i0, i1] : -1 <= i0 <= 30 and -1 <= i1 <= 30 }
+  // Min: { f_off_chip[-1, -1] }
+  // Max: { f_off_chip[30, 30] }
 // Out: two_input_mag dimensions...
   // { two_input_mag[i0, i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
   // Min: { two_input_mag[0, 0] }

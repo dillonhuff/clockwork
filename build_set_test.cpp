@@ -4998,6 +4998,15 @@ Expr* sub(Expr* const a, Expr* const b) {
   return new Binop("-", a, b);
 }
 
+Expr* add(vector<Expr*> args) {
+  assert(args.size() > 1);
+  Expr* res = args.at(0);
+  for (int i = 1; i < args.size(); i++) {
+    res = new Binop("+", res, args.at(i));
+  }
+  return res;
+}
+
 App denoise2d(const std::string& name) {
   App dn;
 
@@ -5388,7 +5397,12 @@ void two_input_mag_test() {
   dn.func2d("diff_r", sub(v("u", 0, 0), v("u", 1, 0)));
 
   dn.func2d("diff_sums", add(add(v("diff_u"), v("diff_d")), add(v("diff_l"), v("diff_r"))));
-  dn.func2d(out_name, add(v("diff_sums"), v("f")));
+  dn.func2d(out_name,
+      add({v("diff_sums"), v("f"),
+        v("f", -1, 0),
+        v("f", 1, 0),
+        v("f", 0, -1),
+        v("f", 0, 1)}));
 
   int size = 30;
 
