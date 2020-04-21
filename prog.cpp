@@ -408,7 +408,7 @@ void generate_tb_compare_scripts(prog& prg) {
   of << "cd .." << endl;
 
   of << "cd our_code" << endl;
-  of << "./run_tb_${app_name}_opt.sh || { echo 'our compilation failed'; exit 1; }" << endl;
+  of << "./run_tb_${app_name}.sh || { echo 'our compilation failed'; exit 1; }" << endl;
   of << "cd .." << endl;
 
   of << "cd ../../" << endl;
