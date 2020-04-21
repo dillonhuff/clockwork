@@ -2757,7 +2757,7 @@ struct App {
     }
     // Now what?
     //  - Create windows from each call...?
-    assert(false);
+    //assert(false);
     add_func(name,
         compute_name,
         2,
