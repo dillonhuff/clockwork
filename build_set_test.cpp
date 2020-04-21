@@ -2789,11 +2789,6 @@ struct App {
       set<vector<int> > offsets;
       for (auto off : c.second) {
         vector<int> offset = get_offset(off);
-        //vector<int> offset;
-        //for (auto arg : off->args) {
-          //assert(arg->is_int_const());
-          //offset.push_back(((IntConst*) arg)->int_value());
-        //}
         offsets.insert(offset);
         offset_map[window_name].push_back({off, offset});
       }
