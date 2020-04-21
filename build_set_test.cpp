@@ -2669,6 +2669,15 @@ string compute_string(Expr* def, map<string, vector<pair<FunctionCall*, vector<i
   return "ERROR NO COMPUTE FOR EXPRESSION";
 }
 
+vector<int> get_offset(FunctionCall* off) {
+  vector<int> offset;
+  for (auto arg : off->args) {
+    assert(arg->is_int_const());
+    offset.push_back(((IntConst*) arg)->int_value());
+  }
+  return offset;
+}
+
 string compute_unit_string(const string& name, vector<Window>& windows, Expr* def, map<string, vector<pair<FunctionCall*, vector<int> > > >& offset_map) {
   vector<string> args;
   for (auto w : windows) {
@@ -2775,17 +2784,17 @@ struct App {
     vector<Window> windows;
     map<string, vector<pair<FunctionCall*, vector<int> > > > offset_map;
     for (auto c : calls) {
-      //cout << tab(1) << c->name << endl;
       string window_name = c.first;
       vector<QAV> strides{qconst(1), qconst(1)};
-      vector<vector<int> > offsets;
+      set<vector<int> > offsets;
       for (auto off : c.second) {
-        vector<int> offset;
-        for (auto arg : off->args) {
-          assert(arg->is_int_const());
-          offset.push_back(((IntConst*) arg)->int_value());
-        }
-        offsets.push_back(offset);
+        vector<int> offset = get_offset(off);
+        //vector<int> offset;
+        //for (auto arg : off->args) {
+          //assert(arg->is_int_const());
+          //offset.push_back(((IntConst*) arg)->int_value());
+        //}
+        offsets.insert(offset);
         offset_map[window_name].push_back({off, offset});
       }
 
@@ -2796,7 +2805,7 @@ struct App {
           });
 
       offset_map[window_name] = offset_vec;
-      Window w{window_name, strides, offsets};
+      Window w{window_name, strides, vector<vector<int> >(begin(offsets), end(offsets))};
       // Normalize positions of each offset
       windows.push_back(w);
     }
@@ -5381,6 +5390,48 @@ void sum_diffs_test() {
   //assert(false);
 }
 
+void two_input_denoise_pipeline_test() {
+  App dn;
+  string out_name = "two_input_denoise_pipeline";
+
+  dn.func2d("u_off_chip");
+  dn.func2d("f_off_chip");
+
+  dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
+  dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
+
+  dn.func2d("diff_u", sub(v("u", 0, 0), v("u", 0, -1)));
+  dn.func2d("diff_d", sub(v("u", 0, 0), v("u", 0, 1)));
+  dn.func2d("diff_l", sub(v("u", 0, 0), v("u", -1, 0)));
+  dn.func2d("diff_r", sub(v("u", 0, 0), v("u", 1, 0)));
+
+  dn.func2d("diff_sums", add(add(v("diff_u"), v("diff_d")), add(v("diff_l"), v("diff_r"))));
+  dn.func2d("g",
+      add({v("diff_sums"), v("f"),
+        v("f", -1, 0),
+        v("f", 1, 0),
+        v("f", 0, -1),
+        v("f", 0, 1)}));
+
+  dn.func2d("r0", add(v("u"), v("f")));
+  dn.func2d("r1", add(v("r0"), v("r0")));
+  dn.func2d(out_name, add({v("u"), v("g"), v("f"), v("r1")}));
+
+  int size = 30;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = false;
+  options.debug_options.expect_all_linebuffers = true;
+  dn.realize(options, out_name, size, size);
+    std::vector<std::string> optimized =
+      run_regression_tb(out_name + "_opt");
+
+  move_to_benchmarks_folder(out_name);
+
+}
+
 void two_input_mag_test() {
   App dn;
   string out_name = "two_input_mag";
@@ -6208,6 +6259,8 @@ void playground() {
 void application_tests() {
   //parse_denoise3d_test();
 
+  two_input_denoise_pipeline_test();
+  assert(false);
   two_input_mag_test();
   //assert(false);
   one_input_mag_test();
