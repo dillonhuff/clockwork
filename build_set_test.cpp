@@ -1943,6 +1943,7 @@ struct Expr {
   vector<Token> tokens;
 
   virtual bool is_function_call() const { return false; }
+  virtual bool is_int_const() const { return false; }
   virtual set<Expr*> children() const { return {}; }
 };
 
@@ -1953,11 +1954,14 @@ struct FloatConst : public Expr {
 };
 
 struct IntConst : public Expr {
-  bool neg;
   string val;
 
-  IntConst(std::string& val_) : neg(false), val(val_) {}
-  IntConst() : neg(false), val("") {}
+  IntConst(std::string& val_) : val(val_) {}
+  IntConst() : val("") {}
+
+  virtual bool is_int_const() const { return true; }
+
+  int int_value() const { return safe_stoi(val); }
 
 };
 
@@ -2720,20 +2724,40 @@ struct App {
 
     string compute_name = name + "_generated_compute";
 
-    vector<FunctionCall*> calls;
+    map<string, vector<FunctionCall*> > calls;
     visit_function_calls(def, [this, &calls](FunctionCall* c) {
         if (contains_key(c->name, app_dag)) {
-        calls.push_back(c);
+        calls[c->name].push_back(c);
         }
         });
 
     cout << "Function calls..." << endl;
+
+    vector<Window> windows;
     for (auto c : calls) {
-      cout << tab(1) << c->name << endl;
+      //cout << tab(1) << c->name << endl;
+      string window_name = c.first;
+      vector<QAV> strides{qconst(1), qconst(1)};
+      vector<vector<int> > offsets;
+      for (auto off : c.second) {
+        vector<int> offset;
+        for (auto arg : off->args) {
+          assert(arg->is_int_const());
+          offset.push_back(((IntConst*) arg)->int_value());
+        }
+        offsets.push_back(offset);
+      }
+      Window w{window_name, strides, offsets};
+      windows.push_back(w);
     }
 
+    cout << "Windows..." << endl;
+    for (auto w : windows) {
+      cout << tab(1) << w.unroll_cpy(1) << endl;
+    }
+    // Now what?
+    //  - Create windows from each call...?
     assert(false);
-    vector<Window> windows;
     add_func(name,
         compute_name,
         2,
