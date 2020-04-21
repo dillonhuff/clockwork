@@ -383,6 +383,15 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
 }
 
 void generate_tb_compare_scripts(prog& prg) {
+
+  {
+    ofstream of("run_tb.sh");
+    of << "../../common/gen_app.sh" << endl;
+    of << "g++ -std=c++0x tb_${app}.cpp ${app}_kernel.cpp -I ../../../ -I /cad/xilinx/vivado/2017.2/Vivado_HLS/2017.2/include/ || { echo 'compilation failed'; exit 1; }" << endl;
+    of << "./a.out" << endl;
+    of.close();
+  }
+  
   ofstream of("compare_regressions.sh");
   of << "app_name=" << prg.name << endl;
 
