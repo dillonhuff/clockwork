@@ -13,7 +13,7 @@ hw_uint<32> diff_u_generated_compute(hw_uint<32*2> u){ return u.get<32, 1>()-u.g
 
 hw_uint<32> diff_sums_generated_compute(hw_uint<32*1> diff_d, hw_uint<32*1> diff_l, hw_uint<32*1> diff_r, hw_uint<32*1> diff_u){ return diff_u.get<32, 0>()+diff_d.get<32, 0>()+diff_l.get<32, 0>()+diff_r.get<32, 0>(); }
 
-hw_uint<32> two_input_mag_generated_compute(hw_uint<32*1> diff_sums, hw_uint<32*1> f){ return diff_sums.get<32, 0>()+f.get<32, 0>(); }
+hw_uint<32> two_input_mag_generated_compute(hw_uint<32*1> diff_sums, hw_uint<32*5> f){ return diff_sums.get<32, 0>()+f.get<32, 2>()+f.get<32, 0>()+f.get<32, 4>()+f.get<32, 1>()+f.get<32, 3>(); }
 
 
 
@@ -102,14 +102,22 @@ hw_uint<32>  diff_sums_generated_compute_unrolled_1(hw_uint<32>& diff_d, hw_uint
 }
 
   // two_input_mag_update_0 unroll factor: 1
-hw_uint<32>  two_input_mag_generated_compute_unrolled_1(hw_uint<32>& diff_sums, hw_uint<32>& f) {
+hw_uint<32>  two_input_mag_generated_compute_unrolled_1(hw_uint<32>& diff_sums, hw_uint<160>& f) {
   hw_uint<32> whole_result;
   hw_uint<32> lane_0_diff_sums;
   // Need offset: 0, 0
   set_at<0, 32>(lane_0_diff_sums, diff_sums.extract<0, 31>());
-  hw_uint<32> lane_0_f;
+  hw_uint<160> lane_0_f;
+  // Need offset: -1, 0
+  set_at<0, 160>(lane_0_f, f.extract<0, 31>());
+  // Need offset: 0, -1
+  set_at<32, 160>(lane_0_f, f.extract<32, 63>());
   // Need offset: 0, 0
-  set_at<0, 32>(lane_0_f, f.extract<0, 31>());
+  set_at<64, 160>(lane_0_f, f.extract<64, 95>());
+  // Need offset: 0, 1
+  set_at<96, 160>(lane_0_f, f.extract<96, 127>());
+  // Need offset: 1, 0
+  set_at<128, 160>(lane_0_f, f.extract<128, 159>());
   auto result_0 = two_input_mag_generated_compute(lane_0_diff_sums, lane_0_f);
   set_at<0, 32>(whole_result, result_0);
   return whole_result;
