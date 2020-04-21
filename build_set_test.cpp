@@ -2698,6 +2698,9 @@ struct App {
 
     Result res;
     for (auto w : windows) {
+      if (!contains_key(w.name, app_dag)) {
+        cout << "Error: App dag already contains: " << w.name << endl;
+      }
       assert(contains_key(w.name, app_dag));
       w.needed = build_needed(name, w);
       res.srcs.push_back(w);
@@ -2719,7 +2722,6 @@ struct App {
   }
 
   string func2d(const std::string& name, Expr* def) {
-    cout << "Creating function " << name << endl;
     Result res;
 
     string compute_name = name + "_generated_compute";
@@ -2730,8 +2732,6 @@ struct App {
         calls[c->name].push_back(c);
         }
         });
-
-    cout << "Function calls..." << endl;
 
     vector<Window> windows;
     for (auto c : calls) {
@@ -2748,16 +2748,18 @@ struct App {
         offsets.push_back(offset);
       }
       Window w{window_name, strides, offsets};
+      // Normalize positions of each offset
       windows.push_back(w);
     }
 
     cout << "Windows..." << endl;
     for (auto w : windows) {
-      cout << tab(1) << w.unroll_cpy(1) << endl;
+      cout << tab(1) << w << endl;
     }
+
     // Now what?
     //  - Create windows from each call...?
-    //assert(false);
+    
     add_func(name,
         compute_name,
         2,
@@ -3845,6 +3847,15 @@ struct App {
     cfile << "#pragma once" << endl << endl;
     cfile << "#include \"conv_3x3.h\"" << endl << endl;
 
+    cfile << "// Generated compute units..." << endl;
+    for (auto u : sort_updates()) {
+      if (get_update(u).compute_unit_impl != "") {
+        cfile << get_update(u).compute_unit_impl << endl << endl;
+      }
+    }
+    cfile << endl << endl;
+
+    cfile << "// Compute unit banks..." << endl;
     set<string> already_seen;
     for (auto f : sort_functions()) {
       if (producers(f).size() == 0) {
