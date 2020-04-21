@@ -2254,101 +2254,190 @@ Expr* evaluate(deque<Token>& output) {
   assert(false);
 }
 
+#define FINISH(arg) if ((arg) != nullptr) { return arg; }
+
+#define CONSUME(token, toks, pos) if (!done(toks, pos) && peek(toks, pos).txt == (token)) { next(toks, pos); } else { return nullptr; }
+
+bool comma_token(vector<Token>& orig_tokens, size_t& pos) {
+  if (!done(orig_tokens, pos) && peek(orig_tokens, pos).txt == ",") {
+    next(orig_tokens, pos);
+    return true;
+  }
+  return false;
+}
+
+template<typename Sep, typename E>
+vector<Expr*> sep_list(Sep s, E e, vector<Token>& orig_tokens, size_t& pos) {
+  vector<Expr*> es;
+  do {
+    es.push_back(e(orig_tokens, pos));
+    cout << "tokens: " << comma_list(orig_tokens) << endl;
+  } while (s(orig_tokens, pos));
+
+  return es;
+}
+
+template<typename F>
+Expr* try_parse(F f, vector<Token>& orig_tokens, size_t& pos) {
+  auto old = pos;
+  auto res = f(orig_tokens, pos);
+  if (res == nullptr) {
+    pos = old;
+  }
+  return res;
+}
+
+Expr* parse_paren_expr(vector<Token>& orig_tokens, size_t& pos);
+
+Expr* parse_expression(vector<Token>& orig_tokens, size_t& pos);
+Expr* parse_operator_expr(vector<Token>& orig_tokens, size_t& pos) {
+  return nullptr;
+}
+
+Expr* parse_base_expr(vector<Token>& orig_tokens, size_t& pos) {
+  cout << "Parsing base expr: " << comma_list(orig_tokens) << endl;
+  if (!done(orig_tokens, pos) && is_function_call(peek(orig_tokens, pos))) {
+    cout << tab(1) << "Next token is funcall" << endl;
+    auto name = next(orig_tokens, pos);
+    CONSUME("(", orig_tokens, pos);
+    vector<Expr*> args =
+      sep_list(comma_token, parse_expression, orig_tokens, pos);
+    CONSUME(")", orig_tokens, pos);
+    return new FunctionCall(name.txt, args);
+  }
+
+  cout << "Got base expr" << endl;
+
+  if (is_int(peek(orig_tokens, pos))) {
+    string val = next(orig_tokens, pos).txt;
+    return new IntConst(val);
+  }
+
+  return nullptr;
+}
+
+Expr* parse_expression(vector<Token>& orig_tokens, size_t& pos) {
+  auto paren = try_parse(parse_paren_expr, orig_tokens, pos);
+
+  FINISH(paren);
+  
+  auto op = try_parse(parse_operator_expr, orig_tokens, pos);
+
+  FINISH(op);
+    
+  auto basic = try_parse(parse_base_expr, orig_tokens, pos);
+
+  FINISH(basic);
+
+  return nullptr;
+}
+
+Expr* parse_paren_expr(vector<Token>& orig_tokens, size_t& pos) {
+  CONSUME("(", orig_tokens, pos);
+  auto res = try_parse(parse_expression, orig_tokens, pos);
+  CONSUME(")", orig_tokens, pos);
+
+  cout << "Got paren expr: " << comma_list(orig_tokens) << endl;
+  return res;
+}
+
 Expr* parse_expr(vector<Token>& orig_tokens, size_t& pos) {
-  deque<Token> tokens;
+  vector<Token> tokens;
   while (!done(orig_tokens, pos) && expr_start(peek(orig_tokens, pos))) {
     tokens.push_back(next(orig_tokens, pos));
   }
 
+  cout << "Parsing expr: " << comma_list(tokens) << endl;
 
+  return parse_expression(tokens, pos);
 
-  deque<Token> op_stack;
-  deque<Token> output;
-  while (tokens.size() > 0) {
-    Token t = tokens.front();
-    tokens.pop_front();
+  //deque<Token> op_stack;
+  //deque<Token> output;
+  //while (tokens.size() > 0) {
+    //Token t = tokens.front();
+    //tokens.pop_front();
 
-    cout << "T = " << t << endl;
-    if (is_float(t)) {
-      cout << tab(1) << " is float" << endl;
-      output.push_back(t);
-    } else if (is_int(t)) {
-      cout << tab(1) << " is number" << endl;
-      output.push_back(t);
-    } else if (is_function_call(t)) {
-      cout << tab(1) << " is function call" << endl;
-      op_stack.push_back(t);
-    } else if (is_function_separator(t)) {
-      cout << tab(1) << " is function separator" << endl;
-      while (op_stack.back().txt != "(") {
-        output.push_back(op_stack.back());
-        op_stack.pop_back();
-      }
-    } else if (is_operator(t)) {
-      cout << tab(1) << " is function operator" << endl;
-      if (!is_unary(t)) {
-        // Pop higher precedence operators off the stack
-        while (op_stack.size() > 0 &&
-            is_operator(op_stack.back()) &&
-            is_higher_prec(op_stack.back(), t)) {
-          output.push_back(op_stack.back());
-          op_stack.pop_back();
-        }
-      } else {
-        // Pop higher precedence operators off the stack
-        while (op_stack.size() > 0 &&
-            is_operator(op_stack.back()) &&
-            is_unary(op_stack.back()) &&
-            is_higher_prec(op_stack.back(), t)) {
-          output.push_back(op_stack.back());
-          op_stack.pop_back();
-        }
-      }
-      op_stack.push_back(t);
-    } else if (t.txt == "(") {
-      op_stack.push_back(t);
-    } else if (t.txt == ")") {
-      cout << "Popping off lparen" << endl;
-      cout << "Current stack..." << endl;
-      for (auto elem : op_stack) {
-        cout << tab(1) << elem << endl;
-      }
-      while (op_stack.size() > 0 && op_stack.back().txt != "(") {
-        output.push_back(op_stack.back());
-        op_stack.pop_back();
-      }
+    //cout << "T = " << t << endl;
+    //if (is_float(t)) {
+      //cout << tab(1) << " is float" << endl;
+      //output.push_back(t);
+    //} else if (is_int(t)) {
+      //cout << tab(1) << " is number" << endl;
+      //output.push_back(t);
+    //} else if (is_function_call(t)) {
+      //cout << tab(1) << " is function call" << endl;
+      //op_stack.push_back(t);
+    //} else if (is_function_separator(t)) {
+      //cout << tab(1) << " is function separator" << endl;
+      //while (op_stack.back().txt != "(") {
+        //output.push_back(op_stack.back());
+        //op_stack.pop_back();
+      //}
+    //} else if (is_operator(t)) {
+      //cout << tab(1) << " is function operator" << endl;
+      //if (!is_unary(t)) {
+        //// Pop higher precedence operators off the stack
+        //while (op_stack.size() > 0 &&
+            //is_operator(op_stack.back()) &&
+            //is_higher_prec(op_stack.back(), t)) {
+          //output.push_back(op_stack.back());
+          //op_stack.pop_back();
+        //}
+      //} else {
+        //// Pop higher precedence operators off the stack
+        //while (op_stack.size() > 0 &&
+            //is_operator(op_stack.back()) &&
+            //is_unary(op_stack.back()) &&
+            //is_higher_prec(op_stack.back(), t)) {
+          //output.push_back(op_stack.back());
+          //op_stack.pop_back();
+        //}
+      //}
+      //op_stack.push_back(t);
+    //} else if (t.txt == "(") {
+      //op_stack.push_back(t);
+    //} else if (t.txt == ")") {
+      //cout << "Popping off lparen" << endl;
+      //cout << "Current stack..." << endl;
+      //for (auto elem : op_stack) {
+        //cout << tab(1) << elem << endl;
+      //}
+      //while (op_stack.size() > 0 && op_stack.back().txt != "(") {
+        //output.push_back(op_stack.back());
+        //op_stack.pop_back();
+      //}
 
-      assert((op_stack.size() > 0));
-      assert((op_stack.back().txt == "("));
+      //assert((op_stack.size() > 0));
+      //assert((op_stack.back().txt == "("));
 
-      op_stack.pop_back();
-    } else {
-      cout << "Error: Unsupported token: " << t << ", len: " << t.txt.size() << endl;
-      assert(false);
-    }
-  }
+      //op_stack.pop_back();
+    //} else {
+      //cout << "Error: Unsupported token: " << t << ", len: " << t.txt.size() << endl;
+      //assert(false);
+    //}
+  //}
 
-  while (op_stack.size() > 0) {
-    auto next = op_stack.back();
-    op_stack.pop_back();
+  //while (op_stack.size() > 0) {
+    //auto next = op_stack.back();
+    //op_stack.pop_back();
 
-    assert(next.txt != ")");
-    assert(next.txt != "(");
+    //assert(next.txt != ")");
+    //assert(next.txt != "(");
 
-    output.push_back(next);
-  }
-  assert(op_stack.size() == 0);
+    //output.push_back(next);
+  //}
+  //assert(op_stack.size() == 0);
 
-  cout << "Output..." << endl;
-  for (auto out : output) {
-    cout << out << " ";
-  }
-  cout << endl;
+  //cout << "Output..." << endl;
+  //for (auto out : output) {
+    //cout << out << " ";
+  //}
+  //cout << endl;
 
-  assert(output.size() > 0);
+  //assert(output.size() > 0);
 
-  Expr* e = evaluate(output);
-  return e;
+  //Expr* e = evaluate(output);
+  //return e;
 }
 
 Expr* parse_expr(const std::string& input) {
@@ -2404,6 +2493,7 @@ StencilProgram parse_soda_program(istream& in) {
 
       consume(tokens, pos, "=");
       Expr* e = parse_expr(tokens, pos);
+      assert(e != nullptr);
       cout << "After expr: " <<
         endl;
       for (size_t i = pos; i < tokens.size(); i++) {
@@ -5894,7 +5984,7 @@ void playground() {
 }
 
 void application_tests() {
-  parse_denoise3d_test();
+  //parse_denoise3d_test();
 
   sum_diffs_test();
   //assert(false);
