@@ -385,6 +385,10 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
 void generate_tb_compare_scripts(prog& prg) {
   {
     ofstream of("tb_soda_" + prg.name + ".cpp");
+
+    of << "int main() {" << endl;
+    of << "}" << endl;
+
     of.close();
   }
 
