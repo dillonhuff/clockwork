@@ -1,4 +1,4 @@
-app_name=two_input_mag_opt
+app_name=two_input_mag
 cd soda_code
 ./run_tb.sh || { echo 'soda compilation failed'; exit 1; }
 cd ..
