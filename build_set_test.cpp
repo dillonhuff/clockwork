@@ -4716,6 +4716,20 @@ App sobel_mag_y() {
   return sobel;
 }
 
+App sobel16_stage_x(const std::string output_name) {
+  App sobel;
+  sobel.set_default_pixel_width(16);
+  sobel.func2d("off_chip_img");
+  sobel.func2d("img", v("off_chip_img"));
+  sobel.func2d(output_name, 
+      add(sub(v("img", 1, -1), v("img", -1, -1)),
+        mul(sub(v("img", 1, 0), v("img", -1, 0)), 3),
+        sub(v("img", 1, 1), v("img", -1, 1))));
+
+
+  return sobel;
+}
+
 App sobel16(const std::string output_name) {
   App sobel;
   sobel.set_default_pixel_width(16);
@@ -5039,6 +5053,24 @@ void sobel_mag_x_test() {
   system(("mv " + out_name + "*.h " + synth_dir).c_str());
   system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
   system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
+}
+
+void sobel_16_stage_x_app_test() {
+  int cols = 30;
+  int rows = 30;
+ 
+  for (int i = 0; i < 1; i++) {
+    int unroll_factor = pow(2, i);
+    cout << tab(1) << "unroll factor: " << unroll_factor << endl;
+    string out_name = "sobel_16_stage_x_unrolled_" + str(unroll_factor);
+    sobel16(out_name).realize(out_name, cols, rows, unroll_factor);
+    
+    std::vector<std::string> optimized =
+      run_regression_tb(out_name + "_opt");
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+
 }
 
 void sobel_16_app_test() {
@@ -6070,9 +6102,10 @@ void playground() {
 void application_tests() {
   //parse_denoise3d_test();
 
-  sobel_16_app_test();
+  sobel_16_stage_x_app_test();
   assert(false);
 
+  sobel_16_app_test();
   up_stencil_down_test();
 
   up_stencil_test();
