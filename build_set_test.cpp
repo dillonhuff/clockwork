@@ -5205,6 +5205,9 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("mkdir " + app_dir).c_str());
   system(("mkdir " + synth_dir).c_str());
   system(("mkdir " + soda_dir).c_str());
+
+  system(("mv " + out_name + "_kernel.h " + soda_dir).c_str());
+
   system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
   system(("mv " + out_name + "*.h " + synth_dir).c_str());
   system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
@@ -5425,8 +5428,8 @@ void two_input_denoise_pipeline_test() {
   options.use_custom_code_string = false;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
-    std::vector<std::string> optimized =
-      run_regression_tb(out_name + "_opt");
+  std::vector<std::string> optimized =
+    run_regression_tb(out_name + "_opt");
 
   move_to_benchmarks_folder(out_name + "_opt");
 
