@@ -5428,7 +5428,7 @@ void two_input_denoise_pipeline_test() {
     std::vector<std::string> optimized =
       run_regression_tb(out_name + "_opt");
 
-  move_to_benchmarks_folder(out_name);
+  move_to_benchmarks_folder(out_name + "_opt");
 
 }
 
