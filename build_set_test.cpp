@@ -2,7 +2,6 @@
 #include "ubuffer.h"
 #include "codegen.h"
 #include "prog.h"
-#include "expr.h"
 
 void synth_reduce_test() {
 
@@ -1928,68 +1927,6 @@ void jacobi_2d_test() {
   regression_test(prg);
 }
 
-struct Expr {
-  vector<Token> tokens;
-
-  virtual bool is_function_call() const { return false; }
-  virtual bool is_binop() const { return false; }
-  virtual bool is_int_const() const { return false; }
-  virtual set<Expr*> children() const { return {}; }
-};
-
-struct FloatConst : public Expr {
-  bool neg;
-  string l;
-  string r;
-};
-
-struct IntConst : public Expr {
-  string val;
-
-  IntConst(std::string& val_) : val(val_) {}
-  IntConst() : val("") {}
-
-  virtual bool is_int_const() const { return true; }
-
-  int int_value() const { return safe_stoi(val); }
-
-};
-
-struct FunctionCall : public Expr {
-  string name;
-  vector<Expr*> args;
-
-  FunctionCall(const string& n_, const vector<Expr*> args_) :
-    name(n_), args(args_) {}
-
-  virtual bool is_function_call() const { return true; }
-  virtual set<Expr*> children() const { return set<Expr*>(begin(args), end(args)); }
-};
-
-struct Binop : public Expr {
-  string op;
-  Expr* l;
-  Expr* r;
-
-  Binop(const string& op_, Expr* l_, Expr* r_) :
-    op(op_), l(l_), r(r_) {}
-
-  virtual bool is_binop() const { return true; }
-
-  virtual set<Expr*> children() const { return {l, r}; }
-}; 
-
-struct Unop : public Expr {
-  string op;
-  Expr* arg;
-  virtual set<Expr*> children() const { return {arg}; }
-};
-
-ostream& operator<<(ostream& out, const Expr& e) {
-  out << comma_list(e.tokens);
-  return out;
-}
-
 struct BaseExpr {
   string name;
   vector<Token> dims;
@@ -2619,66 +2556,6 @@ void seidel2d_test() {
   regression_test(prg);
 }
 
-template<typename F>
-void visit_function_calls(Expr* e, F f) {
-  if (e->is_function_call()) {
-    f((FunctionCall*)e);
-  }
-
-  for (auto v : e->children()) {
-    visit_function_calls(v, f);
-  }
-}
-
-vector<int> get_offset(FunctionCall* off) {
-  vector<int> offset;
-  for (auto arg : off->args) {
-    assert(arg->is_int_const());
-    offset.push_back(((IntConst*) arg)->int_value());
-  }
-  return offset;
-}
-
-string compute_string(Expr* def, map<string, vector<vector<int> > >& offset_map) {
-  if (def->is_int_const()) {
-    return ((IntConst*)def)->val;
-  } else if (def->is_binop()) {
-    auto op = (Binop*) def;
-    return parens(compute_string(op->l, offset_map) + " " + op->op + " " + compute_string(op->r, offset_map));
-  } else {
-    assert(def->is_function_call());
-    auto call = (FunctionCall*) def;
-    assert(contains_key(call->name, offset_map));
-
-    auto offsets = get_offset(call);
-    int offset = 0;
-    bool found_offset = false;
-    for (auto off : offset_map[call->name]) {
-      if (off == offsets) {
-        found_offset = true;
-        break;
-      }
-      offset++;
-    }
-    assert(found_offset);
-    return call->name + ".get<32, " + str(offset) + ">()";
-  }
-
-  assert(false);
-  return "ERROR NO COMPUTE FOR EXPRESSION";
-}
-
-string compute_unit_string(const string& name,
-    vector<Window>& windows,
-    Expr* def,
-    map<string, vector<vector<int> > >& offset_map) {
-  vector<string> args;
-  for (auto w : windows) {
-    args.push_back("hw_uint<32*" + str(w.offsets.size()) + "> " + w.name);
-  }
-  return "hw_uint<32> " + name + sep_list(args, "(", ")", ", ") + " {\n" + tab(1) + "return " + compute_string(def, offset_map) + ";\n}";
-}
-
 struct App {
   isl_ctx* ctx;
   map<string, Result> app_dag;
@@ -2713,18 +2590,6 @@ struct App {
     app_dag.at(func).add_reduce_update(accum, compute, rargs, reduce_ranges);
 
   }
-
-  //string func2d(const std::string& name, const std::string& def) {
-    //Expr* e = parse_expr(def);
-    ////assert(false);
-    ////map<Expr*, vector<int> > offsets
-    //Result res;
-
-    //app_dag[name] = res;
-
-    //return name;
-
-  //}
 
   bool is_input(const std::string& name) const {
     return producers(name).size() == 0;
@@ -2782,19 +2647,11 @@ struct App {
       for (auto off : c.second) {
         vector<int> offset = get_offset(off);
         offsets.insert(offset);
-        //offset_map[window_name].push_back({off, offset});
       }
-
-      //vector<pair<FunctionCall*, vector<int> > > offset_vec = offset_map[window_name];
-      //sort_lt(offset_vec,
-          //[](const pair<FunctionCall*, vector<int> >& a) {
-          //return a.second;
-          //});
 
       vector<vector<int> > offsets_vec(begin(offsets), end(offsets));
       offset_map[window_name] = offsets_vec;
       Window w{window_name, strides, offsets_vec};
-      // Normalize positions of each offset
       windows.push_back(w);
     }
 
@@ -2803,9 +2660,6 @@ struct App {
       cout << tab(1) << w << endl;
     }
 
-    // Now what?
-    //  - Create windows from each call...?
-    
     add_func(name,
         compute_name,
         2,
@@ -2813,6 +2667,7 @@ struct App {
 
     app_dag[name].updates.back().compute_unit_impl =
       compute_unit_string(compute_name, windows, def, offset_map);
+
     return name;
   }
 
