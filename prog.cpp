@@ -410,6 +410,7 @@ void generate_tb_compare_scripts(prog& prg) {
 
     int pixel_width =
       pick(prg.buffer_port_widths).second;
+
     of << "#include \"" << prg.name << "_kernel.h\"" << endl;
     of << "#include <iostream>" << endl;
     of << "#include <fstream>" << endl;
@@ -427,25 +428,49 @@ void generate_tb_compare_scripts(prog& prg) {
     of << tab(1) << "const uint64_t bits_per_pixel = PIXEL_WIDTH;" << endl;
     of << tab(1) << "uint64_t img_bits = bits_per_pixel*img_pixels;" << endl;
 
-    of << "const uint64_t num_transfers = img_bits / BURST_WIDTH;" << endl;
+    of << tab(1) << "const uint64_t num_transfers = img_bits / BURST_WIDTH;" << endl;
 
-    of << "const uint64_t pixels_per_burst = BURST_WIDTH / bits_per_pixel;" << endl;
+    of << tab(1) << "const uint64_t pixels_per_burst = BURST_WIDTH / bits_per_pixel;" << endl;
 
     of << tab(1) << "cout << \"num transfers    : \" << num_transfers << endl;" << endl;
-    of << "cout << \"pixels / transfer: \" << pixels_per_burst << endl;" << endl;
+    of << tab(1) << "cout << \"pixels / transfer: \" << pixels_per_burst << endl;" << endl;
 
-    of << "const uint64_t transfer_cols = ncols / pixels_per_burst;" << endl;
+    of << tab(1) << "const uint64_t transfer_cols = ncols / pixels_per_burst;" << endl;
 
-    of << tab(1) << "ap_uint<BURST_WIDTH>* y_res = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);" << endl;
-    of << "ap_uint<BURST_WIDTH>* u = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>) * num_transfers);" << endl;
-    of << "ap_uint<BURST_WIDTH>* f = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>) * num_transfers);" << endl;
+    vector<string> args;
+    for (auto out : prg.outs) {
+      of << tab(1) << "ap_uint<BURST_WIDTH>* " << out << " = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);" << endl;
+      args.push_back(out);
 
-    of << "fill_array<bits_per_pixel>(\"u_input_pixel.csv\", u, nrows, ncols, transfer_cols);" << endl;
-    of << "fill_array<bits_per_pixel>(\"f_input_pixel.csv\", f, nrows, ncols, transfer_cols);" << endl;
+    }
 
-    of << prg.name << "_kernel(y_res, f, u, num_transfers);" << endl;
-    of << tab(1) << "write_results<bits_per_pixel>(\"soda_" << prg.name << "_regression_result.csv\", y_res, nrows, ncols, transfer_cols);" << endl;
-    of << tab(1) << "free(y_res);" << endl;
+    for (auto in : prg.ins) {
+      of << tab(1) << "ap_uint<BURST_WIDTH>* " << in << " = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);" << endl;
+    of << tab(1) << "fill_array<bits_per_pixel>(\"" << in << "_input_pixel.csv\", " << in << ", nrows, ncols, transfer_cols);" << endl;
+
+      args.push_back(in);
+    }
+
+    args.push_back("transfer_cols");
+
+    //of << tab(1) << "ap_uint<BURST_WIDTH>* y_res = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);" << endl;
+    //of << tab(1) << "ap_uint<BURST_WIDTH>* u = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>) * num_transfers);" << endl;
+    //of << tab(1) << "ap_uint<BURST_WIDTH>* f = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>) * num_transfers);" << endl;
+
+    //of << tab(1) << "fill_array<bits_per_pixel>(\"u_input_pixel.csv\", u, nrows, ncols, transfer_cols);" << endl;
+    //of << tab(1) << "fill_array<bits_per_pixel>(\"f_input_pixel.csv\", f, nrows, ncols, transfer_cols);" << endl;
+
+    of << tab(1) << prg.name << "_kernel(" << comma_list(args) << ");" << endl;
+    for (auto out : prg.outs) {
+      of << tab(1) << "write_results<bits_per_pixel>(\"soda_" << prg.name << "_regression_result.csv\", " << out << ", nrows, ncols, transfer_cols);" << endl;
+    }
+
+    for (auto in : prg.ins) {
+      of << tab(1) << "free(" << in << ");" << endl;
+    }
+    for (auto in : prg.outs) {
+      of << tab(1) << "free(" << in << ");" << endl;
+    }
     of << "}" << endl;
 
     of.close();
