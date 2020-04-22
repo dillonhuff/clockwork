@@ -3513,6 +3513,9 @@ struct App {
     auto action_domain = cpy(whole_dom);
     map<string, isl_set*> domain_map;
     for (auto f : sorted_functions) {
+      prg.buffer_port_widths[f] =
+        app_dag.at(f).pixel_width;
+
       for (auto u : app_dag.at(f).updates) {
         if (u.get_srcs().size() == 0) {
           prg.ins.insert(f);
@@ -6067,6 +6070,9 @@ void playground() {
 void application_tests() {
   //parse_denoise3d_test();
 
+  sobel_16_app_test();
+  assert(false);
+
   up_stencil_down_test();
 
   up_stencil_test();
@@ -6080,7 +6086,6 @@ void application_tests() {
   conv3x3_app_unrolled_uneven_test();
   
   conv3x3_app_unrolled_test();
-  sobel_16_app_test();
   //assert(false);
 
   dummy_app_test();
