@@ -1,8 +1,8 @@
 #include "sobel_16_unrolled_1_opt_kernel.h"
 #include <iostream>
 #include <fstream>
-#define PIXEL_WIDTH 32
-#define BURST_WIDTH 32
+#define PIXEL_WIDTH 16
+#define BURST_WIDTH 16
 #include "runtime/test_utils.h"
 
 using namespace std;

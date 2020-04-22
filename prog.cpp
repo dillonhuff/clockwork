@@ -408,11 +408,13 @@ void generate_tb_compare_scripts(prog& prg) {
   {
     ofstream of("tb_soda_" + prg.name + ".cpp");
 
+    int pixel_width =
+      pick(prg.buffer_port_widths).second;
     of << "#include \"" << prg.name << "_kernel.h\"" << endl;
     of << "#include <iostream>" << endl;
     of << "#include <fstream>" << endl;
-    of << "#define PIXEL_WIDTH 32" << endl;
-    of << "#define BURST_WIDTH 32" << endl;
+    of << "#define PIXEL_WIDTH " << pixel_width << endl;
+    of << "#define BURST_WIDTH " << pixel_width << endl;
 
     of << "#include \"runtime/test_utils.h\"" << endl << endl;
     of << "using namespace std;" << endl << endl;
