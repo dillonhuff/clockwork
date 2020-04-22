@@ -3,20 +3,20 @@
 #include "conv_3x3.h"
 
 // Generated compute units...
-hw_uint<32> img_generated_compute(hw_uint<32*1> off_chip_img) {
-  return off_chip_img.get<32, 0>();
+hw_uint<16> img_generated_compute(hw_uint<16*1> off_chip_img) {
+  return off_chip_img.get<16, 0>();
 }
 
-hw_uint<32> mag_y_generated_compute(hw_uint<32*6> img) {
-  return (((img.get<32, 1>() - img.get<32, 0>()) + ((img.get<32, 3>() - img.get<32, 2>()) * 3)) + (img.get<32, 5>() - img.get<32, 4>()));
+hw_uint<16> mag_y_generated_compute(hw_uint<16*6> img) {
+  return (((img.get<16, 1>() - img.get<16, 0>()) + ((img.get<16, 3>() - img.get<16, 2>()) * 3)) + (img.get<16, 5>() - img.get<16, 4>()));
 }
 
-hw_uint<32> mag_x_generated_compute(hw_uint<32*6> img) {
-  return (((img.get<32, 3>() - img.get<32, 0>()) + ((img.get<32, 4>() - img.get<32, 1>()) * 3)) + (img.get<32, 5>() - img.get<32, 2>()));
+hw_uint<16> mag_x_generated_compute(hw_uint<16*6> img) {
+  return (((img.get<16, 3>() - img.get<16, 0>()) + ((img.get<16, 4>() - img.get<16, 1>()) * 3)) + (img.get<16, 5>() - img.get<16, 2>()));
 }
 
-hw_uint<32> sobel_16_unrolled_1_generated_compute(hw_uint<32*1> mag_x, hw_uint<32*1> mag_y) {
-  return (65535 - ((mag_x.get<32, 0>() * mag_x.get<32, 0>()) + (mag_y.get<32, 0>() * mag_y.get<32, 0>())));
+hw_uint<16> sobel_16_unrolled_1_generated_compute(hw_uint<16*1> mag_x, hw_uint<16*1> mag_y) {
+  return (65535 - ((mag_x.get<16, 0>() * mag_x.get<16, 0>()) + (mag_y.get<16, 0>() * mag_y.get<16, 0>())));
 }
 
 

@@ -909,7 +909,7 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
     for (int p = 0; p < num_ports; p++) {
       string next_val = str(num_ports) + "*i + " + str(p);
       rgtb << tab(2) << "in_pix << " << next_val << " << endl;" << endl;
-      rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ">(in_val, " << next_val << ");" << endl;
+      rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
     }
     rgtb << tab(2) << bundle << ".write(in_val);" << endl;
     rgtb << tab(1) << "}" << endl << endl;
@@ -6067,8 +6067,8 @@ void playground() {
 void application_tests() {
   //parse_denoise3d_test();
 
-  //sobel_16_app_test();
-  //assert(false);
+  sobel_16_app_test();
+  assert(false);
 
   dummy_app_test();
   two_input_denoise_pipeline_test();
