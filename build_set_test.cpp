@@ -3604,12 +3604,6 @@ struct App {
           op->add_function(u.compute_name() + "_unrolled_" + str(u.unroll_factor));
           op->unroll_factor = u.unroll_factor;
 
-          //if (u.unroll_factor == 1) {
-            //op->add_function(u.compute_name());
-          //} else {
-            //op->add_function(u.compute_name() + "_unrolled_" + str(u.unroll_factor));
-            //op->unroll_factor = u.unroll_factor;
-          //}
           domain_map[u.name()] =
             compute_domain(u.name());
         }
@@ -3633,6 +3627,12 @@ struct App {
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
     generate_regression_testbench(prg, buffers);
+    generate_soda_file(prg.name);
+  }
+
+  void generate_soda_file(const std::string& name) {
+    ofstream out(name + ".soda");
+    out.close();
   }
 
   umap* realize_opt_schedule(const std::string& name, const int d0, const int d1) {
@@ -5058,6 +5058,7 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("mv run_tb_" + out_name + "*.sh " + synth_dir).c_str());
   system(("mv compare_regressions.sh " + app_dir).c_str());
   
+  system(("mv " + out_name + ".soda " + soda_dir).c_str());
   system(("mv tb_soda_" + out_name + "*.cpp " + soda_dir).c_str());
   system(("mv run_tb.sh " + soda_dir).c_str());
 }
