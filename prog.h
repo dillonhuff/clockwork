@@ -344,6 +344,16 @@ struct prog {
     root->pretty_print(cout, 0);
   }
 
+  int buffer_port_width(const string& name) const {
+    if (!contains_key(name, buffer_port_widths)) {
+      return 32;
+    }
+    assert(contains_key(name, buffer_port_widths));
+
+    auto width = buffer_port_widths.at(name);
+    return width;
+  }
+
   string buffer_element_type_string(const string& name) const {
     if (!contains_key(name, buffer_port_widths)) {
       return "hw_uint<32> ";

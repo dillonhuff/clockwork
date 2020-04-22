@@ -387,7 +387,19 @@ void generate_tb_compare_scripts(prog& prg) {
     ofstream of(prg.name + "_kernel.h");
     of << "#include \"ap_int.h\"" << endl << endl;
     of << "extern \"C\" {" << endl << endl;
-    of << "void " << prg.name << "_kernel();" << endl;
+    vector<string> decls;
+    for (auto out : prg.outs) {
+      string tp_string =
+        "ap_uint<" + str(prg.buffer_port_width(out)) + ">*";
+      decls.push_back(tp_string + " " + out);
+    }
+
+    for (auto out : prg.ins) {
+      string tp_string =
+        "ap_uint<" + str(prg.buffer_port_width(out)) + ">*";
+      decls.push_back(tp_string + " " + out);
+    }
+    of << "void " << prg.name << "_kernel(" << comma_list(decls) << ");" << endl;
     of << "}" << endl;
     of.close();
   }
