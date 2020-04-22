@@ -384,9 +384,18 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
 
 void generate_tb_compare_scripts(prog& prg) {
   {
+    ofstream of(prg.name + "_kernel.h");
+    of << "#include \"ap_int.h\"" << endl << endl;
+    of << "extern \"C\" {" << endl << endl;
+    of << "void " << prg.name << "_kernel();" << endl;
+    of << "}" << endl;
+    of.close();
+  }
+
+  {
     ofstream of("tb_soda_" + prg.name + ".cpp");
 
-    of << "#include \"" << prg.name << ".h\"" << endl;
+    of << "#include \"" << prg.name << "_kernel.h\"" << endl;
     of << "#include <iostream>" << endl;
     of << "#include <fstream>" << endl;
     of << "#define PIXEL_WIDTH 32" << endl;

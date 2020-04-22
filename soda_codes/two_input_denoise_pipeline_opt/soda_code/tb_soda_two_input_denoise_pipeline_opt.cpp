@@ -1,4 +1,4 @@
-#include "two_input_denoise_pipeline_opt.h"
+#include "two_input_denoise_pipeline_opt_kernel.h"
 #include <iostream>
 #include <fstream>
 #define PIXEL_WIDTH 32
