@@ -2671,6 +2671,7 @@ struct App {
 
     app_dag[name].updates.back().compute_unit_impl =
       compute_unit_string(default_pixel_width, compute_name, windows, def, offset_map);
+    app_dag[name].updates.back().def = def;
 
     return name;
   }
@@ -3577,23 +3578,52 @@ struct App {
   void generate_soda_file(const std::string& name) {
     ofstream out(name + ".soda");
     out << "kernel: " << name << endl;
-    out << "iterate: 1" << endl;
 
     string rep = pick(app_dag).first;
     int unroll_factor = last_update(rep).unroll_factor;
     int width = app_dag.at(rep).pixel_width;
+
     out << "unroll factor: " << unroll_factor << endl;
     out << "burst width: " << width*unroll_factor << endl << endl;
+
+    set<string> external_buffers;
+    for (auto f : sort_functions()) {
+      if (producers(f).size() == 0) {
+        external_buffers.insert(f);
+      }
+    }
 
     for (auto f : sort_functions()) {
       for (auto u : app_dag.at(f).updates) {
         if (u.get_srcs().size() == 0) {
         } else {
-          out << "local uint" << width << ": " << u.name() << "(0, 0) = 1" << endl;
-        }
+          if (consumers(f).size() == 0) {
+            out << "output uint" << width << ": " << u.name() << "(0, 0) = ";
+              out << soda_compute_string(width, u.def) << endl << endl;
+          } else {
+            bool all_producers_external = true;
+            for (auto p : producers(f)) {
+              if (!elem(p.name, external_buffers)) {
+                all_producers_external = false;
+                break;
+              }
+            }
 
+            if (all_producers_external) {
+              Box domain = data_domain(f);
+              //assert(domain.dimension() == 2);
+              out << "input uint" << width << ": " << u.name() << "(" << domain.length(0) << ", *)" << endl << endl;
+            } else {
+              out << "local uint" << width << ": " << u.name() << "(0, 0) = ";
+              out << soda_compute_string(width, u.def) << endl << endl;
+            }
+          }
+        }
       }
     }
+
+    out << endl;
+    out << "iterate: 1" << endl;
 
     out.close();
   }
@@ -6121,10 +6151,10 @@ void playground() {
 void application_tests() {
   //parse_denoise3d_test();
 
+  sobel_16_stage_x_app_test();
+  assert(false);
   reduce_2d_test();
   reduce_1d_test();
-  sobel_16_stage_x_app_test();
-  //assert(false);
 
   sobel_16_app_test();
   up_stencil_down_test();

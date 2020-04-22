@@ -105,6 +105,34 @@ vector<int> get_offset(FunctionCall* off) {
   return offset;
 }
 
+static inline
+string soda_compute_string(const int pixel_width, Expr* def) {
+  if (def == nullptr) {
+    return "<NULLPTR FOR SODA COMPUTE STRING>";
+  }
+
+  if (def->is_int_const()) {
+    return ((IntConst*)def)->val;
+  } else if (def->is_binop()) {
+    auto op = (Binop*) def;
+    return parens(soda_compute_string(pixel_width, op->l) + " " + op->op + " " + soda_compute_string(pixel_width, op->r));
+  } else {
+    assert(def->is_function_call());
+    auto call = (FunctionCall*) def;
+    //assert(contains_key(call->name, offset_map));
+
+    auto offsets = get_offset(call);
+    vector<string> args;
+    for (auto a : call->args) {
+      args.push_back(soda_compute_string(pixel_width, a));
+    }
+    return call->name + sep_list(args, "(", ")", ", ");
+  }
+
+  assert(false);
+  return "ERROR NO COMPUTE FOR EXPRESSION";
+}
+
 
 static inline
 string compute_string(const int pixel_width, Expr* def, map<string, vector<vector<int> > >& offset_map) {
