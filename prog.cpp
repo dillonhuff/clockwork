@@ -412,7 +412,7 @@ void generate_tb_compare_scripts(prog& prg) {
   of << "cd .." << endl;
 
   of << "cd ../../" << endl;
-  of << "./run_aligner.sh ./soda_codes/${app_name}/our_code/regression_result_${app_name}_opt.txt ./soda_codes/${app_name}/soda_code/soda_${app_name}_regression_result.csv" << endl;
+  of << "./run_aligner.sh ./soda_codes/${app_name}/our_code/regression_result_${app_name}.txt ./soda_codes/${app_name}/soda_code/soda_${app_name}_regression_result.csv" << endl;
 
   of.close();
 }
