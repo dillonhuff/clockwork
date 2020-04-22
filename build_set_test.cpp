@@ -2454,10 +2454,10 @@ StencilProgram parse_soda_program(istream& in) {
     cout << " ) = ";
 
     Expr* e = op.second;
-    for (auto t : e->tokens) {
-      cout << t.txt << " ";
-    }
-    cout << endl;
+    //for (auto t : e->tokens) {
+      //cout << t.txt << " ";
+    //}
+    //cout << endl;
   }
   cout << "Done" << endl;
   return program;
@@ -5120,17 +5120,7 @@ void sobel_app_test() {
     //std::vector<std::string> optimized =
       //run_regression_tb(out_name + "_opt");
 
-    string app_dir =
-      "./soda_codes/" + out_name;
-    string synth_dir =
-      "./soda_codes/" + out_name + "/our_code/";
-
-    system(("mkdir " + app_dir).c_str());
-    system(("mkdir " + synth_dir).c_str());
-    system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
-    system(("mv " + out_name + "*.h " + synth_dir).c_str());
-    system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
-    system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
+    move_to_benchmarks_folder(out_name + "_opt");
   }
 
 }
@@ -5235,6 +5225,30 @@ void sum_diffs_test() {
 
   move_to_benchmarks_folder(out_name);
   //assert(false);
+}
+
+void dummy_app_test() {
+  App dn;
+  string out_name = "dummy_app";
+
+  dn.func2d("u_off_chip");
+
+  dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
+
+  dn.func2d(out_name, sub(v("u", 0, 0), v("u", 0, -1)));
+
+  int size = 30;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = false;
+  options.debug_options.expect_all_linebuffers = true;
+  dn.realize(options, out_name, size, size);
+  std::vector<std::string> optimized =
+    run_regression_tb(out_name + "_opt");
+
+  move_to_benchmarks_folder(out_name + "_opt");
 }
 
 void two_input_denoise_pipeline_test() {
@@ -6106,6 +6120,8 @@ void playground() {
 void application_tests() {
   //parse_denoise3d_test();
 
+  dummy_app_test();
+  assert(false);
   two_input_denoise_pipeline_test();
   two_input_mag_test();
   one_input_mag_test();

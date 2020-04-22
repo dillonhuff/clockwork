@@ -14,9 +14,15 @@ ostream& operator<<(ostream& out, const Token& e) {
   return out;
 }
 
+enum num_type {
+  NUM_TYPE_FLOAT,
+  NUM_TYPE_UNSIGNED,
+  NUM_TYPE_SIGNED
+};
 
 struct Expr {
-  vector<Token> tokens;
+  int width;
+  num_type num_tp;
 
   virtual bool is_function_call() const { return false; }
   virtual bool is_binop() const { return false; }
@@ -74,7 +80,7 @@ struct Unop : public Expr {
 
 static inline
 ostream& operator<<(ostream& out, const Expr& e) {
-  out << comma_list(e.tokens);
+  out << "<NO EXPR PRINT>";
   return out;
 }
 
