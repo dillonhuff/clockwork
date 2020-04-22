@@ -957,14 +957,17 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity);
 umap* experimental_opt(uset* domain, umap* validity, umap* proximity);
 
 static inline
-string compute_unit_string(const string& name,
+string compute_unit_string(const int pixel_width,
+    const string& name,
     vector<Window>& windows,
     Expr* def,
     map<string, vector<vector<int> > >& offset_map) {
   vector<string> args;
+  string wstr = str(pixel_width);
   for (auto w : windows) {
-    args.push_back("hw_uint<32*" + str(w.offsets.size()) + "> " + w.name);
+    args.push_back("hw_uint<" + wstr + "*" + str(w.offsets.size()) + "> " + w.name);
   }
-  return "hw_uint<32> " + name + sep_list(args, "(", ")", ", ") + " {\n" + tab(1) + "return " + compute_string(def, offset_map) + ";\n}";
+  return "hw_uint<" + wstr + "> " + name + sep_list(args, "(", ")", ", ") + " {\n" + tab(1) +
+    "return " + compute_string(pixel_width, def, offset_map) + ";\n}";
 }
 

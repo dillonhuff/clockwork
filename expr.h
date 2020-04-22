@@ -107,12 +107,12 @@ vector<int> get_offset(FunctionCall* off) {
 
 
 static inline
-string compute_string(Expr* def, map<string, vector<vector<int> > >& offset_map) {
+string compute_string(const int pixel_width, Expr* def, map<string, vector<vector<int> > >& offset_map) {
   if (def->is_int_const()) {
     return ((IntConst*)def)->val;
   } else if (def->is_binop()) {
     auto op = (Binop*) def;
-    return parens(compute_string(op->l, offset_map) + " " + op->op + " " + compute_string(op->r, offset_map));
+    return parens(compute_string(pixel_width, op->l, offset_map) + " " + op->op + " " + compute_string(pixel_width, op->r, offset_map));
   } else {
     assert(def->is_function_call());
     auto call = (FunctionCall*) def;
@@ -129,7 +129,7 @@ string compute_string(Expr* def, map<string, vector<vector<int> > >& offset_map)
       offset++;
     }
     assert(found_offset);
-    return call->name + ".get<32, " + str(offset) + ">()";
+    return call->name + ".get<" + str(pixel_width) + ", " + str(offset) + ">()";
   }
 
   assert(false);

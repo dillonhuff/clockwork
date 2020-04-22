@@ -2566,8 +2566,11 @@ struct App {
   map<string, isl_set*> compute_sets;
   map<string, isl_map*> compute_maps;
 
+  int default_pixel_width;
+
   App() {
     ctx = isl_ctx_alloc();
+    default_pixel_width = 32;
   }
 
   ~App() {
@@ -2623,6 +2626,7 @@ struct App {
 
     app_dag[name] = res;
 
+    set_width(name, default_pixel_width);
     return name;
   }
 
@@ -2666,7 +2670,7 @@ struct App {
         windows);
 
     app_dag[name].updates.back().compute_unit_impl =
-      compute_unit_string(compute_name, windows, def, offset_map);
+      compute_unit_string(default_pixel_width, compute_name, windows, def, offset_map);
 
     return name;
   }
@@ -2747,10 +2751,8 @@ struct App {
     return func2d(name, compute, {w});
   }
 
-  void set_all_widths(const int width) {
-    for (auto a : app_dag) {
-      set_width(a.first, width);
-    }
+  void set_default_pixel_width(const int width) {
+    default_pixel_width = width;
   }
 
   void set_width(const string& func, const int width) {
@@ -4713,6 +4715,7 @@ App sobel_mag_y() {
 
 App sobel16(const std::string output_name) {
   App sobel;
+  sobel.set_default_pixel_width(16);
   sobel.func2d("off_chip_img");
   sobel.func2d("img", v("off_chip_img"));
   sobel.func2d("mag_x", 
@@ -4728,7 +4731,6 @@ App sobel16(const std::string output_name) {
   sobel.func2d(output_name,
       sub(65535, add(square(v("mag_x")), square(v("mag_y")))));
   
-  sobel.set_all_widths(16);
 
   return sobel;
 }
@@ -4746,7 +4748,6 @@ App sobel(const std::string output_name) {
   Window xwindow{"mag_x", {1, 1}, {{0, 0}}};
   Window ywindow{"mag_y", {1, 1}, {{0, 0}}};
   sobel.func2d(output_name, "mag_cu", {xwindow, ywindow});
-  //sobel.set_all_widths(16);
 
   return sobel;
 }
@@ -6066,8 +6067,8 @@ void playground() {
 void application_tests() {
   //parse_denoise3d_test();
 
-  sobel_16_app_test();
-  assert(false);
+  //sobel_16_app_test();
+  //assert(false);
 
   dummy_app_test();
   two_input_denoise_pipeline_test();
