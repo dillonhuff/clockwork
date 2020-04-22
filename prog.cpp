@@ -399,6 +399,7 @@ void generate_tb_compare_scripts(prog& prg) {
         "ap_uint<" + str(prg.buffer_port_width(out)) + ">*";
       decls.push_back(tp_string + " " + out);
     }
+    decls.push_back("uint64_t coalesced_data_num");
     of << "void " << prg.name << "_kernel(" << comma_list(decls) << ");" << endl;
     of << "}" << endl;
     of.close();
