@@ -1,0 +1,11 @@
+kernel: sobel_16_stage_x_unrolled_1_opt
+burst width: 16
+unroll factor: 1
+input uint16: img(32, *)
+output uint16: mag_x(0, 0) =
+    (img(1, -1) - img(-1, -1)) +
+    (img(1,  0) - img(-1,  0)) * 3 +
+    (img(1,  1) - img(-1,  1))
+
+iterate: 1
+
