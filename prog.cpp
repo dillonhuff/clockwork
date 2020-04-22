@@ -404,6 +404,23 @@ void generate_tb_compare_scripts(prog& prg) {
     of << "#include \"runtime/test_utils.h\"" << endl << endl;
     of << "using namespace std;" << endl << endl;
     of << "int main() {" << endl;
+    of << tab(1) << "const int nrows = 32;" << endl;
+    of << tab(1) << "const int ncols = 32;" << endl;
+
+    of << tab(1) << "uint64_t img_pixels = nrows*ncols;" << endl;
+
+    of << tab(1) << "const uint64_t bits_per_pixel = PIXEL_WIDTH;" << endl;
+    of << tab(1) << "uint64_t img_bits = bits_per_pixel*img_pixels;" << endl;
+
+    of << "const uint64_t num_transfers = img_bits / BURST_WIDTH;" << endl;
+
+    of << "const uint64_t pixels_per_burst = BURST_WIDTH / bits_per_pixel;" << endl;
+
+    of << tab(1) << "cout << \"num transfers    : \" << num_transfers << endl;" << endl;
+    of << "cout << \"pixels / transfer: \" << pixels_per_burst << endl;" << endl;
+
+    of << "const uint64_t transfer_cols = ncols / pixels_per_burst;" << endl;
+
     of << tab(1) << "ap_uint<BURST_WIDTH>* y_res = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);" << endl;
 
     of << tab(1) << "write_results<bits_per_pixel>(\"soda_" << prg.name << "_regression_result.csv\", y_res, nrows, ncols, transfer_cols);" << endl;
