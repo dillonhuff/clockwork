@@ -422,7 +422,13 @@ void generate_tb_compare_scripts(prog& prg) {
     of << "const uint64_t transfer_cols = ncols / pixels_per_burst;" << endl;
 
     of << tab(1) << "ap_uint<BURST_WIDTH>* y_res = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);" << endl;
+    of << "ap_uint<BURST_WIDTH>* u = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>) * num_transfers);" << endl;
+    of << "ap_uint<BURST_WIDTH>* f = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>) * num_transfers);" << endl;
 
+    of << "fill_array<bits_per_pixel>(\"u_input_pixel.csv\", u, nrows, ncols, transfer_cols);" << endl;
+    of << "fill_array<bits_per_pixel>(\"f_input_pixel.csv\", f, nrows, ncols, transfer_cols);" << endl;
+
+    of << prg.name << "_kernel(y_res, f, u, num_transfers);" << endl;
     of << tab(1) << "write_results<bits_per_pixel>(\"soda_" << prg.name << "_regression_result.csv\", y_res, nrows, ncols, transfer_cols);" << endl;
     of << tab(1) << "free(y_res);" << endl;
     of << "}" << endl;

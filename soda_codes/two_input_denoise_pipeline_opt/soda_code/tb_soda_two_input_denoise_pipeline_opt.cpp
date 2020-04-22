@@ -19,6 +19,11 @@ const uint64_t pixels_per_burst = BURST_WIDTH / bits_per_pixel;
 cout << "pixels / transfer: " << pixels_per_burst << endl;
 const uint64_t transfer_cols = ncols / pixels_per_burst;
   ap_uint<BURST_WIDTH>* y_res = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
+ap_uint<BURST_WIDTH>* u = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>) * num_transfers);
+ap_uint<BURST_WIDTH>* f = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>) * num_transfers);
+fill_array<bits_per_pixel>("u_input_pixel.csv", u, nrows, ncols, transfer_cols);
+fill_array<bits_per_pixel>("f_input_pixel.csv", f, nrows, ncols, transfer_cols);
+two_input_denoise_pipeline_opt_kernel(y_res, f, u, num_transfers);
   write_results<bits_per_pixel>("soda_two_input_denoise_pipeline_opt_regression_result.csv", y_res, nrows, ncols, transfer_cols);
   free(y_res);
 }
