@@ -2,6 +2,7 @@
 #include "ubuffer.h"
 #include "codegen.h"
 #include "prog.h"
+#include "expr.h"
 
 void synth_reduce_test() {
 
@@ -1925,18 +1926,6 @@ void jacobi_2d_test() {
     stencil_op(out_name, "jacobi2d_compute", "I", {"d0", "d1"}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
 
   regression_test(prg);
-}
-
-struct Token {
-  string txt;
-
-  Token() : txt("") {}
-  Token(const std::string& txt_) : txt(txt_) {}
-};
-
-ostream& operator<<(ostream& out, const Token& e) {
-  out << e.txt;
-  return out;
 }
 
 struct Expr {
@@ -6263,12 +6252,9 @@ void application_tests() {
   //parse_denoise3d_test();
 
   two_input_denoise_pipeline_test();
-  assert(false);
   two_input_mag_test();
-  //assert(false);
   one_input_mag_test();
   sum_diffs_test();
-  //assert(false);
   sum_float_test();
   sum_denoise_test();
   denoise2d_test();
