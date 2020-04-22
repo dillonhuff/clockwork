@@ -2890,19 +2890,6 @@ struct App {
     return updates;
   }
 
-  //vector<string> sort_operations() const {
-    //auto functions = sort_functions();
-    //vector<string> operations;
-    //for (auto f : functions) {
-      //Result r = app_dag.at(f);
-      //operations.push_back(f + "_comp");
-      ////if (r.is_reduce()) {
-        ////operations.push_back(f + "_reduce");
-      ////}
-    //}
-    //return operations;
-  //}
-
   vector<string> sort_functions() const {
     vector<string> sorted;
 
@@ -3237,55 +3224,7 @@ struct App {
       cout << endl;
     }
 
-    //assert(false);
     return scheds;
-    //vector<string> sorted_functions = sort_functions();
-    //vector<string> sorted_operations;
-
-    //map<string, Box> op_domains;
-    //map<string, vector<QExpr> > schedules;
-    //map<string, isl_map*> op_compute_maps;
-    //map<string, map<string, umap*> > pixels_needed;
-
-    //for (auto f : sorted_functions) {
-      //for (auto u : app_dag.at(f).updates) {
-        //sorted_operations.push_back(u.name());
-
-        //op_domains[u.name()] =
-          //compute_box(u.name());
-
-        //pixels_needed[u.name()] = {};
-        //for (auto w : u.get_srcs()) {
-          //pixels_needed[u.name()][last_update(w.name).name()] = w.needed;
-        //}
-
-        //op_compute_maps[u.name()] = compute_map(u.name());
-      //}
-    //}
-
-    //int ndims = schedule_dimension();
-
-    //auto last_compute_needed = build_compute_deps(
-        //ndims,
-        //sorted_operations,
-        //pixels_needed,
-        //op_compute_maps);
-    //for (int i = ndims - 1; i >= 0; i--) {
-      //auto dim_schedules =
-        //schedule_dim(ctx, i, op_domains, sorted_operations, last_compute_needed);
-
-      //for (auto f : sorted_operations) {
-        //schedules[f].push_back(dim_schedules.at(f));
-      //}
-    //}
-
-    //cout << "Final schedule.." << endl;
-    //for (auto s : schedules) {
-      //cout << tab(1) << s.first << " -> " << comma_list(s.second) << endl;
-    //}
-    ////assert(false);
-
-    //return schedules;
   }
 
   umap* pixels_read(const std::string& u) {
@@ -4772,6 +4711,24 @@ App sobel_mag_y() {
   return sobel;
 }
 
+App sobel16(const std::string output_name) {
+  App sobel;
+  sobel.func2d("off_chip_img");
+  sobel.func2d("img", "id", "off_chip_img", {1, 1}, {{0, 0}});
+  sobel.func2d("mag_x", "sobel_mx", "img", {1, 1},
+      {{-1, -1}, {-1, 0}, {-1, 1}, {1, -1}, {1, 0}, {1, 1}});
+  sobel.func2d("mag_y", "sobel_my", "img", {1, 1},
+      {{-1, -1}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 1}});
+      //{{-1, 1}, {-1, -1}, {0, 1}, {0, - 1}, {1, 1}, {1, -1}});
+
+  Window xwindow{"mag_x", {1, 1}, {{0, 0}}};
+  Window ywindow{"mag_y", {1, 1}, {{0, 0}}};
+  sobel.func2d(output_name, "mag_cu", {xwindow, ywindow});
+  sobel.set_all_widths(16);
+
+  return sobel;
+}
+
 App sobel(const std::string output_name) {
   App sobel;
   sobel.func2d("off_chip_img");
@@ -5107,6 +5064,21 @@ void sobel_mag_x_test() {
   system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
 }
 
+void sobel_16_app_test() {
+  int cols = 30;
+  int rows = 30;
+ 
+  for (int i = 0; i < 1; i++) {
+    int unroll_factor = pow(2, i);
+    cout << tab(1) << "unroll factor: " << unroll_factor << endl;
+    string out_name = "sobel_16_unrolled_" + str(unroll_factor);
+    sobel16(out_name).realize(out_name, cols, rows, unroll_factor);
+    
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+
+}
+
 void sobel_app_test() {
   int cols = 1920;
   int rows = 1080;
@@ -5118,9 +5090,6 @@ void sobel_app_test() {
     string out_name = "sobel_unrolled_" + str(unroll_factor);
     sobel(out_name).realize(out_name, cols, rows, unroll_factor);
     
-    //std::vector<std::string> optimized =
-      //run_regression_tb(out_name + "_opt");
-
     move_to_benchmarks_folder(out_name + "_opt");
   }
 
@@ -6121,8 +6090,10 @@ void playground() {
 void application_tests() {
   //parse_denoise3d_test();
 
-  dummy_app_test();
+  sobel_16_app_test();
   assert(false);
+
+  dummy_app_test();
   two_input_denoise_pipeline_test();
   two_input_mag_test();
   one_input_mag_test();
