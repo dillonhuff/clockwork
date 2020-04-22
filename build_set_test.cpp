@@ -3576,6 +3576,25 @@ struct App {
 
   void generate_soda_file(const std::string& name) {
     ofstream out(name + ".soda");
+    out << "kernel: " << name << endl;
+    out << "iterate: 1" << endl;
+
+    string rep = pick(app_dag).first;
+    int unroll_factor = last_update(rep).unroll_factor;
+    int width = app_dag.at(rep).pixel_width;
+    out << "unroll factor: " << unroll_factor << endl;
+    out << "burst width: " << width*unroll_factor << endl << endl;
+
+    for (auto f : sort_functions()) {
+      for (auto u : app_dag.at(f).updates) {
+        if (u.get_srcs().size() == 0) {
+        } else {
+          out << "local uint" << width << ": " << u.name() << "(0, 0) = 1" << endl;
+        }
+
+      }
+    }
+
     out.close();
   }
 
@@ -6102,8 +6121,10 @@ void playground() {
 void application_tests() {
   //parse_denoise3d_test();
 
+  reduce_2d_test();
+  reduce_1d_test();
   sobel_16_stage_x_app_test();
-  assert(false);
+  //assert(false);
 
   sobel_16_app_test();
   up_stencil_down_test();
@@ -6180,7 +6201,6 @@ void application_tests() {
   //synth_upsample_test();
   unsharp_test();
   //conv_2d_rolled_test();
-  //reduce_2d_test();
   conv_1d_test();
   conv_2d_bc_test();
   //mobilenet_test();
@@ -6192,7 +6212,6 @@ void application_tests() {
   //synth_sr_boundary_condition_test();
   //synth_lb_test();
   //conv_app_rolled_reduce_test();
-  //reduce_1d_test();
 
 
   //up_stencil_down_unrolled_test();

@@ -8,15 +8,15 @@ hw_uint<16> img_generated_compute(hw_uint<16*1> off_chip_img) {
 }
 
 hw_uint<16> mag_y_generated_compute(hw_uint<16*6> img) {
-  return (((img.get<16, 1>() - img.get<16, 0>()) + ((img.get<16, 3>() - img.get<16, 2>()) * 3)) + (img.get<16, 5>() - img.get<16, 4>()));
+  return (((img.get<16, 1>() - img.get<16, 0>()) + ((img.get<16, 3>() - img.get<16, 2>()) * hw_uint<16>(3))) + (img.get<16, 5>() - img.get<16, 4>()));
 }
 
 hw_uint<16> mag_x_generated_compute(hw_uint<16*6> img) {
-  return (((img.get<16, 3>() - img.get<16, 0>()) + ((img.get<16, 4>() - img.get<16, 1>()) * 3)) + (img.get<16, 5>() - img.get<16, 2>()));
+  return (((img.get<16, 3>() - img.get<16, 0>()) + ((img.get<16, 4>() - img.get<16, 1>()) * hw_uint<16>(3))) + (img.get<16, 5>() - img.get<16, 2>()));
 }
 
 hw_uint<16> sobel_16_unrolled_1_generated_compute(hw_uint<16*1> mag_x, hw_uint<16*1> mag_y) {
-  return (65535 - ((mag_x.get<16, 0>() * mag_x.get<16, 0>()) + (mag_y.get<16, 0>() * mag_y.get<16, 0>())));
+  return (hw_uint<16>(65535) - ((mag_x.get<16, 0>() * mag_x.get<16, 0>()) + (mag_y.get<16, 0>() * mag_y.get<16, 0>())));
 }
 
 
