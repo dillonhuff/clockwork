@@ -39,7 +39,7 @@ struct FloatConst : public Expr {
 struct IntConst : public Expr {
   string val;
 
-  IntConst(std::string& val_) : val(val_) {}
+  IntConst(const std::string& val_) : val(val_) {}
   IntConst() : val("") {}
 
   virtual bool is_int_const() const { return true; }
@@ -134,4 +134,70 @@ string compute_string(Expr* def, map<string, vector<vector<int> > >& offset_map)
 
   assert(false);
   return "ERROR NO COMPUTE FOR EXPRESSION";
+}
+
+static inline
+Expr* v(const std::string& name,
+    const int a,
+    const int b) {
+
+  auto astr = str(a);
+  auto bstr = str(b);
+  return new FunctionCall(name, {new IntConst(astr),
+      new IntConst(bstr)});
+}
+
+static inline
+Expr* v(const std::string& name) {
+  return v(name, 0, 0);
+}
+
+static inline
+Expr* mul(Expr* const a, Expr* const b) {
+  return new Binop("*", a, b);
+}
+
+static inline
+Expr* mul(Expr* const a, const int v) {
+  return new Binop("*", a, new IntConst(str(v)));
+}
+
+static inline
+Expr* add(Expr* const a, Expr* const b) {
+  return new Binop("+", a, b);
+}
+
+static inline
+Expr* sub(Expr* const a, Expr* const b) {
+  return new Binop("-", a, b);
+}
+
+static inline
+Expr* add(vector<Expr*> args) {
+  assert(args.size() > 1);
+  Expr* res = args.at(0);
+  for (int i = 1; i < args.size(); i++) {
+    res = new Binop("+", res, args.at(i));
+  }
+  return res;
+}
+
+static inline
+Expr* add(Expr* const a, Expr* const b, Expr* c) {
+  return add({a, b, c});
+}
+
+static inline
+Expr* square(Expr* a) {
+  return mul(a, a);
+}
+
+static inline
+Expr* sub(const int v, Expr* a) {
+  return sub(new IntConst(str(v)), a);
+}
+
+static inline
+Expr* sub(Expr* a, const int v) {
+  return sub(a, new IntConst(str(v)));
 }

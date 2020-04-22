@@ -4714,16 +4714,20 @@ App sobel_mag_y() {
 App sobel16(const std::string output_name) {
   App sobel;
   sobel.func2d("off_chip_img");
-  sobel.func2d("img", "id", "off_chip_img", {1, 1}, {{0, 0}});
-  sobel.func2d("mag_x", "sobel_mx", "img", {1, 1},
-      {{-1, -1}, {-1, 0}, {-1, 1}, {1, -1}, {1, 0}, {1, 1}});
-  sobel.func2d("mag_y", "sobel_my", "img", {1, 1},
-      {{-1, -1}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 1}});
-      //{{-1, 1}, {-1, -1}, {0, 1}, {0, - 1}, {1, 1}, {1, -1}});
+  sobel.func2d("img", v("off_chip_img"));
+  sobel.func2d("mag_x", 
+      add(sub(v("img", 1, -1), v("img", -1, -1)),
+        mul(sub(v("img", 1, 0), v("img", -1, 0)), 3),
+        sub(v("img", 1, 1), v("img", -1, 1))));
 
-  Window xwindow{"mag_x", {1, 1}, {{0, 0}}};
-  Window ywindow{"mag_y", {1, 1}, {{0, 0}}};
-  sobel.func2d(output_name, "mag_cu", {xwindow, ywindow});
+  sobel.func2d("mag_y", 
+      add(sub(v("img", -1, 1), v("img", -1, -1)),
+        mul(sub(v("img", 0, 1), v("img", 0, -1)), 3),
+        sub(v("img", 1, 1), v("img", 1, -1))));
+
+  sobel.func2d(output_name,
+      sub(65535, add(square(v("mag_x")), square(v("mag_y")))));
+  
   sobel.set_all_widths(16);
 
   return sobel;
@@ -4783,37 +4787,6 @@ App jacobi3d(const std::string output_name) {
       {0, 1, 0}, {0, -1, 0},
       {0, 0, 1}, {0, 0, -1}});
   return jac;
-}
-
-Expr* v(const std::string& name,
-    const int a,
-    const int b) {
-
-  auto astr = str(a);
-  auto bstr = str(b);
-  return new FunctionCall(name, {new IntConst(astr),
-      new IntConst(bstr)});
-}
-
-Expr* v(const std::string& name) {
-  return v(name, 0, 0);
-}
-
-Expr* add(Expr* const a, Expr* const b) {
-  return new Binop("+", a, b);
-}
-
-Expr* sub(Expr* const a, Expr* const b) {
-  return new Binop("-", a, b);
-}
-
-Expr* add(vector<Expr*> args) {
-  assert(args.size() > 1);
-  Expr* res = args.at(0);
-  for (int i = 1; i < args.size(); i++) {
-    res = new Binop("+", res, args.at(i));
-  }
-  return res;
 }
 
 App denoise2d(const std::string& name) {
@@ -5074,6 +5047,9 @@ void sobel_16_app_test() {
     string out_name = "sobel_16_unrolled_" + str(unroll_factor);
     sobel16(out_name).realize(out_name, cols, rows, unroll_factor);
     
+    std::vector<std::string> optimized =
+      run_regression_tb(out_name + "_opt");
+
     move_to_benchmarks_folder(out_name + "_opt");
   }
 
