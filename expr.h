@@ -109,7 +109,7 @@ vector<int> get_offset(FunctionCall* off) {
 static inline
 string compute_string(const int pixel_width, Expr* def, map<string, vector<vector<int> > >& offset_map) {
   if (def->is_int_const()) {
-    return ((IntConst*)def)->val;
+    return "hw_uint<" + str(pixel_width) + ">(" + ((IntConst*)def)->val + ")";
   } else if (def->is_binop()) {
     auto op = (Binop*) def;
     return parens(compute_string(pixel_width, op->l, offset_map) + " " + op->op + " " + compute_string(pixel_width, op->r, offset_map));
