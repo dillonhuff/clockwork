@@ -386,7 +386,19 @@ void generate_tb_compare_scripts(prog& prg) {
   {
     ofstream of("tb_soda_" + prg.name + ".cpp");
 
+    of << "#include \"" << prg.name << ".h\"" << endl;
+    of << "#include <iostream>" << endl;
+    of << "#include <fstream>" << endl;
+    of << "#define PIXEL_WIDTH 32" << endl;
+    of << "#define BURST_WIDTH 32" << endl;
+
+    of << "#include \"runtime/test_utils.h\"" << endl << endl;
+    of << "using namespace std;" << endl << endl;
     of << "int main() {" << endl;
+    of << tab(1) << "ap_uint<BURST_WIDTH>* y_res = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);" << endl;
+
+    of << tab(1) << "write_results<bits_per_pixel>(\"soda_" << prg.name << "_regression_result.csv\", y_res, nrows, ncols, transfer_cols);" << endl;
+    of << tab(1) << "free(y_res);" << endl;
     of << "}" << endl;
 
     of.close();
