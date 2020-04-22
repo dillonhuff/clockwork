@@ -16,7 +16,7 @@ int main() {
   for (int i = 0; i < 900; i++) {
     hw_uint<32> in_val;
     in_pix << 1*i + 0 << endl;
-    set_at<0*32, 32>(in_val, 1*i + 0);
+    set_at<0*32, 32, 32>(in_val, 1*i + 0);
     f_update_0_read.write(in_val);
   }
 
@@ -26,7 +26,7 @@ int main() {
   for (int i = 0; i < 1024; i++) {
     hw_uint<32> in_val;
     in_pix << 1*i + 0 << endl;
-    set_at<0*32, 32>(in_val, 1*i + 0);
+    set_at<0*32, 32, 32>(in_val, 1*i + 0);
     u_update_0_read.write(in_val);
   }
 

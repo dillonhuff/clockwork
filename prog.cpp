@@ -15,7 +15,7 @@ split_bv(const int indent,
     int end = (i + 1)*lane_width- 1;
     conv_out << tab(indent) << "hw_uint<" << lane_width << "> " << ln << ";" << endl;
     conv_out << tab(indent)
-      << "set_at<0, " << lane_width << ">(" << ln << ", " << value << ".extract<" << base << ", " << end << ">());" << endl;
+      << "set_at<0, " << lane_width << ", " << lane_width << ">(" << ln << ", " << value << ".extract<" << base << ", " << end << ">());" << endl;
 
     lanes.push_back(ln);
   }

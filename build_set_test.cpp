@@ -909,7 +909,7 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
     for (int p = 0; p < num_ports; p++) {
       string next_val = str(num_ports) + "*i + " + str(p);
       rgtb << tab(2) << "in_pix << " << next_val << " << endl;" << endl;
-      rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ">(in_val, " << next_val << ");" << endl;
+      rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
     }
     rgtb << tab(2) << bundle << ".write(in_val);" << endl;
     rgtb << tab(1) << "}" << endl << endl;
@@ -2566,8 +2566,11 @@ struct App {
   map<string, isl_set*> compute_sets;
   map<string, isl_map*> compute_maps;
 
+  int default_pixel_width;
+
   App() {
     ctx = isl_ctx_alloc();
+    default_pixel_width = 32;
   }
 
   ~App() {
@@ -2623,6 +2626,7 @@ struct App {
 
     app_dag[name] = res;
 
+    set_width(name, default_pixel_width);
     return name;
   }
 
@@ -2666,7 +2670,7 @@ struct App {
         windows);
 
     app_dag[name].updates.back().compute_unit_impl =
-      compute_unit_string(compute_name, windows, def, offset_map);
+      compute_unit_string(default_pixel_width, compute_name, windows, def, offset_map);
 
     return name;
   }
@@ -2747,10 +2751,8 @@ struct App {
     return func2d(name, compute, {w});
   }
 
-  void set_all_widths(const int width) {
-    for (auto a : app_dag) {
-      set_width(a.first, width);
-    }
+  void set_default_pixel_width(const int width) {
+    default_pixel_width = width;
   }
 
   void set_width(const string& func, const int width) {
@@ -3754,14 +3756,14 @@ struct App {
                 if (arg_input_window.offsets.at(i) == off) {
                   int base = i*arg_width;
                   int end = (i + 1)*arg_width - 1;
-                  cfile << tab(1) << "set_at<" << win_pos*arg_width << ", " << npts << ">(" << arg_name << ", " << p << ".extract<" << base << ", " << end << ">());" << endl;
+                  cfile << tab(1) << "set_at<" << win_pos*arg_width << ", " << npts << ", " << arg_width << ">(" << arg_name << ", " << p << ".extract<" << base << ", " << end << ">());" << endl;
                 }
               }
               win_pos++;
             }
           }
           cfile << tab(1) << "auto result_" << lane << " = " << compute_name(f) << "(" << comma_list(arg_names) << ");" << endl;
-          cfile << tab(1) << "set_at<" << fwidth*lane << ", " << out_width << ">(whole_result, result_" << lane << ");" << endl;
+          cfile << tab(1) << "set_at<" << fwidth*lane << ", " << out_width << ", " << fwidth << ">(whole_result, result_" << lane << ");" << endl;
         }
         cfile << tab(1) << "return whole_result;" << endl;
         cfile << "}" << endl << endl;
@@ -4713,18 +4715,22 @@ App sobel_mag_y() {
 
 App sobel16(const std::string output_name) {
   App sobel;
+  sobel.set_default_pixel_width(16);
   sobel.func2d("off_chip_img");
-  sobel.func2d("img", "id", "off_chip_img", {1, 1}, {{0, 0}});
-  sobel.func2d("mag_x", "sobel_mx", "img", {1, 1},
-      {{-1, -1}, {-1, 0}, {-1, 1}, {1, -1}, {1, 0}, {1, 1}});
-  sobel.func2d("mag_y", "sobel_my", "img", {1, 1},
-      {{-1, -1}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 1}});
-      //{{-1, 1}, {-1, -1}, {0, 1}, {0, - 1}, {1, 1}, {1, -1}});
+  sobel.func2d("img", v("off_chip_img"));
+  sobel.func2d("mag_x", 
+      add(sub(v("img", 1, -1), v("img", -1, -1)),
+        mul(sub(v("img", 1, 0), v("img", -1, 0)), 3),
+        sub(v("img", 1, 1), v("img", -1, 1))));
 
-  Window xwindow{"mag_x", {1, 1}, {{0, 0}}};
-  Window ywindow{"mag_y", {1, 1}, {{0, 0}}};
-  sobel.func2d(output_name, "mag_cu", {xwindow, ywindow});
-  sobel.set_all_widths(16);
+  sobel.func2d("mag_y", 
+      add(sub(v("img", -1, 1), v("img", -1, -1)),
+        mul(sub(v("img", 0, 1), v("img", 0, -1)), 3),
+        sub(v("img", 1, 1), v("img", 1, -1))));
+
+  sobel.func2d(output_name,
+      sub(65535, add(square(v("mag_x")), square(v("mag_y")))));
+  
 
   return sobel;
 }
@@ -4742,7 +4748,6 @@ App sobel(const std::string output_name) {
   Window xwindow{"mag_x", {1, 1}, {{0, 0}}};
   Window ywindow{"mag_y", {1, 1}, {{0, 0}}};
   sobel.func2d(output_name, "mag_cu", {xwindow, ywindow});
-  //sobel.set_all_widths(16);
 
   return sobel;
 }
@@ -4783,37 +4788,6 @@ App jacobi3d(const std::string output_name) {
       {0, 1, 0}, {0, -1, 0},
       {0, 0, 1}, {0, 0, -1}});
   return jac;
-}
-
-Expr* v(const std::string& name,
-    const int a,
-    const int b) {
-
-  auto astr = str(a);
-  auto bstr = str(b);
-  return new FunctionCall(name, {new IntConst(astr),
-      new IntConst(bstr)});
-}
-
-Expr* v(const std::string& name) {
-  return v(name, 0, 0);
-}
-
-Expr* add(Expr* const a, Expr* const b) {
-  return new Binop("+", a, b);
-}
-
-Expr* sub(Expr* const a, Expr* const b) {
-  return new Binop("-", a, b);
-}
-
-Expr* add(vector<Expr*> args) {
-  assert(args.size() > 1);
-  Expr* res = args.at(0);
-  for (int i = 1; i < args.size(); i++) {
-    res = new Binop("+", res, args.at(i));
-  }
-  return res;
 }
 
 App denoise2d(const std::string& name) {
@@ -5074,6 +5048,9 @@ void sobel_16_app_test() {
     string out_name = "sobel_16_unrolled_" + str(unroll_factor);
     sobel16(out_name).realize(out_name, cols, rows, unroll_factor);
     
+    std::vector<std::string> optimized =
+      run_regression_tb(out_name + "_opt");
+
     move_to_benchmarks_folder(out_name + "_opt");
   }
 
@@ -6090,8 +6067,21 @@ void playground() {
 void application_tests() {
   //parse_denoise3d_test();
 
+  up_stencil_down_test();
+
+  up_stencil_test();
+  neg_stencil_test();
+  blur_x_test();
+
+  up_unrolled_test();
+  up_unrolled_4_test();
+  up_down_unrolled_test();
+  
+  conv3x3_app_unrolled_uneven_test();
+  
+  conv3x3_app_unrolled_test();
   sobel_16_app_test();
-  assert(false);
+  //assert(false);
 
   dummy_app_test();
   two_input_denoise_pipeline_test();
@@ -6105,7 +6095,6 @@ void application_tests() {
   sobel_mag_y_test();
   sobel_app_test();
   sobel_mag_x_test();
-  conv3x3_app_unrolled_test();
   exposure_fusion();
 
   //blur_xy_app_test();
@@ -6113,18 +6102,6 @@ void application_tests() {
   //playground();
   
   jacobi2d_app_test();
-  up_stencil_down_test();
-
-  up_stencil_test();
-  neg_stencil_test();
-  blur_x_test();
-
-  up_unrolled_test();
-  up_unrolled_4_test();
-  up_down_unrolled_test();
-  
-  conv3x3_app_unrolled_uneven_test();
-  
   mismatched_stencil_test();
 
   gaussian_pyramid_app_test();

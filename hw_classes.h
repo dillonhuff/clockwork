@@ -317,20 +317,20 @@ hw_uint<Len> operator+(const hw_uint<Len>& a, const hw_uint<Len>& b) {
 #endif
 }
 
-template<int offset, int Len>
-void set_at(hw_uint<Len>& i, const int value) {
-#ifdef __VIVADO_SYNTH__
-  for (int v = offset; v < offset + 32; v++) {
-#pragma HLS unroll
-    i.val[v] = ((value >> (v - offset)) & 1);
-  }
-#else
-  //cout << "Setting " << i << " to be " << value << " at: " << offset << endl;
-  for (int v = offset; v < offset + 32; v++) {
-    i.val.set(v, bsim::quad_value((value >> (v - offset)) & 1));
-  }
-#endif
-}
+//template<int offset, int Len>
+//void set_at(hw_uint<Len>& i, const int value) {
+//#ifdef __VIVADO_SYNTH__
+  //for (int v = offset; v < offset + 32; v++) {
+//#pragma HLS unroll
+    //i.val[v] = ((value >> (v - offset)) & 1);
+  //}
+//#else
+  ////cout << "Setting " << i << " to be " << value << " at: " << offset << endl;
+  //for (int v = offset; v < offset + 32; v++) {
+    //i.val.set(v, bsim::quad_value((value >> (v - offset)) & 1));
+  //}
+//#endif
+//}
 
 template<int offset, int Len, int OtherLen>
 void set_at(hw_uint<Len>& i, const hw_uint<OtherLen>& value) {

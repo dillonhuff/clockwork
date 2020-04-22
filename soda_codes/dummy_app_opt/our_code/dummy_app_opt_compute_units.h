@@ -15,9 +15,9 @@ hw_uint<32>  id_unrolled_1(hw_uint<32>& u_off_chip) {
   hw_uint<32> whole_result;
   hw_uint<32> lane_0_u_off_chip;
   // Need offset: 0, 0
-  set_at<0, 32>(lane_0_u_off_chip, u_off_chip.extract<0, 31>());
+  set_at<0, 32, 32>(lane_0_u_off_chip, u_off_chip.extract<0, 31>());
   auto result_0 = id(lane_0_u_off_chip);
-  set_at<0, 32>(whole_result, result_0);
+  set_at<0, 32, 32>(whole_result, result_0);
   return whole_result;
 }
 
@@ -26,11 +26,11 @@ hw_uint<32>  dummy_app_generated_compute_unrolled_1(hw_uint<64>& u) {
   hw_uint<32> whole_result;
   hw_uint<64> lane_0_u;
   // Need offset: 0, -1
-  set_at<0, 64>(lane_0_u, u.extract<0, 31>());
+  set_at<0, 64, 32>(lane_0_u, u.extract<0, 31>());
   // Need offset: 0, 0
-  set_at<32, 64>(lane_0_u, u.extract<32, 63>());
+  set_at<32, 64, 32>(lane_0_u, u.extract<32, 63>());
   auto result_0 = dummy_app_generated_compute(lane_0_u);
-  set_at<0, 32>(whole_result, result_0);
+  set_at<0, 32, 32>(whole_result, result_0);
   return whole_result;
 }
 

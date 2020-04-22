@@ -690,13 +690,13 @@ inline void t1_update_0(HWStream<hw_uint<128> >& /* buffer_args num ports = 4 */
 #ifndef __VIVADO_SYNTH__
   hw_uint<128> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
   hw_uint<32> debug_compute_result_lane_1;
-  set_at<0, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
+  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
   hw_uint<32> debug_compute_result_lane_2;
-  set_at<0, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
+  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
   hw_uint<32> debug_compute_result_lane_3;
-  set_at<0, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
+  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
   *global_debug_handle << "t1_update_0," << (4*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
   *global_debug_handle << "t1_update_0," << (4*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
   *global_debug_handle << "t1_update_0," << (4*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
@@ -716,13 +716,13 @@ inline void jacobi2d_unrolled_4_update_0(t1_cache& t1, HWStream<hw_uint<128> >& 
 #ifndef __VIVADO_SYNTH__
   hw_uint<128> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
   hw_uint<32> debug_compute_result_lane_1;
-  set_at<0, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
+  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
   hw_uint<32> debug_compute_result_lane_2;
-  set_at<0, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
+  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
   hw_uint<32> debug_compute_result_lane_3;
-  set_at<0, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
+  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
   *global_debug_handle << "jacobi2d_unrolled_4_update_0," << (4*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
   *global_debug_handle << "jacobi2d_unrolled_4_update_0," << (4*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
   *global_debug_handle << "jacobi2d_unrolled_4_update_0," << (4*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
