@@ -3756,14 +3756,14 @@ struct App {
                 if (arg_input_window.offsets.at(i) == off) {
                   int base = i*arg_width;
                   int end = (i + 1)*arg_width - 1;
-                  cfile << tab(1) << "set_at<" << win_pos*arg_width << ", " << npts << ">(" << arg_name << ", " << p << ".extract<" << base << ", " << end << ">());" << endl;
+                  cfile << tab(1) << "set_at<" << win_pos*arg_width << ", " << npts << ", " << arg_width << ">(" << arg_name << ", " << p << ".extract<" << base << ", " << end << ">());" << endl;
                 }
               }
               win_pos++;
             }
           }
           cfile << tab(1) << "auto result_" << lane << " = " << compute_name(f) << "(" << comma_list(arg_names) << ");" << endl;
-          cfile << tab(1) << "set_at<" << fwidth*lane << ", " << out_width << ">(whole_result, result_" << lane << ");" << endl;
+          cfile << tab(1) << "set_at<" << fwidth*lane << ", " << out_width << ", " << fwidth << ">(whole_result, result_" << lane << ");" << endl;
         }
         cfile << tab(1) << "return whole_result;" << endl;
         cfile << "}" << endl << endl;
@@ -6067,8 +6067,21 @@ void playground() {
 void application_tests() {
   //parse_denoise3d_test();
 
+  up_stencil_down_test();
+
+  up_stencil_test();
+  neg_stencil_test();
+  blur_x_test();
+
+  up_unrolled_test();
+  up_unrolled_4_test();
+  up_down_unrolled_test();
+  
+  conv3x3_app_unrolled_uneven_test();
+  
+  conv3x3_app_unrolled_test();
   sobel_16_app_test();
-  assert(false);
+  //assert(false);
 
   dummy_app_test();
   two_input_denoise_pipeline_test();
@@ -6082,7 +6095,6 @@ void application_tests() {
   sobel_mag_y_test();
   sobel_app_test();
   sobel_mag_x_test();
-  conv3x3_app_unrolled_test();
   exposure_fusion();
 
   //blur_xy_app_test();
@@ -6090,18 +6102,6 @@ void application_tests() {
   //playground();
   
   jacobi2d_app_test();
-  up_stencil_down_test();
-
-  up_stencil_test();
-  neg_stencil_test();
-  blur_x_test();
-
-  up_unrolled_test();
-  up_unrolled_4_test();
-  up_down_unrolled_test();
-  
-  conv3x3_app_unrolled_uneven_test();
-  
   mismatched_stencil_test();
 
   gaussian_pyramid_app_test();

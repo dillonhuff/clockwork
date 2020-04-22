@@ -24,8 +24,8 @@ int main() {
         r*IN_COLS + c + 0;
       int v1 =
         r*IN_COLS + c + 1;
-      set_at<0, 64>(in, v0);
-      set_at<32, 64>(in, v1);
+      set_at<0, 64, 32>(in, v0);
+      set_at<32, 64, 32>(in, v1);
 
       cout << "Writing to accelerator: " << in << endl;
 
