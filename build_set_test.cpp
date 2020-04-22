@@ -1927,80 +1927,6 @@ void jacobi_2d_test() {
   regression_test(prg);
 }
 
-struct Token {
-  string txt;
-
-  Token() : txt("") {}
-  Token(const std::string& txt_) : txt(txt_) {}
-};
-
-ostream& operator<<(ostream& out, const Token& e) {
-  out << e.txt;
-  return out;
-}
-
-struct Expr {
-  vector<Token> tokens;
-
-  virtual bool is_function_call() const { return false; }
-  virtual bool is_binop() const { return false; }
-  virtual bool is_int_const() const { return false; }
-  virtual set<Expr*> children() const { return {}; }
-};
-
-struct FloatConst : public Expr {
-  bool neg;
-  string l;
-  string r;
-};
-
-struct IntConst : public Expr {
-  string val;
-
-  IntConst(std::string& val_) : val(val_) {}
-  IntConst() : val("") {}
-
-  virtual bool is_int_const() const { return true; }
-
-  int int_value() const { return safe_stoi(val); }
-
-};
-
-struct FunctionCall : public Expr {
-  string name;
-  vector<Expr*> args;
-
-  FunctionCall(const string& n_, const vector<Expr*> args_) :
-    name(n_), args(args_) {}
-
-  virtual bool is_function_call() const { return true; }
-  virtual set<Expr*> children() const { return set<Expr*>(begin(args), end(args)); }
-};
-
-struct Binop : public Expr {
-  string op;
-  Expr* l;
-  Expr* r;
-
-  Binop(const string& op_, Expr* l_, Expr* r_) :
-    op(op_), l(l_), r(r_) {}
-
-  virtual bool is_binop() const { return true; }
-
-  virtual set<Expr*> children() const { return {l, r}; }
-}; 
-
-struct Unop : public Expr {
-  string op;
-  Expr* arg;
-  virtual set<Expr*> children() const { return {arg}; }
-};
-
-ostream& operator<<(ostream& out, const Expr& e) {
-  out << comma_list(e.tokens);
-  return out;
-}
-
 struct BaseExpr {
   string name;
   vector<Token> dims;
@@ -2528,10 +2454,10 @@ StencilProgram parse_soda_program(istream& in) {
     cout << " ) = ";
 
     Expr* e = op.second;
-    for (auto t : e->tokens) {
-      cout << t.txt << " ";
-    }
-    cout << endl;
+    //for (auto t : e->tokens) {
+      //cout << t.txt << " ";
+    //}
+    //cout << endl;
   }
   cout << "Done" << endl;
   return program;
@@ -2630,66 +2556,6 @@ void seidel2d_test() {
   regression_test(prg);
 }
 
-template<typename F>
-void visit_function_calls(Expr* e, F f) {
-  if (e->is_function_call()) {
-    f((FunctionCall*)e);
-  }
-
-  for (auto v : e->children()) {
-    visit_function_calls(v, f);
-  }
-}
-
-vector<int> get_offset(FunctionCall* off) {
-  vector<int> offset;
-  for (auto arg : off->args) {
-    assert(arg->is_int_const());
-    offset.push_back(((IntConst*) arg)->int_value());
-  }
-  return offset;
-}
-
-string compute_string(Expr* def, map<string, vector<vector<int> > >& offset_map) {
-  if (def->is_int_const()) {
-    return ((IntConst*)def)->val;
-  } else if (def->is_binop()) {
-    auto op = (Binop*) def;
-    return parens(compute_string(op->l, offset_map) + " " + op->op + " " + compute_string(op->r, offset_map));
-  } else {
-    assert(def->is_function_call());
-    auto call = (FunctionCall*) def;
-    assert(contains_key(call->name, offset_map));
-
-    auto offsets = get_offset(call);
-    int offset = 0;
-    bool found_offset = false;
-    for (auto off : offset_map[call->name]) {
-      if (off == offsets) {
-        found_offset = true;
-        break;
-      }
-      offset++;
-    }
-    assert(found_offset);
-    return call->name + ".get<32, " + str(offset) + ">()";
-  }
-
-  assert(false);
-  return "ERROR NO COMPUTE FOR EXPRESSION";
-}
-
-string compute_unit_string(const string& name,
-    vector<Window>& windows,
-    Expr* def,
-    map<string, vector<vector<int> > >& offset_map) {
-  vector<string> args;
-  for (auto w : windows) {
-    args.push_back("hw_uint<32*" + str(w.offsets.size()) + "> " + w.name);
-  }
-  return "hw_uint<32> " + name + sep_list(args, "(", ")", ", ") + " {\n" + tab(1) + "return " + compute_string(def, offset_map) + ";\n}";
-}
-
 struct App {
   isl_ctx* ctx;
   map<string, Result> app_dag;
@@ -2724,18 +2590,6 @@ struct App {
     app_dag.at(func).add_reduce_update(accum, compute, rargs, reduce_ranges);
 
   }
-
-  //string func2d(const std::string& name, const std::string& def) {
-    //Expr* e = parse_expr(def);
-    ////assert(false);
-    ////map<Expr*, vector<int> > offsets
-    //Result res;
-
-    //app_dag[name] = res;
-
-    //return name;
-
-  //}
 
   bool is_input(const std::string& name) const {
     return producers(name).size() == 0;
@@ -2793,19 +2647,11 @@ struct App {
       for (auto off : c.second) {
         vector<int> offset = get_offset(off);
         offsets.insert(offset);
-        //offset_map[window_name].push_back({off, offset});
       }
-
-      //vector<pair<FunctionCall*, vector<int> > > offset_vec = offset_map[window_name];
-      //sort_lt(offset_vec,
-          //[](const pair<FunctionCall*, vector<int> >& a) {
-          //return a.second;
-          //});
 
       vector<vector<int> > offsets_vec(begin(offsets), end(offsets));
       offset_map[window_name] = offsets_vec;
       Window w{window_name, strides, offsets_vec};
-      // Normalize positions of each offset
       windows.push_back(w);
     }
 
@@ -2814,9 +2660,6 @@ struct App {
       cout << tab(1) << w << endl;
     }
 
-    // Now what?
-    //  - Create windows from each call...?
-    
     add_func(name,
         compute_name,
         2,
@@ -2824,6 +2667,7 @@ struct App {
 
     app_dag[name].updates.back().compute_unit_impl =
       compute_unit_string(compute_name, windows, def, offset_map);
+
     return name;
   }
 
@@ -5276,17 +5120,7 @@ void sobel_app_test() {
     //std::vector<std::string> optimized =
       //run_regression_tb(out_name + "_opt");
 
-    string app_dir =
-      "./soda_codes/" + out_name;
-    string synth_dir =
-      "./soda_codes/" + out_name + "/our_code/";
-
-    system(("mkdir " + app_dir).c_str());
-    system(("mkdir " + synth_dir).c_str());
-    system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
-    system(("mv " + out_name + "*.h " + synth_dir).c_str());
-    system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
-    system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
+    move_to_benchmarks_folder(out_name + "_opt");
   }
 
 }
@@ -5391,6 +5225,30 @@ void sum_diffs_test() {
 
   move_to_benchmarks_folder(out_name);
   //assert(false);
+}
+
+void dummy_app_test() {
+  App dn;
+  string out_name = "dummy_app";
+
+  dn.func2d("u_off_chip");
+
+  dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
+
+  dn.func2d(out_name, sub(v("u", 0, 0), v("u", 0, -1)));
+
+  int size = 30;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = false;
+  options.debug_options.expect_all_linebuffers = true;
+  dn.realize(options, out_name, size, size);
+  std::vector<std::string> optimized =
+    run_regression_tb(out_name + "_opt");
+
+  move_to_benchmarks_folder(out_name + "_opt");
 }
 
 void two_input_denoise_pipeline_test() {
@@ -6262,13 +6120,12 @@ void playground() {
 void application_tests() {
   //parse_denoise3d_test();
 
-  two_input_denoise_pipeline_test();
+  dummy_app_test();
   assert(false);
+  two_input_denoise_pipeline_test();
   two_input_mag_test();
-  //assert(false);
   one_input_mag_test();
   sum_diffs_test();
-  //assert(false);
   sum_float_test();
   sum_denoise_test();
   denoise2d_test();

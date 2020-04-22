@@ -3,7 +3,9 @@
 #include "conv_3x3.h"
 
 // Generated compute units...
-hw_uint<32> diff_qwe_generated_compute(hw_uint<32*2> u){ return u.get<32, 0>()-u.get<32, 1>(); }
+hw_uint<32> diff_qwe_generated_compute(hw_uint<32*2> u) {
+  return (u.get<32, 0>() - u.get<32, 1>());
+}
 
 
 

@@ -1,39 +1,29 @@
-#include "soda_jacobi2d_unrolled_1_opt.h"
-#include <cstdlib>
-#include <cstring>
-#include "hw_classes.h"
+#include "jacobi2d_unrolled_1_opt_kernel.h"
 #include <iostream>
-#include "ap_int.h"
-#include "soda_jacobi2d_unrolled_1_opt_kernel.h"
 #include <fstream>
-
 #define PIXEL_WIDTH 32
 #define BURST_WIDTH 32
+#include "runtime/test_utils.h"
+
 using namespace std;
 
-// Out: jacobi2d_unrolled_1 dimensions...
-  // { jacobi2d_unrolled_1[i0, i1] : 0 <= i0 <= 15 and 0 <= i1 <= 15 }
-  // Min: { jacobi2d_unrolled_1[0, 0] }
-  // Max: { jacobi2d_unrolled_1[15, 15] }
-// In : t1_arg dimensions...
-  // { t1_arg[i0, i1] : -1 <= i0 <= 16 and -1 <= i1 <= 16 }
-  // Min: { t1_arg[-1, -1] }
-  // Max: { t1_arg[16, 16] }
 int main() {
-  const int img_size = 1920*1080;
-  ap_uint<32>* buf =
-    (ap_uint<32>*)malloc(sizeof(ap_uint<32>)*img_size);
-  for (int i = 0; i < img_size; i++) {
-    buf[i] = i;
-  }
-  ap_uint<32>* blur_y =
-    (ap_uint<32>*)malloc(sizeof(ap_uint<32>)*img_size);
-  jacobi2d_unrolled_1_opt_kernel(blur_y, buf, img_size);
-  ofstream soda_regression_out("regression_result_soda_jacobi2d_unrolled_1_opt.txt");
-  for (int i = 0; i < img_size; i++) {
-    soda_regression_out<< (int) blur_y[i] << endl;
-  }
-  soda_regression_out.close();
-  free(buf);
-  free(blur_y);
+  const int nrows = 32;
+  const int ncols = 32;
+  uint64_t img_pixels = nrows*ncols;
+  const uint64_t bits_per_pixel = PIXEL_WIDTH;
+  uint64_t img_bits = bits_per_pixel*img_pixels;
+const uint64_t num_transfers = img_bits / BURST_WIDTH;
+const uint64_t pixels_per_burst = BURST_WIDTH / bits_per_pixel;
+  cout << "num transfers    : " << num_transfers << endl;
+cout << "pixels / transfer: " << pixels_per_burst << endl;
+const uint64_t transfer_cols = ncols / pixels_per_burst;
+  ap_uint<BURST_WIDTH>* y_res = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
+ap_uint<BURST_WIDTH>* u = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>) * num_transfers);
+ap_uint<BURST_WIDTH>* f = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>) * num_transfers);
+fill_array<bits_per_pixel>("u_input_pixel.csv", u, nrows, ncols, transfer_cols);
+fill_array<bits_per_pixel>("f_input_pixel.csv", f, nrows, ncols, transfer_cols);
+jacobi2d_unrolled_1_opt_kernel(y_res, f, u, num_transfers);
+  write_results<bits_per_pixel>("soda_jacobi2d_unrolled_1_opt_regression_result.csv", y_res, nrows, ncols, transfer_cols);
+  free(y_res);
 }

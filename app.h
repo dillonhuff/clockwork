@@ -3,6 +3,7 @@
 #include "algorithm.h"
 #include "utils.h"
 #include "qexpr.h"
+#include "expr.h"
 
 map<string, int> maximize(const std::vector<QConstraint>& constraints, QExpr& objective);
 
@@ -954,3 +955,16 @@ map<string, vector<isl_aff*> >
 clockwork_schedule(uset* domain, umap* validity, umap* proximity);
 
 umap* experimental_opt(uset* domain, umap* validity, umap* proximity);
+
+static inline
+string compute_unit_string(const string& name,
+    vector<Window>& windows,
+    Expr* def,
+    map<string, vector<vector<int> > >& offset_map) {
+  vector<string> args;
+  for (auto w : windows) {
+    args.push_back("hw_uint<32*" + str(w.offsets.size()) + "> " + w.name);
+  }
+  return "hw_uint<32> " + name + sep_list(args, "(", ")", ", ") + " {\n" + tab(1) + "return " + compute_string(def, offset_map) + ";\n}";
+}
+
