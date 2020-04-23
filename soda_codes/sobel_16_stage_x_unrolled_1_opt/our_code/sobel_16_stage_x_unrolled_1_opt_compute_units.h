@@ -8,7 +8,7 @@ hw_uint<16> img_generated_compute(hw_uint<16*1> off_chip_img) {
 }
 
 hw_uint<16> sobel_16_stage_x_unrolled_1_generated_compute(hw_uint<16*6> img) {
-  return (((img.get<16, 3>() + img.get<16, 0>()) + ((img.get<16, 4>() + img.get<16, 1>()) + hw_uint<16>(3))) + (img.get<16, 5>() + img.get<16, 2>()));
+  return (((img.get<16, 3>() - img.get<16, 0>()) + ((img.get<16, 4>() - img.get<16, 1>()) * hw_uint<16>(3))) + (img.get<16, 5>() - img.get<16, 2>()));
 }
 
 
