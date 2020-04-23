@@ -9,10 +9,10 @@ int main() {
 
 
   // Loading input data
-  // cmap    : { img_update_0[root = 0, img_0, img_1] -> off_chip_img[0, 0] : -1 <= img_0 <= 30 and -1 <= img_1 <= 30 }
-  // read map: { off_chip_img[0, 0] -> img_update_0[root = 0, img_0, img_1] : -1 <= img_0 <= 30 and -1 <= img_1 <= 30 }
-  // rng     : { img_update_0[root = 0, img_0, img_1] : -1 <= img_0 <= 30 and -1 <= img_1 <= 30 }
-  for (int i = 0; i < 1024; i++) {
+  // cmap    : { img_update_0[root = 0, img_0, img_1] -> off_chip_img[0, 0] : -1 <= img_0 <= 1920 and -1 <= img_1 <= 1080 }
+  // read map: { off_chip_img[0, 0] -> img_update_0[root = 0, img_0, img_1] : -1 <= img_0 <= 1920 and -1 <= img_1 <= 1080 }
+  // rng     : { img_update_0[root = 0, img_0, img_1] : -1 <= img_0 <= 1920 and -1 <= img_1 <= 1080 }
+  for (int i = 0; i < 2079604; i++) {
     hw_uint<16> in_val;
     in_pix << 1*i + 0 << endl;
     set_at<0*16, 16, 16>(in_val, 1*i + 0);
@@ -21,7 +21,7 @@ int main() {
 
   sobel_16_unrolled_1_opt(img_update_0_read, sobel_16_unrolled_1_update_0_write);
 
-  for (int i = 0; i < 900; i++) {
+  for (int i = 0; i < 2073600; i++) {
     hw_uint<16> actual = sobel_16_unrolled_1_update_0_write.read();
     auto actual_lane_0 = actual.extract<0*16, 15>();
     fout << actual_lane_0 << endl;

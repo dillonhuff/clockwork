@@ -3898,7 +3898,7 @@ struct App {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = false;
+    options.use_custom_code_string = true;
     //options.debug_options.expect_all_linebuffers = true;
     realize(options, name, d0, d1);
   }
@@ -5129,17 +5129,17 @@ void sobel_16_stage_x_app_test() {
 }
 
 void sobel_16_app_test() {
-  int cols = 30;
-  int rows = 30;
+  int cols = 1920;
+  int rows = 1080;
  
-  for (int i = 0; i < 1; i++) {
+  for (int i = 0; i < 5; i++) {
     int unroll_factor = pow(2, i);
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
     string out_name = "sobel_16_unrolled_" + str(unroll_factor);
     sobel16(out_name).realize(out_name, cols, rows, unroll_factor);
     
-    std::vector<std::string> optimized =
-      run_regression_tb(out_name + "_opt");
+    //std::vector<std::string> optimized =
+      //run_regression_tb(out_name + "_opt");
 
     move_to_benchmarks_folder(out_name + "_opt");
   }
