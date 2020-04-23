@@ -4765,6 +4765,17 @@ App sobel_mag_y() {
   return sobel;
 }
 
+App blur_xy_16(const std::string output_name) {
+  App blur;
+  blur.set_default_pixel_width(16);
+  blur.func2d("input_arg");
+  blur.func2d("input", v("input_arg"));
+  blur.func2d("blurx", div(add(v("input", 0, 0), v("input", 0, 1), v("input", 0, 2)), 3));
+  blur.func2d(output_name, div(add(v("blurx", 0, 0), v("blurx", 1, 0), v("blurx", 2, 0)), 3));
+
+  return blur;
+}
+
 App sobel16_stage_x(const std::string output_name) {
   App sobel;
   sobel.set_default_pixel_width(16);
@@ -5161,6 +5172,21 @@ void sobel_app_test() {
   }
 
 }
+
+void blur_xy_16_app_test() {
+  int cols = 1920;
+  int rows = 1080;
+ 
+  for (int i = 0; i < 5; i++) {
+    int unroll_factor = pow(2, i);
+    cout << tab(1) << "unroll factor: " << unroll_factor << endl;
+    string out_name = "blur_xy_16_unrolled_" + str(unroll_factor);
+    blur_xy_16(out_name).realize(out_name, cols, rows, unroll_factor);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+}
+
 void blur_xy_app_test() {
   int cols = 1920;
   int rows = 1080;
@@ -6157,6 +6183,8 @@ void playground() {
 void application_tests() {
   //parse_denoise3d_test();
 
+  blur_xy_16_app_test();
+  assert(false);
   sobel_16_app_test();
   //assert(false);
   sobel_16_stage_x_app_test();
@@ -6192,7 +6220,6 @@ void application_tests() {
   sobel_mag_x_test();
   exposure_fusion();
 
-  //blur_xy_app_test();
 
   //playground();
   

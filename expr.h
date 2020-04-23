@@ -216,6 +216,16 @@ Expr* sub(Expr* const a, Expr* const b) {
 }
 
 static inline
+Expr* div(Expr* const a, Expr* const b) {
+  return new Binop("/", a, b);
+}
+
+static inline
+Expr* div(Expr* const a, const int v) {
+  return div(a, new IntConst(str(v)));
+}
+
+static inline
 Expr* add(vector<Expr*> args) {
   assert(args.size() > 1);
   Expr* res = args.at(0);
