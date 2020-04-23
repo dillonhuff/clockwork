@@ -339,8 +339,15 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
     of << "#include \"runtime/test_utils.h\"" << endl << endl;
     of << "using namespace std;" << endl << endl;
     of << "int main() {" << endl;
-    of << tab(1) << "const int nrows = 32;" << endl;
-    of << tab(1) << "const int ncols = 32;" << endl;
+    string rep_buf = pick(prg.ins);
+
+    assert(prg.buffer_bounds[rep_buf].size() > 1);
+
+    int nrows = prg.buffer_bounds[rep_buf].at(0);
+    int ncols = prg.buffer_bounds[rep_buf].at(1);
+
+    of << tab(1) << "const int nrows = " << nrows << ";" << endl;
+    of << tab(1) << "const int ncols = " << ncols << ";" << endl;
 
     of << tab(1) << "uint64_t img_pixels = nrows*ncols;" << endl;
 
@@ -349,10 +356,10 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
 
     of << tab(1) << "const uint64_t num_transfers = img_bits / BURST_WIDTH;" << endl;
 
-    of << tab(1) << "const uint64_t pixels_per_burst = BURST_WIDTH / bits_per_pixel;" << endl;
+    of << tab(1) << "const uint64_t pixels_per_burst = BURST_WIDTH / bits_per_pixel;" << endl << endl;
 
     of << tab(1) << "cout << \"num transfers    : \" << num_transfers << endl;" << endl;
-    of << tab(1) << "cout << \"pixels / transfer: \" << pixels_per_burst << endl;" << endl;
+    of << tab(1) << "cout << \"pixels / transfer: \" << pixels_per_burst << endl;" << endl << endl;
 
     of << tab(1) << "const uint64_t transfer_cols = ncols / pixels_per_burst;" << endl;
 

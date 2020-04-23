@@ -3517,6 +3517,11 @@ struct App {
       prg.buffer_port_widths[f] =
         app_dag.at(f).pixel_width;
 
+      Box domain = data_domain(f);
+      for (int i = 0; i < domain.dimension(); i++) {
+        prg.buffer_bounds[f].push_back(domain.length(i));
+      }
+
       for (auto u : app_dag.at(f).updates) {
         if (u.get_srcs().size() == 0) {
           prg.ins.insert(f);
@@ -3594,6 +3599,7 @@ struct App {
     }
 
     for (auto f : sort_functions()) {
+
       for (auto u : app_dag.at(f).updates) {
         if (u.get_srcs().size() == 0) {
         } else {
