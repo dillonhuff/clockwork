@@ -4798,7 +4798,8 @@ App sobel16(const std::string output_name) {
         sub(v("img", 1, 1), v("img", 1, -1))));
 
   sobel.func2d(output_name,
-      sub(65535, add(square(v("mag_x")), square(v("mag_y")))));
+      add(square(v("mag_x")), square(v("mag_y"))));
+      //sub(65535, add(square(v("mag_x")), square(v("mag_y")))));
   
 
   return sobel;
@@ -6154,9 +6155,9 @@ void playground() {
 void application_tests() {
   //parse_denoise3d_test();
 
-  sobel_16_stage_x_app_test();
-  assert(false);
   sobel_16_app_test();
+  assert(false);
+  sobel_16_stage_x_app_test();
   reduce_2d_test();
   reduce_1d_test();
 

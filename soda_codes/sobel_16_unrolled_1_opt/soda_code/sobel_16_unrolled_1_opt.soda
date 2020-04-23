@@ -8,7 +8,7 @@ local uint16: mag_y(0, 0) = (((img(-1, 1) - img(-1, -1)) + ((img(0, 1) - img(0, 
 
 local uint16: mag_x(0, 0) = (((img(1, -1) - img(-1, -1)) + ((img(1, 0) - img(-1, 0)) * 3)) + (img(1, 1) - img(-1, 1)))
 
-output uint16: sobel_16_unrolled_1(0, 0) = (65535 - ((mag_x(0, 0) * mag_x(0, 0)) + (mag_y(0, 0) * mag_y(0, 0))))
+output uint16: sobel_16_unrolled_1(0, 0) = ((mag_x(0, 0) * mag_x(0, 0)) + (mag_y(0, 0) * mag_y(0, 0)))
 
 
 iterate: 1
