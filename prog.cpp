@@ -31,27 +31,28 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
   out << "#include \"" << prg.name << ".h\"" << endl << endl;
 
   string in_rep = pick(prg.ins);
-  UBuffer& in_buf = map_find(in_rep, buffers);
-  string in_bundle = pick(in_buf.bundles).first;
+  UBuffer& in_buf = buffers.at(in_rep);
+  string in_bundle = pick(in_buf.port_bundles).first;
   string in_bundle_tp = in_buf.bundle_type_string(in_bundle);
 
-  //string out_rep = pick(prg.outs);
-  //UBuffer& out_buf = map_find(out_rep, buffers);
+  string out_rep = pick(prg.outs);
+  UBuffer& out_buf = buffers.at(out_rep);
+  string out_bundle = pick(out_buf.port_bundles).first;
+  string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
 
-
-  out << "#define INPUT_SIZE (18*18)" << endl;
-  out << "#define OUTPUT_SIZE (16*16)" << endl << endl;
+  out << "#define INPUT_SIZE " << prg.buffer_size(in_rep) << endl;
+  out << "#define OUTPUT_SIZE " << prg.buffer_size(out_rep) << endl << endl;
 
   out << "extern \"C\" {" << endl << endl;
 
-  out << "static void read_input(int* input, hls::stream<hw_uint<32> >& v, const int size) {" << endl;
+  out << "static void read_input(" << in_bundle_tp << "* input, hls::stream<" << in_bundle_tp << ">& v, const int size) {" << endl;
   out << tab(1) << "for (int i = 0; i < INPUT_SIZE; i++) {" << endl;
   out << tab(2) << "#pragma HLS pipeline II=1" << endl;
   out << tab(2) << "v.write(input[i]);" << endl;
   out << tab(1) << "}" << endl;
   out << "}" << endl << endl;
 
-  out << "static void write_output(int* output, hls::stream<hw_uint<32> >& v, const int size) {" << endl;
+  out << "static void write_output(" << out_bundle_tp << "* output, hls::stream<" << out_bundle_tp << ">& v, const int size) {" << endl;
   out << tab(1) << "for (int i = 0; i < OUTPUT_SIZE; i++) {" << endl;
   out << tab(2) << "#pragma HLS pipeline II=1" << endl;
   out << tab(2) << "output[i] = v.read();" << endl;
@@ -1029,12 +1030,13 @@ void generate_app_code(CodegenOptions& options,
   conv_out << tab(1) << "debug_file.close();" << endl;
   close_debug_scope(conv_out);
 
-  conv_out << "}" << endl;
+  conv_out << "}" << endl << endl;
 
-  open_synth_scope();
+  open_synth_scope(conv_out);
   generate_xilinx_accel_wrapper(conv_out, buffers, prg);
-  open_close_scope();
+  close_synth_scope(conv_out);
 
+  conv_out << endl;
 
   generate_app_code_header(buffers, prg);
   generate_soda_tb(buffers, prg);

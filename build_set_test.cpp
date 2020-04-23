@@ -6190,7 +6190,7 @@ void application_tests() {
   //parse_denoise3d_test();
 
   blur_xy_16_app_test();
-  //assert(false);
+  assert(false);
   sobel_16_app_test();
   //assert(false);
   sobel_16_stage_x_app_test();

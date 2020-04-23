@@ -329,6 +329,17 @@ struct prog {
 
   map<string, vector<int> > buffer_bounds;
 
+  int buffer_size(const std::string& buf) const {
+    assert(contains_key(buf, buffer_bounds));
+
+    auto dims = map_find(buf, buffer_bounds);
+    int sz = dims.at(0);
+    for (int i = 1; i < dims.size(); i++) {
+      sz *= dims.at(i);
+    }
+    return sz;
+  }
+
   map<op*, Box> get_domain_boxes() {
       return root->get_domain_boxes();
   }
