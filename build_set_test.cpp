@@ -4798,8 +4798,8 @@ App sobel16(const std::string output_name) {
         sub(v("img", 1, 1), v("img", 1, -1))));
 
   sobel.func2d(output_name,
-      add(square(v("mag_x")), square(v("mag_y"))));
-      //sub(65535, add(square(v("mag_x")), square(v("mag_y")))));
+      //add(square(v("mag_x")), square(v("mag_y"))));
+      sub(65535, add(square(v("mag_x")), square(v("mag_y")))));
   
 
   return sobel;

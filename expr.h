@@ -137,7 +137,10 @@ string soda_compute_string(const int pixel_width, Expr* def) {
 static inline
 string compute_string(const int pixel_width, Expr* def, map<string, vector<vector<int> > >& offset_map) {
   if (def->is_int_const()) {
-    return "hw_uint<" + str(pixel_width) + ">(" + ((IntConst*)def)->val + ")";
+    stringstream ss;
+    ss << std::hex << ((IntConst*) def)->val;
+    string pixw = str(pixel_width);
+    return "hw_uint<" + str(pixel_width) + ">(\"" + pixw + "'h" + ss.str() + "\")";
   } else if (def->is_binop()) {
     auto op = (Binop*) def;
     return parens(compute_string(pixel_width, op->l, offset_map) + " " + op->op + " " + compute_string(pixel_width, op->r, offset_map));

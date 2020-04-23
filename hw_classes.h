@@ -216,12 +216,9 @@ class hw_uint {
 
     bsim::static_quad_value_bit_vector<Len> val;
 
-    //hw_uint(const hw_uint<Len>&& v) : val(v.val) {
-      //assert(false);
-    //}
-
     hw_uint(const hw_uint<Len>& v) : val(v.val) {}
     hw_uint(const int v) : val(v) {}
+    hw_uint(const string& v) : val(v) {}
     hw_uint() : val(0) {}
 
     template<int S, int E_inclusive>
