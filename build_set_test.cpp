@@ -5193,7 +5193,7 @@ void jacobi2d_app_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
   jac.realize(options, "t0", 32, 28, 1);
 
@@ -5216,7 +5216,7 @@ void jacobi2d_app_test() {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = false;
+    options.use_custom_code_string = true;
     options.debug_options.expect_all_linebuffers = true;
     jacobi2d(out_name).realize(options, out_name, cols, rows, unroll_factor);
     std::vector<std::string> optimized =
@@ -5254,7 +5254,7 @@ void sum_diffs_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
     std::vector<std::string> optimized =
@@ -5279,7 +5279,7 @@ void dummy_app_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
   std::vector<std::string> optimized =
@@ -5320,7 +5320,7 @@ void two_input_denoise_pipeline_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
   std::vector<std::string> optimized =
@@ -5358,7 +5358,7 @@ void two_input_mag_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
     std::vector<std::string> optimized =
@@ -5384,7 +5384,7 @@ void one_input_mag_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
     std::vector<std::string> optimized =
@@ -5407,7 +5407,7 @@ void sum_float_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
     std::vector<std::string> optimized =
@@ -5424,7 +5424,7 @@ void sum_denoise_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, "sum_denoise2d", size, size);
     std::vector<std::string> optimized =
@@ -5441,7 +5441,7 @@ void denoise2d_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, "denoise2d", size, size);
 
@@ -5504,7 +5504,7 @@ void conv3x3_app_unrolled_uneven_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
   sobel.realize(options, "conv3x3_app_unrolled_uneven", 30, 30, 7);
 
@@ -5530,7 +5530,7 @@ void conv3x3_app_unrolled_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
   sobel.realize(options, "conv3x3_app_unrolled", 30, 30, 2);
 
@@ -5558,7 +5558,7 @@ void conv3x3_app_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
   sobel.realize(options, "conv3x3_app", 30, 30);
 
@@ -6158,7 +6158,7 @@ void application_tests() {
   //parse_denoise3d_test();
 
   sobel_16_app_test();
-  assert(false);
+  //assert(false);
   sobel_16_stage_x_app_test();
   reduce_2d_test();
   reduce_1d_test();

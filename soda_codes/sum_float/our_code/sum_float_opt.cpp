@@ -17,7 +17,6 @@ struct f_f_update_0_write0_merged_banks_1_cache {
 	fifo<hw_uint<32> , 1> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
@@ -26,7 +25,6 @@ struct f_f_update_0_write0_merged_banks_1_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.push(value);
   }
@@ -45,7 +43,6 @@ inline void f_f_update_0_write0_write(hw_uint<32> & f_f_update_0_write0, f_cache
 
 inline hw_uint<32>  sum_float_rd0_select(f_cache& f, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
   // sum_float_rd0 read pattern: { sum_float_update_0[d0, d1] -> f[d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
   // Read schedule : { sum_float_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
@@ -89,7 +86,6 @@ struct u_u_update_0_write0_merged_banks_1_cache {
 	fifo<hw_uint<32> , 1> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.peek(0 - offset);
   }
@@ -98,7 +94,6 @@ struct u_u_update_0_write0_merged_banks_1_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.push(value);
   }
@@ -117,7 +112,6 @@ inline void u_u_update_0_write0_write(hw_uint<32> & u_u_update_0_write0, u_cache
 
 inline hw_uint<32>  sum_float_rd0_select(u_cache& u, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=u inter false
 #endif //__VIVADO_SYNTH__
   // sum_float_rd0 read pattern: { sum_float_update_0[d0, d1] -> u[d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
   // Read schedule : { sum_float_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
@@ -214,18 +208,35 @@ void sum_float_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chi
 #endif //__VIVADO_SYNTH__
   f_cache f;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
   u_cache u;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=u inter false
 #endif //__VIVADO_SYNTH__
-	for (int c0 = 0; c0 <= 29; c0 += 1)
-	  for (int c1 = 0; c1 <= 29; c1 += 1) {
-	f_update_0(f_off_chip, f, c1, c0);
-	u_update_0(u_off_chip, u, c1, c0);
-	sum_float_update_0(f, u, sum_float, c1, c0);
+	#ifdef __VIVADO_SYNTH__
+	#pragma HLS inline recursive
+	#endif // __VIVADO_SYNTH__
+	
+	for (int c0 = 0; c0 <= 29; c0++) {
+	  for (int c1 = 0; c1 <= 29; c1++) {
+	
+	#ifdef __VIVADO_SYNTH__
+	#pragma HLS pipeline II=1
+	#endif // __VIVADO_SYNTH__
+	
+	    if ((0 <= c1 && c1 <= 29) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 29) && ((c0 - 0) % 1 == 0)) {
+	f_update_0(f_off_chip, f, (c1 - 0) / 1, (c0 - 0) / 1);
+	    }
+	
+	    if ((0 <= c1 && c1 <= 29) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 29) && ((c0 - 0) % 1 == 0)) {
+	u_update_0(u_off_chip, u, (c1 - 0) / 1, (c0 - 0) / 1);
+	    }
+	
+	    if ((0 <= c1 && c1 <= 29) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 29) && ((c0 - 0) % 1 == 0)) {
+	sum_float_update_0(f, u, sum_float, (c1 - 0) / 1, (c0 - 0) / 1);
+	    }
+	
 	  }
+	}
 	
 #ifndef __VIVADO_SYNTH__
   debug_file.close();

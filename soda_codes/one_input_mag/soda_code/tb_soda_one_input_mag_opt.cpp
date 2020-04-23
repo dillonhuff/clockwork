@@ -21,7 +21,7 @@ int main() {
   ap_uint<BURST_WIDTH>* one_input_mag = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
   ap_uint<BURST_WIDTH>* u_off_chip = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
   fill_array<bits_per_pixel>("u_off_chip_input_pixel.csv", u_off_chip, nrows, ncols, transfer_cols);
-  one_input_mag_opt_kernel(one_input_mag, u_off_chip, transfer_cols);
+  one_input_mag_opt_kernel(one_input_mag, u_off_chip, num_transfers);
   write_results<bits_per_pixel>("soda_one_input_mag_opt_regression_result.csv", one_input_mag, nrows, ncols, transfer_cols);
   free(u_off_chip);
   free(one_input_mag);

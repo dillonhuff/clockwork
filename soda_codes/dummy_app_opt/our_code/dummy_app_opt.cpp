@@ -25,7 +25,6 @@ struct u_u_update_0_write0_merged_banks_2_cache {
 
 	inline hw_uint<32>  peek_29() {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f1 inter false
 #endif //__VIVADO_SYNTH__
 		return f1.back();
 	}
@@ -38,12 +37,10 @@ struct u_u_update_0_write0_merged_banks_2_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f2 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 29
     f2 = f1.back();
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f1 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 29 reading from capacity: 1
     f1.push(f0);
@@ -65,7 +62,6 @@ inline void u_u_update_0_write0_write(hw_uint<32> & u_u_update_0_write0, u_cache
 
 inline hw_uint<32>  dummy_app_rd0_select(u_cache& u, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=u inter false
 #endif //__VIVADO_SYNTH__
   // dummy_app_rd0 read pattern: { dummy_app_update_0[d0, d1] -> u[d0, -1 + d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
   // Read schedule : { dummy_app_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
@@ -82,7 +78,6 @@ inline hw_uint<32>  dummy_app_rd0_select(u_cache& u, int d0, int d1) {
 
 inline hw_uint<32>  dummy_app_rd1_select(u_cache& u, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=u inter false
 #endif //__VIVADO_SYNTH__
   // dummy_app_rd1 read pattern: { dummy_app_update_0[d0, d1] -> u[d0, d1] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
   // Read schedule : { dummy_app_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 29 and 0 <= d1 <= 29 }
@@ -124,20 +119,6 @@ inline void u_u_update_0_write_bundle_write(hw_uint<32>& u_update_0_write, u_cac
 
 
 // Operation logic
-inline void u_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_off_chip, u_cache& u, int d0, int d1) {
-	// Consume: u_off_chip
-	auto u_off_chip_0_c__0_value = u_off_chip.read();
-	auto compute_result = id_unrolled_1(u_off_chip_0_c__0_value);
-	// Produce: u
-	u_u_update_0_write_bundle_write(compute_result, u, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "u_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-}
-
 inline void dummy_app_update_0(u_cache& u, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */dummy_app, int d0, int d1) {
 	// Consume: u
 	auto u_0_c__0_value = u_dummy_app_update_0_read_bundle_read(u/* source_delay */, d0, d1);
@@ -155,6 +136,20 @@ inline void dummy_app_update_0(u_cache& u, HWStream<hw_uint<32> >& /* buffer_arg
 #endif //__VIVADO_SYNTH__
 }
 
+inline void u_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_off_chip, u_cache& u, int d0, int d1) {
+	// Consume: u_off_chip
+	auto u_off_chip_0_c__0_value = u_off_chip.read();
+	auto compute_result = id_unrolled_1(u_off_chip_0_c__0_value);
+	// Produce: u
+	u_u_update_0_write_bundle_write(compute_result, u, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  hw_uint<32> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  *global_debug_handle << "u_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+}
+
 // Driver function
 void dummy_app_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */u_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */dummy_app) {
 
@@ -164,14 +159,28 @@ void dummy_app_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */u_off_chi
 #endif //__VIVADO_SYNTH__
   u_cache u;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=u inter false
 #endif //__VIVADO_SYNTH__
-	for (int c0 = -1; c0 <= 29; c0 += 1)
-	  for (int c1 = 0; c1 <= 29; c1 += 1) {
-	u_update_0(u_off_chip, u, c1, c0);
-	    if (c0 >= 0)
-	dummy_app_update_0(u, dummy_app, c1, c0);
+	#ifdef __VIVADO_SYNTH__
+	#pragma HLS inline recursive
+	#endif // __VIVADO_SYNTH__
+	
+	for (int c0 = -1; c0 <= 29; c0++) {
+	  for (int c1 = 0; c1 <= 29; c1++) {
+	
+	#ifdef __VIVADO_SYNTH__
+	#pragma HLS pipeline II=1
+	#endif // __VIVADO_SYNTH__
+	
+	    if ((0 <= c1 && c1 <= 29) && ((c1 - 0) % 1 == 0) && (-1 <= c0 && c0 <= 29) && ((c0 - 0) % 1 == 0)) {
+	u_update_0(u_off_chip, u, (c1 - 0) / 1, (c0 - 0) / 1);
+	    }
+	
+	    if ((0 <= c1 && c1 <= 29) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 29) && ((c0 - 0) % 1 == 0)) {
+	dummy_app_update_0(u, dummy_app, (c1 - 0) / 1, (c0 - 0) / 1);
+	    }
+	
 	  }
+	}
 	
 #ifndef __VIVADO_SYNTH__
   debug_file.close();

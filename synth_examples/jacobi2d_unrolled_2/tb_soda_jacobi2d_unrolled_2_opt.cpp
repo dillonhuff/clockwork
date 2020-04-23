@@ -21,7 +21,7 @@ int main() {
   ap_uint<BURST_WIDTH>* jacobi2d_unrolled_2 = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
   ap_uint<BURST_WIDTH>* t1_arg = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
   fill_array<bits_per_pixel>("t1_arg_input_pixel.csv", t1_arg, nrows, ncols, transfer_cols);
-  jacobi2d_unrolled_2_opt_kernel(jacobi2d_unrolled_2, t1_arg, transfer_cols);
+  jacobi2d_unrolled_2_opt_kernel(jacobi2d_unrolled_2, t1_arg, num_transfers);
   write_results<bits_per_pixel>("soda_jacobi2d_unrolled_2_opt_regression_result.csv", jacobi2d_unrolled_2, nrows, ncols, transfer_cols);
   free(t1_arg);
   free(jacobi2d_unrolled_2);

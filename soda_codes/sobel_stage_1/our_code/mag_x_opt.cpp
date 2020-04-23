@@ -41,7 +41,6 @@ struct img_img_update_0_write0_merged_banks_6_cache {
 
 	inline hw_uint<32>  peek_33() {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f3 inter false
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
@@ -60,7 +59,6 @@ struct img_img_update_0_write0_merged_banks_6_cache {
 
 	inline hw_uint<32>  peek_67() {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f7 inter false
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
@@ -81,52 +79,42 @@ struct img_img_update_0_write0_merged_banks_6_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f10 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 1
     f10 = f9;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f9 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 1
     f9 = f8;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f8 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 31
     f8 = f7.back();
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f7 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 31 reading from capacity: 1
     f7.push(f6);
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f6 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 1
     f6 = f5;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f5 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 1
     f5 = f4;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f4 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 31
     f4 = f3.back();
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f3 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 31 reading from capacity: 1
     f3.push(f2);
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f2 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 1
     f2 = f1;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f1 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 1
     f1 = f0;
@@ -148,7 +136,6 @@ inline void img_img_update_0_write0_write(hw_uint<32> & img_img_update_0_write0,
 
 inline hw_uint<32>  mag_x_rd0_select(img_cache& img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=img inter false
 #endif //__VIVADO_SYNTH__
   // mag_x_rd0 read pattern: { mag_x_update_0[d0, d1] -> img[-1 + d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Read schedule : { mag_x_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
@@ -165,7 +152,6 @@ inline hw_uint<32>  mag_x_rd0_select(img_cache& img, int d0, int d1) {
 
 inline hw_uint<32>  mag_x_rd1_select(img_cache& img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=img inter false
 #endif //__VIVADO_SYNTH__
   // mag_x_rd1 read pattern: { mag_x_update_0[d0, d1] -> img[-1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Read schedule : { mag_x_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
@@ -182,7 +168,6 @@ inline hw_uint<32>  mag_x_rd1_select(img_cache& img, int d0, int d1) {
 
 inline hw_uint<32>  mag_x_rd2_select(img_cache& img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=img inter false
 #endif //__VIVADO_SYNTH__
   // mag_x_rd2 read pattern: { mag_x_update_0[d0, d1] -> img[-1 + d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Read schedule : { mag_x_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
@@ -199,7 +184,6 @@ inline hw_uint<32>  mag_x_rd2_select(img_cache& img, int d0, int d1) {
 
 inline hw_uint<32>  mag_x_rd3_select(img_cache& img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=img inter false
 #endif //__VIVADO_SYNTH__
   // mag_x_rd3 read pattern: { mag_x_update_0[d0, d1] -> img[1 + d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Read schedule : { mag_x_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
@@ -216,7 +200,6 @@ inline hw_uint<32>  mag_x_rd3_select(img_cache& img, int d0, int d1) {
 
 inline hw_uint<32>  mag_x_rd4_select(img_cache& img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=img inter false
 #endif //__VIVADO_SYNTH__
   // mag_x_rd4 read pattern: { mag_x_update_0[d0, d1] -> img[1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Read schedule : { mag_x_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
@@ -233,7 +216,6 @@ inline hw_uint<32>  mag_x_rd4_select(img_cache& img, int d0, int d1) {
 
 inline hw_uint<32>  mag_x_rd5_select(img_cache& img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=img inter false
 #endif //__VIVADO_SYNTH__
   // mag_x_rd5 read pattern: { mag_x_update_0[d0, d1] -> img[1 + d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Read schedule : { mag_x_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
@@ -331,14 +313,28 @@ void mag_x_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */off_chip_img,
 #endif //__VIVADO_SYNTH__
   img_cache img;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=img inter false
 #endif //__VIVADO_SYNTH__
-	for (int c0 = -1; c0 <= 32; c0 += 1)
-	  for (int c1 = -1; c1 <= 32; c1 += 1) {
-	img_update_0(off_chip_img, img, c1, c0);
-	    if (c0 >= 1 && c1 >= 1)
-	mag_x_update_0(img, mag_x, c1 - 1, c0 - 1);
+	#ifdef __VIVADO_SYNTH__
+	#pragma HLS inline recursive
+	#endif // __VIVADO_SYNTH__
+	
+	for (int c0 = -1; c0 <= 32; c0++) {
+	  for (int c1 = -1; c1 <= 32; c1++) {
+	
+	#ifdef __VIVADO_SYNTH__
+	#pragma HLS pipeline II=1
+	#endif // __VIVADO_SYNTH__
+	
+	    if ((-1 <= c1 && c1 <= 32) && ((c1 - 0) % 1 == 0) && (-1 <= c0 && c0 <= 32) && ((c0 - 0) % 1 == 0)) {
+	img_update_0(off_chip_img, img, (c1 - 0) / 1, (c0 - 0) / 1);
+	    }
+	
+	    if ((1 <= c1 && c1 <= 32) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 32) && ((c0 - 1) % 1 == 0)) {
+	mag_x_update_0(img, mag_x, (c1 - 1) / 1, (c0 - 1) / 1);
+	    }
+	
 	  }
+	}
 	
 #ifndef __VIVADO_SYNTH__
   debug_file.close();

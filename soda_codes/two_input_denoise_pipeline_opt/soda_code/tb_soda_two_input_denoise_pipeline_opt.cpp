@@ -23,7 +23,7 @@ int main() {
   fill_array<bits_per_pixel>("f_off_chip_input_pixel.csv", f_off_chip, nrows, ncols, transfer_cols);
   ap_uint<BURST_WIDTH>* u_off_chip = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
   fill_array<bits_per_pixel>("u_off_chip_input_pixel.csv", u_off_chip, nrows, ncols, transfer_cols);
-  two_input_denoise_pipeline_opt_kernel(two_input_denoise_pipeline, f_off_chip, u_off_chip, transfer_cols);
+  two_input_denoise_pipeline_opt_kernel(two_input_denoise_pipeline, f_off_chip, u_off_chip, num_transfers);
   write_results<bits_per_pixel>("soda_two_input_denoise_pipeline_opt_regression_result.csv", two_input_denoise_pipeline, nrows, ncols, transfer_cols);
   free(f_off_chip);
   free(u_off_chip);
