@@ -324,12 +324,17 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
     int pixel_width =
       pick(prg.buffer_port_widths).second;
 
+    int unroll_factor =
+      pick(map_find(pick(prg.ins), buffers).port_bundles).second.size();
+
+    int burst_width = pixel_width*unroll_factor;
+
     of << "// AUTO GEN SODA TB" << endl;
     of << "#include \"" << prg.name << "_kernel.h\"" << endl;
     of << "#include <iostream>" << endl;
     of << "#include <fstream>" << endl << endl;
     of << "#define PIXEL_WIDTH " << pixel_width << endl;
-    of << "#define BURST_WIDTH " << pixel_width << endl << endl;
+    of << "#define BURST_WIDTH " << burst_width << endl << endl;
 
     of << "#include \"runtime/test_utils.h\"" << endl << endl;
     of << "using namespace std;" << endl << endl;
