@@ -1,8 +1,11 @@
+// AUTO GEN SODA TB
 #include "blur_xy_16_unrolled_16_opt_kernel.h"
 #include <iostream>
 #include <fstream>
+
 #define PIXEL_WIDTH 16
 #define BURST_WIDTH 16
+
 #include "runtime/test_utils.h"
 
 using namespace std;
