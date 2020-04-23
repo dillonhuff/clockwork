@@ -4767,7 +4767,7 @@ App sobel_mag_y() {
 
 App sobel16_stage_x(const std::string output_name) {
   App sobel;
-  sobel.set_default_pixel_width(16);
+  //sobel.set_default_pixel_width(16);
   sobel.func2d("off_chip_img");
   sobel.func2d("img", v("off_chip_img"));
   sobel.func2d(output_name, 
