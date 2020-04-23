@@ -908,8 +908,8 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
     rgtb << tab(2) << buf.bundle_type_string(bundle) << " in_val;" << endl;
     for (int p = 0; p < num_ports; p++) {
       string next_val = str(num_ports) + "*i + " + str(p);
-      rgtb << tab(2) << "in_pix << " << next_val << " << endl;" << endl;
       rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
+      rgtb << tab(2) << "in_pix << in_val << endl;" << endl;
     }
     rgtb << tab(2) << bundle << ".write(in_val);" << endl;
     rgtb << tab(1) << "}" << endl << endl;

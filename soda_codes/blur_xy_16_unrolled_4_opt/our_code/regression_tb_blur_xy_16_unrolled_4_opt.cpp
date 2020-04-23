@@ -14,14 +14,14 @@ int main() {
   // rng     : { input_update_0[root = 0, input_0, input_1] : 0 <= input_0 <= 480 and 0 <= input_1 <= 1081 }
   for (int i = 0; i < 520442; i++) {
     hw_uint<64> in_val;
-    in_pix << 4*i + 0 << endl;
     set_at<0*16, 64, 16>(in_val, 4*i + 0);
-    in_pix << 4*i + 1 << endl;
+    in_pix << in_val << endl;
     set_at<1*16, 64, 16>(in_val, 4*i + 1);
-    in_pix << 4*i + 2 << endl;
+    in_pix << in_val << endl;
     set_at<2*16, 64, 16>(in_val, 4*i + 2);
-    in_pix << 4*i + 3 << endl;
+    in_pix << in_val << endl;
     set_at<3*16, 64, 16>(in_val, 4*i + 3);
+    in_pix << in_val << endl;
     input_update_0_read.write(in_val);
   }
 

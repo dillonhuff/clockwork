@@ -14,38 +14,38 @@ int main() {
   // rng     : { input_update_0[root = 0, input_0, input_1] : 0 <= input_0 <= 120 and 0 <= input_1 <= 1081 }
   for (int i = 0; i < 130922; i++) {
     hw_uint<256> in_val;
-    in_pix << 16*i + 0 << endl;
     set_at<0*16, 256, 16>(in_val, 16*i + 0);
-    in_pix << 16*i + 1 << endl;
+    in_pix << in_val << endl;
     set_at<1*16, 256, 16>(in_val, 16*i + 1);
-    in_pix << 16*i + 2 << endl;
+    in_pix << in_val << endl;
     set_at<2*16, 256, 16>(in_val, 16*i + 2);
-    in_pix << 16*i + 3 << endl;
+    in_pix << in_val << endl;
     set_at<3*16, 256, 16>(in_val, 16*i + 3);
-    in_pix << 16*i + 4 << endl;
+    in_pix << in_val << endl;
     set_at<4*16, 256, 16>(in_val, 16*i + 4);
-    in_pix << 16*i + 5 << endl;
+    in_pix << in_val << endl;
     set_at<5*16, 256, 16>(in_val, 16*i + 5);
-    in_pix << 16*i + 6 << endl;
+    in_pix << in_val << endl;
     set_at<6*16, 256, 16>(in_val, 16*i + 6);
-    in_pix << 16*i + 7 << endl;
+    in_pix << in_val << endl;
     set_at<7*16, 256, 16>(in_val, 16*i + 7);
-    in_pix << 16*i + 8 << endl;
+    in_pix << in_val << endl;
     set_at<8*16, 256, 16>(in_val, 16*i + 8);
-    in_pix << 16*i + 9 << endl;
+    in_pix << in_val << endl;
     set_at<9*16, 256, 16>(in_val, 16*i + 9);
-    in_pix << 16*i + 10 << endl;
+    in_pix << in_val << endl;
     set_at<10*16, 256, 16>(in_val, 16*i + 10);
-    in_pix << 16*i + 11 << endl;
+    in_pix << in_val << endl;
     set_at<11*16, 256, 16>(in_val, 16*i + 11);
-    in_pix << 16*i + 12 << endl;
+    in_pix << in_val << endl;
     set_at<12*16, 256, 16>(in_val, 16*i + 12);
-    in_pix << 16*i + 13 << endl;
+    in_pix << in_val << endl;
     set_at<13*16, 256, 16>(in_val, 16*i + 13);
-    in_pix << 16*i + 14 << endl;
+    in_pix << in_val << endl;
     set_at<14*16, 256, 16>(in_val, 16*i + 14);
-    in_pix << 16*i + 15 << endl;
+    in_pix << in_val << endl;
     set_at<15*16, 256, 16>(in_val, 16*i + 15);
+    in_pix << in_val << endl;
     input_update_0_read.write(in_val);
   }
 
