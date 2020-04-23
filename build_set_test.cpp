@@ -5112,7 +5112,7 @@ void sobel_16_stage_x_app_test() {
     int unroll_factor = pow(2, i);
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
     string out_name = "sobel_16_stage_x_unrolled_" + str(unroll_factor);
-    sobel16(out_name).realize(out_name, cols, rows, unroll_factor);
+    sobel16_stage_x(out_name).realize(out_name, cols, rows, unroll_factor);
     
     std::vector<std::string> optimized =
       run_regression_tb(out_name + "_opt");
