@@ -138,7 +138,7 @@ static inline
 string compute_string(const int pixel_width, Expr* def, map<string, vector<vector<int> > >& offset_map) {
   if (def->is_int_const()) {
     stringstream ss;
-    ss << std::hex << ((IntConst*) def)->val;
+    ss << std::hex << safe_stoi(((IntConst*) def)->val);
     string pixw = str(pixel_width);
     return "hw_uint<" + str(pixel_width) + ">(\"" + pixw + "'h" + ss.str() + "\")";
   } else if (def->is_binop()) {
