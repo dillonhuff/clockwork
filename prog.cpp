@@ -462,7 +462,7 @@ void generate_tb_compare_scripts(prog& prg) {
 
     of << tab(1) << prg.name << "_kernel(" << comma_list(args) << ");" << endl;
     for (auto out : prg.outs) {
-      of << tab(1) << "write_results<bits_per_pixel>(\"soda_" << prg.name << "_regression_result.csv\", " << out << ", nrows, ncols, transfer_cols);" << endl;
+      of << tab(1) << "write_results<bits_per_pixel>(\"soda_" << prg.name << "_regression_result.csv\", " << out << ", nrows, ncols, num_transfers);" << endl;
     }
 
     for (auto in : prg.ins) {
