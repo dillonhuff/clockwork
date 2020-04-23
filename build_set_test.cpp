@@ -4771,9 +4771,12 @@ App sobel16_stage_x(const std::string output_name) {
   sobel.func2d("off_chip_img");
   sobel.func2d("img", v("off_chip_img"));
   sobel.func2d(output_name, 
-      add(sub(v("img", 1, -1), v("img", -1, -1)),
-        mul(sub(v("img", 1, 0), v("img", -1, 0)), 3),
-        sub(v("img", 1, 1), v("img", -1, 1))));
+      add(add(v("img", 1, -1), v("img", -1, -1)),
+        add(add(v("img", 1, 0), v("img", -1, 0)), 3),
+        add(v("img", 1, 1), v("img", -1, 1))));
+      //add(sub(v("img", 1, -1), v("img", -1, -1)),
+        //mul(sub(v("img", 1, 0), v("img", -1, 0)), 3),
+        //sub(v("img", 1, 1), v("img", -1, 1))));
 
 
   return sobel;

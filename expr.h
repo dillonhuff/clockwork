@@ -196,6 +196,11 @@ Expr* add(Expr* const a, Expr* const b) {
 }
 
 static inline
+Expr* add(Expr* const a, const int b) {
+  return new Binop("+", a, new IntConst(str(b)));
+}
+
+static inline
 Expr* sub(Expr* const a, Expr* const b) {
   return new Binop("-", a, b);
 }
@@ -208,6 +213,11 @@ Expr* add(vector<Expr*> args) {
     res = new Binop("+", res, args.at(i));
   }
   return res;
+}
+
+static inline
+Expr* add(Expr* const a, Expr* const b, const int c) {
+  return add({a, b, new IntConst(str(c))});
 }
 
 static inline
