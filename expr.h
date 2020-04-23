@@ -137,10 +137,12 @@ string soda_compute_string(const int pixel_width, Expr* def) {
 static inline
 string compute_string(const int pixel_width, Expr* def, map<string, vector<vector<int> > >& offset_map) {
   if (def->is_int_const()) {
-    stringstream ss;
-    ss << std::hex << safe_stoi(((IntConst*) def)->val);
-    string pixw = str(pixel_width);
-    return "hw_uint<" + str(pixel_width) + ">(\"" + pixw + "'h" + ss.str() + "\")";
+    string val = (((IntConst*) def)->val);
+    return "hw_uint<" + str(pixel_width) + ">(" + val + ")";
+    //stringstream ss;
+    //ss << std::hex << safe_stoi(((IntConst*) def)->val);
+    //string pixw = str(pixel_width);
+    //return "hw_uint<" + str(pixel_width) + ">(\"" + pixw + "'h" + ss.str() + "\")";
   } else if (def->is_binop()) {
     auto op = (Binop*) def;
     return parens(compute_string(pixel_width, op->l, offset_map) + " " + op->op + " " + compute_string(pixel_width, op->r, offset_map));
@@ -191,6 +193,11 @@ Expr* mul(Expr* const a, Expr* const b) {
 static inline
 Expr* mul(Expr* const a, const int v) {
   return new Binop("*", a, new IntConst(str(v)));
+}
+
+static inline
+Expr* add(const int a, Expr* const b) {
+  return new Binop("+", new IntConst(str(a)), b);
 }
 
 static inline
