@@ -4799,7 +4799,8 @@ App sobel16(const std::string output_name) {
 
   sobel.func2d(output_name,
       //add(square(v("mag_x")), square(v("mag_y"))));
-      sub(65535, add(square(v("mag_x")), square(v("mag_y")))));
+      //sub(65535, add(square(v("mag_x")), square(v("mag_y")))));
+      sub(100, add(square(v("mag_x")), square(v("mag_y")))));
   
 
   return sobel;
