@@ -271,6 +271,16 @@ void ignore_inter_deps_array(std::ostream& out) {
 
 
 static inline
+void open_synth_scope(std::ostream& out) {
+  out << "#ifdef __VIVADO_SYNTH__" << endl;
+}
+
+static inline
+void close_synth_scope(std::ostream& out) {
+  out << "#endif //__VIVADO_SYNTH__" << endl;
+}
+
+static inline
 void open_debug_scope(std::ostream& out) {
   out << "#ifndef __VIVADO_SYNTH__" << endl;
 }

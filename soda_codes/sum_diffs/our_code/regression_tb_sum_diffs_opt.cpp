@@ -15,8 +15,8 @@ int main() {
   // rng     : { f_update_0[root = 0, f_0, f_1] : 0 <= f_0 <= 29 and 0 <= f_1 <= 29 }
   for (int i = 0; i < 900; i++) {
     hw_uint<32> in_val;
-    in_pix << 1*i + 0 << endl;
     set_at<0*32, 32, 32>(in_val, 1*i + 0);
+    in_pix << in_val << endl;
     f_update_0_read.write(in_val);
   }
 
@@ -25,8 +25,8 @@ int main() {
   // rng     : { u_update_0[root = 0, u_0, u_1] : -1 <= u_0 <= 30 and -1 <= u_1 <= 30 }
   for (int i = 0; i < 1024; i++) {
     hw_uint<32> in_val;
-    in_pix << 1*i + 0 << endl;
     set_at<0*32, 32, 32>(in_val, 1*i + 0);
+    in_pix << in_val << endl;
     u_update_0_read.write(in_val);
   }
 

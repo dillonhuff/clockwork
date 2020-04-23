@@ -1,8 +1,11 @@
+// AUTO GEN SODA TB
 #include "sobel_16_stage_x_unrolled_1_opt_kernel.h"
 #include <iostream>
 #include <fstream>
+
 #define PIXEL_WIDTH 16
 #define BURST_WIDTH 16
+
 #include "runtime/test_utils.h"
 
 using namespace std;
@@ -15,8 +18,10 @@ int main() {
   uint64_t img_bits = bits_per_pixel*img_pixels;
   const uint64_t num_transfers = img_bits / BURST_WIDTH;
   const uint64_t pixels_per_burst = BURST_WIDTH / bits_per_pixel;
+
   cout << "num transfers    : " << num_transfers << endl;
   cout << "pixels / transfer: " << pixels_per_burst << endl;
+
   const uint64_t transfer_cols = ncols / pixels_per_burst;
   ap_uint<BURST_WIDTH>* sobel_16_stage_x_unrolled_1 = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
   ap_uint<BURST_WIDTH>* off_chip_img = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);

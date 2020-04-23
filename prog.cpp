@@ -23,12 +23,21 @@ split_bv(const int indent,
   return lanes;
 }
 
-void generate_xilinx_accel_wrapper(map<string, UBuffer>& buffers, prog& prg) {
+void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
 
   string driver_func = prg.name + "_accel";
 
-  ofstream out(driver_func + ".cpp");
+  //ofstream out(driver_func + ".cpp");
   out << "#include \"" << prg.name << ".h\"" << endl << endl;
+
+  string in_rep = pick(prg.ins);
+  UBuffer& in_buf = map_find(in_rep, buffers);
+  string in_bundle = pick(in_buf.bundles).first;
+  string in_bundle_tp = in_buf.bundle_type_string(in_bundle);
+
+  //string out_rep = pick(prg.outs);
+  //UBuffer& out_buf = map_find(out_rep, buffers);
+
 
   out << "#define INPUT_SIZE (18*18)" << endl;
   out << "#define OUTPUT_SIZE (16*16)" << endl << endl;
@@ -114,7 +123,7 @@ void generate_xilinx_accel_wrapper(map<string, UBuffer>& buffers, prog& prg) {
   out << "}" << endl << endl;
   out << "}" << endl;
 
-  out.close();
+  //out.close();
 }
 
 prog duplicate_interface(prog& p) {
@@ -341,10 +350,17 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
     of << "int main() {" << endl;
     string rep_buf = pick(prg.ins);
 
-    assert(prg.buffer_bounds[rep_buf].size() > 1);
 
-    int nrows = prg.buffer_bounds[rep_buf].at(0);
-    int ncols = prg.buffer_bounds[rep_buf].at(1);
+    //assert(prg.buffer_bounds[rep_buf].size() > 0);
+
+    int nrows = -1;
+    if (prg.buffer_bounds[rep_buf].size() > 0) {
+      nrows = prg.buffer_bounds[rep_buf].at(0);
+    }
+    int ncols = -1;
+    if (prg.buffer_bounds[rep_buf].size() > 1) {
+      ncols = prg.buffer_bounds[rep_buf].at(1);
+    }
 
     of << tab(1) << "const int nrows = " << nrows << ";" << endl;
     of << tab(1) << "const int ncols = " << ncols << ";" << endl;
@@ -486,7 +502,7 @@ void generate_tb_compare_scripts(prog& prg) {
   {
     ofstream of("run_tb.sh");
     of << "../../common/gen_app.sh" << endl;
-    of << "g++ -std=c++0x tb_soda_${app}.cpp ${app}_kernel.cpp -I ../../../ -I /cad/xilinx/vivado/2017.2/Vivado_HLS/2017.2/include/ || { echo 'compilation failed'; exit 1; }" << endl;
+    of << "g++ -std=c++0x tb_soda_${app}.cpp ${app}_kernel.cpp -I ../../../ -I ${XILINX_VIVADO}/include || { echo 'compilation failed'; exit 1; }" << endl;
     of << "./a.out" << endl;
     of.close();
   }
@@ -1015,12 +1031,18 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out << "}" << endl;
 
+  open_synth_scope();
+  generate_xilinx_accel_wrapper(conv_out, buffers, prg);
+  open_close_scope();
+
+
   generate_app_code_header(buffers, prg);
   generate_soda_tb(buffers, prg);
-  generate_xilinx_accel_wrapper(buffers, prg);
   generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
   generate_tb_run_scripts(prg);
   generate_tb_compare_scripts(prg);
+
+  conv_out.close();
 }
 
 void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap) {
