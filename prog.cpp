@@ -451,18 +451,12 @@ void generate_tb_compare_scripts(prog& prg) {
       args.push_back(in);
     }
 
-    args.push_back("transfer_cols");
-
-    //of << tab(1) << "ap_uint<BURST_WIDTH>* y_res = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);" << endl;
-    //of << tab(1) << "ap_uint<BURST_WIDTH>* u = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>) * num_transfers);" << endl;
-    //of << tab(1) << "ap_uint<BURST_WIDTH>* f = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>) * num_transfers);" << endl;
-
-    //of << tab(1) << "fill_array<bits_per_pixel>(\"u_input_pixel.csv\", u, nrows, ncols, transfer_cols);" << endl;
-    //of << tab(1) << "fill_array<bits_per_pixel>(\"f_input_pixel.csv\", f, nrows, ncols, transfer_cols);" << endl;
+    args.push_back("num_transfers");
 
     of << tab(1) << prg.name << "_kernel(" << comma_list(args) << ");" << endl;
+
     for (auto out : prg.outs) {
-      of << tab(1) << "write_results<bits_per_pixel>(\"soda_" << prg.name << "_regression_result.csv\", " << out << ", nrows, ncols, num_transfers);" << endl;
+      of << tab(1) << "write_results<bits_per_pixel>(\"soda_" << prg.name << "_regression_result.csv\", " << out << ", nrows, ncols, transfer_cols);" << endl;
     }
 
     for (auto in : prg.ins) {
