@@ -330,9 +330,14 @@ struct prog {
   map<string, vector<int> > buffer_bounds;
 
   int buffer_size(const std::string& buf) const {
+    if (!(contains_key(buf, buffer_bounds))) {
+      return 0;
+    }
     assert(contains_key(buf, buffer_bounds));
 
     auto dims = map_find(buf, buffer_bounds);
+    assert(dims.size() > 0);
+
     int sz = dims.at(0);
     for (int i = 1; i < dims.size(); i++) {
       sz *= dims.at(i);

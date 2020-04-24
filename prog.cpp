@@ -25,15 +25,17 @@ split_bv(const int indent,
 
 void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
 
+  cout << "Generating accel wrapper" << endl;
   string driver_func = prg.name + "_accel";
 
-  //ofstream out(driver_func + ".cpp");
   out << "#include \"" << prg.name << ".h\"" << endl << endl;
 
   string in_rep = pick(prg.ins);
   UBuffer& in_buf = buffers.at(in_rep);
   string in_bundle = pick(in_buf.port_bundles).first;
   string in_bundle_tp = in_buf.bundle_type_string(in_bundle);
+
+  cout << "Got in bundle" << endl;
 
   string out_rep = pick(prg.outs);
   UBuffer& out_buf = buffers.at(out_rep);
@@ -59,6 +61,7 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
   out << tab(1) << "}" << endl;
   out << "}" << endl << endl;
 
+  cout << "Generating arg list" << endl;
   vector<string> ptr_args;
   vector<string> ptr_arg_decls;
   vector<string> buffer_args;
@@ -66,26 +69,35 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
     assert(contains_key(in, buffers));
     auto& buf = buffers.at(in);
     assert(buf.get_out_bundles().size() == 1);
-    auto bundle = pick(buf.get_out_bundles());
 
-    ptr_arg_decls.push_back("int* " + bundle + "_arg");
+    cout << "picking from bundle" << endl;
+    auto bundle = pick(buf.get_out_bundles());
+    cout << "bundle: " << bundle << endl;
+
+    string out_bundle_tp = buf.bundle_type_string(bundle);
+    ptr_arg_decls.push_back(out_bundle_tp + "* " + bundle + "_arg");
     ptr_args.push_back(bundle);
     buffer_args.push_back(buf.name);
   }
+
+  cout << "Done with ins" << endl;
 
   for (auto out : prg.outs) {
     assert(contains_key(out, buffers));
     auto& buf = buffers.at(out);
     assert(buf.get_in_bundles().size() == 1);
     auto bundle = pick(buf.get_in_bundles());
+    string in_bundle_tp = buf.bundle_type_string(bundle);
 
-    ptr_arg_decls.push_back("int* " + bundle + "_arg");
+    ptr_arg_decls.push_back(in_bundle_tp + "* " + bundle + "_arg");
     ptr_args.push_back(bundle);
     buffer_args.push_back(buf.name);
   }
 
   vector<string> all_arg_decls = ptr_arg_decls;
   all_arg_decls.push_back("const int size");
+
+  cout << "Generating driver function" << endl;
 
   out << "void " << driver_func << "(" << comma_list(all_arg_decls) << ") { " << endl;
   out << "#pragma HLS dataflow" << endl;
@@ -123,8 +135,7 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
 
   out << "}" << endl << endl;
   out << "}" << endl;
-
-  //out.close();
+  cout << "Generated accel wrapper" << endl;
 }
 
 prog duplicate_interface(prog& p) {
@@ -275,6 +286,7 @@ vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg) {
     for (auto bndl : buf.port_bundles) {
       cout << "Trying bundle: " << bndl.first << endl;
       if (is_prefix(b, bndl.first)) {
+        cout << "Found" << endl;
         string bname = bndl.first;
         vector<string> ports = bndl.second;
         args.push_back("HWStream<" + buf.bundle_type_string(bname) + " >& /* get_args num ports = " + to_string(ports.size()) + " */" + buf.name);
@@ -282,6 +294,8 @@ vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg) {
         break;
       }
     }
+    cout << "done trying bundles" << endl;
+
     if (!found_bundle) {
       cout << "No bundle for input: " << b << endl;
       cout << "No bundle for input: " << b << endl;
@@ -312,6 +326,7 @@ vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg) {
         break;
       }
     }
+    cout << "done trying bundle" << endl;
     if (!found_bundle) {
       // TODO: Should really be an error
       cout << "No bundle for input: " << b << endl;
@@ -323,6 +338,7 @@ vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg) {
     }
 
   }
+  cout << "Got args" << endl;
   return args;
 }
 
@@ -356,10 +372,12 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
 
     int nrows = -1;
     if (prg.buffer_bounds[rep_buf].size() > 0) {
+      cout << "Getting 0" << endl;
       nrows = prg.buffer_bounds[rep_buf].at(0);
     }
     int ncols = -1;
     if (prg.buffer_bounds[rep_buf].size() > 1) {
+      cout << "Getting 1" << endl;
       ncols = prg.buffer_bounds[rep_buf].at(1);
     }
 

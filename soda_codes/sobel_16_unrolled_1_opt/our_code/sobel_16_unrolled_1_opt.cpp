@@ -539,6 +539,37 @@ inline hw_uint<16> mag_y_sobel_16_unrolled_1_update_0_read_bundle_read(mag_y_cac
 
 
 // Operation logic
+inline void img_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */off_chip_img, img_cache& img, int d0, int d1) {
+	// Consume: off_chip_img
+	auto off_chip_img_0_c__0_value = off_chip_img.read();
+	auto compute_result = img_generated_compute_unrolled_1(off_chip_img_0_c__0_value);
+	// Produce: img
+	img_img_update_0_write_bundle_write(compute_result, img, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  hw_uint<16> debug_compute_result(compute_result);
+  hw_uint<16> debug_compute_result_lane_0;
+  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
+  *global_debug_handle << "img_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+}
+
+inline void mag_y_update_0(img_cache& img, mag_y_cache& mag_y, int d0, int d1) {
+	// Consume: img
+	auto img_0_c__0_value = img_mag_y_update_0_read_bundle_read(img/* source_delay */, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "mag_y_update_0_img," << d0<< "," << d1<< "," <<  img_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+	auto compute_result = mag_y_generated_compute_unrolled_1(img_0_c__0_value);
+	// Produce: mag_y
+	mag_y_mag_y_update_0_write_bundle_write(compute_result, mag_y, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  hw_uint<16> debug_compute_result(compute_result);
+  hw_uint<16> debug_compute_result_lane_0;
+  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
+  *global_debug_handle << "mag_y_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+}
+
 inline void mag_x_update_0(img_cache& img, mag_x_cache& mag_x, int d0, int d1) {
 	// Consume: img
 	auto img_0_c__0_value = img_mag_x_update_0_read_bundle_read(img/* source_delay */, d0, d1);
@@ -553,20 +584,6 @@ inline void mag_x_update_0(img_cache& img, mag_x_cache& mag_x, int d0, int d1) {
   hw_uint<16> debug_compute_result_lane_0;
   set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
   *global_debug_handle << "mag_x_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-}
-
-inline void img_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */off_chip_img, img_cache& img, int d0, int d1) {
-	// Consume: off_chip_img
-	auto off_chip_img_0_c__0_value = off_chip_img.read();
-	auto compute_result = img_generated_compute_unrolled_1(off_chip_img_0_c__0_value);
-	// Produce: img
-	img_img_update_0_write_bundle_write(compute_result, img, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "img_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 }
 
@@ -589,23 +606,6 @@ inline void sobel_16_unrolled_1_update_0(mag_x_cache& mag_x, mag_y_cache& mag_y,
   hw_uint<16> debug_compute_result_lane_0;
   set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
   *global_debug_handle << "sobel_16_unrolled_1_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-}
-
-inline void mag_y_update_0(img_cache& img, mag_y_cache& mag_y, int d0, int d1) {
-	// Consume: img
-	auto img_0_c__0_value = img_mag_y_update_0_read_bundle_read(img/* source_delay */, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "mag_y_update_0_img," << d0<< "," << d1<< "," <<  img_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-	auto compute_result = mag_y_generated_compute_unrolled_1(img_0_c__0_value);
-	// Produce: mag_y
-	mag_y_mag_y_update_0_write_bundle_write(compute_result, mag_y, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "mag_y_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 }
 
@@ -659,3 +659,49 @@ void sobel_16_unrolled_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 *
   debug_file.close();
 #endif //__VIVADO_SYNTH__
 }
+
+#ifdef __VIVADO_SYNTH__
+#include "sobel_16_unrolled_1_opt.h"
+
+#define INPUT_SIZE 2079604
+#define OUTPUT_SIZE 2073600
+
+extern "C" {
+
+static void read_input(hw_uint<16>* input, hls::stream<hw_uint<16>>& v, const int size) {
+  for (int i = 0; i < INPUT_SIZE; i++) {
+    #pragma HLS pipeline II=1
+    v.write(input[i]);
+  }
+}
+
+static void write_output(hw_uint<16>* output, hls::stream<hw_uint<16>>& v, const int size) {
+  for (int i = 0; i < OUTPUT_SIZE; i++) {
+    #pragma HLS pipeline II=1
+    output[i] = v.read();
+  }
+}
+
+void sobel_16_unrolled_1_opt_accel(int* img_update_0_read_arg, int* sobel_16_unrolled_1_update_0_write_arg, const int size) { 
+#pragma HLS dataflow
+#pragma HLS INTERFACE m_axi port = img_update_0_read offset = slave bundle = gmem
+#pragma HLS INTERFACE m_axi port = sobel_16_unrolled_1_update_0_write offset = slave bundle = gmem
+
+#pragma HLS INTERFACE s_axilite port = img_update_0_read bundle = control
+#pragma HLS INTERFACE s_axilite port = sobel_16_unrolled_1_update_0_write bundle = control
+#pragma HLS INTERFACE s_axilite port = size bundle = control
+#pragma HLS INTERFACE s_axilite port = return bundle = control
+
+  static hls::stream<hw_uint<32> > off_chip_img;
+  static hls::stream<hw_uint<32> > sobel_16_unrolled_1;
+
+  read_input(off_chip_img_arg, off_chip_img, size);
+
+  sobel_16_unrolled_1_opt(off_chip_img, sobel_16_unrolled_1);
+
+  write_output(sobel_16_unrolled_1_arg, sobel_16_unrolled_1, size);
+}
+
+}
+#endif //__VIVADO_SYNTH__
+
