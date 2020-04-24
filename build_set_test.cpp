@@ -3678,7 +3678,8 @@ struct App {
     fill_compute_domain();
 
     umap* m =
-      schedule_isl();
+      schedule_naive();
+      //schedule_isl();
 
     cout << "Schedule: " << str(m) << endl;
 
