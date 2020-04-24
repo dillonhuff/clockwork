@@ -23,6 +23,170 @@ split_bv(const int indent,
   return lanes;
 }
 
+set<string> in_bundles(map<string, UBuffer>& buffers, prog& prg) {
+  set<string> edges;
+  for (auto in : prg.ins) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_out_bundles().size() == 1);
+
+    auto bundle = pick(buf.get_out_bundles());
+    edges.insert(bundle);
+  }
+  return edges;
+}
+
+
+set<string> out_bundles(map<string, UBuffer>& buffers, prog& prg) {
+  set<string> edges;
+  for (auto out : prg.outs) {
+    assert(contains_key(out, buffers));
+    auto& buf = buffers.at(out);
+    assert(buf.get_in_bundles().size() == 1);
+    auto bundle = pick(buf.get_in_bundles());
+
+    edges.insert(bundle);
+  }
+
+  return edges;
+}
+
+set<string> edge_bundles(map<string, UBuffer>& buffers, prog& prg) {
+  set<string> edges;
+  for (auto in : prg.ins) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_out_bundles().size() == 1);
+
+    auto bundle = pick(buf.get_out_bundles());
+    edges.insert(bundle);
+  }
+
+  for (auto out : prg.outs) {
+    assert(contains_key(out, buffers));
+    auto& buf = buffers.at(out);
+    assert(buf.get_in_bundles().size() == 1);
+    auto bundle = pick(buf.get_in_bundles());
+
+    edges.insert(bundle);
+  }
+
+  return edges;
+}
+
+void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
+  //return;
+
+  ofstream out(prg.name + "_host.cpp");
+
+  out << "#include \"xcl2.hpp\"" << endl;
+  out << "#include <algorithm>" << endl;
+  out << "#include <fstream>" << endl;
+  out << "#include <vector>" << endl << endl;
+
+  out << "int main(int argc, char **argv) {" << endl;
+
+  out << tab(1) << "if (argc != 5) {" << endl;
+  out << tab(2) << "std::cout << \"Usage: \" << argv[0] << \" <XCLBIN File> <Kernel Name> <input size> <output size>\" << std::endl;" << endl;
+  out << tab(2) << "return EXIT_FAILURE;" << endl;
+  out << tab(1) << "}" << endl;
+
+  out << tab(1) << "std::string binaryFile = argv[1];" << endl;
+  out << tab(1) << "std::string kernel_name = argv[2];" << endl;
+  out << tab(1) << "const int DATA_SIZE = stoi(argv[3]);" << endl;
+  out << tab(1) << "const int OUT_DATA_SIZE = stoi(argv[4]);" << endl << endl;
+
+  out << tab(1) << "size_t vector_size_bytes = sizeof(int) * DATA_SIZE;" << endl;
+  out << tab(1) << "cl_int err;" << endl;
+  out << tab(1) << "cl::Context context;" << endl;
+  out << tab(1) << "cl::Kernel krnl_vector_add;" << endl;
+  out << tab(1) << "cl::CommandQueue q;" << endl << endl;
+
+  for (auto edge_bundle : edge_bundles(buffers, prg)) {
+    out << tab(1) << "std::vector<int, aligned_allocator<int>> " << edge_bundle << "(DATA_SIZE);" << endl;
+  }
+
+  out << tab(1) << "for (int i = 0; i < DATA_SIZE; i++) {" << endl;
+  for (auto edge_bundle : edge_bundles(buffers, prg)) {
+    out << tab(2) << edge_bundle << "[i] = 0;" << endl;
+  }
+  out << tab(1) << "}" << endl << endl;
+
+  out << tab(1) << "auto devices = xcl::get_xil_devices();" << endl;
+  out << tab(1) << "auto fileBuf = xcl::read_binary_file(binaryFile);" << endl;
+  out << tab(1) << "cl::Program::Binaries bins{{fileBuf.data(), fileBuf.size()}};" << endl;
+  out << tab(1) << "int valid_device = 0;" << endl;
+  out << tab(1) << "for (unsigned int i = 0; i < devices.size(); i++) {" << endl;
+  out << tab(2) << "auto device = devices[i];" << endl;
+  out << tab(2) << "OCL_CHECK(err, context = cl::Context({device}, NULL, NULL, NULL, &err));" << endl;
+  out << tab(2) << "OCL_CHECK(err," << endl;
+  out << tab(3) << "q = cl::CommandQueue(" << endl;
+  out << tab(3) << "context, {device}, CL_QUEUE_PROFILING_ENABLE, &err));" << endl << endl;
+
+  out << tab(2) << "std::cout << \"Trying to program device[\" << i" << endl;
+  out << tab(3) << "<< \"]: \" << device.getInfo<CL_DEVICE_NAME>() << std::endl;" << endl;
+  out << tab(2) << "OCL_CHECK(err, cl::Program program(context, {device}, bins, NULL, &err));" << endl;
+  out << tab(2) << "if (err != CL_SUCCESS) {" << endl;
+  out << tab(3) << "std::cout << \"Failed to program device[\" << i" << endl;
+  out << tab(3) << "<< \"] with xclbin file!\\n\";" << endl;
+  out << tab(2) << "} else {" << endl;
+  out << tab(3) << "std::cout << \"Device[\" << i << \"]: program successful!\\n\";" << endl;
+  out << tab(3) << "OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, kernel_name, &err));" << endl;
+  out << tab(3) << "valid_device++;" << endl;
+  out << tab(3) << "break;" << endl;
+  out << tab(2) << "}" << endl;
+  out << tab(1) << "}" << endl;
+  out << tab(1) << "if (valid_device == 0) {" << endl;
+  out << tab(2) << "std::cout << \"Failed to program any device found, exit!\\n\";" << endl;
+  out << tab(2) << "exit(EXIT_FAILURE);" << endl;
+  out << tab(1) << "}" << endl << endl;
+
+  int arg_pos = 0;
+  for (auto in_bundle : in_bundles(buffers, prg)) {
+    out << tab(1) << "OCL_CHECK(err, cl::Buffer buffer_output(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, vector_size_bytes, " << in_bundle << ".data(), &err));" << endl;
+
+    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "));" << endl;
+    arg_pos++;
+  }
+  for (auto in_bundle : out_bundles(buffers, prg)) {
+    out << tab(1) << "OCL_CHECK(err, cl::Buffer buffer_in1(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, vector_size_bytes, " << in_bundle << ".data(), &err));" << endl;
+    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "));" << endl;
+    arg_pos++;
+  }
+
+
+  out << tab(1) << "int size = DATA_SIZE;" << endl;
+  out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", size));" << endl;
+
+  vector<string> in_bufs;
+  for (auto b : in_bundles(buffers, prg)) {
+    in_bufs.push_back(b);
+  }
+  out << tab(1) << "OCL_CHECK(err, err = q.enqueueMigrateMemObjects({" << comma_list(in_bufs) << "}, 0));" << endl;
+
+  out << tab(1) << "OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add));" << endl;
+
+  for (auto out_bundle: out_bundles(buffers, prg)) {
+    out << tab(1) << "OCL_CHECK(err, err = q.enqueueMigrateMemObjects({" << out_bundle << "}, CL_MIGRATE_MEM_OBJECT_HOST));" << endl;
+  }
+
+  out << endl;
+  out << tab(1) << "q.finish();" << endl << endl;
+
+  for (auto out_bundle: out_bundles(buffers, prg)) {
+    out << tab(1) << "std::ofstream regression_result(\"" << out_bundle << "_accel_result.csv\");" << endl;
+    out << tab(1) << "for (int i = 0; i < OUT_DATA_SIZE; i++) {" << endl;
+    out << tab(2) << "regression_result << " << out_bundle << "[i] << std::endl;" << endl;
+    out << tab(1) << "}" << endl;
+  }
+  out << endl;
+
+  out << tab(1) << "return 0;" << endl;
+  out << "}" << endl;
+
+  out.close();
+}
+
 void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
 
   cout << "Generating accel wrapper" << endl;
@@ -77,7 +241,7 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
     string out_bundle_tp = buf.bundle_type_string(bundle);
     ptr_arg_decls.push_back(out_bundle_tp + "* " + bundle);
     ptr_args.push_back(bundle);
-    buffer_args.push_back(buf.name);
+    buffer_args.push_back(bundle + "_channel");
   }
 
   cout << "Done with ins" << endl;
@@ -91,7 +255,8 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
 
     ptr_arg_decls.push_back(in_bundle_tp + "* " + bundle);
     ptr_args.push_back(bundle);
-    buffer_args.push_back(buf.name);
+    buffer_args.push_back(bundle + "_channel");
+    //buf.name);
   }
 
   vector<string> all_arg_decls = ptr_arg_decls;
@@ -116,7 +281,7 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
   for (auto in : prg.ins) {
     assert(contains_key(in, buffers));
     auto& buf = buffers.at(in);
-    assert(buf.get_in_bundles().size() == 1);
+    //assert(buf.get_in_bundles().size() == 1);
     auto bundle = pick(buf.get_in_bundles());
     string in_bundle_tp = buf.bundle_type_string(bundle);
 
@@ -126,7 +291,7 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
   for (auto in : prg.outs) {
     assert(contains_key(in, buffers));
     auto& buf = buffers.at(in);
-    assert(buf.get_in_bundles().size() == 1);
+    //assert(buf.get_in_bundles().size() == 1);
     auto bundle = pick(buf.get_in_bundles());
     string in_bundle_tp = buf.bundle_type_string(bundle);
 
@@ -1073,11 +1238,12 @@ void generate_app_code(CodegenOptions& options,
   conv_out << "}" << endl << endl;
 
   open_synth_scope(conv_out);
-  generate_xilinx_accel_wrapper(conv_out, buffers, prg);
+  //generate_xilinx_accel_wrapper(conv_out, buffers, prg);
   close_synth_scope(conv_out);
 
   conv_out << endl;
 
+  //generate_xilinx_accel_host(buffers, prg);
   generate_app_code_header(buffers, prg);
   generate_soda_tb(buffers, prg);
   generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);

@@ -342,47 +342,5 @@ void sobel_16_stage_x_unrolled_1_opt(HWStream<hw_uint<16> >& /* get_args num por
 }
 
 #ifdef __VIVADO_SYNTH__
-#include "sobel_16_stage_x_unrolled_1_opt.h"
-
-#define INPUT_SIZE 1024
-#define OUTPUT_SIZE 900
-
-extern "C" {
-
-static void read_input(hw_uint<16>* input, hls::stream<hw_uint<16>>& v, const int size) {
-  for (int i = 0; i < INPUT_SIZE; i++) {
-    #pragma HLS pipeline II=1
-    v.write(input[i]);
-  }
-}
-
-static void write_output(hw_uint<16>* output, hls::stream<hw_uint<16>>& v, const int size) {
-  for (int i = 0; i < OUTPUT_SIZE; i++) {
-    #pragma HLS pipeline II=1
-    output[i] = v.read();
-  }
-}
-
-void sobel_16_stage_x_unrolled_1_opt_accel(hw_uint<16>* img_update_0_read, hw_uint<16>* sobel_16_stage_x_unrolled_1_update_0_write, const int size) { 
-#pragma HLS dataflow
-#pragma HLS INTERFACE m_axi port = img_update_0_read offset = slave bundle = gmem
-#pragma HLS INTERFACE m_axi port = sobel_16_stage_x_unrolled_1_update_0_write offset = slave bundle = gmem
-
-#pragma HLS INTERFACE s_axilite port = img_update_0_read bundle = control
-#pragma HLS INTERFACE s_axilite port = sobel_16_stage_x_unrolled_1_update_0_write bundle = control
-#pragma HLS INTERFACE s_axilite port = size bundle = control
-#pragma HLS INTERFACE s_axilite port = return bundle = control
-
-  static hls::stream<hw_uint<32> > off_chip_img;
-  static hls::stream<hw_uint<32> > sobel_16_stage_x_unrolled_1;
-
-  read_input(off_chip_img_arg, off_chip_img, size);
-
-  sobel_16_stage_x_unrolled_1_opt(off_chip_img, sobel_16_stage_x_unrolled_1);
-
-  write_output(sobel_16_stage_x_unrolled_1_arg, sobel_16_stage_x_unrolled_1, size);
-}
-
-}
 #endif //__VIVADO_SYNTH__
 
