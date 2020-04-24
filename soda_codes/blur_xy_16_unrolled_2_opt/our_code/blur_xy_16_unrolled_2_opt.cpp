@@ -461,26 +461,6 @@ inline void input_input_update_0_write_bundle_write(hw_uint<32>& input_update_0_
 
 
 // Operation logic
-inline void blur_xy_16_unrolled_2_update_0(blurx_cache& blurx, HWStream<hw_uint<32> >& /* buffer_args num ports = 2 */blur_xy_16_unrolled_2, int d0, int d1) {
-	// Consume: blurx
-	auto blurx_0_c__0_value = blurx_blur_xy_16_unrolled_2_update_0_read_bundle_read(blurx/* source_delay */, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "blur_xy_16_unrolled_2_update_0_blurx," << d0<< "," << d1<< "," <<  blurx_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-	auto compute_result = blur_xy_16_unrolled_2_generated_compute_unrolled_2(blurx_0_c__0_value);
-	// Produce: blur_xy_16_unrolled_2
-	blur_xy_16_unrolled_2.write(compute_result);
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "blur_xy_16_unrolled_2_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "blur_xy_16_unrolled_2_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-#endif //__VIVADO_SYNTH__
-}
-
 inline void input_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 2 */input_arg, input_cache& input, int d0, int d1) {
 	// Consume: input_arg
 	auto input_arg_0_c__0_value = input_arg.read();
@@ -515,6 +495,26 @@ inline void blurx_update_0(input_cache& input, blurx_cache& blurx, int d0, int d
   set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
   *global_debug_handle << "blurx_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
   *global_debug_handle << "blurx_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+#endif //__VIVADO_SYNTH__
+}
+
+inline void blur_xy_16_unrolled_2_update_0(blurx_cache& blurx, HWStream<hw_uint<32> >& /* buffer_args num ports = 2 */blur_xy_16_unrolled_2, int d0, int d1) {
+	// Consume: blurx
+	auto blurx_0_c__0_value = blurx_blur_xy_16_unrolled_2_update_0_read_bundle_read(blurx/* source_delay */, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "blur_xy_16_unrolled_2_update_0_blurx," << d0<< "," << d1<< "," <<  blurx_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+	auto compute_result = blur_xy_16_unrolled_2_generated_compute_unrolled_2(blurx_0_c__0_value);
+	// Produce: blur_xy_16_unrolled_2
+	blur_xy_16_unrolled_2.write(compute_result);
+#ifndef __VIVADO_SYNTH__
+  hw_uint<32> debug_compute_result(compute_result);
+  hw_uint<16> debug_compute_result_lane_0;
+  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
+  hw_uint<16> debug_compute_result_lane_1;
+  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
+  *global_debug_handle << "blur_xy_16_unrolled_2_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "blur_xy_16_unrolled_2_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
 #endif //__VIVADO_SYNTH__
 }
 
@@ -570,14 +570,14 @@ void blur_xy_16_unrolled_2_opt(HWStream<hw_uint<32> >& /* get_args num ports = 2
 
 extern "C" {
 
-static void read_input(hw_uint<32>* input, hls::stream<hw_uint<32>>& v, const int size) {
+static void read_input(hw_uint<32>* input, hls::stream<hw_uint<32> >& v, const int size) {
   for (int i = 0; i < INPUT_SIZE; i++) {
     #pragma HLS pipeline II=1
     v.write(input[i]);
   }
 }
 
-static void write_output(hw_uint<32>* output, hls::stream<hw_uint<32>>& v, const int size) {
+static void write_output(hw_uint<32>* output, hls::stream<hw_uint<32> >& v, const int size) {
   for (int i = 0; i < OUTPUT_SIZE; i++) {
     #pragma HLS pipeline II=1
     output[i] = v.read();
@@ -594,14 +594,14 @@ void blur_xy_16_unrolled_2_opt_accel(hw_uint<32>* input_update_0_read, hw_uint<3
 #pragma HLS INTERFACE s_axilite port = size bundle = control
 #pragma HLS INTERFACE s_axilite port = return bundle = control
 
-  static hls::stream<hw_uint<32>> input_arg_update_0_write_channel;
-  static hls::stream<hw_uint<32>> blur_xy_16_unrolled_2_update_0_write_channel;
+  static hls::stream<hw_uint<32> > input_arg_update_0_write_channel;
+  static hls::stream<hw_uint<32> > blur_xy_16_unrolled_2_update_0_write_channel;
 
   read_input(input_arg_update_0_write, input_arg_update_0_write_channel, size);
 
   blur_xy_16_unrolled_2_opt(input_update_0_read_channel, blur_xy_16_unrolled_2_update_0_write_channel);
 
-  write_output(blur_xy_16_unrolled_2_update_0_write, blur_xy_16_unrolled_2_update_0_write_channel, , size);
+  write_output(blur_xy_16_unrolled_2_update_0_write, blur_xy_16_unrolled_2_update_0_write_channel, size);
 }
 
 }
