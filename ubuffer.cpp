@@ -625,8 +625,6 @@ string delay_string(CodegenOptions& options,
 selector generate_select(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
   selector sel = generate_select_decl(options, out, outpt, buf);
 
-  auto lex_max_events = get_lexmax_events(outpt, buf);
-
   out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
   vector<string> possible_ports;
   for (auto pt : buf.get_in_ports()) {
@@ -638,9 +636,7 @@ selector generate_select(CodegenOptions& options, std::ostream& out, const strin
   map<string, string> in_ports_to_conditions;
 
   //cout << possible_ports.size() << " possible ports for " << outpt << " on buffer: " << endl << buf << endl;
-  //cout << "lexmax = " << str(lex_max_events) << endl;
   for (auto inpt : possible_ports) {
-    //cout << tab(1) << inpt << endl;
     auto write_ops =
       domain(buf.access_map.at(outpt));
     auto written =
