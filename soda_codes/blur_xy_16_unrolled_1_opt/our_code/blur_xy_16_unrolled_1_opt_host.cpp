@@ -9,7 +9,6 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
   std::string binaryFile = argv[1];
-  std::string kernel_name = argv[2];
   const int DATA_SIZE = 4096;
   const int OUT_DATA_SIZE = 4096;
 
@@ -45,7 +44,7 @@ int main(int argc, char **argv) {
       << "] with xclbin file!\n";
     } else {
       std::cout << "Device[" << i << "]: program successful!\n";
-      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, kernel_name, &err));
+      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, blur_xy_16_unrolled_1_opt_accel, &err));
       valid_device++;
       break;
     }

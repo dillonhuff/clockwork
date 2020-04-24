@@ -92,7 +92,6 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   out << tab(1) << "}" << endl;
 
   out << tab(1) << "std::string binaryFile = argv[1];" << endl;
-  out << tab(1) << "std::string kernel_name = argv[2];" << endl;
   out << tab(1) << "const int DATA_SIZE = 4096;" << endl;
   out << tab(1) << "const int OUT_DATA_SIZE = 4096;" << endl << endl;
 
@@ -131,7 +130,7 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   out << tab(3) << "<< \"] with xclbin file!\\n\";" << endl;
   out << tab(2) << "} else {" << endl;
   out << tab(3) << "std::cout << \"Device[\" << i << \"]: program successful!\\n\";" << endl;
-  out << tab(3) << "OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, kernel_name, &err));" << endl;
+  out << tab(3) << "OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, " << prg.name << "_accel, &err));" << endl;
   out << tab(3) << "valid_device++;" << endl;
   out << tab(3) << "break;" << endl;
   out << tab(2) << "}" << endl;
