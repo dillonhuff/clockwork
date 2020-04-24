@@ -54,15 +54,15 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer buffer_output(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, vector_size_bytes, input_update_0_read.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(0, input_update_0_read));
-  OCL_CHECK(err, cl::Buffer buffer_in1(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, vector_size_bytes, blur_xy_16_unrolled_1_update_0_write.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(1, blur_xy_16_unrolled_1_update_0_write));
+  OCL_CHECK(err, cl::Buffer input_update_0_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, vector_size_bytes, input_update_0_read.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(0, input_update_0_read_ocl_buf));
+  OCL_CHECK(err, cl::Buffer blur_xy_16_unrolled_1_update_0_write_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, vector_size_bytes, blur_xy_16_unrolled_1_update_0_write.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(1, blur_xy_16_unrolled_1_update_0_write_ocl_buf));
   int size = DATA_SIZE;
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, size));
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({input_update_0_read}, 0));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({input_update_0_read_ocl_buf}, 0));
   OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add));
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({blur_xy_16_unrolled_1_update_0_write}, CL_MIGRATE_MEM_OBJECT_HOST));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({blur_xy_16_unrolled_1_update_0_write_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
 
