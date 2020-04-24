@@ -600,6 +600,23 @@ inline void u_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_
 #endif //__VIVADO_SYNTH__
 }
 
+inline void diff_d_update_0(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_d_update_0_read_bundle_read(u/* source_delay */, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "diff_d_update_0_u," << d0<< "," << d1<< "," <<  u_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+	auto compute_result = diff_d_generated_compute_unrolled_1(u_0_c__0_value);
+	// Produce: diff_d
+	diff_d_diff_d_update_0_write_bundle_write(compute_result, diff_d, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  hw_uint<32> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  *global_debug_handle << "diff_d_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+}
+
 inline void diff_u_update_0(u_cache& u, diff_u_cache& diff_u, int d0, int d1) {
 	// Consume: u
 	auto u_0_c__0_value = u_diff_u_update_0_read_bundle_read(u/* source_delay */, d0, d1);
@@ -614,6 +631,38 @@ inline void diff_u_update_0(u_cache& u, diff_u_cache& diff_u, int d0, int d1) {
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
   *global_debug_handle << "diff_u_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+}
+
+inline void one_input_mag_update_0(diff_d_cache& diff_d, diff_l_cache& diff_l, diff_r_cache& diff_r, diff_u_cache& diff_u, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */one_input_mag, int d0, int d1) {
+	// Consume: diff_d
+	auto diff_d_0_c__0_value = diff_d_one_input_mag_update_0_read_bundle_read(diff_d/* source_delay */, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "one_input_mag_update_0_diff_d," << d0<< "," << d1<< "," <<  diff_d_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+	// Consume: diff_l
+	auto diff_l_0_c__0_value = diff_l_one_input_mag_update_0_read_bundle_read(diff_l/* source_delay */, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "one_input_mag_update_0_diff_l," << d0<< "," << d1<< "," <<  diff_l_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+	// Consume: diff_r
+	auto diff_r_0_c__0_value = diff_r_one_input_mag_update_0_read_bundle_read(diff_r/* source_delay */, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "one_input_mag_update_0_diff_r," << d0<< "," << d1<< "," <<  diff_r_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+	// Consume: diff_u
+	auto diff_u_0_c__0_value = diff_u_one_input_mag_update_0_read_bundle_read(diff_u/* source_delay */, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "one_input_mag_update_0_diff_u," << d0<< "," << d1<< "," <<  diff_u_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+	auto compute_result = one_input_mag_generated_compute_unrolled_1(diff_d_0_c__0_value, diff_l_0_c__0_value, diff_r_0_c__0_value, diff_u_0_c__0_value);
+	// Produce: one_input_mag
+	one_input_mag.write(compute_result);
+#ifndef __VIVADO_SYNTH__
+  hw_uint<32> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  *global_debug_handle << "one_input_mag_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 }
 
@@ -648,55 +697,6 @@ inline void diff_l_update_0(u_cache& u, diff_l_cache& diff_l, int d0, int d1) {
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
   *global_debug_handle << "diff_l_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-}
-
-inline void diff_d_update_0(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_d_update_0_read_bundle_read(u/* source_delay */, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "diff_d_update_0_u," << d0<< "," << d1<< "," <<  u_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-	auto compute_result = diff_d_generated_compute_unrolled_1(u_0_c__0_value);
-	// Produce: diff_d
-	diff_d_diff_d_update_0_write_bundle_write(compute_result, diff_d, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "diff_d_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-}
-
-inline void one_input_mag_update_0(diff_d_cache& diff_d, diff_l_cache& diff_l, diff_r_cache& diff_r, diff_u_cache& diff_u, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */one_input_mag, int d0, int d1) {
-	// Consume: diff_d
-	auto diff_d_0_c__0_value = diff_d_one_input_mag_update_0_read_bundle_read(diff_d/* source_delay */, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "one_input_mag_update_0_diff_d," << d0<< "," << d1<< "," <<  diff_d_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-	// Consume: diff_l
-	auto diff_l_0_c__0_value = diff_l_one_input_mag_update_0_read_bundle_read(diff_l/* source_delay */, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "one_input_mag_update_0_diff_l," << d0<< "," << d1<< "," <<  diff_l_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-	// Consume: diff_r
-	auto diff_r_0_c__0_value = diff_r_one_input_mag_update_0_read_bundle_read(diff_r/* source_delay */, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "one_input_mag_update_0_diff_r," << d0<< "," << d1<< "," <<  diff_r_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-	// Consume: diff_u
-	auto diff_u_0_c__0_value = diff_u_one_input_mag_update_0_read_bundle_read(diff_u/* source_delay */, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "one_input_mag_update_0_diff_u," << d0<< "," << d1<< "," <<  diff_u_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-	auto compute_result = one_input_mag_generated_compute_unrolled_1(diff_d_0_c__0_value, diff_l_0_c__0_value, diff_r_0_c__0_value, diff_u_0_c__0_value);
-	// Produce: one_input_mag
-	one_input_mag.write(compute_result);
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "one_input_mag_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 }
 
@@ -766,5 +766,47 @@ void one_input_mag_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */u_off
 }
 
 #ifdef __VIVADO_SYNTH__
+#include "one_input_mag_opt.h"
+
+#define INPUT_SIZE 1024
+#define OUTPUT_SIZE 900
+
+extern "C" {
+
+static void read_input(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
+  for (int i = 0; i < INPUT_SIZE; i++) {
+    #pragma HLS pipeline II=1
+    v.write(input[i]);
+  }
+}
+
+static void write_output(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
+  for (int i = 0; i < OUTPUT_SIZE; i++) {
+    #pragma HLS pipeline II=1
+    output[i] = v.read();
+  }
+}
+
+void one_input_mag_opt_accel(hw_uint<32>* u_update_0_read, hw_uint<32>* one_input_mag_update_0_write, const int size) { 
+#pragma HLS dataflow
+#pragma HLS INTERFACE m_axi port = u_update_0_read offset = slave bundle = gmem
+#pragma HLS INTERFACE m_axi port = one_input_mag_update_0_write offset = slave bundle = gmem
+
+#pragma HLS INTERFACE s_axilite port = u_update_0_read bundle = control
+#pragma HLS INTERFACE s_axilite port = one_input_mag_update_0_write bundle = control
+#pragma HLS INTERFACE s_axilite port = size bundle = control
+#pragma HLS INTERFACE s_axilite port = return bundle = control
+
+  static HWStream<hw_uint<32> > u_update_0_read_channel;
+  static HWStream<hw_uint<32> > one_input_mag_update_0_write_channel;
+
+  read_input(u_update_0_read, u_update_0_read_channel, size);
+
+  one_input_mag_opt(u_update_0_read_channel, one_input_mag_update_0_write_channel);
+
+  write_output(one_input_mag_update_0_write, one_input_mag_update_0_write_channel, size);
+}
+
+}
 #endif //__VIVADO_SYNTH__
 

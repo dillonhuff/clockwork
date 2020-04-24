@@ -464,7 +464,7 @@ void generate_code_prefix(CodegenOptions& options,
     }
   }
 
-  string inpt = buf.get_in_port();
+  //string inpt = buf.get_in_port();
   out << "#include \"hw_classes.h\"" << endl << endl;
   for (auto b : buf.get_banks()) {
     generate_bank(options, out, b);

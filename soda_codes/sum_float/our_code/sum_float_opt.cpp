@@ -163,6 +163,20 @@ inline void u_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_
 #endif //__VIVADO_SYNTH__
 }
 
+inline void f_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */f_off_chip, f_cache& f, int d0, int d1) {
+	// Consume: f_off_chip
+	auto f_off_chip_0_c__0_value = f_off_chip.read();
+	auto compute_result = id_unrolled_1(f_off_chip_0_c__0_value);
+	// Produce: f
+	f_f_update_0_write_bundle_write(compute_result, f, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  hw_uint<32> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  *global_debug_handle << "f_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+}
+
 inline void sum_float_update_0(f_cache& f, u_cache& u, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */sum_float, int d0, int d1) {
 	// Consume: f
 	auto f_0_c__0_value = f_sum_float_update_0_read_bundle_read(f/* source_delay */, d0, d1);
@@ -182,20 +196,6 @@ inline void sum_float_update_0(f_cache& f, u_cache& u, HWStream<hw_uint<32> >& /
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
   *global_debug_handle << "sum_float_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-}
-
-inline void f_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */f_off_chip, f_cache& f, int d0, int d1) {
-	// Consume: f_off_chip
-	auto f_off_chip_0_c__0_value = f_off_chip.read();
-	auto compute_result = id_unrolled_1(f_off_chip_0_c__0_value);
-	// Produce: f
-	f_f_update_0_write_bundle_write(compute_result, f, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "f_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 }
 
@@ -244,5 +244,51 @@ void sum_float_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chi
 }
 
 #ifdef __VIVADO_SYNTH__
+#include "sum_float_opt.h"
+
+#define INPUT_SIZE 900
+#define OUTPUT_SIZE 900
+
+extern "C" {
+
+static void read_input(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
+  for (int i = 0; i < INPUT_SIZE; i++) {
+    #pragma HLS pipeline II=1
+    v.write(input[i]);
+  }
+}
+
+static void write_output(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
+  for (int i = 0; i < OUTPUT_SIZE; i++) {
+    #pragma HLS pipeline II=1
+    output[i] = v.read();
+  }
+}
+
+void sum_float_opt_accel(hw_uint<32>* f_update_0_read, hw_uint<32>* u_update_0_read, hw_uint<32>* sum_float_update_0_write, const int size) { 
+#pragma HLS dataflow
+#pragma HLS INTERFACE m_axi port = f_update_0_read offset = slave bundle = gmem
+#pragma HLS INTERFACE m_axi port = u_update_0_read offset = slave bundle = gmem
+#pragma HLS INTERFACE m_axi port = sum_float_update_0_write offset = slave bundle = gmem
+
+#pragma HLS INTERFACE s_axilite port = f_update_0_read bundle = control
+#pragma HLS INTERFACE s_axilite port = u_update_0_read bundle = control
+#pragma HLS INTERFACE s_axilite port = sum_float_update_0_write bundle = control
+#pragma HLS INTERFACE s_axilite port = size bundle = control
+#pragma HLS INTERFACE s_axilite port = return bundle = control
+
+  static HWStream<hw_uint<32> > f_update_0_read_channel;
+  static HWStream<hw_uint<32> > u_update_0_read_channel;
+  static HWStream<hw_uint<32> > sum_float_update_0_write_channel;
+
+  read_input(f_update_0_read, f_update_0_read_channel, size);
+  read_input(u_update_0_read, u_update_0_read_channel, size);
+
+  sum_float_opt(f_update_0_read_channel, u_update_0_read_channel, sum_float_update_0_write_channel);
+
+  write_output(sum_float_update_0_write, sum_float_update_0_write_channel, size);
+}
+
+}
 #endif //__VIVADO_SYNTH__
 

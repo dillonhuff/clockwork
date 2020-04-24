@@ -6210,7 +6210,7 @@ void playground() {
 void application_tests() {
   //parse_denoise3d_test();
   blur_xy_16_app_test();
-  assert(false);
+  //assert(false);
 
   reduce_2d_test();
   reduce_1d_test();
