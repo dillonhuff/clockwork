@@ -65,7 +65,7 @@ ifneq ($(HOST_ARCH), x86)
 endif
 
 # Kernel compiler global settings
-CLFLAGS += -t $(TARGET) --platform $(DEVICE) --save-temps 
+CLFLAGS += -D__VIVADO_SYNTH__ -I ../../../ -t $(TARGET) --platform $(DEVICE) --save-temps 
 ifneq ($(TARGET), hw)
 	CLFLAGS += -g
 endif
@@ -92,9 +92,9 @@ exe: $(EXECUTABLE)
 build: $(BINARY_CONTAINERS)
 
 # Building kernel
-$(TEMP_DIR)/$(APP_NAME).xo: src/$(APP_NAME).cpp
+$(TEMP_DIR)/$(APP_NAME).xo: $(APP_NAME).cpp
 	mkdir -p $(TEMP_DIR)
-	$(VPP) $(CLFLAGS) --temp_dir $(TEMP_DIR) -c -k $(APP_NAME) -I'$(<D)' -o'$@' '$<'
+	$(VPP) $(CLFLAGS) --temp_dir $(TEMP_DIR) -c -k $(APP_NAME)_accel -I'$(<D)' -o'$@' '$<'
 $(BUILD_DIR)/$(APP_NAME).xclbin: $(BINARY_CONTAINER_vadd_OBJS)
 	mkdir -p $(BUILD_DIR)
 	$(VPP) $(CLFLAGS) --temp_dir $(BUILD_DIR) -l $(LDCLFLAGS) -o'$@' $(+)
