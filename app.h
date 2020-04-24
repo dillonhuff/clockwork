@@ -3,6 +3,7 @@
 #include "algorithm.h"
 #include "utils.h"
 #include "qexpr.h"
+#include "expr.h"
 
 map<string, int> maximize(const std::vector<QConstraint>& constraints, QExpr& objective);
 
@@ -282,6 +283,7 @@ struct Update {
   int unroll_factor;
 
   string compute_unit_impl;
+  Expr* def;
 
   void pad_reduce_dimension(const int max_reduce_dimension) {
     for (auto& win : srcs) {
@@ -361,7 +363,7 @@ struct Result {
 
   void add_init_update(const string& name, const string& compute, const vector<Window>& args) {
     string update_name = provided.name + "_update_" + str(updates.size());
-    updates.push_back({false, update_name, provided, "", compute, {}, args, 1});
+    updates.push_back({false, update_name, provided, "", compute, {}, args, 1, "", nullptr});
   }
 
 };
@@ -954,3 +956,19 @@ map<string, vector<isl_aff*> >
 clockwork_schedule(uset* domain, umap* validity, umap* proximity);
 
 umap* experimental_opt(uset* domain, umap* validity, umap* proximity);
+
+static inline
+string compute_unit_string(const int pixel_width,
+    const string& name,
+    vector<Window>& windows,
+    Expr* def,
+    map<string, vector<vector<int> > >& offset_map) {
+  vector<string> args;
+  string wstr = str(pixel_width);
+  for (auto w : windows) {
+    args.push_back("hw_uint<" + wstr + "*" + str(w.offsets.size()) + "> " + w.name);
+  }
+  return "hw_uint<" + wstr + "> " + name + sep_list(args, "(", ")", ", ") + " {\n" + tab(1) +
+    "return " + compute_string(pixel_width, def, offset_map) + ";\n}";
+}
+

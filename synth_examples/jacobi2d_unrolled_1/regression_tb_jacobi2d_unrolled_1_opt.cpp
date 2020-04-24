@@ -14,8 +14,8 @@ int main() {
   // rng     : { t1_update_0[root = 0, t1_0, t1_1] : -1 <= t1_0 <= 16 and -1 <= t1_1 <= 16 }
   for (int i = 0; i < 324; i++) {
     hw_uint<32> in_val;
-    in_pix << 1*i + 0 << endl;
-    set_at<0*32, 32>(in_val, 1*i + 0);
+    set_at<0*32, 32, 32>(in_val, 1*i + 0);
+    in_pix << in_val << endl;
     t1_update_0_read.write(in_val);
   }
 

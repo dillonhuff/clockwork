@@ -1,43 +1,36 @@
-#include "soda_sum_denoise2d_opt.h"
-#include <cstdlib>
-#include <cstring>
-#include "hw_classes.h"
+// AUTO GEN SODA TB
+#include "sum_denoise2d_opt_kernel.h"
 #include <iostream>
-#include "ap_int.h"
-#include "soda_sum_denoise2d_opt_kernel.h"
 #include <fstream>
 
 #define PIXEL_WIDTH 32
 #define BURST_WIDTH 32
+
+#include "runtime/test_utils.h"
+
 using namespace std;
 
-// In : f_off_chip dimensions...
-  // { f_off_chip[i0, i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
-  // Min: { f_off_chip[0, 0] }
-  // Max: { f_off_chip[29, 29] }
-// Out: sum_denoise2d dimensions...
-  // { sum_denoise2d[i0, i1] : 0 <= i0 <= 29 and 0 <= i1 <= 29 }
-  // Min: { sum_denoise2d[0, 0] }
-  // Max: { sum_denoise2d[29, 29] }
-// In : u_off_chip dimensions...
-  // { u_off_chip[i0, i1] : -2 <= i0 <= 31 and -2 <= i1 <= 31 }
-  // Min: { u_off_chip[-2, -2] }
-  // Max: { u_off_chip[31, 31] }
 int main() {
-  const int img_size = 1920*1080;
-  ap_uint<32>* buf =
-    (ap_uint<32>*)malloc(sizeof(ap_uint<32>)*img_size);
-  for (int i = 0; i < img_size; i++) {
-    buf[i] = i;
-  }
-  ap_uint<32>* blur_y =
-    (ap_uint<32>*)malloc(sizeof(ap_uint<32>)*img_size);
-  sum_denoise2d_opt_kernel(blur_y, buf, img_size);
-  ofstream soda_regression_out("regression_result_soda_sum_denoise2d_opt.txt");
-  for (int i = 0; i < img_size; i++) {
-    soda_regression_out<< (int) blur_y[i] << endl;
-  }
-  soda_regression_out.close();
-  free(buf);
-  free(blur_y);
+  const int nrows = 30;
+  const int ncols = 30;
+  uint64_t img_pixels = nrows*ncols;
+  const uint64_t bits_per_pixel = PIXEL_WIDTH;
+  uint64_t img_bits = bits_per_pixel*img_pixels;
+  const uint64_t num_transfers = img_bits / BURST_WIDTH;
+  const uint64_t pixels_per_burst = BURST_WIDTH / bits_per_pixel;
+
+  cout << "num transfers    : " << num_transfers << endl;
+  cout << "pixels / transfer: " << pixels_per_burst << endl;
+
+  const uint64_t transfer_cols = ncols / pixels_per_burst;
+  ap_uint<BURST_WIDTH>* sum_denoise2d = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
+  ap_uint<BURST_WIDTH>* f_off_chip = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
+  fill_array<bits_per_pixel>("f_off_chip_input_pixel.csv", f_off_chip, nrows, ncols, transfer_cols);
+  ap_uint<BURST_WIDTH>* u_off_chip = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
+  fill_array<bits_per_pixel>("u_off_chip_input_pixel.csv", u_off_chip, nrows, ncols, transfer_cols);
+  sum_denoise2d_opt_kernel(sum_denoise2d, f_off_chip, u_off_chip, num_transfers);
+  write_results<bits_per_pixel>("soda_sum_denoise2d_opt_regression_result.csv", sum_denoise2d, nrows, ncols, transfer_cols);
+  free(f_off_chip);
+  free(u_off_chip);
+  free(sum_denoise2d);
 }

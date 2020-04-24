@@ -30,7 +30,7 @@ void fill_array(const string& in_name,
       ap_uint<BURST_WIDTH>* val = &(input[offset]);
       for (int l = 0; l < (BURST_WIDTH / bits_per_pixel); l++) {
         ap_uint<PIXEL_WIDTH> next_pix = r*ncols + c + l;
-        in << next_pix << endl;
+        in << binary_string(next_pix) << endl;
         (*val)(l*bits_per_pixel + bits_per_pixel - 1, l*bits_per_pixel) = next_pix;
       }
     }

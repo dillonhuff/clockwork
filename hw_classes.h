@@ -66,6 +66,10 @@ class fifo {
     }
 
     T peek(int offset) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
+
       assert(offset >= 0);
       //cout << "Getting offset from top: " << offset << endl;
       //int top_addr = (write_addr + Depth) % Depth;
@@ -88,6 +92,9 @@ class fifo {
     }
 
     T back() {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
       int addr = write_addr + Depth;
       if (addr >= Depth) {
         // Wrap around
@@ -99,6 +106,9 @@ class fifo {
     }
 
     void push(const T& val) {
+#ifdef __VIVADO_SYNTH__
+#pragma HLS dependence array inter false
+#endif //__VIVADO_SYNTH__
       assert(write_addr < Depth);
       vals[write_addr] = val;
       write_addr = MOD_INC(write_addr, Depth);
@@ -206,12 +216,9 @@ class hw_uint {
 
     bsim::static_quad_value_bit_vector<Len> val;
 
-    //hw_uint(const hw_uint<Len>&& v) : val(v.val) {
-      //assert(false);
-    //}
-
     hw_uint(const hw_uint<Len>& v) : val(v.val) {}
     hw_uint(const int v) : val(v) {}
+    hw_uint(const string& v) : val(v) {}
     hw_uint() : val(0) {}
 
     template<int S, int E_inclusive>
@@ -246,7 +253,7 @@ template<int Len>
 hw_uint<Len> operator*(const hw_uint<Len>& a, const hw_uint<Len>& b) {
 #ifdef __VIVADO_SYNTH__
   hw_uint<Len> v;
-  v.val = a.val + b.val;
+  v.val = a.val * b.val;
   return v;
 #else
   hw_uint<Len> res;
@@ -259,10 +266,11 @@ template<int Len>
 hw_uint<Len> operator/(const hw_uint<Len>& a, const hw_uint<Len>& b) {
 #ifdef __VIVADO_SYNTH__
   hw_uint<Len> v;
-  v.val = a.val + b.val;
+  v.val = a.val / b.val;
   return v;
 #else
   hw_uint<Len> res;
+  // TODO: Fix this!!!
   res.val = bsim::add_general_width_bv(a.val, b.val);
   return res;
 #endif
@@ -271,13 +279,11 @@ hw_uint<Len> operator/(const hw_uint<Len>& a, const hw_uint<Len>& b) {
 template<int Len>
 bool operator==(const hw_uint<Len>& a, const hw_uint<Len>& b) {
 #ifdef __VIVADO_SYNTH__
-  hw_uint<Len> v;
-  v.val = a.val + b.val;
-  return v;
+  return a.val == b.val;
 #else
-  hw_uint<Len> res;
-  res.val = a.val == b.val;
-  return res;
+  //hw_uint<Len> res;
+  //res.val = a.val == b.val;
+  return a.val == b.val;
 #endif
 }
 
@@ -285,7 +291,7 @@ template<int Len>
 hw_uint<Len> operator-(const hw_uint<Len>& a, const hw_uint<Len>& b) {
 #ifdef __VIVADO_SYNTH__
   hw_uint<Len> v;
-  v.val = a.val + b.val;
+  v.val = a.val - b.val;
   return v;
 #else
   hw_uint<Len> res;
@@ -307,20 +313,20 @@ hw_uint<Len> operator+(const hw_uint<Len>& a, const hw_uint<Len>& b) {
 #endif
 }
 
-template<int offset, int Len>
-void set_at(hw_uint<Len>& i, const int value) {
-#ifdef __VIVADO_SYNTH__
-  for (int v = offset; v < offset + 32; v++) {
-#pragma HLS unroll
-    i.val[v] = ((value >> (v - offset)) & 1);
-  }
-#else
-  //cout << "Setting " << i << " to be " << value << " at: " << offset << endl;
-  for (int v = offset; v < offset + 32; v++) {
-    i.val.set(v, bsim::quad_value((value >> (v - offset)) & 1));
-  }
-#endif
-}
+//template<int offset, int Len>
+//void set_at(hw_uint<Len>& i, const int value) {
+//#ifdef __VIVADO_SYNTH__
+  //for (int v = offset; v < offset + 32; v++) {
+//#pragma HLS unroll
+    //i.val[v] = ((value >> (v - offset)) & 1);
+  //}
+//#else
+  ////cout << "Setting " << i << " to be " << value << " at: " << offset << endl;
+  //for (int v = offset; v < offset + 32; v++) {
+    //i.val.set(v, bsim::quad_value((value >> (v - offset)) & 1));
+  //}
+//#endif
+//}
 
 template<int offset, int Len, int OtherLen>
 void set_at(hw_uint<Len>& i, const hw_uint<OtherLen>& value) {
@@ -393,7 +399,6 @@ class HWStream {
 
 #endif // __VIVADO_SYNTH__
 };
-
 
 
 

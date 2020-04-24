@@ -2,6 +2,10 @@
 
 #include "conv_3x3.h"
 
+// Generated compute units...
+
+
+// Compute unit banks...
   // img_update_0 unroll factor: 16
 hw_uint<512>  id_unrolled_16(hw_uint<512>& off_chip_img) {
   hw_uint<512> whole_result;

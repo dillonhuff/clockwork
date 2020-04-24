@@ -265,3 +265,7 @@ string str(const int i) {
   return to_string(i);
 }
 
+static inline
+string parens(const std::string& s) {
+  return "(" + s + ")";
+}

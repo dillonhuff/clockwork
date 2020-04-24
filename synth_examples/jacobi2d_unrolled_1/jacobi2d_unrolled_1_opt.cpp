@@ -34,7 +34,6 @@ struct t1_t1_update_0_write0_merged_banks_5_cache {
 
 	inline hw_uint<32>  peek_17() {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f3 inter false
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
@@ -53,7 +52,6 @@ struct t1_t1_update_0_write0_merged_banks_5_cache {
 
 	inline hw_uint<32>  peek_36() {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f9 inter false
 #endif //__VIVADO_SYNTH__
 		return f9.back();
 	}
@@ -66,37 +64,30 @@ struct t1_t1_update_0_write0_merged_banks_5_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f10 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 16
     f10 = f9.back();
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f9 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 16 reading from capacity: 1
     f9.push(f8);
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f8 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 1
     f8 = f6;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f6 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 1
     f6 = f4;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f4 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 16
     f4 = f3.back();
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f3 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 16 reading from capacity: 1
     f3.push(f2);
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f2 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 1
     f2 = f0;
@@ -118,7 +109,6 @@ inline void t1_t1_update_0_write0_write(hw_uint<32> & t1_t1_update_0_write0, t1_
 
 inline hw_uint<32>  jacobi2d_unrolled_1_rd0_select(t1_cache& t1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=t1 inter false
 #endif //__VIVADO_SYNTH__
   // jacobi2d_unrolled_1_rd0 read pattern: { jacobi2d_unrolled_1_update_0[d0, d1] -> t1[-1 + d0, d1] : 0 <= d0 <= 15 and 0 <= d1 <= 15 }
   // Read schedule : { jacobi2d_unrolled_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 15 and 0 <= d1 <= 15 }
@@ -135,7 +125,6 @@ inline hw_uint<32>  jacobi2d_unrolled_1_rd0_select(t1_cache& t1, int d0, int d1)
 
 inline hw_uint<32>  jacobi2d_unrolled_1_rd1_select(t1_cache& t1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=t1 inter false
 #endif //__VIVADO_SYNTH__
   // jacobi2d_unrolled_1_rd1 read pattern: { jacobi2d_unrolled_1_update_0[d0, d1] -> t1[d0, -1 + d1] : 0 <= d0 <= 15 and 0 <= d1 <= 15 }
   // Read schedule : { jacobi2d_unrolled_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 15 and 0 <= d1 <= 15 }
@@ -152,7 +141,6 @@ inline hw_uint<32>  jacobi2d_unrolled_1_rd1_select(t1_cache& t1, int d0, int d1)
 
 inline hw_uint<32>  jacobi2d_unrolled_1_rd2_select(t1_cache& t1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=t1 inter false
 #endif //__VIVADO_SYNTH__
   // jacobi2d_unrolled_1_rd2 read pattern: { jacobi2d_unrolled_1_update_0[d0, d1] -> t1[d0, d1] : 0 <= d0 <= 15 and 0 <= d1 <= 15 }
   // Read schedule : { jacobi2d_unrolled_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 15 and 0 <= d1 <= 15 }
@@ -169,7 +157,6 @@ inline hw_uint<32>  jacobi2d_unrolled_1_rd2_select(t1_cache& t1, int d0, int d1)
 
 inline hw_uint<32>  jacobi2d_unrolled_1_rd3_select(t1_cache& t1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=t1 inter false
 #endif //__VIVADO_SYNTH__
   // jacobi2d_unrolled_1_rd3 read pattern: { jacobi2d_unrolled_1_update_0[d0, d1] -> t1[d0, 1 + d1] : 0 <= d0 <= 15 and 0 <= d1 <= 15 }
   // Read schedule : { jacobi2d_unrolled_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 15 and 0 <= d1 <= 15 }
@@ -186,7 +173,6 @@ inline hw_uint<32>  jacobi2d_unrolled_1_rd3_select(t1_cache& t1, int d0, int d1)
 
 inline hw_uint<32>  jacobi2d_unrolled_1_rd4_select(t1_cache& t1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=t1 inter false
 #endif //__VIVADO_SYNTH__
   // jacobi2d_unrolled_1_rd4 read pattern: { jacobi2d_unrolled_1_update_0[d0, d1] -> t1[1 + d0, d1] : 0 <= d0 <= 15 and 0 <= d1 <= 15 }
   // Read schedule : { jacobi2d_unrolled_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 15 and 0 <= d1 <= 15 }
@@ -249,7 +235,7 @@ inline void t1_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */t
 #ifndef __VIVADO_SYNTH__
   hw_uint<32> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
   *global_debug_handle << "t1_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 }
@@ -266,7 +252,7 @@ inline void jacobi2d_unrolled_1_update_0(t1_cache& t1, HWStream<hw_uint<32> >& /
 #ifndef __VIVADO_SYNTH__
   hw_uint<32> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
   *global_debug_handle << "jacobi2d_unrolled_1_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 }
@@ -280,16 +266,34 @@ void jacobi2d_unrolled_1_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 *
 #endif //__VIVADO_SYNTH__
   t1_cache t1;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=t1 inter false
 #endif //__VIVADO_SYNTH__
-	for (int c0 = -1; c0 <= 16; c0 += 1)
-	  for (int c1 = -1; c1 <= 16; c1 += 1) {
-	t1_update_0(t1_arg, t1, c1, c0);
-	    if (c0 >= 1 && c1 >= 1)
-	jacobi2d_unrolled_1_update_0(t1, jacobi2d_unrolled_1, c1 - 1, c0 - 1);
+	#ifdef __VIVADO_SYNTH__
+	#pragma HLS inline recursive
+	#endif // __VIVADO_SYNTH__
+	
+	for (int c0 = -1; c0 <= 16; c0++) {
+	  for (int c1 = -1; c1 <= 16; c1++) {
+	
+	#ifdef __VIVADO_SYNTH__
+	#pragma HLS pipeline II=1
+	#endif // __VIVADO_SYNTH__
+	
+	    if ((-1 <= c1 && c1 <= 16) && ((c1 - 0) % 1 == 0) && (-1 <= c0 && c0 <= 16) && ((c0 - 0) % 1 == 0)) {
+	t1_update_0(t1_arg, t1, (c1 - 0) / 1, (c0 - 0) / 1);
+	    }
+	
+	    if ((1 <= c1 && c1 <= 16) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 16) && ((c0 - 1) % 1 == 0)) {
+	jacobi2d_unrolled_1_update_0(t1, jacobi2d_unrolled_1, (c1 - 1) / 1, (c0 - 1) / 1);
+	    }
+	
 	  }
+	}
 	
 #ifndef __VIVADO_SYNTH__
   debug_file.close();
 #endif //__VIVADO_SYNTH__
 }
+
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+

@@ -908,8 +908,8 @@ void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
     rgtb << tab(2) << buf.bundle_type_string(bundle) << " in_val;" << endl;
     for (int p = 0; p < num_ports; p++) {
       string next_val = str(num_ports) + "*i + " + str(p);
-      rgtb << tab(2) << "in_pix << " << next_val << " << endl;" << endl;
-      rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ">(in_val, " << next_val << ");" << endl;
+      rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
+      rgtb << tab(2) << "in_pix << in_val << endl;" << endl;
     }
     rgtb << tab(2) << bundle << ".write(in_val);" << endl;
     rgtb << tab(1) << "}" << endl << endl;
@@ -1388,9 +1388,13 @@ void reduce_1d_test() {
   prg.add_input("in");
   prg.add_output("out");
   prg.buffer_port_widths["in"] = 32;
+  prg.buffer_bounds["in"] = {15};
   prg.buffer_port_widths["out"] = 32;
+  prg.buffer_bounds["out"] = {1};
   prg.buffer_port_widths["I"] = 32;
+  prg.buffer_bounds["I"] = {15};
   prg.buffer_port_widths["tmp"] = 32;
+  prg.buffer_bounds["tmp"] = {1};
 
   {
     auto read_in = prg.add_loop("rd_in", 0, 14);
@@ -1444,9 +1448,16 @@ void reduce_2d_test() {
   prg.add_input("in");
   prg.add_output("out");
   prg.buffer_port_widths["in"] = 32;
+  prg.buffer_bounds["in"] = {3, 3};
+
   prg.buffer_port_widths["out"] = 32;
+  prg.buffer_bounds["out"] = {1};
+
   prg.buffer_port_widths["I"] = 32;
+  prg.buffer_bounds["I"] = {3, 3};
+
   prg.buffer_port_widths["tmp"] = 32;
+  prg.buffer_bounds["tmp"] = {1};
 
   auto read_in = prg.add_nest("rd_r", 0, 3, "rd_c", 0, 3)->add_op({"I", "rd_r, rd_c"}, "id", {"in", "rd_r, rd_c"});
 
@@ -1936,9 +1947,6 @@ void jacobi_2d_4_test() {
   auto in_nest = prg.add_nest("id1", 0, rows, "id0", 0, cols / unroll);
   for (size_t i = 0; i < inputs.size(); i++) {
     string in_name_0 = inputs.at(i);
-    cout << "Creating in nest: " << i << endl;
-    //in_nest->add_op
-      //({"I", us + "*id0 + " + to_string(i) + ", id1"}, "conv", {in_name_0, "id0, id1"});
     in_nest->add_op({"I", us + "*id0 + " + to_string(i) + ", id1"}, "id", {in_name_0, "id0, id1"});
   }
 
@@ -2025,65 +2033,6 @@ void jacobi_2d_test() {
     stencil_op(out_name, "jacobi2d_compute", "I", {"d0", "d1"}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
 
   regression_test(prg);
-}
-
-struct Token {
-  string txt;
-
-  Token() : txt("") {}
-  Token(const std::string& txt_) : txt(txt_) {}
-};
-
-ostream& operator<<(ostream& out, const Token& e) {
-  out << e.txt;
-  return out;
-}
-
-struct Expr {
-  vector<Token> tokens;
-};
-
-struct FloatConst : public Expr {
-  bool neg;
-  string l;
-  string r;
-};
-
-struct IntConst : public Expr {
-  bool neg;
-  string val;
-
-  IntConst(std::string& val_) : val(val_) {}
-
-};
-
-struct FunctionCall : public Expr {
-  string name;
-  vector<Expr*> args;
-
-  FunctionCall(const string& n_, const vector<Expr*> args_) :
-    name(n_), args(args_) {}
-
-};
-
-struct Binop : public Expr {
-  string op;
-  Expr* l;
-  Expr* r;
-
-  Binop(const string& op_, Expr* l_, Expr* r_) :
-    op(op_), l(l_), r(r_) {}
-
-};
-
-struct Unop : public Expr {
-  string op;
-  Expr* arg;
-};
-
-ostream& operator<<(ostream& out, const Expr& e) {
-  out << comma_list(e.tokens);
-  return out;
 }
 
 struct BaseExpr {
@@ -2613,10 +2562,10 @@ StencilProgram parse_soda_program(istream& in) {
     cout << " ) = ";
 
     Expr* e = op.second;
-    for (auto t : e->tokens) {
-      cout << t.txt << " ";
-    }
-    cout << endl;
+    //for (auto t : e->tokens) {
+      //cout << t.txt << " ";
+    //}
+    //cout << endl;
   }
   cout << "Done" << endl;
   return program;
@@ -2716,7 +2665,6 @@ void seidel2d_test() {
 }
 
 struct App {
-
   isl_ctx* ctx;
   map<string, Result> app_dag;
   map<string, Box> domain_boxes;
@@ -2726,8 +2674,11 @@ struct App {
   map<string, isl_set*> compute_sets;
   map<string, isl_map*> compute_maps;
 
+  int default_pixel_width;
+
   App() {
     ctx = isl_ctx_alloc();
+    default_pixel_width = 32;
   }
 
   ~App() {
@@ -2751,18 +2702,6 @@ struct App {
 
   }
 
-  string func2d(const std::string& name, const std::string& def) {
-    Expr* e = parse_expr(def);
-    //assert(false);
-    //map<Expr*, vector<int> > offsets
-    Result res;
-
-    app_dag[name] = res;
-
-    return name;
-
-  }
-
   bool is_input(const std::string& name) const {
     return producers(name).size() == 0;
   }
@@ -2775,6 +2714,9 @@ struct App {
 
     Result res;
     for (auto w : windows) {
+      if (!contains_key(w.name, app_dag)) {
+        cout << "Error: App dag already contains: " << w.name << endl;
+      }
       assert(contains_key(w.name, app_dag));
       w.needed = build_needed(name, w);
       res.srcs.push_back(w);
@@ -2791,6 +2733,53 @@ struct App {
     res.add_init_update(name, compute, res.srcs);
 
     app_dag[name] = res;
+
+    set_width(name, default_pixel_width);
+    return name;
+  }
+
+  string func2d(const std::string& name, Expr* def) {
+    Result res;
+
+    string compute_name = name + "_generated_compute";
+
+    map<string, vector<FunctionCall*> > calls;
+    visit_function_calls(def, [this, &calls](FunctionCall* c) {
+        if (contains_key(c->name, app_dag)) {
+        calls[c->name].push_back(c);
+        }
+        });
+
+    vector<Window> windows;
+    map<string, vector<vector<int> > > offset_map;
+    for (auto c : calls) {
+      string window_name = c.first;
+      vector<QAV> strides{qconst(1), qconst(1)};
+      set<vector<int> > offsets;
+      for (auto off : c.second) {
+        vector<int> offset = get_offset(off);
+        offsets.insert(offset);
+      }
+
+      vector<vector<int> > offsets_vec(begin(offsets), end(offsets));
+      offset_map[window_name] = offsets_vec;
+      Window w{window_name, strides, offsets_vec};
+      windows.push_back(w);
+    }
+
+    cout << "Windows..." << endl;
+    for (auto w : windows) {
+      cout << tab(1) << w << endl;
+    }
+
+    add_func(name,
+        compute_name,
+        2,
+        windows);
+
+    app_dag[name].updates.back().compute_unit_impl =
+      compute_unit_string(default_pixel_width, compute_name, windows, def, offset_map);
+    app_dag[name].updates.back().def = def;
 
     return name;
   }
@@ -2871,10 +2860,8 @@ struct App {
     return func2d(name, compute, {w});
   }
 
-  void set_all_widths(const int width) {
-    for (auto a : app_dag) {
-      set_width(a.first, width);
-    }
+  void set_default_pixel_width(const int width) {
+    default_pixel_width = width;
   }
 
   void set_width(const string& func, const int width) {
@@ -3013,19 +3000,6 @@ struct App {
     }
     return updates;
   }
-
-  //vector<string> sort_operations() const {
-    //auto functions = sort_functions();
-    //vector<string> operations;
-    //for (auto f : functions) {
-      //Result r = app_dag.at(f);
-      //operations.push_back(f + "_comp");
-      ////if (r.is_reduce()) {
-        ////operations.push_back(f + "_reduce");
-      ////}
-    //}
-    //return operations;
-  //}
 
   vector<string> sort_functions() const {
     vector<string> sorted;
@@ -3361,55 +3335,7 @@ struct App {
       cout << endl;
     }
 
-    //assert(false);
     return scheds;
-    //vector<string> sorted_functions = sort_functions();
-    //vector<string> sorted_operations;
-
-    //map<string, Box> op_domains;
-    //map<string, vector<QExpr> > schedules;
-    //map<string, isl_map*> op_compute_maps;
-    //map<string, map<string, umap*> > pixels_needed;
-
-    //for (auto f : sorted_functions) {
-      //for (auto u : app_dag.at(f).updates) {
-        //sorted_operations.push_back(u.name());
-
-        //op_domains[u.name()] =
-          //compute_box(u.name());
-
-        //pixels_needed[u.name()] = {};
-        //for (auto w : u.get_srcs()) {
-          //pixels_needed[u.name()][last_update(w.name).name()] = w.needed;
-        //}
-
-        //op_compute_maps[u.name()] = compute_map(u.name());
-      //}
-    //}
-
-    //int ndims = schedule_dimension();
-
-    //auto last_compute_needed = build_compute_deps(
-        //ndims,
-        //sorted_operations,
-        //pixels_needed,
-        //op_compute_maps);
-    //for (int i = ndims - 1; i >= 0; i--) {
-      //auto dim_schedules =
-        //schedule_dim(ctx, i, op_domains, sorted_operations, last_compute_needed);
-
-      //for (auto f : sorted_operations) {
-        //schedules[f].push_back(dim_schedules.at(f));
-      //}
-    //}
-
-    //cout << "Final schedule.." << endl;
-    //for (auto s : schedules) {
-      //cout << tab(1) << s.first << " -> " << comma_list(s.second) << endl;
-    //}
-    ////assert(false);
-
-    //return schedules;
   }
 
   umap* pixels_read(const std::string& u) {
@@ -3696,6 +3622,14 @@ struct App {
     auto action_domain = cpy(whole_dom);
     map<string, isl_set*> domain_map;
     for (auto f : sorted_functions) {
+      prg.buffer_port_widths[f] =
+        app_dag.at(f).pixel_width;
+
+      Box domain = data_domain(f);
+      for (int i = 0; i < domain.dimension(); i++) {
+        prg.buffer_bounds[f].push_back(domain.length(i));
+      }
+
       for (auto u : app_dag.at(f).updates) {
         if (u.get_srcs().size() == 0) {
           prg.ins.insert(f);
@@ -3728,12 +3662,6 @@ struct App {
           op->add_function(u.compute_name() + "_unrolled_" + str(u.unroll_factor));
           op->unroll_factor = u.unroll_factor;
 
-          //if (u.unroll_factor == 1) {
-            //op->add_function(u.compute_name());
-          //} else {
-            //op->add_function(u.compute_name() + "_unrolled_" + str(u.unroll_factor));
-            //op->unroll_factor = u.unroll_factor;
-          //}
           domain_map[u.name()] =
             compute_domain(u.name());
         }
@@ -3757,6 +3685,61 @@ struct App {
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
     generate_regression_testbench(prg, buffers);
+    generate_soda_file(prg.name);
+  }
+
+  void generate_soda_file(const std::string& name) {
+    ofstream out(name + ".soda");
+    out << "kernel: " << name << endl;
+
+    string rep = pick(app_dag).first;
+    int unroll_factor = last_update(rep).unroll_factor;
+    int width = app_dag.at(rep).pixel_width;
+
+    out << "unroll factor: " << unroll_factor << endl;
+    out << "burst width: " << width*unroll_factor << endl << endl;
+
+    set<string> external_buffers;
+    for (auto f : sort_functions()) {
+      if (producers(f).size() == 0) {
+        external_buffers.insert(f);
+      }
+    }
+
+    for (auto f : sort_functions()) {
+
+      for (auto u : app_dag.at(f).updates) {
+        if (u.get_srcs().size() == 0) {
+        } else {
+          if (consumers(f).size() == 0) {
+            out << "output uint" << width << ": " << f << "(0, 0) = ";
+              out << soda_compute_string(width, u.def) << endl << endl;
+          } else {
+            bool all_producers_external = true;
+            for (auto p : producers(f)) {
+              if (!elem(p.name, external_buffers)) {
+                all_producers_external = false;
+                break;
+              }
+            }
+
+            if (all_producers_external) {
+              Box domain = data_domain(f);
+              //assert(domain.dimension() == 2);
+              out << "input uint" << width << ": " << f << "(" << domain.length(0) << ", *)" << endl << endl;
+            } else {
+              out << "local uint" << width << ": " << f << "(0, 0) = ";
+              out << soda_compute_string(width, u.def) << endl << endl;
+            }
+          }
+        }
+      }
+    }
+
+    out << endl;
+    out << "iterate: 1" << endl;
+
+    out.close();
   }
 
   umap* realize_opt_schedule(const std::string& name, const int d0, const int d1) {
@@ -3872,6 +3855,15 @@ struct App {
     cfile << "#pragma once" << endl << endl;
     cfile << "#include \"conv_3x3.h\"" << endl << endl;
 
+    cfile << "// Generated compute units..." << endl;
+    for (auto u : sort_updates()) {
+      if (get_update(u).compute_unit_impl != "") {
+        cfile << get_update(u).compute_unit_impl << endl << endl;
+      }
+    }
+    cfile << endl << endl;
+
+    cfile << "// Compute unit banks..." << endl;
     set<string> already_seen;
     for (auto f : sort_functions()) {
       if (producers(f).size() == 0) {
@@ -3930,14 +3922,14 @@ struct App {
                 if (arg_input_window.offsets.at(i) == off) {
                   int base = i*arg_width;
                   int end = (i + 1)*arg_width - 1;
-                  cfile << tab(1) << "set_at<" << win_pos*arg_width << ", " << npts << ">(" << arg_name << ", " << p << ".extract<" << base << ", " << end << ">());" << endl;
+                  cfile << tab(1) << "set_at<" << win_pos*arg_width << ", " << npts << ", " << arg_width << ">(" << arg_name << ", " << p << ".extract<" << base << ", " << end << ">());" << endl;
                 }
               }
               win_pos++;
             }
           }
           cfile << tab(1) << "auto result_" << lane << " = " << compute_name(f) << "(" << comma_list(arg_names) << ");" << endl;
-          cfile << tab(1) << "set_at<" << fwidth*lane << ", " << out_width << ">(whole_result, result_" << lane << ");" << endl;
+          cfile << tab(1) << "set_at<" << fwidth*lane << ", " << out_width << ", " << fwidth << ">(whole_result, result_" << lane << ");" << endl;
         }
         cfile << tab(1) << "return whole_result;" << endl;
         cfile << "}" << endl << endl;
@@ -4020,7 +4012,7 @@ struct App {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = false;
+    options.use_custom_code_string = true;
     //options.debug_options.expect_all_linebuffers = true;
     realize(options, name, d0, d1);
   }
@@ -4887,6 +4879,59 @@ App sobel_mag_y() {
   return sobel;
 }
 
+App blur_xy_16(const std::string output_name) {
+  App blur;
+  blur.set_default_pixel_width(16);
+  blur.func2d("input_arg");
+  blur.func2d("input", v("input_arg"));
+  blur.func2d("blurx", div(add(v("input", 0, 0), v("input", 0, 1), v("input", 0, 2)), 3));
+  blur.func2d(output_name, div(add(v("blurx", 0, 0), v("blurx", 1, 0), v("blurx", 2, 0)), 3));
+
+  return blur;
+}
+
+App sobel16_stage_x(const std::string output_name) {
+  App sobel;
+  sobel.set_default_pixel_width(16);
+  sobel.func2d("off_chip_img");
+  sobel.func2d("img", v("off_chip_img"));
+  sobel.func2d(output_name,
+      //add(add(v("img", 1, -1), v("img", -1, -1)),
+        //add(add(v("img", 1, 0), v("img", -1, 0)), 3),
+        //add(v("img", 1, 1), v("img", -1, 1))));
+      add(sub(v("img", 1, -1), v("img", -1, -1)),
+        mul(sub(v("img", 1, 0), v("img", -1, 0)), 3),
+        sub(v("img", 1, 1), v("img", -1, 1))));
+
+
+  return sobel;
+}
+
+App sobel16(const std::string output_name) {
+  App sobel;
+  sobel.set_default_pixel_width(16);
+  sobel.func2d("off_chip_img");
+  sobel.func2d("img", v("off_chip_img"));
+  sobel.func2d("mag_x",
+      add(sub(v("img", 1, -1), v("img", -1, -1)),
+        mul(sub(v("img", 1, 0), v("img", -1, 0)), 3),
+        sub(v("img", 1, 1), v("img", -1, 1))));
+
+  sobel.func2d("mag_y",
+      add(sub(v("img", -1, 1), v("img", -1, -1)),
+        mul(sub(v("img", 0, 1), v("img", 0, -1)), 3),
+        sub(v("img", 1, 1), v("img", 1, -1))));
+
+  sobel.func2d(output_name,
+      //add(square(v("mag_x")), square(v("mag_y"))));
+      //sub(65535, add(square(v("mag_x")), square(v("mag_y")))));
+      //sub(100, add(square(v("mag_x")), square(v("mag_y")))));
+      add(65535, add(square(v("mag_x")), square(v("mag_y")))));
+
+
+  return sobel;
+}
+
 App sobel(const std::string output_name) {
   App sobel;
   sobel.func2d("off_chip_img");
@@ -4900,7 +4945,6 @@ App sobel(const std::string output_name) {
   Window xwindow{"mag_x", {1, 1}, {{0, 0}}};
   Window ywindow{"mag_y", {1, 1}, {{0, 0}}};
   sobel.func2d(output_name, "mag_cu", {xwindow, ywindow});
-  //sobel.set_all_widths(16);
 
   return sobel;
 }
@@ -4951,10 +4995,8 @@ App denoise2d(const std::string& name) {
   dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
   dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
 
-  dn.func2d("diff_qwe", "diff_qwe2d", "u", {
-      {0, -1},
-      {0, 0}
-      });
+  Expr* diff = sub(v("u", 0, -1), v("u", 0, 0));
+  dn.func2d("diff_qwe", diff);
   dn.func2d("diff_d", "diff_d2d", "u", {{0, 0}, {0, 1}});
   dn.func2d("diff_l", "diff_l2d", "u", {
       {-1, 0},
@@ -5135,13 +5177,18 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("mkdir " + app_dir).c_str());
   system(("mkdir " + synth_dir).c_str());
   system(("mkdir " + soda_dir).c_str());
+
+  system(("mv " + out_name + "_kernel.h " + soda_dir).c_str());
+
   system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
   system(("mv " + out_name + "*.h " + synth_dir).c_str());
   system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
   system(("mv run_tb_" + out_name + "*.sh " + synth_dir).c_str());
   system(("mv compare_regressions.sh " + app_dir).c_str());
 
+  system(("mv " + out_name + ".soda " + soda_dir).c_str());
   system(("mv tb_soda_" + out_name + "*.cpp " + soda_dir).c_str());
+  system(("mv run_tb.sh " + soda_dir).c_str());
 }
 
 void sobel_mag_y_test() {
@@ -5188,6 +5235,42 @@ void sobel_mag_x_test() {
   system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
 }
 
+void sobel_16_stage_x_app_test() {
+  int cols = 30;
+  int rows = 30;
+
+  for (int i = 0; i < 1; i++) {
+    int unroll_factor = pow(2, i);
+    cout << tab(1) << "unroll factor: " << unroll_factor << endl;
+    string out_name = "sobel_16_stage_x_unrolled_" + str(unroll_factor);
+    sobel16_stage_x(out_name).realize(out_name, cols, rows, unroll_factor);
+
+    std::vector<std::string> optimized =
+      run_regression_tb(out_name + "_opt");
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+
+}
+
+void sobel_16_app_test() {
+  int cols = 1920;
+  int rows = 1080;
+
+  for (int i = 0; i < 5; i++) {
+    int unroll_factor = pow(2, i);
+    cout << tab(1) << "unroll factor: " << unroll_factor << endl;
+    string out_name = "sobel_16_unrolled_" + str(unroll_factor);
+    sobel16(out_name).realize(out_name, cols, rows, unroll_factor);
+
+    //std::vector<std::string> optimized =
+      //run_regression_tb(out_name + "_opt");
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+
+}
+
 void sobel_app_test() {
   int cols = 1920;
   int rows = 1080;
@@ -5199,23 +5282,25 @@ void sobel_app_test() {
     string out_name = "sobel_unrolled_" + str(unroll_factor);
     sobel(out_name).realize(out_name, cols, rows, unroll_factor);
 
-    //std::vector<std::string> optimized =
-      //run_regression_tb(out_name + "_opt");
-
-    string app_dir =
-      "./soda_codes/" + out_name;
-    string synth_dir =
-      "./soda_codes/" + out_name + "/our_code/";
-
-    system(("mkdir " + app_dir).c_str());
-    system(("mkdir " + synth_dir).c_str());
-    system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
-    system(("mv " + out_name + "*.h " + synth_dir).c_str());
-    system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
-    system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
+    move_to_benchmarks_folder(out_name + "_opt");
   }
 
 }
+
+void blur_xy_16_app_test() {
+  int cols = 1920;
+  int rows = 1080;
+
+  for (int i = 0; i < 5; i++) {
+    int unroll_factor = pow(2, i);
+    cout << tab(1) << "unroll factor: " << unroll_factor << endl;
+    string out_name = "blur_xy_16_unrolled_" + str(unroll_factor);
+    blur_xy_16(out_name).realize(out_name, cols, rows, unroll_factor);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+}
+
 void blur_xy_app_test() {
   int cols = 1920;
   int rows = 1080;
@@ -5248,7 +5333,7 @@ void jacobi2d_app_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
   jac.realize(options, "t0", 32, 28, 1);
 
@@ -5271,7 +5356,7 @@ void jacobi2d_app_test() {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = false;
+    options.use_custom_code_string = true;
     options.debug_options.expect_all_linebuffers = true;
     jacobi2d(out_name).realize(options, out_name, cols, rows, unroll_factor);
     std::vector<std::string> optimized =
@@ -5309,7 +5394,7 @@ void sum_diffs_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
     std::vector<std::string> optimized =
@@ -5317,6 +5402,135 @@ void sum_diffs_test() {
 
   move_to_benchmarks_folder(out_name);
   //assert(false);
+}
+
+void dummy_app_test() {
+  App dn;
+  string out_name = "dummy_app";
+
+  dn.func2d("u_off_chip");
+
+  dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
+
+  dn.func2d(out_name, sub(v("u", 0, 0), v("u", 0, -1)));
+
+  int size = 30;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  options.debug_options.expect_all_linebuffers = true;
+  dn.realize(options, out_name, size, size);
+  std::vector<std::string> optimized =
+    run_regression_tb(out_name + "_opt");
+
+  move_to_benchmarks_folder(out_name + "_opt");
+}
+
+void two_input_denoise_pipeline_test() {
+  App dn;
+  string out_name = "two_input_denoise_pipeline";
+
+  dn.func2d("u_off_chip");
+  dn.func2d("f_off_chip");
+
+  dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
+  dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
+
+  dn.func2d("diff_u", sub(v("u", 0, 0), v("u", 0, -1)));
+  dn.func2d("diff_d", sub(v("u", 0, 0), v("u", 0, 1)));
+  dn.func2d("diff_l", sub(v("u", 0, 0), v("u", -1, 0)));
+  dn.func2d("diff_r", sub(v("u", 0, 0), v("u", 1, 0)));
+
+  dn.func2d("diff_sums", add(add(v("diff_u"), v("diff_d")), add(v("diff_l"), v("diff_r"))));
+  dn.func2d("g",
+      add({v("diff_sums"), v("f"),
+        v("f", -1, 0),
+        v("f", 1, 0),
+        v("f", 0, -1),
+        v("f", 0, 1)}));
+
+  dn.func2d("r0", add(v("u"), v("f")));
+  dn.func2d("r1", add(v("r0"), v("r0")));
+  dn.func2d(out_name, add({v("u"), v("g"), v("f"), v("r1")}));
+
+  int size = 30;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  options.debug_options.expect_all_linebuffers = true;
+  dn.realize(options, out_name, size, size);
+  std::vector<std::string> optimized =
+    run_regression_tb(out_name + "_opt");
+
+  move_to_benchmarks_folder(out_name + "_opt");
+
+}
+
+void two_input_mag_test() {
+  App dn;
+  string out_name = "two_input_mag";
+
+  dn.func2d("u_off_chip");
+  dn.func2d("f_off_chip");
+
+  dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
+  dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
+
+  dn.func2d("diff_u", sub(v("u", 0, 0), v("u", 0, -1)));
+  dn.func2d("diff_d", sub(v("u", 0, 0), v("u", 0, 1)));
+  dn.func2d("diff_l", sub(v("u", 0, 0), v("u", -1, 0)));
+  dn.func2d("diff_r", sub(v("u", 0, 0), v("u", 1, 0)));
+
+  dn.func2d("diff_sums", add(add(v("diff_u"), v("diff_d")), add(v("diff_l"), v("diff_r"))));
+  dn.func2d(out_name,
+      add({v("diff_sums"), v("f"),
+        v("f", -1, 0),
+        v("f", 1, 0),
+        v("f", 0, -1),
+        v("f", 0, 1)}));
+
+  int size = 30;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  options.debug_options.expect_all_linebuffers = true;
+  dn.realize(options, out_name, size, size);
+    std::vector<std::string> optimized =
+      run_regression_tb(out_name + "_opt");
+
+  move_to_benchmarks_folder(out_name);
+}
+
+void one_input_mag_test() {
+  App dn;
+  string out_name = "one_input_mag";
+  dn.func2d("u_off_chip");
+  dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
+  dn.func2d("diff_u", sub(v("u", 0, 0), v("u", 0, -1)));
+  dn.func2d("diff_d", sub(v("u", 0, 0), v("u", 0, 1)));
+  dn.func2d("diff_l", sub(v("u", 0, 0), v("u", -1, 0)));
+  dn.func2d("diff_r", sub(v("u", 0, 0), v("u", 1, 0)));
+
+  dn.func2d(out_name, add(add(v("diff_u"), v("diff_d")), add(v("diff_l"), v("diff_r"))));
+
+  int size = 30;
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  options.debug_options.expect_all_linebuffers = true;
+  dn.realize(options, out_name, size, size);
+    std::vector<std::string> optimized =
+      run_regression_tb(out_name + "_opt");
+
+  move_to_benchmarks_folder(out_name);
 }
 
 void sum_float_test() {
@@ -5333,7 +5547,7 @@ void sum_float_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
     std::vector<std::string> optimized =
@@ -5350,7 +5564,7 @@ void sum_denoise_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, "sum_denoise2d", size, size);
     std::vector<std::string> optimized =
@@ -5367,7 +5581,7 @@ void denoise2d_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, "denoise2d", size, size);
 
@@ -5430,7 +5644,7 @@ void conv3x3_app_unrolled_uneven_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
   sobel.realize(options, "conv3x3_app_unrolled_uneven", 30, 30, 7);
 
@@ -5456,7 +5670,7 @@ void conv3x3_app_unrolled_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
   sobel.realize(options, "conv3x3_app_unrolled", 30, 30, 2);
 
@@ -5484,7 +5698,7 @@ void conv3x3_app_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
   sobel.realize(options, "conv3x3_app", 30, 30);
 
@@ -5546,14 +5760,17 @@ void blur_x_test() {
   prg.compute_unit_file = "conv_3x3.h";
   prg.name = "blur_x";
   prg.buffer_port_widths["I"] = 16;
+  prg.buffer_bounds["i"] = {32, 8};
 
   string in_name = "in";
   string out_name = "out";
 
   prg.buffer_port_widths[in_name] = 16;
+  prg.buffer_bounds[in_name] = {32, 8};
   prg.add_input(in_name);
 
   prg.buffer_port_widths[out_name] = 16;
+  prg.buffer_bounds[in_name] = {32 - 2, 8 - 2};
   prg.add_output(out_name);
 
   // This code (in SODA is described as blur_x)
@@ -5924,9 +6141,16 @@ void playground() {
   prg.add_input("in");
   prg.add_output("out");
   prg.buffer_port_widths["in"] = 32;
+  prg.buffer_bounds["in"] = {3, 3};
+
   prg.buffer_port_widths["out"] = 32;
+  prg.buffer_bounds["out"] = {1};
+
   prg.buffer_port_widths["I"] = 32;
+  prg.buffer_bounds["I"] = {3, 3};
+
   prg.buffer_port_widths["tmp"] = 32;
+  prg.buffer_bounds["tmp"] = {1};
 
   auto read_in = prg.add_nest("rd_r", 0, 3, "rd_c", 0, 3)->add_op({"I", "rd_r, rd_c"}, "id", {"in", "rd_r, rd_c"});
 
@@ -6085,24 +6309,16 @@ void application_tests() {
   //app added for cnn
   //cnn_test();
   //conv_test();
+  blur_xy_16_app_test();
+  assert(false);
 
-  sum_diffs_test();
+  reduce_2d_test();
+  reduce_1d_test();
   //assert(false);
-  sum_float_test();
-  sum_denoise_test();
-  denoise2d_test();
+  sobel_16_app_test();
+  //assert(false);
+  sobel_16_stage_x_app_test();
 
-  sobel_mag_y_test();
-  sobel_app_test();
-  sobel_mag_x_test();
-  conv3x3_app_unrolled_test();
-  exposure_fusion();
-
-  //blur_xy_app_test();
-
-  //playground();
-
-  jacobi2d_app_test();
   up_stencil_down_test();
 
   up_stencil_test();
@@ -6115,6 +6331,27 @@ void application_tests() {
 
   conv3x3_app_unrolled_uneven_test();
 
+  conv3x3_app_unrolled_test();
+  //assert(false);
+
+  dummy_app_test();
+  two_input_denoise_pipeline_test();
+  two_input_mag_test();
+  one_input_mag_test();
+  sum_diffs_test();
+  sum_float_test();
+  sum_denoise_test();
+  denoise2d_test();
+
+  sobel_mag_y_test();
+  sobel_app_test();
+  sobel_mag_x_test();
+  exposure_fusion();
+
+
+  //playground();
+
+  jacobi2d_app_test();
   mismatched_stencil_test();
 
   gaussian_pyramid_app_test();
@@ -6155,7 +6392,6 @@ void application_tests() {
   //synth_upsample_test();
   unsharp_test();
   //conv_2d_rolled_test();
-  //reduce_2d_test();
   conv_1d_test();
   conv_2d_bc_test();
   //mobilenet_test();
@@ -6167,7 +6403,6 @@ void application_tests() {
   //synth_sr_boundary_condition_test();
   //synth_lb_test();
   //conv_app_rolled_reduce_test();
-  //reduce_1d_test();
 
 
   //up_stencil_down_unrolled_test();

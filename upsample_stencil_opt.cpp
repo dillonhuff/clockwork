@@ -17,7 +17,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd0_cache {
 	fifo<hw_uint<32> , 54> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.peek(53 - offset);
   }
@@ -26,7 +25,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd0_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.push(value);
   }
@@ -40,7 +38,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd1_cache {
 	fifo<hw_uint<32> , 36> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.peek(35 - offset);
   }
@@ -49,7 +46,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd1_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.push(value);
   }
@@ -63,7 +59,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd2_cache {
 	fifo<hw_uint<32> , 18> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.peek(17 - offset);
   }
@@ -72,7 +67,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd2_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.push(value);
   }
@@ -86,7 +80,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd3_cache {
 	fifo<hw_uint<32> , 53> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.peek(52 - offset);
   }
@@ -95,7 +88,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd3_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.push(value);
   }
@@ -109,7 +101,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd4_cache {
 	fifo<hw_uint<32> , 35> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.peek(34 - offset);
   }
@@ -118,7 +109,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd4_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.push(value);
   }
@@ -132,7 +122,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd5_cache {
 	fifo<hw_uint<32> , 17> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.peek(16 - offset);
   }
@@ -141,7 +130,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd5_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.push(value);
   }
@@ -155,7 +143,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd6_cache {
 	fifo<hw_uint<32> , 52> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.peek(51 - offset);
   }
@@ -164,7 +151,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd6_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.push(value);
   }
@@ -178,7 +164,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd7_cache {
 	fifo<hw_uint<32> , 34> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.peek(33 - offset);
   }
@@ -187,7 +172,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd7_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.push(value);
   }
@@ -201,7 +185,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd8_cache {
 	fifo<hw_uint<32> , 16> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.peek(15 - offset);
   }
@@ -210,7 +193,6 @@ struct Img_Img_update_0_write0_to_upsample_stencil_rd8_cache {
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f inter false
 #endif //__VIVADO_SYNTH__
     return f.push(value);
   }
@@ -245,7 +227,6 @@ inline void Img_Img_update_0_write0_write(hw_uint<32> & Img_Img_update_0_write0,
 
 inline hw_uint<32>  upsample_stencil_rd0_select(Img_cache& Img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=Img inter false
 #endif //__VIVADO_SYNTH__
   // upsample_stencil_rd0 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -3 + d0 <= 2o0 <= -2 + d0 and -3 + d1 <= 2o1 <= -2 + d1 }
   // Read schedule : { upsample_stencil_update_0[d0, d1] -> [2 + d1, 2 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
@@ -262,7 +243,6 @@ inline hw_uint<32>  upsample_stencil_rd0_select(Img_cache& Img, int d0, int d1) 
 
 inline hw_uint<32>  upsample_stencil_rd1_select(Img_cache& Img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=Img inter false
 #endif //__VIVADO_SYNTH__
   // upsample_stencil_rd1 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -3 + d0 <= 2o0 <= -2 + d0 and -1 + d1 <= 2o1 <= d1 }
   // Read schedule : { upsample_stencil_update_0[d0, d1] -> [2 + d1, 2 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
@@ -279,7 +259,6 @@ inline hw_uint<32>  upsample_stencil_rd1_select(Img_cache& Img, int d0, int d1) 
 
 inline hw_uint<32>  upsample_stencil_rd2_select(Img_cache& Img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=Img inter false
 #endif //__VIVADO_SYNTH__
   // upsample_stencil_rd2 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -3 + d0 <= 2o0 <= -2 + d0 and d1 < 2o1 <= 2 + d1 }
   // Read schedule : { upsample_stencil_update_0[d0, d1] -> [2 + d1, 2 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
@@ -296,7 +275,6 @@ inline hw_uint<32>  upsample_stencil_rd2_select(Img_cache& Img, int d0, int d1) 
 
 inline hw_uint<32>  upsample_stencil_rd3_select(Img_cache& Img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=Img inter false
 #endif //__VIVADO_SYNTH__
   // upsample_stencil_rd3 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 + d0 <= 2o0 <= d0 and -3 + d1 <= 2o1 <= -2 + d1 }
   // Read schedule : { upsample_stencil_update_0[d0, d1] -> [2 + d1, 2 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
@@ -313,7 +291,6 @@ inline hw_uint<32>  upsample_stencil_rd3_select(Img_cache& Img, int d0, int d1) 
 
 inline hw_uint<32>  upsample_stencil_rd4_select(Img_cache& Img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=Img inter false
 #endif //__VIVADO_SYNTH__
   // upsample_stencil_rd4 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 + d0 <= 2o0 <= d0 and -1 + d1 <= 2o1 <= d1 }
   // Read schedule : { upsample_stencil_update_0[d0, d1] -> [2 + d1, 2 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
@@ -330,7 +307,6 @@ inline hw_uint<32>  upsample_stencil_rd4_select(Img_cache& Img, int d0, int d1) 
 
 inline hw_uint<32>  upsample_stencil_rd5_select(Img_cache& Img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=Img inter false
 #endif //__VIVADO_SYNTH__
   // upsample_stencil_rd5 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and -1 + d0 <= 2o0 <= d0 and d1 < 2o1 <= 2 + d1 }
   // Read schedule : { upsample_stencil_update_0[d0, d1] -> [2 + d1, 2 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
@@ -347,7 +323,6 @@ inline hw_uint<32>  upsample_stencil_rd5_select(Img_cache& Img, int d0, int d1) 
 
 inline hw_uint<32>  upsample_stencil_rd6_select(Img_cache& Img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=Img inter false
 #endif //__VIVADO_SYNTH__
   // upsample_stencil_rd6 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and d0 < 2o0 <= 2 + d0 and -3 + d1 <= 2o1 <= -2 + d1 }
   // Read schedule : { upsample_stencil_update_0[d0, d1] -> [2 + d1, 2 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
@@ -364,7 +339,6 @@ inline hw_uint<32>  upsample_stencil_rd6_select(Img_cache& Img, int d0, int d1) 
 
 inline hw_uint<32>  upsample_stencil_rd7_select(Img_cache& Img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=Img inter false
 #endif //__VIVADO_SYNTH__
   // upsample_stencil_rd7 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and d0 < 2o0 <= 2 + d0 and -1 + d1 <= 2o1 <= d1 }
   // Read schedule : { upsample_stencil_update_0[d0, d1] -> [2 + d1, 2 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
@@ -381,7 +355,6 @@ inline hw_uint<32>  upsample_stencil_rd7_select(Img_cache& Img, int d0, int d1) 
 
 inline hw_uint<32>  upsample_stencil_rd8_select(Img_cache& Img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=Img inter false
 #endif //__VIVADO_SYNTH__
   // upsample_stencil_rd8 read pattern: { upsample_stencil_update_0[d0, d1] -> Img[o0, o1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 and d0 < 2o0 <= 2 + d0 and d1 < 2o1 <= 2 + d1 }
   // Read schedule : { upsample_stencil_update_0[d0, d1] -> [2 + d1, 2 + d0, 2] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
@@ -460,7 +433,7 @@ inline void Img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */
 #ifndef __VIVADO_SYNTH__
   hw_uint<32> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
   *global_debug_handle << "Img_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 }
@@ -477,7 +450,7 @@ inline void upsample_stencil_update_0(Img_cache& Img, HWStream<hw_uint<32> >& /*
 #ifndef __VIVADO_SYNTH__
   hw_uint<32> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
   *global_debug_handle << "upsample_stencil_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 }
@@ -491,21 +464,26 @@ void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Im
 #endif //__VIVADO_SYNTH__
   Img_cache Img;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=Img inter false
 #endif //__VIVADO_SYNTH__
-	for (int c0 = -2; c0 <= 33; c0 += 1) {
-	  if (c0 >= 2) {
-	    if (c0 % 2 == 0)
-	      for (int c1 = -1; c1 <= 0; c1 += 1)
-	Img_update_0(Img_off, Img, c1, c0 / 2);
-	    for (int c1 = 2; c1 <= 33; c1 += 1) {
-	      if (c0 % 2 == 0 && c1 % 2 == 0)
-	Img_update_0(Img_off, Img, c1 / 2, c0 / 2);
-	upsample_stencil_update_0(Img, upsample_stencil, c1 - 2, c0 - 2);
+	#ifdef __VIVADO_SYNTH__
+	#pragma HLS inline recursive
+	#endif // __VIVADO_SYNTH__
+	
+	for (int c0 = -2; c0 <= 33; c0++) {
+	  for (int c1 = -2; c1 <= 33; c1++) {
+	
+	#ifdef __VIVADO_SYNTH__
+	#pragma HLS pipeline II=1
+	#endif // __VIVADO_SYNTH__
+	
+	    if ((-2 <= c1 && c1 <= 32) && ((c1 - 0) % 2 == 0) && (-2 <= c0 && c0 <= 32) && ((c0 - 0) % 2 == 0)) {
+	Img_update_0(Img_off, Img, (c1 - 0) / 2, (c0 - 0) / 2);
 	    }
-	  } else if (c0 % 2 == 0) {
-	    for (int c1 = -1; c1 <= 16; c1 += 1)
-	Img_update_0(Img_off, Img, c1, c0 / 2);
+	
+	    if ((2 <= c1 && c1 <= 33) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 33) && ((c0 - 2) % 1 == 0)) {
+	upsample_stencil_update_0(Img, upsample_stencil, (c1 - 2) / 1, (c0 - 2) / 1);
+	    }
+	
 	  }
 	}
 	
@@ -513,3 +491,7 @@ void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Im
   debug_file.close();
 #endif //__VIVADO_SYNTH__
 }
+
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+

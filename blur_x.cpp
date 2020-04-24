@@ -27,7 +27,6 @@ struct I_I_id0_0_merged_banks_3_cache {
 
 	inline hw_uint<16> peek_31() {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f1 inter false
 #endif //__VIVADO_SYNTH__
 		return f1.back();
 	}
@@ -38,7 +37,6 @@ struct I_I_id0_0_merged_banks_3_cache {
 
 	inline hw_uint<16> peek_63() {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f3 inter false
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
@@ -51,22 +49,18 @@ struct I_I_id0_0_merged_banks_3_cache {
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f4 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 31
     f4 = f3.back();
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f3 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 31 reading from capacity: 1
     f3.push(f2);
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f2 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 31
     f2 = f1.back();
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=f1 inter false
 #endif //__VIVADO_SYNTH__
     // cap: 31 reading from capacity: 1
     f1.push(f0);
@@ -88,7 +82,6 @@ inline void I_I_id0_0_write(hw_uint<16>& I_I_id0_0, I_cache& I, int root, int id
 
 inline hw_uint<16> I_out_blur_30_3_select(I_cache& I, int root, int d1, int d0) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=I inter false
 #endif //__VIVADO_SYNTH__
   // I_out_blur_30_3 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // Read schedule : { out_blur_30[root = 0, d1, d0] -> [2 + d1, d0, 1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
@@ -105,7 +98,6 @@ inline hw_uint<16> I_out_blur_30_3_select(I_cache& I, int root, int d1, int d0) 
 
 inline hw_uint<16> I_out_blur_30_4_select(I_cache& I, int root, int d1, int d0) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=I inter false
 #endif //__VIVADO_SYNTH__
   // I_out_blur_30_4 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, 1 + d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // Read schedule : { out_blur_30[root = 0, d1, d0] -> [2 + d1, d0, 1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
@@ -122,7 +114,6 @@ inline hw_uint<16> I_out_blur_30_4_select(I_cache& I, int root, int d1, int d0) 
 
 inline hw_uint<16> I_out_blur_30_5_select(I_cache& I, int root, int d1, int d0) {
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=I inter false
 #endif //__VIVADO_SYNTH__
   // I_out_blur_30_5 read pattern: { out_blur_30[root = 0, d1, d0] -> I[d0, 2 + d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // Read schedule : { out_blur_30[root = 0, d1, d0] -> [2 + d1, d0, 1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
@@ -177,7 +168,7 @@ inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in, I_c
 #ifndef __VIVADO_SYNTH__
   hw_uint<16> debug_compute_result(compute_result);
   hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
+  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
   *global_debug_handle << "I_id0," << (1*root + 0) << ", " << id1<< "," << id0<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 }
@@ -194,7 +185,7 @@ inline void out_blur_30(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num p
 #ifndef __VIVADO_SYNTH__
   hw_uint<16> debug_compute_result(compute_result);
   hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
+  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
   *global_debug_handle << "out_blur_30," << (1*root + 0) << ", " << d1<< "," << d0<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 }
@@ -208,7 +199,6 @@ void blur_x(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in, HW
 #endif //__VIVADO_SYNTH__
   I_cache I;
 #ifdef __VIVADO_SYNTH__
-#pragma HLS dependence variable=I inter false
 #endif //__VIVADO_SYNTH__
 	for (int c0 = 0; c0 <= 7; c0 += 1)
 	  for (int c1 = 0; c1 <= 31; c1 += 1) {
@@ -221,3 +211,7 @@ void blur_x(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in, HW
   debug_file.close();
 #endif //__VIVADO_SYNTH__
 }
+
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+

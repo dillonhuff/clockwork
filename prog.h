@@ -329,6 +329,25 @@ struct prog {
 
   map<string, vector<int> > buffer_bounds;
 
+  int buffer_size(const std::string& buf) const {
+    if (!(contains_key(buf, buffer_bounds))) {
+      return 0;
+    }
+    assert(contains_key(buf, buffer_bounds));
+
+    auto dims = map_find(buf, buffer_bounds);
+    if (dims.size() == 0) {
+      return 0;
+    }
+    //assert(dims.size() > 0);
+
+    int sz = dims.at(0);
+    for (int i = 1; i < dims.size(); i++) {
+      sz *= dims.at(i);
+    }
+    return sz;
+  }
+
   map<op*, Box> get_domain_boxes() {
       return root->get_domain_boxes();
   }
@@ -342,6 +361,16 @@ struct prog {
       //"[" << comma_list(b.second) << "]" << endl;
     }
     root->pretty_print(cout, 0);
+  }
+
+  int buffer_port_width(const string& name) const {
+    if (!contains_key(name, buffer_port_widths)) {
+      return 32;
+    }
+    assert(contains_key(name, buffer_port_widths));
+
+    auto width = buffer_port_widths.at(name);
+    return width;
   }
 
   string buffer_element_type_string(const string& name) const {

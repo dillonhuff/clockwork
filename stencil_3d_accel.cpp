@@ -1,0 +1,21 @@
+#include "stencil_3d.h"
+
+extern "C" {
+
+void stencil_3d_accel(int* I_id0_read_arg, int* out_blur_270_write_arg, const int size) { 
+#pragma HLS dataflow
+#pragma HLS INTERFACE m_axi port = int* I_id0_read_arg offset = slave bundle = gmem
+#pragma HLS INTERFACE m_axi port = int* out_blur_270_write_arg offset = slave bundle = gmem
+#pragma HLS INTERFACE m_axilite port = int* I_id0_read_arg offset = slave bundle = control
+#pragma HLS INTERFACE m_axilite port = int* out_blur_270_write_arg offset = slave bundle = control
+#pragma HLS INTERFACE m_axilite port = const int size offset = slave bundle = control
+
+  hls::stream<int> in;
+  hls::stream<int> out;
+
+  read_input(in_arg, in, size);
+
+  stencil_3d(in, out);
+
+  write_output(out_arg, out, size);
+}
