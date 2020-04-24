@@ -1202,6 +1202,103 @@ prog conv_2d() {
   return prg;
 }
 
+
+prog cnn_conv_layer() {
+
+  prog prg;
+  /*
+  string read_string = "{conv_read[root, i] -> [i+2]: 0<=i<=9 }";
+  string write_string = "{conv_write[root, j] -> [j]: 0<=j<=11}";
+  isl_map* read_sched= isl_map_read_from_str(prg.ctx, read_string.c_str());
+  isl_map* write_sched= isl_map_read_from_str(prg.ctx, write_string.c_str());
+  auto before_acc = lex_gt(read_sched, write_sched);
+  cout <<"\tlexlt result: " << str(before_acc) << endl;
+  assert(false);
+  */
+
+  prg.compute_unit_file = "cnn_conv_layer.h";
+  prg.name = "cnn_conv_layer";
+  prg.add_input("ifmap");
+  //prg.add_input("weight");
+  prg.add_output("ofmap");
+  prg.buffer_port_widths["ifmap"] = 32;
+  prg.buffer_port_widths["ifbuf"] = 32;
+  prg.buffer_port_widths["ofmap"] = 32;
+  //prg.buffer_port_widths["weight"] = 32;
+  int unroll_pi = 4, unroll_po = 1;
+
+  {
+    auto y = prg.add_loop("y", 0, 16);
+    auto x = y->add_loop("x", 0, 16);
+    auto ich = x->add_loop("ich", 0, 32 / unroll_pi);
+    auto write = ich->add_op("dma_if");
+    for (int i = 0; i < unroll_pi; i ++) {
+        string channel = "ich*" + to_string(unroll_pi) + "+" + to_string(i);
+        write->add_load("ifmap", channel + ", x, y");
+        write->add_store("ifbuf", channel + ", x, y");
+    }
+  }
+
+  {
+    auto buf_y = prg.add_loop("ly", 0, 16 - 2);
+    auto buf_x = buf_y->add_loop("lx", 0, 16 - 2);
+    auto buf_och= buf_x->add_loop("loch", 0, 32 / unroll_po);
+    auto init = buf_och->add_op("init_psum");
+    init->add_store("psum", "0");
+    auto buf_fy= buf_och->add_loop("lfy", 0, 3);
+    auto buf_fx= buf_fy->add_loop("lfx", 0, 3);
+    auto buf_ich = buf_fx->add_loop("lich", 0, 32 / unroll_pi);
+    auto mac = buf_ich->add_op("mac");
+    // Need to load 9 values
+    for (int po = 0; po < unroll_po; po++) {
+      for (int pi = 0; pi < unroll_pi; pi++) {
+        string c = to_string(unroll_pi) + "*lich + " + to_string(pi);
+        mac->add_load("ifbuf", c + ", lfx + lx, lfy + ly" );
+      }
+    }
+    mac->add_load("psum", "0");
+    mac->add_function("mac");
+    mac->add_store("psum", "0");
+    auto output = buf_och-> add_op("output");
+    output->add_load("psum", "0");
+    output->add_store("ofmap", "loch, lx, ly");
+  }
+  return prg;
+}
+
+void cnn_test() {
+    prog prg = cnn_conv_layer();
+
+    umap* opt_sched = prg.optimized_codegen();
+    auto domain = prg.whole_iteration_domain();
+    auto schedmap = its(opt_sched, domain);
+    cout << "Optimized schedule..." << endl;
+    cout << codegen_c(schedmap);
+
+    /*
+    auto buffers = build_buffers(prg);
+    for (auto itr: buffers) {
+        //generate_hls_code(itr.second);
+
+    }*/
+    auto buffers = build_buffers(prg);
+    generate_app_code(buffers, prg);
+    assert(false);
+}
+
+void conv_test() {
+    prog prg = conv_2d();
+
+    umap* opt_sched = prg.optimized_codegen();
+    auto domain = prg.whole_iteration_domain();
+    auto schedmap = its(opt_sched, domain);
+    cout << "Optimized schedule..." << endl;
+    cout << codegen_c(schedmap);
+
+    auto buffers = build_buffers(prg);
+    generate_hls_code(buffers["I"]);
+}
+
 void pyramid_2d_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
@@ -2193,7 +2290,7 @@ Expr* evaluate(deque<Token>& output) {
     auto arg1 = evaluate(output);
     return new FunctionCall(next.txt, {arg0, arg1});
   }
-  
+
   if (is_operator(next)) {
     auto arg0 = evaluate(output);
     auto arg1 = evaluate(output);
@@ -2269,11 +2366,11 @@ Expr* parse_expression(vector<Token>& orig_tokens, size_t& pos) {
   auto paren = try_parse(parse_paren_expr, orig_tokens, pos);
 
   FINISH(paren);
-  
+
   auto op = try_parse(parse_operator_expr, orig_tokens, pos);
 
   FINISH(op);
-    
+
   auto basic = try_parse(parse_base_expr, orig_tokens, pos);
 
   FINISH(basic);
@@ -2772,7 +2869,7 @@ struct App {
     assert(contains_key(func, app_dag));
     app_dag.at(func).pixel_width = width;
   }
-  
+
   void unroll(const string& func, const int unroll_factor) {
     assert(unroll_factor > 0);
     assert(contains_key(func, app_dag));
@@ -3156,7 +3253,7 @@ struct App {
 
     umap* writes = rdmap(ctx, "{}");
     umap* reads = rdmap(ctx, "{}");
-    
+
     for (auto u : sort_updates()) {
       writes =
         unn(writes, to_umap(pixels_written(u)));
@@ -3259,7 +3356,7 @@ struct App {
 
     umap* writes = rdmap(ctx, "{}");
     umap* reads = rdmap(ctx, "{}");
-    
+
     //uset* domain = isl_union_set_read_from_str(ctx, "{}");
 
     for (auto u : sort_updates()) {
@@ -5091,6 +5188,7 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("mv compare_regressions.sh " + app_dir).c_str());
   
   system(("mv " + out_name + ".soda " + soda_dir).c_str());
+
   system(("mv tb_soda_" + out_name + "*.cpp " + soda_dir).c_str());
   system(("mv run_tb.sh " + soda_dir).c_str());
 }
@@ -5178,7 +5276,7 @@ void sobel_16_app_test() {
 void sobel_app_test() {
   int cols = 1920;
   int rows = 1080;
- 
+
   cout << "sobel" << endl;
   for (int i = 0; i < 5; i++) {
     int unroll_factor = pow(2, i);
@@ -5188,6 +5286,9 @@ void sobel_app_test() {
     
     move_to_benchmarks_folder(out_name + "_opt");
   }
+
+    //std::vector<std::string> optimized =
+      //run_regression_tb(out_name + "_opt");
 
 }
 
@@ -5208,7 +5309,7 @@ void blur_xy_16_app_test() {
 void blur_xy_app_test() {
   int cols = 1920;
   int rows = 1080;
- 
+
   cout << "blur_xy" << endl;
   for (int i = 0; i < 5; i++) {
     int unroll_factor = pow(2, i);
@@ -6211,6 +6312,11 @@ void playground() {
 void application_tests() {
   //parse_denoise3d_test();
   blur_xy_16_app_test();
+  //app added for cnn
+  //cnn_test();
+  //conv_test();
+
+  sum_diffs_test();
   //assert(false);
 
   reduce_2d_test();
@@ -6220,6 +6326,9 @@ void application_tests() {
   //assert(false);
   sobel_16_stage_x_app_test();
 
+  //playground();
+
+  jacobi2d_app_test();
   up_stencil_down_test();
 
   up_stencil_test();
@@ -6229,7 +6338,7 @@ void application_tests() {
   up_unrolled_test();
   up_unrolled_4_test();
   up_down_unrolled_test();
-  
+
   conv3x3_app_unrolled_uneven_test();
   
   conv3x3_app_unrolled_test();
