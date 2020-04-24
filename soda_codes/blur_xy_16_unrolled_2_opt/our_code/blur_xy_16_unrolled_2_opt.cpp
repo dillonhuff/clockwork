@@ -570,14 +570,14 @@ void blur_xy_16_unrolled_2_opt(HWStream<hw_uint<32> >& /* get_args num ports = 2
 
 extern "C" {
 
-static void read_input(hw_uint<32>* input, hls::stream<hw_uint<32> >& v, const int size) {
+static void read_input(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
   for (int i = 0; i < INPUT_SIZE; i++) {
     #pragma HLS pipeline II=1
     v.write(input[i]);
   }
 }
 
-static void write_output(hw_uint<32>* output, hls::stream<hw_uint<32> >& v, const int size) {
+static void write_output(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
   for (int i = 0; i < OUTPUT_SIZE; i++) {
     #pragma HLS pipeline II=1
     output[i] = v.read();
@@ -594,10 +594,10 @@ void blur_xy_16_unrolled_2_opt_accel(hw_uint<32>* input_update_0_read, hw_uint<3
 #pragma HLS INTERFACE s_axilite port = size bundle = control
 #pragma HLS INTERFACE s_axilite port = return bundle = control
 
-  static hls::stream<hw_uint<32> > input_arg_update_0_write_channel;
-  static hls::stream<hw_uint<32> > blur_xy_16_unrolled_2_update_0_write_channel;
+  static HWStream<hw_uint<32> > input_update_0_read_channel;
+  static HWStream<hw_uint<32> > blur_xy_16_unrolled_2_update_0_write_channel;
 
-  read_input(input_arg_update_0_write, input_arg_update_0_write_channel, size);
+  read_input(input_update_0_read, input_update_0_read_channel, size);
 
   blur_xy_16_unrolled_2_opt(input_update_0_read_channel, blur_xy_16_unrolled_2_update_0_write_channel);
 
