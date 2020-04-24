@@ -114,23 +114,45 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
   out << endl;
 
   for (auto in : prg.ins) {
-    out << tab(1) << "static hls::stream<hw_uint<32> > " << in << ";" << endl;
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_in_bundles().size() == 1);
+    auto bundle = pick(buf.get_in_bundles());
+    string in_bundle_tp = buf.bundle_type_string(bundle);
+
+    out << tab(1) << "static hls::stream<" << in_bundle_tp << "> " << bundle << "_channel;" << endl;
   }
 
   for (auto in : prg.outs) {
-    out << tab(1) << "static hls::stream<hw_uint<32> > " << in << ";" << endl;
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_in_bundles().size() == 1);
+    auto bundle = pick(buf.get_in_bundles());
+    string in_bundle_tp = buf.bundle_type_string(bundle);
+
+    out << tab(1) << "static hls::stream<" << in_bundle_tp << "> " << bundle << "_channel;" << endl;
   }
+
   out << endl;
 
-  // TODO: Change to bundle names!!
   for (auto in : prg.ins) {
-    out << tab(1) << "read_input(" << in << "_arg" << ", " << in << ", size);" << endl;
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_in_bundles().size() == 1);
+    auto bundle = pick(buf.get_in_bundles());
+
+    out << tab(1) << "read_input(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
   }
 
   out << endl << tab(1) << prg.name << "(" << comma_list(buffer_args) << ");" << endl << endl;
 
   for (auto in : prg.outs) {
-    out << tab(1) << "write_output(" << in << "_arg" << ", " << in << ", size);" << endl;
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_in_bundles().size() == 1);
+    auto bundle = pick(buf.get_in_bundles());
+
+    out << tab(1) << "write_output(" << bundle << ", " << bundle << "_channel" << ", " << ", size);" << endl;
   }
 
   out << "}" << endl << endl;

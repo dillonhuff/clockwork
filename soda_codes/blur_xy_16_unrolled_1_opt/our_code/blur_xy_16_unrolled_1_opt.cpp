@@ -409,14 +409,14 @@ void blur_xy_16_unrolled_1_opt_accel(hw_uint<16>* input_update_0_read, hw_uint<1
 #pragma HLS INTERFACE s_axilite port = size bundle = control
 #pragma HLS INTERFACE s_axilite port = return bundle = control
 
-  static hls::stream<hw_uint<32> > input_arg;
-  static hls::stream<hw_uint<32> > blur_xy_16_unrolled_1;
+  static hls::stream<hw_uint<16>> input_arg_update_0_write_channel;
+  static hls::stream<hw_uint<16>> blur_xy_16_unrolled_1_update_0_write_channel;
 
-  read_input(input_arg_arg, input_arg, size);
+  read_input(input_arg_update_0_write, input_arg_update_0_write_channel, size);
 
   blur_xy_16_unrolled_1_opt(input_arg, blur_xy_16_unrolled_1);
 
-  write_output(blur_xy_16_unrolled_1_arg, blur_xy_16_unrolled_1, size);
+  write_output(blur_xy_16_unrolled_1_update_0_write, blur_xy_16_unrolled_1_update_0_write_channel, , size);
 }
 
 }
