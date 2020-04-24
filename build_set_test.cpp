@@ -1283,7 +1283,7 @@ void cnn_test() {
     }*/
     auto buffers = build_buffers(prg);
     generate_app_code(buffers, prg);
-    assert(false);
+    //assert(false);
 }
 
 void conv_test() {
@@ -6310,7 +6310,7 @@ void playground() {
 }
 
 void application_tests() {
-  //cnn_test();
+  cnn_test();
 
   jacobi2d_app_test();
   up_stencil_down_test();
