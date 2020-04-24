@@ -2035,68 +2035,6 @@ void jacobi_2d_test() {
   regression_test(prg);
 }
 
-<<<<<<< HEAD
-=======
-struct Token {
-  string txt;
-
-  Token() : txt("") {}
-  Token(const std::string& txt_) : txt(txt_) {}
-};
-
-ostream& operator<<(ostream& out, const Token& e) {
-  out << e.txt;
-  return out;
-}
-
-struct Expr {
-  vector<Token> tokens;
-};
-
-struct FloatConst : public Expr {
-  bool neg;
-  string l;
-  string r;
-};
-
-struct IntConst : public Expr {
-  bool neg;
-  string val;
-
-  IntConst(std::string& val_) : val(val_) {}
-
-};
-
-struct FunctionCall : public Expr {
-  string name;
-  vector<Expr*> args;
-
-  FunctionCall(const string& n_, const vector<Expr*> args_) :
-    name(n_), args(args_) {}
-
-};
-
-struct Binop : public Expr {
-  string op;
-  Expr* l;
-  Expr* r;
-
-  Binop(const string& op_, Expr* l_, Expr* r_) :
-    op(op_), l(l_), r(r_) {}
-
-};
-
-struct Unop : public Expr {
-  string op;
-  Expr* arg;
-};
-
-ostream& operator<<(ostream& out, const Expr& e) {
-  out << comma_list(e.tokens);
-  return out;
-}
-
->>>>>>> origin/nn_apps
 struct BaseExpr {
   string name;
   vector<Token> dims;
@@ -3837,7 +3775,8 @@ struct App {
     fill_compute_domain();
 
     umap* m =
-      schedule_isl();
+      schedule_naive();
+      //schedule_isl();
 
     cout << "Schedule: " << str(m) << endl;
 
@@ -5247,12 +5186,9 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
   system(("mv run_tb_" + out_name + "*.sh " + synth_dir).c_str());
   system(("mv compare_regressions.sh " + app_dir).c_str());
-<<<<<<< HEAD
   
   system(("mv " + out_name + ".soda " + soda_dir).c_str());
-=======
 
->>>>>>> origin/nn_apps
   system(("mv tb_soda_" + out_name + "*.cpp " + soda_dir).c_str());
   system(("mv run_tb.sh " + soda_dir).c_str());
 }
@@ -5347,15 +5283,12 @@ void sobel_app_test() {
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
     string out_name = "sobel_unrolled_" + str(unroll_factor);
     sobel(out_name).realize(out_name, cols, rows, unroll_factor);
-<<<<<<< HEAD
     
     move_to_benchmarks_folder(out_name + "_opt");
   }
-=======
 
     //std::vector<std::string> optimized =
       //run_regression_tb(out_name + "_opt");
->>>>>>> origin/nn_apps
 
 }
 
@@ -6378,15 +6311,12 @@ void playground() {
 
 void application_tests() {
   //parse_denoise3d_test();
-<<<<<<< HEAD
   blur_xy_16_app_test();
-=======
   //app added for cnn
   //cnn_test();
   //conv_test();
 
   sum_diffs_test();
->>>>>>> origin/nn_apps
   //assert(false);
 
   reduce_2d_test();
@@ -6396,12 +6326,9 @@ void application_tests() {
   //assert(false);
   sobel_16_stage_x_app_test();
 
-<<<<<<< HEAD
-=======
   //playground();
 
   jacobi2d_app_test();
->>>>>>> origin/nn_apps
   up_stencil_down_test();
 
   up_stencil_test();
@@ -6413,7 +6340,6 @@ void application_tests() {
   up_down_unrolled_test();
 
   conv3x3_app_unrolled_uneven_test();
-<<<<<<< HEAD
   
   conv3x3_app_unrolled_test();
   //assert(false);
@@ -6436,9 +6362,6 @@ void application_tests() {
   //playground();
   
   jacobi2d_app_test();
-=======
-
->>>>>>> origin/nn_apps
   mismatched_stencil_test();
 
   gaussian_pyramid_app_test();

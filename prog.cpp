@@ -1247,10 +1247,7 @@ void generate_app_code(CodegenOptions& options,
   generate_xilinx_accel_host(buffers, prg);
   generate_app_code_header(buffers, prg);
   generate_soda_tb(buffers, prg);
-<<<<<<< HEAD
-=======
   //generate_xilinx_accel_wrapper(buffers, prg);
->>>>>>> origin/nn_apps
   generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
   generate_tb_run_scripts(prg);
   generate_tb_compare_scripts(prg);
