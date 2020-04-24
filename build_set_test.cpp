@@ -1206,6 +1206,16 @@ prog conv_2d() {
 prog cnn_conv_layer() {
 
   prog prg;
+  /*
+  string read_string = "{conv_read[root, i] -> [i+2]: 0<=i<=9 }";
+  string write_string = "{conv_write[root, j] -> [j]: 0<=j<=11}";
+  isl_map* read_sched= isl_map_read_from_str(prg.ctx, read_string.c_str());
+  isl_map* write_sched= isl_map_read_from_str(prg.ctx, write_string.c_str());
+  auto before_acc = lex_gt(read_sched, write_sched);
+  cout <<"\tlexlt result: " << str(before_acc) << endl;
+  assert(false);
+  */
+
   prg.compute_unit_file = "cnn_conv_layer.h";
   prg.name = "cnn_conv_layer";
   prg.add_input("ifmap");
@@ -1215,26 +1225,29 @@ prog cnn_conv_layer() {
   prg.buffer_port_widths["ifbuf"] = 32;
   prg.buffer_port_widths["ofmap"] = 32;
   //prg.buffer_port_widths["weight"] = 32;
-  int unroll_pi = 1, unroll_po = 1;
+  int unroll_pi = 4, unroll_po = 1;
 
   {
     auto y = prg.add_loop("y", 0, 16);
     auto x = y->add_loop("x", 0, 16);
-    auto ich = x->add_loop("ich", 0, 32);
+    auto ich = x->add_loop("ich", 0, 32 / unroll_pi);
     auto write = ich->add_op("dma_if");
-    write->add_load("ifmap", "ich, x, y");
-    write->add_store("ifbuf", "ich, x, y");
+    for (int i = 0; i < unroll_pi; i ++) {
+        string channel = "ich*" + to_string(unroll_pi) + "+" + to_string(i);
+        write->add_load("ifmap", channel + ", x, y");
+        write->add_store("ifbuf", channel + ", x, y");
+    }
   }
 
   {
     auto buf_y = prg.add_loop("ly", 0, 16 - 2);
     auto buf_x = buf_y->add_loop("lx", 0, 16 - 2);
-    auto buf_och= buf_x->add_loop("loch", 0, 32);
+    auto buf_och= buf_x->add_loop("loch", 0, 32 / unroll_po);
     auto init = buf_och->add_op("init_psum");
     init->add_store("psum", "0");
-    auto buf_fx= buf_och->add_loop("lfx", 0, 3);
-    auto buf_fy= buf_fx->add_loop("lfy", 0, 3);
-    auto buf_ich = buf_fy->add_loop("lich", 0, 32);
+    auto buf_fy= buf_och->add_loop("lfy", 0, 3);
+    auto buf_fx= buf_fy->add_loop("lfx", 0, 3);
+    auto buf_ich = buf_fx->add_loop("lich", 0, 32 / unroll_pi);
     auto mac = buf_ich->add_op("mac");
     // Need to load 9 values
     for (int po = 0; po < unroll_po; po++) {
@@ -1262,7 +1275,28 @@ void cnn_test() {
     cout << "Optimized schedule..." << endl;
     cout << codegen_c(schedmap);
 
+    /*
     auto buffers = build_buffers(prg);
+    for (auto itr: buffers) {
+        //generate_hls_code(itr.second);
+
+    }*/
+    auto buffers = build_buffers(prg);
+    generate_app_code(buffers, prg);
+    assert(false);
+}
+
+void conv_test() {
+    prog prg = conv_2d();
+
+    umap* opt_sched = prg.optimized_codegen();
+    auto domain = prg.whole_iteration_domain();
+    auto schedmap = its(opt_sched, domain);
+    cout << "Optimized schedule..." << endl;
+    cout << codegen_c(schedmap);
+
+    auto buffers = build_buffers(prg);
+    generate_hls_code(buffers["I"]);
 }
 
 void pyramid_2d_test() {
@@ -6048,8 +6082,9 @@ void playground() {
 
 void application_tests() {
   //parse_denoise3d_test();
-  cnn_test();
-  assert(False);
+  //app added for cnn
+  //cnn_test();
+  //conv_test();
 
   sum_diffs_test();
   //assert(false);

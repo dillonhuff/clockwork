@@ -263,7 +263,7 @@ class AccessPattern {
       }
 
       void initial_access_mat(isl_map* access_map, isl_set* domain, isl_ctx* ctx) {
-          cout << "\t\tProduced: " << str(access_map) << endl;
+          //cout << "\t\tProduced: " << str(access_map) << endl;
 
           for (size_t i = 0; i < isl_map_dim(access_map, isl_dim_in); i++) {
               if (!isl_map_has_dim_id(access_map, isl_dim_in, i)) {
@@ -922,6 +922,7 @@ class UBuffer {
           return m.first;
         }
       }
+      cout << "ERROR: couldn't find any input port in : " << name << endl;
       assert(false);
     }
 
@@ -1050,7 +1051,7 @@ void generate_bank(CodegenOptions& options,
 
 Box extract_box(uset* rddom);
 bank compute_bank_info(
-    const std::string& inpt, 
+    const std::string& inpt,
     const std::string& outpt,
     UBuffer& buf);
 
