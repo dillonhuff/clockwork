@@ -93,8 +93,8 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
 
   out << tab(1) << "std::string binaryFile = argv[1];" << endl;
   out << tab(1) << "std::string kernel_name = argv[2];" << endl;
-  out << tab(1) << "const int DATA_SIZE = stoi(argv[3]);" << endl;
-  out << tab(1) << "const int OUT_DATA_SIZE = stoi(argv[4]);" << endl << endl;
+  out << tab(1) << "const int DATA_SIZE = 4096;" << endl;
+  out << tab(1) << "const int OUT_DATA_SIZE = 4096;" << endl << endl;
 
   out << tab(1) << "size_t vector_size_bytes = sizeof(int) * DATA_SIZE;" << endl;
   out << tab(1) << "cl_int err;" << endl;
