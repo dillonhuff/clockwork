@@ -633,18 +633,9 @@ string delay_string(CodegenOptions& options,
 selector generate_select(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
   cout << "creating select for port: <" << outpt <<"> in buffer: " << buf.name << endl;
   selector sel = generate_select_decl(options, out, outpt, buf);
-  cout << "finished creating decl" << endl;
 
-<<<<<<< HEAD
-=======
-  //auto lex_max_events = get_lexmax_events(outpt, buf);
-
-  cout << "finished get lex max event" << endl;
-
->>>>>>> origin/nn_apps
   out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
 
-  cout << "Codegen finished" << endl;
 
   vector<string> possible_ports;
   for (auto pt : buf.get_in_ports()) {
@@ -655,15 +646,8 @@ selector generate_select(CodegenOptions& options, std::ostream& out, const strin
 
   map<string, string> in_ports_to_conditions;
 
-<<<<<<< HEAD
   //cout << possible_ports.size() << " possible ports for " << outpt << " on buffer: " << endl << buf << endl;
   for (auto inpt : possible_ports) {
-=======
-  cout << possible_ports.size() << " possible ports for " << outpt << " on buffer: " << endl << buf << endl;
-  //cout << "lexmax = " << str(lex_max_events) << endl;
-  for (auto inpt : possible_ports) {
-    cout << tab(1) << inpt << endl;
->>>>>>> origin/nn_apps
     auto write_ops =
       domain(buf.access_map.at(outpt));
     auto written =
