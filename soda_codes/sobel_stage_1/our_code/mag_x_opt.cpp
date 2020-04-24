@@ -340,3 +340,49 @@ void mag_x_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */off_chip_img,
   debug_file.close();
 #endif //__VIVADO_SYNTH__
 }
+
+#ifdef __VIVADO_SYNTH__
+#include "mag_x_opt.h"
+
+#define INPUT_SIZE 1156
+#define OUTPUT_SIZE 1024
+
+extern "C" {
+
+static void read_input(hw_uint<32>* input, hls::stream<hw_uint<32>>& v, const int size) {
+  for (int i = 0; i < INPUT_SIZE; i++) {
+    #pragma HLS pipeline II=1
+    v.write(input[i]);
+  }
+}
+
+static void write_output(hw_uint<32>* output, hls::stream<hw_uint<32>>& v, const int size) {
+  for (int i = 0; i < OUTPUT_SIZE; i++) {
+    #pragma HLS pipeline II=1
+    output[i] = v.read();
+  }
+}
+
+void mag_x_opt_accel(hw_uint<32>* img_update_0_read, hw_uint<32>* mag_x_update_0_write, const int size) { 
+#pragma HLS dataflow
+#pragma HLS INTERFACE m_axi port = img_update_0_read offset = slave bundle = gmem
+#pragma HLS INTERFACE m_axi port = mag_x_update_0_write offset = slave bundle = gmem
+
+#pragma HLS INTERFACE s_axilite port = img_update_0_read bundle = control
+#pragma HLS INTERFACE s_axilite port = mag_x_update_0_write bundle = control
+#pragma HLS INTERFACE s_axilite port = size bundle = control
+#pragma HLS INTERFACE s_axilite port = return bundle = control
+
+  static hls::stream<hw_uint<32> > off_chip_img;
+  static hls::stream<hw_uint<32> > mag_x;
+
+  read_input(off_chip_img_arg, off_chip_img, size);
+
+  mag_x_opt(off_chip_img, mag_x);
+
+  write_output(mag_x_arg, mag_x, size);
+}
+
+}
+#endif //__VIVADO_SYNTH__
+

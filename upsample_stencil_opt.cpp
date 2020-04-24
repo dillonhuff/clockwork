@@ -491,3 +491,49 @@ void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Im
   debug_file.close();
 #endif //__VIVADO_SYNTH__
 }
+
+#ifdef __VIVADO_SYNTH__
+#include "upsample_stencil_opt.h"
+
+#define INPUT_SIZE 324
+#define OUTPUT_SIZE 1024
+
+extern "C" {
+
+static void read_input(hw_uint<32>* input, hls::stream<hw_uint<32>>& v, const int size) {
+  for (int i = 0; i < INPUT_SIZE; i++) {
+    #pragma HLS pipeline II=1
+    v.write(input[i]);
+  }
+}
+
+static void write_output(hw_uint<32>* output, hls::stream<hw_uint<32>>& v, const int size) {
+  for (int i = 0; i < OUTPUT_SIZE; i++) {
+    #pragma HLS pipeline II=1
+    output[i] = v.read();
+  }
+}
+
+void upsample_stencil_opt_accel(hw_uint<32>* Img_update_0_read, hw_uint<32>* upsample_stencil_update_0_write, const int size) { 
+#pragma HLS dataflow
+#pragma HLS INTERFACE m_axi port = Img_update_0_read offset = slave bundle = gmem
+#pragma HLS INTERFACE m_axi port = upsample_stencil_update_0_write offset = slave bundle = gmem
+
+#pragma HLS INTERFACE s_axilite port = Img_update_0_read bundle = control
+#pragma HLS INTERFACE s_axilite port = upsample_stencil_update_0_write bundle = control
+#pragma HLS INTERFACE s_axilite port = size bundle = control
+#pragma HLS INTERFACE s_axilite port = return bundle = control
+
+  static hls::stream<hw_uint<32> > Img_off;
+  static hls::stream<hw_uint<32> > upsample_stencil;
+
+  read_input(Img_off_arg, Img_off, size);
+
+  upsample_stencil_opt(Img_off, upsample_stencil);
+
+  write_output(upsample_stencil_arg, upsample_stencil, size);
+}
+
+}
+#endif //__VIVADO_SYNTH__
+

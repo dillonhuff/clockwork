@@ -956,7 +956,7 @@ static void write_output(hw_uint<64>* output, hls::stream<hw_uint<64>>& v, const
   }
 }
 
-void blur_xy_16_unrolled_4_opt_accel(int* input_update_0_read_arg, int* blur_xy_16_unrolled_4_update_0_write_arg, const int size) { 
+void blur_xy_16_unrolled_4_opt_accel(hw_uint<64>* input_update_0_read, hw_uint<64>* blur_xy_16_unrolled_4_update_0_write, const int size) { 
 #pragma HLS dataflow
 #pragma HLS INTERFACE m_axi port = input_update_0_read offset = slave bundle = gmem
 #pragma HLS INTERFACE m_axi port = blur_xy_16_unrolled_4_update_0_write offset = slave bundle = gmem

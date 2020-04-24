@@ -235,20 +235,6 @@ inline hw_uint<192> img_mag_y_update_0_read_bundle_read(img_cache& img, int d0, 
 
 
 // Operation logic
-inline void img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */off_chip_img, img_cache& img, int d0, int d1) {
-	// Consume: off_chip_img
-	auto off_chip_img_0_c__0_value = off_chip_img.read();
-	auto compute_result = id_unrolled_1(off_chip_img_0_c__0_value);
-	// Produce: img
-	img_img_update_0_write_bundle_write(compute_result, img, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "img_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-}
-
 inline void mag_y_update_0(img_cache& img, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */mag_y, int d0, int d1) {
 	// Consume: img
 	auto img_0_c__0_value = img_mag_y_update_0_read_bundle_read(img/* source_delay */, d0, d1);
@@ -263,6 +249,20 @@ inline void mag_y_update_0(img_cache& img, HWStream<hw_uint<32> >& /* buffer_arg
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
   *global_debug_handle << "mag_y_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+}
+
+inline void img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */off_chip_img, img_cache& img, int d0, int d1) {
+	// Consume: off_chip_img
+	auto off_chip_img_0_c__0_value = off_chip_img.read();
+	auto compute_result = id_unrolled_1(off_chip_img_0_c__0_value);
+	// Produce: img
+	img_img_update_0_write_bundle_write(compute_result, img, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  hw_uint<32> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  *global_debug_handle << "img_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 }
 
@@ -302,3 +302,49 @@ void mag_y_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */off_chip_img,
   debug_file.close();
 #endif //__VIVADO_SYNTH__
 }
+
+#ifdef __VIVADO_SYNTH__
+#include "mag_y_opt.h"
+
+#define INPUT_SIZE 1156
+#define OUTPUT_SIZE 1024
+
+extern "C" {
+
+static void read_input(hw_uint<32>* input, hls::stream<hw_uint<32>>& v, const int size) {
+  for (int i = 0; i < INPUT_SIZE; i++) {
+    #pragma HLS pipeline II=1
+    v.write(input[i]);
+  }
+}
+
+static void write_output(hw_uint<32>* output, hls::stream<hw_uint<32>>& v, const int size) {
+  for (int i = 0; i < OUTPUT_SIZE; i++) {
+    #pragma HLS pipeline II=1
+    output[i] = v.read();
+  }
+}
+
+void mag_y_opt_accel(hw_uint<32>* img_update_0_read, hw_uint<32>* mag_y_update_0_write, const int size) { 
+#pragma HLS dataflow
+#pragma HLS INTERFACE m_axi port = img_update_0_read offset = slave bundle = gmem
+#pragma HLS INTERFACE m_axi port = mag_y_update_0_write offset = slave bundle = gmem
+
+#pragma HLS INTERFACE s_axilite port = img_update_0_read bundle = control
+#pragma HLS INTERFACE s_axilite port = mag_y_update_0_write bundle = control
+#pragma HLS INTERFACE s_axilite port = size bundle = control
+#pragma HLS INTERFACE s_axilite port = return bundle = control
+
+  static hls::stream<hw_uint<32> > off_chip_img;
+  static hls::stream<hw_uint<32> > mag_y;
+
+  read_input(off_chip_img_arg, off_chip_img, size);
+
+  mag_y_opt(off_chip_img, mag_y);
+
+  write_output(mag_y_arg, mag_y, size);
+}
+
+}
+#endif //__VIVADO_SYNTH__
+

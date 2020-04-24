@@ -75,7 +75,7 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
     cout << "bundle: " << bundle << endl;
 
     string out_bundle_tp = buf.bundle_type_string(bundle);
-    ptr_arg_decls.push_back(out_bundle_tp + "* " + bundle + "_arg");
+    ptr_arg_decls.push_back(out_bundle_tp + "* " + bundle);
     ptr_args.push_back(bundle);
     buffer_args.push_back(buf.name);
   }
@@ -89,7 +89,7 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
     auto bundle = pick(buf.get_in_bundles());
     string in_bundle_tp = buf.bundle_type_string(bundle);
 
-    ptr_arg_decls.push_back(in_bundle_tp + "* " + bundle + "_arg");
+    ptr_arg_decls.push_back(in_bundle_tp + "* " + bundle);
     ptr_args.push_back(bundle);
     buffer_args.push_back(buf.name);
   }

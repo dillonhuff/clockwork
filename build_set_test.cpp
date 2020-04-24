@@ -1291,9 +1291,13 @@ void reduce_1d_test() {
   prg.add_input("in");
   prg.add_output("out");
   prg.buffer_port_widths["in"] = 32;
+  prg.buffer_bounds["in"] = {15};
   prg.buffer_port_widths["out"] = 32;
+  prg.buffer_bounds["out"] = {1};
   prg.buffer_port_widths["I"] = 32;
+  prg.buffer_bounds["I"] = {15};
   prg.buffer_port_widths["tmp"] = 32;
+  prg.buffer_bounds["tmp"] = {1};
 
   {
     auto read_in = prg.add_loop("rd_in", 0, 14);
@@ -1347,9 +1351,16 @@ void reduce_2d_test() {
   prg.add_input("in");
   prg.add_output("out");
   prg.buffer_port_widths["in"] = 32;
+  prg.buffer_bounds["in"] = {3, 3};
+
   prg.buffer_port_widths["out"] = 32;
+  prg.buffer_bounds["out"] = {1};
+
   prg.buffer_port_widths["I"] = 32;
+  prg.buffer_bounds["I"] = {3, 3};
+
   prg.buffer_port_widths["tmp"] = 32;
+  prg.buffer_bounds["tmp"] = {1};
 
   auto read_in = prg.add_nest("rd_r", 0, 3, "rd_c", 0, 3)->add_op({"I", "rd_r, rd_c"}, "id", {"in", "rd_r, rd_c"});
 
@@ -5652,14 +5663,17 @@ void blur_x_test() {
   prg.compute_unit_file = "conv_3x3.h";
   prg.name = "blur_x";
   prg.buffer_port_widths["I"] = 16;
+  prg.buffer_bounds["i"] = {32, 8};
 
   string in_name = "in";
   string out_name = "out";
 
   prg.buffer_port_widths[in_name] = 16;
+  prg.buffer_bounds[in_name] = {32, 8};
   prg.add_input(in_name);
 
   prg.buffer_port_widths[out_name] = 16;
+  prg.buffer_bounds[in_name] = {32 - 2, 8 - 2};
   prg.add_output(out_name);
 
   // This code (in SODA is described as blur_x)
@@ -6030,9 +6044,16 @@ void playground() {
   prg.add_input("in");
   prg.add_output("out");
   prg.buffer_port_widths["in"] = 32;
+  prg.buffer_bounds["in"] = {3, 3};
+
   prg.buffer_port_widths["out"] = 32;
+  prg.buffer_bounds["out"] = {1};
+
   prg.buffer_port_widths["I"] = 32;
+  prg.buffer_bounds["I"] = {3, 3};
+
   prg.buffer_port_widths["tmp"] = 32;
+  prg.buffer_bounds["tmp"] = {1};
 
   auto read_in = prg.add_nest("rd_r", 0, 3, "rd_c", 0, 3)->add_op({"I", "rd_r, rd_c"}, "id", {"in", "rd_r, rd_c"});
 

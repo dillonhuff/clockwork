@@ -336,7 +336,10 @@ struct prog {
     assert(contains_key(buf, buffer_bounds));
 
     auto dims = map_find(buf, buffer_bounds);
-    assert(dims.size() > 0);
+    if (dims.size() == 0) {
+      return 0;
+    }
+    //assert(dims.size() > 0);
 
     int sz = dims.at(0);
     for (int i = 1; i < dims.size(); i++) {

@@ -363,7 +363,7 @@ static void write_output(hw_uint<16>* output, hls::stream<hw_uint<16>>& v, const
   }
 }
 
-void sobel_16_stage_x_unrolled_1_opt_accel(int* img_update_0_read_arg, int* sobel_16_stage_x_unrolled_1_update_0_write_arg, const int size) { 
+void sobel_16_stage_x_unrolled_1_opt_accel(hw_uint<16>* img_update_0_read, hw_uint<16>* sobel_16_stage_x_unrolled_1_update_0_write, const int size) { 
 #pragma HLS dataflow
 #pragma HLS INTERFACE m_axi port = img_update_0_read offset = slave bundle = gmem
 #pragma HLS INTERFACE m_axi port = sobel_16_stage_x_unrolled_1_update_0_write offset = slave bundle = gmem
