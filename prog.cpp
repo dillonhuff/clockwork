@@ -904,16 +904,16 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
   int bundle_width = buf.port_bundle_width(bundle_name);
   int nlanes = buf.port_bundles.at(bundle_name).size();
 
-  assert(nlanes == op->unroll_factor);
+  //assert(nlanes == op->unroll_factor);
   assert(bundle_width % nlanes == 0);
 
-  int element_width = bundle_width / nlanes;
+  int element_width = bundle_width / op->unroll_factor;
 
 
   string dbg_res_name = "debug_" + res;
   conv_out << tab(1) << "hw_uint<" << bundle_width << "> " << dbg_res_name << "(" << res << ");" << endl;
   vector<string> lane_values =
-    split_bv(1, conv_out, dbg_res_name, element_width, nlanes);
+    split_bv(1, conv_out, dbg_res_name, element_width, op->unroll_factor);
   for (int lane = 0; lane < nlanes; lane++) {
     conv_out << tab(1) << "*global_debug_handle << \"" << op->name << ",\" << ";
     int i = 0;
@@ -926,7 +926,6 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
       i++;
     }
     conv_out << " " << lane_values.at(lane) << " << endl;" << endl;
-    //conv_out << " " << res << " << endl;" << endl;
   }
 
   close_debug_scope(conv_out);
@@ -1239,12 +1238,12 @@ void generate_app_code(CodegenOptions& options,
   conv_out << "}" << endl << endl;
 
   open_synth_scope(conv_out);
-  generate_xilinx_accel_wrapper(conv_out, buffers, prg);
+  //generate_xilinx_accel_wrapper(conv_out, buffers, prg);
   close_synth_scope(conv_out);
 
   conv_out << endl;
 
-  generate_xilinx_accel_host(buffers, prg);
+  //generate_xilinx_accel_host(buffers, prg);
   generate_app_code_header(buffers, prg);
   generate_soda_tb(buffers, prg);
   //generate_xilinx_accel_wrapper(buffers, prg);

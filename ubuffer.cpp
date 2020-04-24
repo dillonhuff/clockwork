@@ -675,11 +675,8 @@ selector generate_select(CodegenOptions& options, std::ostream& out, const strin
   } else {
     for (auto port : possible_ports) {
       out << tab(1) << "if (" << map_find(port, in_ports_to_conditions) << ") {" << endl;
-      //string inpt = possible_ports.at(0);
-      //string peeked_val = delay_string(options, out, inpt, outpt, buf);
       string peeked_val = delay_string(options, out, port, outpt, buf);
       sel.bank_conditions.push_back("1");
-      //sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, inpt));
       sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, port));
 
       out << tab(2) << "auto value_" << port << " = " << peeked_val << ";" << endl;
@@ -791,6 +788,7 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
     }
     out << "}" << endl << endl;
   }
+  cout << "Finished bundle..." << endl;
 }
 
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf) {

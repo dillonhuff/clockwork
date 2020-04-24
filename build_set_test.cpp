@@ -6310,23 +6310,7 @@ void playground() {
 }
 
 void application_tests() {
-  //parse_denoise3d_test();
-  blur_xy_16_app_test();
-  //app added for cnn
   //cnn_test();
-  //conv_test();
-
-  sum_diffs_test();
-  //assert(false);
-
-  reduce_2d_test();
-  reduce_1d_test();
-  //assert(false);
-  sobel_16_app_test();
-  //assert(false);
-  sobel_16_stage_x_app_test();
-
-  //playground();
 
   jacobi2d_app_test();
   up_stencil_down_test();
@@ -6341,6 +6325,23 @@ void application_tests() {
 
   conv3x3_app_unrolled_uneven_test();
   
+  //parse_denoise3d_test();
+  blur_xy_16_app_test();
+  //app added for cnn
+  //conv_test();
+
+  sum_diffs_test();
+  //assert(false);
+
+  reduce_2d_test();
+  reduce_1d_test();
+  //assert(false);
+  sobel_16_app_test();
+  //assert(false);
+  sobel_16_stage_x_app_test();
+
+  //playground();
+
   conv3x3_app_unrolled_test();
   //assert(false);
 

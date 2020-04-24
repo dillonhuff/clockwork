@@ -563,47 +563,5 @@ void blur_xy_16_unrolled_2_opt(HWStream<hw_uint<32> >& /* get_args num ports = 2
 }
 
 #ifdef __VIVADO_SYNTH__
-#include "blur_xy_16_unrolled_2_opt.h"
-
-#define INPUT_SIZE 2079604
-#define OUTPUT_SIZE 2073600
-
-extern "C" {
-
-static void read_input(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
-  for (int i = 0; i < INPUT_SIZE; i++) {
-    #pragma HLS pipeline II=1
-    v.write(input[i]);
-  }
-}
-
-static void write_output(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
-  for (int i = 0; i < OUTPUT_SIZE; i++) {
-    #pragma HLS pipeline II=1
-    output[i] = v.read();
-  }
-}
-
-void blur_xy_16_unrolled_2_opt_accel(hw_uint<32>* input_update_0_read, hw_uint<32>* blur_xy_16_unrolled_2_update_0_write, const int size) { 
-#pragma HLS dataflow
-#pragma HLS INTERFACE m_axi port = input_update_0_read offset = slave bundle = gmem
-#pragma HLS INTERFACE m_axi port = blur_xy_16_unrolled_2_update_0_write offset = slave bundle = gmem
-
-#pragma HLS INTERFACE s_axilite port = input_update_0_read bundle = control
-#pragma HLS INTERFACE s_axilite port = blur_xy_16_unrolled_2_update_0_write bundle = control
-#pragma HLS INTERFACE s_axilite port = size bundle = control
-#pragma HLS INTERFACE s_axilite port = return bundle = control
-
-  static HWStream<hw_uint<32> > input_update_0_read_channel;
-  static HWStream<hw_uint<32> > blur_xy_16_unrolled_2_update_0_write_channel;
-
-  read_input(input_update_0_read, input_update_0_read_channel, size);
-
-  blur_xy_16_unrolled_2_opt(input_update_0_read_channel, blur_xy_16_unrolled_2_update_0_write_channel);
-
-  write_output(blur_xy_16_unrolled_2_update_0_write, blur_xy_16_unrolled_2_update_0_write_channel, size);
-}
-
-}
 #endif //__VIVADO_SYNTH__
 
