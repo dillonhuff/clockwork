@@ -1189,25 +1189,42 @@ inline void u_u_update_0_write_bundle_write(hw_uint<32>& u_update_0_write, u_cac
 
 
 // Operation logic
-inline void r0_update_0(f_cache& f, u_cache& u, r0_cache& r0, int d0, int d1) {
-	// Consume: f
-	auto f_0_c__0_value = f_r0_update_0_read_bundle_read(f/* source_delay */, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "r0_update_0_f," << d0<< "," << d1<< "," <<  f_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
+inline void diff_u_update_0(u_cache& u, diff_u_cache& diff_u, int d0, int d1) {
 	// Consume: u
-	auto u_0_c__0_value = u_r0_update_0_read_bundle_read(u/* source_delay */, d0, d1);
+	auto u_0_c__0_value = u_diff_u_update_0_read_bundle_read(u/* source_delay */, d0, d1);
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "r0_update_0_u," << d0<< "," << d1<< "," <<  u_0_c__0_value << endl;
+  *global_debug_handle << "diff_u_update_0_u," << d0<< "," << d1<< "," <<  u_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
-	auto compute_result = r0_generated_compute_unrolled_1(f_0_c__0_value, u_0_c__0_value);
-	// Produce: r0
-	r0_r0_update_0_write_bundle_write(compute_result, r0, d0, d1);
+	auto compute_result = diff_u_generated_compute_unrolled_1(u_0_c__0_value);
+	// Produce: diff_u
+	diff_u_diff_u_update_0_write_bundle_write(compute_result, diff_u, d0, d1);
 #ifndef __VIVADO_SYNTH__
   hw_uint<32> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "r0_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "diff_u_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+}
+
+inline void g_update_0(diff_sums_cache& diff_sums, f_cache& f, g_cache& g, int d0, int d1) {
+	// Consume: diff_sums
+	auto diff_sums_0_c__0_value = diff_sums_g_update_0_read_bundle_read(diff_sums/* source_delay */, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "g_update_0_diff_sums," << d0<< "," << d1<< "," <<  diff_sums_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+	// Consume: f
+	auto f_0_c__0_value = f_g_update_0_read_bundle_read(f/* source_delay */, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "g_update_0_f," << d0<< "," << d1<< "," <<  f_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+	auto compute_result = g_generated_compute_unrolled_1(diff_sums_0_c__0_value, f_0_c__0_value);
+	// Produce: g
+	g_g_update_0_write_bundle_write(compute_result, g, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  hw_uint<32> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  *global_debug_handle << "g_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 }
 
@@ -1290,20 +1307,25 @@ inline void diff_d_update_0(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline void diff_u_update_0(u_cache& u, diff_u_cache& diff_u, int d0, int d1) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_u_update_0_read_bundle_read(u/* source_delay */, d0, d1);
+inline void r0_update_0(f_cache& f, u_cache& u, r0_cache& r0, int d0, int d1) {
+	// Consume: f
+	auto f_0_c__0_value = f_r0_update_0_read_bundle_read(f/* source_delay */, d0, d1);
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "diff_u_update_0_u," << d0<< "," << d1<< "," <<  u_0_c__0_value << endl;
+  *global_debug_handle << "r0_update_0_f," << d0<< "," << d1<< "," <<  f_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
-	auto compute_result = diff_u_generated_compute_unrolled_1(u_0_c__0_value);
-	// Produce: diff_u
-	diff_u_diff_u_update_0_write_bundle_write(compute_result, diff_u, d0, d1);
+	// Consume: u
+	auto u_0_c__0_value = u_r0_update_0_read_bundle_read(u/* source_delay */, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "r0_update_0_u," << d0<< "," << d1<< "," <<  u_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+	auto compute_result = r0_generated_compute_unrolled_1(f_0_c__0_value, u_0_c__0_value);
+	// Produce: r0
+	r0_r0_update_0_write_bundle_write(compute_result, r0, d0, d1);
 #ifndef __VIVADO_SYNTH__
   hw_uint<32> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "diff_u_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "r0_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 }
 
@@ -1353,28 +1375,6 @@ inline void r1_update_0(r0_cache& r0, r1_cache& r1, int d0, int d1) {
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
   *global_debug_handle << "r1_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-}
-
-inline void g_update_0(diff_sums_cache& diff_sums, f_cache& f, g_cache& g, int d0, int d1) {
-	// Consume: diff_sums
-	auto diff_sums_0_c__0_value = diff_sums_g_update_0_read_bundle_read(diff_sums/* source_delay */, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "g_update_0_diff_sums," << d0<< "," << d1<< "," <<  diff_sums_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-	// Consume: f
-	auto f_0_c__0_value = f_g_update_0_read_bundle_read(f/* source_delay */, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "g_update_0_f," << d0<< "," << d1<< "," <<  f_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-	auto compute_result = g_generated_compute_unrolled_1(diff_sums_0_c__0_value, f_0_c__0_value);
-	// Produce: g
-	g_g_update_0_write_bundle_write(compute_result, g, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "g_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 }
 
