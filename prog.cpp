@@ -210,14 +210,14 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
 
   out << "extern \"C\" {" << endl << endl;
 
-  out << "static void read_input(" << in_bundle_tp << "* input, hls::stream<" << in_bundle_tp << ">& v, const int size) {" << endl;
+  out << "static void read_input(" << in_bundle_tp << "* input, hls::stream<" << in_bundle_tp << " >& v, const int size) {" << endl;
   out << tab(1) << "for (int i = 0; i < INPUT_SIZE; i++) {" << endl;
   out << tab(2) << "#pragma HLS pipeline II=1" << endl;
   out << tab(2) << "v.write(input[i]);" << endl;
   out << tab(1) << "}" << endl;
   out << "}" << endl << endl;
 
-  out << "static void write_output(" << out_bundle_tp << "* output, hls::stream<" << out_bundle_tp << ">& v, const int size) {" << endl;
+  out << "static void write_output(" << out_bundle_tp << "* output, hls::stream<" << out_bundle_tp << " >& v, const int size) {" << endl;
   out << tab(1) << "for (int i = 0; i < OUTPUT_SIZE; i++) {" << endl;
   out << tab(2) << "#pragma HLS pipeline II=1" << endl;
   out << tab(2) << "output[i] = v.read();" << endl;
@@ -284,7 +284,7 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
     auto bundle = pick(buf.get_in_bundles());
     string in_bundle_tp = buf.bundle_type_string(bundle);
 
-    out << tab(1) << "static hls::stream<" << in_bundle_tp << "> " << bundle << "_channel;" << endl;
+    out << tab(1) << "static hls::stream<" << in_bundle_tp << " > " << bundle << "_channel;" << endl;
   }
 
   for (auto in : prg.outs) {
@@ -294,7 +294,7 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
     auto bundle = pick(buf.get_in_bundles());
     string in_bundle_tp = buf.bundle_type_string(bundle);
 
-    out << tab(1) << "static hls::stream<" << in_bundle_tp << "> " << bundle << "_channel;" << endl;
+    out << tab(1) << "static hls::stream<" << in_bundle_tp << " > " << bundle << "_channel;" << endl;
   }
 
   out << endl;
@@ -316,7 +316,7 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
     assert(buf.get_in_bundles().size() == 1);
     auto bundle = pick(buf.get_in_bundles());
 
-    out << tab(1) << "write_output(" << bundle << ", " << bundle << "_channel" << ", " << ", size);" << endl;
+    out << tab(1) << "write_output(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
   }
 
   out << "}" << endl << endl;
