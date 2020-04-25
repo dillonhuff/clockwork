@@ -27,7 +27,7 @@ int main() {
   ap_uint<BURST_WIDTH>* input_arg = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
   fill_array<bits_per_pixel>("input_arg_input_pixel.csv", input_arg, nrows, ncols, transfer_cols);
   bxy_ur_1_opt_kernel(bxy_ur_1, input_arg, num_transfers);
-  write_results<bits_per_pixel>("soda_bxy_ur_1_opt_regression_result.csv", bxy_ur_1, nrows, ncols, transfer_cols);
+  write_results_decimal<bits_per_pixel>("soda_bxy_ur_1_opt_regression_result.csv", bxy_ur_1, nrows, ncols, transfer_cols);
   free(input_arg);
   free(bxy_ur_1);
 }
