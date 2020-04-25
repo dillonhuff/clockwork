@@ -152,14 +152,14 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   for (auto edge_bundle : in_bundles(buffers, prg)) {
     out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
     out << tab(1) << "// TODO: Add support for other widths" << endl;
-    out << tab(2) << "((uint16_t*) " << edge_bundle << ")[i] = i;" << endl;
+    out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = i;" << endl;
     out << tab(1) << "}" << endl << endl;
   }
 
   for (auto edge_bundle : out_bundles(buffers, prg)) {
     out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
     out << tab(1) << "// TODO: Add support for other widths" << endl;
-    out << tab(2) << "((uint16_t*) " << edge_bundle << ")[i] = 0;" << endl;
+    out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = 0;" << endl;
     out << tab(1) << "}" << endl << endl;
   }
 
@@ -229,7 +229,7 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   for (auto out_bundle: out_bundles(buffers, prg)) {
     out << tab(1) << "std::ofstream regression_result(\"" << out_bundle << "_accel_result.csv\");" << endl;
     out << tab(1) << "for (int i = 0; i < " << out_bundle << "_DATA_SIZE; i++) {" << endl;
-    out << tab(2) << "regression_result << ((uint16_t*) " << out_bundle << ")[i] << std::endl;;" << endl;
+    out << tab(2) << "regression_result << ((uint16_t*) (" << out_bundle << ".data()))[i] << std::endl;;" << endl;
     out << tab(1) << "}" << endl;
   }
   out << endl;
