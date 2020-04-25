@@ -1307,14 +1307,14 @@ void generate_app_code(CodegenOptions& options,
   conv_out << "}" << endl << endl;
 
   open_synth_scope(conv_out);
-  generate_xilinx_accel_wrapper(conv_out, buffers, prg);
+  //generate_xilinx_accel_wrapper(conv_out, buffers, prg);
   close_synth_scope(conv_out);
 
   conv_out << endl;
 
   generate_app_code_header(buffers, prg);
   generate_soda_tb(buffers, prg);
-  generate_xilinx_accel_host(buffers, prg);
+  //generate_xilinx_accel_host(buffers, prg);
   generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
   generate_tb_run_scripts(prg);
   generate_tb_compare_scripts(prg);
