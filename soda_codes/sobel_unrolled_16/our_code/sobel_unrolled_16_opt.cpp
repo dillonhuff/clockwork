@@ -5028,6 +5028,9 @@ inline hw_uint<512> mag_y_sobel_unrolled_16_update_0_read_bundle_read(mag_y_cach
 
 // Operation logic
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/nn_apps
 inline void sobel_unrolled_16_update_0(mag_x_cache& mag_x, mag_y_cache& mag_y, HWStream<hw_uint<512> >& /* buffer_args num ports = 16 */sobel_unrolled_16, int d0, int d1) {
 	// Consume: mag_x
 	auto mag_x_0_c__0_value = mag_x_sobel_unrolled_16_update_0_read_bundle_read(mag_x/* source_delay */, d0, d1);
@@ -5157,6 +5160,9 @@ inline void mag_x_update_0(img_cache& img, mag_x_cache& mag_x, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
+<<<<<<< HEAD
+=======
+>>>>>>> origin/nn_apps
 =======
 >>>>>>> origin/nn_apps
 inline void img_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 16 */off_chip_img, img_cache& img, int d0, int d1) {
@@ -5280,6 +5286,7 @@ inline void mag_y_update_0(img_cache& img, mag_y_cache& mag_y, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 inline void mag_x_update_0(img_cache& img, mag_x_cache& mag_x, int d0, int d1) {
@@ -5411,6 +5418,8 @@ inline void sobel_unrolled_16_update_0(mag_x_cache& mag_x, mag_y_cache& mag_y, H
 #endif //__VIVADO_SYNTH__
 }
 
+>>>>>>> origin/nn_apps
+=======
 >>>>>>> origin/nn_apps
 // Driver function
 void sobel_unrolled_16_opt(HWStream<hw_uint<512> >& /* get_args num ports = 16 */off_chip_img, HWStream<hw_uint<512> >& /* get_args num ports = 16 */sobel_unrolled_16) {

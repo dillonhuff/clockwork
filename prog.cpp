@@ -713,7 +713,7 @@ void generate_tb_compare_scripts(prog& prg) {
     of << "./a.out" << endl;
     of.close();
   }
-  
+
   ofstream of("compare_regressions.sh");
   of << "app_name=" << prg.name << endl;
 
