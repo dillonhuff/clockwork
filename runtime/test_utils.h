@@ -15,6 +15,22 @@ string binary_string(ap_uint<width>& val) {
 
 template<int bits_per_pixel>
 static
+void fill_pixel_array(const string& in_name,
+    uint16_t* input,
+    const int nrows,
+    const int ncols) {
+
+  ofstream in(in_name);
+  for (int i = 0; i < nrows*ncols; i++) {
+      input[i] = (i % 256);
+      in << input[i] << endl;
+  }
+
+  in.close();
+}
+
+template<int bits_per_pixel>
+static
 void fill_array(const string& in_name,
     ap_uint<BURST_WIDTH>* input,
     const int nrows,
@@ -29,7 +45,7 @@ void fill_array(const string& in_name,
 
       ap_uint<BURST_WIDTH>* val = &(input[offset]);
       for (int l = 0; l < (BURST_WIDTH / bits_per_pixel); l++) {
-        ap_uint<PIXEL_WIDTH> next_pix = r*ncols + c + l;
+        ap_uint<PIXEL_WIDTH> next_pix = (r*ncols + c + l) % 256;
         in << binary_string(next_pix) << endl;
         (*val)(l*bits_per_pixel + bits_per_pixel - 1, l*bits_per_pixel) = next_pix;
       }
