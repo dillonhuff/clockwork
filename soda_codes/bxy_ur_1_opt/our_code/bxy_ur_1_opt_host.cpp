@@ -10,16 +10,16 @@ int main(int argc, char **argv) {
   }
   std::string binaryFile = argv[1];
   const int bxy_ur_1_update_0_write_DATA_SIZE = 1922*1082;
-  size_t bxy_ur_1_update_0_write_size_bytes = sizeof(ap_uint<16>) * bxy_ur_1_update_0_write_DATA_SIZE;
+  size_t bxy_ur_1_update_0_write_size_bytes = sizeof(int) * bxy_ur_1_update_0_write_DATA_SIZE;
   const int input_update_0_read_DATA_SIZE = 1922*1082;
-  size_t input_update_0_read_size_bytes = sizeof(ap_uint<16>) * input_update_0_read_DATA_SIZE;
+  size_t input_update_0_read_size_bytes = sizeof(int) * input_update_0_read_DATA_SIZE;
   cl_int err;
   cl::Context context;
   cl::Kernel krnl_vector_add;
   cl::CommandQueue q;
 
-  std::vector<ap_uint<16>, aligned_allocator<ap_uint<16> > > bxy_ur_1_update_0_write(DATA_SIZE);
-  std::vector<ap_uint<16>, aligned_allocator<ap_uint<16> > > input_update_0_read(DATA_SIZE);
+  std::vector<int, aligned_allocator<int > > bxy_ur_1_update_0_write(DATA_SIZE);
+  std::vector<int, aligned_allocator<int > > input_update_0_read(DATA_SIZE);
   for (int i = 0; i < bxy_ur_1_update_0_write_DATA_SIZE; i++) {
     bxy_ur_1_update_0_write[i] = 0;
   }

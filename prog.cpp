@@ -94,7 +94,7 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   out << tab(1) << "std::string binaryFile = argv[1];" << endl;
   for (auto edge_bundle : edge_bundles(buffers, prg)) {
     out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = 1922*1082;" << endl;
-    out << tab(1) << "size_t " << edge_bundle << "_size_bytes = sizeof(ap_uint<16>) * " << edge_bundle << "_DATA_SIZE;" << endl;
+    out << tab(1) << "size_t " << edge_bundle << "_size_bytes = sizeof(int) * " << edge_bundle << "_DATA_SIZE;" << endl;
   }
 
   out << tab(1) << "cl_int err;" << endl;
@@ -103,7 +103,7 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   out << tab(1) << "cl::CommandQueue q;" << endl << endl;
 
   for (auto edge_bundle : edge_bundles(buffers, prg)) {
-    out << tab(1) << "std::vector<ap_uint<16>, aligned_allocator<ap_uint<16> > > " << edge_bundle << "(DATA_SIZE);" << endl;
+    out << tab(1) << "std::vector<int, aligned_allocator<int > > " << edge_bundle << "(DATA_SIZE);" << endl;
   }
 
   for (auto edge_bundle : edge_bundles(buffers, prg)) {
