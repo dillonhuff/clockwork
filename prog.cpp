@@ -86,30 +86,31 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
 
   out << "int main(int argc, char **argv) {" << endl;
 
-  out << tab(1) << "if (argc != 5) {" << endl;
-  out << tab(2) << "std::cout << \"Usage: \" << argv[0] << \" <XCLBIN File> <Kernel Name> <input size> <output size>\" << std::endl;" << endl;
+  out << tab(1) << "if (argc != 2) {" << endl;
+  out << tab(2) << "std::cout << \"Usage: \" << argv[0] << \" <XCLBIN File>\" << std::endl;" << endl;
   out << tab(2) << "return EXIT_FAILURE;" << endl;
   out << tab(1) << "}" << endl;
 
   out << tab(1) << "std::string binaryFile = argv[1];" << endl;
-  out << tab(1) << "const int DATA_SIZE = 4096;" << endl;
-  out << tab(1) << "const int OUT_DATA_SIZE = 4096;" << endl << endl;
+  for (auto edge_bundle : edge_bundles(buffers, prg)) {
+    out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = 1922*1082;" << endl;
+    out << tab(1) << "size_t " << edge_bundle << "_size_bytes = sizeof(ap_uint<16>) * " << edge_bundle << "_DATA_SIZE;" << endl;
+  }
 
-  out << tab(1) << "size_t vector_size_bytes = sizeof(int) * DATA_SIZE;" << endl;
   out << tab(1) << "cl_int err;" << endl;
   out << tab(1) << "cl::Context context;" << endl;
   out << tab(1) << "cl::Kernel krnl_vector_add;" << endl;
   out << tab(1) << "cl::CommandQueue q;" << endl << endl;
 
   for (auto edge_bundle : edge_bundles(buffers, prg)) {
-    out << tab(1) << "std::vector<int, aligned_allocator<int>> " << edge_bundle << "(DATA_SIZE);" << endl;
+    out << tab(1) << "std::vector<ap_uint<16>, aligned_allocator<ap_uint<16> > > " << edge_bundle << "(DATA_SIZE);" << endl;
   }
 
-  out << tab(1) << "for (int i = 0; i < DATA_SIZE; i++) {" << endl;
   for (auto edge_bundle : edge_bundles(buffers, prg)) {
+    out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
     out << tab(2) << edge_bundle << "[i] = 0;" << endl;
+    out << tab(1) << "}" << endl << endl;
   }
-  out << tab(1) << "}" << endl << endl;
 
   out << tab(1) << "auto devices = xcl::get_xil_devices();" << endl;
   out << tab(1) << "auto fileBuf = xcl::read_binary_file(binaryFile);" << endl;
@@ -142,27 +143,29 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
 
   int arg_pos = 0;
   for (auto in_bundle : in_bundles(buffers, prg)) {
-    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, vector_size_bytes, " << in_bundle << ".data(), &err));" << endl;
+    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << ".data(), &err));" << endl;
 
     out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_ocl_buf));" << endl;
     arg_pos++;
   }
+
   for (auto in_bundle : out_bundles(buffers, prg)) {
-    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, vector_size_bytes, " << in_bundle << ".data(), &err));" << endl;
+    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << ".data(), &err));" << endl;
     out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_ocl_buf));" << endl;
     arg_pos++;
   }
 
-
-  out << tab(1) << "int size = DATA_SIZE;" << endl;
-  out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", size));" << endl;
+  for (auto b : out_bundles(buffers, prg)) {
+    out << tab(1) << "int " << b << "_size = " << b << "_DATA_SIZE;" << endl;
+    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << b << "_size));" << endl << endl;
+  }
 
   vector<string> in_bufs;
   for (auto b : in_bundles(buffers, prg)) {
     in_bufs.push_back(b + "_ocl_buf");
   }
-  out << tab(1) << "OCL_CHECK(err, err = q.enqueueMigrateMemObjects({" << comma_list(in_bufs) << "}, 0));" << endl;
 
+  out << tab(1) << "OCL_CHECK(err, err = q.enqueueMigrateMemObjects({" << comma_list(in_bufs) << "}, 0));" << endl;
   out << tab(1) << "OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add));" << endl;
 
   for (auto out_bundle: out_bundles(buffers, prg)) {
@@ -174,7 +177,7 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
 
   for (auto out_bundle: out_bundles(buffers, prg)) {
     out << tab(1) << "std::ofstream regression_result(\"" << out_bundle << "_accel_result.csv\");" << endl;
-    out << tab(1) << "for (int i = 0; i < OUT_DATA_SIZE; i++) {" << endl;
+    out << tab(1) << "for (int i = 0; i < " << out_bundle << "_DATA_SIZE; i++) {" << endl;
     out << tab(2) << "regression_result << " << out_bundle << "[i] << std::endl;" << endl;
     out << tab(1) << "}" << endl;
   }
