@@ -647,6 +647,11 @@ class UBuffer {
 
     UBuffer() : port_widths(32) {}
 
+    int lanes_in_bundle(const std::string& bn) {
+      assert(contains_key(bn, port_bundles));
+      return map_find(bn, port_bundles).size();
+    }
+
     isl_union_map* bundle_access(const std::string& bn) {
       auto d = isl_union_map_read_from_str(ctx, "{}");
       for (auto pt : port_bundles.at(bn)) {
