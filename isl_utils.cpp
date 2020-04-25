@@ -332,6 +332,7 @@ std::string str(isl_local_space* const m) {
 
   return r;
 }
+
 std::string str(umap* const m) {
   auto ctx = isl_union_map_get_ctx(m);
   isl_printer *p;

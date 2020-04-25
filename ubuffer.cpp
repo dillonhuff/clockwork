@@ -16,6 +16,7 @@ umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
         unn(src_map, ((its(dot(buf.access_map.at(outpt), inv(buf.access_map.at(inpt))), beforeAcc))));
     }
   }
+  assert(src_map != nullptr);
 
   //cout << "src map done: " << str(src_map) << endl;
   auto sched = buf.global_schedule();
@@ -30,6 +31,7 @@ umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
     dot(lexmax(dot(src_map, sched)), time_to_event);
 
   //cout << "Done" << outpt << endl;
+  assert(lex_max_events != nullptr);
   return lex_max_events;
 }
 
@@ -312,7 +314,7 @@ Box extract_box(uset* rddom) {
 }
 
 bank compute_bank_info(
-    const std::string& inpt, 
+    const std::string& inpt,
     const std::string& outpt,
     UBuffer& buf) {
 
@@ -325,10 +327,14 @@ bank compute_bank_info(
   int num_readers = 0;
 
   auto in_actions = buf.domain.at(inpt);
+  //cout << "\t in action : " << str(in_actions) << endl;
   auto lex_max_events =
     get_lexmax_events(outpt, buf);
+  //cout << "\t lexmax result: " << str(lex_max_events) << endl;
   auto act_dom =
     domain(its_range(lex_max_events, to_uset(in_actions)));
+
+  //cout <<"\t act dom: " << str(act_dom) << endl;
 
   if (!isl_union_set_is_empty(act_dom)) {
     num_readers++;
@@ -336,12 +342,14 @@ bank compute_bank_info(
     auto qpd = compute_dd_bound(buf, outpt, inpt);
     int lb = compute_dd_lower_bound(buf, outpt, inpt);
 
+    cout << "ub: " << qpd << ", lb: " << lb << endl;
+
     for (int i = lb; i < qpd + 1; i++) {
       read_delays.push_back(i);
     }
   }
 
- 
+
   string pt_type_string = buf.port_type_string();
   string name = inpt + "_to_" + outpt;
   cout << "inpt  = " << inpt << endl;
@@ -464,7 +472,7 @@ void generate_code_prefix(CodegenOptions& options,
     }
   }
 
-  string inpt = buf.get_in_port();
+  //string inpt = buf.get_in_port();
   out << "#include \"hw_classes.h\"" << endl << endl;
   for (auto b : buf.get_banks()) {
     generate_bank(options, out, b);
@@ -623,11 +631,12 @@ string delay_string(CodegenOptions& options,
 }
 
 selector generate_select(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
+  cout << "creating select for port: <" << outpt <<"> in buffer: " << buf.name << endl;
   selector sel = generate_select_decl(options, out, outpt, buf);
 
-  auto lex_max_events = get_lexmax_events(outpt, buf);
-
   out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
+
+
   vector<string> possible_ports;
   for (auto pt : buf.get_in_ports()) {
     if (buf.has_bank_between(pt, outpt)) {
@@ -638,9 +647,7 @@ selector generate_select(CodegenOptions& options, std::ostream& out, const strin
   map<string, string> in_ports_to_conditions;
 
   //cout << possible_ports.size() << " possible ports for " << outpt << " on buffer: " << endl << buf << endl;
-  //cout << "lexmax = " << str(lex_max_events) << endl;
   for (auto inpt : possible_ports) {
-    //cout << tab(1) << inpt << endl;
     auto write_ops =
       domain(buf.access_map.at(outpt));
     auto written =
@@ -668,11 +675,8 @@ selector generate_select(CodegenOptions& options, std::ostream& out, const strin
   } else {
     for (auto port : possible_ports) {
       out << tab(1) << "if (" << map_find(port, in_ports_to_conditions) << ") {" << endl;
-      //string inpt = possible_ports.at(0);
-      //string peeked_val = delay_string(options, out, inpt, outpt, buf);
       string peeked_val = delay_string(options, out, port, outpt, buf);
       sel.bank_conditions.push_back("1");
-      //sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, inpt));
       sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, port));
 
       out << tab(2) << "auto value_" << port << " = " << peeked_val << ";" << endl;
@@ -682,8 +686,10 @@ selector generate_select(CodegenOptions& options, std::ostream& out, const strin
     }
   }
 
+  cout << "Generating debug assertion" << endl;
   select_debug_assertions(options, out, outpt, buf);
   out << "}" << endl << endl;
+  cout << "Finished debug assertion" << endl;
 
   return sel;
 }
@@ -693,6 +699,7 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
   out << "// # of bundles = " << buf.port_bundles.size() << endl;
 
   for (auto b : buf.port_bundles) {
+      cout << "\t generate for bundle: " << b.first << endl;
     out << "// " << b.first << endl;
     for (auto pt : b.second) {
       out << "//\t" << pt << endl;
@@ -781,6 +788,7 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
     }
     out << "}" << endl << endl;
   }
+  cout << "Finished bundle..." << endl;
 }
 
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
@@ -789,6 +797,7 @@ void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf)
   for (auto outpt : buf.get_out_ports()) {
     buf.selectors[outpt] = generate_select(options, out, outpt, buf);
   }
+  cout << "\tFinished generate slection" << endl;
 
   generate_bundles(options, out, buf);
 }

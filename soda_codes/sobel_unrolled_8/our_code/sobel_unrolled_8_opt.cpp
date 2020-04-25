@@ -2721,6 +2721,10 @@ inline void mag_y_update_0(img_cache& img, mag_y_cache& mag_y, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/nn_apps
 inline void sobel_unrolled_8_update_0(mag_x_cache& mag_x, mag_y_cache& mag_y, HWStream<hw_uint<256> >& /* buffer_args num ports = 8 */sobel_unrolled_8, int d0, int d1) {
 	// Consume: mag_x
 	auto mag_x_0_c__0_value = mag_x_sobel_unrolled_8_update_0_read_bundle_read(mag_x/* source_delay */, d0, d1);
@@ -2770,6 +2774,20 @@ inline void img_update_0(HWStream<hw_uint<256> >& /* buffer_args num ports = 8 *
 	auto compute_result = id_unrolled_8(off_chip_img_0_c__0_value);
 	// Produce: img
 	img_img_update_0_write_bundle_write(compute_result, img, d0, d1);
+<<<<<<< HEAD
+=======
+inline void mag_x_update_0(img_cache& img, mag_x_cache& mag_x, int d0, int d1) {
+	// Consume: img
+	auto img_0_c__0_value = img_mag_x_update_0_read_bundle_read(img/* source_delay */, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "mag_x_update_0_img," << d0<< "," << d1<< "," <<  img_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+	auto compute_result = sobel_mx_unrolled_8(img_0_c__0_value);
+	// Produce: mag_x
+	mag_x_mag_x_update_0_write_bundle_write(compute_result, mag_x, d0, d1);
+>>>>>>> origin/nn_apps
+=======
+>>>>>>> origin/nn_apps
 #ifndef __VIVADO_SYNTH__
   hw_uint<256> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;

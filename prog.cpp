@@ -393,6 +393,8 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       isl_map* produced_here =
         its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + produced.second + "]" + " }").c_str()), cpy(domains.at(op)));
 
+      cout << "\tAdding input port: " << pt_name << endl;
+      cout << "\t\tProduced:: " << str(produced_here) << endl;
       buf.add_in_pt(pt_name, domains.at(op), produced_here, its(opt_sched, domains.at(op)));
       buf.add_access_pattern(pt_name, op->name, name);
 
@@ -711,7 +713,7 @@ void generate_tb_compare_scripts(prog& prg) {
     of << "./a.out" << endl;
     of.close();
   }
-  
+
   ofstream of("compare_regressions.sh");
   of << "app_name=" << prg.name << endl;
 
@@ -808,12 +810,16 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
 compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<string, UBuffer>& buffers,
     map<string, isl_set*>& domain_map) {
 
+  cout << "Generating compute for: " << op->name << endl;
+
   compute_kernel kernel;
   kernel.name = op->name;
   kernel.functional_unit = op->func;
 
   vector<string> buf_srcs;
   concat(buf_srcs, buffer_args(buffers, op, prg));
+
+  cout << "Got srcs" << endl;
 
   auto s = get_space(domain_map.at(op->name));
   vector<string> dim_args;
@@ -825,6 +831,7 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
     buf_srcs.push_back(a);
   }
 
+  cout << "Got iteration variables" << endl;
   conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
   vector<pair<string, string> > in_buffers;
   set<string> distinct;
@@ -835,6 +842,7 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
     }
   }
 
+  cout << "got in_buffers" << endl;
   string res;
   vector<string> buf_args;
 
@@ -867,11 +875,13 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
     res = value_name;
   }
 
+  cout << "created res" << endl;
   if (op->func != "") {
     conv_out << "\tauto compute_result = " << op->func << "(" << comma_list(buf_args) << ");" << endl;
     res = "compute_result";
   }
 
+  cout << "finding out buffers" << endl;
   set<string> out_buffers;
   for (auto con : op->produce_locs) {
     out_buffers.insert(con.first);
@@ -883,6 +893,8 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
 
   string bundle_name = op->name + "_write";
   kernel.output_buffer = {out_buffer, bundle_name};
+
+  cout << "Checking if program is a boundary" << endl;
 
   if (prg.is_boundary(out_buffer)) {
     conv_out << "\t" << out_buffer << ".write(" << res << ");" << endl;
@@ -898,33 +910,37 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
 
   open_debug_scope(conv_out);
 
+  cout << "emitting bundle code" << endl;
   auto& buf = buffers.at(out_buffer);
   int bundle_width = buf.port_bundle_width(bundle_name);
-  int nlanes = buf.port_bundles.at(bundle_name).size();
+  //int nlanes = buf.port_bundles.at(bundle_name).size();
 
-  assert(nlanes == op->unroll_factor);
-  assert(bundle_width % nlanes == 0);
+  //assert(nlanes == op->unroll_factor);
+  //assert(bundle_width % nlanes == 0);
 
-  int element_width = bundle_width / nlanes;
+  int unroll_factor = op->unroll_factor;
+  int element_width = bundle_width / op->unroll_factor;
 
 
   string dbg_res_name = "debug_" + res;
   conv_out << tab(1) << "hw_uint<" << bundle_width << "> " << dbg_res_name << "(" << res << ");" << endl;
   vector<string> lane_values =
-    split_bv(1, conv_out, dbg_res_name, element_width, nlanes);
-  for (int lane = 0; lane < nlanes; lane++) {
+    split_bv(1, conv_out, dbg_res_name, element_width, op->unroll_factor);
+
+  //cout << "nlanes = " << nlanes << endl;
+  for (int lane = 0; lane < unroll_factor; lane++) {
     conv_out << tab(1) << "*global_debug_handle << \"" << op->name << ",\" << ";
     int i = 0;
     for (auto v : kernel.iteration_variables) {
       if (i == 0) {
-        conv_out << "(" << nlanes << "*" << v << " + " << lane << ") << \", \" << ";
+        conv_out << "(" << unroll_factor << "*" << v << " + " << lane << ") << \", \" << ";
       } else {
         conv_out << v << "<< \",\" << ";
       }
       i++;
     }
+    assert(lane < lane_values.size());
     conv_out << " " << lane_values.at(lane) << " << endl;" << endl;
-    //conv_out << " " << res << " << endl;" << endl;
   }
 
   close_debug_scope(conv_out);
@@ -1237,14 +1253,15 @@ void generate_app_code(CodegenOptions& options,
   conv_out << "}" << endl << endl;
 
   open_synth_scope(conv_out);
-  generate_xilinx_accel_wrapper(conv_out, buffers, prg);
+  //generate_xilinx_accel_wrapper(conv_out, buffers, prg);
   close_synth_scope(conv_out);
 
   conv_out << endl;
 
-  generate_xilinx_accel_host(buffers, prg);
+  //generate_xilinx_accel_host(buffers, prg);
   generate_app_code_header(buffers, prg);
   generate_soda_tb(buffers, prg);
+  //generate_xilinx_accel_wrapper(buffers, prg);
   generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
   generate_tb_run_scripts(prg);
   generate_tb_compare_scripts(prg);

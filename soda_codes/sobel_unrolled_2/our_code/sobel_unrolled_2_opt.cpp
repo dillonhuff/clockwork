@@ -925,6 +925,10 @@ inline hw_uint<64> mag_y_sobel_unrolled_2_update_0_read_bundle_read(mag_y_cache&
 
 
 // Operation logic
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/nn_apps
 inline void mag_y_update_0(img_cache& img, mag_y_cache& mag_y, int d0, int d1) {
 	// Consume: img
 	auto img_0_c__0_value = img_mag_y_update_0_read_bundle_read(img/* source_delay */, d0, d1);
@@ -962,6 +966,11 @@ inline void img_update_0(HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */
 #endif //__VIVADO_SYNTH__
 }
 
+<<<<<<< HEAD
+=======
+>>>>>>> origin/nn_apps
+=======
+>>>>>>> origin/nn_apps
 inline void mag_x_update_0(img_cache& img, mag_x_cache& mag_x, int d0, int d1) {
 	// Consume: img
 	auto img_0_c__0_value = img_mag_x_update_0_read_bundle_read(img/* source_delay */, d0, d1);
