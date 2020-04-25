@@ -6310,6 +6310,13 @@ void playground() {
 }
 
 void application_tests() {
+  up_unrolled_test();
+  up_unrolled_4_test();
+  up_down_unrolled_test();
+
+  conv3x3_app_unrolled_uneven_test();
+  
+
   cnn_test();
 
   jacobi2d_app_test();
@@ -6319,12 +6326,6 @@ void application_tests() {
   neg_stencil_test();
   blur_x_test();
 
-  up_unrolled_test();
-  up_unrolled_4_test();
-  up_down_unrolled_test();
-
-  conv3x3_app_unrolled_uneven_test();
-  
   //parse_denoise3d_test();
   blur_xy_16_app_test();
   //app added for cnn
