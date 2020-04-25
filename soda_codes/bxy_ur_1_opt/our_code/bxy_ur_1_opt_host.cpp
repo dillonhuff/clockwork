@@ -18,8 +18,8 @@ int main(int argc, char **argv) {
   cl::Kernel krnl_vector_add;
   cl::CommandQueue q;
 
-  std::vector<int, aligned_allocator<int > > bxy_ur_1_update_0_write(DATA_SIZE);
-  std::vector<int, aligned_allocator<int > > input_update_0_read(DATA_SIZE);
+  std::vector<int, aligned_allocator<int > > bxy_ur_1_update_0_write(bxy_ur_1_update_0_write_DATA_SIZE);
+  std::vector<int, aligned_allocator<int > > input_update_0_read(input_update_0_read_DATA_SIZE);
   for (int i = 0; i < bxy_ur_1_update_0_write_DATA_SIZE; i++) {
     bxy_ur_1_update_0_write[i] = 0;
   }
