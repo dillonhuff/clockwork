@@ -4014,7 +4014,6 @@ struct App {
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
-    //options.debug_options.expect_all_linebuffers = true;
     realize(options, name, d0, d1);
   }
 
@@ -5298,7 +5297,7 @@ void blur_xy_16_app_test() {
   for (int i = 0; i < 5; i++) {
     int unroll_factor = pow(2, i);
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
-    string out_name = "blur_xy_16_unrolled_" + str(unroll_factor);
+    string out_name = "bxy_ur_" + str(unroll_factor);
     blur_xy_16(out_name).realize(out_name, cols, rows, unroll_factor);
 
     move_to_benchmarks_folder(out_name + "_opt");
@@ -6309,6 +6308,9 @@ void playground() {
 }
 
 void application_tests() {
+  blur_xy_16_app_test();
+  assert(false);
+
   up_unrolled_test();
   up_unrolled_4_test();
   up_down_unrolled_test();
@@ -6325,7 +6327,6 @@ void application_tests() {
   blur_x_test();
 
   //parse_denoise3d_test();
-  blur_xy_16_app_test();
   //app added for cnn
   //conv_test();
 
