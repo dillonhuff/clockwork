@@ -565,9 +565,8 @@ void bxy_ur_2_opt(HWStream<hw_uint<32> >& /* get_args num ports = 2 */input_arg,
 #ifdef __VIVADO_SYNTH__
 #include "bxy_ur_2_opt.h"
 
-#define INPUT_SIZE 2079604
-#define OUTPUT_SIZE 2073600
-
+#define INPUT_SIZE 1039802
+#define OUTPUT_SIZE 1036800
 extern "C" {
 
 static void read_input(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {

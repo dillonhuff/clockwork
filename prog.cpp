@@ -259,8 +259,18 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
   string out_bundle = pick(out_buf.port_bundles).first;
   string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
 
-  out << "#define INPUT_SIZE " << prg.buffer_size(in_rep) << endl;
-  out << "#define OUTPUT_SIZE " << prg.buffer_size(out_rep) << endl << endl;
+  int in_pix = prg.buffer_size(in_rep);
+  int pix_per_in_burst =
+    in_buf.lanes_in_bundle(in_bundle);
+  int in_burst = in_pix / pix_per_in_burst;
+
+  int out_pix = prg.buffer_size(out_rep);
+  int pix_per_out_burst =
+    out_buf.lanes_in_bundle(out_bundle);
+  int out_burst = out_pix / pix_per_out_burst;
+
+  out << "#define INPUT_SIZE " << in_burst << endl;
+  out << "#define OUTPUT_SIZE " << out_burst << endl;
 
   out << "extern \"C\" {" << endl << endl;
 
