@@ -10,21 +10,28 @@ int main(int argc, char **argv) {
   }
   std::string binaryFile = argv[1];
   const int bxy_ur_1_update_0_write_DATA_SIZE = 1922*1082;
-  size_t bxy_ur_1_update_0_write_size_bytes = sizeof(int) * bxy_ur_1_update_0_write_DATA_SIZE;
+  const int bxy_ur_1_update_0_write_BYTES_PER_PIXEL = 16/ 8;
+  size_t bxy_ur_1_update_0_write_size_bytes = bxy_ur_1_update_0_write_BYTES_PER_PIXEL * bxy_ur_1_update_0_write_DATA_SIZE;
+
   const int input_update_0_read_DATA_SIZE = 1922*1082;
-  size_t input_update_0_read_size_bytes = sizeof(int) * input_update_0_read_DATA_SIZE;
+  const int input_update_0_read_BYTES_PER_PIXEL = 16/ 8;
+  size_t input_update_0_read_size_bytes = input_update_0_read_BYTES_PER_PIXEL * input_update_0_read_DATA_SIZE;
+
+
   cl_int err;
   cl::Context context;
   cl::Kernel krnl_vector_add;
   cl::CommandQueue q;
 
-  std::vector<int, aligned_allocator<int > > bxy_ur_1_update_0_write(bxy_ur_1_update_0_write_DATA_SIZE);
-  std::vector<int, aligned_allocator<int > > input_update_0_read(input_update_0_read_DATA_SIZE);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > bxy_ur_1_update_0_write(bxy_ur_1_update_0_write_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > input_update_0_read(input_update_0_read_size_bytes);
   for (int i = 0; i < bxy_ur_1_update_0_write_DATA_SIZE; i++) {
+  // Change to set via ptr arithmetic
     bxy_ur_1_update_0_write[i] = 0;
   }
 
   for (int i = 0; i < input_update_0_read_DATA_SIZE; i++) {
+  // Change to set via ptr arithmetic
     input_update_0_read[i] = 0;
   }
 

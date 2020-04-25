@@ -680,6 +680,11 @@ class UBuffer {
       return "hw_uint<" + to_string(port_width(name)) + ">";
     }
 
+    int bundle_lane_width(const std::string& bundle_name) {
+      assert(contains_key(bundle_name, port_bundles));
+      return port_width(pick(map_find(bundle_name, port_bundles)));
+    }
+
     int port_bundle_width(const std::string& bundle_name) {
       assert(contains_key(bundle_name, port_bundles));
       int len = 0;
