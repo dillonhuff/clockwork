@@ -23,6 +23,19 @@ split_bv(const int indent,
   return lanes;
 }
 
+set<pair<string, string> > inputs(map<string, UBuffer>& buffers, prog& prg) {
+  set<pair<string, string> > edges;
+  for (auto in : prg.ins) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_out_bundles().size() == 1);
+
+    auto bundle = pick(buf.get_out_bundles());
+    edges.insert({buf.name, bundle});
+  }
+  return edges;
+}
+
 set<string> in_bundles(map<string, UBuffer>& buffers, prog& prg) {
   set<string> edges;
   for (auto in : prg.ins) {
@@ -37,6 +50,20 @@ set<string> in_bundles(map<string, UBuffer>& buffers, prog& prg) {
 }
 
 
+set<pair<string, string> > outputs(map<string, UBuffer>& buffers, prog& prg) {
+  set<pair<string, string> > edges;
+  for (auto out : prg.outs) {
+    assert(contains_key(out, buffers));
+    auto& buf = buffers.at(out);
+    assert(buf.get_in_bundles().size() == 1);
+    auto bundle = pick(buf.get_in_bundles());
+
+    edges.insert({buf.name, bundle});
+  }
+
+  return edges;
+}
+
 set<string> out_bundles(map<string, UBuffer>& buffers, prog& prg) {
   set<string> edges;
   for (auto out : prg.outs) {
@@ -48,6 +75,18 @@ set<string> out_bundles(map<string, UBuffer>& buffers, prog& prg) {
     edges.insert(bundle);
   }
 
+  return edges;
+}
+
+set<pair<string, string> > edge_buffers(map<string, UBuffer>& buffers, prog& prg) {
+  set<pair<string, string> > edges;
+  for (auto b : inputs(buffers, prg)) {
+    edges.insert(b);
+  }
+
+  for (auto b : outputs(buffers, prg)) {
+    edges.insert(b);
+  }
   return edges;
 }
 
@@ -75,8 +114,6 @@ set<string> edge_bundles(map<string, UBuffer>& buffers, prog& prg) {
 }
 
 void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
-  //return;
-
   ofstream out(prg.name + "_host.cpp");
 
   out << "#include \"xcl2.hpp\"" << endl;
