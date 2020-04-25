@@ -4,8 +4,8 @@
 #include <vector>
 
 int main(int argc, char **argv) {
-  if (argc != 5) {
-    std::cout << "Usage: " << argv[0] << " <XCLBIN File> <Kernel Name> <input size> <output size>" << std::endl;
+  if (argc != 2) {
+    std::cout << "Usage: " << argv[0] << " <XCLBIN File>" << std::endl;
     return EXIT_FAILURE;
   }
   std::string binaryFile = argv[1];
