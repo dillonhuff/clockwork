@@ -152,7 +152,7 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   for (auto edge_bundle : in_bundles(buffers, prg)) {
     out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
     out << tab(1) << "// TODO: Add support for other widths" << endl;
-    out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = i;" << endl;
+    out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = (i % 256);" << endl;
     out << tab(1) << "}" << endl << endl;
   }
 
@@ -1307,14 +1307,14 @@ void generate_app_code(CodegenOptions& options,
   conv_out << "}" << endl << endl;
 
   open_synth_scope(conv_out);
-  //generate_xilinx_accel_wrapper(conv_out, buffers, prg);
+  generate_xilinx_accel_wrapper(conv_out, buffers, prg);
   close_synth_scope(conv_out);
 
   conv_out << endl;
 
   generate_app_code_header(buffers, prg);
   generate_soda_tb(buffers, prg);
-  //generate_xilinx_accel_host(buffers, prg);
+  generate_xilinx_accel_host(buffers, prg);
   generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
   generate_tb_run_scripts(prg);
   generate_tb_compare_scripts(prg);
