@@ -28,12 +28,12 @@ int main(int argc, char **argv) {
 
   for (int i = 0; i < input_update_0_read_DATA_SIZE; i++) {
   // TODO: Add support for other widths
-    ((uint16_t*) input_update_0_read)[i] = i;
+    ((uint16_t*) (input_update_0_read.data()))[i] = i;
   }
 
   for (int i = 0; i < bxy_ur_1_update_0_write_DATA_SIZE; i++) {
   // TODO: Add support for other widths
-    ((uint16_t*) bxy_ur_1_update_0_write)[i] = 0;
+    ((uint16_t*) (bxy_ur_1_update_0_write.data()))[i] = 0;
   }
 
   auto devices = xcl::get_xil_devices();
@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
 
   std::ofstream regression_result("bxy_ur_1_update_0_write_accel_result.csv");
   for (int i = 0; i < bxy_ur_1_update_0_write_DATA_SIZE; i++) {
-    regression_result << ((uint16_t*) bxy_ur_1_update_0_write)[i] << std::endl;;
+    regression_result << ((uint16_t*) (bxy_ur_1_update_0_write.data()))[i] << std::endl;;
   }
 
   return 0;
