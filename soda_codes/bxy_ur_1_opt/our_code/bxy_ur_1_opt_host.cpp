@@ -9,12 +9,12 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
   std::string binaryFile = argv[1];
-  const int bxy_ur_1_update_0_write_DATA_SIZE = 1922*1082;
-  const int bxy_ur_1_update_0_write_BYTES_PER_PIXEL = 16/ 8;
+  const int bxy_ur_1_update_0_write_DATA_SIZE = 2073600;
+  const int bxy_ur_1_update_0_write_BYTES_PER_PIXEL = 16 / 8;
   size_t bxy_ur_1_update_0_write_size_bytes = bxy_ur_1_update_0_write_BYTES_PER_PIXEL * bxy_ur_1_update_0_write_DATA_SIZE;
 
-  const int input_update_0_read_DATA_SIZE = 1922*1082;
-  const int input_update_0_read_BYTES_PER_PIXEL = 16/ 8;
+  const int input_update_0_read_DATA_SIZE = 2079604;
+  const int input_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t input_update_0_read_size_bytes = input_update_0_read_BYTES_PER_PIXEL * input_update_0_read_DATA_SIZE;
 
 
@@ -25,14 +25,15 @@ int main(int argc, char **argv) {
 
   std::vector<uint8_t, aligned_allocator<uint8_t> > bxy_ur_1_update_0_write(bxy_ur_1_update_0_write_size_bytes);
   std::vector<uint8_t, aligned_allocator<uint8_t> > input_update_0_read(input_update_0_read_size_bytes);
-  for (int i = 0; i < bxy_ur_1_update_0_write_DATA_SIZE; i++) {
-  // Change to set via ptr arithmetic
-    bxy_ur_1_update_0_write[i] = 0;
-  }
 
   for (int i = 0; i < input_update_0_read_DATA_SIZE; i++) {
-  // Change to set via ptr arithmetic
-    input_update_0_read[i] = 0;
+  // TODO: Add support for other widths
+    ((uint16_t*) input_update_0_read)[i] = i;
+  }
+
+  for (int i = 0; i < bxy_ur_1_update_0_write_DATA_SIZE; i++) {
+  // TODO: Add support for other widths
+    ((uint16_t*) bxy_ur_1_update_0_write)[i] = 0;
   }
 
   auto devices = xcl::get_xil_devices();
@@ -66,20 +67,24 @@ int main(int argc, char **argv) {
 
   OCL_CHECK(err, cl::Buffer input_update_0_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, input_update_0_read_size_bytes, input_update_0_read.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(0, input_update_0_read_ocl_buf));
+
   OCL_CHECK(err, cl::Buffer bxy_ur_1_update_0_write_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, bxy_ur_1_update_0_write_size_bytes, bxy_ur_1_update_0_write.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, bxy_ur_1_update_0_write_ocl_buf));
+
   int bxy_ur_1_update_0_write_size = bxy_ur_1_update_0_write_DATA_SIZE;
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, bxy_ur_1_update_0_write_size));
 
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({input_update_0_read_ocl_buf}, 0));
+
   OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add));
+
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({bxy_ur_1_update_0_write_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
 
   std::ofstream regression_result("bxy_ur_1_update_0_write_accel_result.csv");
   for (int i = 0; i < bxy_ur_1_update_0_write_DATA_SIZE; i++) {
-    regression_result << bxy_ur_1_update_0_write[i] << std::endl;
+    regression_result << ((uint16_t*) bxy_ur_1_update_0_write)[i] << std::endl;;
   }
 
   return 0;

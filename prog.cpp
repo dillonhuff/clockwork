@@ -133,8 +133,8 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
     string edge_bundle = eb.second;
     string buf = eb.first;
 
-    out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = 1922*1082;" << endl;
-    out << tab(1) << "const int " << edge_bundle << "_BYTES_PER_PIXEL = " << map_find(buf, buffers).bundle_lane_width(edge_bundle) << "/ 8;" << endl;
+    out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = " << prg.buffer_size(buf) << ";" << endl;
+    out << tab(1) << "const int " << edge_bundle << "_BYTES_PER_PIXEL = " << map_find(buf, buffers).bundle_lane_width(edge_bundle) << " / 8;" << endl;
     out << tab(1) << "size_t " << edge_bundle << "_size_bytes = " << edge_bundle << "_BYTES_PER_PIXEL * " << edge_bundle << "_DATA_SIZE;" << endl << endl;
   }
   out << endl;
@@ -147,11 +147,19 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   for (auto edge_bundle : edge_bundles(buffers, prg)) {
     out << tab(1) << "std::vector<uint8_t, aligned_allocator<uint8_t> > " << edge_bundle << "(" << edge_bundle << "_size_bytes);" << endl;
   }
+  out << endl;
 
-  for (auto edge_bundle : edge_bundles(buffers, prg)) {
+  for (auto edge_bundle : in_bundles(buffers, prg)) {
     out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
-    out << tab(1) << "// Change to set via ptr arithmetic" << endl;
-    out << tab(2) << edge_bundle << "[i] = 0;" << endl;
+    out << tab(1) << "// TODO: Add support for other widths" << endl;
+    out << tab(2) << "((uint16_t*) " << edge_bundle << ")[i] = i;" << endl;
+    out << tab(1) << "}" << endl << endl;
+  }
+
+  for (auto edge_bundle : out_bundles(buffers, prg)) {
+    out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
+    out << tab(1) << "// TODO: Add support for other widths" << endl;
+    out << tab(2) << "((uint16_t*) " << edge_bundle << ")[i] = 0;" << endl;
     out << tab(1) << "}" << endl << endl;
   }
 
@@ -188,13 +196,13 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   for (auto in_bundle : in_bundles(buffers, prg)) {
     out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << ".data(), &err));" << endl;
 
-    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_ocl_buf));" << endl;
+    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_ocl_buf));" << endl << endl;
     arg_pos++;
   }
 
   for (auto in_bundle : out_bundles(buffers, prg)) {
     out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << ".data(), &err));" << endl;
-    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_ocl_buf));" << endl;
+    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_ocl_buf));" << endl << endl;
     arg_pos++;
   }
 
@@ -208,8 +216,8 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
     in_bufs.push_back(b + "_ocl_buf");
   }
 
-  out << tab(1) << "OCL_CHECK(err, err = q.enqueueMigrateMemObjects({" << comma_list(in_bufs) << "}, 0));" << endl;
-  out << tab(1) << "OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add));" << endl;
+  out << tab(1) << "OCL_CHECK(err, err = q.enqueueMigrateMemObjects({" << comma_list(in_bufs) << "}, 0));" << endl << endl;
+  out << tab(1) << "OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add));" << endl << endl;
 
   for (auto out_bundle: out_bundles(buffers, prg)) {
     out << tab(1) << "OCL_CHECK(err, err = q.enqueueMigrateMemObjects({" << out_bundle << "_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));" << endl;
@@ -221,7 +229,7 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   for (auto out_bundle: out_bundles(buffers, prg)) {
     out << tab(1) << "std::ofstream regression_result(\"" << out_bundle << "_accel_result.csv\");" << endl;
     out << tab(1) << "for (int i = 0; i < " << out_bundle << "_DATA_SIZE; i++) {" << endl;
-    out << tab(2) << "regression_result << " << out_bundle << "[i] << std::endl;" << endl;
+    out << tab(2) << "regression_result << ((uint16_t*) " << out_bundle << ")[i] << std::endl;;" << endl;
     out << tab(1) << "}" << endl;
   }
   out << endl;
