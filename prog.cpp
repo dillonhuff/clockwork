@@ -619,9 +619,6 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
     of << "int main() {" << endl;
     string rep_buf = pick(prg.ins);
 
-
-    //assert(prg.buffer_bounds[rep_buf].size() > 0);
-
     int nrows = -1;
     if (prg.buffer_bounds[rep_buf].size() > 0) {
       cout << "Getting 0" << endl;
@@ -725,21 +722,31 @@ void generate_tb_compare_scripts(map<string, UBuffer>& buffers, prog& prg) {
     of.close();
   }
 
-  ofstream of("compare_regressions.sh");
-  of << "app_name=" << prg.name << endl;
+  {
+    ofstream of("aws_run_tb_" + prg.name + ".sh");
+    of << "make clean" << endl;
+    of << "make check TARGET=sw_emu DEVICE=$AWS_PLATFORM all" << endl;
+    of << "./a.out" << endl;
+    of.close();
+  }
 
-  of << "cd soda_code" << endl;
-  of << "./run_tb.sh || { echo 'soda compilation failed'; exit 1; }" << endl;
-  of << "cd .." << endl;
+  {
+    ofstream of("compare_regressions.sh");
+    of << "app_name=" << prg.name << endl;
 
-  of << "cd our_code" << endl;
-  of << "./run_tb_${app_name}.sh || { echo 'our compilation failed'; exit 1; }" << endl;
-  of << "cd .." << endl;
+    of << "cd soda_code" << endl;
+    of << "./run_tb.sh || { echo 'soda compilation failed'; exit 1; }" << endl;
+    of << "cd .." << endl;
 
-  of << "cd ../../" << endl;
-  of << "./run_aligner.sh ./soda_codes/${app_name}/our_code/regression_result_${app_name}.txt ./soda_codes/${app_name}/soda_code/soda_${app_name}_regression_result.csv" << endl;
+    of << "cd our_code" << endl;
+    of << "./run_tb_${app_name}.sh || { echo 'our compilation failed'; exit 1; }" << endl;
+    of << "cd .." << endl;
 
-  of.close();
+    of << "cd ../../" << endl;
+    of << "./run_aligner.sh ./soda_codes/${app_name}/our_code/regression_result_${app_name}.txt ./soda_codes/${app_name}/soda_code/soda_${app_name}_regression_result.csv" << endl;
+
+    of.close();
+  }
 }
 
 void generate_tb_run_scripts(prog& prg) {
