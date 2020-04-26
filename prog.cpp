@@ -619,9 +619,6 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
     of << "int main() {" << endl;
     string rep_buf = pick(prg.ins);
 
-
-    //assert(prg.buffer_bounds[rep_buf].size() > 0);
-
     int nrows = -1;
     if (prg.buffer_bounds[rep_buf].size() > 0) {
       cout << "Getting 0" << endl;
@@ -682,87 +679,34 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
 
     of.close();
   }
-  //ofstream out("tb_soda_" + prg.name + ".cpp");
-  //out << "#include \"soda_" + prg.name + ".h\"" << endl;
-  //out << "#include <cstdlib>" << endl;
-  //out << "#include <cstring>" << endl;
-  //out << "#include \"hw_classes.h\"" << endl;
-  //out << "#include <iostream>" << endl;
-  //out << "#include \"ap_int.h\"" << endl;
-  //out << "#include \"soda_" + prg.name + "_kernel.h\"" << endl;
-  //out << "#include <fstream>" << endl << endl;
-
-  //out << "#define PIXEL_WIDTH " << 32 << endl;
-  //out << "#define BURST_WIDTH " << 32 << endl;
-
-  //out << "using namespace std;" << endl << endl;
-
-  //for (auto b : buffers) {
-    //if (prg.is_input(b.first)) {
-      //out << "// In : " << b.first << " dimensions..." << endl;
-      //int dim = b.second.num_dims();
-      //auto all_mem = coalesce(b.second.all_memory());
-      //out << tab(1) << "// " << str(all_mem) << endl;
-      //out << tab(1) << "// Min: " << str(lexmin(all_mem)) << endl;
-      //out << tab(1) << "// Max: " << str(lexmax(all_mem)) << endl;
-    //}
-
-    //if (prg.is_output(b.first)) {
-      //out << "// Out: " << b.first << " dimensions..." << endl;
-      //int dim = b.second.num_dims();
-      //auto all_mem = coalesce(b.second.all_memory());
-      //out << tab(1) << "// " << str(all_mem) << endl;
-      //out << tab(1) << "// Min: " << str(lexmin(all_mem)) << endl;
-      //out << tab(1) << "// Max: " << str(lexmax(all_mem)) << endl;
-    //}
-  //}
-
-  //out <<"int main() {" << endl;
-  //cout << "starting" << endl;
-
-  //out << tab(1) << "const int img_size = 1920*1080;" << endl;
-  //out << tab(1) << "ap_uint<32>* buf =" << endl;
-  //out << tab(2) << "(ap_uint<32>*)malloc(sizeof(ap_uint<32>)*img_size);" << endl;
-
-  //out << tab(1) << "for (int i = 0; i < img_size; i++) {" << endl;
-  //out << tab(2) << "buf[i] = i;" << endl;
-  //out << tab(1) << "}" << endl;
-
-  //out << tab(1) << "ap_uint<32>* blur_y =" << endl;
-  //out << tab(2) << "(ap_uint<32>*)malloc(sizeof(ap_uint<32>)*img_size);" << endl;
-
-  //out << tab(1) << prg.name << "_kernel(blur_y, buf, img_size);" << endl;
-
-  //out << tab(1) << "ofstream soda_regression_out(\"regression_result_soda_" << prg.name << ".txt\");" << endl;
-  //out << tab(1) << "for (int i = 0; i < img_size; i++) {" << endl;
-  //out << tab(2) << "soda_regression_out<< (int) blur_y[i] << endl;" << endl;
-  //out << tab(1) << "}" << endl;
-
-  //out << tab(1) << "soda_regression_out.close();" << endl;
-  //out << tab(1) << "free(buf);" << endl;
-  //out << tab(1) << "free(blur_y);" << endl;
-
-  //out <<"}" << endl;
-  //out.close();
 }
 
-void generate_tb_compare_scripts(prog& prg) {
+void generate_tb_compare_scripts(map<string, UBuffer>& buffers, prog& prg) {
   {
     ofstream of(prg.name + "_kernel.h");
     of << "#include \"ap_int.h\"" << endl << endl;
     of << "extern \"C\" {" << endl << endl;
     vector<string> decls;
-    for (auto out : prg.outs) {
+    //for (auto out : prg.outs) {
+    for (auto b : outputs(buffers, prg)) {
+      auto out = b.first;
+      auto bundle = b.second;
       string tp_string =
-        "ap_uint<" + str(prg.buffer_port_width(out)) + ">*";
+        "ap_uint<" + str(map_find(out, buffers).port_bundle_width(bundle)) + ">*";
+        //"ap_uint<" + str(prg.buffer_port_width(out)) + ">*";
       decls.push_back(tp_string + " " + out);
     }
 
-    for (auto out : prg.ins) {
+    //for (auto out : prg.ins) {
+    for (auto b : inputs(buffers, prg)) {
+      auto out = b.first;
+      auto bundle = b.second;
       string tp_string =
-        "ap_uint<" + str(prg.buffer_port_width(out)) + ">*";
+        "ap_uint<" + str(map_find(out, buffers).port_bundle_width(bundle)) + ">*";
+        //"ap_uint<" + str(prg.buffer_port_width(out)) + ">*";
       decls.push_back(tp_string + " " + out);
     }
+
     decls.push_back("uint64_t coalesced_data_num");
     of << "void " << prg.name << "_kernel(" << comma_list(decls) << ");" << endl;
     of << "}" << endl;
@@ -778,21 +722,31 @@ void generate_tb_compare_scripts(prog& prg) {
     of.close();
   }
 
-  ofstream of("compare_regressions.sh");
-  of << "app_name=" << prg.name << endl;
+  {
+    ofstream of("aws_run_tb_" + prg.name + ".sh");
+    of << "make clean" << endl;
+    of << "make check TARGET=sw_emu DEVICE=$AWS_PLATFORM all" << endl;
+    of << "./a.out" << endl;
+    of.close();
+  }
 
-  of << "cd soda_code" << endl;
-  of << "./run_tb.sh || { echo 'soda compilation failed'; exit 1; }" << endl;
-  of << "cd .." << endl;
+  {
+    ofstream of("compare_regressions.sh");
+    of << "app_name=" << prg.name << endl;
 
-  of << "cd our_code" << endl;
-  of << "./run_tb_${app_name}.sh || { echo 'our compilation failed'; exit 1; }" << endl;
-  of << "cd .." << endl;
+    of << "cd soda_code" << endl;
+    of << "./run_tb.sh || { echo 'soda compilation failed'; exit 1; }" << endl;
+    of << "cd .." << endl;
 
-  of << "cd ../../" << endl;
-  of << "./run_aligner.sh ./soda_codes/${app_name}/our_code/regression_result_${app_name}.txt ./soda_codes/${app_name}/soda_code/soda_${app_name}_regression_result.csv" << endl;
+    of << "cd our_code" << endl;
+    of << "./run_tb_${app_name}.sh || { echo 'our compilation failed'; exit 1; }" << endl;
+    of << "cd .." << endl;
 
-  of.close();
+    of << "cd ../../" << endl;
+    of << "./run_aligner.sh ./soda_codes/${app_name}/our_code/regression_result_${app_name}.txt ./soda_codes/${app_name}/soda_code/soda_${app_name}_regression_result.csv" << endl;
+
+    of.close();
+  }
 }
 
 void generate_tb_run_scripts(prog& prg) {
@@ -1327,7 +1281,7 @@ void generate_app_code(CodegenOptions& options,
   generate_xilinx_accel_host(buffers, prg);
   generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
   generate_tb_run_scripts(prg);
-  generate_tb_compare_scripts(prg);
+  generate_tb_compare_scripts(buffers, prg);
 
   conv_out.close();
 }
