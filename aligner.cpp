@@ -112,11 +112,11 @@ int main(const int argc, const char** argv) {
   cout << endl;
 
 
-  //if (false) {
-  cout << "Finding event sub-alignments" << endl;
+  if (false) {
+    cout << "Finding event sub-alignments" << endl;
 
-  find_event_alignment(reference_lines, target_lines);
-  //}
+    find_event_alignment(reference_lines, target_lines);
+  }
 
 
   return 0;
