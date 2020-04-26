@@ -726,7 +726,6 @@ void generate_tb_compare_scripts(map<string, UBuffer>& buffers, prog& prg) {
     ofstream of("aws_run_tb_" + prg.name + ".sh");
     of << "make clean" << endl;
     of << "make check TARGET=sw_emu DEVICE=$AWS_PLATFORM all" << endl;
-    of << "./a.out" << endl;
     of.close();
   }
 
