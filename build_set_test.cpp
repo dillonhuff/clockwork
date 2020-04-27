@@ -6309,14 +6309,13 @@ void playground() {
 }
 
 void application_tests() {
-  cnn_test();
-  assert(false);
   up_unrolled_test();
   up_unrolled_4_test();
   up_down_unrolled_test();
 
   conv3x3_app_unrolled_uneven_test();
 
+  cnn_test();
 
   jacobi2d_app_test();
   up_stencil_down_test();

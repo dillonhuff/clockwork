@@ -415,7 +415,7 @@ void generate_vivado_tcl(UBuffer& buf) {
 void generate_code_prefix(CodegenOptions& options,
     std::ostream& out,
     UBuffer& buf) {
-
+  /*
   for (auto inpt : buf.get_in_ports()) {
     for (auto outpt : buf.get_out_ports()) {
       auto overlap =
@@ -470,7 +470,10 @@ void generate_code_prefix(CodegenOptions& options,
         buf.replace_bank(to_replace, merged);
       }
     }
-  }
+  }*/
+
+  //banking and merge pass
+  buf.generate_bank_and_merge(options);
 
   //string inpt = buf.get_in_port();
   out << "#include \"hw_classes.h\"" << endl << endl;
@@ -990,7 +993,7 @@ bank UBuffer::compute_bank_info(
   auto lex_max_events = get_lexmax_events(outpt);
   //cout << "\t lexmax result: " << str(lex_max_events) << endl;
   auto act_dom =
-    domain(its_range(lex_max_events, to_uset(in_actions)));
+    ::domain(its_range(lex_max_events, to_uset(in_actions)));
 
   //cout <<"\t act dom: " << str(act_dom) << endl;
 
@@ -1025,7 +1028,7 @@ bank UBuffer::compute_bank_info(
   return bank;
 }
 
-void UBuffer::generate_bank_and_merge() {
+void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
   for (auto inpt : get_in_ports()) {
     for (auto outpt : get_out_ports()) {
       auto overlap =
