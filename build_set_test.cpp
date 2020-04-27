@@ -6323,7 +6323,7 @@ void playground() {
 
 void application_tests() {
   denoise2d_test();
-  assert(false);
+  //assert(false);
 
   blur_xy_16_app_test();
   up_unrolled_test();

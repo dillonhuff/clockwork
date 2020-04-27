@@ -141,7 +141,12 @@ string compute_string(const num_type tp,
     map<string, vector<vector<int> > >& offset_map) {
   if (def->is_int_const()) {
     string val = (((IntConst*) def)->val);
-    return "hw_uint<" + str(pixel_width) + ">(" + val + ")";
+    string res = "hw_uint<" + str(pixel_width) + ">(" + val + ")";
+    if (tp == NUM_TYPE_FLOAT) {
+      return "to_float(" + res + ")";
+    } else {
+      return res;
+    }
   } else if (def->is_binop()) {
     auto op = (Binop*) def;
     return parens(compute_string(tp, pixel_width, op->l, offset_map) + " " + op->op + " " + compute_string(tp, pixel_width, op->r, offset_map));
