@@ -315,6 +315,7 @@ struct Update {
 
 struct Result {
   int pixel_width;
+  num_type tp;
   vector<Window> srcs;
   Window provided;
 

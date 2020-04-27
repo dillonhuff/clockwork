@@ -2737,6 +2737,7 @@ struct App {
     app_dag[name] = res;
 
     set_width(name, default_pixel_width);
+    set_num_type(name, default_num_type);
     return name;
   }
 
@@ -2870,6 +2871,10 @@ struct App {
     default_pixel_width = width;
   }
 
+  void set_num_type(const string& func, const num_type tp) {
+    assert(contains_key(func, app_dag));
+    app_dag.at(func).tp = tp;
+  }
   void set_width(const string& func, const int width) {
     assert(width > 0);
     assert(contains_key(func, app_dag));
