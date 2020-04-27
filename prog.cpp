@@ -1389,6 +1389,7 @@ void generate_app_code(CodegenOptions& options,
 
   generate_app_code_header(buffers, prg);
   generate_soda_tb(buffers, prg);
+  generate_xilinx_accel_soda_host(buffers, prg);
   generate_xilinx_accel_host(buffers, prg);
   generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
   generate_tb_run_scripts(prg);
