@@ -28,11 +28,7 @@ int main(int argc, char **argv) {
 
   for (int i = 0; i < input_update_0_read_DATA_SIZE; i++) {
   // TODO: Add support for other widths
-<<<<<<< HEAD
-    ((uint16_t*) (input_update_0_read.data()))[i] = i % 256;
-=======
     ((uint16_t*) (input_update_0_read.data()))[i] = (i % 256);
->>>>>>> origin/master
   }
 
   for (int i = 0; i < bxy_ur_1_update_0_write_DATA_SIZE; i++) {
