@@ -1,6 +1,6 @@
 kernel: bxy_ur_1_opt
-unroll factor: 1
 burst width: 16
+unroll factor: 1
 
 input uint16: input(1922, *)
 
