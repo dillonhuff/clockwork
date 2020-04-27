@@ -159,6 +159,10 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
   out << tab(1) << "}" << endl;
 
   out << tab(1) << "std::string binaryFile = argv[1];" << endl;
+
+  int unroll_factor =
+    pick(map_find(pick(prg.ins), buffers).port_bundles).second.size();
+
   int max_buf_size = -1;
   for (auto eb : edge_buffers(buffers, prg)) {
     string buf = eb.first;
@@ -166,7 +170,6 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
       max_buf_size = prg.buffer_size(buf);
     }
   }
-  //assert(max_buf_size > 0);
 
   for (auto eb : edge_buffers(buffers, prg)) {
     string edge_bundle = eb.second;
@@ -205,6 +208,12 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
   ocl_program_device(out, prg);
 
   int arg_pos = 0;
+  for (auto in_bundle : out_bundles(buffers, prg)) {
+    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << ".data(), &err));" << endl;
+    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_ocl_buf));" << endl << endl;
+    arg_pos++;
+  }
+
   for (auto in_bundle : in_bundles(buffers, prg)) {
     out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << ".data(), &err));" << endl;
 
@@ -212,16 +221,8 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
     arg_pos++;
   }
 
-  for (auto in_bundle : out_bundles(buffers, prg)) {
-    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << ".data(), &err));" << endl;
-    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_ocl_buf));" << endl << endl;
-    arg_pos++;
-  }
-
-  for (auto b : out_bundles(buffers, prg)) {
-    out << tab(1) << "int " << b << "_size = " << b << "_DATA_SIZE;" << endl;
-    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << b << "_size));" << endl << endl;
-  }
+  out << tab(1) << "int transfer_size = " << max_buf_size << " / " << unroll_factor << ";" << endl;
+  out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << "transfer_size));" << endl << endl;
 
   vector<string> in_bufs;
   for (auto b : in_bundles(buffers, prg)) {

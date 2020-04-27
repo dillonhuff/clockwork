@@ -65,14 +65,14 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer input_update_0_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, input_update_0_read_size_bytes, input_update_0_read.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(0, input_update_0_read_ocl_buf));
-
   OCL_CHECK(err, cl::Buffer bxy_ur_1_update_0_write_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, bxy_ur_1_update_0_write_size_bytes, bxy_ur_1_update_0_write.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(1, bxy_ur_1_update_0_write_ocl_buf));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(0, bxy_ur_1_update_0_write_ocl_buf));
 
-  int bxy_ur_1_update_0_write_size = bxy_ur_1_update_0_write_DATA_SIZE;
-  OCL_CHECK(err, err = krnl_vector_add.setArg(2, bxy_ur_1_update_0_write_size));
+  OCL_CHECK(err, cl::Buffer input_update_0_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, input_update_0_read_size_bytes, input_update_0_read.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(1, input_update_0_read_ocl_buf));
+
+  int transfer_size = 2079604 / 1;
+  OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({input_update_0_read_ocl_buf}, 0));
 
