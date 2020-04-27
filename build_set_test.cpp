@@ -6322,10 +6322,11 @@ void playground() {
 }
 
 void application_tests() {
-  denoise2d_test();
-  //assert(false);
-
   blur_xy_16_app_test();
+  assert(false);
+
+  denoise2d_test();
+
   up_unrolled_test();
   up_unrolled_4_test();
   up_down_unrolled_test();
