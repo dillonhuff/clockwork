@@ -5188,6 +5188,7 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("mv compare_regressions.sh " + app_dir).c_str());
   system(("mv " + out_name + ".soda " + soda_dir).c_str());
 
+  system(("mv soda_" + out_name + "*_host.cpp " + soda_dir).c_str());
   system(("mv tb_soda_" + out_name + "*.cpp " + soda_dir).c_str());
   system(("mv run_tb.sh " + soda_dir).c_str());
 }
