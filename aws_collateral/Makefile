@@ -25,7 +25,7 @@ help::
 	$(ECHO) "      By default, HOST_ARCH=x86. HOST_ARCH and SYSROOT is required for SoC shells"
 	$(ECHO) ""
 
-APP_NAME = bxy_ur_1_opt
+APP_NAME = $(app)
 
 # Points to top directory of Git repository
 COMMON_REPO = /home/centos/aws-fpga/Vitis/examples/xilinx/
