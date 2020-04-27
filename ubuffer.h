@@ -946,6 +946,12 @@ class UBuffer {
     void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, map<string, isl_map*> sched_map, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out);
 
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
+
+    isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
+    int compute_dd_bound(const std::string & read_port, const std::string & write_port, bool is_max);
+    isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
+    bank compute_bank_info(const std::string& inpt, const std::string& outpt);
+    void generate_bank_and_merge();
 };
 
 int compute_max_dd(UBuffer& buf, const string& inpt);

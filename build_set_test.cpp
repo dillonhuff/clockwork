@@ -5282,7 +5282,7 @@ void sobel_app_test() {
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
     string out_name = "sobel_unrolled_" + str(unroll_factor);
     sobel(out_name).realize(out_name, cols, rows, unroll_factor);
-    
+
     move_to_benchmarks_folder(out_name + "_opt");
   }
 
@@ -6309,13 +6309,14 @@ void playground() {
 }
 
 void application_tests() {
+  cnn_test();
+  assert(false);
   up_unrolled_test();
   up_unrolled_4_test();
   up_down_unrolled_test();
 
   conv3x3_app_unrolled_uneven_test();
 
-  cnn_test();
 
   jacobi2d_app_test();
   up_stencil_down_test();

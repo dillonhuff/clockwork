@@ -898,6 +898,192 @@ void generate_hls_code(UBuffer& buf) {
   generate_vivado_tcl(buf);
 }
 
+umap* UBuffer::get_lexmax_events(const std::string& outpt) {
+  umap* src_map = nullptr;
+  for (auto inpt : get_in_ports()) {
+    auto beforeAcc = lex_gt(schedule.at(outpt), schedule.at(inpt));
+    if (src_map == nullptr) {
+      auto outmap = access_map.at(outpt);
+      auto inmap = access_map.at(inpt);
+      src_map =
+        its(dot(outmap,
+              inv(inmap)), beforeAcc);
+    } else {
+      src_map =
+        unn(src_map, ((its(dot(access_map.at(outpt), inv(access_map.at(inpt))), beforeAcc))));
+    }
+  }
+  assert(src_map != nullptr);
+
+  //cout << "src map done: " << str(src_map) << endl;
+  auto sched = global_schedule();
+  auto after = lex_gt(sched, sched);
+
+  src_map = its(src_map, after);
+  src_map = lexmax(src_map);
+
+  auto time_to_event = inv(sched);
+
+  auto lex_max_events =
+    dot(lexmax(dot(src_map, sched)), time_to_event);
+
+  //cout << "Done" << outpt << endl;
+  assert(lex_max_events != nullptr);
+  return lex_max_events;
+}
+
+isl_union_pw_qpolynomial* UBuffer::compute_dd(const std::string& read_port, const std::string& write_port) {
+
+  isl_union_map* sched = schedule.at(write_port);
+  assert(sched != nullptr);
+
+  auto WritesAfterWrite = lex_lt(sched, sched);
+
+  assert(WritesAfterWrite != nullptr);
+
+  umap* rdsched = schedule.at(read_port);
+  umap* wrsched = schedule.at(write_port);
+  auto WritesBeforeRead =
+    lex_gt(rdsched, wrsched);
+
+  auto WriteThatProducesReadData = get_lexmax_events(read_port);
+
+  auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
+
+  auto WritesBtwn = its_range((its(WritesAfterProduction, WritesBeforeRead)),
+      to_uset(domain.at(write_port)));
+
+  //cout << "WritesBtwn: " << str(WritesBtwn) << endl;
+
+  auto c = card(WritesBtwn);
+  //cout << "got card" << endl;
+  return c;
+}
+
+int UBuffer::compute_dd_bound(const std::string& read_port, const std::string& write_port, bool is_max) {
+  auto c = compute_dd(read_port, write_port);
+  //cout << "DD: " << str(c) << endl;
+  int tight;
+  int* b = &tight;
+  if (is_max){
+    auto bound = isl_union_pw_qpolynomial_bound(c, isl_fold_max, b);
+    return bnd_int(bound);
+  }
+  else {
+    auto bound = isl_union_pw_qpolynomial_bound(c, isl_fold_min, b);
+    return bnd_int(bound);
+  }
+}
+
+bank UBuffer::compute_bank_info(
+    const std::string& inpt,
+    const std::string& outpt) {
+  int maxdelay = compute_dd_bound(outpt, inpt, true);
+  vector<int> read_delays{0};
+
+  // NOTE: Just to ensure we dont force everything to be a RAM
+  //int num_readers = 10;
+  int num_readers = 0;
+
+  auto in_actions = domain.at(inpt);
+  //cout << "\t in action : " << str(in_actions) << endl;
+  auto lex_max_events = get_lexmax_events(outpt);
+  //cout << "\t lexmax result: " << str(lex_max_events) << endl;
+  auto act_dom =
+    domain(its_range(lex_max_events, to_uset(in_actions)));
+
+  //cout <<"\t act dom: " << str(act_dom) << endl;
+
+  if (!isl_union_set_is_empty(act_dom)) {
+    num_readers++;
+    //auto c = compute_dd(buf, outpt, inpt);
+    int qpd = compute_dd_bound(outpt, inpt, true);
+    int lb = compute_dd_bound(outpt, inpt, false);
+
+    cout << "ub: " << qpd << ", lb: " << lb << endl;
+
+    for (int i = lb; i < qpd + 1; i++) {
+      read_delays.push_back(i);
+    }
+  }
+
+
+  string pt_type_string = port_type_string();
+  string name = inpt + "_to_" + outpt;
+  cout << "inpt  = " << inpt << endl;
+  cout << "outpt = " << outpt << endl;
+  cout << "name of bank = " << name << endl;
+
+  auto rddom =
+    unn(range(access_map.at(inpt)),
+        range(access_map.at(outpt)));
+  Box mem_box = extract_box(rddom);
+
+  stack_bank bank{name, BANK_TYPE_STACK, pt_type_string, read_delays, num_readers, maxdelay, mem_box};
+  //stack_bank bank{name, BANK_TYPE_RAM, pt_type_string, read_delays, num_readers, maxdelay, mem_box};
+
+  return bank;
+}
+
+void UBuffer::generate_bank_and_merge() {
+  for (auto inpt : get_in_ports()) {
+    for (auto outpt : get_out_ports()) {
+      auto overlap =
+        its(range(access_map.at(inpt)), range(access_map.at(outpt)));
+
+      if (!empty(overlap)) {
+        stack_bank bank = compute_bank_info(inpt, outpt);
+        add_bank_between(inpt, outpt, bank);
+      }
+    }
+  }
+
+  for (auto inpt : get_in_ports()) {
+    vector<stack_bank> receivers = receiver_banks(inpt);
+    cout << "Receiver banks for " << inpt << endl;
+    vector<stack_bank> mergeable;
+    for (auto bnk : receivers) {
+      cout << tab(1) << bnk.name << ", # read offsets: " << bnk.read_delays.size() << endl;
+
+      //TODO: check this assertion
+      if (options.debug_options.expect_all_linebuffers) {
+        assert(bnk.read_delays.size() == 2);
+      }
+      if (bnk.read_delays.size() == 2) {
+        assert(bnk.read_delays[0] == 0);
+        mergeable.push_back(bnk);
+      }
+
+    }
+
+    if (mergeable.size() > 0) {
+      stack_bank merged;
+      merged.tp = BANK_TYPE_STACK;
+      merged.layout = Box(mergeable.at(0).layout.dimension());
+      merged.name =
+        inpt + "_merged_banks_" + str(mergeable.size());
+      merged.pt_type_string =
+        mergeable.at(0).pt_type_string;
+      merged.num_readers = mergeable.size();
+      merged.maxdelay = -1;
+      for (auto m : mergeable) {
+        merged.layout = unn(merged.layout, m.layout);
+        if (m.maxdelay > merged.maxdelay) {
+          merged.maxdelay = m.maxdelay;
+        }
+        for (auto mrd : m.read_delays) {
+          merged.read_delays.push_back(mrd);
+        }
+      }
+      merged.read_delays = sort_unique(merged.read_delays);
+
+      for (auto to_replace : mergeable) {
+        replace_bank(to_replace, merged);
+      }
+    }
+  }
+}
+
 map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name) {
     /*
      * Previously we have two ops, input and output.In order to do the vectorization
