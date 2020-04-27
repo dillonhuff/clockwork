@@ -113,7 +113,7 @@ set<string> edge_bundles(map<string, UBuffer>& buffers, prog& prg) {
   return edges;
 }
 
-void ocl_program_device(ostream& out) {
+void ocl_program_device(ostream& out, prog& prg) {
   out << tab(1) << "auto devices = xcl::get_xil_devices();" << endl;
   out << tab(1) << "auto fileBuf = xcl::read_binary_file(binaryFile);" << endl;
   out << tab(1) << "cl::Program::Binaries bins{{fileBuf.data(), fileBuf.size()}};" << endl;
@@ -162,11 +162,11 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
   int max_buf_size = -1;
   for (auto eb : edge_buffers(buffers, prg)) {
     string buf = eb.first;
-    if (prg.buffer_size(buf) > buf_size) {
+    if (prg.buffer_size(buf) > max_buf_size) {
       max_buf_size = prg.buffer_size(buf);
     }
   }
-  assert(max_buf_size > 0);
+  //assert(max_buf_size > 0);
 
   for (auto eb : edge_buffers(buffers, prg)) {
     string edge_bundle = eb.second;
@@ -202,7 +202,7 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
     out << tab(1) << "}" << endl << endl;
   }
 
-  ocl_program_device(out);
+  ocl_program_device(out, prg);
 
   int arg_pos = 0;
   for (auto in_bundle : in_bundles(buffers, prg)) {
@@ -302,7 +302,7 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
     out << tab(1) << "}" << endl << endl;
   }
 
-  ocl_program_device(out);
+  ocl_program_device(out, prg);
 
   int arg_pos = 0;
   for (auto in_bundle : in_bundles(buffers, prg)) {
