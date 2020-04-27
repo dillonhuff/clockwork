@@ -2675,10 +2675,12 @@ struct App {
   map<string, isl_map*> compute_maps;
 
   int default_pixel_width;
+  num_type default_num_type;
 
   App() {
     ctx = isl_ctx_alloc();
     default_pixel_width = 32;
+    default_num_type = NUM_TYPE_UNSIGNED;
   }
 
   ~App() {
@@ -2858,6 +2860,10 @@ struct App {
     Window w{arg, strides, offsets};
 
     return func2d(name, compute, {w});
+  }
+
+  void set_default_num_type(const num_type tp) {
+    default_num_type = tp;
   }
 
   void set_default_pixel_width(const int width) {
@@ -4989,6 +4995,7 @@ App jacobi3d(const std::string output_name) {
 
 App denoise2d(const std::string& name) {
   App dn;
+  dn.set_default_num_type(NUM_TYPE_FLOAT);
 
   dn.func2d("f_off_chip");
   dn.func2d("u_off_chip");
@@ -6310,9 +6317,10 @@ void playground() {
 }
 
 void application_tests() {
-  blur_xy_16_app_test();
+  denoise2d_test();
   assert(false);
 
+  blur_xy_16_app_test();
   up_unrolled_test();
   up_unrolled_4_test();
   up_down_unrolled_test();
@@ -6354,7 +6362,6 @@ void application_tests() {
   sum_diffs_test();
   sum_float_test();
   sum_denoise_test();
-  denoise2d_test();
 
   sobel_mag_y_test();
   sobel_app_test();
