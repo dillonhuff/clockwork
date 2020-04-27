@@ -2781,7 +2781,7 @@ struct App {
         windows);
 
     app_dag[name].updates.back().compute_unit_impl =
-      compute_unit_string(default_pixel_width, compute_name, windows, def, offset_map);
+      compute_unit_string(default_num_type, default_pixel_width, compute_name, windows, def, offset_map);
     app_dag[name].updates.back().def = def;
 
     return name;
