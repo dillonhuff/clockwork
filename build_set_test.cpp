@@ -6311,7 +6311,7 @@ void playground() {
 
 void application_tests() {
   blur_xy_16_app_test();
-  //assert(false);
+  assert(false);
 
   up_unrolled_test();
   up_unrolled_4_test();
