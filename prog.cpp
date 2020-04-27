@@ -113,6 +113,40 @@ set<string> edge_bundles(map<string, UBuffer>& buffers, prog& prg) {
   return edges;
 }
 
+void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
+}
+
+void ocl_program_device(ostream& out) {
+  out << tab(1) << "auto devices = xcl::get_xil_devices();" << endl;
+  out << tab(1) << "auto fileBuf = xcl::read_binary_file(binaryFile);" << endl;
+  out << tab(1) << "cl::Program::Binaries bins{{fileBuf.data(), fileBuf.size()}};" << endl;
+  out << tab(1) << "int valid_device = 0;" << endl;
+  out << tab(1) << "for (unsigned int i = 0; i < devices.size(); i++) {" << endl;
+  out << tab(2) << "auto device = devices[i];" << endl;
+  out << tab(2) << "OCL_CHECK(err, context = cl::Context({device}, NULL, NULL, NULL, &err));" << endl;
+  out << tab(2) << "OCL_CHECK(err," << endl;
+  out << tab(3) << "q = cl::CommandQueue(" << endl;
+  out << tab(3) << "context, {device}, CL_QUEUE_PROFILING_ENABLE, &err));" << endl << endl;
+
+  out << tab(2) << "std::cout << \"Trying to program device[\" << i" << endl;
+  out << tab(3) << "<< \"]: \" << device.getInfo<CL_DEVICE_NAME>() << std::endl;" << endl;
+  out << tab(2) << "OCL_CHECK(err, cl::Program program(context, {device}, bins, NULL, &err));" << endl;
+  out << tab(2) << "if (err != CL_SUCCESS) {" << endl;
+  out << tab(3) << "std::cout << \"Failed to program device[\" << i" << endl;
+  out << tab(3) << "<< \"] with xclbin file!\\n\";" << endl;
+  out << tab(2) << "} else {" << endl;
+  out << tab(3) << "std::cout << \"Device[\" << i << \"]: program successful!\\n\";" << endl;
+  out << tab(3) << "OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, \"" << prg.name << "_accel\", &err));" << endl;
+  out << tab(3) << "valid_device++;" << endl;
+  out << tab(3) << "break;" << endl;
+  out << tab(2) << "}" << endl;
+  out << tab(1) << "}" << endl;
+  out << tab(1) << "if (valid_device == 0) {" << endl;
+  out << tab(2) << "std::cout << \"Failed to program any device found, exit!\\n\";" << endl;
+  out << tab(2) << "exit(EXIT_FAILURE);" << endl;
+  out << tab(1) << "}" << endl << endl;
+}
+
 void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   ofstream out(prg.name + "_host.cpp");
 
@@ -163,34 +197,7 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
     out << tab(1) << "}" << endl << endl;
   }
 
-  out << tab(1) << "auto devices = xcl::get_xil_devices();" << endl;
-  out << tab(1) << "auto fileBuf = xcl::read_binary_file(binaryFile);" << endl;
-  out << tab(1) << "cl::Program::Binaries bins{{fileBuf.data(), fileBuf.size()}};" << endl;
-  out << tab(1) << "int valid_device = 0;" << endl;
-  out << tab(1) << "for (unsigned int i = 0; i < devices.size(); i++) {" << endl;
-  out << tab(2) << "auto device = devices[i];" << endl;
-  out << tab(2) << "OCL_CHECK(err, context = cl::Context({device}, NULL, NULL, NULL, &err));" << endl;
-  out << tab(2) << "OCL_CHECK(err," << endl;
-  out << tab(3) << "q = cl::CommandQueue(" << endl;
-  out << tab(3) << "context, {device}, CL_QUEUE_PROFILING_ENABLE, &err));" << endl << endl;
-
-  out << tab(2) << "std::cout << \"Trying to program device[\" << i" << endl;
-  out << tab(3) << "<< \"]: \" << device.getInfo<CL_DEVICE_NAME>() << std::endl;" << endl;
-  out << tab(2) << "OCL_CHECK(err, cl::Program program(context, {device}, bins, NULL, &err));" << endl;
-  out << tab(2) << "if (err != CL_SUCCESS) {" << endl;
-  out << tab(3) << "std::cout << \"Failed to program device[\" << i" << endl;
-  out << tab(3) << "<< \"] with xclbin file!\\n\";" << endl;
-  out << tab(2) << "} else {" << endl;
-  out << tab(3) << "std::cout << \"Device[\" << i << \"]: program successful!\\n\";" << endl;
-  out << tab(3) << "OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, \"" << prg.name << "_accel\", &err));" << endl;
-  out << tab(3) << "valid_device++;" << endl;
-  out << tab(3) << "break;" << endl;
-  out << tab(2) << "}" << endl;
-  out << tab(1) << "}" << endl;
-  out << tab(1) << "if (valid_device == 0) {" << endl;
-  out << tab(2) << "std::cout << \"Failed to program any device found, exit!\\n\";" << endl;
-  out << tab(2) << "exit(EXIT_FAILURE);" << endl;
-  out << tab(1) << "}" << endl << endl;
+  ocl_program_device(out);
 
   int arg_pos = 0;
   for (auto in_bundle : in_bundles(buffers, prg)) {
