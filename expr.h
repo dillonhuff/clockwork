@@ -143,7 +143,7 @@ string compute_string(const num_type tp,
     string val = (((IntConst*) def)->val);
     string res = "hw_uint<" + str(pixel_width) + ">(" + val + ")";
     if (tp == NUM_TYPE_FLOAT) {
-      return "to_float(" + res + ")";
+      return "int_to_float(" + res + ")";
     } else {
       return res;
     }
