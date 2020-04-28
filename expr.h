@@ -126,9 +126,7 @@ string soda_compute_string(const int pixel_width, Expr* def) {
   } else {
     assert(def->is_function_call());
     auto call = (FunctionCall*) def;
-    //assert(contains_key(call->name, offset_map));
 
-    //auto offsets = get_offset(call);
     vector<string> args;
     for (auto a : call->args) {
       args.push_back(soda_compute_string(pixel_width, a));

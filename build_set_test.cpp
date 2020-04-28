@@ -3699,6 +3699,13 @@ struct App {
     generate_soda_file(prg.name);
   }
 
+  string num_type_cstring() const {
+    if (default_num_type == NUM_TYPE_FLOAT) {
+      return "float";
+    }
+    return "uint" + str(default_pixel_width);
+  }
+
   void generate_soda_file(const std::string& name) {
     ofstream out(name + ".soda");
     out << "kernel: " << name << endl;
@@ -3723,7 +3730,7 @@ struct App {
         if (u.get_srcs().size() == 0) {
         } else {
           if (consumers(f).size() == 0) {
-            out << "output uint" << width << ": " << f << "(0, 0) = ";
+            out << "output " << num_type_cstring() << ": " << f << "(0, 0) = ";
               out << soda_compute_string(width, u.def) << endl << endl;
           } else {
             bool all_producers_external = true;
@@ -3737,9 +3744,9 @@ struct App {
             if (all_producers_external) {
               Box domain = data_domain(f);
               //assert(domain.dimension() == 2);
-              out << "input uint" << width << ": " << f << "(" << domain.length(0) << ", *)" << endl << endl;
+              out << "input " << num_type_cstring() << ": " << f << "(" << domain.length(0) << ", *)" << endl << endl;
             } else {
-              out << "local uint" << width << ": " << f << "(0, 0) = ";
+              out << "local " << num_type_cstring() << ": " << f << "(0, 0) = ";
               out << soda_compute_string(width, u.def) << endl << endl;
             }
           }
