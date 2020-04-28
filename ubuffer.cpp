@@ -415,62 +415,6 @@ void generate_vivado_tcl(UBuffer& buf) {
 void generate_code_prefix(CodegenOptions& options,
     std::ostream& out,
     UBuffer& buf) {
-  /*
-  for (auto inpt : buf.get_in_ports()) {
-    for (auto outpt : buf.get_out_ports()) {
-      auto overlap =
-        its(range(buf.access_map.at(inpt)), range(buf.access_map.at(outpt)));
-
-      if (!empty(overlap)) {
-        stack_bank bank = compute_bank_info(inpt, outpt, buf);
-        buf.add_bank_between(inpt, outpt, bank);
-      }
-    }
-  }
-
-  for (auto inpt : buf.get_in_ports()) {
-    vector<stack_bank> receivers = buf.receiver_banks(inpt);
-    cout << "Receiver banks for " << inpt << endl;
-    vector<stack_bank> mergeable;
-    for (auto bnk : receivers) {
-      cout << tab(1) << bnk.name << ", # read offsets: " << bnk.read_delays.size() << endl;
-
-      if (options.debug_options.expect_all_linebuffers) {
-        assert(bnk.read_delays.size() == 2);
-      }
-      if (bnk.read_delays.size() == 2) {
-        assert(bnk.read_delays[0] == 0);
-        mergeable.push_back(bnk);
-      }
-
-    }
-
-    if (mergeable.size() > 0) {
-      stack_bank merged;
-      merged.tp = BANK_TYPE_STACK;
-      merged.layout = Box(mergeable.at(0).layout.dimension());
-      merged.name =
-        inpt + "_merged_banks_" + str(mergeable.size());
-      merged.pt_type_string =
-        mergeable.at(0).pt_type_string;
-      merged.num_readers = mergeable.size();
-      merged.maxdelay = -1;
-      for (auto m : mergeable) {
-        merged.layout = unn(merged.layout, m.layout);
-        if (m.maxdelay > merged.maxdelay) {
-          merged.maxdelay = m.maxdelay;
-        }
-        for (auto mrd : m.read_delays) {
-          merged.read_delays.push_back(mrd);
-        }
-      }
-      merged.read_delays = sort_unique(merged.read_delays);
-
-      for (auto to_replace : mergeable) {
-        buf.replace_bank(to_replace, merged);
-      }
-    }
-  }*/
 
   //banking and merge pass
   buf.generate_bank_and_merge(options);
