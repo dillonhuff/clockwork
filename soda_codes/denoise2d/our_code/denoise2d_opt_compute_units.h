@@ -4,7 +4,7 @@
 
 // Generated compute units...
 hw_uint<32> diff_qwe_generated_compute(hw_uint<32*2> u) {
-  return (u.get<32, 0>() - u.get<32, 1>());
+  return to_bits((to_float(u.get<32, 0>()) - to_float(u.get<32, 1>())));
 }
 
 

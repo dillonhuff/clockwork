@@ -23,6 +23,19 @@ split_bv(const int indent,
   return lanes;
 }
 
+set<pair<string, string> > inputs(map<string, UBuffer>& buffers, prog& prg) {
+  set<pair<string, string> > edges;
+  for (auto in : prg.ins) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_out_bundles().size() == 1);
+
+    auto bundle = pick(buf.get_out_bundles());
+    edges.insert({buf.name, bundle});
+  }
+  return edges;
+}
+
 set<string> in_bundles(map<string, UBuffer>& buffers, prog& prg) {
   set<string> edges;
   for (auto in : prg.ins) {
@@ -37,6 +50,20 @@ set<string> in_bundles(map<string, UBuffer>& buffers, prog& prg) {
 }
 
 
+set<pair<string, string> > outputs(map<string, UBuffer>& buffers, prog& prg) {
+  set<pair<string, string> > edges;
+  for (auto out : prg.outs) {
+    assert(contains_key(out, buffers));
+    auto& buf = buffers.at(out);
+    assert(buf.get_in_bundles().size() == 1);
+    auto bundle = pick(buf.get_in_bundles());
+
+    edges.insert({buf.name, bundle});
+  }
+
+  return edges;
+}
+
 set<string> out_bundles(map<string, UBuffer>& buffers, prog& prg) {
   set<string> edges;
   for (auto out : prg.outs) {
@@ -48,6 +75,18 @@ set<string> out_bundles(map<string, UBuffer>& buffers, prog& prg) {
     edges.insert(bundle);
   }
 
+  return edges;
+}
+
+set<pair<string, string> > edge_buffers(map<string, UBuffer>& buffers, prog& prg) {
+  set<pair<string, string> > edges;
+  for (auto b : inputs(buffers, prg)) {
+    edges.insert(b);
+  }
+
+  for (auto b : outputs(buffers, prg)) {
+    edges.insert(b);
+  }
   return edges;
 }
 
@@ -74,43 +113,7 @@ set<string> edge_bundles(map<string, UBuffer>& buffers, prog& prg) {
   return edges;
 }
 
-void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
-  //return;
-
-  ofstream out(prg.name + "_host.cpp");
-
-  out << "#include \"xcl2.hpp\"" << endl;
-  out << "#include <algorithm>" << endl;
-  out << "#include <fstream>" << endl;
-  out << "#include <vector>" << endl << endl;
-
-  out << "int main(int argc, char **argv) {" << endl;
-
-  out << tab(1) << "if (argc != 5) {" << endl;
-  out << tab(2) << "std::cout << \"Usage: \" << argv[0] << \" <XCLBIN File> <Kernel Name> <input size> <output size>\" << std::endl;" << endl;
-  out << tab(2) << "return EXIT_FAILURE;" << endl;
-  out << tab(1) << "}" << endl;
-
-  out << tab(1) << "std::string binaryFile = argv[1];" << endl;
-  out << tab(1) << "const int DATA_SIZE = 4096;" << endl;
-  out << tab(1) << "const int OUT_DATA_SIZE = 4096;" << endl << endl;
-
-  out << tab(1) << "size_t vector_size_bytes = sizeof(int) * DATA_SIZE;" << endl;
-  out << tab(1) << "cl_int err;" << endl;
-  out << tab(1) << "cl::Context context;" << endl;
-  out << tab(1) << "cl::Kernel krnl_vector_add;" << endl;
-  out << tab(1) << "cl::CommandQueue q;" << endl << endl;
-
-  for (auto edge_bundle : edge_bundles(buffers, prg)) {
-    out << tab(1) << "std::vector<int, aligned_allocator<int>> " << edge_bundle << "(DATA_SIZE);" << endl;
-  }
-
-  out << tab(1) << "for (int i = 0; i < DATA_SIZE; i++) {" << endl;
-  for (auto edge_bundle : edge_bundles(buffers, prg)) {
-    out << tab(2) << edge_bundle << "[i] = 0;" << endl;
-  }
-  out << tab(1) << "}" << endl << endl;
-
+void ocl_program_device(ostream& out, prog& prg) {
   out << tab(1) << "auto devices = xcl::get_xil_devices();" << endl;
   out << tab(1) << "auto fileBuf = xcl::read_binary_file(binaryFile);" << endl;
   out << tab(1) << "cl::Program::Binaries bins{{fileBuf.data(), fileBuf.size()}};" << endl;
@@ -139,31 +142,95 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   out << tab(2) << "std::cout << \"Failed to program any device found, exit!\\n\";" << endl;
   out << tab(2) << "exit(EXIT_FAILURE);" << endl;
   out << tab(1) << "}" << endl << endl;
+}
+
+void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
+  ofstream out("soda_" + prg.name + "_host.cpp");
+  out << "#include \"xcl2.hpp\"" << endl;
+  out << "#include <algorithm>" << endl;
+  out << "#include <fstream>" << endl;
+  out << "#include <vector>" << endl << endl;
+
+  out << "int main(int argc, char **argv) {" << endl;
+
+  out << tab(1) << "if (argc != 2) {" << endl;
+  out << tab(2) << "std::cout << \"Usage: \" << argv[0] << \" <XCLBIN File>\" << std::endl;" << endl;
+  out << tab(2) << "return EXIT_FAILURE;" << endl;
+  out << tab(1) << "}" << endl;
+
+  out << tab(1) << "std::string binaryFile = argv[1];" << endl;
+
+  int unroll_factor =
+    pick(map_find(pick(prg.ins), buffers).port_bundles).second.size();
+
+  int max_buf_size = -1;
+  for (auto eb : edge_buffers(buffers, prg)) {
+    string buf = eb.first;
+    if (prg.buffer_size(buf) > max_buf_size) {
+      max_buf_size = prg.buffer_size(buf);
+    }
+  }
+
+  for (auto eb : edge_buffers(buffers, prg)) {
+    string edge_bundle = eb.second;
+    string buf = eb.first;
+
+    out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = " << max_buf_size << ";" << endl;
+    out << tab(1) << "const int " << edge_bundle << "_BYTES_PER_PIXEL = " << map_find(buf, buffers).bundle_lane_width(edge_bundle) << " / 8;" << endl;
+    out << tab(1) << "size_t " << edge_bundle << "_size_bytes = " << edge_bundle << "_BYTES_PER_PIXEL * " << edge_bundle << "_DATA_SIZE;" << endl << endl;
+  }
+  out << endl;
+
+  out << tab(1) << "cl_int err;" << endl;
+  out << tab(1) << "cl::Context context;" << endl;
+  out << tab(1) << "cl::Kernel krnl_vector_add;" << endl;
+  out << tab(1) << "cl::CommandQueue q;" << endl << endl;
+
+  for (auto edge_bundle : edge_bundles(buffers, prg)) {
+    out << tab(1) << "std::vector<uint8_t, aligned_allocator<uint8_t> > " << edge_bundle << "(" << edge_bundle << "_size_bytes);" << endl;
+  }
+  out << endl;
+
+  for (auto edge_bundle : in_bundles(buffers, prg)) {
+    out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
+    out << tab(1) << "// TODO: Add support for other widths" << endl;
+    out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = (i % 256);" << endl;
+    out << tab(1) << "}" << endl << endl;
+  }
+
+  for (auto edge_bundle : out_bundles(buffers, prg)) {
+    out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
+    out << tab(1) << "// TODO: Add support for other widths" << endl;
+    out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = 0;" << endl;
+    out << tab(1) << "}" << endl << endl;
+  }
+
+  ocl_program_device(out, prg);
 
   int arg_pos = 0;
-  for (auto in_bundle : in_bundles(buffers, prg)) {
-    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, vector_size_bytes, " << in_bundle << ".data(), &err));" << endl;
-
-    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_ocl_buf));" << endl;
-    arg_pos++;
-  }
   for (auto in_bundle : out_bundles(buffers, prg)) {
-    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, vector_size_bytes, " << in_bundle << ".data(), &err));" << endl;
-    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_ocl_buf));" << endl;
+    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << ".data(), &err));" << endl;
+    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_ocl_buf));" << endl << endl;
     arg_pos++;
   }
 
+  for (auto in_bundle : in_bundles(buffers, prg)) {
+    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << ".data(), &err));" << endl;
 
-  out << tab(1) << "int size = DATA_SIZE;" << endl;
-  out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", size));" << endl;
+    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_ocl_buf));" << endl << endl;
+    arg_pos++;
+  }
+
+  out << tab(1) << "int transfer_size = " << max_buf_size << " / " << unroll_factor << ";" << endl;
+  out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << "transfer_size));" << endl << endl;
 
   vector<string> in_bufs;
   for (auto b : in_bundles(buffers, prg)) {
     in_bufs.push_back(b + "_ocl_buf");
   }
-  out << tab(1) << "OCL_CHECK(err, err = q.enqueueMigrateMemObjects({" << comma_list(in_bufs) << "}, 0));" << endl;
 
-  out << tab(1) << "OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add));" << endl;
+  out << tab(1) << "OCL_CHECK(err, err = q.enqueueMigrateMemObjects({" << comma_list(in_bufs) << "}, 0));" << endl << endl;
+  out << tab(1) << "OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add));" << endl << endl;
 
   for (auto out_bundle: out_bundles(buffers, prg)) {
     out << tab(1) << "OCL_CHECK(err, err = q.enqueueMigrateMemObjects({" << out_bundle << "_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));" << endl;
@@ -174,8 +241,108 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
 
   for (auto out_bundle: out_bundles(buffers, prg)) {
     out << tab(1) << "std::ofstream regression_result(\"" << out_bundle << "_accel_result.csv\");" << endl;
-    out << tab(1) << "for (int i = 0; i < OUT_DATA_SIZE; i++) {" << endl;
-    out << tab(2) << "regression_result << " << out_bundle << "[i] << std::endl;" << endl;
+    out << tab(1) << "for (int i = 0; i < " << out_bundle << "_DATA_SIZE; i++) {" << endl;
+    out << tab(2) << "regression_result << ((uint16_t*) (" << out_bundle << ".data()))[i] << std::endl;;" << endl;
+    out << tab(1) << "}" << endl;
+  }
+  out << endl;
+
+  out << tab(1) << "return 0;" << endl;
+  out << "}" << endl;
+
+  out.close();
+}
+
+void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
+  ofstream out(prg.name + "_host.cpp");
+
+  out << "#include \"xcl2.hpp\"" << endl;
+  out << "#include <algorithm>" << endl;
+  out << "#include <fstream>" << endl;
+  out << "#include <vector>" << endl << endl;
+
+  out << "int main(int argc, char **argv) {" << endl;
+
+  out << tab(1) << "if (argc != 2) {" << endl;
+  out << tab(2) << "std::cout << \"Usage: \" << argv[0] << \" <XCLBIN File>\" << std::endl;" << endl;
+  out << tab(2) << "return EXIT_FAILURE;" << endl;
+  out << tab(1) << "}" << endl;
+
+  out << tab(1) << "std::string binaryFile = argv[1];" << endl;
+  for (auto eb : edge_buffers(buffers, prg)) {
+    string edge_bundle = eb.second;
+    string buf = eb.first;
+
+    out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = " << prg.buffer_size(buf) << ";" << endl;
+    out << tab(1) << "const int " << edge_bundle << "_BYTES_PER_PIXEL = " << map_find(buf, buffers).bundle_lane_width(edge_bundle) << " / 8;" << endl;
+    out << tab(1) << "size_t " << edge_bundle << "_size_bytes = " << edge_bundle << "_BYTES_PER_PIXEL * " << edge_bundle << "_DATA_SIZE;" << endl << endl;
+  }
+  out << endl;
+
+  out << tab(1) << "cl_int err;" << endl;
+  out << tab(1) << "cl::Context context;" << endl;
+  out << tab(1) << "cl::Kernel krnl_vector_add;" << endl;
+  out << tab(1) << "cl::CommandQueue q;" << endl << endl;
+
+  for (auto edge_bundle : edge_bundles(buffers, prg)) {
+    out << tab(1) << "std::vector<uint8_t, aligned_allocator<uint8_t> > " << edge_bundle << "(" << edge_bundle << "_size_bytes);" << endl;
+  }
+  out << endl;
+
+  for (auto edge_bundle : in_bundles(buffers, prg)) {
+    out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
+    out << tab(1) << "// TODO: Add support for other widths" << endl;
+    out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = (i % 256);" << endl;
+    out << tab(1) << "}" << endl << endl;
+  }
+
+  for (auto edge_bundle : out_bundles(buffers, prg)) {
+    out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
+    out << tab(1) << "// TODO: Add support for other widths" << endl;
+    out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = 0;" << endl;
+    out << tab(1) << "}" << endl << endl;
+  }
+
+  ocl_program_device(out, prg);
+
+  int arg_pos = 0;
+  for (auto in_bundle : in_bundles(buffers, prg)) {
+    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << ".data(), &err));" << endl;
+
+    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_ocl_buf));" << endl << endl;
+    arg_pos++;
+  }
+
+  for (auto in_bundle : out_bundles(buffers, prg)) {
+    out << tab(1) << "OCL_CHECK(err, cl::Buffer " << in_bundle << "_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, " << in_bundle << "_size_bytes, " << in_bundle << ".data(), &err));" << endl;
+    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << in_bundle << "_ocl_buf));" << endl << endl;
+    arg_pos++;
+  }
+
+  for (auto b : out_bundles(buffers, prg)) {
+    out << tab(1) << "int " << b << "_size = " << b << "_DATA_SIZE;" << endl;
+    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << b << "_size));" << endl << endl;
+  }
+
+  vector<string> in_bufs;
+  for (auto b : in_bundles(buffers, prg)) {
+    in_bufs.push_back(b + "_ocl_buf");
+  }
+
+  out << tab(1) << "OCL_CHECK(err, err = q.enqueueMigrateMemObjects({" << comma_list(in_bufs) << "}, 0));" << endl << endl;
+  out << tab(1) << "OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add));" << endl << endl;
+
+  for (auto out_bundle: out_bundles(buffers, prg)) {
+    out << tab(1) << "OCL_CHECK(err, err = q.enqueueMigrateMemObjects({" << out_bundle << "_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));" << endl;
+  }
+
+  out << endl;
+  out << tab(1) << "q.finish();" << endl << endl;
+
+  for (auto out_bundle: out_bundles(buffers, prg)) {
+    out << tab(1) << "std::ofstream regression_result(\"" << out_bundle << "_accel_result.csv\");" << endl;
+    out << tab(1) << "for (int i = 0; i < " << out_bundle << "_DATA_SIZE; i++) {" << endl;
+    out << tab(2) << "regression_result << ((uint16_t*) (" << out_bundle << ".data()))[i] << std::endl;;" << endl;
     out << tab(1) << "}" << endl;
   }
   out << endl;
@@ -205,8 +372,18 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
   string out_bundle = pick(out_buf.port_bundles).first;
   string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
 
-  out << "#define INPUT_SIZE " << prg.buffer_size(in_rep) << endl;
-  out << "#define OUTPUT_SIZE " << prg.buffer_size(out_rep) << endl << endl;
+  int in_pix = prg.buffer_size(in_rep);
+  int pix_per_in_burst =
+    in_buf.lanes_in_bundle(in_bundle);
+  int in_burst = in_pix / pix_per_in_burst;
+
+  int out_pix = prg.buffer_size(out_rep);
+  int pix_per_out_burst =
+    out_buf.lanes_in_bundle(out_bundle);
+  int out_burst = out_pix / pix_per_out_burst;
+
+  out << "#define INPUT_SIZE " << in_burst << endl;
+  out << "#define OUTPUT_SIZE " << out_burst << endl;
 
   out << "extern \"C\" {" << endl << endl;
 
@@ -555,9 +732,6 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
     of << "int main() {" << endl;
     string rep_buf = pick(prg.ins);
 
-
-    //assert(prg.buffer_bounds[rep_buf].size() > 0);
-
     int nrows = -1;
     if (prg.buffer_bounds[rep_buf].size() > 0) {
       cout << "Getting 0" << endl;
@@ -618,87 +792,34 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
 
     of.close();
   }
-  //ofstream out("tb_soda_" + prg.name + ".cpp");
-  //out << "#include \"soda_" + prg.name + ".h\"" << endl;
-  //out << "#include <cstdlib>" << endl;
-  //out << "#include <cstring>" << endl;
-  //out << "#include \"hw_classes.h\"" << endl;
-  //out << "#include <iostream>" << endl;
-  //out << "#include \"ap_int.h\"" << endl;
-  //out << "#include \"soda_" + prg.name + "_kernel.h\"" << endl;
-  //out << "#include <fstream>" << endl << endl;
-
-  //out << "#define PIXEL_WIDTH " << 32 << endl;
-  //out << "#define BURST_WIDTH " << 32 << endl;
-
-  //out << "using namespace std;" << endl << endl;
-
-  //for (auto b : buffers) {
-    //if (prg.is_input(b.first)) {
-      //out << "// In : " << b.first << " dimensions..." << endl;
-      //int dim = b.second.num_dims();
-      //auto all_mem = coalesce(b.second.all_memory());
-      //out << tab(1) << "// " << str(all_mem) << endl;
-      //out << tab(1) << "// Min: " << str(lexmin(all_mem)) << endl;
-      //out << tab(1) << "// Max: " << str(lexmax(all_mem)) << endl;
-    //}
-
-    //if (prg.is_output(b.first)) {
-      //out << "// Out: " << b.first << " dimensions..." << endl;
-      //int dim = b.second.num_dims();
-      //auto all_mem = coalesce(b.second.all_memory());
-      //out << tab(1) << "// " << str(all_mem) << endl;
-      //out << tab(1) << "// Min: " << str(lexmin(all_mem)) << endl;
-      //out << tab(1) << "// Max: " << str(lexmax(all_mem)) << endl;
-    //}
-  //}
-
-  //out <<"int main() {" << endl;
-  //cout << "starting" << endl;
-
-  //out << tab(1) << "const int img_size = 1920*1080;" << endl;
-  //out << tab(1) << "ap_uint<32>* buf =" << endl;
-  //out << tab(2) << "(ap_uint<32>*)malloc(sizeof(ap_uint<32>)*img_size);" << endl;
-
-  //out << tab(1) << "for (int i = 0; i < img_size; i++) {" << endl;
-  //out << tab(2) << "buf[i] = i;" << endl;
-  //out << tab(1) << "}" << endl;
-
-  //out << tab(1) << "ap_uint<32>* blur_y =" << endl;
-  //out << tab(2) << "(ap_uint<32>*)malloc(sizeof(ap_uint<32>)*img_size);" << endl;
-
-  //out << tab(1) << prg.name << "_kernel(blur_y, buf, img_size);" << endl;
-
-  //out << tab(1) << "ofstream soda_regression_out(\"regression_result_soda_" << prg.name << ".txt\");" << endl;
-  //out << tab(1) << "for (int i = 0; i < img_size; i++) {" << endl;
-  //out << tab(2) << "soda_regression_out<< (int) blur_y[i] << endl;" << endl;
-  //out << tab(1) << "}" << endl;
-
-  //out << tab(1) << "soda_regression_out.close();" << endl;
-  //out << tab(1) << "free(buf);" << endl;
-  //out << tab(1) << "free(blur_y);" << endl;
-
-  //out <<"}" << endl;
-  //out.close();
 }
 
-void generate_tb_compare_scripts(prog& prg) {
+void generate_tb_compare_scripts(map<string, UBuffer>& buffers, prog& prg) {
   {
     ofstream of(prg.name + "_kernel.h");
     of << "#include \"ap_int.h\"" << endl << endl;
     of << "extern \"C\" {" << endl << endl;
     vector<string> decls;
-    for (auto out : prg.outs) {
+    //for (auto out : prg.outs) {
+    for (auto b : outputs(buffers, prg)) {
+      auto out = b.first;
+      auto bundle = b.second;
       string tp_string =
-        "ap_uint<" + str(prg.buffer_port_width(out)) + ">*";
+        "ap_uint<" + str(map_find(out, buffers).port_bundle_width(bundle)) + ">*";
+        //"ap_uint<" + str(prg.buffer_port_width(out)) + ">*";
       decls.push_back(tp_string + " " + out);
     }
 
-    for (auto out : prg.ins) {
+    //for (auto out : prg.ins) {
+    for (auto b : inputs(buffers, prg)) {
+      auto out = b.first;
+      auto bundle = b.second;
       string tp_string =
-        "ap_uint<" + str(prg.buffer_port_width(out)) + ">*";
+        "ap_uint<" + str(map_find(out, buffers).port_bundle_width(bundle)) + ">*";
+        //"ap_uint<" + str(prg.buffer_port_width(out)) + ">*";
       decls.push_back(tp_string + " " + out);
     }
+
     decls.push_back("uint64_t coalesced_data_num");
     of << "void " << prg.name << "_kernel(" << comma_list(decls) << ");" << endl;
     of << "}" << endl;
@@ -714,21 +835,30 @@ void generate_tb_compare_scripts(prog& prg) {
     of.close();
   }
 
-  ofstream of("compare_regressions.sh");
-  of << "app_name=" << prg.name << endl;
+  {
+    ofstream of("aws_run_tb_" + prg.name + ".sh");
+    of << "make clean" << endl;
+    of << "make check TARGET=sw_emu DEVICE=$AWS_PLATFORM all" << endl;
+    of.close();
+  }
 
-  of << "cd soda_code" << endl;
-  of << "./run_tb.sh || { echo 'soda compilation failed'; exit 1; }" << endl;
-  of << "cd .." << endl;
+  {
+    ofstream of("compare_regressions.sh");
+    of << "app_name=" << prg.name << endl;
 
-  of << "cd our_code" << endl;
-  of << "./run_tb_${app_name}.sh || { echo 'our compilation failed'; exit 1; }" << endl;
-  of << "cd .." << endl;
+    of << "cd soda_code" << endl;
+    of << "./run_tb.sh || { echo 'soda compilation failed'; exit 1; }" << endl;
+    of << "cd .." << endl;
 
-  of << "cd ../../" << endl;
-  of << "./run_aligner.sh ./soda_codes/${app_name}/our_code/regression_result_${app_name}.txt ./soda_codes/${app_name}/soda_code/soda_${app_name}_regression_result.csv" << endl;
+    of << "cd our_code" << endl;
+    of << "./run_tb_${app_name}.sh || { echo 'our compilation failed'; exit 1; }" << endl;
+    of << "cd .." << endl;
 
-  of.close();
+    of << "cd ../../" << endl;
+    of << "./run_aligner.sh ./soda_codes/${app_name}/our_code/regression_result_${app_name}.txt ./soda_codes/${app_name}/soda_code/soda_${app_name}_regression_result.csv" << endl;
+
+    of.close();
+  }
 }
 
 void generate_tb_run_scripts(prog& prg) {
@@ -1253,18 +1383,18 @@ void generate_app_code(CodegenOptions& options,
   conv_out << "}" << endl << endl;
 
   open_synth_scope(conv_out);
-  //generate_xilinx_accel_wrapper(conv_out, buffers, prg);
+  generate_xilinx_accel_wrapper(conv_out, buffers, prg);
   close_synth_scope(conv_out);
 
   conv_out << endl;
 
-  //generate_xilinx_accel_host(buffers, prg);
   generate_app_code_header(buffers, prg);
   generate_soda_tb(buffers, prg);
-  //generate_xilinx_accel_wrapper(buffers, prg);
+  generate_xilinx_accel_soda_host(buffers, prg);
+  generate_xilinx_accel_host(buffers, prg);
   generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
   generate_tb_run_scripts(prg);
-  generate_tb_compare_scripts(prg);
+  generate_tb_compare_scripts(buffers, prg);
 
   conv_out.close();
 }

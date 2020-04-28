@@ -25,10 +25,10 @@ help::
 	$(ECHO) "      By default, HOST_ARCH=x86. HOST_ARCH and SYSROOT is required for SoC shells"
 	$(ECHO) ""
 
-KERNEL_NAME = jacobi2d_unrolled_1_opt_accel
+APP_NAME = $(app)
 
 # Points to top directory of Git repository
-COMMON_REPO = ../
+COMMON_REPO = /home/centos/aws-fpga/Vitis/examples/xilinx/
 PWD = $(shell readlink -f .)
 ABS_COMMON_REPO = $(shell readlink -f $(COMMON_REPO))
 
@@ -54,7 +54,7 @@ HOST_SRCS += $(xcl2_SRCS)
 CXXFLAGS += $(opencl_CXXFLAGS) -Wall -O0 -g -std=c++11
 LDFLAGS += $(opencl_LDFLAGS)
 
-HOST_SRCS += src/host.cpp
+HOST_SRCS += $(APP_NAME)_host.cpp
 
 # Host compiler global settings
 CXXFLAGS += -fmessage-length=0
@@ -65,7 +65,7 @@ ifneq ($(HOST_ARCH), x86)
 endif
 
 # Kernel compiler global settings
-CLFLAGS += -D__VIVADO_SYNTH__ -t $(TARGET) --platform $(DEVICE) --save-temps 
+CLFLAGS += -D__VIVADO_SYNTH__ -I ../../../ -t $(TARGET) --platform $(DEVICE) --save-temps 
 ifneq ($(TARGET), hw)
 	CLFLAGS += -g
 endif
@@ -73,12 +73,12 @@ endif
 
 
 EXECUTABLE = host
-CMD_ARGS = $(BUILD_DIR)/$(KERNEL_NAME).xclbin
+CMD_ARGS = $(BUILD_DIR)/$(APP_NAME).xclbin
 EMCONFIG_DIR = $(TEMP_DIR)
 EMU_DIR = $(SDCARD)/data/emulation
 
-BINARY_CONTAINERS += $(BUILD_DIR)/$(KERNEL_NAME).xclbin
-BINARY_CONTAINER_$(KERNEL_NAME)_OBJS += $(TEMP_DIR)/$(KERNEL_NAME).xo
+BINARY_CONTAINERS += $(BUILD_DIR)/$(APP_NAME).xclbin
+BINARY_CONTAINER_vadd_OBJS += $(TEMP_DIR)/$(APP_NAME).xo
 
 CP = cp -rf
 
@@ -92,10 +92,10 @@ exe: $(EXECUTABLE)
 build: $(BINARY_CONTAINERS)
 
 # Building kernel
-$(TEMP_DIR)/$(KERNEL_NAME).xo: src/$(KERNEL_NAME).cpp
+$(TEMP_DIR)/$(APP_NAME).xo: $(APP_NAME).cpp
 	mkdir -p $(TEMP_DIR)
-	$(VPP) $(CLFLAGS) --temp_dir $(TEMP_DIR) -c -k $(KERNEL_NAME) -I'$(<D)' -o'$@' '$<'
-$(BUILD_DIR)/$(KERNEL_NAME).xclbin: $(BINARY_CONTAINER_$(KERNEL_NAME)_OBJS)
+	$(VPP) $(CLFLAGS) --temp_dir $(TEMP_DIR) -c -k $(APP_NAME)_accel -I'$(<D)' -o'$@' '$<'
+$(BUILD_DIR)/$(APP_NAME).xclbin: $(BINARY_CONTAINER_vadd_OBJS)
 	mkdir -p $(BUILD_DIR)
 	$(VPP) $(CLFLAGS) --temp_dir $(BUILD_DIR) -l $(LDCLFLAGS) -o'$@' $(+)
 
@@ -111,7 +111,7 @@ check: all
 ifeq ($(TARGET),$(filter $(TARGET),sw_emu hw_emu))
 ifeq ($(HOST_ARCH), x86)
 	$(CP) $(EMCONFIG_DIR)/emconfig.json .
-	XCL_EMULATION_MODE=$(TARGET) ./$(EXECUTABLE) $(BUILD_DIR)/$(KERNEL_NAME).xclbin
+	XCL_EMULATION_MODE=$(TARGET) ./$(EXECUTABLE) $(BUILD_DIR)/$(APP_NAME).xclbin
 else
 	mkdir -p $(EMU_DIR)
 	$(CP) $(XILINX_VITIS)/data/emulation/unified $(EMU_DIR)
@@ -120,7 +120,7 @@ else
 endif
 else
 ifeq ($(HOST_ARCH), x86)
-	./$(EXECUTABLE) $(BUILD_DIR)/$(KERNEL_NAME).xclbin
+	./$(EXECUTABLE) $(BUILD_DIR)/$(APP_NAME).xclbin
 endif
 endif
 ifeq ($(HOST_ARCH), x86)

@@ -3,6 +3,11 @@
 #include "hw_classes.h"
 
 static inline
+float int_to_float(const hw_uint<32>& in) {
+  return (float) in.to_int();
+}
+
+static inline
 float to_float(const hw_uint<32>& in) {
   int i = in.to_int();
   void* ip = (void*)(&i);

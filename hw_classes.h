@@ -189,7 +189,7 @@ class hw_uint {
       }
 
 #ifdef __VIVADO_SYNTH__
-    ap_int<Len> val;
+    ap_uint<Len> val;
 
     hw_uint(const hw_uint<Len>& v) : val(v.val) {}
     hw_uint(const int v) : val(v) {}

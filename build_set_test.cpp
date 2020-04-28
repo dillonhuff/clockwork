@@ -2675,10 +2675,12 @@ struct App {
   map<string, isl_map*> compute_maps;
 
   int default_pixel_width;
+  num_type default_num_type;
 
   App() {
     ctx = isl_ctx_alloc();
     default_pixel_width = 32;
+    default_num_type = NUM_TYPE_UNSIGNED;
   }
 
   ~App() {
@@ -2735,6 +2737,7 @@ struct App {
     app_dag[name] = res;
 
     set_width(name, default_pixel_width);
+    set_num_type(name, default_num_type);
     return name;
   }
 
@@ -2778,7 +2781,7 @@ struct App {
         windows);
 
     app_dag[name].updates.back().compute_unit_impl =
-      compute_unit_string(default_pixel_width, compute_name, windows, def, offset_map);
+      compute_unit_string(default_num_type, default_pixel_width, compute_name, windows, def, offset_map);
     app_dag[name].updates.back().def = def;
 
     return name;
@@ -2860,10 +2863,18 @@ struct App {
     return func2d(name, compute, {w});
   }
 
+  void set_default_num_type(const num_type tp) {
+    default_num_type = tp;
+  }
+
   void set_default_pixel_width(const int width) {
     default_pixel_width = width;
   }
 
+  void set_num_type(const string& func, const num_type tp) {
+    assert(contains_key(func, app_dag));
+    app_dag.at(func).tp = tp;
+  }
   void set_width(const string& func, const int width) {
     assert(width > 0);
     assert(contains_key(func, app_dag));
@@ -4014,7 +4025,6 @@ struct App {
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
-    //options.debug_options.expect_all_linebuffers = true;
     realize(options, name, d0, d1);
   }
 
@@ -4990,6 +5000,7 @@ App jacobi3d(const std::string output_name) {
 
 App denoise2d(const std::string& name) {
   App dn;
+  dn.set_default_num_type(NUM_TYPE_FLOAT);
 
   dn.func2d("f_off_chip");
   dn.func2d("u_off_chip");
@@ -5185,9 +5196,11 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("mv " + out_name + "*.h " + synth_dir).c_str());
   system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
   system(("mv run_tb_" + out_name + "*.sh " + synth_dir).c_str());
+  system(("mv aws_run_tb_" + out_name + "*.sh " + synth_dir).c_str());
   system(("mv compare_regressions.sh " + app_dir).c_str());
   system(("mv " + out_name + ".soda " + soda_dir).c_str());
 
+  system(("mv soda_" + out_name + "*_host.cpp " + soda_dir).c_str());
   system(("mv tb_soda_" + out_name + "*.cpp " + soda_dir).c_str());
   system(("mv run_tb.sh " + soda_dir).c_str());
 }
@@ -5298,7 +5311,7 @@ void blur_xy_16_app_test() {
   for (int i = 0; i < 5; i++) {
     int unroll_factor = pow(2, i);
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
-    string out_name = "blur_xy_16_unrolled_" + str(unroll_factor);
+    string out_name = "bxy_ur_" + str(unroll_factor);
     blur_xy_16(out_name).realize(out_name, cols, rows, unroll_factor);
 
     move_to_benchmarks_folder(out_name + "_opt");
@@ -6309,6 +6322,11 @@ void playground() {
 }
 
 void application_tests() {
+  blur_xy_16_app_test();
+  assert(false);
+
+  denoise2d_test();
+
   up_unrolled_test();
   up_unrolled_4_test();
   up_down_unrolled_test();
@@ -6325,7 +6343,6 @@ void application_tests() {
   blur_x_test();
 
   //parse_denoise3d_test();
-  blur_xy_16_app_test();
   //app added for cnn
   //conv_test();
 
@@ -6351,7 +6368,6 @@ void application_tests() {
   sum_diffs_test();
   sum_float_test();
   sum_denoise_test();
-  denoise2d_test();
 
   sobel_mag_y_test();
   sobel_app_test();

@@ -315,6 +315,7 @@ struct Update {
 
 struct Result {
   int pixel_width;
+  num_type tp;
   vector<Window> srcs;
   Window provided;
 
@@ -958,7 +959,8 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity);
 umap* experimental_opt(uset* domain, umap* validity, umap* proximity);
 
 static inline
-string compute_unit_string(const int pixel_width,
+string compute_unit_string(const num_type tp,
+    const int pixel_width,
     const string& name,
     vector<Window>& windows,
     Expr* def,
@@ -968,7 +970,13 @@ string compute_unit_string(const int pixel_width,
   for (auto w : windows) {
     args.push_back("hw_uint<" + wstr + "*" + str(w.offsets.size()) + "> " + w.name);
   }
+  string res =
+    compute_string(tp, pixel_width, def, offset_map);
+
+  if (tp == NUM_TYPE_FLOAT) {
+    res = "to_bits(" + res + ")";
+  }
   return "hw_uint<" + wstr + "> " + name + sep_list(args, "(", ")", ", ") + " {\n" + tab(1) +
-    "return " + compute_string(pixel_width, def, offset_map) + ";\n}";
+    "return " + res + ";\n}";
 }
 

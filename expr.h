@@ -135,17 +135,21 @@ string soda_compute_string(const int pixel_width, Expr* def) {
 
 
 static inline
-string compute_string(const int pixel_width, Expr* def, map<string, vector<vector<int> > >& offset_map) {
+string compute_string(const num_type tp,
+    const int pixel_width,
+    Expr* def,
+    map<string, vector<vector<int> > >& offset_map) {
   if (def->is_int_const()) {
     string val = (((IntConst*) def)->val);
-    return "hw_uint<" + str(pixel_width) + ">(" + val + ")";
-    //stringstream ss;
-    //ss << std::hex << safe_stoi(((IntConst*) def)->val);
-    //string pixw = str(pixel_width);
-    //return "hw_uint<" + str(pixel_width) + ">(\"" + pixw + "'h" + ss.str() + "\")";
+    string res = "hw_uint<" + str(pixel_width) + ">(" + val + ")";
+    if (tp == NUM_TYPE_FLOAT) {
+      return "int_to_float(" + res + ")";
+    } else {
+      return res;
+    }
   } else if (def->is_binop()) {
     auto op = (Binop*) def;
-    return parens(compute_string(pixel_width, op->l, offset_map) + " " + op->op + " " + compute_string(pixel_width, op->r, offset_map));
+    return parens(compute_string(tp, pixel_width, op->l, offset_map) + " " + op->op + " " + compute_string(tp, pixel_width, op->r, offset_map));
   } else {
     assert(def->is_function_call());
     auto call = (FunctionCall*) def;
@@ -162,7 +166,13 @@ string compute_string(const int pixel_width, Expr* def, map<string, vector<vecto
       offset++;
     }
     assert(found_offset);
-    return call->name + ".get<" + str(pixel_width) + ", " + str(offset) + ">()";
+    string res = call->name + ".get<" + str(pixel_width) + ", " + str(offset) + ">()";
+    if (tp == NUM_TYPE_FLOAT) {
+      return "to_float(" + res + ")";
+    } else {
+      return res;
+    }
+
   }
 
   assert(false);

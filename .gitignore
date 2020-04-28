@@ -55,3 +55,4 @@ level_3_*
 ds_*
 *.txt
 run_tb_*
+aws_*
