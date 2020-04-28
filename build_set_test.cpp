@@ -5004,8 +5004,8 @@ App denoise2d(const std::string& name) {
 
   dn.func2d("f_off_chip");
   dn.func2d("u_off_chip");
-  dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
-  dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
+  dn.func2d("f", v("f_off_chip"));
+  dn.func2d("u", v("u_off_chip"));
 
   Expr* diff = sub(v("u", 0, -1), v("u", 0, 0));
   dn.func2d("diff_qwe", diff);
@@ -5016,7 +5016,8 @@ App denoise2d(const std::string& name) {
       });
   dn.func2d("diff_r", "diff_r2d", "u", {{0, 0}, {1, 0}});
 
-  dn.func2d("g", "mag_dn2d", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
+  dn.func2d("g", div(fc("1.0f"), func("sqrt", add({sq("diff_qwe"), sq("diff_d"), sq("diff_l"), sq("diff_r")}))));
+      //"mag_dn2d", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
   dn.func2d("r0", "comp_r02d", {pt("u"), pt("f")});
   dn.func2d("r1", "r1_comp2d", pt("r0"));
   dn.func2d(name,
@@ -6322,10 +6323,10 @@ void playground() {
 }
 
 void application_tests() {
-  blur_xy_16_app_test();
-  //assert(false);
-
   denoise2d_test();
+  //assert(false);
+  blur_xy_16_app_test();
+
 
   up_unrolled_test();
   up_unrolled_4_test();
@@ -6428,7 +6429,6 @@ void application_tests() {
   //synth_sr_boundary_condition_test();
   //synth_lb_test();
   //conv_app_rolled_reduce_test();
-
 
   //up_stencil_down_unrolled_test();
   //laplacian_pyramid_app_test();

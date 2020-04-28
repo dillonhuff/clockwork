@@ -27,13 +27,17 @@ struct Expr {
   virtual bool is_function_call() const { return false; }
   virtual bool is_binop() const { return false; }
   virtual bool is_int_const() const { return false; }
+  virtual bool is_float_const() const { return false; }
   virtual set<Expr*> children() const { return {}; }
 };
 
 struct FloatConst : public Expr {
-  bool neg;
-  string l;
-  string r;
+  string val;
+
+  FloatConst(const std::string& val_) : val(val_) {}
+  FloatConst() : val("") {}
+
+  virtual bool is_float_const() const { return true; }
 };
 
 struct IntConst : public Expr {
@@ -116,12 +120,15 @@ string soda_compute_string(const int pixel_width, Expr* def) {
   } else if (def->is_binop()) {
     auto op = (Binop*) def;
     return parens(soda_compute_string(pixel_width, op->l) + " " + op->op + " " + soda_compute_string(pixel_width, op->r));
+  } else if (def->is_float_const()) {
+    auto fv = static_cast<FloatConst*>(def);
+    return fv->val;
   } else {
     assert(def->is_function_call());
     auto call = (FunctionCall*) def;
     //assert(contains_key(call->name, offset_map));
 
-    auto offsets = get_offset(call);
+    //auto offsets = get_offset(call);
     vector<string> args;
     for (auto a : call->args) {
       args.push_back(soda_compute_string(pixel_width, a));
@@ -150,33 +157,58 @@ string compute_string(const num_type tp,
   } else if (def->is_binop()) {
     auto op = (Binop*) def;
     return parens(compute_string(tp, pixel_width, op->l, offset_map) + " " + op->op + " " + compute_string(tp, pixel_width, op->r, offset_map));
+  } else if (def->is_float_const()) {
+    auto fv = static_cast<FloatConst*>(def);
+    return "((float)" + fv->val +")";
   } else {
     assert(def->is_function_call());
     auto call = (FunctionCall*) def;
-    assert(contains_key(call->name, offset_map));
 
-    auto offsets = get_offset(call);
-    int offset = 0;
-    bool found_offset = false;
-    for (auto off : offset_map[call->name]) {
-      if (off == offsets) {
-        found_offset = true;
-        break;
+    if (contains_key(call->name, offset_map)) {
+
+      auto offsets = get_offset(call);
+      int offset = 0;
+      bool found_offset = false;
+      for (auto off : offset_map[call->name]) {
+        if (off == offsets) {
+          found_offset = true;
+          break;
+        }
+        offset++;
       }
-      offset++;
-    }
-    assert(found_offset);
-    string res = call->name + ".get<" + str(pixel_width) + ", " + str(offset) + ">()";
-    if (tp == NUM_TYPE_FLOAT) {
-      return "to_float(" + res + ")";
+      assert(found_offset);
+      string res = call->name + ".get<" + str(pixel_width) + ", " + str(offset) + ">()";
+      if (tp == NUM_TYPE_FLOAT) {
+        return "to_float(" + res + ")";
+      } else {
+        return res;
+      }
     } else {
-      return res;
+    
+      vector<string> argstrings;
+      for (auto a : call->args) {
+        argstrings.push_back(compute_string(
+              tp,
+              pixel_width,
+              a,
+              offset_map));
+      }
+      return call->name + sep_list(argstrings, "(", ")", ", ");
     }
-
   }
 
   assert(false);
   return "ERROR NO COMPUTE FOR EXPRESSION";
+}
+
+static inline
+Expr* func(const std::string& name, const vector<Expr*>& args) {
+  return new FunctionCall(name, args);
+}
+
+static inline
+Expr* func(const std::string& name, Expr* arg) {
+  return func(name, vector<Expr*>{arg});
 }
 
 static inline
@@ -188,6 +220,11 @@ Expr* v(const std::string& name,
   auto bstr = str(b);
   return new FunctionCall(name, {new IntConst(astr),
       new IntConst(bstr)});
+}
+
+static inline
+Expr* fc(const std::string& value) {
+  return new FloatConst(value);
 }
 
 static inline
@@ -258,6 +295,16 @@ Expr* add(Expr* const a, Expr* const b, Expr* c) {
 static inline
 Expr* square(Expr* a) {
   return mul(a, a);
+}
+
+static inline
+Expr* sq(Expr* a) {
+  return square(a);
+}
+
+static inline
+Expr* sq(const std::string& a) {
+  return sq(v(a));
 }
 
 static inline
