@@ -34,6 +34,7 @@ int main(int argc, char **argv) {
     ((uint16_t*) (input_update_0_read.data()))[i] = val;
   }
 
+  input_input_update_0_read.close();
   for (int i = 0; i < bxy_ur_2_update_0_write_DATA_SIZE; i++) {
   // TODO: Add support for other widths
     ((uint16_t*) (bxy_ur_2_update_0_write.data()))[i] = 0;

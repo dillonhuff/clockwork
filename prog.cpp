@@ -203,6 +203,7 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
     out << tab(2) << "input_" << edge_bundle << " << val << std::endl;" << endl;
     out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = val;" << endl;
     out << tab(1) << "}" << endl << endl;
+    out << tab(1) << "input_" << edge_bundle << ".close();" << endl;
   }
 
   for (auto edge_bundle : out_bundles(buffers, prg)) {
@@ -301,7 +302,9 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
     out << tab(2) << "input_" << edge_bundle << " << val << std::endl;" << endl;
     out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = val;" << endl;
     out << tab(1) << "}" << endl << endl;
+    out << tab(1) << "input_" << edge_bundle << ".close();" << endl;
   }
+
   //for (auto edge_bundle : in_bundles(buffers, prg)) {
     //out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
     //out << tab(1) << "// TODO: Add support for other widths" << endl;
