@@ -1189,38 +1189,6 @@ inline void u_u_update_0_write_bundle_write(hw_uint<32>& u_update_0_write, u_cac
 
 
 // Operation logic
-inline void two_input_denoise_pipeline_update_0(f_cache& f, g_cache& g, r1_cache& r1, u_cache& u, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */two_input_denoise_pipeline, int d0, int d1) {
-	// Consume: f
-	auto f_0_c__0_value = f_two_input_denoise_pipeline_update_0_read_bundle_read(f/* source_delay */, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "two_input_denoise_pipeline_update_0_f," << d0<< "," << d1<< "," <<  f_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-	// Consume: g
-	auto g_0_c__0_value = g_two_input_denoise_pipeline_update_0_read_bundle_read(g/* source_delay */, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "two_input_denoise_pipeline_update_0_g," << d0<< "," << d1<< "," <<  g_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-	// Consume: r1
-	auto r1_0_c__0_value = r1_two_input_denoise_pipeline_update_0_read_bundle_read(r1/* source_delay */, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "two_input_denoise_pipeline_update_0_r1," << d0<< "," << d1<< "," <<  r1_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-	// Consume: u
-	auto u_0_c__0_value = u_two_input_denoise_pipeline_update_0_read_bundle_read(u/* source_delay */, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "two_input_denoise_pipeline_update_0_u," << d0<< "," << d1<< "," <<  u_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-	auto compute_result = two_input_denoise_pipeline_generated_compute_unrolled_1(f_0_c__0_value, g_0_c__0_value, r1_0_c__0_value, u_0_c__0_value);
-	// Produce: two_input_denoise_pipeline
-	two_input_denoise_pipeline.write(compute_result);
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "two_input_denoise_pipeline_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-}
-
 inline void u_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_off_chip, u_cache& u, int d0, int d1) {
 	// Consume: u_off_chip
 	auto u_off_chip_0_c__0_value = u_off_chip.read();
@@ -1280,6 +1248,28 @@ inline void diff_l_update_0(u_cache& u, diff_l_cache& diff_l, int d0, int d1) {
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
   *global_debug_handle << "diff_l_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+}
+
+inline void r0_update_0(f_cache& f, u_cache& u, r0_cache& r0, int d0, int d1) {
+	// Consume: f
+	auto f_0_c__0_value = f_r0_update_0_read_bundle_read(f/* source_delay */, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "r0_update_0_f," << d0<< "," << d1<< "," <<  f_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+	// Consume: u
+	auto u_0_c__0_value = u_r0_update_0_read_bundle_read(u/* source_delay */, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "r0_update_0_u," << d0<< "," << d1<< "," <<  u_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+	auto compute_result = r0_generated_compute_unrolled_1(f_0_c__0_value, u_0_c__0_value);
+	// Produce: r0
+	r0_r0_update_0_write_bundle_write(compute_result, r0, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  hw_uint<32> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  *global_debug_handle << "r0_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 }
 
@@ -1388,25 +1378,35 @@ inline void g_update_0(diff_sums_cache& diff_sums, f_cache& f, g_cache& g, int d
 #endif //__VIVADO_SYNTH__
 }
 
-inline void r0_update_0(f_cache& f, u_cache& u, r0_cache& r0, int d0, int d1) {
+inline void two_input_denoise_pipeline_update_0(f_cache& f, g_cache& g, r1_cache& r1, u_cache& u, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */two_input_denoise_pipeline, int d0, int d1) {
 	// Consume: f
-	auto f_0_c__0_value = f_r0_update_0_read_bundle_read(f/* source_delay */, d0, d1);
+	auto f_0_c__0_value = f_two_input_denoise_pipeline_update_0_read_bundle_read(f/* source_delay */, d0, d1);
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "r0_update_0_f," << d0<< "," << d1<< "," <<  f_0_c__0_value << endl;
+  *global_debug_handle << "two_input_denoise_pipeline_update_0_f," << d0<< "," << d1<< "," <<  f_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+	// Consume: g
+	auto g_0_c__0_value = g_two_input_denoise_pipeline_update_0_read_bundle_read(g/* source_delay */, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "two_input_denoise_pipeline_update_0_g," << d0<< "," << d1<< "," <<  g_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+	// Consume: r1
+	auto r1_0_c__0_value = r1_two_input_denoise_pipeline_update_0_read_bundle_read(r1/* source_delay */, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "two_input_denoise_pipeline_update_0_r1," << d0<< "," << d1<< "," <<  r1_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 	// Consume: u
-	auto u_0_c__0_value = u_r0_update_0_read_bundle_read(u/* source_delay */, d0, d1);
+	auto u_0_c__0_value = u_two_input_denoise_pipeline_update_0_read_bundle_read(u/* source_delay */, d0, d1);
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "r0_update_0_u," << d0<< "," << d1<< "," <<  u_0_c__0_value << endl;
+  *global_debug_handle << "two_input_denoise_pipeline_update_0_u," << d0<< "," << d1<< "," <<  u_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
-	auto compute_result = r0_generated_compute_unrolled_1(f_0_c__0_value, u_0_c__0_value);
-	// Produce: r0
-	r0_r0_update_0_write_bundle_write(compute_result, r0, d0, d1);
+	auto compute_result = two_input_denoise_pipeline_generated_compute_unrolled_1(f_0_c__0_value, g_0_c__0_value, r1_0_c__0_value, u_0_c__0_value);
+	// Produce: two_input_denoise_pipeline
+	two_input_denoise_pipeline.write(compute_result);
 #ifndef __VIVADO_SYNTH__
   hw_uint<32> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "r0_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "two_input_denoise_pipeline_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 }
 
