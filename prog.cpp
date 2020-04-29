@@ -855,11 +855,11 @@ void generate_tb_compare_scripts(map<string, UBuffer>& buffers, prog& prg) {
     of << "cd .." << endl;
 
     of << "cd our_code" << endl;
-    of << "./aws_run_tb_${app_name}.sh || { echo 'our compilation failed'; exit 1; }" << endl;
+    of << "./aws_run_tb_${app}.sh || { echo 'our compilation failed'; exit 1; }" << endl;
     of << "cd .." << endl;
 
     of << "cd ../../" << endl;
-    of << "../../../aligner ./soda_codes/${app_name}/our_code/regression_result_${app_name}.txt ./soda_codes/${app_name}/soda_code/soda_${app_name}_regression_result.csv" << endl;
+    of << "../../../aligner ./soda_codes/${app}/our_code/regression_result_${app}.txt ./soda_codes/${app}/soda_code/soda_${app}_regression_result.csv" << endl;
 
     of.close();
   }
