@@ -1,6 +1,13 @@
 #include "prog.h"
 #include "codegen.h"
 
+void ocl_headers(ostream& out) {
+  out << "#include \"xcl2.hpp\"" << endl;
+  out << "#include <algorithm>" << endl;
+  out << "#include <fstream>" << endl;
+  out << "#include <vector>" << endl << endl;
+}
+
 vector<string>
 split_bv(const int indent,
     ostream& conv_out,
@@ -146,10 +153,7 @@ void ocl_program_device(ostream& out, prog& prg) {
 
 void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
   ofstream out("soda_" + prg.name + "_host.cpp");
-  out << "#include \"xcl2.hpp\"" << endl;
-  out << "#include <algorithm>" << endl;
-  out << "#include <fstream>" << endl;
-  out << "#include <vector>" << endl << endl;
+  ocl_headers(out);
 
   out << "int main(int argc, char **argv) {" << endl;
 
@@ -192,7 +196,7 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
   out << endl;
 
   for (auto edge_bundle : in_bundles(buffers, prg)) {
-    out << tab(1) << "ofstream input_" << edge_bundle << "(\"" << edge_bundle << ".csv\");" << endl;
+    out << tab(1) << "std::ofstream input_" << edge_bundle << "(\"" << edge_bundle << ".csv\");" << endl;
     out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
     out << tab(2) << "// TODO: Add support for other widths" << endl;
     out << tab(2) << "uint16_t val = (i % 256);" << endl;
@@ -259,10 +263,7 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
 void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   ofstream out(prg.name + "_host.cpp");
 
-  out << "#include \"xcl2.hpp\"" << endl;
-  out << "#include <algorithm>" << endl;
-  out << "#include <fstream>" << endl;
-  out << "#include <vector>" << endl << endl;
+  ocl_headers(out);
 
   out << "int main(int argc, char **argv) {" << endl;
 
@@ -293,7 +294,7 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   out << endl;
 
   for (auto edge_bundle : in_bundles(buffers, prg)) {
-    out << tab(1) << "ofstream input_" << edge_bundle << "(\"" << edge_bundle << ".csv\");" << endl;
+    out << tab(1) << "std::ofstream input_" << edge_bundle << "(\"" << edge_bundle << ".csv\");" << endl;
     out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
     out << tab(2) << "// TODO: Add support for other widths" << endl;
     out << tab(2) << "uint16_t val = (i % 256);" << endl;
