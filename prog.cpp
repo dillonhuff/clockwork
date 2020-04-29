@@ -875,7 +875,7 @@ void generate_tb_compare_scripts(map<string, UBuffer>& buffers, prog& prg) {
     of << "cd .." << endl;
 
     auto out_bundle = pick(outputs(buffers, prg)).second;
-    of << "../../aligner ./our_code/" + out_bundle + ".csv ./soda_code/soda_${app}_regression_result.csv" << endl;
+    of << "../../aligner ./our_code/" + out_bundle + "_accel_result.csv ./soda_code/soda_${app}_regression_result.csv" << endl;
 
     of.close();
   }
