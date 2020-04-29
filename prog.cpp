@@ -874,7 +874,8 @@ void generate_tb_compare_scripts(map<string, UBuffer>& buffers, prog& prg) {
     of << "./aws_run_tb_${app}.sh || { echo 'our compilation failed'; exit 1; }" << endl;
     of << "cd .." << endl;
 
-    of << "../../aligner ./our_code/${app}_update_0_write_accel_result.csv ./soda_code/soda_${app}_regression_result.csv" << endl;
+    auto out_bundle = pick(outputs(buffers, prg)).second;
+    of << "../../aligner ./our_code/" + out_bundle + ".csv ./soda_code/soda_${app}_regression_result.csv" << endl;
 
     of.close();
   }
