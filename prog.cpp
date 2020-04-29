@@ -848,6 +848,22 @@ void generate_tb_compare_scripts(map<string, UBuffer>& buffers, prog& prg) {
   }
 
   {
+    ofstream of("aws_compare_regressions.sh");
+    of << "source set_app_name.sh" << endl;
+    of << "cd soda_code" << endl;
+    of << "./run_tb.sh || { echo 'soda compilation failed'; exit 1; }" << endl;
+    of << "cd .." << endl;
+
+    of << "cd our_code" << endl;
+    of << "./aws_run_tb_${app_name}.sh || { echo 'our compilation failed'; exit 1; }" << endl;
+    of << "cd .." << endl;
+
+    of << "cd ../../" << endl;
+    of << "../../../aligner ./soda_codes/${app_name}/our_code/regression_result_${app_name}.txt ./soda_codes/${app_name}/soda_code/soda_${app_name}_regression_result.csv" << endl;
+
+    of.close();
+  }
+  {
     ofstream of("compare_regressions.sh");
     of << "app_name=" << prg.name << endl;
 
