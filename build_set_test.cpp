@@ -3578,13 +3578,9 @@ struct App {
 
           cout << tab(1) << "unroll factor: " << u.unroll_factor << endl;
           for (int i = 0; i < u.unroll_factor; i++) {
-            //string lane_select_str =
-              //curly(arrow(, u.provided.name));
-              //"{ " + u.provided.name + "[d0, l1] -> lane[l] : d0 % " + str(u.unroll_factor) + " = " + str(i) + " }";
             string lane_select_str =
               "{ " + u.provided.name + "[d0, d1] -> lane_" + str(i) +
               "[floor(d0 / " + str(u.unroll_factor) + "), d1] : d0 % " + str(u.unroll_factor) + " = " + str(i) + " }";
-              //"{ " + u.provided.name + "[d0, l1] -> lane[l] : d0 % " + str(u.unroll_factor) + " = " + str(i) + " }";
             cout << tab(1) << "lane select str = " << lane_select_str << endl;
 
             isl_map* lane_select =
@@ -4642,7 +4638,6 @@ void up_stencil_down_unrolled_test() {
 
   int size = 16;
   lp.unroll("us", 4);
-  //lp.unroll("us", 2);
   lp.unroll("stencil", 2);
 
   lp.realize("ds", size, size);

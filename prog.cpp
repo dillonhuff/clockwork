@@ -748,15 +748,15 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
     of << "int main() {" << endl;
     string rep_buf = pick(prg.ins);
 
-    int nrows = -1;
+    int ncols = -1;
     if (prg.buffer_bounds[rep_buf].size() > 0) {
       cout << "Getting 0" << endl;
-      nrows = prg.buffer_bounds[rep_buf].at(0);
+      ncols = prg.buffer_bounds[rep_buf].at(0);
     }
-    int ncols = -1;
+    int nrows = -1;
     if (prg.buffer_bounds[rep_buf].size() > 1) {
       cout << "Getting 1" << endl;
-      ncols = prg.buffer_bounds[rep_buf].at(1);
+      nrows = prg.buffer_bounds[rep_buf].at(1);
     }
 
     of << tab(1) << "const int nrows = " << nrows << ";" << endl;
