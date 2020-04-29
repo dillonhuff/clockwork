@@ -269,3 +269,8 @@ static inline
 string parens(const std::string& s) {
   return "(" + s + ")";
 }
+
+static inline
+void make_exe(const std::string& file) {
+  system(("chmod +x " + file).c_str());
+}
