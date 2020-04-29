@@ -1,1 +1,1 @@
-CXX=g++
+export CXX=g++
