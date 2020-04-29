@@ -935,11 +935,8 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
   vector<isl_map*> consumed_data;
   for (auto d : deps) {
     cout << tab(1) << str(d) << endl;
-    //cout << tab(2) << str(card((d))) << endl;
     consumed_data.push_back(inv(d));
   }
-
-  //assert(false);
 
   cout << "Consumed data..." << endl;
   map<isl_map*, vector<pair<isl_val*, isl_val*> > > schedule_params;
@@ -1140,8 +1137,6 @@ isl_map* pad_map(isl_map* s, const int max_dim) {
     padded = unn(padded, pbset);
   }
 
-  //assert(false);
-  
   return padded;
 }
 
