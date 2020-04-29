@@ -25,11 +25,11 @@ int main() {
   const uint64_t transfer_cols = ncols / pixels_per_burst;
   ap_uint<BURST_WIDTH>* sum_denoise2d = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
   ap_uint<BURST_WIDTH>* f_off_chip = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
-  fill_array<bits_per_pixel>("f_off_chip_input_pixel.csv", f_off_chip, nrows, ncols, transfer_cols);
+  fill_array_decimal<bits_per_pixel>("f_off_chip_input_pixel.csv", f_off_chip, nrows, ncols, transfer_cols);
   ap_uint<BURST_WIDTH>* u_off_chip = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
-  fill_array<bits_per_pixel>("u_off_chip_input_pixel.csv", u_off_chip, nrows, ncols, transfer_cols);
+  fill_array_decimal<bits_per_pixel>("u_off_chip_input_pixel.csv", u_off_chip, nrows, ncols, transfer_cols);
   sum_denoise2d_opt_kernel(sum_denoise2d, f_off_chip, u_off_chip, num_transfers);
-  write_results<bits_per_pixel>("soda_sum_denoise2d_opt_regression_result.csv", sum_denoise2d, nrows, ncols, transfer_cols);
+  write_results_decimal<bits_per_pixel>("soda_sum_denoise2d_opt_regression_result.csv", sum_denoise2d, nrows, ncols, transfer_cols);
   free(f_off_chip);
   free(u_off_chip);
   free(sum_denoise2d);

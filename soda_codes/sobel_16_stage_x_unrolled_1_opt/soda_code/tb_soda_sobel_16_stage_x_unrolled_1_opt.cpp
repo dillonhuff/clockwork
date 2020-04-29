@@ -25,9 +25,9 @@ int main() {
   const uint64_t transfer_cols = ncols / pixels_per_burst;
   ap_uint<BURST_WIDTH>* sobel_16_stage_x_unrolled_1 = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
   ap_uint<BURST_WIDTH>* off_chip_img = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
-  fill_array<bits_per_pixel>("off_chip_img_input_pixel.csv", off_chip_img, nrows, ncols, transfer_cols);
+  fill_array_decimal<bits_per_pixel>("off_chip_img_input_pixel.csv", off_chip_img, nrows, ncols, transfer_cols);
   sobel_16_stage_x_unrolled_1_opt_kernel(sobel_16_stage_x_unrolled_1, off_chip_img, num_transfers);
-  write_results<bits_per_pixel>("soda_sobel_16_stage_x_unrolled_1_opt_regression_result.csv", sobel_16_stage_x_unrolled_1, nrows, ncols, transfer_cols);
+  write_results_decimal<bits_per_pixel>("soda_sobel_16_stage_x_unrolled_1_opt_regression_result.csv", sobel_16_stage_x_unrolled_1, nrows, ncols, transfer_cols);
   free(off_chip_img);
   free(sobel_16_stage_x_unrolled_1);
 }
