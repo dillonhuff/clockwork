@@ -5202,6 +5202,8 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("cp ./aws_collateral/Makefile " + synth_dir).c_str());
   system(("cp ./aws_collateral/utils.mk " + synth_dir).c_str());
 
+  system(("mv set_app.sh " + app_dir).c_str());
+
   system(("mv " + out_name + "_kernel.h " + soda_dir).c_str());
 
   system(("mv " + out_name + "*.cpp " + synth_dir).c_str());

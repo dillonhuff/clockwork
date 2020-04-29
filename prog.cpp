@@ -769,7 +769,7 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
 
     for (auto in : prg.ins) {
       of << tab(1) << "ap_uint<BURST_WIDTH>* " << in << " = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);" << endl;
-    of << tab(1) << "fill_array<bits_per_pixel>(\"" << in << "_input_pixel.csv\", " << in << ", nrows, ncols, transfer_cols);" << endl;
+    of << tab(1) << "fill_array_decimal<bits_per_pixel>(\"" << in << "_input_pixel.csv\", " << in << ", nrows, ncols, transfer_cols);" << endl;
 
       args.push_back(in);
     }
@@ -779,7 +779,7 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
     of << tab(1) << prg.name << "_kernel(" << comma_list(args) << ");" << endl;
 
     for (auto out : prg.outs) {
-      of << tab(1) << "write_results<bits_per_pixel>(\"soda_" << prg.name << "_regression_result.csv\", " << out << ", nrows, ncols, transfer_cols);" << endl;
+      of << tab(1) << "write_results_decimal<bits_per_pixel>(\"soda_" << prg.name << "_regression_result.csv\", " << out << ", nrows, ncols, transfer_cols);" << endl;
     }
 
     for (auto in : prg.ins) {
@@ -826,10 +826,15 @@ void generate_tb_compare_scripts(map<string, UBuffer>& buffers, prog& prg) {
     of.close();
   }
 
+  {
+    ofstream of("set_app.sh");
+    of << "export app=" << prg.name << endl;
+    of.close();
+  }
 
   {
     ofstream of("run_tb.sh");
-    of << "../../common/gen_app.sh" << endl;
+    of << "~/soda-compiler/src/sodac ${app}.soda --xocl-kernel ${app}_kernel.cpp --xocl-platform \"$VITIS_DIR/aws_platform/xilinx_aws-vu9p-f1_shell-v04261818_201920_1\"" << endl;
     of << "g++ -std=c++0x tb_soda_${app}.cpp ${app}_kernel.cpp -I ../../../ -I ${XILINX_VIVADO}/include || { echo 'compilation failed'; exit 1; }" << endl;
     of << "./a.out" << endl;
     of.close();
