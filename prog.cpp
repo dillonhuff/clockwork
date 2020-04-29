@@ -859,7 +859,7 @@ void generate_tb_compare_scripts(map<string, UBuffer>& buffers, prog& prg) {
     of << "cd .." << endl;
 
     of << "cd ../../" << endl;
-    of << "../../aligner ./soda_codes/${app}/our_code/${app}_update_0_write_accel_result.csv ./soda_codes/${app}/soda_code/soda_${app}_regression_result.csv" << endl;
+    of << "../../aligner ./our_code/${app}_update_0_write_accel_result.csv ./soda_code/soda_${app}_regression_result.csv" << endl;
 
     of.close();
   }
