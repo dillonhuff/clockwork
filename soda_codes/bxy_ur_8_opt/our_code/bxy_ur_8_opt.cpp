@@ -1523,15 +1523,15 @@ inline void input_input_update_0_write_bundle_write(hw_uint<128>& input_update_0
 
 
 // Operation logic
-inline void bxy_ur_8_update_0(blurx_cache& blurx, HWStream<hw_uint<128> >& /* buffer_args num ports = 8 */bxy_ur_8, int d0, int d1) {
-	// Consume: blurx
-	auto blurx_0_c__0_value = blurx_bxy_ur_8_update_0_read_bundle_read(blurx/* source_delay */, d0, d1);
+inline void blurx_update_0(input_cache& input, blurx_cache& blurx, int d0, int d1) {
+	// Consume: input
+	auto input_0_c__0_value = input_blurx_update_0_read_bundle_read(input/* source_delay */, d0, d1);
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bxy_ur_8_update_0_blurx," << d0<< "," << d1<< "," <<  blurx_0_c__0_value << endl;
+  *global_debug_handle << "blurx_update_0_input," << d0<< "," << d1<< "," <<  input_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
-	auto compute_result = bxy_ur_8_generated_compute_unrolled_8(blurx_0_c__0_value);
-	// Produce: bxy_ur_8
-	bxy_ur_8.write(compute_result);
+	auto compute_result = blurx_generated_compute_unrolled_8(input_0_c__0_value);
+	// Produce: blurx
+	blurx_blurx_update_0_write_bundle_write(compute_result, blurx, d0, d1);
 #ifndef __VIVADO_SYNTH__
   hw_uint<128> debug_compute_result(compute_result);
   hw_uint<16> debug_compute_result_lane_0;
@@ -1550,14 +1550,14 @@ inline void bxy_ur_8_update_0(blurx_cache& blurx, HWStream<hw_uint<128> >& /* bu
   set_at<0, 16, 16>(debug_compute_result_lane_6, debug_compute_result.extract<96, 111>());
   hw_uint<16> debug_compute_result_lane_7;
   set_at<0, 16, 16>(debug_compute_result_lane_7, debug_compute_result.extract<112, 127>());
-  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
-  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
-  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
-  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
-  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
+  *global_debug_handle << "blurx_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "blurx_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "blurx_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "blurx_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "blurx_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
+  *global_debug_handle << "blurx_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
+  *global_debug_handle << "blurx_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
+  *global_debug_handle << "blurx_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
 #endif //__VIVADO_SYNTH__
 }
 
@@ -1596,15 +1596,15 @@ inline void input_update_0(HWStream<hw_uint<128> >& /* buffer_args num ports = 8
 #endif //__VIVADO_SYNTH__
 }
 
-inline void blurx_update_0(input_cache& input, blurx_cache& blurx, int d0, int d1) {
-	// Consume: input
-	auto input_0_c__0_value = input_blurx_update_0_read_bundle_read(input/* source_delay */, d0, d1);
+inline void bxy_ur_8_update_0(blurx_cache& blurx, HWStream<hw_uint<128> >& /* buffer_args num ports = 8 */bxy_ur_8, int d0, int d1) {
+	// Consume: blurx
+	auto blurx_0_c__0_value = blurx_bxy_ur_8_update_0_read_bundle_read(blurx/* source_delay */, d0, d1);
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "blurx_update_0_input," << d0<< "," << d1<< "," <<  input_0_c__0_value << endl;
+  *global_debug_handle << "bxy_ur_8_update_0_blurx," << d0<< "," << d1<< "," <<  blurx_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
-	auto compute_result = blurx_generated_compute_unrolled_8(input_0_c__0_value);
-	// Produce: blurx
-	blurx_blurx_update_0_write_bundle_write(compute_result, blurx, d0, d1);
+	auto compute_result = bxy_ur_8_generated_compute_unrolled_8(blurx_0_c__0_value);
+	// Produce: bxy_ur_8
+	bxy_ur_8.write(compute_result);
 #ifndef __VIVADO_SYNTH__
   hw_uint<128> debug_compute_result(compute_result);
   hw_uint<16> debug_compute_result_lane_0;
@@ -1623,14 +1623,14 @@ inline void blurx_update_0(input_cache& input, blurx_cache& blurx, int d0, int d
   set_at<0, 16, 16>(debug_compute_result_lane_6, debug_compute_result.extract<96, 111>());
   hw_uint<16> debug_compute_result_lane_7;
   set_at<0, 16, 16>(debug_compute_result_lane_7, debug_compute_result.extract<112, 127>());
-  *global_debug_handle << "blurx_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "blurx_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "blurx_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "blurx_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
-  *global_debug_handle << "blurx_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
-  *global_debug_handle << "blurx_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
-  *global_debug_handle << "blurx_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
-  *global_debug_handle << "blurx_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
+  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
+  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
+  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
+  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
 #endif //__VIVADO_SYNTH__
 }
 
