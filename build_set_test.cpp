@@ -3578,13 +3578,9 @@ struct App {
 
           cout << tab(1) << "unroll factor: " << u.unroll_factor << endl;
           for (int i = 0; i < u.unroll_factor; i++) {
-            //string lane_select_str =
-              //curly(arrow(, u.provided.name));
-              //"{ " + u.provided.name + "[d0, l1] -> lane[l] : d0 % " + str(u.unroll_factor) + " = " + str(i) + " }";
             string lane_select_str =
               "{ " + u.provided.name + "[d0, d1] -> lane_" + str(i) +
               "[floor(d0 / " + str(u.unroll_factor) + "), d1] : d0 % " + str(u.unroll_factor) + " = " + str(i) + " }";
-              //"{ " + u.provided.name + "[d0, l1] -> lane[l] : d0 % " + str(u.unroll_factor) + " = " + str(i) + " }";
             cout << tab(1) << "lane select str = " << lane_select_str << endl;
 
             isl_map* lane_select =
@@ -4642,7 +4638,6 @@ void up_stencil_down_unrolled_test() {
 
   int size = 16;
   lp.unroll("us", 4);
-  //lp.unroll("us", 2);
   lp.unroll("stencil", 2);
 
   lp.realize("ds", size, size);
@@ -5203,19 +5198,32 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("cp ./aws_collateral/utils.mk " + synth_dir).c_str());
 
   system(("mv set_app.sh " + app_dir).c_str());
+  make_exe("set_app");
 
   system(("mv " + out_name + "_kernel.h " + soda_dir).c_str());
 
   system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
   system(("mv " + out_name + "*.h " + synth_dir).c_str());
   system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
-  system(("mv run_tb_" + out_name + "*.sh " + synth_dir).c_str());
-  system(("mv aws_run_tb_" + out_name + "*.sh " + synth_dir).c_str());
+
+  make_exe("run_tb_" + out_name + ".sh");
+  system(("mv run_tb_" + out_name + ".sh " + synth_dir).c_str());
+
+  make_exe("aws_run_tb_" + out_name + ".sh");
+  system(("mv aws_run_tb_" + out_name + ".sh " + synth_dir).c_str());
+
+  make_exe("compare_regressions.sh");
   system(("mv compare_regressions.sh " + app_dir).c_str());
+
+  make_exe("aws_compare_regressions.sh");
+  system(("mv aws_compare_regressions.sh " + app_dir).c_str());
+
   system(("mv " + out_name + ".soda " + soda_dir).c_str());
 
   system(("mv soda_" + out_name + "*_host.cpp " + soda_dir).c_str());
   system(("mv tb_soda_" + out_name + "*.cpp " + soda_dir).c_str());
+
+  make_exe("run_tb.sh");
   system(("mv run_tb.sh " + soda_dir).c_str());
 }
 
@@ -6337,7 +6345,7 @@ void playground() {
 
 void application_tests() {
   blur_xy_16_app_test();
-  //assert(false);
+  assert(false);
   denoise2d_test();
 
 

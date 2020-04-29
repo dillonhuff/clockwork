@@ -113,9 +113,9 @@ int main(const int argc, const char** argv) {
 
 
   if (false) {
-  cout << "Finding event sub-alignments" << endl;
+    cout << "Finding event sub-alignments" << endl;
 
-  find_event_alignment(reference_lines, target_lines);
+    find_event_alignment(reference_lines, target_lines);
   }
 
 

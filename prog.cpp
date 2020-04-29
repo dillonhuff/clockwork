@@ -1,6 +1,13 @@
 #include "prog.h"
 #include "codegen.h"
 
+void ocl_headers(ostream& out) {
+  out << "#include \"xcl2.hpp\"" << endl;
+  out << "#include <algorithm>" << endl;
+  out << "#include <fstream>" << endl;
+  out << "#include <vector>" << endl << endl;
+}
+
 vector<string>
 split_bv(const int indent,
     ostream& conv_out,
@@ -146,10 +153,7 @@ void ocl_program_device(ostream& out, prog& prg) {
 
 void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
   ofstream out("soda_" + prg.name + "_host.cpp");
-  out << "#include \"xcl2.hpp\"" << endl;
-  out << "#include <algorithm>" << endl;
-  out << "#include <fstream>" << endl;
-  out << "#include <vector>" << endl << endl;
+  ocl_headers(out);
 
   out << "int main(int argc, char **argv) {" << endl;
 
@@ -192,15 +196,19 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
   out << endl;
 
   for (auto edge_bundle : in_bundles(buffers, prg)) {
+    out << tab(1) << "std::ofstream input_" << edge_bundle << "(\"" << edge_bundle << ".csv\");" << endl;
     out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
-    out << tab(1) << "// TODO: Add support for other widths" << endl;
-    out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = (i % 256);" << endl;
+    out << tab(2) << "// TODO: Add support for other widths" << endl;
+    out << tab(2) << "uint16_t val = (i % 256);" << endl;
+    out << tab(2) << "input_" << edge_bundle << " << val << std::endl;" << endl;
+    out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = val;" << endl;
     out << tab(1) << "}" << endl << endl;
+    out << tab(1) << "input_" << edge_bundle << ".close();" << endl;
   }
 
   for (auto edge_bundle : out_bundles(buffers, prg)) {
     out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
-    out << tab(1) << "// TODO: Add support for other widths" << endl;
+    out << tab(2) << "// TODO: Add support for other widths" << endl;
     out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = 0;" << endl;
     out << tab(1) << "}" << endl << endl;
   }
@@ -256,10 +264,7 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
 void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   ofstream out(prg.name + "_host.cpp");
 
-  out << "#include \"xcl2.hpp\"" << endl;
-  out << "#include <algorithm>" << endl;
-  out << "#include <fstream>" << endl;
-  out << "#include <vector>" << endl << endl;
+  ocl_headers(out);
 
   out << "int main(int argc, char **argv) {" << endl;
 
@@ -290,11 +295,22 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   out << endl;
 
   for (auto edge_bundle : in_bundles(buffers, prg)) {
+    out << tab(1) << "std::ofstream input_" << edge_bundle << "(\"" << edge_bundle << ".csv\");" << endl;
     out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
-    out << tab(1) << "// TODO: Add support for other widths" << endl;
-    out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = (i % 256);" << endl;
+    out << tab(2) << "// TODO: Add support for other widths" << endl;
+    out << tab(2) << "uint16_t val = (i % 256);" << endl;
+    out << tab(2) << "input_" << edge_bundle << " << val << std::endl;" << endl;
+    out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = val;" << endl;
     out << tab(1) << "}" << endl << endl;
+    out << tab(1) << "input_" << edge_bundle << ".close();" << endl;
   }
+
+  //for (auto edge_bundle : in_bundles(buffers, prg)) {
+    //out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
+    //out << tab(1) << "// TODO: Add support for other widths" << endl;
+    //out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = (i % 256);" << endl;
+    //out << tab(1) << "}" << endl << endl;
+  //}
 
   for (auto edge_bundle : out_bundles(buffers, prg)) {
     out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
@@ -732,15 +748,15 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
     of << "int main() {" << endl;
     string rep_buf = pick(prg.ins);
 
-    int nrows = -1;
+    int ncols = -1;
     if (prg.buffer_bounds[rep_buf].size() > 0) {
       cout << "Getting 0" << endl;
-      nrows = prg.buffer_bounds[rep_buf].at(0);
+      ncols = prg.buffer_bounds[rep_buf].at(0);
     }
-    int ncols = -1;
+    int nrows = -1;
     if (prg.buffer_bounds[rep_buf].size() > 1) {
       cout << "Getting 1" << endl;
-      ncols = prg.buffer_bounds[rep_buf].at(1);
+      nrows = prg.buffer_bounds[rep_buf].at(1);
     }
 
     of << tab(1) << "const int nrows = " << nrows << ";" << endl;
@@ -847,6 +863,21 @@ void generate_tb_compare_scripts(map<string, UBuffer>& buffers, prog& prg) {
     of.close();
   }
 
+  {
+    ofstream of("aws_compare_regressions.sh");
+    of << "source set_app.sh" << endl;
+    of << "cd soda_code" << endl;
+    of << "./run_tb.sh || { echo 'soda compilation failed'; exit 1; }" << endl;
+    of << "cd .." << endl;
+
+    of << "cd our_code" << endl;
+    of << "./aws_run_tb_${app}.sh || { echo 'our compilation failed'; exit 1; }" << endl;
+    of << "cd .." << endl;
+
+    of << "../../aligner ./our_code/${app}_update_0_write_accel_result.csv ./soda_code/soda_${app}_regression_result.csv" << endl;
+
+    of.close();
+  }
   {
     ofstream of("compare_regressions.sh");
     of << "app_name=" << prg.name << endl;
