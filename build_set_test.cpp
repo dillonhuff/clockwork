@@ -3596,30 +3596,32 @@ struct App {
             its(m, domain);
 
           cout << "Getting map from " << u.name() << " to " << consumer << endl;
-
-          Window f_win = data_window_needed_by_compute(u.name(), f);
-          //Window lane_window = data_window_needed_by_one_compute_lane(u.name(), f);
-          //cout << "### Window of " << f << " needed by " << u.name() << " = " << f_win << endl;
-          //auto* lane_data_needed =
-            //lane_window.needed;
-          //cout << tab(1) << "Window needed by a single lane: " << u.name() << " = " << str(lane_data_needed) << endl;
-
           cout << tab(1) << "unroll factor: " << u.unroll_factor << endl;
-          int i = 0;
-          for (auto p : f_win.pts()) {
-            vector<string> coeffs;
-            for (auto e : p) {
-              coeffs.push_back(isl_str(e));
+
+          for (int lane = 0; lane < u.unroll_factor; lane++) {
+            //Window f_win = data_window_needed_by_compute(u.name(), f);
+
+            //Window f_win = data_window_needed_by_compute(u.name(), f);
+            Window orig_dw =
+              data_window_needed_by_one_compute_lane(u.name(), f);
+            Window f_win =
+              data_window_needed_by_one_compute_lane(u.name(), f).increment(orig_dw.stride(0), lane);
+            int i = 0;
+            for (auto p : f_win.pts()) {
+              vector<string> coeffs;
+              for (auto e : p) {
+                coeffs.push_back(isl_str(e));
+              }
+              cout << "Coeffs: " << sep_list(coeffs, "[", "]", ", ") << endl;
+              auto access_map =
+                rdmap(ctx, "{ " + u.name() + "[" + comma_list(var_names) + "] -> " +
+                    f + sep_list(coeffs, "[", "]", ", ") + " }");
+              cout << "Access map: " << str(access_map) << endl;
+              string pt_name = consumer + "_rd" + to_string(i);
+              b.add_out_pt(pt_name, domain, its(to_map(access_map), domain), sched);
+              i++;
+              b.port_bundles[u.name() + "_read"].push_back(pt_name);
             }
-            cout << "Coeffs: " << sep_list(coeffs, "[", "]", ", ") << endl;
-            auto access_map =
-              rdmap(ctx, "{ " + u.name() + "[" + comma_list(var_names) + "] -> " +
-                  f + sep_list(coeffs, "[", "]", ", ") + " }");
-            cout << "Access map: " << str(access_map) << endl;
-            string pt_name = consumer + "_rd" + to_string(i);
-            b.add_out_pt(pt_name, domain, its(to_map(access_map), domain), sched);
-            i++;
-            b.port_bundles[u.name() + "_read"].push_back(pt_name);
           }
         }
       }
