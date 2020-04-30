@@ -6401,13 +6401,13 @@ void playground() {
 }
 
 void application_tests() {
+  up_stencil_down_auto_unrolled_test();
   conv3x3_app_unrolled_test();
   //assert(false);
   conv3x3_app_test();
   conv3x3_app_unrolled_uneven_test();
 
   up_unrolled_4_test();
-  //up_stencil_down_auto_unrolled_test();
   //assert(false);
 
   cnn_test();
