@@ -3176,6 +3176,7 @@ struct App {
       sbox.intervals.push_back({0, 0});
     }
 
+    cout << "padding to " << last_update(name).unroll_factor << endl;
     sbox = sbox.pad_range_to_nearest_multiple(last_update(name).unroll_factor);
 
     vector<string> buffers = sort_functions();
@@ -3223,6 +3224,7 @@ struct App {
       for (auto nn : needed_windows) {
         final_dom = unn(final_dom, nn.second);
       }
+      cout << "padding to " << last_update(next).unroll_factor << endl;
       final_dom = final_dom.pad_range_to_nearest_multiple(last_update(next).unroll_factor);
 
       domain_boxes[next] = final_dom;
@@ -3797,6 +3799,8 @@ struct App {
     if (!options.unroll_factors_as_pad) {
       const int unroll_factor = 1;
       set_unroll_factors(unroll_factor);
+    } else {
+      cout << "realizing naive with padded unroll factors" << endl;
     }
     //cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     fill_data_domain(name, d0, d1);
