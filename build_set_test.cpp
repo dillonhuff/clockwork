@@ -3926,8 +3926,13 @@ struct App {
         vector<pair<int, string> > args_and_widths;
         for (auto p : producers(f)) {
           int arg_width = app_dag.at(p.name).pixel_width;
+          int lanes = u.unroll_factor;
+          int offsets_per_lane =
+            data_window_needed_by_one_compute_lane(u.name(), p.name).pts().size();
+          int input_bits = arg_width*lanes*offsets_per_lane;
 
-          args_and_widths.push_back({arg_width*data_window_needed_by_compute(u.name(), p.name).pts().size(), p.name});
+          args_and_widths.push_back({input_bits, p.name});
+          //args_and_widths.push_back({arg_width*data_window_needed_by_compute(u.name(), p.name).pts().size(), p.name});
         }
 
         vector<string> arg_decls;
@@ -4608,6 +4613,32 @@ void up_stencil_test() {
   //assert(false);
 }
 
+void up_stencil_down_auto_unrolled_test() {
+  App lp;
+  lp.func2d("in_off_chip");
+  lp.func2d("in", "id", {pt("in_off_chip")});
+
+  lp.func2d("us", "id", {upsample(2, "in")});
+  lp.func2d("stencil", "conv_3_3", {stencil(-1, 1, -1, 1, "us")});
+  lp.func2d("up_stencil_down", "id", {downsample(2, "stencil")});
+
+  int size = 16;
+
+  lp.realize("up_stencil_down", size, size, 4);
+  auto opt = run_regression_tb("up_stencil_down_opt");
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  options.unroll_factors_as_pad = true;
+
+  lp.realize_naive(options, "up_stencil_down", size, size);
+  auto naive = run_regression_tb("up_stencil_down_naive");
+
+  assert(opt == naive);
+  assert(false);
+}
+
 void up_stencil_down_test() {
   App lp;
   lp.func2d("in_off_chip");
@@ -4661,7 +4692,6 @@ void up_stencil_down_unrolled_test() {
 
   lp.func2d("us", "id", {upsample(2, "in")});
   lp.func2d("stencil", "conv_3_3", {stencil(-1, 1, -1, 1, "us")});
-  //lp.func2d("stencil", "conv_3_3", {stencil(0, 2, 0, 2, "us")});
   lp.func2d("ds", "id", {downsample(2, "stencil")});
 
   int size = 16;
@@ -6372,6 +6402,10 @@ void playground() {
 }
 
 void application_tests() {
+  //up_unrolled_4_test();
+  //up_stencil_down_auto_unrolled_test();
+  //assert(false);
+
   cnn_test();
   //assert(false);
 
@@ -6380,7 +6414,6 @@ void application_tests() {
 
 
   up_unrolled_test();
-  up_unrolled_4_test();
   up_down_unrolled_test();
 
   conv3x3_app_unrolled_uneven_test();

@@ -143,7 +143,7 @@ hw_uint<128>  blurx_generated_compute_unrolled_8(hw_uint<384>& input) {
 }
 
   // bxy_ur_8_update_0 unroll factor: 8
-hw_uint<128>  bxy_ur_8_generated_compute_unrolled_8(hw_uint<160>& blurx) {
+hw_uint<128>  bxy_ur_8_generated_compute_unrolled_8(hw_uint<384>& blurx) {
   hw_uint<128> whole_result;
   hw_uint<48> lane_0_blurx;
   // Need offset: 0, 0
