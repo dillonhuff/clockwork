@@ -95,6 +95,13 @@ isl_aff* cpy(isl_aff* const b) {
   return isl_aff_copy(b);
 }
 
+isl_local_space* get_local_space(isl_set* const m) {
+
+  auto bsets = get_basic_sets(m);
+  assert(bsets.size() == 1);
+  return get_local_space(pick(bsets));
+}
+
 isl_local_space* get_local_space(isl_aff* const m) {
   return isl_aff_get_local_space(m);
 }
@@ -1827,6 +1834,14 @@ int to_int(isl_val* a) {
   return stoi(str(a));
 }
 
+isl_aff* set_coeff(isl_aff* const a, const int pos, isl_val* v) {
+  return isl_aff_set_coefficient_val(a, isl_dim_in, pos, v);
+}
+
+isl_val* coeff(isl_aff* const a, const int pos) {
+  return isl_aff_get_coefficient_val(a, isl_dim_in, pos);
+}
+
 int int_coeff(isl_aff* const a, const int pos) {
   return to_int(isl_aff_get_coefficient_val(a, isl_dim_in, pos));
 }
@@ -1836,3 +1851,71 @@ int int_const_coeff(isl_aff* const a) {
 }
 
 
+uset* pad_uset(uset* domain) {
+  auto ct = ctx(domain);
+  cout << "Domain: " << str(domain) << endl;
+  int max_dim = -1;
+  set<int> different_dims;
+  cout << "sets..." << endl;
+  for (auto s : get_sets(domain)) {
+    cout << tab(1) << str(s) << endl;
+    int new_dim = num_dims(s);
+    if (new_dim > max_dim) {
+      max_dim = new_dim;
+    }
+    different_dims.insert(new_dim);
+  }
+
+  cout << "Max dimension: " << max_dim << endl;
+  cout << "# of different dimensions..." << different_dims.size() << endl;
+  map<string, int> pad_factor;
+  map<string, isl_set*> padded_sets;
+  for (auto s : get_sets(domain)) {
+    cout << "padding set: " << str(s) << endl;
+    int pad_factor = max_dim - num_dims(s);
+    int original_dim = num_dims(s);
+
+    isl_set* padded = isl_set_empty(get_space(s));
+    padded = isl_set_add_dims(padded, isl_dim_set, pad_factor);
+
+    for (auto bset : get_basic_sets(s)) {
+
+      auto pad = isl_basic_set_add_dims(cpy(bset), isl_dim_set, pad_factor);
+      cout << "Pad set before zero constraints: " << str(pad) << endl;
+
+      for (int i = original_dim; i < num_dims(pad); i++) {
+        auto ls = isl_local_space_from_space(cpy(get_space(padded)));
+
+        auto is_zero = isl_constraint_alloc_equality(ls);
+        is_zero = isl_constraint_set_constant_val(is_zero, zero(ct));
+        is_zero = isl_constraint_set_coefficient_val(is_zero, isl_dim_set, i, one(ct));
+        pad = isl_basic_set_add_constraint(pad, is_zero);
+      }
+
+      cout << "Padded bset: " << str(pad) << endl;
+      isl_set* pbset = to_set(pad);
+      cout << "Padded  set: " << str(pbset) << endl;
+      padded = unn(padded, pbset);
+      cout << "Padded: " << str(padded) << endl;
+    }
+
+    cout << "Final Padded set" << str(padded) << endl;
+    padded = isl_set_set_tuple_id(padded, id(ct, name(s)));
+    padded_sets[name(s)] = padded;
+  }
+
+  cout << "After padding..." << endl;
+  uset* padded_domain =
+    isl_union_set_read_from_str(ct, "{}");
+  for (auto p : padded_sets) {
+    cout << tab(1) << str(p.second) << endl;
+    padded_domain = unn(padded_domain, to_uset(p.second));
+  }
+
+  cout << "Padded domain: " << str(padded_domain) << endl;
+  return padded_domain;
+}
+
+isl_aff* add(isl_aff* a, isl_aff* b) {
+  return isl_aff_add(cpy(a), cpy(b));
+}

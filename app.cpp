@@ -7,6 +7,15 @@ string sched_var_name(const string& n) {
 string delay_var_name(const string& n) {
   return "delay_" + n;
 }
+
+string startvar(const string& n) {
+  return "start_" + n;
+}
+
+string endvar(const string& n) {
+  return "end_" + n;
+}
+
 QExpr delayvar(const string& n) {
   return qexpr(delay_var_name(n));
 }
@@ -1210,6 +1219,42 @@ umap* pad_map(umap* unpadded) {
   return final_map;
 }
 
+map<string, isl_aff*>
+hardware_schedule(
+    uset* domain,
+    umap* validity,
+    umap* proximity) {
+
+  auto padded_domain = pad_uset(domain);
+  auto padded_validity = pad_map(validity);
+  auto padded_proximity = pad_map(proximity);
+
+  auto sw_schedules =
+    clockwork_schedule(padded_domain, padded_validity, padded_proximity);
+
+  map<string, isl_aff*> hw_schedules;
+  auto ct = ctx(padded_domain);
+
+  for (auto f : get_sets(padded_domain)) {
+    isl_aff* s = aff_on_domain(get_local_space(f), zero(ct));
+    isl_aff* cycle_delay = aff_on_domain(get_local_space(f), one(ct));
+    vector<isl_aff*> sw_exprs =
+      map_find(name(f), sw_schedules);
+
+    for (int i = 0; i < sw_exprs.size(); i++) {
+      s = set_coeff(s, i, coeff(sw_exprs.at(i), 0));
+    }
+
+    hw_schedules[startvar(name(f))] = s;
+      //aff_on_domain(get_local_space(f), one(ct));
+    hw_schedules[endvar(name(f))] =
+      add(s, cycle_delay);
+      //aff_on_domain(get_local_space(f), one(ct));
+  }
+
+  return hw_schedules;
+}
+
 map<string, vector<isl_aff*> >
 clockwork_schedule(uset* domain,
     umap* validity,
@@ -1220,68 +1265,8 @@ clockwork_schedule(uset* domain,
 
 map<string, vector<isl_aff*> >
 clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, vector<string> >& high_bandwidth_deps) {
-  auto ct = ctx(domain);
-  cout << "Domain: " << str(domain) << endl;
-  int max_dim = -1;
-  set<int> different_dims;
-  cout << "sets..." << endl;
-  for (auto s : get_sets(domain)) {
-    cout << tab(1) << str(s) << endl;
-    int new_dim = num_dims(s);
-    if (new_dim > max_dim) {
-      max_dim = new_dim;
-    }
-    different_dims.insert(new_dim);
-  }
 
-  cout << "Max dimension: " << max_dim << endl;
-  cout << "# of different dimensions..." << different_dims.size() << endl;
-  map<string, int> pad_factor;
-  map<string, isl_set*> padded_sets;
-  for (auto s : get_sets(domain)) {
-    cout << "padding set: " << str(s) << endl;
-    int pad_factor = max_dim - num_dims(s);
-    int original_dim = num_dims(s);
-
-    isl_set* padded = isl_set_empty(get_space(s));
-    padded = isl_set_add_dims(padded, isl_dim_set, pad_factor);
-
-    for (auto bset : get_basic_sets(s)) {
-
-      auto pad = isl_basic_set_add_dims(cpy(bset), isl_dim_set, pad_factor);
-      cout << "Pad set before zero constraints: " << str(pad) << endl;
-
-      for (int i = original_dim; i < num_dims(pad); i++) {
-        auto ls = isl_local_space_from_space(cpy(get_space(padded)));
-
-        auto is_zero = isl_constraint_alloc_equality(ls);
-        is_zero = isl_constraint_set_constant_val(is_zero, zero(ct));
-        is_zero = isl_constraint_set_coefficient_val(is_zero, isl_dim_set, i, one(ct));
-        pad = isl_basic_set_add_constraint(pad, is_zero);
-      }
-
-      cout << "Padded bset: " << str(pad) << endl;
-      isl_set* pbset = to_set(pad);
-      cout << "Padded  set: " << str(pbset) << endl;
-      padded = unn(padded, pbset);
-      cout << "Padded: " << str(padded) << endl;
-    }
-
-    cout << "Final Padded set" << str(padded) << endl;
-    padded = isl_set_set_tuple_id(padded, id(ct, name(s)));
-    padded_sets[name(s)] = padded;
-  }
-
-  cout << "After padding..." << endl;
-  uset* padded_domain =
-    isl_union_set_read_from_str(ct, "{}");
-  for (auto p : padded_sets) {
-    cout << tab(1) << str(p.second) << endl;
-    padded_domain = unn(padded_domain, to_uset(p.second));
-  }
-
-  cout << "Padded domain: " << str(padded_domain) << endl;
-
+  uset* padded_domain = pad_uset(domain);
   auto padded_validity = pad_map(validity);
   auto padded_proximity = pad_map(proximity);
 

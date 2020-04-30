@@ -76,6 +76,7 @@ isl_val* negone(isl_ctx* c);
 isl_val* zero(isl_ctx* c);
 isl_aff* cpy(isl_aff* const b);
 
+isl_local_space* get_local_space(isl_set* const m);
 isl_local_space* get_local_space(isl_basic_set* const m);
 isl_local_space* get_local_space(isl_aff* const m);
 isl_space* get_space(isl_constraint* const m);
@@ -446,14 +447,19 @@ isl_map* project_all_but(isl_map* const dmap, const int d);
 vector<string> space_var_args(isl_space* s);
 vector<string> space_var_decls(isl_space* s);
 
+isl_aff* add(isl_aff* a, isl_aff* b);
+
 isl_val* add(isl_val* a, isl_val* b);
 isl_val* mul(isl_val* a, isl_val* b);
 isl_val* neg(isl_val* a);
 
 int to_int(isl_val* a);
 
+isl_aff* set_coeff(isl_aff* const a, const int pos, isl_val* v);
+isl_val* coeff(isl_aff* const a, const int pos);
 int int_coeff(isl_aff* const a, const int pos);
 int int_const_coeff(isl_aff* const a);
 
 isl_aff* aff_on_domain(isl_local_space* ls, isl_val* max);
 
+uset* pad_uset(uset* domain);

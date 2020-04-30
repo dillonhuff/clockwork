@@ -1267,23 +1267,51 @@ prog cnn_conv_layer() {
 }
 
 void cnn_test() {
-    prog prg = cnn_conv_layer();
+  prog prg = cnn_conv_layer();
+  //auto domain = prg.whole_iteration_domain();
 
-    umap* opt_sched = prg.optimized_codegen();
-    auto domain = prg.whole_iteration_domain();
-    auto schedmap = its(opt_sched, domain);
-    cout << "Optimized schedule..." << endl;
-    cout << codegen_c(schedmap);
+  //auto order_deps = prg.relative_orders();
+  //cout << "Getting validity deps..." << endl;
+  //isl_union_map *raw_deps = prg.validity_deps();
+  //cout << "Got validity deps..." << endl;
+  //cout << "Validity: " << str(raw_deps) << endl;
+  //auto validity =
+    //unn(order_deps, raw_deps);
+  //isl_union_map *proximity =
+    //cpy(raw_deps);
 
-    /*
-    auto buffers = build_buffers(prg);
-    for (auto itr: buffers) {
-        //generate_hls_code(itr.second);
+  //auto clksched = hardware_schedule(domain, validity, proximity);
+  //auto doms = get_sets(domain);
+  //cout << "---- Domains..." << endl;
+  //for (auto d : doms) {
+    //cout << tab(1) << str(d) << endl;
+  //}
+  //cout << "---- Hardware schedule:" << endl;
+  //for (auto s : clksched) {
+    //cout << tab(1) << s.first << " -> " << str(s.second) << endl;
+  //}
+  //assert(false);
+  umap* opt_sched = prg.optimized_codegen();
+  //cout << "------ ISL schedule" << endl;
+  //for (auto m : get_maps(opt_sched)) {
+    //cout << tab(1) << str(m) << endl;
+  //}
+  //assert(false);
 
-    }*/
-    auto buffers = build_buffers(prg);
-    generate_app_code(buffers, prg);
-    //assert(false);
+  auto domain = prg.whole_iteration_domain();
+  auto schedmap = its(opt_sched, domain);
+  cout << "Optimized schedule..." << endl;
+  cout << codegen_c(schedmap);
+
+
+  //auto buffers = build_buffers(prg);
+  //for (auto itr: buffers) {
+  //generate_hls_code(itr.second);
+  //}*/
+
+  auto buffers = build_buffers(prg);
+  generate_app_code(buffers, prg);
+  //assert(false);
 }
 
 void conv_test() {
@@ -6344,8 +6372,10 @@ void playground() {
 }
 
 void application_tests() {
-  blur_xy_16_app_test();
+  cnn_test();
   //assert(false);
+
+  blur_xy_16_app_test();
   denoise2d_test();
 
 
@@ -6355,7 +6385,6 @@ void application_tests() {
 
   conv3x3_app_unrolled_uneven_test();
 
-  cnn_test();
 
   jacobi2d_app_test();
   up_stencil_down_test();
