@@ -959,18 +959,14 @@ extract_schedule_params(vector<isl_map*>& deps) {
   return schedule_params;
 }
 
-map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
-    map<string, vector<string> >& high_bandwidth_deps) {
-  cout << "Deps..." << endl;
-  assert(deps.size() > 0);
-  isl_ctx* ct = ctx(deps.at(0));
-  
-  auto schedule_params =
-    extract_schedule_params(deps);
+map<string, isl_val*> compute_qfactors(map<isl_map*, vector<pair<isl_val*, isl_val*> > >& schedule_params) {
+
+  assert(schedule_params.size() > 0);
+  isl_ctx* ct = ctx(pick(schedule_params).first);
 
   ilp_builder ilp(ct);
   vector<QConstraint> rate_constraints;
-  //QExpr objective = qexpr(0);
+
 
   map<string, isl_val*> obj;
   for (auto s : schedule_params) {
@@ -994,8 +990,6 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
 
       obj.insert({sched_var_name(consumer), isl_val_one(ct)});
       obj.insert({sched_var_name(producer), isl_val_one(ct)});
-
-      //objective = objective + qp + qc;
     }
   }
 
@@ -1008,6 +1002,31 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
 
   // Compute delays
   assert(ilp.solved);
+  map<string, isl_val*> qfs;
+  for (auto s : schedule_params) {
+    string consumer = domain_name(s.first);
+    string producer = range_name(s.first);
+
+    string qp = sched_var_name(producer);
+    string qc = sched_var_name(consumer);
+
+    qfs[qp] = ilp.value(qp);
+    qfs[qc] = ilp.value(qc);
+  }
+  return qfs;
+}
+
+map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
+    map<string, vector<string> >& high_bandwidth_deps) {
+  cout << "Deps..." << endl;
+  assert(deps.size() > 0);
+  isl_ctx* ct = ctx(deps.at(0));
+  
+  auto schedule_params =
+    extract_schedule_params(deps);
+
+  map<string, isl_val*> qfactors =
+    compute_qfactors(schedule_params);
 
   cout << "Building delay constraints" << endl;
   ilp_builder delay_problem(ct);
@@ -1050,7 +1069,8 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
     operation_names.insert(consumer);
     operation_names.insert(producer);
 
-    isl_val* qp = ilp.value(sched_var_name(producer));
+    isl_val* qp = map_find(sched_var_name(producer), qfactors);
+    //isl_val* qp = ilp.value(sched_var_name(producer));
 
     string dc = delay_var_name(consumer);
     string dp = delay_var_name(producer);
@@ -1081,7 +1101,8 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
 
   map<string, isl_aff*> schedule_functions;
   for (auto f : operation_names) {
-    isl_val* rate = ilp.value(sched_var_name(f));
+    isl_val* rate = map_find(sched_var_name(f), qfactors);
+    //isl_val* rate = ilp.value(sched_var_name(f));
     isl_val* delay = delay_problem.value(delay_var_name(f));
     cout << "f rate: " << str(rate) << ", delay: " << str(delay) << endl;
     string aff_str = 
