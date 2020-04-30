@@ -770,6 +770,7 @@ class UBuffer {
         isl_set* dm,
         isl_map* access,
         isl_union_map* sched) {
+      assert(!contains_key(name, domain));
       domain[name] = dm;
       access_map[name] = to_umap(access);
       schedule[name] = (sched);
@@ -812,6 +813,7 @@ class UBuffer {
     void add_out_pt_with_access_pattern(
             const std::string& name,
             AccessPattern & acc_pattern ) {
+      assert(!contains_key(name, domain));
       domain[name] = acc_pattern.get_domain(ctx);
       access_map[name] = acc_pattern.get_access_map(ctx);
       access_pattern[name] = acc_pattern;
@@ -823,6 +825,7 @@ class UBuffer {
         isl_set* dm,
         isl_map* access,
         isl_map* sched) {
+      assert(!contains_key(name, domain));
       domain[name] = dm;
       access_map[name] = to_umap(access);
       schedule[name] = to_umap(sched);
@@ -843,6 +846,7 @@ class UBuffer {
         const std::string& dm,
         const std::string& access,
         const std::string& sched) {
+      assert(!contains_key(name, domain));
       add_pt(name, dm, access, sched);
       isIn[name] = false;
     }
