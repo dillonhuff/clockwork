@@ -86,6 +86,14 @@ std::string to_string(const QAV& q) {
 }
 
 static inline
+QAV scale(const int f, const QAV& v) {
+  assert(v.is_num);
+  QAV cpy = v;
+  cpy.num = f*cpy.num;
+  return cpy;
+}
+
+static inline
 QAV qconst(const int& v, const int& d) {
   assert(v == 1 || v % d == 0);
   //if (!(v == 1 || d == 1)) {

@@ -3605,8 +3605,10 @@ struct App {
             //Window f_win = data_window_needed_by_compute(u.name(), f);
             Window orig_dw =
               data_window_needed_by_one_compute_lane(u.name(), f);
+            cout << "original window = " << orig_dw << endl;
             Window f_win =
-              data_window_needed_by_one_compute_lane(u.name(), f).increment(orig_dw.stride(0), lane);
+              data_window_needed_by_one_compute_lane(u.name(), f).increment(orig_dw.stride(0), lane).scale_stride(u.unroll_factor);
+            cout << "unrolled window f_win = " << f_win << endl;
             for (auto p : f_win.pts()) {
               vector<string> coeffs;
               for (auto e : p) {
@@ -6399,12 +6401,13 @@ void playground() {
 }
 
 void application_tests() {
-  conv3x3_app_test();
   conv3x3_app_unrolled_test();
+  //assert(false);
+  conv3x3_app_test();
   conv3x3_app_unrolled_uneven_test();
 
   up_unrolled_4_test();
-  up_stencil_down_auto_unrolled_test();
+  //up_stencil_down_auto_unrolled_test();
   //assert(false);
 
   cnn_test();

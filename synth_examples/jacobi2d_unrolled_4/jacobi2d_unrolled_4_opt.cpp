@@ -10,7 +10,7 @@ using namespace std;
 
 #include "hw_classes.h"
 
-struct t1_t1_update_0_write0_merged_banks_4_cache {
+struct t1_t1_update_0_write0_merged_banks_5_cache {
 	// RAM Box: {[-4, 16], [-1, 16]}
 	// Capacity: 14
 	// # of read delays: 5
@@ -88,7 +88,7 @@ struct t1_t1_update_0_write0_merged_banks_4_cache {
 
 };
 
-struct t1_t1_update_0_write1_merged_banks_3_cache {
+struct t1_t1_update_0_write1_merged_banks_5_cache {
 	// RAM Box: {[-3, 17], [-1, 16]}
 	// Capacity: 14
 	// # of read delays: 4
@@ -157,7 +157,7 @@ struct t1_t1_update_0_write1_merged_banks_3_cache {
 
 };
 
-struct t1_t1_update_0_write2_merged_banks_3_cache {
+struct t1_t1_update_0_write2_merged_banks_5_cache {
 	// RAM Box: {[-2, 18], [-1, 16]}
 	// Capacity: 14
 	// # of read delays: 4
@@ -226,7 +226,7 @@ struct t1_t1_update_0_write2_merged_banks_3_cache {
 
 };
 
-struct t1_t1_update_0_write3_merged_banks_4_cache {
+struct t1_t1_update_0_write3_merged_banks_5_cache {
 	// RAM Box: {[-1, 19], [-1, 16]}
 	// Capacity: 14
 	// # of read delays: 5
@@ -305,28 +305,28 @@ struct t1_t1_update_0_write3_merged_banks_4_cache {
 };
 
 struct t1_cache {
-  t1_t1_update_0_write0_merged_banks_4_cache t1_t1_update_0_write0_merged_banks_4;
-  t1_t1_update_0_write1_merged_banks_3_cache t1_t1_update_0_write1_merged_banks_3;
-  t1_t1_update_0_write2_merged_banks_3_cache t1_t1_update_0_write2_merged_banks_3;
-  t1_t1_update_0_write3_merged_banks_4_cache t1_t1_update_0_write3_merged_banks_4;
+  t1_t1_update_0_write0_merged_banks_5_cache t1_t1_update_0_write0_merged_banks_5;
+  t1_t1_update_0_write1_merged_banks_5_cache t1_t1_update_0_write1_merged_banks_5;
+  t1_t1_update_0_write2_merged_banks_5_cache t1_t1_update_0_write2_merged_banks_5;
+  t1_t1_update_0_write3_merged_banks_5_cache t1_t1_update_0_write3_merged_banks_5;
 };
 
 
 
 inline void t1_t1_update_0_write0_write(hw_uint<32> & t1_t1_update_0_write0, t1_cache& t1, int d0, int d1) {
-  t1.t1_t1_update_0_write0_merged_banks_4.push(t1_t1_update_0_write0);
+  t1.t1_t1_update_0_write0_merged_banks_5.push(t1_t1_update_0_write0);
 }
 
 inline void t1_t1_update_0_write1_write(hw_uint<32> & t1_t1_update_0_write1, t1_cache& t1, int d0, int d1) {
-  t1.t1_t1_update_0_write1_merged_banks_3.push(t1_t1_update_0_write1);
+  t1.t1_t1_update_0_write1_merged_banks_5.push(t1_t1_update_0_write1);
 }
 
 inline void t1_t1_update_0_write2_write(hw_uint<32> & t1_t1_update_0_write2, t1_cache& t1, int d0, int d1) {
-  t1.t1_t1_update_0_write2_merged_banks_3.push(t1_t1_update_0_write2);
+  t1.t1_t1_update_0_write2_merged_banks_5.push(t1_t1_update_0_write2);
 }
 
 inline void t1_t1_update_0_write3_write(hw_uint<32> & t1_t1_update_0_write3, t1_cache& t1, int d0, int d1) {
-  t1.t1_t1_update_0_write3_merged_banks_4.push(t1_t1_update_0_write3);
+  t1.t1_t1_update_0_write3_merged_banks_5.push(t1_t1_update_0_write3);
 }
 
 inline hw_uint<32>  jacobi2d_unrolled_4_rd0_select(t1_cache& t1, int d0, int d1) {
@@ -336,7 +336,7 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd0_select(t1_cache& t1, int d0, int d1)
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
   // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 8 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write3 = t1.t1_t1_update_0_write3_merged_banks_4.peek_8();
+  auto value_t1_t1_update_0_write3 = t1.t1_t1_update_0_write3_merged_banks_5.peek_8();
   return value_t1_t1_update_0_write3;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -352,7 +352,7 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd1_select(t1_cache& t1, int d0, int d1)
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
   // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 13 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_4.peek_13();
+  auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_13();
   return value_t1_t1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -364,12 +364,12 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd1_select(t1_cache& t1, int d0, int d1)
 inline hw_uint<32>  jacobi2d_unrolled_4_rd10_select(t1_cache& t1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // jacobi2d_unrolled_4_rd10 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[3 + 4d0, -1 + d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // jacobi2d_unrolled_4_rd10 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[1 + 4d0, d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
-  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 13 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write3 = t1.t1_t1_update_0_write3_merged_banks_4.peek_13();
-  return value_t1_t1_update_0_write3;
+  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 7 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  auto value_t1_t1_update_0_write1 = t1.t1_t1_update_0_write1_merged_banks_5.peek_7();
+  return value_t1_t1_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -380,12 +380,12 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd10_select(t1_cache& t1, int d0, int d1
 inline hw_uint<32>  jacobi2d_unrolled_4_rd11_select(t1_cache& t1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // jacobi2d_unrolled_4_rd11 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[3 + 4d0, d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // jacobi2d_unrolled_4_rd11 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[2 + 4d0, -1 + d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
-  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 7 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write3 = t1.t1_t1_update_0_write3_merged_banks_4.peek_7();
-  return value_t1_t1_update_0_write3;
+  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 13 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  auto value_t1_t1_update_0_write2 = t1.t1_t1_update_0_write2_merged_banks_5.peek_13();
+  return value_t1_t1_update_0_write2;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -396,12 +396,12 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd11_select(t1_cache& t1, int d0, int d1
 inline hw_uint<32>  jacobi2d_unrolled_4_rd12_select(t1_cache& t1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // jacobi2d_unrolled_4_rd12 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[3 + 4d0, 1 + d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // jacobi2d_unrolled_4_rd12 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[2 + 4d0, d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
-  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 1 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write3 = t1.t1_t1_update_0_write3_merged_banks_4.peek_1();
-  return value_t1_t1_update_0_write3;
+  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 7 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  auto value_t1_t1_update_0_write2 = t1.t1_t1_update_0_write2_merged_banks_5.peek_7();
+  return value_t1_t1_update_0_write2;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -412,11 +412,107 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd12_select(t1_cache& t1, int d0, int d1
 inline hw_uint<32>  jacobi2d_unrolled_4_rd13_select(t1_cache& t1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // jacobi2d_unrolled_4_rd13 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[4 + 4d0, d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // jacobi2d_unrolled_4_rd13 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[2 + 4d0, 1 + d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
+  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 1 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  auto value_t1_t1_update_0_write2 = t1.t1_t1_update_0_write2_merged_banks_5.peek_1();
+  return value_t1_t1_update_0_write2;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<32>  jacobi2d_unrolled_4_rd14_select(t1_cache& t1, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // jacobi2d_unrolled_4_rd14 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[3 + 4d0, d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
+  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 7 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  auto value_t1_t1_update_0_write3 = t1.t1_t1_update_0_write3_merged_banks_5.peek_7();
+  return value_t1_t1_update_0_write3;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<32>  jacobi2d_unrolled_4_rd15_select(t1_cache& t1, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // jacobi2d_unrolled_4_rd15 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[2 + 4d0, d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
+  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 7 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  auto value_t1_t1_update_0_write2 = t1.t1_t1_update_0_write2_merged_banks_5.peek_7();
+  return value_t1_t1_update_0_write2;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<32>  jacobi2d_unrolled_4_rd16_select(t1_cache& t1, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // jacobi2d_unrolled_4_rd16 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[3 + 4d0, -1 + d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
+  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 13 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  auto value_t1_t1_update_0_write3 = t1.t1_t1_update_0_write3_merged_banks_5.peek_13();
+  return value_t1_t1_update_0_write3;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<32>  jacobi2d_unrolled_4_rd17_select(t1_cache& t1, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // jacobi2d_unrolled_4_rd17 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[3 + 4d0, d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
+  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 7 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  auto value_t1_t1_update_0_write3 = t1.t1_t1_update_0_write3_merged_banks_5.peek_7();
+  return value_t1_t1_update_0_write3;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<32>  jacobi2d_unrolled_4_rd18_select(t1_cache& t1, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // jacobi2d_unrolled_4_rd18 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[3 + 4d0, 1 + d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
+  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 1 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  auto value_t1_t1_update_0_write3 = t1.t1_t1_update_0_write3_merged_banks_5.peek_1();
+  return value_t1_t1_update_0_write3;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<32>  jacobi2d_unrolled_4_rd19_select(t1_cache& t1, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // jacobi2d_unrolled_4_rd19 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[4 + 4d0, d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
   // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 6 : 0 <= d0 <= 2 and 0 <= d1 <= 15; jacobi2d_unrolled_4_update_0[d0, d1] -> (3 + d0) : d0 = 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_4.peek_6();
+  auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_6();
   return value_t1_t1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -432,7 +528,7 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd2_select(t1_cache& t1, int d0, int d1)
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
   // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 7 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_4.peek_7();
+  auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_7();
   return value_t1_t1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -448,7 +544,7 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd3_select(t1_cache& t1, int d0, int d1)
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
   // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 1 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_4.peek_1();
+  auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_1();
   return value_t1_t1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -460,11 +556,11 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd3_select(t1_cache& t1, int d0, int d1)
 inline hw_uint<32>  jacobi2d_unrolled_4_rd4_select(t1_cache& t1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // jacobi2d_unrolled_4_rd4 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[1 + 4d0, -1 + d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // jacobi2d_unrolled_4_rd4 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[1 + 4d0, d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
-  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 13 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write1 = t1.t1_t1_update_0_write1_merged_banks_3.peek_13();
+  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 7 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  auto value_t1_t1_update_0_write1 = t1.t1_t1_update_0_write1_merged_banks_5.peek_7();
   return value_t1_t1_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -476,12 +572,12 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd4_select(t1_cache& t1, int d0, int d1)
 inline hw_uint<32>  jacobi2d_unrolled_4_rd5_select(t1_cache& t1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // jacobi2d_unrolled_4_rd5 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[1 + 4d0, d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // jacobi2d_unrolled_4_rd5 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[4d0, d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
   // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 7 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write1 = t1.t1_t1_update_0_write1_merged_banks_3.peek_7();
-  return value_t1_t1_update_0_write1;
+  auto value_t1_t1_update_0_write0 = t1.t1_t1_update_0_write0_merged_banks_5.peek_7();
+  return value_t1_t1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -492,11 +588,11 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd5_select(t1_cache& t1, int d0, int d1)
 inline hw_uint<32>  jacobi2d_unrolled_4_rd6_select(t1_cache& t1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // jacobi2d_unrolled_4_rd6 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[1 + 4d0, 1 + d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // jacobi2d_unrolled_4_rd6 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[1 + 4d0, -1 + d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
-  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 1 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write1 = t1.t1_t1_update_0_write1_merged_banks_3.peek_1();
+  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 13 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  auto value_t1_t1_update_0_write1 = t1.t1_t1_update_0_write1_merged_banks_5.peek_13();
   return value_t1_t1_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -508,12 +604,12 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd6_select(t1_cache& t1, int d0, int d1)
 inline hw_uint<32>  jacobi2d_unrolled_4_rd7_select(t1_cache& t1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // jacobi2d_unrolled_4_rd7 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[2 + 4d0, -1 + d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // jacobi2d_unrolled_4_rd7 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[1 + 4d0, d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
-  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 13 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write2 = t1.t1_t1_update_0_write2_merged_banks_3.peek_13();
-  return value_t1_t1_update_0_write2;
+  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 7 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  auto value_t1_t1_update_0_write1 = t1.t1_t1_update_0_write1_merged_banks_5.peek_7();
+  return value_t1_t1_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -524,12 +620,12 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd7_select(t1_cache& t1, int d0, int d1)
 inline hw_uint<32>  jacobi2d_unrolled_4_rd8_select(t1_cache& t1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // jacobi2d_unrolled_4_rd8 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[2 + 4d0, d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // jacobi2d_unrolled_4_rd8 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[1 + 4d0, 1 + d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
-  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 7 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write2 = t1.t1_t1_update_0_write2_merged_banks_3.peek_7();
-  return value_t1_t1_update_0_write2;
+  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 1 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  auto value_t1_t1_update_0_write1 = t1.t1_t1_update_0_write1_merged_banks_5.peek_1();
+  return value_t1_t1_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -540,11 +636,11 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd8_select(t1_cache& t1, int d0, int d1)
 inline hw_uint<32>  jacobi2d_unrolled_4_rd9_select(t1_cache& t1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // jacobi2d_unrolled_4_rd9 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[2 + 4d0, 1 + d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  // jacobi2d_unrolled_4_rd9 read pattern: { jacobi2d_unrolled_4_update_0[d0, d1] -> t1[2 + 4d0, d1] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Read schedule : { jacobi2d_unrolled_4_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
   // Write schedule: { t1_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 4 and -1 <= d1 <= 16 }
-  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 1 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
-  auto value_t1_t1_update_0_write2 = t1.t1_t1_update_0_write2_merged_banks_3.peek_1();
+  // DD fold: { jacobi2d_unrolled_4_update_0[d0, d1] -> 7 : 0 <= d0 <= 3 and 0 <= d1 <= 15 }
+  auto value_t1_t1_update_0_write2 = t1.t1_t1_update_0_write2_merged_banks_5.peek_7();
   return value_t1_t1_update_0_write2;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -569,8 +665,14 @@ inline hw_uint<32>  jacobi2d_unrolled_4_rd9_select(t1_cache& t1, int d0, int d1)
 //	jacobi2d_unrolled_4_rd11
 //	jacobi2d_unrolled_4_rd12
 //	jacobi2d_unrolled_4_rd13
-inline hw_uint<448> t1_jacobi2d_unrolled_4_update_0_read_bundle_read(t1_cache& t1, int d0, int d1) {
-  // # of ports in bundle: 14
+//	jacobi2d_unrolled_4_rd14
+//	jacobi2d_unrolled_4_rd15
+//	jacobi2d_unrolled_4_rd16
+//	jacobi2d_unrolled_4_rd17
+//	jacobi2d_unrolled_4_rd18
+//	jacobi2d_unrolled_4_rd19
+inline hw_uint<640> t1_jacobi2d_unrolled_4_update_0_read_bundle_read(t1_cache& t1, int d0, int d1) {
+  // # of ports in bundle: 20
     // jacobi2d_unrolled_4_rd0
     // jacobi2d_unrolled_4_rd1
     // jacobi2d_unrolled_4_rd2
@@ -585,36 +687,54 @@ inline hw_uint<448> t1_jacobi2d_unrolled_4_update_0_read_bundle_read(t1_cache& t
     // jacobi2d_unrolled_4_rd11
     // jacobi2d_unrolled_4_rd12
     // jacobi2d_unrolled_4_rd13
+    // jacobi2d_unrolled_4_rd14
+    // jacobi2d_unrolled_4_rd15
+    // jacobi2d_unrolled_4_rd16
+    // jacobi2d_unrolled_4_rd17
+    // jacobi2d_unrolled_4_rd18
+    // jacobi2d_unrolled_4_rd19
 
-	hw_uint<448> result;
+	hw_uint<640> result;
 	hw_uint<32>  jacobi2d_unrolled_4_rd0_res = jacobi2d_unrolled_4_rd0_select(t1, d0, d1);
-	set_at<0, 448>(result, jacobi2d_unrolled_4_rd0_res);
+	set_at<0, 640>(result, jacobi2d_unrolled_4_rd0_res);
 	hw_uint<32>  jacobi2d_unrolled_4_rd1_res = jacobi2d_unrolled_4_rd1_select(t1, d0, d1);
-	set_at<32, 448>(result, jacobi2d_unrolled_4_rd1_res);
+	set_at<32, 640>(result, jacobi2d_unrolled_4_rd1_res);
 	hw_uint<32>  jacobi2d_unrolled_4_rd2_res = jacobi2d_unrolled_4_rd2_select(t1, d0, d1);
-	set_at<64, 448>(result, jacobi2d_unrolled_4_rd2_res);
+	set_at<64, 640>(result, jacobi2d_unrolled_4_rd2_res);
 	hw_uint<32>  jacobi2d_unrolled_4_rd3_res = jacobi2d_unrolled_4_rd3_select(t1, d0, d1);
-	set_at<96, 448>(result, jacobi2d_unrolled_4_rd3_res);
+	set_at<96, 640>(result, jacobi2d_unrolled_4_rd3_res);
 	hw_uint<32>  jacobi2d_unrolled_4_rd4_res = jacobi2d_unrolled_4_rd4_select(t1, d0, d1);
-	set_at<128, 448>(result, jacobi2d_unrolled_4_rd4_res);
+	set_at<128, 640>(result, jacobi2d_unrolled_4_rd4_res);
 	hw_uint<32>  jacobi2d_unrolled_4_rd5_res = jacobi2d_unrolled_4_rd5_select(t1, d0, d1);
-	set_at<160, 448>(result, jacobi2d_unrolled_4_rd5_res);
+	set_at<160, 640>(result, jacobi2d_unrolled_4_rd5_res);
 	hw_uint<32>  jacobi2d_unrolled_4_rd6_res = jacobi2d_unrolled_4_rd6_select(t1, d0, d1);
-	set_at<192, 448>(result, jacobi2d_unrolled_4_rd6_res);
+	set_at<192, 640>(result, jacobi2d_unrolled_4_rd6_res);
 	hw_uint<32>  jacobi2d_unrolled_4_rd7_res = jacobi2d_unrolled_4_rd7_select(t1, d0, d1);
-	set_at<224, 448>(result, jacobi2d_unrolled_4_rd7_res);
+	set_at<224, 640>(result, jacobi2d_unrolled_4_rd7_res);
 	hw_uint<32>  jacobi2d_unrolled_4_rd8_res = jacobi2d_unrolled_4_rd8_select(t1, d0, d1);
-	set_at<256, 448>(result, jacobi2d_unrolled_4_rd8_res);
+	set_at<256, 640>(result, jacobi2d_unrolled_4_rd8_res);
 	hw_uint<32>  jacobi2d_unrolled_4_rd9_res = jacobi2d_unrolled_4_rd9_select(t1, d0, d1);
-	set_at<288, 448>(result, jacobi2d_unrolled_4_rd9_res);
+	set_at<288, 640>(result, jacobi2d_unrolled_4_rd9_res);
 	hw_uint<32>  jacobi2d_unrolled_4_rd10_res = jacobi2d_unrolled_4_rd10_select(t1, d0, d1);
-	set_at<320, 448>(result, jacobi2d_unrolled_4_rd10_res);
+	set_at<320, 640>(result, jacobi2d_unrolled_4_rd10_res);
 	hw_uint<32>  jacobi2d_unrolled_4_rd11_res = jacobi2d_unrolled_4_rd11_select(t1, d0, d1);
-	set_at<352, 448>(result, jacobi2d_unrolled_4_rd11_res);
+	set_at<352, 640>(result, jacobi2d_unrolled_4_rd11_res);
 	hw_uint<32>  jacobi2d_unrolled_4_rd12_res = jacobi2d_unrolled_4_rd12_select(t1, d0, d1);
-	set_at<384, 448>(result, jacobi2d_unrolled_4_rd12_res);
+	set_at<384, 640>(result, jacobi2d_unrolled_4_rd12_res);
 	hw_uint<32>  jacobi2d_unrolled_4_rd13_res = jacobi2d_unrolled_4_rd13_select(t1, d0, d1);
-	set_at<416, 448>(result, jacobi2d_unrolled_4_rd13_res);
+	set_at<416, 640>(result, jacobi2d_unrolled_4_rd13_res);
+	hw_uint<32>  jacobi2d_unrolled_4_rd14_res = jacobi2d_unrolled_4_rd14_select(t1, d0, d1);
+	set_at<448, 640>(result, jacobi2d_unrolled_4_rd14_res);
+	hw_uint<32>  jacobi2d_unrolled_4_rd15_res = jacobi2d_unrolled_4_rd15_select(t1, d0, d1);
+	set_at<480, 640>(result, jacobi2d_unrolled_4_rd15_res);
+	hw_uint<32>  jacobi2d_unrolled_4_rd16_res = jacobi2d_unrolled_4_rd16_select(t1, d0, d1);
+	set_at<512, 640>(result, jacobi2d_unrolled_4_rd16_res);
+	hw_uint<32>  jacobi2d_unrolled_4_rd17_res = jacobi2d_unrolled_4_rd17_select(t1, d0, d1);
+	set_at<544, 640>(result, jacobi2d_unrolled_4_rd17_res);
+	hw_uint<32>  jacobi2d_unrolled_4_rd18_res = jacobi2d_unrolled_4_rd18_select(t1, d0, d1);
+	set_at<576, 640>(result, jacobi2d_unrolled_4_rd18_res);
+	hw_uint<32>  jacobi2d_unrolled_4_rd19_res = jacobi2d_unrolled_4_rd19_select(t1, d0, d1);
+	set_at<608, 640>(result, jacobi2d_unrolled_4_rd19_res);
 	return result;
 }
 

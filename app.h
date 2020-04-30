@@ -107,6 +107,19 @@ struct FiniteRegion {
     return c;
   }
 
+  FiniteRegion scale_stride(const int factor) const {
+    QAV s = stride(0);
+
+    assert(s.is_num);
+    cout << "denom = " << s.denom << ", factor = " << factor << endl;
+    assert(factor == 1 || s.denom == 1 || ((factor % s.denom) == 0));
+
+    FiniteRegion cpy = *this;
+    cpy.strides[0] = scale(factor, s);
+    return cpy;
+  }
+
+
   FiniteRegion unroll_cpy(const int factor) const {
     cout << "Unrolling by factor: " << factor << endl;
     FiniteRegion c;

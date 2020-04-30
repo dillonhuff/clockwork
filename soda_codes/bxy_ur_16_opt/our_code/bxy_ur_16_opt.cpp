@@ -10,7 +10,7 @@ using namespace std;
 
 #include "hw_classes.h"
 
-struct blurx_blurx_update_0_write0_merged_banks_2_cache {
+struct blurx_blurx_update_0_write0_merged_banks_3_cache {
 	// RAM Box: {[0, 1920], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
@@ -39,7 +39,7 @@ struct blurx_blurx_update_0_write0_merged_banks_2_cache {
 
 };
 
-struct blurx_blurx_update_0_write1_merged_banks_2_cache {
+struct blurx_blurx_update_0_write1_merged_banks_3_cache {
 	// RAM Box: {[0, 1921], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
@@ -68,383 +68,495 @@ struct blurx_blurx_update_0_write1_merged_banks_2_cache {
 
 };
 
-struct blurx_blurx_update_0_write10_merged_banks_1_cache {
+struct blurx_blurx_update_0_write10_merged_banks_3_cache {
 	// RAM Box: {[0, 1930], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
-	fifo<hw_uint<16>, 2> f;
-	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(1 - offset);
-  }
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+
+
+	inline hw_uint<16> peek_0() {
+		return f0;
+	}
+
+	inline hw_uint<16> peek_1() {
+		return f2;
+	}
 
 
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
+    // cap: 1 reading from capacity: 1
+    f2 = f0;
+    // cap: 1
+    f0 = value;
+	}
 
 };
 
-struct blurx_blurx_update_0_write11_merged_banks_1_cache {
+struct blurx_blurx_update_0_write11_merged_banks_3_cache {
 	// RAM Box: {[0, 1931], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
-	fifo<hw_uint<16>, 2> f;
-	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(1 - offset);
-  }
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+
+
+	inline hw_uint<16> peek_0() {
+		return f0;
+	}
+
+	inline hw_uint<16> peek_1() {
+		return f2;
+	}
 
 
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
+    // cap: 1 reading from capacity: 1
+    f2 = f0;
+    // cap: 1
+    f0 = value;
+	}
 
 };
 
-struct blurx_blurx_update_0_write12_merged_banks_1_cache {
+struct blurx_blurx_update_0_write12_merged_banks_3_cache {
 	// RAM Box: {[0, 1932], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
-	fifo<hw_uint<16>, 2> f;
-	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(1 - offset);
-  }
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+
+
+	inline hw_uint<16> peek_0() {
+		return f0;
+	}
+
+	inline hw_uint<16> peek_1() {
+		return f2;
+	}
 
 
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
+    // cap: 1 reading from capacity: 1
+    f2 = f0;
+    // cap: 1
+    f0 = value;
+	}
 
 };
 
-struct blurx_blurx_update_0_write13_merged_banks_1_cache {
+struct blurx_blurx_update_0_write13_merged_banks_3_cache {
 	// RAM Box: {[0, 1933], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
-	fifo<hw_uint<16>, 2> f;
-	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(1 - offset);
-  }
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+
+
+	inline hw_uint<16> peek_0() {
+		return f0;
+	}
+
+	inline hw_uint<16> peek_1() {
+		return f2;
+	}
 
 
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
+    // cap: 1 reading from capacity: 1
+    f2 = f0;
+    // cap: 1
+    f0 = value;
+	}
 
 };
 
-struct blurx_blurx_update_0_write14_merged_banks_1_cache {
+struct blurx_blurx_update_0_write14_merged_banks_3_cache {
 	// RAM Box: {[0, 1934], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
-	fifo<hw_uint<16>, 2> f;
-	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(1 - offset);
-  }
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+
+
+	inline hw_uint<16> peek_0() {
+		return f0;
+	}
+
+	inline hw_uint<16> peek_1() {
+		return f2;
+	}
 
 
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
+    // cap: 1 reading from capacity: 1
+    f2 = f0;
+    // cap: 1
+    f0 = value;
+	}
 
 };
 
-struct blurx_blurx_update_0_write15_merged_banks_1_cache {
+struct blurx_blurx_update_0_write15_merged_banks_3_cache {
 	// RAM Box: {[0, 1935], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
-	fifo<hw_uint<16>, 2> f;
-	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(1 - offset);
-  }
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+
+
+	inline hw_uint<16> peek_0() {
+		return f0;
+	}
+
+	inline hw_uint<16> peek_1() {
+		return f2;
+	}
 
 
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
+    // cap: 1 reading from capacity: 1
+    f2 = f0;
+    // cap: 1
+    f0 = value;
+	}
 
 };
 
-struct blurx_blurx_update_0_write2_merged_banks_1_cache {
+struct blurx_blurx_update_0_write2_merged_banks_3_cache {
 	// RAM Box: {[0, 1922], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
-	fifo<hw_uint<16>, 2> f;
-	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(1 - offset);
-  }
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+
+
+	inline hw_uint<16> peek_0() {
+		return f0;
+	}
+
+	inline hw_uint<16> peek_1() {
+		return f2;
+	}
 
 
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
+    // cap: 1 reading from capacity: 1
+    f2 = f0;
+    // cap: 1
+    f0 = value;
+	}
 
 };
 
-struct blurx_blurx_update_0_write3_merged_banks_1_cache {
+struct blurx_blurx_update_0_write3_merged_banks_3_cache {
 	// RAM Box: {[0, 1923], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
-	fifo<hw_uint<16>, 2> f;
-	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(1 - offset);
-  }
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+
+
+	inline hw_uint<16> peek_0() {
+		return f0;
+	}
+
+	inline hw_uint<16> peek_1() {
+		return f2;
+	}
 
 
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
+    // cap: 1 reading from capacity: 1
+    f2 = f0;
+    // cap: 1
+    f0 = value;
+	}
 
 };
 
-struct blurx_blurx_update_0_write4_merged_banks_1_cache {
+struct blurx_blurx_update_0_write4_merged_banks_3_cache {
 	// RAM Box: {[0, 1924], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
-	fifo<hw_uint<16>, 2> f;
-	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(1 - offset);
-  }
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+
+
+	inline hw_uint<16> peek_0() {
+		return f0;
+	}
+
+	inline hw_uint<16> peek_1() {
+		return f2;
+	}
 
 
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
+    // cap: 1 reading from capacity: 1
+    f2 = f0;
+    // cap: 1
+    f0 = value;
+	}
 
 };
 
-struct blurx_blurx_update_0_write5_merged_banks_1_cache {
+struct blurx_blurx_update_0_write5_merged_banks_3_cache {
 	// RAM Box: {[0, 1925], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
-	fifo<hw_uint<16>, 2> f;
-	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(1 - offset);
-  }
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+
+
+	inline hw_uint<16> peek_0() {
+		return f0;
+	}
+
+	inline hw_uint<16> peek_1() {
+		return f2;
+	}
 
 
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
+    // cap: 1 reading from capacity: 1
+    f2 = f0;
+    // cap: 1
+    f0 = value;
+	}
 
 };
 
-struct blurx_blurx_update_0_write6_merged_banks_1_cache {
+struct blurx_blurx_update_0_write6_merged_banks_3_cache {
 	// RAM Box: {[0, 1926], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
-	fifo<hw_uint<16>, 2> f;
-	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(1 - offset);
-  }
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+
+
+	inline hw_uint<16> peek_0() {
+		return f0;
+	}
+
+	inline hw_uint<16> peek_1() {
+		return f2;
+	}
 
 
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
+    // cap: 1 reading from capacity: 1
+    f2 = f0;
+    // cap: 1
+    f0 = value;
+	}
 
 };
 
-struct blurx_blurx_update_0_write7_merged_banks_1_cache {
+struct blurx_blurx_update_0_write7_merged_banks_3_cache {
 	// RAM Box: {[0, 1927], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
-	fifo<hw_uint<16>, 2> f;
-	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(1 - offset);
-  }
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+
+
+	inline hw_uint<16> peek_0() {
+		return f0;
+	}
+
+	inline hw_uint<16> peek_1() {
+		return f2;
+	}
 
 
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
+    // cap: 1 reading from capacity: 1
+    f2 = f0;
+    // cap: 1
+    f0 = value;
+	}
 
 };
 
-struct blurx_blurx_update_0_write8_merged_banks_1_cache {
+struct blurx_blurx_update_0_write8_merged_banks_3_cache {
 	// RAM Box: {[0, 1928], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
-	fifo<hw_uint<16>, 2> f;
-	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(1 - offset);
-  }
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+
+
+	inline hw_uint<16> peek_0() {
+		return f0;
+	}
+
+	inline hw_uint<16> peek_1() {
+		return f2;
+	}
 
 
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
+    // cap: 1 reading from capacity: 1
+    f2 = f0;
+    // cap: 1
+    f0 = value;
+	}
 
 };
 
-struct blurx_blurx_update_0_write9_merged_banks_1_cache {
+struct blurx_blurx_update_0_write9_merged_banks_3_cache {
 	// RAM Box: {[0, 1929], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
-	fifo<hw_uint<16>, 2> f;
-	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(1 - offset);
-  }
+	hw_uint<16> f0;
+	hw_uint<16> f2;
+
+
+	inline hw_uint<16> peek_0() {
+		return f0;
+	}
+
+	inline hw_uint<16> peek_1() {
+		return f2;
+	}
 
 
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
+    // cap: 1 reading from capacity: 1
+    f2 = f0;
+    // cap: 1
+    f0 = value;
+	}
 
 };
 
 struct blurx_cache {
-  blurx_blurx_update_0_write0_merged_banks_2_cache blurx_blurx_update_0_write0_merged_banks_2;
-  blurx_blurx_update_0_write1_merged_banks_2_cache blurx_blurx_update_0_write1_merged_banks_2;
-  blurx_blurx_update_0_write10_merged_banks_1_cache blurx_blurx_update_0_write10_merged_banks_1;
-  blurx_blurx_update_0_write11_merged_banks_1_cache blurx_blurx_update_0_write11_merged_banks_1;
-  blurx_blurx_update_0_write12_merged_banks_1_cache blurx_blurx_update_0_write12_merged_banks_1;
-  blurx_blurx_update_0_write13_merged_banks_1_cache blurx_blurx_update_0_write13_merged_banks_1;
-  blurx_blurx_update_0_write14_merged_banks_1_cache blurx_blurx_update_0_write14_merged_banks_1;
-  blurx_blurx_update_0_write15_merged_banks_1_cache blurx_blurx_update_0_write15_merged_banks_1;
-  blurx_blurx_update_0_write2_merged_banks_1_cache blurx_blurx_update_0_write2_merged_banks_1;
-  blurx_blurx_update_0_write3_merged_banks_1_cache blurx_blurx_update_0_write3_merged_banks_1;
-  blurx_blurx_update_0_write4_merged_banks_1_cache blurx_blurx_update_0_write4_merged_banks_1;
-  blurx_blurx_update_0_write5_merged_banks_1_cache blurx_blurx_update_0_write5_merged_banks_1;
-  blurx_blurx_update_0_write6_merged_banks_1_cache blurx_blurx_update_0_write6_merged_banks_1;
-  blurx_blurx_update_0_write7_merged_banks_1_cache blurx_blurx_update_0_write7_merged_banks_1;
-  blurx_blurx_update_0_write8_merged_banks_1_cache blurx_blurx_update_0_write8_merged_banks_1;
-  blurx_blurx_update_0_write9_merged_banks_1_cache blurx_blurx_update_0_write9_merged_banks_1;
+  blurx_blurx_update_0_write0_merged_banks_3_cache blurx_blurx_update_0_write0_merged_banks_3;
+  blurx_blurx_update_0_write1_merged_banks_3_cache blurx_blurx_update_0_write1_merged_banks_3;
+  blurx_blurx_update_0_write10_merged_banks_3_cache blurx_blurx_update_0_write10_merged_banks_3;
+  blurx_blurx_update_0_write11_merged_banks_3_cache blurx_blurx_update_0_write11_merged_banks_3;
+  blurx_blurx_update_0_write12_merged_banks_3_cache blurx_blurx_update_0_write12_merged_banks_3;
+  blurx_blurx_update_0_write13_merged_banks_3_cache blurx_blurx_update_0_write13_merged_banks_3;
+  blurx_blurx_update_0_write14_merged_banks_3_cache blurx_blurx_update_0_write14_merged_banks_3;
+  blurx_blurx_update_0_write15_merged_banks_3_cache blurx_blurx_update_0_write15_merged_banks_3;
+  blurx_blurx_update_0_write2_merged_banks_3_cache blurx_blurx_update_0_write2_merged_banks_3;
+  blurx_blurx_update_0_write3_merged_banks_3_cache blurx_blurx_update_0_write3_merged_banks_3;
+  blurx_blurx_update_0_write4_merged_banks_3_cache blurx_blurx_update_0_write4_merged_banks_3;
+  blurx_blurx_update_0_write5_merged_banks_3_cache blurx_blurx_update_0_write5_merged_banks_3;
+  blurx_blurx_update_0_write6_merged_banks_3_cache blurx_blurx_update_0_write6_merged_banks_3;
+  blurx_blurx_update_0_write7_merged_banks_3_cache blurx_blurx_update_0_write7_merged_banks_3;
+  blurx_blurx_update_0_write8_merged_banks_3_cache blurx_blurx_update_0_write8_merged_banks_3;
+  blurx_blurx_update_0_write9_merged_banks_3_cache blurx_blurx_update_0_write9_merged_banks_3;
 };
 
 
 
 inline void blurx_blurx_update_0_write0_write(hw_uint<16>& blurx_blurx_update_0_write0, blurx_cache& blurx, int d0, int d1) {
-  blurx.blurx_blurx_update_0_write0_merged_banks_2.push(blurx_blurx_update_0_write0);
+  blurx.blurx_blurx_update_0_write0_merged_banks_3.push(blurx_blurx_update_0_write0);
 }
 
 inline void blurx_blurx_update_0_write1_write(hw_uint<16>& blurx_blurx_update_0_write1, blurx_cache& blurx, int d0, int d1) {
-  blurx.blurx_blurx_update_0_write1_merged_banks_2.push(blurx_blurx_update_0_write1);
+  blurx.blurx_blurx_update_0_write1_merged_banks_3.push(blurx_blurx_update_0_write1);
 }
 
 inline void blurx_blurx_update_0_write10_write(hw_uint<16>& blurx_blurx_update_0_write10, blurx_cache& blurx, int d0, int d1) {
-  blurx.blurx_blurx_update_0_write10_merged_banks_1.push(blurx_blurx_update_0_write10);
+  blurx.blurx_blurx_update_0_write10_merged_banks_3.push(blurx_blurx_update_0_write10);
 }
 
 inline void blurx_blurx_update_0_write11_write(hw_uint<16>& blurx_blurx_update_0_write11, blurx_cache& blurx, int d0, int d1) {
-  blurx.blurx_blurx_update_0_write11_merged_banks_1.push(blurx_blurx_update_0_write11);
+  blurx.blurx_blurx_update_0_write11_merged_banks_3.push(blurx_blurx_update_0_write11);
 }
 
 inline void blurx_blurx_update_0_write12_write(hw_uint<16>& blurx_blurx_update_0_write12, blurx_cache& blurx, int d0, int d1) {
-  blurx.blurx_blurx_update_0_write12_merged_banks_1.push(blurx_blurx_update_0_write12);
+  blurx.blurx_blurx_update_0_write12_merged_banks_3.push(blurx_blurx_update_0_write12);
 }
 
 inline void blurx_blurx_update_0_write13_write(hw_uint<16>& blurx_blurx_update_0_write13, blurx_cache& blurx, int d0, int d1) {
-  blurx.blurx_blurx_update_0_write13_merged_banks_1.push(blurx_blurx_update_0_write13);
+  blurx.blurx_blurx_update_0_write13_merged_banks_3.push(blurx_blurx_update_0_write13);
 }
 
 inline void blurx_blurx_update_0_write14_write(hw_uint<16>& blurx_blurx_update_0_write14, blurx_cache& blurx, int d0, int d1) {
-  blurx.blurx_blurx_update_0_write14_merged_banks_1.push(blurx_blurx_update_0_write14);
+  blurx.blurx_blurx_update_0_write14_merged_banks_3.push(blurx_blurx_update_0_write14);
 }
 
 inline void blurx_blurx_update_0_write15_write(hw_uint<16>& blurx_blurx_update_0_write15, blurx_cache& blurx, int d0, int d1) {
-  blurx.blurx_blurx_update_0_write15_merged_banks_1.push(blurx_blurx_update_0_write15);
+  blurx.blurx_blurx_update_0_write15_merged_banks_3.push(blurx_blurx_update_0_write15);
 }
 
 inline void blurx_blurx_update_0_write2_write(hw_uint<16>& blurx_blurx_update_0_write2, blurx_cache& blurx, int d0, int d1) {
-  blurx.blurx_blurx_update_0_write2_merged_banks_1.push(blurx_blurx_update_0_write2);
+  blurx.blurx_blurx_update_0_write2_merged_banks_3.push(blurx_blurx_update_0_write2);
 }
 
 inline void blurx_blurx_update_0_write3_write(hw_uint<16>& blurx_blurx_update_0_write3, blurx_cache& blurx, int d0, int d1) {
-  blurx.blurx_blurx_update_0_write3_merged_banks_1.push(blurx_blurx_update_0_write3);
+  blurx.blurx_blurx_update_0_write3_merged_banks_3.push(blurx_blurx_update_0_write3);
 }
 
 inline void blurx_blurx_update_0_write4_write(hw_uint<16>& blurx_blurx_update_0_write4, blurx_cache& blurx, int d0, int d1) {
-  blurx.blurx_blurx_update_0_write4_merged_banks_1.push(blurx_blurx_update_0_write4);
+  blurx.blurx_blurx_update_0_write4_merged_banks_3.push(blurx_blurx_update_0_write4);
 }
 
 inline void blurx_blurx_update_0_write5_write(hw_uint<16>& blurx_blurx_update_0_write5, blurx_cache& blurx, int d0, int d1) {
-  blurx.blurx_blurx_update_0_write5_merged_banks_1.push(blurx_blurx_update_0_write5);
+  blurx.blurx_blurx_update_0_write5_merged_banks_3.push(blurx_blurx_update_0_write5);
 }
 
 inline void blurx_blurx_update_0_write6_write(hw_uint<16>& blurx_blurx_update_0_write6, blurx_cache& blurx, int d0, int d1) {
-  blurx.blurx_blurx_update_0_write6_merged_banks_1.push(blurx_blurx_update_0_write6);
+  blurx.blurx_blurx_update_0_write6_merged_banks_3.push(blurx_blurx_update_0_write6);
 }
 
 inline void blurx_blurx_update_0_write7_write(hw_uint<16>& blurx_blurx_update_0_write7, blurx_cache& blurx, int d0, int d1) {
-  blurx.blurx_blurx_update_0_write7_merged_banks_1.push(blurx_blurx_update_0_write7);
+  blurx.blurx_blurx_update_0_write7_merged_banks_3.push(blurx_blurx_update_0_write7);
 }
 
 inline void blurx_blurx_update_0_write8_write(hw_uint<16>& blurx_blurx_update_0_write8, blurx_cache& blurx, int d0, int d1) {
-  blurx.blurx_blurx_update_0_write8_merged_banks_1.push(blurx_blurx_update_0_write8);
+  blurx.blurx_blurx_update_0_write8_merged_banks_3.push(blurx_blurx_update_0_write8);
 }
 
 inline void blurx_blurx_update_0_write9_write(hw_uint<16>& blurx_blurx_update_0_write9, blurx_cache& blurx, int d0, int d1) {
-  blurx.blurx_blurx_update_0_write9_merged_banks_1.push(blurx_blurx_update_0_write9);
+  blurx.blurx_blurx_update_0_write9_merged_banks_3.push(blurx_blurx_update_0_write9);
 }
 
 inline hw_uint<16> bxy_ur_16_rd0_select(blurx_cache& blurx, int d0, int d1) {
@@ -454,7 +566,7 @@ inline hw_uint<16> bxy_ur_16_rd0_select(blurx_cache& blurx, int d0, int d1) {
   // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
   // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  auto value_blurx_blurx_update_0_write0 = blurx.blurx_blurx_update_0_write0_merged_banks_2.peek_1();
+  auto value_blurx_blurx_update_0_write0 = blurx.blurx_blurx_update_0_write0_merged_banks_3.peek_1();
   return value_blurx_blurx_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -470,7 +582,7 @@ inline hw_uint<16> bxy_ur_16_rd1_select(blurx_cache& blurx, int d0, int d1) {
   // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
   // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  auto value_blurx_blurx_update_0_write1 = blurx.blurx_blurx_update_0_write1_merged_banks_2.peek_1();
+  auto value_blurx_blurx_update_0_write1 = blurx.blurx_blurx_update_0_write1_merged_banks_3.peek_1();
   return value_blurx_blurx_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -482,12 +594,12 @@ inline hw_uint<16> bxy_ur_16_rd1_select(blurx_cache& blurx, int d0, int d1) {
 inline hw_uint<16> bxy_ur_16_rd10_select(blurx_cache& blurx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bxy_ur_16_rd10 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[10 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // bxy_ur_16_rd10 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[4 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
   // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  auto value_blurx_blurx_update_0_write10 = blurx.blurx_blurx_update_0_write10_merged_banks_1.peek(/* one reader or all rams */ 1);
-  return value_blurx_blurx_update_0_write10;
+  auto value_blurx_blurx_update_0_write4 = blurx.blurx_blurx_update_0_write4_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write4;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -498,12 +610,12 @@ inline hw_uint<16> bxy_ur_16_rd10_select(blurx_cache& blurx, int d0, int d1) {
 inline hw_uint<16> bxy_ur_16_rd11_select(blurx_cache& blurx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bxy_ur_16_rd11 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[11 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // bxy_ur_16_rd11 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[5 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
   // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  auto value_blurx_blurx_update_0_write11 = blurx.blurx_blurx_update_0_write11_merged_banks_1.peek(/* one reader or all rams */ 1);
-  return value_blurx_blurx_update_0_write11;
+  auto value_blurx_blurx_update_0_write5 = blurx.blurx_blurx_update_0_write5_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write5;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -514,12 +626,12 @@ inline hw_uint<16> bxy_ur_16_rd11_select(blurx_cache& blurx, int d0, int d1) {
 inline hw_uint<16> bxy_ur_16_rd12_select(blurx_cache& blurx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bxy_ur_16_rd12 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[12 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // bxy_ur_16_rd12 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[4 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
   // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  auto value_blurx_blurx_update_0_write12 = blurx.blurx_blurx_update_0_write12_merged_banks_1.peek(/* one reader or all rams */ 1);
-  return value_blurx_blurx_update_0_write12;
+  auto value_blurx_blurx_update_0_write4 = blurx.blurx_blurx_update_0_write4_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write4;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -530,12 +642,12 @@ inline hw_uint<16> bxy_ur_16_rd12_select(blurx_cache& blurx, int d0, int d1) {
 inline hw_uint<16> bxy_ur_16_rd13_select(blurx_cache& blurx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bxy_ur_16_rd13 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[13 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // bxy_ur_16_rd13 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[5 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
   // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  auto value_blurx_blurx_update_0_write13 = blurx.blurx_blurx_update_0_write13_merged_banks_1.peek(/* one reader or all rams */ 1);
-  return value_blurx_blurx_update_0_write13;
+  auto value_blurx_blurx_update_0_write5 = blurx.blurx_blurx_update_0_write5_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write5;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -546,12 +658,12 @@ inline hw_uint<16> bxy_ur_16_rd13_select(blurx_cache& blurx, int d0, int d1) {
 inline hw_uint<16> bxy_ur_16_rd14_select(blurx_cache& blurx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bxy_ur_16_rd14 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[14 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // bxy_ur_16_rd14 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[6 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
   // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  auto value_blurx_blurx_update_0_write14 = blurx.blurx_blurx_update_0_write14_merged_banks_1.peek(/* one reader or all rams */ 1);
-  return value_blurx_blurx_update_0_write14;
+  auto value_blurx_blurx_update_0_write6 = blurx.blurx_blurx_update_0_write6_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write6;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -562,12 +674,12 @@ inline hw_uint<16> bxy_ur_16_rd14_select(blurx_cache& blurx, int d0, int d1) {
 inline hw_uint<16> bxy_ur_16_rd15_select(blurx_cache& blurx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bxy_ur_16_rd15 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[15 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // bxy_ur_16_rd15 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[5 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
   // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  auto value_blurx_blurx_update_0_write15 = blurx.blurx_blurx_update_0_write15_merged_banks_1.peek(/* one reader or all rams */ 1);
-  return value_blurx_blurx_update_0_write15;
+  auto value_blurx_blurx_update_0_write5 = blurx.blurx_blurx_update_0_write5_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write5;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -578,12 +690,12 @@ inline hw_uint<16> bxy_ur_16_rd15_select(blurx_cache& blurx, int d0, int d1) {
 inline hw_uint<16> bxy_ur_16_rd16_select(blurx_cache& blurx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bxy_ur_16_rd16 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[16 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // bxy_ur_16_rd16 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[6 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
-  // DD fold: {  }
-  auto value_blurx_blurx_update_0_write0 = blurx.blurx_blurx_update_0_write0_merged_banks_2.peek_0();
-  return value_blurx_blurx_update_0_write0;
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write6 = blurx.blurx_blurx_update_0_write6_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write6;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -594,12 +706,44 @@ inline hw_uint<16> bxy_ur_16_rd16_select(blurx_cache& blurx, int d0, int d1) {
 inline hw_uint<16> bxy_ur_16_rd17_select(blurx_cache& blurx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bxy_ur_16_rd17 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[17 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // bxy_ur_16_rd17 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[7 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
-  // DD fold: {  }
-  auto value_blurx_blurx_update_0_write1 = blurx.blurx_blurx_update_0_write1_merged_banks_2.peek_0();
-  return value_blurx_blurx_update_0_write1;
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write7 = blurx.blurx_blurx_update_0_write7_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write7;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd18_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd18 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[6 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write6 = blurx.blurx_blurx_update_0_write6_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write6;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd19_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd19 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[7 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write7 = blurx.blurx_blurx_update_0_write7_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write7;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -614,8 +758,168 @@ inline hw_uint<16> bxy_ur_16_rd2_select(blurx_cache& blurx, int d0, int d1) {
   // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
   // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  auto value_blurx_blurx_update_0_write2 = blurx.blurx_blurx_update_0_write2_merged_banks_1.peek(/* one reader or all rams */ 1);
+  auto value_blurx_blurx_update_0_write2 = blurx.blurx_blurx_update_0_write2_merged_banks_3.peek_1();
   return value_blurx_blurx_update_0_write2;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd20_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd20 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[8 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write8 = blurx.blurx_blurx_update_0_write8_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write8;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd21_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd21 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[7 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write7 = blurx.blurx_blurx_update_0_write7_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write7;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd22_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd22 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[8 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write8 = blurx.blurx_blurx_update_0_write8_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write8;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd23_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd23 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[9 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write9 = blurx.blurx_blurx_update_0_write9_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write9;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd24_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd24 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[8 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write8 = blurx.blurx_blurx_update_0_write8_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write8;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd25_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd25 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[9 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write9 = blurx.blurx_blurx_update_0_write9_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write9;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd26_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd26 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[10 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write10 = blurx.blurx_blurx_update_0_write10_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write10;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd27_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd27 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[9 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write9 = blurx.blurx_blurx_update_0_write9_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write9;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd28_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd28 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[10 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write10 = blurx.blurx_blurx_update_0_write10_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write10;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd29_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd29 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[11 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write11 = blurx.blurx_blurx_update_0_write11_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write11;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -626,12 +930,172 @@ inline hw_uint<16> bxy_ur_16_rd2_select(blurx_cache& blurx, int d0, int d1) {
 inline hw_uint<16> bxy_ur_16_rd3_select(blurx_cache& blurx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bxy_ur_16_rd3 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[3 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // bxy_ur_16_rd3 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[1 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
   // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  auto value_blurx_blurx_update_0_write3 = blurx.blurx_blurx_update_0_write3_merged_banks_1.peek(/* one reader or all rams */ 1);
-  return value_blurx_blurx_update_0_write3;
+  auto value_blurx_blurx_update_0_write1 = blurx.blurx_blurx_update_0_write1_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write1;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd30_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd30 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[10 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write10 = blurx.blurx_blurx_update_0_write10_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write10;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd31_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd31 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[11 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write11 = blurx.blurx_blurx_update_0_write11_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write11;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd32_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd32 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[12 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write12 = blurx.blurx_blurx_update_0_write12_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write12;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd33_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd33 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[11 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write11 = blurx.blurx_blurx_update_0_write11_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write11;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd34_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd34 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[12 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write12 = blurx.blurx_blurx_update_0_write12_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write12;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd35_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd35 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[13 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write13 = blurx.blurx_blurx_update_0_write13_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write13;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd36_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd36 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[12 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write12 = blurx.blurx_blurx_update_0_write12_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write12;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd37_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd37 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[13 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write13 = blurx.blurx_blurx_update_0_write13_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write13;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd38_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd38 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[14 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write14 = blurx.blurx_blurx_update_0_write14_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write14;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd39_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd39 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[13 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write13 = blurx.blurx_blurx_update_0_write13_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write13;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -642,12 +1106,140 @@ inline hw_uint<16> bxy_ur_16_rd3_select(blurx_cache& blurx, int d0, int d1) {
 inline hw_uint<16> bxy_ur_16_rd4_select(blurx_cache& blurx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bxy_ur_16_rd4 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[4 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // bxy_ur_16_rd4 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[2 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
   // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  auto value_blurx_blurx_update_0_write4 = blurx.blurx_blurx_update_0_write4_merged_banks_1.peek(/* one reader or all rams */ 1);
-  return value_blurx_blurx_update_0_write4;
+  auto value_blurx_blurx_update_0_write2 = blurx.blurx_blurx_update_0_write2_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write2;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd40_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd40 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[14 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write14 = blurx.blurx_blurx_update_0_write14_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write14;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd41_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd41 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[15 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write15 = blurx.blurx_blurx_update_0_write15_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write15;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd42_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd42 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[14 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write14 = blurx.blurx_blurx_update_0_write14_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write14;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd43_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd43 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[15 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write15 = blurx.blurx_blurx_update_0_write15_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write15;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd44_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd44 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[16 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: {  }
+  auto value_blurx_blurx_update_0_write0 = blurx.blurx_blurx_update_0_write0_merged_banks_3.peek_0();
+  return value_blurx_blurx_update_0_write0;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd45_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd45 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[15 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  auto value_blurx_blurx_update_0_write15 = blurx.blurx_blurx_update_0_write15_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write15;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd46_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd46 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[16 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: {  }
+  auto value_blurx_blurx_update_0_write0 = blurx.blurx_blurx_update_0_write0_merged_banks_3.peek_0();
+  return value_blurx_blurx_update_0_write0;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+inline hw_uint<16> bxy_ur_16_rd47_select(blurx_cache& blurx, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // bxy_ur_16_rd47 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[17 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
+  // DD fold: {  }
+  auto value_blurx_blurx_update_0_write1 = blurx.blurx_blurx_update_0_write1_merged_banks_3.peek_0();
+  return value_blurx_blurx_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -658,12 +1250,12 @@ inline hw_uint<16> bxy_ur_16_rd4_select(blurx_cache& blurx, int d0, int d1) {
 inline hw_uint<16> bxy_ur_16_rd5_select(blurx_cache& blurx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bxy_ur_16_rd5 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[5 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // bxy_ur_16_rd5 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[3 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
   // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  auto value_blurx_blurx_update_0_write5 = blurx.blurx_blurx_update_0_write5_merged_banks_1.peek(/* one reader or all rams */ 1);
-  return value_blurx_blurx_update_0_write5;
+  auto value_blurx_blurx_update_0_write3 = blurx.blurx_blurx_update_0_write3_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write3;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -674,12 +1266,12 @@ inline hw_uint<16> bxy_ur_16_rd5_select(blurx_cache& blurx, int d0, int d1) {
 inline hw_uint<16> bxy_ur_16_rd6_select(blurx_cache& blurx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bxy_ur_16_rd6 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[6 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // bxy_ur_16_rd6 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[2 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
   // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  auto value_blurx_blurx_update_0_write6 = blurx.blurx_blurx_update_0_write6_merged_banks_1.peek(/* one reader or all rams */ 1);
-  return value_blurx_blurx_update_0_write6;
+  auto value_blurx_blurx_update_0_write2 = blurx.blurx_blurx_update_0_write2_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write2;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -690,12 +1282,12 @@ inline hw_uint<16> bxy_ur_16_rd6_select(blurx_cache& blurx, int d0, int d1) {
 inline hw_uint<16> bxy_ur_16_rd7_select(blurx_cache& blurx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bxy_ur_16_rd7 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[7 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // bxy_ur_16_rd7 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[3 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
   // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  auto value_blurx_blurx_update_0_write7 = blurx.blurx_blurx_update_0_write7_merged_banks_1.peek(/* one reader or all rams */ 1);
-  return value_blurx_blurx_update_0_write7;
+  auto value_blurx_blurx_update_0_write3 = blurx.blurx_blurx_update_0_write3_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write3;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -706,12 +1298,12 @@ inline hw_uint<16> bxy_ur_16_rd7_select(blurx_cache& blurx, int d0, int d1) {
 inline hw_uint<16> bxy_ur_16_rd8_select(blurx_cache& blurx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bxy_ur_16_rd8 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[8 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // bxy_ur_16_rd8 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[4 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
   // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  auto value_blurx_blurx_update_0_write8 = blurx.blurx_blurx_update_0_write8_merged_banks_1.peek(/* one reader or all rams */ 1);
-  return value_blurx_blurx_update_0_write8;
+  auto value_blurx_blurx_update_0_write4 = blurx.blurx_blurx_update_0_write4_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write4;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -722,12 +1314,12 @@ inline hw_uint<16> bxy_ur_16_rd8_select(blurx_cache& blurx, int d0, int d1) {
 inline hw_uint<16> bxy_ur_16_rd9_select(blurx_cache& blurx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bxy_ur_16_rd9 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[9 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // bxy_ur_16_rd9 read pattern: { bxy_ur_16_update_0[d0, d1] -> blurx[3 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Read schedule : { bxy_ur_16_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
   // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 120 and 0 <= d1 <= 1079 }
   // DD fold: { bxy_ur_16_update_0[d0, d1] -> 1 : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  auto value_blurx_blurx_update_0_write9 = blurx.blurx_blurx_update_0_write9_merged_banks_1.peek(/* one reader or all rams */ 1);
-  return value_blurx_blurx_update_0_write9;
+  auto value_blurx_blurx_update_0_write3 = blurx.blurx_blurx_update_0_write3_merged_banks_3.peek_1();
+  return value_blurx_blurx_update_0_write3;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
 	assert(false);
@@ -807,8 +1399,38 @@ inline void blurx_blurx_update_0_write_bundle_write(hw_uint<256>& blurx_update_0
 //	bxy_ur_16_rd15
 //	bxy_ur_16_rd16
 //	bxy_ur_16_rd17
-inline hw_uint<288> blurx_bxy_ur_16_update_0_read_bundle_read(blurx_cache& blurx, int d0, int d1) {
-  // # of ports in bundle: 18
+//	bxy_ur_16_rd18
+//	bxy_ur_16_rd19
+//	bxy_ur_16_rd20
+//	bxy_ur_16_rd21
+//	bxy_ur_16_rd22
+//	bxy_ur_16_rd23
+//	bxy_ur_16_rd24
+//	bxy_ur_16_rd25
+//	bxy_ur_16_rd26
+//	bxy_ur_16_rd27
+//	bxy_ur_16_rd28
+//	bxy_ur_16_rd29
+//	bxy_ur_16_rd30
+//	bxy_ur_16_rd31
+//	bxy_ur_16_rd32
+//	bxy_ur_16_rd33
+//	bxy_ur_16_rd34
+//	bxy_ur_16_rd35
+//	bxy_ur_16_rd36
+//	bxy_ur_16_rd37
+//	bxy_ur_16_rd38
+//	bxy_ur_16_rd39
+//	bxy_ur_16_rd40
+//	bxy_ur_16_rd41
+//	bxy_ur_16_rd42
+//	bxy_ur_16_rd43
+//	bxy_ur_16_rd44
+//	bxy_ur_16_rd45
+//	bxy_ur_16_rd46
+//	bxy_ur_16_rd47
+inline hw_uint<768> blurx_bxy_ur_16_update_0_read_bundle_read(blurx_cache& blurx, int d0, int d1) {
+  // # of ports in bundle: 48
     // bxy_ur_16_rd0
     // bxy_ur_16_rd1
     // bxy_ur_16_rd2
@@ -827,44 +1449,134 @@ inline hw_uint<288> blurx_bxy_ur_16_update_0_read_bundle_read(blurx_cache& blurx
     // bxy_ur_16_rd15
     // bxy_ur_16_rd16
     // bxy_ur_16_rd17
+    // bxy_ur_16_rd18
+    // bxy_ur_16_rd19
+    // bxy_ur_16_rd20
+    // bxy_ur_16_rd21
+    // bxy_ur_16_rd22
+    // bxy_ur_16_rd23
+    // bxy_ur_16_rd24
+    // bxy_ur_16_rd25
+    // bxy_ur_16_rd26
+    // bxy_ur_16_rd27
+    // bxy_ur_16_rd28
+    // bxy_ur_16_rd29
+    // bxy_ur_16_rd30
+    // bxy_ur_16_rd31
+    // bxy_ur_16_rd32
+    // bxy_ur_16_rd33
+    // bxy_ur_16_rd34
+    // bxy_ur_16_rd35
+    // bxy_ur_16_rd36
+    // bxy_ur_16_rd37
+    // bxy_ur_16_rd38
+    // bxy_ur_16_rd39
+    // bxy_ur_16_rd40
+    // bxy_ur_16_rd41
+    // bxy_ur_16_rd42
+    // bxy_ur_16_rd43
+    // bxy_ur_16_rd44
+    // bxy_ur_16_rd45
+    // bxy_ur_16_rd46
+    // bxy_ur_16_rd47
 
-	hw_uint<288> result;
+	hw_uint<768> result;
 	hw_uint<16> bxy_ur_16_rd0_res = bxy_ur_16_rd0_select(blurx, d0, d1);
-	set_at<0, 288>(result, bxy_ur_16_rd0_res);
+	set_at<0, 768>(result, bxy_ur_16_rd0_res);
 	hw_uint<16> bxy_ur_16_rd1_res = bxy_ur_16_rd1_select(blurx, d0, d1);
-	set_at<16, 288>(result, bxy_ur_16_rd1_res);
+	set_at<16, 768>(result, bxy_ur_16_rd1_res);
 	hw_uint<16> bxy_ur_16_rd2_res = bxy_ur_16_rd2_select(blurx, d0, d1);
-	set_at<32, 288>(result, bxy_ur_16_rd2_res);
+	set_at<32, 768>(result, bxy_ur_16_rd2_res);
 	hw_uint<16> bxy_ur_16_rd3_res = bxy_ur_16_rd3_select(blurx, d0, d1);
-	set_at<48, 288>(result, bxy_ur_16_rd3_res);
+	set_at<48, 768>(result, bxy_ur_16_rd3_res);
 	hw_uint<16> bxy_ur_16_rd4_res = bxy_ur_16_rd4_select(blurx, d0, d1);
-	set_at<64, 288>(result, bxy_ur_16_rd4_res);
+	set_at<64, 768>(result, bxy_ur_16_rd4_res);
 	hw_uint<16> bxy_ur_16_rd5_res = bxy_ur_16_rd5_select(blurx, d0, d1);
-	set_at<80, 288>(result, bxy_ur_16_rd5_res);
+	set_at<80, 768>(result, bxy_ur_16_rd5_res);
 	hw_uint<16> bxy_ur_16_rd6_res = bxy_ur_16_rd6_select(blurx, d0, d1);
-	set_at<96, 288>(result, bxy_ur_16_rd6_res);
+	set_at<96, 768>(result, bxy_ur_16_rd6_res);
 	hw_uint<16> bxy_ur_16_rd7_res = bxy_ur_16_rd7_select(blurx, d0, d1);
-	set_at<112, 288>(result, bxy_ur_16_rd7_res);
+	set_at<112, 768>(result, bxy_ur_16_rd7_res);
 	hw_uint<16> bxy_ur_16_rd8_res = bxy_ur_16_rd8_select(blurx, d0, d1);
-	set_at<128, 288>(result, bxy_ur_16_rd8_res);
+	set_at<128, 768>(result, bxy_ur_16_rd8_res);
 	hw_uint<16> bxy_ur_16_rd9_res = bxy_ur_16_rd9_select(blurx, d0, d1);
-	set_at<144, 288>(result, bxy_ur_16_rd9_res);
+	set_at<144, 768>(result, bxy_ur_16_rd9_res);
 	hw_uint<16> bxy_ur_16_rd10_res = bxy_ur_16_rd10_select(blurx, d0, d1);
-	set_at<160, 288>(result, bxy_ur_16_rd10_res);
+	set_at<160, 768>(result, bxy_ur_16_rd10_res);
 	hw_uint<16> bxy_ur_16_rd11_res = bxy_ur_16_rd11_select(blurx, d0, d1);
-	set_at<176, 288>(result, bxy_ur_16_rd11_res);
+	set_at<176, 768>(result, bxy_ur_16_rd11_res);
 	hw_uint<16> bxy_ur_16_rd12_res = bxy_ur_16_rd12_select(blurx, d0, d1);
-	set_at<192, 288>(result, bxy_ur_16_rd12_res);
+	set_at<192, 768>(result, bxy_ur_16_rd12_res);
 	hw_uint<16> bxy_ur_16_rd13_res = bxy_ur_16_rd13_select(blurx, d0, d1);
-	set_at<208, 288>(result, bxy_ur_16_rd13_res);
+	set_at<208, 768>(result, bxy_ur_16_rd13_res);
 	hw_uint<16> bxy_ur_16_rd14_res = bxy_ur_16_rd14_select(blurx, d0, d1);
-	set_at<224, 288>(result, bxy_ur_16_rd14_res);
+	set_at<224, 768>(result, bxy_ur_16_rd14_res);
 	hw_uint<16> bxy_ur_16_rd15_res = bxy_ur_16_rd15_select(blurx, d0, d1);
-	set_at<240, 288>(result, bxy_ur_16_rd15_res);
+	set_at<240, 768>(result, bxy_ur_16_rd15_res);
 	hw_uint<16> bxy_ur_16_rd16_res = bxy_ur_16_rd16_select(blurx, d0, d1);
-	set_at<256, 288>(result, bxy_ur_16_rd16_res);
+	set_at<256, 768>(result, bxy_ur_16_rd16_res);
 	hw_uint<16> bxy_ur_16_rd17_res = bxy_ur_16_rd17_select(blurx, d0, d1);
-	set_at<272, 288>(result, bxy_ur_16_rd17_res);
+	set_at<272, 768>(result, bxy_ur_16_rd17_res);
+	hw_uint<16> bxy_ur_16_rd18_res = bxy_ur_16_rd18_select(blurx, d0, d1);
+	set_at<288, 768>(result, bxy_ur_16_rd18_res);
+	hw_uint<16> bxy_ur_16_rd19_res = bxy_ur_16_rd19_select(blurx, d0, d1);
+	set_at<304, 768>(result, bxy_ur_16_rd19_res);
+	hw_uint<16> bxy_ur_16_rd20_res = bxy_ur_16_rd20_select(blurx, d0, d1);
+	set_at<320, 768>(result, bxy_ur_16_rd20_res);
+	hw_uint<16> bxy_ur_16_rd21_res = bxy_ur_16_rd21_select(blurx, d0, d1);
+	set_at<336, 768>(result, bxy_ur_16_rd21_res);
+	hw_uint<16> bxy_ur_16_rd22_res = bxy_ur_16_rd22_select(blurx, d0, d1);
+	set_at<352, 768>(result, bxy_ur_16_rd22_res);
+	hw_uint<16> bxy_ur_16_rd23_res = bxy_ur_16_rd23_select(blurx, d0, d1);
+	set_at<368, 768>(result, bxy_ur_16_rd23_res);
+	hw_uint<16> bxy_ur_16_rd24_res = bxy_ur_16_rd24_select(blurx, d0, d1);
+	set_at<384, 768>(result, bxy_ur_16_rd24_res);
+	hw_uint<16> bxy_ur_16_rd25_res = bxy_ur_16_rd25_select(blurx, d0, d1);
+	set_at<400, 768>(result, bxy_ur_16_rd25_res);
+	hw_uint<16> bxy_ur_16_rd26_res = bxy_ur_16_rd26_select(blurx, d0, d1);
+	set_at<416, 768>(result, bxy_ur_16_rd26_res);
+	hw_uint<16> bxy_ur_16_rd27_res = bxy_ur_16_rd27_select(blurx, d0, d1);
+	set_at<432, 768>(result, bxy_ur_16_rd27_res);
+	hw_uint<16> bxy_ur_16_rd28_res = bxy_ur_16_rd28_select(blurx, d0, d1);
+	set_at<448, 768>(result, bxy_ur_16_rd28_res);
+	hw_uint<16> bxy_ur_16_rd29_res = bxy_ur_16_rd29_select(blurx, d0, d1);
+	set_at<464, 768>(result, bxy_ur_16_rd29_res);
+	hw_uint<16> bxy_ur_16_rd30_res = bxy_ur_16_rd30_select(blurx, d0, d1);
+	set_at<480, 768>(result, bxy_ur_16_rd30_res);
+	hw_uint<16> bxy_ur_16_rd31_res = bxy_ur_16_rd31_select(blurx, d0, d1);
+	set_at<496, 768>(result, bxy_ur_16_rd31_res);
+	hw_uint<16> bxy_ur_16_rd32_res = bxy_ur_16_rd32_select(blurx, d0, d1);
+	set_at<512, 768>(result, bxy_ur_16_rd32_res);
+	hw_uint<16> bxy_ur_16_rd33_res = bxy_ur_16_rd33_select(blurx, d0, d1);
+	set_at<528, 768>(result, bxy_ur_16_rd33_res);
+	hw_uint<16> bxy_ur_16_rd34_res = bxy_ur_16_rd34_select(blurx, d0, d1);
+	set_at<544, 768>(result, bxy_ur_16_rd34_res);
+	hw_uint<16> bxy_ur_16_rd35_res = bxy_ur_16_rd35_select(blurx, d0, d1);
+	set_at<560, 768>(result, bxy_ur_16_rd35_res);
+	hw_uint<16> bxy_ur_16_rd36_res = bxy_ur_16_rd36_select(blurx, d0, d1);
+	set_at<576, 768>(result, bxy_ur_16_rd36_res);
+	hw_uint<16> bxy_ur_16_rd37_res = bxy_ur_16_rd37_select(blurx, d0, d1);
+	set_at<592, 768>(result, bxy_ur_16_rd37_res);
+	hw_uint<16> bxy_ur_16_rd38_res = bxy_ur_16_rd38_select(blurx, d0, d1);
+	set_at<608, 768>(result, bxy_ur_16_rd38_res);
+	hw_uint<16> bxy_ur_16_rd39_res = bxy_ur_16_rd39_select(blurx, d0, d1);
+	set_at<624, 768>(result, bxy_ur_16_rd39_res);
+	hw_uint<16> bxy_ur_16_rd40_res = bxy_ur_16_rd40_select(blurx, d0, d1);
+	set_at<640, 768>(result, bxy_ur_16_rd40_res);
+	hw_uint<16> bxy_ur_16_rd41_res = bxy_ur_16_rd41_select(blurx, d0, d1);
+	set_at<656, 768>(result, bxy_ur_16_rd41_res);
+	hw_uint<16> bxy_ur_16_rd42_res = bxy_ur_16_rd42_select(blurx, d0, d1);
+	set_at<672, 768>(result, bxy_ur_16_rd42_res);
+	hw_uint<16> bxy_ur_16_rd43_res = bxy_ur_16_rd43_select(blurx, d0, d1);
+	set_at<688, 768>(result, bxy_ur_16_rd43_res);
+	hw_uint<16> bxy_ur_16_rd44_res = bxy_ur_16_rd44_select(blurx, d0, d1);
+	set_at<704, 768>(result, bxy_ur_16_rd44_res);
+	hw_uint<16> bxy_ur_16_rd45_res = bxy_ur_16_rd45_select(blurx, d0, d1);
+	set_at<720, 768>(result, bxy_ur_16_rd45_res);
+	hw_uint<16> bxy_ur_16_rd46_res = bxy_ur_16_rd46_select(blurx, d0, d1);
+	set_at<736, 768>(result, bxy_ur_16_rd46_res);
+	hw_uint<16> bxy_ur_16_rd47_res = bxy_ur_16_rd47_select(blurx, d0, d1);
+	set_at<752, 768>(result, bxy_ur_16_rd47_res);
 	return result;
 }
 
@@ -2998,68 +3710,6 @@ inline void input_update_0(HWStream<hw_uint<256> >& /* buffer_args num ports = 1
 #endif //__VIVADO_SYNTH__
 }
 
-inline void blurx_update_0(input_cache& input, blurx_cache& blurx, int d0, int d1) {
-	// Consume: input
-	auto input_0_c__0_value = input_blurx_update_0_read_bundle_read(input/* source_delay */, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "blurx_update_0_input," << d0<< "," << d1<< "," <<  input_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-	auto compute_result = blurx_generated_compute_unrolled_16(input_0_c__0_value);
-	// Produce: blurx
-	blurx_blurx_update_0_write_bundle_write(compute_result, blurx, d0, d1);
-#ifndef __VIVADO_SYNTH__
-  hw_uint<256> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  hw_uint<16> debug_compute_result_lane_2;
-  set_at<0, 16, 16>(debug_compute_result_lane_2, debug_compute_result.extract<32, 47>());
-  hw_uint<16> debug_compute_result_lane_3;
-  set_at<0, 16, 16>(debug_compute_result_lane_3, debug_compute_result.extract<48, 63>());
-  hw_uint<16> debug_compute_result_lane_4;
-  set_at<0, 16, 16>(debug_compute_result_lane_4, debug_compute_result.extract<64, 79>());
-  hw_uint<16> debug_compute_result_lane_5;
-  set_at<0, 16, 16>(debug_compute_result_lane_5, debug_compute_result.extract<80, 95>());
-  hw_uint<16> debug_compute_result_lane_6;
-  set_at<0, 16, 16>(debug_compute_result_lane_6, debug_compute_result.extract<96, 111>());
-  hw_uint<16> debug_compute_result_lane_7;
-  set_at<0, 16, 16>(debug_compute_result_lane_7, debug_compute_result.extract<112, 127>());
-  hw_uint<16> debug_compute_result_lane_8;
-  set_at<0, 16, 16>(debug_compute_result_lane_8, debug_compute_result.extract<128, 143>());
-  hw_uint<16> debug_compute_result_lane_9;
-  set_at<0, 16, 16>(debug_compute_result_lane_9, debug_compute_result.extract<144, 159>());
-  hw_uint<16> debug_compute_result_lane_10;
-  set_at<0, 16, 16>(debug_compute_result_lane_10, debug_compute_result.extract<160, 175>());
-  hw_uint<16> debug_compute_result_lane_11;
-  set_at<0, 16, 16>(debug_compute_result_lane_11, debug_compute_result.extract<176, 191>());
-  hw_uint<16> debug_compute_result_lane_12;
-  set_at<0, 16, 16>(debug_compute_result_lane_12, debug_compute_result.extract<192, 207>());
-  hw_uint<16> debug_compute_result_lane_13;
-  set_at<0, 16, 16>(debug_compute_result_lane_13, debug_compute_result.extract<208, 223>());
-  hw_uint<16> debug_compute_result_lane_14;
-  set_at<0, 16, 16>(debug_compute_result_lane_14, debug_compute_result.extract<224, 239>());
-  hw_uint<16> debug_compute_result_lane_15;
-  set_at<0, 16, 16>(debug_compute_result_lane_15, debug_compute_result.extract<240, 255>());
-  *global_debug_handle << "blurx_update_0," << (16*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "blurx_update_0," << (16*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "blurx_update_0," << (16*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "blurx_update_0," << (16*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
-  *global_debug_handle << "blurx_update_0," << (16*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
-  *global_debug_handle << "blurx_update_0," << (16*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
-  *global_debug_handle << "blurx_update_0," << (16*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
-  *global_debug_handle << "blurx_update_0," << (16*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
-  *global_debug_handle << "blurx_update_0," << (16*d0 + 8) << ", " << d1<< "," <<  debug_compute_result_lane_8 << endl;
-  *global_debug_handle << "blurx_update_0," << (16*d0 + 9) << ", " << d1<< "," <<  debug_compute_result_lane_9 << endl;
-  *global_debug_handle << "blurx_update_0," << (16*d0 + 10) << ", " << d1<< "," <<  debug_compute_result_lane_10 << endl;
-  *global_debug_handle << "blurx_update_0," << (16*d0 + 11) << ", " << d1<< "," <<  debug_compute_result_lane_11 << endl;
-  *global_debug_handle << "blurx_update_0," << (16*d0 + 12) << ", " << d1<< "," <<  debug_compute_result_lane_12 << endl;
-  *global_debug_handle << "blurx_update_0," << (16*d0 + 13) << ", " << d1<< "," <<  debug_compute_result_lane_13 << endl;
-  *global_debug_handle << "blurx_update_0," << (16*d0 + 14) << ", " << d1<< "," <<  debug_compute_result_lane_14 << endl;
-  *global_debug_handle << "blurx_update_0," << (16*d0 + 15) << ", " << d1<< "," <<  debug_compute_result_lane_15 << endl;
-#endif //__VIVADO_SYNTH__
-}
-
 inline void bxy_ur_16_update_0(blurx_cache& blurx, HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */bxy_ur_16, int d0, int d1) {
 	// Consume: blurx
 	auto blurx_0_c__0_value = blurx_bxy_ur_16_update_0_read_bundle_read(blurx/* source_delay */, d0, d1);
@@ -3119,6 +3769,68 @@ inline void bxy_ur_16_update_0(blurx_cache& blurx, HWStream<hw_uint<256> >& /* b
   *global_debug_handle << "bxy_ur_16_update_0," << (16*d0 + 13) << ", " << d1<< "," <<  debug_compute_result_lane_13 << endl;
   *global_debug_handle << "bxy_ur_16_update_0," << (16*d0 + 14) << ", " << d1<< "," <<  debug_compute_result_lane_14 << endl;
   *global_debug_handle << "bxy_ur_16_update_0," << (16*d0 + 15) << ", " << d1<< "," <<  debug_compute_result_lane_15 << endl;
+#endif //__VIVADO_SYNTH__
+}
+
+inline void blurx_update_0(input_cache& input, blurx_cache& blurx, int d0, int d1) {
+	// Consume: input
+	auto input_0_c__0_value = input_blurx_update_0_read_bundle_read(input/* source_delay */, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "blurx_update_0_input," << d0<< "," << d1<< "," <<  input_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+	auto compute_result = blurx_generated_compute_unrolled_16(input_0_c__0_value);
+	// Produce: blurx
+	blurx_blurx_update_0_write_bundle_write(compute_result, blurx, d0, d1);
+#ifndef __VIVADO_SYNTH__
+  hw_uint<256> debug_compute_result(compute_result);
+  hw_uint<16> debug_compute_result_lane_0;
+  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
+  hw_uint<16> debug_compute_result_lane_1;
+  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
+  hw_uint<16> debug_compute_result_lane_2;
+  set_at<0, 16, 16>(debug_compute_result_lane_2, debug_compute_result.extract<32, 47>());
+  hw_uint<16> debug_compute_result_lane_3;
+  set_at<0, 16, 16>(debug_compute_result_lane_3, debug_compute_result.extract<48, 63>());
+  hw_uint<16> debug_compute_result_lane_4;
+  set_at<0, 16, 16>(debug_compute_result_lane_4, debug_compute_result.extract<64, 79>());
+  hw_uint<16> debug_compute_result_lane_5;
+  set_at<0, 16, 16>(debug_compute_result_lane_5, debug_compute_result.extract<80, 95>());
+  hw_uint<16> debug_compute_result_lane_6;
+  set_at<0, 16, 16>(debug_compute_result_lane_6, debug_compute_result.extract<96, 111>());
+  hw_uint<16> debug_compute_result_lane_7;
+  set_at<0, 16, 16>(debug_compute_result_lane_7, debug_compute_result.extract<112, 127>());
+  hw_uint<16> debug_compute_result_lane_8;
+  set_at<0, 16, 16>(debug_compute_result_lane_8, debug_compute_result.extract<128, 143>());
+  hw_uint<16> debug_compute_result_lane_9;
+  set_at<0, 16, 16>(debug_compute_result_lane_9, debug_compute_result.extract<144, 159>());
+  hw_uint<16> debug_compute_result_lane_10;
+  set_at<0, 16, 16>(debug_compute_result_lane_10, debug_compute_result.extract<160, 175>());
+  hw_uint<16> debug_compute_result_lane_11;
+  set_at<0, 16, 16>(debug_compute_result_lane_11, debug_compute_result.extract<176, 191>());
+  hw_uint<16> debug_compute_result_lane_12;
+  set_at<0, 16, 16>(debug_compute_result_lane_12, debug_compute_result.extract<192, 207>());
+  hw_uint<16> debug_compute_result_lane_13;
+  set_at<0, 16, 16>(debug_compute_result_lane_13, debug_compute_result.extract<208, 223>());
+  hw_uint<16> debug_compute_result_lane_14;
+  set_at<0, 16, 16>(debug_compute_result_lane_14, debug_compute_result.extract<224, 239>());
+  hw_uint<16> debug_compute_result_lane_15;
+  set_at<0, 16, 16>(debug_compute_result_lane_15, debug_compute_result.extract<240, 255>());
+  *global_debug_handle << "blurx_update_0," << (16*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "blurx_update_0," << (16*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "blurx_update_0," << (16*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "blurx_update_0," << (16*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "blurx_update_0," << (16*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
+  *global_debug_handle << "blurx_update_0," << (16*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
+  *global_debug_handle << "blurx_update_0," << (16*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
+  *global_debug_handle << "blurx_update_0," << (16*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
+  *global_debug_handle << "blurx_update_0," << (16*d0 + 8) << ", " << d1<< "," <<  debug_compute_result_lane_8 << endl;
+  *global_debug_handle << "blurx_update_0," << (16*d0 + 9) << ", " << d1<< "," <<  debug_compute_result_lane_9 << endl;
+  *global_debug_handle << "blurx_update_0," << (16*d0 + 10) << ", " << d1<< "," <<  debug_compute_result_lane_10 << endl;
+  *global_debug_handle << "blurx_update_0," << (16*d0 + 11) << ", " << d1<< "," <<  debug_compute_result_lane_11 << endl;
+  *global_debug_handle << "blurx_update_0," << (16*d0 + 12) << ", " << d1<< "," <<  debug_compute_result_lane_12 << endl;
+  *global_debug_handle << "blurx_update_0," << (16*d0 + 13) << ", " << d1<< "," <<  debug_compute_result_lane_13 << endl;
+  *global_debug_handle << "blurx_update_0," << (16*d0 + 14) << ", " << d1<< "," <<  debug_compute_result_lane_14 << endl;
+  *global_debug_handle << "blurx_update_0," << (16*d0 + 15) << ", " << d1<< "," <<  debug_compute_result_lane_15 << endl;
 #endif //__VIVADO_SYNTH__
 }
 
