@@ -4612,6 +4612,57 @@ void up_stencil_test() {
   //assert(false);
 }
 
+void up_down_auto_unrolled_test() {
+  App lp;
+  lp.func2d("in_off_chip");
+  lp.func2d("in", "id", {pt("in_off_chip")});
+
+  lp.func2d("us", "id", {upsample(2, "in")});
+  lp.func2d("up_stencil_down", "id", {downsample(2, "us")});
+
+  int size = 16;
+
+  lp.realize("up_stencil_down", size, size, 4);
+  auto opt = run_regression_tb("up_stencil_down_opt");
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  options.unroll_factors_as_pad = true;
+
+  lp.realize_naive(options, "up_stencil_down", size, size);
+  auto naive = run_regression_tb("up_stencil_down_naive");
+
+  assert(opt == naive);
+  assert(false);
+}
+
+void up_stencil_auto_unrolled_test() {
+  App lp;
+  lp.func2d("in_off_chip");
+  lp.func2d("in", "id", {pt("in_off_chip")});
+
+  string app_name = "up_stencil";
+  lp.func2d("us", "id", {upsample(2, "in")});
+  lp.func2d(app_name, "conv_3_3", {stencil(-1, 1, -1, 1, "us")});
+
+  int size = 16;
+
+  lp.realize(app_name, size, size, 4);
+  auto opt = run_regression_tb(app_name + "_opt");
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  options.unroll_factors_as_pad = true;
+
+  lp.realize_naive(options, app_name, size, size);
+  auto naive = run_regression_tb(app_name + "_naive");
+
+  assert(opt == naive);
+  assert(false);
+}
+
 void up_stencil_down_auto_unrolled_test() {
   App lp;
   lp.func2d("in_off_chip");
@@ -6401,9 +6452,10 @@ void playground() {
 }
 
 void application_tests() {
+  up_stencil_auto_unrolled_test();
+  up_down_auto_unrolled_test();
   up_stencil_down_auto_unrolled_test();
   conv3x3_app_unrolled_test();
-  //assert(false);
   conv3x3_app_test();
   conv3x3_app_unrolled_uneven_test();
 

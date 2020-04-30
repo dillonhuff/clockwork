@@ -1029,13 +1029,46 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
       cout << "op = " << op->name << endl;
       conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
 
+      conv_out << endl;
       open_debug_scope(conv_out);
+
+      auto& buf = buffers.at(in_buffer);
+      int bundle_width = buf.port_bundle_width(bundle_name);
+
+      int unroll_factor = op->unroll_factor;
+      //int element_width = bundle_width / op->unroll_factor;
+
+      string dbg_res_name = "debug_" + value_name;
+      conv_out << tab(1) << "hw_uint<" << bundle_width << "> " << dbg_res_name << " = " << value_name << ";" << endl;
+
+  //vector<string> lane_values =
+    //split_bv(1, conv_out, dbg_res_name, element_width, op->unroll_factor);
+
+  //for (int lane = 0; lane < unroll_factor; lane++) {
+    //conv_out << tab(1) << "*global_debug_handle << \"" << op->name << ",\" << ";
+    //int i = 0;
+    //for (auto v : kernel.iteration_variables) {
+      //if (i == 0) {
+        //conv_out << "(" << unroll_factor << "*" << v << " + " << lane << ") << \", \" << ";
+      //} else {
+        //conv_out << v << "<< \",\" << ";
+      //}
+      //i++;
+    //}
+    //assert(lane < lane_values.size());
+    //conv_out << " " << lane_values.at(lane) << " << endl;" << endl;
+  //}
+
+
+
+
       conv_out << tab(1) << "*global_debug_handle << \"" << op->name << "_" << in_buffer << ",\" << ";
       for (auto v : kernel.iteration_variables) {
         conv_out << v << "<< \",\" << ";
       }
       conv_out << " " << value_name << " << endl;" << endl;
       close_debug_scope(conv_out);
+      conv_out << endl;
 
     }
     buf_args.push_back(value_name);
@@ -1075,15 +1108,12 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
       comma_list(arg_names) << ");" << endl;
   }
 
+  conv_out << endl;
   open_debug_scope(conv_out);
 
-  cout << "emitting bundle code" << endl;
+  //cout << "emitting bundle code" << endl;
   auto& buf = buffers.at(out_buffer);
   int bundle_width = buf.port_bundle_width(bundle_name);
-  //int nlanes = buf.port_bundles.at(bundle_name).size();
-
-  //assert(nlanes == op->unroll_factor);
-  //assert(bundle_width % nlanes == 0);
 
   int unroll_factor = op->unroll_factor;
   int element_width = bundle_width / op->unroll_factor;
@@ -1094,7 +1124,6 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
   vector<string> lane_values =
     split_bv(1, conv_out, dbg_res_name, element_width, op->unroll_factor);
 
-  //cout << "nlanes = " << nlanes << endl;
   for (int lane = 0; lane < unroll_factor; lane++) {
     conv_out << tab(1) << "*global_debug_handle << \"" << op->name << ",\" << ";
     int i = 0;
@@ -1111,6 +1140,7 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
   }
 
   close_debug_scope(conv_out);
+  conv_out << endl;
   conv_out << "}" << endl << endl;
 
   return kernel;
