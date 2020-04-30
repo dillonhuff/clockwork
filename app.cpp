@@ -1282,8 +1282,6 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, ve
 
   cout << "Padded domain: " << str(padded_domain) << endl;
 
-  //assert(different_dims.size() == 1);
-
   auto padded_validity = pad_map(validity);
   auto padded_proximity = pad_map(proximity);
 
