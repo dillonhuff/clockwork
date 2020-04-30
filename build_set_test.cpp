@@ -3598,30 +3598,13 @@ struct App {
           cout << "Getting map from " << u.name() << " to " << consumer << endl;
 
           Window f_win = data_window_needed_by_compute(u.name(), f);
-          Window lane_window = data_window_needed_by_one_compute_lane(u.name(), f);
-          cout << "### Window of " << f << " needed by " << u.name() << " = " << f_win << endl;
-          auto* lane_data_needed =
-            lane_window.needed;
-          cout << tab(1) << "Window needed by a single lane: " << u.name() << " = " << str(lane_data_needed) << endl;
+          //Window lane_window = data_window_needed_by_one_compute_lane(u.name(), f);
+          //cout << "### Window of " << f << " needed by " << u.name() << " = " << f_win << endl;
+          //auto* lane_data_needed =
+            //lane_window.needed;
+          //cout << tab(1) << "Window needed by a single lane: " << u.name() << " = " << str(lane_data_needed) << endl;
 
           cout << tab(1) << "unroll factor: " << u.unroll_factor << endl;
-          for (int i = 0; i < u.unroll_factor; i++) {
-            string lane_select_str =
-              "{ " + u.provided.name + "[d0, d1] -> lane_" + str(i) +
-              "[floor(d0 / " + str(u.unroll_factor) + "), d1] : d0 % " + str(u.unroll_factor) + " = " + str(i) + " }";
-            cout << tab(1) << "lane select str = " << lane_select_str << endl;
-
-            isl_map* lane_select =
-              to_map(rdmap(ctx, lane_select_str));
-
-            cout << tab(1) << "lane selector: " << str(lane_select) << endl << endl;
-
-            auto data_needed_by_lane =
-              dot(inv(lane_select), lane_data_needed);
-
-            cout << tab(1) << "lane " << i << " data    : " << str(data_needed_by_lane) << endl;
-          }
-
           int i = 0;
           for (auto p : f_win.pts()) {
             vector<string> coeffs;
@@ -6402,8 +6385,8 @@ void playground() {
 }
 
 void application_tests() {
-  //up_unrolled_4_test();
-  //up_stencil_down_auto_unrolled_test();
+  up_unrolled_4_test();
+  up_stencil_down_auto_unrolled_test();
   //assert(false);
 
   cnn_test();
