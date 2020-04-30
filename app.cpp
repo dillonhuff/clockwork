@@ -1010,6 +1010,7 @@ map<string, isl_val*> compute_qfactors(map<isl_map*, vector<pair<isl_val*, isl_v
     string qp = sched_var_name(producer);
     string qc = sched_var_name(consumer);
 
+    //qfs[qp] = mul(isl_val_int_from_si(ct, 5), ilp.value(qp));
     qfs[qp] = ilp.value(qp);
     qfs[qc] = ilp.value(qc);
   }

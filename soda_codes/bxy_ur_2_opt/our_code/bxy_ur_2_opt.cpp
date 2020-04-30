@@ -87,8 +87,8 @@ inline hw_uint<16> bxy_ur_2_rd0_select(blurx_cache& blurx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // bxy_ur_2_rd0 read pattern: { bxy_ur_2_update_0[d0, d1] -> blurx[2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
-  // Read schedule : { bxy_ur_2_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
-  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_2_update_0[d0, d1] -> [10 + d1, 1 + d0, 3] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [10 + d1, d0, 2] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
   // DD fold: { bxy_ur_2_update_0[d0, d1] -> 1 : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
   auto value_blurx_blurx_update_0_write0 = blurx.blurx_blurx_update_0_write0_merged_banks_2.peek_1();
   return value_blurx_blurx_update_0_write0;
@@ -103,8 +103,8 @@ inline hw_uint<16> bxy_ur_2_rd1_select(blurx_cache& blurx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // bxy_ur_2_rd1 read pattern: { bxy_ur_2_update_0[d0, d1] -> blurx[1 + 2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
-  // Read schedule : { bxy_ur_2_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
-  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_2_update_0[d0, d1] -> [10 + d1, 1 + d0, 3] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [10 + d1, d0, 2] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
   // DD fold: { bxy_ur_2_update_0[d0, d1] -> 1 : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
   auto value_blurx_blurx_update_0_write1 = blurx.blurx_blurx_update_0_write1_merged_banks_2.peek_1();
   return value_blurx_blurx_update_0_write1;
@@ -119,8 +119,8 @@ inline hw_uint<16> bxy_ur_2_rd2_select(blurx_cache& blurx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // bxy_ur_2_rd2 read pattern: { bxy_ur_2_update_0[d0, d1] -> blurx[2 + 2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
-  // Read schedule : { bxy_ur_2_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
-  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_2_update_0[d0, d1] -> [10 + d1, 1 + d0, 3] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [10 + d1, d0, 2] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
   // DD fold: {  }
   auto value_blurx_blurx_update_0_write0 = blurx.blurx_blurx_update_0_write0_merged_banks_2.peek_0();
   return value_blurx_blurx_update_0_write0;
@@ -135,8 +135,8 @@ inline hw_uint<16> bxy_ur_2_rd3_select(blurx_cache& blurx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // bxy_ur_2_rd3 read pattern: { bxy_ur_2_update_0[d0, d1] -> blurx[3 + 2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
-  // Read schedule : { bxy_ur_2_update_0[d0, d1] -> [2 + d1, 1 + d0, 3] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
-  // Write schedule: { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
+  // Read schedule : { bxy_ur_2_update_0[d0, d1] -> [10 + d1, 1 + d0, 3] : 0 <= d0 <= 959 and 0 <= d1 <= 1079 }
+  // Write schedule: { blurx_update_0[d0, d1] -> [10 + d1, d0, 2] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
   // DD fold: {  }
   auto value_blurx_blurx_update_0_write1 = blurx.blurx_blurx_update_0_write1_merged_banks_2.peek_0();
   return value_blurx_blurx_update_0_write1;
@@ -184,149 +184,163 @@ inline hw_uint<64> blurx_bxy_ur_2_update_0_read_bundle_read(blurx_cache& blurx, 
 
 #include "hw_classes.h"
 
-struct input_input_update_0_write0_merged_banks_3_cache {
+struct input_input_update_0_write0_to_blurx_rd0_cache {
 	// RAM Box: {[0, 1920], [0, 1081]}
 	// Capacity: 1923
-	// # of read delays: 3
-	hw_uint<16> f0;
-	fifo<hw_uint<16>, 960> f1;
-	hw_uint<16> f2;
-	fifo<hw_uint<16>, 960> f3;
-	hw_uint<16> f4;
-
-
-	inline hw_uint<16> peek_0() {
-		return f0;
-	}
-
-	inline hw_uint<16> peek_960() {
+	// # of read delays: 1923
+	fifo<hw_uint<16>, 1923> f;
+	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-		return f1.back();
-	}
-
-	inline hw_uint<16> peek_961() {
-		return f2;
-	}
-
-	inline hw_uint<16> peek_1921() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-		return f3.back();
-	}
-
-	inline hw_uint<16> peek_1922() {
-		return f4;
-	}
+    return f.peek(1922 - offset);
+  }
 
 
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 960
-    f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 960 reading from capacity: 1
-    f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 960
-    f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 960 reading from capacity: 1
-    f1.push(f0);
-    // cap: 1
-    f0 = value;
-	}
+    return f.push(value);
+  }
 
 };
 
-struct input_input_update_0_write1_merged_banks_3_cache {
-	// RAM Box: {[0, 1921], [0, 1081]}
-	// Capacity: 1923
-	// # of read delays: 3
-	hw_uint<16> f0;
-	fifo<hw_uint<16>, 960> f1;
-	hw_uint<16> f2;
-	fifo<hw_uint<16>, 960> f3;
-	hw_uint<16> f4;
-
-
-	inline hw_uint<16> peek_0() {
-		return f0;
-	}
-
-	inline hw_uint<16> peek_960() {
+struct input_input_update_0_write0_to_blurx_rd1_cache {
+	// RAM Box: {[0, 1920], [0, 1081]}
+	// Capacity: 962
+	// # of read delays: 962
+	fifo<hw_uint<16>, 962> f;
+	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-		return f1.back();
-	}
-
-	inline hw_uint<16> peek_961() {
-		return f2;
-	}
-
-	inline hw_uint<16> peek_1921() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-		return f3.back();
-	}
-
-	inline hw_uint<16> peek_1922() {
-		return f4;
-	}
+    return f.peek(961 - offset);
+  }
 
 
 
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 960
-    f4 = f3.back();
+    return f.push(value);
+  }
+
+};
+
+struct input_input_update_0_write0_merged_banks_1_cache {
+	// RAM Box: {[0, 1920], [0, 1081]}
+	// Capacity: 1
+	// # of read delays: 1
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 960 reading from capacity: 1
-    f3.push(f2);
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 960
-    f2 = f1.back();
+    return f.push(value);
+  }
+
+};
+
+struct input_input_update_0_write1_to_blurx_rd3_cache {
+	// RAM Box: {[1, 1921], [0, 1081]}
+	// Capacity: 1923
+	// # of read delays: 1923
+	fifo<hw_uint<16>, 1923> f;
+	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 960 reading from capacity: 1
-    f1.push(f0);
-    // cap: 1
-    f0 = value;
-	}
+    return f.peek(1922 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_input_update_0_write1_to_blurx_rd4_cache {
+	// RAM Box: {[1, 1921], [0, 1081]}
+	// Capacity: 962
+	// # of read delays: 962
+	fifo<hw_uint<16>, 962> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(961 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct input_input_update_0_write1_merged_banks_1_cache {
+	// RAM Box: {[0, 1921], [0, 1081]}
+	// Capacity: 1
+	// # of read delays: 1
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
 
 };
 
 struct input_cache {
-  input_input_update_0_write0_merged_banks_3_cache input_input_update_0_write0_merged_banks_3;
-  input_input_update_0_write1_merged_banks_3_cache input_input_update_0_write1_merged_banks_3;
+  input_input_update_0_write0_to_blurx_rd0_cache input_input_update_0_write0_to_blurx_rd0;
+  input_input_update_0_write0_to_blurx_rd1_cache input_input_update_0_write0_to_blurx_rd1;
+  input_input_update_0_write0_merged_banks_1_cache input_input_update_0_write0_merged_banks_1;
+  input_input_update_0_write1_to_blurx_rd3_cache input_input_update_0_write1_to_blurx_rd3;
+  input_input_update_0_write1_to_blurx_rd4_cache input_input_update_0_write1_to_blurx_rd4;
+  input_input_update_0_write1_merged_banks_1_cache input_input_update_0_write1_merged_banks_1;
 };
 
 
 
 inline void input_input_update_0_write0_write(hw_uint<16>& input_input_update_0_write0, input_cache& input, int d0, int d1) {
-  input.input_input_update_0_write0_merged_banks_3.push(input_input_update_0_write0);
+  input.input_input_update_0_write0_to_blurx_rd0.push(input_input_update_0_write0);
+  input.input_input_update_0_write0_to_blurx_rd1.push(input_input_update_0_write0);
+  input.input_input_update_0_write0_merged_banks_1.push(input_input_update_0_write0);
 }
 
 inline void input_input_update_0_write1_write(hw_uint<16>& input_input_update_0_write1, input_cache& input, int d0, int d1) {
-  input.input_input_update_0_write1_merged_banks_3.push(input_input_update_0_write1);
+  input.input_input_update_0_write1_to_blurx_rd3.push(input_input_update_0_write1);
+  input.input_input_update_0_write1_to_blurx_rd4.push(input_input_update_0_write1);
+  input.input_input_update_0_write1_merged_banks_1.push(input_input_update_0_write1);
 }
 
 inline hw_uint<16> blurx_rd0_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // blurx_rd0 read pattern: { blurx_update_0[d0, d1] -> input[2d0, d1] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
-  // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 960 and 0 <= d1 <= 1081 }
-  // DD fold: { blurx_update_0[d0, d1] -> 1922 : 0 < d0 <= 959 and 0 <= d1 <= 1079; blurx_update_0[d0, d1] -> (962 + d0) : d0 = 960 and 0 <= d1 <= 1079; blurx_update_0[d0, d1] -> 1922 : d0 = 0 and 0 <= d1 <= 1079 }
-  auto value_input_input_update_0_write0 = input.input_input_update_0_write0_merged_banks_3.peek_1922();
+  // Read schedule : { blurx_update_0[d0, d1] -> [10 + d1, d0, 2] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
+  // Write schedule: { input_update_0[d0, d1] -> [5d1, d0, 1] : 0 <= d0 <= 960 and 0 <= d1 <= 1081 }
+  // DD fold: { blurx_update_0[d0, d1] -> 1922 : d1 = 0 and 0 < d0 <= 959; blurx_update_0[d0, d1] -> (962 + d0) : d0 = 960 and d1 = 0; blurx_update_0[d0, d1] -> 1922 : d0 = 0 and d1 = 0; blurx_update_0[d0, d1] -> (1921 - d0) : d1 = 1 and 0 <= d0 <= 959; blurx_update_0[d0, d1] -> ((961 - 961 * d1) + 961 * floor((4 + d1)/5)) : d0 = 960 and d1 = 1; blurx_update_0[d0, d1] -> (960 - d0) : d1 = 2 and 0 <= d0 <= 959 }
+  auto value_input_input_update_0_write0 = input.input_input_update_0_write0_to_blurx_rd0.peek(/* one reader or all rams */ (d1 == 0 && 959 - d0 >= 0) ? (1922) : (-2 + d1 == 0 && 959 - d0 >= 0) ? ((960 - d0)) : (d1 == 0 && -960 + d0 == 0) ? (1922) : (-1 + d1 == 0 && 959 - d0 >= 0) ? ((1921 - d0)) : (-1 + d1 == 0 && -960 + d0 == 0) ? (961) : 0);
   return value_input_input_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -339,10 +353,10 @@ inline hw_uint<16> blurx_rd1_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // blurx_rd1 read pattern: { blurx_update_0[d0, d1] -> input[2d0, 1 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
-  // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 960 and 0 <= d1 <= 1081 }
-  // DD fold: { blurx_update_0[d0, d1] -> 961 : 0 < d0 <= 959 and 0 <= d1 <= 1079; blurx_update_0[d0, d1] -> (1 + d0) : d0 = 960 and 0 <= d1 <= 1079; blurx_update_0[d0, d1] -> 961 : d0 = 0 and 0 <= d1 <= 1079 }
-  auto value_input_input_update_0_write0 = input.input_input_update_0_write0_merged_banks_3.peek_961();
+  // Read schedule : { blurx_update_0[d0, d1] -> [10 + d1, d0, 2] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
+  // Write schedule: { input_update_0[d0, d1] -> [5d1, d0, 1] : 0 <= d0 <= 960 and 0 <= d1 <= 1081 }
+  // DD fold: { blurx_update_0[d0, d1] -> 961 : d1 = 0 and 0 < d0 <= 959; blurx_update_0[d0, d1] -> (1 + d0) : d0 = 960 and d1 = 0; blurx_update_0[d0, d1] -> 961 : d0 = 0 and d1 = 0; blurx_update_0[d0, d1] -> (960 - d0) : d1 = 1 and 0 <= d0 <= 959 }
+  auto value_input_input_update_0_write0 = input.input_input_update_0_write0_to_blurx_rd1.peek(/* one reader or all rams */ (d1 == 0 && 959 - d0 >= 0) ? (961) : (d1 == 0 && -960 + d0 == 0) ? (961) : (-1 + d1 == 0 && 959 - d0 >= 0) ? ((960 - d0)) : 0);
   return value_input_input_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -355,10 +369,10 @@ inline hw_uint<16> blurx_rd2_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // blurx_rd2 read pattern: { blurx_update_0[d0, d1] -> input[2d0, 2 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
-  // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 960 and 0 <= d1 <= 1081 }
+  // Read schedule : { blurx_update_0[d0, d1] -> [10 + d1, d0, 2] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
+  // Write schedule: { input_update_0[d0, d1] -> [5d1, d0, 1] : 0 <= d0 <= 960 and 0 <= d1 <= 1081 }
   // DD fold: {  }
-  auto value_input_input_update_0_write0 = input.input_input_update_0_write0_merged_banks_3.peek_0();
+  auto value_input_input_update_0_write0 = input.input_input_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_input_input_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -371,10 +385,10 @@ inline hw_uint<16> blurx_rd3_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // blurx_rd3 read pattern: { blurx_update_0[d0, d1] -> input[1 + 2d0, d1] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
-  // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 960 and 0 <= d1 <= 1081 }
-  // DD fold: { blurx_update_0[d0, d1] -> 1922 : 0 < d0 <= 959 and 0 <= d1 <= 1079; blurx_update_0[d0, d1] -> (962 + d0) : d0 = 960 and 0 <= d1 <= 1079; blurx_update_0[d0, d1] -> 1922 : d0 = 0 and 0 <= d1 <= 1079 }
-  auto value_input_input_update_0_write1 = input.input_input_update_0_write1_merged_banks_3.peek_1922();
+  // Read schedule : { blurx_update_0[d0, d1] -> [10 + d1, d0, 2] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
+  // Write schedule: { input_update_0[d0, d1] -> [5d1, d0, 1] : 0 <= d0 <= 960 and 0 <= d1 <= 1081 }
+  // DD fold: { blurx_update_0[d0, d1] -> 1922 : d1 = 0 and 0 < d0 <= 959; blurx_update_0[d0, d1] -> (962 + d0) : d0 = 960 and d1 = 0; blurx_update_0[d0, d1] -> 1922 : d0 = 0 and d1 = 0; blurx_update_0[d0, d1] -> (1921 - d0) : d1 = 1 and 0 <= d0 <= 959; blurx_update_0[d0, d1] -> ((961 - 961 * d1) + 961 * floor((4 + d1)/5)) : d0 = 960 and d1 = 1; blurx_update_0[d0, d1] -> (960 - d0) : d1 = 2 and 0 <= d0 <= 959 }
+  auto value_input_input_update_0_write1 = input.input_input_update_0_write1_to_blurx_rd3.peek(/* one reader or all rams */ (d1 == 0 && 959 - d0 >= 0) ? (1922) : (-2 + d1 == 0 && 959 - d0 >= 0) ? ((960 - d0)) : (d1 == 0 && -960 + d0 == 0) ? (1922) : (-1 + d1 == 0 && 959 - d0 >= 0) ? ((1921 - d0)) : (-1 + d1 == 0 && -960 + d0 == 0) ? (961) : 0);
   return value_input_input_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -387,10 +401,10 @@ inline hw_uint<16> blurx_rd4_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // blurx_rd4 read pattern: { blurx_update_0[d0, d1] -> input[1 + 2d0, 1 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
-  // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 960 and 0 <= d1 <= 1081 }
-  // DD fold: { blurx_update_0[d0, d1] -> 961 : 0 < d0 <= 959 and 0 <= d1 <= 1079; blurx_update_0[d0, d1] -> (1 + d0) : d0 = 960 and 0 <= d1 <= 1079; blurx_update_0[d0, d1] -> 961 : d0 = 0 and 0 <= d1 <= 1079 }
-  auto value_input_input_update_0_write1 = input.input_input_update_0_write1_merged_banks_3.peek_961();
+  // Read schedule : { blurx_update_0[d0, d1] -> [10 + d1, d0, 2] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
+  // Write schedule: { input_update_0[d0, d1] -> [5d1, d0, 1] : 0 <= d0 <= 960 and 0 <= d1 <= 1081 }
+  // DD fold: { blurx_update_0[d0, d1] -> 961 : d1 = 0 and 0 < d0 <= 959; blurx_update_0[d0, d1] -> (1 + d0) : d0 = 960 and d1 = 0; blurx_update_0[d0, d1] -> 961 : d0 = 0 and d1 = 0; blurx_update_0[d0, d1] -> (960 - d0) : d1 = 1 and 0 <= d0 <= 959 }
+  auto value_input_input_update_0_write1 = input.input_input_update_0_write1_to_blurx_rd4.peek(/* one reader or all rams */ (d1 == 0 && 959 - d0 >= 0) ? (961) : (d1 == 0 && -960 + d0 == 0) ? (961) : (-1 + d1 == 0 && 959 - d0 >= 0) ? ((960 - d0)) : 0);
   return value_input_input_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -403,10 +417,10 @@ inline hw_uint<16> blurx_rd5_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // blurx_rd5 read pattern: { blurx_update_0[d0, d1] -> input[1 + 2d0, 2 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
-  // Read schedule : { blurx_update_0[d0, d1] -> [2 + d1, d0, 2] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 960 and 0 <= d1 <= 1081 }
+  // Read schedule : { blurx_update_0[d0, d1] -> [10 + d1, d0, 2] : 0 <= d0 <= 960 and 0 <= d1 <= 1079 }
+  // Write schedule: { input_update_0[d0, d1] -> [5d1, d0, 1] : 0 <= d0 <= 960 and 0 <= d1 <= 1081 }
   // DD fold: {  }
-  auto value_input_input_update_0_write1 = input.input_input_update_0_write1_merged_banks_3.peek_0();
+  auto value_input_input_update_0_write1 = input.input_input_update_0_write1_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_input_input_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -535,7 +549,7 @@ void bxy_ur_2_opt(HWStream<hw_uint<32> >& /* get_args num ports = 2 */input_arg,
 	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
 	
-	for (int c0 = 0; c0 <= 1081; c0++) {
+	for (int c0 = 0; c0 <= 5397; c0++) {
 	  for (int c1 = 0; c1 <= 960; c1++) {
 	
 	#ifdef __VIVADO_SYNTH__
@@ -546,8 +560,8 @@ void bxy_ur_2_opt(HWStream<hw_uint<32> >& /* get_args num ports = 2 */input_arg,
 	input_update_0(input_arg, input, (c1 - 0) / 1, (c0 - 0) / 1);
 	    }
 	
-	    if ((0 <= c1 && c1 <= 960) && ((c1 - 0) % 1 == 0) && (2 <= c0 && c0 <= 1081) && ((c0 - 2) % 1 == 0)) {
-	blurx_update_0(input, blurx, (c1 - 0) / 1, (c0 - 2) / 1);
+	    if ((0 <= c1 && c1 <= 960) && ((c1 - 0) % 1 == 0) && (2 <= c0 && c0 <= 5397) && ((c0 - 2) % 5 == 0)) {
+	blurx_update_0(input, blurx, (c1 - 0) / 1, (c0 - 2) / 5);
 	    }
 	
 	    if ((1 <= c1 && c1 <= 960) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1081) && ((c0 - 2) % 1 == 0)) {
