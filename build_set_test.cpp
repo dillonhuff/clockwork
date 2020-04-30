@@ -4638,7 +4638,7 @@ void up_down_auto_unrolled_test() {
   auto naive = run_regression_tb("up_stencil_down_naive");
 
   assert(opt == naive);
-  assert(false);
+  //assert(false);
 }
 
 void up_stencil_auto_unrolled_test() {
@@ -4648,7 +4648,8 @@ void up_stencil_auto_unrolled_test() {
 
   string app_name = "up_stencil";
   lp.func2d("us", "id", {upsample(2, "in")});
-  lp.func2d(app_name, "conv_3_3", {stencil(-1, 1, -1, 1, "us")});
+  //lp.func2d(app_name, "conv_3_3", {stencil(-1, 1, -1, 1, "us")});
+  lp.func2d(app_name, "conv_3_3", {stencil(0, 2, 0, 2, "us")});
 
   int size = 16;
 
@@ -4664,7 +4665,7 @@ void up_stencil_auto_unrolled_test() {
   auto naive = run_regression_tb(app_name + "_naive");
 
   assert(opt == naive);
-  assert(false);
+  //assert(false);
 }
 
 void up_stencil_down_auto_unrolled_test() {
@@ -4673,7 +4674,8 @@ void up_stencil_down_auto_unrolled_test() {
   lp.func2d("in", "id", {pt("in_off_chip")});
 
   lp.func2d("us", "id", {upsample(2, "in")});
-  lp.func2d("stencil", "conv_3_3", {stencil(-1, 1, -1, 1, "us")});
+  lp.func2d("stencil", "conv_3_3", {stencil(0, 2, 0, 2, "us")});
+  //lp.func2d("stencil", "conv_3_3", {stencil(-1, 1, -1, 1, "us")});
   lp.func2d("up_stencil_down", "id", {downsample(2, "stencil")});
 
   int size = 16;
@@ -4690,7 +4692,7 @@ void up_stencil_down_auto_unrolled_test() {
   auto naive = run_regression_tb("up_stencil_down_naive");
 
   assert(opt == naive);
-  assert(false);
+  //assert(false);
 }
 
 void up_stencil_down_test() {
@@ -6456,6 +6458,8 @@ void playground() {
 }
 
 void application_tests() {
+  reduce_2d_test();
+  reduce_1d_test();
   up_stencil_auto_unrolled_test();
   up_down_auto_unrolled_test();
   up_stencil_down_auto_unrolled_test();
@@ -6490,8 +6494,6 @@ void application_tests() {
 
   sum_diffs_test();
 
-  reduce_2d_test();
-  reduce_1d_test();
   //assert(false);
   sobel_16_app_test();
   //assert(false);

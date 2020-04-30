@@ -1032,14 +1032,14 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
       conv_out << endl;
       open_debug_scope(conv_out);
 
-      auto& buf = buffers.at(in_buffer);
-      int bundle_width = buf.port_bundle_width(bundle_name);
+      //auto& buf = buffers.at(in_buffer);
+      //int bundle_width = buf.port_bundle_width(bundle_name);
 
-      int unroll_factor = op->unroll_factor;
-      //int element_width = bundle_width / op->unroll_factor;
+      //int unroll_factor = op->unroll_factor;
+      ////int element_width = bundle_width / op->unroll_factor;
 
-      string dbg_res_name = "debug_" + value_name;
-      conv_out << tab(1) << "hw_uint<" << bundle_width << "> " << dbg_res_name << " = " << value_name << ";" << endl;
+      //string dbg_res_name = "debug_" + value_name;
+      //conv_out << tab(1) << "hw_uint<" << bundle_width << "> " << dbg_res_name << " = " << value_name << ";" << endl;
 
   //vector<string> lane_values =
     //split_bv(1, conv_out, dbg_res_name, element_width, op->unroll_factor);
