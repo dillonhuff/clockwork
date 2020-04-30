@@ -3598,6 +3598,7 @@ struct App {
           cout << "Getting map from " << u.name() << " to " << consumer << endl;
           cout << tab(1) << "unroll factor: " << u.unroll_factor << endl;
 
+          int i = 0;
           for (int lane = 0; lane < u.unroll_factor; lane++) {
             //Window f_win = data_window_needed_by_compute(u.name(), f);
 
@@ -3606,7 +3607,6 @@ struct App {
               data_window_needed_by_one_compute_lane(u.name(), f);
             Window f_win =
               data_window_needed_by_one_compute_lane(u.name(), f).increment(orig_dw.stride(0), lane);
-            int i = 0;
             for (auto p : f_win.pts()) {
               vector<string> coeffs;
               for (auto e : p) {
@@ -3927,39 +3927,51 @@ struct App {
 
         string out_type_string = "hw_uint<" + to_string(out_width) + "> ";
         cfile << out_type_string << " " << unrolled_compute_name(f) << sep_list(arg_decls, "(", ")", ", ") << " {" << endl;
+
         cfile << tab(1) << "hw_uint<" << out_width << "> whole_result;" << endl;
 
         for (int lane = 0; lane < u.unroll_factor; lane++) {
+          cfile << endl;
           vector<string> arg_names;
           for (auto arg : args_and_widths) {
             int arg_width = app_dag.at(arg.second).pixel_width;
 
             string p = arg.second;
-            Window arg_input_window = data_window_needed_by_compute(u.name(), p);
+            Window arg_input_window =
+              data_window_needed_by_one_compute_lane(u.name(), p);
+              //data_window_needed_by_compute(u.name(), p);
+            int offsets_per_lane =
+              arg_input_window.pts().size();
+            int input_bits = arg_width*offsets_per_lane;
+
             string arg_name = "lane_" + to_string(lane) + "_" + p;
 
             arg_names.push_back(arg_name);
             cout << "getting window for " << u.name() << endl;
-            Window orig_dw =
-              data_window_needed_by_one_compute_lane(u.name(), p);
-            Window win_needed =
-              data_window_needed_by_one_compute_lane(u.name(), p).increment(orig_dw.stride(0), lane);
-            cout << "Win needed: " << win_needed << endl;
+            //Window orig_dw =
+              //data_window_needed_by_one_compute_lane(u.name(), p);
+            //Window win_needed =
+              //data_window_needed_by_one_compute_lane(u.name(), p).increment(orig_dw.stride(0), lane);
+            //cout << "Win needed: " << win_needed << endl;
 
-            cfile << tab(1) << "hw_uint<" << win_needed.pts().size()*arg_width << "> " << arg_name << ";" << endl;
-            int win_pos = 0;
-            for (auto off : win_needed.offsets) {
-              cfile << tab(1) << "// Need offset: " << str(off) << endl;
-              int npts = win_needed.pts().size()*arg_width;
-              for (int i = 0; i < arg_input_window.offsets.size(); i++) {
-                if (arg_input_window.offsets.at(i) == off) {
-                  int base = i*arg_width;
-                  int end = (i + 1)*arg_width - 1;
-                  cfile << tab(1) << "set_at<" << win_pos*arg_width << ", " << npts << ", " << arg_width << ">(" << arg_name << ", " << p << ".extract<" << base << ", " << end << ">());" << endl;
-                }
-              }
-              win_pos++;
-            }
+            int base = lane*input_bits;
+            int end = (lane + 1)*input_bits - 1;
+
+            cfile << tab(1) << "hw_uint<" << input_bits << "> " << arg_name << ";" << endl;
+            cfile << tab(1) << "set_at<0, " << input_bits << ", " << input_bits << ">(" << arg_name << ", " << p << ".extract<" << base << ", " << end << ">());" << endl;
+            //int win_pos = 0;
+            //for (auto off : win_needed.offsets) {
+              //cfile << tab(1) << "// Need offset: " << str(off) << endl;
+              //int npts = win_needed.pts().size()*arg_width;
+              //for (int i = 0; i < arg_input_window.offsets.size(); i++) {
+                //if (arg_input_window.offsets.at(i) == off) {
+                  //int base = i*arg_width;
+                  //int end = (i + 1)*arg_width - 1;
+                  //cfile << tab(1) << "set_at<" << win_pos*arg_width << ", " << npts << ", " << arg_width << ">(" << arg_name << ", " << p << ".extract<" << base << ", " << end << ">());" << endl;
+                //}
+              //}
+              //win_pos++;
+            //}
           }
           cfile << tab(1) << "auto result_" << lane << " = " << compute_name(f) << "(" << comma_list(arg_names) << ");" << endl;
           cfile << tab(1) << "set_at<" << fwidth*lane << ", " << out_width << ", " << fwidth << ">(whole_result, result_" << lane << ");" << endl;
