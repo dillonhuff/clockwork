@@ -6399,6 +6399,10 @@ void playground() {
 }
 
 void application_tests() {
+  conv3x3_app_test();
+  conv3x3_app_unrolled_test();
+  conv3x3_app_unrolled_uneven_test();
+
   up_unrolled_4_test();
   up_stencil_down_auto_unrolled_test();
   //assert(false);
@@ -6412,8 +6416,6 @@ void application_tests() {
 
   up_unrolled_test();
   up_down_unrolled_test();
-
-  conv3x3_app_unrolled_uneven_test();
 
 
   jacobi2d_app_test();
@@ -6470,10 +6472,7 @@ void application_tests() {
   seidel2d_test();
   jacobi_2d_2_test();
   jacobi_2d_test();
-  conv3x3_app_test();
-  conv3x3_app_test();
 
-  conv3x3_app_unrolled_test();
 
   upsample_stencil_2d_test();
   upsample_stencil_1d_test();
