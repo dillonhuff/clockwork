@@ -927,11 +927,9 @@ map<string, isl_val*> simplify(const vector<pair<string, isl_val*> >& terms) {
   return done;
 }
 
-map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
-    map<string, vector<string> >& high_bandwidth_deps) {
-  cout << "Deps..." << endl;
-  assert(deps.size() > 0);
-  isl_ctx* ct = ctx(deps.at(0));
+map<isl_map*, vector<pair<isl_val*, isl_val*> > >
+extract_schedule_params(vector<isl_map*>& deps) {
+
   vector<isl_map*> consumed_data;
   for (auto d : deps) {
     cout << tab(1) << str(d) << endl;
@@ -958,10 +956,21 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
       schedule_params[c].push_back(kb);
     }
   }
+  return schedule_params;
+}
+
+map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
+    map<string, vector<string> >& high_bandwidth_deps) {
+  cout << "Deps..." << endl;
+  assert(deps.size() > 0);
+  isl_ctx* ct = ctx(deps.at(0));
+  
+  auto schedule_params =
+    extract_schedule_params(deps);
 
   ilp_builder ilp(ct);
   vector<QConstraint> rate_constraints;
-  QExpr objective = qexpr(0);
+  //QExpr objective = qexpr(0);
 
   map<string, isl_val*> obj;
   for (auto s : schedule_params) {
@@ -986,7 +995,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
       obj.insert({sched_var_name(consumer), isl_val_one(ct)});
       obj.insert({sched_var_name(producer), isl_val_one(ct)});
 
-      objective = objective + qp + qc;
+      //objective = objective + qp + qc;
     }
   }
 
@@ -1306,8 +1315,6 @@ umap* experimental_opt(uset* domain,
   for (auto m : get_maps(finite_validity)) {
     assert(m != nullptr);
 
-    //cout << tab(1) << str(m) << endl;
-    // Schedule respects intra-dependencies by construction
     if (domain_name(m) != range_name(m)) {
       deps.push_back(m);
     }
