@@ -348,7 +348,7 @@ class AccessPattern {
               isl_pw_aff_foreach_piece(pa, isl_pw_aff_get_coefficient, &coef);
               cout << "output_dim: " << i << endl;
               for (auto cc: coef) {
-                  cout << "\tvar_name: " << cc.first <<", idx: " << name2idx[cc.first] << ", coef: " << cc.second << endl;
+                  cout << "\tvar_name: " << cc.first <<", idx: " << name2idx[cc.first] << ", coef: " << cc.second << ", vec_stride_in_addr:" << vec_stride_in_addr[i] << endl;
                   access_matrix[i][name2idx[cc.first]] = cc.second / vec_stride_in_addr[i];
               }
           }
@@ -969,6 +969,8 @@ class UBuffer {
     isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
     bank compute_bank_info(const std::string& inpt, const std::string& outpt);
     void generate_bank_and_merge(CodegenOptions& options);
+
+    vector<string> get_ram_address(const std::string& pt);
 };
 
 int compute_max_dd(UBuffer& buf, const string& inpt);

@@ -614,6 +614,9 @@ selector generate_select(CodegenOptions& options, std::ostream& out, const strin
   if (possible_ports.size() == 1) {
     string inpt = possible_ports.at(0);
     string peeked_val = delay_string(options, out, inpt, outpt, buf);
+    buf.get_ram_address(outpt);
+    cout << "Get delay string: " << peeked_val << endl;
+    cout << "Corresponding access map: " << str(buf.access_map.at(outpt)) << endl;
     sel.bank_conditions.push_back("1");
     sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, inpt));
 
@@ -1029,6 +1032,50 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
       }
     }
   }
+}
+
+vector<string> UBuffer::get_ram_address(const std::string& pt) {
+    vector<string> ret;
+    vector<string> id2name;
+    auto pt_access_map = to_map(access_map.at(pt));
+    size_t var_dim = get_in_dim(pt_access_map);
+    size_t addr_dim = get_out_dim(pt_access_map);
+    vector<vector<int>> acc_matrix = get_access_matrix_from_map(pt_access_map);
+    for (size_t i = 0; i < var_dim; i ++) {
+        id2name.push_back("p" + to_string(i));
+        if (isl_map_has_dim_id(pt_access_map, isl_dim_in, i)) {
+            //rename with its name, position 0 (root) will save const
+            string name = str(isl_map_get_dim_id(pt_access_map, isl_dim_in, i));
+            id2name.back() = name;
+        }
+    }
+
+    for (auto row: acc_matrix) {
+        vector<string> sum_list;
+        for (auto itr = row.begin()+1; itr != row.end(); itr ++ ){
+            int item = *itr;
+            int cnt = itr - row.begin() ;
+            if (item == 0 ) {
+                continue;
+            }
+            else if (item == 1) {
+                sum_list.push_back(id2name[cnt]);
+            }
+            else {
+                string entry = to_string(item) + "*" + id2name[cnt];
+                sum_list.push_back(entry);
+            }
+        }
+
+        //const
+        if (sum_list.size() == 0 || (row.front() != 0)) {
+            sum_list.push_back(std::to_string(row.front()));
+        }
+        ret.push_back(sep_list(sum_list, "", "", "+"));
+        cout << "\t Addr: " << ret.back() << endl;
+    }
+
+    return ret;
 }
 
 map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name) {

@@ -140,8 +140,12 @@ std::string str(isl_pw_multi_aff* const pma);
 
 std::string str(isl_multi_union_pw_aff* const pma);
 
+vector<vector<int> > get_access_matrix_from_map(isl_map* acc_map);
+
 //TODO: not consider pw affine, should add a condition on the set
 isl_stat isl_pw_aff_get_coefficient( isl_set *set,  isl_aff *aff, void *user);
+
+isl_stat isl_pw_aff_get_coefficient_matrix( isl_set *set,  isl_aff *aff, void *user);
 
 isl_stat isl_pw_aff_get_const( isl_set *set,  isl_aff *aff, void *user);
 

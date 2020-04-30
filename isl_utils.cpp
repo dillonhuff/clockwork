@@ -395,6 +395,42 @@ isl_stat isl_pw_aff_get_coefficient( isl_set *set,  isl_aff *aff, void *user) {
     return isl_stat_ok;
 }
 
+isl_stat isl_pw_aff_get_coefficient_matrix( isl_set *set,  isl_aff *aff, void *user) {
+    auto* coef_list = (map<int, int>*) user;
+
+    int const_ = isl_val_get_num_si(isl_aff_get_constant_val(aff));
+    //add the constant item to the coefficient matrix
+    coef_list->insert(std::make_pair(0, const_));
+
+	int n_div = isl_aff_dim(aff, isl_dim_in);
+	for (int i = 0; i < n_div; ++i) {
+
+		if (!isl_aff_involves_dims(aff, isl_dim_in, i, 1))
+        {
+			continue;
+        }
+		isl_val *v = isl_aff_get_coefficient_val(aff, isl_dim_in, i);
+        int int_v =  isl_val_get_num_si(v);
+        coef_list->insert(std::make_pair(i, int_v));
+	}
+    return isl_stat_ok;
+}
+
+vector<vector<int> > get_access_matrix_from_map(isl_map* acc_map) {
+    auto mpa = isl_pw_multi_aff_from_map(acc_map);
+    size_t var_dim = get_in_dim(acc_map);
+    size_t addr_dim = get_out_dim(acc_map);
+    vector<vector<int> > access_matrix(addr_dim, vector<int>(var_dim, 0));
+    for (size_t i = 0; i < addr_dim; i ++) {
+        auto pa = isl_pw_multi_aff_get_pw_aff(mpa, i);
+        map<int, int> coef;
+        isl_pw_aff_foreach_piece(pa, isl_pw_aff_get_coefficient_matrix, &coef);
+        for (auto cc: coef){
+            access_matrix[i][cc.first] = cc.second;
+        }
+    }
+    return access_matrix;
+}
 
 isl_stat isl_pw_aff_get_const( isl_set *set,  isl_aff *aff, void *user) {
     auto* const_ = (int*) user;

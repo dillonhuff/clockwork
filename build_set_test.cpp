@@ -5197,7 +5197,7 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("mkdir " + app_dir).c_str());
   system(("mkdir " + synth_dir).c_str());
   system(("mkdir " + soda_dir).c_str());
-  
+
   system(("cp ./aws_collateral/xrt.ini " + synth_dir).c_str());
   system(("cp ./aws_collateral/Makefile " + synth_dir).c_str());
   system(("cp ./aws_collateral/utils.mk " + synth_dir).c_str());
@@ -6349,8 +6349,11 @@ void playground() {
 }
 
 void application_tests() {
+    //memtile_test();
+    cnn_test();
+    assert(false);
+
   blur_xy_16_app_test();
-  assert(false);
   denoise2d_test();
 
 
