@@ -4901,8 +4901,8 @@ void exposure_fusion() {
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
   int size =
-    64;
-    //1250;
+    //64;
+    1250;
     //200;
 
   auto isl_sched = lp.realize_isl_schedule("pyramid_synthetic_exposure_fusion", size, size);
@@ -4943,7 +4943,7 @@ void exposure_fusion() {
   //cout << "isl schedule: " << str(isl_sched) << endl;
   //cout << "opt schedule: " << str(opt_sched) << endl;
 
-  //assert(false);
+  assert(false);
 
   //lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
   lp.realize("pyramid_synthetic_exposure_fusion", size, size, 4);
@@ -5505,7 +5505,12 @@ void sobel_16_app_test() {
     int unroll_factor = pow(2, i);
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
     string out_name = "sbl_ur_" + str(unroll_factor);
-    sobel16(out_name).realize(out_name, cols, rows, unroll_factor);
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    options.debug_options.expect_all_linebuffers = true;
+    sobel16(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
     //std::vector<std::string> optimized =
       //run_regression_tb(out_name + "_opt");
@@ -6552,11 +6557,12 @@ void playground() {
 }
 
 void application_tests() {
+  denoise2d_test();
+  sobel_16_app_test();
   exposure_fusion();
   //assert(false);
 
   gaussian_pyramid_app_test();
-  sobel_16_app_test();
   //assert(false);
 
   downsample2d_test();
@@ -6614,7 +6620,6 @@ void application_tests() {
   //assert(false);
 
   blur_xy_16_app_test();
-  denoise2d_test();
 
   up_unrolled_test();
   up_down_unrolled_test();

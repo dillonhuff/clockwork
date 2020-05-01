@@ -101,6 +101,7 @@ struct ilp_builder {
         objective = isl_aff_set_coefficient_val(objective, isl_dim_in, index, cn);
       }
       isl_val* max = isl_basic_set_max_val(cpy(max_loc), objective);
+      cout << tab(1) << "obj max = " << str(max) << endl;
       values.push_back(max);
 
       auto max_loc_s =
@@ -118,6 +119,7 @@ struct ilp_builder {
 
     solved = true;
 
+    assert(false);
     return values;
   }
 
@@ -1054,18 +1056,26 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
     pipeline_delay[delay_var_name(c)] = one(ct);
   }
 
+
   vector<pair<string, isl_val*> > linebuffer_obj_terms;
 
+  vector<map<string, isl_val*> > lb_objs;
   for (auto b : high_bandwidth_deps) {
     string consumer_delay = delay_var_name(b.first);
     for (auto producer_name : b.second) {
       string producer_delay = delay_var_name(producer_name);
-      linebuffer_obj_terms.push_back({consumer_delay, one(ct)});
-      linebuffer_obj_terms.push_back({producer_delay, negone(ct)});
+      vector<pair<string, isl_val*> > ts;
+      ts.push_back({consumer_delay, negone(ct)});
+      ts.push_back({producer_delay, one(ct)});
+
+      //lb_objs.push_back(simplify(ts));
+
+      //linebuffer_obj_terms.push_back({consumer_delay, one(ct)});
+      //linebuffer_obj_terms.push_back({producer_delay, negone(ct)});
     }
   }
 
-  auto linebuffer_obj = simplify(linebuffer_obj_terms);
+  //auto linebuffer_obj = simplify(linebuffer_obj_terms);
 
   map<string, isl_val*> delay_obj;
   for (auto s : schedule_params) {
@@ -1081,11 +1091,11 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
     string dc = delay_var_name(consumer);
     string dp = delay_var_name(producer);
 
-    delay_obj[dc] = negone(ct);
-    delay_obj[dp] = negone(ct);
+    //delay_obj[dc] = negone(ct);
+    //delay_obj[dp] = negone(ct);
     
-    //delay_obj[dc] = one(ct);
-    //delay_obj[dp] = one(ct);
+    delay_obj[dc] = one(ct);
+    delay_obj[dp] = one(ct);
 
     for (auto sv : s.second) {
 
@@ -1102,8 +1112,13 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
   cout << "Delay constraints" << endl;
   //auto opt_delay = delay_problem.lex_minimize({delay_obj});
   //auto opt_delay = delay_problem.lex_minimize({pipeline_delay});
-  auto opt_delay = delay_problem.lex_minimize({pipeline_delay, delay_obj});
-  //auto opt_delay = delay_problem.lex_minimize({linebuffer_obj, delay_obj});
+  //auto opt_delay = delay_problem.lex_minimize({pipeline_delay, delay_obj});
+  //auto opt_delay = delay_problem.lex_minimize({pipeline_delay, linebuffer_obj, delay_obj});
+  
+  vector<map<string, isl_val*> > objectives{pipeline_delay};
+  concat(objectives, lb_objs);
+  objectives.push_back(delay_obj);
+  auto opt_delay = delay_problem.lex_minimize(objectives);
 
   map<string, isl_aff*> schedule_functions;
   for (auto f : operation_names) {
