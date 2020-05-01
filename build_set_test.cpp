@@ -4107,9 +4107,13 @@ struct App {
     string reference_update =
       sched_var_name(last_update(reference_function).name());
     cout << "reference: " << reference_update << endl;
+    
     int ref_q = to_int(map_find(reference_update, qfs));
+    cout << "ref_q = " << ref_q << endl;
     int umax = ref_q * unroll_factor;
+    cout << "umax  = " << umax << endl;
 
+    //assert(false);
     // Use these factors to set unrolled behavior
     for (auto& r : app_dag) {
       for (auto& u : r.second.updates) {
@@ -4422,7 +4426,9 @@ void upsample2d_test() {
 
 void downsample2d_test() {
   App ds;
-  ds.func2d("A");
+  ds.func2d("A_oc");
+  ds.func2d("A", "id", pt("A_oc"));
+
   Window awin{"A", {2, 2}, {{0, 0}}};
   ds.func2d("B", "id", awin);
   ds.realize("B", 10, 10, 1);
@@ -6522,8 +6528,8 @@ void playground() {
 
 void application_tests() {
   // START Failing list
-  //up_stencil_down_test();
-  //downsample2d_test();
+  downsample2d_test();
+  up_stencil_down_test();
   // END Failing list
   
   updown_merge_test();
