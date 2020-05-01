@@ -4945,8 +4945,14 @@ void exposure_fusion() {
 
   //assert(false);
 
-  lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
-  lp.realize_naive("pyramid_synthetic_exposure_fusion", size, size);
+  //lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
+  lp.realize("pyramid_synthetic_exposure_fusion", size, size, 4);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  options.unroll_factors_as_pad = true;
+  lp.realize_naive(options, "pyramid_synthetic_exposure_fusion", size, size);
 
   std::vector<std::string> naive =
     run_regression_tb("pyramid_synthetic_exposure_fusion_naive");
@@ -5052,8 +5058,14 @@ void gaussian_pyramid_app_test() {
     gp.func2d(next, "reduce_gauss", last_window);
     last = next;
   }
-  gp.realize(last, 32, 32, 1);
-  gp.realize_naive(last, 32, 32);
+  //gp.realize(last, 32, 32, 1);
+  gp.realize(last, 32, 32, 2);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  options.unroll_factors_as_pad = true;
+  gp.realize_naive(options, last, 32, 32);
 
   std::vector<std::string> naive =
     run_regression_tb("level_3_naive");
@@ -6540,8 +6552,12 @@ void playground() {
 }
 
 void application_tests() {
+  exposure_fusion();
+  //assert(false);
+
+  gaussian_pyramid_app_test();
   sobel_16_app_test();
-  assert(false);
+  //assert(false);
 
   downsample2d_test();
   up_stencil_down_test();
@@ -6633,14 +6649,12 @@ void application_tests() {
   sobel_mag_y_test();
   sobel_app_test();
   sobel_mag_x_test();
-  exposure_fusion();
 
 
   //playground();
   jacobi2d_app_test();
   mismatched_stencil_test();
 
-  gaussian_pyramid_app_test();
   grayscale_conversion_test();
   upsample2d_test();
   
