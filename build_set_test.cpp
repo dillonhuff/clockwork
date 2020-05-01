@@ -3358,6 +3358,19 @@ struct App {
     isl_union_map *coincidence =
       cpy(validity);
 
+    set<string> high_bandwidth_buffers;
+    for (auto f : sort_functions()) {
+      auto cs = consumers(f);
+      if (cs.size() > 1) {
+        high_bandwidth_buffers.insert(f);
+      }
+    }
+    cout << "High bandwidth buffers" << endl;
+    for (auto b : high_bandwidth_buffers) {
+      cout << tab(1) << b << endl;
+    }
+    cout << endl;
+
     map<string, vector<string> > high_bandwidth_deps;
     for (auto un : sort_updates()) {
       auto u = get_update(un);
@@ -3372,6 +3385,8 @@ struct App {
       cout << tab(1) << b.first << endl;
       cout << tab(2) << comma_list(b.second) << endl;
     }
+
+    assert(false);
 
     map<string, vector<isl_aff*> > sched =
       clockwork_schedule(domain, validity, proximity, high_bandwidth_deps);
@@ -4462,14 +4477,14 @@ void mismatched_stencil_test() {
   sobel.func2d("mismatched_stencils", "contrived", {xwindow, ywindow});
 
   int size = 10;
-  sobel.realize("mismatched_stencils", size, 1, 1);
-
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
   options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
-  sobel.realize_naive(options, "mismatched_stencils", size, 1);
+  sobel.realize(options, "mismatched_stencils", size, 1, 1);
+
+  sobel.realize_naive("mismatched_stencils", size, 1);
 
   std::vector<std::string> naive =
     run_regression_tb("mismatched_stencils_naive");
@@ -4949,7 +4964,7 @@ void exposure_fusion() {
   //cout << "isl schedule: " << str(isl_sched) << endl;
   //cout << "opt schedule: " << str(opt_sched) << endl;
 
-  assert(false);
+  //assert(false);
 
   //lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
   lp.realize("pyramid_synthetic_exposure_fusion", size, size, 4);
@@ -5233,7 +5248,6 @@ App denoise2d(const std::string& name) {
   dn.func2d("diff_r", "diff_r2d", "u", {{0, 0}, {1, 0}});
 
   dn.func2d("g", div(fc("1.0f"), func("sqrt", add({sq("diff_qwe"), sq("diff_d"), sq("diff_l"), sq("diff_r")}))));
-      //"mag_dn2d", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
   dn.func2d("r0", "comp_r02d", {pt("u"), pt("f")});
   dn.func2d("r1", "r1_comp2d", pt("r0"));
   dn.func2d(name,
@@ -6564,9 +6578,10 @@ void playground() {
 
 void application_tests() {
   denoise2d_test();
+
   sobel_16_app_test();
   mismatched_stencil_test();
-  assert(false);
+  //assert(false);
   exposure_fusion();
   //assert(false);
 
