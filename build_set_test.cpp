@@ -3290,6 +3290,32 @@ struct App {
     return {};
   }
 
+  umap* validity_deps() {
+    umap* writes = rdmap(ctx, "{}");
+    umap* reads = rdmap(ctx, "{}");
+
+    for (auto u : sort_updates()) {
+      writes =
+        unn(writes, to_umap(pixels_written(u)));
+      reads =
+        unn(reads, pixels_read(u));
+    }
+
+    assert(writes != nullptr);
+    assert(reads != nullptr);
+
+    uset* domain = whole_compute_domain();
+    assert(domain != nullptr);
+
+    umap* naive_sched = schedule_naive();
+    auto before = lex_lt(naive_sched, naive_sched);
+
+    isl_union_map *validity =
+      its(dot(writes, inv(reads)), before);
+
+    return validity;
+  }
+
   map<string, vector<QExpr> > rectangular_schedules() {
 
     umap* writes = rdmap(ctx, "{}");
@@ -3336,7 +3362,6 @@ struct App {
       cout << tab(2) << comma_list(b.second) << endl;
     }
 
-    //assert(false);
     map<string, vector<isl_aff*> > sched =
       clockwork_schedule(domain, validity, proximity, high_bandwidth_deps);
 
@@ -3349,7 +3374,6 @@ struct App {
       int i = 0;
       for (auto v : vals) {
         QExpr rate = qexpr("d" + str(i));
-          //qexpr(qvar("q_" + name));
         auto rate_coeff =
           qexpr(int_coeff(v, 0));
         auto delay =
@@ -4052,6 +4076,10 @@ struct App {
   }
 
   void set_unroll_factors(const int unroll_factor) {
+
+    umap* deps = pad_map(validity_deps());
+    auto maps = get_maps(deps);
+    map<string, isl_val*> qfs = compute_qfactors(maps);
 
     for (auto& r : app_dag) {
       for (auto& u : r.second.updates) {
