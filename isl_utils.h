@@ -463,3 +463,6 @@ int int_const_coeff(isl_aff* const a);
 isl_aff* aff_on_domain(isl_local_space* ls, isl_val* max);
 
 uset* pad_uset(uset* domain);
+umap* pad_map(umap* unpadded);
+
+

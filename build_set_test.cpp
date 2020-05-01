@@ -4052,6 +4052,7 @@ struct App {
   }
 
   void set_unroll_factors(const int unroll_factor) {
+
     for (auto& r : app_dag) {
       for (auto& u : r.second.updates) {
         u.unroll_factor = unroll_factor;
@@ -6468,18 +6469,14 @@ void application_tests() {
   conv3x3_app_unrolled_uneven_test();
 
   up_unrolled_4_test();
-  //assert(false);
-
   cnn_test();
   //assert(false);
 
   blur_xy_16_app_test();
   denoise2d_test();
 
-
   up_unrolled_test();
   up_down_unrolled_test();
-
 
   jacobi2d_app_test();
   up_stencil_down_test();

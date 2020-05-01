@@ -996,3 +996,5 @@ string compute_unit_string(const num_type tp,
     "return " + res + ";\n}";
 }
 
+map<string, isl_val*> 
+compute_qfactors(const vector<isl_map*>& deps);
