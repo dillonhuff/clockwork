@@ -38,6 +38,7 @@ struct ilp_builder {
     int next_pos = num_dims(isl_basic_set_get_space(s));
     variable_positions[name] = next_pos;
     s = isl_basic_set_add_dims(s, isl_dim_set, 1);
+    s = isl_basic_set_set_dim_name(s, isl_dim_set, next_pos, name.c_str());
   }
 
   void add_geq(const std::map<string, isl_val*>& coeffs, isl_val* constant) {
@@ -100,6 +101,7 @@ struct ilp_builder {
         isl_val* cn = mul(isl_val_negone(ctx), coeff.second);
         objective = isl_aff_set_coefficient_val(objective, isl_dim_in, index, cn);
       }
+      cout << "objective = " << str(objective) << endl;
       isl_val* max = isl_basic_set_max_val(cpy(max_loc), objective);
       cout << tab(1) << "obj max = " << str(max) << endl;
       values.push_back(max);
@@ -108,6 +110,7 @@ struct ilp_builder {
         isl_aff_eq_basic_set(objective,
             aff_on_domain(get_local_space(s), max));
       max_loc = its(max_loc, max_loc_s);
+      cout << "max loc after solve: " << str(max_loc) << endl;
 
       assert(!empty(max_loc));
     }
@@ -119,7 +122,7 @@ struct ilp_builder {
 
     solved = true;
 
-    assert(false);
+    //assert(false);
     return values;
   }
 
@@ -1038,23 +1041,47 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
 
   cout << "Building delay constraints" << endl;
   ilp_builder delay_problem(ct);
+
+  set<string> consumed;
+  set<string> outputs;
+  set<string> all_names;
+  for (auto d : deps) {
+    consumed.insert(domain_name(d));
+
+    all_names.insert(domain_name(d));
+    all_names.insert(range_name(d));
+  }
+  for (auto n : all_names) {
+    if (!elem(n, consumed)) {
+      outputs.insert(n);
+    }
+  }
+
+  cout << "Outputs..." << endl;
+  map<string, isl_val*> pipeline_delay;
+  for (auto out : outputs) {
+    pipeline_delay[delay_var_name(out)] = one(ct);
+  }
+
+  //assert(false);
+
   set<string> operation_names;
 
-  set<string> consumers;
-  for (auto dep : deps) {
-    string consumer = range_name(dep);
-    consumers.insert(consumer);
-  }
-  for (auto dep : deps) {
-    consumers.erase(domain_name(dep));
-  }
+  //set<string> consumers;
+  //for (auto dep : deps) {
+    //string consumer = range_name(dep);
+    //consumers.insert(consumer);
+  //}
+  //for (auto dep : deps) {
+    //consumers.erase(domain_name(dep));
+  //}
 
-  assert(consumers.size() > 0);
+  //assert(consumers.size() > 0);
 
-  map<string, isl_val*> pipeline_delay;
-  for (auto c : consumers) {
-    pipeline_delay[delay_var_name(c)] = one(ct);
-  }
+  //map<string, isl_val*> pipeline_delay;
+  //for (auto c : consumers) {
+    //pipeline_delay[delay_var_name(c)] = one(ct);
+  //}
 
 
   vector<pair<string, isl_val*> > linebuffer_obj_terms;
@@ -1065,8 +1092,8 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
     for (auto producer_name : b.second) {
       string producer_delay = delay_var_name(producer_name);
       vector<pair<string, isl_val*> > ts;
-      ts.push_back({consumer_delay, negone(ct)});
-      ts.push_back({producer_delay, one(ct)});
+      ts.push_back({consumer_delay, one(ct)});
+      ts.push_back({producer_delay, negone(ct)});
 
       //lb_objs.push_back(simplify(ts));
 
@@ -1091,11 +1118,11 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
     string dc = delay_var_name(consumer);
     string dp = delay_var_name(producer);
 
-    //delay_obj[dc] = negone(ct);
-    //delay_obj[dp] = negone(ct);
+    delay_obj[dc] = negone(ct);
+    delay_obj[dp] = negone(ct);
     
-    delay_obj[dc] = one(ct);
-    delay_obj[dp] = one(ct);
+    //delay_obj[dc] = one(ct);
+    //delay_obj[dp] = one(ct);
 
     for (auto sv : s.second) {
 
@@ -1115,8 +1142,9 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
   //auto opt_delay = delay_problem.lex_minimize({pipeline_delay, delay_obj});
   //auto opt_delay = delay_problem.lex_minimize({pipeline_delay, linebuffer_obj, delay_obj});
   
-  vector<map<string, isl_val*> > objectives{pipeline_delay};
-  concat(objectives, lb_objs);
+  vector<map<string, isl_val*> > objectives;
+  objectives.push_back(pipeline_delay);
+  //concat(objectives, lb_objs);
   objectives.push_back(delay_obj);
   auto opt_delay = delay_problem.lex_minimize(objectives);
 

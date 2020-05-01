@@ -4461,9 +4461,15 @@ void mismatched_stencil_test() {
   Window ywindow{"img1", {1, 1}, {{0, 0}, {1, 0}}};
   sobel.func2d("mismatched_stencils", "contrived", {xwindow, ywindow});
 
-  int size = 1920;
+  int size = 10;
   sobel.realize("mismatched_stencils", size, 1, 1);
-  sobel.realize_naive("mismatched_stencils", size, 1);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  options.debug_options.expect_all_linebuffers = true;
+  sobel.realize_naive(options, "mismatched_stencils", size, 1);
 
   std::vector<std::string> naive =
     run_regression_tb("mismatched_stencils_naive");
@@ -6559,6 +6565,8 @@ void playground() {
 void application_tests() {
   denoise2d_test();
   sobel_16_app_test();
+  mismatched_stencil_test();
+  assert(false);
   exposure_fusion();
   //assert(false);
 
@@ -6658,7 +6666,6 @@ void application_tests() {
 
   //playground();
   jacobi2d_app_test();
-  mismatched_stencil_test();
 
   grayscale_conversion_test();
   upsample2d_test();
