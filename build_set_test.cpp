@@ -4085,19 +4085,20 @@ struct App {
 
   void set_unroll_factors(const std::string& reference_function, const int unroll_factor) {
     // Preprocess application graph to compute qfactors
-    //int dummy_value = 10;
-    //no_unrolling();
-    //fill_data_domain(reference_function, dummy_value, dummy_value);
-    //fill_compute_domain();
+    App cpy = *this;
+    int dummy_value = 10;
+    cpy.no_unrolling();
+    cpy.fill_data_domain(reference_function, dummy_value, dummy_value);
+    cpy.fill_compute_domain();
 
-    //umap* deps = pad_map(validity_deps());
-    //auto umaps = get_maps(deps);
-    //vector<isl_map*> projected_deps;
-    //for (auto m : umaps) {
-      //isl_map* projected = project_all_but(m, 0);
-      //projected_deps.push_back(projected);
-    //}
-    //map<string, isl_val*> qfs = compute_qfactors(projected_deps);
+    umap* deps = pad_map(cpy.validity_deps());
+    auto umaps = get_maps(deps);
+    vector<isl_map*> projected_deps;
+    for (auto m : umaps) {
+      isl_map* projected = project_all_but(m, 0);
+      projected_deps.push_back(projected);
+    }
+    map<string, isl_val*> qfs = compute_qfactors(projected_deps);
 
     // Use these factors to set unrolled behavior
     for (auto& r : app_dag) {
@@ -6506,14 +6507,15 @@ void playground() {
 }
 
 void application_tests() {
-  reduce_2d_test();
-  reduce_1d_test();
   up_stencil_auto_unrolled_test();
   up_down_auto_unrolled_test();
   up_stencil_down_auto_unrolled_test();
   conv3x3_app_unrolled_test();
   conv3x3_app_test();
   conv3x3_app_unrolled_uneven_test();
+
+  reduce_2d_test();
+  reduce_1d_test();
 
   up_unrolled_4_test();
   cnn_test();
