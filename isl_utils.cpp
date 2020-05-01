@@ -1241,6 +1241,10 @@ isl_set* range(isl_map* const m) {
   return isl_map_range(cpy(m));
 }
 
+int stride_in_dim(isl_set* const s, size_t dim) {
+    return isl_val_get_num_si(isl_set_get_stride(cpy(s), dim));
+}
+
 
 isl_set* domain(isl_map* const m) {
   return isl_map_domain(cpy(m));

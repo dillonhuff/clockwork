@@ -370,6 +370,8 @@ isl_union_set* domain(isl_union_map* const m);
 
 isl_union_set* range(isl_union_map* const m);
 
+int stride_in_dim(isl_set* const s, size_t dim);
+
 isl_set* range(isl_map* const m);
 
 isl_set* domain(isl_map* const m);

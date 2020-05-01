@@ -308,6 +308,7 @@ Box extract_box(uset* rddom) {
   Box b;
   for (size_t i = 0; i < min_pt.size(); i++) {
     b.intervals.push_back({min_pt.at(i), max_pt.at(i)});
+    cout << "min: " << min_pt.at(i) << ", max: " << max_pt.at(i) << endl;
   }
   cout << tab(1) << "result = " << b << endl;
   return b;
@@ -614,7 +615,9 @@ selector generate_select(CodegenOptions& options, std::ostream& out, const strin
   if (possible_ports.size() == 1) {
     string inpt = possible_ports.at(0);
     string peeked_val = delay_string(options, out, inpt, outpt, buf);
+    //extract_box(range(buf.access_map.at(outpt)));
     buf.get_ram_address(outpt);
+    buf.separate_offset_dim(outpt);
     cout << "Get delay string: " << peeked_val << endl;
     cout << "Corresponding access map: " << str(buf.access_map.at(outpt)) << endl;
     sel.bank_conditions.push_back("1");
@@ -1034,13 +1037,71 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
   }
 }
 
-vector<string> UBuffer::get_ram_address(const std::string& pt) {
-    vector<string> ret;
-    vector<string> id2name;
+Box UBuffer::get_bundle_box(const std::string & pt) {
+    string pt_name;
+    for (auto it: port_bundles) {
+        if (std::find(it.second.begin(), it.second.end(), pt)
+                != it.second.end()){
+            pt_name = pick(it.second);
+            break;
+        }
+    }
+    cout << pt_name << endl;
+    auto pt_map = to_map(access_map.at(pt_name));
+    auto pt_range = range(pt_map);
+    Box ret;
+    vector<int> offset;
+    for (int i = 0; i < get_out_dim(pt_map); i ++) {
+        int stride = stride_in_dim(pt_range, i);
+        ret.intervals.push_back({0, stride - 1});
+    }
+
+    //TODO: we may need a dilation box if we have holes in bundle
+    //auto min_pt = parse_pt(sample(lexmin(pt_range)));
+    //auto max_pt = parse_pt(sample(lexmax(pt_range)));
+    return ret;
+}
+
+umap* UBuffer::separate_offset_dim(const std::string & pt) {
     auto pt_access_map = to_map(access_map.at(pt));
+    Box pt_block = get_bundle_box(pt);
+
+    vector<string> var_list, map_var_list;
+    for (size_t  dim = 0; dim < pt_block.dimension(); dim ++) {
+        string var = "p"+to_string(dim);
+        var_list.push_back(var);
+        if (pt_block.length(dim) != 1) {
+            int div = pt_block.length(dim);
+            string floor_expr = "floor(" + var + "/" + to_string(div) +")";
+            string offset_expr = var + "-" + to_string(div) + "*" + floor_expr;
+            map_var_list.push_back(offset_expr);
+            map_var_list.push_back(floor_expr);
+        }
+        else {
+            map_var_list.push_back(var);
+        }
+    }
+
+    string buf_name = range_name(pt_access_map);
+    string new_name = buf_name + "_sep";
+    auto domain_vars = sep_list(var_list, "[", "]", ",");
+    auto range_vars = sep_list(map_var_list, "[", "]", ",");
+
+    //string map_str = "{ifbuf[a, b, c] -> ifbuf_sep[a-4*floor(a/4), floor(a/4), b, c]}";
+    string map_str = "{" + buf_name+domain_vars+" -> " + new_name + range_vars + "}";
+    auto transform = rdmap(ctx, map_str);
+    cout <<"Transform: " << str(transform) << "access_map: " << str(pt_access_map) << endl;
+    auto access_map_new = simplify(dot(pt_access_map, transform));
+    cout << "Transform separate access map: " << str(access_map_new) << endl;
+    return access_map_new;
+}
+
+vector<string> UBuffer::map2address(isl_map* pt_access_map) {
+    vector<string> ret;
     size_t var_dim = get_in_dim(pt_access_map);
     size_t addr_dim = get_out_dim(pt_access_map);
     vector<vector<int>> acc_matrix = get_access_matrix_from_map(pt_access_map);
+    vector<string> id2name;
     for (size_t i = 0; i < var_dim; i ++) {
         id2name.push_back("p" + to_string(i));
         if (isl_map_has_dim_id(pt_access_map, isl_dim_in, i)) {
@@ -1074,8 +1135,12 @@ vector<string> UBuffer::get_ram_address(const std::string& pt) {
         ret.push_back(sep_list(sum_list, "", "", "+"));
         cout << "\t Addr: " << ret.back() << endl;
     }
-
     return ret;
+}
+
+vector<string> UBuffer::get_ram_address(const std::string& pt) {
+    auto pt_access_map = to_map(access_map.at(pt));
+    return map2address(pt_access_map);
 }
 
 map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name) {

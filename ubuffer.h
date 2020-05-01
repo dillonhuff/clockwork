@@ -970,7 +970,11 @@ class UBuffer {
     bank compute_bank_info(const std::string& inpt, const std::string& outpt);
     void generate_bank_and_merge(CodegenOptions& options);
 
+    vector<string> map2address(isl_map* m);
     vector<string> get_ram_address(const std::string& pt);
+    umap* separate_offset_dim(const std::string& pt);
+    Box get_bundle_box(const std::string& pt);
+
 };
 
 int compute_max_dd(UBuffer& buf, const string& inpt);
