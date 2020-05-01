@@ -5134,7 +5134,8 @@ App sobel16(const std::string output_name) {
       //add(square(v("mag_x")), square(v("mag_y"))));
       //sub(65535, add(square(v("mag_x")), square(v("mag_y")))));
       //sub(100, add(square(v("mag_x")), square(v("mag_y")))));
-      sub(65535, add(square(v("mag_x")), square(v("mag_y")))));
+      add(square(v("mag_x")), square(v("mag_y"))));
+      //sub(65535, add(square(v("mag_x")), square(v("mag_y")))));
 
 
   return sobel;

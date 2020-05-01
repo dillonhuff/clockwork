@@ -555,30 +555,23 @@ inline void img_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */
 
 }
 
-inline void sbl_ur_1_update_0(mag_x_cache& mag_x, mag_y_cache& mag_y, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */sbl_ur_1, int d0, int d1) {
-	// Consume: mag_x
-	auto mag_x_0_c__0_value = mag_x_sbl_ur_1_update_0_read_bundle_read(mag_x/* source_delay */, d0, d1);
+inline void mag_x_update_0(img_cache& img, mag_x_cache& mag_x, int d0, int d1) {
+	// Consume: img
+	auto img_0_c__0_value = img_mag_x_update_0_read_bundle_read(img/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "sbl_ur_1_update_0_mag_x," << d0<< "," << d1<< "," <<  mag_x_0_c__0_value << endl;
+  *global_debug_handle << "mag_x_update_0_img," << d0<< "," << d1<< "," <<  img_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
-	// Consume: mag_y
-	auto mag_y_0_c__0_value = mag_y_sbl_ur_1_update_0_read_bundle_read(mag_y/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "sbl_ur_1_update_0_mag_y," << d0<< "," << d1<< "," <<  mag_y_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = sbl_ur_1_generated_compute_unrolled_1(mag_x_0_c__0_value, mag_y_0_c__0_value);
-	// Produce: sbl_ur_1
-	sbl_ur_1.write(compute_result);
+	auto compute_result = mag_x_generated_compute_unrolled_1(img_0_c__0_value);
+	// Produce: mag_x
+	mag_x_mag_x_update_0_write_bundle_write(compute_result, mag_x, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
   hw_uint<16> debug_compute_result(compute_result);
   hw_uint<16> debug_compute_result_lane_0;
   set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "sbl_ur_1_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "mag_x_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -604,23 +597,30 @@ inline void mag_y_update_0(img_cache& img, mag_y_cache& mag_y, int d0, int d1) {
 
 }
 
-inline void mag_x_update_0(img_cache& img, mag_x_cache& mag_x, int d0, int d1) {
-	// Consume: img
-	auto img_0_c__0_value = img_mag_x_update_0_read_bundle_read(img/* source_delay */, d0, d1);
+inline void sbl_ur_1_update_0(mag_x_cache& mag_x, mag_y_cache& mag_y, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */sbl_ur_1, int d0, int d1) {
+	// Consume: mag_x
+	auto mag_x_0_c__0_value = mag_x_sbl_ur_1_update_0_read_bundle_read(mag_x/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "mag_x_update_0_img," << d0<< "," << d1<< "," <<  img_0_c__0_value << endl;
+  *global_debug_handle << "sbl_ur_1_update_0_mag_x," << d0<< "," << d1<< "," <<  mag_x_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = mag_x_generated_compute_unrolled_1(img_0_c__0_value);
-	// Produce: mag_x
-	mag_x_mag_x_update_0_write_bundle_write(compute_result, mag_x, d0, d1);
+	// Consume: mag_y
+	auto mag_y_0_c__0_value = mag_y_sbl_ur_1_update_0_read_bundle_read(mag_y/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "sbl_ur_1_update_0_mag_y," << d0<< "," << d1<< "," <<  mag_y_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = sbl_ur_1_generated_compute_unrolled_1(mag_x_0_c__0_value, mag_y_0_c__0_value);
+	// Produce: sbl_ur_1
+	sbl_ur_1.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
   hw_uint<16> debug_compute_result(compute_result);
   hw_uint<16> debug_compute_result_lane_0;
   set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "mag_x_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "sbl_ur_1_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }

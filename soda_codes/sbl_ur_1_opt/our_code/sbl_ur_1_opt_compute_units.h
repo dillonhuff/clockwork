@@ -16,7 +16,7 @@ hw_uint<16> mag_x_generated_compute(hw_uint<16*6> img) {
 }
 
 hw_uint<16> sbl_ur_1_generated_compute(hw_uint<16*1> mag_x, hw_uint<16*1> mag_y) {
-  return (hw_uint<16>(65535) - ((mag_x.get<16, 0>() * mag_x.get<16, 0>()) + (mag_y.get<16, 0>() * mag_y.get<16, 0>())));
+  return ((mag_x.get<16, 0>() * mag_x.get<16, 0>()) + (mag_y.get<16, 0>() * mag_y.get<16, 0>()));
 }
 
 
