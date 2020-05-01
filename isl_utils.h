@@ -35,6 +35,7 @@ using std::string;
 
 std::string name(isl_space* const s);
 isl_pw_aff* cpy(isl_pw_aff* const s);
+isl_multi_aff* cpy(isl_multi_aff* const s);
 
 isl_constraint* cpy(isl_constraint* const s);
 
@@ -138,6 +139,7 @@ vector<isl_basic_set*> get_basic_sets(isl_set* m);
 std::string str(umap* const m);
 
 std::string str(isl_pw_multi_aff* const pma);
+std::string str(isl_multi_aff* const pma);
 
 std::string str(isl_multi_union_pw_aff* const pma);
 

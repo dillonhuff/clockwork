@@ -8,6 +8,10 @@ isl_stat get_set(isl_set* m, void* user) {
   return isl_stat_ok;
 }
 
+isl_multi_aff* cpy(isl_multi_aff* const s) {
+  return isl_multi_aff_copy(s);
+}
+
 isl_multi_union_pw_aff* cpy(isl_multi_union_pw_aff* const s) {
   return isl_multi_union_pw_aff_copy(s);
 }
@@ -345,6 +349,19 @@ std::string str(umap* const m) {
   isl_printer *p;
   p = isl_printer_to_str(ctx);
   p = isl_printer_print_union_map(p, cpy(m));
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  std::string r(rs);
+  free(rs);
+
+  return r;
+}
+
+std::string str(isl_multi_aff* const pma) {
+  auto ctx = isl_multi_aff_get_ctx(pma);
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_print_multi_aff(p, cpy(pma));
   char* rs = isl_printer_get_str(p);
   isl_printer_free(p);
   std::string r(rs);

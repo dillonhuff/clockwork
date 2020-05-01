@@ -955,6 +955,7 @@ extract_schedule_params(vector<isl_map*>& deps) {
       get_pieces(lm);
     for (auto piece : pieces) {
       isl_multi_aff* bound = piece.second;
+      cout << "bound: " << str(bound) << endl;
       assert(get_size(bound) == 1);
       isl_aff* aff_bound =
         isl_multi_aff_get_aff(bound, 0);

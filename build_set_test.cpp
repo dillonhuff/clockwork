@@ -3799,7 +3799,7 @@ struct App {
 
   umap* realize_opt_schedule(const std::string& name, const int d0, const int d1) {
     const int unroll_factor = 1;
-    set_unroll_factors(unroll_factor);
+    set_unroll_factors(name, unroll_factor);
     fill_data_domain(name, d0, d1);
     fill_compute_domain();
 
@@ -3810,7 +3810,7 @@ struct App {
 
   umap* realize_isl_schedule(const std::string& name, const int d0, const int d1)  {
     const int unroll_factor = 1;
-    set_unroll_factors(unroll_factor);
+    set_unroll_factors(name, unroll_factor);
     fill_data_domain(name, d0, d1);
     fill_compute_domain();
 
@@ -3822,13 +3822,13 @@ struct App {
   void realize_naive(CodegenOptions& options, const std::string& name, const int d0, const int d1) {
     if (!options.unroll_factors_as_pad) {
       const int unroll_factor = 1;
-      set_unroll_factors(unroll_factor);
+      set_unroll_factors(name, unroll_factor);
     } else {
       cout << "realizing naive with padded unroll factors" << endl;
     }
     //cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
     fill_data_domain(name, d0, d1);
-    set_unroll_factors(1);
+    set_unroll_factors(name, 1);
     fill_compute_domain();
 
     umap* m =
@@ -4075,12 +4075,31 @@ struct App {
     return;
   }
 
-  void set_unroll_factors(const int unroll_factor) {
+  void no_unrolling() {
+    for (auto& r : app_dag) {
+      for (auto& u : r.second.updates) {
+        u.unroll_factor = 1;
+      }
+    }
+  }
 
-    umap* deps = pad_map(validity_deps());
-    auto maps = get_maps(deps);
-    map<string, isl_val*> qfs = compute_qfactors(maps);
+  void set_unroll_factors(const std::string& reference_function, const int unroll_factor) {
+    // Preprocess application graph to compute qfactors
+    //int dummy_value = 10;
+    //no_unrolling();
+    //fill_data_domain(reference_function, dummy_value, dummy_value);
+    //fill_compute_domain();
 
+    //umap* deps = pad_map(validity_deps());
+    //auto umaps = get_maps(deps);
+    //vector<isl_map*> projected_deps;
+    //for (auto m : umaps) {
+      //isl_map* projected = project_all_but(m, 0);
+      //projected_deps.push_back(projected);
+    //}
+    //map<string, isl_val*> qfs = compute_qfactors(projected_deps);
+
+    // Use these factors to set unrolled behavior
     for (auto& r : app_dag) {
       for (auto& u : r.second.updates) {
         u.unroll_factor = unroll_factor;
@@ -4104,12 +4123,12 @@ struct App {
   }
 
   void realize(CodegenOptions& options, const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    set_unroll_factors(unroll_factor);
+    set_unroll_factors(name, unroll_factor);
     realize(options, name, d0, d1);
   }
 
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    set_unroll_factors(unroll_factor);
+    set_unroll_factors(name, unroll_factor);
     realize(name, d0, d1);
   }
 
