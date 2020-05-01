@@ -5,6 +5,26 @@
 #include "qexpr.h"
 #include "expr.h"
 
+static inline
+string sched_var_name(const string& n) {
+  return "s_" + n;
+}
+
+static inline
+string delay_var_name(const string& n) {
+  return "delay_" + n;
+}
+
+static inline
+string startvar(const string& n) {
+  return "start_" + n;
+}
+
+static inline
+string endvar(const string& n) {
+  return "end_" + n;
+}
+
 map<string, int> maximize(const std::vector<QConstraint>& constraints, QExpr& objective);
 
 map<string, int> minimize(const std::vector<QConstraint>& constraints, QExpr& objective);

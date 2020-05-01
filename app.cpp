@@ -1,21 +1,5 @@
 #include "app.h"
 
-string sched_var_name(const string& n) {
-  return "s_" + n;
-}
-
-string delay_var_name(const string& n) {
-  return "delay_" + n;
-}
-
-string startvar(const string& n) {
-  return "start_" + n;
-}
-
-string endvar(const string& n) {
-  return "end_" + n;
-}
-
 QExpr delayvar(const string& n) {
   return qexpr(delay_var_name(n));
 }
