@@ -3,6 +3,17 @@
 #include "codegen.h"
 #include "prog.h"
 
+void compare(vector<string>& opt, vector<string>& naive) {
+  assert(opt.size() == naive.size());
+  for (size_t i = 0; i < opt.size(); i++) {
+    if (!(opt.at(i) == naive.at(i))) {
+      cout << "Error: Opt and naive disagree at " << i << ", opt = " << opt.at(i) << ", naive = " << naive.at(i) << endl;
+    }
+    assert(opt.at(i) == naive.at(i));
+  }
+  assert(opt == naive);
+}
+
 void synth_reduce_test() {
 
   struct isl_ctx *ctx;
@@ -4801,12 +4812,13 @@ void up_stencil_down_test() {
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
-  //options.unroll_factors_as_pad = true;
+  options.unroll_factors_as_pad = true;
 
   lp.realize_naive(options, "ds", size, size);
   auto naive = run_regression_tb("ds_naive");
 
-  assert(opt == naive);
+  compare(opt, naive);
+  //assert(opt == naive);
   //assert(false);
 }
 

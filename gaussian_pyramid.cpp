@@ -10,7 +10,7 @@ using namespace std;
 
 #include "hw_classes.h"
 
-struct I_store_I_from_in_10_merged_banks_9_cache {
+struct I_store_I_from_in_0_merged_banks_9_cache {
 	// RAM Box: {[0, 31], [0, 31]}
 	// Capacity: 67
 	// # of read delays: 9
@@ -125,24 +125,24 @@ struct I_store_I_from_in_10_merged_banks_9_cache {
 };
 
 struct I_cache {
-  I_store_I_from_in_10_merged_banks_9_cache I_store_I_from_in_10_merged_banks_9;
+  I_store_I_from_in_0_merged_banks_9_cache I_store_I_from_in_0_merged_banks_9;
 };
 
 
 
-inline void I_store_I_from_in_10_write(hw_uint<32> & I_store_I_from_in_10, I_cache& I, int root, int pr, int pc) {
-  I.I_store_I_from_in_10_merged_banks_9.push(I_store_I_from_in_10);
+inline void I_store_I_from_in_0_write(hw_uint<32> & I_store_I_from_in_0, I_cache& I, int root, int pr, int pc) {
+  I.I_store_I_from_in_0_merged_banks_9.push(I_store_I_from_in_0);
 }
 
-inline hw_uint<32>  I_I_blr_conv_3_30_1_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
+inline hw_uint<32>  I_I_blr_conv_3_30_10_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // I_I_blr_conv_3_30_1 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_I_blr_conv_3_30_10 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[2 + I_blr_r, 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // Read schedule : { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> [2 + I_blr_r, 2 + I_blr_c, 1] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // Write schedule: { store_I_from_in[root = 0, pr, pc] -> [pr, pc, 0] : 0 <= pr <= 31 and 0 <= pc <= 31 }
-  // DD fold: { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 66 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  auto value_I_store_I_from_in_10 = I.I_store_I_from_in_10_merged_banks_9.peek_66();
-  return value_I_store_I_from_in_10;
+  // DD fold: { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 1 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_merged_banks_9.peek_1();
+  return value_I_store_I_from_in_0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " I_blr_r = " << I_blr_r  << " I_blr_c = " << I_blr_c  << endl;
 	assert(false);
@@ -150,15 +150,15 @@ inline hw_uint<32>  I_I_blr_conv_3_30_1_select(I_cache& I, int root, int I_blr_r
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<32>  I_I_blr_conv_3_30_2_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
+inline hw_uint<32>  I_I_blr_conv_3_30_11_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // I_I_blr_conv_3_30_2 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[I_blr_r, 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_I_blr_conv_3_30_11 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[2 + I_blr_r, 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // Read schedule : { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> [2 + I_blr_r, 2 + I_blr_c, 1] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // Write schedule: { store_I_from_in[root = 0, pr, pc] -> [pr, pc, 0] : 0 <= pr <= 31 and 0 <= pc <= 31 }
-  // DD fold: { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 65 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  auto value_I_store_I_from_in_10 = I.I_store_I_from_in_10_merged_banks_9.peek_65();
-  return value_I_store_I_from_in_10;
+  // DD fold: {  }
+  auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_merged_banks_9.peek_0();
+  return value_I_store_I_from_in_0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " I_blr_r = " << I_blr_r  << " I_blr_c = " << I_blr_c  << endl;
 	assert(false);
@@ -169,12 +169,12 @@ inline hw_uint<32>  I_I_blr_conv_3_30_2_select(I_cache& I, int root, int I_blr_r
 inline hw_uint<32>  I_I_blr_conv_3_30_3_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // I_I_blr_conv_3_30_3 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[I_blr_r, 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_I_blr_conv_3_30_3 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // Read schedule : { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> [2 + I_blr_r, 2 + I_blr_c, 1] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // Write schedule: { store_I_from_in[root = 0, pr, pc] -> [pr, pc, 0] : 0 <= pr <= 31 and 0 <= pc <= 31 }
-  // DD fold: { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 64 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 28; I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> (35 + I_blr_c) : root = 0 and I_blr_c = 29 and 0 <= I_blr_r <= 29 }
-  auto value_I_store_I_from_in_10 = I.I_store_I_from_in_10_merged_banks_9.peek_64();
-  return value_I_store_I_from_in_10;
+  // DD fold: { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 66 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_merged_banks_9.peek_66();
+  return value_I_store_I_from_in_0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " I_blr_r = " << I_blr_r  << " I_blr_c = " << I_blr_c  << endl;
 	assert(false);
@@ -185,12 +185,12 @@ inline hw_uint<32>  I_I_blr_conv_3_30_3_select(I_cache& I, int root, int I_blr_r
 inline hw_uint<32>  I_I_blr_conv_3_30_4_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // I_I_blr_conv_3_30_4 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[1 + I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_I_blr_conv_3_30_4 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[I_blr_r, 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // Read schedule : { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> [2 + I_blr_r, 2 + I_blr_c, 1] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // Write schedule: { store_I_from_in[root = 0, pr, pc] -> [pr, pc, 0] : 0 <= pr <= 31 and 0 <= pc <= 31 }
-  // DD fold: { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 34 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  auto value_I_store_I_from_in_10 = I.I_store_I_from_in_10_merged_banks_9.peek_34();
-  return value_I_store_I_from_in_10;
+  // DD fold: { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 65 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_merged_banks_9.peek_65();
+  return value_I_store_I_from_in_0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " I_blr_r = " << I_blr_r  << " I_blr_c = " << I_blr_c  << endl;
 	assert(false);
@@ -201,12 +201,12 @@ inline hw_uint<32>  I_I_blr_conv_3_30_4_select(I_cache& I, int root, int I_blr_r
 inline hw_uint<32>  I_I_blr_conv_3_30_5_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // I_I_blr_conv_3_30_5 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[1 + I_blr_r, 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_I_blr_conv_3_30_5 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[I_blr_r, 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // Read schedule : { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> [2 + I_blr_r, 2 + I_blr_c, 1] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // Write schedule: { store_I_from_in[root = 0, pr, pc] -> [pr, pc, 0] : 0 <= pr <= 31 and 0 <= pc <= 31 }
-  // DD fold: { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 33 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  auto value_I_store_I_from_in_10 = I.I_store_I_from_in_10_merged_banks_9.peek_33();
-  return value_I_store_I_from_in_10;
+  // DD fold: { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 64 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 28; I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> (35 + I_blr_c) : root = 0 and I_blr_c = 29 and 0 <= I_blr_r <= 29 }
+  auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_merged_banks_9.peek_64();
+  return value_I_store_I_from_in_0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " I_blr_r = " << I_blr_r  << " I_blr_c = " << I_blr_c  << endl;
 	assert(false);
@@ -217,12 +217,12 @@ inline hw_uint<32>  I_I_blr_conv_3_30_5_select(I_cache& I, int root, int I_blr_r
 inline hw_uint<32>  I_I_blr_conv_3_30_6_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // I_I_blr_conv_3_30_6 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[1 + I_blr_r, 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_I_blr_conv_3_30_6 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[1 + I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // Read schedule : { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> [2 + I_blr_r, 2 + I_blr_c, 1] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // Write schedule: { store_I_from_in[root = 0, pr, pc] -> [pr, pc, 0] : 0 <= pr <= 31 and 0 <= pc <= 31 }
-  // DD fold: { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 32 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 28; I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> (3 + I_blr_c) : root = 0 and I_blr_c = 29 and 0 <= I_blr_r <= 29 }
-  auto value_I_store_I_from_in_10 = I.I_store_I_from_in_10_merged_banks_9.peek_32();
-  return value_I_store_I_from_in_10;
+  // DD fold: { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 34 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_merged_banks_9.peek_34();
+  return value_I_store_I_from_in_0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " I_blr_r = " << I_blr_r  << " I_blr_c = " << I_blr_c  << endl;
 	assert(false);
@@ -233,12 +233,12 @@ inline hw_uint<32>  I_I_blr_conv_3_30_6_select(I_cache& I, int root, int I_blr_r
 inline hw_uint<32>  I_I_blr_conv_3_30_7_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // I_I_blr_conv_3_30_7 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[2 + I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_I_blr_conv_3_30_7 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[1 + I_blr_r, 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // Read schedule : { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> [2 + I_blr_r, 2 + I_blr_c, 1] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // Write schedule: { store_I_from_in[root = 0, pr, pc] -> [pr, pc, 0] : 0 <= pr <= 31 and 0 <= pc <= 31 }
-  // DD fold: { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 2 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  auto value_I_store_I_from_in_10 = I.I_store_I_from_in_10_merged_banks_9.peek_2();
-  return value_I_store_I_from_in_10;
+  // DD fold: { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 33 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_merged_banks_9.peek_33();
+  return value_I_store_I_from_in_0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " I_blr_r = " << I_blr_r  << " I_blr_c = " << I_blr_c  << endl;
 	assert(false);
@@ -249,12 +249,12 @@ inline hw_uint<32>  I_I_blr_conv_3_30_7_select(I_cache& I, int root, int I_blr_r
 inline hw_uint<32>  I_I_blr_conv_3_30_8_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // I_I_blr_conv_3_30_8 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[2 + I_blr_r, 1 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_I_blr_conv_3_30_8 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[1 + I_blr_r, 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // Read schedule : { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> [2 + I_blr_r, 2 + I_blr_c, 1] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // Write schedule: { store_I_from_in[root = 0, pr, pc] -> [pr, pc, 0] : 0 <= pr <= 31 and 0 <= pc <= 31 }
-  // DD fold: { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 1 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
-  auto value_I_store_I_from_in_10 = I.I_store_I_from_in_10_merged_banks_9.peek_1();
-  return value_I_store_I_from_in_10;
+  // DD fold: { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 32 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 28; I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> (3 + I_blr_c) : root = 0 and I_blr_c = 29 and 0 <= I_blr_r <= 29 }
+  auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_merged_banks_9.peek_32();
+  return value_I_store_I_from_in_0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " I_blr_r = " << I_blr_r  << " I_blr_c = " << I_blr_c  << endl;
 	assert(false);
@@ -265,12 +265,12 @@ inline hw_uint<32>  I_I_blr_conv_3_30_8_select(I_cache& I, int root, int I_blr_r
 inline hw_uint<32>  I_I_blr_conv_3_30_9_select(I_cache& I, int root, int I_blr_r, int I_blr_c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // I_I_blr_conv_3_30_9 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[2 + I_blr_r, 2 + I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  // I_I_blr_conv_3_30_9 read pattern: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> I[2 + I_blr_r, I_blr_c] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // Read schedule : { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> [2 + I_blr_r, 2 + I_blr_c, 1] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // Write schedule: { store_I_from_in[root = 0, pr, pc] -> [pr, pc, 0] : 0 <= pr <= 31 and 0 <= pc <= 31 }
-  // DD fold: {  }
-  auto value_I_store_I_from_in_10 = I.I_store_I_from_in_10_merged_banks_9.peek_0();
-  return value_I_store_I_from_in_10;
+  // DD fold: { I_blr_conv_3_30[root, I_blr_r, I_blr_c] -> 2 : root = 0 and 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
+  auto value_I_store_I_from_in_0 = I.I_store_I_from_in_0_merged_banks_9.peek_2();
+  return value_I_store_I_from_in_0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " I_blr_r = " << I_blr_r  << " I_blr_c = " << I_blr_c  << endl;
 	assert(false);
@@ -280,8 +280,6 @@ inline hw_uint<32>  I_I_blr_conv_3_30_9_select(I_cache& I, int root, int I_blr_r
 
 // # of bundles = 2
 // I_blr_conv_3_30_read
-//	I_I_blr_conv_3_30_1
-//	I_I_blr_conv_3_30_2
 //	I_I_blr_conv_3_30_3
 //	I_I_blr_conv_3_30_4
 //	I_I_blr_conv_3_30_5
@@ -289,10 +287,10 @@ inline hw_uint<32>  I_I_blr_conv_3_30_9_select(I_cache& I, int root, int I_blr_r
 //	I_I_blr_conv_3_30_7
 //	I_I_blr_conv_3_30_8
 //	I_I_blr_conv_3_30_9
+//	I_I_blr_conv_3_30_10
+//	I_I_blr_conv_3_30_11
 inline hw_uint<288> I_I_blr_conv_3_30_read_bundle_read(I_cache& I, int root, int I_blr_r, int I_blr_c) {
   // # of ports in bundle: 9
-    // I_I_blr_conv_3_30_1
-    // I_I_blr_conv_3_30_2
     // I_I_blr_conv_3_30_3
     // I_I_blr_conv_3_30_4
     // I_I_blr_conv_3_30_5
@@ -300,39 +298,41 @@ inline hw_uint<288> I_I_blr_conv_3_30_read_bundle_read(I_cache& I, int root, int
     // I_I_blr_conv_3_30_7
     // I_I_blr_conv_3_30_8
     // I_I_blr_conv_3_30_9
+    // I_I_blr_conv_3_30_10
+    // I_I_blr_conv_3_30_11
 
 	hw_uint<288> result;
-	hw_uint<32>  I_I_blr_conv_3_30_1_res = I_I_blr_conv_3_30_1_select(I, root, I_blr_r, I_blr_c);
-	set_at<0, 288>(result, I_I_blr_conv_3_30_1_res);
-	hw_uint<32>  I_I_blr_conv_3_30_2_res = I_I_blr_conv_3_30_2_select(I, root, I_blr_r, I_blr_c);
-	set_at<32, 288>(result, I_I_blr_conv_3_30_2_res);
 	hw_uint<32>  I_I_blr_conv_3_30_3_res = I_I_blr_conv_3_30_3_select(I, root, I_blr_r, I_blr_c);
-	set_at<64, 288>(result, I_I_blr_conv_3_30_3_res);
+	set_at<0, 288>(result, I_I_blr_conv_3_30_3_res);
 	hw_uint<32>  I_I_blr_conv_3_30_4_res = I_I_blr_conv_3_30_4_select(I, root, I_blr_r, I_blr_c);
-	set_at<96, 288>(result, I_I_blr_conv_3_30_4_res);
+	set_at<32, 288>(result, I_I_blr_conv_3_30_4_res);
 	hw_uint<32>  I_I_blr_conv_3_30_5_res = I_I_blr_conv_3_30_5_select(I, root, I_blr_r, I_blr_c);
-	set_at<128, 288>(result, I_I_blr_conv_3_30_5_res);
+	set_at<64, 288>(result, I_I_blr_conv_3_30_5_res);
 	hw_uint<32>  I_I_blr_conv_3_30_6_res = I_I_blr_conv_3_30_6_select(I, root, I_blr_r, I_blr_c);
-	set_at<160, 288>(result, I_I_blr_conv_3_30_6_res);
+	set_at<96, 288>(result, I_I_blr_conv_3_30_6_res);
 	hw_uint<32>  I_I_blr_conv_3_30_7_res = I_I_blr_conv_3_30_7_select(I, root, I_blr_r, I_blr_c);
-	set_at<192, 288>(result, I_I_blr_conv_3_30_7_res);
+	set_at<128, 288>(result, I_I_blr_conv_3_30_7_res);
 	hw_uint<32>  I_I_blr_conv_3_30_8_res = I_I_blr_conv_3_30_8_select(I, root, I_blr_r, I_blr_c);
-	set_at<224, 288>(result, I_I_blr_conv_3_30_8_res);
+	set_at<160, 288>(result, I_I_blr_conv_3_30_8_res);
 	hw_uint<32>  I_I_blr_conv_3_30_9_res = I_I_blr_conv_3_30_9_select(I, root, I_blr_r, I_blr_c);
-	set_at<256, 288>(result, I_I_blr_conv_3_30_9_res);
+	set_at<192, 288>(result, I_I_blr_conv_3_30_9_res);
+	hw_uint<32>  I_I_blr_conv_3_30_10_res = I_I_blr_conv_3_30_10_select(I, root, I_blr_r, I_blr_c);
+	set_at<224, 288>(result, I_I_blr_conv_3_30_10_res);
+	hw_uint<32>  I_I_blr_conv_3_30_11_res = I_I_blr_conv_3_30_11_select(I, root, I_blr_r, I_blr_c);
+	set_at<256, 288>(result, I_I_blr_conv_3_30_11_res);
 	return result;
 }
 
 // store_I_from_in_write
-//	I_store_I_from_in_10
+//	I_store_I_from_in_0
 inline void I_store_I_from_in_write_bundle_write(hw_uint<32>& store_I_from_in_write, I_cache& I, int root, int pr, int pc) {
-	hw_uint<32>  I_store_I_from_in_10_res = store_I_from_in_write.extract<0, 31>();
-	I_store_I_from_in_10_write(I_store_I_from_in_10_res, I, root, pr, pc);
+	hw_uint<32>  I_store_I_from_in_0_res = store_I_from_in_write.extract<0, 31>();
+	I_store_I_from_in_0_write(I_store_I_from_in_0_res, I, root, pr, pc);
 }
 
 #include "hw_classes.h"
 
-struct I_blr_I_blr_conv_3_30_0_merged_banks_1_cache {
+struct I_blr_I_blr_conv_3_30_2_merged_banks_1_cache {
 	// RAM Box: {[0, 29], [0, 29]}
 	// Capacity: 1
 	// # of read delays: 1
@@ -354,13 +354,13 @@ struct I_blr_I_blr_conv_3_30_0_merged_banks_1_cache {
 };
 
 struct I_blr_cache {
-  I_blr_I_blr_conv_3_30_0_merged_banks_1_cache I_blr_I_blr_conv_3_30_0_merged_banks_1;
+  I_blr_I_blr_conv_3_30_2_merged_banks_1_cache I_blr_I_blr_conv_3_30_2_merged_banks_1;
 };
 
 
 
-inline void I_blr_I_blr_conv_3_30_0_write(hw_uint<32> & I_blr_I_blr_conv_3_30_0, I_blr_cache& I_blr, int root, int I_blr_r, int I_blr_c) {
-  I_blr.I_blr_I_blr_conv_3_30_0_merged_banks_1.push(I_blr_I_blr_conv_3_30_0);
+inline void I_blr_I_blr_conv_3_30_2_write(hw_uint<32> & I_blr_I_blr_conv_3_30_2, I_blr_cache& I_blr, int root, int I_blr_r, int I_blr_c) {
+  I_blr.I_blr_I_blr_conv_3_30_2_merged_banks_1.push(I_blr_I_blr_conv_3_30_2);
 }
 
 inline hw_uint<32>  I_blr_I_blr_ds_id0_13_select(I_blr_cache& I_blr, int root, int I_blr_ds_r, int I_blr_ds_c) {
@@ -370,8 +370,8 @@ inline hw_uint<32>  I_blr_I_blr_ds_id0_13_select(I_blr_cache& I_blr, int root, i
   // Read schedule : { I_blr_ds_id0[root = 0, I_blr_ds_r, I_blr_ds_c] -> [2 + 2I_blr_ds_r, 2 + 2I_blr_ds_c, 2] : 0 <= I_blr_ds_r <= 14 and 0 <= I_blr_ds_c <= 14 }
   // Write schedule: { I_blr_conv_3_30[root = 0, I_blr_r, I_blr_c] -> [2 + I_blr_r, 2 + I_blr_c, 1] : 0 <= I_blr_r <= 29 and 0 <= I_blr_c <= 29 }
   // DD fold: {  }
-  auto value_I_blr_I_blr_conv_3_30_0 = I_blr.I_blr_I_blr_conv_3_30_0_merged_banks_1.peek(/* one reader or all rams */ 0);
-  return value_I_blr_I_blr_conv_3_30_0;
+  auto value_I_blr_I_blr_conv_3_30_2 = I_blr.I_blr_I_blr_conv_3_30_2_merged_banks_1.peek(/* one reader or all rams */ 0);
+  return value_I_blr_I_blr_conv_3_30_2;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " I_blr_ds_r = " << I_blr_ds_r  << " I_blr_ds_c = " << I_blr_ds_c  << endl;
 	assert(false);
@@ -381,10 +381,10 @@ inline hw_uint<32>  I_blr_I_blr_ds_id0_13_select(I_blr_cache& I_blr, int root, i
 
 // # of bundles = 2
 // I_blr_conv_3_30_write
-//	I_blr_I_blr_conv_3_30_0
+//	I_blr_I_blr_conv_3_30_2
 inline void I_blr_I_blr_conv_3_30_write_bundle_write(hw_uint<32>& I_blr_conv_3_30_write, I_blr_cache& I_blr, int root, int I_blr_r, int I_blr_c) {
-	hw_uint<32>  I_blr_I_blr_conv_3_30_0_res = I_blr_conv_3_30_write.extract<0, 31>();
-	I_blr_I_blr_conv_3_30_0_write(I_blr_I_blr_conv_3_30_0_res, I_blr, root, I_blr_r, I_blr_c);
+	hw_uint<32>  I_blr_I_blr_conv_3_30_2_res = I_blr_conv_3_30_write.extract<0, 31>();
+	I_blr_I_blr_conv_3_30_2_write(I_blr_I_blr_conv_3_30_2_res, I_blr, root, I_blr_r, I_blr_c);
 }
 
 // I_blr_ds_id0_read
@@ -525,10 +525,10 @@ inline void I_blr_ds_I_blr_ds_id0_12_write(hw_uint<32> & I_blr_ds_I_blr_ds_id0_1
   I_blr_ds.I_blr_ds_I_blr_ds_id0_12_merged_banks_9.push(I_blr_ds_I_blr_ds_id0_12);
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_15_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_17_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // I_blr_ds_I_blr_ds_blr_conv_3_30_15 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_17 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // Read schedule : { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> [6 + 2I_blr_ds_blr_r, 6 + 2I_blr_ds_blr_c, 3] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // Write schedule: { I_blr_ds_id0[root = 0, I_blr_ds_r, I_blr_ds_c] -> [2 + 2I_blr_ds_r, 2 + 2I_blr_ds_c, 2] : 0 <= I_blr_ds_r <= 14 and 0 <= I_blr_ds_c <= 14 }
   // DD fold: { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 32 : root = 0 and 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
@@ -541,10 +541,10 @@ inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_15_select(I_blr_ds_cache& I_
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_16_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_18_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // I_blr_ds_I_blr_ds_blr_conv_3_30_16 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[I_blr_ds_blr_r, 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_18 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[I_blr_ds_blr_r, 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // Read schedule : { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> [6 + 2I_blr_ds_blr_r, 6 + 2I_blr_ds_blr_c, 3] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // Write schedule: { I_blr_ds_id0[root = 0, I_blr_ds_r, I_blr_ds_c] -> [2 + 2I_blr_ds_r, 2 + 2I_blr_ds_c, 2] : 0 <= I_blr_ds_r <= 14 and 0 <= I_blr_ds_c <= 14 }
   // DD fold: { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 31 : root = 0 and 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
@@ -557,10 +557,10 @@ inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_16_select(I_blr_ds_cache& I_
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_17_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_19_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // I_blr_ds_I_blr_ds_blr_conv_3_30_17 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[I_blr_ds_blr_r, 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_19 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[I_blr_ds_blr_r, 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // Read schedule : { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> [6 + 2I_blr_ds_blr_r, 6 + 2I_blr_ds_blr_c, 3] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // Write schedule: { I_blr_ds_id0[root = 0, I_blr_ds_r, I_blr_ds_c] -> [2 + 2I_blr_ds_r, 2 + 2I_blr_ds_c, 2] : 0 <= I_blr_ds_r <= 14 and 0 <= I_blr_ds_c <= 14 }
   // DD fold: { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 30 : root = 0 and 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 11; I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> (18 + I_blr_ds_blr_c) : root = 0 and I_blr_ds_blr_c = 12 and 0 <= I_blr_ds_blr_r <= 12 }
@@ -573,10 +573,10 @@ inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_17_select(I_blr_ds_cache& I_
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_18_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_20_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // I_blr_ds_I_blr_ds_blr_conv_3_30_18 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[1 + I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_20 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[1 + I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // Read schedule : { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> [6 + 2I_blr_ds_blr_r, 6 + 2I_blr_ds_blr_c, 3] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // Write schedule: { I_blr_ds_id0[root = 0, I_blr_ds_r, I_blr_ds_c] -> [2 + 2I_blr_ds_r, 2 + 2I_blr_ds_c, 2] : 0 <= I_blr_ds_r <= 14 and 0 <= I_blr_ds_c <= 14 }
   // DD fold: { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 17 : root = 0 and 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
@@ -589,10 +589,10 @@ inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_18_select(I_blr_ds_cache& I_
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_19_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_21_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // I_blr_ds_I_blr_ds_blr_conv_3_30_19 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[1 + I_blr_ds_blr_r, 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_21 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[1 + I_blr_ds_blr_r, 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // Read schedule : { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> [6 + 2I_blr_ds_blr_r, 6 + 2I_blr_ds_blr_c, 3] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // Write schedule: { I_blr_ds_id0[root = 0, I_blr_ds_r, I_blr_ds_c] -> [2 + 2I_blr_ds_r, 2 + 2I_blr_ds_c, 2] : 0 <= I_blr_ds_r <= 14 and 0 <= I_blr_ds_c <= 14 }
   // DD fold: { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 16 : root = 0 and 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
@@ -605,10 +605,10 @@ inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_19_select(I_blr_ds_cache& I_
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_20_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_22_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // I_blr_ds_I_blr_ds_blr_conv_3_30_20 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[1 + I_blr_ds_blr_r, 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_22 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[1 + I_blr_ds_blr_r, 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // Read schedule : { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> [6 + 2I_blr_ds_blr_r, 6 + 2I_blr_ds_blr_c, 3] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // Write schedule: { I_blr_ds_id0[root = 0, I_blr_ds_r, I_blr_ds_c] -> [2 + 2I_blr_ds_r, 2 + 2I_blr_ds_c, 2] : 0 <= I_blr_ds_r <= 14 and 0 <= I_blr_ds_c <= 14 }
   // DD fold: { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 15 : root = 0 and 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 11; I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> (3 + I_blr_ds_blr_c) : root = 0 and I_blr_ds_blr_c = 12 and 0 <= I_blr_ds_blr_r <= 12 }
@@ -621,10 +621,10 @@ inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_20_select(I_blr_ds_cache& I_
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_21_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_23_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // I_blr_ds_I_blr_ds_blr_conv_3_30_21 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[2 + I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_23 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[2 + I_blr_ds_blr_r, I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // Read schedule : { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> [6 + 2I_blr_ds_blr_r, 6 + 2I_blr_ds_blr_c, 3] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // Write schedule: { I_blr_ds_id0[root = 0, I_blr_ds_r, I_blr_ds_c] -> [2 + 2I_blr_ds_r, 2 + 2I_blr_ds_c, 2] : 0 <= I_blr_ds_r <= 14 and 0 <= I_blr_ds_c <= 14 }
   // DD fold: { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 2 : root = 0 and 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
@@ -637,10 +637,10 @@ inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_21_select(I_blr_ds_cache& I_
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_22_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_24_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // I_blr_ds_I_blr_ds_blr_conv_3_30_22 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[2 + I_blr_ds_blr_r, 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_24 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[2 + I_blr_ds_blr_r, 1 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // Read schedule : { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> [6 + 2I_blr_ds_blr_r, 6 + 2I_blr_ds_blr_c, 3] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // Write schedule: { I_blr_ds_id0[root = 0, I_blr_ds_r, I_blr_ds_c] -> [2 + 2I_blr_ds_r, 2 + 2I_blr_ds_c, 2] : 0 <= I_blr_ds_r <= 14 and 0 <= I_blr_ds_c <= 14 }
   // DD fold: { I_blr_ds_blr_conv_3_30[root, I_blr_ds_blr_r, I_blr_ds_blr_c] -> 1 : root = 0 and 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
@@ -653,10 +653,10 @@ inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_22_select(I_blr_ds_cache& I_
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_23_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_25_select(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // I_blr_ds_I_blr_ds_blr_conv_3_30_23 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[2 + I_blr_ds_blr_r, 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
+  // I_blr_ds_I_blr_ds_blr_conv_3_30_25 read pattern: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> I_blr_ds[2 + I_blr_ds_blr_r, 2 + I_blr_ds_blr_c] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // Read schedule : { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> [6 + 2I_blr_ds_blr_r, 6 + 2I_blr_ds_blr_c, 3] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // Write schedule: { I_blr_ds_id0[root = 0, I_blr_ds_r, I_blr_ds_c] -> [2 + 2I_blr_ds_r, 2 + 2I_blr_ds_c, 2] : 0 <= I_blr_ds_r <= 14 and 0 <= I_blr_ds_c <= 14 }
   // DD fold: {  }
@@ -671,8 +671,6 @@ inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_23_select(I_blr_ds_cache& I_
 
 // # of bundles = 2
 // I_blr_ds_blr_conv_3_30_read
-//	I_blr_ds_I_blr_ds_blr_conv_3_30_15
-//	I_blr_ds_I_blr_ds_blr_conv_3_30_16
 //	I_blr_ds_I_blr_ds_blr_conv_3_30_17
 //	I_blr_ds_I_blr_ds_blr_conv_3_30_18
 //	I_blr_ds_I_blr_ds_blr_conv_3_30_19
@@ -680,10 +678,10 @@ inline hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_23_select(I_blr_ds_cache& I_
 //	I_blr_ds_I_blr_ds_blr_conv_3_30_21
 //	I_blr_ds_I_blr_ds_blr_conv_3_30_22
 //	I_blr_ds_I_blr_ds_blr_conv_3_30_23
+//	I_blr_ds_I_blr_ds_blr_conv_3_30_24
+//	I_blr_ds_I_blr_ds_blr_conv_3_30_25
 inline hw_uint<288> I_blr_ds_I_blr_ds_blr_conv_3_30_read_bundle_read(I_blr_ds_cache& I_blr_ds, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
   // # of ports in bundle: 9
-    // I_blr_ds_I_blr_ds_blr_conv_3_30_15
-    // I_blr_ds_I_blr_ds_blr_conv_3_30_16
     // I_blr_ds_I_blr_ds_blr_conv_3_30_17
     // I_blr_ds_I_blr_ds_blr_conv_3_30_18
     // I_blr_ds_I_blr_ds_blr_conv_3_30_19
@@ -691,26 +689,28 @@ inline hw_uint<288> I_blr_ds_I_blr_ds_blr_conv_3_30_read_bundle_read(I_blr_ds_ca
     // I_blr_ds_I_blr_ds_blr_conv_3_30_21
     // I_blr_ds_I_blr_ds_blr_conv_3_30_22
     // I_blr_ds_I_blr_ds_blr_conv_3_30_23
+    // I_blr_ds_I_blr_ds_blr_conv_3_30_24
+    // I_blr_ds_I_blr_ds_blr_conv_3_30_25
 
 	hw_uint<288> result;
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_15_res = I_blr_ds_I_blr_ds_blr_conv_3_30_15_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<0, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_15_res);
-	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_16_res = I_blr_ds_I_blr_ds_blr_conv_3_30_16_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<32, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_16_res);
 	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_17_res = I_blr_ds_I_blr_ds_blr_conv_3_30_17_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<64, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_17_res);
+	set_at<0, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_17_res);
 	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_18_res = I_blr_ds_I_blr_ds_blr_conv_3_30_18_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<96, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_18_res);
+	set_at<32, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_18_res);
 	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_19_res = I_blr_ds_I_blr_ds_blr_conv_3_30_19_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<128, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_19_res);
+	set_at<64, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_19_res);
 	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_20_res = I_blr_ds_I_blr_ds_blr_conv_3_30_20_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<160, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_20_res);
+	set_at<96, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_20_res);
 	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_21_res = I_blr_ds_I_blr_ds_blr_conv_3_30_21_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<192, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_21_res);
+	set_at<128, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_21_res);
 	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_22_res = I_blr_ds_I_blr_ds_blr_conv_3_30_22_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<224, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_22_res);
+	set_at<160, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_22_res);
 	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_23_res = I_blr_ds_I_blr_ds_blr_conv_3_30_23_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
-	set_at<256, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_23_res);
+	set_at<192, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_23_res);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_24_res = I_blr_ds_I_blr_ds_blr_conv_3_30_24_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	set_at<224, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_24_res);
+	hw_uint<32>  I_blr_ds_I_blr_ds_blr_conv_3_30_25_res = I_blr_ds_I_blr_ds_blr_conv_3_30_25_select(I_blr_ds, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	set_at<256, 288>(result, I_blr_ds_I_blr_ds_blr_conv_3_30_25_res);
 	return result;
 }
 
@@ -723,7 +723,7 @@ inline void I_blr_ds_I_blr_ds_id0_write_bundle_write(hw_uint<32>& I_blr_ds_id0_w
 
 #include "hw_classes.h"
 
-struct I_blr_ds_blr_I_blr_ds_blr_conv_3_30_14_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_27_cache {
+struct I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_27_cache {
 	// RAM Box: {[0, 12], [0, 12]}
 	// Capacity: 39
 	// # of read delays: 39
@@ -745,13 +745,13 @@ struct I_blr_ds_blr_I_blr_ds_blr_conv_3_30_14_to_I_blr_ds_blr_I_blr_ds_blr_ds_id
 };
 
 struct I_blr_ds_blr_cache {
-  I_blr_ds_blr_I_blr_ds_blr_conv_3_30_14_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_27_cache I_blr_ds_blr_I_blr_ds_blr_conv_3_30_14_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_27;
+  I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_27_cache I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_27;
 };
 
 
 
-inline void I_blr_ds_blr_I_blr_ds_blr_conv_3_30_14_write(hw_uint<32> & I_blr_ds_blr_I_blr_ds_blr_conv_3_30_14, I_blr_ds_blr_cache& I_blr_ds_blr, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-  I_blr_ds_blr.I_blr_ds_blr_I_blr_ds_blr_conv_3_30_14_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_27.push(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_14);
+inline void I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_write(hw_uint<32> & I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16, I_blr_ds_blr_cache& I_blr_ds_blr, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
+  I_blr_ds_blr.I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_27.push(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16);
 }
 
 inline hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_ds_id0_27_select(I_blr_ds_blr_cache& I_blr_ds_blr, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
@@ -761,8 +761,8 @@ inline hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_ds_id0_27_select(I_blr_ds_blr_cach
   // Read schedule : { I_blr_ds_blr_ds_id0[root = 0, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> [11 + 3I_blr_ds_blr_ds_r, 11 + 3I_blr_ds_blr_ds_c, 4] : 0 <= I_blr_ds_blr_ds_r <= 5 and 0 <= I_blr_ds_blr_ds_c <= 5 }
   // Write schedule: { I_blr_ds_blr_conv_3_30[root = 0, I_blr_ds_blr_r, I_blr_ds_blr_c] -> [6 + 2I_blr_ds_blr_r, 6 + 2I_blr_ds_blr_c, 3] : 0 <= I_blr_ds_blr_r <= 12 and 0 <= I_blr_ds_blr_c <= 12 }
   // DD fold: { I_blr_ds_blr_ds_id0[root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> 2 : root = 0 and I_blr_ds_blr_ds_r = 5 and (1 + I_blr_ds_blr_ds_c) mod 2 = 0 and 0 < I_blr_ds_blr_ds_c <= 2; I_blr_ds_blr_ds_id0[root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> ((2 - I_blr_ds_blr_ds_c) + floor((I_blr_ds_blr_ds_c)/2)) : root = 0 and I_blr_ds_blr_ds_r = 5 and (I_blr_ds_blr_ds_c) mod 2 = 0 and 0 <= I_blr_ds_blr_ds_c <= 2; I_blr_ds_blr_ds_id0[root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> 1 : root = 0 and I_blr_ds_blr_ds_r = 5 and I_blr_ds_blr_ds_c = 3; I_blr_ds_blr_ds_id0[root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> (57/2 - 1/2 * I_blr_ds_blr_ds_c) : root = 0 and (1 + I_blr_ds_blr_ds_r) mod 2 = 0 and (1 + I_blr_ds_blr_ds_c) mod 2 = 0 and 0 < I_blr_ds_blr_ds_r <= 2 and 0 < I_blr_ds_blr_ds_c <= 5; I_blr_ds_blr_ds_id0[root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> (28 - 1/2 * I_blr_ds_blr_ds_c) : root = 0 and (1 + I_blr_ds_blr_ds_r) mod 2 = 0 and (I_blr_ds_blr_ds_c) mod 2 = 0 and 0 < I_blr_ds_blr_ds_r <= 2 and 0 <= I_blr_ds_blr_ds_c <= 5; I_blr_ds_blr_ds_id0[root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> ((38 - 13/2 * I_blr_ds_blr_ds_r) - 2 * I_blr_ds_blr_ds_c) : root = 0 and (I_blr_ds_blr_ds_r) mod 2 = 0 and 0 <= I_blr_ds_blr_ds_r <= 2 and 0 <= I_blr_ds_blr_ds_c <= 5; I_blr_ds_blr_ds_id0[root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> (31/2 - 1/2 * I_blr_ds_blr_ds_c) : root = 0 and I_blr_ds_blr_ds_r = 3 and (1 + I_blr_ds_blr_ds_c) mod 2 = 0 and 0 < I_blr_ds_blr_ds_c <= 5; I_blr_ds_blr_ds_id0[root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> (15 - 1/2 * I_blr_ds_blr_ds_c) : root = 0 and I_blr_ds_blr_ds_r = 3 and (I_blr_ds_blr_ds_c) mod 2 = 0 and 0 <= I_blr_ds_blr_ds_c <= 5; I_blr_ds_blr_ds_id0[root, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> (12 - 2 * I_blr_ds_blr_ds_c) : I_blr_ds_blr_ds_r = 4 and root = 0 and 0 <= I_blr_ds_blr_ds_c <= 5 and ((root = 0 and (1 + I_blr_ds_blr_ds_c) mod 2 = 0) or (root = 0 and (I_blr_ds_blr_ds_c) mod 2 = 0)) }
-  auto value_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_14 = I_blr_ds_blr.I_blr_ds_blr_I_blr_ds_blr_conv_3_30_14_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_27.peek(/* one reader or all rams */ (-3 + I_blr_ds_blr_ds_c == 0 && -5 + I_blr_ds_blr_ds_r == 0) ? (1) : (-1 + I_blr_ds_blr_ds_c == 0 && -5 + I_blr_ds_blr_ds_r == 0) ? (2) : (-4 + I_blr_ds_blr_ds_r == 0) ? ((12 - 2 * I_blr_ds_blr_ds_c)) : ((-I_blr_ds_blr_ds_r) % 2 == 0 && 2 - I_blr_ds_blr_ds_r >= 0) ? ((((76 - 13 * I_blr_ds_blr_ds_r) - 4 * I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && -5 + I_blr_ds_blr_ds_r == 0 && 2 - I_blr_ds_blr_ds_c >= 0) ? (((4 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && -3 + I_blr_ds_blr_ds_r == 0) ? (((30 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && -1 + I_blr_ds_blr_ds_r == 0) ? (((56 - I_blr_ds_blr_ds_c))/2) : ((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -3 + I_blr_ds_blr_ds_r == 0) ? (((31 - I_blr_ds_blr_ds_c))/2) : ((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -1 + I_blr_ds_blr_ds_r == 0) ? (((57 - I_blr_ds_blr_ds_c))/2) : 0);
-  return value_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_14;
+  auto value_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16 = I_blr_ds_blr.I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_to_I_blr_ds_blr_I_blr_ds_blr_ds_id0_27.peek(/* one reader or all rams */ (-3 + I_blr_ds_blr_ds_c == 0 && -5 + I_blr_ds_blr_ds_r == 0) ? (1) : (-1 + I_blr_ds_blr_ds_c == 0 && -5 + I_blr_ds_blr_ds_r == 0) ? (2) : (-4 + I_blr_ds_blr_ds_r == 0) ? ((12 - 2 * I_blr_ds_blr_ds_c)) : ((-I_blr_ds_blr_ds_r) % 2 == 0 && 2 - I_blr_ds_blr_ds_r >= 0) ? ((((76 - 13 * I_blr_ds_blr_ds_r) - 4 * I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && -5 + I_blr_ds_blr_ds_r == 0 && 2 - I_blr_ds_blr_ds_c >= 0) ? (((4 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && -3 + I_blr_ds_blr_ds_r == 0) ? (((30 - I_blr_ds_blr_ds_c))/2) : ((-I_blr_ds_blr_ds_c) % 2 == 0 && -1 + I_blr_ds_blr_ds_r == 0) ? (((56 - I_blr_ds_blr_ds_c))/2) : ((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -3 + I_blr_ds_blr_ds_r == 0) ? (((31 - I_blr_ds_blr_ds_c))/2) : ((-1 - I_blr_ds_blr_ds_c) % 2 == 0 && -1 + I_blr_ds_blr_ds_r == 0) ? (((57 - I_blr_ds_blr_ds_c))/2) : 0);
+  return value_I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " I_blr_ds_blr_ds_r = " << I_blr_ds_blr_ds_r  << " I_blr_ds_blr_ds_c = " << I_blr_ds_blr_ds_c  << endl;
 	assert(false);
@@ -772,10 +772,10 @@ inline hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_ds_id0_27_select(I_blr_ds_blr_cach
 
 // # of bundles = 2
 // I_blr_ds_blr_conv_3_30_write
-//	I_blr_ds_blr_I_blr_ds_blr_conv_3_30_14
+//	I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16
 inline void I_blr_ds_blr_I_blr_ds_blr_conv_3_30_write_bundle_write(hw_uint<32>& I_blr_ds_blr_conv_3_30_write, I_blr_ds_blr_cache& I_blr_ds_blr, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
-	hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_conv_3_30_14_res = I_blr_ds_blr_conv_3_30_write.extract<0, 31>();
-	I_blr_ds_blr_I_blr_ds_blr_conv_3_30_14_write(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_14_res, I_blr_ds_blr, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
+	hw_uint<32>  I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_res = I_blr_ds_blr_conv_3_30_write.extract<0, 31>();
+	I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_write(I_blr_ds_blr_I_blr_ds_blr_conv_3_30_16_res, I_blr_ds_blr, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
 }
 
 // I_blr_ds_blr_ds_id0_read
@@ -792,7 +792,7 @@ inline hw_uint<32> I_blr_ds_blr_I_blr_ds_blr_ds_id0_read_bundle_read(I_blr_ds_bl
 
 #include "hw_classes.h"
 
-struct I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_25_cache {
+struct I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_15_cache {
 	// RAM Box: {[0, 5], [0, 5]}
 	// Capacity: 12
 	// # of read delays: 12
@@ -814,23 +814,23 @@ struct I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26_to_I_blr_ds_blr_ds_store_I_blr_ds_
 };
 
 struct I_blr_ds_blr_ds_cache {
-  I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_25_cache I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_25;
+  I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_15_cache I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_15;
 };
 
 
 
 inline void I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26_write(hw_uint<32> & I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26, I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, int root, int I_blr_ds_blr_ds_r, int I_blr_ds_blr_ds_c) {
-  I_blr_ds_blr_ds.I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_25.push(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26);
+  I_blr_ds_blr_ds.I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_15.push(I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26);
 }
 
-inline hw_uint<32>  I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_25_select(I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, int root, int I_blr_ds_blr_ds_out_r, int I_blr_ds_blr_ds_out_c) {
+inline hw_uint<32>  I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_15_select(I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, int root, int I_blr_ds_blr_ds_out_r, int I_blr_ds_blr_ds_out_c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_25 read pattern: { store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root = 0, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> I_blr_ds_blr_ds[I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] : 0 <= I_blr_ds_blr_ds_out_r <= 5 and 0 <= I_blr_ds_blr_ds_out_c <= 5 }
+  // I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_15 read pattern: { store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root = 0, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> I_blr_ds_blr_ds[I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] : 0 <= I_blr_ds_blr_ds_out_r <= 5 and 0 <= I_blr_ds_blr_ds_out_c <= 5 }
   // Read schedule : { store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root = 0, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> [16 + 2I_blr_ds_blr_ds_out_r, 16 + 2I_blr_ds_blr_ds_out_c, 5] : 0 <= I_blr_ds_blr_ds_out_r <= 5 and 0 <= I_blr_ds_blr_ds_out_c <= 5 }
   // Write schedule: { I_blr_ds_blr_ds_id0[root = 0, I_blr_ds_blr_ds_r, I_blr_ds_blr_ds_c] -> [11 + 3I_blr_ds_blr_ds_r, 11 + 3I_blr_ds_blr_ds_c, 4] : 0 <= I_blr_ds_blr_ds_r <= 5 and 0 <= I_blr_ds_blr_ds_c <= 5 }
   // DD fold: { store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> 1 : root = 0 and I_blr_ds_blr_ds_out_r = 5 and 0 <= I_blr_ds_blr_ds_out_c <= 1; store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> 1 : root = 0 and I_blr_ds_blr_ds_out_r = 5 and I_blr_ds_blr_ds_out_c = 2; store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> (11 - I_blr_ds_blr_ds_out_c) : root = 0 and 0 <= I_blr_ds_blr_ds_out_r <= 1 and 0 <= I_blr_ds_blr_ds_out_c <= 4; store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> 6 : root = 0 and I_blr_ds_blr_ds_out_c = 5 and 0 <= I_blr_ds_blr_ds_out_r <= 1; store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> 7 : root = 0 and I_blr_ds_blr_ds_out_r = 2 and (1 + I_blr_ds_blr_ds_out_c) mod 3 = 0 and 2 <= I_blr_ds_blr_ds_out_c <= 4; store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> (8/3 + 2/3 * I_blr_ds_blr_ds_out_c) : root = 0 and I_blr_ds_blr_ds_out_r = 2 and I_blr_ds_blr_ds_out_c = 5; store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> (7 - floor((1 + I_blr_ds_blr_ds_out_c)/3)) : root = 0 and I_blr_ds_blr_ds_out_r = 2 and 0 <= I_blr_ds_blr_ds_out_c <= 4 and 3*floor((1 + I_blr_ds_blr_ds_out_c)/3) <= I_blr_ds_blr_ds_out_c; store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds[root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c] -> (5 - I_blr_ds_blr_ds_out_c) : root = 0 and 3 <= I_blr_ds_blr_ds_out_r <= 4 and 0 <= I_blr_ds_blr_ds_out_c <= 4 and ((3*floor((1 + I_blr_ds_blr_ds_out_c)/3) <= I_blr_ds_blr_ds_out_c) or (1 + I_blr_ds_blr_ds_out_c) mod 3 = 0) }
-  auto value_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26 = I_blr_ds_blr_ds.I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_25.peek(/* one reader or all rams */ (-5 + I_blr_ds_blr_ds_out_r == 0 && 2 - I_blr_ds_blr_ds_out_c >= 0) ? (1) : (-5 + I_blr_ds_blr_ds_out_c == 0 && 1 - I_blr_ds_blr_ds_out_r >= 0) ? (6) : (-2 + I_blr_ds_blr_ds_out_c == 0 && -2 + I_blr_ds_blr_ds_out_r == 0) ? (7) : ((-3 + I_blr_ds_blr_ds_out_r >= 0 && 4 - I_blr_ds_blr_ds_out_r >= 0 && I_blr_ds_blr_ds_out_c - 3*floord(1 + I_blr_ds_blr_ds_out_c, 3) >= 0) || (-2 + I_blr_ds_blr_ds_out_c == 0 && -3 + I_blr_ds_blr_ds_out_r >= 0 && 4 - I_blr_ds_blr_ds_out_r >= 0)) ? ((5 - I_blr_ds_blr_ds_out_c)) : (4 - I_blr_ds_blr_ds_out_c >= 0 && 1 - I_blr_ds_blr_ds_out_r >= 0) ? ((11 - I_blr_ds_blr_ds_out_c)) : (-5 + I_blr_ds_blr_ds_out_c == 0 && -2 + I_blr_ds_blr_ds_out_r == 0) ? (6) : (-2 + I_blr_ds_blr_ds_out_r == 0 && I_blr_ds_blr_ds_out_c - 3*floord(1 + I_blr_ds_blr_ds_out_c, 3) >= 0) ? ((7 - floord(1 + I_blr_ds_blr_ds_out_c, 3))) : 0);
+  auto value_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26 = I_blr_ds_blr_ds.I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26_to_I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_15.peek(/* one reader or all rams */ (-5 + I_blr_ds_blr_ds_out_r == 0 && 2 - I_blr_ds_blr_ds_out_c >= 0) ? (1) : (-5 + I_blr_ds_blr_ds_out_c == 0 && 1 - I_blr_ds_blr_ds_out_r >= 0) ? (6) : (-2 + I_blr_ds_blr_ds_out_c == 0 && -2 + I_blr_ds_blr_ds_out_r == 0) ? (7) : ((-3 + I_blr_ds_blr_ds_out_r >= 0 && 4 - I_blr_ds_blr_ds_out_r >= 0 && I_blr_ds_blr_ds_out_c - 3*floord(1 + I_blr_ds_blr_ds_out_c, 3) >= 0) || (-2 + I_blr_ds_blr_ds_out_c == 0 && -3 + I_blr_ds_blr_ds_out_r >= 0 && 4 - I_blr_ds_blr_ds_out_r >= 0)) ? ((5 - I_blr_ds_blr_ds_out_c)) : (4 - I_blr_ds_blr_ds_out_c >= 0 && 1 - I_blr_ds_blr_ds_out_r >= 0) ? ((11 - I_blr_ds_blr_ds_out_c)) : (-5 + I_blr_ds_blr_ds_out_c == 0 && -2 + I_blr_ds_blr_ds_out_r == 0) ? (6) : (-2 + I_blr_ds_blr_ds_out_r == 0 && I_blr_ds_blr_ds_out_c - 3*floord(1 + I_blr_ds_blr_ds_out_c, 3) >= 0) ? ((7 - floord(1 + I_blr_ds_blr_ds_out_c, 3))) : 0);
   return value_I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_26;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " I_blr_ds_blr_ds_out_r = " << I_blr_ds_blr_ds_out_r  << " I_blr_ds_blr_ds_out_c = " << I_blr_ds_blr_ds_out_c  << endl;
@@ -848,20 +848,35 @@ inline void I_blr_ds_blr_ds_I_blr_ds_blr_ds_id0_write_bundle_write(hw_uint<32>& 
 }
 
 // store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_read
-//	I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_25
+//	I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_15
 inline hw_uint<32> I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_read_bundle_read(I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, int root, int I_blr_ds_blr_ds_out_r, int I_blr_ds_blr_ds_out_c) {
   // # of ports in bundle: 1
-    // I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_25
+    // I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_15
 
 	hw_uint<32> result;
-	hw_uint<32>  I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_25_res = I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_25_select(I_blr_ds_blr_ds, root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c);
-	set_at<0, 32>(result, I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_25_res);
+	hw_uint<32>  I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_15_res = I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_15_select(I_blr_ds_blr_ds, root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c);
+	set_at<0, 32>(result, I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_15_res);
 	return result;
 }
 
 
 
 // Operation logic
+inline void store_I_from_in(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, I_cache& I, int root, int pr, int pc) {
+	// Consume: in
+	auto in_pr_c__pc_value = in.read();
+	// Produce: I
+	I_store_I_from_in_write_bundle_write(in_pr_c__pc_value, I, root, pr, pc);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<32> debug_in_pr_c__pc_value(in_pr_c__pc_value);
+  hw_uint<32> debug_in_pr_c__pc_value_lane_0;
+  set_at<0, 32, 32>(debug_in_pr_c__pc_value_lane_0, debug_in_pr_c__pc_value.extract<0, 31>());
+  *global_debug_handle << "store_I_from_in," << (1*root + 0) << ", " << pr<< "," << pc<< "," <<  debug_in_pr_c__pc_value_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void I_blr_conv_3_30(I_cache& I, I_blr_cache& I_blr, int root, int I_blr_r, int I_blr_c) {
 	// Consume: I
 	auto I_I_blr_r__p__0_c__I_blr_c__p__0_value = I_I_blr_conv_3_30_read_bundle_read(I/* source_delay */, root, I_blr_r, I_blr_c);
@@ -879,21 +894,6 @@ inline void I_blr_conv_3_30(I_cache& I, I_blr_cache& I_blr, int root, int I_blr_
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
   *global_debug_handle << "I_blr_conv_3_30," << (1*root + 0) << ", " << I_blr_r<< "," << I_blr_c<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void store_I_from_in(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */in, I_cache& I, int root, int pr, int pc) {
-	// Consume: in
-	auto in_pr_c__pc_value = in.read();
-	// Produce: I
-	I_store_I_from_in_write_bundle_write(in_pr_c__pc_value, I, root, pr, pc);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_in_pr_c__pc_value(in_pr_c__pc_value);
-  hw_uint<32> debug_in_pr_c__pc_value_lane_0;
-  set_at<0, 32, 32>(debug_in_pr_c__pc_value_lane_0, debug_in_pr_c__pc_value.extract<0, 31>());
-  *global_debug_handle << "store_I_from_in," << (1*root + 0) << ", " << pr<< "," << pc<< "," <<  debug_in_pr_c__pc_value_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -919,6 +919,26 @@ inline void I_blr_ds_id0(I_blr_cache& I_blr, I_blr_ds_cache& I_blr_ds, int root,
 
 }
 
+inline void store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds(I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */I_blr_ds_blr_ds_out, int root, int I_blr_ds_blr_ds_out_r, int I_blr_ds_blr_ds_out_c) {
+	// Consume: I_blr_ds_blr_ds
+	auto I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value = I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_read_bundle_read(I_blr_ds_blr_ds/* source_delay */, root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_I_blr_ds_blr_ds," << root<< "," << I_blr_ds_blr_ds_out_r<< "," << I_blr_ds_blr_ds_out_c<< "," <<  I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	// Produce: I_blr_ds_blr_ds_out
+	I_blr_ds_blr_ds_out.write(I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<32> debug_I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value(I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value);
+  hw_uint<32> debug_I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value_lane_0;
+  set_at<0, 32, 32>(debug_I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value_lane_0, debug_I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value.extract<0, 31>());
+  *global_debug_handle << "store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds," << (1*root + 0) << ", " << I_blr_ds_blr_ds_out_r<< "," << I_blr_ds_blr_ds_out_c<< "," <<  debug_I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void I_blr_ds_blr_conv_3_30(I_blr_ds_cache& I_blr_ds, I_blr_ds_blr_cache& I_blr_ds_blr, int root, int I_blr_ds_blr_r, int I_blr_ds_blr_c) {
 	// Consume: I_blr_ds
 	auto I_blr_ds_I_blr_ds_blr_r__p__0_c__I_blr_ds_blr_c__p__0_value = I_blr_ds_I_blr_ds_blr_conv_3_30_read_bundle_read(I_blr_ds/* source_delay */, root, I_blr_ds_blr_r, I_blr_ds_blr_c);
@@ -936,26 +956,6 @@ inline void I_blr_ds_blr_conv_3_30(I_blr_ds_cache& I_blr_ds, I_blr_ds_blr_cache&
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
   *global_debug_handle << "I_blr_ds_blr_conv_3_30," << (1*root + 0) << ", " << I_blr_ds_blr_r<< "," << I_blr_ds_blr_c<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds(I_blr_ds_blr_ds_cache& I_blr_ds_blr_ds, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */I_blr_ds_blr_ds_out, int root, int I_blr_ds_blr_ds_out_r, int I_blr_ds_blr_ds_out_c) {
-	// Consume: I_blr_ds_blr_ds
-	auto I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value = I_blr_ds_blr_ds_store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_read_bundle_read(I_blr_ds_blr_ds/* source_delay */, root, I_blr_ds_blr_ds_out_r, I_blr_ds_blr_ds_out_c);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds_I_blr_ds_blr_ds," << root<< "," << I_blr_ds_blr_ds_out_r<< "," << I_blr_ds_blr_ds_out_c<< "," <<  I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	// Produce: I_blr_ds_blr_ds_out
-	I_blr_ds_blr_ds_out.write(I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value(I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value);
-  hw_uint<32> debug_I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value_lane_0;
-  set_at<0, 32, 32>(debug_I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value_lane_0, debug_I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value.extract<0, 31>());
-  *global_debug_handle << "store_I_blr_ds_blr_ds_out_from_I_blr_ds_blr_ds," << (1*root + 0) << ", " << I_blr_ds_blr_ds_out_r<< "," << I_blr_ds_blr_ds_out_c<< "," <<  debug_I_blr_ds_blr_ds_I_blr_ds_blr_ds_out_r_c__I_blr_ds_blr_ds_out_c_value_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
