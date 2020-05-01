@@ -56,3 +56,4 @@ ds_*
 *.txt
 run_tb_*
 aws_*
+soda_*
