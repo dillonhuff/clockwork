@@ -9,11 +9,11 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
   std::string binaryFile = argv[1];
-  const int img_update_0_read_DATA_SIZE = 2079604;
+  const int img_update_0_read_DATA_SIZE = 144;
   const int img_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t img_update_0_read_size_bytes = img_update_0_read_BYTES_PER_PIXEL * img_update_0_read_DATA_SIZE;
 
-  const int sbl_ur_1_update_0_write_DATA_SIZE = 2073600;
+  const int sbl_ur_1_update_0_write_DATA_SIZE = 100;
   const int sbl_ur_1_update_0_write_BYTES_PER_PIXEL = 16 / 8;
   size_t sbl_ur_1_update_0_write_size_bytes = sbl_ur_1_update_0_write_BYTES_PER_PIXEL * sbl_ur_1_update_0_write_DATA_SIZE;
 

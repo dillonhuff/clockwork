@@ -11,17 +11,17 @@ using namespace std;
 #include "hw_classes.h"
 
 struct img_img_update_0_write0_merged_banks_12_cache {
-	// RAM Box: {[-1, 1920], [-1, 1080]}
-	// Capacity: 3847
+	// RAM Box: {[-1, 10], [-1, 10]}
+	// Capacity: 27
 	// # of read delays: 8
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	hw_uint<16> f4;
-	fifo<hw_uint<16>, 1919> f5;
+	fifo<hw_uint<16>, 9> f5;
 	hw_uint<16> f6;
 	hw_uint<16> f7;
 	hw_uint<16> f8;
-	fifo<hw_uint<16>, 1919> f9;
+	fifo<hw_uint<16>, 9> f9;
 	hw_uint<16> f10;
 	hw_uint<16> f12;
 	hw_uint<16> f14;
@@ -39,39 +39,39 @@ struct img_img_update_0_write0_merged_banks_12_cache {
 		return f4;
 	}
 
-	inline hw_uint<16> peek_1921() {
+	inline hw_uint<16> peek_11() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f5.back();
 	}
 
-	inline hw_uint<16> peek_1922() {
+	inline hw_uint<16> peek_12() {
 		return f6;
 	}
 
-	inline hw_uint<16> peek_1923() {
+	inline hw_uint<16> peek_13() {
 		return f7;
 	}
 
-	inline hw_uint<16> peek_1924() {
+	inline hw_uint<16> peek_14() {
 		return f8;
 	}
 
-	inline hw_uint<16> peek_3843() {
+	inline hw_uint<16> peek_23() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f9.back();
 	}
 
-	inline hw_uint<16> peek_3844() {
+	inline hw_uint<16> peek_24() {
 		return f10;
 	}
 
-	inline hw_uint<16> peek_3845() {
+	inline hw_uint<16> peek_25() {
 		return f12;
 	}
 
-	inline hw_uint<16> peek_3846() {
+	inline hw_uint<16> peek_26() {
 		return f14;
 	}
 
@@ -88,11 +88,11 @@ struct img_img_update_0_write0_merged_banks_12_cache {
     f12 = f10;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 1919
+    // cap: 1 reading from capacity: 9
     f10 = f9.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1919 reading from capacity: 1
+    // cap: 9 reading from capacity: 1
     f9.push(f8);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -104,11 +104,11 @@ struct img_img_update_0_write0_merged_banks_12_cache {
     f7 = f6;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 1919
+    // cap: 1 reading from capacity: 9
     f6 = f5.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1919 reading from capacity: 1
+    // cap: 9 reading from capacity: 1
     f5.push(f4);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -137,11 +137,11 @@ inline void img_img_update_0_write0_write(hw_uint<16>& img_img_update_0_write0, 
 inline hw_uint<16> mag_x_rd0_select(img_cache& img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // mag_x_rd0 read pattern: { mag_x_update_0[d0, d1] -> img[-1 + d0, -1 + d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Read schedule : { mag_x_update_0[d0, d1] -> [1 + d1, 1 + d0, 3] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 1920 and -1 <= d1 <= 1080 }
-  // DD fold: { mag_x_update_0[d0, d1] -> 3846 : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  auto value_img_img_update_0_write0 = img.img_img_update_0_write0_merged_banks_12.peek_3846();
+  // mag_x_rd0 read pattern: { mag_x_update_0[d0, d1] -> img[-1 + d0, -1 + d1] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Read schedule : { mag_x_update_0[d0, d1] -> [1 + d1, 1 + d0, 3] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 10 and -1 <= d1 <= 10 }
+  // DD fold: { mag_x_update_0[d0, d1] -> 26 : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  auto value_img_img_update_0_write0 = img.img_img_update_0_write0_merged_banks_12.peek_26();
   return value_img_img_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -153,11 +153,11 @@ inline hw_uint<16> mag_x_rd0_select(img_cache& img, int d0, int d1) {
 inline hw_uint<16> mag_x_rd1_select(img_cache& img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // mag_x_rd1 read pattern: { mag_x_update_0[d0, d1] -> img[-1 + d0, d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Read schedule : { mag_x_update_0[d0, d1] -> [1 + d1, 1 + d0, 3] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 1920 and -1 <= d1 <= 1080 }
-  // DD fold: { mag_x_update_0[d0, d1] -> 1924 : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  auto value_img_img_update_0_write0 = img.img_img_update_0_write0_merged_banks_12.peek_1924();
+  // mag_x_rd1 read pattern: { mag_x_update_0[d0, d1] -> img[-1 + d0, d1] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Read schedule : { mag_x_update_0[d0, d1] -> [1 + d1, 1 + d0, 3] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 10 and -1 <= d1 <= 10 }
+  // DD fold: { mag_x_update_0[d0, d1] -> 14 : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  auto value_img_img_update_0_write0 = img.img_img_update_0_write0_merged_banks_12.peek_14();
   return value_img_img_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -169,10 +169,10 @@ inline hw_uint<16> mag_x_rd1_select(img_cache& img, int d0, int d1) {
 inline hw_uint<16> mag_x_rd2_select(img_cache& img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // mag_x_rd2 read pattern: { mag_x_update_0[d0, d1] -> img[-1 + d0, 1 + d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Read schedule : { mag_x_update_0[d0, d1] -> [1 + d1, 1 + d0, 3] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 1920 and -1 <= d1 <= 1080 }
-  // DD fold: { mag_x_update_0[d0, d1] -> 2 : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
+  // mag_x_rd2 read pattern: { mag_x_update_0[d0, d1] -> img[-1 + d0, 1 + d1] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Read schedule : { mag_x_update_0[d0, d1] -> [1 + d1, 1 + d0, 3] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 10 and -1 <= d1 <= 10 }
+  // DD fold: { mag_x_update_0[d0, d1] -> 2 : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
   auto value_img_img_update_0_write0 = img.img_img_update_0_write0_merged_banks_12.peek_2();
   return value_img_img_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -185,11 +185,11 @@ inline hw_uint<16> mag_x_rd2_select(img_cache& img, int d0, int d1) {
 inline hw_uint<16> mag_x_rd3_select(img_cache& img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // mag_x_rd3 read pattern: { mag_x_update_0[d0, d1] -> img[1 + d0, -1 + d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Read schedule : { mag_x_update_0[d0, d1] -> [1 + d1, 1 + d0, 3] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 1920 and -1 <= d1 <= 1080 }
-  // DD fold: { mag_x_update_0[d0, d1] -> 3844 : 0 <= d0 <= 1918 and 0 <= d1 <= 1079; mag_x_update_0[d0, d1] -> (1925 + d0) : d0 = 1919 and 0 <= d1 <= 1079 }
-  auto value_img_img_update_0_write0 = img.img_img_update_0_write0_merged_banks_12.peek_3844();
+  // mag_x_rd3 read pattern: { mag_x_update_0[d0, d1] -> img[1 + d0, -1 + d1] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Read schedule : { mag_x_update_0[d0, d1] -> [1 + d1, 1 + d0, 3] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 10 and -1 <= d1 <= 10 }
+  // DD fold: { mag_x_update_0[d0, d1] -> 24 : 0 <= d0 <= 8 and 0 <= d1 <= 9; mag_x_update_0[d0, d1] -> (15 + d0) : d0 = 9 and 0 <= d1 <= 9 }
+  auto value_img_img_update_0_write0 = img.img_img_update_0_write0_merged_banks_12.peek_24();
   return value_img_img_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -201,11 +201,11 @@ inline hw_uint<16> mag_x_rd3_select(img_cache& img, int d0, int d1) {
 inline hw_uint<16> mag_x_rd4_select(img_cache& img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // mag_x_rd4 read pattern: { mag_x_update_0[d0, d1] -> img[1 + d0, d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Read schedule : { mag_x_update_0[d0, d1] -> [1 + d1, 1 + d0, 3] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 1920 and -1 <= d1 <= 1080 }
-  // DD fold: { mag_x_update_0[d0, d1] -> 1922 : 0 <= d0 <= 1918 and 0 <= d1 <= 1079; mag_x_update_0[d0, d1] -> (3 + d0) : d0 = 1919 and 0 <= d1 <= 1079 }
-  auto value_img_img_update_0_write0 = img.img_img_update_0_write0_merged_banks_12.peek_1922();
+  // mag_x_rd4 read pattern: { mag_x_update_0[d0, d1] -> img[1 + d0, d1] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Read schedule : { mag_x_update_0[d0, d1] -> [1 + d1, 1 + d0, 3] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 10 and -1 <= d1 <= 10 }
+  // DD fold: { mag_x_update_0[d0, d1] -> 12 : 0 <= d0 <= 8 and 0 <= d1 <= 9; mag_x_update_0[d0, d1] -> (3 + d0) : d0 = 9 and 0 <= d1 <= 9 }
+  auto value_img_img_update_0_write0 = img.img_img_update_0_write0_merged_banks_12.peek_12();
   return value_img_img_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -217,9 +217,9 @@ inline hw_uint<16> mag_x_rd4_select(img_cache& img, int d0, int d1) {
 inline hw_uint<16> mag_x_rd5_select(img_cache& img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // mag_x_rd5 read pattern: { mag_x_update_0[d0, d1] -> img[1 + d0, 1 + d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Read schedule : { mag_x_update_0[d0, d1] -> [1 + d1, 1 + d0, 3] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 1920 and -1 <= d1 <= 1080 }
+  // mag_x_rd5 read pattern: { mag_x_update_0[d0, d1] -> img[1 + d0, 1 + d1] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Read schedule : { mag_x_update_0[d0, d1] -> [1 + d1, 1 + d0, 3] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 10 and -1 <= d1 <= 10 }
   // DD fold: {  }
   auto value_img_img_update_0_write0 = img.img_img_update_0_write0_merged_banks_12.peek_0();
   return value_img_img_update_0_write0;
@@ -233,11 +233,11 @@ inline hw_uint<16> mag_x_rd5_select(img_cache& img, int d0, int d1) {
 inline hw_uint<16> mag_y_rd0_select(img_cache& img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // mag_y_rd0 read pattern: { mag_y_update_0[d0, d1] -> img[-1 + d0, -1 + d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Read schedule : { mag_y_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 1920 and -1 <= d1 <= 1080 }
-  // DD fold: { mag_y_update_0[d0, d1] -> 3846 : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  auto value_img_img_update_0_write0 = img.img_img_update_0_write0_merged_banks_12.peek_3846();
+  // mag_y_rd0 read pattern: { mag_y_update_0[d0, d1] -> img[-1 + d0, -1 + d1] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Read schedule : { mag_y_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 10 and -1 <= d1 <= 10 }
+  // DD fold: { mag_y_update_0[d0, d1] -> 26 : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  auto value_img_img_update_0_write0 = img.img_img_update_0_write0_merged_banks_12.peek_26();
   return value_img_img_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -249,10 +249,10 @@ inline hw_uint<16> mag_y_rd0_select(img_cache& img, int d0, int d1) {
 inline hw_uint<16> mag_y_rd1_select(img_cache& img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // mag_y_rd1 read pattern: { mag_y_update_0[d0, d1] -> img[-1 + d0, 1 + d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Read schedule : { mag_y_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 1920 and -1 <= d1 <= 1080 }
-  // DD fold: { mag_y_update_0[d0, d1] -> 2 : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
+  // mag_y_rd1 read pattern: { mag_y_update_0[d0, d1] -> img[-1 + d0, 1 + d1] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Read schedule : { mag_y_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 10 and -1 <= d1 <= 10 }
+  // DD fold: { mag_y_update_0[d0, d1] -> 2 : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
   auto value_img_img_update_0_write0 = img.img_img_update_0_write0_merged_banks_12.peek_2();
   return value_img_img_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -265,11 +265,11 @@ inline hw_uint<16> mag_y_rd1_select(img_cache& img, int d0, int d1) {
 inline hw_uint<16> mag_y_rd2_select(img_cache& img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // mag_y_rd2 read pattern: { mag_y_update_0[d0, d1] -> img[d0, -1 + d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Read schedule : { mag_y_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 1920 and -1 <= d1 <= 1080 }
-  // DD fold: { mag_y_update_0[d0, d1] -> 3845 : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  auto value_img_img_update_0_write0 = img.img_img_update_0_write0_merged_banks_12.peek_3845();
+  // mag_y_rd2 read pattern: { mag_y_update_0[d0, d1] -> img[d0, -1 + d1] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Read schedule : { mag_y_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 10 and -1 <= d1 <= 10 }
+  // DD fold: { mag_y_update_0[d0, d1] -> 25 : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  auto value_img_img_update_0_write0 = img.img_img_update_0_write0_merged_banks_12.peek_25();
   return value_img_img_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -281,10 +281,10 @@ inline hw_uint<16> mag_y_rd2_select(img_cache& img, int d0, int d1) {
 inline hw_uint<16> mag_y_rd3_select(img_cache& img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // mag_y_rd3 read pattern: { mag_y_update_0[d0, d1] -> img[d0, 1 + d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Read schedule : { mag_y_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 1920 and -1 <= d1 <= 1080 }
-  // DD fold: { mag_y_update_0[d0, d1] -> 1 : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
+  // mag_y_rd3 read pattern: { mag_y_update_0[d0, d1] -> img[d0, 1 + d1] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Read schedule : { mag_y_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 10 and -1 <= d1 <= 10 }
+  // DD fold: { mag_y_update_0[d0, d1] -> 1 : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
   auto value_img_img_update_0_write0 = img.img_img_update_0_write0_merged_banks_12.peek_1();
   return value_img_img_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -297,11 +297,11 @@ inline hw_uint<16> mag_y_rd3_select(img_cache& img, int d0, int d1) {
 inline hw_uint<16> mag_y_rd4_select(img_cache& img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // mag_y_rd4 read pattern: { mag_y_update_0[d0, d1] -> img[1 + d0, -1 + d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Read schedule : { mag_y_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 1920 and -1 <= d1 <= 1080 }
-  // DD fold: { mag_y_update_0[d0, d1] -> 3844 : 0 <= d0 <= 1918 and 0 <= d1 <= 1079; mag_y_update_0[d0, d1] -> (1925 + d0) : d0 = 1919 and 0 <= d1 <= 1079 }
-  auto value_img_img_update_0_write0 = img.img_img_update_0_write0_merged_banks_12.peek_3844();
+  // mag_y_rd4 read pattern: { mag_y_update_0[d0, d1] -> img[1 + d0, -1 + d1] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Read schedule : { mag_y_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 10 and -1 <= d1 <= 10 }
+  // DD fold: { mag_y_update_0[d0, d1] -> 24 : 0 <= d0 <= 8 and 0 <= d1 <= 9; mag_y_update_0[d0, d1] -> (15 + d0) : d0 = 9 and 0 <= d1 <= 9 }
+  auto value_img_img_update_0_write0 = img.img_img_update_0_write0_merged_banks_12.peek_24();
   return value_img_img_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -313,9 +313,9 @@ inline hw_uint<16> mag_y_rd4_select(img_cache& img, int d0, int d1) {
 inline hw_uint<16> mag_y_rd5_select(img_cache& img, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // mag_y_rd5 read pattern: { mag_y_update_0[d0, d1] -> img[1 + d0, 1 + d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Read schedule : { mag_y_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 1920 and -1 <= d1 <= 1080 }
+  // mag_y_rd5 read pattern: { mag_y_update_0[d0, d1] -> img[1 + d0, 1 + d1] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Read schedule : { mag_y_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Write schedule: { img_update_0[d0, d1] -> [d1, d0, 1] : -1 <= d0 <= 10 and -1 <= d1 <= 10 }
   // DD fold: {  }
   auto value_img_img_update_0_write0 = img.img_img_update_0_write0_merged_banks_12.peek_0();
   return value_img_img_update_0_write0;
@@ -401,7 +401,7 @@ inline hw_uint<96> img_mag_y_update_0_read_bundle_read(img_cache& img, int d0, i
 #include "hw_classes.h"
 
 struct mag_x_mag_x_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 1919], [0, 1079]}
+	// RAM Box: {[0, 9], [0, 9]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -434,9 +434,9 @@ inline void mag_x_mag_x_update_0_write0_write(hw_uint<16>& mag_x_mag_x_update_0_
 inline hw_uint<16> sbl_ur_1_rd0_select(mag_x_cache& mag_x, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // sbl_ur_1_rd0 read pattern: { sbl_ur_1_update_0[d0, d1] -> mag_x[d0, d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Read schedule : { sbl_ur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 4] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Write schedule: { mag_x_update_0[d0, d1] -> [1 + d1, 1 + d0, 3] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
+  // sbl_ur_1_rd0 read pattern: { sbl_ur_1_update_0[d0, d1] -> mag_x[d0, d1] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Read schedule : { sbl_ur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 4] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Write schedule: { mag_x_update_0[d0, d1] -> [1 + d1, 1 + d0, 3] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
   // DD fold: {  }
   auto value_mag_x_mag_x_update_0_write0 = mag_x.mag_x_mag_x_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_mag_x_mag_x_update_0_write0;
@@ -470,7 +470,7 @@ inline hw_uint<16> mag_x_sbl_ur_1_update_0_read_bundle_read(mag_x_cache& mag_x, 
 #include "hw_classes.h"
 
 struct mag_y_mag_y_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 1919], [0, 1079]}
+	// RAM Box: {[0, 9], [0, 9]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -503,9 +503,9 @@ inline void mag_y_mag_y_update_0_write0_write(hw_uint<16>& mag_y_mag_y_update_0_
 inline hw_uint<16> sbl_ur_1_rd0_select(mag_y_cache& mag_y, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // sbl_ur_1_rd0 read pattern: { sbl_ur_1_update_0[d0, d1] -> mag_y[d0, d1] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Read schedule : { sbl_ur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 4] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
-  // Write schedule: { mag_y_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 1919 and 0 <= d1 <= 1079 }
+  // sbl_ur_1_rd0 read pattern: { sbl_ur_1_update_0[d0, d1] -> mag_y[d0, d1] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Read schedule : { sbl_ur_1_update_0[d0, d1] -> [1 + d1, 1 + d0, 4] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
+  // Write schedule: { mag_y_update_0[d0, d1] -> [1 + d1, 1 + d0, 2] : 0 <= d0 <= 9 and 0 <= d1 <= 9 }
   // DD fold: {  }
   auto value_mag_y_mag_y_update_0_write0 = mag_y.mag_y_mag_y_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_mag_y_mag_y_update_0_write0;
@@ -539,6 +539,43 @@ inline hw_uint<16> mag_y_sbl_ur_1_update_0_read_bundle_read(mag_y_cache& mag_y, 
 
 
 // Operation logic
+inline void img_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */off_chip_img, img_cache& img, int d0, int d1) {
+	// Consume: off_chip_img
+	auto off_chip_img_0_c__0_value = off_chip_img.read();
+	auto compute_result = img_generated_compute_unrolled_1(off_chip_img_0_c__0_value);
+	// Produce: img
+	img_img_update_0_write_bundle_write(compute_result, img, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<16> debug_compute_result(compute_result);
+  hw_uint<16> debug_compute_result_lane_0;
+  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
+  *global_debug_handle << "img_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void mag_y_update_0(img_cache& img, mag_y_cache& mag_y, int d0, int d1) {
+	// Consume: img
+	auto img_0_c__0_value = img_mag_y_update_0_read_bundle_read(img/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "mag_y_update_0_img," << d0<< "," << d1<< "," <<  img_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = mag_y_generated_compute_unrolled_1(img_0_c__0_value);
+	// Produce: mag_y
+	mag_y_mag_y_update_0_write_bundle_write(compute_result, mag_y, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<16> debug_compute_result(compute_result);
+  hw_uint<16> debug_compute_result_lane_0;
+  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
+  *global_debug_handle << "mag_y_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void mag_x_update_0(img_cache& img, mag_x_cache& mag_x, int d0, int d1) {
 	// Consume: img
 	auto img_0_c__0_value = img_mag_x_update_0_read_bundle_read(img/* source_delay */, d0, d1);
@@ -588,43 +625,6 @@ inline void sbl_ur_1_update_0(mag_x_cache& mag_x, mag_y_cache& mag_y, HWStream<h
 
 }
 
-inline void img_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */off_chip_img, img_cache& img, int d0, int d1) {
-	// Consume: off_chip_img
-	auto off_chip_img_0_c__0_value = off_chip_img.read();
-	auto compute_result = img_generated_compute_unrolled_1(off_chip_img_0_c__0_value);
-	// Produce: img
-	img_img_update_0_write_bundle_write(compute_result, img, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "img_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void mag_y_update_0(img_cache& img, mag_y_cache& mag_y, int d0, int d1) {
-	// Consume: img
-	auto img_0_c__0_value = img_mag_y_update_0_read_bundle_read(img/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "mag_y_update_0_img," << d0<< "," << d1<< "," <<  img_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = mag_y_generated_compute_unrolled_1(img_0_c__0_value);
-	// Produce: mag_y
-	mag_y_mag_y_update_0_write_bundle_write(compute_result, mag_y, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "mag_y_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
 // Driver function
 void sbl_ur_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */off_chip_img, HWStream<hw_uint<16> >& /* get_args num ports = 1 */sbl_ur_1) {
 
@@ -645,26 +645,26 @@ void sbl_ur_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */off_chip_i
 	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
 	
-	for (int c0 = -1; c0 <= 1080; c0++) {
-	  for (int c1 = -1; c1 <= 1920; c1++) {
+	for (int c0 = -1; c0 <= 10; c0++) {
+	  for (int c1 = -1; c1 <= 10; c1++) {
 	
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS pipeline II=1
 	#endif // __VIVADO_SYNTH__
 	
-	    if ((-1 <= c1 && c1 <= 1920) && ((c1 - 0) % 1 == 0) && (-1 <= c0 && c0 <= 1080) && ((c0 - 0) % 1 == 0)) {
+	    if ((-1 <= c1 && c1 <= 10) && ((c1 - 0) % 1 == 0) && (-1 <= c0 && c0 <= 10) && ((c0 - 0) % 1 == 0)) {
 	img_update_0(off_chip_img, img, (c1 - 0) / 1, (c0 - 0) / 1);
 	    }
 	
-	    if ((1 <= c1 && c1 <= 1920) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 1080) && ((c0 - 1) % 1 == 0)) {
+	    if ((1 <= c1 && c1 <= 10) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 10) && ((c0 - 1) % 1 == 0)) {
 	mag_y_update_0(img, mag_y, (c1 - 1) / 1, (c0 - 1) / 1);
 	    }
 	
-	    if ((1 <= c1 && c1 <= 1920) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 1080) && ((c0 - 1) % 1 == 0)) {
+	    if ((1 <= c1 && c1 <= 10) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 10) && ((c0 - 1) % 1 == 0)) {
 	mag_x_update_0(img, mag_x, (c1 - 1) / 1, (c0 - 1) / 1);
 	    }
 	
-	    if ((1 <= c1 && c1 <= 1920) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 1080) && ((c0 - 1) % 1 == 0)) {
+	    if ((1 <= c1 && c1 <= 10) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 10) && ((c0 - 1) % 1 == 0)) {
 	sbl_ur_1_update_0(mag_x, mag_y, sbl_ur_1, (c1 - 1) / 1, (c0 - 1) / 1);
 	    }
 	
@@ -679,8 +679,8 @@ void sbl_ur_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */off_chip_i
 #ifdef __VIVADO_SYNTH__
 #include "sbl_ur_1_opt.h"
 
-#define INPUT_SIZE 2079604
-#define OUTPUT_SIZE 2073600
+#define INPUT_SIZE 144
+#define OUTPUT_SIZE 100
 extern "C" {
 
 static void read_input(hw_uint<16>* input, HWStream<hw_uint<16> >& v, const int size) {

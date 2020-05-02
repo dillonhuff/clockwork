@@ -9,11 +9,11 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
   std::string binaryFile = argv[1];
-  const int img_update_0_read_DATA_SIZE = 2079604;
+  const int img_update_0_read_DATA_SIZE = 144;
   const int img_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t img_update_0_read_size_bytes = img_update_0_read_BYTES_PER_PIXEL * img_update_0_read_DATA_SIZE;
 
-  const int sbl_ur_2_update_0_write_DATA_SIZE = 2079604;
+  const int sbl_ur_2_update_0_write_DATA_SIZE = 144;
   const int sbl_ur_2_update_0_write_BYTES_PER_PIXEL = 16 / 8;
   size_t sbl_ur_2_update_0_write_size_bytes = sbl_ur_2_update_0_write_BYTES_PER_PIXEL * sbl_ur_2_update_0_write_DATA_SIZE;
 
@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, cl::Buffer img_update_0_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, img_update_0_read_size_bytes, img_update_0_read.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, img_update_0_read_ocl_buf));
 
-  int transfer_size = 2079604 / 2;
+  int transfer_size = 144 / 2;
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({img_update_0_read_ocl_buf}, 0));

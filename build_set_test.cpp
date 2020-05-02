@@ -5572,9 +5572,11 @@ void sobel_16_stage_x_app_test() {
 }
 
 void sobel_16_app_test() {
-  int cols = 1920;
-  int rows = 1080;
+  /*int cols = 1920;*/
+  //int rows = 1080;
 
+  int cols = 10;
+  int rows = 10;
   for (int i = 0; i < 5; i++) {
     int unroll_factor = pow(2, i);
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
