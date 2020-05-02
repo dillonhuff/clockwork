@@ -444,6 +444,7 @@ vector<int> parse_pt(isl_point* p);
 
 uset* gist(uset* base, uset* context);
 isl_map* project_all_but(isl_map* const dmap, const int d);
+isl_set* project_all_but(isl_set* const dmap, const int d);
 
 
 vector<string> space_var_args(isl_space* s);

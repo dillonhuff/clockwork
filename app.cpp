@@ -1027,7 +1027,9 @@ compute_qfactors(vector<isl_map*>& deps) {
   return qfactors;
 }
 
-map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
+map<string, isl_aff*> clockwork_schedule_dimension(
+    vector<isl_set*> domains,
+    vector<isl_map*> deps,
     map<string, vector<string> >& high_bandwidth_deps) {
   cout << "Deps..." << endl;
   assert(deps.size() > 0);
@@ -1258,7 +1260,13 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, ve
       projected_deps.push_back(projected);
     }
 
-    auto schedules = clockwork_schedule_dimension(projected_deps, high_bandwidth_deps);
+    vector<isl_set*> projected_domains;
+    for (auto dset : get_sets(padded_domain)) {
+      isl_set* projected = project_all_but(dset, d);
+      projected_domains.push_back(projected);
+    }
+
+    auto schedules = clockwork_schedule_dimension(projected_domains, projected_deps, high_bandwidth_deps);
     cout << "Clockwork schedules..." << endl;
     for (auto s : schedules) {
       cout << tab(1) << s.first << ": " << str(s.second) << endl;

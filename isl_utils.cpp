@@ -1747,6 +1747,29 @@ uset* gist(uset* base, uset* context) {
   return isl_union_set_gist(cpy(base), cpy(context));
 }
 
+isl_set* project_all_but(isl_set* const dmap,
+    const int d) {
+
+  auto m = cpy(dmap);
+  auto ct = ctx(dmap);
+
+  string dname = name(m);
+
+  if (d != 0) {
+    m = isl_set_project_out(m, isl_dim_set, 0, d);
+  }
+
+  int in_dim = num_dims(get_space(m));
+
+  m = isl_set_project_out(m, isl_dim_set, 1, in_dim - 1);
+
+  assert(num_dims(get_space(m)) == 1);
+
+  isl_set_set_tuple_id(m, id(ct, dname));
+
+  return m;
+}
+
 isl_map* project_all_but(isl_map* const dmap,
     const int d) {
 
