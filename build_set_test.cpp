@@ -3,6 +3,8 @@
 #include "codegen.h"
 #include "prog.h"
 
+#include <chrono>
+
 void compare(vector<string>& opt, vector<string>& naive) {
   assert(opt.size() == naive.size());
   for (size_t i = 0; i < opt.size(); i++) {
@@ -4222,13 +4224,33 @@ struct App {
   }
 
   void realize(CodegenOptions& options, const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    set_unroll_factors(name, unroll_factor);
-    realize(options, name, d0, d1);
+      double total_elapsed = 0.;
+      auto start = std::chrono::system_clock::now();
+
+      set_unroll_factors(name, unroll_factor);
+      realize(options, name, d0, d1);
+
+      auto end = std::chrono::system_clock::now();
+      std::chrono::duration<double> elapsed = end - start;
+      total_elapsed += elapsed.count();
+      ofstream schedule_info("./scratch/" + name + ".txt");
+      schedule_info << "time to realize " << name << ": " << total_elapsed << endl;
+      schedule_info.close();
   }
 
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
+    double total_elapsed = 0.;
+    auto start = std::chrono::system_clock::now();
+
     set_unroll_factors(name, unroll_factor);
     realize(name, d0, d1);
+
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+    total_elapsed += elapsed.count();
+    ofstream schedule_info("./scratch/" + name + ".txt");
+    schedule_info << "time to realize " << name << ": " << total_elapsed << endl;
+    schedule_info.close();
   }
 
 };
@@ -4980,40 +5002,40 @@ void exposure_fusion() {
     //1250;
     //200;
 
-  auto isl_sched = lp.realize_isl_schedule("pyramid_synthetic_exposure_fusion", size, size);
-  auto isl_maps = get_maps(isl_sched);
+  /*auto isl_sched = lp.realize_isl_schedule("pyramid_synthetic_exposure_fusion", size, size);*/
+  //auto isl_maps = get_maps(isl_sched);
 
-  auto opt_sched = lp.realize_opt_schedule("pyramid_synthetic_exposure_fusion", size, size);
-  auto opt_maps = get_maps(opt_sched);
+  //auto opt_sched = lp.realize_opt_schedule("pyramid_synthetic_exposure_fusion", size, size);
+  //auto opt_maps = get_maps(opt_sched);
 
-  cout << "--- ISL Schedule" << endl;
-  for (auto m : isl_maps) {
-    cout << tab(1) << str(m) <<  endl;
-  }
-  cout << endl << endl;
+  //cout << "--- ISL Schedule" << endl;
+  //for (auto m : isl_maps) {
+    //cout << tab(1) << str(m) <<  endl;
+  //}
+  //cout << endl << endl;
 
-  cout << "--- OPT Schedule" << endl;
-  for (auto m : opt_maps) {
-    cout << tab(1) << str(m) <<  endl;
-  }
-  cout << endl << endl;
+  //cout << "--- OPT Schedule" << endl;
+  //for (auto m : opt_maps) {
+    //cout << tab(1) << str(m) <<  endl;
+  //}
+  //cout << endl << endl;
 
-  assert(isl_maps.size() == opt_maps.size());
-  cout << "--- MATCHED Schedules" << endl;
-  for (auto opt : opt_maps) {
-    isl_map* imap = nullptr;
-    for (auto isl : isl_maps) {
-      if (domain_name(isl) == domain_name(opt)) {
-        imap = isl;
-        break;
-      }
-    }
-    assert(imap != nullptr);
+  //assert(isl_maps.size() == opt_maps.size());
+  //cout << "--- MATCHED Schedules" << endl;
+  //for (auto opt : opt_maps) {
+    //isl_map* imap = nullptr;
+    //for (auto isl : isl_maps) {
+      //if (domain_name(isl) == domain_name(opt)) {
+        //imap = isl;
+        //break;
+      //}
+    //}
+    //assert(imap != nullptr);
 
-    cout << tab(1) << "opt: " << str(opt) << endl;
-    cout << tab(1) << "isl: " << str(imap) << endl;
-    cout << endl;
-  }
+    //cout << tab(1) << "opt: " << str(opt) << endl;
+    //cout << tab(1) << "isl: " << str(imap) << endl;
+    //cout << endl;
+  //}
 
   //cout << "isl schedule: " << str(isl_sched) << endl;
   //cout << "opt schedule: " << str(opt_sched) << endl;
@@ -6633,14 +6655,16 @@ void playground() {
 }
 
 void application_tests() {
-  sobel_16_app_test();
+
+  exposure_fusion();
   assert(false);
-  cnn_test();
   denoise2d_test();
+  sobel_16_app_test();
+  //assert(false);
+  cnn_test();
 
   mismatched_stencil_test();
   //assert(false);
-  exposure_fusion();
   //assert(false);
 
   gaussian_pyramid_app_test();
@@ -6803,6 +6827,7 @@ int main(int argc, char** argv) {
 
   } else if (argc == 1) {
 
+    system("mkdir -p scratch");
     application_tests();
     memory_tile_tests();
 

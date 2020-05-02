@@ -995,6 +995,7 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
       cout << tab(1) << bnk.name << ", # read offsets: " << bnk.read_delays.size() << endl;
 
       if (options.debug_options.expect_all_linebuffers) {
+        //assert(receivers.size() == 1 || bnk.read_delays.size() == 2);
         assert(bnk.read_delays.size() == 2);
       }
       if (bnk.read_delays.size() == 2) {
