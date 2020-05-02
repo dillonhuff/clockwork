@@ -3881,7 +3881,7 @@ struct App {
 
   umap* realize_opt_schedule(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     set_unroll_factors(name, unroll_factor);
-    fill_data_domain(name, d0, d1);
+    fill_data_domain(name, {d0, d1});
     fill_compute_domain();
 
     umap* m =
@@ -3891,7 +3891,7 @@ struct App {
 
   umap* realize_isl_schedule(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     set_unroll_factors(name, unroll_factor);
-    fill_data_domain(name, d0, d1);
+    fill_data_domain(name, {d0, d1});
     fill_compute_domain();
 
     umap* m =
@@ -3907,7 +3907,7 @@ struct App {
       cout << "realizing naive with padded unroll factors" << endl;
     }
     //cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
-    fill_data_domain(name, d0, d1);
+    fill_data_domain(name, {d0, d1});
     set_unroll_factors(name, 1);
     fill_compute_domain();
 
@@ -3922,7 +3922,6 @@ struct App {
     prog prg;
     prg.name = name + "_naive";
     prg.compute_unit_file = prg.name + "_compute_units.h";
-    //prg.compute_unit_file = "conv_3x3.h";
     populate_program(options, prg, name, m, buffers);
 
     return;
@@ -4168,7 +4167,7 @@ struct App {
     App cpy = *this;
     int dummy_value = 10;
     cpy.no_unrolling();
-    cpy.fill_data_domain(reference_function, dummy_value, dummy_value);
+    cpy.fill_data_domain(reference_function, {dummy_value, dummy_value});
     cpy.fill_compute_domain();
 
     umap* deps = pad_map(cpy.validity_deps());
@@ -4215,7 +4214,7 @@ struct App {
   }
 
   void realize(CodegenOptions& options, const std::string& name, const int d0, const int d1) {
-    fill_data_domain(name, d0, d1);
+    fill_data_domain(name, {d0, d1});
     fill_compute_domain();
 
     schedule_and_codegen(options, name);
@@ -5015,6 +5014,14 @@ void up_stencil_down_unrolled_test() {
   auto naive = run_regression_tb("ds_naive");
 
   assert(opt == naive);
+}
+
+void max_pooling_test() {
+  App mp;
+  mp.func3d("in_oc");
+  mp.func3d("in", "id", pt3("in_oc"));
+  Window max_win{"in", {qconst(2), qconst(2), qconst(1)}, {{0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {1, 1, 0}}};
+  mp.func3d("out", "max_pool", {max_win});
 }
 
 void exposure_fusion() {
@@ -6682,6 +6689,7 @@ void playground() {
 
 void application_tests() {
 
+  max_pooling_test();
   exposure_fusion();
   assert(false);
   tricky_shift_register_reconvergence_test();
