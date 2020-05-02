@@ -915,6 +915,16 @@ struct Box {
     return c;
   }
 
+  int cardinality(int dims) const {
+    int c = 1;
+    assert(dims <= dimension());
+    for (int i = 0; i < dims; i++) {
+      c *= length(i);
+    }
+
+    return c;
+  }
+
   int min(const int dim) const { return intervals.at(dim).min; }
   int max(const int dim) const { return intervals.at(dim).max; }
 
@@ -1160,7 +1170,7 @@ std::string box_codegen(const vector<string>& op_order,
   return ss.str();
 }
 
-static inline 
+static inline
 QExpr qe(isl_val* v) {
   if (isl_val_is_int(v)) {
     return qexpr(safe_stoi(str(v)));

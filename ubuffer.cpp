@@ -616,8 +616,9 @@ selector generate_select(CodegenOptions& options, std::ostream& out, const strin
     string inpt = possible_ports.at(0);
     string peeked_val = delay_string(options, out, inpt, outpt, buf);
     //extract_box(range(buf.access_map.at(outpt)));
+    string access_val = buf.generate_linearize_ram_addr(outpt);
+    cout << "Get ram string: " << access_val << endl;
     buf.get_ram_address(outpt);
-    buf.separate_offset_dim(outpt);
     cout << "Get delay string: " << peeked_val << endl;
     cout << "Corresponding access map: " << str(buf.access_map.at(outpt)) << endl;
     sel.bank_conditions.push_back("1");
@@ -1062,11 +1063,32 @@ Box UBuffer::get_bundle_box(const std::string & pt) {
     return ret;
 }
 
+Box UBuffer::extract_addr_box(uset* rddom, vector<size_t> sequence) {
+  //sequence save the transpose matrix
+  cout << "extracting address box from " << str(rddom) << endl;
+  auto min_pt =
+    parse_pt(sample(lexmin(rddom)));
+  auto max_pt =
+    parse_pt(sample(lexmax(rddom)));
+
+  assert(min_pt.size() == max_pt.size());
+
+  Box b(min_pt.size());
+  for (size_t i = 0; i < min_pt.size(); i++) {
+    size_t loc = sequence.at(i);
+    b.intervals[loc] = {min_pt.at(i), max_pt.at(i)};
+    cout << "min: " << min_pt.at(i) << ", max: " << max_pt.at(i) << endl;
+  }
+  cout << tab(1) << "result = " << b << endl;
+  return b;
+}
+
 umap* UBuffer::separate_offset_dim(const std::string & pt) {
     auto pt_access_map = to_map(access_map.at(pt));
     Box pt_block = get_bundle_box(pt);
 
-    vector<string> var_list, map_var_list;
+    vector<string> var_list, map_var_list, bank_id_list;
+    bank_id_list.push_back("0");
     for (size_t  dim = 0; dim < pt_block.dimension(); dim ++) {
         string var = "p"+to_string(dim);
         var_list.push_back(var);
@@ -1074,7 +1096,7 @@ umap* UBuffer::separate_offset_dim(const std::string & pt) {
             int div = pt_block.length(dim);
             string floor_expr = "floor(" + var + "/" + to_string(div) +")";
             string offset_expr = var + "-" + to_string(div) + "*" + floor_expr;
-            map_var_list.push_back(offset_expr);
+            bank_id_list.push_back(offset_expr);
             map_var_list.push_back(floor_expr);
         }
         else {
@@ -1083,17 +1105,23 @@ umap* UBuffer::separate_offset_dim(const std::string & pt) {
     }
 
     string buf_name = range_name(pt_access_map);
-    string new_name = buf_name + "_sep";
+    string new_name = buf_name + "_internal";
+    string id_name = buf_name + "_id";
     auto domain_vars = sep_list(var_list, "[", "]", ",");
     auto range_vars = sep_list(map_var_list, "[", "]", ",");
+    auto id_vars = sep_list(bank_id_list, "[", "]", ",");
 
     //string map_str = "{ifbuf[a, b, c] -> ifbuf_sep[a-4*floor(a/4), floor(a/4), b, c]}";
     string map_str = "{" + buf_name+domain_vars+" -> " + new_name + range_vars + "}";
-    auto transform = rdmap(ctx, map_str);
-    cout <<"Transform: " << str(transform) << "access_map: " << str(pt_access_map) << endl;
-    auto access_map_new = simplify(dot(pt_access_map, transform));
-    cout << "Transform separate access map: " << str(access_map_new) << endl;
-    return access_map_new;
+    auto addr_trans = rdmap(ctx, map_str);
+    string id_str = "{" + buf_name+domain_vars+" -> " + id_name + id_vars + "}";
+    auto id_trans = rdmap(ctx, id_str);
+    cout <<"Transform: " << str(addr_trans) << "access_map: " << str(pt_access_map) << endl;
+    auto new_access_map = dot(pt_access_map, addr_trans);
+    cout << "Transform separate access map: " << str(new_access_map) << endl;
+    auto bank_id_map = simplify(dot(pt_access_map, id_trans));
+    cout << "Bank ID separate access map: " << str(bank_id_map) << endl;
+    return new_access_map;
 }
 
 vector<string> UBuffer::map2address(isl_map* pt_access_map) {
@@ -1141,6 +1169,25 @@ vector<string> UBuffer::map2address(isl_map* pt_access_map) {
 vector<string> UBuffer::get_ram_address(const std::string& pt) {
     auto pt_access_map = to_map(access_map.at(pt));
     return map2address(pt_access_map);
+}
+
+string UBuffer::generate_linearize_ram_addr(const std::string& pt) {
+
+    auto address_map = separate_offset_dim(pt);
+    vector<string> addr_vec = map2address(to_map(address_map));
+
+    vector<size_t> sequence;
+    for (size_t i = 0; i < get_out_dim(to_map(address_map)); i ++) {
+        sequence.push_back(i);
+    }
+
+    auto address_box = extract_addr_box(range(address_map), sequence);
+    vector<string> addr_vec_out;
+    for (size_t i = 0; i < get_out_dim(to_map(address_map)); i ++) {
+        string item = "(" + addr_vec.at(i) + ") * " + to_string(address_box.cardinality(i));
+        addr_vec_out.push_back(item);
+    }
+    return sep_list(addr_vec_out, "", "", " + ");
 }
 
 map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name) {
