@@ -1082,7 +1082,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
       for (auto sv : s.second) {
         auto b = sv.second;
         auto neg_qpb = neg(mul(qp, b));
-        delay_problem.add_eq({{dc, one(ct)}, {dp, negone(ct)}}, neg_qpb);
+        //delay_problem.add_eq({{dc, one(ct)}, {dp, negone(ct)}}, neg_qpb);
       }
     //}
   }
@@ -1142,11 +1142,11 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     string dc = delay_var_name(consumer);
     string dp = delay_var_name(producer);
 
-    //delay_obj[dc] = negone(ct);
-    //delay_obj[dp] = negone(ct);
+    delay_obj[dc] = negone(ct);
+    delay_obj[dp] = negone(ct);
     
-    delay_obj[dc] = one(ct);
-    delay_obj[dp] = one(ct);
+    //delay_obj[dc] = one(ct);
+    //delay_obj[dp] = one(ct);
     
     //delay_obj[dc] = one(ct);
     //delay_obj[dp] = negone(ct);

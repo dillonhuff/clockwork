@@ -274,3 +274,52 @@ static inline
 void make_exe(const std::string& file) {
   system(("chmod +x " + file).c_str());
 }
+
+static inline
+void move_to_benchmarks_folder(const std::string& app_name) {
+  string out_name = app_name;
+  string app_dir =
+    "./soda_codes/" + app_name;
+  string soda_dir =
+    "./soda_codes/" + app_name + "/soda_code/";
+  string synth_dir =
+    "./soda_codes/" + app_name + "/our_code/";
+
+  system(("mkdir " + app_dir).c_str());
+  system(("mkdir " + synth_dir).c_str());
+  system(("mkdir " + soda_dir).c_str());
+  
+  system(("cp ./aws_collateral/xrt.ini " + synth_dir).c_str());
+  system(("cp ./aws_collateral/Makefile " + synth_dir).c_str());
+  system(("cp ./aws_collateral/utils.mk " + synth_dir).c_str());
+
+  system(("mv set_app.sh " + app_dir).c_str());
+  make_exe("set_app");
+
+  system(("mv " + out_name + "_kernel.h " + soda_dir).c_str());
+
+  system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
+  system(("mv " + out_name + "*.h " + synth_dir).c_str());
+  system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
+
+  make_exe("run_tb_" + out_name + ".sh");
+  system(("mv run_tb_" + out_name + ".sh " + synth_dir).c_str());
+
+  make_exe("aws_run_tb_" + out_name + ".sh");
+  system(("mv aws_run_tb_" + out_name + ".sh " + synth_dir).c_str());
+
+  make_exe("compare_regressions.sh");
+  system(("mv compare_regressions.sh " + app_dir).c_str());
+
+  make_exe("aws_compare_regressions.sh");
+  system(("mv aws_compare_regressions.sh " + app_dir).c_str());
+
+  system(("mv " + out_name + ".soda " + soda_dir).c_str());
+
+  system(("mv soda_" + out_name + "*_host.cpp " + soda_dir).c_str());
+  system(("mv tb_soda_" + out_name + "*.cpp " + soda_dir).c_str());
+
+  make_exe("run_tb.sh");
+  system(("mv run_tb.sh " + soda_dir).c_str());
+}
+

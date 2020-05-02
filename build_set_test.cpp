@@ -3879,8 +3879,7 @@ struct App {
     out.close();
   }
 
-  umap* realize_opt_schedule(const std::string& name, const int d0, const int d1) {
-    const int unroll_factor = 1;
+  umap* realize_opt_schedule(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     set_unroll_factors(name, unroll_factor);
     fill_data_domain(name, d0, d1);
     fill_compute_domain();
@@ -3890,8 +3889,7 @@ struct App {
     return m;
   }
 
-  umap* realize_isl_schedule(const std::string& name, const int d0, const int d1)  {
-    const int unroll_factor = 1;
+  umap* realize_isl_schedule(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     set_unroll_factors(name, unroll_factor);
     fill_data_domain(name, d0, d1);
     fill_compute_domain();
@@ -4831,23 +4829,23 @@ void up_stencil_test() {
 
   int size = 4;
 
-  auto isl_sched = lp.realize_isl_schedule("up_stencil", size, 1);
-  auto isl_maps = get_maps(isl_sched);
+  //auto isl_sched = lp.realize_isl_schedule("up_stencil", size, size);
+  //auto isl_maps = get_maps(isl_sched);
 
-  auto opt_sched = lp.realize_opt_schedule("up_stencil", size, 1);
-  auto opt_maps = get_maps(opt_sched);
+  //auto opt_sched = lp.realize_opt_schedule("up_stencil", size, size);
+  //auto opt_maps = get_maps(opt_sched);
 
-  cout << "--- ISL Schedule" << endl;
-  for (auto m : isl_maps) {
-    cout << tab(1) << str(m) <<  endl;
-  }
-  cout << endl << endl;
+  //cout << "--- ISL Schedule" << endl;
+  //for (auto m : isl_maps) {
+    //cout << tab(1) << str(m) <<  endl;
+  //}
+  //cout << endl << endl;
 
-  cout << "--- OPT Schedule" << endl;
-  for (auto m : opt_maps) {
-    cout << tab(1) << str(m) <<  endl;
-  }
-  cout << endl << endl;
+  //cout << "--- OPT Schedule" << endl;
+  //for (auto m : opt_maps) {
+    //cout << tab(1) << str(m) <<  endl;
+  //}
+  //cout << endl << endl;
 
   //assert(false);
 
@@ -5071,14 +5069,16 @@ void exposure_fusion() {
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
   int size =
-    64;
-    //1250;
+    //64;
+    1250;
     //200;
 
-  /*auto isl_sched = lp.realize_isl_schedule("pyramid_synthetic_exposure_fusion", size, size);*/
+  //auto isl_sched = lp.realize_isl_schedule("pyramid_synthetic_exposure_fusion", size, size, 1);
   //auto isl_maps = get_maps(isl_sched);
 
-  //auto opt_sched = lp.realize_opt_schedule("pyramid_synthetic_exposure_fusion", size, size);
+  //auto opt_sched = lp.realize_opt_schedule("pyramid_synthetic_exposure_fusion", size, size, 1);
+  ////auto dom = domain(opt_sched);
+  ////opt_sched = unn_domain(opt_sched, isl_union_set_universe(cpy(dom)));
   //auto opt_maps = get_maps(opt_sched);
 
   //cout << "--- ISL Schedule" << endl;
@@ -5110,13 +5110,13 @@ void exposure_fusion() {
     //cout << endl;
   //}
 
-  //cout << "isl schedule: " << str(isl_sched) << endl;
-  //cout << "opt schedule: " << str(opt_sched) << endl;
-
   //assert(false);
 
-  //lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
-  lp.realize("pyramid_synthetic_exposure_fusion", size, size, 4);
+  lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
+  move_to_benchmarks_folder("pyramid_synthetic_exposure_fusion_opt");
+  assert(false);
+
+  //lp.realize("pyramid_synthetic_exposure_fusion", size, size, 4);
 
   CodegenOptions options;
   options.internal = true;
@@ -5555,53 +5555,6 @@ void upsample_stencil_1d_test() {
 
   assert(optimized == naive);
   //assert(false);
-}
-
-void move_to_benchmarks_folder(const std::string& app_name) {
-  string out_name = app_name;
-  string app_dir =
-    "./soda_codes/" + app_name;
-  string soda_dir =
-    "./soda_codes/" + app_name + "/soda_code/";
-  string synth_dir =
-    "./soda_codes/" + app_name + "/our_code/";
-
-  system(("mkdir " + app_dir).c_str());
-  system(("mkdir " + synth_dir).c_str());
-  system(("mkdir " + soda_dir).c_str());
-  
-  system(("cp ./aws_collateral/xrt.ini " + synth_dir).c_str());
-  system(("cp ./aws_collateral/Makefile " + synth_dir).c_str());
-  system(("cp ./aws_collateral/utils.mk " + synth_dir).c_str());
-
-  system(("mv set_app.sh " + app_dir).c_str());
-  make_exe("set_app");
-
-  system(("mv " + out_name + "_kernel.h " + soda_dir).c_str());
-
-  system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
-  system(("mv " + out_name + "*.h " + synth_dir).c_str());
-  system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
-
-  make_exe("run_tb_" + out_name + ".sh");
-  system(("mv run_tb_" + out_name + ".sh " + synth_dir).c_str());
-
-  make_exe("aws_run_tb_" + out_name + ".sh");
-  system(("mv aws_run_tb_" + out_name + ".sh " + synth_dir).c_str());
-
-  make_exe("compare_regressions.sh");
-  system(("mv compare_regressions.sh " + app_dir).c_str());
-
-  make_exe("aws_compare_regressions.sh");
-  system(("mv aws_compare_regressions.sh " + app_dir).c_str());
-
-  system(("mv " + out_name + ".soda " + soda_dir).c_str());
-
-  system(("mv soda_" + out_name + "*_host.cpp " + soda_dir).c_str());
-  system(("mv tb_soda_" + out_name + "*.cpp " + soda_dir).c_str());
-
-  make_exe("run_tb.sh");
-  system(("mv run_tb.sh " + soda_dir).c_str());
 }
 
 void sobel_mag_y_test() {
@@ -6729,12 +6682,12 @@ void playground() {
 
 void application_tests() {
 
-  tricky_shift_register_reconvergence_test();
+  exposure_fusion();
   assert(false);
+  tricky_shift_register_reconvergence_test();
   denoise2d_test();
   mismatched_stencil_test();
   sobel_16_app_test();
-  exposure_fusion();
   //assert(false);
   //assert(false);
   cnn_test();
