@@ -9,10 +9,10 @@ int main() {
 
 
   // Loading input data
-  // cmap    : { img_update_0[root = 0, img_0, img_1] -> off_chip_img[0, 0] : -1 <= img_0 <= 5 and -1 <= img_1 <= 10 }
-  // read map: { off_chip_img[0, 0] -> img_update_0[root = 0, img_0, img_1] : -1 <= img_0 <= 5 and -1 <= img_1 <= 10 }
-  // rng     : { img_update_0[root = 0, img_0, img_1] : -1 <= img_0 <= 5 and -1 <= img_1 <= 10 }
-  for (int i = 0; i < 84; i++) {
+  // cmap    : { img_update_0[root = 0, img_0, img_1] -> off_chip_img[0, 0] : -1 <= img_0 <= 960 and -1 <= img_1 <= 1080 }
+  // read map: { off_chip_img[0, 0] -> img_update_0[root = 0, img_0, img_1] : -1 <= img_0 <= 960 and -1 <= img_1 <= 1080 }
+  // rng     : { img_update_0[root = 0, img_0, img_1] : -1 <= img_0 <= 960 and -1 <= img_1 <= 1080 }
+  for (int i = 0; i < 1040884; i++) {
     hw_uint<32> in_val;
     set_at<0*16, 32, 16>(in_val, 2*i + 0);
     in_pix << in_val << endl;
@@ -23,7 +23,7 @@ int main() {
 
   sbl_ur_2_opt(img_update_0_read, sbl_ur_2_update_0_write);
 
-  for (int i = 0; i < 50; i++) {
+  for (int i = 0; i < 1036800; i++) {
     hw_uint<32> actual = sbl_ur_2_update_0_write.read();
     auto actual_lane_0 = actual.extract<0*16, 15>();
     fout << actual_lane_0 << endl;
