@@ -6,8 +6,10 @@
 
 #ifdef __VIVADO_SYNTH__
 
-#include "hls_stream.h"
+#define AP_INT_MAX_W 2048
 #include "ap_int.h"
+
+#include "hls_stream.h"
 
 #else
 
