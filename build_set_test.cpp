@@ -798,15 +798,12 @@ void vec_test() {
   //assert(false);
 }
 
-
-void auto_vec_test() {
-
+void auto_vec_rolled_test() {
   prog prg;
   prg.compute_unit_file = "vec_access.h";
   prg.name = "vec";
   prg.add_input("in");
   prg.add_output("out");
-  //prg.buffer_port_widths["T"] = 32*3;
   prg.buffer_port_widths["in"] = 32;
   prg.buffer_port_widths["out"] = 32;
 
@@ -816,6 +813,63 @@ void auto_vec_test() {
   write->add_store("buf", "po, pi");
 
   auto q = prg.add_nest("qo", 0, 6, "qi", 0, 8);
+  auto init = q->add_op("set_z");
+  init->add_function("set_zero_32");
+  init->add_store("out", "qo, qi");
+
+  auto accum_loop = q->add_loop("a", 0, 3);
+  auto accum = accum_loop->add_op("accumulate");
+  auto tmp = accum->add_load("buf", "qo + a, qi");
+  // Note: This address scheme fails...
+  //auto tmp = accum->add_load("buf", "qo, qi + a");
+  auto next = accum->add_load("out", "qo, qi");
+  accum->add_function("inc", {tmp, next});
+  accum->add_store("out", "qo, qi");
+  
+  //// put read / write
+  //auto read = q->add_op("output");
+  //read->add_load("buf", "qo, qi");
+  //read->add_load("buf", "qo+1, qi");
+  //read->add_load("buf", "qo+2, qi");
+  //read->add_store("out", "qo, qi");
+
+  // get naive schedule
+  auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
+
+  cout << "output schedule..." << endl;
+  cout << tab(1) << codegen_c(sched_naive) << endl;
+
+  // bank based on access patterns
+
+  auto buffers = build_buffers(prg, sched_naive);
+  int fetch_width = 4;
+  // Vectorize each bank: make the transpose, agg, and sram explicit
+  buffer_vectorization("buf", 1, fetch_width, buffers);
+
+  // Re-schedule and shrink buffers
+  auto opt_sched = optimized_schedule_from_buffers(buffers);
+  cout << codegen_c(opt_sched) << endl;
+  //assert(false);
+}
+
+
+void auto_vec_test() {
+
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "vec";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+
+  auto p = prg.add_nest("po", 0, 8, "pi", 0, 8);
+  auto write = p->add_op("input");
+  write->add_load("in", "po, pi");
+  write->add_store("buf", "po, pi");
+
+  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 8);
+  // put read / write
   auto read = q->add_op("output");
   read->add_load("buf", "qo, qi");
   read->add_load("buf", "qo+1, qi");
@@ -1302,17 +1356,17 @@ void cnn_test() {
     //cout << tab(1) << s.first << " -> " << str(s.second) << endl;
   //}
   //assert(false);
-  umap* opt_sched = prg.optimized_codegen();
-  //cout << "------ ISL schedule" << endl;
-  //for (auto m : get_maps(opt_sched)) {
-    //cout << tab(1) << str(m) << endl;
-  //}
-  //assert(false);
+  //umap* opt_sched = prg.optimized_codegen();
+  ////cout << "------ ISL schedule" << endl;
+  ////for (auto m : get_maps(opt_sched)) {
+    ////cout << tab(1) << str(m) << endl;
+  ////}
+  ////assert(false);
 
-  auto domain = prg.whole_iteration_domain();
-  auto schedmap = its(opt_sched, domain);
-  cout << "Optimized schedule..." << endl;
-  cout << codegen_c(schedmap);
+  //auto domain = prg.whole_iteration_domain();
+  //auto schedmap = its(opt_sched, domain);
+  //cout << "Optimized schedule..." << endl;
+  //cout << codegen_c(schedmap);
 
 
   //auto buffers = build_buffers(prg);
@@ -3375,7 +3429,7 @@ struct App {
     for (auto un : sort_updates()) {
       auto u = get_update(un);
       for (auto w : u.get_srcs()) {
-        if (w.pts().size() > 1) {
+        if (elem(w.name, high_bandwidth_buffers) || (w.pts().size() > 1)) {
           high_bandwidth_deps[u.name()].push_back(last_update(w.name).name());
         }
       }
@@ -3386,7 +3440,7 @@ struct App {
       cout << tab(2) << comma_list(b.second) << endl;
     }
 
-    assert(false);
+    //assert(false);
 
     map<string, vector<isl_aff*> > sched =
       clockwork_schedule(domain, validity, proximity, high_bandwidth_deps);
@@ -4922,8 +4976,8 @@ void exposure_fusion() {
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
   int size =
-    //64;
-    1250;
+    64;
+    //1250;
     //200;
 
   auto isl_sched = lp.realize_isl_schedule("pyramid_synthetic_exposure_fusion", size, size);
@@ -6577,6 +6631,7 @@ void playground() {
 }
 
 void application_tests() {
+  cnn_test();
   denoise2d_test();
 
   sobel_16_app_test();
@@ -6639,7 +6694,6 @@ void application_tests() {
   reduce_1d_test();
 
   up_unrolled_4_test();
-  cnn_test();
   //assert(false);
 
   blur_xy_16_app_test();
@@ -6697,6 +6751,7 @@ void application_tests() {
 }
 
 void memory_tile_tests() {
+  auto_vec_rolled_test();
   auto_vec_test();
   vec_test();
   agg_test();

@@ -973,6 +973,7 @@ bank UBuffer::compute_bank_info(
 }
 
 void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
+  // Naive always reaches target throughput
   for (auto inpt : get_in_ports()) {
     for (auto outpt : get_out_ports()) {
       auto overlap =
@@ -986,13 +987,13 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
   }
 
   for (auto inpt : get_in_ports()) {
+    // try to turn the banks for this inpt into one big linebuffer
     vector<stack_bank> receivers = receiver_banks(inpt);
     cout << "Receiver banks for " << inpt << endl;
     vector<stack_bank> mergeable;
     for (auto bnk : receivers) {
       cout << tab(1) << bnk.name << ", # read offsets: " << bnk.read_delays.size() << endl;
 
-      //TODO: check this assertion
       if (options.debug_options.expect_all_linebuffers) {
         assert(bnk.read_delays.size() == 2);
       }
