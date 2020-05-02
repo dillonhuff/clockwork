@@ -1051,6 +1051,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
     all_names.insert(domain_name(d));
     all_names.insert(range_name(d));
   }
+
   for (auto n : all_names) {
     if (!elem(n, consumed)) {
       outputs.insert(n);
@@ -1063,26 +1064,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
     pipeline_delay[delay_var_name(out)] = one(ct);
   }
 
-  //assert(false);
-
   set<string> operation_names;
-
-  //set<string> consumers;
-  //for (auto dep : deps) {
-    //string consumer = range_name(dep);
-    //consumers.insert(consumer);
-  //}
-  //for (auto dep : deps) {
-    //consumers.erase(domain_name(dep));
-  //}
-
-  //assert(consumers.size() > 0);
-
-  //map<string, isl_val*> pipeline_delay;
-  //for (auto c : consumers) {
-    //pipeline_delay[delay_var_name(c)] = one(ct);
-  //}
-
 
   vector<pair<string, isl_val*> > linebuffer_obj_terms;
 
@@ -1104,7 +1086,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
 
   //auto linebuffer_obj = simplify(linebuffer_obj_terms);
 
-  map<string, isl_val*> delay_obj;
+  // Add delay legality constraints
   for (auto s : schedule_params) {
     string consumer = domain_name(s.first);
     string producer = range_name(s.first);
@@ -1118,12 +1100,6 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
     string dc = delay_var_name(consumer);
     string dp = delay_var_name(producer);
 
-    delay_obj[dc] = negone(ct);
-    delay_obj[dp] = negone(ct);
-    
-    //delay_obj[dc] = one(ct);
-    //delay_obj[dp] = one(ct);
-
     for (auto sv : s.second) {
 
       delay_problem.add_geq({{dc, one(ct)}}, isl_val_zero(ct));
@@ -1134,6 +1110,21 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
       delay_problem.add_geq({{dc, one(ct)}, {dp, negone(ct)}}, neg_qpb);
 
     }
+  }
+
+  map<string, isl_val*> delay_obj;
+  for (auto s : schedule_params) {
+    string consumer = domain_name(s.first);
+    string producer = range_name(s.first);
+
+    string dc = delay_var_name(consumer);
+    string dp = delay_var_name(producer);
+
+    delay_obj[dc] = negone(ct);
+    delay_obj[dp] = negone(ct);
+    
+    //delay_obj[dc] = one(ct);
+    //delay_obj[dp] = one(ct);
   }
 
   cout << "Delay constraints" << endl;
