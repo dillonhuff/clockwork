@@ -1074,12 +1074,15 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
     string dc = delay_var_name(consumer);
     string dp = delay_var_name(producer);
 
-    assert(s.second.size() == 1);
-    for (auto sv : s.second) {
-      auto b = sv.second;
-      auto neg_qpb = neg(mul(qp, b));
-      delay_problem.add_eq({{dc, one(ct)}, {dp, negone(ct)}}, neg_qpb);
-    }
+    //if (contains_key(consumer, high_bandwidth_deps) &&
+        //elem(producer, map_find(consumer, high_bandwidth_deps))) {
+      assert(s.second.size() == 1);
+      for (auto sv : s.second) {
+        auto b = sv.second;
+        auto neg_qpb = neg(mul(qp, b));
+        delay_problem.add_eq({{dc, one(ct)}, {dp, negone(ct)}}, neg_qpb);
+      }
+    //}
   }
   set<string> operation_names;
 
@@ -1113,7 +1116,6 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
     operation_names.insert(producer);
 
     isl_val* qp = map_find(sched_var_name(producer), qfactors);
-    //isl_val* qp = ilp.value(sched_var_name(producer));
 
     string dc = delay_var_name(consumer);
     string dp = delay_var_name(producer);
@@ -1143,6 +1145,9 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
     
     delay_obj[dc] = one(ct);
     delay_obj[dp] = one(ct);
+    
+    //delay_obj[dc] = one(ct);
+    //delay_obj[dp] = negone(ct);
   }
 
   cout << "Delay constraints" << endl;

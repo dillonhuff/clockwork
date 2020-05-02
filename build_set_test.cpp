@@ -4539,6 +4539,79 @@ void downsample2d_test() {
   assert(res == 0);
 }
 
+App tricky_reconvergence(const std::string& name) {
+  App dn;
+  dn.set_default_num_type(NUM_TYPE_FLOAT);
+
+  dn.func2d("f_off_chip");
+  dn.func2d("u_off_chip");
+  dn.func2d("f", v("f_off_chip"));
+  dn.func2d("u", v("u_off_chip"));
+
+  Expr* diff = sub(v("u", 0, -1), v("u", 0, 0));
+  dn.func2d("diff_qwe", diff);
+  dn.func2d("diff_d", "diff_d2d", "u", {{0, 0}, {0, 1}});
+  dn.func2d("diff_l", "diff_l2d", "u", {
+      {-1, 0},
+      {0, 0}
+      });
+  dn.func2d("diff_r", "diff_r2d", "u", {{0, 0}, {1, 0}});
+
+  dn.func2d("g", div(fc("1.0f"), func("sqrt", add({sq("diff_qwe"), sq("diff_d"), sq("diff_l"), sq("diff_r")}))));
+  dn.func2d("r0", "comp_r02d", {pt("u"), pt("f")});
+  dn.func2d("r1", "r1_comp2d", pt("r0"));
+  //dn.func2d(name, "r1_comp2d", pt("r0"));
+  dn.func2d(name,
+      "out_comp_dn2d",
+      {pt("r1"),
+      pt("f"),
+      win("u", {
+          {-1, 0},
+          {0, -1},
+          {0, 0},
+          {1, 0}
+          }),
+      win("g", {
+          {-1, 0},
+          {0, -1},
+          {0, 1},
+          {1, 0}
+          })});
+
+  return dn;
+}
+
+void tricky_shift_register_reconvergence_test() {
+  //App sobel = tricky_reconvergence("A");
+  App sobel;
+  sobel.func2d("C_oc");
+  sobel.func2d("C", v("C_oc"));
+
+  sobel.func2d("B", add(v("C", -2, 0), v("C", -1, 0), v("C", 0, 0)));
+  sobel.func2d("A", add(v("C", 2, 0), v("C", 3, 0), v("C", 4, 0)));
+
+  sobel.func2d("D", add({
+        v("A", 0, 0), v("A", 1, 0), v("A", 2, 0),
+        v("B", 0, 0), v("B", 1, 0), v("B", 2, 0)}));
+
+  int size = 10;
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  options.debug_options.expect_all_linebuffers = true;
+  sobel.realize(options, "D", size, 1, 1);
+
+  sobel.realize_naive("D", size, 1);
+
+  std::vector<std::string> naive =
+    run_regression_tb("D_naive");
+  cout << "Naive    : " << naive << endl;
+  std::vector<std::string> optimized =
+    run_regression_tb("D_opt");
+  cout << "Optimized: " << optimized << endl;
+  assert(naive == optimized);
+}
 void mismatched_stencil_test() {
   App sobel;
 
@@ -6656,9 +6729,11 @@ void playground() {
 
 void application_tests() {
 
+  tricky_shift_register_reconvergence_test();
+  assert(false);
+  denoise2d_test();
   mismatched_stencil_test();
   sobel_16_app_test();
-  denoise2d_test();
   exposure_fusion();
   //assert(false);
   //assert(false);
