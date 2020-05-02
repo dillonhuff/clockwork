@@ -6656,14 +6656,14 @@ void playground() {
 
 void application_tests() {
 
+  mismatched_stencil_test();
+  sobel_16_app_test();
+  denoise2d_test();
   exposure_fusion();
   //assert(false);
-  denoise2d_test();
-  sobel_16_app_test();
   //assert(false);
   cnn_test();
 
-  mismatched_stencil_test();
   //assert(false);
   //assert(false);
 

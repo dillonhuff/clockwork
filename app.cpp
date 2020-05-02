@@ -102,6 +102,7 @@ struct ilp_builder {
         objective = isl_aff_set_coefficient_val(objective, isl_dim_in, index, cn);
       }
       cout << "objective = " << str(objective) << endl;
+      cout << "max loc before solve: " << str(max_loc) << endl;
       isl_val* max = isl_basic_set_max_val(cpy(max_loc), objective);
       cout << tab(1) << "obj max = " << str(max) << endl;
       values.push_back(max);
@@ -165,21 +166,21 @@ struct ilp_builder {
         auto dv = isl_val_get_den_val(v.second);
         assert(isl_val_is_pos(dv));
         denoms.push_back(dv);
-        cout << tab(1) << "rational    : " << str(v.second) << endl;
+        //cout << tab(1) << "rational    : " << str(v.second) << endl;
       } else {
-        cout << tab(1) << "non-rational: " << str(v.second) << endl;
+        //cout << tab(1) << "non-rational: " << str(v.second) << endl;
       }
     }
 
-    cout << "Denoms..." << endl;
+    //cout << "Denoms..." << endl;
     isl_val* dn = isl_val_one(ctx);
     for (auto v : denoms) {
-      cout << tab(1) << str(v) << endl;
+      //cout << tab(1) << str(v) << endl;
       dn = mul(dn, v);
     }
     //assert(isl_val_is_int(constant));
 
-    cout << "Denom: " << str(dn) << endl;
+    //cout << "Denom: " << str(dn) << endl;
     for (auto v : coeffs) {
       //assert(isl_val_is_int(v.second));
       if (!contains_key(v.first, variable_positions)) {
@@ -191,17 +192,17 @@ struct ilp_builder {
 
     isl_constraint* c = isl_constraint_alloc_equality(get_local_space(s));
     auto cv = mul(dn, constant);
-    cout << "cv = " << str(cv) << endl;
-    cout << "dn = " << str(dn) << endl;
+    //cout << "cv = " << str(cv) << endl;
+    //cout << "dn = " << str(dn) << endl;
     assert(isl_val_is_int(cv));
 
     isl_constraint_set_constant_val(c, cv);
 
     for (auto v : coeffs) {
-      cout << "index = " << map_find(v.first, variable_positions) << endl;
+      //cout << "index = " << map_find(v.first, variable_positions) << endl;
       auto m = mul(dn, v.second);
-      cout << "dn = " << str(dn) << endl;
-      cout << "m = " << str(m) << endl;
+      //cout << "dn = " << str(dn) << endl;
+      //cout << "m = " << str(m) << endl;
       assert(isl_val_is_int(m));
       isl_constraint_set_coefficient_val(c,
           isl_dim_set,
@@ -966,7 +967,6 @@ map<string, isl_val*> compute_qfactors(map<isl_map*, vector<pair<isl_val*, isl_v
   ilp_builder ilp(ct);
   vector<QConstraint> rate_constraints;
 
-
   map<string, isl_val*> obj;
   for (auto s : schedule_params) {
     string consumer = domain_name(s.first);
@@ -1064,25 +1064,43 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
     pipeline_delay[delay_var_name(out)] = one(ct);
   }
 
+  // Add shift register constraints
+  for (auto s : schedule_params) {
+    string consumer = domain_name(s.first);
+    string producer = range_name(s.first);
+
+    isl_val* qp = map_find(sched_var_name(producer), qfactors);
+
+    string dc = delay_var_name(consumer);
+    string dp = delay_var_name(producer);
+
+    assert(s.second.size() == 1);
+    for (auto sv : s.second) {
+      auto b = sv.second;
+      auto neg_qpb = neg(mul(qp, b));
+      delay_problem.add_eq({{dc, one(ct)}, {dp, negone(ct)}}, neg_qpb);
+    }
+  }
   set<string> operation_names;
 
   vector<pair<string, isl_val*> > linebuffer_obj_terms;
 
   vector<map<string, isl_val*> > lb_objs;
-  for (auto b : high_bandwidth_deps) {
-    string consumer_delay = delay_var_name(b.first);
-    for (auto producer_name : b.second) {
-      string producer_delay = delay_var_name(producer_name);
-      vector<pair<string, isl_val*> > ts;
-      ts.push_back({consumer_delay, one(ct)});
-      ts.push_back({producer_delay, negone(ct)});
 
-      //lb_objs.push_back(simplify(ts));
+  //for (auto b : high_bandwidth_deps) {
+    //string consumer_delay = delay_var_name(b.first);
+    //for (auto producer_name : b.second) {
+      //string producer_delay = delay_var_name(producer_name);
+      //vector<pair<string, isl_val*> > ts;
+      //ts.push_back({consumer_delay, one(ct)});
+      //ts.push_back({producer_delay, negone(ct)});
 
-      //linebuffer_obj_terms.push_back({consumer_delay, one(ct)});
-      //linebuffer_obj_terms.push_back({producer_delay, negone(ct)});
-    }
-  }
+      ////lb_objs.push_back(simplify(ts));
+
+      ////linebuffer_obj_terms.push_back({consumer_delay, one(ct)});
+      ////linebuffer_obj_terms.push_back({producer_delay, negone(ct)});
+    //}
+  //}
 
   //auto linebuffer_obj = simplify(linebuffer_obj_terms);
 
@@ -1120,11 +1138,11 @@ map<string, isl_aff*> clockwork_schedule_dimension(vector<isl_map*> deps,
     string dc = delay_var_name(consumer);
     string dp = delay_var_name(producer);
 
-    delay_obj[dc] = negone(ct);
-    delay_obj[dp] = negone(ct);
+    //delay_obj[dc] = negone(ct);
+    //delay_obj[dp] = negone(ct);
     
-    //delay_obj[dc] = one(ct);
-    //delay_obj[dp] = one(ct);
+    delay_obj[dc] = one(ct);
+    delay_obj[dp] = one(ct);
   }
 
   cout << "Delay constraints" << endl;
