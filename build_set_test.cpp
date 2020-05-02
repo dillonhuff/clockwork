@@ -6631,10 +6631,11 @@ void playground() {
 }
 
 void application_tests() {
+  sobel_16_app_test();
+  assert(false);
   cnn_test();
   denoise2d_test();
 
-  sobel_16_app_test();
   mismatched_stencil_test();
   //assert(false);
   exposure_fusion();
