@@ -6657,7 +6657,7 @@ void playground() {
 void application_tests() {
 
   exposure_fusion();
-  assert(false);
+  //assert(false);
   denoise2d_test();
   sobel_16_app_test();
   //assert(false);
