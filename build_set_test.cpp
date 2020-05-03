@@ -5043,8 +5043,7 @@ void up_stencil_down_unrolled_test() {
   assert(opt == naive);
 }
 
-void harris_test() {
-
+App harris(const std::string& out_name) {
   App harris;
   harris.func2d("img_oc");
   harris.func2d("img", v("img_oc"));
@@ -5101,11 +5100,25 @@ void harris_test() {
 
   harris.func2d("det", sub(mul("lgxx8", "lgyy8"), square("lgxy8")));
   harris.func2d("trace", add("lgxx8", "lgyy8"));
-  harris.func2d("cim", sub(v("det"),
+  harris.func2d(out_name, sub(v("det"),
         div(square("trace"), 8)));
 
-  harris.realize("cim", 10, 10);
-  //assert(false);
+  return harris;
+
+}
+
+void harris_test() {
+
+  int rows = 1080;
+  int cols = 1920;
+  for (int i = 0; i < 1; i++) {
+    int unroll_factor = pow(2, i);
+    cout << tab(1) << "unroll factor: " << unroll_factor << endl;
+    string out_name = "harris_" + str(unroll_factor);
+    harris(out_name).realize(out_name, cols, rows, unroll_factor);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
 }
 
 void max_pooling_test() {
@@ -6806,10 +6819,10 @@ void playground() {
 
 void application_tests() {
 
-  sobel_16_app_test();
-  assert(false);
-
   harris_test();
+  assert(false);
+  sobel_16_app_test();
+
   max_pooling_test();
   exposure_fusion();
   //assert(false);
