@@ -311,6 +311,16 @@ Expr* square(const string& a) {
 }
 
 static inline
+Expr* dbl(Expr* const a) {
+  return add(a, a);
+}
+
+static inline
+Expr* dbl(const string& a) {
+  return add(v(a), v(a));
+}
+
+static inline
 Expr* sq(Expr* a) {
   return square(a);
 }

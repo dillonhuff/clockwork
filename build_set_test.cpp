@@ -5048,46 +5048,61 @@ App harris(const std::string& out_name) {
   harris.set_default_pixel_width(16);
   harris.func2d("img_oc");
   harris.func2d("img", v("img_oc"));
-
   harris.func2d("grad_x",
-      add(sub(v("img", 1, -1), v("img", -1, -1)),
-        mul(sub(v("img", 1, 0), v("img", -1, 0)), 2),
-        sub(v("img", 1, 1), v("img", -1, 1))));
+      add(add(v("img", 1, -1), v("img", -1, -1)),
+        add(add(v("img", 1, 0), v("img", -1, 0)), 2),
+        add(v("img", 1, 1), v("img", -1, 1))));
 
   harris.func2d("grad_y",
-      add(sub(v("img", -1, 1), v("img", -1, -1)),
-        mul(sub(v("img", 0, 1), v("img", 0, -1)), 2),
-        sub(v("img", 1, 1), v("img", 1, -1))));
+      add(add(v("img", -1, 1), v("img", -1, -1)),
+        add(add(v("img", 0, 1), v("img", 0, -1)), 2),
+        add(v("img", 1, 1), v("img", 1, -1))));
 
-  //grad_xx(x, y) = cast<int32_t>(grad_x(x,y)) * cast<int32_t>(grad_x(x,y));
-  //grad_yy(x, y) = cast<int32_t>(grad_y(x,y)) * cast<int32_t>(grad_y(x,y));
-  //grad_xy(x, y) = cast<int32_t>(grad_x(x,y)) * cast<int32_t>(grad_y(x,y));
+  harris.func2d("lxx", add(dbl(v("grad_x")), 7));
+  harris.func2d("lyy", add(dbl(v("grad_y")), 7));
+  harris.func2d("lxy", add(add(v("grad_x"), v("grad_y")), 7));
 
-  //harris.func2d("gradxx", square(v("grad_x")));
-  //harris.func2d("gradyy", square(v("grad_y")));
-  //harris.func2d("gradxy", mul(v("grad_x"), v("grad_y")));
-
-  //Func lxx, lyy, lxy;
-  //lxx(x, y) = cast<int32_t>(grad_x(x,y)) * cast<int32_t>(grad_x(x,y)) >> 7;
-  //lyy(x, y) = cast<int32_t>(grad_y(x,y)) * cast<int32_t>(grad_y(x,y)) >> 7;
-  //lxy(x, y) = cast<int32_t>(grad_x(x,y)) * cast<int32_t>(grad_y(x,y)) >> 7;
-
-  harris.func2d("lxx", div(square(v("grad_x")), 7));
-  harris.func2d("lyy", div(square(v("grad_y")), 7));
-  harris.func2d("lxy", div(mul(v("grad_x"), v("grad_y")), 7));
-
+  // TODO: revert bounds
   harris.func2d("lgxx", stencilv(0, 2, 0, 2, "lxx"));
   harris.func2d("lgyy", stencilv(0, 2, 0, 2, "lyy"));
   harris.func2d("lgxy", stencilv(0, 2, 0, 2, "lxy"));
 
-  harris.func2d("lgxx8", div(v("lgxx"), 64));
-  harris.func2d("lgyy8", div(v("lgyy"), 64));
-  harris.func2d("lgxy8", div(v("lgxy"), 64));
+  harris.func2d("lgxx8", add(v("lgxx"), 64));
+  harris.func2d("lgyy8", add(v("lgyy"), 64));
+  harris.func2d("lgxy8", add(v("lgxy"), 64));
   
-  harris.func2d("det", sub(mul("lgxx8", "lgyy8"), square("lgxy8")));
+  harris.func2d("det", add(add("lgxx8", "lgyy8"), dbl("lgxy8")));
   harris.func2d("trace", add("lgxx8", "lgyy8"));
-  harris.func2d(out_name, sub(v("det"),
-        div(square("trace"), 8)));
+  harris.func2d(out_name, add(v("det"),
+        add(dbl("trace"), 8)));
+
+  //harris.func2d("grad_x",
+      //add(sub(v("img", 1, -1), v("img", -1, -1)),
+        //mul(sub(v("img", 1, 0), v("img", -1, 0)), 2),
+        //sub(v("img", 1, 1), v("img", -1, 1))));
+
+  //harris.func2d("grad_y",
+      //add(sub(v("img", -1, 1), v("img", -1, -1)),
+        //mul(sub(v("img", 0, 1), v("img", 0, -1)), 2),
+        //sub(v("img", 1, 1), v("img", 1, -1))));
+
+  //harris.func2d("lxx", div(square(v("grad_x")), 7));
+  //harris.func2d("lyy", div(square(v("grad_y")), 7));
+  //harris.func2d("lxy", div(mul(v("grad_x"), v("grad_y")), 7));
+
+  //// TODO: revert bounds
+  //harris.func2d("lgxx", stencilv(0, 2, 0, 2, "lxx"));
+  //harris.func2d("lgyy", stencilv(0, 2, 0, 2, "lyy"));
+  //harris.func2d("lgxy", stencilv(0, 2, 0, 2, "lxy"));
+
+  //harris.func2d("lgxx8", div(v("lgxx"), 64));
+  //harris.func2d("lgyy8", div(v("lgyy"), 64));
+  //harris.func2d("lgxy8", div(v("lgxy"), 64));
+  
+  //harris.func2d("det", sub(mul("lgxx8", "lgyy8"), square("lgxy8")));
+  //harris.func2d("trace", add("lgxx8", "lgyy8"));
+  //harris.func2d(out_name, sub(v("det"),
+        //div(square("trace"), 8)));
 
   return harris;
 
