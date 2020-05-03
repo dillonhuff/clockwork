@@ -5110,8 +5110,8 @@ App harris(const std::string& out_name) {
 
 void harris_test() {
   auto hmini = harris("harris_mini");
-  hmini.realize("harris_mini", 32, 32, 1);
   hmini.realize_naive("harris_mini", 32, 32);
+  hmini.realize("harris_mini", 32, 32, 1);
 
   std::vector<std::string> naive =
     run_regression_tb("harris_mini_opt");

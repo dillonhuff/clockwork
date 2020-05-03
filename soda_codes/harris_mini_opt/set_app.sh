@@ -1,1 +1,1 @@
-export app=harris_mini_naive
+export app=harris_mini_opt
