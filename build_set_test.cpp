@@ -6806,6 +6806,9 @@ void playground() {
 
 void application_tests() {
 
+  sobel_16_app_test();
+  assert(false);
+
   harris_test();
   max_pooling_test();
   exposure_fusion();
@@ -6813,7 +6816,6 @@ void application_tests() {
   tricky_shift_register_reconvergence_test();
   denoise2d_test();
   mismatched_stencil_test();
-  sobel_16_app_test();
   //assert(false);
   //assert(false);
   cnn_test();
