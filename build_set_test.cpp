@@ -5109,8 +5109,15 @@ App harris(const std::string& out_name) {
 }
 
 void harris_test() {
-  harris("harris_mini").realize("harris_mini", 32, 32, 1);
+  auto hmini = harris("harris_mini");
+  hmini.realize("harris_mini", 32, 32, 1);
+  hmini.realize_naive("harris_mini", 32, 32);
 
+  std::vector<std::string> naive =
+    run_regression_tb("harris_mini_opt");
+  std::vector<std::string> optimized =
+    run_regression_tb("harris_mini_naive");
+  assert(naive == optimized);
   move_to_benchmarks_folder("harris_mini_opt");
 
   int rows = 1080;

@@ -1,4 +1,4 @@
-app_name=harris_mini_opt
+app_name=harris_mini_naive
 cd soda_code
 ./run_tb.sh || { echo 'soda compilation failed'; exit 1; }
 cd ..
