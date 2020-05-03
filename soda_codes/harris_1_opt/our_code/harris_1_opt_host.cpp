@@ -10,11 +10,11 @@ int main(int argc, char **argv) {
   }
   std::string binaryFile = argv[1];
   const int harris_1_update_0_write_DATA_SIZE = 2073600;
-  const int harris_1_update_0_write_BYTES_PER_PIXEL = 32 / 8;
+  const int harris_1_update_0_write_BYTES_PER_PIXEL = 16 / 8;
   size_t harris_1_update_0_write_size_bytes = harris_1_update_0_write_BYTES_PER_PIXEL * harris_1_update_0_write_DATA_SIZE;
 
   const int img_update_0_read_DATA_SIZE = 2085616;
-  const int img_update_0_read_BYTES_PER_PIXEL = 32 / 8;
+  const int img_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t img_update_0_read_size_bytes = img_update_0_read_BYTES_PER_PIXEL * img_update_0_read_DATA_SIZE;
 
 

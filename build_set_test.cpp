@@ -5045,6 +5045,7 @@ void up_stencil_down_unrolled_test() {
 
 App harris(const std::string& out_name) {
   App harris;
+  harris.set_default_pixel_width(16);
   harris.func2d("img_oc");
   harris.func2d("img", v("img_oc"));
 
