@@ -236,6 +236,11 @@ Expr* mul(Expr* const a, Expr* const b) {
 }
 
 static inline
+Expr* mul(const std::string& a, const std::string& b) {
+  return mul(v(a), v(b));
+}
+
+static inline
 Expr* mul(Expr* const a, const int v) {
   return new Binop("*", a, new IntConst(str(v)));
 }
@@ -248,6 +253,11 @@ Expr* add(const int a, Expr* const b) {
 static inline
 Expr* add(Expr* const a, Expr* const b) {
   return new Binop("+", a, b);
+}
+
+static inline
+Expr* add(const std::string& a, const std::string& b) {
+  return add(v(a), v(b));
 }
 
 static inline
@@ -293,6 +303,11 @@ Expr* add(Expr* const a, Expr* const b, Expr* c) {
 static inline
 Expr* square(Expr* a) {
   return mul(a, a);
+}
+
+static inline
+Expr* square(const string& a) {
+  return square(v(a));
 }
 
 static inline

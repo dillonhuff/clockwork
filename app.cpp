@@ -1078,7 +1078,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
 
     //if (contains_key(consumer, high_bandwidth_deps) &&
         //elem(producer, map_find(consumer, high_bandwidth_deps))) {
-      assert(s.second.size() == 1);
+      //assert(s.second.size() == 1);
       for (auto sv : s.second) {
         auto b = sv.second;
         auto neg_qpb = neg(mul(qp, b));

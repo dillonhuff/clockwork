@@ -3900,14 +3900,17 @@ struct App {
   }
 
   void realize_naive(CodegenOptions& options, const std::string& name, const int d0, const int d1) {
+    realize_naive(options, name, {d0, d1});
+  }
+
+  void realize_naive(CodegenOptions& options, const std::string& name, const std::vector<int>& dims) {
     if (!options.unroll_factors_as_pad) {
       const int unroll_factor = 1;
       set_unroll_factors(name, unroll_factor);
     } else {
       cout << "realizing naive with padded unroll factors" << endl;
     }
-    //cout << "Realizing: " << name << " on " << d0 << ", " << d1 << " with unroll factor: " << unroll_factor << endl;
-    fill_data_domain(name, {d0, d1});
+    fill_data_domain(name, dims);
     set_unroll_factors(name, 1);
     fill_compute_domain();
 
@@ -4213,19 +4216,33 @@ struct App {
     realize(options, name, d0, d1);
   }
 
-  void realize(CodegenOptions& options, const std::string& name, const int d0, const int d1) {
-    fill_data_domain(name, {d0, d1});
-    fill_compute_domain();
+  void realize(CodegenOptions& options,
+      const std::string& name,
+      const int d0,
+      const int d1) {
+    realize(options, name, {d0, d1});
+  }
 
+  void realize(CodegenOptions& options,
+      const std::string& name,
+      const std::vector<int>& dims) {
+
+    fill_data_domain(name, dims);
+    fill_compute_domain();
     schedule_and_codegen(options, name);
+
   }
 
   void realize(CodegenOptions& options, const std::string& name, const int d0, const int d1, const int unroll_factor) {
+    realize(options, name, {d0, d1}, unroll_factor);
+  }
+
+  void realize(CodegenOptions& options, const std::string& name, const vector<int>& dims, const int unroll_factor) {
       double total_elapsed = 0.;
       auto start = std::chrono::system_clock::now();
 
       set_unroll_factors(name, unroll_factor);
-      realize(options, name, d0, d1);
+      realize(options, name, dims);
 
       auto end = std::chrono::system_clock::now();
       std::chrono::duration<double> elapsed = end - start;
@@ -4461,6 +4478,16 @@ Window win(const std::string& name, const std::vector<vector<int > >& offsets) {
     strides.push_back(1);
   }
   return Window{name, strides, offsets};
+}
+
+Expr* stencilv(int xl, int xr, int yl, int yr, const std::string& name) {
+  vector<Expr*> offsets;
+  for (int i = xl; i <= xr; i++) {
+    for (int j = yl; j <= yr; j++) {
+      offsets.push_back(v(name, i, j));
+    }
+  }
+  return add(offsets);
 }
 
 Window stencil(int xl, int xr, int yl, int yr, const std::string& name) {
@@ -5016,12 +5043,102 @@ void up_stencil_down_unrolled_test() {
   assert(opt == naive);
 }
 
+void harris_test() {
+
+  App harris;
+  harris.func2d("img_oc");
+  harris.func2d("img", v("img_oc"));
+
+  harris.func2d("grad_x",
+      add(sub(v("img", 1, -1), v("img", -1, -1)),
+        mul(sub(v("img", 1, 0), v("img", -1, 0)), 2),
+        sub(v("img", 1, 1), v("img", -1, 1))));
+
+  harris.func2d("grad_y",
+      add(sub(v("img", -1, 1), v("img", -1, -1)),
+        mul(sub(v("img", 0, 1), v("img", 0, -1)), 2),
+        sub(v("img", 1, 1), v("img", 1, -1))));
+
+  //grad_xx(x, y) = cast<int32_t>(grad_x(x,y)) * cast<int32_t>(grad_x(x,y));
+  //grad_yy(x, y) = cast<int32_t>(grad_y(x,y)) * cast<int32_t>(grad_y(x,y));
+  //grad_xy(x, y) = cast<int32_t>(grad_x(x,y)) * cast<int32_t>(grad_y(x,y));
+
+  //harris.func2d("gradxx", square(v("grad_x")));
+  //harris.func2d("gradyy", square(v("grad_y")));
+  //harris.func2d("gradxy", mul(v("grad_x"), v("grad_y")));
+
+  //Func lxx, lyy, lxy;
+  //lxx(x, y) = cast<int32_t>(grad_x(x,y)) * cast<int32_t>(grad_x(x,y)) >> 7;
+  //lyy(x, y) = cast<int32_t>(grad_y(x,y)) * cast<int32_t>(grad_y(x,y)) >> 7;
+  //lxy(x, y) = cast<int32_t>(grad_x(x,y)) * cast<int32_t>(grad_y(x,y)) >> 7;
+
+  harris.func2d("lxx", div(square(v("grad_x")), 7));
+  harris.func2d("lyy", div(square(v("grad_y")), 7));
+  harris.func2d("lxy", div(mul(v("grad_x"), v("grad_y")), 7));
+
+  // box filter (i.e. windowed sum)
+  //RDom box(-blockSize/2, blockSize, -blockSize/2, blockSize);
+  //lgxx(x, y) += lxx(x+box.x, y+box.y);
+  //lgyy(x, y) += lyy(x+box.x, y+box.y);
+  //lgxy(x, y) += lxy(x+box.x, y+box.y);
+
+  harris.func2d("lgxx", stencilv(-1, 1, -1, 1, "lxx"));
+  harris.func2d("lgyy", stencilv(-1, 1, -1, 1, "lyy"));
+  harris.func2d("lgxy", stencilv(-1, 1, -1, 1, "lxy"));
+
+  //Expr lgxx8 = lgxx(x,y) >> 6;
+  //Expr lgyy8 = lgyy(x,y) >> 6;
+  //Expr lgxy8 = lgxy(x,y) >> 6;
+
+  harris.func2d("lgxx8", div(v("lgxx"), 64));
+  harris.func2d("lgyy8", div(v("lgyy"), 64));
+  harris.func2d("lgxy8", div(v("lgxy"), 64));
+  
+  //Func cim;
+  //Expr det = lgxx8*lgyy8 - lgxy8*lgxy8;
+  //Expr trace = lgxx8 + lgyy8;
+  //cim(x, y) = det - (trace*trace >> shiftk);
+
+  harris.func2d("det", sub(mul("lgxx8", "lgyy8"), square("lgxy8")));
+  harris.func2d("trace", add("lgxx8", "lgyy8"));
+  harris.func2d("cim", sub(v("det"),
+        div(square("trace"), 8)));
+
+  harris.realize("cim", 10, 10);
+  //assert(false);
+}
+
 void max_pooling_test() {
   App mp;
   mp.func3d("in_oc");
   mp.func3d("in", "id", pt3("in_oc"));
   Window max_win{"in", {qconst(2), qconst(2), qconst(1)}, {{0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {1, 1, 0}}};
-  mp.func3d("out", "max_pool", {max_win});
+  mp.func3d("max_pool", "max_pool_2x2", {max_win});
+
+  int W = 10;
+  int H = 10;
+  int D = 3;
+
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+
+    mp.realize(options, "max_pool", {H, W, D}, 1);
+  }
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  options.unroll_factors_as_pad = true;
+  mp.realize_naive(options, "max_pool", {H, W, D});
+
+  std::vector<std::string> naive =
+    run_regression_tb("max_pool_opt");
+  std::vector<std::string> optimized =
+    run_regression_tb("max_pool_naive");
+  assert(naive == optimized);
 }
 
 void exposure_fusion() {
@@ -5076,8 +5193,8 @@ void exposure_fusion() {
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
   int size =
-    //64;
-    1250;
+    64;
+    //1250;
     //200;
 
   //auto isl_sched = lp.realize_isl_schedule("pyramid_synthetic_exposure_fusion", size, size, 1);
@@ -5120,8 +5237,8 @@ void exposure_fusion() {
   //assert(false);
 
   lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
-  move_to_benchmarks_folder("pyramid_synthetic_exposure_fusion_opt");
-  assert(false);
+  //move_to_benchmarks_folder("pyramid_synthetic_exposure_fusion_opt");
+  //assert(false);
 
   //lp.realize("pyramid_synthetic_exposure_fusion", size, size, 4);
 
@@ -6689,9 +6806,10 @@ void playground() {
 
 void application_tests() {
 
+  harris_test();
   max_pooling_test();
   exposure_fusion();
-  assert(false);
+  //assert(false);
   tricky_shift_register_reconvergence_test();
   denoise2d_test();
   mismatched_stencil_test();

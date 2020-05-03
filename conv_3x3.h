@@ -16,6 +16,16 @@ float to_float(const hw_uint<32>& in) {
 }
 
 static inline
+hw_uint<32>
+max_pool_2x2(const hw_uint<32*4>& in) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+  hw_uint<32> v3 = in.extract<96, 127>();
+  return max(max(v0, v1), max(v2, v3));
+}
+
+static inline
 hw_uint<32> to_bits(const float& f) {
   int* ip = (int*) ((void*)(&f));
   return *ip;
