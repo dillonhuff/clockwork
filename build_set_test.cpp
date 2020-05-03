@@ -5108,6 +5108,9 @@ App harris(const std::string& out_name) {
 }
 
 void harris_test() {
+  harris("harris_mini").realize("harris_mini", 32, 32, 1);
+
+  move_to_benchmarks_folder("harris_mini_opt");
 
   int rows = 1080;
   int cols = 1920;
