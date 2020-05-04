@@ -979,6 +979,7 @@ bank UBuffer::compute_bank_info(
   return bank;
 }
 
+
 void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
   for (auto inpt : get_in_ports()) {
     for (auto outpt : get_out_ports()) {
@@ -997,7 +998,7 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
     cout << "Receiver banks for " << inpt << endl;
     vector<stack_bank> mergeable;
     for (auto bnk : receivers) {
-      cout << tab(1) << bnk.name << ", # read offsets: " << bnk.read_delays.size() << endl;
+      cout << tab(1) << bnk.name << ", # read offsets: " << bnk.read_delays.size() <<  endl;
 
       //TODO: check this assertion
       if (options.debug_options.expect_all_linebuffers) {
@@ -1011,28 +1012,84 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
     }
 
     if (mergeable.size() > 0) {
-      stack_bank merged;
-      merged.tp = BANK_TYPE_STACK;
-      merged.layout = Box(mergeable.at(0).layout.dimension());
-      merged.name =
-        inpt + "_merged_banks_" + str(mergeable.size());
-      merged.pt_type_string =
-        mergeable.at(0).pt_type_string;
-      merged.num_readers = mergeable.size();
-      merged.maxdelay = -1;
-      for (auto m : mergeable) {
-        merged.layout = unn(merged.layout, m.layout);
-        if (m.maxdelay > merged.maxdelay) {
-          merged.maxdelay = m.maxdelay;
+      if (!options.conditional_merge){
+        stack_bank merged;
+        merged.tp = BANK_TYPE_STACK;
+        merged.layout = Box(mergeable.at(0).layout.dimension());
+        merged.name =
+          inpt + "_merged_banks_" + str(mergeable.size());
+        merged.pt_type_string =
+          mergeable.at(0).pt_type_string;
+        merged.num_readers = mergeable.size();
+        merged.maxdelay = -1;
+        for (auto m : mergeable) {
+          merged.layout = unn(merged.layout, m.layout);
+          if (m.maxdelay > merged.maxdelay) {
+            merged.maxdelay = m.maxdelay;
+          }
+          for (auto mrd : m.read_delays) {
+            merged.read_delays.push_back(mrd);
+          }
         }
-        for (auto mrd : m.read_delays) {
-          merged.read_delays.push_back(mrd);
+        merged.read_delays = sort_unique(merged.read_delays);
+
+        for (auto to_replace : mergeable) {
+          replace_bank(to_replace, merged);
         }
       }
-      merged.read_delays = sort_unique(merged.read_delays);
+      else {
+        //Add a condition to the merged offset
+        //First sort the delay
+        sort(mergeable.begin(), mergeable.end(), [](const bank& l, const bank& r) {
+                return l.maxdelay > r.maxdelay;
+                });
+        for (auto merge_bank : mergeable) {
+            cout << merge_bank.name << " with delay : " << merge_bank.maxdelay << endl;
+        }
 
-      for (auto to_replace : mergeable) {
-        replace_bank(to_replace, merged);
+        while(mergeable.size()) {
+          //keep pop port to merged bank and replace origin bank
+          stack_bank merged;
+          merged.tp = BANK_TYPE_STACK;
+          merged.layout = Box(mergeable.at(0).layout.dimension());
+          merged.name =
+            inpt + "_merged_banks_" + str(mergeable.size());
+          merged.pt_type_string =
+            mergeable.at(0).pt_type_string;
+          merged.read_delays.push_back(0);
+
+          vector<bank> replace_candidates;
+          bank m = mergeable.back();
+          merged.maxdelay = m.maxdelay;
+          while (m.maxdelay - merged.maxdelay <= options.merge_threshold) {
+              replace_candidates.push_back(m);
+              merged.layout = unn(merged.layout, m.layout);
+              merged.maxdelay = m.maxdelay;
+              merged.read_delays.push_back(m.maxdelay);
+
+              //get the next data
+              mergeable.pop_back();
+              m = mergeable.back();
+              cout << m.maxdelay <<", " << merged.maxdelay << endl;
+          }
+          merged.num_readers = replace_candidates.size();
+          merged.read_delays = sort_unique(merged.read_delays);
+
+          for (auto to_replace : replace_candidates) {
+            cout << to_replace.name << endl;
+            replace_bank(to_replace, merged);
+          }
+          cout << "Create a new bank !"<< endl;
+        }
+        auto banks = get_banks();
+        cout << "finished create bank!" << endl;
+        for (bank bk : banks) {
+            cout << bk.name << " has delays: ";//<< bk.read_delays << endl;
+            for (int dl: bk.read_delays) {
+                cout << dl << "," ;
+            }
+            cout << endl;
+        }
       }
     }
   }

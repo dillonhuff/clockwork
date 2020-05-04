@@ -787,6 +787,36 @@ void vec_test() {
   //assert(false);
 }
 
+void bankmerge_vec_test() {
+
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "vec";
+  prg.add_input("in");
+  prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+
+  auto p = prg.add_nest("po", 0, 8, "pi", 0, 8);
+  auto write = p->add_op("input");
+  write->add_load("in", "po, pi");
+  write->add_store("buf", "po, pi");
+
+  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 6);
+  auto read = q->add_op("output");
+  for (size_t wy = 0; wy < 3; wy ++)
+      for (size_t wx = 0; wx < 3; wx ++) {
+        read->add_load("buf", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+      }
+
+  auto buffers_opt = build_buffers(prg);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  buffers_opt.at("buf").generate_bank_and_merge(opt);
+  assert(false);
+}
 
 void auto_vec_test() {
 
@@ -819,6 +849,22 @@ void auto_vec_test() {
 
   auto opt_sched = optimized_schedule_from_buffers(buffers);
   cout << codegen_c(opt_sched) << endl;
+  for (auto buf : buffers) {
+      UBuffer& buffer = buf.second;
+      for (string pt: buffer.get_in_ports()) {
+          auto rddom = buffer.domain.at(pt);
+          auto pt_sched = its(opt_sched, rddom);
+          cout << "Schedule for pt: " << pt << " is " << str(pt_sched) << endl;
+          buffer.schedule.at(pt) = pt_sched;
+      }
+      for (string pt: buffer.get_out_ports()) {
+          auto wtdom = buffer.domain.at(pt);
+          auto pt_sched = its(opt_sched, wtdom);
+          cout << "Schedule for pt: " << pt << " is " << str(pt_sched) << endl;
+          buffer.schedule.at(pt) = pt_sched;
+      }
+      cout << "Vectorized buffer: " << buf.second << endl;
+  }
 }
 
 std::vector<std::string> run_regression_tb(const std::string& name) {
@@ -6350,8 +6396,9 @@ void playground() {
 
 void application_tests() {
     //memtile_test();
-    cnn_test();
+    bankmerge_vec_test();
     assert(false);
+    cnn_test();
 
   blur_xy_16_app_test();
   denoise2d_test();
