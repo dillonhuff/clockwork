@@ -5043,6 +5043,36 @@ void up_stencil_down_unrolled_test() {
   assert(opt == naive);
 }
 
+App harris_cartoon(const std::string& out_name) {
+  App harris;
+  harris.set_default_pixel_width(16);
+  harris.func2d("img_oc");
+  harris.func2d("img", v("img_oc"));
+  harris.func2d("grad_x",
+      add(sub(v("img", 1, -1), v("img", -1, -1)),
+        mul(sub(v("img", 1, 0), v("img", -1, 0)), 2),
+        sub(v("img", 1, 1), v("img", -1, 1))));
+
+  harris.func2d("grad_y",
+      add(sub(v("img", -1, 1), v("img", -1, -1)),
+        mul(sub(v("img", 0, 1), v("img", 0, -1)), 2),
+        sub(v("img", 1, 1), v("img", 1, -1))));
+
+  harris.func2d("lxx", add(dbl(v("grad_x")), 7));
+  harris.func2d("lyy", add(dbl(v("grad_y")), 7));
+  harris.func2d("lxy", add(add(v("grad_x"), v("grad_y")), 7));
+  
+  harris.func2d("lgxx", stencilv(-1, 1, -1, 1, "lxx"));
+  harris.func2d("lgyy", stencilv(-1, 1, -1, 1, "lyy"));
+  harris.func2d("lgxy", stencilv(-1, 1, -1, 1, "lxy"));
+
+  harris.func2d("det", add(add("lgxx", "lgyy"), dbl("lgxy")));
+  harris.func2d("trace", add("lgxx", "lgyy"));
+  harris.func2d(out_name, add(v("det"),
+        add(dbl("trace"), 8)));
+
+  return harris;
+}
 App harris(const std::string& out_name) {
   App harris;
   harris.set_default_pixel_width(16);
@@ -5090,7 +5120,7 @@ void harris_unrolled_test() {
   options.simplify_address_expressions = true;
   options.use_custom_code_string = true;
   options.debug_options.expect_all_linebuffers = true;
-  harris(out_name).realize(options, out_name, cols, rows, unroll_factor);
+  harris_cartoon(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
   move_to_benchmarks_folder(out_name + "_opt");
 }
