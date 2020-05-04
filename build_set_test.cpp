@@ -3354,7 +3354,7 @@ struct App {
       cout << f << " = " << d << endl;
     }
 
-    fill_compute_domain();
+    //fill_compute_domain();
     //assert(false);
   }
 
@@ -3933,7 +3933,7 @@ struct App {
   umap* realize_opt_schedule(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     set_unroll_factors(name, unroll_factor);
     fill_data_domain(name, {d0, d1});
-    //fill_compute_domain();
+    fill_compute_domain();
 
     umap* m =
       schedule();
@@ -3943,7 +3943,7 @@ struct App {
   umap* realize_isl_schedule(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     set_unroll_factors(name, unroll_factor);
     fill_data_domain(name, {d0, d1});
-    //fill_compute_domain();
+    fill_compute_domain();
 
     umap* m =
       schedule_isl();
@@ -3963,7 +3963,7 @@ struct App {
     }
     fill_data_domain(name, dims);
     set_unroll_factors(name, 1);
-    //fill_compute_domain();
+    fill_compute_domain();
 
     umap* m =
       schedule_naive();
@@ -4222,7 +4222,7 @@ struct App {
     int dummy_value = 10;
     cpy.no_unrolling();
     cpy.fill_data_domain(reference_function, {dummy_value, dummy_value});
-    //cpy.fill_compute_domain();
+    cpy.fill_compute_domain();
 
     umap* deps = pad_map(cpy.validity_deps());
     auto umaps = get_maps(deps);
@@ -4279,7 +4279,7 @@ struct App {
       const std::vector<int>& dims) {
 
     fill_data_domain(name, dims);
-    //fill_compute_domain();
+    fill_compute_domain();
     schedule_and_codegen(options, name);
 
   }
