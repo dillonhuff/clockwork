@@ -1062,15 +1062,21 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
           bank m = mergeable.back();
           merged.maxdelay = m.maxdelay;
           while (m.maxdelay - merged.maxdelay <= options.merge_threshold) {
+              auto in2out = split_at(m.name, "_to_");
+              cout << "output port name: " <<  in2out.at(1) << endl;
+              merged.delay_map[in2out.at(1)] = m.maxdelay;
               replace_candidates.push_back(m);
               merged.layout = unn(merged.layout, m.layout);
               merged.maxdelay = m.maxdelay;
               merged.read_delays.push_back(m.maxdelay);
+              cout << m.maxdelay <<", " << merged.maxdelay << endl;
 
               //get the next data
               mergeable.pop_back();
-              m = mergeable.back();
-              cout << m.maxdelay <<", " << merged.maxdelay << endl;
+              if (mergeable.size())
+                  m = mergeable.back();
+              else
+                  break;
           }
           merged.num_readers = replace_candidates.size();
           merged.read_delays = sort_unique(merged.read_delays);
@@ -1085,10 +1091,15 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
         cout << "finished create bank!" << endl;
         for (bank bk : banks) {
             cout << bk.name << " has delays: ";//<< bk.read_delays << endl;
+            cout << tab(1);
             for (int dl: bk.read_delays) {
                 cout << dl << "," ;
             }
             cout << endl;
+            for (auto dl: bk.delay_map) {
+                cout <<tab(1)<< dl.first << ":" << dl.second <<endl; ;
+            }
+
         }
       }
     }

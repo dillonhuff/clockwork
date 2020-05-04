@@ -67,6 +67,9 @@ struct bank {
   // RAM bank properties
   Box layout;
 
+  //port delay map
+  map<string, int> delay_map;
+
   vector<int> get_end_inds() const {
     auto break_points = get_break_points();
 
