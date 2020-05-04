@@ -3304,6 +3304,9 @@ struct App {
     string n = name;
     domain_boxes = {};
     domain_boxes[n] = sbox;
+    //for (auto update : app_dag.at(n).updates) {
+      //fill_compute_domain(n, update);
+    //}
 
     for (int i = 1; i < (int) buffers.size(); i++) {
       string next = buffers.at(i);
@@ -3339,6 +3342,9 @@ struct App {
       final_dom = final_dom.pad_range_to_nearest_multiple(last_update(next).unroll_factor);
 
       domain_boxes[next] = final_dom;
+      //for (auto update : app_dag.at(next).updates) {
+        //fill_compute_domain(next, update);
+      //}
     }
 
     cout << domain_boxes.size() << " data domains.." << endl;
@@ -3348,6 +3354,7 @@ struct App {
       cout << f << " = " << d << endl;
     }
 
+    fill_compute_domain();
     //assert(false);
   }
 
@@ -3926,7 +3933,7 @@ struct App {
   umap* realize_opt_schedule(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     set_unroll_factors(name, unroll_factor);
     fill_data_domain(name, {d0, d1});
-    fill_compute_domain();
+    //fill_compute_domain();
 
     umap* m =
       schedule();
@@ -3936,7 +3943,7 @@ struct App {
   umap* realize_isl_schedule(const std::string& name, const int d0, const int d1, const int unroll_factor) {
     set_unroll_factors(name, unroll_factor);
     fill_data_domain(name, {d0, d1});
-    fill_compute_domain();
+    //fill_compute_domain();
 
     umap* m =
       schedule_isl();
@@ -3956,7 +3963,7 @@ struct App {
     }
     fill_data_domain(name, dims);
     set_unroll_factors(name, 1);
-    fill_compute_domain();
+    //fill_compute_domain();
 
     umap* m =
       schedule_naive();
@@ -4215,7 +4222,7 @@ struct App {
     int dummy_value = 10;
     cpy.no_unrolling();
     cpy.fill_data_domain(reference_function, {dummy_value, dummy_value});
-    cpy.fill_compute_domain();
+    //cpy.fill_compute_domain();
 
     umap* deps = pad_map(cpy.validity_deps());
     auto umaps = get_maps(deps);
@@ -4272,7 +4279,7 @@ struct App {
       const std::vector<int>& dims) {
 
     fill_data_domain(name, dims);
-    fill_compute_domain();
+    //fill_compute_domain();
     schedule_and_codegen(options, name);
 
   }
@@ -6883,6 +6890,7 @@ void playground() {
 
 void application_tests() {
 
+  gaussian_pyramid_app_test();
   //harris_unrolled_test();
   //harris_test();
   sobel_16_app_test();
@@ -6900,7 +6908,6 @@ void application_tests() {
   //assert(false);
   //assert(false);
 
-  gaussian_pyramid_app_test();
   //assert(false);
 
   downsample2d_test();
