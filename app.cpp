@@ -943,6 +943,7 @@ extract_schedule_params(vector<isl_map*>& deps) {
     cout << tab(2) << "lexmax: " << str(lm) << endl;
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
       get_pieces(lm);
+    assert(pieces.size() <= 1);
     for (auto piece : pieces) {
       isl_multi_aff* bound = piece.second;
       cout << "bound: " << str(bound) << endl;
@@ -1027,10 +1028,35 @@ compute_qfactors(vector<isl_map*>& deps) {
   return qfactors;
 }
 
+isl_set* find_set(std::string& f, const vector<isl_set*>& domains) {
+  for (auto s : domains) {
+    if (name(s) == f) {
+      return s;
+    }
+  }
+  assert(false);
+  return nullptr;
+}
+
 map<string, isl_aff*> clockwork_schedule_dimension(
     vector<isl_set*> domains,
     vector<isl_map*> deps,
     map<string, vector<string> >& high_bandwidth_deps) {
+  ofstream sd("schedule_debug.txt", ios::app);
+  sd << "--- Scheduling dimension" << endl;
+  sd << tab(1) << "=== Domains..." << endl;
+  for (auto d : domains) {
+    sd << tab(2) << str(d) << endl;
+  }
+  sd << endl;
+  sd << tab(1) << "=== Dependencies..." << endl;
+  for (auto d : deps) {
+    sd << tab(2) << str(d) << endl;
+    sd << tab(3) << str(card(d)) << endl;
+  }
+  sd << endl;
+
+
   cout << "Deps..." << endl;
   assert(deps.size() > 0);
   isl_ctx* ct = ctx(deps.at(0));
@@ -1043,6 +1069,13 @@ map<string, isl_aff*> clockwork_schedule_dimension(
 
   cout << "Building delay constraints" << endl;
   ilp_builder delay_problem(ct);
+  sd << "=== Schedule params" << endl;
+  for (auto s : schedule_params) {
+    sd << tab(1) << str(s.first) << endl;
+    for (auto k : s.second) {
+      sd << tab(2) << str(k.first) << "*x + " << str(k.second) << endl;
+    }
+  }
 
   set<string> consumed;
   set<string> outputs;
@@ -1063,11 +1096,14 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   cout << "Outputs..." << endl;
   map<string, isl_val*> pipeline_delay;
   for (auto out : outputs) {
+    cout << tab(1) << out << endl;
     pipeline_delay[delay_var_name(out)] = one(ct);
   }
+  assert(outputs.size() == 1);
 
   // Add shift register constraints
   for (auto s : schedule_params) {
+
     string consumer = domain_name(s.first);
     string producer = range_name(s.first);
 
@@ -1173,7 +1209,16 @@ map<string, isl_aff*> clockwork_schedule_dimension(
       "{ [i] -> [(" + str(rate) + "*i + " + str(delay) + ")]}";
     cout << tab(1) << "aff str: " << aff_str << endl;
     schedule_functions[f] = rdaff(ct, aff_str);
+    isl_set* dom = find_set(f, domains);
+    auto sf = map_find(f, schedule_functions);
+    auto minpt = lexmin(dom);
+    auto maxpt = lexmax(dom);
+    sd << tab(1) << f << ": " << str(sf) << endl;
+    sd << tab(2) << "min pt: " << str(minpt) << endl;
+    sd << tab(2) << "max pt: " << str(maxpt) << endl;
+    sd << endl;
   }
+  sd.close();
 
   cout << "Done with schedule" << endl;
   return schedule_functions;

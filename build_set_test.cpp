@@ -5061,7 +5061,7 @@ App harris(const std::string& out_name) {
   harris.func2d("lxx", add(dbl(v("grad_x")), 7));
   harris.func2d("lyy", add(dbl(v("grad_y")), 7));
   harris.func2d("lxy", add(add(v("grad_x"), v("grad_y")), 7));
-
+  
   harris.func2d("lgxx", stencilv(-1, 1, -1, 1, "lxx"));
   harris.func2d("lgyy", stencilv(-1, 1, -1, 1, "lyy"));
   harris.func2d("lgxy", stencilv(-1, 1, -1, 1, "lxy"));
@@ -5075,36 +5075,24 @@ App harris(const std::string& out_name) {
   harris.func2d(out_name, add(v("det"),
         add(dbl("trace"), 8)));
 
-  //harris.func2d("grad_x",
-      //add(sub(v("img", 1, -1), v("img", -1, -1)),
-        //mul(sub(v("img", 1, 0), v("img", -1, 0)), 2),
-        //sub(v("img", 1, 1), v("img", -1, 1))));
-
-  //harris.func2d("grad_y",
-      //add(sub(v("img", -1, 1), v("img", -1, -1)),
-        //mul(sub(v("img", 0, 1), v("img", 0, -1)), 2),
-        //sub(v("img", 1, 1), v("img", 1, -1))));
-
-  //harris.func2d("lxx", div(square(v("grad_x")), 7));
-  //harris.func2d("lyy", div(square(v("grad_y")), 7));
-  //harris.func2d("lxy", div(mul(v("grad_x"), v("grad_y")), 7));
-
-  //// TODO: revert bounds
-  //harris.func2d("lgxx", stencilv(0, 2, 0, 2, "lxx"));
-  //harris.func2d("lgyy", stencilv(0, 2, 0, 2, "lyy"));
-  //harris.func2d("lgxy", stencilv(0, 2, 0, 2, "lxy"));
-
-  //harris.func2d("lgxx8", div(v("lgxx"), 64));
-  //harris.func2d("lgyy8", div(v("lgyy"), 64));
-  //harris.func2d("lgxy8", div(v("lgxy"), 64));
-  
-  //harris.func2d("det", sub(mul("lgxx8", "lgyy8"), square("lgxy8")));
-  //harris.func2d("trace", add("lgxx8", "lgyy8"));
-  //harris.func2d(out_name, sub(v("det"),
-        //div(square("trace"), 8)));
-
   return harris;
+}
 
+void harris_unrolled_test() {
+  int rows = 1;
+  int cols = 10;
+  int unroll_factor = 2;
+  cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
+  string out_name = "harris_" + str(unroll_factor);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  options.debug_options.expect_all_linebuffers = true;
+  harris(out_name).realize(options, out_name, cols, rows, unroll_factor);
+
+  move_to_benchmarks_folder(out_name + "_opt");
 }
 
 void harris_test() {
@@ -5123,7 +5111,7 @@ void harris_test() {
   int cols = 1920;
   for (int i = 0; i < 2; i++) {
     int unroll_factor = pow(2, i);
-    cout << tab(1) << "unroll factor: " << unroll_factor << endl;
+    cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
     string out_name = "harris_" + str(unroll_factor);
 
     CodegenOptions options;
@@ -6835,7 +6823,8 @@ void playground() {
 
 void application_tests() {
 
-  //harris_test();
+  harris_unrolled_test();
+  harris_test();
   sobel_16_app_test();
 
   max_pooling_test();
