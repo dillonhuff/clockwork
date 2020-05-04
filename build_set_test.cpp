@@ -5066,10 +5066,9 @@ App harris_cartoon(const std::string& out_name) {
   harris.func2d("lgyy", stencilv(-1, 1, -1, 1, "lyy"));
   harris.func2d("lgxy", stencilv(-1, 1, -1, 1, "lxy"));
 
-  harris.func2d("det", add(add("lgxx", "lgyy"), dbl("lgxy")));
-  harris.func2d("trace", add("lgxx", "lgyy"));
-  harris.func2d(out_name, add(v("det"),
-        add(dbl("trace"), 8)));
+  harris.func2d(out_name, add(v("lgxx"), v("lgxx"), v("lgyy")));
+  //harris.func2d(out_name, add(v("det"),
+        //add(dbl("trace"), 8)));
 
   return harris;
 }
