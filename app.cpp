@@ -1167,7 +1167,6 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   map<string, isl_aff*> schedule_functions;
   for (auto f : operation_names) {
     isl_val* rate = map_find(sched_var_name(f), qfactors);
-    //isl_val* rate = ilp.value(sched_var_name(f));
     isl_val* delay = delay_problem.value(delay_var_name(f));
     cout << "f rate: " << str(rate) << ", delay: " << str(delay) << endl;
     string aff_str = 

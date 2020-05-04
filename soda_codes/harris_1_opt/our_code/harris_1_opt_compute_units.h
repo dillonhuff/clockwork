@@ -8,11 +8,11 @@ hw_uint<16> img_generated_compute(hw_uint<16*1> img_oc) {
 }
 
 hw_uint<16> grad_y_generated_compute(hw_uint<16*6> img) {
-  return (((img.get<16, 1>() + img.get<16, 0>()) + ((img.get<16, 3>() + img.get<16, 2>()) + hw_uint<16>(2))) + (img.get<16, 5>() + img.get<16, 4>()));
+  return (((img.get<16, 1>() - img.get<16, 0>()) + ((img.get<16, 3>() - img.get<16, 2>()) * hw_uint<16>(2))) + (img.get<16, 5>() - img.get<16, 4>()));
 }
 
 hw_uint<16> grad_x_generated_compute(hw_uint<16*6> img) {
-  return (((img.get<16, 3>() + img.get<16, 0>()) + ((img.get<16, 4>() + img.get<16, 1>()) + hw_uint<16>(2))) + (img.get<16, 5>() + img.get<16, 2>()));
+  return (((img.get<16, 3>() - img.get<16, 0>()) + ((img.get<16, 4>() - img.get<16, 1>()) * hw_uint<16>(2))) + (img.get<16, 5>() - img.get<16, 2>()));
 }
 
 hw_uint<16> lyy_generated_compute(hw_uint<16*1> grad_y) {

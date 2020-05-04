@@ -5049,23 +5049,22 @@ App harris(const std::string& out_name) {
   harris.func2d("img_oc");
   harris.func2d("img", v("img_oc"));
   harris.func2d("grad_x",
-      add(add(v("img", 1, -1), v("img", -1, -1)),
-        add(add(v("img", 1, 0), v("img", -1, 0)), 2),
-        add(v("img", 1, 1), v("img", -1, 1))));
+      add(sub(v("img", 1, -1), v("img", -1, -1)),
+        mul(sub(v("img", 1, 0), v("img", -1, 0)), 2),
+        sub(v("img", 1, 1), v("img", -1, 1))));
 
   harris.func2d("grad_y",
-      add(add(v("img", -1, 1), v("img", -1, -1)),
-        add(add(v("img", 0, 1), v("img", 0, -1)), 2),
-        add(v("img", 1, 1), v("img", 1, -1))));
+      add(sub(v("img", -1, 1), v("img", -1, -1)),
+        mul(sub(v("img", 0, 1), v("img", 0, -1)), 2),
+        sub(v("img", 1, 1), v("img", 1, -1))));
 
   harris.func2d("lxx", add(dbl(v("grad_x")), 7));
   harris.func2d("lyy", add(dbl(v("grad_y")), 7));
   harris.func2d("lxy", add(add(v("grad_x"), v("grad_y")), 7));
 
-  // TODO: revert bounds
-  harris.func2d("lgxx", stencilv(0, 2, 0, 2, "lxx"));
-  harris.func2d("lgyy", stencilv(0, 2, 0, 2, "lyy"));
-  harris.func2d("lgxy", stencilv(0, 2, 0, 2, "lxy"));
+  harris.func2d("lgxx", stencilv(-1, 1, -1, 1, "lxx"));
+  harris.func2d("lgyy", stencilv(-1, 1, -1, 1, "lyy"));
+  harris.func2d("lgxy", stencilv(-1, 1, -1, 1, "lxy"));
 
   harris.func2d("lgxx8", add(v("lgxx"), 64));
   harris.func2d("lgyy8", add(v("lgyy"), 64));
@@ -5122,11 +5121,17 @@ void harris_test() {
 
   int rows = 1080;
   int cols = 1920;
-  for (int i = 0; i < 1; i++) {
+  for (int i = 0; i < 2; i++) {
     int unroll_factor = pow(2, i);
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
     string out_name = "harris_" + str(unroll_factor);
-    harris(out_name).realize(out_name, cols, rows, unroll_factor);
+
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    options.debug_options.expect_all_linebuffers = true;
+    harris(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
     move_to_benchmarks_folder(out_name + "_opt");
   }
@@ -6830,8 +6835,7 @@ void playground() {
 
 void application_tests() {
 
-  harris_test();
-  assert(false);
+  //harris_test();
   sobel_16_app_test();
 
   max_pooling_test();
