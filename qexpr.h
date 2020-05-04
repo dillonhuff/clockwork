@@ -953,6 +953,9 @@ struct Box {
 
     Box padded;
     int r = 0;
+    int old_min = min(0);
+    int old_max = max(0);
+
     for (auto i : intervals) {
       if (r != 0) {
         padded.intervals.push_back({i.min, i.max});
@@ -974,7 +977,13 @@ struct Box {
       r++;
     }
     cout << "New length: " << padded.length(0) << endl;
+
     assert(padded.length(0) % unroll_factor == 0);
+    //assert(padded.min(0) % unroll_factor == 0);
+    //assert((padded.max(0) + 1) % unroll_factor == 0);
+
+    //assert(padded.min(0) <= old_min);
+    //assert(padded.max(0) >= old_max);
     return padded;
   }
 

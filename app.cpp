@@ -943,7 +943,7 @@ extract_schedule_params(vector<isl_map*>& deps) {
     cout << tab(2) << "lexmax: " << str(lm) << endl;
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
       get_pieces(lm);
-    assert(pieces.size() <= 1);
+    //assert(pieces.size() <= 1);
     for (auto piece : pieces) {
       isl_multi_aff* bound = piece.second;
       cout << "bound: " << str(bound) << endl;
@@ -1042,6 +1042,15 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     vector<isl_set*> domains,
     vector<isl_map*> deps,
     map<string, vector<string> >& high_bandwidth_deps) {
+  cout << "Domains..." << endl;
+  for (auto d : domains) {
+    cout << tab(1) << str(d) << endl;
+  }
+  cout << endl;
+  cout << "Deps..." << endl;
+  for (auto d : deps) {
+    cout << tab(1) << str(d) << endl;
+  }
   ofstream sd("schedule_debug.txt", ios::app);
   sd << "--- Scheduling dimension" << endl;
   sd << tab(1) << "=== Domains..." << endl;

@@ -3144,7 +3144,9 @@ struct App {
     return map_find(f, domain_boxes);
   }
 
-  void fill_compute_domain() {
+  void fill_compute_domain(const std::string& f,
+      Update& update) {
+
     int ndims = data_dimension();
     vector<string> data_vars;
     vector<string> later_data_vars;
@@ -3173,19 +3175,61 @@ struct App {
       }
     }
 
+    compute_maps[update.name()] =
+      to_map(rdmap(ctx, "{ " + f + "[" + comma_list(data_vars) + " ] -> " +
+            update.name() + "[floor(d0 / " + to_string(update.unroll_factor) + "), " + comma_list(later_sched_vars) + "] }"));
+
+    cout << "compute map for " << update.name() << " is " << str(compute_maps[update.name()]) << endl;
+    compute_sets[update.name()] =
+      range(its(
+            compute_maps[update.name()],
+            data_domain(f).to_set(ctx, f)));
+    cout << "Compute domain for " << update.name() << " is " << str(compute_sets[update.name()]) << endl;
+  }
+
+  void fill_compute_domain() {
+    //int ndims = data_dimension();
+    //vector<string> data_vars;
+    //vector<string> later_data_vars;
+    //for (int i = 0; i < ndims; i++) {
+      //data_vars.push_back("d" + str(i));
+      //if (i > 0) {
+        //later_data_vars.push_back("d" + str(i));
+      //}
+    //}
+
+    //int sdims = schedule_dimension();
+    //assert(sdims >= ndims);
+
+    //vector<string> sched_vars;
+    //vector<string> later_sched_vars;
+    //for (int i = 0; i < ndims; i++) {
+      //sched_vars.push_back("d" + str(i));
+      //if (i > 0) {
+        //later_sched_vars.push_back("d" + str(i));
+      //}
+    //}
+    //for (int i = ndims; i < sdims; i++) {
+      //sched_vars.push_back("s" + str(i));
+      //if (i > 0) {
+        //later_sched_vars.push_back("s" + str(i));
+      //}
+    //}
+
     for (auto f : sort_functions()) {
       for (auto update : app_dag.at(f).updates) {
+        fill_compute_domain(f, update);
 
-        compute_maps[update.name()] =
-          to_map(rdmap(ctx, "{ " + f + "[" + comma_list(data_vars) + " ] -> " +
-                update.name() + "[floor(d0 / " + to_string(update.unroll_factor) + "), " + comma_list(later_sched_vars) + "] }"));
+        //compute_maps[update.name()] =
+          //to_map(rdmap(ctx, "{ " + f + "[" + comma_list(data_vars) + " ] -> " +
+                //update.name() + "[floor(d0 / " + to_string(update.unroll_factor) + "), " + comma_list(later_sched_vars) + "] }"));
 
-        cout << "compute map for " << update.name() << " is " << str(compute_maps[update.name()]) << endl;
-        compute_sets[update.name()] =
-          range(its(
-                compute_maps[update.name()],
-                data_domain(f).to_set(ctx, f)));
-        cout << "Compute domain for " << update.name() << " is " << str(compute_sets[update.name()]) << endl;
+        //cout << "compute map for " << update.name() << " is " << str(compute_maps[update.name()]) << endl;
+        //compute_sets[update.name()] =
+          //range(its(
+                //compute_maps[update.name()],
+                //data_domain(f).to_set(ctx, f)));
+        //cout << "Compute domain for " << update.name() << " is " << str(compute_sets[update.name()]) << endl;
       }
     }
     cout << "Got compute domain" << endl;
@@ -3227,14 +3271,14 @@ struct App {
     Box sbox;
     int max_dims = data_dimension();
 
-    for (auto f : sort_functions()) {
-      for (auto w : producers(f)) {
-        int dm = w.dimension();
-        if (dm > max_dims) {
-          max_dims = dm;
-        }
-      }
-    }
+    //for (auto f : sort_functions()) {
+      //for (auto w : producers(f)) {
+        //int dm = w.dimension();
+        //if (dm > max_dims) {
+          //max_dims = dm;
+        //}
+      //}
+    //}
 
     for (auto d : dims) {
       sbox.intervals.push_back({0, d - 1});
@@ -5048,31 +5092,12 @@ App harris_cartoon(const std::string& out_name) {
   harris.set_default_pixel_width(16);
   harris.func2d("img_oc");
   harris.func2d("img", v("img_oc"));
-  harris.func2d("grad_x", stencilv(-1, 1, 0, 0, "img"));
-      //add(sub(v("img", 1, -1), v("img", -1, -1)),
-        //mul(sub(v("img", 1, 0), v("img", -1, 0)), 2),
-        //sub(v("img", 1, 1), v("img", -1, 1))));
 
-  //harris.func2d("grad_y",
-      //add(sub(v("img", -1, 1), v("img", -1, -1)),
-        //mul(sub(v("img", 0, 1), v("img", 0, -1)), 2),
-        //sub(v("img", 1, 1), v("img", 1, -1))));
-
-  //harris.func2d("lxx", add(dbl(v("grad_x")), 7));
-  //harris.func2d("lyy", add(dbl(v("grad_y")), 7));
-  //harris.func2d("lxy", add(add(v("grad_x"), v("grad_y")), 7));
- 
-  // Passes scheduling
-  //harris.func2d(out_name, add(v("lxx"), v("lxy"), v("lyy")));
+  //harris.func2d("grad_x", stencilv(0, 2, 0, 0, "img"));
+  //harris.func2d(out_name, stencilv(0, 2, 0, 0, "grad_x"));
   
+  harris.func2d("grad_x", stencilv(-1, 1, 0, 0, "img"));
   harris.func2d(out_name, stencilv(-1, 1, 0, 0, "grad_x"));
-  //harris.func2d("lgxx", stencilv(-1, 1, -1, 1, "grad_x"));
-  //harris.func2d("lgyy", stencilv(-1, 1, -1, 1, "grad_x"));
-  //harris.func2d("lgxy", stencilv(-1, 1, -1, 1, "grad_x"));
-
-  //harris.func2d(out_name, add(v("lgxx"), v("lgxy"), v("lgyy")));
-  //harris.func2d(out_name, add(v("det"),
-        //add(dbl("trace"), 8)));
 
   return harris;
 }
@@ -5114,7 +5139,7 @@ App harris(const std::string& out_name) {
 
 void harris_unrolled_test() {
   int rows = 1;
-  int cols = 10;
+  int cols = 1;
   int unroll_factor = 2;
   cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
   string out_name = "harris_" + str(unroll_factor);
@@ -6858,8 +6883,8 @@ void playground() {
 
 void application_tests() {
 
-  harris_unrolled_test();
-  harris_test();
+  //harris_unrolled_test();
+  //harris_test();
   sobel_16_app_test();
 
   max_pooling_test();
