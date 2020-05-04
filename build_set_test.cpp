@@ -5048,32 +5048,35 @@ App harris_cartoon(const std::string& out_name) {
   harris.set_default_pixel_width(16);
   harris.func2d("img_oc");
   harris.func2d("img", v("img_oc"));
-  harris.func2d("grad_x",
-      add(sub(v("img", 1, -1), v("img", -1, -1)),
-        mul(sub(v("img", 1, 0), v("img", -1, 0)), 2),
-        sub(v("img", 1, 1), v("img", -1, 1))));
+  harris.func2d("grad_x", stencilv(-1, 1, 0, 0, "img"));
+      //add(sub(v("img", 1, -1), v("img", -1, -1)),
+        //mul(sub(v("img", 1, 0), v("img", -1, 0)), 2),
+        //sub(v("img", 1, 1), v("img", -1, 1))));
 
-  harris.func2d("grad_y",
-      add(sub(v("img", -1, 1), v("img", -1, -1)),
-        mul(sub(v("img", 0, 1), v("img", 0, -1)), 2),
-        sub(v("img", 1, 1), v("img", 1, -1))));
+  //harris.func2d("grad_y",
+      //add(sub(v("img", -1, 1), v("img", -1, -1)),
+        //mul(sub(v("img", 0, 1), v("img", 0, -1)), 2),
+        //sub(v("img", 1, 1), v("img", 1, -1))));
 
-  harris.func2d("lxx", add(dbl(v("grad_x")), 7));
-  harris.func2d("lyy", add(dbl(v("grad_y")), 7));
-  harris.func2d("lxy", add(add(v("grad_x"), v("grad_y")), 7));
+  //harris.func2d("lxx", add(dbl(v("grad_x")), 7));
+  //harris.func2d("lyy", add(dbl(v("grad_y")), 7));
+  //harris.func2d("lxy", add(add(v("grad_x"), v("grad_y")), 7));
+ 
+  // Passes scheduling
+  //harris.func2d(out_name, add(v("lxx"), v("lxy"), v("lyy")));
   
-  harris.func2d(out_name, add(v("lxx"), v("lxy"), v("lyy")));
-  
-  //harris.func2d("lgxx", stencilv(-1, 1, -1, 1, "lxx"));
-  //harris.func2d("lgyy", stencilv(-1, 1, -1, 1, "lyy"));
-  //harris.func2d("lgxy", stencilv(-1, 1, -1, 1, "lxy"));
+  harris.func2d(out_name, stencilv(-1, 1, 0, 0, "grad_x"));
+  //harris.func2d("lgxx", stencilv(-1, 1, -1, 1, "grad_x"));
+  //harris.func2d("lgyy", stencilv(-1, 1, -1, 1, "grad_x"));
+  //harris.func2d("lgxy", stencilv(-1, 1, -1, 1, "grad_x"));
 
-  //harris.func2d(out_name, add(v("lgxx"), v("lgxx"), v("lgyy")));
+  //harris.func2d(out_name, add(v("lgxx"), v("lgxy"), v("lgyy")));
   //harris.func2d(out_name, add(v("det"),
         //add(dbl("trace"), 8)));
 
   return harris;
 }
+
 App harris(const std::string& out_name) {
   App harris;
   harris.set_default_pixel_width(16);
