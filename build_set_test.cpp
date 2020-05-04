@@ -5062,11 +5062,13 @@ App harris_cartoon(const std::string& out_name) {
   harris.func2d("lyy", add(dbl(v("grad_y")), 7));
   harris.func2d("lxy", add(add(v("grad_x"), v("grad_y")), 7));
   
-  harris.func2d("lgxx", stencilv(-1, 1, -1, 1, "lxx"));
-  harris.func2d("lgyy", stencilv(-1, 1, -1, 1, "lyy"));
-  harris.func2d("lgxy", stencilv(-1, 1, -1, 1, "lxy"));
+  harris.func2d(out_name, add(v("lxx"), v("lxy"), v("lyy")));
+  
+  //harris.func2d("lgxx", stencilv(-1, 1, -1, 1, "lxx"));
+  //harris.func2d("lgyy", stencilv(-1, 1, -1, 1, "lyy"));
+  //harris.func2d("lgxy", stencilv(-1, 1, -1, 1, "lxy"));
 
-  harris.func2d(out_name, add(v("lgxx"), v("lgxx"), v("lgyy")));
+  //harris.func2d(out_name, add(v("lgxx"), v("lgxx"), v("lgyy")));
   //harris.func2d(out_name, add(v("det"),
         //add(dbl("trace"), 8)));
 
@@ -5122,6 +5124,7 @@ void harris_unrolled_test() {
   harris_cartoon(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
   move_to_benchmarks_folder(out_name + "_opt");
+  assert(false);
 }
 
 void harris_test() {

@@ -7,12 +7,12 @@ hw_uint<16> img_generated_compute(hw_uint<16*1> img_oc) {
   return img_oc.get<16, 0>();
 }
 
-hw_uint<16> grad_y_generated_compute(hw_uint<16*4> img) {
-  return (((img.get<16, 3>() - img.get<16, 2>()) + ((img.get<16, 0>() - img.get<16, 0>()) * hw_uint<16>(2))) + (img.get<16, 1>() - img.get<16, 1>()));
+hw_uint<16> grad_y_generated_compute(hw_uint<16*6> img) {
+  return (((img.get<16, 1>() - img.get<16, 0>()) + ((img.get<16, 3>() - img.get<16, 2>()) * hw_uint<16>(2))) + (img.get<16, 5>() - img.get<16, 4>()));
 }
 
-hw_uint<16> grad_x_generated_compute(hw_uint<16*3> img) {
-  return (((img.get<16, 0>() - img.get<16, 1>()) + ((img.get<16, 0>() - img.get<16, 0>()) * hw_uint<16>(2))) + (img.get<16, 1>() - img.get<16, 2>()));
+hw_uint<16> grad_x_generated_compute(hw_uint<16*6> img) {
+  return (((img.get<16, 3>() - img.get<16, 0>()) + ((img.get<16, 4>() - img.get<16, 1>()) * hw_uint<16>(2))) + (img.get<16, 5>() - img.get<16, 2>()));
 }
 
 hw_uint<16> lyy_generated_compute(hw_uint<16*1> grad_y) {
@@ -78,22 +78,22 @@ hw_uint<16>  img_generated_compute_unrolled_1(hw_uint<16>& img_oc) {
 }
 
   // grad_y_update_0 unroll factor: 1
-hw_uint<16>  grad_y_generated_compute_unrolled_1(hw_uint<64>& img) {
+hw_uint<16>  grad_y_generated_compute_unrolled_1(hw_uint<96>& img) {
   hw_uint<16> whole_result;
 
-  hw_uint<64> lane_0_img;
-  set_at<0, 64, 64>(lane_0_img, img.extract<0, 63>());
+  hw_uint<96> lane_0_img;
+  set_at<0, 96, 96>(lane_0_img, img.extract<0, 95>());
   auto result_0 = grad_y_generated_compute(lane_0_img);
   set_at<0, 16, 16>(whole_result, result_0);
   return whole_result;
 }
 
   // grad_x_update_0 unroll factor: 1
-hw_uint<16>  grad_x_generated_compute_unrolled_1(hw_uint<48>& img) {
+hw_uint<16>  grad_x_generated_compute_unrolled_1(hw_uint<96>& img) {
   hw_uint<16> whole_result;
 
-  hw_uint<48> lane_0_img;
-  set_at<0, 48, 48>(lane_0_img, img.extract<0, 47>());
+  hw_uint<96> lane_0_img;
+  set_at<0, 96, 96>(lane_0_img, img.extract<0, 95>());
   auto result_0 = grad_x_generated_compute(lane_0_img);
   set_at<0, 16, 16>(whole_result, result_0);
   return whole_result;
