@@ -950,6 +950,9 @@ struct Box {
 
   Box pad_range_to_nearest_multiple(const int unroll_factor) const {
     assert(unroll_factor > 0);
+    if (unroll_factor == 1) {
+      return *this;
+    }
 
     Box padded;
     int r = 0;
@@ -960,30 +963,40 @@ struct Box {
       if (r != 0) {
         padded.intervals.push_back({i.min, i.max});
       } else {
-        int range = length(0);
-        cout << "Length: " << range << endl;
-        if (range % unroll_factor != 0) {
-          int new_range = range + (unroll_factor - (range % unroll_factor));
-          cout << "new_range = " << new_range << endl;
-          int new_max = i.min + new_range - 1;
-
-          cout << "new_max = " << new_max << endl;
-
-          padded.intervals.push_back({i.min, new_max});
-        } else {
-          padded.intervals.push_back({i.min, i.max});
+        padded.intervals.push_back({i.min, i.max});
+        while (padded.min(0) % unroll_factor != 0) {
+          padded.intervals[0].min = padded.min(0) - 1;
         }
+
+        while ((padded.max(0) % unroll_factor) != (unroll_factor - 1)) {
+          padded.intervals[0].max = padded.max(0) + 1;
+          cout << "max = " << padded.intervals[0].max << endl;
+        }
+
+        //int range = length(0);
+        //cout << "Length: " << range << endl;
+        //if (range % unroll_factor != 0) {
+          //int new_range = range + (unroll_factor - (range % unroll_factor));
+          //cout << "new_range = " << new_range << endl;
+          //int new_max = i.min + new_range - 1;
+
+          //cout << "new_max = " << new_max << endl;
+
+          //padded.intervals.push_back({i.min, new_max});
+        //} else {
+          //padded.intervals.push_back({i.min, i.max});
+        //}
       }
       r++;
     }
-    cout << "New length: " << padded.length(0) << endl;
+    cout << "New length: " << padded.length(0) << ", " << padded.min(0) << ", " << padded.max(0) << endl;
 
+    assert(padded.min(0) % unroll_factor == 0);
+    assert((padded.max(0) + 1) % unroll_factor == 0);
     assert(padded.length(0) % unroll_factor == 0);
-    //assert(padded.min(0) % unroll_factor == 0);
-    //assert((padded.max(0) + 1) % unroll_factor == 0);
 
-    //assert(padded.min(0) <= old_min);
-    //assert(padded.max(0) >= old_max);
+    assert(padded.min(0) <= old_min);
+    assert(padded.max(0) >= old_max);
     return padded;
   }
 

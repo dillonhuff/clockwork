@@ -6890,9 +6890,9 @@ void playground() {
 
 void application_tests() {
 
+  harris_unrolled_test();
+  harris_test();
   gaussian_pyramid_app_test();
-  //harris_unrolled_test();
-  //harris_test();
   sobel_16_app_test();
 
   max_pooling_test();
