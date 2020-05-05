@@ -7655,8 +7655,8 @@ static void write_output(hw_uint<512>* output, HWStream<hw_uint<512> >& v, const
 
 void bxy_ur_32_opt_accel(hw_uint<512>* input_update_0_read, hw_uint<512>* bxy_ur_32_update_0_write, const int size) { 
 #pragma HLS dataflow
-#pragma HLS INTERFACE m_axi port = input_update_0_read offset = slave bundle = gmem
-#pragma HLS INTERFACE m_axi port = bxy_ur_32_update_0_write offset = slave bundle = gmem
+#pragma HLS INTERFACE m_axi port = input_update_0_read offset = slave bundle = gmem0
+#pragma HLS INTERFACE m_axi port = bxy_ur_32_update_0_write offset = slave bundle = gmem1
 
 #pragma HLS INTERFACE s_axilite port = input_update_0_read bundle = control
 #pragma HLS INTERFACE s_axilite port = bxy_ur_32_update_0_write bundle = control
