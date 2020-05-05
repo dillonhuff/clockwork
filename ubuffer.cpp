@@ -1341,20 +1341,30 @@ map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, st
     size_t sched_dim = 0;
     for (size_t dim = 0; dim < in_sched_vec.size(); dim ++) {
         if (!(is_number(in_sched_vec[dim]) || find_sched_dim)) {
-            assert(dim > 0);
-            find_sched_dim = true;
-            int in_sched_stamp = safe_stoi(in_sched_vec[dim-1]);
-            int out_sched_stamp = safe_stoi(out_sched_vec[dim-1]);
-            if (in_sched_stamp == out_sched_stamp - 1) {
-                in_new_sched_vec.push_back("0");
-                in_vectorized_sched_vec.push_back( "1" );
-                out_vectorized_sched_vec[dim-1] = to_string(in_sched_stamp);
-                out_vectorized_sched_vec.push_back( "2");
-                out_new_sched_vec.push_back("0");
+            if (dim == 0){
+              find_sched_dim = true;
+              in_vectorized_sched_vec.push_back("1");
+              in_new_sched_vec.push_back("0");
+              out_vectorized_sched_vec.push_back("2");
+              out_new_sched_vec.push_back("3");
             }
             else {
-                cout << "ERROR: The schedule is not considered\n\tin vec: " << in_sched_vec << "\n\tout vec: " << out_sched_vec << endl;
-                assert(false);
+              //this is the situation we did not run any schedule optimization
+              //First try
+              find_sched_dim = true;
+              int in_sched_stamp = safe_stoi(in_sched_vec[dim-1]);
+              int out_sched_stamp = safe_stoi(out_sched_vec[dim-1]);
+              if (in_sched_stamp == out_sched_stamp - 1) {
+                  in_new_sched_vec.push_back("0");
+                  in_vectorized_sched_vec.push_back( "1" );
+                  out_vectorized_sched_vec[dim-1] = to_string(in_sched_stamp);
+                  out_vectorized_sched_vec.push_back( "2");
+                  out_new_sched_vec.push_back("0");
+              }
+              else {
+                  cout << "ERROR: The schedule is not considered\n\tin vec: " << in_sched_vec << "\n\tout vec: " << out_sched_vec << endl;
+                  assert(false);
+              }
             }
         }
         in_vectorized_sched_vec.push_back(in_sched_vec[dim]);
@@ -1395,6 +1405,7 @@ void UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2
 
     for (auto slice : constraint_slices) {
         cout << "Constraint: " << str(slice) << endl;
+        cout << "origin: " << str(rewrite_buf2op) << endl;
         cout << "Rewrited Access Map" << str(simplify(dot(inv(rewrite_buf2op), slice))) << endl;
         auto rewrite_access_map = dot(inv(rewrite_buf2op), slice);
         if (is_out) {

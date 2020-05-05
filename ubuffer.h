@@ -710,23 +710,29 @@ class UBuffer {
           if (buf.isIn.at(pt_name)){
             if (inpt_set.count(pt_name)) {
               port_bundles[itr.first].push_back(pt_name);
+              auto acc_map = to_map(buf.access_map.at(pt_name));
+              acc_map = set_range_name(acc_map, name);
               add_in_pt(pt_name,
                       buf.domain.at(pt_name),
-                      to_map(buf.access_map.at(pt_name)),
+                      acc_map,
                       buf.schedule.at(pt_name));
               //TODO: get rid of this, change into a method
               access_pattern[pt_name] = buf.access_pattern.at(pt_name);
+              access_pattern.at(pt_name).buf_name = name;
             }
           }
           else {
             if (outpt_set.count(pt_name)) {
               port_bundles[itr.first].push_back(pt_name);
+              auto acc_map = to_map(buf.access_map.at(pt_name));
+              acc_map = set_range_name(acc_map, name);
               add_out_pt(pt_name,
                       buf.domain.at(pt_name),
-                      to_map(buf.access_map.at(pt_name)),
+                      acc_map,
                       buf.schedule.at(pt_name));
               //TODO: get rid of this, change into a method
               access_pattern[pt_name] = buf.access_pattern.at(pt_name);
+              access_pattern.at(pt_name).buf_name = name;
             }
           }
         }
@@ -1043,6 +1049,7 @@ class UBuffer {
         }
         string vars = sep_list(addr_var, "[", "]", ",");
         isl_map* buf_map = isl_map_read_from_str(ctx, string("{" + name + vars + " -> " + new_buf_name + vars + "}").c_str());
+        cout <<"origin: " << str(origin_map) <<", transform: " << str(buf_map) << endl;
         return to_map(dot(origin_map, buf_map));
     }
 

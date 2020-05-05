@@ -273,15 +273,16 @@ void buffer_vectorization(string vec_buf_name, int dim_id, int fetch_width, map<
             target_buffer.vectorization(dim_id, fetch_width, agg, sram, tb);
             break;
         }
-        else {
-            //add extra dimension in the schedule vector
-            auto buffer = it.second;
-            for(auto it_sched : buffer.schedule) {
-                umap* sched = it_sched.second;
-                string key = it_sched.first;
-                buffer.schedule[key] = pad_one_more_dim_to_sched_map(buffer.ctx, sched, "0");
-            }
-        }
+        //else {
+        //    //add extra dimension in the schedule vector
+        //    auto buffer = it.second;
+        //    for(auto it_sched : buffer.schedule) {
+        //        cout << "pad one more dim" << endl;
+        //        umap* sched = it_sched.second;
+        //        string key = it_sched.first;
+        //        buffer.schedule[key] = pad_one_more_dim_to_sched_map(buffer.ctx, sched, "0");
+        //    }
+        //}
     }
     buffers.erase(vec_buf_name);
     buffers[agg.name] = agg;
@@ -803,22 +804,29 @@ void bankmerge_vec_test() {
   write->add_load("in", "po, pi");
   write->add_store("buf", "po, pi");
 
-  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 6);
+  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 8);
   auto read = q->add_op("output");
   for (size_t wy = 0; wy < 3; wy ++)
-      for (size_t wx = 0; wx < 3; wx ++) {
+      for (size_t wx = 0; wx < 1; wx ++) {
         read->add_load("buf", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
       }
+  read->add_store("out", "po, pi");
 
   auto buffers_opt = build_buffers(prg);
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
   buffers_opt.at("buf").generate_bank_and_merge(opt);
+  cout << buffers_opt.at("buf") << endl;
   auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
   for (auto buf : rewrite_buf) {
-      cout << buf << endl;
+    cout << buf << endl;
+    buffers_opt[buf.name] = buf;
   }
+  buffers_opt.erase("buf");
+  buffer_vectorization("buf1", 1, 4, buffers_opt);
+  auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
+  cout << codegen_c(opt_sched) << endl;
   assert(false);
 }
 
@@ -6400,6 +6408,8 @@ void playground() {
 
 void application_tests() {
     //memtile_test();
+    //auto_vec_test();
+    //assert(false);
     bankmerge_vec_test();
     assert(false);
     cnn_test();
