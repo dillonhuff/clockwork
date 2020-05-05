@@ -5293,48 +5293,48 @@ void exposure_fusion() {
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
   int size =
-    64;
-    //1250;
+    //64;
+    1250;
     //200;
 
-  //auto isl_sched = lp.realize_isl_schedule("pyramid_synthetic_exposure_fusion", size, size, 1);
-  //auto isl_maps = get_maps(isl_sched);
+  auto isl_sched = lp.realize_isl_schedule("pyramid_synthetic_exposure_fusion", size, size, 1);
+  auto isl_maps = get_maps(isl_sched);
 
-  //auto opt_sched = lp.realize_opt_schedule("pyramid_synthetic_exposure_fusion", size, size, 1);
-  ////auto dom = domain(opt_sched);
-  ////opt_sched = unn_domain(opt_sched, isl_union_set_universe(cpy(dom)));
-  //auto opt_maps = get_maps(opt_sched);
+  auto opt_sched = lp.realize_opt_schedule("pyramid_synthetic_exposure_fusion", size, size, 1);
+  //auto dom = domain(opt_sched);
+  //opt_sched = unn_domain(opt_sched, isl_union_set_universe(cpy(dom)));
+  auto opt_maps = get_maps(opt_sched);
 
-  //cout << "--- ISL Schedule" << endl;
-  //for (auto m : isl_maps) {
-    //cout << tab(1) << str(m) <<  endl;
-  //}
-  //cout << endl << endl;
+  cout << "--- ISL Schedule" << endl;
+  for (auto m : isl_maps) {
+    cout << tab(1) << str(m) <<  endl;
+  }
+  cout << endl << endl;
 
-  //cout << "--- OPT Schedule" << endl;
-  //for (auto m : opt_maps) {
-    //cout << tab(1) << str(m) <<  endl;
-  //}
-  //cout << endl << endl;
+  cout << "--- OPT Schedule" << endl;
+  for (auto m : opt_maps) {
+    cout << tab(1) << str(m) <<  endl;
+  }
+  cout << endl << endl;
 
-  //assert(isl_maps.size() == opt_maps.size());
-  //cout << "--- MATCHED Schedules" << endl;
-  //for (auto opt : opt_maps) {
-    //isl_map* imap = nullptr;
-    //for (auto isl : isl_maps) {
-      //if (domain_name(isl) == domain_name(opt)) {
-        //imap = isl;
-        //break;
-      //}
-    //}
-    //assert(imap != nullptr);
+  assert(isl_maps.size() == opt_maps.size());
+  cout << "--- MATCHED Schedules" << endl;
+  for (auto opt : opt_maps) {
+    isl_map* imap = nullptr;
+    for (auto isl : isl_maps) {
+      if (domain_name(isl) == domain_name(opt)) {
+        imap = isl;
+        break;
+      }
+    }
+    assert(imap != nullptr);
 
-    //cout << tab(1) << "opt: " << str(opt) << endl;
-    //cout << tab(1) << "isl: " << str(imap) << endl;
-    //cout << endl;
-  //}
+    cout << tab(1) << "opt: " << str(opt) << endl;
+    cout << tab(1) << "isl: " << str(imap) << endl;
+    cout << endl;
+  }
 
-  //assert(false);
+  assert(false);
 
   lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
   //move_to_benchmarks_folder("pyramid_synthetic_exposure_fusion_opt");
@@ -5453,13 +5453,21 @@ void gaussian_pyramid_app_test() {
     last = next;
   }
   //gp.realize(last, 32, 32, 1);
-  gp.realize(last, 32, 32, 2);
+ 
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    options.debug_options.expect_all_linebuffers = true;
+    gp.realize(options, last, 4, 4, 2);
+  }
 
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
   options.unroll_factors_as_pad = true;
-  gp.realize_naive(options, last, 32, 32);
+  gp.realize_naive(options, last, 4, 4);
 
   std::vector<std::string> naive =
     run_regression_tb("level_3_naive");
@@ -6905,17 +6913,17 @@ void playground() {
 }
 
 void application_tests() {
+  exposure_fusion();
+  gaussian_pyramid_app_test();
+  denoise2d_test();
 
   harris_unrolled_test();
   harris_test();
-  gaussian_pyramid_app_test();
   sobel_16_app_test();
 
   max_pooling_test();
-  exposure_fusion();
   //assert(false);
   tricky_shift_register_reconvergence_test();
-  denoise2d_test();
   mismatched_stencil_test();
   //assert(false);
   //assert(false);

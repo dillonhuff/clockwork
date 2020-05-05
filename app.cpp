@@ -1051,19 +1051,19 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   for (auto d : deps) {
     cout << tab(1) << str(d) << endl;
   }
-  ofstream sd("schedule_debug.txt", ios::app);
-  sd << "--- Scheduling dimension" << endl;
-  sd << tab(1) << "=== Domains..." << endl;
-  for (auto d : domains) {
-    sd << tab(2) << str(d) << endl;
-  }
-  sd << endl;
-  sd << tab(1) << "=== Dependencies..." << endl;
-  for (auto d : deps) {
-    sd << tab(2) << str(d) << endl;
-    sd << tab(3) << str(card(d)) << endl;
-  }
-  sd << endl;
+  //ofstream sd("schedule_debug.txt", ios::app);
+  //sd << "--- Scheduling dimension" << endl;
+  //sd << tab(1) << "=== Domains..." << endl;
+  //for (auto d : domains) {
+    //sd << tab(2) << str(d) << endl;
+  //}
+  //sd << endl;
+  //sd << tab(1) << "=== Dependencies..." << endl;
+  //for (auto d : deps) {
+    //sd << tab(2) << str(d) << endl;
+    //sd << tab(3) << str(card(d)) << endl;
+  //}
+  //sd << endl;
 
 
   cout << "Deps..." << endl;
@@ -1078,13 +1078,13 @@ map<string, isl_aff*> clockwork_schedule_dimension(
 
   cout << "Building delay constraints" << endl;
   ilp_builder delay_problem(ct);
-  sd << "=== Schedule params" << endl;
-  for (auto s : schedule_params) {
-    sd << tab(1) << str(s.first) << endl;
-    for (auto k : s.second) {
-      sd << tab(2) << str(k.first) << "*x + " << str(k.second) << endl;
-    }
-  }
+  //sd << "=== Schedule params" << endl;
+  //for (auto s : schedule_params) {
+    //sd << tab(1) << str(s.first) << endl;
+    //for (auto k : s.second) {
+      //sd << tab(2) << str(k.first) << "*x + " << str(k.second) << endl;
+    //}
+  //}
 
   set<string> consumed;
   set<string> outputs;
@@ -1179,24 +1179,54 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     }
   }
 
+  vector<pair<string, isl_val*> > diffs;
   map<string, isl_val*> delay_obj;
   for (auto s : schedule_params) {
     string consumer = domain_name(s.first);
     string producer = range_name(s.first);
+    
+    isl_set* pset = find_set(producer, domains);
+    //isl_val* min = lexminval(cset);
+    isl_val* lp = lexmaxval(pset);
+
+    isl_set* cset = find_set(consumer, domains);
+    //isl_val* min = lexminval(cset);
+    isl_val* lc = lexmaxval(cset);
+
+    //cout << consumer << endl;
+    //cout << tab(1) << "consumer min point = " << str(min) << endl;
+    //cout << tab(1) << "consumer max point = " << str(max) << endl;
+    //cout << endl;
+    //isl_set* pset = find_set(consumer, domains);
+
+    isl_val* qc = map_find(sched_var_name(producer), qfactors);
+    isl_val* qp = map_find(sched_var_name(producer), qfactors);
 
     string dc = delay_var_name(consumer);
     string dp = delay_var_name(producer);
 
-    delay_obj[dc] = negone(ct);
-    delay_obj[dp] = negone(ct);
+
+    //if (contains_key(consumer, high_bandwidth_deps) &&
+        //elem(producer, map_find(consumer, high_bandwidth_deps))) {
+      //auto qcoeff = sub(mul(qp, lp), mul(qc, lc));
+      //delay_problem.add_geq({{dp, one(ct)}, {dc, negone(ct)}}, qcoeff);
+    //}
+
+    //delay_obj[dc] = negone(ct);
+    //delay_obj[dp] = negone(ct);
     
     //delay_obj[dc] = one(ct);
     //delay_obj[dp] = one(ct);
-    
+
+    diffs.push_back({dc, one(ct)});
+    diffs.push_back({dp, negone(ct)});
+
     //delay_obj[dc] = one(ct);
     //delay_obj[dp] = negone(ct);
   }
+  //assert(false);
 
+  delay_obj = simplify(diffs);
   cout << "Delay constraints" << endl;
   //auto opt_delay = delay_problem.lex_minimize({delay_obj});
   //auto opt_delay = delay_problem.lex_minimize({pipeline_delay});
@@ -1222,12 +1252,12 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     auto sf = map_find(f, schedule_functions);
     auto minpt = lexmin(dom);
     auto maxpt = lexmax(dom);
-    sd << tab(1) << f << ": " << str(sf) << endl;
-    sd << tab(2) << "min pt: " << str(minpt) << endl;
-    sd << tab(2) << "max pt: " << str(maxpt) << endl;
-    sd << endl;
+    //sd << tab(1) << f << ": " << str(sf) << endl;
+    //sd << tab(2) << "min pt: " << str(minpt) << endl;
+    //sd << tab(2) << "max pt: " << str(maxpt) << endl;
+    //sd << endl;
   }
-  sd.close();
+  //sd.close();
 
   cout << "Done with schedule" << endl;
   return schedule_functions;

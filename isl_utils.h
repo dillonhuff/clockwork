@@ -289,6 +289,12 @@ isl_union_set* lexmax(isl_union_set* const m0);
 
 isl_set* lexmax(isl_set* const m0);
 
+isl_point* lexminpt(isl_set* const m0);
+isl_point* lexmaxpt(isl_set* const m0);
+
+isl_val* lexminval(isl_set* const m0);
+isl_val* lexmaxval(isl_set* const m0);
+
 umap* lexmax(umap* const m0);
 
 isl_map* lexmax(isl_map* const m0);
@@ -452,6 +458,7 @@ vector<string> space_var_decls(isl_space* s);
 isl_aff* add(isl_aff* a, isl_aff* b);
 
 isl_val* add(isl_val* a, isl_val* b);
+isl_val* sub(isl_val* a, isl_val* b);
 isl_val* mul(isl_val* a, isl_val* b);
 isl_val* neg(isl_val* a);
 
@@ -467,4 +474,4 @@ isl_aff* aff_on_domain(isl_local_space* ls, isl_val* max);
 uset* pad_uset(uset* domain);
 umap* pad_map(umap* unpadded);
 
-
+isl_val* coord(isl_point* const p, const int pos);

@@ -1846,6 +1846,10 @@ isl_val* neg(isl_val* a) {
   return isl_val_neg(cpy(a));
 }
 
+isl_val* sub(isl_val* a, isl_val* b) {
+  return isl_val_sub(cpy(a), cpy(b));
+}
+
 isl_val* add(isl_val* a, isl_val* b) {
   return isl_val_add(cpy(a), cpy(b));
 }
@@ -2052,4 +2056,24 @@ umap* pad_map(umap* unpadded) {
   }
 
   return final_map;
+}
+
+isl_val* coord(isl_point* const p, const int pos) {
+  return isl_point_get_coordinate_val(p, isl_dim_set, pos);
+}
+
+isl_val* lexminval(isl_set* const m0) {
+  return coord(lexminpt(m0), 0);
+}
+
+isl_val* lexmaxval(isl_set* const m0) {
+  return coord(lexmaxpt(m0), 0);
+}
+
+isl_point* lexminpt(isl_set* const m0) {
+  return sample(lexmin(m0));
+}
+
+isl_point* lexmaxpt(isl_set* const m0) {
+  return sample(lexmax(m0));
 }
