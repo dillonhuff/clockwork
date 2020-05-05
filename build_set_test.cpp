@@ -5151,15 +5151,31 @@ void harris_unrolled_test() {
   cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
   string out_name = "harris_" + str(unroll_factor);
 
-  CodegenOptions options;
-  options.internal = true;
-  options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
-  options.debug_options.expect_all_linebuffers = true;
-  harris_cartoon(out_name).realize(options, out_name, cols, rows, unroll_factor);
+  App h = harris_cartoon(out_name);
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    options.debug_options.expect_all_linebuffers = true;
+    h.realize(options, out_name, cols, rows, unroll_factor);
+  }
+
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.all_rams = true;
+    options.unroll_factors_as_pad = true;
+    h.realize_naive(options, out_name, cols, rows);
+  }
+
+  std::vector<std::string> naive =
+    run_regression_tb("harris_2_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb("harris_2_opt");
+  assert(naive == optimized);
 
   move_to_benchmarks_folder(out_name + "_opt");
-  assert(false);
 }
 
 void harris_test() {

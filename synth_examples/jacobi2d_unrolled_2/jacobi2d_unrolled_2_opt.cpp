@@ -486,7 +486,7 @@ void jacobi2d_unrolled_2_opt(HWStream<hw_uint<64> >& /* get_args num ports = 2 *
 #ifdef __VIVADO_SYNTH__
 #include "jacobi2d_unrolled_2_opt.h"
 
-#define INPUT_SIZE 162
+#define INPUT_SIZE 180
 #define OUTPUT_SIZE 128
 extern "C" {
 

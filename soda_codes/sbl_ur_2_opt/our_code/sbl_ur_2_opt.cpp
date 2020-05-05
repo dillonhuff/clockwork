@@ -1106,7 +1106,7 @@ void sbl_ur_2_opt(HWStream<hw_uint<32> >& /* get_args num ports = 2 */off_chip_i
 #ifdef __VIVADO_SYNTH__
 #include "sbl_ur_2_opt.h"
 
-#define INPUT_SIZE 1039802
+#define INPUT_SIZE 1040884
 #define OUTPUT_SIZE 1036800
 extern "C" {
 
