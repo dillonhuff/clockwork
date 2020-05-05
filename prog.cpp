@@ -233,14 +233,6 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
 
   for (auto edge_bundle : in_bundles(buffers, prg)) {
     populate_input(out, edge_bundle);
-    //out << tab(1) << "std::ofstream input_" << edge_bundle << "(\"" << edge_bundle << ".csv\");" << endl;
-    //out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
-    //out << tab(2) << "// TODO: Add support for other widths" << endl;
-    //out << tab(2) << "uint16_t val = (i % 256);" << endl;
-    //out << tab(2) << "input_" << edge_bundle << " << val << std::endl;" << endl;
-    //out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = val;" << endl;
-    //out << tab(1) << "}" << endl << endl;
-    //out << tab(1) << "input_" << edge_bundle << ".close();" << endl;
   }
 
   for (auto edge_bundle : out_bundles(buffers, prg)) {

@@ -5899,7 +5899,7 @@ void blur_xy_16_app_test() {
   int cols = 1920;
   int rows = 1080;
 
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 6; i++) {
     int unroll_factor = pow(2, i);
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
     string out_name = "bxy_ur_" + str(unroll_factor);
@@ -6913,6 +6913,7 @@ void playground() {
 }
 
 void application_tests() {
+  blur_xy_16_app_test();
   tricky_shift_register_reconvergence_test();
 
   //playground();
@@ -6996,7 +6997,6 @@ void application_tests() {
   up_unrolled_4_test();
   //assert(false);
 
-  blur_xy_16_app_test();
 
   up_unrolled_test();
   up_down_unrolled_test();
