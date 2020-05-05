@@ -6069,7 +6069,7 @@ void two_input_denoise_pipeline_test() {
   options.internal = true;
   options.simplify_address_expressions = true;
   options.use_custom_code_string = true;
-  options.debug_options.expect_all_linebuffers = true;
+  //options.debug_options.expect_all_linebuffers = true;
   dn.realize(options, out_name, size, size);
   std::vector<std::string> optimized =
     run_regression_tb(out_name + "_opt");
@@ -6913,16 +6913,7 @@ void playground() {
 }
 
 void application_tests() {
-  two_input_mag_test();
-  one_input_mag_test();
-  sum_diffs_test();
-  sum_float_test();
-  sum_denoise_test();
-
-  sobel_mag_y_test();
-  sobel_app_test();
-  sobel_mag_x_test();
-
+  tricky_shift_register_reconvergence_test();
 
   //playground();
   jacobi2d_app_test();
@@ -6930,7 +6921,6 @@ void application_tests() {
   grayscale_conversion_test();
   upsample2d_test();
 
-  tricky_shift_register_reconvergence_test();
   gaussian_pyramid_app_test();
   denoise2d_test();
 
@@ -6949,16 +6939,8 @@ void application_tests() {
   exposure_fusion();
 
   max_pooling_test();
-  //assert(false);
   mismatched_stencil_test();
-  //assert(false);
-  //assert(false);
   cnn_test();
-
-  //assert(false);
-  //assert(false);
-
-  //assert(false);
 
   sobel_test();
 
@@ -6966,6 +6948,16 @@ void application_tests() {
   jacobi_2d_2_test();
   jacobi_2d_test();
 
+
+  two_input_mag_test();
+  one_input_mag_test();
+  sum_diffs_test();
+  sum_float_test();
+  sum_denoise_test();
+
+  sobel_mag_y_test();
+  sobel_app_test();
+  sobel_mag_x_test();
 
 
   heat_3d_test();
