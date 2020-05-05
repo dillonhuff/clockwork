@@ -1106,6 +1106,68 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
   }
 }
 
+vector<UBuffer> UBuffer::port_grouping(int port_width) {
+    /* This is the port constrained buffer lowering algorithm,
+     * Based on the banking information, we are regrouping the banks
+     * into a set of ubuffer
+     */
+    //TODO: we need more app to test this heuristic based algorithm
+    vector<UBuffer> regroup_ub;
+    stack<bank> bank_pool;
+    for (auto inpt: get_in_ports()) {
+        vector<bank> rec = receiver_banks(inpt);
+        sort(rec.begin(), rec.end(), [](const bank& l, const bank& r) {
+                return l.maxdelay > r.maxdelay;
+                });
+        for (auto bk : rec) {
+            bank_pool.push(bk);
+            //cout << tab(1) << bk.name << ", " << bk.maxdelay << ", SR only: " << bk.onlySR() << endl;
+        }
+    }
+    int group_port_width = 0;
+
+    //Using set for reoccuring port
+    set<string> inpt_set, outpt_set;
+    int cnt = 0;
+    while(!bank_pool.empty()) {
+        auto bk = bank_pool.top();
+        auto input = get_bank_input(bk.name);
+        if (bk.onlySR()) {
+            //create a ub with mark of shift register
+            string tmp[] = {input};
+            regroup_ub.emplace_back(*this, set<string>(tmp, tmp+1), bk.get_out_ports(), cnt);
+            bank_pool.pop();
+            cnt ++;
+        }
+        else{
+            group_port_width += inpt_set.count(input) + 1;
+            if (group_port_width < port_width) {
+                //pop stack and add port width
+                bank_pool.pop();
+
+                //add it to the group
+                inpt_set.insert(input);
+                auto outpts = bk.get_out_ports();
+                outpt_set.insert(outpts.begin(), outpts.end());
+            }
+            else {
+                //create a new merged ubuffer for this backend port constraint
+                //UBuffer ub_grp(*this, inpt_set, outpt_set, cnt);
+                regroup_ub.emplace_back(*this, inpt_set, outpt_set, cnt);
+                group_port_width = 0;
+                inpt_set.clear();
+                outpt_set.clear();
+                cnt ++;
+            }
+        }
+    }
+    //chances are that we have some leftover
+    if (!inpt_set.empty()) {
+        regroup_ub.emplace_back(*this, inpt_set, outpt_set, cnt);
+    }
+    return regroup_ub;
+}
+
 Box UBuffer::get_bundle_box(const std::string & pt) {
     string pt_name;
     for (auto it: port_bundles) {

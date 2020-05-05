@@ -815,6 +815,10 @@ void bankmerge_vec_test() {
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
   buffers_opt.at("buf").generate_bank_and_merge(opt);
+  auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
+  for (auto buf : rewrite_buf) {
+      cout << buf << endl;
+  }
   assert(false);
 }
 

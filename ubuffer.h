@@ -70,6 +70,26 @@ struct bank {
   //port delay map
   map<string, int> delay_map;
 
+  //method determine if we are going to map to memory
+  bool onlySR() const {
+      auto delays = sort_unique(read_delays);
+      for (size_t i = 0; i < delays.size()-1; i ++) {
+          if (delays[i+1] - delays[i] != 1) {
+              return false;
+          }
+      }
+      return true;
+  }
+
+  //return a set of port string
+  set<string> get_out_ports() {
+    set<string> ret;
+    for (auto itr: delay_map) {
+        ret.insert(itr.first);
+    }
+    return ret;
+  }
+
   vector<int> get_end_inds() const {
     auto break_points = get_break_points();
 
@@ -595,6 +615,17 @@ class UBuffer {
       return {};
     }
 
+    string get_bank_input(const std::string& name) const {
+      for (auto b : stack_banks) {
+        if (b.second.name == name) {
+          return b.first.first;
+        }
+      }
+      cout << "Error: No such bank as: " << name << endl;
+      assert(false);
+      return "";
+    }
+
     void replace_bank(stack_bank& target, stack_bank& replacement) {
       for (auto bnk : stack_banks) {
         if (bnk.second.name == target.name) {
@@ -643,6 +674,11 @@ class UBuffer {
       return "";
     }
 
+    bank get_bank_between(const std::string& inpt, const std::string& outpt) const {
+      string bk_name = bank_between(inpt, outpt);
+      return get_bank(bk_name);
+    }
+
     vector<stack_bank> receiver_banks(const std::string& inpt) {
       vector<stack_bank> bnks;
       vector<string> done;
@@ -661,6 +697,51 @@ class UBuffer {
     }
 
     UBuffer() : port_widths(32) {}
+
+    //method to create a subgroup
+    UBuffer(UBuffer buf, set<string> inpt_set, set<string> outpt_set, int idx) {
+      name = buf.name + to_string(idx);
+      ctx = buf.ctx;
+      port_widths = buf.port_widths;
+
+      //adding port
+      for (auto itr: buf.port_bundles) {
+        for (auto pt_name : itr.second) {
+          if (buf.isIn.at(pt_name)){
+            if (inpt_set.count(pt_name)) {
+              port_bundles[itr.first].push_back(pt_name);
+              add_in_pt(pt_name,
+                      buf.domain.at(pt_name),
+                      to_map(buf.access_map.at(pt_name)),
+                      buf.schedule.at(pt_name));
+              //TODO: get rid of this, change into a method
+              access_pattern[pt_name] = buf.access_pattern.at(pt_name);
+            }
+          }
+          else {
+            if (outpt_set.count(pt_name)) {
+              port_bundles[itr.first].push_back(pt_name);
+              add_out_pt(pt_name,
+                      buf.domain.at(pt_name),
+                      to_map(buf.access_map.at(pt_name)),
+                      buf.schedule.at(pt_name));
+              //TODO: get rid of this, change into a method
+              access_pattern[pt_name] = buf.access_pattern.at(pt_name);
+            }
+          }
+        }
+      }
+
+      //reconstruct_bank
+      for (auto inpt: get_in_ports()) {
+          for (auto outpt: get_out_ports()) {
+              if (buf.has_bank_between(inpt, outpt)) {
+                  stack_banks[make_pair(inpt, outpt)] =
+                      buf.get_bank_between(inpt, outpt);
+              }
+          }
+      }
+    }
 
     int lanes_in_bundle(const std::string& bn) {
       assert(contains_key(bn, port_bundles));
@@ -984,7 +1065,7 @@ class UBuffer {
     Box get_bundle_box(const std::string& pt);
     Box extract_addr_box(uset* rddom, vector<size_t> sequence);
     string generate_linearize_ram_addr(const std::string& pt);
-
+    vector<UBuffer> port_grouping(int port_width);
 };
 
 int compute_max_dd(UBuffer& buf, const string& inpt);
