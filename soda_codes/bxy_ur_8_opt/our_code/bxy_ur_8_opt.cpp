@@ -1851,48 +1851,6 @@ inline void input_input_update_0_write_bundle_write(hw_uint<128>& input_update_0
 
 
 // Operation logic
-inline void bxy_ur_8_update_0(blurx_cache& blurx, HWStream<hw_uint<128> >& /* buffer_args num ports = 8 */bxy_ur_8, int d0, int d1) {
-	// Consume: blurx
-	auto blurx_0_c__0_value = blurx_bxy_ur_8_update_0_read_bundle_read(blurx/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bxy_ur_8_update_0_blurx," << d0<< "," << d1<< "," <<  blurx_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = bxy_ur_8_generated_compute_unrolled_8(blurx_0_c__0_value);
-	// Produce: bxy_ur_8
-	bxy_ur_8.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<128> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  hw_uint<16> debug_compute_result_lane_2;
-  set_at<0, 16, 16>(debug_compute_result_lane_2, debug_compute_result.extract<32, 47>());
-  hw_uint<16> debug_compute_result_lane_3;
-  set_at<0, 16, 16>(debug_compute_result_lane_3, debug_compute_result.extract<48, 63>());
-  hw_uint<16> debug_compute_result_lane_4;
-  set_at<0, 16, 16>(debug_compute_result_lane_4, debug_compute_result.extract<64, 79>());
-  hw_uint<16> debug_compute_result_lane_5;
-  set_at<0, 16, 16>(debug_compute_result_lane_5, debug_compute_result.extract<80, 95>());
-  hw_uint<16> debug_compute_result_lane_6;
-  set_at<0, 16, 16>(debug_compute_result_lane_6, debug_compute_result.extract<96, 111>());
-  hw_uint<16> debug_compute_result_lane_7;
-  set_at<0, 16, 16>(debug_compute_result_lane_7, debug_compute_result.extract<112, 127>());
-  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
-  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
-  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
-  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
-  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void input_update_0(HWStream<hw_uint<128> >& /* buffer_args num ports = 8 */input_arg, input_cache& input, int d0, int d1) {
 	// Consume: input_arg
 	auto input_arg_0_c__0_value = input_arg.read();
@@ -1972,6 +1930,48 @@ inline void blurx_update_0(input_cache& input, blurx_cache& blurx, int d0, int d
 
 }
 
+inline void bxy_ur_8_update_0(blurx_cache& blurx, HWStream<hw_uint<128> >& /* buffer_args num ports = 8 */bxy_ur_8, int d0, int d1) {
+	// Consume: blurx
+	auto blurx_0_c__0_value = blurx_bxy_ur_8_update_0_read_bundle_read(blurx/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "bxy_ur_8_update_0_blurx," << d0<< "," << d1<< "," <<  blurx_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = bxy_ur_8_generated_compute_unrolled_8(blurx_0_c__0_value);
+	// Produce: bxy_ur_8
+	bxy_ur_8.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<128> debug_compute_result(compute_result);
+  hw_uint<16> debug_compute_result_lane_0;
+  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
+  hw_uint<16> debug_compute_result_lane_1;
+  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
+  hw_uint<16> debug_compute_result_lane_2;
+  set_at<0, 16, 16>(debug_compute_result_lane_2, debug_compute_result.extract<32, 47>());
+  hw_uint<16> debug_compute_result_lane_3;
+  set_at<0, 16, 16>(debug_compute_result_lane_3, debug_compute_result.extract<48, 63>());
+  hw_uint<16> debug_compute_result_lane_4;
+  set_at<0, 16, 16>(debug_compute_result_lane_4, debug_compute_result.extract<64, 79>());
+  hw_uint<16> debug_compute_result_lane_5;
+  set_at<0, 16, 16>(debug_compute_result_lane_5, debug_compute_result.extract<80, 95>());
+  hw_uint<16> debug_compute_result_lane_6;
+  set_at<0, 16, 16>(debug_compute_result_lane_6, debug_compute_result.extract<96, 111>());
+  hw_uint<16> debug_compute_result_lane_7;
+  set_at<0, 16, 16>(debug_compute_result_lane_7, debug_compute_result.extract<112, 127>());
+  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
+  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
+  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
+  *global_debug_handle << "bxy_ur_8_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
 // Driver function
 void bxy_ur_8_opt(HWStream<hw_uint<128> >& /* get_args num ports = 8 */input_arg, HWStream<hw_uint<128> >& /* get_args num ports = 8 */bxy_ur_8) {
 
@@ -2024,23 +2024,27 @@ void bxy_ur_8_opt(HWStream<hw_uint<128> >& /* get_args num ports = 8 */input_arg
 extern "C" {
 
 static void read_input(hw_uint<128>* input, HWStream<hw_uint<128> >& v, const int size) {
+  hw_uint<128> burst_reg;
   for (int i = 0; i < INPUT_SIZE; i++) {
     #pragma HLS pipeline II=1
-    v.write(input[i]);
+    burst_reg = input[i];
+    v.write(burst_reg);
   }
 }
 
 static void write_output(hw_uint<128>* output, HWStream<hw_uint<128> >& v, const int size) {
+  hw_uint<128> burst_reg;
   for (int i = 0; i < OUTPUT_SIZE; i++) {
     #pragma HLS pipeline II=1
-    output[i] = v.read();
+    burst_reg = v.read();
+    output[i] = burst_reg;
   }
 }
 
 void bxy_ur_8_opt_accel(hw_uint<128>* input_update_0_read, hw_uint<128>* bxy_ur_8_update_0_write, const int size) { 
 #pragma HLS dataflow
-#pragma HLS INTERFACE m_axi port = input_update_0_read offset = slave bundle = gmem
-#pragma HLS INTERFACE m_axi port = bxy_ur_8_update_0_write offset = slave bundle = gmem
+#pragma HLS INTERFACE m_axi port = input_update_0_read offset = slave depth = 65536 bundle = gmem0
+#pragma HLS INTERFACE m_axi port = bxy_ur_8_update_0_write offset = slave depth = 65536 bundle = gmem1
 
 #pragma HLS INTERFACE s_axilite port = input_update_0_read bundle = control
 #pragma HLS INTERFACE s_axilite port = bxy_ur_8_update_0_write bundle = control

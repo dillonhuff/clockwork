@@ -394,16 +394,20 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
   out << "extern \"C\" {" << endl << endl;
 
   out << "static void read_input(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const int size) {" << endl;
+  out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
   out << tab(1) << "for (int i = 0; i < INPUT_SIZE; i++) {" << endl;
   out << tab(2) << "#pragma HLS pipeline II=1" << endl;
-  out << tab(2) << "v.write(input[i]);" << endl;
+  out << tab(2) << "burst_reg = input[i];" << endl;
+  out << tab(2) << "v.write(burst_reg);" << endl;
   out << tab(1) << "}" << endl;
   out << "}" << endl << endl;
 
   out << "static void write_output(" << out_bundle_tp << "* output, HWStream<" << out_bundle_tp << " >& v, const int size) {" << endl;
+  out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
   out << tab(1) << "for (int i = 0; i < OUTPUT_SIZE; i++) {" << endl;
   out << tab(2) << "#pragma HLS pipeline II=1" << endl;
-  out << tab(2) << "output[i] = v.read();" << endl;
+  out << tab(2) << "burst_reg = v.read();" << endl;
+  out << tab(2) << "output[i] = burst_reg;" << endl;
   out << tab(1) << "}" << endl;
   out << "}" << endl << endl;
 
@@ -449,8 +453,12 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
   out << "void " << driver_func << "(" << comma_list(all_arg_decls) << ") { " << endl;
   out << "#pragma HLS dataflow" << endl;
 
+  int bank_no = 0;
   for (auto pt : ptr_args) {
-    out << "#pragma HLS INTERFACE m_axi port = " << pt << " offset = slave bundle = gmem" << endl;
+    out << "#pragma HLS INTERFACE m_axi port = " << pt << " offset = slave depth = 65536 bundle = gmem" << bank_no << endl;
+    if (bank_no < 3) {
+      bank_no++;
+    }
   }
   out << endl;
   for (auto pt : ptr_args) {

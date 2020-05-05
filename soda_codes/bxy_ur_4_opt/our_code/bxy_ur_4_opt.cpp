@@ -1088,23 +1088,27 @@ void bxy_ur_4_opt(HWStream<hw_uint<64> >& /* get_args num ports = 4 */input_arg,
 extern "C" {
 
 static void read_input(hw_uint<64>* input, HWStream<hw_uint<64> >& v, const int size) {
+  hw_uint<64> burst_reg;
   for (int i = 0; i < INPUT_SIZE; i++) {
     #pragma HLS pipeline II=1
-    v.write(input[i]);
+    burst_reg = input[i];
+    v.write(burst_reg);
   }
 }
 
 static void write_output(hw_uint<64>* output, HWStream<hw_uint<64> >& v, const int size) {
+  hw_uint<64> burst_reg;
   for (int i = 0; i < OUTPUT_SIZE; i++) {
     #pragma HLS pipeline II=1
-    output[i] = v.read();
+    burst_reg = v.read();
+    output[i] = burst_reg;
   }
 }
 
 void bxy_ur_4_opt_accel(hw_uint<64>* input_update_0_read, hw_uint<64>* bxy_ur_4_update_0_write, const int size) { 
 #pragma HLS dataflow
-#pragma HLS INTERFACE m_axi port = input_update_0_read offset = slave bundle = gmem
-#pragma HLS INTERFACE m_axi port = bxy_ur_4_update_0_write offset = slave bundle = gmem
+#pragma HLS INTERFACE m_axi port = input_update_0_read offset = slave depth = 65536 bundle = gmem0
+#pragma HLS INTERFACE m_axi port = bxy_ur_4_update_0_write offset = slave depth = 65536 bundle = gmem1
 
 #pragma HLS INTERFACE s_axilite port = input_update_0_read bundle = control
 #pragma HLS INTERFACE s_axilite port = bxy_ur_4_update_0_write bundle = control
