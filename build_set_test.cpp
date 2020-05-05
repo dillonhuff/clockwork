@@ -5293,48 +5293,48 @@ void exposure_fusion() {
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
   int size =
-    //64;
-    1250;
+    64;
+    //1250;
     //200;
 
-  auto isl_sched = lp.realize_isl_schedule("pyramid_synthetic_exposure_fusion", size, size, 1);
-  auto isl_maps = get_maps(isl_sched);
+  //auto isl_sched = lp.realize_isl_schedule("pyramid_synthetic_exposure_fusion", size, size, 1);
+  //auto isl_maps = get_maps(isl_sched);
 
-  auto opt_sched = lp.realize_opt_schedule("pyramid_synthetic_exposure_fusion", size, size, 1);
-  //auto dom = domain(opt_sched);
-  //opt_sched = unn_domain(opt_sched, isl_union_set_universe(cpy(dom)));
-  auto opt_maps = get_maps(opt_sched);
+  //auto opt_sched = lp.realize_opt_schedule("pyramid_synthetic_exposure_fusion", size, size, 1);
+  ////auto dom = domain(opt_sched);
+  ////opt_sched = unn_domain(opt_sched, isl_union_set_universe(cpy(dom)));
+  //auto opt_maps = get_maps(opt_sched);
 
-  cout << "--- ISL Schedule" << endl;
-  for (auto m : isl_maps) {
-    cout << tab(1) << str(m) <<  endl;
-  }
-  cout << endl << endl;
+  //cout << "--- ISL Schedule" << endl;
+  //for (auto m : isl_maps) {
+    //cout << tab(1) << str(m) <<  endl;
+  //}
+  //cout << endl << endl;
 
-  cout << "--- OPT Schedule" << endl;
-  for (auto m : opt_maps) {
-    cout << tab(1) << str(m) <<  endl;
-  }
-  cout << endl << endl;
+  //cout << "--- OPT Schedule" << endl;
+  //for (auto m : opt_maps) {
+    //cout << tab(1) << str(m) <<  endl;
+  //}
+  //cout << endl << endl;
 
-  assert(isl_maps.size() == opt_maps.size());
-  cout << "--- MATCHED Schedules" << endl;
-  for (auto opt : opt_maps) {
-    isl_map* imap = nullptr;
-    for (auto isl : isl_maps) {
-      if (domain_name(isl) == domain_name(opt)) {
-        imap = isl;
-        break;
-      }
-    }
-    assert(imap != nullptr);
+  //assert(isl_maps.size() == opt_maps.size());
+  //cout << "--- MATCHED Schedules" << endl;
+  //for (auto opt : opt_maps) {
+    //isl_map* imap = nullptr;
+    //for (auto isl : isl_maps) {
+      //if (domain_name(isl) == domain_name(opt)) {
+        //imap = isl;
+        //break;
+      //}
+    //}
+    //assert(imap != nullptr);
 
-    cout << tab(1) << "opt: " << str(opt) << endl;
-    cout << tab(1) << "isl: " << str(imap) << endl;
-    cout << endl;
-  }
+    //cout << tab(1) << "opt: " << str(opt) << endl;
+    //cout << tab(1) << "isl: " << str(imap) << endl;
+    //cout << endl;
+  //}
 
-  assert(false);
+  //assert(false);
 
   lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
   //move_to_benchmarks_folder("pyramid_synthetic_exposure_fusion_opt");
@@ -6913,17 +6913,43 @@ void playground() {
 }
 
 void application_tests() {
-  exposure_fusion();
+  two_input_mag_test();
+  one_input_mag_test();
+  sum_diffs_test();
+  sum_float_test();
+  sum_denoise_test();
+
+  sobel_mag_y_test();
+  sobel_app_test();
+  sobel_mag_x_test();
+
+
+  //playground();
+  jacobi2d_app_test();
+
+  grayscale_conversion_test();
+  upsample2d_test();
+
+  tricky_shift_register_reconvergence_test();
   gaussian_pyramid_app_test();
   denoise2d_test();
 
+  downsample2d_test();
+  up_stencil_down_test();
+  blur_and_downsample_test();
+  downsample_and_blur_test();
+
+  upsample_stencil_2d_test();
+  upsample_stencil_1d_test();
+  
+  updown_merge_test();
   harris_unrolled_test();
   harris_test();
   sobel_16_app_test();
+  exposure_fusion();
 
   max_pooling_test();
   //assert(false);
-  tricky_shift_register_reconvergence_test();
   mismatched_stencil_test();
   //assert(false);
   //assert(false);
@@ -6934,10 +6960,6 @@ void application_tests() {
 
   //assert(false);
 
-  downsample2d_test();
-  up_stencil_down_test();
-  
-  updown_merge_test();
   sobel_test();
 
   seidel2d_test();
@@ -6945,15 +6967,10 @@ void application_tests() {
   jacobi_2d_test();
 
 
-  upsample_stencil_2d_test();
-  upsample_stencil_1d_test();
 
   heat_3d_test();
 
   upsample_reduce_test();
-
-  blur_and_downsample_test();
-  downsample_and_blur_test();
 
   pointwise_test();
 
@@ -7012,23 +7029,7 @@ void application_tests() {
   blur_x_test();
 
   dummy_app_test();
-  two_input_denoise_pipeline_test();
-  two_input_mag_test();
-  one_input_mag_test();
-  sum_diffs_test();
-  sum_float_test();
-  sum_denoise_test();
-
-  sobel_mag_y_test();
-  sobel_app_test();
-  sobel_mag_x_test();
-
-
-  //playground();
-  jacobi2d_app_test();
-
-  grayscale_conversion_test();
-  upsample2d_test();
+  //two_input_denoise_pipeline_test();
   
 
   //conv_1d_bc_test();
