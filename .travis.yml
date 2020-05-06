@@ -8,7 +8,6 @@ addons:
     - ubuntu-toolchain-r-test
     packages:
     - g++-4.9
-    - gmp
 
 before_install:
   - wget https://shoup.net/ntl/ntl-11.4.1.tar.gz
