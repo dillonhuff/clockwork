@@ -5111,7 +5111,7 @@ App harris_cartoon(const std::string& out_name) {
 
 App harris(const std::string& out_name) {
   App harris;
-  harris.set_default_pixel_width(16);
+  //harris.set_default_pixel_width(16);
   harris.func2d("img_oc");
   harris.func2d("img", v("img_oc"));
   harris.func2d("grad_x",
