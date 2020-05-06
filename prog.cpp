@@ -177,6 +177,19 @@ void ocl_check_args(std::ostream& out) {
   out << tab(1) << "std::string binaryFile = argv[1];" << endl;
 }
 
+void ocl_timing_suffix(std::ostream& out) {
+  out << tab(1) << "double dnsduration = ((double)nsduration);" << endl;
+  out << "double dsduration = dnsduration / ((double)1000000000);" << endl;
+
+  out << "double dbytes = total_size_bytes;" << endl;
+  out << "double bpersec = (dbytes / dsduration);" << endl;
+  out << "double gbpersec = bpersec / ((double)1024 * 1024 * 1024);" << endl;
+
+  out << "cout << \"bytes / sec = \" << bpersec << endl;" << endl;
+  out << "cout << \"GB / sec = \" << gbpersec << endl;" << endl;
+  out << "printf(\"Execution time = %f (sec) \n\", dsduration);" << endl;
+}
+
 void ocl_command_queue(std::ostream& out) {
   out << tab(1) << "cl_int err;" << endl;
   out << tab(1) << "cl::Context context;" << endl;
@@ -214,6 +227,7 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
     }
   }
 
+  out << tab(1) << "size_t total_size_bytes = 0;" << endl;
   for (auto eb : edge_buffers(buffers, prg)) {
     string edge_bundle = eb.second;
     string buf = eb.first;
@@ -221,6 +235,7 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
     out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = " << max_buf_size << ";" << endl;
     out << tab(1) << "const int " << edge_bundle << "_BYTES_PER_PIXEL = " << map_find(buf, buffers).bundle_lane_width(edge_bundle) << " / 8;" << endl;
     out << tab(1) << "size_t " << edge_bundle << "_size_bytes = " << edge_bundle << "_BYTES_PER_PIXEL * " << edge_bundle << "_DATA_SIZE;" << endl << endl;
+    out << tab(1) << "total_size_bytes += " << edge_bundle << "_size_bytes;" << endl;
   }
   out << endl;
 

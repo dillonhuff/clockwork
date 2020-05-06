@@ -121,11 +121,7 @@ int main(int argc, char **argv) {
 
   cout << "bytes / sec = " << bpersec << endl;
   cout << "GB / sec = " << gbpersec << endl;
-  //printf(
-      //"Kernel completed read/write %.0lf MB bytes from/to global memory.\n",
-      //dmbytes);
   printf("Execution time = %f (sec) \n", dsduration);
-  //printf("Concurrent Read and Write Throughput = %f (GB/sec) \n", gbpersec);
 
   printf("TEST PASSED\n");
   return 0;
