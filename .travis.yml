@@ -17,6 +17,8 @@ before_install:
   - make
   - sudo make install
   - cd ../../
+  - wget https://barvinok.gforge.inria.fr/barvinok-0.41.tar.gz
+  - tar -xvzf barvinok-0.41.tar.gz
 
 script:
   - ./rebuild_and_run.sh
