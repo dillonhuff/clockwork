@@ -9,14 +9,17 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
   std::string binaryFile = argv[1];
+  size_t total_size_bytes = 0;
   const int harris_1_update_0_write_DATA_SIZE = 2073600;
   const int harris_1_update_0_write_BYTES_PER_PIXEL = 16 / 8;
   size_t harris_1_update_0_write_size_bytes = harris_1_update_0_write_BYTES_PER_PIXEL * harris_1_update_0_write_DATA_SIZE;
 
+  total_size_bytes += harris_1_update_0_write_size_bytes;
   const int img_update_0_read_DATA_SIZE = 2085616;
   const int img_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t img_update_0_read_size_bytes = img_update_0_read_BYTES_PER_PIXEL * img_update_0_read_DATA_SIZE;
 
+  total_size_bytes += img_update_0_read_size_bytes;
 
   cl_int err;
   cl::Context context;
@@ -26,11 +29,11 @@ int main(int argc, char **argv) {
   std::vector<uint8_t, aligned_allocator<uint8_t> > harris_1_update_0_write(harris_1_update_0_write_size_bytes);
   std::vector<uint8_t, aligned_allocator<uint8_t> > img_update_0_read(img_update_0_read_size_bytes);
 
-  std::ofstream input_img_update_0_read("img_update_0_read.csv");
+  std::ifstream input_img_update_0_read("img_update_0_read.csv");
   for (int i = 0; i < img_update_0_read_DATA_SIZE; i++) {
     // TODO: Add support for other widths
-    uint16_t val = (i % 256);
-    input_img_update_0_read << val << std::endl;
+    uint16_t val;
+    input_img_update_0_read >> val;
     ((uint16_t*) (img_update_0_read.data()))[i] = val;
   }
 
@@ -80,8 +83,16 @@ int main(int argc, char **argv) {
 
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({img_update_0_read_ocl_buf}, 0));
 
-  OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add));
+unsigned long start, end, nsduration;
+cl::Event event;
 
+OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));
+OCL_CHECK(err, err = event.wait());
+end =
+OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
+start = OCL_CHECK(err,
+event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
+nsduration = end - start;
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({harris_1_update_0_write_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
@@ -91,5 +102,13 @@ int main(int argc, char **argv) {
     regression_result << ((uint16_t*) (harris_1_update_0_write.data()))[i] << std::endl;;
   }
 
+  double dnsduration = ((double)nsduration);
+double dsduration = dnsduration / ((double)1000000000);
+double dbytes = total_size_bytes;
+double bpersec = (dbytes / dsduration);
+double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
+std::cout << "bytes / sec = " << bpersec << std::endl;
+std::cout << "GB / sec = " << gbpersec << std::endl;
+printf("Execution time = %f (sec) \n", dsduration);
   return 0;
 }

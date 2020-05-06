@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
   std::vector<uint8_t, aligned_allocator<uint8_t> > bxy_ur_2_update_0_write(bxy_ur_2_update_0_write_size_bytes);
   std::vector<uint8_t, aligned_allocator<uint8_t> > input_update_0_read(input_update_0_read_size_bytes);
 
-  std::ifstream input_input_input_update_0_read("input_update_0_read.csv");
+  std::ifstream input_input_update_0_read("input_update_0_read.csv");
   for (int i = 0; i < input_update_0_read_DATA_SIZE; i++) {
     // TODO: Add support for other widths
     uint16_t val;
@@ -107,8 +107,8 @@ double dsduration = dnsduration / ((double)1000000000);
 double dbytes = total_size_bytes;
 double bpersec = (dbytes / dsduration);
 double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
-cout << "bytes / sec = " << bpersec << endl;
-cout << "GB / sec = " << gbpersec << endl;
+std::cout << "bytes / sec = " << bpersec << std::endl;
+std::cout << "GB / sec = " << gbpersec << std::endl;
 printf("Execution time = %f (sec) \n", dsduration);
   return 0;
 }
