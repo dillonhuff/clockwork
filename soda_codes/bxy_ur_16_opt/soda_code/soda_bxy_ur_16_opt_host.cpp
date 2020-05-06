@@ -3,6 +3,8 @@
 #include <fstream>
 #include <vector>
 
+using namespace std;
+
 int main(int argc, char **argv) {
   if (argc != 2) {
     std::cout << "Usage: " << argv[0] << " <XCLBIN File>" << std::endl;
@@ -29,11 +31,12 @@ int main(int argc, char **argv) {
   std::vector<uint8_t, aligned_allocator<uint8_t> > bxy_ur_16_update_0_write(bxy_ur_16_update_0_write_size_bytes);
   std::vector<uint8_t, aligned_allocator<uint8_t> > input_update_0_read(input_update_0_read_size_bytes);
 
-  std::ifstream input_input_update_0_read("input_update_0_read.csv");
+  std::ifstream input_input_update_0_read("input_arg_input_pixel.csv");
   for (int i = 0; i < input_update_0_read_DATA_SIZE; i++) {
     // TODO: Add support for other widths
     uint16_t val;
     input_input_update_0_read >> val;
+    //cout << "  val = " << (int) val << endl;
     ((uint16_t*) (input_update_0_read.data()))[i] = val;
   }
 
@@ -107,6 +110,7 @@ double dsduration = dnsduration / ((double)1000000000);
 double dbytes = total_size_bytes;
 double bpersec = (dbytes / dsduration);
 double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
+std::cout << "total data (bytes) = " << total_size_bytes << std::endl;
 std::cout << "bytes / sec = " << bpersec << std::endl;
 std::cout << "GB / sec = " << gbpersec << std::endl;
 printf("Execution time = %f (sec) \n", dsduration);
