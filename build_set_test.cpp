@@ -5581,6 +5581,14 @@ App seidel(const std::string output_name) {
   return jac;
 }
 
+App pointwise_add(const std::string output_name) {
+  App jac;
+  jac.func2d("input_arg");
+  jac.func2d("input", v("input_arg"));
+  jac.func2d(output_name, add(v("input"), 1));
+  return jac;
+}
+
 App blur_xy(const std::string output_name) {
   App jac;
   jac.func2d("input_arg");
@@ -5907,6 +5915,17 @@ void blur_xy_16_app_test() {
 
     move_to_benchmarks_folder(out_name + "_opt");
   }
+}
+
+void pointwise_app_test() {
+  int cols = 1920;
+  int rows = 1080;
+
+  cout << "pointwise math" << endl;
+  int unroll_factor = 16;
+  string out_name = "pw_ur_" + str(unroll_factor);
+  pointwise_add(out_name).realize(out_name, cols, rows, unroll_factor);
+  move_to_benchmarks_folder(out_name + "_opt");
 }
 
 void blur_xy_app_test() {
@@ -6913,6 +6932,8 @@ void playground() {
 }
 
 void application_tests() {
+  pointwise_app_test();
+  assert(false);
   blur_xy_16_app_test();
   tricky_shift_register_reconvergence_test();
 
