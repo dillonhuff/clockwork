@@ -2,5 +2,5 @@
 
 ## Dependencies
 
-* barvinok-0.41
-* ntl-11.4.1
+* barvinok-0.41 - [download here](http://barvinok.gforge.inria.fr/)
+* ntl-11.4.1 - [download here](https://shoup.net/ntl/download.html)
