@@ -5,7 +5,7 @@ target=$2
 
 aws s3 mb s3://iccad-2020-bucket/app-results/${app}/soda_code/
 
-aws s3 sync . s3://iccad-2020-bucket/app-results/${app}/soda_code/ --exclude '*' --include *.rpt
+aws s3 sync . s3://iccad-2020-bucket/app-results/${app}/soda_code/ --exclude '*' --include ${build_dir}/${app}_pnr*.rpt
 aws s3 cp host s3://iccad-2020-bucket/app-results/${app}/soda_code/
 aws s3 cp ${build_dir}/${target}.xclbin.info s3://iccad-2020-bucket/app-results/${app}/soda_code/
 aws s3 cp ${build_dir}/${target}.xclbin s3://iccad-2020-bucket/app-results/${app}/soda_code/
