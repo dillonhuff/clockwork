@@ -1,10 +1,10 @@
 kernel: pw_ur_16_opt
 unroll factor: 16
-burst width: 512
+burst width: 256
 
-input uint32: input(1920, *)
+input uint16: input(1920, *)
 
-output uint32: pw_ur_16(0, 0) = (input(0, 0) + 1)
+output uint16: pw_ur_16(0, 0) = (input(0, 0) + 1)
 
 
 iterate: 1

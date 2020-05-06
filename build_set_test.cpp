@@ -5583,6 +5583,7 @@ App seidel(const std::string output_name) {
 
 App pointwise_add(const std::string output_name) {
   App jac;
+  jac.set_default_pixel_width(16);
   jac.func2d("input_arg");
   jac.func2d("input", v("input_arg"));
   jac.func2d(output_name, add(v("input"), 1));

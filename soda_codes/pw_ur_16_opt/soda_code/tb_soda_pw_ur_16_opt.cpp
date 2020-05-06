@@ -3,8 +3,8 @@
 #include <iostream>
 #include <fstream>
 
-#define PIXEL_WIDTH 32
-#define BURST_WIDTH 512
+#define PIXEL_WIDTH 16
+#define BURST_WIDTH 256
 
 #include "runtime/test_utils.h"
 
