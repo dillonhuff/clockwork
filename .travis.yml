@@ -13,6 +13,7 @@ before_install:
   - wget https://shoup.net/ntl/ntl-11.4.1.tar.gz
   - tar -xvzf ntl-11.4.1.tar.gz
   - cd ntl-11.4.1/src
+  - ./configure
   - make
   - sudo make install
   - cd ../../
