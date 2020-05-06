@@ -1,0 +1,28 @@
+dist: xenial
+language: c++
+sudo: true
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - g++-4.9
+    - gmp
+
+before_install:
+  - wget https://shoup.net/ntl/ntl-11.4.1.tar.gz
+  - tar -xvzf ntl-11.4.1.tar.gz
+  - cd ntl-11.4.1/src
+  - make
+  - sudo make install
+  - cd ../../
+
+script:
+  - ./rebuild_and_run.sh
+
+compiler:
+  - gcc
+
+os:
+- linux
