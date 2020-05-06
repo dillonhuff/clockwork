@@ -11,7 +11,7 @@ using namespace std;
 #include "hw_classes.h"
 
 struct input_input_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 1904], [0, 1079]}
+	// RAM Box: {[0, 1904], [0, 21599]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -32,7 +32,7 @@ struct input_input_update_0_write0_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write1_merged_banks_1_cache {
-	// RAM Box: {[0, 1905], [0, 1079]}
+	// RAM Box: {[0, 1905], [0, 21599]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -53,7 +53,7 @@ struct input_input_update_0_write1_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write10_merged_banks_1_cache {
-	// RAM Box: {[0, 1914], [0, 1079]}
+	// RAM Box: {[0, 1914], [0, 21599]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -74,7 +74,7 @@ struct input_input_update_0_write10_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write11_merged_banks_1_cache {
-	// RAM Box: {[0, 1915], [0, 1079]}
+	// RAM Box: {[0, 1915], [0, 21599]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -95,7 +95,7 @@ struct input_input_update_0_write11_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write12_merged_banks_1_cache {
-	// RAM Box: {[0, 1916], [0, 1079]}
+	// RAM Box: {[0, 1916], [0, 21599]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -116,7 +116,7 @@ struct input_input_update_0_write12_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write13_merged_banks_1_cache {
-	// RAM Box: {[0, 1917], [0, 1079]}
+	// RAM Box: {[0, 1917], [0, 21599]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -137,7 +137,7 @@ struct input_input_update_0_write13_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write14_merged_banks_1_cache {
-	// RAM Box: {[0, 1918], [0, 1079]}
+	// RAM Box: {[0, 1918], [0, 21599]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -158,7 +158,7 @@ struct input_input_update_0_write14_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write15_merged_banks_1_cache {
-	// RAM Box: {[0, 1919], [0, 1079]}
+	// RAM Box: {[0, 1919], [0, 21599]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -179,7 +179,7 @@ struct input_input_update_0_write15_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write2_merged_banks_1_cache {
-	// RAM Box: {[0, 1906], [0, 1079]}
+	// RAM Box: {[0, 1906], [0, 21599]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -200,7 +200,7 @@ struct input_input_update_0_write2_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write3_merged_banks_1_cache {
-	// RAM Box: {[0, 1907], [0, 1079]}
+	// RAM Box: {[0, 1907], [0, 21599]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -221,7 +221,7 @@ struct input_input_update_0_write3_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write4_merged_banks_1_cache {
-	// RAM Box: {[0, 1908], [0, 1079]}
+	// RAM Box: {[0, 1908], [0, 21599]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -242,7 +242,7 @@ struct input_input_update_0_write4_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write5_merged_banks_1_cache {
-	// RAM Box: {[0, 1909], [0, 1079]}
+	// RAM Box: {[0, 1909], [0, 21599]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -263,7 +263,7 @@ struct input_input_update_0_write5_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write6_merged_banks_1_cache {
-	// RAM Box: {[0, 1910], [0, 1079]}
+	// RAM Box: {[0, 1910], [0, 21599]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -284,7 +284,7 @@ struct input_input_update_0_write6_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write7_merged_banks_1_cache {
-	// RAM Box: {[0, 1911], [0, 1079]}
+	// RAM Box: {[0, 1911], [0, 21599]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -305,7 +305,7 @@ struct input_input_update_0_write7_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write8_merged_banks_1_cache {
-	// RAM Box: {[0, 1912], [0, 1079]}
+	// RAM Box: {[0, 1912], [0, 21599]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -326,7 +326,7 @@ struct input_input_update_0_write8_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write9_merged_banks_1_cache {
-	// RAM Box: {[0, 1913], [0, 1079]}
+	// RAM Box: {[0, 1913], [0, 21599]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -434,9 +434,9 @@ inline void input_input_update_0_write9_write(hw_uint<16>& input_input_update_0_
 inline hw_uint<16> pw_ur_16_rd0_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // pw_ur_16_rd0 read pattern: { pw_ur_16_update_0[d0, d1] -> input[16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // pw_ur_16_rd0 read pattern: { pw_ur_16_update_0[d0, d1] -> input[16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
   // DD fold: {  }
   auto value_input_input_update_0_write0 = input.input_input_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_input_input_update_0_write0;
@@ -450,9 +450,9 @@ inline hw_uint<16> pw_ur_16_rd0_select(input_cache& input, int d0, int d1) {
 inline hw_uint<16> pw_ur_16_rd1_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // pw_ur_16_rd1 read pattern: { pw_ur_16_update_0[d0, d1] -> input[1 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // pw_ur_16_rd1 read pattern: { pw_ur_16_update_0[d0, d1] -> input[1 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
   // DD fold: {  }
   auto value_input_input_update_0_write1 = input.input_input_update_0_write1_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_input_input_update_0_write1;
@@ -466,9 +466,9 @@ inline hw_uint<16> pw_ur_16_rd1_select(input_cache& input, int d0, int d1) {
 inline hw_uint<16> pw_ur_16_rd10_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // pw_ur_16_rd10 read pattern: { pw_ur_16_update_0[d0, d1] -> input[10 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // pw_ur_16_rd10 read pattern: { pw_ur_16_update_0[d0, d1] -> input[10 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
   // DD fold: {  }
   auto value_input_input_update_0_write10 = input.input_input_update_0_write10_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_input_input_update_0_write10;
@@ -482,9 +482,9 @@ inline hw_uint<16> pw_ur_16_rd10_select(input_cache& input, int d0, int d1) {
 inline hw_uint<16> pw_ur_16_rd11_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // pw_ur_16_rd11 read pattern: { pw_ur_16_update_0[d0, d1] -> input[11 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // pw_ur_16_rd11 read pattern: { pw_ur_16_update_0[d0, d1] -> input[11 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
   // DD fold: {  }
   auto value_input_input_update_0_write11 = input.input_input_update_0_write11_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_input_input_update_0_write11;
@@ -498,9 +498,9 @@ inline hw_uint<16> pw_ur_16_rd11_select(input_cache& input, int d0, int d1) {
 inline hw_uint<16> pw_ur_16_rd12_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // pw_ur_16_rd12 read pattern: { pw_ur_16_update_0[d0, d1] -> input[12 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // pw_ur_16_rd12 read pattern: { pw_ur_16_update_0[d0, d1] -> input[12 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
   // DD fold: {  }
   auto value_input_input_update_0_write12 = input.input_input_update_0_write12_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_input_input_update_0_write12;
@@ -514,9 +514,9 @@ inline hw_uint<16> pw_ur_16_rd12_select(input_cache& input, int d0, int d1) {
 inline hw_uint<16> pw_ur_16_rd13_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // pw_ur_16_rd13 read pattern: { pw_ur_16_update_0[d0, d1] -> input[13 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // pw_ur_16_rd13 read pattern: { pw_ur_16_update_0[d0, d1] -> input[13 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
   // DD fold: {  }
   auto value_input_input_update_0_write13 = input.input_input_update_0_write13_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_input_input_update_0_write13;
@@ -530,9 +530,9 @@ inline hw_uint<16> pw_ur_16_rd13_select(input_cache& input, int d0, int d1) {
 inline hw_uint<16> pw_ur_16_rd14_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // pw_ur_16_rd14 read pattern: { pw_ur_16_update_0[d0, d1] -> input[14 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // pw_ur_16_rd14 read pattern: { pw_ur_16_update_0[d0, d1] -> input[14 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
   // DD fold: {  }
   auto value_input_input_update_0_write14 = input.input_input_update_0_write14_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_input_input_update_0_write14;
@@ -546,9 +546,9 @@ inline hw_uint<16> pw_ur_16_rd14_select(input_cache& input, int d0, int d1) {
 inline hw_uint<16> pw_ur_16_rd15_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // pw_ur_16_rd15 read pattern: { pw_ur_16_update_0[d0, d1] -> input[15 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // pw_ur_16_rd15 read pattern: { pw_ur_16_update_0[d0, d1] -> input[15 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
   // DD fold: {  }
   auto value_input_input_update_0_write15 = input.input_input_update_0_write15_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_input_input_update_0_write15;
@@ -562,9 +562,9 @@ inline hw_uint<16> pw_ur_16_rd15_select(input_cache& input, int d0, int d1) {
 inline hw_uint<16> pw_ur_16_rd2_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // pw_ur_16_rd2 read pattern: { pw_ur_16_update_0[d0, d1] -> input[2 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // pw_ur_16_rd2 read pattern: { pw_ur_16_update_0[d0, d1] -> input[2 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
   // DD fold: {  }
   auto value_input_input_update_0_write2 = input.input_input_update_0_write2_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_input_input_update_0_write2;
@@ -578,9 +578,9 @@ inline hw_uint<16> pw_ur_16_rd2_select(input_cache& input, int d0, int d1) {
 inline hw_uint<16> pw_ur_16_rd3_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // pw_ur_16_rd3 read pattern: { pw_ur_16_update_0[d0, d1] -> input[3 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // pw_ur_16_rd3 read pattern: { pw_ur_16_update_0[d0, d1] -> input[3 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
   // DD fold: {  }
   auto value_input_input_update_0_write3 = input.input_input_update_0_write3_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_input_input_update_0_write3;
@@ -594,9 +594,9 @@ inline hw_uint<16> pw_ur_16_rd3_select(input_cache& input, int d0, int d1) {
 inline hw_uint<16> pw_ur_16_rd4_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // pw_ur_16_rd4 read pattern: { pw_ur_16_update_0[d0, d1] -> input[4 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // pw_ur_16_rd4 read pattern: { pw_ur_16_update_0[d0, d1] -> input[4 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
   // DD fold: {  }
   auto value_input_input_update_0_write4 = input.input_input_update_0_write4_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_input_input_update_0_write4;
@@ -610,9 +610,9 @@ inline hw_uint<16> pw_ur_16_rd4_select(input_cache& input, int d0, int d1) {
 inline hw_uint<16> pw_ur_16_rd5_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // pw_ur_16_rd5 read pattern: { pw_ur_16_update_0[d0, d1] -> input[5 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // pw_ur_16_rd5 read pattern: { pw_ur_16_update_0[d0, d1] -> input[5 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
   // DD fold: {  }
   auto value_input_input_update_0_write5 = input.input_input_update_0_write5_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_input_input_update_0_write5;
@@ -626,9 +626,9 @@ inline hw_uint<16> pw_ur_16_rd5_select(input_cache& input, int d0, int d1) {
 inline hw_uint<16> pw_ur_16_rd6_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // pw_ur_16_rd6 read pattern: { pw_ur_16_update_0[d0, d1] -> input[6 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // pw_ur_16_rd6 read pattern: { pw_ur_16_update_0[d0, d1] -> input[6 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
   // DD fold: {  }
   auto value_input_input_update_0_write6 = input.input_input_update_0_write6_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_input_input_update_0_write6;
@@ -642,9 +642,9 @@ inline hw_uint<16> pw_ur_16_rd6_select(input_cache& input, int d0, int d1) {
 inline hw_uint<16> pw_ur_16_rd7_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // pw_ur_16_rd7 read pattern: { pw_ur_16_update_0[d0, d1] -> input[7 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // pw_ur_16_rd7 read pattern: { pw_ur_16_update_0[d0, d1] -> input[7 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
   // DD fold: {  }
   auto value_input_input_update_0_write7 = input.input_input_update_0_write7_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_input_input_update_0_write7;
@@ -658,9 +658,9 @@ inline hw_uint<16> pw_ur_16_rd7_select(input_cache& input, int d0, int d1) {
 inline hw_uint<16> pw_ur_16_rd8_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // pw_ur_16_rd8 read pattern: { pw_ur_16_update_0[d0, d1] -> input[8 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // pw_ur_16_rd8 read pattern: { pw_ur_16_update_0[d0, d1] -> input[8 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
   // DD fold: {  }
   auto value_input_input_update_0_write8 = input.input_input_update_0_write8_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_input_input_update_0_write8;
@@ -674,9 +674,9 @@ inline hw_uint<16> pw_ur_16_rd8_select(input_cache& input, int d0, int d1) {
 inline hw_uint<16> pw_ur_16_rd9_select(input_cache& input, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // pw_ur_16_rd9 read pattern: { pw_ur_16_update_0[d0, d1] -> input[9 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
-  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 1079 }
+  // pw_ur_16_rd9 read pattern: { pw_ur_16_update_0[d0, d1] -> input[9 + 16d0, d1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Read schedule : { pw_ur_16_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
+  // Write schedule: { input_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 119 and 0 <= d1 <= 21599 }
   // DD fold: {  }
   auto value_input_input_update_0_write9 = input.input_input_update_0_write9_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_input_input_update_0_write9;
@@ -956,18 +956,18 @@ void pw_ur_16_opt(HWStream<hw_uint<256> >& /* get_args num ports = 16 */input_ar
 	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
 	
-	for (int c0 = 0; c0 <= 1079; c0++) {
+	for (int c0 = 0; c0 <= 21599; c0++) {
 	  for (int c1 = 0; c1 <= 119; c1++) {
 	
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS pipeline II=1
 	#endif // __VIVADO_SYNTH__
 	
-	    if ((0 <= c1 && c1 <= 119) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1079) && ((c0 - 0) % 1 == 0)) {
+	    if ((0 <= c1 && c1 <= 119) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 21599) && ((c0 - 0) % 1 == 0)) {
 	input_update_0(input_arg, input, (c1 - 0) / 1, (c0 - 0) / 1);
 	    }
 	
-	    if ((0 <= c1 && c1 <= 119) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1079) && ((c0 - 0) % 1 == 0)) {
+	    if ((0 <= c1 && c1 <= 119) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 21599) && ((c0 - 0) % 1 == 0)) {
 	pw_ur_16_update_0(input, pw_ur_16, (c1 - 0) / 1, (c0 - 0) / 1);
 	    }
 	
@@ -982,8 +982,8 @@ void pw_ur_16_opt(HWStream<hw_uint<256> >& /* get_args num ports = 16 */input_ar
 #ifdef __VIVADO_SYNTH__
 #include "pw_ur_16_opt.h"
 
-#define INPUT_SIZE 129600
-#define OUTPUT_SIZE 129600
+#define INPUT_SIZE 2592000
+#define OUTPUT_SIZE 2592000
 extern "C" {
 
 static void read_input(hw_uint<256>* input, HWStream<hw_uint<256> >& v, const int size) {

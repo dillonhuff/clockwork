@@ -9,10 +9,10 @@ int main() {
 
 
   // Loading input data
-  // cmap    : { input_update_0[root = 0, input_0, input_1] -> input_arg[0, 0] : 0 <= input_0 <= 119 and 0 <= input_1 <= 1079 }
-  // read map: { input_arg[0, 0] -> input_update_0[root = 0, input_0, input_1] : 0 <= input_0 <= 119 and 0 <= input_1 <= 1079 }
-  // rng     : { input_update_0[root = 0, input_0, input_1] : 0 <= input_0 <= 119 and 0 <= input_1 <= 1079 }
-  for (int i = 0; i < 129600; i++) {
+  // cmap    : { input_update_0[root = 0, input_0, input_1] -> input_arg[0, 0] : 0 <= input_0 <= 119 and 0 <= input_1 <= 21599 }
+  // read map: { input_arg[0, 0] -> input_update_0[root = 0, input_0, input_1] : 0 <= input_0 <= 119 and 0 <= input_1 <= 21599 }
+  // rng     : { input_update_0[root = 0, input_0, input_1] : 0 <= input_0 <= 119 and 0 <= input_1 <= 21599 }
+  for (int i = 0; i < 2592000; i++) {
     hw_uint<256> in_val;
     set_at<0*16, 256, 16>(in_val, 16*i + 0);
     in_pix << in_val << endl;
@@ -51,7 +51,7 @@ int main() {
 
   pw_ur_16_opt(input_update_0_read, pw_ur_16_update_0_write);
 
-  for (int i = 0; i < 129600; i++) {
+  for (int i = 0; i < 2592000; i++) {
     hw_uint<256> actual = pw_ur_16_update_0_write.read();
     auto actual_lane_0 = actual.extract<0*16, 15>();
     fout << actual_lane_0 << endl;
