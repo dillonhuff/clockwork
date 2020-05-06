@@ -120,7 +120,7 @@ set<string> edge_bundles(map<string, UBuffer>& buffers, prog& prg) {
   return edges;
 }
 
-void ocl_program_device(ostream& out, prog& prg) {
+void ocl_program_device(ostream& out, prog& prg, const std::string& suffix) {
   out << tab(1) << "auto devices = xcl::get_xil_devices();" << endl;
   out << tab(1) << "auto fileBuf = xcl::read_binary_file(binaryFile);" << endl;
   out << tab(1) << "cl::Program::Binaries bins{{fileBuf.data(), fileBuf.size()}};" << endl;
@@ -140,7 +140,7 @@ void ocl_program_device(ostream& out, prog& prg) {
   out << tab(3) << "<< \"] with xclbin file!\\n\";" << endl;
   out << tab(2) << "} else {" << endl;
   out << tab(3) << "std::cout << \"Device[\" << i << \"]: program successful!\\n\";" << endl;
-  out << tab(3) << "OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, \"" << prg.name << "_accel\", &err));" << endl;
+  out << tab(3) << "OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, \"" << prg.name << suffix << "\", &err));" << endl;
   out << tab(3) << "valid_device++;" << endl;
   out << tab(3) << "break;" << endl;
   out << tab(2) << "}" << endl;
@@ -158,7 +158,19 @@ void run_kernel(std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
   }
 
   out << tab(1) << "OCL_CHECK(err, err = q.enqueueMigrateMemObjects({" << comma_list(in_bufs) << "}, 0));" << endl << endl;
-  out << tab(1) << "OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add));" << endl << endl;
+
+  out << "unsigned long start, end, nsduration;" << endl;
+  out << "cl::Event event;" << endl << endl;
+
+  out << "OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));" << endl;
+  out << "OCL_CHECK(err, err = event.wait());" << endl;
+  out << "end =" << endl;
+  out << "OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));" << endl;
+  out << "start = OCL_CHECK(err," << endl;
+  out << "event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));" << endl;
+  out << "nsduration = end - start;" << endl;
+
+  //out << tab(1) << "OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add));" << endl << endl;
 
   for (auto out_bundle: out_bundles(buffers, prg)) {
     out << tab(1) << "OCL_CHECK(err, err = q.enqueueMigrateMemObjects({" << out_bundle << "_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));" << endl;
@@ -187,7 +199,7 @@ void ocl_timing_suffix(std::ostream& out) {
 
   out << "cout << \"bytes / sec = \" << bpersec << endl;" << endl;
   out << "cout << \"GB / sec = \" << gbpersec << endl;" << endl;
-  out << "printf(\"Execution time = %f (sec) \n\", dsduration);" << endl;
+  out << "printf(\"Execution time = %f (sec) \\n\", dsduration);" << endl;
 }
 
 void ocl_command_queue(std::ostream& out) {
@@ -198,11 +210,17 @@ void ocl_command_queue(std::ostream& out) {
 }
 
 void populate_input(std::ostream& out, const std::string& edge_bundle) {
-  out << tab(1) << "std::ofstream input_" << edge_bundle << "(\"" << edge_bundle << ".csv\");" << endl;
+  string instream =
+    "input_" + edge_bundle;
+
+  out << tab(1) << "std::ifstream input_" << instream << "(\"" << edge_bundle << ".csv\");" << endl;
+  //out << tab(1) << "std::ofstream input_" << edge_bundle << "(\"" << edge_bundle << ".csv\");" << endl;
   out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
   out << tab(2) << "// TODO: Add support for other widths" << endl;
-  out << tab(2) << "uint16_t val = (i % 256);" << endl;
-  out << tab(2) << "input_" << edge_bundle << " << val << std::endl;" << endl;
+  //out << tab(2) << "uint16_t val = (i % 256);" << endl;
+  out << tab(2) << "uint16_t val;" << endl;
+  out << tab(2) << instream << " >> val;" << endl;
+  //out << tab(2) << "input_" << edge_bundle << " << val << std::endl;" << endl;
   out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = val;" << endl;
   out << tab(1) << "}" << endl << endl;
   out << tab(1) << "input_" << edge_bundle << ".close();" << endl;
@@ -257,7 +275,7 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
     out << tab(1) << "}" << endl << endl;
   }
 
-  ocl_program_device(out, prg);
+  ocl_program_device(out, prg, "_kernel");
 
   int arg_pos = 0;
   for (auto in_bundle : out_bundles(buffers, prg)) {
@@ -273,7 +291,7 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
     arg_pos++;
   }
 
-  out << tab(1) << "int transfer_size = " << max_buf_size << " / " << unroll_factor << ";" << endl;
+  out << tab(1) << "uint64_t transfer_size = " << max_buf_size << " / " << unroll_factor << ";" << endl;
   out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << "transfer_size));" << endl << endl;
 
   run_kernel(out, buffers, prg);
@@ -285,6 +303,8 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
     out << tab(1) << "}" << endl;
   }
   out << endl;
+
+  ocl_timing_suffix(out);
 
   out << tab(1) << "return 0;" << endl;
   out << "}" << endl;
@@ -301,6 +321,7 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
 
   ocl_check_args(out);
   
+  out << tab(1) << "size_t total_size_bytes = 0;" << endl;
   for (auto eb : edge_buffers(buffers, prg)) {
     string edge_bundle = eb.second;
     string buf = eb.first;
@@ -308,6 +329,7 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
     out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = " << prg.buffer_size(buf) << ";" << endl;
     out << tab(1) << "const int " << edge_bundle << "_BYTES_PER_PIXEL = " << map_find(buf, buffers).bundle_lane_width(edge_bundle) << " / 8;" << endl;
     out << tab(1) << "size_t " << edge_bundle << "_size_bytes = " << edge_bundle << "_BYTES_PER_PIXEL * " << edge_bundle << "_DATA_SIZE;" << endl << endl;
+    out << tab(1) << "total_size_bytes += " << edge_bundle << "_size_bytes;" << endl;
   }
   out << endl;
 
@@ -320,14 +342,6 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
 
   for (auto edge_bundle : in_bundles(buffers, prg)) {
     populate_input(out, edge_bundle);
-    //out << tab(1) << "std::ofstream input_" << edge_bundle << "(\"" << edge_bundle << ".csv\");" << endl;
-    //out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
-    //out << tab(2) << "// TODO: Add support for other widths" << endl;
-    //out << tab(2) << "uint16_t val = (i % 256);" << endl;
-    //out << tab(2) << "input_" << edge_bundle << " << val << std::endl;" << endl;
-    //out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = val;" << endl;
-    //out << tab(1) << "}" << endl << endl;
-    //out << tab(1) << "input_" << edge_bundle << ".close();" << endl;
   }
 
   for (auto edge_bundle : out_bundles(buffers, prg)) {
@@ -337,7 +351,7 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
     out << tab(1) << "}" << endl << endl;
   }
 
-  ocl_program_device(out, prg);
+  ocl_program_device(out, prg, "_accel");
 
   int arg_pos = 0;
   for (auto in_bundle : in_bundles(buffers, prg)) {
@@ -368,6 +382,7 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   }
   out << endl;
 
+  ocl_timing_suffix(out);
   out << tab(1) << "return 0;" << endl;
   out << "}" << endl;
 

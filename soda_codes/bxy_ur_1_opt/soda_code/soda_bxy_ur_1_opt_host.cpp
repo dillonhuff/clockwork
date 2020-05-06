@@ -9,14 +9,17 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
   std::string binaryFile = argv[1];
+  size_t total_size_bytes = 0;
   const int bxy_ur_1_update_0_write_DATA_SIZE = 2079604;
   const int bxy_ur_1_update_0_write_BYTES_PER_PIXEL = 16 / 8;
   size_t bxy_ur_1_update_0_write_size_bytes = bxy_ur_1_update_0_write_BYTES_PER_PIXEL * bxy_ur_1_update_0_write_DATA_SIZE;
 
+  total_size_bytes += bxy_ur_1_update_0_write_size_bytes;
   const int input_update_0_read_DATA_SIZE = 2079604;
   const int input_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t input_update_0_read_size_bytes = input_update_0_read_BYTES_PER_PIXEL * input_update_0_read_DATA_SIZE;
 
+  total_size_bytes += input_update_0_read_size_bytes;
 
   cl_int err;
   cl::Context context;
@@ -26,11 +29,11 @@ int main(int argc, char **argv) {
   std::vector<uint8_t, aligned_allocator<uint8_t> > bxy_ur_1_update_0_write(bxy_ur_1_update_0_write_size_bytes);
   std::vector<uint8_t, aligned_allocator<uint8_t> > input_update_0_read(input_update_0_read_size_bytes);
 
-  std::ofstream input_input_update_0_read("input_update_0_read.csv");
+  std::ifstream input_input_input_update_0_read("input_update_0_read.csv");
   for (int i = 0; i < input_update_0_read_DATA_SIZE; i++) {
     // TODO: Add support for other widths
-    uint16_t val = (i % 256);
-    input_input_update_0_read << val << std::endl;
+    uint16_t val;
+    input_input_update_0_read >> val;
     ((uint16_t*) (input_update_0_read.data()))[i] = val;
   }
 
@@ -59,7 +62,7 @@ int main(int argc, char **argv) {
       << "] with xclbin file!\n";
     } else {
       std::cout << "Device[" << i << "]: program successful!\n";
-      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, "bxy_ur_1_opt_accel", &err));
+      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, "bxy_ur_1_opt_kernel", &err));
       valid_device++;
       break;
     }
@@ -75,13 +78,21 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, cl::Buffer input_update_0_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, input_update_0_read_size_bytes, input_update_0_read.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, input_update_0_read_ocl_buf));
 
-  int transfer_size = 2079604 / 1;
+  uint64_t transfer_size = 2079604 / 1;
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({input_update_0_read_ocl_buf}, 0));
 
-  OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add));
+unsigned long start, end, nsduration;
+cl::Event event;
 
+OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));
+OCL_CHECK(err, err = event.wait());
+end =
+OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
+start = OCL_CHECK(err,
+event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
+nsduration = end - start;
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({bxy_ur_1_update_0_write_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
@@ -91,5 +102,13 @@ int main(int argc, char **argv) {
     regression_result << ((uint16_t*) (bxy_ur_1_update_0_write.data()))[i] << std::endl;;
   }
 
+  double dnsduration = ((double)nsduration);
+double dsduration = dnsduration / ((double)1000000000);
+double dbytes = total_size_bytes;
+double bpersec = (dbytes / dsduration);
+double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
+cout << "bytes / sec = " << bpersec << endl;
+cout << "GB / sec = " << gbpersec << endl;
+printf("Execution time = %f (sec) \n", dsduration);
   return 0;
 }
