@@ -29,11 +29,11 @@ int main(int argc, char **argv) {
   std::vector<uint8_t, aligned_allocator<uint8_t> > harris_mini_update_0_write(harris_mini_update_0_write_size_bytes);
   std::vector<uint8_t, aligned_allocator<uint8_t> > img_update_0_read(img_update_0_read_size_bytes);
 
-  std::ifstream input_img_update_0_read("img_update_0_read.csv");
+  std::ofstream input_img_update_0_read("img_update_0_read.csv");
   for (int i = 0; i < img_update_0_read_DATA_SIZE; i++) {
     // TODO: Add support for other widths
-    uint16_t val;
-    input_img_update_0_read >> val;
+    uint16_t val = (i % 256);
+    input_img_update_0_read << val << std::endl;
     ((uint16_t*) (img_update_0_read.data()))[i] = val;
   }
 
