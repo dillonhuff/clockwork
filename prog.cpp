@@ -213,7 +213,7 @@ void populate_input(std::ostream& out, const std::string& edge_bundle) {
   string instream =
     "input_" + edge_bundle;
 
-  out << tab(1) << "std::ifstream input_" << instream << "(\"" << edge_bundle << ".csv\");" << endl;
+  out << tab(1) << "std::ifstream " << instream << "(\"" << edge_bundle << ".csv\");" << endl;
   //out << tab(1) << "std::ofstream input_" << edge_bundle << "(\"" << edge_bundle << ".csv\");" << endl;
   out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
   out << tab(2) << "// TODO: Add support for other widths" << endl;
