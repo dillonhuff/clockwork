@@ -5124,9 +5124,9 @@ App harris(const std::string& out_name) {
         mul(sub(v("img", 0, 1), v("img", 0, -1)), 2),
         sub(v("img", 1, 1), v("img", 1, -1))));
 
-  harris.func2d("lxx", add(dbl(v("grad_x")), 7));
-  harris.func2d("lyy", add(dbl(v("grad_y")), 7));
-  harris.func2d("lxy", add(add(v("grad_x"), v("grad_y")), 7));
+  harris.func2d("lxx", div(dbl(v("grad_x")), 7));
+  harris.func2d("lyy", div(dbl(v("grad_y")), 7));
+  harris.func2d("lxy", div(add(v("grad_x"), v("grad_y")), 7));
   
   harris.func2d("lgxx", stencilv(-1, 1, -1, 1, "lxx"));
   harris.func2d("lgyy", stencilv(-1, 1, -1, 1, "lyy"));

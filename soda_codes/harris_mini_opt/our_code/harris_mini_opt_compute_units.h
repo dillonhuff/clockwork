@@ -16,15 +16,15 @@ hw_uint<16> grad_x_generated_compute(hw_uint<16*6> img) {
 }
 
 hw_uint<16> lyy_generated_compute(hw_uint<16*1> grad_y) {
-  return ((grad_y.get<16, 0>() + grad_y.get<16, 0>()) + hw_uint<16>(7));
+  return ((grad_y.get<16, 0>() + grad_y.get<16, 0>()) / hw_uint<16>(7));
 }
 
 hw_uint<16> lxy_generated_compute(hw_uint<16*1> grad_x, hw_uint<16*1> grad_y) {
-  return ((grad_x.get<16, 0>() + grad_y.get<16, 0>()) + hw_uint<16>(7));
+  return ((grad_x.get<16, 0>() + grad_y.get<16, 0>()) / hw_uint<16>(7));
 }
 
 hw_uint<16> lxx_generated_compute(hw_uint<16*1> grad_x) {
-  return ((grad_x.get<16, 0>() + grad_x.get<16, 0>()) + hw_uint<16>(7));
+  return ((grad_x.get<16, 0>() + grad_x.get<16, 0>()) / hw_uint<16>(7));
 }
 
 hw_uint<16> lgyy_generated_compute(hw_uint<16*9> lyy) {
