@@ -51,15 +51,15 @@ int main(int argc, char **argv) {
     auto device = devices[i];
     OCL_CHECK(err, context = cl::Context({device}, NULL, NULL, NULL, &err));
     OCL_CHECK(err,
-        q = cl::CommandQueue(
-          context, {device}, CL_QUEUE_PROFILING_ENABLE, &err));
+      q = cl::CommandQueue(
+      context, {device}, CL_QUEUE_PROFILING_ENABLE, &err));
 
     std::cout << "Trying to program device[" << i
       << "]: " << device.getInfo<CL_DEVICE_NAME>() << std::endl;
     OCL_CHECK(err, cl::Program program(context, {device}, bins, NULL, &err));
     if (err != CL_SUCCESS) {
       std::cout << "Failed to program device[" << i
-        << "] with xclbin file!\n";
+      << "] with xclbin file!\n";
     } else {
       std::cout << "Device[" << i << "]: program successful!\n";
       OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, "bxy_ur_32_opt_kernel", &err));
@@ -83,16 +83,16 @@ int main(int argc, char **argv) {
 
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({input_update_0_read_ocl_buf}, 0));
 
-  unsigned long start, end, nsduration;
-  cl::Event event;
+unsigned long start, end, nsduration;
+cl::Event event;
 
-  OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));
-  OCL_CHECK(err, err = event.wait());
-  end =
-    OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
-  start = OCL_CHECK(err,
-      event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
-  nsduration = end - start;
+OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));
+OCL_CHECK(err, err = event.wait());
+end =
+OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
+start = OCL_CHECK(err,
+event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
+nsduration = end - start;
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({bxy_ur_32_update_0_write_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
@@ -103,12 +103,12 @@ int main(int argc, char **argv) {
   }
 
   double dnsduration = ((double)nsduration);
-  double dsduration = dnsduration / ((double)1000000000);
-  double dbytes = total_size_bytes;
-  double bpersec = (dbytes / dsduration);
-  double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
-  cout << "bytes / sec = " << bpersec << endl;
-  cout << "GB / sec = " << gbpersec << endl;
-  printf("Execution time = %f (sec) \n", dsduration);
+double dsduration = dnsduration / ((double)1000000000);
+double dbytes = total_size_bytes;
+double bpersec = (dbytes / dsduration);
+double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
+std::cout << "bytes / sec = " << bpersec << std::endl;
+std::cout << "GB / sec = " << gbpersec << std::endl;
+printf("Execution time = %f (sec) \n", dsduration);
   return 0;
 }
