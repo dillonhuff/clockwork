@@ -5190,6 +5190,8 @@ void harris_test() {
   assert(naive == optimized);
   move_to_benchmarks_folder("harris_mini_opt");
 
+  assert(false);
+
   int rows = 1080;
   int cols = 1920;
   for (int i = 0; i < 2; i++) {
@@ -6933,8 +6935,8 @@ void playground() {
 }
 
 void application_tests() {
+  harris_test();
   pointwise_app_test();
-  assert(false);
   blur_xy_16_app_test();
   tricky_shift_register_reconvergence_test();
 
@@ -6957,7 +6959,6 @@ void application_tests() {
   
   updown_merge_test();
   harris_unrolled_test();
-  harris_test();
   sobel_16_app_test();
   exposure_fusion();
 
