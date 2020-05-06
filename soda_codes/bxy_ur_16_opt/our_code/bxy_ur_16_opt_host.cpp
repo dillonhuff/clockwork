@@ -3,8 +3,6 @@
 #include <fstream>
 #include <vector>
 
-using namespace std;
-
 int main(int argc, char **argv) {
   if (argc != 2) {
     std::cout << "Usage: " << argv[0] << " <XCLBIN File>" << std::endl;
@@ -19,8 +17,6 @@ int main(int argc, char **argv) {
   const int input_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t input_update_0_read_size_bytes = input_update_0_read_BYTES_PER_PIXEL * input_update_0_read_DATA_SIZE;
 
-
-  std::cout << "Hello, I am the rebuilt host" << std::endl;
 
   cl_int err;
   cl::Context context;
@@ -84,20 +80,7 @@ int main(int argc, char **argv) {
 
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({input_update_0_read_ocl_buf}, 0));
 
-  // Start of timing code
-  unsigned long start, end, nsduration;
-  cl::Event event;
-
-  /* Execute Kernel */
-  OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));
-  OCL_CHECK(err, err = event.wait());
-  end =
-    OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
-  start = OCL_CHECK(err,
-      event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
-  nsduration = end - start;
-  //OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add));
-
+  OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add));
 
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({bxy_ur_16_update_0_write_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
@@ -108,25 +91,5 @@ int main(int argc, char **argv) {
     regression_result << ((uint16_t*) (bxy_ur_16_update_0_write.data()))[i] << std::endl;;
   }
 
-  size_t total_size_bytes = bxy_ur_16_update_0_write_size_bytes + input_update_0_read_size_bytes;
-  std::cout << "Total size of input and output in bytes = " << total_size_bytes << std::endl;
-
-  //short ddr_banks = 2;
-  double dnsduration = ((double)nsduration);
-  double dsduration = dnsduration / ((double)1000000000);
-
-  double dbytes = total_size_bytes;
-  double bpersec = (dbytes / dsduration);
-  double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
-
-  cout << "bytes / sec = " << bpersec << endl;
-  cout << "GB / sec = " << gbpersec << endl;
-  //printf(
-      //"Kernel completed read/write %.0lf MB bytes from/to global memory.\n",
-      //dmbytes);
-  printf("Execution time = %f (sec) \n", dsduration);
-  //printf("Concurrent Read and Write Throughput = %f (GB/sec) \n", gbpersec);
-
-  printf("TEST PASSED\n");
   return 0;
 }

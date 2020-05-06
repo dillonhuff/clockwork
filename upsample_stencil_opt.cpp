@@ -506,23 +506,27 @@ void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Im
 extern "C" {
 
 static void read_input(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
+  hw_uint<32> burst_reg;
   for (int i = 0; i < INPUT_SIZE; i++) {
     #pragma HLS pipeline II=1
-    v.write(input[i]);
+    burst_reg = input[i];
+    v.write(burst_reg);
   }
 }
 
 static void write_output(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
+  hw_uint<32> burst_reg;
   for (int i = 0; i < OUTPUT_SIZE; i++) {
     #pragma HLS pipeline II=1
-    output[i] = v.read();
+    burst_reg = v.read();
+    output[i] = burst_reg;
   }
 }
 
 void upsample_stencil_opt_accel(hw_uint<32>* Img_update_0_read, hw_uint<32>* upsample_stencil_update_0_write, const int size) { 
 #pragma HLS dataflow
-#pragma HLS INTERFACE m_axi port = Img_update_0_read offset = slave bundle = gmem
-#pragma HLS INTERFACE m_axi port = upsample_stencil_update_0_write offset = slave bundle = gmem
+#pragma HLS INTERFACE m_axi port = Img_update_0_read offset = slave depth = 65536 bundle = gmem0
+#pragma HLS INTERFACE m_axi port = upsample_stencil_update_0_write offset = slave depth = 65536 bundle = gmem1
 
 #pragma HLS INTERFACE s_axilite port = Img_update_0_read bundle = control
 #pragma HLS INTERFACE s_axilite port = upsample_stencil_update_0_write bundle = control
