@@ -5125,9 +5125,9 @@ App harris(const std::string& out_name) {
         mul(sub(v("img", 0, 1), v("img", 0, -1)), 2),
         sub(v("img", 1, 1), v("img", 1, -1))));
 
-  harris.func2d("lxx", add(dbl(v("grad_x")), 7));
-  harris.func2d("lyy", add(dbl(v("grad_y")), 7));
-  harris.func2d("lxy", add(add(v("grad_x"), v("grad_y")), 7));
+  harris.func2d("lxx", add(square(v("grad_x")), 128));
+  harris.func2d("lyy", add(square(v("grad_y")), 128));
+  harris.func2d("lxy", add(mul(v("grad_x"), v("grad_y")), 128));
   
   harris.func2d("lgxx", stencilv(-1, 1, -1, 1, "lxx"));
   harris.func2d("lgyy", stencilv(-1, 1, -1, 1, "lyy"));
@@ -5137,10 +5137,10 @@ App harris(const std::string& out_name) {
   harris.func2d("lgyy8", add(v("lgyy"), 64));
   harris.func2d("lgxy8", add(v("lgxy"), 64));
   
-  harris.func2d("det", add(add("lgxx8", "lgyy8"), dbl("lgxy8")));
-  harris.func2d("trace", add("lgxx8", "lgyy8"));
+  harris.func2d("det", add(mul("lgxx8", "lgyy8"), square("lgxy8")));
+  harris.func2d("trace", mul("lgxx8", "lgyy8"));
   harris.func2d(out_name, add(v("det"),
-        add(dbl("trace"), 8)));
+        mul(square("trace"), 8)));
 
   return harris;
 }
@@ -6938,7 +6938,7 @@ void playground() {
 void application_tests() {
 
   harris_test();
-  assert(false);
+  //assert(false);
 
   pointwise_app_test();
   conv_1d_test();
