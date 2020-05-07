@@ -441,7 +441,6 @@ prog conv_1d() {
   prg.name = "conv_1d";
   prg.add_input("in");
   prg.add_output("out");
-  //prg.buffer_port_widths["T"] = 32*3;
   prg.buffer_port_widths["in"] = 32;
   prg.buffer_port_widths["out"] = 32;
   prg.buffer_port_widths["M"] = 32;
@@ -452,14 +451,13 @@ prog conv_1d() {
   write->add_store("M", "p");
 
   auto c = prg.add_loop("c", 0, 10 - 2);
-
   auto compute = c->add_op("compute_output");
   compute->add_function("accumulate_3");
-  //compute->add_load("T", "c");
   compute->add_load("M", "c");
   compute->add_load("M", "c + 1");
   compute->add_load("M", "c + 2");
   compute->add_store("out", "c");
+
   return prg;
 }
 

@@ -8,6 +8,11 @@ The file `build_set_test.cpp` is the main driver for all tests.
 Most files in this repository are automatically generated collateral
 that can be ignored.
 
+Important Files
+* `build_set_test.cpp` - The main driver program
+* `ubuffer.h` - The header file which stores the `UBuffer` class, which represents re-use buffers that store data between compute operations.
+* `prog.h` - The header file which stores the `prog` class, which is the clockwork input representation.
+
 ## Dependencies
 
 Please install the specific versions of the listed dependencies. Do
