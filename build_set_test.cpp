@@ -5196,11 +5196,11 @@ void harris_test() {
 
   int rows = 1080;
   int cols = 1920;
-  vector<int> factors{0, 8, 16};
+  vector<int> factors{1, 8, 16};
   for (int i = 0; i < (int) factors.size(); i++) {
     int unroll_factor = factors.at(i);
     cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
-    string out_name = "harris_" + str(unroll_factor);
+    string out_name = "hr_" + str(unroll_factor);
 
     CodegenOptions options;
     options.internal = true;
