@@ -194,7 +194,6 @@ void generate_bank(CodegenOptions& options,
   out << "\t// RAM Box: " << bank.layout << endl;
   out << "\t// Capacity: " << maxdelay + 1 << endl;
 
-  //TODO: add option for address type
   //C array with read and write method
   if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_LINEAR){
       //num reader > 1 partiions = 1;
@@ -202,7 +201,8 @@ void generate_bank(CodegenOptions& options,
         bank.get_partitions();
       int partition_size = partitions.size();
       if (num_readers == 1 || partition_size == 1 || options.all_rams) {
-        int capacity = 1 + maxdelay;
+        //TODO: add a ram capacity compute pass for bank
+        int capacity = bank.layout.cardinality();
         out << tab(1) << pt_type_string << " RAM[" << capacity << "];" << endl;
         out << tab(1) << "inline " + pt_type_string + " read(const int addr) {" << endl;
 
@@ -223,6 +223,7 @@ void generate_bank(CodegenOptions& options,
           cout << "Not support more than one reader in RAM mode" << endl;
           assert(false);
       }
+      out << "};" << endl << endl;
 
   }
   else {

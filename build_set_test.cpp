@@ -1413,6 +1413,70 @@ prog cnn_conv_layer() {
   return prg;
 }
 
+void ram_addr_unit_test() {
+
+  prog prg;
+  prg.compute_unit_file = "mobilenet_compute.h";
+  prg.name = "ram_addr_unit_test";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_bounds["in"] = {15};
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_bounds["out"] = {1};
+  prg.buffer_port_widths["I"] = 32;
+  prg.buffer_bounds["I"] = {15};
+  prg.buffer_port_widths["tmp"] = 32;
+  prg.buffer_bounds["tmp"] = {1};
+
+  {
+    auto read_in = prg.add_loop("rd_in", 0, 14);
+    auto rop = read_in->add_op("read_input_stream");
+    rop->add_load("in", "rd_in");
+    rop->add_store("I", "rd_in");
+  }
+
+  {
+    auto init = prg.add_op("set_z");
+    init->add_function("set_zero_32");
+    init->add_store("tmp", "0");
+
+    auto accum_loop = prg.add_loop("a", 0, 14);
+    auto accum = accum_loop->add_op("accumulate");
+    auto tmp = accum->add_load("tmp", "0");
+    auto next = accum->add_load("I", "a");
+    accum->add_function("inc", {tmp, next});
+    accum->add_store("tmp", "0");
+
+    auto write_out = prg.add_op("output");
+    write_out->add_load("tmp", "0");
+    write_out->add_store("out", "0");
+  }
+
+  cout << "Program code without optimization..." << endl;
+  prg.unoptimized_codegen();
+
+  umap* opt_sched = prg.optimized_codegen();
+  auto domain = prg.whole_iteration_domain();
+  auto schedmap = its(opt_sched, domain);
+  cout << "Optimized schedule..." << endl;
+  cout << codegen_c(schedmap);
+
+  auto buffers = build_buffers(prg);
+  CodegenOptions options;
+  options.internal = true;
+  options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
+  generate_app_code(options, buffers, prg, opt_sched);
+
+  generate_regression_testbench(prg, buffers);
+
+  int res = system(string("g++ -std=c++11 regression_tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
 void cnn_test() {
     prog prg = cnn_conv_layer();
 
@@ -6503,8 +6567,9 @@ void application_tests() {
     //memtile_test();
     //auto_vec_test();
     //assert(false);
-    cnn_test();
+    ram_addr_unit_test();
     assert(false);
+    cnn_test();
     bankmerge_vec_test();
 
   blur_xy_16_app_test();
