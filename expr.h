@@ -210,6 +210,33 @@ Expr* func(const std::string& name, Expr* arg) {
 }
 
 static inline
+Expr* v3(const std::string& name) {
+  return v3(name, 0, 0, 0);
+}
+
+static inline
+Expr* v3(const std::string& name,
+    const int a,
+    const int b,
+    const int c) {
+
+  auto astr = str(a);
+  auto bstr = str(b);
+  auto cstr = str(c);
+  return new FunctionCall(name, {new IntConst(astr),
+      new IntConst(bstr),
+      new IntConst(cstr)});
+}
+
+static inline
+Expr* v(const std::string& name,
+    const int a,
+    const int b,
+    const int c) {
+  return v3(name, a, b, c);
+}
+
+static inline
 Expr* v(const std::string& name,
     const int a,
     const int b) {
@@ -328,6 +355,11 @@ Expr* sq(Expr* a) {
 static inline
 Expr* sq(const std::string& a) {
   return sq(v(a));
+}
+
+static inline
+Expr* sq3(const std::string& a) {
+  return sq(v(a, 0, 0, 0));
 }
 
 static inline

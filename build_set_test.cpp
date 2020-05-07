@@ -2835,6 +2835,52 @@ struct App {
     return name;
   }
 
+  string func3d(const std::string& name, Expr* def) {
+    Result res;
+
+    string compute_name = name + "_generated_compute";
+
+    map<string, vector<FunctionCall*> > calls;
+    visit_function_calls(def, [this, &calls](FunctionCall* c) {
+        if (contains_key(c->name, app_dag)) {
+        calls[c->name].push_back(c);
+        }
+        });
+
+    vector<Window> windows;
+    map<string, vector<vector<int> > > offset_map;
+    for (auto c : calls) {
+      string window_name = c.first;
+      vector<QAV> strides{qconst(1), qconst(1), qconst(1)};
+      set<vector<int> > offsets;
+      for (auto off : c.second) {
+        vector<int> offset = get_offset(off);
+        offsets.insert(offset);
+      }
+
+      vector<vector<int> > offsets_vec(begin(offsets), end(offsets));
+      offset_map[window_name] = offsets_vec;
+      Window w{window_name, strides, offsets_vec};
+      windows.push_back(w);
+    }
+
+    cout << "Windows..." << endl;
+    for (auto w : windows) {
+      cout << tab(1) << w << endl;
+    }
+
+    add_func(name,
+        compute_name,
+        3,
+        windows);
+
+    app_dag[name].updates.back().compute_unit_impl =
+      compute_unit_string(default_num_type, default_pixel_width, compute_name, windows, def, offset_map);
+    app_dag[name].updates.back().def = def;
+
+    return name;
+  }
+
   string func2d(const std::string& name, Expr* def) {
     Result res;
 
@@ -5211,6 +5257,35 @@ void harris_test() {
   }
 }
 
+App denoise3d(const std::string& out_name) {
+  App dn;
+  dn.func3d("u_oc");
+  dn.func3d("f_oc");
+
+  dn.func3d("u", v3("u_oc", 0, 0, 0));
+  dn.func3d("f", v3("f_oc", 0, 0, 0));
+
+  dn.func3d("diff_u", sub(v("u", 0, 0, 0), v("u", 0, -1, 0)));
+  dn.func3d("diff_d", sub(v("u", 0, 0, 0), v("u", 0, 1, 0)));
+  dn.func3d("diff_l", sub(v("u", 0, 0, 0), v("u", -1, 0, 0)));
+  dn.func3d("diff_r", sub(v("u", 0, 0, 0), v("u", 1, 0, 0)));
+  dn.func3d("diff_i", sub(v("u", 0, 0, 0), v("u", 0, 0, -1)));
+  dn.func3d("diff_o", sub(v("u", 0, 0, 0), v("u", 0, 0, 1)));
+
+  dn.func3d("g",
+      add({sq3("diff_u"), sq3("diff_d"), sq3("diff_l"), sq3("diff_r"), sq3("diff_i"), sq3("diff_o")}));
+
+  dn.func3d("r0", mul(v3("u"), v3("f")));
+  dn.func3d("r1", sq3("r0"));
+  dn.func3d(out_name,
+      add({v3("u", 0, 0, 0), v3("u", 1, 0, 0), v3("g", 1, 0, 0), v3("u", -1, 0, 0), v3("g", -1, 0, 0),
+        v3("u", 0, 1, 0), v3("g", 0, 1, 0), v3("u", 0, -1, 0), v3("g", 0, -1, 0), v3("u", 0, 0, 1), v3("g", 0, 0, 1),
+        v3("u", 0, 0, -1), v3("g", 0, 0, -1), v3("f", 0, 0, 0), v3("r1", 0, 0, 0),
+        v3("g", 1, 0, 0), v3("g", -1, 0, 0), v3("g", 0, 1, 0), v3("g", 0, -1, 0), v3("g", 0, 0, 1), v3("g", 0, 0, -1)});
+
+  return dn;
+}
+
 void max_pooling_test() {
   App mp;
   mp.func3d("in_oc");
@@ -5680,26 +5755,6 @@ App sum_denoise2d(const std::string& outname) {
   dn.func2d("r0", "fadd2", {pt("u"), pt("f")});
   dn.func2d("r1", "id", pt("r0"));
   dn.func2d(outname, "out_comp_fadd", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
-
-  return dn;
-}
-
-App denoise3d() {
-  App dn;
-
-  dn.func2d("f_off_chip");
-  dn.func2d("u_off_chip");
-  dn.func2d("f", "id", "f_off_chip", {1, 1}, {{0, 0}});
-  dn.func2d("u", "id", "u_off_chip", {1, 1}, {{0, 0}});
-  dn.func2d("diff_qwe", "diff_b", "u", {{0, 0}, {0, -1}});
-  dn.func2d("diff_d", "diff_b", "u", {{0, 0}, {0, 1}});
-  dn.func2d("diff_l", "diff_b", "u", {{0, 0}, {-1, 0}});
-  dn.func2d("diff_r", "diff_b", "u", {{0, 0}, {1, 0}});
-
-  dn.func2d("g", "mag_dn2", {pt("diff_qwe"), pt("diff_d"), pt("diff_l"), pt("diff_r")});
-  dn.func2d("r0", "comp_r0", {pt("u"), pt("f")});
-  dn.func2d("r1", "r1_comp", pt("r0"));
-  dn.func2d("denoise2d", "out_comp_dn2d", {pt("r1"), pt("f"), win("u", {{0, 0}, {0, -1}, {-1, 0}, {1, 0}}), win("g", {{0, 1}, {0, -1}, {-1, 0}, {1, 0}})});
 
   return dn;
 }
