@@ -11,8 +11,8 @@
 using namespace std;
 
 int main() {
-  const int nrows = 132;
-  const int ncols = 132;
+  const int nrows = 36;
+  const int ncols = 36;
   uint64_t img_pixels = nrows*ncols;
   const uint64_t bits_per_pixel = PIXEL_WIDTH;
   uint64_t img_bits = bits_per_pixel*img_pixels;

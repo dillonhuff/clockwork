@@ -11,12 +11,12 @@ int main(int argc, char **argv) {
   std::string binaryFile = argv[1];
   size_t total_size_bytes = 0;
   const int harris_1_update_0_write_DATA_SIZE = 2085616;
-  const int harris_1_update_0_write_BYTES_PER_PIXEL = 16 / 8;
+  const int harris_1_update_0_write_BYTES_PER_PIXEL = 32 / 8;
   size_t harris_1_update_0_write_size_bytes = harris_1_update_0_write_BYTES_PER_PIXEL * harris_1_update_0_write_DATA_SIZE;
 
   total_size_bytes += harris_1_update_0_write_size_bytes;
   const int img_update_0_read_DATA_SIZE = 2085616;
-  const int img_update_0_read_BYTES_PER_PIXEL = 16 / 8;
+  const int img_update_0_read_BYTES_PER_PIXEL = 32 / 8;
   size_t img_update_0_read_size_bytes = img_update_0_read_BYTES_PER_PIXEL * img_update_0_read_DATA_SIZE;
 
   total_size_bytes += img_update_0_read_size_bytes;
@@ -29,18 +29,16 @@ int main(int argc, char **argv) {
   std::vector<uint8_t, aligned_allocator<uint8_t> > harris_1_update_0_write(harris_1_update_0_write_size_bytes);
   std::vector<uint8_t, aligned_allocator<uint8_t> > img_update_0_read(img_update_0_read_size_bytes);
 
-  std::ifstream input_img_update_0_read("img_update_0_read.csv");
+  std::ofstream input_img_update_0_read("img_update_0_read.csv");
   for (int i = 0; i < img_update_0_read_DATA_SIZE; i++) {
-    // TODO: Add support for other widths
-    uint16_t val;
-    input_img_update_0_read >> val;
-    ((uint16_t*) (img_update_0_read.data()))[i] = val;
+    uint32_t val = (i % 256);
+    input_img_update_0_read << val << std::endl;
+    ((uint32_t*) (img_update_0_read.data()))[i] = val;
   }
 
   input_img_update_0_read.close();
   for (int i = 0; i < harris_1_update_0_write_DATA_SIZE; i++) {
-    // TODO: Add support for other widths
-    ((uint16_t*) (harris_1_update_0_write.data()))[i] = 0;
+    ((uint32_t*) (harris_1_update_0_write.data()))[i] = 0;
   }
 
   auto devices = xcl::get_xil_devices();
@@ -99,7 +97,7 @@ nsduration = end - start;
 
   std::ofstream regression_result("harris_1_update_0_write_accel_result.csv");
   for (int i = 0; i < harris_1_update_0_write_DATA_SIZE; i++) {
-    regression_result << ((uint16_t*) (harris_1_update_0_write.data()))[i] << std::endl;;
+    regression_result << ((uint32_t*) (harris_1_update_0_write.data()))[i] << std::endl;
   }
 
   double dnsduration = ((double)nsduration);

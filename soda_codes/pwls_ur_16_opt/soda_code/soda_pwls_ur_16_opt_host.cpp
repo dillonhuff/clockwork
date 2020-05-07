@@ -38,7 +38,6 @@ int main(int argc, char **argv) {
 
   input_input_update_0_read.close();
   for (int i = 0; i < pwls_ur_16_update_0_write_DATA_SIZE; i++) {
-    // TODO: Add support for other widths
     ((uint16_t*) (pwls_ur_16_update_0_write.data()))[i] = 0;
   }
 
@@ -98,7 +97,7 @@ nsduration = end - start;
 
   std::ofstream regression_result("pwls_ur_16_update_0_write_accel_result.csv");
   for (int i = 0; i < pwls_ur_16_update_0_write_DATA_SIZE; i++) {
-    regression_result << ((uint16_t*) (pwls_ur_16_update_0_write.data()))[i] << std::endl;;
+    regression_result << ((uint16_t*) (pwls_ur_16_update_0_write.data()))[i] << std::endl;
   }
 
   double dnsduration = ((double)nsduration);

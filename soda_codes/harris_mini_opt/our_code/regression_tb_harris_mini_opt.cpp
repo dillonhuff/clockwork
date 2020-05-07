@@ -9,10 +9,10 @@ int main() {
 
 
   // Loading input data
-  // cmap    : { img_update_0[root = 0, img_0, img_1] -> img_oc[0, 0] : -2 <= img_0 <= 129 and -2 <= img_1 <= 129 }
-  // read map: { img_oc[0, 0] -> img_update_0[root = 0, img_0, img_1] : -2 <= img_0 <= 129 and -2 <= img_1 <= 129 }
-  // rng     : { img_update_0[root = 0, img_0, img_1] : -2 <= img_0 <= 129 and -2 <= img_1 <= 129 }
-  for (int i = 0; i < 17424; i++) {
+  // cmap    : { img_update_0[root = 0, img_0, img_1] -> img_oc[0, 0] : -2 <= img_0 <= 33 and -2 <= img_1 <= 33 }
+  // read map: { img_oc[0, 0] -> img_update_0[root = 0, img_0, img_1] : -2 <= img_0 <= 33 and -2 <= img_1 <= 33 }
+  // rng     : { img_update_0[root = 0, img_0, img_1] : -2 <= img_0 <= 33 and -2 <= img_1 <= 33 }
+  for (int i = 0; i < 1296; i++) {
     hw_uint<32> in_val;
     set_at<0*32, 32, 32>(in_val, 1*i + 0);
     in_pix << in_val << endl;
@@ -21,7 +21,7 @@ int main() {
 
   harris_mini_opt(img_update_0_read, harris_mini_update_0_write);
 
-  for (int i = 0; i < 16384; i++) {
+  for (int i = 0; i < 1024; i++) {
     hw_uint<32> actual = harris_mini_update_0_write.read();
     auto actual_lane_0 = actual.extract<0*32, 31>();
     fout << actual_lane_0 << endl;

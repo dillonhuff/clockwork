@@ -5180,7 +5180,7 @@ void harris_unrolled_test() {
 }
 
 void harris_test() {
-  int mini_size = 128;
+  int mini_size = 32;
   auto hmini = harris("harris_mini");
   hmini.realize_naive("harris_mini", mini_size, mini_size);
   hmini.realize("harris_mini", mini_size, mini_size, 1);
@@ -5192,12 +5192,13 @@ void harris_test() {
   assert(naive == optimized);
   move_to_benchmarks_folder("harris_mini_opt");
 
-  assert(false);
+  //assert(false);
 
   int rows = 1080;
   int cols = 1920;
-  for (int i = 0; i < 2; i++) {
-    int unroll_factor = pow(2, i);
+  vector<int> factors{0, 8, 16};
+  for (int i = 0; i < (int) factors.size(); i++) {
+    int unroll_factor = factors.at(i);
     cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
     string out_name = "harris_" + str(unroll_factor);
 
