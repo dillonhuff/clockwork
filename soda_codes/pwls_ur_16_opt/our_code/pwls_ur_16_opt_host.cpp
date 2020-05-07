@@ -31,7 +31,6 @@ int main(int argc, char **argv) {
 
   std::ofstream input_input_update_0_read("input_update_0_read.csv");
   for (int i = 0; i < input_update_0_read_DATA_SIZE; i++) {
-    // TODO: Add support for other widths
     uint16_t val = (i % 256);
     input_input_update_0_read << val << std::endl;
     ((uint16_t*) (input_update_0_read.data()))[i] = val;

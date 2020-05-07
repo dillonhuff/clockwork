@@ -1,6 +1,27 @@
 #include "prog.h"
 #include "codegen.h"
 
+std::string vanilla_c_pixel_type_string(const int w) {
+  if (w == 8) {
+    return "uint8_t";
+  }
+
+  if (w == 16) {
+    return "uint16_t";
+  }
+
+  if (w == 32) {
+    return "uint32_t";
+  }
+
+  cout << "Error: No primitive C type for width: " << w << endl;
+  assert(false);
+}
+
+std::string vanilla_c_pixel_type_string(const std::string& buf, map<string, UBuffer>& buffers) {
+  return vanilla_c_pixel_type_string(map_find(buf, buffers).port_widths);
+}
+
 void ocl_headers(ostream& out) {
   out << "#include \"xcl2.hpp\"" << endl;
   out << "#include <algorithm>" << endl;
@@ -209,19 +230,15 @@ void ocl_command_queue(std::ostream& out) {
   out << tab(1) << "cl::CommandQueue q;" << endl << endl;
 }
 
-void populate_input(std::ostream& out, const std::string& edge_bundle) {
+void populate_input(std::ostream& out, const std::string& edge_bundle, const string& tp) {
   string instream =
     "input_" + edge_bundle;
 
-  //out << tab(1) << "std::ifstream " << instream << "(\"" << edge_bundle << ".csv\");" << endl;
   out << tab(1) << "std::ofstream input_" << edge_bundle << "(\"" << edge_bundle << ".csv\");" << endl;
   out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
-  out << tab(2) << "// TODO: Add support for other widths" << endl;
-  out << tab(2) << "uint16_t val = (i % 256);" << endl;
-  //out << tab(2) << "uint16_t val;" << endl;
-  //out << tab(2) << instream << " >> val;" << endl;
+  out << tab(2) << tp << " val = (i % 256);" << endl;
   out << tab(2) << "input_" << edge_bundle << " << val << std::endl;" << endl;
-  out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = val;" << endl;
+  out << tab(2) << "((" << tp << "*) (" << edge_bundle << ".data()))[i] = val;" << endl;
   out << tab(1) << "}" << endl << endl;
   out << tab(1) << "input_" << edge_bundle << ".close();" << endl;
 }
@@ -264,8 +281,8 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
   }
   out << endl;
 
-  for (auto edge_bundle : in_bundles(buffers, prg)) {
-    populate_input(out, edge_bundle);
+  for (auto edge_in : inputs(buffers, prg)) {
+    populate_input(out, edge_in.second, vanilla_c_pixel_type_string(edge_in.first, buffers));
   }
 
   for (auto edge_bundle : out_bundles(buffers, prg)) {
@@ -340,9 +357,12 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   }
   out << endl;
 
-  for (auto edge_bundle : in_bundles(buffers, prg)) {
-    populate_input(out, edge_bundle);
+  for (auto edge_in : inputs(buffers, prg)) {
+    populate_input(out, edge_in.second, vanilla_c_pixel_type_string(edge_in.first, buffers));
   }
+  //for (auto edge_bundle : in_bundles(buffers, prg)) {
+    //populate_input(out, edge_bundle);
+  //}
 
   for (auto edge_bundle : out_bundles(buffers, prg)) {
     out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;

@@ -6937,10 +6937,11 @@ void playground() {
 
 void application_tests() {
 
-  pointwise_app_test();
-  assert(false);
-  conv_1d_test();
   harris_test();
+  assert(false);
+
+  pointwise_app_test();
+  conv_1d_test();
   blur_xy_16_app_test();
   tricky_shift_register_reconvergence_test();
 
