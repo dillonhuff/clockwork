@@ -97,7 +97,7 @@ nsduration = end - start;
 
   std::ofstream regression_result("harris_mini_update_0_write_accel_result.csv");
   for (int i = 0; i < harris_mini_update_0_write_DATA_SIZE; i++) {
-    regression_result << ((uint16_t*) (harris_mini_update_0_write.data()))[i] << std::endl;;
+    regression_result << ((uint32_t*) (harris_mini_update_0_write.data()))[i] << std::endl;
   }
 
   double dnsduration = ((double)nsduration);
