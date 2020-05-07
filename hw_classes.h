@@ -364,7 +364,8 @@ class HWStream {
 
 #ifdef __VIVADO_SYNTH__
 
-    hls::stream<T> values;
+    hls::stream<T> values("values");
+#pragma HLS stream variable=values depth=32
 
     void write(const T& v) {
       return values.write(v);
