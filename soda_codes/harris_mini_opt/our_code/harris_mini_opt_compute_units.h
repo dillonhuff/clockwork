@@ -16,15 +16,15 @@ hw_uint<32> grad_x_generated_compute(hw_uint<32*6> img) {
 }
 
 hw_uint<32> lyy_generated_compute(hw_uint<32*1> grad_y) {
-  return ((grad_y.get<32, 0>() * grad_y.get<32, 0>()) + hw_uint<32>(128));
+  return ((grad_y.get<32, 0>() * grad_y.get<32, 0>()) / hw_uint<32>(128));
 }
 
 hw_uint<32> lxy_generated_compute(hw_uint<32*1> grad_x, hw_uint<32*1> grad_y) {
-  return ((grad_x.get<32, 0>() * grad_y.get<32, 0>()) + hw_uint<32>(128));
+  return ((grad_x.get<32, 0>() * grad_y.get<32, 0>()) / hw_uint<32>(128));
 }
 
 hw_uint<32> lxx_generated_compute(hw_uint<32*1> grad_x) {
-  return ((grad_x.get<32, 0>() * grad_x.get<32, 0>()) + hw_uint<32>(128));
+  return ((grad_x.get<32, 0>() * grad_x.get<32, 0>()) / hw_uint<32>(128));
 }
 
 hw_uint<32> lgyy_generated_compute(hw_uint<32*9> lyy) {
@@ -40,15 +40,15 @@ hw_uint<32> lgxx_generated_compute(hw_uint<32*9> lxx) {
 }
 
 hw_uint<32> lgyy8_generated_compute(hw_uint<32*1> lgyy) {
-  return (lgyy.get<32, 0>() + hw_uint<32>(64));
+  return (lgyy.get<32, 0>() / hw_uint<32>(64));
 }
 
 hw_uint<32> lgxy8_generated_compute(hw_uint<32*1> lgxy) {
-  return (lgxy.get<32, 0>() + hw_uint<32>(64));
+  return (lgxy.get<32, 0>() / hw_uint<32>(64));
 }
 
 hw_uint<32> lgxx8_generated_compute(hw_uint<32*1> lgxx) {
-  return (lgxx.get<32, 0>() + hw_uint<32>(64));
+  return (lgxx.get<32, 0>() / hw_uint<32>(64));
 }
 
 hw_uint<32> det_generated_compute(hw_uint<32*1> lgxx8, hw_uint<32*1> lgxy8, hw_uint<32*1> lgyy8) {
