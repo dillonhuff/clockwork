@@ -1015,7 +1015,9 @@ void pwls_ur_16_opt_accel(hw_uint<256>* input_update_0_read, hw_uint<256>* pwls_
 #pragma HLS INTERFACE s_axilite port = return bundle = control
 
   static HWStream<hw_uint<256> > input_update_0_read_channel;
+#pragma HLS stream variable=input_update_0_read_channel.values depth=320
   static HWStream<hw_uint<256> > pwls_ur_16_update_0_write_channel;
+#pragma HLS stream variable=pwls_ur_16_update_0_write_channel.values depth=320
 
   read_input(input_update_0_read, input_update_0_read_channel, size);
 
