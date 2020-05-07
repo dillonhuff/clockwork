@@ -285,10 +285,11 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
     populate_input(out, edge_in.second, vanilla_c_pixel_type_string(edge_in.first, buffers));
   }
 
-  for (auto edge_bundle : out_bundles(buffers, prg)) {
+  for (auto edge_out : outputs(buffers, prg)) {
+    auto edge_bundle = edge_out.second;
+    auto buf = edge_out.first;
     out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
-    out << tab(2) << "// TODO: Add support for other widths" << endl;
-    out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = 0;" << endl;
+    out << tab(2) << "((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << edge_bundle << ".data()))[i] = 0;" << endl;
     out << tab(1) << "}" << endl << endl;
   }
 
@@ -364,10 +365,18 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
     //populate_input(out, edge_bundle);
   //}
 
-  for (auto edge_bundle : out_bundles(buffers, prg)) {
+  //for (auto edge_bundle : out_bundles(buffers, prg)) {
+    //out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
+    //out << tab(1) << "// TODO: Add support for other widths" << endl;
+    //out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = 0;" << endl;
+    //out << tab(1) << "}" << endl << endl;
+  //}
+
+  for (auto edge_out : outputs(buffers, prg)) {
+    auto edge_bundle = edge_out.second;
+    auto buf = edge_out.first;
     out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
-    out << tab(1) << "// TODO: Add support for other widths" << endl;
-    out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = 0;" << endl;
+    out << tab(2) << "((" << vanilla_c_pixel_type_string(buf, buffers) << "*) (" << edge_bundle << ".data()))[i] = 0;" << endl;
     out << tab(1) << "}" << endl << endl;
   }
 

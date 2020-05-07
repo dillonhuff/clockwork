@@ -38,8 +38,7 @@ int main(int argc, char **argv) {
 
   input_img_update_0_read.close();
   for (int i = 0; i < harris_mini_update_0_write_DATA_SIZE; i++) {
-  // TODO: Add support for other widths
-    ((uint16_t*) (harris_mini_update_0_write.data()))[i] = 0;
+    ((uint32_t*) (harris_mini_update_0_write.data()))[i] = 0;
   }
 
   auto devices = xcl::get_xil_devices();
