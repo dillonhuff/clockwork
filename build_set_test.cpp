@@ -1429,7 +1429,10 @@ void cnn_test() {
 
     }*/
     auto buffers = build_buffers(prg);
-    generate_app_code(buffers, prg);
+    CodegenOptions options;
+    options.internal = true;
+    options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
+    generate_app_code(options, buffers, prg, opt_sched);
     //assert(false);
 }
 
@@ -6500,9 +6503,9 @@ void application_tests() {
     //memtile_test();
     //auto_vec_test();
     //assert(false);
-    bankmerge_vec_test();
-    assert(false);
     cnn_test();
+    assert(false);
+    bankmerge_vec_test();
 
   blur_xy_16_app_test();
   denoise2d_test();

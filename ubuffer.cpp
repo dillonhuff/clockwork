@@ -193,6 +193,40 @@ void generate_bank(CodegenOptions& options,
   out << "struct " << name << "_cache" <<  " {" << endl;
   out << "\t// RAM Box: " << bank.layout << endl;
   out << "\t// Capacity: " << maxdelay + 1 << endl;
+
+  //TODO: add option for address type
+  //C array with read and write method
+  if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_LINEAR){
+      //num reader > 1 partiions = 1;
+      auto partitions =
+        bank.get_partitions();
+      int partition_size = partitions.size();
+      if (num_readers == 1 || partition_size == 1 || options.all_rams) {
+        int capacity = 1 + maxdelay;
+        out << tab(1) << pt_type_string << " RAM[" << capacity << "];" << endl;
+        out << tab(1) << "inline " + pt_type_string + " read(const int addr) {" << endl;
+
+        ignore_inter_deps(out, "RAM");
+        out << tab(2) << "return RAM[addr];" << endl;
+        out << tab(1) << "}" << endl << endl;
+        out << endl << endl;
+
+        out << "\tinline void write(const " + pt_type_string + " value, const int addr) {" << endl;
+        if (options.add_dependence_pragmas) {
+          ignore_inter_deps(out, "RAM");
+        }
+        out << tab(2) << "RAM[addr] = value;" << endl;
+        out << tab(1) << "}" << endl << endl;
+
+      }
+      else {
+          cout << "Not support more than one reader in RAM mode" << endl;
+          assert(false);
+      }
+
+  }
+  else {
+
   out << "\t// # of read delays: " << read_delays.size() << endl;
 
   read_delays = sort_unique(read_delays);
@@ -294,6 +328,7 @@ void generate_bank(CodegenOptions& options,
     out << "\t}" << endl << endl;
   }
   out << "};" << endl << endl;
+  }
 }
 
 Box extract_box(uset* rddom) {
@@ -450,6 +485,7 @@ void generate_code_prefix(CodegenOptions& options,
     out << comma_list(args) << ") {" << endl;
 
     for (auto sb : buf.receiver_banks(inpt)) {
+      //TODO: add another options for ram address
       if (sb.tp == BANK_TYPE_STACK) {
         out << tab(1) << buf.name << "." << sb.name << ".push(" << inpt << ");" << endl;
       } else {
@@ -1023,6 +1059,7 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
         merged.num_readers = mergeable.size();
         merged.maxdelay = -1;
         for (auto m : mergeable) {
+            cout << "merge: " << m.name << endl;
           merged.layout = unn(merged.layout, m.layout);
           if (m.maxdelay > merged.maxdelay) {
             merged.maxdelay = m.maxdelay;
