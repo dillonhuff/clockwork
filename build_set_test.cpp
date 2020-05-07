@@ -5180,9 +5180,10 @@ void harris_unrolled_test() {
 }
 
 void harris_test() {
+  int mini_size = 128;
   auto hmini = harris("harris_mini");
-  hmini.realize_naive("harris_mini", 32, 32);
-  hmini.realize("harris_mini", 32, 32, 1);
+  hmini.realize_naive("harris_mini", mini_size, mini_size);
+  hmini.realize("harris_mini", mini_size, mini_size, 1);
 
   std::vector<std::string> naive =
     run_regression_tb("harris_mini_opt");
