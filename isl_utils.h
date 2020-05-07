@@ -458,6 +458,10 @@ isl_val* neg(isl_val* a);
 
 int to_int(isl_val* a);
 
+int bnd_int(isl_union_pw_qpolynomial_fold* bound);
+int int_lower_bound(isl_union_pw_qpolynomial* range_card);
+int int_upper_bound(isl_union_pw_qpolynomial* range_card);
+
 int int_coeff(isl_aff* const a, const int pos);
 int int_const_coeff(isl_aff* const a);
 

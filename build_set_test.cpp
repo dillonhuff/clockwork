@@ -290,6 +290,26 @@ void buffer_vectorization(string vec_buf_name, int dim_id, int fetch_width, map<
     buffers[tb.name] = tb;
 }
 
+//This method does not work.
+isl_union_map* filter_inner_sram_deps(isl_ctx* ctx, isl_union_map* deps) {
+    vector<isl_map*> deps_map = get_maps(deps);
+    umap* ret = rdmap(ctx, "{}");
+    for ( auto m : deps_map ) {
+        auto dname = domain_name(m);
+        auto rname = range_name(m);
+        bool is_sram_in = dname.find("_vec") != std::string::npos;
+        bool is_sram_out = rname.find("_vec") != std::string::npos;
+        if (is_sram_in && is_sram_out) {
+            continue;
+        }
+        else {
+            cout << "union: " << str(m) << endl;
+            ret = unn(ret, to_umap(m));
+        }
+    }
+    return ret;
+}
+
 isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers) {
     isl_ctx* ctx = pick(buffers).second.ctx;
     isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
@@ -308,7 +328,12 @@ isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffe
     auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
     auto validity = unn(order_deps, raw_deps);
     auto proximity = cpy(raw_deps);
+
+    //Try to remove proximity between_input vec to output_vec
+    //proximity = filter_inner_sram_deps(ctx, proximity);
+
     cout << "Raw_deps: " << str(raw_deps) << endl;
+    cout << "proximity: " << str(proximity) << endl;
     cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
     isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
     auto sched_map = its(isl_schedule_get_map(sched), domain);
@@ -788,6 +813,25 @@ void vec_test() {
   //assert(false);
 }
 
+Box compute_box_from_sched(umap* opt_sched) {
+  //cout << tab(1) << "lexmin: " << str(lexmin(compute_domain(name))) << endl;
+  //cout << tab(1) << "lexmax: " << str(lexmax(compute_domain(name))) << endl;
+
+  auto min_pt =
+    parse_pt(sample(lexmin(range(opt_sched))));
+  auto max_pt =
+    parse_pt(sample(lexmax(range(opt_sched))));
+
+  assert(min_pt.size() == max_pt.size());
+
+  Box b;
+  for (size_t i = 0; i < min_pt.size(); i++) {
+    b.intervals.push_back({min_pt.at(i), max_pt.at(i)});
+  }
+  return b;
+}
+
+
 void bankmerge_vec_test() {
 
   prog prg;
@@ -799,12 +843,12 @@ void bankmerge_vec_test() {
   prg.buffer_port_widths["in"] = 32;
   prg.buffer_port_widths["out"] = 32;
 
-  auto p = prg.add_nest("po", 0, 8, "pi", 0, 8);
+  auto p = prg.add_nest("po", 0, 8, "pi", 0, 32);
   auto write = p->add_op("input");
   write->add_load("in", "po, pi");
   write->add_store("buf", "po, pi");
 
-  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 8);
+  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 32);
   auto read = q->add_op("output");
   for (size_t wy = 0; wy < 3; wy ++)
       for (size_t wx = 0; wx < 1; wx ++) {
@@ -827,6 +871,51 @@ void bankmerge_vec_test() {
   buffer_vectorization("buf1", 1, 4, buffers_opt);
   auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
   cout << codegen_c(opt_sched) << endl;
+  map<string, umap*> op2sched;
+
+  //get a map from op to schedule
+  for (auto buf : buffers_opt) {
+      UBuffer& buffer = buf.second;
+      for (string pt: buffer.get_in_ports()) {
+          auto rddom = buffer.domain.at(pt);
+          auto pt_sched = its(opt_sched, rddom);
+          cout << "Schedule for pt: " << pt << " is " << str(pt_sched) << endl;
+          buffer.schedule.at(pt) = pt_sched;
+          string opname = domain_name(to_map(pt_sched));
+          if(op2sched.count(opname) == 0) {
+              op2sched[opname] = pt_sched;
+          }
+      }
+      for (string pt: buffer.get_out_ports()) {
+          auto wtdom = buffer.domain.at(pt);
+          auto pt_sched = its(opt_sched, wtdom);
+          cout << "Schedule for pt: " << pt << " is " << str(pt_sched) << endl;
+          buffer.schedule.at(pt) = pt_sched;
+          string opname = domain_name(to_map(pt_sched));
+          if(op2sched.count(opname) == 0) {
+              op2sched[opname] = pt_sched;
+          }
+      }
+      //cout << "Vectorized buffer: " << buf.second << endl;
+  }
+  for (auto it: op2sched) {
+    cout <<"\tOP: " << it.first << " has sched: " << str(it.second) << endl;
+  }
+
+  //compute the bound of the schedule
+  cout << str(lexmin(range(opt_sched))) << endl << str(lexmax(range(opt_sched))) <<endl;
+  auto bound = compute_box_from_sched(opt_sched);
+  isl_set* sched_set = bound.to_set(prg.ctx, "");
+  cout << str(sched_set) << endl;
+  auto point_vec = get_points(sched_set);
+  for (auto point : point_vec) {
+      cout << str(point) << endl;
+      auto input_sched = op2sched.at("input");
+      auto isExeQP = card(its_range(input_sched, to_uset(isl_set_from_point(cpy(point)))));
+      cout <<"Card Expr: " << str(isExeQP) << endl;
+      bool isExe = int_lower_bound(isExeQP) == 1;
+      cout << "input OP execute in this point = " << isExe << endl;
+  }
   assert(false);
 }
 
@@ -3287,6 +3376,7 @@ struct App {
     }
     return b;
   }
+
 
   // Too vague of a name
   isl_map* compute_map(const std::string& f) {

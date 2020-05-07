@@ -1338,9 +1338,9 @@ std::string codegen_c(isl_pw_qpolynomial* pqp) {
 }
 
 //add this to the header file
-int bnd_int(isl_union_pw_qpolynomial_fold* bound);
-int int_lower_bound(isl_union_pw_qpolynomial* range_card);
-int int_upper_bound(isl_union_pw_qpolynomial* range_card);
+//int bnd_int(isl_union_pw_qpolynomial_fold* bound);
+//int int_lower_bound(isl_union_pw_qpolynomial* range_card);
+//int int_upper_bound(isl_union_pw_qpolynomial* range_card);
 
 isl_union_pw_qpolynomial* get_out_range(isl_map* m, int dim) {
     auto* pw_aff_on_dim_i = isl_map_dim_max(cpy(m), dim);
@@ -1874,5 +1874,6 @@ int int_coeff(isl_aff* const a, const int pos) {
 int int_const_coeff(isl_aff* const a) {
   return to_int(isl_aff_get_constant_val(a));
 }
+
 
 
