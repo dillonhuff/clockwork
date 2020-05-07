@@ -376,6 +376,7 @@ void conv_1d_bc_test() {
   prg.buffer_port_widths["M"] = 32;
   prg.buffer_bounds["out"] = {32 - 2, 32 - 2};
 
+  // Where the ast gets built
   auto p = prg.add_loop("p", 0, 10);
   auto write = p->add_op("write");
   write->add_load("in", "p");
@@ -525,7 +526,7 @@ struct sram_config {
 };
 
 struct memtile_config {
-    int agg_align_0_line_length;
+  int agg_align_0_line_length;
 
    int agg_in_0_in_period;
    int agg_in_0_in_sched_0;
@@ -5922,11 +5923,11 @@ void blur_xy_16_app_test() {
 
 void pointwise_app_test() {
   int cols = 1920;
-  int rows = 1080*20;
+  int rows = 1080;
 
   cout << "pointwise math" << endl;
   int unroll_factor = 16;
-  string out_name = "pw_ur_" + str(unroll_factor);
+  string out_name = "pwls_ur_" + str(unroll_factor);
   pointwise_add(out_name).realize(out_name, cols, rows, unroll_factor);
   move_to_benchmarks_folder(out_name + "_opt");
 }
@@ -6935,8 +6936,10 @@ void playground() {
 }
 
 void application_tests() {
+
   pointwise_app_test();
   assert(false);
+  conv_1d_test();
   harris_test();
   blur_xy_16_app_test();
   tricky_shift_register_reconvergence_test();
@@ -7002,7 +7005,6 @@ void application_tests() {
   //synth_upsample_test();
   unsharp_test();
   //conv_2d_rolled_test();
-  conv_1d_test();
   conv_2d_bc_test();
   //mobilenet_test();
   pyramid_2d_test();

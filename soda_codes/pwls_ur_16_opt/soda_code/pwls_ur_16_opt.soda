@@ -1,0 +1,10 @@
+kernel: pwls_ur_16_opt
+unroll factor: 16
+burst width: 256
+
+input uint16: input(1920, *)
+
+output uint16: pwls_ur_16(0, 0) = (input(0, 0) + 1)
+
+
+iterate: 1

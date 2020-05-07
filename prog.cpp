@@ -1510,10 +1510,15 @@ void generate_optimized_code(prog& prg) {
   cout << "Optimized schedule..." << endl;
   cout << tab(1) << ": " << str(sched) << endl << endl;
   cout << codegen_c(sched) << endl;
-  //assert(false);
 
   auto buffers = build_buffers(prg, sched);
 
+  cout << "Buffers..." << endl;
+  for (auto b : buffers) {
+    cout << b.second << endl;
+  }
+
+  //assert(false);
   generate_app_code(buffers, prg, sched);
   generate_vivado_tcl(prg.name);
 }
