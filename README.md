@@ -1,5 +1,9 @@
 # Clockwork: Polyhedral Analysis for Hardware Accelerators
 
+Clockwork is a tool for compiling naive descriptions of hardware accelerates written as loop nests into high performance, staticall scheduled hardware.
+
+![](./pictures/polyhedral_scheduling_figure.pdf)
+
 ## Important Files
 * `build_set_test.cpp` - The main driver program
 * `ubuffer.h` - The header file which stores the `UBuffer` class, which represents re-use buffers that store data between compute operations.

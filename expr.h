@@ -210,11 +210,6 @@ Expr* func(const std::string& name, Expr* arg) {
 }
 
 static inline
-Expr* v3(const std::string& name) {
-  return v3(name, 0, 0, 0);
-}
-
-static inline
 Expr* v3(const std::string& name,
     const int a,
     const int b,
@@ -226,6 +221,11 @@ Expr* v3(const std::string& name,
   return new FunctionCall(name, {new IntConst(astr),
       new IntConst(bstr),
       new IntConst(cstr)});
+}
+
+static inline
+Expr* v3(const std::string& name) {
+  return v3(name, 0, 0, 0);
 }
 
 static inline
