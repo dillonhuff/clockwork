@@ -419,6 +419,42 @@ isl_stat isl_pw_aff_get_coefficient( isl_set *set,  isl_aff *aff, void *user) {
     return isl_stat_ok;
 }
 
+isl_stat isl_pw_aff_get_coefficient_matrix( isl_set *set,  isl_aff *aff, void *user) {
+    auto* coef_list = (map<int, int>*) user;
+
+    int const_ = isl_val_get_num_si(isl_aff_get_constant_val(aff));
+    //add the constant item to the coefficient matrix
+    coef_list->insert(std::make_pair(0, const_));
+
+	int n_div = isl_aff_dim(aff, isl_dim_in);
+	for (int i = 0; i < n_div; ++i) {
+
+		if (!isl_aff_involves_dims(aff, isl_dim_in, i, 1))
+        {
+			continue;
+        }
+		isl_val *v = isl_aff_get_coefficient_val(aff, isl_dim_in, i);
+        int int_v =  isl_val_get_num_si(v);
+        coef_list->insert(std::make_pair(i, int_v));
+	}
+    return isl_stat_ok;
+}
+
+vector<vector<int> > get_access_matrix_from_map(isl_map* acc_map) {
+    auto mpa = isl_pw_multi_aff_from_map(acc_map);
+    size_t var_dim = get_in_dim(acc_map);
+    size_t addr_dim = get_out_dim(acc_map);
+    vector<vector<int> > access_matrix(addr_dim, vector<int>(var_dim, 0));
+    for (size_t i = 0; i < addr_dim; i ++) {
+        auto pa = isl_pw_multi_aff_get_pw_aff(mpa, i);
+        map<int, int> coef;
+        isl_pw_aff_foreach_piece(pa, isl_pw_aff_get_coefficient_matrix, &coef);
+        for (auto cc: coef){
+            access_matrix[i][cc.first] = cc.second;
+        }
+    }
+    return access_matrix;
+}
 
 isl_stat isl_pw_aff_get_const( isl_set *set,  isl_aff *aff, void *user) {
     auto* const_ = (int*) user;
@@ -1229,6 +1265,10 @@ isl_set* range(isl_map* const m) {
   return isl_map_range(cpy(m));
 }
 
+int stride_in_dim(isl_set* const s, size_t dim) {
+    return isl_val_get_num_si(isl_set_get_stride(cpy(s), dim));
+}
+
 
 isl_set* domain(isl_map* const m) {
   return isl_map_domain(cpy(m));
@@ -1322,9 +1362,9 @@ std::string codegen_c(isl_pw_qpolynomial* pqp) {
 }
 
 //add this to the header file
-int bnd_int(isl_union_pw_qpolynomial_fold* bound);
-int int_lower_bound(isl_union_pw_qpolynomial* range_card);
-int int_upper_bound(isl_union_pw_qpolynomial* range_card);
+//int bnd_int(isl_union_pw_qpolynomial_fold* bound);
+//int int_lower_bound(isl_union_pw_qpolynomial* range_card);
+//int int_upper_bound(isl_union_pw_qpolynomial* range_card);
 
 isl_union_pw_qpolynomial* get_out_range(isl_map* m, int dim) {
     auto* pw_aff_on_dim_i = isl_map_dim_max(cpy(m), dim);
@@ -1893,7 +1933,6 @@ int int_coeff(isl_aff* const a, const int pos) {
 int int_const_coeff(isl_aff* const a) {
   return to_int(isl_aff_get_constant_val(a));
 }
-
 
 uset* pad_uset(uset* domain) {
   auto ct = ctx(domain);

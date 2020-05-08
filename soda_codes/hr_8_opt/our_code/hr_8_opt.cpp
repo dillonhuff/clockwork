@@ -32,7 +32,7 @@ struct det_det_update_0_write0_merged_banks_1_cache {
 };
 
 struct det_det_update_0_write1_merged_banks_1_cache {
-	// RAM Box: {[0, 1913], [0, 1079]}
+	// RAM Box: {[1, 1913], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -53,7 +53,7 @@ struct det_det_update_0_write1_merged_banks_1_cache {
 };
 
 struct det_det_update_0_write2_merged_banks_1_cache {
-	// RAM Box: {[0, 1914], [0, 1079]}
+	// RAM Box: {[2, 1914], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -74,7 +74,7 @@ struct det_det_update_0_write2_merged_banks_1_cache {
 };
 
 struct det_det_update_0_write3_merged_banks_1_cache {
-	// RAM Box: {[0, 1915], [0, 1079]}
+	// RAM Box: {[3, 1915], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -95,7 +95,7 @@ struct det_det_update_0_write3_merged_banks_1_cache {
 };
 
 struct det_det_update_0_write4_merged_banks_1_cache {
-	// RAM Box: {[0, 1916], [0, 1079]}
+	// RAM Box: {[4, 1916], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -116,7 +116,7 @@ struct det_det_update_0_write4_merged_banks_1_cache {
 };
 
 struct det_det_update_0_write5_merged_banks_1_cache {
-	// RAM Box: {[0, 1917], [0, 1079]}
+	// RAM Box: {[5, 1917], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -137,7 +137,7 @@ struct det_det_update_0_write5_merged_banks_1_cache {
 };
 
 struct det_det_update_0_write6_merged_banks_1_cache {
-	// RAM Box: {[0, 1918], [0, 1079]}
+	// RAM Box: {[6, 1918], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -158,7 +158,7 @@ struct det_det_update_0_write6_merged_banks_1_cache {
 };
 
 struct det_det_update_0_write7_merged_banks_1_cache {
-	// RAM Box: {[0, 1919], [0, 1079]}
+	// RAM Box: {[7, 1919], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -4197,7 +4197,7 @@ struct lgxx_lgxx_update_0_write0_merged_banks_1_cache {
 };
 
 struct lgxx_lgxx_update_0_write1_merged_banks_1_cache {
-	// RAM Box: {[0, 1913], [0, 1079]}
+	// RAM Box: {[1, 1913], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -4218,7 +4218,7 @@ struct lgxx_lgxx_update_0_write1_merged_banks_1_cache {
 };
 
 struct lgxx_lgxx_update_0_write2_merged_banks_1_cache {
-	// RAM Box: {[0, 1914], [0, 1079]}
+	// RAM Box: {[2, 1914], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -4239,7 +4239,7 @@ struct lgxx_lgxx_update_0_write2_merged_banks_1_cache {
 };
 
 struct lgxx_lgxx_update_0_write3_merged_banks_1_cache {
-	// RAM Box: {[0, 1915], [0, 1079]}
+	// RAM Box: {[3, 1915], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -4260,7 +4260,7 @@ struct lgxx_lgxx_update_0_write3_merged_banks_1_cache {
 };
 
 struct lgxx_lgxx_update_0_write4_merged_banks_1_cache {
-	// RAM Box: {[0, 1916], [0, 1079]}
+	// RAM Box: {[4, 1916], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -4281,7 +4281,7 @@ struct lgxx_lgxx_update_0_write4_merged_banks_1_cache {
 };
 
 struct lgxx_lgxx_update_0_write5_merged_banks_1_cache {
-	// RAM Box: {[0, 1917], [0, 1079]}
+	// RAM Box: {[5, 1917], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -4302,7 +4302,7 @@ struct lgxx_lgxx_update_0_write5_merged_banks_1_cache {
 };
 
 struct lgxx_lgxx_update_0_write6_merged_banks_1_cache {
-	// RAM Box: {[0, 1918], [0, 1079]}
+	// RAM Box: {[6, 1918], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -4323,7 +4323,7 @@ struct lgxx_lgxx_update_0_write6_merged_banks_1_cache {
 };
 
 struct lgxx_lgxx_update_0_write7_merged_banks_1_cache {
-	// RAM Box: {[0, 1919], [0, 1079]}
+	// RAM Box: {[7, 1919], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -4608,7 +4608,7 @@ struct lgxx8_lgxx8_update_0_write0_merged_banks_2_cache {
 };
 
 struct lgxx8_lgxx8_update_0_write1_merged_banks_2_cache {
-	// RAM Box: {[0, 1913], [0, 1079]}
+	// RAM Box: {[1, 1913], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<32>  f1;
@@ -4628,7 +4628,7 @@ struct lgxx8_lgxx8_update_0_write1_merged_banks_2_cache {
 };
 
 struct lgxx8_lgxx8_update_0_write2_merged_banks_2_cache {
-	// RAM Box: {[0, 1914], [0, 1079]}
+	// RAM Box: {[2, 1914], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<32>  f1;
@@ -4648,7 +4648,7 @@ struct lgxx8_lgxx8_update_0_write2_merged_banks_2_cache {
 };
 
 struct lgxx8_lgxx8_update_0_write3_merged_banks_2_cache {
-	// RAM Box: {[0, 1915], [0, 1079]}
+	// RAM Box: {[3, 1915], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<32>  f1;
@@ -4668,7 +4668,7 @@ struct lgxx8_lgxx8_update_0_write3_merged_banks_2_cache {
 };
 
 struct lgxx8_lgxx8_update_0_write4_merged_banks_2_cache {
-	// RAM Box: {[0, 1916], [0, 1079]}
+	// RAM Box: {[4, 1916], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<32>  f1;
@@ -4688,7 +4688,7 @@ struct lgxx8_lgxx8_update_0_write4_merged_banks_2_cache {
 };
 
 struct lgxx8_lgxx8_update_0_write5_merged_banks_2_cache {
-	// RAM Box: {[0, 1917], [0, 1079]}
+	// RAM Box: {[5, 1917], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<32>  f1;
@@ -4708,7 +4708,7 @@ struct lgxx8_lgxx8_update_0_write5_merged_banks_2_cache {
 };
 
 struct lgxx8_lgxx8_update_0_write6_merged_banks_2_cache {
-	// RAM Box: {[0, 1918], [0, 1079]}
+	// RAM Box: {[6, 1918], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<32>  f1;
@@ -4728,7 +4728,7 @@ struct lgxx8_lgxx8_update_0_write6_merged_banks_2_cache {
 };
 
 struct lgxx8_lgxx8_update_0_write7_merged_banks_2_cache {
-	// RAM Box: {[0, 1919], [0, 1079]}
+	// RAM Box: {[7, 1919], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<32>  f1;
@@ -5181,7 +5181,7 @@ struct lgxy_lgxy_update_0_write0_merged_banks_1_cache {
 };
 
 struct lgxy_lgxy_update_0_write1_merged_banks_1_cache {
-	// RAM Box: {[0, 1913], [0, 1079]}
+	// RAM Box: {[1, 1913], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -5202,7 +5202,7 @@ struct lgxy_lgxy_update_0_write1_merged_banks_1_cache {
 };
 
 struct lgxy_lgxy_update_0_write2_merged_banks_1_cache {
-	// RAM Box: {[0, 1914], [0, 1079]}
+	// RAM Box: {[2, 1914], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -5223,7 +5223,7 @@ struct lgxy_lgxy_update_0_write2_merged_banks_1_cache {
 };
 
 struct lgxy_lgxy_update_0_write3_merged_banks_1_cache {
-	// RAM Box: {[0, 1915], [0, 1079]}
+	// RAM Box: {[3, 1915], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -5244,7 +5244,7 @@ struct lgxy_lgxy_update_0_write3_merged_banks_1_cache {
 };
 
 struct lgxy_lgxy_update_0_write4_merged_banks_1_cache {
-	// RAM Box: {[0, 1916], [0, 1079]}
+	// RAM Box: {[4, 1916], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -5265,7 +5265,7 @@ struct lgxy_lgxy_update_0_write4_merged_banks_1_cache {
 };
 
 struct lgxy_lgxy_update_0_write5_merged_banks_1_cache {
-	// RAM Box: {[0, 1917], [0, 1079]}
+	// RAM Box: {[5, 1917], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -5286,7 +5286,7 @@ struct lgxy_lgxy_update_0_write5_merged_banks_1_cache {
 };
 
 struct lgxy_lgxy_update_0_write6_merged_banks_1_cache {
-	// RAM Box: {[0, 1918], [0, 1079]}
+	// RAM Box: {[6, 1918], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -5307,7 +5307,7 @@ struct lgxy_lgxy_update_0_write6_merged_banks_1_cache {
 };
 
 struct lgxy_lgxy_update_0_write7_merged_banks_1_cache {
-	// RAM Box: {[0, 1919], [0, 1079]}
+	// RAM Box: {[7, 1919], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -5593,7 +5593,7 @@ struct lgxy8_lgxy8_update_0_write0_merged_banks_1_cache {
 };
 
 struct lgxy8_lgxy8_update_0_write1_merged_banks_1_cache {
-	// RAM Box: {[0, 1913], [0, 1079]}
+	// RAM Box: {[1, 1913], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -5614,7 +5614,7 @@ struct lgxy8_lgxy8_update_0_write1_merged_banks_1_cache {
 };
 
 struct lgxy8_lgxy8_update_0_write2_merged_banks_1_cache {
-	// RAM Box: {[0, 1914], [0, 1079]}
+	// RAM Box: {[2, 1914], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -5635,7 +5635,7 @@ struct lgxy8_lgxy8_update_0_write2_merged_banks_1_cache {
 };
 
 struct lgxy8_lgxy8_update_0_write3_merged_banks_1_cache {
-	// RAM Box: {[0, 1915], [0, 1079]}
+	// RAM Box: {[3, 1915], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -5656,7 +5656,7 @@ struct lgxy8_lgxy8_update_0_write3_merged_banks_1_cache {
 };
 
 struct lgxy8_lgxy8_update_0_write4_merged_banks_1_cache {
-	// RAM Box: {[0, 1916], [0, 1079]}
+	// RAM Box: {[4, 1916], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -5677,7 +5677,7 @@ struct lgxy8_lgxy8_update_0_write4_merged_banks_1_cache {
 };
 
 struct lgxy8_lgxy8_update_0_write5_merged_banks_1_cache {
-	// RAM Box: {[0, 1917], [0, 1079]}
+	// RAM Box: {[5, 1917], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -5698,7 +5698,7 @@ struct lgxy8_lgxy8_update_0_write5_merged_banks_1_cache {
 };
 
 struct lgxy8_lgxy8_update_0_write6_merged_banks_1_cache {
-	// RAM Box: {[0, 1918], [0, 1079]}
+	// RAM Box: {[6, 1918], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -5719,7 +5719,7 @@ struct lgxy8_lgxy8_update_0_write6_merged_banks_1_cache {
 };
 
 struct lgxy8_lgxy8_update_0_write7_merged_banks_1_cache {
-	// RAM Box: {[0, 1919], [0, 1079]}
+	// RAM Box: {[7, 1919], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -6005,7 +6005,7 @@ struct lgyy_lgyy_update_0_write0_merged_banks_1_cache {
 };
 
 struct lgyy_lgyy_update_0_write1_merged_banks_1_cache {
-	// RAM Box: {[0, 1913], [0, 1079]}
+	// RAM Box: {[1, 1913], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -6026,7 +6026,7 @@ struct lgyy_lgyy_update_0_write1_merged_banks_1_cache {
 };
 
 struct lgyy_lgyy_update_0_write2_merged_banks_1_cache {
-	// RAM Box: {[0, 1914], [0, 1079]}
+	// RAM Box: {[2, 1914], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -6047,7 +6047,7 @@ struct lgyy_lgyy_update_0_write2_merged_banks_1_cache {
 };
 
 struct lgyy_lgyy_update_0_write3_merged_banks_1_cache {
-	// RAM Box: {[0, 1915], [0, 1079]}
+	// RAM Box: {[3, 1915], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -6068,7 +6068,7 @@ struct lgyy_lgyy_update_0_write3_merged_banks_1_cache {
 };
 
 struct lgyy_lgyy_update_0_write4_merged_banks_1_cache {
-	// RAM Box: {[0, 1916], [0, 1079]}
+	// RAM Box: {[4, 1916], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -6089,7 +6089,7 @@ struct lgyy_lgyy_update_0_write4_merged_banks_1_cache {
 };
 
 struct lgyy_lgyy_update_0_write5_merged_banks_1_cache {
-	// RAM Box: {[0, 1917], [0, 1079]}
+	// RAM Box: {[5, 1917], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -6110,7 +6110,7 @@ struct lgyy_lgyy_update_0_write5_merged_banks_1_cache {
 };
 
 struct lgyy_lgyy_update_0_write6_merged_banks_1_cache {
-	// RAM Box: {[0, 1918], [0, 1079]}
+	// RAM Box: {[6, 1918], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -6131,7 +6131,7 @@ struct lgyy_lgyy_update_0_write6_merged_banks_1_cache {
 };
 
 struct lgyy_lgyy_update_0_write7_merged_banks_1_cache {
-	// RAM Box: {[0, 1919], [0, 1079]}
+	// RAM Box: {[7, 1919], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -6416,7 +6416,7 @@ struct lgyy8_lgyy8_update_0_write0_merged_banks_2_cache {
 };
 
 struct lgyy8_lgyy8_update_0_write1_merged_banks_2_cache {
-	// RAM Box: {[0, 1913], [0, 1079]}
+	// RAM Box: {[1, 1913], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<32>  f1;
@@ -6436,7 +6436,7 @@ struct lgyy8_lgyy8_update_0_write1_merged_banks_2_cache {
 };
 
 struct lgyy8_lgyy8_update_0_write2_merged_banks_2_cache {
-	// RAM Box: {[0, 1914], [0, 1079]}
+	// RAM Box: {[2, 1914], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<32>  f1;
@@ -6456,7 +6456,7 @@ struct lgyy8_lgyy8_update_0_write2_merged_banks_2_cache {
 };
 
 struct lgyy8_lgyy8_update_0_write3_merged_banks_2_cache {
-	// RAM Box: {[0, 1915], [0, 1079]}
+	// RAM Box: {[3, 1915], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<32>  f1;
@@ -6476,7 +6476,7 @@ struct lgyy8_lgyy8_update_0_write3_merged_banks_2_cache {
 };
 
 struct lgyy8_lgyy8_update_0_write4_merged_banks_2_cache {
-	// RAM Box: {[0, 1916], [0, 1079]}
+	// RAM Box: {[4, 1916], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<32>  f1;
@@ -6496,7 +6496,7 @@ struct lgyy8_lgyy8_update_0_write4_merged_banks_2_cache {
 };
 
 struct lgyy8_lgyy8_update_0_write5_merged_banks_2_cache {
-	// RAM Box: {[0, 1917], [0, 1079]}
+	// RAM Box: {[5, 1917], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<32>  f1;
@@ -6516,7 +6516,7 @@ struct lgyy8_lgyy8_update_0_write5_merged_banks_2_cache {
 };
 
 struct lgyy8_lgyy8_update_0_write6_merged_banks_2_cache {
-	// RAM Box: {[0, 1918], [0, 1079]}
+	// RAM Box: {[6, 1918], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<32>  f1;
@@ -6536,7 +6536,7 @@ struct lgyy8_lgyy8_update_0_write6_merged_banks_2_cache {
 };
 
 struct lgyy8_lgyy8_update_0_write7_merged_banks_2_cache {
-	// RAM Box: {[0, 1919], [0, 1079]}
+	// RAM Box: {[7, 1919], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<32>  f1;
@@ -13352,7 +13352,7 @@ struct trace_trace_update_0_write0_merged_banks_1_cache {
 };
 
 struct trace_trace_update_0_write1_merged_banks_1_cache {
-	// RAM Box: {[0, 1913], [0, 1079]}
+	// RAM Box: {[1, 1913], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -13373,7 +13373,7 @@ struct trace_trace_update_0_write1_merged_banks_1_cache {
 };
 
 struct trace_trace_update_0_write2_merged_banks_1_cache {
-	// RAM Box: {[0, 1914], [0, 1079]}
+	// RAM Box: {[2, 1914], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -13394,7 +13394,7 @@ struct trace_trace_update_0_write2_merged_banks_1_cache {
 };
 
 struct trace_trace_update_0_write3_merged_banks_1_cache {
-	// RAM Box: {[0, 1915], [0, 1079]}
+	// RAM Box: {[3, 1915], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -13415,7 +13415,7 @@ struct trace_trace_update_0_write3_merged_banks_1_cache {
 };
 
 struct trace_trace_update_0_write4_merged_banks_1_cache {
-	// RAM Box: {[0, 1916], [0, 1079]}
+	// RAM Box: {[4, 1916], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -13436,7 +13436,7 @@ struct trace_trace_update_0_write4_merged_banks_1_cache {
 };
 
 struct trace_trace_update_0_write5_merged_banks_1_cache {
-	// RAM Box: {[0, 1917], [0, 1079]}
+	// RAM Box: {[5, 1917], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -13457,7 +13457,7 @@ struct trace_trace_update_0_write5_merged_banks_1_cache {
 };
 
 struct trace_trace_update_0_write6_merged_banks_1_cache {
-	// RAM Box: {[0, 1918], [0, 1079]}
+	// RAM Box: {[6, 1918], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -13478,7 +13478,7 @@ struct trace_trace_update_0_write6_merged_banks_1_cache {
 };
 
 struct trace_trace_update_0_write7_merged_banks_1_cache {
-	// RAM Box: {[0, 1919], [0, 1079]}
+	// RAM Box: {[7, 1919], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<32> , 1> f;
@@ -13780,6 +13780,48 @@ inline void img_update_0(HWStream<hw_uint<256> >& /* buffer_args num ports = 8 *
 
 }
 
+inline void grad_y_update_0(img_cache& img, grad_y_cache& grad_y, int d0, int d1) {
+	// Consume: img
+	auto img_0_c__0_value = img_grad_y_update_0_read_bundle_read(img/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "grad_y_update_0_img," << d0<< "," << d1<< "," <<  img_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = grad_y_generated_compute_unrolled_8(img_0_c__0_value);
+	// Produce: grad_y
+	grad_y_grad_y_update_0_write_bundle_write(compute_result, grad_y, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<256> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  hw_uint<32> debug_compute_result_lane_1;
+  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
+  hw_uint<32> debug_compute_result_lane_2;
+  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
+  hw_uint<32> debug_compute_result_lane_3;
+  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
+  hw_uint<32> debug_compute_result_lane_4;
+  set_at<0, 32, 32>(debug_compute_result_lane_4, debug_compute_result.extract<128, 159>());
+  hw_uint<32> debug_compute_result_lane_5;
+  set_at<0, 32, 32>(debug_compute_result_lane_5, debug_compute_result.extract<160, 191>());
+  hw_uint<32> debug_compute_result_lane_6;
+  set_at<0, 32, 32>(debug_compute_result_lane_6, debug_compute_result.extract<192, 223>());
+  hw_uint<32> debug_compute_result_lane_7;
+  set_at<0, 32, 32>(debug_compute_result_lane_7, debug_compute_result.extract<224, 255>());
+  *global_debug_handle << "grad_y_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "grad_y_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "grad_y_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "grad_y_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "grad_y_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
+  *global_debug_handle << "grad_y_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
+  *global_debug_handle << "grad_y_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
+  *global_debug_handle << "grad_y_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void grad_x_update_0(img_cache& img, grad_x_cache& grad_x, int d0, int d1) {
 	// Consume: img
 	auto img_0_c__0_value = img_grad_x_update_0_read_bundle_read(img/* source_delay */, d0, d1);
@@ -13818,48 +13860,6 @@ inline void grad_x_update_0(img_cache& img, grad_x_cache& grad_x, int d0, int d1
   *global_debug_handle << "grad_x_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
   *global_debug_handle << "grad_x_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
   *global_debug_handle << "grad_x_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void lyy_update_0(grad_y_cache& grad_y, lyy_cache& lyy, int d0, int d1) {
-	// Consume: grad_y
-	auto grad_y_0_c__0_value = grad_y_lyy_update_0_read_bundle_read(grad_y/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "lyy_update_0_grad_y," << d0<< "," << d1<< "," <<  grad_y_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = lyy_generated_compute_unrolled_8(grad_y_0_c__0_value);
-	// Produce: lyy
-	lyy_lyy_update_0_write_bundle_write(compute_result, lyy, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<256> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  hw_uint<32> debug_compute_result_lane_1;
-  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
-  hw_uint<32> debug_compute_result_lane_2;
-  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
-  hw_uint<32> debug_compute_result_lane_3;
-  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
-  hw_uint<32> debug_compute_result_lane_4;
-  set_at<0, 32, 32>(debug_compute_result_lane_4, debug_compute_result.extract<128, 159>());
-  hw_uint<32> debug_compute_result_lane_5;
-  set_at<0, 32, 32>(debug_compute_result_lane_5, debug_compute_result.extract<160, 191>());
-  hw_uint<32> debug_compute_result_lane_6;
-  set_at<0, 32, 32>(debug_compute_result_lane_6, debug_compute_result.extract<192, 223>());
-  hw_uint<32> debug_compute_result_lane_7;
-  set_at<0, 32, 32>(debug_compute_result_lane_7, debug_compute_result.extract<224, 255>());
-  *global_debug_handle << "lyy_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "lyy_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "lyy_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "lyy_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
-  *global_debug_handle << "lyy_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
-  *global_debug_handle << "lyy_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
-  *global_debug_handle << "lyy_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
-  *global_debug_handle << "lyy_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -13909,6 +13909,90 @@ inline void lxy_update_0(grad_x_cache& grad_x, grad_y_cache& grad_y, lxy_cache& 
   *global_debug_handle << "lxy_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
   *global_debug_handle << "lxy_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
   *global_debug_handle << "lxy_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void lgyy_update_0(lyy_cache& lyy, lgyy_cache& lgyy, int d0, int d1) {
+	// Consume: lyy
+	auto lyy_0_c__0_value = lyy_lgyy_update_0_read_bundle_read(lyy/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "lgyy_update_0_lyy," << d0<< "," << d1<< "," <<  lyy_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = lgyy_generated_compute_unrolled_8(lyy_0_c__0_value);
+	// Produce: lgyy
+	lgyy_lgyy_update_0_write_bundle_write(compute_result, lgyy, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<256> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  hw_uint<32> debug_compute_result_lane_1;
+  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
+  hw_uint<32> debug_compute_result_lane_2;
+  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
+  hw_uint<32> debug_compute_result_lane_3;
+  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
+  hw_uint<32> debug_compute_result_lane_4;
+  set_at<0, 32, 32>(debug_compute_result_lane_4, debug_compute_result.extract<128, 159>());
+  hw_uint<32> debug_compute_result_lane_5;
+  set_at<0, 32, 32>(debug_compute_result_lane_5, debug_compute_result.extract<160, 191>());
+  hw_uint<32> debug_compute_result_lane_6;
+  set_at<0, 32, 32>(debug_compute_result_lane_6, debug_compute_result.extract<192, 223>());
+  hw_uint<32> debug_compute_result_lane_7;
+  set_at<0, 32, 32>(debug_compute_result_lane_7, debug_compute_result.extract<224, 255>());
+  *global_debug_handle << "lgyy_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "lgyy_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "lgyy_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "lgyy_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "lgyy_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
+  *global_debug_handle << "lgyy_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
+  *global_debug_handle << "lgyy_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
+  *global_debug_handle << "lgyy_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void lgxy_update_0(lxy_cache& lxy, lgxy_cache& lgxy, int d0, int d1) {
+	// Consume: lxy
+	auto lxy_0_c__0_value = lxy_lgxy_update_0_read_bundle_read(lxy/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "lgxy_update_0_lxy," << d0<< "," << d1<< "," <<  lxy_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = lgxy_generated_compute_unrolled_8(lxy_0_c__0_value);
+	// Produce: lgxy
+	lgxy_lgxy_update_0_write_bundle_write(compute_result, lgxy, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<256> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  hw_uint<32> debug_compute_result_lane_1;
+  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
+  hw_uint<32> debug_compute_result_lane_2;
+  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
+  hw_uint<32> debug_compute_result_lane_3;
+  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
+  hw_uint<32> debug_compute_result_lane_4;
+  set_at<0, 32, 32>(debug_compute_result_lane_4, debug_compute_result.extract<128, 159>());
+  hw_uint<32> debug_compute_result_lane_5;
+  set_at<0, 32, 32>(debug_compute_result_lane_5, debug_compute_result.extract<160, 191>());
+  hw_uint<32> debug_compute_result_lane_6;
+  set_at<0, 32, 32>(debug_compute_result_lane_6, debug_compute_result.extract<192, 223>());
+  hw_uint<32> debug_compute_result_lane_7;
+  set_at<0, 32, 32>(debug_compute_result_lane_7, debug_compute_result.extract<224, 255>());
+  *global_debug_handle << "lgxy_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "lgxy_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "lgxy_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "lgxy_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "lgxy_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
+  *global_debug_handle << "lgxy_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
+  *global_debug_handle << "lgxy_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
+  *global_debug_handle << "lgxy_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -14235,17 +14319,17 @@ inline void hr_8_update_0(det_cache& det, trace_cache& trace, HWStream<hw_uint<2
 
 }
 
-inline void lgyy_update_0(lyy_cache& lyy, lgyy_cache& lgyy, int d0, int d1) {
-	// Consume: lyy
-	auto lyy_0_c__0_value = lyy_lgyy_update_0_read_bundle_read(lyy/* source_delay */, d0, d1);
+inline void lyy_update_0(grad_y_cache& grad_y, lyy_cache& lyy, int d0, int d1) {
+	// Consume: grad_y
+	auto grad_y_0_c__0_value = grad_y_lyy_update_0_read_bundle_read(grad_y/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "lgyy_update_0_lyy," << d0<< "," << d1<< "," <<  lyy_0_c__0_value << endl;
+  *global_debug_handle << "lyy_update_0_grad_y," << d0<< "," << d1<< "," <<  grad_y_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = lgyy_generated_compute_unrolled_8(lyy_0_c__0_value);
-	// Produce: lgyy
-	lgyy_lgyy_update_0_write_bundle_write(compute_result, lgyy, d0, d1);
+	auto compute_result = lyy_generated_compute_unrolled_8(grad_y_0_c__0_value);
+	// Produce: lyy
+	lyy_lyy_update_0_write_bundle_write(compute_result, lyy, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
   hw_uint<256> debug_compute_result(compute_result);
@@ -14265,56 +14349,14 @@ inline void lgyy_update_0(lyy_cache& lyy, lgyy_cache& lgyy, int d0, int d1) {
   set_at<0, 32, 32>(debug_compute_result_lane_6, debug_compute_result.extract<192, 223>());
   hw_uint<32> debug_compute_result_lane_7;
   set_at<0, 32, 32>(debug_compute_result_lane_7, debug_compute_result.extract<224, 255>());
-  *global_debug_handle << "lgyy_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "lgyy_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "lgyy_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "lgyy_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
-  *global_debug_handle << "lgyy_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
-  *global_debug_handle << "lgyy_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
-  *global_debug_handle << "lgyy_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
-  *global_debug_handle << "lgyy_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void grad_y_update_0(img_cache& img, grad_y_cache& grad_y, int d0, int d1) {
-	// Consume: img
-	auto img_0_c__0_value = img_grad_y_update_0_read_bundle_read(img/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "grad_y_update_0_img," << d0<< "," << d1<< "," <<  img_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = grad_y_generated_compute_unrolled_8(img_0_c__0_value);
-	// Produce: grad_y
-	grad_y_grad_y_update_0_write_bundle_write(compute_result, grad_y, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<256> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  hw_uint<32> debug_compute_result_lane_1;
-  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
-  hw_uint<32> debug_compute_result_lane_2;
-  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
-  hw_uint<32> debug_compute_result_lane_3;
-  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
-  hw_uint<32> debug_compute_result_lane_4;
-  set_at<0, 32, 32>(debug_compute_result_lane_4, debug_compute_result.extract<128, 159>());
-  hw_uint<32> debug_compute_result_lane_5;
-  set_at<0, 32, 32>(debug_compute_result_lane_5, debug_compute_result.extract<160, 191>());
-  hw_uint<32> debug_compute_result_lane_6;
-  set_at<0, 32, 32>(debug_compute_result_lane_6, debug_compute_result.extract<192, 223>());
-  hw_uint<32> debug_compute_result_lane_7;
-  set_at<0, 32, 32>(debug_compute_result_lane_7, debug_compute_result.extract<224, 255>());
-  *global_debug_handle << "grad_y_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "grad_y_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "grad_y_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "grad_y_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
-  *global_debug_handle << "grad_y_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
-  *global_debug_handle << "grad_y_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
-  *global_debug_handle << "grad_y_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
-  *global_debug_handle << "grad_y_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
+  *global_debug_handle << "lyy_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "lyy_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "lyy_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "lyy_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "lyy_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
+  *global_debug_handle << "lyy_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
+  *global_debug_handle << "lyy_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
+  *global_debug_handle << "lyy_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -14357,48 +14399,6 @@ inline void lxx_update_0(grad_x_cache& grad_x, lxx_cache& lxx, int d0, int d1) {
   *global_debug_handle << "lxx_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
   *global_debug_handle << "lxx_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
   *global_debug_handle << "lxx_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void lgxy_update_0(lxy_cache& lxy, lgxy_cache& lgxy, int d0, int d1) {
-	// Consume: lxy
-	auto lxy_0_c__0_value = lxy_lgxy_update_0_read_bundle_read(lxy/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "lgxy_update_0_lxy," << d0<< "," << d1<< "," <<  lxy_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = lgxy_generated_compute_unrolled_8(lxy_0_c__0_value);
-	// Produce: lgxy
-	lgxy_lgxy_update_0_write_bundle_write(compute_result, lgxy, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<256> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  hw_uint<32> debug_compute_result_lane_1;
-  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
-  hw_uint<32> debug_compute_result_lane_2;
-  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
-  hw_uint<32> debug_compute_result_lane_3;
-  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
-  hw_uint<32> debug_compute_result_lane_4;
-  set_at<0, 32, 32>(debug_compute_result_lane_4, debug_compute_result.extract<128, 159>());
-  hw_uint<32> debug_compute_result_lane_5;
-  set_at<0, 32, 32>(debug_compute_result_lane_5, debug_compute_result.extract<160, 191>());
-  hw_uint<32> debug_compute_result_lane_6;
-  set_at<0, 32, 32>(debug_compute_result_lane_6, debug_compute_result.extract<192, 223>());
-  hw_uint<32> debug_compute_result_lane_7;
-  set_at<0, 32, 32>(debug_compute_result_lane_7, debug_compute_result.extract<224, 255>());
-  *global_debug_handle << "lgxy_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "lgxy_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "lgxy_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "lgxy_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
-  *global_debug_handle << "lgxy_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
-  *global_debug_handle << "lgxy_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
-  *global_debug_handle << "lgxy_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
-  *global_debug_handle << "lgxy_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
 #endif //__VIVADO_SYNTH__
 
 }

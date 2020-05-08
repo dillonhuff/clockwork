@@ -282,7 +282,7 @@ int blur_27(hw_uint<16*27>& in) {
   hw_uint<32> v0 = in.extract<0, 31>();
   hw_uint<32> v1 = in.extract<32, 63>();
   hw_uint<32> v2 = in.extract<64, 95>();
-  
+
   hw_uint<32> v3 = in.extract<96, 127>();
   hw_uint<32> v4 = in.extract<128, 159>();
   hw_uint<32> v5 = in.extract<160, 191>();
@@ -301,7 +301,7 @@ hw_uint<32> conv_3_3(hw_uint<32*9>& in) {
   hw_uint<32> v0 = in.extract<0, 31>();
   hw_uint<32> v1 = in.extract<32, 63>();
   hw_uint<32> v2 = in.extract<64, 95>();
-  
+
   hw_uint<32> v3 = in.extract<96, 127>();
   hw_uint<32> v4 = in.extract<128, 159>();
   hw_uint<32> v5 = in.extract<160, 191>();
@@ -319,6 +319,16 @@ hw_uint<32> conv_3_3(hw_uint<32*9>& in) {
   return (v0 + v1 + v2 +
     v3 + v4 + v5 +
     v6 + v7 + v8).to_int();
+}
+
+static inline
+hw_uint<32> cnn_mac(hw_uint<32*4> & in, hw_uint<32> & psum) {
+  hw_uint<32> v0 = in.extract<0, 31>();
+  hw_uint<32> v1 = in.extract<32, 63>();
+  hw_uint<32> v2 = in.extract<64, 95>();
+  hw_uint<32> v3 = in.extract<96, 127>();
+
+  return (psum + v0 + v1 + v2 + v3).to_int();
 }
 
 static inline
@@ -356,7 +366,7 @@ hw_uint<32> mag_dn2(hw_uint<32>& diff_d_0_c__0_value,
     hw_uint<32>& diff_u_0_c__0_value) {
   return diff_d_0_c__0_value +
     diff_l_0_c__0_value +
-    diff_r_0_c__0_value + 
+    diff_r_0_c__0_value +
     diff_u_0_c__0_value;
 }
 
@@ -369,7 +379,7 @@ hw_uint<64> conv_3_3_unroll(hw_uint<384>& in) {
   hw_uint<32> v0 = in.extract<0, 31>();
   hw_uint<32> v1 = in.extract<32, 63>();
   hw_uint<32> v2 = in.extract<64, 95>();
-  
+
   hw_uint<32> v3 = in.extract<96, 127>();
   hw_uint<32> v4 = in.extract<128, 159>();
   hw_uint<32> v5 = in.extract<160, 191>();
