@@ -6209,12 +6209,12 @@ void blur_xy_16_app_test() {
 }
 
 void pointwise_app_test() {
-  int cols = 1920;
-  int rows = 1080;
+  int cols = 300;
+  int rows = 300;
 
   cout << "pointwise math" << endl;
-  int unroll_factor = 16;
-  string out_name = "pwls_ur_" + str(unroll_factor);
+  int unroll_factor = 1;
+  string out_name = "pw16";
   pointwise_add(out_name).realize(out_name, cols, rows, unroll_factor);
   move_to_benchmarks_folder(out_name + "_opt");
 }
@@ -7223,6 +7223,9 @@ void playground() {
 }
 
 void application_tests() {
+  pointwise_app_test();
+  assert(false);
+
   ram_addr_unit_test();
 
   blur_xy_16_app_test();
@@ -7232,7 +7235,6 @@ void application_tests() {
 
   harris_test();
 
-  pointwise_app_test();
   conv_1d_test();
   blur_xy_16_app_test();
   tricky_shift_register_reconvergence_test();
