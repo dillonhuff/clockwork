@@ -286,20 +286,41 @@ void buffer_vectorization(string vec_buf_name, int dim_id, int fetch_width, map<
             target_buffer.vectorization(dim_id, fetch_width, agg, sram, tb);
             break;
         }
-        else {
-            //add extra dimension in the schedule vector
-            auto buffer = it.second;
-            for(auto it_sched : buffer.schedule) {
-                umap* sched = it_sched.second;
-                string key = it_sched.first;
-                buffer.schedule[key] = pad_one_more_dim_to_sched_map(buffer.ctx, sched, "0");
-            }
-        }
+        //else {
+        //    //add extra dimension in the schedule vector
+        //    auto buffer = it.second;
+        //    for(auto it_sched : buffer.schedule) {
+        //        cout << "pad one more dim" << endl;
+        //        umap* sched = it_sched.second;
+        //        string key = it_sched.first;
+        //        buffer.schedule[key] = pad_one_more_dim_to_sched_map(buffer.ctx, sched, "0");
+        //    }
+        //}
     }
     buffers.erase(vec_buf_name);
     buffers[agg.name] = agg;
     buffers[sram.name] = sram;
     buffers[tb.name] = tb;
+}
+
+//This method does not work.
+isl_union_map* filter_inner_sram_deps(isl_ctx* ctx, isl_union_map* deps) {
+    vector<isl_map*> deps_map = get_maps(deps);
+    umap* ret = rdmap(ctx, "{}");
+    for ( auto m : deps_map ) {
+        auto dname = domain_name(m);
+        auto rname = range_name(m);
+        bool is_sram_in = dname.find("_vec") != std::string::npos;
+        bool is_sram_out = rname.find("_vec") != std::string::npos;
+        if (is_sram_in && is_sram_out) {
+            continue;
+        }
+        else {
+            cout << "union: " << str(m) << endl;
+            ret = unn(ret, to_umap(m));
+        }
+    }
+    return ret;
 }
 
 isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers) {
@@ -320,7 +341,12 @@ isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffe
     auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
     auto validity = unn(order_deps, raw_deps);
     auto proximity = cpy(raw_deps);
+
+    //Try to remove proximity between_input vec to output_vec
+    //proximity = filter_inner_sram_deps(ctx, proximity);
+
     cout << "Raw_deps: " << str(raw_deps) << endl;
+    cout << "proximity: " << str(proximity) << endl;
     cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
     isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
     auto sched_map = its(isl_schedule_get_map(sched), domain);
@@ -799,60 +825,111 @@ void vec_test() {
   //assert(false);
 }
 
-void auto_vec_rolled_test() {
+Box compute_box_from_sched(umap* opt_sched) {
+  //cout << tab(1) << "lexmin: " << str(lexmin(compute_domain(name))) << endl;
+  //cout << tab(1) << "lexmax: " << str(lexmax(compute_domain(name))) << endl;
+
+  auto min_pt =
+    parse_pt(sample(lexmin(range(opt_sched))));
+  auto max_pt =
+    parse_pt(sample(lexmax(range(opt_sched))));
+
+  assert(min_pt.size() == max_pt.size());
+
+  Box b;
+  for (size_t i = 0; i < min_pt.size(); i++) {
+    b.intervals.push_back({min_pt.at(i), max_pt.at(i)});
+  }
+  return b;
+}
+
+
+void bankmerge_vec_test() {
+
   prog prg;
   prg.compute_unit_file = "vec_access.h";
   prg.name = "vec";
   prg.add_input("in");
   prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
   prg.buffer_port_widths["in"] = 32;
   prg.buffer_port_widths["out"] = 32;
 
-  auto p = prg.add_nest("po", 0, 8, "pi", 0, 8);
+  auto p = prg.add_nest("po", 0, 8, "pi", 0, 32);
   auto write = p->add_op("input");
   write->add_load("in", "po, pi");
   write->add_store("buf", "po, pi");
 
-  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 8);
-  auto init = q->add_op("set_z");
-  init->add_function("set_zero_32");
-  init->add_store("out", "qo, qi");
+  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 32);
+  auto read = q->add_op("output");
+  for (size_t wy = 0; wy < 3; wy ++)
+      for (size_t wx = 0; wx < 1; wx ++) {
+        read->add_load("buf", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+      }
+  read->add_store("out", "po, pi");
 
-  auto accum_loop = q->add_loop("a", 0, 3);
-  auto accum = accum_loop->add_op("accumulate");
-  auto tmp = accum->add_load("buf", "qo + a, qi");
-  // Note: This address scheme fails...
-  //auto tmp = accum->add_load("buf", "qo, qi + a");
-  auto next = accum->add_load("out", "qo, qi");
-  accum->add_function("inc", {tmp, next});
-  accum->add_store("out", "qo, qi");
-  
-  //// put read / write
-  //auto read = q->add_op("output");
-  //read->add_load("buf", "qo, qi");
-  //read->add_load("buf", "qo+1, qi");
-  //read->add_load("buf", "qo+2, qi");
-  //read->add_store("out", "qo, qi");
-
-  // get naive schedule
-  auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
-
-  cout << "output schedule..." << endl;
-  cout << tab(1) << codegen_c(sched_naive) << endl;
-
-  // bank based on access patterns
-
-  auto buffers = build_buffers(prg, sched_naive);
-  int fetch_width = 4;
-  // Vectorize each bank: make the transpose, agg, and sram explicit
-  buffer_vectorization("buf", 1, fetch_width, buffers);
-
-  // Re-schedule and shrink buffers
-  auto opt_sched = optimized_schedule_from_buffers(buffers);
+  auto buffers_opt = build_buffers(prg);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  buffers_opt.at("buf").generate_bank_and_merge(opt);
+  cout << buffers_opt.at("buf") << endl;
+  auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
+  for (auto buf : rewrite_buf) {
+    cout << buf << endl;
+    buffers_opt[buf.name] = buf;
+  }
+  buffers_opt.erase("buf");
+  buffer_vectorization("buf1", 1, 4, buffers_opt);
+  auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
   cout << codegen_c(opt_sched) << endl;
-  //assert(false);
-}
+  map<string, umap*> op2sched;
 
+  //get a map from op to schedule
+  for (auto buf : buffers_opt) {
+      UBuffer& buffer = buf.second;
+      for (string pt: buffer.get_in_ports()) {
+          auto rddom = buffer.domain.at(pt);
+          auto pt_sched = its(opt_sched, rddom);
+          cout << "Schedule for pt: " << pt << " is " << str(pt_sched) << endl;
+          buffer.schedule.at(pt) = pt_sched;
+          string opname = domain_name(to_map(pt_sched));
+          if(op2sched.count(opname) == 0) {
+              op2sched[opname] = pt_sched;
+          }
+      }
+      for (string pt: buffer.get_out_ports()) {
+          auto wtdom = buffer.domain.at(pt);
+          auto pt_sched = its(opt_sched, wtdom);
+          cout << "Schedule for pt: " << pt << " is " << str(pt_sched) << endl;
+          buffer.schedule.at(pt) = pt_sched;
+          string opname = domain_name(to_map(pt_sched));
+          if(op2sched.count(opname) == 0) {
+              op2sched[opname] = pt_sched;
+          }
+      }
+      //cout << "Vectorized buffer: " << buf.second << endl;
+  }
+  for (auto it: op2sched) {
+    cout <<"\tOP: " << it.first << " has sched: " << str(it.second) << endl;
+  }
+
+  //compute the bound of the schedule
+  cout << str(lexmin(range(opt_sched))) << endl << str(lexmax(range(opt_sched))) <<endl;
+  auto bound = compute_box_from_sched(opt_sched);
+  isl_set* sched_set = bound.to_set(prg.ctx, "");
+  cout << str(sched_set) << endl;
+  auto point_vec = get_points(sched_set);
+  for (auto point : point_vec) {
+      cout << str(point) << endl;
+      auto input_sched = op2sched.at("input");
+      auto isExeQP = card(its_range(input_sched, to_uset(isl_set_from_point(cpy(point)))));
+      cout <<"Card Expr: " << str(isExeQP) << endl;
+      bool isExe = int_lower_bound(isExeQP) == 1;
+      cout << "input OP execute in this point = " << isExe << endl;
+  }
+  assert(false);
+}
 
 void auto_vec_test() {
 
@@ -885,6 +962,22 @@ void auto_vec_test() {
 
   auto opt_sched = optimized_schedule_from_buffers(buffers);
   cout << codegen_c(opt_sched) << endl;
+  for (auto buf : buffers) {
+      UBuffer& buffer = buf.second;
+      for (string pt: buffer.get_in_ports()) {
+          auto rddom = buffer.domain.at(pt);
+          auto pt_sched = its(opt_sched, rddom);
+          cout << "Schedule for pt: " << pt << " is " << str(pt_sched) << endl;
+          buffer.schedule.at(pt) = pt_sched;
+      }
+      for (string pt: buffer.get_out_ports()) {
+          auto wtdom = buffer.domain.at(pt);
+          auto pt_sched = its(opt_sched, wtdom);
+          cout << "Schedule for pt: " << pt << " is " << str(pt_sched) << endl;
+          buffer.schedule.at(pt) = pt_sched;
+      }
+      cout << "Vectorized buffer: " << buf.second << endl;
+  }
 }
 
 std::vector<std::string> run_regression_tb(const std::string& name) {
@@ -1282,7 +1375,7 @@ prog cnn_conv_layer() {
   assert(false);
   */
 
-  prg.compute_unit_file = "cnn_conv_layer.h";
+  prg.compute_unit_file = "mobilenet_compute.h";
   prg.name = "cnn_conv_layer";
   prg.add_input("ifmap");
   //prg.add_input("weight");
@@ -1310,6 +1403,7 @@ prog cnn_conv_layer() {
     auto buf_x = buf_y->add_loop("lx", 0, 16 - 2);
     auto buf_och= buf_x->add_loop("loch", 0, 32 / unroll_po);
     auto init = buf_och->add_op("init_psum");
+    init->add_function("set_zero_32");
     init->add_store("psum", "0");
     auto buf_fy= buf_och->add_loop("lfy", 0, 3);
     auto buf_fx= buf_fy->add_loop("lfx", 0, 3);
@@ -1323,13 +1417,77 @@ prog cnn_conv_layer() {
       }
     }
     mac->add_load("psum", "0");
-    mac->add_function("mac");
+    mac->add_function("cnn_mac");
     mac->add_store("psum", "0");
     auto output = buf_och-> add_op("output");
     output->add_load("psum", "0");
     output->add_store("ofmap", "loch, lx, ly");
   }
   return prg;
+}
+
+void ram_addr_unit_test() {
+
+  prog prg;
+  prg.compute_unit_file = "mobilenet_compute.h";
+  prg.name = "ram_addr_unit_test";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_bounds["in"] = {15};
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_bounds["out"] = {1};
+  prg.buffer_port_widths["I"] = 32;
+  prg.buffer_bounds["I"] = {15};
+  prg.buffer_port_widths["tmp"] = 32;
+  prg.buffer_bounds["tmp"] = {1};
+
+  {
+    auto read_in = prg.add_loop("rd_in", 0, 14);
+    auto rop = read_in->add_op("read_input_stream");
+    rop->add_load("in", "rd_in");
+    rop->add_store("I", "rd_in");
+  }
+
+  {
+    auto init = prg.add_op("set_z");
+    init->add_function("set_zero_32");
+    init->add_store("tmp", "0");
+
+    auto accum_loop = prg.add_loop("a", 0, 14);
+    auto accum = accum_loop->add_op("accumulate");
+    auto tmp = accum->add_load("tmp", "0");
+    auto next = accum->add_load("I", "a");
+    accum->add_function("inc", {tmp, next});
+    accum->add_store("tmp", "0");
+
+    auto write_out = prg.add_op("output");
+    write_out->add_load("tmp", "0");
+    write_out->add_store("out", "0");
+  }
+
+  cout << "Program code without optimization..." << endl;
+  prg.unoptimized_codegen();
+
+  umap* opt_sched = prg.optimized_codegen();
+  auto domain = prg.whole_iteration_domain();
+  auto schedmap = its(opt_sched, domain);
+  cout << "Optimized schedule..." << endl;
+  cout << codegen_c(schedmap);
+
+  auto buffers = build_buffers(prg);
+  CodegenOptions options;
+  options.internal = true;
+  options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
+  generate_app_code(options, buffers, prg, opt_sched);
+
+  generate_regression_testbench(prg, buffers);
+
+  int res = system(string("g++ -std=c++11 regression_tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
 }
 
 void cnn_test() {
@@ -1357,7 +1515,7 @@ void cnn_test() {
     //cout << tab(1) << s.first << " -> " << str(s.second) << endl;
   //}
   //assert(false);
-  //umap* opt_sched = prg.optimized_codegen();
+  umap* opt_sched = prg.optimized_codegen();
   ////cout << "------ ISL schedule" << endl;
   ////for (auto m : get_maps(opt_sched)) {
     ////cout << tab(1) << str(m) << endl;
@@ -1369,15 +1527,19 @@ void cnn_test() {
   //cout << "Optimized schedule..." << endl;
   //cout << codegen_c(schedmap);
 
+    auto buffers = build_buffers(prg);
+    CodegenOptions options;
+    options.internal = true;
+    options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
+    generate_app_code(options, buffers, prg, opt_sched);
 
-  //auto buffers = build_buffers(prg);
-  //for (auto itr: buffers) {
-  //generate_hls_code(itr.second);
-  //}*/
+    generate_regression_testbench(prg, buffers);
 
-  auto buffers = build_buffers(prg);
-  generate_app_code(buffers, prg);
-  //assert(false);
+    int res = system(string("g++ -std=c++11 regression_tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
+    assert(res == 0);
+
+    res = system("./a.out");
+    assert(res == 0);
 }
 
 void conv_test() {
@@ -3422,6 +3584,7 @@ struct App {
     }
     return b;
   }
+
 
   // Too vague of a name
   isl_map* compute_map(const std::string& f) {
@@ -7060,12 +7223,14 @@ void playground() {
 }
 
 void application_tests() {
+  ram_addr_unit_test();
+
+  blur_xy_16_app_test();
+  denoise2d_test();
 
   harris16_test();
-  assert(false);
 
   harris_test();
-  //assert(false);
 
   pointwise_app_test();
   conv_1d_test();
@@ -7189,7 +7354,6 @@ void application_tests() {
 }
 
 void memory_tile_tests() {
-  auto_vec_rolled_test();
   auto_vec_test();
   vec_test();
   agg_test();

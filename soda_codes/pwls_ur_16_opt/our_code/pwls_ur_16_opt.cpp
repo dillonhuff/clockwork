@@ -32,7 +32,7 @@ struct input_input_update_0_write0_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write1_merged_banks_1_cache {
-	// RAM Box: {[0, 1905], [0, 1079]}
+	// RAM Box: {[1, 1905], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -53,7 +53,7 @@ struct input_input_update_0_write1_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write10_merged_banks_1_cache {
-	// RAM Box: {[0, 1914], [0, 1079]}
+	// RAM Box: {[10, 1914], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -74,7 +74,7 @@ struct input_input_update_0_write10_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write11_merged_banks_1_cache {
-	// RAM Box: {[0, 1915], [0, 1079]}
+	// RAM Box: {[11, 1915], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -95,7 +95,7 @@ struct input_input_update_0_write11_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write12_merged_banks_1_cache {
-	// RAM Box: {[0, 1916], [0, 1079]}
+	// RAM Box: {[12, 1916], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -116,7 +116,7 @@ struct input_input_update_0_write12_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write13_merged_banks_1_cache {
-	// RAM Box: {[0, 1917], [0, 1079]}
+	// RAM Box: {[13, 1917], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -137,7 +137,7 @@ struct input_input_update_0_write13_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write14_merged_banks_1_cache {
-	// RAM Box: {[0, 1918], [0, 1079]}
+	// RAM Box: {[14, 1918], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -158,7 +158,7 @@ struct input_input_update_0_write14_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write15_merged_banks_1_cache {
-	// RAM Box: {[0, 1919], [0, 1079]}
+	// RAM Box: {[15, 1919], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -179,7 +179,7 @@ struct input_input_update_0_write15_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write2_merged_banks_1_cache {
-	// RAM Box: {[0, 1906], [0, 1079]}
+	// RAM Box: {[2, 1906], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -200,7 +200,7 @@ struct input_input_update_0_write2_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write3_merged_banks_1_cache {
-	// RAM Box: {[0, 1907], [0, 1079]}
+	// RAM Box: {[3, 1907], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -221,7 +221,7 @@ struct input_input_update_0_write3_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write4_merged_banks_1_cache {
-	// RAM Box: {[0, 1908], [0, 1079]}
+	// RAM Box: {[4, 1908], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -242,7 +242,7 @@ struct input_input_update_0_write4_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write5_merged_banks_1_cache {
-	// RAM Box: {[0, 1909], [0, 1079]}
+	// RAM Box: {[5, 1909], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -263,7 +263,7 @@ struct input_input_update_0_write5_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write6_merged_banks_1_cache {
-	// RAM Box: {[0, 1910], [0, 1079]}
+	// RAM Box: {[6, 1910], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -284,7 +284,7 @@ struct input_input_update_0_write6_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write7_merged_banks_1_cache {
-	// RAM Box: {[0, 1911], [0, 1079]}
+	// RAM Box: {[7, 1911], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -305,7 +305,7 @@ struct input_input_update_0_write7_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write8_merged_banks_1_cache {
-	// RAM Box: {[0, 1912], [0, 1079]}
+	// RAM Box: {[8, 1912], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -326,7 +326,7 @@ struct input_input_update_0_write8_merged_banks_1_cache {
 };
 
 struct input_input_update_0_write9_merged_banks_1_cache {
-	// RAM Box: {[0, 1913], [0, 1079]}
+	// RAM Box: {[9, 1913], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
