@@ -2,7 +2,7 @@
 
 Clockwork is a tool for compiling naive descriptions of hardware accelerates written as loop nests into high performance, staticall scheduled hardware.
 
-![](./pictures/polyhedral_scheduling_figure.jpg)
+![](./pictures/polyhedral_scheduling_figure_2.jpg)
 
 ## Important Files
 * `build_set_test.cpp` - The main driver program
