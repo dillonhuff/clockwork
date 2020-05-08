@@ -7062,7 +7062,7 @@ void playground() {
 void application_tests() {
 
   harris16_test();
-  assert(false);
+  //assert(false);
 
   harris_test();
   //assert(false);
