@@ -1934,8 +1934,6 @@ int int_const_coeff(isl_aff* const a) {
   return to_int(isl_aff_get_constant_val(a));
 }
 
-
-<<<<<<< HEAD
 uset* pad_uset(uset* domain) {
   auto ct = ctx(domain);
   cout << "Domain: " << str(domain) << endl;
@@ -2118,6 +2116,3 @@ isl_point* lexminpt(isl_set* const m0) {
 isl_point* lexmaxpt(isl_set* const m0) {
   return sample(lexmax(m0));
 }
-=======
-
->>>>>>> origin/lower_ubuffer

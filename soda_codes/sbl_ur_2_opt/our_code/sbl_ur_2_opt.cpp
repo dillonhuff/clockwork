@@ -739,7 +739,7 @@ struct mag_x_mag_x_update_0_write0_merged_banks_1_cache {
 };
 
 struct mag_x_mag_x_update_0_write1_merged_banks_1_cache {
-	// RAM Box: {[0, 1919], [0, 1079]}
+	// RAM Box: {[1, 1919], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -857,7 +857,7 @@ struct mag_y_mag_y_update_0_write0_merged_banks_1_cache {
 };
 
 struct mag_y_mag_y_update_0_write1_merged_banks_1_cache {
-	// RAM Box: {[0, 1919], [0, 1079]}
+	// RAM Box: {[1, 1919], [0, 1079]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;

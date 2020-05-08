@@ -40,7 +40,7 @@ struct blurx_blurx_update_0_write0_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write1_merged_banks_3_cache {
-	// RAM Box: {[0, 1921], [0, 1079]}
+	// RAM Box: {[1, 1921], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -69,7 +69,7 @@ struct blurx_blurx_update_0_write1_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write10_merged_banks_3_cache {
-	// RAM Box: {[0, 1930], [0, 1079]}
+	// RAM Box: {[10, 1930], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -98,7 +98,7 @@ struct blurx_blurx_update_0_write10_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write11_merged_banks_3_cache {
-	// RAM Box: {[0, 1931], [0, 1079]}
+	// RAM Box: {[11, 1931], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -127,7 +127,7 @@ struct blurx_blurx_update_0_write11_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write12_merged_banks_3_cache {
-	// RAM Box: {[0, 1932], [0, 1079]}
+	// RAM Box: {[12, 1932], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -156,7 +156,7 @@ struct blurx_blurx_update_0_write12_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write13_merged_banks_3_cache {
-	// RAM Box: {[0, 1933], [0, 1079]}
+	// RAM Box: {[13, 1933], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -185,7 +185,7 @@ struct blurx_blurx_update_0_write13_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write14_merged_banks_3_cache {
-	// RAM Box: {[0, 1934], [0, 1079]}
+	// RAM Box: {[14, 1934], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -214,7 +214,7 @@ struct blurx_blurx_update_0_write14_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write15_merged_banks_3_cache {
-	// RAM Box: {[0, 1935], [0, 1079]}
+	// RAM Box: {[15, 1935], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -243,7 +243,7 @@ struct blurx_blurx_update_0_write15_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write16_merged_banks_3_cache {
-	// RAM Box: {[0, 1936], [0, 1079]}
+	// RAM Box: {[16, 1936], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -272,7 +272,7 @@ struct blurx_blurx_update_0_write16_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write17_merged_banks_3_cache {
-	// RAM Box: {[0, 1937], [0, 1079]}
+	// RAM Box: {[17, 1937], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -301,7 +301,7 @@ struct blurx_blurx_update_0_write17_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write18_merged_banks_3_cache {
-	// RAM Box: {[0, 1938], [0, 1079]}
+	// RAM Box: {[18, 1938], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -330,7 +330,7 @@ struct blurx_blurx_update_0_write18_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write19_merged_banks_3_cache {
-	// RAM Box: {[0, 1939], [0, 1079]}
+	// RAM Box: {[19, 1939], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -359,7 +359,7 @@ struct blurx_blurx_update_0_write19_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write2_merged_banks_3_cache {
-	// RAM Box: {[0, 1922], [0, 1079]}
+	// RAM Box: {[2, 1922], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -388,7 +388,7 @@ struct blurx_blurx_update_0_write2_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write20_merged_banks_3_cache {
-	// RAM Box: {[0, 1940], [0, 1079]}
+	// RAM Box: {[20, 1940], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -417,7 +417,7 @@ struct blurx_blurx_update_0_write20_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write21_merged_banks_3_cache {
-	// RAM Box: {[0, 1941], [0, 1079]}
+	// RAM Box: {[21, 1941], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -446,7 +446,7 @@ struct blurx_blurx_update_0_write21_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write22_merged_banks_3_cache {
-	// RAM Box: {[0, 1942], [0, 1079]}
+	// RAM Box: {[22, 1942], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -475,7 +475,7 @@ struct blurx_blurx_update_0_write22_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write23_merged_banks_3_cache {
-	// RAM Box: {[0, 1943], [0, 1079]}
+	// RAM Box: {[23, 1943], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -504,7 +504,7 @@ struct blurx_blurx_update_0_write23_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write24_merged_banks_3_cache {
-	// RAM Box: {[0, 1944], [0, 1079]}
+	// RAM Box: {[24, 1944], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -533,7 +533,7 @@ struct blurx_blurx_update_0_write24_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write25_merged_banks_3_cache {
-	// RAM Box: {[0, 1945], [0, 1079]}
+	// RAM Box: {[25, 1945], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -562,7 +562,7 @@ struct blurx_blurx_update_0_write25_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write26_merged_banks_3_cache {
-	// RAM Box: {[0, 1946], [0, 1079]}
+	// RAM Box: {[26, 1946], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -591,7 +591,7 @@ struct blurx_blurx_update_0_write26_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write27_merged_banks_3_cache {
-	// RAM Box: {[0, 1947], [0, 1079]}
+	// RAM Box: {[27, 1947], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -620,7 +620,7 @@ struct blurx_blurx_update_0_write27_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write28_merged_banks_3_cache {
-	// RAM Box: {[0, 1948], [0, 1079]}
+	// RAM Box: {[28, 1948], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -649,7 +649,7 @@ struct blurx_blurx_update_0_write28_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write29_merged_banks_3_cache {
-	// RAM Box: {[0, 1949], [0, 1079]}
+	// RAM Box: {[29, 1949], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -678,7 +678,7 @@ struct blurx_blurx_update_0_write29_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write3_merged_banks_3_cache {
-	// RAM Box: {[0, 1923], [0, 1079]}
+	// RAM Box: {[3, 1923], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -707,7 +707,7 @@ struct blurx_blurx_update_0_write3_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write30_merged_banks_3_cache {
-	// RAM Box: {[0, 1950], [0, 1079]}
+	// RAM Box: {[30, 1950], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -736,7 +736,7 @@ struct blurx_blurx_update_0_write30_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write31_merged_banks_3_cache {
-	// RAM Box: {[0, 1951], [0, 1079]}
+	// RAM Box: {[31, 1951], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -765,7 +765,7 @@ struct blurx_blurx_update_0_write31_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write4_merged_banks_3_cache {
-	// RAM Box: {[0, 1924], [0, 1079]}
+	// RAM Box: {[4, 1924], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -794,7 +794,7 @@ struct blurx_blurx_update_0_write4_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write5_merged_banks_3_cache {
-	// RAM Box: {[0, 1925], [0, 1079]}
+	// RAM Box: {[5, 1925], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -823,7 +823,7 @@ struct blurx_blurx_update_0_write5_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write6_merged_banks_3_cache {
-	// RAM Box: {[0, 1926], [0, 1079]}
+	// RAM Box: {[6, 1926], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -852,7 +852,7 @@ struct blurx_blurx_update_0_write6_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write7_merged_banks_3_cache {
-	// RAM Box: {[0, 1927], [0, 1079]}
+	// RAM Box: {[7, 1927], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -881,7 +881,7 @@ struct blurx_blurx_update_0_write7_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write8_merged_banks_3_cache {
-	// RAM Box: {[0, 1928], [0, 1079]}
+	// RAM Box: {[8, 1928], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -910,7 +910,7 @@ struct blurx_blurx_update_0_write8_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write9_merged_banks_3_cache {
-	// RAM Box: {[0, 1929], [0, 1079]}
+	// RAM Box: {[9, 1929], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -3195,7 +3195,7 @@ struct input_input_update_0_write0_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write1_merged_banks_3_cache {
-	// RAM Box: {[0, 1921], [0, 1081]}
+	// RAM Box: {[1, 1921], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -3255,7 +3255,7 @@ struct input_input_update_0_write1_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write10_merged_banks_3_cache {
-	// RAM Box: {[0, 1930], [0, 1081]}
+	// RAM Box: {[10, 1930], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -3315,7 +3315,7 @@ struct input_input_update_0_write10_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write11_merged_banks_3_cache {
-	// RAM Box: {[0, 1931], [0, 1081]}
+	// RAM Box: {[11, 1931], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -3375,7 +3375,7 @@ struct input_input_update_0_write11_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write12_merged_banks_3_cache {
-	// RAM Box: {[0, 1932], [0, 1081]}
+	// RAM Box: {[12, 1932], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -3435,7 +3435,7 @@ struct input_input_update_0_write12_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write13_merged_banks_3_cache {
-	// RAM Box: {[0, 1933], [0, 1081]}
+	// RAM Box: {[13, 1933], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -3495,7 +3495,7 @@ struct input_input_update_0_write13_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write14_merged_banks_3_cache {
-	// RAM Box: {[0, 1934], [0, 1081]}
+	// RAM Box: {[14, 1934], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -3555,7 +3555,7 @@ struct input_input_update_0_write14_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write15_merged_banks_3_cache {
-	// RAM Box: {[0, 1935], [0, 1081]}
+	// RAM Box: {[15, 1935], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -3615,7 +3615,7 @@ struct input_input_update_0_write15_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write16_merged_banks_3_cache {
-	// RAM Box: {[0, 1936], [0, 1081]}
+	// RAM Box: {[16, 1936], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -3675,7 +3675,7 @@ struct input_input_update_0_write16_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write17_merged_banks_3_cache {
-	// RAM Box: {[0, 1937], [0, 1081]}
+	// RAM Box: {[17, 1937], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -3735,7 +3735,7 @@ struct input_input_update_0_write17_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write18_merged_banks_3_cache {
-	// RAM Box: {[0, 1938], [0, 1081]}
+	// RAM Box: {[18, 1938], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -3795,7 +3795,7 @@ struct input_input_update_0_write18_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write19_merged_banks_3_cache {
-	// RAM Box: {[0, 1939], [0, 1081]}
+	// RAM Box: {[19, 1939], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -3855,7 +3855,7 @@ struct input_input_update_0_write19_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write2_merged_banks_3_cache {
-	// RAM Box: {[0, 1922], [0, 1081]}
+	// RAM Box: {[2, 1922], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -3915,7 +3915,7 @@ struct input_input_update_0_write2_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write20_merged_banks_3_cache {
-	// RAM Box: {[0, 1940], [0, 1081]}
+	// RAM Box: {[20, 1940], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -3975,7 +3975,7 @@ struct input_input_update_0_write20_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write21_merged_banks_3_cache {
-	// RAM Box: {[0, 1941], [0, 1081]}
+	// RAM Box: {[21, 1941], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -4035,7 +4035,7 @@ struct input_input_update_0_write21_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write22_merged_banks_3_cache {
-	// RAM Box: {[0, 1942], [0, 1081]}
+	// RAM Box: {[22, 1942], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -4095,7 +4095,7 @@ struct input_input_update_0_write22_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write23_merged_banks_3_cache {
-	// RAM Box: {[0, 1943], [0, 1081]}
+	// RAM Box: {[23, 1943], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -4155,7 +4155,7 @@ struct input_input_update_0_write23_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write24_merged_banks_3_cache {
-	// RAM Box: {[0, 1944], [0, 1081]}
+	// RAM Box: {[24, 1944], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -4215,7 +4215,7 @@ struct input_input_update_0_write24_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write25_merged_banks_3_cache {
-	// RAM Box: {[0, 1945], [0, 1081]}
+	// RAM Box: {[25, 1945], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -4275,7 +4275,7 @@ struct input_input_update_0_write25_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write26_merged_banks_3_cache {
-	// RAM Box: {[0, 1946], [0, 1081]}
+	// RAM Box: {[26, 1946], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -4335,7 +4335,7 @@ struct input_input_update_0_write26_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write27_merged_banks_3_cache {
-	// RAM Box: {[0, 1947], [0, 1081]}
+	// RAM Box: {[27, 1947], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -4395,7 +4395,7 @@ struct input_input_update_0_write27_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write28_merged_banks_3_cache {
-	// RAM Box: {[0, 1948], [0, 1081]}
+	// RAM Box: {[28, 1948], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -4455,7 +4455,7 @@ struct input_input_update_0_write28_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write29_merged_banks_3_cache {
-	// RAM Box: {[0, 1949], [0, 1081]}
+	// RAM Box: {[29, 1949], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -4515,7 +4515,7 @@ struct input_input_update_0_write29_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write3_merged_banks_3_cache {
-	// RAM Box: {[0, 1923], [0, 1081]}
+	// RAM Box: {[3, 1923], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -4575,7 +4575,7 @@ struct input_input_update_0_write3_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write30_merged_banks_3_cache {
-	// RAM Box: {[0, 1950], [0, 1081]}
+	// RAM Box: {[30, 1950], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -4635,7 +4635,7 @@ struct input_input_update_0_write30_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write31_merged_banks_3_cache {
-	// RAM Box: {[0, 1951], [0, 1081]}
+	// RAM Box: {[31, 1951], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -4695,7 +4695,7 @@ struct input_input_update_0_write31_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write4_merged_banks_3_cache {
-	// RAM Box: {[0, 1924], [0, 1081]}
+	// RAM Box: {[4, 1924], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -4755,7 +4755,7 @@ struct input_input_update_0_write4_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write5_merged_banks_3_cache {
-	// RAM Box: {[0, 1925], [0, 1081]}
+	// RAM Box: {[5, 1925], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -4815,7 +4815,7 @@ struct input_input_update_0_write5_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write6_merged_banks_3_cache {
-	// RAM Box: {[0, 1926], [0, 1081]}
+	// RAM Box: {[6, 1926], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -4875,7 +4875,7 @@ struct input_input_update_0_write6_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write7_merged_banks_3_cache {
-	// RAM Box: {[0, 1927], [0, 1081]}
+	// RAM Box: {[7, 1927], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -4935,7 +4935,7 @@ struct input_input_update_0_write7_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write8_merged_banks_3_cache {
-	// RAM Box: {[0, 1928], [0, 1081]}
+	// RAM Box: {[8, 1928], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -4995,7 +4995,7 @@ struct input_input_update_0_write8_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write9_merged_banks_3_cache {
-	// RAM Box: {[0, 1929], [0, 1081]}
+	// RAM Box: {[9, 1929], [0, 1081]}
 	// Capacity: 123
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -7251,6 +7251,120 @@ inline void input_input_update_0_write_bundle_write(hw_uint<512>& input_update_0
 
 
 // Operation logic
+inline void bxy_ur_32_update_0(blurx_cache& blurx, HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */bxy_ur_32, int d0, int d1) {
+	// Consume: blurx
+	auto blurx_0_c__0_value = blurx_bxy_ur_32_update_0_read_bundle_read(blurx/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "bxy_ur_32_update_0_blurx," << d0<< "," << d1<< "," <<  blurx_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = bxy_ur_32_generated_compute_unrolled_32(blurx_0_c__0_value);
+	// Produce: bxy_ur_32
+	bxy_ur_32.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<512> debug_compute_result(compute_result);
+  hw_uint<16> debug_compute_result_lane_0;
+  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
+  hw_uint<16> debug_compute_result_lane_1;
+  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
+  hw_uint<16> debug_compute_result_lane_2;
+  set_at<0, 16, 16>(debug_compute_result_lane_2, debug_compute_result.extract<32, 47>());
+  hw_uint<16> debug_compute_result_lane_3;
+  set_at<0, 16, 16>(debug_compute_result_lane_3, debug_compute_result.extract<48, 63>());
+  hw_uint<16> debug_compute_result_lane_4;
+  set_at<0, 16, 16>(debug_compute_result_lane_4, debug_compute_result.extract<64, 79>());
+  hw_uint<16> debug_compute_result_lane_5;
+  set_at<0, 16, 16>(debug_compute_result_lane_5, debug_compute_result.extract<80, 95>());
+  hw_uint<16> debug_compute_result_lane_6;
+  set_at<0, 16, 16>(debug_compute_result_lane_6, debug_compute_result.extract<96, 111>());
+  hw_uint<16> debug_compute_result_lane_7;
+  set_at<0, 16, 16>(debug_compute_result_lane_7, debug_compute_result.extract<112, 127>());
+  hw_uint<16> debug_compute_result_lane_8;
+  set_at<0, 16, 16>(debug_compute_result_lane_8, debug_compute_result.extract<128, 143>());
+  hw_uint<16> debug_compute_result_lane_9;
+  set_at<0, 16, 16>(debug_compute_result_lane_9, debug_compute_result.extract<144, 159>());
+  hw_uint<16> debug_compute_result_lane_10;
+  set_at<0, 16, 16>(debug_compute_result_lane_10, debug_compute_result.extract<160, 175>());
+  hw_uint<16> debug_compute_result_lane_11;
+  set_at<0, 16, 16>(debug_compute_result_lane_11, debug_compute_result.extract<176, 191>());
+  hw_uint<16> debug_compute_result_lane_12;
+  set_at<0, 16, 16>(debug_compute_result_lane_12, debug_compute_result.extract<192, 207>());
+  hw_uint<16> debug_compute_result_lane_13;
+  set_at<0, 16, 16>(debug_compute_result_lane_13, debug_compute_result.extract<208, 223>());
+  hw_uint<16> debug_compute_result_lane_14;
+  set_at<0, 16, 16>(debug_compute_result_lane_14, debug_compute_result.extract<224, 239>());
+  hw_uint<16> debug_compute_result_lane_15;
+  set_at<0, 16, 16>(debug_compute_result_lane_15, debug_compute_result.extract<240, 255>());
+  hw_uint<16> debug_compute_result_lane_16;
+  set_at<0, 16, 16>(debug_compute_result_lane_16, debug_compute_result.extract<256, 271>());
+  hw_uint<16> debug_compute_result_lane_17;
+  set_at<0, 16, 16>(debug_compute_result_lane_17, debug_compute_result.extract<272, 287>());
+  hw_uint<16> debug_compute_result_lane_18;
+  set_at<0, 16, 16>(debug_compute_result_lane_18, debug_compute_result.extract<288, 303>());
+  hw_uint<16> debug_compute_result_lane_19;
+  set_at<0, 16, 16>(debug_compute_result_lane_19, debug_compute_result.extract<304, 319>());
+  hw_uint<16> debug_compute_result_lane_20;
+  set_at<0, 16, 16>(debug_compute_result_lane_20, debug_compute_result.extract<320, 335>());
+  hw_uint<16> debug_compute_result_lane_21;
+  set_at<0, 16, 16>(debug_compute_result_lane_21, debug_compute_result.extract<336, 351>());
+  hw_uint<16> debug_compute_result_lane_22;
+  set_at<0, 16, 16>(debug_compute_result_lane_22, debug_compute_result.extract<352, 367>());
+  hw_uint<16> debug_compute_result_lane_23;
+  set_at<0, 16, 16>(debug_compute_result_lane_23, debug_compute_result.extract<368, 383>());
+  hw_uint<16> debug_compute_result_lane_24;
+  set_at<0, 16, 16>(debug_compute_result_lane_24, debug_compute_result.extract<384, 399>());
+  hw_uint<16> debug_compute_result_lane_25;
+  set_at<0, 16, 16>(debug_compute_result_lane_25, debug_compute_result.extract<400, 415>());
+  hw_uint<16> debug_compute_result_lane_26;
+  set_at<0, 16, 16>(debug_compute_result_lane_26, debug_compute_result.extract<416, 431>());
+  hw_uint<16> debug_compute_result_lane_27;
+  set_at<0, 16, 16>(debug_compute_result_lane_27, debug_compute_result.extract<432, 447>());
+  hw_uint<16> debug_compute_result_lane_28;
+  set_at<0, 16, 16>(debug_compute_result_lane_28, debug_compute_result.extract<448, 463>());
+  hw_uint<16> debug_compute_result_lane_29;
+  set_at<0, 16, 16>(debug_compute_result_lane_29, debug_compute_result.extract<464, 479>());
+  hw_uint<16> debug_compute_result_lane_30;
+  set_at<0, 16, 16>(debug_compute_result_lane_30, debug_compute_result.extract<480, 495>());
+  hw_uint<16> debug_compute_result_lane_31;
+  set_at<0, 16, 16>(debug_compute_result_lane_31, debug_compute_result.extract<496, 511>());
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 8) << ", " << d1<< "," <<  debug_compute_result_lane_8 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 9) << ", " << d1<< "," <<  debug_compute_result_lane_9 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 10) << ", " << d1<< "," <<  debug_compute_result_lane_10 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 11) << ", " << d1<< "," <<  debug_compute_result_lane_11 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 12) << ", " << d1<< "," <<  debug_compute_result_lane_12 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 13) << ", " << d1<< "," <<  debug_compute_result_lane_13 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 14) << ", " << d1<< "," <<  debug_compute_result_lane_14 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 15) << ", " << d1<< "," <<  debug_compute_result_lane_15 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 16) << ", " << d1<< "," <<  debug_compute_result_lane_16 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 17) << ", " << d1<< "," <<  debug_compute_result_lane_17 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 18) << ", " << d1<< "," <<  debug_compute_result_lane_18 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 19) << ", " << d1<< "," <<  debug_compute_result_lane_19 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 20) << ", " << d1<< "," <<  debug_compute_result_lane_20 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 21) << ", " << d1<< "," <<  debug_compute_result_lane_21 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 22) << ", " << d1<< "," <<  debug_compute_result_lane_22 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 23) << ", " << d1<< "," <<  debug_compute_result_lane_23 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 24) << ", " << d1<< "," <<  debug_compute_result_lane_24 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 25) << ", " << d1<< "," <<  debug_compute_result_lane_25 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 26) << ", " << d1<< "," <<  debug_compute_result_lane_26 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 27) << ", " << d1<< "," <<  debug_compute_result_lane_27 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 28) << ", " << d1<< "," <<  debug_compute_result_lane_28 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 29) << ", " << d1<< "," <<  debug_compute_result_lane_29 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 30) << ", " << d1<< "," <<  debug_compute_result_lane_30 << endl;
+  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 31) << ", " << d1<< "," <<  debug_compute_result_lane_31 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void input_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */input_arg, input_cache& input, int d0, int d1) {
 	// Consume: input_arg
 	auto input_arg_0_c__0_value = input_arg.read();
@@ -7470,120 +7584,6 @@ inline void blurx_update_0(input_cache& input, blurx_cache& blurx, int d0, int d
   *global_debug_handle << "blurx_update_0," << (32*d0 + 29) << ", " << d1<< "," <<  debug_compute_result_lane_29 << endl;
   *global_debug_handle << "blurx_update_0," << (32*d0 + 30) << ", " << d1<< "," <<  debug_compute_result_lane_30 << endl;
   *global_debug_handle << "blurx_update_0," << (32*d0 + 31) << ", " << d1<< "," <<  debug_compute_result_lane_31 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bxy_ur_32_update_0(blurx_cache& blurx, HWStream<hw_uint<512> >& /* buffer_args num ports = 32 */bxy_ur_32, int d0, int d1) {
-	// Consume: blurx
-	auto blurx_0_c__0_value = blurx_bxy_ur_32_update_0_read_bundle_read(blurx/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bxy_ur_32_update_0_blurx," << d0<< "," << d1<< "," <<  blurx_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = bxy_ur_32_generated_compute_unrolled_32(blurx_0_c__0_value);
-	// Produce: bxy_ur_32
-	bxy_ur_32.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<512> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  hw_uint<16> debug_compute_result_lane_2;
-  set_at<0, 16, 16>(debug_compute_result_lane_2, debug_compute_result.extract<32, 47>());
-  hw_uint<16> debug_compute_result_lane_3;
-  set_at<0, 16, 16>(debug_compute_result_lane_3, debug_compute_result.extract<48, 63>());
-  hw_uint<16> debug_compute_result_lane_4;
-  set_at<0, 16, 16>(debug_compute_result_lane_4, debug_compute_result.extract<64, 79>());
-  hw_uint<16> debug_compute_result_lane_5;
-  set_at<0, 16, 16>(debug_compute_result_lane_5, debug_compute_result.extract<80, 95>());
-  hw_uint<16> debug_compute_result_lane_6;
-  set_at<0, 16, 16>(debug_compute_result_lane_6, debug_compute_result.extract<96, 111>());
-  hw_uint<16> debug_compute_result_lane_7;
-  set_at<0, 16, 16>(debug_compute_result_lane_7, debug_compute_result.extract<112, 127>());
-  hw_uint<16> debug_compute_result_lane_8;
-  set_at<0, 16, 16>(debug_compute_result_lane_8, debug_compute_result.extract<128, 143>());
-  hw_uint<16> debug_compute_result_lane_9;
-  set_at<0, 16, 16>(debug_compute_result_lane_9, debug_compute_result.extract<144, 159>());
-  hw_uint<16> debug_compute_result_lane_10;
-  set_at<0, 16, 16>(debug_compute_result_lane_10, debug_compute_result.extract<160, 175>());
-  hw_uint<16> debug_compute_result_lane_11;
-  set_at<0, 16, 16>(debug_compute_result_lane_11, debug_compute_result.extract<176, 191>());
-  hw_uint<16> debug_compute_result_lane_12;
-  set_at<0, 16, 16>(debug_compute_result_lane_12, debug_compute_result.extract<192, 207>());
-  hw_uint<16> debug_compute_result_lane_13;
-  set_at<0, 16, 16>(debug_compute_result_lane_13, debug_compute_result.extract<208, 223>());
-  hw_uint<16> debug_compute_result_lane_14;
-  set_at<0, 16, 16>(debug_compute_result_lane_14, debug_compute_result.extract<224, 239>());
-  hw_uint<16> debug_compute_result_lane_15;
-  set_at<0, 16, 16>(debug_compute_result_lane_15, debug_compute_result.extract<240, 255>());
-  hw_uint<16> debug_compute_result_lane_16;
-  set_at<0, 16, 16>(debug_compute_result_lane_16, debug_compute_result.extract<256, 271>());
-  hw_uint<16> debug_compute_result_lane_17;
-  set_at<0, 16, 16>(debug_compute_result_lane_17, debug_compute_result.extract<272, 287>());
-  hw_uint<16> debug_compute_result_lane_18;
-  set_at<0, 16, 16>(debug_compute_result_lane_18, debug_compute_result.extract<288, 303>());
-  hw_uint<16> debug_compute_result_lane_19;
-  set_at<0, 16, 16>(debug_compute_result_lane_19, debug_compute_result.extract<304, 319>());
-  hw_uint<16> debug_compute_result_lane_20;
-  set_at<0, 16, 16>(debug_compute_result_lane_20, debug_compute_result.extract<320, 335>());
-  hw_uint<16> debug_compute_result_lane_21;
-  set_at<0, 16, 16>(debug_compute_result_lane_21, debug_compute_result.extract<336, 351>());
-  hw_uint<16> debug_compute_result_lane_22;
-  set_at<0, 16, 16>(debug_compute_result_lane_22, debug_compute_result.extract<352, 367>());
-  hw_uint<16> debug_compute_result_lane_23;
-  set_at<0, 16, 16>(debug_compute_result_lane_23, debug_compute_result.extract<368, 383>());
-  hw_uint<16> debug_compute_result_lane_24;
-  set_at<0, 16, 16>(debug_compute_result_lane_24, debug_compute_result.extract<384, 399>());
-  hw_uint<16> debug_compute_result_lane_25;
-  set_at<0, 16, 16>(debug_compute_result_lane_25, debug_compute_result.extract<400, 415>());
-  hw_uint<16> debug_compute_result_lane_26;
-  set_at<0, 16, 16>(debug_compute_result_lane_26, debug_compute_result.extract<416, 431>());
-  hw_uint<16> debug_compute_result_lane_27;
-  set_at<0, 16, 16>(debug_compute_result_lane_27, debug_compute_result.extract<432, 447>());
-  hw_uint<16> debug_compute_result_lane_28;
-  set_at<0, 16, 16>(debug_compute_result_lane_28, debug_compute_result.extract<448, 463>());
-  hw_uint<16> debug_compute_result_lane_29;
-  set_at<0, 16, 16>(debug_compute_result_lane_29, debug_compute_result.extract<464, 479>());
-  hw_uint<16> debug_compute_result_lane_30;
-  set_at<0, 16, 16>(debug_compute_result_lane_30, debug_compute_result.extract<480, 495>());
-  hw_uint<16> debug_compute_result_lane_31;
-  set_at<0, 16, 16>(debug_compute_result_lane_31, debug_compute_result.extract<496, 511>());
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 8) << ", " << d1<< "," <<  debug_compute_result_lane_8 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 9) << ", " << d1<< "," <<  debug_compute_result_lane_9 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 10) << ", " << d1<< "," <<  debug_compute_result_lane_10 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 11) << ", " << d1<< "," <<  debug_compute_result_lane_11 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 12) << ", " << d1<< "," <<  debug_compute_result_lane_12 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 13) << ", " << d1<< "," <<  debug_compute_result_lane_13 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 14) << ", " << d1<< "," <<  debug_compute_result_lane_14 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 15) << ", " << d1<< "," <<  debug_compute_result_lane_15 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 16) << ", " << d1<< "," <<  debug_compute_result_lane_16 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 17) << ", " << d1<< "," <<  debug_compute_result_lane_17 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 18) << ", " << d1<< "," <<  debug_compute_result_lane_18 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 19) << ", " << d1<< "," <<  debug_compute_result_lane_19 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 20) << ", " << d1<< "," <<  debug_compute_result_lane_20 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 21) << ", " << d1<< "," <<  debug_compute_result_lane_21 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 22) << ", " << d1<< "," <<  debug_compute_result_lane_22 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 23) << ", " << d1<< "," <<  debug_compute_result_lane_23 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 24) << ", " << d1<< "," <<  debug_compute_result_lane_24 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 25) << ", " << d1<< "," <<  debug_compute_result_lane_25 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 26) << ", " << d1<< "," <<  debug_compute_result_lane_26 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 27) << ", " << d1<< "," <<  debug_compute_result_lane_27 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 28) << ", " << d1<< "," <<  debug_compute_result_lane_28 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 29) << ", " << d1<< "," <<  debug_compute_result_lane_29 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 30) << ", " << d1<< "," <<  debug_compute_result_lane_30 << endl;
-  *global_debug_handle << "bxy_ur_32_update_0," << (32*d0 + 31) << ", " << d1<< "," <<  debug_compute_result_lane_31 << endl;
 #endif //__VIVADO_SYNTH__
 
 }

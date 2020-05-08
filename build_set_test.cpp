@@ -825,9 +825,6 @@ void vec_test() {
   //assert(false);
 }
 
-<<<<<<< HEAD
-void auto_vec_rolled_test() {
-=======
 Box compute_box_from_sched(umap* opt_sched) {
   //cout << tab(1) << "lexmin: " << str(lexmin(compute_domain(name))) << endl;
   //cout << tab(1) << "lexmax: " << str(lexmax(compute_domain(name))) << endl;
@@ -849,70 +846,20 @@ Box compute_box_from_sched(umap* opt_sched) {
 
 void bankmerge_vec_test() {
 
->>>>>>> origin/lower_ubuffer
   prog prg;
   prg.compute_unit_file = "vec_access.h";
   prg.name = "vec";
   prg.add_input("in");
   prg.add_output("out");
-<<<<<<< HEAD
-  prg.buffer_port_widths["in"] = 32;
-  prg.buffer_port_widths["out"] = 32;
-
-  auto p = prg.add_nest("po", 0, 8, "pi", 0, 8);
-=======
   //prg.buffer_port_widths["T"] = 32*3;
   prg.buffer_port_widths["in"] = 32;
   prg.buffer_port_widths["out"] = 32;
 
   auto p = prg.add_nest("po", 0, 8, "pi", 0, 32);
->>>>>>> origin/lower_ubuffer
   auto write = p->add_op("input");
   write->add_load("in", "po, pi");
   write->add_store("buf", "po, pi");
 
-<<<<<<< HEAD
-  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 8);
-  auto init = q->add_op("set_z");
-  init->add_function("set_zero_32");
-  init->add_store("out", "qo, qi");
-
-  auto accum_loop = q->add_loop("a", 0, 3);
-  auto accum = accum_loop->add_op("accumulate");
-  auto tmp = accum->add_load("buf", "qo + a, qi");
-  // Note: This address scheme fails...
-  //auto tmp = accum->add_load("buf", "qo, qi + a");
-  auto next = accum->add_load("out", "qo, qi");
-  accum->add_function("inc", {tmp, next});
-  accum->add_store("out", "qo, qi");
-  
-  //// put read / write
-  //auto read = q->add_op("output");
-  //read->add_load("buf", "qo, qi");
-  //read->add_load("buf", "qo+1, qi");
-  //read->add_load("buf", "qo+2, qi");
-  //read->add_store("out", "qo, qi");
-
-  // get naive schedule
-  auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
-
-  cout << "output schedule..." << endl;
-  cout << tab(1) << codegen_c(sched_naive) << endl;
-
-  // bank based on access patterns
-
-  auto buffers = build_buffers(prg, sched_naive);
-  int fetch_width = 4;
-  // Vectorize each bank: make the transpose, agg, and sram explicit
-  buffer_vectorization("buf", 1, fetch_width, buffers);
-
-  // Re-schedule and shrink buffers
-  auto opt_sched = optimized_schedule_from_buffers(buffers);
-  cout << codegen_c(opt_sched) << endl;
-  //assert(false);
-}
-
-=======
   auto q = prg.add_nest("qo", 0, 6, "qi", 0, 32);
   auto read = q->add_op("output");
   for (size_t wy = 0; wy < 3; wy ++)
@@ -983,7 +930,6 @@ void bankmerge_vec_test() {
   }
   assert(false);
 }
->>>>>>> origin/lower_ubuffer
 
 void auto_vec_test() {
 
@@ -1569,7 +1515,7 @@ void cnn_test() {
     //cout << tab(1) << s.first << " -> " << str(s.second) << endl;
   //}
   //assert(false);
-  //umap* opt_sched = prg.optimized_codegen();
+  umap* opt_sched = prg.optimized_codegen();
   ////cout << "------ ISL schedule" << endl;
   ////for (auto m : get_maps(opt_sched)) {
     ////cout << tab(1) << str(m) << endl;
@@ -1581,18 +1527,6 @@ void cnn_test() {
   //cout << "Optimized schedule..." << endl;
   //cout << codegen_c(schedmap);
 
-<<<<<<< HEAD
-
-  //auto buffers = build_buffers(prg);
-  //for (auto itr: buffers) {
-  //generate_hls_code(itr.second);
-  //}*/
-
-  auto buffers = build_buffers(prg);
-  generate_app_code(buffers, prg);
-  //assert(false);
-=======
-    }*/
     auto buffers = build_buffers(prg);
     CodegenOptions options;
     options.internal = true;
@@ -1606,7 +1540,6 @@ void cnn_test() {
 
     res = system("./a.out");
     assert(res == 0);
->>>>>>> origin/lower_ubuffer
 }
 
 void conv_test() {
@@ -6155,56 +6088,6 @@ void upsample_stencil_1d_test() {
   //assert(false);
 }
 
-<<<<<<< HEAD
-=======
-void move_to_benchmarks_folder(const std::string& app_name) {
-  string out_name = app_name;
-  string app_dir =
-    "./soda_codes/" + app_name;
-  string soda_dir =
-    "./soda_codes/" + app_name + "/soda_code/";
-  string synth_dir =
-    "./soda_codes/" + app_name + "/our_code/";
-
-  system(("mkdir " + app_dir).c_str());
-  system(("mkdir " + synth_dir).c_str());
-  system(("mkdir " + soda_dir).c_str());
-
-  system(("cp ./aws_collateral/xrt.ini " + synth_dir).c_str());
-  system(("cp ./aws_collateral/Makefile " + synth_dir).c_str());
-  system(("cp ./aws_collateral/utils.mk " + synth_dir).c_str());
-
-  system(("mv set_app.sh " + app_dir).c_str());
-  make_exe("set_app");
-
-  system(("mv " + out_name + "_kernel.h " + soda_dir).c_str());
-
-  system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
-  system(("mv " + out_name + "*.h " + synth_dir).c_str());
-  system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
-
-  make_exe("run_tb_" + out_name + ".sh");
-  system(("mv run_tb_" + out_name + ".sh " + synth_dir).c_str());
-
-  make_exe("aws_run_tb_" + out_name + ".sh");
-  system(("mv aws_run_tb_" + out_name + ".sh " + synth_dir).c_str());
-
-  make_exe("compare_regressions.sh");
-  system(("mv compare_regressions.sh " + app_dir).c_str());
-
-  make_exe("aws_compare_regressions.sh");
-  system(("mv aws_compare_regressions.sh " + app_dir).c_str());
-
-  system(("mv " + out_name + ".soda " + soda_dir).c_str());
-
-  system(("mv soda_" + out_name + "*_host.cpp " + soda_dir).c_str());
-  system(("mv tb_soda_" + out_name + "*.cpp " + soda_dir).c_str());
-
-  make_exe("run_tb.sh");
-  system(("mv run_tb.sh " + soda_dir).c_str());
-}
-
->>>>>>> origin/lower_ubuffer
 void sobel_mag_y_test() {
   int cols = 32;
   int rows = 32;
@@ -7340,25 +7223,14 @@ void playground() {
 }
 
 void application_tests() {
-<<<<<<< HEAD
-=======
-    //memtile_test();
-    //auto_vec_test();
-    //assert(false);
-    ram_addr_unit_test();
-    //cnn_test();
-    //assert(false);
-    //bankmerge_vec_test();
+  ram_addr_unit_test();
 
   blur_xy_16_app_test();
   denoise2d_test();
->>>>>>> origin/lower_ubuffer
 
   harris16_test();
-  //assert(false);
 
   harris_test();
-  //assert(false);
 
   pointwise_app_test();
   conv_1d_test();
@@ -7482,7 +7354,6 @@ void application_tests() {
 }
 
 void memory_tile_tests() {
-  auto_vec_rolled_test();
   auto_vec_test();
   vec_test();
   agg_test();
