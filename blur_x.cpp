@@ -165,14 +165,20 @@ inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in, I_c
 	auto compute_result = id(in_id0_c__id1_value);
 	// Produce: I
 	I_I_id0_write_bundle_write(compute_result, I, root, id1, id0);
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/lower_ubuffer
 #ifndef __VIVADO_SYNTH__
   hw_uint<16> debug_compute_result(compute_result);
   hw_uint<16> debug_compute_result_lane_0;
   set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
   *global_debug_handle << "I_id0," << (1*root + 0) << ", " << id1<< "," << id0<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/lower_ubuffer
 }
 
 inline void out_blur_30(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */out, int root, int d1, int d0) {
@@ -194,8 +200,11 @@ inline void out_blur_30(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num p
   *global_debug_handle << "out_blur_30," << (1*root + 0) << ", " << d1<< "," << d0<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
+<<<<<<< HEAD
 }
 
+=======
+>>>>>>> origin/lower_ubuffer
 // Driver function
 void blur_x(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in, HWStream<hw_uint<16> >& /* get_args num ports = 1 */out) {
 

@@ -143,8 +143,12 @@ std::string str(isl_multi_aff* const pma);
 
 std::string str(isl_multi_union_pw_aff* const pma);
 
+vector<vector<int> > get_access_matrix_from_map(isl_map* acc_map);
+
 //TODO: not consider pw affine, should add a condition on the set
 isl_stat isl_pw_aff_get_coefficient( isl_set *set,  isl_aff *aff, void *user);
+
+isl_stat isl_pw_aff_get_coefficient_matrix( isl_set *set,  isl_aff *aff, void *user);
 
 isl_stat isl_pw_aff_get_const( isl_set *set,  isl_aff *aff, void *user);
 
@@ -374,6 +378,8 @@ isl_pw_qpolynomial* card(isl_set* const m);
 isl_union_set* range(isl_union_map* const m);
 isl_union_set* domain(isl_union_map* const m);
 
+int stride_in_dim(isl_set* const s, size_t dim);
+
 isl_set* range(isl_map* const m);
 
 isl_set* domain(isl_map* const m);
@@ -464,8 +470,15 @@ isl_val* neg(isl_val* a);
 
 int to_int(isl_val* a);
 
+<<<<<<< HEAD
 isl_aff* set_coeff(isl_aff* const a, const int pos, isl_val* v);
 isl_val* coeff(isl_aff* const a, const int pos);
+=======
+int bnd_int(isl_union_pw_qpolynomial_fold* bound);
+int int_lower_bound(isl_union_pw_qpolynomial* range_card);
+int int_upper_bound(isl_union_pw_qpolynomial* range_card);
+
+>>>>>>> origin/lower_ubuffer
 int int_coeff(isl_aff* const a, const int pos);
 int int_const_coeff(isl_aff* const a);
 

@@ -430,14 +430,20 @@ inline void Img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */
 	auto compute_result = id_unrolled_1(Img_off_0_c__0_value);
 	// Produce: Img
 	Img_Img_update_0_write_bundle_write(compute_result, Img, d0, d1);
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/lower_ubuffer
 #ifndef __VIVADO_SYNTH__
   hw_uint<32> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
   *global_debug_handle << "Img_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/lower_ubuffer
 }
 
 inline void upsample_stencil_update_0(Img_cache& Img, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */upsample_stencil, int d0, int d1) {
@@ -459,8 +465,11 @@ inline void upsample_stencil_update_0(Img_cache& Img, HWStream<hw_uint<32> >& /*
   *global_debug_handle << "upsample_stencil_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
+<<<<<<< HEAD
 }
 
+=======
+>>>>>>> origin/lower_ubuffer
 // Driver function
 void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Img_off, HWStream<hw_uint<32> >& /* get_args num ports = 1 */upsample_stencil) {
 

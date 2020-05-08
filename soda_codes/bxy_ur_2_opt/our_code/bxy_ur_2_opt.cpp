@@ -39,8 +39,13 @@ struct blurx_blurx_update_0_write0_merged_banks_3_cache {
 
 };
 
+<<<<<<< HEAD
 struct blurx_blurx_update_0_write1_merged_banks_3_cache {
 	// RAM Box: {[0, 1921], [0, 1079]}
+=======
+struct blurx_blurx_update_0_write1_merged_banks_2_cache {
+	// RAM Box: {[1, 1921], [0, 1079]}
+>>>>>>> origin/lower_ubuffer
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -285,7 +290,7 @@ struct input_input_update_0_write0_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write1_merged_banks_3_cache {
-	// RAM Box: {[0, 1921], [0, 1081]}
+	// RAM Box: {[1, 1921], [0, 1081]}
 	// Capacity: 1923
 	// # of read delays: 3
 	hw_uint<16> f0;

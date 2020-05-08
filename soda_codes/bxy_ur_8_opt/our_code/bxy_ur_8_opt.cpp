@@ -39,8 +39,13 @@ struct blurx_blurx_update_0_write0_merged_banks_3_cache {
 
 };
 
+<<<<<<< HEAD
 struct blurx_blurx_update_0_write1_merged_banks_3_cache {
 	// RAM Box: {[0, 1921], [0, 1079]}
+=======
+struct blurx_blurx_update_0_write1_merged_banks_2_cache {
+	// RAM Box: {[1, 1921], [0, 1079]}
+>>>>>>> origin/lower_ubuffer
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -68,8 +73,13 @@ struct blurx_blurx_update_0_write1_merged_banks_3_cache {
 
 };
 
+<<<<<<< HEAD
 struct blurx_blurx_update_0_write2_merged_banks_3_cache {
 	// RAM Box: {[0, 1922], [0, 1079]}
+=======
+struct blurx_blurx_update_0_write2_merged_banks_1_cache {
+	// RAM Box: {[2, 1922], [0, 1079]}
+>>>>>>> origin/lower_ubuffer
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -97,8 +107,13 @@ struct blurx_blurx_update_0_write2_merged_banks_3_cache {
 
 };
 
+<<<<<<< HEAD
 struct blurx_blurx_update_0_write3_merged_banks_3_cache {
 	// RAM Box: {[0, 1923], [0, 1079]}
+=======
+struct blurx_blurx_update_0_write3_merged_banks_1_cache {
+	// RAM Box: {[3, 1923], [0, 1079]}
+>>>>>>> origin/lower_ubuffer
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -126,8 +141,13 @@ struct blurx_blurx_update_0_write3_merged_banks_3_cache {
 
 };
 
+<<<<<<< HEAD
 struct blurx_blurx_update_0_write4_merged_banks_3_cache {
 	// RAM Box: {[0, 1924], [0, 1079]}
+=======
+struct blurx_blurx_update_0_write4_merged_banks_1_cache {
+	// RAM Box: {[4, 1924], [0, 1079]}
+>>>>>>> origin/lower_ubuffer
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -155,8 +175,13 @@ struct blurx_blurx_update_0_write4_merged_banks_3_cache {
 
 };
 
+<<<<<<< HEAD
 struct blurx_blurx_update_0_write5_merged_banks_3_cache {
 	// RAM Box: {[0, 1925], [0, 1079]}
+=======
+struct blurx_blurx_update_0_write5_merged_banks_1_cache {
+	// RAM Box: {[5, 1925], [0, 1079]}
+>>>>>>> origin/lower_ubuffer
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -184,8 +209,13 @@ struct blurx_blurx_update_0_write5_merged_banks_3_cache {
 
 };
 
+<<<<<<< HEAD
 struct blurx_blurx_update_0_write6_merged_banks_3_cache {
 	// RAM Box: {[0, 1926], [0, 1079]}
+=======
+struct blurx_blurx_update_0_write6_merged_banks_1_cache {
+	// RAM Box: {[6, 1926], [0, 1079]}
+>>>>>>> origin/lower_ubuffer
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -213,8 +243,13 @@ struct blurx_blurx_update_0_write6_merged_banks_3_cache {
 
 };
 
+<<<<<<< HEAD
 struct blurx_blurx_update_0_write7_merged_banks_3_cache {
 	// RAM Box: {[0, 1927], [0, 1079]}
+=======
+struct blurx_blurx_update_0_write7_merged_banks_1_cache {
+	// RAM Box: {[7, 1927], [0, 1079]}
+>>>>>>> origin/lower_ubuffer
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -867,7 +902,7 @@ struct input_input_update_0_write0_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write1_merged_banks_3_cache {
-	// RAM Box: {[0, 1921], [0, 1081]}
+	// RAM Box: {[1, 1921], [0, 1081]}
 	// Capacity: 483
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -927,7 +962,7 @@ struct input_input_update_0_write1_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write2_merged_banks_3_cache {
-	// RAM Box: {[0, 1922], [0, 1081]}
+	// RAM Box: {[2, 1922], [0, 1081]}
 	// Capacity: 483
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -987,7 +1022,7 @@ struct input_input_update_0_write2_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write3_merged_banks_3_cache {
-	// RAM Box: {[0, 1923], [0, 1081]}
+	// RAM Box: {[3, 1923], [0, 1081]}
 	// Capacity: 483
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -1047,7 +1082,7 @@ struct input_input_update_0_write3_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write4_merged_banks_3_cache {
-	// RAM Box: {[0, 1924], [0, 1081]}
+	// RAM Box: {[4, 1924], [0, 1081]}
 	// Capacity: 483
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -1107,7 +1142,7 @@ struct input_input_update_0_write4_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write5_merged_banks_3_cache {
-	// RAM Box: {[0, 1925], [0, 1081]}
+	// RAM Box: {[5, 1925], [0, 1081]}
 	// Capacity: 483
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -1167,7 +1202,7 @@ struct input_input_update_0_write5_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write6_merged_banks_3_cache {
-	// RAM Box: {[0, 1926], [0, 1081]}
+	// RAM Box: {[6, 1926], [0, 1081]}
 	// Capacity: 483
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -1227,7 +1262,7 @@ struct input_input_update_0_write6_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write7_merged_banks_3_cache {
-	// RAM Box: {[0, 1927], [0, 1081]}
+	// RAM Box: {[7, 1927], [0, 1081]}
 	// Capacity: 483
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -1857,7 +1892,10 @@ inline void input_update_0(HWStream<hw_uint<128> >& /* buffer_args num ports = 8
 	auto compute_result = input_generated_compute_unrolled_8(input_arg_0_c__0_value);
 	// Produce: input
 	input_input_update_0_write_bundle_write(compute_result, input, d0, d1);
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/lower_ubuffer
 #ifndef __VIVADO_SYNTH__
   hw_uint<128> debug_compute_result(compute_result);
   hw_uint<16> debug_compute_result_lane_0;
@@ -1933,6 +1971,7 @@ inline void blurx_update_0(input_cache& input, blurx_cache& blurx, int d0, int d
 inline void bxy_ur_8_update_0(blurx_cache& blurx, HWStream<hw_uint<128> >& /* buffer_args num ports = 8 */bxy_ur_8, int d0, int d1) {
 	// Consume: blurx
 	auto blurx_0_c__0_value = blurx_bxy_ur_8_update_0_read_bundle_read(blurx/* source_delay */, d0, d1);
+<<<<<<< HEAD
 
 #ifndef __VIVADO_SYNTH__
   *global_debug_handle << "bxy_ur_8_update_0_blurx," << d0<< "," << d1<< "," <<  blurx_0_c__0_value << endl;
@@ -1942,6 +1981,14 @@ inline void bxy_ur_8_update_0(blurx_cache& blurx, HWStream<hw_uint<128> >& /* bu
 	// Produce: bxy_ur_8
 	bxy_ur_8.write(compute_result);
 
+=======
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "bxy_ur_8_update_0_blurx," << d0<< "," << d1<< "," <<  blurx_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+	auto compute_result = bxy_ur_8_generated_compute_unrolled_8(blurx_0_c__0_value);
+	// Produce: bxy_ur_8
+	bxy_ur_8.write(compute_result);
+>>>>>>> origin/lower_ubuffer
 #ifndef __VIVADO_SYNTH__
   hw_uint<128> debug_compute_result(compute_result);
   hw_uint<16> debug_compute_result_lane_0;
