@@ -40,7 +40,7 @@ struct blurx_blurx_update_0_write0_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write1_merged_banks_3_cache {
-	// RAM Box: {[0, 1921], [0, 1079]}
+	// RAM Box: {[1, 1921], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -69,7 +69,7 @@ struct blurx_blurx_update_0_write1_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write2_merged_banks_3_cache {
-	// RAM Box: {[0, 1922], [0, 1079]}
+	// RAM Box: {[2, 1922], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -98,7 +98,7 @@ struct blurx_blurx_update_0_write2_merged_banks_3_cache {
 };
 
 struct blurx_blurx_update_0_write3_merged_banks_3_cache {
-	// RAM Box: {[0, 1923], [0, 1079]}
+	// RAM Box: {[3, 1923], [0, 1079]}
 	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<16> f0;
@@ -479,7 +479,7 @@ struct input_input_update_0_write0_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write1_merged_banks_3_cache {
-	// RAM Box: {[0, 1921], [0, 1081]}
+	// RAM Box: {[1, 1921], [0, 1081]}
 	// Capacity: 963
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -539,7 +539,7 @@ struct input_input_update_0_write1_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write2_merged_banks_3_cache {
-	// RAM Box: {[0, 1922], [0, 1081]}
+	// RAM Box: {[2, 1922], [0, 1081]}
 	// Capacity: 963
 	// # of read delays: 3
 	hw_uint<16> f0;
@@ -599,7 +599,7 @@ struct input_input_update_0_write2_merged_banks_3_cache {
 };
 
 struct input_input_update_0_write3_merged_banks_3_cache {
-	// RAM Box: {[0, 1923], [0, 1081]}
+	// RAM Box: {[3, 1923], [0, 1081]}
 	// Capacity: 963
 	// # of read delays: 3
 	hw_uint<16> f0;
