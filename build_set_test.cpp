@@ -5154,6 +5154,41 @@ App harris_cartoon(const std::string& out_name) {
   return harris;
 }
 
+App harris16(const std::string& out_name) {
+  App harris;
+  harris.set_default_pixel_width(16);
+  harris.func2d("img_oc");
+  harris.func2d("img", v("img_oc"));
+  harris.func2d("grad_x",
+      add(sub(v("img", 1, -1), v("img", -1, -1)),
+        mul(sub(v("img", 1, 0), v("img", -1, 0)), 2),
+        sub(v("img", 1, 1), v("img", -1, 1))));
+
+  harris.func2d("grad_y",
+      add(sub(v("img", -1, 1), v("img", -1, -1)),
+        mul(sub(v("img", 0, 1), v("img", 0, -1)), 2),
+        sub(v("img", 1, 1), v("img", 1, -1))));
+
+  harris.func2d("lxx", add(square(v("grad_x")), 128));
+  harris.func2d("lyy", add(square(v("grad_y")), 128));
+  harris.func2d("lxy", add(mul(v("grad_x"), v("grad_y")), 128));
+  
+  harris.func2d("lgxx", stencilv(-1, 1, -1, 1, "lxx"));
+  harris.func2d("lgyy", stencilv(-1, 1, -1, 1, "lyy"));
+  harris.func2d("lgxy", stencilv(-1, 1, -1, 1, "lxy"));
+
+  harris.func2d("lgxx8", add(v("lgxx"), 64));
+  harris.func2d("lgyy8", add(v("lgyy"), 64));
+  harris.func2d("lgxy8", add(v("lgxy"), 64));
+  
+  harris.func2d("det", add(mul("lgxx8", "lgyy8"), square("lgxy8")));
+  harris.func2d("trace", mul("lgxx8", "lgyy8"));
+  harris.func2d(out_name, add(v("det"),
+        mul(square("trace"), 8)));
+
+  return harris;
+}
+
 App harris(const std::string& out_name) {
   App harris;
   //harris.set_default_pixel_width(16);
@@ -5221,6 +5256,40 @@ void harris_unrolled_test() {
   assert(naive == optimized);
 
   move_to_benchmarks_folder(out_name + "_opt");
+}
+
+void harris16_test() {
+  int mini_size = 32;
+  auto hmini = harris16("harris16_mini");
+  hmini.realize_naive("harris16_mini", mini_size, mini_size);
+  hmini.realize("harris16_mini", mini_size, mini_size, 1);
+
+  std::vector<std::string> naive =
+    run_regression_tb("harris16_mini_opt");
+  std::vector<std::string> optimized =
+    run_regression_tb("harris16_mini_naive");
+  assert(naive == optimized);
+  move_to_benchmarks_folder("harris16_mini_opt");
+
+  //assert(false);
+
+  int rows = 1080;
+  int cols = 1920;
+  vector<int> factors{1, 8, 16};
+  for (int i = 0; i < (int) factors.size(); i++) {
+    int unroll_factor = factors.at(i);
+    cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
+    string out_name = "hrs_" + str(unroll_factor);
+
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    options.debug_options.expect_all_linebuffers = true;
+    harris16(out_name).realize(options, out_name, cols, rows, unroll_factor);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
 }
 
 void harris_test() {
@@ -6991,6 +7060,9 @@ void playground() {
 }
 
 void application_tests() {
+
+  harris16_test();
+  assert(false);
 
   harris_test();
   //assert(false);
