@@ -1,5 +1,5 @@
-build_dir=$1
-target=$2
+build_dir=build_dir.hw.xilinx_aws-vu9p-f1_shell-v04261818_201920_1
+target=${app}
 
 aws s3 mb s3://iccad-2020-bucket/app-results/${app}/our_code/
 
