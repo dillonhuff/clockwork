@@ -6576,9 +6576,9 @@ void application_tests() {
     //auto_vec_test();
     //assert(false);
     ram_addr_unit_test();
-    cnn_test();
-    assert(false);
-    bankmerge_vec_test();
+    //cnn_test();
+    //assert(false);
+    //bankmerge_vec_test();
 
   blur_xy_16_app_test();
   denoise2d_test();
