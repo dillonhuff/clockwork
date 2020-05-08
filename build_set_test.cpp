@@ -1363,7 +1363,7 @@ prog cnn_conv_layer() {
   assert(false);
   */
 
-  prg.compute_unit_file = "cnn_conv_layer.h";
+  prg.compute_unit_file = "mobilenet_compute.h";
   prg.name = "cnn_conv_layer";
   prg.add_input("ifmap");
   //prg.add_input("weight");
@@ -1391,6 +1391,7 @@ prog cnn_conv_layer() {
     auto buf_x = buf_y->add_loop("lx", 0, 16 - 2);
     auto buf_och= buf_x->add_loop("loch", 0, 32 / unroll_po);
     auto init = buf_och->add_op("init_psum");
+    init->add_function("set_zero_32");
     init->add_store("psum", "0");
     auto buf_fy= buf_och->add_loop("lfy", 0, 3);
     auto buf_fx= buf_fy->add_loop("lfx", 0, 3);
@@ -1404,7 +1405,7 @@ prog cnn_conv_layer() {
       }
     }
     mac->add_load("psum", "0");
-    mac->add_function("mac");
+    mac->add_function("cnn_mac");
     mac->add_store("psum", "0");
     auto output = buf_och-> add_op("output");
     output->add_load("psum", "0");
@@ -1497,7 +1498,14 @@ void cnn_test() {
     options.internal = true;
     options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
     generate_app_code(options, buffers, prg, opt_sched);
-    //assert(false);
+
+    generate_regression_testbench(prg, buffers);
+
+    int res = system(string("g++ -std=c++11 regression_tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
+    assert(res == 0);
+
+    res = system("./a.out");
+    assert(res == 0);
 }
 
 void conv_test() {
@@ -6568,8 +6576,8 @@ void application_tests() {
     //auto_vec_test();
     //assert(false);
     ram_addr_unit_test();
-    assert(false);
     cnn_test();
+    assert(false);
     bankmerge_vec_test();
 
   blur_xy_16_app_test();

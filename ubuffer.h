@@ -65,10 +65,33 @@ struct bank {
   int maxdelay;
 
   // RAM bank properties
-  Box layout;
+  //Box layout;
+  //The Box is overprocessed, it contains the raw information of layout
+  //Box does not work if the box is stride
+  //Data saved in this bank in the group domain
+  isl_union_set* rddom;
 
   //port delay map
   map<string, int> delay_map;
+
+  //method to extract box from data_domain
+  Box extract_layout() {
+    cout << "extracting box from " << str(rddom) << endl;
+    auto min_pt =
+      parse_pt(sample(lexmin(rddom)));
+    auto max_pt =
+      parse_pt(sample(lexmax(rddom)));
+
+    assert(min_pt.size() == max_pt.size());
+
+    Box b;
+    for (size_t i = 0; i < min_pt.size(); i++) {
+      b.intervals.push_back({min_pt.at(i), max_pt.at(i)});
+      cout << "min: " << min_pt.at(i) << ", max: " << max_pt.at(i) << endl;
+    }
+    cout << tab(1) << "result = " << b << endl;
+    return b;
+  }
 
   //method determine if we are going to map to memory
   bool onlySR() const {
@@ -1063,7 +1086,7 @@ class UBuffer {
     umap* get_lexmax_events(const std::string& outpt);
     int compute_dd_bound(const std::string & read_port, const std::string & write_port, bool is_max);
     isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
-    bank compute_bank_info(const std::string& inpt, const std::string& outpt);
+    bank compute_bank_info(CodegenOptions options, const std::string& inpt, const std::string& outpt);
     void generate_bank_and_merge(CodegenOptions& options);
 
     vector<string> map2address(isl_map* m);
