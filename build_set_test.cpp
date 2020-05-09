@@ -16,6 +16,165 @@ void compare(vector<string>& opt, vector<string>& naive) {
   assert(opt == naive);
 }
 
+prog clockwork_target() {
+  prog prg;
+  // TODO: Semicolon needs to be moved outside
+  prg.compute_unit_file = "clockwork_target_compute.h";
+  prg.name = "clockwork_target";
+
+  // TODO: Sanitize away the dollar sign
+  // TODO: Sanitize away the '.'
+  // TODO: Remove underscore prefix from loops
+  //
+// Stencil<void *> &_hw_output = arg_0;
+  prg.add_output("_hw_outputa0");
+  prg.buffer_port_widths["_hw_outputa0"] = 16;
+// Stencil<void *> &_hw_input = arg_1;
+  prg.add_input("_hw_inputa0");
+  prg.buffer_port_widths["_hw_inputa0"] = 16;
+
+  auto loop_hw_output_s0_y_yo = prg.add_loop("_hw_output_s0_y_yo", 0, 62);
+////producing kernel
+  auto loop_kernel_s0_y = loop_hw_output_s0_y_yo->add_loop("kernel_s0_y", 0, 3);
+  auto loop_kernel_s0_x = loop_kernel_s0_y->add_loop("kernel_s0_x", 0, 3);
+
+//store is: kernela1[(kernel.s0.x + (kernel.s0.y*3))] = 0
+  auto compute_kernela1 = loop_kernel_s0_x->add_op("compute_kernela1");
+  compute_kernela1->add_function("compute_kernela1");
+  prg.buffer_port_widths["_kernela1"] = 16;
+  compute_kernela1->add_store("_kernela1", "(kernel_s0_x + (kernel_s0_y*3))");
+
+//store is: kernela1[0] = 17
+  auto compute_kernela1$1 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_1");
+  compute_kernela1$1->add_function("compute_kernela1_1");
+  compute_kernela1$1->add_store("_kernela1", "0");
+
+//store is: kernela1[3] = 4
+  auto compute_kernela1$2 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_2");
+  compute_kernela1$2->add_function("compute_kernela1_2");
+  compute_kernela1$2->add_store("_kernela1", "3");
+
+//store is: kernela1[6] = 6
+  auto compute_kernela1$3 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_3");
+  compute_kernela1$3->add_function("compute_kernela1_3");
+  compute_kernela1$3->add_store("_kernela1", "6");
+
+//store is: kernela1[1] = 7
+  auto compute_kernela1$4 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_4");
+  compute_kernela1$4->add_function("compute_kernela1_4");
+  compute_kernela1$4->add_store("_kernela1", "1");
+
+//store is: kernela1[4] = 19
+  auto compute_kernela1$5 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_5");
+  compute_kernela1$5->add_function("compute_kernela1_5");
+  compute_kernela1$5->add_store("_kernela1", "4");
+
+//store is: kernela1[7] = 4
+  auto compute_kernela1$6 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_6");
+  compute_kernela1$6->add_function("compute_kernela1_6");
+  compute_kernela1$6->add_store("_kernela1", "7");
+
+//store is: kernela1[2] = 5
+  auto compute_kernela1$7 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_7");
+  compute_kernela1$7->add_function("compute_kernela1_7");
+  compute_kernela1$7->add_store("_kernela1", "2");
+
+//store is: kernela1[5] = 21
+  auto compute_kernela1$8 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_8");
+  compute_kernela1$8->add_function("compute_kernela1_8");
+  compute_kernela1$8->add_store("_kernela1", "5");
+
+//store is: kernela1[8] = 15
+  auto compute_kernela1$9 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_9");
+  compute_kernela1$9->add_function("compute_kernela1_9");
+  compute_kernela1$9->add_store("_kernela1", "8");
+//consuming kernel
+  auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("_hw_output_s0_x_xo", 0, 62);
+////producing conv
+  auto loop_conv_s0_y = loop_hw_output_s0_x_xo->add_loop("conv_s0_y", 0, 62);
+  auto loop_conv_s0_x = loop_conv_s0_y->add_loop("conv_s0_x", 0, 62);
+
+  auto compute_conva2 = loop_conv_s0_x->add_op("compute_conva2");
+  compute_conva2->add_function("compute_conva2");
+  prg.buffer_port_widths["_conva2"] = 16;
+  compute_conva2->add_store("_conva2", "(conv_s0_x + (conv_s0_y*62))");
+//consuming hw_input
+  auto loop_conv_s1_y = loop_hw_output_s0_x_xo->add_loop("conv_s1_y", 0, 62);
+  auto loop_conv_s1_x = loop_conv_s1_y->add_loop("conv_s1_x", 0, 62);
+
+  auto compute_conva2$1 = loop_conv_s1_x->add_op("compute_conva2_1");
+  compute_conva2$1->add_function("compute_conva2_1");
+  compute_conva2$1->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  prg.buffer_port_widths["_hw_inputa0"] = 16;
+  compute_conva2$1->add_load("_hw_inputa0", "(conv_s1_x + (conv_s1_y*64))");
+  compute_conva2$1->add_load("_kernela1", "0");
+  compute_conva2$1->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+
+  auto compute_conva2$2 = loop_conv_s1_x->add_op("compute_conva2_2");
+  compute_conva2$2->add_function("compute_conva2_2");
+  compute_conva2$2->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  compute_conva2$2->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 1)");
+  compute_conva2$2->add_load("_kernela1", "1");
+  compute_conva2$2->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+
+  auto compute_conva2$3 = loop_conv_s1_x->add_op("compute_conva2_3");
+  compute_conva2$3->add_function("compute_conva2_3");
+  compute_conva2$3->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  compute_conva2$3->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 2)");
+  compute_conva2$3->add_load("_kernela1", "2");
+  compute_conva2$3->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+
+  auto compute_conva2$4 = loop_conv_s1_x->add_op("compute_conva2_4");
+  compute_conva2$4->add_function("compute_conva2_4");
+  compute_conva2$4->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  compute_conva2$4->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 64)");
+  compute_conva2$4->add_load("_kernela1", "3");
+  compute_conva2$4->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+
+  auto compute_conva2$5 = loop_conv_s1_x->add_op("compute_conva2_5");
+  compute_conva2$5->add_function("compute_conva2$5");
+  compute_conva2$5->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  compute_conva2$5->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 65)");
+  compute_conva2$5->add_load("_kernela1", "4");
+  compute_conva2$5->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+
+  auto compute_conva2$6 = loop_conv_s1_x->add_op("compute_conva2_6");
+  compute_conva2$6->add_function("compute_conva2_6");
+  compute_conva2$6->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  compute_conva2$6->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 66)");
+  compute_conva2$6->add_load("_kernela1", "5");
+  compute_conva2$6->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+
+  auto compute_conva2$7 = loop_conv_s1_x->add_op("compute_conva2_7");
+  compute_conva2$7->add_function("compute_conva2_7");
+  compute_conva2$7->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  compute_conva2$7->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 128)");
+  compute_conva2$7->add_load("_kernela1", "6");
+  compute_conva2$7->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+
+  auto compute_conva2$8 = loop_conv_s1_x->add_op("compute_conva2_8");
+  compute_conva2$8->add_function("compute_conva2_8");
+  compute_conva2$8->add_load("_conva2", "(conv.s1.x + (conv.s1.y*62))");
+  compute_conva2$8->add_load("_hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 129)");
+  compute_conva2$8->add_load("_kernela1", "7");
+  compute_conva2$8->add_store("_conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+  auto compute_conva2$9 = loop_conv_s1_x->add_op("compute_conva2_9");
+  compute_conva2$9->add_function("compute_conva2_9");
+  compute_conva2$9->add_load("_conva2", "(conv.s1.x + (conv.s1.y*62))");
+  compute_conva2$9->add_load("_hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 130)");
+  compute_conva2$9->add_load("_kernela1", "8");
+  compute_conva2$9->add_store("_conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+  auto compute_hw_output = loop_hw_output_s0_x_xo->add_op("compute_hw_output");
+  compute_hw_output->add_function("compute_hw_output");
+  compute_hw_output->add_load("_conva2", "(hw_output.s0.x.xo + (hw_output.s0.y.yo*62))");
+  prg.buffer_port_widths["_hw_output"] = 16;
+  compute_hw_output->add_store("_hw_output", "(hw_output.s0.x.xo + (hw_output.s0.y.yo*62))");
+
+  return prg;
+}
+
 void synth_reduce_test() {
 
   struct isl_ctx *ctx;
@@ -4864,6 +5023,12 @@ App tricky_reconvergence(const std::string& name) {
   return dn;
 }
 
+void halide_frontend_test() {
+  prog prg = clockwork_target();
+
+  regression_test(prg);
+}
+
 void tricky_shift_register_reconvergence_test() {
   //App sobel = tricky_reconvergence("A");
   App sobel;
@@ -7223,6 +7388,8 @@ void playground() {
 }
 
 void application_tests() {
+  halide_frontend_test();
+
   pointwise_app_test();
   assert(false);
 
