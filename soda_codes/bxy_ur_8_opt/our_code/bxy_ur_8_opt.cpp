@@ -1973,7 +1973,7 @@ inline void bxy_ur_8_update_0(blurx_cache& blurx, HWStream<hw_uint<128> >& /* bu
 }
 
 // Driver function
-void bxy_ur_8_opt(HWStream<hw_uint<128> >& /* get_args num ports = 8 */input_arg, HWStream<hw_uint<128> >& /* get_args num ports = 8 */bxy_ur_8) {
+void bxy_ur_8_opt(HWStream<hw_uint<128> >& /* get_args num ports = 8 */input_arg, HWStream<hw_uint<128> >& /* get_args num ports = 8 */bxy_ur_8, uint64_t num_epochs) {
 
 #ifndef __VIVADO_SYNTH__
   ofstream debug_file("bxy_ur_8_opt_debug.csv");
@@ -2016,6 +2016,10 @@ void bxy_ur_8_opt(HWStream<hw_uint<128> >& /* get_args num ports = 8 */input_arg
 #endif //__VIVADO_SYNTH__
 }
 
+void bxy_ur_8_opt(HWStream<hw_uint<128> >& /* get_args num ports = 8 */input_arg, HWStream<hw_uint<128> >& /* get_args num ports = 8 */bxy_ur_8) {
+
+  bxy_ur_8_opt(input_arg, bxy_ur_8, 1);
+}
 #ifdef __VIVADO_SYNTH__
 #include "bxy_ur_8_opt.h"
 

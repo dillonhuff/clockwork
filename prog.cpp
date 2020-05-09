@@ -723,6 +723,77 @@ void generate_app_code(map<string, UBuffer>& buffers, prog& prg) {
   generate_app_code(buffers, prg, schedmap);
 }
 
+vector<string> get_arg_names(const map<string, UBuffer>& buffers, prog& prg) {
+  vector<string> args;
+  for (auto& b : prg.ins) {
+    cout << "Trying to find " << b << " in buffers" << endl;
+    assert(contains_key(b, buffers));
+    auto& buf = buffers.at(b);
+
+    bool found_bundle = false;
+    for (auto bndl : buf.port_bundles) {
+      cout << "Trying bundle: " << bndl.first << endl;
+      if (is_prefix(b, bndl.first)) {
+        cout << "Found" << endl;
+        string bname = bndl.first;
+        vector<string> ports = bndl.second;
+        args.push_back(buf.name);
+        found_bundle = true;
+        break;
+      }
+    }
+    cout << "done trying bundles" << endl;
+
+    if (!found_bundle) {
+      cout << "No bundle for input: " << b << endl;
+      cout << "No bundle for input: " << b << endl;
+      auto bndl = pick(buf.port_bundles);
+      string bname = bndl.first;
+      vector<string> ports =
+        map_find(bname, buf.port_bundles);
+      args.push_back(buf.name);
+    }
+  }
+
+  for (auto& b : prg.outs) {
+
+    if (!contains_key(b, buffers)) {
+      cout << "No buffer for: " << b << ", available buffers..." << endl;
+      for (auto buf : buffers) {
+        cout << tab(1) << buf.first << endl;
+      }
+    }
+
+    assert(contains_key(b, buffers));
+    auto& buf = buffers.at(b);
+
+    bool found_bundle = false;
+    for (auto bndl : buf.port_bundles) {
+      cout << "Trying bundle: " << bndl.first << endl;
+      if (is_prefix(b, bndl.first)) {
+        string bname = bndl.first;
+        vector<string> ports = bndl.second;
+        args.push_back(buf.name);
+        found_bundle = true;
+        break;
+      }
+    }
+    cout << "done trying bundle" << endl;
+    if (!found_bundle) {
+      // TODO: Should really be an error
+      cout << "No bundle for input: " << b << endl;
+      auto bndl = pick(buf.port_bundles);
+      string bname = bndl.first;
+      vector<string> ports =
+        map_find(bname, buf.port_bundles);
+      args.push_back(buf.name);
+    }
+
+  }
+  cout << "Got args" << endl;
+  return args;
+}
+
 vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg) {
   vector<string> args;
   for (auto& b : prg.ins) {
@@ -754,10 +825,14 @@ vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg) {
       args.push_back("HWStream<" + buf.bundle_type_string(bname) + " >& /* no bundle get_args num ports = " + to_string(ports.size()) + " */" + buf.name);
     }
   }
+
   for (auto& b : prg.outs) {
 
     if (!contains_key(b, buffers)) {
-      cout << "No buffer for: " << b << endl;
+      cout << "No buffer for: " << b << ", available buffers..." << endl;
+      for (auto buf : buffers) {
+        cout << tab(1) << buf.first << endl;
+      }
     }
 
     assert(contains_key(b, buffers));
@@ -1470,8 +1545,14 @@ void generate_app_code(CodegenOptions& options,
   }
 
   conv_out << "// Driver function" << endl;
-  string arg_buffers = sep_list(get_args(buffers, prg), "(", ")", ", ");
-  conv_out << "void " << prg.name << arg_buffers << " {" << endl << endl;
+  vector<string> arg_buf_list = get_args(buffers, prg);
+  string outer_arg_buffers = sep_list(arg_buf_list, "(", ")", ", ");
+
+  auto inner_args = arg_buf_list;
+  inner_args.push_back("uint64_t num_epochs");
+  string inner_arg_buffers = sep_list(inner_args, "(", ")", ", ");
+
+  conv_out << "void " << prg.name << inner_arg_buffers << " {" << endl << endl;
 
   open_debug_scope(conv_out);
   conv_out << tab(1) << "ofstream debug_file(\"" << prg.name + "_debug.csv\");" << endl;
@@ -1515,6 +1596,14 @@ void generate_app_code(CodegenOptions& options,
   close_debug_scope(conv_out);
 
   conv_out << "}" << endl << endl;
+
+  {
+    conv_out << "void " << prg.name << outer_arg_buffers << " {" << endl << endl;
+    vector<string> arg_strings = get_arg_names(buffers, prg);
+    arg_strings.push_back("1");
+    conv_out << tab(1) << prg.name << sep_list(arg_strings, "(", ")", ", ") << ";" << endl;
+    conv_out << "}" << endl;
+  }
 
   open_synth_scope(conv_out);
   generate_xilinx_accel_wrapper(conv_out, buffers, prg);
@@ -1573,7 +1662,6 @@ void generate_unoptimized_code(prog& prg) {
 
   cout << codegen_c(prg.unoptimized_schedule());
 
-  //assert(false);
   auto buffers = build_buffers(prg, prg.unoptimized_schedule());
 
   CodegenOptions options;

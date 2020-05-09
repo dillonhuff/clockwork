@@ -80,6 +80,22 @@ inline hw_uint<16> input_pw16_update_0_read_bundle_read(input_cache& input, int 
 
 
 // Operation logic
+inline void input_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */input_arg, input_cache& input, int d0, int d1) {
+	// Consume: input_arg
+	auto input_arg_0_c__0_value = input_arg.read();
+	auto compute_result = input_generated_compute_unrolled_1(input_arg_0_c__0_value);
+	// Produce: input
+	input_input_update_0_write_bundle_write(compute_result, input, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<16> debug_compute_result(compute_result);
+  hw_uint<16> debug_compute_result_lane_0;
+  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
+  *global_debug_handle << "input_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void pw16_update_0(input_cache& input, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */pw16, int d0, int d1) {
 	// Consume: input
 	auto input_0_c__0_value = input_pw16_update_0_read_bundle_read(input/* source_delay */, d0, d1);
@@ -101,24 +117,8 @@ inline void pw16_update_0(input_cache& input, HWStream<hw_uint<16> >& /* buffer_
 
 }
 
-inline void input_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */input_arg, input_cache& input, int d0, int d1) {
-	// Consume: input_arg
-	auto input_arg_0_c__0_value = input_arg.read();
-	auto compute_result = input_generated_compute_unrolled_1(input_arg_0_c__0_value);
-	// Produce: input
-	input_input_update_0_write_bundle_write(compute_result, input, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "input_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
 // Driver function
-void pw16_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */input_arg, HWStream<hw_uint<16> >& /* get_args num ports = 1 */pw16) {
+void pw16_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */input_arg, HWStream<hw_uint<16> >& /* get_args num ports = 1 */pw16, uint64_t num_epochs) {
 
 #ifndef __VIVADO_SYNTH__
   ofstream debug_file("pw16_opt_debug.csv");
@@ -154,6 +154,10 @@ void pw16_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */input_arg, HWS
 #endif //__VIVADO_SYNTH__
 }
 
+void pw16_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */input_arg, HWStream<hw_uint<16> >& /* get_args num ports = 1 */pw16) {
+
+  pw16_opt(input_arg, pw16, 1);
+}
 #ifdef __VIVADO_SYNTH__
 #include "pw16_opt.h"
 

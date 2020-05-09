@@ -7589,7 +7589,7 @@ inline void bxy_ur_32_update_0(blurx_cache& blurx, HWStream<hw_uint<512> >& /* b
 }
 
 // Driver function
-void bxy_ur_32_opt(HWStream<hw_uint<512> >& /* get_args num ports = 32 */input_arg, HWStream<hw_uint<512> >& /* get_args num ports = 32 */bxy_ur_32) {
+void bxy_ur_32_opt(HWStream<hw_uint<512> >& /* get_args num ports = 32 */input_arg, HWStream<hw_uint<512> >& /* get_args num ports = 32 */bxy_ur_32, uint64_t num_epochs) {
 
 #ifndef __VIVADO_SYNTH__
   ofstream debug_file("bxy_ur_32_opt_debug.csv");
@@ -7632,6 +7632,10 @@ void bxy_ur_32_opt(HWStream<hw_uint<512> >& /* get_args num ports = 32 */input_a
 #endif //__VIVADO_SYNTH__
 }
 
+void bxy_ur_32_opt(HWStream<hw_uint<512> >& /* get_args num ports = 32 */input_arg, HWStream<hw_uint<512> >& /* get_args num ports = 32 */bxy_ur_32) {
+
+  bxy_ur_32_opt(input_arg, bxy_ur_32, 1);
+}
 #ifdef __VIVADO_SYNTH__
 #include "bxy_ur_32_opt.h"
 

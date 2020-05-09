@@ -22,8 +22,8 @@ prog clockwork_target() {
   prg.name = "clockwork_target";
 
 // Stencil<void *> &_hw_output = arg_0;
-  prg.add_output("_hw_outputa0");
-  prg.buffer_port_widths["_hw_outputa0"] = 16;
+  prg.add_output("_hw_output");
+  prg.buffer_port_widths["_hw_output"] = 16;
 // Stencil<void *> &_hw_input = arg_1;
   prg.add_input("_hw_inputa0");
   prg.buffer_port_widths["_hw_inputa0"] = 16;
@@ -5020,6 +5020,8 @@ App tricky_reconvergence(const std::string& name) {
 
 void halide_frontend_test() {
   //prog prg = clockwork_target();
+  //generate_optimized_code(prg);
+  //assert(false);
 
   //regression_test(prg);
 }
