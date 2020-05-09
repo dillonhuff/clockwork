@@ -11,7 +11,7 @@ using namespace std;
 #include "hw_classes.h"
 
 struct diff_d_diff_d_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[-1, 8], [-1, 8], [-1, 1]}
+	// RAM Box: {[-1, 8], [-1, 8], [-1, 8]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -44,9 +44,9 @@ inline void diff_d_diff_d_update_0_write0_write(hw_uint<16>& diff_d_diff_d_updat
 inline hw_uint<16> g_rd0_select(diff_d_cache& diff_d, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_d[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Write schedule: { diff_d_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 10] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
+  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_d[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Write schedule: { diff_d_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 10] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
   // DD fold: {  }
   auto value_diff_d_diff_d_update_0_write0 = diff_d.diff_d_diff_d_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_diff_d_diff_d_update_0_write0;
@@ -80,7 +80,7 @@ inline hw_uint<16> diff_d_g_update_0_read_bundle_read(diff_d_cache& diff_d, int 
 #include "hw_classes.h"
 
 struct diff_i_diff_i_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[-1, 8], [-1, 8], [-1, 1]}
+	// RAM Box: {[-1, 8], [-1, 8], [-1, 8]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -113,9 +113,9 @@ inline void diff_i_diff_i_update_0_write0_write(hw_uint<16>& diff_i_diff_i_updat
 inline hw_uint<16> g_rd0_select(diff_i_cache& diff_i, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_i[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Write schedule: { diff_i_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 9] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
+  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_i[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Write schedule: { diff_i_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 9] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
   // DD fold: {  }
   auto value_diff_i_diff_i_update_0_write0 = diff_i.diff_i_diff_i_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_diff_i_diff_i_update_0_write0;
@@ -149,7 +149,7 @@ inline hw_uint<16> diff_i_g_update_0_read_bundle_read(diff_i_cache& diff_i, int 
 #include "hw_classes.h"
 
 struct diff_l_diff_l_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[-1, 8], [-1, 8], [-1, 1]}
+	// RAM Box: {[-1, 8], [-1, 8], [-1, 8]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -182,9 +182,9 @@ inline void diff_l_diff_l_update_0_write0_write(hw_uint<16>& diff_l_diff_l_updat
 inline hw_uint<16> g_rd0_select(diff_l_cache& diff_l, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_l[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Write schedule: { diff_l_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 8] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
+  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_l[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Write schedule: { diff_l_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 8] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
   // DD fold: {  }
   auto value_diff_l_diff_l_update_0_write0 = diff_l.diff_l_diff_l_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_diff_l_diff_l_update_0_write0;
@@ -218,7 +218,7 @@ inline hw_uint<16> diff_l_g_update_0_read_bundle_read(diff_l_cache& diff_l, int 
 #include "hw_classes.h"
 
 struct diff_o_diff_o_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[-1, 8], [-1, 8], [-1, 1]}
+	// RAM Box: {[-1, 8], [-1, 8], [-1, 8]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -251,9 +251,9 @@ inline void diff_o_diff_o_update_0_write0_write(hw_uint<16>& diff_o_diff_o_updat
 inline hw_uint<16> g_rd0_select(diff_o_cache& diff_o, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_o[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Write schedule: { diff_o_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 7] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
+  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_o[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Write schedule: { diff_o_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 7] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
   // DD fold: {  }
   auto value_diff_o_diff_o_update_0_write0 = diff_o.diff_o_diff_o_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_diff_o_diff_o_update_0_write0;
@@ -287,7 +287,7 @@ inline hw_uint<16> diff_o_g_update_0_read_bundle_read(diff_o_cache& diff_o, int 
 #include "hw_classes.h"
 
 struct diff_r_diff_r_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[-1, 8], [-1, 8], [-1, 1]}
+	// RAM Box: {[-1, 8], [-1, 8], [-1, 8]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -320,9 +320,9 @@ inline void diff_r_diff_r_update_0_write0_write(hw_uint<16>& diff_r_diff_r_updat
 inline hw_uint<16> g_rd0_select(diff_r_cache& diff_r, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_r[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Write schedule: { diff_r_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 6] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
+  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_r[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Write schedule: { diff_r_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 6] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
   // DD fold: {  }
   auto value_diff_r_diff_r_update_0_write0 = diff_r.diff_r_diff_r_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_diff_r_diff_r_update_0_write0;
@@ -356,7 +356,7 @@ inline hw_uint<16> diff_r_g_update_0_read_bundle_read(diff_r_cache& diff_r, int 
 #include "hw_classes.h"
 
 struct diff_u_diff_u_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[-1, 8], [-1, 8], [-1, 1]}
+	// RAM Box: {[-1, 8], [-1, 8], [-1, 8]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -389,9 +389,9 @@ inline void diff_u_diff_u_update_0_write0_write(hw_uint<16>& diff_u_diff_u_updat
 inline hw_uint<16> g_rd0_select(diff_u_cache& diff_u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_u[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Write schedule: { diff_u_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 5] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
+  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_u[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Write schedule: { diff_u_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 5] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
   // DD fold: {  }
   auto value_diff_u_diff_u_update_0_write0 = diff_u.diff_u_diff_u_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_diff_u_diff_u_update_0_write0;
@@ -425,7 +425,7 @@ inline hw_uint<16> diff_u_g_update_0_read_bundle_read(diff_u_cache& diff_u, int 
 #include "hw_classes.h"
 
 struct f_f_update_0_write0_merged_banks_2_cache {
-	// RAM Box: {[0, 7], [0, 7], [0, 0]}
+	// RAM Box: {[0, 7], [0, 7], [0, 7]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<16> f1;
@@ -457,9 +457,9 @@ inline void f_f_update_0_write0_write(hw_uint<16>& f_f_update_0_write0, f_cache&
 inline hw_uint<16> dn3d_mini_rd0_select(f_cache& f, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd0 read pattern: { dn3d_mini_update_0[d0, d1, d2 = 0] -> f[d0, d1, 0] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Write schedule: { f_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 1] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
+  // dn3d_mini_rd0 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> f[d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { f_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 1] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   // DD fold: {  }
   auto value_f_f_update_0_write0 = f.f_f_update_0_write0_merged_banks_2.peek_0();
   return value_f_f_update_0_write0;
@@ -473,9 +473,9 @@ inline hw_uint<16> dn3d_mini_rd0_select(f_cache& f, int d0, int d1, int d2) {
 inline hw_uint<16> r0_rd0_select(f_cache& f, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // r0_rd0 read pattern: { r0_update_0[d0, d1, d2 = 0] -> f[d0, d1, 0] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Read schedule : { r0_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 4] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Write schedule: { f_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 1] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
+  // r0_rd0 read pattern: { r0_update_0[d0, d1, d2] -> f[d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { r0_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 4] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { f_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 1] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   // DD fold: {  }
   auto value_f_f_update_0_write0 = f.f_f_update_0_write0_merged_banks_2.peek_0();
   return value_f_f_update_0_write0;
@@ -521,7 +521,7 @@ inline hw_uint<16> f_r0_update_0_read_bundle_read(f_cache& f, int d0, int d1, in
 #include "hw_classes.h"
 
 struct g_g_update_0_write0_merged_banks_6_cache {
-	// RAM Box: {[-1, 8], [-1, 8], [-1, 1]}
+	// RAM Box: {[-1, 8], [-1, 8], [-1, 8]}
 	// Capacity: 212
 	// # of read delays: 7
 	hw_uint<16> f0;
@@ -671,10 +671,10 @@ inline void g_g_update_0_write0_write(hw_uint<16>& g_g_update_0_write0, g_cache&
 inline hw_uint<16> dn3d_mini_rd0_select(g_cache& g, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd0 read pattern: { dn3d_mini_update_0[d0, d1, d2 = 0] -> g[-1 + d0, d1, 0] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Write schedule: { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 112 : d2 = 0 and 0 <= d0 <= 7 and 0 <= d1 <= 7 }
+  // dn3d_mini_rd0 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> g[-1 + d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 112 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   auto value_g_g_update_0_write0 = g.g_g_update_0_write0_merged_banks_6.peek_112();
   return value_g_g_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -687,10 +687,10 @@ inline hw_uint<16> dn3d_mini_rd0_select(g_cache& g, int d0, int d1, int d2) {
 inline hw_uint<16> dn3d_mini_rd1_select(g_cache& g, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd1 read pattern: { dn3d_mini_update_0[d0, d1, d2 = 0] -> g[d0, -1 + d1, 0] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Write schedule: { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 121 : d2 = 0 and 0 <= d0 <= 7 and 0 <= d1 <= 7 }
+  // dn3d_mini_rd1 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> g[d0, -1 + d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 121 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   auto value_g_g_update_0_write0 = g.g_g_update_0_write0_merged_banks_6.peek_121();
   return value_g_g_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -703,10 +703,10 @@ inline hw_uint<16> dn3d_mini_rd1_select(g_cache& g, int d0, int d1, int d2) {
 inline hw_uint<16> dn3d_mini_rd2_select(g_cache& g, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd2 read pattern: { dn3d_mini_update_0[d0, d1, d2 = 0] -> g[d0, d1, -1] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Write schedule: { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 211 : d2 = 0 and 0 <= d0 <= 7 and 0 <= d1 <= 7 }
+  // dn3d_mini_rd2 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> g[d0, d1, -1 + d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 211 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   auto value_g_g_update_0_write0 = g.g_g_update_0_write0_merged_banks_6.peek_211();
   return value_g_g_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -719,10 +719,10 @@ inline hw_uint<16> dn3d_mini_rd2_select(g_cache& g, int d0, int d1, int d2) {
 inline hw_uint<16> dn3d_mini_rd3_select(g_cache& g, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd3 read pattern: { dn3d_mini_update_0[d0, d1, d2 = 0] -> g[d0, d1, 1] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Write schedule: { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 11 : d2 = 0 and 0 <= d0 <= 7 and 0 <= d1 <= 7 }
+  // dn3d_mini_rd3 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> g[d0, d1, 1 + d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 11 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   auto value_g_g_update_0_write0 = g.g_g_update_0_write0_merged_banks_6.peek_11();
   return value_g_g_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -735,10 +735,10 @@ inline hw_uint<16> dn3d_mini_rd3_select(g_cache& g, int d0, int d1, int d2) {
 inline hw_uint<16> dn3d_mini_rd4_select(g_cache& g, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd4 read pattern: { dn3d_mini_update_0[d0, d1, d2 = 0] -> g[d0, 1 + d1, 0] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Write schedule: { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 101 : d2 = 0 and 0 <= d0 <= 7 and 0 <= d1 <= 6; dn3d_mini_update_0[d0, d1, d2] -> 101 : d1 = 7 and d2 = 0 and 0 <= d0 <= 7 }
+  // dn3d_mini_rd4 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> g[d0, 1 + d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 101 : 0 <= d0 <= 7 and 0 <= d1 <= 6 and 0 <= d2 <= 7; dn3d_mini_update_0[d0, d1, d2] -> 101 : d1 = 7 and 0 <= d0 <= 7 and 0 <= d2 <= 7 }
   auto value_g_g_update_0_write0 = g.g_g_update_0_write0_merged_banks_6.peek_101();
   return value_g_g_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -751,10 +751,10 @@ inline hw_uint<16> dn3d_mini_rd4_select(g_cache& g, int d0, int d1, int d2) {
 inline hw_uint<16> dn3d_mini_rd5_select(g_cache& g, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd5 read pattern: { dn3d_mini_update_0[d0, d1, d2 = 0] -> g[1 + d0, d1, 0] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Write schedule: { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 110 : d2 = 0 and 0 <= d0 <= 6 and 0 <= d1 <= 7; dn3d_mini_update_0[d0, d1, d2] -> (103 + d0) : d0 = 7 and d2 = 0 and 0 <= d1 <= 7 }
+  // dn3d_mini_rd5 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> g[1 + d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 110 : 0 <= d0 <= 6 and 0 <= d1 <= 7 and 0 <= d2 <= 7; dn3d_mini_update_0[d0, d1, d2] -> (103 + d0) : d0 = 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   auto value_g_g_update_0_write0 = g.g_g_update_0_write0_merged_banks_6.peek_110();
   return value_g_g_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -807,7 +807,7 @@ inline void g_g_update_0_write_bundle_write(hw_uint<16>& g_update_0_write, g_cac
 #include "hw_classes.h"
 
 struct r0_r0_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 7], [0, 7], [0, 0]}
+	// RAM Box: {[0, 7], [0, 7], [0, 7]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -840,9 +840,9 @@ inline void r0_r0_update_0_write0_write(hw_uint<16>& r0_r0_update_0_write0, r0_c
 inline hw_uint<16> r1_rd0_select(r0_cache& r0, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // r1_rd0 read pattern: { r1_update_0[d0, d1, d2 = 0] -> r0[d0, d1, 0] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Read schedule : { r1_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 11] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Write schedule: { r0_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 4] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
+  // r1_rd0 read pattern: { r1_update_0[d0, d1, d2] -> r0[d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { r1_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 11] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { r0_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 4] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   // DD fold: {  }
   auto value_r0_r0_update_0_write0 = r0.r0_r0_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_r0_r0_update_0_write0;
@@ -876,7 +876,7 @@ inline hw_uint<16> r0_r1_update_0_read_bundle_read(r0_cache& r0, int d0, int d1,
 #include "hw_classes.h"
 
 struct r1_r1_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 7], [0, 7], [0, 0]}
+	// RAM Box: {[0, 7], [0, 7], [0, 7]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -909,9 +909,9 @@ inline void r1_r1_update_0_write0_write(hw_uint<16>& r1_r1_update_0_write0, r1_c
 inline hw_uint<16> dn3d_mini_rd0_select(r1_cache& r1, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd0 read pattern: { dn3d_mini_update_0[d0, d1, d2 = 0] -> r1[d0, d1, 0] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Write schedule: { r1_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 11] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
+  // dn3d_mini_rd0 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> r1[d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { r1_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 11] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   // DD fold: {  }
   auto value_r1_r1_update_0_write0 = r1.r1_r1_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_r1_r1_update_0_write0;
@@ -945,7 +945,7 @@ inline void r1_r1_update_0_write_bundle_write(hw_uint<16>& r1_update_0_write, r1
 #include "hw_classes.h"
 
 struct u_u_update_0_write0_merged_banks_20_cache {
-	// RAM Box: {[-2, 9], [-2, 9], [-2, 2]}
+	// RAM Box: {[-2, 9], [-2, 9], [-2, 9]}
 	// Capacity: 459
 	// # of read delays: 15
 	hw_uint<16> f0;
@@ -1191,10 +1191,10 @@ inline void u_u_update_0_write0_write(hw_uint<16>& u_u_update_0_write0, u_cache&
 inline hw_uint<16> diff_d_rd0_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_d_rd0 read pattern: { diff_d_update_0[d0, d1, d2] -> u[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Read schedule : { diff_d_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 10] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 2 }
-  // DD fold: { diff_d_update_0[d0, d1, d2] -> 157 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
+  // diff_d_rd0 read pattern: { diff_d_update_0[d0, d1, d2] -> u[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Read schedule : { diff_d_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 10] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
+  // DD fold: { diff_d_update_0[d0, d1, d2] -> 157 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
   auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_157();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1207,10 +1207,10 @@ inline hw_uint<16> diff_d_rd0_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_d_rd1_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_d_rd1 read pattern: { diff_d_update_0[d0, d1, d2] -> u[d0, 1 + d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Read schedule : { diff_d_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 10] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 2 }
-  // DD fold: { diff_d_update_0[d0, d1, d2] -> 145 : -1 <= d0 <= 8 and -1 <= d1 <= 7 and -1 <= d2 <= 1; diff_d_update_0[d0, d1, d2] -> 145 : d1 = 8 and -1 <= d0 <= 8 and -1 <= d2 <= 1 }
+  // diff_d_rd1 read pattern: { diff_d_update_0[d0, d1, d2] -> u[d0, 1 + d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Read schedule : { diff_d_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 10] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
+  // DD fold: { diff_d_update_0[d0, d1, d2] -> 145 : -1 <= d0 <= 8 and -1 <= d1 <= 7 and -1 <= d2 <= 8; diff_d_update_0[d0, d1, d2] -> 145 : d1 = 8 and -1 <= d0 <= 8 and -1 <= d2 <= 8 }
   auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_145();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1223,10 +1223,10 @@ inline hw_uint<16> diff_d_rd1_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_i_rd0_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_i_rd0 read pattern: { diff_i_update_0[d0, d1, d2] -> u[d0, d1, -1 + d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Read schedule : { diff_i_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 9] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 2 }
-  // DD fold: { diff_i_update_0[d0, d1, d2] -> 301 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
+  // diff_i_rd0 read pattern: { diff_i_update_0[d0, d1, d2] -> u[d0, d1, -1 + d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Read schedule : { diff_i_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 9] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
+  // DD fold: { diff_i_update_0[d0, d1, d2] -> 301 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
   auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_301();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1239,10 +1239,10 @@ inline hw_uint<16> diff_i_rd0_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_i_rd1_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_i_rd1 read pattern: { diff_i_update_0[d0, d1, d2] -> u[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Read schedule : { diff_i_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 9] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 2 }
-  // DD fold: { diff_i_update_0[d0, d1, d2] -> 157 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
+  // diff_i_rd1 read pattern: { diff_i_update_0[d0, d1, d2] -> u[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Read schedule : { diff_i_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 9] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
+  // DD fold: { diff_i_update_0[d0, d1, d2] -> 157 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
   auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_157();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1255,10 +1255,10 @@ inline hw_uint<16> diff_i_rd1_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_l_rd0_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_l_rd0 read pattern: { diff_l_update_0[d0, d1, d2] -> u[-1 + d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Read schedule : { diff_l_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 8] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 2 }
-  // DD fold: { diff_l_update_0[d0, d1, d2] -> 158 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
+  // diff_l_rd0 read pattern: { diff_l_update_0[d0, d1, d2] -> u[-1 + d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Read schedule : { diff_l_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 8] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
+  // DD fold: { diff_l_update_0[d0, d1, d2] -> 158 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
   auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_158();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1271,10 +1271,10 @@ inline hw_uint<16> diff_l_rd0_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_l_rd1_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_l_rd1 read pattern: { diff_l_update_0[d0, d1, d2] -> u[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Read schedule : { diff_l_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 8] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 2 }
-  // DD fold: { diff_l_update_0[d0, d1, d2] -> 157 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
+  // diff_l_rd1 read pattern: { diff_l_update_0[d0, d1, d2] -> u[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Read schedule : { diff_l_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 8] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
+  // DD fold: { diff_l_update_0[d0, d1, d2] -> 157 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
   auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_157();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1287,10 +1287,10 @@ inline hw_uint<16> diff_l_rd1_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_o_rd0_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_o_rd0 read pattern: { diff_o_update_0[d0, d1, d2] -> u[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Read schedule : { diff_o_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 7] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 2 }
-  // DD fold: { diff_o_update_0[d0, d1, d2] -> 157 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
+  // diff_o_rd0 read pattern: { diff_o_update_0[d0, d1, d2] -> u[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Read schedule : { diff_o_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 7] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
+  // DD fold: { diff_o_update_0[d0, d1, d2] -> 157 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
   auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_157();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1303,10 +1303,10 @@ inline hw_uint<16> diff_o_rd0_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_o_rd1_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_o_rd1 read pattern: { diff_o_update_0[d0, d1, d2] -> u[d0, d1, 1 + d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Read schedule : { diff_o_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 7] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 2 }
-  // DD fold: { diff_o_update_0[d0, d1, d2] -> 13 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
+  // diff_o_rd1 read pattern: { diff_o_update_0[d0, d1, d2] -> u[d0, d1, 1 + d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Read schedule : { diff_o_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 7] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
+  // DD fold: { diff_o_update_0[d0, d1, d2] -> 13 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
   auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_13();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1319,10 +1319,10 @@ inline hw_uint<16> diff_o_rd1_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_r_rd0_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_r_rd0 read pattern: { diff_r_update_0[d0, d1, d2] -> u[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Read schedule : { diff_r_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 6] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 2 }
-  // DD fold: { diff_r_update_0[d0, d1, d2] -> 157 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
+  // diff_r_rd0 read pattern: { diff_r_update_0[d0, d1, d2] -> u[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Read schedule : { diff_r_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 6] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
+  // DD fold: { diff_r_update_0[d0, d1, d2] -> 157 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
   auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_157();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1335,10 +1335,10 @@ inline hw_uint<16> diff_r_rd0_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_r_rd1_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_r_rd1 read pattern: { diff_r_update_0[d0, d1, d2] -> u[1 + d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Read schedule : { diff_r_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 6] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 2 }
-  // DD fold: { diff_r_update_0[d0, d1, d2] -> 156 : -1 <= d0 <= 7 and -1 <= d1 <= 8 and -1 <= d2 <= 1; diff_r_update_0[d0, d1, d2] -> (148 + d0) : d0 = 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
+  // diff_r_rd1 read pattern: { diff_r_update_0[d0, d1, d2] -> u[1 + d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Read schedule : { diff_r_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 6] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
+  // DD fold: { diff_r_update_0[d0, d1, d2] -> 156 : -1 <= d0 <= 7 and -1 <= d1 <= 8 and -1 <= d2 <= 8; diff_r_update_0[d0, d1, d2] -> (148 + d0) : d0 = 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
   auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_156();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1351,10 +1351,10 @@ inline hw_uint<16> diff_r_rd1_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_u_rd0_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_u_rd0 read pattern: { diff_u_update_0[d0, d1, d2] -> u[d0, -1 + d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Read schedule : { diff_u_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 5] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 2 }
-  // DD fold: { diff_u_update_0[d0, d1, d2] -> 169 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
+  // diff_u_rd0 read pattern: { diff_u_update_0[d0, d1, d2] -> u[d0, -1 + d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Read schedule : { diff_u_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 5] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
+  // DD fold: { diff_u_update_0[d0, d1, d2] -> 169 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
   auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_169();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1367,10 +1367,10 @@ inline hw_uint<16> diff_u_rd0_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_u_rd1_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_u_rd1 read pattern: { diff_u_update_0[d0, d1, d2] -> u[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Read schedule : { diff_u_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 5] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 2 }
-  // DD fold: { diff_u_update_0[d0, d1, d2] -> 157 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 1 }
+  // diff_u_rd1 read pattern: { diff_u_update_0[d0, d1, d2] -> u[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Read schedule : { diff_u_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 5] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
+  // DD fold: { diff_u_update_0[d0, d1, d2] -> 157 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
   auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_157();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1383,10 +1383,10 @@ inline hw_uint<16> diff_u_rd1_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> dn3d_mini_rd0_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd0 read pattern: { dn3d_mini_update_0[d0, d1, d2 = 0] -> u[-1 + d0, d1, 0] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 2 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 315 : d2 = 0 and 0 <= d0 <= 7 and 0 <= d1 <= 7 }
+  // dn3d_mini_rd0 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> u[-1 + d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
+  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 315 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_315();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1399,10 +1399,10 @@ inline hw_uint<16> dn3d_mini_rd0_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> dn3d_mini_rd1_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd1 read pattern: { dn3d_mini_update_0[d0, d1, d2 = 0] -> u[d0, -1 + d1, 0] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 2 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 326 : d2 = 0 and 0 <= d0 <= 7 and 0 <= d1 <= 7 }
+  // dn3d_mini_rd1 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> u[d0, -1 + d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
+  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 326 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_326();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1415,10 +1415,10 @@ inline hw_uint<16> dn3d_mini_rd1_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> dn3d_mini_rd2_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd2 read pattern: { dn3d_mini_update_0[d0, d1, d2 = 0] -> u[d0, d1, -1] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 2 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 458 : d2 = 0 and 0 <= d0 <= 7 and 0 <= d1 <= 7 }
+  // dn3d_mini_rd2 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> u[d0, d1, -1 + d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
+  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 458 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_458();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1431,10 +1431,10 @@ inline hw_uint<16> dn3d_mini_rd2_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> dn3d_mini_rd3_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd3 read pattern: { dn3d_mini_update_0[d0, d1, d2 = 0] -> u[d0, d1, 0] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 2 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 314 : d2 = 0 and 0 <= d0 <= 7 and 0 <= d1 <= 7 }
+  // dn3d_mini_rd3 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> u[d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
+  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 314 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_314();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1447,10 +1447,10 @@ inline hw_uint<16> dn3d_mini_rd3_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> dn3d_mini_rd4_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd4 read pattern: { dn3d_mini_update_0[d0, d1, d2 = 0] -> u[d0, d1, 1] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 2 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 170 : d2 = 0 and 0 <= d0 <= 7 and 0 <= d1 <= 7 }
+  // dn3d_mini_rd4 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> u[d0, d1, 1 + d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
+  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 170 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_170();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1463,10 +1463,10 @@ inline hw_uint<16> dn3d_mini_rd4_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> dn3d_mini_rd5_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd5 read pattern: { dn3d_mini_update_0[d0, d1, d2 = 0] -> u[d0, 1 + d1, 0] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 2 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 302 : d2 = 0 and 0 <= d0 <= 7 and 0 <= d1 <= 7 }
+  // dn3d_mini_rd5 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> u[d0, 1 + d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
+  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 302 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_302();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1479,10 +1479,10 @@ inline hw_uint<16> dn3d_mini_rd5_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> dn3d_mini_rd6_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd6 read pattern: { dn3d_mini_update_0[d0, d1, d2 = 0] -> u[1 + d0, d1, 0] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 2 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 313 : d2 = 0 and 0 <= d0 <= 7 and 0 <= d1 <= 7 }
+  // dn3d_mini_rd6 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> u[1 + d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
+  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 313 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_313();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1495,10 +1495,10 @@ inline hw_uint<16> dn3d_mini_rd6_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> r0_rd0_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // r0_rd0 read pattern: { r0_update_0[d0, d1, d2 = 0] -> u[d0, d1, 0] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Read schedule : { r0_update_0[d0, d1, d2 = 0] -> [2, 2 + d1, 2 + d0, 4] : 0 <= d0 <= 7 and 0 <= d1 <= 7 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 2 }
-  // DD fold: { r0_update_0[d0, d1, d2] -> 314 : d2 = 0 and 0 <= d0 <= 7 and 0 <= d1 <= 7 }
+  // r0_rd0 read pattern: { r0_update_0[d0, d1, d2] -> u[d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { r0_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 4] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
+  // DD fold: { r0_update_0[d0, d1, d2] -> 314 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_314();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1663,18 +1663,23 @@ inline void u_u_update_0_write_bundle_write(hw_uint<16>& u_update_0_write, u_cac
 
 
 // Operation logic
-inline void u_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */u_oc, u_cache& u, int d0, int d1, int d2) {
-	// Consume: u_oc
-	auto u_oc_0_c__0_value = u_oc.read();
-	auto compute_result = u_generated_compute_unrolled_1(u_oc_0_c__0_value);
-	// Produce: u
-	u_u_update_0_write_bundle_write(compute_result, u, d0, d1, d2);
+inline void diff_l_update_0(u_cache& u, diff_l_cache& diff_l, int d0, int d1, int d2) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_l_update_0_read_bundle_read(u/* source_delay */, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "diff_l_update_0_u," << d0<< "," << d1<< "," << d2<< "," <<  u_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = diff_l_generated_compute_unrolled_1(u_0_c__0_value);
+	// Produce: diff_l
+	diff_l_diff_l_update_0_write_bundle_write(compute_result, diff_l, d0, d1, d2);
 
 #ifndef __VIVADO_SYNTH__
   hw_uint<16> debug_compute_result(compute_result);
   hw_uint<16> debug_compute_result_lane_0;
   set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "u_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "diff_l_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -1700,44 +1705,44 @@ inline void diff_i_update_0(u_cache& u, diff_i_cache& diff_i, int d0, int d1, in
 
 }
 
-inline void diff_d_update_0(u_cache& u, diff_d_cache& diff_d, int d0, int d1, int d2) {
+inline void diff_r_update_0(u_cache& u, diff_r_cache& diff_r, int d0, int d1, int d2) {
 	// Consume: u
-	auto u_0_c__0_value = u_diff_d_update_0_read_bundle_read(u/* source_delay */, d0, d1, d2);
+	auto u_0_c__0_value = u_diff_r_update_0_read_bundle_read(u/* source_delay */, d0, d1, d2);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "diff_d_update_0_u," << d0<< "," << d1<< "," << d2<< "," <<  u_0_c__0_value << endl;
+  *global_debug_handle << "diff_r_update_0_u," << d0<< "," << d1<< "," << d2<< "," <<  u_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = diff_d_generated_compute_unrolled_1(u_0_c__0_value);
-	// Produce: diff_d
-	diff_d_diff_d_update_0_write_bundle_write(compute_result, diff_d, d0, d1, d2);
+	auto compute_result = diff_r_generated_compute_unrolled_1(u_0_c__0_value);
+	// Produce: diff_r
+	diff_r_diff_r_update_0_write_bundle_write(compute_result, diff_r, d0, d1, d2);
 
 #ifndef __VIVADO_SYNTH__
   hw_uint<16> debug_compute_result(compute_result);
   hw_uint<16> debug_compute_result_lane_0;
   set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "diff_d_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "diff_r_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
 
-inline void r1_update_0(r0_cache& r0, r1_cache& r1, int d0, int d1, int d2) {
-	// Consume: r0
-	auto r0_0_c__0_value = r0_r1_update_0_read_bundle_read(r0/* source_delay */, d0, d1, d2);
+inline void diff_o_update_0(u_cache& u, diff_o_cache& diff_o, int d0, int d1, int d2) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_o_update_0_read_bundle_read(u/* source_delay */, d0, d1, d2);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "r1_update_0_r0," << d0<< "," << d1<< "," << d2<< "," <<  r0_0_c__0_value << endl;
+  *global_debug_handle << "diff_o_update_0_u," << d0<< "," << d1<< "," << d2<< "," <<  u_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = r1_generated_compute_unrolled_1(r0_0_c__0_value);
-	// Produce: r1
-	r1_r1_update_0_write_bundle_write(compute_result, r1, d0, d1, d2);
+	auto compute_result = diff_o_generated_compute_unrolled_1(u_0_c__0_value);
+	// Produce: diff_o
+	diff_o_diff_o_update_0_write_bundle_write(compute_result, diff_o, d0, d1, d2);
 
 #ifndef __VIVADO_SYNTH__
   hw_uint<16> debug_compute_result(compute_result);
   hw_uint<16> debug_compute_result_lane_0;
   set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "r1_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "diff_o_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -1754,6 +1759,22 @@ inline void f_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */f_
   hw_uint<16> debug_compute_result_lane_0;
   set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
   *global_debug_handle << "f_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void u_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */u_oc, u_cache& u, int d0, int d1, int d2) {
+	// Consume: u_oc
+	auto u_oc_0_c__0_value = u_oc.read();
+	auto compute_result = u_generated_compute_unrolled_1(u_oc_0_c__0_value);
+	// Produce: u
+	u_u_update_0_write_bundle_write(compute_result, u, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<16> debug_compute_result(compute_result);
+  hw_uint<16> debug_compute_result_lane_0;
+  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
+  *global_debug_handle << "u_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -1807,65 +1828,44 @@ inline void diff_u_update_0(u_cache& u, diff_u_cache& diff_u, int d0, int d1, in
 
 }
 
-inline void diff_r_update_0(u_cache& u, diff_r_cache& diff_r, int d0, int d1, int d2) {
+inline void diff_d_update_0(u_cache& u, diff_d_cache& diff_d, int d0, int d1, int d2) {
 	// Consume: u
-	auto u_0_c__0_value = u_diff_r_update_0_read_bundle_read(u/* source_delay */, d0, d1, d2);
+	auto u_0_c__0_value = u_diff_d_update_0_read_bundle_read(u/* source_delay */, d0, d1, d2);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "diff_r_update_0_u," << d0<< "," << d1<< "," << d2<< "," <<  u_0_c__0_value << endl;
+  *global_debug_handle << "diff_d_update_0_u," << d0<< "," << d1<< "," << d2<< "," <<  u_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = diff_r_generated_compute_unrolled_1(u_0_c__0_value);
-	// Produce: diff_r
-	diff_r_diff_r_update_0_write_bundle_write(compute_result, diff_r, d0, d1, d2);
+	auto compute_result = diff_d_generated_compute_unrolled_1(u_0_c__0_value);
+	// Produce: diff_d
+	diff_d_diff_d_update_0_write_bundle_write(compute_result, diff_d, d0, d1, d2);
 
 #ifndef __VIVADO_SYNTH__
   hw_uint<16> debug_compute_result(compute_result);
   hw_uint<16> debug_compute_result_lane_0;
   set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "diff_r_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "diff_d_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
 
-inline void diff_o_update_0(u_cache& u, diff_o_cache& diff_o, int d0, int d1, int d2) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_o_update_0_read_bundle_read(u/* source_delay */, d0, d1, d2);
+inline void r1_update_0(r0_cache& r0, r1_cache& r1, int d0, int d1, int d2) {
+	// Consume: r0
+	auto r0_0_c__0_value = r0_r1_update_0_read_bundle_read(r0/* source_delay */, d0, d1, d2);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "diff_o_update_0_u," << d0<< "," << d1<< "," << d2<< "," <<  u_0_c__0_value << endl;
+  *global_debug_handle << "r1_update_0_r0," << d0<< "," << d1<< "," << d2<< "," <<  r0_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = diff_o_generated_compute_unrolled_1(u_0_c__0_value);
-	// Produce: diff_o
-	diff_o_diff_o_update_0_write_bundle_write(compute_result, diff_o, d0, d1, d2);
+	auto compute_result = r1_generated_compute_unrolled_1(r0_0_c__0_value);
+	// Produce: r1
+	r1_r1_update_0_write_bundle_write(compute_result, r1, d0, d1, d2);
 
 #ifndef __VIVADO_SYNTH__
   hw_uint<16> debug_compute_result(compute_result);
   hw_uint<16> debug_compute_result_lane_0;
   set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "diff_o_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void diff_l_update_0(u_cache& u, diff_l_cache& diff_l, int d0, int d1, int d2) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_l_update_0_read_bundle_read(u/* source_delay */, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "diff_l_update_0_u," << d0<< "," << d1<< "," << d2<< "," <<  u_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = diff_l_generated_compute_unrolled_1(u_0_c__0_value);
-	// Produce: diff_l
-	diff_l_diff_l_update_0_write_bundle_write(compute_result, diff_l, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "diff_l_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "r1_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -2017,7 +2017,7 @@ void dn3d_mini_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */f_oc, HWS
 	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
 	
-	for (int c0 = -2; c0 <= 2; c0++) {
+	for (int c0 = -2; c0 <= 9; c0++) {
 	  for (int c1 = -2; c1 <= 9; c1++) {
 	    for (int c2 = -2; c2 <= 9; c2++) {
 	
@@ -2025,51 +2025,51 @@ void dn3d_mini_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */f_oc, HWS
 	#pragma HLS pipeline II=1
 	#endif // __VIVADO_SYNTH__
 	
-	      if ((2 <= c2 && c2 <= 9) && ((c2 - 2) % 1 == 0) && (2 <= c1 && c1 <= 9) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 2) && ((c0 - 2) % 1 == 0)) {
+	      if ((2 <= c2 && c2 <= 9) && ((c2 - 2) % 1 == 0) && (2 <= c1 && c1 <= 9) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 9) && ((c0 - 2) % 1 == 0)) {
 	f_update_0(f_oc, f, (c2 - 2) / 1, (c1 - 2) / 1, (c0 - 2) / 1);
 	      }
 	
-	      if ((-2 <= c2 && c2 <= 9) && ((c2 - 0) % 1 == 0) && (-2 <= c1 && c1 <= 9) && ((c1 - 0) % 1 == 0) && (-2 <= c0 && c0 <= 2) && ((c0 - 0) % 1 == 0)) {
+	      if ((-2 <= c2 && c2 <= 9) && ((c2 - 0) % 1 == 0) && (-2 <= c1 && c1 <= 9) && ((c1 - 0) % 1 == 0) && (-2 <= c0 && c0 <= 9) && ((c0 - 0) % 1 == 0)) {
 	u_update_0(u_oc, u, (c2 - 0) / 1, (c1 - 0) / 1, (c0 - 0) / 1);
 	      }
 	
-	      if ((2 <= c2 && c2 <= 9) && ((c2 - 2) % 1 == 0) && (2 <= c1 && c1 <= 9) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 2) && ((c0 - 2) % 1 == 0)) {
+	      if ((2 <= c2 && c2 <= 9) && ((c2 - 2) % 1 == 0) && (2 <= c1 && c1 <= 9) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 9) && ((c0 - 2) % 1 == 0)) {
 	r0_update_0(f, u, r0, (c2 - 2) / 1, (c1 - 2) / 1, (c0 - 2) / 1);
 	      }
 	
-	      if ((0 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (0 <= c1 && c1 <= 9) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 2) && ((c0 - 1) % 1 == 0)) {
+	      if ((0 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (0 <= c1 && c1 <= 9) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 9) && ((c0 - 1) % 1 == 0)) {
 	diff_u_update_0(u, diff_u, (c2 - 1) / 1, (c1 - 1) / 1, (c0 - 1) / 1);
 	      }
 	
-	      if ((0 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (0 <= c1 && c1 <= 9) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 2) && ((c0 - 1) % 1 == 0)) {
+	      if ((0 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (0 <= c1 && c1 <= 9) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 9) && ((c0 - 1) % 1 == 0)) {
 	diff_r_update_0(u, diff_r, (c2 - 1) / 1, (c1 - 1) / 1, (c0 - 1) / 1);
 	      }
 	
-	      if ((0 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (0 <= c1 && c1 <= 9) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 2) && ((c0 - 1) % 1 == 0)) {
+	      if ((0 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (0 <= c1 && c1 <= 9) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 9) && ((c0 - 1) % 1 == 0)) {
 	diff_o_update_0(u, diff_o, (c2 - 1) / 1, (c1 - 1) / 1, (c0 - 1) / 1);
 	      }
 	
-	      if ((0 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (0 <= c1 && c1 <= 9) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 2) && ((c0 - 1) % 1 == 0)) {
+	      if ((0 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (0 <= c1 && c1 <= 9) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 9) && ((c0 - 1) % 1 == 0)) {
 	diff_l_update_0(u, diff_l, (c2 - 1) / 1, (c1 - 1) / 1, (c0 - 1) / 1);
 	      }
 	
-	      if ((0 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (0 <= c1 && c1 <= 9) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 2) && ((c0 - 1) % 1 == 0)) {
+	      if ((0 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (0 <= c1 && c1 <= 9) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 9) && ((c0 - 1) % 1 == 0)) {
 	diff_i_update_0(u, diff_i, (c2 - 1) / 1, (c1 - 1) / 1, (c0 - 1) / 1);
 	      }
 	
-	      if ((0 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (0 <= c1 && c1 <= 9) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 2) && ((c0 - 1) % 1 == 0)) {
+	      if ((0 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (0 <= c1 && c1 <= 9) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 9) && ((c0 - 1) % 1 == 0)) {
 	diff_d_update_0(u, diff_d, (c2 - 1) / 1, (c1 - 1) / 1, (c0 - 1) / 1);
 	      }
 	
-	      if ((2 <= c2 && c2 <= 9) && ((c2 - 2) % 1 == 0) && (2 <= c1 && c1 <= 9) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 2) && ((c0 - 2) % 1 == 0)) {
+	      if ((2 <= c2 && c2 <= 9) && ((c2 - 2) % 1 == 0) && (2 <= c1 && c1 <= 9) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 9) && ((c0 - 2) % 1 == 0)) {
 	r1_update_0(r0, r1, (c2 - 2) / 1, (c1 - 2) / 1, (c0 - 2) / 1);
 	      }
 	
-	      if ((0 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (0 <= c1 && c1 <= 9) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 2) && ((c0 - 1) % 1 == 0)) {
+	      if ((0 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (0 <= c1 && c1 <= 9) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 9) && ((c0 - 1) % 1 == 0)) {
 	g_update_0(diff_d, diff_i, diff_l, diff_o, diff_r, diff_u, g, (c2 - 1) / 1, (c1 - 1) / 1, (c0 - 1) / 1);
 	      }
 	
-	      if ((2 <= c2 && c2 <= 9) && ((c2 - 2) % 1 == 0) && (2 <= c1 && c1 <= 9) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 2) && ((c0 - 2) % 1 == 0)) {
+	      if ((2 <= c2 && c2 <= 9) && ((c2 - 2) % 1 == 0) && (2 <= c1 && c1 <= 9) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 9) && ((c0 - 2) % 1 == 0)) {
 	dn3d_mini_update_0(f, g, r1, u, dn3d_mini, (c2 - 2) / 1, (c1 - 2) / 1, (c0 - 2) / 1);
 	      }
 	
@@ -2091,8 +2091,8 @@ void dn3d_mini_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */f_oc, HWS
 #ifdef __VIVADO_SYNTH__
 #include "dn3d_mini_opt.h"
 
-#define INPUT_SIZE 64
-#define OUTPUT_SIZE 64
+#define INPUT_SIZE 512
+#define OUTPUT_SIZE 512
 extern "C" {
 
 static void read_input(hw_uint<16>* input, HWStream<hw_uint<16> >& v, const int size) {

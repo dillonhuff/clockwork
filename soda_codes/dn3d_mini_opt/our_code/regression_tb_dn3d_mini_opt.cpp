@@ -10,20 +10,20 @@ int main() {
 
 
   // Loading input data
-  // cmap    : { f_update_0[root = 0, f_0, f_1, f_2 = 0] -> f_oc[0, 0] : 0 <= f_0 <= 7 and 0 <= f_1 <= 7 }
-  // read map: { f_oc[0, 0] -> f_update_0[root = 0, f_0, f_1, f_2 = 0] : 0 <= f_0 <= 7 and 0 <= f_1 <= 7 }
-  // rng     : { f_update_0[root = 0, f_0, f_1, f_2 = 0] : 0 <= f_0 <= 7 and 0 <= f_1 <= 7 }
-  for (int i = 0; i < 64; i++) {
+  // cmap    : { f_update_0[root = 0, f_0, f_1, f_2] -> f_oc[0, 0] : 0 <= f_0 <= 7 and 0 <= f_1 <= 7 and 0 <= f_2 <= 7 }
+  // read map: { f_oc[0, 0] -> f_update_0[root = 0, f_0, f_1, f_2] : 0 <= f_0 <= 7 and 0 <= f_1 <= 7 and 0 <= f_2 <= 7 }
+  // rng     : { f_update_0[root = 0, f_0, f_1, f_2] : 0 <= f_0 <= 7 and 0 <= f_1 <= 7 and 0 <= f_2 <= 7 }
+  for (int i = 0; i < 512; i++) {
     hw_uint<16> in_val;
     set_at<0*16, 16, 16>(in_val, 1*i + 0);
     in_pix << in_val << endl;
     f_update_0_read.write(in_val);
   }
 
-  // cmap    : { u_update_0[root = 0, u_0, u_1, u_2] -> u_oc[0, 0] : -2 <= u_0 <= 9 and -2 <= u_1 <= 9 and -2 <= u_2 <= 2 }
-  // read map: { u_oc[0, 0] -> u_update_0[root = 0, u_0, u_1, u_2] : -2 <= u_0 <= 9 and -2 <= u_1 <= 9 and -2 <= u_2 <= 2 }
-  // rng     : { u_update_0[root = 0, u_0, u_1, u_2] : -2 <= u_0 <= 9 and -2 <= u_1 <= 9 and -2 <= u_2 <= 2 }
-  for (int i = 0; i < 720; i++) {
+  // cmap    : { u_update_0[root = 0, u_0, u_1, u_2] -> u_oc[0, 0] : -2 <= u_0 <= 9 and -2 <= u_1 <= 9 and -2 <= u_2 <= 9 }
+  // read map: { u_oc[0, 0] -> u_update_0[root = 0, u_0, u_1, u_2] : -2 <= u_0 <= 9 and -2 <= u_1 <= 9 and -2 <= u_2 <= 9 }
+  // rng     : { u_update_0[root = 0, u_0, u_1, u_2] : -2 <= u_0 <= 9 and -2 <= u_1 <= 9 and -2 <= u_2 <= 9 }
+  for (int i = 0; i < 1728; i++) {
     hw_uint<16> in_val;
     set_at<0*16, 16, 16>(in_val, 1*i + 0);
     in_pix << in_val << endl;
@@ -32,7 +32,7 @@ int main() {
 
   dn3d_mini_opt(f_update_0_read, u_update_0_read, dn3d_mini_update_0_write);
 
-  for (int i = 0; i < 64; i++) {
+  for (int i = 0; i < 512; i++) {
     hw_uint<16> actual = dn3d_mini_update_0_write.read();
     auto actual_lane_0 = actual.extract<0*16, 15>();
     fout << actual_lane_0 << endl;

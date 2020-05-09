@@ -3632,16 +3632,9 @@ struct App {
     Box sbox;
     int max_dims = data_dimension();
 
-    //for (auto f : sort_functions()) {
-      //for (auto w : producers(f)) {
-        //int dm = w.dimension();
-        //if (dm > max_dims) {
-          //max_dims = dm;
-        //}
-      //}
-    //}
-
+    cout << "# dims = " << dims.size() << endl;
     for (auto d : dims) {
+      cout << tab(1) << d << endl;
       sbox.intervals.push_back({0, d - 1});
     }
     for (int i = dims.size(); i < max_dims; i++) {
@@ -3650,6 +3643,8 @@ struct App {
 
     cout << "padding to " << last_update(name).unroll_factor << endl;
     sbox = sbox.pad_range_to_nearest_multiple(last_update(name).unroll_factor);
+
+    cout << "Filling data domain " << name << " from: " << sbox << endl;
 
     vector<string> buffers = sort_functions();
     assert(buffers.size() > 0);
@@ -4346,6 +4341,13 @@ struct App {
     populate_program(options, prg, name, m, buffers);
 
     return;
+  }
+
+  void realize_naive(const std::string& name, const vector<int>& dims) {
+    CodegenOptions options;
+    options.internal = true;
+    options.all_rams = true;
+    realize_naive(options, name, dims);
   }
 
   void realize_naive(const std::string& name, const int d0, const int d1) {
@@ -5689,8 +5691,14 @@ App denoise3d(const std::string& out_name) {
 void denoise3d_test() {
   int mini_size = 8;
   auto hmini = denoise3d("dn3d_mini");
-  hmini.realize_naive("dn3d_mini", mini_size, mini_size);
-  hmini.realize("dn3d_mini", mini_size, mini_size, 1);
+  hmini.realize_naive("dn3d_mini", {mini_size, mini_size, mini_size});
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  options.debug_options.expect_all_linebuffers = true;
+  hmini.realize(options, "dn3d_mini", {mini_size, mini_size, mini_size}, 1);
 
   std::vector<std::string> naive =
     run_regression_tb("dn3d_mini_naive");
