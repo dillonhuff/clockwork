@@ -7437,13 +7437,13 @@ void playground() {
 }
 
 void application_tests() {
-  harris_test();
+  sobel_16_app_test();
   assert(false);
+  harris_test();
   harris16_test();
   blur_xy_16_app_test();
   denoise3d_test();
 
-  sobel_16_app_test();
 
   halide_frontend_test();
 
