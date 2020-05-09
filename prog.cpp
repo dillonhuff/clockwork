@@ -461,6 +461,7 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
     out_buf.lanes_in_bundle(out_bundle);
   int out_burst = out_pix / pix_per_out_burst;
 
+  out << "// TODO: Adapt to have one size for each edge buffer" << endl;
   out << "#define INPUT_SIZE " << in_burst << endl;
   out << "#define OUTPUT_SIZE " << out_burst << endl;
 
