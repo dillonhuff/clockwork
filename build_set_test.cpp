@@ -18,14 +18,9 @@ void compare(vector<string>& opt, vector<string>& naive) {
 
 prog clockwork_target() {
   prog prg;
-  // TODO: Semicolon needs to be moved outside
   prg.compute_unit_file = "clockwork_target_compute.h";
   prg.name = "clockwork_target";
 
-  // TODO: Sanitize away the dollar sign
-  // TODO: Sanitize away the '.'
-  // TODO: Remove underscore prefix from loops
-  //
 // Stencil<void *> &_hw_output = arg_0;
   prg.add_output("_hw_outputa0");
   prg.buffer_port_widths["_hw_outputa0"] = 16;
@@ -33,7 +28,7 @@ prog clockwork_target() {
   prg.add_input("_hw_inputa0");
   prg.buffer_port_widths["_hw_inputa0"] = 16;
 
-  auto loop_hw_output_s0_y_yo = prg.add_loop("_hw_output_s0_y_yo", 0, 62);
+  auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, 62);
 ////producing kernel
   auto loop_kernel_s0_y = loop_hw_output_s0_y_yo->add_loop("kernel_s0_y", 0, 3);
   auto loop_kernel_s0_x = loop_kernel_s0_y->add_loop("kernel_s0_x", 0, 3);
@@ -89,7 +84,7 @@ prog clockwork_target() {
   compute_kernela1$9->add_function("compute_kernela1_9");
   compute_kernela1$9->add_store("_kernela1", "8");
 //consuming kernel
-  auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("_hw_output_s0_x_xo", 0, 62);
+  auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 62);
 ////producing conv
   auto loop_conv_s0_y = loop_hw_output_s0_x_xo->add_loop("conv_s0_y", 0, 62);
   auto loop_conv_s0_x = loop_conv_s0_y->add_loop("conv_s0_x", 0, 62);
@@ -154,23 +149,23 @@ prog clockwork_target() {
 
   auto compute_conva2$8 = loop_conv_s1_x->add_op("compute_conva2_8");
   compute_conva2$8->add_function("compute_conva2_8");
-  compute_conva2$8->add_load("_conva2", "(conv.s1.x + (conv.s1.y*62))");
-  compute_conva2$8->add_load("_hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 129)");
+  compute_conva2$8->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  compute_conva2$8->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 129)");
   compute_conva2$8->add_load("_kernela1", "7");
-  compute_conva2$8->add_store("_conva2", "(conv.s1.x + (conv.s1.y*62))");
+  compute_conva2$8->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
   auto compute_conva2$9 = loop_conv_s1_x->add_op("compute_conva2_9");
   compute_conva2$9->add_function("compute_conva2_9");
-  compute_conva2$9->add_load("_conva2", "(conv.s1.x + (conv.s1.y*62))");
-  compute_conva2$9->add_load("_hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 130)");
+  compute_conva2$9->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  compute_conva2$9->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 130)");
   compute_conva2$9->add_load("_kernela1", "8");
-  compute_conva2$9->add_store("_conva2", "(conv.s1.x + (conv.s1.y*62))");
+  compute_conva2$9->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
   auto compute_hw_output = loop_hw_output_s0_x_xo->add_op("compute_hw_output");
   compute_hw_output->add_function("compute_hw_output");
-  compute_hw_output->add_load("_conva2", "(hw_output.s0.x.xo + (hw_output.s0.y.yo*62))");
+  compute_hw_output->add_load("_conva2", "(hw_output_s0_x_xo + (hw_output_s0_y_yo*62))");
   prg.buffer_port_widths["_hw_output"] = 16;
-  compute_hw_output->add_store("_hw_output", "(hw_output.s0.x.xo + (hw_output.s0.y.yo*62))");
+  compute_hw_output->add_store("_hw_output", "(hw_output_s0_x_xo + (hw_output_s0_y_yo*62))");
 
   return prg;
 }
@@ -5024,9 +5019,9 @@ App tricky_reconvergence(const std::string& name) {
 }
 
 void halide_frontend_test() {
-  prog prg = clockwork_target();
+  //prog prg = clockwork_target();
 
-  regression_test(prg);
+  //regression_test(prg);
 }
 
 void tricky_shift_register_reconvergence_test() {
@@ -7391,7 +7386,7 @@ void application_tests() {
   halide_frontend_test();
 
   pointwise_app_test();
-  assert(false);
+  //assert(false);
 
   ram_addr_unit_test();
 
