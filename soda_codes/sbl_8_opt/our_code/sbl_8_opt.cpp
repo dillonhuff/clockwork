@@ -3615,7 +3615,7 @@ inline void sbl_8_update_0(mag_x_cache& mag_x, mag_y_cache& mag_y, HWStream<hw_u
 }
 
 // Driver function
-void sbl_8_opt(HWStream<hw_uint<128> >& /* get_args num ports = 8 */off_chip_img, HWStream<hw_uint<128> >& /* get_args num ports = 8 */sbl_8, uint64_t num_epochs) {
+void sbl_8_opt(HWStream<hw_uint<128> >& /* get_args num ports = 8 */off_chip_img, HWStream<hw_uint<128> >& /* get_args num ports = 8 */sbl_8, int num_epochs) {
 
 #ifndef __VIVADO_SYNTH__
   ofstream debug_file("sbl_8_opt_debug.csv");
@@ -3634,7 +3634,7 @@ void sbl_8_opt(HWStream<hw_uint<128> >& /* get_args num ports = 8 */off_chip_img
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-  for (uint64_t epoch = 0; epoch < num_epochs; epoch++) {
+  for (int epoch = 0; epoch < num_epochs; epoch++) {
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
@@ -3683,7 +3683,7 @@ void sbl_8_opt(HWStream<hw_uint<128> >& /* get_args num ports = 8 */off_chip_img
 #define OUTPUT_SIZE 259200
 extern "C" {
 
-static void read_input(hw_uint<128>* input, HWStream<hw_uint<128> >& v, const uint64_t size) {
+static void read_input(hw_uint<128>* input, HWStream<hw_uint<128> >& v, const int size) {
   hw_uint<128> burst_reg;
   for (int i = 0; i < INPUT_SIZE*size; i++) {
     #pragma HLS pipeline II=1
@@ -3692,7 +3692,7 @@ static void read_input(hw_uint<128>* input, HWStream<hw_uint<128> >& v, const ui
   }
 }
 
-static void write_output(hw_uint<128>* output, HWStream<hw_uint<128> >& v, const uint64_t size) {
+static void write_output(hw_uint<128>* output, HWStream<hw_uint<128> >& v, const int size) {
   hw_uint<128> burst_reg;
   for (int i = 0; i < OUTPUT_SIZE*size; i++) {
     #pragma HLS pipeline II=1
@@ -3701,7 +3701,7 @@ static void write_output(hw_uint<128>* output, HWStream<hw_uint<128> >& v, const
   }
 }
 
-void sbl_8_opt_accel(hw_uint<128>* img_update_0_read, hw_uint<128>* sbl_8_update_0_write, const uint64_t size) { 
+void sbl_8_opt_accel(hw_uint<128>* img_update_0_read, hw_uint<128>* sbl_8_update_0_write, const int size) { 
 #pragma HLS dataflow
 #pragma HLS INTERFACE m_axi port = img_update_0_read offset = slave depth = 65536 bundle = gmem0
 #pragma HLS INTERFACE m_axi port = sbl_8_update_0_write offset = slave depth = 65536 bundle = gmem1

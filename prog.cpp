@@ -462,7 +462,7 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
 
   out << "extern \"C\" {" << endl << endl;
 
-  out << "static void read_input(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const uint64_t size) {" << endl;
+  out << "static void read_input(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const int size) {" << endl;
   out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
   out << tab(1) << "for (int i = 0; i < INPUT_SIZE*size; i++) {" << endl;
   out << tab(2) << "#pragma HLS pipeline II=1" << endl;
@@ -471,7 +471,7 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
   out << tab(1) << "}" << endl;
   out << "}" << endl << endl;
 
-  out << "static void write_output(" << out_bundle_tp << "* output, HWStream<" << out_bundle_tp << " >& v, const uint64_t size) {" << endl;
+  out << "static void write_output(" << out_bundle_tp << "* output, HWStream<" << out_bundle_tp << " >& v, const int size) {" << endl;
   out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
   out << tab(1) << "for (int i = 0; i < OUTPUT_SIZE*size; i++) {" << endl;
   out << tab(2) << "#pragma HLS pipeline II=1" << endl;
@@ -512,7 +512,7 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
   }
 
   vector<string> all_arg_decls = ptr_arg_decls;
-  all_arg_decls.push_back("const uint64_t size");
+  all_arg_decls.push_back("const int size");
   buffer_args.push_back("size");
 
   cout << "Generating driver function" << endl;
@@ -1544,7 +1544,7 @@ void generate_app_code(CodegenOptions& options,
   string outer_arg_buffers = sep_list(arg_buf_list, "(", ")", ", ");
 
   auto inner_args = arg_buf_list;
-  inner_args.push_back("uint64_t num_epochs");
+  inner_args.push_back("int num_epochs");
   string inner_arg_buffers = sep_list(inner_args, "(", ")", ", ");
 
   conv_out << "void " << prg.name << inner_arg_buffers << " {" << endl << endl;
@@ -1581,7 +1581,7 @@ void generate_app_code(CodegenOptions& options,
   conv_out << "#pragma HLS inline recursive" << endl;
   conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
 
-  conv_out << tab(1) << "for (uint64_t epoch = 0; epoch < num_epochs; epoch++) {" << endl;
+  conv_out << tab(1) << "for (int epoch = 0; epoch < num_epochs; epoch++) {" << endl;
   conv_out << code_string << endl;
   conv_out << tab(1) << "}" << endl << endl;
 
