@@ -408,10 +408,10 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   out << tab(1) << "int num_epochs = 1;" << endl;
   out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", num_epochs));" << endl << endl;
 
-  for (auto b : out_bundles(buffers, prg)) {
-    out << tab(1) << "int " << b << "_size = " << b << "_DATA_SIZE;" << endl;
-    out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << b << "_size));" << endl << endl;
-  }
+  //for (auto b : out_bundles(buffers, prg)) {
+    //out << tab(1) << "int " << b << "_size = " << b << "_DATA_SIZE;" << endl;
+    //out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << b << "_size));" << endl << endl;
+  //}
 
   run_kernel(out, buffers, prg);
 

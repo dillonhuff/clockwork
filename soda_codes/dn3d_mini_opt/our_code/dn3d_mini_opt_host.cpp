@@ -97,9 +97,6 @@ int main(int argc, char **argv) {
   int num_epochs = 1;
   OCL_CHECK(err, err = krnl_vector_add.setArg(3, num_epochs));
 
-  int dn3d_mini_update_0_write_size = dn3d_mini_update_0_write_DATA_SIZE;
-  OCL_CHECK(err, err = krnl_vector_add.setArg(3, dn3d_mini_update_0_write_size));
-
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({f_update_0_read_ocl_buf, u_update_0_read_ocl_buf}, 0));
 
 unsigned long start, end, nsduration;
