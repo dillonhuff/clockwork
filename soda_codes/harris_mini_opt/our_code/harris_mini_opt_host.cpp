@@ -76,8 +76,9 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, cl::Buffer harris_mini_update_0_write_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, harris_mini_update_0_write_size_bytes, harris_mini_update_0_write.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, harris_mini_update_0_write_ocl_buf));
 
-  int harris_mini_update_0_write_size = harris_mini_update_0_write_DATA_SIZE;
-  OCL_CHECK(err, err = krnl_vector_add.setArg(2, harris_mini_update_0_write_size));
+
+  int num_epochs = 1;
+  OCL_CHECK(err, err = krnl_vector_add.setArg(2, num_epochs));
 
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({img_update_0_read_ocl_buf}, 0));
 

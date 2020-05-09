@@ -7437,8 +7437,10 @@ void playground() {
 }
 
 void application_tests() {
-  blur_xy_16_app_test();
+  harris_test();
   assert(false);
+  harris16_test();
+  blur_xy_16_app_test();
   denoise3d_test();
 
   sobel_16_app_test();
@@ -7452,9 +7454,7 @@ void application_tests() {
 
   denoise2d_test();
 
-  harris16_test();
 
-  harris_test();
 
   conv_1d_test();
   blur_xy_16_app_test();
