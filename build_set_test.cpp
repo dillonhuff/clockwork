@@ -5680,6 +5680,41 @@ App denoise3d(const std::string& out_name) {
   return dn;
 }
 
+void denoise3d_test() {
+  //int mini_size = 32;
+  //auto hmini = denoise3d("harris_mini");
+  //hmini.realize_naive("harris_mini", mini_size, mini_size);
+  //hmini.realize("harris_mini", mini_size, mini_size, 1);
+
+  //std::vector<std::string> naive =
+    //run_regression_tb("harris_mini_opt");
+  //std::vector<std::string> optimized =
+    //run_regression_tb("harris_mini_naive");
+  //assert(naive == optimized);
+  //move_to_benchmarks_folder("harris_mini_opt");
+
+  //assert(false);
+
+  int rows = 32;
+  int cols = 32;
+  int channels = 32;
+  vector<int> factors{1, 8, 16};
+  for (int i = 0; i < (int) factors.size(); i++) {
+    int unroll_factor = factors.at(i);
+    cout << tab(1) << "denoise3d unroll factor: " << unroll_factor << endl;
+    string out_name = "dn3d_" + str(unroll_factor);
+
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    options.debug_options.expect_all_linebuffers = true;
+    denoise3d(out_name).realize(options, out_name, {cols, rows, channels}, unroll_factor);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+}
+
 void max_pooling_test() {
   App mp;
   mp.func3d("in_oc");
@@ -7388,8 +7423,10 @@ void playground() {
 }
 
 void application_tests() {
-  sobel_16_app_test();
+  denoise3d_test();
   assert(false);
+
+  sobel_16_app_test();
 
   halide_frontend_test();
 
