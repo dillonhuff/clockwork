@@ -4256,13 +4256,18 @@ struct App {
       }
     }
 
+    vector<string> zeros;
+    for (int i = 0; i < data_dimension(); i++) {
+      zeros.push_back("0");
+    }
+    auto zrs = sep_list(zeros, "(", ")", ", ");
     for (auto f : sort_functions()) {
 
       for (auto u : app_dag.at(f).updates) {
         if (u.get_srcs().size() == 0) {
         } else {
           if (consumers(f).size() == 0) {
-            out << "output " << num_type_cstring() << ": " << f << "(0, 0) = ";
+            out << "output " << num_type_cstring() << ": " << f << zrs << " = ";
               out << soda_compute_string(width, u.def) << endl << endl;
           } else {
             bool all_producers_external = true;
@@ -4278,7 +4283,7 @@ struct App {
               //assert(domain.dimension() == 2);
               out << "input " << num_type_cstring() << ": " << f << "(" << domain.length(0) << ", *)" << endl << endl;
             } else {
-              out << "local " << num_type_cstring() << ": " << f << "(0, 0) = ";
+              out << "local " << num_type_cstring() << ": " << f << zrs << " = ";
               out << soda_compute_string(width, u.def) << endl << endl;
             }
           }
@@ -5682,19 +5687,19 @@ App denoise3d(const std::string& out_name) {
 }
 
 void denoise3d_test() {
-  //int mini_size = 32;
-  //auto hmini = denoise3d("harris_mini");
-  //hmini.realize_naive("harris_mini", mini_size, mini_size);
-  //hmini.realize("harris_mini", mini_size, mini_size, 1);
+  int mini_size = 8;
+  auto hmini = denoise3d("dn3d_mini");
+  hmini.realize_naive("dn3d_mini", mini_size, mini_size);
+  hmini.realize("dn3d_mini", mini_size, mini_size, 1);
 
-  //std::vector<std::string> naive =
-    //run_regression_tb("harris_mini_opt");
-  //std::vector<std::string> optimized =
-    //run_regression_tb("harris_mini_naive");
-  //assert(naive == optimized);
-  //move_to_benchmarks_folder("harris_mini_opt");
+  std::vector<std::string> naive =
+    run_regression_tb("dn3d_mini_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb("dn3d_mini_opt");
+  assert(naive == optimized);
+  move_to_benchmarks_folder("dn3d_mini_opt");
 
-  //assert(false);
+  assert(false);
 
   int rows = 32;
   int cols = 32;
