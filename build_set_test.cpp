@@ -5653,6 +5653,7 @@ void harris_test() {
 
 App denoise3d(const std::string& out_name) {
   App dn;
+  dn.set_default_pixel_width(16);
   dn.func3d("u_oc");
   dn.func3d("f_oc");
 
