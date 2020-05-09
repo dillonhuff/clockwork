@@ -127,6 +127,11 @@ void pw16_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */input_arg, HWS
   input_cache input;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
+  for (uint64_t epoch = 0; epoch < num_epochs; epoch++) {
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
@@ -149,6 +154,8 @@ void pw16_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */input_arg, HWS
 	  }
 	}
 	
+  }
+
 #ifndef __VIVADO_SYNTH__
   debug_file.close();
 #endif //__VIVADO_SYNTH__

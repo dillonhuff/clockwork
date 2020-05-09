@@ -1582,14 +1582,13 @@ void generate_app_code(CodegenOptions& options,
     code_string = regex_replace(code_string, re, "\n\t" + op->name + "(" + args_list + ", $1);");
   }
 
-  //conv_out << "/* ISL CODE STRING" << endl;
-  //conv_out << original_isl_code_string << endl;
-  //conv_out << "*/" << endl;
-  //conv_out << "/* CUSTOM CODE STRING" << endl;
-  //conv_out << options.code_string << endl;
-  //conv_out << "*/" << endl;
+  conv_out << "#ifdef __VIVADO_SYNTH__" << endl;
+  conv_out << "#pragma HLS inline recursive" << endl;
+  conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
 
+  conv_out << tab(1) << "for (uint64_t epoch = 0; epoch < num_epochs; epoch++) {" << endl;
   conv_out << code_string << endl;
+  conv_out << tab(1) << "}" << endl << endl;
 
   open_debug_scope(conv_out);
   conv_out << tab(1) << "debug_file.close();" << endl;

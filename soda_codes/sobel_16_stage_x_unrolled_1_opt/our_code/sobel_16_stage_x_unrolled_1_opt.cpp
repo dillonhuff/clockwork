@@ -311,7 +311,7 @@ inline void sobel_16_stage_x_unrolled_1_update_0(img_cache& img, HWStream<hw_uin
 }
 
 // Driver function
-void sobel_16_stage_x_unrolled_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */off_chip_img, HWStream<hw_uint<16> >& /* get_args num ports = 1 */sobel_16_stage_x_unrolled_1) {
+void sobel_16_stage_x_unrolled_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */off_chip_img, HWStream<hw_uint<16> >& /* get_args num ports = 1 */sobel_16_stage_x_unrolled_1, uint64_t num_epochs) {
 
 #ifndef __VIVADO_SYNTH__
   ofstream debug_file("sobel_16_stage_x_unrolled_1_opt_debug.csv");
@@ -320,6 +320,11 @@ void sobel_16_stage_x_unrolled_1_opt(HWStream<hw_uint<16> >& /* get_args num por
   img_cache img;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
+  for (uint64_t epoch = 0; epoch < num_epochs; epoch++) {
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
@@ -342,11 +347,17 @@ void sobel_16_stage_x_unrolled_1_opt(HWStream<hw_uint<16> >& /* get_args num por
 	  }
 	}
 	
+  }
+
 #ifndef __VIVADO_SYNTH__
   debug_file.close();
 #endif //__VIVADO_SYNTH__
 }
 
+void sobel_16_stage_x_unrolled_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */off_chip_img, HWStream<hw_uint<16> >& /* get_args num ports = 1 */sobel_16_stage_x_unrolled_1) {
+
+  sobel_16_stage_x_unrolled_1_opt(off_chip_img, sobel_16_stage_x_unrolled_1, 1);
+}
 #ifdef __VIVADO_SYNTH__
 #include "sobel_16_stage_x_unrolled_1_opt.h"
 

@@ -210,7 +210,7 @@ inline void sum_float_update_0(f_cache& f, u_cache& u, HWStream<hw_uint<32> >& /
 }
 
 // Driver function
-void sum_float_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */u_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */sum_float) {
+void sum_float_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */u_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */sum_float, uint64_t num_epochs) {
 
 #ifndef __VIVADO_SYNTH__
   ofstream debug_file("sum_float_opt_debug.csv");
@@ -222,6 +222,11 @@ void sum_float_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chi
   u_cache u;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
+  for (uint64_t epoch = 0; epoch < num_epochs; epoch++) {
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
@@ -248,11 +253,17 @@ void sum_float_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chi
 	  }
 	}
 	
+  }
+
 #ifndef __VIVADO_SYNTH__
   debug_file.close();
 #endif //__VIVADO_SYNTH__
 }
 
+void sum_float_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */u_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */sum_float) {
+
+  sum_float_opt(f_off_chip, u_off_chip, sum_float, 1);
+}
 #ifdef __VIVADO_SYNTH__
 #include "sum_float_opt.h"
 

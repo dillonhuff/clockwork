@@ -462,7 +462,7 @@ inline void upsample_stencil_update_0(Img_cache& Img, HWStream<hw_uint<32> >& /*
 }
 
 // Driver function
-void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Img_off, HWStream<hw_uint<32> >& /* get_args num ports = 1 */upsample_stencil) {
+void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Img_off, HWStream<hw_uint<32> >& /* get_args num ports = 1 */upsample_stencil, uint64_t num_epochs) {
 
 #ifndef __VIVADO_SYNTH__
   ofstream debug_file("upsample_stencil_opt_debug.csv");
@@ -471,6 +471,11 @@ void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Im
   Img_cache Img;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
+  for (uint64_t epoch = 0; epoch < num_epochs; epoch++) {
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
@@ -493,11 +498,17 @@ void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Im
 	  }
 	}
 	
+  }
+
 #ifndef __VIVADO_SYNTH__
   debug_file.close();
 #endif //__VIVADO_SYNTH__
 }
 
+void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Img_off, HWStream<hw_uint<32> >& /* get_args num ports = 1 */upsample_stencil) {
+
+  upsample_stencil_opt(Img_off, upsample_stencil, 1);
+}
 #ifdef __VIVADO_SYNTH__
 #include "upsample_stencil_opt.h"
 

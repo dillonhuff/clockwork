@@ -7601,6 +7601,11 @@ void bxy_ur_32_opt(HWStream<hw_uint<512> >& /* get_args num ports = 32 */input_a
   input_cache input;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
+  for (uint64_t epoch = 0; epoch < num_epochs; epoch++) {
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
@@ -7627,6 +7632,8 @@ void bxy_ur_32_opt(HWStream<hw_uint<512> >& /* get_args num ports = 32 */input_a
 	  }
 	}
 	
+  }
+
 #ifndef __VIVADO_SYNTH__
   debug_file.close();
 #endif //__VIVADO_SYNTH__

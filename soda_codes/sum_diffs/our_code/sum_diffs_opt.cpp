@@ -911,7 +911,7 @@ inline void sum_diffs_update_0(magval_cache& magval, f_cache& f, HWStream<hw_uin
 }
 
 // Driver function
-void sum_diffs_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */u_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */sum_diffs) {
+void sum_diffs_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */u_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */sum_diffs, uint64_t num_epochs) {
 
 #ifndef __VIVADO_SYNTH__
   ofstream debug_file("sum_diffs_opt_debug.csv");
@@ -938,6 +938,11 @@ void sum_diffs_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chi
   u_cache u;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
+  for (uint64_t epoch = 0; epoch < num_epochs; epoch++) {
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
@@ -984,11 +989,17 @@ void sum_diffs_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chi
 	  }
 	}
 	
+  }
+
 #ifndef __VIVADO_SYNTH__
   debug_file.close();
 #endif //__VIVADO_SYNTH__
 }
 
+void sum_diffs_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */u_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */sum_diffs) {
+
+  sum_diffs_opt(f_off_chip, u_off_chip, sum_diffs, 1);
+}
 #ifdef __VIVADO_SYNTH__
 #include "sum_diffs_opt.h"
 

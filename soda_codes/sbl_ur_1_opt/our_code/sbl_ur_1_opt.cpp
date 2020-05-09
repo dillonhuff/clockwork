@@ -626,7 +626,7 @@ inline void sbl_ur_1_update_0(mag_x_cache& mag_x, mag_y_cache& mag_y, HWStream<h
 }
 
 // Driver function
-void sbl_ur_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */off_chip_img, HWStream<hw_uint<16> >& /* get_args num ports = 1 */sbl_ur_1) {
+void sbl_ur_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */off_chip_img, HWStream<hw_uint<16> >& /* get_args num ports = 1 */sbl_ur_1, uint64_t num_epochs) {
 
 #ifndef __VIVADO_SYNTH__
   ofstream debug_file("sbl_ur_1_opt_debug.csv");
@@ -641,6 +641,11 @@ void sbl_ur_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */off_chip_i
   mag_y_cache mag_y;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
+  for (uint64_t epoch = 0; epoch < num_epochs; epoch++) {
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
@@ -671,11 +676,17 @@ void sbl_ur_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */off_chip_i
 	  }
 	}
 	
+  }
+
 #ifndef __VIVADO_SYNTH__
   debug_file.close();
 #endif //__VIVADO_SYNTH__
 }
 
+void sbl_ur_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */off_chip_img, HWStream<hw_uint<16> >& /* get_args num ports = 1 */sbl_ur_1) {
+
+  sbl_ur_1_opt(off_chip_img, sbl_ur_1, 1);
+}
 #ifdef __VIVADO_SYNTH__
 #include "sbl_ur_1_opt.h"
 
