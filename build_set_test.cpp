@@ -7437,8 +7437,9 @@ void playground() {
 }
 
 void application_tests() {
-  denoise3d_test();
+  blur_xy_16_app_test();
   assert(false);
+  denoise3d_test();
 
   sobel_16_app_test();
 
@@ -7449,7 +7450,6 @@ void application_tests() {
 
   ram_addr_unit_test();
 
-  blur_xy_16_app_test();
   denoise2d_test();
 
   harris16_test();

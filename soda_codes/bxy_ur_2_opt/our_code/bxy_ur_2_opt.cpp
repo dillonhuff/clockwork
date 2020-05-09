@@ -569,7 +569,7 @@ inline void bxy_ur_2_update_0(blurx_cache& blurx, HWStream<hw_uint<32> >& /* buf
 }
 
 // Driver function
-void bxy_ur_2_opt(HWStream<hw_uint<32> >& /* get_args num ports = 2 */input_arg, HWStream<hw_uint<32> >& /* get_args num ports = 2 */bxy_ur_2, uint64_t num_epochs) {
+void bxy_ur_2_opt(HWStream<hw_uint<32> >& /* get_args num ports = 2 */input_arg, HWStream<hw_uint<32> >& /* get_args num ports = 2 */bxy_ur_2, int num_epochs) {
 
 #ifndef __VIVADO_SYNTH__
   ofstream debug_file("bxy_ur_2_opt_debug.csv");
@@ -585,7 +585,7 @@ void bxy_ur_2_opt(HWStream<hw_uint<32> >& /* get_args num ports = 2 */input_arg,
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-  for (uint64_t epoch = 0; epoch < num_epochs; epoch++) {
+  for (int epoch = 0; epoch < num_epochs; epoch++) {
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
@@ -632,7 +632,7 @@ extern "C" {
 
 static void read_input(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < INPUT_SIZE; i++) {
+  for (int i = 0; i < INPUT_SIZE*size; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -641,7 +641,7 @@ static void read_input(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int 
 
 static void write_output(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < OUTPUT_SIZE; i++) {
+  for (int i = 0; i < OUTPUT_SIZE*size; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;
@@ -663,7 +663,7 @@ void bxy_ur_2_opt_accel(hw_uint<32>* input_update_0_read, hw_uint<32>* bxy_ur_2_
 
   read_input(input_update_0_read, input_update_0_read_channel, size);
 
-  bxy_ur_2_opt(input_update_0_read_channel, bxy_ur_2_update_0_write_channel);
+  bxy_ur_2_opt(input_update_0_read_channel, bxy_ur_2_update_0_write_channel, size);
 
   write_output(bxy_ur_2_update_0_write, bxy_ur_2_update_0_write_channel, size);
 }

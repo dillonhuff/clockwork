@@ -76,8 +76,9 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, cl::Buffer bxy_ur_16_update_0_write_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, bxy_ur_16_update_0_write_size_bytes, bxy_ur_16_update_0_write.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, bxy_ur_16_update_0_write_ocl_buf));
 
-  int bxy_ur_16_update_0_write_size = bxy_ur_16_update_0_write_DATA_SIZE;
-  OCL_CHECK(err, err = krnl_vector_add.setArg(2, bxy_ur_16_update_0_write_size));
+
+  int num_epochs = 1;
+  OCL_CHECK(err, err = krnl_vector_add.setArg(2, num_epochs));
 
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({input_update_0_read_ocl_buf}, 0));
 
