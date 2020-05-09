@@ -7385,6 +7385,9 @@ void playground() {
 }
 
 void application_tests() {
+  sobel_16_app_test();
+  assert(false);
+
   halide_frontend_test();
 
   pointwise_app_test();
@@ -7422,7 +7425,6 @@ void application_tests() {
   
   updown_merge_test();
   harris_unrolled_test();
-  sobel_16_app_test();
   exposure_fusion();
 
   max_pooling_test();

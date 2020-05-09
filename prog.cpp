@@ -462,18 +462,18 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
 
   out << "extern \"C\" {" << endl << endl;
 
-  out << "static void read_input(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const int size) {" << endl;
+  out << "static void read_input(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const uint64_t size) {" << endl;
   out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
-  out << tab(1) << "for (int i = 0; i < INPUT_SIZE; i++) {" << endl;
+  out << tab(1) << "for (int i = 0; i < INPUT_SIZE*size; i++) {" << endl;
   out << tab(2) << "#pragma HLS pipeline II=1" << endl;
   out << tab(2) << "burst_reg = input[i];" << endl;
   out << tab(2) << "v.write(burst_reg);" << endl;
   out << tab(1) << "}" << endl;
   out << "}" << endl << endl;
 
-  out << "static void write_output(" << out_bundle_tp << "* output, HWStream<" << out_bundle_tp << " >& v, const int size) {" << endl;
+  out << "static void write_output(" << out_bundle_tp << "* output, HWStream<" << out_bundle_tp << " >& v, const uint64_t size) {" << endl;
   out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
-  out << tab(1) << "for (int i = 0; i < OUTPUT_SIZE; i++) {" << endl;
+  out << tab(1) << "for (int i = 0; i < OUTPUT_SIZE*size; i++) {" << endl;
   out << tab(2) << "#pragma HLS pipeline II=1" << endl;
   out << tab(2) << "burst_reg = v.read();" << endl;
   out << tab(2) << "output[i] = burst_reg;" << endl;
@@ -499,8 +499,6 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
     buffer_args.push_back(bundle + "_channel");
   }
 
-  cout << "Done with ins" << endl;
-
   for (auto out : prg.outs) {
     assert(contains_key(out, buffers));
     auto& buf = buffers.at(out);
@@ -511,11 +509,11 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
     ptr_arg_decls.push_back(in_bundle_tp + "* " + bundle);
     ptr_args.push_back(bundle);
     buffer_args.push_back(bundle + "_channel");
-    //buf.name);
   }
 
   vector<string> all_arg_decls = ptr_arg_decls;
-  all_arg_decls.push_back("const int size");
+  all_arg_decls.push_back("const uint64_t size");
+  buffer_args.push_back("size");
 
   cout << "Generating driver function" << endl;
 
@@ -1304,9 +1302,6 @@ module_type* generate_rtl_buffer(CodegenOptions& options,
           part.second);
       partitions[part.first] =
         bankprog->add_module_instance(part.first, part_tp);
-
-      //read_partitions[part.first] =
-        //bankprog->call(part.first, "read_instr");
     }
 
     auto bankmod = minigen.compile(bankprog);
