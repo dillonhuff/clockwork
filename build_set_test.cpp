@@ -4276,7 +4276,11 @@ struct App {
             if (all_producers_external) {
               Box domain = data_domain(f);
               //assert(domain.dimension() == 2);
-              out << "input " << num_type_cstring() << ": " << f << "(" << domain.length(0) << ", *)" << endl << endl;
+              vector<string> dims;
+              for (int i = 0; i < domain.dimension(); i++) {
+                dims.push_back(str(domain.length(i)));
+              }
+              out << "input " << num_type_cstring() << ": " << f << sep_list(dims, "(", ")", ", ") << endl << endl;
             } else {
               out << "local " << num_type_cstring() << ": " << f << zrs << " = ";
               out << soda_compute_string(width, u.def) << endl << endl;
