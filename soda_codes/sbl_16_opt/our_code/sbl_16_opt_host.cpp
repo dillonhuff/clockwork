@@ -6,22 +6,22 @@
 
 int main(int argc, char **argv) {
   srand(234);
-<<<<<<< HEAD
-=======
-
->>>>>>> 004cc13a2faa516bdbae09534cd3178bfbf7fae7
   if (argc != 2) {
     std::cout << "Usage: " << argv[0] << " <XCLBIN File>" << std::endl;
     return EXIT_FAILURE;
   }
+
   std::string binaryFile = argv[1];
+
+  int num_epochs = 1;
+
   size_t total_size_bytes = 0;
-  const int img_update_0_read_DATA_SIZE = 2112064;
+  const int img_update_0_read_DATA_SIZE = num_epochs*2112064;
   const int img_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t img_update_0_read_size_bytes = img_update_0_read_BYTES_PER_PIXEL * img_update_0_read_DATA_SIZE;
 
   total_size_bytes += img_update_0_read_size_bytes;
-  const int sbl_16_update_0_write_DATA_SIZE = 2073600;
+  const int sbl_16_update_0_write_DATA_SIZE = num_epochs*2073600;
   const int sbl_16_update_0_write_BYTES_PER_PIXEL = 16 / 8;
   size_t sbl_16_update_0_write_size_bytes = sbl_16_update_0_write_BYTES_PER_PIXEL * sbl_16_update_0_write_DATA_SIZE;
 
@@ -37,12 +37,7 @@ int main(int argc, char **argv) {
 
   std::ofstream input_img_update_0_read("img_update_0_read.csv");
   for (int i = 0; i < img_update_0_read_DATA_SIZE; i++) {
-<<<<<<< HEAD
     uint16_t val = (srand() % 256);
-=======
-    //uint16_t val = (i % 256);
-    uint16_t val = (rand() % 256);
->>>>>>> 004cc13a2faa516bdbae09534cd3178bfbf7fae7
     input_img_update_0_read << val << std::endl;
     ((uint16_t*) (img_update_0_read.data()))[i] = val;
   }
@@ -88,7 +83,6 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, sbl_16_update_0_write_ocl_buf));
 
 
-  int num_epochs = 1;
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, num_epochs));
 
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({img_update_0_read_ocl_buf}, 0));

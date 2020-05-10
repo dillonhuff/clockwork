@@ -207,9 +207,10 @@ void ocl_check_args(std::ostream& out) {
   out << tab(1) << "if (argc != 2) {" << endl;
   out << tab(2) << "std::cout << \"Usage: \" << argv[0] << \" <XCLBIN File>\" << std::endl;" << endl;
   out << tab(2) << "return EXIT_FAILURE;" << endl;
-  out << tab(1) << "}" << endl;
+  out << tab(1) << "}" << endl << endl;
 
-  out << tab(1) << "std::string binaryFile = argv[1];" << endl;
+  out << tab(1) << "std::string binaryFile = argv[1];" << endl << endl;
+  out << tab(1) << "int num_epochs = 1;" << endl << endl;
 }
 
 void ocl_timing_suffix(std::ostream& out) {
@@ -311,7 +312,7 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
     arg_pos++;
   }
 
-  out << tab(1) << "uint64_t transfer_size = " << max_buf_size << " / " << unroll_factor << ";" << endl;
+  out << tab(1) << "uint64_t transfer_size = num_epochs*(" << max_buf_size << " / " << unroll_factor << ");" << endl;
   out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << "transfer_size));" << endl << endl;
 
   run_kernel(out, buffers, prg);
@@ -354,7 +355,7 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
     string edge_bundle = eb.second;
     string buf = eb.first;
 
-    out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = " << prg.buffer_size(buf) << ";" << endl;
+    out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = num_epochs*" << prg.buffer_size(buf) << ";" << endl;
     out << tab(1) << "const int " << edge_bundle << "_BYTES_PER_PIXEL = " << map_find(buf, buffers).bundle_lane_width(edge_bundle) << " / 8;" << endl;
     out << tab(1) << "size_t " << edge_bundle << "_size_bytes = " << edge_bundle << "_BYTES_PER_PIXEL * " << edge_bundle << "_DATA_SIZE;" << endl << endl;
     out << tab(1) << "total_size_bytes += " << edge_bundle << "_size_bytes;" << endl;
@@ -407,7 +408,6 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   }
 
   out << endl;
-  out << tab(1) << "int num_epochs = 1;" << endl;
   out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", num_epochs));" << endl << endl;
 
   //for (auto b : out_bundles(buffers, prg)) {

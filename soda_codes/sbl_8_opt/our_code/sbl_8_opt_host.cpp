@@ -10,14 +10,18 @@ int main(int argc, char **argv) {
     std::cout << "Usage: " << argv[0] << " <XCLBIN File>" << std::endl;
     return EXIT_FAILURE;
   }
+
   std::string binaryFile = argv[1];
+
+  int num_epochs = 1;
+
   size_t total_size_bytes = 0;
-  const int img_update_0_read_DATA_SIZE = 2094752;
+  const int img_update_0_read_DATA_SIZE = num_epochs*2094752;
   const int img_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t img_update_0_read_size_bytes = img_update_0_read_BYTES_PER_PIXEL * img_update_0_read_DATA_SIZE;
 
   total_size_bytes += img_update_0_read_size_bytes;
-  const int sbl_8_update_0_write_DATA_SIZE = 2073600;
+  const int sbl_8_update_0_write_DATA_SIZE = num_epochs*2073600;
   const int sbl_8_update_0_write_BYTES_PER_PIXEL = 16 / 8;
   size_t sbl_8_update_0_write_size_bytes = sbl_8_update_0_write_BYTES_PER_PIXEL * sbl_8_update_0_write_DATA_SIZE;
 
@@ -79,7 +83,6 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, sbl_8_update_0_write_ocl_buf));
 
 
-  int num_epochs = 1;
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, num_epochs));
 
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({img_update_0_read_ocl_buf}, 0));

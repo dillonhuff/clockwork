@@ -6,15 +6,15 @@
 
 int main(int argc, char **argv) {
   srand(234);
-<<<<<<< HEAD
-=======
-
->>>>>>> 004cc13a2faa516bdbae09534cd3178bfbf7fae7
   if (argc != 2) {
     std::cout << "Usage: " << argv[0] << " <XCLBIN File>" << std::endl;
     return EXIT_FAILURE;
   }
+
   std::string binaryFile = argv[1];
+
+  int num_epochs = 1;
+
   size_t total_size_bytes = 0;
   const int img_update_0_read_DATA_SIZE = 2112064;
   const int img_update_0_read_BYTES_PER_PIXEL = 16 / 8;
@@ -37,11 +37,7 @@ int main(int argc, char **argv) {
 
   std::ofstream input_img_update_0_read("img_update_0_read.csv");
   for (int i = 0; i < img_update_0_read_DATA_SIZE; i++) {
-<<<<<<< HEAD
     uint16_t val = (srand() % 256);
-=======
-    uint16_t val = (rand() % 256);
->>>>>>> 004cc13a2faa516bdbae09534cd3178bfbf7fae7
     input_img_update_0_read << val << std::endl;
     ((uint16_t*) (img_update_0_read.data()))[i] = val;
   }
@@ -86,7 +82,7 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, cl::Buffer img_update_0_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, img_update_0_read_size_bytes, img_update_0_read.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, img_update_0_read_ocl_buf));
 
-  uint64_t transfer_size = 2112064 / 16;
+  uint64_t transfer_size = num_epochs*(2112064 / 16);
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({img_update_0_read_ocl_buf}, 0));

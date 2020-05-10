@@ -7445,9 +7445,9 @@ void playground() {
 }
 
 void application_tests() {
-  denoise3d_test();
-  assert(false);
   sobel_16_app_test();
+  assert(false);
+  denoise3d_test();
   harris_test();
   harris16_test();
   blur_xy_16_app_test();
