@@ -2018,7 +2018,7 @@ isl_map* pad_map(isl_map* s, const int max_dim) {
 
   padded = isl_map_add_dims(padded, isl_dim_in, in_pad_factor);
   padded = isl_map_add_dims(padded, isl_dim_out, out_pad_factor);
-  
+
   padded = isl_map_set_tuple_id(padded, isl_dim_in, id(ct, domain_name(s)));
   padded = isl_map_set_tuple_id(padded, isl_dim_out, id(ct, range_name(s)));
 
@@ -2095,6 +2095,22 @@ umap* pad_map(umap* unpadded) {
   }
 
   return final_map;
+}
+
+bool lex_lt_pt(isl_point* const l, isl_point* const r) {
+    vector<int> l_pt = parse_pt(l);
+    vector<int> r_pt = parse_pt(r);
+    assert(l_pt.size() == r_pt.size());
+    for (size_t i = 0; i < l_pt.size(); i ++) {
+        if (l_pt.at(i) < r_pt.at(i))
+            return true;
+        if (l_pt.at(i) > r_pt.at(i))
+            return false;
+    }
+    //cout << "L: " << str(l) << ", R: " << str(r) << " is equal" << endl;
+    ///assert(false);
+    //equal return true
+    return false;
 }
 
 isl_val* coord(isl_point* const p, const int pos) {

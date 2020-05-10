@@ -8,6 +8,7 @@
 #include <sstream>
 #include <map>
 #include <vector>
+#include <queue>
 
 #include "utils.h"
 #include "isl_utils.h"

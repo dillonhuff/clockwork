@@ -1,4 +1,4 @@
-source ./user_settings/private_settings.sh
+#source ./user_settings/jliu_settings.sh
 ./make_code.sh
 if [ $? -eq 0 ]; then
   echo "Cmd: " $1

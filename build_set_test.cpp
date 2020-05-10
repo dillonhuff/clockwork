@@ -855,12 +855,12 @@ void bankmerge_vec_test() {
   prg.buffer_port_widths["in"] = 32;
   prg.buffer_port_widths["out"] = 32;
 
-  auto p = prg.add_nest("po", 0, 8, "pi", 0, 32);
+  auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
   auto write = p->add_op("input");
   write->add_load("in", "po, pi");
   write->add_store("buf", "po, pi");
 
-  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 32);
+  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 16);
   auto read = q->add_op("output");
   for (size_t wy = 0; wy < 3; wy ++)
       for (size_t wx = 0; wx < 1; wx ++) {
@@ -880,6 +880,8 @@ void bankmerge_vec_test() {
     buffers_opt[buf.name] = buf;
   }
   buffers_opt.erase("buf");
+  buffers_opt.erase("in");
+  buffers_opt.erase("out");
   buffer_vectorization("buf1", 1, 4, buffers_opt);
   auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
   cout << codegen_c(opt_sched) << endl;
@@ -918,15 +920,27 @@ void bankmerge_vec_test() {
   cout << str(lexmin(range(opt_sched))) << endl << str(lexmax(range(opt_sched))) <<endl;
   auto bound = compute_box_from_sched(opt_sched);
   isl_set* sched_set = bound.to_set(prg.ctx, "");
+  auto bset_vec = constraints(sched_set);
+  for (auto bset: bset_vec) {
+      cout << "cosntraints: " << str(bset) << endl;
+  }
   cout << str(sched_set) << endl;
   auto point_vec = get_points(sched_set);
+  std::sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
   for (auto point : point_vec) {
-      cout << str(point) << endl;
-      auto input_sched = op2sched.at("input");
-      auto isExeQP = card(its_range(input_sched, to_uset(isl_set_from_point(cpy(point)))));
-      cout <<"Card Expr: " << str(isExeQP) << endl;
-      bool isExe = int_lower_bound(isExeQP) == 1;
-      cout << "input OP execute in this point = " << isExe << endl;
+      //cout << str(point) << endl;
+      //auto input_sched = op2sched.at("input");
+      //auto isExeQP = card(its_range(input_sched, to_uset(isl_set_from_point(cpy(point)))));
+      //cout <<"Card Expr: " << str(isExeQP) << endl;
+      //bool isExe = int_lower_bound(isExeQP) == 1;
+      //cout << "input OP execute in this point = " << isExe << endl;
+      for (auto it: buffers_opt) {
+          auto buf = it.second;
+          cout << "Buffer: " << buf.name << endl;
+          cout << str(point) << " read = " << buf.is_rd(point) << endl;
+          cout << str(point) << " write = " << buf.is_wr(point) << endl;
+          cout << endl;
+      }
   }
   assert(false);
 }
@@ -4448,7 +4462,7 @@ struct App {
     string reference_update =
       sched_var_name(last_update(reference_function).name());
     cout << "reference: " << reference_update << endl;
-    
+
     int ref_q = to_int(map_find(reference_update, qfs));
     cout << "ref_q = " << ref_q << endl;
     int umax = ref_q * unroll_factor;
@@ -5310,7 +5324,7 @@ App harris_cartoon(const std::string& out_name) {
 
   //harris.func2d("grad_x", stencilv(0, 2, 0, 0, "img"));
   //harris.func2d(out_name, stencilv(0, 2, 0, 0, "grad_x"));
-  
+
   harris.func2d("grad_x", stencilv(-1, 1, 0, 0, "img"));
   harris.func2d(out_name, stencilv(-1, 1, 0, 0, "grad_x"));
 
@@ -5335,7 +5349,7 @@ App harris16(const std::string& out_name) {
   harris.func2d("lxx", add(square(v("grad_x")), 128));
   harris.func2d("lyy", add(square(v("grad_y")), 128));
   harris.func2d("lxy", add(mul(v("grad_x"), v("grad_y")), 128));
-  
+
   harris.func2d("lgxx", stencilv(-1, 1, -1, 1, "lxx"));
   harris.func2d("lgyy", stencilv(-1, 1, -1, 1, "lyy"));
   harris.func2d("lgxy", stencilv(-1, 1, -1, 1, "lxy"));
@@ -5343,7 +5357,7 @@ App harris16(const std::string& out_name) {
   harris.func2d("lgxx8", add(v("lgxx"), 64));
   harris.func2d("lgyy8", add(v("lgyy"), 64));
   harris.func2d("lgxy8", add(v("lgxy"), 64));
-  
+
   harris.func2d("det", add(mul("lgxx8", "lgyy8"), square("lgxy8")));
   harris.func2d("trace", mul("lgxx8", "lgyy8"));
   harris.func2d(out_name, add(v("det"),
@@ -5370,7 +5384,7 @@ App harris(const std::string& out_name) {
   harris.func2d("lxx", add(square(v("grad_x")), 128));
   harris.func2d("lyy", add(square(v("grad_y")), 128));
   harris.func2d("lxy", add(mul(v("grad_x"), v("grad_y")), 128));
-  
+
   harris.func2d("lgxx", stencilv(-1, 1, -1, 1, "lxx"));
   harris.func2d("lgyy", stencilv(-1, 1, -1, 1, "lyy"));
   harris.func2d("lgxy", stencilv(-1, 1, -1, 1, "lxy"));
@@ -5378,7 +5392,7 @@ App harris(const std::string& out_name) {
   harris.func2d("lgxx8", add(v("lgxx"), 64));
   harris.func2d("lgyy8", add(v("lgyy"), 64));
   harris.func2d("lgxy8", add(v("lgxy"), 64));
-  
+
   harris.func2d("det", add(mul("lgxx8", "lgyy8"), square("lgxy8")));
   harris.func2d("trace", mul("lgxx8", "lgyy8"));
   harris.func2d(out_name, add(v("det"),
@@ -5763,7 +5777,7 @@ void gaussian_pyramid_app_test() {
     last = next;
   }
   //gp.realize(last, 32, 32, 1);
- 
+
   {
     CodegenOptions options;
     options.internal = true;
@@ -7223,8 +7237,9 @@ void playground() {
 }
 
 void application_tests() {
-  pointwise_app_test();
+  bankmerge_vec_test();
   assert(false);
+  pointwise_app_test();
 
   ram_addr_unit_test();
 
@@ -7255,7 +7270,7 @@ void application_tests() {
 
   upsample_stencil_2d_test();
   upsample_stencil_1d_test();
-  
+
   updown_merge_test();
   harris_unrolled_test();
   sobel_16_app_test();
@@ -7343,7 +7358,7 @@ void application_tests() {
 
   dummy_app_test();
   //two_input_denoise_pipeline_test();
-  
+
 
   //conv_1d_bc_test();
   //synth_wire_test();

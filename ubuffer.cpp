@@ -1474,10 +1474,10 @@ void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuff
             auto inpt_acc_map = remap_access_to_new_buffer(in_pt_name, "_agg");
             cout << "Access map add to agg_in: " << str(inpt_acc_map) << endl;
             agg_buf.add_in_pt(in_pt_name+"_in", domain.at(in_pt_name), inpt_acc_map, its(new_sched.at(acc_pattern.op_name), domain.at(in_pt_name)));
-            agg_buf.port_bundles[bd_name].push_back(in_pt_name + "_in");
+            agg_buf.port_bundles[bd_name+"_agg_in"].push_back(in_pt_name + "_in");
 
             //add out port to agg_buf
-            add_vectorized_pt_to_ubuf(agg_buf, rewrite_buf2op, new_sched, in_pt_name, bd_name, dim_id, fetch_width, true);
+            add_vectorized_pt_to_ubuf(agg_buf, rewrite_buf2op, new_sched, in_pt_name, bd_name+"_agg_out", dim_id, fetch_width, true);
             //add in port to sram
             add_vectorized_pt_to_ubuf(sram, rewrite_buf2op, new_sched, in_pt_name, bd_name, dim_id, fetch_width, false);
        }
@@ -1503,10 +1503,10 @@ void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuff
             outpt_acc_map = add_range_suffix(outpt_acc_map, "_tb");
             cout << "Access map decouple reuse: " << str(outpt_acc_map) << endl;
             tb.add_out_pt(out_pt_name+"_out", domain.at(out_pt_name), outpt_acc_map, its(new_sched.at(acc_pattern.op_name), domain.at(out_pt_name)));
-            tb.port_bundles[bd_name].push_back(out_pt_name + "_out");
+            tb.port_bundles[bd_name+"_tb_out"].push_back(out_pt_name + "_out");
 
             //add out port to tb
-            add_vectorized_pt_to_ubuf(tb, rewrite_buf2op, new_sched, out_pt_name, bd_name, dim_id, fetch_width, false);
+            add_vectorized_pt_to_ubuf(tb, rewrite_buf2op, new_sched, out_pt_name, bd_name+"_tb_in", dim_id, fetch_width, false);
 
             //add in port to sram
             add_vectorized_pt_to_ubuf(sram, rewrite_buf2op, new_sched, out_pt_name, bd_name, dim_id, fetch_width, true);

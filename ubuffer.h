@@ -54,6 +54,14 @@ struct selector {
   vector<string> inner_bank_offsets;
 };
 
+struct HWconstraints {
+    size_t port_width;
+    size_t port_number;
+    size_t capacity;
+    bool raw_same_cycle;
+    bool war_same_cycle;
+};
+
 struct bank {
   std::string name;
   bank_type tp;
@@ -619,6 +627,41 @@ class UBuffer {
     map<pair<string, string>, stack_bank > stack_banks;
     map<string, selector> selectors;
 
+    //lowering ubuffer to memtile
+    vector<int> read_cycle, write_cycle;
+    HWconstraints hardware;
+
+    queue<string> rd_op_queue, wr_op_queue;
+    queue<int> cycle_queue;
+
+    //TODO: only support one read/write
+    bool is_rd(isl_point* pt) {
+        for (auto it: port_bundles) {
+            auto pt_name = pick(it.second);
+            if (!isIn.at(pt_name)) {
+                auto sched = schedule.at(pt_name);
+                auto qp = card(its_range(sched, to_uset(isl_set_from_point(cpy(pt)))));
+                return int_lower_bound(qp) == 1;
+            }
+        }
+        assert(false);
+        return false;
+    }
+
+
+    bool is_wr(isl_point* pt) {
+        for (auto it: port_bundles) {
+            auto pt_name = pick(it.second);
+            if (isIn.at(pt_name)) {
+                auto sched = schedule.at(pt_name);
+                auto qp = card(its_range(sched, to_uset(isl_set_from_point(cpy(pt)))));
+                return int_lower_bound(qp) == 1;
+            }
+        }
+        assert(false);
+        return false;
+    }
+
     int num_dims() const {
       assert(access_map.size() > 0);
       auto maps =
@@ -1161,6 +1204,17 @@ std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
     out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
   }
 
+
+  out << "\t---- Input Bundles" << endl;
+  for (auto in_bundle : buf.get_in_bundles()) {
+    out << "\t\t" << in_bundle << endl;
+    auto ports = buf.port_bundles.at(in_bundle);
+    out << "\t\t---- Ports..." << endl;
+    for (auto p : ports) {
+      out << "\t\t\t" << p << endl;
+    }
+
+  }
   out << "\t---- Output Bundles" << endl;
   for (auto out_bundle : buf.get_out_bundles()) {
     out << "\t\t" << out_bundle << endl;
@@ -1169,12 +1223,6 @@ std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
     for (auto p : ports) {
       out << "\t\t\t" << p << endl;
     }
-
-    if (buf.get_in_ports().size() == 0) {
-      continue;
-    }
-
-    auto inpt = pick(buf.get_in_ports());
 
   }
   return out;
