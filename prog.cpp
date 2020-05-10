@@ -212,6 +212,7 @@ void ocl_check_args(std::ostream& out) {
 
   out << tab(1) << "std::string binaryFile = argv[1];" << endl << endl;
   out << tab(1) << "int num_epochs = 1;" << endl << endl;
+  out << tab(1) << "std::cout << \"num_epochs = \" << num_epochs << std::endl;" << endl << endl;
 }
 
 void ocl_timing_suffix(std::ostream& out) {
@@ -271,7 +272,7 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
     string edge_bundle = eb.second;
     string buf = eb.first;
 
-    out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = " << max_buf_size << ";" << endl;
+    out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = num_epochs*" << max_buf_size << ";" << endl;
     out << tab(1) << "const int " << edge_bundle << "_BYTES_PER_PIXEL = " << map_find(buf, buffers).bundle_lane_width(edge_bundle) << " / 8;" << endl;
     out << tab(1) << "size_t " << edge_bundle << "_size_bytes = " << edge_bundle << "_BYTES_PER_PIXEL * " << edge_bundle << "_DATA_SIZE;" << endl << endl;
     out << tab(1) << "total_size_bytes += " << edge_bundle << "_size_bytes;" << endl;

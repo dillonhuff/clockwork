@@ -15,13 +15,15 @@ int main(int argc, char **argv) {
 
   int num_epochs = 1;
 
+  std::cout << "num_epochs = " << num_epochs << std::endl;
+
   size_t total_size_bytes = 0;
-  const int img_update_0_read_DATA_SIZE = 2079604;
+  const int img_update_0_read_DATA_SIZE = num_epochs*2079604;
   const int img_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t img_update_0_read_size_bytes = img_update_0_read_BYTES_PER_PIXEL * img_update_0_read_DATA_SIZE;
 
   total_size_bytes += img_update_0_read_size_bytes;
-  const int sbl_1_update_0_write_DATA_SIZE = 2079604;
+  const int sbl_1_update_0_write_DATA_SIZE = num_epochs*2079604;
   const int sbl_1_update_0_write_BYTES_PER_PIXEL = 16 / 8;
   size_t sbl_1_update_0_write_size_bytes = sbl_1_update_0_write_BYTES_PER_PIXEL * sbl_1_update_0_write_DATA_SIZE;
 
