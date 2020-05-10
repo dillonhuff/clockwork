@@ -2,8 +2,10 @@
 #include <algorithm>
 #include <fstream>
 #include <vector>
+#include <cstdlib>
 
 int main(int argc, char **argv) {
+  srand(234);
   if (argc != 2) {
     std::cout << "Usage: " << argv[0] << " <XCLBIN File>" << std::endl;
     return EXIT_FAILURE;
@@ -37,7 +39,7 @@ int main(int argc, char **argv) {
 
   std::ofstream input_f_update_0_read("f_update_0_read.csv");
   for (int i = 0; i < f_update_0_read_DATA_SIZE; i++) {
-    uint16_t val = (i % 256);
+    uint16_t val = (srand() % 256);
     input_f_update_0_read << val << std::endl;
     ((uint16_t*) (f_update_0_read.data()))[i] = val;
   }
@@ -45,7 +47,7 @@ int main(int argc, char **argv) {
   input_f_update_0_read.close();
   std::ofstream input_u_update_0_read("u_update_0_read.csv");
   for (int i = 0; i < u_update_0_read_DATA_SIZE; i++) {
-    uint16_t val = (i % 256);
+    uint16_t val = (srand() % 256);
     input_u_update_0_read << val << std::endl;
     ((uint16_t*) (u_update_0_read.data()))[i] = val;
   }

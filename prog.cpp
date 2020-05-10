@@ -26,7 +26,8 @@ void ocl_headers(ostream& out) {
   out << "#include \"xcl2.hpp\"" << endl;
   out << "#include <algorithm>" << endl;
   out << "#include <fstream>" << endl;
-  out << "#include <vector>" << endl << endl;
+  out << "#include <vector>" << endl;
+  out << "#include <cstdlib>" << endl << endl;
 }
 
 vector<string>
@@ -202,6 +203,7 @@ void run_kernel(std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
 }
 
 void ocl_check_args(std::ostream& out) {
+  out << tab(1) << "srand(234);" << endl;
   out << tab(1) << "if (argc != 2) {" << endl;
   out << tab(2) << "std::cout << \"Usage: \" << argv[0] << \" <XCLBIN File>\" << std::endl;" << endl;
   out << tab(2) << "return EXIT_FAILURE;" << endl;
@@ -236,7 +238,7 @@ void populate_input(std::ostream& out, const std::string& edge_bundle, const str
 
   out << tab(1) << "std::ofstream input_" << edge_bundle << "(\"" << edge_bundle << ".csv\");" << endl;
   out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
-  out << tab(2) << tp << " val = (i % 256);" << endl;
+  out << tab(2) << tp << " val = (srand() % 256);" << endl;
   out << tab(2) << "input_" << edge_bundle << " << val << std::endl;" << endl;
   out << tab(2) << "((" << tp << "*) (" << edge_bundle << ".data()))[i] = val;" << endl;
   out << tab(1) << "}" << endl << endl;
@@ -439,6 +441,23 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
 
   out << "#include \"" << prg.name << ".h\"" << endl << endl;
 
+  for (auto eb : edge_buffers(buffers, prg)) {
+    string out_rep = eb.first;
+    string out_bundle = eb.second;
+
+    UBuffer out_buf = map_find(out_rep, buffers);
+    string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
+
+    int num_pixels = prg.buffer_size(out_rep);
+
+    int pix_per_burst =
+      out_buf.lanes_in_bundle(out_bundle);
+    int num_in_bursts = num_pixels / pix_per_burst;
+
+    out << "const int " << out_bundle << "_num_transfers = " << num_in_bursts << ";" << endl;
+  }
+  out << endl;
+
   string in_rep = pick(prg.ins);
   UBuffer& in_buf = buffers.at(in_rep);
   string in_bundle = pick(in_buf.port_bundles).first;
@@ -467,23 +486,29 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
 
   out << "extern \"C\" {" << endl << endl;
 
-  out << "static void read_input(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const int size) {" << endl;
-  out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
-  out << tab(1) << "for (int i = 0; i < INPUT_SIZE*size; i++) {" << endl;
-  out << tab(2) << "#pragma HLS pipeline II=1" << endl;
-  out << tab(2) << "burst_reg = input[i];" << endl;
-  out << tab(2) << "v.write(burst_reg);" << endl;
-  out << tab(1) << "}" << endl;
-  out << "}" << endl << endl;
+  for (auto in_bundle : in_bundles(buffers, prg)) {
+    out << "static void read_" << in_bundle << "(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const int size) {" << endl;
+    out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
+    //out << tab(1) << "for (int i = 0; i < INPUT_SIZE*size; i++) {" << endl;
+    out << tab(1) << "for (int i = 0; i < " << in_bundle << "_num_transfers*size; i++) {" << endl;
+    out << tab(2) << "#pragma HLS pipeline II=1" << endl;
+    out << tab(2) << "burst_reg = input[i];" << endl;
+    out << tab(2) << "v.write(burst_reg);" << endl;
+    out << tab(1) << "}" << endl;
+    out << "}" << endl << endl;
+  }
 
-  out << "static void write_output(" << out_bundle_tp << "* output, HWStream<" << out_bundle_tp << " >& v, const int size) {" << endl;
-  out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
-  out << tab(1) << "for (int i = 0; i < OUTPUT_SIZE*size; i++) {" << endl;
-  out << tab(2) << "#pragma HLS pipeline II=1" << endl;
-  out << tab(2) << "burst_reg = v.read();" << endl;
-  out << tab(2) << "output[i] = burst_reg;" << endl;
-  out << tab(1) << "}" << endl;
-  out << "}" << endl << endl;
+  for (auto out_bundle : out_bundles(buffers, prg)) {
+    out << "static void write_" << out_bundle << "(" << out_bundle_tp << "* output, HWStream<" << out_bundle_tp << " >& v, const int size) {" << endl;
+    out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
+    //out << tab(1) << "for (int i = 0; i < OUTPUT_SIZE*size; i++) {" << endl;
+    out << tab(1) << "for (int i = 0; i < " << out_bundle << "_num_transfers*size; i++) {" << endl;
+    out << tab(2) << "#pragma HLS pipeline II=1" << endl;
+    out << tab(2) << "burst_reg = v.read();" << endl;
+    out << tab(2) << "output[i] = burst_reg;" << endl;
+    out << tab(1) << "}" << endl;
+    out << "}" << endl << endl;
+  }
 
   cout << "Generating arg list" << endl;
   vector<string> ptr_args;
@@ -568,7 +593,8 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
     assert(buf.get_out_bundles().size() == 1);
     auto bundle = pick(buf.get_out_bundles());
 
-    out << tab(1) << "read_input(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
+    //out << tab(1) << "read_input(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
+    out << tab(1) << "read_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
   }
 
   out << endl << tab(1) << prg.name << "(" << comma_list(buffer_args) << ");" << endl << endl;
@@ -579,7 +605,8 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
     assert(buf.get_in_bundles().size() == 1);
     auto bundle = pick(buf.get_in_bundles());
 
-    out << tab(1) << "write_output(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
+    //out << tab(1) << "write_output(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
+    out << tab(1) << "write_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
   }
 
   out << "}" << endl << endl;
