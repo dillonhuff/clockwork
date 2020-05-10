@@ -1,0 +1,10 @@
+kernel: pw16n_opt
+unroll factor: 1
+burst width: 16
+
+input uint16: input(1920, *)
+
+output uint16: pw16n(0, 0) = (input(0, 0) + 1)
+
+
+iterate: 1

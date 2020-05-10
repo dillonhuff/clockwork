@@ -6115,7 +6115,7 @@ App pointwise_add(const std::string output_name) {
   jac.set_default_pixel_width(16);
   jac.func2d("input_arg");
   jac.func2d("input", v("input_arg"));
-  jac.func2d(output_name, sub(v("input"), 1));
+  jac.func2d(output_name, add(v("input"), 1));
   return jac;
 }
 
@@ -6431,12 +6431,12 @@ void blur_xy_16_app_test() {
 }
 
 void pointwise_app_test() {
-  int cols = 300;
-  int rows = 300;
+  int cols = 1920;
+  int rows = 1080;
 
   cout << "pointwise math" << endl;
   int unroll_factor = 1;
-  string out_name = "pw16";
+  string out_name = "pw16n";
   pointwise_add(out_name).realize(out_name, cols, rows, unroll_factor);
   move_to_benchmarks_folder(out_name + "_opt");
 }
@@ -7445,8 +7445,10 @@ void playground() {
 }
 
 void application_tests() {
-  sobel_16_app_test();
+  pointwise_app_test();
   assert(false);
+
+  sobel_16_app_test();
   denoise3d_test();
   harris_test();
   harris16_test();
@@ -7455,7 +7457,6 @@ void application_tests() {
 
   halide_frontend_test();
 
-  pointwise_app_test();
   //assert(false);
 
   ram_addr_unit_test();
