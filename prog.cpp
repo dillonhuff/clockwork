@@ -174,6 +174,7 @@ void ocl_program_device(ostream& out, prog& prg, const std::string& suffix) {
 }
 
 void run_kernel(std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
+  out << tab(1) << "std::cout << \"Starting kernel\" << std::endl;" << endl;
   vector<string> in_bufs;
   for (auto b : in_bundles(buffers, prg)) {
     in_bufs.push_back(b + "_ocl_buf");
@@ -317,6 +318,8 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
 
   run_kernel(out, buffers, prg);
 
+  ocl_timing_suffix(out);
+
   for (auto output : outputs(buffers, prg)) {
     auto buf = output.first;
     auto out_bundle = output.second;
@@ -333,7 +336,6 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
   /*}*/
   out << endl;
 
-  ocl_timing_suffix(out);
 
   out << tab(1) << "return 0;" << endl;
   out << "}" << endl;
@@ -417,6 +419,8 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
 
   run_kernel(out, buffers, prg);
 
+  ocl_timing_suffix(out);
+
   for (auto output : outputs(buffers, prg)) {
     auto buf = output.first;
     auto out_bundle = output.second;
@@ -427,7 +431,6 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   }
   out << endl;
 
-  ocl_timing_suffix(out);
   out << tab(1) << "return 0;" << endl;
   out << "}" << endl;
 
