@@ -504,7 +504,7 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
 
   for (auto out_bundle : out_bundles(buffers, prg)) {
     out << "static void write_" << out_bundle << "(" << out_bundle_tp << "* output, HWStream<" << out_bundle_tp << " >& v, const int size) {" << endl;
-    out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
+    out << tab(1) << out_bundle_tp << " burst_reg;" << endl;
     //out << tab(1) << "for (int i = 0; i < OUTPUT_SIZE*size; i++) {" << endl;
     out << tab(1) << "for (int i = 0; i < " << out_bundle << "_num_transfers*size; i++) {" << endl;
     out << tab(2) << "#pragma HLS pipeline II=1" << endl;
