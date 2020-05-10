@@ -3902,22 +3902,26 @@ void bxy_ur_16_opt(HWStream<hw_uint<256> >& /* get_args num ports = 16 */input_a
 #ifdef __VIVADO_SYNTH__
 #include "bxy_ur_16_opt.h"
 
+const int bxy_ur_16_update_0_write_num_transfers = 129600;
+const int input_update_0_read_num_transfers = 130922;
+
+// TODO: Adapt to have one size for each edge buffer
 #define INPUT_SIZE 130922
 #define OUTPUT_SIZE 129600
 extern "C" {
 
-static void read_input(hw_uint<256>* input, HWStream<hw_uint<256> >& v, const int size) {
+static void read_input_update_0_read(hw_uint<256>* input, HWStream<hw_uint<256> >& v, const int size) {
   hw_uint<256> burst_reg;
-  for (int i = 0; i < INPUT_SIZE*size; i++) {
+  for (int i = 0; i < input_update_0_read_num_transfers*size; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
   }
 }
 
-static void write_output(hw_uint<256>* output, HWStream<hw_uint<256> >& v, const int size) {
+static void write_bxy_ur_16_update_0_write(hw_uint<256>* output, HWStream<hw_uint<256> >& v, const int size) {
   hw_uint<256> burst_reg;
-  for (int i = 0; i < OUTPUT_SIZE*size; i++) {
+  for (int i = 0; i < bxy_ur_16_update_0_write_num_transfers*size; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;
@@ -3937,11 +3941,11 @@ void bxy_ur_16_opt_accel(hw_uint<256>* input_update_0_read, hw_uint<256>* bxy_ur
   static HWStream<hw_uint<256> > input_update_0_read_channel;
   static HWStream<hw_uint<256> > bxy_ur_16_update_0_write_channel;
 
-  read_input(input_update_0_read, input_update_0_read_channel, size);
+  read_input_update_0_read(input_update_0_read, input_update_0_read_channel, size);
 
   bxy_ur_16_opt(input_update_0_read_channel, bxy_ur_16_update_0_write_channel, size);
 
-  write_output(bxy_ur_16_update_0_write, bxy_ur_16_update_0_write_channel, size);
+  write_bxy_ur_16_update_0_write(bxy_ur_16_update_0_write, bxy_ur_16_update_0_write_channel, size);
 }
 
 }

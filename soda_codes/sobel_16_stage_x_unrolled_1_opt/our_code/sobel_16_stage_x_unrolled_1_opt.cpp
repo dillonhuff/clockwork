@@ -311,7 +311,7 @@ inline void sobel_16_stage_x_unrolled_1_update_0(img_cache& img, HWStream<hw_uin
 }
 
 // Driver function
-void sobel_16_stage_x_unrolled_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */off_chip_img, HWStream<hw_uint<16> >& /* get_args num ports = 1 */sobel_16_stage_x_unrolled_1, uint64_t num_epochs) {
+void sobel_16_stage_x_unrolled_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */off_chip_img, HWStream<hw_uint<16> >& /* get_args num ports = 1 */sobel_16_stage_x_unrolled_1, int num_epochs) {
 
 #ifndef __VIVADO_SYNTH__
   ofstream debug_file("sobel_16_stage_x_unrolled_1_opt_debug.csv");
@@ -324,7 +324,7 @@ void sobel_16_stage_x_unrolled_1_opt(HWStream<hw_uint<16> >& /* get_args num por
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-  for (uint64_t epoch = 0; epoch < num_epochs; epoch++) {
+  for (int epoch = 0; epoch < num_epochs; epoch++) {
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
@@ -361,22 +361,26 @@ void sobel_16_stage_x_unrolled_1_opt(HWStream<hw_uint<16> >& /* get_args num por
 #ifdef __VIVADO_SYNTH__
 #include "sobel_16_stage_x_unrolled_1_opt.h"
 
+const int img_update_0_read_num_transfers = 1024;
+const int sobel_16_stage_x_unrolled_1_update_0_write_num_transfers = 900;
+
+// TODO: Adapt to have one size for each edge buffer
 #define INPUT_SIZE 1024
 #define OUTPUT_SIZE 900
 extern "C" {
 
-static void read_input(hw_uint<16>* input, HWStream<hw_uint<16> >& v, const int size) {
+static void read_img_update_0_read(hw_uint<16>* input, HWStream<hw_uint<16> >& v, const int size) {
   hw_uint<16> burst_reg;
-  for (int i = 0; i < INPUT_SIZE; i++) {
+  for (int i = 0; i < img_update_0_read_num_transfers*size; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
   }
 }
 
-static void write_output(hw_uint<16>* output, HWStream<hw_uint<16> >& v, const int size) {
+static void write_sobel_16_stage_x_unrolled_1_update_0_write(hw_uint<16>* output, HWStream<hw_uint<16> >& v, const int size) {
   hw_uint<16> burst_reg;
-  for (int i = 0; i < OUTPUT_SIZE; i++) {
+  for (int i = 0; i < sobel_16_stage_x_unrolled_1_update_0_write_num_transfers*size; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;
@@ -396,11 +400,11 @@ void sobel_16_stage_x_unrolled_1_opt_accel(hw_uint<16>* img_update_0_read, hw_ui
   static HWStream<hw_uint<16> > img_update_0_read_channel;
   static HWStream<hw_uint<16> > sobel_16_stage_x_unrolled_1_update_0_write_channel;
 
-  read_input(img_update_0_read, img_update_0_read_channel, size);
+  read_img_update_0_read(img_update_0_read, img_update_0_read_channel, size);
 
-  sobel_16_stage_x_unrolled_1_opt(img_update_0_read_channel, sobel_16_stage_x_unrolled_1_update_0_write_channel);
+  sobel_16_stage_x_unrolled_1_opt(img_update_0_read_channel, sobel_16_stage_x_unrolled_1_update_0_write_channel, size);
 
-  write_output(sobel_16_stage_x_unrolled_1_update_0_write, sobel_16_stage_x_unrolled_1_update_0_write_channel, size);
+  write_sobel_16_stage_x_unrolled_1_update_0_write(sobel_16_stage_x_unrolled_1_update_0_write, sobel_16_stage_x_unrolled_1_update_0_write_channel, size);
 }
 
 }

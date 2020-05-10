@@ -911,7 +911,7 @@ inline void sum_diffs_update_0(magval_cache& magval, f_cache& f, HWStream<hw_uin
 }
 
 // Driver function
-void sum_diffs_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */u_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */sum_diffs, uint64_t num_epochs) {
+void sum_diffs_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */u_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */sum_diffs, int num_epochs) {
 
 #ifndef __VIVADO_SYNTH__
   ofstream debug_file("sum_diffs_opt_debug.csv");
@@ -942,7 +942,7 @@ void sum_diffs_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chi
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-  for (uint64_t epoch = 0; epoch < num_epochs; epoch++) {
+  for (int epoch = 0; epoch < num_epochs; epoch++) {
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
@@ -1003,22 +1003,36 @@ void sum_diffs_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chi
 #ifdef __VIVADO_SYNTH__
 #include "sum_diffs_opt.h"
 
+const int f_update_0_read_num_transfers = 900;
+const int sum_diffs_update_0_write_num_transfers = 900;
+const int u_update_0_read_num_transfers = 1024;
+
+// TODO: Adapt to have one size for each edge buffer
 #define INPUT_SIZE 900
 #define OUTPUT_SIZE 900
 extern "C" {
 
-static void read_input(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
+static void read_f_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < INPUT_SIZE; i++) {
+  for (int i = 0; i < f_update_0_read_num_transfers*size; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
   }
 }
 
-static void write_output(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
+static void read_u_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < OUTPUT_SIZE; i++) {
+  for (int i = 0; i < u_update_0_read_num_transfers*size; i++) {
+    #pragma HLS pipeline II=1
+    burst_reg = input[i];
+    v.write(burst_reg);
+  }
+}
+
+static void write_sum_diffs_update_0_write(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
+  hw_uint<32> burst_reg;
+  for (int i = 0; i < sum_diffs_update_0_write_num_transfers*size; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;
@@ -1041,12 +1055,12 @@ void sum_diffs_opt_accel(hw_uint<32>* f_update_0_read, hw_uint<32>* u_update_0_r
   static HWStream<hw_uint<32> > u_update_0_read_channel;
   static HWStream<hw_uint<32> > sum_diffs_update_0_write_channel;
 
-  read_input(f_update_0_read, f_update_0_read_channel, size);
-  read_input(u_update_0_read, u_update_0_read_channel, size);
+  read_f_update_0_read(f_update_0_read, f_update_0_read_channel, size);
+  read_u_update_0_read(u_update_0_read, u_update_0_read_channel, size);
 
-  sum_diffs_opt(f_update_0_read_channel, u_update_0_read_channel, sum_diffs_update_0_write_channel);
+  sum_diffs_opt(f_update_0_read_channel, u_update_0_read_channel, sum_diffs_update_0_write_channel, size);
 
-  write_output(sum_diffs_update_0_write, sum_diffs_update_0_write_channel, size);
+  write_sum_diffs_update_0_write(sum_diffs_update_0_write, sum_diffs_update_0_write_channel, size);
 }
 
 }

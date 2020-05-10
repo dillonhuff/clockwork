@@ -5715,7 +5715,7 @@ void denoise3d_test() {
   assert(naive == optimized);
   move_to_benchmarks_folder("dn3d_mini_opt");
 
-  assert(false);
+  //assert(false);
 
   int rows = 32;
   int cols = 32;
@@ -5744,9 +5744,9 @@ void max_pooling_test() {
   Window max_win{"in", {qconst(2), qconst(2), qconst(1)}, {{0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {1, 1, 0}}};
   mp.func3d("max_pool", "max_pool_2x2", {max_win});
 
-  int W = 10;
-  int H = 10;
-  int D = 3;
+  int W = 64;
+  int H = 64;
+  int D = 32;
 
   {
     CodegenOptions options;
@@ -5754,23 +5754,25 @@ void max_pooling_test() {
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
 
-    mp.realize(options, "max_pool", {H, W, D}, 1);
+    mp.realize(options, "max_pool", {H, W, D}, 16);
   }
 
-  CodegenOptions options;
-  options.internal = true;
-  options.all_rams = true;
-  options.unroll_factors_as_pad = true;
-  mp.realize_naive(options, "max_pool", {H, W, D});
+  //CodegenOptions options;
+  //options.internal = true;
+  //options.all_rams = true;
+  //options.unroll_factors_as_pad = true;
+  //mp.realize_naive(options, "max_pool", {H, W, D});
 
-  std::vector<std::string> naive =
-    run_regression_tb("max_pool_opt");
-  std::vector<std::string> optimized =
-    run_regression_tb("max_pool_naive");
-  assert(naive == optimized);
+  //std::vector<std::string> naive =
+    //run_regression_tb("max_pool_opt");
+  //std::vector<std::string> optimized =
+    //run_regression_tb("max_pool_naive");
+  //assert(naive == optimized);
+  
+  move_to_benchmarks_folder("max_pool_opt");
 }
 
-void exposure_fusion() {
+App exposure_fusion_app(const std::string& out_name) {
   App lp;
   // The off chip input we are reading from
   lp.func2d("in_off_chip");
@@ -5821,6 +5823,12 @@ void exposure_fusion() {
 
   lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
 
+  return lp;
+}
+
+void exposure_fusion() {
+
+  App lp = exposure_fusion_app("pyramid_synthetic_exposure_fusion");
   int size =
     64;
     //1250;
@@ -6006,7 +6014,6 @@ void gaussian_pyramid_app_test() {
   //cout << "Optimized: " << optimized << endl;
   assert(naive == optimized);
 
-  //assert(false);
 }
 
 App sobel_mag_x() {
@@ -6250,7 +6257,6 @@ void upsample_stencil_2d_test() {
   }
 
   assert(optimized == naive);
-  //assert(false);
 }
 
 void grayscale_conversion_test() {
@@ -6304,7 +6310,6 @@ void upsample_stencil_1d_test() {
   }
 
   assert(optimized == naive);
-  //assert(false);
 }
 
 void sobel_mag_y_test() {
@@ -6510,7 +6515,6 @@ void jacobi2d_app_test() {
     system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
   }
 
-  //assert(false);
 }
 
 void sum_diffs_test() {
@@ -6541,7 +6545,6 @@ void sum_diffs_test() {
       run_regression_tb(out_name + "_opt");
 
   move_to_benchmarks_folder(out_name);
-  //assert(false);
 }
 
 void dummy_app_test() {
@@ -6694,7 +6697,6 @@ void sum_float_test() {
       run_regression_tb(out_name + "_opt");
 
   move_to_benchmarks_folder(out_name);
-  //assert(false);
 }
 
 void sum_denoise_test() {
@@ -6711,7 +6713,6 @@ void sum_denoise_test() {
       run_regression_tb("sum_denoise2d_opt");
 
   move_to_benchmarks_folder("sum_denoise2d");
-  //assert(false);
 }
 
 void denoise2d_test() {
@@ -6925,7 +6926,6 @@ void blur_x_test() {
     add_op({out_name, "d0, d1"}, "blur_3", lds);
 
   regression_test(prg);
-  //assert(false);
 }
 
 void pointwise_test() {
@@ -7050,7 +7050,6 @@ void soda_blur_test() {
   //}
 
   regression_test(prg);
-  //assert(false);
 }
 
 void conv_2d_rolled_test() {
@@ -7237,7 +7236,6 @@ void upsample_reduce_test() {
     auto next_op = lexmin(lex_lt(s.second, s.second));
     cout << "next op: " << str(next_op) << endl;
   }
-  //assert(false);
 
   prog pcpy = duplicate_interface(prg);
   for (auto c : prg.all_loops()) {
@@ -7249,7 +7247,6 @@ void upsample_reduce_test() {
   cout << "Copy..." << endl;
   pcpy.pretty_print();
 
-  //assert(false);
 }
 
 void blur_and_downsample_test() {
@@ -7336,7 +7333,6 @@ void playground() {
     }
     cout << endl;
   }
-  //assert(false);
 
   //cout << "Program code without optimization..." << endl;
   //prg.unoptimized_codegen();
@@ -7371,7 +7367,6 @@ void playground() {
   //clockwork_schedule(dom, validity, proximity);
   ////experimental_opt(dom, validity, proximity);
 
-  ////assert(false);
 
   //isl_aff* zero = rdaff(ct, "{ [a, b] -> [0] }");
   //isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor(a/2) + 3] }");
@@ -7424,7 +7419,6 @@ void playground() {
     //cout << endl;
   //}
 
-  //assert(false);
 
   //auto prev = rdaff(ct, "{ [x] -> [floor(x / 2)] }");
   //auto next = rdaff(ct, "{ [x] -> [floor((x + 1) / 2)] }");
@@ -7441,19 +7435,19 @@ void playground() {
   ////isl_mat* matrix = aff->ls->div;
   //isl_ctx_free(ct);
 
-  //assert(false);
 }
 
 void application_tests() {
-  pointwise_app_test();
+  max_pooling_test();
   assert(false);
+  exposure_fusion();
+  pointwise_app_test();
 
   sobel_16_app_test();
   denoise3d_test();
   harris_test();
   harris16_test();
   blur_xy_16_app_test();
-
 
   halide_frontend_test();
 
@@ -7488,9 +7482,7 @@ void application_tests() {
   
   updown_merge_test();
   harris_unrolled_test();
-  exposure_fusion();
 
-  max_pooling_test();
   mismatched_stencil_test();
   cnn_test();
 

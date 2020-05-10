@@ -301,27 +301,6 @@ inline void input_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 
 
 }
 
-inline void bxy_ur_1_update_0(blurx_cache& blurx, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */bxy_ur_1, int d0, int d1) {
-	// Consume: blurx
-	auto blurx_0_c__0_value = blurx_bxy_ur_1_update_0_read_bundle_read(blurx/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bxy_ur_1_update_0_blurx," << d0<< "," << d1<< "," <<  blurx_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = bxy_ur_1_generated_compute_unrolled_1(blurx_0_c__0_value);
-	// Produce: bxy_ur_1
-	bxy_ur_1.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "bxy_ur_1_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void blurx_update_0(input_cache& input, blurx_cache& blurx, int d0, int d1) {
 	// Consume: input
 	auto input_0_c__0_value = input_blurx_update_0_read_bundle_read(input/* source_delay */, d0, d1);
@@ -339,6 +318,27 @@ inline void blurx_update_0(input_cache& input, blurx_cache& blurx, int d0, int d
   hw_uint<16> debug_compute_result_lane_0;
   set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
   *global_debug_handle << "blurx_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bxy_ur_1_update_0(blurx_cache& blurx, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */bxy_ur_1, int d0, int d1) {
+	// Consume: blurx
+	auto blurx_0_c__0_value = blurx_bxy_ur_1_update_0_read_bundle_read(blurx/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "bxy_ur_1_update_0_blurx," << d0<< "," << d1<< "," <<  blurx_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = bxy_ur_1_generated_compute_unrolled_1(blurx_0_c__0_value);
+	// Produce: bxy_ur_1
+	bxy_ur_1.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<16> debug_compute_result(compute_result);
+  hw_uint<16> debug_compute_result_lane_0;
+  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
+  *global_debug_handle << "bxy_ur_1_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -401,22 +401,26 @@ void bxy_ur_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */input_arg,
 #ifdef __VIVADO_SYNTH__
 #include "bxy_ur_1_opt.h"
 
+const int bxy_ur_1_update_0_write_num_transfers = 2073600;
+const int input_update_0_read_num_transfers = 2079604;
+
+// TODO: Adapt to have one size for each edge buffer
 #define INPUT_SIZE 2079604
 #define OUTPUT_SIZE 2073600
 extern "C" {
 
-static void read_input(hw_uint<16>* input, HWStream<hw_uint<16> >& v, const int size) {
+static void read_input_update_0_read(hw_uint<16>* input, HWStream<hw_uint<16> >& v, const int size) {
   hw_uint<16> burst_reg;
-  for (int i = 0; i < INPUT_SIZE*size; i++) {
+  for (int i = 0; i < input_update_0_read_num_transfers*size; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
   }
 }
 
-static void write_output(hw_uint<16>* output, HWStream<hw_uint<16> >& v, const int size) {
+static void write_bxy_ur_1_update_0_write(hw_uint<16>* output, HWStream<hw_uint<16> >& v, const int size) {
   hw_uint<16> burst_reg;
-  for (int i = 0; i < OUTPUT_SIZE*size; i++) {
+  for (int i = 0; i < bxy_ur_1_update_0_write_num_transfers*size; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;
@@ -436,11 +440,11 @@ void bxy_ur_1_opt_accel(hw_uint<16>* input_update_0_read, hw_uint<16>* bxy_ur_1_
   static HWStream<hw_uint<16> > input_update_0_read_channel;
   static HWStream<hw_uint<16> > bxy_ur_1_update_0_write_channel;
 
-  read_input(input_update_0_read, input_update_0_read_channel, size);
+  read_input_update_0_read(input_update_0_read, input_update_0_read_channel, size);
 
   bxy_ur_1_opt(input_update_0_read_channel, bxy_ur_1_update_0_write_channel, size);
 
-  write_output(bxy_ur_1_update_0_write, bxy_ur_1_update_0_write_channel, size);
+  write_bxy_ur_1_update_0_write(bxy_ur_1_update_0_write, bxy_ur_1_update_0_write_channel, size);
 }
 
 }

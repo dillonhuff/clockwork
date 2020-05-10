@@ -1169,22 +1169,6 @@ inline void u_u_update_0_write_bundle_write(hw_uint<32>& u_update_0_write, u_cac
 
 
 // Operation logic
-inline void f_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */f_off_chip, f_cache& f, int d0, int d1) {
-	// Consume: f_off_chip
-	auto f_off_chip_0_c__0_value = f_off_chip.read();
-	auto compute_result = f_generated_compute_unrolled_1(f_off_chip_0_c__0_value);
-	// Produce: f
-	f_f_update_0_write_bundle_write(compute_result, f, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "f_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void u_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_off_chip, u_cache& u, int d0, int d1) {
 	// Consume: u_off_chip
 	auto u_off_chip_0_c__0_value = u_off_chip.read();
@@ -1418,8 +1402,24 @@ inline void denoise2d_update_0(r1_cache& r1, f_cache& f, u_cache& u, g_cache& g,
 
 }
 
+inline void f_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */f_off_chip, f_cache& f, int d0, int d1) {
+	// Consume: f_off_chip
+	auto f_off_chip_0_c__0_value = f_off_chip.read();
+	auto compute_result = f_generated_compute_unrolled_1(f_off_chip_0_c__0_value);
+	// Produce: f
+	f_f_update_0_write_bundle_write(compute_result, f, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<32> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  *global_debug_handle << "f_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
 // Driver function
-void denoise2d_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */u_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */denoise2d, uint64_t num_epochs) {
+void denoise2d_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */u_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */denoise2d, int num_epochs) {
 
 #ifndef __VIVADO_SYNTH__
   ofstream debug_file("denoise2d_opt_debug.csv");
@@ -1456,7 +1456,7 @@ void denoise2d_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chi
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-  for (uint64_t epoch = 0; epoch < num_epochs; epoch++) {
+  for (int epoch = 0; epoch < num_epochs; epoch++) {
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
@@ -1525,22 +1525,36 @@ void denoise2d_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chi
 #ifdef __VIVADO_SYNTH__
 #include "denoise2d_opt.h"
 
+const int denoise2d_update_0_write_num_transfers = 900;
+const int f_update_0_read_num_transfers = 900;
+const int u_update_0_read_num_transfers = 1156;
+
+// TODO: Adapt to have one size for each edge buffer
 #define INPUT_SIZE 900
 #define OUTPUT_SIZE 900
 extern "C" {
 
-static void read_input(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
+static void read_f_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < INPUT_SIZE; i++) {
+  for (int i = 0; i < f_update_0_read_num_transfers*size; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
   }
 }
 
-static void write_output(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
+static void read_u_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < OUTPUT_SIZE; i++) {
+  for (int i = 0; i < u_update_0_read_num_transfers*size; i++) {
+    #pragma HLS pipeline II=1
+    burst_reg = input[i];
+    v.write(burst_reg);
+  }
+}
+
+static void write_denoise2d_update_0_write(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
+  hw_uint<32> burst_reg;
+  for (int i = 0; i < denoise2d_update_0_write_num_transfers*size; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;
@@ -1563,12 +1577,12 @@ void denoise2d_opt_accel(hw_uint<32>* f_update_0_read, hw_uint<32>* u_update_0_r
   static HWStream<hw_uint<32> > u_update_0_read_channel;
   static HWStream<hw_uint<32> > denoise2d_update_0_write_channel;
 
-  read_input(f_update_0_read, f_update_0_read_channel, size);
-  read_input(u_update_0_read, u_update_0_read_channel, size);
+  read_f_update_0_read(f_update_0_read, f_update_0_read_channel, size);
+  read_u_update_0_read(u_update_0_read, u_update_0_read_channel, size);
 
-  denoise2d_opt(f_update_0_read_channel, u_update_0_read_channel, denoise2d_update_0_write_channel);
+  denoise2d_opt(f_update_0_read_channel, u_update_0_read_channel, denoise2d_update_0_write_channel, size);
 
-  write_output(denoise2d_update_0_write, denoise2d_update_0_write_channel, size);
+  write_denoise2d_update_0_write(denoise2d_update_0_write, denoise2d_update_0_write_channel, size);
 }
 
 }

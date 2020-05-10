@@ -462,7 +462,7 @@ inline void upsample_stencil_update_0(Img_cache& Img, HWStream<hw_uint<32> >& /*
 }
 
 // Driver function
-void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Img_off, HWStream<hw_uint<32> >& /* get_args num ports = 1 */upsample_stencil, uint64_t num_epochs) {
+void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Img_off, HWStream<hw_uint<32> >& /* get_args num ports = 1 */upsample_stencil, int num_epochs) {
 
 #ifndef __VIVADO_SYNTH__
   ofstream debug_file("upsample_stencil_opt_debug.csv");
@@ -475,7 +475,7 @@ void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Im
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-  for (uint64_t epoch = 0; epoch < num_epochs; epoch++) {
+  for (int epoch = 0; epoch < num_epochs; epoch++) {
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
@@ -512,22 +512,26 @@ void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Im
 #ifdef __VIVADO_SYNTH__
 #include "upsample_stencil_opt.h"
 
+const int Img_update_0_read_num_transfers = 324;
+const int upsample_stencil_update_0_write_num_transfers = 1024;
+
+// TODO: Adapt to have one size for each edge buffer
 #define INPUT_SIZE 324
 #define OUTPUT_SIZE 1024
 extern "C" {
 
-static void read_input(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
+static void read_Img_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < INPUT_SIZE; i++) {
+  for (int i = 0; i < Img_update_0_read_num_transfers*size; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
   }
 }
 
-static void write_output(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
+static void write_upsample_stencil_update_0_write(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < OUTPUT_SIZE; i++) {
+  for (int i = 0; i < upsample_stencil_update_0_write_num_transfers*size; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;
@@ -547,11 +551,11 @@ void upsample_stencil_opt_accel(hw_uint<32>* Img_update_0_read, hw_uint<32>* ups
   static HWStream<hw_uint<32> > Img_update_0_read_channel;
   static HWStream<hw_uint<32> > upsample_stencil_update_0_write_channel;
 
-  read_input(Img_update_0_read, Img_update_0_read_channel, size);
+  read_Img_update_0_read(Img_update_0_read, Img_update_0_read_channel, size);
 
-  upsample_stencil_opt(Img_update_0_read_channel, upsample_stencil_update_0_write_channel);
+  upsample_stencil_opt(Img_update_0_read_channel, upsample_stencil_update_0_write_channel, size);
 
-  write_output(upsample_stencil_update_0_write, upsample_stencil_update_0_write_channel, size);
+  write_upsample_stencil_update_0_write(upsample_stencil_update_0_write, upsample_stencil_update_0_write_channel, size);
 }
 
 }

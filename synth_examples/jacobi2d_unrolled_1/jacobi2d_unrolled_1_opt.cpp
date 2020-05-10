@@ -264,7 +264,7 @@ inline void jacobi2d_unrolled_1_update_0(t1_cache& t1, HWStream<hw_uint<32> >& /
 }
 
 // Driver function
-void jacobi2d_unrolled_1_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */t1_arg, HWStream<hw_uint<32> >& /* get_args num ports = 1 */jacobi2d_unrolled_1, uint64_t num_epochs) {
+void jacobi2d_unrolled_1_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */t1_arg, HWStream<hw_uint<32> >& /* get_args num ports = 1 */jacobi2d_unrolled_1, int num_epochs) {
 
 #ifndef __VIVADO_SYNTH__
   ofstream debug_file("jacobi2d_unrolled_1_opt_debug.csv");
@@ -277,7 +277,7 @@ void jacobi2d_unrolled_1_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 *
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-  for (uint64_t epoch = 0; epoch < num_epochs; epoch++) {
+  for (int epoch = 0; epoch < num_epochs; epoch++) {
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
@@ -314,22 +314,26 @@ void jacobi2d_unrolled_1_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 *
 #ifdef __VIVADO_SYNTH__
 #include "jacobi2d_unrolled_1_opt.h"
 
+const int jacobi2d_unrolled_1_update_0_write_num_transfers = 256;
+const int t1_update_0_read_num_transfers = 324;
+
+// TODO: Adapt to have one size for each edge buffer
 #define INPUT_SIZE 324
 #define OUTPUT_SIZE 256
 extern "C" {
 
-static void read_input(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
+static void read_t1_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < INPUT_SIZE; i++) {
+  for (int i = 0; i < t1_update_0_read_num_transfers*size; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
   }
 }
 
-static void write_output(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
+static void write_jacobi2d_unrolled_1_update_0_write(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < OUTPUT_SIZE; i++) {
+  for (int i = 0; i < jacobi2d_unrolled_1_update_0_write_num_transfers*size; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;
@@ -349,11 +353,11 @@ void jacobi2d_unrolled_1_opt_accel(hw_uint<32>* t1_update_0_read, hw_uint<32>* j
   static HWStream<hw_uint<32> > t1_update_0_read_channel;
   static HWStream<hw_uint<32> > jacobi2d_unrolled_1_update_0_write_channel;
 
-  read_input(t1_update_0_read, t1_update_0_read_channel, size);
+  read_t1_update_0_read(t1_update_0_read, t1_update_0_read_channel, size);
 
-  jacobi2d_unrolled_1_opt(t1_update_0_read_channel, jacobi2d_unrolled_1_update_0_write_channel);
+  jacobi2d_unrolled_1_opt(t1_update_0_read_channel, jacobi2d_unrolled_1_update_0_write_channel, size);
 
-  write_output(jacobi2d_unrolled_1_update_0_write, jacobi2d_unrolled_1_update_0_write_channel, size);
+  write_jacobi2d_unrolled_1_update_0_write(jacobi2d_unrolled_1_update_0_write, jacobi2d_unrolled_1_update_0_write_channel, size);
 }
 
 }

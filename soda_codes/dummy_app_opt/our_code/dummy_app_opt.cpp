@@ -119,6 +119,22 @@ inline void u_u_update_0_write_bundle_write(hw_uint<32>& u_update_0_write, u_cac
 
 
 // Operation logic
+inline void u_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_off_chip, u_cache& u, int d0, int d1) {
+	// Consume: u_off_chip
+	auto u_off_chip_0_c__0_value = u_off_chip.read();
+	auto compute_result = id_unrolled_1(u_off_chip_0_c__0_value);
+	// Produce: u
+	u_u_update_0_write_bundle_write(compute_result, u, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<32> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  *global_debug_handle << "u_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void dummy_app_update_0(u_cache& u, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */dummy_app, int d0, int d1) {
 	// Consume: u
 	auto u_0_c__0_value = u_dummy_app_update_0_read_bundle_read(u/* source_delay */, d0, d1);
@@ -140,24 +156,8 @@ inline void dummy_app_update_0(u_cache& u, HWStream<hw_uint<32> >& /* buffer_arg
 
 }
 
-inline void u_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_off_chip, u_cache& u, int d0, int d1) {
-	// Consume: u_off_chip
-	auto u_off_chip_0_c__0_value = u_off_chip.read();
-	auto compute_result = id_unrolled_1(u_off_chip_0_c__0_value);
-	// Produce: u
-	u_u_update_0_write_bundle_write(compute_result, u, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "u_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
 // Driver function
-void dummy_app_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */u_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */dummy_app, uint64_t num_epochs) {
+void dummy_app_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */u_off_chip, HWStream<hw_uint<32> >& /* get_args num ports = 1 */dummy_app, int num_epochs) {
 
 #ifndef __VIVADO_SYNTH__
   ofstream debug_file("dummy_app_opt_debug.csv");
@@ -170,7 +170,7 @@ void dummy_app_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */u_off_chi
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-  for (uint64_t epoch = 0; epoch < num_epochs; epoch++) {
+  for (int epoch = 0; epoch < num_epochs; epoch++) {
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
@@ -207,22 +207,26 @@ void dummy_app_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */u_off_chi
 #ifdef __VIVADO_SYNTH__
 #include "dummy_app_opt.h"
 
+const int dummy_app_update_0_write_num_transfers = 900;
+const int u_update_0_read_num_transfers = 930;
+
+// TODO: Adapt to have one size for each edge buffer
 #define INPUT_SIZE 930
 #define OUTPUT_SIZE 900
 extern "C" {
 
-static void read_input(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
+static void read_u_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < INPUT_SIZE; i++) {
+  for (int i = 0; i < u_update_0_read_num_transfers*size; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
   }
 }
 
-static void write_output(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
+static void write_dummy_app_update_0_write(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < OUTPUT_SIZE; i++) {
+  for (int i = 0; i < dummy_app_update_0_write_num_transfers*size; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;
@@ -242,11 +246,11 @@ void dummy_app_opt_accel(hw_uint<32>* u_update_0_read, hw_uint<32>* dummy_app_up
   static HWStream<hw_uint<32> > u_update_0_read_channel;
   static HWStream<hw_uint<32> > dummy_app_update_0_write_channel;
 
-  read_input(u_update_0_read, u_update_0_read_channel, size);
+  read_u_update_0_read(u_update_0_read, u_update_0_read_channel, size);
 
-  dummy_app_opt(u_update_0_read_channel, dummy_app_update_0_write_channel);
+  dummy_app_opt(u_update_0_read_channel, dummy_app_update_0_write_channel, size);
 
-  write_output(dummy_app_update_0_write, dummy_app_update_0_write_channel, size);
+  write_dummy_app_update_0_write(dummy_app_update_0_write, dummy_app_update_0_write_channel, size);
 }
 
 }

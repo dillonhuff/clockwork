@@ -1,0 +1,10 @@
+kernel: max_pool_opt
+unroll factor: 32
+burst width: 1024
+
+input uint32: in(128, 128, *)
+
+output uint32: max_pool(0, 0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+
+iterate: 1
