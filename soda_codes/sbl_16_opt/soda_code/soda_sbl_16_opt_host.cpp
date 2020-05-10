@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
 
   std::ofstream input_img_update_0_read("img_update_0_read.csv");
   for (int i = 0; i < img_update_0_read_DATA_SIZE; i++) {
-    uint16_t val = (srand() % 256);
+    uint16_t val = (rand() % 256);
     input_img_update_0_read << val << std::endl;
     ((uint16_t*) (img_update_0_read.data()))[i] = val;
   }
