@@ -880,15 +880,16 @@ void bankmerge_vec_test() {
     buffers_opt[buf.name] = buf;
   }
   buffers_opt.erase("buf");
-  buffers_opt.erase("in");
-  buffers_opt.erase("out");
   buffer_vectorization("buf1", 1, 4, buffers_opt);
   auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
   cout << codegen_c(opt_sched) << endl;
   map<string, umap*> op2sched;
+  buffers_opt.erase("buf0");
+  buffers_opt.erase("in");
+  buffers_opt.erase("out");
 
   //get a map from op to schedule
-  for (auto buf : buffers_opt) {
+  for (auto & buf : buffers_opt) {
       UBuffer& buffer = buf.second;
       for (string pt: buffer.get_in_ports()) {
           auto rddom = buffer.domain.at(pt);
@@ -924,6 +925,13 @@ void bankmerge_vec_test() {
   for (auto bset: bset_vec) {
       cout << "cosntraints: " << str(bset) << endl;
   }
+
+  //Initialize the variable for lattice count
+  map<string, bool> update_map;
+  size_t cycle = 0;
+  for (auto buf : buffers_opt) {
+      update_map[buf.first] = false;
+  }
   cout << str(sched_set) << endl;
   auto point_vec = get_points(sched_set);
   std::sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
@@ -936,10 +944,42 @@ void bankmerge_vec_test() {
       //cout << "input OP execute in this point = " << isExe << endl;
       for (auto it: buffers_opt) {
           auto buf = it.second;
-          cout << "Buffer: " << buf.name << endl;
-          cout << str(point) << " read = " << buf.is_rd(point) << endl;
-          cout << str(point) << " write = " << buf.is_wr(point) << endl;
-          cout << endl;
+          //cout << "Buffer: " << buf.name << endl;
+          //cout << str(point) << " read = " << buf.is_rd(point) << endl;
+          //cout << str(point) << " write = " << buf.is_wr(point) << endl;
+          //cout << endl;
+
+          //first pass to update cycle
+          if (buf.is_rd(point) || buf.is_wr(point)) {
+              if (update_map.at(it.first)) {
+                  cout << "Buffer: " << buf.name << " update cycle" << endl;
+                  cycle ++;
+                  for (auto & it: update_map) {
+                      it.second = false;
+                  }
+              }
+          }
+
+          //second pass to process read and write
+          if (buf.is_wr(point) && is_suffix(buf.name, "agg")) {
+            buf.mark_write(cycle);
+            update_map.at(it.first) = true;
+
+            cout << "Buffer: " << buf.name << endl;
+            //cout << str(point) << " read = " << buf.is_rd(point) << endl;
+            cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
+            cout << endl;
+
+          }
+          else if (buf.is_rd(point) && is_suffix(buf.name, "tb")) {
+            buf.mark_read(cycle);
+            update_map.at(it.first) = true;
+
+            cout << "Buffer: " << buf.name << endl;
+            cout << str(point) << " read = " << buf.is_rd(point) << "at cycle" << cycle << endl;
+            //cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
+            cout << endl;
+          }
       }
   }
   assert(false);

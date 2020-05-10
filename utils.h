@@ -109,6 +109,15 @@ is_prefix( std::string const& lhs, std::string const& rhs )
         rhs.begin() );
 }
 
+static inline bool
+is_suffix( std::string const& lhs, std:: string const& rhs )
+{
+    return std::equal(
+            lhs.end() - rhs.size(),
+            lhs.end(),
+            rhs.begin() );
+}
+
 template<typename A, typename B>
 static inline
 pair<A, B> pick(const map<A, B>& s) {
@@ -288,7 +297,7 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("mkdir " + app_dir).c_str());
   system(("mkdir " + synth_dir).c_str());
   system(("mkdir " + soda_dir).c_str());
-  
+
   system(("cp ./aws_collateral/xrt.ini " + synth_dir).c_str());
   system(("cp ./aws_collateral/Makefile " + synth_dir).c_str());
   system(("cp ./aws_collateral/utils.mk " + synth_dir).c_str());

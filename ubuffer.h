@@ -648,7 +648,6 @@ class UBuffer {
         return false;
     }
 
-
     bool is_wr(isl_point* pt) {
         for (auto it: port_bundles) {
             auto pt_name = pick(it.second);
@@ -660,6 +659,14 @@ class UBuffer {
         }
         assert(false);
         return false;
+    }
+
+    void mark_write(size_t cycle) {
+        write_cycle.push_back(cycle);
+    }
+
+    void mark_read(size_t cycle) {
+        read_cycle.push_back(cycle);
     }
 
     int num_dims() const {
