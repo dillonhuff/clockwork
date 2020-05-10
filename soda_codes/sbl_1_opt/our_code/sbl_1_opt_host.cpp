@@ -13,7 +13,9 @@ int main(int argc, char **argv) {
 
   std::string binaryFile = argv[1];
 
-  int num_epochs = 4;
+  int num_epochs = 1;
+
+  std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
   const int img_update_0_read_DATA_SIZE = num_epochs*2079604;
