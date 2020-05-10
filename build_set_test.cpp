@@ -4278,7 +4278,11 @@ struct App {
               //assert(domain.dimension() == 2);
               vector<string> dims;
               for (int i = 0; i < domain.dimension(); i++) {
-                dims.push_back(str(domain.length(i)));
+                if (i < domain.dimension() - 1) {
+                  dims.push_back(str(domain.length(i)));
+                } else {
+                  dims.push_back("*");
+                }
               }
               out << "input " << num_type_cstring() << ": " << f << sep_list(dims, "(", ")", ", ") << endl << endl;
             } else {
