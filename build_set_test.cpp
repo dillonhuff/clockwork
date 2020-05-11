@@ -5828,7 +5828,7 @@ App exposure_fusion_app(const std::string& out_name) {
 }
 
 void exposure_fusion_iccad_apps() {
-  const int throughput = 2;
+  const int throughput = 4;
   string name = "psefn_" + str(throughput);
   App lp = exposure_fusion_app(name);
   int size = 1920;
