@@ -5774,6 +5774,7 @@ void max_pooling_test() {
 
 App exposure_fusion_app(const std::string& out_name) {
   App lp;
+  lp.set_default_pixel_width(16);
   // The off chip input we are reading from
   lp.func2d("in_off_chip");
 
@@ -5821,9 +5822,19 @@ App exposure_fusion_app(const std::string& out_name) {
     image = merged_level;
   }
 
-  lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
+  lp.func2d(out_name, "id", pt(image));
 
   return lp;
+}
+
+void exposure_fusion_iccad_apps() {
+  const int throughput = 1;
+  string name = "psefn_" + str(throughput);
+  App lp = exposure_fusion_app(name);
+  int size = 1920;
+  lp.realize(name, size, size, throughput);
+  move_to_benchmarks_folder(name + "_opt");
+  assert(false);
 }
 
 void exposure_fusion() {
@@ -7438,8 +7449,10 @@ void playground() {
 }
 
 void application_tests() {
-  max_pooling_test();
+  exposure_fusion_iccad_apps();
   assert(false);
+
+  max_pooling_test();
   exposure_fusion();
   pointwise_app_test();
 
