@@ -4798,10 +4798,11 @@ struct App {
       const std::string& name,
       const int d0,
       const int d1) {
-    realize(options, name, {d0, d1});
+    realize(options, name, {d0, d1}, 1);
+    //realize(options, name, {d0, d1});
   }
 
-  void realize(CodegenOptions& options,
+  void realize_no_unroll(CodegenOptions& options,
       const std::string& name,
       const std::vector<int>& dims) {
 
@@ -4820,7 +4821,7 @@ struct App {
       auto start = std::chrono::system_clock::now();
 
       set_unroll_factors(name, unroll_factor);
-      realize(options, name, dims);
+      realize_no_unroll(options, name, dims);
 
       auto end = std::chrono::system_clock::now();
       std::chrono::duration<double> elapsed = end - start;
