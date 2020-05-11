@@ -297,6 +297,25 @@ int blur_27(hw_uint<16*27>& in) {
 }
 
 static inline
+hw_uint<16> conv_3_3(hw_uint<16*9>& in) {
+  hw_uint<16> v0 = in.extract<0, 15>();
+  hw_uint<16> v1 = in.extract<16, 31>();
+  hw_uint<16> v2 = in.extract<32, 47>();
+
+  hw_uint<16> v3 = in.extract<48, 63>();
+  hw_uint<16> v4 = in.extract<64, 79>();
+  hw_uint<16> v5 = in.extract<80, 95>();
+
+  hw_uint<16> v6 = in.extract<96, 111>();
+  hw_uint<16> v7 = in.extract<112, 127>();
+  hw_uint<16> v8 = in.extract<128, 143>();
+
+  return (v0 + v1 + v2 +
+    v3 + v4 + v5 +
+    v6 + v7 + v8);
+}
+
+static inline
 hw_uint<32> conv_3_3(hw_uint<32*9>& in) {
   hw_uint<32> v0 = in.extract<0, 31>();
   hw_uint<32> v1 = in.extract<32, 63>();
@@ -329,6 +348,12 @@ hw_uint<32> cnn_mac(hw_uint<32*4> & in, hw_uint<32> & psum) {
   hw_uint<32> v3 = in.extract<96, 127>();
 
   return (psum + v0 + v1 + v2 + v3).to_int();
+}
+
+static inline
+hw_uint<16> reduce_gauss(hw_uint<16*9>& in) {
+  auto res = conv_3_3(in);
+  return res / 9;
 }
 
 static inline
