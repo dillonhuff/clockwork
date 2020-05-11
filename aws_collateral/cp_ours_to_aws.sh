@@ -9,6 +9,9 @@ aws s3 cp ${build_dir}/${target}.xclbin.info s3://iccad-2020-bucket/app-results/
 aws s3 cp ${build_dir}/${target}.xclbin s3://iccad-2020-bucket/app-results/${app}/our_code/
 aws s3 cp ${target}.awsxclbin s3://iccad-2020-bucket/app-results/${app}/our_code/
 
+aws s3 cp ${target}.awsxclbin s3://iccad-2020-bucket/app-results/${app}/our_code/start_time.txt
+aws s3 cp ${target}.awsxclbin s3://iccad-2020-bucket/app-results/${app}/our_code/end_time.txt
+
 
 
 

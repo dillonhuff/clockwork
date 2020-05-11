@@ -13,4 +13,7 @@ aws s3 cp ${target}.awsxclbin s3://iccad-2020-bucket/app-results/${app}/soda_cod
 
 
 
+aws s3 cp ${target}.awsxclbin s3://iccad-2020-bucket/app-results/${app}/soda_code/start_time.txt
+aws s3 cp ${target}.awsxclbin s3://iccad-2020-bucket/app-results/${app}/soda_code/end_time.txt
+
 

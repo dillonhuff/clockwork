@@ -3,3 +3,4 @@ target=${app}
 
 /home/centos/aws-fpga/Vitis/tools/create_vitis_afi.sh -xclbin=${build_dir}/${target}.xclbin -o=${target} -s3_bucket=iccad-2020-bucket -s3_dcp_key=dcp_folder -s3_logs_key=logs_folder
 
+
