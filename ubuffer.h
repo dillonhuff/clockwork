@@ -631,8 +631,9 @@ class UBuffer {
     vector<int> read_cycle, write_cycle;
     HWconstraints hardware;
 
-    queue<string> rd_op_queue, wr_op_queue;
-    queue<int> cycle_queue;
+    //SRAM specific
+    //Save the pair of read port bundle name and op pos point
+    queue<pair<string, isl_set*>> rd_op_queue;
 
     //TODO: only support one read/write
     bool is_rd(isl_point* pt) {
@@ -667,6 +668,95 @@ class UBuffer {
 
     void mark_read(size_t cycle) {
         read_cycle.push_back(cycle);
+    }
+
+    //TODO: add a bundle name
+    vector<string> get_bd_in_ports() {
+        auto wr_bd = get_in_bundles();
+        assert(wr_bd.size() == 1);
+        string bd_name = pick(wr_bd);
+        vector<string> pt_vec = port_bundles.at(bd_name);
+        return pt_vec;
+    }
+
+    vector<string> get_bd_out_ports() {
+        auto rd_bd = get_out_bundles();
+        assert(rd_bd.size() == 1);
+        string bd_name = pick(rd_bd);
+        vector<string> pt_vec = port_bundles.at(bd_name);
+        return pt_vec;
+    }
+
+    size_t get_wr_cycle() {
+        auto pt_vec = get_bd_in_ports();
+        return pt_vec.size() / hardware.port_width;
+    }
+
+    size_t get_rd_cycle() {
+        auto pt_vec = get_bd_out_ports();
+        return pt_vec.size() / hardware.port_width;
+    }
+
+    //TODO: create a subclass and merge into the mark read method
+    void mark_write_sram(size_t cycle) {
+        auto num_cycle = get_wr_cycle();
+        for (size_t delay = 1; delay <= num_cycle; delay ++)
+            write_cycle.push_back(cycle + delay);
+    }
+
+    void mark_read_sram(isl_set* iteration_pos) {
+        auto rd_bd = get_out_bundles();
+        assert(rd_bd.size() == 1);
+        string bd_name = pick(rd_bd);
+        rd_op_queue.push(make_pair(bd_name, iteration_pos));
+    }
+
+    void schedule_read_sram(size_t cycle, isl_set* iteration_pos, UBuffer tb) {
+        auto possible_read = rd_op_queue.front();
+        auto sram2tb_op = possible_read.second;
+
+        //get the data relation in TB
+        vector<string> pt_vec = tb.get_bd_in_ports();
+        isl_union_set* sram2tb_data_in_tb = isl_union_set_read_from_str(ctx, "{}");
+        for(auto pt: pt_vec) {
+            auto map_current_op = its(tb.access_map.at(pt), sram2tb_op);
+            sram2tb_data_in_tb = unn(sram2tb_data_in_tb, range(map_current_op));
+        }
+
+        vector<string> rd_pt_vec = tb.get_bd_out_ports();
+        isl_union_set* tb2out_data_in_tb = isl_union_set_read_from_str(ctx, "{}");
+        for (auto pt: rd_pt_vec) {
+            auto map_current_op = its(tb.access_map.at(pt), iteration_pos);
+            tb2out_data_in_tb = unn(tb2out_data_in_tb, range(map_current_op));
+        }
+
+
+        auto overlap = its(tb2out_data_in_tb, sram2tb_data_in_tb);
+        if (int_upper_bound(card(overlap)) > 0) {
+            //this is the op we want to pop
+            rd_op_queue.pop();
+            size_t rd_op_cycle = get_rd_cycle();
+            size_t target_cycle = cycle - 1;
+            stack<int> scheduled;
+            while (scheduled.size() < rd_op_cycle) {
+                //TODO: check if we can schedule the read
+                for (int write : write_cycle) {
+                    if (target_cycle != write) {
+                        if (read_cycle.size())
+                            assert(target_cycle > read_cycle.back());
+                        scheduled.push(target_cycle);
+                        target_cycle --;
+                        break;
+                    }
+                }
+            }
+            while (!scheduled.empty()) {
+                read_cycle.push_back(scheduled.top());
+                cout << "SRAM read op: " << str(possible_read.second) << " execute in cycle: " << scheduled.top() << endl;
+                scheduled.pop();
+            }
+        }
+
     }
 
     int num_dims() const {

@@ -950,9 +950,10 @@ void bankmerge_vec_test() {
           //cout << endl;
 
           //first pass to update cycle
-          if (buf.is_rd(point) || buf.is_wr(point)) {
+          //FIXME: possible bug. we need to add the buffer constraints of rd/wr same cycle
+          if (buf.is_wr(point) ){//|| buf.is_rd(point)) {
               if (update_map.at(it.first)) {
-                  cout << "Buffer: " << buf.name << " update cycle" << endl;
+                  cout <<  " Buffer: " << buf.name << " update cycle" << endl;
                   cycle ++;
                   for (auto & it: update_map) {
                       it.second = false;
@@ -976,9 +977,31 @@ void bankmerge_vec_test() {
             update_map.at(it.first) = true;
 
             cout << "Buffer: " << buf.name << endl;
-            cout << str(point) << " read = " << buf.is_rd(point) << "at cycle" << cycle << endl;
+            cout << str(point) << " read = " << buf.is_rd(point) << " at cycle:" << cycle << endl;
             //cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
             cout << endl;
+            //TODO: pop out sram rd operation ahead of tb read
+            //auto pt = pick(buf.get_out_ports());
+            //auto rd_sched = buf.schedule.at(pt);
+            //auto iter_pos = domain(its_range(rd_sched, isl_set_from_point(point)));
+            //buffers_opt.at("buf1_sram").schedule_read_sram(cycle, to_set(iter_pos), buf);
+          }
+          else if(buf.is_wr(point) && is_suffix(buf.name, "sram")) {
+              //TODO:get the number of cycle depend on hw constraints
+            cout << "Buffer: " << buf.name << endl;
+            cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
+            cout << endl;
+            buf.mark_write_sram(cycle);
+          }
+          else if(buf.is_rd(point) && is_suffix(buf.name, "sram")) {
+              //TODO: push operation into queue and its corresponding cycle:
+            cout << "Buffer: " << buf.name << endl;
+            cout << str(point) << " read = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
+            cout << endl;
+            auto pt = pick(buf.get_out_ports());
+            auto rd_sched = to_map(buf.schedule.at(pt));
+            auto iter_set = domain(its_range(rd_sched, isl_set_from_point(point)));
+            buf.mark_read_sram(iter_set);
           }
       }
   }
