@@ -932,6 +932,8 @@ void bankmerge_vec_test() {
   for (auto buf : buffers_opt) {
       update_map[buf.first] = false;
   }
+  HWconstraints sram = {4, 1, 512, false, true};
+  buffers_opt.at("buf1_sram").hardware = sram;
   cout << str(sched_set) << endl;
   auto point_vec = get_points(sched_set);
   std::sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
@@ -942,8 +944,8 @@ void bankmerge_vec_test() {
       //cout <<"Card Expr: " << str(isExeQP) << endl;
       //bool isExe = int_lower_bound(isExeQP) == 1;
       //cout << "input OP execute in this point = " << isExe << endl;
-      for (auto it: buffers_opt) {
-          auto buf = it.second;
+      for (auto & it: buffers_opt) {
+          auto & buf = it.second;
           //cout << "Buffer: " << buf.name << endl;
           //cout << str(point) << " read = " << buf.is_rd(point) << endl;
           //cout << str(point) << " write = " << buf.is_wr(point) << endl;
@@ -981,10 +983,10 @@ void bankmerge_vec_test() {
             //cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
             cout << endl;
             //TODO: pop out sram rd operation ahead of tb read
-            //auto pt = pick(buf.get_out_ports());
-            //auto rd_sched = buf.schedule.at(pt);
-            //auto iter_pos = domain(its_range(rd_sched, isl_set_from_point(point)));
-            //buffers_opt.at("buf1_sram").schedule_read_sram(cycle, to_set(iter_pos), buf);
+            auto pt = pick(buf.get_out_ports());
+            auto rd_sched = to_map(buf.schedule.at(pt));
+            auto iter_pos = domain(its_range(rd_sched, isl_set_from_point(point)));
+            buffers_opt.at("buf1_sram").schedule_read_sram(cycle, iter_pos, buf);
           }
           else if(buf.is_wr(point) && is_suffix(buf.name, "sram")) {
               //TODO:get the number of cycle depend on hw constraints
@@ -996,7 +998,7 @@ void bankmerge_vec_test() {
           else if(buf.is_rd(point) && is_suffix(buf.name, "sram")) {
               //TODO: push operation into queue and its corresponding cycle:
             cout << "Buffer: " << buf.name << endl;
-            cout << str(point) << " read = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
+            cout << str(point) << " push read to queue  at cycle:" << cycle << endl;
             cout << endl;
             auto pt = pick(buf.get_out_ports());
             auto rd_sched = to_map(buf.schedule.at(pt));

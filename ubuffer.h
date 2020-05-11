@@ -712,6 +712,10 @@ class UBuffer {
     }
 
     void schedule_read_sram(size_t cycle, isl_set* iteration_pos, UBuffer tb) {
+        //chances are that no data read from SRAM, all data is in TB
+        if (rd_op_queue.empty())
+            return;
+
         auto possible_read = rd_op_queue.front();
         auto sram2tb_op = possible_read.second;
 
@@ -722,6 +726,7 @@ class UBuffer {
             auto map_current_op = its(tb.access_map.at(pt), sram2tb_op);
             sram2tb_data_in_tb = unn(sram2tb_data_in_tb, range(map_current_op));
         }
+        cout << "\t sram2tb: " << str(sram2tb_data_in_tb) << endl;
 
         vector<string> rd_pt_vec = tb.get_bd_out_ports();
         isl_union_set* tb2out_data_in_tb = isl_union_set_read_from_str(ctx, "{}");
@@ -729,32 +734,39 @@ class UBuffer {
             auto map_current_op = its(tb.access_map.at(pt), iteration_pos);
             tb2out_data_in_tb = unn(tb2out_data_in_tb, range(map_current_op));
         }
+        cout << "\t tb2out: " << str(tb2out_data_in_tb) << endl;
 
 
         auto overlap = its(tb2out_data_in_tb, sram2tb_data_in_tb);
+        cout << "\toverlap: " << str(overlap) << endl;
         if (int_upper_bound(card(overlap)) > 0) {
             //this is the op we want to pop
-            rd_op_queue.pop();
+            cout << "pop queue!" << endl;
             size_t rd_op_cycle = get_rd_cycle();
             size_t target_cycle = cycle - 1;
             stack<int> scheduled;
             while (scheduled.size() < rd_op_cycle) {
                 //TODO: check if we can schedule the read
+                bool has_write_scheduled = false;
                 for (int write : write_cycle) {
-                    if (target_cycle != write) {
-                        if (read_cycle.size())
-                            assert(target_cycle > read_cycle.back());
-                        scheduled.push(target_cycle);
-                        target_cycle --;
+                    if (target_cycle == write) {
+                        has_write_scheduled = true;
                         break;
                     }
                 }
+                if (!has_write_scheduled) {
+                    if (read_cycle.size())
+                        assert(target_cycle > read_cycle.back());
+                    scheduled.push(target_cycle);
+                }
+                target_cycle --;
             }
             while (!scheduled.empty()) {
                 read_cycle.push_back(scheduled.top());
                 cout << "SRAM read op: " << str(possible_read.second) << " execute in cycle: " << scheduled.top() << endl;
                 scheduled.pop();
             }
+            rd_op_queue.pop();
         }
 
     }
