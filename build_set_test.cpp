@@ -17,6 +17,169 @@ void compare(vector<string>& opt, vector<string>& naive) {
 }
 
 prog clockwork_target() {
+
+  //prog prg;
+  //prg.compute_unit_file = "clockwork_target_compute.h";
+  //prg.name = "clockwork_target";
+
+//// Stencil<void *> &hw_output = arg_0;
+  //prg.add_output("hw_output");
+  //prg.buffer_port_widths["hw_output"] = 16;
+//// Stencil<void *> &hw_inputa0 = arg_1;
+  //prg.add_input("hw_inputa0");
+  //prg.buffer_port_widths["hw_inputa0"] = 16;
+
+  //auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, 62);
+//////producing kernel
+  //auto loop_kernel_s0_y = loop_hw_output_s0_y_yo->add_loop("kernel_s0_y", 0, 3);
+  //auto loop_kernel_s0_x = loop_kernel_s0_y->add_loop("kernel_s0_x", 0, 3);
+
+////store is: kernela1[(kernel.s0.x + (kernel.s0.y*3))] = 0
+  //auto compute_kernela1 = loop_kernel_s0_x->add_op("compute_kernela1");
+  //compute_kernela1->add_function("compute_kernela1");
+  //prg.buffer_port_widths["kernela1"] = 16;
+  //compute_kernela1->add_store("kernela1", "(kernel.s0.x + (kernel.s0.y*3))");
+
+////store is: kernela1[0] = 17
+  //auto compute_kernela1_1 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_1");
+  //compute_kernela1_1->add_function("compute_kernela1_1");
+  //compute_kernela1_1->add_store("kernela1", "0");
+
+////store is: kernela1[3] = 4
+  //auto compute_kernela1_2 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_2");
+  //compute_kernela1_2->add_function("compute_kernela1_2");
+  //compute_kernela1_2->add_store("kernela1", "3");
+
+////store is: kernela1[6] = 6
+  //auto compute_kernela1_3 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_3");
+  //compute_kernela1_3->add_function("compute_kernela1_3");
+  //compute_kernela1_3->add_store("kernela1", "6");
+
+////store is: kernela1[1] = 7
+  //auto compute_kernela1_4 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_4");
+  //compute_kernela1_4->add_function("compute_kernela1_4");
+  //compute_kernela1_4->add_store("kernela1", "1");
+
+////store is: kernela1[4] = 19
+  //auto compute_kernela1_5 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_5");
+  //compute_kernela1_5->add_function("compute_kernela1_5");
+  //compute_kernela1_5->add_store("kernela1", "4");
+
+////store is: kernela1[7] = 4
+  //auto compute_kernela1_6 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_6");
+  //compute_kernela1_6->add_function("compute_kernela1_6");
+  //compute_kernela1_6->add_store("kernela1", "7");
+
+////store is: kernela1[2] = 5
+  //auto compute_kernela1_7 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_7");
+  //compute_kernela1_7->add_function("compute_kernela1_7");
+  //compute_kernela1_7->add_store("kernela1", "2");
+
+////store is: kernela1[5] = 21
+  //auto compute_kernela1_8 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_8");
+  //compute_kernela1_8->add_function("compute_kernela1_8");
+  //compute_kernela1_8->add_store("kernela1", "5");
+
+////store is: kernela1[8] = 15
+  //auto compute_kernela1_9 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_9");
+  //compute_kernela1_9->add_function("compute_kernela1_9");
+  //compute_kernela1_9->add_store("kernela1", "8");
+////consuming kernel
+  //auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 62);
+//////producing conv
+  //auto loop_conv_s0_y = loop_hw_output_s0_x_xo->add_loop("conv_s0_y", 0, 62);
+  //auto loop_conv_s0_x = loop_conv_s0_y->add_loop("conv_s0_x", 0, 62);
+
+////store is: conva2[(conv.s0.x + (conv.s0.y*62))] = 0
+  //auto compute_conva2 = loop_conv_s0_x->add_op("compute_conva2");
+  //compute_conva2->add_function("compute_conva2");
+  //prg.buffer_port_widths["conva2"] = 16;
+  //compute_conva2->add_store("conva2", "(conv.s0.x + (conv.s0.y*62))");
+////consuming hw_input
+  //auto loop_conv_s1_y = loop_hw_output_s0_x_xo->add_loop("conv_s1_y", 0, 62);
+  //auto loop_conv_s1_x = loop_conv_s1_y->add_loop("conv_s1_x", 0, 62);
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[0]*int32(hw_inputa0[(conv.s1.x + (conv.s1.y*64))])))
+  //auto compute_conva2_1 = loop_conv_s1_x->add_op("compute_conva2_1");
+  //compute_conva2_1->add_function("compute_conva2_1");
+  //compute_conva2_1->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_1->add_load("hw_inputa0", "(conv.s1.x + (conv.s1.y*64))");
+  //compute_conva2_1->add_load("kernela1", "0");
+  //compute_conva2_1->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[1]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 1)])))
+  //auto compute_conva2_2 = loop_conv_s1_x->add_op("compute_conva2_2");
+  //compute_conva2_2->add_function("compute_conva2_2");
+  //compute_conva2_2->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_2->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 1)");
+  //compute_conva2_2->add_load("kernela1", "1");
+  //compute_conva2_2->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[2]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 2)])))
+  //auto compute_conva2_3 = loop_conv_s1_x->add_op("compute_conva2_3");
+  //compute_conva2_3->add_function("compute_conva2_3");
+  //compute_conva2_3->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_3->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 2)");
+  //compute_conva2_3->add_load("kernela1", "2");
+  //compute_conva2_3->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[3]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 64)])))
+  //auto compute_conva2_4 = loop_conv_s1_x->add_op("compute_conva2_4");
+  //compute_conva2_4->add_function("compute_conva2_4");
+  //compute_conva2_4->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_4->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 64)");
+  //compute_conva2_4->add_load("kernela1", "3");
+  //compute_conva2_4->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[4]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 65)])))
+  //auto compute_conva2_5 = loop_conv_s1_x->add_op("compute_conva2_5");
+  //compute_conva2_5->add_function("compute_conva2_5");
+  //compute_conva2_5->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_5->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 65)");
+  //compute_conva2_5->add_load("kernela1", "4");
+  //compute_conva2_5->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[5]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 66)])))
+  //auto compute_conva2_6 = loop_conv_s1_x->add_op("compute_conva2_6");
+  //compute_conva2_6->add_function("compute_conva2_6");
+  //compute_conva2_6->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_6->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 66)");
+  //compute_conva2_6->add_load("kernela1", "5");
+  //compute_conva2_6->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[6]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 128)])))
+  //auto compute_conva2_7 = loop_conv_s1_x->add_op("compute_conva2_7");
+  //compute_conva2_7->add_function("compute_conva2_7");
+  //compute_conva2_7->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_7->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 128)");
+  //compute_conva2_7->add_load("kernela1", "6");
+  //compute_conva2_7->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[7]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 129)])))
+  //auto compute_conva2_8 = loop_conv_s1_x->add_op("compute_conva2_8");
+  //compute_conva2_8->add_function("compute_conva2_8");
+  //compute_conva2_8->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_8->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 129)");
+  //compute_conva2_8->add_load("kernela1", "7");
+  //compute_conva2_8->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[8]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 130)])))
+  //auto compute_conva2_9 = loop_conv_s1_x->add_op("compute_conva2_9");
+  //compute_conva2_9->add_function("compute_conva2_9");
+  //compute_conva2_9->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_9->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 130)");
+  //compute_conva2_9->add_load("kernela1", "8");
+  //compute_conva2_9->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+////consuming conv
+
+////store is: hw_output[(hw_output.s0.x.xo + (hw_output.s0.y.yo*62))] = uint8(conva2[(hw_output.s0.x.xo + (hw_output.s0.y.yo*62))])
+  //auto compute_hw_output = loop_hw_output_s0_x_xo->add_op("compute_hw_output");
+  //compute_hw_output->add_function("compute_hw_output");
+  //compute_hw_output->add_load("conva2", "(hw_output.s0.x.xo + (hw_output.s0.y.yo*62))");
+  //compute_hw_output->add_store("hw_output", "(hw_output.s0.x.xo + (hw_output.s0.y.yo*62))");
+
+  //return prg;
+
   prog prg;
   prg.compute_unit_file = "clockwork_target_compute.h";
   prg.name = "clockwork_target";
@@ -39,50 +202,50 @@ prog clockwork_target() {
   prg.buffer_port_widths["_kernela1"] = 16;
   compute_kernela1->add_store("_kernela1", "(kernel_s0_x + (kernel_s0_y*3))");
 
-//store is: kernela1[0] = 17
-  auto compute_kernela1$1 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_1");
-  compute_kernela1$1->add_function("compute_kernela1_1");
-  compute_kernela1$1->add_store("_kernela1", "0");
+////store is: kernela1[0] = 17
+  //auto compute_kernela1$1 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_1");
+  //compute_kernela1$1->add_function("compute_kernela1_1");
+  //compute_kernela1$1->add_store("_kernela1", "0");
 
-//store is: kernela1[3] = 4
-  auto compute_kernela1$2 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_2");
-  compute_kernela1$2->add_function("compute_kernela1_2");
-  compute_kernela1$2->add_store("_kernela1", "3");
+////store is: kernela1[3] = 4
+  //auto compute_kernela1$2 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_2");
+  //compute_kernela1$2->add_function("compute_kernela1_2");
+  //compute_kernela1$2->add_store("_kernela1", "3");
 
-//store is: kernela1[6] = 6
-  auto compute_kernela1$3 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_3");
-  compute_kernela1$3->add_function("compute_kernela1_3");
-  compute_kernela1$3->add_store("_kernela1", "6");
+////store is: kernela1[6] = 6
+  //auto compute_kernela1$3 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_3");
+  //compute_kernela1$3->add_function("compute_kernela1_3");
+  //compute_kernela1$3->add_store("_kernela1", "6");
 
-//store is: kernela1[1] = 7
-  auto compute_kernela1$4 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_4");
-  compute_kernela1$4->add_function("compute_kernela1_4");
-  compute_kernela1$4->add_store("_kernela1", "1");
+////store is: kernela1[1] = 7
+  //auto compute_kernela1$4 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_4");
+  //compute_kernela1$4->add_function("compute_kernela1_4");
+  //compute_kernela1$4->add_store("_kernela1", "1");
 
-//store is: kernela1[4] = 19
-  auto compute_kernela1$5 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_5");
-  compute_kernela1$5->add_function("compute_kernela1_5");
-  compute_kernela1$5->add_store("_kernela1", "4");
+////store is: kernela1[4] = 19
+  //auto compute_kernela1$5 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_5");
+  //compute_kernela1$5->add_function("compute_kernela1_5");
+  //compute_kernela1$5->add_store("_kernela1", "4");
 
-//store is: kernela1[7] = 4
-  auto compute_kernela1$6 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_6");
-  compute_kernela1$6->add_function("compute_kernela1_6");
-  compute_kernela1$6->add_store("_kernela1", "7");
+////store is: kernela1[7] = 4
+  //auto compute_kernela1$6 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_6");
+  //compute_kernela1$6->add_function("compute_kernela1_6");
+  //compute_kernela1$6->add_store("_kernela1", "7");
 
-//store is: kernela1[2] = 5
-  auto compute_kernela1$7 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_7");
-  compute_kernela1$7->add_function("compute_kernela1_7");
-  compute_kernela1$7->add_store("_kernela1", "2");
+////store is: kernela1[2] = 5
+  //auto compute_kernela1$7 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_7");
+  //compute_kernela1$7->add_function("compute_kernela1_7");
+  //compute_kernela1$7->add_store("_kernela1", "2");
 
-//store is: kernela1[5] = 21
-  auto compute_kernela1$8 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_8");
-  compute_kernela1$8->add_function("compute_kernela1_8");
-  compute_kernela1$8->add_store("_kernela1", "5");
+////store is: kernela1[5] = 21
+  //auto compute_kernela1$8 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_8");
+  //compute_kernela1$8->add_function("compute_kernela1_8");
+  //compute_kernela1$8->add_store("_kernela1", "5");
 
-//store is: kernela1[8] = 15
-  auto compute_kernela1$9 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_9");
-  compute_kernela1$9->add_function("compute_kernela1_9");
-  compute_kernela1$9->add_store("_kernela1", "8");
+////store is: kernela1[8] = 15
+  //auto compute_kernela1$9 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_9");
+  //compute_kernela1$9->add_function("compute_kernela1_9");
+  //compute_kernela1$9->add_store("_kernela1", "8");
 //consuming kernel
   auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 62);
 ////producing conv
@@ -105,61 +268,61 @@ prog clockwork_target() {
   compute_conva2$1->add_load("_kernela1", "0");
   compute_conva2$1->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  auto compute_conva2$2 = loop_conv_s1_x->add_op("compute_conva2_2");
-  compute_conva2$2->add_function("compute_conva2_2");
-  compute_conva2$2->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  compute_conva2$2->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 1)");
-  compute_conva2$2->add_load("_kernela1", "1");
-  compute_conva2$2->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //auto compute_conva2$2 = loop_conv_s1_x->add_op("compute_conva2_2");
+  //compute_conva2$2->add_function("compute_conva2_2");
+  //compute_conva2$2->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //compute_conva2$2->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 1)");
+  //compute_conva2$2->add_load("_kernela1", "1");
+  //compute_conva2$2->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  auto compute_conva2$3 = loop_conv_s1_x->add_op("compute_conva2_3");
-  compute_conva2$3->add_function("compute_conva2_3");
-  compute_conva2$3->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  compute_conva2$3->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 2)");
-  compute_conva2$3->add_load("_kernela1", "2");
-  compute_conva2$3->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //auto compute_conva2$3 = loop_conv_s1_x->add_op("compute_conva2_3");
+  //compute_conva2$3->add_function("compute_conva2_3");
+  //compute_conva2$3->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //compute_conva2$3->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 2)");
+  //compute_conva2$3->add_load("_kernela1", "2");
+  //compute_conva2$3->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  auto compute_conva2$4 = loop_conv_s1_x->add_op("compute_conva2_4");
-  compute_conva2$4->add_function("compute_conva2_4");
-  compute_conva2$4->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  compute_conva2$4->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 64)");
-  compute_conva2$4->add_load("_kernela1", "3");
-  compute_conva2$4->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //auto compute_conva2$4 = loop_conv_s1_x->add_op("compute_conva2_4");
+  //compute_conva2$4->add_function("compute_conva2_4");
+  //compute_conva2$4->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //compute_conva2$4->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 64)");
+  //compute_conva2$4->add_load("_kernela1", "3");
+  //compute_conva2$4->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  auto compute_conva2$5 = loop_conv_s1_x->add_op("compute_conva2_5");
-  compute_conva2$5->add_function("compute_conva2$5");
-  compute_conva2$5->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  compute_conva2$5->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 65)");
-  compute_conva2$5->add_load("_kernela1", "4");
-  compute_conva2$5->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //auto compute_conva2$5 = loop_conv_s1_x->add_op("compute_conva2_5");
+  //compute_conva2$5->add_function("compute_conva2$5");
+  //compute_conva2$5->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //compute_conva2$5->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 65)");
+  //compute_conva2$5->add_load("_kernela1", "4");
+  //compute_conva2$5->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  auto compute_conva2$6 = loop_conv_s1_x->add_op("compute_conva2_6");
-  compute_conva2$6->add_function("compute_conva2_6");
-  compute_conva2$6->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  compute_conva2$6->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 66)");
-  compute_conva2$6->add_load("_kernela1", "5");
-  compute_conva2$6->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //auto compute_conva2$6 = loop_conv_s1_x->add_op("compute_conva2_6");
+  //compute_conva2$6->add_function("compute_conva2_6");
+  //compute_conva2$6->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //compute_conva2$6->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 66)");
+  //compute_conva2$6->add_load("_kernela1", "5");
+  //compute_conva2$6->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  auto compute_conva2$7 = loop_conv_s1_x->add_op("compute_conva2_7");
-  compute_conva2$7->add_function("compute_conva2_7");
-  compute_conva2$7->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  compute_conva2$7->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 128)");
-  compute_conva2$7->add_load("_kernela1", "6");
-  compute_conva2$7->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //auto compute_conva2$7 = loop_conv_s1_x->add_op("compute_conva2_7");
+  //compute_conva2$7->add_function("compute_conva2_7");
+  //compute_conva2$7->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //compute_conva2$7->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 128)");
+  //compute_conva2$7->add_load("_kernela1", "6");
+  //compute_conva2$7->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  auto compute_conva2$8 = loop_conv_s1_x->add_op("compute_conva2_8");
-  compute_conva2$8->add_function("compute_conva2_8");
-  compute_conva2$8->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  compute_conva2$8->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 129)");
-  compute_conva2$8->add_load("_kernela1", "7");
-  compute_conva2$8->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //auto compute_conva2$8 = loop_conv_s1_x->add_op("compute_conva2_8");
+  //compute_conva2$8->add_function("compute_conva2_8");
+  //compute_conva2$8->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //compute_conva2$8->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 129)");
+  //compute_conva2$8->add_load("_kernela1", "7");
+  //compute_conva2$8->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  auto compute_conva2$9 = loop_conv_s1_x->add_op("compute_conva2_9");
-  compute_conva2$9->add_function("compute_conva2_9");
-  compute_conva2$9->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  compute_conva2$9->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 130)");
-  compute_conva2$9->add_load("_kernela1", "8");
-  compute_conva2$9->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //auto compute_conva2$9 = loop_conv_s1_x->add_op("compute_conva2_9");
+  //compute_conva2$9->add_function("compute_conva2_9");
+  //compute_conva2$9->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //compute_conva2$9->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 130)");
+  //compute_conva2$9->add_load("_kernela1", "8");
+  //compute_conva2$9->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
   auto compute_hw_output = loop_hw_output_s0_x_xo->add_op("compute_hw_output");
   compute_hw_output->add_function("compute_hw_output");
@@ -4668,18 +4831,24 @@ struct App {
   }
 
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    double total_elapsed = 0.;
-    auto start = std::chrono::system_clock::now();
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
 
-    set_unroll_factors(name, unroll_factor);
-    realize(name, d0, d1);
+    realize(options, name, {d0, d1}, unroll_factor);
+    //double total_elapsed = 0.;
+    //auto start = std::chrono::system_clock::now();
 
-    auto end = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed = end - start;
-    total_elapsed += elapsed.count();
-    ofstream schedule_info("./scratch/" + name + ".txt");
-    schedule_info << "time to realize " << name << ": " << total_elapsed << endl;
-    schedule_info.close();
+    //set_unroll_factors(name, unroll_factor);
+    //realize(name, d0, d1);
+
+    //auto end = std::chrono::system_clock::now();
+    //std::chrono::duration<double> elapsed = end - start;
+    //total_elapsed += elapsed.count();
+    //ofstream schedule_info("./scratch/" + name + ".txt");
+    //schedule_info << "time to realize " << name << ": " << total_elapsed << endl;
+    //schedule_info.close();
   }
 
 };
@@ -5022,6 +5191,7 @@ App tricky_reconvergence(const std::string& name) {
 
 void halide_frontend_test() {
   //prog prg = clockwork_target();
+  //cout << "Created program..." << endl;
   //generate_optimized_code(prg);
   //assert(false);
 
@@ -7429,6 +7599,9 @@ void playground() {
 }
 
 void application_tests() {
+  halide_frontend_test();
+  //assert(false);
+
   exposure_fusion_iccad_apps();
   //assert(false);
 
@@ -7442,7 +7615,6 @@ void application_tests() {
   harris16_test();
   blur_xy_16_app_test();
 
-  halide_frontend_test();
 
   //assert(false);
 
