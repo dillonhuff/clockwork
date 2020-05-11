@@ -21,6 +21,9 @@ for filename in glob.iglob(directory + '**/*', recursive=True):
   if filename.endswith("kernel_util_routed.rpt"):
     print('File:', filename)
     util = open(filename, 'r').read()
-    print('Util', util)
+    latex_table = util.replace("%", "\\%")
+    latex_table = latex_table.replace("|", "&")
+    latex_table = latex_table.replace("[ ", "[")
+    print(latex_table)
     break
 
