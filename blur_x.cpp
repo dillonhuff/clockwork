@@ -206,10 +206,6 @@ void blur_x(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in, HW
   I_cache I;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#pragma HLS inline recursive
-#endif // __VIVADO_SYNTH__
-
   for (int epoch = 0; epoch < num_epochs; epoch++) {
 	for (int c0 = 0; c0 <= 7; c0 += 1)
 	  for (int c1 = 0; c1 <= 31; c1 += 1) {

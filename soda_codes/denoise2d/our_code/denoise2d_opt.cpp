@@ -1169,18 +1169,18 @@ inline void u_u_update_0_write_bundle_write(hw_uint<32>& u_update_0_write, u_cac
 
 
 // Operation logic
-inline void u_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_off_chip, u_cache& u, int d0, int d1) {
-	// Consume: u_off_chip
-	auto u_off_chip_0_c__0_value = u_off_chip.read();
-	auto compute_result = u_generated_compute_unrolled_1(u_off_chip_0_c__0_value);
-	// Produce: u
-	u_u_update_0_write_bundle_write(compute_result, u, d0, d1);
+inline void f_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */f_off_chip, f_cache& f, int d0, int d1) {
+	// Consume: f_off_chip
+	auto f_off_chip_0_c__0_value = f_off_chip.read();
+	auto compute_result = f_generated_compute_unrolled_1(f_off_chip_0_c__0_value);
+	// Produce: f
+	f_f_update_0_write_bundle_write(compute_result, f, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
   hw_uint<32> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "u_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "f_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -1402,18 +1402,18 @@ inline void denoise2d_update_0(r1_cache& r1, f_cache& f, u_cache& u, g_cache& g,
 
 }
 
-inline void f_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */f_off_chip, f_cache& f, int d0, int d1) {
-	// Consume: f_off_chip
-	auto f_off_chip_0_c__0_value = f_off_chip.read();
-	auto compute_result = f_generated_compute_unrolled_1(f_off_chip_0_c__0_value);
-	// Produce: f
-	f_f_update_0_write_bundle_write(compute_result, f, d0, d1);
+inline void u_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_off_chip, u_cache& u, int d0, int d1) {
+	// Consume: u_off_chip
+	auto u_off_chip_0_c__0_value = u_off_chip.read();
+	auto compute_result = u_generated_compute_unrolled_1(u_off_chip_0_c__0_value);
+	// Produce: u
+	u_u_update_0_write_bundle_write(compute_result, u, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
   hw_uint<32> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "f_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "u_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -1452,10 +1452,6 @@ void denoise2d_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chi
   u_cache u;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#pragma HLS inline recursive
-#endif // __VIVADO_SYNTH__
-
   for (int epoch = 0; epoch < num_epochs; epoch++) {
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS inline recursive

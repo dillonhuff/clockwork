@@ -2165,34 +2165,6 @@ inline void trace_trace_update_0_write_bundle_write(hw_uint<32>& trace_update_0_
 
 
 // Operation logic
-inline void harris_mini_update_0(det_cache& det, trace_cache& trace, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */harris_mini, int d0, int d1) {
-	// Consume: det
-	auto det_0_c__0_value = det_harris_mini_update_0_read_bundle_read(det/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "harris_mini_update_0_det," << d0<< "," << d1<< "," <<  det_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	// Consume: trace
-	auto trace_0_c__0_value = trace_harris_mini_update_0_read_bundle_read(trace/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "harris_mini_update_0_trace," << d0<< "," << d1<< "," <<  trace_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = harris_mini_generated_compute_unrolled_1(det_0_c__0_value, trace_0_c__0_value);
-	// Produce: harris_mini
-	harris_mini.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "harris_mini_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */img_oc, img_cache& img, int d0, int d1) {
 	// Consume: img_oc
 	auto img_oc_0_c__0_value = img_oc.read();
@@ -2510,6 +2482,34 @@ inline void trace_update_0(lgxx8_cache& lgxx8, lgyy8_cache& lgyy8, trace_cache& 
 
 }
 
+inline void harris_mini_update_0(det_cache& det, trace_cache& trace, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */harris_mini, int d0, int d1) {
+	// Consume: det
+	auto det_0_c__0_value = det_harris_mini_update_0_read_bundle_read(det/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "harris_mini_update_0_det," << d0<< "," << d1<< "," <<  det_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	// Consume: trace
+	auto trace_0_c__0_value = trace_harris_mini_update_0_read_bundle_read(trace/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "harris_mini_update_0_trace," << d0<< "," << d1<< "," <<  trace_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = harris_mini_generated_compute_unrolled_1(det_0_c__0_value, trace_0_c__0_value);
+	// Produce: harris_mini
+	harris_mini.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<32> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  *global_debug_handle << "harris_mini_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
 // Driver function
 void harris_mini_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */img_oc, HWStream<hw_uint<32> >& /* get_args num ports = 1 */harris_mini, int num_epochs) {
 
@@ -2559,10 +2559,6 @@ void harris_mini_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */img_oc,
   trace_cache trace;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#pragma HLS inline recursive
-#endif // __VIVADO_SYNTH__
-
   for (int epoch = 0; epoch < num_epochs; epoch++) {
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS inline recursive

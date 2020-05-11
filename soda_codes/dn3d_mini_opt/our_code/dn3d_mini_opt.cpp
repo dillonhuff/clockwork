@@ -2008,10 +2008,6 @@ void dn3d_mini_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */f_oc, HWS
   u_cache u;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#pragma HLS inline recursive
-#endif // __VIVADO_SYNTH__
-
   for (int epoch = 0; epoch < num_epochs; epoch++) {
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS inline recursive

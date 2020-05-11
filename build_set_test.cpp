@@ -969,14 +969,12 @@ void vec_test() {
   //auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
   //cout << "Sched map: " << str(sched_opt) << endl;
   //cout << codegen_c(sched_opt) << endl;
-  //assert(false);
   //aha_talk_print_info(prg);
   //hardcode some configuration registers
   //memtile_config memtile;
   //auto buffers = build_buffers(prg, sched_opt);
   //memtile.extract_config(buffers);
   //memtile.emit_config_file_csv("lake_memtile_config");
-  //assert(false);
 }
 
 Box compute_box_from_sched(umap* opt_sched) {
@@ -1082,7 +1080,6 @@ void bankmerge_vec_test() {
       bool isExe = int_lower_bound(isExeQP) == 1;
       cout << "input OP execute in this point = " << isExe << endl;
   }
-  assert(false);
 }
 
 void auto_vec_test() {
@@ -1414,7 +1411,6 @@ void mmul_test() {
   auto schedmap = its(isl_schedule_get_map(opt_sched), domain);
   //cout << "Optimized schedule..." << endl;
   //cout << codegen_c(schedmap);
-  //assert(false);
 }
 
 void pyramid_test() {
@@ -1526,7 +1522,6 @@ prog cnn_conv_layer() {
   isl_map* write_sched= isl_map_read_from_str(prg.ctx, write_string.c_str());
   auto before_acc = lex_gt(read_sched, write_sched);
   cout <<"\tlexlt result: " << str(before_acc) << endl;
-  assert(false);
   */
 
   prg.compute_unit_file = "mobilenet_compute.h";
@@ -1668,13 +1663,11 @@ void cnn_test() {
   //for (auto s : clksched) {
     //cout << tab(1) << s.first << " -> " << str(s.second) << endl;
   //}
-  //assert(false);
   umap* opt_sched = prg.optimized_codegen();
   ////cout << "------ ISL schedule" << endl;
   ////for (auto m : get_maps(opt_sched)) {
     ////cout << tab(1) << str(m) << endl;
   ////}
-  ////assert(false);
 
   //auto domain = prg.whole_iteration_domain();
   //auto schedmap = its(opt_sched, domain);
@@ -1787,7 +1780,6 @@ void pyramid_2d_test() {
   res = system("./a.out");
   assert(res == 0);
 
-  //assert(false);
 }
 
 void reduce_1d_test() {
@@ -1961,7 +1953,6 @@ void reduce_2d_test() {
   //res = system("./a.out");
   //assert(res == 0);
 
-  ////assert(false);
 //}
 
 
@@ -2369,7 +2360,6 @@ void jacobi_2d_4_test() {
   }
 
   regression_test(prg);
-  //assert(false);
 }
 
 void jacobi_2d_2_test() {
@@ -2411,7 +2401,6 @@ void jacobi_2d_2_test() {
     stencil_op(out_name_1, "jacobi2d_compute", "I", {"2*(d0) + 1 - 1", "d1"}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
 
   regression_test(prg);
-  //assert(false);
 }
 
 void jacobi_2d_test() {
@@ -2991,7 +2980,6 @@ void parse_denoise3d_test() {
     cout << tab(1) << op.first << " = " << *(op.second) << endl;
   }
 
-  assert(false);
 }
 
 void duplicate_upsample_test() {
@@ -3032,7 +3020,6 @@ void duplicate_upsample_test() {
         //{{0, -1}, {0, 0}, {0, 1}});
 
   regression_test(prg);
-  assert(false);
 }
 
 void seidel2d_test() {
@@ -5375,7 +5362,6 @@ void up_stencil_auto_unrolled_test() {
   auto naive = run_regression_tb(app_name + "_naive");
 
   assert(opt == naive);
-  //assert(false);
 }
 
 void up_stencil_down_auto_unrolled_test() {
@@ -5402,7 +5388,6 @@ void up_stencil_down_auto_unrolled_test() {
   auto naive = run_regression_tb("up_stencil_down_naive");
 
   assert(opt == naive);
-  //assert(false);
 }
 
 void up_stencil_down_test() {
@@ -5434,7 +5419,6 @@ void up_stencil_down_test() {
   //}
   //cout << endl << endl;
 
-  //assert(false);
 
   lp.realize("ds", size, size);
   auto opt = run_regression_tb("ds_opt");
@@ -5449,7 +5433,6 @@ void up_stencil_down_test() {
 
   compare(opt, naive);
   //assert(opt == naive);
-  //assert(false);
 }
 
 void up_stencil_down_unrolled_test() {
@@ -5611,7 +5594,6 @@ void harris16_test() {
   assert(naive == optimized);
   move_to_benchmarks_folder("harris16_mini_opt");
 
-  //assert(false);
 
   int rows = 1080;
   int cols = 1920;
@@ -5645,7 +5627,6 @@ void harris_test() {
   assert(naive == optimized);
   move_to_benchmarks_folder("harris_mini_opt");
 
-  //assert(false);
 
   int rows = 1080;
   int cols = 1920;
@@ -5715,7 +5696,6 @@ void denoise3d_test() {
   assert(naive == optimized);
   move_to_benchmarks_folder("dn3d_mini_opt");
 
-  //assert(false);
 
   int rows = 32;
   int cols = 32;
@@ -5834,7 +5814,7 @@ void exposure_fusion_iccad_apps() {
   int size = 1920;
   lp.realize(name, size, size, throughput);
   move_to_benchmarks_folder(name + "_opt");
-  assert(false);
+  //assert(false);
 }
 
 void exposure_fusion() {
@@ -7450,7 +7430,7 @@ void playground() {
 
 void application_tests() {
   exposure_fusion_iccad_apps();
-  assert(false);
+  //assert(false);
 
   max_pooling_test();
   exposure_fusion();
