@@ -4805,11 +4805,9 @@ struct App {
   void realize_no_unroll(CodegenOptions& options,
       const std::string& name,
       const std::vector<int>& dims) {
-
     fill_data_domain(name, dims);
     fill_compute_domain();
     schedule_and_codegen(options, name);
-
   }
 
   void realize(CodegenOptions& options, const std::string& name, const int d0, const int d1, const int unroll_factor) {
@@ -7622,8 +7620,6 @@ void application_tests() {
   ram_addr_unit_test();
 
   denoise2d_test();
-
-
 
   conv_1d_test();
   blur_xy_16_app_test();

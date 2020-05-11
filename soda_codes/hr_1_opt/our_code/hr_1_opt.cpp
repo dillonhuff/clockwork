@@ -2244,6 +2244,27 @@ inline void lyy_update_0(grad_y_cache& grad_y, lyy_cache& lyy, int d0, int d1) {
 
 }
 
+inline void lgxy_update_0(lxy_cache& lxy, lgxy_cache& lgxy, int d0, int d1) {
+	// Consume: lxy
+	auto lxy_0_c__0_value = lxy_lgxy_update_0_read_bundle_read(lxy/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "lgxy_update_0_lxy," << d0<< "," << d1<< "," <<  lxy_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = lgxy_generated_compute_unrolled_1(lxy_0_c__0_value);
+	// Produce: lgxy
+	lgxy_lgxy_update_0_write_bundle_write(compute_result, lgxy, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<32> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  *global_debug_handle << "lgxy_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void lxy_update_0(grad_x_cache& grad_x, grad_y_cache& grad_y, lxy_cache& lxy, int d0, int d1) {
 	// Consume: grad_x
 	auto grad_x_0_c__0_value = grad_x_lxy_update_0_read_bundle_read(grad_x/* source_delay */, d0, d1);
@@ -2310,27 +2331,6 @@ inline void lgyy_update_0(lyy_cache& lyy, lgyy_cache& lgyy, int d0, int d1) {
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
   *global_debug_handle << "lgyy_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void lgxy_update_0(lxy_cache& lxy, lgxy_cache& lgxy, int d0, int d1) {
-	// Consume: lxy
-	auto lxy_0_c__0_value = lxy_lgxy_update_0_read_bundle_read(lxy/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "lgxy_update_0_lxy," << d0<< "," << d1<< "," <<  lxy_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = lgxy_generated_compute_unrolled_1(lxy_0_c__0_value);
-	// Produce: lgxy
-	lgxy_lgxy_update_0_write_bundle_write(compute_result, lgxy, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "lgxy_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
