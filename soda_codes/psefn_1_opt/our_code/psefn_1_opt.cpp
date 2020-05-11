@@ -8884,9 +8884,6 @@ void psefn_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */in_off_chip
 #endif // __VIVADO_SYNTH__
 
   for (int epoch = 0; epoch < num_epochs; epoch++) {
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS inline recursive
-	#endif // __VIVADO_SYNTH__
 	
 	for (int c0 = 0; c0 <= 1933; c0++) {
 	  for (int c1 = 0; c1 <= 1933; c1++) {
