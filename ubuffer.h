@@ -658,7 +658,7 @@ class UBuffer {
             const auto addr = read_addr.at(rd_itr);
 
             //cout << cycle << tab(1) << "rd" << tab(1) << addr << endl;
-            out << "rd@" << cycle << tab(1) << "data=" <<sep_list(addr, "[", "]", ",") << endl;
+            out << "rd@" << cycle << tab(1) << ",data=" <<sep_list(addr, "[", "]", " ") << endl;
             rd_itr ++;
           }
         }
@@ -666,7 +666,7 @@ class UBuffer {
           if (write_cycle.at(wr_itr) == cycle) {
             auto addr = write_addr.at(wr_itr);
             //cout << cycle << tab(1) << "wr" << tab(1) << addr << endl;
-            out << "wr@" << cycle << tab(1) << "data="<< sep_list(addr, "[", "]", ",") << endl;
+            out << "wr@" << cycle << tab(1) << ",data="<< sep_list(addr, "[", "]", " ") << endl;
             //out << cycle << tab(1) << "wr"  << endl;
             wr_itr ++;
           }
