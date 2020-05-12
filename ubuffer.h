@@ -629,11 +629,35 @@ class UBuffer {
 
     //lowering ubuffer to memtile
     vector<int> read_cycle, write_cycle;
+    vector<isl_set*> read_it, write_it;
     HWconstraints hardware;
 
     //SRAM specific
     //Save the pair of read port bundle name and op pos point
     queue<pair<string, isl_set*>> rd_op_queue;
+
+    void emit_address_stream(string fname) {
+      ofstream out(fname+".csv");
+      int cycle = 0;
+      size_t rd_itr = 0;
+      size_t wr_itr = 0;
+      while (rd_itr < read_cycle.size() && wr_itr < write_cycle.size()) {
+        if (rd_itr < read_cycle.size()) {
+          if (read_cycle.at(rd_itr) == cycle) {
+            out << "rd" << tab(1) << cycle << endl;
+            rd_itr ++;
+          }
+        }
+        if (wr_itr < write_cycle.size()) {
+          if (write_cycle.at(wr_itr) == cycle) {
+            out << "wr" << tab(1) << cycle << endl;
+            wr_itr ++;
+          }
+        }
+        cycle ++;
+      }
+      out.close();
+    }
 
     //TODO: only support one read/write
     bool is_rd(isl_point* pt) {
@@ -698,10 +722,12 @@ class UBuffer {
     }
 
     //TODO: create a subclass and merge into the mark read method
-    void mark_write_sram(size_t cycle) {
+    void mark_write_sram(size_t cycle, isl_set* iter_set) {
         auto num_cycle = get_wr_cycle();
-        for (size_t delay = 1; delay <= num_cycle; delay ++)
+        for (size_t delay = 1; delay <= num_cycle; delay ++) {
             write_cycle.push_back(cycle + delay);
+            write_it.push_back(iter_set);
+        }
     }
 
     void mark_read_sram(isl_set* iteration_pos) {
@@ -709,6 +735,26 @@ class UBuffer {
         assert(rd_bd.size() == 1);
         string bd_name = pick(rd_bd);
         rd_op_queue.push(make_pair(bd_name, iteration_pos));
+    }
+
+    isl_union_set* get_in_data_set(isl_set* op) {
+        vector<string> pt_vec = get_bd_in_ports();
+        isl_union_set* data = isl_union_set_read_from_str(ctx, "{}");
+        for(auto pt: pt_vec) {
+            auto map_current_op = its(access_map.at(pt), op);
+            data = unn(data, range(map_current_op));
+        }
+        return data;
+    }
+
+    isl_union_set* get_out_data_set(isl_set* op) {
+        vector<string> pt_vec = get_bd_out_ports();
+        isl_union_set* data = isl_union_set_read_from_str(ctx, "{}");
+        for(auto pt: pt_vec) {
+            auto map_current_op = its(access_map.at(pt), op);
+            data = unn(data, range(map_current_op));
+        }
+        return data;
     }
 
     void schedule_read_sram(size_t cycle, isl_set* iteration_pos, UBuffer tb) {
@@ -720,20 +766,22 @@ class UBuffer {
         auto sram2tb_op = possible_read.second;
 
         //get the data relation in TB
-        vector<string> pt_vec = tb.get_bd_in_ports();
+        auto sram2tb_data_in_tb = tb.get_in_data_set(sram2tb_op);
+        /*vector<string> pt_vec = tb.get_bd_in_ports();
         isl_union_set* sram2tb_data_in_tb = isl_union_set_read_from_str(ctx, "{}");
         for(auto pt: pt_vec) {
             auto map_current_op = its(tb.access_map.at(pt), sram2tb_op);
             sram2tb_data_in_tb = unn(sram2tb_data_in_tb, range(map_current_op));
-        }
+        }*/
         cout << "\t sram2tb: " << str(sram2tb_data_in_tb) << endl;
 
-        vector<string> rd_pt_vec = tb.get_bd_out_ports();
+        /*vector<string> rd_pt_vec = tb.get_bd_out_ports();
         isl_union_set* tb2out_data_in_tb = isl_union_set_read_from_str(ctx, "{}");
         for (auto pt: rd_pt_vec) {
             auto map_current_op = its(tb.access_map.at(pt), iteration_pos);
             tb2out_data_in_tb = unn(tb2out_data_in_tb, range(map_current_op));
-        }
+        }*/
+        auto tb2out_data_in_tb = tb.get_out_data_set(iteration_pos);
         cout << "\t tb2out: " << str(tb2out_data_in_tb) << endl;
 
 

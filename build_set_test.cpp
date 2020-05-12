@@ -993,7 +993,10 @@ void bankmerge_vec_test() {
             cout << "Buffer: " << buf.name << endl;
             cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
             cout << endl;
-            buf.mark_write_sram(cycle);
+            auto pt = pick(buf.get_out_ports());
+            auto rd_sched = to_map(buf.schedule.at(pt));
+            auto iter_set = domain(its_range(rd_sched, isl_set_from_point(point)));
+            buf.mark_write_sram(cycle, iter_set);
           }
           else if(buf.is_rd(point) && is_suffix(buf.name, "sram")) {
               //TODO: push operation into queue and its corresponding cycle:
@@ -1007,6 +1010,7 @@ void bankmerge_vec_test() {
           }
       }
   }
+  buffers_opt.at("buf1_sram").emit_address_stream("SRAM_address");
   assert(false);
 }
 
