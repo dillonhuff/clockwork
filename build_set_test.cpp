@@ -5674,9 +5674,9 @@ App harris16(const std::string& out_name) {
   harris.func2d("lyy", div(square(v("grad_y")), 128));
   harris.func2d("lxy", div(mul(v("grad_x"), v("grad_y")), 128));
   
-  harris.func2d("lgxx", div(stencilv(-1, 1, -1, 1, "lxx"), 9));
-  harris.func2d("lgyy", div(stencilv(-1, 1, -1, 1, "lyy"), 9));
-  harris.func2d("lgxy", div(stencilv(-1, 1, -1, 1, "lxy"), 9));
+  harris.func2d("lgxx", add(stencilv(-1, 1, -1, 1, "lxx"), 9));
+  harris.func2d("lgyy", add(stencilv(-1, 1, -1, 1, "lyy"), 9));
+  harris.func2d("lgxy", add(stencilv(-1, 1, -1, 1, "lxy"), 9));
 
   harris.func2d("lgxx8", div(v("lgxx"), 64));
   harris.func2d("lgyy8", div(v("lgyy"), 64));
@@ -5771,6 +5771,7 @@ void harris16_test() {
     run_regression_tb("harris16_mini_naive");
   assert(naive == optimized);
   move_to_benchmarks_folder("harris16_mini_opt");
+  assert(false);
 
 
   int rows = 1080;
