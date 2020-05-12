@@ -5670,17 +5670,17 @@ App harris16(const std::string& out_name) {
         mul(sub(v("img", 0, 1), v("img", 0, -1)), 2),
         sub(v("img", 1, 1), v("img", 1, -1))));
 
-  harris.func2d("lxx", div(square(v("grad_x")), 128));
-  harris.func2d("lyy", div(square(v("grad_y")), 128));
-  harris.func2d("lxy", div(mul(v("grad_x"), v("grad_y")), 128));
+  harris.func2d("lxx", add(square(v("grad_x")), 128));
+  harris.func2d("lyy", add(square(v("grad_y")), 128));
+  harris.func2d("lxy", add(mul(v("grad_x"), v("grad_y")), 128));
   
   harris.func2d("lgxx", add(stencilv(-1, 1, -1, 1, "lxx"), 9));
   harris.func2d("lgyy", add(stencilv(-1, 1, -1, 1, "lyy"), 9));
   harris.func2d("lgxy", add(stencilv(-1, 1, -1, 1, "lxy"), 9));
 
-  harris.func2d("lgxx8", div(v("lgxx"), 64));
-  harris.func2d("lgyy8", div(v("lgyy"), 64));
-  harris.func2d("lgxy8", div(v("lgxy"), 64));
+  harris.func2d("lgxx8", add(v("lgxx"), 64));
+  harris.func2d("lgyy8", add(v("lgyy"), 64));
+  harris.func2d("lgxy8", add(v("lgxy"), 64));
   
   harris.func2d("det", add(mul("lgxx8", "lgyy8"), square("lgxy8")));
   harris.func2d("trace", mul("lgxx8", "lgyy8"));
@@ -6314,7 +6314,7 @@ App pointwise_add(const std::string output_name) {
   jac.set_default_pixel_width(16);
   jac.func2d("input_arg");
   jac.func2d("input", v("input_arg"));
-  jac.func2d(output_name, add(v("input"), 1));
+  jac.func2d(output_name, div(v("input"), 9));
   return jac;
 }
 
@@ -7633,6 +7633,7 @@ void application_tests() {
   harris16_test();
   assert(false);
 
+  pointwise_app_test();
   gaussian_pyramid_app_test();
 
   max_pooling_test();
@@ -7642,7 +7643,6 @@ void application_tests() {
   exposure_fusion_iccad_apps();
 
   exposure_fusion();
-  pointwise_app_test();
 
   sobel_16_app_test();
   denoise3d_test();

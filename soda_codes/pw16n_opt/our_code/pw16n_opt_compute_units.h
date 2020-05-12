@@ -8,7 +8,7 @@ hw_uint<16> input_generated_compute(hw_uint<16*1> input_arg) {
 }
 
 hw_uint<16> pw16n_generated_compute(hw_uint<16*1> input) {
-  return (input.get<16, 0>() + hw_uint<16>(1));
+  return (input.get<16, 0>() / hw_uint<16>(9));
 }
 
 
