@@ -6145,8 +6145,9 @@ void laplacian_pyramid_app_test() {
 
 }
 
-void gaussian_pyramid_app_test() {
+App gaussian_pyramid_app(const std::string& out_name) {
   App gp;
+  gp.set_default_pixel_width(16);
 
   gp.func2d("in_off_chip");
   gp.func2d("in", "id", pt("in_off_chip"));
@@ -6164,29 +6165,45 @@ void gaussian_pyramid_app_test() {
     gp.func2d(next, "reduce_gauss", last_window);
     last = next;
   }
-  //gp.realize(last, 32, 32, 1);
- 
+
+  gp.func2d(out_name, "id", pt(last));
+  return gp;
+}
+
+void gaussian_pyramid_app_test() {
+  string name = "gp";
+  vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
+  for (auto factor : unroll_factors) {
+    string name = "gp_" + str(factor);
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+
+    gaussian_pyramid_app(name).realize(options, name, {4, 4}, "in", factor);
+    move_to_benchmarks_folder(name + "_opt");
+  }
+
+  App gp = gaussian_pyramid_app(name);
   {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
     options.debug_options.expect_all_linebuffers = true;
-    gp.realize(options, last, 4, 4, 2);
+    gp.realize(options, name, 4, 4, 2);
   }
 
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
   options.unroll_factors_as_pad = true;
-  gp.realize_naive(options, last, 4, 4);
+  gp.realize_naive(options, name, 4, 4);
 
   std::vector<std::string> naive =
-    run_regression_tb("level_3_naive");
-  //cout << "Naive    : " << naive << endl;
+    run_regression_tb(name + "_naive");
   std::vector<std::string> optimized =
-    run_regression_tb("level_3_opt");
-  //cout << "Optimized: " << optimized << endl;
+    run_regression_tb(name + "_opt");
   assert(naive == optimized);
 }
 
@@ -7612,10 +7629,11 @@ void playground() {
 }
 
 void application_tests() {
-  max_pooling_test();
+  gaussian_pyramid_app_test();
   assert(false);
 
-  gaussian_pyramid_app_test();
+  max_pooling_test();
+
   halide_frontend_test();
 
   exposure_fusion_iccad_apps();
