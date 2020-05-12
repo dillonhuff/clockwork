@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, cl::Buffer in_update_0_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in_update_0_read_size_bytes, in_update_0_read.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, in_update_0_read_ocl_buf));
 
-  uint64_t transfer_size = num_epochs*(524288 / 32);
+  uint64_t transfer_size = num_epochs*(524288 / 16);
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
   std::cout << "Starting kernel" << std::endl;

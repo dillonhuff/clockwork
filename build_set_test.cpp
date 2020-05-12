@@ -4746,7 +4746,7 @@ struct App {
   void set_unroll_factors(const std::string& reference_function,
       const std::string& to_unroll_function,
       const int unroll_factor) {
-    assert(reference_function == to_unroll_function);
+    //assert(reference_function == to_unroll_function);
 
     // Preprocess application graph to compute qfactors
     App cpy = *this;
@@ -4832,7 +4832,7 @@ struct App {
       double total_elapsed = 0.;
       auto start = std::chrono::system_clock::now();
 
-      assert(out_name == unroll_target);
+      //assert(out_name == unroll_target);
       set_unroll_factors(out_name, unroll_target, unroll_factor);
       realize_no_unroll(options, out_name, dims);
 
@@ -5906,7 +5906,7 @@ void max_pooling_test() {
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
 
-    mp.realize(options, "max_pool", {H, W, D}, 16);
+    mp.realize(options, "max_pool", {H, W, D}, "in", 16);
   }
 
   //CodegenOptions options;
@@ -6176,7 +6176,6 @@ void gaussian_pyramid_app_test() {
     run_regression_tb("level_3_opt");
   //cout << "Optimized: " << optimized << endl;
   assert(naive == optimized);
-
 }
 
 App sobel_mag_x() {
@@ -7601,15 +7600,14 @@ void playground() {
 }
 
 void application_tests() {
-  gaussian_pyramid_app_test();
-  assert(false);
+  max_pooling_test();
+  //assert(false);
 
+  gaussian_pyramid_app_test();
   halide_frontend_test();
 
   exposure_fusion_iccad_apps();
-  //assert(false);
 
-  max_pooling_test();
   exposure_fusion();
   pointwise_app_test();
 
@@ -7619,11 +7617,7 @@ void application_tests() {
   harris16_test();
   blur_xy_16_app_test();
 
-
-  //assert(false);
-
   ram_addr_unit_test();
-
   denoise2d_test();
 
   conv_1d_test();
