@@ -4,6 +4,16 @@
 
 using namespace std;
 
+template <typename T>
+std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
+    if ( !v.empty()  ) {
+        out << '[';
+        std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
+        out << "\b\b]";
+    }
+    return out;
+}
+
 struct DebugOptions {
   bool expect_all_linebuffers;
 
@@ -629,12 +639,13 @@ class UBuffer {
 
     //lowering ubuffer to memtile
     vector<int> read_cycle, write_cycle;
-    vector<isl_set*> read_it, write_it;
+    vector<vector<int> > read_addr, write_addr;
     HWconstraints hardware;
 
     //SRAM specific
     //Save the pair of read port bundle name and op pos point
     queue<pair<string, isl_set*>> rd_op_queue;
+
 
     void emit_address_stream(string fname) {
       ofstream out(fname+".csv");
@@ -644,13 +655,19 @@ class UBuffer {
       while (rd_itr < read_cycle.size() && wr_itr < write_cycle.size()) {
         if (rd_itr < read_cycle.size()) {
           if (read_cycle.at(rd_itr) == cycle) {
-            out << "rd" << tab(1) << cycle << endl;
+            const auto addr = read_addr.at(rd_itr);
+
+            //cout << cycle << tab(1) << "rd" << tab(1) << addr << endl;
+            out << "rd@" << cycle << tab(1) << "data=" <<sep_list(addr, "[", "]", ",") << endl;
             rd_itr ++;
           }
         }
         if (wr_itr < write_cycle.size()) {
           if (write_cycle.at(wr_itr) == cycle) {
-            out << "wr" << tab(1) << cycle << endl;
+            auto addr = write_addr.at(wr_itr);
+            //cout << cycle << tab(1) << "wr" << tab(1) << addr << endl;
+            out << "wr@" << cycle << tab(1) << "data="<< sep_list(addr, "[", "]", ",") << endl;
+            //out << cycle << tab(1) << "wr"  << endl;
             wr_itr ++;
           }
         }
@@ -721,12 +738,74 @@ class UBuffer {
         return pt_vec.size() / hardware.port_width;
     }
 
+    //TODO: put it into qexpr.h
+    Box extract_access_range() {
+        auto addr_range = isl_union_set_read_from_str(ctx, "{}");
+        for (auto pt: get_in_ports()) {
+            addr_range = unn(range(access_map.at(pt)), addr_range);
+        }
+        auto min_pt = parse_pt(sample(lexmin(addr_range)));
+        auto max_pt = parse_pt(sample(lexmax(addr_range)));
+
+        Box b;
+
+        for (size_t i = 0; i < min_pt.size(); i ++) {
+            auto len = min_pt.size() - 1;
+            b.intervals.push_back({min_pt.at(len - i), max_pt.at(len - i)});
+        }
+        return b;
+    }
+
+    vector<int> get_linearization_vector() {
+        vector<int> ret;
+        auto b = extract_access_range();
+        for (size_t i = 0; i < b.dimension(); i ++) {
+            ret.push_back(b.cardinality(i));
+        }
+        return ret;
+    }
+
+    queue<int> get_rd_data_nd_addr(isl_set* op) {
+        queue<int> ret;
+        auto rd_data_set = get_out_data_set(op);
+        auto point_vec = get_points(rd_data_set);
+        sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
+        for (auto point:  point_vec) {
+            auto b = get_linearization_vector();
+            auto a = parse_pt(point);
+            int addr = std::inner_product(a.rbegin(), a.rend(), b.begin(), 0);
+            ret.push(addr);
+        }
+        return ret;
+    }
+
+    queue<int> get_wr_data_nd_addr(isl_set* op) {
+        queue<int> ret;
+        auto wr_data_set = get_in_data_set(op);
+        auto point_vec = get_points(wr_data_set);
+        sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
+        for (auto point:  point_vec) {
+            auto b = get_linearization_vector();
+            auto a = parse_pt(point);
+            int addr = std::inner_product(a.begin(), a.end(), b.rbegin(), 0);
+            ret.push(addr);
+        }
+        return ret;
+    }
+
     //TODO: create a subclass and merge into the mark read method
     void mark_write_sram(size_t cycle, isl_set* iter_set) {
         auto num_cycle = get_wr_cycle();
+        auto addr_queue = get_wr_data_nd_addr(iter_set);
         for (size_t delay = 1; delay <= num_cycle; delay ++) {
             write_cycle.push_back(cycle + delay);
-            write_it.push_back(iter_set);
+            vector<int> tmp;
+            for (size_t i = 0; i < hardware.port_width; i ++) {
+                assert(!addr_queue.empty());
+                tmp.push_back(addr_queue.front());
+                addr_queue.pop();
+            }
+            write_addr.push_back(tmp);
         }
     }
 
@@ -773,7 +852,7 @@ class UBuffer {
             auto map_current_op = its(tb.access_map.at(pt), sram2tb_op);
             sram2tb_data_in_tb = unn(sram2tb_data_in_tb, range(map_current_op));
         }*/
-        cout << "\t sram2tb: " << str(sram2tb_data_in_tb) << endl;
+        //cout << "\t sram2tb: " << str(sram2tb_data_in_tb) << endl;
 
         /*vector<string> rd_pt_vec = tb.get_bd_out_ports();
         isl_union_set* tb2out_data_in_tb = isl_union_set_read_from_str(ctx, "{}");
@@ -782,14 +861,13 @@ class UBuffer {
             tb2out_data_in_tb = unn(tb2out_data_in_tb, range(map_current_op));
         }*/
         auto tb2out_data_in_tb = tb.get_out_data_set(iteration_pos);
-        cout << "\t tb2out: " << str(tb2out_data_in_tb) << endl;
+        //cout << "\t tb2out: " << str(tb2out_data_in_tb) << endl;
 
 
         auto overlap = its(tb2out_data_in_tb, sram2tb_data_in_tb);
-        cout << "\toverlap: " << str(overlap) << endl;
+        //cout << "\toverlap: " << str(overlap) << endl;
         if (int_upper_bound(card(overlap)) > 0) {
             //this is the op we want to pop
-            cout << "pop queue!" << endl;
             size_t rd_op_cycle = get_rd_cycle();
             size_t target_cycle = cycle - 1;
             stack<int> scheduled;
@@ -809,8 +887,17 @@ class UBuffer {
                 }
                 target_cycle --;
             }
+
+            auto addr_queue = get_rd_data_nd_addr(possible_read.second);
             while (!scheduled.empty()) {
                 read_cycle.push_back(scheduled.top());
+                vector<int>  tmp;
+                for (size_t i = 0; i < hardware.port_width; i ++) {
+                    assert(!addr_queue.empty());
+                    tmp.push_back(addr_queue.front());
+                    addr_queue.pop();
+                }
+                read_addr.push_back(tmp);
                 cout << "SRAM read op: " << str(possible_read.second) << " execute in cycle: " << scheduled.top() << endl;
                 scheduled.pop();
             }
@@ -1304,15 +1391,6 @@ class UBuffer {
 
 int compute_max_dd(UBuffer& buf, const string& inpt);
 
-template <typename T>
-std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
-    if ( !v.empty()  ) {
-        out << '[';
-        std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
-        out << "\b\b]";
-    }
-    return out;
-}
 
 static inline
 std::ostream& operator<<(std::ostream& out, const AccessPattern& acc_pattern) {

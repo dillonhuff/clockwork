@@ -993,7 +993,7 @@ void bankmerge_vec_test() {
             cout << "Buffer: " << buf.name << endl;
             cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
             cout << endl;
-            auto pt = pick(buf.get_out_ports());
+            auto pt = pick(buf.get_in_ports());
             auto rd_sched = to_map(buf.schedule.at(pt));
             auto iter_set = domain(its_range(rd_sched, isl_set_from_point(point)));
             buf.mark_write_sram(cycle, iter_set);

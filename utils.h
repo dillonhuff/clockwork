@@ -169,7 +169,7 @@ std::string sep_list(const std::vector<T>& vals, const std::string& ldelim, cons
     ss << v;
     strs.push_back(ss.str());
   }
-  return sep_list(vals, ldelim, rdelim, sep);
+  return sep_list(strs, ldelim, rdelim, sep);
 }
 
 static inline

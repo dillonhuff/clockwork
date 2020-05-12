@@ -130,6 +130,9 @@ isl_set* to_set(isl_basic_set* const m);
 
 vector<isl_point*> get_points(isl_set* m);
 
+isl_stat get_points(isl_set* m, void* user);
+vector<isl_point*> get_points(isl_union_set* s);
+
 isl_stat get_maps(isl_map* m, void* user);
 vector<isl_map*> get_maps(isl_union_map* m);
 vector<isl_set*> get_sets(isl_union_set* m);

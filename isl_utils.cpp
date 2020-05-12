@@ -306,6 +306,20 @@ vector<isl_point*> get_points(isl_set* m) {
   return map_vec;
 }
 
+isl_stat get_points(isl_set* m, void* user) {
+  auto* vm = (vector<isl_point*>*) user;
+  vector<isl_point*> pt_vec = get_points(m);
+  vm->insert(vm->end(), pt_vec.begin(), pt_vec.end());
+  return isl_stat_ok;
+}
+
+vector<isl_point*> get_points(isl_union_set* s) {
+    assert(s != nullptr);
+    vector<isl_point*> point_vec;
+    isl_union_set_foreach_set(s, get_points, &point_vec);
+    return point_vec;
+}
+
 vector<isl_set*> get_sets(isl_union_set* m) {
   assert(m != nullptr);
 
