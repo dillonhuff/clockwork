@@ -4746,6 +4746,8 @@ struct App {
   void set_unroll_factors(const std::string& reference_function,
       const std::string& to_unroll_function,
       const int unroll_factor) {
+    cout << "Unrolling " << to_unroll_function << " by " << unroll_factor << endl;
+
     //assert(reference_function == to_unroll_function);
 
     // Preprocess application graph to compute qfactors
@@ -4788,6 +4790,10 @@ struct App {
         int fres = (int) max(1.0f, floor(((float) umax) / (float) u_qfactor));
         int u_unroll_factor = fres;
         u.unroll_factor = u_unroll_factor;
+        cout << tab(1) << u.unroll_factor << endl;
+        if (r.first == to_unroll_function) {
+          assert(u.unroll_factor == unroll_factor);
+        }
       }
     }
   }
@@ -5889,24 +5895,31 @@ void denoise3d_test() {
   }
 }
 
-void max_pooling_test() {
+App max_pooling(const std::string& out_name) {
   App mp;
   mp.func3d("in_oc");
   mp.func3d("in", "id", pt3("in_oc"));
   Window max_win{"in", {qconst(2), qconst(2), qconst(1)}, {{0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {1, 1, 0}}};
-  mp.func3d("max_pool", "max_pool_2x2", {max_win});
+  mp.func3d(out_name, "max_pool_2x2", {max_win});
 
+  return mp;
+}
+
+void max_pooling_test() {
   int W = 64;
   int H = 64;
   int D = 32;
 
-  {
+  vector<int> unroll_factors{1, 2, 4};
+  for (auto factor : unroll_factors) {
+    string name = "mp_" + str(factor);
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
 
-    mp.realize(options, "max_pool", {H, W, D}, "in", 16);
+    max_pooling(name).realize(options, name, {H, W, D}, "in", factor);
+    move_to_benchmarks_folder(name + "_opt");
   }
 
   //CodegenOptions options;
@@ -5921,7 +5934,6 @@ void max_pooling_test() {
     //run_regression_tb("max_pool_naive");
   //assert(naive == optimized);
   
-  move_to_benchmarks_folder("max_pool_opt");
 }
 
 App exposure_fusion_app(const std::string& out_name) {
@@ -7601,7 +7613,7 @@ void playground() {
 
 void application_tests() {
   max_pooling_test();
-  //assert(false);
+  assert(false);
 
   gaussian_pyramid_app_test();
   halide_frontend_test();
