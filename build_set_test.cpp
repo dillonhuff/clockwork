@@ -4451,7 +4451,7 @@ struct App {
   }
 
   umap* realize_opt_schedule(const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    set_unroll_factors(name, unroll_factor);
+    set_unroll_factors(name, name, unroll_factor);
     fill_data_domain(name, {d0, d1});
     fill_compute_domain();
 
@@ -4461,7 +4461,7 @@ struct App {
   }
 
   umap* realize_isl_schedule(const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    set_unroll_factors(name, unroll_factor);
+    set_unroll_factors(name, name, unroll_factor);
     fill_data_domain(name, {d0, d1});
     fill_compute_domain();
 
@@ -4477,12 +4477,12 @@ struct App {
   void realize_naive(CodegenOptions& options, const std::string& name, const std::vector<int>& dims) {
     if (!options.unroll_factors_as_pad) {
       const int unroll_factor = 1;
-      set_unroll_factors(name, unroll_factor);
+      set_unroll_factors(name, name, unroll_factor);
     } else {
       cout << "realizing naive with padded unroll factors" << endl;
     }
     fill_data_domain(name, dims);
-    set_unroll_factors(name, 1);
+    set_unroll_factors(name, name, 1);
     fill_compute_domain();
 
     umap* m =
@@ -4743,9 +4743,14 @@ struct App {
     }
   }
 
-  void set_unroll_factors(const std::string& reference_function, const int unroll_factor) {
+  void set_unroll_factors(const std::string& reference_function,
+      const std::string& to_unroll_function,
+      const int unroll_factor) {
+    assert(reference_function == to_unroll_function);
+
     // Preprocess application graph to compute qfactors
     App cpy = *this;
+    // TODO: Update to fill with ndims dimensions
     int dummy_value = 10;
     cpy.no_unrolling();
     cpy.fill_data_domain(reference_function, {dummy_value, dummy_value});
@@ -4765,15 +4770,16 @@ struct App {
     }
 
     string reference_update =
-      sched_var_name(last_update(reference_function).name());
+      sched_var_name(last_update(to_unroll_function).name());
+      //sched_var_name(last_update(reference_function).name());
     cout << "reference: " << reference_update << endl;
+    cout << "to unroll: " << to_unroll_function << endl;
     
     int ref_q = to_int(map_find(reference_update, qfs));
     cout << "ref_q = " << ref_q << endl;
     int umax = ref_q * unroll_factor;
     cout << "umax  = " << umax << endl;
 
-    //assert(false);
     // Use these factors to set unrolled behavior
     for (auto& r : app_dag) {
       for (auto& u : r.second.updates) {
@@ -4785,6 +4791,15 @@ struct App {
       }
     }
   }
+  
+  void realize_no_unroll(CodegenOptions& options,
+      const std::string& name,
+      const std::vector<int>& dims) {
+    fill_data_domain(name, dims);
+    fill_compute_domain();
+    schedule_and_codegen(options, name);
+  }
+
 
   void realize(const std::string& name, const int d0, const int d1) {
     CodegenOptions options;
@@ -4799,15 +4814,6 @@ struct App {
       const int d0,
       const int d1) {
     realize(options, name, {d0, d1}, 1);
-    //realize(options, name, {d0, d1});
-  }
-
-  void realize_no_unroll(CodegenOptions& options,
-      const std::string& name,
-      const std::vector<int>& dims) {
-    fill_data_domain(name, dims);
-    fill_compute_domain();
-    schedule_and_codegen(options, name);
   }
 
   void realize(CodegenOptions& options, const std::string& name, const int d0, const int d1, const int unroll_factor) {
@@ -4815,17 +4821,26 @@ struct App {
   }
 
   void realize(CodegenOptions& options, const std::string& name, const vector<int>& dims, const int unroll_factor) {
+    realize(options, name, dims, name, unroll_factor);
+  }
+
+  void realize(CodegenOptions& options,
+      const std::string& out_name,
+      const vector<int>& dims,
+      const std::string& unroll_target,
+      const int unroll_factor) {
       double total_elapsed = 0.;
       auto start = std::chrono::system_clock::now();
 
-      set_unroll_factors(name, unroll_factor);
-      realize_no_unroll(options, name, dims);
+      assert(out_name == unroll_target);
+      set_unroll_factors(out_name, unroll_target, unroll_factor);
+      realize_no_unroll(options, out_name, dims);
 
       auto end = std::chrono::system_clock::now();
       std::chrono::duration<double> elapsed = end - start;
       total_elapsed += elapsed.count();
-      ofstream schedule_info("./scratch/" + name + ".txt");
-      schedule_info << "time to realize " << name << ": " << total_elapsed << endl;
+      ofstream schedule_info("./scratch/" + out_name + ".txt");
+      schedule_info << "time to realize " << out_name << ": " << total_elapsed << endl;
       schedule_info.close();
   }
 
@@ -4836,18 +4851,6 @@ struct App {
     options.use_custom_code_string = true;
 
     realize(options, name, {d0, d1}, unroll_factor);
-    //double total_elapsed = 0.;
-    //auto start = std::chrono::system_clock::now();
-
-    //set_unroll_factors(name, unroll_factor);
-    //realize(name, d0, d1);
-
-    //auto end = std::chrono::system_clock::now();
-    //std::chrono::duration<double> elapsed = end - start;
-    //total_elapsed += elapsed.count();
-    //ofstream schedule_info("./scratch/" + name + ".txt");
-    //schedule_info << "time to realize " << name << ": " << total_elapsed << endl;
-    //schedule_info.close();
   }
 
 };
@@ -7598,8 +7601,10 @@ void playground() {
 }
 
 void application_tests() {
+  gaussian_pyramid_app_test();
+  assert(false);
+
   halide_frontend_test();
-  //assert(false);
 
   exposure_fusion_iccad_apps();
   //assert(false);
@@ -7631,7 +7636,6 @@ void application_tests() {
   grayscale_conversion_test();
   upsample2d_test();
 
-  gaussian_pyramid_app_test();
   denoise2d_test();
 
   downsample2d_test();
