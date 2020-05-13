@@ -1,5 +1,9 @@
 #pragma once
 
+#include <string>
+
+using namespace std;
+
 struct DebugOptions {
   bool expect_all_linebuffers;
 
