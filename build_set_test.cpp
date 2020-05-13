@@ -6583,6 +6583,7 @@ void sobel_16_app_test() {
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
+    options.num_input_epochs = 30;
     options.debug_options.expect_all_linebuffers = true;
     sobel16(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
@@ -7630,6 +7631,9 @@ void playground() {
 }
 
 void iccad_tests() {
+  sobel_16_app_test();
+  assert(false);
+
   exposure_fusion_iccad_apps();
   pointwise_app_test();
   gaussian_pyramid_app_test();
@@ -7637,14 +7641,12 @@ void iccad_tests() {
   max_pooling_test();
 
   harris16_test();
-  sobel_16_app_test();
   denoise3d_test();
   harris_test();
   blur_xy_16_app_test();
 
   exposure_fusion();
 
-  assert(false);
 }
 
 void application_tests() {

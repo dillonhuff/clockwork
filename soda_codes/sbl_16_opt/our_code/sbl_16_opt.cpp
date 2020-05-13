@@ -7046,11 +7046,11 @@ void sbl_16_opt(HWStream<hw_uint<256> >& /* get_args num ports = 16 */off_chip_i
   mag_y_cache mag_y;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  for (int epoch = 0; epoch < num_epochs; epoch++) {
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS inline recursive
-	#endif // __VIVADO_SYNTH__
-	
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
+  for (int epoch = 0; epoch < 30; epoch++) {
 	for (int c0 = -1; c0 <= 1080; c0++) {
 	  for (int c1 = -1; c1 <= 120; c1++) {
 	
