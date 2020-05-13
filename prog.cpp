@@ -438,7 +438,7 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   out.close();
 }
 
-void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
+void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
 
   cout << "Generating accel wrapper" << endl;
   string driver_func = prg.name + "_accel";
@@ -1641,7 +1641,7 @@ void generate_app_code(CodegenOptions& options,
   }
 
   open_synth_scope(conv_out);
-  generate_xilinx_accel_wrapper(conv_out, buffers, prg);
+  generate_xilinx_accel_wrapper(options, conv_out, buffers, prg);
   close_synth_scope(conv_out);
 
   conv_out << endl;
