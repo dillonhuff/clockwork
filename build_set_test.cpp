@@ -5771,7 +5771,7 @@ void harris16_test() {
     run_regression_tb("harris16_mini_naive");
   assert(naive == optimized);
   move_to_benchmarks_folder("harris16_mini_opt");
-  assert(false);
+  //assert(false);
 
 
   int rows = 1080;
@@ -7629,31 +7629,34 @@ void playground() {
 
 }
 
-void application_tests() {
-  harris16_test();
-  assert(false);
-
+void iccad_tests() {
+  exposure_fusion_iccad_apps();
   pointwise_app_test();
   gaussian_pyramid_app_test();
 
   max_pooling_test();
 
-  halide_frontend_test();
-
-  exposure_fusion_iccad_apps();
-
-  exposure_fusion();
-
+  harris16_test();
   sobel_16_app_test();
   denoise3d_test();
   harris_test();
   blur_xy_16_app_test();
 
+  exposure_fusion();
+
+  assert(false);
+}
+
+void application_tests() {
+  iccad_tests();
+
+  halide_frontend_test();
+
   ram_addr_unit_test();
   denoise2d_test();
 
   conv_1d_test();
-  blur_xy_16_app_test();
+  
   tricky_shift_register_reconvergence_test();
 
   //playground();
