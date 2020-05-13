@@ -47,7 +47,8 @@ void fill_array_decimal(const string& in_name,
 
       ap_uint<BURST_WIDTH>* val = &(input[offset]);
       for (int l = 0; l < pixels_per_transfer; l++) {
-        ap_uint<PIXEL_WIDTH> next_pix = (r*ncols + pixels_per_transfer*c + l) % 256;
+        ap_uint<PIXEL_WIDTH> next_pix = rand();
+        //ap_uint<PIXEL_WIDTH> next_pix = (r*ncols + pixels_per_transfer*c + l) % 256;
         in << (next_pix) << endl;
         (*val)(l*bits_per_pixel + bits_per_pixel - 1, l*bits_per_pixel) = next_pix;
       }

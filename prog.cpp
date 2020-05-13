@@ -922,6 +922,7 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
     of << "#include \"runtime/test_utils.h\"" << endl << endl;
     of << "using namespace std;" << endl << endl;
     of << "int main() {" << endl;
+    of << tab(1) << "srand(234);" << endl;
     string rep_buf = pick(prg.ins);
 
     int ncols = -1;
