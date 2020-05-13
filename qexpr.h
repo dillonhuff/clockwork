@@ -1147,9 +1147,11 @@ void print_loops(int level,
 }
 
 static inline
-std::string box_codegen(const vector<string>& op_order,
+std::string box_codegen(CodegenOptions& options,
+    const vector<string>& op_order,
     map<string, vector<QExpr> >& scheds,
     map<string, Box>& compute_domains) {
+
   assert(compute_domains.size() > 0);
 
   ostringstream ss;

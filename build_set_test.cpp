@@ -4717,7 +4717,7 @@ struct App {
       }
     }
 
-    string cgn = box_codegen(ops, scheds, compute_domains);
+    string cgn = box_codegen(options, ops, scheds, compute_domains);
     options.code_string = cgn;
 
     map<string, UBuffer> buffers = build_buffers(m);
