@@ -6572,13 +6572,13 @@ void sobel_16_app_test() {
 
   //int cols = 10;
   //int rows = 10;
-  vector<int> factors{1, 8, 16};
+  vector<int> factors{1, 2, 4, 8};
   //for (int i = 0; i < 5; i++) {
   for (auto factor : factors) {
     int unroll_factor = factor;
       //pow(2, i);
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
-    string out_name = "sbl_" + str(unroll_factor);
+    string out_name = "sblf30_" + str(unroll_factor);
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
