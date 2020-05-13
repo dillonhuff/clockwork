@@ -9,6 +9,7 @@
 #include <map>
 #include <vector>
 
+#include "options.h"
 #include "utils.h"
 #include "isl_utils.h"
 
