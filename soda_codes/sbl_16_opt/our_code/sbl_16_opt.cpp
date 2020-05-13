@@ -7094,14 +7094,12 @@ void sbl_16_opt(HWStream<hw_uint<256> >& /* get_args num ports = 16 */off_chip_i
 const int img_update_0_read_num_transfers = 132004;
 const int sbl_16_update_0_write_num_transfers = 129600;
 
-// TODO: Adapt to have one size for each edge buffer
-#define INPUT_SIZE 132004
-#define OUTPUT_SIZE 129600
+
 extern "C" {
 
 static void read_img_update_0_read(hw_uint<256>* input, HWStream<hw_uint<256> >& v, const int size) {
-  hw_uint<256> burst_reg;
-  for (int i = 0; i < img_update_0_read_num_transfers*size; i++) {
+  int num_transfers = sbl_16_update_0_write_num_transfers*30;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -7110,7 +7108,8 @@ static void read_img_update_0_read(hw_uint<256>* input, HWStream<hw_uint<256> >&
 
 static void write_sbl_16_update_0_write(hw_uint<256>* output, HWStream<hw_uint<256> >& v, const int size) {
   hw_uint<256> burst_reg;
-  for (int i = 0; i < sbl_16_update_0_write_num_transfers*size; i++) {
+  int num_transfers = sbl_16_update_0_write_num_transfers*30;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;

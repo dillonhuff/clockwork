@@ -203,7 +203,7 @@ void run_kernel(std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
   out << tab(1) << "q.finish();" << endl << endl;
 }
 
-void ocl_check_args(std::ostream& out) {
+void ocl_check_args(CodegenOptions& options, std::ostream& out) {
   out << tab(1) << "srand(234);" << endl;
   out << tab(1) << "if (argc != 2) {" << endl;
   out << tab(2) << "std::cout << \"Usage: \" << argv[0] << \" <XCLBIN File>\" << std::endl;" << endl;
@@ -211,7 +211,11 @@ void ocl_check_args(std::ostream& out) {
   out << tab(1) << "}" << endl << endl;
 
   out << tab(1) << "std::string binaryFile = argv[1];" << endl << endl;
-  out << tab(1) << "int num_epochs = 1;" << endl << endl;
+  if (options.num_input_epochs < 0) {
+    out << tab(1) << "int num_epochs = 1;" << endl << endl;
+  } else {
+    out << tab(1) << "int num_epochs = " << options.num_input_epochs << ";" << endl << endl;
+  }
   out << tab(1) << "std::cout << \"num_epochs = \" << num_epochs << std::endl;" << endl << endl;
 }
 
@@ -248,13 +252,13 @@ void populate_input(std::ostream& out, const std::string& edge_bundle, const str
   out << tab(1) << "input_" << edge_bundle << ".close();" << endl;
 }
 
-void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
+void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg) {
   ofstream out("soda_" + prg.name + "_host.cpp");
   ocl_headers(out);
 
   out << "int main(int argc, char **argv) {" << endl;
 
-  ocl_check_args(out);
+  ocl_check_args(options, out);
 
   int unroll_factor =
     pick(map_find(pick(prg.ins), buffers).port_bundles).second.size();
@@ -344,14 +348,14 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
   out.close();
 }
 
-void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
+void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg) {
   ofstream out(prg.name + "_host.cpp");
 
   ocl_headers(out);
 
   out << "int main(int argc, char **argv) {" << endl;
 
-  ocl_check_args(out);
+  ocl_check_args(options, out);
   
   out << tab(1) << "size_t total_size_bytes = 0;" << endl;
   for (auto eb : edge_buffers(buffers, prg)) {
@@ -484,17 +488,23 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
     out_buf.lanes_in_bundle(out_bundle);
   int out_burst = out_pix / pix_per_out_burst;
 
-  out << "// TODO: Adapt to have one size for each edge buffer" << endl;
-  out << "#define INPUT_SIZE " << in_burst << endl;
-  out << "#define OUTPUT_SIZE " << out_burst << endl;
+  //out << "// TODO: Adapt to have one size for each edge buffer" << endl;
+  //out << "#define INPUT_SIZE " << in_burst << endl;
+  //out << "#define OUTPUT_SIZE " << out_burst << endl;
 
+  out << endl;
   out << "extern \"C\" {" << endl << endl;
 
   for (auto in_bundle : in_bundles(buffers, prg)) {
     out << "static void read_" << in_bundle << "(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const int size) {" << endl;
-    out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
-    //out << tab(1) << "for (int i = 0; i < INPUT_SIZE*size; i++) {" << endl;
-    out << tab(1) << "for (int i = 0; i < " << in_bundle << "_num_transfers*size; i++) {" << endl;
+    
+    if (options.num_input_epochs < 0) {
+      out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*size;" << endl;
+    } else {
+      out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
+    }
+
+    out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
     out << tab(2) << "#pragma HLS pipeline II=1" << endl;
     out << tab(2) << "burst_reg = input[i];" << endl;
     out << tab(2) << "v.write(burst_reg);" << endl;
@@ -505,8 +515,13 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
   for (auto out_bundle : out_bundles(buffers, prg)) {
     out << "static void write_" << out_bundle << "(" << out_bundle_tp << "* output, HWStream<" << out_bundle_tp << " >& v, const int size) {" << endl;
     out << tab(1) << out_bundle_tp << " burst_reg;" << endl;
-    //out << tab(1) << "for (int i = 0; i < OUTPUT_SIZE*size; i++) {" << endl;
-    out << tab(1) << "for (int i = 0; i < " << out_bundle << "_num_transfers*size; i++) {" << endl;
+    if (options.num_input_epochs < 0) {
+      out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*size;" << endl;
+    } else {
+      out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
+    }
+
+    out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
     out << tab(2) << "#pragma HLS pipeline II=1" << endl;
     out << tab(2) << "burst_reg = v.read();" << endl;
     out << tab(2) << "output[i] = burst_reg;" << endl;
@@ -1648,8 +1663,8 @@ void generate_app_code(CodegenOptions& options,
 
   generate_app_code_header(buffers, prg);
   generate_soda_tb(buffers, prg);
-  generate_xilinx_accel_soda_host(buffers, prg);
-  generate_xilinx_accel_host(buffers, prg);
+  generate_xilinx_accel_soda_host(options, buffers, prg);
+  generate_xilinx_accel_host(options, buffers, prg);
   generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
   generate_tb_run_scripts(prg);
   generate_tb_compare_scripts(buffers, prg);
