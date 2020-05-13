@@ -29,6 +29,7 @@ struct CodegenOptions {
   size_t merge_threshold;
 
   int num_input_epochs;
+  bool push_garbage_outputs;
   InnerBankOffsetMode inner_bank_offset_mode;
 
 
@@ -38,6 +39,7 @@ struct CodegenOptions {
   use_custom_code_string(false), code_string(""), simplify_address_expressions(false),
   unroll_factors_as_pad(false), conditional_merge(false), merge_threshold(0),
   num_input_epochs(-1),
+  push_garbage_outputs(false),
   inner_bank_offset_mode(INNER_BANK_OFFSET_STACK) {}
 
 };
