@@ -497,7 +497,8 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
 
   for (auto in_bundle : in_bundles(buffers, prg)) {
     out << "static void read_" << in_bundle << "(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const int size) {" << endl;
-    
+   
+    out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
     if (options.num_input_epochs < 0) {
       out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*size;" << endl;
     } else {
