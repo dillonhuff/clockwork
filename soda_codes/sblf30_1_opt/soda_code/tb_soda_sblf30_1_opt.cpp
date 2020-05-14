@@ -12,9 +12,9 @@ using namespace std;
 
 int main() {
   srand(234);
-  const int nrows = 10;
+  const int nrows = 30*10;
   const int ncols = 10;
-  uint64_t img_pixels = 30*nrows*ncols;
+  uint64_t img_pixels = nrows*ncols;
   const uint64_t bits_per_pixel = PIXEL_WIDTH;
   uint64_t img_bits = bits_per_pixel*img_pixels;
   const uint64_t num_transfers = img_bits / BURST_WIDTH;
