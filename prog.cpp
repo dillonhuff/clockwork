@@ -173,8 +173,21 @@ void ocl_program_device(ostream& out, prog& prg, const std::string& suffix) {
   out << tab(1) << "}" << endl << endl;
 }
 
+void ocl_timing_suffix(std::ostream& out) {
+  out << tab(1) << "double dnsduration = ((double)nsduration);" << endl;
+  out << tab(1) << "double dsduration = dnsduration / ((double)1000000000);" << endl;
+
+  out << tab(1) << "double dbytes = total_size_bytes;" << endl;
+  out << tab(1) << "double bpersec = (dbytes / dsduration);" << endl;
+  out << tab(1) << "double gbpersec = bpersec / ((double)1024 * 1024 * 1024);" << endl;
+
+  out << "std::cout << \"bytes / sec = \" << bpersec << std::endl;" << endl;
+  out << "std::cout << \"GB / sec = \" << gbpersec << std::endl;" << endl;
+  out << "printf(\"Execution time = %f (sec) \\n\", dsduration);" << endl;
+}
+
 void run_kernel(std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
-  out << tab(1) << "std::cout << \"Starting kernel\" << std::endl;" << endl;
+  out << tab(1) << "std::cout << \"Migrating memory\" << std::endl;" << endl;
   vector<string> in_bufs;
   for (auto b : in_bundles(buffers, prg)) {
     in_bufs.push_back(b + "_ocl_buf");
@@ -185,6 +198,7 @@ void run_kernel(std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
   out << "unsigned long start, end, nsduration;" << endl;
   out << "cl::Event event;" << endl << endl;
 
+  out << tab(1) << "std::cout << \"Starting kernel\" << std::endl;" << endl;
   out << "OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));" << endl;
   out << "OCL_CHECK(err, err = event.wait());" << endl;
   out << "end =" << endl;
@@ -201,6 +215,8 @@ void run_kernel(std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
 
   out << endl;
   out << tab(1) << "q.finish();" << endl << endl;
+
+  ocl_timing_suffix(out);
 }
 
 void ocl_check_args(CodegenOptions& options, std::ostream& out) {
@@ -217,19 +233,6 @@ void ocl_check_args(CodegenOptions& options, std::ostream& out) {
     out << tab(1) << "int num_epochs = " << options.num_input_epochs << ";" << endl << endl;
   }
   out << tab(1) << "std::cout << \"num_epochs = \" << num_epochs << std::endl;" << endl << endl;
-}
-
-void ocl_timing_suffix(std::ostream& out) {
-  out << tab(1) << "double dnsduration = ((double)nsduration);" << endl;
-  out << "double dsduration = dnsduration / ((double)1000000000);" << endl;
-
-  out << "double dbytes = total_size_bytes;" << endl;
-  out << "double bpersec = (dbytes / dsduration);" << endl;
-  out << "double gbpersec = bpersec / ((double)1024 * 1024 * 1024);" << endl;
-
-  out << "std::cout << \"bytes / sec = \" << bpersec << std::endl;" << endl;
-  out << "std::cout << \"GB / sec = \" << gbpersec << std::endl;" << endl;
-  out << "printf(\"Execution time = %f (sec) \\n\", dsduration);" << endl;
 }
 
 void ocl_command_queue(std::ostream& out) {
@@ -323,7 +326,6 @@ void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffe
 
   run_kernel(out, buffers, prg);
 
-  ocl_timing_suffix(out);
 
   for (auto output : outputs(buffers, prg)) {
     auto buf = output.first;
@@ -379,16 +381,6 @@ void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& b
   for (auto edge_in : inputs(buffers, prg)) {
     populate_input(out, edge_in.second, vanilla_c_pixel_type_string(edge_in.first, buffers));
   }
-  //for (auto edge_bundle : in_bundles(buffers, prg)) {
-    //populate_input(out, edge_bundle);
-  //}
-
-  //for (auto edge_bundle : out_bundles(buffers, prg)) {
-    //out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
-    //out << tab(1) << "// TODO: Add support for other widths" << endl;
-    //out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = 0;" << endl;
-    //out << tab(1) << "}" << endl << endl;
-  //}
 
   for (auto edge_out : outputs(buffers, prg)) {
     auto edge_bundle = edge_out.second;
@@ -417,14 +409,7 @@ void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& b
   out << endl;
   out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", num_epochs));" << endl << endl;
 
-  //for (auto b : out_bundles(buffers, prg)) {
-    //out << tab(1) << "int " << b << "_size = " << b << "_DATA_SIZE;" << endl;
-    //out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << b << "_size));" << endl << endl;
-  //}
-
   run_kernel(out, buffers, prg);
-
-  ocl_timing_suffix(out);
 
   for (auto output : outputs(buffers, prg)) {
     auto buf = output.first;
@@ -500,9 +485,9 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
    
     out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
     if (options.num_input_epochs < 0) {
-      out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*size;" << endl;
+      out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*size;" << endl;
     } else {
-      out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
+      out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
     }
 
     out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
