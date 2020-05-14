@@ -5874,6 +5874,7 @@ void denoise3d_test() {
     run_regression_tb("dn3d_mini_opt");
   assert(naive == optimized);
   move_to_benchmarks_folder("dn3d_mini_opt");
+  assert(false);
 
 
   int rows = 32;
@@ -7631,9 +7632,10 @@ void playground() {
 }
 
 void iccad_tests() {
-  sobel_16_app_test();
+  denoise3d_test();
   assert(false);
 
+  sobel_16_app_test();
   exposure_fusion_iccad_apps();
   pointwise_app_test();
   gaussian_pyramid_app_test();
@@ -7641,7 +7643,6 @@ void iccad_tests() {
   max_pooling_test();
 
   harris16_test();
-  denoise3d_test();
   harris_test();
   blur_xy_16_app_test();
 
