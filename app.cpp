@@ -943,7 +943,7 @@ extract_schedule_params(vector<isl_map*>& deps) {
     cout << tab(2) << "lexmax: " << str(lm) << endl;
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
       get_pieces(lm);
-    //assert(pieces.size() <= 1);
+    assert(pieces.size() <= 1);
     for (auto piece : pieces) {
       isl_multi_aff* bound = piece.second;
       cout << "bound: " << str(bound) << endl;
