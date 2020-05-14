@@ -937,14 +937,14 @@ void generate_soda_tb(CodegenOptions& options, map<string, UBuffer>& buffers, pr
       nrows = prg.buffer_bounds[rep_buf].at(1);
     }
 
-    of << tab(1) << "const int nrows = " << nrows << ";" << endl;
+    if (options.num_input_epochs < 0) {
+      of << tab(1) << "const int nrows = " << nrows << ";" << endl;
+    } else {
+      of << tab(1) << "const int nrows = " << options.num_input_epochs << "*" << nrows << ";" << endl;
+    }
     of << tab(1) << "const int ncols = " << ncols << ";" << endl;
 
-    if (options.num_input_epochs < 0) {
-      of << tab(1) << "uint64_t img_pixels = nrows*ncols;" << endl;
-    } else {
-      of << tab(1) << "uint64_t img_pixels = " << options.num_input_epochs << "*nrows*ncols;" << endl;
-    }
+    of << tab(1) << "uint64_t img_pixels = nrows*ncols;" << endl;
 
     of << tab(1) << "const uint64_t bits_per_pixel = PIXEL_WIDTH;" << endl;
     of << tab(1) << "uint64_t img_bits = bits_per_pixel*img_pixels;" << endl;
