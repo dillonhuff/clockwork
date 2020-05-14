@@ -5874,6 +5874,7 @@ void denoise3d_test() {
     run_regression_tb("dn3d_mini_opt");
   assert(naive == optimized);
   move_to_benchmarks_folder("dn3d_mini_opt");
+  assert(false);
 
 
   int rows = 32;
@@ -6567,8 +6568,8 @@ void sobel_16_stage_x_app_test() {
 }
 
 void sobel_16_app_test() {
-  int cols = 8;
-  int rows = 8;
+  int cols = 1920;
+  int rows = 1080;
 
   //int cols = 10;
   //int rows = 10;
@@ -6578,7 +6579,7 @@ void sobel_16_app_test() {
     int unroll_factor = factor;
       //pow(2, i);
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
-    string out_name = "sblf30_" + str(unroll_factor);
+    string out_name = "sblr30_" + str(unroll_factor);
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
@@ -7631,9 +7632,10 @@ void playground() {
 }
 
 void iccad_tests() {
-  sobel_16_app_test();
+  denoise3d_test();
   assert(false);
 
+  sobel_16_app_test();
   exposure_fusion_iccad_apps();
   pointwise_app_test();
   gaussian_pyramid_app_test();
@@ -7641,7 +7643,6 @@ void iccad_tests() {
   max_pooling_test();
 
   harris16_test();
-  denoise3d_test();
   harris_test();
   blur_xy_16_app_test();
 
