@@ -4733,7 +4733,21 @@ struct App {
   }
 
   void schedule_and_codegen(CodegenOptions& options, const std::string& name) {
+    time_t rawtime;
+    struct tm * timeinfo;
+    char buffer[80];
+
+    time (&rawtime);
+    timeinfo = localtime(&rawtime);
+
+    strftime(buffer,sizeof(buffer),"%d-%m-%Y %H:%M:%S",timeinfo);
+    std::string time_str(buffer);   
     umap* m = schedule();
+    ofstream schedule_out(name + "_sched_" + time_str);
+    for (auto k : get_maps(m)) {
+      schedule_out << str(k) << endl;
+    }
+    schedule_out.close();
     assert(m != nullptr);
 
     map<string, vector<QExpr> > scheds =
@@ -5865,15 +5879,8 @@ App denoise3d_reconverge(const std::string& out_name) {
   dn.func3d("u", v3("u_oc", 0, 0, 0));
   dn.func3d("f", v3("f_oc", 0, 0, 0));
 
-  //dn.func3d("diff_u", sub(v("u", 0, 0, 0), v("u", 0, -1, 0)));
-  //dn.func3d("diff_d", sub(v("u", 0, 0, 0), v("u", 0, 1, 0)));
-  //dn.func3d("diff_l", sub(v("u", 0, 0, 0), v("u", -1, 0, 0)));
-  //dn.func3d("diff_r", sub(v("u", 0, 0, 0), v("u", 1, 0, 0)));
   dn.func3d("diff_i", sub(v("u", 0, 0, 0), v("u", 0, 0, -1)));
   dn.func3d("diff_o", sub(v("u", 0, 0, 0), v("u", 0, 0, 1)));
-
-  //dn.func3d("g",
-      //add({sq3("diff_u"), sq3("diff_d"), sq3("diff_l"), sq3("diff_r"), sq3("diff_i"), sq3("diff_o")}));
 
   dn.func3d("g",
       add({sq3("diff_i"), sq3("diff_o")}));
@@ -5928,6 +5935,7 @@ void denoise3d_reconvergence_test() {
   options.internal = true;
   options.simplify_address_expressions = true;
   options.use_custom_code_string = true;
+  options.all_rams = true;
   //options.debug_options.expect_all_linebuffers = true;
   hmini.realize(options, name, {mini_size, mini_size, mini_size}, 1);
 
