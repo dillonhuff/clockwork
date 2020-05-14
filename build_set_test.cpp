@@ -5856,6 +5856,33 @@ void harris_test() {
   }
 }
 
+App denoise3d_reconverge(const std::string& out_name) {
+  App dn;
+  dn.set_default_pixel_width(16);
+  dn.func3d("u_oc");
+  dn.func3d("f_oc");
+
+  dn.func3d("u", v3("u_oc", 0, 0, 0));
+  dn.func3d("f", v3("f_oc", 0, 0, 0));
+
+  dn.func3d("diff_u", sub(v("u", 0, 0, 0), v("u", 0, -1, 0)));
+  dn.func3d("diff_d", sub(v("u", 0, 0, 0), v("u", 0, 1, 0)));
+  dn.func3d("diff_l", sub(v("u", 0, 0, 0), v("u", -1, 0, 0)));
+  dn.func3d("diff_r", sub(v("u", 0, 0, 0), v("u", 1, 0, 0)));
+  dn.func3d("diff_i", sub(v("u", 0, 0, 0), v("u", 0, 0, -1)));
+  dn.func3d("diff_o", sub(v("u", 0, 0, 0), v("u", 0, 0, 1)));
+
+  dn.func3d("g",
+      add({sq3("diff_u"), sq3("diff_d"), sq3("diff_l"), sq3("diff_r"), sq3("diff_i"), sq3("diff_o")}));
+
+  dn.func3d("r0", mul(v3("u"), v3("f")));
+  dn.func3d("r1", sq3("r0"));
+  dn.func3d(out_name,
+      add({v3("u", 0, 0, 0), v3("g", 1, 0, 0), v3("r1", 0, 0, 0)}));
+
+  return dn;
+}
+
 App denoise3d(const std::string& out_name) {
   App dn;
   dn.set_default_pixel_width(16);
@@ -5878,12 +5905,36 @@ App denoise3d(const std::string& out_name) {
   dn.func3d("r0", mul(v3("u"), v3("f")));
   dn.func3d("r1", sq3("r0"));
   dn.func3d(out_name,
-      add({v3("u", 0, 0, 0), v3("u", 1, 0, 0), v3("g", 1, 0, 0), v3("u", -1, 0, 0), v3("g", -1, 0, 0),
-        v3("u", 0, 1, 0), v3("g", 0, 1, 0), v3("u", 0, -1, 0), v3("g", 0, -1, 0), v3("u", 0, 0, 1), v3("g", 0, 0, 1),
-        v3("u", 0, 0, -1), v3("g", 0, 0, -1), v3("f", 0, 0, 0), v3("r1", 0, 0, 0),
-        v3("g", 1, 0, 0), v3("g", -1, 0, 0), v3("g", 0, 1, 0), v3("g", 0, -1, 0), v3("g", 0, 0, 1), v3("g", 0, 0, -1)}));
+      add({v3("u", 0, 0, 0), v3("g", 1, 0, 0), v3("r1", 0, 0, 0)}));
+
+  //dn.func3d(out_name,
+      //add({v3("u", 0, 0, 0), v3("u", 1, 0, 0), v3("g", 1, 0, 0), v3("u", -1, 0, 0), v3("g", -1, 0, 0),
+        //v3("u", 0, 1, 0), v3("g", 0, 1, 0), v3("u", 0, -1, 0), v3("g", 0, -1, 0), v3("u", 0, 0, 1), v3("g", 0, 0, 1),
+        //v3("u", 0, 0, -1), v3("g", 0, 0, -1), v3("f", 0, 0, 0), v3("r1", 0, 0, 0),
+        //v3("g", 1, 0, 0), v3("g", -1, 0, 0), v3("g", 0, 1, 0), v3("g", 0, -1, 0), v3("g", 0, 0, 1), v3("g", 0, 0, -1)}));
 
   return dn;
+}
+
+void denoise3d_reconvergence_test() {
+  string name = "dn_reconv";
+  int mini_size = 8;
+  auto hmini = denoise3d_reconverge(name);
+  hmini.realize_naive(name, {mini_size, mini_size, mini_size});
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  //options.debug_options.expect_all_linebuffers = true;
+  hmini.realize(options, name, {mini_size, mini_size, mini_size}, 1);
+
+  std::vector<std::string> naive =
+    run_regression_tb(name + "_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb(name + "_opt");
+  assert(naive == optimized);
+  assert(false);
 }
 
 void denoise3d_test() {
@@ -5895,7 +5946,7 @@ void denoise3d_test() {
   options.internal = true;
   options.simplify_address_expressions = true;
   options.use_custom_code_string = true;
-  options.debug_options.expect_all_linebuffers = true;
+  //options.debug_options.expect_all_linebuffers = true;
   hmini.realize(options, "dn3d_mini", {mini_size, mini_size, mini_size}, 1);
 
   std::vector<std::string> naive =
@@ -5905,6 +5956,7 @@ void denoise3d_test() {
   assert(naive == optimized);
   move_to_benchmarks_folder("dn3d_mini_opt");
   assert(false);
+
 
 
   int rows = 32;
@@ -7662,7 +7714,7 @@ void playground() {
 }
 
 void iccad_tests() {
-  denoise3d_test();
+  denoise3d_reconvergence_test();
   assert(false);
 
   sobel_16_app_test();
