@@ -5865,16 +5865,18 @@ App denoise3d_reconverge(const std::string& out_name) {
   dn.func3d("u", v3("u_oc", 0, 0, 0));
   dn.func3d("f", v3("f_oc", 0, 0, 0));
 
-  dn.func3d("diff_u", sub(v("u", 0, 0, 0), v("u", 0, -1, 0)));
-  dn.func3d("diff_d", sub(v("u", 0, 0, 0), v("u", 0, 1, 0)));
-  dn.func3d("diff_l", sub(v("u", 0, 0, 0), v("u", -1, 0, 0)));
-  dn.func3d("diff_r", sub(v("u", 0, 0, 0), v("u", 1, 0, 0)));
+  //dn.func3d("diff_u", sub(v("u", 0, 0, 0), v("u", 0, -1, 0)));
+  //dn.func3d("diff_d", sub(v("u", 0, 0, 0), v("u", 0, 1, 0)));
+  //dn.func3d("diff_l", sub(v("u", 0, 0, 0), v("u", -1, 0, 0)));
+  //dn.func3d("diff_r", sub(v("u", 0, 0, 0), v("u", 1, 0, 0)));
   dn.func3d("diff_i", sub(v("u", 0, 0, 0), v("u", 0, 0, -1)));
   dn.func3d("diff_o", sub(v("u", 0, 0, 0), v("u", 0, 0, 1)));
 
-  dn.func3d("g",
-      add({sq3("diff_u"), sq3("diff_d"), sq3("diff_l"), sq3("diff_r"), sq3("diff_i"), sq3("diff_o")}));
+  //dn.func3d("g",
+      //add({sq3("diff_u"), sq3("diff_d"), sq3("diff_l"), sq3("diff_r"), sq3("diff_i"), sq3("diff_o")}));
 
+  dn.func3d("g",
+      add({sq3("diff_i"), sq3("diff_o")}));
   dn.func3d("r0", mul(v3("u"), v3("f")));
   dn.func3d("r1", sq3("r0"));
   dn.func3d(out_name,
