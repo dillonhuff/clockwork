@@ -6567,8 +6567,8 @@ void sobel_16_stage_x_app_test() {
 }
 
 void sobel_16_app_test() {
-  int cols = 8;
-  int rows = 8;
+  int cols = 1920;
+  int rows = 1080;
 
   //int cols = 10;
   //int rows = 10;
@@ -6578,7 +6578,7 @@ void sobel_16_app_test() {
     int unroll_factor = factor;
       //pow(2, i);
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
-    string out_name = "sblf30_" + str(unroll_factor);
+    string out_name = "sblr30_" + str(unroll_factor);
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
