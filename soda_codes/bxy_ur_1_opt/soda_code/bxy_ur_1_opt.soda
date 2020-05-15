@@ -2,7 +2,9 @@ kernel: bxy_ur_1_opt
 unroll factor: 1
 burst width: 16
 
-input uint16: input(1922, *)
+input uint16: input_arg(1922, *)
+
+local uint16: input(0, 0) = input_arg(0, 0)
 
 local uint16: blurx(0, 0) = (((input(0, 0) + input(0, 1)) + input(0, 2)) / 3)
 

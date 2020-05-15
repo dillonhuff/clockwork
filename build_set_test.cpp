@@ -6764,11 +6764,18 @@ void blur_xy_16_app_test() {
   int cols = 1920;
   int rows = 1080;
 
-  for (int i = 0; i < 6; i++) {
-    int unroll_factor = pow(2, i);
+  vector<int> factors{1, 2, 4, 8};
+  for (auto f : factors) {
+    int unroll_factor = f;
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
-    string out_name = "bxy_ur_" + str(unroll_factor);
-    blur_xy_16(out_name).realize(out_name, cols, rows, unroll_factor);
+    string out_name = "bxy30_" + str(unroll_factor);
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    options.num_input_epochs = 30;
+    options.debug_options.expect_all_linebuffers = true;
+    blur_xy_16(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
     move_to_benchmarks_folder(out_name + "_opt");
   }
@@ -7777,9 +7784,10 @@ void playground() {
 }
 
 void iccad_tests() {
-  denoise3d_reconvergence_test();
+  blur_xy_16_app_test();
   assert(false);
 
+  denoise3d_reconvergence_test();
   sobel_16_app_test();
   exposure_fusion_iccad_apps();
   pointwise_app_test();
@@ -7789,15 +7797,14 @@ void iccad_tests() {
 
   harris16_test();
   harris_test();
-  blur_xy_16_app_test();
 
   exposure_fusion();
 
 }
 
 void application_tests() {
-  halide_frontend_test();
   iccad_tests();
+  halide_frontend_test();
 
 
   ram_addr_unit_test();
