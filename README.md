@@ -14,8 +14,9 @@ Clockwork is a tool for compiling naive descriptions of hardware accelerates wri
 Please install the specific versions of the listed dependencies. Do
 not just take the latest release on NTL or barvinok.
 
+* ntl-11.4.1 - [download here](https://shoup.net/ntl/download.html) 
+    * https://www.shoup.net/ntl/doc/tour-unix.html (needs GMP to be installed already)
 * barvinok-0.41 - [download here](http://barvinok.gforge.inria.fr/)
-* ntl-11.4.1 - [download here](https://shoup.net/ntl/download.html)
 
 ## Build instructions
 
