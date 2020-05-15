@@ -1511,11 +1511,19 @@ void gp_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */in_off_chip, H
   level_3_cache level_3;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
   for (int epoch = 0; epoch < num_epochs; epoch++) {
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS inline recursive
-	#endif // __VIVADO_SYNTH__
-	
+	  // Schedules...
+	    // gp_1_update_0 -> [1*d1*1*16 + 1*30,1*d0*1*16 + 1*30,1*6]
+	    // in_off_chip_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
+	    // in_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
+	    // level_0_update_0 -> [1*d1*1*2 + 1*2,1*d0*1*2 + 1*2,1*2]
+	    // level_1_update_0 -> [1*d1*1*4 + 1*6,1*d0*1*4 + 1*6,1*3]
+	    // level_2_update_0 -> [1*d1*1*8 + 1*14,1*d0*1*8 + 1*14,1*4]
+	    // level_3_update_0 -> [1*d1*1*16 + 1*30,1*d0*1*16 + 1*30,1*5]
 	for (int c0 = 0; c0 <= 78; c0++) {
 	  for (int c1 = 0; c1 <= 78; c1++) {
 	
@@ -1567,14 +1575,13 @@ void gp_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */in_off_chip, H
 const int gp_1_update_0_write_num_transfers = 16;
 const int in_update_0_read_num_transfers = 6241;
 
-// TODO: Adapt to have one size for each edge buffer
-#define INPUT_SIZE 6241
-#define OUTPUT_SIZE 16
+
 extern "C" {
 
 static void read_in_update_0_read(hw_uint<16>* input, HWStream<hw_uint<16> >& v, const int size) {
   hw_uint<16> burst_reg;
-  for (int i = 0; i < in_update_0_read_num_transfers*size; i++) {
+  int num_transfers = in_update_0_read_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -1583,7 +1590,8 @@ static void read_in_update_0_read(hw_uint<16>* input, HWStream<hw_uint<16> >& v,
 
 static void write_gp_1_update_0_write(hw_uint<16>* output, HWStream<hw_uint<16> >& v, const int size) {
   hw_uint<16> burst_reg;
-  for (int i = 0; i < gp_1_update_0_write_num_transfers*size; i++) {
+  int num_transfers = gp_1_update_0_write_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;

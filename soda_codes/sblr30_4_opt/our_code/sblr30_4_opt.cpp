@@ -1927,6 +1927,12 @@ void sblr30_4_opt(HWStream<hw_uint<64> >& /* get_args num ports = 4 */off_chip_i
 #endif // __VIVADO_SYNTH__
 
   for (int epoch = 0; epoch < 30; epoch++) {
+	  // Schedules...
+	    // img_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
+	    // mag_x_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*3]
+	    // mag_y_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*2]
+	    // off_chip_img_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
+	    // sblr30_4_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*4]
 	for (int c0 = -1; c0 <= 1080; c0++) {
 	  for (int c1 = -1; c1 <= 480; c1++) {
 	

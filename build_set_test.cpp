@@ -1239,14 +1239,12 @@ void agg_test() {
  // auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
   cout << "Sched map: " << str(sched_opt) << endl;
   cout << codegen_c(sched_opt) << endl;
-  //assert(false);
   //aha_talk_print_info(prg);
   //hardcode some configuration registers
   memtile_config memtile;
   auto buffers = build_buffers(prg, sched_opt);
   memtile.extract_config(buffers);
   memtile.emit_config_file_csv("lake_memtile_config");
-  //assert(false);
 }
 
 
@@ -4166,7 +4164,6 @@ struct App {
       cout << tab(2) << comma_list(b.second) << endl;
     }
 
-    //assert(false);
 
     map<string, vector<isl_aff*> > sched =
       clockwork_schedule(domain, validity, proximity, high_bandwidth_deps);
@@ -4261,7 +4258,6 @@ struct App {
     assert(domain != nullptr);
 
     cout << "rel order: " << str(rel_order) << endl;
-    //assert(false);
 
     isl_union_map *validity =
       its(dot(writes, inv(reads)), before);
@@ -4272,7 +4268,6 @@ struct App {
       //cout << tab(1) << str(m) << endl;
       //cout << tab(2) << str(lexmin(m)) << endl;
     //}
-    //assert(false);
     validity = unn(validity, rel_order);
 
     isl_union_map *proximity =
@@ -4295,7 +4290,6 @@ struct App {
 
     //domain = unn(domain, isl_union_set_universe(cpy(domain)));
     //experimental_opt(cpy(domain), cpy(validity), cpy(proximity));
-    //assert(false);
     //isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
 
 
@@ -4304,7 +4298,6 @@ struct App {
     assert(schedmap != nullptr);
     cout << "Final isl schedule: " << str(schedmap) << endl;
     cout << "C code; " << codegen_c(schedmap) << endl;
-    //assert(false);
 
     isl_options_set_schedule_algorithm(ctx, ISL_SCHEDULE_ALGORITHM_ISL);
 
@@ -4535,7 +4528,6 @@ struct App {
       }
     }
 
-    //assert(false);
     prg.outs = {name};
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
@@ -4969,13 +4961,17 @@ struct App {
     cpy.fill_data_domain(reference_function, {dummy_value, dummy_value});
     cpy.fill_compute_domain();
 
+    cout << "Padding validity deps..." << endl;
+
     umap* deps = pad_map(cpy.validity_deps());
+    cout << "Done padding validity deps" << endl;
     auto umaps = get_maps(deps);
     vector<isl_map*> projected_deps;
     for (auto m : umaps) {
       isl_map* projected = project_all_but(m, 0);
       projected_deps.push_back(projected);
     }
+    cout << "Computing qfactors..." << endl;
     map<string, isl_val*> qfs = compute_qfactors(projected_deps);
     cout << "Got qfactors..." << endl;
     for (auto q : qfs) {
@@ -5528,9 +5524,9 @@ void halide_cascade_test() {
     cout << tab(2) << "ma = " << str(ma) << endl;
   }
 
-  assert(false);
+  //assert(false);
   generate_optimized_code(prg);
-  assert(false);
+  //assert(false);
 
   //regression_test(prg);
 }
@@ -5541,7 +5537,7 @@ void halide_frontend_test() {
   prg.pretty_print();
   //assert(false);
   generate_optimized_code(prg);
-  assert(false);
+  //assert(false);
 
   //regression_test(prg);
 }
@@ -6241,7 +6237,7 @@ void denoise3d_reconvergence_test() {
   std::vector<std::string> optimized =
     run_regression_tb(name + "_opt");
   assert(naive == optimized);
-  assert(false);
+  //assert(false);
 }
 
 void denoise3d_test() {
@@ -8029,7 +8025,7 @@ void playground() {
 
 void iccad_tests() {
   blur_xy_16_app_test();
-  assert(false);
+  //assert(false);
 
   denoise3d_reconvergence_test();
   sobel_16_app_test();

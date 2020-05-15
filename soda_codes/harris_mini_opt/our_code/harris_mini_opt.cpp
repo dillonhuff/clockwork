@@ -2165,23 +2165,18 @@ inline void trace_trace_update_0_write_bundle_write(hw_uint<32>& trace_update_0_
 
 
 // Operation logic
-inline void grad_x_update_0(img_cache& img, grad_x_cache& grad_x, int d0, int d1) {
-	// Consume: img
-	auto img_0_c__0_value = img_grad_x_update_0_read_bundle_read(img/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "grad_x_update_0_img," << d0<< "," << d1<< "," <<  img_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = grad_x_generated_compute_unrolled_1(img_0_c__0_value);
-	// Produce: grad_x
-	grad_x_grad_x_update_0_write_bundle_write(compute_result, grad_x, d0, d1);
+inline void img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */img_oc, img_cache& img, int d0, int d1) {
+	// Consume: img_oc
+	auto img_oc_0_c__0_value = img_oc.read();
+	auto compute_result = img_generated_compute_unrolled_1(img_oc_0_c__0_value);
+	// Produce: img
+	img_img_update_0_write_bundle_write(compute_result, img, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
   hw_uint<32> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "grad_x_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "img_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -2203,6 +2198,27 @@ inline void grad_y_update_0(img_cache& img, grad_y_cache& grad_y, int d0, int d1
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
   *global_debug_handle << "grad_y_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void grad_x_update_0(img_cache& img, grad_x_cache& grad_x, int d0, int d1) {
+	// Consume: img
+	auto img_0_c__0_value = img_grad_x_update_0_read_bundle_read(img/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "grad_x_update_0_img," << d0<< "," << d1<< "," <<  img_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = grad_x_generated_compute_unrolled_1(img_0_c__0_value);
+	// Produce: grad_x
+	grad_x_grad_x_update_0_write_bundle_write(compute_result, grad_x, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<32> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  *global_debug_handle << "grad_x_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -2294,22 +2310,6 @@ inline void lgyy_update_0(lyy_cache& lyy, lgyy_cache& lgyy, int d0, int d1) {
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
   *global_debug_handle << "lgyy_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */img_oc, img_cache& img, int d0, int d1) {
-	// Consume: img_oc
-	auto img_oc_0_c__0_value = img_oc.read();
-	auto compute_result = img_generated_compute_unrolled_1(img_oc_0_c__0_value);
-	// Produce: img
-	img_img_update_0_write_bundle_write(compute_result, img, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "img_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -2559,11 +2559,28 @@ void harris_mini_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */img_oc,
   trace_cache trace;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
   for (int epoch = 0; epoch < num_epochs; epoch++) {
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS inline recursive
-	#endif // __VIVADO_SYNTH__
-	
+	  // Schedules...
+	    // det_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*13]
+	    // grad_x_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*3]
+	    // grad_y_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*2]
+	    // harris_mini_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*15]
+	    // img_oc_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
+	    // img_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
+	    // lgxx8_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*12]
+	    // lgxx_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*9]
+	    // lgxy8_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*11]
+	    // lgxy_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*8]
+	    // lgyy8_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*10]
+	    // lgyy_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*7]
+	    // lxx_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*6]
+	    // lxy_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*5]
+	    // lyy_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*4]
+	    // trace_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*14]
 	for (int c0 = -2; c0 <= 33; c0++) {
 	  for (int c1 = -2; c1 <= 33; c1++) {
 	
@@ -2651,14 +2668,13 @@ void harris_mini_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */img_oc,
 const int harris_mini_update_0_write_num_transfers = 1024;
 const int img_update_0_read_num_transfers = 1296;
 
-// TODO: Adapt to have one size for each edge buffer
-#define INPUT_SIZE 1296
-#define OUTPUT_SIZE 1024
+
 extern "C" {
 
 static void read_img_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < img_update_0_read_num_transfers*size; i++) {
+  int num_transfers = img_update_0_read_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -2667,7 +2683,8 @@ static void read_img_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v
 
 static void write_harris_mini_update_0_write(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < harris_mini_update_0_write_num_transfers*size; i++) {
+  int num_transfers = harris_mini_update_0_write_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;

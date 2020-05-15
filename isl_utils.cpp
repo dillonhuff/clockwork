@@ -1393,8 +1393,11 @@ isl_aff* rdaff(isl_ctx* ctx, const std::string& str) {
   return isl_aff_read_from_str(ctx, str.c_str());
 }
 
-umap* rdmap(isl_ctx* ctx, const std::string& str) {
-  return isl_union_map_read_from_str(ctx, str.c_str());
+umap* rdmap(isl_ctx* ctx, const std::string& s) {
+  cout << "Reading map: " << s << endl;
+  auto res = isl_union_map_read_from_str(ctx, s.c_str());
+  assert(res != nullptr);
+  return res;
 }
 
 isl_point* sample(isl_basic_set* s) {
@@ -2063,10 +2066,12 @@ isl_map* pad_map(isl_map* s, const int max_dim) {
     padded = unn(padded, pbset);
   }
 
+  cout << "Done padding" << endl;
   return padded;
 }
 
 umap* pad_map(umap* unpadded) {
+  cout << "Padding map..." << endl;
   auto ct = ctx(unpadded);
 
   cout << "Padding union map: " << str(unpadded) << endl;

@@ -578,13 +578,13 @@ string isl_str(QTerm& v) {
 
   vector<string> tstrings;
   vector<string> divs;
-  for (auto v : v.vals) {
-    if (!v.is_num || v.is_whole()) {
+  for (QAV val : v.vals) {
+    if (!val.is_num || val.is_whole()) {
       ostringstream ss;
-      ss << v;
+      ss << val;
       tstrings.push_back(ss.str());
     } else {
-      divs.push_back(to_string(v.denom));
+      divs.push_back(to_string(val.denom));
     }
   }
   string s = sep_list(tstrings, "", "", "*");

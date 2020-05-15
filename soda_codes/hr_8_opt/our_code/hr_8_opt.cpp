@@ -13743,6 +13743,265 @@ inline void trace_trace_update_0_write_bundle_write(hw_uint<256>& trace_update_0
 
 
 // Operation logic
+inline void lgxx8_update_0(lgxx_cache& lgxx, lgxx8_cache& lgxx8, int d0, int d1) {
+	// Consume: lgxx
+	auto lgxx_0_c__0_value = lgxx_lgxx8_update_0_read_bundle_read(lgxx/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "lgxx8_update_0_lgxx," << d0<< "," << d1<< "," <<  lgxx_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = lgxx8_generated_compute_unrolled_8(lgxx_0_c__0_value);
+	// Produce: lgxx8
+	lgxx8_lgxx8_update_0_write_bundle_write(compute_result, lgxx8, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<256> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  hw_uint<32> debug_compute_result_lane_1;
+  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
+  hw_uint<32> debug_compute_result_lane_2;
+  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
+  hw_uint<32> debug_compute_result_lane_3;
+  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
+  hw_uint<32> debug_compute_result_lane_4;
+  set_at<0, 32, 32>(debug_compute_result_lane_4, debug_compute_result.extract<128, 159>());
+  hw_uint<32> debug_compute_result_lane_5;
+  set_at<0, 32, 32>(debug_compute_result_lane_5, debug_compute_result.extract<160, 191>());
+  hw_uint<32> debug_compute_result_lane_6;
+  set_at<0, 32, 32>(debug_compute_result_lane_6, debug_compute_result.extract<192, 223>());
+  hw_uint<32> debug_compute_result_lane_7;
+  set_at<0, 32, 32>(debug_compute_result_lane_7, debug_compute_result.extract<224, 255>());
+  *global_debug_handle << "lgxx8_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "lgxx8_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "lgxx8_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "lgxx8_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "lgxx8_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
+  *global_debug_handle << "lgxx8_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
+  *global_debug_handle << "lgxx8_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
+  *global_debug_handle << "lgxx8_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void hr_8_update_0(det_cache& det, trace_cache& trace, HWStream<hw_uint<256> >& /* buffer_args num ports = 8 */hr_8, int d0, int d1) {
+	// Consume: det
+	auto det_0_c__0_value = det_hr_8_update_0_read_bundle_read(det/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "hr_8_update_0_det," << d0<< "," << d1<< "," <<  det_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	// Consume: trace
+	auto trace_0_c__0_value = trace_hr_8_update_0_read_bundle_read(trace/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "hr_8_update_0_trace," << d0<< "," << d1<< "," <<  trace_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = hr_8_generated_compute_unrolled_8(det_0_c__0_value, trace_0_c__0_value);
+	// Produce: hr_8
+	hr_8.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<256> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  hw_uint<32> debug_compute_result_lane_1;
+  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
+  hw_uint<32> debug_compute_result_lane_2;
+  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
+  hw_uint<32> debug_compute_result_lane_3;
+  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
+  hw_uint<32> debug_compute_result_lane_4;
+  set_at<0, 32, 32>(debug_compute_result_lane_4, debug_compute_result.extract<128, 159>());
+  hw_uint<32> debug_compute_result_lane_5;
+  set_at<0, 32, 32>(debug_compute_result_lane_5, debug_compute_result.extract<160, 191>());
+  hw_uint<32> debug_compute_result_lane_6;
+  set_at<0, 32, 32>(debug_compute_result_lane_6, debug_compute_result.extract<192, 223>());
+  hw_uint<32> debug_compute_result_lane_7;
+  set_at<0, 32, 32>(debug_compute_result_lane_7, debug_compute_result.extract<224, 255>());
+  *global_debug_handle << "hr_8_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "hr_8_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "hr_8_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "hr_8_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "hr_8_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
+  *global_debug_handle << "hr_8_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
+  *global_debug_handle << "hr_8_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
+  *global_debug_handle << "hr_8_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void lgyy_update_0(lyy_cache& lyy, lgyy_cache& lgyy, int d0, int d1) {
+	// Consume: lyy
+	auto lyy_0_c__0_value = lyy_lgyy_update_0_read_bundle_read(lyy/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "lgyy_update_0_lyy," << d0<< "," << d1<< "," <<  lyy_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = lgyy_generated_compute_unrolled_8(lyy_0_c__0_value);
+	// Produce: lgyy
+	lgyy_lgyy_update_0_write_bundle_write(compute_result, lgyy, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<256> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  hw_uint<32> debug_compute_result_lane_1;
+  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
+  hw_uint<32> debug_compute_result_lane_2;
+  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
+  hw_uint<32> debug_compute_result_lane_3;
+  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
+  hw_uint<32> debug_compute_result_lane_4;
+  set_at<0, 32, 32>(debug_compute_result_lane_4, debug_compute_result.extract<128, 159>());
+  hw_uint<32> debug_compute_result_lane_5;
+  set_at<0, 32, 32>(debug_compute_result_lane_5, debug_compute_result.extract<160, 191>());
+  hw_uint<32> debug_compute_result_lane_6;
+  set_at<0, 32, 32>(debug_compute_result_lane_6, debug_compute_result.extract<192, 223>());
+  hw_uint<32> debug_compute_result_lane_7;
+  set_at<0, 32, 32>(debug_compute_result_lane_7, debug_compute_result.extract<224, 255>());
+  *global_debug_handle << "lgyy_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "lgyy_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "lgyy_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "lgyy_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "lgyy_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
+  *global_debug_handle << "lgyy_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
+  *global_debug_handle << "lgyy_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
+  *global_debug_handle << "lgyy_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void lgxx_update_0(lxx_cache& lxx, lgxx_cache& lgxx, int d0, int d1) {
+	// Consume: lxx
+	auto lxx_0_c__0_value = lxx_lgxx_update_0_read_bundle_read(lxx/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "lgxx_update_0_lxx," << d0<< "," << d1<< "," <<  lxx_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = lgxx_generated_compute_unrolled_8(lxx_0_c__0_value);
+	// Produce: lgxx
+	lgxx_lgxx_update_0_write_bundle_write(compute_result, lgxx, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<256> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  hw_uint<32> debug_compute_result_lane_1;
+  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
+  hw_uint<32> debug_compute_result_lane_2;
+  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
+  hw_uint<32> debug_compute_result_lane_3;
+  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
+  hw_uint<32> debug_compute_result_lane_4;
+  set_at<0, 32, 32>(debug_compute_result_lane_4, debug_compute_result.extract<128, 159>());
+  hw_uint<32> debug_compute_result_lane_5;
+  set_at<0, 32, 32>(debug_compute_result_lane_5, debug_compute_result.extract<160, 191>());
+  hw_uint<32> debug_compute_result_lane_6;
+  set_at<0, 32, 32>(debug_compute_result_lane_6, debug_compute_result.extract<192, 223>());
+  hw_uint<32> debug_compute_result_lane_7;
+  set_at<0, 32, 32>(debug_compute_result_lane_7, debug_compute_result.extract<224, 255>());
+  *global_debug_handle << "lgxx_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "lgxx_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "lgxx_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "lgxx_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "lgxx_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
+  *global_debug_handle << "lgxx_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
+  *global_debug_handle << "lgxx_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
+  *global_debug_handle << "lgxx_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void lgxy_update_0(lxy_cache& lxy, lgxy_cache& lgxy, int d0, int d1) {
+	// Consume: lxy
+	auto lxy_0_c__0_value = lxy_lgxy_update_0_read_bundle_read(lxy/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "lgxy_update_0_lxy," << d0<< "," << d1<< "," <<  lxy_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = lgxy_generated_compute_unrolled_8(lxy_0_c__0_value);
+	// Produce: lgxy
+	lgxy_lgxy_update_0_write_bundle_write(compute_result, lgxy, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<256> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  hw_uint<32> debug_compute_result_lane_1;
+  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
+  hw_uint<32> debug_compute_result_lane_2;
+  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
+  hw_uint<32> debug_compute_result_lane_3;
+  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
+  hw_uint<32> debug_compute_result_lane_4;
+  set_at<0, 32, 32>(debug_compute_result_lane_4, debug_compute_result.extract<128, 159>());
+  hw_uint<32> debug_compute_result_lane_5;
+  set_at<0, 32, 32>(debug_compute_result_lane_5, debug_compute_result.extract<160, 191>());
+  hw_uint<32> debug_compute_result_lane_6;
+  set_at<0, 32, 32>(debug_compute_result_lane_6, debug_compute_result.extract<192, 223>());
+  hw_uint<32> debug_compute_result_lane_7;
+  set_at<0, 32, 32>(debug_compute_result_lane_7, debug_compute_result.extract<224, 255>());
+  *global_debug_handle << "lgxy_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "lgxy_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "lgxy_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "lgxy_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "lgxy_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
+  *global_debug_handle << "lgxy_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
+  *global_debug_handle << "lgxy_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
+  *global_debug_handle << "lgxy_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void lgyy8_update_0(lgyy_cache& lgyy, lgyy8_cache& lgyy8, int d0, int d1) {
+	// Consume: lgyy
+	auto lgyy_0_c__0_value = lgyy_lgyy8_update_0_read_bundle_read(lgyy/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "lgyy8_update_0_lgyy," << d0<< "," << d1<< "," <<  lgyy_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = lgyy8_generated_compute_unrolled_8(lgyy_0_c__0_value);
+	// Produce: lgyy8
+	lgyy8_lgyy8_update_0_write_bundle_write(compute_result, lgyy8, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<256> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  hw_uint<32> debug_compute_result_lane_1;
+  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
+  hw_uint<32> debug_compute_result_lane_2;
+  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
+  hw_uint<32> debug_compute_result_lane_3;
+  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
+  hw_uint<32> debug_compute_result_lane_4;
+  set_at<0, 32, 32>(debug_compute_result_lane_4, debug_compute_result.extract<128, 159>());
+  hw_uint<32> debug_compute_result_lane_5;
+  set_at<0, 32, 32>(debug_compute_result_lane_5, debug_compute_result.extract<160, 191>());
+  hw_uint<32> debug_compute_result_lane_6;
+  set_at<0, 32, 32>(debug_compute_result_lane_6, debug_compute_result.extract<192, 223>());
+  hw_uint<32> debug_compute_result_lane_7;
+  set_at<0, 32, 32>(debug_compute_result_lane_7, debug_compute_result.extract<224, 255>());
+  *global_debug_handle << "lgyy8_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "lgyy8_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "lgyy8_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "lgyy8_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "lgyy8_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
+  *global_debug_handle << "lgyy8_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
+  *global_debug_handle << "lgyy8_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
+  *global_debug_handle << "lgyy8_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void img_update_0(HWStream<hw_uint<256> >& /* buffer_args num ports = 8 */img_oc, img_cache& img, int d0, int d1) {
 	// Consume: img_oc
 	auto img_oc_0_c__0_value = img_oc.read();
@@ -13997,132 +14256,6 @@ inline void lgxy8_update_0(lgxy_cache& lgxy, lgxy8_cache& lgxy8, int d0, int d1)
 
 }
 
-inline void lxx_update_0(grad_x_cache& grad_x, lxx_cache& lxx, int d0, int d1) {
-	// Consume: grad_x
-	auto grad_x_0_c__0_value = grad_x_lxx_update_0_read_bundle_read(grad_x/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "lxx_update_0_grad_x," << d0<< "," << d1<< "," <<  grad_x_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = lxx_generated_compute_unrolled_8(grad_x_0_c__0_value);
-	// Produce: lxx
-	lxx_lxx_update_0_write_bundle_write(compute_result, lxx, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<256> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  hw_uint<32> debug_compute_result_lane_1;
-  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
-  hw_uint<32> debug_compute_result_lane_2;
-  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
-  hw_uint<32> debug_compute_result_lane_3;
-  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
-  hw_uint<32> debug_compute_result_lane_4;
-  set_at<0, 32, 32>(debug_compute_result_lane_4, debug_compute_result.extract<128, 159>());
-  hw_uint<32> debug_compute_result_lane_5;
-  set_at<0, 32, 32>(debug_compute_result_lane_5, debug_compute_result.extract<160, 191>());
-  hw_uint<32> debug_compute_result_lane_6;
-  set_at<0, 32, 32>(debug_compute_result_lane_6, debug_compute_result.extract<192, 223>());
-  hw_uint<32> debug_compute_result_lane_7;
-  set_at<0, 32, 32>(debug_compute_result_lane_7, debug_compute_result.extract<224, 255>());
-  *global_debug_handle << "lxx_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "lxx_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "lxx_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "lxx_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
-  *global_debug_handle << "lxx_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
-  *global_debug_handle << "lxx_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
-  *global_debug_handle << "lxx_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
-  *global_debug_handle << "lxx_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void lgyy_update_0(lyy_cache& lyy, lgyy_cache& lgyy, int d0, int d1) {
-	// Consume: lyy
-	auto lyy_0_c__0_value = lyy_lgyy_update_0_read_bundle_read(lyy/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "lgyy_update_0_lyy," << d0<< "," << d1<< "," <<  lyy_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = lgyy_generated_compute_unrolled_8(lyy_0_c__0_value);
-	// Produce: lgyy
-	lgyy_lgyy_update_0_write_bundle_write(compute_result, lgyy, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<256> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  hw_uint<32> debug_compute_result_lane_1;
-  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
-  hw_uint<32> debug_compute_result_lane_2;
-  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
-  hw_uint<32> debug_compute_result_lane_3;
-  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
-  hw_uint<32> debug_compute_result_lane_4;
-  set_at<0, 32, 32>(debug_compute_result_lane_4, debug_compute_result.extract<128, 159>());
-  hw_uint<32> debug_compute_result_lane_5;
-  set_at<0, 32, 32>(debug_compute_result_lane_5, debug_compute_result.extract<160, 191>());
-  hw_uint<32> debug_compute_result_lane_6;
-  set_at<0, 32, 32>(debug_compute_result_lane_6, debug_compute_result.extract<192, 223>());
-  hw_uint<32> debug_compute_result_lane_7;
-  set_at<0, 32, 32>(debug_compute_result_lane_7, debug_compute_result.extract<224, 255>());
-  *global_debug_handle << "lgyy_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "lgyy_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "lgyy_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "lgyy_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
-  *global_debug_handle << "lgyy_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
-  *global_debug_handle << "lgyy_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
-  *global_debug_handle << "lgyy_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
-  *global_debug_handle << "lgyy_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void lgxx8_update_0(lgxx_cache& lgxx, lgxx8_cache& lgxx8, int d0, int d1) {
-	// Consume: lgxx
-	auto lgxx_0_c__0_value = lgxx_lgxx8_update_0_read_bundle_read(lgxx/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "lgxx8_update_0_lgxx," << d0<< "," << d1<< "," <<  lgxx_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = lgxx8_generated_compute_unrolled_8(lgxx_0_c__0_value);
-	// Produce: lgxx8
-	lgxx8_lgxx8_update_0_write_bundle_write(compute_result, lgxx8, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<256> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  hw_uint<32> debug_compute_result_lane_1;
-  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
-  hw_uint<32> debug_compute_result_lane_2;
-  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
-  hw_uint<32> debug_compute_result_lane_3;
-  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
-  hw_uint<32> debug_compute_result_lane_4;
-  set_at<0, 32, 32>(debug_compute_result_lane_4, debug_compute_result.extract<128, 159>());
-  hw_uint<32> debug_compute_result_lane_5;
-  set_at<0, 32, 32>(debug_compute_result_lane_5, debug_compute_result.extract<160, 191>());
-  hw_uint<32> debug_compute_result_lane_6;
-  set_at<0, 32, 32>(debug_compute_result_lane_6, debug_compute_result.extract<192, 223>());
-  hw_uint<32> debug_compute_result_lane_7;
-  set_at<0, 32, 32>(debug_compute_result_lane_7, debug_compute_result.extract<224, 255>());
-  *global_debug_handle << "lgxx8_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "lgxx8_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "lgxx8_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "lgxx8_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
-  *global_debug_handle << "lgxx8_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
-  *global_debug_handle << "lgxx8_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
-  *global_debug_handle << "lgxx8_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
-  *global_debug_handle << "lgxx8_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void det_update_0(lgxx8_cache& lgxx8, lgxy8_cache& lgxy8, lgyy8_cache& lgyy8, det_cache& det, int d0, int d1) {
 	// Consume: lgxx8
 	auto lgxx8_0_c__0_value = lgxx8_det_update_0_read_bundle_read(lgxx8/* source_delay */, d0, d1);
@@ -14179,55 +14312,6 @@ inline void det_update_0(lgxx8_cache& lgxx8, lgxy8_cache& lgxy8, lgyy8_cache& lg
 
 }
 
-inline void hr_8_update_0(det_cache& det, trace_cache& trace, HWStream<hw_uint<256> >& /* buffer_args num ports = 8 */hr_8, int d0, int d1) {
-	// Consume: det
-	auto det_0_c__0_value = det_hr_8_update_0_read_bundle_read(det/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "hr_8_update_0_det," << d0<< "," << d1<< "," <<  det_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	// Consume: trace
-	auto trace_0_c__0_value = trace_hr_8_update_0_read_bundle_read(trace/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "hr_8_update_0_trace," << d0<< "," << d1<< "," <<  trace_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = hr_8_generated_compute_unrolled_8(det_0_c__0_value, trace_0_c__0_value);
-	// Produce: hr_8
-	hr_8.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<256> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  hw_uint<32> debug_compute_result_lane_1;
-  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
-  hw_uint<32> debug_compute_result_lane_2;
-  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
-  hw_uint<32> debug_compute_result_lane_3;
-  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
-  hw_uint<32> debug_compute_result_lane_4;
-  set_at<0, 32, 32>(debug_compute_result_lane_4, debug_compute_result.extract<128, 159>());
-  hw_uint<32> debug_compute_result_lane_5;
-  set_at<0, 32, 32>(debug_compute_result_lane_5, debug_compute_result.extract<160, 191>());
-  hw_uint<32> debug_compute_result_lane_6;
-  set_at<0, 32, 32>(debug_compute_result_lane_6, debug_compute_result.extract<192, 223>());
-  hw_uint<32> debug_compute_result_lane_7;
-  set_at<0, 32, 32>(debug_compute_result_lane_7, debug_compute_result.extract<224, 255>());
-  *global_debug_handle << "hr_8_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "hr_8_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "hr_8_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "hr_8_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
-  *global_debug_handle << "hr_8_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
-  *global_debug_handle << "hr_8_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
-  *global_debug_handle << "hr_8_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
-  *global_debug_handle << "hr_8_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void trace_update_0(lgxx8_cache& lgxx8, lgyy8_cache& lgyy8, trace_cache& trace, int d0, int d1) {
 	// Consume: lgxx8
 	auto lgxx8_0_c__0_value = lgxx8_trace_update_0_read_bundle_read(lgxx8/* source_delay */, d0, d1);
@@ -14277,17 +14361,17 @@ inline void trace_update_0(lgxx8_cache& lgxx8, lgyy8_cache& lgyy8, trace_cache& 
 
 }
 
-inline void lgxy_update_0(lxy_cache& lxy, lgxy_cache& lgxy, int d0, int d1) {
-	// Consume: lxy
-	auto lxy_0_c__0_value = lxy_lgxy_update_0_read_bundle_read(lxy/* source_delay */, d0, d1);
+inline void lxx_update_0(grad_x_cache& grad_x, lxx_cache& lxx, int d0, int d1) {
+	// Consume: grad_x
+	auto grad_x_0_c__0_value = grad_x_lxx_update_0_read_bundle_read(grad_x/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "lgxy_update_0_lxy," << d0<< "," << d1<< "," <<  lxy_0_c__0_value << endl;
+  *global_debug_handle << "lxx_update_0_grad_x," << d0<< "," << d1<< "," <<  grad_x_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = lgxy_generated_compute_unrolled_8(lxy_0_c__0_value);
-	// Produce: lgxy
-	lgxy_lgxy_update_0_write_bundle_write(compute_result, lgxy, d0, d1);
+	auto compute_result = lxx_generated_compute_unrolled_8(grad_x_0_c__0_value);
+	// Produce: lxx
+	lxx_lxx_update_0_write_bundle_write(compute_result, lxx, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
   hw_uint<256> debug_compute_result(compute_result);
@@ -14307,98 +14391,14 @@ inline void lgxy_update_0(lxy_cache& lxy, lgxy_cache& lgxy, int d0, int d1) {
   set_at<0, 32, 32>(debug_compute_result_lane_6, debug_compute_result.extract<192, 223>());
   hw_uint<32> debug_compute_result_lane_7;
   set_at<0, 32, 32>(debug_compute_result_lane_7, debug_compute_result.extract<224, 255>());
-  *global_debug_handle << "lgxy_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "lgxy_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "lgxy_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "lgxy_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
-  *global_debug_handle << "lgxy_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
-  *global_debug_handle << "lgxy_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
-  *global_debug_handle << "lgxy_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
-  *global_debug_handle << "lgxy_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void lgxx_update_0(lxx_cache& lxx, lgxx_cache& lgxx, int d0, int d1) {
-	// Consume: lxx
-	auto lxx_0_c__0_value = lxx_lgxx_update_0_read_bundle_read(lxx/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "lgxx_update_0_lxx," << d0<< "," << d1<< "," <<  lxx_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = lgxx_generated_compute_unrolled_8(lxx_0_c__0_value);
-	// Produce: lgxx
-	lgxx_lgxx_update_0_write_bundle_write(compute_result, lgxx, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<256> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  hw_uint<32> debug_compute_result_lane_1;
-  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
-  hw_uint<32> debug_compute_result_lane_2;
-  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
-  hw_uint<32> debug_compute_result_lane_3;
-  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
-  hw_uint<32> debug_compute_result_lane_4;
-  set_at<0, 32, 32>(debug_compute_result_lane_4, debug_compute_result.extract<128, 159>());
-  hw_uint<32> debug_compute_result_lane_5;
-  set_at<0, 32, 32>(debug_compute_result_lane_5, debug_compute_result.extract<160, 191>());
-  hw_uint<32> debug_compute_result_lane_6;
-  set_at<0, 32, 32>(debug_compute_result_lane_6, debug_compute_result.extract<192, 223>());
-  hw_uint<32> debug_compute_result_lane_7;
-  set_at<0, 32, 32>(debug_compute_result_lane_7, debug_compute_result.extract<224, 255>());
-  *global_debug_handle << "lgxx_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "lgxx_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "lgxx_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "lgxx_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
-  *global_debug_handle << "lgxx_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
-  *global_debug_handle << "lgxx_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
-  *global_debug_handle << "lgxx_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
-  *global_debug_handle << "lgxx_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void lgyy8_update_0(lgyy_cache& lgyy, lgyy8_cache& lgyy8, int d0, int d1) {
-	// Consume: lgyy
-	auto lgyy_0_c__0_value = lgyy_lgyy8_update_0_read_bundle_read(lgyy/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "lgyy8_update_0_lgyy," << d0<< "," << d1<< "," <<  lgyy_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = lgyy8_generated_compute_unrolled_8(lgyy_0_c__0_value);
-	// Produce: lgyy8
-	lgyy8_lgyy8_update_0_write_bundle_write(compute_result, lgyy8, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<256> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  hw_uint<32> debug_compute_result_lane_1;
-  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
-  hw_uint<32> debug_compute_result_lane_2;
-  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
-  hw_uint<32> debug_compute_result_lane_3;
-  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
-  hw_uint<32> debug_compute_result_lane_4;
-  set_at<0, 32, 32>(debug_compute_result_lane_4, debug_compute_result.extract<128, 159>());
-  hw_uint<32> debug_compute_result_lane_5;
-  set_at<0, 32, 32>(debug_compute_result_lane_5, debug_compute_result.extract<160, 191>());
-  hw_uint<32> debug_compute_result_lane_6;
-  set_at<0, 32, 32>(debug_compute_result_lane_6, debug_compute_result.extract<192, 223>());
-  hw_uint<32> debug_compute_result_lane_7;
-  set_at<0, 32, 32>(debug_compute_result_lane_7, debug_compute_result.extract<224, 255>());
-  *global_debug_handle << "lgyy8_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "lgyy8_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "lgyy8_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "lgyy8_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
-  *global_debug_handle << "lgyy8_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
-  *global_debug_handle << "lgyy8_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
-  *global_debug_handle << "lgyy8_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
-  *global_debug_handle << "lgyy8_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
+  *global_debug_handle << "lxx_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "lxx_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "lxx_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "lxx_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "lxx_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
+  *global_debug_handle << "lxx_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
+  *global_debug_handle << "lxx_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
+  *global_debug_handle << "lxx_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -14452,11 +14452,28 @@ void hr_8_opt(HWStream<hw_uint<256> >& /* get_args num ports = 8 */img_oc, HWStr
   trace_cache trace;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
   for (int epoch = 0; epoch < num_epochs; epoch++) {
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS inline recursive
-	#endif // __VIVADO_SYNTH__
-	
+	  // Schedules...
+	    // det_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*13]
+	    // grad_x_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*3]
+	    // grad_y_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*2]
+	    // hr_8_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*15]
+	    // img_oc_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
+	    // img_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
+	    // lgxx8_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*12]
+	    // lgxx_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*9]
+	    // lgxy8_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*11]
+	    // lgxy_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*8]
+	    // lgyy8_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*10]
+	    // lgyy_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*7]
+	    // lxx_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*6]
+	    // lxy_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*5]
+	    // lyy_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*4]
+	    // trace_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*14]
 	for (int c0 = -2; c0 <= 1081; c0++) {
 	  for (int c1 = -2; c1 <= 241; c1++) {
 	
@@ -14544,14 +14561,13 @@ void hr_8_opt(HWStream<hw_uint<256> >& /* get_args num ports = 8 */img_oc, HWStr
 const int hr_8_update_0_write_num_transfers = 259200;
 const int img_update_0_read_num_transfers = 264496;
 
-// TODO: Adapt to have one size for each edge buffer
-#define INPUT_SIZE 264496
-#define OUTPUT_SIZE 259200
+
 extern "C" {
 
 static void read_img_update_0_read(hw_uint<256>* input, HWStream<hw_uint<256> >& v, const int size) {
   hw_uint<256> burst_reg;
-  for (int i = 0; i < img_update_0_read_num_transfers*size; i++) {
+  int num_transfers = img_update_0_read_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -14560,7 +14576,8 @@ static void read_img_update_0_read(hw_uint<256>* input, HWStream<hw_uint<256> >&
 
 static void write_hr_8_update_0_write(hw_uint<256>* output, HWStream<hw_uint<256> >& v, const int size) {
   hw_uint<256> burst_reg;
-  for (int i = 0; i < hr_8_update_0_write_num_transfers*size; i++) {
+  int num_transfers = hr_8_update_0_write_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;
