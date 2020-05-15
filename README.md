@@ -17,6 +17,7 @@ not just take the latest release on NTL or barvinok.
 * ntl-11.4.1 - [download here](https://shoup.net/ntl/download.html) 
     * https://www.shoup.net/ntl/doc/tour-unix.html (needs GMP to be installed already)
 * barvinok-0.41 - [download here](http://barvinok.gforge.inria.fr/)
+   * https://repo.or.cz/w/barvinok.git/blob/HEAD:/README - instructions for installing barvinok with ntl and GMP
 
 ## Build instructions
 
