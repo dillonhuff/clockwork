@@ -29,12 +29,13 @@ Alternatively, you can follow these steps:
 5. (optionally) make check
 6. make install
 7. Download barvniok-0.41 from the link above.
-8. ./configure --prefix=/opt_b --with-gmp-prefix=/path/to/gmp --with-ntl-prefix=/path/to/ntl
+8. cd barvinok-0.41
+9. ./configure --prefix=/opt_b --with-gmp-prefix=/path/to/gmp --with-ntl-prefix=/path/to/ntl
    * if you have sudo access, you do not need PREFIX and barvinok will be installed in /usr/local
    * if you do not have sudo access or would like to specify where barvinok is installed, replace /opt_b above with a directory path for PREFIX
-9. make
-10. (optionally) make check
-11. make install
+10. make
+11. (optionally) make check
+12. make install
 
 ## Build instructions
 
