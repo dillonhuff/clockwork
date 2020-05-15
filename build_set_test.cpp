@@ -4219,6 +4219,7 @@ struct App {
 
     auto finite_domain = cpy(domain);
 
+    // TODO: MAYBE REMOVE THIS?
     clockwork_schedule(cpy(domain), cpy(validity), cpy(proximity));
 
     isl_schedule_constraints* constraints =
@@ -5343,10 +5344,127 @@ App tricky_reconvergence(const std::string& name) {
   return dn;
 }
 
+prog halide_cascade() {
+  prog prg;
+  prg.compute_unit_file = "clockwork_target_compute.h";
+  prg.name = "halide_cascade";
+
+// Stencil<uint16_t, 64, 64> &hw_input_stencil = arg_0;
+  prg.add_input("hw_input_stencil");
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
+// Stencil<void *> &hw_output_stencil = arg_1;
+  prg.add_output("hw_output_stencil");
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+
+//consuming hw_input.stencil
+////producing conv1.stencil
+  auto loop_conv1_s0_y = prg.add_loop("conv1_s0_y", 0, 62);
+  auto loop_conv1_s0_x = loop_conv1_s0_y->add_loop("conv1_s0_x", 0, 62);
+
+//store is: conv1.stencil(conv1.s0.x, conv1.s0.y) = 0
+  auto compute_conv1_stencil = loop_conv1_s0_x->add_op("compute_conv1_stencil");
+  compute_conv1_stencil->add_function("compute_conv1_stencil");
+  prg.buffer_port_widths["conv1_stencil"] = 16;
+  compute_conv1_stencil->add_store("conv1_stencil", "conv1_s0_x", "conv1_s0_y");
+  auto loop_conv1_s1_y = prg.add_loop("conv1_s1_y", 0, 62);
+  auto loop_conv1_s1_x = loop_conv1_s1_y->add_loop("conv1_s1_x", 0, 62);
+
+//store is: conv1.stencil(conv1.s1.x, conv1.s1.y) = (((((conv1.stencil(conv1.s1.x, conv1.s1.y) + (((((int32(hw_input.stencil((conv1.s1.x + 1), (conv1.s1.y + 1)))*2) + (int32(hw_input.stencil((conv1.s1.x + 1), (conv1.s1.y + 2))) + int32(hw_input.stencil((conv1.s1.x + 2), (conv1.s1.y + 1))))) + int32(hw_input.stencil(conv1.s1.x, (conv1.s1.y + 1)))) + int32(hw_input.stencil((conv1.s1.x + 1), conv1.s1.y)))*2)) + int32(hw_input.stencil(conv1.s1.x, conv1.s1.y))) + int32(hw_input.stencil((conv1.s1.x + 2), conv1.s1.y))) + int32(hw_input.stencil(conv1.s1.x, (conv1.s1.y + 2)))) + int32(hw_input.stencil((conv1.s1.x + 2), (conv1.s1.y + 2))))
+  auto compute_conv1_stencil_1 = loop_conv1_s1_x->add_op("compute_conv1_stencil_1");
+  compute_conv1_stencil_1->add_function("compute_conv1_stencil_1");
+  compute_conv1_stencil_1->add_load("conv1_stencil", "conv1_s1_x", "conv1_s1_y");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "(conv1_s1_x + 1)", "(conv1_s1_y + 1)");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "(conv1_s1_x + 1)", "(conv1_s1_y + 2)");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "(conv1_s1_x + 2)", "(conv1_s1_y + 1)");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "conv1_s1_x", "(conv1_s1_y + 1)");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "(conv1_s1_x + 1)", "conv1_s1_y");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "conv1_s1_x", "conv1_s1_y");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "(conv1_s1_x + 2)", "conv1_s1_y");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "conv1_s1_x", "(conv1_s1_y + 2)");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "(conv1_s1_x + 2)", "(conv1_s1_y + 2)");
+  compute_conv1_stencil_1->add_store("conv1_stencil", "conv1_s1_x", "conv1_s1_y");
+////producing conv2.stencil
+  auto loop_conv2_s0_y = prg.add_loop("conv2_s0_y", 0, 60);
+  auto loop_conv2_s0_x = loop_conv2_s0_y->add_loop("conv2_s0_x", 0, 60);
+
+//store is: conv2.stencil(conv2.s0.x, conv2.s0.y) = 0
+  auto compute_conv2_stencil = loop_conv2_s0_x->add_op("compute_conv2_stencil");
+  compute_conv2_stencil->add_function("compute_conv2_stencil");
+  prg.buffer_port_widths["conv2_stencil"] = 16;
+  compute_conv2_stencil->add_store("conv2_stencil", "conv2_s0_x", "conv2_s0_y");
+
+//consuming conv1.stencil
+  auto loop_conv2_s1_y = prg.add_loop("conv2_s1_y", 0, 60);
+  auto loop_conv2_s1_x = loop_conv2_s1_y->add_loop("conv2_s1_x", 0, 60);
+
+//store is: conv2.stencil(conv2.s1.x, conv2.s1.y) = (conv1.stencil(conv2.s1.x, conv2.s1.y) + (conv2.stencil(conv2.s1.x, conv2.s1.y) + ((conv1.stencil((conv2.s1.x + 1), conv2.s1.y)*2) + (conv1.stencil((conv2.s1.x + 2), conv2.s1.y) + ((conv1.stencil(conv2.s1.x, (conv2.s1.y + 1))*2) + ((conv1.stencil((conv2.s1.x + 1), (conv2.s1.y + 1))*4) + ((conv1.stencil((conv2.s1.x + 2), (conv2.s1.y + 1))*2) + (conv1.stencil(conv2.s1.x, (conv2.s1.y + 2)) + (conv1.stencil((conv2.s1.x + 2), (conv2.s1.y + 2)) + (conv1.stencil((conv2.s1.x + 1), (conv2.s1.y + 2))*2))))))))))
+  auto compute_conv2_stencil_1 = loop_conv2_s1_x->add_op("compute_conv2_stencil_1");
+  compute_conv2_stencil_1->add_function("compute_conv2_stencil_1");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "conv2_s1_x", "conv2_s1_y");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "(conv2_s1_x + 1)", "conv2_s1_y");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "(conv2_s1_x + 2)", "conv2_s1_y");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "conv2_s1_x", "(conv2_s1_y + 1)");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "(conv2_s1_x + 1)", "(conv2_s1_y + 1)");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "(conv2_s1_x + 2)", "(conv2_s1_y + 1)");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "conv2_s1_x", "(conv2_s1_y + 2)");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "(conv2_s1_x + 2)", "(conv2_s1_y + 2)");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "(conv2_s1_x + 1)", "(conv2_s1_y + 2)");
+  compute_conv2_stencil_1->add_load("conv2_stencil", "conv2_s1_x", "conv2_s1_y");
+  compute_conv2_stencil_1->add_store("conv2_stencil", "conv2_s1_x", "conv2_s1_y");
+
+//consuming conv2.stencil
+  auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, 60);
+  auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 60);
+
+//store is: hw_output.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo) = uint8(conv2.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo))
+  auto compute_hw_output_stencil = loop_hw_output_s0_x_xo->add_op("compute_hw_output_stencil");
+  compute_hw_output_stencil->add_function("compute_hw_output_stencil");
+  compute_hw_output_stencil->add_load("conv2_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo");
+  compute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo");
+
+  return prg;
+}
+
+void halide_cascade_test() {
+  prog prg = halide_cascade();
+  cout << "Created program..." << endl;
+  prg.pretty_print();
+  
+  auto domain = prg.whole_iteration_domain();
+
+  auto order_deps = prg.relative_orders();
+  cout << "Getting validity deps..." << endl;
+  isl_union_map *raw_deps = prg.validity_deps();
+  cout << "Got validity deps..." << endl;
+  cout << "Validity: " << str(raw_deps) << endl;
+  auto validity =
+    unn(order_deps, raw_deps);
+  isl_union_map *proximity =
+    cpy(raw_deps);
+
+  auto clksched = clockwork_schedule(domain, validity, proximity);
+  cout << "---- Clockwork schedule:" << endl;
+  for (auto s : clksched) {
+    cout << tab(1) << s.first << " -> ";
+    for (auto v : s.second) {
+      cout << str(v) << ", ";
+    }
+    cout << endl;
+  }
+
+  assert(false);
+  generate_optimized_code(prg);
+  assert(false);
+
+  //regression_test(prg);
+}
+
 void halide_frontend_test() {
   prog prg = clockwork_target();
   cout << "Created program..." << endl;
   prg.pretty_print();
+  assert(false);
   generate_optimized_code(prg);
   //assert(false);
 
@@ -7854,6 +7972,7 @@ void iccad_tests() {
 }
 
 void application_tests() {
+  halide_cascade_test();
   halide_frontend_test();
   iccad_tests();
 
