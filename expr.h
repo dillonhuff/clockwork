@@ -28,7 +28,7 @@ struct Expr {
   virtual bool is_binop() const { return false; }
   virtual bool is_int_const() const { return false; }
   virtual bool is_float_const() const { return false; }
-  virtual set<Expr*> children() const { return {}; }
+  virtual std::set<Expr*> children() const { return {}; }
 };
 
 struct FloatConst : public Expr {
@@ -60,7 +60,7 @@ struct FunctionCall : public Expr {
     name(n_), args(args_) {}
 
   virtual bool is_function_call() const { return true; }
-  virtual set<Expr*> children() const { return set<Expr*>(begin(args), end(args)); }
+  virtual std::set<Expr*> children() const { return std::set<Expr*>(begin(args), end(args)); }
 };
 
 struct Binop : public Expr {
@@ -73,13 +73,13 @@ struct Binop : public Expr {
 
   virtual bool is_binop() const { return true; }
 
-  virtual set<Expr*> children() const { return {l, r}; }
+  virtual std::set<Expr*> children() const { return {l, r}; }
 }; 
 
 struct Unop : public Expr {
   string op;
   Expr* arg;
-  virtual set<Expr*> children() const { return {arg}; }
+  virtual std::set<Expr*> children() const { return {arg}; }
 };
 
 static inline
