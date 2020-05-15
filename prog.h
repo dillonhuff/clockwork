@@ -189,6 +189,10 @@ struct ir_node {
     return fo;
   }
 
+  string add_load(const std::string& b, const std::string& d0, const std::string& d1) {
+    return add_load(b, d0 + ", " + d1);
+  }
+
   string add_load(const std::string& b, const std::string& loc) {
     assert(!is_loop);
     consume_locs.push_back({b, loc});
@@ -210,6 +214,10 @@ struct ir_node {
       ps.push_back(p.first + "[" + p.second + "]");
     }
     return ps;
+  }
+
+  void add_store(const std::string& b, const std::string& d0, const std::string& d1) {
+    add_store(b, d0 + ", " + d1);
   }
 
   void add_store(const std::string& b, const std::string& loc) {
