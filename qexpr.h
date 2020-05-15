@@ -1155,6 +1155,19 @@ std::string box_codegen(CodegenOptions& options,
   assert(compute_domains.size() > 0);
 
   ostringstream ss;
+  ss << tab(1) << "// Schedules..." << endl;
+  for (auto s : scheds) {
+    vector<string> qstrings;
+    for (auto q : s.second) {
+      ostringstream qs;
+      qs << q;
+      qstrings.push_back(qs.str());
+    }
+    string schedstr = sep_list(qstrings, "[", "]", ",");
+
+    ss << tab(2) <<  "// " << s.first << " -> " << schedstr << endl;
+  }
+
   int ndims = pick(compute_domains).second.intervals.size();
 
   map<string, Box> index_bounds;

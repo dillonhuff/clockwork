@@ -5934,7 +5934,8 @@ void denoise3d_reconvergence_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
+  options.use_custom_code_string = false;
+  //options.use_custom_code_string = true;
   options.all_rams = true;
   //options.debug_options.expect_all_linebuffers = true;
   hmini.realize(options, name, {mini_size, mini_size, mini_size}, 1);
