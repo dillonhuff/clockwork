@@ -52,8 +52,8 @@ split_bv(const int indent,
   return lanes;
 }
 
-set<pair<string, string> > inputs(map<string, UBuffer>& buffers, prog& prg) {
-  set<pair<string, string> > edges;
+std::set<pair<string, string> > inputs(map<string, UBuffer>& buffers, prog& prg) {
+  std::set<pair<string, string> > edges;
   for (auto in : prg.ins) {
     assert(contains_key(in, buffers));
     auto& buf = buffers.at(in);
@@ -65,8 +65,8 @@ set<pair<string, string> > inputs(map<string, UBuffer>& buffers, prog& prg) {
   return edges;
 }
 
-set<string> in_bundles(map<string, UBuffer>& buffers, prog& prg) {
-  set<string> edges;
+std::set<string> in_bundles(map<string, UBuffer>& buffers, prog& prg) {
+  std::set<string> edges;
   for (auto in : prg.ins) {
     assert(contains_key(in, buffers));
     auto& buf = buffers.at(in);
@@ -79,8 +79,8 @@ set<string> in_bundles(map<string, UBuffer>& buffers, prog& prg) {
 }
 
 
-set<pair<string, string> > outputs(map<string, UBuffer>& buffers, prog& prg) {
-  set<pair<string, string> > edges;
+std::set<pair<string, string> > outputs(map<string, UBuffer>& buffers, prog& prg) {
+  std::set<pair<string, string> > edges;
   for (auto out : prg.outs) {
     assert(contains_key(out, buffers));
     auto& buf = buffers.at(out);
@@ -93,8 +93,8 @@ set<pair<string, string> > outputs(map<string, UBuffer>& buffers, prog& prg) {
   return edges;
 }
 
-set<string> out_bundles(map<string, UBuffer>& buffers, prog& prg) {
-  set<string> edges;
+std::set<string> out_bundles(map<string, UBuffer>& buffers, prog& prg) {
+  std::set<string> edges;
   for (auto out : prg.outs) {
     assert(contains_key(out, buffers));
     auto& buf = buffers.at(out);
@@ -107,8 +107,8 @@ set<string> out_bundles(map<string, UBuffer>& buffers, prog& prg) {
   return edges;
 }
 
-set<pair<string, string> > edge_buffers(map<string, UBuffer>& buffers, prog& prg) {
-  set<pair<string, string> > edges;
+std::set<pair<string, string> > edge_buffers(map<string, UBuffer>& buffers, prog& prg) {
+  std::set<pair<string, string> > edges;
   for (auto b : inputs(buffers, prg)) {
     edges.insert(b);
   }
@@ -119,8 +119,8 @@ set<pair<string, string> > edge_buffers(map<string, UBuffer>& buffers, prog& prg
   return edges;
 }
 
-set<string> edge_bundles(map<string, UBuffer>& buffers, prog& prg) {
-  set<string> edges;
+std::set<string> edge_bundles(map<string, UBuffer>& buffers, prog& prg) {
+  std::set<string> edges;
   for (auto in : prg.ins) {
     assert(contains_key(in, buffers));
     auto& buf = buffers.at(in);
@@ -1105,7 +1105,7 @@ void generate_app_code_header(const map<string, UBuffer>& buffers, prog& prg) {
 
 
 vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, prog& prg) {
-  set<string> done;
+  std::set<string> done;
   vector<string> buf_srcs;
 
   for (auto p : op->consume_locs) {
@@ -1126,7 +1126,7 @@ vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, pro
 }
 
 vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& prg) {
-  set<string> done;
+  std::set<string> done;
   vector<string> buf_srcs;
   for (auto p : op->consume_locs) {
     auto buf_name = p.first;
@@ -1189,7 +1189,7 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
   cout << "Got iteration variables" << endl;
   conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
   vector<pair<string, string> > in_buffers;
-  set<string> distinct;
+  std::set<string> distinct;
   for (auto con : op->consume_locs) {
     if (!elem(con.first, distinct)) {
       in_buffers.push_back(con);
@@ -1270,7 +1270,7 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
   }
 
   cout << "finding out buffers" << endl;
-  set<string> out_buffers;
+  std::set<string> out_buffers;
   for (auto con : op->produce_locs) {
     out_buffers.insert(con.first);
   }
