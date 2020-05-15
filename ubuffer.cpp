@@ -1122,7 +1122,7 @@ vector<UBuffer> UBuffer::port_grouping(int port_width) {
     int group_port_width = 0;
 
     //Using set for reoccuring port
-    set<string> inpt_set, outpt_set;
+    std::set<string> inpt_set, outpt_set;
     int cnt = 0;
     while(!bank_pool.empty()) {
         auto bk = bank_pool.top();
@@ -1130,7 +1130,7 @@ vector<UBuffer> UBuffer::port_grouping(int port_width) {
         if (bk.onlySR()) {
             //create a ub with mark of shift register
             string tmp[] = {input};
-            regroup_ub.emplace_back(*this, set<string>(tmp, tmp+1), bk.get_out_ports(), cnt);
+            regroup_ub.emplace_back(*this, std::set<string>(tmp, tmp+1), bk.get_out_ports(), cnt);
             bank_pool.pop();
             cnt ++;
         }

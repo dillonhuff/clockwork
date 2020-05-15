@@ -14,7 +14,7 @@ Clockwork is a tool for compiling naive descriptions of hardware accelerators wr
 Please install the specific versions of the listed dependencies. Do
 not just take the latest release on NTL or barvinok.
 
-* barvinok-0.41 - [download here](http://barvinok.gforge.inria.fr/)
+* barvinok-0.41 - [download here](http://barvinok.gforge.inria.fr/), note that linux users may need to manually add -lpthread to the include path
 * ntl-11.4.1 - [download here](https://shoup.net/ntl/download.html)
 
 ## Build instructions

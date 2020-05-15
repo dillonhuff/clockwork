@@ -1946,7 +1946,7 @@ uset* pad_uset(uset* domain) {
   auto ct = ctx(domain);
   cout << "Domain: " << str(domain) << endl;
   int max_dim = -1;
-  set<int> different_dims;
+  std::set<int> different_dims;
   cout << "sets..." << endl;
   for (auto s : get_sets(domain)) {
     cout << tab(1) << str(s) << endl;
