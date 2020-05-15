@@ -5357,18 +5357,19 @@ prog halide_cascade() {
   prg.buffer_port_widths["hw_output_stencil"] = 16;
 
 
+  int size = 6200;
 //consuming hw_input.stencil
 ////producing conv1.stencil
-  auto loop_conv1_s0_y = prg.add_loop("conv1_s0_y", 0, 62);
-  auto loop_conv1_s0_x = loop_conv1_s0_y->add_loop("conv1_s0_x", 0, 62);
+  auto loop_conv1_s0_y = prg.add_loop("conv1_s0_y", 0, size);
+  auto loop_conv1_s0_x = loop_conv1_s0_y->add_loop("conv1_s0_x", 0, size);
 
 //store is: conv1.stencil(conv1.s0.x, conv1.s0.y) = 0
   auto compute_conv1_stencil = loop_conv1_s0_x->add_op("compute_conv1_stencil");
   compute_conv1_stencil->add_function("compute_conv1_stencil");
   prg.buffer_port_widths["conv1_stencil"] = 16;
   compute_conv1_stencil->add_store("conv1_stencil", "conv1_s0_x", "conv1_s0_y");
-  auto loop_conv1_s1_y = prg.add_loop("conv1_s1_y", 0, 62);
-  auto loop_conv1_s1_x = loop_conv1_s1_y->add_loop("conv1_s1_x", 0, 62);
+  auto loop_conv1_s1_y = prg.add_loop("conv1_s1_y", 0, size);
+  auto loop_conv1_s1_x = loop_conv1_s1_y->add_loop("conv1_s1_x", 0, size);
 
 //store is: conv1.stencil(conv1.s1.x, conv1.s1.y) = (((((conv1.stencil(conv1.s1.x, conv1.s1.y) + (((((int32(hw_input.stencil((conv1.s1.x + 1), (conv1.s1.y + 1)))*2) + (int32(hw_input.stencil((conv1.s1.x + 1), (conv1.s1.y + 2))) + int32(hw_input.stencil((conv1.s1.x + 2), (conv1.s1.y + 1))))) + int32(hw_input.stencil(conv1.s1.x, (conv1.s1.y + 1)))) + int32(hw_input.stencil((conv1.s1.x + 1), conv1.s1.y)))*2)) + int32(hw_input.stencil(conv1.s1.x, conv1.s1.y))) + int32(hw_input.stencil((conv1.s1.x + 2), conv1.s1.y))) + int32(hw_input.stencil(conv1.s1.x, (conv1.s1.y + 2)))) + int32(hw_input.stencil((conv1.s1.x + 2), (conv1.s1.y + 2))))
   auto compute_conv1_stencil_1 = loop_conv1_s1_x->add_op("compute_conv1_stencil_1");
@@ -5385,8 +5386,8 @@ prog halide_cascade() {
   compute_conv1_stencil_1->add_load("hw_input_stencil", "(conv1_s1_x + 2)", "(conv1_s1_y + 2)");
   compute_conv1_stencil_1->add_store("conv1_stencil", "conv1_s1_x", "conv1_s1_y");
 ////producing conv2.stencil
-  auto loop_conv2_s0_y = prg.add_loop("conv2_s0_y", 0, 60);
-  auto loop_conv2_s0_x = loop_conv2_s0_y->add_loop("conv2_s0_x", 0, 60);
+  auto loop_conv2_s0_y = prg.add_loop("conv2_s0_y", 0, size - 2);
+  auto loop_conv2_s0_x = loop_conv2_s0_y->add_loop("conv2_s0_x", 0, size - 2);
 
 //store is: conv2.stencil(conv2.s0.x, conv2.s0.y) = 0
   auto compute_conv2_stencil = loop_conv2_s0_x->add_op("compute_conv2_stencil");
@@ -5395,8 +5396,8 @@ prog halide_cascade() {
   compute_conv2_stencil->add_store("conv2_stencil", "conv2_s0_x", "conv2_s0_y");
 
 //consuming conv1.stencil
-  auto loop_conv2_s1_y = prg.add_loop("conv2_s1_y", 0, 60);
-  auto loop_conv2_s1_x = loop_conv2_s1_y->add_loop("conv2_s1_x", 0, 60);
+  auto loop_conv2_s1_y = prg.add_loop("conv2_s1_y", 0, size - 2);
+  auto loop_conv2_s1_x = loop_conv2_s1_y->add_loop("conv2_s1_x", 0, size - 2);
 
 //store is: conv2.stencil(conv2.s1.x, conv2.s1.y) = (conv1.stencil(conv2.s1.x, conv2.s1.y) + (conv2.stencil(conv2.s1.x, conv2.s1.y) + ((conv1.stencil((conv2.s1.x + 1), conv2.s1.y)*2) + (conv1.stencil((conv2.s1.x + 2), conv2.s1.y) + ((conv1.stencil(conv2.s1.x, (conv2.s1.y + 1))*2) + ((conv1.stencil((conv2.s1.x + 1), (conv2.s1.y + 1))*4) + ((conv1.stencil((conv2.s1.x + 2), (conv2.s1.y + 1))*2) + (conv1.stencil(conv2.s1.x, (conv2.s1.y + 2)) + (conv1.stencil((conv2.s1.x + 2), (conv2.s1.y + 2)) + (conv1.stencil((conv2.s1.x + 1), (conv2.s1.y + 2))*2))))))))))
   auto compute_conv2_stencil_1 = loop_conv2_s1_x->add_op("compute_conv2_stencil_1");
@@ -5414,8 +5415,8 @@ prog halide_cascade() {
   compute_conv2_stencil_1->add_store("conv2_stencil", "conv2_s1_x", "conv2_s1_y");
 
 //consuming conv2.stencil
-  auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, 60);
-  auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 60);
+  auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, size - 2);
+  auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, size - 2);
 
 //store is: hw_output.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo) = uint8(conv2.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo))
   auto compute_hw_output_stencil = loop_hw_output_s0_x_xo->add_op("compute_hw_output_stencil");
@@ -5445,12 +5446,22 @@ void halide_cascade_test() {
 
   auto clksched = clockwork_schedule(domain, validity, proximity);
   cout << "---- Clockwork schedule:" << endl;
+  isl_space* test_space = map_space(prg.ctx, 2, 3);
+  isl_local_space* aff_space = local_set_space(prg.ctx, 2);
   for (auto s : clksched) {
+    auto ma = isl_multi_aff_zero(test_space);
+
     cout << tab(1) << s.first << " -> ";
+    int i = 0;
     for (auto v : s.second) {
       cout << str(v) << ", ";
+      isl_aff* av = isl_aff_zero_on_domain(aff_space);
+      av = set_const_coeff(av, const_coeff(v));
+      isl_multi_aff_set_aff(ma, i, av);
+      i++;
     }
     cout << endl;
+    cout << tab(2) << "ma = " << str(ma) << endl;
   }
 
   assert(false);
