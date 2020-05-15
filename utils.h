@@ -319,6 +319,9 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("mv soda_" + out_name + "*_host.cpp " + soda_dir).c_str());
   system(("mv tb_soda_" + out_name + "*.cpp " + soda_dir).c_str());
 
+  make_exe("build_kernel.sh");
+  system(("mv build_kernel.sh " + soda_dir).c_str());
+
   make_exe("run_tb.sh");
   system(("mv run_tb.sh " + soda_dir).c_str());
 }

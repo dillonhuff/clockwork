@@ -9,6 +9,7 @@
 #include <map>
 #include <vector>
 
+#include "options.h"
 #include "utils.h"
 #include "isl_utils.h"
 
@@ -1146,12 +1147,27 @@ void print_loops(int level,
 }
 
 static inline
-std::string box_codegen(const vector<string>& op_order,
+std::string box_codegen(CodegenOptions& options,
+    const vector<string>& op_order,
     map<string, vector<QExpr> >& scheds,
     map<string, Box>& compute_domains) {
+
   assert(compute_domains.size() > 0);
 
   ostringstream ss;
+  ss << tab(1) << "// Schedules..." << endl;
+  for (auto s : scheds) {
+    vector<string> qstrings;
+    for (auto q : s.second) {
+      ostringstream qs;
+      qs << q;
+      qstrings.push_back(qs.str());
+    }
+    string schedstr = sep_list(qstrings, "[", "]", ",");
+
+    ss << tab(2) <<  "// " << s.first << " -> " << schedstr << endl;
+  }
+
   int ndims = pick(compute_domains).second.intervals.size();
 
   map<string, Box> index_bounds;
@@ -1191,9 +1207,9 @@ std::string box_codegen(const vector<string>& op_order,
   reverse(bnds);
   cout << "Whole domain: " << whole_dom << endl;
   //assert(false);
-  ss << "#ifdef __VIVADO_SYNTH__" << endl;
-  ss << "#pragma HLS inline recursive" << endl;
-  ss << "#endif // __VIVADO_SYNTH__" << endl << endl;
+  //ss << "#ifdef __VIVADO_SYNTH__" << endl;
+  //ss << "#pragma HLS inline recursive" << endl;
+  //ss << "#endif // __VIVADO_SYNTH__" << endl << endl;
   print_loops(0, ss, op_order, whole_dom, index_bounds, scheds);
   //print_while_loop(0, ss, op_order, whole_dom, index_bounds, scheds);
 

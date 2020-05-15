@@ -943,7 +943,7 @@ extract_schedule_params(vector<isl_map*>& deps) {
     cout << tab(2) << "lexmax: " << str(lm) << endl;
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
       get_pieces(lm);
-    //assert(pieces.size() <= 1);
+    assert(pieces.size() <= 1);
     for (auto piece : pieces) {
       isl_multi_aff* bound = piece.second;
       cout << "bound: " << str(bound) << endl;
@@ -1111,26 +1111,26 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   assert(outputs.size() == 1);
 
   // Add shift register constraints
-  for (auto s : schedule_params) {
+  //for (auto s : schedule_params) {
 
-    string consumer = domain_name(s.first);
-    string producer = range_name(s.first);
+    //string consumer = domain_name(s.first);
+    //string producer = range_name(s.first);
 
-    isl_val* qp = map_find(sched_var_name(producer), qfactors);
+    //isl_val* qp = map_find(sched_var_name(producer), qfactors);
 
-    string dc = delay_var_name(consumer);
-    string dp = delay_var_name(producer);
+    //string dc = delay_var_name(consumer);
+    //string dp = delay_var_name(producer);
 
-    //if (contains_key(consumer, high_bandwidth_deps) &&
-        //elem(producer, map_find(consumer, high_bandwidth_deps))) {
-      //assert(s.second.size() == 1);
-      for (auto sv : s.second) {
-        auto b = sv.second;
-        auto neg_qpb = neg(mul(qp, b));
-        //delay_problem.add_eq({{dc, one(ct)}, {dp, negone(ct)}}, neg_qpb);
-      }
-    //}
-  }
+    ////if (contains_key(consumer, high_bandwidth_deps) &&
+        ////elem(producer, map_find(consumer, high_bandwidth_deps))) {
+      ////assert(s.second.size() == 1);
+      //for (auto sv : s.second) {
+        //auto b = sv.second;
+        //auto neg_qpb = neg(mul(qp, b));
+        ////delay_problem.add_eq({{dc, one(ct)}, {dp, negone(ct)}}, neg_qpb);
+      //}
+    ////}
+  //}
   set<string> operation_names;
 
   vector<pair<string, isl_val*> > linebuffer_obj_terms;

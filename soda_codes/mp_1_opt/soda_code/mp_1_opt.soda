@@ -1,0 +1,10 @@
+kernel: mp_1_opt
+unroll factor: 1
+burst width: 32
+
+input uint32: in(128, 128, *)
+
+output uint32: mp_1(0, 0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
+
+
+iterate: 1

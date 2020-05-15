@@ -20,10 +20,10 @@ int main() {
     f_update_0_read.write(in_val);
   }
 
-  // cmap    : { u_update_0[root = 0, u_0, u_1, u_2] -> u_oc[0, 0] : -2 <= u_0 <= 9 and -2 <= u_1 <= 9 and -2 <= u_2 <= 9 }
-  // read map: { u_oc[0, 0] -> u_update_0[root = 0, u_0, u_1, u_2] : -2 <= u_0 <= 9 and -2 <= u_1 <= 9 and -2 <= u_2 <= 9 }
-  // rng     : { u_update_0[root = 0, u_0, u_1, u_2] : -2 <= u_0 <= 9 and -2 <= u_1 <= 9 and -2 <= u_2 <= 9 }
-  for (int i = 0; i < 1728; i++) {
+  // cmap    : { u_update_0[root = 0, u_0, u_1, u_2] -> u_oc[0, 0] : -1 <= u_0 <= 9 and -1 <= u_1 <= 8 and -1 <= u_2 <= 8 }
+  // read map: { u_oc[0, 0] -> u_update_0[root = 0, u_0, u_1, u_2] : -1 <= u_0 <= 9 and -1 <= u_1 <= 8 and -1 <= u_2 <= 8 }
+  // rng     : { u_update_0[root = 0, u_0, u_1, u_2] : -1 <= u_0 <= 9 and -1 <= u_1 <= 8 and -1 <= u_2 <= 8 }
+  for (int i = 0; i < 1100; i++) {
     hw_uint<16> in_val;
     set_at<0*16, 16, 16>(in_val, 1*i + 0);
     in_pix << in_val << endl;

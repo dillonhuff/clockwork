@@ -951,61 +951,6 @@ inline void input_input_update_0_write_bundle_write(hw_uint<64>& input_update_0_
 
 
 // Operation logic
-inline void bxy_ur_4_update_0(blurx_cache& blurx, HWStream<hw_uint<64> >& /* buffer_args num ports = 4 */bxy_ur_4, int d0, int d1) {
-	// Consume: blurx
-	auto blurx_0_c__0_value = blurx_bxy_ur_4_update_0_read_bundle_read(blurx/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bxy_ur_4_update_0_blurx," << d0<< "," << d1<< "," <<  blurx_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = bxy_ur_4_generated_compute_unrolled_4(blurx_0_c__0_value);
-	// Produce: bxy_ur_4
-	bxy_ur_4.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<64> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  hw_uint<16> debug_compute_result_lane_2;
-  set_at<0, 16, 16>(debug_compute_result_lane_2, debug_compute_result.extract<32, 47>());
-  hw_uint<16> debug_compute_result_lane_3;
-  set_at<0, 16, 16>(debug_compute_result_lane_3, debug_compute_result.extract<48, 63>());
-  *global_debug_handle << "bxy_ur_4_update_0," << (4*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "bxy_ur_4_update_0," << (4*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "bxy_ur_4_update_0," << (4*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "bxy_ur_4_update_0," << (4*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void input_update_0(HWStream<hw_uint<64> >& /* buffer_args num ports = 4 */input_arg, input_cache& input, int d0, int d1) {
-	// Consume: input_arg
-	auto input_arg_0_c__0_value = input_arg.read();
-	auto compute_result = input_generated_compute_unrolled_4(input_arg_0_c__0_value);
-	// Produce: input
-	input_input_update_0_write_bundle_write(compute_result, input, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<64> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  hw_uint<16> debug_compute_result_lane_2;
-  set_at<0, 16, 16>(debug_compute_result_lane_2, debug_compute_result.extract<32, 47>());
-  hw_uint<16> debug_compute_result_lane_3;
-  set_at<0, 16, 16>(debug_compute_result_lane_3, debug_compute_result.extract<48, 63>());
-  *global_debug_handle << "input_update_0," << (4*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "input_update_0," << (4*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "input_update_0," << (4*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "input_update_0," << (4*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void blurx_update_0(input_cache& input, blurx_cache& blurx, int d0, int d1) {
 	// Consume: input
 	auto input_0_c__0_value = input_blurx_update_0_read_bundle_read(input/* source_delay */, d0, d1);
@@ -1036,6 +981,61 @@ inline void blurx_update_0(input_cache& input, blurx_cache& blurx, int d0, int d
 
 }
 
+inline void input_update_0(HWStream<hw_uint<64> >& /* buffer_args num ports = 4 */input_arg, input_cache& input, int d0, int d1) {
+	// Consume: input_arg
+	auto input_arg_0_c__0_value = input_arg.read();
+	auto compute_result = input_generated_compute_unrolled_4(input_arg_0_c__0_value);
+	// Produce: input
+	input_input_update_0_write_bundle_write(compute_result, input, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<64> debug_compute_result(compute_result);
+  hw_uint<16> debug_compute_result_lane_0;
+  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
+  hw_uint<16> debug_compute_result_lane_1;
+  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
+  hw_uint<16> debug_compute_result_lane_2;
+  set_at<0, 16, 16>(debug_compute_result_lane_2, debug_compute_result.extract<32, 47>());
+  hw_uint<16> debug_compute_result_lane_3;
+  set_at<0, 16, 16>(debug_compute_result_lane_3, debug_compute_result.extract<48, 63>());
+  *global_debug_handle << "input_update_0," << (4*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "input_update_0," << (4*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "input_update_0," << (4*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "input_update_0," << (4*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bxy_ur_4_update_0(blurx_cache& blurx, HWStream<hw_uint<64> >& /* buffer_args num ports = 4 */bxy_ur_4, int d0, int d1) {
+	// Consume: blurx
+	auto blurx_0_c__0_value = blurx_bxy_ur_4_update_0_read_bundle_read(blurx/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "bxy_ur_4_update_0_blurx," << d0<< "," << d1<< "," <<  blurx_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = bxy_ur_4_generated_compute_unrolled_4(blurx_0_c__0_value);
+	// Produce: bxy_ur_4
+	bxy_ur_4.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<64> debug_compute_result(compute_result);
+  hw_uint<16> debug_compute_result_lane_0;
+  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
+  hw_uint<16> debug_compute_result_lane_1;
+  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
+  hw_uint<16> debug_compute_result_lane_2;
+  set_at<0, 16, 16>(debug_compute_result_lane_2, debug_compute_result.extract<32, 47>());
+  hw_uint<16> debug_compute_result_lane_3;
+  set_at<0, 16, 16>(debug_compute_result_lane_3, debug_compute_result.extract<48, 63>());
+  *global_debug_handle << "bxy_ur_4_update_0," << (4*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "bxy_ur_4_update_0," << (4*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "bxy_ur_4_update_0," << (4*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "bxy_ur_4_update_0," << (4*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
 // Driver function
 void bxy_ur_4_opt(HWStream<hw_uint<64> >& /* get_args num ports = 4 */input_arg, HWStream<hw_uint<64> >& /* get_args num ports = 4 */bxy_ur_4, int num_epochs) {
 
@@ -1049,10 +1049,6 @@ void bxy_ur_4_opt(HWStream<hw_uint<64> >& /* get_args num ports = 4 */input_arg,
   input_cache input;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-#ifdef __VIVADO_SYNTH__
-#pragma HLS inline recursive
-#endif // __VIVADO_SYNTH__
-
   for (int epoch = 0; epoch < num_epochs; epoch++) {
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS inline recursive

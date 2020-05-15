@@ -1,6 +1,6 @@
 kernel: max_pool_opt
-unroll factor: 32
-burst width: 1024
+unroll factor: 16
+burst width: 512
 
 input uint32: in(128, 128, *)
 

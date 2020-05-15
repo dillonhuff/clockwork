@@ -17,6 +17,169 @@ void compare(vector<string>& opt, vector<string>& naive) {
 }
 
 prog clockwork_target() {
+
+  //prog prg;
+  //prg.compute_unit_file = "clockwork_target_compute.h";
+  //prg.name = "clockwork_target";
+
+//// Stencil<void *> &hw_output = arg_0;
+  //prg.add_output("hw_output");
+  //prg.buffer_port_widths["hw_output"] = 16;
+//// Stencil<void *> &hw_inputa0 = arg_1;
+  //prg.add_input("hw_inputa0");
+  //prg.buffer_port_widths["hw_inputa0"] = 16;
+
+  //auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, 62);
+//////producing kernel
+  //auto loop_kernel_s0_y = loop_hw_output_s0_y_yo->add_loop("kernel_s0_y", 0, 3);
+  //auto loop_kernel_s0_x = loop_kernel_s0_y->add_loop("kernel_s0_x", 0, 3);
+
+////store is: kernela1[(kernel.s0.x + (kernel.s0.y*3))] = 0
+  //auto compute_kernela1 = loop_kernel_s0_x->add_op("compute_kernela1");
+  //compute_kernela1->add_function("compute_kernela1");
+  //prg.buffer_port_widths["kernela1"] = 16;
+  //compute_kernela1->add_store("kernela1", "(kernel.s0.x + (kernel.s0.y*3))");
+
+////store is: kernela1[0] = 17
+  //auto compute_kernela1_1 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_1");
+  //compute_kernela1_1->add_function("compute_kernela1_1");
+  //compute_kernela1_1->add_store("kernela1", "0");
+
+////store is: kernela1[3] = 4
+  //auto compute_kernela1_2 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_2");
+  //compute_kernela1_2->add_function("compute_kernela1_2");
+  //compute_kernela1_2->add_store("kernela1", "3");
+
+////store is: kernela1[6] = 6
+  //auto compute_kernela1_3 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_3");
+  //compute_kernela1_3->add_function("compute_kernela1_3");
+  //compute_kernela1_3->add_store("kernela1", "6");
+
+////store is: kernela1[1] = 7
+  //auto compute_kernela1_4 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_4");
+  //compute_kernela1_4->add_function("compute_kernela1_4");
+  //compute_kernela1_4->add_store("kernela1", "1");
+
+////store is: kernela1[4] = 19
+  //auto compute_kernela1_5 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_5");
+  //compute_kernela1_5->add_function("compute_kernela1_5");
+  //compute_kernela1_5->add_store("kernela1", "4");
+
+////store is: kernela1[7] = 4
+  //auto compute_kernela1_6 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_6");
+  //compute_kernela1_6->add_function("compute_kernela1_6");
+  //compute_kernela1_6->add_store("kernela1", "7");
+
+////store is: kernela1[2] = 5
+  //auto compute_kernela1_7 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_7");
+  //compute_kernela1_7->add_function("compute_kernela1_7");
+  //compute_kernela1_7->add_store("kernela1", "2");
+
+////store is: kernela1[5] = 21
+  //auto compute_kernela1_8 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_8");
+  //compute_kernela1_8->add_function("compute_kernela1_8");
+  //compute_kernela1_8->add_store("kernela1", "5");
+
+////store is: kernela1[8] = 15
+  //auto compute_kernela1_9 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_9");
+  //compute_kernela1_9->add_function("compute_kernela1_9");
+  //compute_kernela1_9->add_store("kernela1", "8");
+////consuming kernel
+  //auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 62);
+//////producing conv
+  //auto loop_conv_s0_y = loop_hw_output_s0_x_xo->add_loop("conv_s0_y", 0, 62);
+  //auto loop_conv_s0_x = loop_conv_s0_y->add_loop("conv_s0_x", 0, 62);
+
+////store is: conva2[(conv.s0.x + (conv.s0.y*62))] = 0
+  //auto compute_conva2 = loop_conv_s0_x->add_op("compute_conva2");
+  //compute_conva2->add_function("compute_conva2");
+  //prg.buffer_port_widths["conva2"] = 16;
+  //compute_conva2->add_store("conva2", "(conv.s0.x + (conv.s0.y*62))");
+////consuming hw_input
+  //auto loop_conv_s1_y = loop_hw_output_s0_x_xo->add_loop("conv_s1_y", 0, 62);
+  //auto loop_conv_s1_x = loop_conv_s1_y->add_loop("conv_s1_x", 0, 62);
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[0]*int32(hw_inputa0[(conv.s1.x + (conv.s1.y*64))])))
+  //auto compute_conva2_1 = loop_conv_s1_x->add_op("compute_conva2_1");
+  //compute_conva2_1->add_function("compute_conva2_1");
+  //compute_conva2_1->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_1->add_load("hw_inputa0", "(conv.s1.x + (conv.s1.y*64))");
+  //compute_conva2_1->add_load("kernela1", "0");
+  //compute_conva2_1->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[1]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 1)])))
+  //auto compute_conva2_2 = loop_conv_s1_x->add_op("compute_conva2_2");
+  //compute_conva2_2->add_function("compute_conva2_2");
+  //compute_conva2_2->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_2->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 1)");
+  //compute_conva2_2->add_load("kernela1", "1");
+  //compute_conva2_2->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[2]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 2)])))
+  //auto compute_conva2_3 = loop_conv_s1_x->add_op("compute_conva2_3");
+  //compute_conva2_3->add_function("compute_conva2_3");
+  //compute_conva2_3->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_3->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 2)");
+  //compute_conva2_3->add_load("kernela1", "2");
+  //compute_conva2_3->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[3]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 64)])))
+  //auto compute_conva2_4 = loop_conv_s1_x->add_op("compute_conva2_4");
+  //compute_conva2_4->add_function("compute_conva2_4");
+  //compute_conva2_4->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_4->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 64)");
+  //compute_conva2_4->add_load("kernela1", "3");
+  //compute_conva2_4->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[4]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 65)])))
+  //auto compute_conva2_5 = loop_conv_s1_x->add_op("compute_conva2_5");
+  //compute_conva2_5->add_function("compute_conva2_5");
+  //compute_conva2_5->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_5->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 65)");
+  //compute_conva2_5->add_load("kernela1", "4");
+  //compute_conva2_5->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[5]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 66)])))
+  //auto compute_conva2_6 = loop_conv_s1_x->add_op("compute_conva2_6");
+  //compute_conva2_6->add_function("compute_conva2_6");
+  //compute_conva2_6->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_6->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 66)");
+  //compute_conva2_6->add_load("kernela1", "5");
+  //compute_conva2_6->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[6]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 128)])))
+  //auto compute_conva2_7 = loop_conv_s1_x->add_op("compute_conva2_7");
+  //compute_conva2_7->add_function("compute_conva2_7");
+  //compute_conva2_7->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_7->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 128)");
+  //compute_conva2_7->add_load("kernela1", "6");
+  //compute_conva2_7->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[7]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 129)])))
+  //auto compute_conva2_8 = loop_conv_s1_x->add_op("compute_conva2_8");
+  //compute_conva2_8->add_function("compute_conva2_8");
+  //compute_conva2_8->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_8->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 129)");
+  //compute_conva2_8->add_load("kernela1", "7");
+  //compute_conva2_8->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[8]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 130)])))
+  //auto compute_conva2_9 = loop_conv_s1_x->add_op("compute_conva2_9");
+  //compute_conva2_9->add_function("compute_conva2_9");
+  //compute_conva2_9->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_9->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 130)");
+  //compute_conva2_9->add_load("kernela1", "8");
+  //compute_conva2_9->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+////consuming conv
+
+////store is: hw_output[(hw_output.s0.x.xo + (hw_output.s0.y.yo*62))] = uint8(conva2[(hw_output.s0.x.xo + (hw_output.s0.y.yo*62))])
+  //auto compute_hw_output = loop_hw_output_s0_x_xo->add_op("compute_hw_output");
+  //compute_hw_output->add_function("compute_hw_output");
+  //compute_hw_output->add_load("conva2", "(hw_output.s0.x.xo + (hw_output.s0.y.yo*62))");
+  //compute_hw_output->add_store("hw_output", "(hw_output.s0.x.xo + (hw_output.s0.y.yo*62))");
+
+  //return prg;
+
   prog prg;
   prg.compute_unit_file = "clockwork_target_compute.h";
   prg.name = "clockwork_target";
@@ -39,50 +202,50 @@ prog clockwork_target() {
   prg.buffer_port_widths["_kernela1"] = 16;
   compute_kernela1->add_store("_kernela1", "(kernel_s0_x + (kernel_s0_y*3))");
 
-//store is: kernela1[0] = 17
-  auto compute_kernela1$1 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_1");
-  compute_kernela1$1->add_function("compute_kernela1_1");
-  compute_kernela1$1->add_store("_kernela1", "0");
+////store is: kernela1[0] = 17
+  //auto compute_kernela1$1 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_1");
+  //compute_kernela1$1->add_function("compute_kernela1_1");
+  //compute_kernela1$1->add_store("_kernela1", "0");
 
-//store is: kernela1[3] = 4
-  auto compute_kernela1$2 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_2");
-  compute_kernela1$2->add_function("compute_kernela1_2");
-  compute_kernela1$2->add_store("_kernela1", "3");
+////store is: kernela1[3] = 4
+  //auto compute_kernela1$2 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_2");
+  //compute_kernela1$2->add_function("compute_kernela1_2");
+  //compute_kernela1$2->add_store("_kernela1", "3");
 
-//store is: kernela1[6] = 6
-  auto compute_kernela1$3 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_3");
-  compute_kernela1$3->add_function("compute_kernela1_3");
-  compute_kernela1$3->add_store("_kernela1", "6");
+////store is: kernela1[6] = 6
+  //auto compute_kernela1$3 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_3");
+  //compute_kernela1$3->add_function("compute_kernela1_3");
+  //compute_kernela1$3->add_store("_kernela1", "6");
 
-//store is: kernela1[1] = 7
-  auto compute_kernela1$4 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_4");
-  compute_kernela1$4->add_function("compute_kernela1_4");
-  compute_kernela1$4->add_store("_kernela1", "1");
+////store is: kernela1[1] = 7
+  //auto compute_kernela1$4 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_4");
+  //compute_kernela1$4->add_function("compute_kernela1_4");
+  //compute_kernela1$4->add_store("_kernela1", "1");
 
-//store is: kernela1[4] = 19
-  auto compute_kernela1$5 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_5");
-  compute_kernela1$5->add_function("compute_kernela1_5");
-  compute_kernela1$5->add_store("_kernela1", "4");
+////store is: kernela1[4] = 19
+  //auto compute_kernela1$5 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_5");
+  //compute_kernela1$5->add_function("compute_kernela1_5");
+  //compute_kernela1$5->add_store("_kernela1", "4");
 
-//store is: kernela1[7] = 4
-  auto compute_kernela1$6 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_6");
-  compute_kernela1$6->add_function("compute_kernela1_6");
-  compute_kernela1$6->add_store("_kernela1", "7");
+////store is: kernela1[7] = 4
+  //auto compute_kernela1$6 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_6");
+  //compute_kernela1$6->add_function("compute_kernela1_6");
+  //compute_kernela1$6->add_store("_kernela1", "7");
 
-//store is: kernela1[2] = 5
-  auto compute_kernela1$7 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_7");
-  compute_kernela1$7->add_function("compute_kernela1_7");
-  compute_kernela1$7->add_store("_kernela1", "2");
+////store is: kernela1[2] = 5
+  //auto compute_kernela1$7 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_7");
+  //compute_kernela1$7->add_function("compute_kernela1_7");
+  //compute_kernela1$7->add_store("_kernela1", "2");
 
-//store is: kernela1[5] = 21
-  auto compute_kernela1$8 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_8");
-  compute_kernela1$8->add_function("compute_kernela1_8");
-  compute_kernela1$8->add_store("_kernela1", "5");
+////store is: kernela1[5] = 21
+  //auto compute_kernela1$8 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_8");
+  //compute_kernela1$8->add_function("compute_kernela1_8");
+  //compute_kernela1$8->add_store("_kernela1", "5");
 
-//store is: kernela1[8] = 15
-  auto compute_kernela1$9 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_9");
-  compute_kernela1$9->add_function("compute_kernela1_9");
-  compute_kernela1$9->add_store("_kernela1", "8");
+////store is: kernela1[8] = 15
+  //auto compute_kernela1$9 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_9");
+  //compute_kernela1$9->add_function("compute_kernela1_9");
+  //compute_kernela1$9->add_store("_kernela1", "8");
 //consuming kernel
   auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 62);
 ////producing conv
@@ -105,61 +268,61 @@ prog clockwork_target() {
   compute_conva2$1->add_load("_kernela1", "0");
   compute_conva2$1->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  auto compute_conva2$2 = loop_conv_s1_x->add_op("compute_conva2_2");
-  compute_conva2$2->add_function("compute_conva2_2");
-  compute_conva2$2->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  compute_conva2$2->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 1)");
-  compute_conva2$2->add_load("_kernela1", "1");
-  compute_conva2$2->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //auto compute_conva2$2 = loop_conv_s1_x->add_op("compute_conva2_2");
+  //compute_conva2$2->add_function("compute_conva2_2");
+  //compute_conva2$2->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //compute_conva2$2->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 1)");
+  //compute_conva2$2->add_load("_kernela1", "1");
+  //compute_conva2$2->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  auto compute_conva2$3 = loop_conv_s1_x->add_op("compute_conva2_3");
-  compute_conva2$3->add_function("compute_conva2_3");
-  compute_conva2$3->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  compute_conva2$3->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 2)");
-  compute_conva2$3->add_load("_kernela1", "2");
-  compute_conva2$3->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //auto compute_conva2$3 = loop_conv_s1_x->add_op("compute_conva2_3");
+  //compute_conva2$3->add_function("compute_conva2_3");
+  //compute_conva2$3->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //compute_conva2$3->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 2)");
+  //compute_conva2$3->add_load("_kernela1", "2");
+  //compute_conva2$3->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  auto compute_conva2$4 = loop_conv_s1_x->add_op("compute_conva2_4");
-  compute_conva2$4->add_function("compute_conva2_4");
-  compute_conva2$4->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  compute_conva2$4->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 64)");
-  compute_conva2$4->add_load("_kernela1", "3");
-  compute_conva2$4->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //auto compute_conva2$4 = loop_conv_s1_x->add_op("compute_conva2_4");
+  //compute_conva2$4->add_function("compute_conva2_4");
+  //compute_conva2$4->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //compute_conva2$4->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 64)");
+  //compute_conva2$4->add_load("_kernela1", "3");
+  //compute_conva2$4->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  auto compute_conva2$5 = loop_conv_s1_x->add_op("compute_conva2_5");
-  compute_conva2$5->add_function("compute_conva2$5");
-  compute_conva2$5->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  compute_conva2$5->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 65)");
-  compute_conva2$5->add_load("_kernela1", "4");
-  compute_conva2$5->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //auto compute_conva2$5 = loop_conv_s1_x->add_op("compute_conva2_5");
+  //compute_conva2$5->add_function("compute_conva2$5");
+  //compute_conva2$5->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //compute_conva2$5->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 65)");
+  //compute_conva2$5->add_load("_kernela1", "4");
+  //compute_conva2$5->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  auto compute_conva2$6 = loop_conv_s1_x->add_op("compute_conva2_6");
-  compute_conva2$6->add_function("compute_conva2_6");
-  compute_conva2$6->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  compute_conva2$6->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 66)");
-  compute_conva2$6->add_load("_kernela1", "5");
-  compute_conva2$6->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //auto compute_conva2$6 = loop_conv_s1_x->add_op("compute_conva2_6");
+  //compute_conva2$6->add_function("compute_conva2_6");
+  //compute_conva2$6->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //compute_conva2$6->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 66)");
+  //compute_conva2$6->add_load("_kernela1", "5");
+  //compute_conva2$6->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  auto compute_conva2$7 = loop_conv_s1_x->add_op("compute_conva2_7");
-  compute_conva2$7->add_function("compute_conva2_7");
-  compute_conva2$7->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  compute_conva2$7->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 128)");
-  compute_conva2$7->add_load("_kernela1", "6");
-  compute_conva2$7->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //auto compute_conva2$7 = loop_conv_s1_x->add_op("compute_conva2_7");
+  //compute_conva2$7->add_function("compute_conva2_7");
+  //compute_conva2$7->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //compute_conva2$7->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 128)");
+  //compute_conva2$7->add_load("_kernela1", "6");
+  //compute_conva2$7->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  auto compute_conva2$8 = loop_conv_s1_x->add_op("compute_conva2_8");
-  compute_conva2$8->add_function("compute_conva2_8");
-  compute_conva2$8->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  compute_conva2$8->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 129)");
-  compute_conva2$8->add_load("_kernela1", "7");
-  compute_conva2$8->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //auto compute_conva2$8 = loop_conv_s1_x->add_op("compute_conva2_8");
+  //compute_conva2$8->add_function("compute_conva2_8");
+  //compute_conva2$8->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //compute_conva2$8->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 129)");
+  //compute_conva2$8->add_load("_kernela1", "7");
+  //compute_conva2$8->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  auto compute_conva2$9 = loop_conv_s1_x->add_op("compute_conva2_9");
-  compute_conva2$9->add_function("compute_conva2_9");
-  compute_conva2$9->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  compute_conva2$9->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 130)");
-  compute_conva2$9->add_load("_kernela1", "8");
-  compute_conva2$9->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //auto compute_conva2$9 = loop_conv_s1_x->add_op("compute_conva2_9");
+  //compute_conva2$9->add_function("compute_conva2_9");
+  //compute_conva2$9->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //compute_conva2$9->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 130)");
+  //compute_conva2$9->add_load("_kernela1", "8");
+  //compute_conva2$9->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
   auto compute_hw_output = loop_hw_output_s0_x_xo->add_op("compute_hw_output");
   compute_hw_output->add_function("compute_hw_output");
@@ -969,14 +1132,12 @@ void vec_test() {
   //auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
   //cout << "Sched map: " << str(sched_opt) << endl;
   //cout << codegen_c(sched_opt) << endl;
-  //assert(false);
   //aha_talk_print_info(prg);
   //hardcode some configuration registers
   //memtile_config memtile;
   //auto buffers = build_buffers(prg, sched_opt);
   //memtile.extract_config(buffers);
   //memtile.emit_config_file_csv("lake_memtile_config");
-  //assert(false);
 }
 
 Box compute_box_from_sched(umap* opt_sched) {
@@ -1082,7 +1243,6 @@ void bankmerge_vec_test() {
       bool isExe = int_lower_bound(isExeQP) == 1;
       cout << "input OP execute in this point = " << isExe << endl;
   }
-  assert(false);
 }
 
 void auto_vec_test() {
@@ -1414,7 +1574,6 @@ void mmul_test() {
   auto schedmap = its(isl_schedule_get_map(opt_sched), domain);
   //cout << "Optimized schedule..." << endl;
   //cout << codegen_c(schedmap);
-  //assert(false);
 }
 
 void pyramid_test() {
@@ -1526,7 +1685,6 @@ prog cnn_conv_layer() {
   isl_map* write_sched= isl_map_read_from_str(prg.ctx, write_string.c_str());
   auto before_acc = lex_gt(read_sched, write_sched);
   cout <<"\tlexlt result: " << str(before_acc) << endl;
-  assert(false);
   */
 
   prg.compute_unit_file = "mobilenet_compute.h";
@@ -1668,13 +1826,11 @@ void cnn_test() {
   //for (auto s : clksched) {
     //cout << tab(1) << s.first << " -> " << str(s.second) << endl;
   //}
-  //assert(false);
   umap* opt_sched = prg.optimized_codegen();
   ////cout << "------ ISL schedule" << endl;
   ////for (auto m : get_maps(opt_sched)) {
     ////cout << tab(1) << str(m) << endl;
   ////}
-  ////assert(false);
 
   //auto domain = prg.whole_iteration_domain();
   //auto schedmap = its(opt_sched, domain);
@@ -1787,7 +1943,6 @@ void pyramid_2d_test() {
   res = system("./a.out");
   assert(res == 0);
 
-  //assert(false);
 }
 
 void reduce_1d_test() {
@@ -1961,7 +2116,6 @@ void reduce_2d_test() {
   //res = system("./a.out");
   //assert(res == 0);
 
-  ////assert(false);
 //}
 
 
@@ -2369,7 +2523,6 @@ void jacobi_2d_4_test() {
   }
 
   regression_test(prg);
-  //assert(false);
 }
 
 void jacobi_2d_2_test() {
@@ -2411,7 +2564,6 @@ void jacobi_2d_2_test() {
     stencil_op(out_name_1, "jacobi2d_compute", "I", {"2*(d0) + 1 - 1", "d1"}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
 
   regression_test(prg);
-  //assert(false);
 }
 
 void jacobi_2d_test() {
@@ -2991,7 +3143,6 @@ void parse_denoise3d_test() {
     cout << tab(1) << op.first << " = " << *(op.second) << endl;
   }
 
-  assert(false);
 }
 
 void duplicate_upsample_test() {
@@ -3032,7 +3183,6 @@ void duplicate_upsample_test() {
         //{{0, -1}, {0, 0}, {0, 1}});
 
   regression_test(prg);
-  assert(false);
 }
 
 void seidel2d_test() {
@@ -4233,6 +4383,10 @@ struct App {
     return "uint" + str(default_pixel_width);
   }
 
+  int original_buffer_size(const std::string& max_buffer) {
+    return data_domain(max_buffer).cardinality();
+  }
+
   void generate_soda_file(const std::string& name) {
     ofstream out(name + ".soda");
     out << "kernel: " << name << endl;
@@ -4251,6 +4405,32 @@ struct App {
       }
     }
 
+    assert(external_buffers.size() > 0);
+    string max_buffer;
+    int max_size = -1;
+    for (auto b : external_buffers) {
+      if (original_buffer_size(b) > max_size) {
+        max_buffer = b;
+        max_size = original_buffer_size(b);
+      }
+    }
+    for (auto b : external_buffers) {
+      if (b != max_buffer) {
+        out << "input " << num_type_cstring() << ": " << b << endl;
+      }
+    }
+    Box domain = data_domain(max_buffer);
+    //assert(domain.dimension() == 2);
+    vector<string> dims;
+    for (int i = 0; i < domain.dimension(); i++) {
+      if (i < domain.dimension() - 1) {
+        dims.push_back(str(domain.length(i)));
+      } else {
+        dims.push_back("*");
+      }
+    }
+    out << "input " << num_type_cstring() << ": " << max_buffer << sep_list(dims, "(", ")", ", ") << endl << endl;
+
     vector<string> zeros;
     for (int i = 0; i < data_dimension(); i++) {
       zeros.push_back("0");
@@ -4265,30 +4445,30 @@ struct App {
             out << "output " << num_type_cstring() << ": " << f << zrs << " = ";
               out << soda_compute_string(width, u.def) << endl << endl;
           } else {
-            bool all_producers_external = true;
-            for (auto p : producers(f)) {
-              if (!elem(p.name, external_buffers)) {
-                all_producers_external = false;
-                break;
-              }
-            }
+            //bool all_producers_external = true;
+            //for (auto p : producers(f)) {
+              //if (!elem(p.name, external_buffers)) {
+                //all_producers_external = false;
+                //break;
+              //}
+            //}
 
-            if (all_producers_external) {
-              Box domain = data_domain(f);
-              //assert(domain.dimension() == 2);
-              vector<string> dims;
-              for (int i = 0; i < domain.dimension(); i++) {
-                if (i < domain.dimension() - 1) {
-                  dims.push_back(str(domain.length(i)));
-                } else {
-                  dims.push_back("*");
-                }
-              }
-              out << "input " << num_type_cstring() << ": " << f << sep_list(dims, "(", ")", ", ") << endl << endl;
-            } else {
+            //if (all_producers_external) {
+              //Box domain = data_domain(f);
+              ////assert(domain.dimension() == 2);
+              //vector<string> dims;
+              //for (int i = 0; i < domain.dimension(); i++) {
+                //if (i < domain.dimension() - 1) {
+                  //dims.push_back(str(domain.length(i)));
+                //} else {
+                  //dims.push_back("*");
+                //}
+              //}
+              //out << "input " << num_type_cstring() << ": " << f << sep_list(dims, "(", ")", ", ") << endl << endl;
+            //} else {
               out << "local " << num_type_cstring() << ": " << f << zrs << " = ";
               out << soda_compute_string(width, u.def) << endl << endl;
-            }
+            //}
           }
         }
       }
@@ -4301,7 +4481,7 @@ struct App {
   }
 
   umap* realize_opt_schedule(const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    set_unroll_factors(name, unroll_factor);
+    set_unroll_factors(name, name, unroll_factor);
     fill_data_domain(name, {d0, d1});
     fill_compute_domain();
 
@@ -4311,7 +4491,7 @@ struct App {
   }
 
   umap* realize_isl_schedule(const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    set_unroll_factors(name, unroll_factor);
+    set_unroll_factors(name, name, unroll_factor);
     fill_data_domain(name, {d0, d1});
     fill_compute_domain();
 
@@ -4327,12 +4507,12 @@ struct App {
   void realize_naive(CodegenOptions& options, const std::string& name, const std::vector<int>& dims) {
     if (!options.unroll_factors_as_pad) {
       const int unroll_factor = 1;
-      set_unroll_factors(name, unroll_factor);
+      set_unroll_factors(name, name, unroll_factor);
     } else {
       cout << "realizing naive with padded unroll factors" << endl;
     }
     fill_data_domain(name, dims);
-    set_unroll_factors(name, 1);
+    set_unroll_factors(name, name, 1);
     fill_compute_domain();
 
     umap* m =
@@ -4553,7 +4733,21 @@ struct App {
   }
 
   void schedule_and_codegen(CodegenOptions& options, const std::string& name) {
+    time_t rawtime;
+    struct tm * timeinfo;
+    char buffer[80];
+
+    time (&rawtime);
+    timeinfo = localtime(&rawtime);
+
+    strftime(buffer,sizeof(buffer),"%d-%m-%Y %H:%M:%S",timeinfo);
+    std::string time_str(buffer);   
     umap* m = schedule();
+    ofstream schedule_out(name + "_sched_" + time_str);
+    for (auto k : get_maps(m)) {
+      schedule_out << str(k) << endl;
+    }
+    schedule_out.close();
     assert(m != nullptr);
 
     map<string, vector<QExpr> > scheds =
@@ -4567,7 +4761,7 @@ struct App {
       }
     }
 
-    string cgn = box_codegen(ops, scheds, compute_domains);
+    string cgn = box_codegen(options, ops, scheds, compute_domains);
     options.code_string = cgn;
 
     map<string, UBuffer> buffers = build_buffers(m);
@@ -4593,9 +4787,16 @@ struct App {
     }
   }
 
-  void set_unroll_factors(const std::string& reference_function, const int unroll_factor) {
+  void set_unroll_factors(const std::string& reference_function,
+      const std::string& to_unroll_function,
+      const int unroll_factor) {
+    cout << "Unrolling " << to_unroll_function << " by " << unroll_factor << endl;
+
+    //assert(reference_function == to_unroll_function);
+
     // Preprocess application graph to compute qfactors
     App cpy = *this;
+    // TODO: Update to fill with ndims dimensions
     int dummy_value = 10;
     cpy.no_unrolling();
     cpy.fill_data_domain(reference_function, {dummy_value, dummy_value});
@@ -4615,15 +4816,16 @@ struct App {
     }
 
     string reference_update =
-      sched_var_name(last_update(reference_function).name());
+      sched_var_name(last_update(to_unroll_function).name());
+      //sched_var_name(last_update(reference_function).name());
     cout << "reference: " << reference_update << endl;
+    cout << "to unroll: " << to_unroll_function << endl;
     
     int ref_q = to_int(map_find(reference_update, qfs));
     cout << "ref_q = " << ref_q << endl;
     int umax = ref_q * unroll_factor;
     cout << "umax  = " << umax << endl;
 
-    //assert(false);
     // Use these factors to set unrolled behavior
     for (auto& r : app_dag) {
       for (auto& u : r.second.updates) {
@@ -4632,9 +4834,22 @@ struct App {
         int fres = (int) max(1.0f, floor(((float) umax) / (float) u_qfactor));
         int u_unroll_factor = fres;
         u.unroll_factor = u_unroll_factor;
+        cout << tab(1) << u.unroll_factor << endl;
+        if (r.first == to_unroll_function) {
+          assert(u.unroll_factor == unroll_factor);
+        }
       }
     }
   }
+  
+  void realize_no_unroll(CodegenOptions& options,
+      const std::string& name,
+      const std::vector<int>& dims) {
+    fill_data_domain(name, dims);
+    fill_compute_domain();
+    schedule_and_codegen(options, name);
+  }
+
 
   void realize(const std::string& name, const int d0, const int d1) {
     CodegenOptions options;
@@ -4648,17 +4863,7 @@ struct App {
       const std::string& name,
       const int d0,
       const int d1) {
-    realize(options, name, {d0, d1});
-  }
-
-  void realize(CodegenOptions& options,
-      const std::string& name,
-      const std::vector<int>& dims) {
-
-    fill_data_domain(name, dims);
-    fill_compute_domain();
-    schedule_and_codegen(options, name);
-
+    realize(options, name, {d0, d1}, 1);
   }
 
   void realize(CodegenOptions& options, const std::string& name, const int d0, const int d1, const int unroll_factor) {
@@ -4666,33 +4871,36 @@ struct App {
   }
 
   void realize(CodegenOptions& options, const std::string& name, const vector<int>& dims, const int unroll_factor) {
+    realize(options, name, dims, name, unroll_factor);
+  }
+
+  void realize(CodegenOptions& options,
+      const std::string& out_name,
+      const vector<int>& dims,
+      const std::string& unroll_target,
+      const int unroll_factor) {
       double total_elapsed = 0.;
       auto start = std::chrono::system_clock::now();
 
-      set_unroll_factors(name, unroll_factor);
-      realize(options, name, dims);
+      //assert(out_name == unroll_target);
+      set_unroll_factors(out_name, unroll_target, unroll_factor);
+      realize_no_unroll(options, out_name, dims);
 
       auto end = std::chrono::system_clock::now();
       std::chrono::duration<double> elapsed = end - start;
       total_elapsed += elapsed.count();
-      ofstream schedule_info("./scratch/" + name + ".txt");
-      schedule_info << "time to realize " << name << ": " << total_elapsed << endl;
+      ofstream schedule_info("./scratch/" + out_name + ".txt");
+      schedule_info << "time to realize " << out_name << ": " << total_elapsed << endl;
       schedule_info.close();
   }
 
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    double total_elapsed = 0.;
-    auto start = std::chrono::system_clock::now();
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
 
-    set_unroll_factors(name, unroll_factor);
-    realize(name, d0, d1);
-
-    auto end = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed = end - start;
-    total_elapsed += elapsed.count();
-    ofstream schedule_info("./scratch/" + name + ".txt");
-    schedule_info << "time to realize " << name << ": " << total_elapsed << endl;
-    schedule_info.close();
+    realize(options, name, {d0, d1}, unroll_factor);
   }
 
 };
@@ -5035,6 +5243,7 @@ App tricky_reconvergence(const std::string& name) {
 
 void halide_frontend_test() {
   //prog prg = clockwork_target();
+  //cout << "Created program..." << endl;
   //generate_optimized_code(prg);
   //assert(false);
 
@@ -5375,7 +5584,6 @@ void up_stencil_auto_unrolled_test() {
   auto naive = run_regression_tb(app_name + "_naive");
 
   assert(opt == naive);
-  //assert(false);
 }
 
 void up_stencil_down_auto_unrolled_test() {
@@ -5402,7 +5610,6 @@ void up_stencil_down_auto_unrolled_test() {
   auto naive = run_regression_tb("up_stencil_down_naive");
 
   assert(opt == naive);
-  //assert(false);
 }
 
 void up_stencil_down_test() {
@@ -5434,7 +5641,6 @@ void up_stencil_down_test() {
   //}
   //cout << endl << endl;
 
-  //assert(false);
 
   lp.realize("ds", size, size);
   auto opt = run_regression_tb("ds_opt");
@@ -5449,7 +5655,6 @@ void up_stencil_down_test() {
 
   compare(opt, naive);
   //assert(opt == naive);
-  //assert(false);
 }
 
 void up_stencil_down_unrolled_test() {
@@ -5513,9 +5718,9 @@ App harris16(const std::string& out_name) {
   harris.func2d("lyy", add(square(v("grad_y")), 128));
   harris.func2d("lxy", add(mul(v("grad_x"), v("grad_y")), 128));
   
-  harris.func2d("lgxx", stencilv(-1, 1, -1, 1, "lxx"));
-  harris.func2d("lgyy", stencilv(-1, 1, -1, 1, "lyy"));
-  harris.func2d("lgxy", stencilv(-1, 1, -1, 1, "lxy"));
+  harris.func2d("lgxx", add(stencilv(-1, 1, -1, 1, "lxx"), 9));
+  harris.func2d("lgyy", add(stencilv(-1, 1, -1, 1, "lyy"), 9));
+  harris.func2d("lgxy", add(stencilv(-1, 1, -1, 1, "lxy"), 9));
 
   harris.func2d("lgxx8", add(v("lgxx"), 64));
   harris.func2d("lgyy8", add(v("lgyy"), 64));
@@ -5610,8 +5815,8 @@ void harris16_test() {
     run_regression_tb("harris16_mini_naive");
   assert(naive == optimized);
   move_to_benchmarks_folder("harris16_mini_opt");
-
   //assert(false);
+
 
   int rows = 1080;
   int cols = 1920;
@@ -5645,7 +5850,6 @@ void harris_test() {
   assert(naive == optimized);
   move_to_benchmarks_folder("harris_mini_opt");
 
-  //assert(false);
 
   int rows = 1080;
   int cols = 1920;
@@ -5664,6 +5868,28 @@ void harris_test() {
 
     move_to_benchmarks_folder(out_name + "_opt");
   }
+}
+
+App denoise3d_reconverge(const std::string& out_name) {
+  App dn;
+  dn.set_default_pixel_width(16);
+  dn.func3d("u_oc");
+  dn.func3d("f_oc");
+
+  dn.func3d("u", v3("u_oc", 0, 0, 0));
+  dn.func3d("f", v3("f_oc", 0, 0, 0));
+
+  dn.func3d("diff_i", sub(v("u", 0, 0, 0), v("u", 0, 0, -1)));
+  dn.func3d("diff_o", sub(v("u", 0, 0, 0), v("u", 0, 0, 1)));
+
+  dn.func3d("g",
+      add({sq3("diff_i"), sq3("diff_o")}));
+  dn.func3d("r0", mul(v3("u"), v3("f")));
+  dn.func3d("r1", sq3("r0"));
+  dn.func3d(out_name,
+      add({v3("u", 0, 0, 0), v3("g", 1, 0, 0), v3("r1", 0, 0, 0)}));
+
+  return dn;
 }
 
 App denoise3d(const std::string& out_name) {
@@ -5688,12 +5914,38 @@ App denoise3d(const std::string& out_name) {
   dn.func3d("r0", mul(v3("u"), v3("f")));
   dn.func3d("r1", sq3("r0"));
   dn.func3d(out_name,
-      add({v3("u", 0, 0, 0), v3("u", 1, 0, 0), v3("g", 1, 0, 0), v3("u", -1, 0, 0), v3("g", -1, 0, 0),
-        v3("u", 0, 1, 0), v3("g", 0, 1, 0), v3("u", 0, -1, 0), v3("g", 0, -1, 0), v3("u", 0, 0, 1), v3("g", 0, 0, 1),
-        v3("u", 0, 0, -1), v3("g", 0, 0, -1), v3("f", 0, 0, 0), v3("r1", 0, 0, 0),
-        v3("g", 1, 0, 0), v3("g", -1, 0, 0), v3("g", 0, 1, 0), v3("g", 0, -1, 0), v3("g", 0, 0, 1), v3("g", 0, 0, -1)}));
+      add({v3("u", 0, 0, 0), v3("g", 1, 0, 0), v3("r1", 0, 0, 0)}));
+
+  //dn.func3d(out_name,
+      //add({v3("u", 0, 0, 0), v3("u", 1, 0, 0), v3("g", 1, 0, 0), v3("u", -1, 0, 0), v3("g", -1, 0, 0),
+        //v3("u", 0, 1, 0), v3("g", 0, 1, 0), v3("u", 0, -1, 0), v3("g", 0, -1, 0), v3("u", 0, 0, 1), v3("g", 0, 0, 1),
+        //v3("u", 0, 0, -1), v3("g", 0, 0, -1), v3("f", 0, 0, 0), v3("r1", 0, 0, 0),
+        //v3("g", 1, 0, 0), v3("g", -1, 0, 0), v3("g", 0, 1, 0), v3("g", 0, -1, 0), v3("g", 0, 0, 1), v3("g", 0, 0, -1)}));
 
   return dn;
+}
+
+void denoise3d_reconvergence_test() {
+  string name = "dn_reconv";
+  int mini_size = 8;
+  auto hmini = denoise3d_reconverge(name);
+  hmini.realize_naive(name, {mini_size, mini_size, mini_size});
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = false;
+  //options.use_custom_code_string = true;
+  options.all_rams = true;
+  //options.debug_options.expect_all_linebuffers = true;
+  hmini.realize(options, name, {mini_size, mini_size, mini_size}, 1);
+
+  std::vector<std::string> naive =
+    run_regression_tb(name + "_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb(name + "_opt");
+  assert(naive == optimized);
+  assert(false);
 }
 
 void denoise3d_test() {
@@ -5705,7 +5957,7 @@ void denoise3d_test() {
   options.internal = true;
   options.simplify_address_expressions = true;
   options.use_custom_code_string = true;
-  options.debug_options.expect_all_linebuffers = true;
+  //options.debug_options.expect_all_linebuffers = true;
   hmini.realize(options, "dn3d_mini", {mini_size, mini_size, mini_size}, 1);
 
   std::vector<std::string> naive =
@@ -5714,8 +5966,9 @@ void denoise3d_test() {
     run_regression_tb("dn3d_mini_opt");
   assert(naive == optimized);
   move_to_benchmarks_folder("dn3d_mini_opt");
+  assert(false);
 
-  //assert(false);
+
 
   int rows = 32;
   int cols = 32;
@@ -5737,24 +5990,31 @@ void denoise3d_test() {
   }
 }
 
-void max_pooling_test() {
+App max_pooling(const std::string& out_name) {
   App mp;
   mp.func3d("in_oc");
   mp.func3d("in", "id", pt3("in_oc"));
   Window max_win{"in", {qconst(2), qconst(2), qconst(1)}, {{0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {1, 1, 0}}};
-  mp.func3d("max_pool", "max_pool_2x2", {max_win});
+  mp.func3d(out_name, "max_pool_2x2", {max_win});
 
+  return mp;
+}
+
+void max_pooling_test() {
   int W = 64;
   int H = 64;
   int D = 32;
 
-  {
+  vector<int> unroll_factors{1, 2, 4};
+  for (auto factor : unroll_factors) {
+    string name = "mp_" + str(factor);
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
 
-    mp.realize(options, "max_pool", {H, W, D}, 16);
+    max_pooling(name).realize(options, name, {H, W, D}, "in", factor);
+    move_to_benchmarks_folder(name + "_opt");
   }
 
   //CodegenOptions options;
@@ -5769,7 +6029,6 @@ void max_pooling_test() {
     //run_regression_tb("max_pool_naive");
   //assert(naive == optimized);
   
-  move_to_benchmarks_folder("max_pool_opt");
 }
 
 App exposure_fusion_app(const std::string& out_name) {
@@ -5834,7 +6093,7 @@ void exposure_fusion_iccad_apps() {
   int size = 1920;
   lp.realize(name, size, size, throughput);
   move_to_benchmarks_folder(name + "_opt");
-  assert(false);
+  //assert(false);
 }
 
 void exposure_fusion() {
@@ -5981,8 +6240,9 @@ void laplacian_pyramid_app_test() {
 
 }
 
-void gaussian_pyramid_app_test() {
+App gaussian_pyramid_app(const std::string& out_name) {
   App gp;
+  gp.set_default_pixel_width(16);
 
   gp.func2d("in_off_chip");
   gp.func2d("in", "id", pt("in_off_chip"));
@@ -6000,31 +6260,46 @@ void gaussian_pyramid_app_test() {
     gp.func2d(next, "reduce_gauss", last_window);
     last = next;
   }
-  //gp.realize(last, 32, 32, 1);
- 
+
+  gp.func2d(out_name, "id", pt(last));
+  return gp;
+}
+
+void gaussian_pyramid_app_test() {
+  string name = "gp";
+  vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
+  for (auto factor : unroll_factors) {
+    string name = "gp_" + str(factor);
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+
+    gaussian_pyramid_app(name).realize(options, name, {4, 4}, "in", factor);
+    move_to_benchmarks_folder(name + "_opt");
+  }
+
+  App gp = gaussian_pyramid_app(name);
   {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
     options.debug_options.expect_all_linebuffers = true;
-    gp.realize(options, last, 4, 4, 2);
+    gp.realize(options, name, 4, 4, 2);
   }
 
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
   options.unroll_factors_as_pad = true;
-  gp.realize_naive(options, last, 4, 4);
+  gp.realize_naive(options, name, 4, 4);
 
   std::vector<std::string> naive =
-    run_regression_tb("level_3_naive");
-  //cout << "Naive    : " << naive << endl;
+    run_regression_tb(name + "_naive");
   std::vector<std::string> optimized =
-    run_regression_tb("level_3_opt");
-  //cout << "Optimized: " << optimized << endl;
+    run_regression_tb(name + "_opt");
   assert(naive == optimized);
-
 }
 
 App sobel_mag_x() {
@@ -6133,7 +6408,7 @@ App pointwise_add(const std::string output_name) {
   jac.set_default_pixel_width(16);
   jac.func2d("input_arg");
   jac.func2d("input", v("input_arg"));
-  jac.func2d(output_name, add(v("input"), 1));
+  jac.func2d(output_name, div(v("input"), 9));
   return jac;
 }
 
@@ -6391,17 +6666,18 @@ void sobel_16_app_test() {
 
   //int cols = 10;
   //int rows = 10;
-  vector<int> factors{1, 8, 16};
+  vector<int> factors{1, 2, 4, 8};
   //for (int i = 0; i < 5; i++) {
   for (auto factor : factors) {
     int unroll_factor = factor;
       //pow(2, i);
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
-    string out_name = "sbl_" + str(unroll_factor);
+    string out_name = "sblr30_" + str(unroll_factor);
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
+    options.num_input_epochs = 30;
     options.debug_options.expect_all_linebuffers = true;
     sobel16(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
@@ -7448,32 +7724,35 @@ void playground() {
 
 }
 
-void application_tests() {
-  exposure_fusion_iccad_apps();
+void iccad_tests() {
+  denoise3d_reconvergence_test();
   assert(false);
 
-  max_pooling_test();
-  exposure_fusion();
-  pointwise_app_test();
-
   sobel_16_app_test();
-  denoise3d_test();
-  harris_test();
+  exposure_fusion_iccad_apps();
+  pointwise_app_test();
+  gaussian_pyramid_app_test();
+
+  max_pooling_test();
+
   harris16_test();
+  harris_test();
   blur_xy_16_app_test();
+
+  exposure_fusion();
+
+}
+
+void application_tests() {
+  iccad_tests();
 
   halide_frontend_test();
 
-  //assert(false);
-
   ram_addr_unit_test();
-
   denoise2d_test();
 
-
-
   conv_1d_test();
-  blur_xy_16_app_test();
+  
   tricky_shift_register_reconvergence_test();
 
   //playground();
@@ -7482,7 +7761,6 @@ void application_tests() {
   grayscale_conversion_test();
   upsample2d_test();
 
-  gaussian_pyramid_app_test();
   denoise2d_test();
 
   downsample2d_test();

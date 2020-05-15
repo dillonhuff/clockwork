@@ -4,7 +4,7 @@
 #include <fstream>
 
 #define PIXEL_WIDTH 32
-#define BURST_WIDTH 1024
+#define BURST_WIDTH 512
 
 #include "runtime/test_utils.h"
 
