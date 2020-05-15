@@ -21,17 +21,17 @@ prog clockwork_target() {
   prg.compute_unit_file = "clockwork_target_compute.h";
   prg.name = "clockwork_target";
 
-// Stencil<void *> &hw_output_stencil = arg_0;
-  prg.add_output("hw_output_stencil");
-  prg.buffer_port_widths["hw_output_stencil"] = 16;
-// Stencil<void *> &hw_input_stencil = arg_1;
+// Stencil<uint16_t, 64, 64> &hw_input_stencil = arg_0;
   prg.add_input("hw_input_stencil");
   prg.buffer_port_widths["hw_input_stencil"] = 16;
+// Stencil<void *> &hw_output_stencil = arg_1;
+  prg.add_output("hw_output_stencil");
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
 
-  auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, 62);
-  auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 62);
+
+//consuming hw_input.stencil
 ////producing conv.stencil
-  auto loop_conv_s0_y = loop_hw_output_s0_x_xo->add_loop("conv_s0_y", 0, 62);
+  auto loop_conv_s0_y = prg.add_loop("conv_s0_y", 0, 62);
   auto loop_conv_s0_x = loop_conv_s0_y->add_loop("conv_s0_x", 0, 62);
 
 //store is: conv.stencil(conv.s0.x, conv.s0.y) = 0
@@ -39,9 +39,7 @@ prog clockwork_target() {
   compute_conv_stencil->add_function("compute_conv_stencil");
   prg.buffer_port_widths["conv_stencil"] = 16;
   compute_conv_stencil->add_store("conv_stencil", "conv_s0_x", "conv_s0_y");
-
-//consuming hw_input.stencil
-  auto loop_conv_s1_y = loop_hw_output_s0_x_xo->add_loop("conv_s1_y", 0, 62);
+  auto loop_conv_s1_y = prg.add_loop("conv_s1_y", 0, 62);
   auto loop_conv_s1_x = loop_conv_s1_y->add_loop("conv_s1_x", 0, 62);
 
 //store is: conv.stencil(conv.s1.x, conv.s1.y) = ((int32(hw_input.stencil(conv.s1.x, conv.s1.y))*17) + (conv.stencil(conv.s1.x, conv.s1.y) + ((int32(hw_input.stencil((conv.s1.x + 1), conv.s1.y))*7) + ((int32(hw_input.stencil((conv.s1.x + 2), conv.s1.y))*5) + ((int32(hw_input.stencil(conv.s1.x, (conv.s1.y + 1)))*4) + ((int32(hw_input.stencil((conv.s1.x + 1), (conv.s1.y + 1)))*19) + ((int32(hw_input.stencil((conv.s1.x + 2), (conv.s1.y + 1)))*21) + ((int32(hw_input.stencil(conv.s1.x, (conv.s1.y + 2)))*6) + ((int32(hw_input.stencil((conv.s1.x + 2), (conv.s1.y + 2)))*15) + (int32(hw_input.stencil((conv.s1.x + 1), (conv.s1.y + 2)))*4))))))))))
@@ -60,6 +58,8 @@ prog clockwork_target() {
   compute_conv_stencil_1->add_store("conv_stencil", "conv_s1_x", "conv_s1_y");
 
 //consuming conv.stencil
+  auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, 62);
+  auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 62);
 
 //store is: hw_output.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo) = uint8(conv.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo))
   auto compute_hw_output_stencil = loop_hw_output_s0_x_xo->add_op("compute_hw_output_stencil");
@@ -68,6 +68,57 @@ prog clockwork_target() {
   compute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo");
 
   return prg;
+  //prog prg;
+  //prg.compute_unit_file = "clockwork_target_compute.h";
+  //prg.name = "clockwork_target";
+
+//// Stencil<void *> &hw_output_stencil = arg_0;
+  //prg.add_output("hw_output_stencil");
+  //prg.buffer_port_widths["hw_output_stencil"] = 16;
+//// Stencil<void *> &hw_input_stencil = arg_1;
+  //prg.add_input("hw_input_stencil");
+  //prg.buffer_port_widths["hw_input_stencil"] = 16;
+
+  //auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, 62);
+  //auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 62);
+//////producing conv.stencil
+  //auto loop_conv_s0_y = loop_hw_output_s0_x_xo->add_loop("conv_s0_y", 0, 62);
+  //auto loop_conv_s0_x = loop_conv_s0_y->add_loop("conv_s0_x", 0, 62);
+
+////store is: conv.stencil(conv.s0.x, conv.s0.y) = 0
+  //auto compute_conv_stencil = loop_conv_s0_x->add_op("compute_conv_stencil");
+  //compute_conv_stencil->add_function("compute_conv_stencil");
+  //prg.buffer_port_widths["conv_stencil"] = 16;
+  //compute_conv_stencil->add_store("conv_stencil", "conv_s0_x", "conv_s0_y");
+
+////consuming hw_input.stencil
+  //auto loop_conv_s1_y = loop_hw_output_s0_x_xo->add_loop("conv_s1_y", 0, 62);
+  //auto loop_conv_s1_x = loop_conv_s1_y->add_loop("conv_s1_x", 0, 62);
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y) = ((int32(hw_input.stencil(conv.s1.x, conv.s1.y))*17) + (conv.stencil(conv.s1.x, conv.s1.y) + ((int32(hw_input.stencil((conv.s1.x + 1), conv.s1.y))*7) + ((int32(hw_input.stencil((conv.s1.x + 2), conv.s1.y))*5) + ((int32(hw_input.stencil(conv.s1.x, (conv.s1.y + 1)))*4) + ((int32(hw_input.stencil((conv.s1.x + 1), (conv.s1.y + 1)))*19) + ((int32(hw_input.stencil((conv.s1.x + 2), (conv.s1.y + 1)))*21) + ((int32(hw_input.stencil(conv.s1.x, (conv.s1.y + 2)))*6) + ((int32(hw_input.stencil((conv.s1.x + 2), (conv.s1.y + 2)))*15) + (int32(hw_input.stencil((conv.s1.x + 1), (conv.s1.y + 2)))*4))))))))))
+  //auto compute_conv_stencil_1 = loop_conv_s1_x->add_op("compute_conv_stencil_1");
+  //compute_conv_stencil_1->add_function("compute_conv_stencil_1");
+  //compute_conv_stencil_1->add_load("conv_stencil", "conv_s1_x", "conv_s1_y");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "conv_s1_x", "conv_s1_y");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 1)", "conv_s1_y");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 2)", "conv_s1_y");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "conv_s1_x", "(conv_s1_y + 1)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 1)", "(conv_s1_y + 1)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 2)", "(conv_s1_y + 1)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "conv_s1_x", "(conv_s1_y + 2)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 2)", "(conv_s1_y + 2)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 1)", "(conv_s1_y + 2)");
+  //compute_conv_stencil_1->add_store("conv_stencil", "conv_s1_x", "conv_s1_y");
+
+////consuming conv.stencil
+
+////store is: hw_output.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo) = uint8(conv.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo))
+  //auto compute_hw_output_stencil = loop_hw_output_s0_x_xo->add_op("compute_hw_output_stencil");
+  //compute_hw_output_stencil->add_function("compute_hw_output_stencil");
+  //compute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo");
+  //compute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo");
+
+  //return prg;
 
   //prog prg;
   //prg.compute_unit_file = "clockwork_target_compute.h";
@@ -5296,10 +5347,10 @@ void halide_frontend_test() {
   prog prg = clockwork_target();
   cout << "Created program..." << endl;
   prg.pretty_print();
-  //generate_optimized_code(prg);
-  assert(false);
+  generate_optimized_code(prg);
+  //assert(false);
 
-  regression_test(prg);
+  //regression_test(prg);
 }
 
 void tricky_shift_register_reconvergence_test() {
@@ -7803,8 +7854,8 @@ void iccad_tests() {
 }
 
 void application_tests() {
-  iccad_tests();
   halide_frontend_test();
+  iccad_tests();
 
 
   ram_addr_unit_test();
