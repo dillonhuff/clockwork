@@ -493,7 +493,7 @@ namespace minihls {
 
     public:
 
-    context* context;
+    context* mcontext;
     micro_architecture arch;
     string name;
 
@@ -501,7 +501,7 @@ namespace minihls {
 
     vector<instruction_binding*> get_bindings(instruction_type* tp) const {
       vector<instruction_binding*> candidates;
-      for (auto binding : context->instruction_bindings) {
+      for (auto binding : mcontext->instruction_bindings) {
         //cout << "binding: " << binding.second->get_name() << endl;
         if (binding.second->target_instr() == tp) {
           candidates.push_back(binding.second);
@@ -518,7 +518,7 @@ namespace minihls {
 
     instruction_type* find_instruction_type(module_type* tp, const std::string& instr_substring) {
       vector<instruction_type*> candidates;
-      for (auto it : context->instruction_types) {
+      for (auto it : mcontext->instruction_types) {
         if (contains(it.first, instr_substring)) {
 
           vector<instruction_binding*> bindings =
@@ -600,7 +600,7 @@ namespace minihls {
 
     std::set<instruction_binding*> all_bindings() const {
       std::set<instruction_binding*> bs;
-      for (auto b : context->instruction_bindings) {
+      for (auto b : mcontext->instruction_bindings) {
         bs.insert(b.second);
       }
       return bs;
@@ -818,58 +818,58 @@ namespace minihls {
         inst->output_wire = output_wire;
         inst->arg_map = arg_map;
         inst->latency = latency;
-        context->instruction_bindings[name] = inst;
+        mcontext->instruction_bindings[name] = inst;
         return inst;
       }
 
     instruction_binding* get_instruction_binding(const std::string& name) const {
       assert(has_instruction_binding(name));
-      return map_find(name, context->instruction_bindings);
+      return map_find(name, mcontext->instruction_bindings);
     }
 
     bool has_instruction_binding(const std::string& name) const {
-      return contains_key(name, context->instruction_bindings);
+      return contains_key(name, mcontext->instruction_bindings);
     }
 
     instruction_type* add_instruction_type(const std::string& name) {
       auto inst = new instruction_type();
       inst->name = name;
-      context->instruction_types[name] = inst;
+      mcontext->instruction_types[name] = inst;
       return inst;
     }
 
     instruction_type* get_instruction_type(const std::string& name) const {
       assert(has_instruction_type(name));
-      return map_find(name, context->instruction_types);
+      return map_find(name, mcontext->instruction_types);
     }
 
     bool has_instruction_type(const std::string& name) const {
-      return contains_key(name, context->instruction_types);
+      return contains_key(name, mcontext->instruction_types);
     }
 
     std::set<module_type*> module_type_set() const {
       std::set<module_type*> ms;
-      for (auto mt : context->module_types) {
+      for (auto mt : mcontext->module_types) {
         ms.insert(mt.second);
       }
       return ms;
     }
 
     module_type* add_module_type(const std::string& name, const vector<port>& pts, const std::string& body) {
-      return context->add_module_type(name, pts, body);
+      return mcontext->add_module_type(name, pts, body);
     }
 
     module_type* add_module_type(const std::string& name, const vector<port>& pts) {
-      return context->add_module_type(name, pts, "");
+      return mcontext->add_module_type(name, pts, "");
     }
 
     module_type* get_module_type(const std::string& name) const {
       assert(has_module_type(name));
-      return map_find(name, context->module_types);
+      return map_find(name, mcontext->module_types);
     }
 
     bool has_module_type(const std::string& name) const {
-      return contains_key(name, context->module_types);
+      return contains_key(name, mcontext->module_types);
     }
 
     module_instance* add_external_module_instance(const std::string& name, module_type* tp) {

@@ -10370,62 +10370,38 @@ inline void in_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 32 *
   set_at<0, 16, 16>(debug_compute_result_lane_30, debug_compute_result.extract<480, 495>());
   hw_uint<16> debug_compute_result_lane_31;
   set_at<0, 16, 16>(debug_compute_result_lane_31, debug_compute_result.extract<496, 511>());
-  *global_debug_handle << "in_update_0," << (32*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 8) << ", " << d1<< "," <<  debug_compute_result_lane_8 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 9) << ", " << d1<< "," <<  debug_compute_result_lane_9 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 10) << ", " << d1<< "," <<  debug_compute_result_lane_10 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 11) << ", " << d1<< "," <<  debug_compute_result_lane_11 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 12) << ", " << d1<< "," <<  debug_compute_result_lane_12 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 13) << ", " << d1<< "," <<  debug_compute_result_lane_13 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 14) << ", " << d1<< "," <<  debug_compute_result_lane_14 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 15) << ", " << d1<< "," <<  debug_compute_result_lane_15 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 16) << ", " << d1<< "," <<  debug_compute_result_lane_16 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 17) << ", " << d1<< "," <<  debug_compute_result_lane_17 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 18) << ", " << d1<< "," <<  debug_compute_result_lane_18 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 19) << ", " << d1<< "," <<  debug_compute_result_lane_19 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 20) << ", " << d1<< "," <<  debug_compute_result_lane_20 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 21) << ", " << d1<< "," <<  debug_compute_result_lane_21 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 22) << ", " << d1<< "," <<  debug_compute_result_lane_22 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 23) << ", " << d1<< "," <<  debug_compute_result_lane_23 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 24) << ", " << d1<< "," <<  debug_compute_result_lane_24 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 25) << ", " << d1<< "," <<  debug_compute_result_lane_25 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 26) << ", " << d1<< "," <<  debug_compute_result_lane_26 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 27) << ", " << d1<< "," <<  debug_compute_result_lane_27 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 28) << ", " << d1<< "," <<  debug_compute_result_lane_28 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 29) << ", " << d1<< "," <<  debug_compute_result_lane_29 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 30) << ", " << d1<< "," <<  debug_compute_result_lane_30 << endl;
-  *global_debug_handle << "in_update_0," << (32*d0 + 31) << ", " << d1<< "," <<  debug_compute_result_lane_31 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void gp_32_update_0(level_3_cache& level_3, HWStream<hw_uint<32> >& /* buffer_args num ports = 2 */gp_32, int d0, int d1) {
-	// Consume: level_3
-	auto level_3_0_c__0_value = level_3_gp_32_update_0_read_bundle_read(level_3/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "gp_32_update_0_level_3," << d0<< "," << d1<< "," <<  level_3_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_2(level_3_0_c__0_value);
-	// Produce: gp_32
-	gp_32.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "gp_32_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "gp_32_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 1) << "," << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 2) << "," << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 3) << "," << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 4) << "," << d1<< "," <<  debug_compute_result_lane_4 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 5) << "," << d1<< "," <<  debug_compute_result_lane_5 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 6) << "," << d1<< "," <<  debug_compute_result_lane_6 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 7) << "," << d1<< "," <<  debug_compute_result_lane_7 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 8) << "," << d1<< "," <<  debug_compute_result_lane_8 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 9) << "," << d1<< "," <<  debug_compute_result_lane_9 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 10) << "," << d1<< "," <<  debug_compute_result_lane_10 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 11) << "," << d1<< "," <<  debug_compute_result_lane_11 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 12) << "," << d1<< "," <<  debug_compute_result_lane_12 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 13) << "," << d1<< "," <<  debug_compute_result_lane_13 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 14) << "," << d1<< "," <<  debug_compute_result_lane_14 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 15) << "," << d1<< "," <<  debug_compute_result_lane_15 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 16) << "," << d1<< "," <<  debug_compute_result_lane_16 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 17) << "," << d1<< "," <<  debug_compute_result_lane_17 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 18) << "," << d1<< "," <<  debug_compute_result_lane_18 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 19) << "," << d1<< "," <<  debug_compute_result_lane_19 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 20) << "," << d1<< "," <<  debug_compute_result_lane_20 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 21) << "," << d1<< "," <<  debug_compute_result_lane_21 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 22) << "," << d1<< "," <<  debug_compute_result_lane_22 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 23) << "," << d1<< "," <<  debug_compute_result_lane_23 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 24) << "," << d1<< "," <<  debug_compute_result_lane_24 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 25) << "," << d1<< "," <<  debug_compute_result_lane_25 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 26) << "," << d1<< "," <<  debug_compute_result_lane_26 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 27) << "," << d1<< "," <<  debug_compute_result_lane_27 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 28) << "," << d1<< "," <<  debug_compute_result_lane_28 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 29) << "," << d1<< "," <<  debug_compute_result_lane_29 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 30) << "," << d1<< "," <<  debug_compute_result_lane_30 << endl;
+  *global_debug_handle << "in_update_0," << (32*d0 + 31) << "," << d1<< "," <<  debug_compute_result_lane_31 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -10476,22 +10452,22 @@ inline void level_0_update_0(in_cache& in, level_0_cache& level_0, int d0, int d
   set_at<0, 16, 16>(debug_compute_result_lane_14, debug_compute_result.extract<224, 239>());
   hw_uint<16> debug_compute_result_lane_15;
   set_at<0, 16, 16>(debug_compute_result_lane_15, debug_compute_result.extract<240, 255>());
-  *global_debug_handle << "level_0_update_0," << (16*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "level_0_update_0," << (16*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "level_0_update_0," << (16*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "level_0_update_0," << (16*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
-  *global_debug_handle << "level_0_update_0," << (16*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
-  *global_debug_handle << "level_0_update_0," << (16*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
-  *global_debug_handle << "level_0_update_0," << (16*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
-  *global_debug_handle << "level_0_update_0," << (16*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
-  *global_debug_handle << "level_0_update_0," << (16*d0 + 8) << ", " << d1<< "," <<  debug_compute_result_lane_8 << endl;
-  *global_debug_handle << "level_0_update_0," << (16*d0 + 9) << ", " << d1<< "," <<  debug_compute_result_lane_9 << endl;
-  *global_debug_handle << "level_0_update_0," << (16*d0 + 10) << ", " << d1<< "," <<  debug_compute_result_lane_10 << endl;
-  *global_debug_handle << "level_0_update_0," << (16*d0 + 11) << ", " << d1<< "," <<  debug_compute_result_lane_11 << endl;
-  *global_debug_handle << "level_0_update_0," << (16*d0 + 12) << ", " << d1<< "," <<  debug_compute_result_lane_12 << endl;
-  *global_debug_handle << "level_0_update_0," << (16*d0 + 13) << ", " << d1<< "," <<  debug_compute_result_lane_13 << endl;
-  *global_debug_handle << "level_0_update_0," << (16*d0 + 14) << ", " << d1<< "," <<  debug_compute_result_lane_14 << endl;
-  *global_debug_handle << "level_0_update_0," << (16*d0 + 15) << ", " << d1<< "," <<  debug_compute_result_lane_15 << endl;
+  *global_debug_handle << "level_0_update_0," << (16*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "level_0_update_0," << (16*d0 + 1) << "," << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "level_0_update_0," << (16*d0 + 2) << "," << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "level_0_update_0," << (16*d0 + 3) << "," << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "level_0_update_0," << (16*d0 + 4) << "," << d1<< "," <<  debug_compute_result_lane_4 << endl;
+  *global_debug_handle << "level_0_update_0," << (16*d0 + 5) << "," << d1<< "," <<  debug_compute_result_lane_5 << endl;
+  *global_debug_handle << "level_0_update_0," << (16*d0 + 6) << "," << d1<< "," <<  debug_compute_result_lane_6 << endl;
+  *global_debug_handle << "level_0_update_0," << (16*d0 + 7) << "," << d1<< "," <<  debug_compute_result_lane_7 << endl;
+  *global_debug_handle << "level_0_update_0," << (16*d0 + 8) << "," << d1<< "," <<  debug_compute_result_lane_8 << endl;
+  *global_debug_handle << "level_0_update_0," << (16*d0 + 9) << "," << d1<< "," <<  debug_compute_result_lane_9 << endl;
+  *global_debug_handle << "level_0_update_0," << (16*d0 + 10) << "," << d1<< "," <<  debug_compute_result_lane_10 << endl;
+  *global_debug_handle << "level_0_update_0," << (16*d0 + 11) << "," << d1<< "," <<  debug_compute_result_lane_11 << endl;
+  *global_debug_handle << "level_0_update_0," << (16*d0 + 12) << "," << d1<< "," <<  debug_compute_result_lane_12 << endl;
+  *global_debug_handle << "level_0_update_0," << (16*d0 + 13) << "," << d1<< "," <<  debug_compute_result_lane_13 << endl;
+  *global_debug_handle << "level_0_update_0," << (16*d0 + 14) << "," << d1<< "," <<  debug_compute_result_lane_14 << endl;
+  *global_debug_handle << "level_0_update_0," << (16*d0 + 15) << "," << d1<< "," <<  debug_compute_result_lane_15 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -10526,14 +10502,14 @@ inline void level_1_update_0(level_0_cache& level_0, level_1_cache& level_1, int
   set_at<0, 16, 16>(debug_compute_result_lane_6, debug_compute_result.extract<96, 111>());
   hw_uint<16> debug_compute_result_lane_7;
   set_at<0, 16, 16>(debug_compute_result_lane_7, debug_compute_result.extract<112, 127>());
-  *global_debug_handle << "level_1_update_0," << (8*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "level_1_update_0," << (8*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "level_1_update_0," << (8*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "level_1_update_0," << (8*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
-  *global_debug_handle << "level_1_update_0," << (8*d0 + 4) << ", " << d1<< "," <<  debug_compute_result_lane_4 << endl;
-  *global_debug_handle << "level_1_update_0," << (8*d0 + 5) << ", " << d1<< "," <<  debug_compute_result_lane_5 << endl;
-  *global_debug_handle << "level_1_update_0," << (8*d0 + 6) << ", " << d1<< "," <<  debug_compute_result_lane_6 << endl;
-  *global_debug_handle << "level_1_update_0," << (8*d0 + 7) << ", " << d1<< "," <<  debug_compute_result_lane_7 << endl;
+  *global_debug_handle << "level_1_update_0," << (8*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "level_1_update_0," << (8*d0 + 1) << "," << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "level_1_update_0," << (8*d0 + 2) << "," << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "level_1_update_0," << (8*d0 + 3) << "," << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "level_1_update_0," << (8*d0 + 4) << "," << d1<< "," <<  debug_compute_result_lane_4 << endl;
+  *global_debug_handle << "level_1_update_0," << (8*d0 + 5) << "," << d1<< "," <<  debug_compute_result_lane_5 << endl;
+  *global_debug_handle << "level_1_update_0," << (8*d0 + 6) << "," << d1<< "," <<  debug_compute_result_lane_6 << endl;
+  *global_debug_handle << "level_1_update_0," << (8*d0 + 7) << "," << d1<< "," <<  debug_compute_result_lane_7 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -10560,10 +10536,10 @@ inline void level_2_update_0(level_1_cache& level_1, level_2_cache& level_2, int
   set_at<0, 16, 16>(debug_compute_result_lane_2, debug_compute_result.extract<32, 47>());
   hw_uint<16> debug_compute_result_lane_3;
   set_at<0, 16, 16>(debug_compute_result_lane_3, debug_compute_result.extract<48, 63>());
-  *global_debug_handle << "level_2_update_0," << (4*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "level_2_update_0," << (4*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "level_2_update_0," << (4*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "level_2_update_0," << (4*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "level_2_update_0," << (4*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "level_2_update_0," << (4*d0 + 1) << "," << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "level_2_update_0," << (4*d0 + 2) << "," << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "level_2_update_0," << (4*d0 + 3) << "," << d1<< "," <<  debug_compute_result_lane_3 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -10586,8 +10562,32 @@ inline void level_3_update_0(level_2_cache& level_2, level_3_cache& level_3, int
   set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
   hw_uint<16> debug_compute_result_lane_1;
   set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "level_3_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "level_3_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "level_3_update_0," << (2*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "level_3_update_0," << (2*d0 + 1) << "," << d1<< "," <<  debug_compute_result_lane_1 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void gp_32_update_0(level_3_cache& level_3, HWStream<hw_uint<32> >& /* buffer_args num ports = 2 */gp_32, int d0, int d1) {
+	// Consume: level_3
+	auto level_3_0_c__0_value = level_3_gp_32_update_0_read_bundle_read(level_3/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "gp_32_update_0_level_3," << d0<< "," << d1<< "," <<  level_3_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_2(level_3_0_c__0_value);
+	// Produce: gp_32
+	gp_32.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<32> debug_compute_result(compute_result);
+  hw_uint<16> debug_compute_result_lane_0;
+  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
+  hw_uint<16> debug_compute_result_lane_1;
+  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
+  *global_debug_handle << "gp_32_update_0," << (2*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "gp_32_update_0," << (2*d0 + 1) << "," << d1<< "," <<  debug_compute_result_lane_1 << endl;
 #endif //__VIVADO_SYNTH__
 
 }

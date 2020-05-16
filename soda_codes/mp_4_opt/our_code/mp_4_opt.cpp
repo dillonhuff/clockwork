@@ -383,31 +383,6 @@ inline hw_uint<256> in_mp_4_update_0_read_bundle_read(in_cache& in, int d0, int 
 
 
 // Operation logic
-inline void in_update_0(HWStream<hw_uint<128> >& /* buffer_args num ports = 4 */in_oc, in_cache& in, int d0, int d1, int d2) {
-	// Consume: in_oc
-	auto in_oc_0_c__0_value = in_oc.read();
-	auto compute_result = id_unrolled_4(in_oc_0_c__0_value);
-	// Produce: in
-	in_in_update_0_write_bundle_write(compute_result, in, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<128> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  hw_uint<32> debug_compute_result_lane_1;
-  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
-  hw_uint<32> debug_compute_result_lane_2;
-  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
-  hw_uint<32> debug_compute_result_lane_3;
-  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
-  *global_debug_handle << "in_update_0," << (4*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "in_update_0," << (4*d0 + 1) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "in_update_0," << (4*d0 + 2) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "in_update_0," << (4*d0 + 3) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_3 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void mp_4_update_0(in_cache& in, HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */mp_4, int d0, int d1, int d2) {
 	// Consume: in
 	auto in_0_c__0_value = in_mp_4_update_0_read_bundle_read(in/* source_delay */, d0, d1, d2);
@@ -426,8 +401,33 @@ inline void mp_4_update_0(in_cache& in, HWStream<hw_uint<64> >& /* buffer_args n
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
   hw_uint<32> debug_compute_result_lane_1;
   set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
-  *global_debug_handle << "mp_4_update_0," << (2*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "mp_4_update_0," << (2*d0 + 1) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "mp_4_update_0," << (2*d0 + 0) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "mp_4_update_0," << (2*d0 + 1) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_1 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void in_update_0(HWStream<hw_uint<128> >& /* buffer_args num ports = 4 */in_oc, in_cache& in, int d0, int d1, int d2) {
+	// Consume: in_oc
+	auto in_oc_0_c__0_value = in_oc.read();
+	auto compute_result = id_unrolled_4(in_oc_0_c__0_value);
+	// Produce: in
+	in_in_update_0_write_bundle_write(compute_result, in, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<128> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  hw_uint<32> debug_compute_result_lane_1;
+  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
+  hw_uint<32> debug_compute_result_lane_2;
+  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
+  hw_uint<32> debug_compute_result_lane_3;
+  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
+  *global_debug_handle << "in_update_0," << (4*d0 + 0) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "in_update_0," << (4*d0 + 1) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "in_update_0," << (4*d0 + 2) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "in_update_0," << (4*d0 + 3) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_3 << endl;
 #endif //__VIVADO_SYNTH__
 
 }

@@ -4720,9 +4720,7 @@ struct App {
     return schedules;
   }
 
-  umap* schedule() {
-    auto schedules = schedule_opt();
-
+  umap* qschedule_to_map(map<string, vector<QExpr> >& schedules) {
     umap* m = rdmap(ctx, "{}");
     for (auto fn : schedules) {
       string f = fn.first;
@@ -4747,6 +4745,12 @@ struct App {
     }
 
     return m;
+  }
+
+  umap* schedule() {
+    auto schedules = schedule_opt();
+    return qschedule_to_map(schedules);
+
   }
 
   string unrolled_compute_name(const string& f) {
@@ -4901,7 +4905,10 @@ struct App {
 
     strftime(buffer,sizeof(buffer),"%d-%m-%Y %H:%M:%S",timeinfo);
     std::string time_str(buffer);   
-    umap* m = schedule();
+
+    auto scheds = schedule_opt();
+    umap* m = qschedule_to_map(scheds);
+    //umap* m = schedule();
     ofstream schedule_out(name + "_sched_" + time_str);
     for (auto k : get_maps(m)) {
       schedule_out << str(k) << endl;
@@ -4909,8 +4916,8 @@ struct App {
     schedule_out.close();
     assert(m != nullptr);
 
-    map<string, vector<QExpr> > scheds =
-      schedule_opt();
+    //map<string, vector<QExpr> > scheds =
+      //schedule_opt();
     map<string, Box> compute_domains;
     vector<string> ops;
     for (auto u : sort_updates()) {
@@ -6226,9 +6233,9 @@ void denoise3d_reconvergence_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
-  //options.use_custom_code_string = true;
-  options.all_rams = true;
+  //options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
+  //options.all_rams = true;
   //options.debug_options.expect_all_linebuffers = true;
   hmini.realize(options, name, {mini_size, mini_size, mini_size}, 1);
 
@@ -8024,10 +8031,11 @@ void playground() {
 }
 
 void iccad_tests() {
+  denoise3d_reconvergence_test();
+  //assert(false);
   blur_xy_16_app_test();
   //assert(false);
 
-  denoise3d_reconvergence_test();
   sobel_16_app_test();
   exposure_fusion_iccad_apps();
   pointwise_app_test();
