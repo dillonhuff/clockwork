@@ -4720,9 +4720,7 @@ struct App {
     return schedules;
   }
 
-  umap* schedule() {
-    auto schedules = schedule_opt();
-
+  umap* qschedule_to_map(map<string, vector<QExpr> >& schedules) {
     umap* m = rdmap(ctx, "{}");
     for (auto fn : schedules) {
       string f = fn.first;
@@ -4747,6 +4745,12 @@ struct App {
     }
 
     return m;
+  }
+
+  umap* schedule() {
+    auto schedules = schedule_opt();
+    return qschedule_to_map(schedules);
+
   }
 
   string unrolled_compute_name(const string& f) {
@@ -6226,8 +6230,8 @@ void denoise3d_reconvergence_test() {
   CodegenOptions options;
   options.internal = true;
   options.simplify_address_expressions = true;
-  options.use_custom_code_string = false;
-  //options.use_custom_code_string = true;
+  //options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
   options.all_rams = true;
   //options.debug_options.expect_all_linebuffers = true;
   hmini.realize(options, name, {mini_size, mini_size, mini_size}, 1);
@@ -8024,10 +8028,11 @@ void playground() {
 }
 
 void iccad_tests() {
+  denoise3d_reconvergence_test();
+  assert(false);
   blur_xy_16_app_test();
   //assert(false);
 
-  denoise3d_reconvergence_test();
   sobel_16_app_test();
   exposure_fusion_iccad_apps();
   pointwise_app_test();
