@@ -774,10 +774,10 @@ inline void t1_update_0(HWStream<hw_uint<128> >& /* buffer_args num ports = 4 */
   set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
   hw_uint<32> debug_compute_result_lane_3;
   set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
-  *global_debug_handle << "t1_update_0," << (4*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "t1_update_0," << (4*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "t1_update_0," << (4*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "t1_update_0," << (4*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "t1_update_0," << (4*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "t1_update_0," << (4*d0 + 1) << "," << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "t1_update_0," << (4*d0 + 2) << "," << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "t1_update_0," << (4*d0 + 3) << "," << d1<< "," <<  debug_compute_result_lane_3 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -804,10 +804,10 @@ inline void jacobi2d_unrolled_4_update_0(t1_cache& t1, HWStream<hw_uint<128> >& 
   set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
   hw_uint<32> debug_compute_result_lane_3;
   set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
-  *global_debug_handle << "jacobi2d_unrolled_4_update_0," << (4*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "jacobi2d_unrolled_4_update_0," << (4*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "jacobi2d_unrolled_4_update_0," << (4*d0 + 2) << ", " << d1<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "jacobi2d_unrolled_4_update_0," << (4*d0 + 3) << ", " << d1<< "," <<  debug_compute_result_lane_3 << endl;
+  *global_debug_handle << "jacobi2d_unrolled_4_update_0," << (4*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "jacobi2d_unrolled_4_update_0," << (4*d0 + 1) << "," << d1<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "jacobi2d_unrolled_4_update_0," << (4*d0 + 2) << "," << d1<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "jacobi2d_unrolled_4_update_0," << (4*d0 + 3) << "," << d1<< "," <<  debug_compute_result_lane_3 << endl;
 #endif //__VIVADO_SYNTH__
 
 }

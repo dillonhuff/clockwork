@@ -4905,7 +4905,10 @@ struct App {
 
     strftime(buffer,sizeof(buffer),"%d-%m-%Y %H:%M:%S",timeinfo);
     std::string time_str(buffer);   
-    umap* m = schedule();
+
+    auto scheds = schedule_opt();
+    umap* m = qschedule_to_map(scheds);
+    //umap* m = schedule();
     ofstream schedule_out(name + "_sched_" + time_str);
     for (auto k : get_maps(m)) {
       schedule_out << str(k) << endl;
@@ -4913,8 +4916,8 @@ struct App {
     schedule_out.close();
     assert(m != nullptr);
 
-    map<string, vector<QExpr> > scheds =
-      schedule_opt();
+    //map<string, vector<QExpr> > scheds =
+      //schedule_opt();
     map<string, Box> compute_domains;
     vector<string> ops;
     for (auto u : sort_updates()) {
@@ -6232,7 +6235,7 @@ void denoise3d_reconvergence_test() {
   options.simplify_address_expressions = true;
   //options.use_custom_code_string = false;
   options.use_custom_code_string = true;
-  options.all_rams = true;
+  //options.all_rams = true;
   //options.debug_options.expect_all_linebuffers = true;
   hmini.realize(options, name, {mini_size, mini_size, mini_size}, 1);
 
@@ -8029,7 +8032,7 @@ void playground() {
 
 void iccad_tests() {
   denoise3d_reconvergence_test();
-  assert(false);
+  //assert(false);
   blur_xy_16_app_test();
   //assert(false);
 
