@@ -6244,6 +6244,7 @@ void denoise3d_reconvergence_test() {
   std::vector<std::string> optimized =
     run_regression_tb(name + "_opt");
   assert(naive == optimized);
+  move_to_benchmarks_folder(name + "_opt");
   //assert(false);
 }
 
@@ -8032,7 +8033,7 @@ void playground() {
 
 void iccad_tests() {
   denoise3d_reconvergence_test();
-  //assert(false);
+  assert(false);
   blur_xy_16_app_test();
   //assert(false);
 
@@ -8051,10 +8052,9 @@ void iccad_tests() {
 }
 
 void application_tests() {
+  iccad_tests();
   halide_frontend_test();
   halide_cascade_test();
-  iccad_tests();
-
 
   ram_addr_unit_test();
   denoise2d_test();
