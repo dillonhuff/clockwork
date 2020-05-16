@@ -8032,8 +8032,9 @@ void playground() {
 }
 
 void iccad_tests() {
-  denoise3d_reconvergence_test();
+  harris_test();
   assert(false);
+  denoise3d_reconvergence_test();
   blur_xy_16_app_test();
   //assert(false);
 
@@ -8045,7 +8046,6 @@ void iccad_tests() {
   max_pooling_test();
 
   harris16_test();
-  harris_test();
 
   exposure_fusion();
 
