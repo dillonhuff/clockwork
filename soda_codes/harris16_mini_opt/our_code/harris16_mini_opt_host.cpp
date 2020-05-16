@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
   size_t harris16_mini_update_0_write_size_bytes = harris16_mini_update_0_write_BYTES_PER_PIXEL * harris16_mini_update_0_write_DATA_SIZE;
 
   total_size_bytes += harris16_mini_update_0_write_size_bytes;
-  const int img_update_0_read_DATA_SIZE = num_epochs*1024;
+  const int img_update_0_read_DATA_SIZE = num_epochs*1156;
   const int img_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t img_update_0_read_size_bytes = img_update_0_read_BYTES_PER_PIXEL * img_update_0_read_DATA_SIZE;
 
