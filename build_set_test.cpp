@@ -6003,17 +6003,18 @@ App harris16(const std::string& out_name) {
   harris.set_default_pixel_width(16);
   harris.func2d("img_oc");
   harris.func2d("img", v("img_oc"));
-  harris.func2d("grad_x",
-      add(sub(v("img", 1, -1), v("img", -1, -1)),
-        mul(sub(v("img", 1, 0), v("img", -1, 0)), 2),
-        sub(v("img", 1, 1), v("img", -1, 1))));
+  harris.func2d(out_name, div(square(v("img")), 128));
+  //harris.func2d("grad_x",
+      //add(sub(v("img", 1, -1), v("img", -1, -1)),
+        //mul(sub(v("img", 1, 0), v("img", -1, 0)), 2),
+        //sub(v("img", 1, 1), v("img", -1, 1))));
 
   //harris.func2d("grad_y",
       //add(sub(v("img", -1, 1), v("img", -1, -1)),
         //mul(sub(v("img", 0, 1), v("img", 0, -1)), 2),
         //sub(v("img", 1, 1), v("img", 1, -1))));
 
-  harris.func2d(out_name, div(square(v("grad_x")), 128));
+  //harris.func2d(out_name, div(square(v("grad_x")), 128));
 
   //harris.func2d("lxx", add(square(v("grad_x")), 128));
   //harris.func2d("lyy", add(square(v("grad_y")), 128));
