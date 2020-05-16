@@ -2,6 +2,7 @@
 #include "harris16_mini_opt_kernel.h"
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
 
 #define PIXEL_WIDTH 16
 #define BURST_WIDTH 16
@@ -11,6 +12,7 @@
 using namespace std;
 
 int main() {
+  srand(234);
   const int nrows = 36;
   const int ncols = 36;
   uint64_t img_pixels = nrows*ncols;

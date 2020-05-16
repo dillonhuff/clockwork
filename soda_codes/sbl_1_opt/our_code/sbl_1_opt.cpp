@@ -641,7 +641,7 @@ void sbl_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */off_chip_img,
   mag_y_cache mag_y;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  for (int epoch = 0; epoch < num_epochs; epoch++) {
+  for (int epoch = 0; epoch < 20; epoch++) {
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS inline recursive
 	#endif // __VIVADO_SYNTH__
@@ -696,7 +696,7 @@ extern "C" {
 
 static void read_img_update_0_read(hw_uint<16>* input, HWStream<hw_uint<16> >& v, const int size) {
   hw_uint<16> burst_reg;
-  for (int i = 0; i < img_update_0_read_num_transfers*size; i++) {
+  for (int i = 0; i < img_update_0_read_num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -705,7 +705,7 @@ static void read_img_update_0_read(hw_uint<16>* input, HWStream<hw_uint<16> >& v
 
 static void write_sbl_1_update_0_write(hw_uint<16>* output, HWStream<hw_uint<16> >& v, const int size) {
   hw_uint<16> burst_reg;
-  for (int i = 0; i < sbl_1_update_0_write_num_transfers*size; i++) {
+  for (int i = 0; i < sbl_1_update_0_write_num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;
