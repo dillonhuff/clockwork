@@ -178,7 +178,7 @@ namespace minihls {
     block* context::add_block(const std::string& name) {
       auto blk = new block();
       blk->name = name;
-      blk->context = this;
+      blk->mcontext = this;
       blocks[name] = blk;
       return blk;
     }
