@@ -34,7 +34,7 @@ Alternatively, you can follow these steps:
    * if you have sudo access, you do not need PREFIX and barvinok will be installed in /usr/local
    * if you do not have sudo access or would like to specify where barvinok is installed, replace /opt_b above with a directory path for PREFIX
 10. make
-   * you may need to add -lpthread to LIBS in the generated Makefile
+      * you may need to add -lpthread to LIBS in the generated Makefile
 11. (optionally) make check
 12. make install
 
