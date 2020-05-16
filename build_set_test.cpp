@@ -6099,6 +6099,70 @@ void harris_unrolled_test() {
   move_to_benchmarks_folder(out_name + "_opt");
 }
 
+string sharpen(App& cp, const std::string& r) {
+  string bx = r + "_bx";
+  string by = r + "_by";
+  string bdiff = r + "_diff";
+  cp.func2d(bx, stencilv(0, 2, 0, 0, r));
+  cp.func2d(by, stencilv(0, 0, 0, 2, bx));
+
+  cp.func2d(bdiff, sub(v(by), v(r)));
+  return bdiff;
+}
+
+App camera_pipeline(const std::string& out_name) {
+  App cp;
+  cp.set_default_pixel_width(16);
+
+  cp.func2d("raw_oc");
+  cp.func2d("raw", v("raw_oc"));
+
+  cp.func2d("red", stencilv(0, 2, 0, 2, "raw"));
+  cp.func2d("green", stencilv(0, 2, 0, 2, "raw"));
+  cp.func2d("blue", stencilv(0, 2, 0, 2, "raw"));
+
+  string red_sharpened = sharpen(cp, "red");
+  string green_sharpened = sharpen(cp, "green");
+  string blue_sharpened = sharpen(cp, "blue");
+
+  cp.func2d(out_name, add(v(red_sharpened), v(green_sharpened), v(blue_sharpened)));
+  return cp;
+}
+
+void camera_pipeline_test() {
+  //string app_name = "camera_pipeline";
+  //int mini_size = 32;
+  //auto hmini = camera_pipeline("harris16_mini");
+  //hmini.realize_naive("harris16_mini", mini_size, mini_size);
+  //hmini.realize("harris16_mini", mini_size, mini_size, 1);
+
+  //std::vector<std::string> naive =
+    //run_regression_tb("harris16_mini_opt");
+  //std::vector<std::string> optimized =
+    //run_regression_tb("harris16_mini_naive");
+  //assert(naive == optimized);
+  //move_to_benchmarks_folder("harris16_mini_opt");
+
+
+  int rows = 1080;
+  int cols = 1920;
+  vector<int> factors{1, 2, 4, 8, 16};
+  for (int i = 0; i < (int) factors.size(); i++) {
+    int unroll_factor = factors.at(i);
+    //cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
+    string out_name = "cp_" + str(unroll_factor);
+
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    options.debug_options.expect_all_linebuffers = true;
+    camera_pipeline(out_name).realize(options, out_name, cols, rows, unroll_factor);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+}
+
 void harris16_test() {
   int mini_size = 32;
   auto hmini = harris16("harris16_mini");
@@ -8021,6 +8085,8 @@ void playground() {
 }
 
 void iccad_tests() {
+  camera_pipeline_test();
+  assert(false);
   harris16_test();
   harris_test();
   denoise3d_reconvergence_test();
