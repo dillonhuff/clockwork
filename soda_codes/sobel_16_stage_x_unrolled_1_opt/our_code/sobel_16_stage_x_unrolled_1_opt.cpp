@@ -320,11 +320,15 @@ void sobel_16_stage_x_unrolled_1_opt(HWStream<hw_uint<16> >& /* get_args num por
   img_cache img;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
   for (int epoch = 0; epoch < num_epochs; epoch++) {
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS inline recursive
-	#endif // __VIVADO_SYNTH__
-	
+	  // Schedules...
+	    // img_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
+	    // off_chip_img_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
+	    // sobel_16_stage_x_unrolled_1_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*2]
 	for (int c0 = -1; c0 <= 30; c0++) {
 	  for (int c1 = -1; c1 <= 30; c1++) {
 	
@@ -360,14 +364,13 @@ void sobel_16_stage_x_unrolled_1_opt(HWStream<hw_uint<16> >& /* get_args num por
 const int img_update_0_read_num_transfers = 1024;
 const int sobel_16_stage_x_unrolled_1_update_0_write_num_transfers = 900;
 
-// TODO: Adapt to have one size for each edge buffer
-#define INPUT_SIZE 1024
-#define OUTPUT_SIZE 900
+
 extern "C" {
 
 static void read_img_update_0_read(hw_uint<16>* input, HWStream<hw_uint<16> >& v, const int size) {
   hw_uint<16> burst_reg;
-  for (int i = 0; i < img_update_0_read_num_transfers*size; i++) {
+  int num_transfers = img_update_0_read_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -376,7 +379,8 @@ static void read_img_update_0_read(hw_uint<16>* input, HWStream<hw_uint<16> >& v
 
 static void write_sobel_16_stage_x_unrolled_1_update_0_write(hw_uint<16>* output, HWStream<hw_uint<16> >& v, const int size) {
   hw_uint<16> burst_reg;
-  for (int i = 0; i < sobel_16_stage_x_unrolled_1_update_0_write_num_transfers*size; i++) {
+  int num_transfers = sobel_16_stage_x_unrolled_1_update_0_write_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;

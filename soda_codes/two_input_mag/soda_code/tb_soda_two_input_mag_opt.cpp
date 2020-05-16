@@ -11,6 +11,7 @@
 using namespace std;
 
 int main() {
+  srand(234);
   const int nrows = 32;
   const int ncols = 32;
   uint64_t img_pixels = nrows*ncols;
