@@ -8,7 +8,7 @@ hw_uint<16> img_generated_compute(hw_uint<16*1> img_oc) {
 }
 
 hw_uint<16> harris16_mini_generated_compute(hw_uint<16*1> img) {
-  return ((img.get<16, 0>() * img.get<16, 0>()) / hw_uint<16>(128));
+  return ((img.get<16, 0>() * hw_uint<16>(9)) / hw_uint<16>(128));
 }
 
 
