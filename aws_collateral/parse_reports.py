@@ -15,6 +15,8 @@ app = sys.argv[1]
 print('app =', app)
 import glob
 
+os.system('rm -rf our_code')
+os.system('rm -rf soda_code')
 os.system('../aws_collateral/get_reports.sh {0}'.format(app))
 directory = './'
 for filename in glob.iglob(directory + '**/*', recursive=True):
@@ -24,6 +26,7 @@ for filename in glob.iglob(directory + '**/*', recursive=True):
     latex_table = util.replace("%", "\\%")
     latex_table = latex_table.replace("|", "&")
     latex_table = latex_table.replace("[ ", "[")
+    latex_table = latex_table.replace("_", "u")
     print(latex_table)
-    break
+    # break
 

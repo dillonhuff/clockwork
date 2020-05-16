@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
   size_t hrs_8_update_0_write_size_bytes = hrs_8_update_0_write_BYTES_PER_PIXEL * hrs_8_update_0_write_DATA_SIZE;
 
   total_size_bytes += hrs_8_update_0_write_size_bytes;
-  const int img_update_0_read_DATA_SIZE = num_epochs*2115968;
+  const int img_update_0_read_DATA_SIZE = num_epochs*2073600;
   const int img_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t img_update_0_read_size_bytes = img_update_0_read_BYTES_PER_PIXEL * img_update_0_read_DATA_SIZE;
 

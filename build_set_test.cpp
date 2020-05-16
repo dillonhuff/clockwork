@@ -4025,7 +4025,6 @@ struct App {
     }
 
     //fill_compute_domain();
-    //assert(false);
   }
 
 
@@ -5250,7 +5249,6 @@ void memtile_test() {
     memtile_config memtile;
     memtile.extract_config(buffers);
     memtile.emit_config_file_csv("lake_memtile_config_conv33");
-    //assert(false);
   }
 
   int pos = 0;
@@ -5272,7 +5270,6 @@ void memtile_test() {
   auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
   sched_opt = its(sched_opt, prg.whole_iteration_domain());
   cout << codegen_c(sched_opt) << endl;
-  //assert(false);
   //aha_talk_print_info(prg);
 }
 
@@ -5531,9 +5528,7 @@ void halide_cascade_test() {
     cout << tab(2) << "ma = " << str(ma) << endl;
   }
 
-  //assert(false);
   generate_optimized_code(prg);
-  //assert(false);
 
   //regression_test(prg);
 }
@@ -5542,9 +5537,7 @@ void halide_frontend_test() {
   prog prg = clockwork_target();
   cout << "Created program..." << endl;
   prg.pretty_print();
-  //assert(false);
   generate_optimized_code(prg);
-  //assert(false);
 
   //regression_test(prg);
 }
@@ -5632,7 +5625,6 @@ void conv_app_rolled_reduce_test() {
   cv.update("reduce_conv", "add", "id", {img_win}, reduce_ranges);
   cv.realize("reduce_conv", 32, 32, 1);
 
-  //assert(false);
 }
 
 vector<string> gauss_pyramid(const int num_levels, const string& func, App& app) {
@@ -5760,7 +5752,6 @@ void up_down_unrolled_test() {
   auto naive = run_regression_tb("ds_naive");
 
   assert(opt == naive);
-  //assert(false);
 }
 
 void neg_stencil_test() {
@@ -5817,7 +5808,6 @@ void up_stencil_test() {
   //}
   //cout << endl << endl;
 
-  //assert(false);
 
   lp.realize("up_stencil", size, size);
   auto opt = run_regression_tb("up_stencil_opt");
@@ -5831,7 +5821,6 @@ void up_stencil_test() {
   auto naive = run_regression_tb("up_stencil_naive");
 
   assert(opt == naive);
-  //assert(false);
 }
 
 void up_down_auto_unrolled_test() {
@@ -5856,7 +5845,6 @@ void up_down_auto_unrolled_test() {
   auto naive = run_regression_tb("up_stencil_down_naive");
 
   assert(opt == naive);
-  //assert(false);
 }
 
 void up_stencil_auto_unrolled_test() {
@@ -6003,32 +5991,41 @@ App harris16(const std::string& out_name) {
   harris.set_default_pixel_width(16);
   harris.func2d("img_oc");
   harris.func2d("img", v("img_oc"));
-  harris.func2d("grad_x",
-      add(sub(v("img", 1, -1), v("img", -1, -1)),
-        mul(sub(v("img", 1, 0), v("img", -1, 0)), 2),
-        sub(v("img", 1, 1), v("img", -1, 1))));
+  //harris.func2d("grad_x",
+      //add(sub(v("img", 1, -1), v("img", -1, -1)),
+        //mul(sub(v("img", 1, 0), v("img", -1, 0)), 2),
+        //sub(v("img", 1, 1), v("img", -1, 1))));
+  // This example causes SODA and our code to disagree
+  harris.func2d(out_name, div(sub(v("img"), 30000), 128));
 
-  harris.func2d("grad_y",
-      add(sub(v("img", -1, 1), v("img", -1, -1)),
-        mul(sub(v("img", 0, 1), v("img", 0, -1)), 2),
-        sub(v("img", 1, 1), v("img", 1, -1))));
+  //harris.func2d("grad_x",
+      //add(sub(v("img", 1, -1), v("img", -1, -1)),
+        //mul(sub(v("img", 1, 0), v("img", -1, 0)), 2),
+        //sub(v("img", 1, 1), v("img", -1, 1))));
 
-  harris.func2d("lxx", add(square(v("grad_x")), 128));
-  harris.func2d("lyy", add(square(v("grad_y")), 128));
-  harris.func2d("lxy", add(mul(v("grad_x"), v("grad_y")), 128));
+  //harris.func2d("grad_y",
+      //add(sub(v("img", -1, 1), v("img", -1, -1)),
+        //mul(sub(v("img", 0, 1), v("img", 0, -1)), 2),
+        //sub(v("img", 1, 1), v("img", 1, -1))));
+
+  //harris.func2d(out_name, div(square(v("grad_x")), 128));
+
+  //harris.func2d("lxx", add(square(v("grad_x")), 128));
+  //harris.func2d("lyy", add(square(v("grad_y")), 128));
+  //harris.func2d("lxy", add(mul(v("grad_x"), v("grad_y")), 128));
   
-  harris.func2d("lgxx", add(stencilv(-1, 1, -1, 1, "lxx"), 9));
-  harris.func2d("lgyy", add(stencilv(-1, 1, -1, 1, "lyy"), 9));
-  harris.func2d("lgxy", add(stencilv(-1, 1, -1, 1, "lxy"), 9));
+  //harris.func2d("lgxx", add(stencilv(-1, 1, -1, 1, "lxx"), 9));
+  //harris.func2d("lgyy", add(stencilv(-1, 1, -1, 1, "lyy"), 9));
+  //harris.func2d("lgxy", add(stencilv(-1, 1, -1, 1, "lxy"), 9));
 
-  harris.func2d("lgxx8", add(v("lgxx"), 64));
-  harris.func2d("lgyy8", add(v("lgyy"), 64));
-  harris.func2d("lgxy8", add(v("lgxy"), 64));
+  //harris.func2d("lgxx8", add(v("lgxx"), 64));
+  //harris.func2d("lgyy8", add(v("lgyy"), 64));
+  //harris.func2d("lgxy8", add(v("lgxy"), 64));
   
-  harris.func2d("det", add(mul("lgxx8", "lgyy8"), square("lgxy8")));
-  harris.func2d("trace", mul("lgxx8", "lgyy8"));
-  harris.func2d(out_name, add(v("det"),
-        mul(square("trace"), 8)));
+  //harris.func2d("det", add(mul("lgxx8", "lgyy8"), square("lgxy8")));
+  //harris.func2d("trace", mul("lgxx8", "lgyy8"));
+  //harris.func2d(out_name, add(v("det"),
+        //mul(square("trace"), 8)));
 
   return harris;
 }
@@ -6114,7 +6111,6 @@ void harris16_test() {
     run_regression_tb("harris16_mini_naive");
   assert(naive == optimized);
   move_to_benchmarks_folder("harris16_mini_opt");
-  //assert(false);
 
 
   int rows = 1080;
@@ -6244,7 +6240,7 @@ void denoise3d_reconvergence_test() {
   std::vector<std::string> optimized =
     run_regression_tb(name + "_opt");
   assert(naive == optimized);
-  //assert(false);
+  move_to_benchmarks_folder(name + "_opt");
 }
 
 void denoise3d_test() {
@@ -6265,7 +6261,6 @@ void denoise3d_test() {
     run_regression_tb("dn3d_mini_opt");
   assert(naive == optimized);
   move_to_benchmarks_folder("dn3d_mini_opt");
-  assert(false);
 
 
 
@@ -6392,7 +6387,6 @@ void exposure_fusion_iccad_apps() {
   int size = 1920;
   lp.realize(name, size, size, throughput);
   move_to_benchmarks_folder(name + "_opt");
-  //assert(false);
 }
 
 void exposure_fusion() {
@@ -6440,11 +6434,9 @@ void exposure_fusion() {
     //cout << endl;
   //}
 
-  //assert(false);
 
   lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
   //move_to_benchmarks_folder("pyramid_synthetic_exposure_fusion_opt");
-  //assert(false);
 
   //lp.realize("pyramid_synthetic_exposure_fusion", size, size, 4);
 
@@ -6460,7 +6452,6 @@ void exposure_fusion() {
     run_regression_tb("pyramid_synthetic_exposure_fusion_opt");
   assert(naive == optimized);
 
-  //assert(false);
 }
 
 void laplacian_pyramid_app_test() {
@@ -6535,7 +6526,6 @@ void laplacian_pyramid_app_test() {
     run_regression_tb("blended_opt");
   assert(naive == optimized);
 
-  //assert(false);
 
 }
 
@@ -8031,10 +8021,10 @@ void playground() {
 }
 
 void iccad_tests() {
+  harris16_test();
+  harris_test();
   denoise3d_reconvergence_test();
-  //assert(false);
   blur_xy_16_app_test();
-  //assert(false);
 
   sobel_16_app_test();
   exposure_fusion_iccad_apps();
@@ -8043,18 +8033,15 @@ void iccad_tests() {
 
   max_pooling_test();
 
-  harris16_test();
-  harris_test();
 
   exposure_fusion();
 
 }
 
 void application_tests() {
+  iccad_tests();
   halide_frontend_test();
   halide_cascade_test();
-  iccad_tests();
-
 
   ram_addr_unit_test();
   denoise2d_test();
@@ -8136,7 +8123,6 @@ void application_tests() {
   reduce_1d_test();
 
   up_unrolled_4_test();
-  //assert(false);
 
 
   up_unrolled_test();
@@ -8154,7 +8140,6 @@ void application_tests() {
 
   sum_diffs_test();
 
-  //assert(false);
   sobel_16_stage_x_app_test();
 
   up_stencil_test();
@@ -8227,6 +8212,7 @@ int main(int argc, char** argv) {
     system("mkdir -p scratch");
     application_tests();
     memory_tile_tests();
+    cout << "All tests passed" << endl;
 
   } else {
     assert(false);
