@@ -22,6 +22,7 @@ before_install:
   - wget https://barvinok.gforge.inria.fr/barvinok-0.41.tar.gz
   - tar -xvzf barvinok-0.41.tar.gz
   - cd barvinok-0.41/
+  - cd ..
 
 script:
   - ./rebuild_and_run.sh
