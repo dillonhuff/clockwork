@@ -702,7 +702,7 @@ umap* opt_schedule_dimension(vector<isl_map*> deps) {
     }
   }
 
-  set<string> vars;
+  std::set<string> vars;
   for (int r = 0; r < system.num_rows(); r++) {
     for (int c = 0; c < system.num_cols(); c++) {
       for (auto v : system(r, c).vars()) {
@@ -943,7 +943,7 @@ extract_schedule_params(vector<isl_map*>& deps) {
     cout << tab(2) << "lexmax: " << str(lm) << endl;
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
       get_pieces(lm);
-    assert(pieces.size() <= 1);
+    //assert(pieces.size() <= 1);
     for (auto piece : pieces) {
       isl_multi_aff* bound = piece.second;
       cout << "bound: " << str(bound) << endl;
@@ -1086,9 +1086,9 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     //}
   //}
 
-  set<string> consumed;
-  set<string> outputs;
-  set<string> all_names;
+  std::set<string> consumed;
+  std::set<string> outputs;
+  std::set<string> all_names;
   for (auto d : deps) {
     consumed.insert(domain_name(d));
 
@@ -1131,7 +1131,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
       //}
     ////}
   //}
-  set<string> operation_names;
+  std::set<string> operation_names;
 
   vector<pair<string, isl_val*> > linebuffer_obj_terms;
 

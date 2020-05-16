@@ -87,12 +87,13 @@ int main(int argc, char **argv) {
   uint64_t transfer_size = num_epochs*(10112 / 16);
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
-  std::cout << "Starting kernel" << std::endl;
+  std::cout << "Migrating memory" << std::endl;
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({in_update_0_read_ocl_buf}, 0));
 
 unsigned long start, end, nsduration;
 cl::Event event;
 
+  std::cout << "Starting kernel" << std::endl;
 OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));
 OCL_CHECK(err, err = event.wait());
 end =
@@ -105,10 +106,10 @@ nsduration = end - start;
   q.finish();
 
   double dnsduration = ((double)nsduration);
-double dsduration = dnsduration / ((double)1000000000);
-double dbytes = total_size_bytes;
-double bpersec = (dbytes / dsduration);
-double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
+  double dsduration = dnsduration / ((double)1000000000);
+  double dbytes = total_size_bytes;
+  double bpersec = (dbytes / dsduration);
+  double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
 std::cout << "bytes / sec = " << bpersec << std::endl;
 std::cout << "GB / sec = " << gbpersec << std::endl;
 printf("Execution time = %f (sec) \n", dsduration);

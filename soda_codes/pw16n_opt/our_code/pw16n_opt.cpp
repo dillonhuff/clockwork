@@ -127,11 +127,15 @@ void pw16n_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */input_arg, HW
   input_cache input;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
   for (int epoch = 0; epoch < num_epochs; epoch++) {
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS inline recursive
-	#endif // __VIVADO_SYNTH__
-	
+	  // Schedules...
+	    // input_arg_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
+	    // input_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
+	    // pw16n_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*2]
 	for (int c0 = 0; c0 <= 1079; c0++) {
 	  for (int c1 = 0; c1 <= 1919; c1++) {
 	
@@ -167,14 +171,13 @@ void pw16n_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */input_arg, HW
 const int input_update_0_read_num_transfers = 2073600;
 const int pw16n_update_0_write_num_transfers = 2073600;
 
-// TODO: Adapt to have one size for each edge buffer
-#define INPUT_SIZE 2073600
-#define OUTPUT_SIZE 2073600
+
 extern "C" {
 
 static void read_input_update_0_read(hw_uint<16>* input, HWStream<hw_uint<16> >& v, const int size) {
   hw_uint<16> burst_reg;
-  for (int i = 0; i < input_update_0_read_num_transfers*size; i++) {
+  int num_transfers = input_update_0_read_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -183,7 +186,8 @@ static void read_input_update_0_read(hw_uint<16>* input, HWStream<hw_uint<16> >&
 
 static void write_pw16n_update_0_write(hw_uint<16>* output, HWStream<hw_uint<16> >& v, const int size) {
   hw_uint<16> burst_reg;
-  for (int i = 0; i < pw16n_update_0_write_num_transfers*size; i++) {
+  int num_transfers = pw16n_update_0_write_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;

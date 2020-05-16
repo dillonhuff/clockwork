@@ -822,11 +822,15 @@ void jacobi2d_unrolled_4_opt(HWStream<hw_uint<128> >& /* get_args num ports = 4 
   t1_cache t1;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
   for (int epoch = 0; epoch < num_epochs; epoch++) {
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS inline recursive
-	#endif // __VIVADO_SYNTH__
-	
+	  // Schedules...
+	    // jacobi2d_unrolled_4_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*2]
+	    // t1_arg_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
+	    // t1_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
 	for (int c0 = -1; c0 <= 16; c0++) {
 	  for (int c1 = -1; c1 <= 4; c1++) {
 	
@@ -862,14 +866,13 @@ void jacobi2d_unrolled_4_opt(HWStream<hw_uint<128> >& /* get_args num ports = 4 
 const int jacobi2d_unrolled_4_update_0_write_num_transfers = 64;
 const int t1_update_0_read_num_transfers = 108;
 
-// TODO: Adapt to have one size for each edge buffer
-#define INPUT_SIZE 108
-#define OUTPUT_SIZE 64
+
 extern "C" {
 
 static void read_t1_update_0_read(hw_uint<128>* input, HWStream<hw_uint<128> >& v, const int size) {
   hw_uint<128> burst_reg;
-  for (int i = 0; i < t1_update_0_read_num_transfers*size; i++) {
+  int num_transfers = t1_update_0_read_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -878,7 +881,8 @@ static void read_t1_update_0_read(hw_uint<128>* input, HWStream<hw_uint<128> >& 
 
 static void write_jacobi2d_unrolled_4_update_0_write(hw_uint<128>* output, HWStream<hw_uint<128> >& v, const int size) {
   hw_uint<128> burst_reg;
-  for (int i = 0; i < jacobi2d_unrolled_4_update_0_write_num_transfers*size; i++) {
+  int num_transfers = jacobi2d_unrolled_4_update_0_write_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;

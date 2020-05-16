@@ -740,6 +740,90 @@ inline void f_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */f_
 
 }
 
+inline void diff_l_update_0(u_cache& u, diff_l_cache& diff_l, int d0, int d1) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_l_update_0_read_bundle_read(u/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "diff_l_update_0_u," << d0<< "," << d1<< "," <<  u_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = fadd_unrolled_1(u_0_c__0_value);
+	// Produce: diff_l
+	diff_l_diff_l_update_0_write_bundle_write(compute_result, diff_l, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<32> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  *global_debug_handle << "diff_l_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void magval_update_0(diff_qwe_cache& diff_qwe, diff_d_cache& diff_d, diff_l_cache& diff_l, diff_r_cache& diff_r, magval_cache& magval, int d0, int d1) {
+	// Consume: diff_qwe
+	auto diff_qwe_0_c__0_value = diff_qwe_magval_update_0_read_bundle_read(diff_qwe/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "magval_update_0_diff_qwe," << d0<< "," << d1<< "," <<  diff_qwe_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	// Consume: diff_d
+	auto diff_d_0_c__0_value = diff_d_magval_update_0_read_bundle_read(diff_d/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "magval_update_0_diff_d," << d0<< "," << d1<< "," <<  diff_d_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	// Consume: diff_l
+	auto diff_l_0_c__0_value = diff_l_magval_update_0_read_bundle_read(diff_l/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "magval_update_0_diff_l," << d0<< "," << d1<< "," <<  diff_l_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	// Consume: diff_r
+	auto diff_r_0_c__0_value = diff_r_magval_update_0_read_bundle_read(diff_r/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "magval_update_0_diff_r," << d0<< "," << d1<< "," <<  diff_r_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = fmag2d_unrolled_1(diff_qwe_0_c__0_value, diff_d_0_c__0_value, diff_l_0_c__0_value, diff_r_0_c__0_value);
+	// Produce: magval
+	magval_magval_update_0_write_bundle_write(compute_result, magval, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<32> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  *global_debug_handle << "magval_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void diff_d_update_0(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_d_update_0_read_bundle_read(u/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "diff_d_update_0_u," << d0<< "," << d1<< "," <<  u_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = fadd_unrolled_1(u_0_c__0_value);
+	// Produce: diff_d
+	diff_d_diff_d_update_0_write_bundle_write(compute_result, diff_d, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<32> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  *global_debug_handle << "diff_d_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void u_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_off_chip, u_cache& u, int d0, int d1) {
 	// Consume: u_off_chip
 	auto u_off_chip_0_c__0_value = u_off_chip.read();
@@ -794,90 +878,6 @@ inline void diff_qwe_update_0(u_cache& u, diff_qwe_cache& diff_qwe, int d0, int 
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
   *global_debug_handle << "diff_qwe_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void diff_l_update_0(u_cache& u, diff_l_cache& diff_l, int d0, int d1) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_l_update_0_read_bundle_read(u/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "diff_l_update_0_u," << d0<< "," << d1<< "," <<  u_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = fadd_unrolled_1(u_0_c__0_value);
-	// Produce: diff_l
-	diff_l_diff_l_update_0_write_bundle_write(compute_result, diff_l, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "diff_l_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void diff_d_update_0(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_d_update_0_read_bundle_read(u/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "diff_d_update_0_u," << d0<< "," << d1<< "," <<  u_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = fadd_unrolled_1(u_0_c__0_value);
-	// Produce: diff_d
-	diff_d_diff_d_update_0_write_bundle_write(compute_result, diff_d, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "diff_d_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void magval_update_0(diff_qwe_cache& diff_qwe, diff_d_cache& diff_d, diff_l_cache& diff_l, diff_r_cache& diff_r, magval_cache& magval, int d0, int d1) {
-	// Consume: diff_qwe
-	auto diff_qwe_0_c__0_value = diff_qwe_magval_update_0_read_bundle_read(diff_qwe/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "magval_update_0_diff_qwe," << d0<< "," << d1<< "," <<  diff_qwe_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	// Consume: diff_d
-	auto diff_d_0_c__0_value = diff_d_magval_update_0_read_bundle_read(diff_d/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "magval_update_0_diff_d," << d0<< "," << d1<< "," <<  diff_d_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	// Consume: diff_l
-	auto diff_l_0_c__0_value = diff_l_magval_update_0_read_bundle_read(diff_l/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "magval_update_0_diff_l," << d0<< "," << d1<< "," <<  diff_l_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	// Consume: diff_r
-	auto diff_r_0_c__0_value = diff_r_magval_update_0_read_bundle_read(diff_r/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "magval_update_0_diff_r," << d0<< "," << d1<< "," <<  diff_r_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = fmag2d_unrolled_1(diff_qwe_0_c__0_value, diff_d_0_c__0_value, diff_l_0_c__0_value, diff_r_0_c__0_value);
-	// Produce: magval
-	magval_magval_update_0_write_bundle_write(compute_result, magval, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "magval_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -938,11 +938,22 @@ void sum_diffs_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chi
   u_cache u;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
   for (int epoch = 0; epoch < num_epochs; epoch++) {
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS inline recursive
-	#endif // __VIVADO_SYNTH__
-	
+	  // Schedules...
+	    // diff_d_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*5]
+	    // diff_l_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*4]
+	    // diff_qwe_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*3]
+	    // diff_r_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*2]
+	    // f_off_chip_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*7]
+	    // f_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*8]
+	    // magval_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*6]
+	    // sum_diffs_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*9]
+	    // u_off_chip_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
+	    // u_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
 	for (int c0 = -1; c0 <= 30; c0++) {
 	  for (int c1 = -1; c1 <= 30; c1++) {
 	
@@ -1003,14 +1014,13 @@ const int f_update_0_read_num_transfers = 900;
 const int sum_diffs_update_0_write_num_transfers = 900;
 const int u_update_0_read_num_transfers = 1024;
 
-// TODO: Adapt to have one size for each edge buffer
-#define INPUT_SIZE 900
-#define OUTPUT_SIZE 900
+
 extern "C" {
 
 static void read_f_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < f_update_0_read_num_transfers*size; i++) {
+  int num_transfers = f_update_0_read_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -1019,7 +1029,8 @@ static void read_f_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v, 
 
 static void read_u_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < u_update_0_read_num_transfers*size; i++) {
+  int num_transfers = u_update_0_read_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -1028,7 +1039,8 @@ static void read_u_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v, 
 
 static void write_sum_diffs_update_0_write(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < sum_diffs_update_0_write_num_transfers*size; i++) {
+  int num_transfers = sum_diffs_update_0_write_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;

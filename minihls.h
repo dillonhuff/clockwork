@@ -423,10 +423,10 @@ namespace minihls {
   template<typename N, typename E>
     class directed_graph {
       public:
-        map<N, set<pair<N, E > > > out_edges;
+        map<N, std::set<pair<N, E > > > out_edges;
 
-        set<pair<pair<N, N>, E> > edges() const {
-          set<pair<pair<N, N>, E> > es;
+        std::set<pair<pair<N, N>, E> > edges() const {
+          std::set<pair<pair<N, N>, E> > es;
 
           for (auto edge_set : out_edges) {
             for (auto e : edge_set.second) {
@@ -436,8 +436,8 @@ namespace minihls {
           return es;
         }
 
-        set<N> vertices() const {
-          set<N> verts;
+        std::set<N> vertices() const {
+          std::set<N> verts;
           for (auto e : out_edges) {
             verts.insert(e.first);
           }
@@ -598,16 +598,16 @@ namespace minihls {
       assert(false);
     }
 
-    set<instruction_binding*> all_bindings() const {
-      set<instruction_binding*> bs;
+    std::set<instruction_binding*> all_bindings() const {
+      std::set<instruction_binding*> bs;
       for (auto b : context->instruction_bindings) {
         bs.insert(b.second);
       }
       return bs;
     }
 
-    set<instr*> all_instrs() const {
-      set<instr*> allis;
+    std::set<instr*> all_instrs() const {
+      std::set<instr*> allis;
       for (auto i : instrs) {
         allis.insert(i.second);
       }
@@ -622,8 +622,8 @@ namespace minihls {
       return "stage_" + to_string(i) + "_active";
     }
 
-    set<instr*> bound_instrs(module_instance* inst) {
-      set<instr*> bnd;
+    std::set<instr*> bound_instrs(module_instance* inst) {
+      std::set<instr*> bnd;
       for (auto instr : instrs) {
         if (instr.second->get_unit() == inst) {
           bnd.insert(instr.second);
@@ -638,8 +638,8 @@ namespace minihls {
       return pre + "_" + to_string(n);
     }
 
-    set<module_instance*> instance_set() {
-      set<module_instance*> insts;
+    std::set<module_instance*> instance_set() {
+      std::set<module_instance*> insts;
       for (auto i : instances) {
         insts.insert(i.second);
       }
@@ -847,8 +847,8 @@ namespace minihls {
       return contains_key(name, context->instruction_types);
     }
 
-    set<module_type*> module_type_set() const {
-      set<module_type*> ms;
+    std::set<module_type*> module_type_set() const {
+      std::set<module_type*> ms;
       for (auto mt : context->module_types) {
         ms.insert(mt.second);
       }

@@ -94,7 +94,7 @@ struct FiniteRegion {
     c.name = name;
     c.strides = strides;
 
-    set<vector<int> > unrolled_offsets;
+    std::set<vector<int> > unrolled_offsets;
     for (auto offset : offsets) {
       vector<int> uoff = offset;
       uoff[0] = uoff.at(0) + times_int(stride, diff);
@@ -113,7 +113,7 @@ struct FiniteRegion {
     c.name = name;
     c.strides = strides;
 
-    set<vector<int> > unrolled_offsets;
+    std::set<vector<int> > unrolled_offsets;
     for (auto offset : offsets) {
       vector<int> uoff = offset;
       uoff[0] = uoff.at(0) + diff;
@@ -154,7 +154,7 @@ struct FiniteRegion {
       i++;
     }
 
-    set<vector<int> > unrolled_offsets;
+    std::set<vector<int> > unrolled_offsets;
     for (int i = 0; i < factor; i++) {
       for (auto offset : offsets) {
         vector<int> uoff = offset;
@@ -609,7 +609,7 @@ compute_schedule_for_dim(isl_ctx* ctx,
 
   cout << "Rate constraints..." << endl;
   vector<QConstraint> rates_only;
-  set<int> denoms;
+  std::set<int> denoms;
   for (auto r : rate_constraints) {
     cout << "R = " << r << endl;
 
