@@ -6013,7 +6013,7 @@ App harris16(const std::string& out_name) {
         mul(sub(v("img", 0, 1), v("img", 0, -1)), 2),
         sub(v("img", 1, 1), v("img", 1, -1))));
 
-  harris.func2d("lxx", add(square(v("grad_x")), 128));
+  harris.func2d("lxx", div(square(v("grad_x")), 128));
   harris.func2d("lyy", add(square(v("grad_y")), 128));
   harris.func2d("lxy", add(mul(v("grad_x"), v("grad_y")), 128));
   
