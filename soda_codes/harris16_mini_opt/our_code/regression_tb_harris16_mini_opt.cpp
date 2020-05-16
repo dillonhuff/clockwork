@@ -9,10 +9,10 @@ int main() {
 
 
   // Loading input data
-  // cmap    : { img_update_0[root = 0, img_0, img_1] -> img_oc[0, 0] : -1 <= img_0 <= 32 and -1 <= img_1 <= 32 }
-  // read map: { img_oc[0, 0] -> img_update_0[root = 0, img_0, img_1] : -1 <= img_0 <= 32 and -1 <= img_1 <= 32 }
-  // rng     : { img_update_0[root = 0, img_0, img_1] : -1 <= img_0 <= 32 and -1 <= img_1 <= 32 }
-  for (int i = 0; i < 1156; i++) {
+  // cmap    : { img_update_0[root = 0, img_0, img_1] -> img_oc[0, 0] : 0 <= img_0 <= 31 and 0 <= img_1 <= 31 }
+  // read map: { img_oc[0, 0] -> img_update_0[root = 0, img_0, img_1] : 0 <= img_0 <= 31 and 0 <= img_1 <= 31 }
+  // rng     : { img_update_0[root = 0, img_0, img_1] : 0 <= img_0 <= 31 and 0 <= img_1 <= 31 }
+  for (int i = 0; i < 1024; i++) {
     hw_uint<16> in_val;
     set_at<0*16, 16, 16>(in_val, 1*i + 0);
     in_pix << in_val << endl;
