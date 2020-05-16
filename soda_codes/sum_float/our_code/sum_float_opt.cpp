@@ -160,7 +160,7 @@ inline void f_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */f_
   hw_uint<32> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "f_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "f_update_0," << (1*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -176,7 +176,7 @@ inline void u_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_
   hw_uint<32> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "u_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "u_update_0," << (1*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -204,7 +204,7 @@ inline void sum_float_update_0(f_cache& f, u_cache& u, HWStream<hw_uint<32> >& /
   hw_uint<32> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "sum_float_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "sum_float_update_0," << (1*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -222,11 +222,17 @@ void sum_float_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chi
   u_cache u;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
   for (int epoch = 0; epoch < num_epochs; epoch++) {
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS inline recursive
-	#endif // __VIVADO_SYNTH__
-	
+	  // Schedules...
+	    // f_off_chip_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
+	    // f_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
+	    // sum_float_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*4]
+	    // u_off_chip_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*2]
+	    // u_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*3]
 	for (int c0 = 0; c0 <= 29; c0++) {
 	  for (int c1 = 0; c1 <= 29; c1++) {
 	
@@ -267,14 +273,13 @@ const int f_update_0_read_num_transfers = 900;
 const int sum_float_update_0_write_num_transfers = 900;
 const int u_update_0_read_num_transfers = 900;
 
-// TODO: Adapt to have one size for each edge buffer
-#define INPUT_SIZE 900
-#define OUTPUT_SIZE 900
+
 extern "C" {
 
 static void read_f_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < f_update_0_read_num_transfers*size; i++) {
+  int num_transfers = f_update_0_read_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -283,7 +288,8 @@ static void read_f_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v, 
 
 static void read_u_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < u_update_0_read_num_transfers*size; i++) {
+  int num_transfers = u_update_0_read_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -292,7 +298,8 @@ static void read_u_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v, 
 
 static void write_sum_float_update_0_write(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < sum_float_update_0_write_num_transfers*size; i++) {
+  int num_transfers = sum_float_update_0_write_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;

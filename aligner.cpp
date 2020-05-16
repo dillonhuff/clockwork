@@ -24,6 +24,43 @@ vector<string> read_lines(const string& f) {
   return read_lines(in);
 }
 
+bool find_index_alignment(vector<string>& reference_lines, vector<string>& target_lines) {
+
+  cout << tab(1) << "Finding alignment..." << endl;
+  cout << tab(1) << "reference length: " << reference_lines.size() << endl;
+  cout << tab(1) << "target length   : " << target_lines.size() << endl;
+  int reference_position = 0;
+  map<int, int> alignment;
+  for (int i = 0; i < target_lines.size(); i++) {
+    string ref = reference_lines.at(reference_position);
+    string target = target_lines.at(i);
+    //cout << "ref = " << ref << endl;
+    //cout << "tar = " << target << endl;
+    auto ref_inds = split_at(ref, ",");
+    ref_inds.pop_back();
+    auto target_inds = split_at(target, ",");
+    target_inds.pop_back();
+    //assert(false);
+
+    if (ref_inds == target_inds) {
+      alignment[reference_position] = i;
+      reference_position++;
+    }
+
+    if (reference_position >= reference_lines.size()) {
+      break;
+    }
+  }
+
+  if (reference_position != reference_lines.size()) {
+    cout << tab(1) << "ERROR: Could not align reference indexes " << reference_position << ": " << reference_lines.at(reference_position) << endl;
+    return false;
+  } else {
+    cout << tab(1) << "Sequences align!" << endl;
+    cout << "  " << "Start delay: " << alignment.at(0) << endl;
+  }
+  return true;
+}
 bool find_alignment(vector<string>& reference_lines, vector<string>& target_lines) {
 
   cout << tab(1) << "Finding alignment..." << endl;
@@ -72,6 +109,18 @@ map<string, vector<string> > split_events(vector<string>& reference_lines) {
   return seqs;
 }
 
+
+bool find_event_index_alignment(vector<string>& reference_lines, vector<string>& target_lines) {
+  map<string, vector<string> > reference_event_sequences = split_events(reference_lines);
+  map<string, vector<string> > target_event_sequences = split_events(target_lines);
+
+  for (auto& reference_event : reference_event_sequences) {
+    cout << endl << "Aligning indexes for: " << reference_event.first << endl;
+    bool alignment = find_index_alignment(reference_event.second, target_event_sequences.at(reference_event.first));
+  }
+  return true;
+}
+
 bool find_event_alignment(vector<string>& reference_lines, vector<string>& target_lines) {
   map<string, vector<string> > reference_event_sequences = split_events(reference_lines);
   map<string, vector<string> > target_event_sequences = split_events(target_lines);
@@ -111,6 +160,11 @@ int main(const int argc, const char** argv) {
   }
   cout << endl;
 
+  if (true) {
+    cout << "Finding event index sub-alignments" << endl;
+
+    find_event_index_alignment(reference_lines, target_lines);
+  }
 
   if (false) {
     cout << "Finding event sub-alignments" << endl;

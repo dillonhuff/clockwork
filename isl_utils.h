@@ -93,6 +93,10 @@ isl_space* get_space(isl_aff* const m);
 
 int get_size(isl_multi_aff* const m);
 
+isl_local_space* local_set_space(isl_ctx* ctx, const int dims);
+isl_space* map_space(isl_ctx* ctx, const int in_dims, const int out_dims);
+isl_space* set_space(isl_ctx* ctx, const int dims);
+
 int dim(isl_space* const s);
 
 bool empty(isl_basic_set* const s);
@@ -471,7 +475,9 @@ isl_val* neg(isl_val* a);
 int to_int(isl_val* a);
 
 isl_aff* set_coeff(isl_aff* const a, const int pos, isl_val* v);
+isl_aff* set_const_coeff(isl_aff* const a, isl_val* v);
 isl_val* coeff(isl_aff* const a, const int pos);
+isl_val* const_coeff(isl_aff* const a);
 
 int bnd_int(isl_union_pw_qpolynomial_fold* bound);
 int int_lower_bound(isl_union_pw_qpolynomial* range_card);

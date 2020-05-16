@@ -11,7 +11,7 @@ using namespace std;
 #include "hw_classes.h"
 
 struct diff_d_diff_d_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[-1, 8], [-1, 8], [-1, 8]}
+	// RAM Box: {[0, 8], [0, 7], [0, 7]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -44,9 +44,9 @@ inline void diff_d_diff_d_update_0_write0_write(hw_uint<16>& diff_d_diff_d_updat
 inline hw_uint<16> g_rd0_select(diff_d_cache& diff_d, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_d[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Write schedule: { diff_d_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 10] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_d[d0, d1, d2] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { diff_d_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 10] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   // DD fold: {  }
   auto value_diff_d_diff_d_update_0_write0 = diff_d.diff_d_diff_d_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_diff_d_diff_d_update_0_write0;
@@ -80,7 +80,7 @@ inline hw_uint<16> diff_d_g_update_0_read_bundle_read(diff_d_cache& diff_d, int 
 #include "hw_classes.h"
 
 struct diff_i_diff_i_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[-1, 8], [-1, 8], [-1, 8]}
+	// RAM Box: {[0, 8], [0, 7], [0, 7]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -113,9 +113,9 @@ inline void diff_i_diff_i_update_0_write0_write(hw_uint<16>& diff_i_diff_i_updat
 inline hw_uint<16> g_rd0_select(diff_i_cache& diff_i, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_i[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Write schedule: { diff_i_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 9] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_i[d0, d1, d2] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { diff_i_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 9] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   // DD fold: {  }
   auto value_diff_i_diff_i_update_0_write0 = diff_i.diff_i_diff_i_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_diff_i_diff_i_update_0_write0;
@@ -149,7 +149,7 @@ inline hw_uint<16> diff_i_g_update_0_read_bundle_read(diff_i_cache& diff_i, int 
 #include "hw_classes.h"
 
 struct diff_l_diff_l_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[-1, 8], [-1, 8], [-1, 8]}
+	// RAM Box: {[0, 8], [0, 7], [0, 7]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -182,9 +182,9 @@ inline void diff_l_diff_l_update_0_write0_write(hw_uint<16>& diff_l_diff_l_updat
 inline hw_uint<16> g_rd0_select(diff_l_cache& diff_l, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_l[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Write schedule: { diff_l_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 8] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_l[d0, d1, d2] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { diff_l_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 8] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   // DD fold: {  }
   auto value_diff_l_diff_l_update_0_write0 = diff_l.diff_l_diff_l_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_diff_l_diff_l_update_0_write0;
@@ -218,7 +218,7 @@ inline hw_uint<16> diff_l_g_update_0_read_bundle_read(diff_l_cache& diff_l, int 
 #include "hw_classes.h"
 
 struct diff_o_diff_o_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[-1, 8], [-1, 8], [-1, 8]}
+	// RAM Box: {[0, 8], [0, 7], [0, 7]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -251,9 +251,9 @@ inline void diff_o_diff_o_update_0_write0_write(hw_uint<16>& diff_o_diff_o_updat
 inline hw_uint<16> g_rd0_select(diff_o_cache& diff_o, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_o[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Write schedule: { diff_o_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 7] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_o[d0, d1, d2] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { diff_o_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 7] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   // DD fold: {  }
   auto value_diff_o_diff_o_update_0_write0 = diff_o.diff_o_diff_o_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_diff_o_diff_o_update_0_write0;
@@ -287,7 +287,7 @@ inline hw_uint<16> diff_o_g_update_0_read_bundle_read(diff_o_cache& diff_o, int 
 #include "hw_classes.h"
 
 struct diff_r_diff_r_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[-1, 8], [-1, 8], [-1, 8]}
+	// RAM Box: {[0, 8], [0, 7], [0, 7]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -320,9 +320,9 @@ inline void diff_r_diff_r_update_0_write0_write(hw_uint<16>& diff_r_diff_r_updat
 inline hw_uint<16> g_rd0_select(diff_r_cache& diff_r, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_r[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Write schedule: { diff_r_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 6] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_r[d0, d1, d2] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { diff_r_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 6] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   // DD fold: {  }
   auto value_diff_r_diff_r_update_0_write0 = diff_r.diff_r_diff_r_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_diff_r_diff_r_update_0_write0;
@@ -356,7 +356,7 @@ inline hw_uint<16> diff_r_g_update_0_read_bundle_read(diff_r_cache& diff_r, int 
 #include "hw_classes.h"
 
 struct diff_u_diff_u_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[-1, 8], [-1, 8], [-1, 8]}
+	// RAM Box: {[0, 8], [0, 7], [0, 7]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -389,9 +389,9 @@ inline void diff_u_diff_u_update_0_write0_write(hw_uint<16>& diff_u_diff_u_updat
 inline hw_uint<16> g_rd0_select(diff_u_cache& diff_u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_u[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Write schedule: { diff_u_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 5] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // g_rd0 read pattern: { g_update_0[d0, d1, d2] -> diff_u[d0, d1, d2] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { diff_u_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 5] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   // DD fold: {  }
   auto value_diff_u_diff_u_update_0_write0 = diff_u.diff_u_diff_u_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_diff_u_diff_u_update_0_write0;
@@ -424,60 +424,45 @@ inline hw_uint<16> diff_u_g_update_0_read_bundle_read(diff_u_cache& diff_u, int 
 
 #include "hw_classes.h"
 
-struct f_f_update_0_write0_merged_banks_2_cache {
+struct f_f_update_0_write0_merged_banks_1_cache {
 	// RAM Box: {[0, 7], [0, 7], [0, 7]}
 	// Capacity: 1
 	// # of read delays: 1
-	hw_uint<16> f1;
-
-
-	inline hw_uint<16> peek_0() {
-		return f1;
-	}
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
 
 
 
 	inline void push(const hw_uint<16> value) {
-    // cap: 1
-    f1 = value;
-	}
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
 
 };
 
 struct f_cache {
-  f_f_update_0_write0_merged_banks_2_cache f_f_update_0_write0_merged_banks_2;
+  f_f_update_0_write0_merged_banks_1_cache f_f_update_0_write0_merged_banks_1;
 };
 
 
 
 inline void f_f_update_0_write0_write(hw_uint<16>& f_f_update_0_write0, f_cache& f, int d0, int d1, int d2) {
-  f.f_f_update_0_write0_merged_banks_2.push(f_f_update_0_write0);
-}
-
-inline hw_uint<16> dn3d_mini_rd0_select(f_cache& f, int d0, int d1, int d2) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd0 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> f[d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Write schedule: { f_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 1] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // DD fold: {  }
-  auto value_f_f_update_0_write0 = f.f_f_update_0_write0_merged_banks_2.peek_0();
-  return value_f_f_update_0_write0;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  f.f_f_update_0_write0_merged_banks_1.push(f_f_update_0_write0);
 }
 
 inline hw_uint<16> r0_rd0_select(f_cache& f, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // r0_rd0 read pattern: { r0_update_0[d0, d1, d2] -> f[d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Read schedule : { r0_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 4] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Write schedule: { f_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 1] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { r0_update_0[d0, d1, d2] -> [d2, d1, d0, 4] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { f_update_0[d0, d1, d2] -> [d2, d1, d0, 1] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   // DD fold: {  }
-  auto value_f_f_update_0_write0 = f.f_f_update_0_write0_merged_banks_2.peek_0();
+  auto value_f_f_update_0_write0 = f.f_f_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_f_f_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
@@ -486,19 +471,7 @@ inline hw_uint<16> r0_rd0_select(f_cache& f, int d0, int d1, int d2) {
 #endif //__VIVADO_SYNTH__
 }
 
-// # of bundles = 3
-// dn3d_mini_update_0_read
-//	dn3d_mini_rd0
-inline hw_uint<16> f_dn3d_mini_update_0_read_bundle_read(f_cache& f, int d0, int d1, int d2) {
-  // # of ports in bundle: 1
-    // dn3d_mini_rd0
-
-	hw_uint<16> result;
-	hw_uint<16> dn3d_mini_rd0_res = dn3d_mini_rd0_select(f, d0, d1, d2);
-	set_at<0, 16>(result, dn3d_mini_rd0_res);
-	return result;
-}
-
+// # of bundles = 2
 // f_update_0_write
 //	f_f_update_0_write0
 inline void f_f_update_0_write_bundle_write(hw_uint<16>& f_update_0_write, f_cache& f, int d0, int d1, int d2) {
@@ -520,294 +493,8 @@ inline hw_uint<16> f_r0_update_0_read_bundle_read(f_cache& f, int d0, int d1, in
 
 #include "hw_classes.h"
 
-struct g_g_update_0_write0_merged_banks_6_cache {
-	// RAM Box: {[-1, 8], [-1, 8], [-1, 8]}
-	// Capacity: 212
-	// # of read delays: 7
-	hw_uint<16> f0;
-	fifo<hw_uint<16>, 10> f1;
-	hw_uint<16> f2;
-	fifo<hw_uint<16>, 89> f3;
-	hw_uint<16> f4;
-	fifo<hw_uint<16>, 8> f5;
-	hw_uint<16> f6;
-	hw_uint<16> f7;
-	hw_uint<16> f8;
-	fifo<hw_uint<16>, 8> f9;
-	hw_uint<16> f10;
-	fifo<hw_uint<16>, 89> f11;
-	hw_uint<16> f12;
-
-
-	inline hw_uint<16> peek_0() {
-		return f0;
-	}
-
-	inline hw_uint<16> peek_10() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-		return f1.back();
-	}
-
-	inline hw_uint<16> peek_11() {
-		return f2;
-	}
-
-	inline hw_uint<16> peek_100() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-		return f3.back();
-	}
-
-	inline hw_uint<16> peek_101() {
-		return f4;
-	}
-
-	inline hw_uint<16> peek_109() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-		return f5.back();
-	}
-
-	inline hw_uint<16> peek_110() {
-		return f6;
-	}
-
-	inline hw_uint<16> peek_111() {
-		return f7;
-	}
-
-	inline hw_uint<16> peek_112() {
-		return f8;
-	}
-
-	inline hw_uint<16> peek_120() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-		return f9.back();
-	}
-
-	inline hw_uint<16> peek_121() {
-		return f10;
-	}
-
-	inline hw_uint<16> peek_210() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-		return f11.back();
-	}
-
-	inline hw_uint<16> peek_211() {
-		return f12;
-	}
-
-
-
-	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 89
-    f12 = f11.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 89 reading from capacity: 1
-    f11.push(f10);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 8
-    f10 = f9.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 8 reading from capacity: 1
-    f9.push(f8);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 1
-    f8 = f7;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 1
-    f7 = f6;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 8
-    f6 = f5.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 8 reading from capacity: 1
-    f5.push(f4);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 89
-    f4 = f3.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 89 reading from capacity: 1
-    f3.push(f2);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 10
-    f2 = f1.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 10 reading from capacity: 1
-    f1.push(f0);
-    // cap: 1
-    f0 = value;
-	}
-
-};
-
-struct g_cache {
-  g_g_update_0_write0_merged_banks_6_cache g_g_update_0_write0_merged_banks_6;
-};
-
-
-
-inline void g_g_update_0_write0_write(hw_uint<16>& g_g_update_0_write0, g_cache& g, int d0, int d1, int d2) {
-  g.g_g_update_0_write0_merged_banks_6.push(g_g_update_0_write0);
-}
-
-inline hw_uint<16> dn3d_mini_rd0_select(g_cache& g, int d0, int d1, int d2) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd0 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> g[-1 + d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Write schedule: { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 112 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  auto value_g_g_update_0_write0 = g.g_g_update_0_write0_merged_banks_6.peek_112();
-  return value_g_g_update_0_write0;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
-}
-
-inline hw_uint<16> dn3d_mini_rd1_select(g_cache& g, int d0, int d1, int d2) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd1 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> g[d0, -1 + d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Write schedule: { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 121 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  auto value_g_g_update_0_write0 = g.g_g_update_0_write0_merged_banks_6.peek_121();
-  return value_g_g_update_0_write0;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
-}
-
-inline hw_uint<16> dn3d_mini_rd2_select(g_cache& g, int d0, int d1, int d2) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd2 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> g[d0, d1, -1 + d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Write schedule: { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 211 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  auto value_g_g_update_0_write0 = g.g_g_update_0_write0_merged_banks_6.peek_211();
-  return value_g_g_update_0_write0;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
-}
-
-inline hw_uint<16> dn3d_mini_rd3_select(g_cache& g, int d0, int d1, int d2) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd3 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> g[d0, d1, 1 + d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Write schedule: { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 11 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  auto value_g_g_update_0_write0 = g.g_g_update_0_write0_merged_banks_6.peek_11();
-  return value_g_g_update_0_write0;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
-}
-
-inline hw_uint<16> dn3d_mini_rd4_select(g_cache& g, int d0, int d1, int d2) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd4 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> g[d0, 1 + d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Write schedule: { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 101 : 0 <= d0 <= 7 and 0 <= d1 <= 6 and 0 <= d2 <= 7; dn3d_mini_update_0[d0, d1, d2] -> 101 : d1 = 7 and 0 <= d0 <= 7 and 0 <= d2 <= 7 }
-  auto value_g_g_update_0_write0 = g.g_g_update_0_write0_merged_banks_6.peek_101();
-  return value_g_g_update_0_write0;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
-}
-
-inline hw_uint<16> dn3d_mini_rd5_select(g_cache& g, int d0, int d1, int d2) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd5 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> g[1 + d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Write schedule: { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 110 : 0 <= d0 <= 6 and 0 <= d1 <= 7 and 0 <= d2 <= 7; dn3d_mini_update_0[d0, d1, d2] -> (103 + d0) : d0 = 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  auto value_g_g_update_0_write0 = g.g_g_update_0_write0_merged_banks_6.peek_110();
-  return value_g_g_update_0_write0;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
-}
-
-// # of bundles = 2
-// dn3d_mini_update_0_read
-//	dn3d_mini_rd0
-//	dn3d_mini_rd1
-//	dn3d_mini_rd2
-//	dn3d_mini_rd3
-//	dn3d_mini_rd4
-//	dn3d_mini_rd5
-inline hw_uint<96> g_dn3d_mini_update_0_read_bundle_read(g_cache& g, int d0, int d1, int d2) {
-  // # of ports in bundle: 6
-    // dn3d_mini_rd0
-    // dn3d_mini_rd1
-    // dn3d_mini_rd2
-    // dn3d_mini_rd3
-    // dn3d_mini_rd4
-    // dn3d_mini_rd5
-
-	hw_uint<96> result;
-	hw_uint<16> dn3d_mini_rd0_res = dn3d_mini_rd0_select(g, d0, d1, d2);
-	set_at<0, 96>(result, dn3d_mini_rd0_res);
-	hw_uint<16> dn3d_mini_rd1_res = dn3d_mini_rd1_select(g, d0, d1, d2);
-	set_at<16, 96>(result, dn3d_mini_rd1_res);
-	hw_uint<16> dn3d_mini_rd2_res = dn3d_mini_rd2_select(g, d0, d1, d2);
-	set_at<32, 96>(result, dn3d_mini_rd2_res);
-	hw_uint<16> dn3d_mini_rd3_res = dn3d_mini_rd3_select(g, d0, d1, d2);
-	set_at<48, 96>(result, dn3d_mini_rd3_res);
-	hw_uint<16> dn3d_mini_rd4_res = dn3d_mini_rd4_select(g, d0, d1, d2);
-	set_at<64, 96>(result, dn3d_mini_rd4_res);
-	hw_uint<16> dn3d_mini_rd5_res = dn3d_mini_rd5_select(g, d0, d1, d2);
-	set_at<80, 96>(result, dn3d_mini_rd5_res);
-	return result;
-}
-
-// g_update_0_write
-//	g_g_update_0_write0
-inline void g_g_update_0_write_bundle_write(hw_uint<16>& g_update_0_write, g_cache& g, int d0, int d1, int d2) {
-	hw_uint<16> g_g_update_0_write0_res = g_update_0_write.extract<0, 15>();
-	g_g_update_0_write0_write(g_g_update_0_write0_res, g, d0, d1, d2);
-}
-
-#include "hw_classes.h"
-
-struct r0_r0_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 7], [0, 7], [0, 7]}
+struct g_g_update_0_write0_merged_banks_1_cache {
+	// RAM Box: {[0, 8], [0, 7], [0, 7]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -827,24 +514,93 @@ struct r0_r0_update_0_write0_merged_banks_1_cache {
 
 };
 
+struct g_cache {
+  g_g_update_0_write0_merged_banks_1_cache g_g_update_0_write0_merged_banks_1;
+};
+
+
+
+inline void g_g_update_0_write0_write(hw_uint<16>& g_g_update_0_write0, g_cache& g, int d0, int d1, int d2) {
+  g.g_g_update_0_write0_merged_banks_1.push(g_g_update_0_write0);
+}
+
+inline hw_uint<16> dn3d_mini_rd0_select(g_cache& g, int d0, int d1, int d2) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // dn3d_mini_rd0 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> g[1 + d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { g_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 12] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // DD fold: {  }
+  auto value_g_g_update_0_write0 = g.g_g_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
+  return value_g_g_update_0_write0;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+// # of bundles = 2
+// dn3d_mini_update_0_read
+//	dn3d_mini_rd0
+inline hw_uint<16> g_dn3d_mini_update_0_read_bundle_read(g_cache& g, int d0, int d1, int d2) {
+  // # of ports in bundle: 1
+    // dn3d_mini_rd0
+
+	hw_uint<16> result;
+	hw_uint<16> dn3d_mini_rd0_res = dn3d_mini_rd0_select(g, d0, d1, d2);
+	set_at<0, 16>(result, dn3d_mini_rd0_res);
+	return result;
+}
+
+// g_update_0_write
+//	g_g_update_0_write0
+inline void g_g_update_0_write_bundle_write(hw_uint<16>& g_update_0_write, g_cache& g, int d0, int d1, int d2) {
+	hw_uint<16> g_g_update_0_write0_res = g_update_0_write.extract<0, 15>();
+	g_g_update_0_write0_write(g_g_update_0_write0_res, g, d0, d1, d2);
+}
+
+#include "hw_classes.h"
+
+struct r0_r0_update_0_write0_to_r1_rd0_cache {
+	// RAM Box: {[0, 7], [0, 7], [0, 7]}
+	// Capacity: 75
+	// # of read delays: 75
+	fifo<hw_uint<16>, 75> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(74 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
 struct r0_cache {
-  r0_r0_update_0_write0_merged_banks_1_cache r0_r0_update_0_write0_merged_banks_1;
+  r0_r0_update_0_write0_to_r1_rd0_cache r0_r0_update_0_write0_to_r1_rd0;
 };
 
 
 
 inline void r0_r0_update_0_write0_write(hw_uint<16>& r0_r0_update_0_write0, r0_cache& r0, int d0, int d1, int d2) {
-  r0.r0_r0_update_0_write0_merged_banks_1.push(r0_r0_update_0_write0);
+  r0.r0_r0_update_0_write0_to_r1_rd0.push(r0_r0_update_0_write0);
 }
 
 inline hw_uint<16> r1_rd0_select(r0_cache& r0, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // r1_rd0 read pattern: { r1_update_0[d0, d1, d2] -> r0[d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Read schedule : { r1_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 11] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Write schedule: { r0_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 4] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // DD fold: {  }
-  auto value_r0_r0_update_0_write0 = r0.r0_r0_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
+  // Read schedule : { r1_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 2 + d0, 11] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { r0_update_0[d0, d1, d2] -> [d2, d1, d0, 4] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // DD fold: { r1_update_0[d0, d1, d2] -> 72 : d0 = 7 and 0 <= d1 <= 6 and 0 <= d2 <= 6; r1_update_0[d0, d1, d2] -> 74 : 0 <= d0 <= 5 and 0 <= d1 <= 6 and 0 <= d2 <= 6; r1_update_0[d0, d1, d2] -> 73 : d0 = 6 and 0 <= d1 <= 6 and 0 <= d2 <= 6; r1_update_0[d0, d1, d2] -> (71 - d0) : d1 = 7 and 0 <= d0 <= 6 and 0 <= d2 <= 6; r1_update_0[d0, d1, d2] -> (8 + 8 * d1) : d0 = 7 and d1 = 7 and 0 <= d2 <= 6; r1_update_0[d0, d1, d2] -> ((63 - d0) - 8 * d1) : d2 = 7 and 0 <= d1 <= 6 and ((0 <= d0 <= 5) or d0 = 6); r1_update_0[d0, d1, d2] -> (56 - 8 * d1) : d0 = 7 and d2 = 7 and 0 <= d1 <= 6; r1_update_0[d0, d1, d2] -> (7 - d0) : d1 = 7 and d2 = 7 and ((0 <= d0 <= 5) or d0 = 6) }
+  auto value_r0_r0_update_0_write0 = r0.r0_r0_update_0_write0_to_r1_rd0.peek(/* one reader or all rams */ (-7 + d0 == 0 && 6 - d2 >= 0 && 6 - d1 >= 0) ? (72) : (-6 + d0 == 0 && 6 - d2 >= 0 && 6 - d1 >= 0) ? (73) : (6 - d1 >= 0 && 5 - d0 >= 0 && 6 - d2 >= 0) ? (74) : (-7 + d2 == 0 && -7 + d1 == 0 && 6 - d0 >= 0) ? ((7 - d0)) : (-7 + d1 == 0 && 6 - d2 >= 0 && 6 - d0 >= 0) ? ((71 - d0)) : (-7 + d1 == 0 && -7 + d0 == 0 && 6 - d2 >= 0) ? (64) : (-7 + d2 == 0 && -7 + d0 == 0 && 6 - d1 >= 0) ? ((56 - 8 * d1)) : (-7 + d2 == 0 && 6 - d1 >= 0 && 6 - d0 >= 0) ? (((63 - d0) - 8 * d1)) : 0);
   return value_r0_r0_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
@@ -910,8 +666,8 @@ inline hw_uint<16> dn3d_mini_rd0_select(r1_cache& r1, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // dn3d_mini_rd0 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> r1[d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Write schedule: { r1_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 11] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { r1_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 2 + d0, 11] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
   // DD fold: {  }
   auto value_r1_r1_update_0_write0 = r1.r1_r1_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_r1_r1_update_0_write0;
@@ -944,141 +700,85 @@ inline void r1_r1_update_0_write_bundle_write(hw_uint<16>& r1_update_0_write, r1
 
 #include "hw_classes.h"
 
-struct u_u_update_0_write0_merged_banks_20_cache {
-	// RAM Box: {[-2, 9], [-2, 9], [-2, 9]}
-	// Capacity: 459
-	// # of read delays: 15
+struct u_u_update_0_write0_merged_banks_14_cache {
+	// RAM Box: {[-1, 9], [-1, 8], [-1, 8]}
+	// Capacity: 233
+	// # of read delays: 8
 	hw_uint<16> f0;
-	fifo<hw_uint<16>, 12> f1;
+	fifo<hw_uint<16>, 11> f1;
 	hw_uint<16> f2;
-	fifo<hw_uint<16>, 131> f3;
+	fifo<hw_uint<16>, 98> f3;
 	hw_uint<16> f4;
-	fifo<hw_uint<16>, 10> f5;
+	fifo<hw_uint<16>, 9> f5;
 	hw_uint<16> f6;
 	hw_uint<16> f8;
 	hw_uint<16> f10;
-	fifo<hw_uint<16>, 10> f11;
+	fifo<hw_uint<16>, 9> f11;
 	hw_uint<16> f12;
+	fifo<hw_uint<16>, 98> f13;
 	hw_uint<16> f14;
-	fifo<hw_uint<16>, 130> f15;
-	hw_uint<16> f16;
-	hw_uint<16> f18;
-	fifo<hw_uint<16>, 10> f19;
-	hw_uint<16> f20;
-	hw_uint<16> f22;
-	hw_uint<16> f24;
-	fifo<hw_uint<16>, 10> f25;
-	hw_uint<16> f26;
-	fifo<hw_uint<16>, 131> f27;
-	hw_uint<16> f28;
 
 
 	inline hw_uint<16> peek_0() {
 		return f0;
 	}
 
-	inline hw_uint<16> peek_12() {
+	inline hw_uint<16> peek_11() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f1.back();
 	}
 
-	inline hw_uint<16> peek_13() {
+	inline hw_uint<16> peek_12() {
 		return f2;
 	}
 
-	inline hw_uint<16> peek_144() {
+	inline hw_uint<16> peek_110() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<16> peek_145() {
+	inline hw_uint<16> peek_111() {
 		return f4;
 	}
 
-	inline hw_uint<16> peek_155() {
+	inline hw_uint<16> peek_120() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f5.back();
 	}
 
-	inline hw_uint<16> peek_156() {
+	inline hw_uint<16> peek_121() {
 		return f6;
 	}
 
-	inline hw_uint<16> peek_157() {
+	inline hw_uint<16> peek_122() {
 		return f8;
 	}
 
-	inline hw_uint<16> peek_158() {
+	inline hw_uint<16> peek_123() {
 		return f10;
 	}
 
-	inline hw_uint<16> peek_168() {
+	inline hw_uint<16> peek_132() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f11.back();
 	}
 
-	inline hw_uint<16> peek_169() {
+	inline hw_uint<16> peek_133() {
 		return f12;
 	}
 
-	inline hw_uint<16> peek_170() {
+	inline hw_uint<16> peek_231() {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+		return f13.back();
+	}
+
+	inline hw_uint<16> peek_232() {
 		return f14;
-	}
-
-	inline hw_uint<16> peek_300() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-		return f15.back();
-	}
-
-	inline hw_uint<16> peek_301() {
-		return f16;
-	}
-
-	inline hw_uint<16> peek_302() {
-		return f18;
-	}
-
-	inline hw_uint<16> peek_312() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-		return f19.back();
-	}
-
-	inline hw_uint<16> peek_313() {
-		return f20;
-	}
-
-	inline hw_uint<16> peek_314() {
-		return f22;
-	}
-
-	inline hw_uint<16> peek_315() {
-		return f24;
-	}
-
-	inline hw_uint<16> peek_325() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-		return f25.back();
-	}
-
-	inline hw_uint<16> peek_326() {
-		return f26;
-	}
-
-	inline hw_uint<16> peek_457() {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-		return f27.back();
-	}
-
-	inline hw_uint<16> peek_458() {
-		return f28;
 	}
 
 
@@ -1086,59 +786,19 @@ struct u_u_update_0_write0_merged_banks_20_cache {
 	inline void push(const hw_uint<16> value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 131
-    f28 = f27.back();
+    // cap: 1 reading from capacity: 98
+    f14 = f13.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 131 reading from capacity: 1
-    f27.push(f26);
+    // cap: 98 reading from capacity: 1
+    f13.push(f12);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 10
-    f26 = f25.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 10 reading from capacity: 1
-    f25.push(f24);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 1
-    f24 = f22;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 1
-    f22 = f20;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 10
-    f20 = f19.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 10 reading from capacity: 1
-    f19.push(f18);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 1
-    f18 = f16;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 130
-    f16 = f15.back();
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 130 reading from capacity: 1
-    f15.push(f14);
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 1
-    f14 = f12;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 10
+    // cap: 1 reading from capacity: 9
     f12 = f11.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 10 reading from capacity: 1
+    // cap: 9 reading from capacity: 1
     f11.push(f10);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1150,27 +810,27 @@ struct u_u_update_0_write0_merged_banks_20_cache {
     f8 = f6;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 10
+    // cap: 1 reading from capacity: 9
     f6 = f5.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 10 reading from capacity: 1
+    // cap: 9 reading from capacity: 1
     f5.push(f4);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 131
+    // cap: 1 reading from capacity: 98
     f4 = f3.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 131 reading from capacity: 1
+    // cap: 98 reading from capacity: 1
     f3.push(f2);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 12
+    // cap: 1 reading from capacity: 11
     f2 = f1.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 12 reading from capacity: 1
+    // cap: 11 reading from capacity: 1
     f1.push(f0);
     // cap: 1
     f0 = value;
@@ -1179,23 +839,23 @@ struct u_u_update_0_write0_merged_banks_20_cache {
 };
 
 struct u_cache {
-  u_u_update_0_write0_merged_banks_20_cache u_u_update_0_write0_merged_banks_20;
+  u_u_update_0_write0_merged_banks_14_cache u_u_update_0_write0_merged_banks_14;
 };
 
 
 
 inline void u_u_update_0_write0_write(hw_uint<16>& u_u_update_0_write0, u_cache& u, int d0, int d1, int d2) {
-  u.u_u_update_0_write0_merged_banks_20.push(u_u_update_0_write0);
+  u.u_u_update_0_write0_merged_banks_14.push(u_u_update_0_write0);
 }
 
 inline hw_uint<16> diff_d_rd0_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_d_rd0 read pattern: { diff_d_update_0[d0, d1, d2] -> u[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Read schedule : { diff_d_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 10] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
-  // DD fold: { diff_d_update_0[d0, d1, d2] -> 157 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_157();
+  // diff_d_rd0 read pattern: { diff_d_update_0[d0, d1, d2] -> u[d0, d1, d2] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { diff_d_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 10] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -1 <= d0 <= 9 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // DD fold: { diff_d_update_0[d0, d1, d2] -> 122 : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_14.peek_122();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
@@ -1207,11 +867,11 @@ inline hw_uint<16> diff_d_rd0_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_d_rd1_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_d_rd1 read pattern: { diff_d_update_0[d0, d1, d2] -> u[d0, 1 + d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Read schedule : { diff_d_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 10] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
-  // DD fold: { diff_d_update_0[d0, d1, d2] -> 145 : -1 <= d0 <= 8 and -1 <= d1 <= 7 and -1 <= d2 <= 8; diff_d_update_0[d0, d1, d2] -> 145 : d1 = 8 and -1 <= d0 <= 8 and -1 <= d2 <= 8 }
-  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_145();
+  // diff_d_rd1 read pattern: { diff_d_update_0[d0, d1, d2] -> u[d0, 1 + d1, d2] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { diff_d_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 10] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -1 <= d0 <= 9 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // DD fold: { diff_d_update_0[d0, d1, d2] -> 111 : 0 <= d0 <= 8 and 0 <= d1 <= 6 and 0 <= d2 <= 7; diff_d_update_0[d0, d1, d2] -> 111 : d1 = 7 and 0 <= d0 <= 8 and 0 <= d2 <= 7 }
+  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_14.peek_111();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
@@ -1223,11 +883,11 @@ inline hw_uint<16> diff_d_rd1_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_i_rd0_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_i_rd0 read pattern: { diff_i_update_0[d0, d1, d2] -> u[d0, d1, -1 + d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Read schedule : { diff_i_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 9] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
-  // DD fold: { diff_i_update_0[d0, d1, d2] -> 301 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_301();
+  // diff_i_rd0 read pattern: { diff_i_update_0[d0, d1, d2] -> u[d0, d1, -1 + d2] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { diff_i_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 9] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -1 <= d0 <= 9 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // DD fold: { diff_i_update_0[d0, d1, d2] -> 232 : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_14.peek_232();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
@@ -1239,11 +899,11 @@ inline hw_uint<16> diff_i_rd0_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_i_rd1_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_i_rd1 read pattern: { diff_i_update_0[d0, d1, d2] -> u[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Read schedule : { diff_i_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 9] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
-  // DD fold: { diff_i_update_0[d0, d1, d2] -> 157 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_157();
+  // diff_i_rd1 read pattern: { diff_i_update_0[d0, d1, d2] -> u[d0, d1, d2] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { diff_i_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 9] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -1 <= d0 <= 9 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // DD fold: { diff_i_update_0[d0, d1, d2] -> 122 : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_14.peek_122();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
@@ -1255,11 +915,11 @@ inline hw_uint<16> diff_i_rd1_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_l_rd0_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_l_rd0 read pattern: { diff_l_update_0[d0, d1, d2] -> u[-1 + d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Read schedule : { diff_l_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 8] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
-  // DD fold: { diff_l_update_0[d0, d1, d2] -> 158 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_158();
+  // diff_l_rd0 read pattern: { diff_l_update_0[d0, d1, d2] -> u[-1 + d0, d1, d2] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { diff_l_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 8] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -1 <= d0 <= 9 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // DD fold: { diff_l_update_0[d0, d1, d2] -> 123 : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_14.peek_123();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
@@ -1271,11 +931,11 @@ inline hw_uint<16> diff_l_rd0_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_l_rd1_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_l_rd1 read pattern: { diff_l_update_0[d0, d1, d2] -> u[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Read schedule : { diff_l_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 8] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
-  // DD fold: { diff_l_update_0[d0, d1, d2] -> 157 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_157();
+  // diff_l_rd1 read pattern: { diff_l_update_0[d0, d1, d2] -> u[d0, d1, d2] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { diff_l_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 8] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -1 <= d0 <= 9 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // DD fold: { diff_l_update_0[d0, d1, d2] -> 122 : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_14.peek_122();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
@@ -1287,11 +947,11 @@ inline hw_uint<16> diff_l_rd1_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_o_rd0_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_o_rd0 read pattern: { diff_o_update_0[d0, d1, d2] -> u[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Read schedule : { diff_o_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 7] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
-  // DD fold: { diff_o_update_0[d0, d1, d2] -> 157 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_157();
+  // diff_o_rd0 read pattern: { diff_o_update_0[d0, d1, d2] -> u[d0, d1, d2] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { diff_o_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 7] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -1 <= d0 <= 9 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // DD fold: { diff_o_update_0[d0, d1, d2] -> 122 : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_14.peek_122();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
@@ -1303,11 +963,11 @@ inline hw_uint<16> diff_o_rd0_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_o_rd1_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_o_rd1 read pattern: { diff_o_update_0[d0, d1, d2] -> u[d0, d1, 1 + d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Read schedule : { diff_o_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 7] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
-  // DD fold: { diff_o_update_0[d0, d1, d2] -> 13 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_13();
+  // diff_o_rd1 read pattern: { diff_o_update_0[d0, d1, d2] -> u[d0, d1, 1 + d2] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { diff_o_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 7] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -1 <= d0 <= 9 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // DD fold: { diff_o_update_0[d0, d1, d2] -> 12 : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_14.peek_12();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
@@ -1319,11 +979,11 @@ inline hw_uint<16> diff_o_rd1_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_r_rd0_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_r_rd0 read pattern: { diff_r_update_0[d0, d1, d2] -> u[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Read schedule : { diff_r_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 6] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
-  // DD fold: { diff_r_update_0[d0, d1, d2] -> 157 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_157();
+  // diff_r_rd0 read pattern: { diff_r_update_0[d0, d1, d2] -> u[d0, d1, d2] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { diff_r_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 6] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -1 <= d0 <= 9 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // DD fold: { diff_r_update_0[d0, d1, d2] -> 122 : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_14.peek_122();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
@@ -1335,11 +995,11 @@ inline hw_uint<16> diff_r_rd0_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_r_rd1_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_r_rd1 read pattern: { diff_r_update_0[d0, d1, d2] -> u[1 + d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Read schedule : { diff_r_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 6] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
-  // DD fold: { diff_r_update_0[d0, d1, d2] -> 156 : -1 <= d0 <= 7 and -1 <= d1 <= 8 and -1 <= d2 <= 8; diff_r_update_0[d0, d1, d2] -> (148 + d0) : d0 = 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_156();
+  // diff_r_rd1 read pattern: { diff_r_update_0[d0, d1, d2] -> u[1 + d0, d1, d2] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { diff_r_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 6] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -1 <= d0 <= 9 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // DD fold: { diff_r_update_0[d0, d1, d2] -> 121 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7; diff_r_update_0[d0, d1, d2] -> (113 + d0) : d0 = 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_14.peek_121();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
@@ -1351,11 +1011,11 @@ inline hw_uint<16> diff_r_rd1_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_u_rd0_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_u_rd0 read pattern: { diff_u_update_0[d0, d1, d2] -> u[d0, -1 + d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Read schedule : { diff_u_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 5] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
-  // DD fold: { diff_u_update_0[d0, d1, d2] -> 169 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_169();
+  // diff_u_rd0 read pattern: { diff_u_update_0[d0, d1, d2] -> u[d0, -1 + d1, d2] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { diff_u_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 5] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -1 <= d0 <= 9 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // DD fold: { diff_u_update_0[d0, d1, d2] -> 133 : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_14.peek_133();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
@@ -1367,11 +1027,11 @@ inline hw_uint<16> diff_u_rd0_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> diff_u_rd1_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // diff_u_rd1 read pattern: { diff_u_update_0[d0, d1, d2] -> u[d0, d1, d2] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Read schedule : { diff_u_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 5] : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
-  // DD fold: { diff_u_update_0[d0, d1, d2] -> 157 : -1 <= d0 <= 8 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
-  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_157();
+  // diff_u_rd1 read pattern: { diff_u_update_0[d0, d1, d2] -> u[d0, d1, d2] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { diff_u_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 1 + d0, 5] : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -1 <= d0 <= 9 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // DD fold: { diff_u_update_0[d0, d1, d2] -> 122 : 0 <= d0 <= 8 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_14.peek_122();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
@@ -1383,107 +1043,11 @@ inline hw_uint<16> diff_u_rd1_select(u_cache& u, int d0, int d1, int d2) {
 inline hw_uint<16> dn3d_mini_rd0_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd0 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> u[-1 + d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 315 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_315();
-  return value_u_u_update_0_write0;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
-}
-
-inline hw_uint<16> dn3d_mini_rd1_select(u_cache& u, int d0, int d1, int d2) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd1 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> u[d0, -1 + d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 326 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_326();
-  return value_u_u_update_0_write0;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
-}
-
-inline hw_uint<16> dn3d_mini_rd2_select(u_cache& u, int d0, int d1, int d2) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd2 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> u[d0, d1, -1 + d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 458 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_458();
-  return value_u_u_update_0_write0;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
-}
-
-inline hw_uint<16> dn3d_mini_rd3_select(u_cache& u, int d0, int d1, int d2) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd3 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> u[d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 314 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_314();
-  return value_u_u_update_0_write0;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
-}
-
-inline hw_uint<16> dn3d_mini_rd4_select(u_cache& u, int d0, int d1, int d2) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd4 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> u[d0, d1, 1 + d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 170 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_170();
-  return value_u_u_update_0_write0;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
-}
-
-inline hw_uint<16> dn3d_mini_rd5_select(u_cache& u, int d0, int d1, int d2) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd5 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> u[d0, 1 + d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 302 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_302();
-  return value_u_u_update_0_write0;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
-}
-
-inline hw_uint<16> dn3d_mini_rd6_select(u_cache& u, int d0, int d1, int d2) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-  // dn3d_mini_rd6 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> u[1 + d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
-  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 313 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_313();
+  // dn3d_mini_rd0 read pattern: { dn3d_mini_update_0[d0, d1, d2] -> u[d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Read schedule : { dn3d_mini_update_0[d0, d1, d2] -> [1 + d2, 1 + d1, 2 + d0, 13] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -1 <= d0 <= 9 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // DD fold: { dn3d_mini_update_0[d0, d1, d2] -> 123 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_14.peek_123();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
@@ -1496,10 +1060,10 @@ inline hw_uint<16> r0_rd0_select(u_cache& u, int d0, int d1, int d2) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // r0_rd0 read pattern: { r0_update_0[d0, d1, d2] -> u[d0, d1, d2] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Read schedule : { r0_update_0[d0, d1, d2] -> [2 + d2, 2 + d1, 2 + d0, 4] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -2 <= d0 <= 9 and -2 <= d1 <= 9 and -2 <= d2 <= 9 }
-  // DD fold: { r0_update_0[d0, d1, d2] -> 314 : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
-  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_20.peek_314();
+  // Read schedule : { r0_update_0[d0, d1, d2] -> [d2, d1, d0, 4] : 0 <= d0 <= 7 and 0 <= d1 <= 7 and 0 <= d2 <= 7 }
+  // Write schedule: { u_update_0[d0, d1, d2] -> [d2, d1, d0, 3] : -1 <= d0 <= 9 and -1 <= d1 <= 8 and -1 <= d2 <= 8 }
+  // DD fold: {  }
+  auto value_u_u_update_0_write0 = u.u_u_update_0_write0_merged_banks_14.peek_0();
   return value_u_u_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << " d2 = " << d2  << endl;
@@ -1607,37 +1171,13 @@ inline hw_uint<32> u_diff_u_update_0_read_bundle_read(u_cache& u, int d0, int d1
 
 // dn3d_mini_update_0_read
 //	dn3d_mini_rd0
-//	dn3d_mini_rd1
-//	dn3d_mini_rd2
-//	dn3d_mini_rd3
-//	dn3d_mini_rd4
-//	dn3d_mini_rd5
-//	dn3d_mini_rd6
-inline hw_uint<112> u_dn3d_mini_update_0_read_bundle_read(u_cache& u, int d0, int d1, int d2) {
-  // # of ports in bundle: 7
+inline hw_uint<16> u_dn3d_mini_update_0_read_bundle_read(u_cache& u, int d0, int d1, int d2) {
+  // # of ports in bundle: 1
     // dn3d_mini_rd0
-    // dn3d_mini_rd1
-    // dn3d_mini_rd2
-    // dn3d_mini_rd3
-    // dn3d_mini_rd4
-    // dn3d_mini_rd5
-    // dn3d_mini_rd6
 
-	hw_uint<112> result;
+	hw_uint<16> result;
 	hw_uint<16> dn3d_mini_rd0_res = dn3d_mini_rd0_select(u, d0, d1, d2);
-	set_at<0, 112>(result, dn3d_mini_rd0_res);
-	hw_uint<16> dn3d_mini_rd1_res = dn3d_mini_rd1_select(u, d0, d1, d2);
-	set_at<16, 112>(result, dn3d_mini_rd1_res);
-	hw_uint<16> dn3d_mini_rd2_res = dn3d_mini_rd2_select(u, d0, d1, d2);
-	set_at<32, 112>(result, dn3d_mini_rd2_res);
-	hw_uint<16> dn3d_mini_rd3_res = dn3d_mini_rd3_select(u, d0, d1, d2);
-	set_at<48, 112>(result, dn3d_mini_rd3_res);
-	hw_uint<16> dn3d_mini_rd4_res = dn3d_mini_rd4_select(u, d0, d1, d2);
-	set_at<64, 112>(result, dn3d_mini_rd4_res);
-	hw_uint<16> dn3d_mini_rd5_res = dn3d_mini_rd5_select(u, d0, d1, d2);
-	set_at<80, 112>(result, dn3d_mini_rd5_res);
-	hw_uint<16> dn3d_mini_rd6_res = dn3d_mini_rd6_select(u, d0, d1, d2);
-	set_at<96, 112>(result, dn3d_mini_rd6_res);
+	set_at<0, 16>(result, dn3d_mini_rd0_res);
 	return result;
 }
 
@@ -1663,6 +1203,22 @@ inline void u_u_update_0_write_bundle_write(hw_uint<16>& u_update_0_write, u_cac
 
 
 // Operation logic
+inline void f_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */f_oc, f_cache& f, int d0, int d1, int d2) {
+	// Consume: f_oc
+	auto f_oc_0_c__0_value = f_oc.read();
+	auto compute_result = f_generated_compute_unrolled_1(f_oc_0_c__0_value);
+	// Produce: f
+	f_f_update_0_write_bundle_write(compute_result, f, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<16> debug_compute_result(compute_result);
+  hw_uint<16> debug_compute_result_lane_0;
+  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
+  *global_debug_handle << "f_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void g_update_0(diff_d_cache& diff_d, diff_i_cache& diff_i, diff_l_cache& diff_l, diff_o_cache& diff_o, diff_r_cache& diff_r, diff_u_cache& diff_u, g_cache& g, int d0, int d1, int d2) {
 	// Consume: diff_d
 	auto diff_d_0_c__0_value = diff_d_g_update_0_read_bundle_read(diff_d/* source_delay */, d0, d1, d2);
@@ -1719,35 +1275,7 @@ inline void g_update_0(diff_d_cache& diff_d, diff_i_cache& diff_i, diff_l_cache&
 
 }
 
-inline void r1_update_0(r0_cache& r0, r1_cache& r1, int d0, int d1, int d2) {
-	// Consume: r0
-	auto r0_0_c__0_value = r0_r1_update_0_read_bundle_read(r0/* source_delay */, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "r1_update_0_r0," << d0<< "," << d1<< "," << d2<< "," <<  r0_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = r1_generated_compute_unrolled_1(r0_0_c__0_value);
-	// Produce: r1
-	r1_r1_update_0_write_bundle_write(compute_result, r1, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "r1_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dn3d_mini_update_0(f_cache& f, g_cache& g, r1_cache& r1, u_cache& u, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */dn3d_mini, int d0, int d1, int d2) {
-	// Consume: f
-	auto f_0_c__0_value = f_dn3d_mini_update_0_read_bundle_read(f/* source_delay */, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dn3d_mini_update_0_f," << d0<< "," << d1<< "," << d2<< "," <<  f_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
+inline void dn3d_mini_update_0(g_cache& g, r1_cache& r1, u_cache& u, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */dn3d_mini, int d0, int d1, int d2) {
 	// Consume: g
 	auto g_0_c__0_value = g_dn3d_mini_update_0_read_bundle_read(g/* source_delay */, d0, d1, d2);
 
@@ -1769,7 +1297,7 @@ inline void dn3d_mini_update_0(f_cache& f, g_cache& g, r1_cache& r1, u_cache& u,
   *global_debug_handle << "dn3d_mini_update_0_u," << d0<< "," << d1<< "," << d2<< "," <<  u_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = dn3d_mini_generated_compute_unrolled_1(f_0_c__0_value, g_0_c__0_value, r1_0_c__0_value, u_0_c__0_value);
+	auto compute_result = dn3d_mini_generated_compute_unrolled_1(g_0_c__0_value, r1_0_c__0_value, u_0_c__0_value);
 	// Produce: dn3d_mini
 	dn3d_mini.write(compute_result);
 
@@ -1778,43 +1306,6 @@ inline void dn3d_mini_update_0(f_cache& f, g_cache& g, r1_cache& r1, u_cache& u,
   hw_uint<16> debug_compute_result_lane_0;
   set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
   *global_debug_handle << "dn3d_mini_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void diff_d_update_0(u_cache& u, diff_d_cache& diff_d, int d0, int d1, int d2) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_d_update_0_read_bundle_read(u/* source_delay */, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "diff_d_update_0_u," << d0<< "," << d1<< "," << d2<< "," <<  u_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = diff_d_generated_compute_unrolled_1(u_0_c__0_value);
-	// Produce: diff_d
-	diff_d_diff_d_update_0_write_bundle_write(compute_result, diff_d, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "diff_d_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void f_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */f_oc, f_cache& f, int d0, int d1, int d2) {
-	// Consume: f_oc
-	auto f_oc_0_c__0_value = f_oc.read();
-	auto compute_result = f_generated_compute_unrolled_1(f_oc_0_c__0_value);
-	// Produce: f
-	f_f_update_0_write_bundle_write(compute_result, f, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "f_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -1968,6 +1459,48 @@ inline void diff_i_update_0(u_cache& u, diff_i_cache& diff_i, int d0, int d1, in
 
 }
 
+inline void diff_d_update_0(u_cache& u, diff_d_cache& diff_d, int d0, int d1, int d2) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_d_update_0_read_bundle_read(u/* source_delay */, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "diff_d_update_0_u," << d0<< "," << d1<< "," << d2<< "," <<  u_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = diff_d_generated_compute_unrolled_1(u_0_c__0_value);
+	// Produce: diff_d
+	diff_d_diff_d_update_0_write_bundle_write(compute_result, diff_d, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<16> debug_compute_result(compute_result);
+  hw_uint<16> debug_compute_result_lane_0;
+  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
+  *global_debug_handle << "diff_d_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void r1_update_0(r0_cache& r0, r1_cache& r1, int d0, int d1, int d2) {
+	// Consume: r0
+	auto r0_0_c__0_value = r0_r1_update_0_read_bundle_read(r0/* source_delay */, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "r1_update_0_r0," << d0<< "," << d1<< "," << d2<< "," <<  r0_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = r1_generated_compute_unrolled_1(r0_0_c__0_value);
+	// Produce: r1
+	r1_r1_update_0_write_bundle_write(compute_result, r1, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<16> debug_compute_result(compute_result);
+  hw_uint<16> debug_compute_result_lane_0;
+  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
+  *global_debug_handle << "r1_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
 // Driver function
 void dn3d_mini_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */f_oc, HWStream<hw_uint<16> >& /* get_args num ports = 1 */u_oc, HWStream<hw_uint<16> >& /* get_args num ports = 1 */dn3d_mini, int num_epochs) {
 
@@ -2008,65 +1541,65 @@ void dn3d_mini_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */f_oc, HWS
   u_cache u;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
   for (int epoch = 0; epoch < num_epochs; epoch++) {
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS inline recursive
-	#endif // __VIVADO_SYNTH__
-	
-	for (int c0 = -2; c0 <= 9; c0++) {
-	  for (int c1 = -2; c1 <= 9; c1++) {
-	    for (int c2 = -2; c2 <= 9; c2++) {
+	for (int c0 = -1; c0 <= 8; c0++) {
+	  for (int c1 = -1; c1 <= 8; c1++) {
+	    for (int c2 = -1; c2 <= 9; c2++) {
 	
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS pipeline II=1
 	#endif // __VIVADO_SYNTH__
 	
-	      if ((2 <= c2 && c2 <= 9) && ((c2 - 2) % 1 == 0) && (2 <= c1 && c1 <= 9) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 9) && ((c0 - 2) % 1 == 0)) {
-	f_update_0(f_oc, f, (c2 - 2) / 1, (c1 - 2) / 1, (c0 - 2) / 1);
+	      if ((0 <= c2 && c2 <= 7) && ((c2 - 0) % 1 == 0) && (0 <= c1 && c1 <= 7) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 7) && ((c0 - 0) % 1 == 0)) {
+	f_update_0(f_oc, f, (c2 - 0) / 1, (c1 - 0) / 1, (c0 - 0) / 1);
 	      }
 	
-	      if ((-2 <= c2 && c2 <= 9) && ((c2 - 0) % 1 == 0) && (-2 <= c1 && c1 <= 9) && ((c1 - 0) % 1 == 0) && (-2 <= c0 && c0 <= 9) && ((c0 - 0) % 1 == 0)) {
+	      if ((-1 <= c2 && c2 <= 9) && ((c2 - 0) % 1 == 0) && (-1 <= c1 && c1 <= 8) && ((c1 - 0) % 1 == 0) && (-1 <= c0 && c0 <= 8) && ((c0 - 0) % 1 == 0)) {
 	u_update_0(u_oc, u, (c2 - 0) / 1, (c1 - 0) / 1, (c0 - 0) / 1);
 	      }
 	
-	      if ((2 <= c2 && c2 <= 9) && ((c2 - 2) % 1 == 0) && (2 <= c1 && c1 <= 9) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 9) && ((c0 - 2) % 1 == 0)) {
-	r0_update_0(f, u, r0, (c2 - 2) / 1, (c1 - 2) / 1, (c0 - 2) / 1);
+	      if ((0 <= c2 && c2 <= 7) && ((c2 - 0) % 1 == 0) && (0 <= c1 && c1 <= 7) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 7) && ((c0 - 0) % 1 == 0)) {
+	r0_update_0(f, u, r0, (c2 - 0) / 1, (c1 - 0) / 1, (c0 - 0) / 1);
 	      }
 	
-	      if ((0 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (0 <= c1 && c1 <= 9) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 9) && ((c0 - 1) % 1 == 0)) {
+	      if ((1 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (1 <= c1 && c1 <= 8) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 8) && ((c0 - 1) % 1 == 0)) {
 	diff_u_update_0(u, diff_u, (c2 - 1) / 1, (c1 - 1) / 1, (c0 - 1) / 1);
 	      }
 	
-	      if ((0 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (0 <= c1 && c1 <= 9) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 9) && ((c0 - 1) % 1 == 0)) {
+	      if ((1 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (1 <= c1 && c1 <= 8) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 8) && ((c0 - 1) % 1 == 0)) {
 	diff_r_update_0(u, diff_r, (c2 - 1) / 1, (c1 - 1) / 1, (c0 - 1) / 1);
 	      }
 	
-	      if ((0 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (0 <= c1 && c1 <= 9) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 9) && ((c0 - 1) % 1 == 0)) {
+	      if ((1 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (1 <= c1 && c1 <= 8) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 8) && ((c0 - 1) % 1 == 0)) {
 	diff_o_update_0(u, diff_o, (c2 - 1) / 1, (c1 - 1) / 1, (c0 - 1) / 1);
 	      }
 	
-	      if ((0 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (0 <= c1 && c1 <= 9) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 9) && ((c0 - 1) % 1 == 0)) {
+	      if ((1 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (1 <= c1 && c1 <= 8) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 8) && ((c0 - 1) % 1 == 0)) {
 	diff_l_update_0(u, diff_l, (c2 - 1) / 1, (c1 - 1) / 1, (c0 - 1) / 1);
 	      }
 	
-	      if ((0 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (0 <= c1 && c1 <= 9) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 9) && ((c0 - 1) % 1 == 0)) {
+	      if ((1 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (1 <= c1 && c1 <= 8) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 8) && ((c0 - 1) % 1 == 0)) {
 	diff_i_update_0(u, diff_i, (c2 - 1) / 1, (c1 - 1) / 1, (c0 - 1) / 1);
 	      }
 	
-	      if ((0 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (0 <= c1 && c1 <= 9) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 9) && ((c0 - 1) % 1 == 0)) {
+	      if ((1 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (1 <= c1 && c1 <= 8) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 8) && ((c0 - 1) % 1 == 0)) {
 	diff_d_update_0(u, diff_d, (c2 - 1) / 1, (c1 - 1) / 1, (c0 - 1) / 1);
 	      }
 	
-	      if ((2 <= c2 && c2 <= 9) && ((c2 - 2) % 1 == 0) && (2 <= c1 && c1 <= 9) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 9) && ((c0 - 2) % 1 == 0)) {
-	r1_update_0(r0, r1, (c2 - 2) / 1, (c1 - 2) / 1, (c0 - 2) / 1);
+	      if ((2 <= c2 && c2 <= 9) && ((c2 - 2) % 1 == 0) && (1 <= c1 && c1 <= 8) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 8) && ((c0 - 1) % 1 == 0)) {
+	r1_update_0(r0, r1, (c2 - 2) / 1, (c1 - 1) / 1, (c0 - 1) / 1);
 	      }
 	
-	      if ((0 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (0 <= c1 && c1 <= 9) && ((c1 - 1) % 1 == 0) && (0 <= c0 && c0 <= 9) && ((c0 - 1) % 1 == 0)) {
+	      if ((1 <= c2 && c2 <= 9) && ((c2 - 1) % 1 == 0) && (1 <= c1 && c1 <= 8) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 8) && ((c0 - 1) % 1 == 0)) {
 	g_update_0(diff_d, diff_i, diff_l, diff_o, diff_r, diff_u, g, (c2 - 1) / 1, (c1 - 1) / 1, (c0 - 1) / 1);
 	      }
 	
-	      if ((2 <= c2 && c2 <= 9) && ((c2 - 2) % 1 == 0) && (2 <= c1 && c1 <= 9) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 9) && ((c0 - 2) % 1 == 0)) {
-	dn3d_mini_update_0(f, g, r1, u, dn3d_mini, (c2 - 2) / 1, (c1 - 2) / 1, (c0 - 2) / 1);
+	      if ((2 <= c2 && c2 <= 9) && ((c2 - 2) % 1 == 0) && (1 <= c1 && c1 <= 8) && ((c1 - 1) % 1 == 0) && (1 <= c0 && c0 <= 8) && ((c0 - 1) % 1 == 0)) {
+	dn3d_mini_update_0(g, r1, u, dn3d_mini, (c2 - 2) / 1, (c1 - 1) / 1, (c0 - 1) / 1);
 	      }
 	
 	    }
@@ -2089,16 +1622,15 @@ void dn3d_mini_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */f_oc, HWS
 
 const int dn3d_mini_update_0_write_num_transfers = 512;
 const int f_update_0_read_num_transfers = 512;
-const int u_update_0_read_num_transfers = 1728;
+const int u_update_0_read_num_transfers = 1100;
 
-// TODO: Adapt to have one size for each edge buffer
-#define INPUT_SIZE 512
-#define OUTPUT_SIZE 512
+
 extern "C" {
 
 static void read_f_update_0_read(hw_uint<16>* input, HWStream<hw_uint<16> >& v, const int size) {
   hw_uint<16> burst_reg;
-  for (int i = 0; i < f_update_0_read_num_transfers*size; i++) {
+  int num_transfers = f_update_0_read_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -2107,7 +1639,8 @@ static void read_f_update_0_read(hw_uint<16>* input, HWStream<hw_uint<16> >& v, 
 
 static void read_u_update_0_read(hw_uint<16>* input, HWStream<hw_uint<16> >& v, const int size) {
   hw_uint<16> burst_reg;
-  for (int i = 0; i < u_update_0_read_num_transfers*size; i++) {
+  int num_transfers = u_update_0_read_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -2116,7 +1649,8 @@ static void read_u_update_0_read(hw_uint<16>* input, HWStream<hw_uint<16> >& v, 
 
 static void write_dn3d_mini_update_0_write(hw_uint<16>* output, HWStream<hw_uint<16> >& v, const int size) {
   hw_uint<16> burst_reg;
-  for (int i = 0; i < dn3d_mini_update_0_write_num_transfers*size; i++) {
+  int num_transfers = dn3d_mini_update_0_write_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;

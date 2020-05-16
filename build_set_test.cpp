@@ -17,6 +17,172 @@ void compare(vector<string>& opt, vector<string>& naive) {
 }
 
 prog clockwork_target() {
+  prog prg;
+  prg.compute_unit_file = "clockwork_target_compute.h";
+  prg.name = "clockwork_target";
+
+// Stencil<uint16_t, 64, 64> &hw_input_stencil = arg_0;
+  prg.add_input("hw_input_stencil");
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
+// Stencil<void *> &hw_output_stencil = arg_1;
+  prg.add_output("hw_output_stencil");
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+
+//consuming hw_input.stencil
+////producing hw_input_copy.stencil
+  auto loop_hw_input_copy_s0_y = prg.add_loop("hw_input_copy_s0_y", 0, 64);
+  auto loop_hw_input_copy_s0_x = loop_hw_input_copy_s0_y->add_loop("hw_input_copy_s0_x", 0, 64);
+
+//store is: hw_input_copy.stencil(hw_input_copy.s0.x, hw_input_copy.s0.y) = hw_input.stencil(hw_input_copy.s0.x, hw_input_copy.s0.y)
+  auto hcompute_hw_input_copy_stencil = loop_hw_input_copy_s0_x->add_op("hcompute_hw_input_copy_stencil");
+  hcompute_hw_input_copy_stencil->add_function("hcompute_hw_input_copy_stencil");
+  hcompute_hw_input_copy_stencil->add_load("hw_input_stencil", "hw_input_copy_s0_x", "hw_input_copy_s0_y");
+  prg.buffer_port_widths["hw_input_copy_stencil"] = 16;
+  hcompute_hw_input_copy_stencil->add_store("hw_input_copy_stencil", "hw_input_copy_s0_x", "hw_input_copy_s0_y");
+////producing conv.stencil
+  auto loop_conv_s0_y = prg.add_loop("conv_s0_y", 0, 62);
+  auto loop_conv_s0_x = loop_conv_s0_y->add_loop("conv_s0_x", 0, 62);
+
+//store is: conv.stencil(conv.s0.x, conv.s0.y) = 0
+  auto hcompute_conv_stencil = loop_conv_s0_x->add_op("hcompute_conv_stencil");
+  hcompute_conv_stencil->add_function("hcompute_conv_stencil");
+  prg.buffer_port_widths["conv_stencil"] = 16;
+  hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_x", "conv_s0_y");
+
+//consuming hw_input_copy.stencil
+  auto loop_conv_s1_y = prg.add_loop("conv_s1_y", 0, 62);
+  auto loop_conv_s1_x = loop_conv_s1_y->add_loop("conv_s1_x", 0, 62);
+
+//store is: conv.stencil(conv.s1.x, conv.s1.y) = ((int32(hw_input_copy.stencil(conv.s1.x, conv.s1.y))*17) + (conv.stencil(conv.s1.x, conv.s1.y) + ((int32(hw_input_copy.stencil((conv.s1.x + 1), conv.s1.y))*7) + ((int32(hw_input_copy.stencil((conv.s1.x + 2), conv.s1.y))*5) + ((int32(hw_input_copy.stencil(conv.s1.x, (conv.s1.y + 1)))*4) + ((int32(hw_input_copy.stencil((conv.s1.x + 1), (conv.s1.y + 1)))*19) + ((int32(hw_input_copy.stencil((conv.s1.x + 2), (conv.s1.y + 1)))*21) + ((int32(hw_input_copy.stencil(conv.s1.x, (conv.s1.y + 2)))*6) + ((int32(hw_input_copy.stencil((conv.s1.x + 2), (conv.s1.y + 2)))*15) + (int32(hw_input_copy.stencil((conv.s1.x + 1), (conv.s1.y + 2)))*4))))))))))
+  auto hcompute_conv_stencil_1 = loop_conv_s1_x->add_op("hcompute_conv_stencil_1");
+  hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
+  hcompute_conv_stencil_1->add_load("conv_stencil", "conv_s1_x", "conv_s1_y");
+  hcompute_conv_stencil_1->add_load("hw_input_copy_stencil", "conv_s1_x", "conv_s1_y");
+  hcompute_conv_stencil_1->add_load("hw_input_copy_stencil", "(conv_s1_x + 1)", "conv_s1_y");
+  hcompute_conv_stencil_1->add_load("hw_input_copy_stencil", "(conv_s1_x + 2)", "conv_s1_y");
+  hcompute_conv_stencil_1->add_load("hw_input_copy_stencil", "conv_s1_x", "(conv_s1_y + 1)");
+  hcompute_conv_stencil_1->add_load("hw_input_copy_stencil", "(conv_s1_x + 1)", "(conv_s1_y + 1)");
+  hcompute_conv_stencil_1->add_load("hw_input_copy_stencil", "(conv_s1_x + 2)", "(conv_s1_y + 1)");
+  hcompute_conv_stencil_1->add_load("hw_input_copy_stencil", "conv_s1_x", "(conv_s1_y + 2)");
+  hcompute_conv_stencil_1->add_load("hw_input_copy_stencil", "(conv_s1_x + 2)", "(conv_s1_y + 2)");
+  hcompute_conv_stencil_1->add_load("hw_input_copy_stencil", "(conv_s1_x + 1)", "(conv_s1_y + 2)");
+  hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_x", "conv_s1_y");
+
+//consuming conv.stencil
+  auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, 62);
+  auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 62);
+
+//store is: hw_output.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo) = uint8(conv.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo))
+  auto hcompute_hw_output_stencil = loop_hw_output_s0_x_xo->add_op("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo");
+  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo");
+
+  return prg;
+
+  //prog prg;
+  //prg.compute_unit_file = "clockwork_target_compute.h";
+  //prg.name = "clockwork_target";
+
+//// Stencil<uint16_t, 64, 64> &hw_input_stencil = arg_0;
+  //prg.add_input("hw_input_stencil");
+  //prg.buffer_port_widths["hw_input_stencil"] = 16;
+//// Stencil<void *> &hw_output_stencil = arg_1;
+  //prg.add_output("hw_output_stencil");
+  //prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+
+////consuming hw_input.stencil
+//////producing conv.stencil
+  //auto loop_conv_s0_y = prg.add_loop("conv_s0_y", 0, 62);
+  //auto loop_conv_s0_x = loop_conv_s0_y->add_loop("conv_s0_x", 0, 62);
+
+////store is: conv.stencil(conv.s0.x, conv.s0.y) = 0
+  //auto compute_conv_stencil = loop_conv_s0_x->add_op("compute_conv_stencil");
+  //compute_conv_stencil->add_function("compute_conv_stencil");
+  //prg.buffer_port_widths["conv_stencil"] = 16;
+  //compute_conv_stencil->add_store("conv_stencil", "conv_s0_x", "conv_s0_y");
+  //auto loop_conv_s1_y = prg.add_loop("conv_s1_y", 0, 62);
+  //auto loop_conv_s1_x = loop_conv_s1_y->add_loop("conv_s1_x", 0, 62);
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y) = ((int32(hw_input.stencil(conv.s1.x, conv.s1.y))*17) + (conv.stencil(conv.s1.x, conv.s1.y) + ((int32(hw_input.stencil((conv.s1.x + 1), conv.s1.y))*7) + ((int32(hw_input.stencil((conv.s1.x + 2), conv.s1.y))*5) + ((int32(hw_input.stencil(conv.s1.x, (conv.s1.y + 1)))*4) + ((int32(hw_input.stencil((conv.s1.x + 1), (conv.s1.y + 1)))*19) + ((int32(hw_input.stencil((conv.s1.x + 2), (conv.s1.y + 1)))*21) + ((int32(hw_input.stencil(conv.s1.x, (conv.s1.y + 2)))*6) + ((int32(hw_input.stencil((conv.s1.x + 2), (conv.s1.y + 2)))*15) + (int32(hw_input.stencil((conv.s1.x + 1), (conv.s1.y + 2)))*4))))))))))
+  //auto compute_conv_stencil_1 = loop_conv_s1_x->add_op("compute_conv_stencil_1");
+  //compute_conv_stencil_1->add_function("compute_conv_stencil_1");
+  //compute_conv_stencil_1->add_load("conv_stencil", "conv_s1_x", "conv_s1_y");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "conv_s1_x", "conv_s1_y");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 1)", "conv_s1_y");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 2)", "conv_s1_y");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "conv_s1_x", "(conv_s1_y + 1)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 1)", "(conv_s1_y + 1)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 2)", "(conv_s1_y + 1)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "conv_s1_x", "(conv_s1_y + 2)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 2)", "(conv_s1_y + 2)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 1)", "(conv_s1_y + 2)");
+  //compute_conv_stencil_1->add_store("conv_stencil", "conv_s1_x", "conv_s1_y");
+
+////consuming conv.stencil
+  //auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, 62);
+  //auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 62);
+
+////store is: hw_output.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo) = uint8(conv.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo))
+  //auto compute_hw_output_stencil = loop_hw_output_s0_x_xo->add_op("compute_hw_output_stencil");
+  //compute_hw_output_stencil->add_function("compute_hw_output_stencil");
+  //compute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo");
+  //compute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo");
+
+  //return prg;
+  //prog prg;
+  //prg.compute_unit_file = "clockwork_target_compute.h";
+  //prg.name = "clockwork_target";
+
+//// Stencil<void *> &hw_output_stencil = arg_0;
+  //prg.add_output("hw_output_stencil");
+  //prg.buffer_port_widths["hw_output_stencil"] = 16;
+//// Stencil<void *> &hw_input_stencil = arg_1;
+  //prg.add_input("hw_input_stencil");
+  //prg.buffer_port_widths["hw_input_stencil"] = 16;
+
+  //auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, 62);
+  //auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 62);
+//////producing conv.stencil
+  //auto loop_conv_s0_y = loop_hw_output_s0_x_xo->add_loop("conv_s0_y", 0, 62);
+  //auto loop_conv_s0_x = loop_conv_s0_y->add_loop("conv_s0_x", 0, 62);
+
+////store is: conv.stencil(conv.s0.x, conv.s0.y) = 0
+  //auto compute_conv_stencil = loop_conv_s0_x->add_op("compute_conv_stencil");
+  //compute_conv_stencil->add_function("compute_conv_stencil");
+  //prg.buffer_port_widths["conv_stencil"] = 16;
+  //compute_conv_stencil->add_store("conv_stencil", "conv_s0_x", "conv_s0_y");
+
+////consuming hw_input.stencil
+  //auto loop_conv_s1_y = loop_hw_output_s0_x_xo->add_loop("conv_s1_y", 0, 62);
+  //auto loop_conv_s1_x = loop_conv_s1_y->add_loop("conv_s1_x", 0, 62);
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y) = ((int32(hw_input.stencil(conv.s1.x, conv.s1.y))*17) + (conv.stencil(conv.s1.x, conv.s1.y) + ((int32(hw_input.stencil((conv.s1.x + 1), conv.s1.y))*7) + ((int32(hw_input.stencil((conv.s1.x + 2), conv.s1.y))*5) + ((int32(hw_input.stencil(conv.s1.x, (conv.s1.y + 1)))*4) + ((int32(hw_input.stencil((conv.s1.x + 1), (conv.s1.y + 1)))*19) + ((int32(hw_input.stencil((conv.s1.x + 2), (conv.s1.y + 1)))*21) + ((int32(hw_input.stencil(conv.s1.x, (conv.s1.y + 2)))*6) + ((int32(hw_input.stencil((conv.s1.x + 2), (conv.s1.y + 2)))*15) + (int32(hw_input.stencil((conv.s1.x + 1), (conv.s1.y + 2)))*4))))))))))
+  //auto compute_conv_stencil_1 = loop_conv_s1_x->add_op("compute_conv_stencil_1");
+  //compute_conv_stencil_1->add_function("compute_conv_stencil_1");
+  //compute_conv_stencil_1->add_load("conv_stencil", "conv_s1_x", "conv_s1_y");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "conv_s1_x", "conv_s1_y");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 1)", "conv_s1_y");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 2)", "conv_s1_y");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "conv_s1_x", "(conv_s1_y + 1)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 1)", "(conv_s1_y + 1)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 2)", "(conv_s1_y + 1)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "conv_s1_x", "(conv_s1_y + 2)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 2)", "(conv_s1_y + 2)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 1)", "(conv_s1_y + 2)");
+  //compute_conv_stencil_1->add_store("conv_stencil", "conv_s1_x", "conv_s1_y");
+
+////consuming conv.stencil
+
+////store is: hw_output.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo) = uint8(conv.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo))
+  //auto compute_hw_output_stencil = loop_hw_output_s0_x_xo->add_op("compute_hw_output_stencil");
+  //compute_hw_output_stencil->add_function("compute_hw_output_stencil");
+  //compute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo");
+  //compute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo");
+
+  //return prg;
 
   //prog prg;
   //prg.compute_unit_file = "clockwork_target_compute.h";
@@ -180,157 +346,157 @@ prog clockwork_target() {
 
   //return prg;
 
-  prog prg;
-  prg.compute_unit_file = "clockwork_target_compute.h";
-  prg.name = "clockwork_target";
+  //prog prg;
+  //prg.compute_unit_file = "clockwork_target_compute.h";
+  //prg.name = "clockwork_target";
 
-// Stencil<void *> &_hw_output = arg_0;
-  prg.add_output("_hw_output");
-  prg.buffer_port_widths["_hw_output"] = 16;
-// Stencil<void *> &_hw_input = arg_1;
-  prg.add_input("_hw_inputa0");
-  prg.buffer_port_widths["_hw_inputa0"] = 16;
+//// Stencil<void *> &_hw_output = arg_0;
+  //prg.add_output("_hw_output");
+  //prg.buffer_port_widths["_hw_output"] = 16;
+//// Stencil<void *> &_hw_input = arg_1;
+  //prg.add_input("_hw_inputa0");
+  //prg.buffer_port_widths["_hw_inputa0"] = 16;
 
-  auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, 62);
-////producing kernel
-  auto loop_kernel_s0_y = loop_hw_output_s0_y_yo->add_loop("kernel_s0_y", 0, 3);
-  auto loop_kernel_s0_x = loop_kernel_s0_y->add_loop("kernel_s0_x", 0, 3);
+  //auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, 62);
+//////producing kernel
+  //auto loop_kernel_s0_y = loop_hw_output_s0_y_yo->add_loop("kernel_s0_y", 0, 3);
+  //auto loop_kernel_s0_x = loop_kernel_s0_y->add_loop("kernel_s0_x", 0, 3);
 
-//store is: kernela1[(kernel.s0.x + (kernel.s0.y*3))] = 0
-  auto compute_kernela1 = loop_kernel_s0_x->add_op("compute_kernela1");
-  compute_kernela1->add_function("compute_kernela1");
-  prg.buffer_port_widths["_kernela1"] = 16;
-  compute_kernela1->add_store("_kernela1", "(kernel_s0_x + (kernel_s0_y*3))");
+////store is: kernela1[(kernel.s0.x + (kernel.s0.y*3))] = 0
+  //auto compute_kernela1 = loop_kernel_s0_x->add_op("compute_kernela1");
+  //compute_kernela1->add_function("compute_kernela1");
+  //prg.buffer_port_widths["_kernela1"] = 16;
+  //compute_kernela1->add_store("_kernela1", "(kernel_s0_x + (kernel_s0_y*3))");
 
-////store is: kernela1[0] = 17
-  //auto compute_kernela1$1 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_1");
-  //compute_kernela1$1->add_function("compute_kernela1_1");
-  //compute_kernela1$1->add_store("_kernela1", "0");
+//////store is: kernela1[0] = 17
+  ////auto compute_kernela1$1 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_1");
+  ////compute_kernela1$1->add_function("compute_kernela1_1");
+  ////compute_kernela1$1->add_store("_kernela1", "0");
 
-////store is: kernela1[3] = 4
-  //auto compute_kernela1$2 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_2");
-  //compute_kernela1$2->add_function("compute_kernela1_2");
-  //compute_kernela1$2->add_store("_kernela1", "3");
+//////store is: kernela1[3] = 4
+  ////auto compute_kernela1$2 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_2");
+  ////compute_kernela1$2->add_function("compute_kernela1_2");
+  ////compute_kernela1$2->add_store("_kernela1", "3");
 
-////store is: kernela1[6] = 6
-  //auto compute_kernela1$3 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_3");
-  //compute_kernela1$3->add_function("compute_kernela1_3");
-  //compute_kernela1$3->add_store("_kernela1", "6");
+//////store is: kernela1[6] = 6
+  ////auto compute_kernela1$3 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_3");
+  ////compute_kernela1$3->add_function("compute_kernela1_3");
+  ////compute_kernela1$3->add_store("_kernela1", "6");
 
-////store is: kernela1[1] = 7
-  //auto compute_kernela1$4 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_4");
-  //compute_kernela1$4->add_function("compute_kernela1_4");
-  //compute_kernela1$4->add_store("_kernela1", "1");
+//////store is: kernela1[1] = 7
+  ////auto compute_kernela1$4 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_4");
+  ////compute_kernela1$4->add_function("compute_kernela1_4");
+  ////compute_kernela1$4->add_store("_kernela1", "1");
 
-////store is: kernela1[4] = 19
-  //auto compute_kernela1$5 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_5");
-  //compute_kernela1$5->add_function("compute_kernela1_5");
-  //compute_kernela1$5->add_store("_kernela1", "4");
+//////store is: kernela1[4] = 19
+  ////auto compute_kernela1$5 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_5");
+  ////compute_kernela1$5->add_function("compute_kernela1_5");
+  ////compute_kernela1$5->add_store("_kernela1", "4");
 
-////store is: kernela1[7] = 4
-  //auto compute_kernela1$6 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_6");
-  //compute_kernela1$6->add_function("compute_kernela1_6");
-  //compute_kernela1$6->add_store("_kernela1", "7");
+//////store is: kernela1[7] = 4
+  ////auto compute_kernela1$6 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_6");
+  ////compute_kernela1$6->add_function("compute_kernela1_6");
+  ////compute_kernela1$6->add_store("_kernela1", "7");
 
-////store is: kernela1[2] = 5
-  //auto compute_kernela1$7 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_7");
-  //compute_kernela1$7->add_function("compute_kernela1_7");
-  //compute_kernela1$7->add_store("_kernela1", "2");
+//////store is: kernela1[2] = 5
+  ////auto compute_kernela1$7 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_7");
+  ////compute_kernela1$7->add_function("compute_kernela1_7");
+  ////compute_kernela1$7->add_store("_kernela1", "2");
 
-////store is: kernela1[5] = 21
-  //auto compute_kernela1$8 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_8");
-  //compute_kernela1$8->add_function("compute_kernela1_8");
-  //compute_kernela1$8->add_store("_kernela1", "5");
+//////store is: kernela1[5] = 21
+  ////auto compute_kernela1$8 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_8");
+  ////compute_kernela1$8->add_function("compute_kernela1_8");
+  ////compute_kernela1$8->add_store("_kernela1", "5");
 
-////store is: kernela1[8] = 15
-  //auto compute_kernela1$9 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_9");
-  //compute_kernela1$9->add_function("compute_kernela1_9");
-  //compute_kernela1$9->add_store("_kernela1", "8");
-//consuming kernel
-  auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 62);
-////producing conv
-  auto loop_conv_s0_y = loop_hw_output_s0_x_xo->add_loop("conv_s0_y", 0, 62);
-  auto loop_conv_s0_x = loop_conv_s0_y->add_loop("conv_s0_x", 0, 62);
+//////store is: kernela1[8] = 15
+  ////auto compute_kernela1$9 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_9");
+  ////compute_kernela1$9->add_function("compute_kernela1_9");
+  ////compute_kernela1$9->add_store("_kernela1", "8");
+////consuming kernel
+  //auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 62);
+//////producing conv
+  //auto loop_conv_s0_y = loop_hw_output_s0_x_xo->add_loop("conv_s0_y", 0, 62);
+  //auto loop_conv_s0_x = loop_conv_s0_y->add_loop("conv_s0_x", 0, 62);
 
-  auto compute_conva2 = loop_conv_s0_x->add_op("compute_conva2");
-  compute_conva2->add_function("compute_conva2");
-  prg.buffer_port_widths["_conva2"] = 16;
-  compute_conva2->add_store("_conva2", "(conv_s0_x + (conv_s0_y*62))");
-//consuming hw_input
-  auto loop_conv_s1_y = loop_hw_output_s0_x_xo->add_loop("conv_s1_y", 0, 62);
-  auto loop_conv_s1_x = loop_conv_s1_y->add_loop("conv_s1_x", 0, 62);
+  //auto compute_conva2 = loop_conv_s0_x->add_op("compute_conva2");
+  //compute_conva2->add_function("compute_conva2");
+  //prg.buffer_port_widths["_conva2"] = 16;
+  //compute_conva2->add_store("_conva2", "(conv_s0_x + (conv_s0_y*62))");
+////consuming hw_input
+  //auto loop_conv_s1_y = loop_hw_output_s0_x_xo->add_loop("conv_s1_y", 0, 62);
+  //auto loop_conv_s1_x = loop_conv_s1_y->add_loop("conv_s1_x", 0, 62);
 
-  auto compute_conva2$1 = loop_conv_s1_x->add_op("compute_conva2_1");
-  compute_conva2$1->add_function("compute_conva2_1");
-  compute_conva2$1->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  prg.buffer_port_widths["_hw_inputa0"] = 16;
-  compute_conva2$1->add_load("_hw_inputa0", "(conv_s1_x + (conv_s1_y*64))");
-  compute_conva2$1->add_load("_kernela1", "0");
-  compute_conva2$1->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //auto compute_conva2$1 = loop_conv_s1_x->add_op("compute_conva2_1");
+  //compute_conva2$1->add_function("compute_conva2_1");
+  //compute_conva2$1->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //prg.buffer_port_widths["_hw_inputa0"] = 16;
+  //compute_conva2$1->add_load("_hw_inputa0", "(conv_s1_x + (conv_s1_y*64))");
+  //compute_conva2$1->add_load("_kernela1", "0");
+  //compute_conva2$1->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  //auto compute_conva2$2 = loop_conv_s1_x->add_op("compute_conva2_2");
-  //compute_conva2$2->add_function("compute_conva2_2");
-  //compute_conva2$2->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  //compute_conva2$2->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 1)");
-  //compute_conva2$2->add_load("_kernela1", "1");
-  //compute_conva2$2->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////auto compute_conva2$2 = loop_conv_s1_x->add_op("compute_conva2_2");
+  ////compute_conva2$2->add_function("compute_conva2_2");
+  ////compute_conva2$2->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////compute_conva2$2->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 1)");
+  ////compute_conva2$2->add_load("_kernela1", "1");
+  ////compute_conva2$2->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  //auto compute_conva2$3 = loop_conv_s1_x->add_op("compute_conva2_3");
-  //compute_conva2$3->add_function("compute_conva2_3");
-  //compute_conva2$3->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  //compute_conva2$3->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 2)");
-  //compute_conva2$3->add_load("_kernela1", "2");
-  //compute_conva2$3->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////auto compute_conva2$3 = loop_conv_s1_x->add_op("compute_conva2_3");
+  ////compute_conva2$3->add_function("compute_conva2_3");
+  ////compute_conva2$3->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////compute_conva2$3->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 2)");
+  ////compute_conva2$3->add_load("_kernela1", "2");
+  ////compute_conva2$3->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  //auto compute_conva2$4 = loop_conv_s1_x->add_op("compute_conva2_4");
-  //compute_conva2$4->add_function("compute_conva2_4");
-  //compute_conva2$4->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  //compute_conva2$4->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 64)");
-  //compute_conva2$4->add_load("_kernela1", "3");
-  //compute_conva2$4->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////auto compute_conva2$4 = loop_conv_s1_x->add_op("compute_conva2_4");
+  ////compute_conva2$4->add_function("compute_conva2_4");
+  ////compute_conva2$4->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////compute_conva2$4->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 64)");
+  ////compute_conva2$4->add_load("_kernela1", "3");
+  ////compute_conva2$4->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  //auto compute_conva2$5 = loop_conv_s1_x->add_op("compute_conva2_5");
-  //compute_conva2$5->add_function("compute_conva2$5");
-  //compute_conva2$5->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  //compute_conva2$5->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 65)");
-  //compute_conva2$5->add_load("_kernela1", "4");
-  //compute_conva2$5->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////auto compute_conva2$5 = loop_conv_s1_x->add_op("compute_conva2_5");
+  ////compute_conva2$5->add_function("compute_conva2$5");
+  ////compute_conva2$5->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////compute_conva2$5->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 65)");
+  ////compute_conva2$5->add_load("_kernela1", "4");
+  ////compute_conva2$5->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  //auto compute_conva2$6 = loop_conv_s1_x->add_op("compute_conva2_6");
-  //compute_conva2$6->add_function("compute_conva2_6");
-  //compute_conva2$6->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  //compute_conva2$6->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 66)");
-  //compute_conva2$6->add_load("_kernela1", "5");
-  //compute_conva2$6->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////auto compute_conva2$6 = loop_conv_s1_x->add_op("compute_conva2_6");
+  ////compute_conva2$6->add_function("compute_conva2_6");
+  ////compute_conva2$6->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////compute_conva2$6->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 66)");
+  ////compute_conva2$6->add_load("_kernela1", "5");
+  ////compute_conva2$6->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  //auto compute_conva2$7 = loop_conv_s1_x->add_op("compute_conva2_7");
-  //compute_conva2$7->add_function("compute_conva2_7");
-  //compute_conva2$7->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  //compute_conva2$7->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 128)");
-  //compute_conva2$7->add_load("_kernela1", "6");
-  //compute_conva2$7->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////auto compute_conva2$7 = loop_conv_s1_x->add_op("compute_conva2_7");
+  ////compute_conva2$7->add_function("compute_conva2_7");
+  ////compute_conva2$7->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////compute_conva2$7->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 128)");
+  ////compute_conva2$7->add_load("_kernela1", "6");
+  ////compute_conva2$7->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  //auto compute_conva2$8 = loop_conv_s1_x->add_op("compute_conva2_8");
-  //compute_conva2$8->add_function("compute_conva2_8");
-  //compute_conva2$8->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  //compute_conva2$8->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 129)");
-  //compute_conva2$8->add_load("_kernela1", "7");
-  //compute_conva2$8->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////auto compute_conva2$8 = loop_conv_s1_x->add_op("compute_conva2_8");
+  ////compute_conva2$8->add_function("compute_conva2_8");
+  ////compute_conva2$8->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////compute_conva2$8->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 129)");
+  ////compute_conva2$8->add_load("_kernela1", "7");
+  ////compute_conva2$8->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  //auto compute_conva2$9 = loop_conv_s1_x->add_op("compute_conva2_9");
-  //compute_conva2$9->add_function("compute_conva2_9");
-  //compute_conva2$9->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
-  //compute_conva2$9->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 130)");
-  //compute_conva2$9->add_load("_kernela1", "8");
-  //compute_conva2$9->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////auto compute_conva2$9 = loop_conv_s1_x->add_op("compute_conva2_9");
+  ////compute_conva2$9->add_function("compute_conva2_9");
+  ////compute_conva2$9->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////compute_conva2$9->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 130)");
+  ////compute_conva2$9->add_load("_kernela1", "8");
+  ////compute_conva2$9->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
 
-  auto compute_hw_output = loop_hw_output_s0_x_xo->add_op("compute_hw_output");
-  compute_hw_output->add_function("compute_hw_output");
-  compute_hw_output->add_load("_conva2", "(hw_output_s0_x_xo + (hw_output_s0_y_yo*62))");
-  prg.buffer_port_widths["_hw_output"] = 16;
-  compute_hw_output->add_store("_hw_output", "(hw_output_s0_x_xo + (hw_output_s0_y_yo*62))");
+  //auto compute_hw_output = loop_hw_output_s0_x_xo->add_op("compute_hw_output");
+  //compute_hw_output->add_function("compute_hw_output");
+  //compute_hw_output->add_load("_conva2", "(hw_output_s0_x_xo + (hw_output_s0_y_yo*62))");
+  //prg.buffer_port_widths["_hw_output"] = 16;
+  //compute_hw_output->add_store("_hw_output", "(hw_output_s0_x_xo + (hw_output_s0_y_yo*62))");
 
-  return prg;
+  //return prg;
 }
 
 void synth_reduce_test() {
@@ -1073,14 +1239,12 @@ void agg_test() {
  // auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
   cout << "Sched map: " << str(sched_opt) << endl;
   cout << codegen_c(sched_opt) << endl;
-  //assert(false);
   //aha_talk_print_info(prg);
   //hardcode some configuration registers
   memtile_config memtile;
   auto buffers = build_buffers(prg, sched_opt);
   memtile.extract_config(buffers);
   memtile.emit_config_file_csv("lake_memtile_config");
-  //assert(false);
 }
 
 
@@ -3318,7 +3482,7 @@ struct App {
     for (auto c : calls) {
       string window_name = c.first;
       vector<QAV> strides{qconst(1), qconst(1), qconst(1)};
-      set<vector<int> > offsets;
+      std::set<vector<int> > offsets;
       for (auto off : c.second) {
         vector<int> offset = get_offset(off);
         offsets.insert(offset);
@@ -3364,7 +3528,7 @@ struct App {
     for (auto c : calls) {
       string window_name = c.first;
       vector<QAV> strides{qconst(1), qconst(1)};
-      set<vector<int> > offsets;
+      std::set<vector<int> > offsets;
       for (auto off : c.second) {
         vector<int> offset = get_offset(off);
         offsets.insert(offset);
@@ -3581,8 +3745,8 @@ struct App {
     return cons;
   }
 
-  set<string> consumers(const string& f) const {
-    set<string> cons;
+  std::set<string> consumers(const string& f) const {
+    std::set<string> cons;
     for (auto other_func : app_dag) {
       for (auto d : other_func.second.get_srcs()) {
         if (d.name == f) {
@@ -3972,7 +4136,7 @@ struct App {
     isl_union_map *coincidence =
       cpy(validity);
 
-    set<string> high_bandwidth_buffers;
+    std::set<string> high_bandwidth_buffers;
     for (auto f : sort_functions()) {
       auto cs = consumers(f);
       if (cs.size() > 1) {
@@ -4000,7 +4164,6 @@ struct App {
       cout << tab(2) << comma_list(b.second) << endl;
     }
 
-    //assert(false);
 
     map<string, vector<isl_aff*> > sched =
       clockwork_schedule(domain, validity, proximity, high_bandwidth_deps);
@@ -4095,7 +4258,6 @@ struct App {
     assert(domain != nullptr);
 
     cout << "rel order: " << str(rel_order) << endl;
-    //assert(false);
 
     isl_union_map *validity =
       its(dot(writes, inv(reads)), before);
@@ -4106,7 +4268,6 @@ struct App {
       //cout << tab(1) << str(m) << endl;
       //cout << tab(2) << str(lexmin(m)) << endl;
     //}
-    //assert(false);
     validity = unn(validity, rel_order);
 
     isl_union_map *proximity =
@@ -4117,6 +4278,7 @@ struct App {
 
     auto finite_domain = cpy(domain);
 
+    // TODO: MAYBE REMOVE THIS?
     clockwork_schedule(cpy(domain), cpy(validity), cpy(proximity));
 
     isl_schedule_constraints* constraints =
@@ -4128,7 +4290,6 @@ struct App {
 
     //domain = unn(domain, isl_union_set_universe(cpy(domain)));
     //experimental_opt(cpy(domain), cpy(validity), cpy(proximity));
-    //assert(false);
     //isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
 
 
@@ -4137,7 +4298,6 @@ struct App {
     assert(schedmap != nullptr);
     cout << "Final isl schedule: " << str(schedmap) << endl;
     cout << "C code; " << codegen_c(schedmap) << endl;
-    //assert(false);
 
     isl_options_set_schedule_algorithm(ctx, ISL_SCHEDULE_ALGORITHM_ISL);
 
@@ -4368,7 +4528,6 @@ struct App {
       }
     }
 
-    //assert(false);
     prg.outs = {name};
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
@@ -4383,6 +4542,10 @@ struct App {
     return "uint" + str(default_pixel_width);
   }
 
+  int original_buffer_size(const std::string& max_buffer) {
+    return data_domain(max_buffer).cardinality();
+  }
+
   void generate_soda_file(const std::string& name) {
     ofstream out(name + ".soda");
     out << "kernel: " << name << endl;
@@ -4394,12 +4557,38 @@ struct App {
     out << "unroll factor: " << unroll_factor << endl;
     out << "burst width: " << width*unroll_factor << endl << endl;
 
-    set<string> external_buffers;
+    std::set<string> external_buffers;
     for (auto f : sort_functions()) {
       if (producers(f).size() == 0) {
         external_buffers.insert(f);
       }
     }
+
+    assert(external_buffers.size() > 0);
+    string max_buffer;
+    int max_size = -1;
+    for (auto b : external_buffers) {
+      if (original_buffer_size(b) > max_size) {
+        max_buffer = b;
+        max_size = original_buffer_size(b);
+      }
+    }
+    for (auto b : external_buffers) {
+      if (b != max_buffer) {
+        out << "input " << num_type_cstring() << ": " << b << endl;
+      }
+    }
+    Box domain = data_domain(max_buffer);
+    //assert(domain.dimension() == 2);
+    vector<string> dims;
+    for (int i = 0; i < domain.dimension(); i++) {
+      if (i < domain.dimension() - 1) {
+        dims.push_back(str(domain.length(i)));
+      } else {
+        dims.push_back("*");
+      }
+    }
+    out << "input " << num_type_cstring() << ": " << max_buffer << sep_list(dims, "(", ")", ", ") << endl << endl;
 
     vector<string> zeros;
     for (int i = 0; i < data_dimension(); i++) {
@@ -4415,30 +4604,30 @@ struct App {
             out << "output " << num_type_cstring() << ": " << f << zrs << " = ";
               out << soda_compute_string(width, u.def) << endl << endl;
           } else {
-            bool all_producers_external = true;
-            for (auto p : producers(f)) {
-              if (!elem(p.name, external_buffers)) {
-                all_producers_external = false;
-                break;
-              }
-            }
+            //bool all_producers_external = true;
+            //for (auto p : producers(f)) {
+              //if (!elem(p.name, external_buffers)) {
+                //all_producers_external = false;
+                //break;
+              //}
+            //}
 
-            if (all_producers_external) {
-              Box domain = data_domain(f);
-              //assert(domain.dimension() == 2);
-              vector<string> dims;
-              for (int i = 0; i < domain.dimension(); i++) {
-                if (i < domain.dimension() - 1) {
-                  dims.push_back(str(domain.length(i)));
-                } else {
-                  dims.push_back("*");
-                }
-              }
-              out << "input " << num_type_cstring() << ": " << f << sep_list(dims, "(", ")", ", ") << endl << endl;
-            } else {
+            //if (all_producers_external) {
+              //Box domain = data_domain(f);
+              ////assert(domain.dimension() == 2);
+              //vector<string> dims;
+              //for (int i = 0; i < domain.dimension(); i++) {
+                //if (i < domain.dimension() - 1) {
+                  //dims.push_back(str(domain.length(i)));
+                //} else {
+                  //dims.push_back("*");
+                //}
+              //}
+              //out << "input " << num_type_cstring() << ": " << f << sep_list(dims, "(", ")", ", ") << endl << endl;
+            //} else {
               out << "local " << num_type_cstring() << ": " << f << zrs << " = ";
               out << soda_compute_string(width, u.def) << endl << endl;
-            }
+            //}
           }
         }
       }
@@ -4531,9 +4720,7 @@ struct App {
     return schedules;
   }
 
-  umap* schedule() {
-    auto schedules = schedule_opt();
-
+  umap* qschedule_to_map(map<string, vector<QExpr> >& schedules) {
     umap* m = rdmap(ctx, "{}");
     for (auto fn : schedules) {
       string f = fn.first;
@@ -4560,6 +4747,12 @@ struct App {
     return m;
   }
 
+  umap* schedule() {
+    auto schedules = schedule_opt();
+    return qschedule_to_map(schedules);
+
+  }
+
   string unrolled_compute_name(const string& f) {
     return map_find(f, app_dag).unrolled_compute_name();
   }
@@ -4582,7 +4775,7 @@ struct App {
     cfile << endl << endl;
 
     cfile << "// Compute unit banks..." << endl;
-    set<string> already_seen;
+    std::set<string> already_seen;
     for (auto f : sort_functions()) {
       if (producers(f).size() == 0) {
         continue;
@@ -4703,11 +4896,28 @@ struct App {
   }
 
   void schedule_and_codegen(CodegenOptions& options, const std::string& name) {
-    umap* m = schedule();
+    time_t rawtime;
+    struct tm * timeinfo;
+    char buffer[80];
+
+    time (&rawtime);
+    timeinfo = localtime(&rawtime);
+
+    strftime(buffer,sizeof(buffer),"%d-%m-%Y %H:%M:%S",timeinfo);
+    std::string time_str(buffer);   
+
+    auto scheds = schedule_opt();
+    umap* m = qschedule_to_map(scheds);
+    //umap* m = schedule();
+    ofstream schedule_out(name + "_sched_" + time_str);
+    for (auto k : get_maps(m)) {
+      schedule_out << str(k) << endl;
+    }
+    schedule_out.close();
     assert(m != nullptr);
 
-    map<string, vector<QExpr> > scheds =
-      schedule_opt();
+    //map<string, vector<QExpr> > scheds =
+      //schedule_opt();
     map<string, Box> compute_domains;
     vector<string> ops;
     for (auto u : sort_updates()) {
@@ -4717,7 +4927,7 @@ struct App {
       }
     }
 
-    string cgn = box_codegen(ops, scheds, compute_domains);
+    string cgn = box_codegen(options, ops, scheds, compute_domains);
     options.code_string = cgn;
 
     map<string, UBuffer> buffers = build_buffers(m);
@@ -4758,13 +4968,17 @@ struct App {
     cpy.fill_data_domain(reference_function, {dummy_value, dummy_value});
     cpy.fill_compute_domain();
 
+    cout << "Padding validity deps..." << endl;
+
     umap* deps = pad_map(cpy.validity_deps());
+    cout << "Done padding validity deps" << endl;
     auto umaps = get_maps(deps);
     vector<isl_map*> projected_deps;
     for (auto m : umaps) {
       isl_map* projected = project_all_but(m, 0);
       projected_deps.push_back(projected);
     }
+    cout << "Computing qfactors..." << endl;
     map<string, isl_val*> qfs = compute_qfactors(projected_deps);
     cout << "Got qfactors..." << endl;
     for (auto q : qfs) {
@@ -5197,10 +5411,139 @@ App tricky_reconvergence(const std::string& name) {
   return dn;
 }
 
+prog halide_cascade() {
+  prog prg;
+  prg.compute_unit_file = "clockwork_target_compute.h";
+  prg.name = "halide_cascade";
+
+// Stencil<uint16_t, 64, 64> &hw_input_stencil = arg_0;
+  prg.add_input("hw_input_stencil");
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
+// Stencil<void *> &hw_output_stencil = arg_1;
+  prg.add_output("hw_output_stencil");
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+
+  int size = 6200;
+//consuming hw_input.stencil
+////producing conv1.stencil
+  auto loop_conv1_s0_y = prg.add_loop("conv1_s0_y", 0, size);
+  auto loop_conv1_s0_x = loop_conv1_s0_y->add_loop("conv1_s0_x", 0, size);
+
+//store is: conv1.stencil(conv1.s0.x, conv1.s0.y) = 0
+  auto compute_conv1_stencil = loop_conv1_s0_x->add_op("compute_conv1_stencil");
+  compute_conv1_stencil->add_function("compute_conv1_stencil");
+  prg.buffer_port_widths["conv1_stencil"] = 16;
+  compute_conv1_stencil->add_store("conv1_stencil", "conv1_s0_x", "conv1_s0_y");
+  auto loop_conv1_s1_y = prg.add_loop("conv1_s1_y", 0, size);
+  auto loop_conv1_s1_x = loop_conv1_s1_y->add_loop("conv1_s1_x", 0, size);
+
+//store is: conv1.stencil(conv1.s1.x, conv1.s1.y) = (((((conv1.stencil(conv1.s1.x, conv1.s1.y) + (((((int32(hw_input.stencil((conv1.s1.x + 1), (conv1.s1.y + 1)))*2) + (int32(hw_input.stencil((conv1.s1.x + 1), (conv1.s1.y + 2))) + int32(hw_input.stencil((conv1.s1.x + 2), (conv1.s1.y + 1))))) + int32(hw_input.stencil(conv1.s1.x, (conv1.s1.y + 1)))) + int32(hw_input.stencil((conv1.s1.x + 1), conv1.s1.y)))*2)) + int32(hw_input.stencil(conv1.s1.x, conv1.s1.y))) + int32(hw_input.stencil((conv1.s1.x + 2), conv1.s1.y))) + int32(hw_input.stencil(conv1.s1.x, (conv1.s1.y + 2)))) + int32(hw_input.stencil((conv1.s1.x + 2), (conv1.s1.y + 2))))
+  auto compute_conv1_stencil_1 = loop_conv1_s1_x->add_op("compute_conv1_stencil_1");
+  compute_conv1_stencil_1->add_function("compute_conv1_stencil_1");
+  compute_conv1_stencil_1->add_load("conv1_stencil", "conv1_s1_x", "conv1_s1_y");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "(conv1_s1_x + 1)", "(conv1_s1_y + 1)");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "(conv1_s1_x + 1)", "(conv1_s1_y + 2)");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "(conv1_s1_x + 2)", "(conv1_s1_y + 1)");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "conv1_s1_x", "(conv1_s1_y + 1)");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "(conv1_s1_x + 1)", "conv1_s1_y");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "conv1_s1_x", "conv1_s1_y");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "(conv1_s1_x + 2)", "conv1_s1_y");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "conv1_s1_x", "(conv1_s1_y + 2)");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "(conv1_s1_x + 2)", "(conv1_s1_y + 2)");
+  compute_conv1_stencil_1->add_store("conv1_stencil", "conv1_s1_x", "conv1_s1_y");
+////producing conv2.stencil
+  auto loop_conv2_s0_y = prg.add_loop("conv2_s0_y", 0, size - 2);
+  auto loop_conv2_s0_x = loop_conv2_s0_y->add_loop("conv2_s0_x", 0, size - 2);
+
+//store is: conv2.stencil(conv2.s0.x, conv2.s0.y) = 0
+  auto compute_conv2_stencil = loop_conv2_s0_x->add_op("compute_conv2_stencil");
+  compute_conv2_stencil->add_function("compute_conv2_stencil");
+  prg.buffer_port_widths["conv2_stencil"] = 16;
+  compute_conv2_stencil->add_store("conv2_stencil", "conv2_s0_x", "conv2_s0_y");
+
+//consuming conv1.stencil
+  auto loop_conv2_s1_y = prg.add_loop("conv2_s1_y", 0, size - 2);
+  auto loop_conv2_s1_x = loop_conv2_s1_y->add_loop("conv2_s1_x", 0, size - 2);
+
+//store is: conv2.stencil(conv2.s1.x, conv2.s1.y) = (conv1.stencil(conv2.s1.x, conv2.s1.y) + (conv2.stencil(conv2.s1.x, conv2.s1.y) + ((conv1.stencil((conv2.s1.x + 1), conv2.s1.y)*2) + (conv1.stencil((conv2.s1.x + 2), conv2.s1.y) + ((conv1.stencil(conv2.s1.x, (conv2.s1.y + 1))*2) + ((conv1.stencil((conv2.s1.x + 1), (conv2.s1.y + 1))*4) + ((conv1.stencil((conv2.s1.x + 2), (conv2.s1.y + 1))*2) + (conv1.stencil(conv2.s1.x, (conv2.s1.y + 2)) + (conv1.stencil((conv2.s1.x + 2), (conv2.s1.y + 2)) + (conv1.stencil((conv2.s1.x + 1), (conv2.s1.y + 2))*2))))))))))
+  auto compute_conv2_stencil_1 = loop_conv2_s1_x->add_op("compute_conv2_stencil_1");
+  compute_conv2_stencil_1->add_function("compute_conv2_stencil_1");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "conv2_s1_x", "conv2_s1_y");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "(conv2_s1_x + 1)", "conv2_s1_y");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "(conv2_s1_x + 2)", "conv2_s1_y");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "conv2_s1_x", "(conv2_s1_y + 1)");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "(conv2_s1_x + 1)", "(conv2_s1_y + 1)");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "(conv2_s1_x + 2)", "(conv2_s1_y + 1)");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "conv2_s1_x", "(conv2_s1_y + 2)");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "(conv2_s1_x + 2)", "(conv2_s1_y + 2)");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "(conv2_s1_x + 1)", "(conv2_s1_y + 2)");
+  compute_conv2_stencil_1->add_load("conv2_stencil", "conv2_s1_x", "conv2_s1_y");
+  compute_conv2_stencil_1->add_store("conv2_stencil", "conv2_s1_x", "conv2_s1_y");
+
+//consuming conv2.stencil
+  auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, size - 2);
+  auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, size - 2);
+
+//store is: hw_output.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo) = uint8(conv2.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo))
+  auto compute_hw_output_stencil = loop_hw_output_s0_x_xo->add_op("compute_hw_output_stencil");
+  compute_hw_output_stencil->add_function("compute_hw_output_stencil");
+  compute_hw_output_stencil->add_load("conv2_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo");
+  compute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo");
+
+  return prg;
+}
+
+void halide_cascade_test() {
+  prog prg = halide_cascade();
+  cout << "Created program..." << endl;
+  prg.pretty_print();
+  
+  auto domain = prg.whole_iteration_domain();
+
+  auto order_deps = prg.relative_orders();
+  cout << "Getting validity deps..." << endl;
+  isl_union_map *raw_deps = prg.validity_deps();
+  cout << "Got validity deps..." << endl;
+  cout << "Validity: " << str(raw_deps) << endl;
+  auto validity =
+    unn(order_deps, raw_deps);
+  isl_union_map *proximity =
+    cpy(raw_deps);
+
+  auto clksched = clockwork_schedule(domain, validity, proximity);
+  cout << "---- Clockwork schedule:" << endl;
+  isl_space* test_space = map_space(prg.ctx, 2, 3);
+  isl_local_space* aff_space = local_set_space(prg.ctx, 2);
+  for (auto s : clksched) {
+    auto ma = isl_multi_aff_zero(test_space);
+
+    cout << tab(1) << s.first << " -> ";
+    int i = 0;
+    for (auto v : s.second) {
+      cout << str(v) << ", ";
+      isl_aff* av = isl_aff_zero_on_domain(aff_space);
+      av = set_const_coeff(av, const_coeff(v));
+      isl_multi_aff_set_aff(ma, i, av);
+      i++;
+    }
+    cout << endl;
+    cout << tab(2) << "ma = " << str(ma) << endl;
+  }
+
+  //assert(false);
+  generate_optimized_code(prg);
+  //assert(false);
+
+  //regression_test(prg);
+}
+
 void halide_frontend_test() {
-  //prog prg = clockwork_target();
-  //cout << "Created program..." << endl;
-  //generate_optimized_code(prg);
+  prog prg = clockwork_target();
+  cout << "Created program..." << endl;
+  prg.pretty_print();
+  //assert(false);
+  generate_optimized_code(prg);
   //assert(false);
 
   //regression_test(prg);
@@ -5771,7 +6114,7 @@ void harris16_test() {
     run_regression_tb("harris16_mini_naive");
   assert(naive == optimized);
   move_to_benchmarks_folder("harris16_mini_opt");
-  assert(false);
+  //assert(false);
 
 
   int rows = 1080;
@@ -5826,6 +6169,28 @@ void harris_test() {
   }
 }
 
+App denoise3d_reconverge(const std::string& out_name) {
+  App dn;
+  dn.set_default_pixel_width(16);
+  dn.func3d("u_oc");
+  dn.func3d("f_oc");
+
+  dn.func3d("u", v3("u_oc", 0, 0, 0));
+  dn.func3d("f", v3("f_oc", 0, 0, 0));
+
+  dn.func3d("diff_i", sub(v("u", 0, 0, 0), v("u", 0, 0, -1)));
+  dn.func3d("diff_o", sub(v("u", 0, 0, 0), v("u", 0, 0, 1)));
+
+  dn.func3d("g",
+      add({sq3("diff_i"), sq3("diff_o")}));
+  dn.func3d("r0", mul(v3("u"), v3("f")));
+  dn.func3d("r1", sq3("r0"));
+  dn.func3d(out_name,
+      add({v3("u", 0, 0, 0), v3("g", 1, 0, 0), v3("r1", 0, 0, 0)}));
+
+  return dn;
+}
+
 App denoise3d(const std::string& out_name) {
   App dn;
   dn.set_default_pixel_width(16);
@@ -5848,12 +6213,39 @@ App denoise3d(const std::string& out_name) {
   dn.func3d("r0", mul(v3("u"), v3("f")));
   dn.func3d("r1", sq3("r0"));
   dn.func3d(out_name,
-      add({v3("u", 0, 0, 0), v3("u", 1, 0, 0), v3("g", 1, 0, 0), v3("u", -1, 0, 0), v3("g", -1, 0, 0),
-        v3("u", 0, 1, 0), v3("g", 0, 1, 0), v3("u", 0, -1, 0), v3("g", 0, -1, 0), v3("u", 0, 0, 1), v3("g", 0, 0, 1),
-        v3("u", 0, 0, -1), v3("g", 0, 0, -1), v3("f", 0, 0, 0), v3("r1", 0, 0, 0),
-        v3("g", 1, 0, 0), v3("g", -1, 0, 0), v3("g", 0, 1, 0), v3("g", 0, -1, 0), v3("g", 0, 0, 1), v3("g", 0, 0, -1)}));
+      add({v3("u", 0, 0, 0), v3("g", 1, 0, 0), v3("r1", 0, 0, 0)}));
+
+  //dn.func3d(out_name,
+      //add({v3("u", 0, 0, 0), v3("u", 1, 0, 0), v3("g", 1, 0, 0), v3("u", -1, 0, 0), v3("g", -1, 0, 0),
+        //v3("u", 0, 1, 0), v3("g", 0, 1, 0), v3("u", 0, -1, 0), v3("g", 0, -1, 0), v3("u", 0, 0, 1), v3("g", 0, 0, 1),
+        //v3("u", 0, 0, -1), v3("g", 0, 0, -1), v3("f", 0, 0, 0), v3("r1", 0, 0, 0),
+        //v3("g", 1, 0, 0), v3("g", -1, 0, 0), v3("g", 0, 1, 0), v3("g", 0, -1, 0), v3("g", 0, 0, 1), v3("g", 0, 0, -1)}));
 
   return dn;
+}
+
+void denoise3d_reconvergence_test() {
+  string name = "dn_reconv";
+  int mini_size = 8;
+  auto hmini = denoise3d_reconverge(name);
+  hmini.realize_naive(name, {mini_size, mini_size, mini_size});
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  //options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
+  //options.all_rams = true;
+  //options.debug_options.expect_all_linebuffers = true;
+  hmini.realize(options, name, {mini_size, mini_size, mini_size}, 1);
+
+  std::vector<std::string> naive =
+    run_regression_tb(name + "_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb(name + "_opt");
+  assert(naive == optimized);
+  move_to_benchmarks_folder(name + "_opt");
+  //assert(false);
 }
 
 void denoise3d_test() {
@@ -5865,7 +6257,7 @@ void denoise3d_test() {
   options.internal = true;
   options.simplify_address_expressions = true;
   options.use_custom_code_string = true;
-  options.debug_options.expect_all_linebuffers = true;
+  //options.debug_options.expect_all_linebuffers = true;
   hmini.realize(options, "dn3d_mini", {mini_size, mini_size, mini_size}, 1);
 
   std::vector<std::string> naive =
@@ -5874,6 +6266,8 @@ void denoise3d_test() {
     run_regression_tb("dn3d_mini_opt");
   assert(naive == optimized);
   move_to_benchmarks_folder("dn3d_mini_opt");
+  assert(false);
+
 
 
   int rows = 32;
@@ -6572,17 +6966,18 @@ void sobel_16_app_test() {
 
   //int cols = 10;
   //int rows = 10;
-  vector<int> factors{1, 8, 16};
+  vector<int> factors{1, 2, 4, 8};
   //for (int i = 0; i < 5; i++) {
   for (auto factor : factors) {
     int unroll_factor = factor;
       //pow(2, i);
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
-    string out_name = "sbl_" + str(unroll_factor);
+    string out_name = "sblr30_" + str(unroll_factor);
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
+    options.num_input_epochs = 30;
     options.debug_options.expect_all_linebuffers = true;
     sobel16(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
@@ -6617,11 +7012,18 @@ void blur_xy_16_app_test() {
   int cols = 1920;
   int rows = 1080;
 
-  for (int i = 0; i < 6; i++) {
-    int unroll_factor = pow(2, i);
+  vector<int> factors{1, 2, 4, 8};
+  for (auto f : factors) {
+    int unroll_factor = f;
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
-    string out_name = "bxy_ur_" + str(unroll_factor);
-    blur_xy_16(out_name).realize(out_name, cols, rows, unroll_factor);
+    string out_name = "bxy30_" + str(unroll_factor);
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    options.num_input_epochs = 30;
+    options.debug_options.expect_all_linebuffers = true;
+    blur_xy_16(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
     move_to_benchmarks_folder(out_name + "_opt");
   }
@@ -7629,31 +8031,36 @@ void playground() {
 
 }
 
-void application_tests() {
-  harris16_test();
+void iccad_tests() {
+  denoise3d_reconvergence_test();
   assert(false);
+  blur_xy_16_app_test();
+  //assert(false);
 
+  sobel_16_app_test();
+  exposure_fusion_iccad_apps();
   pointwise_app_test();
   gaussian_pyramid_app_test();
 
   max_pooling_test();
 
-  halide_frontend_test();
-
-  exposure_fusion_iccad_apps();
+  harris16_test();
+  harris_test();
 
   exposure_fusion();
 
-  sobel_16_app_test();
-  denoise3d_test();
-  harris_test();
-  blur_xy_16_app_test();
+}
+
+void application_tests() {
+  iccad_tests();
+  halide_frontend_test();
+  halide_cascade_test();
 
   ram_addr_unit_test();
   denoise2d_test();
 
   conv_1d_test();
-  blur_xy_16_app_test();
+  
   tricky_shift_register_reconvergence_test();
 
   //playground();

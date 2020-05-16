@@ -47,8 +47,8 @@ hw_uint<16> g_generated_compute(hw_uint<16*1> diff_d, hw_uint<16*1> diff_i, hw_u
   return ((((((diff_u.get<16, 0>() * diff_u.get<16, 0>()) + (diff_d.get<16, 0>() * diff_d.get<16, 0>())) + (diff_l.get<16, 0>() * diff_l.get<16, 0>())) + (diff_r.get<16, 0>() * diff_r.get<16, 0>())) + (diff_i.get<16, 0>() * diff_i.get<16, 0>())) + (diff_o.get<16, 0>() * diff_o.get<16, 0>()));
 }
 
-hw_uint<16> dn3d_mini_generated_compute(hw_uint<16*1> f, hw_uint<16*6> g, hw_uint<16*1> r1, hw_uint<16*7> u) {
-  return ((((((((((((((((((((u.get<16, 3>() + u.get<16, 6>()) + g.get<16, 5>()) + u.get<16, 0>()) + g.get<16, 0>()) + u.get<16, 5>()) + g.get<16, 4>()) + u.get<16, 1>()) + g.get<16, 1>()) + u.get<16, 4>()) + g.get<16, 3>()) + u.get<16, 2>()) + g.get<16, 2>()) + f.get<16, 0>()) + r1.get<16, 0>()) + g.get<16, 5>()) + g.get<16, 0>()) + g.get<16, 4>()) + g.get<16, 1>()) + g.get<16, 3>()) + g.get<16, 2>());
+hw_uint<16> dn3d_mini_generated_compute(hw_uint<16*1> g, hw_uint<16*1> r1, hw_uint<16*1> u) {
+  return ((u.get<16, 0>() + g.get<16, 0>()) + r1.get<16, 0>());
 }
 
 
@@ -188,18 +188,16 @@ hw_uint<16>  g_generated_compute_unrolled_1(hw_uint<16>& diff_d, hw_uint<16>& di
 }
 
   // dn3d_mini_update_0 unroll factor: 1
-hw_uint<16>  dn3d_mini_generated_compute_unrolled_1(hw_uint<16>& f, hw_uint<96>& g, hw_uint<16>& r1, hw_uint<112>& u) {
+hw_uint<16>  dn3d_mini_generated_compute_unrolled_1(hw_uint<16>& g, hw_uint<16>& r1, hw_uint<16>& u) {
   hw_uint<16> whole_result;
 
-  hw_uint<16> lane_0_f;
-  set_at<0, 16, 16>(lane_0_f, f.extract<0, 15>());
-  hw_uint<96> lane_0_g;
-  set_at<0, 96, 96>(lane_0_g, g.extract<0, 95>());
+  hw_uint<16> lane_0_g;
+  set_at<0, 16, 16>(lane_0_g, g.extract<0, 15>());
   hw_uint<16> lane_0_r1;
   set_at<0, 16, 16>(lane_0_r1, r1.extract<0, 15>());
-  hw_uint<112> lane_0_u;
-  set_at<0, 112, 112>(lane_0_u, u.extract<0, 111>());
-  auto result_0 = dn3d_mini_generated_compute(lane_0_f, lane_0_g, lane_0_r1, lane_0_u);
+  hw_uint<16> lane_0_u;
+  set_at<0, 16, 16>(lane_0_u, u.extract<0, 15>());
+  auto result_0 = dn3d_mini_generated_compute(lane_0_g, lane_0_r1, lane_0_u);
   set_at<0, 16, 16>(whole_result, result_0);
   return whole_result;
 }

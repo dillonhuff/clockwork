@@ -383,31 +383,6 @@ inline hw_uint<256> in_mp_4_update_0_read_bundle_read(in_cache& in, int d0, int 
 
 
 // Operation logic
-inline void in_update_0(HWStream<hw_uint<128> >& /* buffer_args num ports = 4 */in_oc, in_cache& in, int d0, int d1, int d2) {
-	// Consume: in_oc
-	auto in_oc_0_c__0_value = in_oc.read();
-	auto compute_result = id_unrolled_4(in_oc_0_c__0_value);
-	// Produce: in
-	in_in_update_0_write_bundle_write(compute_result, in, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<128> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  hw_uint<32> debug_compute_result_lane_1;
-  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
-  hw_uint<32> debug_compute_result_lane_2;
-  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
-  hw_uint<32> debug_compute_result_lane_3;
-  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
-  *global_debug_handle << "in_update_0," << (4*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "in_update_0," << (4*d0 + 1) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_1 << endl;
-  *global_debug_handle << "in_update_0," << (4*d0 + 2) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_2 << endl;
-  *global_debug_handle << "in_update_0," << (4*d0 + 3) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_3 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void mp_4_update_0(in_cache& in, HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */mp_4, int d0, int d1, int d2) {
 	// Consume: in
 	auto in_0_c__0_value = in_mp_4_update_0_read_bundle_read(in/* source_delay */, d0, d1, d2);
@@ -426,8 +401,33 @@ inline void mp_4_update_0(in_cache& in, HWStream<hw_uint<64> >& /* buffer_args n
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
   hw_uint<32> debug_compute_result_lane_1;
   set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
-  *global_debug_handle << "mp_4_update_0," << (2*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "mp_4_update_0," << (2*d0 + 1) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "mp_4_update_0," << (2*d0 + 0) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "mp_4_update_0," << (2*d0 + 1) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_1 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void in_update_0(HWStream<hw_uint<128> >& /* buffer_args num ports = 4 */in_oc, in_cache& in, int d0, int d1, int d2) {
+	// Consume: in_oc
+	auto in_oc_0_c__0_value = in_oc.read();
+	auto compute_result = id_unrolled_4(in_oc_0_c__0_value);
+	// Produce: in
+	in_in_update_0_write_bundle_write(compute_result, in, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<128> debug_compute_result(compute_result);
+  hw_uint<32> debug_compute_result_lane_0;
+  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
+  hw_uint<32> debug_compute_result_lane_1;
+  set_at<0, 32, 32>(debug_compute_result_lane_1, debug_compute_result.extract<32, 63>());
+  hw_uint<32> debug_compute_result_lane_2;
+  set_at<0, 32, 32>(debug_compute_result_lane_2, debug_compute_result.extract<64, 95>());
+  hw_uint<32> debug_compute_result_lane_3;
+  set_at<0, 32, 32>(debug_compute_result_lane_3, debug_compute_result.extract<96, 127>());
+  *global_debug_handle << "in_update_0," << (4*d0 + 0) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "in_update_0," << (4*d0 + 1) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_1 << endl;
+  *global_debug_handle << "in_update_0," << (4*d0 + 2) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_2 << endl;
+  *global_debug_handle << "in_update_0," << (4*d0 + 3) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_3 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -442,11 +442,15 @@ void mp_4_opt(HWStream<hw_uint<128> >& /* get_args num ports = 4 */in_oc, HWStre
   in_cache in;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
   for (int epoch = 0; epoch < num_epochs; epoch++) {
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS inline recursive
-	#endif // __VIVADO_SYNTH__
-	
+	  // Schedules...
+	    // in_oc_update_0 -> [1*d2*1*1 + 1*0,1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
+	    // in_update_0 -> [1*d2*1*1 + 1*0,1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
+	    // mp_4_update_0 -> [1*d2*1*1 + 1*0,1*d1*1*2 + 1*1,1*d0*1*1 + 1*0,1*2]
 	for (int c0 = 0; c0 <= 31; c0++) {
 	  for (int c1 = 0; c1 <= 127; c1++) {
 	    for (int c2 = 0; c2 <= 31; c2++) {
@@ -484,14 +488,13 @@ void mp_4_opt(HWStream<hw_uint<128> >& /* get_args num ports = 4 */in_oc, HWStre
 const int in_update_0_read_num_transfers = 131072;
 const int mp_4_update_0_write_num_transfers = 65536;
 
-// TODO: Adapt to have one size for each edge buffer
-#define INPUT_SIZE 131072
-#define OUTPUT_SIZE 65536
+
 extern "C" {
 
 static void read_in_update_0_read(hw_uint<128>* input, HWStream<hw_uint<128> >& v, const int size) {
   hw_uint<128> burst_reg;
-  for (int i = 0; i < in_update_0_read_num_transfers*size; i++) {
+  int num_transfers = in_update_0_read_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -500,7 +503,8 @@ static void read_in_update_0_read(hw_uint<128>* input, HWStream<hw_uint<128> >& 
 
 static void write_mp_4_update_0_write(hw_uint<64>* output, HWStream<hw_uint<64> >& v, const int size) {
   hw_uint<64> burst_reg;
-  for (int i = 0; i < mp_4_update_0_write_num_transfers*size; i++) {
+  int num_transfers = mp_4_update_0_write_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;

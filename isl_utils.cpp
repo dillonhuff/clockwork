@@ -1393,8 +1393,11 @@ isl_aff* rdaff(isl_ctx* ctx, const std::string& str) {
   return isl_aff_read_from_str(ctx, str.c_str());
 }
 
-umap* rdmap(isl_ctx* ctx, const std::string& str) {
-  return isl_union_map_read_from_str(ctx, str.c_str());
+umap* rdmap(isl_ctx* ctx, const std::string& s) {
+  cout << "Reading map: " << s << endl;
+  auto res = isl_union_map_read_from_str(ctx, s.c_str());
+  assert(res != nullptr);
+  return res;
 }
 
 isl_point* sample(isl_basic_set* s) {
@@ -1918,8 +1921,16 @@ int to_int(isl_val* a) {
   return stoi(str(a));
 }
 
+isl_aff* set_const_coeff(isl_aff* const a, isl_val* v) {
+  return isl_aff_set_constant_val(a, cpy(v));
+}
+
 isl_aff* set_coeff(isl_aff* const a, const int pos, isl_val* v) {
-  return isl_aff_set_coefficient_val(a, isl_dim_in, pos, v);
+  return isl_aff_set_coefficient_val(a, isl_dim_in, pos,cpy(v));
+}
+
+isl_val* const_coeff(isl_aff* const a) {
+  return isl_aff_get_constant_val(a);
 }
 
 isl_val* coeff(isl_aff* const a, const int pos) {
@@ -1938,7 +1949,7 @@ uset* pad_uset(uset* domain) {
   auto ct = ctx(domain);
   cout << "Domain: " << str(domain) << endl;
   int max_dim = -1;
-  set<int> different_dims;
+  std::set<int> different_dims;
   cout << "sets..." << endl;
   for (auto s : get_sets(domain)) {
     cout << tab(1) << str(s) << endl;
@@ -2055,10 +2066,12 @@ isl_map* pad_map(isl_map* s, const int max_dim) {
     padded = unn(padded, pbset);
   }
 
+  cout << "Done padding" << endl;
   return padded;
 }
 
 umap* pad_map(umap* unpadded) {
+  cout << "Padding map..." << endl;
   auto ct = ctx(unpadded);
 
   cout << "Padding union map: " << str(unpadded) << endl;
@@ -2115,4 +2128,18 @@ isl_point* lexminpt(isl_set* const m0) {
 
 isl_point* lexmaxpt(isl_set* const m0) {
   return sample(lexmax(m0));
+}
+
+isl_local_space* local_set_space(isl_ctx* ctx, const int dims) {
+  return isl_local_space_from_space(set_space(ctx, dims));
+}
+
+isl_space* set_space(isl_ctx* ctx, const int dim) {
+  auto s = isl_space_set_alloc(ctx, 0, dim);
+  return s;
+}
+
+isl_space* map_space(isl_ctx* ctx, const int in_dims, const int out_dims) {
+  auto s = isl_space_alloc(ctx, 0, in_dims, out_dims);
+  return s;
 }

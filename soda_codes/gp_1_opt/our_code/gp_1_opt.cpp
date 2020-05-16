@@ -1368,6 +1368,22 @@ inline void level_3_level_3_update_0_write_bundle_write(hw_uint<16>& level_3_upd
 
 
 // Operation logic
+inline void in_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in_off_chip, in_cache& in, int d0, int d1) {
+	// Consume: in_off_chip
+	auto in_off_chip_0_c__0_value = in_off_chip.read();
+	auto compute_result = id_unrolled_1(in_off_chip_0_c__0_value);
+	// Produce: in
+	in_in_update_0_write_bundle_write(compute_result, in, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<16> debug_compute_result(compute_result);
+  hw_uint<16> debug_compute_result_lane_0;
+  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
+  *global_debug_handle << "in_update_0," << (1*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void level_0_update_0(in_cache& in, level_0_cache& level_0, int d0, int d1) {
 	// Consume: in
 	auto in_0_c__0_value = in_level_0_update_0_read_bundle_read(in/* source_delay */, d0, d1);
@@ -1384,44 +1400,7 @@ inline void level_0_update_0(in_cache& in, level_0_cache& level_0, int d0, int d
   hw_uint<16> debug_compute_result(compute_result);
   hw_uint<16> debug_compute_result_lane_0;
   set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "level_0_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void gp_1_update_0(level_3_cache& level_3, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */gp_1, int d0, int d1) {
-	// Consume: level_3
-	auto level_3_0_c__0_value = level_3_gp_1_update_0_read_bundle_read(level_3/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "gp_1_update_0_level_3," << d0<< "," << d1<< "," <<  level_3_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_1(level_3_0_c__0_value);
-	// Produce: gp_1
-	gp_1.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "gp_1_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void in_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in_off_chip, in_cache& in, int d0, int d1) {
-	// Consume: in_off_chip
-	auto in_off_chip_0_c__0_value = in_off_chip.read();
-	auto compute_result = id_unrolled_1(in_off_chip_0_c__0_value);
-	// Produce: in
-	in_in_update_0_write_bundle_write(compute_result, in, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "in_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "level_0_update_0," << (1*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -1442,7 +1421,7 @@ inline void level_1_update_0(level_0_cache& level_0, level_1_cache& level_1, int
   hw_uint<16> debug_compute_result(compute_result);
   hw_uint<16> debug_compute_result_lane_0;
   set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "level_1_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "level_1_update_0," << (1*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -1463,7 +1442,7 @@ inline void level_2_update_0(level_1_cache& level_1, level_2_cache& level_2, int
   hw_uint<16> debug_compute_result(compute_result);
   hw_uint<16> debug_compute_result_lane_0;
   set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "level_2_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "level_2_update_0," << (1*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -1484,7 +1463,28 @@ inline void level_3_update_0(level_2_cache& level_2, level_3_cache& level_3, int
   hw_uint<16> debug_compute_result(compute_result);
   hw_uint<16> debug_compute_result_lane_0;
   set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "level_3_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "level_3_update_0," << (1*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void gp_1_update_0(level_3_cache& level_3, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */gp_1, int d0, int d1) {
+	// Consume: level_3
+	auto level_3_0_c__0_value = level_3_gp_1_update_0_read_bundle_read(level_3/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+  *global_debug_handle << "gp_1_update_0_level_3," << d0<< "," << d1<< "," <<  level_3_0_c__0_value << endl;
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_1(level_3_0_c__0_value);
+	// Produce: gp_1
+	gp_1.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+  hw_uint<16> debug_compute_result(compute_result);
+  hw_uint<16> debug_compute_result_lane_0;
+  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
+  *global_debug_handle << "gp_1_update_0," << (1*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -1511,11 +1511,19 @@ void gp_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */in_off_chip, H
   level_3_cache level_3;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
   for (int epoch = 0; epoch < num_epochs; epoch++) {
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS inline recursive
-	#endif // __VIVADO_SYNTH__
-	
+	  // Schedules...
+	    // gp_1_update_0 -> [1*d1*1*16 + 1*30,1*d0*1*16 + 1*30,1*6]
+	    // in_off_chip_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
+	    // in_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
+	    // level_0_update_0 -> [1*d1*1*2 + 1*2,1*d0*1*2 + 1*2,1*2]
+	    // level_1_update_0 -> [1*d1*1*4 + 1*6,1*d0*1*4 + 1*6,1*3]
+	    // level_2_update_0 -> [1*d1*1*8 + 1*14,1*d0*1*8 + 1*14,1*4]
+	    // level_3_update_0 -> [1*d1*1*16 + 1*30,1*d0*1*16 + 1*30,1*5]
 	for (int c0 = 0; c0 <= 78; c0++) {
 	  for (int c1 = 0; c1 <= 78; c1++) {
 	
@@ -1567,14 +1575,13 @@ void gp_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */in_off_chip, H
 const int gp_1_update_0_write_num_transfers = 16;
 const int in_update_0_read_num_transfers = 6241;
 
-// TODO: Adapt to have one size for each edge buffer
-#define INPUT_SIZE 6241
-#define OUTPUT_SIZE 16
+
 extern "C" {
 
 static void read_in_update_0_read(hw_uint<16>* input, HWStream<hw_uint<16> >& v, const int size) {
   hw_uint<16> burst_reg;
-  for (int i = 0; i < in_update_0_read_num_transfers*size; i++) {
+  int num_transfers = in_update_0_read_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -1583,7 +1590,8 @@ static void read_in_update_0_read(hw_uint<16>* input, HWStream<hw_uint<16> >& v,
 
 static void write_gp_1_update_0_write(hw_uint<16>* output, HWStream<hw_uint<16> >& v, const int size) {
   hw_uint<16> burst_reg;
-  for (int i = 0; i < gp_1_update_0_write_num_transfers*size; i++) {
+  int num_transfers = gp_1_update_0_write_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;

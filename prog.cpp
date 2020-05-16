@@ -52,8 +52,8 @@ split_bv(const int indent,
   return lanes;
 }
 
-set<pair<string, string> > inputs(map<string, UBuffer>& buffers, prog& prg) {
-  set<pair<string, string> > edges;
+std::set<pair<string, string> > inputs(map<string, UBuffer>& buffers, prog& prg) {
+  std::set<pair<string, string> > edges;
   for (auto in : prg.ins) {
     assert(contains_key(in, buffers));
     auto& buf = buffers.at(in);
@@ -65,8 +65,8 @@ set<pair<string, string> > inputs(map<string, UBuffer>& buffers, prog& prg) {
   return edges;
 }
 
-set<string> in_bundles(map<string, UBuffer>& buffers, prog& prg) {
-  set<string> edges;
+std::set<string> in_bundles(map<string, UBuffer>& buffers, prog& prg) {
+  std::set<string> edges;
   for (auto in : prg.ins) {
     assert(contains_key(in, buffers));
     auto& buf = buffers.at(in);
@@ -79,8 +79,8 @@ set<string> in_bundles(map<string, UBuffer>& buffers, prog& prg) {
 }
 
 
-set<pair<string, string> > outputs(map<string, UBuffer>& buffers, prog& prg) {
-  set<pair<string, string> > edges;
+std::set<pair<string, string> > outputs(map<string, UBuffer>& buffers, prog& prg) {
+  std::set<pair<string, string> > edges;
   for (auto out : prg.outs) {
     assert(contains_key(out, buffers));
     auto& buf = buffers.at(out);
@@ -93,8 +93,8 @@ set<pair<string, string> > outputs(map<string, UBuffer>& buffers, prog& prg) {
   return edges;
 }
 
-set<string> out_bundles(map<string, UBuffer>& buffers, prog& prg) {
-  set<string> edges;
+std::set<string> out_bundles(map<string, UBuffer>& buffers, prog& prg) {
+  std::set<string> edges;
   for (auto out : prg.outs) {
     assert(contains_key(out, buffers));
     auto& buf = buffers.at(out);
@@ -107,8 +107,8 @@ set<string> out_bundles(map<string, UBuffer>& buffers, prog& prg) {
   return edges;
 }
 
-set<pair<string, string> > edge_buffers(map<string, UBuffer>& buffers, prog& prg) {
-  set<pair<string, string> > edges;
+std::set<pair<string, string> > edge_buffers(map<string, UBuffer>& buffers, prog& prg) {
+  std::set<pair<string, string> > edges;
   for (auto b : inputs(buffers, prg)) {
     edges.insert(b);
   }
@@ -119,8 +119,8 @@ set<pair<string, string> > edge_buffers(map<string, UBuffer>& buffers, prog& prg
   return edges;
 }
 
-set<string> edge_bundles(map<string, UBuffer>& buffers, prog& prg) {
-  set<string> edges;
+std::set<string> edge_bundles(map<string, UBuffer>& buffers, prog& prg) {
+  std::set<string> edges;
   for (auto in : prg.ins) {
     assert(contains_key(in, buffers));
     auto& buf = buffers.at(in);
@@ -173,8 +173,21 @@ void ocl_program_device(ostream& out, prog& prg, const std::string& suffix) {
   out << tab(1) << "}" << endl << endl;
 }
 
+void ocl_timing_suffix(std::ostream& out) {
+  out << tab(1) << "double dnsduration = ((double)nsduration);" << endl;
+  out << tab(1) << "double dsduration = dnsduration / ((double)1000000000);" << endl;
+
+  out << tab(1) << "double dbytes = total_size_bytes;" << endl;
+  out << tab(1) << "double bpersec = (dbytes / dsduration);" << endl;
+  out << tab(1) << "double gbpersec = bpersec / ((double)1024 * 1024 * 1024);" << endl;
+
+  out << "std::cout << \"bytes / sec = \" << bpersec << std::endl;" << endl;
+  out << "std::cout << \"GB / sec = \" << gbpersec << std::endl;" << endl;
+  out << "printf(\"Execution time = %f (sec) \\n\", dsduration);" << endl;
+}
+
 void run_kernel(std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
-  out << tab(1) << "std::cout << \"Starting kernel\" << std::endl;" << endl;
+  out << tab(1) << "std::cout << \"Migrating memory\" << std::endl;" << endl;
   vector<string> in_bufs;
   for (auto b : in_bundles(buffers, prg)) {
     in_bufs.push_back(b + "_ocl_buf");
@@ -185,6 +198,7 @@ void run_kernel(std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
   out << "unsigned long start, end, nsduration;" << endl;
   out << "cl::Event event;" << endl << endl;
 
+  out << tab(1) << "std::cout << \"Starting kernel\" << std::endl;" << endl;
   out << "OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));" << endl;
   out << "OCL_CHECK(err, err = event.wait());" << endl;
   out << "end =" << endl;
@@ -201,9 +215,11 @@ void run_kernel(std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
 
   out << endl;
   out << tab(1) << "q.finish();" << endl << endl;
+
+  ocl_timing_suffix(out);
 }
 
-void ocl_check_args(std::ostream& out) {
+void ocl_check_args(CodegenOptions& options, std::ostream& out) {
   out << tab(1) << "srand(234);" << endl;
   out << tab(1) << "if (argc != 2) {" << endl;
   out << tab(2) << "std::cout << \"Usage: \" << argv[0] << \" <XCLBIN File>\" << std::endl;" << endl;
@@ -211,21 +227,12 @@ void ocl_check_args(std::ostream& out) {
   out << tab(1) << "}" << endl << endl;
 
   out << tab(1) << "std::string binaryFile = argv[1];" << endl << endl;
-  out << tab(1) << "int num_epochs = 1;" << endl << endl;
+  if (options.num_input_epochs < 0) {
+    out << tab(1) << "int num_epochs = 1;" << endl << endl;
+  } else {
+    out << tab(1) << "int num_epochs = " << options.num_input_epochs << ";" << endl << endl;
+  }
   out << tab(1) << "std::cout << \"num_epochs = \" << num_epochs << std::endl;" << endl << endl;
-}
-
-void ocl_timing_suffix(std::ostream& out) {
-  out << tab(1) << "double dnsduration = ((double)nsduration);" << endl;
-  out << "double dsduration = dnsduration / ((double)1000000000);" << endl;
-
-  out << "double dbytes = total_size_bytes;" << endl;
-  out << "double bpersec = (dbytes / dsduration);" << endl;
-  out << "double gbpersec = bpersec / ((double)1024 * 1024 * 1024);" << endl;
-
-  out << "std::cout << \"bytes / sec = \" << bpersec << std::endl;" << endl;
-  out << "std::cout << \"GB / sec = \" << gbpersec << std::endl;" << endl;
-  out << "printf(\"Execution time = %f (sec) \\n\", dsduration);" << endl;
 }
 
 void ocl_command_queue(std::ostream& out) {
@@ -248,13 +255,13 @@ void populate_input(std::ostream& out, const std::string& edge_bundle, const str
   out << tab(1) << "input_" << edge_bundle << ".close();" << endl;
 }
 
-void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
+void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg) {
   ofstream out("soda_" + prg.name + "_host.cpp");
   ocl_headers(out);
 
   out << "int main(int argc, char **argv) {" << endl;
 
-  ocl_check_args(out);
+  ocl_check_args(options, out);
 
   int unroll_factor =
     pick(map_find(pick(prg.ins), buffers).port_bundles).second.size();
@@ -319,7 +326,6 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
 
   run_kernel(out, buffers, prg);
 
-  ocl_timing_suffix(out);
 
   for (auto output : outputs(buffers, prg)) {
     auto buf = output.first;
@@ -344,14 +350,14 @@ void generate_xilinx_accel_soda_host(map<string, UBuffer>& buffers, prog& prg) {
   out.close();
 }
 
-void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
+void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg) {
   ofstream out(prg.name + "_host.cpp");
 
   ocl_headers(out);
 
   out << "int main(int argc, char **argv) {" << endl;
 
-  ocl_check_args(out);
+  ocl_check_args(options, out);
   
   out << tab(1) << "size_t total_size_bytes = 0;" << endl;
   for (auto eb : edge_buffers(buffers, prg)) {
@@ -375,16 +381,6 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   for (auto edge_in : inputs(buffers, prg)) {
     populate_input(out, edge_in.second, vanilla_c_pixel_type_string(edge_in.first, buffers));
   }
-  //for (auto edge_bundle : in_bundles(buffers, prg)) {
-    //populate_input(out, edge_bundle);
-  //}
-
-  //for (auto edge_bundle : out_bundles(buffers, prg)) {
-    //out << tab(1) << "for (int i = 0; i < " << edge_bundle << "_DATA_SIZE; i++) {" << endl;
-    //out << tab(1) << "// TODO: Add support for other widths" << endl;
-    //out << tab(2) << "((uint16_t*) (" << edge_bundle << ".data()))[i] = 0;" << endl;
-    //out << tab(1) << "}" << endl << endl;
-  //}
 
   for (auto edge_out : outputs(buffers, prg)) {
     auto edge_bundle = edge_out.second;
@@ -413,14 +409,7 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   out << endl;
   out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", num_epochs));" << endl << endl;
 
-  //for (auto b : out_bundles(buffers, prg)) {
-    //out << tab(1) << "int " << b << "_size = " << b << "_DATA_SIZE;" << endl;
-    //out << tab(1) << "OCL_CHECK(err, err = krnl_vector_add.setArg(" << arg_pos << ", " << b << "_size));" << endl << endl;
-  //}
-
   run_kernel(out, buffers, prg);
-
-  ocl_timing_suffix(out);
 
   for (auto output : outputs(buffers, prg)) {
     auto buf = output.first;
@@ -438,7 +427,7 @@ void generate_xilinx_accel_host(map<string, UBuffer>& buffers, prog& prg) {
   out.close();
 }
 
-void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
+void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
 
   cout << "Generating accel wrapper" << endl;
   string driver_func = prg.name + "_accel";
@@ -484,17 +473,24 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
     out_buf.lanes_in_bundle(out_bundle);
   int out_burst = out_pix / pix_per_out_burst;
 
-  out << "// TODO: Adapt to have one size for each edge buffer" << endl;
-  out << "#define INPUT_SIZE " << in_burst << endl;
-  out << "#define OUTPUT_SIZE " << out_burst << endl;
+  //out << "// TODO: Adapt to have one size for each edge buffer" << endl;
+  //out << "#define INPUT_SIZE " << in_burst << endl;
+  //out << "#define OUTPUT_SIZE " << out_burst << endl;
 
+  out << endl;
   out << "extern \"C\" {" << endl << endl;
 
   for (auto in_bundle : in_bundles(buffers, prg)) {
     out << "static void read_" << in_bundle << "(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const int size) {" << endl;
+   
     out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
-    //out << tab(1) << "for (int i = 0; i < INPUT_SIZE*size; i++) {" << endl;
-    out << tab(1) << "for (int i = 0; i < " << in_bundle << "_num_transfers*size; i++) {" << endl;
+    if (options.num_input_epochs < 0) {
+      out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*size;" << endl;
+    } else {
+      out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
+    }
+
+    out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
     out << tab(2) << "#pragma HLS pipeline II=1" << endl;
     out << tab(2) << "burst_reg = input[i];" << endl;
     out << tab(2) << "v.write(burst_reg);" << endl;
@@ -505,8 +501,13 @@ void generate_xilinx_accel_wrapper(std::ostream& out, map<string, UBuffer>& buff
   for (auto out_bundle : out_bundles(buffers, prg)) {
     out << "static void write_" << out_bundle << "(" << out_bundle_tp << "* output, HWStream<" << out_bundle_tp << " >& v, const int size) {" << endl;
     out << tab(1) << out_bundle_tp << " burst_reg;" << endl;
-    //out << tab(1) << "for (int i = 0; i < OUTPUT_SIZE*size; i++) {" << endl;
-    out << tab(1) << "for (int i = 0; i < " << out_bundle << "_num_transfers*size; i++) {" << endl;
+    if (options.num_input_epochs < 0) {
+      out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*size;" << endl;
+    } else {
+      out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
+    }
+
+    out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
     out << tab(2) << "#pragma HLS pipeline II=1" << endl;
     out << tab(2) << "burst_reg = v.read();" << endl;
     out << tab(2) << "output[i] = burst_reg;" << endl;
@@ -899,7 +900,7 @@ vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg) {
   return args;
 }
 
-void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
+void generate_soda_tb(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg) {
 
   {
     ofstream of("tb_soda_" + prg.name + ".cpp");
@@ -922,6 +923,7 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
     of << "#include \"runtime/test_utils.h\"" << endl << endl;
     of << "using namespace std;" << endl << endl;
     of << "int main() {" << endl;
+    of << tab(1) << "srand(234);" << endl;
     string rep_buf = pick(prg.ins);
 
     int ncols = -1;
@@ -935,7 +937,11 @@ void generate_soda_tb(map<string, UBuffer>& buffers, prog& prg) {
       nrows = prg.buffer_bounds[rep_buf].at(1);
     }
 
-    of << tab(1) << "const int nrows = " << nrows << ";" << endl;
+    if (options.num_input_epochs < 0) {
+      of << tab(1) << "const int nrows = " << nrows << ";" << endl;
+    } else {
+      of << tab(1) << "const int nrows = " << options.num_input_epochs << "*" << nrows << ";" << endl;
+    }
     of << tab(1) << "const int ncols = " << ncols << ";" << endl;
 
     of << tab(1) << "uint64_t img_pixels = nrows*ncols;" << endl;
@@ -1025,6 +1031,12 @@ void generate_tb_compare_scripts(map<string, UBuffer>& buffers, prog& prg) {
   }
 
   {
+    ofstream of("build_kernel.sh");
+    of << "~/soda-compiler/src/sodac ${app}.soda --xocl-kernel ${app}_kernel.cpp --xocl-platform \"$VITIS_DIR/aws_platform/xilinx_aws-vu9p-f1_shell-v04261818_201920_1\"" << endl;
+    of.close();
+  }
+
+  {
     ofstream of("run_tb.sh");
     of << "~/soda-compiler/src/sodac ${app}.soda --xocl-kernel ${app}_kernel.cpp --xocl-platform \"$VITIS_DIR/aws_platform/xilinx_aws-vu9p-f1_shell-v04261818_201920_1\"" << endl;
     of << "g++ -std=c++0x tb_soda_${app}.cpp ${app}_kernel.cpp -I ../../../ -I ${XILINX_VIVADO}/include || { echo 'compilation failed'; exit 1; }" << endl;
@@ -1093,7 +1105,7 @@ void generate_app_code_header(const map<string, UBuffer>& buffers, prog& prg) {
 
 
 vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, prog& prg) {
-  set<string> done;
+  std::set<string> done;
   vector<string> buf_srcs;
 
   for (auto p : op->consume_locs) {
@@ -1114,7 +1126,7 @@ vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, pro
 }
 
 vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& prg) {
-  set<string> done;
+  std::set<string> done;
   vector<string> buf_srcs;
   for (auto p : op->consume_locs) {
     auto buf_name = p.first;
@@ -1177,7 +1189,7 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
   cout << "Got iteration variables" << endl;
   conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
   vector<pair<string, string> > in_buffers;
-  set<string> distinct;
+  std::set<string> distinct;
   for (auto con : op->consume_locs) {
     if (!elem(con.first, distinct)) {
       in_buffers.push_back(con);
@@ -1208,36 +1220,6 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
       conv_out << endl;
       open_debug_scope(conv_out);
 
-      //auto& buf = buffers.at(in_buffer);
-      //int bundle_width = buf.port_bundle_width(bundle_name);
-
-      //int unroll_factor = op->unroll_factor;
-      ////int element_width = bundle_width / op->unroll_factor;
-
-      //string dbg_res_name = "debug_" + value_name;
-      //conv_out << tab(1) << "hw_uint<" << bundle_width << "> " << dbg_res_name << " = " << value_name << ";" << endl;
-
-  //vector<string> lane_values =
-    //split_bv(1, conv_out, dbg_res_name, element_width, op->unroll_factor);
-
-  //for (int lane = 0; lane < unroll_factor; lane++) {
-    //conv_out << tab(1) << "*global_debug_handle << \"" << op->name << ",\" << ";
-    //int i = 0;
-    //for (auto v : kernel.iteration_variables) {
-      //if (i == 0) {
-        //conv_out << "(" << unroll_factor << "*" << v << " + " << lane << ") << \", \" << ";
-      //} else {
-        //conv_out << v << "<< \",\" << ";
-      //}
-      //i++;
-    //}
-    //assert(lane < lane_values.size());
-    //conv_out << " " << lane_values.at(lane) << " << endl;" << endl;
-  //}
-
-
-
-
       conv_out << tab(1) << "*global_debug_handle << \"" << op->name << "_" << in_buffer << ",\" << ";
       for (auto v : kernel.iteration_variables) {
         conv_out << v << "<< \",\" << ";
@@ -1258,7 +1240,7 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
   }
 
   cout << "finding out buffers" << endl;
-  set<string> out_buffers;
+  std::set<string> out_buffers;
   for (auto con : op->produce_locs) {
     out_buffers.insert(con.first);
   }
@@ -1305,7 +1287,7 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
     int i = 0;
     for (auto v : kernel.iteration_variables) {
       if (i == 0) {
-        conv_out << "(" << unroll_factor << "*" << v << " + " << lane << ") << \", \" << ";
+        conv_out << "(" << unroll_factor << "*" << v << " + " << lane << ") << \",\" << ";
       } else {
         conv_out << v << "<< \",\" << ";
       }
@@ -1613,11 +1595,15 @@ void generate_app_code(CodegenOptions& options,
     code_string = regex_replace(code_string, re, "\n\t" + op->name + "(" + args_list + ", $1);");
   }
 
-  //conv_out << "#ifdef __VIVADO_SYNTH__" << endl;
-  //conv_out << "#pragma HLS inline recursive" << endl;
-  //conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
+  conv_out << "#ifdef __VIVADO_SYNTH__" << endl;
+  conv_out << "#pragma HLS inline recursive" << endl;
+  conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
 
-  conv_out << tab(1) << "for (int epoch = 0; epoch < num_epochs; epoch++) {" << endl;
+  if (options.num_input_epochs < 0) {
+    conv_out << tab(1) << "for (int epoch = 0; epoch < num_epochs; epoch++) {" << endl;
+  } else {
+    conv_out << tab(1) << "for (int epoch = 0; epoch < " << options.num_input_epochs << "; epoch++) {" << endl;
+  }
   conv_out << code_string << endl;
   conv_out << tab(1) << "}" << endl << endl;
 
@@ -1636,15 +1622,15 @@ void generate_app_code(CodegenOptions& options,
   }
 
   open_synth_scope(conv_out);
-  generate_xilinx_accel_wrapper(conv_out, buffers, prg);
+  generate_xilinx_accel_wrapper(options, conv_out, buffers, prg);
   close_synth_scope(conv_out);
 
   conv_out << endl;
 
   generate_app_code_header(buffers, prg);
-  generate_soda_tb(buffers, prg);
-  generate_xilinx_accel_soda_host(buffers, prg);
-  generate_xilinx_accel_host(buffers, prg);
+  generate_soda_tb(options, buffers, prg);
+  generate_xilinx_accel_soda_host(options, buffers, prg);
+  generate_xilinx_accel_host(options, buffers, prg);
   generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
   generate_tb_run_scripts(prg);
   generate_tb_compare_scripts(buffers, prg);

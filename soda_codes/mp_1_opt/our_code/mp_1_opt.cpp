@@ -188,7 +188,7 @@ inline void in_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */i
   hw_uint<32> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "in_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "in_update_0," << (1*d0 + 0) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -209,7 +209,7 @@ inline void mp_1_update_0(in_cache& in, HWStream<hw_uint<32> >& /* buffer_args n
   hw_uint<32> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "mp_1_update_0," << (1*d0 + 0) << ", " << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "mp_1_update_0," << (1*d0 + 0) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -224,11 +224,15 @@ void mp_1_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */in_oc, HWStrea
   in_cache in;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
   for (int epoch = 0; epoch < num_epochs; epoch++) {
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS inline recursive
-	#endif // __VIVADO_SYNTH__
-	
+	  // Schedules...
+	    // in_oc_update_0 -> [1*d2*1*1 + 1*0,1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
+	    // in_update_0 -> [1*d2*1*1 + 1*0,1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
+	    // mp_1_update_0 -> [1*d2*1*1 + 1*0,1*d1*1*2 + 1*1,1*d0*1*2 + 1*1,1*2]
 	for (int c0 = 0; c0 <= 31; c0++) {
 	  for (int c1 = 0; c1 <= 127; c1++) {
 	    for (int c2 = 0; c2 <= 127; c2++) {
@@ -266,14 +270,13 @@ void mp_1_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */in_oc, HWStrea
 const int in_update_0_read_num_transfers = 524288;
 const int mp_1_update_0_write_num_transfers = 131072;
 
-// TODO: Adapt to have one size for each edge buffer
-#define INPUT_SIZE 524288
-#define OUTPUT_SIZE 131072
+
 extern "C" {
 
 static void read_in_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < in_update_0_read_num_transfers*size; i++) {
+  int num_transfers = in_update_0_read_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -282,7 +285,8 @@ static void read_in_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v,
 
 static void write_mp_1_update_0_write(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < mp_1_update_0_write_num_transfers*size; i++) {
+  int num_transfers = mp_1_update_0_write_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;

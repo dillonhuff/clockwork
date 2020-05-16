@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
   size_t f_update_0_read_size_bytes = f_update_0_read_BYTES_PER_PIXEL * f_update_0_read_DATA_SIZE;
 
   total_size_bytes += f_update_0_read_size_bytes;
-  const int u_update_0_read_DATA_SIZE = num_epochs*1728;
+  const int u_update_0_read_DATA_SIZE = num_epochs*1100;
   const int u_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t u_update_0_read_size_bytes = u_update_0_read_BYTES_PER_PIXEL * u_update_0_read_DATA_SIZE;
 
@@ -104,12 +104,13 @@ int main(int argc, char **argv) {
 
   OCL_CHECK(err, err = krnl_vector_add.setArg(3, num_epochs));
 
-  std::cout << "Starting kernel" << std::endl;
+  std::cout << "Migrating memory" << std::endl;
   OCL_CHECK(err, err = q.enqueueMigrateMemObjects({f_update_0_read_ocl_buf, u_update_0_read_ocl_buf}, 0));
 
 unsigned long start, end, nsduration;
 cl::Event event;
 
+  std::cout << "Starting kernel" << std::endl;
 OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add, NULL, &event));
 OCL_CHECK(err, err = event.wait());
 end =
@@ -122,10 +123,10 @@ nsduration = end - start;
   q.finish();
 
   double dnsduration = ((double)nsduration);
-double dsduration = dnsduration / ((double)1000000000);
-double dbytes = total_size_bytes;
-double bpersec = (dbytes / dsduration);
-double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
+  double dsduration = dnsduration / ((double)1000000000);
+  double dbytes = total_size_bytes;
+  double bpersec = (dbytes / dsduration);
+  double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
 std::cout << "bytes / sec = " << bpersec << std::endl;
 std::cout << "GB / sec = " << gbpersec << std::endl;
 printf("Execution time = %f (sec) \n", dsduration);

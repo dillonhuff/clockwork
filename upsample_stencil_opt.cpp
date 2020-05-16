@@ -440,7 +440,7 @@ inline void upsample_stencil_update_0(Img_cache& Img, HWStream<hw_uint<32> >& /*
   hw_uint<32> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "upsample_stencil_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "upsample_stencil_update_0," << (1*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -456,7 +456,7 @@ inline void Img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */
   hw_uint<32> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "Img_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "Img_update_0," << (1*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -471,11 +471,15 @@ void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Im
   Img_cache Img;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
   for (int epoch = 0; epoch < num_epochs; epoch++) {
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS inline recursive
-	#endif // __VIVADO_SYNTH__
-	
+	  // Schedules...
+	    // Img_off_update_0 -> [1*d1*1*2 + 1*0,1*d0*1*2 + 1*0,1*0]
+	    // Img_update_0 -> [1*d1*1*2 + 1*0,1*d0*1*2 + 1*0,1*1]
+	    // upsample_stencil_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*2]
 	for (int c0 = -2; c0 <= 33; c0++) {
 	  for (int c1 = -2; c1 <= 33; c1++) {
 	
@@ -511,14 +515,13 @@ void upsample_stencil_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */Im
 const int Img_update_0_read_num_transfers = 324;
 const int upsample_stencil_update_0_write_num_transfers = 1024;
 
-// TODO: Adapt to have one size for each edge buffer
-#define INPUT_SIZE 324
-#define OUTPUT_SIZE 1024
+
 extern "C" {
 
 static void read_Img_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < Img_update_0_read_num_transfers*size; i++) {
+  int num_transfers = Img_update_0_read_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -527,7 +530,8 @@ static void read_Img_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v
 
 static void write_upsample_stencil_update_0_write(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < upsample_stencil_update_0_write_num_transfers*size; i++) {
+  int num_transfers = upsample_stencil_update_0_write_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;

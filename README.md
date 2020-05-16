@@ -1,6 +1,6 @@
 # Clockwork: Polyhedral Analysis for Hardware Accelerators
 
-Clockwork is a tool for compiling naive descriptions of hardware accelerates written as loop nests into high performance, staticall scheduled hardware.
+Clockwork is a tool for compiling naive descriptions of hardware accelerators written as loop nests into high performance, staticall scheduled hardware.
 
 ![](./pictures/polyhedral_scheduling_figure_2.jpg)
 
@@ -14,7 +14,7 @@ Clockwork is a tool for compiling naive descriptions of hardware accelerates wri
 Please install the specific versions of the listed dependencies. Do
 not just take the latest release on NTL or barvinok.
 
-* barvinok-0.41 - [download here](http://barvinok.gforge.inria.fr/)
+* barvinok-0.41 - [download here](http://barvinok.gforge.inria.fr/), note that linux users may need to manually add -lpthread to the include path
 * ntl-11.4.1 - [download here](https://shoup.net/ntl/download.html)
 
 ## Build instructions

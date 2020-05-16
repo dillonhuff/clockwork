@@ -170,7 +170,7 @@ inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in, I_c
   hw_uint<16> debug_compute_result(compute_result);
   hw_uint<16> debug_compute_result_lane_0;
   set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "I_id0," << (1*root + 0) << ", " << id1<< "," << id0<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "I_id0," << (1*root + 0) << "," << id1<< "," << id0<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -191,7 +191,7 @@ inline void out_blur_30(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num p
   hw_uint<16> debug_compute_result(compute_result);
   hw_uint<16> debug_compute_result_lane_0;
   set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "out_blur_30," << (1*root + 0) << ", " << d1<< "," << d0<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "out_blur_30," << (1*root + 0) << "," << d1<< "," << d0<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -206,6 +206,10 @@ void blur_x(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in, HW
   I_cache I;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
   for (int epoch = 0; epoch < num_epochs; epoch++) {
 	for (int c0 = 0; c0 <= 7; c0 += 1)
 	  for (int c1 = 0; c1 <= 31; c1 += 1) {
@@ -231,14 +235,13 @@ void blur_x(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in, HW
 const int I_id0_read_num_transfers = 180;
 const int out_blur_30_write_num_transfers = 0;
 
-// TODO: Adapt to have one size for each edge buffer
-#define INPUT_SIZE 180
-#define OUTPUT_SIZE 0
+
 extern "C" {
 
 static void read_I_id0_read(hw_uint<16>* input, HWStream<hw_uint<16> >& v, const int size) {
   hw_uint<16> burst_reg;
-  for (int i = 0; i < I_id0_read_num_transfers*size; i++) {
+  int num_transfers = I_id0_read_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -247,7 +250,8 @@ static void read_I_id0_read(hw_uint<16>* input, HWStream<hw_uint<16> >& v, const
 
 static void write_out_blur_30_write(hw_uint<16>* output, HWStream<hw_uint<16> >& v, const int size) {
   hw_uint<16> burst_reg;
-  for (int i = 0; i < out_blur_30_write_num_transfers*size; i++) {
+  int num_transfers = out_blur_30_write_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;

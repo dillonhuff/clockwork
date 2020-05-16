@@ -2,7 +2,9 @@ kernel: harris16_mini_opt
 unroll factor: 1
 burst width: 16
 
-input uint16: img(36, *)
+input uint16: img_oc(36, *)
+
+local uint16: img(0, 0) = img_oc(0, 0)
 
 local uint16: grad_y(0, 0) = (((img(-1, 1) - img(-1, -1)) + ((img(0, 1) - img(0, -1)) * 2)) + (img(1, 1) - img(1, -1)))
 
