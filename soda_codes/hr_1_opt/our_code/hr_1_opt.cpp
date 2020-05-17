@@ -2193,22 +2193,6 @@ inline void grad_y_update_0(img_cache& img, grad_y_cache& grad_y, int d0, int d1
 
 }
 
-inline void lgyy_update_0(lyy_cache& lyy, lgyy_cache& lgyy, int d0, int d1) {
-	// Consume: lyy
-	auto lyy_0_c__0_value = lyy_lgyy_update_0_read_bundle_read(lyy/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = lgyy_generated_compute_unrolled_1(lyy_0_c__0_value);
-	// Produce: lgyy
-	lgyy_lgyy_update_0_write_bundle_write(compute_result, lgyy, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void grad_x_update_0(img_cache& img, grad_x_cache& grad_x, int d0, int d1) {
 	// Consume: img
 	auto img_0_c__0_value = img_grad_x_update_0_read_bundle_read(img/* source_delay */, d0, d1);
@@ -2219,6 +2203,22 @@ inline void grad_x_update_0(img_cache& img, grad_x_cache& grad_x, int d0, int d1
 	auto compute_result = grad_x_generated_compute_unrolled_1(img_0_c__0_value);
 	// Produce: grad_x
 	grad_x_grad_x_update_0_write_bundle_write(compute_result, grad_x, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void lyy_update_0(grad_y_cache& grad_y, lyy_cache& lyy, int d0, int d1) {
+	// Consume: grad_y
+	auto grad_y_0_c__0_value = grad_y_lyy_update_0_read_bundle_read(grad_y/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = lyy_generated_compute_unrolled_1(grad_y_0_c__0_value);
+	// Produce: lyy
+	lyy_lyy_update_0_write_bundle_write(compute_result, lyy, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -2247,60 +2247,6 @@ inline void lxy_update_0(grad_x_cache& grad_x, grad_y_cache& grad_y, lxy_cache& 
 
 }
 
-inline void lgxy_update_0(lxy_cache& lxy, lgxy_cache& lgxy, int d0, int d1) {
-	// Consume: lxy
-	auto lxy_0_c__0_value = lxy_lgxy_update_0_read_bundle_read(lxy/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = lgxy_generated_compute_unrolled_1(lxy_0_c__0_value);
-	// Produce: lgxy
-	lgxy_lgxy_update_0_write_bundle_write(compute_result, lgxy, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void trace_update_0(lgxx8_cache& lgxx8, lgyy8_cache& lgyy8, trace_cache& trace, int d0, int d1) {
-	// Consume: lgxx8
-	auto lgxx8_0_c__0_value = lgxx8_trace_update_0_read_bundle_read(lgxx8/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: lgyy8
-	auto lgyy8_0_c__0_value = lgyy8_trace_update_0_read_bundle_read(lgyy8/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = trace_generated_compute_unrolled_1(lgxx8_0_c__0_value, lgyy8_0_c__0_value);
-	// Produce: trace
-	trace_trace_update_0_write_bundle_write(compute_result, trace, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void lyy_update_0(grad_y_cache& grad_y, lyy_cache& lyy, int d0, int d1) {
-	// Consume: grad_y
-	auto grad_y_0_c__0_value = grad_y_lyy_update_0_read_bundle_read(grad_y/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = lyy_generated_compute_unrolled_1(grad_y_0_c__0_value);
-	// Produce: lyy
-	lyy_lyy_update_0_write_bundle_write(compute_result, lyy, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void lxx_update_0(grad_x_cache& grad_x, lxx_cache& lxx, int d0, int d1) {
 	// Consume: grad_x
 	auto grad_x_0_c__0_value = grad_x_lxx_update_0_read_bundle_read(grad_x/* source_delay */, d0, d1);
@@ -2311,6 +2257,38 @@ inline void lxx_update_0(grad_x_cache& grad_x, lxx_cache& lxx, int d0, int d1) {
 	auto compute_result = lxx_generated_compute_unrolled_1(grad_x_0_c__0_value);
 	// Produce: lxx
 	lxx_lxx_update_0_write_bundle_write(compute_result, lxx, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void lgyy_update_0(lyy_cache& lyy, lgyy_cache& lgyy, int d0, int d1) {
+	// Consume: lyy
+	auto lyy_0_c__0_value = lyy_lgyy_update_0_read_bundle_read(lyy/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = lgyy_generated_compute_unrolled_1(lyy_0_c__0_value);
+	// Produce: lgyy
+	lgyy_lgyy_update_0_write_bundle_write(compute_result, lgyy, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void lgxy_update_0(lxy_cache& lxy, lgxy_cache& lgxy, int d0, int d1) {
+	// Consume: lxy
+	auto lxy_0_c__0_value = lxy_lgxy_update_0_read_bundle_read(lxy/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = lgxy_generated_compute_unrolled_1(lxy_0_c__0_value);
+	// Produce: lgxy
+	lgxy_lgxy_update_0_write_bundle_write(compute_result, lgxy, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -2403,6 +2381,28 @@ inline void det_update_0(lgxx8_cache& lgxx8, lgxy8_cache& lgxy8, lgyy8_cache& lg
 	auto compute_result = det_generated_compute_unrolled_1(lgxx8_0_c__0_value, lgxy8_0_c__0_value, lgyy8_0_c__0_value);
 	// Produce: det
 	det_det_update_0_write_bundle_write(compute_result, det, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void trace_update_0(lgxx8_cache& lgxx8, lgyy8_cache& lgyy8, trace_cache& trace, int d0, int d1) {
+	// Consume: lgxx8
+	auto lgxx8_0_c__0_value = lgxx8_trace_update_0_read_bundle_read(lgxx8/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: lgyy8
+	auto lgyy8_0_c__0_value = lgyy8_trace_update_0_read_bundle_read(lgyy8/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = trace_generated_compute_unrolled_1(lgxx8_0_c__0_value, lgyy8_0_c__0_value);
+	// Produce: trace
+	trace_trace_update_0_write_bundle_write(compute_result, trace, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

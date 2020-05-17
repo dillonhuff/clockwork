@@ -6618,6 +6618,32 @@ App gaussian_pyramid_app(const std::string& out_name) {
   return gp;
 }
 
+void single_gaussian_pyramid_app_test() {
+  string name = "gp";
+
+  App gp = gaussian_pyramid_app(name);
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    options.debug_options.expect_all_linebuffers = true;
+    gp.realize(options, name, 4, 4, 2);
+  }
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  options.unroll_factors_as_pad = true;
+  gp.realize_naive(options, name, 4, 4);
+
+  std::vector<std::string> naive =
+    run_regression_tb(name + "_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb(name + "_opt");
+  assert(naive == optimized);
+}
+
 void gaussian_pyramid_app_test() {
   string name = "gp";
   vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
@@ -8104,7 +8130,31 @@ void iccad_tests() {
 
 }
 
+void mini_application_tests() {
+  reduce_2d_test();
+  reduce_1d_test();
+  up_unrolled_4_test();
+  up_unrolled_test();
+  up_down_unrolled_test();
+  jacobi2d_app_test();
+  two_in_window_test();
+  two_in_conv2d_test();
+  gaussian_pyramid_test();
+  warp_and_upsample_test();
+  up_stencil_test();
+  neg_stencil_test();
+  blur_x_test();
+  harris16_test();
+  denoise3d_reconvergence_test();
+  blur_xy_16_app_test();
+  sobel_16_app_test();
+  single_gaussian_pyramid_app_test();
+  max_pooling_test();
+  exposure_fusion();
+}
+
 void application_tests() {
+  iccad_tests();
   halide_frontend_test();
   halide_cascade_test();
 
@@ -8213,7 +8263,6 @@ void application_tests() {
 
   dummy_app_test();
 
-  iccad_tests();
   //two_input_denoise_pipeline_test();
   
 
@@ -8268,6 +8317,11 @@ int main(int argc, char** argv) {
     if (cmd == "conv_2d") {
       prog prg = conv_2d();
       aha_talk_print_info(prg);
+      return 0;
+    }
+
+    if (cmd == "minitest") {
+      mini_application_tests();
       return 0;
     }
 
