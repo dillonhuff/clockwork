@@ -8105,7 +8105,6 @@ void iccad_tests() {
 }
 
 void application_tests() {
-  iccad_tests();
   halide_frontend_test();
   halide_cascade_test();
 
@@ -8213,6 +8212,8 @@ void application_tests() {
   blur_x_test();
 
   dummy_app_test();
+
+  iccad_tests();
   //two_input_denoise_pipeline_test();
   
 
@@ -8276,8 +8277,8 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
-    application_tests();
     memory_tile_tests();
+    application_tests();
     cout << "All tests passed" << endl;
 
   } else {
