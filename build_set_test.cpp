@@ -8105,6 +8105,7 @@ void iccad_tests() {
 }
 
 void application_tests() {
+  iccad_tests();
   halide_frontend_test();
   halide_cascade_test();
 
@@ -8213,7 +8214,6 @@ void application_tests() {
 
   dummy_app_test();
 
-  iccad_tests();
   //two_input_denoise_pipeline_test();
   
 
