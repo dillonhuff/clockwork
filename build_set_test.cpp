@@ -8137,7 +8137,6 @@ void mini_application_tests() {
   up_unrolled_test();
   up_down_unrolled_test();
   jacobi2d_app_test();
-
   two_in_window_test();
   two_in_conv2d_test();
   gaussian_pyramid_test();
