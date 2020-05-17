@@ -8322,6 +8322,7 @@ int main(int argc, char** argv) {
 
     if (cmd == "minitest") {
       mini_application_tests();
+      cout << "Minitest passed" << endl;
       return 0;
     }
 
