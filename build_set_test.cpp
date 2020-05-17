@@ -8085,8 +8085,8 @@ void playground() {
 }
 
 void iccad_tests() {
-  camera_pipeline_test();
-  assert(false);
+  //camera_pipeline_test();
+  //assert(false);
   harris16_test();
   harris_test();
   denoise3d_reconvergence_test();
