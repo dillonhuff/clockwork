@@ -26987,22 +26987,6 @@ inline void img_update_0(HWStream<hw_uint<512> >& /* buffer_args num ports = 16 
 
 }
 
-inline void lyy_update_0(grad_y_cache& grad_y, lyy_cache& lyy, int d0, int d1) {
-	// Consume: grad_y
-	auto grad_y_0_c__0_value = grad_y_lyy_update_0_read_bundle_read(grad_y/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = lyy_generated_compute_unrolled_16(grad_y_0_c__0_value);
-	// Produce: lyy
-	lyy_lyy_update_0_write_bundle_write(compute_result, lyy, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void grad_y_update_0(img_cache& img, grad_y_cache& grad_y, int d0, int d1) {
 	// Consume: img
 	auto img_0_c__0_value = img_grad_y_update_0_read_bundle_read(img/* source_delay */, d0, d1);
@@ -27029,6 +27013,22 @@ inline void grad_x_update_0(img_cache& img, grad_x_cache& grad_x, int d0, int d1
 	auto compute_result = grad_x_generated_compute_unrolled_16(img_0_c__0_value);
 	// Produce: grad_x
 	grad_x_grad_x_update_0_write_bundle_write(compute_result, grad_x, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void lyy_update_0(grad_y_cache& grad_y, lyy_cache& lyy, int d0, int d1) {
+	// Consume: grad_y
+	auto grad_y_0_c__0_value = grad_y_lyy_update_0_read_bundle_read(grad_y/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = lyy_generated_compute_unrolled_16(grad_y_0_c__0_value);
+	// Produce: lyy
+	lyy_lyy_update_0_write_bundle_write(compute_result, lyy, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

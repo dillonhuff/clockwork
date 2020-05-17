@@ -539,6 +539,18 @@ inline hw_uint<16> mag_y_sblr30_1_update_0_read_bundle_read(mag_y_cache& mag_y, 
 
 
 // Operation logic
+inline void img_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */off_chip_img, img_cache& img, int d0, int d1) {
+	// Consume: off_chip_img
+	auto off_chip_img_0_c__0_value = off_chip_img.read();
+	auto compute_result = img_generated_compute_unrolled_1(off_chip_img_0_c__0_value);
+	// Produce: img
+	img_img_update_0_write_bundle_write(compute_result, img, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void mag_y_update_0(img_cache& img, mag_y_cache& mag_y, int d0, int d1) {
 	// Consume: img
 	auto img_0_c__0_value = img_mag_y_update_0_read_bundle_read(img/* source_delay */, d0, d1);
@@ -587,18 +599,6 @@ inline void sblr30_1_update_0(mag_x_cache& mag_x, mag_y_cache& mag_y, HWStream<h
 	auto compute_result = sblr30_1_generated_compute_unrolled_1(mag_x_0_c__0_value, mag_y_0_c__0_value);
 	// Produce: sblr30_1
 	sblr30_1.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void img_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */off_chip_img, img_cache& img, int d0, int d1) {
-	// Consume: off_chip_img
-	auto off_chip_img_0_c__0_value = off_chip_img.read();
-	auto compute_result = img_generated_compute_unrolled_1(off_chip_img_0_c__0_value);
-	// Produce: img
-	img_img_update_0_write_bundle_write(compute_result, img, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
