@@ -815,18 +815,6 @@ inline void img_img_update_0_write_bundle_write(hw_uint<256>& img_update_0_write
 
 
 // Operation logic
-inline void img_update_0(HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */img_oc, img_cache& img, int d0, int d1) {
-	// Consume: img_oc
-	auto img_oc_0_c__0_value = img_oc.read();
-	auto compute_result = img_generated_compute_unrolled_16(img_oc_0_c__0_value);
-	// Produce: img
-	img_img_update_0_write_bundle_write(compute_result, img, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void hrs_16_update_0(img_cache& img, HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */hrs_16, int d0, int d1) {
 	// Consume: img
 	auto img_0_c__0_value = img_hrs_16_update_0_read_bundle_read(img/* source_delay */, d0, d1);
@@ -837,6 +825,18 @@ inline void hrs_16_update_0(img_cache& img, HWStream<hw_uint<256> >& /* buffer_a
 	auto compute_result = hrs_16_generated_compute_unrolled_16(img_0_c__0_value);
 	// Produce: hrs_16
 	hrs_16.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void img_update_0(HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */img_oc, img_cache& img, int d0, int d1) {
+	// Consume: img_oc
+	auto img_oc_0_c__0_value = img_oc.read();
+	auto compute_result = img_generated_compute_unrolled_16(img_oc_0_c__0_value);
+	// Produce: img
+	img_img_update_0_write_bundle_write(compute_result, img, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
