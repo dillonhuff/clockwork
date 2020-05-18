@@ -189,6 +189,10 @@ struct ir_node {
     return fo;
   }
 
+  string add_load(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2) {
+    return add_load(b, d0 + ", " + d1 + ", " + d2);
+  }
+
   string add_load(const std::string& b, const std::string& d0, const std::string& d1) {
     return add_load(b, d0 + ", " + d1);
   }
@@ -214,6 +218,10 @@ struct ir_node {
       ps.push_back(p.first + "[" + p.second + "]");
     }
     return ps;
+  }
+
+  void add_store(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2) {
+    add_store(b, d0 + ", " + d1 + ", " + d2);
   }
 
   void add_store(const std::string& b, const std::string& d0, const std::string& d1) {
@@ -819,10 +827,13 @@ struct prog {
           umap* vmap =
             its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
           pmap = unn(pmap, vmap);
+          //cout << tab(1) << "pmap = " << str(pmap) << endl;
         }
       }
       m = unn(m, pmap);
     }
+    //cout << "m = " << str(m) << endl;
+    //assert(false);
     return m;
   }
 
@@ -841,10 +852,13 @@ struct prog {
       for (auto p : op->consumes()) {
         umap* vmap =
           its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
+        //cout << tab(1) << "vmap = " << str(vmap) << endl;
         pmap = unn(pmap, vmap);
       }
       m = unn(m, pmap);
     }
+    //cout << tab(1) << "m = " << str(m) << endl;
+    //assert(false);
     return m;
   }
 
