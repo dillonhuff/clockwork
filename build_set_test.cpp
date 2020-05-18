@@ -6320,7 +6320,7 @@ App different_path_latencies(const std::string& out_name) {
   harris.func2d("img_oc");
   harris.func2d("img", v("img_oc"));
   harris.func2d("short_path", v("img"));
-  harris.func2d("long_path", mul(div(v("img"), add(v("img"), 1)), 16));
+  harris.func2d("long_path", mul(div(v("img"), add(v("img"), 1)), 29));
   harris.func2d(out_name, add(v("long_path"), v("short_path")));
 
   return harris;
