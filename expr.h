@@ -150,7 +150,8 @@ string compute_string(const num_type tp,
     if (tp == NUM_TYPE_FLOAT) {
       return "int_to_float(" + res + ")";
     } else {
-      return res;
+      //return res;
+      return val;
     }
   } else if (def->is_binop()) {
     auto op = (Binop*) def;
@@ -179,7 +180,7 @@ string compute_string(const num_type tp,
       if (tp == NUM_TYPE_FLOAT) {
         return "to_float(" + res + ")";
       } else {
-        return res;
+        return "uint" + str(pixel_width) + "_t" + parens(res);
       }
     } else {
     
