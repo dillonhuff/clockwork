@@ -4,11 +4,11 @@
 
 // Generated compute units...
 hw_uint<16> img_generated_compute(hw_uint<16*1> img_oc) {
-  return img_oc.get<16, 0>();
+  return uint16_t(uint16_t(img_oc.get<16, 0>()));
 }
 
 hw_uint<16> harris16_mini_generated_compute(hw_uint<16*1> img) {
-  return ((img.get<16, 0>() - hw_uint<16>(30000)) / hw_uint<16>(128));
+  return uint16_t(((uint16_t(img.get<16, 0>()) - 30000) / 128));
 }
 
 

@@ -1013,7 +1013,7 @@ string compute_unit_string(const num_type tp,
     res = "to_bits(" + res + ")";
   }
   return "hw_uint<" + wstr + "> " + name + sep_list(args, "(", ")", ", ") + " {\n" + tab(1) +
-    "return " + res + ";\n}";
+    "return " + "uint" + str(pixel_width) + "_t" + parens(res) + ";\n}";
 }
 
 map<string, isl_val*> 
