@@ -402,8 +402,19 @@ class HWStream {
 #endif // __VIVADO_SYNTH__
 };
 
+template<int T>
+hw_uint<T> int8(const hw_uint<T>& in) {
+  return in;
+}
 
-
+template<int T>
+hw_uint<T> uint8(const hw_uint<T>& in) {
+  return in;
+}
+template<int T>
+hw_uint<T> int32(const hw_uint<T>& in) {
+  return in;
+}
 
 
 
