@@ -189,6 +189,10 @@ struct ir_node {
     return fo;
   }
 
+  string add_load(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2) {
+    return add_load(b, d0 + ", " + d1 + ", " + d2);
+  }
+
   string add_load(const std::string& b, const std::string& d0, const std::string& d1) {
     return add_load(b, d0 + ", " + d1);
   }
@@ -214,6 +218,10 @@ struct ir_node {
       ps.push_back(p.first + "[" + p.second + "]");
     }
     return ps;
+  }
+
+  void add_store(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2) {
+    add_store(b, d0 + ", " + d1 + ", " + d2);
   }
 
   void add_store(const std::string& b, const std::string& d0, const std::string& d1) {
@@ -646,50 +654,50 @@ struct prog {
     return m;
   }
 
-  map<string, Result> data_demands_maps() {
-    map<string, Result> m;
-    auto ivars = iter_vars();
-    auto doms = domains();
+  //map<string, Result> data_demands_maps() {
+    //map<string, Result> m;
+    //auto ivars = iter_vars();
+    //auto doms = domains();
 
-    auto ops = root->all_ops();
-    for (auto op : ops) {
-        if (!op->is_loop) {
-            Window win;
-            string result_buf = "";
-            for (auto p : op->produces()) {
-                result_buf= take_until(p, "[");
-                cout << "Producer :" << p << endl;
-            }
-            assert(result_buf != "");
+    //auto ops = root->all_ops();
+    //for (auto op : ops) {
+        //if (!op->is_loop) {
+            //Window win;
+            //string result_buf = "";
+            //for (auto p : op->produces()) {
+                //result_buf= take_until(p, "[");
+                //cout << "Producer :" << p << endl;
+            //}
+            //assert(result_buf != "");
 
-            auto vars = map_find(op, ivars);
-            //TODO: fix this hack
-            //reverse(vars);
-            //vars.pop_back();
-            //reverse(vars);
-            string ivar_str = sep_list(vars, "[", "]", ", ");
-            auto dom = map_find(op, doms);
+            //auto vars = map_find(op, ivars);
+            ////TODO: fix this hack
+            ////reverse(vars);
+            ////vars.pop_back();
+            ////reverse(vars);
+            //string ivar_str = sep_list(vars, "[", "]", ", ");
+            //auto dom = map_find(op, doms);
 
-            umap* pmap = rdmap(ctx, "{}");
-            int cnt_ld_st_pair = 0;
-            auto producers = op->produces();
-            for (auto p : op->consumes()) {
-                cout << "DEBUG:" << result_buf + ivar_str <<", " << producers[cnt_ld_st_pair] << endl;
-                isl_union_map* vmap =
-                  rdmap(ctx, string("{ " + producers[cnt_ld_st_pair] + " -> " + p + " }").c_str());
-                  //rdmap(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str());
-                pmap = unn(pmap, vmap);
-                cnt_ld_st_pair ++;
-                cout << "Consumer map : " << str(pmap) << endl;
-            }
-            win.needed = pmap;
-            Result res;
-            res.srcs.push_back(win);
-            m[op->name] = res;
-        }
-    }
-      return m;
-  }
+            //umap* pmap = rdmap(ctx, "{}");
+            //int cnt_ld_st_pair = 0;
+            //auto producers = op->produces();
+            //for (auto p : op->consumes()) {
+                //cout << "DEBUG:" << result_buf + ivar_str <<", " << producers[cnt_ld_st_pair] << endl;
+                //isl_union_map* vmap =
+                  //rdmap(ctx, string("{ " + producers[cnt_ld_st_pair] + " -> " + p + " }").c_str());
+                  ////rdmap(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str());
+                //pmap = unn(pmap, vmap);
+                //cnt_ld_st_pair ++;
+                //cout << "Consumer map : " << str(pmap) << endl;
+            //}
+            //win.needed = pmap;
+            //Result res;
+            //res.srcs.push_back(win);
+            //m[op->name] = res;
+        //}
+    //}
+      //return m;
+  //}
 
 
   map<op*, isl_map*> producer_maps() {
@@ -819,10 +827,13 @@ struct prog {
           umap* vmap =
             its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
           pmap = unn(pmap, vmap);
+          //cout << tab(1) << "pmap = " << str(pmap) << endl;
         }
       }
       m = unn(m, pmap);
     }
+    //cout << "m = " << str(m) << endl;
+    //assert(false);
     return m;
   }
 
@@ -841,10 +852,13 @@ struct prog {
       for (auto p : op->consumes()) {
         umap* vmap =
           its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
+        //cout << tab(1) << "vmap = " << str(vmap) << endl;
         pmap = unn(pmap, vmap);
       }
       m = unn(m, pmap);
     }
+    //cout << tab(1) << "m = " << str(m) << endl;
+    //assert(false);
     return m;
   }
 
