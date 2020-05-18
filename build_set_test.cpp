@@ -4280,7 +4280,7 @@ struct App {
     auto finite_domain = cpy(domain);
 
     // TODO: MAYBE REMOVE THIS?
-    clockwork_schedule(cpy(domain), cpy(validity), cpy(proximity));
+    //clockwork_schedule(cpy(domain), cpy(validity), cpy(proximity));
 
     isl_schedule_constraints* constraints =
       isl_schedule_constraints_on_domain(domain);
@@ -6459,17 +6459,17 @@ App camera_pipeline(const std::string& out_name) {
 
 void camera_pipeline_test() {
   string app_name = "camera_mini";
-  int mini_rows = 1020;
-  int mini_cols = 1920;
+  int mini_rows = 32;
+  int mini_cols = 32;
   auto hmini = camera_pipeline(app_name);
   hmini.realize_naive(app_name, mini_cols, mini_rows);
   hmini.realize(app_name, mini_cols, mini_rows, 1);
 
-  //std::vector<std::string> naive =
-    //run_regression_tb(app_name + "_naive");
-  //std::vector<std::string> optimized =
-    //run_regression_tb(app_name + "_opt");
-  //assert(naive == optimized);
+  std::vector<std::string> naive =
+    run_regression_tb(app_name + "_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb(app_name + "_opt");
+  assert(naive == optimized);
   move_to_benchmarks_folder(app_name + "_opt");
   assert(false);
 
@@ -6505,12 +6505,13 @@ void harris16_test(const std::string& prefix) {
     run_regression_tb("harris16_mini_naive");
   assert(naive == optimized);
   move_to_benchmarks_folder("harris16_mini_opt");
-  assert(false);
+  //assert(false);
 
 
   int rows = 1080;
   int cols = 1920;
-  vector<int> factors{1, 8, 16};
+  vector<int> factors{1, 2, 4};
+  //8, 16};
   for (int i = 0; i < (int) factors.size(); i++) {
     int unroll_factor = factors.at(i);
     cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;

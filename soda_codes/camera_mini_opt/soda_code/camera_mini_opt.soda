@@ -2,7 +2,7 @@ kernel: camera_mini_opt
 unroll factor: 1
 burst width: 16
 
-input uint16: raw_oc(1924, *)
+input uint16: raw_oc(36, *)
 
 local uint16: raw(0, 0) = raw_oc(0, 0)
 
