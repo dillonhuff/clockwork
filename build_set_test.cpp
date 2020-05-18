@@ -8154,6 +8154,7 @@ void mini_application_tests() {
 }
 
 void application_tests() {
+  //conv_1d_bc_test();
   iccad_tests();
   halide_frontend_test();
   halide_cascade_test();
@@ -8266,7 +8267,6 @@ void application_tests() {
   //two_input_denoise_pipeline_test();
   
 
-  //conv_1d_bc_test();
   //synth_wire_test();
   //synth_sr_boundary_condition_test();
   //synth_lb_test();
