@@ -6314,6 +6314,18 @@ App harris_cartoon(const std::string& out_name) {
   return harris;
 }
 
+App different_path_latencies(const std::string& out_name) {
+  App harris;
+  harris.set_default_pixel_width(16);
+  harris.func2d("img_oc");
+  harris.func2d("img", v("img_oc"));
+  harris.func2d("short_path", v("img"));
+  harris.func2d("long_path", mul(div(v("img"), add(v("img"), 1)), 16));
+  harris.func2d(out_name, add(v("long_path"), v("short_path")));
+
+  return harris;
+}
+
 App harris16(const std::string& out_name) {
   App harris;
   harris.set_default_pixel_width(16);
@@ -6492,6 +6504,21 @@ void camera_pipeline_test(const std::string& prefix) {
 
     move_to_benchmarks_folder(out_name + "_opt");
   }
+}
+
+void different_path_latencies_test(const std::string& prefix) {
+  int mini_size = 32;
+  auto hmini = different_path_latencies(prefix);
+  hmini.realize_naive(prefix, mini_size, mini_size);
+  hmini.realize(prefix, mini_size, mini_size, 1);
+
+  std::vector<std::string> naive =
+    run_regression_tb(prefix + "_opt");
+  std::vector<std::string> optimized =
+    run_regression_tb(prefix + "_naive");
+  assert(naive == optimized);
+  move_to_benchmarks_folder(prefix + "_opt");
+  assert(false);
 }
 
 void harris16_test(const std::string& prefix) {
@@ -8445,6 +8472,7 @@ void playground() {
 }
 
 void iccad_tests() {
+  different_path_latencies_test("dp");
   harris16_test("hr18");
   camera_pipeline_test("cp18");
   blur_xy_16_app_test("bxy18");
