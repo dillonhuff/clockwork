@@ -578,13 +578,13 @@ string isl_str(QTerm& v) {
 
   vector<string> tstrings;
   vector<string> divs;
-  for (auto v : v.vals) {
-    if (!v.is_num || v.is_whole()) {
+  for (QAV val : v.vals) {
+    if (!val.is_num || val.is_whole()) {
       ostringstream ss;
-      ss << v;
+      ss << val;
       tstrings.push_back(ss.str());
     } else {
-      divs.push_back(to_string(v.denom));
+      divs.push_back(to_string(val.denom));
     }
   }
   string s = sep_list(tstrings, "", "", "*");
@@ -1155,6 +1155,19 @@ std::string box_codegen(CodegenOptions& options,
   assert(compute_domains.size() > 0);
 
   ostringstream ss;
+  ss << tab(1) << "// Schedules..." << endl;
+  for (auto s : scheds) {
+    vector<string> qstrings;
+    for (auto q : s.second) {
+      ostringstream qs;
+      qs << q;
+      qstrings.push_back(qs.str());
+    }
+    string schedstr = sep_list(qstrings, "[", "]", ",");
+
+    ss << tab(2) <<  "// " << s.first << " -> " << schedstr << endl;
+  }
+
   int ndims = pick(compute_domains).second.intervals.size();
 
   map<string, Box> index_bounds;

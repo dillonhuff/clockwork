@@ -18,17 +18,17 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
-  const int dn3d_mini_update_0_write_DATA_SIZE = num_epochs*1728;
+  const int dn3d_mini_update_0_write_DATA_SIZE = num_epochs*1100;
   const int dn3d_mini_update_0_write_BYTES_PER_PIXEL = 16 / 8;
   size_t dn3d_mini_update_0_write_size_bytes = dn3d_mini_update_0_write_BYTES_PER_PIXEL * dn3d_mini_update_0_write_DATA_SIZE;
 
   total_size_bytes += dn3d_mini_update_0_write_size_bytes;
-  const int f_update_0_read_DATA_SIZE = num_epochs*1728;
+  const int f_update_0_read_DATA_SIZE = num_epochs*1100;
   const int f_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t f_update_0_read_size_bytes = f_update_0_read_BYTES_PER_PIXEL * f_update_0_read_DATA_SIZE;
 
   total_size_bytes += f_update_0_read_size_bytes;
-  const int u_update_0_read_DATA_SIZE = num_epochs*1728;
+  const int u_update_0_read_DATA_SIZE = num_epochs*1100;
   const int u_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t u_update_0_read_size_bytes = u_update_0_read_BYTES_PER_PIXEL * u_update_0_read_DATA_SIZE;
 
@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, cl::Buffer u_update_0_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, u_update_0_read_size_bytes, u_update_0_read.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, u_update_0_read_ocl_buf));
 
-  uint64_t transfer_size = num_epochs*(1728 / 1);
+  uint64_t transfer_size = num_epochs*(1100 / 1);
   OCL_CHECK(err, err = krnl_vector_add.setArg(3, transfer_size));
 
   std::cout << "Migrating memory" << std::endl;

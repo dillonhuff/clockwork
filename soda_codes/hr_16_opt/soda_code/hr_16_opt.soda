@@ -2,7 +2,9 @@ kernel: hr_16_opt
 unroll factor: 16
 burst width: 512
 
-input uint32: img(1984, *)
+input uint32: img_oc(1984, *)
+
+local uint32: img(0, 0) = img_oc(0, 0)
 
 local uint32: grad_y(0, 0) = (((img(-1, 1) - img(-1, -1)) + ((img(0, 1) - img(0, -1)) * 2)) + (img(1, 1) - img(1, -1)))
 

@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
   size_t f_update_0_read_size_bytes = f_update_0_read_BYTES_PER_PIXEL * f_update_0_read_DATA_SIZE;
 
   total_size_bytes += f_update_0_read_size_bytes;
-  const int u_update_0_read_DATA_SIZE = num_epochs*1728;
+  const int u_update_0_read_DATA_SIZE = num_epochs*1100;
   const int u_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t u_update_0_read_size_bytes = u_update_0_read_BYTES_PER_PIXEL * u_update_0_read_DATA_SIZE;
 

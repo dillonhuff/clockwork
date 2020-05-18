@@ -189,6 +189,10 @@ struct ir_node {
     return fo;
   }
 
+  string add_load(const std::string& b, const std::string& d0, const std::string& d1) {
+    return add_load(b, d0 + ", " + d1);
+  }
+
   string add_load(const std::string& b, const std::string& loc) {
     assert(!is_loop);
     consume_locs.push_back({b, loc});
@@ -210,6 +214,10 @@ struct ir_node {
       ps.push_back(p.first + "[" + p.second + "]");
     }
     return ps;
+  }
+
+  void add_store(const std::string& b, const std::string& d0, const std::string& d1) {
+    add_store(b, d0 + ", " + d1);
   }
 
   void add_store(const std::string& b, const std::string& loc) {
@@ -281,8 +289,8 @@ struct ir_node {
     }
   }
 
-  set<op*> all_loops() {
-    set<op*> loops{this};
+  std::set<op*> all_loops() {
+    std::set<op*> loops{this};
     if (!is_loop) {
       loops = {};
     }
@@ -294,8 +302,8 @@ struct ir_node {
     return loops;
   }
 
-  set<op*> all_ops() {
-    set<op*> ops{this};
+  std::set<op*> all_ops() {
+    std::set<op*> ops{this};
     if (is_loop) {
       ops = {};
     }
@@ -319,8 +327,8 @@ struct prog {
   ir_node* root;
 
   // Names of input and output buffers
-  set<string> ins;
-  set<string> outs;
+  std::set<string> ins;
+  std::set<string> outs;
   map<string, int> buffer_port_widths;
 
   // The C++ source file which holds HLS code
@@ -503,8 +511,8 @@ struct prog {
     return args;
   }
 
-  set<op*> all_loops() { return root->all_loops(); }
-  set<op*> all_ops() { return root->all_ops(); }
+  std::set<op*> all_loops() { return root->all_loops(); }
+  std::set<op*> all_ops() { return root->all_ops(); }
 
   op* add_op(const std::string& name) {
     return root->add_op(name);

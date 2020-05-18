@@ -10,17 +10,7 @@ addons:
     - g++-4.9
 
 before_install:
-  - wget https://shoup.net/ntl/ntl-11.4.1.tar.gz
-  - tar -xvzf ntl-11.4.1.tar.gz
-  - cd ntl-11.4.1/src
-  - ./configure
-  - make
-  - sudo make install
-  - cd ../../
-  #- wget https://barvinok.gforge.inria.fr/barvinok-0.41.tar.gz
-  #- tar -xvzf barvinok-0.41.tar.gz
-  #- cd barvinok-0.41/
-  #- ls
+  - ./install_deps_rice.sh
 
 script:
   - ./rebuild_and_run.sh

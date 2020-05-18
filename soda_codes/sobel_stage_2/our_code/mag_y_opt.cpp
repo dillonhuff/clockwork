@@ -246,7 +246,7 @@ inline void img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */
   hw_uint<32> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "img_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "img_update_0," << (1*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -267,7 +267,7 @@ inline void mag_y_update_0(img_cache& img, HWStream<hw_uint<32> >& /* buffer_arg
   hw_uint<32> debug_compute_result(compute_result);
   hw_uint<32> debug_compute_result_lane_0;
   set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "mag_y_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+  *global_debug_handle << "mag_y_update_0," << (1*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -282,11 +282,15 @@ void mag_y_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */off_chip_img,
   img_cache img;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
   for (int epoch = 0; epoch < num_epochs; epoch++) {
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS inline recursive
-	#endif // __VIVADO_SYNTH__
-	
+	  // Schedules...
+	    // img_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
+	    // mag_y_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*2]
+	    // off_chip_img_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
 	for (int c0 = -1; c0 <= 32; c0++) {
 	  for (int c1 = -1; c1 <= 32; c1++) {
 	
@@ -322,14 +326,13 @@ void mag_y_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */off_chip_img,
 const int mag_y_update_0_write_num_transfers = 1024;
 const int img_update_0_read_num_transfers = 1156;
 
-// TODO: Adapt to have one size for each edge buffer
-#define INPUT_SIZE 1156
-#define OUTPUT_SIZE 1024
+
 extern "C" {
 
 static void read_img_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < img_update_0_read_num_transfers*size; i++) {
+  int num_transfers = img_update_0_read_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -338,7 +341,8 @@ static void read_img_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v
 
 static void write_mag_y_update_0_write(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < mag_y_update_0_write_num_transfers*size; i++) {
+  int num_transfers = mag_y_update_0_write_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;
