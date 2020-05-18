@@ -167,10 +167,6 @@ inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in, I_c
 	I_I_id0_write_bundle_write(compute_result, I, root, id1, id0);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "I_id0," << (1*root + 0) << "," << id1<< "," << id0<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -180,7 +176,6 @@ inline void out_blur_30(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num p
 	auto I_d0__p__0_c__d1__p__0_value = I_out_blur_30_read_bundle_read(I/* source_delay */, root, d1, d0);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "out_blur_30_I," << root<< "," << d1<< "," << d0<< "," <<  I_d0__p__0_c__d1__p__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = blur_3(I_d0__p__0_c__d1__p__0_value);
@@ -188,10 +183,6 @@ inline void out_blur_30(I_cache& I, HWStream<hw_uint<16> >& /* buffer_args num p
 	out.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "out_blur_30," << (1*root + 0) << "," << d1<< "," << d0<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }

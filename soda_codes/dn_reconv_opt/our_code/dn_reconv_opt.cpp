@@ -666,111 +666,6 @@ inline void u_u_update_0_write_bundle_write(hw_uint<16>& u_update_0_write, u_cac
 
 
 // Operation logic
-inline void r0_update_0(f_cache& f, u_cache& u, r0_cache& r0, int d0, int d1, int d2) {
-	// Consume: f
-	auto f_0_c__0_value = f_r0_update_0_read_bundle_read(f/* source_delay */, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "r0_update_0_f," << d0<< "," << d1<< "," << d2<< "," <<  f_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	// Consume: u
-	auto u_0_c__0_value = u_r0_update_0_read_bundle_read(u/* source_delay */, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "r0_update_0_u," << d0<< "," << d1<< "," << d2<< "," <<  u_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = r0_generated_compute_unrolled_1(f_0_c__0_value, u_0_c__0_value);
-	// Produce: r0
-	r0_r0_update_0_write_bundle_write(compute_result, r0, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "r0_update_0," << (1*d0 + 0) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void diff_o_update_0(u_cache& u, diff_o_cache& diff_o, int d0, int d1, int d2) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_o_update_0_read_bundle_read(u/* source_delay */, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "diff_o_update_0_u," << d0<< "," << d1<< "," << d2<< "," <<  u_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = diff_o_generated_compute_unrolled_1(u_0_c__0_value);
-	// Produce: diff_o
-	diff_o_diff_o_update_0_write_bundle_write(compute_result, diff_o, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "diff_o_update_0," << (1*d0 + 0) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void diff_i_update_0(u_cache& u, diff_i_cache& diff_i, int d0, int d1, int d2) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_i_update_0_read_bundle_read(u/* source_delay */, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "diff_i_update_0_u," << d0<< "," << d1<< "," << d2<< "," <<  u_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = diff_i_generated_compute_unrolled_1(u_0_c__0_value);
-	// Produce: diff_i
-	diff_i_diff_i_update_0_write_bundle_write(compute_result, diff_i, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "diff_i_update_0," << (1*d0 + 0) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dn_reconv_update_0(g_cache& g, r1_cache& r1, u_cache& u, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */dn_reconv, int d0, int d1, int d2) {
-	// Consume: g
-	auto g_0_c__0_value = g_dn_reconv_update_0_read_bundle_read(g/* source_delay */, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dn_reconv_update_0_g," << d0<< "," << d1<< "," << d2<< "," <<  g_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	// Consume: r1
-	auto r1_0_c__0_value = r1_dn_reconv_update_0_read_bundle_read(r1/* source_delay */, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dn_reconv_update_0_r1," << d0<< "," << d1<< "," << d2<< "," <<  r1_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	// Consume: u
-	auto u_0_c__0_value = u_dn_reconv_update_0_read_bundle_read(u/* source_delay */, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dn_reconv_update_0_u," << d0<< "," << d1<< "," << d2<< "," <<  u_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = dn_reconv_generated_compute_unrolled_1(g_0_c__0_value, r1_0_c__0_value, u_0_c__0_value);
-	// Produce: dn_reconv
-	dn_reconv.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "dn_reconv_update_0," << (1*d0 + 0) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void f_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */f_oc, f_cache& f, int d0, int d1, int d2) {
 	// Consume: f_oc
 	auto f_oc_0_c__0_value = f_oc.read();
@@ -779,10 +674,6 @@ inline void f_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */f_
 	f_f_update_0_write_bundle_write(compute_result, f, d0, d1, d2);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "f_update_0," << (1*d0 + 0) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -792,7 +683,6 @@ inline void r1_update_0(r0_cache& r0, r1_cache& r1, int d0, int d1, int d2) {
 	auto r0_0_c__0_value = r0_r1_update_0_read_bundle_read(r0/* source_delay */, d0, d1, d2);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "r1_update_0_r0," << d0<< "," << d1<< "," << d2<< "," <<  r0_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = r1_generated_compute_unrolled_1(r0_0_c__0_value);
@@ -800,10 +690,6 @@ inline void r1_update_0(r0_cache& r0, r1_cache& r1, int d0, int d1, int d2) {
 	r1_r1_update_0_write_bundle_write(compute_result, r1, d0, d1, d2);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "r1_update_0," << (1*d0 + 0) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -813,14 +699,12 @@ inline void g_update_0(diff_i_cache& diff_i, diff_o_cache& diff_o, g_cache& g, i
 	auto diff_i_0_c__0_value = diff_i_g_update_0_read_bundle_read(diff_i/* source_delay */, d0, d1, d2);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "g_update_0_diff_i," << d0<< "," << d1<< "," << d2<< "," <<  diff_i_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	// Consume: diff_o
 	auto diff_o_0_c__0_value = diff_o_g_update_0_read_bundle_read(diff_o/* source_delay */, d0, d1, d2);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "g_update_0_diff_o," << d0<< "," << d1<< "," << d2<< "," <<  diff_o_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = g_generated_compute_unrolled_1(diff_i_0_c__0_value, diff_o_0_c__0_value);
@@ -828,10 +712,56 @@ inline void g_update_0(diff_i_cache& diff_i, diff_o_cache& diff_o, g_cache& g, i
 	g_g_update_0_write_bundle_write(compute_result, g, d0, d1, d2);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "g_update_0," << (1*d0 + 0) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dn_reconv_update_0(g_cache& g, r1_cache& r1, u_cache& u, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */dn_reconv, int d0, int d1, int d2) {
+	// Consume: g
+	auto g_0_c__0_value = g_dn_reconv_update_0_read_bundle_read(g/* source_delay */, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: r1
+	auto r1_0_c__0_value = r1_dn_reconv_update_0_read_bundle_read(r1/* source_delay */, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: u
+	auto u_0_c__0_value = u_dn_reconv_update_0_read_bundle_read(u/* source_delay */, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = dn_reconv_generated_compute_unrolled_1(g_0_c__0_value, r1_0_c__0_value, u_0_c__0_value);
+	// Produce: dn_reconv
+	dn_reconv.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void r0_update_0(f_cache& f, u_cache& u, r0_cache& r0, int d0, int d1, int d2) {
+	// Consume: f
+	auto f_0_c__0_value = f_r0_update_0_read_bundle_read(f/* source_delay */, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: u
+	auto u_0_c__0_value = u_r0_update_0_read_bundle_read(u/* source_delay */, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = r0_generated_compute_unrolled_1(f_0_c__0_value, u_0_c__0_value);
+	// Produce: r0
+	r0_r0_update_0_write_bundle_write(compute_result, r0, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 }
@@ -844,10 +774,38 @@ inline void u_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */u_
 	u_u_update_0_write_bundle_write(compute_result, u, d0, d1, d2);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "u_update_0," << (1*d0 + 0) << "," << d1<< "," << d2<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void diff_o_update_0(u_cache& u, diff_o_cache& diff_o, int d0, int d1, int d2) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_o_update_0_read_bundle_read(u/* source_delay */, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = diff_o_generated_compute_unrolled_1(u_0_c__0_value);
+	// Produce: diff_o
+	diff_o_diff_o_update_0_write_bundle_write(compute_result, diff_o, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void diff_i_update_0(u_cache& u, diff_i_cache& diff_i, int d0, int d1, int d2) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_i_update_0_read_bundle_read(u/* source_delay */, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = diff_i_generated_compute_unrolled_1(u_0_c__0_value);
+	// Produce: diff_i
+	diff_i_diff_i_update_0_write_bundle_write(compute_result, diff_i, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 }
