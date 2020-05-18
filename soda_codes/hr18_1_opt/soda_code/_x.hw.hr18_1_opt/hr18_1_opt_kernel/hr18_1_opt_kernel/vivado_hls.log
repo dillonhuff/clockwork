@@ -6,7 +6,7 @@
 
 source /opt/Xilinx/Vivado/2019.2/scripts/vivado_hls/hls.tcl -notrace
 INFO: [HLS 200-10] Running '/opt/Xilinx/Vivado/2019.2/bin/unwrapped/lnx64.o/vivado_hls'
-INFO: [HLS 200-10] For user 'centos' on host 'ip-172-31-77-56.ec2.internal' (Linux_x86_64 version 3.10.0-1062.4.1.el7.x86_64) on Mon May 18 21:43:52 UTC 2020
+INFO: [HLS 200-10] For user 'centos' on host 'ip-172-31-77-56.ec2.internal' (Linux_x86_64 version 3.10.0-1062.4.1.el7.x86_64) on Mon May 18 22:47:53 UTC 2020
 INFO: [HLS 200-10] On os "CentOS Linux release 7.7.1908 (Core)"
 INFO: [HLS 200-10] In directory '/home/centos/clockwork/soda_codes/hr18_1_opt/soda_code/_x.hw.hr18_1_opt/hr18_1_opt_kernel/hr18_1_opt_kernel'
 Sourcing Tcl script 'hr18_1_opt_kernel.tcl'
@@ -30,8 +30,8 @@ INFO: [SYN 201-201] Setting up clock 'default' with an uncertainty of 1.08ns.
 INFO: [SYN 201-201] Setting up clock 'default' with an uncertainty of 1.08ns.
 INFO: [SCHED 204-61] Option 'relax_ii_for_timing' is enabled, will increase II to preserve clock frequency constraints.
 INFO: [HLS 200-10] Analyzing design file '/home/centos/clockwork/soda_codes/hr18_1_opt/soda_code/hr18_1_opt_kernel.cpp' ... 
-INFO: [HLS 200-111] Finished Linking Time (s): cpu = 00:00:11 ; elapsed = 00:01:07 . Memory (MB): peak = 983.102 ; gain = 463.160 ; free physical = 60642 ; free virtual = 83080
-INFO: [HLS 200-111] Finished Checking Pragmas Time (s): cpu = 00:00:11 ; elapsed = 00:01:07 . Memory (MB): peak = 983.102 ; gain = 463.160 ; free physical = 60642 ; free virtual = 83080
+INFO: [HLS 200-111] Finished Linking Time (s): cpu = 00:00:11 ; elapsed = 00:00:12 . Memory (MB): peak = 983.102 ; gain = 463.160 ; free physical = 61839 ; free virtual = 83179
+INFO: [HLS 200-111] Finished Checking Pragmas Time (s): cpu = 00:00:11 ; elapsed = 00:00:12 . Memory (MB): peak = 983.102 ; gain = 463.160 ; free physical = 61839 ; free virtual = 83179
 INFO: [HLS 200-10] Starting code transformations ...
 INFO: [XFORM 203-603] Inlining function 'WriteData<ap_uint<16> >' into 'Module18Func' (/home/centos/clockwork/soda_codes/hr18_1_opt/soda_code/hr18_1_opt_kernel.cpp:601).
 INFO: [XFORM 203-603] Inlining function 'WriteData<ap_uint<16> >' into 'BurstRead' (/home/centos/clockwork/soda_codes/hr18_1_opt/soda_code/hr18_1_opt_kernel.cpp:64).
@@ -101,11 +101,11 @@ INFO: [XFORM 203-603] Inlining function 'ReadData<unsigned short>' into 'Module4
 INFO: [XFORM 203-603] Inlining function 'ReadData<unsigned short>' into 'Module3Func' (/home/centos/clockwork/soda_codes/hr18_1_opt/soda_code/hr18_1_opt_kernel.cpp:163).
 INFO: [XFORM 203-603] Inlining function 'ReadData<unsigned short>' into 'Module2Func' (/home/centos/clockwork/soda_codes/hr18_1_opt/soda_code/hr18_1_opt_kernel.cpp:136).
 INFO: [XFORM 203-603] Inlining function 'ReadData<unsigned short>' into 'Module1Func' (/home/centos/clockwork/soda_codes/hr18_1_opt/soda_code/hr18_1_opt_kernel.cpp:112).
-INFO: [HLS 200-111] Finished Standard Transforms Time (s): cpu = 00:00:12 ; elapsed = 00:01:10 . Memory (MB): peak = 983.102 ; gain = 463.160 ; free physical = 60633 ; free virtual = 83078
+INFO: [HLS 200-111] Finished Standard Transforms Time (s): cpu = 00:00:12 ; elapsed = 00:00:14 . Memory (MB): peak = 983.102 ; gain = 463.160 ; free physical = 61836 ; free virtual = 83177
 INFO: [HLS 200-10] Checking synthesizability ...
 INFO: [XFORM 203-602] Inlining function 'Reinterpret<unsigned short, ap_uint<16> >' into 'Module0Func' (/home/centos/clockwork/soda_codes/hr18_1_opt/soda_code/hr18_1_opt_kernel.cpp:95) automatically.
 INFO: [XFORM 203-602] Inlining function 'Reinterpret<ap_uint<16>, unsigned short>' into 'Module18Func' (/home/centos/clockwork/soda_codes/hr18_1_opt/soda_code/hr18_1_opt_kernel.cpp:600) automatically.
-INFO: [HLS 200-111] Finished Checking Synthesizability Time (s): cpu = 00:00:12 ; elapsed = 00:01:11 . Memory (MB): peak = 983.102 ; gain = 463.160 ; free physical = 60629 ; free virtual = 83074
+INFO: [HLS 200-111] Finished Checking Synthesizability Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 983.102 ; gain = 463.160 ; free physical = 61832 ; free virtual = 83174
 WARNING: [XFORM 203-1102] Ignored multiple data pack pragma for variable 'bank_0_img_oc_buf.V' (/home/centos/clockwork/soda_codes/hr18_1_opt/soda_code/hr18_1_opt_kernel.cpp:621).
 INFO: [XFORM 203-1101] Packing variable 'bank_0_img_oc_buf.V' (/home/centos/clockwork/soda_codes/hr18_1_opt/soda_code/hr18_1_opt_kernel.cpp:621) into a 17-bit variable.
 WARNING: [XFORM 203-1102] Ignored multiple data pack pragma for variable 'bank_0_hr18_1_buf.V' (/home/centos/clockwork/soda_codes/hr18_1_opt/soda_code/hr18_1_opt_kernel.cpp:624).
@@ -388,7 +388,7 @@ INFO: [XFORM 203-11] Balancing expressions in function 'Module8Func' (/home/cent
 INFO: [XFORM 203-11] Balancing expressions in function 'Module13Func125' (/home/centos/clockwork/soda_codes/hr18_1_opt/soda_code/hr18_1_opt_kernel.cpp:436)...18 expression(s) balanced.
 INFO: [XFORM 203-11] Balancing expressions in function 'Module13Func120' (/home/centos/clockwork/soda_codes/hr18_1_opt/soda_code/hr18_1_opt_kernel.cpp:436)...18 expression(s) balanced.
 INFO: [XFORM 203-11] Balancing expressions in function 'Module13Func' (/home/centos/clockwork/soda_codes/hr18_1_opt/soda_code/hr18_1_opt_kernel.cpp:436)...18 expression(s) balanced.
-INFO: [HLS 200-111] Finished Pre-synthesis Time (s): cpu = 00:00:19 ; elapsed = 00:01:18 . Memory (MB): peak = 983.102 ; gain = 463.160 ; free physical = 60604 ; free virtual = 83051
+INFO: [HLS 200-111] Finished Pre-synthesis Time (s): cpu = 00:00:19 ; elapsed = 00:00:22 . Memory (MB): peak = 983.102 ; gain = 463.160 ; free physical = 61809 ; free virtual = 83152
 WARNING: [ANALYSIS 214-52] Found false inter dependency for variable 'fifo_ref_0_delayed_1922_buf' (/home/centos/clockwork/soda_codes/hr18_1_opt/soda_code/hr18_1_opt_kernel.cpp:278).
 WARNING: [ANALYSIS 214-52] Found false inter dependency for variable 'fifo_ref_0_delayed_2_buf' (/home/centos/clockwork/soda_codes/hr18_1_opt/soda_code/hr18_1_opt_kernel.cpp:246).
 WARNING: [ANALYSIS 214-52] Found false inter dependency for variable 'fifo_ref_0_delayed_1922_buf' (/home/centos/clockwork/soda_codes/hr18_1_opt/soda_code/hr18_1_opt_kernel.cpp:216).
@@ -432,4 +432,4 @@ Broken module found, compilation aborted!
 Stack dump:
 0.	Running pass 'Function Pass Manager' on module '/home/centos/clockwork/soda_codes/hr18_1_opt/soda_code/_x.hw.hr18_1_opt/hr18_1_opt_kernel/hr18_1_opt_kernel/hr18_1_opt_kernel/solution/.autopilot/db/a.o.2.bc'.
 1.	Running pass 'Module Verifier' on function '@Module14Func127'
-/opt/Xilinx/Vivado/2019.2/bin/loader: line 280:  5196 Aborted                 "$RDI_PROG" "$@"
+/opt/Xilinx/Vivado/2019.2/bin/loader: line 280:  5431 Aborted                 "$RDI_PROG" "$@"
