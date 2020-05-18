@@ -6443,8 +6443,8 @@ string sharpen(App& cp, const std::string& r) {
   string bx = r + "_bx";
   string by = r + "_by";
   string bdiff = r + "_diff";
-  cp.func2d(bx, mul(stencilv(0, 2, 0, 0, r), 3));
-  cp.func2d(by, mul(stencilv(0, 0, 0, 2, bx), 3));
+  cp.func2d(bx, div(stencilv(0, 2, 0, 0, r), 3));
+  cp.func2d(by, div(stencilv(0, 0, 0, 2, bx), 3));
 
   cp.func2d(bdiff, sub(v(by), v(r)));
   return bdiff;
@@ -6456,16 +6456,12 @@ App camera_pipeline(const std::string& out_name) {
 
   cp.func2d("raw_oc");
   cp.func2d("raw", v("raw_oc"));
+  cp.func2d("denoised", div(stencilv(-2, 2, -2, 2, "raw"), 25));
+  cp.func2d("demosaic", div(stencilv(-1, 1, -1, 1, "denoised"), 9));
 
-  cp.func2d("red", mul(stencilv(0, 2, 0, 2, "raw"), 4));
-  cp.func2d("green", mul(stencilv(0, 2, 0, 2, "raw"), 4));
-  cp.func2d("blue", mul(stencilv(0, 2, 0, 2, "raw"), 4));
+  string sharpened = sharpen(cp, "demosaic");
 
-  string red_sharpened = sharpen(cp, "red");
-  string green_sharpened = sharpen(cp, "green");
-  string blue_sharpened = sharpen(cp, "blue");
-
-  cp.func2d(out_name, add(v(red_sharpened), v(green_sharpened), v(blue_sharpened)));
+  cp.func2d(out_name, add(v(sharpened), 20));
   return cp;
 }
 
@@ -6483,7 +6479,7 @@ void camera_pipeline_test(const std::string& prefix) {
     run_regression_tb(app_name + "_opt");
   assert(naive == optimized);
   move_to_benchmarks_folder(app_name + "_opt");
-  assert(false);
+  //assert(false);
 
 
   int rows = 1080;
@@ -8472,13 +8468,13 @@ void playground() {
 }
 
 void iccad_tests() {
-  different_path_latencies_test("dp");
-  harris16_test("hr18");
   camera_pipeline_test("cp18");
+  harris16_test("hr18");
   blur_xy_16_app_test("bxy18");
   sobel_16_app_test("sbl18");
   assert(false);
 
+  different_path_latencies_test("dp");
   harris_test();
   denoise3d_reconvergence_test();
 

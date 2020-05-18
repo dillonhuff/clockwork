@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
   size_t camera_mini_update_0_write_size_bytes = camera_mini_update_0_write_BYTES_PER_PIXEL * camera_mini_update_0_write_DATA_SIZE;
 
   total_size_bytes += camera_mini_update_0_write_size_bytes;
-  const int raw_update_0_read_DATA_SIZE = num_epochs*1296;
+  const int raw_update_0_read_DATA_SIZE = num_epochs*1600;
   const int raw_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t raw_update_0_read_size_bytes = raw_update_0_read_BYTES_PER_PIXEL * raw_update_0_read_DATA_SIZE;
 
