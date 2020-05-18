@@ -16,39 +16,39 @@ hw_uint<16> grad_x_generated_compute(hw_uint<16*6> img) {
 }
 
 hw_uint<16> lyy_generated_compute(hw_uint<16*1> grad_y) {
-  return uint16_t(((uint16_t(grad_y.get<16, 0>()) * uint16_t(grad_y.get<16, 0>())) / 128));
+  return uint16_t(((uint16_t(grad_y.get<16, 0>()) * uint16_t(grad_y.get<16, 0>())) * 128));
 }
 
 hw_uint<16> lxy_generated_compute(hw_uint<16*1> grad_x, hw_uint<16*1> grad_y) {
-  return uint16_t(((uint16_t(grad_x.get<16, 0>()) * uint16_t(grad_y.get<16, 0>())) / 128));
+  return uint16_t(((uint16_t(grad_x.get<16, 0>()) * uint16_t(grad_y.get<16, 0>())) * 128));
 }
 
 hw_uint<16> lxx_generated_compute(hw_uint<16*1> grad_x) {
-  return uint16_t(((uint16_t(grad_x.get<16, 0>()) * uint16_t(grad_x.get<16, 0>())) / 128));
+  return uint16_t(((uint16_t(grad_x.get<16, 0>()) * uint16_t(grad_x.get<16, 0>())) * 128));
 }
 
 hw_uint<16> lgyy_generated_compute(hw_uint<16*9> lyy) {
-  return uint16_t((((((((((uint16_t(lyy.get<16, 0>()) + uint16_t(lyy.get<16, 1>())) + uint16_t(lyy.get<16, 2>())) + uint16_t(lyy.get<16, 3>())) + uint16_t(lyy.get<16, 4>())) + uint16_t(lyy.get<16, 5>())) + uint16_t(lyy.get<16, 6>())) + uint16_t(lyy.get<16, 7>())) + uint16_t(lyy.get<16, 8>())) / 9));
+  return uint16_t((((((((((uint16_t(lyy.get<16, 0>()) + uint16_t(lyy.get<16, 1>())) + uint16_t(lyy.get<16, 2>())) + uint16_t(lyy.get<16, 3>())) + uint16_t(lyy.get<16, 4>())) + uint16_t(lyy.get<16, 5>())) + uint16_t(lyy.get<16, 6>())) + uint16_t(lyy.get<16, 7>())) + uint16_t(lyy.get<16, 8>())) * 9));
 }
 
 hw_uint<16> lgxy_generated_compute(hw_uint<16*9> lxy) {
-  return uint16_t((((((((((uint16_t(lxy.get<16, 0>()) + uint16_t(lxy.get<16, 1>())) + uint16_t(lxy.get<16, 2>())) + uint16_t(lxy.get<16, 3>())) + uint16_t(lxy.get<16, 4>())) + uint16_t(lxy.get<16, 5>())) + uint16_t(lxy.get<16, 6>())) + uint16_t(lxy.get<16, 7>())) + uint16_t(lxy.get<16, 8>())) / 9));
+  return uint16_t((((((((((uint16_t(lxy.get<16, 0>()) + uint16_t(lxy.get<16, 1>())) + uint16_t(lxy.get<16, 2>())) + uint16_t(lxy.get<16, 3>())) + uint16_t(lxy.get<16, 4>())) + uint16_t(lxy.get<16, 5>())) + uint16_t(lxy.get<16, 6>())) + uint16_t(lxy.get<16, 7>())) + uint16_t(lxy.get<16, 8>())) * 9));
 }
 
 hw_uint<16> lgxx_generated_compute(hw_uint<16*9> lxx) {
-  return uint16_t((((((((((uint16_t(lxx.get<16, 0>()) + uint16_t(lxx.get<16, 1>())) + uint16_t(lxx.get<16, 2>())) + uint16_t(lxx.get<16, 3>())) + uint16_t(lxx.get<16, 4>())) + uint16_t(lxx.get<16, 5>())) + uint16_t(lxx.get<16, 6>())) + uint16_t(lxx.get<16, 7>())) + uint16_t(lxx.get<16, 8>())) / 9));
+  return uint16_t((((((((((uint16_t(lxx.get<16, 0>()) + uint16_t(lxx.get<16, 1>())) + uint16_t(lxx.get<16, 2>())) + uint16_t(lxx.get<16, 3>())) + uint16_t(lxx.get<16, 4>())) + uint16_t(lxx.get<16, 5>())) + uint16_t(lxx.get<16, 6>())) + uint16_t(lxx.get<16, 7>())) + uint16_t(lxx.get<16, 8>())) * 9));
 }
 
 hw_uint<16> lgyy8_generated_compute(hw_uint<16*1> lgyy) {
-  return uint16_t((uint16_t(lgyy.get<16, 0>()) / 64));
+  return uint16_t((uint16_t(lgyy.get<16, 0>()) * 64));
 }
 
 hw_uint<16> lgxy8_generated_compute(hw_uint<16*1> lgxy) {
-  return uint16_t((uint16_t(lgxy.get<16, 0>()) / 64));
+  return uint16_t((uint16_t(lgxy.get<16, 0>()) * 64));
 }
 
 hw_uint<16> lgxx8_generated_compute(hw_uint<16*1> lgxx) {
-  return uint16_t((uint16_t(lgxx.get<16, 0>()) / 64));
+  return uint16_t((uint16_t(lgxx.get<16, 0>()) * 64));
 }
 
 hw_uint<16> det_generated_compute(hw_uint<16*1> lgxx8, hw_uint<16*1> lgxy8, hw_uint<16*1> lgyy8) {

@@ -8,39 +8,39 @@ hw_uint<16> raw_generated_compute(hw_uint<16*1> raw_oc) {
 }
 
 hw_uint<16> blue_generated_compute(hw_uint<16*9> raw) {
-  return uint16_t(((((((((uint16_t(raw.get<16, 0>()) + uint16_t(raw.get<16, 1>())) + uint16_t(raw.get<16, 2>())) + uint16_t(raw.get<16, 3>())) + uint16_t(raw.get<16, 4>())) + uint16_t(raw.get<16, 5>())) + uint16_t(raw.get<16, 6>())) + uint16_t(raw.get<16, 7>())) + uint16_t(raw.get<16, 8>())));
+  return uint16_t((((((((((uint16_t(raw.get<16, 0>()) + uint16_t(raw.get<16, 1>())) + uint16_t(raw.get<16, 2>())) + uint16_t(raw.get<16, 3>())) + uint16_t(raw.get<16, 4>())) + uint16_t(raw.get<16, 5>())) + uint16_t(raw.get<16, 6>())) + uint16_t(raw.get<16, 7>())) + uint16_t(raw.get<16, 8>())) * 4));
 }
 
 hw_uint<16> red_generated_compute(hw_uint<16*9> raw) {
-  return uint16_t(((((((((uint16_t(raw.get<16, 0>()) + uint16_t(raw.get<16, 1>())) + uint16_t(raw.get<16, 2>())) + uint16_t(raw.get<16, 3>())) + uint16_t(raw.get<16, 4>())) + uint16_t(raw.get<16, 5>())) + uint16_t(raw.get<16, 6>())) + uint16_t(raw.get<16, 7>())) + uint16_t(raw.get<16, 8>())));
+  return uint16_t((((((((((uint16_t(raw.get<16, 0>()) + uint16_t(raw.get<16, 1>())) + uint16_t(raw.get<16, 2>())) + uint16_t(raw.get<16, 3>())) + uint16_t(raw.get<16, 4>())) + uint16_t(raw.get<16, 5>())) + uint16_t(raw.get<16, 6>())) + uint16_t(raw.get<16, 7>())) + uint16_t(raw.get<16, 8>())) * 4));
 }
 
 hw_uint<16> green_generated_compute(hw_uint<16*9> raw) {
-  return uint16_t(((((((((uint16_t(raw.get<16, 0>()) + uint16_t(raw.get<16, 1>())) + uint16_t(raw.get<16, 2>())) + uint16_t(raw.get<16, 3>())) + uint16_t(raw.get<16, 4>())) + uint16_t(raw.get<16, 5>())) + uint16_t(raw.get<16, 6>())) + uint16_t(raw.get<16, 7>())) + uint16_t(raw.get<16, 8>())));
+  return uint16_t((((((((((uint16_t(raw.get<16, 0>()) + uint16_t(raw.get<16, 1>())) + uint16_t(raw.get<16, 2>())) + uint16_t(raw.get<16, 3>())) + uint16_t(raw.get<16, 4>())) + uint16_t(raw.get<16, 5>())) + uint16_t(raw.get<16, 6>())) + uint16_t(raw.get<16, 7>())) + uint16_t(raw.get<16, 8>())) * 4));
 }
 
 hw_uint<16> blue_bx_generated_compute(hw_uint<16*3> blue) {
-  return uint16_t(((uint16_t(blue.get<16, 0>()) + uint16_t(blue.get<16, 1>())) + uint16_t(blue.get<16, 2>())));
+  return uint16_t((((uint16_t(blue.get<16, 0>()) + uint16_t(blue.get<16, 1>())) + uint16_t(blue.get<16, 2>())) * 3));
 }
 
 hw_uint<16> red_bx_generated_compute(hw_uint<16*3> red) {
-  return uint16_t(((uint16_t(red.get<16, 0>()) + uint16_t(red.get<16, 1>())) + uint16_t(red.get<16, 2>())));
+  return uint16_t((((uint16_t(red.get<16, 0>()) + uint16_t(red.get<16, 1>())) + uint16_t(red.get<16, 2>())) * 3));
 }
 
 hw_uint<16> green_bx_generated_compute(hw_uint<16*3> green) {
-  return uint16_t(((uint16_t(green.get<16, 0>()) + uint16_t(green.get<16, 1>())) + uint16_t(green.get<16, 2>())));
+  return uint16_t((((uint16_t(green.get<16, 0>()) + uint16_t(green.get<16, 1>())) + uint16_t(green.get<16, 2>())) * 3));
 }
 
 hw_uint<16> blue_by_generated_compute(hw_uint<16*3> blue_bx) {
-  return uint16_t(((uint16_t(blue_bx.get<16, 0>()) + uint16_t(blue_bx.get<16, 1>())) + uint16_t(blue_bx.get<16, 2>())));
+  return uint16_t((((uint16_t(blue_bx.get<16, 0>()) + uint16_t(blue_bx.get<16, 1>())) + uint16_t(blue_bx.get<16, 2>())) * 3));
 }
 
 hw_uint<16> red_by_generated_compute(hw_uint<16*3> red_bx) {
-  return uint16_t(((uint16_t(red_bx.get<16, 0>()) + uint16_t(red_bx.get<16, 1>())) + uint16_t(red_bx.get<16, 2>())));
+  return uint16_t((((uint16_t(red_bx.get<16, 0>()) + uint16_t(red_bx.get<16, 1>())) + uint16_t(red_bx.get<16, 2>())) * 3));
 }
 
 hw_uint<16> green_by_generated_compute(hw_uint<16*3> green_bx) {
-  return uint16_t(((uint16_t(green_bx.get<16, 0>()) + uint16_t(green_bx.get<16, 1>())) + uint16_t(green_bx.get<16, 2>())));
+  return uint16_t((((uint16_t(green_bx.get<16, 0>()) + uint16_t(green_bx.get<16, 1>())) + uint16_t(green_bx.get<16, 2>())) * 3));
 }
 
 hw_uint<16> blue_diff_generated_compute(hw_uint<16*1> blue, hw_uint<16*1> blue_by) {

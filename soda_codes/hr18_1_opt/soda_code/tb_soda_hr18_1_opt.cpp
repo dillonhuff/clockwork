@@ -12,7 +12,7 @@ using namespace std;
 
 int main() {
   srand(234);
-  const int nrows = 1084;
+  const int nrows = 30*1084;
   const int ncols = 1924;
   uint64_t img_pixels = nrows*ncols;
   const uint64_t bits_per_pixel = PIXEL_WIDTH;

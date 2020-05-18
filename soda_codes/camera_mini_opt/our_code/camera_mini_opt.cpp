@@ -2089,70 +2089,6 @@ inline void red_diff_red_diff_update_0_write_bundle_write(hw_uint<16>& red_diff_
 
 
 // Operation logic
-inline void blue_update_0(raw_cache& raw, blue_cache& blue, int d0, int d1) {
-	// Consume: raw
-	auto raw_0_c__0_value = raw_blue_update_0_read_bundle_read(raw/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = blue_generated_compute_unrolled_1(raw_0_c__0_value);
-	// Produce: blue
-	blue_blue_update_0_write_bundle_write(compute_result, blue, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void red_update_0(raw_cache& raw, red_cache& red, int d0, int d1) {
-	// Consume: raw
-	auto raw_0_c__0_value = raw_red_update_0_read_bundle_read(raw/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = red_generated_compute_unrolled_1(raw_0_c__0_value);
-	// Produce: red
-	red_red_update_0_write_bundle_write(compute_result, red, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void green_update_0(raw_cache& raw, green_cache& green, int d0, int d1) {
-	// Consume: raw
-	auto raw_0_c__0_value = raw_green_update_0_read_bundle_read(raw/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = green_generated_compute_unrolled_1(raw_0_c__0_value);
-	// Produce: green
-	green_green_update_0_write_bundle_write(compute_result, green, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void blue_bx_update_0(blue_cache& blue, blue_bx_cache& blue_bx, int d0, int d1) {
-	// Consume: blue
-	auto blue_0_c__0_value = blue_blue_bx_update_0_read_bundle_read(blue/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = blue_bx_generated_compute_unrolled_1(blue_0_c__0_value);
-	// Produce: blue_bx
-	blue_bx_blue_bx_update_0_write_bundle_write(compute_result, blue_bx, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void red_bx_update_0(red_cache& red, red_bx_cache& red_bx, int d0, int d1) {
 	// Consume: red
 	auto red_0_c__0_value = red_red_bx_update_0_read_bundle_read(red/* source_delay */, d0, d1);
@@ -2163,22 +2099,6 @@ inline void red_bx_update_0(red_cache& red, red_bx_cache& red_bx, int d0, int d1
 	auto compute_result = red_bx_generated_compute_unrolled_1(red_0_c__0_value);
 	// Produce: red_bx
 	red_bx_red_bx_update_0_write_bundle_write(compute_result, red_bx, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void blue_by_update_0(blue_bx_cache& blue_bx, blue_by_cache& blue_by, int d0, int d1) {
-	// Consume: blue_bx
-	auto blue_bx_0_c__0_value = blue_bx_blue_by_update_0_read_bundle_read(blue_bx/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = blue_by_generated_compute_unrolled_1(blue_bx_0_c__0_value);
-	// Produce: blue_by
-	blue_by_blue_by_update_0_write_bundle_write(compute_result, blue_by, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -2201,16 +2121,16 @@ inline void green_bx_update_0(green_cache& green, green_bx_cache& green_bx, int 
 
 }
 
-inline void red_by_update_0(red_bx_cache& red_bx, red_by_cache& red_by, int d0, int d1) {
-	// Consume: red_bx
-	auto red_bx_0_c__0_value = red_bx_red_by_update_0_read_bundle_read(red_bx/* source_delay */, d0, d1);
+inline void blue_by_update_0(blue_bx_cache& blue_bx, blue_by_cache& blue_by, int d0, int d1) {
+	// Consume: blue_bx
+	auto blue_bx_0_c__0_value = blue_bx_blue_by_update_0_read_bundle_read(blue_bx/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = red_by_generated_compute_unrolled_1(red_bx_0_c__0_value);
-	// Produce: red_by
-	red_by_red_by_update_0_write_bundle_write(compute_result, red_by, d0, d1);
+	auto compute_result = blue_by_generated_compute_unrolled_1(blue_bx_0_c__0_value);
+	// Produce: blue_by
+	blue_by_blue_by_update_0_write_bundle_write(compute_result, blue_by, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -2333,6 +2253,86 @@ inline void raw_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */
 	auto compute_result = raw_generated_compute_unrolled_1(raw_oc_0_c__0_value);
 	// Produce: raw
 	raw_raw_update_0_write_bundle_write(compute_result, raw, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void blue_update_0(raw_cache& raw, blue_cache& blue, int d0, int d1) {
+	// Consume: raw
+	auto raw_0_c__0_value = raw_blue_update_0_read_bundle_read(raw/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = blue_generated_compute_unrolled_1(raw_0_c__0_value);
+	// Produce: blue
+	blue_blue_update_0_write_bundle_write(compute_result, blue, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void red_update_0(raw_cache& raw, red_cache& red, int d0, int d1) {
+	// Consume: raw
+	auto raw_0_c__0_value = raw_red_update_0_read_bundle_read(raw/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = red_generated_compute_unrolled_1(raw_0_c__0_value);
+	// Produce: red
+	red_red_update_0_write_bundle_write(compute_result, red, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void green_update_0(raw_cache& raw, green_cache& green, int d0, int d1) {
+	// Consume: raw
+	auto raw_0_c__0_value = raw_green_update_0_read_bundle_read(raw/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = green_generated_compute_unrolled_1(raw_0_c__0_value);
+	// Produce: green
+	green_green_update_0_write_bundle_write(compute_result, green, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void blue_bx_update_0(blue_cache& blue, blue_bx_cache& blue_bx, int d0, int d1) {
+	// Consume: blue
+	auto blue_0_c__0_value = blue_blue_bx_update_0_read_bundle_read(blue/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = blue_bx_generated_compute_unrolled_1(blue_0_c__0_value);
+	// Produce: blue_bx
+	blue_bx_blue_bx_update_0_write_bundle_write(compute_result, blue_bx, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void red_by_update_0(red_bx_cache& red_bx, red_by_cache& red_by, int d0, int d1) {
+	// Consume: red_bx
+	auto red_bx_0_c__0_value = red_bx_red_by_update_0_read_bundle_read(red_bx/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = red_by_generated_compute_unrolled_1(red_bx_0_c__0_value);
+	// Produce: red_by
+	red_by_red_by_update_0_write_bundle_write(compute_result, red_by, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

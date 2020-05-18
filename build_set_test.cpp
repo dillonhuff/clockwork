@@ -6338,17 +6338,17 @@ App harris16(const std::string& out_name) {
 
   //harris.func2d(out_name, div(square(v("grad_x")), 128));
 
-  harris.func2d("lxx", div(square(v("grad_x")), 128));
-  harris.func2d("lyy", div(square(v("grad_y")), 128));
-  harris.func2d("lxy", div(mul(v("grad_x"), v("grad_y")), 128));
+  harris.func2d("lxx", mul(square(v("grad_x")), 128));
+  harris.func2d("lyy", mul(square(v("grad_y")), 128));
+  harris.func2d("lxy", mul(mul(v("grad_x"), v("grad_y")), 128));
   
-  harris.func2d("lgxx", div(stencilv(-1, 1, -1, 1, "lxx"), 9));
-  harris.func2d("lgyy", div(stencilv(-1, 1, -1, 1, "lyy"), 9));
-  harris.func2d("lgxy", div(stencilv(-1, 1, -1, 1, "lxy"), 9));
+  harris.func2d("lgxx", mul(stencilv(-1, 1, -1, 1, "lxx"), 9));
+  harris.func2d("lgyy", mul(stencilv(-1, 1, -1, 1, "lyy"), 9));
+  harris.func2d("lgxy", mul(stencilv(-1, 1, -1, 1, "lxy"), 9));
 
-  harris.func2d("lgxx8", div(v("lgxx"), 64));
-  harris.func2d("lgyy8", div(v("lgyy"), 64));
-  harris.func2d("lgxy8", div(v("lgxy"), 64));
+  harris.func2d("lgxx8", mul(v("lgxx"), 64));
+  harris.func2d("lgyy8", mul(v("lgyy"), 64));
+  harris.func2d("lgxy8", mul(v("lgxy"), 64));
   
   harris.func2d("det", add(mul("lgxx8", "lgyy8"), square("lgxy8")));
   harris.func2d("trace", mul("lgxx8", "lgyy8"));
@@ -6431,8 +6431,8 @@ string sharpen(App& cp, const std::string& r) {
   string bx = r + "_bx";
   string by = r + "_by";
   string bdiff = r + "_diff";
-  cp.func2d(bx, stencilv(0, 2, 0, 0, r));
-  cp.func2d(by, stencilv(0, 0, 0, 2, bx));
+  cp.func2d(bx, mul(stencilv(0, 2, 0, 0, r), 3));
+  cp.func2d(by, mul(stencilv(0, 0, 0, 2, bx), 3));
 
   cp.func2d(bdiff, sub(v(by), v(r)));
   return bdiff;
@@ -6445,9 +6445,9 @@ App camera_pipeline(const std::string& out_name) {
   cp.func2d("raw_oc");
   cp.func2d("raw", v("raw_oc"));
 
-  cp.func2d("red", stencilv(0, 2, 0, 2, "raw"));
-  cp.func2d("green", stencilv(0, 2, 0, 2, "raw"));
-  cp.func2d("blue", stencilv(0, 2, 0, 2, "raw"));
+  cp.func2d("red", mul(stencilv(0, 2, 0, 2, "raw"), 4));
+  cp.func2d("green", mul(stencilv(0, 2, 0, 2, "raw"), 4));
+  cp.func2d("blue", mul(stencilv(0, 2, 0, 2, "raw"), 4));
 
   string red_sharpened = sharpen(cp, "red");
   string green_sharpened = sharpen(cp, "green");
@@ -6457,7 +6457,7 @@ App camera_pipeline(const std::string& out_name) {
   return cp;
 }
 
-void camera_pipeline_test() {
+void camera_pipeline_test(const std::string& prefix) {
   string app_name = "camera_mini";
   int mini_rows = 32;
   int mini_cols = 32;
@@ -6476,17 +6476,18 @@ void camera_pipeline_test() {
 
   int rows = 1080;
   int cols = 1920;
-  vector<int> factors{1, 2, 4, 8, 16};
+  vector<int> factors{1, 2, 4};
   for (int i = 0; i < (int) factors.size(); i++) {
     int unroll_factor = factors.at(i);
     //cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
-    string out_name = "cp_" + str(unroll_factor);
+    string out_name = prefix + "_" + str(unroll_factor);
 
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
     options.debug_options.expect_all_linebuffers = true;
+    options.num_input_epochs = 30;
     camera_pipeline(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
     move_to_benchmarks_folder(out_name + "_opt");
@@ -6522,6 +6523,7 @@ void harris16_test(const std::string& prefix) {
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
     options.debug_options.expect_all_linebuffers = true;
+    options.num_input_epochs = 30;
     harris16(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
     move_to_benchmarks_folder(out_name + "_opt");
@@ -7371,7 +7373,7 @@ void sobel_16_stage_x_app_test() {
 
 }
 
-void sobel_16_app_test() {
+void sobel_16_app_test(const std::string& prefix) {
   int cols = 1920;
   int rows = 1080;
 
@@ -7383,7 +7385,7 @@ void sobel_16_app_test() {
     int unroll_factor = factor;
       //pow(2, i);
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
-    string out_name = "sblr30_" + str(unroll_factor);
+    string out_name = prefix + "_" + str(unroll_factor);
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
@@ -7419,7 +7421,7 @@ void sobel_app_test() {
 
 }
 
-void blur_xy_16_app_test() {
+void blur_xy_16_app_test(const std::string& prefix) {
   int cols = 1920;
   int rows = 1080;
 
@@ -7427,7 +7429,7 @@ void blur_xy_16_app_test() {
   for (auto f : factors) {
     int unroll_factor = f;
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
-    string out_name = "bxy30_" + str(unroll_factor);
+    string out_name = prefix + "_" + str(unroll_factor);
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
@@ -8444,9 +8446,9 @@ void playground() {
 
 void iccad_tests() {
   harris16_test("hr18");
-  camera_pipeline_test();
-  blur_xy_16_app_test();
-  sobel_16_app_test();
+  camera_pipeline_test("cp18");
+  blur_xy_16_app_test("bxy18");
+  sobel_16_app_test("sbl18");
   assert(false);
 
   harris_test();
@@ -8477,8 +8479,8 @@ void mini_application_tests() {
   blur_x_test();
   harris16_test("hrs");
   denoise3d_reconvergence_test();
-  blur_xy_16_app_test();
-  sobel_16_app_test();
+  blur_xy_16_app_test("bxy");
+  sobel_16_app_test("sbl");
   single_gaussian_pyramid_app_test();
   max_pooling_test();
   exposure_fusion();
