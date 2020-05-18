@@ -6459,7 +6459,7 @@ App camera_pipeline(const std::string& out_name) {
 
 void camera_pipeline_test() {
   string app_name = "camera_mini";
-  int mini_size = 32;
+  int mini_size = 100;
   auto hmini = camera_pipeline(app_name);
   hmini.realize_naive(app_name, mini_size, mini_size);
   hmini.realize(app_name, mini_size, mini_size, 1);
