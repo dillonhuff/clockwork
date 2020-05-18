@@ -646,50 +646,50 @@ struct prog {
     return m;
   }
 
-  map<string, Result> data_demands_maps() {
-    map<string, Result> m;
-    auto ivars = iter_vars();
-    auto doms = domains();
+  //map<string, Result> data_demands_maps() {
+    //map<string, Result> m;
+    //auto ivars = iter_vars();
+    //auto doms = domains();
 
-    auto ops = root->all_ops();
-    for (auto op : ops) {
-        if (!op->is_loop) {
-            Window win;
-            string result_buf = "";
-            for (auto p : op->produces()) {
-                result_buf= take_until(p, "[");
-                cout << "Producer :" << p << endl;
-            }
-            assert(result_buf != "");
+    //auto ops = root->all_ops();
+    //for (auto op : ops) {
+        //if (!op->is_loop) {
+            //Window win;
+            //string result_buf = "";
+            //for (auto p : op->produces()) {
+                //result_buf= take_until(p, "[");
+                //cout << "Producer :" << p << endl;
+            //}
+            //assert(result_buf != "");
 
-            auto vars = map_find(op, ivars);
-            //TODO: fix this hack
-            //reverse(vars);
-            //vars.pop_back();
-            //reverse(vars);
-            string ivar_str = sep_list(vars, "[", "]", ", ");
-            auto dom = map_find(op, doms);
+            //auto vars = map_find(op, ivars);
+            ////TODO: fix this hack
+            ////reverse(vars);
+            ////vars.pop_back();
+            ////reverse(vars);
+            //string ivar_str = sep_list(vars, "[", "]", ", ");
+            //auto dom = map_find(op, doms);
 
-            umap* pmap = rdmap(ctx, "{}");
-            int cnt_ld_st_pair = 0;
-            auto producers = op->produces();
-            for (auto p : op->consumes()) {
-                cout << "DEBUG:" << result_buf + ivar_str <<", " << producers[cnt_ld_st_pair] << endl;
-                isl_union_map* vmap =
-                  rdmap(ctx, string("{ " + producers[cnt_ld_st_pair] + " -> " + p + " }").c_str());
-                  //rdmap(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str());
-                pmap = unn(pmap, vmap);
-                cnt_ld_st_pair ++;
-                cout << "Consumer map : " << str(pmap) << endl;
-            }
-            win.needed = pmap;
-            Result res;
-            res.srcs.push_back(win);
-            m[op->name] = res;
-        }
-    }
-      return m;
-  }
+            //umap* pmap = rdmap(ctx, "{}");
+            //int cnt_ld_st_pair = 0;
+            //auto producers = op->produces();
+            //for (auto p : op->consumes()) {
+                //cout << "DEBUG:" << result_buf + ivar_str <<", " << producers[cnt_ld_st_pair] << endl;
+                //isl_union_map* vmap =
+                  //rdmap(ctx, string("{ " + producers[cnt_ld_st_pair] + " -> " + p + " }").c_str());
+                  ////rdmap(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str());
+                //pmap = unn(pmap, vmap);
+                //cnt_ld_st_pair ++;
+                //cout << "Consumer map : " << str(pmap) << endl;
+            //}
+            //win.needed = pmap;
+            //Result res;
+            //res.srcs.push_back(win);
+            //m[op->name] = res;
+        //}
+    //}
+      //return m;
+  //}
 
 
   map<op*, isl_map*> producer_maps() {
