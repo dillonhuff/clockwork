@@ -30,6 +30,7 @@ struct CodegenOptions {
 
   int num_input_epochs;
   bool push_garbage_outputs;
+  bool use_soda_casting;
   InnerBankOffsetMode inner_bank_offset_mode;
 
 
@@ -40,6 +41,7 @@ struct CodegenOptions {
   unroll_factors_as_pad(false), conditional_merge(false), merge_threshold(0),
   num_input_epochs(-1),
   push_garbage_outputs(false),
+  use_soda_casting(false),
   inner_bank_offset_mode(INNER_BANK_OFFSET_STACK) {}
 
 };
