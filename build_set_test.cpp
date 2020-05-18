@@ -6338,17 +6338,17 @@ App harris16(const std::string& out_name) {
 
   //harris.func2d(out_name, div(square(v("grad_x")), 128));
 
-  harris.func2d("lxx", mul(square(v("grad_x")), 128));
-  harris.func2d("lyy", mul(square(v("grad_y")), 128));
-  harris.func2d("lxy", mul(mul(v("grad_x"), v("grad_y")), 128));
+  harris.func2d("lxx", add(square(v("grad_x")), 128));
+  harris.func2d("lyy", add(square(v("grad_y")), 128));
+  harris.func2d("lxy", add(mul(v("grad_x"), v("grad_y")), 128));
   
-  harris.func2d("lgxx", mul(stencilv(-1, 1, -1, 1, "lxx"), 9));
-  harris.func2d("lgyy", mul(stencilv(-1, 1, -1, 1, "lyy"), 9));
-  harris.func2d("lgxy", mul(stencilv(-1, 1, -1, 1, "lxy"), 9));
+  harris.func2d("lgxx", add(stencilv(-1, 1, -1, 1, "lxx"), 9));
+  harris.func2d("lgyy", add(stencilv(-1, 1, -1, 1, "lyy"), 9));
+  harris.func2d("lgxy", add(stencilv(-1, 1, -1, 1, "lxy"), 9));
 
-  harris.func2d("lgxx8", mul(v("lgxx"), 64));
-  harris.func2d("lgyy8", mul(v("lgyy"), 64));
-  harris.func2d("lgxy8", mul(v("lgxy"), 64));
+  harris.func2d("lgxx8", add(v("lgxx"), 64));
+  harris.func2d("lgyy8", add(v("lgyy"), 64));
+  harris.func2d("lgxy8", add(v("lgxy"), 64));
   
   harris.func2d("det", add(mul("lgxx8", "lgyy8"), square("lgxy8")));
   harris.func2d("trace", mul("lgxx8", "lgyy8"));
