@@ -6459,16 +6459,17 @@ App camera_pipeline(const std::string& out_name) {
 
 void camera_pipeline_test() {
   string app_name = "camera_mini";
-  int mini_size = 100;
+  int mini_rows = 1020;
+  int mini_cols = 1920;
   auto hmini = camera_pipeline(app_name);
-  hmini.realize_naive(app_name, mini_size, mini_size);
-  hmini.realize(app_name, mini_size, mini_size, 1);
+  hmini.realize_naive(app_name, mini_cols, mini_rows);
+  hmini.realize(app_name, mini_cols, mini_rows, 1);
 
-  std::vector<std::string> naive =
-    run_regression_tb(app_name + "_naive");
-  std::vector<std::string> optimized =
-    run_regression_tb(app_name + "_opt");
-  assert(naive == optimized);
+  //std::vector<std::string> naive =
+    //run_regression_tb(app_name + "_naive");
+  //std::vector<std::string> optimized =
+    //run_regression_tb(app_name + "_opt");
+  //assert(naive == optimized);
   move_to_benchmarks_folder(app_name + "_opt");
   assert(false);
 
