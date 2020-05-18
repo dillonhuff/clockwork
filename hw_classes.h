@@ -3,6 +3,7 @@
 #include <cassert>
 #include <deque>
 #include <cmath>
+#include <stdint.h>
 
 #ifdef __VIVADO_SYNTH__
 
