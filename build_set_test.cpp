@@ -6324,36 +6324,36 @@ App harris16(const std::string& out_name) {
         //mul(sub(v("img", 1, 0), v("img", -1, 0)), 2),
         //sub(v("img", 1, 1), v("img", -1, 1))));
   // This example causes SODA and our code to disagree
-  harris.func2d(out_name, div(sub(v("img"), 30000), 128));
+  //harris.func2d(out_name, div(sub(v("img"), 30000), 128));
 
-  //harris.func2d("grad_x",
-      //add(sub(v("img", 1, -1), v("img", -1, -1)),
-        //mul(sub(v("img", 1, 0), v("img", -1, 0)), 2),
-        //sub(v("img", 1, 1), v("img", -1, 1))));
+  harris.func2d("grad_x",
+      add(sub(v("img", 1, -1), v("img", -1, -1)),
+        mul(sub(v("img", 1, 0), v("img", -1, 0)), 2),
+        sub(v("img", 1, 1), v("img", -1, 1))));
 
-  //harris.func2d("grad_y",
-      //add(sub(v("img", -1, 1), v("img", -1, -1)),
-        //mul(sub(v("img", 0, 1), v("img", 0, -1)), 2),
-        //sub(v("img", 1, 1), v("img", 1, -1))));
+  harris.func2d("grad_y",
+      add(sub(v("img", -1, 1), v("img", -1, -1)),
+        mul(sub(v("img", 0, 1), v("img", 0, -1)), 2),
+        sub(v("img", 1, 1), v("img", 1, -1))));
 
   //harris.func2d(out_name, div(square(v("grad_x")), 128));
 
-  //harris.func2d("lxx", add(square(v("grad_x")), 128));
-  //harris.func2d("lyy", add(square(v("grad_y")), 128));
-  //harris.func2d("lxy", add(mul(v("grad_x"), v("grad_y")), 128));
+  harris.func2d("lxx", div(square(v("grad_x")), 128));
+  harris.func2d("lyy", div(square(v("grad_y")), 128));
+  harris.func2d("lxy", div(mul(v("grad_x"), v("grad_y")), 128));
   
-  //harris.func2d("lgxx", add(stencilv(-1, 1, -1, 1, "lxx"), 9));
-  //harris.func2d("lgyy", add(stencilv(-1, 1, -1, 1, "lyy"), 9));
-  //harris.func2d("lgxy", add(stencilv(-1, 1, -1, 1, "lxy"), 9));
+  harris.func2d("lgxx", div(stencilv(-1, 1, -1, 1, "lxx"), 9));
+  harris.func2d("lgyy", div(stencilv(-1, 1, -1, 1, "lyy"), 9));
+  harris.func2d("lgxy", div(stencilv(-1, 1, -1, 1, "lxy"), 9));
 
-  //harris.func2d("lgxx8", add(v("lgxx"), 64));
-  //harris.func2d("lgyy8", add(v("lgyy"), 64));
-  //harris.func2d("lgxy8", add(v("lgxy"), 64));
+  harris.func2d("lgxx8", div(v("lgxx"), 64));
+  harris.func2d("lgyy8", div(v("lgyy"), 64));
+  harris.func2d("lgxy8", div(v("lgxy"), 64));
   
-  //harris.func2d("det", add(mul("lgxx8", "lgyy8"), square("lgxy8")));
-  //harris.func2d("trace", mul("lgxx8", "lgyy8"));
-  //harris.func2d(out_name, add(v("det"),
-        //mul(square("trace"), 8)));
+  harris.func2d("det", add(mul("lgxx8", "lgyy8"), square("lgxy8")));
+  harris.func2d("trace", mul("lgxx8", "lgyy8"));
+  harris.func2d(out_name, add(v("det"),
+        mul(square("trace"), 8)));
 
   return harris;
 }
@@ -6493,7 +6493,7 @@ void camera_pipeline_test() {
   }
 }
 
-void harris16_test() {
+void harris16_test(const std::string& prefix) {
   int mini_size = 32;
   auto hmini = harris16("harris16_mini");
   hmini.realize_naive("harris16_mini", mini_size, mini_size);
@@ -6514,7 +6514,7 @@ void harris16_test() {
   for (int i = 0; i < (int) factors.size(); i++) {
     int unroll_factor = factors.at(i);
     cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
-    string out_name = "hrs_" + str(unroll_factor);
+    string out_name = prefix + "_" + str(unroll_factor);
 
     CodegenOptions options;
     options.internal = true;
@@ -8442,24 +8442,22 @@ void playground() {
 }
 
 void iccad_tests() {
-  harris16_test();
+  harris16_test("hr18");
+  camera_pipeline_test();
+  blur_xy_16_app_test();
+  sobel_16_app_test();
   assert(false);
 
-  camera_pipeline_test();
   harris_test();
   denoise3d_reconvergence_test();
-  blur_xy_16_app_test();
 
-  sobel_16_app_test();
   exposure_fusion_iccad_apps();
   pointwise_app_test();
   gaussian_pyramid_app_test();
 
   max_pooling_test();
 
-
   exposure_fusion();
-
 }
 
 void mini_application_tests() {
@@ -8476,7 +8474,7 @@ void mini_application_tests() {
   up_stencil_test();
   neg_stencil_test();
   blur_x_test();
-  harris16_test();
+  harris16_test("hrs");
   denoise3d_reconvergence_test();
   blur_xy_16_app_test();
   sobel_16_app_test();
@@ -8488,6 +8486,7 @@ void mini_application_tests() {
 void application_tests() {
   iccad_tests();
   halide_dnn_test();
+  assert(false);
   halide_harris_test();
   conv_1d_bc_test();
   halide_frontend_test();
