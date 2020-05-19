@@ -1,2 +1,2 @@
 make clean
-make check TARGET=sw_emu DEVICE=$AWS_PLATFORM all
+make check TARGET=hw_emu DEVICE=$AWS_PLATFORM all
