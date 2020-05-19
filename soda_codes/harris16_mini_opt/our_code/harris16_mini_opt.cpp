@@ -45,8 +45,8 @@ inline hw_uint<16> harris16_mini_rd0_select(det_cache& det, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // harris16_mini_rd0 read pattern: { harris16_mini_update_0[d0, d1] -> det[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { harris16_mini_update_0[d0, d1] -> [2 + d1, 2 + d0, 15] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Write schedule: { det_update_0[d0, d1] -> [2 + d1, 2 + d0, 13] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { harris16_mini_update_0[d0, d1] -> [2 + d1, 2 + d0, 18] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { det_update_0[d0, d1] -> [2 + d1, 2 + d0, 16] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // DD fold: {  }
   auto value_det_det_update_0_write0 = det.det_det_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_det_det_update_0_write0;
@@ -696,8 +696,8 @@ inline hw_uint<16> lgxx8_rd0_select(lgxx_cache& lgxx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // lgxx8_rd0 read pattern: { lgxx8_update_0[d0, d1] -> lgxx[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgxx8_update_0[d0, d1] -> [2 + d1, 2 + d0, 12] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Write schedule: { lgxx_update_0[d0, d1] -> [2 + d1, 2 + d0, 9] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxx8_update_0[d0, d1] -> [2 + d1, 2 + d0, 15] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { lgxx_update_0[d0, d1] -> [2 + d1, 2 + d0, 12] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // DD fold: {  }
   auto value_lgxx_lgxx_update_0_write0 = lgxx.lgxx_lgxx_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_lgxx_lgxx_update_0_write0;
@@ -764,8 +764,8 @@ inline hw_uint<16> det_rd0_select(lgxx8_cache& lgxx8, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // det_rd0 read pattern: { det_update_0[d0, d1] -> lgxx8[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { det_update_0[d0, d1] -> [2 + d1, 2 + d0, 13] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Write schedule: { lgxx8_update_0[d0, d1] -> [2 + d1, 2 + d0, 12] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { det_update_0[d0, d1] -> [2 + d1, 2 + d0, 16] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { lgxx8_update_0[d0, d1] -> [2 + d1, 2 + d0, 15] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // DD fold: {  }
   auto value_lgxx8_lgxx8_update_0_write0 = lgxx8.lgxx8_lgxx8_update_0_write0_merged_banks_2.peek_0();
   return value_lgxx8_lgxx8_update_0_write0;
@@ -780,8 +780,8 @@ inline hw_uint<16> trace_rd0_select(lgxx8_cache& lgxx8, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // trace_rd0 read pattern: { trace_update_0[d0, d1] -> lgxx8[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { trace_update_0[d0, d1] -> [2 + d1, 2 + d0, 14] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Write schedule: { lgxx8_update_0[d0, d1] -> [2 + d1, 2 + d0, 12] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { trace_update_0[d0, d1] -> [2 + d1, 2 + d0, 17] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { lgxx8_update_0[d0, d1] -> [2 + d1, 2 + d0, 15] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // DD fold: {  }
   auto value_lgxx8_lgxx8_update_0_write0 = lgxx8.lgxx8_lgxx8_update_0_write0_merged_banks_2.peek_0();
   return value_lgxx8_lgxx8_update_0_write0;
@@ -826,6 +826,75 @@ inline hw_uint<16> lgxx8_trace_update_0_read_bundle_read(lgxx8_cache& lgxx8, int
 
 #include "hw_classes.h"
 
+struct lgxx_a_lgxx_a_update_0_write0_merged_banks_1_cache {
+	// RAM Box: {[0, 31], [0, 31]}
+	// Capacity: 1
+	// # of read delays: 1
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct lgxx_a_cache {
+  lgxx_a_lgxx_a_update_0_write0_merged_banks_1_cache lgxx_a_lgxx_a_update_0_write0_merged_banks_1;
+};
+
+
+
+inline void lgxx_a_lgxx_a_update_0_write0_write(hw_uint<16>& lgxx_a_lgxx_a_update_0_write0, lgxx_a_cache& lgxx_a, int d0, int d1) {
+  lgxx_a.lgxx_a_lgxx_a_update_0_write0_merged_banks_1.push(lgxx_a_lgxx_a_update_0_write0);
+}
+
+inline hw_uint<16> lgxx_rd0_select(lgxx_a_cache& lgxx_a, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // lgxx_rd0 read pattern: { lgxx_update_0[d0, d1] -> lgxx_a[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxx_update_0[d0, d1] -> [2 + d1, 2 + d0, 12] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { lgxx_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 11] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // DD fold: {  }
+  auto value_lgxx_a_lgxx_a_update_0_write0 = lgxx_a.lgxx_a_lgxx_a_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
+  return value_lgxx_a_lgxx_a_update_0_write0;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+// # of bundles = 2
+// lgxx_a_update_0_write
+//	lgxx_a_lgxx_a_update_0_write0
+inline void lgxx_a_lgxx_a_update_0_write_bundle_write(hw_uint<16>& lgxx_a_update_0_write, lgxx_a_cache& lgxx_a, int d0, int d1) {
+	hw_uint<16> lgxx_a_lgxx_a_update_0_write0_res = lgxx_a_update_0_write.extract<0, 15>();
+	lgxx_a_lgxx_a_update_0_write0_write(lgxx_a_lgxx_a_update_0_write0_res, lgxx_a, d0, d1);
+}
+
+// lgxx_update_0_read
+//	lgxx_rd0
+inline hw_uint<16> lgxx_a_lgxx_update_0_read_bundle_read(lgxx_a_cache& lgxx_a, int d0, int d1) {
+  // # of ports in bundle: 1
+    // lgxx_rd0
+
+	hw_uint<16> result;
+	hw_uint<16> lgxx_rd0_res = lgxx_rd0_select(lgxx_a, d0, d1);
+	set_at<0, 16>(result, lgxx_rd0_res);
+	return result;
+}
+
+#include "hw_classes.h"
+
 struct lgxy_lgxy_update_0_write0_merged_banks_1_cache {
 	// RAM Box: {[0, 31], [0, 31]}
 	// Capacity: 1
@@ -861,8 +930,8 @@ inline hw_uint<16> lgxy8_rd0_select(lgxy_cache& lgxy, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // lgxy8_rd0 read pattern: { lgxy8_update_0[d0, d1] -> lgxy[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgxy8_update_0[d0, d1] -> [2 + d1, 2 + d0, 11] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Write schedule: { lgxy_update_0[d0, d1] -> [2 + d1, 2 + d0, 8] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxy8_update_0[d0, d1] -> [2 + d1, 2 + d0, 14] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { lgxy_update_0[d0, d1] -> [2 + d1, 2 + d0, 10] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // DD fold: {  }
   auto value_lgxy_lgxy_update_0_write0 = lgxy.lgxy_lgxy_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_lgxy_lgxy_update_0_write0;
@@ -930,8 +999,8 @@ inline hw_uint<16> det_rd0_select(lgxy8_cache& lgxy8, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // det_rd0 read pattern: { det_update_0[d0, d1] -> lgxy8[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { det_update_0[d0, d1] -> [2 + d1, 2 + d0, 13] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Write schedule: { lgxy8_update_0[d0, d1] -> [2 + d1, 2 + d0, 11] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { det_update_0[d0, d1] -> [2 + d1, 2 + d0, 16] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { lgxy8_update_0[d0, d1] -> [2 + d1, 2 + d0, 14] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // DD fold: {  }
   auto value_lgxy8_lgxy8_update_0_write0 = lgxy8.lgxy8_lgxy8_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_lgxy8_lgxy8_update_0_write0;
@@ -960,6 +1029,75 @@ inline hw_uint<16> lgxy8_det_update_0_read_bundle_read(lgxy8_cache& lgxy8, int d
 inline void lgxy8_lgxy8_update_0_write_bundle_write(hw_uint<16>& lgxy8_update_0_write, lgxy8_cache& lgxy8, int d0, int d1) {
 	hw_uint<16> lgxy8_lgxy8_update_0_write0_res = lgxy8_update_0_write.extract<0, 15>();
 	lgxy8_lgxy8_update_0_write0_write(lgxy8_lgxy8_update_0_write0_res, lgxy8, d0, d1);
+}
+
+#include "hw_classes.h"
+
+struct lgxy_a_lgxy_a_update_0_write0_merged_banks_1_cache {
+	// RAM Box: {[0, 31], [0, 31]}
+	// Capacity: 1
+	// # of read delays: 1
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct lgxy_a_cache {
+  lgxy_a_lgxy_a_update_0_write0_merged_banks_1_cache lgxy_a_lgxy_a_update_0_write0_merged_banks_1;
+};
+
+
+
+inline void lgxy_a_lgxy_a_update_0_write0_write(hw_uint<16>& lgxy_a_lgxy_a_update_0_write0, lgxy_a_cache& lgxy_a, int d0, int d1) {
+  lgxy_a.lgxy_a_lgxy_a_update_0_write0_merged_banks_1.push(lgxy_a_lgxy_a_update_0_write0);
+}
+
+inline hw_uint<16> lgxy_rd0_select(lgxy_a_cache& lgxy_a, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // lgxy_rd0 read pattern: { lgxy_update_0[d0, d1] -> lgxy_a[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxy_update_0[d0, d1] -> [2 + d1, 2 + d0, 10] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { lgxy_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 9] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // DD fold: {  }
+  auto value_lgxy_a_lgxy_a_update_0_write0 = lgxy_a.lgxy_a_lgxy_a_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
+  return value_lgxy_a_lgxy_a_update_0_write0;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+// # of bundles = 2
+// lgxy_a_update_0_write
+//	lgxy_a_lgxy_a_update_0_write0
+inline void lgxy_a_lgxy_a_update_0_write_bundle_write(hw_uint<16>& lgxy_a_update_0_write, lgxy_a_cache& lgxy_a, int d0, int d1) {
+	hw_uint<16> lgxy_a_lgxy_a_update_0_write0_res = lgxy_a_update_0_write.extract<0, 15>();
+	lgxy_a_lgxy_a_update_0_write0_write(lgxy_a_lgxy_a_update_0_write0_res, lgxy_a, d0, d1);
+}
+
+// lgxy_update_0_read
+//	lgxy_rd0
+inline hw_uint<16> lgxy_a_lgxy_update_0_read_bundle_read(lgxy_a_cache& lgxy_a, int d0, int d1) {
+  // # of ports in bundle: 1
+    // lgxy_rd0
+
+	hw_uint<16> result;
+	hw_uint<16> lgxy_rd0_res = lgxy_rd0_select(lgxy_a, d0, d1);
+	set_at<0, 16>(result, lgxy_rd0_res);
+	return result;
 }
 
 #include "hw_classes.h"
@@ -999,8 +1137,8 @@ inline hw_uint<16> lgyy8_rd0_select(lgyy_cache& lgyy, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // lgyy8_rd0 read pattern: { lgyy8_update_0[d0, d1] -> lgyy[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgyy8_update_0[d0, d1] -> [2 + d1, 2 + d0, 10] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Write schedule: { lgyy_update_0[d0, d1] -> [2 + d1, 2 + d0, 7] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgyy8_update_0[d0, d1] -> [2 + d1, 2 + d0, 13] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { lgyy_update_0[d0, d1] -> [2 + d1, 2 + d0, 8] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // DD fold: {  }
   auto value_lgyy_lgyy_update_0_write0 = lgyy.lgyy_lgyy_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_lgyy_lgyy_update_0_write0;
@@ -1067,8 +1205,8 @@ inline hw_uint<16> det_rd0_select(lgyy8_cache& lgyy8, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // det_rd0 read pattern: { det_update_0[d0, d1] -> lgyy8[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { det_update_0[d0, d1] -> [2 + d1, 2 + d0, 13] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Write schedule: { lgyy8_update_0[d0, d1] -> [2 + d1, 2 + d0, 10] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { det_update_0[d0, d1] -> [2 + d1, 2 + d0, 16] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { lgyy8_update_0[d0, d1] -> [2 + d1, 2 + d0, 13] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // DD fold: {  }
   auto value_lgyy8_lgyy8_update_0_write0 = lgyy8.lgyy8_lgyy8_update_0_write0_merged_banks_2.peek_0();
   return value_lgyy8_lgyy8_update_0_write0;
@@ -1083,8 +1221,8 @@ inline hw_uint<16> trace_rd0_select(lgyy8_cache& lgyy8, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // trace_rd0 read pattern: { trace_update_0[d0, d1] -> lgyy8[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { trace_update_0[d0, d1] -> [2 + d1, 2 + d0, 14] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Write schedule: { lgyy8_update_0[d0, d1] -> [2 + d1, 2 + d0, 10] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { trace_update_0[d0, d1] -> [2 + d1, 2 + d0, 17] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { lgyy8_update_0[d0, d1] -> [2 + d1, 2 + d0, 13] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // DD fold: {  }
   auto value_lgyy8_lgyy8_update_0_write0 = lgyy8.lgyy8_lgyy8_update_0_write0_merged_banks_2.peek_0();
   return value_lgyy8_lgyy8_update_0_write0;
@@ -1124,6 +1262,75 @@ inline hw_uint<16> lgyy8_trace_update_0_read_bundle_read(lgyy8_cache& lgyy8, int
 	hw_uint<16> result;
 	hw_uint<16> trace_rd0_res = trace_rd0_select(lgyy8, d0, d1);
 	set_at<0, 16>(result, trace_rd0_res);
+	return result;
+}
+
+#include "hw_classes.h"
+
+struct lgyy_a_lgyy_a_update_0_write0_merged_banks_1_cache {
+	// RAM Box: {[0, 31], [0, 31]}
+	// Capacity: 1
+	// # of read delays: 1
+	fifo<hw_uint<16>, 1> f;
+	inline hw_uint<16> peek(const int offset) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.peek(0 - offset);
+  }
+
+
+
+	inline void push(const hw_uint<16> value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    return f.push(value);
+  }
+
+};
+
+struct lgyy_a_cache {
+  lgyy_a_lgyy_a_update_0_write0_merged_banks_1_cache lgyy_a_lgyy_a_update_0_write0_merged_banks_1;
+};
+
+
+
+inline void lgyy_a_lgyy_a_update_0_write0_write(hw_uint<16>& lgyy_a_lgyy_a_update_0_write0, lgyy_a_cache& lgyy_a, int d0, int d1) {
+  lgyy_a.lgyy_a_lgyy_a_update_0_write0_merged_banks_1.push(lgyy_a_lgyy_a_update_0_write0);
+}
+
+inline hw_uint<16> lgyy_rd0_select(lgyy_a_cache& lgyy_a, int d0, int d1) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  // lgyy_rd0 read pattern: { lgyy_update_0[d0, d1] -> lgyy_a[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgyy_update_0[d0, d1] -> [2 + d1, 2 + d0, 8] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { lgyy_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 7] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // DD fold: {  }
+  auto value_lgyy_a_lgyy_a_update_0_write0 = lgyy_a.lgyy_a_lgyy_a_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
+  return value_lgyy_a_lgyy_a_update_0_write0;
+#ifndef __VIVADO_SYNTH__
+	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
+	assert(false);
+	return 0;
+#endif //__VIVADO_SYNTH__
+}
+
+// # of bundles = 2
+// lgyy_a_update_0_write
+//	lgyy_a_lgyy_a_update_0_write0
+inline void lgyy_a_lgyy_a_update_0_write_bundle_write(hw_uint<16>& lgyy_a_update_0_write, lgyy_a_cache& lgyy_a, int d0, int d1) {
+	hw_uint<16> lgyy_a_lgyy_a_update_0_write0_res = lgyy_a_update_0_write.extract<0, 15>();
+	lgyy_a_lgyy_a_update_0_write0_write(lgyy_a_lgyy_a_update_0_write0_res, lgyy_a, d0, d1);
+}
+
+// lgyy_update_0_read
+//	lgyy_rd0
+inline hw_uint<16> lgyy_a_lgyy_update_0_read_bundle_read(lgyy_a_cache& lgyy_a, int d0, int d1) {
+  // # of ports in bundle: 1
+    // lgyy_rd0
+
+	hw_uint<16> result;
+	hw_uint<16> lgyy_rd0_res = lgyy_rd0_select(lgyy_a, d0, d1);
+	set_at<0, 16>(result, lgyy_rd0_res);
 	return result;
 }
 
@@ -1253,13 +1460,13 @@ inline void lxx_lxx_update_0_write0_write(hw_uint<16>& lxx_lxx_update_0_write0, 
   lxx.lxx_lxx_update_0_write0_merged_banks_9.push(lxx_lxx_update_0_write0);
 }
 
-inline hw_uint<16> lgxx_rd0_select(lxx_cache& lxx, int d0, int d1) {
+inline hw_uint<16> lgxx_a_rd0_select(lxx_cache& lxx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgxx_rd0 read pattern: { lgxx_update_0[d0, d1] -> lxx[-1 + d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgxx_update_0[d0, d1] -> [2 + d1, 2 + d0, 9] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgxx_a_rd0 read pattern: { lgxx_a_update_0[d0, d1] -> lxx[-1 + d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxx_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 11] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lxx_update_0[d0, d1] -> [1 + d1, 1 + d0, 6] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgxx_update_0[d0, d1] -> 70 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgxx_a_update_0[d0, d1] -> 70 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   auto value_lxx_lxx_update_0_write0 = lxx.lxx_lxx_update_0_write0_merged_banks_9.peek_70();
   return value_lxx_lxx_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1269,13 +1476,13 @@ inline hw_uint<16> lgxx_rd0_select(lxx_cache& lxx, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgxx_rd1_select(lxx_cache& lxx, int d0, int d1) {
+inline hw_uint<16> lgxx_a_rd1_select(lxx_cache& lxx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgxx_rd1 read pattern: { lgxx_update_0[d0, d1] -> lxx[-1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgxx_update_0[d0, d1] -> [2 + d1, 2 + d0, 9] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgxx_a_rd1 read pattern: { lgxx_a_update_0[d0, d1] -> lxx[-1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxx_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 11] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lxx_update_0[d0, d1] -> [1 + d1, 1 + d0, 6] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgxx_update_0[d0, d1] -> 36 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgxx_a_update_0[d0, d1] -> 36 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   auto value_lxx_lxx_update_0_write0 = lxx.lxx_lxx_update_0_write0_merged_banks_9.peek_36();
   return value_lxx_lxx_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1285,13 +1492,13 @@ inline hw_uint<16> lgxx_rd1_select(lxx_cache& lxx, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgxx_rd2_select(lxx_cache& lxx, int d0, int d1) {
+inline hw_uint<16> lgxx_a_rd2_select(lxx_cache& lxx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgxx_rd2 read pattern: { lgxx_update_0[d0, d1] -> lxx[-1 + d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgxx_update_0[d0, d1] -> [2 + d1, 2 + d0, 9] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgxx_a_rd2 read pattern: { lgxx_a_update_0[d0, d1] -> lxx[-1 + d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxx_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 11] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lxx_update_0[d0, d1] -> [1 + d1, 1 + d0, 6] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgxx_update_0[d0, d1] -> 2 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgxx_a_update_0[d0, d1] -> 2 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   auto value_lxx_lxx_update_0_write0 = lxx.lxx_lxx_update_0_write0_merged_banks_9.peek_2();
   return value_lxx_lxx_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1301,13 +1508,13 @@ inline hw_uint<16> lgxx_rd2_select(lxx_cache& lxx, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgxx_rd3_select(lxx_cache& lxx, int d0, int d1) {
+inline hw_uint<16> lgxx_a_rd3_select(lxx_cache& lxx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgxx_rd3 read pattern: { lgxx_update_0[d0, d1] -> lxx[d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgxx_update_0[d0, d1] -> [2 + d1, 2 + d0, 9] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgxx_a_rd3 read pattern: { lgxx_a_update_0[d0, d1] -> lxx[d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxx_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 11] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lxx_update_0[d0, d1] -> [1 + d1, 1 + d0, 6] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgxx_update_0[d0, d1] -> 69 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgxx_a_update_0[d0, d1] -> 69 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   auto value_lxx_lxx_update_0_write0 = lxx.lxx_lxx_update_0_write0_merged_banks_9.peek_69();
   return value_lxx_lxx_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1317,13 +1524,13 @@ inline hw_uint<16> lgxx_rd3_select(lxx_cache& lxx, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgxx_rd4_select(lxx_cache& lxx, int d0, int d1) {
+inline hw_uint<16> lgxx_a_rd4_select(lxx_cache& lxx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgxx_rd4 read pattern: { lgxx_update_0[d0, d1] -> lxx[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgxx_update_0[d0, d1] -> [2 + d1, 2 + d0, 9] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgxx_a_rd4 read pattern: { lgxx_a_update_0[d0, d1] -> lxx[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxx_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 11] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lxx_update_0[d0, d1] -> [1 + d1, 1 + d0, 6] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgxx_update_0[d0, d1] -> 35 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgxx_a_update_0[d0, d1] -> 35 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   auto value_lxx_lxx_update_0_write0 = lxx.lxx_lxx_update_0_write0_merged_banks_9.peek_35();
   return value_lxx_lxx_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1333,13 +1540,13 @@ inline hw_uint<16> lgxx_rd4_select(lxx_cache& lxx, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgxx_rd5_select(lxx_cache& lxx, int d0, int d1) {
+inline hw_uint<16> lgxx_a_rd5_select(lxx_cache& lxx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgxx_rd5 read pattern: { lgxx_update_0[d0, d1] -> lxx[d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgxx_update_0[d0, d1] -> [2 + d1, 2 + d0, 9] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgxx_a_rd5 read pattern: { lgxx_a_update_0[d0, d1] -> lxx[d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxx_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 11] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lxx_update_0[d0, d1] -> [1 + d1, 1 + d0, 6] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgxx_update_0[d0, d1] -> 1 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgxx_a_update_0[d0, d1] -> 1 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   auto value_lxx_lxx_update_0_write0 = lxx.lxx_lxx_update_0_write0_merged_banks_9.peek_1();
   return value_lxx_lxx_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1349,13 +1556,13 @@ inline hw_uint<16> lgxx_rd5_select(lxx_cache& lxx, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgxx_rd6_select(lxx_cache& lxx, int d0, int d1) {
+inline hw_uint<16> lgxx_a_rd6_select(lxx_cache& lxx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgxx_rd6 read pattern: { lgxx_update_0[d0, d1] -> lxx[1 + d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgxx_update_0[d0, d1] -> [2 + d1, 2 + d0, 9] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgxx_a_rd6 read pattern: { lgxx_a_update_0[d0, d1] -> lxx[1 + d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxx_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 11] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lxx_update_0[d0, d1] -> [1 + d1, 1 + d0, 6] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgxx_update_0[d0, d1] -> 68 : 0 <= d0 <= 30 and 0 <= d1 <= 31; lgxx_update_0[d0, d1] -> (37 + d0) : d0 = 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgxx_a_update_0[d0, d1] -> 68 : 0 <= d0 <= 30 and 0 <= d1 <= 31; lgxx_a_update_0[d0, d1] -> (37 + d0) : d0 = 31 and 0 <= d1 <= 31 }
   auto value_lxx_lxx_update_0_write0 = lxx.lxx_lxx_update_0_write0_merged_banks_9.peek_68();
   return value_lxx_lxx_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1365,13 +1572,13 @@ inline hw_uint<16> lgxx_rd6_select(lxx_cache& lxx, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgxx_rd7_select(lxx_cache& lxx, int d0, int d1) {
+inline hw_uint<16> lgxx_a_rd7_select(lxx_cache& lxx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgxx_rd7 read pattern: { lgxx_update_0[d0, d1] -> lxx[1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgxx_update_0[d0, d1] -> [2 + d1, 2 + d0, 9] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgxx_a_rd7 read pattern: { lgxx_a_update_0[d0, d1] -> lxx[1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxx_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 11] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lxx_update_0[d0, d1] -> [1 + d1, 1 + d0, 6] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgxx_update_0[d0, d1] -> 34 : 0 <= d0 <= 30 and 0 <= d1 <= 31; lgxx_update_0[d0, d1] -> (3 + d0) : d0 = 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgxx_a_update_0[d0, d1] -> 34 : 0 <= d0 <= 30 and 0 <= d1 <= 31; lgxx_a_update_0[d0, d1] -> (3 + d0) : d0 = 31 and 0 <= d1 <= 31 }
   auto value_lxx_lxx_update_0_write0 = lxx.lxx_lxx_update_0_write0_merged_banks_9.peek_34();
   return value_lxx_lxx_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1381,11 +1588,11 @@ inline hw_uint<16> lgxx_rd7_select(lxx_cache& lxx, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgxx_rd8_select(lxx_cache& lxx, int d0, int d1) {
+inline hw_uint<16> lgxx_a_rd8_select(lxx_cache& lxx, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgxx_rd8 read pattern: { lgxx_update_0[d0, d1] -> lxx[1 + d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgxx_update_0[d0, d1] -> [2 + d1, 2 + d0, 9] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgxx_a_rd8 read pattern: { lgxx_a_update_0[d0, d1] -> lxx[1 + d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxx_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 11] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lxx_update_0[d0, d1] -> [1 + d1, 1 + d0, 6] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
   // DD fold: {  }
   auto value_lxx_lxx_update_0_write0 = lxx.lxx_lxx_update_0_write0_merged_banks_9.peek_0();
@@ -1398,47 +1605,47 @@ inline hw_uint<16> lgxx_rd8_select(lxx_cache& lxx, int d0, int d1) {
 }
 
 // # of bundles = 2
-// lgxx_update_0_read
-//	lgxx_rd0
-//	lgxx_rd1
-//	lgxx_rd2
-//	lgxx_rd3
-//	lgxx_rd4
-//	lgxx_rd5
-//	lgxx_rd6
-//	lgxx_rd7
-//	lgxx_rd8
-inline hw_uint<144> lxx_lgxx_update_0_read_bundle_read(lxx_cache& lxx, int d0, int d1) {
+// lgxx_a_update_0_read
+//	lgxx_a_rd0
+//	lgxx_a_rd1
+//	lgxx_a_rd2
+//	lgxx_a_rd3
+//	lgxx_a_rd4
+//	lgxx_a_rd5
+//	lgxx_a_rd6
+//	lgxx_a_rd7
+//	lgxx_a_rd8
+inline hw_uint<144> lxx_lgxx_a_update_0_read_bundle_read(lxx_cache& lxx, int d0, int d1) {
   // # of ports in bundle: 9
-    // lgxx_rd0
-    // lgxx_rd1
-    // lgxx_rd2
-    // lgxx_rd3
-    // lgxx_rd4
-    // lgxx_rd5
-    // lgxx_rd6
-    // lgxx_rd7
-    // lgxx_rd8
+    // lgxx_a_rd0
+    // lgxx_a_rd1
+    // lgxx_a_rd2
+    // lgxx_a_rd3
+    // lgxx_a_rd4
+    // lgxx_a_rd5
+    // lgxx_a_rd6
+    // lgxx_a_rd7
+    // lgxx_a_rd8
 
 	hw_uint<144> result;
-	hw_uint<16> lgxx_rd0_res = lgxx_rd0_select(lxx, d0, d1);
-	set_at<0, 144>(result, lgxx_rd0_res);
-	hw_uint<16> lgxx_rd1_res = lgxx_rd1_select(lxx, d0, d1);
-	set_at<16, 144>(result, lgxx_rd1_res);
-	hw_uint<16> lgxx_rd2_res = lgxx_rd2_select(lxx, d0, d1);
-	set_at<32, 144>(result, lgxx_rd2_res);
-	hw_uint<16> lgxx_rd3_res = lgxx_rd3_select(lxx, d0, d1);
-	set_at<48, 144>(result, lgxx_rd3_res);
-	hw_uint<16> lgxx_rd4_res = lgxx_rd4_select(lxx, d0, d1);
-	set_at<64, 144>(result, lgxx_rd4_res);
-	hw_uint<16> lgxx_rd5_res = lgxx_rd5_select(lxx, d0, d1);
-	set_at<80, 144>(result, lgxx_rd5_res);
-	hw_uint<16> lgxx_rd6_res = lgxx_rd6_select(lxx, d0, d1);
-	set_at<96, 144>(result, lgxx_rd6_res);
-	hw_uint<16> lgxx_rd7_res = lgxx_rd7_select(lxx, d0, d1);
-	set_at<112, 144>(result, lgxx_rd7_res);
-	hw_uint<16> lgxx_rd8_res = lgxx_rd8_select(lxx, d0, d1);
-	set_at<128, 144>(result, lgxx_rd8_res);
+	hw_uint<16> lgxx_a_rd0_res = lgxx_a_rd0_select(lxx, d0, d1);
+	set_at<0, 144>(result, lgxx_a_rd0_res);
+	hw_uint<16> lgxx_a_rd1_res = lgxx_a_rd1_select(lxx, d0, d1);
+	set_at<16, 144>(result, lgxx_a_rd1_res);
+	hw_uint<16> lgxx_a_rd2_res = lgxx_a_rd2_select(lxx, d0, d1);
+	set_at<32, 144>(result, lgxx_a_rd2_res);
+	hw_uint<16> lgxx_a_rd3_res = lgxx_a_rd3_select(lxx, d0, d1);
+	set_at<48, 144>(result, lgxx_a_rd3_res);
+	hw_uint<16> lgxx_a_rd4_res = lgxx_a_rd4_select(lxx, d0, d1);
+	set_at<64, 144>(result, lgxx_a_rd4_res);
+	hw_uint<16> lgxx_a_rd5_res = lgxx_a_rd5_select(lxx, d0, d1);
+	set_at<80, 144>(result, lgxx_a_rd5_res);
+	hw_uint<16> lgxx_a_rd6_res = lgxx_a_rd6_select(lxx, d0, d1);
+	set_at<96, 144>(result, lgxx_a_rd6_res);
+	hw_uint<16> lgxx_a_rd7_res = lgxx_a_rd7_select(lxx, d0, d1);
+	set_at<112, 144>(result, lgxx_a_rd7_res);
+	hw_uint<16> lgxx_a_rd8_res = lgxx_a_rd8_select(lxx, d0, d1);
+	set_at<128, 144>(result, lgxx_a_rd8_res);
 	return result;
 }
 
@@ -1575,13 +1782,13 @@ inline void lxy_lxy_update_0_write0_write(hw_uint<16>& lxy_lxy_update_0_write0, 
   lxy.lxy_lxy_update_0_write0_merged_banks_9.push(lxy_lxy_update_0_write0);
 }
 
-inline hw_uint<16> lgxy_rd0_select(lxy_cache& lxy, int d0, int d1) {
+inline hw_uint<16> lgxy_a_rd0_select(lxy_cache& lxy, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgxy_rd0 read pattern: { lgxy_update_0[d0, d1] -> lxy[-1 + d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgxy_update_0[d0, d1] -> [2 + d1, 2 + d0, 8] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgxy_a_rd0 read pattern: { lgxy_a_update_0[d0, d1] -> lxy[-1 + d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxy_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 9] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lxy_update_0[d0, d1] -> [1 + d1, 1 + d0, 5] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgxy_update_0[d0, d1] -> 70 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgxy_a_update_0[d0, d1] -> 70 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   auto value_lxy_lxy_update_0_write0 = lxy.lxy_lxy_update_0_write0_merged_banks_9.peek_70();
   return value_lxy_lxy_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1591,13 +1798,13 @@ inline hw_uint<16> lgxy_rd0_select(lxy_cache& lxy, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgxy_rd1_select(lxy_cache& lxy, int d0, int d1) {
+inline hw_uint<16> lgxy_a_rd1_select(lxy_cache& lxy, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgxy_rd1 read pattern: { lgxy_update_0[d0, d1] -> lxy[-1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgxy_update_0[d0, d1] -> [2 + d1, 2 + d0, 8] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgxy_a_rd1 read pattern: { lgxy_a_update_0[d0, d1] -> lxy[-1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxy_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 9] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lxy_update_0[d0, d1] -> [1 + d1, 1 + d0, 5] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgxy_update_0[d0, d1] -> 36 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgxy_a_update_0[d0, d1] -> 36 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   auto value_lxy_lxy_update_0_write0 = lxy.lxy_lxy_update_0_write0_merged_banks_9.peek_36();
   return value_lxy_lxy_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1607,13 +1814,13 @@ inline hw_uint<16> lgxy_rd1_select(lxy_cache& lxy, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgxy_rd2_select(lxy_cache& lxy, int d0, int d1) {
+inline hw_uint<16> lgxy_a_rd2_select(lxy_cache& lxy, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgxy_rd2 read pattern: { lgxy_update_0[d0, d1] -> lxy[-1 + d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgxy_update_0[d0, d1] -> [2 + d1, 2 + d0, 8] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgxy_a_rd2 read pattern: { lgxy_a_update_0[d0, d1] -> lxy[-1 + d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxy_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 9] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lxy_update_0[d0, d1] -> [1 + d1, 1 + d0, 5] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgxy_update_0[d0, d1] -> 2 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgxy_a_update_0[d0, d1] -> 2 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   auto value_lxy_lxy_update_0_write0 = lxy.lxy_lxy_update_0_write0_merged_banks_9.peek_2();
   return value_lxy_lxy_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1623,13 +1830,13 @@ inline hw_uint<16> lgxy_rd2_select(lxy_cache& lxy, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgxy_rd3_select(lxy_cache& lxy, int d0, int d1) {
+inline hw_uint<16> lgxy_a_rd3_select(lxy_cache& lxy, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgxy_rd3 read pattern: { lgxy_update_0[d0, d1] -> lxy[d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgxy_update_0[d0, d1] -> [2 + d1, 2 + d0, 8] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgxy_a_rd3 read pattern: { lgxy_a_update_0[d0, d1] -> lxy[d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxy_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 9] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lxy_update_0[d0, d1] -> [1 + d1, 1 + d0, 5] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgxy_update_0[d0, d1] -> 69 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgxy_a_update_0[d0, d1] -> 69 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   auto value_lxy_lxy_update_0_write0 = lxy.lxy_lxy_update_0_write0_merged_banks_9.peek_69();
   return value_lxy_lxy_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1639,13 +1846,13 @@ inline hw_uint<16> lgxy_rd3_select(lxy_cache& lxy, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgxy_rd4_select(lxy_cache& lxy, int d0, int d1) {
+inline hw_uint<16> lgxy_a_rd4_select(lxy_cache& lxy, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgxy_rd4 read pattern: { lgxy_update_0[d0, d1] -> lxy[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgxy_update_0[d0, d1] -> [2 + d1, 2 + d0, 8] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgxy_a_rd4 read pattern: { lgxy_a_update_0[d0, d1] -> lxy[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxy_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 9] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lxy_update_0[d0, d1] -> [1 + d1, 1 + d0, 5] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgxy_update_0[d0, d1] -> 35 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgxy_a_update_0[d0, d1] -> 35 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   auto value_lxy_lxy_update_0_write0 = lxy.lxy_lxy_update_0_write0_merged_banks_9.peek_35();
   return value_lxy_lxy_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1655,13 +1862,13 @@ inline hw_uint<16> lgxy_rd4_select(lxy_cache& lxy, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgxy_rd5_select(lxy_cache& lxy, int d0, int d1) {
+inline hw_uint<16> lgxy_a_rd5_select(lxy_cache& lxy, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgxy_rd5 read pattern: { lgxy_update_0[d0, d1] -> lxy[d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgxy_update_0[d0, d1] -> [2 + d1, 2 + d0, 8] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgxy_a_rd5 read pattern: { lgxy_a_update_0[d0, d1] -> lxy[d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxy_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 9] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lxy_update_0[d0, d1] -> [1 + d1, 1 + d0, 5] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgxy_update_0[d0, d1] -> 1 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgxy_a_update_0[d0, d1] -> 1 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   auto value_lxy_lxy_update_0_write0 = lxy.lxy_lxy_update_0_write0_merged_banks_9.peek_1();
   return value_lxy_lxy_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1671,13 +1878,13 @@ inline hw_uint<16> lgxy_rd5_select(lxy_cache& lxy, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgxy_rd6_select(lxy_cache& lxy, int d0, int d1) {
+inline hw_uint<16> lgxy_a_rd6_select(lxy_cache& lxy, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgxy_rd6 read pattern: { lgxy_update_0[d0, d1] -> lxy[1 + d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgxy_update_0[d0, d1] -> [2 + d1, 2 + d0, 8] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgxy_a_rd6 read pattern: { lgxy_a_update_0[d0, d1] -> lxy[1 + d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxy_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 9] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lxy_update_0[d0, d1] -> [1 + d1, 1 + d0, 5] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgxy_update_0[d0, d1] -> 68 : 0 <= d0 <= 30 and 0 <= d1 <= 31; lgxy_update_0[d0, d1] -> (37 + d0) : d0 = 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgxy_a_update_0[d0, d1] -> 68 : 0 <= d0 <= 30 and 0 <= d1 <= 31; lgxy_a_update_0[d0, d1] -> (37 + d0) : d0 = 31 and 0 <= d1 <= 31 }
   auto value_lxy_lxy_update_0_write0 = lxy.lxy_lxy_update_0_write0_merged_banks_9.peek_68();
   return value_lxy_lxy_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1687,13 +1894,13 @@ inline hw_uint<16> lgxy_rd6_select(lxy_cache& lxy, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgxy_rd7_select(lxy_cache& lxy, int d0, int d1) {
+inline hw_uint<16> lgxy_a_rd7_select(lxy_cache& lxy, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgxy_rd7 read pattern: { lgxy_update_0[d0, d1] -> lxy[1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgxy_update_0[d0, d1] -> [2 + d1, 2 + d0, 8] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgxy_a_rd7 read pattern: { lgxy_a_update_0[d0, d1] -> lxy[1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxy_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 9] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lxy_update_0[d0, d1] -> [1 + d1, 1 + d0, 5] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgxy_update_0[d0, d1] -> 34 : 0 <= d0 <= 30 and 0 <= d1 <= 31; lgxy_update_0[d0, d1] -> (3 + d0) : d0 = 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgxy_a_update_0[d0, d1] -> 34 : 0 <= d0 <= 30 and 0 <= d1 <= 31; lgxy_a_update_0[d0, d1] -> (3 + d0) : d0 = 31 and 0 <= d1 <= 31 }
   auto value_lxy_lxy_update_0_write0 = lxy.lxy_lxy_update_0_write0_merged_banks_9.peek_34();
   return value_lxy_lxy_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1703,11 +1910,11 @@ inline hw_uint<16> lgxy_rd7_select(lxy_cache& lxy, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgxy_rd8_select(lxy_cache& lxy, int d0, int d1) {
+inline hw_uint<16> lgxy_a_rd8_select(lxy_cache& lxy, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgxy_rd8 read pattern: { lgxy_update_0[d0, d1] -> lxy[1 + d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgxy_update_0[d0, d1] -> [2 + d1, 2 + d0, 8] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgxy_a_rd8 read pattern: { lgxy_a_update_0[d0, d1] -> lxy[1 + d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgxy_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 9] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lxy_update_0[d0, d1] -> [1 + d1, 1 + d0, 5] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
   // DD fold: {  }
   auto value_lxy_lxy_update_0_write0 = lxy.lxy_lxy_update_0_write0_merged_banks_9.peek_0();
@@ -1720,47 +1927,47 @@ inline hw_uint<16> lgxy_rd8_select(lxy_cache& lxy, int d0, int d1) {
 }
 
 // # of bundles = 2
-// lgxy_update_0_read
-//	lgxy_rd0
-//	lgxy_rd1
-//	lgxy_rd2
-//	lgxy_rd3
-//	lgxy_rd4
-//	lgxy_rd5
-//	lgxy_rd6
-//	lgxy_rd7
-//	lgxy_rd8
-inline hw_uint<144> lxy_lgxy_update_0_read_bundle_read(lxy_cache& lxy, int d0, int d1) {
+// lgxy_a_update_0_read
+//	lgxy_a_rd0
+//	lgxy_a_rd1
+//	lgxy_a_rd2
+//	lgxy_a_rd3
+//	lgxy_a_rd4
+//	lgxy_a_rd5
+//	lgxy_a_rd6
+//	lgxy_a_rd7
+//	lgxy_a_rd8
+inline hw_uint<144> lxy_lgxy_a_update_0_read_bundle_read(lxy_cache& lxy, int d0, int d1) {
   // # of ports in bundle: 9
-    // lgxy_rd0
-    // lgxy_rd1
-    // lgxy_rd2
-    // lgxy_rd3
-    // lgxy_rd4
-    // lgxy_rd5
-    // lgxy_rd6
-    // lgxy_rd7
-    // lgxy_rd8
+    // lgxy_a_rd0
+    // lgxy_a_rd1
+    // lgxy_a_rd2
+    // lgxy_a_rd3
+    // lgxy_a_rd4
+    // lgxy_a_rd5
+    // lgxy_a_rd6
+    // lgxy_a_rd7
+    // lgxy_a_rd8
 
 	hw_uint<144> result;
-	hw_uint<16> lgxy_rd0_res = lgxy_rd0_select(lxy, d0, d1);
-	set_at<0, 144>(result, lgxy_rd0_res);
-	hw_uint<16> lgxy_rd1_res = lgxy_rd1_select(lxy, d0, d1);
-	set_at<16, 144>(result, lgxy_rd1_res);
-	hw_uint<16> lgxy_rd2_res = lgxy_rd2_select(lxy, d0, d1);
-	set_at<32, 144>(result, lgxy_rd2_res);
-	hw_uint<16> lgxy_rd3_res = lgxy_rd3_select(lxy, d0, d1);
-	set_at<48, 144>(result, lgxy_rd3_res);
-	hw_uint<16> lgxy_rd4_res = lgxy_rd4_select(lxy, d0, d1);
-	set_at<64, 144>(result, lgxy_rd4_res);
-	hw_uint<16> lgxy_rd5_res = lgxy_rd5_select(lxy, d0, d1);
-	set_at<80, 144>(result, lgxy_rd5_res);
-	hw_uint<16> lgxy_rd6_res = lgxy_rd6_select(lxy, d0, d1);
-	set_at<96, 144>(result, lgxy_rd6_res);
-	hw_uint<16> lgxy_rd7_res = lgxy_rd7_select(lxy, d0, d1);
-	set_at<112, 144>(result, lgxy_rd7_res);
-	hw_uint<16> lgxy_rd8_res = lgxy_rd8_select(lxy, d0, d1);
-	set_at<128, 144>(result, lgxy_rd8_res);
+	hw_uint<16> lgxy_a_rd0_res = lgxy_a_rd0_select(lxy, d0, d1);
+	set_at<0, 144>(result, lgxy_a_rd0_res);
+	hw_uint<16> lgxy_a_rd1_res = lgxy_a_rd1_select(lxy, d0, d1);
+	set_at<16, 144>(result, lgxy_a_rd1_res);
+	hw_uint<16> lgxy_a_rd2_res = lgxy_a_rd2_select(lxy, d0, d1);
+	set_at<32, 144>(result, lgxy_a_rd2_res);
+	hw_uint<16> lgxy_a_rd3_res = lgxy_a_rd3_select(lxy, d0, d1);
+	set_at<48, 144>(result, lgxy_a_rd3_res);
+	hw_uint<16> lgxy_a_rd4_res = lgxy_a_rd4_select(lxy, d0, d1);
+	set_at<64, 144>(result, lgxy_a_rd4_res);
+	hw_uint<16> lgxy_a_rd5_res = lgxy_a_rd5_select(lxy, d0, d1);
+	set_at<80, 144>(result, lgxy_a_rd5_res);
+	hw_uint<16> lgxy_a_rd6_res = lgxy_a_rd6_select(lxy, d0, d1);
+	set_at<96, 144>(result, lgxy_a_rd6_res);
+	hw_uint<16> lgxy_a_rd7_res = lgxy_a_rd7_select(lxy, d0, d1);
+	set_at<112, 144>(result, lgxy_a_rd7_res);
+	hw_uint<16> lgxy_a_rd8_res = lgxy_a_rd8_select(lxy, d0, d1);
+	set_at<128, 144>(result, lgxy_a_rd8_res);
 	return result;
 }
 
@@ -1897,13 +2104,13 @@ inline void lyy_lyy_update_0_write0_write(hw_uint<16>& lyy_lyy_update_0_write0, 
   lyy.lyy_lyy_update_0_write0_merged_banks_9.push(lyy_lyy_update_0_write0);
 }
 
-inline hw_uint<16> lgyy_rd0_select(lyy_cache& lyy, int d0, int d1) {
+inline hw_uint<16> lgyy_a_rd0_select(lyy_cache& lyy, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgyy_rd0 read pattern: { lgyy_update_0[d0, d1] -> lyy[-1 + d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgyy_update_0[d0, d1] -> [2 + d1, 2 + d0, 7] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgyy_a_rd0 read pattern: { lgyy_a_update_0[d0, d1] -> lyy[-1 + d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgyy_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 7] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lyy_update_0[d0, d1] -> [1 + d1, 1 + d0, 4] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgyy_update_0[d0, d1] -> 70 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgyy_a_update_0[d0, d1] -> 70 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   auto value_lyy_lyy_update_0_write0 = lyy.lyy_lyy_update_0_write0_merged_banks_9.peek_70();
   return value_lyy_lyy_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1913,13 +2120,13 @@ inline hw_uint<16> lgyy_rd0_select(lyy_cache& lyy, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgyy_rd1_select(lyy_cache& lyy, int d0, int d1) {
+inline hw_uint<16> lgyy_a_rd1_select(lyy_cache& lyy, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgyy_rd1 read pattern: { lgyy_update_0[d0, d1] -> lyy[-1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgyy_update_0[d0, d1] -> [2 + d1, 2 + d0, 7] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgyy_a_rd1 read pattern: { lgyy_a_update_0[d0, d1] -> lyy[-1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgyy_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 7] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lyy_update_0[d0, d1] -> [1 + d1, 1 + d0, 4] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgyy_update_0[d0, d1] -> 36 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgyy_a_update_0[d0, d1] -> 36 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   auto value_lyy_lyy_update_0_write0 = lyy.lyy_lyy_update_0_write0_merged_banks_9.peek_36();
   return value_lyy_lyy_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1929,13 +2136,13 @@ inline hw_uint<16> lgyy_rd1_select(lyy_cache& lyy, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgyy_rd2_select(lyy_cache& lyy, int d0, int d1) {
+inline hw_uint<16> lgyy_a_rd2_select(lyy_cache& lyy, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgyy_rd2 read pattern: { lgyy_update_0[d0, d1] -> lyy[-1 + d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgyy_update_0[d0, d1] -> [2 + d1, 2 + d0, 7] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgyy_a_rd2 read pattern: { lgyy_a_update_0[d0, d1] -> lyy[-1 + d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgyy_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 7] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lyy_update_0[d0, d1] -> [1 + d1, 1 + d0, 4] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgyy_update_0[d0, d1] -> 2 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgyy_a_update_0[d0, d1] -> 2 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   auto value_lyy_lyy_update_0_write0 = lyy.lyy_lyy_update_0_write0_merged_banks_9.peek_2();
   return value_lyy_lyy_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1945,13 +2152,13 @@ inline hw_uint<16> lgyy_rd2_select(lyy_cache& lyy, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgyy_rd3_select(lyy_cache& lyy, int d0, int d1) {
+inline hw_uint<16> lgyy_a_rd3_select(lyy_cache& lyy, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgyy_rd3 read pattern: { lgyy_update_0[d0, d1] -> lyy[d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgyy_update_0[d0, d1] -> [2 + d1, 2 + d0, 7] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgyy_a_rd3 read pattern: { lgyy_a_update_0[d0, d1] -> lyy[d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgyy_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 7] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lyy_update_0[d0, d1] -> [1 + d1, 1 + d0, 4] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgyy_update_0[d0, d1] -> 69 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgyy_a_update_0[d0, d1] -> 69 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   auto value_lyy_lyy_update_0_write0 = lyy.lyy_lyy_update_0_write0_merged_banks_9.peek_69();
   return value_lyy_lyy_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1961,13 +2168,13 @@ inline hw_uint<16> lgyy_rd3_select(lyy_cache& lyy, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgyy_rd4_select(lyy_cache& lyy, int d0, int d1) {
+inline hw_uint<16> lgyy_a_rd4_select(lyy_cache& lyy, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgyy_rd4 read pattern: { lgyy_update_0[d0, d1] -> lyy[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgyy_update_0[d0, d1] -> [2 + d1, 2 + d0, 7] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgyy_a_rd4 read pattern: { lgyy_a_update_0[d0, d1] -> lyy[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgyy_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 7] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lyy_update_0[d0, d1] -> [1 + d1, 1 + d0, 4] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgyy_update_0[d0, d1] -> 35 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgyy_a_update_0[d0, d1] -> 35 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   auto value_lyy_lyy_update_0_write0 = lyy.lyy_lyy_update_0_write0_merged_banks_9.peek_35();
   return value_lyy_lyy_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1977,13 +2184,13 @@ inline hw_uint<16> lgyy_rd4_select(lyy_cache& lyy, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgyy_rd5_select(lyy_cache& lyy, int d0, int d1) {
+inline hw_uint<16> lgyy_a_rd5_select(lyy_cache& lyy, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgyy_rd5 read pattern: { lgyy_update_0[d0, d1] -> lyy[d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgyy_update_0[d0, d1] -> [2 + d1, 2 + d0, 7] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgyy_a_rd5 read pattern: { lgyy_a_update_0[d0, d1] -> lyy[d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgyy_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 7] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lyy_update_0[d0, d1] -> [1 + d1, 1 + d0, 4] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgyy_update_0[d0, d1] -> 1 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgyy_a_update_0[d0, d1] -> 1 : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   auto value_lyy_lyy_update_0_write0 = lyy.lyy_lyy_update_0_write0_merged_banks_9.peek_1();
   return value_lyy_lyy_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1993,13 +2200,13 @@ inline hw_uint<16> lgyy_rd5_select(lyy_cache& lyy, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgyy_rd6_select(lyy_cache& lyy, int d0, int d1) {
+inline hw_uint<16> lgyy_a_rd6_select(lyy_cache& lyy, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgyy_rd6 read pattern: { lgyy_update_0[d0, d1] -> lyy[1 + d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgyy_update_0[d0, d1] -> [2 + d1, 2 + d0, 7] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgyy_a_rd6 read pattern: { lgyy_a_update_0[d0, d1] -> lyy[1 + d0, -1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgyy_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 7] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lyy_update_0[d0, d1] -> [1 + d1, 1 + d0, 4] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgyy_update_0[d0, d1] -> 68 : 0 <= d0 <= 30 and 0 <= d1 <= 31; lgyy_update_0[d0, d1] -> (37 + d0) : d0 = 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgyy_a_update_0[d0, d1] -> 68 : 0 <= d0 <= 30 and 0 <= d1 <= 31; lgyy_a_update_0[d0, d1] -> (37 + d0) : d0 = 31 and 0 <= d1 <= 31 }
   auto value_lyy_lyy_update_0_write0 = lyy.lyy_lyy_update_0_write0_merged_banks_9.peek_68();
   return value_lyy_lyy_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -2009,13 +2216,13 @@ inline hw_uint<16> lgyy_rd6_select(lyy_cache& lyy, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgyy_rd7_select(lyy_cache& lyy, int d0, int d1) {
+inline hw_uint<16> lgyy_a_rd7_select(lyy_cache& lyy, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgyy_rd7 read pattern: { lgyy_update_0[d0, d1] -> lyy[1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgyy_update_0[d0, d1] -> [2 + d1, 2 + d0, 7] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgyy_a_rd7 read pattern: { lgyy_a_update_0[d0, d1] -> lyy[1 + d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgyy_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 7] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lyy_update_0[d0, d1] -> [1 + d1, 1 + d0, 4] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
-  // DD fold: { lgyy_update_0[d0, d1] -> 34 : 0 <= d0 <= 30 and 0 <= d1 <= 31; lgyy_update_0[d0, d1] -> (3 + d0) : d0 = 31 and 0 <= d1 <= 31 }
+  // DD fold: { lgyy_a_update_0[d0, d1] -> 34 : 0 <= d0 <= 30 and 0 <= d1 <= 31; lgyy_a_update_0[d0, d1] -> (3 + d0) : d0 = 31 and 0 <= d1 <= 31 }
   auto value_lyy_lyy_update_0_write0 = lyy.lyy_lyy_update_0_write0_merged_banks_9.peek_34();
   return value_lyy_lyy_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -2025,11 +2232,11 @@ inline hw_uint<16> lgyy_rd7_select(lyy_cache& lyy, int d0, int d1) {
 #endif //__VIVADO_SYNTH__
 }
 
-inline hw_uint<16> lgyy_rd8_select(lyy_cache& lyy, int d0, int d1) {
+inline hw_uint<16> lgyy_a_rd8_select(lyy_cache& lyy, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // lgyy_rd8 read pattern: { lgyy_update_0[d0, d1] -> lyy[1 + d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { lgyy_update_0[d0, d1] -> [2 + d1, 2 + d0, 7] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // lgyy_a_rd8 read pattern: { lgyy_a_update_0[d0, d1] -> lyy[1 + d0, 1 + d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { lgyy_a_update_0[d0, d1] -> [2 + d1, 2 + d0, 7] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // Write schedule: { lyy_update_0[d0, d1] -> [1 + d1, 1 + d0, 4] : -1 <= d0 <= 32 and -1 <= d1 <= 32 }
   // DD fold: {  }
   auto value_lyy_lyy_update_0_write0 = lyy.lyy_lyy_update_0_write0_merged_banks_9.peek_0();
@@ -2042,47 +2249,47 @@ inline hw_uint<16> lgyy_rd8_select(lyy_cache& lyy, int d0, int d1) {
 }
 
 // # of bundles = 2
-// lgyy_update_0_read
-//	lgyy_rd0
-//	lgyy_rd1
-//	lgyy_rd2
-//	lgyy_rd3
-//	lgyy_rd4
-//	lgyy_rd5
-//	lgyy_rd6
-//	lgyy_rd7
-//	lgyy_rd8
-inline hw_uint<144> lyy_lgyy_update_0_read_bundle_read(lyy_cache& lyy, int d0, int d1) {
+// lgyy_a_update_0_read
+//	lgyy_a_rd0
+//	lgyy_a_rd1
+//	lgyy_a_rd2
+//	lgyy_a_rd3
+//	lgyy_a_rd4
+//	lgyy_a_rd5
+//	lgyy_a_rd6
+//	lgyy_a_rd7
+//	lgyy_a_rd8
+inline hw_uint<144> lyy_lgyy_a_update_0_read_bundle_read(lyy_cache& lyy, int d0, int d1) {
   // # of ports in bundle: 9
-    // lgyy_rd0
-    // lgyy_rd1
-    // lgyy_rd2
-    // lgyy_rd3
-    // lgyy_rd4
-    // lgyy_rd5
-    // lgyy_rd6
-    // lgyy_rd7
-    // lgyy_rd8
+    // lgyy_a_rd0
+    // lgyy_a_rd1
+    // lgyy_a_rd2
+    // lgyy_a_rd3
+    // lgyy_a_rd4
+    // lgyy_a_rd5
+    // lgyy_a_rd6
+    // lgyy_a_rd7
+    // lgyy_a_rd8
 
 	hw_uint<144> result;
-	hw_uint<16> lgyy_rd0_res = lgyy_rd0_select(lyy, d0, d1);
-	set_at<0, 144>(result, lgyy_rd0_res);
-	hw_uint<16> lgyy_rd1_res = lgyy_rd1_select(lyy, d0, d1);
-	set_at<16, 144>(result, lgyy_rd1_res);
-	hw_uint<16> lgyy_rd2_res = lgyy_rd2_select(lyy, d0, d1);
-	set_at<32, 144>(result, lgyy_rd2_res);
-	hw_uint<16> lgyy_rd3_res = lgyy_rd3_select(lyy, d0, d1);
-	set_at<48, 144>(result, lgyy_rd3_res);
-	hw_uint<16> lgyy_rd4_res = lgyy_rd4_select(lyy, d0, d1);
-	set_at<64, 144>(result, lgyy_rd4_res);
-	hw_uint<16> lgyy_rd5_res = lgyy_rd5_select(lyy, d0, d1);
-	set_at<80, 144>(result, lgyy_rd5_res);
-	hw_uint<16> lgyy_rd6_res = lgyy_rd6_select(lyy, d0, d1);
-	set_at<96, 144>(result, lgyy_rd6_res);
-	hw_uint<16> lgyy_rd7_res = lgyy_rd7_select(lyy, d0, d1);
-	set_at<112, 144>(result, lgyy_rd7_res);
-	hw_uint<16> lgyy_rd8_res = lgyy_rd8_select(lyy, d0, d1);
-	set_at<128, 144>(result, lgyy_rd8_res);
+	hw_uint<16> lgyy_a_rd0_res = lgyy_a_rd0_select(lyy, d0, d1);
+	set_at<0, 144>(result, lgyy_a_rd0_res);
+	hw_uint<16> lgyy_a_rd1_res = lgyy_a_rd1_select(lyy, d0, d1);
+	set_at<16, 144>(result, lgyy_a_rd1_res);
+	hw_uint<16> lgyy_a_rd2_res = lgyy_a_rd2_select(lyy, d0, d1);
+	set_at<32, 144>(result, lgyy_a_rd2_res);
+	hw_uint<16> lgyy_a_rd3_res = lgyy_a_rd3_select(lyy, d0, d1);
+	set_at<48, 144>(result, lgyy_a_rd3_res);
+	hw_uint<16> lgyy_a_rd4_res = lgyy_a_rd4_select(lyy, d0, d1);
+	set_at<64, 144>(result, lgyy_a_rd4_res);
+	hw_uint<16> lgyy_a_rd5_res = lgyy_a_rd5_select(lyy, d0, d1);
+	set_at<80, 144>(result, lgyy_a_rd5_res);
+	hw_uint<16> lgyy_a_rd6_res = lgyy_a_rd6_select(lyy, d0, d1);
+	set_at<96, 144>(result, lgyy_a_rd6_res);
+	hw_uint<16> lgyy_a_rd7_res = lgyy_a_rd7_select(lyy, d0, d1);
+	set_at<112, 144>(result, lgyy_a_rd7_res);
+	hw_uint<16> lgyy_a_rd8_res = lgyy_a_rd8_select(lyy, d0, d1);
+	set_at<128, 144>(result, lgyy_a_rd8_res);
 	return result;
 }
 
@@ -2130,8 +2337,8 @@ inline hw_uint<16> harris16_mini_rd0_select(trace_cache& trace, int d0, int d1) 
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // harris16_mini_rd0 read pattern: { harris16_mini_update_0[d0, d1] -> trace[d0, d1] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Read schedule : { harris16_mini_update_0[d0, d1] -> [2 + d1, 2 + d0, 15] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
-  // Write schedule: { trace_update_0[d0, d1] -> [2 + d1, 2 + d0, 14] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Read schedule : { harris16_mini_update_0[d0, d1] -> [2 + d1, 2 + d0, 18] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
+  // Write schedule: { trace_update_0[d0, d1] -> [2 + d1, 2 + d0, 17] : 0 <= d0 <= 31 and 0 <= d1 <= 31 }
   // DD fold: {  }
   auto value_trace_trace_update_0_write0 = trace.trace_trace_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_trace_trace_update_0_write0;
@@ -2165,12 +2372,38 @@ inline void trace_trace_update_0_write_bundle_write(hw_uint<16>& trace_update_0_
 
 
 // Operation logic
-inline void img_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */img_oc, img_cache& img, int d0, int d1) {
-	// Consume: img_oc
-	auto img_oc_0_c__0_value = img_oc.read();
-	auto compute_result = img_generated_compute_unrolled_1(img_oc_0_c__0_value);
-	// Produce: img
-	img_img_update_0_write_bundle_write(compute_result, img, d0, d1);
+inline void lxy_update_0(grad_x_cache& grad_x, grad_y_cache& grad_y, lxy_cache& lxy, int d0, int d1) {
+	// Consume: grad_x
+	auto grad_x_0_c__0_value = grad_x_lxy_update_0_read_bundle_read(grad_x/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: grad_y
+	auto grad_y_0_c__0_value = grad_y_lxy_update_0_read_bundle_read(grad_y/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = lxy_generated_compute_unrolled_1(grad_x_0_c__0_value, grad_y_0_c__0_value);
+	// Produce: lxy
+	lxy_lxy_update_0_write_bundle_write(compute_result, lxy, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void grad_y_update_0(img_cache& img, grad_y_cache& grad_y, int d0, int d1) {
+	// Consume: img
+	auto img_0_c__0_value = img_grad_y_update_0_read_bundle_read(img/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = grad_y_generated_compute_unrolled_1(img_0_c__0_value);
+	// Produce: grad_y
+	grad_y_grad_y_update_0_write_bundle_write(compute_result, grad_y, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -2209,28 +2442,6 @@ inline void lyy_update_0(grad_y_cache& grad_y, lyy_cache& lyy, int d0, int d1) {
 
 }
 
-inline void lxy_update_0(grad_x_cache& grad_x, grad_y_cache& grad_y, lxy_cache& lxy, int d0, int d1) {
-	// Consume: grad_x
-	auto grad_x_0_c__0_value = grad_x_lxy_update_0_read_bundle_read(grad_x/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: grad_y
-	auto grad_y_0_c__0_value = grad_y_lxy_update_0_read_bundle_read(grad_y/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = lxy_generated_compute_unrolled_1(grad_x_0_c__0_value, grad_y_0_c__0_value);
-	// Produce: lxy
-	lxy_lxy_update_0_write_bundle_write(compute_result, lxy, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void lxx_update_0(grad_x_cache& grad_x, lxx_cache& lxx, int d0, int d1) {
 	// Consume: grad_x
 	auto grad_x_0_c__0_value = grad_x_lxx_update_0_read_bundle_read(grad_x/* source_delay */, d0, d1);
@@ -2247,14 +2458,14 @@ inline void lxx_update_0(grad_x_cache& grad_x, lxx_cache& lxx, int d0, int d1) {
 
 }
 
-inline void lgyy_update_0(lyy_cache& lyy, lgyy_cache& lgyy, int d0, int d1) {
-	// Consume: lyy
-	auto lyy_0_c__0_value = lyy_lgyy_update_0_read_bundle_read(lyy/* source_delay */, d0, d1);
+inline void lgyy_update_0(lgyy_a_cache& lgyy_a, lgyy_cache& lgyy, int d0, int d1) {
+	// Consume: lgyy_a
+	auto lgyy_a_0_c__0_value = lgyy_a_lgyy_update_0_read_bundle_read(lgyy_a/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = lgyy_generated_compute_unrolled_1(lyy_0_c__0_value);
+	auto compute_result = lgyy_generated_compute_unrolled_1(lgyy_a_0_c__0_value);
 	// Produce: lgyy
 	lgyy_lgyy_update_0_write_bundle_write(compute_result, lgyy, d0, d1);
 
@@ -2263,14 +2474,30 @@ inline void lgyy_update_0(lyy_cache& lyy, lgyy_cache& lgyy, int d0, int d1) {
 
 }
 
-inline void lgxy_update_0(lxy_cache& lxy, lgxy_cache& lgxy, int d0, int d1) {
+inline void lgxy_a_update_0(lxy_cache& lxy, lgxy_a_cache& lgxy_a, int d0, int d1) {
 	// Consume: lxy
-	auto lxy_0_c__0_value = lxy_lgxy_update_0_read_bundle_read(lxy/* source_delay */, d0, d1);
+	auto lxy_0_c__0_value = lxy_lgxy_a_update_0_read_bundle_read(lxy/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = lgxy_generated_compute_unrolled_1(lxy_0_c__0_value);
+	auto compute_result = lgxy_a_generated_compute_unrolled_1(lxy_0_c__0_value);
+	// Produce: lgxy_a
+	lgxy_a_lgxy_a_update_0_write_bundle_write(compute_result, lgxy_a, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void lgxy_update_0(lgxy_a_cache& lgxy_a, lgxy_cache& lgxy, int d0, int d1) {
+	// Consume: lgxy_a
+	auto lgxy_a_0_c__0_value = lgxy_a_lgxy_update_0_read_bundle_read(lgxy_a/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = lgxy_generated_compute_unrolled_1(lgxy_a_0_c__0_value);
 	// Produce: lgxy
 	lgxy_lgxy_update_0_write_bundle_write(compute_result, lgxy, d0, d1);
 
@@ -2279,16 +2506,32 @@ inline void lgxy_update_0(lxy_cache& lxy, lgxy_cache& lgxy, int d0, int d1) {
 
 }
 
-inline void lgxx_update_0(lxx_cache& lxx, lgxx_cache& lgxx, int d0, int d1) {
-	// Consume: lxx
-	auto lxx_0_c__0_value = lxx_lgxx_update_0_read_bundle_read(lxx/* source_delay */, d0, d1);
+inline void lgxx_update_0(lgxx_a_cache& lgxx_a, lgxx_cache& lgxx, int d0, int d1) {
+	// Consume: lgxx_a
+	auto lgxx_a_0_c__0_value = lgxx_a_lgxx_update_0_read_bundle_read(lgxx_a/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = lgxx_generated_compute_unrolled_1(lxx_0_c__0_value);
+	auto compute_result = lgxx_generated_compute_unrolled_1(lgxx_a_0_c__0_value);
 	// Produce: lgxx
 	lgxx_lgxx_update_0_write_bundle_write(compute_result, lgxx, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void lgxx_a_update_0(lxx_cache& lxx, lgxx_a_cache& lgxx_a, int d0, int d1) {
+	// Consume: lxx
+	auto lxx_0_c__0_value = lxx_lgxx_a_update_0_read_bundle_read(lxx/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = lgxx_a_generated_compute_unrolled_1(lxx_0_c__0_value);
+	// Produce: lgxx_a
+	lgxx_a_lgxx_a_update_0_write_bundle_write(compute_result, lgxx_a, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -2305,22 +2548,6 @@ inline void lgyy8_update_0(lgyy_cache& lgyy, lgyy8_cache& lgyy8, int d0, int d1)
 	auto compute_result = lgyy8_generated_compute_unrolled_1(lgyy_0_c__0_value);
 	// Produce: lgyy8
 	lgyy8_lgyy8_update_0_write_bundle_write(compute_result, lgyy8, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void lgxy8_update_0(lgxy_cache& lgxy, lgxy8_cache& lgxy8, int d0, int d1) {
-	// Consume: lgxy
-	auto lgxy_0_c__0_value = lgxy_lgxy8_update_0_read_bundle_read(lgxy/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = lgxy8_generated_compute_unrolled_1(lgxy_0_c__0_value);
-	// Produce: lgxy8
-	lgxy8_lgxy8_update_0_write_bundle_write(compute_result, lgxy8, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -2393,6 +2620,50 @@ inline void trace_update_0(lgxx8_cache& lgxx8, lgyy8_cache& lgyy8, trace_cache& 
 
 }
 
+inline void img_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */img_oc, img_cache& img, int d0, int d1) {
+	// Consume: img_oc
+	auto img_oc_0_c__0_value = img_oc.read();
+	auto compute_result = img_generated_compute_unrolled_1(img_oc_0_c__0_value);
+	// Produce: img
+	img_img_update_0_write_bundle_write(compute_result, img, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void lgyy_a_update_0(lyy_cache& lyy, lgyy_a_cache& lgyy_a, int d0, int d1) {
+	// Consume: lyy
+	auto lyy_0_c__0_value = lyy_lgyy_a_update_0_read_bundle_read(lyy/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = lgyy_a_generated_compute_unrolled_1(lyy_0_c__0_value);
+	// Produce: lgyy_a
+	lgyy_a_lgyy_a_update_0_write_bundle_write(compute_result, lgyy_a, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void lgxy8_update_0(lgxy_cache& lgxy, lgxy8_cache& lgxy8, int d0, int d1) {
+	// Consume: lgxy
+	auto lgxy_0_c__0_value = lgxy_lgxy8_update_0_read_bundle_read(lgxy/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = lgxy8_generated_compute_unrolled_1(lgxy_0_c__0_value);
+	// Produce: lgxy8
+	lgxy8_lgxy8_update_0_write_bundle_write(compute_result, lgxy8, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void harris16_mini_update_0(det_cache& det, trace_cache& trace, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */harris16_mini, int d0, int d1) {
 	// Consume: det
 	auto det_0_c__0_value = det_harris16_mini_update_0_read_bundle_read(det/* source_delay */, d0, d1);
@@ -2409,22 +2680,6 @@ inline void harris16_mini_update_0(det_cache& det, trace_cache& trace, HWStream<
 	auto compute_result = harris16_mini_generated_compute_unrolled_1(det_0_c__0_value, trace_0_c__0_value);
 	// Produce: harris16_mini
 	harris16_mini.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void grad_y_update_0(img_cache& img, grad_y_cache& grad_y, int d0, int d1) {
-	// Consume: img
-	auto img_0_c__0_value = img_grad_y_update_0_read_bundle_read(img/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = grad_y_generated_compute_unrolled_1(img_0_c__0_value);
-	// Produce: grad_y
-	grad_y_grad_y_update_0_write_bundle_write(compute_result, grad_y, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -2456,16 +2711,25 @@ void harris16_mini_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */img_o
   lgxx8_cache lgxx8;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+  lgxx_a_cache lgxx_a;
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   lgxy_cache lgxy;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   lgxy8_cache lgxy8;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+  lgxy_a_cache lgxy_a;
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
   lgyy_cache lgyy;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   lgyy8_cache lgyy8;
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+  lgyy_a_cache lgyy_a;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   lxx_cache lxx;
@@ -2486,22 +2750,25 @@ void harris16_mini_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */img_o
 
   for (int epoch = 0; epoch < num_epochs; epoch++) {
 	  // Schedules...
-	    // det_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*13]
+	    // det_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*16]
 	    // grad_x_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*3]
 	    // grad_y_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*2]
-	    // harris16_mini_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*15]
+	    // harris16_mini_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*18]
 	    // img_oc_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
 	    // img_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
-	    // lgxx8_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*12]
-	    // lgxx_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*9]
-	    // lgxy8_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*11]
-	    // lgxy_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*8]
-	    // lgyy8_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*10]
-	    // lgyy_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*7]
+	    // lgxx8_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*15]
+	    // lgxx_a_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*11]
+	    // lgxx_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*12]
+	    // lgxy8_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*14]
+	    // lgxy_a_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*9]
+	    // lgxy_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*10]
+	    // lgyy8_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*13]
+	    // lgyy_a_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*7]
+	    // lgyy_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*8]
 	    // lxx_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*6]
 	    // lxy_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*5]
 	    // lyy_update_0 -> [1*d1*1*1 + 1*1,1*d0*1*1 + 1*1,1*4]
-	    // trace_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*14]
+	    // trace_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*17]
 	for (int c0 = -2; c0 <= 33; c0++) {
 	  for (int c1 = -2; c1 <= 33; c1++) {
 	
@@ -2534,15 +2801,27 @@ void harris16_mini_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */img_o
 	    }
 	
 	    if ((2 <= c1 && c1 <= 33) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 33) && ((c0 - 2) % 1 == 0)) {
-	lgyy_update_0(lyy, lgyy, (c1 - 2) / 1, (c0 - 2) / 1);
+	lgyy_a_update_0(lyy, lgyy_a, (c1 - 2) / 1, (c0 - 2) / 1);
 	    }
 	
 	    if ((2 <= c1 && c1 <= 33) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 33) && ((c0 - 2) % 1 == 0)) {
-	lgxy_update_0(lxy, lgxy, (c1 - 2) / 1, (c0 - 2) / 1);
+	lgyy_update_0(lgyy_a, lgyy, (c1 - 2) / 1, (c0 - 2) / 1);
 	    }
 	
 	    if ((2 <= c1 && c1 <= 33) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 33) && ((c0 - 2) % 1 == 0)) {
-	lgxx_update_0(lxx, lgxx, (c1 - 2) / 1, (c0 - 2) / 1);
+	lgxy_a_update_0(lxy, lgxy_a, (c1 - 2) / 1, (c0 - 2) / 1);
+	    }
+	
+	    if ((2 <= c1 && c1 <= 33) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 33) && ((c0 - 2) % 1 == 0)) {
+	lgxy_update_0(lgxy_a, lgxy, (c1 - 2) / 1, (c0 - 2) / 1);
+	    }
+	
+	    if ((2 <= c1 && c1 <= 33) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 33) && ((c0 - 2) % 1 == 0)) {
+	lgxx_a_update_0(lxx, lgxx_a, (c1 - 2) / 1, (c0 - 2) / 1);
+	    }
+	
+	    if ((2 <= c1 && c1 <= 33) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 33) && ((c0 - 2) % 1 == 0)) {
+	lgxx_update_0(lgxx_a, lgxx, (c1 - 2) / 1, (c0 - 2) / 1);
 	    }
 	
 	    if ((2 <= c1 && c1 <= 33) && ((c1 - 2) % 1 == 0) && (2 <= c0 && c0 <= 33) && ((c0 - 2) % 1 == 0)) {

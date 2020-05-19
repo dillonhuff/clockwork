@@ -6326,6 +6326,11 @@ App different_path_latencies(const std::string& out_name) {
   return harris;
 }
 
+void box_blur(App& app, const string& res, const string& src) {
+  app.func2d(res + "_a", stencilv(-1, 1, -1, 1, src));
+  app.func2d(res, div(v(res + "_a"), 9));
+}
+
 App harris16(const std::string& out_name) {
   App harris;
   harris.set_default_pixel_width(16);
@@ -6354,9 +6359,13 @@ App harris16(const std::string& out_name) {
   harris.func2d("lyy", div(square(v("grad_y")), 128));
   harris.func2d("lxy", div(mul(v("grad_x"), v("grad_y")), 128));
 
-  harris.func2d("lgxx", div(stencilv(-1, 1, -1, 1, "lxx"), 9));
-  harris.func2d("lgyy", div(stencilv(-1, 1, -1, 1, "lyy"), 9));
-  harris.func2d("lgxy", div(stencilv(-1, 1, -1, 1, "lxy"), 9));
+  box_blur(harris, "lgxx", "lxx");
+  box_blur(harris, "lgyy", "lyy");
+  box_blur(harris, "lgxy", "lxy");
+
+  //harris.func2d("lgxx", div(stencilv(-1, 1, -1, 1, "lxx"), 9));
+  //harris.func2d("lgyy", div(stencilv(-1, 1, -1, 1, "lyy"), 9));
+  //harris.func2d("lgxy", div(stencilv(-1, 1, -1, 1, "lxy"), 9));
 
   harris.func2d("lgxx8", div(v("lgxx"), 64));
   harris.func2d("lgyy8", div(v("lgyy"), 64));
