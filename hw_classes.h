@@ -69,9 +69,9 @@ class fifo {
     }
 
     T peek(int offset) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
+//#ifdef __VIVADO_SYNTH__
+//#pragma HLS dependence array inter false
+//#endif //__VIVADO_SYNTH__
 
       assert(offset >= 0);
       //cout << "Getting offset from top: " << offset << endl;
@@ -95,9 +95,9 @@ class fifo {
     }
 
     T back() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
+//#ifdef __VIVADO_SYNTH__
+//#pragma HLS dependence array inter false
+//#endif //__VIVADO_SYNTH__
       int addr = write_addr + Depth;
       if (addr >= Depth) {
         // Wrap around
@@ -109,9 +109,9 @@ class fifo {
     }
 
     void push(const T& val) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
+//#ifdef __VIVADO_SYNTH__
+//#pragma HLS dependence array inter false
+//#endif //__VIVADO_SYNTH__
       assert(write_addr < Depth);
       vals[write_addr] = val;
       write_addr = MOD_INC(write_addr, Depth);
