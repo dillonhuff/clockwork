@@ -6450,6 +6450,32 @@ string sharpen(App& cp, const std::string& r) {
   return bdiff;
 }
 
+string sharpen_all_adds(App& cp, const std::string& r) {
+  string bx = r + "_bx";
+  string by = r + "_by";
+  string bdiff = r + "_diff";
+  cp.func2d(bx, add(stencilv(0, 2, 0, 0, r), 3));
+  cp.func2d(by, add(stencilv(0, 0, 0, 2, bx), 3));
+
+  cp.func2d(bdiff, add(v(by), v(r)));
+  return bdiff;
+}
+
+App camera_pipeline_all_adds(const std::string& out_name) {
+  App cp;
+  cp.set_default_pixel_width(16);
+
+  cp.func2d("raw_oc");
+  cp.func2d("raw", v("raw_oc"));
+  cp.func2d("denoised", add(stencilv(-2, 2, -2, 2, "raw"), 25));
+  cp.func2d("demosaic", add(stencilv(-1, 1, -1, 1, "denoised"), 9));
+
+  string sharpened = sharpen_all_adds(cp, "demosaic");
+
+  cp.func2d(out_name, add(v(sharpened), 20));
+  return cp;
+}
+
 App camera_pipeline(const std::string& out_name) {
   App cp;
   cp.set_default_pixel_width(16);
@@ -6463,6 +6489,45 @@ App camera_pipeline(const std::string& out_name) {
 
   cp.func2d(out_name, add(v(sharpened), 20));
   return cp;
+}
+
+void camera_pipeline_all_adds_test(const std::string& prefix) {
+  //string app_name = "camera_mini";
+  //int mini_rows = 32;
+  //int mini_cols = 32;
+  //auto hmini = camera_pipeline(app_name);
+  //hmini.realize_naive(app_name, mini_cols, mini_rows);
+  //hmini.realize(app_name, mini_cols, mini_rows, 1);
+
+  //std::vector<std::string> naive =
+    //run_regression_tb(app_name + "_naive");
+  //std::vector<std::string> optimized =
+    //run_regression_tb(app_name + "_opt");
+  //assert(naive == optimized);
+  //move_to_benchmarks_folder(app_name + "_opt");
+  ////assert(false);
+
+
+  int rows = 1080;
+  int cols = 1920;
+  //vector<int> factors{1, 2, 4};
+  vector<int> factors{1};
+  for (int i = 0; i < (int) factors.size(); i++) {
+    int unroll_factor = factors.at(i);
+    //cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
+    string out_name = prefix + "_" + str(unroll_factor);
+
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    options.debug_options.expect_all_linebuffers = true;
+    options.num_input_epochs = 30;
+    camera_pipeline_all_adds(out_name).realize(options, out_name, cols, rows, unroll_factor);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+  assert(false);
 }
 
 void camera_pipeline_test(const std::string& prefix) {
@@ -8468,6 +8533,8 @@ void playground() {
 }
 
 void iccad_tests() {
+  camera_pipeline_all_adds_test("cp_all_adds_18");
+
   camera_pipeline_test("cp18");
   harris16_test("hr18");
   blur_xy_16_app_test("bxy18");
