@@ -1,5 +1,5 @@
 // AUTO GEN SODA TB
-#include "camera_mini_opt_kernel.h"
+#include "cp_all_adds_18_1_opt_kernel.h"
 #include <iostream>
 #include <fstream>
 
@@ -12,7 +12,7 @@ using namespace std;
 
 int main() {
   srand(234);
-  const int nrows = 38;
+  const int nrows = 30*1088;
   const int ncols = 1928;
   uint64_t img_pixels = nrows*ncols;
   const uint64_t bits_per_pixel = PIXEL_WIDTH;
@@ -24,11 +24,11 @@ int main() {
   cout << "pixels / transfer: " << pixels_per_burst << endl;
 
   const uint64_t transfer_cols = ncols / pixels_per_burst;
-  ap_uint<BURST_WIDTH>* camera_mini = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
+  ap_uint<BURST_WIDTH>* cp_all_adds_18_1 = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
   ap_uint<BURST_WIDTH>* raw_oc = (ap_uint<BURST_WIDTH>*) malloc(sizeof(ap_uint<BURST_WIDTH>)*num_transfers);
   fill_array_decimal<bits_per_pixel>("raw_oc_input_pixel.csv", raw_oc, nrows, ncols, transfer_cols);
-  camera_mini_opt_kernel(camera_mini, raw_oc, num_transfers);
-  write_results_decimal<bits_per_pixel>("soda_camera_mini_opt_regression_result.csv", camera_mini, nrows, ncols, transfer_cols);
+  cp_all_adds_18_1_opt_kernel(cp_all_adds_18_1, raw_oc, num_transfers);
+  write_results_decimal<bits_per_pixel>("soda_cp_all_adds_18_1_opt_regression_result.csv", cp_all_adds_18_1, nrows, ncols, transfer_cols);
   free(raw_oc);
-  free(camera_mini);
+  free(cp_all_adds_18_1);
 }
