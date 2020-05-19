@@ -289,6 +289,10 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("mkdir " + synth_dir).c_str());
   system(("mkdir " + soda_dir).c_str());
   
+  system(("cp ./aws_collateral/xrt.ini " + soda_dir).c_str());
+  system(("cp ./aws_collateral/soda_makefile.mk " + soda_dir + "/Makefile").c_str());
+  system(("cp ./aws_collateral/utils.mk " + soda_dir).c_str());
+  
   system(("cp ./aws_collateral/xrt.ini " + synth_dir).c_str());
   system(("cp ./aws_collateral/Makefile " + synth_dir).c_str());
   system(("cp ./aws_collateral/utils.mk " + synth_dir).c_str());

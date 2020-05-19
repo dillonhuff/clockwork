@@ -245,6 +245,18 @@ inline void short_path_short_path_update_0_write_bundle_write(hw_uint<16>& short
 
 
 // Operation logic
+inline void img_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */img_oc, img_cache& img, int d0, int d1) {
+	// Consume: img_oc
+	auto img_oc_0_c__0_value = img_oc.read();
+	auto compute_result = img_generated_compute_unrolled_1(img_oc_0_c__0_value);
+	// Produce: img
+	img_img_update_0_write_bundle_write(compute_result, img, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void short_path_update_0(img_cache& img, short_path_cache& short_path, int d0, int d1) {
 	// Consume: img
 	auto img_0_c__0_value = img_short_path_update_0_read_bundle_read(img/* source_delay */, d0, d1);
@@ -293,18 +305,6 @@ inline void dp_update_0(long_path_cache& long_path, short_path_cache& short_path
 	auto compute_result = dp_generated_compute_unrolled_1(long_path_0_c__0_value, short_path_0_c__0_value);
 	// Produce: dp
 	dp.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void img_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */img_oc, img_cache& img, int d0, int d1) {
-	// Consume: img_oc
-	auto img_oc_0_c__0_value = img_oc.read();
-	auto compute_result = img_generated_compute_unrolled_1(img_oc_0_c__0_value);
-	// Produce: img
-	img_img_update_0_write_bundle_write(compute_result, img, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

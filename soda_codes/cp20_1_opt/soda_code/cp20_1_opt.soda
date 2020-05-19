@@ -1,8 +1,8 @@
-kernel: camera_mini_opt
+kernel: cp20_1_opt
 unroll factor: 1
 burst width: 16
 
-input uint16: raw_oc(108, *)
+input uint16: raw_oc(1928, *)
 
 local uint16: raw(0, 0) = raw_oc(0, 0)
 
@@ -24,7 +24,7 @@ local uint16: demosaic_by(0, 0) = (demosaic_byb(0, 0) / 3)
 
 local uint16: demosaic_diff(0, 0) = (demosaic_by(0, 0) - demosaic(0, 0))
 
-output uint16: camera_mini(0, 0) = (demosaic_diff(0, 0) + 20)
+output uint16: cp20_1(0, 0) = (demosaic_diff(0, 0) + 20)
 
 
 iterate: 1

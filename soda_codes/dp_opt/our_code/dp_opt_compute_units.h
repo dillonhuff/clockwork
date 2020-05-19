@@ -12,7 +12,7 @@ hw_uint<16> short_path_generated_compute(hw_uint<16*1> img) {
 }
 
 hw_uint<16> long_path_generated_compute(hw_uint<16*1> img) {
-  return uint16_t(((uint16_t(img.get<16, 0>()) / (uint16_t(img.get<16, 0>()) + 1)) * 29));
+  return uint16_t(((uint16_t(img.get<16, 0>()) * (uint16_t(img.get<16, 0>()) + 1)) / 29));
 }
 
 hw_uint<16> dp_generated_compute(hw_uint<16*1> long_path, hw_uint<16*1> short_path) {
