@@ -196,7 +196,7 @@ class hw_uint {
 
     hw_uint(const hw_uint<Len>& v) : val(v.val) {}
     hw_uint(const int v) : val(v) {}
-    hw_uint() : val(0) {}
+    //hw_uint() : val(0) {}
 
     template<int S, int E_inclusive>
     hw_uint<E_inclusive - S + 1> extract() const {
@@ -222,7 +222,7 @@ class hw_uint {
     hw_uint(const hw_uint<Len>& v) : val(v.val) {}
     hw_uint(const int v) : val(v) {}
     hw_uint(const string& v) : val(v) {}
-    hw_uint() : val(0) {}
+    //hw_uint() : val(0) {}
 
     template<int S, int E_inclusive>
       inline
