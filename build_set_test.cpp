@@ -6532,8 +6532,8 @@ void camera_pipeline_all_adds_test(const std::string& prefix) {
 
 void camera_pipeline_test(const std::string& prefix) {
   string app_name = "camera_mini";
-  int mini_rows = 32;
-  int mini_cols = 32;
+  int mini_rows = 30;
+  int mini_cols = 1920;
   auto hmini = camera_pipeline(app_name);
   hmini.realize_naive(app_name, mini_cols, mini_rows);
   hmini.realize(app_name, mini_cols, mini_rows, 1);
@@ -6544,7 +6544,7 @@ void camera_pipeline_test(const std::string& prefix) {
     run_regression_tb(app_name + "_opt");
   assert(naive == optimized);
   move_to_benchmarks_folder(app_name + "_opt");
-  //assert(false);
+  assert(false);
 
 
   int rows = 1080;
@@ -8533,11 +8533,13 @@ void playground() {
 }
 
 void iccad_tests() {
-  different_path_latencies_test("dp");
-  assert(false);
-  camera_pipeline_all_adds_test("cp_all_adds_18");
 
   camera_pipeline_test("cp18");
+  assert(false);
+
+  different_path_latencies_test("dp");
+  camera_pipeline_all_adds_test("cp_all_adds_18");
+
   harris16_test("hr18");
   blur_xy_16_app_test("bxy18");
   sobel_16_app_test("sbl18");

@@ -18,12 +18,12 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
-  const int camera_mini_update_0_write_DATA_SIZE = num_epochs*1600;
+  const int camera_mini_update_0_write_DATA_SIZE = num_epochs*73264;
   const int camera_mini_update_0_write_BYTES_PER_PIXEL = 16 / 8;
   size_t camera_mini_update_0_write_size_bytes = camera_mini_update_0_write_BYTES_PER_PIXEL * camera_mini_update_0_write_DATA_SIZE;
 
   total_size_bytes += camera_mini_update_0_write_size_bytes;
-  const int raw_update_0_read_DATA_SIZE = num_epochs*1600;
+  const int raw_update_0_read_DATA_SIZE = num_epochs*73264;
   const int raw_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t raw_update_0_read_size_bytes = raw_update_0_read_BYTES_PER_PIXEL * raw_update_0_read_DATA_SIZE;
 
@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, cl::Buffer raw_update_0_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, raw_update_0_read_size_bytes, raw_update_0_read.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(1, raw_update_0_read_ocl_buf));
 
-  uint64_t transfer_size = num_epochs*(1600 / 1);
+  uint64_t transfer_size = num_epochs*(73264 / 1);
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
   std::cout << "Migrating memory" << std::endl;
