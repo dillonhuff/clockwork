@@ -6533,7 +6533,8 @@ void camera_pipeline_all_adds_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    //options.use_custom_code_string = true;
+    options.use_custom_code_string = false;
     options.debug_options.expect_all_linebuffers = true;
     options.num_input_epochs = 30;
     camera_pipeline_all_adds(out_name).realize(options, out_name, cols, rows, unroll_factor);
@@ -8549,7 +8550,7 @@ void iccad_tests() {
   int index = 20;
   string istr = str(index);
 
-  camera_pipeline_all_adds_test("cp_add_20_nodep");
+  camera_pipeline_all_adds_test("cp_add_20_nopipe");
   assert(false);
   camera_pipeline_test("cp" + istr);
   harris16_test("hr" + istr);
