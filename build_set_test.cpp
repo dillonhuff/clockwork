@@ -6608,7 +6608,7 @@ void harris16_test(const std::string& prefix) {
     run_regression_tb("harris16_mini_naive");
   assert(naive == optimized);
   move_to_benchmarks_folder("harris16_mini_opt");
-  assert(false);
+  //assert(false);
 
 
   int rows = 1080;
@@ -8548,7 +8548,7 @@ void playground() {
 
 void iccad_tests() {
 
-  harris16_test("hr18");
+  harris16_test("hr19");
   assert(false);
   camera_pipeline_test("cp18");
 
