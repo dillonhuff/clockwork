@@ -6443,8 +6443,11 @@ string sharpen(App& cp, const std::string& r) {
   string bx = r + "_bx";
   string by = r + "_by";
   string bdiff = r + "_diff";
-  cp.func2d(bx, div(stencilv(0, 2, 0, 0, r), 3));
-  cp.func2d(by, div(stencilv(0, 0, 0, 2, bx), 3));
+  cp.func2d(bx + "b", stencilv(0, 2, 0, 0, r));
+  cp.func2d(bx, div(v(bx + "b"), 3));
+
+  cp.func2d(by + "b", stencilv(0, 0, 0, 2, bx));
+  cp.func2d(by, div(v(by + "b"), 3));
 
   cp.func2d(bdiff, sub(v(by), v(r)));
   return bdiff;
@@ -6482,8 +6485,10 @@ App camera_pipeline(const std::string& out_name) {
 
   cp.func2d("raw_oc");
   cp.func2d("raw", v("raw_oc"));
-  cp.func2d("denoised", mul(stencilv(-2, 2, -2, 2, "raw"), 25));
-  cp.func2d("demosaic", div(stencilv(-1, 1, -1, 1, "denoised"), 9));
+  cp.func2d("denoiseb", stencilv(-2, 2, -2, 2, "raw"));
+  cp.func2d("denoise", div(v("denoiseb"), 25));
+  cp.func2d("demosaicb", stencilv(-1, 1, -1, 1, "denoise"));
+  cp.func2d("demosaic", div(v("demosaicb"), 9));
 
   string sharpened = sharpen(cp, "demosaic");
 
@@ -6532,7 +6537,7 @@ void camera_pipeline_all_adds_test(const std::string& prefix) {
 
 void camera_pipeline_test(const std::string& prefix) {
   string app_name = "camera_mini";
-  int mini_rows = 100;
+  int mini_rows = 30;
   int mini_cols = 100;
   auto hmini = camera_pipeline(app_name);
   hmini.realize_naive(app_name, mini_cols, mini_rows);
