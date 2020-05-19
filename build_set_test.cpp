@@ -6506,21 +6506,20 @@ App camera_pipeline(const std::string& out_name) {
 }
 
 void camera_pipeline_all_adds_test(const std::string& prefix) {
-  //string app_name = "camera_mini";
-  //int mini_rows = 32;
-  //int mini_cols = 32;
-  //auto hmini = camera_pipeline(app_name);
-  //hmini.realize_naive(app_name, mini_cols, mini_rows);
-  //hmini.realize(app_name, mini_cols, mini_rows, 1);
+  string app_name = "cp_all_adds_mini";
+  int mini_rows = 10;
+  int mini_cols = 1920;
+  auto hmini = camera_pipeline_all_adds(app_name);
+  hmini.realize_naive(app_name, mini_cols, mini_rows);
+  hmini.realize(app_name, mini_cols, mini_rows, 1);
 
-  //std::vector<std::string> naive =
-    //run_regression_tb(app_name + "_naive");
-  //std::vector<std::string> optimized =
-    //run_regression_tb(app_name + "_opt");
-  //assert(naive == optimized);
-  //move_to_benchmarks_folder(app_name + "_opt");
-  ////assert(false);
-
+  std::vector<std::string> naive =
+    run_regression_tb(app_name + "_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb(app_name + "_opt");
+  assert(naive == optimized);
+  move_to_benchmarks_folder(app_name + "_opt");
+  //assert(false);
 
   int rows = 1080;
   int cols = 1920;
@@ -6534,7 +6533,8 @@ void camera_pipeline_all_adds_test(const std::string& prefix) {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    //options.use_custom_code_string = true;
+    options.use_custom_code_string = false;
     options.debug_options.expect_all_linebuffers = true;
     options.num_input_epochs = 30;
     camera_pipeline_all_adds(out_name).realize(options, out_name, cols, rows, unroll_factor);
@@ -8550,13 +8550,13 @@ void iccad_tests() {
   int index = 20;
   string istr = str(index);
 
-  camera_pipeline_test("cp" + istr);
+  camera_pipeline_all_adds_test("cp_add_20_nopipe");
   assert(false);
+  camera_pipeline_test("cp" + istr);
   harris16_test("hr" + istr);
   blur_xy_16_app_test("bxy" + istr);
   sobel_16_app_test("sbl" + istr);
 
-  camera_pipeline_all_adds_test("cp_all_adds_18");
 
   assert(false);
 
