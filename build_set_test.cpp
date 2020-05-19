@@ -6532,7 +6532,7 @@ void camera_pipeline_all_adds_test(const std::string& prefix) {
 
 void camera_pipeline_test(const std::string& prefix) {
   string app_name = "camera_mini";
-  int mini_rows = 30;
+  int mini_rows = 100;
   int mini_cols = 100;
   auto hmini = camera_pipeline(app_name);
   hmini.realize_naive(app_name, mini_cols, mini_rows);
