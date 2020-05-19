@@ -8,19 +8,19 @@ hw_uint<16> raw_generated_compute(hw_uint<16*1> raw_oc) {
 }
 
 hw_uint<16> denoised_generated_compute(hw_uint<16*25> raw) {
-  return uint16_t((((((((((((((((((((((((((uint16_t(raw.get<16, 0>()) + uint16_t(raw.get<16, 1>())) + uint16_t(raw.get<16, 2>())) + uint16_t(raw.get<16, 3>())) + uint16_t(raw.get<16, 4>())) + uint16_t(raw.get<16, 5>())) + uint16_t(raw.get<16, 6>())) + uint16_t(raw.get<16, 7>())) + uint16_t(raw.get<16, 8>())) + uint16_t(raw.get<16, 9>())) + uint16_t(raw.get<16, 10>())) + uint16_t(raw.get<16, 11>())) + uint16_t(raw.get<16, 12>())) + uint16_t(raw.get<16, 13>())) + uint16_t(raw.get<16, 14>())) + uint16_t(raw.get<16, 15>())) + uint16_t(raw.get<16, 16>())) + uint16_t(raw.get<16, 17>())) + uint16_t(raw.get<16, 18>())) + uint16_t(raw.get<16, 19>())) + uint16_t(raw.get<16, 20>())) + uint16_t(raw.get<16, 21>())) + uint16_t(raw.get<16, 22>())) + uint16_t(raw.get<16, 23>())) + uint16_t(raw.get<16, 24>())) / 25));
+  return uint16_t((((((uint16_t(raw.get<16, 0>()) + (uint16_t(raw.get<16, 1>()) + uint16_t(raw.get<16, 2>()))) + (uint16_t(raw.get<16, 3>()) + (uint16_t(raw.get<16, 4>()) + uint16_t(raw.get<16, 5>())))) + ((uint16_t(raw.get<16, 6>()) + (uint16_t(raw.get<16, 7>()) + uint16_t(raw.get<16, 8>()))) + (uint16_t(raw.get<16, 9>()) + (uint16_t(raw.get<16, 10>()) + uint16_t(raw.get<16, 11>()))))) + (((uint16_t(raw.get<16, 12>()) + (uint16_t(raw.get<16, 13>()) + uint16_t(raw.get<16, 14>()))) + (uint16_t(raw.get<16, 15>()) + (uint16_t(raw.get<16, 16>()) + uint16_t(raw.get<16, 17>())))) + ((uint16_t(raw.get<16, 18>()) + (uint16_t(raw.get<16, 19>()) + uint16_t(raw.get<16, 20>()))) + ((uint16_t(raw.get<16, 21>()) + uint16_t(raw.get<16, 22>())) + (uint16_t(raw.get<16, 23>()) + uint16_t(raw.get<16, 24>())))))) / 25));
 }
 
 hw_uint<16> demosaic_generated_compute(hw_uint<16*9> denoised) {
-  return uint16_t((((((((((uint16_t(denoised.get<16, 0>()) + uint16_t(denoised.get<16, 1>())) + uint16_t(denoised.get<16, 2>())) + uint16_t(denoised.get<16, 3>())) + uint16_t(denoised.get<16, 4>())) + uint16_t(denoised.get<16, 5>())) + uint16_t(denoised.get<16, 6>())) + uint16_t(denoised.get<16, 7>())) + uint16_t(denoised.get<16, 8>())) / 9));
+  return uint16_t(((((uint16_t(denoised.get<16, 0>()) + uint16_t(denoised.get<16, 1>())) + (uint16_t(denoised.get<16, 2>()) + uint16_t(denoised.get<16, 3>()))) + ((uint16_t(denoised.get<16, 4>()) + uint16_t(denoised.get<16, 5>())) + (uint16_t(denoised.get<16, 6>()) + (uint16_t(denoised.get<16, 7>()) + uint16_t(denoised.get<16, 8>()))))) / 9));
 }
 
 hw_uint<16> demosaic_bx_generated_compute(hw_uint<16*3> demosaic) {
-  return uint16_t((((uint16_t(demosaic.get<16, 0>()) + uint16_t(demosaic.get<16, 1>())) + uint16_t(demosaic.get<16, 2>())) / 3));
+  return uint16_t(((uint16_t(demosaic.get<16, 0>()) + (uint16_t(demosaic.get<16, 1>()) + uint16_t(demosaic.get<16, 2>()))) / 3));
 }
 
 hw_uint<16> demosaic_by_generated_compute(hw_uint<16*3> demosaic_bx) {
-  return uint16_t((((uint16_t(demosaic_bx.get<16, 0>()) + uint16_t(demosaic_bx.get<16, 1>())) + uint16_t(demosaic_bx.get<16, 2>())) / 3));
+  return uint16_t(((uint16_t(demosaic_bx.get<16, 0>()) + (uint16_t(demosaic_bx.get<16, 1>()) + uint16_t(demosaic_bx.get<16, 2>()))) / 3));
 }
 
 hw_uint<16> demosaic_diff_generated_compute(hw_uint<16*1> demosaic, hw_uint<16*1> demosaic_by) {
