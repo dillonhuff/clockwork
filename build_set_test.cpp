@@ -6320,7 +6320,7 @@ App different_path_latencies(const std::string& out_name) {
   harris.func2d("img_oc");
   harris.func2d("img", v("img_oc"));
   harris.func2d("short_path", v("img"));
-  harris.func2d("long_path", mul(div(v("img"), add(v("img"), 1)), 29));
+  harris.func2d("long_path", div(mul(v("img"), add(v("img"), 1)), 29));
   harris.func2d(out_name, add(v("long_path"), v("short_path")));
 
   return harris;
@@ -8533,6 +8533,8 @@ void playground() {
 }
 
 void iccad_tests() {
+  different_path_latencies_test("dp");
+  assert(false);
   camera_pipeline_all_adds_test("cp_all_adds_18");
 
   camera_pipeline_test("cp18");
@@ -8541,7 +8543,6 @@ void iccad_tests() {
   sobel_16_app_test("sbl18");
   assert(false);
 
-  different_path_latencies_test("dp");
   harris_test();
   denoise3d_reconvergence_test();
 
