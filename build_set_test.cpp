@@ -6482,7 +6482,7 @@ App camera_pipeline(const std::string& out_name) {
 
   cp.func2d("raw_oc");
   cp.func2d("raw", v("raw_oc"));
-  cp.func2d("denoised", div(stencilv(-2, 2, -2, 2, "raw"), 25));
+  cp.func2d("denoised", mul(stencilv(-2, 2, -2, 2, "raw"), 25));
   cp.func2d("demosaic", div(stencilv(-1, 1, -1, 1, "denoised"), 9));
 
   string sharpened = sharpen(cp, "demosaic");
