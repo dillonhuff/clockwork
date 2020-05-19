@@ -6558,7 +6558,7 @@ void camera_pipeline_test(const std::string& prefix) {
     run_regression_tb(app_name + "_opt");
   assert(naive == optimized);
   move_to_benchmarks_folder(app_name + "_opt");
-  assert(false);
+  //assert(false);
 
 
   int rows = 1080;
@@ -8547,15 +8547,17 @@ void playground() {
 }
 
 void iccad_tests() {
+  int index = 20;
+  string istr = str(index);
 
-  harris16_test("hr19");
+  camera_pipeline_test("cp" + istr);
   assert(false);
-  camera_pipeline_test("cp18");
+  harris16_test("hr" + istr);
+  blur_xy_16_app_test("bxy" + istr);
+  sobel_16_app_test("sbl" + istr);
 
   camera_pipeline_all_adds_test("cp_all_adds_18");
 
-  blur_xy_16_app_test("bxy18");
-  sobel_16_app_test("sbl18");
   assert(false);
 
   different_path_latencies_test("dp");
@@ -8595,9 +8597,10 @@ void mini_application_tests() {
 }
 
 void application_tests() {
+  iccad_tests();
+  assert(false);
   halide_dnn_test();
   assert(false);
-  iccad_tests();
   halide_harris_test();
   conv_1d_bc_test();
   halide_frontend_test();
