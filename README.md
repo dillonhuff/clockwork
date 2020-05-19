@@ -37,6 +37,7 @@ Alternatively, you can follow these steps:
       * you may need to add -lpthread to LIBS in the generated Makefile
 11. (optionally) make check
 12. make install
+13. if Linux: export LD_LIBRARY_PATH=/path/to/these/installations 
 
 ## Build instructions
 
