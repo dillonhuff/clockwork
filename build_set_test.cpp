@@ -5730,10 +5730,10 @@ void halide_dnn_test() {
   prg.pretty_print();
   //assert(false);
 
-  generate_optimized_code(prg);
-  assert(false);
+  //generate_optimized_code(prg);
+  //assert(false);
 
-  //regression_test(prg);
+  regression_test(prg);
 }
 
 prog halide_cascade() {
@@ -8595,9 +8595,9 @@ void mini_application_tests() {
 }
 
 void application_tests() {
-  iccad_tests();
   halide_dnn_test();
   assert(false);
+  iccad_tests();
   halide_harris_test();
   conv_1d_bc_test();
   halide_frontend_test();
