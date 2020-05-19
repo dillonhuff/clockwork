@@ -6519,7 +6519,7 @@ void camera_pipeline_all_adds_test(const std::string& prefix) {
     run_regression_tb(app_name + "_opt");
   assert(naive == optimized);
   move_to_benchmarks_folder(app_name + "_opt");
-  assert(false);
+  //assert(false);
 
   int rows = 1080;
   int cols = 1920;
@@ -8549,7 +8549,7 @@ void iccad_tests() {
   int index = 20;
   string istr = str(index);
 
-  camera_pipeline_all_adds_test("cp_all_adds_18");
+  camera_pipeline_all_adds_test("cp_add_20_nodep");
   assert(false);
   camera_pipeline_test("cp" + istr);
   harris16_test("hr" + istr);
