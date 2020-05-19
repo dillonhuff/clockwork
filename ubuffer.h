@@ -652,25 +652,34 @@ class UBuffer {
       int cycle = 0;
       size_t rd_itr = 0;
       size_t wr_itr = 0;
+      out << "cycle, data_in, wen, ren, data_out, valid_out" << endl;
       while (rd_itr < read_cycle.size() && wr_itr < write_cycle.size()) {
+        bool wen = false, valid = false;
+        auto addr_in = vector<int>(4, 0);
+        auto addr_out = vector<int>(4, 0);
         if (rd_itr < read_cycle.size()) {
           if (read_cycle.at(rd_itr) == cycle) {
-            const auto addr = read_addr.at(rd_itr);
+            valid = true;
+            addr_out = read_addr.at(rd_itr);
 
             //cout << cycle << tab(1) << "rd" << tab(1) << addr << endl;
-            out << "rd@" << cycle << tab(1) << ",data=" <<sep_list(addr, "[", "]", " ") << endl;
+            //out << "rd@" << cycle << tab(1) << ",data=" <<sep_list(addr, "[", "]", " ") << endl;
             rd_itr ++;
           }
         }
         if (wr_itr < write_cycle.size()) {
           if (write_cycle.at(wr_itr) == cycle) {
-            auto addr = write_addr.at(wr_itr);
+            wen = true;
+            addr_in = write_addr.at(wr_itr);
             //cout << cycle << tab(1) << "wr" << tab(1) << addr << endl;
-            out << "wr@" << cycle << tab(1) << ",data="<< sep_list(addr, "[", "]", " ") << endl;
+            //out << "wr@" << cycle << tab(1) << ",data="<< sep_list(addr, "[", "]", " ") << endl;
             //out << cycle << tab(1) << "wr"  << endl;
             wr_itr ++;
           }
         }
+        assert((valid && wen) == false);
+        out << "@" << cycle << ", " << sep_list(addr_in, "[", "]", " ") << ", "
+            << wen << ", " << valid << ", " << sep_list(addr_out, "[", "]", " ") << ", " << valid << endl;
         cycle ++;
       }
       out.close();

@@ -868,6 +868,7 @@ void bankmerge_vec_test() {
       }
   read->add_store("out", "po, pi");
 
+  //optimized first time
   auto buffers_opt = build_buffers(prg);
   CodegenOptions opt;
   opt.conditional_merge = true;
@@ -881,6 +882,8 @@ void bankmerge_vec_test() {
   }
   buffers_opt.erase("buf");
   buffer_vectorization("buf1", 1, 4, buffers_opt);
+
+  //second time
   auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
   cout << codegen_c(opt_sched) << endl;
   map<string, umap*> op2sched;
@@ -7306,6 +7309,7 @@ void playground() {
 }
 
 void application_tests() {
+  auto_vec_test();
   bankmerge_vec_test();
   assert(false);
   pointwise_app_test();
