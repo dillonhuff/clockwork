@@ -652,7 +652,7 @@ class UBuffer {
       int cycle = 0;
       size_t rd_itr = 0;
       size_t wr_itr = 0;
-      out << "cycle, data_in, wen, ren, data_out, valid_out" << endl;
+      out << "data_in, wen, ren, data_out, valid_out" << endl;
       while (rd_itr < read_cycle.size() && wr_itr < write_cycle.size()) {
         bool wen = false, valid = false;
         auto addr_in = vector<int>(4, 0);
@@ -678,8 +678,8 @@ class UBuffer {
           }
         }
         assert((valid && wen) == false);
-        out << "@" << cycle << ", " << sep_list(addr_in, "[", "]", " ") << ", "
-            << wen << ", " << valid << ", " << sep_list(addr_out, "[", "]", " ") << ", " << valid << endl;
+        out << sep_list(addr_in, "[[", "]]", "] [") << ", " << wen << ", " << valid << ", "
+            << sep_list(addr_out, "[[", "]]", "] [") << ", " << valid << endl;
         cycle ++;
       }
       out.close();
