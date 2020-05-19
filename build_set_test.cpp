@@ -4280,7 +4280,7 @@ struct App {
     auto finite_domain = cpy(domain);
 
     // TODO: MAYBE REMOVE THIS?
-    clockwork_schedule(cpy(domain), cpy(validity), cpy(proximity));
+    //clockwork_schedule(cpy(domain), cpy(validity), cpy(proximity));
 
     isl_schedule_constraints* constraints =
       isl_schedule_constraints_on_domain(domain);
@@ -6314,6 +6314,18 @@ App harris_cartoon(const std::string& out_name) {
   return harris;
 }
 
+App different_path_latencies(const std::string& out_name) {
+  App harris;
+  harris.set_default_pixel_width(16);
+  harris.func2d("img_oc");
+  harris.func2d("img", v("img_oc"));
+  harris.func2d("short_path", v("img"));
+  harris.func2d("long_path", mul(div(v("img"), add(v("img"), 1)), 29));
+  harris.func2d(out_name, add(v("long_path"), v("short_path")));
+
+  return harris;
+}
+
 App harris16(const std::string& out_name) {
   App harris;
   harris.set_default_pixel_width(16);
@@ -6338,22 +6350,22 @@ App harris16(const std::string& out_name) {
 
   //harris.func2d(out_name, div(square(v("grad_x")), 128));
 
-  harris.func2d("lxx", div(square(v("grad_x")), 128));
-  harris.func2d("lyy", div(square(v("grad_y")), 128));
-  harris.func2d("lxy", div(mul(v("grad_x"), v("grad_y")), 128));
+  harris.func2d("lxx", add(dbl(v("grad_x")), 128));
+  harris.func2d("lyy", add(dbl(v("grad_y")), 128));
+  harris.func2d("lxy", add(add(v("grad_x"), v("grad_y")), 128));
   
-  harris.func2d("lgxx", div(stencilv(-1, 1, -1, 1, "lxx"), 9));
-  harris.func2d("lgyy", div(stencilv(-1, 1, -1, 1, "lyy"), 9));
-  harris.func2d("lgxy", div(stencilv(-1, 1, -1, 1, "lxy"), 9));
+  harris.func2d("lgxx", add(stencilv(-1, 1, -1, 1, "lxx"), 9));
+  harris.func2d("lgyy", add(stencilv(-1, 1, -1, 1, "lyy"), 9));
+  harris.func2d("lgxy", add(stencilv(-1, 1, -1, 1, "lxy"), 9));
 
-  harris.func2d("lgxx8", div(v("lgxx"), 64));
-  harris.func2d("lgyy8", div(v("lgyy"), 64));
-  harris.func2d("lgxy8", div(v("lgxy"), 64));
+  harris.func2d("lgxx8", add(v("lgxx"), 64));
+  harris.func2d("lgyy8", add(v("lgyy"), 64));
+  harris.func2d("lgxy8", add(v("lgxy"), 64));
   
-  harris.func2d("det", add(mul("lgxx8", "lgyy8"), square("lgxy8")));
-  harris.func2d("trace", mul("lgxx8", "lgyy8"));
+  harris.func2d("det", add(add("lgxx8", "lgyy8"), dbl("lgxy8")));
+  harris.func2d("trace", add("lgxx8", "lgyy8"));
   harris.func2d(out_name, add(v("det"),
-        mul(square("trace"), 8)));
+        add(dbl("trace"), 8)));
 
   return harris;
 }
@@ -6431,8 +6443,8 @@ string sharpen(App& cp, const std::string& r) {
   string bx = r + "_bx";
   string by = r + "_by";
   string bdiff = r + "_diff";
-  cp.func2d(bx, stencilv(0, 2, 0, 0, r));
-  cp.func2d(by, stencilv(0, 0, 0, 2, bx));
+  cp.func2d(bx, div(stencilv(0, 2, 0, 0, r), 3));
+  cp.func2d(by, div(stencilv(0, 0, 0, 2, bx), 3));
 
   cp.func2d(bdiff, sub(v(by), v(r)));
   return bdiff;
@@ -6444,53 +6456,65 @@ App camera_pipeline(const std::string& out_name) {
 
   cp.func2d("raw_oc");
   cp.func2d("raw", v("raw_oc"));
+  cp.func2d("denoised", div(stencilv(-2, 2, -2, 2, "raw"), 25));
+  cp.func2d("demosaic", div(stencilv(-1, 1, -1, 1, "denoised"), 9));
 
-  cp.func2d("red", stencilv(0, 2, 0, 2, "raw"));
-  cp.func2d("green", stencilv(0, 2, 0, 2, "raw"));
-  cp.func2d("blue", stencilv(0, 2, 0, 2, "raw"));
+  string sharpened = sharpen(cp, "demosaic");
 
-  string red_sharpened = sharpen(cp, "red");
-  string green_sharpened = sharpen(cp, "green");
-  string blue_sharpened = sharpen(cp, "blue");
-
-  cp.func2d(out_name, add(v(red_sharpened), v(green_sharpened), v(blue_sharpened)));
+  cp.func2d(out_name, add(v(sharpened), 20));
   return cp;
 }
 
-void camera_pipeline_test() {
+void camera_pipeline_test(const std::string& prefix) {
   string app_name = "camera_mini";
-  int mini_rows = 1020;
-  int mini_cols = 1920;
+  int mini_rows = 32;
+  int mini_cols = 32;
   auto hmini = camera_pipeline(app_name);
   hmini.realize_naive(app_name, mini_cols, mini_rows);
   hmini.realize(app_name, mini_cols, mini_rows, 1);
 
-  //std::vector<std::string> naive =
-    //run_regression_tb(app_name + "_naive");
-  //std::vector<std::string> optimized =
-    //run_regression_tb(app_name + "_opt");
-  //assert(naive == optimized);
+  std::vector<std::string> naive =
+    run_regression_tb(app_name + "_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb(app_name + "_opt");
+  assert(naive == optimized);
   move_to_benchmarks_folder(app_name + "_opt");
-  assert(false);
+  //assert(false);
 
 
   int rows = 1080;
   int cols = 1920;
-  vector<int> factors{1, 2, 4, 8, 16};
+  vector<int> factors{1, 2, 4};
   for (int i = 0; i < (int) factors.size(); i++) {
     int unroll_factor = factors.at(i);
     //cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
-    string out_name = "cp_" + str(unroll_factor);
+    string out_name = prefix + "_" + str(unroll_factor);
 
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
     options.debug_options.expect_all_linebuffers = true;
+    options.num_input_epochs = 30;
     camera_pipeline(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
     move_to_benchmarks_folder(out_name + "_opt");
   }
+}
+
+void different_path_latencies_test(const std::string& prefix) {
+  int mini_size = 32;
+  auto hmini = different_path_latencies(prefix);
+  hmini.realize_naive(prefix, mini_size, mini_size);
+  hmini.realize(prefix, mini_size, mini_size, 1);
+
+  std::vector<std::string> naive =
+    run_regression_tb(prefix + "_opt");
+  std::vector<std::string> optimized =
+    run_regression_tb(prefix + "_naive");
+  assert(naive == optimized);
+  move_to_benchmarks_folder(prefix + "_opt");
+  assert(false);
 }
 
 void harris16_test(const std::string& prefix) {
@@ -6505,12 +6529,13 @@ void harris16_test(const std::string& prefix) {
     run_regression_tb("harris16_mini_naive");
   assert(naive == optimized);
   move_to_benchmarks_folder("harris16_mini_opt");
-  assert(false);
+  //assert(false);
 
 
   int rows = 1080;
   int cols = 1920;
-  vector<int> factors{1, 8, 16};
+  vector<int> factors{1, 2, 4};
+  //8, 16};
   for (int i = 0; i < (int) factors.size(); i++) {
     int unroll_factor = factors.at(i);
     cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
@@ -6521,6 +6546,7 @@ void harris16_test(const std::string& prefix) {
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
     options.debug_options.expect_all_linebuffers = true;
+    options.num_input_epochs = 30;
     harris16(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
     move_to_benchmarks_folder(out_name + "_opt");
@@ -7370,7 +7396,7 @@ void sobel_16_stage_x_app_test() {
 
 }
 
-void sobel_16_app_test() {
+void sobel_16_app_test(const std::string& prefix) {
   int cols = 1920;
   int rows = 1080;
 
@@ -7382,7 +7408,7 @@ void sobel_16_app_test() {
     int unroll_factor = factor;
       //pow(2, i);
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
-    string out_name = "sblr30_" + str(unroll_factor);
+    string out_name = prefix + "_" + str(unroll_factor);
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
@@ -7418,7 +7444,7 @@ void sobel_app_test() {
 
 }
 
-void blur_xy_16_app_test() {
+void blur_xy_16_app_test(const std::string& prefix) {
   int cols = 1920;
   int rows = 1080;
 
@@ -7426,7 +7452,7 @@ void blur_xy_16_app_test() {
   for (auto f : factors) {
     int unroll_factor = f;
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
-    string out_name = "bxy30_" + str(unroll_factor);
+    string out_name = prefix + "_" + str(unroll_factor);
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
@@ -8442,12 +8468,13 @@ void playground() {
 }
 
 void iccad_tests() {
+  camera_pipeline_test("cp18");
   harris16_test("hr18");
-  camera_pipeline_test();
-  blur_xy_16_app_test();
-  sobel_16_app_test();
+  blur_xy_16_app_test("bxy18");
+  sobel_16_app_test("sbl18");
   assert(false);
 
+  different_path_latencies_test("dp");
   harris_test();
   denoise3d_reconvergence_test();
 
@@ -8476,8 +8503,8 @@ void mini_application_tests() {
   blur_x_test();
   harris16_test("hrs");
   denoise3d_reconvergence_test();
-  blur_xy_16_app_test();
-  sobel_16_app_test();
+  blur_xy_16_app_test("bxy");
+  sobel_16_app_test("sbl");
   single_gaussian_pyramid_app_test();
   max_pooling_test();
   exposure_fusion();

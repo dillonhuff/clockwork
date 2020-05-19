@@ -18,35 +18,35 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
-  const int camera_mini_update_0_write_DATA_SIZE = num_epochs*1024;
-  const int camera_mini_update_0_write_BYTES_PER_PIXEL = 16 / 8;
-  size_t camera_mini_update_0_write_size_bytes = camera_mini_update_0_write_BYTES_PER_PIXEL * camera_mini_update_0_write_DATA_SIZE;
+  const int dp_update_0_write_DATA_SIZE = num_epochs*1024;
+  const int dp_update_0_write_BYTES_PER_PIXEL = 16 / 8;
+  size_t dp_update_0_write_size_bytes = dp_update_0_write_BYTES_PER_PIXEL * dp_update_0_write_DATA_SIZE;
 
-  total_size_bytes += camera_mini_update_0_write_size_bytes;
-  const int raw_update_0_read_DATA_SIZE = num_epochs*1600;
-  const int raw_update_0_read_BYTES_PER_PIXEL = 16 / 8;
-  size_t raw_update_0_read_size_bytes = raw_update_0_read_BYTES_PER_PIXEL * raw_update_0_read_DATA_SIZE;
+  total_size_bytes += dp_update_0_write_size_bytes;
+  const int img_update_0_read_DATA_SIZE = num_epochs*1024;
+  const int img_update_0_read_BYTES_PER_PIXEL = 16 / 8;
+  size_t img_update_0_read_size_bytes = img_update_0_read_BYTES_PER_PIXEL * img_update_0_read_DATA_SIZE;
 
-  total_size_bytes += raw_update_0_read_size_bytes;
+  total_size_bytes += img_update_0_read_size_bytes;
 
   cl_int err;
   cl::Context context;
   cl::Kernel krnl_vector_add;
   cl::CommandQueue q;
 
-  std::vector<uint8_t, aligned_allocator<uint8_t> > camera_mini_update_0_write(camera_mini_update_0_write_size_bytes);
-  std::vector<uint8_t, aligned_allocator<uint8_t> > raw_update_0_read(raw_update_0_read_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > dp_update_0_write(dp_update_0_write_size_bytes);
+  std::vector<uint8_t, aligned_allocator<uint8_t> > img_update_0_read(img_update_0_read_size_bytes);
 
-  std::ofstream input_raw_update_0_read("raw_update_0_read.csv");
-  for (int i = 0; i < raw_update_0_read_DATA_SIZE; i++) {
+  std::ofstream input_img_update_0_read("img_update_0_read.csv");
+  for (int i = 0; i < img_update_0_read_DATA_SIZE; i++) {
     uint16_t val = (rand() % 256);
-    input_raw_update_0_read << val << std::endl;
-    ((uint16_t*) (raw_update_0_read.data()))[i] = val;
+    input_img_update_0_read << val << std::endl;
+    ((uint16_t*) (img_update_0_read.data()))[i] = val;
   }
 
-  input_raw_update_0_read.close();
-  for (int i = 0; i < camera_mini_update_0_write_DATA_SIZE; i++) {
-    ((uint16_t*) (camera_mini_update_0_write.data()))[i] = 0;
+  input_img_update_0_read.close();
+  for (int i = 0; i < dp_update_0_write_DATA_SIZE; i++) {
+    ((uint16_t*) (dp_update_0_write.data()))[i] = 0;
   }
 
   auto devices = xcl::get_xil_devices();
@@ -68,7 +68,7 @@ int main(int argc, char **argv) {
       << "] with xclbin file!\n";
     } else {
       std::cout << "Device[" << i << "]: program successful!\n";
-      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, "camera_mini_opt_accel", &err));
+      OCL_CHECK(err, krnl_vector_add = cl::Kernel(program, "dp_opt_kernel", &err));
       valid_device++;
       break;
     }
@@ -78,17 +78,17 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
-  OCL_CHECK(err, cl::Buffer raw_update_0_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, raw_update_0_read_size_bytes, raw_update_0_read.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(0, raw_update_0_read_ocl_buf));
+  OCL_CHECK(err, cl::Buffer dp_update_0_write_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, dp_update_0_write_size_bytes, dp_update_0_write.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(0, dp_update_0_write_ocl_buf));
 
-  OCL_CHECK(err, cl::Buffer camera_mini_update_0_write_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, camera_mini_update_0_write_size_bytes, camera_mini_update_0_write.data(), &err));
-  OCL_CHECK(err, err = krnl_vector_add.setArg(1, camera_mini_update_0_write_ocl_buf));
+  OCL_CHECK(err, cl::Buffer img_update_0_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, img_update_0_read_size_bytes, img_update_0_read.data(), &err));
+  OCL_CHECK(err, err = krnl_vector_add.setArg(1, img_update_0_read_ocl_buf));
 
-
-  OCL_CHECK(err, err = krnl_vector_add.setArg(2, num_epochs));
+  uint64_t transfer_size = num_epochs*(1024 / 1);
+  OCL_CHECK(err, err = krnl_vector_add.setArg(2, transfer_size));
 
   std::cout << "Migrating memory" << std::endl;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({raw_update_0_read_ocl_buf}, 0));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({img_update_0_read_ocl_buf}, 0));
 
 unsigned long start, end, nsduration;
 cl::Event event;
@@ -101,7 +101,7 @@ OCL_CHECK(err, event.getProfilingInfo<CL_PROFILING_COMMAND_END>(&err));
 start = OCL_CHECK(err,
 event.getProfilingInfo<CL_PROFILING_COMMAND_START>(&err));
 nsduration = end - start;
-  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({camera_mini_update_0_write_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
+  OCL_CHECK(err, err = q.enqueueMigrateMemObjects({dp_update_0_write_ocl_buf}, CL_MIGRATE_MEM_OBJECT_HOST));
 
   q.finish();
 
@@ -113,9 +113,9 @@ nsduration = end - start;
 std::cout << "bytes / sec = " << bpersec << std::endl;
 std::cout << "GB / sec = " << gbpersec << std::endl;
 printf("Execution time = %f (sec) \n", dsduration);
-  std::ofstream regression_result("camera_mini_update_0_write_accel_result.csv");
-  for (int i = 0; i < camera_mini_update_0_write_DATA_SIZE; i++) {
-    regression_result << ((uint16_t*) (camera_mini_update_0_write.data()))[i] << std::endl;
+  std::ofstream regression_result("dp_update_0_write_accel_result.csv");
+  for (int i = 0; i < dp_update_0_write_DATA_SIZE; i++) {
+    regression_result << ((uint16_t*) (dp_update_0_write.data()))[i] << std::endl;
   }
 
   return 0;

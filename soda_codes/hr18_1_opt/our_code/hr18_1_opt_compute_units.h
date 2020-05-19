@@ -59,7 +59,7 @@ hw_uint<16> trace_generated_compute(hw_uint<16*1> lgxx8, hw_uint<16*1> lgyy8) {
   return uint16_t((uint16_t(lgxx8.get<16, 0>()) + uint16_t(lgyy8.get<16, 0>())));
 }
 
-hw_uint<16> harris16_mini_generated_compute(hw_uint<16*1> det, hw_uint<16*1> trace) {
+hw_uint<16> hr18_1_generated_compute(hw_uint<16*1> det, hw_uint<16*1> trace) {
   return uint16_t((uint16_t(det.get<16, 0>()) + ((uint16_t(trace.get<16, 0>()) + uint16_t(trace.get<16, 0>())) + 8)));
 }
 
@@ -228,15 +228,15 @@ hw_uint<16>  trace_generated_compute_unrolled_1(hw_uint<16>& lgxx8, hw_uint<16>&
   return whole_result;
 }
 
-  // harris16_mini_update_0 unroll factor: 1
-hw_uint<16>  harris16_mini_generated_compute_unrolled_1(hw_uint<16>& det, hw_uint<16>& trace) {
+  // hr18_1_update_0 unroll factor: 1
+hw_uint<16>  hr18_1_generated_compute_unrolled_1(hw_uint<16>& det, hw_uint<16>& trace) {
   hw_uint<16> whole_result;
 
   hw_uint<16> lane_0_det;
   set_at<0, 16, 16>(lane_0_det, det.extract<0, 15>());
   hw_uint<16> lane_0_trace;
   set_at<0, 16, 16>(lane_0_trace, trace.extract<0, 15>());
-  auto result_0 = harris16_mini_generated_compute(lane_0_det, lane_0_trace);
+  auto result_0 = hr18_1_generated_compute(lane_0_det, lane_0_trace);
   set_at<0, 16, 16>(whole_result, result_0);
   return whole_result;
 }

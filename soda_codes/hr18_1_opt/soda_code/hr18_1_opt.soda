@@ -1,8 +1,8 @@
-kernel: harris16_mini_opt
+kernel: hr18_1_opt
 unroll factor: 1
 burst width: 16
 
-input uint16: img_oc(36, *)
+input uint16: img_oc(1924, *)
 
 local uint16: img(0, 0) = img_oc(0, 0)
 
@@ -32,7 +32,7 @@ local uint16: det(0, 0) = ((lgxx8(0, 0) + lgyy8(0, 0)) + (lgxy8(0, 0) + lgxy8(0,
 
 local uint16: trace(0, 0) = (lgxx8(0, 0) + lgyy8(0, 0))
 
-output uint16: harris16_mini(0, 0) = (det(0, 0) + ((trace(0, 0) + trace(0, 0)) + 8))
+output uint16: hr18_1(0, 0) = (det(0, 0) + ((trace(0, 0) + trace(0, 0)) + 8))
 
 
 iterate: 1

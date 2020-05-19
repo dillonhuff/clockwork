@@ -27,7 +27,7 @@ hw_uint<16> demosaic_diff_generated_compute(hw_uint<16*1> demosaic, hw_uint<16*1
   return uint16_t((uint16_t(demosaic_by.get<16, 0>()) - uint16_t(demosaic.get<16, 0>())));
 }
 
-hw_uint<16> camera_mini_generated_compute(hw_uint<16*1> demosaic_diff) {
+hw_uint<16> cp18_1_generated_compute(hw_uint<16*1> demosaic_diff) {
   return uint16_t((uint16_t(demosaic_diff.get<16, 0>()) + 20));
 }
 
@@ -102,13 +102,13 @@ hw_uint<16>  demosaic_diff_generated_compute_unrolled_1(hw_uint<16>& demosaic, h
   return whole_result;
 }
 
-  // camera_mini_update_0 unroll factor: 1
-hw_uint<16>  camera_mini_generated_compute_unrolled_1(hw_uint<16>& demosaic_diff) {
+  // cp18_1_update_0 unroll factor: 1
+hw_uint<16>  cp18_1_generated_compute_unrolled_1(hw_uint<16>& demosaic_diff) {
   hw_uint<16> whole_result;
 
   hw_uint<16> lane_0_demosaic_diff;
   set_at<0, 16, 16>(lane_0_demosaic_diff, demosaic_diff.extract<0, 15>());
-  auto result_0 = camera_mini_generated_compute(lane_0_demosaic_diff);
+  auto result_0 = cp18_1_generated_compute(lane_0_demosaic_diff);
   set_at<0, 16, 16>(whole_result, result_0);
   return whole_result;
 }
