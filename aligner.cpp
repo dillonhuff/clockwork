@@ -4,8 +4,10 @@
 #include <vector>
 #include <map>
 
+#include "algorithm.h"
 #include "utils.h"
 
+using namespace dbhc;
 using namespace std;
 
 vector<string> read_lines(istream& f) {
@@ -152,6 +154,45 @@ int main(const int argc, const char** argv) {
 
   assert(reference_lines.size() > 0);
   assert(reference_lines.size() <= target_lines.size());
+
+  //{
+    //set<string> ref_vals;
+    //for (auto v : reference_lines) {
+      //ref_vals.insert(v);
+    //}
+
+    //cout << "Built reference strings" << endl;
+    //int overlap = 0;
+    //for (auto v : target_lines) {
+      //if (elem(v, ref_vals)) {
+        //overlap++;
+      //}
+    //}
+
+    //cout << "reference size                 = " << ref_vals.size() << endl;
+    //cout << "# of target lines in reference = " << overlap << endl;
+
+  //}
+
+  //{
+    //set<string> target_vals;
+    //for (auto v : target_lines) {
+      //target_vals.insert(v);
+    //}
+
+    //cout << "Built target string set" << endl;
+    //int overlap = 0;
+    //for (auto v : reference_lines) {
+      //if (elem(v, target_vals)) {
+        //overlap++;
+      //}
+    //}
+
+    //cout << "unique values in target        = " << target_vals.size() << endl;
+    //cout << "# of reference lines in target = " << overlap << endl;
+  //}
+
+  //return 0;
 
   cout << "Finding total alignment" << endl;
   bool total_alignment = find_alignment(reference_lines, target_lines);
