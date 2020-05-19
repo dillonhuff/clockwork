@@ -6562,7 +6562,7 @@ void camera_pipeline_all_adds_test(const std::string& prefix) {
     run_regression_tb(app_name + "_opt");
   assert(naive == optimized);
   move_to_benchmarks_folder(app_name + "_opt");
-  assert(false);
+  //assert(false);
 
   int rows = 1080;
   int cols = 1920;
@@ -6579,7 +6579,7 @@ void camera_pipeline_all_adds_test(const std::string& prefix) {
     //options.use_custom_code_string = true;
     options.use_custom_code_string = false;
     options.debug_options.expect_all_linebuffers = true;
-    options.num_input_epochs = 30;
+    //options.num_input_epochs = 30;
     camera_pipeline_all_adds(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
     move_to_benchmarks_folder(out_name + "_opt");
@@ -8592,11 +8592,12 @@ void playground() {
 void iccad_tests() {
   int index = 20;
   string istr = str(index);
+  camera_pipeline_all_adds_test("cp_add_20_noinit");
+  assert(false);
 
   camera_pipeline_all_adds_linear_test("lcp");
   assert(false);
 
-  camera_pipeline_all_adds_test("cp_add_20_nopipe");
   camera_pipeline_test("cp" + istr);
   harris16_test("hr" + istr);
   blur_xy_16_app_test("bxy" + istr);

@@ -196,6 +196,7 @@ class hw_uint {
 
     hw_uint(const hw_uint<Len>& v) : val(v.val) {}
     hw_uint(const int v) : val(v) {}
+    hw_uint() {}
     //hw_uint() : val(0) {}
 
     template<int S, int E_inclusive>
@@ -222,6 +223,7 @@ class hw_uint {
     hw_uint(const hw_uint<Len>& v) : val(v.val) {}
     hw_uint(const int v) : val(v) {}
     hw_uint(const string& v) : val(v) {}
+    hw_uint() {}
     //hw_uint() : val(0) {}
 
     template<int S, int E_inclusive>
