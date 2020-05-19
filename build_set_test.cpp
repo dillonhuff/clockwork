@@ -4907,8 +4907,10 @@ struct App {
     strftime(buffer,sizeof(buffer),"%d-%m-%Y %H:%M:%S",timeinfo);
     std::string time_str(buffer);   
 
+    auto m = schedule_isl();
+    
     auto scheds = schedule_opt();
-    umap* m = qschedule_to_map(scheds);
+    //umap* m = qschedule_to_map(scheds);
     //umap* m = schedule();
     ofstream schedule_out(name + "_sched_" + time_str);
     for (auto k : get_maps(m)) {
@@ -4917,8 +4919,6 @@ struct App {
     schedule_out.close();
     assert(m != nullptr);
 
-    //map<string, vector<QExpr> > scheds =
-      //schedule_opt();
     map<string, Box> compute_domains;
     vector<string> ops;
     for (auto u : sort_updates()) {
@@ -6473,6 +6473,32 @@ string sharpen_all_adds(App& cp, const std::string& r) {
   return bdiff;
 }
 
+string sharpen_all_adds_linear(App& cp, const std::string& r) {
+  string bx = r + "_bx";
+  string by = r + "_by";
+  string bdiff = r + "_diff";
+  cp.func2d(bx, add(stencilv(0, 2, 0, 0, r), 3));
+  cp.func2d(by, add(stencilv(0, 0, 0, 2, bx), 3));
+
+  cp.func2d(bdiff, add(v(by), 1));
+  return bdiff;
+}
+
+App camera_pipeline_all_adds_linear(const std::string& out_name) {
+  App cp;
+  cp.set_default_pixel_width(16);
+
+  cp.func2d("raw_oc");
+  cp.func2d("raw", v("raw_oc"));
+  cp.func2d("denoised", add(stencilv(-2, 2, -2, 2, "raw"), 25));
+  cp.func2d("demosaic", add(stencilv(-1, 1, -1, 1, "denoised"), 9));
+
+  string sharpened = sharpen_all_adds_linear(cp, "demosaic");
+
+  cp.func2d(out_name, add(v(sharpened), 20));
+  return cp;
+}
+
 App camera_pipeline_all_adds(const std::string& out_name) {
   App cp;
   cp.set_default_pixel_width(16);
@@ -6505,6 +6531,23 @@ App camera_pipeline(const std::string& out_name) {
   return cp;
 }
 
+void camera_pipeline_all_adds_linear_test(const std::string& prefix) {
+  string app_name = prefix + "_mini";
+  int mini_rows = 10;
+  int mini_cols = 1920;
+  auto hmini = camera_pipeline_all_adds_linear(app_name);
+  hmini.realize_naive(app_name, mini_cols, mini_rows);
+  hmini.realize(app_name, mini_cols, mini_rows, 1);
+
+  std::vector<std::string> naive =
+    run_regression_tb(app_name + "_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb(app_name + "_opt");
+  assert(naive == optimized);
+  move_to_benchmarks_folder(app_name + "_opt");
+  assert(false);
+}
+
 void camera_pipeline_all_adds_test(const std::string& prefix) {
   string app_name = "cp_all_adds_mini";
   int mini_rows = 10;
@@ -6519,7 +6562,7 @@ void camera_pipeline_all_adds_test(const std::string& prefix) {
     run_regression_tb(app_name + "_opt");
   assert(naive == optimized);
   move_to_benchmarks_folder(app_name + "_opt");
-  //assert(false);
+  assert(false);
 
   int rows = 1080;
   int cols = 1920;
@@ -8550,8 +8593,10 @@ void iccad_tests() {
   int index = 20;
   string istr = str(index);
 
-  camera_pipeline_all_adds_test("cp_add_20_nopipe");
+  camera_pipeline_all_adds_linear_test("lcp");
   assert(false);
+
+  camera_pipeline_all_adds_test("cp_add_20_nopipe");
   camera_pipeline_test("cp" + istr);
   harris16_test("hr" + istr);
   blur_xy_16_app_test("bxy" + istr);
@@ -8599,12 +8644,11 @@ void mini_application_tests() {
 void application_tests() {
   iccad_tests();
   assert(false);
+  halide_cascade_test();
   halide_dnn_test();
-  assert(false);
   halide_harris_test();
   conv_1d_bc_test();
   halide_frontend_test();
-  halide_cascade_test();
 
   ram_addr_unit_test();
   denoise2d_test();
