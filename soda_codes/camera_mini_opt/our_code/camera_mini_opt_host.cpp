@@ -18,12 +18,12 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
-  const int camera_mini_update_0_write_DATA_SIZE = num_epochs*10000;
+  const int camera_mini_update_0_write_DATA_SIZE = num_epochs*3000;
   const int camera_mini_update_0_write_BYTES_PER_PIXEL = 16 / 8;
   size_t camera_mini_update_0_write_size_bytes = camera_mini_update_0_write_BYTES_PER_PIXEL * camera_mini_update_0_write_DATA_SIZE;
 
   total_size_bytes += camera_mini_update_0_write_size_bytes;
-  const int raw_update_0_read_DATA_SIZE = num_epochs*11664;
+  const int raw_update_0_read_DATA_SIZE = num_epochs*4104;
   const int raw_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t raw_update_0_read_size_bytes = raw_update_0_read_BYTES_PER_PIXEL * raw_update_0_read_DATA_SIZE;
 
