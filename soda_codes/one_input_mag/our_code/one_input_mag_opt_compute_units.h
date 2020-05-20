@@ -4,23 +4,23 @@
 
 // Generated compute units...
 hw_uint<32> diff_u_generated_compute(hw_uint<32*2> u) {
-  return (u.get<32, 1>() - u.get<32, 0>());
+  return uint32_t((uint32_t(u.get<32, 1>()) - uint32_t(u.get<32, 0>())));
 }
 
 hw_uint<32> diff_r_generated_compute(hw_uint<32*2> u) {
-  return (u.get<32, 0>() - u.get<32, 1>());
+  return uint32_t((uint32_t(u.get<32, 0>()) - uint32_t(u.get<32, 1>())));
 }
 
 hw_uint<32> diff_l_generated_compute(hw_uint<32*2> u) {
-  return (u.get<32, 1>() - u.get<32, 0>());
+  return uint32_t((uint32_t(u.get<32, 1>()) - uint32_t(u.get<32, 0>())));
 }
 
 hw_uint<32> diff_d_generated_compute(hw_uint<32*2> u) {
-  return (u.get<32, 0>() - u.get<32, 1>());
+  return uint32_t((uint32_t(u.get<32, 0>()) - uint32_t(u.get<32, 1>())));
 }
 
 hw_uint<32> one_input_mag_generated_compute(hw_uint<32*1> diff_d, hw_uint<32*1> diff_l, hw_uint<32*1> diff_r, hw_uint<32*1> diff_u) {
-  return ((diff_u.get<32, 0>() + diff_d.get<32, 0>()) + (diff_l.get<32, 0>() + diff_r.get<32, 0>()));
+  return uint32_t(((uint32_t(diff_u.get<32, 0>()) + uint32_t(diff_d.get<32, 0>())) + (uint32_t(diff_l.get<32, 0>()) + uint32_t(diff_r.get<32, 0>()))));
 }
 
 

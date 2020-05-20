@@ -4,11 +4,11 @@
 
 // Generated compute units...
 hw_uint<16> img_generated_compute(hw_uint<16*1> off_chip_img) {
-  return off_chip_img.get<16, 0>();
+  return uint16_t(uint16_t(off_chip_img.get<16, 0>()));
 }
 
 hw_uint<16> sobel_16_stage_x_unrolled_1_generated_compute(hw_uint<16*6> img) {
-  return (((img.get<16, 3>() - img.get<16, 0>()) + ((img.get<16, 4>() - img.get<16, 1>()) * hw_uint<16>(3))) + (img.get<16, 5>() - img.get<16, 2>()));
+  return uint16_t(((uint16_t(img.get<16, 3>()) - uint16_t(img.get<16, 0>())) + (((uint16_t(img.get<16, 4>()) - uint16_t(img.get<16, 1>())) * 3) + (uint16_t(img.get<16, 5>()) - uint16_t(img.get<16, 2>())))));
 }
 
 

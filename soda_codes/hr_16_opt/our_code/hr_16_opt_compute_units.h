@@ -4,63 +4,63 @@
 
 // Generated compute units...
 hw_uint<32> img_generated_compute(hw_uint<32*1> img_oc) {
-  return img_oc.get<32, 0>();
+  return uint32_t(uint32_t(img_oc.get<32, 0>()));
 }
 
 hw_uint<32> grad_y_generated_compute(hw_uint<32*6> img) {
-  return (((img.get<32, 1>() - img.get<32, 0>()) + ((img.get<32, 3>() - img.get<32, 2>()) * hw_uint<32>(2))) + (img.get<32, 5>() - img.get<32, 4>()));
+  return uint32_t(((uint32_t(img.get<32, 1>()) - uint32_t(img.get<32, 0>())) + (((uint32_t(img.get<32, 3>()) - uint32_t(img.get<32, 2>())) * 2) + (uint32_t(img.get<32, 5>()) - uint32_t(img.get<32, 4>())))));
 }
 
 hw_uint<32> grad_x_generated_compute(hw_uint<32*6> img) {
-  return (((img.get<32, 3>() - img.get<32, 0>()) + ((img.get<32, 4>() - img.get<32, 1>()) * hw_uint<32>(2))) + (img.get<32, 5>() - img.get<32, 2>()));
+  return uint32_t(((uint32_t(img.get<32, 3>()) - uint32_t(img.get<32, 0>())) + (((uint32_t(img.get<32, 4>()) - uint32_t(img.get<32, 1>())) * 2) + (uint32_t(img.get<32, 5>()) - uint32_t(img.get<32, 2>())))));
 }
 
 hw_uint<32> lyy_generated_compute(hw_uint<32*1> grad_y) {
-  return ((grad_y.get<32, 0>() * grad_y.get<32, 0>()) + hw_uint<32>(128));
+  return uint32_t(((uint32_t(grad_y.get<32, 0>()) * uint32_t(grad_y.get<32, 0>())) + 128));
 }
 
 hw_uint<32> lxy_generated_compute(hw_uint<32*1> grad_x, hw_uint<32*1> grad_y) {
-  return ((grad_x.get<32, 0>() * grad_y.get<32, 0>()) + hw_uint<32>(128));
+  return uint32_t(((uint32_t(grad_x.get<32, 0>()) * uint32_t(grad_y.get<32, 0>())) + 128));
 }
 
 hw_uint<32> lxx_generated_compute(hw_uint<32*1> grad_x) {
-  return ((grad_x.get<32, 0>() * grad_x.get<32, 0>()) + hw_uint<32>(128));
+  return uint32_t(((uint32_t(grad_x.get<32, 0>()) * uint32_t(grad_x.get<32, 0>())) + 128));
 }
 
 hw_uint<32> lgyy_generated_compute(hw_uint<32*9> lyy) {
-  return ((((((((lyy.get<32, 0>() + lyy.get<32, 1>()) + lyy.get<32, 2>()) + lyy.get<32, 3>()) + lyy.get<32, 4>()) + lyy.get<32, 5>()) + lyy.get<32, 6>()) + lyy.get<32, 7>()) + lyy.get<32, 8>());
+  return uint32_t((((uint32_t(lyy.get<32, 0>()) + uint32_t(lyy.get<32, 1>())) + (uint32_t(lyy.get<32, 2>()) + uint32_t(lyy.get<32, 3>()))) + ((uint32_t(lyy.get<32, 4>()) + uint32_t(lyy.get<32, 5>())) + (uint32_t(lyy.get<32, 6>()) + (uint32_t(lyy.get<32, 7>()) + uint32_t(lyy.get<32, 8>()))))));
 }
 
 hw_uint<32> lgxy_generated_compute(hw_uint<32*9> lxy) {
-  return ((((((((lxy.get<32, 0>() + lxy.get<32, 1>()) + lxy.get<32, 2>()) + lxy.get<32, 3>()) + lxy.get<32, 4>()) + lxy.get<32, 5>()) + lxy.get<32, 6>()) + lxy.get<32, 7>()) + lxy.get<32, 8>());
+  return uint32_t((((uint32_t(lxy.get<32, 0>()) + uint32_t(lxy.get<32, 1>())) + (uint32_t(lxy.get<32, 2>()) + uint32_t(lxy.get<32, 3>()))) + ((uint32_t(lxy.get<32, 4>()) + uint32_t(lxy.get<32, 5>())) + (uint32_t(lxy.get<32, 6>()) + (uint32_t(lxy.get<32, 7>()) + uint32_t(lxy.get<32, 8>()))))));
 }
 
 hw_uint<32> lgxx_generated_compute(hw_uint<32*9> lxx) {
-  return ((((((((lxx.get<32, 0>() + lxx.get<32, 1>()) + lxx.get<32, 2>()) + lxx.get<32, 3>()) + lxx.get<32, 4>()) + lxx.get<32, 5>()) + lxx.get<32, 6>()) + lxx.get<32, 7>()) + lxx.get<32, 8>());
+  return uint32_t((((uint32_t(lxx.get<32, 0>()) + uint32_t(lxx.get<32, 1>())) + (uint32_t(lxx.get<32, 2>()) + uint32_t(lxx.get<32, 3>()))) + ((uint32_t(lxx.get<32, 4>()) + uint32_t(lxx.get<32, 5>())) + (uint32_t(lxx.get<32, 6>()) + (uint32_t(lxx.get<32, 7>()) + uint32_t(lxx.get<32, 8>()))))));
 }
 
 hw_uint<32> lgyy8_generated_compute(hw_uint<32*1> lgyy) {
-  return (lgyy.get<32, 0>() + hw_uint<32>(64));
+  return uint32_t((uint32_t(lgyy.get<32, 0>()) + 64));
 }
 
 hw_uint<32> lgxy8_generated_compute(hw_uint<32*1> lgxy) {
-  return (lgxy.get<32, 0>() + hw_uint<32>(64));
+  return uint32_t((uint32_t(lgxy.get<32, 0>()) + 64));
 }
 
 hw_uint<32> lgxx8_generated_compute(hw_uint<32*1> lgxx) {
-  return (lgxx.get<32, 0>() + hw_uint<32>(64));
+  return uint32_t((uint32_t(lgxx.get<32, 0>()) + 64));
 }
 
 hw_uint<32> det_generated_compute(hw_uint<32*1> lgxx8, hw_uint<32*1> lgxy8, hw_uint<32*1> lgyy8) {
-  return ((lgxx8.get<32, 0>() * lgyy8.get<32, 0>()) + (lgxy8.get<32, 0>() * lgxy8.get<32, 0>()));
+  return uint32_t(((uint32_t(lgxx8.get<32, 0>()) * uint32_t(lgyy8.get<32, 0>())) + (uint32_t(lgxy8.get<32, 0>()) * uint32_t(lgxy8.get<32, 0>()))));
 }
 
 hw_uint<32> trace_generated_compute(hw_uint<32*1> lgxx8, hw_uint<32*1> lgyy8) {
-  return (lgxx8.get<32, 0>() * lgyy8.get<32, 0>());
+  return uint32_t((uint32_t(lgxx8.get<32, 0>()) * uint32_t(lgyy8.get<32, 0>())));
 }
 
 hw_uint<32> hr_16_generated_compute(hw_uint<32*1> det, hw_uint<32*1> trace) {
-  return (det.get<32, 0>() + ((trace.get<32, 0>() * trace.get<32, 0>()) * hw_uint<32>(8)));
+  return uint32_t((uint32_t(det.get<32, 0>()) + ((uint32_t(trace.get<32, 0>()) * uint32_t(trace.get<32, 0>())) * 8)));
 }
 
 

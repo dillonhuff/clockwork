@@ -429,7 +429,6 @@ inline void upsample_stencil_update_0(Img_cache& Img, HWStream<hw_uint<32> >& /*
 	auto Img_0_c__0_value = Img_upsample_stencil_update_0_read_bundle_read(Img/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "upsample_stencil_update_0_Img," << d0<< "," << d1<< "," <<  Img_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = conv_3_3_unrolled_1(Img_0_c__0_value);
@@ -437,10 +436,6 @@ inline void upsample_stencil_update_0(Img_cache& Img, HWStream<hw_uint<32> >& /*
 	upsample_stencil.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "upsample_stencil_update_0," << (1*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -453,10 +448,6 @@ inline void Img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */
 	Img_Img_update_0_write_bundle_write(compute_result, Img, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "Img_update_0," << (1*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }

@@ -4,19 +4,19 @@
 
 // Generated compute units...
 hw_uint<32> f_generated_compute(hw_uint<32*1> f_off_chip) {
-  return to_bits(to_float(f_off_chip.get<32, 0>()));
+  return uint32_t(to_bits(to_float(f_off_chip.get<32, 0>())));
 }
 
 hw_uint<32> u_generated_compute(hw_uint<32*1> u_off_chip) {
-  return to_bits(to_float(u_off_chip.get<32, 0>()));
+  return uint32_t(to_bits(to_float(u_off_chip.get<32, 0>())));
 }
 
 hw_uint<32> diff_qwe_generated_compute(hw_uint<32*2> u) {
-  return to_bits((to_float(u.get<32, 0>()) - to_float(u.get<32, 1>())));
+  return uint32_t(to_bits((to_float(u.get<32, 0>()) - to_float(u.get<32, 1>()))));
 }
 
 hw_uint<32> g_generated_compute(hw_uint<32*1> diff_d, hw_uint<32*1> diff_l, hw_uint<32*1> diff_qwe, hw_uint<32*1> diff_r) {
-  return to_bits((((float)1.0f) / sqrt(((((to_float(diff_qwe.get<32, 0>()) * to_float(diff_qwe.get<32, 0>())) + (to_float(diff_d.get<32, 0>()) * to_float(diff_d.get<32, 0>()))) + (to_float(diff_l.get<32, 0>()) * to_float(diff_l.get<32, 0>()))) + (to_float(diff_r.get<32, 0>()) * to_float(diff_r.get<32, 0>()))))));
+  return uint32_t(to_bits((((float)1.0f) / sqrt((((to_float(diff_qwe.get<32, 0>()) * to_float(diff_qwe.get<32, 0>())) + (to_float(diff_d.get<32, 0>()) * to_float(diff_d.get<32, 0>()))) + ((to_float(diff_l.get<32, 0>()) * to_float(diff_l.get<32, 0>())) + (to_float(diff_r.get<32, 0>()) * to_float(diff_r.get<32, 0>()))))))));
 }
 
 

@@ -3,6 +3,7 @@
 #include <cassert>
 #include <deque>
 #include <cmath>
+#include <stdint.h>
 
 #ifdef __VIVADO_SYNTH__
 
@@ -68,9 +69,9 @@ class fifo {
     }
 
     T peek(int offset) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
+//#ifdef __VIVADO_SYNTH__
+//#pragma HLS dependence array inter false
+//#endif //__VIVADO_SYNTH__
 
       assert(offset >= 0);
       //cout << "Getting offset from top: " << offset << endl;
@@ -94,9 +95,9 @@ class fifo {
     }
 
     T back() {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
+//#ifdef __VIVADO_SYNTH__
+//#pragma HLS dependence array inter false
+//#endif //__VIVADO_SYNTH__
       int addr = write_addr + Depth;
       if (addr >= Depth) {
         // Wrap around
@@ -108,9 +109,9 @@ class fifo {
     }
 
     void push(const T& val) {
-#ifdef __VIVADO_SYNTH__
-#pragma HLS dependence array inter false
-#endif //__VIVADO_SYNTH__
+//#ifdef __VIVADO_SYNTH__
+//#pragma HLS dependence array inter false
+//#endif //__VIVADO_SYNTH__
       assert(write_addr < Depth);
       vals[write_addr] = val;
       write_addr = MOD_INC(write_addr, Depth);
@@ -195,7 +196,8 @@ class hw_uint {
 
     hw_uint(const hw_uint<Len>& v) : val(v.val) {}
     hw_uint(const int v) : val(v) {}
-    hw_uint() : val(0) {}
+    hw_uint() {}
+    //hw_uint() : val(0) {}
 
     template<int S, int E_inclusive>
     hw_uint<E_inclusive - S + 1> extract() const {
@@ -221,7 +223,8 @@ class hw_uint {
     hw_uint(const hw_uint<Len>& v) : val(v.val) {}
     hw_uint(const int v) : val(v) {}
     hw_uint(const string& v) : val(v) {}
-    hw_uint() : val(0) {}
+    hw_uint() {}
+    //hw_uint() : val(0) {}
 
     template<int S, int E_inclusive>
       inline
@@ -402,8 +405,19 @@ class HWStream {
 #endif // __VIVADO_SYNTH__
 };
 
+template<int T>
+hw_uint<T> int8(const hw_uint<T>& in) {
+  return in;
+}
 
-
+template<int T>
+hw_uint<T> uint8(const hw_uint<T>& in) {
+  return in;
+}
+template<int T>
+hw_uint<T> int32(const hw_uint<T>& in) {
+  return in;
+}
 
 
 
