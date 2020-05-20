@@ -8590,16 +8590,14 @@ void playground() {
 }
 
 void iccad_tests() {
-  // Need to fix this problem
-  denoise3d_reconvergence_test();
-  //assert(false);
+  camera_pipeline_all_adds_linear_test("lcp_noinit");
+  assert(false);
 
   int index = 20;
   string istr = str(index);
   camera_pipeline_all_adds_test("cp_add_20_noinit");
   //assert(false);
 
-  camera_pipeline_all_adds_linear_test("lcp");
   //assert(false);
 
   camera_pipeline_test("cp" + istr);
@@ -8608,6 +8606,7 @@ void iccad_tests() {
   sobel_16_app_test("sbl" + istr);
 
 
+  denoise3d_reconvergence_test();
   //assert(false);
 
   different_path_latencies_test("dp");
