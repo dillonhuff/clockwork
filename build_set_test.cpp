@@ -7611,7 +7611,7 @@ void blur_xy_16_app_test(const std::string& prefix) {
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
-    options.num_input_epochs = 30;
+    //options.num_input_epochs = 30;
     options.debug_options.expect_all_linebuffers = true;
     blur_xy_16(out_name).realize(options, out_name, cols, rows, unroll_factor);
 

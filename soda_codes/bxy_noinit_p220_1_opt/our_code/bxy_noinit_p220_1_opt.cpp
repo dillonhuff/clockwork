@@ -346,7 +346,7 @@ void bxy_noinit_p220_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */i
 #pragma HLS inline recursive
 #endif // __VIVADO_SYNTH__
 
-  for (int epoch = 0; epoch < 30; epoch++) {
+  for (int epoch = 0; epoch < num_epochs; epoch++) {
 	  // Schedules...
 	    // blurx_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*0,1*2]
 	    // bxy_noinit_p220_1_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*2,1*3]
@@ -396,7 +396,7 @@ extern "C" {
 
 static void read_input_update_0_read(hw_uint<16>* input, HWStream<hw_uint<16> >& v, const int size) {
   hw_uint<16> burst_reg;
-  int num_transfers = input_update_0_read_num_transfers*30;
+  int num_transfers = input_update_0_read_num_transfers*size;
   for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
@@ -406,7 +406,7 @@ static void read_input_update_0_read(hw_uint<16>* input, HWStream<hw_uint<16> >&
 
 static void write_bxy_noinit_p220_1_update_0_write(hw_uint<16>* output, HWStream<hw_uint<16> >& v, const int size) {
   hw_uint<16> burst_reg;
-  int num_transfers = bxy_noinit_p220_1_update_0_write_num_transfers*30;
+  int num_transfers = bxy_noinit_p220_1_update_0_write_num_transfers*size;
   for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
