@@ -8626,8 +8626,9 @@ void iccad_tests() {
   string istr = str(index);
 
 
-  blur_xy_16_app_test("bxy_noinit_p2" + istr);
+  camera_pipeline_test("cp_noinit_" + istr);
   assert(false);
+  blur_xy_16_app_test("bxy_noinit_p2" + istr);
   camera_pipeline_all_adds_only_denoise_demosaic_test("lcp_noinit_dd");
   camera_pipeline_all_adds_linear_test("lcp_noinit");
   assert(false);
@@ -8638,7 +8639,6 @@ void iccad_tests() {
 
   //assert(false);
 
-  camera_pipeline_test("cp" + istr);
   harris16_test("hr" + istr);
   sobel_16_app_test("sbl" + istr);
 
