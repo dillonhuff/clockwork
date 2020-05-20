@@ -6484,6 +6484,21 @@ string sharpen_all_adds_linear(App& cp, const std::string& r) {
   return bdiff;
 }
 
+App camera_pipeline_all_adds_only_denoise_demosaic(const std::string& out_name) {
+  App cp;
+  cp.set_default_pixel_width(16);
+
+  cp.func2d("raw_oc");
+  cp.func2d("raw", v("raw_oc"));
+  cp.func2d("denoised", add(stencilv(-2, 2, -2, 2, "raw"), 25));
+  cp.func2d(out_name, add(stencilv(-1, 1, -1, 1, "denoised"), 9));
+
+  //string sharpened = sharpen_all_adds_linear(cp, "demosaic");
+
+  //cp.func2d(out_name, add(v(sharpened), 20));
+  return cp;
+}
+
 App camera_pipeline_all_adds_linear(const std::string& out_name) {
   App cp;
   cp.set_default_pixel_width(16);
@@ -6529,6 +6544,23 @@ App camera_pipeline(const std::string& out_name) {
 
   cp.func2d(out_name, add(v(sharpened), 20));
   return cp;
+}
+
+void camera_pipeline_all_adds_only_denoise_demosaic_test(const std::string& prefix) {
+  string app_name = prefix + "_mini";
+  int mini_rows = 10;
+  int mini_cols = 1920;
+  auto hmini = camera_pipeline_all_adds_only_denoise_demosaic(app_name);
+  hmini.realize_naive(app_name, mini_cols, mini_rows);
+  hmini.realize(app_name, mini_cols, mini_rows, 1);
+
+  std::vector<std::string> naive =
+    run_regression_tb(app_name + "_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb(app_name + "_opt");
+  assert(naive == optimized);
+  move_to_benchmarks_folder(app_name + "_opt");
+  assert(false);
 }
 
 void camera_pipeline_all_adds_linear_test(const std::string& prefix) {
@@ -8590,19 +8622,24 @@ void playground() {
 }
 
 void iccad_tests() {
+  int index = 20;
+  string istr = str(index);
+
+
+  blur_xy_16_app_test("bxy_noinit_p2" + istr);
+  assert(false);
+  camera_pipeline_all_adds_only_denoise_demosaic_test("lcp_noinit_dd");
   camera_pipeline_all_adds_linear_test("lcp_noinit");
   assert(false);
 
-  int index = 20;
-  string istr = str(index);
   camera_pipeline_all_adds_test("cp_add_20_noinit");
+
   //assert(false);
 
   //assert(false);
 
   camera_pipeline_test("cp" + istr);
   harris16_test("hr" + istr);
-  blur_xy_16_app_test("bxy" + istr);
   sobel_16_app_test("sbl" + istr);
 
 
