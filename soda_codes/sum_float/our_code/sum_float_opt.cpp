@@ -157,10 +157,6 @@ inline void f_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */f_
 	f_f_update_0_write_bundle_write(compute_result, f, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "f_update_0," << (1*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -173,10 +169,6 @@ inline void u_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */u_
 	u_u_update_0_write_bundle_write(compute_result, u, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "u_update_0," << (1*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -186,14 +178,12 @@ inline void sum_float_update_0(f_cache& f, u_cache& u, HWStream<hw_uint<32> >& /
 	auto f_0_c__0_value = f_sum_float_update_0_read_bundle_read(f/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "sum_float_update_0_f," << d0<< "," << d1<< "," <<  f_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	// Consume: u
 	auto u_0_c__0_value = u_sum_float_update_0_read_bundle_read(u/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "sum_float_update_0_u," << d0<< "," << d1<< "," <<  u_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = fadd2_unrolled_1(f_0_c__0_value, u_0_c__0_value);
@@ -201,10 +191,6 @@ inline void sum_float_update_0(f_cache& f, u_cache& u, HWStream<hw_uint<32> >& /
 	sum_float.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<32> debug_compute_result_lane_0;
-  set_at<0, 32, 32>(debug_compute_result_lane_0, debug_compute_result.extract<0, 31>());
-  *global_debug_handle << "sum_float_update_0," << (1*d0 + 0) << "," << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }

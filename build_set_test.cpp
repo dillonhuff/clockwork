@@ -4907,10 +4907,10 @@ struct App {
     strftime(buffer,sizeof(buffer),"%d-%m-%Y %H:%M:%S",timeinfo);
     std::string time_str(buffer);   
 
-    auto m = schedule_isl();
+    //auto m = schedule_isl();
     
     auto scheds = schedule_opt();
-    //umap* m = qschedule_to_map(scheds);
+    umap* m = qschedule_to_map(scheds);
     //umap* m = schedule();
     ofstream schedule_out(name + "_sched_" + time_str);
     for (auto k : get_maps(m)) {
@@ -5719,7 +5719,7 @@ void halide_harris_test() {
   cout << "Created program..." << endl;
   prg.pretty_print();
   generate_optimized_code(prg);
-  assert(false);
+  //assert(false);
 
   //regression_test(prg);
 }
@@ -6545,7 +6545,7 @@ void camera_pipeline_all_adds_linear_test(const std::string& prefix) {
     run_regression_tb(app_name + "_opt");
   assert(naive == optimized);
   move_to_benchmarks_folder(app_name + "_opt");
-  assert(false);
+  //assert(false);
 }
 
 void camera_pipeline_all_adds_test(const std::string& prefix) {
@@ -6584,7 +6584,7 @@ void camera_pipeline_all_adds_test(const std::string& prefix) {
 
     move_to_benchmarks_folder(out_name + "_opt");
   }
-  assert(false);
+  //assert(false);
 }
 
 void camera_pipeline_test(const std::string& prefix) {
@@ -6636,7 +6636,7 @@ void different_path_latencies_test(const std::string& prefix) {
     run_regression_tb(prefix + "_naive");
   assert(naive == optimized);
   move_to_benchmarks_folder(prefix + "_opt");
-  assert(false);
+  //assert(false);
 }
 
 void harris16_test(const std::string& prefix) {
@@ -8590,13 +8590,17 @@ void playground() {
 }
 
 void iccad_tests() {
+  // Need to fix this problem
+  denoise3d_reconvergence_test();
+  //assert(false);
+
   int index = 20;
   string istr = str(index);
   camera_pipeline_all_adds_test("cp_add_20_noinit");
-  assert(false);
+  //assert(false);
 
   camera_pipeline_all_adds_linear_test("lcp");
-  assert(false);
+  //assert(false);
 
   camera_pipeline_test("cp" + istr);
   harris16_test("hr" + istr);
@@ -8604,11 +8608,10 @@ void iccad_tests() {
   sobel_16_app_test("sbl" + istr);
 
 
-  assert(false);
+  //assert(false);
 
   different_path_latencies_test("dp");
   harris_test();
-  denoise3d_reconvergence_test();
 
   exposure_fusion_iccad_apps();
   pointwise_app_test();
@@ -8644,11 +8647,11 @@ void mini_application_tests() {
 
 void application_tests() {
   iccad_tests();
-  assert(false);
+  //assert(false);
   halide_cascade_test();
   halide_dnn_test();
   halide_harris_test();
-  conv_1d_bc_test();
+  //conv_1d_bc_test();
   halide_frontend_test();
 
   ram_addr_unit_test();

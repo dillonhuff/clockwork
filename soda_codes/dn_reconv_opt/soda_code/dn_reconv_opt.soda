@@ -19,7 +19,7 @@ local uint16: r1(0, 0, 0) = (r0(0, 0, 0) * r0(0, 0, 0))
 
 local uint16: g(0, 0, 0) = ((diff_i(0, 0, 0) * diff_i(0, 0, 0)) + (diff_o(0, 0, 0) * diff_o(0, 0, 0)))
 
-output uint16: dn_reconv(0, 0, 0) = ((u(0, 0, 0) + g(1, 0, 0)) + r1(0, 0, 0))
+output uint16: dn_reconv(0, 0, 0) = (u(0, 0, 0) + (g(1, 0, 0) + r1(0, 0, 0)))
 
 
 iterate: 1

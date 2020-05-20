@@ -207,6 +207,18 @@ inline hw_uint<128> in_mp_2_update_0_read_bundle_read(in_cache& in, int d0, int 
 
 
 // Operation logic
+inline void in_update_0(HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */in_oc, in_cache& in, int d0, int d1, int d2) {
+	// Consume: in_oc
+	auto in_oc_0_c__0_value = in_oc.read();
+	auto compute_result = id_unrolled_2(in_oc_0_c__0_value);
+	// Produce: in
+	in_in_update_0_write_bundle_write(compute_result, in, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void mp_2_update_0(in_cache& in, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */mp_2, int d0, int d1, int d2) {
 	// Consume: in
 	auto in_0_c__0_value = in_mp_2_update_0_read_bundle_read(in/* source_delay */, d0, d1, d2);
@@ -217,18 +229,6 @@ inline void mp_2_update_0(in_cache& in, HWStream<hw_uint<32> >& /* buffer_args n
 	auto compute_result = max_pool_2x2_unrolled_1(in_0_c__0_value);
 	// Produce: mp_2
 	mp_2.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void in_update_0(HWStream<hw_uint<64> >& /* buffer_args num ports = 2 */in_oc, in_cache& in, int d0, int d1, int d2) {
-	// Consume: in_oc
-	auto in_oc_0_c__0_value = in_oc.read();
-	auto compute_result = id_unrolled_2(in_oc_0_c__0_value);
-	// Produce: in
-	in_in_update_0_write_bundle_write(compute_result, in, d0, d1, d2);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

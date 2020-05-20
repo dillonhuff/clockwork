@@ -4,35 +4,35 @@
 
 // Generated compute units...
 hw_uint<16> f_generated_compute(hw_uint<16*1> f_oc) {
-  return f_oc.get<16, 0>();
+  return uint16_t(uint16_t(f_oc.get<16, 0>()));
 }
 
 hw_uint<16> u_generated_compute(hw_uint<16*1> u_oc) {
-  return u_oc.get<16, 0>();
+  return uint16_t(uint16_t(u_oc.get<16, 0>()));
 }
 
 hw_uint<16> r0_generated_compute(hw_uint<16*1> f, hw_uint<16*1> u) {
-  return (u.get<16, 0>() * f.get<16, 0>());
+  return uint16_t((uint16_t(u.get<16, 0>()) * uint16_t(f.get<16, 0>())));
 }
 
 hw_uint<16> diff_o_generated_compute(hw_uint<16*2> u) {
-  return (u.get<16, 0>() - u.get<16, 1>());
+  return uint16_t((uint16_t(u.get<16, 0>()) - uint16_t(u.get<16, 1>())));
 }
 
 hw_uint<16> diff_i_generated_compute(hw_uint<16*2> u) {
-  return (u.get<16, 1>() - u.get<16, 0>());
+  return uint16_t((uint16_t(u.get<16, 1>()) - uint16_t(u.get<16, 0>())));
 }
 
 hw_uint<16> r1_generated_compute(hw_uint<16*1> r0) {
-  return (r0.get<16, 0>() * r0.get<16, 0>());
+  return uint16_t((uint16_t(r0.get<16, 0>()) * uint16_t(r0.get<16, 0>())));
 }
 
 hw_uint<16> g_generated_compute(hw_uint<16*1> diff_i, hw_uint<16*1> diff_o) {
-  return ((diff_i.get<16, 0>() * diff_i.get<16, 0>()) + (diff_o.get<16, 0>() * diff_o.get<16, 0>()));
+  return uint16_t(((uint16_t(diff_i.get<16, 0>()) * uint16_t(diff_i.get<16, 0>())) + (uint16_t(diff_o.get<16, 0>()) * uint16_t(diff_o.get<16, 0>()))));
 }
 
 hw_uint<16> dn_reconv_generated_compute(hw_uint<16*1> g, hw_uint<16*1> r1, hw_uint<16*1> u) {
-  return ((u.get<16, 0>() + g.get<16, 0>()) + r1.get<16, 0>());
+  return uint16_t((uint16_t(u.get<16, 0>()) + (uint16_t(g.get<16, 0>()) + uint16_t(r1.get<16, 0>()))));
 }
 
 

@@ -4,7 +4,7 @@
 
 // Generated compute units...
 hw_uint<32> dummy_app_generated_compute(hw_uint<32*2> u) {
-  return (u.get<32, 1>() - u.get<32, 0>());
+  return uint32_t((uint32_t(u.get<32, 1>()) - uint32_t(u.get<32, 0>())));
 }
 
 
