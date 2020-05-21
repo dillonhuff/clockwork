@@ -316,12 +316,16 @@ isl_union_map* unn(isl_union_map* const m0, isl_union_map* const m1);
 
 isl_union_map* get_rel_order(isl_ctx* ctx, isl_union_map* const m0);
 isl_union_map* flatten_umap_domain(isl_ctx* ctx, isl_union_map* const um);
+isl_union_map* flatten_umap_domain(isl_ctx* ctx, isl_union_map* const um, map<string, int> ii_map);
 isl_union_map* remove_dep_domain_name(umap* um, string name);
 
 
 isl_stat flatten_map_domain(isl_map* s, void* user);
+umap* flatten_map_domain_with_ii(isl_map* s, int ii);
 isl_stat umap_lex_lt(isl_map* s,  void* user);
 isl_bool with_domain_name(isl_map* m, void* user);
+
+isl_map* get_domain_ii_transform(isl_ctx* ctx, isl_set* const s, int ii);
 
 isl_map* unn(isl_map* const m0, isl_map* const m1);
 

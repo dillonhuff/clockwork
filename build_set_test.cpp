@@ -310,10 +310,10 @@ isl_union_map* filter_inner_sram_deps(isl_ctx* ctx, isl_union_map* deps) {
     for ( auto m : deps_map ) {
         auto dname = domain_name(m);
         auto rname = range_name(m);
-        bool is_sram_in = dname.find("_vec") != std::string::npos;
-        bool is_sram_out = rname.find("_vec") != std::string::npos;
+        bool is_sram_in = dname.find("output_vec") != std::string::npos;
+        bool is_sram_out = rname.find("output") != std::string::npos;
         if (is_sram_in && is_sram_out) {
-            continue;
+            ret = unn(ret, to_umap(inv(m)));
         }
         else {
             cout << "union: " << str(m) << endl;
@@ -338,7 +338,10 @@ isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffe
         domain = unn(buf.global_domain(), domain);
     }
     cout << "Global Schedule: " << str(global_sched) << endl;
+    cout << "Producer Map: " << str(global_p_map) << endl;
+    cout << "Consumer Map: " << str(global_c_map) << endl;
     auto order_deps = get_rel_order(ctx, global_sched);
+    cout << "Lex_lt : " << str(lex_lt(global_sched, global_sched)) << endl;
     auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
     auto validity = unn(order_deps, raw_deps);
     auto proximity = cpy(raw_deps);
@@ -355,7 +358,7 @@ isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffe
 
 }
 
-isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers, isl_union_map* global_sched) {
+isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers, isl_union_map* global_sched, bool has_global_constraint) {
     isl_ctx* ctx = pick(buffers).second.ctx;
     isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
     isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
@@ -375,9 +378,49 @@ isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffe
     auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
     auto validity = unn(order_deps, raw_deps);
     auto proximity = cpy(raw_deps);
-    proximity = remove_dep_domain_name(proximity, "input_vec");
+    if (has_global_constraint)
+        proximity = remove_dep_domain_name(proximity, "input_vec");
 
     //Try to remove proximity between_input vec to output_vec
+    //proximity = filter_inner_sram_deps(ctx, proximity);
+
+    cout << "Raw_deps: " << str(raw_deps) << endl;
+    cout << "proximity: " << str(proximity) << endl;
+    cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
+    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+    auto sched_map = its(isl_schedule_get_map(sched), domain);
+    return sched_map;
+
+}
+
+isl_union_map* optimized_schedule_from_buffers_flatten(const map<string, UBuffer> &buffers, bool second_round) {
+    map<string, int> ii_map = {{"input", 1}, {"output", 1}, {"input_vec", 1}, {"output_vec",1}};
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        string buf_name = it.first;
+        auto buf = it.second;
+        global_p_map = unn(buf.producer_map(), global_p_map);
+        global_c_map = unn(buf.consumer_map(), global_c_map);
+        global_sched = unn(its(buf.global_schedule(), buf.global_domain()), global_sched);
+    }
+    //get all map domain flatten
+    global_c_map = flatten_umap_domain(ctx, global_c_map, ii_map);
+    global_p_map = flatten_umap_domain(ctx, global_p_map, ii_map);
+    global_sched = flatten_umap_domain(ctx, global_sched, ii_map);
+    isl_union_set* domain = ::domain(global_sched);
+
+    cout << "Global Schedule: " << str(global_sched) << endl;
+    auto order_deps = get_rel_order(ctx, global_sched);
+    auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
+    auto validity = unn(order_deps, raw_deps);
+    auto proximity = cpy(raw_deps);
+
+    //Try to remove proximity between_input vec to output_vec
+    if (second_round)
+        proximity = remove_dep_domain_name(proximity, "input_vec");
     //proximity = filter_inner_sram_deps(ctx, proximity);
 
     cout << "Raw_deps: " << str(raw_deps) << endl;
@@ -878,6 +921,53 @@ Box compute_box_from_sched(umap* opt_sched) {
   return b;
 }
 
+void flatten_sched_test() {
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "vec";
+  prg.add_input("in");
+  prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+
+  auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
+  auto write = p->add_op("input");
+  write->add_load("in", "po, pi");
+  write->add_store("buf", "po, pi");
+
+  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 16);
+  auto read = q->add_op("output");
+  for (size_t wy = 0; wy < 3; wy ++)
+      for (size_t wx = 0; wx < 1; wx ++) {
+        read->add_load("buf", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+      }
+  read->add_store("out", "po, pi");
+
+  //optimized first time
+  auto buffers_opt = build_buffers(prg);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  buffers_opt.at("buf").generate_bank_and_merge(opt);
+  cout << buffers_opt.at("buf") << endl;
+  auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
+  for (auto buf : rewrite_buf) {
+    cout << buf << endl;
+    buffers_opt[buf.name] = buf;
+  }
+  buffers_opt.erase("buf");
+  buffer_vectorization("buf1", 1, 4, buffers_opt);
+
+  //second time
+  auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
+  cout << codegen_c(opt_sched) << endl;
+  cout <<"Multi-dim schedule:\n" << str(opt_sched) << endl;
+  auto new_opt_sched = optimized_schedule_from_buffers_flatten(buffers_opt, true);
+  cout << "Flatten-dim schedule:\n" << codegen_c(new_opt_sched) << endl;
+  cout << str(new_opt_sched) << endl;
+}
+
 
 void bankmerge_vec_test() {
 
@@ -921,14 +1011,7 @@ void bankmerge_vec_test() {
   //second time
   auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
   cout << codegen_c(opt_sched) << endl;
-
   cout << str(opt_sched) << endl;
-  auto flatten_opt_sched = flatten_umap_domain(prg.ctx, opt_sched);
-  cout << str(flatten_opt_sched) << endl;
-  cout << codegen_c(flatten_opt_sched) << endl;
-  auto new_opt_sched = optimized_schedule_from_buffers(buffers_opt, flatten_opt_sched);
-  cout << codegen_c(new_opt_sched) << endl;
-  assert(false);
 
   map<string, umap*> op2sched;
   buffers_opt.erase("buf0");
@@ -1057,7 +1140,6 @@ void bankmerge_vec_test() {
       }
   }
   buffers_opt.at("buf1_sram").emit_address_stream("SRAM_address");
-  assert(false);
 }
 
 void auto_vec_test() {
@@ -1090,7 +1172,9 @@ void auto_vec_test() {
   buffer_vectorization("buf", 1, fetch_width, buffers);
 
   auto opt_sched = optimized_schedule_from_buffers(buffers);
+  auto opt_sched_new = optimized_schedule_from_buffers_flatten(buffers, false);
   cout << codegen_c(opt_sched) << endl;
+  cout << codegen_c(opt_sched_new) << endl;
   for (auto buf : buffers) {
       UBuffer& buffer = buf.second;
       for (string pt: buffer.get_in_ports()) {
@@ -7354,6 +7438,7 @@ void playground() {
 void application_tests() {
   auto_vec_test();
   bankmerge_vec_test();
+  flatten_sched_test();
   assert(false);
   pointwise_app_test();
 
