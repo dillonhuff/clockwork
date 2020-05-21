@@ -10,3 +10,5 @@ cd our_code
 echo $(pwd)
 ../../../aws_collateral/run_our_image.sh >& our_image_res.txt
 cd ..
+
+
