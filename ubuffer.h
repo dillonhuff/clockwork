@@ -712,12 +712,26 @@ class UBuffer {
         return false;
     }
 
-    void mark_write(size_t cycle) {
+    void mark_write(size_t cycle, isl_set* iter_set) {
         write_cycle.push_back(cycle);
+        auto addr_queue = get_wr_data_nd_addr(iter_set);
+        vector<int> tmp;
+        while(!addr_queue.empty()) {
+            tmp.push_back(addr_queue.front());
+            addr_queue.pop();
+        }
+        write_addr.push_back(tmp);
     }
 
-    void mark_read(size_t cycle) {
+    void mark_read(size_t cycle, isl_set* iter_set) {
         read_cycle.push_back(cycle);
+        auto addr_queue = get_rd_data_nd_addr(iter_set);
+        vector<int> tmp;
+        while(!addr_queue.empty()) {
+            tmp.push_back(addr_queue.front());
+            addr_queue.pop();
+        }
+        read_addr.push_back(tmp);
     }
 
     //TODO: add a bundle name
@@ -806,7 +820,8 @@ class UBuffer {
     void mark_write_sram(size_t cycle, isl_set* iter_set) {
         auto num_cycle = get_wr_cycle();
         auto addr_queue = get_wr_data_nd_addr(iter_set);
-        for (size_t delay = 1; delay <= num_cycle; delay ++) {
+        //TODO: make the delay a hardware property
+        for (size_t delay = 1; delay < num_cycle + 1; delay ++) {
             write_cycle.push_back(cycle + delay);
             vector<int> tmp;
             for (size_t i = 0; i < hardware.port_width; i ++) {

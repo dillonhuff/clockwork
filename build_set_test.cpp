@@ -975,6 +975,52 @@ void flatten_sched_test() {
 }
 
 
+void emit_address_stream(string fname, bool is_top, vector<int> read_cycle, vector<int> write_cycle,
+        vector<vector<int> > read_addr, vector<vector<int> > write_addr) {
+  ofstream out(fname+".csv");
+  int cycle = 0;
+  size_t rd_itr = 0;
+  size_t wr_itr = 0;
+  out << "data_in, wen, ren, data_out, valid_out" << endl;
+  while (rd_itr < read_cycle.size() && wr_itr < write_cycle.size()) {
+    bool wen = false, valid = false;
+    int in_width = pick(write_addr).size();
+    int out_width = pick(read_addr).size();
+    auto addr_in = vector<int>(in_width, 0);
+    auto addr_out = vector<int>(out_width, 0);
+    if (rd_itr < read_cycle.size()) {
+      if (read_cycle.at(rd_itr) == cycle) {
+        valid = true;
+        addr_out = read_addr.at(rd_itr);
+
+        cout << cycle << tab(1) << "rd" << tab(1) << addr_out << endl;
+        //out << "rd@" << cycle << tab(1) << ",data=" <<sep_list(addr, "[", "]", " ") << endl;
+        rd_itr ++;
+      }
+    }
+    if (wr_itr < write_cycle.size()) {
+      if (write_cycle.at(wr_itr) == cycle) {
+        wen = true;
+        addr_in = write_addr.at(wr_itr);
+        cout << cycle << tab(1) << "wr" << tab(1) << addr_in << endl;
+        //out << "wr@" << cycle << tab(1) << ",data="<< sep_list(addr, "[", "]", " ") << endl;
+        //out << cycle << tab(1) << "wr"  << endl;
+        wr_itr ++;
+      }
+    }
+
+    //for generate multiple bit valid/wen
+    int multiplier = 1;
+    if (is_top)
+       multiplier = pow(2, out_width) - 1;
+    out << sep_list(addr_in, "[[", "]]", "] [") << ", " << wen << ", " << valid * multiplier << ", "
+        << sep_list(addr_out, "[[", "]]", "] [") << ", " << valid * multiplier << endl;
+    cycle ++;
+  }
+  out.close();
+}
+
+
 void bankmerge_vec_test() {
 
   prog prg;
@@ -1114,7 +1160,10 @@ void bankmerge_vec_test() {
 
           //second pass to process read and write
           if (buf.is_wr(point) && is_suffix(buf.name, "agg")) {
-            buf.mark_write(cycle);
+            auto pt = pick(buf.get_in_ports());
+            auto rd_sched = to_map(buf.schedule.at(pt));
+            auto iter_set = domain(its_range(rd_sched, isl_set_from_point(point)));
+            buf.mark_write(cycle, iter_set);
             update_map.at(it.first) = true;
 
             cout << "Buffer: " << buf.name << endl;
@@ -1124,7 +1173,10 @@ void bankmerge_vec_test() {
 
           }
           else if (buf.is_rd(point) && is_suffix(buf.name, "tb")) {
-            buf.mark_read(cycle);
+            auto pt = pick(buf.get_out_ports());
+            auto rd_sched = to_map(buf.schedule.at(pt));
+            auto iter_set = domain(its_range(rd_sched, isl_set_from_point(point)));
+            buf.mark_read(cycle, iter_set);
             update_map.at(it.first) = true;
 
             cout << "Buffer: " << buf.name << endl;
@@ -1132,10 +1184,7 @@ void bankmerge_vec_test() {
             //cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
             cout << endl;
             //TODO: pop out sram rd operation ahead of tb read
-            auto pt = pick(buf.get_out_ports());
-            auto rd_sched = to_map(buf.schedule.at(pt));
-            auto iter_pos = domain(its_range(rd_sched, isl_set_from_point(point)));
-            buffers_opt.at("buf1_sram").schedule_read_sram(cycle, iter_pos, buf);
+            buffers_opt.at("buf1_sram").schedule_read_sram(cycle, iter_set, buf);
           }
           else if(buf.is_wr(point) && is_suffix(buf.name, "sram")) {
               //TODO:get the number of cycle depend on hw constraints
@@ -1159,7 +1208,17 @@ void bankmerge_vec_test() {
           }
       }
   }
-  buffers_opt.at("buf1_sram").emit_address_stream("SRAM_address");
+  vector<int> sram_read = buffers_opt.at("buf1_sram").read_cycle;
+  vector<int> sram_write = buffers_opt.at("buf1_sram").write_cycle;
+  auto read_addr = buffers_opt.at("buf1_sram").read_addr;
+  auto write_addr = buffers_opt.at("buf1_sram").write_addr;
+  emit_address_stream("SRAM_address", false, sram_read, sram_write, read_addr, write_addr);
+
+  sram_read = buffers_opt.at("buf1_tb").read_cycle;
+  sram_write = buffers_opt.at("buf1_agg").write_cycle;
+  read_addr = buffers_opt.at("buf1_tb").read_addr;
+  write_addr = buffers_opt.at("buf1_agg").write_addr;
+  emit_address_stream("TOP_address", true, sram_read, sram_write, read_addr, write_addr);
 }
 
 void auto_vec_test() {
