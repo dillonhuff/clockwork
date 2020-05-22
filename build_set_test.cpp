@@ -6874,7 +6874,7 @@ void max_pooling_test() {
   int H = 64;
   int D = 32;
 
-  vector<int> unroll_factors{1, 2, 4};
+  vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
   for (auto factor : unroll_factors) {
     string name = "mp_" + str(factor);
     CodegenOptions options;
@@ -6955,13 +6955,16 @@ App exposure_fusion_app(const std::string& out_name) {
   return lp;
 }
 
-void exposure_fusion_iccad_apps() {
-  const int throughput = 4;
-  string name = "psefn_" + str(throughput);
-  App lp = exposure_fusion_app(name);
-  int size = 1920;
-  lp.realize(name, size, size, throughput);
-  move_to_benchmarks_folder(name + "_opt");
+void exposure_fusion_iccad_apps(const std::string& prefix) {
+  vector<int> throughputs{1, 2, 4, 8, 16, 32};
+  for (auto throughput : throughputs) {
+    //const int throughput = 4;
+    string name = prefix + "_" + str(throughput);
+    App lp = exposure_fusion_app(name);
+    int size = 1250;
+    lp.realize(name, size, size, throughput);
+    move_to_benchmarks_folder(name + "_opt");
+  }
 }
 
 void exposure_fusion() {
@@ -8625,36 +8628,28 @@ void iccad_tests() {
   int index = 20;
   string istr = str(index);
 
+  exposure_fusion_iccad_apps("psef22");
+  max_pooling_test();
+  gaussian_pyramid_app_test();
+  assert(false);
+
 
   camera_pipeline_test("cp_noinit_" + istr);
-  assert(false);
   blur_xy_16_app_test("bxy_noinit_p2" + istr);
   camera_pipeline_all_adds_only_denoise_demosaic_test("lcp_noinit_dd");
   camera_pipeline_all_adds_linear_test("lcp_noinit");
-  assert(false);
 
   camera_pipeline_all_adds_test("cp_add_20_noinit");
-
-  //assert(false);
-
-  //assert(false);
 
   harris16_test("hr" + istr);
   sobel_16_app_test("sbl" + istr);
 
-
   denoise3d_reconvergence_test();
-  //assert(false);
 
   different_path_latencies_test("dp");
   harris_test();
 
-  exposure_fusion_iccad_apps();
   pointwise_app_test();
-  gaussian_pyramid_app_test();
-
-  max_pooling_test();
-
   exposure_fusion();
 }
 
@@ -8681,7 +8676,94 @@ void mini_application_tests() {
   exposure_fusion();
 }
 
+prog pyr_conv_1d() {
+  prog prg;
+  prg.compute_unit_file = "accumulate_3.h";
+  prg.name = "pyr_conv_1d";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["M1"] = 32;
+  prg.buffer_port_widths["M2"] = 32;
+  prg.buffer_port_widths["M3"] = 32;
+  prg.buffer_port_widths["M1_o"] = 32;
+  prg.buffer_port_widths["M2_o"] = 32;
+  prg.buffer_port_widths["M3_o"] = 32;
+
+  int size1 = 134;
+  int size1_o = size1 - 2;
+  int size2 = size1_o / 2;
+  int size2_o = size2 - 2;
+  int size3 = size2_o / 2;
+  int size3_o = size3 - 2;
+
+  cout << "Pyramid sizes: " << size1 << " " << size1_o << " " << size2 << " " << size2_o << " " << size3 << " " << size3_o << endl;
+
+  //prg.add_nest("dr", 0, (64) / 2, "dc", 0, (64) / 2)->
+    //add_op({"downsampled", "dr, dc"}, "id", {"I", "2*dr, 2*dc"});
+
+  auto p = prg.add_loop("p", 0, size1);
+  auto write = p->add_op("get_input");
+  write->add_load("in", "p");
+  write->add_store("M1", "p");
+
+  // compute
+  auto c1 = prg.add_loop("c1", 0, size1_o);
+  auto compute1 = c1->add_op("compute_level_1");
+  compute1->add_function("accumulate_3");
+  compute1->add_load("M1", "c1");
+  compute1->add_load("M1", "c1 + 1");
+  compute1->add_load("M1", "c1 + 2");
+  compute1->add_store("M1_o", "c1");
+
+  // downsample
+  prg.add_nest("d1", 0, size2, "dc1", 0, size2)->
+    add_op({"M1_o", "d1, dc1"}, "id", {"M2", "2*d1, 2*dc1"}); // FIXME use of undeclared identifier 'id'
+
+//  auto d1 = prg.add_loop("d1", 0, size2);
+//  auto down1 = p->add_op("downsample");
+//  down1->add_load("M1_o", "2 * d1"); // FIXME compile error
+//  down1->add_store("M2", "d1");
+
+  // compute
+  auto c2 = prg.add_loop("c2", 0, size2_o);
+  auto compute2 = c2->add_op("compute_level_2");
+  compute2->add_function("accumulate_3");
+  compute2->add_load("M2", "c2");
+  compute2->add_load("M2", "c2 + 1");
+  compute2->add_load("M2", "c2 + 2");
+  compute2->add_store("M2_o", "c2");
+
+  // downsample
+  prg.add_nest("d2", 0, size3, "dc2", 0, size3)->
+    add_op({"M2_o", "d2, dc2"}, "id", {"M3", "2*d2, 2*dc2"}); // FIXME use of undeclared identifier 'id'
+
+//  auto d2 = prg.add_loop("d2", 0, size3);
+//  auto down2 = p->add_op("downsample");
+//  down2->add_load("M2_o", "2*d2"); // FIXME compile error
+//  down2->add_store("M3", "d2");
+
+  // compute
+  auto c3 = prg.add_loop("c3", 0, size3_o);
+  auto compute3 = c3->add_op("compute_level_3");
+  compute3->add_function("accumulate_3");
+  compute3->add_load("M3", "c3");
+  compute3->add_load("M3", "c3 + 1");
+  compute3->add_load("M3", "c3 + 2");
+  compute3->add_store("out", "c3");
+  
+  return prg;
+}
+
+void pyr_1d_conv_test() {
+  prog pyr = pyr_conv_1d();
+  regression_test(pyr);
+  assert(false);
+}
+
 void application_tests() {
+  //pyr_1d_conv_test();
   iccad_tests();
   //assert(false);
   halide_cascade_test();

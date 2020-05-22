@@ -11,15 +11,15 @@ using namespace std;
 #include "hw_classes.h"
 
 struct bright_bright_update_0_write0_merged_banks_11_cache {
-	// RAM Box: {[0, 1926], [0, 1926]}
-	// Capacity: 1930
+	// RAM Box: {[0, 1262], [0, 1262]}
+	// Capacity: 1266
 	// # of read delays: 6
 	hw_uint<16> f0;
 	hw_uint<16> f2;
-	fifo<hw_uint<16>, 962> f3;
+	fifo<hw_uint<16>, 630> f3;
 	hw_uint<16> f4;
 	hw_uint<16> f6;
-	fifo<hw_uint<16>, 962> f7;
+	fifo<hw_uint<16>, 630> f7;
 	hw_uint<16> f8;
 	hw_uint<16> f10;
 
@@ -32,31 +32,31 @@ struct bright_bright_update_0_write0_merged_banks_11_cache {
 		return f2;
 	}
 
-	inline hw_uint<16> peek_963() {
+	inline hw_uint<16> peek_631() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<16> peek_964() {
+	inline hw_uint<16> peek_632() {
 		return f4;
 	}
 
-	inline hw_uint<16> peek_965() {
+	inline hw_uint<16> peek_633() {
 		return f6;
 	}
 
-	inline hw_uint<16> peek_1927() {
+	inline hw_uint<16> peek_1263() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<16> peek_1928() {
+	inline hw_uint<16> peek_1264() {
 		return f8;
 	}
 
-	inline hw_uint<16> peek_1929() {
+	inline hw_uint<16> peek_1265() {
 		return f10;
 	}
 
@@ -69,11 +69,11 @@ struct bright_bright_update_0_write0_merged_banks_11_cache {
     f10 = f8;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 962
+    // cap: 1 reading from capacity: 630
     f8 = f7.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 962 reading from capacity: 1
+    // cap: 630 reading from capacity: 1
     f7.push(f6);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -81,11 +81,11 @@ struct bright_bright_update_0_write0_merged_banks_11_cache {
     f6 = f4;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 962
+    // cap: 1 reading from capacity: 630
     f4 = f3.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 962 reading from capacity: 1
+    // cap: 630 reading from capacity: 1
     f3.push(f2);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -98,15 +98,15 @@ struct bright_bright_update_0_write0_merged_banks_11_cache {
 };
 
 struct bright_bright_update_0_write1_merged_banks_11_cache {
-	// RAM Box: {[1, 1927], [0, 1926]}
-	// Capacity: 1930
+	// RAM Box: {[1, 1263], [0, 1262]}
+	// Capacity: 1266
 	// # of read delays: 6
 	hw_uint<16> f0;
 	hw_uint<16> f2;
-	fifo<hw_uint<16>, 962> f3;
+	fifo<hw_uint<16>, 630> f3;
 	hw_uint<16> f4;
 	hw_uint<16> f6;
-	fifo<hw_uint<16>, 962> f7;
+	fifo<hw_uint<16>, 630> f7;
 	hw_uint<16> f8;
 	hw_uint<16> f10;
 
@@ -119,31 +119,31 @@ struct bright_bright_update_0_write1_merged_banks_11_cache {
 		return f2;
 	}
 
-	inline hw_uint<16> peek_963() {
+	inline hw_uint<16> peek_631() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<16> peek_964() {
+	inline hw_uint<16> peek_632() {
 		return f4;
 	}
 
-	inline hw_uint<16> peek_965() {
+	inline hw_uint<16> peek_633() {
 		return f6;
 	}
 
-	inline hw_uint<16> peek_1927() {
+	inline hw_uint<16> peek_1263() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<16> peek_1928() {
+	inline hw_uint<16> peek_1264() {
 		return f8;
 	}
 
-	inline hw_uint<16> peek_1929() {
+	inline hw_uint<16> peek_1265() {
 		return f10;
 	}
 
@@ -156,11 +156,11 @@ struct bright_bright_update_0_write1_merged_banks_11_cache {
     f10 = f8;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 962
+    // cap: 1 reading from capacity: 630
     f8 = f7.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 962 reading from capacity: 1
+    // cap: 630 reading from capacity: 1
     f7.push(f6);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -168,11 +168,11 @@ struct bright_bright_update_0_write1_merged_banks_11_cache {
     f6 = f4;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 962
+    // cap: 1 reading from capacity: 630
     f4 = f3.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 962 reading from capacity: 1
+    // cap: 630 reading from capacity: 1
     f3.push(f2);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -202,11 +202,11 @@ inline void bright_bright_update_0_write1_write(hw_uint<16>& bright_bright_updat
 inline hw_uint<16> bright_gauss_blur_1_rd0_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_1_rd0 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 1929 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_bright_bright_update_0_write0 = bright.bright_bright_update_0_write0_merged_banks_11.peek_1929();
+  // bright_gauss_blur_1_rd0 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 1265 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_bright_bright_update_0_write0 = bright.bright_bright_update_0_write0_merged_banks_11.peek_1265();
   return value_bright_bright_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -218,11 +218,11 @@ inline hw_uint<16> bright_gauss_blur_1_rd0_select(bright_cache& bright, int d0, 
 inline hw_uint<16> bright_gauss_blur_1_rd1_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_1_rd1 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 965 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_bright_bright_update_0_write0 = bright.bright_bright_update_0_write0_merged_banks_11.peek_965();
+  // bright_gauss_blur_1_rd1 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 633 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_bright_bright_update_0_write0 = bright.bright_bright_update_0_write0_merged_banks_11.peek_633();
   return value_bright_bright_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -234,11 +234,11 @@ inline hw_uint<16> bright_gauss_blur_1_rd1_select(bright_cache& bright, int d0, 
 inline hw_uint<16> bright_gauss_blur_1_rd10_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_1_rd10 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[1 + 2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 965 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_bright_bright_update_0_write1 = bright.bright_bright_update_0_write1_merged_banks_11.peek_965();
+  // bright_gauss_blur_1_rd10 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[1 + 2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 633 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_bright_bright_update_0_write1 = bright.bright_bright_update_0_write1_merged_banks_11.peek_633();
   return value_bright_bright_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -250,10 +250,10 @@ inline hw_uint<16> bright_gauss_blur_1_rd10_select(bright_cache& bright, int d0,
 inline hw_uint<16> bright_gauss_blur_1_rd11_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_1_rd11 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[1 + 2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
+  // bright_gauss_blur_1_rd11 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[1 + 2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
   auto value_bright_bright_update_0_write1 = bright.bright_bright_update_0_write1_merged_banks_11.peek_1();
   return value_bright_bright_update_0_write1;
 #ifndef __VIVADO_SYNTH__
@@ -266,11 +266,11 @@ inline hw_uint<16> bright_gauss_blur_1_rd11_select(bright_cache& bright, int d0,
 inline hw_uint<16> bright_gauss_blur_1_rd12_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_1_rd12 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[2 + 2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 1928 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; bright_gauss_blur_1_update_0[d0, d1] -> (966 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_bright_bright_update_0_write0 = bright.bright_bright_update_0_write0_merged_banks_11.peek_1928();
+  // bright_gauss_blur_1_rd12 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[2 + 2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 1264 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; bright_gauss_blur_1_update_0[d0, d1] -> (634 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_bright_bright_update_0_write0 = bright.bright_bright_update_0_write0_merged_banks_11.peek_1264();
   return value_bright_bright_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -282,11 +282,11 @@ inline hw_uint<16> bright_gauss_blur_1_rd12_select(bright_cache& bright, int d0,
 inline hw_uint<16> bright_gauss_blur_1_rd13_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_1_rd13 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[2 + 2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 964 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; bright_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_bright_bright_update_0_write0 = bright.bright_bright_update_0_write0_merged_banks_11.peek_964();
+  // bright_gauss_blur_1_rd13 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[2 + 2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 632 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; bright_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_bright_bright_update_0_write0 = bright.bright_bright_update_0_write0_merged_banks_11.peek_632();
   return value_bright_bright_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -298,9 +298,9 @@ inline hw_uint<16> bright_gauss_blur_1_rd13_select(bright_cache& bright, int d0,
 inline hw_uint<16> bright_gauss_blur_1_rd14_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_1_rd14 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[2 + 2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // bright_gauss_blur_1_rd14 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[2 + 2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_bright_bright_update_0_write0 = bright.bright_bright_update_0_write0_merged_banks_11.peek_0();
   return value_bright_bright_update_0_write0;
@@ -314,11 +314,11 @@ inline hw_uint<16> bright_gauss_blur_1_rd14_select(bright_cache& bright, int d0,
 inline hw_uint<16> bright_gauss_blur_1_rd15_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_1_rd15 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[3 + 2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 1928 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; bright_gauss_blur_1_update_0[d0, d1] -> (966 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_bright_bright_update_0_write1 = bright.bright_bright_update_0_write1_merged_banks_11.peek_1928();
+  // bright_gauss_blur_1_rd15 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[3 + 2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 1264 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; bright_gauss_blur_1_update_0[d0, d1] -> (634 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_bright_bright_update_0_write1 = bright.bright_bright_update_0_write1_merged_banks_11.peek_1264();
   return value_bright_bright_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -330,11 +330,11 @@ inline hw_uint<16> bright_gauss_blur_1_rd15_select(bright_cache& bright, int d0,
 inline hw_uint<16> bright_gauss_blur_1_rd16_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_1_rd16 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[3 + 2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 964 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; bright_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_bright_bright_update_0_write1 = bright.bright_bright_update_0_write1_merged_banks_11.peek_964();
+  // bright_gauss_blur_1_rd16 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[3 + 2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 632 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; bright_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_bright_bright_update_0_write1 = bright.bright_bright_update_0_write1_merged_banks_11.peek_632();
   return value_bright_bright_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -346,9 +346,9 @@ inline hw_uint<16> bright_gauss_blur_1_rd16_select(bright_cache& bright, int d0,
 inline hw_uint<16> bright_gauss_blur_1_rd17_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_1_rd17 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[3 + 2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // bright_gauss_blur_1_rd17 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[3 + 2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_bright_bright_update_0_write1 = bright.bright_bright_update_0_write1_merged_banks_11.peek_0();
   return value_bright_bright_update_0_write1;
@@ -362,10 +362,10 @@ inline hw_uint<16> bright_gauss_blur_1_rd17_select(bright_cache& bright, int d0,
 inline hw_uint<16> bright_gauss_blur_1_rd2_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_1_rd2 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
+  // bright_gauss_blur_1_rd2 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
   auto value_bright_bright_update_0_write0 = bright.bright_bright_update_0_write0_merged_banks_11.peek_1();
   return value_bright_bright_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -378,11 +378,11 @@ inline hw_uint<16> bright_gauss_blur_1_rd2_select(bright_cache& bright, int d0, 
 inline hw_uint<16> bright_gauss_blur_1_rd3_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_1_rd3 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[1 + 2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 1929 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_bright_bright_update_0_write1 = bright.bright_bright_update_0_write1_merged_banks_11.peek_1929();
+  // bright_gauss_blur_1_rd3 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[1 + 2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 1265 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_bright_bright_update_0_write1 = bright.bright_bright_update_0_write1_merged_banks_11.peek_1265();
   return value_bright_bright_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -394,11 +394,11 @@ inline hw_uint<16> bright_gauss_blur_1_rd3_select(bright_cache& bright, int d0, 
 inline hw_uint<16> bright_gauss_blur_1_rd4_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_1_rd4 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[1 + 2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 965 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_bright_bright_update_0_write1 = bright.bright_bright_update_0_write1_merged_banks_11.peek_965();
+  // bright_gauss_blur_1_rd4 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[1 + 2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 633 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_bright_bright_update_0_write1 = bright.bright_bright_update_0_write1_merged_banks_11.peek_633();
   return value_bright_bright_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -410,10 +410,10 @@ inline hw_uint<16> bright_gauss_blur_1_rd4_select(bright_cache& bright, int d0, 
 inline hw_uint<16> bright_gauss_blur_1_rd5_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_1_rd5 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[1 + 2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
+  // bright_gauss_blur_1_rd5 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[1 + 2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
   auto value_bright_bright_update_0_write1 = bright.bright_bright_update_0_write1_merged_banks_11.peek_1();
   return value_bright_bright_update_0_write1;
 #ifndef __VIVADO_SYNTH__
@@ -426,11 +426,11 @@ inline hw_uint<16> bright_gauss_blur_1_rd5_select(bright_cache& bright, int d0, 
 inline hw_uint<16> bright_gauss_blur_1_rd6_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_1_rd6 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[2 + 2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 1928 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; bright_gauss_blur_1_update_0[d0, d1] -> (966 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_bright_bright_update_0_write0 = bright.bright_bright_update_0_write0_merged_banks_11.peek_1928();
+  // bright_gauss_blur_1_rd6 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[2 + 2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 1264 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; bright_gauss_blur_1_update_0[d0, d1] -> (634 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_bright_bright_update_0_write0 = bright.bright_bright_update_0_write0_merged_banks_11.peek_1264();
   return value_bright_bright_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -442,11 +442,11 @@ inline hw_uint<16> bright_gauss_blur_1_rd6_select(bright_cache& bright, int d0, 
 inline hw_uint<16> bright_gauss_blur_1_rd7_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_1_rd7 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[2 + 2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 964 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; bright_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_bright_bright_update_0_write0 = bright.bright_bright_update_0_write0_merged_banks_11.peek_964();
+  // bright_gauss_blur_1_rd7 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[2 + 2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 632 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; bright_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_bright_bright_update_0_write0 = bright.bright_bright_update_0_write0_merged_banks_11.peek_632();
   return value_bright_bright_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -458,9 +458,9 @@ inline hw_uint<16> bright_gauss_blur_1_rd7_select(bright_cache& bright, int d0, 
 inline hw_uint<16> bright_gauss_blur_1_rd8_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_1_rd8 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[2 + 2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // bright_gauss_blur_1_rd8 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[2 + 2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_bright_bright_update_0_write0 = bright.bright_bright_update_0_write0_merged_banks_11.peek_0();
   return value_bright_bright_update_0_write0;
@@ -474,11 +474,11 @@ inline hw_uint<16> bright_gauss_blur_1_rd8_select(bright_cache& bright, int d0, 
 inline hw_uint<16> bright_gauss_blur_1_rd9_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_1_rd9 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[1 + 2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 1929 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_bright_bright_update_0_write1 = bright.bright_bright_update_0_write1_merged_banks_11.peek_1929();
+  // bright_gauss_blur_1_rd9 read pattern: { bright_gauss_blur_1_update_0[d0, d1] -> bright[1 + 2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_gauss_blur_1_update_0[d0, d1] -> 1265 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_bright_bright_update_0_write1 = bright.bright_bright_update_0_write1_merged_banks_11.peek_1265();
   return value_bright_bright_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -490,11 +490,11 @@ inline hw_uint<16> bright_gauss_blur_1_rd9_select(bright_cache& bright, int d0, 
 inline hw_uint<16> bright_laplace_diff_0_rd0_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_laplace_diff_0_rd0 read pattern: { bright_laplace_diff_0_update_0[d0, d1] -> bright[2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Read schedule : { bright_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 44] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_laplace_diff_0_update_0[d0, d1] -> 1929 : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  auto value_bright_bright_update_0_write0 = bright.bright_bright_update_0_write0_merged_banks_11.peek_1929();
+  // bright_laplace_diff_0_rd0 read pattern: { bright_laplace_diff_0_update_0[d0, d1] -> bright[2d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Read schedule : { bright_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 44] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_laplace_diff_0_update_0[d0, d1] -> 1265 : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  auto value_bright_bright_update_0_write0 = bright.bright_bright_update_0_write0_merged_banks_11.peek_1265();
   return value_bright_bright_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -506,11 +506,11 @@ inline hw_uint<16> bright_laplace_diff_0_rd0_select(bright_cache& bright, int d0
 inline hw_uint<16> bright_laplace_diff_0_rd1_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_laplace_diff_0_rd1 read pattern: { bright_laplace_diff_0_update_0[d0, d1] -> bright[1 + 2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Read schedule : { bright_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 44] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_laplace_diff_0_update_0[d0, d1] -> 1929 : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  auto value_bright_bright_update_0_write1 = bright.bright_bright_update_0_write1_merged_banks_11.peek_1929();
+  // bright_laplace_diff_0_rd1 read pattern: { bright_laplace_diff_0_update_0[d0, d1] -> bright[1 + 2d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Read schedule : { bright_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 44] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_laplace_diff_0_update_0[d0, d1] -> 1265 : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  auto value_bright_bright_update_0_write1 = bright.bright_bright_update_0_write1_merged_banks_11.peek_1265();
   return value_bright_bright_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -522,9 +522,9 @@ inline hw_uint<16> bright_laplace_diff_0_rd1_select(bright_cache& bright, int d0
 inline hw_uint<16> bright_weights_rd0_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_rd0 read pattern: { bright_weights_update_0[d0, d1] -> bright[2d0, d1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Read schedule : { bright_weights_update_0[d0, d1] -> [d1, d0, 5] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // bright_weights_rd0 read pattern: { bright_weights_update_0[d0, d1] -> bright[2d0, d1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Read schedule : { bright_weights_update_0[d0, d1] -> [d1, d0, 5] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_bright_bright_update_0_write0 = bright.bright_bright_update_0_write0_merged_banks_11.peek_0();
   return value_bright_bright_update_0_write0;
@@ -538,9 +538,9 @@ inline hw_uint<16> bright_weights_rd0_select(bright_cache& bright, int d0, int d
 inline hw_uint<16> bright_weights_rd1_select(bright_cache& bright, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_rd1 read pattern: { bright_weights_update_0[d0, d1] -> bright[1 + 2d0, d1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Read schedule : { bright_weights_update_0[d0, d1] -> [d1, d0, 5] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // bright_weights_rd1 read pattern: { bright_weights_update_0[d0, d1] -> bright[1 + 2d0, d1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Read schedule : { bright_weights_update_0[d0, d1] -> [d1, d0, 5] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Write schedule: { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_bright_bright_update_0_write1 = bright.bright_bright_update_0_write1_merged_banks_11.peek_0();
   return value_bright_bright_update_0_write1;
@@ -677,7 +677,7 @@ inline hw_uint<32> bright_bright_weights_update_0_read_bundle_read(bright_cache&
 #include "hw_classes.h"
 
 struct bright_gauss_blur_1_bright_gauss_blur_1_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 1924], [0, 1924]}
+	// RAM Box: {[0, 1260], [0, 1260]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -713,9 +713,9 @@ inline void bright_gauss_blur_1_bright_gauss_blur_1_update_0_write1_write(hw_uin
 inline hw_uint<16> bright_gauss_ds_1_rd0_select(bright_gauss_blur_1_cache& bright_gauss_blur_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_ds_1_rd0 read pattern: { bright_gauss_ds_1_update_0[d0, d1] -> bright_gauss_blur_1[2d0, 2d1] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // Read schedule : { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // Write schedule: { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
+  // bright_gauss_ds_1_rd0 read pattern: { bright_gauss_ds_1_update_0[d0, d1] -> bright_gauss_blur_1[2d0, 2d1] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // Read schedule : { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // Write schedule: { bright_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 10] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
   // DD fold: {  }
   auto value_bright_gauss_blur_1_bright_gauss_blur_1_update_0_write0 = bright_gauss_blur_1.bright_gauss_blur_1_bright_gauss_blur_1_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_bright_gauss_blur_1_bright_gauss_blur_1_update_0_write0;
@@ -752,7 +752,7 @@ inline hw_uint<16> bright_gauss_blur_1_bright_gauss_ds_1_update_0_read_bundle_re
 #include "hw_classes.h"
 
 struct bright_gauss_blur_2_bright_gauss_blur_2_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 960], [0, 960]}
+	// RAM Box: {[0, 628], [0, 628]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -785,9 +785,9 @@ inline void bright_gauss_blur_2_bright_gauss_blur_2_update_0_write0_write(hw_uin
 inline hw_uint<16> bright_gauss_ds_2_rd0_select(bright_gauss_blur_2_cache& bright_gauss_blur_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_ds_2_rd0 read pattern: { bright_gauss_ds_2_update_0[d0, d1] -> bright_gauss_blur_2[2d0, 2d1] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // Read schedule : { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // Write schedule: { bright_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 16] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
+  // bright_gauss_ds_2_rd0 read pattern: { bright_gauss_ds_2_update_0[d0, d1] -> bright_gauss_blur_2[2d0, 2d1] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // Read schedule : { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // Write schedule: { bright_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 16] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
   // DD fold: {  }
   auto value_bright_gauss_blur_2_bright_gauss_blur_2_update_0_write0 = bright_gauss_blur_2.bright_gauss_blur_2_bright_gauss_blur_2_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_bright_gauss_blur_2_bright_gauss_blur_2_update_0_write0;
@@ -821,7 +821,7 @@ inline hw_uint<16> bright_gauss_blur_2_bright_gauss_ds_2_update_0_read_bundle_re
 #include "hw_classes.h"
 
 struct bright_gauss_blur_3_bright_gauss_blur_3_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 478], [0, 478]}
+	// RAM Box: {[0, 312], [0, 312]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -854,9 +854,9 @@ inline void bright_gauss_blur_3_bright_gauss_blur_3_update_0_write0_write(hw_uin
 inline hw_uint<16> bright_gauss_ds_3_rd0_select(bright_gauss_blur_3_cache& bright_gauss_blur_3, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_ds_3_rd0 read pattern: { bright_gauss_ds_3_update_0[d0, d1] -> bright_gauss_blur_3[2d0, 2d1] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
-  // Read schedule : { bright_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 30] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
-  // Write schedule: { bright_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 24] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
+  // bright_gauss_ds_3_rd0 read pattern: { bright_gauss_ds_3_update_0[d0, d1] -> bright_gauss_blur_3[2d0, 2d1] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
+  // Read schedule : { bright_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 30] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
+  // Write schedule: { bright_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 24] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
   // DD fold: {  }
   auto value_bright_gauss_blur_3_bright_gauss_blur_3_update_0_write0 = bright_gauss_blur_3.bright_gauss_blur_3_bright_gauss_blur_3_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_bright_gauss_blur_3_bright_gauss_blur_3_update_0_write0;
@@ -890,17 +890,17 @@ inline hw_uint<16> bright_gauss_blur_3_bright_gauss_ds_3_update_0_read_bundle_re
 #include "hw_classes.h"
 
 struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10_cache {
-	// RAM Box: {[0, 962], [0, 962]}
-	// Capacity: 1929
+	// RAM Box: {[0, 630], [0, 630]}
+	// Capacity: 1265
 	// # of read delays: 9
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	hw_uint<16> f4;
-	fifo<hw_uint<16>, 960> f5;
+	fifo<hw_uint<16>, 628> f5;
 	hw_uint<16> f6;
 	hw_uint<16> f8;
 	hw_uint<16> f10;
-	fifo<hw_uint<16>, 960> f11;
+	fifo<hw_uint<16>, 628> f11;
 	hw_uint<16> f12;
 	hw_uint<16> f14;
 	hw_uint<16> f16;
@@ -918,39 +918,39 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10_cache
 		return f4;
 	}
 
-	inline hw_uint<16> peek_962() {
+	inline hw_uint<16> peek_630() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f5.back();
 	}
 
-	inline hw_uint<16> peek_963() {
+	inline hw_uint<16> peek_631() {
 		return f6;
 	}
 
-	inline hw_uint<16> peek_964() {
+	inline hw_uint<16> peek_632() {
 		return f8;
 	}
 
-	inline hw_uint<16> peek_965() {
+	inline hw_uint<16> peek_633() {
 		return f10;
 	}
 
-	inline hw_uint<16> peek_1925() {
+	inline hw_uint<16> peek_1261() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f11.back();
 	}
 
-	inline hw_uint<16> peek_1926() {
+	inline hw_uint<16> peek_1262() {
 		return f12;
 	}
 
-	inline hw_uint<16> peek_1927() {
+	inline hw_uint<16> peek_1263() {
 		return f14;
 	}
 
-	inline hw_uint<16> peek_1928() {
+	inline hw_uint<16> peek_1264() {
 		return f16;
 	}
 
@@ -967,11 +967,11 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10_cache
     f14 = f12;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 960
+    // cap: 1 reading from capacity: 628
     f12 = f11.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 960 reading from capacity: 1
+    // cap: 628 reading from capacity: 1
     f11.push(f10);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -983,11 +983,11 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10_cache
     f8 = f6;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 960
+    // cap: 1 reading from capacity: 628
     f6 = f5.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 960 reading from capacity: 1
+    // cap: 628 reading from capacity: 1
     f5.push(f4);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1004,14 +1004,14 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10_cache
 };
 
 struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_to_bright_laplace_us_0_rd0_cache {
-	// RAM Box: {[0, 962], [0, 962]}
-	// Capacity: 963
-	// # of read delays: 961
-	fifo<hw_uint<16>, 963> f;
+	// RAM Box: {[0, 630], [0, 630]}
+	// Capacity: 631
+	// # of read delays: 626
+	fifo<hw_uint<16>, 631> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.peek(962 - offset);
+    return f.peek(630 - offset);
   }
 
 
@@ -1025,14 +1025,14 @@ struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_to_bright_laplace_us_
 };
 
 struct bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_to_bright_laplace_us_0_rd1_cache {
-	// RAM Box: {[0, 962], [0, 962]}
-	// Capacity: 963
-	// # of read delays: 961
-	fifo<hw_uint<16>, 963> f;
+	// RAM Box: {[0, 630], [0, 630]}
+	// Capacity: 631
+	// # of read delays: 626
+	fifo<hw_uint<16>, 631> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.peek(962 - offset);
+    return f.peek(630 - offset);
   }
 
 
@@ -1062,11 +1062,11 @@ inline void bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_write(hw_uint<16
 inline hw_uint<16> bright_gauss_blur_2_rd0_select(bright_gauss_ds_1_cache& bright_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_2_rd0 read pattern: { bright_gauss_blur_2_update_0[d0, d1] -> bright_gauss_ds_1[d0, d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { bright_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 16] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { bright_gauss_blur_2_update_0[d0, d1] -> 1928 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  auto value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0 = bright_gauss_ds_1.bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10.peek_1928();
+  // bright_gauss_blur_2_rd0 read pattern: { bright_gauss_blur_2_update_0[d0, d1] -> bright_gauss_ds_1[d0, d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { bright_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 16] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { bright_gauss_blur_2_update_0[d0, d1] -> 1264 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  auto value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0 = bright_gauss_ds_1.bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10.peek_1264();
   return value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -1078,11 +1078,11 @@ inline hw_uint<16> bright_gauss_blur_2_rd0_select(bright_gauss_ds_1_cache& brigh
 inline hw_uint<16> bright_gauss_blur_2_rd1_select(bright_gauss_ds_1_cache& bright_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_2_rd1 read pattern: { bright_gauss_blur_2_update_0[d0, d1] -> bright_gauss_ds_1[d0, 1 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { bright_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 16] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { bright_gauss_blur_2_update_0[d0, d1] -> 965 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  auto value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0 = bright_gauss_ds_1.bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10.peek_965();
+  // bright_gauss_blur_2_rd1 read pattern: { bright_gauss_blur_2_update_0[d0, d1] -> bright_gauss_ds_1[d0, 1 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { bright_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 16] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { bright_gauss_blur_2_update_0[d0, d1] -> 633 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  auto value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0 = bright_gauss_ds_1.bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10.peek_633();
   return value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -1094,10 +1094,10 @@ inline hw_uint<16> bright_gauss_blur_2_rd1_select(bright_gauss_ds_1_cache& brigh
 inline hw_uint<16> bright_gauss_blur_2_rd2_select(bright_gauss_ds_1_cache& bright_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_2_rd2 read pattern: { bright_gauss_blur_2_update_0[d0, d1] -> bright_gauss_ds_1[d0, 2 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { bright_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 16] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { bright_gauss_blur_2_update_0[d0, d1] -> 2 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
+  // bright_gauss_blur_2_rd2 read pattern: { bright_gauss_blur_2_update_0[d0, d1] -> bright_gauss_ds_1[d0, 2 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { bright_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 16] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { bright_gauss_blur_2_update_0[d0, d1] -> 2 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
   auto value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0 = bright_gauss_ds_1.bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10.peek_2();
   return value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1110,11 +1110,11 @@ inline hw_uint<16> bright_gauss_blur_2_rd2_select(bright_gauss_ds_1_cache& brigh
 inline hw_uint<16> bright_gauss_blur_2_rd3_select(bright_gauss_ds_1_cache& bright_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_2_rd3 read pattern: { bright_gauss_blur_2_update_0[d0, d1] -> bright_gauss_ds_1[1 + d0, d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { bright_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 16] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { bright_gauss_blur_2_update_0[d0, d1] -> 1927 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  auto value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0 = bright_gauss_ds_1.bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10.peek_1927();
+  // bright_gauss_blur_2_rd3 read pattern: { bright_gauss_blur_2_update_0[d0, d1] -> bright_gauss_ds_1[1 + d0, d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { bright_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 16] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { bright_gauss_blur_2_update_0[d0, d1] -> 1263 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  auto value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0 = bright_gauss_ds_1.bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10.peek_1263();
   return value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -1126,11 +1126,11 @@ inline hw_uint<16> bright_gauss_blur_2_rd3_select(bright_gauss_ds_1_cache& brigh
 inline hw_uint<16> bright_gauss_blur_2_rd4_select(bright_gauss_ds_1_cache& bright_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_2_rd4 read pattern: { bright_gauss_blur_2_update_0[d0, d1] -> bright_gauss_ds_1[1 + d0, 1 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { bright_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 16] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { bright_gauss_blur_2_update_0[d0, d1] -> 964 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  auto value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0 = bright_gauss_ds_1.bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10.peek_964();
+  // bright_gauss_blur_2_rd4 read pattern: { bright_gauss_blur_2_update_0[d0, d1] -> bright_gauss_ds_1[1 + d0, 1 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { bright_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 16] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { bright_gauss_blur_2_update_0[d0, d1] -> 632 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  auto value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0 = bright_gauss_ds_1.bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10.peek_632();
   return value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -1142,10 +1142,10 @@ inline hw_uint<16> bright_gauss_blur_2_rd4_select(bright_gauss_ds_1_cache& brigh
 inline hw_uint<16> bright_gauss_blur_2_rd5_select(bright_gauss_ds_1_cache& bright_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_2_rd5 read pattern: { bright_gauss_blur_2_update_0[d0, d1] -> bright_gauss_ds_1[1 + d0, 2 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { bright_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 16] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { bright_gauss_blur_2_update_0[d0, d1] -> 1 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
+  // bright_gauss_blur_2_rd5 read pattern: { bright_gauss_blur_2_update_0[d0, d1] -> bright_gauss_ds_1[1 + d0, 2 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { bright_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 16] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { bright_gauss_blur_2_update_0[d0, d1] -> 1 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
   auto value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0 = bright_gauss_ds_1.bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10.peek_1();
   return value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -1158,11 +1158,11 @@ inline hw_uint<16> bright_gauss_blur_2_rd5_select(bright_gauss_ds_1_cache& brigh
 inline hw_uint<16> bright_gauss_blur_2_rd6_select(bright_gauss_ds_1_cache& bright_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_2_rd6 read pattern: { bright_gauss_blur_2_update_0[d0, d1] -> bright_gauss_ds_1[2 + d0, d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { bright_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 16] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { bright_gauss_blur_2_update_0[d0, d1] -> 1926 : 0 <= d0 <= 959 and 0 <= d1 <= 960; bright_gauss_blur_2_update_0[d0, d1] -> (966 + d0) : d0 = 960 and 0 <= d1 <= 960 }
-  auto value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0 = bright_gauss_ds_1.bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10.peek_1926();
+  // bright_gauss_blur_2_rd6 read pattern: { bright_gauss_blur_2_update_0[d0, d1] -> bright_gauss_ds_1[2 + d0, d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { bright_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 16] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { bright_gauss_blur_2_update_0[d0, d1] -> 1262 : 0 <= d0 <= 627 and 0 <= d1 <= 628; bright_gauss_blur_2_update_0[d0, d1] -> (634 + d0) : d0 = 628 and 0 <= d1 <= 628 }
+  auto value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0 = bright_gauss_ds_1.bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10.peek_1262();
   return value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -1174,11 +1174,11 @@ inline hw_uint<16> bright_gauss_blur_2_rd6_select(bright_gauss_ds_1_cache& brigh
 inline hw_uint<16> bright_gauss_blur_2_rd7_select(bright_gauss_ds_1_cache& bright_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_2_rd7 read pattern: { bright_gauss_blur_2_update_0[d0, d1] -> bright_gauss_ds_1[2 + d0, 1 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { bright_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 16] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { bright_gauss_blur_2_update_0[d0, d1] -> 963 : 0 <= d0 <= 959 and 0 <= d1 <= 960; bright_gauss_blur_2_update_0[d0, d1] -> (3 + d0) : d0 = 960 and 0 <= d1 <= 960 }
-  auto value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0 = bright_gauss_ds_1.bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10.peek_963();
+  // bright_gauss_blur_2_rd7 read pattern: { bright_gauss_blur_2_update_0[d0, d1] -> bright_gauss_ds_1[2 + d0, 1 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { bright_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 16] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { bright_gauss_blur_2_update_0[d0, d1] -> 631 : 0 <= d0 <= 627 and 0 <= d1 <= 628; bright_gauss_blur_2_update_0[d0, d1] -> (3 + d0) : d0 = 628 and 0 <= d1 <= 628 }
+  auto value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0 = bright_gauss_ds_1.bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10.peek_631();
   return value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -1190,9 +1190,9 @@ inline hw_uint<16> bright_gauss_blur_2_rd7_select(bright_gauss_ds_1_cache& brigh
 inline hw_uint<16> bright_gauss_blur_2_rd8_select(bright_gauss_ds_1_cache& bright_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_2_rd8 read pattern: { bright_gauss_blur_2_update_0[d0, d1] -> bright_gauss_ds_1[2 + d0, 2 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { bright_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 16] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
+  // bright_gauss_blur_2_rd8 read pattern: { bright_gauss_blur_2_update_0[d0, d1] -> bright_gauss_ds_1[2 + d0, 2 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { bright_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 16] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
   // DD fold: {  }
   auto value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0 = bright_gauss_ds_1.bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10.peek_0();
   return value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0;
@@ -1206,11 +1206,11 @@ inline hw_uint<16> bright_gauss_blur_2_rd8_select(bright_gauss_ds_1_cache& brigh
 inline hw_uint<16> bright_laplace_diff_1_rd0_select(bright_gauss_ds_1_cache& bright_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_laplace_diff_1_rd0 read pattern: { bright_laplace_diff_1_update_0[d0, d1] -> bright_gauss_ds_1[d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // Read schedule : { bright_laplace_diff_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 43] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { bright_laplace_diff_1_update_0[d0, d1] -> 1928 : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  auto value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0 = bright_gauss_ds_1.bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10.peek_1928();
+  // bright_laplace_diff_1_rd0 read pattern: { bright_laplace_diff_1_update_0[d0, d1] -> bright_gauss_ds_1[d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // Read schedule : { bright_laplace_diff_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 43] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { bright_laplace_diff_1_update_0[d0, d1] -> 1264 : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  auto value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0 = bright_gauss_ds_1.bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_merged_banks_10.peek_1264();
   return value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -1222,11 +1222,11 @@ inline hw_uint<16> bright_laplace_diff_1_rd0_select(bright_gauss_ds_1_cache& bri
 inline hw_uint<16> bright_laplace_us_0_rd0_select(bright_gauss_ds_1_cache& bright_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_laplace_us_0_rd0 read pattern: { bright_laplace_us_0_update_0[d0, d1] -> bright_gauss_ds_1[d0, o1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 and -1 + d1 <= 2o1 <= d1 }
-  // Read schedule : { bright_laplace_us_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 41] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { bright_laplace_us_0_update_0[d0, d1] -> (962 - d0) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 959 and 0 < d1 <= 1919 }
-  auto value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0 = bright_gauss_ds_1.bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_to_bright_laplace_us_0_rd0.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0) ? ((962 - d0)) : 0);
+  // bright_laplace_us_0_rd0 read pattern: { bright_laplace_us_0_update_0[d0, d1] -> bright_gauss_ds_1[d0, o1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 and -1 + d1 <= 2o1 <= d1 }
+  // Read schedule : { bright_laplace_us_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 41] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { bright_laplace_us_0_update_0[d0, d1] -> (630 - d0) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 624 and 0 < d1 <= 1249 }
+  auto value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0 = bright_gauss_ds_1.bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_to_bright_laplace_us_0_rd0.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0) ? ((630 - d0)) : 0);
   return value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -1238,11 +1238,11 @@ inline hw_uint<16> bright_laplace_us_0_rd0_select(bright_gauss_ds_1_cache& brigh
 inline hw_uint<16> bright_laplace_us_0_rd1_select(bright_gauss_ds_1_cache& bright_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_laplace_us_0_rd1 read pattern: { bright_laplace_us_0_update_0[d0, d1] -> bright_gauss_ds_1[d0, o1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 and -1 + d1 <= 2o1 <= d1 }
-  // Read schedule : { bright_laplace_us_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 41] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { bright_laplace_us_0_update_0[d0, d1] -> (962 - d0) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 959 and 0 < d1 <= 1919 }
-  auto value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0 = bright_gauss_ds_1.bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_to_bright_laplace_us_0_rd1.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0) ? ((962 - d0)) : 0);
+  // bright_laplace_us_0_rd1 read pattern: { bright_laplace_us_0_update_0[d0, d1] -> bright_gauss_ds_1[d0, o1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 and -1 + d1 <= 2o1 <= d1 }
+  // Read schedule : { bright_laplace_us_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 41] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { bright_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 15] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { bright_laplace_us_0_update_0[d0, d1] -> (630 - d0) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 624 and 0 < d1 <= 1249 }
+  auto value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0 = bright_gauss_ds_1.bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0_to_bright_laplace_us_0_rd1.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0) ? ((630 - d0)) : 0);
   return value_bright_gauss_ds_1_bright_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -1333,18 +1333,18 @@ inline hw_uint<32> bright_gauss_ds_1_bright_laplace_us_0_update_0_read_bundle_re
 
 #include "hw_classes.h"
 
-struct bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_9_cache {
-	// RAM Box: {[0, 480], [0, 480]}
-	// Capacity: 965
+struct bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_10_cache {
+	// RAM Box: {[0, 314], [0, 314]}
+	// Capacity: 633
 	// # of read delays: 9
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	hw_uint<16> f4;
-	fifo<hw_uint<16>, 478> f5;
+	fifo<hw_uint<16>, 312> f5;
 	hw_uint<16> f6;
 	hw_uint<16> f8;
 	hw_uint<16> f10;
-	fifo<hw_uint<16>, 478> f11;
+	fifo<hw_uint<16>, 312> f11;
 	hw_uint<16> f12;
 	hw_uint<16> f14;
 	hw_uint<16> f16;
@@ -1362,39 +1362,39 @@ struct bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_9_cache 
 		return f4;
 	}
 
-	inline hw_uint<16> peek_480() {
+	inline hw_uint<16> peek_314() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f5.back();
 	}
 
-	inline hw_uint<16> peek_481() {
+	inline hw_uint<16> peek_315() {
 		return f6;
 	}
 
-	inline hw_uint<16> peek_482() {
+	inline hw_uint<16> peek_316() {
 		return f8;
 	}
 
-	inline hw_uint<16> peek_483() {
+	inline hw_uint<16> peek_317() {
 		return f10;
 	}
 
-	inline hw_uint<16> peek_961() {
+	inline hw_uint<16> peek_629() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f11.back();
 	}
 
-	inline hw_uint<16> peek_962() {
+	inline hw_uint<16> peek_630() {
 		return f12;
 	}
 
-	inline hw_uint<16> peek_963() {
+	inline hw_uint<16> peek_631() {
 		return f14;
 	}
 
-	inline hw_uint<16> peek_964() {
+	inline hw_uint<16> peek_632() {
 		return f16;
 	}
 
@@ -1411,11 +1411,11 @@ struct bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_9_cache 
     f14 = f12;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 478
+    // cap: 1 reading from capacity: 312
     f12 = f11.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 478 reading from capacity: 1
+    // cap: 312 reading from capacity: 1
     f11.push(f10);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1427,11 +1427,11 @@ struct bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_9_cache 
     f8 = f6;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 478
+    // cap: 1 reading from capacity: 312
     f6 = f5.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 478 reading from capacity: 1
+    // cap: 312 reading from capacity: 1
     f5.push(f4);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1447,36 +1447,15 @@ struct bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_9_cache 
 
 };
 
-struct bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_to_bright_laplace_diff_2_rd0_cache {
-	// RAM Box: {[0, 480], [0, 480]}
-	// Capacity: 965
-	// # of read delays: 484
-	fifo<hw_uint<16>, 965> f;
-	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(964 - offset);
-  }
-
-
-
-	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
-
-};
-
 struct bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_to_bright_laplace_us_1_rd0_cache {
-	// RAM Box: {[0, 480], [0, 480]}
-	// Capacity: 481
-	// # of read delays: 482
-	fifo<hw_uint<16>, 481> f;
+	// RAM Box: {[0, 314], [0, 314]}
+	// Capacity: 315
+	// # of read delays: 314
+	fifo<hw_uint<16>, 315> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.peek(480 - offset);
+    return f.peek(314 - offset);
   }
 
 
@@ -1490,27 +1469,25 @@ struct bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_to_bright_laplace_us_
 };
 
 struct bright_gauss_ds_2_cache {
-  bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_9_cache bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_9;
-  bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_to_bright_laplace_diff_2_rd0_cache bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_to_bright_laplace_diff_2_rd0;
+  bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_10_cache bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_10;
   bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_to_bright_laplace_us_1_rd0_cache bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_to_bright_laplace_us_1_rd0;
 };
 
 
 
 inline void bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_write(hw_uint<16>& bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0, bright_gauss_ds_2_cache& bright_gauss_ds_2, int d0, int d1) {
-  bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_9.push(bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0);
-  bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_to_bright_laplace_diff_2_rd0.push(bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0);
+  bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_10.push(bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0);
   bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_to_bright_laplace_us_1_rd0.push(bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0);
 }
 
 inline hw_uint<16> bright_gauss_blur_3_rd0_select(bright_gauss_ds_2_cache& bright_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_3_rd0 read pattern: { bright_gauss_blur_3_update_0[d0, d1] -> bright_gauss_ds_2[d0, d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { bright_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 24] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { bright_gauss_blur_3_update_0[d0, d1] -> 964 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_9.peek_964();
+  // bright_gauss_blur_3_rd0 read pattern: { bright_gauss_blur_3_update_0[d0, d1] -> bright_gauss_ds_2[d0, d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { bright_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 24] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { bright_gauss_blur_3_update_0[d0, d1] -> 632 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_10.peek_632();
   return value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -1522,11 +1499,11 @@ inline hw_uint<16> bright_gauss_blur_3_rd0_select(bright_gauss_ds_2_cache& brigh
 inline hw_uint<16> bright_gauss_blur_3_rd1_select(bright_gauss_ds_2_cache& bright_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_3_rd1 read pattern: { bright_gauss_blur_3_update_0[d0, d1] -> bright_gauss_ds_2[d0, 1 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { bright_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 24] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { bright_gauss_blur_3_update_0[d0, d1] -> 483 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_9.peek_483();
+  // bright_gauss_blur_3_rd1 read pattern: { bright_gauss_blur_3_update_0[d0, d1] -> bright_gauss_ds_2[d0, 1 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { bright_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 24] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { bright_gauss_blur_3_update_0[d0, d1] -> 317 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_10.peek_317();
   return value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -1538,11 +1515,11 @@ inline hw_uint<16> bright_gauss_blur_3_rd1_select(bright_gauss_ds_2_cache& brigh
 inline hw_uint<16> bright_gauss_blur_3_rd2_select(bright_gauss_ds_2_cache& bright_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_3_rd2 read pattern: { bright_gauss_blur_3_update_0[d0, d1] -> bright_gauss_ds_2[d0, 2 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { bright_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 24] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { bright_gauss_blur_3_update_0[d0, d1] -> 2 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_9.peek_2();
+  // bright_gauss_blur_3_rd2 read pattern: { bright_gauss_blur_3_update_0[d0, d1] -> bright_gauss_ds_2[d0, 2 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { bright_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 24] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { bright_gauss_blur_3_update_0[d0, d1] -> 2 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_10.peek_2();
   return value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -1554,11 +1531,11 @@ inline hw_uint<16> bright_gauss_blur_3_rd2_select(bright_gauss_ds_2_cache& brigh
 inline hw_uint<16> bright_gauss_blur_3_rd3_select(bright_gauss_ds_2_cache& bright_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_3_rd3 read pattern: { bright_gauss_blur_3_update_0[d0, d1] -> bright_gauss_ds_2[1 + d0, d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { bright_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 24] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { bright_gauss_blur_3_update_0[d0, d1] -> 963 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_9.peek_963();
+  // bright_gauss_blur_3_rd3 read pattern: { bright_gauss_blur_3_update_0[d0, d1] -> bright_gauss_ds_2[1 + d0, d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { bright_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 24] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { bright_gauss_blur_3_update_0[d0, d1] -> 631 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_10.peek_631();
   return value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -1570,11 +1547,11 @@ inline hw_uint<16> bright_gauss_blur_3_rd3_select(bright_gauss_ds_2_cache& brigh
 inline hw_uint<16> bright_gauss_blur_3_rd4_select(bright_gauss_ds_2_cache& bright_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_3_rd4 read pattern: { bright_gauss_blur_3_update_0[d0, d1] -> bright_gauss_ds_2[1 + d0, 1 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { bright_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 24] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { bright_gauss_blur_3_update_0[d0, d1] -> 482 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_9.peek_482();
+  // bright_gauss_blur_3_rd4 read pattern: { bright_gauss_blur_3_update_0[d0, d1] -> bright_gauss_ds_2[1 + d0, 1 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { bright_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 24] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { bright_gauss_blur_3_update_0[d0, d1] -> 316 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_10.peek_316();
   return value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -1586,11 +1563,11 @@ inline hw_uint<16> bright_gauss_blur_3_rd4_select(bright_gauss_ds_2_cache& brigh
 inline hw_uint<16> bright_gauss_blur_3_rd5_select(bright_gauss_ds_2_cache& bright_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_3_rd5 read pattern: { bright_gauss_blur_3_update_0[d0, d1] -> bright_gauss_ds_2[1 + d0, 2 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { bright_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 24] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { bright_gauss_blur_3_update_0[d0, d1] -> 1 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_9.peek_1();
+  // bright_gauss_blur_3_rd5 read pattern: { bright_gauss_blur_3_update_0[d0, d1] -> bright_gauss_ds_2[1 + d0, 2 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { bright_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 24] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { bright_gauss_blur_3_update_0[d0, d1] -> 1 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_10.peek_1();
   return value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -1602,11 +1579,11 @@ inline hw_uint<16> bright_gauss_blur_3_rd5_select(bright_gauss_ds_2_cache& brigh
 inline hw_uint<16> bright_gauss_blur_3_rd6_select(bright_gauss_ds_2_cache& bright_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_3_rd6 read pattern: { bright_gauss_blur_3_update_0[d0, d1] -> bright_gauss_ds_2[2 + d0, d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { bright_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 24] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { bright_gauss_blur_3_update_0[d0, d1] -> 962 : 0 <= d0 <= 477 and 0 <= d1 <= 478; bright_gauss_blur_3_update_0[d0, d1] -> (484 + d0) : d0 = 478 and 0 <= d1 <= 478 }
-  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_9.peek_962();
+  // bright_gauss_blur_3_rd6 read pattern: { bright_gauss_blur_3_update_0[d0, d1] -> bright_gauss_ds_2[2 + d0, d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { bright_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 24] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { bright_gauss_blur_3_update_0[d0, d1] -> 630 : 0 <= d0 <= 311 and 0 <= d1 <= 312; bright_gauss_blur_3_update_0[d0, d1] -> (318 + d0) : d0 = 312 and 0 <= d1 <= 312 }
+  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_10.peek_630();
   return value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -1618,11 +1595,11 @@ inline hw_uint<16> bright_gauss_blur_3_rd6_select(bright_gauss_ds_2_cache& brigh
 inline hw_uint<16> bright_gauss_blur_3_rd7_select(bright_gauss_ds_2_cache& bright_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_3_rd7 read pattern: { bright_gauss_blur_3_update_0[d0, d1] -> bright_gauss_ds_2[2 + d0, 1 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { bright_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 24] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { bright_gauss_blur_3_update_0[d0, d1] -> 481 : 0 <= d0 <= 477 and 0 <= d1 <= 478; bright_gauss_blur_3_update_0[d0, d1] -> (3 + d0) : d0 = 478 and 0 <= d1 <= 478 }
-  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_9.peek_481();
+  // bright_gauss_blur_3_rd7 read pattern: { bright_gauss_blur_3_update_0[d0, d1] -> bright_gauss_ds_2[2 + d0, 1 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { bright_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 24] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { bright_gauss_blur_3_update_0[d0, d1] -> 315 : 0 <= d0 <= 311 and 0 <= d1 <= 312; bright_gauss_blur_3_update_0[d0, d1] -> (3 + d0) : d0 = 312 and 0 <= d1 <= 312 }
+  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_10.peek_315();
   return value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -1634,11 +1611,11 @@ inline hw_uint<16> bright_gauss_blur_3_rd7_select(bright_gauss_ds_2_cache& brigh
 inline hw_uint<16> bright_gauss_blur_3_rd8_select(bright_gauss_ds_2_cache& bright_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_gauss_blur_3_rd8 read pattern: { bright_gauss_blur_3_update_0[d0, d1] -> bright_gauss_ds_2[2 + d0, 2 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { bright_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 24] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
+  // bright_gauss_blur_3_rd8 read pattern: { bright_gauss_blur_3_update_0[d0, d1] -> bright_gauss_ds_2[2 + d0, 2 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { bright_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 24] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
   // DD fold: {  }
-  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_9.peek_0();
+  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_10.peek_0();
   return value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -1650,11 +1627,11 @@ inline hw_uint<16> bright_gauss_blur_3_rd8_select(bright_gauss_ds_2_cache& brigh
 inline hw_uint<16> bright_laplace_diff_2_rd0_select(bright_gauss_ds_2_cache& bright_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_laplace_diff_2_rd0 read pattern: { bright_laplace_diff_2_update_0[d0, d1] -> bright_gauss_ds_2[d0, d1] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // Read schedule : { bright_laplace_diff_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 42] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { bright_laplace_diff_2_update_0[d0, d1] -> 964 : 0 <= d0 <= 478 and 0 <= d1 <= 478; bright_laplace_diff_2_update_0[d0, d1] -> 963 : d0 = 479 and 0 <= d1 <= 478; bright_laplace_diff_2_update_0[d0, d1] -> (961 - d0) : d1 = 479 and 0 <= d0 <= 479 }
-  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_to_bright_laplace_diff_2_rd0.peek(/* one reader or all rams */ (-479 + d0 == 0 && 478 - d1 >= 0) ? (963) : (478 - d1 >= 0 && 478 - d0 >= 0) ? (964) : (-479 + d1 == 0) ? ((961 - d0)) : 0);
+  // bright_laplace_diff_2_rd0 read pattern: { bright_laplace_diff_2_update_0[d0, d1] -> bright_gauss_ds_2[d0, d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { bright_laplace_diff_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 42] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { bright_laplace_diff_2_update_0[d0, d1] -> 632 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_merged_banks_10.peek_632();
   return value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -1666,11 +1643,11 @@ inline hw_uint<16> bright_laplace_diff_2_rd0_select(bright_gauss_ds_2_cache& bri
 inline hw_uint<16> bright_laplace_us_1_rd0_select(bright_gauss_ds_2_cache& bright_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_laplace_us_1_rd0 read pattern: { bright_laplace_us_1_update_0[d0, d1] -> bright_gauss_ds_2[o0, o1] : 0 <= d0 <= 959 and 0 <= d1 <= 959 and -1 + d0 <= 2o0 <= d0 and -1 + d1 <= 2o1 <= d1 }
-  // Read schedule : { bright_laplace_us_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 40] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { bright_laplace_us_1_update_0[d0, d1] -> (480 - floor((2d0)/4)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 959 and 0 < d1 <= 959 }
-  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_to_bright_laplace_us_1_rd0.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0) ? ((480 - floord(2*d0, 4))) : 0);
+  // bright_laplace_us_1_rd0 read pattern: { bright_laplace_us_1_update_0[d0, d1] -> bright_gauss_ds_2[o0, o1] : 0 <= d0 <= 624 and 0 <= d1 <= 624 and -1 + d0 <= 2o0 <= d0 and -1 + d1 <= 2o1 <= d1 }
+  // Read schedule : { bright_laplace_us_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 40] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // Write schedule: { bright_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 23] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { bright_laplace_us_1_update_0[d0, d1] -> (314 - floor((2d0)/4)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 624 and 0 < d1 <= 623 }
+  auto value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0 = bright_gauss_ds_2.bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0_to_bright_laplace_us_1_rd0.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0) ? ((314 - floord(2*d0, 4))) : 0);
   return value_bright_gauss_ds_2_bright_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -1758,14 +1735,14 @@ inline hw_uint<16> bright_gauss_ds_2_bright_laplace_us_1_update_0_read_bundle_re
 #include "hw_classes.h"
 
 struct bright_gauss_ds_3_bright_gauss_ds_3_update_0_write0_to_bright_laplace_us_2_rd0_cache {
-	// RAM Box: {[0, 239], [0, 239]}
-	// Capacity: 240
-	// # of read delays: 241
-	fifo<hw_uint<16>, 240> f;
+	// RAM Box: {[0, 156], [0, 156]}
+	// Capacity: 157
+	// # of read delays: 158
+	fifo<hw_uint<16>, 157> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.peek(239 - offset);
+    return f.peek(156 - offset);
   }
 
 
@@ -1779,7 +1756,7 @@ struct bright_gauss_ds_3_bright_gauss_ds_3_update_0_write0_to_bright_laplace_us_
 };
 
 struct bright_gauss_ds_3_bright_gauss_ds_3_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 239], [0, 239]}
+	// RAM Box: {[0, 156], [0, 156]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -1814,11 +1791,11 @@ inline void bright_gauss_ds_3_bright_gauss_ds_3_update_0_write0_write(hw_uint<16
 inline hw_uint<16> bright_laplace_us_2_rd0_select(bright_gauss_ds_3_cache& bright_gauss_ds_3, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_laplace_us_2_rd0 read pattern: { bright_laplace_us_2_update_0[d0, d1] -> bright_gauss_ds_3[o0, o1] : 0 <= d0 <= 479 and 0 <= d1 <= 479 and -1 + d0 <= 2o0 <= d0 and -1 + d1 <= 2o1 <= d1 }
-  // Read schedule : { bright_laplace_us_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 39] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // Write schedule: { bright_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 30] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
-  // DD fold: { bright_laplace_us_2_update_0[d0, d1] -> (239 - floor((2d0)/4)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 477 and 0 < d1 <= 479 }
-  auto value_bright_gauss_ds_3_bright_gauss_ds_3_update_0_write0 = bright_gauss_ds_3.bright_gauss_ds_3_bright_gauss_ds_3_update_0_write0_to_bright_laplace_us_2_rd0.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0 && 477 - d0 >= 0) ? ((239 - floord(2*d0, 4))) : 0);
+  // bright_laplace_us_2_rd0 read pattern: { bright_laplace_us_2_update_0[d0, d1] -> bright_gauss_ds_3[o0, o1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 and -1 + d0 <= 2o0 <= d0 and -1 + d1 <= 2o1 <= d1 }
+  // Read schedule : { bright_laplace_us_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 39] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 30] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
+  // DD fold: { bright_laplace_us_2_update_0[d0, d1] -> (156 - floor((2d0)/4)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 311 and 0 < d1 <= 311 }
+  auto value_bright_gauss_ds_3_bright_gauss_ds_3_update_0_write0 = bright_gauss_ds_3.bright_gauss_ds_3_bright_gauss_ds_3_update_0_write0_to_bright_laplace_us_2_rd0.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0 && 311 - d0 >= 0) ? ((156 - floord(2*d0, 4))) : 0);
   return value_bright_gauss_ds_3_bright_gauss_ds_3_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -1830,9 +1807,9 @@ inline hw_uint<16> bright_laplace_us_2_rd0_select(bright_gauss_ds_3_cache& brigh
 inline hw_uint<16> fused_level_3_rd0_select(bright_gauss_ds_3_cache& bright_gauss_ds_3, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // fused_level_3_rd0 read pattern: { fused_level_3_update_0[d0, d1] -> bright_gauss_ds_3[d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
-  // Read schedule : { fused_level_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 45] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
-  // Write schedule: { bright_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 30] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
+  // fused_level_3_rd0 read pattern: { fused_level_3_update_0[d0, d1] -> bright_gauss_ds_3[d0, d1] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
+  // Read schedule : { fused_level_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 45] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
+  // Write schedule: { bright_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 30] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
   // DD fold: {  }
   auto value_bright_gauss_ds_3_bright_gauss_ds_3_update_0_write0 = bright_gauss_ds_3.bright_gauss_ds_3_bright_gauss_ds_3_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_bright_gauss_ds_3_bright_gauss_ds_3_update_0_write0;
@@ -1878,7 +1855,7 @@ inline hw_uint<16> bright_gauss_ds_3_fused_level_3_update_0_read_bundle_read(bri
 #include "hw_classes.h"
 
 struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 1918], [0, 1919]}
+	// RAM Box: {[0, 1248], [0, 1249]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -1899,7 +1876,7 @@ struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write0_merged_banks_
 };
 
 struct bright_laplace_diff_0_bright_laplace_diff_0_update_0_write1_merged_banks_1_cache {
-	// RAM Box: {[1, 1919], [0, 1919]}
+	// RAM Box: {[1, 1249], [0, 1249]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -1937,9 +1914,9 @@ inline void bright_laplace_diff_0_bright_laplace_diff_0_update_0_write1_write(hw
 inline hw_uint<16> fused_level_0_rd0_select(bright_laplace_diff_0_cache& bright_laplace_diff_0, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // fused_level_0_rd0 read pattern: { fused_level_0_update_0[d0, d1] -> bright_laplace_diff_0[2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Read schedule : { fused_level_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 48] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { bright_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 44] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
+  // fused_level_0_rd0 read pattern: { fused_level_0_update_0[d0, d1] -> bright_laplace_diff_0[2d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Read schedule : { fused_level_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 48] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { bright_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 44] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
   // DD fold: {  }
   auto value_bright_laplace_diff_0_bright_laplace_diff_0_update_0_write0 = bright_laplace_diff_0.bright_laplace_diff_0_bright_laplace_diff_0_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_bright_laplace_diff_0_bright_laplace_diff_0_update_0_write0;
@@ -1953,9 +1930,9 @@ inline hw_uint<16> fused_level_0_rd0_select(bright_laplace_diff_0_cache& bright_
 inline hw_uint<16> fused_level_0_rd1_select(bright_laplace_diff_0_cache& bright_laplace_diff_0, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // fused_level_0_rd1 read pattern: { fused_level_0_update_0[d0, d1] -> bright_laplace_diff_0[1 + 2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Read schedule : { fused_level_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 48] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { bright_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 44] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
+  // fused_level_0_rd1 read pattern: { fused_level_0_update_0[d0, d1] -> bright_laplace_diff_0[1 + 2d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Read schedule : { fused_level_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 48] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { bright_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 44] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
   // DD fold: {  }
   auto value_bright_laplace_diff_0_bright_laplace_diff_0_update_0_write1 = bright_laplace_diff_0.bright_laplace_diff_0_bright_laplace_diff_0_update_0_write1_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_bright_laplace_diff_0_bright_laplace_diff_0_update_0_write1;
@@ -1996,7 +1973,7 @@ inline hw_uint<32> bright_laplace_diff_0_fused_level_0_update_0_read_bundle_read
 #include "hw_classes.h"
 
 struct bright_laplace_diff_1_bright_laplace_diff_1_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 959], [0, 959]}
+	// RAM Box: {[0, 624], [0, 624]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -2029,9 +2006,9 @@ inline void bright_laplace_diff_1_bright_laplace_diff_1_update_0_write0_write(hw
 inline hw_uint<16> fused_level_1_rd0_select(bright_laplace_diff_1_cache& bright_laplace_diff_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // fused_level_1_rd0 read pattern: { fused_level_1_update_0[d0, d1] -> bright_laplace_diff_1[d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // Read schedule : { fused_level_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 47] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // Write schedule: { bright_laplace_diff_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 43] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
+  // fused_level_1_rd0 read pattern: { fused_level_1_update_0[d0, d1] -> bright_laplace_diff_1[d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // Read schedule : { fused_level_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 47] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // Write schedule: { bright_laplace_diff_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 43] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
   // DD fold: {  }
   auto value_bright_laplace_diff_1_bright_laplace_diff_1_update_0_write0 = bright_laplace_diff_1.bright_laplace_diff_1_bright_laplace_diff_1_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_bright_laplace_diff_1_bright_laplace_diff_1_update_0_write0;
@@ -2065,7 +2042,7 @@ inline hw_uint<16> bright_laplace_diff_1_fused_level_1_update_0_read_bundle_read
 #include "hw_classes.h"
 
 struct bright_laplace_diff_2_bright_laplace_diff_2_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 479], [0, 479]}
+	// RAM Box: {[0, 312], [0, 312]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -2098,9 +2075,9 @@ inline void bright_laplace_diff_2_bright_laplace_diff_2_update_0_write0_write(hw
 inline hw_uint<16> fused_level_2_rd0_select(bright_laplace_diff_2_cache& bright_laplace_diff_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // fused_level_2_rd0 read pattern: { fused_level_2_update_0[d0, d1] -> bright_laplace_diff_2[d0, d1] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // Read schedule : { fused_level_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 46] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // Write schedule: { bright_laplace_diff_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 42] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
+  // fused_level_2_rd0 read pattern: { fused_level_2_update_0[d0, d1] -> bright_laplace_diff_2[d0, d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { fused_level_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 46] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_laplace_diff_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 42] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
   // DD fold: {  }
   auto value_bright_laplace_diff_2_bright_laplace_diff_2_update_0_write0 = bright_laplace_diff_2.bright_laplace_diff_2_bright_laplace_diff_2_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_bright_laplace_diff_2_bright_laplace_diff_2_update_0_write0;
@@ -2134,7 +2111,7 @@ inline hw_uint<16> bright_laplace_diff_2_fused_level_2_update_0_read_bundle_read
 #include "hw_classes.h"
 
 struct bright_laplace_us_0_bright_laplace_us_0_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 1918], [0, 1919]}
+	// RAM Box: {[0, 1248], [0, 1249]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -2155,7 +2132,7 @@ struct bright_laplace_us_0_bright_laplace_us_0_update_0_write0_merged_banks_1_ca
 };
 
 struct bright_laplace_us_0_bright_laplace_us_0_update_0_write1_merged_banks_1_cache {
-	// RAM Box: {[1, 1919], [0, 1919]}
+	// RAM Box: {[1, 1249], [0, 1249]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -2193,9 +2170,9 @@ inline void bright_laplace_us_0_bright_laplace_us_0_update_0_write1_write(hw_uin
 inline hw_uint<16> bright_laplace_diff_0_rd0_select(bright_laplace_us_0_cache& bright_laplace_us_0, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_laplace_diff_0_rd0 read pattern: { bright_laplace_diff_0_update_0[d0, d1] -> bright_laplace_us_0[2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Read schedule : { bright_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 44] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { bright_laplace_us_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 41] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
+  // bright_laplace_diff_0_rd0 read pattern: { bright_laplace_diff_0_update_0[d0, d1] -> bright_laplace_us_0[2d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Read schedule : { bright_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 44] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { bright_laplace_us_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 41] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
   // DD fold: {  }
   auto value_bright_laplace_us_0_bright_laplace_us_0_update_0_write0 = bright_laplace_us_0.bright_laplace_us_0_bright_laplace_us_0_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_bright_laplace_us_0_bright_laplace_us_0_update_0_write0;
@@ -2209,9 +2186,9 @@ inline hw_uint<16> bright_laplace_diff_0_rd0_select(bright_laplace_us_0_cache& b
 inline hw_uint<16> bright_laplace_diff_0_rd1_select(bright_laplace_us_0_cache& bright_laplace_us_0, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_laplace_diff_0_rd1 read pattern: { bright_laplace_diff_0_update_0[d0, d1] -> bright_laplace_us_0[1 + 2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Read schedule : { bright_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 44] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { bright_laplace_us_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 41] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
+  // bright_laplace_diff_0_rd1 read pattern: { bright_laplace_diff_0_update_0[d0, d1] -> bright_laplace_us_0[1 + 2d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Read schedule : { bright_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 44] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { bright_laplace_us_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 41] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
   // DD fold: {  }
   auto value_bright_laplace_us_0_bright_laplace_us_0_update_0_write1 = bright_laplace_us_0.bright_laplace_us_0_bright_laplace_us_0_update_0_write1_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_bright_laplace_us_0_bright_laplace_us_0_update_0_write1;
@@ -2252,7 +2229,7 @@ inline void bright_laplace_us_0_bright_laplace_us_0_update_0_write_bundle_write(
 #include "hw_classes.h"
 
 struct bright_laplace_us_1_bright_laplace_us_1_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 959], [0, 959]}
+	// RAM Box: {[0, 624], [0, 624]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -2285,9 +2262,9 @@ inline void bright_laplace_us_1_bright_laplace_us_1_update_0_write0_write(hw_uin
 inline hw_uint<16> bright_laplace_diff_1_rd0_select(bright_laplace_us_1_cache& bright_laplace_us_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_laplace_diff_1_rd0 read pattern: { bright_laplace_diff_1_update_0[d0, d1] -> bright_laplace_us_1[d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // Read schedule : { bright_laplace_diff_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 43] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // Write schedule: { bright_laplace_us_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 40] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
+  // bright_laplace_diff_1_rd0 read pattern: { bright_laplace_diff_1_update_0[d0, d1] -> bright_laplace_us_1[d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // Read schedule : { bright_laplace_diff_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 43] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // Write schedule: { bright_laplace_us_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 40] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
   // DD fold: {  }
   auto value_bright_laplace_us_1_bright_laplace_us_1_update_0_write0 = bright_laplace_us_1.bright_laplace_us_1_bright_laplace_us_1_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_bright_laplace_us_1_bright_laplace_us_1_update_0_write0;
@@ -2321,7 +2298,7 @@ inline void bright_laplace_us_1_bright_laplace_us_1_update_0_write_bundle_write(
 #include "hw_classes.h"
 
 struct bright_laplace_us_2_bright_laplace_us_2_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 479], [0, 479]}
+	// RAM Box: {[0, 312], [0, 312]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -2354,9 +2331,9 @@ inline void bright_laplace_us_2_bright_laplace_us_2_update_0_write0_write(hw_uin
 inline hw_uint<16> bright_laplace_diff_2_rd0_select(bright_laplace_us_2_cache& bright_laplace_us_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_laplace_diff_2_rd0 read pattern: { bright_laplace_diff_2_update_0[d0, d1] -> bright_laplace_us_2[d0, d1] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // Read schedule : { bright_laplace_diff_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 42] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // Write schedule: { bright_laplace_us_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 39] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
+  // bright_laplace_diff_2_rd0 read pattern: { bright_laplace_diff_2_update_0[d0, d1] -> bright_laplace_us_2[d0, d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { bright_laplace_diff_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 42] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_laplace_us_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 39] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
   // DD fold: {  }
   auto value_bright_laplace_us_2_bright_laplace_us_2_update_0_write0 = bright_laplace_us_2.bright_laplace_us_2_bright_laplace_us_2_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_bright_laplace_us_2_bright_laplace_us_2_update_0_write0;
@@ -2390,7 +2367,7 @@ inline void bright_laplace_us_2_bright_laplace_us_2_update_0_write_bundle_write(
 #include "hw_classes.h"
 
 struct bright_weights_bright_weights_update_0_write0_merged_banks_2_cache {
-	// RAM Box: {[0, 1926], [0, 1926]}
+	// RAM Box: {[0, 1262], [0, 1262]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<16> f1;
@@ -2410,7 +2387,7 @@ struct bright_weights_bright_weights_update_0_write0_merged_banks_2_cache {
 };
 
 struct bright_weights_bright_weights_update_0_write1_merged_banks_2_cache {
-	// RAM Box: {[1, 1927], [0, 1926]}
+	// RAM Box: {[1, 1263], [0, 1262]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<16> f1;
@@ -2447,9 +2424,9 @@ inline void bright_weights_bright_weights_update_0_write1_write(hw_uint<16>& bri
 inline hw_uint<16> bright_weights_normed_rd0_select(bright_weights_cache& bright_weights, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_rd0 read pattern: { bright_weights_normed_update_0[d0, d1] -> bright_weights[2d0, d1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Read schedule : { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Write schedule: { bright_weights_update_0[d0, d1] -> [d1, d0, 5] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // bright_weights_normed_rd0 read pattern: { bright_weights_normed_update_0[d0, d1] -> bright_weights[2d0, d1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Read schedule : { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Write schedule: { bright_weights_update_0[d0, d1] -> [d1, d0, 5] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_bright_weights_bright_weights_update_0_write0 = bright_weights.bright_weights_bright_weights_update_0_write0_merged_banks_2.peek_0();
   return value_bright_weights_bright_weights_update_0_write0;
@@ -2463,9 +2440,9 @@ inline hw_uint<16> bright_weights_normed_rd0_select(bright_weights_cache& bright
 inline hw_uint<16> bright_weights_normed_rd1_select(bright_weights_cache& bright_weights, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_rd1 read pattern: { bright_weights_normed_update_0[d0, d1] -> bright_weights[1 + 2d0, d1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Read schedule : { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Write schedule: { bright_weights_update_0[d0, d1] -> [d1, d0, 5] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // bright_weights_normed_rd1 read pattern: { bright_weights_normed_update_0[d0, d1] -> bright_weights[1 + 2d0, d1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Read schedule : { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Write schedule: { bright_weights_update_0[d0, d1] -> [d1, d0, 5] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_bright_weights_bright_weights_update_0_write1 = bright_weights.bright_weights_bright_weights_update_0_write1_merged_banks_2.peek_0();
   return value_bright_weights_bright_weights_update_0_write1;
@@ -2479,9 +2456,9 @@ inline hw_uint<16> bright_weights_normed_rd1_select(bright_weights_cache& bright
 inline hw_uint<16> weight_sums_rd0_select(bright_weights_cache& bright_weights, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // weight_sums_rd0 read pattern: { weight_sums_update_0[d0, d1] -> bright_weights[2d0, d1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Read schedule : { weight_sums_update_0[d0, d1] -> [d1, d0, 6] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Write schedule: { bright_weights_update_0[d0, d1] -> [d1, d0, 5] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // weight_sums_rd0 read pattern: { weight_sums_update_0[d0, d1] -> bright_weights[2d0, d1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Read schedule : { weight_sums_update_0[d0, d1] -> [d1, d0, 6] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Write schedule: { bright_weights_update_0[d0, d1] -> [d1, d0, 5] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_bright_weights_bright_weights_update_0_write0 = bright_weights.bright_weights_bright_weights_update_0_write0_merged_banks_2.peek_0();
   return value_bright_weights_bright_weights_update_0_write0;
@@ -2495,9 +2472,9 @@ inline hw_uint<16> weight_sums_rd0_select(bright_weights_cache& bright_weights, 
 inline hw_uint<16> weight_sums_rd1_select(bright_weights_cache& bright_weights, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // weight_sums_rd1 read pattern: { weight_sums_update_0[d0, d1] -> bright_weights[1 + 2d0, d1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Read schedule : { weight_sums_update_0[d0, d1] -> [d1, d0, 6] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Write schedule: { bright_weights_update_0[d0, d1] -> [d1, d0, 5] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // weight_sums_rd1 read pattern: { weight_sums_update_0[d0, d1] -> bright_weights[1 + 2d0, d1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Read schedule : { weight_sums_update_0[d0, d1] -> [d1, d0, 6] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Write schedule: { bright_weights_update_0[d0, d1] -> [d1, d0, 5] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_bright_weights_bright_weights_update_0_write1 = bright_weights.bright_weights_bright_weights_update_0_write1_merged_banks_2.peek_0();
   return value_bright_weights_bright_weights_update_0_write1;
@@ -2554,15 +2531,15 @@ inline hw_uint<32> bright_weights_weight_sums_update_0_read_bundle_read(bright_w
 #include "hw_classes.h"
 
 struct bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_10_cache {
-	// RAM Box: {[0, 1926], [0, 1926]}
-	// Capacity: 1930
+	// RAM Box: {[0, 1262], [0, 1262]}
+	// Capacity: 1266
 	// # of read delays: 6
 	hw_uint<16> f0;
 	hw_uint<16> f2;
-	fifo<hw_uint<16>, 962> f3;
+	fifo<hw_uint<16>, 630> f3;
 	hw_uint<16> f4;
 	hw_uint<16> f6;
-	fifo<hw_uint<16>, 962> f7;
+	fifo<hw_uint<16>, 630> f7;
 	hw_uint<16> f8;
 	hw_uint<16> f10;
 
@@ -2575,31 +2552,31 @@ struct bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_
 		return f2;
 	}
 
-	inline hw_uint<16> peek_963() {
+	inline hw_uint<16> peek_631() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<16> peek_964() {
+	inline hw_uint<16> peek_632() {
 		return f4;
 	}
 
-	inline hw_uint<16> peek_965() {
+	inline hw_uint<16> peek_633() {
 		return f6;
 	}
 
-	inline hw_uint<16> peek_1927() {
+	inline hw_uint<16> peek_1263() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<16> peek_1928() {
+	inline hw_uint<16> peek_1264() {
 		return f8;
 	}
 
-	inline hw_uint<16> peek_1929() {
+	inline hw_uint<16> peek_1265() {
 		return f10;
 	}
 
@@ -2612,11 +2589,11 @@ struct bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_
     f10 = f8;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 962
+    // cap: 1 reading from capacity: 630
     f8 = f7.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 962 reading from capacity: 1
+    // cap: 630 reading from capacity: 1
     f7.push(f6);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -2624,11 +2601,11 @@ struct bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_
     f6 = f4;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 962
+    // cap: 1 reading from capacity: 630
     f4 = f3.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 962 reading from capacity: 1
+    // cap: 630 reading from capacity: 1
     f3.push(f2);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -2641,15 +2618,15 @@ struct bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_
 };
 
 struct bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_10_cache {
-	// RAM Box: {[1, 1927], [0, 1926]}
-	// Capacity: 1930
+	// RAM Box: {[1, 1263], [0, 1262]}
+	// Capacity: 1266
 	// # of read delays: 6
 	hw_uint<16> f0;
 	hw_uint<16> f2;
-	fifo<hw_uint<16>, 962> f3;
+	fifo<hw_uint<16>, 630> f3;
 	hw_uint<16> f4;
 	hw_uint<16> f6;
-	fifo<hw_uint<16>, 962> f7;
+	fifo<hw_uint<16>, 630> f7;
 	hw_uint<16> f8;
 	hw_uint<16> f10;
 
@@ -2662,31 +2639,31 @@ struct bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_
 		return f2;
 	}
 
-	inline hw_uint<16> peek_963() {
+	inline hw_uint<16> peek_631() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<16> peek_964() {
+	inline hw_uint<16> peek_632() {
 		return f4;
 	}
 
-	inline hw_uint<16> peek_965() {
+	inline hw_uint<16> peek_633() {
 		return f6;
 	}
 
-	inline hw_uint<16> peek_1927() {
+	inline hw_uint<16> peek_1263() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<16> peek_1928() {
+	inline hw_uint<16> peek_1264() {
 		return f8;
 	}
 
-	inline hw_uint<16> peek_1929() {
+	inline hw_uint<16> peek_1265() {
 		return f10;
 	}
 
@@ -2699,11 +2676,11 @@ struct bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_
     f10 = f8;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 962
+    // cap: 1 reading from capacity: 630
     f8 = f7.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 962 reading from capacity: 1
+    // cap: 630 reading from capacity: 1
     f7.push(f6);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -2711,11 +2688,11 @@ struct bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_
     f6 = f4;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 962
+    // cap: 1 reading from capacity: 630
     f4 = f3.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 962 reading from capacity: 1
+    // cap: 630 reading from capacity: 1
     f3.push(f2);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -2745,11 +2722,11 @@ inline void bright_weights_normed_bright_weights_normed_update_0_write1_write(hw
 inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd0_select(bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_1_rd0 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1929 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_bright_weights_normed_bright_weights_normed_update_0_write0 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_10.peek_1929();
+  // bright_weights_normed_gauss_blur_1_rd0 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1265 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_bright_weights_normed_bright_weights_normed_update_0_write0 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_10.peek_1265();
   return value_bright_weights_normed_bright_weights_normed_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -2761,11 +2738,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd0_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd1_select(bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_1_rd1 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 965 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_bright_weights_normed_bright_weights_normed_update_0_write0 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_10.peek_965();
+  // bright_weights_normed_gauss_blur_1_rd1 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 633 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_bright_weights_normed_bright_weights_normed_update_0_write0 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_10.peek_633();
   return value_bright_weights_normed_bright_weights_normed_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -2777,11 +2754,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd1_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd10_select(bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_1_rd10 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[1 + 2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 965 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_bright_weights_normed_bright_weights_normed_update_0_write1 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_10.peek_965();
+  // bright_weights_normed_gauss_blur_1_rd10 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[1 + 2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 633 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_bright_weights_normed_bright_weights_normed_update_0_write1 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_10.peek_633();
   return value_bright_weights_normed_bright_weights_normed_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -2793,10 +2770,10 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd10_select(bright_weights
 inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd11_select(bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_1_rd11 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[1 + 2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
+  // bright_weights_normed_gauss_blur_1_rd11 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[1 + 2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
   auto value_bright_weights_normed_bright_weights_normed_update_0_write1 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_10.peek_1();
   return value_bright_weights_normed_bright_weights_normed_update_0_write1;
 #ifndef __VIVADO_SYNTH__
@@ -2809,11 +2786,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd11_select(bright_weights
 inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd12_select(bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_1_rd12 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[2 + 2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1928 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> (966 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_bright_weights_normed_bright_weights_normed_update_0_write0 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_10.peek_1928();
+  // bright_weights_normed_gauss_blur_1_rd12 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[2 + 2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1264 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> (634 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_bright_weights_normed_bright_weights_normed_update_0_write0 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_10.peek_1264();
   return value_bright_weights_normed_bright_weights_normed_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -2825,11 +2802,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd12_select(bright_weights
 inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd13_select(bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_1_rd13 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[2 + 2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 964 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_bright_weights_normed_bright_weights_normed_update_0_write0 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_10.peek_964();
+  // bright_weights_normed_gauss_blur_1_rd13 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[2 + 2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 632 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_bright_weights_normed_bright_weights_normed_update_0_write0 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_10.peek_632();
   return value_bright_weights_normed_bright_weights_normed_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -2841,9 +2818,9 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd13_select(bright_weights
 inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd14_select(bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_1_rd14 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[2 + 2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // bright_weights_normed_gauss_blur_1_rd14 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[2 + 2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_bright_weights_normed_bright_weights_normed_update_0_write0 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_10.peek_0();
   return value_bright_weights_normed_bright_weights_normed_update_0_write0;
@@ -2857,11 +2834,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd14_select(bright_weights
 inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd15_select(bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_1_rd15 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[3 + 2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1928 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> (966 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_bright_weights_normed_bright_weights_normed_update_0_write1 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_10.peek_1928();
+  // bright_weights_normed_gauss_blur_1_rd15 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[3 + 2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1264 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> (634 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_bright_weights_normed_bright_weights_normed_update_0_write1 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_10.peek_1264();
   return value_bright_weights_normed_bright_weights_normed_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -2873,11 +2850,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd15_select(bright_weights
 inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd16_select(bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_1_rd16 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[3 + 2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 964 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_bright_weights_normed_bright_weights_normed_update_0_write1 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_10.peek_964();
+  // bright_weights_normed_gauss_blur_1_rd16 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[3 + 2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 632 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_bright_weights_normed_bright_weights_normed_update_0_write1 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_10.peek_632();
   return value_bright_weights_normed_bright_weights_normed_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -2889,9 +2866,9 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd16_select(bright_weights
 inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd17_select(bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_1_rd17 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[3 + 2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // bright_weights_normed_gauss_blur_1_rd17 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[3 + 2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_bright_weights_normed_bright_weights_normed_update_0_write1 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_10.peek_0();
   return value_bright_weights_normed_bright_weights_normed_update_0_write1;
@@ -2905,10 +2882,10 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd17_select(bright_weights
 inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd2_select(bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_1_rd2 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
+  // bright_weights_normed_gauss_blur_1_rd2 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
   auto value_bright_weights_normed_bright_weights_normed_update_0_write0 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_10.peek_1();
   return value_bright_weights_normed_bright_weights_normed_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -2921,11 +2898,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd2_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd3_select(bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_1_rd3 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[1 + 2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1929 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_bright_weights_normed_bright_weights_normed_update_0_write1 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_10.peek_1929();
+  // bright_weights_normed_gauss_blur_1_rd3 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[1 + 2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1265 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_bright_weights_normed_bright_weights_normed_update_0_write1 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_10.peek_1265();
   return value_bright_weights_normed_bright_weights_normed_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -2937,11 +2914,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd3_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd4_select(bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_1_rd4 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[1 + 2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 965 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_bright_weights_normed_bright_weights_normed_update_0_write1 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_10.peek_965();
+  // bright_weights_normed_gauss_blur_1_rd4 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[1 + 2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 633 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_bright_weights_normed_bright_weights_normed_update_0_write1 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_10.peek_633();
   return value_bright_weights_normed_bright_weights_normed_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -2953,10 +2930,10 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd4_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd5_select(bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_1_rd5 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[1 + 2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
+  // bright_weights_normed_gauss_blur_1_rd5 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[1 + 2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
   auto value_bright_weights_normed_bright_weights_normed_update_0_write1 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_10.peek_1();
   return value_bright_weights_normed_bright_weights_normed_update_0_write1;
 #ifndef __VIVADO_SYNTH__
@@ -2969,11 +2946,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd5_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd6_select(bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_1_rd6 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[2 + 2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1928 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> (966 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_bright_weights_normed_bright_weights_normed_update_0_write0 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_10.peek_1928();
+  // bright_weights_normed_gauss_blur_1_rd6 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[2 + 2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1264 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> (634 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_bright_weights_normed_bright_weights_normed_update_0_write0 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_10.peek_1264();
   return value_bright_weights_normed_bright_weights_normed_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -2985,11 +2962,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd6_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd7_select(bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_1_rd7 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[2 + 2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 964 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_bright_weights_normed_bright_weights_normed_update_0_write0 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_10.peek_964();
+  // bright_weights_normed_gauss_blur_1_rd7 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[2 + 2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 632 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_bright_weights_normed_bright_weights_normed_update_0_write0 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_10.peek_632();
   return value_bright_weights_normed_bright_weights_normed_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -3001,9 +2978,9 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd7_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd8_select(bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_1_rd8 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[2 + 2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // bright_weights_normed_gauss_blur_1_rd8 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[2 + 2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_bright_weights_normed_bright_weights_normed_update_0_write0 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_10.peek_0();
   return value_bright_weights_normed_bright_weights_normed_update_0_write0;
@@ -3017,11 +2994,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd8_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd9_select(bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_1_rd9 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[1 + 2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1929 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_bright_weights_normed_bright_weights_normed_update_0_write1 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_10.peek_1929();
+  // bright_weights_normed_gauss_blur_1_rd9 read pattern: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> bright_weights_normed[1 + 2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1265 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_bright_weights_normed_bright_weights_normed_update_0_write1 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_10.peek_1265();
   return value_bright_weights_normed_bright_weights_normed_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -3033,11 +3010,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_1_rd9_select(bright_weights_
 inline hw_uint<16> fused_level_0_rd0_select(bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // fused_level_0_rd0 read pattern: { fused_level_0_update_0[d0, d1] -> bright_weights_normed[2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Read schedule : { fused_level_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 48] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { fused_level_0_update_0[d0, d1] -> 1929 : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  auto value_bright_weights_normed_bright_weights_normed_update_0_write0 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_10.peek_1929();
+  // fused_level_0_rd0 read pattern: { fused_level_0_update_0[d0, d1] -> bright_weights_normed[2d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Read schedule : { fused_level_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 48] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { fused_level_0_update_0[d0, d1] -> 1265 : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  auto value_bright_weights_normed_bright_weights_normed_update_0_write0 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write0_merged_banks_10.peek_1265();
   return value_bright_weights_normed_bright_weights_normed_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -3049,11 +3026,11 @@ inline hw_uint<16> fused_level_0_rd0_select(bright_weights_normed_cache& bright_
 inline hw_uint<16> fused_level_0_rd1_select(bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // fused_level_0_rd1 read pattern: { fused_level_0_update_0[d0, d1] -> bright_weights_normed[1 + 2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Read schedule : { fused_level_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 48] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { fused_level_0_update_0[d0, d1] -> 1929 : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  auto value_bright_weights_normed_bright_weights_normed_update_0_write1 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_10.peek_1929();
+  // fused_level_0_rd1 read pattern: { fused_level_0_update_0[d0, d1] -> bright_weights_normed[1 + 2d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Read schedule : { fused_level_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 48] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { fused_level_0_update_0[d0, d1] -> 1265 : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  auto value_bright_weights_normed_bright_weights_normed_update_0_write1 = bright_weights_normed.bright_weights_normed_bright_weights_normed_update_0_write1_merged_banks_10.peek_1265();
   return value_bright_weights_normed_bright_weights_normed_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -3172,7 +3149,7 @@ inline hw_uint<32> bright_weights_normed_fused_level_0_update_0_read_bundle_read
 #include "hw_classes.h"
 
 struct bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 1924], [0, 1924]}
+	// RAM Box: {[0, 1260], [0, 1260]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -3208,9 +3185,9 @@ inline void bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_
 inline hw_uint<16> bright_weights_normed_gauss_ds_1_rd0_select(bright_weights_normed_gauss_blur_1_cache& bright_weights_normed_gauss_blur_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_ds_1_rd0 read pattern: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> bright_weights_normed_gauss_blur_1[2d0, 2d1] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // Read schedule : { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // Write schedule: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
+  // bright_weights_normed_gauss_ds_1_rd0 read pattern: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> bright_weights_normed_gauss_blur_1[2d0, 2d1] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // Read schedule : { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // Write schedule: { bright_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 14] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
   // DD fold: {  }
   auto value_bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_update_0_write0 = bright_weights_normed_gauss_blur_1.bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_update_0_write0;
@@ -3247,7 +3224,7 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_1_bright_weights_normed_gaus
 #include "hw_classes.h"
 
 struct bright_weights_normed_gauss_blur_2_bright_weights_normed_gauss_blur_2_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 960], [0, 960]}
+	// RAM Box: {[0, 628], [0, 628]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -3280,9 +3257,9 @@ inline void bright_weights_normed_gauss_blur_2_bright_weights_normed_gauss_blur_
 inline hw_uint<16> bright_weights_normed_gauss_ds_2_rd0_select(bright_weights_normed_gauss_blur_2_cache& bright_weights_normed_gauss_blur_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_ds_2_rd0 read pattern: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> bright_weights_normed_gauss_blur_2[2d0, 2d1] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // Read schedule : { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // Write schedule: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 22] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
+  // bright_weights_normed_gauss_ds_2_rd0 read pattern: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> bright_weights_normed_gauss_blur_2[2d0, 2d1] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // Read schedule : { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // Write schedule: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 22] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
   // DD fold: {  }
   auto value_bright_weights_normed_gauss_blur_2_bright_weights_normed_gauss_blur_2_update_0_write0 = bright_weights_normed_gauss_blur_2.bright_weights_normed_gauss_blur_2_bright_weights_normed_gauss_blur_2_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_bright_weights_normed_gauss_blur_2_bright_weights_normed_gauss_blur_2_update_0_write0;
@@ -3316,7 +3293,7 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_2_bright_weights_normed_gaus
 #include "hw_classes.h"
 
 struct bright_weights_normed_gauss_blur_3_bright_weights_normed_gauss_blur_3_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 478], [0, 478]}
+	// RAM Box: {[0, 312], [0, 312]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -3349,9 +3326,9 @@ inline void bright_weights_normed_gauss_blur_3_bright_weights_normed_gauss_blur_
 inline hw_uint<16> bright_weights_normed_gauss_ds_3_rd0_select(bright_weights_normed_gauss_blur_3_cache& bright_weights_normed_gauss_blur_3, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_ds_3_rd0 read pattern: { bright_weights_normed_gauss_ds_3_update_0[d0, d1] -> bright_weights_normed_gauss_blur_3[2d0, 2d1] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
-  // Read schedule : { bright_weights_normed_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 38] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
-  // Write schedule: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 29] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
+  // bright_weights_normed_gauss_ds_3_rd0 read pattern: { bright_weights_normed_gauss_ds_3_update_0[d0, d1] -> bright_weights_normed_gauss_blur_3[2d0, 2d1] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
+  // Read schedule : { bright_weights_normed_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 38] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
+  // Write schedule: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 29] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
   // DD fold: {  }
   auto value_bright_weights_normed_gauss_blur_3_bright_weights_normed_gauss_blur_3_update_0_write0 = bright_weights_normed_gauss_blur_3.bright_weights_normed_gauss_blur_3_bright_weights_normed_gauss_blur_3_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_bright_weights_normed_gauss_blur_3_bright_weights_normed_gauss_blur_3_update_0_write0;
@@ -3385,17 +3362,17 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_3_bright_weights_normed_gaus
 #include "hw_classes.h"
 
 struct bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10_cache {
-	// RAM Box: {[0, 962], [0, 962]}
-	// Capacity: 1929
+	// RAM Box: {[0, 630], [0, 630]}
+	// Capacity: 1265
 	// # of read delays: 9
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	hw_uint<16> f4;
-	fifo<hw_uint<16>, 960> f5;
+	fifo<hw_uint<16>, 628> f5;
 	hw_uint<16> f6;
 	hw_uint<16> f8;
 	hw_uint<16> f10;
-	fifo<hw_uint<16>, 960> f11;
+	fifo<hw_uint<16>, 628> f11;
 	hw_uint<16> f12;
 	hw_uint<16> f14;
 	hw_uint<16> f16;
@@ -3413,39 +3390,39 @@ struct bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_
 		return f4;
 	}
 
-	inline hw_uint<16> peek_962() {
+	inline hw_uint<16> peek_630() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f5.back();
 	}
 
-	inline hw_uint<16> peek_963() {
+	inline hw_uint<16> peek_631() {
 		return f6;
 	}
 
-	inline hw_uint<16> peek_964() {
+	inline hw_uint<16> peek_632() {
 		return f8;
 	}
 
-	inline hw_uint<16> peek_965() {
+	inline hw_uint<16> peek_633() {
 		return f10;
 	}
 
-	inline hw_uint<16> peek_1925() {
+	inline hw_uint<16> peek_1261() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f11.back();
 	}
 
-	inline hw_uint<16> peek_1926() {
+	inline hw_uint<16> peek_1262() {
 		return f12;
 	}
 
-	inline hw_uint<16> peek_1927() {
+	inline hw_uint<16> peek_1263() {
 		return f14;
 	}
 
-	inline hw_uint<16> peek_1928() {
+	inline hw_uint<16> peek_1264() {
 		return f16;
 	}
 
@@ -3462,11 +3439,11 @@ struct bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_
     f14 = f12;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 960
+    // cap: 1 reading from capacity: 628
     f12 = f11.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 960 reading from capacity: 1
+    // cap: 628 reading from capacity: 1
     f11.push(f10);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -3478,11 +3455,11 @@ struct bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_
     f8 = f6;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 960
+    // cap: 1 reading from capacity: 628
     f6 = f5.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 960 reading from capacity: 1
+    // cap: 628 reading from capacity: 1
     f5.push(f4);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -3511,11 +3488,11 @@ inline void bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_up
 inline hw_uint<16> bright_weights_normed_gauss_blur_2_rd0_select(bright_weights_normed_gauss_ds_1_cache& bright_weights_normed_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_2_rd0 read pattern: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> bright_weights_normed_gauss_ds_1[d0, d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 22] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> 1928 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  auto value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0 = bright_weights_normed_gauss_ds_1.bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_1928();
+  // bright_weights_normed_gauss_blur_2_rd0 read pattern: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> bright_weights_normed_gauss_ds_1[d0, d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 22] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> 1264 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  auto value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0 = bright_weights_normed_gauss_ds_1.bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_1264();
   return value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -3527,11 +3504,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_2_rd0_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_2_rd1_select(bright_weights_normed_gauss_ds_1_cache& bright_weights_normed_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_2_rd1 read pattern: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> bright_weights_normed_gauss_ds_1[d0, 1 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 22] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> 965 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  auto value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0 = bright_weights_normed_gauss_ds_1.bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_965();
+  // bright_weights_normed_gauss_blur_2_rd1 read pattern: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> bright_weights_normed_gauss_ds_1[d0, 1 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 22] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> 633 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  auto value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0 = bright_weights_normed_gauss_ds_1.bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_633();
   return value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -3543,10 +3520,10 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_2_rd1_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_2_rd2_select(bright_weights_normed_gauss_ds_1_cache& bright_weights_normed_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_2_rd2 read pattern: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> bright_weights_normed_gauss_ds_1[d0, 2 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 22] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> 2 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
+  // bright_weights_normed_gauss_blur_2_rd2 read pattern: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> bright_weights_normed_gauss_ds_1[d0, 2 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 22] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> 2 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
   auto value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0 = bright_weights_normed_gauss_ds_1.bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_2();
   return value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -3559,11 +3536,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_2_rd2_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_2_rd3_select(bright_weights_normed_gauss_ds_1_cache& bright_weights_normed_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_2_rd3 read pattern: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> bright_weights_normed_gauss_ds_1[1 + d0, d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 22] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> 1927 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  auto value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0 = bright_weights_normed_gauss_ds_1.bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_1927();
+  // bright_weights_normed_gauss_blur_2_rd3 read pattern: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> bright_weights_normed_gauss_ds_1[1 + d0, d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 22] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> 1263 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  auto value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0 = bright_weights_normed_gauss_ds_1.bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_1263();
   return value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -3575,11 +3552,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_2_rd3_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_2_rd4_select(bright_weights_normed_gauss_ds_1_cache& bright_weights_normed_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_2_rd4 read pattern: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> bright_weights_normed_gauss_ds_1[1 + d0, 1 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 22] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> 964 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  auto value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0 = bright_weights_normed_gauss_ds_1.bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_964();
+  // bright_weights_normed_gauss_blur_2_rd4 read pattern: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> bright_weights_normed_gauss_ds_1[1 + d0, 1 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 22] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> 632 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  auto value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0 = bright_weights_normed_gauss_ds_1.bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_632();
   return value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -3591,10 +3568,10 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_2_rd4_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_2_rd5_select(bright_weights_normed_gauss_ds_1_cache& bright_weights_normed_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_2_rd5 read pattern: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> bright_weights_normed_gauss_ds_1[1 + d0, 2 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 22] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> 1 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
+  // bright_weights_normed_gauss_blur_2_rd5 read pattern: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> bright_weights_normed_gauss_ds_1[1 + d0, 2 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 22] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> 1 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
   auto value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0 = bright_weights_normed_gauss_ds_1.bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_1();
   return value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -3607,11 +3584,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_2_rd5_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_2_rd6_select(bright_weights_normed_gauss_ds_1_cache& bright_weights_normed_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_2_rd6 read pattern: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> bright_weights_normed_gauss_ds_1[2 + d0, d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 22] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> 1926 : 0 <= d0 <= 959 and 0 <= d1 <= 960; bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> (966 + d0) : d0 = 960 and 0 <= d1 <= 960 }
-  auto value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0 = bright_weights_normed_gauss_ds_1.bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_1926();
+  // bright_weights_normed_gauss_blur_2_rd6 read pattern: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> bright_weights_normed_gauss_ds_1[2 + d0, d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 22] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> 1262 : 0 <= d0 <= 627 and 0 <= d1 <= 628; bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> (634 + d0) : d0 = 628 and 0 <= d1 <= 628 }
+  auto value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0 = bright_weights_normed_gauss_ds_1.bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_1262();
   return value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -3623,11 +3600,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_2_rd6_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_2_rd7_select(bright_weights_normed_gauss_ds_1_cache& bright_weights_normed_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_2_rd7 read pattern: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> bright_weights_normed_gauss_ds_1[2 + d0, 1 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 22] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> 963 : 0 <= d0 <= 959 and 0 <= d1 <= 960; bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> (3 + d0) : d0 = 960 and 0 <= d1 <= 960 }
-  auto value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0 = bright_weights_normed_gauss_ds_1.bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_963();
+  // bright_weights_normed_gauss_blur_2_rd7 read pattern: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> bright_weights_normed_gauss_ds_1[2 + d0, 1 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 22] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> 631 : 0 <= d0 <= 627 and 0 <= d1 <= 628; bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> (3 + d0) : d0 = 628 and 0 <= d1 <= 628 }
+  auto value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0 = bright_weights_normed_gauss_ds_1.bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_631();
   return value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -3639,9 +3616,9 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_2_rd7_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_2_rd8_select(bright_weights_normed_gauss_ds_1_cache& bright_weights_normed_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_2_rd8 read pattern: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> bright_weights_normed_gauss_ds_1[2 + d0, 2 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 22] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
+  // bright_weights_normed_gauss_blur_2_rd8 read pattern: { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> bright_weights_normed_gauss_ds_1[2 + d0, 2 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { bright_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 22] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
   // DD fold: {  }
   auto value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0 = bright_weights_normed_gauss_ds_1.bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_0();
   return value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0;
@@ -3655,11 +3632,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_2_rd8_select(bright_weights_
 inline hw_uint<16> fused_level_1_rd0_select(bright_weights_normed_gauss_ds_1_cache& bright_weights_normed_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // fused_level_1_rd0 read pattern: { fused_level_1_update_0[d0, d1] -> bright_weights_normed_gauss_ds_1[d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // Read schedule : { fused_level_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 47] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // Write schedule: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { fused_level_1_update_0[d0, d1] -> 1928 : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  auto value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0 = bright_weights_normed_gauss_ds_1.bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_1928();
+  // fused_level_1_rd0 read pattern: { fused_level_1_update_0[d0, d1] -> bright_weights_normed_gauss_ds_1[d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // Read schedule : { fused_level_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 47] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // Write schedule: { bright_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 21] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { fused_level_1_update_0[d0, d1] -> 1264 : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  auto value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0 = bright_weights_normed_gauss_ds_1.bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_1264();
   return value_bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -3734,18 +3711,18 @@ inline hw_uint<16> bright_weights_normed_gauss_ds_1_fused_level_1_update_0_read_
 
 #include "hw_classes.h"
 
-struct bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9_cache {
-	// RAM Box: {[0, 480], [0, 480]}
-	// Capacity: 965
+struct bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10_cache {
+	// RAM Box: {[0, 314], [0, 314]}
+	// Capacity: 633
 	// # of read delays: 9
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	hw_uint<16> f4;
-	fifo<hw_uint<16>, 478> f5;
+	fifo<hw_uint<16>, 312> f5;
 	hw_uint<16> f6;
 	hw_uint<16> f8;
 	hw_uint<16> f10;
-	fifo<hw_uint<16>, 478> f11;
+	fifo<hw_uint<16>, 312> f11;
 	hw_uint<16> f12;
 	hw_uint<16> f14;
 	hw_uint<16> f16;
@@ -3763,39 +3740,39 @@ struct bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_
 		return f4;
 	}
 
-	inline hw_uint<16> peek_480() {
+	inline hw_uint<16> peek_314() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f5.back();
 	}
 
-	inline hw_uint<16> peek_481() {
+	inline hw_uint<16> peek_315() {
 		return f6;
 	}
 
-	inline hw_uint<16> peek_482() {
+	inline hw_uint<16> peek_316() {
 		return f8;
 	}
 
-	inline hw_uint<16> peek_483() {
+	inline hw_uint<16> peek_317() {
 		return f10;
 	}
 
-	inline hw_uint<16> peek_961() {
+	inline hw_uint<16> peek_629() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f11.back();
 	}
 
-	inline hw_uint<16> peek_962() {
+	inline hw_uint<16> peek_630() {
 		return f12;
 	}
 
-	inline hw_uint<16> peek_963() {
+	inline hw_uint<16> peek_631() {
 		return f14;
 	}
 
-	inline hw_uint<16> peek_964() {
+	inline hw_uint<16> peek_632() {
 		return f16;
 	}
 
@@ -3812,11 +3789,11 @@ struct bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_
     f14 = f12;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 478
+    // cap: 1 reading from capacity: 312
     f12 = f11.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 478 reading from capacity: 1
+    // cap: 312 reading from capacity: 1
     f11.push(f10);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -3828,11 +3805,11 @@ struct bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_
     f8 = f6;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 478
+    // cap: 1 reading from capacity: 312
     f6 = f5.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 478 reading from capacity: 1
+    // cap: 312 reading from capacity: 1
     f5.push(f4);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -3848,47 +3825,24 @@ struct bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_
 
 };
 
-struct bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_to_fused_level_2_rd0_cache {
-	// RAM Box: {[0, 480], [0, 480]}
-	// Capacity: 965
-	// # of read delays: 484
-	fifo<hw_uint<16>, 965> f;
-	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(964 - offset);
-  }
-
-
-
-	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
-
-};
-
 struct bright_weights_normed_gauss_ds_2_cache {
-  bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9_cache bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9;
-  bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_to_fused_level_2_rd0_cache bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_to_fused_level_2_rd0;
+  bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10_cache bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10;
 };
 
 
 
 inline void bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_write(hw_uint<16>& bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0, bright_weights_normed_gauss_ds_2_cache& bright_weights_normed_gauss_ds_2, int d0, int d1) {
-  bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9.push(bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0);
-  bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_to_fused_level_2_rd0.push(bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0);
+  bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.push(bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0);
 }
 
 inline hw_uint<16> bright_weights_normed_gauss_blur_3_rd0_select(bright_weights_normed_gauss_ds_2_cache& bright_weights_normed_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_3_rd0 read pattern: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> bright_weights_normed_gauss_ds_2[d0, d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 29] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> 964 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0 = bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9.peek_964();
+  // bright_weights_normed_gauss_blur_3_rd0 read pattern: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> bright_weights_normed_gauss_ds_2[d0, d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 29] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> 632 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0 = bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.peek_632();
   return value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -3900,11 +3854,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_3_rd0_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_3_rd1_select(bright_weights_normed_gauss_ds_2_cache& bright_weights_normed_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_3_rd1 read pattern: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> bright_weights_normed_gauss_ds_2[d0, 1 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 29] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> 483 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0 = bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9.peek_483();
+  // bright_weights_normed_gauss_blur_3_rd1 read pattern: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> bright_weights_normed_gauss_ds_2[d0, 1 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 29] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> 317 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0 = bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.peek_317();
   return value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -3916,11 +3870,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_3_rd1_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_3_rd2_select(bright_weights_normed_gauss_ds_2_cache& bright_weights_normed_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_3_rd2 read pattern: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> bright_weights_normed_gauss_ds_2[d0, 2 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 29] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> 2 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0 = bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9.peek_2();
+  // bright_weights_normed_gauss_blur_3_rd2 read pattern: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> bright_weights_normed_gauss_ds_2[d0, 2 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 29] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> 2 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0 = bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.peek_2();
   return value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -3932,11 +3886,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_3_rd2_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_3_rd3_select(bright_weights_normed_gauss_ds_2_cache& bright_weights_normed_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_3_rd3 read pattern: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> bright_weights_normed_gauss_ds_2[1 + d0, d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 29] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> 963 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0 = bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9.peek_963();
+  // bright_weights_normed_gauss_blur_3_rd3 read pattern: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> bright_weights_normed_gauss_ds_2[1 + d0, d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 29] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> 631 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0 = bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.peek_631();
   return value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -3948,11 +3902,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_3_rd3_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_3_rd4_select(bright_weights_normed_gauss_ds_2_cache& bright_weights_normed_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_3_rd4 read pattern: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> bright_weights_normed_gauss_ds_2[1 + d0, 1 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 29] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> 482 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0 = bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9.peek_482();
+  // bright_weights_normed_gauss_blur_3_rd4 read pattern: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> bright_weights_normed_gauss_ds_2[1 + d0, 1 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 29] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> 316 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0 = bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.peek_316();
   return value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -3964,11 +3918,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_3_rd4_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_3_rd5_select(bright_weights_normed_gauss_ds_2_cache& bright_weights_normed_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_3_rd5 read pattern: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> bright_weights_normed_gauss_ds_2[1 + d0, 2 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 29] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> 1 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0 = bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9.peek_1();
+  // bright_weights_normed_gauss_blur_3_rd5 read pattern: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> bright_weights_normed_gauss_ds_2[1 + d0, 2 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 29] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> 1 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0 = bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.peek_1();
   return value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -3980,11 +3934,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_3_rd5_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_3_rd6_select(bright_weights_normed_gauss_ds_2_cache& bright_weights_normed_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_3_rd6 read pattern: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> bright_weights_normed_gauss_ds_2[2 + d0, d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 29] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> 962 : 0 <= d0 <= 477 and 0 <= d1 <= 478; bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> (484 + d0) : d0 = 478 and 0 <= d1 <= 478 }
-  auto value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0 = bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9.peek_962();
+  // bright_weights_normed_gauss_blur_3_rd6 read pattern: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> bright_weights_normed_gauss_ds_2[2 + d0, d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 29] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> 630 : 0 <= d0 <= 311 and 0 <= d1 <= 312; bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> (318 + d0) : d0 = 312 and 0 <= d1 <= 312 }
+  auto value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0 = bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.peek_630();
   return value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -3996,11 +3950,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_3_rd6_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_3_rd7_select(bright_weights_normed_gauss_ds_2_cache& bright_weights_normed_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_3_rd7 read pattern: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> bright_weights_normed_gauss_ds_2[2 + d0, 1 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 29] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> 481 : 0 <= d0 <= 477 and 0 <= d1 <= 478; bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> (3 + d0) : d0 = 478 and 0 <= d1 <= 478 }
-  auto value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0 = bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9.peek_481();
+  // bright_weights_normed_gauss_blur_3_rd7 read pattern: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> bright_weights_normed_gauss_ds_2[2 + d0, 1 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 29] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> 315 : 0 <= d0 <= 311 and 0 <= d1 <= 312; bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> (3 + d0) : d0 = 312 and 0 <= d1 <= 312 }
+  auto value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0 = bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.peek_315();
   return value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -4012,11 +3966,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_3_rd7_select(bright_weights_
 inline hw_uint<16> bright_weights_normed_gauss_blur_3_rd8_select(bright_weights_normed_gauss_ds_2_cache& bright_weights_normed_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_gauss_blur_3_rd8 read pattern: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> bright_weights_normed_gauss_ds_2[2 + d0, 2 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 29] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
+  // bright_weights_normed_gauss_blur_3_rd8 read pattern: { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> bright_weights_normed_gauss_ds_2[2 + d0, 2 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { bright_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 29] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
   // DD fold: {  }
-  auto value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0 = bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9.peek_0();
+  auto value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0 = bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.peek_0();
   return value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -4028,11 +3982,11 @@ inline hw_uint<16> bright_weights_normed_gauss_blur_3_rd8_select(bright_weights_
 inline hw_uint<16> fused_level_2_rd0_select(bright_weights_normed_gauss_ds_2_cache& bright_weights_normed_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // fused_level_2_rd0 read pattern: { fused_level_2_update_0[d0, d1] -> bright_weights_normed_gauss_ds_2[d0, d1] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // Read schedule : { fused_level_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 46] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // Write schedule: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { fused_level_2_update_0[d0, d1] -> 964 : 0 <= d0 <= 478 and 0 <= d1 <= 478; fused_level_2_update_0[d0, d1] -> 963 : d0 = 479 and 0 <= d1 <= 478; fused_level_2_update_0[d0, d1] -> (961 - d0) : d1 = 479 and 0 <= d0 <= 479 }
-  auto value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0 = bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_to_fused_level_2_rd0.peek(/* one reader or all rams */ (-479 + d0 == 0 && 478 - d1 >= 0) ? (963) : (478 - d1 >= 0 && 478 - d0 >= 0) ? (964) : (-479 + d1 == 0) ? ((961 - d0)) : 0);
+  // fused_level_2_rd0 read pattern: { fused_level_2_update_0[d0, d1] -> bright_weights_normed_gauss_ds_2[d0, d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { fused_level_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 46] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { bright_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 28] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { fused_level_2_update_0[d0, d1] -> 632 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0 = bright_weights_normed_gauss_ds_2.bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.peek_632();
   return value_bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -4108,7 +4062,7 @@ inline hw_uint<16> bright_weights_normed_gauss_ds_2_fused_level_2_update_0_read_
 #include "hw_classes.h"
 
 struct bright_weights_normed_gauss_ds_3_bright_weights_normed_gauss_ds_3_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 239], [0, 239]}
+	// RAM Box: {[0, 156], [0, 156]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -4141,9 +4095,9 @@ inline void bright_weights_normed_gauss_ds_3_bright_weights_normed_gauss_ds_3_up
 inline hw_uint<16> fused_level_3_rd0_select(bright_weights_normed_gauss_ds_3_cache& bright_weights_normed_gauss_ds_3, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // fused_level_3_rd0 read pattern: { fused_level_3_update_0[d0, d1] -> bright_weights_normed_gauss_ds_3[d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
-  // Read schedule : { fused_level_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 45] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
-  // Write schedule: { bright_weights_normed_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 38] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
+  // fused_level_3_rd0 read pattern: { fused_level_3_update_0[d0, d1] -> bright_weights_normed_gauss_ds_3[d0, d1] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
+  // Read schedule : { fused_level_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 45] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
+  // Write schedule: { bright_weights_normed_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 38] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
   // DD fold: {  }
   auto value_bright_weights_normed_gauss_ds_3_bright_weights_normed_gauss_ds_3_update_0_write0 = bright_weights_normed_gauss_ds_3.bright_weights_normed_gauss_ds_3_bright_weights_normed_gauss_ds_3_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_bright_weights_normed_gauss_ds_3_bright_weights_normed_gauss_ds_3_update_0_write0;
@@ -4177,15 +4131,15 @@ inline hw_uint<16> bright_weights_normed_gauss_ds_3_fused_level_3_update_0_read_
 #include "hw_classes.h"
 
 struct dark_dark_update_0_write0_merged_banks_11_cache {
-	// RAM Box: {[0, 1926], [0, 1926]}
-	// Capacity: 1930
+	// RAM Box: {[0, 1262], [0, 1262]}
+	// Capacity: 1266
 	// # of read delays: 6
 	hw_uint<16> f0;
 	hw_uint<16> f2;
-	fifo<hw_uint<16>, 962> f3;
+	fifo<hw_uint<16>, 630> f3;
 	hw_uint<16> f4;
 	hw_uint<16> f6;
-	fifo<hw_uint<16>, 962> f7;
+	fifo<hw_uint<16>, 630> f7;
 	hw_uint<16> f8;
 	hw_uint<16> f10;
 
@@ -4198,31 +4152,31 @@ struct dark_dark_update_0_write0_merged_banks_11_cache {
 		return f2;
 	}
 
-	inline hw_uint<16> peek_963() {
+	inline hw_uint<16> peek_631() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<16> peek_964() {
+	inline hw_uint<16> peek_632() {
 		return f4;
 	}
 
-	inline hw_uint<16> peek_965() {
+	inline hw_uint<16> peek_633() {
 		return f6;
 	}
 
-	inline hw_uint<16> peek_1927() {
+	inline hw_uint<16> peek_1263() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<16> peek_1928() {
+	inline hw_uint<16> peek_1264() {
 		return f8;
 	}
 
-	inline hw_uint<16> peek_1929() {
+	inline hw_uint<16> peek_1265() {
 		return f10;
 	}
 
@@ -4235,11 +4189,11 @@ struct dark_dark_update_0_write0_merged_banks_11_cache {
     f10 = f8;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 962
+    // cap: 1 reading from capacity: 630
     f8 = f7.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 962 reading from capacity: 1
+    // cap: 630 reading from capacity: 1
     f7.push(f6);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -4247,11 +4201,11 @@ struct dark_dark_update_0_write0_merged_banks_11_cache {
     f6 = f4;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 962
+    // cap: 1 reading from capacity: 630
     f4 = f3.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 962 reading from capacity: 1
+    // cap: 630 reading from capacity: 1
     f3.push(f2);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -4264,15 +4218,15 @@ struct dark_dark_update_0_write0_merged_banks_11_cache {
 };
 
 struct dark_dark_update_0_write1_merged_banks_11_cache {
-	// RAM Box: {[1, 1927], [0, 1926]}
-	// Capacity: 1930
+	// RAM Box: {[1, 1263], [0, 1262]}
+	// Capacity: 1266
 	// # of read delays: 6
 	hw_uint<16> f0;
 	hw_uint<16> f2;
-	fifo<hw_uint<16>, 962> f3;
+	fifo<hw_uint<16>, 630> f3;
 	hw_uint<16> f4;
 	hw_uint<16> f6;
-	fifo<hw_uint<16>, 962> f7;
+	fifo<hw_uint<16>, 630> f7;
 	hw_uint<16> f8;
 	hw_uint<16> f10;
 
@@ -4285,31 +4239,31 @@ struct dark_dark_update_0_write1_merged_banks_11_cache {
 		return f2;
 	}
 
-	inline hw_uint<16> peek_963() {
+	inline hw_uint<16> peek_631() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<16> peek_964() {
+	inline hw_uint<16> peek_632() {
 		return f4;
 	}
 
-	inline hw_uint<16> peek_965() {
+	inline hw_uint<16> peek_633() {
 		return f6;
 	}
 
-	inline hw_uint<16> peek_1927() {
+	inline hw_uint<16> peek_1263() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<16> peek_1928() {
+	inline hw_uint<16> peek_1264() {
 		return f8;
 	}
 
-	inline hw_uint<16> peek_1929() {
+	inline hw_uint<16> peek_1265() {
 		return f10;
 	}
 
@@ -4322,11 +4276,11 @@ struct dark_dark_update_0_write1_merged_banks_11_cache {
     f10 = f8;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 962
+    // cap: 1 reading from capacity: 630
     f8 = f7.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 962 reading from capacity: 1
+    // cap: 630 reading from capacity: 1
     f7.push(f6);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -4334,11 +4288,11 @@ struct dark_dark_update_0_write1_merged_banks_11_cache {
     f6 = f4;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 962
+    // cap: 1 reading from capacity: 630
     f4 = f3.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 962 reading from capacity: 1
+    // cap: 630 reading from capacity: 1
     f3.push(f2);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -4368,11 +4322,11 @@ inline void dark_dark_update_0_write1_write(hw_uint<16>& dark_dark_update_0_writ
 inline hw_uint<16> dark_gauss_blur_1_rd0_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_1_rd0 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 1929 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_dark_dark_update_0_write0 = dark.dark_dark_update_0_write0_merged_banks_11.peek_1929();
+  // dark_gauss_blur_1_rd0 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 1265 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_dark_dark_update_0_write0 = dark.dark_dark_update_0_write0_merged_banks_11.peek_1265();
   return value_dark_dark_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -4384,11 +4338,11 @@ inline hw_uint<16> dark_gauss_blur_1_rd0_select(dark_cache& dark, int d0, int d1
 inline hw_uint<16> dark_gauss_blur_1_rd1_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_1_rd1 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 965 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_dark_dark_update_0_write0 = dark.dark_dark_update_0_write0_merged_banks_11.peek_965();
+  // dark_gauss_blur_1_rd1 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 633 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_dark_dark_update_0_write0 = dark.dark_dark_update_0_write0_merged_banks_11.peek_633();
   return value_dark_dark_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -4400,11 +4354,11 @@ inline hw_uint<16> dark_gauss_blur_1_rd1_select(dark_cache& dark, int d0, int d1
 inline hw_uint<16> dark_gauss_blur_1_rd10_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_1_rd10 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[1 + 2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 965 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_dark_dark_update_0_write1 = dark.dark_dark_update_0_write1_merged_banks_11.peek_965();
+  // dark_gauss_blur_1_rd10 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[1 + 2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 633 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_dark_dark_update_0_write1 = dark.dark_dark_update_0_write1_merged_banks_11.peek_633();
   return value_dark_dark_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -4416,10 +4370,10 @@ inline hw_uint<16> dark_gauss_blur_1_rd10_select(dark_cache& dark, int d0, int d
 inline hw_uint<16> dark_gauss_blur_1_rd11_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_1_rd11 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[1 + 2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
+  // dark_gauss_blur_1_rd11 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[1 + 2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
   auto value_dark_dark_update_0_write1 = dark.dark_dark_update_0_write1_merged_banks_11.peek_1();
   return value_dark_dark_update_0_write1;
 #ifndef __VIVADO_SYNTH__
@@ -4432,11 +4386,11 @@ inline hw_uint<16> dark_gauss_blur_1_rd11_select(dark_cache& dark, int d0, int d
 inline hw_uint<16> dark_gauss_blur_1_rd12_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_1_rd12 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[2 + 2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 1928 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; dark_gauss_blur_1_update_0[d0, d1] -> (966 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_dark_dark_update_0_write0 = dark.dark_dark_update_0_write0_merged_banks_11.peek_1928();
+  // dark_gauss_blur_1_rd12 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[2 + 2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 1264 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; dark_gauss_blur_1_update_0[d0, d1] -> (634 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_dark_dark_update_0_write0 = dark.dark_dark_update_0_write0_merged_banks_11.peek_1264();
   return value_dark_dark_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -4448,11 +4402,11 @@ inline hw_uint<16> dark_gauss_blur_1_rd12_select(dark_cache& dark, int d0, int d
 inline hw_uint<16> dark_gauss_blur_1_rd13_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_1_rd13 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[2 + 2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 964 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; dark_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_dark_dark_update_0_write0 = dark.dark_dark_update_0_write0_merged_banks_11.peek_964();
+  // dark_gauss_blur_1_rd13 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[2 + 2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 632 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; dark_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_dark_dark_update_0_write0 = dark.dark_dark_update_0_write0_merged_banks_11.peek_632();
   return value_dark_dark_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -4464,9 +4418,9 @@ inline hw_uint<16> dark_gauss_blur_1_rd13_select(dark_cache& dark, int d0, int d
 inline hw_uint<16> dark_gauss_blur_1_rd14_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_1_rd14 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[2 + 2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // dark_gauss_blur_1_rd14 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[2 + 2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_dark_dark_update_0_write0 = dark.dark_dark_update_0_write0_merged_banks_11.peek_0();
   return value_dark_dark_update_0_write0;
@@ -4480,11 +4434,11 @@ inline hw_uint<16> dark_gauss_blur_1_rd14_select(dark_cache& dark, int d0, int d
 inline hw_uint<16> dark_gauss_blur_1_rd15_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_1_rd15 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[3 + 2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 1928 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; dark_gauss_blur_1_update_0[d0, d1] -> (966 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_dark_dark_update_0_write1 = dark.dark_dark_update_0_write1_merged_banks_11.peek_1928();
+  // dark_gauss_blur_1_rd15 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[3 + 2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 1264 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; dark_gauss_blur_1_update_0[d0, d1] -> (634 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_dark_dark_update_0_write1 = dark.dark_dark_update_0_write1_merged_banks_11.peek_1264();
   return value_dark_dark_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -4496,11 +4450,11 @@ inline hw_uint<16> dark_gauss_blur_1_rd15_select(dark_cache& dark, int d0, int d
 inline hw_uint<16> dark_gauss_blur_1_rd16_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_1_rd16 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[3 + 2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 964 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; dark_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_dark_dark_update_0_write1 = dark.dark_dark_update_0_write1_merged_banks_11.peek_964();
+  // dark_gauss_blur_1_rd16 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[3 + 2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 632 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; dark_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_dark_dark_update_0_write1 = dark.dark_dark_update_0_write1_merged_banks_11.peek_632();
   return value_dark_dark_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -4512,9 +4466,9 @@ inline hw_uint<16> dark_gauss_blur_1_rd16_select(dark_cache& dark, int d0, int d
 inline hw_uint<16> dark_gauss_blur_1_rd17_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_1_rd17 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[3 + 2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // dark_gauss_blur_1_rd17 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[3 + 2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_dark_dark_update_0_write1 = dark.dark_dark_update_0_write1_merged_banks_11.peek_0();
   return value_dark_dark_update_0_write1;
@@ -4528,10 +4482,10 @@ inline hw_uint<16> dark_gauss_blur_1_rd17_select(dark_cache& dark, int d0, int d
 inline hw_uint<16> dark_gauss_blur_1_rd2_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_1_rd2 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
+  // dark_gauss_blur_1_rd2 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
   auto value_dark_dark_update_0_write0 = dark.dark_dark_update_0_write0_merged_banks_11.peek_1();
   return value_dark_dark_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -4544,11 +4498,11 @@ inline hw_uint<16> dark_gauss_blur_1_rd2_select(dark_cache& dark, int d0, int d1
 inline hw_uint<16> dark_gauss_blur_1_rd3_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_1_rd3 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[1 + 2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 1929 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_dark_dark_update_0_write1 = dark.dark_dark_update_0_write1_merged_banks_11.peek_1929();
+  // dark_gauss_blur_1_rd3 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[1 + 2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 1265 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_dark_dark_update_0_write1 = dark.dark_dark_update_0_write1_merged_banks_11.peek_1265();
   return value_dark_dark_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -4560,11 +4514,11 @@ inline hw_uint<16> dark_gauss_blur_1_rd3_select(dark_cache& dark, int d0, int d1
 inline hw_uint<16> dark_gauss_blur_1_rd4_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_1_rd4 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[1 + 2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 965 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_dark_dark_update_0_write1 = dark.dark_dark_update_0_write1_merged_banks_11.peek_965();
+  // dark_gauss_blur_1_rd4 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[1 + 2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 633 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_dark_dark_update_0_write1 = dark.dark_dark_update_0_write1_merged_banks_11.peek_633();
   return value_dark_dark_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -4576,10 +4530,10 @@ inline hw_uint<16> dark_gauss_blur_1_rd4_select(dark_cache& dark, int d0, int d1
 inline hw_uint<16> dark_gauss_blur_1_rd5_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_1_rd5 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[1 + 2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
+  // dark_gauss_blur_1_rd5 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[1 + 2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
   auto value_dark_dark_update_0_write1 = dark.dark_dark_update_0_write1_merged_banks_11.peek_1();
   return value_dark_dark_update_0_write1;
 #ifndef __VIVADO_SYNTH__
@@ -4592,11 +4546,11 @@ inline hw_uint<16> dark_gauss_blur_1_rd5_select(dark_cache& dark, int d0, int d1
 inline hw_uint<16> dark_gauss_blur_1_rd6_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_1_rd6 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[2 + 2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 1928 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; dark_gauss_blur_1_update_0[d0, d1] -> (966 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_dark_dark_update_0_write0 = dark.dark_dark_update_0_write0_merged_banks_11.peek_1928();
+  // dark_gauss_blur_1_rd6 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[2 + 2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 1264 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; dark_gauss_blur_1_update_0[d0, d1] -> (634 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_dark_dark_update_0_write0 = dark.dark_dark_update_0_write0_merged_banks_11.peek_1264();
   return value_dark_dark_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -4608,11 +4562,11 @@ inline hw_uint<16> dark_gauss_blur_1_rd6_select(dark_cache& dark, int d0, int d1
 inline hw_uint<16> dark_gauss_blur_1_rd7_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_1_rd7 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[2 + 2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 964 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; dark_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_dark_dark_update_0_write0 = dark.dark_dark_update_0_write0_merged_banks_11.peek_964();
+  // dark_gauss_blur_1_rd7 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[2 + 2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 632 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; dark_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_dark_dark_update_0_write0 = dark.dark_dark_update_0_write0_merged_banks_11.peek_632();
   return value_dark_dark_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -4624,9 +4578,9 @@ inline hw_uint<16> dark_gauss_blur_1_rd7_select(dark_cache& dark, int d0, int d1
 inline hw_uint<16> dark_gauss_blur_1_rd8_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_1_rd8 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[2 + 2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // dark_gauss_blur_1_rd8 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[2 + 2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_dark_dark_update_0_write0 = dark.dark_dark_update_0_write0_merged_banks_11.peek_0();
   return value_dark_dark_update_0_write0;
@@ -4640,11 +4594,11 @@ inline hw_uint<16> dark_gauss_blur_1_rd8_select(dark_cache& dark, int d0, int d1
 inline hw_uint<16> dark_gauss_blur_1_rd9_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_1_rd9 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[1 + 2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 1929 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_dark_dark_update_0_write1 = dark.dark_dark_update_0_write1_merged_banks_11.peek_1929();
+  // dark_gauss_blur_1_rd9 read pattern: { dark_gauss_blur_1_update_0[d0, d1] -> dark[1 + 2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_gauss_blur_1_update_0[d0, d1] -> 1265 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_dark_dark_update_0_write1 = dark.dark_dark_update_0_write1_merged_banks_11.peek_1265();
   return value_dark_dark_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -4656,11 +4610,11 @@ inline hw_uint<16> dark_gauss_blur_1_rd9_select(dark_cache& dark, int d0, int d1
 inline hw_uint<16> dark_laplace_diff_0_rd0_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_laplace_diff_0_rd0 read pattern: { dark_laplace_diff_0_update_0[d0, d1] -> dark[2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Read schedule : { dark_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 37] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_laplace_diff_0_update_0[d0, d1] -> 1929 : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  auto value_dark_dark_update_0_write0 = dark.dark_dark_update_0_write0_merged_banks_11.peek_1929();
+  // dark_laplace_diff_0_rd0 read pattern: { dark_laplace_diff_0_update_0[d0, d1] -> dark[2d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Read schedule : { dark_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 37] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_laplace_diff_0_update_0[d0, d1] -> 1265 : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  auto value_dark_dark_update_0_write0 = dark.dark_dark_update_0_write0_merged_banks_11.peek_1265();
   return value_dark_dark_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -4672,11 +4626,11 @@ inline hw_uint<16> dark_laplace_diff_0_rd0_select(dark_cache& dark, int d0, int 
 inline hw_uint<16> dark_laplace_diff_0_rd1_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_laplace_diff_0_rd1 read pattern: { dark_laplace_diff_0_update_0[d0, d1] -> dark[1 + 2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Read schedule : { dark_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 37] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_laplace_diff_0_update_0[d0, d1] -> 1929 : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  auto value_dark_dark_update_0_write1 = dark.dark_dark_update_0_write1_merged_banks_11.peek_1929();
+  // dark_laplace_diff_0_rd1 read pattern: { dark_laplace_diff_0_update_0[d0, d1] -> dark[1 + 2d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Read schedule : { dark_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 37] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_laplace_diff_0_update_0[d0, d1] -> 1265 : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  auto value_dark_dark_update_0_write1 = dark.dark_dark_update_0_write1_merged_banks_11.peek_1265();
   return value_dark_dark_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -4688,9 +4642,9 @@ inline hw_uint<16> dark_laplace_diff_0_rd1_select(dark_cache& dark, int d0, int 
 inline hw_uint<16> dark_weights_rd0_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_rd0 read pattern: { dark_weights_update_0[d0, d1] -> dark[2d0, d1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Read schedule : { dark_weights_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // dark_weights_rd0 read pattern: { dark_weights_update_0[d0, d1] -> dark[2d0, d1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Read schedule : { dark_weights_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_dark_dark_update_0_write0 = dark.dark_dark_update_0_write0_merged_banks_11.peek_0();
   return value_dark_dark_update_0_write0;
@@ -4704,9 +4658,9 @@ inline hw_uint<16> dark_weights_rd0_select(dark_cache& dark, int d0, int d1) {
 inline hw_uint<16> dark_weights_rd1_select(dark_cache& dark, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_rd1 read pattern: { dark_weights_update_0[d0, d1] -> dark[1 + 2d0, d1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Read schedule : { dark_weights_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // dark_weights_rd1 read pattern: { dark_weights_update_0[d0, d1] -> dark[1 + 2d0, d1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Read schedule : { dark_weights_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Write schedule: { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_dark_dark_update_0_write1 = dark.dark_dark_update_0_write1_merged_banks_11.peek_0();
   return value_dark_dark_update_0_write1;
@@ -4843,7 +4797,7 @@ inline hw_uint<32> dark_dark_weights_update_0_read_bundle_read(dark_cache& dark,
 #include "hw_classes.h"
 
 struct dark_gauss_blur_1_dark_gauss_blur_1_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 1924], [0, 1924]}
+	// RAM Box: {[0, 1260], [0, 1260]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -4879,9 +4833,9 @@ inline void dark_gauss_blur_1_dark_gauss_blur_1_update_0_write1_write(hw_uint<16
 inline hw_uint<16> dark_gauss_ds_1_rd0_select(dark_gauss_blur_1_cache& dark_gauss_blur_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_ds_1_rd0 read pattern: { dark_gauss_ds_1_update_0[d0, d1] -> dark_gauss_blur_1[2d0, 2d1] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // Read schedule : { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // Write schedule: { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
+  // dark_gauss_ds_1_rd0 read pattern: { dark_gauss_ds_1_update_0[d0, d1] -> dark_gauss_blur_1[2d0, 2d1] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // Read schedule : { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // Write schedule: { dark_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 8] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
   // DD fold: {  }
   auto value_dark_gauss_blur_1_dark_gauss_blur_1_update_0_write0 = dark_gauss_blur_1.dark_gauss_blur_1_dark_gauss_blur_1_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_dark_gauss_blur_1_dark_gauss_blur_1_update_0_write0;
@@ -4918,7 +4872,7 @@ inline hw_uint<16> dark_gauss_blur_1_dark_gauss_ds_1_update_0_read_bundle_read(d
 #include "hw_classes.h"
 
 struct dark_gauss_blur_2_dark_gauss_blur_2_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 960], [0, 960]}
+	// RAM Box: {[0, 628], [0, 628]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -4951,9 +4905,9 @@ inline void dark_gauss_blur_2_dark_gauss_blur_2_update_0_write0_write(hw_uint<16
 inline hw_uint<16> dark_gauss_ds_2_rd0_select(dark_gauss_blur_2_cache& dark_gauss_blur_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_ds_2_rd0 read pattern: { dark_gauss_ds_2_update_0[d0, d1] -> dark_gauss_blur_2[2d0, 2d1] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // Read schedule : { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // Write schedule: { dark_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 13] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
+  // dark_gauss_ds_2_rd0 read pattern: { dark_gauss_ds_2_update_0[d0, d1] -> dark_gauss_blur_2[2d0, 2d1] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // Read schedule : { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // Write schedule: { dark_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 13] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
   // DD fold: {  }
   auto value_dark_gauss_blur_2_dark_gauss_blur_2_update_0_write0 = dark_gauss_blur_2.dark_gauss_blur_2_dark_gauss_blur_2_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_dark_gauss_blur_2_dark_gauss_blur_2_update_0_write0;
@@ -4987,7 +4941,7 @@ inline hw_uint<16> dark_gauss_blur_2_dark_gauss_ds_2_update_0_read_bundle_read(d
 #include "hw_classes.h"
 
 struct dark_gauss_blur_3_dark_gauss_blur_3_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 478], [0, 478]}
+	// RAM Box: {[0, 312], [0, 312]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -5020,9 +4974,9 @@ inline void dark_gauss_blur_3_dark_gauss_blur_3_update_0_write0_write(hw_uint<16
 inline hw_uint<16> dark_gauss_ds_3_rd0_select(dark_gauss_blur_3_cache& dark_gauss_blur_3, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_ds_3_rd0 read pattern: { dark_gauss_ds_3_update_0[d0, d1] -> dark_gauss_blur_3[2d0, 2d1] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
-  // Read schedule : { dark_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 27] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
-  // Write schedule: { dark_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 20] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
+  // dark_gauss_ds_3_rd0 read pattern: { dark_gauss_ds_3_update_0[d0, d1] -> dark_gauss_blur_3[2d0, 2d1] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
+  // Read schedule : { dark_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 27] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
+  // Write schedule: { dark_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 20] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
   // DD fold: {  }
   auto value_dark_gauss_blur_3_dark_gauss_blur_3_update_0_write0 = dark_gauss_blur_3.dark_gauss_blur_3_dark_gauss_blur_3_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_dark_gauss_blur_3_dark_gauss_blur_3_update_0_write0;
@@ -5056,17 +5010,17 @@ inline hw_uint<16> dark_gauss_blur_3_dark_gauss_ds_3_update_0_read_bundle_read(d
 #include "hw_classes.h"
 
 struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10_cache {
-	// RAM Box: {[0, 962], [0, 962]}
-	// Capacity: 1929
+	// RAM Box: {[0, 630], [0, 630]}
+	// Capacity: 1265
 	// # of read delays: 9
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	hw_uint<16> f4;
-	fifo<hw_uint<16>, 960> f5;
+	fifo<hw_uint<16>, 628> f5;
 	hw_uint<16> f6;
 	hw_uint<16> f8;
 	hw_uint<16> f10;
-	fifo<hw_uint<16>, 960> f11;
+	fifo<hw_uint<16>, 628> f11;
 	hw_uint<16> f12;
 	hw_uint<16> f14;
 	hw_uint<16> f16;
@@ -5084,39 +5038,39 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10_cache {
 		return f4;
 	}
 
-	inline hw_uint<16> peek_962() {
+	inline hw_uint<16> peek_630() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f5.back();
 	}
 
-	inline hw_uint<16> peek_963() {
+	inline hw_uint<16> peek_631() {
 		return f6;
 	}
 
-	inline hw_uint<16> peek_964() {
+	inline hw_uint<16> peek_632() {
 		return f8;
 	}
 
-	inline hw_uint<16> peek_965() {
+	inline hw_uint<16> peek_633() {
 		return f10;
 	}
 
-	inline hw_uint<16> peek_1925() {
+	inline hw_uint<16> peek_1261() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f11.back();
 	}
 
-	inline hw_uint<16> peek_1926() {
+	inline hw_uint<16> peek_1262() {
 		return f12;
 	}
 
-	inline hw_uint<16> peek_1927() {
+	inline hw_uint<16> peek_1263() {
 		return f14;
 	}
 
-	inline hw_uint<16> peek_1928() {
+	inline hw_uint<16> peek_1264() {
 		return f16;
 	}
 
@@ -5133,11 +5087,11 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10_cache {
     f14 = f12;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 960
+    // cap: 1 reading from capacity: 628
     f12 = f11.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 960 reading from capacity: 1
+    // cap: 628 reading from capacity: 1
     f11.push(f10);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -5149,11 +5103,11 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10_cache {
     f8 = f6;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 960
+    // cap: 1 reading from capacity: 628
     f6 = f5.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 960 reading from capacity: 1
+    // cap: 628 reading from capacity: 1
     f5.push(f4);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -5170,14 +5124,14 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10_cache {
 };
 
 struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_to_dark_laplace_us_0_rd0_cache {
-	// RAM Box: {[0, 962], [0, 962]}
-	// Capacity: 963
-	// # of read delays: 961
-	fifo<hw_uint<16>, 963> f;
+	// RAM Box: {[0, 630], [0, 630]}
+	// Capacity: 631
+	// # of read delays: 626
+	fifo<hw_uint<16>, 631> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.peek(962 - offset);
+    return f.peek(630 - offset);
   }
 
 
@@ -5191,14 +5145,14 @@ struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_to_dark_laplace_us_0_rd0_
 };
 
 struct dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_to_dark_laplace_us_0_rd1_cache {
-	// RAM Box: {[0, 962], [0, 962]}
-	// Capacity: 963
-	// # of read delays: 961
-	fifo<hw_uint<16>, 963> f;
+	// RAM Box: {[0, 630], [0, 630]}
+	// Capacity: 631
+	// # of read delays: 626
+	fifo<hw_uint<16>, 631> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.peek(962 - offset);
+    return f.peek(630 - offset);
   }
 
 
@@ -5228,11 +5182,11 @@ inline void dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_write(hw_uint<16>& d
 inline hw_uint<16> dark_gauss_blur_2_rd0_select(dark_gauss_ds_1_cache& dark_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_2_rd0 read pattern: { dark_gauss_blur_2_update_0[d0, d1] -> dark_gauss_ds_1[d0, d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { dark_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 13] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { dark_gauss_blur_2_update_0[d0, d1] -> 1928 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  auto value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0 = dark_gauss_ds_1.dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10.peek_1928();
+  // dark_gauss_blur_2_rd0 read pattern: { dark_gauss_blur_2_update_0[d0, d1] -> dark_gauss_ds_1[d0, d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { dark_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 13] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { dark_gauss_blur_2_update_0[d0, d1] -> 1264 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  auto value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0 = dark_gauss_ds_1.dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10.peek_1264();
   return value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -5244,11 +5198,11 @@ inline hw_uint<16> dark_gauss_blur_2_rd0_select(dark_gauss_ds_1_cache& dark_gaus
 inline hw_uint<16> dark_gauss_blur_2_rd1_select(dark_gauss_ds_1_cache& dark_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_2_rd1 read pattern: { dark_gauss_blur_2_update_0[d0, d1] -> dark_gauss_ds_1[d0, 1 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { dark_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 13] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { dark_gauss_blur_2_update_0[d0, d1] -> 965 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  auto value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0 = dark_gauss_ds_1.dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10.peek_965();
+  // dark_gauss_blur_2_rd1 read pattern: { dark_gauss_blur_2_update_0[d0, d1] -> dark_gauss_ds_1[d0, 1 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { dark_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 13] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { dark_gauss_blur_2_update_0[d0, d1] -> 633 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  auto value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0 = dark_gauss_ds_1.dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10.peek_633();
   return value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -5260,10 +5214,10 @@ inline hw_uint<16> dark_gauss_blur_2_rd1_select(dark_gauss_ds_1_cache& dark_gaus
 inline hw_uint<16> dark_gauss_blur_2_rd2_select(dark_gauss_ds_1_cache& dark_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_2_rd2 read pattern: { dark_gauss_blur_2_update_0[d0, d1] -> dark_gauss_ds_1[d0, 2 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { dark_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 13] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { dark_gauss_blur_2_update_0[d0, d1] -> 2 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
+  // dark_gauss_blur_2_rd2 read pattern: { dark_gauss_blur_2_update_0[d0, d1] -> dark_gauss_ds_1[d0, 2 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { dark_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 13] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { dark_gauss_blur_2_update_0[d0, d1] -> 2 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
   auto value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0 = dark_gauss_ds_1.dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10.peek_2();
   return value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -5276,11 +5230,11 @@ inline hw_uint<16> dark_gauss_blur_2_rd2_select(dark_gauss_ds_1_cache& dark_gaus
 inline hw_uint<16> dark_gauss_blur_2_rd3_select(dark_gauss_ds_1_cache& dark_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_2_rd3 read pattern: { dark_gauss_blur_2_update_0[d0, d1] -> dark_gauss_ds_1[1 + d0, d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { dark_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 13] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { dark_gauss_blur_2_update_0[d0, d1] -> 1927 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  auto value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0 = dark_gauss_ds_1.dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10.peek_1927();
+  // dark_gauss_blur_2_rd3 read pattern: { dark_gauss_blur_2_update_0[d0, d1] -> dark_gauss_ds_1[1 + d0, d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { dark_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 13] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { dark_gauss_blur_2_update_0[d0, d1] -> 1263 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  auto value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0 = dark_gauss_ds_1.dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10.peek_1263();
   return value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -5292,11 +5246,11 @@ inline hw_uint<16> dark_gauss_blur_2_rd3_select(dark_gauss_ds_1_cache& dark_gaus
 inline hw_uint<16> dark_gauss_blur_2_rd4_select(dark_gauss_ds_1_cache& dark_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_2_rd4 read pattern: { dark_gauss_blur_2_update_0[d0, d1] -> dark_gauss_ds_1[1 + d0, 1 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { dark_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 13] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { dark_gauss_blur_2_update_0[d0, d1] -> 964 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  auto value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0 = dark_gauss_ds_1.dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10.peek_964();
+  // dark_gauss_blur_2_rd4 read pattern: { dark_gauss_blur_2_update_0[d0, d1] -> dark_gauss_ds_1[1 + d0, 1 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { dark_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 13] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { dark_gauss_blur_2_update_0[d0, d1] -> 632 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  auto value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0 = dark_gauss_ds_1.dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10.peek_632();
   return value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -5308,10 +5262,10 @@ inline hw_uint<16> dark_gauss_blur_2_rd4_select(dark_gauss_ds_1_cache& dark_gaus
 inline hw_uint<16> dark_gauss_blur_2_rd5_select(dark_gauss_ds_1_cache& dark_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_2_rd5 read pattern: { dark_gauss_blur_2_update_0[d0, d1] -> dark_gauss_ds_1[1 + d0, 2 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { dark_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 13] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { dark_gauss_blur_2_update_0[d0, d1] -> 1 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
+  // dark_gauss_blur_2_rd5 read pattern: { dark_gauss_blur_2_update_0[d0, d1] -> dark_gauss_ds_1[1 + d0, 2 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { dark_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 13] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { dark_gauss_blur_2_update_0[d0, d1] -> 1 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
   auto value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0 = dark_gauss_ds_1.dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10.peek_1();
   return value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -5324,11 +5278,11 @@ inline hw_uint<16> dark_gauss_blur_2_rd5_select(dark_gauss_ds_1_cache& dark_gaus
 inline hw_uint<16> dark_gauss_blur_2_rd6_select(dark_gauss_ds_1_cache& dark_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_2_rd6 read pattern: { dark_gauss_blur_2_update_0[d0, d1] -> dark_gauss_ds_1[2 + d0, d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { dark_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 13] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { dark_gauss_blur_2_update_0[d0, d1] -> 1926 : 0 <= d0 <= 959 and 0 <= d1 <= 960; dark_gauss_blur_2_update_0[d0, d1] -> (966 + d0) : d0 = 960 and 0 <= d1 <= 960 }
-  auto value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0 = dark_gauss_ds_1.dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10.peek_1926();
+  // dark_gauss_blur_2_rd6 read pattern: { dark_gauss_blur_2_update_0[d0, d1] -> dark_gauss_ds_1[2 + d0, d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { dark_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 13] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { dark_gauss_blur_2_update_0[d0, d1] -> 1262 : 0 <= d0 <= 627 and 0 <= d1 <= 628; dark_gauss_blur_2_update_0[d0, d1] -> (634 + d0) : d0 = 628 and 0 <= d1 <= 628 }
+  auto value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0 = dark_gauss_ds_1.dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10.peek_1262();
   return value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -5340,11 +5294,11 @@ inline hw_uint<16> dark_gauss_blur_2_rd6_select(dark_gauss_ds_1_cache& dark_gaus
 inline hw_uint<16> dark_gauss_blur_2_rd7_select(dark_gauss_ds_1_cache& dark_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_2_rd7 read pattern: { dark_gauss_blur_2_update_0[d0, d1] -> dark_gauss_ds_1[2 + d0, 1 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { dark_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 13] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { dark_gauss_blur_2_update_0[d0, d1] -> 963 : 0 <= d0 <= 959 and 0 <= d1 <= 960; dark_gauss_blur_2_update_0[d0, d1] -> (3 + d0) : d0 = 960 and 0 <= d1 <= 960 }
-  auto value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0 = dark_gauss_ds_1.dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10.peek_963();
+  // dark_gauss_blur_2_rd7 read pattern: { dark_gauss_blur_2_update_0[d0, d1] -> dark_gauss_ds_1[2 + d0, 1 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { dark_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 13] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { dark_gauss_blur_2_update_0[d0, d1] -> 631 : 0 <= d0 <= 627 and 0 <= d1 <= 628; dark_gauss_blur_2_update_0[d0, d1] -> (3 + d0) : d0 = 628 and 0 <= d1 <= 628 }
+  auto value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0 = dark_gauss_ds_1.dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10.peek_631();
   return value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -5356,9 +5310,9 @@ inline hw_uint<16> dark_gauss_blur_2_rd7_select(dark_gauss_ds_1_cache& dark_gaus
 inline hw_uint<16> dark_gauss_blur_2_rd8_select(dark_gauss_ds_1_cache& dark_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_2_rd8 read pattern: { dark_gauss_blur_2_update_0[d0, d1] -> dark_gauss_ds_1[2 + d0, 2 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { dark_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 13] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
+  // dark_gauss_blur_2_rd8 read pattern: { dark_gauss_blur_2_update_0[d0, d1] -> dark_gauss_ds_1[2 + d0, 2 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { dark_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 13] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
   // DD fold: {  }
   auto value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0 = dark_gauss_ds_1.dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10.peek_0();
   return value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0;
@@ -5372,11 +5326,11 @@ inline hw_uint<16> dark_gauss_blur_2_rd8_select(dark_gauss_ds_1_cache& dark_gaus
 inline hw_uint<16> dark_laplace_diff_1_rd0_select(dark_gauss_ds_1_cache& dark_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_laplace_diff_1_rd0 read pattern: { dark_laplace_diff_1_update_0[d0, d1] -> dark_gauss_ds_1[d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // Read schedule : { dark_laplace_diff_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 36] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { dark_laplace_diff_1_update_0[d0, d1] -> 1928 : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  auto value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0 = dark_gauss_ds_1.dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10.peek_1928();
+  // dark_laplace_diff_1_rd0 read pattern: { dark_laplace_diff_1_update_0[d0, d1] -> dark_gauss_ds_1[d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // Read schedule : { dark_laplace_diff_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 36] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { dark_laplace_diff_1_update_0[d0, d1] -> 1264 : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  auto value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0 = dark_gauss_ds_1.dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_merged_banks_10.peek_1264();
   return value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -5388,11 +5342,11 @@ inline hw_uint<16> dark_laplace_diff_1_rd0_select(dark_gauss_ds_1_cache& dark_ga
 inline hw_uint<16> dark_laplace_us_0_rd0_select(dark_gauss_ds_1_cache& dark_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_laplace_us_0_rd0 read pattern: { dark_laplace_us_0_update_0[d0, d1] -> dark_gauss_ds_1[d0, o1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 and -1 + d1 <= 2o1 <= d1 }
-  // Read schedule : { dark_laplace_us_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 34] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { dark_laplace_us_0_update_0[d0, d1] -> (962 - d0) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 959 and 0 < d1 <= 1919 }
-  auto value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0 = dark_gauss_ds_1.dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_to_dark_laplace_us_0_rd0.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0) ? ((962 - d0)) : 0);
+  // dark_laplace_us_0_rd0 read pattern: { dark_laplace_us_0_update_0[d0, d1] -> dark_gauss_ds_1[d0, o1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 and -1 + d1 <= 2o1 <= d1 }
+  // Read schedule : { dark_laplace_us_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 34] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { dark_laplace_us_0_update_0[d0, d1] -> (630 - d0) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 624 and 0 < d1 <= 1249 }
+  auto value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0 = dark_gauss_ds_1.dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_to_dark_laplace_us_0_rd0.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0) ? ((630 - d0)) : 0);
   return value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -5404,11 +5358,11 @@ inline hw_uint<16> dark_laplace_us_0_rd0_select(dark_gauss_ds_1_cache& dark_gaus
 inline hw_uint<16> dark_laplace_us_0_rd1_select(dark_gauss_ds_1_cache& dark_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_laplace_us_0_rd1 read pattern: { dark_laplace_us_0_update_0[d0, d1] -> dark_gauss_ds_1[d0, o1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 and -1 + d1 <= 2o1 <= d1 }
-  // Read schedule : { dark_laplace_us_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 34] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { dark_laplace_us_0_update_0[d0, d1] -> (962 - d0) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 959 and 0 < d1 <= 1919 }
-  auto value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0 = dark_gauss_ds_1.dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_to_dark_laplace_us_0_rd1.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0) ? ((962 - d0)) : 0);
+  // dark_laplace_us_0_rd1 read pattern: { dark_laplace_us_0_update_0[d0, d1] -> dark_gauss_ds_1[d0, o1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 and -1 + d1 <= 2o1 <= d1 }
+  // Read schedule : { dark_laplace_us_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 34] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { dark_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 12] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { dark_laplace_us_0_update_0[d0, d1] -> (630 - d0) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 624 and 0 < d1 <= 1249 }
+  auto value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0 = dark_gauss_ds_1.dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0_to_dark_laplace_us_0_rd1.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0) ? ((630 - d0)) : 0);
   return value_dark_gauss_ds_1_dark_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -5499,18 +5453,18 @@ inline hw_uint<32> dark_gauss_ds_1_dark_laplace_us_0_update_0_read_bundle_read(d
 
 #include "hw_classes.h"
 
-struct dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_9_cache {
-	// RAM Box: {[0, 480], [0, 480]}
-	// Capacity: 965
+struct dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_10_cache {
+	// RAM Box: {[0, 314], [0, 314]}
+	// Capacity: 633
 	// # of read delays: 9
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	hw_uint<16> f4;
-	fifo<hw_uint<16>, 478> f5;
+	fifo<hw_uint<16>, 312> f5;
 	hw_uint<16> f6;
 	hw_uint<16> f8;
 	hw_uint<16> f10;
-	fifo<hw_uint<16>, 478> f11;
+	fifo<hw_uint<16>, 312> f11;
 	hw_uint<16> f12;
 	hw_uint<16> f14;
 	hw_uint<16> f16;
@@ -5528,39 +5482,39 @@ struct dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_9_cache {
 		return f4;
 	}
 
-	inline hw_uint<16> peek_480() {
+	inline hw_uint<16> peek_314() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f5.back();
 	}
 
-	inline hw_uint<16> peek_481() {
+	inline hw_uint<16> peek_315() {
 		return f6;
 	}
 
-	inline hw_uint<16> peek_482() {
+	inline hw_uint<16> peek_316() {
 		return f8;
 	}
 
-	inline hw_uint<16> peek_483() {
+	inline hw_uint<16> peek_317() {
 		return f10;
 	}
 
-	inline hw_uint<16> peek_961() {
+	inline hw_uint<16> peek_629() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f11.back();
 	}
 
-	inline hw_uint<16> peek_962() {
+	inline hw_uint<16> peek_630() {
 		return f12;
 	}
 
-	inline hw_uint<16> peek_963() {
+	inline hw_uint<16> peek_631() {
 		return f14;
 	}
 
-	inline hw_uint<16> peek_964() {
+	inline hw_uint<16> peek_632() {
 		return f16;
 	}
 
@@ -5577,11 +5531,11 @@ struct dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_9_cache {
     f14 = f12;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 478
+    // cap: 1 reading from capacity: 312
     f12 = f11.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 478 reading from capacity: 1
+    // cap: 312 reading from capacity: 1
     f11.push(f10);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -5593,11 +5547,11 @@ struct dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_9_cache {
     f8 = f6;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 478
+    // cap: 1 reading from capacity: 312
     f6 = f5.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 478 reading from capacity: 1
+    // cap: 312 reading from capacity: 1
     f5.push(f4);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -5613,36 +5567,15 @@ struct dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_9_cache {
 
 };
 
-struct dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_to_dark_laplace_diff_2_rd0_cache {
-	// RAM Box: {[0, 480], [0, 480]}
-	// Capacity: 965
-	// # of read delays: 484
-	fifo<hw_uint<16>, 965> f;
-	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(964 - offset);
-  }
-
-
-
-	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
-
-};
-
 struct dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_to_dark_laplace_us_1_rd0_cache {
-	// RAM Box: {[0, 480], [0, 480]}
-	// Capacity: 481
-	// # of read delays: 482
-	fifo<hw_uint<16>, 481> f;
+	// RAM Box: {[0, 314], [0, 314]}
+	// Capacity: 315
+	// # of read delays: 314
+	fifo<hw_uint<16>, 315> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.peek(480 - offset);
+    return f.peek(314 - offset);
   }
 
 
@@ -5656,27 +5589,25 @@ struct dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_to_dark_laplace_us_1_rd0_
 };
 
 struct dark_gauss_ds_2_cache {
-  dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_9_cache dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_9;
-  dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_to_dark_laplace_diff_2_rd0_cache dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_to_dark_laplace_diff_2_rd0;
+  dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_10_cache dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_10;
   dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_to_dark_laplace_us_1_rd0_cache dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_to_dark_laplace_us_1_rd0;
 };
 
 
 
 inline void dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_write(hw_uint<16>& dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0, dark_gauss_ds_2_cache& dark_gauss_ds_2, int d0, int d1) {
-  dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_9.push(dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0);
-  dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_to_dark_laplace_diff_2_rd0.push(dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0);
+  dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_10.push(dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0);
   dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_to_dark_laplace_us_1_rd0.push(dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0);
 }
 
 inline hw_uint<16> dark_gauss_blur_3_rd0_select(dark_gauss_ds_2_cache& dark_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_3_rd0 read pattern: { dark_gauss_blur_3_update_0[d0, d1] -> dark_gauss_ds_2[d0, d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { dark_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 20] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { dark_gauss_blur_3_update_0[d0, d1] -> 964 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_9.peek_964();
+  // dark_gauss_blur_3_rd0 read pattern: { dark_gauss_blur_3_update_0[d0, d1] -> dark_gauss_ds_2[d0, d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { dark_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 20] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { dark_gauss_blur_3_update_0[d0, d1] -> 632 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_10.peek_632();
   return value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -5688,11 +5619,11 @@ inline hw_uint<16> dark_gauss_blur_3_rd0_select(dark_gauss_ds_2_cache& dark_gaus
 inline hw_uint<16> dark_gauss_blur_3_rd1_select(dark_gauss_ds_2_cache& dark_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_3_rd1 read pattern: { dark_gauss_blur_3_update_0[d0, d1] -> dark_gauss_ds_2[d0, 1 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { dark_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 20] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { dark_gauss_blur_3_update_0[d0, d1] -> 483 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_9.peek_483();
+  // dark_gauss_blur_3_rd1 read pattern: { dark_gauss_blur_3_update_0[d0, d1] -> dark_gauss_ds_2[d0, 1 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { dark_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 20] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { dark_gauss_blur_3_update_0[d0, d1] -> 317 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_10.peek_317();
   return value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -5704,11 +5635,11 @@ inline hw_uint<16> dark_gauss_blur_3_rd1_select(dark_gauss_ds_2_cache& dark_gaus
 inline hw_uint<16> dark_gauss_blur_3_rd2_select(dark_gauss_ds_2_cache& dark_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_3_rd2 read pattern: { dark_gauss_blur_3_update_0[d0, d1] -> dark_gauss_ds_2[d0, 2 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { dark_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 20] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { dark_gauss_blur_3_update_0[d0, d1] -> 2 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_9.peek_2();
+  // dark_gauss_blur_3_rd2 read pattern: { dark_gauss_blur_3_update_0[d0, d1] -> dark_gauss_ds_2[d0, 2 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { dark_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 20] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { dark_gauss_blur_3_update_0[d0, d1] -> 2 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_10.peek_2();
   return value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -5720,11 +5651,11 @@ inline hw_uint<16> dark_gauss_blur_3_rd2_select(dark_gauss_ds_2_cache& dark_gaus
 inline hw_uint<16> dark_gauss_blur_3_rd3_select(dark_gauss_ds_2_cache& dark_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_3_rd3 read pattern: { dark_gauss_blur_3_update_0[d0, d1] -> dark_gauss_ds_2[1 + d0, d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { dark_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 20] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { dark_gauss_blur_3_update_0[d0, d1] -> 963 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_9.peek_963();
+  // dark_gauss_blur_3_rd3 read pattern: { dark_gauss_blur_3_update_0[d0, d1] -> dark_gauss_ds_2[1 + d0, d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { dark_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 20] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { dark_gauss_blur_3_update_0[d0, d1] -> 631 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_10.peek_631();
   return value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -5736,11 +5667,11 @@ inline hw_uint<16> dark_gauss_blur_3_rd3_select(dark_gauss_ds_2_cache& dark_gaus
 inline hw_uint<16> dark_gauss_blur_3_rd4_select(dark_gauss_ds_2_cache& dark_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_3_rd4 read pattern: { dark_gauss_blur_3_update_0[d0, d1] -> dark_gauss_ds_2[1 + d0, 1 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { dark_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 20] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { dark_gauss_blur_3_update_0[d0, d1] -> 482 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_9.peek_482();
+  // dark_gauss_blur_3_rd4 read pattern: { dark_gauss_blur_3_update_0[d0, d1] -> dark_gauss_ds_2[1 + d0, 1 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { dark_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 20] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { dark_gauss_blur_3_update_0[d0, d1] -> 316 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_10.peek_316();
   return value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -5752,11 +5683,11 @@ inline hw_uint<16> dark_gauss_blur_3_rd4_select(dark_gauss_ds_2_cache& dark_gaus
 inline hw_uint<16> dark_gauss_blur_3_rd5_select(dark_gauss_ds_2_cache& dark_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_3_rd5 read pattern: { dark_gauss_blur_3_update_0[d0, d1] -> dark_gauss_ds_2[1 + d0, 2 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { dark_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 20] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { dark_gauss_blur_3_update_0[d0, d1] -> 1 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_9.peek_1();
+  // dark_gauss_blur_3_rd5 read pattern: { dark_gauss_blur_3_update_0[d0, d1] -> dark_gauss_ds_2[1 + d0, 2 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { dark_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 20] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { dark_gauss_blur_3_update_0[d0, d1] -> 1 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_10.peek_1();
   return value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -5768,11 +5699,11 @@ inline hw_uint<16> dark_gauss_blur_3_rd5_select(dark_gauss_ds_2_cache& dark_gaus
 inline hw_uint<16> dark_gauss_blur_3_rd6_select(dark_gauss_ds_2_cache& dark_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_3_rd6 read pattern: { dark_gauss_blur_3_update_0[d0, d1] -> dark_gauss_ds_2[2 + d0, d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { dark_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 20] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { dark_gauss_blur_3_update_0[d0, d1] -> 962 : 0 <= d0 <= 477 and 0 <= d1 <= 478; dark_gauss_blur_3_update_0[d0, d1] -> (484 + d0) : d0 = 478 and 0 <= d1 <= 478 }
-  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_9.peek_962();
+  // dark_gauss_blur_3_rd6 read pattern: { dark_gauss_blur_3_update_0[d0, d1] -> dark_gauss_ds_2[2 + d0, d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { dark_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 20] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { dark_gauss_blur_3_update_0[d0, d1] -> 630 : 0 <= d0 <= 311 and 0 <= d1 <= 312; dark_gauss_blur_3_update_0[d0, d1] -> (318 + d0) : d0 = 312 and 0 <= d1 <= 312 }
+  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_10.peek_630();
   return value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -5784,11 +5715,11 @@ inline hw_uint<16> dark_gauss_blur_3_rd6_select(dark_gauss_ds_2_cache& dark_gaus
 inline hw_uint<16> dark_gauss_blur_3_rd7_select(dark_gauss_ds_2_cache& dark_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_3_rd7 read pattern: { dark_gauss_blur_3_update_0[d0, d1] -> dark_gauss_ds_2[2 + d0, 1 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { dark_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 20] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { dark_gauss_blur_3_update_0[d0, d1] -> 481 : 0 <= d0 <= 477 and 0 <= d1 <= 478; dark_gauss_blur_3_update_0[d0, d1] -> (3 + d0) : d0 = 478 and 0 <= d1 <= 478 }
-  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_9.peek_481();
+  // dark_gauss_blur_3_rd7 read pattern: { dark_gauss_blur_3_update_0[d0, d1] -> dark_gauss_ds_2[2 + d0, 1 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { dark_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 20] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { dark_gauss_blur_3_update_0[d0, d1] -> 315 : 0 <= d0 <= 311 and 0 <= d1 <= 312; dark_gauss_blur_3_update_0[d0, d1] -> (3 + d0) : d0 = 312 and 0 <= d1 <= 312 }
+  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_10.peek_315();
   return value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -5800,11 +5731,11 @@ inline hw_uint<16> dark_gauss_blur_3_rd7_select(dark_gauss_ds_2_cache& dark_gaus
 inline hw_uint<16> dark_gauss_blur_3_rd8_select(dark_gauss_ds_2_cache& dark_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_gauss_blur_3_rd8 read pattern: { dark_gauss_blur_3_update_0[d0, d1] -> dark_gauss_ds_2[2 + d0, 2 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { dark_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 20] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
+  // dark_gauss_blur_3_rd8 read pattern: { dark_gauss_blur_3_update_0[d0, d1] -> dark_gauss_ds_2[2 + d0, 2 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { dark_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 20] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
   // DD fold: {  }
-  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_9.peek_0();
+  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_10.peek_0();
   return value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -5816,11 +5747,11 @@ inline hw_uint<16> dark_gauss_blur_3_rd8_select(dark_gauss_ds_2_cache& dark_gaus
 inline hw_uint<16> dark_laplace_diff_2_rd0_select(dark_gauss_ds_2_cache& dark_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_laplace_diff_2_rd0 read pattern: { dark_laplace_diff_2_update_0[d0, d1] -> dark_gauss_ds_2[d0, d1] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // Read schedule : { dark_laplace_diff_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 35] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { dark_laplace_diff_2_update_0[d0, d1] -> 964 : 0 <= d0 <= 478 and 0 <= d1 <= 478; dark_laplace_diff_2_update_0[d0, d1] -> 963 : d0 = 479 and 0 <= d1 <= 478; dark_laplace_diff_2_update_0[d0, d1] -> (961 - d0) : d1 = 479 and 0 <= d0 <= 479 }
-  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_to_dark_laplace_diff_2_rd0.peek(/* one reader or all rams */ (-479 + d0 == 0 && 478 - d1 >= 0) ? (963) : (478 - d1 >= 0 && 478 - d0 >= 0) ? (964) : (-479 + d1 == 0) ? ((961 - d0)) : 0);
+  // dark_laplace_diff_2_rd0 read pattern: { dark_laplace_diff_2_update_0[d0, d1] -> dark_gauss_ds_2[d0, d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { dark_laplace_diff_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 35] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { dark_laplace_diff_2_update_0[d0, d1] -> 632 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_merged_banks_10.peek_632();
   return value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -5832,11 +5763,11 @@ inline hw_uint<16> dark_laplace_diff_2_rd0_select(dark_gauss_ds_2_cache& dark_ga
 inline hw_uint<16> dark_laplace_us_1_rd0_select(dark_gauss_ds_2_cache& dark_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_laplace_us_1_rd0 read pattern: { dark_laplace_us_1_update_0[d0, d1] -> dark_gauss_ds_2[o0, o1] : 0 <= d0 <= 959 and 0 <= d1 <= 959 and -1 + d0 <= 2o0 <= d0 and -1 + d1 <= 2o1 <= d1 }
-  // Read schedule : { dark_laplace_us_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 33] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { dark_laplace_us_1_update_0[d0, d1] -> (480 - floor((2d0)/4)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 959 and 0 < d1 <= 959 }
-  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_to_dark_laplace_us_1_rd0.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0) ? ((480 - floord(2*d0, 4))) : 0);
+  // dark_laplace_us_1_rd0 read pattern: { dark_laplace_us_1_update_0[d0, d1] -> dark_gauss_ds_2[o0, o1] : 0 <= d0 <= 624 and 0 <= d1 <= 624 and -1 + d0 <= 2o0 <= d0 and -1 + d1 <= 2o1 <= d1 }
+  // Read schedule : { dark_laplace_us_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 33] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // Write schedule: { dark_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 19] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { dark_laplace_us_1_update_0[d0, d1] -> (314 - floor((2d0)/4)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 624 and 0 < d1 <= 623 }
+  auto value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0 = dark_gauss_ds_2.dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0_to_dark_laplace_us_1_rd0.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0) ? ((314 - floord(2*d0, 4))) : 0);
   return value_dark_gauss_ds_2_dark_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -5924,14 +5855,14 @@ inline hw_uint<16> dark_gauss_ds_2_dark_laplace_us_1_update_0_read_bundle_read(d
 #include "hw_classes.h"
 
 struct dark_gauss_ds_3_dark_gauss_ds_3_update_0_write0_to_dark_laplace_us_2_rd0_cache {
-	// RAM Box: {[0, 239], [0, 239]}
-	// Capacity: 240
-	// # of read delays: 241
-	fifo<hw_uint<16>, 240> f;
+	// RAM Box: {[0, 156], [0, 156]}
+	// Capacity: 157
+	// # of read delays: 158
+	fifo<hw_uint<16>, 157> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.peek(239 - offset);
+    return f.peek(156 - offset);
   }
 
 
@@ -5945,7 +5876,7 @@ struct dark_gauss_ds_3_dark_gauss_ds_3_update_0_write0_to_dark_laplace_us_2_rd0_
 };
 
 struct dark_gauss_ds_3_dark_gauss_ds_3_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 239], [0, 239]}
+	// RAM Box: {[0, 156], [0, 156]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -5980,11 +5911,11 @@ inline void dark_gauss_ds_3_dark_gauss_ds_3_update_0_write0_write(hw_uint<16>& d
 inline hw_uint<16> dark_laplace_us_2_rd0_select(dark_gauss_ds_3_cache& dark_gauss_ds_3, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_laplace_us_2_rd0 read pattern: { dark_laplace_us_2_update_0[d0, d1] -> dark_gauss_ds_3[o0, o1] : 0 <= d0 <= 479 and 0 <= d1 <= 479 and -1 + d0 <= 2o0 <= d0 and -1 + d1 <= 2o1 <= d1 }
-  // Read schedule : { dark_laplace_us_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 32] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // Write schedule: { dark_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 27] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
-  // DD fold: { dark_laplace_us_2_update_0[d0, d1] -> (239 - floor((2d0)/4)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 477 and 0 < d1 <= 479 }
-  auto value_dark_gauss_ds_3_dark_gauss_ds_3_update_0_write0 = dark_gauss_ds_3.dark_gauss_ds_3_dark_gauss_ds_3_update_0_write0_to_dark_laplace_us_2_rd0.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0 && 477 - d0 >= 0) ? ((239 - floord(2*d0, 4))) : 0);
+  // dark_laplace_us_2_rd0 read pattern: { dark_laplace_us_2_update_0[d0, d1] -> dark_gauss_ds_3[o0, o1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 and -1 + d0 <= 2o0 <= d0 and -1 + d1 <= 2o1 <= d1 }
+  // Read schedule : { dark_laplace_us_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 32] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 27] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
+  // DD fold: { dark_laplace_us_2_update_0[d0, d1] -> (156 - floor((2d0)/4)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 311 and 0 < d1 <= 311 }
+  auto value_dark_gauss_ds_3_dark_gauss_ds_3_update_0_write0 = dark_gauss_ds_3.dark_gauss_ds_3_dark_gauss_ds_3_update_0_write0_to_dark_laplace_us_2_rd0.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0 && 311 - d0 >= 0) ? ((156 - floord(2*d0, 4))) : 0);
   return value_dark_gauss_ds_3_dark_gauss_ds_3_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -5996,9 +5927,9 @@ inline hw_uint<16> dark_laplace_us_2_rd0_select(dark_gauss_ds_3_cache& dark_gaus
 inline hw_uint<16> fused_level_3_rd0_select(dark_gauss_ds_3_cache& dark_gauss_ds_3, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // fused_level_3_rd0 read pattern: { fused_level_3_update_0[d0, d1] -> dark_gauss_ds_3[d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
-  // Read schedule : { fused_level_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 45] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
-  // Write schedule: { dark_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 27] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
+  // fused_level_3_rd0 read pattern: { fused_level_3_update_0[d0, d1] -> dark_gauss_ds_3[d0, d1] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
+  // Read schedule : { fused_level_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 45] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
+  // Write schedule: { dark_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 27] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
   // DD fold: {  }
   auto value_dark_gauss_ds_3_dark_gauss_ds_3_update_0_write0 = dark_gauss_ds_3.dark_gauss_ds_3_dark_gauss_ds_3_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_dark_gauss_ds_3_dark_gauss_ds_3_update_0_write0;
@@ -6044,7 +5975,7 @@ inline hw_uint<16> dark_gauss_ds_3_fused_level_3_update_0_read_bundle_read(dark_
 #include "hw_classes.h"
 
 struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 1918], [0, 1919]}
+	// RAM Box: {[0, 1248], [0, 1249]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -6065,7 +5996,7 @@ struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write0_merged_banks_1_ca
 };
 
 struct dark_laplace_diff_0_dark_laplace_diff_0_update_0_write1_merged_banks_1_cache {
-	// RAM Box: {[1, 1919], [0, 1919]}
+	// RAM Box: {[1, 1249], [0, 1249]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -6103,9 +6034,9 @@ inline void dark_laplace_diff_0_dark_laplace_diff_0_update_0_write1_write(hw_uin
 inline hw_uint<16> fused_level_0_rd0_select(dark_laplace_diff_0_cache& dark_laplace_diff_0, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // fused_level_0_rd0 read pattern: { fused_level_0_update_0[d0, d1] -> dark_laplace_diff_0[2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Read schedule : { fused_level_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 48] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { dark_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 37] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
+  // fused_level_0_rd0 read pattern: { fused_level_0_update_0[d0, d1] -> dark_laplace_diff_0[2d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Read schedule : { fused_level_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 48] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { dark_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 37] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
   // DD fold: {  }
   auto value_dark_laplace_diff_0_dark_laplace_diff_0_update_0_write0 = dark_laplace_diff_0.dark_laplace_diff_0_dark_laplace_diff_0_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_dark_laplace_diff_0_dark_laplace_diff_0_update_0_write0;
@@ -6119,9 +6050,9 @@ inline hw_uint<16> fused_level_0_rd0_select(dark_laplace_diff_0_cache& dark_lapl
 inline hw_uint<16> fused_level_0_rd1_select(dark_laplace_diff_0_cache& dark_laplace_diff_0, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // fused_level_0_rd1 read pattern: { fused_level_0_update_0[d0, d1] -> dark_laplace_diff_0[1 + 2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Read schedule : { fused_level_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 48] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { dark_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 37] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
+  // fused_level_0_rd1 read pattern: { fused_level_0_update_0[d0, d1] -> dark_laplace_diff_0[1 + 2d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Read schedule : { fused_level_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 48] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { dark_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 37] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
   // DD fold: {  }
   auto value_dark_laplace_diff_0_dark_laplace_diff_0_update_0_write1 = dark_laplace_diff_0.dark_laplace_diff_0_dark_laplace_diff_0_update_0_write1_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_dark_laplace_diff_0_dark_laplace_diff_0_update_0_write1;
@@ -6162,7 +6093,7 @@ inline hw_uint<32> dark_laplace_diff_0_fused_level_0_update_0_read_bundle_read(d
 #include "hw_classes.h"
 
 struct dark_laplace_diff_1_dark_laplace_diff_1_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 959], [0, 959]}
+	// RAM Box: {[0, 624], [0, 624]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -6195,9 +6126,9 @@ inline void dark_laplace_diff_1_dark_laplace_diff_1_update_0_write0_write(hw_uin
 inline hw_uint<16> fused_level_1_rd0_select(dark_laplace_diff_1_cache& dark_laplace_diff_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // fused_level_1_rd0 read pattern: { fused_level_1_update_0[d0, d1] -> dark_laplace_diff_1[d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // Read schedule : { fused_level_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 47] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // Write schedule: { dark_laplace_diff_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 36] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
+  // fused_level_1_rd0 read pattern: { fused_level_1_update_0[d0, d1] -> dark_laplace_diff_1[d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // Read schedule : { fused_level_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 47] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // Write schedule: { dark_laplace_diff_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 36] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
   // DD fold: {  }
   auto value_dark_laplace_diff_1_dark_laplace_diff_1_update_0_write0 = dark_laplace_diff_1.dark_laplace_diff_1_dark_laplace_diff_1_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_dark_laplace_diff_1_dark_laplace_diff_1_update_0_write0;
@@ -6231,7 +6162,7 @@ inline hw_uint<16> dark_laplace_diff_1_fused_level_1_update_0_read_bundle_read(d
 #include "hw_classes.h"
 
 struct dark_laplace_diff_2_dark_laplace_diff_2_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 479], [0, 479]}
+	// RAM Box: {[0, 312], [0, 312]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -6264,9 +6195,9 @@ inline void dark_laplace_diff_2_dark_laplace_diff_2_update_0_write0_write(hw_uin
 inline hw_uint<16> fused_level_2_rd0_select(dark_laplace_diff_2_cache& dark_laplace_diff_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // fused_level_2_rd0 read pattern: { fused_level_2_update_0[d0, d1] -> dark_laplace_diff_2[d0, d1] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // Read schedule : { fused_level_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 46] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // Write schedule: { dark_laplace_diff_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 35] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
+  // fused_level_2_rd0 read pattern: { fused_level_2_update_0[d0, d1] -> dark_laplace_diff_2[d0, d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { fused_level_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 46] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_laplace_diff_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 35] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
   // DD fold: {  }
   auto value_dark_laplace_diff_2_dark_laplace_diff_2_update_0_write0 = dark_laplace_diff_2.dark_laplace_diff_2_dark_laplace_diff_2_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_dark_laplace_diff_2_dark_laplace_diff_2_update_0_write0;
@@ -6300,7 +6231,7 @@ inline hw_uint<16> dark_laplace_diff_2_fused_level_2_update_0_read_bundle_read(d
 #include "hw_classes.h"
 
 struct dark_laplace_us_0_dark_laplace_us_0_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 1918], [0, 1919]}
+	// RAM Box: {[0, 1248], [0, 1249]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -6321,7 +6252,7 @@ struct dark_laplace_us_0_dark_laplace_us_0_update_0_write0_merged_banks_1_cache 
 };
 
 struct dark_laplace_us_0_dark_laplace_us_0_update_0_write1_merged_banks_1_cache {
-	// RAM Box: {[1, 1919], [0, 1919]}
+	// RAM Box: {[1, 1249], [0, 1249]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -6359,9 +6290,9 @@ inline void dark_laplace_us_0_dark_laplace_us_0_update_0_write1_write(hw_uint<16
 inline hw_uint<16> dark_laplace_diff_0_rd0_select(dark_laplace_us_0_cache& dark_laplace_us_0, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_laplace_diff_0_rd0 read pattern: { dark_laplace_diff_0_update_0[d0, d1] -> dark_laplace_us_0[2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Read schedule : { dark_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 37] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { dark_laplace_us_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 34] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
+  // dark_laplace_diff_0_rd0 read pattern: { dark_laplace_diff_0_update_0[d0, d1] -> dark_laplace_us_0[2d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Read schedule : { dark_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 37] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { dark_laplace_us_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 34] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
   // DD fold: {  }
   auto value_dark_laplace_us_0_dark_laplace_us_0_update_0_write0 = dark_laplace_us_0.dark_laplace_us_0_dark_laplace_us_0_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_dark_laplace_us_0_dark_laplace_us_0_update_0_write0;
@@ -6375,9 +6306,9 @@ inline hw_uint<16> dark_laplace_diff_0_rd0_select(dark_laplace_us_0_cache& dark_
 inline hw_uint<16> dark_laplace_diff_0_rd1_select(dark_laplace_us_0_cache& dark_laplace_us_0, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_laplace_diff_0_rd1 read pattern: { dark_laplace_diff_0_update_0[d0, d1] -> dark_laplace_us_0[1 + 2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Read schedule : { dark_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 37] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { dark_laplace_us_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 34] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
+  // dark_laplace_diff_0_rd1 read pattern: { dark_laplace_diff_0_update_0[d0, d1] -> dark_laplace_us_0[1 + 2d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Read schedule : { dark_laplace_diff_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 37] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { dark_laplace_us_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 34] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
   // DD fold: {  }
   auto value_dark_laplace_us_0_dark_laplace_us_0_update_0_write1 = dark_laplace_us_0.dark_laplace_us_0_dark_laplace_us_0_update_0_write1_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_dark_laplace_us_0_dark_laplace_us_0_update_0_write1;
@@ -6418,7 +6349,7 @@ inline void dark_laplace_us_0_dark_laplace_us_0_update_0_write_bundle_write(hw_u
 #include "hw_classes.h"
 
 struct dark_laplace_us_1_dark_laplace_us_1_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 959], [0, 959]}
+	// RAM Box: {[0, 624], [0, 624]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -6451,9 +6382,9 @@ inline void dark_laplace_us_1_dark_laplace_us_1_update_0_write0_write(hw_uint<16
 inline hw_uint<16> dark_laplace_diff_1_rd0_select(dark_laplace_us_1_cache& dark_laplace_us_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_laplace_diff_1_rd0 read pattern: { dark_laplace_diff_1_update_0[d0, d1] -> dark_laplace_us_1[d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // Read schedule : { dark_laplace_diff_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 36] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // Write schedule: { dark_laplace_us_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 33] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
+  // dark_laplace_diff_1_rd0 read pattern: { dark_laplace_diff_1_update_0[d0, d1] -> dark_laplace_us_1[d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // Read schedule : { dark_laplace_diff_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 36] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // Write schedule: { dark_laplace_us_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 33] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
   // DD fold: {  }
   auto value_dark_laplace_us_1_dark_laplace_us_1_update_0_write0 = dark_laplace_us_1.dark_laplace_us_1_dark_laplace_us_1_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_dark_laplace_us_1_dark_laplace_us_1_update_0_write0;
@@ -6487,7 +6418,7 @@ inline void dark_laplace_us_1_dark_laplace_us_1_update_0_write_bundle_write(hw_u
 #include "hw_classes.h"
 
 struct dark_laplace_us_2_dark_laplace_us_2_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 479], [0, 479]}
+	// RAM Box: {[0, 312], [0, 312]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -6520,9 +6451,9 @@ inline void dark_laplace_us_2_dark_laplace_us_2_update_0_write0_write(hw_uint<16
 inline hw_uint<16> dark_laplace_diff_2_rd0_select(dark_laplace_us_2_cache& dark_laplace_us_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_laplace_diff_2_rd0 read pattern: { dark_laplace_diff_2_update_0[d0, d1] -> dark_laplace_us_2[d0, d1] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // Read schedule : { dark_laplace_diff_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 35] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // Write schedule: { dark_laplace_us_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 32] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
+  // dark_laplace_diff_2_rd0 read pattern: { dark_laplace_diff_2_update_0[d0, d1] -> dark_laplace_us_2[d0, d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { dark_laplace_diff_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 35] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_laplace_us_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 32] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
   // DD fold: {  }
   auto value_dark_laplace_us_2_dark_laplace_us_2_update_0_write0 = dark_laplace_us_2.dark_laplace_us_2_dark_laplace_us_2_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_dark_laplace_us_2_dark_laplace_us_2_update_0_write0;
@@ -6556,7 +6487,7 @@ inline void dark_laplace_us_2_dark_laplace_us_2_update_0_write_bundle_write(hw_u
 #include "hw_classes.h"
 
 struct dark_weights_dark_weights_update_0_write0_merged_banks_2_cache {
-	// RAM Box: {[0, 1926], [0, 1926]}
+	// RAM Box: {[0, 1262], [0, 1262]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<16> f1;
@@ -6576,7 +6507,7 @@ struct dark_weights_dark_weights_update_0_write0_merged_banks_2_cache {
 };
 
 struct dark_weights_dark_weights_update_0_write1_merged_banks_2_cache {
-	// RAM Box: {[1, 1927], [0, 1926]}
+	// RAM Box: {[1, 1263], [0, 1262]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<16> f1;
@@ -6613,9 +6544,9 @@ inline void dark_weights_dark_weights_update_0_write1_write(hw_uint<16>& dark_we
 inline hw_uint<16> dark_weights_normed_rd0_select(dark_weights_cache& dark_weights, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_rd0 read pattern: { dark_weights_normed_update_0[d0, d1] -> dark_weights[2d0, d1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Read schedule : { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Write schedule: { dark_weights_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // dark_weights_normed_rd0 read pattern: { dark_weights_normed_update_0[d0, d1] -> dark_weights[2d0, d1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Read schedule : { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Write schedule: { dark_weights_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_dark_weights_dark_weights_update_0_write0 = dark_weights.dark_weights_dark_weights_update_0_write0_merged_banks_2.peek_0();
   return value_dark_weights_dark_weights_update_0_write0;
@@ -6629,9 +6560,9 @@ inline hw_uint<16> dark_weights_normed_rd0_select(dark_weights_cache& dark_weigh
 inline hw_uint<16> dark_weights_normed_rd1_select(dark_weights_cache& dark_weights, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_rd1 read pattern: { dark_weights_normed_update_0[d0, d1] -> dark_weights[1 + 2d0, d1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Read schedule : { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Write schedule: { dark_weights_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // dark_weights_normed_rd1 read pattern: { dark_weights_normed_update_0[d0, d1] -> dark_weights[1 + 2d0, d1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Read schedule : { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Write schedule: { dark_weights_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_dark_weights_dark_weights_update_0_write1 = dark_weights.dark_weights_dark_weights_update_0_write1_merged_banks_2.peek_0();
   return value_dark_weights_dark_weights_update_0_write1;
@@ -6645,9 +6576,9 @@ inline hw_uint<16> dark_weights_normed_rd1_select(dark_weights_cache& dark_weigh
 inline hw_uint<16> weight_sums_rd0_select(dark_weights_cache& dark_weights, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // weight_sums_rd0 read pattern: { weight_sums_update_0[d0, d1] -> dark_weights[2d0, d1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Read schedule : { weight_sums_update_0[d0, d1] -> [d1, d0, 6] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Write schedule: { dark_weights_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // weight_sums_rd0 read pattern: { weight_sums_update_0[d0, d1] -> dark_weights[2d0, d1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Read schedule : { weight_sums_update_0[d0, d1] -> [d1, d0, 6] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Write schedule: { dark_weights_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_dark_weights_dark_weights_update_0_write0 = dark_weights.dark_weights_dark_weights_update_0_write0_merged_banks_2.peek_0();
   return value_dark_weights_dark_weights_update_0_write0;
@@ -6661,9 +6592,9 @@ inline hw_uint<16> weight_sums_rd0_select(dark_weights_cache& dark_weights, int 
 inline hw_uint<16> weight_sums_rd1_select(dark_weights_cache& dark_weights, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // weight_sums_rd1 read pattern: { weight_sums_update_0[d0, d1] -> dark_weights[1 + 2d0, d1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Read schedule : { weight_sums_update_0[d0, d1] -> [d1, d0, 6] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Write schedule: { dark_weights_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // weight_sums_rd1 read pattern: { weight_sums_update_0[d0, d1] -> dark_weights[1 + 2d0, d1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Read schedule : { weight_sums_update_0[d0, d1] -> [d1, d0, 6] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Write schedule: { dark_weights_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_dark_weights_dark_weights_update_0_write1 = dark_weights.dark_weights_dark_weights_update_0_write1_merged_banks_2.peek_0();
   return value_dark_weights_dark_weights_update_0_write1;
@@ -6720,15 +6651,15 @@ inline hw_uint<32> dark_weights_weight_sums_update_0_read_bundle_read(dark_weigh
 #include "hw_classes.h"
 
 struct dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10_cache {
-	// RAM Box: {[0, 1926], [0, 1926]}
-	// Capacity: 1930
+	// RAM Box: {[0, 1262], [0, 1262]}
+	// Capacity: 1266
 	// # of read delays: 6
 	hw_uint<16> f0;
 	hw_uint<16> f2;
-	fifo<hw_uint<16>, 962> f3;
+	fifo<hw_uint<16>, 630> f3;
 	hw_uint<16> f4;
 	hw_uint<16> f6;
-	fifo<hw_uint<16>, 962> f7;
+	fifo<hw_uint<16>, 630> f7;
 	hw_uint<16> f8;
 	hw_uint<16> f10;
 
@@ -6741,31 +6672,31 @@ struct dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10_c
 		return f2;
 	}
 
-	inline hw_uint<16> peek_963() {
+	inline hw_uint<16> peek_631() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<16> peek_964() {
+	inline hw_uint<16> peek_632() {
 		return f4;
 	}
 
-	inline hw_uint<16> peek_965() {
+	inline hw_uint<16> peek_633() {
 		return f6;
 	}
 
-	inline hw_uint<16> peek_1927() {
+	inline hw_uint<16> peek_1263() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<16> peek_1928() {
+	inline hw_uint<16> peek_1264() {
 		return f8;
 	}
 
-	inline hw_uint<16> peek_1929() {
+	inline hw_uint<16> peek_1265() {
 		return f10;
 	}
 
@@ -6778,11 +6709,11 @@ struct dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10_c
     f10 = f8;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 962
+    // cap: 1 reading from capacity: 630
     f8 = f7.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 962 reading from capacity: 1
+    // cap: 630 reading from capacity: 1
     f7.push(f6);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -6790,11 +6721,11 @@ struct dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10_c
     f6 = f4;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 962
+    // cap: 1 reading from capacity: 630
     f4 = f3.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 962 reading from capacity: 1
+    // cap: 630 reading from capacity: 1
     f3.push(f2);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -6807,15 +6738,15 @@ struct dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10_c
 };
 
 struct dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_10_cache {
-	// RAM Box: {[1, 1927], [0, 1926]}
-	// Capacity: 1930
+	// RAM Box: {[1, 1263], [0, 1262]}
+	// Capacity: 1266
 	// # of read delays: 6
 	hw_uint<16> f0;
 	hw_uint<16> f2;
-	fifo<hw_uint<16>, 962> f3;
+	fifo<hw_uint<16>, 630> f3;
 	hw_uint<16> f4;
 	hw_uint<16> f6;
-	fifo<hw_uint<16>, 962> f7;
+	fifo<hw_uint<16>, 630> f7;
 	hw_uint<16> f8;
 	hw_uint<16> f10;
 
@@ -6828,31 +6759,31 @@ struct dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_10_c
 		return f2;
 	}
 
-	inline hw_uint<16> peek_963() {
+	inline hw_uint<16> peek_631() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f3.back();
 	}
 
-	inline hw_uint<16> peek_964() {
+	inline hw_uint<16> peek_632() {
 		return f4;
 	}
 
-	inline hw_uint<16> peek_965() {
+	inline hw_uint<16> peek_633() {
 		return f6;
 	}
 
-	inline hw_uint<16> peek_1927() {
+	inline hw_uint<16> peek_1263() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f7.back();
 	}
 
-	inline hw_uint<16> peek_1928() {
+	inline hw_uint<16> peek_1264() {
 		return f8;
 	}
 
-	inline hw_uint<16> peek_1929() {
+	inline hw_uint<16> peek_1265() {
 		return f10;
 	}
 
@@ -6865,11 +6796,11 @@ struct dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_10_c
     f10 = f8;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 962
+    // cap: 1 reading from capacity: 630
     f8 = f7.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 962 reading from capacity: 1
+    // cap: 630 reading from capacity: 1
     f7.push(f6);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -6877,11 +6808,11 @@ struct dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_10_c
     f6 = f4;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 962
+    // cap: 1 reading from capacity: 630
     f4 = f3.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 962 reading from capacity: 1
+    // cap: 630 reading from capacity: 1
     f3.push(f2);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -6911,11 +6842,11 @@ inline void dark_weights_normed_dark_weights_normed_update_0_write1_write(hw_uin
 inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd0_select(dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_1_rd0 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1929 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_dark_weights_normed_dark_weights_normed_update_0_write0 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10.peek_1929();
+  // dark_weights_normed_gauss_blur_1_rd0 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1265 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_dark_weights_normed_dark_weights_normed_update_0_write0 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10.peek_1265();
   return value_dark_weights_normed_dark_weights_normed_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -6927,11 +6858,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd0_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd1_select(dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_1_rd1 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 965 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_dark_weights_normed_dark_weights_normed_update_0_write0 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10.peek_965();
+  // dark_weights_normed_gauss_blur_1_rd1 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 633 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_dark_weights_normed_dark_weights_normed_update_0_write0 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10.peek_633();
   return value_dark_weights_normed_dark_weights_normed_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -6943,11 +6874,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd1_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd10_select(dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_1_rd10 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[1 + 2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 965 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_dark_weights_normed_dark_weights_normed_update_0_write1 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_10.peek_965();
+  // dark_weights_normed_gauss_blur_1_rd10 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[1 + 2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 633 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_dark_weights_normed_dark_weights_normed_update_0_write1 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_10.peek_633();
   return value_dark_weights_normed_dark_weights_normed_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -6959,10 +6890,10 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd10_select(dark_weights_nor
 inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd11_select(dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_1_rd11 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[1 + 2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
+  // dark_weights_normed_gauss_blur_1_rd11 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[1 + 2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
   auto value_dark_weights_normed_dark_weights_normed_update_0_write1 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_10.peek_1();
   return value_dark_weights_normed_dark_weights_normed_update_0_write1;
 #ifndef __VIVADO_SYNTH__
@@ -6975,11 +6906,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd11_select(dark_weights_nor
 inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd12_select(dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_1_rd12 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[2 + 2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1928 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> (966 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_dark_weights_normed_dark_weights_normed_update_0_write0 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10.peek_1928();
+  // dark_weights_normed_gauss_blur_1_rd12 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[2 + 2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1264 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> (634 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_dark_weights_normed_dark_weights_normed_update_0_write0 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10.peek_1264();
   return value_dark_weights_normed_dark_weights_normed_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -6991,11 +6922,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd12_select(dark_weights_nor
 inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd13_select(dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_1_rd13 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[2 + 2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 964 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_dark_weights_normed_dark_weights_normed_update_0_write0 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10.peek_964();
+  // dark_weights_normed_gauss_blur_1_rd13 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[2 + 2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 632 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_dark_weights_normed_dark_weights_normed_update_0_write0 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10.peek_632();
   return value_dark_weights_normed_dark_weights_normed_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -7007,9 +6938,9 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd13_select(dark_weights_nor
 inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd14_select(dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_1_rd14 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[2 + 2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // dark_weights_normed_gauss_blur_1_rd14 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[2 + 2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_dark_weights_normed_dark_weights_normed_update_0_write0 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10.peek_0();
   return value_dark_weights_normed_dark_weights_normed_update_0_write0;
@@ -7023,11 +6954,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd14_select(dark_weights_nor
 inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd15_select(dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_1_rd15 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[3 + 2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1928 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> (966 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_dark_weights_normed_dark_weights_normed_update_0_write1 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_10.peek_1928();
+  // dark_weights_normed_gauss_blur_1_rd15 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[3 + 2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1264 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> (634 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_dark_weights_normed_dark_weights_normed_update_0_write1 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_10.peek_1264();
   return value_dark_weights_normed_dark_weights_normed_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -7039,11 +6970,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd15_select(dark_weights_nor
 inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd16_select(dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_1_rd16 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[3 + 2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 964 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_dark_weights_normed_dark_weights_normed_update_0_write1 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_10.peek_964();
+  // dark_weights_normed_gauss_blur_1_rd16 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[3 + 2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 632 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_dark_weights_normed_dark_weights_normed_update_0_write1 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_10.peek_632();
   return value_dark_weights_normed_dark_weights_normed_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -7055,9 +6986,9 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd16_select(dark_weights_nor
 inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd17_select(dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_1_rd17 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[3 + 2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // dark_weights_normed_gauss_blur_1_rd17 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[3 + 2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_dark_weights_normed_dark_weights_normed_update_0_write1 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_10.peek_0();
   return value_dark_weights_normed_dark_weights_normed_update_0_write1;
@@ -7071,10 +7002,10 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd17_select(dark_weights_nor
 inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd2_select(dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_1_rd2 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
+  // dark_weights_normed_gauss_blur_1_rd2 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
   auto value_dark_weights_normed_dark_weights_normed_update_0_write0 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10.peek_1();
   return value_dark_weights_normed_dark_weights_normed_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -7087,11 +7018,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd2_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd3_select(dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_1_rd3 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[1 + 2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1929 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_dark_weights_normed_dark_weights_normed_update_0_write1 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_10.peek_1929();
+  // dark_weights_normed_gauss_blur_1_rd3 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[1 + 2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1265 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_dark_weights_normed_dark_weights_normed_update_0_write1 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_10.peek_1265();
   return value_dark_weights_normed_dark_weights_normed_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -7103,11 +7034,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd3_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd4_select(dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_1_rd4 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[1 + 2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 965 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_dark_weights_normed_dark_weights_normed_update_0_write1 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_10.peek_965();
+  // dark_weights_normed_gauss_blur_1_rd4 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[1 + 2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 633 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_dark_weights_normed_dark_weights_normed_update_0_write1 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_10.peek_633();
   return value_dark_weights_normed_dark_weights_normed_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -7119,10 +7050,10 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd4_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd5_select(dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_1_rd5 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[1 + 2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
+  // dark_weights_normed_gauss_blur_1_rd5 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[1 + 2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
   auto value_dark_weights_normed_dark_weights_normed_update_0_write1 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_10.peek_1();
   return value_dark_weights_normed_dark_weights_normed_update_0_write1;
 #ifndef __VIVADO_SYNTH__
@@ -7135,11 +7066,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd5_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd6_select(dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_1_rd6 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[2 + 2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1928 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> (966 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_dark_weights_normed_dark_weights_normed_update_0_write0 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10.peek_1928();
+  // dark_weights_normed_gauss_blur_1_rd6 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[2 + 2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1264 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> (634 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_dark_weights_normed_dark_weights_normed_update_0_write0 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10.peek_1264();
   return value_dark_weights_normed_dark_weights_normed_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -7151,11 +7082,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd6_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd7_select(dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_1_rd7 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[2 + 2d0, 1 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 964 : 0 <= d0 <= 961 and 0 <= d1 <= 1924; dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 962 and 0 <= d1 <= 1924 }
-  auto value_dark_weights_normed_dark_weights_normed_update_0_write0 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10.peek_964();
+  // dark_weights_normed_gauss_blur_1_rd7 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[2 + 2d0, 1 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 632 : 0 <= d0 <= 629 and 0 <= d1 <= 1260; dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> (2 + d0) : d0 = 630 and 0 <= d1 <= 1260 }
+  auto value_dark_weights_normed_dark_weights_normed_update_0_write0 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10.peek_632();
   return value_dark_weights_normed_dark_weights_normed_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -7167,9 +7098,9 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd7_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd8_select(dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_1_rd8 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[2 + 2d0, 2 + d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // dark_weights_normed_gauss_blur_1_rd8 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[2 + 2d0, 2 + d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_dark_weights_normed_dark_weights_normed_update_0_write0 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10.peek_0();
   return value_dark_weights_normed_dark_weights_normed_update_0_write0;
@@ -7183,11 +7114,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd8_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd9_select(dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_1_rd9 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[1 + 2d0, d1] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1929 : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
-  auto value_dark_weights_normed_dark_weights_normed_update_0_write1 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_10.peek_1929();
+  // dark_weights_normed_gauss_blur_1_rd9 read pattern: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> dark_weights_normed[1 + 2d0, d1] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Read schedule : { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> 1265 : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
+  auto value_dark_weights_normed_dark_weights_normed_update_0_write1 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_10.peek_1265();
   return value_dark_weights_normed_dark_weights_normed_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -7199,11 +7130,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_1_rd9_select(dark_weights_norm
 inline hw_uint<16> fused_level_0_rd0_select(dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // fused_level_0_rd0 read pattern: { fused_level_0_update_0[d0, d1] -> dark_weights_normed[2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Read schedule : { fused_level_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 48] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { fused_level_0_update_0[d0, d1] -> 1929 : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  auto value_dark_weights_normed_dark_weights_normed_update_0_write0 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10.peek_1929();
+  // fused_level_0_rd0 read pattern: { fused_level_0_update_0[d0, d1] -> dark_weights_normed[2d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Read schedule : { fused_level_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 48] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { fused_level_0_update_0[d0, d1] -> 1265 : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  auto value_dark_weights_normed_dark_weights_normed_update_0_write0 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write0_merged_banks_10.peek_1265();
   return value_dark_weights_normed_dark_weights_normed_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -7215,11 +7146,11 @@ inline hw_uint<16> fused_level_0_rd0_select(dark_weights_normed_cache& dark_weig
 inline hw_uint<16> fused_level_0_rd1_select(dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // fused_level_0_rd1 read pattern: { fused_level_0_update_0[d0, d1] -> dark_weights_normed[1 + 2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Read schedule : { fused_level_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 48] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // DD fold: { fused_level_0_update_0[d0, d1] -> 1929 : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  auto value_dark_weights_normed_dark_weights_normed_update_0_write1 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_10.peek_1929();
+  // fused_level_0_rd1 read pattern: { fused_level_0_update_0[d0, d1] -> dark_weights_normed[1 + 2d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Read schedule : { fused_level_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 48] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // DD fold: { fused_level_0_update_0[d0, d1] -> 1265 : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  auto value_dark_weights_normed_dark_weights_normed_update_0_write1 = dark_weights_normed.dark_weights_normed_dark_weights_normed_update_0_write1_merged_banks_10.peek_1265();
   return value_dark_weights_normed_dark_weights_normed_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -7338,7 +7269,7 @@ inline hw_uint<32> dark_weights_normed_fused_level_0_update_0_read_bundle_read(d
 #include "hw_classes.h"
 
 struct dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 1924], [0, 1924]}
+	// RAM Box: {[0, 1260], [0, 1260]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -7374,9 +7305,9 @@ inline void dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_up
 inline hw_uint<16> dark_weights_normed_gauss_ds_1_rd0_select(dark_weights_normed_gauss_blur_1_cache& dark_weights_normed_gauss_blur_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_ds_1_rd0 read pattern: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> dark_weights_normed_gauss_blur_1[2d0, 2d1] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // Read schedule : { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // Write schedule: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 962 and 0 <= d1 <= 1924 }
+  // dark_weights_normed_gauss_ds_1_rd0 read pattern: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> dark_weights_normed_gauss_blur_1[2d0, 2d1] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // Read schedule : { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // Write schedule: { dark_weights_normed_gauss_blur_1_update_0[d0, d1] -> [2 + d1, 1 + d0, 11] : 0 <= d0 <= 630 and 0 <= d1 <= 1260 }
   // DD fold: {  }
   auto value_dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_0_write0 = dark_weights_normed_gauss_blur_1.dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_0_write0;
@@ -7413,7 +7344,7 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_ds
 #include "hw_classes.h"
 
 struct dark_weights_normed_gauss_blur_2_dark_weights_normed_gauss_blur_2_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 960], [0, 960]}
+	// RAM Box: {[0, 628], [0, 628]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -7446,9 +7377,9 @@ inline void dark_weights_normed_gauss_blur_2_dark_weights_normed_gauss_blur_2_up
 inline hw_uint<16> dark_weights_normed_gauss_ds_2_rd0_select(dark_weights_normed_gauss_blur_2_cache& dark_weights_normed_gauss_blur_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_ds_2_rd0 read pattern: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> dark_weights_normed_gauss_blur_2[2d0, 2d1] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // Read schedule : { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // Write schedule: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 18] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
+  // dark_weights_normed_gauss_ds_2_rd0 read pattern: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> dark_weights_normed_gauss_blur_2[2d0, 2d1] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // Read schedule : { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // Write schedule: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 18] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
   // DD fold: {  }
   auto value_dark_weights_normed_gauss_blur_2_dark_weights_normed_gauss_blur_2_update_0_write0 = dark_weights_normed_gauss_blur_2.dark_weights_normed_gauss_blur_2_dark_weights_normed_gauss_blur_2_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_dark_weights_normed_gauss_blur_2_dark_weights_normed_gauss_blur_2_update_0_write0;
@@ -7482,7 +7413,7 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_2_dark_weights_normed_gauss_ds
 #include "hw_classes.h"
 
 struct dark_weights_normed_gauss_blur_3_dark_weights_normed_gauss_blur_3_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 478], [0, 478]}
+	// RAM Box: {[0, 312], [0, 312]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -7515,9 +7446,9 @@ inline void dark_weights_normed_gauss_blur_3_dark_weights_normed_gauss_blur_3_up
 inline hw_uint<16> dark_weights_normed_gauss_ds_3_rd0_select(dark_weights_normed_gauss_blur_3_cache& dark_weights_normed_gauss_blur_3, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_ds_3_rd0 read pattern: { dark_weights_normed_gauss_ds_3_update_0[d0, d1] -> dark_weights_normed_gauss_blur_3[2d0, 2d1] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
-  // Read schedule : { dark_weights_normed_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 31] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
-  // Write schedule: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 26] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
+  // dark_weights_normed_gauss_ds_3_rd0 read pattern: { dark_weights_normed_gauss_ds_3_update_0[d0, d1] -> dark_weights_normed_gauss_blur_3[2d0, 2d1] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
+  // Read schedule : { dark_weights_normed_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 31] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
+  // Write schedule: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 26] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
   // DD fold: {  }
   auto value_dark_weights_normed_gauss_blur_3_dark_weights_normed_gauss_blur_3_update_0_write0 = dark_weights_normed_gauss_blur_3.dark_weights_normed_gauss_blur_3_dark_weights_normed_gauss_blur_3_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_dark_weights_normed_gauss_blur_3_dark_weights_normed_gauss_blur_3_update_0_write0;
@@ -7551,17 +7482,17 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_3_dark_weights_normed_gauss_ds
 #include "hw_classes.h"
 
 struct dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10_cache {
-	// RAM Box: {[0, 962], [0, 962]}
-	// Capacity: 1929
+	// RAM Box: {[0, 630], [0, 630]}
+	// Capacity: 1265
 	// # of read delays: 9
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	hw_uint<16> f4;
-	fifo<hw_uint<16>, 960> f5;
+	fifo<hw_uint<16>, 628> f5;
 	hw_uint<16> f6;
 	hw_uint<16> f8;
 	hw_uint<16> f10;
-	fifo<hw_uint<16>, 960> f11;
+	fifo<hw_uint<16>, 628> f11;
 	hw_uint<16> f12;
 	hw_uint<16> f14;
 	hw_uint<16> f16;
@@ -7579,39 +7510,39 @@ struct dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_wr
 		return f4;
 	}
 
-	inline hw_uint<16> peek_962() {
+	inline hw_uint<16> peek_630() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f5.back();
 	}
 
-	inline hw_uint<16> peek_963() {
+	inline hw_uint<16> peek_631() {
 		return f6;
 	}
 
-	inline hw_uint<16> peek_964() {
+	inline hw_uint<16> peek_632() {
 		return f8;
 	}
 
-	inline hw_uint<16> peek_965() {
+	inline hw_uint<16> peek_633() {
 		return f10;
 	}
 
-	inline hw_uint<16> peek_1925() {
+	inline hw_uint<16> peek_1261() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f11.back();
 	}
 
-	inline hw_uint<16> peek_1926() {
+	inline hw_uint<16> peek_1262() {
 		return f12;
 	}
 
-	inline hw_uint<16> peek_1927() {
+	inline hw_uint<16> peek_1263() {
 		return f14;
 	}
 
-	inline hw_uint<16> peek_1928() {
+	inline hw_uint<16> peek_1264() {
 		return f16;
 	}
 
@@ -7628,11 +7559,11 @@ struct dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_wr
     f14 = f12;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 960
+    // cap: 1 reading from capacity: 628
     f12 = f11.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 960 reading from capacity: 1
+    // cap: 628 reading from capacity: 1
     f11.push(f10);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -7644,11 +7575,11 @@ struct dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_wr
     f8 = f6;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 960
+    // cap: 1 reading from capacity: 628
     f6 = f5.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 960 reading from capacity: 1
+    // cap: 628 reading from capacity: 1
     f5.push(f4);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -7677,11 +7608,11 @@ inline void dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update
 inline hw_uint<16> dark_weights_normed_gauss_blur_2_rd0_select(dark_weights_normed_gauss_ds_1_cache& dark_weights_normed_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_2_rd0 read pattern: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> dark_weights_normed_gauss_ds_1[d0, d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 18] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> 1928 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  auto value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0 = dark_weights_normed_gauss_ds_1.dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_1928();
+  // dark_weights_normed_gauss_blur_2_rd0 read pattern: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> dark_weights_normed_gauss_ds_1[d0, d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 18] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> 1264 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  auto value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0 = dark_weights_normed_gauss_ds_1.dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_1264();
   return value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -7693,11 +7624,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_2_rd0_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_2_rd1_select(dark_weights_normed_gauss_ds_1_cache& dark_weights_normed_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_2_rd1 read pattern: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> dark_weights_normed_gauss_ds_1[d0, 1 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 18] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> 965 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  auto value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0 = dark_weights_normed_gauss_ds_1.dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_965();
+  // dark_weights_normed_gauss_blur_2_rd1 read pattern: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> dark_weights_normed_gauss_ds_1[d0, 1 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 18] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> 633 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  auto value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0 = dark_weights_normed_gauss_ds_1.dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_633();
   return value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -7709,10 +7640,10 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_2_rd1_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_2_rd2_select(dark_weights_normed_gauss_ds_1_cache& dark_weights_normed_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_2_rd2 read pattern: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> dark_weights_normed_gauss_ds_1[d0, 2 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 18] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> 2 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
+  // dark_weights_normed_gauss_blur_2_rd2 read pattern: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> dark_weights_normed_gauss_ds_1[d0, 2 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 18] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> 2 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
   auto value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0 = dark_weights_normed_gauss_ds_1.dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_2();
   return value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -7725,11 +7656,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_2_rd2_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_2_rd3_select(dark_weights_normed_gauss_ds_1_cache& dark_weights_normed_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_2_rd3 read pattern: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> dark_weights_normed_gauss_ds_1[1 + d0, d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 18] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> 1927 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  auto value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0 = dark_weights_normed_gauss_ds_1.dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_1927();
+  // dark_weights_normed_gauss_blur_2_rd3 read pattern: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> dark_weights_normed_gauss_ds_1[1 + d0, d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 18] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> 1263 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  auto value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0 = dark_weights_normed_gauss_ds_1.dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_1263();
   return value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -7741,11 +7672,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_2_rd3_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_2_rd4_select(dark_weights_normed_gauss_ds_1_cache& dark_weights_normed_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_2_rd4 read pattern: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> dark_weights_normed_gauss_ds_1[1 + d0, 1 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 18] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> 964 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  auto value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0 = dark_weights_normed_gauss_ds_1.dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_964();
+  // dark_weights_normed_gauss_blur_2_rd4 read pattern: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> dark_weights_normed_gauss_ds_1[1 + d0, 1 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 18] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> 632 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  auto value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0 = dark_weights_normed_gauss_ds_1.dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_632();
   return value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -7757,10 +7688,10 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_2_rd4_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_2_rd5_select(dark_weights_normed_gauss_ds_1_cache& dark_weights_normed_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_2_rd5 read pattern: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> dark_weights_normed_gauss_ds_1[1 + d0, 2 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 18] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> 1 : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
+  // dark_weights_normed_gauss_blur_2_rd5 read pattern: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> dark_weights_normed_gauss_ds_1[1 + d0, 2 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 18] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> 1 : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
   auto value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0 = dark_weights_normed_gauss_ds_1.dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_1();
   return value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
@@ -7773,11 +7704,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_2_rd5_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_2_rd6_select(dark_weights_normed_gauss_ds_1_cache& dark_weights_normed_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_2_rd6 read pattern: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> dark_weights_normed_gauss_ds_1[2 + d0, d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 18] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> 1926 : 0 <= d0 <= 959 and 0 <= d1 <= 960; dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> (966 + d0) : d0 = 960 and 0 <= d1 <= 960 }
-  auto value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0 = dark_weights_normed_gauss_ds_1.dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_1926();
+  // dark_weights_normed_gauss_blur_2_rd6 read pattern: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> dark_weights_normed_gauss_ds_1[2 + d0, d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 18] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> 1262 : 0 <= d0 <= 627 and 0 <= d1 <= 628; dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> (634 + d0) : d0 = 628 and 0 <= d1 <= 628 }
+  auto value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0 = dark_weights_normed_gauss_ds_1.dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_1262();
   return value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -7789,11 +7720,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_2_rd6_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_2_rd7_select(dark_weights_normed_gauss_ds_1_cache& dark_weights_normed_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_2_rd7 read pattern: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> dark_weights_normed_gauss_ds_1[2 + d0, 1 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 18] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> 963 : 0 <= d0 <= 959 and 0 <= d1 <= 960; dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> (3 + d0) : d0 = 960 and 0 <= d1 <= 960 }
-  auto value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0 = dark_weights_normed_gauss_ds_1.dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_963();
+  // dark_weights_normed_gauss_blur_2_rd7 read pattern: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> dark_weights_normed_gauss_ds_1[2 + d0, 1 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 18] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> 631 : 0 <= d0 <= 627 and 0 <= d1 <= 628; dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> (3 + d0) : d0 = 628 and 0 <= d1 <= 628 }
+  auto value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0 = dark_weights_normed_gauss_ds_1.dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_631();
   return value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -7805,9 +7736,9 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_2_rd7_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_2_rd8_select(dark_weights_normed_gauss_ds_1_cache& dark_weights_normed_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_2_rd8 read pattern: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> dark_weights_normed_gauss_ds_1[2 + d0, 2 + d1] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Read schedule : { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 18] : 0 <= d0 <= 960 and 0 <= d1 <= 960 }
-  // Write schedule: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
+  // dark_weights_normed_gauss_blur_2_rd8 read pattern: { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> dark_weights_normed_gauss_ds_1[2 + d0, 2 + d1] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Read schedule : { dark_weights_normed_gauss_blur_2_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 18] : 0 <= d0 <= 628 and 0 <= d1 <= 628 }
+  // Write schedule: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
   // DD fold: {  }
   auto value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0 = dark_weights_normed_gauss_ds_1.dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_0();
   return value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0;
@@ -7821,11 +7752,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_2_rd8_select(dark_weights_norm
 inline hw_uint<16> fused_level_1_rd0_select(dark_weights_normed_gauss_ds_1_cache& dark_weights_normed_gauss_ds_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // fused_level_1_rd0 read pattern: { fused_level_1_update_0[d0, d1] -> dark_weights_normed_gauss_ds_1[d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // Read schedule : { fused_level_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 47] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // Write schedule: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 962 and 0 <= d1 <= 962 }
-  // DD fold: { fused_level_1_update_0[d0, d1] -> 1928 : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  auto value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0 = dark_weights_normed_gauss_ds_1.dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_1928();
+  // fused_level_1_rd0 read pattern: { fused_level_1_update_0[d0, d1] -> dark_weights_normed_gauss_ds_1[d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // Read schedule : { fused_level_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 47] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // Write schedule: { dark_weights_normed_gauss_ds_1_update_0[d0, d1] -> [2 + 2d1, 1 + d0, 17] : 0 <= d0 <= 630 and 0 <= d1 <= 630 }
+  // DD fold: { fused_level_1_update_0[d0, d1] -> 1264 : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  auto value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0 = dark_weights_normed_gauss_ds_1.dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0_merged_banks_10.peek_1264();
   return value_dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -7900,18 +7831,18 @@ inline hw_uint<16> dark_weights_normed_gauss_ds_1_fused_level_1_update_0_read_bu
 
 #include "hw_classes.h"
 
-struct dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9_cache {
-	// RAM Box: {[0, 480], [0, 480]}
-	// Capacity: 965
+struct dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10_cache {
+	// RAM Box: {[0, 314], [0, 314]}
+	// Capacity: 633
 	// # of read delays: 9
 	hw_uint<16> f0;
 	hw_uint<16> f2;
 	hw_uint<16> f4;
-	fifo<hw_uint<16>, 478> f5;
+	fifo<hw_uint<16>, 312> f5;
 	hw_uint<16> f6;
 	hw_uint<16> f8;
 	hw_uint<16> f10;
-	fifo<hw_uint<16>, 478> f11;
+	fifo<hw_uint<16>, 312> f11;
 	hw_uint<16> f12;
 	hw_uint<16> f14;
 	hw_uint<16> f16;
@@ -7929,39 +7860,39 @@ struct dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_wr
 		return f4;
 	}
 
-	inline hw_uint<16> peek_480() {
+	inline hw_uint<16> peek_314() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f5.back();
 	}
 
-	inline hw_uint<16> peek_481() {
+	inline hw_uint<16> peek_315() {
 		return f6;
 	}
 
-	inline hw_uint<16> peek_482() {
+	inline hw_uint<16> peek_316() {
 		return f8;
 	}
 
-	inline hw_uint<16> peek_483() {
+	inline hw_uint<16> peek_317() {
 		return f10;
 	}
 
-	inline hw_uint<16> peek_961() {
+	inline hw_uint<16> peek_629() {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 		return f11.back();
 	}
 
-	inline hw_uint<16> peek_962() {
+	inline hw_uint<16> peek_630() {
 		return f12;
 	}
 
-	inline hw_uint<16> peek_963() {
+	inline hw_uint<16> peek_631() {
 		return f14;
 	}
 
-	inline hw_uint<16> peek_964() {
+	inline hw_uint<16> peek_632() {
 		return f16;
 	}
 
@@ -7978,11 +7909,11 @@ struct dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_wr
     f14 = f12;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 478
+    // cap: 1 reading from capacity: 312
     f12 = f11.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 478 reading from capacity: 1
+    // cap: 312 reading from capacity: 1
     f11.push(f10);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -7994,11 +7925,11 @@ struct dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_wr
     f8 = f6;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 478
+    // cap: 1 reading from capacity: 312
     f6 = f5.back();
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    // cap: 478 reading from capacity: 1
+    // cap: 312 reading from capacity: 1
     f5.push(f4);
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -8014,47 +7945,24 @@ struct dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_wr
 
 };
 
-struct dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_to_fused_level_2_rd0_cache {
-	// RAM Box: {[0, 480], [0, 480]}
-	// Capacity: 965
-	// # of read delays: 484
-	fifo<hw_uint<16>, 965> f;
-	inline hw_uint<16> peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(964 - offset);
-  }
-
-
-
-	inline void push(const hw_uint<16> value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
-
-};
-
 struct dark_weights_normed_gauss_ds_2_cache {
-  dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9_cache dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9;
-  dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_to_fused_level_2_rd0_cache dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_to_fused_level_2_rd0;
+  dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10_cache dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10;
 };
 
 
 
 inline void dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_write(hw_uint<16>& dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0, dark_weights_normed_gauss_ds_2_cache& dark_weights_normed_gauss_ds_2, int d0, int d1) {
-  dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9.push(dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0);
-  dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_to_fused_level_2_rd0.push(dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0);
+  dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.push(dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0);
 }
 
 inline hw_uint<16> dark_weights_normed_gauss_blur_3_rd0_select(dark_weights_normed_gauss_ds_2_cache& dark_weights_normed_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_3_rd0 read pattern: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> dark_weights_normed_gauss_ds_2[d0, d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 26] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> 964 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0 = dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9.peek_964();
+  // dark_weights_normed_gauss_blur_3_rd0 read pattern: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> dark_weights_normed_gauss_ds_2[d0, d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 26] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> 632 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0 = dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.peek_632();
   return value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -8066,11 +7974,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_3_rd0_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_3_rd1_select(dark_weights_normed_gauss_ds_2_cache& dark_weights_normed_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_3_rd1 read pattern: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> dark_weights_normed_gauss_ds_2[d0, 1 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 26] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> 483 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0 = dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9.peek_483();
+  // dark_weights_normed_gauss_blur_3_rd1 read pattern: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> dark_weights_normed_gauss_ds_2[d0, 1 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 26] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> 317 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0 = dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.peek_317();
   return value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -8082,11 +7990,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_3_rd1_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_3_rd2_select(dark_weights_normed_gauss_ds_2_cache& dark_weights_normed_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_3_rd2 read pattern: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> dark_weights_normed_gauss_ds_2[d0, 2 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 26] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> 2 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0 = dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9.peek_2();
+  // dark_weights_normed_gauss_blur_3_rd2 read pattern: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> dark_weights_normed_gauss_ds_2[d0, 2 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 26] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> 2 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0 = dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.peek_2();
   return value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -8098,11 +8006,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_3_rd2_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_3_rd3_select(dark_weights_normed_gauss_ds_2_cache& dark_weights_normed_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_3_rd3 read pattern: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> dark_weights_normed_gauss_ds_2[1 + d0, d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 26] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> 963 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0 = dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9.peek_963();
+  // dark_weights_normed_gauss_blur_3_rd3 read pattern: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> dark_weights_normed_gauss_ds_2[1 + d0, d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 26] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> 631 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0 = dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.peek_631();
   return value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -8114,11 +8022,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_3_rd3_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_3_rd4_select(dark_weights_normed_gauss_ds_2_cache& dark_weights_normed_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_3_rd4 read pattern: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> dark_weights_normed_gauss_ds_2[1 + d0, 1 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 26] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> 482 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0 = dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9.peek_482();
+  // dark_weights_normed_gauss_blur_3_rd4 read pattern: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> dark_weights_normed_gauss_ds_2[1 + d0, 1 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 26] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> 316 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0 = dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.peek_316();
   return value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -8130,11 +8038,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_3_rd4_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_3_rd5_select(dark_weights_normed_gauss_ds_2_cache& dark_weights_normed_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_3_rd5 read pattern: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> dark_weights_normed_gauss_ds_2[1 + d0, 2 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 26] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> 1 : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  auto value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0 = dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9.peek_1();
+  // dark_weights_normed_gauss_blur_3_rd5 read pattern: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> dark_weights_normed_gauss_ds_2[1 + d0, 2 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 26] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> 1 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0 = dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.peek_1();
   return value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -8146,11 +8054,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_3_rd5_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_3_rd6_select(dark_weights_normed_gauss_ds_2_cache& dark_weights_normed_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_3_rd6 read pattern: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> dark_weights_normed_gauss_ds_2[2 + d0, d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 26] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> 962 : 0 <= d0 <= 477 and 0 <= d1 <= 478; dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> (484 + d0) : d0 = 478 and 0 <= d1 <= 478 }
-  auto value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0 = dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9.peek_962();
+  // dark_weights_normed_gauss_blur_3_rd6 read pattern: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> dark_weights_normed_gauss_ds_2[2 + d0, d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 26] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> 630 : 0 <= d0 <= 311 and 0 <= d1 <= 312; dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> (318 + d0) : d0 = 312 and 0 <= d1 <= 312 }
+  auto value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0 = dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.peek_630();
   return value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -8162,11 +8070,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_3_rd6_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_3_rd7_select(dark_weights_normed_gauss_ds_2_cache& dark_weights_normed_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_3_rd7 read pattern: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> dark_weights_normed_gauss_ds_2[2 + d0, 1 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 26] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> 481 : 0 <= d0 <= 477 and 0 <= d1 <= 478; dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> (3 + d0) : d0 = 478 and 0 <= d1 <= 478 }
-  auto value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0 = dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9.peek_481();
+  // dark_weights_normed_gauss_blur_3_rd7 read pattern: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> dark_weights_normed_gauss_ds_2[2 + d0, 1 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 26] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> 315 : 0 <= d0 <= 311 and 0 <= d1 <= 312; dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> (3 + d0) : d0 = 312 and 0 <= d1 <= 312 }
+  auto value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0 = dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.peek_315();
   return value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -8178,11 +8086,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_3_rd7_select(dark_weights_norm
 inline hw_uint<16> dark_weights_normed_gauss_blur_3_rd8_select(dark_weights_normed_gauss_ds_2_cache& dark_weights_normed_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_gauss_blur_3_rd8 read pattern: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> dark_weights_normed_gauss_ds_2[2 + d0, 2 + d1] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Read schedule : { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 26] : 0 <= d0 <= 478 and 0 <= d1 <= 478 }
-  // Write schedule: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
+  // dark_weights_normed_gauss_blur_3_rd8 read pattern: { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> dark_weights_normed_gauss_ds_2[2 + d0, 2 + d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { dark_weights_normed_gauss_blur_3_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 26] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
   // DD fold: {  }
-  auto value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0 = dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_9.peek_0();
+  auto value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0 = dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.peek_0();
   return value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -8194,11 +8102,11 @@ inline hw_uint<16> dark_weights_normed_gauss_blur_3_rd8_select(dark_weights_norm
 inline hw_uint<16> fused_level_2_rd0_select(dark_weights_normed_gauss_ds_2_cache& dark_weights_normed_gauss_ds_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // fused_level_2_rd0 read pattern: { fused_level_2_update_0[d0, d1] -> dark_weights_normed_gauss_ds_2[d0, d1] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // Read schedule : { fused_level_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 46] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // Write schedule: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 480 and 0 <= d1 <= 480 }
-  // DD fold: { fused_level_2_update_0[d0, d1] -> 964 : 0 <= d0 <= 478 and 0 <= d1 <= 478; fused_level_2_update_0[d0, d1] -> 963 : d0 = 479 and 0 <= d1 <= 478; fused_level_2_update_0[d0, d1] -> (961 - d0) : d1 = 479 and 0 <= d0 <= 479 }
-  auto value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0 = dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_to_fused_level_2_rd0.peek(/* one reader or all rams */ (-479 + d0 == 0 && 478 - d1 >= 0) ? (963) : (478 - d1 >= 0 && 478 - d0 >= 0) ? (964) : (-479 + d1 == 0) ? ((961 - d0)) : 0);
+  // fused_level_2_rd0 read pattern: { fused_level_2_update_0[d0, d1] -> dark_weights_normed_gauss_ds_2[d0, d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { fused_level_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 46] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { dark_weights_normed_gauss_ds_2_update_0[d0, d1] -> [6 + 4d1, 3 + 2d0, 25] : 0 <= d0 <= 314 and 0 <= d1 <= 314 }
+  // DD fold: { fused_level_2_update_0[d0, d1] -> 632 : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  auto value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0 = dark_weights_normed_gauss_ds_2.dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0_merged_banks_10.peek_632();
   return value_dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -8274,7 +8182,7 @@ inline hw_uint<16> dark_weights_normed_gauss_ds_2_fused_level_2_update_0_read_bu
 #include "hw_classes.h"
 
 struct dark_weights_normed_gauss_ds_3_dark_weights_normed_gauss_ds_3_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 239], [0, 239]}
+	// RAM Box: {[0, 156], [0, 156]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -8307,9 +8215,9 @@ inline void dark_weights_normed_gauss_ds_3_dark_weights_normed_gauss_ds_3_update
 inline hw_uint<16> fused_level_3_rd0_select(dark_weights_normed_gauss_ds_3_cache& dark_weights_normed_gauss_ds_3, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // fused_level_3_rd0 read pattern: { fused_level_3_update_0[d0, d1] -> dark_weights_normed_gauss_ds_3[d0, d1] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
-  // Read schedule : { fused_level_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 45] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
-  // Write schedule: { dark_weights_normed_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 31] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
+  // fused_level_3_rd0 read pattern: { fused_level_3_update_0[d0, d1] -> dark_weights_normed_gauss_ds_3[d0, d1] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
+  // Read schedule : { fused_level_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 45] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
+  // Write schedule: { dark_weights_normed_gauss_ds_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 31] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
   // DD fold: {  }
   auto value_dark_weights_normed_gauss_ds_3_dark_weights_normed_gauss_ds_3_update_0_write0 = dark_weights_normed_gauss_ds_3.dark_weights_normed_gauss_ds_3_dark_weights_normed_gauss_ds_3_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_dark_weights_normed_gauss_ds_3_dark_weights_normed_gauss_ds_3_update_0_write0;
@@ -8343,7 +8251,7 @@ inline hw_uint<16> dark_weights_normed_gauss_ds_3_fused_level_3_update_0_read_bu
 #include "hw_classes.h"
 
 struct final_merged_0_final_merged_0_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 1918], [0, 1919]}
+	// RAM Box: {[0, 1248], [0, 1249]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -8364,7 +8272,7 @@ struct final_merged_0_final_merged_0_update_0_write0_merged_banks_1_cache {
 };
 
 struct final_merged_0_final_merged_0_update_0_write1_merged_banks_1_cache {
-	// RAM Box: {[1, 1919], [0, 1919]}
+	// RAM Box: {[1, 1249], [0, 1249]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -8402,9 +8310,9 @@ inline void final_merged_0_final_merged_0_update_0_write1_write(hw_uint<16>& fin
 inline hw_uint<16> psefn_2_rd0_select(final_merged_0_cache& final_merged_0, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // psefn_2_rd0 read pattern: { psefn_2_update_0[d0, d1] -> final_merged_0[2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Read schedule : { psefn_2_update_0[d0, d1] -> [14 + d1, 7 + d0, 52] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { final_merged_0_update_0[d0, d1] -> [14 + d1, 7 + d0, 51] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
+  // psefn_2_rd0 read pattern: { psefn_2_update_0[d0, d1] -> final_merged_0[2d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Read schedule : { psefn_2_update_0[d0, d1] -> [14 + d1, 7 + d0, 52] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { final_merged_0_update_0[d0, d1] -> [14 + d1, 7 + d0, 51] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
   // DD fold: {  }
   auto value_final_merged_0_final_merged_0_update_0_write0 = final_merged_0.final_merged_0_final_merged_0_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_final_merged_0_final_merged_0_update_0_write0;
@@ -8418,9 +8326,9 @@ inline hw_uint<16> psefn_2_rd0_select(final_merged_0_cache& final_merged_0, int 
 inline hw_uint<16> psefn_2_rd1_select(final_merged_0_cache& final_merged_0, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // psefn_2_rd1 read pattern: { psefn_2_update_0[d0, d1] -> final_merged_0[1 + 2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Read schedule : { psefn_2_update_0[d0, d1] -> [14 + d1, 7 + d0, 52] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { final_merged_0_update_0[d0, d1] -> [14 + d1, 7 + d0, 51] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
+  // psefn_2_rd1 read pattern: { psefn_2_update_0[d0, d1] -> final_merged_0[1 + 2d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Read schedule : { psefn_2_update_0[d0, d1] -> [14 + d1, 7 + d0, 52] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { final_merged_0_update_0[d0, d1] -> [14 + d1, 7 + d0, 51] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
   // DD fold: {  }
   auto value_final_merged_0_final_merged_0_update_0_write1 = final_merged_0.final_merged_0_final_merged_0_update_0_write1_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_final_merged_0_final_merged_0_update_0_write1;
@@ -8461,14 +8369,14 @@ inline hw_uint<32> final_merged_0_psefn_2_update_0_read_bundle_read(final_merged
 #include "hw_classes.h"
 
 struct final_merged_1_final_merged_1_update_0_write0_to_final_merged_0_rd0_cache {
-	// RAM Box: {[0, 959], [0, 959]}
-	// Capacity: 960
-	// # of read delays: 960
-	fifo<hw_uint<16>, 960> f;
+	// RAM Box: {[0, 624], [0, 624]}
+	// Capacity: 625
+	// # of read delays: 625
+	fifo<hw_uint<16>, 625> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.peek(959 - offset);
+    return f.peek(624 - offset);
   }
 
 
@@ -8482,14 +8390,14 @@ struct final_merged_1_final_merged_1_update_0_write0_to_final_merged_0_rd0_cache
 };
 
 struct final_merged_1_final_merged_1_update_0_write0_to_final_merged_0_rd1_cache {
-	// RAM Box: {[0, 959], [0, 959]}
-	// Capacity: 960
-	// # of read delays: 960
-	fifo<hw_uint<16>, 960> f;
+	// RAM Box: {[0, 624], [0, 624]}
+	// Capacity: 625
+	// # of read delays: 625
+	fifo<hw_uint<16>, 625> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.peek(959 - offset);
+    return f.peek(624 - offset);
   }
 
 
@@ -8517,11 +8425,11 @@ inline void final_merged_1_final_merged_1_update_0_write0_write(hw_uint<16>& fin
 inline hw_uint<16> final_merged_0_rd0_select(final_merged_1_cache& final_merged_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // final_merged_0_rd0 read pattern: { final_merged_0_update_0[d0, d1] -> final_merged_1[d0, o1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 and -1 + d1 <= 2o1 <= d1 }
-  // Read schedule : { final_merged_0_update_0[d0, d1] -> [14 + d1, 7 + d0, 51] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { final_merged_1_update_0[d0, d1] -> [14 + 2d1, 7 + d0, 50] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // DD fold: { final_merged_0_update_0[d0, d1] -> (959 - d0) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 958 and 0 < d1 <= 1919 }
-  auto value_final_merged_1_final_merged_1_update_0_write0 = final_merged_1.final_merged_1_final_merged_1_update_0_write0_to_final_merged_0_rd0.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0 && 958 - d0 >= 0) ? ((959 - d0)) : 0);
+  // final_merged_0_rd0 read pattern: { final_merged_0_update_0[d0, d1] -> final_merged_1[d0, o1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 and -1 + d1 <= 2o1 <= d1 }
+  // Read schedule : { final_merged_0_update_0[d0, d1] -> [14 + d1, 7 + d0, 51] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { final_merged_1_update_0[d0, d1] -> [14 + 2d1, 7 + d0, 50] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // DD fold: { final_merged_0_update_0[d0, d1] -> (624 - d0) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 623 and 0 < d1 <= 1249 }
+  auto value_final_merged_1_final_merged_1_update_0_write0 = final_merged_1.final_merged_1_final_merged_1_update_0_write0_to_final_merged_0_rd0.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0 && 623 - d0 >= 0) ? ((624 - d0)) : 0);
   return value_final_merged_1_final_merged_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -8533,11 +8441,11 @@ inline hw_uint<16> final_merged_0_rd0_select(final_merged_1_cache& final_merged_
 inline hw_uint<16> final_merged_0_rd1_select(final_merged_1_cache& final_merged_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // final_merged_0_rd1 read pattern: { final_merged_0_update_0[d0, d1] -> final_merged_1[d0, o1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 and -1 + d1 <= 2o1 <= d1 }
-  // Read schedule : { final_merged_0_update_0[d0, d1] -> [14 + d1, 7 + d0, 51] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { final_merged_1_update_0[d0, d1] -> [14 + 2d1, 7 + d0, 50] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // DD fold: { final_merged_0_update_0[d0, d1] -> (959 - d0) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 958 and 0 < d1 <= 1919 }
-  auto value_final_merged_1_final_merged_1_update_0_write0 = final_merged_1.final_merged_1_final_merged_1_update_0_write0_to_final_merged_0_rd1.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0 && 958 - d0 >= 0) ? ((959 - d0)) : 0);
+  // final_merged_0_rd1 read pattern: { final_merged_0_update_0[d0, d1] -> final_merged_1[d0, o1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 and -1 + d1 <= 2o1 <= d1 }
+  // Read schedule : { final_merged_0_update_0[d0, d1] -> [14 + d1, 7 + d0, 51] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { final_merged_1_update_0[d0, d1] -> [14 + 2d1, 7 + d0, 50] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // DD fold: { final_merged_0_update_0[d0, d1] -> (624 - d0) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 623 and 0 < d1 <= 1249 }
+  auto value_final_merged_1_final_merged_1_update_0_write0 = final_merged_1.final_merged_1_final_merged_1_update_0_write0_to_final_merged_0_rd1.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0 && 623 - d0 >= 0) ? ((624 - d0)) : 0);
   return value_final_merged_1_final_merged_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -8573,14 +8481,14 @@ inline void final_merged_1_final_merged_1_update_0_write_bundle_write(hw_uint<16
 #include "hw_classes.h"
 
 struct final_merged_2_final_merged_2_update_0_write0_to_final_merged_1_rd0_cache {
-	// RAM Box: {[0, 479], [0, 479]}
-	// Capacity: 480
-	// # of read delays: 481
-	fifo<hw_uint<16>, 480> f;
+	// RAM Box: {[0, 312], [0, 312]}
+	// Capacity: 313
+	// # of read delays: 314
+	fifo<hw_uint<16>, 313> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.peek(479 - offset);
+    return f.peek(312 - offset);
   }
 
 
@@ -8606,11 +8514,11 @@ inline void final_merged_2_final_merged_2_update_0_write0_write(hw_uint<16>& fin
 inline hw_uint<16> final_merged_1_rd0_select(final_merged_2_cache& final_merged_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // final_merged_1_rd0 read pattern: { final_merged_1_update_0[d0, d1] -> final_merged_2[o0, o1] : 0 <= d0 <= 959 and 0 <= d1 <= 959 and -1 + d0 <= 2o0 <= d0 and -1 + d1 <= 2o1 <= d1 }
-  // Read schedule : { final_merged_1_update_0[d0, d1] -> [14 + 2d1, 7 + d0, 50] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // Write schedule: { final_merged_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 49] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // DD fold: { final_merged_1_update_0[d0, d1] -> (479 - floor((2d0)/4)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 957 and 0 < d1 <= 959 }
-  auto value_final_merged_2_final_merged_2_update_0_write0 = final_merged_2.final_merged_2_final_merged_2_update_0_write0_to_final_merged_1_rd0.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0 && 957 - d0 >= 0) ? ((479 - floord(2*d0, 4))) : 0);
+  // final_merged_1_rd0 read pattern: { final_merged_1_update_0[d0, d1] -> final_merged_2[o0, o1] : 0 <= d0 <= 624 and 0 <= d1 <= 624 and -1 + d0 <= 2o0 <= d0 and -1 + d1 <= 2o1 <= d1 }
+  // Read schedule : { final_merged_1_update_0[d0, d1] -> [14 + 2d1, 7 + d0, 50] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // Write schedule: { final_merged_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 49] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // DD fold: { final_merged_1_update_0[d0, d1] -> (312 - floor((2d0)/4)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 623 and 0 < d1 <= 623 }
+  auto value_final_merged_2_final_merged_2_update_0_write0 = final_merged_2.final_merged_2_final_merged_2_update_0_write0_to_final_merged_1_rd0.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0 && 623 - d0 >= 0) ? ((312 - floord(2*d0, 4))) : 0);
   return value_final_merged_2_final_merged_2_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -8642,14 +8550,14 @@ inline void final_merged_2_final_merged_2_update_0_write_bundle_write(hw_uint<16
 #include "hw_classes.h"
 
 struct fused_level_0_fused_level_0_update_0_write0_to_final_merged_0_rd0_cache {
-	// RAM Box: {[0, 1918], [0, 1919]}
-	// Capacity: 11527
-	// # of read delays: 11527
-	fifo<hw_uint<16>, 11527> f;
+	// RAM Box: {[0, 1248], [0, 1249]}
+	// Capacity: 7507
+	// # of read delays: 7507
+	fifo<hw_uint<16>, 7507> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.peek(11526 - offset);
+    return f.peek(7506 - offset);
   }
 
 
@@ -8663,14 +8571,14 @@ struct fused_level_0_fused_level_0_update_0_write0_to_final_merged_0_rd0_cache {
 };
 
 struct fused_level_0_fused_level_0_update_0_write1_to_final_merged_0_rd1_cache {
-	// RAM Box: {[1, 1919], [0, 1919]}
-	// Capacity: 11527
-	// # of read delays: 11527
-	fifo<hw_uint<16>, 11527> f;
+	// RAM Box: {[1, 1249], [0, 1249]}
+	// Capacity: 7507
+	// # of read delays: 7507
+	fifo<hw_uint<16>, 7507> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.peek(11526 - offset);
+    return f.peek(7506 - offset);
   }
 
 
@@ -8701,11 +8609,11 @@ inline void fused_level_0_fused_level_0_update_0_write1_write(hw_uint<16>& fused
 inline hw_uint<16> final_merged_0_rd0_select(fused_level_0_cache& fused_level_0, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // final_merged_0_rd0 read pattern: { final_merged_0_update_0[d0, d1] -> fused_level_0[2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Read schedule : { final_merged_0_update_0[d0, d1] -> [14 + d1, 7 + d0, 51] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { fused_level_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 48] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // DD fold: { final_merged_0_update_0[d0, d1] -> ((1843199 - d0) - 960 * d1) : 0 <= d0 <= 958 and 1909 <= d1 <= 1918; final_merged_0_update_0[d0, d1] -> (1842240 - 960 * d1) : d0 = 959 and 1909 <= d1 <= 1918; final_merged_0_update_0[d0, d1] -> (12479 - d0) : 955 <= d0 <= 958 and 0 <= d1 <= 1907; final_merged_0_update_0[d0, d1] -> 11520 : d0 = 959 and 0 <= d1 <= 1907; final_merged_0_update_0[d0, d1] -> 11526 : 0 <= d0 <= 953 and 0 <= d1 <= 1907; final_merged_0_update_0[d0, d1] -> 11525 : d0 = 954 and 0 <= d1 <= 1907; final_merged_0_update_0[d0, d1] -> (11519 - d0) : d1 = 1908 and 0 <= d0 <= 958 and (d0 >= 955 or d0 <= 954); final_merged_0_update_0[d0, d1] -> 10560 : d0 = 959 and d1 = 1908; final_merged_0_update_0[d0, d1] -> (959 - d0) : d1 = 1919 and 0 <= d0 <= 958 }
-  auto value_fused_level_0_fused_level_0_update_0_write0 = fused_level_0.fused_level_0_fused_level_0_update_0_write0_to_final_merged_0_rd0.peek(/* one reader or all rams */ (-1908 + d1 == 0 && -959 + d0 == 0) ? (10560) : (-959 + d0 == 0 && 1907 - d1 >= 0) ? (11520) : (-954 + d0 == 0 && 1907 - d1 >= 0) ? (11525) : (1907 - d1 >= 0 && 953 - d0 >= 0) ? (11526) : (-1919 + d1 == 0 && 958 - d0 >= 0) ? ((959 - d0)) : (-1908 + d1 == 0 && 958 - d0 >= 0) ? ((11519 - d0)) : (-955 + d0 >= 0 && 958 - d0 >= 0 && 1907 - d1 >= 0) ? ((12479 - d0)) : (-959 + d0 == 0 && -1909 + d1 >= 0 && 1918 - d1 >= 0) ? ((1842240 - 960 * d1)) : (1918 - d1 >= 0 && 958 - d0 >= 0 && -1909 + d1 >= 0) ? (((1843199 - d0) - 960 * d1)) : 0);
+  // final_merged_0_rd0 read pattern: { final_merged_0_update_0[d0, d1] -> fused_level_0[2d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Read schedule : { final_merged_0_update_0[d0, d1] -> [14 + d1, 7 + d0, 51] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { fused_level_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 48] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // DD fold: { final_merged_0_update_0[d0, d1] -> ((781249 - d0) - 625 * d1) : 0 <= d0 <= 623 and 1239 <= d1 <= 1248; final_merged_0_update_0[d0, d1] -> (780625 - 625 * d1) : d0 = 624 and 1239 <= d1 <= 1248; final_merged_0_update_0[d0, d1] -> (8124 - d0) : 620 <= d0 <= 623 and 0 <= d1 <= 1237; final_merged_0_update_0[d0, d1] -> 7500 : d0 = 624 and 0 <= d1 <= 1237; final_merged_0_update_0[d0, d1] -> 7506 : 0 <= d0 <= 618 and 0 <= d1 <= 1237; final_merged_0_update_0[d0, d1] -> 7505 : d0 = 619 and 0 <= d1 <= 1237; final_merged_0_update_0[d0, d1] -> (7499 - d0) : d1 = 1238 and 0 <= d0 <= 623 and (d0 >= 620 or d0 <= 619); final_merged_0_update_0[d0, d1] -> 6875 : d0 = 624 and d1 = 1238; final_merged_0_update_0[d0, d1] -> (624 - d0) : d1 = 1249 and 0 <= d0 <= 623 }
+  auto value_fused_level_0_fused_level_0_update_0_write0 = fused_level_0.fused_level_0_fused_level_0_update_0_write0_to_final_merged_0_rd0.peek(/* one reader or all rams */ (-1238 + d1 == 0 && -624 + d0 == 0) ? (6875) : (-624 + d0 == 0 && 1237 - d1 >= 0) ? (7500) : (-619 + d0 == 0 && 1237 - d1 >= 0) ? (7505) : (1237 - d1 >= 0 && 618 - d0 >= 0) ? (7506) : (-1249 + d1 == 0 && 623 - d0 >= 0) ? ((624 - d0)) : (-1238 + d1 == 0 && 623 - d0 >= 0) ? ((7499 - d0)) : (-620 + d0 >= 0 && 623 - d0 >= 0 && 1237 - d1 >= 0) ? ((8124 - d0)) : (-624 + d0 == 0 && -1239 + d1 >= 0 && 1248 - d1 >= 0) ? ((780625 - 625 * d1)) : (1248 - d1 >= 0 && 623 - d0 >= 0 && -1239 + d1 >= 0) ? (((781249 - d0) - 625 * d1)) : 0);
   return value_fused_level_0_fused_level_0_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -8717,11 +8625,11 @@ inline hw_uint<16> final_merged_0_rd0_select(fused_level_0_cache& fused_level_0,
 inline hw_uint<16> final_merged_0_rd1_select(fused_level_0_cache& fused_level_0, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // final_merged_0_rd1 read pattern: { final_merged_0_update_0[d0, d1] -> fused_level_0[1 + 2d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Read schedule : { final_merged_0_update_0[d0, d1] -> [14 + d1, 7 + d0, 51] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // Write schedule: { fused_level_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 48] : 0 <= d0 <= 959 and 0 <= d1 <= 1919 }
-  // DD fold: { final_merged_0_update_0[d0, d1] -> ((1843199 - d0) - 960 * d1) : 0 <= d0 <= 958 and 1909 <= d1 <= 1918; final_merged_0_update_0[d0, d1] -> (1842240 - 960 * d1) : d0 = 959 and 1909 <= d1 <= 1918; final_merged_0_update_0[d0, d1] -> (12479 - d0) : 955 <= d0 <= 958 and 0 <= d1 <= 1907; final_merged_0_update_0[d0, d1] -> 11520 : d0 = 959 and 0 <= d1 <= 1907; final_merged_0_update_0[d0, d1] -> 11526 : 0 <= d0 <= 953 and 0 <= d1 <= 1907; final_merged_0_update_0[d0, d1] -> 11525 : d0 = 954 and 0 <= d1 <= 1907; final_merged_0_update_0[d0, d1] -> (11519 - d0) : d1 = 1908 and 0 <= d0 <= 958 and (d0 >= 955 or d0 <= 954); final_merged_0_update_0[d0, d1] -> 10560 : d0 = 959 and d1 = 1908; final_merged_0_update_0[d0, d1] -> (959 - d0) : d1 = 1919 and 0 <= d0 <= 958 }
-  auto value_fused_level_0_fused_level_0_update_0_write1 = fused_level_0.fused_level_0_fused_level_0_update_0_write1_to_final_merged_0_rd1.peek(/* one reader or all rams */ (-1908 + d1 == 0 && -959 + d0 == 0) ? (10560) : (-959 + d0 == 0 && 1907 - d1 >= 0) ? (11520) : (-954 + d0 == 0 && 1907 - d1 >= 0) ? (11525) : (1907 - d1 >= 0 && 953 - d0 >= 0) ? (11526) : (-1919 + d1 == 0 && 958 - d0 >= 0) ? ((959 - d0)) : (-1908 + d1 == 0 && 958 - d0 >= 0) ? ((11519 - d0)) : (-955 + d0 >= 0 && 958 - d0 >= 0 && 1907 - d1 >= 0) ? ((12479 - d0)) : (-959 + d0 == 0 && -1909 + d1 >= 0 && 1918 - d1 >= 0) ? ((1842240 - 960 * d1)) : (1918 - d1 >= 0 && 958 - d0 >= 0 && -1909 + d1 >= 0) ? (((1843199 - d0) - 960 * d1)) : 0);
+  // final_merged_0_rd1 read pattern: { final_merged_0_update_0[d0, d1] -> fused_level_0[1 + 2d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Read schedule : { final_merged_0_update_0[d0, d1] -> [14 + d1, 7 + d0, 51] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // Write schedule: { fused_level_0_update_0[d0, d1] -> [2 + d1, 1 + d0, 48] : 0 <= d0 <= 624 and 0 <= d1 <= 1249 }
+  // DD fold: { final_merged_0_update_0[d0, d1] -> ((781249 - d0) - 625 * d1) : 0 <= d0 <= 623 and 1239 <= d1 <= 1248; final_merged_0_update_0[d0, d1] -> (780625 - 625 * d1) : d0 = 624 and 1239 <= d1 <= 1248; final_merged_0_update_0[d0, d1] -> (8124 - d0) : 620 <= d0 <= 623 and 0 <= d1 <= 1237; final_merged_0_update_0[d0, d1] -> 7500 : d0 = 624 and 0 <= d1 <= 1237; final_merged_0_update_0[d0, d1] -> 7506 : 0 <= d0 <= 618 and 0 <= d1 <= 1237; final_merged_0_update_0[d0, d1] -> 7505 : d0 = 619 and 0 <= d1 <= 1237; final_merged_0_update_0[d0, d1] -> (7499 - d0) : d1 = 1238 and 0 <= d0 <= 623 and (d0 >= 620 or d0 <= 619); final_merged_0_update_0[d0, d1] -> 6875 : d0 = 624 and d1 = 1238; final_merged_0_update_0[d0, d1] -> (624 - d0) : d1 = 1249 and 0 <= d0 <= 623 }
+  auto value_fused_level_0_fused_level_0_update_0_write1 = fused_level_0.fused_level_0_fused_level_0_update_0_write1_to_final_merged_0_rd1.peek(/* one reader or all rams */ (-1238 + d1 == 0 && -624 + d0 == 0) ? (6875) : (-624 + d0 == 0 && 1237 - d1 >= 0) ? (7500) : (-619 + d0 == 0 && 1237 - d1 >= 0) ? (7505) : (1237 - d1 >= 0 && 618 - d0 >= 0) ? (7506) : (-1249 + d1 == 0 && 623 - d0 >= 0) ? ((624 - d0)) : (-1238 + d1 == 0 && 623 - d0 >= 0) ? ((7499 - d0)) : (-620 + d0 >= 0 && 623 - d0 >= 0 && 1237 - d1 >= 0) ? ((8124 - d0)) : (-624 + d0 == 0 && -1239 + d1 >= 0 && 1248 - d1 >= 0) ? ((780625 - 625 * d1)) : (1248 - d1 >= 0 && 623 - d0 >= 0 && -1239 + d1 >= 0) ? (((781249 - d0) - 625 * d1)) : 0);
   return value_fused_level_0_fused_level_0_update_0_write1;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -8760,14 +8668,14 @@ inline void fused_level_0_fused_level_0_update_0_write_bundle_write(hw_uint<32>&
 #include "hw_classes.h"
 
 struct fused_level_1_fused_level_1_update_0_write0_to_final_merged_1_rd0_cache {
-	// RAM Box: {[0, 959], [0, 959]}
-	// Capacity: 3845
-	// # of read delays: 3845
-	fifo<hw_uint<16>, 3845> f;
+	// RAM Box: {[0, 624], [0, 624]}
+	// Capacity: 2505
+	// # of read delays: 2505
+	fifo<hw_uint<16>, 2505> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.peek(3844 - offset);
+    return f.peek(2504 - offset);
   }
 
 
@@ -8793,11 +8701,11 @@ inline void fused_level_1_fused_level_1_update_0_write0_write(hw_uint<16>& fused
 inline hw_uint<16> final_merged_1_rd0_select(fused_level_1_cache& fused_level_1, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // final_merged_1_rd0 read pattern: { final_merged_1_update_0[d0, d1] -> fused_level_1[d0, d1] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // Read schedule : { final_merged_1_update_0[d0, d1] -> [14 + 2d1, 7 + d0, 50] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // Write schedule: { fused_level_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 47] : 0 <= d0 <= 959 and 0 <= d1 <= 959 }
-  // DD fold: { final_merged_1_update_0[d0, d1] -> ((921599 - d0) - 960 * d1) : 0 <= d0 <= 958 and 957 <= d1 <= 958; final_merged_1_update_0[d0, d1] -> (920640 - 960 * d1) : d0 = 959 and 957 <= d1 <= 958; final_merged_1_update_0[d0, d1] -> (4799 - d0) : 957 <= d0 <= 958 and 0 <= d1 <= 955; final_merged_1_update_0[d0, d1] -> 3840 : d0 = 959 and 0 <= d1 <= 955; final_merged_1_update_0[d0, d1] -> 3844 : 0 <= d0 <= 955 and 0 <= d1 <= 955; final_merged_1_update_0[d0, d1] -> 3843 : d0 = 956 and 0 <= d1 <= 955; final_merged_1_update_0[d0, d1] -> (3839 - d0) : d1 = 956 and 0 <= d0 <= 958 and (d0 >= 957 or d0 <= 956); final_merged_1_update_0[d0, d1] -> 2880 : d0 = 959 and d1 = 956; final_merged_1_update_0[d0, d1] -> (959 - d0) : d1 = 959 and 0 <= d0 <= 958 }
-  auto value_fused_level_1_fused_level_1_update_0_write0 = fused_level_1.fused_level_1_fused_level_1_update_0_write0_to_final_merged_1_rd0.peek(/* one reader or all rams */ (-956 + d1 == 0 && -959 + d0 == 0) ? (2880) : (-959 + d0 == 0 && 955 - d1 >= 0) ? (3840) : (-956 + d0 == 0 && 955 - d1 >= 0) ? (3843) : (955 - d1 >= 0 && 955 - d0 >= 0) ? (3844) : (-959 + d1 == 0 && 958 - d0 >= 0) ? ((959 - d0)) : (-956 + d1 == 0 && 958 - d0 >= 0) ? ((3839 - d0)) : (-957 + d0 >= 0 && 958 - d0 >= 0 && 955 - d1 >= 0) ? ((4799 - d0)) : (-959 + d0 == 0 && -957 + d1 >= 0 && 958 - d1 >= 0) ? ((920640 - 960 * d1)) : (958 - d1 >= 0 && 958 - d0 >= 0 && -957 + d1 >= 0) ? (((921599 - d0) - 960 * d1)) : 0);
+  // final_merged_1_rd0 read pattern: { final_merged_1_update_0[d0, d1] -> fused_level_1[d0, d1] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // Read schedule : { final_merged_1_update_0[d0, d1] -> [14 + 2d1, 7 + d0, 50] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // Write schedule: { fused_level_1_update_0[d0, d1] -> [6 + 2d1, 3 + d0, 47] : 0 <= d0 <= 624 and 0 <= d1 <= 624 }
+  // DD fold: { final_merged_1_update_0[d0, d1] -> ((390624 - d0) - 625 * d1) : 0 <= d0 <= 623 and 622 <= d1 <= 623; final_merged_1_update_0[d0, d1] -> (390000 - 625 * d1) : d0 = 624 and 622 <= d1 <= 623; final_merged_1_update_0[d0, d1] -> (3124 - d0) : 622 <= d0 <= 623 and 0 <= d1 <= 620; final_merged_1_update_0[d0, d1] -> 2500 : d0 = 624 and 0 <= d1 <= 620; final_merged_1_update_0[d0, d1] -> 2504 : 0 <= d0 <= 620 and 0 <= d1 <= 620; final_merged_1_update_0[d0, d1] -> 2503 : d0 = 621 and 0 <= d1 <= 620; final_merged_1_update_0[d0, d1] -> (2499 - d0) : d1 = 621 and 0 <= d0 <= 623 and (d0 >= 622 or d0 <= 621); final_merged_1_update_0[d0, d1] -> 1875 : d0 = 624 and d1 = 621; final_merged_1_update_0[d0, d1] -> (624 - d0) : d1 = 624 and 0 <= d0 <= 623 }
+  auto value_fused_level_1_fused_level_1_update_0_write0 = fused_level_1.fused_level_1_fused_level_1_update_0_write0_to_final_merged_1_rd0.peek(/* one reader or all rams */ (-621 + d1 == 0 && -624 + d0 == 0) ? (1875) : (-624 + d0 == 0 && 620 - d1 >= 0) ? (2500) : (-621 + d0 == 0 && 620 - d1 >= 0) ? (2503) : (620 - d1 >= 0 && 620 - d0 >= 0) ? (2504) : (-624 + d1 == 0 && 623 - d0 >= 0) ? ((624 - d0)) : (-621 + d1 == 0 && 623 - d0 >= 0) ? ((2499 - d0)) : (-622 + d0 >= 0 && 623 - d0 >= 0 && 620 - d1 >= 0) ? ((3124 - d0)) : (-624 + d0 == 0 && -622 + d1 >= 0 && 623 - d1 >= 0) ? ((390000 - 625 * d1)) : (623 - d1 >= 0 && 623 - d0 >= 0 && -622 + d1 >= 0) ? (((390624 - d0) - 625 * d1)) : 0);
   return value_fused_level_1_fused_level_1_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -8829,7 +8737,7 @@ inline void fused_level_1_fused_level_1_update_0_write_bundle_write(hw_uint<16>&
 #include "hw_classes.h"
 
 struct fused_level_2_fused_level_2_update_0_write0_merged_banks_1_cache {
-	// RAM Box: {[0, 479], [0, 479]}
+	// RAM Box: {[0, 312], [0, 312]}
 	// Capacity: 1
 	// # of read delays: 1
 	fifo<hw_uint<16>, 1> f;
@@ -8862,9 +8770,9 @@ inline void fused_level_2_fused_level_2_update_0_write0_write(hw_uint<16>& fused
 inline hw_uint<16> final_merged_2_rd0_select(fused_level_2_cache& fused_level_2, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // final_merged_2_rd0 read pattern: { final_merged_2_update_0[d0, d1] -> fused_level_2[d0, d1] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // Read schedule : { final_merged_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 49] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // Write schedule: { fused_level_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 46] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
+  // final_merged_2_rd0 read pattern: { final_merged_2_update_0[d0, d1] -> fused_level_2[d0, d1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Read schedule : { final_merged_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 49] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { fused_level_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 46] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
   // DD fold: {  }
   auto value_fused_level_2_fused_level_2_update_0_write0 = fused_level_2.fused_level_2_fused_level_2_update_0_write0_merged_banks_1.peek(/* one reader or all rams */ 0);
   return value_fused_level_2_fused_level_2_update_0_write0;
@@ -8898,14 +8806,14 @@ inline void fused_level_2_fused_level_2_update_0_write_bundle_write(hw_uint<16>&
 #include "hw_classes.h"
 
 struct fused_level_3_fused_level_3_update_0_write0_to_final_merged_2_rd0_cache {
-	// RAM Box: {[0, 239], [0, 239]}
-	// Capacity: 240
-	// # of read delays: 241
-	fifo<hw_uint<16>, 240> f;
+	// RAM Box: {[0, 156], [0, 156]}
+	// Capacity: 157
+	// # of read delays: 158
+	fifo<hw_uint<16>, 157> f;
 	inline hw_uint<16> peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.peek(239 - offset);
+    return f.peek(156 - offset);
   }
 
 
@@ -8931,11 +8839,11 @@ inline void fused_level_3_fused_level_3_update_0_write0_write(hw_uint<16>& fused
 inline hw_uint<16> final_merged_2_rd0_select(fused_level_3_cache& fused_level_3, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // final_merged_2_rd0 read pattern: { final_merged_2_update_0[d0, d1] -> fused_level_3[o0, o1] : 0 <= d0 <= 479 and 0 <= d1 <= 479 and -1 + d0 <= 2o0 <= d0 and -1 + d1 <= 2o1 <= d1 }
-  // Read schedule : { final_merged_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 49] : 0 <= d0 <= 479 and 0 <= d1 <= 479 }
-  // Write schedule: { fused_level_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 45] : 0 <= d0 <= 239 and 0 <= d1 <= 239 }
-  // DD fold: { final_merged_2_update_0[d0, d1] -> (239 - floor((2d0)/4)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 477 and 0 < d1 <= 479 }
-  auto value_fused_level_3_fused_level_3_update_0_write0 = fused_level_3.fused_level_3_fused_level_3_update_0_write0_to_final_merged_2_rd0.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0 && 477 - d0 >= 0) ? ((239 - floord(2*d0, 4))) : 0);
+  // final_merged_2_rd0 read pattern: { final_merged_2_update_0[d0, d1] -> fused_level_3[o0, o1] : 0 <= d0 <= 312 and 0 <= d1 <= 312 and -1 + d0 <= 2o0 <= d0 and -1 + d1 <= 2o1 <= d1 }
+  // Read schedule : { final_merged_2_update_0[d0, d1] -> [14 + 4d1, 7 + 2d0, 49] : 0 <= d0 <= 312 and 0 <= d1 <= 312 }
+  // Write schedule: { fused_level_3_update_0[d0, d1] -> [14 + 8d1, 7 + 4d0, 45] : 0 <= d0 <= 156 and 0 <= d1 <= 156 }
+  // DD fold: { final_merged_2_update_0[d0, d1] -> (156 - floor((2d0)/4)) : (1 + d1) mod 2 = 0 and 0 <= d0 <= 311 and 0 < d1 <= 311 }
+  auto value_fused_level_3_fused_level_3_update_0_write0 = fused_level_3.fused_level_3_fused_level_3_update_0_write0_to_final_merged_2_rd0.peek(/* one reader or all rams */ ((-1 - d1) % 2 == 0 && 311 - d0 >= 0) ? ((156 - floord(2*d0, 4))) : 0);
   return value_fused_level_3_fused_level_3_update_0_write0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
@@ -8967,7 +8875,7 @@ inline void fused_level_3_fused_level_3_update_0_write_bundle_write(hw_uint<16>&
 #include "hw_classes.h"
 
 struct in_in_update_0_write0_merged_banks_2_cache {
-	// RAM Box: {[0, 1926], [0, 1926]}
+	// RAM Box: {[0, 1262], [0, 1262]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<16> f1;
@@ -8987,7 +8895,7 @@ struct in_in_update_0_write0_merged_banks_2_cache {
 };
 
 struct in_in_update_0_write1_merged_banks_2_cache {
-	// RAM Box: {[1, 1927], [0, 1926]}
+	// RAM Box: {[1, 1263], [0, 1262]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<16> f1;
@@ -9024,9 +8932,9 @@ inline void in_in_update_0_write1_write(hw_uint<16>& in_in_update_0_write1, in_c
 inline hw_uint<16> bright_rd0_select(in_cache& in, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_rd0 read pattern: { bright_update_0[d0, d1] -> in[2d0, d1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Read schedule : { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // bright_rd0 read pattern: { bright_update_0[d0, d1] -> in[2d0, d1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Read schedule : { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_2.peek_0();
   return value_in_in_update_0_write0;
@@ -9040,9 +8948,9 @@ inline hw_uint<16> bright_rd0_select(in_cache& in, int d0, int d1) {
 inline hw_uint<16> bright_rd1_select(in_cache& in, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_rd1 read pattern: { bright_update_0[d0, d1] -> in[1 + 2d0, d1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Read schedule : { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // bright_rd1 read pattern: { bright_update_0[d0, d1] -> in[1 + 2d0, d1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Read schedule : { bright_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_in_in_update_0_write1 = in.in_in_update_0_write1_merged_banks_2.peek_0();
   return value_in_in_update_0_write1;
@@ -9056,9 +8964,9 @@ inline hw_uint<16> bright_rd1_select(in_cache& in, int d0, int d1) {
 inline hw_uint<16> dark_rd0_select(in_cache& in, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_rd0 read pattern: { dark_update_0[d0, d1] -> in[2d0, d1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Read schedule : { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // dark_rd0 read pattern: { dark_update_0[d0, d1] -> in[2d0, d1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Read schedule : { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_in_in_update_0_write0 = in.in_in_update_0_write0_merged_banks_2.peek_0();
   return value_in_in_update_0_write0;
@@ -9072,9 +8980,9 @@ inline hw_uint<16> dark_rd0_select(in_cache& in, int d0, int d1) {
 inline hw_uint<16> dark_rd1_select(in_cache& in, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_rd1 read pattern: { dark_update_0[d0, d1] -> in[1 + 2d0, d1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Read schedule : { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // dark_rd1 read pattern: { dark_update_0[d0, d1] -> in[1 + 2d0, d1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Read schedule : { dark_update_0[d0, d1] -> [d1, d0, 2] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Write schedule: { in_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_in_in_update_0_write1 = in.in_in_update_0_write1_merged_banks_2.peek_0();
   return value_in_in_update_0_write1;
@@ -9131,7 +9039,7 @@ inline void in_in_update_0_write_bundle_write(hw_uint<32>& in_update_0_write, in
 #include "hw_classes.h"
 
 struct weight_sums_weight_sums_update_0_write0_merged_banks_2_cache {
-	// RAM Box: {[0, 1926], [0, 1926]}
+	// RAM Box: {[0, 1262], [0, 1262]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<16> f1;
@@ -9151,7 +9059,7 @@ struct weight_sums_weight_sums_update_0_write0_merged_banks_2_cache {
 };
 
 struct weight_sums_weight_sums_update_0_write1_merged_banks_2_cache {
-	// RAM Box: {[1, 1927], [0, 1926]}
+	// RAM Box: {[1, 1263], [0, 1262]}
 	// Capacity: 1
 	// # of read delays: 1
 	hw_uint<16> f1;
@@ -9188,9 +9096,9 @@ inline void weight_sums_weight_sums_update_0_write1_write(hw_uint<16>& weight_su
 inline hw_uint<16> bright_weights_normed_rd0_select(weight_sums_cache& weight_sums, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_rd0 read pattern: { bright_weights_normed_update_0[d0, d1] -> weight_sums[2d0, d1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Read schedule : { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Write schedule: { weight_sums_update_0[d0, d1] -> [d1, d0, 6] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // bright_weights_normed_rd0 read pattern: { bright_weights_normed_update_0[d0, d1] -> weight_sums[2d0, d1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Read schedule : { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Write schedule: { weight_sums_update_0[d0, d1] -> [d1, d0, 6] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_weight_sums_weight_sums_update_0_write0 = weight_sums.weight_sums_weight_sums_update_0_write0_merged_banks_2.peek_0();
   return value_weight_sums_weight_sums_update_0_write0;
@@ -9204,9 +9112,9 @@ inline hw_uint<16> bright_weights_normed_rd0_select(weight_sums_cache& weight_su
 inline hw_uint<16> bright_weights_normed_rd1_select(weight_sums_cache& weight_sums, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // bright_weights_normed_rd1 read pattern: { bright_weights_normed_update_0[d0, d1] -> weight_sums[1 + 2d0, d1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Read schedule : { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Write schedule: { weight_sums_update_0[d0, d1] -> [d1, d0, 6] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // bright_weights_normed_rd1 read pattern: { bright_weights_normed_update_0[d0, d1] -> weight_sums[1 + 2d0, d1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Read schedule : { bright_weights_normed_update_0[d0, d1] -> [d1, d0, 9] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Write schedule: { weight_sums_update_0[d0, d1] -> [d1, d0, 6] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_weight_sums_weight_sums_update_0_write1 = weight_sums.weight_sums_weight_sums_update_0_write1_merged_banks_2.peek_0();
   return value_weight_sums_weight_sums_update_0_write1;
@@ -9220,9 +9128,9 @@ inline hw_uint<16> bright_weights_normed_rd1_select(weight_sums_cache& weight_su
 inline hw_uint<16> dark_weights_normed_rd0_select(weight_sums_cache& weight_sums, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_rd0 read pattern: { dark_weights_normed_update_0[d0, d1] -> weight_sums[2d0, d1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Read schedule : { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Write schedule: { weight_sums_update_0[d0, d1] -> [d1, d0, 6] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // dark_weights_normed_rd0 read pattern: { dark_weights_normed_update_0[d0, d1] -> weight_sums[2d0, d1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Read schedule : { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Write schedule: { weight_sums_update_0[d0, d1] -> [d1, d0, 6] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_weight_sums_weight_sums_update_0_write0 = weight_sums.weight_sums_weight_sums_update_0_write0_merged_banks_2.peek_0();
   return value_weight_sums_weight_sums_update_0_write0;
@@ -9236,9 +9144,9 @@ inline hw_uint<16> dark_weights_normed_rd0_select(weight_sums_cache& weight_sums
 inline hw_uint<16> dark_weights_normed_rd1_select(weight_sums_cache& weight_sums, int d0, int d1) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // dark_weights_normed_rd1 read pattern: { dark_weights_normed_update_0[d0, d1] -> weight_sums[1 + 2d0, d1] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Read schedule : { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
-  // Write schedule: { weight_sums_update_0[d0, d1] -> [d1, d0, 6] : 0 <= d0 <= 963 and 0 <= d1 <= 1926 }
+  // dark_weights_normed_rd1 read pattern: { dark_weights_normed_update_0[d0, d1] -> weight_sums[1 + 2d0, d1] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Read schedule : { dark_weights_normed_update_0[d0, d1] -> [d1, d0, 7] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
+  // Write schedule: { weight_sums_update_0[d0, d1] -> [d1, d0, 6] : 0 <= d0 <= 631 and 0 <= d1 <= 1262 }
   // DD fold: {  }
   auto value_weight_sums_weight_sums_update_0_write1 = weight_sums.weight_sums_weight_sums_update_0_write1_merged_banks_2.peek_0();
   return value_weight_sums_weight_sums_update_0_write1;
@@ -9295,629 +9203,6 @@ inline void weight_sums_weight_sums_update_0_write_bundle_write(hw_uint<32>& wei
 
 
 // Operation logic
-inline void dark_weights_normed_update_0(dark_weights_cache& dark_weights, weight_sums_cache& weight_sums, dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
-	// Consume: dark_weights
-	auto dark_weights_0_c__0_value = dark_weights_dark_weights_normed_update_0_read_bundle_read(dark_weights/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_weights_normed_update_0_dark_weights," << d0<< "," << d1<< "," <<  dark_weights_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	// Consume: weight_sums
-	auto weight_sums_0_c__0_value = weight_sums_dark_weights_normed_update_0_read_bundle_read(weight_sums/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_weights_normed_update_0_weight_sums," << d0<< "," << d1<< "," <<  weight_sums_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = f_divide_unrolled_2(dark_weights_0_c__0_value, weight_sums_0_c__0_value);
-	// Produce: dark_weights_normed
-	dark_weights_normed_dark_weights_normed_update_0_write_bundle_write(compute_result, dark_weights_normed, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "dark_weights_normed_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "dark_weights_normed_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dark_weights_normed_gauss_ds_2_update_0(dark_weights_normed_gauss_blur_2_cache& dark_weights_normed_gauss_blur_2, dark_weights_normed_gauss_ds_2_cache& dark_weights_normed_gauss_ds_2, int d0, int d1) {
-	// Consume: dark_weights_normed_gauss_blur_2
-	auto dark_weights_normed_gauss_blur_2_0_c__0_value = dark_weights_normed_gauss_blur_2_dark_weights_normed_gauss_ds_2_update_0_read_bundle_read(dark_weights_normed_gauss_blur_2/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_weights_normed_gauss_ds_2_update_0_dark_weights_normed_gauss_blur_2," << d0<< "," << d1<< "," <<  dark_weights_normed_gauss_blur_2_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_1(dark_weights_normed_gauss_blur_2_0_c__0_value);
-	// Produce: dark_weights_normed_gauss_ds_2
-	dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write_bundle_write(compute_result, dark_weights_normed_gauss_ds_2, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "dark_weights_normed_gauss_ds_2_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dark_gauss_blur_1_update_0(dark_cache& dark, dark_gauss_blur_1_cache& dark_gauss_blur_1, int d0, int d1) {
-	// Consume: dark
-	auto dark_0_c__0_value = dark_dark_gauss_blur_1_update_0_read_bundle_read(dark/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_gauss_blur_1_update_0_dark," << d0<< "," << d1<< "," <<  dark_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_2(dark_0_c__0_value);
-	// Produce: dark_gauss_blur_1
-	dark_gauss_blur_1_dark_gauss_blur_1_update_0_write_bundle_write(compute_result, dark_gauss_blur_1, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "dark_gauss_blur_1_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "dark_gauss_blur_1_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_weights_normed_update_0(bright_weights_cache& bright_weights, weight_sums_cache& weight_sums, bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
-	// Consume: bright_weights
-	auto bright_weights_0_c__0_value = bright_weights_bright_weights_normed_update_0_read_bundle_read(bright_weights/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_weights_normed_update_0_bright_weights," << d0<< "," << d1<< "," <<  bright_weights_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	// Consume: weight_sums
-	auto weight_sums_0_c__0_value = weight_sums_bright_weights_normed_update_0_read_bundle_read(weight_sums/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_weights_normed_update_0_weight_sums," << d0<< "," << d1<< "," <<  weight_sums_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = f_divide_unrolled_2(bright_weights_0_c__0_value, weight_sums_0_c__0_value);
-	// Produce: bright_weights_normed
-	bright_weights_normed_bright_weights_normed_update_0_write_bundle_write(compute_result, bright_weights_normed, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "bright_weights_normed_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "bright_weights_normed_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_gauss_blur_1_update_0(bright_cache& bright, bright_gauss_blur_1_cache& bright_gauss_blur_1, int d0, int d1) {
-	// Consume: bright
-	auto bright_0_c__0_value = bright_bright_gauss_blur_1_update_0_read_bundle_read(bright/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_gauss_blur_1_update_0_bright," << d0<< "," << d1<< "," <<  bright_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_2(bright_0_c__0_value);
-	// Produce: bright_gauss_blur_1
-	bright_gauss_blur_1_bright_gauss_blur_1_update_0_write_bundle_write(compute_result, bright_gauss_blur_1, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "bright_gauss_blur_1_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "bright_gauss_blur_1_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dark_weights_normed_gauss_blur_1_update_0(dark_weights_normed_cache& dark_weights_normed, dark_weights_normed_gauss_blur_1_cache& dark_weights_normed_gauss_blur_1, int d0, int d1) {
-	// Consume: dark_weights_normed
-	auto dark_weights_normed_0_c__0_value = dark_weights_normed_dark_weights_normed_gauss_blur_1_update_0_read_bundle_read(dark_weights_normed/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_weights_normed_gauss_blur_1_update_0_dark_weights_normed," << d0<< "," << d1<< "," <<  dark_weights_normed_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_2(dark_weights_normed_0_c__0_value);
-	// Produce: dark_weights_normed_gauss_blur_1
-	dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_0_write_bundle_write(compute_result, dark_weights_normed_gauss_blur_1, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "dark_weights_normed_gauss_blur_1_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "dark_weights_normed_gauss_blur_1_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dark_gauss_ds_1_update_0(dark_gauss_blur_1_cache& dark_gauss_blur_1, dark_gauss_ds_1_cache& dark_gauss_ds_1, int d0, int d1) {
-	// Consume: dark_gauss_blur_1
-	auto dark_gauss_blur_1_0_c__0_value = dark_gauss_blur_1_dark_gauss_ds_1_update_0_read_bundle_read(dark_gauss_blur_1/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_gauss_ds_1_update_0_dark_gauss_blur_1," << d0<< "," << d1<< "," <<  dark_gauss_blur_1_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_1(dark_gauss_blur_1_0_c__0_value);
-	// Produce: dark_gauss_ds_1
-	dark_gauss_ds_1_dark_gauss_ds_1_update_0_write_bundle_write(compute_result, dark_gauss_ds_1, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "dark_gauss_ds_1_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dark_gauss_blur_2_update_0(dark_gauss_ds_1_cache& dark_gauss_ds_1, dark_gauss_blur_2_cache& dark_gauss_blur_2, int d0, int d1) {
-	// Consume: dark_gauss_ds_1
-	auto dark_gauss_ds_1_0_c__0_value = dark_gauss_ds_1_dark_gauss_blur_2_update_0_read_bundle_read(dark_gauss_ds_1/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_gauss_blur_2_update_0_dark_gauss_ds_1," << d0<< "," << d1<< "," <<  dark_gauss_ds_1_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_1(dark_gauss_ds_1_0_c__0_value);
-	// Produce: dark_gauss_blur_2
-	dark_gauss_blur_2_dark_gauss_blur_2_update_0_write_bundle_write(compute_result, dark_gauss_blur_2, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "dark_gauss_blur_2_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_weights_normed_gauss_blur_1_update_0(bright_weights_normed_cache& bright_weights_normed, bright_weights_normed_gauss_blur_1_cache& bright_weights_normed_gauss_blur_1, int d0, int d1) {
-	// Consume: bright_weights_normed
-	auto bright_weights_normed_0_c__0_value = bright_weights_normed_bright_weights_normed_gauss_blur_1_update_0_read_bundle_read(bright_weights_normed/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_weights_normed_gauss_blur_1_update_0_bright_weights_normed," << d0<< "," << d1<< "," <<  bright_weights_normed_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_2(bright_weights_normed_0_c__0_value);
-	// Produce: bright_weights_normed_gauss_blur_1
-	bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_update_0_write_bundle_write(compute_result, bright_weights_normed_gauss_blur_1, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "bright_weights_normed_gauss_blur_1_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "bright_weights_normed_gauss_blur_1_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_gauss_ds_1_update_0(bright_gauss_blur_1_cache& bright_gauss_blur_1, bright_gauss_ds_1_cache& bright_gauss_ds_1, int d0, int d1) {
-	// Consume: bright_gauss_blur_1
-	auto bright_gauss_blur_1_0_c__0_value = bright_gauss_blur_1_bright_gauss_ds_1_update_0_read_bundle_read(bright_gauss_blur_1/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_gauss_ds_1_update_0_bright_gauss_blur_1," << d0<< "," << d1<< "," <<  bright_gauss_blur_1_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_1(bright_gauss_blur_1_0_c__0_value);
-	// Produce: bright_gauss_ds_1
-	bright_gauss_ds_1_bright_gauss_ds_1_update_0_write_bundle_write(compute_result, bright_gauss_ds_1, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "bright_gauss_ds_1_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_gauss_blur_2_update_0(bright_gauss_ds_1_cache& bright_gauss_ds_1, bright_gauss_blur_2_cache& bright_gauss_blur_2, int d0, int d1) {
-	// Consume: bright_gauss_ds_1
-	auto bright_gauss_ds_1_0_c__0_value = bright_gauss_ds_1_bright_gauss_blur_2_update_0_read_bundle_read(bright_gauss_ds_1/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_gauss_blur_2_update_0_bright_gauss_ds_1," << d0<< "," << d1<< "," <<  bright_gauss_ds_1_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_1(bright_gauss_ds_1_0_c__0_value);
-	// Produce: bright_gauss_blur_2
-	bright_gauss_blur_2_bright_gauss_blur_2_update_0_write_bundle_write(compute_result, bright_gauss_blur_2, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "bright_gauss_blur_2_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dark_weights_normed_gauss_ds_1_update_0(dark_weights_normed_gauss_blur_1_cache& dark_weights_normed_gauss_blur_1, dark_weights_normed_gauss_ds_1_cache& dark_weights_normed_gauss_ds_1, int d0, int d1) {
-	// Consume: dark_weights_normed_gauss_blur_1
-	auto dark_weights_normed_gauss_blur_1_0_c__0_value = dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_ds_1_update_0_read_bundle_read(dark_weights_normed_gauss_blur_1/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_weights_normed_gauss_ds_1_update_0_dark_weights_normed_gauss_blur_1," << d0<< "," << d1<< "," <<  dark_weights_normed_gauss_blur_1_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_1(dark_weights_normed_gauss_blur_1_0_c__0_value);
-	// Produce: dark_weights_normed_gauss_ds_1
-	dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write_bundle_write(compute_result, dark_weights_normed_gauss_ds_1, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "dark_weights_normed_gauss_ds_1_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dark_weights_normed_gauss_blur_2_update_0(dark_weights_normed_gauss_ds_1_cache& dark_weights_normed_gauss_ds_1, dark_weights_normed_gauss_blur_2_cache& dark_weights_normed_gauss_blur_2, int d0, int d1) {
-	// Consume: dark_weights_normed_gauss_ds_1
-	auto dark_weights_normed_gauss_ds_1_0_c__0_value = dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_blur_2_update_0_read_bundle_read(dark_weights_normed_gauss_ds_1/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_weights_normed_gauss_blur_2_update_0_dark_weights_normed_gauss_ds_1," << d0<< "," << d1<< "," <<  dark_weights_normed_gauss_ds_1_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_1(dark_weights_normed_gauss_ds_1_0_c__0_value);
-	// Produce: dark_weights_normed_gauss_blur_2
-	dark_weights_normed_gauss_blur_2_dark_weights_normed_gauss_blur_2_update_0_write_bundle_write(compute_result, dark_weights_normed_gauss_blur_2, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "dark_weights_normed_gauss_blur_2_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dark_gauss_ds_2_update_0(dark_gauss_blur_2_cache& dark_gauss_blur_2, dark_gauss_ds_2_cache& dark_gauss_ds_2, int d0, int d1) {
-	// Consume: dark_gauss_blur_2
-	auto dark_gauss_blur_2_0_c__0_value = dark_gauss_blur_2_dark_gauss_ds_2_update_0_read_bundle_read(dark_gauss_blur_2/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_gauss_ds_2_update_0_dark_gauss_blur_2," << d0<< "," << d1<< "," <<  dark_gauss_blur_2_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_1(dark_gauss_blur_2_0_c__0_value);
-	// Produce: dark_gauss_ds_2
-	dark_gauss_ds_2_dark_gauss_ds_2_update_0_write_bundle_write(compute_result, dark_gauss_ds_2, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "dark_gauss_ds_2_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dark_gauss_blur_3_update_0(dark_gauss_ds_2_cache& dark_gauss_ds_2, dark_gauss_blur_3_cache& dark_gauss_blur_3, int d0, int d1) {
-	// Consume: dark_gauss_ds_2
-	auto dark_gauss_ds_2_0_c__0_value = dark_gauss_ds_2_dark_gauss_blur_3_update_0_read_bundle_read(dark_gauss_ds_2/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_gauss_blur_3_update_0_dark_gauss_ds_2," << d0<< "," << d1<< "," <<  dark_gauss_ds_2_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_1(dark_gauss_ds_2_0_c__0_value);
-	// Produce: dark_gauss_blur_3
-	dark_gauss_blur_3_dark_gauss_blur_3_update_0_write_bundle_write(compute_result, dark_gauss_blur_3, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "dark_gauss_blur_3_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_weights_normed_gauss_ds_1_update_0(bright_weights_normed_gauss_blur_1_cache& bright_weights_normed_gauss_blur_1, bright_weights_normed_gauss_ds_1_cache& bright_weights_normed_gauss_ds_1, int d0, int d1) {
-	// Consume: bright_weights_normed_gauss_blur_1
-	auto bright_weights_normed_gauss_blur_1_0_c__0_value = bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_ds_1_update_0_read_bundle_read(bright_weights_normed_gauss_blur_1/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_weights_normed_gauss_ds_1_update_0_bright_weights_normed_gauss_blur_1," << d0<< "," << d1<< "," <<  bright_weights_normed_gauss_blur_1_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_1(bright_weights_normed_gauss_blur_1_0_c__0_value);
-	// Produce: bright_weights_normed_gauss_ds_1
-	bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write_bundle_write(compute_result, bright_weights_normed_gauss_ds_1, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "bright_weights_normed_gauss_ds_1_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_weights_normed_gauss_blur_2_update_0(bright_weights_normed_gauss_ds_1_cache& bright_weights_normed_gauss_ds_1, bright_weights_normed_gauss_blur_2_cache& bright_weights_normed_gauss_blur_2, int d0, int d1) {
-	// Consume: bright_weights_normed_gauss_ds_1
-	auto bright_weights_normed_gauss_ds_1_0_c__0_value = bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_blur_2_update_0_read_bundle_read(bright_weights_normed_gauss_ds_1/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_weights_normed_gauss_blur_2_update_0_bright_weights_normed_gauss_ds_1," << d0<< "," << d1<< "," <<  bright_weights_normed_gauss_ds_1_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_1(bright_weights_normed_gauss_ds_1_0_c__0_value);
-	// Produce: bright_weights_normed_gauss_blur_2
-	bright_weights_normed_gauss_blur_2_bright_weights_normed_gauss_blur_2_update_0_write_bundle_write(compute_result, bright_weights_normed_gauss_blur_2, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "bright_weights_normed_gauss_blur_2_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_gauss_ds_2_update_0(bright_gauss_blur_2_cache& bright_gauss_blur_2, bright_gauss_ds_2_cache& bright_gauss_ds_2, int d0, int d1) {
-	// Consume: bright_gauss_blur_2
-	auto bright_gauss_blur_2_0_c__0_value = bright_gauss_blur_2_bright_gauss_ds_2_update_0_read_bundle_read(bright_gauss_blur_2/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_gauss_ds_2_update_0_bright_gauss_blur_2," << d0<< "," << d1<< "," <<  bright_gauss_blur_2_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_1(bright_gauss_blur_2_0_c__0_value);
-	// Produce: bright_gauss_ds_2
-	bright_gauss_ds_2_bright_gauss_ds_2_update_0_write_bundle_write(compute_result, bright_gauss_ds_2, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "bright_gauss_ds_2_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_gauss_blur_3_update_0(bright_gauss_ds_2_cache& bright_gauss_ds_2, bright_gauss_blur_3_cache& bright_gauss_blur_3, int d0, int d1) {
-	// Consume: bright_gauss_ds_2
-	auto bright_gauss_ds_2_0_c__0_value = bright_gauss_ds_2_bright_gauss_blur_3_update_0_read_bundle_read(bright_gauss_ds_2/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_gauss_blur_3_update_0_bright_gauss_ds_2," << d0<< "," << d1<< "," <<  bright_gauss_ds_2_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_1(bright_gauss_ds_2_0_c__0_value);
-	// Produce: bright_gauss_blur_3
-	bright_gauss_blur_3_bright_gauss_blur_3_update_0_write_bundle_write(compute_result, bright_gauss_blur_3, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "bright_gauss_blur_3_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dark_weights_normed_gauss_blur_3_update_0(dark_weights_normed_gauss_ds_2_cache& dark_weights_normed_gauss_ds_2, dark_weights_normed_gauss_blur_3_cache& dark_weights_normed_gauss_blur_3, int d0, int d1) {
-	// Consume: dark_weights_normed_gauss_ds_2
-	auto dark_weights_normed_gauss_ds_2_0_c__0_value = dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_blur_3_update_0_read_bundle_read(dark_weights_normed_gauss_ds_2/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_weights_normed_gauss_blur_3_update_0_dark_weights_normed_gauss_ds_2," << d0<< "," << d1<< "," <<  dark_weights_normed_gauss_ds_2_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_1(dark_weights_normed_gauss_ds_2_0_c__0_value);
-	// Produce: dark_weights_normed_gauss_blur_3
-	dark_weights_normed_gauss_blur_3_dark_weights_normed_gauss_blur_3_update_0_write_bundle_write(compute_result, dark_weights_normed_gauss_blur_3, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "dark_weights_normed_gauss_blur_3_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dark_gauss_ds_3_update_0(dark_gauss_blur_3_cache& dark_gauss_blur_3, dark_gauss_ds_3_cache& dark_gauss_ds_3, int d0, int d1) {
-	// Consume: dark_gauss_blur_3
-	auto dark_gauss_blur_3_0_c__0_value = dark_gauss_blur_3_dark_gauss_ds_3_update_0_read_bundle_read(dark_gauss_blur_3/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_gauss_ds_3_update_0_dark_gauss_blur_3," << d0<< "," << d1<< "," <<  dark_gauss_blur_3_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_1(dark_gauss_blur_3_0_c__0_value);
-	// Produce: dark_gauss_ds_3
-	dark_gauss_ds_3_dark_gauss_ds_3_update_0_write_bundle_write(compute_result, dark_gauss_ds_3, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "dark_gauss_ds_3_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_weights_normed_gauss_ds_2_update_0(bright_weights_normed_gauss_blur_2_cache& bright_weights_normed_gauss_blur_2, bright_weights_normed_gauss_ds_2_cache& bright_weights_normed_gauss_ds_2, int d0, int d1) {
-	// Consume: bright_weights_normed_gauss_blur_2
-	auto bright_weights_normed_gauss_blur_2_0_c__0_value = bright_weights_normed_gauss_blur_2_bright_weights_normed_gauss_ds_2_update_0_read_bundle_read(bright_weights_normed_gauss_blur_2/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_weights_normed_gauss_ds_2_update_0_bright_weights_normed_gauss_blur_2," << d0<< "," << d1<< "," <<  bright_weights_normed_gauss_blur_2_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_1(bright_weights_normed_gauss_blur_2_0_c__0_value);
-	// Produce: bright_weights_normed_gauss_ds_2
-	bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write_bundle_write(compute_result, bright_weights_normed_gauss_ds_2, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "bright_weights_normed_gauss_ds_2_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_weights_normed_gauss_blur_3_update_0(bright_weights_normed_gauss_ds_2_cache& bright_weights_normed_gauss_ds_2, bright_weights_normed_gauss_blur_3_cache& bright_weights_normed_gauss_blur_3, int d0, int d1) {
-	// Consume: bright_weights_normed_gauss_ds_2
-	auto bright_weights_normed_gauss_ds_2_0_c__0_value = bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_blur_3_update_0_read_bundle_read(bright_weights_normed_gauss_ds_2/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_weights_normed_gauss_blur_3_update_0_bright_weights_normed_gauss_ds_2," << d0<< "," << d1<< "," <<  bright_weights_normed_gauss_ds_2_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_1(bright_weights_normed_gauss_ds_2_0_c__0_value);
-	// Produce: bright_weights_normed_gauss_blur_3
-	bright_weights_normed_gauss_blur_3_bright_weights_normed_gauss_blur_3_update_0_write_bundle_write(compute_result, bright_weights_normed_gauss_blur_3, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "bright_weights_normed_gauss_blur_3_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_gauss_ds_3_update_0(bright_gauss_blur_3_cache& bright_gauss_blur_3, bright_gauss_ds_3_cache& bright_gauss_ds_3, int d0, int d1) {
-	// Consume: bright_gauss_blur_3
-	auto bright_gauss_blur_3_0_c__0_value = bright_gauss_blur_3_bright_gauss_ds_3_update_0_read_bundle_read(bright_gauss_blur_3/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_gauss_ds_3_update_0_bright_gauss_blur_3," << d0<< "," << d1<< "," <<  bright_gauss_blur_3_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_1(bright_gauss_blur_3_0_c__0_value);
-	// Produce: bright_gauss_ds_3
-	bright_gauss_ds_3_bright_gauss_ds_3_update_0_write_bundle_write(compute_result, bright_gauss_ds_3, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "bright_gauss_ds_3_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dark_weights_normed_gauss_ds_3_update_0(dark_weights_normed_gauss_blur_3_cache& dark_weights_normed_gauss_blur_3, dark_weights_normed_gauss_ds_3_cache& dark_weights_normed_gauss_ds_3, int d0, int d1) {
-	// Consume: dark_weights_normed_gauss_blur_3
-	auto dark_weights_normed_gauss_blur_3_0_c__0_value = dark_weights_normed_gauss_blur_3_dark_weights_normed_gauss_ds_3_update_0_read_bundle_read(dark_weights_normed_gauss_blur_3/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_weights_normed_gauss_ds_3_update_0_dark_weights_normed_gauss_blur_3," << d0<< "," << d1<< "," <<  dark_weights_normed_gauss_blur_3_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_1(dark_weights_normed_gauss_blur_3_0_c__0_value);
-	// Produce: dark_weights_normed_gauss_ds_3
-	dark_weights_normed_gauss_ds_3_dark_weights_normed_gauss_ds_3_update_0_write_bundle_write(compute_result, dark_weights_normed_gauss_ds_3, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "dark_weights_normed_gauss_ds_3_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dark_laplace_us_2_update_0(dark_gauss_ds_3_cache& dark_gauss_ds_3, dark_laplace_us_2_cache& dark_laplace_us_2, int d0, int d1) {
-	// Consume: dark_gauss_ds_3
-	auto dark_gauss_ds_3_0_c__0_value = dark_gauss_ds_3_dark_laplace_us_2_update_0_read_bundle_read(dark_gauss_ds_3/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_laplace_us_2_update_0_dark_gauss_ds_3," << d0<< "," << d1<< "," <<  dark_gauss_ds_3_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_1(dark_gauss_ds_3_0_c__0_value);
-	// Produce: dark_laplace_us_2
-	dark_laplace_us_2_dark_laplace_us_2_update_0_write_bundle_write(compute_result, dark_laplace_us_2, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "dark_laplace_us_2_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_weights_update_0(bright_cache& bright, bright_weights_cache& bright_weights, int d0, int d1) {
-	// Consume: bright
-	auto bright_0_c__0_value = bright_bright_weights_update_0_read_bundle_read(bright/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_weights_update_0_bright," << d0<< "," << d1<< "," <<  bright_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = exposure_weight_unrolled_2(bright_0_c__0_value);
-	// Produce: bright_weights
-	bright_weights_bright_weights_update_0_write_bundle_write(compute_result, bright_weights, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "bright_weights_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "bright_weights_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dark_laplace_us_1_update_0(dark_gauss_ds_2_cache& dark_gauss_ds_2, dark_laplace_us_1_cache& dark_laplace_us_1, int d0, int d1) {
-	// Consume: dark_gauss_ds_2
-	auto dark_gauss_ds_2_0_c__0_value = dark_gauss_ds_2_dark_laplace_us_1_update_0_read_bundle_read(dark_gauss_ds_2/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_laplace_us_1_update_0_dark_gauss_ds_2," << d0<< "," << d1<< "," <<  dark_gauss_ds_2_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_1(dark_gauss_ds_2_0_c__0_value);
-	// Produce: dark_laplace_us_1
-	dark_laplace_us_1_dark_laplace_us_1_update_0_write_bundle_write(compute_result, dark_laplace_us_1, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "dark_laplace_us_1_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void in_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 2 */in_off_chip, in_cache& in, int d0, int d1) {
 	// Consume: in_off_chip
 	auto in_off_chip_0_c__0_value = in_off_chip.read();
@@ -9926,13 +9211,6 @@ inline void in_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 2 */i
 	in_in_update_0_write_bundle_write(compute_result, in, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "in_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "in_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -9942,7 +9220,6 @@ inline void dark_update_0(in_cache& in, dark_cache& dark, int d0, int d1) {
 	auto in_0_c__0_value = in_dark_update_0_read_bundle_read(in/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_update_0_in," << d0<< "," << d1<< "," <<  in_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = scale_exposure_unrolled_2(in_0_c__0_value);
@@ -9950,13 +9227,6 @@ inline void dark_update_0(in_cache& in, dark_cache& dark, int d0, int d1) {
 	dark_dark_update_0_write_bundle_write(compute_result, dark, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "dark_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "dark_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -9966,7 +9236,6 @@ inline void bright_update_0(in_cache& in, bright_cache& bright, int d0, int d1) 
 	auto in_0_c__0_value = in_bright_update_0_read_bundle_read(in/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_update_0_in," << d0<< "," << d1<< "," <<  in_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = id_unrolled_2(in_0_c__0_value);
@@ -9974,13 +9243,6 @@ inline void bright_update_0(in_cache& in, bright_cache& bright, int d0, int d1) 
 	bright_bright_update_0_write_bundle_write(compute_result, bright, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "bright_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "bright_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -9990,7 +9252,6 @@ inline void dark_weights_update_0(dark_cache& dark, dark_weights_cache& dark_wei
 	auto dark_0_c__0_value = dark_dark_weights_update_0_read_bundle_read(dark/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_weights_update_0_dark," << d0<< "," << d1<< "," <<  dark_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = exposure_weight_unrolled_2(dark_0_c__0_value);
@@ -9998,13 +9259,22 @@ inline void dark_weights_update_0(dark_cache& dark, dark_weights_cache& dark_wei
 	dark_weights_dark_weights_update_0_write_bundle_write(compute_result, dark_weights, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "dark_weights_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "dark_weights_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bright_weights_update_0(bright_cache& bright, bright_weights_cache& bright_weights, int d0, int d1) {
+	// Consume: bright
+	auto bright_0_c__0_value = bright_bright_weights_update_0_read_bundle_read(bright/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = exposure_weight_unrolled_2(bright_0_c__0_value);
+	// Produce: bright_weights
+	bright_weights_bright_weights_update_0_write_bundle_write(compute_result, bright_weights, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 }
@@ -10014,14 +9284,12 @@ inline void weight_sums_update_0(dark_weights_cache& dark_weights, bright_weight
 	auto dark_weights_0_c__0_value = dark_weights_weight_sums_update_0_read_bundle_read(dark_weights/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "weight_sums_update_0_dark_weights," << d0<< "," << d1<< "," <<  dark_weights_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	// Consume: bright_weights
 	auto bright_weights_0_c__0_value = bright_weights_weight_sums_update_0_read_bundle_read(bright_weights/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "weight_sums_update_0_bright_weights," << d0<< "," << d1<< "," <<  bright_weights_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = add_unrolled_2(dark_weights_0_c__0_value, bright_weights_0_c__0_value);
@@ -10029,13 +9297,450 @@ inline void weight_sums_update_0(dark_weights_cache& dark_weights, bright_weight
 	weight_sums_weight_sums_update_0_write_bundle_write(compute_result, weight_sums, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "weight_sums_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "weight_sums_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dark_weights_normed_update_0(dark_weights_cache& dark_weights, weight_sums_cache& weight_sums, dark_weights_normed_cache& dark_weights_normed, int d0, int d1) {
+	// Consume: dark_weights
+	auto dark_weights_0_c__0_value = dark_weights_dark_weights_normed_update_0_read_bundle_read(dark_weights/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: weight_sums
+	auto weight_sums_0_c__0_value = weight_sums_dark_weights_normed_update_0_read_bundle_read(weight_sums/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = f_divide_unrolled_2(dark_weights_0_c__0_value, weight_sums_0_c__0_value);
+	// Produce: dark_weights_normed
+	dark_weights_normed_dark_weights_normed_update_0_write_bundle_write(compute_result, dark_weights_normed, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dark_gauss_blur_1_update_0(dark_cache& dark, dark_gauss_blur_1_cache& dark_gauss_blur_1, int d0, int d1) {
+	// Consume: dark
+	auto dark_0_c__0_value = dark_dark_gauss_blur_1_update_0_read_bundle_read(dark/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_2(dark_0_c__0_value);
+	// Produce: dark_gauss_blur_1
+	dark_gauss_blur_1_dark_gauss_blur_1_update_0_write_bundle_write(compute_result, dark_gauss_blur_1, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bright_weights_normed_update_0(bright_weights_cache& bright_weights, weight_sums_cache& weight_sums, bright_weights_normed_cache& bright_weights_normed, int d0, int d1) {
+	// Consume: bright_weights
+	auto bright_weights_0_c__0_value = bright_weights_bright_weights_normed_update_0_read_bundle_read(bright_weights/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: weight_sums
+	auto weight_sums_0_c__0_value = weight_sums_bright_weights_normed_update_0_read_bundle_read(weight_sums/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = f_divide_unrolled_2(bright_weights_0_c__0_value, weight_sums_0_c__0_value);
+	// Produce: bright_weights_normed
+	bright_weights_normed_bright_weights_normed_update_0_write_bundle_write(compute_result, bright_weights_normed, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bright_gauss_blur_1_update_0(bright_cache& bright, bright_gauss_blur_1_cache& bright_gauss_blur_1, int d0, int d1) {
+	// Consume: bright
+	auto bright_0_c__0_value = bright_bright_gauss_blur_1_update_0_read_bundle_read(bright/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_2(bright_0_c__0_value);
+	// Produce: bright_gauss_blur_1
+	bright_gauss_blur_1_bright_gauss_blur_1_update_0_write_bundle_write(compute_result, bright_gauss_blur_1, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dark_weights_normed_gauss_blur_1_update_0(dark_weights_normed_cache& dark_weights_normed, dark_weights_normed_gauss_blur_1_cache& dark_weights_normed_gauss_blur_1, int d0, int d1) {
+	// Consume: dark_weights_normed
+	auto dark_weights_normed_0_c__0_value = dark_weights_normed_dark_weights_normed_gauss_blur_1_update_0_read_bundle_read(dark_weights_normed/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_2(dark_weights_normed_0_c__0_value);
+	// Produce: dark_weights_normed_gauss_blur_1
+	dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_blur_1_update_0_write_bundle_write(compute_result, dark_weights_normed_gauss_blur_1, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dark_gauss_ds_1_update_0(dark_gauss_blur_1_cache& dark_gauss_blur_1, dark_gauss_ds_1_cache& dark_gauss_ds_1, int d0, int d1) {
+	// Consume: dark_gauss_blur_1
+	auto dark_gauss_blur_1_0_c__0_value = dark_gauss_blur_1_dark_gauss_ds_1_update_0_read_bundle_read(dark_gauss_blur_1/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_1(dark_gauss_blur_1_0_c__0_value);
+	// Produce: dark_gauss_ds_1
+	dark_gauss_ds_1_dark_gauss_ds_1_update_0_write_bundle_write(compute_result, dark_gauss_ds_1, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dark_gauss_blur_2_update_0(dark_gauss_ds_1_cache& dark_gauss_ds_1, dark_gauss_blur_2_cache& dark_gauss_blur_2, int d0, int d1) {
+	// Consume: dark_gauss_ds_1
+	auto dark_gauss_ds_1_0_c__0_value = dark_gauss_ds_1_dark_gauss_blur_2_update_0_read_bundle_read(dark_gauss_ds_1/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_1(dark_gauss_ds_1_0_c__0_value);
+	// Produce: dark_gauss_blur_2
+	dark_gauss_blur_2_dark_gauss_blur_2_update_0_write_bundle_write(compute_result, dark_gauss_blur_2, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bright_weights_normed_gauss_blur_1_update_0(bright_weights_normed_cache& bright_weights_normed, bright_weights_normed_gauss_blur_1_cache& bright_weights_normed_gauss_blur_1, int d0, int d1) {
+	// Consume: bright_weights_normed
+	auto bright_weights_normed_0_c__0_value = bright_weights_normed_bright_weights_normed_gauss_blur_1_update_0_read_bundle_read(bright_weights_normed/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_2(bright_weights_normed_0_c__0_value);
+	// Produce: bright_weights_normed_gauss_blur_1
+	bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_blur_1_update_0_write_bundle_write(compute_result, bright_weights_normed_gauss_blur_1, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bright_gauss_ds_1_update_0(bright_gauss_blur_1_cache& bright_gauss_blur_1, bright_gauss_ds_1_cache& bright_gauss_ds_1, int d0, int d1) {
+	// Consume: bright_gauss_blur_1
+	auto bright_gauss_blur_1_0_c__0_value = bright_gauss_blur_1_bright_gauss_ds_1_update_0_read_bundle_read(bright_gauss_blur_1/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_1(bright_gauss_blur_1_0_c__0_value);
+	// Produce: bright_gauss_ds_1
+	bright_gauss_ds_1_bright_gauss_ds_1_update_0_write_bundle_write(compute_result, bright_gauss_ds_1, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bright_gauss_blur_2_update_0(bright_gauss_ds_1_cache& bright_gauss_ds_1, bright_gauss_blur_2_cache& bright_gauss_blur_2, int d0, int d1) {
+	// Consume: bright_gauss_ds_1
+	auto bright_gauss_ds_1_0_c__0_value = bright_gauss_ds_1_bright_gauss_blur_2_update_0_read_bundle_read(bright_gauss_ds_1/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_1(bright_gauss_ds_1_0_c__0_value);
+	// Produce: bright_gauss_blur_2
+	bright_gauss_blur_2_bright_gauss_blur_2_update_0_write_bundle_write(compute_result, bright_gauss_blur_2, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dark_laplace_us_1_update_0(dark_gauss_ds_2_cache& dark_gauss_ds_2, dark_laplace_us_1_cache& dark_laplace_us_1, int d0, int d1) {
+	// Consume: dark_gauss_ds_2
+	auto dark_gauss_ds_2_0_c__0_value = dark_gauss_ds_2_dark_laplace_us_1_update_0_read_bundle_read(dark_gauss_ds_2/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_1(dark_gauss_ds_2_0_c__0_value);
+	// Produce: dark_laplace_us_1
+	dark_laplace_us_1_dark_laplace_us_1_update_0_write_bundle_write(compute_result, dark_laplace_us_1, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dark_weights_normed_gauss_ds_1_update_0(dark_weights_normed_gauss_blur_1_cache& dark_weights_normed_gauss_blur_1, dark_weights_normed_gauss_ds_1_cache& dark_weights_normed_gauss_ds_1, int d0, int d1) {
+	// Consume: dark_weights_normed_gauss_blur_1
+	auto dark_weights_normed_gauss_blur_1_0_c__0_value = dark_weights_normed_gauss_blur_1_dark_weights_normed_gauss_ds_1_update_0_read_bundle_read(dark_weights_normed_gauss_blur_1/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_1(dark_weights_normed_gauss_blur_1_0_c__0_value);
+	// Produce: dark_weights_normed_gauss_ds_1
+	dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_ds_1_update_0_write_bundle_write(compute_result, dark_weights_normed_gauss_ds_1, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dark_weights_normed_gauss_blur_2_update_0(dark_weights_normed_gauss_ds_1_cache& dark_weights_normed_gauss_ds_1, dark_weights_normed_gauss_blur_2_cache& dark_weights_normed_gauss_blur_2, int d0, int d1) {
+	// Consume: dark_weights_normed_gauss_ds_1
+	auto dark_weights_normed_gauss_ds_1_0_c__0_value = dark_weights_normed_gauss_ds_1_dark_weights_normed_gauss_blur_2_update_0_read_bundle_read(dark_weights_normed_gauss_ds_1/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_1(dark_weights_normed_gauss_ds_1_0_c__0_value);
+	// Produce: dark_weights_normed_gauss_blur_2
+	dark_weights_normed_gauss_blur_2_dark_weights_normed_gauss_blur_2_update_0_write_bundle_write(compute_result, dark_weights_normed_gauss_blur_2, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dark_gauss_ds_2_update_0(dark_gauss_blur_2_cache& dark_gauss_blur_2, dark_gauss_ds_2_cache& dark_gauss_ds_2, int d0, int d1) {
+	// Consume: dark_gauss_blur_2
+	auto dark_gauss_blur_2_0_c__0_value = dark_gauss_blur_2_dark_gauss_ds_2_update_0_read_bundle_read(dark_gauss_blur_2/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_1(dark_gauss_blur_2_0_c__0_value);
+	// Produce: dark_gauss_ds_2
+	dark_gauss_ds_2_dark_gauss_ds_2_update_0_write_bundle_write(compute_result, dark_gauss_ds_2, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dark_gauss_blur_3_update_0(dark_gauss_ds_2_cache& dark_gauss_ds_2, dark_gauss_blur_3_cache& dark_gauss_blur_3, int d0, int d1) {
+	// Consume: dark_gauss_ds_2
+	auto dark_gauss_ds_2_0_c__0_value = dark_gauss_ds_2_dark_gauss_blur_3_update_0_read_bundle_read(dark_gauss_ds_2/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_1(dark_gauss_ds_2_0_c__0_value);
+	// Produce: dark_gauss_blur_3
+	dark_gauss_blur_3_dark_gauss_blur_3_update_0_write_bundle_write(compute_result, dark_gauss_blur_3, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bright_weights_normed_gauss_ds_1_update_0(bright_weights_normed_gauss_blur_1_cache& bright_weights_normed_gauss_blur_1, bright_weights_normed_gauss_ds_1_cache& bright_weights_normed_gauss_ds_1, int d0, int d1) {
+	// Consume: bright_weights_normed_gauss_blur_1
+	auto bright_weights_normed_gauss_blur_1_0_c__0_value = bright_weights_normed_gauss_blur_1_bright_weights_normed_gauss_ds_1_update_0_read_bundle_read(bright_weights_normed_gauss_blur_1/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_1(bright_weights_normed_gauss_blur_1_0_c__0_value);
+	// Produce: bright_weights_normed_gauss_ds_1
+	bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_ds_1_update_0_write_bundle_write(compute_result, bright_weights_normed_gauss_ds_1, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bright_weights_normed_gauss_blur_2_update_0(bright_weights_normed_gauss_ds_1_cache& bright_weights_normed_gauss_ds_1, bright_weights_normed_gauss_blur_2_cache& bright_weights_normed_gauss_blur_2, int d0, int d1) {
+	// Consume: bright_weights_normed_gauss_ds_1
+	auto bright_weights_normed_gauss_ds_1_0_c__0_value = bright_weights_normed_gauss_ds_1_bright_weights_normed_gauss_blur_2_update_0_read_bundle_read(bright_weights_normed_gauss_ds_1/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_1(bright_weights_normed_gauss_ds_1_0_c__0_value);
+	// Produce: bright_weights_normed_gauss_blur_2
+	bright_weights_normed_gauss_blur_2_bright_weights_normed_gauss_blur_2_update_0_write_bundle_write(compute_result, bright_weights_normed_gauss_blur_2, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bright_gauss_ds_2_update_0(bright_gauss_blur_2_cache& bright_gauss_blur_2, bright_gauss_ds_2_cache& bright_gauss_ds_2, int d0, int d1) {
+	// Consume: bright_gauss_blur_2
+	auto bright_gauss_blur_2_0_c__0_value = bright_gauss_blur_2_bright_gauss_ds_2_update_0_read_bundle_read(bright_gauss_blur_2/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_1(bright_gauss_blur_2_0_c__0_value);
+	// Produce: bright_gauss_ds_2
+	bright_gauss_ds_2_bright_gauss_ds_2_update_0_write_bundle_write(compute_result, bright_gauss_ds_2, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bright_gauss_blur_3_update_0(bright_gauss_ds_2_cache& bright_gauss_ds_2, bright_gauss_blur_3_cache& bright_gauss_blur_3, int d0, int d1) {
+	// Consume: bright_gauss_ds_2
+	auto bright_gauss_ds_2_0_c__0_value = bright_gauss_ds_2_bright_gauss_blur_3_update_0_read_bundle_read(bright_gauss_ds_2/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_1(bright_gauss_ds_2_0_c__0_value);
+	// Produce: bright_gauss_blur_3
+	bright_gauss_blur_3_bright_gauss_blur_3_update_0_write_bundle_write(compute_result, bright_gauss_blur_3, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dark_weights_normed_gauss_ds_2_update_0(dark_weights_normed_gauss_blur_2_cache& dark_weights_normed_gauss_blur_2, dark_weights_normed_gauss_ds_2_cache& dark_weights_normed_gauss_ds_2, int d0, int d1) {
+	// Consume: dark_weights_normed_gauss_blur_2
+	auto dark_weights_normed_gauss_blur_2_0_c__0_value = dark_weights_normed_gauss_blur_2_dark_weights_normed_gauss_ds_2_update_0_read_bundle_read(dark_weights_normed_gauss_blur_2/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_1(dark_weights_normed_gauss_blur_2_0_c__0_value);
+	// Produce: dark_weights_normed_gauss_ds_2
+	dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_ds_2_update_0_write_bundle_write(compute_result, dark_weights_normed_gauss_ds_2, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dark_weights_normed_gauss_blur_3_update_0(dark_weights_normed_gauss_ds_2_cache& dark_weights_normed_gauss_ds_2, dark_weights_normed_gauss_blur_3_cache& dark_weights_normed_gauss_blur_3, int d0, int d1) {
+	// Consume: dark_weights_normed_gauss_ds_2
+	auto dark_weights_normed_gauss_ds_2_0_c__0_value = dark_weights_normed_gauss_ds_2_dark_weights_normed_gauss_blur_3_update_0_read_bundle_read(dark_weights_normed_gauss_ds_2/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_1(dark_weights_normed_gauss_ds_2_0_c__0_value);
+	// Produce: dark_weights_normed_gauss_blur_3
+	dark_weights_normed_gauss_blur_3_dark_weights_normed_gauss_blur_3_update_0_write_bundle_write(compute_result, dark_weights_normed_gauss_blur_3, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dark_gauss_ds_3_update_0(dark_gauss_blur_3_cache& dark_gauss_blur_3, dark_gauss_ds_3_cache& dark_gauss_ds_3, int d0, int d1) {
+	// Consume: dark_gauss_blur_3
+	auto dark_gauss_blur_3_0_c__0_value = dark_gauss_blur_3_dark_gauss_ds_3_update_0_read_bundle_read(dark_gauss_blur_3/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_1(dark_gauss_blur_3_0_c__0_value);
+	// Produce: dark_gauss_ds_3
+	dark_gauss_ds_3_dark_gauss_ds_3_update_0_write_bundle_write(compute_result, dark_gauss_ds_3, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bright_weights_normed_gauss_ds_2_update_0(bright_weights_normed_gauss_blur_2_cache& bright_weights_normed_gauss_blur_2, bright_weights_normed_gauss_ds_2_cache& bright_weights_normed_gauss_ds_2, int d0, int d1) {
+	// Consume: bright_weights_normed_gauss_blur_2
+	auto bright_weights_normed_gauss_blur_2_0_c__0_value = bright_weights_normed_gauss_blur_2_bright_weights_normed_gauss_ds_2_update_0_read_bundle_read(bright_weights_normed_gauss_blur_2/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_1(bright_weights_normed_gauss_blur_2_0_c__0_value);
+	// Produce: bright_weights_normed_gauss_ds_2
+	bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_ds_2_update_0_write_bundle_write(compute_result, bright_weights_normed_gauss_ds_2, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bright_weights_normed_gauss_blur_3_update_0(bright_weights_normed_gauss_ds_2_cache& bright_weights_normed_gauss_ds_2, bright_weights_normed_gauss_blur_3_cache& bright_weights_normed_gauss_blur_3, int d0, int d1) {
+	// Consume: bright_weights_normed_gauss_ds_2
+	auto bright_weights_normed_gauss_ds_2_0_c__0_value = bright_weights_normed_gauss_ds_2_bright_weights_normed_gauss_blur_3_update_0_read_bundle_read(bright_weights_normed_gauss_ds_2/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_1(bright_weights_normed_gauss_ds_2_0_c__0_value);
+	// Produce: bright_weights_normed_gauss_blur_3
+	bright_weights_normed_gauss_blur_3_bright_weights_normed_gauss_blur_3_update_0_write_bundle_write(compute_result, bright_weights_normed_gauss_blur_3, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bright_gauss_ds_3_update_0(bright_gauss_blur_3_cache& bright_gauss_blur_3, bright_gauss_ds_3_cache& bright_gauss_ds_3, int d0, int d1) {
+	// Consume: bright_gauss_blur_3
+	auto bright_gauss_blur_3_0_c__0_value = bright_gauss_blur_3_bright_gauss_ds_3_update_0_read_bundle_read(bright_gauss_blur_3/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_1(bright_gauss_blur_3_0_c__0_value);
+	// Produce: bright_gauss_ds_3
+	bright_gauss_ds_3_bright_gauss_ds_3_update_0_write_bundle_write(compute_result, bright_gauss_ds_3, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dark_weights_normed_gauss_ds_3_update_0(dark_weights_normed_gauss_blur_3_cache& dark_weights_normed_gauss_blur_3, dark_weights_normed_gauss_ds_3_cache& dark_weights_normed_gauss_ds_3, int d0, int d1) {
+	// Consume: dark_weights_normed_gauss_blur_3
+	auto dark_weights_normed_gauss_blur_3_0_c__0_value = dark_weights_normed_gauss_blur_3_dark_weights_normed_gauss_ds_3_update_0_read_bundle_read(dark_weights_normed_gauss_blur_3/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_1(dark_weights_normed_gauss_blur_3_0_c__0_value);
+	// Produce: dark_weights_normed_gauss_ds_3
+	dark_weights_normed_gauss_ds_3_dark_weights_normed_gauss_ds_3_update_0_write_bundle_write(compute_result, dark_weights_normed_gauss_ds_3, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dark_laplace_us_2_update_0(dark_gauss_ds_3_cache& dark_gauss_ds_3, dark_laplace_us_2_cache& dark_laplace_us_2, int d0, int d1) {
+	// Consume: dark_gauss_ds_3
+	auto dark_gauss_ds_3_0_c__0_value = dark_gauss_ds_3_dark_laplace_us_2_update_0_read_bundle_read(dark_gauss_ds_3/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_1(dark_gauss_ds_3_0_c__0_value);
+	// Produce: dark_laplace_us_2
+	dark_laplace_us_2_dark_laplace_us_2_update_0_write_bundle_write(compute_result, dark_laplace_us_2, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 }
@@ -10045,7 +9750,6 @@ inline void dark_laplace_us_0_update_0(dark_gauss_ds_1_cache& dark_gauss_ds_1, d
 	auto dark_gauss_ds_1_0_c__0_value = dark_gauss_ds_1_dark_laplace_us_0_update_0_read_bundle_read(dark_gauss_ds_1/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_laplace_us_0_update_0_dark_gauss_ds_1," << d0<< "," << d1<< "," <<  dark_gauss_ds_1_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = id_unrolled_2(dark_gauss_ds_1_0_c__0_value);
@@ -10053,13 +9757,6 @@ inline void dark_laplace_us_0_update_0(dark_gauss_ds_1_cache& dark_gauss_ds_1, d
 	dark_laplace_us_0_dark_laplace_us_0_update_0_write_bundle_write(compute_result, dark_laplace_us_0, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "dark_laplace_us_0_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "dark_laplace_us_0_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -10069,14 +9766,12 @@ inline void dark_laplace_diff_2_update_0(dark_gauss_ds_2_cache& dark_gauss_ds_2,
 	auto dark_gauss_ds_2_0_c__0_value = dark_gauss_ds_2_dark_laplace_diff_2_update_0_read_bundle_read(dark_gauss_ds_2/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_laplace_diff_2_update_0_dark_gauss_ds_2," << d0<< "," << d1<< "," <<  dark_gauss_ds_2_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	// Consume: dark_laplace_us_2
 	auto dark_laplace_us_2_0_c__0_value = dark_laplace_us_2_dark_laplace_diff_2_update_0_read_bundle_read(dark_laplace_us_2/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_laplace_diff_2_update_0_dark_laplace_us_2," << d0<< "," << d1<< "," <<  dark_laplace_us_2_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = diff_unrolled_1(dark_gauss_ds_2_0_c__0_value, dark_laplace_us_2_0_c__0_value);
@@ -10084,10 +9779,6 @@ inline void dark_laplace_diff_2_update_0(dark_gauss_ds_2_cache& dark_gauss_ds_2,
 	dark_laplace_diff_2_dark_laplace_diff_2_update_0_write_bundle_write(compute_result, dark_laplace_diff_2, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "dark_laplace_diff_2_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -10097,14 +9788,12 @@ inline void dark_laplace_diff_1_update_0(dark_gauss_ds_1_cache& dark_gauss_ds_1,
 	auto dark_gauss_ds_1_0_c__0_value = dark_gauss_ds_1_dark_laplace_diff_1_update_0_read_bundle_read(dark_gauss_ds_1/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_laplace_diff_1_update_0_dark_gauss_ds_1," << d0<< "," << d1<< "," <<  dark_gauss_ds_1_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	// Consume: dark_laplace_us_1
 	auto dark_laplace_us_1_0_c__0_value = dark_laplace_us_1_dark_laplace_diff_1_update_0_read_bundle_read(dark_laplace_us_1/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_laplace_diff_1_update_0_dark_laplace_us_1," << d0<< "," << d1<< "," <<  dark_laplace_us_1_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = diff_unrolled_1(dark_gauss_ds_1_0_c__0_value, dark_laplace_us_1_0_c__0_value);
@@ -10112,41 +9801,6 @@ inline void dark_laplace_diff_1_update_0(dark_gauss_ds_1_cache& dark_gauss_ds_1,
 	dark_laplace_diff_1_dark_laplace_diff_1_update_0_write_bundle_write(compute_result, dark_laplace_diff_1, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "dark_laplace_diff_1_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void dark_laplace_diff_0_update_0(dark_cache& dark, dark_laplace_us_0_cache& dark_laplace_us_0, dark_laplace_diff_0_cache& dark_laplace_diff_0, int d0, int d1) {
-	// Consume: dark
-	auto dark_0_c__0_value = dark_dark_laplace_diff_0_update_0_read_bundle_read(dark/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_laplace_diff_0_update_0_dark," << d0<< "," << d1<< "," <<  dark_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	// Consume: dark_laplace_us_0
-	auto dark_laplace_us_0_0_c__0_value = dark_laplace_us_0_dark_laplace_diff_0_update_0_read_bundle_read(dark_laplace_us_0/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "dark_laplace_diff_0_update_0_dark_laplace_us_0," << d0<< "," << d1<< "," <<  dark_laplace_us_0_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = diff_unrolled_2(dark_0_c__0_value, dark_laplace_us_0_0_c__0_value);
-	// Produce: dark_laplace_diff_0
-	dark_laplace_diff_0_dark_laplace_diff_0_update_0_write_bundle_write(compute_result, dark_laplace_diff_0, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "dark_laplace_diff_0_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "dark_laplace_diff_0_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -10156,7 +9810,6 @@ inline void bright_weights_normed_gauss_ds_3_update_0(bright_weights_normed_gaus
 	auto bright_weights_normed_gauss_blur_3_0_c__0_value = bright_weights_normed_gauss_blur_3_bright_weights_normed_gauss_ds_3_update_0_read_bundle_read(bright_weights_normed_gauss_blur_3/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_weights_normed_gauss_ds_3_update_0_bright_weights_normed_gauss_blur_3," << d0<< "," << d1<< "," <<  bright_weights_normed_gauss_blur_3_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = id_unrolled_1(bright_weights_normed_gauss_blur_3_0_c__0_value);
@@ -10164,10 +9817,28 @@ inline void bright_weights_normed_gauss_ds_3_update_0(bright_weights_normed_gaus
 	bright_weights_normed_gauss_ds_3_bright_weights_normed_gauss_ds_3_update_0_write_bundle_write(compute_result, bright_weights_normed_gauss_ds_3, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "bright_weights_normed_gauss_ds_3_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void dark_laplace_diff_0_update_0(dark_cache& dark, dark_laplace_us_0_cache& dark_laplace_us_0, dark_laplace_diff_0_cache& dark_laplace_diff_0, int d0, int d1) {
+	// Consume: dark
+	auto dark_0_c__0_value = dark_dark_laplace_diff_0_update_0_read_bundle_read(dark/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: dark_laplace_us_0
+	auto dark_laplace_us_0_0_c__0_value = dark_laplace_us_0_dark_laplace_diff_0_update_0_read_bundle_read(dark_laplace_us_0/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = diff_unrolled_2(dark_0_c__0_value, dark_laplace_us_0_0_c__0_value);
+	// Produce: dark_laplace_diff_0
+	dark_laplace_diff_0_dark_laplace_diff_0_update_0_write_bundle_write(compute_result, dark_laplace_diff_0, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 }
@@ -10177,7 +9848,6 @@ inline void bright_laplace_us_2_update_0(bright_gauss_ds_3_cache& bright_gauss_d
 	auto bright_gauss_ds_3_0_c__0_value = bright_gauss_ds_3_bright_laplace_us_2_update_0_read_bundle_read(bright_gauss_ds_3/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_laplace_us_2_update_0_bright_gauss_ds_3," << d0<< "," << d1<< "," <<  bright_gauss_ds_3_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = id_unrolled_1(bright_gauss_ds_3_0_c__0_value);
@@ -10185,31 +9855,6 @@ inline void bright_laplace_us_2_update_0(bright_gauss_ds_3_cache& bright_gauss_d
 	bright_laplace_us_2_bright_laplace_us_2_update_0_write_bundle_write(compute_result, bright_laplace_us_2, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "bright_laplace_us_2_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bright_laplace_us_1_update_0(bright_gauss_ds_2_cache& bright_gauss_ds_2, bright_laplace_us_1_cache& bright_laplace_us_1, int d0, int d1) {
-	// Consume: bright_gauss_ds_2
-	auto bright_gauss_ds_2_0_c__0_value = bright_gauss_ds_2_bright_laplace_us_1_update_0_read_bundle_read(bright_gauss_ds_2/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_laplace_us_1_update_0_bright_gauss_ds_2," << d0<< "," << d1<< "," <<  bright_gauss_ds_2_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_1(bright_gauss_ds_2_0_c__0_value);
-	// Produce: bright_laplace_us_1
-	bright_laplace_us_1_bright_laplace_us_1_update_0_write_bundle_write(compute_result, bright_laplace_us_1, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "bright_laplace_us_1_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -10219,7 +9864,6 @@ inline void bright_laplace_us_0_update_0(bright_gauss_ds_1_cache& bright_gauss_d
 	auto bright_gauss_ds_1_0_c__0_value = bright_gauss_ds_1_bright_laplace_us_0_update_0_read_bundle_read(bright_gauss_ds_1/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_laplace_us_0_update_0_bright_gauss_ds_1," << d0<< "," << d1<< "," <<  bright_gauss_ds_1_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = id_unrolled_2(bright_gauss_ds_1_0_c__0_value);
@@ -10227,41 +9871,22 @@ inline void bright_laplace_us_0_update_0(bright_gauss_ds_1_cache& bright_gauss_d
 	bright_laplace_us_0_bright_laplace_us_0_update_0_write_bundle_write(compute_result, bright_laplace_us_0, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "bright_laplace_us_0_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "bright_laplace_us_0_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
 
-inline void bright_laplace_diff_2_update_0(bright_gauss_ds_2_cache& bright_gauss_ds_2, bright_laplace_us_2_cache& bright_laplace_us_2, bright_laplace_diff_2_cache& bright_laplace_diff_2, int d0, int d1) {
+inline void bright_laplace_us_1_update_0(bright_gauss_ds_2_cache& bright_gauss_ds_2, bright_laplace_us_1_cache& bright_laplace_us_1, int d0, int d1) {
 	// Consume: bright_gauss_ds_2
-	auto bright_gauss_ds_2_0_c__0_value = bright_gauss_ds_2_bright_laplace_diff_2_update_0_read_bundle_read(bright_gauss_ds_2/* source_delay */, d0, d1);
+	auto bright_gauss_ds_2_0_c__0_value = bright_gauss_ds_2_bright_laplace_us_1_update_0_read_bundle_read(bright_gauss_ds_2/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_laplace_diff_2_update_0_bright_gauss_ds_2," << d0<< "," << d1<< "," <<  bright_gauss_ds_2_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
-	// Consume: bright_laplace_us_2
-	auto bright_laplace_us_2_0_c__0_value = bright_laplace_us_2_bright_laplace_diff_2_update_0_read_bundle_read(bright_laplace_us_2/* source_delay */, d0, d1);
+	auto compute_result = id_unrolled_1(bright_gauss_ds_2_0_c__0_value);
+	// Produce: bright_laplace_us_1
+	bright_laplace_us_1_bright_laplace_us_1_update_0_write_bundle_write(compute_result, bright_laplace_us_1, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_laplace_diff_2_update_0_bright_laplace_us_2," << d0<< "," << d1<< "," <<  bright_laplace_us_2_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = diff_unrolled_1(bright_gauss_ds_2_0_c__0_value, bright_laplace_us_2_0_c__0_value);
-	// Produce: bright_laplace_diff_2
-	bright_laplace_diff_2_bright_laplace_diff_2_update_0_write_bundle_write(compute_result, bright_laplace_diff_2, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "bright_laplace_diff_2_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -10271,14 +9896,12 @@ inline void bright_laplace_diff_1_update_0(bright_gauss_ds_1_cache& bright_gauss
 	auto bright_gauss_ds_1_0_c__0_value = bright_gauss_ds_1_bright_laplace_diff_1_update_0_read_bundle_read(bright_gauss_ds_1/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_laplace_diff_1_update_0_bright_gauss_ds_1," << d0<< "," << d1<< "," <<  bright_gauss_ds_1_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	// Consume: bright_laplace_us_1
 	auto bright_laplace_us_1_0_c__0_value = bright_laplace_us_1_bright_laplace_diff_1_update_0_read_bundle_read(bright_laplace_us_1/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_laplace_diff_1_update_0_bright_laplace_us_1," << d0<< "," << d1<< "," <<  bright_laplace_us_1_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = diff_unrolled_1(bright_gauss_ds_1_0_c__0_value, bright_laplace_us_1_0_c__0_value);
@@ -10286,10 +9909,28 @@ inline void bright_laplace_diff_1_update_0(bright_gauss_ds_1_cache& bright_gauss
 	bright_laplace_diff_1_bright_laplace_diff_1_update_0_write_bundle_write(compute_result, bright_laplace_diff_1, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "bright_laplace_diff_1_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void bright_laplace_diff_2_update_0(bright_gauss_ds_2_cache& bright_gauss_ds_2, bright_laplace_us_2_cache& bright_laplace_us_2, bright_laplace_diff_2_cache& bright_laplace_diff_2, int d0, int d1) {
+	// Consume: bright_gauss_ds_2
+	auto bright_gauss_ds_2_0_c__0_value = bright_gauss_ds_2_bright_laplace_diff_2_update_0_read_bundle_read(bright_gauss_ds_2/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: bright_laplace_us_2
+	auto bright_laplace_us_2_0_c__0_value = bright_laplace_us_2_bright_laplace_diff_2_update_0_read_bundle_read(bright_laplace_us_2/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = diff_unrolled_1(bright_gauss_ds_2_0_c__0_value, bright_laplace_us_2_0_c__0_value);
+	// Produce: bright_laplace_diff_2
+	bright_laplace_diff_2_bright_laplace_diff_2_update_0_write_bundle_write(compute_result, bright_laplace_diff_2, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 }
@@ -10299,14 +9940,12 @@ inline void bright_laplace_diff_0_update_0(bright_cache& bright, bright_laplace_
 	auto bright_0_c__0_value = bright_bright_laplace_diff_0_update_0_read_bundle_read(bright/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_laplace_diff_0_update_0_bright," << d0<< "," << d1<< "," <<  bright_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	// Consume: bright_laplace_us_0
 	auto bright_laplace_us_0_0_c__0_value = bright_laplace_us_0_bright_laplace_diff_0_update_0_read_bundle_read(bright_laplace_us_0/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "bright_laplace_diff_0_update_0_bright_laplace_us_0," << d0<< "," << d1<< "," <<  bright_laplace_us_0_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = diff_unrolled_2(bright_0_c__0_value, bright_laplace_us_0_0_c__0_value);
@@ -10314,13 +9953,6 @@ inline void bright_laplace_diff_0_update_0(bright_cache& bright, bright_laplace_
 	bright_laplace_diff_0_bright_laplace_diff_0_update_0_write_bundle_write(compute_result, bright_laplace_diff_0, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "bright_laplace_diff_0_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "bright_laplace_diff_0_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -10330,28 +9962,24 @@ inline void fused_level_3_update_0(bright_gauss_ds_3_cache& bright_gauss_ds_3, d
 	auto bright_gauss_ds_3_0_c__0_value = bright_gauss_ds_3_fused_level_3_update_0_read_bundle_read(bright_gauss_ds_3/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "fused_level_3_update_0_bright_gauss_ds_3," << d0<< "," << d1<< "," <<  bright_gauss_ds_3_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	// Consume: dark_gauss_ds_3
 	auto dark_gauss_ds_3_0_c__0_value = dark_gauss_ds_3_fused_level_3_update_0_read_bundle_read(dark_gauss_ds_3/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "fused_level_3_update_0_dark_gauss_ds_3," << d0<< "," << d1<< "," <<  dark_gauss_ds_3_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	// Consume: bright_weights_normed_gauss_ds_3
 	auto bright_weights_normed_gauss_ds_3_0_c__0_value = bright_weights_normed_gauss_ds_3_fused_level_3_update_0_read_bundle_read(bright_weights_normed_gauss_ds_3/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "fused_level_3_update_0_bright_weights_normed_gauss_ds_3," << d0<< "," << d1<< "," <<  bright_weights_normed_gauss_ds_3_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	// Consume: dark_weights_normed_gauss_ds_3
 	auto dark_weights_normed_gauss_ds_3_0_c__0_value = dark_weights_normed_gauss_ds_3_fused_level_3_update_0_read_bundle_read(dark_weights_normed_gauss_ds_3/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "fused_level_3_update_0_dark_weights_normed_gauss_ds_3," << d0<< "," << d1<< "," <<  dark_weights_normed_gauss_ds_3_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = merge_exposures_unrolled_1(bright_gauss_ds_3_0_c__0_value, dark_gauss_ds_3_0_c__0_value, bright_weights_normed_gauss_ds_3_0_c__0_value, dark_weights_normed_gauss_ds_3_0_c__0_value);
@@ -10359,10 +9987,6 @@ inline void fused_level_3_update_0(bright_gauss_ds_3_cache& bright_gauss_ds_3, d
 	fused_level_3_fused_level_3_update_0_write_bundle_write(compute_result, fused_level_3, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "fused_level_3_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -10372,28 +9996,24 @@ inline void fused_level_2_update_0(bright_laplace_diff_2_cache& bright_laplace_d
 	auto bright_laplace_diff_2_0_c__0_value = bright_laplace_diff_2_fused_level_2_update_0_read_bundle_read(bright_laplace_diff_2/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "fused_level_2_update_0_bright_laplace_diff_2," << d0<< "," << d1<< "," <<  bright_laplace_diff_2_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	// Consume: dark_laplace_diff_2
 	auto dark_laplace_diff_2_0_c__0_value = dark_laplace_diff_2_fused_level_2_update_0_read_bundle_read(dark_laplace_diff_2/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "fused_level_2_update_0_dark_laplace_diff_2," << d0<< "," << d1<< "," <<  dark_laplace_diff_2_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	// Consume: bright_weights_normed_gauss_ds_2
 	auto bright_weights_normed_gauss_ds_2_0_c__0_value = bright_weights_normed_gauss_ds_2_fused_level_2_update_0_read_bundle_read(bright_weights_normed_gauss_ds_2/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "fused_level_2_update_0_bright_weights_normed_gauss_ds_2," << d0<< "," << d1<< "," <<  bright_weights_normed_gauss_ds_2_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	// Consume: dark_weights_normed_gauss_ds_2
 	auto dark_weights_normed_gauss_ds_2_0_c__0_value = dark_weights_normed_gauss_ds_2_fused_level_2_update_0_read_bundle_read(dark_weights_normed_gauss_ds_2/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "fused_level_2_update_0_dark_weights_normed_gauss_ds_2," << d0<< "," << d1<< "," <<  dark_weights_normed_gauss_ds_2_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = merge_exposures_unrolled_1(bright_laplace_diff_2_0_c__0_value, dark_laplace_diff_2_0_c__0_value, bright_weights_normed_gauss_ds_2_0_c__0_value, dark_weights_normed_gauss_ds_2_0_c__0_value);
@@ -10401,10 +10021,6 @@ inline void fused_level_2_update_0(bright_laplace_diff_2_cache& bright_laplace_d
 	fused_level_2_fused_level_2_update_0_write_bundle_write(compute_result, fused_level_2, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "fused_level_2_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -10414,28 +10030,24 @@ inline void fused_level_1_update_0(bright_laplace_diff_1_cache& bright_laplace_d
 	auto bright_laplace_diff_1_0_c__0_value = bright_laplace_diff_1_fused_level_1_update_0_read_bundle_read(bright_laplace_diff_1/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "fused_level_1_update_0_bright_laplace_diff_1," << d0<< "," << d1<< "," <<  bright_laplace_diff_1_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	// Consume: dark_laplace_diff_1
 	auto dark_laplace_diff_1_0_c__0_value = dark_laplace_diff_1_fused_level_1_update_0_read_bundle_read(dark_laplace_diff_1/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "fused_level_1_update_0_dark_laplace_diff_1," << d0<< "," << d1<< "," <<  dark_laplace_diff_1_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	// Consume: bright_weights_normed_gauss_ds_1
 	auto bright_weights_normed_gauss_ds_1_0_c__0_value = bright_weights_normed_gauss_ds_1_fused_level_1_update_0_read_bundle_read(bright_weights_normed_gauss_ds_1/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "fused_level_1_update_0_bright_weights_normed_gauss_ds_1," << d0<< "," << d1<< "," <<  bright_weights_normed_gauss_ds_1_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	// Consume: dark_weights_normed_gauss_ds_1
 	auto dark_weights_normed_gauss_ds_1_0_c__0_value = dark_weights_normed_gauss_ds_1_fused_level_1_update_0_read_bundle_read(dark_weights_normed_gauss_ds_1/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "fused_level_1_update_0_dark_weights_normed_gauss_ds_1," << d0<< "," << d1<< "," <<  dark_weights_normed_gauss_ds_1_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = merge_exposures_unrolled_1(bright_laplace_diff_1_0_c__0_value, dark_laplace_diff_1_0_c__0_value, bright_weights_normed_gauss_ds_1_0_c__0_value, dark_weights_normed_gauss_ds_1_0_c__0_value);
@@ -10443,10 +10055,6 @@ inline void fused_level_1_update_0(bright_laplace_diff_1_cache& bright_laplace_d
 	fused_level_1_fused_level_1_update_0_write_bundle_write(compute_result, fused_level_1, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "fused_level_1_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -10456,28 +10064,24 @@ inline void fused_level_0_update_0(bright_laplace_diff_0_cache& bright_laplace_d
 	auto bright_laplace_diff_0_0_c__0_value = bright_laplace_diff_0_fused_level_0_update_0_read_bundle_read(bright_laplace_diff_0/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "fused_level_0_update_0_bright_laplace_diff_0," << d0<< "," << d1<< "," <<  bright_laplace_diff_0_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	// Consume: dark_laplace_diff_0
 	auto dark_laplace_diff_0_0_c__0_value = dark_laplace_diff_0_fused_level_0_update_0_read_bundle_read(dark_laplace_diff_0/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "fused_level_0_update_0_dark_laplace_diff_0," << d0<< "," << d1<< "," <<  dark_laplace_diff_0_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	// Consume: bright_weights_normed
 	auto bright_weights_normed_0_c__0_value = bright_weights_normed_fused_level_0_update_0_read_bundle_read(bright_weights_normed/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "fused_level_0_update_0_bright_weights_normed," << d0<< "," << d1<< "," <<  bright_weights_normed_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	// Consume: dark_weights_normed
 	auto dark_weights_normed_0_c__0_value = dark_weights_normed_fused_level_0_update_0_read_bundle_read(dark_weights_normed/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "fused_level_0_update_0_dark_weights_normed," << d0<< "," << d1<< "," <<  dark_weights_normed_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = merge_exposures_unrolled_2(bright_laplace_diff_0_0_c__0_value, dark_laplace_diff_0_0_c__0_value, bright_weights_normed_0_c__0_value, dark_weights_normed_0_c__0_value);
@@ -10485,13 +10089,6 @@ inline void fused_level_0_update_0(bright_laplace_diff_0_cache& bright_laplace_d
 	fused_level_0_fused_level_0_update_0_write_bundle_write(compute_result, fused_level_0, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "fused_level_0_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "fused_level_0_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -10501,14 +10098,12 @@ inline void final_merged_2_update_0(fused_level_3_cache& fused_level_3, fused_le
 	auto fused_level_3_0_c__0_value = fused_level_3_final_merged_2_update_0_read_bundle_read(fused_level_3/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "final_merged_2_update_0_fused_level_3," << d0<< "," << d1<< "," <<  fused_level_3_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	// Consume: fused_level_2
 	auto fused_level_2_0_c__0_value = fused_level_2_final_merged_2_update_0_read_bundle_read(fused_level_2/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "final_merged_2_update_0_fused_level_2," << d0<< "," << d1<< "," <<  fused_level_2_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = add_unrolled_1(fused_level_3_0_c__0_value, fused_level_2_0_c__0_value);
@@ -10516,10 +10111,6 @@ inline void final_merged_2_update_0(fused_level_3_cache& fused_level_3, fused_le
 	final_merged_2_final_merged_2_update_0_write_bundle_write(compute_result, final_merged_2, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "final_merged_2_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -10529,14 +10120,12 @@ inline void final_merged_1_update_0(final_merged_2_cache& final_merged_2, fused_
 	auto final_merged_2_0_c__0_value = final_merged_2_final_merged_1_update_0_read_bundle_read(final_merged_2/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "final_merged_1_update_0_final_merged_2," << d0<< "," << d1<< "," <<  final_merged_2_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	// Consume: fused_level_1
 	auto fused_level_1_0_c__0_value = fused_level_1_final_merged_1_update_0_read_bundle_read(fused_level_1/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "final_merged_1_update_0_fused_level_1," << d0<< "," << d1<< "," <<  fused_level_1_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = add_unrolled_1(final_merged_2_0_c__0_value, fused_level_1_0_c__0_value);
@@ -10544,41 +10133,6 @@ inline void final_merged_1_update_0(final_merged_2_cache& final_merged_2, fused_
 	final_merged_1_final_merged_1_update_0_write_bundle_write(compute_result, final_merged_1, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<16> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  *global_debug_handle << "final_merged_1_update_0," << (1*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void final_merged_0_update_0(final_merged_1_cache& final_merged_1, fused_level_0_cache& fused_level_0, final_merged_0_cache& final_merged_0, int d0, int d1) {
-	// Consume: final_merged_1
-	auto final_merged_1_0_c__0_value = final_merged_1_final_merged_0_update_0_read_bundle_read(final_merged_1/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "final_merged_0_update_0_final_merged_1," << d0<< "," << d1<< "," <<  final_merged_1_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	// Consume: fused_level_0
-	auto fused_level_0_0_c__0_value = fused_level_0_final_merged_0_update_0_read_bundle_read(fused_level_0/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "final_merged_0_update_0_fused_level_0," << d0<< "," << d1<< "," <<  fused_level_0_0_c__0_value << endl;
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = add_unrolled_2(final_merged_1_0_c__0_value, fused_level_0_0_c__0_value);
-	// Produce: final_merged_0
-	final_merged_0_final_merged_0_update_0_write_bundle_write(compute_result, final_merged_0, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "final_merged_0_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "final_merged_0_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
 #endif //__VIVADO_SYNTH__
 
 }
@@ -10588,7 +10142,6 @@ inline void psefn_2_update_0(final_merged_0_cache& final_merged_0, HWStream<hw_u
 	auto final_merged_0_0_c__0_value = final_merged_0_psefn_2_update_0_read_bundle_read(final_merged_0/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
-  *global_debug_handle << "psefn_2_update_0_final_merged_0," << d0<< "," << d1<< "," <<  final_merged_0_0_c__0_value << endl;
 #endif //__VIVADO_SYNTH__
 
 	auto compute_result = id_unrolled_2(final_merged_0_0_c__0_value);
@@ -10596,13 +10149,28 @@ inline void psefn_2_update_0(final_merged_0_cache& final_merged_0, HWStream<hw_u
 	psefn_2.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
-  hw_uint<32> debug_compute_result(compute_result);
-  hw_uint<16> debug_compute_result_lane_0;
-  set_at<0, 16, 16>(debug_compute_result_lane_0, debug_compute_result.extract<0, 15>());
-  hw_uint<16> debug_compute_result_lane_1;
-  set_at<0, 16, 16>(debug_compute_result_lane_1, debug_compute_result.extract<16, 31>());
-  *global_debug_handle << "psefn_2_update_0," << (2*d0 + 0) << ", " << d1<< "," <<  debug_compute_result_lane_0 << endl;
-  *global_debug_handle << "psefn_2_update_0," << (2*d0 + 1) << ", " << d1<< "," <<  debug_compute_result_lane_1 << endl;
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void final_merged_0_update_0(final_merged_1_cache& final_merged_1, fused_level_0_cache& fused_level_0, final_merged_0_cache& final_merged_0, int d0, int d1) {
+	// Consume: final_merged_1
+	auto final_merged_1_0_c__0_value = final_merged_1_final_merged_0_update_0_read_bundle_read(final_merged_1/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: fused_level_0
+	auto fused_level_0_0_c__0_value = fused_level_0_final_merged_0_update_0_read_bundle_read(fused_level_0/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = add_unrolled_2(final_merged_1_0_c__0_value, fused_level_0_0_c__0_value);
+	// Produce: final_merged_0
+	final_merged_0_final_merged_0_update_0_write_bundle_write(compute_result, final_merged_0, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
 }
@@ -10767,223 +10335,277 @@ void psefn_2_opt(HWStream<hw_uint<32> >& /* get_args num ports = 2 */in_off_chip
   weight_sums_cache weight_sums;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
+#ifdef __VIVADO_SYNTH__
+#pragma HLS inline recursive
+#endif // __VIVADO_SYNTH__
+
   for (int epoch = 0; epoch < num_epochs; epoch++) {
-	#ifdef __VIVADO_SYNTH__
-	#pragma HLS inline recursive
-	#endif // __VIVADO_SYNTH__
-	
-	for (int c0 = 0; c0 <= 1933; c0++) {
-	  for (int c1 = 0; c1 <= 966; c1++) {
+	  // Schedules...
+	    // bright_gauss_blur_1_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*1,1*10]
+	    // bright_gauss_blur_2_update_0 -> [1*d1*1*2 + 1*6,1*d0*1*1 + 1*3,1*16]
+	    // bright_gauss_blur_3_update_0 -> [1*d1*1*4 + 1*14,1*d0*1*2 + 1*7,1*24]
+	    // bright_gauss_ds_1_update_0 -> [1*d1*1*2 + 1*2,1*d0*1*1 + 1*1,1*15]
+	    // bright_gauss_ds_2_update_0 -> [1*d1*1*4 + 1*6,1*d0*1*2 + 1*3,1*23]
+	    // bright_gauss_ds_3_update_0 -> [1*d1*1*8 + 1*14,1*d0*1*4 + 1*7,1*30]
+	    // bright_laplace_diff_0_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*1,1*44]
+	    // bright_laplace_diff_1_update_0 -> [1*d1*1*2 + 1*6,1*d0*1*1 + 1*3,1*43]
+	    // bright_laplace_diff_2_update_0 -> [1*d1*1*4 + 1*14,1*d0*1*2 + 1*7,1*42]
+	    // bright_laplace_us_0_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*1,1*41]
+	    // bright_laplace_us_1_update_0 -> [1*d1*1*2 + 1*6,1*d0*1*1 + 1*3,1*40]
+	    // bright_laplace_us_2_update_0 -> [1*d1*1*4 + 1*14,1*d0*1*2 + 1*7,1*39]
+	    // bright_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*3]
+	    // bright_weights_normed_gauss_blur_1_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*1,1*14]
+	    // bright_weights_normed_gauss_blur_2_update_0 -> [1*d1*1*2 + 1*6,1*d0*1*1 + 1*3,1*22]
+	    // bright_weights_normed_gauss_blur_3_update_0 -> [1*d1*1*4 + 1*14,1*d0*1*2 + 1*7,1*29]
+	    // bright_weights_normed_gauss_ds_1_update_0 -> [1*d1*1*2 + 1*2,1*d0*1*1 + 1*1,1*21]
+	    // bright_weights_normed_gauss_ds_2_update_0 -> [1*d1*1*4 + 1*6,1*d0*1*2 + 1*3,1*28]
+	    // bright_weights_normed_gauss_ds_3_update_0 -> [1*d1*1*8 + 1*14,1*d0*1*4 + 1*7,1*38]
+	    // bright_weights_normed_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*9]
+	    // bright_weights_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*5]
+	    // dark_gauss_blur_1_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*1,1*8]
+	    // dark_gauss_blur_2_update_0 -> [1*d1*1*2 + 1*6,1*d0*1*1 + 1*3,1*13]
+	    // dark_gauss_blur_3_update_0 -> [1*d1*1*4 + 1*14,1*d0*1*2 + 1*7,1*20]
+	    // dark_gauss_ds_1_update_0 -> [1*d1*1*2 + 1*2,1*d0*1*1 + 1*1,1*12]
+	    // dark_gauss_ds_2_update_0 -> [1*d1*1*4 + 1*6,1*d0*1*2 + 1*3,1*19]
+	    // dark_gauss_ds_3_update_0 -> [1*d1*1*8 + 1*14,1*d0*1*4 + 1*7,1*27]
+	    // dark_laplace_diff_0_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*1,1*37]
+	    // dark_laplace_diff_1_update_0 -> [1*d1*1*2 + 1*6,1*d0*1*1 + 1*3,1*36]
+	    // dark_laplace_diff_2_update_0 -> [1*d1*1*4 + 1*14,1*d0*1*2 + 1*7,1*35]
+	    // dark_laplace_us_0_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*1,1*34]
+	    // dark_laplace_us_1_update_0 -> [1*d1*1*2 + 1*6,1*d0*1*1 + 1*3,1*33]
+	    // dark_laplace_us_2_update_0 -> [1*d1*1*4 + 1*14,1*d0*1*2 + 1*7,1*32]
+	    // dark_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*2]
+	    // dark_weights_normed_gauss_blur_1_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*1,1*11]
+	    // dark_weights_normed_gauss_blur_2_update_0 -> [1*d1*1*2 + 1*6,1*d0*1*1 + 1*3,1*18]
+	    // dark_weights_normed_gauss_blur_3_update_0 -> [1*d1*1*4 + 1*14,1*d0*1*2 + 1*7,1*26]
+	    // dark_weights_normed_gauss_ds_1_update_0 -> [1*d1*1*2 + 1*2,1*d0*1*1 + 1*1,1*17]
+	    // dark_weights_normed_gauss_ds_2_update_0 -> [1*d1*1*4 + 1*6,1*d0*1*2 + 1*3,1*25]
+	    // dark_weights_normed_gauss_ds_3_update_0 -> [1*d1*1*8 + 1*14,1*d0*1*4 + 1*7,1*31]
+	    // dark_weights_normed_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*7]
+	    // dark_weights_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*4]
+	    // final_merged_0_update_0 -> [1*d1*1*1 + 1*14,1*d0*1*1 + 1*7,1*51]
+	    // final_merged_1_update_0 -> [1*d1*1*2 + 1*14,1*d0*1*1 + 1*7,1*50]
+	    // final_merged_2_update_0 -> [1*d1*1*4 + 1*14,1*d0*1*2 + 1*7,1*49]
+	    // fused_level_0_update_0 -> [1*d1*1*1 + 1*2,1*d0*1*1 + 1*1,1*48]
+	    // fused_level_1_update_0 -> [1*d1*1*2 + 1*6,1*d0*1*1 + 1*3,1*47]
+	    // fused_level_2_update_0 -> [1*d1*1*4 + 1*14,1*d0*1*2 + 1*7,1*46]
+	    // fused_level_3_update_0 -> [1*d1*1*8 + 1*14,1*d0*1*4 + 1*7,1*45]
+	    // in_off_chip_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*0]
+	    // in_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*1]
+	    // psefn_2_update_0 -> [1*d1*1*1 + 1*14,1*d0*1*1 + 1*7,1*52]
+	    // weight_sums_update_0 -> [1*d1*1*1 + 1*0,1*d0*1*1 + 1*0,1*6]
+	for (int c0 = 0; c0 <= 1263; c0++) {
+	  for (int c1 = 0; c1 <= 631; c1++) {
 	
 	#ifdef __VIVADO_SYNTH__
 	#pragma HLS pipeline II=1
 	#endif // __VIVADO_SYNTH__
 	
-	    if ((0 <= c1 && c1 <= 963) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1926) && ((c0 - 0) % 1 == 0)) {
+	    if ((0 <= c1 && c1 <= 631) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1262) && ((c0 - 0) % 1 == 0)) {
 	in_update_0(in_off_chip, in, (c1 - 0) / 1, (c0 - 0) / 1);
 	    }
 	
-	    if ((0 <= c1 && c1 <= 963) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1926) && ((c0 - 0) % 1 == 0)) {
+	    if ((0 <= c1 && c1 <= 631) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1262) && ((c0 - 0) % 1 == 0)) {
 	dark_update_0(in, dark, (c1 - 0) / 1, (c0 - 0) / 1);
 	    }
 	
-	    if ((0 <= c1 && c1 <= 963) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1926) && ((c0 - 0) % 1 == 0)) {
+	    if ((0 <= c1 && c1 <= 631) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1262) && ((c0 - 0) % 1 == 0)) {
 	bright_update_0(in, bright, (c1 - 0) / 1, (c0 - 0) / 1);
 	    }
 	
-	    if ((0 <= c1 && c1 <= 963) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1926) && ((c0 - 0) % 1 == 0)) {
+	    if ((0 <= c1 && c1 <= 631) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1262) && ((c0 - 0) % 1 == 0)) {
 	dark_weights_update_0(dark, dark_weights, (c1 - 0) / 1, (c0 - 0) / 1);
 	    }
 	
-	    if ((0 <= c1 && c1 <= 963) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1926) && ((c0 - 0) % 1 == 0)) {
+	    if ((0 <= c1 && c1 <= 631) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1262) && ((c0 - 0) % 1 == 0)) {
 	bright_weights_update_0(bright, bright_weights, (c1 - 0) / 1, (c0 - 0) / 1);
 	    }
 	
-	    if ((0 <= c1 && c1 <= 963) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1926) && ((c0 - 0) % 1 == 0)) {
+	    if ((0 <= c1 && c1 <= 631) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1262) && ((c0 - 0) % 1 == 0)) {
 	weight_sums_update_0(dark_weights, bright_weights, weight_sums, (c1 - 0) / 1, (c0 - 0) / 1);
 	    }
 	
-	    if ((0 <= c1 && c1 <= 963) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1926) && ((c0 - 0) % 1 == 0)) {
+	    if ((0 <= c1 && c1 <= 631) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1262) && ((c0 - 0) % 1 == 0)) {
 	dark_weights_normed_update_0(dark_weights, weight_sums, dark_weights_normed, (c1 - 0) / 1, (c0 - 0) / 1);
 	    }
 	
-	    if ((1 <= c1 && c1 <= 963) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1926) && ((c0 - 2) % 1 == 0)) {
+	    if ((1 <= c1 && c1 <= 631) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1262) && ((c0 - 2) % 1 == 0)) {
 	dark_gauss_blur_1_update_0(dark, dark_gauss_blur_1, (c1 - 1) / 1, (c0 - 2) / 1);
 	    }
 	
-	    if ((0 <= c1 && c1 <= 963) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1926) && ((c0 - 0) % 1 == 0)) {
+	    if ((0 <= c1 && c1 <= 631) && ((c1 - 0) % 1 == 0) && (0 <= c0 && c0 <= 1262) && ((c0 - 0) % 1 == 0)) {
 	bright_weights_normed_update_0(bright_weights, weight_sums, bright_weights_normed, (c1 - 0) / 1, (c0 - 0) / 1);
 	    }
 	
-	    if ((1 <= c1 && c1 <= 963) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1926) && ((c0 - 2) % 1 == 0)) {
+	    if ((1 <= c1 && c1 <= 631) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1262) && ((c0 - 2) % 1 == 0)) {
 	bright_gauss_blur_1_update_0(bright, bright_gauss_blur_1, (c1 - 1) / 1, (c0 - 2) / 1);
 	    }
 	
-	    if ((1 <= c1 && c1 <= 963) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1926) && ((c0 - 2) % 1 == 0)) {
+	    if ((1 <= c1 && c1 <= 631) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1262) && ((c0 - 2) % 1 == 0)) {
 	dark_weights_normed_gauss_blur_1_update_0(dark_weights_normed, dark_weights_normed_gauss_blur_1, (c1 - 1) / 1, (c0 - 2) / 1);
 	    }
 	
-	    if ((1 <= c1 && c1 <= 963) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1926) && ((c0 - 2) % 2 == 0)) {
+	    if ((1 <= c1 && c1 <= 631) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1262) && ((c0 - 2) % 2 == 0)) {
 	dark_gauss_ds_1_update_0(dark_gauss_blur_1, dark_gauss_ds_1, (c1 - 1) / 1, (c0 - 2) / 2);
 	    }
 	
-	    if ((3 <= c1 && c1 <= 963) && ((c1 - 3) % 1 == 0) && (6 <= c0 && c0 <= 1926) && ((c0 - 6) % 2 == 0)) {
+	    if ((3 <= c1 && c1 <= 631) && ((c1 - 3) % 1 == 0) && (6 <= c0 && c0 <= 1262) && ((c0 - 6) % 2 == 0)) {
 	dark_gauss_blur_2_update_0(dark_gauss_ds_1, dark_gauss_blur_2, (c1 - 3) / 1, (c0 - 6) / 2);
 	    }
 	
-	    if ((1 <= c1 && c1 <= 963) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1926) && ((c0 - 2) % 1 == 0)) {
+	    if ((1 <= c1 && c1 <= 631) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1262) && ((c0 - 2) % 1 == 0)) {
 	bright_weights_normed_gauss_blur_1_update_0(bright_weights_normed, bright_weights_normed_gauss_blur_1, (c1 - 1) / 1, (c0 - 2) / 1);
 	    }
 	
-	    if ((1 <= c1 && c1 <= 963) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1926) && ((c0 - 2) % 2 == 0)) {
+	    if ((1 <= c1 && c1 <= 631) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1262) && ((c0 - 2) % 2 == 0)) {
 	bright_gauss_ds_1_update_0(bright_gauss_blur_1, bright_gauss_ds_1, (c1 - 1) / 1, (c0 - 2) / 2);
 	    }
 	
-	    if ((3 <= c1 && c1 <= 963) && ((c1 - 3) % 1 == 0) && (6 <= c0 && c0 <= 1926) && ((c0 - 6) % 2 == 0)) {
+	    if ((3 <= c1 && c1 <= 631) && ((c1 - 3) % 1 == 0) && (6 <= c0 && c0 <= 1262) && ((c0 - 6) % 2 == 0)) {
 	bright_gauss_blur_2_update_0(bright_gauss_ds_1, bright_gauss_blur_2, (c1 - 3) / 1, (c0 - 6) / 2);
 	    }
 	
-	    if ((1 <= c1 && c1 <= 963) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1926) && ((c0 - 2) % 2 == 0)) {
+	    if ((1 <= c1 && c1 <= 631) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1262) && ((c0 - 2) % 2 == 0)) {
 	dark_weights_normed_gauss_ds_1_update_0(dark_weights_normed_gauss_blur_1, dark_weights_normed_gauss_ds_1, (c1 - 1) / 1, (c0 - 2) / 2);
 	    }
 	
-	    if ((3 <= c1 && c1 <= 963) && ((c1 - 3) % 1 == 0) && (6 <= c0 && c0 <= 1926) && ((c0 - 6) % 2 == 0)) {
+	    if ((3 <= c1 && c1 <= 631) && ((c1 - 3) % 1 == 0) && (6 <= c0 && c0 <= 1262) && ((c0 - 6) % 2 == 0)) {
 	dark_weights_normed_gauss_blur_2_update_0(dark_weights_normed_gauss_ds_1, dark_weights_normed_gauss_blur_2, (c1 - 3) / 1, (c0 - 6) / 2);
 	    }
 	
-	    if ((3 <= c1 && c1 <= 963) && ((c1 - 3) % 2 == 0) && (6 <= c0 && c0 <= 1926) && ((c0 - 6) % 4 == 0)) {
+	    if ((3 <= c1 && c1 <= 631) && ((c1 - 3) % 2 == 0) && (6 <= c0 && c0 <= 1262) && ((c0 - 6) % 4 == 0)) {
 	dark_gauss_ds_2_update_0(dark_gauss_blur_2, dark_gauss_ds_2, (c1 - 3) / 2, (c0 - 6) / 4);
 	    }
 	
-	    if ((7 <= c1 && c1 <= 963) && ((c1 - 7) % 2 == 0) && (14 <= c0 && c0 <= 1926) && ((c0 - 14) % 4 == 0)) {
+	    if ((7 <= c1 && c1 <= 631) && ((c1 - 7) % 2 == 0) && (14 <= c0 && c0 <= 1262) && ((c0 - 14) % 4 == 0)) {
 	dark_gauss_blur_3_update_0(dark_gauss_ds_2, dark_gauss_blur_3, (c1 - 7) / 2, (c0 - 14) / 4);
 	    }
 	
-	    if ((1 <= c1 && c1 <= 963) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1926) && ((c0 - 2) % 2 == 0)) {
+	    if ((1 <= c1 && c1 <= 631) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1262) && ((c0 - 2) % 2 == 0)) {
 	bright_weights_normed_gauss_ds_1_update_0(bright_weights_normed_gauss_blur_1, bright_weights_normed_gauss_ds_1, (c1 - 1) / 1, (c0 - 2) / 2);
 	    }
 	
-	    if ((3 <= c1 && c1 <= 963) && ((c1 - 3) % 1 == 0) && (6 <= c0 && c0 <= 1926) && ((c0 - 6) % 2 == 0)) {
+	    if ((3 <= c1 && c1 <= 631) && ((c1 - 3) % 1 == 0) && (6 <= c0 && c0 <= 1262) && ((c0 - 6) % 2 == 0)) {
 	bright_weights_normed_gauss_blur_2_update_0(bright_weights_normed_gauss_ds_1, bright_weights_normed_gauss_blur_2, (c1 - 3) / 1, (c0 - 6) / 2);
 	    }
 	
-	    if ((3 <= c1 && c1 <= 963) && ((c1 - 3) % 2 == 0) && (6 <= c0 && c0 <= 1926) && ((c0 - 6) % 4 == 0)) {
+	    if ((3 <= c1 && c1 <= 631) && ((c1 - 3) % 2 == 0) && (6 <= c0 && c0 <= 1262) && ((c0 - 6) % 4 == 0)) {
 	bright_gauss_ds_2_update_0(bright_gauss_blur_2, bright_gauss_ds_2, (c1 - 3) / 2, (c0 - 6) / 4);
 	    }
 	
-	    if ((7 <= c1 && c1 <= 963) && ((c1 - 7) % 2 == 0) && (14 <= c0 && c0 <= 1926) && ((c0 - 14) % 4 == 0)) {
+	    if ((7 <= c1 && c1 <= 631) && ((c1 - 7) % 2 == 0) && (14 <= c0 && c0 <= 1262) && ((c0 - 14) % 4 == 0)) {
 	bright_gauss_blur_3_update_0(bright_gauss_ds_2, bright_gauss_blur_3, (c1 - 7) / 2, (c0 - 14) / 4);
 	    }
 	
-	    if ((3 <= c1 && c1 <= 963) && ((c1 - 3) % 2 == 0) && (6 <= c0 && c0 <= 1926) && ((c0 - 6) % 4 == 0)) {
+	    if ((3 <= c1 && c1 <= 631) && ((c1 - 3) % 2 == 0) && (6 <= c0 && c0 <= 1262) && ((c0 - 6) % 4 == 0)) {
 	dark_weights_normed_gauss_ds_2_update_0(dark_weights_normed_gauss_blur_2, dark_weights_normed_gauss_ds_2, (c1 - 3) / 2, (c0 - 6) / 4);
 	    }
 	
-	    if ((7 <= c1 && c1 <= 963) && ((c1 - 7) % 2 == 0) && (14 <= c0 && c0 <= 1926) && ((c0 - 14) % 4 == 0)) {
+	    if ((7 <= c1 && c1 <= 631) && ((c1 - 7) % 2 == 0) && (14 <= c0 && c0 <= 1262) && ((c0 - 14) % 4 == 0)) {
 	dark_weights_normed_gauss_blur_3_update_0(dark_weights_normed_gauss_ds_2, dark_weights_normed_gauss_blur_3, (c1 - 7) / 2, (c0 - 14) / 4);
 	    }
 	
-	    if ((7 <= c1 && c1 <= 963) && ((c1 - 7) % 4 == 0) && (14 <= c0 && c0 <= 1926) && ((c0 - 14) % 8 == 0)) {
+	    if ((7 <= c1 && c1 <= 631) && ((c1 - 7) % 4 == 0) && (14 <= c0 && c0 <= 1262) && ((c0 - 14) % 8 == 0)) {
 	dark_gauss_ds_3_update_0(dark_gauss_blur_3, dark_gauss_ds_3, (c1 - 7) / 4, (c0 - 14) / 8);
 	    }
 	
-	    if ((3 <= c1 && c1 <= 963) && ((c1 - 3) % 2 == 0) && (6 <= c0 && c0 <= 1926) && ((c0 - 6) % 4 == 0)) {
+	    if ((3 <= c1 && c1 <= 631) && ((c1 - 3) % 2 == 0) && (6 <= c0 && c0 <= 1262) && ((c0 - 6) % 4 == 0)) {
 	bright_weights_normed_gauss_ds_2_update_0(bright_weights_normed_gauss_blur_2, bright_weights_normed_gauss_ds_2, (c1 - 3) / 2, (c0 - 6) / 4);
 	    }
 	
-	    if ((7 <= c1 && c1 <= 963) && ((c1 - 7) % 2 == 0) && (14 <= c0 && c0 <= 1926) && ((c0 - 14) % 4 == 0)) {
+	    if ((7 <= c1 && c1 <= 631) && ((c1 - 7) % 2 == 0) && (14 <= c0 && c0 <= 1262) && ((c0 - 14) % 4 == 0)) {
 	bright_weights_normed_gauss_blur_3_update_0(bright_weights_normed_gauss_ds_2, bright_weights_normed_gauss_blur_3, (c1 - 7) / 2, (c0 - 14) / 4);
 	    }
 	
-	    if ((7 <= c1 && c1 <= 963) && ((c1 - 7) % 4 == 0) && (14 <= c0 && c0 <= 1926) && ((c0 - 14) % 8 == 0)) {
+	    if ((7 <= c1 && c1 <= 631) && ((c1 - 7) % 4 == 0) && (14 <= c0 && c0 <= 1262) && ((c0 - 14) % 8 == 0)) {
 	bright_gauss_ds_3_update_0(bright_gauss_blur_3, bright_gauss_ds_3, (c1 - 7) / 4, (c0 - 14) / 8);
 	    }
 	
-	    if ((7 <= c1 && c1 <= 963) && ((c1 - 7) % 4 == 0) && (14 <= c0 && c0 <= 1926) && ((c0 - 14) % 8 == 0)) {
+	    if ((7 <= c1 && c1 <= 631) && ((c1 - 7) % 4 == 0) && (14 <= c0 && c0 <= 1262) && ((c0 - 14) % 8 == 0)) {
 	dark_weights_normed_gauss_ds_3_update_0(dark_weights_normed_gauss_blur_3, dark_weights_normed_gauss_ds_3, (c1 - 7) / 4, (c0 - 14) / 8);
 	    }
 	
-	    if ((7 <= c1 && c1 <= 965) && ((c1 - 7) % 2 == 0) && (14 <= c0 && c0 <= 1930) && ((c0 - 14) % 4 == 0)) {
+	    if ((7 <= c1 && c1 <= 631) && ((c1 - 7) % 2 == 0) && (14 <= c0 && c0 <= 1262) && ((c0 - 14) % 4 == 0)) {
 	dark_laplace_us_2_update_0(dark_gauss_ds_3, dark_laplace_us_2, (c1 - 7) / 2, (c0 - 14) / 4);
 	    }
 	
-	    if ((3 <= c1 && c1 <= 962) && ((c1 - 3) % 1 == 0) && (6 <= c0 && c0 <= 1924) && ((c0 - 6) % 2 == 0)) {
+	    if ((3 <= c1 && c1 <= 627) && ((c1 - 3) % 1 == 0) && (6 <= c0 && c0 <= 1254) && ((c0 - 6) % 2 == 0)) {
 	dark_laplace_us_1_update_0(dark_gauss_ds_2, dark_laplace_us_1, (c1 - 3) / 1, (c0 - 6) / 2);
 	    }
 	
-	    if ((1 <= c1 && c1 <= 960) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1921) && ((c0 - 2) % 1 == 0)) {
+	    if ((1 <= c1 && c1 <= 625) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1251) && ((c0 - 2) % 1 == 0)) {
 	dark_laplace_us_0_update_0(dark_gauss_ds_1, dark_laplace_us_0, (c1 - 1) / 1, (c0 - 2) / 1);
 	    }
 	
-	    if ((7 <= c1 && c1 <= 965) && ((c1 - 7) % 2 == 0) && (14 <= c0 && c0 <= 1930) && ((c0 - 14) % 4 == 0)) {
+	    if ((7 <= c1 && c1 <= 631) && ((c1 - 7) % 2 == 0) && (14 <= c0 && c0 <= 1262) && ((c0 - 14) % 4 == 0)) {
 	dark_laplace_diff_2_update_0(dark_gauss_ds_2, dark_laplace_us_2, dark_laplace_diff_2, (c1 - 7) / 2, (c0 - 14) / 4);
 	    }
 	
-	    if ((3 <= c1 && c1 <= 962) && ((c1 - 3) % 1 == 0) && (6 <= c0 && c0 <= 1924) && ((c0 - 6) % 2 == 0)) {
+	    if ((3 <= c1 && c1 <= 627) && ((c1 - 3) % 1 == 0) && (6 <= c0 && c0 <= 1254) && ((c0 - 6) % 2 == 0)) {
 	dark_laplace_diff_1_update_0(dark_gauss_ds_1, dark_laplace_us_1, dark_laplace_diff_1, (c1 - 3) / 1, (c0 - 6) / 2);
 	    }
 	
-	    if ((1 <= c1 && c1 <= 960) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1921) && ((c0 - 2) % 1 == 0)) {
+	    if ((1 <= c1 && c1 <= 625) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1251) && ((c0 - 2) % 1 == 0)) {
 	dark_laplace_diff_0_update_0(dark, dark_laplace_us_0, dark_laplace_diff_0, (c1 - 1) / 1, (c0 - 2) / 1);
 	    }
 	
-	    if ((7 <= c1 && c1 <= 963) && ((c1 - 7) % 4 == 0) && (14 <= c0 && c0 <= 1926) && ((c0 - 14) % 8 == 0)) {
+	    if ((7 <= c1 && c1 <= 631) && ((c1 - 7) % 4 == 0) && (14 <= c0 && c0 <= 1262) && ((c0 - 14) % 8 == 0)) {
 	bright_weights_normed_gauss_ds_3_update_0(bright_weights_normed_gauss_blur_3, bright_weights_normed_gauss_ds_3, (c1 - 7) / 4, (c0 - 14) / 8);
 	    }
 	
-	    if ((7 <= c1 && c1 <= 965) && ((c1 - 7) % 2 == 0) && (14 <= c0 && c0 <= 1930) && ((c0 - 14) % 4 == 0)) {
+	    if ((7 <= c1 && c1 <= 631) && ((c1 - 7) % 2 == 0) && (14 <= c0 && c0 <= 1262) && ((c0 - 14) % 4 == 0)) {
 	bright_laplace_us_2_update_0(bright_gauss_ds_3, bright_laplace_us_2, (c1 - 7) / 2, (c0 - 14) / 4);
 	    }
 	
-	    if ((3 <= c1 && c1 <= 962) && ((c1 - 3) % 1 == 0) && (6 <= c0 && c0 <= 1924) && ((c0 - 6) % 2 == 0)) {
+	    if ((3 <= c1 && c1 <= 627) && ((c1 - 3) % 1 == 0) && (6 <= c0 && c0 <= 1254) && ((c0 - 6) % 2 == 0)) {
 	bright_laplace_us_1_update_0(bright_gauss_ds_2, bright_laplace_us_1, (c1 - 3) / 1, (c0 - 6) / 2);
 	    }
 	
-	    if ((1 <= c1 && c1 <= 960) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1921) && ((c0 - 2) % 1 == 0)) {
+	    if ((1 <= c1 && c1 <= 625) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1251) && ((c0 - 2) % 1 == 0)) {
 	bright_laplace_us_0_update_0(bright_gauss_ds_1, bright_laplace_us_0, (c1 - 1) / 1, (c0 - 2) / 1);
 	    }
 	
-	    if ((7 <= c1 && c1 <= 965) && ((c1 - 7) % 2 == 0) && (14 <= c0 && c0 <= 1930) && ((c0 - 14) % 4 == 0)) {
+	    if ((7 <= c1 && c1 <= 631) && ((c1 - 7) % 2 == 0) && (14 <= c0 && c0 <= 1262) && ((c0 - 14) % 4 == 0)) {
 	bright_laplace_diff_2_update_0(bright_gauss_ds_2, bright_laplace_us_2, bright_laplace_diff_2, (c1 - 7) / 2, (c0 - 14) / 4);
 	    }
 	
-	    if ((3 <= c1 && c1 <= 962) && ((c1 - 3) % 1 == 0) && (6 <= c0 && c0 <= 1924) && ((c0 - 6) % 2 == 0)) {
+	    if ((3 <= c1 && c1 <= 627) && ((c1 - 3) % 1 == 0) && (6 <= c0 && c0 <= 1254) && ((c0 - 6) % 2 == 0)) {
 	bright_laplace_diff_1_update_0(bright_gauss_ds_1, bright_laplace_us_1, bright_laplace_diff_1, (c1 - 3) / 1, (c0 - 6) / 2);
 	    }
 	
-	    if ((1 <= c1 && c1 <= 960) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1921) && ((c0 - 2) % 1 == 0)) {
+	    if ((1 <= c1 && c1 <= 625) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1251) && ((c0 - 2) % 1 == 0)) {
 	bright_laplace_diff_0_update_0(bright, bright_laplace_us_0, bright_laplace_diff_0, (c1 - 1) / 1, (c0 - 2) / 1);
 	    }
 	
-	    if ((7 <= c1 && c1 <= 963) && ((c1 - 7) % 4 == 0) && (14 <= c0 && c0 <= 1926) && ((c0 - 14) % 8 == 0)) {
+	    if ((7 <= c1 && c1 <= 631) && ((c1 - 7) % 4 == 0) && (14 <= c0 && c0 <= 1262) && ((c0 - 14) % 8 == 0)) {
 	fused_level_3_update_0(bright_gauss_ds_3, dark_gauss_ds_3, bright_weights_normed_gauss_ds_3, dark_weights_normed_gauss_ds_3, fused_level_3, (c1 - 7) / 4, (c0 - 14) / 8);
 	    }
 	
-	    if ((7 <= c1 && c1 <= 965) && ((c1 - 7) % 2 == 0) && (14 <= c0 && c0 <= 1930) && ((c0 - 14) % 4 == 0)) {
+	    if ((7 <= c1 && c1 <= 631) && ((c1 - 7) % 2 == 0) && (14 <= c0 && c0 <= 1262) && ((c0 - 14) % 4 == 0)) {
 	fused_level_2_update_0(bright_laplace_diff_2, dark_laplace_diff_2, bright_weights_normed_gauss_ds_2, dark_weights_normed_gauss_ds_2, fused_level_2, (c1 - 7) / 2, (c0 - 14) / 4);
 	    }
 	
-	    if ((3 <= c1 && c1 <= 962) && ((c1 - 3) % 1 == 0) && (6 <= c0 && c0 <= 1924) && ((c0 - 6) % 2 == 0)) {
+	    if ((3 <= c1 && c1 <= 627) && ((c1 - 3) % 1 == 0) && (6 <= c0 && c0 <= 1254) && ((c0 - 6) % 2 == 0)) {
 	fused_level_1_update_0(bright_laplace_diff_1, dark_laplace_diff_1, bright_weights_normed_gauss_ds_1, dark_weights_normed_gauss_ds_1, fused_level_1, (c1 - 3) / 1, (c0 - 6) / 2);
 	    }
 	
-	    if ((1 <= c1 && c1 <= 960) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1921) && ((c0 - 2) % 1 == 0)) {
+	    if ((1 <= c1 && c1 <= 625) && ((c1 - 1) % 1 == 0) && (2 <= c0 && c0 <= 1251) && ((c0 - 2) % 1 == 0)) {
 	fused_level_0_update_0(bright_laplace_diff_0, dark_laplace_diff_0, bright_weights_normed, dark_weights_normed, fused_level_0, (c1 - 1) / 1, (c0 - 2) / 1);
 	    }
 	
-	    if ((7 <= c1 && c1 <= 965) && ((c1 - 7) % 2 == 0) && (14 <= c0 && c0 <= 1930) && ((c0 - 14) % 4 == 0)) {
+	    if ((7 <= c1 && c1 <= 631) && ((c1 - 7) % 2 == 0) && (14 <= c0 && c0 <= 1262) && ((c0 - 14) % 4 == 0)) {
 	final_merged_2_update_0(fused_level_3, fused_level_2, final_merged_2, (c1 - 7) / 2, (c0 - 14) / 4);
 	    }
 	
-	    if ((7 <= c1 && c1 <= 966) && ((c1 - 7) % 1 == 0) && (14 <= c0 && c0 <= 1932) && ((c0 - 14) % 2 == 0)) {
+	    if ((7 <= c1 && c1 <= 631) && ((c1 - 7) % 1 == 0) && (14 <= c0 && c0 <= 1262) && ((c0 - 14) % 2 == 0)) {
 	final_merged_1_update_0(final_merged_2, fused_level_1, final_merged_1, (c1 - 7) / 1, (c0 - 14) / 2);
 	    }
 	
-	    if ((7 <= c1 && c1 <= 966) && ((c1 - 7) % 1 == 0) && (14 <= c0 && c0 <= 1933) && ((c0 - 14) % 1 == 0)) {
+	    if ((7 <= c1 && c1 <= 631) && ((c1 - 7) % 1 == 0) && (14 <= c0 && c0 <= 1263) && ((c0 - 14) % 1 == 0)) {
 	final_merged_0_update_0(final_merged_1, fused_level_0, final_merged_0, (c1 - 7) / 1, (c0 - 14) / 1);
 	    }
 	
-	    if ((7 <= c1 && c1 <= 966) && ((c1 - 7) % 1 == 0) && (14 <= c0 && c0 <= 1933) && ((c0 - 14) % 1 == 0)) {
+	    if ((7 <= c1 && c1 <= 631) && ((c1 - 7) % 1 == 0) && (14 <= c0 && c0 <= 1263) && ((c0 - 14) % 1 == 0)) {
 	psefn_2_update_0(final_merged_0, psefn_2, (c1 - 7) / 1, (c0 - 14) / 1);
 	    }
 	
@@ -11004,17 +10626,16 @@ void psefn_2_opt(HWStream<hw_uint<32> >& /* get_args num ports = 2 */in_off_chip
 #ifdef __VIVADO_SYNTH__
 #include "psefn_2_opt.h"
 
-const int in_update_0_read_num_transfers = 1857628;
-const int psefn_2_update_0_write_num_transfers = 1843200;
+const int in_update_0_read_num_transfers = 798216;
+const int psefn_2_update_0_write_num_transfers = 781250;
 
-// TODO: Adapt to have one size for each edge buffer
-#define INPUT_SIZE 1857628
-#define OUTPUT_SIZE 1843200
+
 extern "C" {
 
 static void read_in_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < in_update_0_read_num_transfers*size; i++) {
+  int num_transfers = in_update_0_read_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = input[i];
     v.write(burst_reg);
@@ -11023,7 +10644,8 @@ static void read_in_update_0_read(hw_uint<32>* input, HWStream<hw_uint<32> >& v,
 
 static void write_psefn_2_update_0_write(hw_uint<32>* output, HWStream<hw_uint<32> >& v, const int size) {
   hw_uint<32> burst_reg;
-  for (int i = 0; i < psefn_2_update_0_write_num_transfers*size; i++) {
+  int num_transfers = psefn_2_update_0_write_num_transfers*size;
+  for (int i = 0; i < num_transfers; i++) {
     #pragma HLS pipeline II=1
     burst_reg = v.read();
     output[i] = burst_reg;

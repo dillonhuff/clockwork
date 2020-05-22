@@ -4,6 +4,7 @@ target=${app}
 aws s3 mb s3://iccad-2020-bucket/app-results/${app}/our_code/
 
 aws s3 sync . s3://iccad-2020-bucket/app-results/${app}/our_code/ --exclude '*' --include *.rpt
+aws s3 sync . s3://iccad-2020-bucket/app-results/${app}/our_code/ --exclude '*' --include *.log
 aws s3 cp host s3://iccad-2020-bucket/app-results/${app}/our_code/
 aws s3 cp ${build_dir}/${target}.xclbin.info s3://iccad-2020-bucket/app-results/${app}/our_code/
 aws s3 cp ${build_dir}/${target}.xclbin s3://iccad-2020-bucket/app-results/${app}/our_code/

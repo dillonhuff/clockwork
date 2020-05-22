@@ -5242,6 +5242,22 @@ inline void level_3_level_3_update_0_write_bundle_write(hw_uint<16>& level_3_upd
 
 
 // Operation logic
+inline void level_0_update_0(in_cache& in, level_0_cache& level_0, int d0, int d1) {
+	// Consume: in
+	auto in_0_c__0_value = in_level_0_update_0_read_bundle_read(in/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_8(in_0_c__0_value);
+	// Produce: level_0
+	level_0_level_0_update_0_write_bundle_write(compute_result, level_0, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void in_update_0(HWStream<hw_uint<256> >& /* buffer_args num ports = 16 */in_off_chip, in_cache& in, int d0, int d1) {
 	// Consume: in_off_chip
 	auto in_off_chip_0_c__0_value = in_off_chip.read();
@@ -5280,22 +5296,6 @@ inline void level_2_update_0(level_1_cache& level_1, level_2_cache& level_2, int
 	auto compute_result = reduce_gauss_unrolled_2(level_1_0_c__0_value);
 	// Produce: level_2
 	level_2_level_2_update_0_write_bundle_write(compute_result, level_2, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void level_0_update_0(in_cache& in, level_0_cache& level_0, int d0, int d1) {
-	// Consume: in
-	auto in_0_c__0_value = in_level_0_update_0_read_bundle_read(in/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_8(in_0_c__0_value);
-	// Produce: level_0
-	level_0_level_0_update_0_write_bundle_write(compute_result, level_0, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
