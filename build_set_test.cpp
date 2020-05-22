@@ -993,7 +993,7 @@ void emit_address_stream(string fname, bool is_top, vector<int> read_cycle, vect
         valid = true;
         addr_out = read_addr.at(rd_itr);
 
-        cout << cycle << tab(1) << "rd" << tab(1) << addr_out << endl;
+        //cout << cycle << tab(1) << "rd" << tab(1) << addr_out << endl;
         //out << "rd@" << cycle << tab(1) << ",data=" <<sep_list(addr, "[", "]", " ") << endl;
         rd_itr ++;
       }
@@ -1002,7 +1002,7 @@ void emit_address_stream(string fname, bool is_top, vector<int> read_cycle, vect
       if (write_cycle.at(wr_itr) == cycle) {
         wen = true;
         addr_in = write_addr.at(wr_itr);
-        cout << cycle << tab(1) << "wr" << tab(1) << addr_in << endl;
+        //cout << cycle << tab(1) << "wr" << tab(1) << addr_in << endl;
         //out << "wr@" << cycle << tab(1) << ",data="<< sep_list(addr, "[", "]", " ") << endl;
         //out << cycle << tab(1) << "wr"  << endl;
         wr_itr ++;
@@ -1011,10 +1011,13 @@ void emit_address_stream(string fname, bool is_top, vector<int> read_cycle, vect
 
     //for generate multiple bit valid/wen
     int multiplier = 1;
-    if (is_top)
-       multiplier = pow(2, out_width) - 1;
-    out << sep_list(addr_in, "[[", "]]", "] [") << ", " << wen << ", " << valid * multiplier << ", "
-        << sep_list(addr_out, "[[", "]]", "] [") << ", " << valid * multiplier << endl;
+    if (is_top) {
+      multiplier = pow(2, out_width) - 1;
+      //FIXME: hack for the output port
+      addr_out.push_back(0);
+    }
+    out << sep_list(addr_in, "[[", "]]", "],[") << ", " << wen << ", " << valid * multiplier << ", "
+        << sep_list(addr_out, "[[", "]]", "],[") << ", " << valid * multiplier << endl;
     cycle ++;
   }
   out.close();

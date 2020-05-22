@@ -646,45 +646,6 @@ class UBuffer {
     //Save the pair of read port bundle name and op pos point
     queue<pair<string, isl_set*>> rd_op_queue;
 
-
-    void emit_address_stream(string fname) {
-      ofstream out(fname+".csv");
-      int cycle = 0;
-      size_t rd_itr = 0;
-      size_t wr_itr = 0;
-      out << "data_in, wen, ren, data_out, valid_out" << endl;
-      while (rd_itr < read_cycle.size() && wr_itr < write_cycle.size()) {
-        bool wen = false, valid = false;
-        auto addr_in = vector<int>(4, 0);
-        auto addr_out = vector<int>(4, 0);
-        if (rd_itr < read_cycle.size()) {
-          if (read_cycle.at(rd_itr) == cycle) {
-            valid = true;
-            addr_out = read_addr.at(rd_itr);
-
-            //cout << cycle << tab(1) << "rd" << tab(1) << addr << endl;
-            //out << "rd@" << cycle << tab(1) << ",data=" <<sep_list(addr, "[", "]", " ") << endl;
-            rd_itr ++;
-          }
-        }
-        if (wr_itr < write_cycle.size()) {
-          if (write_cycle.at(wr_itr) == cycle) {
-            wen = true;
-            addr_in = write_addr.at(wr_itr);
-            //cout << cycle << tab(1) << "wr" << tab(1) << addr << endl;
-            //out << "wr@" << cycle << tab(1) << ",data="<< sep_list(addr, "[", "]", " ") << endl;
-            //out << cycle << tab(1) << "wr"  << endl;
-            wr_itr ++;
-          }
-        }
-        assert((valid && wen) == false);
-        out << sep_list(addr_in, "[[", "]]", "] [") << ", " << wen << ", " << valid << ", "
-            << sep_list(addr_out, "[[", "]]", "] [") << ", " << valid << endl;
-        cycle ++;
-      }
-      out.close();
-    }
-
     //TODO: only support one read/write
     bool is_rd(isl_point* pt) {
         for (auto it: port_bundles) {
@@ -795,6 +756,9 @@ class UBuffer {
         sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
         for (auto point:  point_vec) {
             auto b = get_linearization_vector();
+            //FIXME: hack the tb address
+            if (is_suffix(name, "tb"))
+                b.back() /= point_vec.size();
             auto a = parse_pt(point);
             int addr = std::inner_product(a.rbegin(), a.rend(), b.begin(), 0);
             ret.push(addr);
