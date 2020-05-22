@@ -1368,18 +1368,6 @@ inline void level_3_level_3_update_0_write_bundle_write(hw_uint<16>& level_3_upd
 
 
 // Operation logic
-inline void in_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in_off_chip, in_cache& in, int d0, int d1) {
-	// Consume: in_off_chip
-	auto in_off_chip_0_c__0_value = in_off_chip.read();
-	auto compute_result = id_unrolled_1(in_off_chip_0_c__0_value);
-	// Produce: in
-	in_in_update_0_write_bundle_write(compute_result, in, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void level_0_update_0(in_cache& in, level_0_cache& level_0, int d0, int d1) {
 	// Consume: in
 	auto in_0_c__0_value = in_level_0_update_0_read_bundle_read(in/* source_delay */, d0, d1);
@@ -1454,6 +1442,18 @@ inline void gp_1_update_0(level_3_cache& level_3, HWStream<hw_uint<16> >& /* buf
 	auto compute_result = id_unrolled_1(level_3_0_c__0_value);
 	// Produce: gp_1
 	gp_1.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void in_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in_off_chip, in_cache& in, int d0, int d1) {
+	// Consume: in_off_chip
+	auto in_off_chip_0_c__0_value = in_off_chip.read();
+	auto compute_result = id_unrolled_1(in_off_chip_0_c__0_value);
+	// Produce: in
+	in_in_update_0_write_bundle_write(compute_result, in, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
