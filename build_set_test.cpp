@@ -907,16 +907,22 @@ Box compute_box_from_sched(umap* opt_sched) {
   //cout << tab(1) << "lexmin: " << str(lexmin(compute_domain(name))) << endl;
   //cout << tab(1) << "lexmax: " << str(lexmax(compute_domain(name))) << endl;
 
-  auto min_pt =
-    parse_pt(sample(lexmin(range(opt_sched))));
-  auto max_pt =
-    parse_pt(sample(lexmax(range(opt_sched))));
+  auto rng = range(opt_sched);
+  int dim = parse_pt(pick(get_points(lexmin(rng)))).size();
+  vector<int> max(dim, 0), min(dim, 0);
+  for (auto s : get_sets(rng)) {
+      cout << max << min << endl;
+    for (auto i = 0; i < get_dim(s); i ++) {
+      max.at(i) = std::max(max.at(i), get_dim_max(s, i));
+      min.at(i) = std::min(min.at(i), get_dim_min(s, i));
+    }
+  }
 
-  assert(min_pt.size() == max_pt.size());
+  assert(min.size() == max.size());
 
   Box b;
-  for (size_t i = 0; i < min_pt.size(); i++) {
-    b.intervals.push_back({min_pt.at(i), max_pt.at(i)});
+  for (size_t i = 0; i < min.size(); i++) {
+    b.intervals.push_back({min.at(i), max.at(i)});
   }
   return b;
 }
@@ -1009,7 +1015,8 @@ void bankmerge_vec_test() {
   buffer_vectorization("buf1", 1, 4, buffers_opt);
 
   //second time
-  auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
+  //auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
+  auto opt_sched = optimized_schedule_from_buffers_flatten(buffers_opt, true);
   cout << codegen_c(opt_sched) << endl;
   cout << str(opt_sched) << endl;
 
@@ -1022,26 +1029,39 @@ void bankmerge_vec_test() {
       UBuffer& buffer = buf.second;
       for (string pt: buffer.get_in_ports()) {
           auto rddom = buffer.domain.at(pt);
-          auto pt_sched = its(opt_sched, rddom);
+          string op_name = name(rddom);
+          auto pt_sched = to_umap(get_maps_in_map(opt_sched).at(op_name));
           cout << "Schedule for pt: " << pt << " is " << str(pt_sched) << endl;
           buffer.schedule.at(pt) = pt_sched;
-          string opname = domain_name(to_map(pt_sched));
-          if(op2sched.count(opname) == 0) {
-              op2sched[opname] = pt_sched;
+          auto origin_access_map = buffer.access_map.at(pt);
+          buffer.access_map.at(pt) = flatten_umap_domain(prg.ctx, origin_access_map);
+          if(op2sched.count(op_name) == 0) {
+              op2sched[op_name] = pt_sched;
           }
       }
       for (string pt: buffer.get_out_ports()) {
           auto wtdom = buffer.domain.at(pt);
-          auto pt_sched = its(opt_sched, wtdom);
+          string op_name = name(wtdom);
+          auto pt_sched = to_umap(get_maps_in_map(opt_sched).at(op_name));
           cout << "Schedule for pt: " << pt << " is " << str(pt_sched) << endl;
           buffer.schedule.at(pt) = pt_sched;
-          string opname = domain_name(to_map(pt_sched));
-          if(op2sched.count(opname) == 0) {
-              op2sched[opname] = pt_sched;
+          //flatten_access map
+          auto origin_access_map = buffer.access_map.at(pt);
+          buffer.access_map.at(pt) = flatten_umap_domain(prg.ctx, origin_access_map);
+          if(op2sched.count(op_name) == 0) {
+              op2sched[op_name] = pt_sched;
           }
       }
       //cout << "Vectorized buffer: " << buf.second << endl;
   }
+  /*
+  auto opt_sched_map= get_maps_in_map(opt_sched);
+  auto opt_sched_flatten_map = get_maps_in_map(opt_sched_flatten);
+  for (auto m : opt_sched_map) {
+    string op_name = m.first;
+    auto rev_trans = flatten_map_domain_trans(m.second, 1);
+    op2sched.insert(make_pair(op_name, dot(rev_trans, opt_sched_flatten_map.at(op_name))));
+  }*/
   for (auto it: op2sched) {
     cout <<"\tOP: " << it.first << " has sched: " << str(it.second) << endl;
   }
@@ -7436,10 +7456,10 @@ void playground() {
 }
 
 void application_tests() {
-  auto_vec_test();
   bankmerge_vec_test();
-  flatten_sched_test();
   assert(false);
+  auto_vec_test();
+  flatten_sched_test();
   pointwise_app_test();
 
   ram_addr_unit_test();

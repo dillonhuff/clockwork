@@ -338,6 +338,19 @@ vector<isl_map*> get_maps(isl_union_map* m) {
   return map_vec;
 }
 
+map<string, isl_map*> get_maps_in_map(isl_union_map* m) {
+  assert(m != nullptr);
+
+  vector<isl_map*> map_vec;
+  isl_union_map_foreach_map(m, get_maps, &map_vec);
+  map<string, isl_map*> map_map;
+  for (auto m: map_vec) {
+      map_map.insert(make_pair(domain_name(m), m));
+  }
+
+  return map_map;
+}
+
 isl_stat get_maps(isl_map* m, void* user) {
   //cout << "Getting map" << endl;
   auto* vm = (vector<isl_map*>*) user;
@@ -530,6 +543,10 @@ unsigned get_in_dim(isl_map* const m) {
 
 unsigned get_out_dim(isl_map* const m) {
     return isl_map_dim(cpy(m), isl_dim_out);
+}
+
+unsigned get_dim(isl_set* const s) {
+    return isl_set_dim(cpy(s), isl_dim_set);
 }
 
 int get_dim_min(isl_set* const m, int pos) {
@@ -1392,6 +1409,12 @@ isl_stat flatten_map_domain(isl_map* s, void* user) {
 }
 
 umap* flatten_map_domain_with_ii(isl_map* s, int ii) {
+    auto trans = flatten_map_domain_trans(s, ii);
+    auto new_sched = dot(inv(trans), to_umap(s));
+    return new_sched;
+}
+
+umap* flatten_map_domain_trans(isl_map* s, int ii) {
     auto dom = domain(s);
     cout << "get domain: " << str(dom) << endl;
     vector<int> dom_range;
@@ -1429,8 +1452,7 @@ umap* flatten_map_domain_with_ii(isl_map* s, int ii) {
       isl_map* flatten_trans = isl_map_read_from_str(ctx, map_str.c_str());
       trans = unn(to_umap(flatten_trans), trans);
     }
-    auto new_sched = dot(inv(trans), to_umap(s));
-    return new_sched;
+    return trans;
 }
 
 
