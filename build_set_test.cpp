@@ -1017,7 +1017,7 @@ void emit_address_stream(string fname, bool is_top, vector<int> read_cycle, vect
       addr_out.push_back(0);
     }
     if (addr_in.size() == 1) {
-        out << sep_list(addr_in, "[", "]", "],[") << ", " << wen << ", " << valid * multiplier << ", "<< sep_list(addr_out, "[[", "]]", "],[") << ", " << valid * multiplier << endl;
+        out << sep_list(addr_in, "", "", "],[") << ", " << wen << ", " << valid * multiplier << ", "<< sep_list(addr_out, "[[", "]]", "],[") << ", " << valid * multiplier << endl;
     }
     else {
         out << sep_list(addr_in, "[[", "]]", "],[") << ", " << wen << ", " << valid * multiplier << ", "<< sep_list(addr_out, "[[", "]]", "],[") << ", " << valid * multiplier << endl;
