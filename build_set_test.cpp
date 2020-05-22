@@ -1016,8 +1016,12 @@ void emit_address_stream(string fname, bool is_top, vector<int> read_cycle, vect
       //FIXME: hack for the output port
       addr_out.push_back(0);
     }
-    out << sep_list(addr_in, "[[", "]]", "],[") << ", " << wen << ", " << valid * multiplier << ", "
-        << sep_list(addr_out, "[[", "]]", "],[") << ", " << valid * multiplier << endl;
+    if (addr_in.size() == 1) {
+        out << sep_list(addr_in, "[", "]", "],[") << ", " << wen << ", " << valid * multiplier << ", "<< sep_list(addr_out, "[[", "]]", "],[") << ", " << valid * multiplier << endl;
+    }
+    else {
+        out << sep_list(addr_in, "[[", "]]", "],[") << ", " << wen << ", " << valid * multiplier << ", "<< sep_list(addr_out, "[[", "]]", "],[") << ", " << valid * multiplier << endl;
+    }
     cycle ++;
   }
   out.close();
