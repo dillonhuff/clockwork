@@ -903,29 +903,6 @@ void vec_test() {
   //assert(false);
 }
 
-Box compute_box_from_sched(umap* opt_sched) {
-  //cout << tab(1) << "lexmin: " << str(lexmin(compute_domain(name))) << endl;
-  //cout << tab(1) << "lexmax: " << str(lexmax(compute_domain(name))) << endl;
-
-  auto rng = range(opt_sched);
-  int dim = parse_pt(pick(get_points(lexmin(rng)))).size();
-  vector<int> max(dim, 0), min(dim, 0);
-  for (auto s : get_sets(rng)) {
-      cout << max << min << endl;
-    for (auto i = 0; i < get_dim(s); i ++) {
-      max.at(i) = std::max(max.at(i), get_dim_max(s, i));
-      min.at(i) = std::min(min.at(i), get_dim_min(s, i));
-    }
-  }
-
-  assert(min.size() == max.size());
-
-  Box b;
-  for (size_t i = 0; i < min.size(); i++) {
-    b.intervals.push_back({min.at(i), max.at(i)});
-  }
-  return b;
-}
 
 void flatten_sched_test() {
   prog prg;
@@ -1016,6 +993,7 @@ void emit_address_stream(string fname, bool is_top, vector<int> read_cycle, vect
       //FIXME: hack for the output port
       addr_out.push_back(0);
     }
+    //Some fix for the output format
     if (addr_in.size() == 1) {
         out << sep_list(addr_in, "", "", "],[") << ", " << wen << ", " << valid * multiplier << ", "<< sep_list(addr_out, "[[", "]]", "],[") << ", " << valid * multiplier << endl;
     }
@@ -1121,7 +1099,7 @@ void bankmerge_vec_test() {
 
   //compute the bound of the schedule
   cout << str(lexmin(range(opt_sched))) << endl << str(lexmax(range(opt_sched))) <<endl;
-  auto bound = compute_box_from_sched(opt_sched);
+  auto bound = Box(opt_sched);
   isl_set* sched_set = bound.to_set(prg.ctx, "");
   auto bset_vec = constraints(sched_set);
   for (auto bset: bset_vec) {

@@ -724,27 +724,18 @@ class UBuffer {
 
     //TODO: put it into qexpr.h
     Box extract_access_range() {
-        auto addr_range = isl_union_set_read_from_str(ctx, "{}");
+        auto addr_range = isl_union_map_read_from_str(ctx, "{}");
         for (auto pt: get_in_ports()) {
-            addr_range = unn(range(access_map.at(pt)), addr_range);
+            addr_range = unn(access_map.at(pt), addr_range);
         }
-        auto min_pt = parse_pt(sample(lexmin(addr_range)));
-        auto max_pt = parse_pt(sample(lexmax(addr_range)));
-
-        Box b;
-
-        for (size_t i = 0; i < min_pt.size(); i ++) {
-            auto len = min_pt.size() - 1;
-            b.intervals.push_back({min_pt.at(len - i), max_pt.at(len - i)});
-        }
-        return b;
+        return Box(addr_range);
     }
 
     vector<int> get_linearization_vector() {
         vector<int> ret;
         auto b = extract_access_range();
         for (size_t i = 0; i < b.dimension(); i ++) {
-            ret.push_back(b.cardinality(i));
+            ret.push_back(b.r_cardinality(i));
         }
         return ret;
     }
