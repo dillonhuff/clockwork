@@ -6961,8 +6961,9 @@ void exposure_fusion_iccad_apps(const std::string& prefix) {
     //const int throughput = 4;
     string name = prefix + "_" + str(throughput);
     App lp = exposure_fusion_app(name);
-    int size = 1250;
-    lp.realize(name, size, size, throughput);
+    int rows = 1080;
+    int cols = 1920;
+    lp.realize(name, cols, rows, throughput);
     move_to_benchmarks_folder(name + "_opt");
   }
 }
@@ -8628,10 +8629,10 @@ void iccad_tests() {
   int index = 20;
   string istr = str(index);
 
-  exposure_fusion_iccad_apps("psef22");
+  exposure_fusion_iccad_apps("psef23");
+  assert(false);
   max_pooling_test();
   gaussian_pyramid_app_test();
-  assert(false);
 
 
   camera_pipeline_test("cp_noinit_" + istr);
