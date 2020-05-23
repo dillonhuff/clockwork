@@ -7163,13 +7163,13 @@ void gaussian_pyramid_app_test() {
   string name = "gp";
   vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
   for (auto factor : unroll_factors) {
-    string name = "gp_" + str(factor);
+    string name = "gp64x64_" + str(factor);
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
 
-    gaussian_pyramid_app(name).realize(options, name, {4, 4}, "in", factor);
+    gaussian_pyramid_app(name).realize(options, name, {64, 64}, "in", factor);
     move_to_benchmarks_folder(name + "_opt");
   }
 
@@ -8628,11 +8628,12 @@ void playground() {
 void iccad_tests() {
   int index = 20;
   string istr = str(index);
+  gaussian_pyramid_app_test();
+  assert(false);
+  max_pooling_test();
 
   exposure_fusion_iccad_apps("psef23");
   //assert(false);
-  max_pooling_test();
-  gaussian_pyramid_app_test();
 
 
   camera_pipeline_test("cp_noinit_" + istr);
@@ -8793,10 +8794,10 @@ void compute_unit_with_index_variables_test() {
 }
 
 void application_tests() {
+  iccad_tests();
   compute_unit_with_index_variables_test();
 
   //pyr_1d_conv_test();
-  iccad_tests();
   //assert(false);
   halide_cascade_test();
   halide_dnn_test();
