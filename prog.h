@@ -38,12 +38,18 @@ struct ir_node {
   std::vector<pair<buffer_name, address> > consume_locs;
   // The name of the HL C++ function that this op invokes
   std::string func;
+  // Name of loop index variables used by this unit
+  std::vector<std::string> index_variables_needed_by_compute;
   // Annotation used for debug printouts
   int unroll_factor;
 
   isl_ctx* ctx;
 
   ir_node() : parent(nullptr), is_loop(false), unroll_factor(1) {}
+
+  void compute_unit_needs_index_variable(const std::string& v) {
+    index_variables_needed_by_compute.push_back(v);
+  }
 
   map<op*, Box> get_domain_boxes() {
       Box empty;

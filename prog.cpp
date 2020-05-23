@@ -1162,7 +1162,11 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
   return buf_srcs;
 }
 
-compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<string, UBuffer>& buffers,
+compute_kernel generate_compute_op(
+    ostream& conv_out,
+    prog& prg,
+    op* op,
+    map<string, UBuffer>& buffers,
     map<string, isl_set*>& domain_map) {
 
   cout << "Generating compute for: " << op->name << endl;
@@ -1185,7 +1189,7 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
   for (auto a : space_var_decls(s)) {
     buf_srcs.push_back(a);
   }
-
+  
   cout << "Got iteration variables" << endl;
   conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
   vector<pair<string, string> > in_buffers;
@@ -1231,6 +1235,10 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
     }
     buf_args.push_back(value_name);
     res = value_name;
+  }
+
+  for (auto var : op->index_variables_needed_by_compute)  {
+    buf_args.push_back(var);
   }
 
   cout << "created res" << endl;

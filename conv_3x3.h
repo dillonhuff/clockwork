@@ -480,3 +480,8 @@ contrived(hw_uint<32*3>& in, hw_uint<32*2>& b) {
     b.extract<0, 31>() +
     b.extract<32, 63>();
 }
+
+static inline
+hw_uint<32> compute_with_variable(const hw_uint<32>& m, const int loop_var) {
+  return m + loop_var;
+}

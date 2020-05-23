@@ -8630,7 +8630,7 @@ void iccad_tests() {
   string istr = str(index);
 
   exposure_fusion_iccad_apps("psef23");
-  assert(false);
+  //assert(false);
   max_pooling_test();
   gaussian_pyramid_app_test();
 
@@ -8763,7 +8763,38 @@ void pyr_1d_conv_test() {
   assert(false);
 }
 
+void compute_unit_with_index_variables_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "compute_unit_with_index_variable";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["M"] = 32;
+
+  auto p = prg.add_loop("p", 0, 10);
+  auto write = p->add_op("get_input");
+  write->add_load("in", "p");
+  write->add_store("M", "p");
+
+  auto c = prg.add_loop("c", 0, 10 - 2);
+  auto compute = c->add_op("compute_output");
+  compute->add_function("compute_with_variable");
+  compute->compute_unit_needs_index_variable("c");
+  compute->add_load("M", "c");
+  compute->add_store("out", "c");
+
+  regression_test(prg);
+
+  assert(false);
+  //return prg;
+
+}
+
 void application_tests() {
+  compute_unit_with_index_variables_test();
+
   //pyr_1d_conv_test();
   iccad_tests();
   //assert(false);
