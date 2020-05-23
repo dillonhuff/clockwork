@@ -1909,50 +1909,6 @@ inline void demosaic_update_0(demosaicb_cache& demosaicb, demosaic_cache& demosa
 
 }
 
-inline void raw_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */raw_oc, raw_cache& raw, int d0, int d1) {
-	// Consume: raw_oc
-	auto raw_oc_0_c__0_value = raw_oc.read();
-	auto compute_result = raw_generated_compute_unrolled_1(raw_oc_0_c__0_value);
-	// Produce: raw
-	raw_raw_update_0_write_bundle_write(compute_result, raw, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void denoiseb_update_0(raw_cache& raw, denoiseb_cache& denoiseb, int d0, int d1) {
-	// Consume: raw
-	auto raw_0_c__0_value = raw_denoiseb_update_0_read_bundle_read(raw/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = denoiseb_generated_compute_unrolled_1(raw_0_c__0_value);
-	// Produce: denoiseb
-	denoiseb_denoiseb_update_0_write_bundle_write(compute_result, denoiseb, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void denoise_update_0(denoiseb_cache& denoiseb, denoise_cache& denoise, int d0, int d1) {
-	// Consume: denoiseb
-	auto denoiseb_0_c__0_value = denoiseb_denoise_update_0_read_bundle_read(denoiseb/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = denoise_generated_compute_unrolled_1(denoiseb_0_c__0_value);
-	// Produce: denoise
-	denoise_denoise_update_0_write_bundle_write(compute_result, denoise, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void demosaic_bxb_update_0(demosaic_cache& demosaic, demosaic_bxb_cache& demosaic_bxb, int d0, int d1) {
 	// Consume: demosaic
 	auto demosaic_0_c__0_value = demosaic_demosaic_bxb_update_0_read_bundle_read(demosaic/* source_delay */, d0, d1);
@@ -1979,6 +1935,50 @@ inline void demosaic_bx_update_0(demosaic_bxb_cache& demosaic_bxb, demosaic_bx_c
 	auto compute_result = demosaic_bx_generated_compute_unrolled_1(demosaic_bxb_0_c__0_value);
 	// Produce: demosaic_bx
 	demosaic_bx_demosaic_bx_update_0_write_bundle_write(compute_result, demosaic_bx, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void raw_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */raw_oc, raw_cache& raw, int d0, int d1) {
+	// Consume: raw_oc
+	auto raw_oc_0_c__0_value = raw_oc.read();
+	auto compute_result = raw_generated_compute_unrolled_1(raw_oc_0_c__0_value);
+	// Produce: raw
+	raw_raw_update_0_write_bundle_write(compute_result, raw, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void denoise_update_0(denoiseb_cache& denoiseb, denoise_cache& denoise, int d0, int d1) {
+	// Consume: denoiseb
+	auto denoiseb_0_c__0_value = denoiseb_denoise_update_0_read_bundle_read(denoiseb/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = denoise_generated_compute_unrolled_1(denoiseb_0_c__0_value);
+	// Produce: denoise
+	denoise_denoise_update_0_write_bundle_write(compute_result, denoise, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void denoiseb_update_0(raw_cache& raw, denoiseb_cache& denoiseb, int d0, int d1) {
+	// Consume: raw
+	auto raw_0_c__0_value = raw_denoiseb_update_0_read_bundle_read(raw/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = denoiseb_generated_compute_unrolled_1(raw_0_c__0_value);
+	// Produce: denoiseb
+	denoiseb_denoiseb_update_0_write_bundle_write(compute_result, denoiseb, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

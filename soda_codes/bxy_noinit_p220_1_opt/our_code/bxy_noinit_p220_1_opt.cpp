@@ -285,18 +285,6 @@ inline void input_input_update_0_write_bundle_write(hw_uint<16>& input_update_0_
 
 
 // Operation logic
-inline void input_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */input_arg, input_cache& input, int d0, int d1) {
-	// Consume: input_arg
-	auto input_arg_0_c__0_value = input_arg.read();
-	auto compute_result = input_generated_compute_unrolled_1(input_arg_0_c__0_value);
-	// Produce: input
-	input_input_update_0_write_bundle_write(compute_result, input, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void blurx_update_0(input_cache& input, blurx_cache& blurx, int d0, int d1) {
 	// Consume: input
 	auto input_0_c__0_value = input_blurx_update_0_read_bundle_read(input/* source_delay */, d0, d1);
@@ -323,6 +311,18 @@ inline void bxy_noinit_p220_1_update_0(blurx_cache& blurx, HWStream<hw_uint<16> 
 	auto compute_result = bxy_noinit_p220_1_generated_compute_unrolled_1(blurx_0_c__0_value);
 	// Produce: bxy_noinit_p220_1
 	bxy_noinit_p220_1.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void input_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */input_arg, input_cache& input, int d0, int d1) {
+	// Consume: input_arg
+	auto input_arg_0_c__0_value = input_arg.read();
+	auto compute_result = input_generated_compute_unrolled_1(input_arg_0_c__0_value);
+	// Produce: input
+	input_input_update_0_write_bundle_write(compute_result, input, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

@@ -2882,6 +2882,22 @@ inline void level_0_update_0(in_cache& in, level_0_cache& level_0, int d0, int d
 
 }
 
+inline void level_1_update_0(level_0_cache& level_0, level_1_cache& level_1, int d0, int d1) {
+	// Consume: level_0
+	auto level_0_0_c__0_value = level_0_level_1_update_0_read_bundle_read(level_0/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_2(level_0_0_c__0_value);
+	// Produce: level_1
+	level_1_level_1_update_0_write_bundle_write(compute_result, level_1, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void level_2_update_0(level_1_cache& level_1, level_2_cache& level_2, int d0, int d1) {
 	// Consume: level_1
 	auto level_1_0_c__0_value = level_1_level_2_update_0_read_bundle_read(level_1/* source_delay */, d0, d1);
@@ -2924,22 +2940,6 @@ inline void gp_8_update_0(level_3_cache& level_3, HWStream<hw_uint<16> >& /* buf
 	auto compute_result = id_unrolled_1(level_3_0_c__0_value);
 	// Produce: gp_8
 	gp_8.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void level_1_update_0(level_0_cache& level_0, level_1_cache& level_1, int d0, int d1) {
-	// Consume: level_0
-	auto level_0_0_c__0_value = level_0_level_1_update_0_read_bundle_read(level_0/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_2(level_0_0_c__0_value);
-	// Produce: level_1
-	level_1_level_1_update_0_write_bundle_write(compute_result, level_1, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__

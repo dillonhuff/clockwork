@@ -6560,7 +6560,7 @@ void camera_pipeline_all_adds_only_denoise_demosaic_test(const std::string& pref
     run_regression_tb(app_name + "_opt");
   assert(naive == optimized);
   move_to_benchmarks_folder(app_name + "_opt");
-  assert(false);
+  //assert(false);
 }
 
 void camera_pipeline_all_adds_linear_test(const std::string& prefix) {
@@ -8787,7 +8787,7 @@ void compute_unit_with_index_variables_test() {
 
   regression_test(prg);
 
-  assert(false);
+  //assert(false);
   //return prg;
 
 }
