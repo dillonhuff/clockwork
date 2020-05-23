@@ -6869,14 +6869,14 @@ App max_pooling(const std::string& out_name) {
   return mp;
 }
 
-void max_pooling_test() {
+void max_pooling_test(const std::string& prefix) {
   int W = 64;
   int H = 64;
-  int D = 32;
+  int D = 64;
 
   vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
   for (auto factor : unroll_factors) {
-    string name = "mp_" + str(factor);
+    string name = prefix + "_" + str(factor);
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
@@ -8628,9 +8628,9 @@ void playground() {
 void iccad_tests() {
   int index = 20;
   string istr = str(index);
-  gaussian_pyramid_app_test();
+  max_pooling_test("mp23");
   assert(false);
-  max_pooling_test();
+  gaussian_pyramid_app_test();
 
   exposure_fusion_iccad_apps("psef23");
   //assert(false);
@@ -8674,7 +8674,7 @@ void mini_application_tests() {
   blur_xy_16_app_test("bxy");
   sobel_16_app_test("sbl");
   single_gaussian_pyramid_app_test();
-  max_pooling_test();
+  max_pooling_test("mp");
   exposure_fusion();
 }
 
