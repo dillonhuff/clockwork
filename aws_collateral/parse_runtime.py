@@ -26,11 +26,16 @@ for filename in glob.iglob(directory + '**/*', recursive=True):
     print('File:', filename)
     lines = open(filename, 'r').readlines()
     for l in lines:
-      target = "^INFO\: \[v\+\+ 60-791\]"
+      target = "^INFO\: \[v\+\+ 60-791\] Total elapsed time\: (\d+)h (\d+)m (\d+)s"
       #"INFO: [v++ 60-791] Total elapsed time:" # (\d+)h (\d+)m (\d+)s"
-      x = re.search(target, l) 
+      x = re.match(target, l) 
       if x:
-        print(l)
+        print('Line: ', l)
+        hrs = int(x.group(1))
+        mins = int(x.group(2))
+        secs = int(x.group(3))
+        total_seconds = hrs*60*60 + mins*60 + secs
+        print('Seconds in v++:', total_seconds)
 
 
     # latex_table = util.replace("%", "\\%")
