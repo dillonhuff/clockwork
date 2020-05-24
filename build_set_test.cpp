@@ -1005,6 +1005,44 @@ void emit_address_stream(string fname, bool is_top, vector<int> read_cycle, vect
   out.close();
 }
 
+void shift_reg_test() {
+
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "vec";
+  prg.add_input("in");
+  prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+
+  auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
+  auto write = p->add_op("input");
+  write->add_load("in", "po, pi");
+  write->add_store("buf", "po, pi");
+
+  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 14);
+  auto read = q->add_op("output");
+  for (size_t wy = 0; wy < 3; wy ++)
+      for (size_t wx = 0; wx < 3; wx ++) {
+        read->add_load("buf", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+      }
+  read->add_store("out", "po, pi");
+
+  //optimized first time
+  auto buffers_opt = build_buffers(prg);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  buffers_opt.at("buf").generate_bank_and_merge(opt);
+  cout << buffers_opt.at("buf") << endl;
+  auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
+  for (auto buf : rewrite_buf) {
+    cout << buf << endl;
+    buffers_opt[buf.name] = buf;
+  }
+}
+
 
 void bankmerge_vec_test() {
 
@@ -7500,8 +7538,9 @@ void playground() {
 }
 
 void application_tests() {
-  bankmerge_vec_test();
+  shift_reg_test();
   assert(false);
+  bankmerge_vec_test();
   auto_vec_test();
   flatten_sched_test();
   pointwise_app_test();

@@ -149,6 +149,18 @@ int dim(isl_space* const s) {
   return 0;
 }
 
+bool equal(isl_space* const l, isl_space* const r) {
+  return isl_space_is_equal(l, r);
+}
+
+bool equal(isl_set* const l, isl_set* const r) {
+  return isl_set_is_equal(l, r);
+}
+
+bool equal(uset* const l, uset* const r) {
+  return isl_union_set_is_equal(l, r);
+}
+
 bool empty(isl_basic_set* const s) {
   return isl_basic_set_is_empty(s);
 }
@@ -1414,6 +1426,7 @@ umap* flatten_map_domain_with_ii(isl_map* s, int ii) {
     return new_sched;
 }
 
+
 umap* flatten_map_domain_trans(isl_map* s, int ii) {
     auto dom = domain(s);
     cout << "get domain: " << str(dom) << endl;
@@ -1648,11 +1661,53 @@ isl_stat bset_collect_constraints(isl_basic_set* m, void* user) {
   return isl_stat_ok;
 }
 
+isl_stat bmap_collect_constraints(isl_basic_map* m, void* user) {
+  isl_basic_map_foreach_constraint(m, collect_constraint, user);
+  return isl_stat_ok;
+}
+
+vector<isl_constraint*> constraints(isl_map* m) {
+    vector<isl_constraint*> code_holder;
+    isl_map_foreach_basic_map(m, bmap_collect_constraints, &code_holder);
+    return code_holder;
+}
+
 isl_stat bmap_codegen_c(isl_basic_map* m, void* user) {
   isl_basic_map_foreach_constraint(m, codegen_constraint, user);
 
   return isl_stat_ok;
 }
+
+//Get the map for shift reg
+isl_map* get_shift_map(isl_map* m) {
+
+  auto c_vec = constraints(m);
+  for (auto & c: c_vec) {
+
+    size_t dom_dim = isl_constraint_dim(c, isl_dim_in);
+    bool involve;
+    involve =  isl_constraint_involves_dims(c, isl_dim_in, dom_dim - 1, 1);
+
+    //shift the constraint by 1
+    if (involve && !isl_constraint_is_equality(c)) {
+      cout << str(c) << "Is involved " <<  endl;
+      auto val = isl_val_get_num_si(isl_constraint_get_constant_val(c));
+      if (isl_constraint_is_lower_bound(c, isl_dim_in, dom_dim - 1))
+        c = isl_constraint_set_constant_si(c , val-1);
+      else
+        c = isl_constraint_set_constant_si(c , val+1);
+      cout << "rewrite: " << str(c) << endl;
+    }
+  }
+  auto b_ret = isl_basic_map_universe(get_space(m));
+  for (auto c: c_vec) {
+      b_ret = isl_basic_map_add_constraint(b_ret, c);
+      cout << "ADD " << str(c) << " TO " << str(b_ret) << endl;
+  }
+
+  return isl_map_from_basic_map(b_ret);
+}
+
 
 vector<isl_constraint*> constraints(isl_set* s) {
   vector<isl_constraint*> code_holder;
@@ -2269,6 +2324,14 @@ isl_point* lexminpt(isl_set* const m0) {
   return sample(lexmin(m0));
 }
 
+isl_point* lexminpt(uset* const m0) {
+  return sample(lexmin(m0));
+}
+
 isl_point* lexmaxpt(isl_set* const m0) {
+  return sample(lexmax(m0));
+}
+
+isl_point* lexmaxpt(uset* const m0) {
   return sample(lexmax(m0));
 }

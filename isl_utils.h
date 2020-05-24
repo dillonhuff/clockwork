@@ -95,6 +95,10 @@ int get_size(isl_multi_aff* const m);
 
 int dim(isl_space* const s);
 
+bool equal(isl_space* const l, isl_space* const r);
+bool equal(isl_set* const l, isl_set* const r);
+bool equal(uset* const l, uset* const r);
+
 bool empty(isl_basic_set* const s);
 bool empty(uset* const s);
 bool empty(isl_set* const s);
@@ -301,7 +305,9 @@ isl_union_set* lexmax(isl_union_set* const m0);
 
 isl_set* lexmax(isl_set* const m0);
 
+isl_point* lexminpt(uset* const m0);
 isl_point* lexminpt(isl_set* const m0);
+isl_point* lexmaxpt(uset* const m0);
 isl_point* lexmaxpt(isl_set* const m0);
 
 isl_val* lexminval(isl_set* const m0);
@@ -332,6 +338,7 @@ isl_stat umap_lex_lt(isl_map* s,  void* user);
 isl_bool with_domain_name(isl_map* m, void* user);
 
 isl_map* get_domain_ii_transform(isl_ctx* ctx, isl_set* const s, int ii);
+isl_map* get_shift_map(isl_map* s);
 
 isl_map* unn(isl_map* const m0, isl_map* const m1);
 
@@ -453,6 +460,7 @@ vector<isl_pw_qpolynomial*>
 get_polynomials(isl_union_pw_qpolynomial* p);
 
 vector<isl_constraint*> constraints(isl_set* s);
+vector<isl_constraint*> constraints(isl_map* s);
 
 map<string, string> umap_codegen_c(umap* const um);
 

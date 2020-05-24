@@ -1101,6 +1101,19 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
   }
 }
 
+umap* UBuffer::merge_output_pt(vector<string> merge_pt) {
+    string pt_name = pick(merge_pt);
+    auto first_pt_amap = access_map.at(pt_name);
+    auto s = pick(get_maps(first_pt_amap));
+    cout << str(s) << endl;
+    auto shift_map = get_shift_map(s);
+    cout << str(shift_map) << endl;
+    assert(false);
+    return first_pt_amap;
+}
+
+
+
 vector<UBuffer> UBuffer::port_grouping(int port_width) {
     /* This is the port constrained buffer lowering algorithm,
      * Based on the banking information, we are regrouping the banks
@@ -1144,6 +1157,13 @@ vector<UBuffer> UBuffer::port_grouping(int port_width) {
                 inpt_set.insert(input);
                 auto outpts = bk.get_out_ports();
                 outpt_set.insert(outpts.begin(), outpts.end());
+                vector<string> pt_vec(outpts.begin(), outpts.end());
+                sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
+                        auto l_start = lexminpt(range(access_map.at(l)));
+                        auto r_start = lexminpt(range(access_map.at(r)));
+                        return lex_lt_pt(l_start, r_start);
+                });
+                auto out_map_merge = merge_output_pt(pt_vec);
             }
             else {
                 //create a new merged ubuffer for this backend port constraint
