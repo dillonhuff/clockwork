@@ -7159,11 +7159,11 @@ void single_gaussian_pyramid_app_test() {
   assert(naive == optimized);
 }
 
-void gaussian_pyramid_app_test() {
+void gaussian_pyramid_app_test(const std::string& prefix) {
   string name = "gp";
   vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
   for (auto factor : unroll_factors) {
-    string name = "gp64x64_" + str(factor);
+    string name = prefix + "_" + str(factor);
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
@@ -8630,8 +8630,7 @@ void iccad_tests() {
   string istr = str(index);
   max_pooling_test("mp23");
   assert(false);
-  gaussian_pyramid_app_test();
-
+  gaussian_pyramid_app_test("gp64x64");
   exposure_fusion_iccad_apps("psef23");
   //assert(false);
 
