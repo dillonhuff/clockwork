@@ -6915,6 +6915,23 @@ void example_app_test() {
   assert(false);
 }
 
+App ef_cartoon(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  // The off chip input we are reading from
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  lp.func2d("in", "id", pt("in_off_chip"));
+
+  // Two synthetic exposures
+  lp.func2d("bright", "id", pt("in"));
+  lp.func2d("dark", "scale_exposure", pt("in"));
+
+  lp.func2d(out_name, "average", {pt("bright"), pt("dark")});
+  return lp;
+}
+
 App exposure_fusion_app(const std::string& out_name) {
   App lp;
   lp.set_default_pixel_width(16);
@@ -7173,6 +7190,21 @@ void single_gaussian_pyramid_app_test() {
     run_regression_tb(name + "_opt");
   assert(naive == optimized);
 }
+
+void ef_cartoon_test(const std::string& out_name) {
+  App gp = ef_cartoon(out_name);
+  int size = 200;
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    options.debug_options.expect_all_linebuffers = true;
+    gp.realize(options, out_name, {size, size}, "in", 1);
+  }
+  assert(false);
+}
+
 
 void gaussian_pyramid_app_test(const std::string& prefix) {
   string name = "gp";
@@ -8645,6 +8677,7 @@ void playground() {
 }
 
 void iccad_tests() {
+  ef_cartoon_test("ef_cartoon");
   gaussian_pyramid_app_test("gp64x64");
   assert(false);
   //example_app_test();

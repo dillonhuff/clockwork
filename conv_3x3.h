@@ -149,7 +149,8 @@ T merge_exposures(T& bright, T& dark, T& bw, T& dw) {
 template<typename T>
 static inline
 T scale_exposure(T& src) {
-  return 3*src;
+  T scaled = 3*src;
+  return min(scaled.to_int(), 255);
 }
 
 template<typename T>
@@ -162,6 +163,12 @@ template<typename T>
 static inline
 T f_divide(T& src, T& a0) {
   return src / a0;
+}
+
+template<typename T>
+static inline
+T average(T& src, T& a0) {
+  return (src + a0) / 2;
 }
 
 template<typename T>
