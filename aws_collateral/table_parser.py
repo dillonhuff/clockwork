@@ -22,5 +22,9 @@ for a in app_resources:
         assert(x)
         pct = x.group(2) + "." + x.group(3)
         print '\tusage =', pct
-
+        vals.append(float(pct))
+    app_percents[a] = vals
+print 'App percents...'
+for p in app_percents:
+    print p, ' -> ', app_percents[p]
 
