@@ -1,5 +1,8 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
-from astropy.table import Table
-tab = Table.read('soda_table.tex')
-
+tablines = open('us_resources.tex').readlines()
+print('tabllines:')
+for t in tablines:
+    strs = t.split("&")
+    print(strs)
+    assert(len(strs) == 7)
