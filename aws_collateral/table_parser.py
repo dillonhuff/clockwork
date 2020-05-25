@@ -48,8 +48,8 @@ for app in app_map:
     utils = []
     for u in range(0, len(apps)):
         factor = 2**u
-
         utils.append(2*factor / 4)
+
     print 'utils =', utils
 
     # Create data
@@ -58,8 +58,8 @@ for app in app_map:
 
     # Plot
     plt.scatter(x, y)
-    plt.hlines([100], 0, 10)
-    plt.title('Scatter plot pythonspot.com')
+    # plt.hlines([100], 0, 10)
+    plt.title(app)
     plt.xlabel('Throughput (GB / sec)')
     plt.ylabel('Resource Utilization (%)')
     plt.show()
