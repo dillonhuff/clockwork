@@ -38,14 +38,32 @@ int main(int argc, char **argv) {
   std::vector<uint8_t, aligned_allocator<uint8_t> > bxy30_1_update_0_write(bxy30_1_update_0_write_size_bytes);
   std::vector<uint8_t, aligned_allocator<uint8_t> > input_update_0_read(input_update_0_read_size_bytes);
 
-  std::ofstream input_input_update_0_read("input_update_0_read.csv");
-  for (int i = 0; i < input_update_0_read_DATA_SIZE; i++) {
-    uint16_t val = (rand() % 256);
-    input_input_update_0_read << val << std::endl;
-    ((uint16_t*) (input_update_0_read.data()))[i] = val;
+  bitmap_image input("../../../images/taxi.bmp");
+  for (int r = 0; r < 1082; r++) {
+    for (int c = 0; c < 1922; c++) {
+      int ind = 1922*r + c;
+
+      //((uint16_t*)(in_update_0_read.data()))[ind] = 0;
+
+      if (r < (int) input.height() &&
+          c < (int) input.width()) {
+        rgb_t pix;
+        input.get_pixel(c, r, pix);
+        ((uint16_t*)(input_update_0_read.data()))[ind] = pix.red;
+      } else {
+        ((uint16_t*)(input_update_0_read.data()))[ind] = 0;
+      }
+    }
   }
 
-  input_input_update_0_read.close();
+  //std::ofstream input_input_update_0_read("input_update_0_read.csv");
+  //for (int i = 0; i < input_update_0_read_DATA_SIZE; i++) {
+    //uint16_t val = (rand() % 256);
+    ////input_input_update_0_read << val << std::endl;
+    //((uint16_t*) (input_update_0_read.data()))[i] = val;
+  //}
+
+  //input_input_update_0_read.close();
   for (int i = 0; i < bxy30_1_update_0_write_DATA_SIZE; i++) {
     ((uint16_t*) (bxy30_1_update_0_write.data()))[i] = 0;
   }
