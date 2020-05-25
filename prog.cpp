@@ -290,13 +290,45 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
     out << tab(1) << "HWStream<" << in_bundle_tp << " > " << bundle << "_channel;" << endl;
     args.push_back(bundle + "_channel");
   }
+
+  auto in_rep = pick(inputs(buffers, prg));
+  int in_cols = prg.buffer_bounds[in_rep.first].at(0);
+  int in_rows = prg.buffer_bounds[in_rep.first].at(1);
+  out << tab(1) << "for (int r = 0; r < " << in_rows << "; r++) {" << endl;
+  out << tab(2) << "for (int c = 0; c < " << in_cols << "; c++) {" << endl;
+  out << tab(3) << "if (r < input.height() && c < input.width()) {" << endl;
+  out << tab(4) << "rgb_t pix;" << endl;
+  out << tab(4) << "input.get_pixel(c, r, pix);" << endl;
+
+  out << tab(4) << "auto val = (pix.red + pix.green + pix.blue) / 3;" << endl;
+  out << tab(4) << in_rep.second << "_channel.write(val);" << endl;
+  out << tab(3) << "} else {" << endl;
+  out << tab(4) << in_rep.second << "_channel.write(0);" << endl;
+  out << tab(3) << "}" << endl;
+  out << tab(2) << "}" << endl;
+  out << tab(1) << "}" << endl;
+
+  out << tab(1) << prg.name << sep_list(args, "(", ")", ", ") << ";" << endl;
+
   auto out_rep = pick(outputs(buffers, prg));
+  int out_cols = prg.buffer_bounds[out_rep.first].at(0);
+  int out_rows = prg.buffer_bounds[out_rep.first].at(1);
   vector<string> sizes;
   for (auto sz : prg.buffer_bounds[out_rep.first]) {
     sizes.push_back(str(sz));
   }
 
   out << tab(1) << "bitmap_image output(" << sep_list(sizes, "", "", ", ") << ");" << endl;
+  out << tab(1) << "for (int r = 0; r < " << out_rows << "; r++) {" << endl;
+  out << tab(2) << "for (int c = 0; c < " << out_cols << "; c++) {" << endl;
+  out << tab(3) << "auto val = " << out_rep.second << "_channel.read();" << endl;
+  out << tab(3) << "rgb_t pix;" << endl;
+  out << tab(3) << "pix.red = val;" << endl;
+  out << tab(3) << "pix.green = val;" << endl;
+  out << tab(3) << "pix.blue = val;" << endl;
+  out << tab(3) << "output.set_pixel(c, r, pix);" << endl;
+  out << tab(2) << "}" << endl;
+  out << tab(1) << "}" << endl;
   out << tab(1) << "output.save_image(\"./images/" << prg.name << "_bmp_out.bmp\");" << endl;
   out << "}" << endl;
 
