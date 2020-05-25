@@ -142,7 +142,8 @@ int max_zero(const int& val) {
 template<typename T>
 static inline
 T merge_exposures(T& bright, T& dark, T& bw, T& dw) {
-  return (bw*bright) + (dw*dark);
+  return dark;
+  //return (bw*bright) + (dw*dark);
 }
 
 template<typename T>
@@ -166,12 +167,15 @@ T f_divide(T& src, T& a0) {
 template<typename T>
 static inline
 T add(T& src, T& a0) {
+  //return src;
+  //+ a0;
   return src + a0;
 }
 
 template<typename T>
 static inline
 T diff(T& src, T& a0) {
+  //return src;
   return src - a0;
 }
 
