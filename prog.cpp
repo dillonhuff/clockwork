@@ -269,7 +269,7 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
   sw_test_headers(out, prg);
 
   out << "int main(int argc, char **argv) {" << endl;
-  out << tab(1) << "bitmap_image input(\"./images/taxi_slice_128.bmp\");" << endl;
+  out << tab(1) << "bitmap_image input(\"./images/taxi_slice_256.bmp\");" << endl;
   vector<string> args;
   for (auto in : prg.ins) {
     assert(contains_key(in, buffers));

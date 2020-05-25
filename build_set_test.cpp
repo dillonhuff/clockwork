@@ -7123,13 +7123,13 @@ void laplacian_pyramid_app_test() {
 
 }
 
-App gaussian_pyramid_app(const std::string& out_name) {
+App gaussian_pyramid_app(const std::string& out_name, const int n_levels) {
   App gp;
   gp.set_default_pixel_width(16);
 
   gp.func2d("in_off_chip");
   gp.func2d("in", "id", pt("in_off_chip"));
-  int n_levels = 4;
+  //int n_levels = 3
   string last = "in";
   for (int l = 0; l < n_levels; l++) {
     string next = "level_" + to_string(l);
@@ -7151,7 +7151,7 @@ App gaussian_pyramid_app(const std::string& out_name) {
 void single_gaussian_pyramid_app_test() {
   string name = "gp";
 
-  App gp = gaussian_pyramid_app(name);
+  App gp = gaussian_pyramid_app(name, 4);
   {
     CodegenOptions options;
     options.internal = true;
@@ -7176,8 +7176,8 @@ void single_gaussian_pyramid_app_test() {
 
 void gaussian_pyramid_app_test(const std::string& prefix) {
   string name = "gp";
-  App gp = gaussian_pyramid_app(name);
-  int size = 16;
+  App gp = gaussian_pyramid_app(name, 3);
+  int size = 32;
   {
     CodegenOptions options;
     options.internal = true;
@@ -7209,7 +7209,7 @@ void gaussian_pyramid_app_test(const std::string& prefix) {
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
 
-    gaussian_pyramid_app(name).realize(options, name, {64, 64}, "in", factor);
+    gaussian_pyramid_app(name, 4).realize(options, name, {64, 64}, "in", factor);
     move_to_benchmarks_folder(name + "_opt");
   }
 
