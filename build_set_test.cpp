@@ -6972,7 +6972,7 @@ void exposure_fusion() {
 
   App lp = exposure_fusion_app("pyramid_synthetic_exposure_fusion");
   int size =
-    64;
+    128;
     //1250;
     //200;
 
@@ -7030,7 +7030,7 @@ void exposure_fusion() {
   std::vector<std::string> optimized =
     run_regression_tb("pyramid_synthetic_exposure_fusion_opt");
   assert(naive == optimized);
-
+  assert(false);
 }
 
 void laplacian_pyramid_app_test() {
@@ -8626,6 +8626,9 @@ void playground() {
 }
 
 void iccad_tests() {
+  exposure_fusion();
+
+
   int index = 20;
   string istr = str(index);
   max_pooling_test("mp23");
@@ -8651,7 +8654,6 @@ void iccad_tests() {
   harris_test();
 
   pointwise_app_test();
-  exposure_fusion();
 }
 
 void mini_application_tests() {
