@@ -6900,6 +6900,21 @@ void max_pooling_test(const std::string& prefix) {
   
 }
 
+App example_app(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
+
+  lp.func2d("in_oc");
+  lp.func2d("in", "id", pt("in_oc"));
+  lp.func2d("bright", "scale_exposure", pt("in"));
+  lp.func2d("out", "average_2x2", stencil(0, 1, 0, 1, "bright"));
+}
+
+void example_app_test() {
+  example_app("example_app");
+  assert(false);
+}
+
 App exposure_fusion_app(const std::string& out_name) {
   App lp;
   lp.set_default_pixel_width(16);
@@ -7161,6 +7176,30 @@ void single_gaussian_pyramid_app_test() {
 
 void gaussian_pyramid_app_test(const std::string& prefix) {
   string name = "gp";
+  App gp = gaussian_pyramid_app(name);
+  int size = 16;
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    options.debug_options.expect_all_linebuffers = true;
+    gp.realize(options, name, size, size, 1);
+  }
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  //options.unroll_factors_as_pad = true;
+  gp.realize_naive(options, name, size, size);
+
+  std::vector<std::string> naive =
+    run_regression_tb(name + "_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb(name + "_opt");
+  assert(naive == optimized);
+  assert(false);
+
   vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
   for (auto factor : unroll_factors) {
     string name = prefix + "_" + str(factor);
@@ -7173,27 +7212,6 @@ void gaussian_pyramid_app_test(const std::string& prefix) {
     move_to_benchmarks_folder(name + "_opt");
   }
 
-  App gp = gaussian_pyramid_app(name);
-  {
-    CodegenOptions options;
-    options.internal = true;
-    options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
-    options.debug_options.expect_all_linebuffers = true;
-    gp.realize(options, name, 4, 4, 2);
-  }
-
-  CodegenOptions options;
-  options.internal = true;
-  options.all_rams = true;
-  options.unroll_factors_as_pad = true;
-  gp.realize_naive(options, name, 4, 4);
-
-  std::vector<std::string> naive =
-    run_regression_tb(name + "_naive");
-  std::vector<std::string> optimized =
-    run_regression_tb(name + "_opt");
-  assert(naive == optimized);
 }
 
 App sobel_mag_x() {
@@ -8626,14 +8644,16 @@ void playground() {
 }
 
 void iccad_tests() {
+  gaussian_pyramid_app_test("gp64x64");
+  assert(false);
+  //example_app_test();
   exposure_fusion();
 
+  max_pooling_test("mp23");
+  assert(false);
 
   int index = 20;
   string istr = str(index);
-  max_pooling_test("mp23");
-  assert(false);
-  gaussian_pyramid_app_test("gp64x64");
   exposure_fusion_iccad_apps("psef23");
   //assert(false);
 
