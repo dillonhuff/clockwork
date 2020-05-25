@@ -6928,14 +6928,22 @@ App ef_cartoon(const std::string& out_name) {
   lp.func2d("bright", "id", pt("in"));
   lp.func2d("dark", "scale_exposure", pt("in"));
 
+  lp.func2d("bright_weights", "psef_weight", pt("bright"));
+  lp.func2d("dark_weights", "psef_weight", pt("dark"));
+
   int pyramid_levels = 2;
+
+  auto dark_weight_pyramid = laplace_pyramid(pyramid_levels, "dark_weights", lp);
+  auto bright_weight_pyramid = laplace_pyramid(pyramid_levels, "bright_weights", lp);
+
   auto dark_pyramid = laplace_pyramid(pyramid_levels, "dark", lp);
   auto bright_pyramid = laplace_pyramid(pyramid_levels, "bright", lp);
 
   vector<string> merged_images;
   for (int i = 0; i < dark_pyramid.size(); i++) {
     string fused = "fused_level_" + str(i);
-    lp.func2d(fused, "average", {pt(bright_pyramid.at(i)), pt(dark_pyramid.at(i))});
+    lp.func2d(fused, "psef_weighted_merge", {pt(bright_pyramid.at(i)), pt(dark_pyramid.at(i)),
+        pt(bright_weight_pyramid.at(i)), pt(dark_weight_pyramid.at(i))});
     merged_images.push_back(fused);
   }
 

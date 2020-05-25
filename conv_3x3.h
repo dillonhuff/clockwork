@@ -148,6 +148,18 @@ T merge_exposures(T& bright, T& dark, T& bw, T& dw) {
 
 template<typename T>
 static inline
+T psef_weighted_merge(T& bright, T& dark, T& bright_weight, T& dark_weight) {
+  return (bright + dark) / 2;
+}
+
+template<typename T>
+static inline
+T psef_weight(T& src) {
+  return abs(128 - src.to_int());
+}
+
+template<typename T>
+static inline
 T scale_exposure(T& src) {
   T scaled = 3*src;
   return min(scaled.to_int(), 255);
