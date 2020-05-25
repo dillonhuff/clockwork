@@ -6928,7 +6928,30 @@ App ef_cartoon(const std::string& out_name) {
   lp.func2d("bright", "id", pt("in"));
   lp.func2d("dark", "scale_exposure", pt("in"));
 
-  lp.func2d(out_name, "average", {pt("bright"), pt("dark")});
+  int pyramid_levels = 2;
+  auto dark_pyramid = laplace_pyramid(pyramid_levels, "dark", lp);
+  auto bright_pyramid = laplace_pyramid(pyramid_levels, "bright", lp);
+
+  vector<string> merged_images;
+  for (int i = 0; i < dark_pyramid.size(); i++) {
+    string fused = "fused_level_" + str(i);
+    lp.func2d(fused, "average", {pt(bright_pyramid.at(i)), pt(dark_pyramid.at(i))});
+    merged_images.push_back(fused);
+  }
+
+  // Collapse the blended pyramid into a single image
+  assert(merged_images.size() == pyramid_levels);
+
+  string image = merged_images.back();
+  for (int i = merged_images.size() - 2; i >= 0; i--) {
+    string merged_level = "final_merged_" + str(i);
+    lp.func2d(merged_level, "average", {upsample(2, image), pt(merged_images.at(i))});
+    image = merged_level;
+  }
+
+  lp.func2d(out_name, "id", pt(image));
+
+  //lp.func2d(out_name, "average", {pt("bright"), pt("dark")});
   return lp;
 }
 
@@ -7199,7 +7222,6 @@ void ef_cartoon_test(const std::string& out_name) {
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
-    options.debug_options.expect_all_linebuffers = true;
     gp.realize(options, out_name, {size, size}, "in", 1);
   }
   assert(false);
