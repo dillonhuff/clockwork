@@ -3,6 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <cstdlib>
+#include "bitmap_image.hpp"
 
 int main(int argc, char **argv) {
   srand(234);
@@ -105,18 +106,40 @@ nsduration = end - start;
 
   q.finish();
 
-  double dnsduration = ((double)nsduration);
-  double dsduration = dnsduration / ((double)1000000000);
-  double dbytes = total_size_bytes;
-  double bpersec = (dbytes / dsduration);
-  double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
-std::cout << "bytes / sec = " << bpersec << std::endl;
-std::cout << "GB / sec = " << gbpersec << std::endl;
-printf("Execution time = %f (sec) \n", dsduration);
-  std::ofstream regression_result("bxy30_1_update_0_write_accel_result.csv");
-  for (int i = 0; i < bxy30_1_update_0_write_DATA_SIZE; i++) {
-    regression_result << ((uint16_t*) (bxy30_1_update_0_write.data()))[i] << std::endl;
+
+  const int out_rows = 1080;
+  const int out_cols = 1920;
+  bitmap_image output(out_cols, out_rows);
+  for (int r = 0; r < out_rows; r++) {
+    for (int c = 0; c < out_cols; c++) {
+      int ind = out_cols*r + c;
+      rgb_t pix;
+      uint16_t val =
+        ((uint16_t*)(bxy30_1_update_0_write.data()))[ind];
+      //std::cout << "val = " << val << std::endl;
+      //val = val >> 8;
+      pix.red = val;
+      pix.green = val;
+      pix.blue = val;
+      output.set_pixel(c, r, pix);
+    }
   }
+
+  std::cout << "Saving output" << std::endl;
+  output.save_image("bxy30_1_out.bmp");
+
+  //double dnsduration = ((double)nsduration);
+  //double dsduration = dnsduration / ((double)1000000000);
+  //double dbytes = total_size_bytes;
+  //double bpersec = (dbytes / dsduration);
+  //double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
+//std::cout << "bytes / sec = " << bpersec << std::endl;
+//std::cout << "GB / sec = " << gbpersec << std::endl;
+//printf("Execution time = %f (sec) \n", dsduration);
+  //std::ofstream regression_result("bxy30_1_update_0_write_accel_result.csv");
+  //for (int i = 0; i < bxy30_1_update_0_write_DATA_SIZE; i++) {
+    //regression_result << ((uint16_t*) (bxy30_1_update_0_write.data()))[i] << std::endl;
+  //}
 
   return 0;
 }
