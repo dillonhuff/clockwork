@@ -22,6 +22,15 @@ std::string vanilla_c_pixel_type_string(const std::string& buf, map<string, UBuf
   return vanilla_c_pixel_type_string(map_find(buf, buffers).port_widths);
 }
 
+void sw_test_headers(ostream& out, prog& prg) {
+  out << "#include <algorithm>" << endl;
+  out << "#include <fstream>" << endl;
+  out << "#include <vector>" << endl;
+  out << "#include \"" << prg.name << ".h\"" << endl;
+  out << "#include \"bitmap_image.hpp\"" << endl;
+  out << "#include <cstdlib>" << endl << endl;
+}
+
 void ocl_headers(ostream& out) {
   out << "#include \"xcl2.hpp\"" << endl;
   out << "#include <algorithm>" << endl;
@@ -253,6 +262,45 @@ void populate_input(std::ostream& out, const std::string& edge_bundle, const str
   out << tab(2) << "((" << tp << "*) (" << edge_bundle << ".data()))[i] = val;" << endl;
   out << tab(1) << "}" << endl << endl;
   out << tab(1) << "input_" << edge_bundle << ".close();" << endl;
+}
+
+void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
+  ofstream out(prg.name + "_sw_bmp_test_harness.cpp");
+  sw_test_headers(out, prg);
+
+  out << "int main(int argc, char **argv) {" << endl;
+  out << tab(1) << "bitmap_image input(\"./images/taxi_slice_128.bmp\");" << endl;
+  vector<string> args;
+  for (auto in : prg.ins) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    auto bundle = pick(buf.get_out_bundles());
+    string in_bundle_tp = buf.bundle_type_string(bundle);
+
+    out << tab(1) << "HWStream<" << in_bundle_tp << " > " << bundle << "_channel;" << endl;
+    args.push_back(bundle + "_channel");
+  }
+
+  for (auto in : prg.outs) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    auto bundle = pick(buf.get_in_bundles());
+    string in_bundle_tp = buf.bundle_type_string(bundle);
+
+    out << tab(1) << "HWStream<" << in_bundle_tp << " > " << bundle << "_channel;" << endl;
+    args.push_back(bundle + "_channel");
+  }
+  auto out_rep = pick(outputs(buffers, prg));
+  vector<string> sizes;
+  for (auto sz : prg.buffer_bounds[out_rep.first]) {
+    sizes.push_back(str(sz));
+  }
+
+  out << tab(1) << "bitmap_image output(" << sep_list(sizes, "", "", ", ") << ");" << endl;
+  out << tab(1) << "output.save_image(\"./images/" << prg.name << "_bmp_out.bmp\");" << endl;
+  out << "}" << endl;
+
+
 }
 
 void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg) {
@@ -1635,6 +1683,8 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out << endl;
 
+  // Collateral generation
+  generate_sw_bmp_test_harness(buffers, prg);
   generate_app_code_header(buffers, prg);
   generate_soda_tb(options, buffers, prg);
   generate_xilinx_accel_soda_host(options, buffers, prg);

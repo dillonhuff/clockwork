@@ -7184,8 +7184,9 @@ void gaussian_pyramid_app_test(const std::string& prefix) {
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
     options.debug_options.expect_all_linebuffers = true;
-    gp.realize(options, name, size, size, 1);
+    gp.realize(options, name, {size, size}, "in", 1);
   }
+  assert(false);
 
   CodegenOptions options;
   options.internal = true;
