@@ -21,7 +21,7 @@ int main() {
     in_update_0_read.write(in_val);
   }
 
-  mpsize_1_naive(in_update_0_read, mpsize_1_update_0_write);
+  mpsize_1_naive(in_update_0_read, mpsize_1_update_0_write, 1);
 
   for (int i = 0; i < 256; i++) {
     hw_uint<32> actual = mpsize_1_update_0_write.read();

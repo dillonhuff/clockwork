@@ -253,6 +253,7 @@ void mpsize_1_naive(HWStream<hw_uint<64> >& /* get_args num ports = 2 */in_oc, H
 	for (int c0 = 0; c0 <= 3; c0 += 1)
 	  for (int c1 = 0; c1 <= 15; c1 += 1)
 	    for (int c2 = 0; c2 <= 7; c2 += 1) {
+#pragma HLS pipeline II=1
 	in_update_0(in_oc, in, c2, c1, c0);
 	      if ((c1 + 1) % 2 == 0)
 	mpsize_1_update_0(in, mpsize_1, c2, (c1 - 1) / 2, c0);
@@ -265,10 +266,10 @@ void mpsize_1_naive(HWStream<hw_uint<64> >& /* get_args num ports = 2 */in_oc, H
 #endif //__VIVADO_SYNTH__
 }
 
-void mpsize_1_naive(HWStream<hw_uint<64> >& /* get_args num ports = 2 */in_oc, HWStream<hw_uint<32> >& /* get_args num ports = 1 */mpsize_1) {
+//void mpsize_1_naive(HWStream<hw_uint<64> >& [> get_args num ports = 2 */in_oc, HWStream<hw_uint<32> >& /* get_args num ports = 1 <]mpsize_1) {
 
-  mpsize_1_naive(in_oc, mpsize_1, 1);
-}
+  //mpsize_1_naive(in_oc, mpsize_1, 1);
+//}
 #ifdef __VIVADO_SYNTH__
 const int in_update_0_read_num_transfers = 512;
 const int mpsize_1_update_0_write_num_transfers = 256;
@@ -298,13 +299,13 @@ static void write_mpsize_1_update_0_write(hw_uint<32>* output, HWStream<hw_uint<
 
 void mpsize_1_naive_accel(hw_uint<64>* in_update_0_read, hw_uint<32>* mpsize_1_update_0_write, const int size) { 
 #pragma HLS dataflow
-#pragma HLS INTERFACE m_axi port = in_update_0_read offset = slave depth = 65536 bundle = gmem0
-#pragma HLS INTERFACE m_axi port = mpsize_1_update_0_write offset = slave depth = 65536 bundle = gmem1
+//#pragma HLS INTERFACE m_axi port = in_update_0_read offset = slave depth = 65536 bundle = gmem0
+//#pragma HLS INTERFACE m_axi port = mpsize_1_update_0_write offset = slave depth = 65536 bundle = gmem1
 
-#pragma HLS INTERFACE s_axilite port = in_update_0_read bundle = control
-#pragma HLS INTERFACE s_axilite port = mpsize_1_update_0_write bundle = control
-#pragma HLS INTERFACE s_axilite port = size bundle = control
-#pragma HLS INTERFACE s_axilite port = return bundle = control
+//#pragma HLS INTERFACE s_axilite port = in_update_0_read bundle = control
+//#pragma HLS INTERFACE s_axilite port = mpsize_1_update_0_write bundle = control
+//#pragma HLS INTERFACE s_axilite port = size bundle = control
+//#pragma HLS INTERFACE s_axilite port = return bundle = control
 
   static HWStream<hw_uint<64> > in_update_0_read_channel;
   static HWStream<hw_uint<32> > mpsize_1_update_0_write_channel;
