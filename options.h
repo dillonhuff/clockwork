@@ -10,6 +10,12 @@ struct DebugOptions {
   DebugOptions() : expect_all_linebuffers(false) {}
 };
 
+enum ScheduleAlgorithm {
+  SCHEDULE_ALGORITHM_NAIVE,
+  SCHEDULE_ALGORITHM_ISL,
+  SCHEDULE_ALGORITHM_CW
+};
+
 enum InnerBankOffsetMode {
   INNER_BANK_OFFSET_STACK,
   INNER_BANK_OFFSET_LINEAR
@@ -32,6 +38,7 @@ struct CodegenOptions {
   bool push_garbage_outputs;
   bool use_soda_casting;
   InnerBankOffsetMode inner_bank_offset_mode;
+  ScheduleAlgorithm scheduling_algorithm;
 
 
   DebugOptions debug_options;
@@ -42,7 +49,9 @@ struct CodegenOptions {
   num_input_epochs(-1),
   push_garbage_outputs(false),
   use_soda_casting(false),
-  inner_bank_offset_mode(INNER_BANK_OFFSET_STACK) {}
+  inner_bank_offset_mode(INNER_BANK_OFFSET_STACK),
+  scheduling_algorithm(SCHEDULE_ALGORITHM_NAIVE)
+  {}
 
 };
 

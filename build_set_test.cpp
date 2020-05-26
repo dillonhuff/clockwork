@@ -4675,10 +4675,16 @@ struct App {
     set_unroll_factors(name, name, 1);
     fill_compute_domain();
 
-    umap* m =
-      schedule_naive();
-      //schedule_isl();
+    umap* m = nullptr;
+    if (options.scheduling_algorithm == SCHEDULE_ALGORITHM_NAIVE) {
+      m = schedule_naive();
+    } else {
+      assert(options.scheduling_algorithm == SCHEDULE_ALGORITHM_ISL);
+      m = schedule_isl();
+    }
+    //schedule_isl();
 
+    assert(m != nullptr);
     cout << "Schedule: " << str(m) << endl;
 
     map<string, UBuffer> buffers = build_buffers(m);
@@ -7230,12 +7236,14 @@ void ef_cartoon_test(const std::string& out_name) {
   App gp = ef_cartoon(out_name);
   int size = 200;
   {
+    //gp.realize(options, out_name, {size, size}, "in", 1);
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
-    gp.realize(options, out_name, {size, size}, "in", 1);
-    move_to_benchmarks_folder(out_name + "_opt");
+    //options.use_custom_code_string = true;
+    options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
+    gp.realize_naive(options, out_name, {size, size});
+    //move_to_benchmarks_folder(out_name + "_opt");
   }
   assert(false);
 }
