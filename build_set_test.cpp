@@ -7028,8 +7028,44 @@ App exposure_fusion_app(const std::string& out_name) {
   return lp;
 }
 
+void ef_cartoon_fusion_iccad_sizes(const std::string& prefix) {
+  vector<pair<int, int> > sizes{{16, 16}, {256, 256}, {1280, 720}, {1920, 1080}};
+  for (auto dims : sizes) {
+    int cols = dims.first;
+    int rows = dims.second;
+    
+    string name = prefix + "_" + str(cols) + "_" + str(rows);
+    {
+      App lp = ef_cartoon(name);
+      CodegenOptions options;
+      options.internal = true;
+      options.num_input_epochs = 1;
+      options.simplify_address_expressions = true;
+      lp.realize(options, name, cols, rows, 1);
+    }
+
+    {
+      App lp = ef_cartoon(name);
+      CodegenOptions options;
+      options.internal = true;
+      options.num_input_epochs = 1;
+      options.simplify_address_expressions = true;
+      options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
+      lp.realize_naive(options, name, cols, rows);
+    }
+    std::vector<std::string> naive =
+      run_regression_tb(name + "_naive");
+    cout << "Naive    : " << naive << endl;
+    std::vector<std::string> optimized =
+      run_regression_tb(name + "_opt");
+    cout << "Optimized: " << optimized << endl;
+    assert(naive == optimized);
+    move_to_benchmarks_folder(name + "_opt");
+  }
+}
+
 void exposure_fusion_iccad_sizes(const std::string& prefix) {
-  vector<pair<int, int> > sizes{{16, 16}, {256, 256}, {1920, 1080}};
+  vector<pair<int, int> > sizes{{16, 16}, {256, 256}, {1280, 720}, {1920, 1080}};
   for (auto dims : sizes) {
     int cols = dims.first;
     int rows = dims.second;
@@ -8758,6 +8794,7 @@ void playground() {
 }
 
 void iccad_tests() {
+  ef_cartoon_fusion_iccad_sizes("psef_ct");
   exposure_fusion_iccad_sizes("psef");
   assert(false);
   ef_cartoon_test("ef_cartoon_1920");
