@@ -512,7 +512,7 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
   cout << "Generating accel wrapper" << endl;
   string driver_func = prg.name + "_accel";
 
-  out << "#include \"" << prg.name << ".h\"" << endl << endl;
+  //out << "#include \"" << prg.name << ".h\"" << endl << endl;
 
   for (auto eb : edge_buffers(buffers, prg)) {
     string out_rep = eb.first;
