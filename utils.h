@@ -284,10 +284,13 @@ void move_to_benchmarks_folder(const std::string& app_name) {
     "./soda_codes/" + app_name + "/soda_code/";
   string synth_dir =
     "./soda_codes/" + app_name + "/our_code/";
+  string isl_dir =
+    "./soda_codes/" + app_name + "/isl_dir/";
 
   system(("mkdir " + app_dir).c_str());
   system(("mkdir " + synth_dir).c_str());
   system(("mkdir " + soda_dir).c_str());
+  system(("mkdir " + isl_dir).c_str());
   
   system(("cp ./aws_collateral/xrt.ini " + soda_dir).c_str());
   system(("cp ./aws_collateral/soda_makefile.mk " + soda_dir + "/Makefile").c_str());
