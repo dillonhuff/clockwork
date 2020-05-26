@@ -1005,6 +1005,41 @@ void emit_address_stream(string fname, bool is_top, vector<int> read_cycle, vect
   out.close();
 }
 
+map<string, umap*> get_op2sched(map<string, UBuffer>& buffers_opt, umap* opt_sched) {
+  map<string, umap*> op2sched;
+  //get a map from op to schedule
+  for (auto & buf : buffers_opt) {
+      UBuffer& buffer = buf.second;
+      for (string pt: buffer.get_in_ports()) {
+          auto rddom = buffer.domain.at(pt);
+          string op_name = name(rddom);
+          auto pt_sched = to_umap(get_maps_in_map(opt_sched).at(op_name));
+          cout << "Schedule for pt: " << pt << " is " << str(pt_sched) << endl;
+          buffer.schedule.at(pt) = pt_sched;
+          auto origin_access_map = buffer.access_map.at(pt);
+          buffer.access_map.at(pt) = flatten_umap_domain(buffer.ctx, origin_access_map);
+          if(op2sched.count(op_name) == 0) {
+              op2sched[op_name] = pt_sched;
+          }
+      }
+      for (string pt: buffer.get_out_ports()) {
+          auto wtdom = buffer.domain.at(pt);
+          string op_name = name(wtdom);
+          auto pt_sched = to_umap(get_maps_in_map(opt_sched).at(op_name));
+          cout << "Schedule for pt: " << pt << " is " << str(pt_sched) << endl;
+          buffer.schedule.at(pt) = pt_sched;
+          //flatten_access map
+          auto origin_access_map = buffer.access_map.at(pt);
+          buffer.access_map.at(pt) = flatten_umap_domain(buffer.ctx, origin_access_map);
+          if(op2sched.count(op_name) == 0) {
+              op2sched[op_name] = pt_sched;
+          }
+      }
+  }
+  return op2sched;
+
+}
+
 void shift_reg_test() {
 
   prog prg;
@@ -1089,40 +1124,11 @@ void bankmerge_vec_test() {
   cout << codegen_c(opt_sched) << endl;
   cout << str(opt_sched) << endl;
 
-  map<string, umap*> op2sched;
   buffers_opt.erase("buf0");
   buffers_opt.erase("in");
   buffers_opt.erase("out");
   //get a map from op to schedule
-  for (auto & buf : buffers_opt) {
-      UBuffer& buffer = buf.second;
-      for (string pt: buffer.get_in_ports()) {
-          auto rddom = buffer.domain.at(pt);
-          string op_name = name(rddom);
-          auto pt_sched = to_umap(get_maps_in_map(opt_sched).at(op_name));
-          cout << "Schedule for pt: " << pt << " is " << str(pt_sched) << endl;
-          buffer.schedule.at(pt) = pt_sched;
-          auto origin_access_map = buffer.access_map.at(pt);
-          buffer.access_map.at(pt) = flatten_umap_domain(prg.ctx, origin_access_map);
-          if(op2sched.count(op_name) == 0) {
-              op2sched[op_name] = pt_sched;
-          }
-      }
-      for (string pt: buffer.get_out_ports()) {
-          auto wtdom = buffer.domain.at(pt);
-          string op_name = name(wtdom);
-          auto pt_sched = to_umap(get_maps_in_map(opt_sched).at(op_name));
-          cout << "Schedule for pt: " << pt << " is " << str(pt_sched) << endl;
-          buffer.schedule.at(pt) = pt_sched;
-          //flatten_access map
-          auto origin_access_map = buffer.access_map.at(pt);
-          buffer.access_map.at(pt) = flatten_umap_domain(prg.ctx, origin_access_map);
-          if(op2sched.count(op_name) == 0) {
-              op2sched[op_name] = pt_sched;
-          }
-      }
-      //cout << "Vectorized buffer: " << buf.second << endl;
-  }
+  auto op2sched = get_op2sched(buffers_opt, opt_sched);
   /*
   auto opt_sched_map= get_maps_in_map(opt_sched);
   auto opt_sched_flatten_map = get_maps_in_map(opt_sched_flatten);
@@ -7539,8 +7545,8 @@ void playground() {
 
 void application_tests() {
   shift_reg_test();
-  assert(false);
   bankmerge_vec_test();
+  assert(false);
   auto_vec_test();
   flatten_sched_test();
   pointwise_app_test();

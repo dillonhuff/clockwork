@@ -1429,7 +1429,7 @@ umap* flatten_map_domain_with_ii(isl_map* s, int ii) {
 
 umap* flatten_map_domain_trans(isl_map* s, int ii) {
     auto dom = domain(s);
-    cout << "get domain: " << str(dom) << endl;
+    //cout << "get domain: " << str(dom) << endl;
     vector<int> dom_range;
     for (size_t i = 0; i < get_in_dim(s); i ++) {
         dom_range.push_back(get_dim_max(dom, i)+1);
@@ -1442,15 +1442,15 @@ umap* flatten_map_domain_trans(isl_map* s, int ii) {
         rolling_dim.push_back(dim);
     }
     std::reverse(rolling_dim.begin(), rolling_dim.end());
-    cout << "dim range: " << dom_range << endl;
-    cout << "rolling dim: " << rolling_dim << endl;
+    //cout << "dim range: " << dom_range << endl;
+    //cout << "rolling dim: " << rolling_dim << endl;
     auto ctx = isl_set_get_ctx(dom);
     umap* trans = isl_union_map_read_from_str(ctx, "{}");
     for (int itr = 0; itr < ii; itr ++) {
       vector<string> var_list, origin_var_list;
       origin_var_list.push_back("0");
       for (size_t i = 0; i < rolling_dim.size() - 1; i ++) {
-          cout << "dim: " << i+1 << str(dom) << endl;
+          //cout << "dim: " << i+1 << str(dom) << endl;
           //auto var_name = str(isl_set_get_dim_id(dom, isl_dim_set, i+1));
           auto var_name = "i" + to_string(i);
           var_list.push_back(string(var_name) + "*" + to_string(rolling_dim.at(i+1)));

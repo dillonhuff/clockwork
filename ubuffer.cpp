@@ -1165,7 +1165,11 @@ vector<UBuffer> UBuffer::port_grouping(int port_width) {
             auto dom = ::domain(out_map_merge);
             auto sched = schedule.at(pt_vec.front());
             auto & new_ub = regroup_ub.back();
-            new_ub.add_out_pt(pt_vec.front() + "_merge", dom, out_map_merge, sched);
+            string pt_name = pt_vec.front() + "_merge";
+            out_map_merge = set_range_name(out_map_merge, new_ub.name);
+            new_ub.add_out_pt(pt_name, dom, out_map_merge, sched);
+            new_ub.add_access_pattern(pt_name, ::name(dom), new_ub.name);
+            new_ub.port_bundles[::name(dom)+ "_write"].push_back(pt_name);
             bank_pool.pop();
             cnt ++;
         }
@@ -1195,8 +1199,12 @@ vector<UBuffer> UBuffer::port_grouping(int port_width) {
                 for (auto it: outpt_merge) {
                     auto dom = ::domain(it.second);
                     auto acc_map = it.second;
+                    acc_map = set_range_name(acc_map, new_ub.name);
                     auto sched = schedule.at(it.first);
-                    new_ub.add_out_pt(it.first + "_merge", dom, acc_map, sched);
+                    string pt_name = it.first + "_merge";
+                    new_ub.add_out_pt(pt_name, dom, acc_map, sched);
+                    new_ub.add_access_pattern(pt_name, ::name(dom), new_ub.name);
+                    new_ub.port_bundles[::name(dom) + "_write"].push_back(pt_name);
                 }
                 group_port_width = 0;
                 inpt_set.clear();
@@ -1211,8 +1219,12 @@ vector<UBuffer> UBuffer::port_grouping(int port_width) {
         for (auto it: outpt_merge) {
             auto dom = ::domain(it.second);
             auto acc_map = it.second;
+            acc_map = set_range_name(acc_map, new_ub.name);
             auto sched = schedule.at(it.first);
-            new_ub.add_out_pt(it.first + "_merge", dom, acc_map, sched);
+            string pt_name = it.first + "_merge";
+            new_ub.add_out_pt(pt_name, dom, acc_map, sched);
+            new_ub.add_access_pattern(pt_name, ::name(dom), new_ub.name);
+            new_ub.port_bundles[::name(dom) + "_write"].push_back(pt_name);
         }
     }
     return regroup_ub;
@@ -1456,7 +1468,7 @@ void UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2
     for (auto slice : constraint_slices) {
         cout << "Constraint: " << str(slice) << endl;
         cout << "origin: " << str(rewrite_buf2op) << endl;
-        cout << "Rewrited Access Map" << str(simplify(dot(inv(rewrite_buf2op), slice))) << endl;
+        cout << "Rewrited Access Map" << str(dot(inv(rewrite_buf2op), slice)) << endl;
         auto rewrite_access_map = dot(inv(rewrite_buf2op), slice);
         if (is_out) {
             string pt_name = origin_pt_name + "_out_" + std::to_string(new_pt_cnt);
