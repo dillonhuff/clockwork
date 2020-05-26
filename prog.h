@@ -189,6 +189,19 @@ struct ir_node {
     return fo;
   }
 
+  string add_load(const std::string& b, const std::vector<std::pair<std::string, std::string>> loc) {
+    assert(!is_loop);
+    string val_name = b;
+    for (auto val : loc) {
+      val_name += "_";
+      val_name += val.second;
+    }
+    val_name += "_value";
+    val_name = c_sanitize(val_name);
+    return val_name;
+  }
+
+
   string add_load(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2) {
     return add_load(b, d0 + ", " + d1 + ", " + d2);
   }
