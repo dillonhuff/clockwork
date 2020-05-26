@@ -16,9 +16,9 @@ config_dataflow -strict_mode warning
 set_clock_uncertainty 27.000000%
 config_rtl -enable_maxiConservative=1
 config_interface -m_axi_addr64
-config_export -format ip_catalog -ipname psef_1920_1080_naive_accel
+#config_export -format ip_catalog -ipname psef_1920_1080_naive_accel
 csynth_design
-export_design
+export_design -rtl verilog -format ip_catalog -xo psef_1920_1080_custom_hls.xo
 close_project
 puts "HLS completed successfully"
 exit
