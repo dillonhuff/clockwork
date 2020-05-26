@@ -123,10 +123,10 @@ struct bank {
   }
 
   //return a set of port string
-  set<string> get_out_ports() {
-    set<string> ret;
+  vector<string> get_out_ports() {
+    vector<string> ret;
     for (auto itr: delay_map) {
-        ret.insert(itr.first);
+        ret.push_back(itr.first);
     }
     return ret;
   }
@@ -1346,11 +1346,6 @@ class UBuffer {
         return to_map(dot(origin_map, buf_map));
     }
 
-    bool lt_start(const string l, const string r) {
-      auto l_start = lexminpt(range(access_map.at(l)));
-      auto r_start = lexminpt(range(access_map.at(r)));
-      return lex_lt_pt(l_start, r_start);
-    }
 
     //change the input and output and return the agg and tb ubuffer stucture
     void vectorization(int dim_id, int fetch_width, UBuffer& agg, UBuffer& sram, UBuffer& tb);
@@ -1372,7 +1367,7 @@ class UBuffer {
     Box extract_addr_box(uset* rddom, vector<size_t> sequence);
     string generate_linearize_ram_addr(const std::string& pt);
     vector<UBuffer> port_grouping(int port_width);
-    umap* merge_output_pt(vector<string> merge_pt);
+    isl_map* merge_output_pt(vector<string> merge_pt);
 
 };
 

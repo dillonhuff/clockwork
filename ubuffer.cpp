@@ -1101,15 +1101,25 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
   }
 }
 
-umap* UBuffer::merge_output_pt(vector<string> merge_pt) {
+isl_map* UBuffer::merge_output_pt(vector<string> merge_pt) {
     string pt_name = pick(merge_pt);
     auto first_pt_amap = access_map.at(pt_name);
     auto s = pick(get_maps(first_pt_amap));
     cout << str(s) << endl;
-    auto shift_map = get_shift_map(s);
+    auto shift_map = cpy(s);
     cout << str(shift_map) << endl;
-    assert(false);
-    return first_pt_amap;
+    int depth = 0;
+    for (size_t i = 1; i < merge_pt.size(); i ++) {
+        shift_map = get_shift_map(shift_map);
+        string name = merge_pt.at(i);
+        if (equal(range(to_umap(shift_map)), range(access_map.at(name)))) {
+            //assign the largest depth
+            depth  = i;
+        }
+    }
+    auto ret = pad_to_domain_map(s, depth);
+    cout << "Rewrited output port map: " << str(ret) << endl;
+    return ret;
 }
 
 
@@ -1134,8 +1144,9 @@ vector<UBuffer> UBuffer::port_grouping(int port_width) {
     }
     int group_port_width = 0;
 
-    //Using set for reoccuring port
-    set<string> inpt_set, outpt_set;
+    //Using set for reoccuring port, single input multi output available
+    set<string> inpt_set;
+    map<string, isl_map*> outpt_merge;
     int cnt = 0;
     while(!bank_pool.empty()) {
         auto bk = bank_pool.top();
@@ -1143,7 +1154,18 @@ vector<UBuffer> UBuffer::port_grouping(int port_width) {
         if (bk.onlySR()) {
             //create a ub with mark of shift register
             string tmp[] = {input};
-            regroup_ub.emplace_back(*this, set<string>(tmp, tmp+1), bk.get_out_ports(), cnt);
+            auto pt_vec = bk.get_out_ports();
+            sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
+                    auto l_start = lexminpt(range(access_map.at(l)));
+                    auto r_start = lexminpt(range(access_map.at(r)));
+                    return lex_lt_pt(l_start, r_start);
+            });
+            auto out_map_merge = merge_output_pt(pt_vec);
+            regroup_ub.emplace_back(*this, set<string>(tmp, tmp+1), set<string>({}), cnt);
+            auto dom = ::domain(out_map_merge);
+            auto sched = schedule.at(pt_vec.front());
+            auto & new_ub = regroup_ub.back();
+            new_ub.add_out_pt(pt_vec.front() + "_merge", dom, out_map_merge, sched);
             bank_pool.pop();
             cnt ++;
         }
@@ -1155,30 +1177,43 @@ vector<UBuffer> UBuffer::port_grouping(int port_width) {
 
                 //add it to the group
                 inpt_set.insert(input);
-                auto outpts = bk.get_out_ports();
-                outpt_set.insert(outpts.begin(), outpts.end());
-                vector<string> pt_vec(outpts.begin(), outpts.end());
+                auto pt_vec = bk.get_out_ports();
+                //outpt_set.insert(outpts.begin(), outpts.end());
                 sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
                         auto l_start = lexminpt(range(access_map.at(l)));
                         auto r_start = lexminpt(range(access_map.at(r)));
                         return lex_lt_pt(l_start, r_start);
                 });
                 auto out_map_merge = merge_output_pt(pt_vec);
+                outpt_merge.insert(make_pair(pt_vec.front(), out_map_merge));
             }
             else {
                 //create a new merged ubuffer for this backend port constraint
                 //UBuffer ub_grp(*this, inpt_set, outpt_set, cnt);
-                regroup_ub.emplace_back(*this, inpt_set, outpt_set, cnt);
+                regroup_ub.emplace_back(*this, inpt_set, set<string>({}), cnt);
+                auto & new_ub = regroup_ub.back();
+                for (auto it: outpt_merge) {
+                    auto dom = ::domain(it.second);
+                    auto acc_map = it.second;
+                    auto sched = schedule.at(it.first);
+                    new_ub.add_out_pt(it.first + "_merge", dom, acc_map, sched);
+                }
                 group_port_width = 0;
                 inpt_set.clear();
-                outpt_set.clear();
                 cnt ++;
             }
         }
     }
     //chances are that we have some leftover
     if (!inpt_set.empty()) {
-        regroup_ub.emplace_back(*this, inpt_set, outpt_set, cnt);
+        regroup_ub.emplace_back(*this, inpt_set, set<string>({}), cnt);
+        auto & new_ub = regroup_ub.back();
+        for (auto it: outpt_merge) {
+            auto dom = ::domain(it.second);
+            auto acc_map = it.second;
+            auto sched = schedule.at(it.first);
+            new_ub.add_out_pt(it.first + "_merge", dom, acc_map, sched);
+        }
     }
     return regroup_ub;
 }
