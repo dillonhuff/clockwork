@@ -6882,13 +6882,21 @@ void max_pooling_test_sizes(const std::string& prefix) {
 
   int factor = 1;
   string name = prefix + "_" + str(factor);
-  CodegenOptions options;
-  options.internal = true;
-  options.simplify_address_expressions = true;
-  options.use_custom_code_string = true;
-
-  max_pooling(name).realize(options, name, {H, W, D}, "in", factor);
-  max_pooling(name).realize_naive(options, name, {H, W, D});
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    max_pooling(name).realize(options, name, {H, W, D}, "in", factor);
+  }
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.num_input_epochs = 1;
+    options.simplify_address_expressions = true;
+    options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
+    max_pooling(name).realize_naive(options, name, {H, W, D});
+  }
   move_to_benchmarks_folder(name + "_opt");
   move_naive_to_benchmarks_folder(name);
   assert(false);
