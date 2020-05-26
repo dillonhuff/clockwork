@@ -276,6 +276,26 @@ void make_exe(const std::string& file) {
 }
 
 static inline
+void move_naive_to_benchmarks_folder(const std::string& app_name) {
+  string out_name = app_name;
+  string app_dir =
+    "./soda_codes/" + app_name + "_opt";
+  string isl_dir =
+    "./soda_codes/" + app_name + "_opt/isl_dir/";
+
+  system(("mkdir " + isl_dir).c_str());
+  
+  system(("cp ./aws_collateral/xrt.ini " + isl_dir).c_str());
+  system(("cp ./aws_collateral/Makefile " + isl_dir).c_str());
+  system(("cp ./aws_collateral/utils.mk " + isl_dir).c_str());
+
+  system(("mv " + out_name + "_naive.cpp " + isl_dir).c_str());
+  system(("mv " + out_name + "_naive_compute_units.h " + isl_dir).c_str());
+  system(("mv " + out_name + "_naive.h " + isl_dir).c_str());
+  system(("mv regression_tb_" + out_name + "_naive.cpp " + isl_dir).c_str());
+}
+
+static inline
 void move_to_benchmarks_folder(const std::string& app_name) {
   string out_name = app_name;
   string app_dir =

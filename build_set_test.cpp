@@ -6875,6 +6875,25 @@ App max_pooling(const std::string& out_name) {
   return mp;
 }
 
+void max_pooling_test_sizes(const std::string& prefix) {
+  int W = 8;
+  int H = 8;
+  int D = 4;
+
+  int factor = 1;
+  string name = prefix + "_" + str(factor);
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+
+  max_pooling(name).realize(options, name, {H, W, D}, "in", factor);
+  max_pooling(name).realize_naive(options, name, {H, W, D});
+  move_to_benchmarks_folder(name + "_opt");
+  move_naive_to_benchmarks_folder(name);
+  assert(false);
+}
+
 void max_pooling_test(const std::string& prefix) {
   int W = 64;
   int H = 64;
@@ -8794,6 +8813,8 @@ void playground() {
 }
 
 void iccad_tests() {
+  max_pooling_test_sizes("mpsize");
+  assert(false);
   max_pooling_test("mp24");
   assert(false);
   ef_cartoon_fusion_iccad_sizes("psef_ct");
