@@ -281,7 +281,7 @@ void move_naive_to_benchmarks_folder(const std::string& app_name) {
   string app_dir =
     "./soda_codes/" + app_name + "_opt";
   string isl_dir =
-    "./soda_codes/" + app_name + "_opt/isl_dir/";
+    "./soda_codes/" + app_name + "_opt/isl_code/";
 
   system(("mkdir " + isl_dir).c_str());
   
@@ -305,7 +305,7 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   string synth_dir =
     "./soda_codes/" + app_name + "/our_code/";
   string isl_dir =
-    "./soda_codes/" + app_name + "/isl_dir/";
+    "./soda_codes/" + app_name + "/isl_code/";
 
   system(("mkdir " + app_dir).c_str());
   system(("mkdir " + synth_dir).c_str());
