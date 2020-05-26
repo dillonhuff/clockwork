@@ -6931,10 +6931,13 @@ App ef_cartoon(const std::string& out_name) {
   lp.func2d("bright_weights", "psef_weight", pt("bright"));
   lp.func2d("dark_weights", "psef_weight", pt("dark"));
 
-  int pyramid_levels = 2;
+  lp.func2d("bright_weights_normed", "psef_normalize_weights", {pt("bright_weights"), pt("dark_weights")});
+  lp.func2d("dark_weights_normed", "psef_normalize_weights", {pt("dark_weights"), pt("bright_weights")});
 
-  auto dark_weight_pyramid = laplace_pyramid(pyramid_levels, "dark_weights", lp);
-  auto bright_weight_pyramid = laplace_pyramid(pyramid_levels, "bright_weights", lp);
+  int pyramid_levels = 4;
+
+  auto dark_weight_pyramid = laplace_pyramid(pyramid_levels, "dark_weights_normed", lp);
+  auto bright_weight_pyramid = laplace_pyramid(pyramid_levels, "bright_weights_normed", lp);
 
   auto dark_pyramid = laplace_pyramid(pyramid_levels, "dark", lp);
   auto bright_pyramid = laplace_pyramid(pyramid_levels, "bright", lp);
@@ -6954,6 +6957,7 @@ App ef_cartoon(const std::string& out_name) {
   for (int i = merged_images.size() - 2; i >= 0; i--) {
     string merged_level = "final_merged_" + str(i);
     lp.func2d(merged_level, "average", {upsample(2, image), pt(merged_images.at(i))});
+    //lp.func2d(merged_level, "add", {upsample(2, image), pt(merged_images.at(i))});
     image = merged_level;
   }
 
@@ -7231,6 +7235,7 @@ void ef_cartoon_test(const std::string& out_name) {
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
     gp.realize(options, out_name, {size, size}, "in", 1);
+    move_to_benchmarks_folder(out_name + "_opt");
   }
   assert(false);
 }

@@ -149,13 +149,28 @@ T merge_exposures(T& bright, T& dark, T& bw, T& dw) {
 template<typename T>
 static inline
 T psef_weighted_merge(T& bright, T& dark, T& bright_weight, T& dark_weight) {
-  return (bright + dark) / 2;
+  //cout << "bw = " << bright_weight << endl;
+  //cout << "dw = " << dark_weight << endl;
+  //assert(bright_weight + dark_weight == 2);
+
+  return (bright_weight*bright + dark_weight*dark) / (bright_weight + dark_weight);
+  //return (bright_weight*bright + dark_weight*dark);
+  //return (bright + dark);
+}
+
+template<typename T>
+static inline
+T psef_normalize_weights(T& bright_weight, T& dark_weight) {
+  return max(1, bright_weight / 100);
 }
 
 template<typename T>
 static inline
 T psef_weight(T& src) {
-  return abs(128 - src.to_int());
+  auto sv = src.to_int();
+  return 128 - min(128, abs(128 - sv));
+  //return abs(128 - sv) > 100 ? 0 : 1;
+  //return min(max(0, 128 - src.to_int()), 255);
 }
 
 template<typename T>
@@ -180,6 +195,7 @@ T f_divide(T& src, T& a0) {
 template<typename T>
 static inline
 T average(T& src, T& a0) {
+  //return src + a0;
   return (src + a0) / 2;
 }
 
