@@ -7028,6 +7028,24 @@ App exposure_fusion_app(const std::string& out_name) {
   return lp;
 }
 
+void exposure_fusion_iccad_sizes(const std::string& prefix) {
+  vector<pair<int, int> > sizes{{16, 16}, {256, 256}, {1920, 1080}};
+  for (auto dims : sizes) {
+    int cols = dims.first;
+    int rows = dims.second;
+    
+    string name = prefix + "_" + str(cols) + "_" + str(rows);
+    App lp = exposure_fusion_app(name);
+    CodegenOptions options;
+    options.internal = true;
+    options.num_input_epochs = 1;
+    options.simplify_address_expressions = true;
+    options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
+    lp.realize_naive(options, name, cols, rows);
+    move_to_benchmarks_folder(name + "_opt");
+  }
+}
+
 void exposure_fusion_iccad_apps(const std::string& prefix) {
   vector<int> throughputs{1, 2, 4, 8, 16, 32};
   for (auto throughput : throughputs) {
@@ -7234,7 +7252,9 @@ void single_gaussian_pyramid_app_test() {
 
 void ef_cartoon_test(const std::string& out_name) {
   App gp = ef_cartoon(out_name);
-  int size = 200;
+  //int size = 200;
+  int cols = 1920;
+  int rows = 1080;
   {
     //gp.realize(options, out_name, {size, size}, "in", 1);
     CodegenOptions options;
@@ -7242,7 +7262,7 @@ void ef_cartoon_test(const std::string& out_name) {
     options.simplify_address_expressions = true;
     //options.use_custom_code_string = true;
     options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
-    gp.realize_naive(options, out_name, {size, size});
+    gp.realize_naive(options, out_name, {cols, rows});
     //move_to_benchmarks_folder(out_name + "_opt");
   }
   assert(false);
@@ -8720,7 +8740,9 @@ void playground() {
 }
 
 void iccad_tests() {
-  ef_cartoon_test("ef_cartoon");
+  exposure_fusion_iccad_sizes("psef");
+  assert(false);
+  ef_cartoon_test("ef_cartoon_1920");
   gaussian_pyramid_app_test("gp64x64");
   assert(false);
   //example_app_test();
