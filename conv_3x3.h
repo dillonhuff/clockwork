@@ -160,7 +160,7 @@ T psef_weighted_merge(T& bright, T& dark, T& bright_weight, T& dark_weight) {
 
 template<typename T>
 static inline
-T psef_normalize_weights(T& bright_weight, T& dark_weight) {
+T psef_normalize_weights(T& bright_weight) {
   return max(1, bright_weight / 100);
 }
 

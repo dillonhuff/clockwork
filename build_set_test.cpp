@@ -6964,8 +6964,8 @@ App ef_cartoon(const std::string& out_name) {
   lp.func2d("bright_weights", "psef_weight", pt("bright"));
   lp.func2d("dark_weights", "psef_weight", pt("dark"));
 
-  lp.func2d("bright_weights_normed", "psef_normalize_weights", {pt("bright_weights"), pt("dark_weights")});
-  lp.func2d("dark_weights_normed", "psef_normalize_weights", {pt("dark_weights"), pt("bright_weights")});
+  lp.func2d("bright_weights_normed", "psef_normalize_weights", {pt("bright_weights")});
+  lp.func2d("dark_weights_normed", "psef_normalize_weights", {pt("dark_weights")});
 
   int pyramid_levels = 4;
 
@@ -7055,6 +7055,19 @@ App exposure_fusion_app(const std::string& out_name) {
   return lp;
 }
 
+void ef_cartoon_iccad_unrolls(const std::string& prefix) {
+  vector<int> throughputs{1, 2, 4, 8, 16, 32};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = ef_cartoon(name);
+    int rows = 1080;
+    int cols = 1920;
+    lp.realize(name, cols, rows, throughput);
+    move_to_benchmarks_folder(name + "_opt");
+    move_naive_to_benchmarks_folder(name);
+  }
+}
+
 void ef_cartoon_fusion_iccad_sizes(const std::string& prefix) {
   vector<pair<int, int> > sizes{{16, 16}, {256, 256}, {1280, 720}, {1920, 1080}};
   for (auto dims : sizes) {
@@ -7088,6 +7101,7 @@ void ef_cartoon_fusion_iccad_sizes(const std::string& prefix) {
     cout << "Optimized: " << optimized << endl;
     assert(naive == optimized);
     move_to_benchmarks_folder(name + "_opt");
+    move_naive_to_benchmarks_folder(name);
   }
 }
 
@@ -7353,14 +7367,14 @@ void ef_cartoon_test(const std::string& out_name) {
 void gaussian_pyramid_app_test(const std::string& prefix) {
   string name = "gp";
   App gp = gaussian_pyramid_app(name, 3);
-  int size = 32;
+  int size = 64;
   {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
     options.debug_options.expect_all_linebuffers = true;
-    gp.realize(options, name, {size, size}, "in", 1);
+    gp.realize(options, name, {size, size}, "in", 2);
   }
   assert(false);
 
@@ -8821,16 +8835,18 @@ void playground() {
 }
 
 void iccad_tests() {
+  gaussian_pyramid_app_test("gp64x64");
+  assert(false);
+  ef_cartoon_fusion_iccad_sizes("psef_ct2");
+  ef_cartoon_iccad_unrolls("psef_ct2");
+  assert(false);
+
+  max_pooling_test("mp25");
+  assert(false);
   max_pooling_test_sizes("mpsize");
-  assert(false);
-  max_pooling_test("mp24");
-  assert(false);
-  ef_cartoon_fusion_iccad_sizes("psef_ct");
   exposure_fusion_iccad_sizes("psef");
   assert(false);
   ef_cartoon_test("ef_cartoon_1920");
-  gaussian_pyramid_app_test("gp64x64");
-  assert(false);
   //example_app_test();
   exposure_fusion();
 
