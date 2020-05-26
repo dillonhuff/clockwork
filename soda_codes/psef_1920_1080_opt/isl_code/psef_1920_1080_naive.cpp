@@ -8747,7 +8747,7 @@ void psef_1920_1080_naive(HWStream<hw_uint<16> >& /* get_args num ports = 1 */in
   psef_1920_1080_naive(in_off_chip, psef_1920_1080, 1);
 }
 #ifdef __VIVADO_SYNTH__
-#include "psef_1920_1080_naive.h"
+//#include "psef_1920_1080_naive.h"
 
 const int in_update_0_read_num_transfers = 2094649;
 const int psef_1920_1080_update_0_write_num_transfers = 2073600;
