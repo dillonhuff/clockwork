@@ -143,7 +143,7 @@ template<typename T>
 static inline
 T merge_exposures(T& bright, T& dark, T& bw, T& dw) {
   //return dark;
-  return (bw*bright) + (dw*dark);
+  return (bw*bright) + (dw*dark) / (bw + dw);
 }
 
 template<typename T>
