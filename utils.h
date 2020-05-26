@@ -300,6 +300,10 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("cp ./aws_collateral/Makefile " + synth_dir).c_str());
   system(("cp ./aws_collateral/utils.mk " + synth_dir).c_str());
 
+  system(("cp ./aws_collateral/xrt.ini " + isl_dir).c_str());
+  system(("cp ./aws_collateral/Makefile " + isl_dir).c_str());
+  system(("cp ./aws_collateral/utils.mk " + isl_dir).c_str());
+
   system(("mv set_app.sh " + app_dir).c_str());
   make_exe("set_app");
 
