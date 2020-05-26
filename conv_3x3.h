@@ -168,7 +168,9 @@ template<typename T>
 static inline
 T psef_weight(T& src) {
   auto sv = src.to_int();
-  return 128 - min(128, abs(128 - sv));
+  int diff = 128 - sv;
+  int abs_diff = diff < 0 ? -diff : diff;
+  return 128 - min(128, abs_diff);
   //return abs(128 - sv) > 100 ? 0 : 1;
   //return min(max(0, 128 - src.to_int()), 255);
 }
