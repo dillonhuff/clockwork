@@ -8794,6 +8794,8 @@ void playground() {
 }
 
 void iccad_tests() {
+  max_pooling_test("mp24");
+  assert(false);
   ef_cartoon_fusion_iccad_sizes("psef_ct");
   exposure_fusion_iccad_sizes("psef");
   assert(false);
@@ -8803,8 +8805,6 @@ void iccad_tests() {
   //example_app_test();
   exposure_fusion();
 
-  max_pooling_test("mp23");
-  assert(false);
 
   int index = 20;
   string istr = str(index);
