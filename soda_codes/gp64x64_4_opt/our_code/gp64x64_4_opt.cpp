@@ -1975,8 +1975,6 @@ void gp64x64_4_opt(HWStream<hw_uint<64> >& /* get_args num ports = 4 */in_off_ch
   gp64x64_4_opt(in_off_chip, gp64x64_4, 1);
 }
 #ifdef __VIVADO_SYNTH__
-#include "gp64x64_4_opt.h"
-
 const int gp64x64_4_update_0_write_num_transfers = 4096;
 const int in_update_0_read_num_transfers = 271179;
 

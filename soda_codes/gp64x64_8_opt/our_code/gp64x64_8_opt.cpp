@@ -2854,38 +2854,6 @@ inline void level_3_level_3_update_0_write_bundle_write(hw_uint<16>& level_3_upd
 
 
 // Operation logic
-inline void level_1_update_0(level_0_cache& level_0, level_1_cache& level_1, int d0, int d1) {
-	// Consume: level_0
-	auto level_0_0_c__0_value = level_0_level_1_update_0_read_bundle_read(level_0/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = reduce_gauss_unrolled_2(level_0_0_c__0_value);
-	// Produce: level_1
-	level_1_level_1_update_0_write_bundle_write(compute_result, level_1, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void gp64x64_8_update_0(level_3_cache& level_3, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */gp64x64_8, int d0, int d1) {
-	// Consume: level_3
-	auto level_3_0_c__0_value = level_3_gp64x64_8_update_0_read_bundle_read(level_3/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = id_unrolled_1(level_3_0_c__0_value);
-	// Produce: gp64x64_8
-	gp64x64_8.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void level_2_update_0(level_1_cache& level_1, level_2_cache& level_2, int d0, int d1) {
 	// Consume: level_1
 	auto level_1_0_c__0_value = level_1_level_2_update_0_read_bundle_read(level_1/* source_delay */, d0, d1);
@@ -2918,6 +2886,22 @@ inline void level_3_update_0(level_2_cache& level_2, level_3_cache& level_3, int
 
 }
 
+inline void gp64x64_8_update_0(level_3_cache& level_3, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */gp64x64_8, int d0, int d1) {
+	// Consume: level_3
+	auto level_3_0_c__0_value = level_3_gp64x64_8_update_0_read_bundle_read(level_3/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = id_unrolled_1(level_3_0_c__0_value);
+	// Produce: gp64x64_8
+	gp64x64_8.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void in_update_0(HWStream<hw_uint<128> >& /* buffer_args num ports = 8 */in_off_chip, in_cache& in, int d0, int d1) {
 	// Consume: in_off_chip
 	auto in_off_chip_0_c__0_value = in_off_chip.read();
@@ -2940,6 +2924,22 @@ inline void level_0_update_0(in_cache& in, level_0_cache& level_0, int d0, int d
 	auto compute_result = reduce_gauss_unrolled_4(in_0_c__0_value);
 	// Produce: level_0
 	level_0_level_0_update_0_write_bundle_write(compute_result, level_0, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void level_1_update_0(level_0_cache& level_0, level_1_cache& level_1, int d0, int d1) {
+	// Consume: level_0
+	auto level_0_0_c__0_value = level_0_level_1_update_0_read_bundle_read(level_0/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = reduce_gauss_unrolled_2(level_0_0_c__0_value);
+	// Produce: level_1
+	level_1_level_1_update_0_write_bundle_write(compute_result, level_1, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -3027,8 +3027,6 @@ void gp64x64_8_opt(HWStream<hw_uint<128> >& /* get_args num ports = 8 */in_off_c
   gp64x64_8_opt(in_off_chip, gp64x64_8, 1);
 }
 #ifdef __VIVADO_SYNTH__
-#include "gp64x64_8_opt.h"
-
 const int gp64x64_8_update_0_write_num_transfers = 4096;
 const int in_update_0_read_num_transfers = 137148;
 

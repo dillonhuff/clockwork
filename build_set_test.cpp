@@ -7376,12 +7376,12 @@ void gaussian_pyramid_app_test(const std::string& prefix) {
     options.debug_options.expect_all_linebuffers = true;
     gp.realize(options, name, {size, size}, "in", 2);
   }
-  assert(false);
+  //assert(false);
 
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
-  //options.unroll_factors_as_pad = true;
+  options.unroll_factors_as_pad = true;
   gp.realize_naive(options, name, size, size);
 
   std::vector<std::string> naive =
@@ -7389,7 +7389,7 @@ void gaussian_pyramid_app_test(const std::string& prefix) {
   std::vector<std::string> optimized =
     run_regression_tb(name + "_opt");
   assert(naive == optimized);
-  assert(false);
+  //assert(false);
 
   vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
   for (auto factor : unroll_factors) {
@@ -7401,6 +7401,9 @@ void gaussian_pyramid_app_test(const std::string& prefix) {
 
     gaussian_pyramid_app(name, 4).realize(options, name, {64, 64}, "in", factor);
     move_to_benchmarks_folder(name + "_opt");
+    if (factor == 16) {
+      assert(false);
+    }
   }
 
 }

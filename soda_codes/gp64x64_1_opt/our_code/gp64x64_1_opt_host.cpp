@@ -3,7 +3,6 @@
 #include <fstream>
 #include <vector>
 #include <cstdlib>
-#include "bitmap_image.hpp"
 
 int main(int argc, char **argv) {
   srand(234);
@@ -106,35 +105,18 @@ nsduration = end - start;
 
   q.finish();
 
-  bitmap_image output(1024, 1024);
-  for (int r = 0; r < 1024; r++) {
-    for (int c = 0; c < 1024; c++) {
-      int ind = 1024*r + c;
-      rgb_t pix;
-      uint16_t val =
-        ((uint16_t*)(gp64x64_1_update_0_write.data()))[ind];
-      val = val >> 8;
-      pix.red = val;
-      pix.green = val;
-      pix.blue = val;
-      output.set_pixel(c, r, pix);
-    }
+  double dnsduration = ((double)nsduration);
+  double dsduration = dnsduration / ((double)1000000000);
+  double dbytes = total_size_bytes;
+  double bpersec = (dbytes / dsduration);
+  double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
+std::cout << "bytes / sec = " << bpersec << std::endl;
+std::cout << "GB / sec = " << gbpersec << std::endl;
+printf("Execution time = %f (sec) \n", dsduration);
+  std::ofstream regression_result("gp64x64_1_update_0_write_accel_result.csv");
+  for (int i = 0; i < gp64x64_1_update_0_write_DATA_SIZE; i++) {
+    regression_result << ((uint16_t*) (gp64x64_1_update_0_write.data()))[i] << std::endl;
   }
-
-  std::cout << "Saving output" << std::endl;
-  output.save_image("gp64.bmp");
-  //double dnsduration = ((double)nsduration);
-  //double dsduration = dnsduration / ((double)1000000000);
-  //double dbytes = total_size_bytes;
-  //double bpersec = (dbytes / dsduration);
-  //double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
-  //std::cout << "bytes / sec = " << bpersec << std::endl;
-  //std::cout << "GB / sec = " << gbpersec << std::endl;
-  //printf("Execution time = %f (sec) \n", dsduration);
-  //std::ofstream regression_result("gp64x64_1_update_0_write_accel_result.csv");
-  //for (int i = 0; i < gp64x64_1_update_0_write_DATA_SIZE; i++) {
-    //regression_result << ((uint16_t*) (gp64x64_1_update_0_write.data()))[i] << std::endl;
-  //}
 
   return 0;
 }

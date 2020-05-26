@@ -316,13 +316,9 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
     out << tab(4) << "auto val = (pix.red + pix.green + pix.blue) / 3;" << endl;
     out << tab(4) << "set_at<" << l*pixel_width << ", " << lanes*pixel_width << ", " << pixel_width << ">(" <<
       "packed, val);" << endl;
-    //out << tab(4) << in_rep.second << "_channel.write(val);" << endl;
-
-    //out << tab(4) << in_rep.second << "_channel.write(val);" << endl;
     out << tab(3) << "} else {" << endl;
     out << tab(4) << "set_at<" << l*pixel_width << ", " << lanes*pixel_width << ", " << pixel_width << ">(" <<
       "packed, 0);" << endl;
-    //out << tab(4) << in_rep.second << "_channel.write(0);" << endl;
     out << tab(3) << "}" << endl;
     out << tab(3) << "}" << endl;
 
@@ -334,28 +330,44 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
 
   out << tab(1) << prg.name << sep_list(args, "(", ")", ", ") << ";" << endl;
 
-  auto out_rep = pick(outputs(buffers, prg));
-  int out_cols = prg.buffer_bounds[out_rep.first].at(0);
-  int out_rows = prg.buffer_bounds[out_rep.first].at(1);
-  vector<string> sizes;
-  for (auto sz : prg.buffer_bounds[out_rep.first]) {
-    sizes.push_back(str(sz));
+  {
+    auto out_rep = pick(outputs(buffers, prg));
+    auto& out_buf = buffers.at(out_rep.first);
+    string out_bundle_tp = out_buf.bundle_type_string(out_rep.second);
+    int pixel_width = out_buf.port_widths;
+    int lanes = out_buf.port_bundles.at(out_rep.second).size();
+    int out_cols = prg.buffer_bounds[out_rep.first].at(0);
+    int out_rows = prg.buffer_bounds[out_rep.first].at(1);
+    vector<string> sizes;
+    for (auto sz : prg.buffer_bounds[out_rep.first]) {
+      sizes.push_back(str(sz));
+    }
+
+    out << tab(1) << "bitmap_image output(" << sep_list(sizes, "", "", ", ") << ");" << endl;
+    out << tab(1) << "for (int r = 0; r < " << out_rows << "; r++) {" << endl;
+    out << tab(2) << "for (int cl = 0; cl < " << out_cols << " / " << lanes << "; cl++) {" << endl;
+    out << tab(3) << out_bundle_tp << " packed;" << endl;
+
+    out << tab(3) << "auto packed_val = " << out_rep.second << "_channel.read();" << endl;
+    vector<string> unpacked_values =
+      split_bv(3, out, "packed_val", pixel_width, lanes);
+    for (int l = 0; l < lanes; l++) {
+      out << tab(3) << "{" << endl;
+      out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
+      string val = unpacked_values.at(l);
+      //out << tab(3) << "auto val_ " << l << " = " << out_rep.second << "_channel.read();" << endl;
+      out << tab(3) << "rgb_t pix;" << endl;
+      out << tab(3) << "pix.red = " << val << ";" << endl;
+      out << tab(3) << "pix.green = " << val << ";" << endl;
+      out << tab(3) << "pix.blue = " << val << ";" << endl;
+      out << tab(3) << "output.set_pixel(c, r, pix);" << endl;
+      out << tab(2) << "}" << endl;
+    }
+    out << tab(1) << "}" << endl;
+    out << tab(1) << "}" << endl;
+    out << tab(1) << "output.save_image(\"./images/" << prg.name << "_bmp_out.bmp\");" << endl;
+    out << "}" << endl;
   }
-
-  out << tab(1) << "bitmap_image output(" << sep_list(sizes, "", "", ", ") << ");" << endl;
-  out << tab(1) << "for (int r = 0; r < " << out_rows << "; r++) {" << endl;
-  out << tab(2) << "for (int c = 0; c < " << out_cols << "; c++) {" << endl;
-  out << tab(3) << "auto val = " << out_rep.second << "_channel.read();" << endl;
-  out << tab(3) << "rgb_t pix;" << endl;
-  out << tab(3) << "pix.red = val;" << endl;
-  out << tab(3) << "pix.green = val;" << endl;
-  out << tab(3) << "pix.blue = val;" << endl;
-  out << tab(3) << "output.set_pixel(c, r, pix);" << endl;
-  out << tab(2) << "}" << endl;
-  out << tab(1) << "}" << endl;
-  out << tab(1) << "output.save_image(\"./images/" << prg.name << "_bmp_out.bmp\");" << endl;
-  out << "}" << endl;
-
 
 }
 
