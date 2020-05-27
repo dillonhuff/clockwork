@@ -893,8 +893,7 @@ void conv_1d_bc_test() {
 
   auto c = prg.add_loop("c", 0, 10);
   auto read0 = c->add_op("read0");
-  //read0->add_load("M", {{"c < 0", "0"}, {"0 <= c and c <= 9", "c"}, {"c > 9", "9"}});
-  //"min(c, 9)");
+  
   read0->add_load("M", "min(c, 9)");
   read0->add_load("M", "min(c + 1, 9)");
   read0->add_load("M", "min(c + 2, 9)");
@@ -939,10 +938,11 @@ prog conv_1d_bc() {
   auto c = prg.add_loop("c", 0, 10);
   auto compute = c->add_op("compute_output");
   compute->add_function("accumulate_3");
+  compute->add_load("M", {{"c < 2", "0"}, {"0 <= c <= 7", "c"}, {"7 < c <= 8", "9"}, {"c > 8", "8"}});
   compute->add_load("M", "min(c, 9)");
   compute->add_load("M", "min(c + 1, 9)");
   compute->add_load("M", "min(c + 2, 9)");
-  compute->add_store("out", "c");
+//  compute->add_store("out", "c");
   return prg;
 }
 
