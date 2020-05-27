@@ -656,6 +656,7 @@ struct prog {
   }
 
   umap* producer_map() {
+cout << "99999999999999999999999999999999999999999999999999999999999999999" << endl;
     auto ivars = iter_vars();
     auto doms = domains();
 
@@ -724,6 +725,7 @@ struct prog {
 
 
   map<op*, isl_map*> producer_maps() {
+cout << "1111111111111111111111111111111111111111111111111111111111111111111111111" << endl;
     map<op*, isl_map*> m;
     auto ivars = iter_vars();
     auto doms = domains();
@@ -808,6 +810,7 @@ struct prog {
   }
 
   umap* producer_map(const std::string& buf_name) {
+cout << "77777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777" << endl;
     auto ivars = iter_vars();
     auto doms = domains();
 
@@ -908,7 +911,7 @@ cout << "-----------------------------------------------------------------------
       m = unn(m, pmap); 
     }
     //cout << tab(1) << "m = " << str(m) << endl;
-    assert(false);
+//    assert(false);
     return m;
   }
 
