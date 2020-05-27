@@ -861,13 +861,10 @@ cout << "op name  " << op->name << " " << ivar_str << " " << p << endl;
           umap* vmap =
             its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
           pmap = unn(pmap, vmap);
-          //cout << tab(1) << "pmap = " << str(pmap) << endl;
         }
       }
       m = unn(m, pmap);
     }
-    //cout << "m = " << str(m) << endl;
-    //assert(false);
     return m;
   }
 
@@ -883,43 +880,31 @@ cout << "op name  " << op->name << " " << ivar_str << " " << p << endl;
       auto dom = map_find(op, doms);
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
+      
+      // for boundary condition expressions
       for (auto top_pair : op->consumes_pair()) {
-      cout << "first for loop" << endl;
-//      cout<< " op name " << op->name << " ivar str " << ivar_str << endl;
-      string test = "{ ";
+      string cond = "{ ";
         for (auto sec_pair : top_pair.second) {
-          test = test + string(op->name + ivar_str + " -> M[" + sec_pair.second + "] : " + sec_pair.first + "; ");
-//        cout << "op name " << op->name << " ivar str " << ivar_str << " p " << sec_pair.second << " first " << sec_pair.first << endl;
-//        cout << "to uset dom " << to_uset(dom) << endl;
-
+          cond = cond + string(op->name + ivar_str + " -> M[" + sec_pair.second + "] : " + sec_pair.first + "; ");
         }
-        test = test.substr(0, test.length() - 2);
-        test = test + string(" }");
+        cond = cond.substr(0, cond.length() - 2);
+        cond = cond + string(" }");
      
-        cout << test.c_str() << endl;
-        umap* vmap = its(isl_union_map_read_from_str(ctx, test.c_str()), to_uset(dom));
-        cout << "vmap : " << str(vmap) << endl;
+        umap* vmap = its(isl_union_map_read_from_str(ctx, cond.c_str()), to_uset(dom));
         pmap = unn(pmap, vmap);
      }
      m = unn(m, pmap);
-cout << "m: " << str(m) << endl;
-       
-cout << "---------------------------------------------------------------------------" << endl;
-      for (auto p : op-> consumes()){
+      
+     // original case
+     for (auto p : op-> consumes()){
       cout << "second for loop" << endl;
        umap* vmap =
           its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
 
-	cout << string("{ " + op->name + ivar_str + " -> " + p + " }").c_str() << endl;
-        cout << tab(1) << "vmap = " << str(vmap) << endl;
-/*        cout << "op name " << op->name << " ivar str " << ivar_str << " p " << p << endl;
-        cout << "to uset dom " << to_uset(dom) << endl;*/
         pmap = unn(pmap, vmap);
       }
       m = unn(m, pmap); 
     }
-    //cout << tab(1) << "m = " << str(m) << endl;
-//    assert(false);
     return m;
   }
 
