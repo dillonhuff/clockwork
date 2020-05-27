@@ -227,7 +227,7 @@ struct ir_node {
     return ps;
   }
 
-  vector<pair<string, vector<pair<string, string>>>> consumes(int i) const {
+  vector<pair<string, vector<pair<string, string>>>> consumes_pair() const {
     return consume_locs_pair;
   }
 
@@ -871,7 +871,7 @@ cout << "77777777777777777777777777777777777777777777777777777777777777777777777
       auto dom = map_find(op, doms);
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
-      for (auto top_pair : op->consumes(0)) {
+      for (auto top_pair : op->consumes_pair()) {
       cout << "first for loop" << endl;
 //      cout<< " op name " << op->name << " ivar str " << ivar_str << endl;
       string test = "{ ";
