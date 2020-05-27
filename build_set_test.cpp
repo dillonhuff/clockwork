@@ -942,7 +942,7 @@ prog conv_1d_bc() {
   compute->add_load("M", "min(c, 9)");
   compute->add_load("M", "min(c + 1, 9)");
   compute->add_load("M", "min(c + 2, 9)");
-//  compute->add_store("out", "c");
+  compute->add_store("out", "c");
   return prg;
 }
 
