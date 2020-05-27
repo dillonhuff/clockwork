@@ -6969,8 +6969,8 @@ App ef_cartoon(const std::string& out_name) {
 
   int pyramid_levels = 4;
 
-  auto dark_weight_pyramid = laplace_pyramid(pyramid_levels, "dark_weights_normed", lp);
-  auto bright_weight_pyramid = laplace_pyramid(pyramid_levels, "bright_weights_normed", lp);
+  auto dark_weight_pyramid = gauss_pyramid(pyramid_levels, "dark_weights_normed", lp);
+  auto bright_weight_pyramid = gauss_pyramid(pyramid_levels, "bright_weights_normed", lp);
 
   auto dark_pyramid = laplace_pyramid(pyramid_levels, "dark", lp);
   auto bright_pyramid = laplace_pyramid(pyramid_levels, "bright", lp);
@@ -7348,16 +7348,20 @@ void single_gaussian_pyramid_app_test() {
 void ef_cartoon_test(const std::string& out_name) {
   App gp = ef_cartoon(out_name);
   //int size = 200;
-  int cols = 1920;
-  int rows = 1080;
+  int cols = 256;
+  int rows = 256;
   {
-    //gp.realize(options, out_name, {size, size}, "in", 1);
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    gp.realize(options, out_name, {cols, rows}, "in", 1);
+    //CodegenOptions options;
+    //options.internal = true;
+    //options.simplify_address_expressions = true;
     //options.use_custom_code_string = true;
-    options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
-    gp.realize_naive(options, out_name, {cols, rows});
+    //options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
+    //gp.realize_naive(options, out_name, {cols, rows});
     //move_to_benchmarks_folder(out_name + "_opt");
   }
   assert(false);
@@ -8838,6 +8842,8 @@ void playground() {
 }
 
 void iccad_tests() {
+  ef_cartoon_test("ef_cartoon_gauss");
+  assert(false);
   ef_cartoon_fusion_iccad_sizes("psef_ct2");
   ef_cartoon_iccad_unrolls("psef_ct2");
   assert(false);
@@ -8850,7 +8856,6 @@ void iccad_tests() {
   max_pooling_test_sizes("mpsize");
   exposure_fusion_iccad_sizes("psef");
   assert(false);
-  ef_cartoon_test("ef_cartoon_1920");
   //example_app_test();
   exposure_fusion();
 
