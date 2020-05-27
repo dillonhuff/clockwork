@@ -34,6 +34,7 @@ struct ir_node {
   std::string name;
   // Locations written
   std::vector<pair<buffer_name, address> > produce_locs;
+  std::vector<pair<buffer_name, std::vector<pair<std::string, std::string>>>> produce_locs_pair;
   // Locations read
   std::vector<pair<buffer_name, address> > consume_locs;
   std::vector<pair<buffer_name, std::vector<pair<std::string, std::string>>>> consume_locs_pair;
@@ -652,7 +653,6 @@ struct prog {
   }
 
   umap* producer_map() {
-cout << "99999999999999999999999999999999999999999999999999999999999999999" << endl;
     auto ivars = iter_vars();
     auto doms = domains();
 
@@ -664,10 +664,15 @@ cout << "99999999999999999999999999999999999999999999999999999999999999999" << e
       auto dom = map_find(op, doms);
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
+
+      for (auto top_pair : op->produces_pair()) {
+        
+      }
       for (auto p : op->produces()) {
         umap* vmap =
           its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
         pmap = unn(pmap, vmap);
+cout << "op name  " << op->name << " " << ivar_str << " " << p << endl;
       }
       m = unn(m, pmap);
     }
@@ -721,7 +726,6 @@ cout << "99999999999999999999999999999999999999999999999999999999999999999" << e
 
 
   map<op*, isl_map*> producer_maps() {
-cout << "1111111111111111111111111111111111111111111111111111111111111111111111111" << endl;
     map<op*, isl_map*> m;
     auto ivars = iter_vars();
     auto doms = domains();
@@ -806,7 +810,6 @@ cout << "11111111111111111111111111111111111111111111111111111111111111111111111
   }
 
   umap* producer_map(const std::string& buf_name) {
-cout << "77777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777" << endl;
     auto ivars = iter_vars();
     auto doms = domains();
 
