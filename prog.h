@@ -239,6 +239,10 @@ struct ir_node {
     return ps;
   }
 
+  vector<pair<string, vector<pair<string, string>>>> produces_pair() const {
+    return produce_locs_pair;
+  }
+
   void add_store(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2) {
     add_store(b, d0 + ", " + d1 + ", " + d2);
   }
