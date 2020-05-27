@@ -669,6 +669,7 @@ class UBuffer {
                 return int_lower_bound(qp) == 1;
             }
         }
+        cout << "Buffer: " << name << " cannot find port at " << str(pt) << endl;
         assert(false);
         return false;
     }

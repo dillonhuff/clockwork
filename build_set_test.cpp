@@ -1040,103 +1040,11 @@ map<string, umap*> get_op2sched(map<string, UBuffer>& buffers_opt, umap* opt_sch
 
 }
 
-void shift_reg_test() {
+void lattice_schedule_buf(isl_ctx* ctx, map<string, UBuffer> & buffers_opt, umap* opt_sched, HWconstraints sram) {
 
-  prog prg;
-  prg.compute_unit_file = "vec_access.h";
-  prg.name = "vec";
-  prg.add_input("in");
-  prg.add_output("out");
-  //prg.buffer_port_widths["T"] = 32*3;
-  prg.buffer_port_widths["in"] = 32;
-  prg.buffer_port_widths["out"] = 32;
-
-  auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
-  auto write = p->add_op("input");
-  write->add_load("in", "po, pi");
-  write->add_store("buf", "po, pi");
-
-  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 14);
-  auto read = q->add_op("output");
-  for (size_t wy = 0; wy < 3; wy ++)
-      for (size_t wx = 0; wx < 3; wx ++) {
-        read->add_load("buf", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
-      }
-  read->add_store("out", "po, pi");
-
-  //optimized first time
-  auto buffers_opt = build_buffers(prg);
-  CodegenOptions opt;
-  opt.conditional_merge = true;
-  opt.merge_threshold = 4;
-  buffers_opt.at("buf").generate_bank_and_merge(opt);
-  cout << buffers_opt.at("buf") << endl;
-  auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
-  for (auto buf : rewrite_buf) {
-    cout << buf << endl;
-    buffers_opt[buf.name] = buf;
-  }
-}
-
-
-void bankmerge_vec_test() {
-
-  prog prg;
-  prg.compute_unit_file = "vec_access.h";
-  prg.name = "vec";
-  prg.add_input("in");
-  prg.add_output("out");
-  //prg.buffer_port_widths["T"] = 32*3;
-  prg.buffer_port_widths["in"] = 32;
-  prg.buffer_port_widths["out"] = 32;
-
-  auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
-  auto write = p->add_op("input");
-  write->add_load("in", "po, pi");
-  write->add_store("buf", "po, pi");
-
-  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 16);
-  auto read = q->add_op("output");
-  for (size_t wy = 0; wy < 3; wy ++)
-      for (size_t wx = 0; wx < 1; wx ++) {
-        read->add_load("buf", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
-      }
-  read->add_store("out", "po, pi");
-
-  //optimized first time
-  auto buffers_opt = build_buffers(prg);
-  CodegenOptions opt;
-  opt.conditional_merge = true;
-  opt.merge_threshold = 4;
-  buffers_opt.at("buf").generate_bank_and_merge(opt);
-  cout << buffers_opt.at("buf") << endl;
-  auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
-  for (auto buf : rewrite_buf) {
-    cout << buf << endl;
-    buffers_opt[buf.name] = buf;
-  }
-  buffers_opt.erase("buf");
-  buffer_vectorization("buf1", 1, 4, buffers_opt);
-
-  //second time
-  //auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
-  auto opt_sched = optimized_schedule_from_buffers_flatten(buffers_opt, true);
-  cout << codegen_c(opt_sched) << endl;
-  cout << str(opt_sched) << endl;
-
-  buffers_opt.erase("buf0");
-  buffers_opt.erase("in");
-  buffers_opt.erase("out");
   //get a map from op to schedule
   auto op2sched = get_op2sched(buffers_opt, opt_sched);
-  /*
-  auto opt_sched_map= get_maps_in_map(opt_sched);
-  auto opt_sched_flatten_map = get_maps_in_map(opt_sched_flatten);
-  for (auto m : opt_sched_map) {
-    string op_name = m.first;
-    auto rev_trans = flatten_map_domain_trans(m.second, 1);
-    op2sched.insert(make_pair(op_name, dot(rev_trans, opt_sched_flatten_map.at(op_name))));
-  }*/
+
   for (auto it: op2sched) {
     cout <<"\tOP: " << it.first << " has sched: " << str(it.second) << endl;
   }
@@ -1144,7 +1052,7 @@ void bankmerge_vec_test() {
   //compute the bound of the schedule
   cout << str(lexmin(range(opt_sched))) << endl << str(lexmax(range(opt_sched))) <<endl;
   auto bound = Box(opt_sched);
-  isl_set* sched_set = bound.to_set(prg.ctx, "");
+  isl_set* sched_set = bound.to_set(ctx, "");
   auto bset_vec = constraints(sched_set);
   for (auto bset: bset_vec) {
       cout << "cosntraints: " << str(bset) << endl;
@@ -1156,7 +1064,6 @@ void bankmerge_vec_test() {
   for (auto buf : buffers_opt) {
       update_map[buf.first] = false;
   }
-  HWconstraints sram = {4, 1, 512, false, true};
   buffers_opt.at("buf1_sram").hardware = sram;
   cout << str(sched_set) << endl;
   auto point_vec = get_points(sched_set);
@@ -1173,7 +1080,7 @@ void bankmerge_vec_test() {
           //cout << "Buffer: " << buf.name << endl;
           //cout << str(point) << " read = " << buf.is_rd(point) << endl;
           //cout << str(point) << " write = " << buf.is_wr(point) << endl;
-          //cout << endl;
+          //tcout << endl;
 
           //first pass to update cycle
           //FIXME: possible bug. we need to add the buffer constraints of rd/wr same cycle
@@ -1237,17 +1144,129 @@ void bankmerge_vec_test() {
           }
       }
   }
-  vector<int> sram_read = buffers_opt.at("buf1_sram").read_cycle;
-  vector<int> sram_write = buffers_opt.at("buf1_sram").write_cycle;
-  auto read_addr = buffers_opt.at("buf1_sram").read_addr;
-  auto write_addr = buffers_opt.at("buf1_sram").write_addr;
-  emit_address_stream("SRAM_address", false, sram_read, sram_write, read_addr, write_addr);
+}
 
-  sram_read = buffers_opt.at("buf1_tb").read_cycle;
-  sram_write = buffers_opt.at("buf1_agg").write_cycle;
-  read_addr = buffers_opt.at("buf1_tb").read_addr;
-  write_addr = buffers_opt.at("buf1_agg").write_addr;
-  emit_address_stream("TOP_address", true, sram_read, sram_write, read_addr, write_addr);
+void emit_address_stream2file(map<string, UBuffer> buffers_opt, string read_buf, string write_buf, string file_name, bool is_top) {
+  vector<int> sram_read = buffers_opt.at(read_buf).read_cycle;
+  vector<int> sram_write = buffers_opt.at(write_buf).write_cycle;
+  auto read_addr = buffers_opt.at(read_buf).read_addr;
+  auto write_addr = buffers_opt.at(write_buf).write_addr;
+  emit_address_stream(file_name, is_top, sram_read, sram_write, read_addr, write_addr);
+
+}
+
+
+void shift_reg_test() {
+
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "vec";
+  prg.add_input("in");
+  prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+
+  auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
+  auto write = p->add_op("input");
+  write->add_load("in", "po, pi");
+  write->add_store("buf", "po, pi");
+
+  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 14);
+  auto read = q->add_op("output");
+  for (size_t wy = 0; wy < 3; wy ++)
+      for (size_t wx = 0; wx < 3; wx ++) {
+        read->add_load("buf", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+      }
+  read->add_store("out", "po, pi");
+
+  //optimized first time
+  auto buffers_opt = build_buffers(prg);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  buffers_opt.at("buf").generate_bank_and_merge(opt);
+  cout << buffers_opt.at("buf") << endl;
+  auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
+  for (auto buf : rewrite_buf) {
+    cout << buf << endl;
+    buffers_opt[buf.name] = buf;
+  }
+  buffers_opt.erase("buf");
+  buffer_vectorization("buf1", 1, 4, buffers_opt);
+
+  //auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
+  auto opt_sched = optimized_schedule_from_buffers_flatten(buffers_opt, true);
+  cout << codegen_c(opt_sched) << endl;
+
+  buffers_opt.erase("buf0");
+  buffers_opt.erase("in");
+  buffers_opt.erase("out");
+
+  HWconstraints sram = {4, 1, 512, false, true};
+
+  lattice_schedule_buf(prg.ctx, buffers_opt, opt_sched, sram);
+
+  emit_address_stream2file(buffers_opt, "buf1_sram", "buf1_sram", "SRAM_address", false);
+  emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "TOP_address", true);
+}
+
+void bankmerge_vec_test() {
+
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "vec";
+  prg.add_input("in");
+  prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+
+  auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
+  auto write = p->add_op("input");
+  write->add_load("in", "po, pi");
+  write->add_store("buf", "po, pi");
+
+  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 16);
+  auto read = q->add_op("output");
+  for (size_t wy = 0; wy < 3; wy ++)
+      for (size_t wx = 0; wx < 1; wx ++) {
+        read->add_load("buf", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+      }
+  read->add_store("out", "po, pi");
+
+  //optimized first time
+  auto buffers_opt = build_buffers(prg);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  buffers_opt.at("buf").generate_bank_and_merge(opt);
+  cout << buffers_opt.at("buf") << endl;
+  auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
+  for (auto buf : rewrite_buf) {
+    cout << buf << endl;
+    buffers_opt[buf.name] = buf;
+  }
+  buffers_opt.erase("buf");
+  buffer_vectorization("buf1", 1, 4, buffers_opt);
+
+  //second time
+  //auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
+  auto opt_sched = optimized_schedule_from_buffers_flatten(buffers_opt, true);
+  cout << codegen_c(opt_sched) << endl;
+  cout << str(opt_sched) << endl;
+
+  buffers_opt.erase("buf0");
+  buffers_opt.erase("in");
+  buffers_opt.erase("out");
+
+  HWconstraints sram = {4, 1, 512, false, true};
+
+  lattice_schedule_buf(prg.ctx, buffers_opt, opt_sched, sram);
+
+  emit_address_stream2file(buffers_opt, "buf1_sram", "buf1_sram", "SRAM_address", false);
+  emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "TOP_address", true);
+
 }
 
 void auto_vec_test() {
@@ -7545,8 +7564,8 @@ void playground() {
 
 void application_tests() {
   shift_reg_test();
-  bankmerge_vec_test();
   assert(false);
+  bankmerge_vec_test();
   auto_vec_test();
   flatten_sched_test();
   pointwise_app_test();
