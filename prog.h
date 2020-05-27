@@ -257,6 +257,11 @@ struct ir_node {
     produce_locs.push_back({b, loc});
   }
 
+//  void add_store(const std::string& b, const std::vector<std::pair<std::string, std::string>> loc) {
+//    assert(!is_loop);
+//    produce_locs_pair.push_back({b, loc});
+//  }
+
   void populate_iteration_domains(map<op*, vector<string> >& sched_vecs, vector<string>& active_vecs) {
     if (is_loop) {
       auto nds = active_vecs;
