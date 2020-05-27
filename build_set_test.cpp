@@ -8842,10 +8842,11 @@ void playground() {
 }
 
 void iccad_tests() {
+  ef_cartoon_iccad_unrolls("psef_gpct3");
+  assert(false);
   ef_cartoon_test("ef_cartoon_gauss");
   assert(false);
   ef_cartoon_fusion_iccad_sizes("psef_ct2");
-  ef_cartoon_iccad_unrolls("psef_ct2");
   assert(false);
 
   gaussian_pyramid_app_test("gp64x64");
