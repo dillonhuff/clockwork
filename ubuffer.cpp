@@ -378,6 +378,33 @@ void generate_vivado_tcl(UBuffer& buf) {
   generate_vivado_tcl(buf.name);
 }
 
+void generate_coreir(CodegenOptions& options, UBuffer& buf) {
+    CoreIR::Context* context = CoreIR::newContext();
+    CoreIRLoadLibrary_commonlib(context);
+    auto ns = context->getNamespace("global");
+    vector<pair<string, CoreIR::Type*> >
+        ub_field{{"clk", context->Named("coreir.clkIn")},
+                {"reset", context->BitIn()}};
+    for (auto inpt: buf.get_in_ports()) {
+        ub_field.push_back(make_pair(inpt + "_en", context->BitIn()));
+        ub_field.push_back(make_pair(inpt, context->BitIn()->Arr(buf.port_widths)));
+    }
+    for (auto outpt: buf.get_out_ports()) {
+        ub_field.push_back(make_pair(outpt + "_valid", context->BitIn()));
+        ub_field.push_back(make_pair(outpt, context->BitIn()->Arr(buf.port_widths)));
+    }
+
+    CoreIR::RecordType* utp = context->Record(ub_field);
+    auto ub = ns->newModuleDecl(buf.name + "_ub", utp);
+    auto def = ub->newModuleDef();
+    ub->setDef(def);
+    if(!saveToFile(ns, "ubuffer.json")) {
+        cout << "Could not save ubuffer coreir" << endl;
+        context->die();
+    }
+    deleteContext(context);
+}
+
 void generate_code_prefix(CodegenOptions& options,
     std::ostream& out,
     UBuffer& buf) {
@@ -1170,6 +1197,7 @@ vector<UBuffer> UBuffer::port_grouping(int port_width) {
             new_ub.add_out_pt(pt_name, dom, out_map_merge, sched);
             new_ub.add_access_pattern(pt_name, ::name(dom), new_ub.name);
             new_ub.port_bundles[::name(dom)+ "_write"].push_back(pt_name);
+            delay_map.insert(make_pair(pt_name, bk.delay_map));
             bank_pool.pop();
             cnt ++;
         }

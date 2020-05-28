@@ -1,6 +1,8 @@
 #pragma once
 
 #include "qexpr.h"
+#include "coreir.h"
+#include "coreir/libs/commonlib.h"
 
 using namespace std;
 
@@ -641,6 +643,9 @@ class UBuffer {
     vector<int> read_cycle, write_cycle;
     vector<vector<int> > read_addr, write_addr;
     HWconstraints hardware;
+    //This identify how many shift register are connect,
+    //and what is the depth of the shift register
+    map<string, map<string, int>> delay_map;
 
     //SRAM specific
     //Save the pair of read port bundle name and op pos point
@@ -1480,7 +1485,7 @@ bank compute_bank_info(
 vector<string> dimension_var_decls(const std::string& pt, UBuffer& buf);
 vector<string> dimension_var_args(const std::string& pt, UBuffer& buf);
 
-
+void generate_coreir(CodegenOptions& options, UBuffer& buf);
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);
 void generate_hls_code(std::ostream& out, UBuffer& buf);
 void generate_hls_code(UBuffer& buf);
