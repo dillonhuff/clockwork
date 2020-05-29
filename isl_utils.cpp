@@ -1693,9 +1693,9 @@ isl_map* get_shift_map(isl_map* m) {
       //cout << str(c) << "Is involved " <<  endl;
       auto val = isl_val_get_num_si(isl_constraint_get_constant_val(c));
       if (isl_constraint_is_lower_bound(c, isl_dim_in, dom_dim - 1))
-        c = isl_constraint_set_constant_si(c , val-1);
-      else
         c = isl_constraint_set_constant_si(c , val+1);
+      else
+        c = isl_constraint_set_constant_si(c , val-1);
       //cout << "rewrite: " << str(c) << endl;
     }
   }
@@ -1722,7 +1722,7 @@ isl_map* pad_to_domain_map(isl_map* m, int depth) {
     if (involve && !isl_constraint_is_equality(c)) {
       //cout << str(c) << "Is involved " <<  endl;
       auto val = isl_val_get_num_si(isl_constraint_get_constant_val(c));
-      if (isl_constraint_is_upper_bound(c, isl_dim_in, dom_dim - 1))
+      if (isl_constraint_is_lower_bound(c, isl_dim_in, dom_dim - 1))
         c = isl_constraint_set_constant_si(c , val+depth);
       //cout << "rewrite: " << str(c) << endl;
     }
@@ -2328,6 +2328,22 @@ bool lex_lt_pt(isl_point* const l, isl_point* const r) {
         if (l_pt.at(i) < r_pt.at(i))
             return true;
         if (l_pt.at(i) > r_pt.at(i))
+            return false;
+    }
+    //cout << "L: " << str(l) << ", R: " << str(r) << " is equal" << endl;
+    ///assert(false);
+    //equal return true
+    return false;
+}
+
+bool lex_gt_pt(isl_point* const l, isl_point* const r) {
+    vector<int> l_pt = parse_pt(l);
+    vector<int> r_pt = parse_pt(r);
+    assert(l_pt.size() == r_pt.size());
+    for (size_t i = 0; i < l_pt.size(); i ++) {
+        if (l_pt.at(i) > r_pt.at(i))
+            return true;
+        if (l_pt.at(i) < r_pt.at(i))
             return false;
     }
     //cout << "L: " << str(l) << ", R: " << str(r) << " is equal" << endl;

@@ -1185,10 +1185,12 @@ void shift_reg_test() {
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
-  generate_coreir(opt, buffers_opt.at("buf"));
-  assert(false);
   buffers_opt.at("buf").generate_bank_and_merge(opt);
   cout << buffers_opt.at("buf") << endl;
+  buffers_opt.at("buf").port_group2bank(2, 2);
+  cout << buffers_opt.at("buf") << endl;
+  generate_coreir(opt, buffers_opt.at("buf"));
+  assert(false);
   auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
   for (auto buf : rewrite_buf) {
     cout << buf << endl;

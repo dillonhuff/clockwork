@@ -630,6 +630,10 @@ class UBuffer {
 
     std::map<string, bool> isIn;
     std::map<string, isl_set*> domain;
+
+    //Stencil valid domain for each port
+    std::map<string, isl_set*> sv_domain;
+
     std::map<string, umap*> access_map;
     std::map<string, isl_union_map*> schedule;
     std::map<string, vector<string> > port_bundles;
@@ -645,7 +649,7 @@ class UBuffer {
     HWconstraints hardware;
     //This identify how many shift register are connect,
     //and what is the depth of the shift register
-    map<string, map<string, int>> delay_map;
+    //map<string, map<string, int>> delay_map;
 
     //SRAM specific
     //Save the pair of read port bundle name and op pos point
@@ -928,6 +932,23 @@ class UBuffer {
           break;
         }
       }
+    }
+
+    void remove_bank(string pt_name) {
+        map<pair<string, string>, bank> replace;
+        for (auto bnk : stack_banks) {
+            if (bnk.first.second != pt_name) {
+                replace.insert(bnk);
+            }
+        }
+        stack_banks = replace;
+    }
+
+    //The method replace the original access map and add a valid domain
+    void replace_pt(string pt, isl_map* target) {
+        access_map.at(pt) = to_umap(target);
+        sv_domain[pt] = domain.at(pt);
+        domain.at(pt) = ::domain(target);
     }
 
     vector<stack_bank> get_banks() {
@@ -1363,8 +1384,11 @@ class UBuffer {
     umap* get_lexmax_events(const std::string& outpt);
     int compute_dd_bound(const std::string & read_port, const std::string & write_port, bool is_max);
     isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
-    bank compute_bank_info(CodegenOptions options, const std::string& inpt, const std::string& outpt);
+    bank compute_bank_info(const std::string& inpt, const std::string& outpt);
+    bank compute_bank_info(set<string> inpt, set<string> outpt);
+    void merge_bank(CodegenOptions& options, string inpt, vector<bank> mergeable);
     void generate_bank_and_merge(CodegenOptions& options);
+    void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def);
 
     vector<string> map2address(isl_map* m);
     vector<string> get_ram_address(const std::string& pt);
@@ -1373,6 +1397,7 @@ class UBuffer {
     Box extract_addr_box(uset* rddom, vector<size_t> sequence);
     string generate_linearize_ram_addr(const std::string& pt);
     vector<UBuffer> port_grouping(int port_width);
+    void port_group2bank(int in_port_width, int out_port_width);
     isl_map* merge_output_pt(vector<string> merge_pt);
 
 };
