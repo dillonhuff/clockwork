@@ -801,7 +801,6 @@ cout << "op name  " << op->name << " " << ivar_str << " " << p << endl;
       string ivar_str = sep_list(vars, "[", "]", ", ");
       auto dom = map_find(op, doms);
       string result_buf;
-cout<<"===============================================consumer maps new=========================="<<endl;
       //TODO: fix this hack if their are multiple consumer
       for (auto p : op->consumes()) {
         result_buf= take_until(p, "[");
@@ -882,8 +881,6 @@ cout<<"===============================================consumer maps new=========
       }
       m = unn(m, pmap);
     }
-cout<<str(m)<<endl;
-cout<<"------------------consumer1---------------------------"<<endl;
     return m;
   }
 
@@ -924,8 +921,6 @@ cout<<"------------------consumer1---------------------------"<<endl;
       }
       m = unn(m, pmap); 
     }
-cout<<str(m)<<endl;
-cout<<"=====================================consumer=================="<<endl;
     return m;
   }
 
