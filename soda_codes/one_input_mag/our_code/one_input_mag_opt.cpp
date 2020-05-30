@@ -777,8 +777,6 @@ void one_input_mag_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */u_off
   one_input_mag_opt(u_off_chip, one_input_mag, 1);
 }
 #ifdef __VIVADO_SYNTH__
-#include "one_input_mag_opt.h"
-
 const int one_input_mag_update_0_write_num_transfers = 900;
 const int u_update_0_read_num_transfers = 1024;
 

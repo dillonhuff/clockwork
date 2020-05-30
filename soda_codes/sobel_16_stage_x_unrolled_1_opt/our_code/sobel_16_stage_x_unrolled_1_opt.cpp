@@ -350,8 +350,6 @@ void sobel_16_stage_x_unrolled_1_opt(HWStream<hw_uint<16> >& /* get_args num por
   sobel_16_stage_x_unrolled_1_opt(off_chip_img, sobel_16_stage_x_unrolled_1, 1);
 }
 #ifdef __VIVADO_SYNTH__
-#include "sobel_16_stage_x_unrolled_1_opt.h"
-
 const int img_update_0_read_num_transfers = 1024;
 const int sobel_16_stage_x_unrolled_1_update_0_write_num_transfers = 900;
 

@@ -3292,54 +3292,6 @@ inline void raw_raw_update_0_write_bundle_write(hw_uint<32>& raw_update_0_write,
 
 
 // Operation logic
-inline void denoiseb_update_0(raw_cache& raw, denoiseb_cache& denoiseb, int d0, int d1) {
-	// Consume: raw
-	auto raw_0_c__0_value = raw_denoiseb_update_0_read_bundle_read(raw/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = denoiseb_generated_compute_unrolled_2(raw_0_c__0_value);
-	// Produce: denoiseb
-	denoiseb_denoiseb_update_0_write_bundle_write(compute_result, denoiseb, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void demosaic_bxb_update_0(demosaic_cache& demosaic, demosaic_bxb_cache& demosaic_bxb, int d0, int d1) {
-	// Consume: demosaic
-	auto demosaic_0_c__0_value = demosaic_demosaic_bxb_update_0_read_bundle_read(demosaic/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = demosaic_bxb_generated_compute_unrolled_2(demosaic_0_c__0_value);
-	// Produce: demosaic_bxb
-	demosaic_bxb_demosaic_bxb_update_0_write_bundle_write(compute_result, demosaic_bxb, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void demosaic_bx_update_0(demosaic_bxb_cache& demosaic_bxb, demosaic_bx_cache& demosaic_bx, int d0, int d1) {
-	// Consume: demosaic_bxb
-	auto demosaic_bxb_0_c__0_value = demosaic_bxb_demosaic_bx_update_0_read_bundle_read(demosaic_bxb/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = demosaic_bx_generated_compute_unrolled_2(demosaic_bxb_0_c__0_value);
-	// Produce: demosaic_bx
-	demosaic_bx_demosaic_bx_update_0_write_bundle_write(compute_result, demosaic_bx, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void demosaic_byb_update_0(demosaic_bx_cache& demosaic_bx, demosaic_byb_cache& demosaic_byb, int d0, int d1) {
 	// Consume: demosaic_bx
 	auto demosaic_bx_0_c__0_value = demosaic_bx_demosaic_byb_update_0_read_bundle_read(demosaic_bx/* source_delay */, d0, d1);
@@ -3410,6 +3362,50 @@ inline void cp_noinit_20_2_update_0(demosaic_diff_cache& demosaic_diff, HWStream
 
 }
 
+inline void demosaic_bx_update_0(demosaic_bxb_cache& demosaic_bxb, demosaic_bx_cache& demosaic_bx, int d0, int d1) {
+	// Consume: demosaic_bxb
+	auto demosaic_bxb_0_c__0_value = demosaic_bxb_demosaic_bx_update_0_read_bundle_read(demosaic_bxb/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = demosaic_bx_generated_compute_unrolled_2(demosaic_bxb_0_c__0_value);
+	// Produce: demosaic_bx
+	demosaic_bx_demosaic_bx_update_0_write_bundle_write(compute_result, demosaic_bx, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void raw_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 2 */raw_oc, raw_cache& raw, int d0, int d1) {
+	// Consume: raw_oc
+	auto raw_oc_0_c__0_value = raw_oc.read();
+	auto compute_result = raw_generated_compute_unrolled_2(raw_oc_0_c__0_value);
+	// Produce: raw
+	raw_raw_update_0_write_bundle_write(compute_result, raw, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void denoiseb_update_0(raw_cache& raw, denoiseb_cache& denoiseb, int d0, int d1) {
+	// Consume: raw
+	auto raw_0_c__0_value = raw_denoiseb_update_0_read_bundle_read(raw/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = denoiseb_generated_compute_unrolled_2(raw_0_c__0_value);
+	// Produce: denoiseb
+	denoiseb_denoiseb_update_0_write_bundle_write(compute_result, denoiseb, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void denoise_update_0(denoiseb_cache& denoiseb, denoise_cache& denoise, int d0, int d1) {
 	// Consume: denoiseb
 	auto denoiseb_0_c__0_value = denoiseb_denoise_update_0_read_bundle_read(denoiseb/* source_delay */, d0, d1);
@@ -3426,12 +3422,16 @@ inline void denoise_update_0(denoiseb_cache& denoiseb, denoise_cache& denoise, i
 
 }
 
-inline void raw_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 2 */raw_oc, raw_cache& raw, int d0, int d1) {
-	// Consume: raw_oc
-	auto raw_oc_0_c__0_value = raw_oc.read();
-	auto compute_result = raw_generated_compute_unrolled_2(raw_oc_0_c__0_value);
-	// Produce: raw
-	raw_raw_update_0_write_bundle_write(compute_result, raw, d0, d1);
+inline void demosaic_update_0(demosaicb_cache& demosaicb, demosaic_cache& demosaic, int d0, int d1) {
+	// Consume: demosaicb
+	auto demosaicb_0_c__0_value = demosaicb_demosaic_update_0_read_bundle_read(demosaicb/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = demosaic_generated_compute_unrolled_2(demosaicb_0_c__0_value);
+	// Produce: demosaic
+	demosaic_demosaic_update_0_write_bundle_write(compute_result, demosaic, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -3454,16 +3454,16 @@ inline void demosaicb_update_0(denoise_cache& denoise, demosaicb_cache& demosaic
 
 }
 
-inline void demosaic_update_0(demosaicb_cache& demosaicb, demosaic_cache& demosaic, int d0, int d1) {
-	// Consume: demosaicb
-	auto demosaicb_0_c__0_value = demosaicb_demosaic_update_0_read_bundle_read(demosaicb/* source_delay */, d0, d1);
+inline void demosaic_bxb_update_0(demosaic_cache& demosaic, demosaic_bxb_cache& demosaic_bxb, int d0, int d1) {
+	// Consume: demosaic
+	auto demosaic_0_c__0_value = demosaic_demosaic_bxb_update_0_read_bundle_read(demosaic/* source_delay */, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 
-	auto compute_result = demosaic_generated_compute_unrolled_2(demosaicb_0_c__0_value);
-	// Produce: demosaic
-	demosaic_demosaic_update_0_write_bundle_write(compute_result, demosaic, d0, d1);
+	auto compute_result = demosaic_bxb_generated_compute_unrolled_2(demosaic_0_c__0_value);
+	// Produce: demosaic_bxb
+	demosaic_bxb_demosaic_bxb_update_0_write_bundle_write(compute_result, demosaic_bxb, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -3591,8 +3591,6 @@ void cp_noinit_20_2_opt(HWStream<hw_uint<32> >& /* get_args num ports = 2 */raw_
   cp_noinit_20_2_opt(raw_oc, cp_noinit_20_2, 1);
 }
 #ifdef __VIVADO_SYNTH__
-#include "cp_noinit_20_2_opt.h"
-
 const int cp_noinit_20_2_update_0_write_num_transfers = 1036800;
 const int raw_update_0_read_num_transfers = 1049920;
 

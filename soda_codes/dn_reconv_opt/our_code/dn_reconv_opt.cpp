@@ -666,12 +666,16 @@ inline void u_u_update_0_write_bundle_write(hw_uint<16>& u_update_0_write, u_cac
 
 
 // Operation logic
-inline void u_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */u_oc, u_cache& u, int d0, int d1, int d2) {
-	// Consume: u_oc
-	auto u_oc_0_c__0_value = u_oc.read();
-	auto compute_result = u_generated_compute_unrolled_1(u_oc_0_c__0_value);
-	// Produce: u
-	u_u_update_0_write_bundle_write(compute_result, u, d0, d1, d2);
+inline void diff_o_update_0(u_cache& u, diff_o_cache& diff_o, int d0, int d1, int d2) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_o_update_0_read_bundle_read(u/* source_delay */, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = diff_o_generated_compute_unrolled_1(u_0_c__0_value);
+	// Produce: diff_o
+	diff_o_diff_o_update_0_write_bundle_write(compute_result, diff_o, d0, d1, d2);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -684,6 +688,18 @@ inline void f_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */f_
 	auto compute_result = f_generated_compute_unrolled_1(f_oc_0_c__0_value);
 	// Produce: f
 	f_f_update_0_write_bundle_write(compute_result, f, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void u_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */u_oc, u_cache& u, int d0, int d1, int d2) {
+	// Consume: u_oc
+	auto u_oc_0_c__0_value = u_oc.read();
+	auto compute_result = u_generated_compute_unrolled_1(u_oc_0_c__0_value);
+	// Produce: u
+	u_u_update_0_write_bundle_write(compute_result, u, d0, d1, d2);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -744,6 +760,28 @@ inline void r1_update_0(r0_cache& r0, r1_cache& r1, int d0, int d1, int d2) {
 
 }
 
+inline void g_update_0(diff_i_cache& diff_i, diff_o_cache& diff_o, g_cache& g, int d0, int d1, int d2) {
+	// Consume: diff_i
+	auto diff_i_0_c__0_value = diff_i_g_update_0_read_bundle_read(diff_i/* source_delay */, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: diff_o
+	auto diff_o_0_c__0_value = diff_o_g_update_0_read_bundle_read(diff_o/* source_delay */, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = g_generated_compute_unrolled_1(diff_i_0_c__0_value, diff_o_0_c__0_value);
+	// Produce: g
+	g_g_update_0_write_bundle_write(compute_result, g, d0, d1, d2);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void dn_reconv_update_0(g_cache& g, r1_cache& r1, u_cache& u, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */dn_reconv, int d0, int d1, int d2) {
 	// Consume: g
 	auto g_0_c__0_value = g_dn_reconv_update_0_read_bundle_read(g/* source_delay */, d0, d1, d2);
@@ -766,44 +804,6 @@ inline void dn_reconv_update_0(g_cache& g, r1_cache& r1, u_cache& u, HWStream<hw
 	auto compute_result = dn_reconv_generated_compute_unrolled_1(g_0_c__0_value, r1_0_c__0_value, u_0_c__0_value);
 	// Produce: dn_reconv
 	dn_reconv.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void diff_o_update_0(u_cache& u, diff_o_cache& diff_o, int d0, int d1, int d2) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_o_update_0_read_bundle_read(u/* source_delay */, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = diff_o_generated_compute_unrolled_1(u_0_c__0_value);
-	// Produce: diff_o
-	diff_o_diff_o_update_0_write_bundle_write(compute_result, diff_o, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void g_update_0(diff_i_cache& diff_i, diff_o_cache& diff_o, g_cache& g, int d0, int d1, int d2) {
-	// Consume: diff_i
-	auto diff_i_0_c__0_value = diff_i_g_update_0_read_bundle_read(diff_i/* source_delay */, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: diff_o
-	auto diff_o_0_c__0_value = diff_o_g_update_0_read_bundle_read(diff_o/* source_delay */, d0, d1, d2);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = g_generated_compute_unrolled_1(diff_i_0_c__0_value, diff_o_0_c__0_value);
-	// Produce: g
-	g_g_update_0_write_bundle_write(compute_result, g, d0, d1, d2);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -910,8 +910,6 @@ void dn_reconv_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */f_oc, HWS
   dn_reconv_opt(f_oc, u_oc, dn_reconv, 1);
 }
 #ifdef __VIVADO_SYNTH__
-#include "dn_reconv_opt.h"
-
 const int dn_reconv_update_0_write_num_transfers = 512;
 const int f_update_0_read_num_transfers = 512;
 const int u_update_0_read_num_transfers = 720;

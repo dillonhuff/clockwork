@@ -376,8 +376,6 @@ void dp_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */img_oc, HWStream
   dp_opt(img_oc, dp, 1);
 }
 #ifdef __VIVADO_SYNTH__
-#include "dp_opt.h"
-
 const int dp_update_0_write_num_transfers = 1024;
 const int img_update_0_read_num_transfers = 1024;
 

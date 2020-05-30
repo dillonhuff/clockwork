@@ -297,6 +297,11 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
   int pixel_width = in_buf.port_widths;
   int lanes = in_buf.port_bundles.at(in_rep.second).size();
   out << tab(1) << "// In lanes = " << lanes << endl;
+  if (prg.buffer_bounds[in_rep.first].size() != 2) {
+    out << tab(1) << "// Error: BMP Harness generation is not supported for programs with " << prg.buffer_bounds.size() << " dimensional buffers" << endl;
+    out << "}" << endl;
+    return;
+  }
   int in_cols = prg.buffer_bounds[in_rep.first].at(0);
   int in_rows = prg.buffer_bounds[in_rep.first].at(1);
 
@@ -336,6 +341,11 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
     string out_bundle_tp = out_buf.bundle_type_string(out_rep.second);
     int pixel_width = out_buf.port_widths;
     int lanes = out_buf.port_bundles.at(out_rep.second).size();
+    if (prg.buffer_bounds[out_rep.first].size() != 2) {
+      out << tab(1) << "// Error: BMP Harness generation is not supported for programs with " << prg.buffer_bounds.size() << " dimensional buffers" << endl;
+      out << "}" << endl;
+      return;
+    }
     int out_cols = prg.buffer_bounds[out_rep.first].at(0);
     int out_rows = prg.buffer_bounds[out_rep.first].at(1);
     vector<string> sizes;

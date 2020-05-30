@@ -8979,6 +8979,9 @@ void application_tests() {
   iccad_tests();
   compute_unit_with_index_variables_test();
 
+  reduce_2d_test();
+  reduce_1d_test();
+
   //pyr_1d_conv_test();
   halide_cascade_test();
   halide_dnn_test();
@@ -9061,9 +9064,6 @@ void application_tests() {
   conv3x3_app_unrolled_test();
   conv3x3_app_test();
   conv3x3_app_unrolled_uneven_test();
-
-  reduce_2d_test();
-  reduce_1d_test();
 
   up_unrolled_4_test();
 
