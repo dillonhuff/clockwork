@@ -1,1 +1,0 @@
-export app=cp_add_20_noinit_1_opt

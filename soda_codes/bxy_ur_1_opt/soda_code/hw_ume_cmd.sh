@@ -1,1 +1,0 @@
-v++ -t hw_emu -f /home/centos/aws-fpga/Vitis/aws_platform/xilinx_aws-vu9p-f1_shell-v04261818_201920_1/xilinx_aws-vu9p-f1_shell-v04261818_201920_1.xpfm -l bxy_ur_1_opt.hw.xo -o bxy_ur_1_opt.hw.xclbin --report_dir blur.rpt --log_dir blur.log --temp_dir blur.temp --report_level 2 --save-temps
