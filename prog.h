@@ -48,8 +48,8 @@ struct ir_node {
 
   ir_node() : parent(nullptr), is_loop(false), unroll_factor(1) {}
 
-  set<op*> ancestors() {
-    set<op*> anc;
+  std::set<op*> ancestors() {
+    std::set<op*> anc;
     if (parent != nullptr) {
       for (auto a : parent->ancestors()) {
         anc.insert(a);
@@ -349,7 +349,7 @@ struct ir_node {
   }
 
   std::set<std::string> all_existing_loop_names() {
-    set<string> names;
+    std::set<string> names;
     for (auto op : all_root_ops()) {
       if (op->is_loop) {
         names.insert(op->name);
@@ -359,7 +359,7 @@ struct ir_node {
   }
 
   std::set<std::string> all_existing_op_names() {
-    set<string> names;
+    std::set<string> names;
     for (auto op : all_root_ops()) {
       if (!op->is_loop) {
         names.insert(op->name);
