@@ -13,7 +13,7 @@ before_install:
   - ./install_deps_rice.sh
 
 script:
-  - ./rebuild_and_run.sh
+  - ./travis_build.sh
 
 compiler:
   - gcc
