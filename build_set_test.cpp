@@ -942,8 +942,8 @@ prog conv_1d_bc() {
   compute->add_load("M", {{"c < 2", "0"}, {"2 <= c <= 7", "c"}, {"7 < c <= 8", "9"}, {"c > 8", "8"}});
   compute->add_load("M", {{"c < 2", "0"}, {"2 <= c <= 7", "c"}, {"7 < c <= 8", "9"}, {"c > 8", "8"}});*/
   compute->add_load("M", {{"0 <= c < 9", "c"}, {"c >= 9", "9"}});
-  compute->add_load("M", {{"0 <= c < 8", "c"}, {"c >= 8", "9"}});
-  compute->add_load("M", {{"0 <= c < 7", "c"}, {"c >= 7", "9"}});
+  compute->add_load("M", {{"0 <= c < 8", "c + 1"}, {"c >= 8", "9"}});
+  compute->add_load("M", {{"0 <= c < 7", "c + 2"}, {"c >= 7", "9"}});
 /*  compute->add_load("M", "min(c, 9)");
   compute->add_load("M", "min(c + 1, 9)");
   compute->add_load("M", "min(c + 2, 9)");*/
