@@ -641,7 +641,7 @@ void generate_op_code(map<string, UBuffer>& buffers, op* op) {
     decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
   }
  
-  for (auto consumed : op->consumes_locs_pair) {
+  for (auto consumed : op->consume_locs_pair) {
     decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
   }
 
