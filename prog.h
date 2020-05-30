@@ -34,7 +34,6 @@ struct ir_node {
   std::string name;
   // Locations written
   std::vector<pair<buffer_name, address> > produce_locs;
-  std::vector<pair<buffer_name, std::vector<pair<std::string, std::string>>>> produce_locs_pair;
   // Locations read
   std::vector<pair<buffer_name, address> > consume_locs;
   std::vector<pair<buffer_name, std::vector<pair<std::string, std::string>>>> consume_locs_pair;
@@ -240,10 +239,6 @@ struct ir_node {
     return ps;
   }
 
-  vector<pair<string, vector<pair<string, string>>>> produces_pair() const {
-    return produce_locs_pair;
-  }
-
   void add_store(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2) {
     add_store(b, d0 + ", " + d1 + ", " + d2);
   }
@@ -256,11 +251,6 @@ struct ir_node {
     assert(!is_loop);
     produce_locs.push_back({b, loc});
   }
-
-//  void add_store(const std::string& b, const std::vector<std::pair<std::string, std::string>> loc) {
-//    assert(!is_loop);
-//    produce_locs_pair.push_back({b, loc});
-//  }
 
   void populate_iteration_domains(map<op*, vector<string> >& sched_vecs, vector<string>& active_vecs) {
     if (is_loop) {
@@ -677,14 +667,10 @@ struct prog {
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
 
-      for (auto top_pair : op->produces_pair()) {
-        
-      }
       for (auto p : op->produces()) {
         umap* vmap =
           its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
         pmap = unn(pmap, vmap);
-cout << "op name  " << op->name << " " << ivar_str << " " << p << endl;
       }
       m = unn(m, pmap);
     }
