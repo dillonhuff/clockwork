@@ -33,10 +33,9 @@ struct M_get_input_0_to_M_compute_output_3_cache {
 
 struct M_get_input_0_merged_banks_2_cache {
 	// RAM Box: {[0, 9]}
-	// Capacity: 3
+	// Capacity: 2
 	// # of read delays: 2
 	hw_uint<32>  f0;
-	hw_uint<32>  f1;
 	hw_uint<32>  f2;
 
 
@@ -45,10 +44,6 @@ struct M_get_input_0_merged_banks_2_cache {
 	}
 
 	inline hw_uint<32>  peek_1() {
-		return f1;
-	}
-
-	inline hw_uint<32>  peek_2() {
 		return f2;
 	}
 
@@ -58,11 +53,7 @@ struct M_get_input_0_merged_banks_2_cache {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 1
-    f2 = f1;
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    // cap: 1 reading from capacity: 1
-    f1 = f0;
+    f2 = f0;
     // cap: 1
     f0 = value;
 	}
@@ -100,11 +91,11 @@ inline hw_uint<32>  M_compute_output_3_select(M_cache& M, int root, int c) {
 inline hw_uint<32>  M_compute_output_4_select(M_cache& M, int root, int c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // M_compute_output_4 read pattern: { compute_output[root = 0, c] -> M[9] : 8 <= c <= 9; compute_output[root = 0, c] -> M[c] : 0 <= c <= 7 }
+  // M_compute_output_4 read pattern: { compute_output[root = 0, c] -> M[9] : 8 <= c <= 9; compute_output[root = 0, c] -> M[1 + c] : 0 <= c <= 7 }
   // Read schedule : { compute_output[root = 0, c] -> [2 + c, 1] : 0 <= c <= 9 }
   // Write schedule: { get_input[root = 0, p] -> [p, 0] : 0 <= p <= 9 }
-  // DD fold: { compute_output[root, c] -> 2 : root = 0 and 0 <= c <= 7 }
-  auto value_M_get_input_0 = M.M_get_input_0_merged_banks_2.peek(/* Needs general delay string */ (7 - c >= 0) ? (2) : 0);
+  // DD fold: { compute_output[root, c] -> 1 : root = 0 and 0 <= c <= 7 }
+  auto value_M_get_input_0 = M.M_get_input_0_merged_banks_2.peek(/* Needs general delay string */ (7 - c >= 0) ? (1) : 0);
   return value_M_get_input_0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " c = " << c  << endl;
@@ -116,11 +107,11 @@ inline hw_uint<32>  M_compute_output_4_select(M_cache& M, int root, int c) {
 inline hw_uint<32>  M_compute_output_5_select(M_cache& M, int root, int c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-  // M_compute_output_5 read pattern: { compute_output[root = 0, c] -> M[9] : 7 <= c <= 9; compute_output[root = 0, c] -> M[c] : 0 <= c <= 6 }
+  // M_compute_output_5 read pattern: { compute_output[root = 0, c] -> M[9] : 7 <= c <= 9; compute_output[root = 0, c] -> M[2 + c] : 0 <= c <= 6 }
   // Read schedule : { compute_output[root = 0, c] -> [2 + c, 1] : 0 <= c <= 9 }
   // Write schedule: { get_input[root = 0, p] -> [p, 0] : 0 <= p <= 9 }
-  // DD fold: { compute_output[root, c] -> 2 : root = 0 and 0 <= c <= 6 }
-  auto value_M_get_input_0 = M.M_get_input_0_merged_banks_2.peek(/* Needs general delay string */ (6 - c >= 0) ? (2) : 0);
+  // DD fold: {  }
+  auto value_M_get_input_0 = M.M_get_input_0_merged_banks_2.peek_0();
   return value_M_get_input_0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " c = " << c  << endl;
