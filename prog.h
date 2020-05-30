@@ -542,6 +542,9 @@ struct prog {
     for (auto cs : op->consume_locs) {
       args.push_back(cs.first);
     }
+    for (auto cs : op->consume_locs_pair) {
+      args.push_back(cs.first);
+    }
     for (auto cs : op->produce_locs) {
       args.push_back(cs.first);
     }
