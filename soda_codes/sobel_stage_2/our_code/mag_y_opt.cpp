@@ -235,18 +235,6 @@ inline hw_uint<192> img_mag_y_update_0_read_bundle_read(img_cache& img, int d0, 
 
 
 // Operation logic
-inline void img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */off_chip_img, img_cache& img, int d0, int d1) {
-	// Consume: off_chip_img
-	auto off_chip_img_0_c__0_value = off_chip_img.read();
-	auto compute_result = id_unrolled_1(off_chip_img_0_c__0_value);
-	// Produce: img
-	img_img_update_0_write_bundle_write(compute_result, img, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
 inline void mag_y_update_0(img_cache& img, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */mag_y, int d0, int d1) {
 	// Consume: img
 	auto img_0_c__0_value = img_mag_y_update_0_read_bundle_read(img/* source_delay */, d0, d1);
@@ -257,6 +245,18 @@ inline void mag_y_update_0(img_cache& img, HWStream<hw_uint<32> >& /* buffer_arg
 	auto compute_result = sobel_my_unrolled_1(img_0_c__0_value);
 	// Produce: mag_y
 	mag_y.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */off_chip_img, img_cache& img, int d0, int d1) {
+	// Consume: off_chip_img
+	auto off_chip_img_0_c__0_value = off_chip_img.read();
+	auto compute_result = id_unrolled_1(off_chip_img_0_c__0_value);
+	// Produce: img
+	img_img_update_0_write_bundle_write(compute_result, img, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -312,8 +312,6 @@ void mag_y_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */off_chip_img,
   mag_y_opt(off_chip_img, mag_y, 1);
 }
 #ifdef __VIVADO_SYNTH__
-#include "mag_y_opt.h"
-
 const int mag_y_update_0_write_num_transfers = 1024;
 const int img_update_0_read_num_transfers = 1156;
 

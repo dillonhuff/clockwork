@@ -480,8 +480,6 @@ void jacobi2d_unrolled_2_opt(HWStream<hw_uint<64> >& /* get_args num ports = 2 *
   jacobi2d_unrolled_2_opt(t1_arg, jacobi2d_unrolled_2, 1);
 }
 #ifdef __VIVADO_SYNTH__
-#include "jacobi2d_unrolled_2_opt.h"
-
 const int jacobi2d_unrolled_2_update_0_write_num_transfers = 128;
 const int t1_update_0_read_num_transfers = 180;
 

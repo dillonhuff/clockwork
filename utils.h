@@ -276,6 +276,26 @@ void make_exe(const std::string& file) {
 }
 
 static inline
+void move_naive_to_benchmarks_folder(const std::string& app_name) {
+  string out_name = app_name;
+  string app_dir =
+    "./soda_codes/" + app_name + "_opt";
+  string isl_dir =
+    "./soda_codes/" + app_name + "_opt/isl_code/";
+
+  system(("mkdir " + isl_dir).c_str());
+  
+  system(("cp ./aws_collateral/xrt.ini " + isl_dir).c_str());
+  system(("cp ./aws_collateral/Makefile " + isl_dir).c_str());
+  system(("cp ./aws_collateral/utils.mk " + isl_dir).c_str());
+
+  system(("mv " + out_name + "_naive.cpp " + isl_dir).c_str());
+  system(("mv " + out_name + "_naive_compute_units.h " + isl_dir).c_str());
+  system(("mv " + out_name + "_naive.h " + isl_dir).c_str());
+  system(("mv regression_tb_" + out_name + "_naive.cpp " + isl_dir).c_str());
+}
+
+static inline
 void move_to_benchmarks_folder(const std::string& app_name) {
   string out_name = app_name;
   string app_dir =
@@ -284,10 +304,13 @@ void move_to_benchmarks_folder(const std::string& app_name) {
     "./soda_codes/" + app_name + "/soda_code/";
   string synth_dir =
     "./soda_codes/" + app_name + "/our_code/";
+  string isl_dir =
+    "./soda_codes/" + app_name + "/isl_code/";
 
   system(("mkdir " + app_dir).c_str());
   system(("mkdir " + synth_dir).c_str());
   system(("mkdir " + soda_dir).c_str());
+  system(("mkdir " + isl_dir).c_str());
   
   system(("cp ./aws_collateral/xrt.ini " + soda_dir).c_str());
   system(("cp ./aws_collateral/soda_makefile.mk " + soda_dir + "/Makefile").c_str());
@@ -297,6 +320,10 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("cp ./aws_collateral/Makefile " + synth_dir).c_str());
   system(("cp ./aws_collateral/utils.mk " + synth_dir).c_str());
 
+  system(("cp ./aws_collateral/xrt.ini " + isl_dir).c_str());
+  system(("cp ./aws_collateral/Makefile " + isl_dir).c_str());
+  system(("cp ./aws_collateral/utils.mk " + isl_dir).c_str());
+
   system(("mv set_app.sh " + app_dir).c_str());
   make_exe("set_app");
 
@@ -304,7 +331,8 @@ void move_to_benchmarks_folder(const std::string& app_name) {
 
   system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
   system(("mv " + out_name + "*.h " + synth_dir).c_str());
-  system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
+  system(("mv regression_tb_" + out_name + ".cpp " + synth_dir).c_str());
+  //system(("mv regression_tb_" + out_name + "_naive.cpp " + isl_dir).c_str());
 
   make_exe("run_tb_" + out_name + ".sh");
   system(("mv run_tb_" + out_name + ".sh " + synth_dir).c_str());

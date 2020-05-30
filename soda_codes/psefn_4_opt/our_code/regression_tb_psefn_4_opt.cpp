@@ -9,10 +9,10 @@ int main() {
 
 
   // Loading input data
-  // cmap    : { in_update_0[root = 0, in_0, in_1] -> in_off_chip[0, 0] : 0 <= in_0 <= 482 and 0 <= in_1 <= 1926 }
-  // read map: { in_off_chip[0, 0] -> in_update_0[root = 0, in_0, in_1] : 0 <= in_0 <= 482 and 0 <= in_1 <= 1926 }
-  // rng     : { in_update_0[root = 0, in_0, in_1] : 0 <= in_0 <= 482 and 0 <= in_1 <= 1926 }
-  for (int i = 0; i < 930741; i++) {
+  // cmap    : { in_update_0[root = 0, in_0, in_1] -> in_off_chip[0, 0] : 0 <= in_0 <= 316 and 0 <= in_1 <= 1262 }
+  // read map: { in_off_chip[0, 0] -> in_update_0[root = 0, in_0, in_1] : 0 <= in_0 <= 316 and 0 <= in_1 <= 1262 }
+  // rng     : { in_update_0[root = 0, in_0, in_1] : 0 <= in_0 <= 316 and 0 <= in_1 <= 1262 }
+  for (int i = 0; i < 400371; i++) {
     hw_uint<64> in_val;
     set_at<0*16, 64, 16>(in_val, 4*i + 0);
     in_pix << in_val << endl;
@@ -27,7 +27,7 @@ int main() {
 
   psefn_4_opt(in_update_0_read, psefn_4_update_0_write);
 
-  for (int i = 0; i < 921600; i++) {
+  for (int i = 0; i < 391250; i++) {
     hw_uint<64> actual = psefn_4_update_0_write.read();
     auto actual_lane_0 = actual.extract<0*16, 15>();
     fout << actual_lane_0 << endl;

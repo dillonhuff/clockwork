@@ -1446,6 +1446,38 @@ inline void diff_qwe_update_0(u_cache& u, diff_qwe_cache& diff_qwe, int d0, int 
 
 }
 
+inline void diff_l_update_0(u_cache& u, diff_l_cache& diff_l, int d0, int d1) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_l_update_0_read_bundle_read(u/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = diff_l2d_unrolled_1(u_0_c__0_value);
+	// Produce: diff_l
+	diff_l_diff_l_update_0_write_bundle_write(compute_result, diff_l, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void diff_d_update_0(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
+	// Consume: u
+	auto u_0_c__0_value = u_diff_d_update_0_read_bundle_read(u/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = diff_d2d_unrolled_1(u_0_c__0_value);
+	// Produce: diff_d
+	diff_d_diff_d_update_0_write_bundle_write(compute_result, diff_d, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void r1_update_0(r0_cache& r0, r1_cache& r1, int d0, int d1) {
 	// Consume: r0
 	auto r0_0_c__0_value = r0_r1_update_0_read_bundle_read(r0/* source_delay */, d0, d1);
@@ -1524,38 +1556,6 @@ inline void denoise2d_update_0(r1_cache& r1, f_cache& f, u_cache& u, g_cache& g,
 	auto compute_result = out_comp_dn2d_unrolled_1(r1_0_c__0_value, f_0_c__0_value, u_0_c__0_value, g_0_c__0_value);
 	// Produce: denoise2d
 	denoise2d.write(compute_result);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void diff_d_update_0(u_cache& u, diff_d_cache& diff_d, int d0, int d1) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_d_update_0_read_bundle_read(u/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = diff_d2d_unrolled_1(u_0_c__0_value);
-	// Produce: diff_d
-	diff_d_diff_d_update_0_write_bundle_write(compute_result, diff_d, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void diff_l_update_0(u_cache& u, diff_l_cache& diff_l, int d0, int d1) {
-	// Consume: u
-	auto u_0_c__0_value = u_diff_l_update_0_read_bundle_read(u/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = diff_l2d_unrolled_1(u_0_c__0_value);
-	// Produce: diff_l
-	diff_l_diff_l_update_0_write_bundle_write(compute_result, diff_l, d0, d1);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1646,8 +1646,6 @@ void denoise2d_naive(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_c
   denoise2d_naive(f_off_chip, u_off_chip, denoise2d, 1);
 }
 #ifdef __VIVADO_SYNTH__
-#include "denoise2d_naive.h"
-
 const int denoise2d_update_0_write_num_transfers = 900;
 const int f_update_0_read_num_transfers = 900;
 const int u_update_0_read_num_transfers = 1156;

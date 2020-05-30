@@ -253,8 +253,6 @@ void sum_float_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */f_off_chi
   sum_float_opt(f_off_chip, u_off_chip, sum_float, 1);
 }
 #ifdef __VIVADO_SYNTH__
-#include "sum_float_opt.h"
-
 const int f_update_0_read_num_transfers = 900;
 const int sum_float_update_0_write_num_transfers = 900;
 const int u_update_0_read_num_transfers = 900;

@@ -18,6 +18,7 @@ not just take the latest release on NTL or barvinok.
     * https://www.shoup.net/ntl/doc/tour-unix.html (needs GMP to be installed already)
 * barvinok-0.41 - [download here](http://barvinok.gforge.inria.fr/)
    * https://repo.or.cz/w/barvinok.git/blob/HEAD:/README - instructions for installing barvinok with ntl and GMP
+   * note that linux users may need to manually add -lpthread to the LIBS field (change "LIBS = -lntl -lgmp", to "LIBS = -lpthread -lntl -lgmp")
 
 Alternatively, you can follow these steps:
 1. Download ntl-11.4.1 from the link above.

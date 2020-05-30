@@ -2165,6 +2165,126 @@ inline void trace_trace_update_0_write_bundle_write(hw_uint<32>& trace_update_0_
 
 
 // Operation logic
+inline void lgyy8_update_0(lgyy_cache& lgyy, lgyy8_cache& lgyy8, int d0, int d1) {
+	// Consume: lgyy
+	auto lgyy_0_c__0_value = lgyy_lgyy8_update_0_read_bundle_read(lgyy/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = lgyy8_generated_compute_unrolled_1(lgyy_0_c__0_value);
+	// Produce: lgyy8
+	lgyy8_lgyy8_update_0_write_bundle_write(compute_result, lgyy8, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void lgxy8_update_0(lgxy_cache& lgxy, lgxy8_cache& lgxy8, int d0, int d1) {
+	// Consume: lgxy
+	auto lgxy_0_c__0_value = lgxy_lgxy8_update_0_read_bundle_read(lgxy/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = lgxy8_generated_compute_unrolled_1(lgxy_0_c__0_value);
+	// Produce: lgxy8
+	lgxy8_lgxy8_update_0_write_bundle_write(compute_result, lgxy8, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void lgxx8_update_0(lgxx_cache& lgxx, lgxx8_cache& lgxx8, int d0, int d1) {
+	// Consume: lgxx
+	auto lgxx_0_c__0_value = lgxx_lgxx8_update_0_read_bundle_read(lgxx/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = lgxx8_generated_compute_unrolled_1(lgxx_0_c__0_value);
+	// Produce: lgxx8
+	lgxx8_lgxx8_update_0_write_bundle_write(compute_result, lgxx8, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void det_update_0(lgxx8_cache& lgxx8, lgxy8_cache& lgxy8, lgyy8_cache& lgyy8, det_cache& det, int d0, int d1) {
+	// Consume: lgxx8
+	auto lgxx8_0_c__0_value = lgxx8_det_update_0_read_bundle_read(lgxx8/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: lgxy8
+	auto lgxy8_0_c__0_value = lgxy8_det_update_0_read_bundle_read(lgxy8/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: lgyy8
+	auto lgyy8_0_c__0_value = lgyy8_det_update_0_read_bundle_read(lgyy8/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = det_generated_compute_unrolled_1(lgxx8_0_c__0_value, lgxy8_0_c__0_value, lgyy8_0_c__0_value);
+	// Produce: det
+	det_det_update_0_write_bundle_write(compute_result, det, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void trace_update_0(lgxx8_cache& lgxx8, lgyy8_cache& lgyy8, trace_cache& trace, int d0, int d1) {
+	// Consume: lgxx8
+	auto lgxx8_0_c__0_value = lgxx8_trace_update_0_read_bundle_read(lgxx8/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: lgyy8
+	auto lgyy8_0_c__0_value = lgyy8_trace_update_0_read_bundle_read(lgyy8/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = trace_generated_compute_unrolled_1(lgxx8_0_c__0_value, lgyy8_0_c__0_value);
+	// Produce: trace
+	trace_trace_update_0_write_bundle_write(compute_result, trace, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
+inline void hr_1_update_0(det_cache& det, trace_cache& trace, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */hr_1, int d0, int d1) {
+	// Consume: det
+	auto det_0_c__0_value = det_hr_1_update_0_read_bundle_read(det/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: trace
+	auto trace_0_c__0_value = trace_hr_1_update_0_read_bundle_read(trace/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = hr_1_generated_compute_unrolled_1(det_0_c__0_value, trace_0_c__0_value);
+	// Produce: hr_1
+	hr_1.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void img_update_0(HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */img_oc, img_cache& img, int d0, int d1) {
 	// Consume: img_oc
 	auto img_oc_0_c__0_value = img_oc.read();
@@ -2305,126 +2425,6 @@ inline void lgxx_update_0(lxx_cache& lxx, lgxx_cache& lgxx, int d0, int d1) {
 	auto compute_result = lgxx_generated_compute_unrolled_1(lxx_0_c__0_value);
 	// Produce: lgxx
 	lgxx_lgxx_update_0_write_bundle_write(compute_result, lgxx, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void lgyy8_update_0(lgyy_cache& lgyy, lgyy8_cache& lgyy8, int d0, int d1) {
-	// Consume: lgyy
-	auto lgyy_0_c__0_value = lgyy_lgyy8_update_0_read_bundle_read(lgyy/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = lgyy8_generated_compute_unrolled_1(lgyy_0_c__0_value);
-	// Produce: lgyy8
-	lgyy8_lgyy8_update_0_write_bundle_write(compute_result, lgyy8, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void lgxy8_update_0(lgxy_cache& lgxy, lgxy8_cache& lgxy8, int d0, int d1) {
-	// Consume: lgxy
-	auto lgxy_0_c__0_value = lgxy_lgxy8_update_0_read_bundle_read(lgxy/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = lgxy8_generated_compute_unrolled_1(lgxy_0_c__0_value);
-	// Produce: lgxy8
-	lgxy8_lgxy8_update_0_write_bundle_write(compute_result, lgxy8, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void lgxx8_update_0(lgxx_cache& lgxx, lgxx8_cache& lgxx8, int d0, int d1) {
-	// Consume: lgxx
-	auto lgxx_0_c__0_value = lgxx_lgxx8_update_0_read_bundle_read(lgxx/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = lgxx8_generated_compute_unrolled_1(lgxx_0_c__0_value);
-	// Produce: lgxx8
-	lgxx8_lgxx8_update_0_write_bundle_write(compute_result, lgxx8, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void det_update_0(lgxx8_cache& lgxx8, lgxy8_cache& lgxy8, lgyy8_cache& lgyy8, det_cache& det, int d0, int d1) {
-	// Consume: lgxx8
-	auto lgxx8_0_c__0_value = lgxx8_det_update_0_read_bundle_read(lgxx8/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: lgxy8
-	auto lgxy8_0_c__0_value = lgxy8_det_update_0_read_bundle_read(lgxy8/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: lgyy8
-	auto lgyy8_0_c__0_value = lgyy8_det_update_0_read_bundle_read(lgyy8/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = det_generated_compute_unrolled_1(lgxx8_0_c__0_value, lgxy8_0_c__0_value, lgyy8_0_c__0_value);
-	// Produce: det
-	det_det_update_0_write_bundle_write(compute_result, det, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void trace_update_0(lgxx8_cache& lgxx8, lgyy8_cache& lgyy8, trace_cache& trace, int d0, int d1) {
-	// Consume: lgxx8
-	auto lgxx8_0_c__0_value = lgxx8_trace_update_0_read_bundle_read(lgxx8/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: lgyy8
-	auto lgyy8_0_c__0_value = lgyy8_trace_update_0_read_bundle_read(lgyy8/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = trace_generated_compute_unrolled_1(lgxx8_0_c__0_value, lgyy8_0_c__0_value);
-	// Produce: trace
-	trace_trace_update_0_write_bundle_write(compute_result, trace, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void hr_1_update_0(det_cache& det, trace_cache& trace, HWStream<hw_uint<32> >& /* buffer_args num ports = 1 */hr_1, int d0, int d1) {
-	// Consume: det
-	auto det_0_c__0_value = det_hr_1_update_0_read_bundle_read(det/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: trace
-	auto trace_0_c__0_value = trace_hr_1_update_0_read_bundle_read(trace/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = hr_1_generated_compute_unrolled_1(det_0_c__0_value, trace_0_c__0_value);
-	// Produce: hr_1
-	hr_1.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -2584,8 +2584,6 @@ void hr_1_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */img_oc, HWStre
   hr_1_opt(img_oc, hr_1, 1);
 }
 #ifdef __VIVADO_SYNTH__
-#include "hr_1_opt.h"
-
 const int hr_1_update_0_write_num_transfers = 2073600;
 const int img_update_0_read_num_transfers = 2085616;
 

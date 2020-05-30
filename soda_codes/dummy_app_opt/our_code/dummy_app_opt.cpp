@@ -196,8 +196,6 @@ void dummy_app_opt(HWStream<hw_uint<32> >& /* get_args num ports = 1 */u_off_chi
   dummy_app_opt(u_off_chip, dummy_app, 1);
 }
 #ifdef __VIVADO_SYNTH__
-#include "dummy_app_opt.h"
-
 const int dummy_app_update_0_write_num_transfers = 900;
 const int u_update_0_read_num_transfers = 930;
 

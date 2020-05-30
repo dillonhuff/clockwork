@@ -285,6 +285,22 @@ inline void input_input_update_0_write_bundle_write(hw_uint<16>& input_update_0_
 
 
 // Operation logic
+inline void bxy_noinit_p220_1_update_0(blurx_cache& blurx, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */bxy_noinit_p220_1, int d0, int d1) {
+	// Consume: blurx
+	auto blurx_0_c__0_value = blurx_bxy_noinit_p220_1_update_0_read_bundle_read(blurx/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = bxy_noinit_p220_1_generated_compute_unrolled_1(blurx_0_c__0_value);
+	// Produce: bxy_noinit_p220_1
+	bxy_noinit_p220_1.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void input_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */input_arg, input_cache& input, int d0, int d1) {
 	// Consume: input_arg
 	auto input_arg_0_c__0_value = input_arg.read();
@@ -307,22 +323,6 @@ inline void blurx_update_0(input_cache& input, blurx_cache& blurx, int d0, int d
 	auto compute_result = blurx_generated_compute_unrolled_1(input_0_c__0_value);
 	// Produce: blurx
 	blurx_blurx_update_0_write_bundle_write(compute_result, blurx, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void bxy_noinit_p220_1_update_0(blurx_cache& blurx, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */bxy_noinit_p220_1, int d0, int d1) {
-	// Consume: blurx
-	auto blurx_0_c__0_value = blurx_bxy_noinit_p220_1_update_0_read_bundle_read(blurx/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = bxy_noinit_p220_1_generated_compute_unrolled_1(blurx_0_c__0_value);
-	// Produce: bxy_noinit_p220_1
-	bxy_noinit_p220_1.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -386,8 +386,6 @@ void bxy_noinit_p220_1_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */i
   bxy_noinit_p220_1_opt(input_arg, bxy_noinit_p220_1, 1);
 }
 #ifdef __VIVADO_SYNTH__
-#include "bxy_noinit_p220_1_opt.h"
-
 const int bxy_noinit_p220_1_update_0_write_num_transfers = 2073600;
 const int input_update_0_read_num_transfers = 2079604;
 

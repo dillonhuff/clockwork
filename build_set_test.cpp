@@ -4680,10 +4680,16 @@ struct App {
     set_unroll_factors(name, name, 1);
     fill_compute_domain();
 
-    umap* m =
-      schedule_naive();
-      //schedule_isl();
+    umap* m = nullptr;
+    if (options.scheduling_algorithm == SCHEDULE_ALGORITHM_NAIVE) {
+      m = schedule_naive();
+    } else {
+      assert(options.scheduling_algorithm == SCHEDULE_ALGORITHM_ISL);
+      m = schedule_isl();
+    }
+    //schedule_isl();
 
+    assert(m != nullptr);
     cout << "Schedule: " << str(m) << endl;
 
     map<string, UBuffer> buffers = build_buffers(m);
@@ -5724,7 +5730,6 @@ void halide_harris_test() {
   cout << "Created program..." << endl;
   prg.pretty_print();
   generate_optimized_code(prg);
-  //assert(false);
 
   //regression_test(prg);
 }
@@ -5733,10 +5738,8 @@ void halide_dnn_test() {
   prog prg = halide_dnn_conv();
   cout << "Created program..." << endl;
   prg.pretty_print();
-  //assert(false);
 
   //generate_optimized_code(prg);
-  //assert(false);
 
   regression_test(prg);
 }
@@ -6565,7 +6568,6 @@ void camera_pipeline_all_adds_only_denoise_demosaic_test(const std::string& pref
     run_regression_tb(app_name + "_opt");
   assert(naive == optimized);
   move_to_benchmarks_folder(app_name + "_opt");
-  assert(false);
 }
 
 void camera_pipeline_all_adds_linear_test(const std::string& prefix) {
@@ -6582,7 +6584,6 @@ void camera_pipeline_all_adds_linear_test(const std::string& prefix) {
     run_regression_tb(app_name + "_opt");
   assert(naive == optimized);
   move_to_benchmarks_folder(app_name + "_opt");
-  //assert(false);
 }
 
 void camera_pipeline_all_adds_test(const std::string& prefix) {
@@ -6599,7 +6600,6 @@ void camera_pipeline_all_adds_test(const std::string& prefix) {
     run_regression_tb(app_name + "_opt");
   assert(naive == optimized);
   move_to_benchmarks_folder(app_name + "_opt");
-  //assert(false);
 
   int rows = 1080;
   int cols = 1920;
@@ -6621,7 +6621,6 @@ void camera_pipeline_all_adds_test(const std::string& prefix) {
 
     move_to_benchmarks_folder(out_name + "_opt");
   }
-  //assert(false);
 }
 
 void camera_pipeline_test(const std::string& prefix) {
@@ -6638,7 +6637,6 @@ void camera_pipeline_test(const std::string& prefix) {
     run_regression_tb(app_name + "_opt");
   assert(naive == optimized);
   move_to_benchmarks_folder(app_name + "_opt");
-  //assert(false);
 
 
   int rows = 1080;
@@ -6673,7 +6671,6 @@ void different_path_latencies_test(const std::string& prefix) {
     run_regression_tb(prefix + "_naive");
   assert(naive == optimized);
   move_to_benchmarks_folder(prefix + "_opt");
-  //assert(false);
 }
 
 void harris16_test(const std::string& prefix) {
@@ -6688,7 +6685,6 @@ void harris16_test(const std::string& prefix) {
     run_regression_tb("harris16_mini_naive");
   assert(naive == optimized);
   move_to_benchmarks_folder("harris16_mini_opt");
-  //assert(false);
 
 
   int rows = 1080;
@@ -6874,14 +6870,40 @@ App max_pooling(const std::string& out_name) {
   return mp;
 }
 
-void max_pooling_test() {
+void max_pooling_test_sizes(const std::string& prefix) {
+  int W = 8;
+  int H = 8;
+  int D = 4;
+
+  int factor = 1;
+  string name = prefix + "_" + str(factor);
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    max_pooling(name).realize(options, name, {H, W, D}, "in", factor);
+  }
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.num_input_epochs = 1;
+    options.simplify_address_expressions = true;
+    options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
+    max_pooling(name).realize_naive(options, name, {H, W, D});
+  }
+  move_to_benchmarks_folder(name + "_opt");
+  move_naive_to_benchmarks_folder(name);
+}
+
+void max_pooling_test(const std::string& prefix) {
   int W = 64;
   int H = 64;
-  int D = 32;
+  int D = 64;
 
-  vector<int> unroll_factors{1, 2, 4};
+  vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
   for (auto factor : unroll_factors) {
-    string name = "mp_" + str(factor);
+    string name = prefix + "_" + str(factor);
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
@@ -6903,6 +6925,58 @@ void max_pooling_test() {
     //run_regression_tb("max_pool_naive");
   //assert(naive == optimized);
   
+}
+
+App ef_cartoon(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
+  // The off chip input we are reading from
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  lp.func2d("in", "id", pt("in_off_chip"));
+
+  // Two synthetic exposures
+  lp.func2d("bright", "id", pt("in"));
+  lp.func2d("dark", "scale_exposure", pt("in"));
+
+  lp.func2d("bright_weights", "psef_weight", pt("bright"));
+  lp.func2d("dark_weights", "psef_weight", pt("dark"));
+
+  lp.func2d("bright_weights_normed", "psef_normalize_weights", {pt("bright_weights")});
+  lp.func2d("dark_weights_normed", "psef_normalize_weights", {pt("dark_weights")});
+
+  int pyramid_levels = 4;
+
+  auto dark_weight_pyramid = gauss_pyramid(pyramid_levels, "dark_weights_normed", lp);
+  auto bright_weight_pyramid = gauss_pyramid(pyramid_levels, "bright_weights_normed", lp);
+
+  auto dark_pyramid = laplace_pyramid(pyramid_levels, "dark", lp);
+  auto bright_pyramid = laplace_pyramid(pyramid_levels, "bright", lp);
+
+  vector<string> merged_images;
+  for (int i = 0; i < dark_pyramid.size(); i++) {
+    string fused = "fused_level_" + str(i);
+    lp.func2d(fused, "psef_weighted_merge", {pt(bright_pyramid.at(i)), pt(dark_pyramid.at(i)),
+        pt(bright_weight_pyramid.at(i)), pt(dark_weight_pyramid.at(i))});
+    merged_images.push_back(fused);
+  }
+
+  // Collapse the blended pyramid into a single image
+  assert(merged_images.size() == pyramid_levels);
+
+  string image = merged_images.back();
+  for (int i = merged_images.size() - 2; i >= 0; i--) {
+    string merged_level = "final_merged_" + str(i);
+    lp.func2d(merged_level, "average", {upsample(2, image), pt(merged_images.at(i))});
+    //lp.func2d(merged_level, "add", {upsample(2, image), pt(merged_images.at(i))});
+    image = merged_level;
+  }
+
+  lp.func2d(out_name, "id", pt(image));
+
+  //lp.func2d(out_name, "average", {pt("bright"), pt("dark")});
+  return lp;
 }
 
 App exposure_fusion_app(const std::string& out_name) {
@@ -6960,20 +7034,110 @@ App exposure_fusion_app(const std::string& out_name) {
   return lp;
 }
 
-void exposure_fusion_iccad_apps() {
-  const int throughput = 4;
-  string name = "psefn_" + str(throughput);
-  App lp = exposure_fusion_app(name);
-  int size = 1920;
-  lp.realize(name, size, size, throughput);
-  move_to_benchmarks_folder(name + "_opt");
+void ef_cartoon_iccad_unrolls(const std::string& prefix) {
+  vector<int> throughputs{1, 2, 4, 8, 16, 32};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = ef_cartoon(name);
+    int rows = 1080;
+    int cols = 1920;
+    lp.realize(name, cols, rows, throughput);
+    move_to_benchmarks_folder(name + "_opt");
+    move_naive_to_benchmarks_folder(name);
+  }
+}
+
+void ef_cartoon_fusion_iccad_sizes(const std::string& prefix) {
+  vector<pair<int, int> > sizes{{16, 16}, {256, 256}, {1280, 720}, {1920, 1080}};
+  for (auto dims : sizes) {
+    int cols = dims.first;
+    int rows = dims.second;
+    
+    string name = prefix + "_" + str(cols) + "_" + str(rows);
+    {
+      App lp = ef_cartoon(name);
+      CodegenOptions options;
+      options.internal = true;
+      options.num_input_epochs = 1;
+      options.simplify_address_expressions = true;
+      lp.realize(options, name, cols, rows, 1);
+    }
+
+    {
+      App lp = ef_cartoon(name);
+      CodegenOptions options;
+      options.internal = true;
+      options.num_input_epochs = 1;
+      options.simplify_address_expressions = true;
+      options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
+      lp.realize_naive(options, name, cols, rows);
+    }
+    std::vector<std::string> naive =
+      run_regression_tb(name + "_naive");
+    cout << "Naive    : " << naive << endl;
+    std::vector<std::string> optimized =
+      run_regression_tb(name + "_opt");
+    cout << "Optimized: " << optimized << endl;
+    assert(naive == optimized);
+    move_to_benchmarks_folder(name + "_opt");
+    move_naive_to_benchmarks_folder(name);
+  }
+}
+
+void exposure_fusion_iccad_sizes(const std::string& prefix) {
+  vector<pair<int, int> > sizes{{16, 16}, {256, 256}, {1280, 720}, {1920, 1080}};
+  for (auto dims : sizes) {
+    int cols = dims.first;
+    int rows = dims.second;
+    
+    string name = prefix + "_" + str(cols) + "_" + str(rows);
+    {
+      App lp = exposure_fusion_app(name);
+      CodegenOptions options;
+      options.internal = true;
+      options.num_input_epochs = 1;
+      options.simplify_address_expressions = true;
+      lp.realize(options, name, cols, rows, 1);
+    }
+
+    {
+      App lp = exposure_fusion_app(name);
+      CodegenOptions options;
+      options.internal = true;
+      options.num_input_epochs = 1;
+      options.simplify_address_expressions = true;
+      options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
+      lp.realize_naive(options, name, cols, rows);
+    }
+    std::vector<std::string> naive =
+      run_regression_tb(name + "_naive");
+    cout << "Naive    : " << naive << endl;
+    std::vector<std::string> optimized =
+      run_regression_tb(name + "_opt");
+    cout << "Optimized: " << optimized << endl;
+    assert(naive == optimized);
+    move_to_benchmarks_folder(name + "_opt");
+  }
+}
+
+void exposure_fusion_iccad_apps(const std::string& prefix) {
+  vector<int> throughputs{1, 2, 4, 8, 16, 32};
+  for (auto throughput : throughputs) {
+    //const int throughput = 4;
+    string name = prefix + "_" + str(throughput);
+    App lp = exposure_fusion_app(name);
+    int rows = 1080;
+    int cols = 1920;
+    lp.realize(name, cols, rows, throughput);
+    move_to_benchmarks_folder(name + "_opt");
+  }
 }
 
 void exposure_fusion() {
 
   App lp = exposure_fusion_app("pyramid_synthetic_exposure_fusion");
   int size =
-    64;
+    128;
     //1250;
     //200;
 
@@ -7031,7 +7195,6 @@ void exposure_fusion() {
   std::vector<std::string> optimized =
     run_regression_tb("pyramid_synthetic_exposure_fusion_opt");
   assert(naive == optimized);
-
 }
 
 void laplacian_pyramid_app_test() {
@@ -7109,13 +7272,13 @@ void laplacian_pyramid_app_test() {
 
 }
 
-App gaussian_pyramid_app(const std::string& out_name) {
+App gaussian_pyramid_app(const std::string& out_name, const int n_levels) {
   App gp;
   gp.set_default_pixel_width(16);
 
   gp.func2d("in_off_chip");
   gp.func2d("in", "id", pt("in_off_chip"));
-  int n_levels = 4;
+  //int n_levels = 3
   string last = "in";
   for (int l = 0; l < n_levels; l++) {
     string next = "level_" + to_string(l);
@@ -7137,7 +7300,7 @@ App gaussian_pyramid_app(const std::string& out_name) {
 void single_gaussian_pyramid_app_test() {
   string name = "gp";
 
-  App gp = gaussian_pyramid_app(name);
+  App gp = gaussian_pyramid_app(name, 4);
   {
     CodegenOptions options;
     options.internal = true;
@@ -7160,41 +7323,67 @@ void single_gaussian_pyramid_app_test() {
   assert(naive == optimized);
 }
 
-void gaussian_pyramid_app_test() {
-  string name = "gp";
-  vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
-  for (auto factor : unroll_factors) {
-    string name = "gp_" + str(factor);
+void ef_cartoon_test(const std::string& out_name) {
+  App gp = ef_cartoon(out_name);
+  //int size = 200;
+  int cols = 256;
+  int rows = 256;
+  {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
-
-    gaussian_pyramid_app(name).realize(options, name, {4, 4}, "in", factor);
-    move_to_benchmarks_folder(name + "_opt");
+    gp.realize(options, out_name, {cols, rows}, "in", 1);
+    //CodegenOptions options;
+    //options.internal = true;
+    //options.simplify_address_expressions = true;
+    //options.use_custom_code_string = true;
+    //options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
+    //gp.realize_naive(options, out_name, {cols, rows});
+    //move_to_benchmarks_folder(out_name + "_opt");
   }
+}
 
-  App gp = gaussian_pyramid_app(name);
+
+void gaussian_pyramid_app_test(const std::string& prefix) {
+  string name = "gp";
+  App gp = gaussian_pyramid_app(name, 3);
+  int size = 64;
   {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
     options.debug_options.expect_all_linebuffers = true;
-    gp.realize(options, name, 4, 4, 2);
+    gp.realize(options, name, {size, size}, "in", 2);
   }
 
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
   options.unroll_factors_as_pad = true;
-  gp.realize_naive(options, name, 4, 4);
+  gp.realize_naive(options, name, size, size);
 
   std::vector<std::string> naive =
     run_regression_tb(name + "_naive");
   std::vector<std::string> optimized =
     run_regression_tb(name + "_opt");
   assert(naive == optimized);
+
+  vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
+  for (auto factor : unroll_factors) {
+    string name = prefix + "_" + str(factor);
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+
+    gaussian_pyramid_app(name, 4).realize(options, name, {64, 64}, "in", factor);
+    move_to_benchmarks_folder(name + "_opt");
+    if (factor == 16) {
+    }
+  }
+
 }
 
 App sobel_mag_x() {
@@ -8627,40 +8816,33 @@ void playground() {
 }
 
 void iccad_tests() {
+  ef_cartoon_test("ef_cartoon_gauss");
+
+  gaussian_pyramid_app_test("gp64x64");
+
+  max_pooling_test("mp25");
+  exposure_fusion();
+
   int index = 20;
   string istr = str(index);
-
+  exposure_fusion_iccad_apps("psef23");
 
   camera_pipeline_test("cp_noinit_" + istr);
-  assert(false);
   blur_xy_16_app_test("bxy_noinit_p2" + istr);
   camera_pipeline_all_adds_only_denoise_demosaic_test("lcp_noinit_dd");
   camera_pipeline_all_adds_linear_test("lcp_noinit");
-  assert(false);
 
   camera_pipeline_all_adds_test("cp_add_20_noinit");
-
-  //assert(false);
-
-  //assert(false);
 
   harris16_test("hr" + istr);
   sobel_16_app_test("sbl" + istr);
 
-
   denoise3d_reconvergence_test();
-  //assert(false);
 
   different_path_latencies_test("dp");
   harris_test();
 
-  exposure_fusion_iccad_apps();
   pointwise_app_test();
-  gaussian_pyramid_app_test();
-
-  max_pooling_test();
-
-  exposure_fusion();
 }
 
 void mini_application_tests() {
@@ -8682,13 +8864,130 @@ void mini_application_tests() {
   blur_xy_16_app_test("bxy");
   sobel_16_app_test("sbl");
   single_gaussian_pyramid_app_test();
-  max_pooling_test();
+  max_pooling_test("mp");
   exposure_fusion();
+}
+
+prog pyr_conv_1d() {
+  prog prg;
+  prg.compute_unit_file = "accumulate_3.h";
+  prg.name = "pyr_conv_1d";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["M1"] = 32;
+  prg.buffer_port_widths["M2"] = 32;
+  prg.buffer_port_widths["M3"] = 32;
+  prg.buffer_port_widths["M1_o"] = 32;
+  prg.buffer_port_widths["M2_o"] = 32;
+  prg.buffer_port_widths["M3_o"] = 32;
+
+  int size1 = 134;
+  int size1_o = size1 - 2;
+  int size2 = size1_o / 2;
+  int size2_o = size2 - 2;
+  int size3 = size2_o / 2;
+  int size3_o = size3 - 2;
+
+  cout << "Pyramid sizes: " << size1 << " " << size1_o << " " << size2 << " " << size2_o << " " << size3 << " " << size3_o << endl;
+
+  //prg.add_nest("dr", 0, (64) / 2, "dc", 0, (64) / 2)->
+    //add_op({"downsampled", "dr, dc"}, "id", {"I", "2*dr, 2*dc"});
+
+  auto p = prg.add_loop("p", 0, size1);
+  auto write = p->add_op("get_input");
+  write->add_load("in", "p");
+  write->add_store("M1", "p");
+
+  // compute
+  auto c1 = prg.add_loop("c1", 0, size1_o);
+  auto compute1 = c1->add_op("compute_level_1");
+  compute1->add_function("accumulate_3");
+  compute1->add_load("M1", "c1");
+  compute1->add_load("M1", "c1 + 1");
+  compute1->add_load("M1", "c1 + 2");
+  compute1->add_store("M1_o", "c1");
+
+  // downsample
+  prg.add_nest("d1", 0, size2, "dc1", 0, size2)->
+    add_op({"M1_o", "d1, dc1"}, "id", {"M2", "2*d1, 2*dc1"}); // FIXME use of undeclared identifier 'id'
+
+//  auto d1 = prg.add_loop("d1", 0, size2);
+//  auto down1 = p->add_op("downsample");
+//  down1->add_load("M1_o", "2 * d1"); // FIXME compile error
+//  down1->add_store("M2", "d1");
+
+  // compute
+  auto c2 = prg.add_loop("c2", 0, size2_o);
+  auto compute2 = c2->add_op("compute_level_2");
+  compute2->add_function("accumulate_3");
+  compute2->add_load("M2", "c2");
+  compute2->add_load("M2", "c2 + 1");
+  compute2->add_load("M2", "c2 + 2");
+  compute2->add_store("M2_o", "c2");
+
+  // downsample
+  prg.add_nest("d2", 0, size3, "dc2", 0, size3)->
+    add_op({"M2_o", "d2, dc2"}, "id", {"M3", "2*d2, 2*dc2"}); // FIXME use of undeclared identifier 'id'
+
+//  auto d2 = prg.add_loop("d2", 0, size3);
+//  auto down2 = p->add_op("downsample");
+//  down2->add_load("M2_o", "2*d2"); // FIXME compile error
+//  down2->add_store("M3", "d2");
+
+  // compute
+  auto c3 = prg.add_loop("c3", 0, size3_o);
+  auto compute3 = c3->add_op("compute_level_3");
+  compute3->add_function("accumulate_3");
+  compute3->add_load("M3", "c3");
+  compute3->add_load("M3", "c3 + 1");
+  compute3->add_load("M3", "c3 + 2");
+  compute3->add_store("out", "c3");
+  
+  return prg;
+}
+
+void pyr_1d_conv_test() {
+  prog pyr = pyr_conv_1d();
+  regression_test(pyr);
+}
+
+void compute_unit_with_index_variables_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "compute_unit_with_index_variable";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["M"] = 32;
+
+  auto p = prg.add_loop("p", 0, 10);
+  auto write = p->add_op("get_input");
+  write->add_load("in", "p");
+  write->add_store("M", "p");
+
+  auto c = prg.add_loop("c", 0, 10 - 2);
+  auto compute = c->add_op("compute_output");
+  compute->add_function("compute_with_variable");
+  compute->compute_unit_needs_index_variable("c");
+  compute->add_load("M", "c");
+  compute->add_store("out", "c");
+
+  regression_test(prg);
+
+
 }
 
 void application_tests() {
   iccad_tests();
-  //assert(false);
+  compute_unit_with_index_variables_test();
+
+  reduce_2d_test();
+  reduce_1d_test();
+
+  //pyr_1d_conv_test();
   halide_cascade_test();
   halide_dnn_test();
   halide_harris_test();
@@ -8770,9 +9069,6 @@ void application_tests() {
   conv3x3_app_unrolled_test();
   conv3x3_app_test();
   conv3x3_app_unrolled_uneven_test();
-
-  reduce_2d_test();
-  reduce_1d_test();
 
   up_unrolled_4_test();
 

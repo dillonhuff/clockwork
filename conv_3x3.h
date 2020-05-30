@@ -142,13 +142,44 @@ int max_zero(const int& val) {
 template<typename T>
 static inline
 T merge_exposures(T& bright, T& dark, T& bw, T& dw) {
-  return (bw*bright) + (dw*dark);
+  //return dark;
+  return (bw*bright) + (dw*dark) / (bw + dw);
+}
+
+template<typename T>
+static inline
+T psef_weighted_merge(T& bright, T& dark, T& bright_weight, T& dark_weight) {
+  //cout << "bw = " << bright_weight << endl;
+  //cout << "dw = " << dark_weight << endl;
+  //assert(bright_weight + dark_weight == 2);
+
+  return (bright_weight*bright + dark_weight*dark) / (bright_weight + dark_weight);
+  //return (bright_weight*bright + dark_weight*dark);
+  //return (bright + dark);
+}
+
+template<typename T>
+static inline
+T psef_normalize_weights(T& bright_weight) {
+  return max(1, bright_weight / 100);
+}
+
+template<typename T>
+static inline
+T psef_weight(T& src) {
+  auto sv = src.to_int();
+  int diff = 128 - sv;
+  int abs_diff = diff < 0 ? -diff : diff;
+  return 128 - min(128, abs_diff);
+  //return abs(128 - sv) > 100 ? 0 : 1;
+  //return min(max(0, 128 - src.to_int()), 255);
 }
 
 template<typename T>
 static inline
 T scale_exposure(T& src) {
-  return 3*src;
+  T scaled = 3*src;
+  return min(scaled.to_int(), 255);
 }
 
 template<typename T>
@@ -165,13 +196,23 @@ T f_divide(T& src, T& a0) {
 
 template<typename T>
 static inline
+T average(T& src, T& a0) {
+  //return src + a0;
+  return (src + a0) / 2;
+}
+
+template<typename T>
+static inline
 T add(T& src, T& a0) {
+  //return src;
+  //+ a0;
   return src + a0;
 }
 
 template<typename T>
 static inline
 T diff(T& src, T& a0) {
+  //return src;
   return src - a0;
 }
 
@@ -479,4 +520,9 @@ contrived(hw_uint<32*3>& in, hw_uint<32*2>& b) {
     in.extract<64, 95>() +
     b.extract<0, 31>() +
     b.extract<32, 63>();
+}
+
+static inline
+hw_uint<32> compute_with_variable(const hw_uint<32>& m, const int loop_var) {
+  return m + loop_var;
 }

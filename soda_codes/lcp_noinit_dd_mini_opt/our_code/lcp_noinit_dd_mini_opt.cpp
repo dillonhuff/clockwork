@@ -1141,6 +1141,22 @@ inline void raw_raw_update_0_write_bundle_write(hw_uint<16>& raw_update_0_write,
 
 
 // Operation logic
+inline void lcp_noinit_dd_mini_update_0(denoised_cache& denoised, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */lcp_noinit_dd_mini, int d0, int d1) {
+	// Consume: denoised
+	auto denoised_0_c__0_value = denoised_lcp_noinit_dd_mini_update_0_read_bundle_read(denoised/* source_delay */, d0, d1);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = lcp_noinit_dd_mini_generated_compute_unrolled_1(denoised_0_c__0_value);
+	// Produce: lcp_noinit_dd_mini
+	lcp_noinit_dd_mini.write(compute_result);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void raw_update_0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */raw_oc, raw_cache& raw, int d0, int d1) {
 	// Consume: raw_oc
 	auto raw_oc_0_c__0_value = raw_oc.read();
@@ -1163,22 +1179,6 @@ inline void denoised_update_0(raw_cache& raw, denoised_cache& denoised, int d0, 
 	auto compute_result = denoised_generated_compute_unrolled_1(raw_0_c__0_value);
 	// Produce: denoised
 	denoised_denoised_update_0_write_bundle_write(compute_result, denoised, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void lcp_noinit_dd_mini_update_0(denoised_cache& denoised, HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */lcp_noinit_dd_mini, int d0, int d1) {
-	// Consume: denoised
-	auto denoised_0_c__0_value = denoised_lcp_noinit_dd_mini_update_0_read_bundle_read(denoised/* source_delay */, d0, d1);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = lcp_noinit_dd_mini_generated_compute_unrolled_1(denoised_0_c__0_value);
-	// Produce: lcp_noinit_dd_mini
-	lcp_noinit_dd_mini.write(compute_result);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -1242,8 +1242,6 @@ void lcp_noinit_dd_mini_opt(HWStream<hw_uint<16> >& /* get_args num ports = 1 */
   lcp_noinit_dd_mini_opt(raw_oc, lcp_noinit_dd_mini, 1);
 }
 #ifdef __VIVADO_SYNTH__
-#include "lcp_noinit_dd_mini_opt.h"
-
 const int lcp_noinit_dd_mini_update_0_write_num_transfers = 19200;
 const int raw_update_0_read_num_transfers = 30816;
 

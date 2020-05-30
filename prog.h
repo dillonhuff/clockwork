@@ -39,12 +39,28 @@ struct ir_node {
   std::vector<pair<buffer_name, std::vector<pair<std::string, std::string>>>> consume_locs_pair;
   // The name of the HL C++ function that this op invokes
   std::string func;
+  // Name of loop index variables used by this unit
+  std::vector<std::string> index_variables_needed_by_compute;
   // Annotation used for debug printouts
   int unroll_factor;
 
   isl_ctx* ctx;
 
   ir_node() : parent(nullptr), is_loop(false), unroll_factor(1) {}
+
+  set<op*> ancestors() {
+    set<op*> anc;
+    if (parent != nullptr) {
+      for (auto a : parent->ancestors()) {
+        anc.insert(a);
+      }
+    }
+    return anc;
+  }
+
+  void compute_unit_needs_index_variable(const std::string& v) {
+    index_variables_needed_by_compute.push_back(v);
+  }
 
   map<op*, Box> get_domain_boxes() {
       Box empty;
@@ -88,7 +104,6 @@ struct ir_node {
 
   void add_function(const std::string& n, const vector<string>& args) {
     func = n;
-    //func_args = args;
   }
 
   op* add_nest(
@@ -117,6 +132,7 @@ struct ir_node {
 
   op* add_loop(const std::string& name, const int l, const int u) {
     assert(is_loop);
+    //assert(!elem(name, all_existing_loop_names()));
 
     auto lp = new op();
     lp->name = name;
@@ -183,7 +199,10 @@ struct ir_node {
   }
 
   op* add_op(const std::string& name) {
+    //assert(!elem(name, all_existing_op_names()));
+
     auto fo = new op();
+    fo->parent = this;
     fo->name = name;
     fo->ctx = ctx;
     children.push_back(fo);
@@ -327,6 +346,37 @@ struct ir_node {
       }
     }
     return loops;
+  }
+
+  std::set<std::string> all_existing_loop_names() {
+    set<string> names;
+    for (auto op : all_root_ops()) {
+      if (op->is_loop) {
+        names.insert(op->name);
+      }
+    }
+    return names;
+  }
+
+  std::set<std::string> all_existing_op_names() {
+    set<string> names;
+    for (auto op : all_root_ops()) {
+      if (!op->is_loop) {
+        names.insert(op->name);
+      }
+    }
+    return names;
+  }
+
+  ir_node* find_root() {
+    if (parent != nullptr) {
+      return this;
+    }
+    return parent->find_root();
+  }
+
+  std::set<op*> all_root_ops() {
+    return find_root()->all_ops();
   }
 
   std::set<op*> all_ops() {

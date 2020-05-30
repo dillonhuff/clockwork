@@ -2,7 +2,7 @@ kernel: psefn_4_opt
 unroll factor: 4
 burst width: 64
 
-input uint16: in_off_chip(1932, *)
+input uint16: in_off_chip(1268, *)
 
 local uint16: in(0, 0) = <NULLPTR FOR SODA COMPUTE STRING>
 

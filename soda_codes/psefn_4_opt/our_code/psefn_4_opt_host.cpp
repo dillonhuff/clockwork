@@ -18,12 +18,12 @@ int main(int argc, char **argv) {
   std::cout << "num_epochs = " << num_epochs << std::endl;
 
   size_t total_size_bytes = 0;
-  const int in_update_0_read_DATA_SIZE = num_epochs*3722964;
+  const int in_update_0_read_DATA_SIZE = num_epochs*1601484;
   const int in_update_0_read_BYTES_PER_PIXEL = 16 / 8;
   size_t in_update_0_read_size_bytes = in_update_0_read_BYTES_PER_PIXEL * in_update_0_read_DATA_SIZE;
 
   total_size_bytes += in_update_0_read_size_bytes;
-  const int psefn_4_update_0_write_DATA_SIZE = num_epochs*3686400;
+  const int psefn_4_update_0_write_DATA_SIZE = num_epochs*1565000;
   const int psefn_4_update_0_write_BYTES_PER_PIXEL = 16 / 8;
   size_t psefn_4_update_0_write_size_bytes = psefn_4_update_0_write_BYTES_PER_PIXEL * psefn_4_update_0_write_DATA_SIZE;
 

@@ -22,6 +22,15 @@ std::string vanilla_c_pixel_type_string(const std::string& buf, map<string, UBuf
   return vanilla_c_pixel_type_string(map_find(buf, buffers).port_widths);
 }
 
+void sw_test_headers(ostream& out, prog& prg) {
+  out << "#include <algorithm>" << endl;
+  out << "#include <fstream>" << endl;
+  out << "#include <vector>" << endl;
+  out << "#include \"" << prg.name << ".h\"" << endl;
+  out << "#include \"bitmap_image.hpp\"" << endl;
+  out << "#include <cstdlib>" << endl << endl;
+}
+
 void ocl_headers(ostream& out) {
   out << "#include \"xcl2.hpp\"" << endl;
   out << "#include <algorithm>" << endl;
@@ -255,6 +264,123 @@ void populate_input(std::ostream& out, const std::string& edge_bundle, const str
   out << tab(1) << "input_" << edge_bundle << ".close();" << endl;
 }
 
+void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
+  ofstream out(prg.name + "_sw_bmp_test_harness.cpp");
+  sw_test_headers(out, prg);
+
+  out << "int main(int argc, char **argv) {" << endl;
+  out << tab(1) << "bitmap_image input(\"./images/taxi_slice_256.bmp\");" << endl;
+  vector<string> args;
+  for (auto in : prg.ins) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    auto bundle = pick(buf.get_out_bundles());
+    string in_bundle_tp = buf.bundle_type_string(bundle);
+
+    out << tab(1) << "HWStream<" << in_bundle_tp << " > " << bundle << "_channel;" << endl;
+    args.push_back(bundle + "_channel");
+  }
+
+  for (auto in : prg.outs) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    auto bundle = pick(buf.get_in_bundles());
+    string in_bundle_tp = buf.bundle_type_string(bundle);
+
+    out << tab(1) << "HWStream<" << in_bundle_tp << " > " << bundle << "_channel;" << endl;
+    args.push_back(bundle + "_channel");
+  }
+
+  auto in_rep = pick(inputs(buffers, prg));
+  auto& in_buf = buffers.at(in_rep.first);
+  string in_bundle_tp = in_buf.bundle_type_string(in_rep.second);
+  int pixel_width = in_buf.port_widths;
+  int lanes = in_buf.port_bundles.at(in_rep.second).size();
+  out << tab(1) << "// In lanes = " << lanes << endl;
+  if (prg.buffer_bounds[in_rep.first].size() != 2) {
+    out << tab(1) << "// Error: BMP Harness generation is not supported for programs with " << prg.buffer_bounds.size() << " dimensional buffers" << endl;
+    out << "}" << endl;
+    return;
+  }
+  int in_cols = prg.buffer_bounds[in_rep.first].at(0);
+  int in_rows = prg.buffer_bounds[in_rep.first].at(1);
+
+  assert(in_cols % lanes == 0);
+
+  out << tab(1) << "for (int r = 0; r < " << in_rows << "; r++) {" << endl;
+  out << tab(2) << "for (int cl = 0; cl < " << in_cols << " / " << lanes << "; cl++) {" << endl;
+  out << tab(3) << in_bundle_tp << " packed;" << endl;
+
+  for (int l = 0; l < lanes; l++) {
+    out << tab(3) << "{" << endl;
+  
+    out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
+    out << tab(3) << "if (r < input.height() && c < input.width()) {" << endl;
+    out << tab(4) << "rgb_t pix;" << endl;
+    out << tab(4) << "input.get_pixel(c, r, pix);" << endl;
+    out << tab(4) << "auto val = (pix.red + pix.green + pix.blue) / 3;" << endl;
+    out << tab(4) << "set_at<" << l*pixel_width << ", " << lanes*pixel_width << ", " << pixel_width << ">(" <<
+      "packed, val);" << endl;
+    out << tab(3) << "} else {" << endl;
+    out << tab(4) << "set_at<" << l*pixel_width << ", " << lanes*pixel_width << ", " << pixel_width << ">(" <<
+      "packed, 0);" << endl;
+    out << tab(3) << "}" << endl;
+    out << tab(3) << "}" << endl;
+
+  }
+
+  out << tab(4) << in_rep.second << "_channel.write(packed);" << endl;
+  out << tab(2) << "}" << endl;
+  out << tab(1) << "}" << endl;
+
+  out << tab(1) << prg.name << sep_list(args, "(", ")", ", ") << ";" << endl;
+
+  {
+    auto out_rep = pick(outputs(buffers, prg));
+    auto& out_buf = buffers.at(out_rep.first);
+    string out_bundle_tp = out_buf.bundle_type_string(out_rep.second);
+    int pixel_width = out_buf.port_widths;
+    int lanes = out_buf.port_bundles.at(out_rep.second).size();
+    if (prg.buffer_bounds[out_rep.first].size() != 2) {
+      out << tab(1) << "// Error: BMP Harness generation is not supported for programs with " << prg.buffer_bounds.size() << " dimensional buffers" << endl;
+      out << "}" << endl;
+      return;
+    }
+    int out_cols = prg.buffer_bounds[out_rep.first].at(0);
+    int out_rows = prg.buffer_bounds[out_rep.first].at(1);
+    vector<string> sizes;
+    for (auto sz : prg.buffer_bounds[out_rep.first]) {
+      sizes.push_back(str(sz));
+    }
+
+    out << tab(1) << "bitmap_image output(" << sep_list(sizes, "", "", ", ") << ");" << endl;
+    out << tab(1) << "for (int r = 0; r < " << out_rows << "; r++) {" << endl;
+    out << tab(2) << "for (int cl = 0; cl < " << out_cols << " / " << lanes << "; cl++) {" << endl;
+    out << tab(3) << out_bundle_tp << " packed;" << endl;
+
+    out << tab(3) << "auto packed_val = " << out_rep.second << "_channel.read();" << endl;
+    vector<string> unpacked_values =
+      split_bv(3, out, "packed_val", pixel_width, lanes);
+    for (int l = 0; l < lanes; l++) {
+      out << tab(3) << "{" << endl;
+      out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
+      string val = unpacked_values.at(l);
+      //out << tab(3) << "auto val_ " << l << " = " << out_rep.second << "_channel.read();" << endl;
+      out << tab(3) << "rgb_t pix;" << endl;
+      out << tab(3) << "pix.red = " << val << ";" << endl;
+      out << tab(3) << "pix.green = " << val << ";" << endl;
+      out << tab(3) << "pix.blue = " << val << ";" << endl;
+      out << tab(3) << "output.set_pixel(c, r, pix);" << endl;
+      out << tab(2) << "}" << endl;
+    }
+    out << tab(1) << "}" << endl;
+    out << tab(1) << "}" << endl;
+    out << tab(1) << "output.save_image(\"./images/" << prg.name << "_bmp_out.bmp\");" << endl;
+    out << "}" << endl;
+  }
+
+}
+
 void generate_xilinx_accel_soda_host(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg) {
   ofstream out("soda_" + prg.name + "_host.cpp");
   ocl_headers(out);
@@ -432,7 +558,7 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
   cout << "Generating accel wrapper" << endl;
   string driver_func = prg.name + "_accel";
 
-  out << "#include \"" << prg.name << ".h\"" << endl << endl;
+  //out << "#include \"" << prg.name << ".h\"" << endl << endl;
 
   for (auto eb : edge_buffers(buffers, prg)) {
     string out_rep = eb.first;
@@ -1218,7 +1344,11 @@ vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& pr
   return buf_srcs;
 }
 
-compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<string, UBuffer>& buffers,
+compute_kernel generate_compute_op(
+    ostream& conv_out,
+    prog& prg,
+    op* op,
+    map<string, UBuffer>& buffers,
     map<string, isl_set*>& domain_map) {
 
   cout << "Generating compute for: " << op->name << endl;
@@ -1241,7 +1371,7 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
   for (auto a : space_var_decls(s)) {
     buf_srcs.push_back(a);
   }
-
+  
   cout << "Got iteration variables" << endl;
   conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
   vector<pair<string, string> > in_buffers;
@@ -1287,6 +1417,10 @@ compute_kernel generate_compute_op(ostream& conv_out, prog& prg, op* op, map<str
     }
     buf_args.push_back(value_name);
     res = value_name;
+  }
+
+  for (auto var : op->index_variables_needed_by_compute)  {
+    buf_args.push_back(var);
   }
 
   cout << "created res" << endl;
@@ -1683,6 +1817,8 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out << endl;
 
+  // Collateral generation
+  generate_sw_bmp_test_harness(buffers, prg);
   generate_app_code_header(buffers, prg);
   generate_soda_tb(options, buffers, prg);
   generate_xilinx_accel_soda_host(options, buffers, prg);
