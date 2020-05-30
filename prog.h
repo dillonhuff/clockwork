@@ -865,6 +865,8 @@ cout << "op name  " << op->name << " " << ivar_str << " " << p << endl;
       }
       m = unn(m, pmap);
     }
+cout<<str(m)<<endl;
+cout<<"------------------consumer1---------------------------"<<endl;
     return m;
   }
 
@@ -905,6 +907,8 @@ cout << "op name  " << op->name << " " << ivar_str << " " << p << endl;
       }
       m = unn(m, pmap); 
     }
+cout<<str(m)<<endl;
+cout<<"=====================================consumer=================="<<endl;
     return m;
   }
 
