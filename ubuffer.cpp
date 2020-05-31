@@ -1,5 +1,6 @@
 #include "ubuffer.h"
 #include "codegen.h"
+#include "coreirgen.h"
 
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
   umap* src_map = nullptr;
@@ -379,27 +380,94 @@ void generate_vivado_tcl(UBuffer& buf) {
 }
 
 void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
+    auto context = def->getContext();
     for (auto it : stack_banks) {
         auto connection = it.first;
         auto bk = it.second;
         cout << "[inpt: " << connection.first << "] -> [bk: " << bk.name << "] -> [outpt:" << connection.second <<  "]\n";
     }
+
+    //map save the register
+    map<string, CoreIR::Wireable*> wire2out;
+    map<string, CoreIR::Wireable*> reg_in;
+
+    for (auto bk : get_banks()) {
+        cout << "visit bank" << bk.name << endl;
+        set<string> inpts = get_bank_inputs(bk.name);
+        set<string> outpts = get_bank_outputs(bk.name);
+        if (bk.maxdelay == 0){
+            //add register, wire valid from ubuffer
+            auto reg = def->addInstance("d_reg_"+context->getUnique(), "mantle.reg",
+                    {{"width", CoreIR::Const::make(context, port_widths)},
+                    {"has_en", CoreIR::Const::make(context, false)}});
+            assert(inpts.size() == 1);
+            assert(outpts.size() == 1);
+            //do not wire input for the first pass
+            if (isIn.at(pick(inpts))) {
+              def->connect(reg->sel("in"), def->sel("self."+pick(inpts)));
+            }
+            else {
+                reg_in[pick(inpts)] = reg->sel("in");
+                wire2out[pick(outpts)] = reg->sel("out");
+            }
+            def->connect(reg->sel("out"), def->sel("self."+pick(outpts)));
+        }
+        else {
+            string ub_ins_name = "ub_"+bk.name;
+            json config_file;
+            config_file["name"][0] = "TOP_address.csv";
+            CoreIR::Values args = {
+                {"width", CoreIR::Const::make(context, port_widths)},
+                {"input_num", CoreIR::Const::make(context, 1)},
+                {"output_num", CoreIR::Const::make(context, bk.num_readers)},
+                {"config", CoreIR::Const::make(context, config_file)}
+            };
+            CoreIR::Instance* buf;
+            buf = def->addInstance(ub_ins_name, "cwlib.ub", args);
+
+            int inpt_cnt = 0, outpt_cnt = 0;
+            for (auto inpt: inpts) {
+                def->connect(buf->sel("datain_" + to_string(inpt_cnt)), def->sel("self."+inpt));
+                def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+inpt+"_en"));
+                inpt_cnt ++;
+            }
+            for (auto outpt: outpts) {
+                def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), def->sel("self."+outpt));
+                wire2out[outpt] = buf->sel("dataout_" + to_string(outpt_cnt));
+                //TODO: figure out valid wiring strategy
+                //
+                outpt_cnt ++;
+            }
+        }
+    }
+
+    //second pass wire all the register input port
+    for (auto it: reg_in) {
+        string outpt = it.first;
+        auto in = it.second;
+        auto out = wire2out.at(outpt);
+        def->connect(in, out);
+    }
+
 }
 
 void generate_coreir(CodegenOptions& options, UBuffer& buf) {
     CoreIR::Context* context = CoreIR::newContext();
     CoreIRLoadLibrary_commonlib(context);
+    CoreIRLoadLibrary_cwlib(context);
     auto ns = context->getNamespace("global");
     vector<pair<string, CoreIR::Type*> >
         ub_field{{"clk", context->Named("coreir.clkIn")},
                 {"reset", context->BitIn()}};
     for (auto inpt: buf.get_in_ports()) {
+        cout << "Initial coreIR input_port : " << inpt << endl;
         ub_field.push_back(make_pair(inpt + "_en", context->BitIn()));
         ub_field.push_back(make_pair(inpt, context->BitIn()->Arr(buf.port_widths)));
     }
     for (auto outpt: buf.get_out_ports()) {
-        ub_field.push_back(make_pair(outpt + "_valid", context->BitIn()));
-        ub_field.push_back(make_pair(outpt, context->BitIn()->Arr(buf.port_widths)));
+        cout << "Initial coreIR output_port : " << outpt << endl;
+        ub_field.push_back(make_pair(outpt + "_valid", context->Bit()));
+        ub_field.push_back(make_pair(outpt, context->Bit()->Arr(buf.port_widths)));
     }
 
     CoreIR::RecordType* utp = context->Record(ub_field);
@@ -993,7 +1061,8 @@ bank UBuffer::compute_bank_info(
   //initial the delay map
   map<string, int> delay_map = {};
 
-  stack_bank bank{name, BANK_TYPE_STACK, pt_type_string, read_delays, num_readers, 0, rddom, delay_map};
+  //FIXME: figure out a correct depth of the bank
+  stack_bank bank{name, BANK_TYPE_STACK, pt_type_string, read_delays, num_readers, 999, rddom, delay_map};
   //stack_bank bank{name, BANK_TYPE_RAM, pt_type_string, read_delays, num_readers, maxdelay, mem_box};
 
   return bank;

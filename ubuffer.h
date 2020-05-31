@@ -925,6 +925,26 @@ class UBuffer {
       return "";
     }
 
+    set<string> get_bank_inputs(const std::string& name) const {
+      set<string> ret;
+      for (auto b : stack_banks) {
+        if (b.second.name == name) {
+          ret.insert(b.first.first);
+        }
+      }
+      return ret;
+    }
+
+    set<string> get_bank_outputs(const std::string& name) const {
+      set<string> ret;
+      for (auto b : stack_banks) {
+        if (b.second.name == name) {
+          ret.insert(b.first.second);
+        }
+      }
+      return ret;
+    }
+
     void replace_bank(stack_bank& target, stack_bank& replacement) {
       for (auto bnk : stack_banks) {
         if (bnk.second.name == target.name) {
