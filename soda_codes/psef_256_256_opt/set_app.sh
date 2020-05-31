@@ -1,1 +1,0 @@
-export app=psef_256_256_naive
