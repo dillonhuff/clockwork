@@ -978,6 +978,31 @@ umap* UBuffer::get_lexmax_events(const std::string& outpt) {
   return lex_max_events;
 }
 
+umap* UBuffer::get_lexmax_events(const std::string& inpt, const std::string& outpt) {
+  umap* src_map = nullptr;
+  auto beforeAcc = lex_gt(schedule.at(outpt), schedule.at(inpt));
+  auto outmap = access_map.at(outpt);
+  auto inmap = access_map.at(inpt);
+  src_map = its(dot(outmap, inv(inmap)), beforeAcc);
+  assert(src_map != nullptr);
+
+  //cout << "src map done: " << str(src_map) << endl;
+  auto sched = global_schedule();
+  auto after = lex_gt(sched, sched);
+
+  src_map = its(src_map, after);
+  src_map = lexmax(src_map);
+
+  auto time_to_event = inv(sched);
+
+  auto lex_max_events =
+    dot(lexmax(dot(src_map, sched)), time_to_event);
+
+  //cout << "Done" << outpt << endl;
+  assert(lex_max_events != nullptr);
+  return lex_max_events;
+}
+
 isl_union_pw_qpolynomial* UBuffer::compute_dd(const std::string& read_port, const std::string& write_port) {
 
   isl_union_map* sched = schedule.at(write_port);
@@ -991,18 +1016,20 @@ isl_union_pw_qpolynomial* UBuffer::compute_dd(const std::string& read_port, cons
   umap* wrsched = schedule.at(write_port);
   auto WritesBeforeRead =
     lex_gt(rdsched, wrsched);
-  //cout << "\trdsched: " << str(rdsched) << "\n wrsched: " << str(wrsched) << "\n wbr: " << str(WritesBeforeRead) << endl;
+  cout << "\trdsched: " << str(rdsched) << "\n wrsched: " << str(wrsched) << "\n wbr: " << str(WritesBeforeRead) << endl;
 
   auto WriteThatProducesReadData = get_lexmax_events(read_port);
-  //cout << "\twpr: " << str(WriteThatProducesReadData) << "\nwaw:" << str(WritesAfterWrite) << endl;
+  //TODO: test these new method
+  //auto WriteThatProducesReadData = get_lexmax_events(write_port, read_port);
+  cout << "\twpr: " << str(WriteThatProducesReadData) << "\nwaw:" << str(WritesAfterWrite) << endl;
 
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
-  //cout << "\twap: " << str(WritesAfterProduction) << endl;
+  cout << "\twap: " << str(WritesAfterProduction) << endl;
   auto WritesBtwn = its_range((its(WritesAfterProduction, WritesBeforeRead)),
       to_uset(domain.at(write_port)));
 
-  //cout << "\tWritesBtwn: " << str(WritesBtwn) << endl;
+  cout << "\tWritesBtwn: " << str(WritesBtwn) << endl;
 
   auto c = card(WritesBtwn);
   //cout << "got card" << endl;
@@ -1217,6 +1244,23 @@ void UBuffer::merge_bank(CodegenOptions& options, string inpt, vector<stack_bank
       }
       cout << "Create a new bank !"<< endl;
     }
+  }
+}
+
+void UBuffer::port_reduction() {
+  //find the lexmin of all out port
+  auto pt_vec = get_out_ports();
+  sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
+          auto l_start = lexminpt(range(access_map.at(l)));
+          auto r_start = lexminpt(range(access_map.at(r)));
+          return lex_gt_pt(l_start, r_start);
+  });
+  cout << "Upper left access port: " << str(access_map.at(pt_vec.front())) << endl;
+  for (auto outpt : pt_vec) {
+      auto max_dd = compute_dd_bound(outpt, pt_vec.front(), true);
+      auto min_dd = compute_dd_bound(outpt, pt_vec.front(), false);
+      cout << "\tpt: [" << outpt << "] -> pt:[" << pt_vec.front()
+          << "] has delay = [" << min_dd << ", " << max_dd << "]\n";
   }
 }
 

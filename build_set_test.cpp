@@ -1155,6 +1155,36 @@ void emit_address_stream2file(map<string, UBuffer> buffers_opt, string read_buf,
 
 }
 
+void reaccess_test() {
+
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "vec";
+  prg.add_input("in");
+  prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+
+  auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
+  auto write = p->add_op("input");
+  write->add_load("in", "po, pi");
+  write->add_store("buf", "po, pi");
+
+  auto q = prg.add_nest("ao", 0 , 2, "qo", 0, 6, "qi", 0, 14);
+  auto read = q->add_op("output");
+  for (size_t wy = 0; wy < 3; wy ++)
+      for (size_t wx = 0; wx < 3; wx ++) {
+        read->add_load("buf", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+      }
+  read->add_store("out", "po, pi");
+
+  auto buffers_opt = build_buffers(prg);
+  CodegenOptions opt;
+  opt.conditional_merge = false;
+  buffers_opt.at("buf").generate_bank_and_merge(opt);
+
+}
 
 void shift_reg_test() {
 
@@ -1180,7 +1210,14 @@ void shift_reg_test() {
       }
   read->add_store("out", "po, pi");
 
-  //optimized first time
+  //unoptimized schedule
+  auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
+  auto buffers = build_buffers(prg, sched_naive);
+  buffers.at("buf").port_reduction();
+  assert(false);
+
+
+  //optimized schedule
   auto buffers_opt = build_buffers(prg);
   CodegenOptions opt;
   opt.conditional_merge = true;
@@ -7569,6 +7606,8 @@ void playground() {
 void application_tests() {
   shift_reg_test();
   assert(false);
+    reaccess_test();
+
   bankmerge_vec_test();
   auto_vec_test();
   flatten_sched_test();
