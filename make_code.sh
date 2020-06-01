@@ -1,3 +1,3 @@
-make
+make -j
 
 
