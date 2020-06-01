@@ -11,7 +11,7 @@ OBJ_FILES := $(patsubst %.cpp,%.o,$(LIB_CPP_FILES))
 #$(TARGET): $(LIB_CPP_FILES) $(TEST_FILES)  # clkwrk.a clockwork.o
 #$(TARGET): $(OBJ_FILES) clockwork.o
 $(TARGET): libclkwrk.so clockwork.o
-	$(CXX) $(CXX_FLAGS) clockwork.o $(LINK_FLAGS) -o $@
+	$(CXX) clockwork.o $(LINK_FLAGS) -o $@
 
 $(TARGET).o: build_set_test.cpp
 	$(CXX) $(CXX_FLAGS) -c $< -o $@
