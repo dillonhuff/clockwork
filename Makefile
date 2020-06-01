@@ -9,6 +9,10 @@ endif
 TARGET = clockwork
 
 CXX_FLAGS = -std=c++11 -I $(BARVINOK_PATH) -I $(OPT_PATH)
+ifneq ($(UNAME), Darwin)
+CXX_FLAGS += -fPIC
+endif
+
 LINK_FLAGS = -L ./lib -L $(OPT_LIB_PATH) -L $(ISL_PATH) -lclkwrk -lbarvinok -lisl -lntl -lgmp -lpolylibgmp -lpthread 
 
 TEST_FILES = build_set_test.cpp
@@ -34,6 +38,7 @@ libclkwrk.$(LIB_EXT): $(OBJ_FILES)
 ifeq ($(UNAME), Darwin)
 	$(CXX) $(CXX_FLAGS) -dynamiclib -undefined dynamic_lookup $^ -o lib/$@
 else
+	$(CXX) $(CXX_FLAGS) -g -fPIC -rdynamic -shared $^ -o lib/$@
 endif
 
 %.o: %.cpp %.h
