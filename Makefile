@@ -8,9 +8,11 @@ LIB_CPP_FILES = qexpr.cpp app.cpp isl_utils.cpp prog.cpp codegen.cpp minihls.cpp
 
 OBJ_FILES := $(patsubst %.cpp,%.o,$(LIB_CPP_FILES))
 
-$(TARGET): $(LIB_CPP_FILES) $(TEST_FILES)  # clkwrk.a clockwork.o
-#$(TARGET): $(OBJ_FILES) clockwork.o
-#$(TARGET): clkwrk.a clockwork.o
+# Works on rice and my machine
+#$(TARGET): $(LIB_CPP_FILES) $(TEST_FILES)  # clkwrk.a clockwork.o
+	#$(CXX) $(CXX_FLAGS) $^ $(LINK_FLAGS) -o $@
+
+$(TARGET): $(OBJ_FILES) clockwork.o
 	$(CXX) $(CXX_FLAGS) $^ $(LINK_FLAGS) -o $@
 
 $(TARGET).o: build_set_test.cpp
