@@ -12,6 +12,7 @@ curl -OL barvinok.gforge.inria.fr/barvinok-0.41.tar.gz
 tar -xvzf barvinok-0.41.tar.gz
 cd barvinok-0.41/
 ./configure --prefix=$top_dir --with-ntl-prefix=$top_dir
+../misc/fix_barvinok_makefile.py
 make
 make install
 cd ..
