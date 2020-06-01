@@ -392,10 +392,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     map<string, CoreIR::Wireable*> reg_in;
 
     for (auto bk : get_banks()) {
-        cout << "visit bank" << bk.name << endl;
         set<string> inpts = get_bank_inputs(bk.name);
         set<string> outpts = get_bank_outputs(bk.name);
-        if (bk.maxdelay == 0){
+        auto buf_inpts = get_in_ports();
+        if (count(buf_inpts.begin(), buf_inpts.end(), pick(inpts)) == 0){
             //add register, wire valid from ubuffer
             auto reg = def->addInstance("d_reg_"+context->getUnique(), "mantle.reg",
                     {{"width", CoreIR::Const::make(context, port_widths)},
@@ -411,6 +411,13 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
                 wire2out[pick(outpts)] = reg->sel("out");
             }
             def->connect(reg->sel("out"), def->sel("self."+pick(outpts)));
+        }
+        else if (bk.maxdelay == 0) {
+            //this is a wire
+            assert(inpts.size() == 1);
+            assert(outpts.size() == 1);
+            def->connect(def->sel("self." + pick(inpts)), def->sel("self." + pick(outpts)));
+            wire2out[pick(outpts)] = def->sel("self." + pick(inpts));
         }
         else {
             string ub_ins_name = "ub_"+bk.name;
@@ -460,12 +467,10 @@ void generate_coreir(CodegenOptions& options, UBuffer& buf) {
         ub_field{{"clk", context->Named("coreir.clkIn")},
                 {"reset", context->BitIn()}};
     for (auto inpt: buf.get_in_ports()) {
-        cout << "Initial coreIR input_port : " << inpt << endl;
         ub_field.push_back(make_pair(inpt + "_en", context->BitIn()));
         ub_field.push_back(make_pair(inpt, context->BitIn()->Arr(buf.port_widths)));
     }
     for (auto outpt: buf.get_out_ports()) {
-        cout << "Initial coreIR output_port : " << outpt << endl;
         ub_field.push_back(make_pair(outpt + "_valid", context->Bit()));
         ub_field.push_back(make_pair(outpt, context->Bit()->Arr(buf.port_widths)));
     }
@@ -986,15 +991,18 @@ isl_union_pw_qpolynomial* UBuffer::compute_dd(const std::string& read_port, cons
   umap* wrsched = schedule.at(write_port);
   auto WritesBeforeRead =
     lex_gt(rdsched, wrsched);
+  //cout << "\trdsched: " << str(rdsched) << "\n wrsched: " << str(wrsched) << "\n wbr: " << str(WritesBeforeRead) << endl;
 
   auto WriteThatProducesReadData = get_lexmax_events(read_port);
+  //cout << "\twpr: " << str(WriteThatProducesReadData) << "\nwaw:" << str(WritesAfterWrite) << endl;
 
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
+  //cout << "\twap: " << str(WritesAfterProduction) << endl;
   auto WritesBtwn = its_range((its(WritesAfterProduction, WritesBeforeRead)),
       to_uset(domain.at(write_port)));
 
-  //cout << "WritesBtwn: " << str(WritesBtwn) << endl;
+  //cout << "\tWritesBtwn: " << str(WritesBtwn) << endl;
 
   auto c = card(WritesBtwn);
   //cout << "got card" << endl;
@@ -1020,8 +1028,14 @@ bank UBuffer::compute_bank_info(
     set<string> inpt_set,
     set<string> outpt_set) {
 
-    //we just need connection information
-  //int maxdelay = compute_dd_bound(outpt, inpt, true);
+  //we just need connection information
+  int maxdelay = 0;
+  for (auto inpt : inpt_set) {
+      for (auto outpt: outpt_set) {
+        maxdelay = std::max(maxdelay, compute_dd_bound(outpt, inpt, true));
+      }
+  }
+  cout << "compute max delay for super bank =  " << maxdelay << endl;
   vector<int> read_delays{0};
 
   int num_readers = outpt_set.size();
@@ -1062,7 +1076,7 @@ bank UBuffer::compute_bank_info(
   map<string, int> delay_map = {};
 
   //FIXME: figure out a correct depth of the bank
-  stack_bank bank{name, BANK_TYPE_STACK, pt_type_string, read_delays, num_readers, 999, rddom, delay_map};
+  stack_bank bank{name, BANK_TYPE_STACK, pt_type_string, read_delays, num_readers, maxdelay, rddom, delay_map};
   //stack_bank bank{name, BANK_TYPE_RAM, pt_type_string, read_delays, num_readers, maxdelay, mem_box};
 
   return bank;
@@ -1313,7 +1327,6 @@ void UBuffer::port_group2bank(int in_port_width, int out_port_width) {
 
         group_in_port_width = inpt_set.size();
         group_out_port_width ++;
-        cout << group_in_port_width << ", " << group_out_port_width << endl;
         if ((group_in_port_width <= in_port_width) && (group_out_port_width <= out_port_width)) {
             //pop stack and add port width
             bank_pool.pop();
@@ -1351,6 +1364,10 @@ void UBuffer::port_group2bank(int in_port_width, int out_port_width) {
             //replace port
             for (auto it : outpt_merge) {
                 replace_pt(it.first, it.second);
+                //auto new_sched = dot(schedule.at(it.first), to_umap(it.second));
+                auto new_sched = assign_domain_to_map(to_map(schedule.at(it.first)), ::domain(it.second));
+                cout << "new schedule with lib: " << str(new_sched) << endl;
+                schedule.at(it.first) = to_umap(new_sched);
                 //add valid bound, mark the main output
             }
             //TODO: replace bank with output port as new input port
@@ -1393,6 +1410,9 @@ void UBuffer::port_group2bank(int in_port_width, int out_port_width) {
     if (!inpt_set.empty()) {
         for (auto it : outpt_merge) {
             replace_pt(it.first, it.second);
+            auto new_sched = assign_domain_to_map(to_map(schedule.at(it.first)), ::domain(it.second));
+            cout << "new schedule with lib: " << str(new_sched) << endl;
+            schedule.at(it.first) = to_umap(new_sched);
         }
         for (auto it: back_edge) {
             auto read = it.first;

@@ -339,7 +339,10 @@ isl_bool with_domain_name(isl_map* m, void* user);
 
 isl_map* get_domain_ii_transform(isl_ctx* ctx, isl_set* const s, int ii);
 isl_map* get_shift_map(isl_map* s);
+
+//some map transformation from reconstruct constraints
 isl_map* pad_to_domain_map(isl_map* s, int depth);
+isl_map* assign_domain_to_map(isl_map* s, isl_set* new_domain);
 
 isl_map* unn(isl_map* const m0, isl_map* const m1);
 

@@ -1736,6 +1736,36 @@ isl_map* pad_to_domain_map(isl_map* m, int depth) {
   return isl_map_from_basic_map(b_ret);
 }
 
+isl_map* assign_domain_to_map(isl_map* m, isl_set* new_domain) {
+    string origin_dom_name = domain_name(m);
+    string new_dom_name = name(new_domain);
+    assert(origin_dom_name == new_dom_name);
+
+    auto c_vec = constraints(m);
+    vector<isl_constraint*> new_c;
+
+    //peel off all the domain constraints
+    for (auto c : c_vec) {
+        if (isl_constraint_is_equality(c)) {
+            new_c.push_back(c);
+        }
+    }
+    //for (auto c : origin_c_vec) {
+    //    //get relation from origin map
+    //    if (isl_constraint_is_equality(c)) {
+    //        new_c.push_back(c);
+    //    }
+    //}
+    auto ret = isl_basic_map_universe(get_space(m));
+    for (auto c : new_c) {
+        //cout << "Add constraint: " << str(c) << endl;
+        ret = isl_basic_map_add_constraint(ret, c);
+    }
+
+    auto ret_m = isl_map_from_basic_map(ret);
+    return its(ret_m, new_domain);
+}
+
 
 vector<isl_constraint*> constraints(isl_set* s) {
   vector<isl_constraint*> code_holder;
