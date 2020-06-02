@@ -15,14 +15,15 @@ endif
 
 LINK_FLAGS = -L ./lib -L $(OPT_LIB_PATH) -L $(ISL_PATH) -lclkwrk -lbarvinok -lisl -lntl -lgmp -lpolylibgmp -lpthread 
 
-COREIR_PATH = $(COREIR)
+ifeq ($(COREIR),1)
+ifndef COREIR_PATH
+$(error COREIR_PATH is not set)
+endif
+$(info CoreIR Path is [${COREIR_PATH}])
+COREIR_INCLUDE = $(COREIR_PATH)/include
+COREIR_LIB = $(COREIR_PATH)/lib
 
-ifdef COREIR_PATH
-$(info CoreIR Path is [${COREIR}])
-COREIR_INCLUDE = $(COREIR)/include
-COREIR_LIB = $(COREIR)/lib
-
-CXX_FLAGS += -I $(COREIR_INCLUDE)
+CXX_FLAGS += -I $(COREIR_INCLUDE) -D COREIR
 LINK_FLAGS += -L $(COREIR_LIB) -Wl,-rpath $(COREIR_LIB) -lcoreir -lcoreirsim -lcoreir-commonlib
 endif
 

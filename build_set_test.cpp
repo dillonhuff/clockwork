@@ -1707,7 +1707,11 @@ void shift_reg_test() {
   cout << buffers_opt.at("buf") << endl;
   buffers_opt.at("buf").port_group2bank(2, 2);
   cout << buffers_opt.at("buf") << endl;
+
+#ifdef COREIR
   generate_coreir(opt, buffers_opt.at("buf"));
+#endif
+
   assert(false);
   auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
   for (auto buf : rewrite_buf) {

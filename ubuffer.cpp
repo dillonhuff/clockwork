@@ -1,6 +1,9 @@
 #include "ubuffer.h"
 #include "codegen.h"
+
+#ifdef COREIR
 #include "coreirgen.h"
+#endif
 
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
   umap* src_map = nullptr;
@@ -379,6 +382,9 @@ void generate_vivado_tcl(UBuffer& buf) {
   generate_vivado_tcl(buf.name);
 }
 
+
+#ifdef COREIR
+
 void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto context = def->getContext();
     for (auto it : stack_banks) {
@@ -488,6 +494,8 @@ void generate_coreir(CodegenOptions& options, UBuffer& buf) {
     }
     deleteContext(context);
 }
+
+#endif
 
 void generate_code_prefix(CodegenOptions& options,
     std::ostream& out,

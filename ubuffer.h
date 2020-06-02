@@ -1,8 +1,11 @@
 #pragma once
 
 #include "qexpr.h"
+
+#ifdef COREIR
 #include "coreir.h"
 #include "coreir/libs/commonlib.h"
+#endif
 
 using namespace std;
 
@@ -1375,7 +1378,10 @@ class UBuffer {
     bank compute_bank_info(set<string> inpt, set<string> outpt);
     void merge_bank(CodegenOptions& options, string inpt, vector<bank> mergeable);
     void generate_bank_and_merge(CodegenOptions& options);
+
+#ifdef COREIR
     void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def);
+#endif
 
     vector<string> map2address(isl_map* m);
     vector<string> get_ram_address(const std::string& pt);
@@ -1497,7 +1503,10 @@ bank compute_bank_info(
 vector<string> dimension_var_decls(const std::string& pt, UBuffer& buf);
 vector<string> dimension_var_args(const std::string& pt, UBuffer& buf);
 
+#ifdef COREIR
 void generate_coreir(CodegenOptions& options, UBuffer& buf);
+#endif
+
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);
 void generate_hls_code(std::ostream& out, UBuffer& buf);
 void generate_hls_code(UBuffer& buf);
