@@ -7323,18 +7323,20 @@ void ef_cartoon_test(const std::string& out_name) {
   //int size = 200;
   int cols = 256;
   int rows = 256;
-  {
-    CodegenOptions options;
-    options.internal = true;
-    options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
-    gp.realize(options, out_name, {cols, rows}, "in", 1);
+  //{
     //CodegenOptions options;
     //options.internal = true;
     //options.simplify_address_expressions = true;
     //options.use_custom_code_string = true;
-    //options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
-    //gp.realize_naive(options, out_name, {cols, rows});
+    //gp.realize(options, out_name, {cols, rows}, "in", 1);
+  //}
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = false;
+    options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
+    gp.realize_naive(options, out_name, {cols, rows});
     //move_to_benchmarks_folder(out_name + "_opt");
   }
 }
@@ -8812,6 +8814,7 @@ void playground() {
 
 void iccad_tests() {
   ef_cartoon_test("ef_cartoon_gauss");
+  assert(false);
 
   gaussian_pyramid_app_test("gp64x64");
 
