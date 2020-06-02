@@ -2893,6 +2893,41 @@ void conv_2d_bc_test() {
   regression_test(prg);
 }
 
+prog conv_2d_bc() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "conv_2d_bc";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["I"] = 32;
+
+  {
+    auto pc = prg.add_nest("pr", 0, 64, "pc", 0, 64);
+    auto write = pc->add_op("write");
+    write->add_load("in", "pc, pr");
+    write->add_store("I", "pc, pr");
+  }
+
+  {
+    auto pr = prg.add_loop("lr", 0, 64);
+    auto pc = pr->add_loop("lc", 0, 64);
+    auto rd = pc->add_op("read_0");
+    // Need to load 9 values
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        string c = "min(lc + " + to_string(i) + ", 63)";
+        string r = "min(lr + " + to_string(j) + ", 63)";
+        rd->add_load("I", c + ", " + r);
+      }
+    }
+    rd->add_function("conv_3_3");
+    rd->add_store("out", "lc, lr");
+  }
+
+  return prg;
+}
+
+
 void conv_1d_rolled_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
@@ -9549,6 +9584,12 @@ int main(int argc, char** argv) {
 
     if (cmd == "conv_2d") {
       prog prg = conv_2d();
+      aha_talk_print_info(prg);
+      return 0;
+    }
+
+    if (cmd == "conv_2d_bc") {
+      prog prg = conv_2d_bc();
       aha_talk_print_info(prg);
       return 0;
     }
