@@ -8,12 +8,24 @@ endif
 
 TARGET = clockwork
 
-CXX_FLAGS = -std=c++11 -I $(BARVINOK_PATH) -I $(OPT_PATH)
+CXX_FLAGS = -std=c++17 -I $(BARVINOK_PATH) -I $(OPT_PATH)
 ifneq ($(UNAME), Darwin)
 CXX_FLAGS += -fPIC
 endif
 
 LINK_FLAGS = -L ./lib -L $(OPT_LIB_PATH) -L $(ISL_PATH) -lclkwrk -lbarvinok -lisl -lntl -lgmp -lpolylibgmp -lpthread 
+
+ifeq ($(COREIR),1)
+ifndef COREIR_PATH
+$(error COREIR_PATH is not set)
+endif
+$(info CoreIR Path is [${COREIR_PATH}])
+COREIR_INCLUDE = $(COREIR_PATH)/include
+COREIR_LIB = $(COREIR_PATH)/lib
+
+CXX_FLAGS += -I $(COREIR_INCLUDE) -D COREIR
+LINK_FLAGS += -L $(COREIR_LIB) -Wl,-rpath $(COREIR_LIB) -lcoreir -lcoreirsim -lcoreir-commonlib
+endif
 
 TEST_FILES = build_set_test.cpp
 LIB_CPP_FILES = qexpr.cpp app.cpp isl_utils.cpp prog.cpp codegen.cpp minihls.cpp ubuffer.cpp

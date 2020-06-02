@@ -99,6 +99,10 @@ isl_space* set_space(isl_ctx* ctx, const int dims);
 
 int dim(isl_space* const s);
 
+bool equal(isl_space* const l, isl_space* const r);
+bool equal(isl_set* const l, isl_set* const r);
+bool equal(uset* const l, uset* const r);
+
 bool empty(isl_basic_set* const s);
 bool empty(uset* const s);
 bool empty(isl_set* const s);
@@ -134,8 +138,12 @@ isl_set* to_set(isl_basic_set* const m);
 
 vector<isl_point*> get_points(isl_set* m);
 
+isl_stat get_points(isl_set* m, void* user);
+vector<isl_point*> get_points(isl_union_set* s);
+
 isl_stat get_maps(isl_map* m, void* user);
 vector<isl_map*> get_maps(isl_union_map* m);
+map<string, isl_map*> get_maps_in_map(isl_union_map* m);
 vector<isl_set*> get_sets(isl_union_set* m);
 vector<isl_basic_map*> get_basic_maps(isl_map* m);
 vector<isl_basic_set*> get_basic_sets(isl_set* m);
@@ -163,6 +171,10 @@ isl_stat isl_pw_aff_set_var_name( isl_set *set,  isl_aff *aff, void *user);
 isl_map* set_map_dim_name(isl_ctx* ctx, isl_map* m, unsigned pos, const string& name);
 
 isl_map* gen_map_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string op_name);
+
+unsigned get_dim(isl_set* const s);
+
+unsigned get_dim(isl_union_set* const s);
 
 unsigned get_in_dim(isl_map* const m);
 
@@ -297,7 +309,9 @@ isl_union_set* lexmax(isl_union_set* const m0);
 
 isl_set* lexmax(isl_set* const m0);
 
+isl_point* lexminpt(uset* const m0);
 isl_point* lexminpt(isl_set* const m0);
+isl_point* lexmaxpt(uset* const m0);
 isl_point* lexmaxpt(isl_set* const m0);
 
 isl_val* lexminval(isl_set* const m0);
@@ -316,7 +330,23 @@ isl_union_set* unn(isl_union_set* const m0, isl_union_set* const m1);
 isl_union_map* unn(isl_union_map* const m0, isl_union_map* const m1);
 
 isl_union_map* get_rel_order(isl_ctx* ctx, isl_union_map* const m0);
+isl_union_map* flatten_umap_domain(isl_ctx* ctx, isl_union_map* const um);
+isl_union_map* flatten_umap_domain(isl_ctx* ctx, isl_union_map* const um, map<string, int> ii_map);
+isl_union_map* remove_dep_domain_name(umap* um, string name);
+
+
+isl_stat flatten_map_domain(isl_map* s, void* user);
+umap* flatten_map_domain_with_ii(isl_map* s, int ii);
+umap* flatten_map_domain_trans(isl_map* s, int ii);
 isl_stat umap_lex_lt(isl_map* s,  void* user);
+isl_bool with_domain_name(isl_map* m, void* user);
+
+isl_map* get_domain_ii_transform(isl_ctx* ctx, isl_set* const s, int ii);
+isl_map* get_shift_map(isl_map* s);
+
+//some map transformation from reconstruct constraints
+isl_map* pad_to_domain_map(isl_map* s, int depth);
+isl_map* assign_domain_to_map(isl_map* s, isl_set* new_domain);
 
 isl_map* unn(isl_map* const m0, isl_map* const m1);
 
@@ -438,6 +468,7 @@ vector<isl_pw_qpolynomial*>
 get_polynomials(isl_union_pw_qpolynomial* p);
 
 vector<isl_constraint*> constraints(isl_set* s);
+vector<isl_constraint*> constraints(isl_map* s);
 
 map<string, string> umap_codegen_c(umap* const um);
 
@@ -492,3 +523,6 @@ uset* pad_uset(uset* domain);
 umap* pad_map(umap* unpadded);
 
 isl_val* coord(isl_point* const p, const int pos);
+
+bool lex_lt_pt(isl_point* const l, isl_point* const r);
+bool lex_gt_pt(isl_point* const l, isl_point* const r);
