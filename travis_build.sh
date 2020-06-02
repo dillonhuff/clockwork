@@ -6,4 +6,5 @@ if [ $? -eq 0 ]; then
   ./clockwork $1
 else
   echo "Build FAILED"
+  exit 1;
 fi
