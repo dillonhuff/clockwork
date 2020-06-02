@@ -2,7 +2,22 @@
 
 #include "qexpr.h"
 
+#ifdef COREIR
+#include "coreir.h"
+#include "coreir/libs/commonlib.h"
+#endif
+
 using namespace std;
+
+template <typename T>
+std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
+    if ( !v.empty()  ) {
+        out << '[';
+        std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
+        out << "\b\b]";
+    }
+    return out;
+}
 
 enum bank_type {
   BANK_TYPE_STACK,
@@ -17,6 +32,14 @@ struct selector {
   vector<string> vars;
   vector<string> bank_conditions;
   vector<string> inner_bank_offsets;
+};
+
+struct HWconstraints {
+    size_t port_width;
+    size_t port_number;
+    size_t capacity;
+    bool raw_same_cycle;
+    bool war_same_cycle;
 };
 
 struct bank {
@@ -69,11 +92,11 @@ struct bank {
       return true;
   }
 
-  //return a set of port string
-  std::set<string> get_out_ports() {
-    std::set<string> ret;
+  //return a vector of port string
+  vector<string> get_out_ports() {
+    vector<string> ret;
     for (auto itr: delay_map) {
-        ret.insert(itr.first);
+        ret.push_back(itr.first);
     }
     return ret;
   }
@@ -575,6 +598,10 @@ class UBuffer {
 
     std::map<string, bool> isIn;
     std::map<string, isl_set*> domain;
+
+    //Stencil valid domain for each port
+    std::map<string, isl_set*> sv_domain;
+
     std::map<string, umap*> access_map;
     std::map<string, isl_union_map*> schedule;
     std::map<string, vector<string> > port_bundles;
@@ -583,6 +610,258 @@ class UBuffer {
 
     map<pair<string, string>, stack_bank > stack_banks;
     map<string, selector> selectors;
+
+    //lowering ubuffer to memtile
+    vector<int> read_cycle, write_cycle;
+    vector<vector<int> > read_addr, write_addr;
+    HWconstraints hardware;
+    //This identify how many shift register are connect,
+    //and what is the depth of the shift register
+    //map<string, map<string, int>> delay_map;
+
+    //SRAM specific
+    //Save the pair of read port bundle name and op pos point
+    queue<pair<string, isl_set*>> rd_op_queue;
+
+    //TODO: only support one read/write
+    bool is_rd(isl_point* pt) {
+        for (auto it: port_bundles) {
+            auto pt_name = pick(it.second);
+            if (!isIn.at(pt_name)) {
+                auto sched = schedule.at(pt_name);
+                auto qp = card(its_range(sched, to_uset(isl_set_from_point(cpy(pt)))));
+                return int_lower_bound(qp) == 1;
+            }
+        }
+        assert(false);
+        return false;
+    }
+
+    bool is_wr(isl_point* pt) {
+        for (auto it: port_bundles) {
+            auto pt_name = pick(it.second);
+            if (isIn.at(pt_name)) {
+                auto sched = schedule.at(pt_name);
+                auto qp = card(its_range(sched, to_uset(isl_set_from_point(cpy(pt)))));
+                return int_lower_bound(qp) == 1;
+            }
+        }
+        cout << "Buffer: " << name << " cannot find port at " << str(pt) << endl;
+        assert(false);
+        return false;
+    }
+
+    void mark_write(size_t cycle, isl_set* iter_set) {
+        write_cycle.push_back(cycle);
+        auto addr_queue = get_wr_data_nd_addr(iter_set);
+        vector<int> tmp;
+        while(!addr_queue.empty()) {
+            tmp.push_back(addr_queue.front());
+            addr_queue.pop();
+        }
+        write_addr.push_back(tmp);
+    }
+
+    void mark_read(size_t cycle, isl_set* iter_set) {
+        read_cycle.push_back(cycle);
+        auto addr_queue = get_rd_data_nd_addr(iter_set);
+        vector<int> tmp;
+        while(!addr_queue.empty()) {
+            tmp.push_back(addr_queue.front());
+            addr_queue.pop();
+        }
+        read_addr.push_back(tmp);
+    }
+
+    //TODO: add a bundle name
+    vector<string> get_bd_in_ports() {
+        auto wr_bd = get_in_bundles();
+        assert(wr_bd.size() == 1);
+        string bd_name = pick(wr_bd);
+        vector<string> pt_vec = port_bundles.at(bd_name);
+        return pt_vec;
+    }
+
+    vector<string> get_bd_out_ports() {
+        auto rd_bd = get_out_bundles();
+        assert(rd_bd.size() == 1);
+        string bd_name = pick(rd_bd);
+        vector<string> pt_vec = port_bundles.at(bd_name);
+        return pt_vec;
+    }
+
+    size_t get_wr_cycle() {
+        auto pt_vec = get_bd_in_ports();
+        return pt_vec.size() / hardware.port_width;
+    }
+
+    size_t get_rd_cycle() {
+        auto pt_vec = get_bd_out_ports();
+        return pt_vec.size() / hardware.port_width;
+    }
+
+    //TODO: put it into qexpr.h
+    Box extract_access_range() {
+        auto addr_range = isl_union_map_read_from_str(ctx, "{}");
+        for (auto pt: get_in_ports()) {
+            addr_range = unn(access_map.at(pt), addr_range);
+        }
+        return Box(addr_range);
+    }
+
+    vector<int> get_linearization_vector() {
+        vector<int> ret;
+        auto b = extract_access_range();
+        for (size_t i = 0; i < b.dimension(); i ++) {
+            ret.push_back(b.r_cardinality(i));
+        }
+        return ret;
+    }
+
+    queue<int> get_rd_data_nd_addr(isl_set* op) {
+        queue<int> ret;
+        auto rd_data_set = get_out_data_set(op);
+        auto point_vec = get_points(rd_data_set);
+        sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
+        for (auto point:  point_vec) {
+            auto b = get_linearization_vector();
+            //FIXME: hack the tb address
+            if (is_suffix(name, "tb"))
+                b.back() /= point_vec.size();
+            auto a = parse_pt(point);
+            int addr = std::inner_product(a.rbegin(), a.rend(), b.begin(), 0);
+            ret.push(addr);
+        }
+        return ret;
+    }
+
+    queue<int> get_wr_data_nd_addr(isl_set* op) {
+        queue<int> ret;
+        auto wr_data_set = get_in_data_set(op);
+        auto point_vec = get_points(wr_data_set);
+        sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
+        for (auto point:  point_vec) {
+            auto b = get_linearization_vector();
+            auto a = parse_pt(point);
+            int addr = std::inner_product(a.begin(), a.end(), b.rbegin(), 0);
+            ret.push(addr);
+        }
+        return ret;
+    }
+
+    //TODO: create a subclass and merge into the mark read method
+    void mark_write_sram(size_t cycle, isl_set* iter_set) {
+        auto num_cycle = get_wr_cycle();
+        auto addr_queue = get_wr_data_nd_addr(iter_set);
+        //TODO: make the delay a hardware property
+        for (size_t delay = 1; delay < num_cycle + 1; delay ++) {
+            write_cycle.push_back(cycle + delay);
+            vector<int> tmp;
+            for (size_t i = 0; i < hardware.port_width; i ++) {
+                assert(!addr_queue.empty());
+                tmp.push_back(addr_queue.front());
+                addr_queue.pop();
+            }
+            write_addr.push_back(tmp);
+        }
+    }
+
+    void mark_read_sram(isl_set* iteration_pos) {
+        auto rd_bd = get_out_bundles();
+        assert(rd_bd.size() == 1);
+        string bd_name = pick(rd_bd);
+        rd_op_queue.push(make_pair(bd_name, iteration_pos));
+    }
+
+    isl_union_set* get_in_data_set(isl_set* op) {
+        vector<string> pt_vec = get_bd_in_ports();
+        isl_union_set* data = isl_union_set_read_from_str(ctx, "{}");
+        for(auto pt: pt_vec) {
+            auto map_current_op = its(access_map.at(pt), op);
+            data = unn(data, range(map_current_op));
+        }
+        return data;
+    }
+
+    isl_union_set* get_out_data_set(isl_set* op) {
+        vector<string> pt_vec = get_bd_out_ports();
+        isl_union_set* data = isl_union_set_read_from_str(ctx, "{}");
+        for(auto pt: pt_vec) {
+            auto map_current_op = its(access_map.at(pt), op);
+            data = unn(data, range(map_current_op));
+        }
+        return data;
+    }
+
+    void schedule_read_sram(size_t cycle, isl_set* iteration_pos, UBuffer tb) {
+        //chances are that no data read from SRAM, all data is in TB
+        if (rd_op_queue.empty())
+            return;
+
+        auto possible_read = rd_op_queue.front();
+        auto sram2tb_op = possible_read.second;
+
+        //get the data relation in TB
+        auto sram2tb_data_in_tb = tb.get_in_data_set(sram2tb_op);
+        /*vector<string> pt_vec = tb.get_bd_in_ports();
+        isl_union_set* sram2tb_data_in_tb = isl_union_set_read_from_str(ctx, "{}");
+        for(auto pt: pt_vec) {
+            auto map_current_op = its(tb.access_map.at(pt), sram2tb_op);
+            sram2tb_data_in_tb = unn(sram2tb_data_in_tb, range(map_current_op));
+        }*/
+        //cout << "\t sram2tb: " << str(sram2tb_data_in_tb) << endl;
+
+        /*vector<string> rd_pt_vec = tb.get_bd_out_ports();
+        isl_union_set* tb2out_data_in_tb = isl_union_set_read_from_str(ctx, "{}");
+        for (auto pt: rd_pt_vec) {
+            auto map_current_op = its(tb.access_map.at(pt), iteration_pos);
+            tb2out_data_in_tb = unn(tb2out_data_in_tb, range(map_current_op));
+        }*/
+        auto tb2out_data_in_tb = tb.get_out_data_set(iteration_pos);
+        //cout << "\t tb2out: " << str(tb2out_data_in_tb) << endl;
+
+
+        auto overlap = its(tb2out_data_in_tb, sram2tb_data_in_tb);
+        //cout << "\toverlap: " << str(overlap) << endl;
+        if (int_upper_bound(card(overlap)) > 0) {
+            //this is the op we want to pop
+            size_t rd_op_cycle = get_rd_cycle();
+            size_t target_cycle = cycle - 1;
+            stack<int> scheduled;
+            while (scheduled.size() < rd_op_cycle) {
+                //TODO: check if we can schedule the read
+                bool has_write_scheduled = false;
+                for (int write : write_cycle) {
+                    if (target_cycle == write) {
+                        has_write_scheduled = true;
+                        break;
+                    }
+                }
+                if (!has_write_scheduled) {
+                    if (read_cycle.size())
+                        assert(target_cycle > read_cycle.back());
+                    scheduled.push(target_cycle);
+                }
+                target_cycle --;
+            }
+
+            auto addr_queue = get_rd_data_nd_addr(possible_read.second);
+            while (!scheduled.empty()) {
+                read_cycle.push_back(scheduled.top());
+                vector<int>  tmp;
+                for (size_t i = 0; i < hardware.port_width; i ++) {
+                    assert(!addr_queue.empty());
+                    tmp.push_back(addr_queue.front());
+                    addr_queue.pop();
+                }
+                read_addr.push_back(tmp);
+                cout << "SRAM read op: " << str(possible_read.second) << " execute in cycle: " << scheduled.top() << endl;
+                scheduled.pop();
+            }
+            rd_op_queue.pop();
+        }
+
+    }
 
     int num_dims() const {
       assert(access_map.size() > 0);
@@ -614,6 +893,26 @@ class UBuffer {
       return "";
     }
 
+    std::set<string> get_bank_inputs(const std::string& name) const {
+      std::set<string> ret;
+      for (auto b : stack_banks) {
+        if (b.second.name == name) {
+          ret.insert(b.first.first);
+        }
+      }
+      return ret;
+    }
+
+    std::set<string> get_bank_outputs(const std::string& name) const {
+      std::set<string> ret;
+      for (auto b : stack_banks) {
+        if (b.second.name == name) {
+          ret.insert(b.first.second);
+        }
+      }
+      return ret;
+    }
+
     void replace_bank(stack_bank& target, stack_bank& replacement) {
       for (auto bnk : stack_banks) {
         if (bnk.second.name == target.name) {
@@ -621,6 +920,23 @@ class UBuffer {
           break;
         }
       }
+    }
+
+    void remove_bank(string pt_name) {
+        map<pair<string, string>, bank> replace;
+        for (auto bnk : stack_banks) {
+            if (bnk.first.second != pt_name) {
+                replace.insert(bnk);
+            }
+        }
+        stack_banks = replace;
+    }
+
+    //The method replace the original access map and add a valid domain
+    void replace_pt(string pt, isl_map* target) {
+        access_map.at(pt) = to_umap(target);
+        sv_domain[pt] = domain.at(pt);
+        domain.at(pt) = ::domain(target);
     }
 
     vector<stack_bank> get_banks() {
@@ -1045,18 +1361,27 @@ class UBuffer {
         return to_map(dot(origin_map, buf_map));
     }
 
+
     //change the input and output and return the agg and tb ubuffer stucture
     void vectorization(int dim_id, int fetch_width, UBuffer& agg, UBuffer& sram, UBuffer& tb);
 
-    void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, map<string, isl_map*> sched_map, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out);
+    void add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out);
 
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
 
+    void port_reduction();
     umap* get_lexmax_events(const std::string& outpt);
+    umap* get_lexmax_events(const std::string& inpt, const std::string& outpt);
     int compute_dd_bound(const std::string & read_port, const std::string & write_port, bool is_max);
     isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
-    bank compute_bank_info(CodegenOptions options, const std::string& inpt, const std::string& outpt);
+    bank compute_bank_info(const std::string& inpt, const std::string& outpt);
+    bank compute_bank_info(std::set<string> inpt, std::set<string> outpt);
+    void merge_bank(CodegenOptions& options, string inpt, vector<bank> mergeable);
     void generate_bank_and_merge(CodegenOptions& options);
+
+#ifdef COREIR
+    void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def);
+#endif
 
     vector<string> map2address(isl_map* m);
     vector<string> get_ram_address(const std::string& pt);
@@ -1065,19 +1390,13 @@ class UBuffer {
     Box extract_addr_box(uset* rddom, vector<size_t> sequence);
     string generate_linearize_ram_addr(const std::string& pt);
     vector<UBuffer> port_grouping(int port_width);
+    void port_group2bank(int in_port_width, int out_port_width);
+    isl_map* merge_output_pt(vector<string> merge_pt);
+
 };
 
 int compute_max_dd(UBuffer& buf, const string& inpt);
 
-template <typename T>
-std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
-    if ( !v.empty()  ) {
-        out << '[';
-        std::copy (v.begin(), v.end(), std::ostream_iterator<T>(out, ", "));
-        out << "\b\b]";
-    }
-    return out;
-}
 
 static inline
 std::ostream& operator<<(std::ostream& out, const AccessPattern& acc_pattern) {
@@ -1126,6 +1445,17 @@ std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
     out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
   }
 
+
+  out << "\t---- Input Bundles" << endl;
+  for (auto in_bundle : buf.get_in_bundles()) {
+    out << "\t\t" << in_bundle << endl;
+    auto ports = buf.port_bundles.at(in_bundle);
+    out << "\t\t---- Ports..." << endl;
+    for (auto p : ports) {
+      out << "\t\t\t" << p << endl;
+    }
+
+  }
   out << "\t---- Output Bundles" << endl;
   for (auto out_bundle : buf.get_out_bundles()) {
     out << "\t\t" << out_bundle << endl;
@@ -1134,12 +1464,6 @@ std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
     for (auto p : ports) {
       out << "\t\t\t" << p << endl;
     }
-
-    if (buf.get_in_ports().size() == 0) {
-      continue;
-    }
-
-    auto inpt = pick(buf.get_in_ports());
 
   }
   return out;
@@ -1179,6 +1503,9 @@ bank compute_bank_info(
 vector<string> dimension_var_decls(const std::string& pt, UBuffer& buf);
 vector<string> dimension_var_args(const std::string& pt, UBuffer& buf);
 
+#ifdef COREIR
+void generate_coreir(CodegenOptions& options, UBuffer& buf);
+#endif
 
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);
 void generate_hls_code(std::ostream& out, UBuffer& buf);

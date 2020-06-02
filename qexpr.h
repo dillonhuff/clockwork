@@ -8,6 +8,7 @@
 #include <sstream>
 #include <map>
 #include <vector>
+#include <queue>
 
 #include "options.h"
 #include "utils.h"
@@ -915,6 +916,27 @@ struct Box {
     }
   }
 
+  Box(umap* opt_sched) {
+  //cout << tab(1) << "lexmin: " << str(lexmin(compute_domain(name))) << endl;
+  //cout << tab(1) << "lexmax: " << str(lexmax(compute_domain(name))) << endl;
+
+    auto rng = range(opt_sched);
+    int dim = parse_pt(pick(get_points(lexmin(rng)))).size();
+    vector<int> max(dim, 0), min(dim, 0);
+    for (auto s : get_sets(rng)) {
+      for (auto i = 0; i < get_dim(s); i ++) {
+        max.at(i) = std::max(max.at(i), get_dim_max(s, i));
+        min.at(i) = std::min(min.at(i), get_dim_min(s, i));
+      }
+    }
+
+    assert(min.size() == max.size());
+
+    for (size_t i = 0; i < min.size(); i++) {
+      intervals.push_back({min.at(i), max.at(i)});
+    }
+  }
+
   int cardinality() const {
     int c = 1;
     for (int i = 0; i < dimension(); i++) {
@@ -931,6 +953,15 @@ struct Box {
       c *= length(i);
     }
 
+    return c;
+  }
+
+  int r_cardinality(int dims) const {
+    int c = 1;
+    assert(dims <= dimension());
+    for (int i = 0; i < dims; i ++) {
+      c *= length(dimension() - 1 - i);
+    }
     return c;
   }
 

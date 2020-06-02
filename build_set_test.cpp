@@ -793,10 +793,10 @@ isl_union_map* filter_inner_sram_deps(isl_ctx* ctx, isl_union_map* deps) {
     for ( auto m : deps_map ) {
         auto dname = domain_name(m);
         auto rname = range_name(m);
-        bool is_sram_in = dname.find("_vec") != std::string::npos;
-        bool is_sram_out = rname.find("_vec") != std::string::npos;
+        bool is_sram_in = dname.find("output_vec") != std::string::npos;
+        bool is_sram_out = rname.find("output") != std::string::npos;
         if (is_sram_in && is_sram_out) {
-            continue;
+            ret = unn(ret, to_umap(inv(m)));
         }
         else {
             cout << "union: " << str(m) << endl;
@@ -820,12 +820,90 @@ isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffe
         global_c_map = unn(buf.consumer_map(), global_c_map);
         domain = unn(buf.global_domain(), domain);
     }
+    cout << "Global Schedule: " << str(global_sched) << endl;
+    cout << "Producer Map: " << str(global_p_map) << endl;
+    cout << "Consumer Map: " << str(global_c_map) << endl;
+    auto order_deps = get_rel_order(ctx, global_sched);
+    cout << "Lex_lt : " << str(lex_lt(global_sched, global_sched)) << endl;
+    auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
+    auto validity = unn(order_deps, raw_deps);
+    auto proximity = cpy(raw_deps);
+
+    //Try to remove proximity between_input vec to output_vec
+    //proximity = filter_inner_sram_deps(ctx, proximity);
+
+    cout << "Raw_deps: " << str(raw_deps) << endl;
+    cout << "proximity: " << str(proximity) << endl;
+    cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
+    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+    auto sched_map = its(isl_schedule_get_map(sched), domain);
+    return sched_map;
+
+}
+
+isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers, isl_union_map* global_sched, bool has_global_constraint) {
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
+    //isl_union_set* domain = isl_union_set_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        string buf_name = it.first;
+        auto buf = it.second;
+        global_p_map = unn(buf.producer_map(), global_p_map);
+        global_c_map = unn(buf.consumer_map(), global_c_map);
+        //domain = unn(buf.global_domain(), domain);
+    }
+    isl_union_set* domain = ::domain(global_sched);
+    global_c_map = flatten_umap_domain(ctx, global_c_map);
+    global_p_map = flatten_umap_domain(ctx, global_p_map);
+    cout << "Global Schedule: " << str(global_sched) << endl;
+    auto order_deps = get_rel_order(ctx, global_sched);
+    auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
+    auto validity = unn(order_deps, raw_deps);
+    auto proximity = cpy(raw_deps);
+    if (has_global_constraint)
+        proximity = remove_dep_domain_name(proximity, "input_vec");
+
+    //Try to remove proximity between_input vec to output_vec
+    //proximity = filter_inner_sram_deps(ctx, proximity);
+
+    cout << "Raw_deps: " << str(raw_deps) << endl;
+    cout << "proximity: " << str(proximity) << endl;
+    cout << "Computing schedule for: " << str(domain) << endl << " subject to " << str(validity) << endl;
+    isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
+    auto sched_map = its(isl_schedule_get_map(sched), domain);
+    return sched_map;
+
+}
+
+isl_union_map* optimized_schedule_from_buffers_flatten(const map<string, UBuffer> &buffers, bool second_round) {
+    map<string, int> ii_map = {{"input", 1}, {"output", 1}, {"input_vec", 1}, {"output_vec",1}};
+    isl_ctx* ctx = pick(buffers).second.ctx;
+    isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
+    isl_union_map* global_sched = isl_union_map_read_from_str(ctx, "{}");
+    for (auto it : buffers) {
+        string buf_name = it.first;
+        auto buf = it.second;
+        global_p_map = unn(buf.producer_map(), global_p_map);
+        global_c_map = unn(buf.consumer_map(), global_c_map);
+        global_sched = unn(its(buf.global_schedule(), buf.global_domain()), global_sched);
+    }
+    //get all map domain flatten
+    global_c_map = flatten_umap_domain(ctx, global_c_map, ii_map);
+    global_p_map = flatten_umap_domain(ctx, global_p_map, ii_map);
+    global_sched = flatten_umap_domain(ctx, global_sched, ii_map);
+    isl_union_set* domain = ::domain(global_sched);
+
+    cout << "Global Schedule: " << str(global_sched) << endl;
     auto order_deps = get_rel_order(ctx, global_sched);
     auto raw_deps = its(dot(global_p_map, inv(global_c_map)), lex_lt(global_sched, global_sched));
     auto validity = unn(order_deps, raw_deps);
     auto proximity = cpy(raw_deps);
 
     //Try to remove proximity between_input vec to output_vec
+    if (second_round)
+        proximity = remove_dep_domain_name(proximity, "input_vec");
     //proximity = filter_inner_sram_deps(ctx, proximity);
 
     cout << "Raw_deps: " << str(raw_deps) << endl;
@@ -1311,27 +1389,8 @@ void vec_test() {
   //memtile.emit_config_file_csv("lake_memtile_config");
 }
 
-Box compute_box_from_sched(umap* opt_sched) {
-  //cout << tab(1) << "lexmin: " << str(lexmin(compute_domain(name))) << endl;
-  //cout << tab(1) << "lexmax: " << str(lexmax(compute_domain(name))) << endl;
 
-  auto min_pt =
-    parse_pt(sample(lexmin(range(opt_sched))));
-  auto max_pt =
-    parse_pt(sample(lexmax(range(opt_sched))));
-
-  assert(min_pt.size() == max_pt.size());
-
-  Box b;
-  for (size_t i = 0; i < min_pt.size(); i++) {
-    b.intervals.push_back({min_pt.at(i), max_pt.at(i)});
-  }
-  return b;
-}
-
-
-void bankmerge_vec_test() {
-
+void flatten_sched_test() {
   prog prg;
   prg.compute_unit_file = "vec_access.h";
   prg.name = "vec";
@@ -1341,12 +1400,12 @@ void bankmerge_vec_test() {
   prg.buffer_port_widths["in"] = 32;
   prg.buffer_port_widths["out"] = 32;
 
-  auto p = prg.add_nest("po", 0, 8, "pi", 0, 32);
+  auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
   auto write = p->add_op("input");
   write->add_load("in", "po, pi");
   write->add_store("buf", "po, pi");
 
-  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 32);
+  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 16);
   auto read = q->add_op("output");
   for (size_t wy = 0; wy < 3; wy ++)
       for (size_t wx = 0; wx < 1; wx ++) {
@@ -1354,6 +1413,7 @@ void bankmerge_vec_test() {
       }
   read->add_store("out", "po, pi");
 
+  //optimized first time
   auto buffers_opt = build_buffers(prg);
   CodegenOptions opt;
   opt.conditional_merge = true;
@@ -1367,53 +1427,377 @@ void bankmerge_vec_test() {
   }
   buffers_opt.erase("buf");
   buffer_vectorization("buf1", 1, 4, buffers_opt);
+
+  //second time
   auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
   cout << codegen_c(opt_sched) << endl;
-  map<string, umap*> op2sched;
+  cout <<"Multi-dim schedule:\n" << str(opt_sched) << endl;
+  auto new_opt_sched = optimized_schedule_from_buffers_flatten(buffers_opt, true);
+  cout << "Flatten-dim schedule:\n" << codegen_c(new_opt_sched) << endl;
+  cout << str(new_opt_sched) << endl;
+}
 
+
+void emit_address_stream(string fname, bool is_top, vector<int> read_cycle, vector<int> write_cycle,
+        vector<vector<int> > read_addr, vector<vector<int> > write_addr) {
+  ofstream out(fname+".csv");
+  int cycle = 0;
+  size_t rd_itr = 0;
+  size_t wr_itr = 0;
+  out << "data_in, wen, ren, data_out, valid_out" << endl;
+  while (rd_itr < read_cycle.size() && wr_itr < write_cycle.size()) {
+    bool wen = false, valid = false;
+    int in_width = pick(write_addr).size();
+    int out_width = pick(read_addr).size();
+    auto addr_in = vector<int>(in_width, 0);
+    auto addr_out = vector<int>(out_width, 0);
+    if (rd_itr < read_cycle.size()) {
+      if (read_cycle.at(rd_itr) == cycle) {
+        valid = true;
+        addr_out = read_addr.at(rd_itr);
+
+        //cout << cycle << tab(1) << "rd" << tab(1) << addr_out << endl;
+        //out << "rd@" << cycle << tab(1) << ",data=" <<sep_list(addr, "[", "]", " ") << endl;
+        rd_itr ++;
+      }
+    }
+    if (wr_itr < write_cycle.size()) {
+      if (write_cycle.at(wr_itr) == cycle) {
+        wen = true;
+        addr_in = write_addr.at(wr_itr);
+        //cout << cycle << tab(1) << "wr" << tab(1) << addr_in << endl;
+        //out << "wr@" << cycle << tab(1) << ",data="<< sep_list(addr, "[", "]", " ") << endl;
+        //out << cycle << tab(1) << "wr"  << endl;
+        wr_itr ++;
+      }
+    }
+
+    //for generate multiple bit valid/wen
+    int multiplier = 1;
+    if (is_top) {
+      multiplier = pow(2, out_width) - 1;
+      //FIXME: hack for the output port
+      addr_out.push_back(0);
+    }
+    //Some fix for the output format
+    if (addr_in.size() == 1) {
+        out << sep_list(addr_in, "", "", "],[") << ", " << wen << ", " << valid * multiplier << ", "<< sep_list(addr_out, "[[", "]]", "],[") << ", " << valid * multiplier << endl;
+    }
+    else {
+        out << sep_list(addr_in, "[[", "]]", "],[") << ", " << wen << ", " << valid * multiplier << ", "<< sep_list(addr_out, "[[", "]]", "],[") << ", " << valid * multiplier << endl;
+    }
+    cycle ++;
+  }
+  out.close();
+}
+
+map<string, umap*> get_op2sched(map<string, UBuffer>& buffers_opt, umap* opt_sched) {
+  map<string, umap*> op2sched;
   //get a map from op to schedule
-  for (auto buf : buffers_opt) {
+  for (auto & buf : buffers_opt) {
       UBuffer& buffer = buf.second;
       for (string pt: buffer.get_in_ports()) {
           auto rddom = buffer.domain.at(pt);
-          auto pt_sched = its(opt_sched, rddom);
+          string op_name = name(rddom);
+          auto pt_sched = to_umap(get_maps_in_map(opt_sched).at(op_name));
           cout << "Schedule for pt: " << pt << " is " << str(pt_sched) << endl;
           buffer.schedule.at(pt) = pt_sched;
-          string opname = domain_name(to_map(pt_sched));
-          if(op2sched.count(opname) == 0) {
-              op2sched[opname] = pt_sched;
+          auto origin_access_map = buffer.access_map.at(pt);
+          buffer.access_map.at(pt) = flatten_umap_domain(buffer.ctx, origin_access_map);
+          if(op2sched.count(op_name) == 0) {
+              op2sched[op_name] = pt_sched;
           }
       }
       for (string pt: buffer.get_out_ports()) {
           auto wtdom = buffer.domain.at(pt);
-          auto pt_sched = its(opt_sched, wtdom);
+          string op_name = name(wtdom);
+          auto pt_sched = to_umap(get_maps_in_map(opt_sched).at(op_name));
           cout << "Schedule for pt: " << pt << " is " << str(pt_sched) << endl;
           buffer.schedule.at(pt) = pt_sched;
-          string opname = domain_name(to_map(pt_sched));
-          if(op2sched.count(opname) == 0) {
-              op2sched[opname] = pt_sched;
+          //flatten_access map
+          auto origin_access_map = buffer.access_map.at(pt);
+          buffer.access_map.at(pt) = flatten_umap_domain(buffer.ctx, origin_access_map);
+          if(op2sched.count(op_name) == 0) {
+              op2sched[op_name] = pt_sched;
           }
       }
-      //cout << "Vectorized buffer: " << buf.second << endl;
   }
+  return op2sched;
+
+}
+
+void lattice_schedule_buf(isl_ctx* ctx, map<string, UBuffer> & buffers_opt, umap* opt_sched, HWconstraints sram) {
+
+  //get a map from op to schedule
+  auto op2sched = get_op2sched(buffers_opt, opt_sched);
+
   for (auto it: op2sched) {
     cout <<"\tOP: " << it.first << " has sched: " << str(it.second) << endl;
   }
 
   //compute the bound of the schedule
   cout << str(lexmin(range(opt_sched))) << endl << str(lexmax(range(opt_sched))) <<endl;
-  auto bound = compute_box_from_sched(opt_sched);
-  isl_set* sched_set = bound.to_set(prg.ctx, "");
+  auto bound = Box(opt_sched);
+  isl_set* sched_set = bound.to_set(ctx, "");
+  auto bset_vec = constraints(sched_set);
+  for (auto bset: bset_vec) {
+      cout << "cosntraints: " << str(bset) << endl;
+  }
+
+  //Initialize the variable for lattice count
+  map<string, bool> update_map;
+  size_t cycle = 0;
+  for (auto buf : buffers_opt) {
+      update_map[buf.first] = false;
+  }
+  buffers_opt.at("buf1_sram").hardware = sram;
   cout << str(sched_set) << endl;
   auto point_vec = get_points(sched_set);
+  std::sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
   for (auto point : point_vec) {
-      cout << str(point) << endl;
-      auto input_sched = op2sched.at("input");
-      auto isExeQP = card(its_range(input_sched, to_uset(isl_set_from_point(cpy(point)))));
-      cout <<"Card Expr: " << str(isExeQP) << endl;
-      bool isExe = int_lower_bound(isExeQP) == 1;
-      cout << "input OP execute in this point = " << isExe << endl;
+      //cout << str(point) << endl;
+      //auto input_sched = op2sched.at("input");
+      //auto isExeQP = card(its_range(input_sched, to_uset(isl_set_from_point(cpy(point)))));
+      //cout <<"Card Expr: " << str(isExeQP) << endl;
+      //bool isExe = int_lower_bound(isExeQP) == 1;
+      //cout << "input OP execute in this point = " << isExe << endl;
+      for (auto & it: buffers_opt) {
+          auto & buf = it.second;
+          //cout << "Buffer: " << buf.name << endl;
+          //cout << str(point) << " read = " << buf.is_rd(point) << endl;
+          //cout << str(point) << " write = " << buf.is_wr(point) << endl;
+          //tcout << endl;
+
+          //first pass to update cycle
+          //FIXME: possible bug. we need to add the buffer constraints of rd/wr same cycle
+          if (buf.is_wr(point) ){//|| buf.is_rd(point)) {
+              if (update_map.at(it.first)) {
+                  cout <<  " Buffer: " << buf.name << " update cycle" << endl;
+                  cycle ++;
+                  for (auto & it: update_map) {
+                      it.second = false;
+                  }
+              }
+          }
+
+          //second pass to process read and write
+          if (buf.is_wr(point) && is_suffix(buf.name, "agg")) {
+            auto pt = pick(buf.get_in_ports());
+            auto rd_sched = to_map(buf.schedule.at(pt));
+            auto iter_set = domain(its_range(rd_sched, isl_set_from_point(point)));
+            buf.mark_write(cycle, iter_set);
+            update_map.at(it.first) = true;
+
+            cout << "Buffer: " << buf.name << endl;
+            //cout << str(point) << " read = " << buf.is_rd(point) << endl;
+            cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
+            cout << endl;
+
+          }
+          else if (buf.is_rd(point) && is_suffix(buf.name, "tb")) {
+            auto pt = pick(buf.get_out_ports());
+            auto rd_sched = to_map(buf.schedule.at(pt));
+            auto iter_set = domain(its_range(rd_sched, isl_set_from_point(point)));
+            buf.mark_read(cycle, iter_set);
+            update_map.at(it.first) = true;
+
+            cout << "Buffer: " << buf.name << endl;
+            cout << str(point) << " read = " << buf.is_rd(point) << " at cycle:" << cycle << endl;
+            //cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
+            cout << endl;
+            //TODO: pop out sram rd operation ahead of tb read
+            buffers_opt.at("buf1_sram").schedule_read_sram(cycle, iter_set, buf);
+          }
+          else if(buf.is_wr(point) && is_suffix(buf.name, "sram")) {
+              //TODO:get the number of cycle depend on hw constraints
+            cout << "Buffer: " << buf.name << endl;
+            cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
+            cout << endl;
+            auto pt = pick(buf.get_in_ports());
+            auto rd_sched = to_map(buf.schedule.at(pt));
+            auto iter_set = domain(its_range(rd_sched, isl_set_from_point(point)));
+            buf.mark_write_sram(cycle, iter_set);
+          }
+          else if(buf.is_rd(point) && is_suffix(buf.name, "sram")) {
+              //TODO: push operation into queue and its corresponding cycle:
+            cout << "Buffer: " << buf.name << endl;
+            cout << str(point) << " push read to queue  at cycle:" << cycle << endl;
+            cout << endl;
+            auto pt = pick(buf.get_out_ports());
+            auto rd_sched = to_map(buf.schedule.at(pt));
+            auto iter_set = domain(its_range(rd_sched, isl_set_from_point(point)));
+            buf.mark_read_sram(iter_set);
+          }
+      }
   }
+}
+
+void emit_address_stream2file(map<string, UBuffer> buffers_opt, string read_buf, string write_buf, string file_name, bool is_top) {
+  vector<int> sram_read = buffers_opt.at(read_buf).read_cycle;
+  vector<int> sram_write = buffers_opt.at(write_buf).write_cycle;
+  auto read_addr = buffers_opt.at(read_buf).read_addr;
+  auto write_addr = buffers_opt.at(write_buf).write_addr;
+  emit_address_stream(file_name, is_top, sram_read, sram_write, read_addr, write_addr);
+
+}
+
+void reaccess_test() {
+
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "vec";
+  prg.add_input("in");
+  prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+
+  auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
+  auto write = p->add_op("input");
+  write->add_load("in", "po, pi");
+  write->add_store("buf", "po, pi");
+
+  auto q = prg.add_nest("ao", 0 , 2, "qo", 0, 6, "qi", 0, 14);
+  auto read = q->add_op("output");
+  for (size_t wy = 0; wy < 3; wy ++)
+      for (size_t wx = 0; wx < 3; wx ++) {
+        read->add_load("buf", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+      }
+  read->add_store("out", "po, pi");
+
+  auto buffers_opt = build_buffers(prg);
+  CodegenOptions opt;
+  opt.conditional_merge = false;
+  buffers_opt.at("buf").generate_bank_and_merge(opt);
+
+}
+
+void shift_reg_test() {
+
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "vec";
+  prg.add_input("in");
+  prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+
+  auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
+  auto write = p->add_op("input");
+  write->add_load("in", "po, pi");
+  write->add_store("buf", "po, pi");
+
+  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 14);
+  auto read = q->add_op("output");
+  for (size_t wy = 0; wy < 3; wy ++)
+      for (size_t wx = 0; wx < 3; wx ++) {
+        read->add_load("buf", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+      }
+  read->add_store("out", "po, pi");
+
+  //unoptimized schedule
+  auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
+  auto buffers = build_buffers(prg, sched_naive);
+  buffers.at("buf").port_reduction();
+  assert(false);
+
+
+  //optimized schedule
+  auto buffers_opt = build_buffers(prg);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  buffers_opt.at("buf").generate_bank_and_merge(opt);
+  cout << buffers_opt.at("buf") << endl;
+  buffers_opt.at("buf").port_group2bank(2, 2);
+  cout << buffers_opt.at("buf") << endl;
+
+#ifdef COREIR
+  generate_coreir(opt, buffers_opt.at("buf"));
+#endif
+
+  assert(false);
+  auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
+  for (auto buf : rewrite_buf) {
+    cout << buf << endl;
+    buffers_opt[buf.name] = buf;
+  }
+  buffers_opt.erase("buf");
+  buffer_vectorization("buf1", 1, 4, buffers_opt);
+
+  //auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
+  auto opt_sched = optimized_schedule_from_buffers_flatten(buffers_opt, true);
+  cout << codegen_c(opt_sched) << endl;
+
+  buffers_opt.erase("buf0");
+  buffers_opt.erase("in");
+  buffers_opt.erase("out");
+
+  HWconstraints sram = {4, 1, 512, false, true};
+
+  lattice_schedule_buf(prg.ctx, buffers_opt, opt_sched, sram);
+
+  emit_address_stream2file(buffers_opt, "buf1_sram", "buf1_sram", "SRAM_address", false);
+  emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "TOP_address", true);
+}
+
+void bankmerge_vec_test() {
+
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "vec";
+  prg.add_input("in");
+  prg.add_output("out");
+  //prg.buffer_port_widths["T"] = 32*3;
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+
+  auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
+  auto write = p->add_op("input");
+  write->add_load("in", "po, pi");
+  write->add_store("buf", "po, pi");
+
+  auto q = prg.add_nest("qo", 0, 6, "qi", 0, 16);
+  auto read = q->add_op("output");
+  for (size_t wy = 0; wy < 3; wy ++)
+      for (size_t wx = 0; wx < 1; wx ++) {
+        read->add_load("buf", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+      }
+  read->add_store("out", "po, pi");
+
+  //optimized first time
+  auto buffers_opt = build_buffers(prg);
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  buffers_opt.at("buf").generate_bank_and_merge(opt);
+  cout << buffers_opt.at("buf") << endl;
+  auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
+  for (auto buf : rewrite_buf) {
+    cout << buf << endl;
+    buffers_opt[buf.name] = buf;
+  }
+  buffers_opt.erase("buf");
+  buffer_vectorization("buf1", 1, 4, buffers_opt);
+
+  //second time
+  //auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
+  auto opt_sched = optimized_schedule_from_buffers_flatten(buffers_opt, true);
+  cout << codegen_c(opt_sched) << endl;
+  cout << str(opt_sched) << endl;
+
+  buffers_opt.erase("buf0");
+  buffers_opt.erase("in");
+  buffers_opt.erase("out");
+
+  HWconstraints sram = {4, 1, 512, false, true};
+
+  lattice_schedule_buf(prg.ctx, buffers_opt, opt_sched, sram);
+
+  emit_address_stream2file(buffers_opt, "buf1_sram", "buf1_sram", "SRAM_address", false);
+  emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "TOP_address", true);
+
 }
 
 void auto_vec_test() {
@@ -1446,7 +1830,9 @@ void auto_vec_test() {
   buffer_vectorization("buf", 1, fetch_width, buffers);
 
   auto opt_sched = optimized_schedule_from_buffers(buffers);
+  auto opt_sched_new = optimized_schedule_from_buffers_flatten(buffers, false);
   cout << codegen_c(opt_sched) << endl;
+  cout << codegen_c(opt_sched_new) << endl;
   for (auto buf : buffers) {
       UBuffer& buffer = buf.second;
       for (string pt: buffer.get_in_ports()) {
@@ -4916,10 +5302,10 @@ struct App {
     timeinfo = localtime(&rawtime);
 
     strftime(buffer,sizeof(buffer),"%d-%m-%Y %H:%M:%S",timeinfo);
-    std::string time_str(buffer);   
+    std::string time_str(buffer);
 
     //auto m = schedule_isl();
-    
+
     auto scheds = schedule_opt();
     umap* m = qschedule_to_map(scheds);
     //umap* m = schedule();
@@ -5001,8 +5387,9 @@ struct App {
       sched_var_name(last_update(to_unroll_function).name());
       //sched_var_name(last_update(reference_function).name());
     cout << "reference: " << reference_update << endl;
+
     cout << "to unroll: " << to_unroll_function << endl;
-    
+
     int ref_q = to_int(map_find(reference_update, qfs));
     cout << "ref_q = " << ref_q << endl;
     int umax = ref_q * unroll_factor;
@@ -5023,7 +5410,7 @@ struct App {
       }
     }
   }
-  
+
   void realize_no_unroll(CodegenOptions& options,
       const std::string& name,
       const std::vector<int>& dims) {
@@ -5831,7 +6218,7 @@ void halide_cascade_test() {
   prog prg = halide_cascade();
   cout << "Created program..." << endl;
   prg.pretty_print();
-  
+
   auto domain = prg.whole_iteration_domain();
 
   auto order_deps = prg.relative_orders();
@@ -6315,7 +6702,7 @@ App harris_cartoon(const std::string& out_name) {
 
   //harris.func2d("grad_x", stencilv(0, 2, 0, 0, "img"));
   //harris.func2d(out_name, stencilv(0, 2, 0, 0, "grad_x"));
-  
+
   harris.func2d("grad_x", stencilv(-1, 1, 0, 0, "img"));
   harris.func2d(out_name, stencilv(-1, 1, 0, 0, "grad_x"));
 
@@ -6378,7 +6765,7 @@ App harris16(const std::string& out_name) {
   harris.func2d("lgxx8", div(v("lgxx"), 64));
   harris.func2d("lgyy8", div(v("lgyy"), 64));
   harris.func2d("lgxy8", div(v("lgxy"), 64));
-  
+
   harris.func2d("det", add(mul("lgxx8", "lgyy8"), square("lgxy8")));
   harris.func2d("trace", mul("lgxx8", "lgyy8"));
   harris.func2d(out_name, add(v("det"),
@@ -6405,7 +6792,7 @@ App harris(const std::string& out_name) {
   harris.func2d("lxx", add(square(v("grad_x")), 128));
   harris.func2d("lyy", add(square(v("grad_y")), 128));
   harris.func2d("lxy", add(mul(v("grad_x"), v("grad_y")), 128));
-  
+
   harris.func2d("lgxx", stencilv(-1, 1, -1, 1, "lxx"));
   harris.func2d("lgyy", stencilv(-1, 1, -1, 1, "lyy"));
   harris.func2d("lgxy", stencilv(-1, 1, -1, 1, "lxy"));
@@ -6413,7 +6800,7 @@ App harris(const std::string& out_name) {
   harris.func2d("lgxx8", add(v("lgxx"), 64));
   harris.func2d("lgyy8", add(v("lgyy"), 64));
   harris.func2d("lgxy8", add(v("lgxy"), 64));
-  
+
   harris.func2d("det", add(mul("lgxx8", "lgyy8"), square("lgxy8")));
   harris.func2d("trace", mul("lgxx8", "lgyy8"));
   harris.func2d(out_name, add(v("det"),
@@ -6924,7 +7311,7 @@ void max_pooling_test(const std::string& prefix) {
   //std::vector<std::string> optimized =
     //run_regression_tb("max_pool_naive");
   //assert(naive == optimized);
-  
+
 }
 
 App ef_cartoon(const std::string& out_name) {
@@ -7052,7 +7439,7 @@ void ef_cartoon_fusion_iccad_sizes(const std::string& prefix) {
   for (auto dims : sizes) {
     int cols = dims.first;
     int rows = dims.second;
-    
+
     string name = prefix + "_" + str(cols) + "_" + str(rows);
     {
       App lp = ef_cartoon(name);
@@ -7089,7 +7476,7 @@ void exposure_fusion_iccad_sizes(const std::string& prefix) {
   for (auto dims : sizes) {
     int cols = dims.first;
     int rows = dims.second;
-    
+
     string name = prefix + "_" + str(cols) + "_" + str(rows);
     {
       App lp = exposure_fusion_app(name);
@@ -7293,6 +7680,7 @@ App gaussian_pyramid_app(const std::string& out_name, const int n_levels) {
     last = next;
   }
 
+
   gp.func2d(out_name, "id", pt(last));
   return gp;
 }
@@ -7328,18 +7716,20 @@ void ef_cartoon_test(const std::string& out_name) {
   //int size = 200;
   int cols = 256;
   int rows = 256;
-  {
-    CodegenOptions options;
-    options.internal = true;
-    options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
-    gp.realize(options, out_name, {cols, rows}, "in", 1);
+  //{
     //CodegenOptions options;
     //options.internal = true;
     //options.simplify_address_expressions = true;
     //options.use_custom_code_string = true;
-    //options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
-    //gp.realize_naive(options, out_name, {cols, rows});
+    //gp.realize(options, out_name, {cols, rows}, "in", 1);
+  //}
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = false;
+    options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
+    gp.realize_naive(options, out_name, {cols, rows});
     //move_to_benchmarks_folder(out_name + "_opt");
   }
 }
@@ -8815,8 +9205,19 @@ void playground() {
 
 }
 
+void new_bankmerge_tests() {
+  shift_reg_test();
+  assert(false);
+  reaccess_test();
+
+  bankmerge_vec_test();
+  auto_vec_test();
+  flatten_sched_test();
+}
+
 void iccad_tests() {
   ef_cartoon_test("ef_cartoon_gauss");
+  assert(false);
 
   gaussian_pyramid_app_test("gp64x64");
 
@@ -8944,7 +9345,7 @@ prog pyr_conv_1d() {
   compute3->add_load("M3", "c3 + 1");
   compute3->add_load("M3", "c3 + 2");
   compute3->add_store("out", "c3");
-  
+
   return prg;
 }
 
@@ -8981,11 +9382,11 @@ void compute_unit_with_index_variables_test() {
 }
 
 void application_tests() {
-  iccad_tests();
-  compute_unit_with_index_variables_test();
-
   reduce_2d_test();
   reduce_1d_test();
+
+  iccad_tests();
+  compute_unit_with_index_variables_test();
 
   //pyr_1d_conv_test();
   halide_cascade_test();
@@ -8998,7 +9399,7 @@ void application_tests() {
   denoise2d_test();
 
   conv_1d_test();
-  
+
   tricky_shift_register_reconvergence_test();
 
   //playground();
@@ -9016,7 +9417,7 @@ void application_tests() {
 
   upsample_stencil_2d_test();
   upsample_stencil_1d_test();
-  
+
   updown_merge_test();
   harris_unrolled_test();
 
@@ -9097,7 +9498,7 @@ void application_tests() {
   dummy_app_test();
 
   //two_input_denoise_pipeline_test();
-  
+
 
   //synth_wire_test();
   //synth_sr_boundary_condition_test();
