@@ -38,12 +38,28 @@ struct ir_node {
   std::vector<pair<buffer_name, address> > consume_locs;
   // The name of the HL C++ function that this op invokes
   std::string func;
+  // Name of loop index variables used by this unit
+  std::vector<std::string> index_variables_needed_by_compute;
   // Annotation used for debug printouts
   int unroll_factor;
 
   isl_ctx* ctx;
 
   ir_node() : parent(nullptr), is_loop(false), unroll_factor(1) {}
+
+  std::set<op*> ancestors() {
+    std::set<op*> anc;
+    if (parent != nullptr) {
+      for (auto a : parent->ancestors()) {
+        anc.insert(a);
+      }
+    }
+    return anc;
+  }
+
+  void compute_unit_needs_index_variable(const std::string& v) {
+    index_variables_needed_by_compute.push_back(v);
+  }
 
   map<op*, Box> get_domain_boxes() {
       Box empty;
@@ -87,7 +103,6 @@ struct ir_node {
 
   void add_function(const std::string& n, const vector<string>& args) {
     func = n;
-    //func_args = args;
   }
 
   op* add_nest(
@@ -116,6 +131,7 @@ struct ir_node {
 
   op* add_loop(const std::string& name, const int l, const int u) {
     assert(is_loop);
+    //assert(!elem(name, all_existing_loop_names()));
 
     auto lp = new op();
     lp->name = name;
@@ -182,11 +198,22 @@ struct ir_node {
   }
 
   op* add_op(const std::string& name) {
+    //assert(!elem(name, all_existing_op_names()));
+
     auto fo = new op();
+    fo->parent = this;
     fo->name = name;
     fo->ctx = ctx;
     children.push_back(fo);
     return fo;
+  }
+
+  string add_load(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2) {
+    return add_load(b, d0 + ", " + d1 + ", " + d2);
+  }
+
+  string add_load(const std::string& b, const std::string& d0, const std::string& d1) {
+    return add_load(b, d0 + ", " + d1);
   }
 
   string add_load(const std::string& b, const std::string& loc) {
@@ -210,6 +237,14 @@ struct ir_node {
       ps.push_back(p.first + "[" + p.second + "]");
     }
     return ps;
+  }
+
+  void add_store(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2) {
+    add_store(b, d0 + ", " + d1 + ", " + d2);
+  }
+
+  void add_store(const std::string& b, const std::string& d0, const std::string& d1) {
+    add_store(b, d0 + ", " + d1);
   }
 
   void add_store(const std::string& b, const std::string& loc) {
@@ -281,8 +316,8 @@ struct ir_node {
     }
   }
 
-  set<op*> all_loops() {
-    set<op*> loops{this};
+  std::set<op*> all_loops() {
+    std::set<op*> loops{this};
     if (!is_loop) {
       loops = {};
     }
@@ -294,8 +329,39 @@ struct ir_node {
     return loops;
   }
 
-  set<op*> all_ops() {
-    set<op*> ops{this};
+  std::set<std::string> all_existing_loop_names() {
+    std::set<string> names;
+    for (auto op : all_root_ops()) {
+      if (op->is_loop) {
+        names.insert(op->name);
+      }
+    }
+    return names;
+  }
+
+  std::set<std::string> all_existing_op_names() {
+    std::set<string> names;
+    for (auto op : all_root_ops()) {
+      if (!op->is_loop) {
+        names.insert(op->name);
+      }
+    }
+    return names;
+  }
+
+  ir_node* find_root() {
+    if (parent != nullptr) {
+      return this;
+    }
+    return parent->find_root();
+  }
+
+  std::set<op*> all_root_ops() {
+    return find_root()->all_ops();
+  }
+
+  std::set<op*> all_ops() {
+    std::set<op*> ops{this};
     if (is_loop) {
       ops = {};
     }
@@ -319,8 +385,8 @@ struct prog {
   ir_node* root;
 
   // Names of input and output buffers
-  set<string> ins;
-  set<string> outs;
+  std::set<string> ins;
+  std::set<string> outs;
   map<string, int> buffer_port_widths;
 
   // The C++ source file which holds HLS code
@@ -503,8 +569,8 @@ struct prog {
     return args;
   }
 
-  set<op*> all_loops() { return root->all_loops(); }
-  set<op*> all_ops() { return root->all_ops(); }
+  std::set<op*> all_loops() { return root->all_loops(); }
+  std::set<op*> all_ops() { return root->all_ops(); }
 
   op* add_op(const std::string& name) {
     return root->add_op(name);
@@ -638,50 +704,50 @@ struct prog {
     return m;
   }
 
-  map<string, Result> data_demands_maps() {
-    map<string, Result> m;
-    auto ivars = iter_vars();
-    auto doms = domains();
+  //map<string, Result> data_demands_maps() {
+    //map<string, Result> m;
+    //auto ivars = iter_vars();
+    //auto doms = domains();
 
-    auto ops = root->all_ops();
-    for (auto op : ops) {
-        if (!op->is_loop) {
-            Window win;
-            string result_buf = "";
-            for (auto p : op->produces()) {
-                result_buf= take_until(p, "[");
-                cout << "Producer :" << p << endl;
-            }
-            assert(result_buf != "");
+    //auto ops = root->all_ops();
+    //for (auto op : ops) {
+        //if (!op->is_loop) {
+            //Window win;
+            //string result_buf = "";
+            //for (auto p : op->produces()) {
+                //result_buf= take_until(p, "[");
+                //cout << "Producer :" << p << endl;
+            //}
+            //assert(result_buf != "");
 
-            auto vars = map_find(op, ivars);
-            //TODO: fix this hack
-            //reverse(vars);
-            //vars.pop_back();
-            //reverse(vars);
-            string ivar_str = sep_list(vars, "[", "]", ", ");
-            auto dom = map_find(op, doms);
+            //auto vars = map_find(op, ivars);
+            ////TODO: fix this hack
+            ////reverse(vars);
+            ////vars.pop_back();
+            ////reverse(vars);
+            //string ivar_str = sep_list(vars, "[", "]", ", ");
+            //auto dom = map_find(op, doms);
 
-            umap* pmap = rdmap(ctx, "{}");
-            int cnt_ld_st_pair = 0;
-            auto producers = op->produces();
-            for (auto p : op->consumes()) {
-                cout << "DEBUG:" << result_buf + ivar_str <<", " << producers[cnt_ld_st_pair] << endl;
-                isl_union_map* vmap =
-                  rdmap(ctx, string("{ " + producers[cnt_ld_st_pair] + " -> " + p + " }").c_str());
-                  //rdmap(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str());
-                pmap = unn(pmap, vmap);
-                cnt_ld_st_pair ++;
-                cout << "Consumer map : " << str(pmap) << endl;
-            }
-            win.needed = pmap;
-            Result res;
-            res.srcs.push_back(win);
-            m[op->name] = res;
-        }
-    }
-      return m;
-  }
+            //umap* pmap = rdmap(ctx, "{}");
+            //int cnt_ld_st_pair = 0;
+            //auto producers = op->produces();
+            //for (auto p : op->consumes()) {
+                //cout << "DEBUG:" << result_buf + ivar_str <<", " << producers[cnt_ld_st_pair] << endl;
+                //isl_union_map* vmap =
+                  //rdmap(ctx, string("{ " + producers[cnt_ld_st_pair] + " -> " + p + " }").c_str());
+                  ////rdmap(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str());
+                //pmap = unn(pmap, vmap);
+                //cnt_ld_st_pair ++;
+                //cout << "Consumer map : " << str(pmap) << endl;
+            //}
+            //win.needed = pmap;
+            //Result res;
+            //res.srcs.push_back(win);
+            //m[op->name] = res;
+        //}
+    //}
+      //return m;
+  //}
 
 
   map<op*, isl_map*> producer_maps() {
@@ -811,10 +877,13 @@ struct prog {
           umap* vmap =
             its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
           pmap = unn(pmap, vmap);
+          //cout << tab(1) << "pmap = " << str(pmap) << endl;
         }
       }
       m = unn(m, pmap);
     }
+    //cout << "m = " << str(m) << endl;
+    //assert(false);
     return m;
   }
 
@@ -833,10 +902,13 @@ struct prog {
       for (auto p : op->consumes()) {
         umap* vmap =
           its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
+        //cout << tab(1) << "vmap = " << str(vmap) << endl;
         pmap = unn(pmap, vmap);
       }
       m = unn(m, pmap);
     }
+    //cout << tab(1) << "m = " << str(m) << endl;
+    //assert(false);
     return m;
   }
 

@@ -28,7 +28,7 @@ struct Expr {
   virtual bool is_binop() const { return false; }
   virtual bool is_int_const() const { return false; }
   virtual bool is_float_const() const { return false; }
-  virtual set<Expr*> children() const { return {}; }
+  virtual std::set<Expr*> children() const { return {}; }
 };
 
 struct FloatConst : public Expr {
@@ -60,7 +60,7 @@ struct FunctionCall : public Expr {
     name(n_), args(args_) {}
 
   virtual bool is_function_call() const { return true; }
-  virtual set<Expr*> children() const { return set<Expr*>(begin(args), end(args)); }
+  virtual std::set<Expr*> children() const { return std::set<Expr*>(begin(args), end(args)); }
 };
 
 struct Binop : public Expr {
@@ -73,13 +73,13 @@ struct Binop : public Expr {
 
   virtual bool is_binop() const { return true; }
 
-  virtual set<Expr*> children() const { return {l, r}; }
+  virtual std::set<Expr*> children() const { return {l, r}; }
 }; 
 
 struct Unop : public Expr {
   string op;
   Expr* arg;
-  virtual set<Expr*> children() const { return {arg}; }
+  virtual std::set<Expr*> children() const { return {arg}; }
 };
 
 static inline
@@ -150,7 +150,8 @@ string compute_string(const num_type tp,
     if (tp == NUM_TYPE_FLOAT) {
       return "int_to_float(" + res + ")";
     } else {
-      return res;
+      //return res;
+      return val;
     }
   } else if (def->is_binop()) {
     auto op = (Binop*) def;
@@ -179,7 +180,7 @@ string compute_string(const num_type tp,
       if (tp == NUM_TYPE_FLOAT) {
         return "to_float(" + res + ")";
       } else {
-        return res;
+        return "uint" + str(pixel_width) + "_t" + parens(res);
       }
     } else {
     
@@ -309,12 +310,30 @@ Expr* div(Expr* const a, const int v) {
 
 static inline
 Expr* add(vector<Expr*> args) {
-  assert(args.size() > 1);
-  Expr* res = args.at(0);
-  for (int i = 1; i < args.size(); i++) {
-    res = new Binop("+", res, args.at(i));
+  assert(args.size() > 0);
+  if (args.size() == 1) {
+    return args.at(0);
+  } else if (args.size() == 2) {
+    return add(args.at(0), args.at(1));
+  } else {
+    vector<Expr*> fst;
+    vector<Expr*> snd;
+    int index = 0;
+    for (index = 0; index < (int) args.size() / 2; index++) {
+      fst.push_back(args.at(index));
+    }
+    for (; index < args.size(); index++) {
+      snd.push_back(args.at(index));
+    }
+    return add(add(fst), add(snd));
   }
-  return res;
+
+  //assert(args.size() > 1);
+  //Expr* res = args.at(0);
+  //for (int i = 1; i < args.size(); i++) {
+    //res = new Binop("+", res, args.at(i));
+  //}
+  //return res;
 }
 
 static inline

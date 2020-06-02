@@ -16,6 +16,489 @@ void compare(vector<string>& opt, vector<string>& naive) {
   assert(opt == naive);
 }
 
+prog clockwork_target() {
+  prog prg;
+  prg.compute_unit_file = "clockwork_target_compute.h";
+  prg.name = "clockwork_target";
+
+// Stencil<uint16_t, 64, 64> &hw_input_stencil = arg_0;
+  prg.add_input("hw_input_stencil");
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
+// Stencil<void *> &hw_output_stencil = arg_1;
+  prg.add_output("hw_output_stencil");
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+
+//consuming hw_input.stencil
+////producing hw_input_copy.stencil
+  auto loop_hw_input_copy_s0_y = prg.add_loop("hw_input_copy_s0_y", 0, 64);
+  auto loop_hw_input_copy_s0_x = loop_hw_input_copy_s0_y->add_loop("hw_input_copy_s0_x", 0, 64);
+
+//store is: hw_input_copy.stencil(hw_input_copy.s0.x, hw_input_copy.s0.y) = hw_input.stencil(hw_input_copy.s0.x, hw_input_copy.s0.y)
+  auto hcompute_hw_input_copy_stencil = loop_hw_input_copy_s0_x->add_op("hcompute_hw_input_copy_stencil");
+  hcompute_hw_input_copy_stencil->add_function("hcompute_hw_input_copy_stencil");
+  hcompute_hw_input_copy_stencil->add_load("hw_input_stencil", "hw_input_copy_s0_x", "hw_input_copy_s0_y");
+  prg.buffer_port_widths["hw_input_copy_stencil"] = 16;
+  hcompute_hw_input_copy_stencil->add_store("hw_input_copy_stencil", "hw_input_copy_s0_x", "hw_input_copy_s0_y");
+////producing conv.stencil
+  auto loop_conv_s0_y = prg.add_loop("conv_s0_y", 0, 62);
+  auto loop_conv_s0_x = loop_conv_s0_y->add_loop("conv_s0_x", 0, 62);
+
+//store is: conv.stencil(conv.s0.x, conv.s0.y) = 0
+  auto hcompute_conv_stencil = loop_conv_s0_x->add_op("hcompute_conv_stencil");
+  hcompute_conv_stencil->add_function("hcompute_conv_stencil");
+  prg.buffer_port_widths["conv_stencil"] = 16;
+  hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_x", "conv_s0_y");
+
+//consuming hw_input_copy.stencil
+  auto loop_conv_s1_y = prg.add_loop("conv_s1_y", 0, 62);
+  auto loop_conv_s1_x = loop_conv_s1_y->add_loop("conv_s1_x", 0, 62);
+
+//store is: conv.stencil(conv.s1.x, conv.s1.y) = ((int32(hw_input_copy.stencil(conv.s1.x, conv.s1.y))*17) + (conv.stencil(conv.s1.x, conv.s1.y) + ((int32(hw_input_copy.stencil((conv.s1.x + 1), conv.s1.y))*7) + ((int32(hw_input_copy.stencil((conv.s1.x + 2), conv.s1.y))*5) + ((int32(hw_input_copy.stencil(conv.s1.x, (conv.s1.y + 1)))*4) + ((int32(hw_input_copy.stencil((conv.s1.x + 1), (conv.s1.y + 1)))*19) + ((int32(hw_input_copy.stencil((conv.s1.x + 2), (conv.s1.y + 1)))*21) + ((int32(hw_input_copy.stencil(conv.s1.x, (conv.s1.y + 2)))*6) + ((int32(hw_input_copy.stencil((conv.s1.x + 2), (conv.s1.y + 2)))*15) + (int32(hw_input_copy.stencil((conv.s1.x + 1), (conv.s1.y + 2)))*4))))))))))
+  auto hcompute_conv_stencil_1 = loop_conv_s1_x->add_op("hcompute_conv_stencil_1");
+  hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
+  hcompute_conv_stencil_1->add_load("conv_stencil", "conv_s1_x", "conv_s1_y");
+  hcompute_conv_stencil_1->add_load("hw_input_copy_stencil", "conv_s1_x", "conv_s1_y");
+  hcompute_conv_stencil_1->add_load("hw_input_copy_stencil", "(conv_s1_x + 1)", "conv_s1_y");
+  hcompute_conv_stencil_1->add_load("hw_input_copy_stencil", "(conv_s1_x + 2)", "conv_s1_y");
+  hcompute_conv_stencil_1->add_load("hw_input_copy_stencil", "conv_s1_x", "(conv_s1_y + 1)");
+  hcompute_conv_stencil_1->add_load("hw_input_copy_stencil", "(conv_s1_x + 1)", "(conv_s1_y + 1)");
+  hcompute_conv_stencil_1->add_load("hw_input_copy_stencil", "(conv_s1_x + 2)", "(conv_s1_y + 1)");
+  hcompute_conv_stencil_1->add_load("hw_input_copy_stencil", "conv_s1_x", "(conv_s1_y + 2)");
+  hcompute_conv_stencil_1->add_load("hw_input_copy_stencil", "(conv_s1_x + 2)", "(conv_s1_y + 2)");
+  hcompute_conv_stencil_1->add_load("hw_input_copy_stencil", "(conv_s1_x + 1)", "(conv_s1_y + 2)");
+  hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_x", "conv_s1_y");
+
+//consuming conv.stencil
+  auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, 62);
+  auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 62);
+
+//store is: hw_output.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo) = uint8(conv.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo))
+  auto hcompute_hw_output_stencil = loop_hw_output_s0_x_xo->add_op("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo");
+  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo");
+
+  return prg;
+
+  //prog prg;
+  //prg.compute_unit_file = "clockwork_target_compute.h";
+  //prg.name = "clockwork_target";
+
+//// Stencil<uint16_t, 64, 64> &hw_input_stencil = arg_0;
+  //prg.add_input("hw_input_stencil");
+  //prg.buffer_port_widths["hw_input_stencil"] = 16;
+//// Stencil<void *> &hw_output_stencil = arg_1;
+  //prg.add_output("hw_output_stencil");
+  //prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+
+////consuming hw_input.stencil
+//////producing conv.stencil
+  //auto loop_conv_s0_y = prg.add_loop("conv_s0_y", 0, 62);
+  //auto loop_conv_s0_x = loop_conv_s0_y->add_loop("conv_s0_x", 0, 62);
+
+////store is: conv.stencil(conv.s0.x, conv.s0.y) = 0
+  //auto compute_conv_stencil = loop_conv_s0_x->add_op("compute_conv_stencil");
+  //compute_conv_stencil->add_function("compute_conv_stencil");
+  //prg.buffer_port_widths["conv_stencil"] = 16;
+  //compute_conv_stencil->add_store("conv_stencil", "conv_s0_x", "conv_s0_y");
+  //auto loop_conv_s1_y = prg.add_loop("conv_s1_y", 0, 62);
+  //auto loop_conv_s1_x = loop_conv_s1_y->add_loop("conv_s1_x", 0, 62);
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y) = ((int32(hw_input.stencil(conv.s1.x, conv.s1.y))*17) + (conv.stencil(conv.s1.x, conv.s1.y) + ((int32(hw_input.stencil((conv.s1.x + 1), conv.s1.y))*7) + ((int32(hw_input.stencil((conv.s1.x + 2), conv.s1.y))*5) + ((int32(hw_input.stencil(conv.s1.x, (conv.s1.y + 1)))*4) + ((int32(hw_input.stencil((conv.s1.x + 1), (conv.s1.y + 1)))*19) + ((int32(hw_input.stencil((conv.s1.x + 2), (conv.s1.y + 1)))*21) + ((int32(hw_input.stencil(conv.s1.x, (conv.s1.y + 2)))*6) + ((int32(hw_input.stencil((conv.s1.x + 2), (conv.s1.y + 2)))*15) + (int32(hw_input.stencil((conv.s1.x + 1), (conv.s1.y + 2)))*4))))))))))
+  //auto compute_conv_stencil_1 = loop_conv_s1_x->add_op("compute_conv_stencil_1");
+  //compute_conv_stencil_1->add_function("compute_conv_stencil_1");
+  //compute_conv_stencil_1->add_load("conv_stencil", "conv_s1_x", "conv_s1_y");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "conv_s1_x", "conv_s1_y");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 1)", "conv_s1_y");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 2)", "conv_s1_y");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "conv_s1_x", "(conv_s1_y + 1)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 1)", "(conv_s1_y + 1)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 2)", "(conv_s1_y + 1)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "conv_s1_x", "(conv_s1_y + 2)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 2)", "(conv_s1_y + 2)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 1)", "(conv_s1_y + 2)");
+  //compute_conv_stencil_1->add_store("conv_stencil", "conv_s1_x", "conv_s1_y");
+
+////consuming conv.stencil
+  //auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, 62);
+  //auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 62);
+
+////store is: hw_output.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo) = uint8(conv.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo))
+  //auto compute_hw_output_stencil = loop_hw_output_s0_x_xo->add_op("compute_hw_output_stencil");
+  //compute_hw_output_stencil->add_function("compute_hw_output_stencil");
+  //compute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo");
+  //compute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo");
+
+  //return prg;
+  //prog prg;
+  //prg.compute_unit_file = "clockwork_target_compute.h";
+  //prg.name = "clockwork_target";
+
+//// Stencil<void *> &hw_output_stencil = arg_0;
+  //prg.add_output("hw_output_stencil");
+  //prg.buffer_port_widths["hw_output_stencil"] = 16;
+//// Stencil<void *> &hw_input_stencil = arg_1;
+  //prg.add_input("hw_input_stencil");
+  //prg.buffer_port_widths["hw_input_stencil"] = 16;
+
+  //auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, 62);
+  //auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 62);
+//////producing conv.stencil
+  //auto loop_conv_s0_y = loop_hw_output_s0_x_xo->add_loop("conv_s0_y", 0, 62);
+  //auto loop_conv_s0_x = loop_conv_s0_y->add_loop("conv_s0_x", 0, 62);
+
+////store is: conv.stencil(conv.s0.x, conv.s0.y) = 0
+  //auto compute_conv_stencil = loop_conv_s0_x->add_op("compute_conv_stencil");
+  //compute_conv_stencil->add_function("compute_conv_stencil");
+  //prg.buffer_port_widths["conv_stencil"] = 16;
+  //compute_conv_stencil->add_store("conv_stencil", "conv_s0_x", "conv_s0_y");
+
+////consuming hw_input.stencil
+  //auto loop_conv_s1_y = loop_hw_output_s0_x_xo->add_loop("conv_s1_y", 0, 62);
+  //auto loop_conv_s1_x = loop_conv_s1_y->add_loop("conv_s1_x", 0, 62);
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y) = ((int32(hw_input.stencil(conv.s1.x, conv.s1.y))*17) + (conv.stencil(conv.s1.x, conv.s1.y) + ((int32(hw_input.stencil((conv.s1.x + 1), conv.s1.y))*7) + ((int32(hw_input.stencil((conv.s1.x + 2), conv.s1.y))*5) + ((int32(hw_input.stencil(conv.s1.x, (conv.s1.y + 1)))*4) + ((int32(hw_input.stencil((conv.s1.x + 1), (conv.s1.y + 1)))*19) + ((int32(hw_input.stencil((conv.s1.x + 2), (conv.s1.y + 1)))*21) + ((int32(hw_input.stencil(conv.s1.x, (conv.s1.y + 2)))*6) + ((int32(hw_input.stencil((conv.s1.x + 2), (conv.s1.y + 2)))*15) + (int32(hw_input.stencil((conv.s1.x + 1), (conv.s1.y + 2)))*4))))))))))
+  //auto compute_conv_stencil_1 = loop_conv_s1_x->add_op("compute_conv_stencil_1");
+  //compute_conv_stencil_1->add_function("compute_conv_stencil_1");
+  //compute_conv_stencil_1->add_load("conv_stencil", "conv_s1_x", "conv_s1_y");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "conv_s1_x", "conv_s1_y");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 1)", "conv_s1_y");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 2)", "conv_s1_y");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "conv_s1_x", "(conv_s1_y + 1)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 1)", "(conv_s1_y + 1)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 2)", "(conv_s1_y + 1)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "conv_s1_x", "(conv_s1_y + 2)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 2)", "(conv_s1_y + 2)");
+  //compute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_x + 1)", "(conv_s1_y + 2)");
+  //compute_conv_stencil_1->add_store("conv_stencil", "conv_s1_x", "conv_s1_y");
+
+////consuming conv.stencil
+
+////store is: hw_output.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo) = uint8(conv.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo))
+  //auto compute_hw_output_stencil = loop_hw_output_s0_x_xo->add_op("compute_hw_output_stencil");
+  //compute_hw_output_stencil->add_function("compute_hw_output_stencil");
+  //compute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo");
+  //compute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo");
+
+  //return prg;
+
+  //prog prg;
+  //prg.compute_unit_file = "clockwork_target_compute.h";
+  //prg.name = "clockwork_target";
+
+//// Stencil<void *> &hw_output = arg_0;
+  //prg.add_output("hw_output");
+  //prg.buffer_port_widths["hw_output"] = 16;
+//// Stencil<void *> &hw_inputa0 = arg_1;
+  //prg.add_input("hw_inputa0");
+  //prg.buffer_port_widths["hw_inputa0"] = 16;
+
+  //auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, 62);
+//////producing kernel
+  //auto loop_kernel_s0_y = loop_hw_output_s0_y_yo->add_loop("kernel_s0_y", 0, 3);
+  //auto loop_kernel_s0_x = loop_kernel_s0_y->add_loop("kernel_s0_x", 0, 3);
+
+////store is: kernela1[(kernel.s0.x + (kernel.s0.y*3))] = 0
+  //auto compute_kernela1 = loop_kernel_s0_x->add_op("compute_kernela1");
+  //compute_kernela1->add_function("compute_kernela1");
+  //prg.buffer_port_widths["kernela1"] = 16;
+  //compute_kernela1->add_store("kernela1", "(kernel.s0.x + (kernel.s0.y*3))");
+
+////store is: kernela1[0] = 17
+  //auto compute_kernela1_1 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_1");
+  //compute_kernela1_1->add_function("compute_kernela1_1");
+  //compute_kernela1_1->add_store("kernela1", "0");
+
+////store is: kernela1[3] = 4
+  //auto compute_kernela1_2 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_2");
+  //compute_kernela1_2->add_function("compute_kernela1_2");
+  //compute_kernela1_2->add_store("kernela1", "3");
+
+////store is: kernela1[6] = 6
+  //auto compute_kernela1_3 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_3");
+  //compute_kernela1_3->add_function("compute_kernela1_3");
+  //compute_kernela1_3->add_store("kernela1", "6");
+
+////store is: kernela1[1] = 7
+  //auto compute_kernela1_4 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_4");
+  //compute_kernela1_4->add_function("compute_kernela1_4");
+  //compute_kernela1_4->add_store("kernela1", "1");
+
+////store is: kernela1[4] = 19
+  //auto compute_kernela1_5 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_5");
+  //compute_kernela1_5->add_function("compute_kernela1_5");
+  //compute_kernela1_5->add_store("kernela1", "4");
+
+////store is: kernela1[7] = 4
+  //auto compute_kernela1_6 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_6");
+  //compute_kernela1_6->add_function("compute_kernela1_6");
+  //compute_kernela1_6->add_store("kernela1", "7");
+
+////store is: kernela1[2] = 5
+  //auto compute_kernela1_7 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_7");
+  //compute_kernela1_7->add_function("compute_kernela1_7");
+  //compute_kernela1_7->add_store("kernela1", "2");
+
+////store is: kernela1[5] = 21
+  //auto compute_kernela1_8 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_8");
+  //compute_kernela1_8->add_function("compute_kernela1_8");
+  //compute_kernela1_8->add_store("kernela1", "5");
+
+////store is: kernela1[8] = 15
+  //auto compute_kernela1_9 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_9");
+  //compute_kernela1_9->add_function("compute_kernela1_9");
+  //compute_kernela1_9->add_store("kernela1", "8");
+////consuming kernel
+  //auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 62);
+//////producing conv
+  //auto loop_conv_s0_y = loop_hw_output_s0_x_xo->add_loop("conv_s0_y", 0, 62);
+  //auto loop_conv_s0_x = loop_conv_s0_y->add_loop("conv_s0_x", 0, 62);
+
+////store is: conva2[(conv.s0.x + (conv.s0.y*62))] = 0
+  //auto compute_conva2 = loop_conv_s0_x->add_op("compute_conva2");
+  //compute_conva2->add_function("compute_conva2");
+  //prg.buffer_port_widths["conva2"] = 16;
+  //compute_conva2->add_store("conva2", "(conv.s0.x + (conv.s0.y*62))");
+////consuming hw_input
+  //auto loop_conv_s1_y = loop_hw_output_s0_x_xo->add_loop("conv_s1_y", 0, 62);
+  //auto loop_conv_s1_x = loop_conv_s1_y->add_loop("conv_s1_x", 0, 62);
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[0]*int32(hw_inputa0[(conv.s1.x + (conv.s1.y*64))])))
+  //auto compute_conva2_1 = loop_conv_s1_x->add_op("compute_conva2_1");
+  //compute_conva2_1->add_function("compute_conva2_1");
+  //compute_conva2_1->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_1->add_load("hw_inputa0", "(conv.s1.x + (conv.s1.y*64))");
+  //compute_conva2_1->add_load("kernela1", "0");
+  //compute_conva2_1->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[1]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 1)])))
+  //auto compute_conva2_2 = loop_conv_s1_x->add_op("compute_conva2_2");
+  //compute_conva2_2->add_function("compute_conva2_2");
+  //compute_conva2_2->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_2->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 1)");
+  //compute_conva2_2->add_load("kernela1", "1");
+  //compute_conva2_2->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[2]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 2)])))
+  //auto compute_conva2_3 = loop_conv_s1_x->add_op("compute_conva2_3");
+  //compute_conva2_3->add_function("compute_conva2_3");
+  //compute_conva2_3->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_3->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 2)");
+  //compute_conva2_3->add_load("kernela1", "2");
+  //compute_conva2_3->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[3]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 64)])))
+  //auto compute_conva2_4 = loop_conv_s1_x->add_op("compute_conva2_4");
+  //compute_conva2_4->add_function("compute_conva2_4");
+  //compute_conva2_4->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_4->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 64)");
+  //compute_conva2_4->add_load("kernela1", "3");
+  //compute_conva2_4->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[4]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 65)])))
+  //auto compute_conva2_5 = loop_conv_s1_x->add_op("compute_conva2_5");
+  //compute_conva2_5->add_function("compute_conva2_5");
+  //compute_conva2_5->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_5->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 65)");
+  //compute_conva2_5->add_load("kernela1", "4");
+  //compute_conva2_5->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[5]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 66)])))
+  //auto compute_conva2_6 = loop_conv_s1_x->add_op("compute_conva2_6");
+  //compute_conva2_6->add_function("compute_conva2_6");
+  //compute_conva2_6->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_6->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 66)");
+  //compute_conva2_6->add_load("kernela1", "5");
+  //compute_conva2_6->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[6]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 128)])))
+  //auto compute_conva2_7 = loop_conv_s1_x->add_op("compute_conva2_7");
+  //compute_conva2_7->add_function("compute_conva2_7");
+  //compute_conva2_7->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_7->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 128)");
+  //compute_conva2_7->add_load("kernela1", "6");
+  //compute_conva2_7->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[7]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 129)])))
+  //auto compute_conva2_8 = loop_conv_s1_x->add_op("compute_conva2_8");
+  //compute_conva2_8->add_function("compute_conva2_8");
+  //compute_conva2_8->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_8->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 129)");
+  //compute_conva2_8->add_load("kernela1", "7");
+  //compute_conva2_8->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+
+////store is: conva2[(conv.s1.x + (conv.s1.y*62))] = (conva2[(conv.s1.x + (conv.s1.y*62))] + (kernela1[8]*int32(hw_inputa0[((conv.s1.x + (conv.s1.y*64)) + 130)])))
+  //auto compute_conva2_9 = loop_conv_s1_x->add_op("compute_conva2_9");
+  //compute_conva2_9->add_function("compute_conva2_9");
+  //compute_conva2_9->add_load("conva2", "(conv.s1.x + (conv.s1.y*62))");
+  //compute_conva2_9->add_load("hw_inputa0", "((conv.s1.x + (conv.s1.y*64)) + 130)");
+  //compute_conva2_9->add_load("kernela1", "8");
+  //compute_conva2_9->add_store("conva2", "(conv.s1.x + (conv.s1.y*62))");
+////consuming conv
+
+////store is: hw_output[(hw_output.s0.x.xo + (hw_output.s0.y.yo*62))] = uint8(conva2[(hw_output.s0.x.xo + (hw_output.s0.y.yo*62))])
+  //auto compute_hw_output = loop_hw_output_s0_x_xo->add_op("compute_hw_output");
+  //compute_hw_output->add_function("compute_hw_output");
+  //compute_hw_output->add_load("conva2", "(hw_output.s0.x.xo + (hw_output.s0.y.yo*62))");
+  //compute_hw_output->add_store("hw_output", "(hw_output.s0.x.xo + (hw_output.s0.y.yo*62))");
+
+  //return prg;
+
+  //prog prg;
+  //prg.compute_unit_file = "clockwork_target_compute.h";
+  //prg.name = "clockwork_target";
+
+//// Stencil<void *> &_hw_output = arg_0;
+  //prg.add_output("_hw_output");
+  //prg.buffer_port_widths["_hw_output"] = 16;
+//// Stencil<void *> &_hw_input = arg_1;
+  //prg.add_input("_hw_inputa0");
+  //prg.buffer_port_widths["_hw_inputa0"] = 16;
+
+  //auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, 62);
+//////producing kernel
+  //auto loop_kernel_s0_y = loop_hw_output_s0_y_yo->add_loop("kernel_s0_y", 0, 3);
+  //auto loop_kernel_s0_x = loop_kernel_s0_y->add_loop("kernel_s0_x", 0, 3);
+
+////store is: kernela1[(kernel.s0.x + (kernel.s0.y*3))] = 0
+  //auto compute_kernela1 = loop_kernel_s0_x->add_op("compute_kernela1");
+  //compute_kernela1->add_function("compute_kernela1");
+  //prg.buffer_port_widths["_kernela1"] = 16;
+  //compute_kernela1->add_store("_kernela1", "(kernel_s0_x + (kernel_s0_y*3))");
+
+//////store is: kernela1[0] = 17
+  ////auto compute_kernela1$1 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_1");
+  ////compute_kernela1$1->add_function("compute_kernela1_1");
+  ////compute_kernela1$1->add_store("_kernela1", "0");
+
+//////store is: kernela1[3] = 4
+  ////auto compute_kernela1$2 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_2");
+  ////compute_kernela1$2->add_function("compute_kernela1_2");
+  ////compute_kernela1$2->add_store("_kernela1", "3");
+
+//////store is: kernela1[6] = 6
+  ////auto compute_kernela1$3 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_3");
+  ////compute_kernela1$3->add_function("compute_kernela1_3");
+  ////compute_kernela1$3->add_store("_kernela1", "6");
+
+//////store is: kernela1[1] = 7
+  ////auto compute_kernela1$4 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_4");
+  ////compute_kernela1$4->add_function("compute_kernela1_4");
+  ////compute_kernela1$4->add_store("_kernela1", "1");
+
+//////store is: kernela1[4] = 19
+  ////auto compute_kernela1$5 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_5");
+  ////compute_kernela1$5->add_function("compute_kernela1_5");
+  ////compute_kernela1$5->add_store("_kernela1", "4");
+
+//////store is: kernela1[7] = 4
+  ////auto compute_kernela1$6 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_6");
+  ////compute_kernela1$6->add_function("compute_kernela1_6");
+  ////compute_kernela1$6->add_store("_kernela1", "7");
+
+//////store is: kernela1[2] = 5
+  ////auto compute_kernela1$7 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_7");
+  ////compute_kernela1$7->add_function("compute_kernela1_7");
+  ////compute_kernela1$7->add_store("_kernela1", "2");
+
+//////store is: kernela1[5] = 21
+  ////auto compute_kernela1$8 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_8");
+  ////compute_kernela1$8->add_function("compute_kernela1_8");
+  ////compute_kernela1$8->add_store("_kernela1", "5");
+
+//////store is: kernela1[8] = 15
+  ////auto compute_kernela1$9 = loop_hw_output_s0_y_yo->add_op("compute_kernela1_9");
+  ////compute_kernela1$9->add_function("compute_kernela1_9");
+  ////compute_kernela1$9->add_store("_kernela1", "8");
+////consuming kernel
+  //auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 62);
+//////producing conv
+  //auto loop_conv_s0_y = loop_hw_output_s0_x_xo->add_loop("conv_s0_y", 0, 62);
+  //auto loop_conv_s0_x = loop_conv_s0_y->add_loop("conv_s0_x", 0, 62);
+
+  //auto compute_conva2 = loop_conv_s0_x->add_op("compute_conva2");
+  //compute_conva2->add_function("compute_conva2");
+  //prg.buffer_port_widths["_conva2"] = 16;
+  //compute_conva2->add_store("_conva2", "(conv_s0_x + (conv_s0_y*62))");
+////consuming hw_input
+  //auto loop_conv_s1_y = loop_hw_output_s0_x_xo->add_loop("conv_s1_y", 0, 62);
+  //auto loop_conv_s1_x = loop_conv_s1_y->add_loop("conv_s1_x", 0, 62);
+
+  //auto compute_conva2$1 = loop_conv_s1_x->add_op("compute_conva2_1");
+  //compute_conva2$1->add_function("compute_conva2_1");
+  //compute_conva2$1->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  //prg.buffer_port_widths["_hw_inputa0"] = 16;
+  //compute_conva2$1->add_load("_hw_inputa0", "(conv_s1_x + (conv_s1_y*64))");
+  //compute_conva2$1->add_load("_kernela1", "0");
+  //compute_conva2$1->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+
+  ////auto compute_conva2$2 = loop_conv_s1_x->add_op("compute_conva2_2");
+  ////compute_conva2$2->add_function("compute_conva2_2");
+  ////compute_conva2$2->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////compute_conva2$2->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 1)");
+  ////compute_conva2$2->add_load("_kernela1", "1");
+  ////compute_conva2$2->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+
+  ////auto compute_conva2$3 = loop_conv_s1_x->add_op("compute_conva2_3");
+  ////compute_conva2$3->add_function("compute_conva2_3");
+  ////compute_conva2$3->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////compute_conva2$3->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 2)");
+  ////compute_conva2$3->add_load("_kernela1", "2");
+  ////compute_conva2$3->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+
+  ////auto compute_conva2$4 = loop_conv_s1_x->add_op("compute_conva2_4");
+  ////compute_conva2$4->add_function("compute_conva2_4");
+  ////compute_conva2$4->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////compute_conva2$4->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 64)");
+  ////compute_conva2$4->add_load("_kernela1", "3");
+  ////compute_conva2$4->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+
+  ////auto compute_conva2$5 = loop_conv_s1_x->add_op("compute_conva2_5");
+  ////compute_conva2$5->add_function("compute_conva2$5");
+  ////compute_conva2$5->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////compute_conva2$5->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 65)");
+  ////compute_conva2$5->add_load("_kernela1", "4");
+  ////compute_conva2$5->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+
+  ////auto compute_conva2$6 = loop_conv_s1_x->add_op("compute_conva2_6");
+  ////compute_conva2$6->add_function("compute_conva2_6");
+  ////compute_conva2$6->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////compute_conva2$6->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 66)");
+  ////compute_conva2$6->add_load("_kernela1", "5");
+  ////compute_conva2$6->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+
+  ////auto compute_conva2$7 = loop_conv_s1_x->add_op("compute_conva2_7");
+  ////compute_conva2$7->add_function("compute_conva2_7");
+  ////compute_conva2$7->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////compute_conva2$7->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 128)");
+  ////compute_conva2$7->add_load("_kernela1", "6");
+  ////compute_conva2$7->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+
+  ////auto compute_conva2$8 = loop_conv_s1_x->add_op("compute_conva2_8");
+  ////compute_conva2$8->add_function("compute_conva2_8");
+  ////compute_conva2$8->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////compute_conva2$8->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 129)");
+  ////compute_conva2$8->add_load("_kernela1", "7");
+  ////compute_conva2$8->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+
+  ////auto compute_conva2$9 = loop_conv_s1_x->add_op("compute_conva2_9");
+  ////compute_conva2$9->add_function("compute_conva2_9");
+  ////compute_conva2$9->add_load("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+  ////compute_conva2$9->add_load("_hw_inputa0", "((conv_s1_x + (conv_s1_y*64)) + 130)");
+  ////compute_conva2$9->add_load("_kernela1", "8");
+  ////compute_conva2$9->add_store("_conva2", "(conv_s1_x + (conv_s1_y*62))");
+
+  //auto compute_hw_output = loop_hw_output_s0_x_xo->add_op("compute_hw_output");
+  //compute_hw_output->add_function("compute_hw_output");
+  //compute_hw_output->add_load("_conva2", "(hw_output_s0_x_xo + (hw_output_s0_y_yo*62))");
+  //prg.buffer_port_widths["_hw_output"] = 16;
+  //compute_hw_output->add_store("_hw_output", "(hw_output_s0_x_xo + (hw_output_s0_y_yo*62))");
+
+  //return prg;
+}
+
 void synth_reduce_test() {
 
   struct isl_ctx *ctx;
@@ -488,6 +971,8 @@ void conv_1d_bc_test() {
 
   auto c = prg.add_loop("c", 0, 10);
   auto read0 = c->add_op("read0");
+  //read0->add_load("M", {{"c < 0", "0"}, {"0 <= c and c <= 9", "c"}, {"c > 9", "9"}});
+  //"min(c, 9)");
   read0->add_load("M", "min(c, 9)");
   read0->add_load("M", "min(c + 1, 9)");
   read0->add_load("M", "min(c + 2, 9)");
@@ -834,14 +1319,12 @@ void agg_test() {
  // auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
   cout << "Sched map: " << str(sched_opt) << endl;
   cout << codegen_c(sched_opt) << endl;
-  //assert(false);
   //aha_talk_print_info(prg);
   //hardcode some configuration registers
   memtile_config memtile;
   auto buffers = build_buffers(prg, sched_opt);
   memtile.extract_config(buffers);
   memtile.emit_config_file_csv("lake_memtile_config");
-  //assert(false);
 }
 
 
@@ -893,14 +1376,12 @@ void vec_test() {
   //auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
   //cout << "Sched map: " << str(sched_opt) << endl;
   //cout << codegen_c(sched_opt) << endl;
-  //assert(false);
   //aha_talk_print_info(prg);
   //hardcode some configuration registers
   //memtile_config memtile;
   //auto buffers = build_buffers(prg, sched_opt);
   //memtile.extract_config(buffers);
   //memtile.emit_config_file_csv("lake_memtile_config");
-  //assert(false);
 }
 
 
@@ -1641,7 +2122,6 @@ void mmul_test() {
   auto schedmap = its(isl_schedule_get_map(opt_sched), domain);
   //cout << "Optimized schedule..." << endl;
   //cout << codegen_c(schedmap);
-  //assert(false);
 }
 
 void pyramid_test() {
@@ -1753,7 +2233,6 @@ prog cnn_conv_layer() {
   isl_map* write_sched= isl_map_read_from_str(prg.ctx, write_string.c_str());
   auto before_acc = lex_gt(read_sched, write_sched);
   cout <<"\tlexlt result: " << str(before_acc) << endl;
-  assert(false);
   */
 
   prg.compute_unit_file = "mobilenet_compute.h";
@@ -1895,13 +2374,11 @@ void cnn_test() {
   //for (auto s : clksched) {
     //cout << tab(1) << s.first << " -> " << str(s.second) << endl;
   //}
-  //assert(false);
   umap* opt_sched = prg.optimized_codegen();
   ////cout << "------ ISL schedule" << endl;
   ////for (auto m : get_maps(opt_sched)) {
     ////cout << tab(1) << str(m) << endl;
   ////}
-  ////assert(false);
 
   //auto domain = prg.whole_iteration_domain();
   //auto schedmap = its(opt_sched, domain);
@@ -2014,7 +2491,6 @@ void pyramid_2d_test() {
   res = system("./a.out");
   assert(res == 0);
 
-  //assert(false);
 }
 
 void reduce_1d_test() {
@@ -2188,7 +2664,6 @@ void reduce_2d_test() {
   //res = system("./a.out");
   //assert(res == 0);
 
-  ////assert(false);
 //}
 
 
@@ -2596,7 +3071,6 @@ void jacobi_2d_4_test() {
   }
 
   regression_test(prg);
-  //assert(false);
 }
 
 void jacobi_2d_2_test() {
@@ -2638,7 +3112,6 @@ void jacobi_2d_2_test() {
     stencil_op(out_name_1, "jacobi2d_compute", "I", {"2*(d0) + 1 - 1", "d1"}, {{0, 1}, {1, 0}, {0, 0}, {0, -1}, {-1, 0}});
 
   regression_test(prg);
-  //assert(false);
 }
 
 void jacobi_2d_test() {
@@ -3218,7 +3691,6 @@ void parse_denoise3d_test() {
     cout << tab(1) << op.first << " = " << *(op.second) << endl;
   }
 
-  assert(false);
 }
 
 void duplicate_upsample_test() {
@@ -3259,7 +3731,6 @@ void duplicate_upsample_test() {
         //{{0, -1}, {0, 0}, {0, 1}});
 
   regression_test(prg);
-  assert(false);
 }
 
 void seidel2d_test() {
@@ -3395,7 +3866,7 @@ struct App {
     for (auto c : calls) {
       string window_name = c.first;
       vector<QAV> strides{qconst(1), qconst(1), qconst(1)};
-      set<vector<int> > offsets;
+      std::set<vector<int> > offsets;
       for (auto off : c.second) {
         vector<int> offset = get_offset(off);
         offsets.insert(offset);
@@ -3441,7 +3912,7 @@ struct App {
     for (auto c : calls) {
       string window_name = c.first;
       vector<QAV> strides{qconst(1), qconst(1)};
-      set<vector<int> > offsets;
+      std::set<vector<int> > offsets;
       for (auto off : c.second) {
         vector<int> offset = get_offset(off);
         offsets.insert(offset);
@@ -3658,8 +4129,8 @@ struct App {
     return cons;
   }
 
-  set<string> consumers(const string& f) const {
-    set<string> cons;
+  std::set<string> consumers(const string& f) const {
+    std::set<string> cons;
     for (auto other_func : app_dag) {
       for (auto d : other_func.second.get_srcs()) {
         if (d.name == f) {
@@ -3859,16 +4330,9 @@ struct App {
     Box sbox;
     int max_dims = data_dimension();
 
-    //for (auto f : sort_functions()) {
-      //for (auto w : producers(f)) {
-        //int dm = w.dimension();
-        //if (dm > max_dims) {
-          //max_dims = dm;
-        //}
-      //}
-    //}
-
+    cout << "# dims = " << dims.size() << endl;
     for (auto d : dims) {
+      cout << tab(1) << d << endl;
       sbox.intervals.push_back({0, d - 1});
     }
     for (int i = dims.size(); i < max_dims; i++) {
@@ -3877,6 +4341,8 @@ struct App {
 
     cout << "padding to " << last_update(name).unroll_factor << endl;
     sbox = sbox.pad_range_to_nearest_multiple(last_update(name).unroll_factor);
+
+    cout << "Filling data domain " << name << " from: " << sbox << endl;
 
     vector<string> buffers = sort_functions();
     assert(buffers.size() > 0);
@@ -3943,7 +4409,6 @@ struct App {
     }
 
     //fill_compute_domain();
-    //assert(false);
   }
 
 
@@ -4054,7 +4519,7 @@ struct App {
     isl_union_map *coincidence =
       cpy(validity);
 
-    set<string> high_bandwidth_buffers;
+    std::set<string> high_bandwidth_buffers;
     for (auto f : sort_functions()) {
       auto cs = consumers(f);
       if (cs.size() > 1) {
@@ -4082,7 +4547,6 @@ struct App {
       cout << tab(2) << comma_list(b.second) << endl;
     }
 
-    //assert(false);
 
     map<string, vector<isl_aff*> > sched =
       clockwork_schedule(domain, validity, proximity, high_bandwidth_deps);
@@ -4177,7 +4641,6 @@ struct App {
     assert(domain != nullptr);
 
     cout << "rel order: " << str(rel_order) << endl;
-    //assert(false);
 
     isl_union_map *validity =
       its(dot(writes, inv(reads)), before);
@@ -4188,7 +4651,6 @@ struct App {
       //cout << tab(1) << str(m) << endl;
       //cout << tab(2) << str(lexmin(m)) << endl;
     //}
-    //assert(false);
     validity = unn(validity, rel_order);
 
     isl_union_map *proximity =
@@ -4199,7 +4661,8 @@ struct App {
 
     auto finite_domain = cpy(domain);
 
-    clockwork_schedule(cpy(domain), cpy(validity), cpy(proximity));
+    // TODO: MAYBE REMOVE THIS?
+    //clockwork_schedule(cpy(domain), cpy(validity), cpy(proximity));
 
     isl_schedule_constraints* constraints =
       isl_schedule_constraints_on_domain(domain);
@@ -4210,7 +4673,6 @@ struct App {
 
     //domain = unn(domain, isl_union_set_universe(cpy(domain)));
     //experimental_opt(cpy(domain), cpy(validity), cpy(proximity));
-    //assert(false);
     //isl_schedule* sched = isl_union_set_compute_schedule(domain, validity, proximity);
 
 
@@ -4219,7 +4681,6 @@ struct App {
     assert(schedmap != nullptr);
     cout << "Final isl schedule: " << str(schedmap) << endl;
     cout << "C code; " << codegen_c(schedmap) << endl;
-    //assert(false);
 
     isl_options_set_schedule_algorithm(ctx, ISL_SCHEDULE_ALGORITHM_ISL);
 
@@ -4450,7 +4911,6 @@ struct App {
       }
     }
 
-    //assert(false);
     prg.outs = {name};
 
     generate_app_code(options, buffers, prg, its(m, action_domain), domain_map);
@@ -4465,6 +4925,10 @@ struct App {
     return "uint" + str(default_pixel_width);
   }
 
+  int original_buffer_size(const std::string& max_buffer) {
+    return data_domain(max_buffer).cardinality();
+  }
+
   void generate_soda_file(const std::string& name) {
     ofstream out(name + ".soda");
     out << "kernel: " << name << endl;
@@ -4476,38 +4940,77 @@ struct App {
     out << "unroll factor: " << unroll_factor << endl;
     out << "burst width: " << width*unroll_factor << endl << endl;
 
-    set<string> external_buffers;
+    std::set<string> external_buffers;
     for (auto f : sort_functions()) {
       if (producers(f).size() == 0) {
         external_buffers.insert(f);
       }
     }
 
+    assert(external_buffers.size() > 0);
+    string max_buffer;
+    int max_size = -1;
+    for (auto b : external_buffers) {
+      if (original_buffer_size(b) > max_size) {
+        max_buffer = b;
+        max_size = original_buffer_size(b);
+      }
+    }
+    for (auto b : external_buffers) {
+      if (b != max_buffer) {
+        out << "input " << num_type_cstring() << ": " << b << endl;
+      }
+    }
+    Box domain = data_domain(max_buffer);
+    //assert(domain.dimension() == 2);
+    vector<string> dims;
+    for (int i = 0; i < domain.dimension(); i++) {
+      if (i < domain.dimension() - 1) {
+        dims.push_back(str(domain.length(i)));
+      } else {
+        dims.push_back("*");
+      }
+    }
+    out << "input " << num_type_cstring() << ": " << max_buffer << sep_list(dims, "(", ")", ", ") << endl << endl;
+
+    vector<string> zeros;
+    for (int i = 0; i < data_dimension(); i++) {
+      zeros.push_back("0");
+    }
+    auto zrs = sep_list(zeros, "(", ")", ", ");
     for (auto f : sort_functions()) {
 
       for (auto u : app_dag.at(f).updates) {
         if (u.get_srcs().size() == 0) {
         } else {
           if (consumers(f).size() == 0) {
-            out << "output " << num_type_cstring() << ": " << f << "(0, 0) = ";
+            out << "output " << num_type_cstring() << ": " << f << zrs << " = ";
               out << soda_compute_string(width, u.def) << endl << endl;
           } else {
-            bool all_producers_external = true;
-            for (auto p : producers(f)) {
-              if (!elem(p.name, external_buffers)) {
-                all_producers_external = false;
-                break;
-              }
-            }
+            //bool all_producers_external = true;
+            //for (auto p : producers(f)) {
+              //if (!elem(p.name, external_buffers)) {
+                //all_producers_external = false;
+                //break;
+              //}
+            //}
 
-            if (all_producers_external) {
-              Box domain = data_domain(f);
-              //assert(domain.dimension() == 2);
-              out << "input " << num_type_cstring() << ": " << f << "(" << domain.length(0) << ", *)" << endl << endl;
-            } else {
-              out << "local " << num_type_cstring() << ": " << f << "(0, 0) = ";
+            //if (all_producers_external) {
+              //Box domain = data_domain(f);
+              ////assert(domain.dimension() == 2);
+              //vector<string> dims;
+              //for (int i = 0; i < domain.dimension(); i++) {
+                //if (i < domain.dimension() - 1) {
+                  //dims.push_back(str(domain.length(i)));
+                //} else {
+                  //dims.push_back("*");
+                //}
+              //}
+              //out << "input " << num_type_cstring() << ": " << f << sep_list(dims, "(", ")", ", ") << endl << endl;
+            //} else {
+              out << "local " << num_type_cstring() << ": " << f << zrs << " = ";
               out << soda_compute_string(width, u.def) << endl << endl;
-            }
+            //}
           }
         }
       }
@@ -4520,7 +5023,7 @@ struct App {
   }
 
   umap* realize_opt_schedule(const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    set_unroll_factors(name, unroll_factor);
+    set_unroll_factors(name, name, unroll_factor);
     fill_data_domain(name, {d0, d1});
     fill_compute_domain();
 
@@ -4530,7 +5033,7 @@ struct App {
   }
 
   umap* realize_isl_schedule(const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    set_unroll_factors(name, unroll_factor);
+    set_unroll_factors(name, name, unroll_factor);
     fill_data_domain(name, {d0, d1});
     fill_compute_domain();
 
@@ -4546,18 +5049,24 @@ struct App {
   void realize_naive(CodegenOptions& options, const std::string& name, const std::vector<int>& dims) {
     if (!options.unroll_factors_as_pad) {
       const int unroll_factor = 1;
-      set_unroll_factors(name, unroll_factor);
+      set_unroll_factors(name, name, unroll_factor);
     } else {
       cout << "realizing naive with padded unroll factors" << endl;
     }
     fill_data_domain(name, dims);
-    set_unroll_factors(name, 1);
+    set_unroll_factors(name, name, 1);
     fill_compute_domain();
 
-    umap* m =
-      schedule_naive();
-      //schedule_isl();
+    umap* m = nullptr;
+    if (options.scheduling_algorithm == SCHEDULE_ALGORITHM_NAIVE) {
+      m = schedule_naive();
+    } else {
+      assert(options.scheduling_algorithm == SCHEDULE_ALGORITHM_ISL);
+      m = schedule_isl();
+    }
+    //schedule_isl();
 
+    assert(m != nullptr);
     cout << "Schedule: " << str(m) << endl;
 
     map<string, UBuffer> buffers = build_buffers(m);
@@ -4568,6 +5077,13 @@ struct App {
     populate_program(options, prg, name, m, buffers);
 
     return;
+  }
+
+  void realize_naive(const std::string& name, const vector<int>& dims) {
+    CodegenOptions options;
+    options.internal = true;
+    options.all_rams = true;
+    realize_naive(options, name, dims);
   }
 
   void realize_naive(const std::string& name, const int d0, const int d1) {
@@ -4593,9 +5109,7 @@ struct App {
     return schedules;
   }
 
-  umap* schedule() {
-    auto schedules = schedule_opt();
-
+  umap* qschedule_to_map(map<string, vector<QExpr> >& schedules) {
     umap* m = rdmap(ctx, "{}");
     for (auto fn : schedules) {
       string f = fn.first;
@@ -4622,6 +5136,12 @@ struct App {
     return m;
   }
 
+  umap* schedule() {
+    auto schedules = schedule_opt();
+    return qschedule_to_map(schedules);
+
+  }
+
   string unrolled_compute_name(const string& f) {
     return map_find(f, app_dag).unrolled_compute_name();
   }
@@ -4644,7 +5164,7 @@ struct App {
     cfile << endl << endl;
 
     cfile << "// Compute unit banks..." << endl;
-    set<string> already_seen;
+    std::set<string> already_seen;
     for (auto f : sort_functions()) {
       if (producers(f).size() == 0) {
         continue;
@@ -4765,11 +5285,28 @@ struct App {
   }
 
   void schedule_and_codegen(CodegenOptions& options, const std::string& name) {
-    umap* m = schedule();
+    time_t rawtime;
+    struct tm * timeinfo;
+    char buffer[80];
+
+    time (&rawtime);
+    timeinfo = localtime(&rawtime);
+
+    strftime(buffer,sizeof(buffer),"%d-%m-%Y %H:%M:%S",timeinfo);
+    std::string time_str(buffer);
+
+    //auto m = schedule_isl();
+
+    auto scheds = schedule_opt();
+    umap* m = qschedule_to_map(scheds);
+    //umap* m = schedule();
+    ofstream schedule_out(name + "_sched_" + time_str);
+    for (auto k : get_maps(m)) {
+      schedule_out << str(k) << endl;
+    }
+    schedule_out.close();
     assert(m != nullptr);
 
-    map<string, vector<QExpr> > scheds =
-      schedule_opt();
     map<string, Box> compute_domains;
     vector<string> ops;
     for (auto u : sort_updates()) {
@@ -4779,7 +5316,7 @@ struct App {
       }
     }
 
-    string cgn = box_codegen(ops, scheds, compute_domains);
+    string cgn = box_codegen(options, ops, scheds, compute_domains);
     options.code_string = cgn;
 
     map<string, UBuffer> buffers = build_buffers(m);
@@ -4805,21 +5342,32 @@ struct App {
     }
   }
 
-  void set_unroll_factors(const std::string& reference_function, const int unroll_factor) {
+  void set_unroll_factors(const std::string& reference_function,
+      const std::string& to_unroll_function,
+      const int unroll_factor) {
+    cout << "Unrolling " << to_unroll_function << " by " << unroll_factor << endl;
+
+    //assert(reference_function == to_unroll_function);
+
     // Preprocess application graph to compute qfactors
     App cpy = *this;
+    // TODO: Update to fill with ndims dimensions
     int dummy_value = 10;
     cpy.no_unrolling();
     cpy.fill_data_domain(reference_function, {dummy_value, dummy_value});
     cpy.fill_compute_domain();
 
+    cout << "Padding validity deps..." << endl;
+
     umap* deps = pad_map(cpy.validity_deps());
+    cout << "Done padding validity deps" << endl;
     auto umaps = get_maps(deps);
     vector<isl_map*> projected_deps;
     for (auto m : umaps) {
       isl_map* projected = project_all_but(m, 0);
       projected_deps.push_back(projected);
     }
+    cout << "Computing qfactors..." << endl;
     map<string, isl_val*> qfs = compute_qfactors(projected_deps);
     cout << "Got qfactors..." << endl;
     for (auto q : qfs) {
@@ -4827,15 +5375,17 @@ struct App {
     }
 
     string reference_update =
-      sched_var_name(last_update(reference_function).name());
+      sched_var_name(last_update(to_unroll_function).name());
+      //sched_var_name(last_update(reference_function).name());
     cout << "reference: " << reference_update << endl;
+
+    cout << "to unroll: " << to_unroll_function << endl;
 
     int ref_q = to_int(map_find(reference_update, qfs));
     cout << "ref_q = " << ref_q << endl;
     int umax = ref_q * unroll_factor;
     cout << "umax  = " << umax << endl;
 
-    //assert(false);
     // Use these factors to set unrolled behavior
     for (auto& r : app_dag) {
       for (auto& u : r.second.updates) {
@@ -4844,9 +5394,22 @@ struct App {
         int fres = (int) max(1.0f, floor(((float) umax) / (float) u_qfactor));
         int u_unroll_factor = fres;
         u.unroll_factor = u_unroll_factor;
+        cout << tab(1) << u.unroll_factor << endl;
+        if (r.first == to_unroll_function) {
+          assert(u.unroll_factor == unroll_factor);
+        }
       }
     }
   }
+
+  void realize_no_unroll(CodegenOptions& options,
+      const std::string& name,
+      const std::vector<int>& dims) {
+    fill_data_domain(name, dims);
+    fill_compute_domain();
+    schedule_and_codegen(options, name);
+  }
+
 
   void realize(const std::string& name, const int d0, const int d1) {
     CodegenOptions options;
@@ -4860,17 +5423,7 @@ struct App {
       const std::string& name,
       const int d0,
       const int d1) {
-    realize(options, name, {d0, d1});
-  }
-
-  void realize(CodegenOptions& options,
-      const std::string& name,
-      const std::vector<int>& dims) {
-
-    fill_data_domain(name, dims);
-    fill_compute_domain();
-    schedule_and_codegen(options, name);
-
+    realize(options, name, {d0, d1}, 1);
   }
 
   void realize(CodegenOptions& options, const std::string& name, const int d0, const int d1, const int unroll_factor) {
@@ -4878,33 +5431,36 @@ struct App {
   }
 
   void realize(CodegenOptions& options, const std::string& name, const vector<int>& dims, const int unroll_factor) {
+    realize(options, name, dims, name, unroll_factor);
+  }
+
+  void realize(CodegenOptions& options,
+      const std::string& out_name,
+      const vector<int>& dims,
+      const std::string& unroll_target,
+      const int unroll_factor) {
       double total_elapsed = 0.;
       auto start = std::chrono::system_clock::now();
 
-      set_unroll_factors(name, unroll_factor);
-      realize(options, name, dims);
+      //assert(out_name == unroll_target);
+      set_unroll_factors(out_name, unroll_target, unroll_factor);
+      realize_no_unroll(options, out_name, dims);
 
       auto end = std::chrono::system_clock::now();
       std::chrono::duration<double> elapsed = end - start;
       total_elapsed += elapsed.count();
-      ofstream schedule_info("./scratch/" + name + ".txt");
-      schedule_info << "time to realize " << name << ": " << total_elapsed << endl;
+      ofstream schedule_info("./scratch/" + out_name + ".txt");
+      schedule_info << "time to realize " << out_name << ": " << total_elapsed << endl;
       schedule_info.close();
   }
 
   void realize(const std::string& name, const int d0, const int d1, const int unroll_factor) {
-    double total_elapsed = 0.;
-    auto start = std::chrono::system_clock::now();
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
 
-    set_unroll_factors(name, unroll_factor);
-    realize(name, d0, d1);
-
-    auto end = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed = end - start;
-    total_elapsed += elapsed.count();
-    ofstream schedule_info("./scratch/" + name + ".txt");
-    schedule_info << "time to realize " << name << ": " << total_elapsed << endl;
-    schedule_info.close();
+    realize(options, name, {d0, d1}, unroll_factor);
   }
 
 };
@@ -5084,7 +5640,6 @@ void memtile_test() {
     memtile_config memtile;
     memtile.extract_config(buffers);
     memtile.emit_config_file_csv("lake_memtile_config_conv33");
-    //assert(false);
   }
 
   int pos = 0;
@@ -5106,7 +5661,6 @@ void memtile_test() {
   auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
   sched_opt = its(sched_opt, prg.whole_iteration_domain());
   cout << codegen_c(sched_opt) << endl;
-  //assert(false);
   //aha_talk_print_info(prg);
 }
 
@@ -5245,6 +5799,463 @@ App tricky_reconvergence(const std::string& name) {
   return dn;
 }
 
+prog halide_harris() {
+  prog prg;
+  prg.compute_unit_file = "clockwork_target_compute.h";
+  prg.name = "halide_harris";
+
+// Stencil<uint8_t, 64, 64> &hw_input_copy_stencil = arg_0;
+  prg.add_input("hw_input_copy_stencil");
+  prg.buffer_port_widths["hw_input_copy_stencil"] = 16;
+// Stencil<void *> &hw_output_stencil = arg_1;
+  prg.add_output("hw_output_stencil");
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+
+//consuming hw_input_copy.stencil
+////producing padded16.stencil
+  auto loop_padded16_s0_y = prg.add_loop("padded16_s0_y", -3, 64);
+  auto loop_padded16_s0_x = loop_padded16_s0_y->add_loop("padded16_s0_x", -3, 64);
+
+//store is: padded16.stencil(padded16.s0.x, padded16.s0.y) = int16(hw_input_copy.stencil(padded16.s0.x, padded16.s0.y))
+  auto hcompute_padded16_stencil = loop_padded16_s0_x->add_op("hcompute_padded16_stencil");
+  hcompute_padded16_stencil->add_function("hcompute_padded16_stencil");
+  hcompute_padded16_stencil->add_load("hw_input_copy_stencil", "padded16_s0_x", "padded16_s0_y");
+  prg.buffer_port_widths["padded16_stencil"] = 16;
+  hcompute_padded16_stencil->add_store("padded16_stencil", "padded16_s0_x", "padded16_s0_y");
+////producing grad_x.stencil
+
+//consuming padded16.stencil
+  auto loop_grad_x_s0_y = prg.add_loop("grad_x_s0_y", -2, 62);
+  auto loop_grad_x_s0_x = loop_grad_x_s0_y->add_loop("grad_x_s0_x", -2, 62);
+
+//store is: grad_x.stencil(grad_x.s0.x, grad_x.s0.y) = max(min(((((padded16.stencil((grad_x.s0.x + 1), (grad_x.s0.y + -1)) + (padded16.stencil((grad_x.s0.x + 1), (grad_x.s0.y + 1)) + (padded16.stencil((grad_x.s0.x + 1), grad_x.s0.y)*(int16)2))) - padded16.stencil((grad_x.s0.x + -1), (grad_x.s0.y + -1))) - (padded16.stencil((grad_x.s0.x + -1), grad_x.s0.y)*(int16)2)) - padded16.stencil((grad_x.s0.x + -1), (grad_x.s0.y + 1))), (int16)255), (int16)-255)
+  auto hcompute_grad_x_stencil = loop_grad_x_s0_x->add_op("hcompute_grad_x_stencil");
+  hcompute_grad_x_stencil->add_function("hcompute_grad_x_stencil");
+  hcompute_grad_x_stencil->add_load("padded16_stencil", "(grad_x_s0_x + 1)", "(grad_x_s0_y + -1)");
+  hcompute_grad_x_stencil->add_load("padded16_stencil", "(grad_x_s0_x + 1)", "(grad_x_s0_y + 1)");
+  hcompute_grad_x_stencil->add_load("padded16_stencil", "(grad_x_s0_x + 1)", "grad_x_s0_y");
+  hcompute_grad_x_stencil->add_load("padded16_stencil", "(grad_x_s0_x + -1)", "(grad_x_s0_y + -1)");
+  hcompute_grad_x_stencil->add_load("padded16_stencil", "(grad_x_s0_x + -1)", "grad_x_s0_y");
+  hcompute_grad_x_stencil->add_load("padded16_stencil", "(grad_x_s0_x + -1)", "(grad_x_s0_y + 1)");
+  prg.buffer_port_widths["grad_x_stencil"] = 16;
+  hcompute_grad_x_stencil->add_store("grad_x_stencil", "grad_x_s0_x", "grad_x_s0_y");
+////producing lxx.stencil
+
+//consuming grad_x.stencil
+  auto loop_lxx_s0_y = prg.add_loop("lxx_s0_y", -2, 62);
+  auto loop_lxx_s0_x = loop_lxx_s0_y->add_loop("lxx_s0_x", -2, 62);
+
+//store is: lxx.stencil(lxx.s0.x, lxx.s0.y) = ((int32(grad_x.stencil(lxx.s0.x, lxx.s0.y))*int32(grad_x.stencil(lxx.s0.x, lxx.s0.y)))/128)
+  auto hcompute_lxx_stencil = loop_lxx_s0_x->add_op("hcompute_lxx_stencil");
+  hcompute_lxx_stencil->add_function("hcompute_lxx_stencil");
+  hcompute_lxx_stencil->add_load("grad_x_stencil", "lxx_s0_x", "lxx_s0_y");
+  hcompute_lxx_stencil->add_load("grad_x_stencil", "lxx_s0_x", "lxx_s0_y");
+  prg.buffer_port_widths["lxx_stencil"] = 16;
+  hcompute_lxx_stencil->add_store("lxx_stencil", "lxx_s0_x", "lxx_s0_y");
+////producing lgxx.stencil
+  auto loop_lgxx_s0_y = prg.add_loop("lgxx_s0_y", -1, 60);
+  auto loop_lgxx_s0_x = loop_lgxx_s0_y->add_loop("lgxx_s0_x", -1, 60);
+
+//store is: lgxx.stencil(lgxx.s0.x, lgxx.s0.y) = 0
+  auto hcompute_lgxx_stencil = loop_lgxx_s0_x->add_op("hcompute_lgxx_stencil");
+  hcompute_lgxx_stencil->add_function("hcompute_lgxx_stencil");
+  prg.buffer_port_widths["lgxx_stencil"] = 16;
+  hcompute_lgxx_stencil->add_store("lgxx_stencil", "lgxx_s0_x", "lgxx_s0_y");
+
+//consuming lxx.stencil
+  auto loop_lgxx_s1_y = prg.add_loop("lgxx_s1_y", -1, 60);
+  auto loop_lgxx_s1_x = loop_lgxx_s1_y->add_loop("lgxx_s1_x", -1, 60);
+
+//store is: lgxx.stencil(lgxx.s1.x, lgxx.s1.y) = (lxx.stencil((lgxx.s1.x + -1), (lgxx.s1.y + -1)) + (lgxx.stencil(lgxx.s1.x, lgxx.s1.y) + (lxx.stencil(lgxx.s1.x, (lgxx.s1.y + -1)) + (lxx.stencil((lgxx.s1.x + 1), (lgxx.s1.y + -1)) + (lxx.stencil((lgxx.s1.x + -1), lgxx.s1.y) + (lxx.stencil(lgxx.s1.x, lgxx.s1.y) + (lxx.stencil((lgxx.s1.x + 1), lgxx.s1.y) + (lxx.stencil((lgxx.s1.x + -1), (lgxx.s1.y + 1)) + (lxx.stencil((lgxx.s1.x + 1), (lgxx.s1.y + 1)) + lxx.stencil(lgxx.s1.x, (lgxx.s1.y + 1)))))))))))
+  auto hcompute_lgxx_stencil_1 = loop_lgxx_s1_x->add_op("hcompute_lgxx_stencil_1");
+  hcompute_lgxx_stencil_1->add_function("hcompute_lgxx_stencil_1");
+  hcompute_lgxx_stencil_1->add_load("lgxx_stencil", "lgxx_s1_x", "lgxx_s1_y");
+  hcompute_lgxx_stencil_1->add_load("lxx_stencil", "(lgxx_s1_x + -1)", "(lgxx_s1_y + -1)");
+  hcompute_lgxx_stencil_1->add_load("lxx_stencil", "lgxx_s1_x", "(lgxx_s1_y + -1)");
+  hcompute_lgxx_stencil_1->add_load("lxx_stencil", "(lgxx_s1_x + 1)", "(lgxx_s1_y + -1)");
+  hcompute_lgxx_stencil_1->add_load("lxx_stencil", "(lgxx_s1_x + -1)", "lgxx_s1_y");
+  hcompute_lgxx_stencil_1->add_load("lxx_stencil", "lgxx_s1_x", "lgxx_s1_y");
+  hcompute_lgxx_stencil_1->add_load("lxx_stencil", "(lgxx_s1_x + 1)", "lgxx_s1_y");
+  hcompute_lgxx_stencil_1->add_load("lxx_stencil", "(lgxx_s1_x + -1)", "(lgxx_s1_y + 1)");
+  hcompute_lgxx_stencil_1->add_load("lxx_stencil", "(lgxx_s1_x + 1)", "(lgxx_s1_y + 1)");
+  hcompute_lgxx_stencil_1->add_load("lxx_stencil", "lgxx_s1_x", "(lgxx_s1_y + 1)");
+  hcompute_lgxx_stencil_1->add_store("lgxx_stencil", "lgxx_s1_x", "lgxx_s1_y");
+////producing grad_y.stencil
+
+//consuming padded16.stencil
+  auto loop_grad_y_s0_y = prg.add_loop("grad_y_s0_y", -2, 62);
+  auto loop_grad_y_s0_x = loop_grad_y_s0_y->add_loop("grad_y_s0_x", -2, 62);
+
+//store is: grad_y.stencil(grad_y.s0.x, grad_y.s0.y) = max(min(((((padded16.stencil((grad_y.s0.x + -1), (grad_y.s0.y + 1)) + (padded16.stencil((grad_y.s0.x + 1), (grad_y.s0.y + 1)) + (padded16.stencil(grad_y.s0.x, (grad_y.s0.y + 1))*(int16)2))) - padded16.stencil((grad_y.s0.x + -1), (grad_y.s0.y + -1))) - (padded16.stencil(grad_y.s0.x, (grad_y.s0.y + -1))*(int16)2)) - padded16.stencil((grad_y.s0.x + 1), (grad_y.s0.y + -1))), (int16)255), (int16)-255)
+  auto hcompute_grad_y_stencil = loop_grad_y_s0_x->add_op("hcompute_grad_y_stencil");
+  hcompute_grad_y_stencil->add_function("hcompute_grad_y_stencil");
+  hcompute_grad_y_stencil->add_load("padded16_stencil", "grad_y_s0_x", "(grad_y_s0_y + -1)");
+  hcompute_grad_y_stencil->add_load("padded16_stencil", "(grad_y_s0_x + 1)", "(grad_y_s0_y + -1)");
+  hcompute_grad_y_stencil->add_load("padded16_stencil", "(grad_y_s0_x + -1)", "(grad_y_s0_y + 1)");
+  hcompute_grad_y_stencil->add_load("padded16_stencil", "(grad_y_s0_x + 1)", "(grad_y_s0_y + 1)");
+  hcompute_grad_y_stencil->add_load("padded16_stencil", "grad_y_s0_x", "(grad_y_s0_y + 1)");
+  hcompute_grad_y_stencil->add_load("padded16_stencil", "(grad_y_s0_x + -1)", "(grad_y_s0_y + -1)");
+  prg.buffer_port_widths["grad_y_stencil"] = 16;
+  hcompute_grad_y_stencil->add_store("grad_y_stencil", "grad_y_s0_x", "grad_y_s0_y");
+////producing lxy.stencil
+
+//consuming grad_y.stencil
+
+//consuming grad_x.stencil
+  auto loop_lxy_s0_y = prg.add_loop("lxy_s0_y", -2, 62);
+  auto loop_lxy_s0_x = loop_lxy_s0_y->add_loop("lxy_s0_x", -2, 62);
+
+//store is: lxy.stencil(lxy.s0.x, lxy.s0.y) = ((int32(grad_x.stencil(lxy.s0.x, lxy.s0.y))*int32(grad_y.stencil(lxy.s0.x, lxy.s0.y)))/128)
+  auto hcompute_lxy_stencil = loop_lxy_s0_x->add_op("hcompute_lxy_stencil");
+  hcompute_lxy_stencil->add_function("hcompute_lxy_stencil");
+  hcompute_lxy_stencil->add_load("grad_x_stencil", "lxy_s0_x", "lxy_s0_y");
+  hcompute_lxy_stencil->add_load("grad_y_stencil", "lxy_s0_x", "lxy_s0_y");
+  prg.buffer_port_widths["lxy_stencil"] = 16;
+  hcompute_lxy_stencil->add_store("lxy_stencil", "lxy_s0_x", "lxy_s0_y");
+////producing lgxy.stencil
+  auto loop_lgxy_s0_y = prg.add_loop("lgxy_s0_y", -1, 60);
+  auto loop_lgxy_s0_x = loop_lgxy_s0_y->add_loop("lgxy_s0_x", -1, 60);
+
+//store is: lgxy.stencil(lgxy.s0.x, lgxy.s0.y) = 0
+  auto hcompute_lgxy_stencil = loop_lgxy_s0_x->add_op("hcompute_lgxy_stencil");
+  hcompute_lgxy_stencil->add_function("hcompute_lgxy_stencil");
+  prg.buffer_port_widths["lgxy_stencil"] = 16;
+  hcompute_lgxy_stencil->add_store("lgxy_stencil", "lgxy_s0_x", "lgxy_s0_y");
+
+//consuming lxy.stencil
+  auto loop_lgxy_s1_y = prg.add_loop("lgxy_s1_y", -1, 60);
+  auto loop_lgxy_s1_x = loop_lgxy_s1_y->add_loop("lgxy_s1_x", -1, 60);
+
+//store is: lgxy.stencil(lgxy.s1.x, lgxy.s1.y) = (lxy.stencil((lgxy.s1.x + -1), (lgxy.s1.y + -1)) + (lgxy.stencil(lgxy.s1.x, lgxy.s1.y) + (lxy.stencil(lgxy.s1.x, (lgxy.s1.y + -1)) + (lxy.stencil((lgxy.s1.x + 1), (lgxy.s1.y + -1)) + (lxy.stencil((lgxy.s1.x + -1), lgxy.s1.y) + (lxy.stencil(lgxy.s1.x, lgxy.s1.y) + (lxy.stencil((lgxy.s1.x + 1), lgxy.s1.y) + (lxy.stencil((lgxy.s1.x + -1), (lgxy.s1.y + 1)) + (lxy.stencil((lgxy.s1.x + 1), (lgxy.s1.y + 1)) + lxy.stencil(lgxy.s1.x, (lgxy.s1.y + 1)))))))))))
+  auto hcompute_lgxy_stencil_1 = loop_lgxy_s1_x->add_op("hcompute_lgxy_stencil_1");
+  hcompute_lgxy_stencil_1->add_function("hcompute_lgxy_stencil_1");
+  hcompute_lgxy_stencil_1->add_load("lgxy_stencil", "lgxy_s1_x", "lgxy_s1_y");
+  hcompute_lgxy_stencil_1->add_load("lxy_stencil", "(lgxy_s1_x + -1)", "(lgxy_s1_y + -1)");
+  hcompute_lgxy_stencil_1->add_load("lxy_stencil", "lgxy_s1_x", "(lgxy_s1_y + -1)");
+  hcompute_lgxy_stencil_1->add_load("lxy_stencil", "(lgxy_s1_x + 1)", "(lgxy_s1_y + -1)");
+  hcompute_lgxy_stencil_1->add_load("lxy_stencil", "(lgxy_s1_x + -1)", "lgxy_s1_y");
+  hcompute_lgxy_stencil_1->add_load("lxy_stencil", "lgxy_s1_x", "lgxy_s1_y");
+  hcompute_lgxy_stencil_1->add_load("lxy_stencil", "(lgxy_s1_x + 1)", "lgxy_s1_y");
+  hcompute_lgxy_stencil_1->add_load("lxy_stencil", "(lgxy_s1_x + -1)", "(lgxy_s1_y + 1)");
+  hcompute_lgxy_stencil_1->add_load("lxy_stencil", "(lgxy_s1_x + 1)", "(lgxy_s1_y + 1)");
+  hcompute_lgxy_stencil_1->add_load("lxy_stencil", "lgxy_s1_x", "(lgxy_s1_y + 1)");
+  hcompute_lgxy_stencil_1->add_store("lgxy_stencil", "lgxy_s1_x", "lgxy_s1_y");
+////producing lyy.stencil
+
+//consuming grad_y.stencil
+  auto loop_lyy_s0_y = prg.add_loop("lyy_s0_y", -2, 62);
+  auto loop_lyy_s0_x = loop_lyy_s0_y->add_loop("lyy_s0_x", -2, 62);
+
+//store is: lyy.stencil(lyy.s0.x, lyy.s0.y) = ((int32(grad_y.stencil(lyy.s0.x, lyy.s0.y))*int32(grad_y.stencil(lyy.s0.x, lyy.s0.y)))/128)
+  auto hcompute_lyy_stencil = loop_lyy_s0_x->add_op("hcompute_lyy_stencil");
+  hcompute_lyy_stencil->add_function("hcompute_lyy_stencil");
+  hcompute_lyy_stencil->add_load("grad_y_stencil", "lyy_s0_x", "lyy_s0_y");
+  hcompute_lyy_stencil->add_load("grad_y_stencil", "lyy_s0_x", "lyy_s0_y");
+  prg.buffer_port_widths["lyy_stencil"] = 16;
+  hcompute_lyy_stencil->add_store("lyy_stencil", "lyy_s0_x", "lyy_s0_y");
+////producing lgyy.stencil
+  auto loop_lgyy_s0_y = prg.add_loop("lgyy_s0_y", -1, 60);
+  auto loop_lgyy_s0_x = loop_lgyy_s0_y->add_loop("lgyy_s0_x", -1, 60);
+
+//store is: lgyy.stencil(lgyy.s0.x, lgyy.s0.y) = 0
+  auto hcompute_lgyy_stencil = loop_lgyy_s0_x->add_op("hcompute_lgyy_stencil");
+  hcompute_lgyy_stencil->add_function("hcompute_lgyy_stencil");
+  prg.buffer_port_widths["lgyy_stencil"] = 16;
+  hcompute_lgyy_stencil->add_store("lgyy_stencil", "lgyy_s0_x", "lgyy_s0_y");
+
+//consuming lyy.stencil
+  auto loop_lgyy_s1_y = prg.add_loop("lgyy_s1_y", -1, 60);
+  auto loop_lgyy_s1_x = loop_lgyy_s1_y->add_loop("lgyy_s1_x", -1, 60);
+
+//store is: lgyy.stencil(lgyy.s1.x, lgyy.s1.y) = (lyy.stencil((lgyy.s1.x + -1), (lgyy.s1.y + -1)) + (lgyy.stencil(lgyy.s1.x, lgyy.s1.y) + (lyy.stencil(lgyy.s1.x, (lgyy.s1.y + -1)) + (lyy.stencil((lgyy.s1.x + 1), (lgyy.s1.y + -1)) + (lyy.stencil((lgyy.s1.x + -1), lgyy.s1.y) + (lyy.stencil(lgyy.s1.x, lgyy.s1.y) + (lyy.stencil((lgyy.s1.x + 1), lgyy.s1.y) + (lyy.stencil((lgyy.s1.x + -1), (lgyy.s1.y + 1)) + (lyy.stencil((lgyy.s1.x + 1), (lgyy.s1.y + 1)) + lyy.stencil(lgyy.s1.x, (lgyy.s1.y + 1)))))))))))
+  auto hcompute_lgyy_stencil_1 = loop_lgyy_s1_x->add_op("hcompute_lgyy_stencil_1");
+  hcompute_lgyy_stencil_1->add_function("hcompute_lgyy_stencil_1");
+  hcompute_lgyy_stencil_1->add_load("lgyy_stencil", "lgyy_s1_x", "lgyy_s1_y");
+  hcompute_lgyy_stencil_1->add_load("lyy_stencil", "(lgyy_s1_x + -1)", "(lgyy_s1_y + -1)");
+  hcompute_lgyy_stencil_1->add_load("lyy_stencil", "lgyy_s1_x", "(lgyy_s1_y + -1)");
+  hcompute_lgyy_stencil_1->add_load("lyy_stencil", "(lgyy_s1_x + 1)", "(lgyy_s1_y + -1)");
+  hcompute_lgyy_stencil_1->add_load("lyy_stencil", "(lgyy_s1_x + -1)", "lgyy_s1_y");
+  hcompute_lgyy_stencil_1->add_load("lyy_stencil", "lgyy_s1_x", "lgyy_s1_y");
+  hcompute_lgyy_stencil_1->add_load("lyy_stencil", "(lgyy_s1_x + 1)", "lgyy_s1_y");
+  hcompute_lgyy_stencil_1->add_load("lyy_stencil", "(lgyy_s1_x + -1)", "(lgyy_s1_y + 1)");
+  hcompute_lgyy_stencil_1->add_load("lyy_stencil", "(lgyy_s1_x + 1)", "(lgyy_s1_y + 1)");
+  hcompute_lgyy_stencil_1->add_load("lyy_stencil", "lgyy_s1_x", "(lgyy_s1_y + 1)");
+  hcompute_lgyy_stencil_1->add_store("lgyy_stencil", "lgyy_s1_x", "lgyy_s1_y");
+////producing cim.stencil
+
+//consuming lgyy.stencil
+
+//consuming lgxy.stencil
+
+//consuming lgxx.stencil
+  auto loop_cim_s0_y = prg.add_loop("cim_s0_y", -1, 60);
+  auto loop_cim_s0_x = loop_cim_s0_y->add_loop("cim_s0_x", -1, 60);
+
+//store is: cim.stencil(cim.s0.x, cim.s0.y) = (let t47 = ((lgxx.stencil(cim.s0.x, cim.s0.y)/64) + (lgyy.stencil(cim.s0.x, cim.s0.y)/64)) in ((((lgxx.stencil(cim.s0.x, cim.s0.y)/64)*(lgyy.stencil(cim.s0.x, cim.s0.y)/64)) - ((lgxy.stencil(cim.s0.x, cim.s0.y)/64)*(lgxy.stencil(cim.s0.x, cim.s0.y)/64))) - ((t47*t47)/16)))
+  auto hcompute_cim_stencil = loop_cim_s0_x->add_op("hcompute_cim_stencil");
+  hcompute_cim_stencil->add_function("hcompute_cim_stencil");
+  hcompute_cim_stencil->add_load("lgxx_stencil", "cim_s0_x", "cim_s0_y");
+  hcompute_cim_stencil->add_load("lgxx_stencil", "cim_s0_x", "cim_s0_y");
+  hcompute_cim_stencil->add_load("lgxy_stencil", "cim_s0_x", "cim_s0_y");
+  hcompute_cim_stencil->add_load("lgxy_stencil", "cim_s0_x", "cim_s0_y");
+  hcompute_cim_stencil->add_load("lgyy_stencil", "cim_s0_x", "cim_s0_y");
+  hcompute_cim_stencil->add_load("lgyy_stencil", "cim_s0_x", "cim_s0_y");
+  prg.buffer_port_widths["cim_stencil"] = 16;
+  hcompute_cim_stencil->add_store("cim_stencil", "cim_s0_x", "cim_s0_y");
+////producing cim_output.stencil
+
+//consuming cim.stencil
+  auto loop_cim_output_s0_y = prg.add_loop("cim_output_s0_y", 0, 58);
+  auto loop_cim_output_s0_x = loop_cim_output_s0_y->add_loop("cim_output_s0_x", 0, 58);
+
+//store is: cim_output.stencil(cim_output.s0.x, cim_output.s0.y) = uint8(select((((((((((cim.stencil((cim_output.s0.x + -1), (cim_output.s0.y + -1)) < cim.stencil(cim_output.s0.x, cim_output.s0.y)) && (cim.stencil(cim_output.s0.x, (cim_output.s0.y + -1)) < cim.stencil(cim_output.s0.x, cim_output.s0.y))) && (cim.stencil((cim_output.s0.x + 1), (cim_output.s0.y + -1)) < cim.stencil(cim_output.s0.x, cim_output.s0.y))) && (cim.stencil((cim_output.s0.x + -1), cim_output.s0.y) < cim.stencil(cim_output.s0.x, cim_output.s0.y))) && (cim.stencil((cim_output.s0.x + 1), cim_output.s0.y) < cim.stencil(cim_output.s0.x, cim_output.s0.y))) && (cim.stencil((cim_output.s0.x + -1), (cim_output.s0.y + 1)) < cim.stencil(cim_output.s0.x, cim_output.s0.y))) && (cim.stencil(cim_output.s0.x, (cim_output.s0.y + 1)) < cim.stencil(cim_output.s0.x, cim_output.s0.y))) && (cim.stencil((cim_output.s0.x + 1), (cim_output.s0.y + 1)) < cim.stencil(cim_output.s0.x, cim_output.s0.y))) && (1 <= cim.stencil(cim_output.s0.x, cim_output.s0.y))), 255, 0))
+  auto hcompute_cim_output_stencil = loop_cim_output_s0_x->add_op("hcompute_cim_output_stencil");
+  hcompute_cim_output_stencil->add_function("hcompute_cim_output_stencil");
+  hcompute_cim_output_stencil->add_load("cim_stencil", "(cim_output_s0_x + -1)", "(cim_output_s0_y + -1)");
+  hcompute_cim_output_stencil->add_load("cim_stencil", "cim_output_s0_x", "cim_output_s0_y");
+  hcompute_cim_output_stencil->add_load("cim_stencil", "(cim_output_s0_x + -1)", "(cim_output_s0_y + 1)");
+  hcompute_cim_output_stencil->add_load("cim_stencil", "cim_output_s0_x", "cim_output_s0_y");
+  hcompute_cim_output_stencil->add_load("cim_stencil", "cim_output_s0_x", "(cim_output_s0_y + 1)");
+  hcompute_cim_output_stencil->add_load("cim_stencil", "cim_output_s0_x", "cim_output_s0_y");
+  hcompute_cim_output_stencil->add_load("cim_stencil", "(cim_output_s0_x + 1)", "(cim_output_s0_y + 1)");
+  hcompute_cim_output_stencil->add_load("cim_stencil", "cim_output_s0_x", "cim_output_s0_y");
+  hcompute_cim_output_stencil->add_load("cim_stencil", "cim_output_s0_x", "cim_output_s0_y");
+  hcompute_cim_output_stencil->add_load("cim_stencil", "cim_output_s0_x", "(cim_output_s0_y + -1)");
+  hcompute_cim_output_stencil->add_load("cim_stencil", "cim_output_s0_x", "cim_output_s0_y");
+  hcompute_cim_output_stencil->add_load("cim_stencil", "(cim_output_s0_x + 1)", "(cim_output_s0_y + -1)");
+  hcompute_cim_output_stencil->add_load("cim_stencil", "cim_output_s0_x", "cim_output_s0_y");
+  hcompute_cim_output_stencil->add_load("cim_stencil", "(cim_output_s0_x + -1)", "cim_output_s0_y");
+  hcompute_cim_output_stencil->add_load("cim_stencil", "cim_output_s0_x", "cim_output_s0_y");
+  hcompute_cim_output_stencil->add_load("cim_stencil", "(cim_output_s0_x + 1)", "cim_output_s0_y");
+  hcompute_cim_output_stencil->add_load("cim_stencil", "cim_output_s0_x", "cim_output_s0_y");
+  prg.buffer_port_widths["cim_output_stencil"] = 16;
+  hcompute_cim_output_stencil->add_store("cim_output_stencil", "cim_output_s0_x", "cim_output_s0_y");
+
+//consuming cim_output.stencil
+  auto loop_hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 58);
+  auto loop_hw_output_s0_x_xi = loop_hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 58);
+
+//store is: hw_output.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi) = cim_output.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi)
+  auto hcompute_hw_output_stencil = loop_hw_output_s0_x_xi->add_op("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_load("cim_output_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi");
+  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi");
+
+  return prg;
+}
+
+prog halide_dnn_conv() {
+  prog prg;
+  prg.compute_unit_file = "conv_multi_compute.h";
+  prg.name = "halide_dnn_conv";
+
+// Stencil<uint16_t, 64, 64, 2> &hw_input_stencil = arg_0;
+  prg.add_input("hw_input_stencil");
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
+// Stencil<void *> &hw_output_stencil = arg_1;
+  prg.add_output("hw_output_stencil");
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+
+//consuming hw_input.stencil
+////producing hw_input_copy.stencil
+  auto loop_hw_input_copy_s0_z = prg.add_loop("hw_input_copy_s0_z", 0, 2);
+  auto loop_hw_input_copy_s0_y = loop_hw_input_copy_s0_z->add_loop("hw_input_copy_s0_y", 0, 64);
+  auto loop_hw_input_copy_s0_x = loop_hw_input_copy_s0_y->add_loop("hw_input_copy_s0_x", 0, 64);
+
+//store is: hw_input_copy.stencil(hw_input_copy.s0.x, hw_input_copy.s0.y, hw_input_copy.s0.z) = hw_input.stencil(hw_input_copy.s0.x, hw_input_copy.s0.y, hw_input_copy.s0.z)
+  auto hcompute_hw_input_copy_stencil = loop_hw_input_copy_s0_x->add_op("hcompute_hw_input_copy_stencil");
+  hcompute_hw_input_copy_stencil->add_function("hcompute_hw_input_copy_stencil");
+  hcompute_hw_input_copy_stencil->add_load("hw_input_stencil", "hw_input_copy_s0_x", "hw_input_copy_s0_y", "hw_input_copy_s0_z");
+  prg.buffer_port_widths["hw_input_copy_stencil"] = 16;
+  hcompute_hw_input_copy_stencil->add_store("hw_input_copy_stencil", "hw_input_copy_s0_x", "hw_input_copy_s0_y", "hw_input_copy_s0_z");
+
+//consuming hw_input_copy.stencil
+  auto loop_hw_output_s0_y_yi = prg.add_loop("hw_output_s0_y_yi", 0, 62);
+  auto loop_hw_output_s0_x_xi = loop_hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 62);
+////producing conv.stencil
+
+//store is: conv.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi) = 0
+  auto hcompute_conv_stencil = loop_hw_output_s0_x_xi->add_op("hcompute_conv_stencil");
+  hcompute_conv_stencil->add_function("hcompute_conv_stencil");
+  prg.buffer_port_widths["conv_stencil"] = 16;
+  hcompute_conv_stencil->add_store("conv_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi");
+  auto loop_conv_s1_r_y = loop_hw_output_s0_x_xi->add_loop("conv_s1_r_y", 0, 3);
+  auto loop_conv_s1_r_x = loop_conv_s1_r_y->add_loop("conv_s1_r_x", 0, 3);
+
+//store is: conv.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi) = ((conv.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi) + int32(hw_input_copy.stencil((conv.s1.r$x + hw_output.s0.x.xi), (conv.s1.r$y + hw_output.s0.y.yi), 0))) + int32(hw_input_copy.stencil((conv.s1.r$x + hw_output.s0.x.xi), (conv.s1.r$y + hw_output.s0.y.yi), 1)))
+  auto hcompute_conv_stencil_1 = loop_conv_s1_r_x->add_op("hcompute_conv_stencil_1");
+  hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
+  hcompute_conv_stencil_1->add_load("conv_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi");
+  hcompute_conv_stencil_1->add_load("hw_input_copy_stencil", "(conv_s1_r_x + hw_output_s0_x_xi)", "(conv_s1_r_y + hw_output_s0_y_yi)", "0");
+  hcompute_conv_stencil_1->add_load("hw_input_copy_stencil", "(conv_s1_r_x + hw_output_s0_x_xi)", "(conv_s1_r_y + hw_output_s0_y_yi)", "1");
+  hcompute_conv_stencil_1->add_store("conv_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi");
+
+//consuming conv.stencil
+
+//store is: hw_output.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi) = uint8(conv.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi))
+  auto hcompute_hw_output_stencil = loop_hw_output_s0_x_xi->add_op("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi");
+  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi");
+
+  return prg;
+}
+
+void halide_harris_test() {
+  prog prg = halide_harris();
+  cout << "Created program..." << endl;
+  prg.pretty_print();
+  generate_optimized_code(prg);
+
+  //regression_test(prg);
+}
+
+void halide_dnn_test() {
+  prog prg = halide_dnn_conv();
+  cout << "Created program..." << endl;
+  prg.pretty_print();
+
+  //generate_optimized_code(prg);
+
+  regression_test(prg);
+}
+
+prog halide_cascade() {
+  prog prg;
+  prg.compute_unit_file = "clockwork_target_compute.h";
+  prg.name = "halide_cascade";
+
+// Stencil<uint16_t, 64, 64> &hw_input_stencil = arg_0;
+  prg.add_input("hw_input_stencil");
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
+// Stencil<void *> &hw_output_stencil = arg_1;
+  prg.add_output("hw_output_stencil");
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+
+  int size = 6200;
+//consuming hw_input.stencil
+////producing conv1.stencil
+  auto loop_conv1_s0_y = prg.add_loop("conv1_s0_y", 0, size);
+  auto loop_conv1_s0_x = loop_conv1_s0_y->add_loop("conv1_s0_x", 0, size);
+
+//store is: conv1.stencil(conv1.s0.x, conv1.s0.y) = 0
+  auto compute_conv1_stencil = loop_conv1_s0_x->add_op("compute_conv1_stencil");
+  compute_conv1_stencil->add_function("compute_conv1_stencil");
+  prg.buffer_port_widths["conv1_stencil"] = 16;
+  compute_conv1_stencil->add_store("conv1_stencil", "conv1_s0_x", "conv1_s0_y");
+  auto loop_conv1_s1_y = prg.add_loop("conv1_s1_y", 0, size);
+  auto loop_conv1_s1_x = loop_conv1_s1_y->add_loop("conv1_s1_x", 0, size);
+
+//store is: conv1.stencil(conv1.s1.x, conv1.s1.y) = (((((conv1.stencil(conv1.s1.x, conv1.s1.y) + (((((int32(hw_input.stencil((conv1.s1.x + 1), (conv1.s1.y + 1)))*2) + (int32(hw_input.stencil((conv1.s1.x + 1), (conv1.s1.y + 2))) + int32(hw_input.stencil((conv1.s1.x + 2), (conv1.s1.y + 1))))) + int32(hw_input.stencil(conv1.s1.x, (conv1.s1.y + 1)))) + int32(hw_input.stencil((conv1.s1.x + 1), conv1.s1.y)))*2)) + int32(hw_input.stencil(conv1.s1.x, conv1.s1.y))) + int32(hw_input.stencil((conv1.s1.x + 2), conv1.s1.y))) + int32(hw_input.stencil(conv1.s1.x, (conv1.s1.y + 2)))) + int32(hw_input.stencil((conv1.s1.x + 2), (conv1.s1.y + 2))))
+  auto compute_conv1_stencil_1 = loop_conv1_s1_x->add_op("compute_conv1_stencil_1");
+  compute_conv1_stencil_1->add_function("compute_conv1_stencil_1");
+  compute_conv1_stencil_1->add_load("conv1_stencil", "conv1_s1_x", "conv1_s1_y");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "(conv1_s1_x + 1)", "(conv1_s1_y + 1)");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "(conv1_s1_x + 1)", "(conv1_s1_y + 2)");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "(conv1_s1_x + 2)", "(conv1_s1_y + 1)");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "conv1_s1_x", "(conv1_s1_y + 1)");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "(conv1_s1_x + 1)", "conv1_s1_y");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "conv1_s1_x", "conv1_s1_y");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "(conv1_s1_x + 2)", "conv1_s1_y");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "conv1_s1_x", "(conv1_s1_y + 2)");
+  compute_conv1_stencil_1->add_load("hw_input_stencil", "(conv1_s1_x + 2)", "(conv1_s1_y + 2)");
+  compute_conv1_stencil_1->add_store("conv1_stencil", "conv1_s1_x", "conv1_s1_y");
+////producing conv2.stencil
+  auto loop_conv2_s0_y = prg.add_loop("conv2_s0_y", 0, size - 2);
+  auto loop_conv2_s0_x = loop_conv2_s0_y->add_loop("conv2_s0_x", 0, size - 2);
+
+//store is: conv2.stencil(conv2.s0.x, conv2.s0.y) = 0
+  auto compute_conv2_stencil = loop_conv2_s0_x->add_op("compute_conv2_stencil");
+  compute_conv2_stencil->add_function("compute_conv2_stencil");
+  prg.buffer_port_widths["conv2_stencil"] = 16;
+  compute_conv2_stencil->add_store("conv2_stencil", "conv2_s0_x", "conv2_s0_y");
+
+//consuming conv1.stencil
+  auto loop_conv2_s1_y = prg.add_loop("conv2_s1_y", 0, size - 2);
+  auto loop_conv2_s1_x = loop_conv2_s1_y->add_loop("conv2_s1_x", 0, size - 2);
+
+//store is: conv2.stencil(conv2.s1.x, conv2.s1.y) = (conv1.stencil(conv2.s1.x, conv2.s1.y) + (conv2.stencil(conv2.s1.x, conv2.s1.y) + ((conv1.stencil((conv2.s1.x + 1), conv2.s1.y)*2) + (conv1.stencil((conv2.s1.x + 2), conv2.s1.y) + ((conv1.stencil(conv2.s1.x, (conv2.s1.y + 1))*2) + ((conv1.stencil((conv2.s1.x + 1), (conv2.s1.y + 1))*4) + ((conv1.stencil((conv2.s1.x + 2), (conv2.s1.y + 1))*2) + (conv1.stencil(conv2.s1.x, (conv2.s1.y + 2)) + (conv1.stencil((conv2.s1.x + 2), (conv2.s1.y + 2)) + (conv1.stencil((conv2.s1.x + 1), (conv2.s1.y + 2))*2))))))))))
+  auto compute_conv2_stencil_1 = loop_conv2_s1_x->add_op("compute_conv2_stencil_1");
+  compute_conv2_stencil_1->add_function("compute_conv2_stencil_1");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "conv2_s1_x", "conv2_s1_y");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "(conv2_s1_x + 1)", "conv2_s1_y");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "(conv2_s1_x + 2)", "conv2_s1_y");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "conv2_s1_x", "(conv2_s1_y + 1)");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "(conv2_s1_x + 1)", "(conv2_s1_y + 1)");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "(conv2_s1_x + 2)", "(conv2_s1_y + 1)");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "conv2_s1_x", "(conv2_s1_y + 2)");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "(conv2_s1_x + 2)", "(conv2_s1_y + 2)");
+  compute_conv2_stencil_1->add_load("conv1_stencil", "(conv2_s1_x + 1)", "(conv2_s1_y + 2)");
+  compute_conv2_stencil_1->add_load("conv2_stencil", "conv2_s1_x", "conv2_s1_y");
+  compute_conv2_stencil_1->add_store("conv2_stencil", "conv2_s1_x", "conv2_s1_y");
+
+//consuming conv2.stencil
+  auto loop_hw_output_s0_y_yo = prg.add_loop("hw_output_s0_y_yo", 0, size - 2);
+  auto loop_hw_output_s0_x_xo = loop_hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, size - 2);
+
+//store is: hw_output.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo) = uint8(conv2.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo))
+  auto compute_hw_output_stencil = loop_hw_output_s0_x_xo->add_op("compute_hw_output_stencil");
+  compute_hw_output_stencil->add_function("compute_hw_output_stencil");
+  compute_hw_output_stencil->add_load("conv2_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo");
+  compute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo");
+
+  return prg;
+}
+
+void halide_cascade_test() {
+  prog prg = halide_cascade();
+  cout << "Created program..." << endl;
+  prg.pretty_print();
+
+  auto domain = prg.whole_iteration_domain();
+
+  auto order_deps = prg.relative_orders();
+  cout << "Getting validity deps..." << endl;
+  isl_union_map *raw_deps = prg.validity_deps();
+  cout << "Got validity deps..." << endl;
+  cout << "Validity: " << str(raw_deps) << endl;
+  auto validity =
+    unn(order_deps, raw_deps);
+  isl_union_map *proximity =
+    cpy(raw_deps);
+
+  auto clksched = clockwork_schedule(domain, validity, proximity);
+  cout << "---- Clockwork schedule:" << endl;
+  isl_space* test_space = map_space(prg.ctx, 2, 3);
+  isl_local_space* aff_space = local_set_space(prg.ctx, 2);
+  for (auto s : clksched) {
+    auto ma = isl_multi_aff_zero(test_space);
+
+    cout << tab(1) << s.first << " -> ";
+    int i = 0;
+    for (auto v : s.second) {
+      cout << str(v) << ", ";
+      isl_aff* av = isl_aff_zero_on_domain(aff_space);
+      av = set_const_coeff(av, const_coeff(v));
+      isl_multi_aff_set_aff(ma, i, av);
+      i++;
+    }
+    cout << endl;
+    cout << tab(2) << "ma = " << str(ma) << endl;
+  }
+
+  generate_optimized_code(prg);
+
+  //regression_test(prg);
+}
+
+void halide_frontend_test() {
+  prog prg = clockwork_target();
+  cout << "Created program..." << endl;
+  prg.pretty_print();
+  generate_optimized_code(prg);
+
+  //regression_test(prg);
+}
+
 void tricky_shift_register_reconvergence_test() {
   //App sobel = tricky_reconvergence("A");
   App sobel;
@@ -5328,7 +6339,6 @@ void conv_app_rolled_reduce_test() {
   cv.update("reduce_conv", "add", "id", {img_win}, reduce_ranges);
   cv.realize("reduce_conv", 32, 32, 1);
 
-  //assert(false);
 }
 
 vector<string> gauss_pyramid(const int num_levels, const string& func, App& app) {
@@ -5456,7 +6466,6 @@ void up_down_unrolled_test() {
   auto naive = run_regression_tb("ds_naive");
 
   assert(opt == naive);
-  //assert(false);
 }
 
 void neg_stencil_test() {
@@ -5513,7 +6522,6 @@ void up_stencil_test() {
   //}
   //cout << endl << endl;
 
-  //assert(false);
 
   lp.realize("up_stencil", size, size);
   auto opt = run_regression_tb("up_stencil_opt");
@@ -5527,7 +6535,6 @@ void up_stencil_test() {
   auto naive = run_regression_tb("up_stencil_naive");
 
   assert(opt == naive);
-  //assert(false);
 }
 
 void up_down_auto_unrolled_test() {
@@ -5552,7 +6559,6 @@ void up_down_auto_unrolled_test() {
   auto naive = run_regression_tb("up_stencil_down_naive");
 
   assert(opt == naive);
-  //assert(false);
 }
 
 void up_stencil_auto_unrolled_test() {
@@ -5579,7 +6585,6 @@ void up_stencil_auto_unrolled_test() {
   auto naive = run_regression_tb(app_name + "_naive");
 
   assert(opt == naive);
-  //assert(false);
 }
 
 void up_stencil_down_auto_unrolled_test() {
@@ -5606,7 +6611,6 @@ void up_stencil_down_auto_unrolled_test() {
   auto naive = run_regression_tb("up_stencil_down_naive");
 
   assert(opt == naive);
-  //assert(false);
 }
 
 void up_stencil_down_test() {
@@ -5638,7 +6642,6 @@ void up_stencil_down_test() {
   //}
   //cout << endl << endl;
 
-  //assert(false);
 
   lp.realize("ds", size, size);
   auto opt = run_regression_tb("ds_opt");
@@ -5653,7 +6656,6 @@ void up_stencil_down_test() {
 
   compare(opt, naive);
   //assert(opt == naive);
-  //assert(false);
 }
 
 void up_stencil_down_unrolled_test() {
@@ -5698,11 +6700,35 @@ App harris_cartoon(const std::string& out_name) {
   return harris;
 }
 
+App different_path_latencies(const std::string& out_name) {
+  App harris;
+  harris.set_default_pixel_width(16);
+  harris.func2d("img_oc");
+  harris.func2d("img", v("img_oc"));
+  harris.func2d("short_path", v("img"));
+  harris.func2d("long_path", div(mul(v("img"), add(v("img"), 1)), 29));
+  harris.func2d(out_name, add(v("long_path"), v("short_path")));
+
+  return harris;
+}
+
+void box_blur(App& app, const string& res, const string& src) {
+  app.func2d(res + "_a", stencilv(-1, 1, -1, 1, src));
+  app.func2d(res, div(v(res + "_a"), 9));
+}
+
 App harris16(const std::string& out_name) {
   App harris;
   harris.set_default_pixel_width(16);
   harris.func2d("img_oc");
   harris.func2d("img", v("img_oc"));
+  //harris.func2d("grad_x",
+      //add(sub(v("img", 1, -1), v("img", -1, -1)),
+        //mul(sub(v("img", 1, 0), v("img", -1, 0)), 2),
+        //sub(v("img", 1, 1), v("img", -1, 1))));
+  // This example causes SODA and our code to disagree
+  //harris.func2d(out_name, div(sub(v("img"), 30000), 128));
+
   harris.func2d("grad_x",
       add(sub(v("img", 1, -1), v("img", -1, -1)),
         mul(sub(v("img", 1, 0), v("img", -1, 0)), 2),
@@ -5713,22 +6739,28 @@ App harris16(const std::string& out_name) {
         mul(sub(v("img", 0, 1), v("img", 0, -1)), 2),
         sub(v("img", 1, 1), v("img", 1, -1))));
 
-  harris.func2d("lxx", add(square(v("grad_x")), 128));
-  harris.func2d("lyy", add(square(v("grad_y")), 128));
-  harris.func2d("lxy", add(mul(v("grad_x"), v("grad_y")), 128));
+  //harris.func2d(out_name, div(square(v("grad_x")), 128));
 
-  harris.func2d("lgxx", stencilv(-1, 1, -1, 1, "lxx"));
-  harris.func2d("lgyy", stencilv(-1, 1, -1, 1, "lyy"));
-  harris.func2d("lgxy", stencilv(-1, 1, -1, 1, "lxy"));
+  harris.func2d("lxx", div(square(v("grad_x")), 128));
+  harris.func2d("lyy", div(square(v("grad_y")), 128));
+  harris.func2d("lxy", div(mul(v("grad_x"), v("grad_y")), 128));
 
-  harris.func2d("lgxx8", add(v("lgxx"), 64));
-  harris.func2d("lgyy8", add(v("lgyy"), 64));
-  harris.func2d("lgxy8", add(v("lgxy"), 64));
+  box_blur(harris, "lgxx", "lxx");
+  box_blur(harris, "lgyy", "lyy");
+  box_blur(harris, "lgxy", "lxy");
+
+  //harris.func2d("lgxx", div(stencilv(-1, 1, -1, 1, "lxx"), 9));
+  //harris.func2d("lgyy", div(stencilv(-1, 1, -1, 1, "lyy"), 9));
+  //harris.func2d("lgxy", div(stencilv(-1, 1, -1, 1, "lxy"), 9));
+
+  harris.func2d("lgxx8", div(v("lgxx"), 64));
+  harris.func2d("lgyy8", div(v("lgyy"), 64));
+  harris.func2d("lgxy8", div(v("lgxy"), 64));
 
   harris.func2d("det", add(mul("lgxx8", "lgyy8"), square("lgxy8")));
   harris.func2d("trace", mul("lgxx8", "lgyy8"));
   harris.func2d(out_name, add(v("det"),
-        mul(square("trace"), 8)));
+        add(square("trace"), 8)));
 
   return harris;
 }
@@ -5802,7 +6834,224 @@ void harris_unrolled_test() {
   move_to_benchmarks_folder(out_name + "_opt");
 }
 
-void harris16_test() {
+string sharpen(App& cp, const std::string& r) {
+  string bx = r + "_bx";
+  string by = r + "_by";
+  string bdiff = r + "_diff";
+  cp.func2d(bx + "b", stencilv(0, 2, 0, 0, r));
+  cp.func2d(bx, div(v(bx + "b"), 3));
+
+  cp.func2d(by + "b", stencilv(0, 0, 0, 2, bx));
+  cp.func2d(by, div(v(by + "b"), 3));
+
+  cp.func2d(bdiff, sub(v(by), v(r)));
+  return bdiff;
+}
+
+string sharpen_all_adds(App& cp, const std::string& r) {
+  string bx = r + "_bx";
+  string by = r + "_by";
+  string bdiff = r + "_diff";
+  cp.func2d(bx, add(stencilv(0, 2, 0, 0, r), 3));
+  cp.func2d(by, add(stencilv(0, 0, 0, 2, bx), 3));
+
+  cp.func2d(bdiff, add(v(by), v(r)));
+  return bdiff;
+}
+
+string sharpen_all_adds_linear(App& cp, const std::string& r) {
+  string bx = r + "_bx";
+  string by = r + "_by";
+  string bdiff = r + "_diff";
+  cp.func2d(bx, add(stencilv(0, 2, 0, 0, r), 3));
+  cp.func2d(by, add(stencilv(0, 0, 0, 2, bx), 3));
+
+  cp.func2d(bdiff, add(v(by), 1));
+  return bdiff;
+}
+
+App camera_pipeline_all_adds_only_denoise_demosaic(const std::string& out_name) {
+  App cp;
+  cp.set_default_pixel_width(16);
+
+  cp.func2d("raw_oc");
+  cp.func2d("raw", v("raw_oc"));
+  cp.func2d("denoised", add(stencilv(-2, 2, -2, 2, "raw"), 25));
+  cp.func2d(out_name, add(stencilv(-1, 1, -1, 1, "denoised"), 9));
+
+  //string sharpened = sharpen_all_adds_linear(cp, "demosaic");
+
+  //cp.func2d(out_name, add(v(sharpened), 20));
+  return cp;
+}
+
+App camera_pipeline_all_adds_linear(const std::string& out_name) {
+  App cp;
+  cp.set_default_pixel_width(16);
+
+  cp.func2d("raw_oc");
+  cp.func2d("raw", v("raw_oc"));
+  cp.func2d("denoised", add(stencilv(-2, 2, -2, 2, "raw"), 25));
+  cp.func2d("demosaic", add(stencilv(-1, 1, -1, 1, "denoised"), 9));
+
+  string sharpened = sharpen_all_adds_linear(cp, "demosaic");
+
+  cp.func2d(out_name, add(v(sharpened), 20));
+  return cp;
+}
+
+App camera_pipeline_all_adds(const std::string& out_name) {
+  App cp;
+  cp.set_default_pixel_width(16);
+
+  cp.func2d("raw_oc");
+  cp.func2d("raw", v("raw_oc"));
+  cp.func2d("denoised", add(stencilv(-2, 2, -2, 2, "raw"), 25));
+  cp.func2d("demosaic", add(stencilv(-1, 1, -1, 1, "denoised"), 9));
+
+  string sharpened = sharpen_all_adds(cp, "demosaic");
+
+  cp.func2d(out_name, add(v(sharpened), 20));
+  return cp;
+}
+
+App camera_pipeline(const std::string& out_name) {
+  App cp;
+  cp.set_default_pixel_width(16);
+
+  cp.func2d("raw_oc");
+  cp.func2d("raw", v("raw_oc"));
+  cp.func2d("denoiseb", stencilv(-2, 2, -2, 2, "raw"));
+  cp.func2d("denoise", div(v("denoiseb"), 25));
+  cp.func2d("demosaicb", stencilv(-1, 1, -1, 1, "denoise"));
+  cp.func2d("demosaic", div(v("demosaicb"), 9));
+
+  string sharpened = sharpen(cp, "demosaic");
+
+  cp.func2d(out_name, add(v(sharpened), 20));
+  return cp;
+}
+
+void camera_pipeline_all_adds_only_denoise_demosaic_test(const std::string& prefix) {
+  string app_name = prefix + "_mini";
+  int mini_rows = 10;
+  int mini_cols = 1920;
+  auto hmini = camera_pipeline_all_adds_only_denoise_demosaic(app_name);
+  hmini.realize_naive(app_name, mini_cols, mini_rows);
+  hmini.realize(app_name, mini_cols, mini_rows, 1);
+
+  std::vector<std::string> naive =
+    run_regression_tb(app_name + "_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb(app_name + "_opt");
+  assert(naive == optimized);
+  move_to_benchmarks_folder(app_name + "_opt");
+}
+
+void camera_pipeline_all_adds_linear_test(const std::string& prefix) {
+  string app_name = prefix + "_mini";
+  int mini_rows = 10;
+  int mini_cols = 1920;
+  auto hmini = camera_pipeline_all_adds_linear(app_name);
+  hmini.realize_naive(app_name, mini_cols, mini_rows);
+  hmini.realize(app_name, mini_cols, mini_rows, 1);
+
+  std::vector<std::string> naive =
+    run_regression_tb(app_name + "_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb(app_name + "_opt");
+  assert(naive == optimized);
+  move_to_benchmarks_folder(app_name + "_opt");
+}
+
+void camera_pipeline_all_adds_test(const std::string& prefix) {
+  string app_name = "cp_all_adds_mini";
+  int mini_rows = 10;
+  int mini_cols = 1920;
+  auto hmini = camera_pipeline_all_adds(app_name);
+  hmini.realize_naive(app_name, mini_cols, mini_rows);
+  hmini.realize(app_name, mini_cols, mini_rows, 1);
+
+  std::vector<std::string> naive =
+    run_regression_tb(app_name + "_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb(app_name + "_opt");
+  assert(naive == optimized);
+  move_to_benchmarks_folder(app_name + "_opt");
+
+  int rows = 1080;
+  int cols = 1920;
+  //vector<int> factors{1, 2, 4};
+  vector<int> factors{1};
+  for (int i = 0; i < (int) factors.size(); i++) {
+    int unroll_factor = factors.at(i);
+    //cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
+    string out_name = prefix + "_" + str(unroll_factor);
+
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    //options.use_custom_code_string = true;
+    options.use_custom_code_string = false;
+    options.debug_options.expect_all_linebuffers = true;
+    //options.num_input_epochs = 30;
+    camera_pipeline_all_adds(out_name).realize(options, out_name, cols, rows, unroll_factor);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+}
+
+void camera_pipeline_test(const std::string& prefix) {
+  string app_name = "camera_mini";
+  int mini_rows = 30;
+  int mini_cols = 100;
+  auto hmini = camera_pipeline(app_name);
+  hmini.realize_naive(app_name, mini_cols, mini_rows);
+  hmini.realize(app_name, mini_cols, mini_rows, 1);
+
+  std::vector<std::string> naive =
+    run_regression_tb(app_name + "_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb(app_name + "_opt");
+  assert(naive == optimized);
+  move_to_benchmarks_folder(app_name + "_opt");
+
+
+  int rows = 1080;
+  int cols = 1920;
+  vector<int> factors{1, 2, 4};
+  for (int i = 0; i < (int) factors.size(); i++) {
+    int unroll_factor = factors.at(i);
+    //cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
+    string out_name = prefix + "_" + str(unroll_factor);
+
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    options.debug_options.expect_all_linebuffers = true;
+    options.num_input_epochs = 30;
+    camera_pipeline(out_name).realize(options, out_name, cols, rows, unroll_factor);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+}
+
+void different_path_latencies_test(const std::string& prefix) {
+  int mini_size = 32;
+  auto hmini = different_path_latencies(prefix);
+  hmini.realize_naive(prefix, mini_size, mini_size);
+  hmini.realize(prefix, mini_size, mini_size, 1);
+
+  std::vector<std::string> naive =
+    run_regression_tb(prefix + "_opt");
+  std::vector<std::string> optimized =
+    run_regression_tb(prefix + "_naive");
+  assert(naive == optimized);
+  move_to_benchmarks_folder(prefix + "_opt");
+}
+
+void harris16_test(const std::string& prefix) {
   int mini_size = 32;
   auto hmini = harris16("harris16_mini");
   hmini.realize_naive("harris16_mini", mini_size, mini_size);
@@ -5815,21 +7064,22 @@ void harris16_test() {
   assert(naive == optimized);
   move_to_benchmarks_folder("harris16_mini_opt");
 
-  //assert(false);
 
   int rows = 1080;
   int cols = 1920;
-  vector<int> factors{1, 8, 16};
+  vector<int> factors{1, 2, 4};
+  //8, 16};
   for (int i = 0; i < (int) factors.size(); i++) {
     int unroll_factor = factors.at(i);
     cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
-    string out_name = "hrs_" + str(unroll_factor);
+    string out_name = prefix + "_" + str(unroll_factor);
 
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
     options.debug_options.expect_all_linebuffers = true;
+    options.num_input_epochs = 30;
     harris16(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
     move_to_benchmarks_folder(out_name + "_opt");
@@ -5849,7 +7099,6 @@ void harris_test() {
   assert(naive == optimized);
   move_to_benchmarks_folder("harris_mini_opt");
 
-  //assert(false);
 
   int rows = 1080;
   int cols = 1920;
@@ -5870,8 +7119,31 @@ void harris_test() {
   }
 }
 
+App denoise3d_reconverge(const std::string& out_name) {
+  App dn;
+  dn.set_default_pixel_width(16);
+  dn.func3d("u_oc");
+  dn.func3d("f_oc");
+
+  dn.func3d("u", v3("u_oc", 0, 0, 0));
+  dn.func3d("f", v3("f_oc", 0, 0, 0));
+
+  dn.func3d("diff_i", sub(v("u", 0, 0, 0), v("u", 0, 0, -1)));
+  dn.func3d("diff_o", sub(v("u", 0, 0, 0), v("u", 0, 0, 1)));
+
+  dn.func3d("g",
+      add({sq3("diff_i"), sq3("diff_o")}));
+  dn.func3d("r0", mul(v3("u"), v3("f")));
+  dn.func3d("r1", sq3("r0"));
+  dn.func3d(out_name,
+      add({v3("u", 0, 0, 0), v3("g", 1, 0, 0), v3("r1", 0, 0, 0)}));
+
+  return dn;
+}
+
 App denoise3d(const std::string& out_name) {
   App dn;
+  dn.set_default_pixel_width(16);
   dn.func3d("u_oc");
   dn.func3d("f_oc");
 
@@ -5891,49 +7163,203 @@ App denoise3d(const std::string& out_name) {
   dn.func3d("r0", mul(v3("u"), v3("f")));
   dn.func3d("r1", sq3("r0"));
   dn.func3d(out_name,
-      add({v3("u", 0, 0, 0), v3("u", 1, 0, 0), v3("g", 1, 0, 0), v3("u", -1, 0, 0), v3("g", -1, 0, 0),
-        v3("u", 0, 1, 0), v3("g", 0, 1, 0), v3("u", 0, -1, 0), v3("g", 0, -1, 0), v3("u", 0, 0, 1), v3("g", 0, 0, 1),
-        v3("u", 0, 0, -1), v3("g", 0, 0, -1), v3("f", 0, 0, 0), v3("r1", 0, 0, 0),
-        v3("g", 1, 0, 0), v3("g", -1, 0, 0), v3("g", 0, 1, 0), v3("g", 0, -1, 0), v3("g", 0, 0, 1), v3("g", 0, 0, -1)}));
+      add({v3("u", 0, 0, 0), v3("g", 1, 0, 0), v3("r1", 0, 0, 0)}));
+
+  //dn.func3d(out_name,
+      //add({v3("u", 0, 0, 0), v3("u", 1, 0, 0), v3("g", 1, 0, 0), v3("u", -1, 0, 0), v3("g", -1, 0, 0),
+        //v3("u", 0, 1, 0), v3("g", 0, 1, 0), v3("u", 0, -1, 0), v3("g", 0, -1, 0), v3("u", 0, 0, 1), v3("g", 0, 0, 1),
+        //v3("u", 0, 0, -1), v3("g", 0, 0, -1), v3("f", 0, 0, 0), v3("r1", 0, 0, 0),
+        //v3("g", 1, 0, 0), v3("g", -1, 0, 0), v3("g", 0, 1, 0), v3("g", 0, -1, 0), v3("g", 0, 0, 1), v3("g", 0, 0, -1)}));
 
   return dn;
 }
 
-void max_pooling_test() {
+void denoise3d_reconvergence_test() {
+  string name = "dn_reconv";
+  int mini_size = 8;
+  auto hmini = denoise3d_reconverge(name);
+  hmini.realize_naive(name, {mini_size, mini_size, mini_size});
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  //options.use_custom_code_string = false;
+  options.use_custom_code_string = true;
+  //options.all_rams = true;
+  //options.debug_options.expect_all_linebuffers = true;
+  hmini.realize(options, name, {mini_size, mini_size, mini_size}, 1);
+
+  std::vector<std::string> naive =
+    run_regression_tb(name + "_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb(name + "_opt");
+  assert(naive == optimized);
+  move_to_benchmarks_folder(name + "_opt");
+}
+
+void denoise3d_test() {
+  int mini_size = 8;
+  auto hmini = denoise3d("dn3d_mini");
+  hmini.realize_naive("dn3d_mini", {mini_size, mini_size, mini_size});
+
+  CodegenOptions options;
+  options.internal = true;
+  options.simplify_address_expressions = true;
+  options.use_custom_code_string = true;
+  //options.debug_options.expect_all_linebuffers = true;
+  hmini.realize(options, "dn3d_mini", {mini_size, mini_size, mini_size}, 1);
+
+  std::vector<std::string> naive =
+    run_regression_tb("dn3d_mini_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb("dn3d_mini_opt");
+  assert(naive == optimized);
+  move_to_benchmarks_folder("dn3d_mini_opt");
+
+
+
+  int rows = 32;
+  int cols = 32;
+  int channels = 32;
+  vector<int> factors{1, 8, 16};
+  for (int i = 0; i < (int) factors.size(); i++) {
+    int unroll_factor = factors.at(i);
+    cout << tab(1) << "denoise3d unroll factor: " << unroll_factor << endl;
+    string out_name = "dn3d_" + str(unroll_factor);
+
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    options.debug_options.expect_all_linebuffers = true;
+    denoise3d(out_name).realize(options, out_name, {cols, rows, channels}, unroll_factor);
+
+    move_to_benchmarks_folder(out_name + "_opt");
+  }
+}
+
+App max_pooling(const std::string& out_name) {
   App mp;
   mp.func3d("in_oc");
   mp.func3d("in", "id", pt3("in_oc"));
   Window max_win{"in", {qconst(2), qconst(2), qconst(1)}, {{0, 0, 0}, {1, 0, 0}, {0, 1, 0}, {1, 1, 0}}};
-  mp.func3d("max_pool", "max_pool_2x2", {max_win});
+  mp.func3d(out_name, "max_pool_2x2", {max_win});
 
-  int W = 10;
-  int H = 10;
-  int D = 3;
+  return mp;
+}
 
+void max_pooling_test_sizes(const std::string& prefix) {
+  int W = 8;
+  int H = 8;
+  int D = 4;
+
+  int factor = 1;
+  string name = prefix + "_" + str(factor);
   {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
-
-    mp.realize(options, "max_pool", {H, W, D}, 1);
+    max_pooling(name).realize(options, name, {H, W, D}, "in", factor);
   }
-
-  CodegenOptions options;
-  options.internal = true;
-  options.all_rams = true;
-  options.unroll_factors_as_pad = true;
-  mp.realize_naive(options, "max_pool", {H, W, D});
-
-  std::vector<std::string> naive =
-    run_regression_tb("max_pool_opt");
-  std::vector<std::string> optimized =
-    run_regression_tb("max_pool_naive");
-  assert(naive == optimized);
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.num_input_epochs = 1;
+    options.simplify_address_expressions = true;
+    options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
+    max_pooling(name).realize_naive(options, name, {H, W, D});
+  }
+  move_to_benchmarks_folder(name + "_opt");
+  move_naive_to_benchmarks_folder(name);
 }
 
-void exposure_fusion() {
+void max_pooling_test(const std::string& prefix) {
+  int W = 64;
+  int H = 64;
+  int D = 64;
+
+  vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
+  for (auto factor : unroll_factors) {
+    string name = prefix + "_" + str(factor);
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+
+    max_pooling(name).realize(options, name, {H, W, D}, "in", factor);
+    move_to_benchmarks_folder(name + "_opt");
+  }
+
+  //CodegenOptions options;
+  //options.internal = true;
+  //options.all_rams = true;
+  //options.unroll_factors_as_pad = true;
+  //mp.realize_naive(options, "max_pool", {H, W, D});
+
+  //std::vector<std::string> naive =
+    //run_regression_tb("max_pool_opt");
+  //std::vector<std::string> optimized =
+    //run_regression_tb("max_pool_naive");
+  //assert(naive == optimized);
+
+}
+
+App ef_cartoon(const std::string& out_name) {
   App lp;
+  lp.set_default_pixel_width(16);
+  // The off chip input we are reading from
+  lp.func2d("in_off_chip");
+
+  // The temporary buffer we store the input image in
+  lp.func2d("in", "id", pt("in_off_chip"));
+
+  // Two synthetic exposures
+  lp.func2d("bright", "id", pt("in"));
+  lp.func2d("dark", "scale_exposure", pt("in"));
+
+  lp.func2d("bright_weights", "psef_weight", pt("bright"));
+  lp.func2d("dark_weights", "psef_weight", pt("dark"));
+
+  lp.func2d("bright_weights_normed", "psef_normalize_weights", {pt("bright_weights")});
+  lp.func2d("dark_weights_normed", "psef_normalize_weights", {pt("dark_weights")});
+
+  int pyramid_levels = 4;
+
+  auto dark_weight_pyramid = gauss_pyramid(pyramid_levels, "dark_weights_normed", lp);
+  auto bright_weight_pyramid = gauss_pyramid(pyramid_levels, "bright_weights_normed", lp);
+
+  auto dark_pyramid = laplace_pyramid(pyramid_levels, "dark", lp);
+  auto bright_pyramid = laplace_pyramid(pyramid_levels, "bright", lp);
+
+  vector<string> merged_images;
+  for (int i = 0; i < dark_pyramid.size(); i++) {
+    string fused = "fused_level_" + str(i);
+    lp.func2d(fused, "psef_weighted_merge", {pt(bright_pyramid.at(i)), pt(dark_pyramid.at(i)),
+        pt(bright_weight_pyramid.at(i)), pt(dark_weight_pyramid.at(i))});
+    merged_images.push_back(fused);
+  }
+
+  // Collapse the blended pyramid into a single image
+  assert(merged_images.size() == pyramid_levels);
+
+  string image = merged_images.back();
+  for (int i = merged_images.size() - 2; i >= 0; i--) {
+    string merged_level = "final_merged_" + str(i);
+    lp.func2d(merged_level, "average", {upsample(2, image), pt(merged_images.at(i))});
+    //lp.func2d(merged_level, "add", {upsample(2, image), pt(merged_images.at(i))});
+    image = merged_level;
+  }
+
+  lp.func2d(out_name, "id", pt(image));
+
+  //lp.func2d(out_name, "average", {pt("bright"), pt("dark")});
+  return lp;
+}
+
+App exposure_fusion_app(const std::string& out_name) {
+  App lp;
+  lp.set_default_pixel_width(16);
   // The off chip input we are reading from
   lp.func2d("in_off_chip");
 
@@ -5981,10 +7407,115 @@ void exposure_fusion() {
     image = merged_level;
   }
 
-  lp.func2d("pyramid_synthetic_exposure_fusion", "id", pt(image));
+  lp.func2d(out_name, "id", pt(image));
 
+  return lp;
+}
+
+void ef_cartoon_iccad_unrolls(const std::string& prefix) {
+  vector<int> throughputs{1, 2, 4, 8, 16, 32};
+  for (auto throughput : throughputs) {
+    string name = prefix + "_" + str(throughput);
+    App lp = ef_cartoon(name);
+    int rows = 1080;
+    int cols = 1920;
+    lp.realize(name, cols, rows, throughput);
+    move_to_benchmarks_folder(name + "_opt");
+    move_naive_to_benchmarks_folder(name);
+  }
+}
+
+void ef_cartoon_fusion_iccad_sizes(const std::string& prefix) {
+  vector<pair<int, int> > sizes{{16, 16}, {256, 256}, {1280, 720}, {1920, 1080}};
+  for (auto dims : sizes) {
+    int cols = dims.first;
+    int rows = dims.second;
+
+    string name = prefix + "_" + str(cols) + "_" + str(rows);
+    {
+      App lp = ef_cartoon(name);
+      CodegenOptions options;
+      options.internal = true;
+      options.num_input_epochs = 1;
+      options.simplify_address_expressions = true;
+      lp.realize(options, name, cols, rows, 1);
+    }
+
+    {
+      App lp = ef_cartoon(name);
+      CodegenOptions options;
+      options.internal = true;
+      options.num_input_epochs = 1;
+      options.simplify_address_expressions = true;
+      options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
+      lp.realize_naive(options, name, cols, rows);
+    }
+    std::vector<std::string> naive =
+      run_regression_tb(name + "_naive");
+    cout << "Naive    : " << naive << endl;
+    std::vector<std::string> optimized =
+      run_regression_tb(name + "_opt");
+    cout << "Optimized: " << optimized << endl;
+    assert(naive == optimized);
+    move_to_benchmarks_folder(name + "_opt");
+    move_naive_to_benchmarks_folder(name);
+  }
+}
+
+void exposure_fusion_iccad_sizes(const std::string& prefix) {
+  vector<pair<int, int> > sizes{{16, 16}, {256, 256}, {1280, 720}, {1920, 1080}};
+  for (auto dims : sizes) {
+    int cols = dims.first;
+    int rows = dims.second;
+
+    string name = prefix + "_" + str(cols) + "_" + str(rows);
+    {
+      App lp = exposure_fusion_app(name);
+      CodegenOptions options;
+      options.internal = true;
+      options.num_input_epochs = 1;
+      options.simplify_address_expressions = true;
+      lp.realize(options, name, cols, rows, 1);
+    }
+
+    {
+      App lp = exposure_fusion_app(name);
+      CodegenOptions options;
+      options.internal = true;
+      options.num_input_epochs = 1;
+      options.simplify_address_expressions = true;
+      options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
+      lp.realize_naive(options, name, cols, rows);
+    }
+    std::vector<std::string> naive =
+      run_regression_tb(name + "_naive");
+    cout << "Naive    : " << naive << endl;
+    std::vector<std::string> optimized =
+      run_regression_tb(name + "_opt");
+    cout << "Optimized: " << optimized << endl;
+    assert(naive == optimized);
+    move_to_benchmarks_folder(name + "_opt");
+  }
+}
+
+void exposure_fusion_iccad_apps(const std::string& prefix) {
+  vector<int> throughputs{1, 2, 4, 8, 16, 32};
+  for (auto throughput : throughputs) {
+    //const int throughput = 4;
+    string name = prefix + "_" + str(throughput);
+    App lp = exposure_fusion_app(name);
+    int rows = 1080;
+    int cols = 1920;
+    lp.realize(name, cols, rows, throughput);
+    move_to_benchmarks_folder(name + "_opt");
+  }
+}
+
+void exposure_fusion() {
+
+  App lp = exposure_fusion_app("pyramid_synthetic_exposure_fusion");
   int size =
-    64;
+    128;
     //1250;
     //200;
 
@@ -6025,11 +7556,9 @@ void exposure_fusion() {
     //cout << endl;
   //}
 
-  //assert(false);
 
   lp.realize("pyramid_synthetic_exposure_fusion", size, size, 1);
   //move_to_benchmarks_folder("pyramid_synthetic_exposure_fusion_opt");
-  //assert(false);
 
   //lp.realize("pyramid_synthetic_exposure_fusion", size, size, 4);
 
@@ -6044,8 +7573,6 @@ void exposure_fusion() {
   std::vector<std::string> optimized =
     run_regression_tb("pyramid_synthetic_exposure_fusion_opt");
   assert(naive == optimized);
-
-  //assert(false);
 }
 
 void laplacian_pyramid_app_test() {
@@ -6120,16 +7647,16 @@ void laplacian_pyramid_app_test() {
     run_regression_tb("blended_opt");
   assert(naive == optimized);
 
-  //assert(false);
 
 }
 
-void gaussian_pyramid_app_test() {
+App gaussian_pyramid_app(const std::string& out_name, const int n_levels) {
   App gp;
+  gp.set_default_pixel_width(16);
 
   gp.func2d("in_off_chip");
   gp.func2d("in", "id", pt("in_off_chip"));
-  int n_levels = 4;
+  //int n_levels = 3
   string last = "in";
   for (int l = 0; l < n_levels; l++) {
     string next = "level_" + to_string(l);
@@ -6143,32 +7670,99 @@ void gaussian_pyramid_app_test() {
     gp.func2d(next, "reduce_gauss", last_window);
     last = next;
   }
-  //gp.realize(last, 32, 32, 1);
 
+
+  gp.func2d(out_name, "id", pt(last));
+  return gp;
+}
+
+void single_gaussian_pyramid_app_test() {
+  string name = "gp";
+
+  App gp = gaussian_pyramid_app(name, 4);
   {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
     options.debug_options.expect_all_linebuffers = true;
-    gp.realize(options, last, 4, 4, 2);
+    gp.realize(options, name, 4, 4, 2);
   }
 
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
   options.unroll_factors_as_pad = true;
-  gp.realize_naive(options, last, 4, 4);
+  gp.realize_naive(options, name, 4, 4);
 
   std::vector<std::string> naive =
-    run_regression_tb("level_3_naive");
-  //cout << "Naive    : " << naive << endl;
+    run_regression_tb(name + "_naive");
   std::vector<std::string> optimized =
-    run_regression_tb("level_3_opt");
-  //cout << "Optimized: " << optimized << endl;
+    run_regression_tb(name + "_opt");
+  assert(naive == optimized);
+}
+
+void ef_cartoon_test(const std::string& out_name) {
+  App gp = ef_cartoon(out_name);
+  //int size = 200;
+  int cols = 256;
+  int rows = 256;
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    gp.realize(options, out_name, {cols, rows}, "in", 1);
+    //CodegenOptions options;
+    //options.internal = true;
+    //options.simplify_address_expressions = true;
+    //options.use_custom_code_string = true;
+    //options.scheduling_algorithm = SCHEDULE_ALGORITHM_ISL;
+    //gp.realize_naive(options, out_name, {cols, rows});
+    //move_to_benchmarks_folder(out_name + "_opt");
+  }
+}
+
+
+void gaussian_pyramid_app_test(const std::string& prefix) {
+  string name = "gp";
+  App gp = gaussian_pyramid_app(name, 3);
+  int size = 64;
+  {
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    options.debug_options.expect_all_linebuffers = true;
+    gp.realize(options, name, {size, size}, "in", 2);
+  }
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  options.unroll_factors_as_pad = true;
+  gp.realize_naive(options, name, size, size);
+
+  std::vector<std::string> naive =
+    run_regression_tb(name + "_naive");
+  std::vector<std::string> optimized =
+    run_regression_tb(name + "_opt");
   assert(naive == optimized);
 
-  //assert(false);
+  vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
+  for (auto factor : unroll_factors) {
+    string name = prefix + "_" + str(factor);
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+
+    gaussian_pyramid_app(name, 4).realize(options, name, {64, 64}, "in", factor);
+    move_to_benchmarks_folder(name + "_opt");
+    if (factor == 16) {
+    }
+  }
+
 }
 
 App sobel_mag_x() {
@@ -6277,7 +7871,7 @@ App pointwise_add(const std::string output_name) {
   jac.set_default_pixel_width(16);
   jac.func2d("input_arg");
   jac.func2d("input", v("input_arg"));
-  jac.func2d(output_name, sub(v("input"), 1));
+  jac.func2d(output_name, div(v("input"), 9));
   return jac;
 }
 
@@ -6412,7 +8006,6 @@ void upsample_stencil_2d_test() {
   }
 
   assert(optimized == naive);
-  //assert(false);
 }
 
 void grayscale_conversion_test() {
@@ -6466,7 +8059,6 @@ void upsample_stencil_1d_test() {
   }
 
   assert(optimized == naive);
-  //assert(false);
 }
 
 void sobel_mag_y_test() {
@@ -6531,20 +8123,24 @@ void sobel_16_stage_x_app_test() {
 
 }
 
-void sobel_16_app_test() {
+void sobel_16_app_test(const std::string& prefix) {
   int cols = 1920;
   int rows = 1080;
 
   //int cols = 10;
   //int rows = 10;
-  for (int i = 0; i < 5; i++) {
-    int unroll_factor = pow(2, i);
+  vector<int> factors{1, 2, 4, 8};
+  //for (int i = 0; i < 5; i++) {
+  for (auto factor : factors) {
+    int unroll_factor = factor;
+      //pow(2, i);
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
-    string out_name = "sbl_ur_" + str(unroll_factor);
+    string out_name = prefix + "_" + str(unroll_factor);
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
     options.use_custom_code_string = true;
+    options.num_input_epochs = 30;
     options.debug_options.expect_all_linebuffers = true;
     sobel16(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
@@ -6575,27 +8171,34 @@ void sobel_app_test() {
 
 }
 
-void blur_xy_16_app_test() {
+void blur_xy_16_app_test(const std::string& prefix) {
   int cols = 1920;
   int rows = 1080;
 
-  for (int i = 0; i < 6; i++) {
-    int unroll_factor = pow(2, i);
+  vector<int> factors{1, 2, 4, 8};
+  for (auto f : factors) {
+    int unroll_factor = f;
     cout << tab(1) << "unroll factor: " << unroll_factor << endl;
-    string out_name = "bxy_ur_" + str(unroll_factor);
-    blur_xy_16(out_name).realize(out_name, cols, rows, unroll_factor);
+    string out_name = prefix + "_" + str(unroll_factor);
+    CodegenOptions options;
+    options.internal = true;
+    options.simplify_address_expressions = true;
+    options.use_custom_code_string = true;
+    //options.num_input_epochs = 30;
+    options.debug_options.expect_all_linebuffers = true;
+    blur_xy_16(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
     move_to_benchmarks_folder(out_name + "_opt");
   }
 }
 
 void pointwise_app_test() {
-  int cols = 300;
-  int rows = 300;
+  int cols = 1920;
+  int rows = 1080;
 
   cout << "pointwise math" << endl;
   int unroll_factor = 1;
-  string out_name = "pw16";
+  string out_name = "pw16n";
   pointwise_add(out_name).realize(out_name, cols, rows, unroll_factor);
   move_to_benchmarks_folder(out_name + "_opt");
 }
@@ -6669,7 +8272,6 @@ void jacobi2d_app_test() {
     system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
   }
 
-  //assert(false);
 }
 
 void sum_diffs_test() {
@@ -6700,7 +8302,6 @@ void sum_diffs_test() {
       run_regression_tb(out_name + "_opt");
 
   move_to_benchmarks_folder(out_name);
-  //assert(false);
 }
 
 void dummy_app_test() {
@@ -6853,7 +8454,6 @@ void sum_float_test() {
       run_regression_tb(out_name + "_opt");
 
   move_to_benchmarks_folder(out_name);
-  //assert(false);
 }
 
 void sum_denoise_test() {
@@ -6870,7 +8470,6 @@ void sum_denoise_test() {
       run_regression_tb("sum_denoise2d_opt");
 
   move_to_benchmarks_folder("sum_denoise2d");
-  //assert(false);
 }
 
 void denoise2d_test() {
@@ -7084,7 +8683,6 @@ void blur_x_test() {
     add_op({out_name, "d0, d1"}, "blur_3", lds);
 
   regression_test(prg);
-  //assert(false);
 }
 
 void pointwise_test() {
@@ -7209,7 +8807,6 @@ void soda_blur_test() {
   //}
 
   regression_test(prg);
-  //assert(false);
 }
 
 void conv_2d_rolled_test() {
@@ -7396,7 +8993,6 @@ void upsample_reduce_test() {
     auto next_op = lexmin(lex_lt(s.second, s.second));
     cout << "next op: " << str(next_op) << endl;
   }
-  //assert(false);
 
   prog pcpy = duplicate_interface(prg);
   for (auto c : prg.all_loops()) {
@@ -7408,7 +9004,6 @@ void upsample_reduce_test() {
   cout << "Copy..." << endl;
   pcpy.pretty_print();
 
-  //assert(false);
 }
 
 void blur_and_downsample_test() {
@@ -7495,7 +9090,6 @@ void playground() {
     }
     cout << endl;
   }
-  //assert(false);
 
   //cout << "Program code without optimization..." << endl;
   //prg.unoptimized_codegen();
@@ -7530,7 +9124,6 @@ void playground() {
   //clockwork_schedule(dom, validity, proximity);
   ////experimental_opt(dom, validity, proximity);
 
-  ////assert(false);
 
   //isl_aff* zero = rdaff(ct, "{ [a, b] -> [0] }");
   //isl_aff* aff = rdaff(ct, "{ [a, b] -> [floor(a/2) + 3] }");
@@ -7583,7 +9176,6 @@ void playground() {
     //cout << endl;
   //}
 
-  //assert(false);
 
   //auto prev = rdaff(ct, "{ [x] -> [floor(x / 2)] }");
   //auto next = rdaff(ct, "{ [x] -> [floor((x + 1) / 2)] }");
@@ -7600,30 +9192,202 @@ void playground() {
   ////isl_mat* matrix = aff->ls->div;
   //isl_ctx_free(ct);
 
-  //assert(false);
 }
 
-void application_tests() {
+void new_bankmerge_tests() {
   shift_reg_test();
   assert(false);
-    reaccess_test();
+  reaccess_test();
 
   bankmerge_vec_test();
   auto_vec_test();
   flatten_sched_test();
-  pointwise_app_test();
+}
 
-  ram_addr_unit_test();
+void iccad_tests() {
+  ef_cartoon_test("ef_cartoon_gauss");
 
-  blur_xy_16_app_test();
-  denoise2d_test();
+  gaussian_pyramid_app_test("gp64x64");
 
-  harris16_test();
+  max_pooling_test("mp25");
+  exposure_fusion();
 
+  int index = 20;
+  string istr = str(index);
+  exposure_fusion_iccad_apps("psef23");
+
+  camera_pipeline_test("cp_noinit_" + istr);
+  blur_xy_16_app_test("bxy_noinit_p2" + istr);
+  camera_pipeline_all_adds_only_denoise_demosaic_test("lcp_noinit_dd");
+  camera_pipeline_all_adds_linear_test("lcp_noinit");
+
+  camera_pipeline_all_adds_test("cp_add_20_noinit");
+
+  harris16_test("hr" + istr);
+  sobel_16_app_test("sbl" + istr);
+
+  denoise3d_reconvergence_test();
+
+  different_path_latencies_test("dp");
   harris_test();
 
+  pointwise_app_test();
+}
+
+void mini_application_tests() {
+  reduce_2d_test();
+  reduce_1d_test();
+  up_unrolled_4_test();
+  up_unrolled_test();
+  up_down_unrolled_test();
+  jacobi2d_app_test();
+  two_in_window_test();
+  two_in_conv2d_test();
+  gaussian_pyramid_test();
+  warp_and_upsample_test();
+  up_stencil_test();
+  neg_stencil_test();
+  blur_x_test();
+  harris16_test("hrs");
+  denoise3d_reconvergence_test();
+  blur_xy_16_app_test("bxy");
+  sobel_16_app_test("sbl");
+  single_gaussian_pyramid_app_test();
+  max_pooling_test("mp");
+  exposure_fusion();
+}
+
+prog pyr_conv_1d() {
+  prog prg;
+  prg.compute_unit_file = "accumulate_3.h";
+  prg.name = "pyr_conv_1d";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["M1"] = 32;
+  prg.buffer_port_widths["M2"] = 32;
+  prg.buffer_port_widths["M3"] = 32;
+  prg.buffer_port_widths["M1_o"] = 32;
+  prg.buffer_port_widths["M2_o"] = 32;
+  prg.buffer_port_widths["M3_o"] = 32;
+
+  int size1 = 134;
+  int size1_o = size1 - 2;
+  int size2 = size1_o / 2;
+  int size2_o = size2 - 2;
+  int size3 = size2_o / 2;
+  int size3_o = size3 - 2;
+
+  cout << "Pyramid sizes: " << size1 << " " << size1_o << " " << size2 << " " << size2_o << " " << size3 << " " << size3_o << endl;
+
+  //prg.add_nest("dr", 0, (64) / 2, "dc", 0, (64) / 2)->
+    //add_op({"downsampled", "dr, dc"}, "id", {"I", "2*dr, 2*dc"});
+
+  auto p = prg.add_loop("p", 0, size1);
+  auto write = p->add_op("get_input");
+  write->add_load("in", "p");
+  write->add_store("M1", "p");
+
+  // compute
+  auto c1 = prg.add_loop("c1", 0, size1_o);
+  auto compute1 = c1->add_op("compute_level_1");
+  compute1->add_function("accumulate_3");
+  compute1->add_load("M1", "c1");
+  compute1->add_load("M1", "c1 + 1");
+  compute1->add_load("M1", "c1 + 2");
+  compute1->add_store("M1_o", "c1");
+
+  // downsample
+  prg.add_nest("d1", 0, size2, "dc1", 0, size2)->
+    add_op({"M1_o", "d1, dc1"}, "id", {"M2", "2*d1, 2*dc1"}); // FIXME use of undeclared identifier 'id'
+
+//  auto d1 = prg.add_loop("d1", 0, size2);
+//  auto down1 = p->add_op("downsample");
+//  down1->add_load("M1_o", "2 * d1"); // FIXME compile error
+//  down1->add_store("M2", "d1");
+
+  // compute
+  auto c2 = prg.add_loop("c2", 0, size2_o);
+  auto compute2 = c2->add_op("compute_level_2");
+  compute2->add_function("accumulate_3");
+  compute2->add_load("M2", "c2");
+  compute2->add_load("M2", "c2 + 1");
+  compute2->add_load("M2", "c2 + 2");
+  compute2->add_store("M2_o", "c2");
+
+  // downsample
+  prg.add_nest("d2", 0, size3, "dc2", 0, size3)->
+    add_op({"M2_o", "d2, dc2"}, "id", {"M3", "2*d2, 2*dc2"}); // FIXME use of undeclared identifier 'id'
+
+//  auto d2 = prg.add_loop("d2", 0, size3);
+//  auto down2 = p->add_op("downsample");
+//  down2->add_load("M2_o", "2*d2"); // FIXME compile error
+//  down2->add_store("M3", "d2");
+
+  // compute
+  auto c3 = prg.add_loop("c3", 0, size3_o);
+  auto compute3 = c3->add_op("compute_level_3");
+  compute3->add_function("accumulate_3");
+  compute3->add_load("M3", "c3");
+  compute3->add_load("M3", "c3 + 1");
+  compute3->add_load("M3", "c3 + 2");
+  compute3->add_store("out", "c3");
+
+  return prg;
+}
+
+void pyr_1d_conv_test() {
+  prog pyr = pyr_conv_1d();
+  regression_test(pyr);
+}
+
+void compute_unit_with_index_variables_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "compute_unit_with_index_variable";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["M"] = 32;
+
+  auto p = prg.add_loop("p", 0, 10);
+  auto write = p->add_op("get_input");
+  write->add_load("in", "p");
+  write->add_store("M", "p");
+
+  auto c = prg.add_loop("c", 0, 10 - 2);
+  auto compute = c->add_op("compute_output");
+  compute->add_function("compute_with_variable");
+  compute->compute_unit_needs_index_variable("c");
+  compute->add_load("M", "c");
+  compute->add_store("out", "c");
+
+  regression_test(prg);
+
+
+}
+
+void application_tests() {
+  iccad_tests();
+  compute_unit_with_index_variables_test();
+
+  reduce_2d_test();
+  reduce_1d_test();
+
+  //pyr_1d_conv_test();
+  halide_cascade_test();
+  halide_dnn_test();
+  halide_harris_test();
+  //conv_1d_bc_test();
+  halide_frontend_test();
+
+  ram_addr_unit_test();
+  denoise2d_test();
+
   conv_1d_test();
-  blur_xy_16_app_test();
+
   tricky_shift_register_reconvergence_test();
 
   //playground();
@@ -7632,7 +9396,6 @@ void application_tests() {
   grayscale_conversion_test();
   upsample2d_test();
 
-  gaussian_pyramid_app_test();
   denoise2d_test();
 
   downsample2d_test();
@@ -7645,10 +9408,7 @@ void application_tests() {
 
   updown_merge_test();
   harris_unrolled_test();
-  sobel_16_app_test();
-  exposure_fusion();
 
-  max_pooling_test();
   mismatched_stencil_test();
   cnn_test();
 
@@ -7699,11 +9459,7 @@ void application_tests() {
   conv3x3_app_test();
   conv3x3_app_unrolled_uneven_test();
 
-  reduce_2d_test();
-  reduce_1d_test();
-
   up_unrolled_4_test();
-  //assert(false);
 
 
   up_unrolled_test();
@@ -7721,7 +9477,6 @@ void application_tests() {
 
   sum_diffs_test();
 
-  //assert(false);
   sobel_16_stage_x_app_test();
 
   up_stencil_test();
@@ -7729,10 +9484,10 @@ void application_tests() {
   blur_x_test();
 
   dummy_app_test();
+
   //two_input_denoise_pipeline_test();
 
 
-  //conv_1d_bc_test();
   //synth_wire_test();
   //synth_sr_boundary_condition_test();
   //synth_lb_test();
@@ -7786,6 +9541,12 @@ int main(int argc, char** argv) {
       return 0;
     }
 
+    if (cmd == "minitest") {
+      mini_application_tests();
+      cout << "Minitest passed" << endl;
+      return 0;
+    }
+
     cout << "Error: Unrecognized command: " << cmd << endl;
     assert(false);
 
@@ -7794,6 +9555,7 @@ int main(int argc, char** argv) {
     system("mkdir -p scratch");
     application_tests();
     memory_tile_tests();
+    cout << "All tests passed" << endl;
 
   } else {
     assert(false);

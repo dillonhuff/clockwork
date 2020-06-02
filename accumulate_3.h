@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hw_classes.h"
+#include "conv_3x3.h"
 
 #include <iostream>
 

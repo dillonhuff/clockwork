@@ -62,10 +62,6 @@ void print_while_loop(int level,
     map<string, vector<QExpr> >& scheds) {
 
 
-  out << "#ifdef __VIVADO_SYNTH__" << endl;
-  out << "#pragma HLS inline recursive" << endl;
-  out << "#endif // __VIVADO_SYNTH__" << endl << endl;
-
   int max_time = whole_dom.cardinality();
   vector<string> loop_counters;
   for (int i = 0; i < whole_dom.dimension(); i++) {
@@ -128,49 +124,50 @@ void print_body(int level,
     const Box& whole_dom,
     map<string, Box>& index_bounds,
     map<string, vector<QExpr> >& scheds) {
+
   int ndims = pick(index_bounds).second.intervals.size();
   int next_level = level + 1;
-    out << endl;
-    out << "#ifdef __VIVADO_SYNTH__" << endl;
-    //out << "#pragma HLS dependence inter false" << endl;
-    out << "#pragma HLS pipeline II=1" << endl;
-    out << "#endif // __VIVADO_SYNTH__" << endl << endl;
+  out << endl;
+  out << "#ifdef __VIVADO_SYNTH__" << endl;
+  //out << "#pragma HLS dependence inter false" << endl;
+  out << "#pragma HLS pipeline II=1" << endl;
+  out << "#endif // __VIVADO_SYNTH__" << endl << endl;
 
-    vector<string> vars;
-    for (int i = 0; i < ndims; i++) {
-      vars.push_back("c" + str(i));
+  vector<string> vars;
+  for (int i = 0; i < ndims; i++) {
+    vars.push_back("c" + str(i));
+  }
+  // NOTE: This is because scheduling reverses order of component variables
+  reverse(vars);
+
+  for (auto f : op_order) {
+    auto box = index_bounds.at(f);
+    vector<int> rates;
+    vector<int> delays;
+    for (auto s : scheds.at(f)) {
+      rates.push_back(s.linear_coeff_int());
+      auto ct = s.const_term();
+      ct.simplify();
+      delays.push_back(ct.to_int());
     }
-    // NOTE: This is because scheduling reverses order of component variables
-    reverse(vars);
 
-    for (auto f : op_order) {
-      auto box = index_bounds.at(f);
-      vector<int> rates;
-      vector<int> delays;
-      for (auto s : scheds.at(f)) {
-        rates.push_back(s.linear_coeff_int());
-        auto ct = s.const_term();
-        ct.simplify();
-        delays.push_back(ct.to_int());
-      }
+    assert(delays.size() == vars.size() + 1);
+    assert(rates.size() == vars.size() + 1);
 
-      assert(delays.size() == vars.size() + 1);
-      assert(rates.size() == vars.size() + 1);
+    delays.pop_back();
+    reverse(delays);
+    rates.pop_back();
+    reverse(rates);
 
-      delays.pop_back();
-      reverse(delays);
-      rates.pop_back();
-      reverse(rates);
+    out << tab(next_level) << "if (" << sep_list(ifconds(vars, box, rates, delays), "", "", " && ") << ") {" << endl;
 
-      out << tab(next_level) << "if (" << sep_list(ifconds(vars, box, rates, delays), "", "", " && ") << ") {" << endl;
+    vector<string> var_exprs;
 
-      vector<string> var_exprs;
-
-      for (int i = 0; i < vars.size(); i++) {
-        var_exprs.push_back("(" + vars.at(i) + " - " + str(delays.at(i)) + ") / " + str(rates.at(i)));
-      }
-
-      out << tab(next_level + 1) << f << "(" << comma_list(var_exprs) << ");" << endl;
-      out << tab(next_level) << "}" << endl << endl;
+    for (int i = 0; i < vars.size(); i++) {
+      var_exprs.push_back("(" + vars.at(i) + " - " + str(delays.at(i)) + ") / " + str(rates.at(i)));
     }
+
+    out << tab(next_level + 1) << f << "(" << comma_list(var_exprs) << ");" << endl;
+    out << tab(next_level) << "}" << endl << endl;
+  }
 }

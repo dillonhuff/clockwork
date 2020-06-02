@@ -1016,20 +1016,20 @@ isl_union_pw_qpolynomial* UBuffer::compute_dd(const std::string& read_port, cons
   umap* wrsched = schedule.at(write_port);
   auto WritesBeforeRead =
     lex_gt(rdsched, wrsched);
-  cout << "\trdsched: " << str(rdsched) << "\n wrsched: " << str(wrsched) << "\n wbr: " << str(WritesBeforeRead) << endl;
+  //cout << "\trdsched: " << str(rdsched) << "\n wrsched: " << str(wrsched) << "\n wbr: " << str(WritesBeforeRead) << endl;
 
   auto WriteThatProducesReadData = get_lexmax_events(read_port);
   //TODO: test these new method
   //auto WriteThatProducesReadData = get_lexmax_events(write_port, read_port);
-  cout << "\twpr: " << str(WriteThatProducesReadData) << "\nwaw:" << str(WritesAfterWrite) << endl;
+  //cout << "\twpr: " << str(WriteThatProducesReadData) << "\nwaw:" << str(WritesAfterWrite) << endl;
 
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
-  cout << "\twap: " << str(WritesAfterProduction) << endl;
+  //cout << "\twap: " << str(WritesAfterProduction) << endl;
   auto WritesBtwn = its_range((its(WritesAfterProduction, WritesBeforeRead)),
       to_uset(domain.at(write_port)));
 
-  cout << "\tWritesBtwn: " << str(WritesBtwn) << endl;
+  //cout << "\tWritesBtwn: " << str(WritesBtwn) << endl;
 
   auto c = card(WritesBtwn);
   //cout << "got card" << endl;
@@ -1506,6 +1506,7 @@ vector<UBuffer> UBuffer::port_grouping(int port_width) {
     //Using set for reoccuring port, single input multi output available
     set<string> inpt_set;
     map<string, isl_map*> outpt_merge;
+
     int cnt = 0;
     while(!bank_pool.empty()) {
         auto bk = bank_pool.top();

@@ -1,2 +1,0 @@
-
-            "FpgaImageGlobalId": "agfi-0082114061fedcd53", 

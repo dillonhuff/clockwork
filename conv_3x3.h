@@ -142,13 +142,44 @@ int max_zero(const int& val) {
 template<typename T>
 static inline
 T merge_exposures(T& bright, T& dark, T& bw, T& dw) {
-  return (bw*bright) + (dw*dark);
+  //return dark;
+  return (bw*bright) + (dw*dark) / (bw + dw);
+}
+
+template<typename T>
+static inline
+T psef_weighted_merge(T& bright, T& dark, T& bright_weight, T& dark_weight) {
+  //cout << "bw = " << bright_weight << endl;
+  //cout << "dw = " << dark_weight << endl;
+  //assert(bright_weight + dark_weight == 2);
+
+  return (bright_weight*bright + dark_weight*dark) / (bright_weight + dark_weight);
+  //return (bright_weight*bright + dark_weight*dark);
+  //return (bright + dark);
+}
+
+template<typename T>
+static inline
+T psef_normalize_weights(T& bright_weight) {
+  return max(1, bright_weight / 100);
+}
+
+template<typename T>
+static inline
+T psef_weight(T& src) {
+  auto sv = src.to_int();
+  int diff = 128 - sv;
+  int abs_diff = diff < 0 ? -diff : diff;
+  return 128 - min(128, abs_diff);
+  //return abs(128 - sv) > 100 ? 0 : 1;
+  //return min(max(0, 128 - src.to_int()), 255);
 }
 
 template<typename T>
 static inline
 T scale_exposure(T& src) {
-  return 3*src;
+  T scaled = 3*src;
+  return min(scaled.to_int(), 255);
 }
 
 template<typename T>
@@ -165,13 +196,23 @@ T f_divide(T& src, T& a0) {
 
 template<typename T>
 static inline
+T average(T& src, T& a0) {
+  //return src + a0;
+  return (src + a0) / 2;
+}
+
+template<typename T>
+static inline
 T add(T& src, T& a0) {
+  //return src;
+  //+ a0;
   return src + a0;
 }
 
 template<typename T>
 static inline
 T diff(T& src, T& a0) {
+  //return src;
   return src - a0;
 }
 
@@ -297,6 +338,25 @@ int blur_27(hw_uint<16*27>& in) {
 }
 
 static inline
+hw_uint<16> conv_3_3(hw_uint<16*9>& in) {
+  hw_uint<16> v0 = in.extract<0, 15>();
+  hw_uint<16> v1 = in.extract<16, 31>();
+  hw_uint<16> v2 = in.extract<32, 47>();
+
+  hw_uint<16> v3 = in.extract<48, 63>();
+  hw_uint<16> v4 = in.extract<64, 79>();
+  hw_uint<16> v5 = in.extract<80, 95>();
+
+  hw_uint<16> v6 = in.extract<96, 111>();
+  hw_uint<16> v7 = in.extract<112, 127>();
+  hw_uint<16> v8 = in.extract<128, 143>();
+
+  return (v0 + v1 + v2 +
+    v3 + v4 + v5 +
+    v6 + v7 + v8);
+}
+
+static inline
 hw_uint<32> conv_3_3(hw_uint<32*9>& in) {
   hw_uint<32> v0 = in.extract<0, 31>();
   hw_uint<32> v1 = in.extract<32, 63>();
@@ -329,6 +389,12 @@ hw_uint<32> cnn_mac(hw_uint<32*4> & in, hw_uint<32> & psum) {
   hw_uint<32> v3 = in.extract<96, 127>();
 
   return (psum + v0 + v1 + v2 + v3).to_int();
+}
+
+static inline
+hw_uint<16> reduce_gauss(hw_uint<16*9>& in) {
+  auto res = conv_3_3(in);
+  return res / 9;
 }
 
 static inline
@@ -454,4 +520,9 @@ contrived(hw_uint<32*3>& in, hw_uint<32*2>& b) {
     in.extract<64, 95>() +
     b.extract<0, 31>() +
     b.extract<32, 63>();
+}
+
+static inline
+hw_uint<32> compute_with_variable(const hw_uint<32>& m, const int loop_var) {
+  return m + loop_var;
 }
