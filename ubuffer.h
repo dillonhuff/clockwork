@@ -8,6 +8,7 @@
 #endif
 
 using namespace std;
+using std::set;
 
 template <typename T>
 std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {

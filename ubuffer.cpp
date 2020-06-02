@@ -398,8 +398,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     map<string, CoreIR::Wireable*> reg_in;
 
     for (auto bk : get_banks()) {
-        set<string> inpts = get_bank_inputs(bk.name);
-        set<string> outpts = get_bank_outputs(bk.name);
+        std::set<string> inpts = get_bank_inputs(bk.name);
+        std::set<string> outpts = get_bank_outputs(bk.name);
         auto buf_inpts = get_in_ports();
         if (count(buf_inpts.begin(), buf_inpts.end(), pick(inpts)) == 0){
             //add register, wire valid from ubuffer
