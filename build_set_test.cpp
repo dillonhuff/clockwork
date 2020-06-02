@@ -9377,11 +9377,11 @@ void compute_unit_with_index_variables_test() {
 }
 
 void application_tests() {
-  iccad_tests();
-  compute_unit_with_index_variables_test();
-
   reduce_2d_test();
   reduce_1d_test();
+
+  iccad_tests();
+  compute_unit_with_index_variables_test();
 
   //pyr_1d_conv_test();
   halide_cascade_test();
