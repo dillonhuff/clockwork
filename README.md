@@ -16,10 +16,18 @@ not just take the latest release on NTL or barvinok.
 
 * barvinok-0.41 - [download here](http://barvinok.gforge.inria.fr/), note that linux users may need to manually add -lpthread to the LIBS field (change "LIBS = -lntl -lgmp", to "LIBS = -lpthread -lntl -lgmp")
 * ntl-11.4.1 - [download here](https://shoup.net/ntl/download.html)
+* *optional codegen backend* CoreIR - [github link](https://github.com/rdaly525/coreir.git)
 
 ## Build instructions
 
+* Default rebuild and execute script
+
     ./rebuild_and_run.sh
+
+* Optional build with CoreIR backend
+
+    export COREIR_PATH=/path/to/coreir
+    make -j COREIR
 
 The file `build_set_test.cpp` is the main driver for all tests.
 Most files in this repository are automatically generated collateral
