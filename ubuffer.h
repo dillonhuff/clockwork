@@ -894,8 +894,8 @@ class UBuffer {
       return "";
     }
 
-    set<string> get_bank_inputs(const std::string& name) const {
-      set<string> ret;
+    std::set<string> get_bank_inputs(const std::string& name) const {
+      std::set<string> ret;
       for (auto b : stack_banks) {
         if (b.second.name == name) {
           ret.insert(b.first.first);
@@ -904,8 +904,8 @@ class UBuffer {
       return ret;
     }
 
-    set<string> get_bank_outputs(const std::string& name) const {
-      set<string> ret;
+    std::set<string> get_bank_outputs(const std::string& name) const {
+      std::set<string> ret;
       for (auto b : stack_banks) {
         if (b.second.name == name) {
           ret.insert(b.first.second);
@@ -1376,7 +1376,7 @@ class UBuffer {
     int compute_dd_bound(const std::string & read_port, const std::string & write_port, bool is_max);
     isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
     bank compute_bank_info(const std::string& inpt, const std::string& outpt);
-    bank compute_bank_info(set<string> inpt, set<string> outpt);
+    bank compute_bank_info(std::set<string> inpt, std::set<string> outpt);
     void merge_bank(CodegenOptions& options, string inpt, vector<bank> mergeable);
     void generate_bank_and_merge(CodegenOptions& options);
 

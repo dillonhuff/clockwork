@@ -1060,8 +1060,8 @@ int UBuffer::compute_dd_bound(const std::string& read_port, const std::string& w
 }
 
 bank UBuffer::compute_bank_info(
-    set<string> inpt_set,
-    set<string> outpt_set) {
+    std::set<string> inpt_set,
+    std::set<string> outpt_set) {
 
   //we just need connection information
   int maxdelay = 0;
@@ -1367,7 +1367,7 @@ void UBuffer::port_group2bank(int in_port_width, int out_port_width) {
     int group_out_port_width = 0;
 
     //Using set for reoccuring port, single input multi output available
-    set<string> inpt_set, outpt_set;
+    std::set<string> inpt_set, outpt_set;
     map<string, isl_map*> outpt_merge;
 
     //the buffer connection information, out-port point to in-port
@@ -1512,7 +1512,7 @@ vector<UBuffer> UBuffer::port_grouping(int port_width) {
     int group_port_width = 0;
 
     //Using set for reoccuring port, single input multi output available
-    set<string> inpt_set;
+    std::set<string> inpt_set;
     map<string, isl_map*> outpt_merge;
 
     int cnt = 0;
@@ -1529,7 +1529,7 @@ vector<UBuffer> UBuffer::port_grouping(int port_width) {
                     return lex_lt_pt(l_start, r_start);
             });
             auto out_map_merge = merge_output_pt(pt_vec);
-            regroup_ub.emplace_back(*this, set<string>(tmp, tmp+1), set<string>({}), cnt);
+            regroup_ub.emplace_back(*this, std::set<string>(tmp, tmp+1), std::set<string>({}), cnt);
             auto dom = ::domain(out_map_merge);
             auto sched = schedule.at(pt_vec.front());
             auto & new_ub = regroup_ub.back();
@@ -1563,7 +1563,7 @@ vector<UBuffer> UBuffer::port_grouping(int port_width) {
             else {
                 //create a new merged ubuffer for this backend port constraint
                 //UBuffer ub_grp(*this, inpt_set, outpt_set, cnt);
-                regroup_ub.emplace_back(*this, inpt_set, set<string>({}), cnt);
+                regroup_ub.emplace_back(*this, inpt_set, std::set<string>({}), cnt);
                 auto & new_ub = regroup_ub.back();
                 for (auto it: outpt_merge) {
                     auto dom = ::domain(it.second);
@@ -1583,7 +1583,7 @@ vector<UBuffer> UBuffer::port_grouping(int port_width) {
     }
     //chances are that we have some leftover
     if (!inpt_set.empty()) {
-        regroup_ub.emplace_back(*this, inpt_set, set<string>({}), cnt);
+        regroup_ub.emplace_back(*this, inpt_set, std::set<string>({}), cnt);
         auto & new_ub = regroup_ub.back();
         for (auto it: outpt_merge) {
             auto dom = ::domain(it.second);
