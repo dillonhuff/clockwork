@@ -897,7 +897,7 @@ struct prog {
      for (auto top_pair : op->consumes_pair()) {
       string cond = "{ ";
         for (auto sec_pair : top_pair.second) {
-          cond = cond + string(op->name + ivar_str + " -> M[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+          cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
         }
         cond = cond.substr(0, cond.length() - 2);
         cond = cond + string(" }");
@@ -937,7 +937,7 @@ struct prog {
       for (auto top_pair : op->consumes_pair()) {
       string cond = "{ ";
         for (auto sec_pair : top_pair.second) {
-          cond = cond + string(op->name + ivar_str + " -> M[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+          cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
         }
         cond = cond.substr(0, cond.length() - 2);
         cond = cond + string(" }");
