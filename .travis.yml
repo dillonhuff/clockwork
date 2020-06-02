@@ -7,7 +7,7 @@ addons:
     sources:
     - ubuntu-toolchain-r-test
     packages:
-    - g++-8.1
+    - g++-7
     - python3
 
 before_install:
