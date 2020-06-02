@@ -27,6 +27,7 @@ not just take the latest release on NTL or barvinok.
 * Optional build with CoreIR backend
 
     `export COREIR_PATH=/path/to/coreir`
+    
     `make -j COREIR`
 
 The file `build_set_test.cpp` is the main driver for all tests.
