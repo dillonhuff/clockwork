@@ -8,7 +8,7 @@ endif
 
 TARGET = clockwork
 
-CXX_FLAGS = -std=c++17 -I $(BARVINOK_PATH) -I $(OPT_PATH) -fobjc-arc
+CXX_FLAGS = -std=c++17 -I $(BARVINOK_PATH) -I $(OPT_PATH)
 ifneq ($(UNAME), Darwin)
 CXX_FLAGS += -fPIC
 endif
