@@ -2,6 +2,34 @@
 
 #ifdef COREIR
 
+#define COREMK(ctx, v) CoreIR::Const::make((ctx), (v))
+
+CoreIR::Wireable* andVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::Wireable* b) {
+  //auto c = def->getContext();
+  auto ad = def->addInstance("and_all_" + def->getContext()->getUnique(), "corebit.and");
+  def->connect(ad->sel("in0"), a);
+  def->connect(ad->sel("in1"), b);
+
+  return ad->sel("out");
+}
+
+CoreIR::Wireable* andList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals) {
+  CoreIR::Wireable* val = nullptr;
+  if (vals.size() == 0) {
+    return def->addInstance("and_all_" + def->getContext()->getUnique(), "corebit.const", {{"value", COREMK(def->getContext(), true)}})->sel("out");
+  }
+
+  if (vals.size() == 1) {
+    return vals[0];
+  }
+
+  val = vals[0];
+  for (int i = 1; i < ((int) vals.size()); i++) {
+    val = andVals(def, val, vals[i]);
+  }
+  return val;
+}
+
 void generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -73,6 +101,20 @@ void generate_coreir(CodegenOptions& options,
     CoreIR::RecordType* utp = context->Record(ub_field);
     auto compute_unit =
       ns->newModuleDecl(op->name, utp);
+    {
+      auto def = compute_unit->newModuleDef();
+      vector<CoreIR::Wireable*> vals;
+      for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+        vals.push_back(def->sel("self." + bundle.second + "_en"));
+      }
+      auto valid = andList(def, vals);
+
+      for (auto bundle : outgoing_bundles(op, buffers, prg)) {
+        def->connect(valid, def->sel("self." + bundle.second + "_valid"));
+      }
+      compute_unit->setDef(def);
+    }
+
     def->addInstance(op->name, compute_unit);
 
   }
