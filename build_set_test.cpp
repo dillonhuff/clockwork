@@ -972,7 +972,7 @@ void conv_1d_bc_test() {
 
   auto c = prg.add_loop("c", 0, 10);
   auto read0 = c->add_op("read0");
-  
+
   read0->add_load("M", "min(c, 9)");
   read0->add_load("M", "min(c + 1, 9)");
   read0->add_load("M", "min(c + 2, 9)");
@@ -1647,7 +1647,7 @@ void reaccess_test() {
 
   prog prg;
   prg.compute_unit_file = "vec_access.h";
-  prg.name = "reacess_conv";
+  prg.name = "reaccess_conv";
   prg.add_input("in");
   prg.add_output("out");
   prg.buffer_port_widths["in"] = 32;
@@ -2941,9 +2941,9 @@ prog conv_2d_bc() {
     // Need to load 9 values
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
-	rd->add_load("I", {{"0 <= lc < " + to_string(63 - i) + " and 0 <= lr < " + to_string(63 - j), "lc + " + to_string(i) + ", lr + " + to_string(j)}, 
+	rd->add_load("I", {{"0 <= lc < " + to_string(63 - i) + " and 0 <= lr < " + to_string(63 - j), "lc + " + to_string(i) + ", lr + " + to_string(j)},
 			  {"lc >= " + to_string(63 - i) + " and lr >= " + to_string(63 - j), "63, 63"},
-			  {"0 <= lc < " + to_string(63 - i) + " and lr >= " + to_string(63 - j), "lc + " + to_string(i) + ", 63"}, 
+			  {"0 <= lc < " + to_string(63 - i) + " and lr >= " + to_string(63 - j), "lc + " + to_string(i) + ", 63"},
 			  {"lc >= " + to_string(63 - i) +  " and 0 <= lr < " + to_string(63 - j), "63, lr + " + to_string(j)}});
       }
     }

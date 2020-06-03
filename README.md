@@ -33,7 +33,7 @@ not just take the latest release on NTL or barvinok. For an example of how to do
 
     `export COREIR_PATH=/path/to/coreir`
     
-    `make -j COREIR`
+    `make -j COREIR=1`
 
 The file `build_set_test.cpp` is the main driver for all tests.
 Most files in this repository are automatically generated collateral
