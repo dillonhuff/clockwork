@@ -5644,15 +5644,16 @@ void memtile_test() {
     memtile_config memtile;
     memtile.extract_config(buffers);
     memtile.emit_config_file_csv("lake_memtile_config_conv33");
+    compare_to_gold("lake_memtile_config_conv33.csv");
   }
 
-  int pos = 0;
-  cout << "Sorted pipeline..." << endl;
-  for (auto f : sorted_functions) {
-    cout << "\t" << f << endl;
-    schedules[f].push_back(qexpr(pos));
-    pos++;
-  }
+  //int pos = 0;
+  //cout << "Sorted pipeline..." << endl;
+  //for (auto f : sorted_functions) {
+    //cout << "\t" << f << endl;
+    //schedules[f].push_back(qexpr(pos));
+    //pos++;
+  //}
 
   //auto sched_opt = its(to_umap(prg.ctx, schedules, sorted_functions, ""), prg.whole_iteration_domain());
   /*auto sched_opt = to_umap(prg.ctx, schedules, sorted_functions, "");
@@ -5662,9 +5663,9 @@ void memtile_test() {
   cout << "Iter Domain:\n " << str(prg.whole_iteration_domain()) << endl;
   sched_opt = its(sched_opt, prg.whole_iteration_domain());
   cout << "After opt Sched map:\n " << str(sched_opt) << endl;*/
-  auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
-  sched_opt = its(sched_opt, prg.whole_iteration_domain());
-  cout << codegen_c(sched_opt) << endl;
+  //auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
+  //sched_opt = its(sched_opt, prg.whole_iteration_domain());
+  //cout << codegen_c(sched_opt) << endl;
   //aha_talk_print_info(prg);
 }
 
@@ -9501,10 +9502,11 @@ void application_tests() {
 }
 
 void memory_tile_tests() {
+  memtile_test();
+  assert(false);
   auto_vec_test();
   vec_test();
   agg_test();
-  memtile_test();
 
 }
 
@@ -9556,8 +9558,8 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
-    application_tests();
     memory_tile_tests();
+    application_tests();
     cout << "All tests passed" << endl;
 
   } else {

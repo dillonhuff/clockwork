@@ -1,6 +1,8 @@
 #pragma once
 
 #include "algorithm.h"
+#include <fstream>
+#include <streambuf>
 #include <sstream>
 #include <regex>
 
@@ -368,3 +370,14 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("mv run_tb.sh " + soda_dir).c_str());
 }
 
+static inline 
+void compare_to_gold(const std::string& name) {
+  std::ifstream t(name);
+  std::string test_str((std::istreambuf_iterator<char>(t)),
+      std::istreambuf_iterator<char>());
+
+  std::ifstream gold("./gold_files/" + name);
+  std::string gold_str((std::istreambuf_iterator<char>(gold)),
+      std::istreambuf_iterator<char>());
+  assert(test_str == gold_str);
+}
