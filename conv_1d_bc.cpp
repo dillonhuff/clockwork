@@ -12,13 +12,13 @@ using namespace std;
 
 struct M_get_input_0_to_M_compute_output_3_cache {
 	// RAM Box: {[0, 9]}
-	// Capacity: 10
-	// # of read delays: 10
-	fifo<hw_uint<32> , 10> f;
+	// Capacity: 3
+	// # of read delays: 3
+	fifo<hw_uint<32> , 3> f;
 	inline hw_uint<32>  peek(const int offset) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.peek(9 - offset);
+    return f.peek(2 - offset);
   }
 
 
@@ -31,70 +31,55 @@ struct M_get_input_0_to_M_compute_output_3_cache {
 
 };
 
-struct M_get_input_0_to_M_compute_output_4_cache {
+struct M_get_input_0_merged_banks_2_cache {
 	// RAM Box: {[0, 9]}
-	// Capacity: 9
-	// # of read delays: 9
-	fifo<hw_uint<32> , 9> f;
-	inline hw_uint<32>  peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(8 - offset);
-  }
+	// Capacity: 2
+	// # of read delays: 2
+	hw_uint<32>  f0;
+	hw_uint<32>  f2;
+
+
+	inline hw_uint<32>  peek_0() {
+		return f0;
+	}
+
+	inline hw_uint<32>  peek_1() {
+		return f2;
+	}
 
 
 
 	inline void push(const hw_uint<32>  value) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
-
-};
-
-struct M_get_input_0_to_M_compute_output_5_cache {
-	// RAM Box: {[0, 9]}
-	// Capacity: 8
-	// # of read delays: 8
-	fifo<hw_uint<32> , 8> f;
-	inline hw_uint<32>  peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(7 - offset);
-  }
-
-
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
+    // cap: 1 reading from capacity: 1
+    f2 = f0;
+    // cap: 1
+    f0 = value;
+	}
 
 };
 
 struct M_cache {
   M_get_input_0_to_M_compute_output_3_cache M_get_input_0_to_M_compute_output_3;
-  M_get_input_0_to_M_compute_output_4_cache M_get_input_0_to_M_compute_output_4;
-  M_get_input_0_to_M_compute_output_5_cache M_get_input_0_to_M_compute_output_5;
+  M_get_input_0_merged_banks_2_cache M_get_input_0_merged_banks_2;
 };
 
 
 
 inline void M_get_input_0_write(hw_uint<32> & M_get_input_0, M_cache& M, int root, int p) {
   M.M_get_input_0_to_M_compute_output_3.push(M_get_input_0);
-  M.M_get_input_0_to_M_compute_output_4.push(M_get_input_0);
-  M.M_get_input_0_to_M_compute_output_5.push(M_get_input_0);
+  M.M_get_input_0_merged_banks_2.push(M_get_input_0);
 }
 
 inline hw_uint<32>  M_compute_output_3_select(M_cache& M, int root, int c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // M_compute_output_3 read pattern: { compute_output[root = 0, c] -> M[c] : 0 <= c <= 8; compute_output[root = 0, c = 9] -> M[9] }
-  // Read schedule : { compute_output[root = 0, c] -> [1, c] : 0 <= c <= 9 }
-  // Write schedule: { get_input[root = 0, p] -> [0, p] : 0 <= p <= 9 }
-  // DD fold: { compute_output[root, c] -> (9 - c) : root = 0 and 0 <= c <= 8 }
-  auto value_M_get_input_0 = M.M_get_input_0_to_M_compute_output_3.peek(/* one reader or all rams */ (8 - c >= 0) ? ((9 - c)) : 0);
+  // Read schedule : { compute_output[root = 0, c] -> [2 + c, 1] : 0 <= c <= 9 }
+  // Write schedule: { get_input[root = 0, p] -> [p, 0] : 0 <= p <= 9 }
+  // DD fold: { compute_output[root, c] -> 2 : root = 0 and 0 <= c <= 7; compute_output[root, c] -> 1 : root = 0 and c = 8 }
+  auto value_M_get_input_0 = M.M_get_input_0_to_M_compute_output_3.peek(/* one reader or all rams */ (-8 + c == 0) ? (1) : (7 - c >= 0) ? (2) : 0);
   return value_M_get_input_0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " c = " << c  << endl;
@@ -107,10 +92,10 @@ inline hw_uint<32>  M_compute_output_4_select(M_cache& M, int root, int c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // M_compute_output_4 read pattern: { compute_output[root = 0, c] -> M[9] : 8 <= c <= 9; compute_output[root = 0, c] -> M[1 + c] : 0 <= c <= 7 }
-  // Read schedule : { compute_output[root = 0, c] -> [1, c] : 0 <= c <= 9 }
-  // Write schedule: { get_input[root = 0, p] -> [0, p] : 0 <= p <= 9 }
-  // DD fold: { compute_output[root, c] -> (8 - c) : root = 0 and 0 <= c <= 7 }
-  auto value_M_get_input_0 = M.M_get_input_0_to_M_compute_output_4.peek(/* one reader or all rams */ (7 - c >= 0) ? ((8 - c)) : 0);
+  // Read schedule : { compute_output[root = 0, c] -> [2 + c, 1] : 0 <= c <= 9 }
+  // Write schedule: { get_input[root = 0, p] -> [p, 0] : 0 <= p <= 9 }
+  // DD fold: { compute_output[root, c] -> 1 : root = 0 and 0 <= c <= 7 }
+  auto value_M_get_input_0 = M.M_get_input_0_merged_banks_2.peek(/* Needs general delay string */ (7 - c >= 0) ? (1) : 0);
   return value_M_get_input_0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " c = " << c  << endl;
@@ -123,10 +108,10 @@ inline hw_uint<32>  M_compute_output_5_select(M_cache& M, int root, int c) {
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // M_compute_output_5 read pattern: { compute_output[root = 0, c] -> M[9] : 7 <= c <= 9; compute_output[root = 0, c] -> M[2 + c] : 0 <= c <= 6 }
-  // Read schedule : { compute_output[root = 0, c] -> [1, c] : 0 <= c <= 9 }
-  // Write schedule: { get_input[root = 0, p] -> [0, p] : 0 <= p <= 9 }
-  // DD fold: { compute_output[root, c] -> (7 - c) : root = 0 and 0 <= c <= 6 }
-  auto value_M_get_input_0 = M.M_get_input_0_to_M_compute_output_5.peek(/* one reader or all rams */ (6 - c >= 0) ? ((7 - c)) : 0);
+  // Read schedule : { compute_output[root = 0, c] -> [2 + c, 1] : 0 <= c <= 9 }
+  // Write schedule: { get_input[root = 0, p] -> [p, 0] : 0 <= p <= 9 }
+  // DD fold: {  }
+  auto value_M_get_input_0 = M.M_get_input_0_merged_banks_2.peek_0();
   return value_M_get_input_0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " c = " << c  << endl;
@@ -209,11 +194,11 @@ void conv_1d_bc(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in
 #endif // __VIVADO_SYNTH__
 
   for (int epoch = 0; epoch < num_epochs; epoch++) {
-	{
-	  for (int c1 = 0; c1 <= 9; c1 += 1)
-	get_input(in, M, 0, c1);
-	  for (int c1 = 0; c1 <= 9; c1 += 1)
-	compute_output(M, out, 0, c1);
+	for (int c0 = 0; c0 <= 11; c0 += 1) {
+	  if (c0 <= 9)
+	get_input(in, M, 0, c0);
+	  if (c0 >= 2)
+	compute_output(M, out, 0, c0 - 2);
 	}
 	
   }

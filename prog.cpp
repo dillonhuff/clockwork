@@ -768,6 +768,7 @@ void generate_op_code(map<string, UBuffer>& buffers, op* op) {
   }
  
   for (auto consumed : op->consume_locs_pair) {
+cout<<"prog.cpp consumelocspairrrrrrrrrrrrrrrrrrrrrrrrrrr"<<endl;
     decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
   }
 
