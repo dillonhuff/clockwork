@@ -9419,7 +9419,6 @@ void memory_tile_tests() {
   auto_vec_test();
   vec_test();
   agg_test();
-
 }
 
 int main(int argc, char** argv) {
