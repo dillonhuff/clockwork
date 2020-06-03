@@ -988,6 +988,12 @@ void generate_unoptimized_code(prog& prg);
 // and then emits HLS C++ code for the program
 void generate_optimized_code(prog& prg);
 
+std::set<pair<string, string> > edge_buffers(map<string, UBuffer>& buffers, prog& prg);
+
+std::set<pair<string, string> > outputs(map<string, UBuffer>& buffers, prog& prg);
+
+std::set<pair<string, string> > inputs(map<string, UBuffer>& buffers, prog& prg);
+
 // Variants on code generation functions
 void generate_app_code(CodegenOptions& options,
     map<string, UBuffer>& buffers,

@@ -14,6 +14,21 @@ void generate_coreir(CodegenOptions& options,
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", context->Named("coreir.clkIn")},
       {"reset", context->BitIn()}};
+  for (auto eb : edge_buffers(buffers, prg)) {
+    string out_rep = eb.first;
+    string out_bundle = eb.second;
+
+    UBuffer out_buf = map_find(out_rep, buffers);
+    //string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
+
+    int pixel_width = out_buf.port_widths;
+    int pix_per_burst =
+      out_buf.lanes_in_bundle(out_bundle);
+
+    ub_field.push_back(make_pair(out_bundle + "_en", context->BitIn()));
+    ub_field.push_back(make_pair(out_bundle, context->BitIn()->Arr(pixel_width*pix_per_burst)));
+  }
+
   //for (auto inpt: buf.get_in_ports()) {
     //ub_field.push_back(make_pair(inpt + "_en", context->BitIn()));
     //ub_field.push_back(make_pair(inpt, context->BitIn()->Arr(buf.port_widths)));
