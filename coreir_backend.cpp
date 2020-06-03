@@ -34,18 +34,19 @@ void generate_coreir(CodegenOptions& options,
     }
   }
 
-  //for (auto inpt: buf.get_in_ports()) {
-    //ub_field.push_back(make_pair(inpt + "_en", context->BitIn()));
-    //ub_field.push_back(make_pair(inpt, context->BitIn()->Arr(buf.port_widths)));
-  //}
-  //for (auto outpt: buf.get_out_ports()) {
-    //ub_field.push_back(make_pair(outpt + "_valid", context->Bit()));
-    //ub_field.push_back(make_pair(outpt, context->Bit()->Arr(buf.port_widths)));
-  //}
-
   CoreIR::RecordType* utp = context->Record(ub_field);
   auto ub = ns->newModuleDecl(prg.name, utp);
   auto def = ub->newModuleDef();
+
+  for (auto op : prg.all_ops()) {
+    vector<pair<string, CoreIR::Type*> >
+      ub_field{{"clk", context->Named("coreir.clkIn")},
+        {"reset", context->BitIn()}};
+    CoreIR::RecordType* utp = context->Record(ub_field);
+    auto compute_unit =
+      ns->newModuleDecl(op->name, utp);
+    def->addInstance(op->name, compute_unit);
+  }
 
   //buf.generate_coreir(options, def);
 
