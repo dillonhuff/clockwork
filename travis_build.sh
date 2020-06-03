@@ -3,7 +3,7 @@ source ./user_settings/travis_settings.sh
 if [ $? -eq 0 ]; then
   echo "Cmd: " $1
   echo "LD_LIBRARY_PATH:"$LD_LIBRARY_PATH
-  ./clockwork $1
+  ./clockwork "travis-tests"
 else
   echo "Build FAILED"
   exit 1;

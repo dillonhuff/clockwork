@@ -9351,6 +9351,36 @@ void compute_unit_with_index_variables_test() {
 
 }
 
+void travis_tests() {
+  reduce_1d_test();
+  reduce_2d_test();
+  heat_3d_test();
+  upsample2d_test();
+  halide_dnn_test();
+  compute_unit_with_index_variables_test();
+
+  exposure_fusion();
+  
+  downsample2d_test();
+  up_stencil_down_test();
+  blur_and_downsample_test();
+  downsample_and_blur_test();
+  upsample_stencil_2d_test();
+  upsample_stencil_1d_test();
+  updown_merge_test();
+  harris_unrolled_test();
+  mismatched_stencil_test();
+  sobel_test();
+  upsample_reduce_test();
+  pointwise_test();
+  stencil_3d_test();
+  soda_blur_test();
+  two_in_window_test();
+  two_in_conv2d_test();
+  gaussian_pyramid_test();
+  warp_and_upsample_test();
+}
+
 void application_tests() {
   reduce_1d_test();
   reduce_2d_test();
@@ -9500,6 +9530,11 @@ int main(int argc, char** argv) {
   if (argc > 1) {
     assert(argc == 2);
     string cmd = argv[1];
+
+    if (cmd == "travis-tests") {
+      travis_tests();
+      return 0;
+    }
 
     if (cmd == "program_representation") {
       prog prg = conv_1d();
