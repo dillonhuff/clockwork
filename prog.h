@@ -247,7 +247,7 @@ struct ir_node {
   }
 
   vector<pair<string, vector<pair<string, string>>>> consumes_pair() const {
-    return consume_locs_pair;
+   return consume_locs_pair;
   }
 
   vector<string> produces() const {
@@ -837,7 +837,7 @@ struct prog {
       string ivar_str = sep_list(vars, "[", "]", ", ");
       auto dom = map_find(op, doms);
       string result_buf;
-      //TODO: fix this hack if their are multiple consumer
+      //TODO: fix this hack if there are multiple consumer
       for (auto p : op->consumes()) {
         result_buf= take_until(p, "[");
         cout << "Consumers :" << p << endl;
@@ -897,7 +897,7 @@ struct prog {
      for (auto top_pair : op->consumes_pair()) {
       string cond = "{ ";
         for (auto sec_pair : top_pair.second) {
-          cond = cond + string(op->name + ivar_str + " -> M[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+          cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
         }
         cond = cond.substr(0, cond.length() - 2);
         cond = cond + string(" }");
@@ -934,14 +934,13 @@ struct prog {
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
       
       // for boundary condition expressions
-      for (auto top_pair : op->consumes_pair()) {
-      string cond = "{ ";
+      for (auto top_pair : op->consumes_pair()) {     
+        string cond = "{ ";
         for (auto sec_pair : top_pair.second) {
-          cond = cond + string(op->name + ivar_str + " -> M[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+          cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
         }
         cond = cond.substr(0, cond.length() - 2);
         cond = cond + string(" }");
-     
         umap* vmap = its(isl_union_map_read_from_str(ctx, cond.c_str()), to_uset(dom));
         pmap = unn(pmap, vmap);
      }

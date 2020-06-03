@@ -2915,9 +2915,10 @@ prog conv_2d_bc() {
     // Need to load 9 values
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
-        string c = "min(lc + " + to_string(i) + ", 63)";
-        string r = "min(lr + " + to_string(j) + ", 63)";
-        rd->add_load("I", c + ", " + r);
+	rd->add_load("I", {{"0 <= lc < " + to_string(63 - i) + " and 0 <= lr < " + to_string(63 - j), "lc + " + to_string(i) + ", lr + " + to_string(j)}, 
+			  {"lc >= " + to_string(63 - i) + " and lr >= " + to_string(63 - j), "63, 63"},
+			  {"0 <= lc < " + to_string(63 - i) + " and lr >= " + to_string(63 - j), "lc + " + to_string(i) + ", 63"}, 
+			  {"lc >= " + to_string(63 - i) +  " and 0 <= lr < " + to_string(63 - j), "63, lr + " + to_string(j)}});
       }
     }
     rd->add_function("conv_3_3");
@@ -9585,6 +9586,11 @@ int main(int argc, char** argv) {
     if (cmd == "conv_2d") {
       prog prg = conv_2d();
       aha_talk_print_info(prg);
+      return 0;
+    }
+
+    if (cmd == "conv_2d_bc_test") {
+      conv_2d_bc_test();
       return 0;
     }
 

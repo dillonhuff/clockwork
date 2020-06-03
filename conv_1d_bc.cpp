@@ -213,8 +213,6 @@ void conv_1d_bc(HWStream<hw_uint<32> >& /* no bundle get_args num ports = 1 */in
   conv_1d_bc(in, out, 1);
 }
 #ifdef __VIVADO_SYNTH__
-#include "conv_1d_bc.h"
-
 const int get_input_read_num_transfers = 0;
 const int compute_output_write_num_transfers = 0;
 

@@ -890,7 +890,7 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
 
       string cond = "{ ";
       for (auto sec_pair : consumed.second) {
-        cond = cond + string(prg.op_iter(op) + " -> M[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+        cond = cond + string(prg.op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
       }
       cond = cond.substr(0, cond.length() - 2);
       cond = cond + string(" }");
