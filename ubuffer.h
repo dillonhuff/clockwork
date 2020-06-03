@@ -64,7 +64,7 @@ struct bank {
 
   //method to extract box from data_domain
   Box extract_layout() {
-    cout << "extracting box from " << str(rddom) << endl;
+    //cout << "extracting box from " << str(rddom) << endl;
     auto min_pt =
       parse_pt(sample(lexmin(rddom)));
     auto max_pt =
@@ -75,9 +75,9 @@ struct bank {
     Box b;
     for (size_t i = 0; i < min_pt.size(); i++) {
       b.intervals.push_back({min_pt.at(i), max_pt.at(i)});
-      cout << "min: " << min_pt.at(i) << ", max: " << max_pt.at(i) << endl;
+      //cout << "min: " << min_pt.at(i) << ", max: " << max_pt.at(i) << endl;
     }
-    cout << tab(1) << "result = " << b << endl;
+    //cout << tab(1) << "result = " << b << endl;
     return b;
   }
 
@@ -1182,8 +1182,8 @@ class UBuffer {
         auto io = isIn.at(pt_name)? "input" : "output";
         isl_map* access = to_map(access_map.at(pt_name));
         isl_set* dm = domain.at(pt_name);
-        cout << "\tAdding access pattern for " << io  <<" port: " << pt_name << "in buf: " << this->name <<  endl;
-        cout << "\top name :" << op_name << endl;
+        //cout << "\tAdding access pattern for " << io  <<" port: " << pt_name << "in buf: " << this->name <<  endl;
+        //cout << "\top name :" << op_name << endl;
         AccessPattern acc_p(buf_name, op_name);
         acc_p.initial_access_mat(access, dm, ctx);
         access_pattern[pt_name] = acc_p;
@@ -1295,7 +1295,7 @@ class UBuffer {
     string get_bundle(const std::string& port) const {
       for (auto b : port_bundles) {
         for (auto bp : b.second) {
-          cout << "Trying bundle: " << bp << endl;
+          //cout << "Trying bundle: " << bp << endl;
           if (bp == port) {
             return b.first;
           }
@@ -1357,7 +1357,7 @@ class UBuffer {
         }
         string vars = sep_list(addr_var, "[", "]", ",");
         isl_map* buf_map = isl_map_read_from_str(ctx, string("{" + name + vars + " -> " + new_buf_name + vars + "}").c_str());
-        cout <<"origin: " << str(origin_map) <<", transform: " << str(buf_map) << endl;
+        //cout <<"origin: " << str(origin_map) <<", transform: " << str(buf_map) << endl;
         return to_map(dot(origin_map, buf_map));
     }
 

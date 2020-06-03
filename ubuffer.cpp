@@ -555,7 +555,6 @@ bool is_optimizable_constant_dd(const string& inpt, const string& outpt, UBuffer
   auto pieces = get_pieces(qpd);
   uset* pieces_dom = isl_union_set_read_from_str(ctx(qpd), "{}");
   for (auto p : pieces) {
-    //cout << "// " << str(p.first) << " -> " << str(p.second) << endl;
     auto pp = isl_pw_qpolynomial_intersect_domain(isl_pw_qpolynomial_from_qpolynomial(cpy(p.second)), cpy(p.first));
     pieces_dom = unn(pieces_dom, to_uset(p.first));
   }
@@ -590,7 +589,7 @@ selector generate_select_decl(CodegenOptions& options, std::ostream& out, const 
   out << sep_list(dim_decls, "", "", ", ");
 
   out << ") {" << endl;
-  cout << "Created dim decls" << endl;
+  //cout << "Created dim decls" << endl;
   ignore_inter_deps(out, buf.name);
 
   return sel;
@@ -687,7 +686,6 @@ selector generate_select(CodegenOptions& options, std::ostream& out, const strin
 
   map<string, string> in_ports_to_conditions;
 
-  //cout << possible_ports.size() << " possible ports for " << outpt << " on buffer: " << endl << buf << endl;
   for (auto inpt : possible_ports) {
     auto write_ops =
       domain(buf.access_map.at(outpt));
@@ -710,10 +708,7 @@ selector generate_select(CodegenOptions& options, std::ostream& out, const strin
     string peeked_val = delay_string(options, out, inpt, outpt, buf);
     //extract_box(range(buf.access_map.at(outpt)));
     string access_val = buf.generate_linearize_ram_addr(outpt);
-    //cout << "Get ram string: " << access_val << endl;
     buf.get_ram_address(outpt);
-    //cout << "Get delay string: " << peeked_val << endl;
-    //cout << "Corresponding access map: " << str(buf.access_map.at(outpt)) << endl;
     sel.bank_conditions.push_back("1");
     sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, inpt));
 
@@ -733,10 +728,8 @@ selector generate_select(CodegenOptions& options, std::ostream& out, const strin
     }
   }
 
-  //cout << "Generating debug assertion" << endl;
   select_debug_assertions(options, out, outpt, buf);
   out << "}" << endl << endl;
-  //cout << "Finished debug assertion" << endl;
 
   return sel;
 }
@@ -762,7 +755,6 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
         string dn = "d" + to_string(i);
         auto new_id = id(buf.ctx, dn);
         assert(new_id != nullptr);
-        //cout << "setting id: " << str(new_id) << endl;
         s = isl_space_set_dim_id(s, isl_dim_set, i, new_id);
       }
       dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
@@ -835,7 +827,6 @@ void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) 
     }
     out << "}" << endl << endl;
   }
-  //cout << "Finished bundle..." << endl;
 }
 
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
@@ -844,7 +835,6 @@ void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf)
   for (auto outpt : buf.get_out_ports()) {
     buf.selectors[outpt] = generate_select(options, out, outpt, buf);
   }
-  //cout << "\tFinished generate slection" << endl;
 
   generate_bundles(options, out, buf);
 }
@@ -1282,11 +1272,11 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
   for (auto inpt : get_in_ports()) {
     // try to turn the banks for this inpt into one big linebuffer
     vector<stack_bank> receivers = receiver_banks(inpt);
-    cout << "Receiver banks for " << inpt << endl;
+    //cout << "Receiver banks for " << inpt << endl;
     vector<stack_bank> mergeable;
     for (auto bnk : receivers) {
-      cout << tab(1) << bnk.name << ", # read offsets: " << bnk.read_delays.size() << endl;
-      cout << tab(2) << "# receivers: " << receivers.size() << endl;
+      //cout << tab(1) << bnk.name << ", # read offsets: " << bnk.read_delays.size() << endl;
+      //cout << tab(2) << "# receivers: " << receivers.size() << endl;
 
       if (options.debug_options.expect_all_linebuffers) {
         //assert(receivers.size() == 1 || bnk.read_delays.size() == 2);
@@ -1631,9 +1621,7 @@ Box UBuffer::extract_addr_box(uset* rddom, vector<size_t> sequence) {
   for (size_t i = 0; i < min_pt.size(); i++) {
     size_t loc = sequence.at(i);
     b.intervals[loc] = {min_pt.at(i), max_pt.at(i)};
-    //cout << "min: " << min_pt.at(i) << ", max: " << max_pt.at(i) << endl;
   }
-  //cout << tab(1) << "result = " << b << endl;
   return b;
 }
 
