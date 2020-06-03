@@ -1167,7 +1167,7 @@ void UBuffer::merge_bank(CodegenOptions& options, string inpt, vector<stack_bank
     merged.num_readers = mergeable.size();
     merged.maxdelay = -1;
     for (auto m : mergeable) {
-  cout << "merge: " << m.name << endl;
+      cout << "merge: " << m.name << endl;
       //merged.layout = unn(merged.layout, m.layout);
       merged.rddom = unn(merged.rddom, m.rddom);
       if (m.maxdelay > merged.maxdelay) {
@@ -1269,33 +1269,37 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
     }
   }
 
+  int counter = 0;
+
   for (auto inpt : get_in_ports()) {
     // try to turn the banks for this inpt into one big linebuffer
     vector<stack_bank> receivers = receiver_banks(inpt);
     cout << "Receiver banks for " << inpt << endl;
     vector<stack_bank> mergeable;
+
     for (auto bnk : receivers) {
 cout<<"============================================"<<endl;
       cout << tab(1) << bnk.name << ", # read offsets: " << bnk.read_delays.size() << endl;
       cout << tab(2) << "# receivers: " << receivers.size() << endl;
 
       for (int i = 0; i < bnk.read_delays.size(); i++){
-         cout<<bnk.read_delays[i]<<endl;
+         cout<<"read delay: " << bnk.read_delays[i]<<endl;
       }
 
       if (bnk.read_delays.size() != 2) {
+ 	cout << "splitting banks " << endl;
         // splitting banks
         stack_bank bank1, bank2;
         bank1.tp = BANK_TYPE_STACK;
         bank1.rddom = isl_union_set_read_from_str(ctx, "{}");
-        bank1.name = inpt + "_split_banks1";
+        bank1.name = inpt + "_split_banks1_" + to_string(counter);
         // bank1.pt_type_string = bank1.at(0).pt_type_string;
         bank1.num_readers = mergeable.size();
         bank1.maxdelay = bnk.maxdelay;
 
         bank2.tp = BANK_TYPE_STACK;
         bank2.rddom = isl_union_set_read_from_str(ctx, "{}");
-        bank2.name = inpt + "_split_banks2";
+        bank2.name = inpt + "_split_banks2_" + to_string(counter);
         // bank2.pt_type_string = bank2.at(0).pt_type_string;
         bank2.num_readers = mergeable.size();
         bank2.maxdelay = bnk.maxdelay;
@@ -1308,6 +1312,8 @@ cout<<"============================================"<<endl;
         }
 
         mergeable.push_back(bank1);
+	counter++;
+
       } else {
              
         if (options.debug_options.expect_all_linebuffers) {
@@ -1322,6 +1328,8 @@ cout<<"============================================"<<endl;
     }
 
     if (mergeable.size() > 0) {
+cout << "mergeable size is greater than 0" << endl;
+cout << "inpt "<<inpt << endl;
         merge_bank(options, inpt, mergeable);
         auto banks = get_banks();
         cout << "finished create bank!" << endl;
