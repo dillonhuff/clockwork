@@ -1406,11 +1406,6 @@ compute_kernel generate_compute_op(
       conv_out << endl;
       open_debug_scope(conv_out);
 
-      //conv_out << tab(1) << "*global_debug_handle << \"" << op->name << "_" << in_buffer << ",\" << ";
-      //for (auto v : kernel.iteration_variables) {
-        //conv_out << v << "<< \",\" << ";
-      //}
-      //conv_out << " " << value_name << " << endl;" << endl;
       close_debug_scope(conv_out);
       conv_out << endl;
 

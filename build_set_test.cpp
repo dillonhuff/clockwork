@@ -1677,9 +1677,12 @@ void reaccess_test() {
   auto opt_sched = prg.optimized_schedule();
   auto schedmap = its(isl_schedule_get_map(opt_sched), prg.whole_iteration_domain());
   auto bufs = build_buffers(prg, schedmap);
+#ifdef COREIR
   CodegenOptions options;
   generate_coreir(options, bufs, prg, schedmap);
-  assert(false);
+#endif
+
+  //assert(false);
 
   //generate_optimized_code(prg);
   //assert(false);
