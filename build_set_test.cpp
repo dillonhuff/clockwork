@@ -9221,14 +9221,9 @@ void iccad_tests() {
 
   int index = 20;
   string istr = str(index);
-  exposure_fusion_iccad_apps("psef23");
 
   camera_pipeline_test("cp_noinit_" + istr);
   blur_xy_16_app_test("bxy_noinit_p2" + istr);
-  camera_pipeline_all_adds_only_denoise_demosaic_test("lcp_noinit_dd");
-  camera_pipeline_all_adds_linear_test("lcp_noinit");
-
-  camera_pipeline_all_adds_test("cp_add_20_noinit");
 
   harris16_test("hr" + istr);
   sobel_16_app_test("sbl" + istr);
