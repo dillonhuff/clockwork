@@ -5564,77 +5564,8 @@ void memtile_test() {
       Result res;
       app_dag[func] = {};
   }
-  //map<string, isl_map*> compute_maps;
-  //map<string, pair<isl_map*, string>> read_maps;
-  //for (auto cm : prg.producer_maps_new()) {
-      //compute_maps[cm.first] = inv(cm.second);
-      //cout << tab(1) << "Producer map: " << cm.first << "->" << str(cm.second) << endl;
-  //}
 
-  //for (auto cm : prg.consumer_maps_new()) {
-      //read_maps[cm.first->name] = cm.second;
-      //cout << tab(1) << "Consumer map: " << cm.first->name << "->" << str(cm.second.first) << ", read buffer = " << cm.second.second << endl;
-  //}
-
-  /*for (auto cm : prg.data_demands_maps()) {
-      app_dag[cm.first] = cm.second;
-      cout << tab(1) << "DATA demands map: " << cm.first<< "->" << str(app_dag[cm.first].srcs.at(0).needed) << endl;
-  }*/
-
-  //umap* compute_deps = rdmap(prg.ctx, "{}");
-
-  //for (auto f : sorted_functions) {
-        //assert(contains_key(f, read_maps));
-        //auto arg_pair = read_maps.at(f);
-
-        //string buffer_name = arg_pair.second;
-        //auto data_read = arg_pair.first;
-
-        ////first function no predcessor
-        //if (!contains_key(buffer_name, compute_maps))
-            //continue;
-
-        //isl_map* map_write = compute_maps.at(buffer_name);
-        //cout << tab(1) << "write map: " << str(map_write) << endl;
-
-        ////auto data_needed = to_map(arg.needed);
-
-        //cout << tab(1) << "read map: " << str(data_read) << endl;
-
-        //isl_map* st_dependency =
-            //dot(data_read, map_write);
-
-          //cout << "statement dependency: " << str(st_dependency) << endl;
-
-          //[>assert(contains_key(arg.name, compute_maps));
-          //isl_map* a_cm = compute_maps.at(arg.name);
-          //cout << "a_cm: " << str(a_cm) << endl;
-
-          //isl_map* comps_needed =
-            //dot(pixels_needed, a_cm);
-          //cout << "comps needed: " << str(comps_needed) << endl;*/
-          //isl_map* last_pix =
-            //lexmax(st_dependency);
-          //cout << "last comp needed: " << str(last_pix) << endl;
-          //compute_deps = unn(compute_deps, to_umap(inv(st_dependency)));
-          ////auto max = dim_max(st_dependency, i);
-          ////cout << "max needed in dim " << i << " = " << str(max) << endl;
-  //}
   {
-    //cout<<endl << "Compute dependency: " << str(compute_deps) << endl << endl;
-    //auto validity = cpy(unn(compute_deps, prg.relative_orders()));
-    //auto proximity = cpy(compute_deps);
-    //auto operations = prg.whole_iteration_domain();
-    ////cout << "operations: " << str(operations) << endl;
-    ////cout << "number of nodes in opteration graph: " << str(card(operations)) << endl;
-    //auto sched_opt_tree = isl_union_set_compute_schedule(operations, validity, proximity);
-    //auto sched_opt = isl_schedule_get_map(sched_opt_tree);
-    //sched_opt = its(sched_opt, prg.whole_iteration_domain());
-    //cout << codegen_c(sched_opt) << endl;
-    /*for (int i = ndims - 1; i >= 1; i--) {
-        schedule_dim(prg.ctx, op_boxes, i, schedules, sorted_functions, read_maps,  compute_maps);
-    }*/
-
     auto sched_opt =
       isl_schedule_get_map(prg.optimized_schedule());
     //Start generate the config
@@ -5649,26 +5580,6 @@ void memtile_test() {
     compare_to_gold("lake_memtile_config_conv33.csv");
   }
 
-  //int pos = 0;
-  //cout << "Sorted pipeline..." << endl;
-  //for (auto f : sorted_functions) {
-    //cout << "\t" << f << endl;
-    //schedules[f].push_back(qexpr(pos));
-    //pos++;
-  //}
-
-  //auto sched_opt = its(to_umap(prg.ctx, schedules, sorted_functions, ""), prg.whole_iteration_domain());
-  /*auto sched_opt = to_umap(prg.ctx, schedules, sorted_functions, "");
-
-  //auto sched_opt = its(rdmap(prg.ctx, "{in2agg[root, po, pi] -> [root, po, pi, 0]; agg2sram[root, qo, qi] -> [root, qo, 3+4*qi, 1]}"), prg.whole_iteration_domain());
-  cout << "Sched map:\n " << str(sched_opt) << endl;
-  cout << "Iter Domain:\n " << str(prg.whole_iteration_domain()) << endl;
-  sched_opt = its(sched_opt, prg.whole_iteration_domain());
-  cout << "After opt Sched map:\n " << str(sched_opt) << endl;*/
-  //auto sched_opt = isl_schedule_get_map(prg.optimized_schedule());
-  //sched_opt = its(sched_opt, prg.whole_iteration_domain());
-  //cout << codegen_c(sched_opt) << endl;
-  //aha_talk_print_info(prg);
 }
 
 Window win(const std::string& name, const std::vector<vector<int > >& offsets) {
