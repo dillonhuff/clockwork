@@ -9513,7 +9513,7 @@ void application_tests() {
 void memory_tile_tests() {
   //shift_reg_test();
   reaccess_test();
-  //assert(false);
+  assert(false);
 
   //new_bankmerge_tests();
   memtile_test();

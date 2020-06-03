@@ -43,10 +43,38 @@ void generate_coreir(CodegenOptions& options,
     vector<pair<string, CoreIR::Type*> >
       ub_field{{"clk", context->Named("coreir.clkIn")},
         {"reset", context->BitIn()}};
+    for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+      string buf_name = bundle.first;
+      string bundle_name = bundle.second;
+      auto buf = map_find(buf_name, buffers);
+      int bundle_width = buf.port_bundle_width(bundle_name);
+
+      cout << "Bundle = " << bundle.second << endl;
+      cout << "Possible bundles..." << endl;
+      for (auto bndl : buf.port_bundles) {
+        cout << tab(1) << bndl.first << endl;
+      }
+      assert(buf.is_input_bundle(bundle.second));
+      ub_field.push_back(make_pair(bundle_name + "_en", context->BitIn()));
+      ub_field.push_back(make_pair(bundle_name, context->BitIn()->Arr(bundle_width)));
+    }
+
+    for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
+      string buf_name = bundle.first;
+      string bundle_name = bundle.second;
+      auto buf = map_find(buf_name, buffers);
+      int bundle_width = buf.port_bundle_width(bundle_name);
+
+      assert(buf.is_output_bundle(bundle.second));
+      ub_field.push_back(make_pair(bundle_name + "_valid", context->Bit()));
+      ub_field.push_back(make_pair(bundle_name, context->Bit()->Arr(bundle_width)));
+    }
+
     CoreIR::RecordType* utp = context->Record(ub_field);
     auto compute_unit =
       ns->newModuleDecl(op->name, utp);
     def->addInstance(op->name, compute_unit);
+
   }
 
   for (auto& buf : buffers) {

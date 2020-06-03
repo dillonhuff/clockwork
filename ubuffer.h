@@ -719,6 +719,32 @@ class UBuffer {
         return ret;
     }
 
+    bool is_output_bundle(const std::string& bundle_name) const {
+
+      if (!(contains_key(bundle_name, port_bundles))) {
+        cout << "No bundle named " << bundle_name << endl;
+        cout << "Available bundles..." << endl;
+        for (auto b : port_bundles) {
+          cout << tab(1) << b.first << endl;
+        }
+      }
+      assert(contains_key(bundle_name, port_bundles));
+      return is_out_pt(pick(map_find(bundle_name, port_bundles)));
+    }
+
+    bool is_input_bundle(const std::string& bundle_name) const {
+
+      if (!(contains_key(bundle_name, port_bundles))) {
+        cout << "No bundle named " << bundle_name << endl;
+        cout << "Available bundles..." << endl;
+        for (auto b : port_bundles) {
+          cout << tab(1) << b.first << endl;
+        }
+      }
+      assert(contains_key(bundle_name, port_bundles));
+      return is_in_pt(pick(map_find(bundle_name, port_bundles)));
+    }
+
     queue<int> get_rd_data_nd_addr(isl_set* op) {
         queue<int> ret;
         auto rd_data_set = get_out_data_set(op);
@@ -1154,6 +1180,11 @@ class UBuffer {
         s = unn(s, access_map.at(pt));
       }
       return s;
+    }
+
+    bool is_in_pt(const std::string& name) const {
+      cout << "Checking if " << name << " is an input..." << endl;
+      return isIn.at(name);
     }
 
     bool is_out_pt(const std::string& name) const {

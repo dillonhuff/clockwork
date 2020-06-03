@@ -1304,6 +1304,32 @@ vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, pro
   return buf_srcs;
 }
 
+vector<string> outgoing_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg) {
+  vector<string> incoming;
+  std::set<string> done;
+  for (auto p : op->produce_locs) {
+    auto buf_name = p.first;
+    if (!elem(buf_name, done)) {
+      incoming.push_back(buf_name);
+      done.insert(buf_name);
+    }
+  }
+  return incoming;
+}
+
+vector<string> incoming_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg) {
+  vector<string> incoming;
+  std::set<string> done;
+  for (auto p : op->consume_locs) {
+    auto buf_name = p.first;
+    if (!elem(buf_name, done)) {
+      incoming.push_back(buf_name);
+      done.insert(buf_name);
+    }
+  }
+  return incoming;
+}
+
 vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& prg) {
   std::set<string> done;
   vector<string> buf_srcs;
@@ -1872,3 +1898,26 @@ void generate_unoptimized_code(prog& prg) {
   prg.name = old_name;
 }
 
+vector<pair<string, string> >
+outgoing_bundles(op* op,
+    map<string, UBuffer>& buffers,
+    prog& prg) {
+
+  vector<pair<string, string> > incoming;
+  for (auto b : outgoing_buffers(buffers, op, prg)) {
+    incoming.push_back({b, op->name + "_write"});
+  }
+  return incoming;
+}
+
+vector<pair<string, string> >
+incoming_bundles(op* op,
+    map<string, UBuffer>& buffers,
+    prog& prg) {
+
+  vector<pair<string, string> > incoming;
+  for (auto b : incoming_buffers(buffers, op, prg)) {
+    incoming.push_back({b, op->name + "_read"});
+  }
+  return incoming;
+}
