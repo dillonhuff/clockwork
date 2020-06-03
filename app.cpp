@@ -24,7 +24,6 @@ struct ilp_builder {
   }
 
   isl_val* value(const std::string& var) {
-    //cout << "Getting value for: " << var << endl;
     assert(solved);
     assert(solution_point != nullptr);
     assert(contains_key(var, variable_positions));
@@ -54,15 +53,12 @@ struct ilp_builder {
       }
     }
 
-    //cout << "Denoms..." << endl;
     isl_val* dn = isl_val_one(ctx);
     for (auto v : denoms) {
-      //cout << tab(1) << str(v) << endl;
       dn = mul(dn, v);
     }
     assert(isl_val_is_int(dn));
 
-    //cout << "Denom: " << str(dn) << endl;
     for (auto v : coeffs) {
       if (!contains_key(v.first, variable_positions)) {
         add_variable(v.first);
@@ -73,10 +69,7 @@ struct ilp_builder {
     isl_constraint_set_constant_val(c, mul(dn, constant));
 
     for (auto v : coeffs) {
-      //cout << "index = " << map_find(v.first, variable_positions) << endl;
       auto m = mul(dn, v.second);
-      //cout << "dn = " << str(dn) << endl;
-      //cout << "m  = " << str(m) << endl;
       assert(isl_val_is_int(m));
 
       isl_constraint_set_coefficient_val(c,
@@ -101,17 +94,13 @@ struct ilp_builder {
         isl_val* cn = mul(isl_val_negone(ctx), coeff.second);
         objective = isl_aff_set_coefficient_val(objective, isl_dim_in, index, cn);
       }
-      cout << "objective = " << str(objective) << endl;
-      cout << "max loc before solve: " << str(max_loc) << endl;
       isl_val* max = isl_basic_set_max_val(cpy(max_loc), objective);
-      cout << tab(1) << "obj max = " << str(max) << endl;
       values.push_back(max);
 
       auto max_loc_s =
         isl_aff_eq_basic_set(objective,
             aff_on_domain(get_local_space(s), max));
       max_loc = its(max_loc, max_loc_s);
-      cout << "max loc after solve: " << str(max_loc) << endl;
 
       assert(!empty(max_loc));
     }
@@ -129,25 +118,17 @@ struct ilp_builder {
 
   isl_val* minimize(const std::map<string, isl_val*>& obj) {
     isl_aff* objective = isl_aff_zero_on_domain(get_local_space(s));
-    cout << "Objective: " << str(objective) << endl;
     for (auto coeff : obj) {
-      cout << "Coeff: " << coeff.first << endl;
       int index = map_find(coeff.first, variable_positions);
       isl_val* cn = mul(isl_val_negone(ctx), coeff.second);
-      cout << "cn = " << str(cn) << endl;
       objective = isl_aff_set_coefficient_val(objective, isl_dim_in, index, cn);
-      cout << "objective: " << str(objective) << endl;
     }
-    cout << "objective: " << str(objective) << endl;
     isl_val* max = isl_basic_set_max_val(cpy(s), objective);
     isl_basic_set* max_loc =
       isl_aff_eq_basic_set(objective,
           aff_on_domain(get_local_space(s), max));
     solved = true;
-    cout << "max loc = " << str(max_loc) << endl;
-    cout << "s       = " << str(s) << endl;
     auto max_loc_pts = its(max_loc, s);
-    cout << "max pts = " << str(max_loc_pts) << endl;
 
     assert(!empty(max_loc_pts));
 
@@ -166,21 +147,16 @@ struct ilp_builder {
         auto dv = isl_val_get_den_val(v.second);
         assert(isl_val_is_pos(dv));
         denoms.push_back(dv);
-        //cout << tab(1) << "rational    : " << str(v.second) << endl;
       } else {
-        //cout << tab(1) << "non-rational: " << str(v.second) << endl;
       }
     }
 
-    //cout << "Denoms..." << endl;
     isl_val* dn = isl_val_one(ctx);
     for (auto v : denoms) {
-      //cout << tab(1) << str(v) << endl;
       dn = mul(dn, v);
     }
     //assert(isl_val_is_int(constant));
 
-    //cout << "Denom: " << str(dn) << endl;
     for (auto v : coeffs) {
       //assert(isl_val_is_int(v.second));
       if (!contains_key(v.first, variable_positions)) {
@@ -192,17 +168,12 @@ struct ilp_builder {
 
     isl_constraint* c = isl_constraint_alloc_equality(get_local_space(s));
     auto cv = mul(dn, constant);
-    //cout << "cv = " << str(cv) << endl;
-    //cout << "dn = " << str(dn) << endl;
     assert(isl_val_is_int(cv));
 
     isl_constraint_set_constant_val(c, cv);
 
     for (auto v : coeffs) {
-      //cout << "index = " << map_find(v.first, variable_positions) << endl;
       auto m = mul(dn, v.second);
-      //cout << "dn = " << str(dn) << endl;
-      //cout << "m = " << str(m) << endl;
       assert(isl_val_is_int(m));
       isl_constraint_set_coefficient_val(c,
           isl_dim_set,
@@ -266,25 +237,21 @@ template<typename T>
 sym_matrix<T> operator*(const sym_matrix<T>& a, const sym_matrix<T>& b) {
   assert(a.num_cols() == b.num_rows());
 
-  cout << "Multiplying..." << endl;
 
   sym_matrix<T> res(a.num_rows(), b.num_cols());
 
   for (int r = 0; r < a.num_rows(); r++) {
     for (int c = 0; c < b.num_cols(); c++) {
-      cout << "r = " << r << ", c = " << c << endl;
 
       // TODO: Generalize to other types
       res(r, c) = qexpr(0);
 
       for (int k = 0; k < a.num_cols(); k++) {
-        cout << "a(" << r << ", " << k << ") = " << a(r, k) << endl;
         res(r, c) = res(r, c) + a(r, k) * b(k, c);
       }
     }
   }
 
-  cout << "Done: " << endl << res << endl;
   return res;
 }
 
@@ -306,7 +273,6 @@ sym_matrix<T> operator-(const sym_matrix<T>& a, const sym_matrix<T>& b) {
 
 map<string, int> maximize(const std::vector<QConstraint>& constraints, QExpr& objective) {
 
-  cout << "All delay constraints..." << endl;
   vector<string> ds;
   for (auto c : constraints) {
     for (auto v : c.vars()) {
@@ -328,9 +294,7 @@ map<string, int> maximize(const std::vector<QConstraint>& constraints, QExpr& ob
 
   string varspx = sep_list(ds, "[", "]", ", ");
   auto* legal_delays = rdset(ctx, "{ " + sep_list(ds, "[", "]", ", ") + " }");
-  cout << "Creating intersection constraints" << endl;
   for (auto c : constraints) {
-    cout << "\tits with: " << c << endl;
     legal_delays = its(legal_delays, rdset(ctx, "{ " + varspx + " : " + isl_str(c) + " }"));
   }
 
@@ -341,29 +305,20 @@ map<string, int> maximize(const std::vector<QConstraint>& constraints, QExpr& ob
     sep_list(ds, "[", "]", ", ") + " -> " + 
     "[" + isl_str(objective) + "] }";
 
-  cout << "Aff str: " << aff_str << endl;
 
   auto obj_func =
     isl_aff_read_from_str(ctx, aff_str.c_str());
-
-  cout << "Objective: " << str(obj_func) << endl;
-  cout << "Legal values: " << str(legal_delays) << endl;
-  cout << "Legal value example point: " << str(isl_set_sample_point(cpy(legal_delays))) << endl;
 
   auto min_point =
     isl_set_max_val(cpy(legal_delays), obj_func);
   string mstring =
     str(min_point);
-  cout << "Max delays: " << mstring << endl;
   string os = aff_c;
   string mset = set_string(ds, os + " = " + mstring);
-  cout << "Max set: " << mset << endl;
   auto min_set = rdset(ctx, mset.c_str());
-  cout << "Max set parsed: " << str(min_set) << endl;
 
   auto mvs = its(min_set, legal_delays);
   string dp = str(isl_set_sample_point(mvs));
-  cout << "Max pt: " << dp << endl;
 
   vector<int> delay_coeffs =
     parse_pt(dp);
@@ -384,7 +339,6 @@ map<string, int> maximize(const std::vector<QConstraint>& constraints, QExpr& ob
 
 map<string, int> minimize(const std::vector<QConstraint>& constraints, QExpr& objective) {
 
-  cout << "All delay constraints..." << endl;
   vector<string> ds;
   for (auto c : constraints) {
     for (auto v : c.vars()) {
@@ -404,7 +358,6 @@ map<string, int> minimize(const std::vector<QConstraint>& constraints, QExpr& ob
 
   isl_ctx* ctx = isl_ctx_alloc();
 
-  cout << "# of variables: " << ds.size() << endl;
   string varspx = sep_list(ds, "[", "]", ", ");
   //auto* legal_delay_basic =
     //rd_basic_set(ctx, "{ " + sep_list(ds, "[", "]", ", ") + " }");
@@ -412,12 +365,10 @@ map<string, int> minimize(const std::vector<QConstraint>& constraints, QExpr& ob
     isl_set_read_from_str(ctx, ("{ " + sep_list(ds, "[", "]", ", ") + " }").c_str());
     //rdset(ctx, "{ " + sep_list(ds, "[", "]", ", ") + " }");
   for (auto c : constraints) {
-    cout << "\tits with: " << c << endl;
     QConstraint normed = c;
     normed.lhs = normed.lhs - normed.rhs;
 
     string lhs_str = isl_str(normed.lhs);
-    cout << tab(1) << lhs_str << endl;
     auto affc = rdaff(ctx,
         "{ " + varspx + " -> [" + lhs_str + "] }");
     isl_constraint* cc = nullptr;
@@ -442,28 +393,21 @@ map<string, int> minimize(const std::vector<QConstraint>& constraints, QExpr& ob
     sep_list(ds, "[", "]", ", ") + " -> " + 
     "[" + isl_str(objective) + "] }";
 
-  cout << "Aff str: " << aff_str << endl;
 
   auto obj_func =
     isl_aff_read_from_str(ctx, aff_str.c_str());
 
-  cout << "Objective: " << str(obj_func) << endl;
-  cout << "Legal values: " << str(legal_delays) << endl;
-  cout << "Legal value example point: " << str(isl_set_sample_point(legal_delays)) << endl;
 
   auto min_point =
     isl_set_min_val(cpy(legal_delays), obj_func);
   string mstring =
     str(min_point);
-  cout << "Min delays: " << mstring << endl;
   //string os = aff_c;
   string mset = set_string(ds, isl_str(objective) + " = " + mstring);
-  cout << "Min set: " << mset << endl;
   auto min_set = rdset(ctx, mset.c_str());
 
   auto mvs = its(min_set, legal_delays);
   string dp = str(isl_set_sample_point(mvs));
-  cout << "Min pt: " << dp << endl;
 
   vector<int> delay_coeffs =
     parse_pt(dp);
@@ -504,11 +448,6 @@ string str(isl_mat* const ineqmat) {
 
 umap* opt_schedule_dimension(vector<isl_map*> deps) {
 
-  cout << "Deps..." << endl;
-  for (auto d : deps) {
-    cout << tab(1) << str(d) << endl;
-  }
-
   int next_column = 0;
   map<string, int> space_var_offsets;
   map<isl_map*, int> div_offsets;
@@ -516,9 +455,7 @@ umap* opt_schedule_dimension(vector<isl_map*> deps) {
   int space_offset = 0;
   int total_divs = 0;
 
-  cout << "Iter stage dependencies..." << endl;
   for (auto m : deps) {
-    cout << tab(1) << str(m) << endl;
     vector<isl_basic_map*> basics = get_basic_maps(m);
     assert(basics.size() == 1);
 
@@ -543,8 +480,6 @@ umap* opt_schedule_dimension(vector<isl_map*> deps) {
         isl_dim_out,
         isl_dim_div,
         isl_dim_param);
-    cout << "Eq Rows: " << isl_mat_rows(eqmat) << endl;
-    cout << "Eq Cols: " << isl_mat_cols(eqmat) << endl;
 
     total_constraints += 2*isl_mat_rows(eqmat);
 
@@ -554,22 +489,20 @@ umap* opt_schedule_dimension(vector<isl_map*> deps) {
         isl_dim_out,
         isl_dim_div,
         isl_dim_param);
-    cout << "Ineq Rows: " << isl_mat_rows(ineqmat) << endl;
-    cout << "Ineq Cols: " << isl_mat_cols(ineqmat) << endl;
 
     assert(isl_mat_cols(ineqmat) == isl_mat_cols(eqmat));
 
     total_constraints += isl_mat_rows(ineqmat);
 
-    for (int r = 0; r < isl_mat_rows(ineqmat); r++) {
-      for (int c = 0; c < isl_mat_cols(ineqmat); c++) {
-        cout << str(isl_mat_get_element_val(ineqmat, r, c)) << " ";
-      }
-      cout << endl;
-    }
+    //for (int r = 0; r < isl_mat_rows(ineqmat); r++) {
+      //for (int c = 0; c < isl_mat_cols(ineqmat); c++) {
+        //cout << str(isl_mat_get_element_val(ineqmat, r, c)) << " ";
+      //}
+      //cout << endl;
+    //}
 
-    cout << endl << endl;
-  }
+    //cout << endl << endl;
+  //}
 
   int num_dependence_edges = deps.size();
   int num_constraints = total_constraints;
@@ -605,13 +538,6 @@ umap* opt_schedule_dimension(vector<isl_map*> deps) {
   sym_matrix<QExpr> A(num_constraints, num_spaces + num_divs);
   sym_matrix<QExpr> b(num_constraints, 1);
 
-  cout << "S..." << S.num_rows() << ", " << S.num_cols() << endl;
-  cout << S << endl << endl;
-
-  cout << "L..." << L.num_rows() << ", " << L.num_cols() << endl;
-  cout << L << endl << endl;
-
-  cout << "A..." << A.num_rows() << ", " << A.num_cols() << endl;
   int constraints_entered = 0;
   for (auto dr : edge_rows) {
     isl_map* dep_edge = dr.first;
@@ -627,8 +553,6 @@ umap* opt_schedule_dimension(vector<isl_map*> deps) {
         isl_dim_out,
         isl_dim_div,
         isl_dim_param);
-    cout << "Eq Rows: " << isl_mat_rows(eqmat) << endl;
-    cout << "Eq Cols: " << isl_mat_cols(eqmat) << endl;
 
     assert(isl_mat_cols(eqmat) == 3);
 
@@ -665,8 +589,6 @@ umap* opt_schedule_dimension(vector<isl_map*> deps) {
         isl_dim_out,
         isl_dim_div,
         isl_dim_param);
-    cout << "InEq Rows: " << isl_mat_rows(ineqmat) << endl;
-    cout << "InEq Cols: " << isl_mat_cols(ineqmat) << endl;
 
     assert(isl_mat_cols(ineqmat) == 3);
 
@@ -687,11 +609,8 @@ umap* opt_schedule_dimension(vector<isl_map*> deps) {
     }
   }
 
-  cout << "Constraints entered: " << constraints_entered << endl;
-  cout << "Total constraints  : " << total_constraints << endl;
   assert(constraints_entered == total_constraints);
 
-  cout << A << endl << endl;
 
   sym_matrix<QExpr> system =
     S - L*A;
@@ -710,12 +629,8 @@ umap* opt_schedule_dimension(vector<isl_map*> deps) {
       }
     }
   }
-  cout << "# of vars: " << vars.size() << endl;
-  cout << "system(" << system.num_rows() << ", " << system.num_cols() << ")" << endl;
-  cout << system << endl;
   assert(false);
 
-  cout << "Scheduling system..." << endl;
   vector<QConstraint> cs;
   for (int r = 0; r < L.num_rows(); r++) {
     for (int c = 0; c < L.num_cols(); c++) {
@@ -740,9 +655,7 @@ umap* opt_schedule_dimension(vector<isl_map*> deps) {
   sym_matrix<QExpr> d(num_dependence_edges, 1);
   sym_matrix<QExpr> const_L(num_dependence_edges, num_constraints);
 
-  cout << "Result: " << endl;
   for (auto r : result) {
-    cout << tab(1) << r.first << " = " << r.second << endl;
     vector<string> strs = split_at(r.first, "_");
     if (strs.at(0) == "L") {
       assert(strs.size() == 3);
@@ -763,27 +676,12 @@ umap* opt_schedule_dimension(vector<isl_map*> deps) {
   }
 
 
-  cout << "Delays..." << endl;
-  cout << d << endl;
 
-  cout << "B values..." << endl;
-  cout << b << endl;
-
-  cout << "l values..." << endl;
-  cout << l << endl;
-
-  cout << "L values..." << endl;
-  cout << const_L << endl;
 
   sym_matrix<QExpr> delay_system =
     d - const_L*b - l;
 
-  cout << "Delay system..." << endl;
-  cout << delay_system << endl;
-
-
   {
-    cout << "Scheduling system..." << endl;
 
     vector<QConstraint> cs;
     for (int r = 0; r < delay_system.num_rows(); r++) {
@@ -794,24 +692,18 @@ umap* opt_schedule_dimension(vector<isl_map*> deps) {
 
     for (int r = 0; r < l.num_rows(); r++) {
       for (int c = 0; c < l.num_cols(); c++) {
-        cout << "Getting l " << r << ", " << c << endl;
         cs.push_back(geq(l(r, c), qexpr(0)));
       }
     }
 
-    cout << "Setting delay var limits" << endl;
     for (auto d : deps) {
-      cout << "D = " << str(d) << endl;
       auto r = range_name(d);
-      cout << "r = " << r << endl;
       auto c = domain_name(d);
-      cout << "c = " << c << endl;
 
       cs.push_back(geq(delayvar(r), qexpr(0)));
       cs.push_back(geq(delayvar(c), qexpr(0)));
     }
 
-    cout << "creating objective" << endl;
 
     QExpr objective = qexpr(0);
     for (int r = 0; r < d.num_rows(); r++) {
@@ -819,15 +711,6 @@ umap* opt_schedule_dimension(vector<isl_map*> deps) {
     }
 
     map<string, int> result = minimize(cs, objective);
-    cout << "####### Delay result" << endl;
-    for (auto r : result) {
-      cout << tab(1) << r.first << " = " << r.second << endl;
-    }
-    cout << endl;
-    cout << "Rate result" << endl;
-    for (auto r : rate_result) {
-      cout << tab(1) << r.first << " = " << r.second << endl;
-    }
   }
 
   //assert(false);
@@ -840,10 +723,6 @@ extract_div_free_linear_rational_approximation(isl_aff* aff_bound) {
   int in_dims = num_in_dims(aff_bound);
   int out_dims = num_out_dims(aff_bound);
   int div_dims = num_div_dims(aff_bound);
-
-  //cout << "in_dims  = " << in_dims << endl;
-  //cout << "out_dims = " << out_dims << endl;
-  //cout << "div_dims = " << div_dims << endl;
 
   assert(in_dims == 1);
   assert(out_dims == 1);
@@ -931,27 +810,25 @@ extract_schedule_params(vector<isl_map*>& deps) {
 
   vector<isl_map*> consumed_data;
   for (auto d : deps) {
-    cout << tab(1) << str(d) << endl;
     consumed_data.push_back(inv(d));
   }
 
-  cout << "Consumed data..." << endl;
   map<isl_map*, vector<pair<isl_val*, isl_val*> > > schedule_params;
   for (auto c : consumed_data) {
     auto lm = isl_map_lexmax_pw_multi_aff(cpy(c));
-    cout << tab(1) << str(c) << endl;
-    cout << tab(2) << "lexmax: " << str(lm) << endl;
+    //cout << tab(1) << str(c) << endl;
+    //cout << tab(2) << "lexmax: " << str(lm) << endl;
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
       get_pieces(lm);
     //assert(pieces.size() <= 1);
     for (auto piece : pieces) {
       isl_multi_aff* bound = piece.second;
-      cout << "bound: " << str(bound) << endl;
+      //cout << "bound: " << str(bound) << endl;
       assert(get_size(bound) == 1);
       isl_aff* aff_bound =
         isl_multi_aff_get_aff(bound, 0);
-      cout << tab(2) << "affine upper bound on data needed: " << str(aff_bound) << endl;
-      cout << tab(3) << "domain of bound: " << str(pieces.at(0).first) << endl;
+      //cout << tab(2) << "affine upper bound on data needed: " << str(aff_bound) << endl;
+      //cout << tab(3) << "domain of bound: " << str(pieces.at(0).first) << endl;
       pair<isl_val*, isl_val*> kb =
         extract_linear_rational_approximation(aff_bound);
       schedule_params[c].push_back(kb);
@@ -993,12 +870,12 @@ map<string, isl_val*> compute_qfactors(map<isl_map*, vector<pair<isl_val*, isl_v
     }
   }
 
-  cout << "ILP Problem: " << str(ilp.s) << endl;
+  //cout << "ILP Problem: " << str(ilp.s) << endl;
 
   auto pt = sample(ilp.s);
   auto opt_pt = ilp.minimize(obj);
-  cout << tab(1) << "legal point  : " << str(pt) << endl;
-  cout << tab(1) << "minimal point: " << str(opt_pt) << endl;
+  //cout << tab(1) << "legal point  : " << str(pt) << endl;
+  //cout << tab(1) << "minimal point: " << str(opt_pt) << endl;
 
   // Compute delays
   assert(ilp.solved);
@@ -1042,15 +919,15 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     vector<isl_set*> domains,
     vector<isl_map*> deps,
     map<string, vector<string> >& high_bandwidth_deps) {
-  cout << "Domains..." << endl;
-  for (auto d : domains) {
-    cout << tab(1) << str(d) << endl;
-  }
-  cout << endl;
-  cout << "Deps..." << endl;
-  for (auto d : deps) {
-    cout << tab(1) << str(d) << endl;
-  }
+  //cout << "Domains..." << endl;
+  //for (auto d : domains) {
+    //cout << tab(1) << str(d) << endl;
+  //}
+  //cout << endl;
+  //cout << "Deps..." << endl;
+  //for (auto d : deps) {
+    //cout << tab(1) << str(d) << endl;
+  //}
   //ofstream sd("schedule_debug.txt", ios::app);
   //sd << "--- Scheduling dimension" << endl;
   //sd << tab(1) << "=== Domains..." << endl;
@@ -1066,7 +943,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   //sd << endl;
 
 
-  cout << "Deps..." << endl;
+  //cout << "Deps..." << endl;
   assert(deps.size() > 0);
   isl_ctx* ct = ctx(deps.at(0));
   
@@ -1076,7 +953,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   map<string, isl_val*> qfactors =
     compute_qfactors(schedule_params);
 
-  cout << "Building delay constraints" << endl;
+  //cout << "Building delay constraints" << endl;
   ilp_builder delay_problem(ct);
   //sd << "=== Schedule params" << endl;
   //for (auto s : schedule_params) {
@@ -1102,10 +979,10 @@ map<string, isl_aff*> clockwork_schedule_dimension(
     }
   }
 
-  cout << "Outputs..." << endl;
+  //cout << "Outputs..." << endl;
   map<string, isl_val*> pipeline_delay;
   for (auto out : outputs) {
-    cout << tab(1) << out << endl;
+    //cout << tab(1) << out << endl;
     pipeline_delay[delay_var_name(out)] = one(ct);
   }
   assert(outputs.size() == 1);
@@ -1227,7 +1104,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   //assert(false);
 
   delay_obj = simplify(diffs);
-  cout << "Delay constraints" << endl;
+  //cout << "Delay constraints" << endl;
   //auto opt_delay = delay_problem.lex_minimize({delay_obj});
   //auto opt_delay = delay_problem.lex_minimize({pipeline_delay});
   //auto opt_delay = delay_problem.lex_minimize({pipeline_delay, delay_obj});
@@ -1243,10 +1120,10 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   for (auto f : operation_names) {
     isl_val* rate = map_find(sched_var_name(f), qfactors);
     isl_val* delay = delay_problem.value(delay_var_name(f));
-    cout << "f rate: " << str(rate) << ", delay: " << str(delay) << endl;
+    //cout << "f rate: " << str(rate) << ", delay: " << str(delay) << endl;
     string aff_str = 
       "{ [i] -> [(" + str(rate) + "*i + " + str(delay) + ")]}";
-    cout << tab(1) << "aff str: " << aff_str << endl;
+    //cout << tab(1) << "aff str: " << aff_str << endl;
     schedule_functions[f] = rdaff(ct, aff_str);
     isl_set* dom = find_set(f, domains);
     auto sf = map_find(f, schedule_functions);
@@ -1259,7 +1136,7 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   }
   //sd.close();
 
-  cout << "Done with schedule" << endl;
+  //cout << "Done with schedule" << endl;
   return schedule_functions;
 }
 
@@ -1317,17 +1194,17 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, ve
 
   vector<isl_map*> deps;
   auto finite_validity = its_range(its(padded_validity, padded_domain), padded_domain);
-  cout << "Finite validity: " << str(finite_validity) << endl;
+  //cout << "Finite validity: " << str(finite_validity) << endl;
   for (auto m : get_maps(finite_validity)) {
     assert(m != nullptr);
 
     // Schedule respects intra-dependencies by construction
     if (domain_name(m) != range_name(m)) {
-      cout << tab(1) << "Dep = " << str(m) << endl;
+      //cout << tab(1) << "Dep = " << str(m) << endl;
       deps.push_back(m);
     }
   }
-  cout << "Got deps" << endl;
+  //cout << "Got deps" << endl;
 
   assert(deps.size() > 0);
 
@@ -1335,7 +1212,7 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, ve
     num_in_dims(get_space(deps.at(0)));
 
   map<string, vector<isl_aff*> > scheds;
-  cout << "Schedule dim = " << schedule_dim << endl;
+  //cout << "Schedule dim = " << schedule_dim << endl;
   for (int d = 0; d < schedule_dim; d++) {
     vector<isl_map*> projected_deps;
     for (auto dmap : deps) {
@@ -1350,9 +1227,9 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, ve
     }
 
     auto schedules = clockwork_schedule_dimension(projected_domains, projected_deps, high_bandwidth_deps);
-    cout << "Clockwork schedules..." << endl;
+    //cout << "Clockwork schedules..." << endl;
     for (auto s : schedules) {
-      cout << tab(1) << s.first << ": " << str(s.second) << endl;
+      //cout << tab(1) << s.first << ": " << str(s.second) << endl;
       scheds[s.first].push_back(s.second);
     }
   }
@@ -1364,8 +1241,8 @@ umap* experimental_opt(uset* domain,
     umap* validity,
     umap* proximity) {
 
-  cout << "Domain  : " << str(domain) << endl;
-  cout << "Validity: " << str(validity) << endl;
+  //cout << "Domain  : " << str(domain) << endl;
+  //cout << "Validity: " << str(validity) << endl;
   vector<isl_map*> deps;
   auto finite_validity = its_range(its(validity, domain), domain);
   for (auto m : get_maps(finite_validity)) {
@@ -1375,14 +1252,14 @@ umap* experimental_opt(uset* domain,
       deps.push_back(m);
     }
   }
-  cout << "Got deps" << endl;
+  //cout << "Got deps" << endl;
 
   assert(deps.size() > 0);
 
   int schedule_dim =
     num_in_dims(get_space(deps.at(0)));
 
-  cout << "Schedule dim = " << schedule_dim << endl;
+  //cout << "Schedule dim = " << schedule_dim << endl;
   for (int d = schedule_dim - 1; d >= 0; d--) {
     vector<isl_map*> projected_deps;
     for (auto dmap : deps) {
