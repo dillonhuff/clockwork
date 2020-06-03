@@ -1675,11 +1675,14 @@ void reaccess_test() {
   }
   read->add_store("out", "qi, qo, ao");
 
+#ifdef COREIR
   auto opt_sched = prg.optimized_schedule();
   auto schedmap = its(isl_schedule_get_map(opt_sched), prg.whole_iteration_domain());
   auto bufs = build_buffers(prg, schedmap);
-#ifdef COREIR
   CodegenOptions options;
+  for (auto& b : bufs) {
+    b.second.generate_bank_and_merge(options);
+  }
   generate_coreir(options, bufs, prg, schedmap);
 #endif
 
