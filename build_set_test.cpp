@@ -1640,25 +1640,36 @@ void reaccess_test() {
 
   prog prg;
   prg.compute_unit_file = "vec_access.h";
-  prg.name = "vec";
+  prg.name = "reacess_conv";
   prg.add_input("in");
   prg.add_output("out");
-  //prg.buffer_port_widths["T"] = 32*3;
   prg.buffer_port_widths["in"] = 32;
   prg.buffer_port_widths["out"] = 32;
 
   auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
   auto write = p->add_op("input");
-  write->add_load("in", "po, pi");
-  write->add_store("buf", "po, pi");
+  write->add_load("in", "pi, po");
+  write->add_store("bufl2", "pi, po");
+
+  {
+    auto e = prg.add_nest("eao", 0 , 2, "eqo", 0, 8, "eqi", 0, 16);
+    auto rd = e->add_op("ld_bufl2_l1");
+    rd->add_load("bufl2", "eqi, eqo");
+    rd->add_store("bufl1", "eqi, eqo, eao");
+  }
+
 
   auto q = prg.add_nest("ao", 0 , 2, "qo", 0, 6, "qi", 0, 14);
   auto read = q->add_op("output");
-  for (size_t wy = 0; wy < 3; wy ++)
+  for (size_t wy = 0; wy < 3; wy ++) {
       for (size_t wx = 0; wx < 3; wx ++) {
-        read->add_load("buf", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+        read->add_load("bufl1", "qi+" + to_string(wy) + ", qo+" + to_string(wx) + ", ao");
       }
-  read->add_store("out", "po, pi");
+  }
+  read->add_store("out", "qi, qo, ao");
+
+  generate_optimized_code(prg);
+  assert(false);
 
   auto buffers_opt = build_buffers(prg);
   CodegenOptions opt;
@@ -1695,7 +1706,7 @@ void shift_reg_test() {
   auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
   auto buffers = build_buffers(prg, sched_naive);
   buffers.at("buf").port_reduction();
-  assert(false);
+  //assert(false);
 
 
   //optimized schedule
@@ -1712,7 +1723,7 @@ void shift_reg_test() {
   generate_coreir(opt, buffers_opt.at("buf"));
 #endif
 
-  assert(false);
+  //assert(false);
   auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
   for (auto buf : rewrite_buf) {
     cout << buf << endl;
@@ -1733,8 +1744,8 @@ void shift_reg_test() {
 
   lattice_schedule_buf(prg.ctx, buffers_opt, opt_sched, sram);
 
-  emit_address_stream2file(buffers_opt, "buf1_sram", "buf1_sram", "SRAM_address", false);
-  emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "TOP_address", true);
+  emit_address_stream2file(buffers_opt, "buf1_sram", "buf1_sram", "shift_reg_SRAM_address", false);
+  emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "shift_reg_TOP_address", true);
 }
 
 void bankmerge_vec_test() {
@@ -1790,8 +1801,8 @@ void bankmerge_vec_test() {
 
   lattice_schedule_buf(prg.ctx, buffers_opt, opt_sched, sram);
 
-  emit_address_stream2file(buffers_opt, "buf1_sram", "buf1_sram", "SRAM_address", false);
-  emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "TOP_address", true);
+  emit_address_stream2file(buffers_opt, "buf1_sram", "buf1_sram", "bankmerge_SRAM_address", false);
+  emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "bankmerge_TOP_address", true);
 
 }
 
@@ -9117,7 +9128,6 @@ void playground() {
 void new_bankmerge_tests() {
   shift_reg_test();
   //assert(false);
-  reaccess_test();
 
   bankmerge_vec_test();
   auto_vec_test();
@@ -9415,10 +9425,16 @@ void application_tests() {
 }
 
 void memory_tile_tests() {
+  reaccess_test();
+  assert(false);
+
+  //new_bankmerge_tests();
   memtile_test();
   auto_vec_test();
   vec_test();
   agg_test();
+
+  //assert(false);
 }
 
 int main(int argc, char** argv) {
