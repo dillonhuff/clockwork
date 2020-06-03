@@ -1669,12 +1669,12 @@ void reaccess_test() {
   read->add_store("out", "qi, qo, ao");
 
   generate_optimized_code(prg);
-  assert(false);
+  //assert(false);
 
-  auto buffers_opt = build_buffers(prg);
-  CodegenOptions opt;
-  opt.conditional_merge = false;
-  buffers_opt.at("buf").generate_bank_and_merge(opt);
+  //auto buffers_opt = build_buffers(prg);
+  //CodegenOptions opt;
+  //opt.conditional_merge = false;
+  //buffers_opt.at("buf").generate_bank_and_merge(opt);
 
 }
 
@@ -9425,8 +9425,9 @@ void application_tests() {
 }
 
 void memory_tile_tests() {
+  //shift_reg_test();
   reaccess_test();
-  assert(false);
+  //assert(false);
 
   //new_bankmerge_tests();
   memtile_test();
