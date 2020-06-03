@@ -9202,7 +9202,7 @@ void playground() {
 
 void new_bankmerge_tests() {
   shift_reg_test();
-  assert(false);
+  //assert(false);
   reaccess_test();
 
   bankmerge_vec_test();
@@ -9212,7 +9212,7 @@ void new_bankmerge_tests() {
 
 void iccad_tests() {
   ef_cartoon_test("ef_cartoon_gauss");
-  assert(false);
+  //assert(false);
 
   gaussian_pyramid_app_test("gp64x64");
 
