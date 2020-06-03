@@ -1278,37 +1278,47 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
 cout<<"============================================"<<endl;
       cout << tab(1) << bnk.name << ", # read offsets: " << bnk.read_delays.size() << endl;
       cout << tab(2) << "# receivers: " << receivers.size() << endl;
-for(int i = 0; i < bnk.read_delays.size(); i++){
-  cout<<bnk.read_delays[i]<<endl;
-}
-    // splitting banks
-    stack_bank bank1, bank2;
-    bank1.tp = BANK_TYPE_STACK;
-    bank1.rddom = isl_union_set_read_from_str(ctx, "{}");
-    bank1.name = inpt + "_split_banks1";
-    bank1.pt_type_string = bank1.at(0).pt_type_string;
-    bank1.num_readers = mergeable.size();
-    bank1.maxdelay = bnk.maxdelay;
 
-    bank2.tp = BANK_TYPE_STACK;
-    bank2.rddom = isl_union_set_read_from_str(ctx, "{}");
-    bank2.name = inpt + "_split_banks2";
-    bank2.pt_type_string = bank2.at(0).pt_type_string;
-    bank2.num_readers = mergeable.size();
-    bank2.maxdelay = -1;
-                       
+      for (int i = 0; i < bnk.read_delays.size(); i++){
+         cout<<bnk.read_delays[i]<<endl;
+      }
+
+      if (bnk.read_delays.size() != 2) {
+        // splitting banks
+        stack_bank bank1, bank2;
+        bank1.tp = BANK_TYPE_STACK;
+        bank1.rddom = isl_union_set_read_from_str(ctx, "{}");
+        bank1.name = inpt + "_split_banks1";
+        // bank1.pt_type_string = bank1.at(0).pt_type_string;
+        bank1.num_readers = mergeable.size();
+        bank1.maxdelay = bnk.maxdelay;
+
+        bank2.tp = BANK_TYPE_STACK;
+        bank2.rddom = isl_union_set_read_from_str(ctx, "{}");
+        bank2.name = inpt + "_split_banks2";
+        // bank2.pt_type_string = bank2.at(0).pt_type_string;
+        bank2.num_readers = mergeable.size();
+        bank2.maxdelay = bnk.maxdelay;
+
+        bank1.read_delays.push_back(bnk.read_delays[0]);
+        bank1.read_delays.push_back(bnk.read_delays[bnk.read_delays.size() - 1]);
+
+        for (int i = 0; i < bnk.read_delays.size() - 1; i++) {
+           bank2.read_delays.push_back(bnk.read_delays[i]);
+        }
+
+        mergeable.push_back(bank1);
+      } else {
              
-        merged.read_delays.push_back(mrd);
+        if (options.debug_options.expect_all_linebuffers) {
+          //assert(receivers.size() == 1 || bnk.read_delays.size() == 2);
+          assert(bnk.read_delays.size() == 2);
+        }
+        if (bnk.read_delays.size() == 2) {
+          assert(bnk.read_delays[0] == 0);
+          mergeable.push_back(bnk);
+        }
       }
-      if (options.debug_options.expect_all_linebuffers) {
-        //assert(receivers.size() == 1 || bnk.read_delays.size() == 2);
-        assert(bnk.read_delays.size() == 2);
-      }
-      if (bnk.read_delays.size() == 2) {
-        assert(bnk.read_delays[0] == 0);
-        mergeable.push_back(bnk);
-      }
-
     }
 
     if (mergeable.size() > 0) {
