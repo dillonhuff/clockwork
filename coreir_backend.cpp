@@ -27,10 +27,10 @@ void generate_coreir(CodegenOptions& options,
       out_buf.lanes_in_bundle(out_bundle);
 
     if (prg.is_input(out_rep)) {
-      ub_field.push_back(make_pair(out_bundle + "_en", context->BitIn()));
+      ub_field.push_back(make_pair(out_bundle + "_valid", context->BitIn()));
       ub_field.push_back(make_pair(out_bundle, context->BitIn()->Arr(pixel_width*pix_per_burst)));
     } else {
-      ub_field.push_back(make_pair(out_bundle + "_valid", context->Bit()));
+      ub_field.push_back(make_pair(out_bundle + "_en", context->Bit()));
       ub_field.push_back(make_pair(out_bundle, context->Bit()->Arr(pixel_width*pix_per_burst)));
     }
   }
@@ -81,6 +81,22 @@ void generate_coreir(CodegenOptions& options,
     if (!prg.is_boundary(buf.first)) {
       auto ub_mod = generate_coreir(options, context, buf.second);
       def->addInstance(buf.second.name, ub_mod);
+    }
+  }
+
+  // Connect compute units to buffers
+  for (auto op : prg.all_ops()) {
+    for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+      string buf_name = bundle.first;
+      string bundle_name = bundle.second;
+      auto buf = map_find(buf_name, buffers);
+
+      assert(buf.is_output_bundle(bundle.second));
+
+      if (prg.is_input(buf_name)) {
+        def->connect("self." + bundle_name, op->name + "." + bundle_name);
+        def->connect("self." + bundle_name + "_valid", op->name + "." + bundle_name + "_en");
+      }
     }
   }
 
