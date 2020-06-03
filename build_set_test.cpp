@@ -1733,7 +1733,9 @@ void shift_reg_test() {
   cout << buffers_opt.at("buf") << endl;
 
 #ifdef COREIR
-  generate_coreir(opt, buffers_opt.at("buf"));
+  CoreIR::Context* context = CoreIR::newContext();
+  generate_coreir(opt, context, buffers_opt.at("buf"));
+  CoreIR::deleteContext(context);
 #endif
 
   //assert(false);

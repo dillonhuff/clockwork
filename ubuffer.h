@@ -1504,7 +1504,7 @@ vector<string> dimension_var_decls(const std::string& pt, UBuffer& buf);
 vector<string> dimension_var_args(const std::string& pt, UBuffer& buf);
 
 #ifdef COREIR
-void generate_coreir(CodegenOptions& options, UBuffer& buf);
+CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf);
 #endif
 
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);

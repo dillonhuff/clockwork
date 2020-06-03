@@ -457,10 +457,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
 }
 
-void generate_coreir(CodegenOptions& options, UBuffer& buf) {
-    CoreIR::Context* context = CoreIR::newContext();
-    CoreIRLoadLibrary_commonlib(context);
-    CoreIRLoadLibrary_cwlib(context);
+CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf) {
+    //CoreIR::Context* context = CoreIR::newContext();
+    //CoreIRLoadLibrary_commonlib(context);
+    //CoreIRLoadLibrary_cwlib(context);
     auto ns = context->getNamespace("global");
     vector<pair<string, CoreIR::Type*> >
         ub_field{{"clk", context->Named("coreir.clkIn")},
@@ -481,11 +481,12 @@ void generate_coreir(CodegenOptions& options, UBuffer& buf) {
     buf.generate_coreir(options, def);
 
     ub->setDef(def);
-    if(!saveToFile(ns, "ubuffer.json")) {
-        cout << "Could not save ubuffer coreir" << endl;
-        context->die();
-    }
-    deleteContext(context);
+    //if(!saveToFile(ns, "ubuffer.json")) {
+        //cout << "Could not save ubuffer coreir" << endl;
+        //context->die();
+    //}
+    //deleteContext(context);
+    return ub;
 }
 
 #endif

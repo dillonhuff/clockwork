@@ -1,4 +1,5 @@
 #include "coreir_backend.h"
+
 #ifdef COREIR
 
 void generate_coreir(CodegenOptions& options,
@@ -48,9 +49,17 @@ void generate_coreir(CodegenOptions& options,
     def->addInstance(op->name, compute_unit);
   }
 
-  //buf.generate_coreir(options, def);
+  for (auto& buf : buffers) {
+    if (!prg.is_boundary(buf.first)) {
+      auto ub_mod = generate_coreir(options, context, buf.second);
+      def->addInstance(buf.second.name, ub_mod);
+    }
+  }
 
   ub->setDef(def);
+
+  ub->print();
+  //assert(false);
   if(!saveToFile(ns, prg.name + ".json")) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();

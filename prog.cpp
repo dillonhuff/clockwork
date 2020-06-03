@@ -1737,7 +1737,6 @@ void generate_app_code(CodegenOptions& options,
     if (!prg.is_boundary(b.first)) {
       generate_hls_code(options, conv_out, b.second);
     }
-
   }
 
   conv_out << endl << endl;
