@@ -795,67 +795,6 @@ struct prog {
     return m;
 
   }
-  //new method for compute producer, write map
-  map<string, isl_map*> producer_maps_new() {
-    map<string, isl_map*> m;
-    auto ivars = iter_vars();
-    auto doms = domains();
-
-    string result_buf = "";
-    auto ops = root->all_ops();
-
-    for (auto op : ops) {
-      auto vars = map_find(op, ivars);
-      string ivar_str = sep_list(vars, "[", "]", ", ");
-      auto dom = map_find(op, doms);
-
-      for (auto p : op->produces()) {
-        result_buf= take_until(p, "[");
-        cout << "Producer :" << p << endl;
-      }
-      assert(result_buf != "");
-
-      umap* pmap = rdmap(ctx, "{}");
-      for (auto p : op->produces()) {
-          isl_union_map* vmap =
-            its(rdmap(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
-          pmap = unn(pmap, vmap);
-      }
-      m[result_buf] = to_map(pmap);
-    }
-    return m;
-  }
-
-  map<op*, pair<isl_map*, string>> consumer_maps_new() {
-    map<op*, pair<isl_map*, string>> m;
-    auto ivars = iter_vars();
-    auto doms = domains();
-
-    auto ops = root->all_ops();
-    for (auto op : ops) {
-      auto vars = map_find(op, ivars);
-      string ivar_str = sep_list(vars, "[", "]", ", ");
-      auto dom = map_find(op, doms);
-      string result_buf;
-      //TODO: fix this hack if there are multiple consumer
-      for (auto p : op->consumes()) {
-        result_buf= take_until(p, "[");
-        cout << "Consumers :" << p << endl;
-      }
-      assert(result_buf != "");
-
-      umap* pmap = rdmap(ctx, "{}");
-      for (auto p : op->consumes()) {
-          isl_union_map* vmap =
-            its(rdmap(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
-          pmap = unn(pmap, vmap);
-      }
-      m[op] = make_pair(to_map(pmap), result_buf);
-    }
-    return m;
-
-  }
-
   umap* producer_map(const std::string& buf_name) {
     auto ivars = iter_vars();
     auto doms = domains();
