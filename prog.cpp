@@ -313,7 +313,7 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
 
   for (int l = 0; l < lanes; l++) {
     out << tab(3) << "{" << endl;
-  
+
     out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
     out << tab(3) << "if (r < input.height() && c < input.width()) {" << endl;
     out << tab(4) << "rgb_t pix;" << endl;
@@ -484,7 +484,7 @@ void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& b
   out << "int main(int argc, char **argv) {" << endl;
 
   ocl_check_args(options, out);
-  
+
   out << tab(1) << "size_t total_size_bytes = 0;" << endl;
   for (auto eb : edge_buffers(buffers, prg)) {
     string edge_bundle = eb.second;
@@ -608,7 +608,7 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
 
   for (auto in_bundle : in_bundles(buffers, prg)) {
     out << "static void read_" << in_bundle << "(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const int size) {" << endl;
-   
+
     out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
     if (options.num_input_epochs < 0) {
       out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*size;" << endl;
@@ -817,7 +817,7 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       cout << "\tAdding input port: " << pt_name << endl;
       cout << "\t\tProduced:: " << str(produced_here) << endl;
       buf.add_in_pt(pt_name, domains.at(op), produced_here, its(opt_sched, domains.at(op)));
-      buf.add_access_pattern(pt_name, op->name, name);
+      //buf.add_access_pattern(pt_name, op->name, name);
 
       vector<string> inpt = buf.get_in_ports();
       cout << "current in port name: " << endl;
@@ -856,7 +856,7 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       cout << "\tAdding output port: " << pt_name << endl;
       cout << "\t\tConsumed: " << str(consumed_here) << endl;
       buf.add_out_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
-      buf.add_access_pattern(pt_name, op->name, name);
+      //buf.add_access_pattern(pt_name, op->name, name);
 
       vector<string> inpt = buf.get_out_ports();
       cout << "current out port name: " << endl;
@@ -1315,7 +1315,7 @@ compute_kernel generate_compute_op(
   for (auto a : space_var_decls(s)) {
     buf_srcs.push_back(a);
   }
-  
+
   cout << "Got iteration variables" << endl;
   conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
   vector<pair<string, string> > in_buffers;

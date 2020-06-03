@@ -991,6 +991,8 @@ umap* UBuffer::get_lexmax_events(const std::string& inpt, const std::string& out
   auto beforeAcc = lex_gt(schedule.at(outpt), schedule.at(inpt));
   auto outmap = access_map.at(outpt);
   auto inmap = access_map.at(inpt);
+  inmap = coalesce(unn(inmap, outmap));
+  cout << "Coalesce map: " << str(inmap) << endl;
   src_map = its(dot(outmap, inv(inmap)), beforeAcc);
   assert(src_map != nullptr);
 
@@ -1024,20 +1026,20 @@ isl_union_pw_qpolynomial* UBuffer::compute_dd(const std::string& read_port, cons
   umap* wrsched = schedule.at(write_port);
   auto WritesBeforeRead =
     lex_gt(rdsched, wrsched);
-  //cout << "\trdsched: " << str(rdsched) << "\n wrsched: " << str(wrsched) << "\n wbr: " << str(WritesBeforeRead) << endl;
+  cout << "\trdsched: " << str(rdsched) << "\n wrsched: " << str(wrsched) << "\n wbr: " << str(WritesBeforeRead) << endl;
 
-  auto WriteThatProducesReadData = get_lexmax_events(read_port);
+  //auto WriteThatProducesReadData = get_lexmax_events(read_port);
   //TODO: test these new method
-  //auto WriteThatProducesReadData = get_lexmax_events(write_port, read_port);
-  //cout << "\twpr: " << str(WriteThatProducesReadData) << "\nwaw:" << str(WritesAfterWrite) << endl;
+  auto WriteThatProducesReadData = get_lexmax_events(write_port, read_port);
+  cout << "\twpr: " << str(WriteThatProducesReadData) << "\nwaw:" << str(WritesAfterWrite) << endl;
 
   auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
-  //cout << "\twap: " << str(WritesAfterProduction) << endl;
+  cout << "\twap: " << str(WritesAfterProduction) << endl;
   auto WritesBtwn = its_range((its(WritesAfterProduction, WritesBeforeRead)),
       to_uset(domain.at(write_port)));
-
-  //cout << "\tWritesBtwn: " << str(WritesBtwn) << endl;
+  cout << "\tits:" << str(its(WritesAfterProduction, WritesBeforeRead)) << endl;
+  cout << "\tWritesBtwn: " << str(WritesBtwn) << endl;
 
   auto c = card(WritesBtwn);
   //cout << "got card" << endl;
@@ -1536,7 +1538,7 @@ vector<UBuffer> UBuffer::port_grouping(int port_width) {
             string pt_name = pt_vec.front() + "_merge";
             out_map_merge = set_range_name(out_map_merge, new_ub.name);
             new_ub.add_out_pt(pt_name, dom, out_map_merge, sched);
-            new_ub.add_access_pattern(pt_name, ::name(dom), new_ub.name);
+            //new_ub.add_access_pattern(pt_name, ::name(dom), new_ub.name);
             new_ub.port_bundles[::name(dom)+ "_write"].push_back(pt_name);
             //delay_map.insert(make_pair(pt_name, bk.delay_map));
             bank_pool.pop();
@@ -1572,7 +1574,7 @@ vector<UBuffer> UBuffer::port_grouping(int port_width) {
                     auto sched = schedule.at(it.first);
                     string pt_name = it.first + "_merge";
                     new_ub.add_out_pt(pt_name, dom, acc_map, sched);
-                    new_ub.add_access_pattern(pt_name, ::name(dom), new_ub.name);
+                    //new_ub.add_access_pattern(pt_name, ::name(dom), new_ub.name);
                     new_ub.port_bundles[::name(dom) + "_write"].push_back(pt_name);
                 }
                 group_port_width = 0;
@@ -1592,7 +1594,7 @@ vector<UBuffer> UBuffer::port_grouping(int port_width) {
             auto sched = schedule.at(it.first);
             string pt_name = it.first + "_merge";
             new_ub.add_out_pt(pt_name, dom, acc_map, sched);
-            new_ub.add_access_pattern(pt_name, ::name(dom), new_ub.name);
+            //new_ub.add_access_pattern(pt_name, ::name(dom), new_ub.name);
             new_ub.port_bundles[::name(dom) + "_write"].push_back(pt_name);
         }
     }
@@ -1759,8 +1761,8 @@ map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, st
      * */
     string in_pt_name = pick(port_bundles.at(in_bd_name));
     string out_pt_name = pick(port_bundles.at(out_bd_name));
-    string in_op = access_pattern.at(in_pt_name).op_name;
-    string out_op = access_pattern.at(out_pt_name).op_name;
+    string in_op = domain_name(to_map(access_map.at(in_pt_name)));
+    string out_op = domain_name(to_map(access_map.at(out_pt_name)));
     auto in_sched = schedule.at(in_pt_name);
     auto out_sched = schedule.at(out_pt_name);
     auto in_sched_vec = collect_sched_vec(in_sched);
@@ -1828,7 +1830,8 @@ map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, st
 
 void UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2op, isl_map* sched, string origin_pt_name, string bd_name, int dim_id, int fetch_width, bool is_out) {
 
-    AccessPattern acc_pattern = access_pattern.at(origin_pt_name);
+    AccessPattern acc_pattern = AccessPattern(
+            to_map(access_map.at(origin_pt_name)), ctx);
     auto constraint_slices = acc_pattern.get_buf_slice(ctx, target_buf.name, dim_id, fetch_width);
     size_t new_pt_cnt = 0;
 
@@ -1843,13 +1846,13 @@ void UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2
             string pt_name = origin_pt_name + "_out_" + std::to_string(new_pt_cnt);
             target_buf.port_bundles[bd_name].push_back(pt_name);
             target_buf.add_out_pt(pt_name, dom, to_map(rewrite_access_map), sched);
-            target_buf.add_access_pattern(pt_name, acc_pattern.op_name+"_vec", target_buf.name);
+            //target_buf.add_access_pattern(pt_name, acc_pattern.op_name+"_vec", target_buf.name);
         }
         else {
             string pt_name = origin_pt_name + "_in_" + std::to_string(new_pt_cnt);
             target_buf.port_bundles[bd_name].push_back(pt_name);
             target_buf.add_in_pt(pt_name, dom, to_map(rewrite_access_map), sched);
-            target_buf.add_access_pattern(pt_name, acc_pattern.op_name+"_vec", target_buf.name);
+            //target_buf.add_access_pattern(pt_name, acc_pattern.op_name+"_vec", target_buf.name);
 
             //LOOK at the name to judge if we need to remap the buffer
             size_t found = target_buf.name.find("tb");
@@ -1857,7 +1860,7 @@ void UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2
                 auto acc_pt = target_buf.access_pattern.at(pt_name);
                 auto decouple_acc_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id);
                 target_buf.access_map[pt_name] = to_umap(decouple_acc_map);
-                target_buf.add_access_pattern(pt_name, acc_pattern.op_name+"_vec", target_buf.name);
+                //target_buf.add_access_pattern(pt_name, acc_pattern.op_name+"_vec", target_buf.name);
             }
         }
         new_pt_cnt ++;
@@ -1893,8 +1896,8 @@ void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuff
         cout << "Vectorize input port bundle: " << bd_name << endl;
         for (auto in_pt_name : port_bundles.at(bd_name) ) {
             cout << "\tvectorize input port: " << in_pt_name << endl;
-            auto acc_pattern = access_pattern.at(in_pt_name);
-            auto acc_pattern_vec = acc_pattern.vectorization(dim_id, fetch_width);
+            auto acc_pattern = AccessPattern(
+                    to_map(access_map.at(in_pt_name)), ctx);
             std::cout << "before rewrite: " << acc_pattern << endl;
 
             //produce the operation transfomation
@@ -1925,9 +1928,9 @@ void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuff
 
         for (auto out_pt_name : port_bundles.at(bd_name) ) {
             cout << "\tVectorize output port: " << out_pt_name << endl;
-            auto acc_pattern = access_pattern.at(out_pt_name);
+            auto acc_pattern = AccessPattern(
+                    to_map(access_map.at(out_pt_name)), ctx);
 
-            auto acc_pattern_vec = acc_pattern.vectorization(dim_id, fetch_width);
             std::cout << "before rewrite: " << acc_pattern << endl;
 
             //produce the operation transfomation

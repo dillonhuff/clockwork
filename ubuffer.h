@@ -187,7 +187,9 @@ class AccessPattern {
       vector<vector<int> > access_matrix;
 
       AccessPattern(){}
-      AccessPattern(string buf, string op):buf_name(buf), op_name(op){}
+      AccessPattern(isl_map* a_map, isl_ctx* ctx):buf_name(range_name(a_map)), op_name(domain_name(a_map)){
+          initial_access_mat(a_map, ctx);
+      }
 
       AccessPattern(const AccessPattern & a) {
           op_name = a.op_name;
@@ -308,7 +310,7 @@ class AccessPattern {
           return its(access_map, domain);
       }
 
-      void initial_access_mat(isl_map* access_map, isl_set* domain, isl_ctx* ctx) {
+      void initial_access_mat(isl_map* access_map, isl_ctx* ctx) {
           //cout << "\t\tProduced: " << str(access_map) << endl;
 
           for (size_t i = 0; i < isl_map_dim(access_map, isl_dim_in); i++) {
@@ -349,8 +351,8 @@ class AccessPattern {
               if (it->first == "const")
                   continue;
               int min, max;
-              min = get_dim_min(domain, it->second);
-              max = get_dim_max(domain, it->second);
+              min = get_dim_min(::domain(access_map), it->second);
+              max = get_dim_max(::domain(access_map), it->second);
               cout << "Domain space on <"<< it->first;
               cout << "> is: [" << min << ", " << max <<"]"<< endl;
               //assert(min == 0);
@@ -1021,8 +1023,8 @@ class UBuffer {
                       acc_map,
                       buf.schedule.at(pt_name));
               //TODO: get rid of this, change into a method
-              access_pattern[pt_name] = buf.access_pattern.at(pt_name);
-              access_pattern.at(pt_name).buf_name = name;
+              //access_pattern[pt_name] = buf.access_pattern.at(pt_name);
+              //access_pattern.at(pt_name).buf_name = name;
             }
           }
           else {
@@ -1035,8 +1037,8 @@ class UBuffer {
                       acc_map,
                       buf.schedule.at(pt_name));
               //TODO: get rid of this, change into a method
-              access_pattern[pt_name] = buf.access_pattern.at(pt_name);
-              access_pattern.at(pt_name).buf_name = name;
+              //access_pattern[pt_name] = buf.access_pattern.at(pt_name);
+              //access_pattern.at(pt_name).buf_name = name;
             }
           }
         }
@@ -1176,18 +1178,17 @@ class UBuffer {
       isIn[name] = false;
     }
 
+    /*
     void add_access_pattern(const std::string& pt_name,
             const std::string & op_name,
             const std::string & buf_name) {
         auto io = isIn.at(pt_name)? "input" : "output";
         isl_map* access = to_map(access_map.at(pt_name));
-        isl_set* dm = domain.at(pt_name);
         cout << "\tAdding access pattern for " << io  <<" port: " << pt_name << "in buf: " << this->name <<  endl;
         cout << "\top name :" << op_name << endl;
-        AccessPattern acc_p(buf_name, op_name);
-        acc_p.initial_access_mat(access, dm, ctx);
+        AccessPattern acc_p(access, ctx);
         access_pattern[pt_name] = acc_p;
-    }
+    }*/
 
     void add_in_pt(const std::string& name,
         isl_set* dm,

@@ -9374,6 +9374,8 @@ void compute_unit_with_index_variables_test() {
 }
 
 void application_tests() {
+  bankmerge_vec_test();
+  assert(false);
   iccad_tests();
   compute_unit_with_index_variables_test();
 
