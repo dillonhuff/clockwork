@@ -9505,7 +9505,6 @@ void application_tests() {
 
 void memory_tile_tests() {
   memtile_test();
-  assert(false);
   auto_vec_test();
   vec_test();
   agg_test();
