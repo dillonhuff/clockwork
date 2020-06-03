@@ -403,19 +403,19 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
             assert(outpts.size() == 1);
             //do not wire input for the first pass
             if (isIn.at(pick(inpts))) {
-              def->connect(reg->sel("in"), def->sel("self."+pick(inpts)));
+              //def->connect(reg->sel("in"), def->sel("self."+pick(inpts)));
             }
             else {
                 reg_in[pick(inpts)] = reg->sel("in");
                 wire2out[pick(outpts)] = reg->sel("out");
             }
-            def->connect(reg->sel("out"), def->sel("self."+pick(outpts)));
+            //def->connect(reg->sel("out"), def->sel("self."+pick(outpts)));
         }
         else if (bk.maxdelay == 0) {
             //this is a wire
             assert(inpts.size() == 1);
             assert(outpts.size() == 1);
-            def->connect(def->sel("self." + pick(inpts)), def->sel("self." + pick(outpts)));
+            //def->connect(def->sel("self." + pick(inpts)), def->sel("self." + pick(outpts)));
             wire2out[pick(outpts)] = def->sel("self." + pick(inpts));
         }
         else {
@@ -433,12 +433,12 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
             int inpt_cnt = 0, outpt_cnt = 0;
             for (auto inpt: inpts) {
-                def->connect(buf->sel("datain_" + to_string(inpt_cnt)), def->sel("self."+inpt));
-                def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+inpt+"_en"));
+                //def->connect(buf->sel("datain_" + to_string(inpt_cnt)), def->sel("self."+inpt));
+                //def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+inpt+"_en"));
                 inpt_cnt ++;
             }
             for (auto outpt: outpts) {
-                def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), def->sel("self."+outpt));
+                //def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), def->sel("self."+outpt));
                 wire2out[outpt] = buf->sel("dataout_" + to_string(outpt_cnt));
                 //TODO: figure out valid wiring strategy
                 //
@@ -452,7 +452,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         string outpt = it.first;
         auto in = it.second;
         auto out = wire2out.at(outpt);
-        def->connect(in, out);
+        //def->connect(in, out);
     }
 
 }
@@ -465,14 +465,27 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
     vector<pair<string, CoreIR::Type*> >
         ub_field{{"clk", context->Named("coreir.clkIn")},
                 {"reset", context->BitIn()}};
-    for (auto inpt: buf.get_in_ports()) {
-        ub_field.push_back(make_pair(inpt + "_en", context->BitIn()));
-        ub_field.push_back(make_pair(inpt, context->BitIn()->Arr(buf.port_widths)));
+    for (auto b : buf.port_bundles) {
+      int width = buf.port_bundle_width(b.first);
+      string name = b.first;
+      if (buf.is_input_bundle(b.first)) {
+        ub_field.push_back(make_pair(name + "_en", context->BitIn()));
+        ub_field.push_back(make_pair(name, context->BitIn()->Arr(width)));
+      } else {
+        ub_field.push_back(make_pair(name + "_valid", context->Bit()));
+        ub_field.push_back(make_pair(name, context->Bit()->Arr(width)));
+
+      }
+
     }
-    for (auto outpt: buf.get_out_ports()) {
-        ub_field.push_back(make_pair(outpt + "_valid", context->Bit()));
-        ub_field.push_back(make_pair(outpt, context->Bit()->Arr(buf.port_widths)));
-    }
+    //for (auto inpt: buf.get_in_ports()) {
+        //ub_field.push_back(make_pair(inpt + "_en", context->BitIn()));
+        //ub_field.push_back(make_pair(inpt, context->BitIn()->Arr(buf.port_widths)));
+    //}
+    //for (auto outpt: buf.get_out_ports()) {
+        //ub_field.push_back(make_pair(outpt + "_valid", context->Bit()));
+        //ub_field.push_back(make_pair(outpt, context->Bit()->Arr(buf.port_widths)));
+    //}
 
     CoreIR::RecordType* utp = context->Record(ub_field);
     auto ub = ns->newModuleDecl(buf.name + "_ub", utp);

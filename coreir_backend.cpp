@@ -54,7 +54,7 @@ void generate_coreir(CodegenOptions& options,
       for (auto bndl : buf.port_bundles) {
         cout << tab(1) << bndl.first << endl;
       }
-      assert(buf.is_input_bundle(bundle.second));
+      assert(buf.is_output_bundle(bundle.second));
       ub_field.push_back(make_pair(bundle_name + "_en", context->BitIn()));
       ub_field.push_back(make_pair(bundle_name, context->BitIn()->Arr(bundle_width)));
     }
@@ -65,7 +65,7 @@ void generate_coreir(CodegenOptions& options,
       auto buf = map_find(buf_name, buffers);
       int bundle_width = buf.port_bundle_width(bundle_name);
 
-      assert(buf.is_output_bundle(bundle.second));
+      assert(buf.is_input_bundle(bundle.second));
       ub_field.push_back(make_pair(bundle_name + "_valid", context->Bit()));
       ub_field.push_back(make_pair(bundle_name, context->Bit()->Arr(bundle_width)));
     }

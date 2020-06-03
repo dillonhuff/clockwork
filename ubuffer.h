@@ -1184,10 +1184,12 @@ class UBuffer {
 
     bool is_in_pt(const std::string& name) const {
       cout << "Checking if " << name << " is an input..." << endl;
+      assert(contains_key(name, isIn));
       return isIn.at(name);
     }
 
     bool is_out_pt(const std::string& name) const {
+      assert(contains_key(name, isIn));
       return !isIn.at(name);
     }
 
