@@ -766,7 +766,7 @@ void generate_op_code(map<string, UBuffer>& buffers, op* op) {
   for (auto consumed : op->consume_locs) {
     decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
   }
- 
+
   for (auto consumed : op->consume_locs_pair) {
     decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
   }
@@ -858,7 +858,6 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       cout << "\tAdding output port: " << pt_name << endl;
       cout << "\t\tConsumed: " << str(consumed_here) << endl;
       buf.add_out_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
-      buf.add_access_pattern(pt_name, op->name, name);
 
       vector<string> inpt = buf.get_out_ports();
       cout << "current out port name: " << endl;
