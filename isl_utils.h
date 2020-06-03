@@ -166,6 +166,8 @@ isl_stat isl_pw_aff_get_const( isl_set *set,  isl_aff *aff, void *user);
 
 isl_stat isl_pw_aff_get_var_id( isl_set *set,  isl_aff *aff, void *user);
 
+void isl_pw_aff_get_var_name( isl_pw_aff *pa, map<string, int> name2idx_related);
+
 isl_stat isl_pw_aff_set_var_name( isl_set *set,  isl_aff *aff, void *user);
 
 isl_map* set_map_dim_name(isl_ctx* ctx, isl_map* m, unsigned pos, const string& name);

@@ -181,13 +181,18 @@ class AccessPattern {
       int addr_dim;
       vector<int> out_range;
       vector<int> start_addr;
+
+      //This save the fetch width info,
+      //SRAM address is on the unit of wider fetch width
       vector<int> vec_stride_in_addr;
 
       //y is output dim, x is input dim
       vector<vector<int> > access_matrix;
 
       AccessPattern(){}
-      AccessPattern(string buf, string op):buf_name(buf), op_name(op){}
+      AccessPattern(isl_map* a_map, isl_ctx* ctx):buf_name(range_name(a_map)), op_name(domain_name(a_map)){
+          initial_access_mat(a_map, ctx);
+      }
 
       AccessPattern(const AccessPattern & a) {
           op_name = a.op_name;
@@ -305,18 +310,12 @@ class AccessPattern {
           cout << "access map expr:" << nd_expr_str << endl;
           auto access_map = isl_map_read_from_str(ctx, string("{ " + op_name + vars + " -> " + buf_name  + nd_expr_str + "}").c_str());
           auto domain = get_domain(ctx);
+          cout << "domain: " << str(domain) << "\naccess map: " << str(access_map) << endl;
           return its(access_map, domain);
       }
 
-      void initial_access_mat(isl_map* access_map, isl_set* domain, isl_ctx* ctx) {
+      void initial_access_mat(isl_map* access_map, isl_ctx* ctx) {
           //cout << "\t\tProduced: " << str(access_map) << endl;
-
-          for (size_t i = 0; i < isl_map_dim(access_map, isl_dim_in); i++) {
-              if (!isl_map_has_dim_id(access_map, isl_dim_in, i)) {
-                  access_map = set_map_dim_name(ctx, access_map, i, "p"+to_string(i));
-              }
-              //cout << "has id:" << str(isl_map_get_dim_id(access_map, isl_dim_in, i)) << endl;
-          }
 
           auto mpa = isl_pw_multi_aff_from_map(access_map);
           addr_dim = isl_pw_multi_aff_dim(mpa, isl_dim_out);
@@ -349,8 +348,8 @@ class AccessPattern {
               if (it->first == "const")
                   continue;
               int min, max;
-              min = get_dim_min(domain, it->second);
-              max = get_dim_max(domain, it->second);
+              min = get_dim_min(::domain(access_map), it->second);
+              max = get_dim_max(::domain(access_map), it->second);
               cout << "Domain space on <"<< it->first;
               cout << "> is: [" << min << ", " << max <<"]"<< endl;
               //assert(min == 0);
@@ -388,7 +387,10 @@ class AccessPattern {
               cout << "output_dim: " << i << endl;
               for (auto cc: coef) {
                   cout << "\tvar_name: " << cc.first <<", idx: " << name2idx[cc.first] << ", coef: " << cc.second << ", vec_stride_in_addr:" << vec_stride_in_addr[i] << endl;
-                  access_matrix[i][name2idx[cc.first]] = cc.second / vec_stride_in_addr[i];
+                  //access_matrix[i][name2idx[cc.first]] = cc.second / vec_stride_in_addr[i];
+                  //TODO: figure out what is vec stride in addr
+                  access_matrix[i][name2idx[cc.first]] = cc.second;
+
               }
           }
       }
@@ -413,7 +415,8 @@ class AccessPattern {
           //matrix multiply with the linearization vector
           for (int addr_it = 0; addr_it < addr_dim; addr_it ++) {
               for (int var_it = 0; var_it < var_dim-1; var_it ++) {
-                  st[var_it] += sorted_out_range[addr_it] * access_matrix[addr_it][var_it+1];
+                  auto stride_in_sram = access_matrix[addr_it][var_it+1] / vec_stride_in_addr[addr_it];
+                  st[var_it] += sorted_out_range[addr_it] * stride_in_sram;
               }
           }
       }
@@ -605,8 +608,6 @@ class UBuffer {
     std::map<string, umap*> access_map;
     std::map<string, isl_union_map*> schedule;
     std::map<string, vector<string> > port_bundles;
-    //post processed access map
-    std::map<string, AccessPattern> access_pattern;
 
     map<pair<string, string>, stack_bank > stack_banks;
     map<string, selector> selectors;
@@ -1020,9 +1021,6 @@ class UBuffer {
                       buf.domain.at(pt_name),
                       acc_map,
                       buf.schedule.at(pt_name));
-              //TODO: get rid of this, change into a method
-              access_pattern[pt_name] = buf.access_pattern.at(pt_name);
-              access_pattern.at(pt_name).buf_name = name;
             }
           }
           else {
@@ -1034,9 +1032,6 @@ class UBuffer {
                       buf.domain.at(pt_name),
                       acc_map,
                       buf.schedule.at(pt_name));
-              //TODO: get rid of this, change into a method
-              access_pattern[pt_name] = buf.access_pattern.at(pt_name);
-              access_pattern.at(pt_name).buf_name = name;
             }
           }
         }
@@ -1176,19 +1171,6 @@ class UBuffer {
       isIn[name] = false;
     }
 
-    void add_access_pattern(const std::string& pt_name,
-            const std::string & op_name,
-            const std::string & buf_name) {
-        auto io = isIn.at(pt_name)? "input" : "output";
-        isl_map* access = to_map(access_map.at(pt_name));
-        isl_set* dm = domain.at(pt_name);
-        //cout << "\tAdding access pattern for " << io  <<" port: " << pt_name << "in buf: " << this->name <<  endl;
-        //cout << "\top name :" << op_name << endl;
-        AccessPattern acc_p(buf_name, op_name);
-        acc_p.initial_access_mat(access, dm, ctx);
-        access_pattern[pt_name] = acc_p;
-    }
-
     void add_in_pt(const std::string& name,
         isl_set* dm,
         isl_map* access,
@@ -1197,27 +1179,6 @@ class UBuffer {
       access_map[name] = to_umap(access);
       schedule[name] = sched;
       isIn[name] = true;
-    }
-
-    void add_in_pt_with_access_pattern(
-            const std::string& name,
-            AccessPattern & acc_pattern ) {
-      domain[name] = acc_pattern.get_domain(ctx);
-      access_map[name] = acc_pattern.get_access_map(ctx);
-      access_pattern[name] = acc_pattern;
-      schedule[name] = NULL;
-      isIn[name] = true;
-    }
-
-    void add_out_pt_with_access_pattern(
-            const std::string& name,
-            AccessPattern & acc_pattern ) {
-      assert(!contains_key(name, domain));
-      domain[name] = acc_pattern.get_domain(ctx);
-      access_map[name] = acc_pattern.get_access_map(ctx);
-      access_pattern[name] = acc_pattern;
-      //schedule[name] = (sched);
-      isIn[name] = false;
     }
 
     void add_out_pt(const std::string& name,

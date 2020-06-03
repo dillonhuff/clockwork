@@ -446,10 +446,11 @@ isl_stat isl_pw_aff_get_coefficient( isl_set *set,  isl_aff *aff, void *user) {
         {
 			continue;
         }
-		auto dim_name = isl_aff_get_dim_name(aff, isl_dim_in, i);
-		isl_val *v = isl_aff_get_coefficient_val(aff, isl_dim_in, i);
+		//auto dim_name = isl_aff_get_dim_name(aff, isl_dim_in, i);
+		string dim_name = "p" + to_string(i);
+        isl_val *v = isl_aff_get_coefficient_val(aff, isl_dim_in, i);
         int int_v =  isl_val_get_num_si(v);
-        coef_list->insert(std::make_pair(string(dim_name), int_v));
+        coef_list->insert(std::make_pair(dim_name, int_v));
 	}
     return isl_stat_ok;
 }
@@ -508,9 +509,9 @@ isl_stat isl_pw_aff_get_var_id( isl_set *set,  isl_aff *aff, void *user) {
         {
 			continue;
         }
-		auto dim_name = isl_aff_get_dim_name(aff, isl_dim_in, i);
+        string dim_name = "p" + to_string(i);
         //0 is reserved for constant
-        name2idx_related->insert(std::make_pair(string(dim_name), i));
+        name2idx_related->insert(std::make_pair(dim_name, i));
 	}
     return isl_stat_ok;
 }
@@ -526,7 +527,7 @@ isl_stat isl_pw_aff_set_var_name( isl_set *set, isl_aff *aff, void *user) {
 
 isl_map* set_map_dim_name(isl_ctx* ctx, isl_map* m, unsigned pos, const string& name) {
     isl_id* name_id = id(ctx, name);
-    return isl_map_set_dim_id(m, isl_dim_in, pos, name_id);
+    return isl_map_set_dim_id(cpy(m), isl_dim_in, pos, name_id);
 }
 
 isl_map* gen_map_from_sched_vec(isl_ctx* ctx, vector<string> sched_vec, string op_name) {
