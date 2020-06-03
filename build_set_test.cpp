@@ -1,6 +1,7 @@
 #include "app.h"
 #include "ubuffer.h"
 #include "codegen.h"
+#include "coreir_backend.h"
 #include "prog.h"
 
 #include <chrono>
@@ -1673,7 +1674,14 @@ void reaccess_test() {
   }
   read->add_store("out", "qi, qo, ao");
 
-  generate_optimized_code(prg);
+  auto opt_sched = prg.optimized_schedule();
+  auto schedmap = its(isl_schedule_get_map(opt_sched), prg.whole_iteration_domain());
+  auto bufs = build_buffers(prg, schedmap);
+  CodegenOptions options;
+  generate_coreir(options, bufs, prg, schedmap);
+  assert(false);
+
+  //generate_optimized_code(prg);
   //assert(false);
 
   //auto buffers_opt = build_buffers(prg);

@@ -1881,4 +1881,3 @@ void generate_unoptimized_code(prog& prg) {
   prg.name = old_name;
 }
 
-
