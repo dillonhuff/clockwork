@@ -1263,12 +1263,12 @@ void UBuffer::port_reduction() {
           auto r_start = lexminpt(range(access_map.at(r)));
           return lex_gt_pt(l_start, r_start);
   });
-  cout << "Upper left access port: " << str(access_map.at(pt_vec.front())) << endl;
+  //cout << "Upper left access port: " << str(access_map.at(pt_vec.front())) << endl;
   for (auto outpt : pt_vec) {
       auto max_dd = compute_dd_bound(outpt, pt_vec.front(), true);
       auto min_dd = compute_dd_bound(outpt, pt_vec.front(), false);
-      cout << "\tpt: [" << outpt << "] -> pt:[" << pt_vec.front()
-          << "] has delay = [" << min_dd << ", " << max_dd << "]\n";
+      //cout << "\tpt: [" << outpt << "] -> pt:[" << pt_vec.front()
+          //<< "] has delay = [" << min_dd << ", " << max_dd << "]\n";
   }
 }
 
@@ -1309,19 +1309,19 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
     if (mergeable.size() > 0) {
         merge_bank(options, inpt, mergeable);
         auto banks = get_banks();
-        cout << "finished create bank!" << endl;
-        for (bank bk : banks) {
-            cout << bk.name << " has delays: ";//<< bk.read_delays << endl;
-            cout << tab(1);
-            for (int dl: bk.read_delays) {
-                cout << dl << "," ;
-            }
-            cout << endl;
-            for (auto dl: bk.delay_map) {
-                cout <<tab(1)<< dl.first << ":" << dl.second <<endl; ;
-            }
+        //cout << "finished create bank!" << endl;
+        //for (bank bk : banks) {
+            //cout << bk.name << " has delays: ";//<< bk.read_delays << endl;
+            //cout << tab(1);
+            //for (int dl: bk.read_delays) {
+                //cout << dl << "," ;
+            //}
+            //cout << endl;
+            //for (auto dl: bk.delay_map) {
+                //cout <<tab(1)<< dl.first << ":" << dl.second <<endl; ;
+            //}
 
-        }
+        //}
     }
   }
 }
