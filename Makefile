@@ -28,7 +28,7 @@ LINK_FLAGS += -L $(COREIR_LIB) -Wl,-rpath $(COREIR_LIB) -lcoreir -lcoreirsim -lc
 endif
 
 TEST_FILES = build_set_test.cpp
-LIB_CPP_FILES = qexpr.cpp app.cpp isl_utils.cpp prog.cpp codegen.cpp minihls.cpp ubuffer.cpp
+LIB_CPP_FILES = qexpr.cpp app.cpp isl_utils.cpp prog.cpp codegen.cpp minihls.cpp ubuffer.cpp coreir_backend.cpp
 
 OBJ_FILES := $(patsubst %.cpp,%.o,$(LIB_CPP_FILES))
 

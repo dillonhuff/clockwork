@@ -36,6 +36,7 @@ struct ir_node {
   std::vector<pair<buffer_name, address> > produce_locs;
   // Locations read
   std::vector<pair<buffer_name, address> > consume_locs;
+  std::vector<pair<buffer_name, std::vector<pair<std::string, std::string>>>> consume_locs_pair;
   // The name of the HL C++ function that this op invokes
   std::string func;
   // Name of loop index variables used by this unit
@@ -208,6 +209,20 @@ struct ir_node {
     return fo;
   }
 
+  string add_load(const std::string& b, const std::vector<std::pair<std::string, std::string>> loc) {
+    assert(!is_loop);
+    consume_locs_pair.push_back({b, loc});
+    string val_name = b;
+    for (auto val : loc) {
+      val_name += "_";
+      val_name += val.second;
+    }
+    val_name += "_value";
+    val_name = c_sanitize(val_name);
+    return val_name;
+  }
+
+
   string add_load(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2) {
     return add_load(b, d0 + ", " + d1 + ", " + d2);
   }
@@ -229,6 +244,10 @@ struct ir_node {
       ps.push_back(p.first + "[" + p.second + "]");
     }
     return ps;
+  }
+
+  vector<pair<string, vector<pair<string, string>>>> consumes_pair() const {
+   return consume_locs_pair;
   }
 
   vector<string> produces() const {
@@ -563,6 +582,9 @@ struct prog {
     for (auto cs : op->consume_locs) {
       args.push_back(cs.first);
     }
+    for (auto cs : op->consume_locs_pair) {
+      args.push_back(cs.first);
+    }
     for (auto cs : op->produce_locs) {
       args.push_back(cs.first);
     }
@@ -694,6 +716,7 @@ struct prog {
       auto dom = map_find(op, doms);
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
+
       for (auto p : op->produces()) {
         umap* vmap =
           its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
@@ -772,7 +795,6 @@ struct prog {
     return m;
 
   }
-
   umap* producer_map(const std::string& buf_name) {
     auto ivars = iter_vars();
     auto doms = domains();
@@ -810,19 +832,30 @@ struct prog {
       auto dom = map_find(op, doms);
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
-      for (auto p : op->consumes()) {
+     // adding vector pair 
+     for (auto top_pair : op->consumes_pair()) {
+      string cond = "{ ";
+        for (auto sec_pair : top_pair.second) {
+          cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+        }
+        cond = cond.substr(0, cond.length() - 2);
+        cond = cond + string(" }");
+     
+        umap* vmap = its(isl_union_map_read_from_str(ctx, cond.c_str()), to_uset(dom));
+        pmap = unn(pmap, vmap);
+     }
+     m = unn(m, pmap);
+     // original
+       for (auto p : op->consumes()) {
         string buf = take_until(p, "[");
         if (buf == buf_name) {
           umap* vmap =
             its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
           pmap = unn(pmap, vmap);
-          //cout << tab(1) << "pmap = " << str(pmap) << endl;
         }
       }
       m = unn(m, pmap);
     }
-    //cout << "m = " << str(m) << endl;
-    //assert(false);
     return m;
   }
 
@@ -838,16 +871,30 @@ struct prog {
       auto dom = map_find(op, doms);
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
-      for (auto p : op->consumes()) {
-        umap* vmap =
+      
+      // for boundary condition expressions
+      for (auto top_pair : op->consumes_pair()) {     
+        string cond = "{ ";
+        for (auto sec_pair : top_pair.second) {
+          cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+        }
+        cond = cond.substr(0, cond.length() - 2);
+        cond = cond + string(" }");
+        umap* vmap = its(isl_union_map_read_from_str(ctx, cond.c_str()), to_uset(dom));
+        pmap = unn(pmap, vmap);
+     }
+     m = unn(m, pmap);
+      
+     // original case
+     for (auto p : op-> consumes()){
+      cout << "second for loop" << endl;
+       umap* vmap =
           its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
-        //cout << tab(1) << "vmap = " << str(vmap) << endl;
+
         pmap = unn(pmap, vmap);
       }
-      m = unn(m, pmap);
+      m = unn(m, pmap); 
     }
-    //cout << tab(1) << "m = " << str(m) << endl;
-    //assert(false);
     return m;
   }
 
@@ -940,6 +987,12 @@ void generate_unoptimized_code(prog& prg);
 // Re-schedules all loops using ISL 
 // and then emits HLS C++ code for the program
 void generate_optimized_code(prog& prg);
+
+std::set<pair<string, string> > edge_buffers(map<string, UBuffer>& buffers, prog& prg);
+
+std::set<pair<string, string> > outputs(map<string, UBuffer>& buffers, prog& prg);
+
+std::set<pair<string, string> > inputs(map<string, UBuffer>& buffers, prog& prg);
 
 // Variants on code generation functions
 void generate_app_code(CodegenOptions& options,

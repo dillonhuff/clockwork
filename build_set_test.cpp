@@ -1,6 +1,7 @@
 #include "app.h"
 #include "ubuffer.h"
 #include "codegen.h"
+#include "coreir_backend.h"
 #include "prog.h"
 
 #include <chrono>
@@ -971,8 +972,7 @@ void conv_1d_bc_test() {
 
   auto c = prg.add_loop("c", 0, 10);
   auto read0 = c->add_op("read0");
-  //read0->add_load("M", {{"c < 0", "0"}, {"0 <= c and c <= 9", "c"}, {"c > 9", "9"}});
-  //"min(c, 9)");
+  
   read0->add_load("M", "min(c, 9)");
   read0->add_load("M", "min(c + 1, 9)");
   read0->add_load("M", "min(c + 2, 9)");
@@ -1017,9 +1017,15 @@ prog conv_1d_bc() {
   auto c = prg.add_loop("c", 0, 10);
   auto compute = c->add_op("compute_output");
   compute->add_function("accumulate_3");
-  compute->add_load("M", "min(c, 9)");
+  /*compute->add_load("M", {{"c < 2", "0"}, {"2 <= c <= 7", "c"}, {"7 < c <= 8", "9"}, {"c > 8", "8"}});
+  compute->add_load("M", {{"c < 2", "0"}, {"2 <= c <= 7", "c"}, {"7 < c <= 8", "9"}, {"c > 8", "8"}});
+  compute->add_load("M", {{"c < 2", "0"}, {"2 <= c <= 7", "c"}, {"7 < c <= 8", "9"}, {"c > 8", "8"}});*/
+  compute->add_load("M", {{"0 <= c < 9", "c"}, {"c >= 9", "9"}});
+  compute->add_load("M", {{"0 <= c < 8", "c + 1"}, {"c >= 8", "9"}});
+  compute->add_load("M", {{"0 <= c < 7", "c + 2"}, {"c >= 7", "9"}});
+/*  compute->add_load("M", "min(c, 9)");
   compute->add_load("M", "min(c + 1, 9)");
-  compute->add_load("M", "min(c + 2, 9)");
+  compute->add_load("M", "min(c + 2, 9)");*/
   compute->add_store("out", "c");
   return prg;
 }
@@ -1641,30 +1647,51 @@ void reaccess_test() {
 
   prog prg;
   prg.compute_unit_file = "vec_access.h";
-  prg.name = "vec";
+  prg.name = "reacess_conv";
   prg.add_input("in");
   prg.add_output("out");
-  //prg.buffer_port_widths["T"] = 32*3;
   prg.buffer_port_widths["in"] = 32;
   prg.buffer_port_widths["out"] = 32;
 
   auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
   auto write = p->add_op("input");
-  write->add_load("in", "po, pi");
-  write->add_store("buf", "po, pi");
+  write->add_load("in", "pi, po");
+  write->add_store("bufl2", "pi, po");
+
+  {
+    auto e = prg.add_nest("eao", 0 , 2, "eqo", 0, 8, "eqi", 0, 16);
+    auto rd = e->add_op("ld_bufl2_l1");
+    rd->add_load("bufl2", "eqi, eqo");
+    rd->add_store("bufl1", "eqi, eqo, eao");
+  }
+
 
   auto q = prg.add_nest("ao", 0 , 2, "qo", 0, 6, "qi", 0, 14);
   auto read = q->add_op("output");
-  for (size_t wy = 0; wy < 3; wy ++)
+  for (size_t wy = 0; wy < 3; wy ++) {
       for (size_t wx = 0; wx < 3; wx ++) {
-        read->add_load("buf", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
+        read->add_load("bufl1", "qi+" + to_string(wy) + ", qo+" + to_string(wx) + ", ao");
       }
-  read->add_store("out", "po, pi");
+  }
+  read->add_store("out", "qi, qo, ao");
 
-  auto buffers_opt = build_buffers(prg);
-  CodegenOptions opt;
-  opt.conditional_merge = false;
-  buffers_opt.at("buf").generate_bank_and_merge(opt);
+  auto opt_sched = prg.optimized_schedule();
+  auto schedmap = its(isl_schedule_get_map(opt_sched), prg.whole_iteration_domain());
+  auto bufs = build_buffers(prg, schedmap);
+#ifdef COREIR
+  CodegenOptions options;
+  generate_coreir(options, bufs, prg, schedmap);
+#endif
+
+  //assert(false);
+
+  //generate_optimized_code(prg);
+  //assert(false);
+
+  //auto buffers_opt = build_buffers(prg);
+  //CodegenOptions opt;
+  //opt.conditional_merge = false;
+  //buffers_opt.at("buf").generate_bank_and_merge(opt);
 
 }
 
@@ -1709,10 +1736,12 @@ void shift_reg_test() {
   cout << buffers_opt.at("buf") << endl;
 
 #ifdef COREIR
-  generate_coreir(opt, buffers_opt.at("buf"));
+  CoreIR::Context* context = CoreIR::newContext();
+  generate_coreir(opt, context, buffers_opt.at("buf"));
+  CoreIR::deleteContext(context);
 #endif
 
-  assert(false);
+  //assert(false);
   auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
   for (auto buf : rewrite_buf) {
     cout << buf << endl;
@@ -1733,8 +1762,8 @@ void shift_reg_test() {
 
   lattice_schedule_buf(prg.ctx, buffers_opt, opt_sched, sram);
 
-  emit_address_stream2file(buffers_opt, "buf1_sram", "buf1_sram", "SRAM_address", false);
-  emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "TOP_address", true);
+  emit_address_stream2file(buffers_opt, "buf1_sram", "buf1_sram", "shift_reg_SRAM_address", false);
+  emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "shift_reg_TOP_address", true);
 }
 
 void bankmerge_vec_test() {
@@ -1790,11 +1819,11 @@ void bankmerge_vec_test() {
 
   lattice_schedule_buf(prg.ctx, buffers_opt, opt_sched, sram);
 
+
   emit_address_stream2file(buffers_opt, "buf1_sram", "buf1_sram", "SRAM_address", false);
   emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "TOP_address", true);
   compare_to_gold("SRAM_address.csv");
   compare_to_gold("TOP_address.csv");
-
 }
 
 void auto_vec_test() {
@@ -2889,6 +2918,42 @@ void conv_2d_bc_test() {
 
   regression_test(prg);
 }
+
+prog conv_2d_bc() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "conv_2d_bc";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["I"] = 32;
+
+  {
+    auto pc = prg.add_nest("pr", 0, 64, "pc", 0, 64);
+    auto write = pc->add_op("write");
+    write->add_load("in", "pc, pr");
+    write->add_store("I", "pc, pr");
+  }
+
+  {
+    auto pr = prg.add_loop("lr", 0, 64);
+    auto pc = pr->add_loop("lc", 0, 64);
+    auto rd = pc->add_op("read_0");
+    // Need to load 9 values
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+	rd->add_load("I", {{"0 <= lc < " + to_string(63 - i) + " and 0 <= lr < " + to_string(63 - j), "lc + " + to_string(i) + ", lr + " + to_string(j)}, 
+			  {"lc >= " + to_string(63 - i) + " and lr >= " + to_string(63 - j), "63, 63"},
+			  {"0 <= lc < " + to_string(63 - i) + " and lr >= " + to_string(63 - j), "lc + " + to_string(i) + ", 63"}, 
+			  {"lc >= " + to_string(63 - i) +  " and 0 <= lr < " + to_string(63 - j), "63, lr + " + to_string(j)}});
+      }
+    }
+    rd->add_function("conv_3_3");
+    rd->add_store("out", "lc, lr");
+  }
+
+  return prg;
+}
+
 
 void conv_1d_rolled_test() {
   prog prg;
@@ -9119,7 +9184,6 @@ void playground() {
 void new_bankmerge_tests() {
   shift_reg_test();
   //assert(false);
-  reaccess_test();
 
   bankmerge_vec_test();
   auto_vec_test();
@@ -9417,11 +9481,18 @@ void application_tests() {
 }
 
 void memory_tile_tests() {
+  //shift_reg_test();
+  reaccess_test();
+  //assert(false);
+
+  //new_bankmerge_tests();
   memtile_test();
   auto_vec_test();
   bankmerge_vec_test();
   vec_test();
   agg_test();
+
+  //assert(false);
 }
 
 int main(int argc, char** argv) {
@@ -9456,6 +9527,17 @@ int main(int argc, char** argv) {
 
     if (cmd == "conv_2d") {
       prog prg = conv_2d();
+      aha_talk_print_info(prg);
+      return 0;
+    }
+
+    if (cmd == "conv_2d_bc_test") {
+      conv_2d_bc_test();
+      return 0;
+    }
+
+    if (cmd == "conv_2d_bc") {
+      prog prg = conv_2d_bc();
       aha_talk_print_info(prg);
       return 0;
     }

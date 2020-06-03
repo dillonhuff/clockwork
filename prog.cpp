@@ -766,6 +766,10 @@ void generate_op_code(map<string, UBuffer>& buffers, op* op) {
   for (auto consumed : op->consume_locs) {
     decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
   }
+ 
+  for (auto consumed : op->consume_locs_pair) {
+    decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
+  }
 
   for (auto consumed : op->produce_locs) {
     if (contains_key(consumed.first, buffers)) {
@@ -849,6 +853,49 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
 
       isl_map* consumed_here =
         its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + consumed.second + "]" + " }").c_str()), cpy(domains.at(op)));
+      assert(contains_key(op, domains));
+
+      cout << "\tAdding output port: " << pt_name << endl;
+      cout << "\t\tConsumed: " << str(consumed_here) << endl;
+      buf.add_out_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
+      buf.add_access_pattern(pt_name, op->name, name);
+
+      vector<string> inpt = buf.get_out_ports();
+      cout << "current out port name: " << endl;
+      for_each(inpt.begin(), inpt.end(), [](string pt_name){cout <<"\t" << pt_name;});
+      cout << endl;
+
+      usuffix++;
+    }
+
+    for (auto consumed : op->consume_locs_pair) {
+      string name = consumed.first;
+
+      if (!contains_key(name, buffers)) {
+        cout << "Creating ports for op: " << name << endl;
+        UBuffer buf;
+        buf.name = name;
+        buf.ctx = prg.ctx;
+        if (contains_key(name, prg.buffer_port_widths)) {
+          buf.port_widths = map_find(name, prg.buffer_port_widths);
+        }
+        buffers[name] = buf;
+      }
+
+      UBuffer& buf = buffers.at(name);
+
+      string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
+      buf.port_bundles[op->name + "_read"].push_back(pt_name);
+
+      string cond = "{ ";
+      for (auto sec_pair : consumed.second) {
+        cond = cond + string(prg.op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+      }
+      cond = cond.substr(0, cond.length() - 2);
+      cond = cond + string(" }");
+
+      isl_map* consumed_here =
+        its(isl_map_read_from_str(buf.ctx, cond.c_str()), cpy(domains.at(op)));
 
       assert(contains_key(op, domains));
 
@@ -1239,6 +1286,15 @@ vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, pro
       done.insert(buf_name);
     }
   }
+
+  for (auto p : op->consume_locs_pair) {
+    auto buf_name = p.first;
+    if (!elem(buf_name, done)) {
+      buf_srcs.push_back(buf_name);
+      done.insert(buf_name);
+    }
+  }
+
   for (auto p : op->produce_locs) {
     auto buf_name = p.first;
     if (!elem(buf_name, done)) {
@@ -1348,11 +1404,6 @@ compute_kernel generate_compute_op(
       conv_out << endl;
       open_debug_scope(conv_out);
 
-      //conv_out << tab(1) << "*global_debug_handle << \"" << op->name << "_" << in_buffer << ",\" << ";
-      //for (auto v : kernel.iteration_variables) {
-        //conv_out << v << "<< \",\" << ";
-      //}
-      //conv_out << " " << value_name << " << endl;" << endl;
       close_debug_scope(conv_out);
       conv_out << endl;
 
@@ -1679,7 +1730,6 @@ void generate_app_code(CodegenOptions& options,
     if (!prg.is_boundary(b.first)) {
       generate_hls_code(options, conv_out, b.second);
     }
-
   }
 
   conv_out << endl << endl;
@@ -1822,5 +1872,4 @@ void generate_unoptimized_code(prog& prg) {
 
   prg.name = old_name;
 }
-
 
