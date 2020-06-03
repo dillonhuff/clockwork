@@ -971,8 +971,7 @@ void conv_1d_bc_test() {
 
   auto c = prg.add_loop("c", 0, 10);
   auto read0 = c->add_op("read0");
-  //read0->add_load("M", {{"c < 0", "0"}, {"0 <= c and c <= 9", "c"}, {"c > 9", "9"}});
-  //"min(c, 9)");
+  
   read0->add_load("M", "min(c, 9)");
   read0->add_load("M", "min(c + 1, 9)");
   read0->add_load("M", "min(c + 2, 9)");
@@ -1017,9 +1016,15 @@ prog conv_1d_bc() {
   auto c = prg.add_loop("c", 0, 10);
   auto compute = c->add_op("compute_output");
   compute->add_function("accumulate_3");
-  compute->add_load("M", "min(c, 9)");
+  /*compute->add_load("M", {{"c < 2", "0"}, {"2 <= c <= 7", "c"}, {"7 < c <= 8", "9"}, {"c > 8", "8"}});
+  compute->add_load("M", {{"c < 2", "0"}, {"2 <= c <= 7", "c"}, {"7 < c <= 8", "9"}, {"c > 8", "8"}});
+  compute->add_load("M", {{"c < 2", "0"}, {"2 <= c <= 7", "c"}, {"7 < c <= 8", "9"}, {"c > 8", "8"}});*/
+  compute->add_load("M", {{"0 <= c < 9", "c"}, {"c >= 9", "9"}});
+  compute->add_load("M", {{"0 <= c < 8", "c + 1"}, {"c >= 8", "9"}});
+  compute->add_load("M", {{"0 <= c < 7", "c + 2"}, {"c >= 7", "9"}});
+/*  compute->add_load("M", "min(c, 9)");
   compute->add_load("M", "min(c + 1, 9)");
-  compute->add_load("M", "min(c + 2, 9)");
+  compute->add_load("M", "min(c + 2, 9)");*/
   compute->add_store("out", "c");
   return prg;
 }
@@ -2898,6 +2903,42 @@ void conv_2d_bc_test() {
 
   regression_test(prg);
 }
+
+prog conv_2d_bc() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "conv_2d_bc";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["I"] = 32;
+
+  {
+    auto pc = prg.add_nest("pr", 0, 64, "pc", 0, 64);
+    auto write = pc->add_op("write");
+    write->add_load("in", "pc, pr");
+    write->add_store("I", "pc, pr");
+  }
+
+  {
+    auto pr = prg.add_loop("lr", 0, 64);
+    auto pc = pr->add_loop("lc", 0, 64);
+    auto rd = pc->add_op("read_0");
+    // Need to load 9 values
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+	rd->add_load("I", {{"0 <= lc < " + to_string(63 - i) + " and 0 <= lr < " + to_string(63 - j), "lc + " + to_string(i) + ", lr + " + to_string(j)}, 
+			  {"lc >= " + to_string(63 - i) + " and lr >= " + to_string(63 - j), "63, 63"},
+			  {"0 <= lc < " + to_string(63 - i) + " and lr >= " + to_string(63 - j), "lc + " + to_string(i) + ", 63"}, 
+			  {"lc >= " + to_string(63 - i) +  " and 0 <= lr < " + to_string(63 - j), "63, lr + " + to_string(j)}});
+      }
+    }
+    rd->add_function("conv_3_3");
+    rd->add_store("out", "lc, lr");
+  }
+
+  return prg;
+}
+
 
 void conv_1d_rolled_test() {
   prog prg;
@@ -9470,6 +9511,17 @@ int main(int argc, char** argv) {
 
     if (cmd == "conv_2d") {
       prog prg = conv_2d();
+      aha_talk_print_info(prg);
+      return 0;
+    }
+
+    if (cmd == "conv_2d_bc_test") {
+      conv_2d_bc_test();
+      return 0;
+    }
+
+    if (cmd == "conv_2d_bc") {
+      prog prg = conv_2d_bc();
       aha_talk_print_info(prg);
       return 0;
     }
