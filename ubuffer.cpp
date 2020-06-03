@@ -1538,7 +1538,7 @@ vector<UBuffer> UBuffer::port_grouping(int port_width) {
             string pt_name = pt_vec.front() + "_merge";
             out_map_merge = set_range_name(out_map_merge, new_ub.name);
             new_ub.add_out_pt(pt_name, dom, out_map_merge, sched);
-            new_ub.add_access_pattern(pt_name, ::name(dom), new_ub.name);
+            //new_ub.add_access_pattern(pt_name, ::name(dom), new_ub.name);
             new_ub.port_bundles[::name(dom)+ "_write"].push_back(pt_name);
             //delay_map.insert(make_pair(pt_name, bk.delay_map));
             bank_pool.pop();
@@ -1574,7 +1574,7 @@ vector<UBuffer> UBuffer::port_grouping(int port_width) {
                     auto sched = schedule.at(it.first);
                     string pt_name = it.first + "_merge";
                     new_ub.add_out_pt(pt_name, dom, acc_map, sched);
-                    new_ub.add_access_pattern(pt_name, ::name(dom), new_ub.name);
+                    //new_ub.add_access_pattern(pt_name, ::name(dom), new_ub.name);
                     new_ub.port_bundles[::name(dom) + "_write"].push_back(pt_name);
                 }
                 group_port_width = 0;
@@ -1594,7 +1594,7 @@ vector<UBuffer> UBuffer::port_grouping(int port_width) {
             auto sched = schedule.at(it.first);
             string pt_name = it.first + "_merge";
             new_ub.add_out_pt(pt_name, dom, acc_map, sched);
-            new_ub.add_access_pattern(pt_name, ::name(dom), new_ub.name);
+            //new_ub.add_access_pattern(pt_name, ::name(dom), new_ub.name);
             new_ub.port_bundles[::name(dom) + "_write"].push_back(pt_name);
         }
     }
@@ -1846,13 +1846,13 @@ void UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2
             string pt_name = origin_pt_name + "_out_" + std::to_string(new_pt_cnt);
             target_buf.port_bundles[bd_name].push_back(pt_name);
             target_buf.add_out_pt(pt_name, dom, to_map(rewrite_access_map), sched);
-            target_buf.add_access_pattern(pt_name, acc_pattern.op_name+"_vec", target_buf.name);
+            //target_buf.add_access_pattern(pt_name, acc_pattern.op_name+"_vec", target_buf.name);
         }
         else {
             string pt_name = origin_pt_name + "_in_" + std::to_string(new_pt_cnt);
             target_buf.port_bundles[bd_name].push_back(pt_name);
             target_buf.add_in_pt(pt_name, dom, to_map(rewrite_access_map), sched);
-            target_buf.add_access_pattern(pt_name, acc_pattern.op_name+"_vec", target_buf.name);
+            //target_buf.add_access_pattern(pt_name, acc_pattern.op_name+"_vec", target_buf.name);
 
             //LOOK at the name to judge if we need to remap the buffer
             size_t found = target_buf.name.find("tb");
@@ -1860,11 +1860,9 @@ void UBuffer::add_vectorized_pt_to_ubuf(UBuffer & target_buf, umap* rewrite_buf2
                 //auto acc_pt = target_buf.access_pattern.at(pt_name);
                 auto acc_pt = AccessPattern(to_map(target_buf.access_map[pt_name]), target_buf.ctx);
                 auto decouple_acc_map = acc_pt.get_access_map_and_decouple_reuse(ctx, dim_id);
-                cout << acc_pt << endl;
-                cout << "origin access map: " << str(target_buf.access_map[pt_name]) << endl;
                 cout << "out pt decouple: " << str(decouple_acc_map) << endl;
                 target_buf.access_map[pt_name] = to_umap(decouple_acc_map);
-                target_buf.add_access_pattern(pt_name, acc_pattern.op_name+"_vec", target_buf.name);
+                //target_buf.add_access_pattern(pt_name, acc_pattern.op_name+"_vec", target_buf.name);
             }
         }
         new_pt_cnt ++;

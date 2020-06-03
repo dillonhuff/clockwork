@@ -1159,7 +1159,7 @@ struct memtile_config {
 
                 //the backend will suto schedule the parallel access
                 string outpt_sram = pick(buf.get_out_ports());
-                auto acc_pattern = buf.access_pattern.at(outpt_sram);
+                auto acc_pattern = AccessPattern(to_map(buf.access_map.at(outpt_sram)), buf.ctx);
                 int output_port_size = acc_pattern.in_range.back();
                 sram_config tmp_out;
                 for(int i = 0; i < output_port_size; i ++){
@@ -1198,7 +1198,8 @@ struct memtile_config {
                 auto fetch_width = buf.get_in_ports().size();
                 for (string outpt : output_pt_map) {
                     tb_config tmp;
-                    auto acc_pattern = buf.access_pattern.at(outpt);
+                    //auto acc_pattern = buf.access_pattern.at(outpt);
+                    auto acc_pattern = AccessPattern(to_map(buf.access_map.at(outpt)), buf.ctx);
                     vector<int> dim_ref;
                     for (int i = 0; i < acc_pattern.addr_dim; i ++)
                         dim_ref.push_back(i);
