@@ -307,18 +307,19 @@ class AccessPattern {
           cout << "access map expr:" << nd_expr_str << endl;
           auto access_map = isl_map_read_from_str(ctx, string("{ " + op_name + vars + " -> " + buf_name  + nd_expr_str + "}").c_str());
           auto domain = get_domain(ctx);
+          cout << "domain: " << str(domain) << "\naccess map: " << str(access_map) << endl;
           return its(access_map, domain);
       }
 
       void initial_access_mat(isl_map* access_map, isl_ctx* ctx) {
-          //cout << "\t\tProduced: " << str(access_map) << endl;
+          cout << "\t\tProduced: " << str(access_map) << endl;
 
-          for (size_t i = 0; i < isl_map_dim(access_map, isl_dim_in); i++) {
+          /*for (size_t i = 0; i < isl_map_dim(access_map, isl_dim_in); i++) {
               if (!isl_map_has_dim_id(access_map, isl_dim_in, i)) {
                   access_map = set_map_dim_name(ctx, access_map, i, "p"+to_string(i));
               }
               //cout << "has id:" << str(isl_map_get_dim_id(access_map, isl_dim_in, i)) << endl;
-          }
+          }*/
 
           auto mpa = isl_pw_multi_aff_from_map(access_map);
           addr_dim = isl_pw_multi_aff_dim(mpa, isl_dim_out);
@@ -345,6 +346,7 @@ class AccessPattern {
 
           var_dim = name2idx.size();
 
+          cout << "Access map: " << str(access_map) << endl;
           //iniital the input var range
           in_range = vector<int>(var_dim - 1, 0);
           for (auto it = pairs.begin(); it != pairs.end(); it ++) {
@@ -390,7 +392,10 @@ class AccessPattern {
               cout << "output_dim: " << i << endl;
               for (auto cc: coef) {
                   cout << "\tvar_name: " << cc.first <<", idx: " << name2idx[cc.first] << ", coef: " << cc.second << ", vec_stride_in_addr:" << vec_stride_in_addr[i] << endl;
-                  access_matrix[i][name2idx[cc.first]] = cc.second / vec_stride_in_addr[i];
+                  //access_matrix[i][name2idx[cc.first]] = cc.second / vec_stride_in_addr[i];
+                  //TODO: figure out what is vec stride in addr
+                  access_matrix[i][name2idx[cc.first]] = cc.second;
+
               }
           }
       }
@@ -1023,8 +1028,8 @@ class UBuffer {
                       acc_map,
                       buf.schedule.at(pt_name));
               //TODO: get rid of this, change into a method
-              //access_pattern[pt_name] = buf.access_pattern.at(pt_name);
-              //access_pattern.at(pt_name).buf_name = name;
+              access_pattern[pt_name] = buf.access_pattern.at(pt_name);
+              access_pattern.at(pt_name).buf_name = name;
             }
           }
           else {
@@ -1037,8 +1042,8 @@ class UBuffer {
                       acc_map,
                       buf.schedule.at(pt_name));
               //TODO: get rid of this, change into a method
-              //access_pattern[pt_name] = buf.access_pattern.at(pt_name);
-              //access_pattern.at(pt_name).buf_name = name;
+              access_pattern[pt_name] = buf.access_pattern.at(pt_name);
+              access_pattern.at(pt_name).buf_name = name;
             }
           }
         }
@@ -1178,7 +1183,6 @@ class UBuffer {
       isIn[name] = false;
     }
 
-    /*
     void add_access_pattern(const std::string& pt_name,
             const std::string & op_name,
             const std::string & buf_name) {
@@ -1188,7 +1192,7 @@ class UBuffer {
         cout << "\top name :" << op_name << endl;
         AccessPattern acc_p(access, ctx);
         access_pattern[pt_name] = acc_p;
-    }*/
+    }
 
     void add_in_pt(const std::string& name,
         isl_set* dm,
