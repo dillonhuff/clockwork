@@ -219,23 +219,19 @@ struct ir_node {
     }
     val_name += "_value";
     val_name = c_sanitize(val_name);
-cout<<"add load ============================================================="<<endl;
     return val_name;
   }
 
 
   string add_load(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2) {
-cout<<"add load2 ============================================================="<<endl;
     return add_load(b, d0 + ", " + d1 + ", " + d2);
   }
 
   string add_load(const std::string& b, const std::string& d0, const std::string& d1) {
-cout<<"add load3 ============================================================="<<endl;
     return add_load(b, d0 + ", " + d1);
   }
 
   string add_load(const std::string& b, const std::string& loc) {
-cout<<"add load4 ============================================================="<<endl;
     assert(!is_loop);
     consume_locs.push_back({b, loc});
     string val_name = c_sanitize(b + "_" + loc + "_value");
@@ -243,7 +239,6 @@ cout<<"add load4 ============================================================="<
   }
 
   vector<string> consumes() const {
-cout<<"consumesssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"<<endl;
     vector<string> ps;
     for (auto p : consume_locs) {
       ps.push_back(p.first + "[" + p.second + "]");
@@ -252,7 +247,6 @@ cout<<"consumessssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
   }
 
   vector<pair<string, vector<pair<string, string>>>> consumes_pair() const {
-  cout<<"777777777777777777777777777777777777777777777777777777777777777777777777777777"<<endl; 
    return consume_locs_pair;
   }
 
@@ -858,7 +852,6 @@ struct prog {
       }
       m[op] = make_pair(to_map(pmap), result_buf);
     }
-    cout<<"855 1111111111111111111111111111111111111111111111111111111111"<<endl;
     return m;
 
   }
@@ -924,8 +917,6 @@ struct prog {
       }
       m = unn(m, pmap);
     }
-cout<<"============================================================================"<<endl;
-cout<<"m "<<str(m)<<endl;
     return m;
   }
 
@@ -944,13 +935,12 @@ cout<<"m "<<str(m)<<endl;
       
       // for boundary condition expressions
       for (auto top_pair : op->consumes_pair()) {     
- string cond = "{ ";
+        string cond = "{ ";
         for (auto sec_pair : top_pair.second) {
           cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
         }
         cond = cond.substr(0, cond.length() - 2);
         cond = cond + string(" }");
-     cout<<"----------------------------------cond "<<cond<<endl;
         umap* vmap = its(isl_union_map_read_from_str(ctx, cond.c_str()), to_uset(dom));
         pmap = unn(pmap, vmap);
      }
@@ -966,8 +956,6 @@ cout<<"m "<<str(m)<<endl;
       }
       m = unn(m, pmap); 
     }
-cout<<"============================================================================"<<endl;
-cout<<"m2 "<<str(m)<<endl;
     return m;
   }
 
