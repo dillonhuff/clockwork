@@ -25,8 +25,13 @@ void generate_coreir(CodegenOptions& options,
     int pix_per_burst =
       out_buf.lanes_in_bundle(out_bundle);
 
-    ub_field.push_back(make_pair(out_bundle + "_en", context->BitIn()));
-    ub_field.push_back(make_pair(out_bundle, context->BitIn()->Arr(pixel_width*pix_per_burst)));
+    if (prg.is_input(out_rep)) {
+      ub_field.push_back(make_pair(out_bundle + "_en", context->BitIn()));
+      ub_field.push_back(make_pair(out_bundle, context->BitIn()->Arr(pixel_width*pix_per_burst)));
+    } else {
+      ub_field.push_back(make_pair(out_bundle + "_valid", context->Bit()));
+      ub_field.push_back(make_pair(out_bundle, context->Bit()->Arr(pixel_width*pix_per_burst)));
+    }
   }
 
   //for (auto inpt: buf.get_in_ports()) {
