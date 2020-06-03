@@ -608,8 +608,6 @@ class UBuffer {
     std::map<string, umap*> access_map;
     std::map<string, isl_union_map*> schedule;
     std::map<string, vector<string> > port_bundles;
-    //post processed access map
-    //std::map<string, AccessPattern> access_pattern;
 
     map<pair<string, string>, stack_bank > stack_banks;
     map<string, selector> selectors;
@@ -1023,9 +1021,6 @@ class UBuffer {
                       buf.domain.at(pt_name),
                       acc_map,
                       buf.schedule.at(pt_name));
-              //TODO: get rid of this, change into a method
-              //access_pattern[pt_name] = buf.access_pattern.at(pt_name);
-              //access_pattern.at(pt_name).buf_name = name;
             }
           }
           else {
@@ -1037,9 +1032,6 @@ class UBuffer {
                       buf.domain.at(pt_name),
                       acc_map,
                       buf.schedule.at(pt_name));
-              //TODO: get rid of this, change into a method
-              //access_pattern[pt_name] = buf.access_pattern.at(pt_name);
-              //access_pattern.at(pt_name).buf_name = name;
             }
           }
         }

@@ -1695,8 +1695,7 @@ void shift_reg_test() {
   //unoptimized schedule
   auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
   auto buffers = build_buffers(prg, sched_naive);
-  buffers.at("buf").port_reduction();
-  assert(false);
+  //buffers.at("buf").port_reduction();
 
 
   //optimized schedule
@@ -1793,6 +1792,8 @@ void bankmerge_vec_test() {
 
   emit_address_stream2file(buffers_opt, "buf1_sram", "buf1_sram", "SRAM_address", false);
   emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "TOP_address", true);
+  compare_to_gold("SRAM_address.csv");
+  compare_to_gold("TOP_address.csv");
 
 }
 
@@ -9287,8 +9288,6 @@ void compute_unit_with_index_variables_test() {
 }
 
 void application_tests() {
-  bankmerge_vec_test();
-  assert(false);
   reduce_1d_test();
   reduce_2d_test();
 
@@ -9420,6 +9419,7 @@ void application_tests() {
 void memory_tile_tests() {
   memtile_test();
   auto_vec_test();
+  bankmerge_vec_test();
   vec_test();
   agg_test();
 }

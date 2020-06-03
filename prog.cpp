@@ -817,7 +817,6 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       cout << "\tAdding input port: " << pt_name << endl;
       cout << "\t\tProduced:: " << str(produced_here) << endl;
       buf.add_in_pt(pt_name, domains.at(op), produced_here, its(opt_sched, domains.at(op)));
-      //buf.add_access_pattern(pt_name, op->name, name);
 
       vector<string> inpt = buf.get_in_ports();
       cout << "current in port name: " << endl;
@@ -856,7 +855,6 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       cout << "\tAdding output port: " << pt_name << endl;
       cout << "\t\tConsumed: " << str(consumed_here) << endl;
       buf.add_out_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
-      //buf.add_access_pattern(pt_name, op->name, name);
 
       vector<string> inpt = buf.get_out_ports();
       cout << "current out port name: " << endl;
