@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<Runs Version="1" Minor="0">
-	<Run Id="jacobi2d_unrolled_1_opt" LaunchDir="/home/centos/aws-fpga/Vitis/examples/xilinx_2019.2/jacobi2d_unrolled_1_opt/_x.sw_emu.xilinx_aws-vu9p-f1_shell-v04261818_201920_1/jacobi2d_unrolled_1_opt/jacobi2d_unrolled_1_opt" FlowId="Build_IP" FromStepId="vivado_hls" ToStepId="vivado_hls"/>
-</Runs>
-
