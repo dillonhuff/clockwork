@@ -4242,12 +4242,12 @@ struct App {
       to_map(rdmap(ctx, "{ " + f + "[" + comma_list(data_vars) + " ] -> " +
             update.name() + "[floor(d0 / " + to_string(update.unroll_factor) + "), " + comma_list(later_sched_vars) + "] }"));
 
-    cout << "compute map for " << update.name() << " is " << str(compute_maps[update.name()]) << endl;
+    //cout << "compute map for " << update.name() << " is " << str(compute_maps[update.name()]) << endl;
     compute_sets[update.name()] =
       range(its(
             compute_maps[update.name()],
             data_domain(f).to_set(ctx, f)));
-    cout << "Compute domain for " << update.name() << " is " << str(compute_sets[update.name()]) << endl;
+    //cout << "Compute domain for " << update.name() << " is " << str(compute_sets[update.name()]) << endl;
   }
 
   void fill_compute_domain() {
@@ -4295,7 +4295,7 @@ struct App {
         //cout << "Compute domain for " << update.name() << " is " << str(compute_sets[update.name()]) << endl;
       }
     }
-    cout << "Got compute domain" << endl;
+    //cout << "Got compute domain" << endl;
     //assert(false);
   }
 
@@ -4782,13 +4782,13 @@ struct App {
 
         Window write_box = data_window_provided_by_compute(u.name());
         int i = 0;
-        cout << "Write box for: " << f << " has " << write_box.pts().size() << " points in it" << endl;
+        //cout << "Write box for: " << f << " has " << write_box.pts().size() << " points in it" << endl;
         for (auto p : write_box.pts()) {
           vector<string> coeffs;
           for (auto e : p) {
             coeffs.push_back(isl_str(e));
           }
-          cout << "Coeffs: " << sep_list(coeffs, "[", "]", ", ") << endl;
+          //cout << "Coeffs: " << sep_list(coeffs, "[", "]", ", ") << endl;
           auto access_map =
             rdmap(ctx, "{ " + u.name() + "[" + comma_list(var_names) + "] -> " +
                 f + sep_list(coeffs, "[", "]", ", ") + " }");
@@ -4797,19 +4797,19 @@ struct App {
           i++;
           b.port_bundles[u.name() + "_write"].push_back(pt_name);
         }
-        cout << "Port bundle has " << b.port_bundles[u.name() + "_write"].size() << " ports in it" << endl;
+        //cout << "Port bundle has " << b.port_bundles[u.name() + "_write"].size() << " ports in it" << endl;
       }
 
       for (auto consumer : consumers(f)) {
-        cout << "Getting consumer compute domain: " << consumer << endl;
+        //cout << "Getting consumer compute domain: " << consumer << endl;
         for (auto u : app_dag.at(consumer).updates) {
           isl_set* domain =
             compute_domain(u.name());
           isl_union_map* sched =
             its(m, domain);
 
-          cout << "Getting map from " << u.name() << " to " << consumer << endl;
-          cout << tab(1) << "unroll factor: " << u.unroll_factor << endl;
+          //cout << "Getting map from " << u.name() << " to " << consumer << endl;
+          //cout << tab(1) << "unroll factor: " << u.unroll_factor << endl;
 
           int i = 0;
           for (int lane = 0; lane < u.unroll_factor; lane++) {
@@ -4818,20 +4818,20 @@ struct App {
             //Window f_win = data_window_needed_by_compute(u.name(), f);
             Window orig_dw =
               data_window_needed_by_one_compute_lane(u.name(), f);
-            cout << "original window = " << orig_dw << endl;
+            //cout << "original window = " << orig_dw << endl;
             Window f_win =
               data_window_needed_by_one_compute_lane(u.name(), f).increment(orig_dw.stride(0), lane).scale_stride(u.unroll_factor);
-            cout << "unrolled window f_win = " << f_win << endl;
+            //cout << "unrolled window f_win = " << f_win << endl;
             for (auto p : f_win.pts()) {
               vector<string> coeffs;
               for (auto e : p) {
                 coeffs.push_back(isl_str(e));
               }
-              cout << "Coeffs: " << sep_list(coeffs, "[", "]", ", ") << endl;
+              //cout << "Coeffs: " << sep_list(coeffs, "[", "]", ", ") << endl;
               auto access_map =
                 rdmap(ctx, "{ " + u.name() + "[" + comma_list(var_names) + "] -> " +
                     f + sep_list(coeffs, "[", "]", ", ") + " }");
-              cout << "Access map: " << str(access_map) << endl;
+              //cout << "Access map: " << str(access_map) << endl;
               string pt_name = consumer + "_rd" + to_string(i);
               b.add_out_pt(pt_name, domain, its(to_map(access_map), domain), sched);
               i++;
