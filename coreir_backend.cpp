@@ -86,6 +86,22 @@ void generate_coreir(CodegenOptions& options,
 
   // Connect compute units to buffers
   for (auto op : prg.all_ops()) {
+    for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
+      string buf_name = bundle.first;
+      string bundle_name = bundle.second;
+      auto buf = map_find(buf_name, buffers);
+
+      assert(buf.is_input_bundle(bundle.second));
+
+      if (prg.is_output(buf_name)) {
+        def->connect("self." + bundle_name, op->name + "." + bundle_name);
+        def->connect("self." + bundle_name + "_en", op->name + "." + bundle_name + "_valid");
+      } else {
+        def->connect(buf_name + "." + bundle_name, op->name + "." + bundle_name);
+        def->connect(buf_name + "." + bundle_name + "_en", op->name + "." + bundle_name + "_valid");
+      }
+    }
+
     for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
       string buf_name = bundle.first;
       string bundle_name = bundle.second;
@@ -96,6 +112,9 @@ void generate_coreir(CodegenOptions& options,
       if (prg.is_input(buf_name)) {
         def->connect("self." + bundle_name, op->name + "." + bundle_name);
         def->connect("self." + bundle_name + "_valid", op->name + "." + bundle_name + "_en");
+      } else {
+        def->connect(buf_name + "." + bundle_name, op->name + "." + bundle_name);
+        def->connect(buf_name + "." + bundle_name + "_valid", op->name + "." + bundle_name + "_en");
       }
     }
   }
