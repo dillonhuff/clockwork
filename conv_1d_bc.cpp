@@ -10,33 +10,13 @@ using namespace std;
 
 #include "hw_classes.h"
 
-struct M_get_input_0_to_M_compute_output_3_cache {
+struct M_get_input_0_merged_banks_3_cache {
 	// RAM Box: {[0, 9]}
 	// Capacity: 3
 	// # of read delays: 3
-	fifo<hw_uint<32> , 3> f;
-	inline hw_uint<32>  peek(const int offset) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.peek(2 - offset);
-  }
-
-
-
-	inline void push(const hw_uint<32>  value) {
-#ifdef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-    return f.push(value);
-  }
-
-};
-
-struct M_get_input_0_merged_banks_2_cache {
-	// RAM Box: {[0, 9]}
-	// Capacity: 2
-	// # of read delays: 2
 	hw_uint<32>  f0;
 	hw_uint<32>  f2;
+	hw_uint<32>  f4;
 
 
 	inline hw_uint<32>  peek_0() {
@@ -47,9 +27,17 @@ struct M_get_input_0_merged_banks_2_cache {
 		return f2;
 	}
 
+	inline hw_uint<32>  peek_2() {
+		return f4;
+	}
+
 
 
 	inline void push(const hw_uint<32>  value) {
+#ifdef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+    // cap: 1 reading from capacity: 1
+    f4 = f2;
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     // cap: 1 reading from capacity: 1
@@ -61,15 +49,13 @@ struct M_get_input_0_merged_banks_2_cache {
 };
 
 struct M_cache {
-  M_get_input_0_to_M_compute_output_3_cache M_get_input_0_to_M_compute_output_3;
-  M_get_input_0_merged_banks_2_cache M_get_input_0_merged_banks_2;
+  M_get_input_0_merged_banks_3_cache M_get_input_0_merged_banks_3;
 };
 
 
 
 inline void M_get_input_0_write(hw_uint<32> & M_get_input_0, M_cache& M, int root, int p) {
-  M.M_get_input_0_to_M_compute_output_3.push(M_get_input_0);
-  M.M_get_input_0_merged_banks_2.push(M_get_input_0);
+  M.M_get_input_0_merged_banks_3.push(M_get_input_0);
 }
 
 inline hw_uint<32>  M_compute_output_3_select(M_cache& M, int root, int c) {
@@ -79,7 +65,7 @@ inline hw_uint<32>  M_compute_output_3_select(M_cache& M, int root, int c) {
   // Read schedule : { compute_output[root = 0, c] -> [2 + c, 1] : 0 <= c <= 9 }
   // Write schedule: { get_input[root = 0, p] -> [p, 0] : 0 <= p <= 9 }
   // DD fold: { compute_output[root, c] -> 2 : root = 0 and 0 <= c <= 7; compute_output[root, c] -> 1 : root = 0 and c = 8 }
-  auto value_M_get_input_0 = M.M_get_input_0_to_M_compute_output_3.peek(/* one reader or all rams */ (-8 + c == 0) ? (1) : (7 - c >= 0) ? (2) : 0);
+  auto value_M_get_input_0 = M.M_get_input_0_merged_banks_3.peek(/* Needs general delay string */ (-8 + c == 0) ? (1) : (7 - c >= 0) ? (2) : 0);
   return value_M_get_input_0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " c = " << c  << endl;
@@ -95,7 +81,7 @@ inline hw_uint<32>  M_compute_output_4_select(M_cache& M, int root, int c) {
   // Read schedule : { compute_output[root = 0, c] -> [2 + c, 1] : 0 <= c <= 9 }
   // Write schedule: { get_input[root = 0, p] -> [p, 0] : 0 <= p <= 9 }
   // DD fold: { compute_output[root, c] -> 1 : root = 0 and 0 <= c <= 7 }
-  auto value_M_get_input_0 = M.M_get_input_0_merged_banks_2.peek(/* Needs general delay string */ (7 - c >= 0) ? (1) : 0);
+  auto value_M_get_input_0 = M.M_get_input_0_merged_banks_3.peek(/* Needs general delay string */ (7 - c >= 0) ? (1) : 0);
   return value_M_get_input_0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " c = " << c  << endl;
@@ -111,7 +97,7 @@ inline hw_uint<32>  M_compute_output_5_select(M_cache& M, int root, int c) {
   // Read schedule : { compute_output[root = 0, c] -> [2 + c, 1] : 0 <= c <= 9 }
   // Write schedule: { get_input[root = 0, p] -> [p, 0] : 0 <= p <= 9 }
   // DD fold: {  }
-  auto value_M_get_input_0 = M.M_get_input_0_merged_banks_2.peek_0();
+  auto value_M_get_input_0 = M.M_get_input_0_merged_banks_3.peek_0();
   return value_M_get_input_0;
 #ifndef __VIVADO_SYNTH__
 	cout << "Error: Unsupported offsets: " << " root = " << root  << " c = " << c  << endl;

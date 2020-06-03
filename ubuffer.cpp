@@ -1167,7 +1167,7 @@ void UBuffer::merge_bank(CodegenOptions& options, string inpt, vector<stack_bank
     merged.num_readers = mergeable.size();
     merged.maxdelay = -1;
     for (auto m : mergeable) {
-      //cout << "merge: " << m.name << endl;
+  cout << "merge: " << m.name << endl;
       //merged.layout = unn(merged.layout, m.layout);
       merged.rddom = unn(merged.rddom, m.rddom);
       if (m.maxdelay > merged.maxdelay) {
@@ -1272,12 +1272,34 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
   for (auto inpt : get_in_ports()) {
     // try to turn the banks for this inpt into one big linebuffer
     vector<stack_bank> receivers = receiver_banks(inpt);
-    //cout << "Receiver banks for " << inpt << endl;
+    cout << "Receiver banks for " << inpt << endl;
     vector<stack_bank> mergeable;
     for (auto bnk : receivers) {
-      //cout << tab(1) << bnk.name << ", # read offsets: " << bnk.read_delays.size() << endl;
-      //cout << tab(2) << "# receivers: " << receivers.size() << endl;
+cout<<"============================================"<<endl;
+      cout << tab(1) << bnk.name << ", # read offsets: " << bnk.read_delays.size() << endl;
+      cout << tab(2) << "# receivers: " << receivers.size() << endl;
+for(int i = 0; i < bnk.read_delays.size(); i++){
+  cout<<bnk.read_delays[i]<<endl;
+}
+    // splitting banks
+    stack_bank bank1, bank2;
+    bank1.tp = BANK_TYPE_STACK;
+    bank1.rddom = isl_union_set_read_from_str(ctx, "{}");
+    bank1.name = inpt + "_split_banks1";
+    bank1.pt_type_string = bank1.at(0).pt_type_string;
+    bank1.num_readers = mergeable.size();
+    bank1.maxdelay = bnk.maxdelay;
 
+    bank2.tp = BANK_TYPE_STACK;
+    bank2.rddom = isl_union_set_read_from_str(ctx, "{}");
+    bank2.name = inpt + "_split_banks2";
+    bank2.pt_type_string = bank2.at(0).pt_type_string;
+    bank2.num_readers = mergeable.size();
+    bank2.maxdelay = -1;
+                       
+             
+        merged.read_delays.push_back(mrd);
+      }
       if (options.debug_options.expect_all_linebuffers) {
         //assert(receivers.size() == 1 || bnk.read_delays.size() == 2);
         assert(bnk.read_delays.size() == 2);
@@ -1292,19 +1314,19 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
     if (mergeable.size() > 0) {
         merge_bank(options, inpt, mergeable);
         auto banks = get_banks();
-        //cout << "finished create bank!" << endl;
-        //for (bank bk : banks) {
-            //cout << bk.name << " has delays: ";//<< bk.read_delays << endl;
-            //cout << tab(1);
-            //for (int dl: bk.read_delays) {
-                //cout << dl << "," ;
-            //}
-            //cout << endl;
-            //for (auto dl: bk.delay_map) {
-                //cout <<tab(1)<< dl.first << ":" << dl.second <<endl; ;
-            //}
+        cout << "finished create bank!" << endl;
+        for (bank bk : banks) {
+            cout << bk.name << " has delays: ";//<< bk.read_delays << endl;
+            cout << tab(1);
+            for (int dl: bk.read_delays) {
+                cout << dl << "," ;
+            }
+            cout << endl;
+            for (auto dl: bk.delay_map) {
+                cout <<tab(1)<< dl.first << ":" << dl.second <<endl; ;
+            }
 
-        //}
+        }
     }
   }
 }
