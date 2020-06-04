@@ -23,7 +23,7 @@ not just take the latest release on NTL or barvinok. For an example of how to do
    * note that linux users may need to manually add -lpthread to the LIBS field (change "LIBS = -lntl -lgmp", to "LIBS = -lpthread -lntl -lgmp")
 * *optional codegen backend* **CoreIR** - [github link](https://github.com/rdaly525/coreir.git)
 
-## Build instructions
+# Building an example 
 
 To generate a synthesizable accelerator for an image blur do:
 
