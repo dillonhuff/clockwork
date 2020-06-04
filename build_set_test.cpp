@@ -9520,7 +9520,7 @@ void memory_tile_tests() {
   //shift_reg_test();
   bankmerge_vec_test();
   reaccess_test();
-  assert(false);
+  //assert(false);
 
   //new_bankmerge_tests();
   memtile_test();
@@ -9531,12 +9531,35 @@ void memory_tile_tests() {
   //assert(false);
 }
 
+void blur_example() {
+  int cols = 1920;
+  int rows = 1080;
+
+  const int unroll_factor = 2;
+  cout << "blur_xy" << endl;
+  cout << tab(1) << "unroll factor: " << unroll_factor << endl;
+  string out_name = "blur_example";
+  blur_xy_16(out_name).realize(out_name, cols, rows, unroll_factor);
+
+  string synth_dir =
+    "./" + out_name;
+  system(("mkdir -p " + synth_dir).c_str());
+  system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
+  system(("mv " + out_name + "*.h " + synth_dir).c_str());
+  system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
+  system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
+}
+
 int main(int argc, char** argv) {
 
   if (argc > 1) {
     assert(argc == 2);
     string cmd = argv[1];
 
+    if (cmd == "blur-example") {
+      blur_example();
+      return 0;
+    }
     if (cmd == "travis-tests") {
       travis_tests();
       return 0;
