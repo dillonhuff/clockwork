@@ -14,7 +14,7 @@ Clockwork is a tool for compiling naive descriptions of hardware accelerators wr
 Examples of how to install the dependencies can be found in [./misc/install\_deps\_mac.sh](./misc/install_deps_mac.sh) and [./misc/install\_deps\_linux.sh](./misc/install\_deps\_linux.sh).
 
 Please install the specific versions of the listed dependencies. Do
-not just take the latest release on NTL or barvinok. For an example of how to download and build dependencies see [install\_deps\_rice.sh](./install_deps_rice.sh).
+not just take the latest release on NTL or barvinok.
 
 * ntl-11.4.1 - [download here](https://shoup.net/ntl/download.html) 
     * https://www.shoup.net/ntl/doc/tour-unix.html (needs GMP to be installed already)
