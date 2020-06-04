@@ -1483,34 +1483,43 @@ void emit_top_address_stream(string fname, TileConstraints lake_mem_tile, vector
 
     //for generate multiple bit valid/wen
     int out_width = pick(read_addr).size();
-    int multiplier = pow(2, out_width) - 1;
+    int in_width = pick(write_addr).size();
+    int mul_out = pow(2, out_width) - 1;
+    int mul_in = pow(2, in_width) - 1;
 
     //Some fix for the output format
-    if (addr_in.size() == 1) {
-        out << sep_list(addr_in, "", "", "],[") << ", " << wen << ", " << ren* multiplier << ", "<< sep_list(addr_out, "[[", "]]", "],[") << ", " << valid * multiplier << endl;
-    }
-    else {
-        out << sep_list(addr_in, "[[", "]]", "],[") << ", " << wen << ", " << ren * multiplier << ", "<< sep_list(addr_out, "[[", "]]", "],[") << ", " << valid * multiplier << endl;
-    }
+    string l_in = addr_in.size() ? "[[" : "[";
+    string l_out = addr_out.size() ? "[[" : "[";
+    string r_in = addr_in.size() ? "]]" : "]";
+    string r_out = addr_out.size() ? "]]" : "]";
+
+    out << sep_list(addr_in, l_in, r_in, "],[") << ", " << wen*mul_in << ", " << ren* mul_out << ", "<< sep_list(addr_out, l_out, r_out, "],[") << ", " << valid * mul_out << endl;
+
     cycle ++;
   }
   out.close();
 }
 
-void emit_address_stream(string fname, bool is_top, vector<int> read_cycle, vector<int> write_cycle,
+void emit_sram_address_stream(string fname, vector<int> read_cycle, vector<int> write_cycle,
         vector<vector<int> > read_addr, vector<vector<int> > write_addr) {
   ofstream out(fname+".csv");
   int cycle = 0;
   size_t rd_itr = 0;
+  size_t cen_itr = 0;
   size_t wr_itr = 0;
-  out << "data_in, wen, ren, data_out, valid_out" << endl;
+  out << "data_in, wen, cen, data_out, valid_data" << endl;
+  int in_width = pick(write_addr).size();
+  int out_width = pick(read_addr).size();
+  auto addr_out = vector<int>(out_width, 0);
   while (rd_itr < read_cycle.size() && wr_itr < write_cycle.size()) {
-    bool wen = false, valid = false;
-    int in_width = pick(write_addr).size();
-    int out_width = pick(read_addr).size();
+    bool wen = false, cen =false, valid = false;
     auto addr_in = vector<int>(in_width, 0);
-    auto addr_out = vector<int>(out_width, 0);
     if (rd_itr < read_cycle.size()) {
+      if (cen_itr < read_cycle.size())
+        if (read_cycle.at(cen_itr) == cycle + 1) {
+          cen = true;
+          cen_itr ++;
+      }
       if (read_cycle.at(rd_itr) == cycle) {
         valid = true;
         addr_out = read_addr.at(rd_itr);
@@ -1523,7 +1532,9 @@ void emit_address_stream(string fname, bool is_top, vector<int> read_cycle, vect
     if (wr_itr < write_cycle.size()) {
       if (write_cycle.at(wr_itr) == cycle) {
         wen = true;
+        cen = true;
         addr_in = write_addr.at(wr_itr);
+        addr_out = vector<int>(out_width, 0);
         //cout << cycle << tab(1) << "wr" << tab(1) << addr_in << endl;
         //out << "wr@" << cycle << tab(1) << ",data="<< sep_list(addr, "[", "]", " ") << endl;
         //out << cycle << tab(1) << "wr"  << endl;
@@ -1531,20 +1542,7 @@ void emit_address_stream(string fname, bool is_top, vector<int> read_cycle, vect
       }
     }
 
-    //for generate multiple bit valid/wen
-    int multiplier = 1;
-    if (is_top) {
-      multiplier = pow(2, out_width) - 1;
-      //FIXME: hack for the output port
-      addr_out.push_back(0);
-    }
-    //Some fix for the output format
-    if (addr_in.size() == 1) {
-        out << sep_list(addr_in, "", "", "],[") << ", " << wen << ", " << valid * multiplier << ", "<< sep_list(addr_out, "[[", "]]", "],[") << ", " << valid * multiplier << endl;
-    }
-    else {
-        out << sep_list(addr_in, "[[", "]]", "],[") << ", " << wen << ", " << valid * multiplier << ", "<< sep_list(addr_out, "[[", "]]", "],[") << ", " << valid * multiplier << endl;
-    }
+    out << sep_list(addr_in, "[[", "]]", "],[") << ", " << wen << ", " << cen << ", "<< sep_list(addr_out, "[[", "]]", "],[") << ", " << valid << endl;
     cycle ++;
   }
   out.close();
@@ -1699,7 +1697,7 @@ void emit_address_stream2file(map<string, UBuffer> buffers_opt, string read_buf,
   if (is_top)
     emit_top_address_stream(file_name, tc, sram_read, sram_write, read_addr, write_addr);
   else
-    emit_address_stream(file_name, is_top, sram_read, sram_write, read_addr, write_addr);
+    emit_sram_address_stream(file_name, sram_read, sram_write, read_addr, write_addr);
 
 }
 
