@@ -1319,7 +1319,7 @@ cout<<"============================================"<<endl;
 	remove_bank(bnk.name);
 	auto outpt_vect = bnk.get_out_ports();
 	auto outpt = outpt_vect[0];
-        for (auto i : outpt_vect) {cout << "out port: " << i << endl;}
+        for (auto i : outpt_vect) {cout << " out port: " << i << endl;}
 	add_bank_between(inpt, outpt, bank2);
         add_bank_between(inpt, outpt, bank1);
 
