@@ -419,15 +419,15 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     } else {
       string ub_ins_name = "ub_"+bk.name;
       json config_file;
-      //config_file["name"][0] = "TOP_address.csv";
-      //CoreIR::Values args = {
-        //{"width", CoreIR::Const::make(context, port_widths)},
-        //{"input_num", CoreIR::Const::make(context, 1)},
-        //{"output_num", CoreIR::Const::make(context, bk.num_readers)},
-        //{"config", CoreIR::Const::make(context, config_file)}
-      //};
-      //CoreIR::Instance* buf;
-      //buf = def->addInstance(ub_ins_name, "cwlib.ub", args);
+      config_file["name"][0] = "TOP_address.csv";
+      CoreIR::Values args = {
+        {"width", CoreIR::Const::make(context, port_widths)},
+        {"input_num", CoreIR::Const::make(context, 1)},
+        {"output_num", CoreIR::Const::make(context, bk.num_readers)},
+        {"config", CoreIR::Const::make(context, config_file)}
+      };
+      CoreIR::Instance* buf;
+      buf = def->addInstance(ub_ins_name, "cwlib.ub", args);
 
       int inpt_cnt = 0, outpt_cnt = 0;
       for (auto inpt: inpts) {
@@ -457,8 +457,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf) {
   //CoreIR::Context* context = CoreIR::newContext();
-  //CoreIRLoadLibrary_commonlib(context);
-  //CoreIRLoadLibrary_cwlib(context);
+  CoreIRLoadLibrary_commonlib(context);
+  CoreIRLoadLibrary_cwlib(context);
   auto ns = context->getNamespace("global");
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", context->Named("coreir.clkIn")},

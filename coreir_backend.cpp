@@ -13,6 +13,34 @@ CoreIR::Wireable* andVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::W
   return ad->sel("out");
 }
 
+CoreIR::Wireable* addVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::Wireable* b) {
+  auto context = def->getContext();
+  auto ad = def->addInstance("add_all_" + def->getContext()->getUnique(), "coreir.add", {{"width", COREMK(context, 16)}});
+  def->connect(ad->sel("in0"), a);
+  def->connect(ad->sel("in1"), b);
+
+  return ad->sel("out");
+}
+
+CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals) {
+  assert(vals.size() > 0);
+  auto context = def->getContext();
+  CoreIR::Wireable* val = nullptr;
+  if (vals.size() == 0) {
+    return def->addInstance("add_all_" + def->getContext()->getUnique(), "coreir.const", {{"value", COREMK(def->getContext(), BitVec(16, 0))}}, {{"width", COREMK(context, 16)}})->sel("out");
+  }
+
+  if (vals.size() == 1) {
+    return vals[0];
+  }
+
+  val = vals[0];
+  for (int i = 1; i < ((int) vals.size()); i++) {
+    val = addVals(def, val, vals[i]);
+  }
+  return val;
+}
+
 CoreIR::Wireable* andList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals) {
   CoreIR::Wireable* val = nullptr;
   if (vals.size() == 0) {
@@ -103,6 +131,34 @@ void generate_coreir(CodegenOptions& options,
       ns->newModuleDecl(op->name, utp);
     {
       auto def = compute_unit->newModuleDef();
+      // Generate dummy compute logic
+      vector<CoreIR::Wireable*> inputs;
+      for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+        string buf_name = bundle.first;
+        string bundle_name = bundle.second;
+        auto buf = map_find(buf_name, buffers);
+        int pix_width = buf.port_widths;
+        int nlanes = buf.lanes_in_bundle(bundle_name);
+        int bundle_width = buf.port_bundle_width(bundle_name);
+        int offset = 0;
+        CoreIR::Wireable* bsel =
+          def->sel("self." + bundle_name);
+        for (int l = 0; l < nlanes; l++) {
+          int lo = l*pix_width;
+          int hi = lo + pix_width;
+          assert(hi - lo == pix_width);
+          auto w =
+            def->addInstance("slice_" + def->getContext()->getUnique(), "coreir.slice", {{"lo", COREMK(context, lo)}, {"hi", COREMK(context, hi)}, {"width", COREMK(context, bundle_width)}});
+          def->connect(w->sel("in"), bsel);
+          inputs.push_back(w->sel("out"));
+        }
+      }
+      auto result = addList(def, inputs);
+
+      for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
+        def->connect(result, def->sel("self")->sel(bundle.second));
+      }
+
       vector<CoreIR::Wireable*> vals;
       for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
         vals.push_back(def->sel("self." + bundle.second + "_en"));

@@ -1530,12 +1530,15 @@ map<string, umap*> get_op2sched(map<string, UBuffer>& buffers_opt, umap* opt_sch
 
 void lattice_schedule_buf(isl_ctx* ctx, map<string, UBuffer> & buffers_opt, umap* opt_sched, HWconstraints sram) {
 
+  //cout << "Lattice schedule: " << str(opt_sched) << endl;
+
   //get a map from op to schedule
   auto op2sched = get_op2sched(buffers_opt, opt_sched);
 
   for (auto it: op2sched) {
     cout <<"\tOP: " << it.first << " has sched: " << str(it.second) << endl;
   }
+  //assert(false);
 
   //compute the bound of the schedule
   cout << str(lexmin(range(opt_sched))) << endl << str(lexmax(range(opt_sched))) <<endl;
@@ -1543,7 +1546,7 @@ void lattice_schedule_buf(isl_ctx* ctx, map<string, UBuffer> & buffers_opt, umap
   isl_set* sched_set = bound.to_set(ctx, "");
   auto bset_vec = constraints(sched_set);
   for (auto bset: bset_vec) {
-      cout << "cosntraints: " << str(bset) << endl;
+      cout << "constraints: " << str(bset) << endl;
   }
 
   //Initialize the variable for lattice count
@@ -1640,7 +1643,6 @@ void emit_address_stream2file(map<string, UBuffer> buffers_opt, string read_buf,
   auto read_addr = buffers_opt.at(read_buf).read_addr;
   auto write_addr = buffers_opt.at(write_buf).write_addr;
   emit_address_stream(file_name, is_top, sram_read, sram_write, read_addr, write_addr);
-
 }
 
 void reaccess_test() {
@@ -1650,8 +1652,10 @@ void reaccess_test() {
   prg.name = "reaccess_conv";
   prg.add_input("in");
   prg.add_output("out");
-  prg.buffer_port_widths["in"] = 32;
-  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["out"] = 16;
+  prg.buffer_port_widths["bufl2"] = 16;
+  prg.buffer_port_widths["bufl1"] = 16;
 
   auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
   auto write = p->add_op("input");
@@ -1716,17 +1720,17 @@ void shift_reg_test() {
 
   auto q = prg.add_nest("qo", 0, 6, "qi", 0, 14);
   auto read = q->add_op("output");
-  for (size_t wy = 0; wy < 3; wy ++)
+  for (size_t wy = 0; wy < 3; wy ++) {
       for (size_t wx = 0; wx < 3; wx ++) {
         read->add_load("buf", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
       }
+  }
   read->add_store("out", "po, pi");
 
   //unoptimized schedule
   auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
   auto buffers = build_buffers(prg, sched_naive);
   //buffers.at("buf").port_reduction();
-
 
   //optimized schedule
   auto buffers_opt = build_buffers(prg);
@@ -1776,7 +1780,6 @@ void bankmerge_vec_test() {
   prg.name = "vec";
   prg.add_input("in");
   prg.add_output("out");
-  //prg.buffer_port_widths["T"] = 32*3;
   prg.buffer_port_widths["in"] = 32;
   prg.buffer_port_widths["out"] = 32;
 
@@ -1821,7 +1824,6 @@ void bankmerge_vec_test() {
   HWconstraints sram = {4, 1, 512, false, true};
 
   lattice_schedule_buf(prg.ctx, buffers_opt, opt_sched, sram);
-
 
   emit_address_stream2file(buffers_opt, "buf1_sram", "buf1_sram", "SRAM_address", false);
   emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "TOP_address", true);
@@ -9516,13 +9518,13 @@ void application_tests() {
 
 void memory_tile_tests() {
   //shift_reg_test();
+  bankmerge_vec_test();
   reaccess_test();
   assert(false);
 
   //new_bankmerge_tests();
   memtile_test();
   auto_vec_test();
-  bankmerge_vec_test();
   vec_test();
   agg_test();
 
