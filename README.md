@@ -25,7 +25,7 @@ not just take the latest release on NTL or barvinok. For an example of how to do
 
 # Building an example 
 
-To generate a synthesizable accelerator for an image blur do:
+To generate a synthesizable accelerator which blurs a 1920 x 1080 grayscale image:
 
     ./rebuild_and_run.sh blur-example
 
