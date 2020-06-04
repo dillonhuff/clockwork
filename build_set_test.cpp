@@ -2,6 +2,11 @@
 #include "ubuffer.h"
 #include "codegen.h"
 #include "coreir_backend.h"
+
+#ifdef COREIR
+#include "coreirgen.h"
+#endif
+
 #include "prog.h"
 
 #include <chrono>
@@ -1753,6 +1758,24 @@ void reaccess_test() {
 
 }
 
+#ifdef COREIR
+json parse_config_file(string filename) {
+    json ret;
+    std::ifstream file(filename);
+    std::string line;
+    while(std::getline(file, line)) {
+        auto expr_val = split_at(line, " = ");
+        assert(expr_val.size() == 2);
+        string val_str = expr_val.at(1);
+        int val = safe_stoi(expr_val.at(1));
+        string config_key = take_btw(expr_val.at(0), "[\"", "\"]");
+        ret[config_key][0] = val;
+        cout << "\tconfig_key: " << config_key << ", val: " << val << endl;
+    }
+    return ret;
+}
+#endif
+
 void shift_reg_test() {
 
   prog prg;
@@ -1795,11 +1818,19 @@ void shift_reg_test() {
 
 #ifdef COREIR
   CoreIR::Context* context = CoreIR::newContext();
-  generate_coreir(opt, context, buffers_opt.at("buf"));
+  CoreIRLoadLibrary_commonlib(context);
+  CoreIRLoadLibrary_cwlib(context);
+  json config_reg_map = parse_config_file("sample_configuration.txt");
+  generate_coreir(opt, context, buffers_opt.at("buf"), config_reg_map);
+
+  if(!saveToFile(context->getNamespace("global"), "conv33_ubuffer.json")) {
+    cout << "Could not save ubuffer coreir!" << endl;
+    context->die();
+  }
   CoreIR::deleteContext(context);
 #endif
 
-  //assert(false);
+  assert(false);
   auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
   for (auto buf : rewrite_buf) {
     cout << buf << endl;
@@ -9541,7 +9572,7 @@ void application_tests() {
 }
 
 void memory_tile_tests() {
-  //shift_reg_test();
+  shift_reg_test();
   bankmerge_vec_test();
   assert(false);
   reaccess_test();

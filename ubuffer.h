@@ -1347,7 +1347,7 @@ class UBuffer {
     void generate_bank_and_merge(CodegenOptions& options);
 
 #ifdef COREIR
-    void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def);
+    void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, json config_file);
 #endif
 
     vector<string> map2address(isl_map* m);
@@ -1472,6 +1472,7 @@ vector<string> dimension_var_args(const std::string& pt, UBuffer& buf);
 
 #ifdef COREIR
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf);
+CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, json config_reg_map);
 #endif
 
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);

@@ -378,7 +378,7 @@ void generate_vivado_tcl(UBuffer& buf) {
 
 #ifdef COREIR
 
-void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
+void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, json config_file) {
     auto context = def->getContext();
     for (auto it : stack_banks) {
         auto connection = it.first;
@@ -420,8 +420,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         }
         else {
             string ub_ins_name = "ub_"+bk.name;
-            json config_file;
-            config_file["name"][0] = "TOP_address.csv";
+            //json config_file;
+            //config_file["name"][0] = "TOP_address.csv";
             CoreIR::Values args = {
                 {"width", CoreIR::Const::make(context, port_widths)},
                 {"input_num", CoreIR::Const::make(context, 1)},
@@ -478,7 +478,42 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
     auto ub = ns->newModuleDecl(buf.name + "_ub", utp);
     auto def = ub->newModuleDef();
 
-    buf.generate_coreir(options, def);
+    json config_file;
+    config_file["name"][0] = "TOP_address.csv";
+    buf.generate_coreir(options, def, config_file);
+
+    ub->setDef(def);
+    //if(!saveToFile(ns, "ubuffer.json")) {
+        //cout << "Could not save ubuffer coreir" << endl;
+        //context->die();
+    //}
+    //deleteContext(context);
+    return ub;
+}
+
+
+CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, json config_reg_map) {
+    //CoreIR::Context* context = CoreIR::newContext();
+    //CoreIRLoadLibrary_commonlib(context);
+    //CoreIRLoadLibrary_cwlib(context);
+    auto ns = context->getNamespace("global");
+    vector<pair<string, CoreIR::Type*> >
+        ub_field{{"clk", context->Named("coreir.clkIn")},
+                {"reset", context->BitIn()}};
+    for (auto inpt: buf.get_in_ports()) {
+        ub_field.push_back(make_pair(inpt + "_en", context->BitIn()));
+        ub_field.push_back(make_pair(inpt, context->BitIn()->Arr(buf.port_widths)));
+    }
+    for (auto outpt: buf.get_out_ports()) {
+        ub_field.push_back(make_pair(outpt + "_valid", context->Bit()));
+        ub_field.push_back(make_pair(outpt, context->Bit()->Arr(buf.port_widths)));
+    }
+
+    CoreIR::RecordType* utp = context->Record(ub_field);
+    auto ub = ns->newModuleDecl(buf.name + "_ub", utp);
+    auto def = ub->newModuleDef();
+
+    buf.generate_coreir(options, def, config_reg_map);
 
     ub->setDef(def);
     //if(!saveToFile(ns, "ubuffer.json")) {
