@@ -42,6 +42,12 @@ struct HWconstraints {
     bool war_same_cycle;
 };
 
+struct TileConstraints{
+    size_t ic_in;
+    size_t ic_out;
+    size_t delay_ren2read;
+};
+
 struct bank {
   std::string name;
   bank_type tp;

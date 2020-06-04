@@ -1439,6 +1439,63 @@ void flatten_sched_test() {
   cout << str(new_opt_sched) << endl;
 }
 
+void emit_top_address_stream(string fname, TileConstraints lake_mem_tile, vector<int> read_cycle, vector<int> write_cycle,
+        vector<vector<int> > read_addr, vector<vector<int> > write_addr) {
+  ofstream out(fname+".csv");
+
+  //TODO: put this into a tile constraint file
+  int input_width = lake_mem_tile.ic_in, output_width = lake_mem_tile.ic_out;
+  int latency_ren2read = lake_mem_tile.delay_ren2read;
+
+  int cycle = 0;
+  size_t rd_itr = 0;
+  size_t wr_itr = 0;
+  out << "data_in, wen, ren, data_out, valid_out" << endl;
+  while (rd_itr < read_cycle.size() && wr_itr < write_cycle.size()) {
+    bool wen = false, ren = false, valid = false;
+    auto addr_in = vector<int>(input_width, 0);
+    auto addr_out = vector<int>(output_width, 0);
+    if (rd_itr < read_cycle.size()) {
+      if (read_cycle.at(rd_itr) <= cycle + latency_ren2read) {
+        ren = true;
+      }
+      if (read_cycle.at(rd_itr) == cycle) {
+        valid = true;
+        for (size_t i = 0; i < read_addr.at(rd_itr).size(); i ++)
+          addr_out.at(i) = read_addr.at(rd_itr).at(i);
+
+        //cout << cycle << tab(1) << "rd" << tab(1) << addr_out << endl;
+        //out << "rd@" << cycle << tab(1) << ",data=" <<sep_list(addr, "[", "]", " ") << endl;
+        rd_itr ++;
+      }
+    }
+    if (wr_itr < write_cycle.size()) {
+      if (write_cycle.at(wr_itr) == cycle) {
+        wen = true;
+        for (size_t i = 0; i < write_addr.at(wr_itr).size(); i ++)
+          addr_in.at(i) = write_addr.at(wr_itr).at(i);
+        //cout << cycle << tab(1) << "wr" << tab(1) << addr_in << endl;
+        //out << "wr@" << cycle << tab(1) << ",data="<< sep_list(addr, "[", "]", " ") << endl;
+        //out << cycle << tab(1) << "wr"  << endl;
+        wr_itr ++;
+      }
+    }
+
+    //for generate multiple bit valid/wen
+    int out_width = pick(read_addr).size();
+    int multiplier = pow(2, out_width) - 1;
+
+    //Some fix for the output format
+    if (addr_in.size() == 1) {
+        out << sep_list(addr_in, "", "", "],[") << ", " << wen << ", " << ren* multiplier << ", "<< sep_list(addr_out, "[[", "]]", "],[") << ", " << valid * multiplier << endl;
+    }
+    else {
+        out << sep_list(addr_in, "[[", "]]", "],[") << ", " << wen << ", " << ren * multiplier << ", "<< sep_list(addr_out, "[[", "]]", "],[") << ", " << valid * multiplier << endl;
+    }
+    cycle ++;
+  }
+  out.close();
+}
 
 void emit_address_stream(string fname, bool is_top, vector<int> read_cycle, vector<int> write_cycle,
         vector<vector<int> > read_addr, vector<vector<int> > write_addr) {
@@ -1634,12 +1691,15 @@ void lattice_schedule_buf(isl_ctx* ctx, map<string, UBuffer> & buffers_opt, umap
   }
 }
 
-void emit_address_stream2file(map<string, UBuffer> buffers_opt, string read_buf, string write_buf, string file_name, bool is_top) {
+void emit_address_stream2file(map<string, UBuffer> buffers_opt, string read_buf, string write_buf, string file_name, bool is_top, TileConstraints tc) {
   vector<int> sram_read = buffers_opt.at(read_buf).read_cycle;
   vector<int> sram_write = buffers_opt.at(write_buf).write_cycle;
   auto read_addr = buffers_opt.at(read_buf).read_addr;
   auto write_addr = buffers_opt.at(write_buf).write_addr;
-  emit_address_stream(file_name, is_top, sram_read, sram_write, read_addr, write_addr);
+  if (is_top)
+    emit_top_address_stream(file_name, tc, sram_read, sram_write, read_addr, write_addr);
+  else
+    emit_address_stream(file_name, is_top, sram_read, sram_write, read_addr, write_addr);
 
 }
 
@@ -1762,8 +1822,9 @@ void shift_reg_test() {
 
   lattice_schedule_buf(prg.ctx, buffers_opt, opt_sched, sram);
 
-  emit_address_stream2file(buffers_opt, "buf1_sram", "buf1_sram", "shift_reg_SRAM_address", false);
-  emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "shift_reg_TOP_address", true);
+  TileConstraints tc{1,3,0};
+  emit_address_stream2file(buffers_opt, "buf1_sram", "buf1_sram", "shift_reg_SRAM_address", false, tc);
+  emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "shift_reg_TOP_address", true, tc);
 }
 
 void bankmerge_vec_test() {
@@ -1819,9 +1880,10 @@ void bankmerge_vec_test() {
 
   lattice_schedule_buf(prg.ctx, buffers_opt, opt_sched, sram);
 
-
-  emit_address_stream2file(buffers_opt, "buf1_sram", "buf1_sram", "SRAM_address", false);
-  emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "TOP_address", true);
+  TileConstraints tc{1,3,0}, tc_tape{2,2,4};
+  emit_address_stream2file(buffers_opt, "buf1_sram", "buf1_sram", "SRAM_address", false, tc);
+  emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "TOP_address", true, tc);
+  emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "TOP_address_tapeout", true, tc_tape);
   compare_to_gold("SRAM_address.csv");
   compare_to_gold("TOP_address.csv");
 }
@@ -9482,8 +9544,9 @@ void application_tests() {
 
 void memory_tile_tests() {
   //shift_reg_test();
+  bankmerge_vec_test();
+  assert(false);
   reaccess_test();
-  //assert(false);
 
   //new_bankmerge_tests();
   memtile_test();
