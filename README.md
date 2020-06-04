@@ -26,9 +26,11 @@ not just take the latest release on NTL or barvinok. For an example of how to do
 ## Build instructions
 
 To generate a synthesizable accelerator for an image blur do:
+
     ./rebuild_and_run.sh blur-example
 
 This will write HLS code for the accelerator and several different test drivers for it to `./blur_example`. To run a software emulation of the accelerator do:
+
     clang++ -std=c++11 ./blur_example/blur_example_opt_sw_bmp_test_harness.cpp ./blur_example/blur_example_opt.cpp -I ./aws_collateral/ -I .
     ./a.out
 
