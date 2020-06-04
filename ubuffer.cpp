@@ -1162,9 +1162,11 @@ void UBuffer::merge_bank(CodegenOptions& options, string inpt, vector<stack_bank
     merged.rddom = isl_union_set_read_from_str(ctx, "{}");
     merged.name =
       inpt + "_merged_banks_" + str(mergeable.size());
+    cout << "merged name " << merged.name << endl;
     merged.pt_type_string =
       mergeable.at(0).pt_type_string;
     merged.num_readers = mergeable.size();
+    cout << "merged num readers " << merged.num_readers << endl;
     merged.maxdelay = -1;
     for (auto m : mergeable) {
       cout << "merge: " << m.name << endl;
@@ -1265,6 +1267,7 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
       if (!empty(overlap)) {
         stack_bank bank = compute_bank_info(inpt, outpt);
         add_bank_between(inpt, outpt, bank);
+cout<<"outpt: " << outpt << endl;
       }
     }
   }
@@ -1291,16 +1294,16 @@ cout<<"============================================"<<endl;
         // splitting banks
         stack_bank bank1, bank2;
         bank1.tp = BANK_TYPE_STACK;
-        bank1.rddom = isl_union_set_read_from_str(ctx, "{}");
+        bank1.rddom = bnk.rddom;
         bank1.name = inpt + "_split_banks1_" + to_string(counter);
-        // bank1.pt_type_string = bank1.at(0).pt_type_string;
+        bank1.pt_type_string = bnk.pt_type_string;
         bank1.num_readers = mergeable.size();
         bank1.maxdelay = bnk.maxdelay;
 
         bank2.tp = BANK_TYPE_STACK;
-        bank2.rddom = isl_union_set_read_from_str(ctx, "{}");
+        bank2.rddom = bnk.rddom;
         bank2.name = inpt + "_split_banks2_" + to_string(counter);
-        // bank2.pt_type_string = bank2.at(0).pt_type_string;
+        bank2.pt_type_string = bnk.pt_type_string;
         bank2.num_readers = mergeable.size();
         bank2.maxdelay = bnk.maxdelay;
 
@@ -1311,9 +1314,17 @@ cout<<"============================================"<<endl;
            bank2.read_delays.push_back(bnk.read_delays[i]);
         }
 
-        mergeable.push_back(bank1);
 	counter++;
 
+	remove_bank(bnk.name);
+	auto outpt_vect = bnk.get_out_ports();
+	auto outpt = outpt_vect[0];
+        for (auto i : outpt_vect) {cout << "out port: " << i << endl;}
+	add_bank_between(inpt, outpt, bank2);
+        add_bank_between(inpt, outpt, bank1);
+
+        mergeable.push_back(bank1);
+	
       } else {
              
         if (options.debug_options.expect_all_linebuffers) {
@@ -1333,7 +1344,10 @@ cout << "inpt "<<inpt << endl;
         merge_bank(options, inpt, mergeable);
         auto banks = get_banks();
         cout << "finished create bank!" << endl;
+int count = 0;
         for (bank bk : banks) {
+cout << count << endl;
+count++;
             cout << bk.name << " has delays: ";//<< bk.read_delays << endl;
             cout << tab(1);
             for (int dl: bk.read_delays) {

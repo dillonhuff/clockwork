@@ -84,6 +84,7 @@ bool is_number(string s) {
 
 static inline
 int safe_stoi(const string s) {
+  cout << "safe stoi " << s << endl;
   if (is_number(s)) {
     return stoi(s);
   }
