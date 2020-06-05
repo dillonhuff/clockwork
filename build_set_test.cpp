@@ -1645,6 +1645,58 @@ void emit_address_stream2file(map<string, UBuffer> buffers_opt, string read_buf,
   emit_address_stream(file_name, is_top, sram_read, sram_write, read_addr, write_addr);
 }
 
+void reaccess_no_hierarchy_test() {
+
+  prog prg;
+  prg.compute_unit_file = "vec_access.h";
+  prg.name = "reaccess_conv_no_hierarchy";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["out"] = 16;
+  prg.buffer_port_widths["bufl2"] = 16;
+  //prg.buffer_port_widths["bufl1"] = 16;
+
+  auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
+  auto write = p->add_op("input");
+  write->add_load("in", "pi, po");
+  write->add_store("bufl2", "pi, po");
+
+
+  auto q = prg.add_nest("ao", 0 , 2, "qo", 0, 6, "qi", 0, 14);
+  auto read = q->add_op("output");
+  for (size_t wy = 0; wy < 3; wy ++) {
+      for (size_t wx = 0; wx < 3; wx ++) {
+        read->add_load("bufl2", "qi+" + to_string(wy) + ", qo+" + to_string(wx));
+      }
+  }
+  read->add_store("out", "qi, qo, ao");
+
+  generate_optimized_code(prg);
+  //assert(false);
+
+//#ifdef COREIR
+  //auto opt_sched = prg.optimized_schedule();
+  //auto schedmap = its(isl_schedule_get_map(opt_sched), prg.whole_iteration_domain());
+  //auto bufs = build_buffers(prg, schedmap);
+  //CodegenOptions options;
+  //for (auto& b : bufs) {
+    //b.second.generate_bank_and_merge(options);
+  //}
+  //generate_coreir(options, bufs, prg, schedmap);
+//#endif
+
+  //assert(false);
+
+  //generate_optimized_code(prg);
+  //assert(false);
+
+  //auto buffers_opt = build_buffers(prg);
+  //CodegenOptions opt;
+  //opt.conditional_merge = false;
+  //buffers_opt.at("buf").generate_bank_and_merge(opt);
+
+}
 void reaccess_test() {
 
   prog prg;
@@ -9517,6 +9569,8 @@ void application_tests() {
 }
 
 void memory_tile_tests() {
+  reaccess_no_hierarchy_test();
+  //assert(false);
   //shift_reg_test();
   bankmerge_vec_test();
   reaccess_test();

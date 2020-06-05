@@ -1797,9 +1797,10 @@ void generate_app_code(CodegenOptions& options,
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
 
   for (auto op : prg.all_ops()) {
-    regex re("\n\t\\s+" + op->name + "\\((.*)\\);");
+    regex re("(\n\t\\s+)" + op->name + "\\((.*)\\);");
     string args_list = sep_list(buffer_arg_names(buffers, op, prg), "", "", ", ");
-    code_string = regex_replace(code_string, re, "\n\t" + op->name + "(" + args_list + ", $1);");
+    //code_string = regex_replace(code_string, re, "\n\t" + op->name + "(" + args_list + ", $1);");
+    code_string = regex_replace(code_string, re, "$1" + op->name + "(" + args_list + ", $2);");
   }
 
   conv_out << "#ifdef __VIVADO_SYNTH__" << endl;
@@ -1857,7 +1858,7 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
   generate_app_code(options, buffers, prg, schedmap, domain_map);
 }
 
-void generate_optimized_code(prog& prg) {
+void generate_optimized_code(CodegenOptions& options, prog& prg) {
   auto sched = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
 
   cout << "Optimized schedule..." << endl;
@@ -1872,9 +1873,16 @@ void generate_optimized_code(prog& prg) {
   }
 
   //assert(false);
-  generate_app_code(buffers, prg, sched);
+  generate_app_code(options, buffers, prg, sched);
   generate_vivado_tcl(prg.name);
 }
+
+void generate_optimized_code(prog& prg) {
+  CodegenOptions options;
+  options.internal = true;
+  generate_optimized_code(options, prg);
+}
+
 
 void generate_unoptimized_code(prog& prg) {
   string old_name = prg.name;

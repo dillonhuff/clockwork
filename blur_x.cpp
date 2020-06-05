@@ -204,9 +204,9 @@ void blur_x(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in, HW
   for (int epoch = 0; epoch < num_epochs; epoch++) {
 	for (int c0 = 0; c0 <= 7; c0 += 1)
 	  for (int c1 = 0; c1 <= 31; c1 += 1) {
-	I_id0(in, I, 0, c0, c1);
+	    I_id0(in, I, 0, c0, c1);
 	    if (c0 >= 2)
-	out_blur_30(I, out, 0, c0 - 2, c1);
+	      out_blur_30(I, out, 0, c0 - 2, c1);
 	  }
 	
   }

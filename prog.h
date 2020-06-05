@@ -987,6 +987,7 @@ void generate_unoptimized_code(prog& prg);
 // Re-schedules all loops using ISL 
 // and then emits HLS C++ code for the program
 void generate_optimized_code(prog& prg);
+void generate_optimized_code(CodegenOptions& options, prog& prg);
 
 std::set<pair<string, string> > edge_buffers(map<string, UBuffer>& buffers, prog& prg);
 
