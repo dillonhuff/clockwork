@@ -11,8 +11,10 @@ Clockwork is a tool for compiling naive descriptions of hardware accelerators wr
 
 ## Dependencies
 
+Examples of how to install the dependencies can be found in [./misc/install\_deps\_mac.sh](./misc/install_deps_mac.sh) and [./misc/install\_deps\_linux.sh](./misc/install\_deps\_linux.sh).
+
 Please install the specific versions of the listed dependencies. Do
-not just take the latest release on NTL or barvinok. For an example of how to download and build dependencies see [install\_deps\_rice.sh](./install_deps_rice.sh).
+not just take the latest release on NTL or barvinok.
 
 * ntl-11.4.1 - [download here](https://shoup.net/ntl/download.html) 
     * https://www.shoup.net/ntl/doc/tour-unix.html (needs GMP to be installed already)
@@ -21,29 +23,22 @@ not just take the latest release on NTL or barvinok. For an example of how to do
    * note that linux users may need to manually add -lpthread to the LIBS field (change "LIBS = -lntl -lgmp", to "LIBS = -lpthread -lntl -lgmp")
 * *optional codegen backend* **CoreIR** - [github link](https://github.com/rdaly525/coreir.git)
 
-Alternatively, you can follow these steps:
-1. Download ntl-11.4.1 from the link above.
-2. cd ntl-11.4.1/src
-3. ./configure NTL_GMP_LIP=on PREFIX=/opt GMP_PREFIX=/path/to/gmp
-   * if you have sudo access, you do not need PREFIX and ntl will be installed in /usr/local
-   * if you do not have sudo access or would like to specify where ntl is installed, replace /opt above with a directory path for PREFIX
-4. make
-5. (optionally) make check
-6. make install
-7. Download barvniok-0.41 from the link above.
-8. cd barvinok-0.41
-9. ./configure --prefix=/opt_b --with-gmp-prefix=/path/to/gmp --with-ntl-prefix=/path/to/ntl
-   * if you have sudo access, you do not need PREFIX and barvinok will be installed in /usr/local
-   * if you do not have sudo access or would like to specify where barvinok is installed, replace /opt_b above with a directory path for PREFIX
-10. make
-      * you may need to add -lpthread to LIBS in the generated Makefile
-11. (optionally) make check
-12. make install
-13. if Linux: export LD_LIBRARY_PATH=/path/to/these/installations 
+# Building an example 
 
-## Build instructions
+To generate a synthesizable accelerator which blurs a 1920 x 1080 grayscale image:
 
-* Default rebuild and execute script
+    ./rebuild_and_run.sh blur-example
+
+This will write HLS code for the accelerator and several different test drivers for it to `./blur_example`. To run a software emulation of the accelerator do:
+
+    clang++ -std=c++11 ./blur_example/blur_example_opt_sw_bmp_test_harness.cpp ./blur_example/blur_example_opt.cpp -I ./aws_collateral/ -I .
+    ./a.out
+
+This will run the accelerator in simulation on a `bmp` image and write the output to `blur_example_opt_bmp_out.bmp`.
+
+# Running all tests
+
+* Default build and execute script which will execute all tests:
 
     `./rebuild_and_run.sh`
 

@@ -1493,10 +1493,10 @@ void emit_top_address_stream(string fname, TileConstraints lake_mem_tile, vector
     int mul_in = pow(2, in_width) - 1;
 
     //Some fix for the output format
-    string l_in = addr_in.size() ? "[[" : "[";
-    string l_out = addr_out.size() ? "[[" : "[";
-    string r_in = addr_in.size() ? "]]" : "]";
-    string r_out = addr_out.size() ? "]]" : "]";
+    string l_in = addr_in.size() > 1 ? "[[" : "";
+    string l_out = addr_out.size() > 1 ? "[[" : "";
+    string r_in = addr_in.size() > 1 ? "]]" : "";
+    string r_out = addr_out.size() > 1 ? "]]" : "";
 
     out << sep_list(addr_in, l_in, r_in, "],[") << ", " << wen*mul_in << ", " << ren* mul_out << ", "<< sep_list(addr_out, l_out, r_out, "],[") << ", " << valid * mul_out << endl;
 
@@ -1590,12 +1590,15 @@ map<string, umap*> get_op2sched(map<string, UBuffer>& buffers_opt, umap* opt_sch
 
 void lattice_schedule_buf(isl_ctx* ctx, map<string, UBuffer> & buffers_opt, umap* opt_sched, HWconstraints sram) {
 
+  //cout << "Lattice schedule: " << str(opt_sched) << endl;
+
   //get a map from op to schedule
   auto op2sched = get_op2sched(buffers_opt, opt_sched);
 
   for (auto it: op2sched) {
     cout <<"\tOP: " << it.first << " has sched: " << str(it.second) << endl;
   }
+  //assert(false);
 
   //compute the bound of the schedule
   cout << str(lexmin(range(opt_sched))) << endl << str(lexmax(range(opt_sched))) <<endl;
@@ -1603,7 +1606,7 @@ void lattice_schedule_buf(isl_ctx* ctx, map<string, UBuffer> & buffers_opt, umap
   isl_set* sched_set = bound.to_set(ctx, "");
   auto bset_vec = constraints(sched_set);
   for (auto bset: bset_vec) {
-      cout << "cosntraints: " << str(bset) << endl;
+      cout << "constraints: " << str(bset) << endl;
   }
 
   //Initialize the variable for lattice count
@@ -1699,11 +1702,11 @@ void emit_address_stream2file(map<string, UBuffer> buffers_opt, string read_buf,
   vector<int> sram_write = buffers_opt.at(write_buf).write_cycle;
   auto read_addr = buffers_opt.at(read_buf).read_addr;
   auto write_addr = buffers_opt.at(write_buf).write_addr;
-  if (is_top)
+  if (is_top) {
     emit_top_address_stream(file_name, tc, sram_read, sram_write, read_addr, write_addr);
-  else
+  } else {
     emit_sram_address_stream(file_name, sram_read, sram_write, read_addr, write_addr);
-
+  }
 }
 
 void reaccess_test() {
@@ -1713,8 +1716,10 @@ void reaccess_test() {
   prg.name = "reaccess_conv";
   prg.add_input("in");
   prg.add_output("out");
-  prg.buffer_port_widths["in"] = 32;
-  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["out"] = 16;
+  prg.buffer_port_widths["bufl2"] = 16;
+  prg.buffer_port_widths["bufl1"] = 16;
 
   auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
   auto write = p->add_op("input");
@@ -1738,11 +1743,14 @@ void reaccess_test() {
   }
   read->add_store("out", "qi, qo, ao");
 
+#ifdef COREIR
   auto opt_sched = prg.optimized_schedule();
   auto schedmap = its(isl_schedule_get_map(opt_sched), prg.whole_iteration_domain());
   auto bufs = build_buffers(prg, schedmap);
-#ifdef COREIR
   CodegenOptions options;
+  for (auto& b : bufs) {
+    b.second.generate_bank_and_merge(options);
+  }
   generate_coreir(options, bufs, prg, schedmap);
 #endif
 
@@ -1794,17 +1802,17 @@ void shift_reg_test() {
 
   auto q = prg.add_nest("qo", 0, 6, "qi", 0, 14);
   auto read = q->add_op("output");
-  for (size_t wy = 0; wy < 3; wy ++)
+  for (size_t wy = 0; wy < 3; wy ++) {
       for (size_t wx = 0; wx < 3; wx ++) {
         read->add_load("buf", "qo+" + to_string(wy) + ", qi+" + to_string(wx));
       }
+  }
   read->add_store("out", "po, pi");
 
   //unoptimized schedule
   auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
   auto buffers = build_buffers(prg, sched_naive);
   //buffers.at("buf").port_reduction();
-
 
   //optimized schedule
   auto buffers_opt = build_buffers(prg);
@@ -1863,7 +1871,6 @@ void bankmerge_vec_test() {
   prg.name = "vec";
   prg.add_input("in");
   prg.add_output("out");
-  //prg.buffer_port_widths["T"] = 32*3;
   prg.buffer_port_widths["in"] = 32;
   prg.buffer_port_widths["out"] = 32;
 
@@ -1910,10 +1917,11 @@ void bankmerge_vec_test() {
   lattice_schedule_buf(prg.ctx, buffers_opt, opt_sched, sram);
 
   TileConstraints tc{1,3,0}, tc_tape{2,2,4};
-  emit_address_stream2file(buffers_opt, "buf1_sram", "buf1_sram", "SRAM_address", false, tc);
+  emit_address_stream2file(buffers_opt, "buf1_sram", "buf1_sram", "SRAM_address_tapeout", false, tc);
   emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "TOP_address", true, tc);
   emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "TOP_address_tapeout", true, tc_tape);
-  compare_to_gold("SRAM_address.csv");
+
+  compare_to_gold("SRAM_address_tapeout.csv");
   compare_to_gold("TOP_address.csv");
 }
 
@@ -9442,6 +9450,37 @@ void compute_unit_with_index_variables_test() {
 
 }
 
+void travis_tests() {
+  reduce_1d_test();
+  reduce_2d_test();
+  return;
+  heat_3d_test();
+  upsample2d_test();
+  halide_dnn_test();
+  compute_unit_with_index_variables_test();
+
+  exposure_fusion();
+
+  downsample2d_test();
+  up_stencil_down_test();
+  blur_and_downsample_test();
+  downsample_and_blur_test();
+  upsample_stencil_2d_test();
+  upsample_stencil_1d_test();
+  updown_merge_test();
+  harris_unrolled_test();
+  mismatched_stencil_test();
+  sobel_test();
+  upsample_reduce_test();
+  pointwise_test();
+  stencil_3d_test();
+  soda_blur_test();
+  two_in_window_test();
+  two_in_conv2d_test();
+  gaussian_pyramid_test();
+  warp_and_upsample_test();
+}
+
 void application_tests() {
   reduce_1d_test();
   reduce_2d_test();
@@ -9572,19 +9611,37 @@ void application_tests() {
 }
 
 void memory_tile_tests() {
-  shift_reg_test();
+  //shift_reg_test();
   bankmerge_vec_test();
-  assert(false);
   reaccess_test();
+  assert(false);
 
   //new_bankmerge_tests();
   memtile_test();
   auto_vec_test();
-  bankmerge_vec_test();
   vec_test();
   agg_test();
 
   //assert(false);
+}
+
+void blur_example() {
+  int cols = 1920;
+  int rows = 1080;
+
+  const int unroll_factor = 2;
+  cout << "blur_xy" << endl;
+  cout << tab(1) << "unroll factor: " << unroll_factor << endl;
+  string out_name = "blur_example";
+  blur_xy_16(out_name).realize(out_name, cols, rows, unroll_factor);
+
+  string synth_dir =
+    "./" + out_name;
+  system(("mkdir -p " + synth_dir).c_str());
+  system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
+  system(("mv " + out_name + "*.h " + synth_dir).c_str());
+  system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
+  system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
 }
 
 int main(int argc, char** argv) {
@@ -9592,6 +9649,15 @@ int main(int argc, char** argv) {
   if (argc > 1) {
     assert(argc == 2);
     string cmd = argv[1];
+
+    if (cmd == "blur-example") {
+      blur_example();
+      return 0;
+    }
+    if (cmd == "travis-tests") {
+      travis_tests();
+      return 0;
+    }
 
     if (cmd == "program_representation") {
       prog prg = conv_1d();

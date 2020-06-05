@@ -1014,3 +1014,6 @@ map<string, UBuffer> build_buffers(prog& prg);
 void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg, umap* schedmap);
 
 prog duplicate_interface(prog& p);
+
+vector<pair<string, string> > incoming_bundles(op* op, map<string, UBuffer>& buffers, prog& prg);
+vector<pair<string, string> > outgoing_bundles(op* op, map<string, UBuffer>& buffers, prog& prg);
