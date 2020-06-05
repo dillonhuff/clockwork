@@ -2,10 +2,7 @@
 #include "ubuffer.h"
 #include "codegen.h"
 #include "coreir_backend.h"
-
-#ifdef COREIR
-#include "coreirgen.h"
-#endif
+#include "coreir_lib.h"
 
 #include "prog.h"
 

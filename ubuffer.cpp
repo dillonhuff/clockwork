@@ -1,9 +1,6 @@
 #include "ubuffer.h"
 #include "codegen.h"
-
-#ifdef COREIR
-#include "coreirgen.h"
-#endif
+#include "coreir_lib.h"
 
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
   umap* src_map = nullptr;
