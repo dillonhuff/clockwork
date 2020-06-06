@@ -458,24 +458,26 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, j
   map<string, CoreIR::Wireable*> pt2wire;
   map<string, CoreIR::Wireable*> reg_in;
 
-  //TODO: add input slice and output slice
+  //TODO: possible bug, the sequence may not be correct
   for (auto b : get_in_bundles()) {
     int pix_width = port_widths;
     int pt_cnt = 0;
-    int bundle_width = port_bundle_width(b);
+    auto inpt_bd_wire = def->sel("self." + b);
     for (auto inpt : port_bundles.at(b)) {
-      int lo = pt_cnt * pix_width;
-      int hi = lo + pix_width;
-
-      auto slice = def->addInstance("slice_" + inpt, "coreir.slice",
-              {{"lo", COREMK(context, lo)},
-              {"hi", COREMK(context, hi)},
-              {"width", COREMK(context, bundle_width)}});
-      def->connect(slice->sel("in"), def->sel("self." + b));
-      pt2wire[inpt] = slice->sel("out");
+      pt2wire[inpt] = inpt_bd_wire->sel(pt_cnt);
       pt_cnt ++;
     }
   }
+  for (auto b : get_out_bundles()) {
+    int pix_width = port_widths;
+    int pt_cnt = 0;
+    auto outpt_bd_wire = def->sel("self." + b);
+    for (auto outpt : port_bundles.at(b)) {
+      pt2wire[outpt] = outpt_bd_wire->sel(pt_cnt);
+      pt_cnt ++;
+    }
+  }
+  /*
   for (auto b : get_out_bundles()) {
     int pix_width = port_widths;
     CoreIR::Wireable* last_out;
@@ -497,7 +499,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, j
         def->connect(concat->sel("out"), def->sel("self." + b));
       }
     }
-  }
+  }*/
 
 
   for (auto bk : get_banks()) {
@@ -514,18 +516,18 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, j
       assert(outpts.size() == 1);
       //do not wire input for the first pass
       if (isIn.at(pick(inpts))) {
-        //def->connect(reg->sel("in"), def->sel("self."+pick(inpts)));
+        def->connect(reg->sel("in"), pt2wire.at(pick(inpts)));
       } else {
         reg_in[pick(inpts)] = reg->sel("in");
         wire2out[pick(outpts)] = reg->sel("out");
       }
-      //def->connect(reg->sel("out"), def->sel("self."+pick(outpts)));
+      def->connect(reg->sel("out"), pt2wire.at(pick(outpts)));
     } else if (bk.maxdelay == 0) {
       //this is a wire
       assert(inpts.size() == 1);
       assert(outpts.size() == 1);
-      //def->connect(def->sel("self." + pick(inpts)), def->sel("self." + pick(outpts)));
-      wire2out[pick(outpts)] = def->sel("self." + pick(inpts));
+      def->connect(pt2wire.at(pick(inpts)), pt2wire.at(pick(outpts)));
+      wire2out[pick(outpts)] = pt2wire.at(pick(inpts));
     } else {
       string ub_ins_name = "ub_"+bk.name;
       //json config_file;
@@ -541,13 +543,14 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, j
 
       int inpt_cnt = 0, outpt_cnt = 0;
       for (auto inpt: inpts) {
-        //def->connect(buf->sel("datain_" + to_string(inpt_cnt)), def->sel("self."+inpt));
-        //def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+inpt+"_en"));
+        //TODO: datain may be an output port
+        def->connect(buf->sel("datain_" + to_string(inpt_cnt)), pt2wire.at(inpt));
+        def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
         inpt_cnt++;
       }
       for (auto outpt: outpts) {
-        //def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), def->sel("self."+outpt));
-        //wire2out[outpt] = buf->sel("dataout_" + to_string(outpt_cnt));
+        def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), pt2wire.at(outpt));
+        wire2out[outpt] = buf->sel("dataout_" + to_string(outpt_cnt));
         //TODO: figure out valid wiring strategy
         //
         outpt_cnt++;
@@ -560,7 +563,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, j
     string outpt = it.first;
     auto in = it.second;
     auto out = wire2out.at(outpt);
-    //def->connect(in, out);
+    def->connect(in, out);
   }
 
 }
@@ -574,14 +577,15 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
     ub_field{{"clk", context->Named("coreir.clkIn")},
       {"reset", context->BitIn()}};
   for (auto b : buf.port_bundles) {
-    int width = buf.port_bundle_width(b.first);
+    int pt_width = buf.port_widths;
+    int bd_width = buf.lanes_in_bundle(b.first);
     string name = b.first;
     if (buf.is_input_bundle(b.first)) {
       ub_field.push_back(make_pair(name + "_en", context->BitIn()));
-      ub_field.push_back(make_pair(name, context->BitIn()->Arr(width)));
+      ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
     } else {
       ub_field.push_back(make_pair(name + "_valid", context->Bit()));
-      ub_field.push_back(make_pair(name, context->Bit()->Arr(width)));
+      ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
     }
   }
 

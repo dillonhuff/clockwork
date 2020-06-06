@@ -1744,11 +1744,16 @@ void reaccess_test() {
   auto opt_sched = prg.optimized_schedule();
   auto schedmap = its(isl_schedule_get_map(opt_sched), prg.whole_iteration_domain());
   auto bufs = build_buffers(prg, schedmap);
-  CodegenOptions options;
+  CodegenOptions opt;
+  opt.conditional_merge = true;
+  opt.merge_threshold = 4;
+  int max_inpt = 2;
+  int max_outpt = 2;
   for (auto& b : bufs) {
-    b.second.generate_bank_and_merge(options);
+    b.second.generate_bank_and_merge(opt);
+    b.second.port_group2bank(max_inpt, max_outpt);
   }
-  generate_coreir(options, bufs, prg, schedmap);
+  generate_coreir(opt, bufs, prg, schedmap);
 #endif
 
   //assert(false);
