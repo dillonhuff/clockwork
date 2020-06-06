@@ -1347,7 +1347,6 @@ cout<<"============================================"<<endl;
           mergeable.push_back(bnk);
         }
       }
-    }
 
     if (mergeable.size() > 0) {
 cout << "mergeable size is greater than 0" << endl;
