@@ -1298,73 +1298,76 @@ cout << "&&&&&&&&&&&&&&&&&&&&&&&& 510 " << endl;
       }
     }
 
-  int counter = 0;
+    int counter = 0;
 
-  for (auto inpt : get_in_ports()) {
-    // try to turn the banks for this inpt into one big linebuffer
-    vector<stack_bank> receivers = receiver_banks(inpt);
-    vector<stack_bank> mergeable;
+    for (auto inpt : get_in_ports()) {
+      // try to turn the banks for this inpt into one big linebuffer
+      vector<stack_bank> receivers = receiver_banks(inpt);
+      vector<stack_bank> mergeable;
 
-    for (auto bnk : receivers) {
-      if (bnk.read_delays.size() != 2) {
- 	cout << "splitting banks " << endl;
-        // splitting banks
-        stack_bank bank1, bank2;
-        bank1.tp = BANK_TYPE_STACK;
-        bank1.rddom = bnk.rddom;
-        bank1.name = inpt + "_split_banks1_" + to_string(counter);
-        bank1.pt_type_string = bnk.pt_type_string;
-        bank1.num_readers = mergeable.size();
-        bank1.maxdelay = bnk.maxdelay;
+      for (auto bnk : receivers) {
+        if (bnk.read_delays.size() != 2) {
+          cout << "splitting banks " << endl;
+          // splitting banks
+          stack_bank bank1, bank2;
+          bank1.tp = BANK_TYPE_STACK;
+          bank1.rddom = bnk.rddom;
+          bank1.name = inpt + "_split_banks1_" + to_string(counter);
+          bank1.pt_type_string = bnk.pt_type_string;
+          bank1.num_readers = mergeable.size();
+          bank1.maxdelay = bnk.maxdelay;
 
-        bank2.tp = BANK_TYPE_STACK;
-        bank2.rddom = bnk.rddom;
-        bank2.name = inpt + "_split_banks2_" + to_string(counter);
-        bank2.pt_type_string = bnk.pt_type_string;
-        bank2.num_readers = mergeable.size();
-        bank2.maxdelay = bnk.maxdelay;
-	// read delays are offsets are within banks
-	// look at different pieces of access pattern
-        bank1.read_delays.push_back(bnk.read_delays[0]);
-        bank1.read_delays.push_back(bnk.read_delays[bnk.read_delays.size() - 1]);
-        for (int i = 0; i < bnk.read_delays.size() - 1; i++) {
-           bank2.read_delays.push_back(bnk.read_delays[i]);
+          bank2.tp = BANK_TYPE_STACK;
+          bank2.rddom = bnk.rddom;
+          bank2.name = inpt + "_split_banks2_" + to_string(counter);
+          bank2.pt_type_string = bnk.pt_type_string;
+          bank2.num_readers = mergeable.size();
+          bank2.maxdelay = bnk.maxdelay;
+  	  // read delays are offsets are within banks
+ 	  // look at different pieces of access pattern
+          bank1.read_delays.push_back(bnk.read_delays[0]);
+          bank1.read_delays.push_back(bnk.read_delays[bnk.read_delays.size() - 1]);
+          for (int i = 0; i < bnk.read_delays.size() - 1; i++) {
+             bank2.read_delays.push_back(bnk.read_delays[i]);
+          }
+      	  counter++;
+          auto outpt_vect = bnk.get_out_ports();
+          auto outpt = outpt_vect[0];
+          for (auto i : outpt_vect) {cout << " out port: " << i << endl;}
+
+          add_bank_between(inpt, outpt, bank2);
+          add_bank_between(inpt, outpt, bank1);
+          remove_bank(bnk.name);
+          mergeable.push_back(bank1);
+
+        } else {
+          if (options.debug_options.expect_all_linebuffers) {
+            //assert(receivers.size() == 1 || bnk.read_delays.size() == 2);
+            assert(bnk.read_delays.size() == 2);
+          }
+          if (bnk.read_delays.size() == 2) {
+            assert(bnk.read_delays[0] == 0);
+            mergeable.push_back(bnk);
+          }
         }
-	counter++;
-	auto outpt_vect = bnk.get_out_ports();
-	auto outpt = outpt_vect[0];
-        for (auto i : outpt_vect) {cout << " out port: " << i << endl;}
-	add_bank_between(inpt, outpt, bank2);
-        add_bank_between(inpt, outpt, bank1);
-        remove_bank(bnk.name);
-        mergeable.push_back(bank1);
-      } else {
-        if (options.debug_options.expect_all_linebuffers) {
-          //assert(receivers.size() == 1 || bnk.read_delays.size() == 2);
-          assert(bnk.read_delays.size() == 2);
-        }
-        if (bnk.read_delays.size() == 2) {
-          assert(bnk.read_delays[0] == 0);
-          mergeable.push_back(bnk);
-        }
-      }
 
-      if (mergeable.size() > 0) {
-        merge_bank(options, inpt, mergeable);
-        auto banks = get_banks();
-        //cout << "finished create bank!" << endl;
-        //for (bank bk : banks) {
-        //cout << bk.name << " has delays: ";//<< bk.read_delays << endl;
-        //cout << tab(1);
-        //for (int dl: bk.read_delays) {
-        //cout << dl << "," ;
-        //}
-        //cout << endl;
-        //for (auto dl: bk.delay_map) {
-        //cout <<tab(1)<< dl.first << ":" << dl.second <<endl; ;
-        //}
+        if (mergeable.size() > 0) {
+          merge_bank(options, inpt, mergeable);
+          auto banks = get_banks();
+          //cout << "finished create bank!" << endl;
+          //for (bank bk : banks) {
+          //cout << bk.name << " has delays: ";//<< bk.read_delays << endl;
+          //cout << tab(1);
+          //for (int dl: bk.read_delays) {
+          //cout << dl << "," ;
+          //}
+          //cout << endl;
+          //for (auto dl: bk.delay_map) {
+          //cout <<tab(1)<< dl.first << ":" << dl.second <<endl; ;
+          //}
 
-        //}
+          //}
+        }
       }
     }
   }
