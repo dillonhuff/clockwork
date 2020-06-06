@@ -965,23 +965,30 @@ class UBuffer {
     }
 
     vector<stack_bank> get_banks() {
+ cout << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << endl;
       vector<stack_bank> bnk;
-      std::set<string> done;
+      for (auto b : stack_banks) {
+        for (auto b_ : b.second) {
+ cout << "-------------------------------------------------------------------------------------------------------- " << b_.name << endl;
+          bnk.push_back(b_);
+        }
+      }
+      return bnk;
+      /*std::set<string> done;
       for (auto bs : stack_banks) {
         auto ex = bs.second;
-cout << "element name " << ex[0].name << endl;
         if (!elem(ex[0].name, done)) {
           bnk.push_back(ex[0]);
           done.insert(ex[0].name);
-        }
+        }*/
         /*for (auto b_ : bs.second) {
           if (!elem(b_.name, done)) {
 	    bnk.push_back(b_);
             done.insert(b_.name);
           }
-        }*/
+        }
       }
-      return bnk;
+      return bnk;*/
     }
 
     void add_bank_between(const std::string& inpt, const std::string& outpt, stack_bank& bank) {

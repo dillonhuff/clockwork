@@ -391,7 +391,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     //map save the register
     map<string, CoreIR::Wireable*> wire2out;
     map<string, CoreIR::Wireable*> reg_in;
-
+    cout << "&&&&&&&&&&&&&&&&&&&&& 394" << endl;
     for (auto bk : get_banks()) {
         std::set<string> inpts = get_bank_inputs(bk.name);
         std::set<string> outpts = get_bank_outputs(bk.name);
@@ -501,12 +501,13 @@ void generate_code_prefix(CodegenOptions& options,
 
   //string inpt = buf.get_in_port();
   out << "#include \"hw_classes.h\"" << endl << endl;
+cout << "&&&&&&&&&&&&&&&&&&&&&&&&&  504 " << endl;
   for (auto b : buf.get_banks()) {
     generate_bank(options, out, b);
   }
 
   out << "struct " << buf.name << "_cache {" << endl;
-
+cout << "&&&&&&&&&&&&&&&&&&&&&&&& 510 " << endl;
   for (auto b : buf.get_banks()) {
     out << tab(1)
       << b.name << "_cache "
@@ -1287,19 +1288,10 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
   for (auto inpt : get_in_ports()) {
     // try to turn the banks for this inpt into one big linebuffer
     vector<stack_bank> receivers = receiver_banks(inpt);
-//    cout << "Receiver banks for " << inpt << endl;
     vector<stack_bank> mergeable;
 
     for (auto bnk : receivers) {
-//cout<<"============================================"<<endl;
-//      cout << tab(1) << bnk.name << ", # read offsets: " << bnk.read_delays.size() << endl;
-//      cout << tab(2) << "# receivers: " << receivers.size() << endl;
-
-      //for (int i = 0; i < bnk.read_delays.size(); i++){
-      //   cout<<"read delay: " << bnk.read_delays[i]<<endl;
-      //}
-
-/*      if (bnk.read_delays.size() != 2) {
+      if (bnk.read_delays.size() != 2) {
  	cout << "splitting banks " << endl;
         // splitting banks
         stack_bank bank1, bank2;
@@ -1320,24 +1312,18 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
 	// look at different pieces of access pattern
         bank1.read_delays.push_back(bnk.read_delays[0]);
         bank1.read_delays.push_back(bnk.read_delays[bnk.read_delays.size() - 1]);
-
         for (int i = 0; i < bnk.read_delays.size() - 1; i++) {
            bank2.read_delays.push_back(bnk.read_delays[i]);
         }
-
 	counter++;
-
-	remove_bank(bnk.name);
 	auto outpt_vect = bnk.get_out_ports();
 	auto outpt = outpt_vect[0];
         for (auto i : outpt_vect) {cout << " out port: " << i << endl;}
 	add_bank_between(inpt, outpt, bank2);
         add_bank_between(inpt, outpt, bank1);
-
+        remove_bank(bnk.name);
         mergeable.push_back(bank1);
-	
       } else {
-*/             
         if (options.debug_options.expect_all_linebuffers) {
           //assert(receivers.size() == 1 || bnk.read_delays.size() == 2);
           assert(bnk.read_delays.size() == 2);
@@ -1348,28 +1334,9 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
         }
       }
 
-    if (mergeable.size() > 0) {
-//cout << "mergeable size is greater than 0" << endl;
-//cout << "inpt "<<inpt << endl;
-        merge_bank(options, inpt, mergeable);
- //       auto banks = get_banks();
- //       cout << "finished create bank!" << endl;
-//int count = 0;
-/*
-       for (bank bk : banks) {
-cout << count << endl;
-count++;
-            cout << bk.name << " has delays: ";//<< bk.read_delays << endl;
-            cout << tab(1);
-            for (int dl: bk.read_delays) {
-                cout << dl << "," ;
-            }
-            cout << endl;
-            for (auto dl: bk.delay_map) {
-                cout <<tab(1)<< dl.first << ":" << dl.second <<endl; ;
-            }
-
-        }*/
+      if (mergeable.size() > 0) {
+          merge_bank(options, inpt, mergeable);
+      }
     }
   }
 }
