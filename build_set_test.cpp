@@ -1751,6 +1751,12 @@ void reaccess_test() {
   int max_outpt = 2;
   for (auto& b : bufs) {
     b.second.generate_bank_and_merge(opt);
+
+    //Assign an configuration file,
+    json config;
+    config["name"][0] = "TOP_address.csv";
+    b.second.set_config(config);
+
     b.second.port_group2bank(max_inpt, max_outpt);
   }
   generate_coreir(opt, bufs, prg, schedmap);
@@ -1831,7 +1837,8 @@ void shift_reg_test() {
   CoreIRLoadLibrary_commonlib(context);
   CoreIRLoadLibrary_cwlib(context);
   json config_reg_map = parse_config_file("sample_configuration.txt");
-  generate_coreir(opt, context, buffers_opt.at("buf"), config_reg_map);
+  buffers_opt.at("buf").set_config(config_reg_map);
+  generate_coreir(opt, context, buffers_opt.at("buf"));
 
   if(!saveToFile(context->getNamespace("global"), "conv33_ubuffer.json")) {
     cout << "Could not save ubuffer coreir!" << endl;
@@ -9616,7 +9623,6 @@ void memory_tile_tests() {
   //shift_reg_test();
   bankmerge_vec_test();
   reaccess_test();
-  assert(false);
 
   //new_bankmerge_tests();
   memtile_test();

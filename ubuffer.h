@@ -622,6 +622,7 @@ class UBuffer {
     vector<int> read_cycle, write_cycle;
     vector<vector<int> > read_addr, write_addr;
     HWconstraints hardware;
+    json config_file;
     //This identify how many shift register are connect,
     //and what is the depth of the shift register
     //map<string, map<string, int>> delay_map;
@@ -629,6 +630,10 @@ class UBuffer {
     //SRAM specific
     //Save the pair of read port bundle name and op pos point
     queue<pair<string, isl_set*>> rd_op_queue;
+
+    void set_config(json config) {
+        config_file = config;
+    }
 
     //TODO: only support one read/write
     bool is_rd(isl_point* pt) {
@@ -1380,7 +1385,6 @@ class UBuffer {
     void generate_bank_and_merge(CodegenOptions& options);
 
 #ifdef COREIR
-    void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, json config_file);
     void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def);
 #endif
 
@@ -1506,7 +1510,6 @@ vector<string> dimension_var_args(const std::string& pt, UBuffer& buf);
 
 #ifdef COREIR
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf);
-CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, json config_reg_map);
 #endif
 
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);

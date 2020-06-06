@@ -148,11 +148,6 @@ void generate_coreir(CodegenOptions& options,
         CoreIR::Wireable* bsel =
           def->sel("self." + bundle_name);
         for (int l = 0; l < nlanes; l++) {
-          //int lo = l*pix_width;
-          //int hi = lo + pix_width;
-          //assert(hi - lo == pix_width);
-          //auto w =
-          //  def->addInstance("slice_" + def->getContext()->getUnique(), "coreir.slice", {{"lo", COREMK(context, lo)}, {"hi", COREMK(context, hi)}, {"width", COREMK(context, bundle_width)}});
           inputs.push_back(bsel->sel(l));
         }
       }

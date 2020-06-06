@@ -375,77 +375,9 @@ void generate_vivado_tcl(UBuffer& buf) {
 
 
 #ifdef COREIR
-/*
-void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, json config_file) {
-    auto context = def->getContext();
-    for (auto it : stack_banks) {
-        auto connection = it.first;
-        auto bk = it.second;
-        //cout << "[inpt: " << connection.first << "] -> [bk: " << bk.name << "] -> [outpt:" << connection.second <<  "]\n";
-    }
 
-    //map save the register
-    map<string, CoreIR::Wireable*> wire2out;
-    map<string, CoreIR::Wireable*> reg_in;
-
-    for (auto bk : get_banks()) {
-        std::set<string> inpts = get_bank_inputs(bk.name);
-        std::set<string> outpts = get_bank_outputs(bk.name);
-        auto buf_inpts = get_in_ports();
-        if (count(buf_inpts.begin(), buf_inpts.end(), pick(inpts)) == 0){
-            //add register, wire valid from ubuffer
-            auto reg = def->addInstance("d_reg_"+context->getUnique(), "mantle.reg",
-                    {{"width", CoreIR::Const::make(context, port_widths)},
-                    {"has_en", CoreIR::Const::make(context, false)}});
-            assert(inpts.size() == 1);
-            assert(outpts.size() == 1);
-            //do not wire input for the first pass
-            if (isIn.at(pick(inpts))) {
-              def->connect(reg->sel("in"), def->sel("self."+pick(inpts)));
-            }
-            else {
-                reg_in[pick(inpts)] = reg->sel("in");
-                wire2out[pick(outpts)] = reg->sel("out");
-            }
-            def->connect(reg->sel("out"), def->sel("self."+pick(outpts)));
-        }
-        else if (bk.maxdelay == 0) {
-            //this is a wire
-            assert(inpts.size() == 1);
-            assert(outpts.size() == 1);
-            def->connect(def->sel("self." + pick(inpts)), def->sel("self." + pick(outpts)));
-            wire2out[pick(outpts)] = def->sel("self." + pick(inpts));
-        }
-        else {
-            string ub_ins_name = "ub_"+bk.name;
-            //json config_file;
-            //config_file["name"][0] = "TOP_address.csv";
-            CoreIR::Values args = {
-                {"width", CoreIR::Const::make(context, port_widths)},
-                {"input_num", CoreIR::Const::make(context, 1)},
-                {"output_num", CoreIR::Const::make(context, bk.num_readers)},
-                {"config", CoreIR::Const::make(context, config_file)}
-            };
-            CoreIR::Instance* buf;
-            buf = def->addInstance(ub_ins_name, "cwlib.ub", args);
-
-            int inpt_cnt = 0, outpt_cnt = 0;
-            for (auto inpt: inpts) {
-                def->connect(buf->sel("datain_" + to_string(inpt_cnt)), def->sel("self."+inpt));
-                def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+inpt+"_en"));
-                inpt_cnt ++;
-            }
-            for (auto outpt: outpts) {
-                def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), def->sel("self."+outpt));
-                wire2out[outpt] = buf->sel("dataout_" + to_string(outpt_cnt));
-                //TODO: figure out valid wiring strategy
-                //
-                outpt_cnt ++;
-            }
-        }
-    }*/
-
-void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, json config_file) {
+//generate/realize the rewrite structure inside ubuffer node
+void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   auto context = def->getContext();
   for (auto it : stack_banks) {
     auto connection = it.first;
@@ -477,30 +409,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, j
       pt_cnt ++;
     }
   }
-  /*
-  for (auto b : get_out_bundles()) {
-    int pix_width = port_widths;
-    CoreIR::Wireable* last_out;
-    auto pt_vec = port_bundles.at(b);
-    for (size_t pt_cnt = 1; pt_cnt < pt_vec.size(); pt_cnt ++ ) {
-      int in_len = pt_cnt * pix_width;
-
-      auto concat = def->addInstance("concat_"+ pt_vec.at(pt_cnt), "coreir.concat",
-              {{"width0", COREMK(context, in_len)},
-              {"width1", COREMK(context, pix_width)}});
-      if (pt_cnt == 1) {
-        pt2wire[pt_vec.at(0)] = concat->sel("in0");
-      } else {
-        def->connect(concat->sel("in0"), last_out);
-      }
-
-      last_out = concat->sel("out");
-      if (pt_cnt == pt_vec.size() - 1) {
-        def->connect(concat->sel("out"), def->sel("self." + b));
-      }
-    }
-  }*/
-
 
   for (auto bk : get_banks()) {
     //assert(false);
@@ -530,8 +438,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, j
       wire2out[pick(outpts)] = pt2wire.at(pick(inpts));
     } else {
       string ub_ins_name = "ub_"+bk.name;
-      //json config_file;
-      //config_file["name"][0] = "TOP_address.csv";
       CoreIR::Values args = {
         {"width", CoreIR::Const::make(context, port_widths)},
         {"input_num", CoreIR::Const::make(context, 1)},
@@ -568,6 +474,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, j
 
 }
 
+//generate coreir instance for single ubuffer
+//return the coreir module with port bundle and enable/valid interface
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf) {
   //CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
@@ -593,50 +501,12 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
   auto ub = ns->newModuleDecl(buf.name + "_ub", utp);
   auto def = ub->newModuleDef();
 
-  json config_file;
-  config_file["name"][0] = "TOP_address.csv";
-  buf.generate_coreir(options, def, config_file);
+  buf.generate_coreir(options, def);
 
   ub->setDef(def);
   //if(!saveToFile(ns, "ubuffer.json")) {
       //cout << "Could not save ubuffer coreir" << endl;
       //context->die();
-  //}
-  //deleteContext(context);
-  return ub;
-}
-
-
-CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf, json config_reg_map) {
-  //CoreIR::Context* context = CoreIR::newContext();
-  //CoreIRLoadLibrary_commonlib(context);
-  //CoreIRLoadLibrary_cwlib(context);
-  auto ns = context->getNamespace("global");
-  vector<pair<string, CoreIR::Type*> >
-    ub_field{{"clk", context->Named("coreir.clkIn")},
-            {"reset", context->BitIn()}};
-  for (auto b : buf.port_bundles) {
-    int width = buf.port_bundle_width(b.first);
-    string name = b.first;
-    if (buf.is_input_bundle(b.first)) {
-      ub_field.push_back(make_pair(name + "_en", context->BitIn()));
-      ub_field.push_back(make_pair(name, context->BitIn()->Arr(width)));
-    } else {
-      ub_field.push_back(make_pair(name + "_valid", context->Bit()));
-      ub_field.push_back(make_pair(name, context->Bit()->Arr(width)));
-    }
-  }
-
-  CoreIR::RecordType* utp = context->Record(ub_field);
-  auto ub = ns->newModuleDecl(buf.name + "_ub", utp);
-  auto def = ub->newModuleDef();
-
-  buf.generate_coreir(options, def, config_reg_map);
-
-  ub->setDef(def);
-  //if(!saveToFile(ns, "ubuffer.json")) {
-  //cout << "Could not save ubuffer coreir" << endl;
-  //context->die();
   //}
   //deleteContext(context);
   return ub;
