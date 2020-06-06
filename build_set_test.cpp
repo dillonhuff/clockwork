@@ -1645,6 +1645,19 @@ void emit_address_stream2file(map<string, UBuffer> buffers_opt, string read_buf,
   emit_address_stream(file_name, is_top, sram_read, sram_write, read_addr, write_addr);
 }
 
+void find_high_bandwidth_non_const_rd_reads(prog& prg) {
+  cout << "Ops..." << endl;
+  for (auto op : prg.all_ops()) {
+    cout << tab(1) << op->name << endl;
+  }
+  auto consumer_map = prg.consumer_map();
+  auto producer_map = prg.producer_map();
+
+  cout << tab(2) << "consumer map: " << str(consumer_map) << endl;
+  cout << tab(2) << "card        : " << str(card(consumer_map)) << endl;
+  //cout << tab(2) << "producer map: " << str(producer_map) << endl;
+}
+
 void reaccess_no_hierarchy_test() {
 
   prog prg;
@@ -1655,13 +1668,11 @@ void reaccess_no_hierarchy_test() {
   prg.buffer_port_widths["in"] = 16;
   prg.buffer_port_widths["out"] = 16;
   prg.buffer_port_widths["bufl2"] = 16;
-  //prg.buffer_port_widths["bufl1"] = 16;
 
   auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
   auto write = p->add_op("input");
   write->add_load("in", "pi, po");
   write->add_store("bufl2", "pi, po");
-
 
   auto q = prg.add_nest("ao", 0 , 2, "qo", 0, 6, "qi", 0, 14);
   auto read = q->add_op("output");
@@ -1672,8 +1683,10 @@ void reaccess_no_hierarchy_test() {
   }
   read->add_store("out", "qi, qo, ao");
 
-  generate_optimized_code(prg);
-  //assert(false);
+  find_high_bandwidth_non_const_rd_reads(prg);
+
+  assert(false);
+  //generate_optimized_code(prg);
 
 //#ifdef COREIR
   //auto opt_sched = prg.optimized_schedule();
@@ -9248,7 +9261,7 @@ void new_bankmerge_tests() {
 }
 
 void iccad_tests() {
-  ef_cartoon_test("ef_cartoon_gauss");
+  //ef_cartoon_test("ef_cartoon_gauss");
   //assert(false);
 
   gaussian_pyramid_app_test("gp64x64");
@@ -9570,7 +9583,7 @@ void application_tests() {
 
 void memory_tile_tests() {
   reaccess_no_hierarchy_test();
-  //assert(false);
+  assert(false);
   //shift_reg_test();
   bankmerge_vec_test();
   reaccess_test();

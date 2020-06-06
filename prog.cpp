@@ -1807,6 +1807,10 @@ void generate_app_code(CodegenOptions& options,
   conv_out << "#pragma HLS inline recursive" << endl;
   conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
 
+  conv_out << "// schedule: " << str(schedmap) << endl;
+  conv_out << tab(1) << "/*" << endl;
+  conv_out << original_isl_code_string << endl;
+  conv_out << tab(1) << "*/" << endl;
   if (options.num_input_epochs < 0) {
     conv_out << tab(1) << "for (int epoch = 0; epoch < num_epochs; epoch++) {" << endl;
   } else {

@@ -887,7 +887,7 @@ struct prog {
       
      // original case
      for (auto p : op-> consumes()){
-      cout << "second for loop" << endl;
+      //cout << "second for loop" << endl;
        umap* vmap =
           its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
 
