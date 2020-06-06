@@ -2,7 +2,6 @@
 
 #ifdef COREIR
 
-#define COREMK(ctx, v) CoreIR::Const::make((ctx), (v))
 
 CoreIR::Wireable* andVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::Wireable* b) {
   //auto c = def->getContext();
@@ -84,10 +83,10 @@ void generate_coreir(CodegenOptions& options,
 
     if (prg.is_input(out_rep)) {
       ub_field.push_back(make_pair(out_bundle + "_valid", context->BitIn()));
-      ub_field.push_back(make_pair(out_bundle, context->BitIn()->Arr(pixel_width*pix_per_burst)));
+      ub_field.push_back(make_pair(out_bundle, context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
     } else {
       ub_field.push_back(make_pair(out_bundle + "_en", context->Bit()));
-      ub_field.push_back(make_pair(out_bundle, context->Bit()->Arr(pixel_width*pix_per_burst)));
+      ub_field.push_back(make_pair(out_bundle, context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
     }
   }
 
@@ -103,7 +102,10 @@ void generate_coreir(CodegenOptions& options,
       string buf_name = bundle.first;
       string bundle_name = bundle.second;
       auto buf = map_find(buf_name, buffers);
-      int bundle_width = buf.port_bundle_width(bundle_name);
+      //int bundle_width = buf.port_bundle_width(bundle_name);
+      int pixel_width = buf.port_widths;
+      int pix_per_burst =
+          buf.lanes_in_bundle(bundle_name);
 
       cout << "Bundle = " << bundle.second << endl;
       cout << "Possible bundles..." << endl;
@@ -112,18 +114,21 @@ void generate_coreir(CodegenOptions& options,
       }
       assert(buf.is_output_bundle(bundle.second));
       ub_field.push_back(make_pair(bundle_name + "_en", context->BitIn()));
-      ub_field.push_back(make_pair(bundle_name, context->BitIn()->Arr(bundle_width)));
+      ub_field.push_back(make_pair(bundle_name, context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
     }
 
     for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
       string buf_name = bundle.first;
       string bundle_name = bundle.second;
       auto buf = map_find(buf_name, buffers);
-      int bundle_width = buf.port_bundle_width(bundle_name);
+      //int bundle_width = buf.port_bundle_width(bundle_name);
+      int pixel_width = buf.port_widths;
+      int pix_per_burst =
+          buf.lanes_in_bundle(bundle_name);
 
       assert(buf.is_input_bundle(bundle.second));
       ub_field.push_back(make_pair(bundle_name + "_valid", context->Bit()));
-      ub_field.push_back(make_pair(bundle_name, context->Bit()->Arr(bundle_width)));
+      ub_field.push_back(make_pair(bundle_name, context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
     }
 
     CoreIR::RecordType* utp = context->Record(ub_field);
@@ -137,26 +142,19 @@ void generate_coreir(CodegenOptions& options,
         string buf_name = bundle.first;
         string bundle_name = bundle.second;
         auto buf = map_find(buf_name, buffers);
-        int pix_width = buf.port_widths;
+        //int pix_width = buf.port_widths;
         int nlanes = buf.lanes_in_bundle(bundle_name);
-        int bundle_width = buf.port_bundle_width(bundle_name);
-        int offset = 0;
+        //int bundle_width = buf.port_bundle_width(bundle_name);
         CoreIR::Wireable* bsel =
           def->sel("self." + bundle_name);
         for (int l = 0; l < nlanes; l++) {
-          int lo = l*pix_width;
-          int hi = lo + pix_width;
-          assert(hi - lo == pix_width);
-          auto w =
-            def->addInstance("slice_" + def->getContext()->getUnique(), "coreir.slice", {{"lo", COREMK(context, lo)}, {"hi", COREMK(context, hi)}, {"width", COREMK(context, bundle_width)}});
-          def->connect(w->sel("in"), bsel);
-          inputs.push_back(w->sel("out"));
+          inputs.push_back(bsel->sel(l));
         }
       }
       auto result = addList(def, inputs);
 
       for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
-        def->connect(result, def->sel("self")->sel(bundle.second));
+        def->connect(result, def->sel("self")->sel(bundle.second)->sel(0));
       }
 
       vector<CoreIR::Wireable*> vals;
