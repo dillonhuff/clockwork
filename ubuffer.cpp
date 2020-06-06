@@ -1,6 +1,7 @@
 #include "ubuffer.h"
 #include "codegen.h"
 #include "coreir_lib.h"
+#include "coreir_backend.h"
 
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
   umap* src_map = nullptr;
@@ -444,7 +445,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, j
         }
     }*/
 
-//TODO: keep the comment version, wire it next
 void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, json config_file) {
   auto context = def->getContext();
   for (auto it : stack_banks) {
@@ -455,7 +455,50 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def, j
 
   //map save the register
   map<string, CoreIR::Wireable*> wire2out;
+  map<string, CoreIR::Wireable*> pt2wire;
   map<string, CoreIR::Wireable*> reg_in;
+
+  //TODO: add input slice and output slice
+  for (auto b : get_in_bundles()) {
+    int pix_width = port_widths;
+    int pt_cnt = 0;
+    int bundle_width = port_bundle_width(b);
+    for (auto inpt : port_bundles.at(b)) {
+      int lo = pt_cnt * pix_width;
+      int hi = lo + pix_width;
+
+      auto slice = def->addInstance("slice_" + inpt, "coreir.slice",
+              {{"lo", COREMK(context, lo)},
+              {"hi", COREMK(context, hi)},
+              {"width", COREMK(context, bundle_width)}});
+      def->connect(slice->sel("in"), def->sel("self." + b));
+      pt2wire[inpt] = slice->sel("out");
+      pt_cnt ++;
+    }
+  }
+  for (auto b : get_out_bundles()) {
+    int pix_width = port_widths;
+    CoreIR::Wireable* last_out;
+    auto pt_vec = port_bundles.at(b);
+    for (size_t pt_cnt = 1; pt_cnt < pt_vec.size(); pt_cnt ++ ) {
+      int in_len = pt_cnt * pix_width;
+
+      auto concat = def->addInstance("concat_"+ pt_vec.at(pt_cnt), "coreir.concat",
+              {{"width0", COREMK(context, in_len)},
+              {"width1", COREMK(context, pix_width)}});
+      if (pt_cnt == 1) {
+        pt2wire[pt_vec.at(0)] = concat->sel("in0");
+      } else {
+        def->connect(concat->sel("in0"), last_out);
+      }
+
+      last_out = concat->sel("out");
+      if (pt_cnt == pt_vec.size() - 1) {
+        def->connect(concat->sel("out"), def->sel("self." + b));
+      }
+    }
+  }
+
 
   for (auto bk : get_banks()) {
     //assert(false);
