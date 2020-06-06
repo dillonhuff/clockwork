@@ -313,7 +313,7 @@ void generate_sw_bmp_test_harness(map<string, UBuffer>& buffers, prog& prg) {
 
   for (int l = 0; l < lanes; l++) {
     out << tab(3) << "{" << endl;
-  
+
     out << tab(3) << "int c = " << lanes << "*cl + " << l << ";" << endl;
     out << tab(3) << "if (r < input.height() && c < input.width()) {" << endl;
     out << tab(4) << "rgb_t pix;" << endl;
@@ -484,7 +484,7 @@ void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& b
   out << "int main(int argc, char **argv) {" << endl;
 
   ocl_check_args(options, out);
-  
+
   out << tab(1) << "size_t total_size_bytes = 0;" << endl;
   for (auto eb : edge_buffers(buffers, prg)) {
     string edge_bundle = eb.second;
@@ -608,7 +608,7 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
 
   for (auto in_bundle : in_bundles(buffers, prg)) {
     out << "static void read_" << in_bundle << "(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const int size) {" << endl;
-   
+
     out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
     if (options.num_input_epochs < 0) {
       out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*size;" << endl;
@@ -766,7 +766,7 @@ void generate_op_code(map<string, UBuffer>& buffers, op* op) {
   for (auto consumed : op->consume_locs) {
     decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
   }
- 
+
   for (auto consumed : op->consume_locs_pair) {
     decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
   }
@@ -821,7 +821,6 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       cout << "\tAdding input port: " << pt_name << endl;
       cout << "\t\tProduced:: " << str(produced_here) << endl;
       buf.add_in_pt(pt_name, domains.at(op), produced_here, its(opt_sched, domains.at(op)));
-      buf.add_access_pattern(pt_name, op->name, name);
 
       vector<string> inpt = buf.get_in_ports();
       cout << "current in port name: " << endl;
@@ -859,7 +858,6 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       cout << "\tAdding output port: " << pt_name << endl;
       cout << "\t\tConsumed: " << str(consumed_here) << endl;
       buf.add_out_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
-      buf.add_access_pattern(pt_name, op->name, name);
 
       vector<string> inpt = buf.get_out_ports();
       cout << "current out port name: " << endl;
@@ -903,7 +901,6 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       cout << "\tAdding output port: " << pt_name << endl;
       cout << "\t\tConsumed: " << str(consumed_here) << endl;
       buf.add_out_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
-      buf.add_access_pattern(pt_name, op->name, name);
 
       vector<string> inpt = buf.get_out_ports();
       cout << "current out port name: " << endl;
@@ -1307,6 +1304,32 @@ vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, pro
   return buf_srcs;
 }
 
+vector<string> outgoing_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg) {
+  vector<string> incoming;
+  std::set<string> done;
+  for (auto p : op->produce_locs) {
+    auto buf_name = p.first;
+    if (!elem(buf_name, done)) {
+      incoming.push_back(buf_name);
+      done.insert(buf_name);
+    }
+  }
+  return incoming;
+}
+
+vector<string> incoming_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg) {
+  vector<string> incoming;
+  std::set<string> done;
+  for (auto p : op->consume_locs) {
+    auto buf_name = p.first;
+    if (!elem(buf_name, done)) {
+      incoming.push_back(buf_name);
+      done.insert(buf_name);
+    }
+  }
+  return incoming;
+}
+
 vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& prg) {
   std::set<string> done;
   vector<string> buf_srcs;
@@ -1371,7 +1394,7 @@ compute_kernel generate_compute_op(
   for (auto a : space_var_decls(s)) {
     buf_srcs.push_back(a);
   }
-  
+
   cout << "Got iteration variables" << endl;
   conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
   vector<pair<string, string> > in_buffers;
@@ -1406,11 +1429,6 @@ compute_kernel generate_compute_op(
       conv_out << endl;
       open_debug_scope(conv_out);
 
-      //conv_out << tab(1) << "*global_debug_handle << \"" << op->name << "_" << in_buffer << ",\" << ";
-      //for (auto v : kernel.iteration_variables) {
-        //conv_out << v << "<< \",\" << ";
-      //}
-      //conv_out << " " << value_name << " << endl;" << endl;
       close_debug_scope(conv_out);
       conv_out << endl;
 
@@ -1738,7 +1756,6 @@ void generate_app_code(CodegenOptions& options,
     if (!prg.is_boundary(b.first)) {
       generate_hls_code(options, conv_out, b.second);
     }
-
   }
 
   conv_out << endl << endl;
@@ -1882,4 +1899,26 @@ void generate_unoptimized_code(prog& prg) {
   prg.name = old_name;
 }
 
+vector<pair<string, string> >
+outgoing_bundles(op* op,
+    map<string, UBuffer>& buffers,
+    prog& prg) {
 
+  vector<pair<string, string> > incoming;
+  for (auto b : outgoing_buffers(buffers, op, prg)) {
+    incoming.push_back({b, op->name + "_write"});
+  }
+  return incoming;
+}
+
+vector<pair<string, string> >
+incoming_bundles(op* op,
+    map<string, UBuffer>& buffers,
+    prog& prg) {
+
+  vector<pair<string, string> > incoming;
+  for (auto b : incoming_buffers(buffers, op, prg)) {
+    incoming.push_back({b, op->name + "_read"});
+  }
+  return incoming;
+}
