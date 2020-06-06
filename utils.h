@@ -68,6 +68,14 @@ string take_until(const std::string& s, const std::string& delim) {
 }
 
 static inline
+string take_btw(const std::string& s, const std::string& ldel, const std::string& rdel) {
+  std::size_t found_l = s.find(ldel);
+  std::size_t found_r = s.find(rdel);
+  found_l += ldel.size();
+  return s.substr(found_l, found_r - found_l);
+}
+
+static inline
 bool is_number(string s) {
 
   if (s[0] != '-' && !isdigit(s[0])) {
@@ -370,7 +378,7 @@ void move_to_benchmarks_folder(const std::string& app_name) {
   system(("mv run_tb.sh " + soda_dir).c_str());
 }
 
-static inline 
+static inline
 void compare_to_gold(const std::string& name) {
   std::ifstream t(name);
   std::string test_str((std::istreambuf_iterator<char>(t)),

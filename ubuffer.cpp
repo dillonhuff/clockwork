@@ -1,9 +1,7 @@
 #include "ubuffer.h"
 #include "codegen.h"
-
-#ifdef COREIR
-#include "coreirgen.h"
-#endif
+#include "coreir_lib.h"
+#include "coreir_backend.h"
 
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
   umap* src_map = nullptr;
@@ -378,6 +376,7 @@ void generate_vivado_tcl(UBuffer& buf) {
 
 #ifdef COREIR
 
+//generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   auto context = def->getContext();
   for (auto it : stack_banks) {
@@ -388,7 +387,28 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
   //map save the register
   map<string, CoreIR::Wireable*> wire2out;
+  map<string, CoreIR::Wireable*> pt2wire;
   map<string, CoreIR::Wireable*> reg_in;
+
+  //TODO: possible bug, the sequence may not be correct
+  for (auto b : get_in_bundles()) {
+    int pix_width = port_widths;
+    int pt_cnt = 0;
+    auto inpt_bd_wire = def->sel("self." + b);
+    for (auto inpt : port_bundles.at(b)) {
+      pt2wire[inpt] = inpt_bd_wire->sel(pt_cnt);
+      pt_cnt ++;
+    }
+  }
+  for (auto b : get_out_bundles()) {
+    int pix_width = port_widths;
+    int pt_cnt = 0;
+    auto outpt_bd_wire = def->sel("self." + b);
+    for (auto outpt : port_bundles.at(b)) {
+      pt2wire[outpt] = outpt_bd_wire->sel(pt_cnt);
+      pt_cnt ++;
+    }
+  }
 
   for (auto bk : get_banks()) {
     //assert(false);
@@ -404,22 +424,20 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       assert(outpts.size() == 1);
       //do not wire input for the first pass
       if (isIn.at(pick(inpts))) {
-        //def->connect(reg->sel("in"), def->sel("self."+pick(inpts)));
+        def->connect(reg->sel("in"), pt2wire.at(pick(inpts)));
       } else {
         reg_in[pick(inpts)] = reg->sel("in");
         wire2out[pick(outpts)] = reg->sel("out");
       }
-      //def->connect(reg->sel("out"), def->sel("self."+pick(outpts)));
+      def->connect(reg->sel("out"), pt2wire.at(pick(outpts)));
     } else if (bk.maxdelay == 0) {
       //this is a wire
       assert(inpts.size() == 1);
       assert(outpts.size() == 1);
-      //def->connect(def->sel("self." + pick(inpts)), def->sel("self." + pick(outpts)));
-      wire2out[pick(outpts)] = def->sel("self." + pick(inpts));
+      def->connect(pt2wire.at(pick(inpts)), pt2wire.at(pick(outpts)));
+      wire2out[pick(outpts)] = pt2wire.at(pick(inpts));
     } else {
       string ub_ins_name = "ub_"+bk.name;
-      json config_file;
-      config_file["name"][0] = "TOP_address.csv";
       CoreIR::Values args = {
         {"width", CoreIR::Const::make(context, port_widths)},
         {"input_num", CoreIR::Const::make(context, 1)},
@@ -431,13 +449,14 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
       int inpt_cnt = 0, outpt_cnt = 0;
       for (auto inpt: inpts) {
-        //def->connect(buf->sel("datain_" + to_string(inpt_cnt)), def->sel("self."+inpt));
-        //def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+inpt+"_en"));
+        //TODO: datain may be an output port
+        def->connect(buf->sel("datain_" + to_string(inpt_cnt)), pt2wire.at(inpt));
+        def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
         inpt_cnt++;
       }
       for (auto outpt: outpts) {
-        //def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), def->sel("self."+outpt));
-        //wire2out[outpt] = buf->sel("dataout_" + to_string(outpt_cnt));
+        def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), pt2wire.at(outpt));
+        wire2out[outpt] = buf->sel("dataout_" + to_string(outpt_cnt));
         //TODO: figure out valid wiring strategy
         //
         outpt_cnt++;
@@ -450,11 +469,13 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     string outpt = it.first;
     auto in = it.second;
     auto out = wire2out.at(outpt);
-    //def->connect(in, out);
+    def->connect(in, out);
   }
 
 }
 
+//generate coreir instance for single ubuffer
+//return the coreir module with port bundle and enable/valid interface
 CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf) {
   //CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
@@ -464,26 +485,17 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
     ub_field{{"clk", context->Named("coreir.clkIn")},
       {"reset", context->BitIn()}};
   for (auto b : buf.port_bundles) {
-    int width = buf.port_bundle_width(b.first);
+    int pt_width = buf.port_widths;
+    int bd_width = buf.lanes_in_bundle(b.first);
     string name = b.first;
     if (buf.is_input_bundle(b.first)) {
       ub_field.push_back(make_pair(name + "_en", context->BitIn()));
-      ub_field.push_back(make_pair(name, context->BitIn()->Arr(width)));
+      ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
     } else {
       ub_field.push_back(make_pair(name + "_valid", context->Bit()));
-      ub_field.push_back(make_pair(name, context->Bit()->Arr(width)));
-
+      ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
     }
-
   }
-  //for (auto inpt: buf.get_in_ports()) {
-  //ub_field.push_back(make_pair(inpt + "_en", context->BitIn()));
-  //ub_field.push_back(make_pair(inpt, context->BitIn()->Arr(buf.port_widths)));
-  //}
-  //for (auto outpt: buf.get_out_ports()) {
-  //ub_field.push_back(make_pair(outpt + "_valid", context->Bit()));
-  //ub_field.push_back(make_pair(outpt, context->Bit()->Arr(buf.port_widths)));
-  //}
 
   CoreIR::RecordType* utp = context->Record(ub_field);
   auto ub = ns->newModuleDecl(buf.name + "_ub", utp);
@@ -493,8 +505,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
 
   ub->setDef(def);
   //if(!saveToFile(ns, "ubuffer.json")) {
-  //cout << "Could not save ubuffer coreir" << endl;
-  //context->die();
+      //cout << "Could not save ubuffer coreir" << endl;
+      //context->die();
   //}
   //deleteContext(context);
   return ub;
