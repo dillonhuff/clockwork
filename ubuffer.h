@@ -948,7 +948,7 @@ class UBuffer {
 
     // removes all banks at this output port
     void remove_bank(string pt_name) {
-        map<pair<string, string>, std::vector<bank>> replace;
+        map<pair<string, string>, std::vector<stack_bank>> replace;
         for (auto bnk : stack_banks) {
           if (bnk.first.second != pt_name) {
               replace.insert(bnk);
@@ -985,8 +985,17 @@ cout << "element name " << ex[0].name << endl;
     }
 
     void add_bank_between(const std::string& inpt, const std::string& outpt, stack_bank& bank) {
-      stack_banks[{inpt, outpt}].push_back(bank);
-      //stack_banks[{inpt, outpt}] = bank;
+
+      if (has_bank_between(inpt, outpt)) {
+        std::vector<stack_bank> b_ = stack_banks[{inpt, outpt}];
+        b_.push_back(bank);
+        stack_banks[{inpt, outpt}] = b_;
+        //stack_banks[{inpt, outpt}] = bank;
+      } else {
+        std::vector<stack_bank> b_;
+        b_.push_back(bank);
+        stack_banks[{inpt, outpt}] = b_;
+      }
     }
 
     // returns true if at least one bank between given input and output ports
@@ -1041,7 +1050,7 @@ cout << "first bank name " << first_bank.name << endl;
       return get_bank(bk_name);
     }
  
-/*   std::vector<bank> get_banks_between(const std::string& inpt, const std::string& outpt) const {
+   std::vector<stack_bank> get_banks_between(const std::string& inpt, const std::string& outpt) const {
      std::vector<string> bank_names = banks_between(inpt, outpt);
      std::vector<bank> banks;
      for (auto name : bank_names) {
@@ -1049,7 +1058,6 @@ cout << "first bank name " << first_bank.name << endl;
      }
      return banks;
   }
-  */    
 
     vector<stack_bank> receiver_banks(const std::string& inpt) {
       vector<stack_bank> bnks;
@@ -1117,8 +1125,8 @@ cout << "first bank name " << first_bank.name << endl;
           for (auto outpt: get_out_ports()) {
               if (buf.has_bank_between(inpt, outpt)) {
                   stack_banks[make_pair(inpt, outpt)] =
-                      {buf.get_bank_between(inpt, outpt)};
-                      //buf.get_banks_betweeen(inpt, outpt);
+                      //{buf.get_bank_between(inpt, outpt)};
+                      buf.get_banks_between(inpt, outpt);
               }
           }
       }

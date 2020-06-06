@@ -538,7 +538,7 @@ void generate_code_prefix(CodegenOptions& options,
       }
       else if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_LINEAR) {
         string linear_addr = buf.generate_linearize_ram_addr(inpt);
-        cout <<"Input port:" << inpt << ", Get ram string: " << linear_addr << endl;
+        //cout <<"Input port:" << inpt << ", Get ram string: " << linear_addr << endl;
         out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt <<
             ", " << linear_addr << ");" << endl;
       }
@@ -1169,14 +1169,14 @@ void UBuffer::merge_bank(CodegenOptions& options, string inpt, vector<stack_bank
     merged.rddom = isl_union_set_read_from_str(ctx, "{}");
     merged.name =
       inpt + "_merged_banks_" + str(mergeable.size());
-    cout << "merged name " << merged.name << endl;
+    // cout << "merged name " << merged.name << endl;
     merged.pt_type_string =
       mergeable.at(0).pt_type_string;
     merged.num_readers = mergeable.size();
-    cout << "merged num readers " << merged.num_readers << endl;
+    // cout << "merged num readers " << merged.num_readers << endl;
     merged.maxdelay = -1;
     for (auto m : mergeable) {
-      cout << "merge: " << m.name << endl;
+      // cout << "merge: " << m.name << endl;
       //merged.layout = unn(merged.layout, m.layout);
       merged.rddom = unn(merged.rddom, m.rddom);
       if (m.maxdelay > merged.maxdelay) {
@@ -1271,13 +1271,13 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
       auto overlap =
         its(range(access_map.at(inpt)), range(access_map.at(outpt)));
 
-      cout << "access map input " << str(access_map.at(inpt)) << endl;
-	cout << "access map output " << str(access_map.at(outpt)) << endl;
+      //cout << "access map input " << str(access_map.at(inpt)) << endl;
+	//cout << "access map output " << str(access_map.at(outpt)) << endl;
 
       if (!empty(overlap)) {
         stack_bank bank = compute_bank_info(inpt, outpt);
         add_bank_between(inpt, outpt, bank);
-cout<<"outpt: " << outpt << endl;
+//cout<<"outpt: " << outpt << endl;
       }
     }
   }
@@ -1287,11 +1287,11 @@ cout<<"outpt: " << outpt << endl;
   for (auto inpt : get_in_ports()) {
     // try to turn the banks for this inpt into one big linebuffer
     vector<stack_bank> receivers = receiver_banks(inpt);
-    cout << "Receiver banks for " << inpt << endl;
+//    cout << "Receiver banks for " << inpt << endl;
     vector<stack_bank> mergeable;
 
     for (auto bnk : receivers) {
-cout<<"============================================"<<endl;
+//cout<<"============================================"<<endl;
 //      cout << tab(1) << bnk.name << ", # read offsets: " << bnk.read_delays.size() << endl;
 //      cout << tab(2) << "# receivers: " << receivers.size() << endl;
 
@@ -1349,8 +1349,8 @@ cout<<"============================================"<<endl;
       }
 
     if (mergeable.size() > 0) {
-cout << "mergeable size is greater than 0" << endl;
-cout << "inpt "<<inpt << endl;
+//cout << "mergeable size is greater than 0" << endl;
+//cout << "inpt "<<inpt << endl;
         merge_bank(options, inpt, mergeable);
  //       auto banks = get_banks();
  //       cout << "finished create bank!" << endl;
@@ -1445,7 +1445,7 @@ void UBuffer::port_group2bank(int in_port_width, int out_port_width) {
             for (size_t i = 0; i < pt_vec.size(); i ++) {
                 auto out_map_merge =
                     merge_output_pt(vector<string>(pt_vec.begin() + i, pt_vec.end()));
-                cout <<"Port: " << pt_vec.at(i) << " ,get merge map: " << str(out_map_merge) << endl;
+                //cout <<"Port: " << pt_vec.at(i) << " ,get merge map: " << str(out_map_merge) << endl;
                 outpt_merge.insert(make_pair(pt_vec.at(i), out_map_merge));
                 if (i == 0) {
                     back_edge.insert(make_pair(pt_vec.at(i), input));
@@ -1466,7 +1466,7 @@ void UBuffer::port_group2bank(int in_port_width, int out_port_width) {
                 replace_pt(it.first, it.second);
                 //auto new_sched = dot(schedule.at(it.first), to_umap(it.second));
                 auto new_sched = assign_domain_to_map(to_map(schedule.at(it.first)), ::domain(it.second));
-                cout << "new schedule with lib: " << str(new_sched) << endl;
+                //cout << "new schedule with lib: " << str(new_sched) << endl;
                 schedule.at(it.first) = to_umap(new_sched);
                 //add valid bound, mark the main output
             }
@@ -1489,7 +1489,7 @@ void UBuffer::port_group2bank(int in_port_width, int out_port_width) {
             stack_bank super_bk = compute_bank_info(inpt_set, outpt_set);
             for (auto inpt: inpt_set) {
                 for (auto outpt: outpt_set) {
-                    cout << "Merge port: " << outpt << endl;
+                    //cout << "Merge port: " << outpt << endl;
                     add_bank_between(inpt, outpt, super_bk);
                 }
             }
@@ -1511,7 +1511,7 @@ void UBuffer::port_group2bank(int in_port_width, int out_port_width) {
         for (auto it : outpt_merge) {
             replace_pt(it.first, it.second);
             auto new_sched = assign_domain_to_map(to_map(schedule.at(it.first)), ::domain(it.second));
-            cout << "new schedule with lib: " << str(new_sched) << endl;
+            //cout << "new schedule with lib: " << str(new_sched) << endl;
             schedule.at(it.first) = to_umap(new_sched);
         }
         for (auto it: back_edge) {
@@ -1532,7 +1532,7 @@ void UBuffer::port_group2bank(int in_port_width, int out_port_width) {
         stack_bank super_bk = compute_bank_info(inpt_set, outpt_set);
         for (auto inpt: inpt_set) {
             for (auto outpt: outpt_set) {
-                cout << "Merge port: " << outpt << endl;
+                //cout << "Merge port: " << outpt << endl;
                 add_bank_between(inpt, outpt, super_bk);
             }
         }
@@ -1656,7 +1656,7 @@ Box UBuffer::get_bundle_box(const std::string & pt) {
             break;
         }
     }
-    cout << pt_name << endl;
+    //cout << pt_name << endl;
     auto pt_map = to_map(access_map.at(pt_name));
     auto pt_range = range(pt_map);
     Box ret;
@@ -1840,7 +1840,7 @@ map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, st
                   out_new_sched_vec.push_back("0");
               }
               else {
-                  cout << "ERROR: The schedule is not considered\n\tin vec: " << in_sched_vec << "\n\tout vec: " << out_sched_vec << endl;
+                  //cout << "ERROR: The schedule is not considered\n\tin vec: " << in_sched_vec << "\n\tout vec: " << out_sched_vec << endl;
                   assert(false);
               }
             }
@@ -1936,24 +1936,24 @@ void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuff
     //assert(false);
 
     for (auto bd_name : in_bundle) {
-        cout << "Vectorize input port bundle: " << bd_name << endl;
+        //cout << "Vectorize input port bundle: " << bd_name << endl;
         for (auto in_pt_name : port_bundles.at(bd_name) ) {
-            cout << "\tvectorize input port: " << in_pt_name << endl;
+            //cout << "\tvectorize input port: " << in_pt_name << endl;
             auto acc_pattern = access_pattern.at(in_pt_name);
             auto acc_pattern_vec = acc_pattern.vectorization(dim_id, fetch_width);
-            std::cout << "before rewrite: " << acc_pattern << endl;
+//            std::cout << "before rewrite: " << acc_pattern << endl;
 
             //produce the operation transfomation
             isl_map* op_trans = acc_pattern.get_op_transform(ctx, dim_id, fetch_width);
-            std::cout << "transform rewrite: " << str(op_trans) << endl;
+  //          std::cout << "transform rewrite: " << str(op_trans) << endl;
 
             auto rewrite_buf2op = dot(inv(access_map.at(in_pt_name)), op_trans);
             auto new_op_domain = pick(get_sets(range(rewrite_buf2op)));
-            cout << "rewrite buffer to op map: " << str(access_map.at(in_pt_name)) << endl;
+    //        cout << "rewrite buffer to op map: " << str(access_map.at(in_pt_name)) << endl;
 
             //add in port to agg_buf
             auto inpt_acc_map = remap_access_to_new_buffer(in_pt_name, "_agg");
-            cout << "Access map add to agg_in: " << str(inpt_acc_map) << endl;
+      //      cout << "Access map add to agg_in: " << str(inpt_acc_map) << endl;
             agg_buf.add_in_pt(in_pt_name+"_in", domain.at(in_pt_name), inpt_acc_map, its(new_sched.at(acc_pattern.op_name), domain.at(in_pt_name)));
             agg_buf.port_bundles[bd_name+"_agg_in"].push_back(in_pt_name + "_in");
 
@@ -1967,18 +1967,18 @@ void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuff
     }
 
     for (auto bd_name: out_bundle) {
-        cout << "Vectorize output port bundle: " << bd_name << endl;
+        //cout << "Vectorize output port bundle: " << bd_name << endl;
 
         for (auto out_pt_name : port_bundles.at(bd_name) ) {
-            cout << "\tVectorize output port: " << out_pt_name << endl;
+            //cout << "\tVectorize output port: " << out_pt_name << endl;
             auto acc_pattern = access_pattern.at(out_pt_name);
 
             auto acc_pattern_vec = acc_pattern.vectorization(dim_id, fetch_width);
-            std::cout << "before rewrite: " << acc_pattern << endl;
+//            std::cout << "before rewrite: " << acc_pattern << endl;
 
             //produce the operation transfomation
             isl_map* op_trans = acc_pattern.get_op_transform(ctx, dim_id, fetch_width);
-            std::cout << "transform rewrite: " << str(op_trans) << endl;
+//            std::cout << "transform rewrite: " << str(op_trans) << endl;
 
             auto rewrite_buf2op = dot(inv(access_map.at(out_pt_name)), op_trans);
             auto new_op_domain = pick(get_sets(range(rewrite_buf2op)));
@@ -1986,7 +1986,7 @@ void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuff
 
             auto outpt_acc_map = acc_pattern.get_access_map_and_decouple_reuse(ctx, dim_id);
             outpt_acc_map = add_range_suffix(outpt_acc_map, "_tb");
-            cout << "Access map decouple reuse: " << str(outpt_acc_map) << endl;
+            //cout << "Access map decouple reuse: " << str(outpt_acc_map) << endl;
             tb.add_out_pt(out_pt_name+"_out", domain.at(out_pt_name), outpt_acc_map, its(new_sched.at(acc_pattern.op_name), domain.at(out_pt_name)));
             tb.port_bundles[bd_name+"_tb_out"].push_back(out_pt_name + "_out");
 
@@ -1998,10 +1998,10 @@ void UBuffer::vectorization(int dim_id, int fetch_width, UBuffer& agg_buf, UBuff
         }
     }
 
-    cout << "AGG : " << agg_buf << endl;
-    cout << "SRAM: " << sram << endl;
-    cout << "TB  : " << tb << endl;
-    cout << "AGG Schedule: " << str(agg_buf.global_schedule()) << endl;
-    cout << "SRAM Schedule: " << str(sram.global_schedule()) << endl;
-    cout << "TB Schedule: " << str(tb.global_schedule())  << endl;
+    //cout << "AGG : " << agg_buf << endl;
+    //cout << "SRAM: " << sram << endl;
+    //cout << "TB  : " << tb << endl;
+    //cout << "AGG Schedule: " << str(agg_buf.global_schedule()) << endl;
+    //cout << "SRAM Schedule: " << str(sram.global_schedule()) << endl;
+    //cout << "TB Schedule: " << str(tb.global_schedule())  << endl;
 }
