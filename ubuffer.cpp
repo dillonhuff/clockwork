@@ -380,11 +380,13 @@ void generate_vivado_tcl(UBuffer& buf) {
 
 void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto context = def->getContext();
-    for (auto it : stack_banks) {
-        auto connection = it.first;
-        auto bk = it.second;
+    //for (auto it : stack_banks) {
+        //auto connection = it.first;
+        // note that the second in stack_banks pair is now a vector, so below
+        // statement would need to be changed for print
+        //auto bk = it.second;
         //cout << "[inpt: " << connection.first << "] -> [bk: " << bk.name << "] -> [outpt:" << connection.second <<  "]\n";
-    }
+    //}
 
     //map save the register
     map<string, CoreIR::Wireable*> wire2out;
@@ -523,9 +525,11 @@ void generate_code_prefix(CodegenOptions& options,
     concat(args, dimension_var_decls(inpt, buf));
     string var_args = comma_list(dimension_var_args(inpt, buf));
 
+    // write func for every input port that gets called in this bundle
     out << "inline void " << inpt << "_write(";
     out << comma_list(args) << ") {" << endl;
 
+    // copy and broadcast whenever write to port is done
     //Different ram type, different address
     for (auto sb : buf.receiver_banks(inpt)) {
       //if (sb.tp == BANK_TYPE_STACK) {
@@ -686,9 +690,12 @@ selector generate_select(CodegenOptions& options, std::ostream& out, const strin
 
   map<string, string> in_ports_to_conditions;
 
+// input select needs to be added
   for (auto inpt : possible_ports) {
+    // domain of output port
     auto write_ops =
       domain(buf.access_map.at(outpt));
+    // values written
     auto written =
       range(buf.access_map.at(inpt));
     auto read =
@@ -737,7 +744,7 @@ selector generate_select(CodegenOptions& options, std::ostream& out, const strin
 void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
 
   out << "// # of bundles = " << buf.port_bundles.size() << endl;
-
+  //broadcast input to every lane
   for (auto b : buf.port_bundles) {
       //cout << "\t generate for bundle: " << b.first << endl;
     out << "// " << b.first << endl;
@@ -1264,6 +1271,9 @@ void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
       auto overlap =
         its(range(access_map.at(inpt)), range(access_map.at(outpt)));
 
+      cout << "access map input " << str(access_map.at(inpt)) << endl;
+	cout << "access map output " << str(access_map.at(outpt)) << endl;
+
       if (!empty(overlap)) {
         stack_bank bank = compute_bank_info(inpt, outpt);
         add_bank_between(inpt, outpt, bank);
@@ -1306,7 +1316,8 @@ cout<<"============================================"<<endl;
         bank2.pt_type_string = bnk.pt_type_string;
         bank2.num_readers = mergeable.size();
         bank2.maxdelay = bnk.maxdelay;
-
+	// read delays are offsets are within banks
+	// look at different pieces of access pattern
         bank1.read_delays.push_back(bnk.read_delays[0]);
         bank1.read_delays.push_back(bnk.read_delays[bnk.read_delays.size() - 1]);
 
@@ -1342,10 +1353,11 @@ cout<<"============================================"<<endl;
 cout << "mergeable size is greater than 0" << endl;
 cout << "inpt "<<inpt << endl;
         merge_bank(options, inpt, mergeable);
-        auto banks = get_banks();
-        cout << "finished create bank!" << endl;
-int count = 0;
-        for (bank bk : banks) {
+ //       auto banks = get_banks();
+ //       cout << "finished create bank!" << endl;
+//int count = 0;
+/*
+       for (bank bk : banks) {
 cout << count << endl;
 count++;
             cout << bk.name << " has delays: ";//<< bk.read_delays << endl;
@@ -1358,7 +1370,7 @@ count++;
                 cout <<tab(1)<< dl.first << ":" << dl.second <<endl; ;
             }
 
-        }
+        }*/
     }
   }
 }
