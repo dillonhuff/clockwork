@@ -883,6 +883,7 @@ class UBuffer {
     }
 
     bank get_bank(const std::string& name) const {
+     cout << "bank name in get_bank " << name << endl;
       for (auto b : stack_banks) {
         for (auto b_ : b.second) {
           if (b_.name == name) {
@@ -1008,6 +1009,7 @@ cout << "element name " << ex[0].name << endl;
       for (auto bs : stack_banks) {
         if (bs.first.first == inpt && bs.first.second == outpt) {
           auto first_bank = bs.second[0];
+cout << "first bank name " << first_bank.name << endl;
           return first_bank.name;
         }
       }

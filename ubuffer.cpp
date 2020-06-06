@@ -1299,7 +1299,7 @@ cout<<"============================================"<<endl;
          cout<<"read delay: " << bnk.read_delays[i]<<endl;
       }
 
-      if (bnk.read_delays.size() != 2) {
+/*      if (bnk.read_delays.size() != 2) {
  	cout << "splitting banks " << endl;
         // splitting banks
         stack_bank bank1, bank2;
@@ -1337,7 +1337,7 @@ cout<<"============================================"<<endl;
         mergeable.push_back(bank1);
 	
       } else {
-             
+*/             
         if (options.debug_options.expect_all_linebuffers) {
           //assert(receivers.size() == 1 || bnk.read_delays.size() == 2);
           assert(bnk.read_delays.size() == 2);
