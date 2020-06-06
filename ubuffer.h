@@ -622,7 +622,11 @@ class UBuffer {
     vector<int> read_cycle, write_cycle;
     vector<vector<int> > read_addr, write_addr;
     HWconstraints hardware;
+
+#ifdef COREIR
     json config_file;
+#endif
+
     //This identify how many shift register are connect,
     //and what is the depth of the shift register
     //map<string, map<string, int>> delay_map;
@@ -631,9 +635,11 @@ class UBuffer {
     //Save the pair of read port bundle name and op pos point
     queue<pair<string, isl_set*>> rd_op_queue;
 
+#ifdef COREIR
     void set_config(json config) {
         config_file = config;
     }
+#endif
 
     //TODO: only support one read/write
     bool is_rd(isl_point* pt) {
