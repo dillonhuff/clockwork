@@ -1226,7 +1226,7 @@ void UBuffer::merge_bank(CodegenOptions& options, string inpt, vector<stack_bank
           merged.rddom = unn(merged.rddom, m.rddom);
           merged.maxdelay = m.maxdelay;
           merged.read_delays.push_back(m.maxdelay);
-          cout << m.maxdelay <<", " << merged.maxdelay << endl;
+          //cout << m.maxdelay <<", " << merged.maxdelay << endl;
 
           //get the next data
           mergeable.pop_back();
@@ -1239,7 +1239,7 @@ void UBuffer::merge_bank(CodegenOptions& options, string inpt, vector<stack_bank
       merged.read_delays = sort_unique(merged.read_delays);
 
       for (auto to_replace : replace_candidates) {
-        cout << to_replace.name << endl;
+        //cout << to_replace.name << endl;
         replace_bank(to_replace, merged);
       }
       cout << "Create a new bank !"<< endl;
@@ -1292,12 +1292,12 @@ cout<<"outpt: " << outpt << endl;
 
     for (auto bnk : receivers) {
 cout<<"============================================"<<endl;
-      cout << tab(1) << bnk.name << ", # read offsets: " << bnk.read_delays.size() << endl;
-      cout << tab(2) << "# receivers: " << receivers.size() << endl;
+//      cout << tab(1) << bnk.name << ", # read offsets: " << bnk.read_delays.size() << endl;
+//      cout << tab(2) << "# receivers: " << receivers.size() << endl;
 
-      for (int i = 0; i < bnk.read_delays.size(); i++){
-         cout<<"read delay: " << bnk.read_delays[i]<<endl;
-      }
+      //for (int i = 0; i < bnk.read_delays.size(); i++){
+      //   cout<<"read delay: " << bnk.read_delays[i]<<endl;
+      //}
 
 /*      if (bnk.read_delays.size() != 2) {
  	cout << "splitting banks " << endl;
