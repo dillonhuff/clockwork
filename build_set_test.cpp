@@ -1650,11 +1650,36 @@ void find_high_bandwidth_non_const_rd_reads(prog& prg) {
   for (auto op : prg.all_ops()) {
     cout << tab(1) << op->name << endl;
   }
-  auto consumer_map = prg.consumer_map();
+  auto consumer_map = coalesce(prg.consumer_map());
   auto producer_map = prg.producer_map();
 
   cout << tab(2) << "consumer map: " << str(consumer_map) << endl;
   cout << tab(2) << "card        : " << str(card(consumer_map)) << endl;
+  cout << tab(2) << "Pieces..." << endl;
+  for (auto m : get_maps(consumer_map)) {
+    cout << tab(3) << str(m) << endl;
+    cout << tab(3) << str(card(m)) << endl << endl;
+  }
+  // Now: Find the re-use distances for the pieces?
+  // Q: What is the re-use distance? The difference
+  // between the time when a value is written and
+  // the time(s) when it is read.
+  //
+  // Or: Maybe we should analyze the re-use port by
+  // port?
+  //
+  // Note: Operations are at the same level if
+  // their schedules are separated only by a constant
+  // in one component of the schedule?
+  //
+  // Also two operations may not need the same port
+  // at the same time even if they are at the same
+  // level because that level may be high up
+  // in the loop hierarchy, so they are separated
+  // by a large amount of time due to the lower
+  // levels of the loop nest executing between them.
+
+  //cout << tab(2) << "coalesced   : " << str(coalesce(consumer_map)) << endl;
   //cout << tab(2) << "producer map: " << str(producer_map) << endl;
 }
 
