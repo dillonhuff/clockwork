@@ -519,6 +519,7 @@ void generate_code_prefix(CodegenOptions& options,
     UBuffer& buf) {
 
   //banking and merge pass
+  cout << "before generate bank and merge " << endl;
   buf.generate_bank_and_merge(options);
 
   //string inpt = buf.get_in_port();
@@ -855,6 +856,7 @@ void generate_code_prefix(CodegenOptions& options,
   }
 
   void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
+cout << "generate hls code " << endl;
     generate_code_prefix(options, out, buf);
 
     for (auto outpt : buf.get_out_ports()) {
@@ -1227,9 +1229,6 @@ cout << "mergeable size " << mergeable.size() << endl;
       sort(mergeable.begin(), mergeable.end(), [](const bank& l, const bank& r) {
           return l.maxdelay > r.maxdelay;
           });
-      for (auto merge_bank : mergeable) {
-        //cout << merge_bank.name << " with delay : " << merge_bank.maxdelay << endl;
-      }
 
       while(mergeable.size()) {
         //keep pop port to merged bank and replace origin bank
@@ -1309,12 +1308,12 @@ cout<<"access map in "<<str(access_map.at(inpt))<<" out "<<str(access_map.at(out
     }
 
     int counter = 0;
-
+cout << "num inpt ports " << get_in_ports().size() << endl;
     for (auto inpt : get_in_ports()) {
       // try to turn the banks for this inpt into one big linebuffer
       vector<stack_bank> receivers = receiver_banks(inpt);
       vector<stack_bank> mergeable;
-
+cout << "num receivers " << receivers.size() << endl;
       for (auto bnk : receivers) {
         if (bnk.read_delays.size() != 2) {
           cout << "splitting banks " << endl;
@@ -1367,6 +1366,7 @@ add_bank_between(inpt, outpt, bank2);
         }
 
         if (mergeable.size() > 0) {
+cout << "before merge bank call" << endl;
           merge_bank(options, inpt, mergeable);
           auto banks = get_banks();
           //cout << "finished create bank!" << endl;
