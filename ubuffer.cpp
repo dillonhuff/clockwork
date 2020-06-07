@@ -1191,6 +1191,7 @@ cout<<"access map output "<< range_name(maptest)<<endl;
   }
 
   void UBuffer::merge_bank(CodegenOptions& options, string inpt, vector<stack_bank> mergeable) {
+    cout << "merge bank called " << endl;
     if (!options.conditional_merge){
       stack_bank merged;
       merged.tp = BANK_TYPE_STACK;
@@ -1214,7 +1215,7 @@ cout<<"access map output "<< range_name(maptest)<<endl;
         }
       }
       merged.read_delays = sort_unique(merged.read_delays);
-
+cout << "mergeable size " << mergeable.size() << endl;
       for (auto to_replace : mergeable) {
         cout << "replace bank called" << endl;
         replace_bank(to_replace, merged);
