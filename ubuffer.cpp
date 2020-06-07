@@ -523,13 +523,11 @@ void generate_code_prefix(CodegenOptions& options,
 
   //string inpt = buf.get_in_port();
   out << "#include \"hw_classes.h\"" << endl << endl;
-cout << "&&&&&&&&&&&&&&&&&&&&&&&&&  504 " << endl;
   for (auto b : buf.get_banks()) {
     generate_bank(options, out, b);
   }
 
   out << "struct " << buf.name << "_cache {" << endl;
-cout << "&&&&&&&&&&&&&&&&&&&&&&&& 510 " << endl;
   for (auto b : buf.get_banks()) {
     out << tab(1)
       << b.name << "_cache "

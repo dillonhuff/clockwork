@@ -1016,11 +1016,10 @@ cout<<"remove bank --------------------------------------------------------"<<pt
     }
 
     vector<stack_bank> get_banks() {
- cout << "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" << endl;
       vector<stack_bank> bnk;
       for (auto b : stack_banks) {
         for (auto b_ : b.second) {
- cout << "-------------------------------------------------------------------------------------------------------- " << b_.name << endl;
+ cout << "bank name " << b_.name << endl;
           bnk.push_back(b_);
         }
       }
