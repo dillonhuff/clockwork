@@ -1349,7 +1349,7 @@ for(auto b : bnk.delay_map){
   cout<< b.first<<" "<<b.second<<" "<<endl;
 }          
 
-add_bank_between(inpt, outpt, bank2);
+          add_bank_between(inpt, outpt, bank2);
           add_bank_between(inpt, outpt, bank1);
           remove_bank(bnk.name);
           mergeable.push_back(bank1);
@@ -1364,7 +1364,7 @@ add_bank_between(inpt, outpt, bank2);
             mergeable.push_back(bnk);
           }
         }
-
+}
         if (mergeable.size() > 0) {
 cout << "before merge bank call" << endl;
           merge_bank(options, inpt, mergeable);
@@ -1383,7 +1383,7 @@ cout << "before merge bank call" << endl;
 
           //}
         }
-      }
+ //     }
     }
   }
 
