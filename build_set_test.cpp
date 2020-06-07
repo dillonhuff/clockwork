@@ -9662,15 +9662,15 @@ void manual_unroll_test() {
   //}
   regression_test(prg);
 
-  assert(false);
+  //assert(false);
 }
 
 void application_tests() {
   //print_test();
   ram_addr_unit_test();
-  manual_unroll_test();
+  //manual_unroll_test();
   reduce_1d_test();
-  assert(false);
+  //assert(false);
   reaccess_no_hierarchy_test();
   reduce_2d_test();
 
