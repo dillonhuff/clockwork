@@ -1171,7 +1171,16 @@ cout << "&&&&&&&&&&&&&&&&&&&&&&&& 510 " << endl;
     auto rddom =
       unn(range(access_map.at(inpt)),
           range(access_map.at(outpt)));
-    //cout << "Read domain for bank: " << str(rddom) << endl;
+    cout << "Read domain for bank: " << str(rddom) << endl;
+cout<<"access map "<<str(access_map.at(outpt))<<endl;
+isl_union_map* test =access_map.at(outpt);
+auto maptest = to_map(test);
+cout<<"access map output "<< domain_name(maptest)<<endl;
+cout<<"access map output "<< range_name(maptest)<<endl;
+for(auto mapi : maptest){
+  cout<<str(mapi.first)<<endl;
+}
+
     //Box mem_box = extract_box(rddom);
 
     //initial the delay map
