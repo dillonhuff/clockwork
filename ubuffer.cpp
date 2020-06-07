@@ -1174,6 +1174,17 @@ cout << "generate hls code " << endl;
           range(access_map.at(outpt)));
     cout << "Read domain for bank: " << str(rddom) << endl;
 cout<<"access map "<<str(access_map.at(outpt))<<endl;
+for(auto m : get_maps(access_map.at(outpt))){
+ cout<<"Map"<<endl;
+ cout<<tab(1)<<str(m)<<endl;
+ for(auto m_ : get_basic_maps(m)){
+   cout<<tab(2)<<str(m_)<<endl;
+ }
+
+}
+
+
+assert(false);
 isl_union_map* test =access_map.at(outpt);
 auto maptest = to_map(test);
 cout<<"access map output "<< domain_name(maptest)<<endl;
