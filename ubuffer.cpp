@@ -1216,6 +1216,7 @@ cout<<"access map output "<< range_name(maptest)<<endl;
       merged.read_delays = sort_unique(merged.read_delays);
 
       for (auto to_replace : mergeable) {
+        cout << "replace bank called" << endl;
         replace_bank(to_replace, merged);
       }
     }
@@ -1267,6 +1268,7 @@ cout<<"access map output "<< range_name(maptest)<<endl;
 
         for (auto to_replace : replace_candidates) {
           cout << to_replace.name << endl;
+          cout << "replace bank called 2 " << endl;
           replace_bank(to_replace, merged);
         }
         cout << "Create a new bank !"<< endl;
