@@ -93,10 +93,14 @@ std::set<pair<string, string> > outputs(map<string, UBuffer>& buffers, prog& prg
   for (auto out : prg.outs) {
     assert(contains_key(out, buffers));
     auto& buf = buffers.at(out);
-    assert(buf.get_in_bundles().size() == 1);
-    auto bundle = pick(buf.get_in_bundles());
+    cout << "# in bundles: " << buf.get_in_bundles().size() << endl;
+    for (auto bundle : buf.get_in_bundles()) {
+      //assert(buf.get_in_bundles().size() == 1);
+      //auto bundle = pick(buf.get_in_bundles());
+      edges.insert({buf.name, bundle});
+    }
 
-    edges.insert({buf.name, bundle});
+    //edges.insert({buf.name, bundle});
   }
 
   return edges;
@@ -107,10 +111,13 @@ std::set<string> out_bundles(map<string, UBuffer>& buffers, prog& prg) {
   for (auto out : prg.outs) {
     assert(contains_key(out, buffers));
     auto& buf = buffers.at(out);
-    assert(buf.get_in_bundles().size() == 1);
-    auto bundle = pick(buf.get_in_bundles());
+    for (auto bundle : buf.get_in_bundles()) {
+      edges.insert(bundle);
+    }
+/*    assert(buf.get_in_bundles().size() == 1);*/
+    //auto bundle = pick(buf.get_in_bundles());
 
-    edges.insert(bundle);
+    //edges.insert(bundle);
   }
 
   return edges;
@@ -142,10 +149,13 @@ std::set<string> edge_bundles(map<string, UBuffer>& buffers, prog& prg) {
   for (auto out : prg.outs) {
     assert(contains_key(out, buffers));
     auto& buf = buffers.at(out);
-    assert(buf.get_in_bundles().size() == 1);
-    auto bundle = pick(buf.get_in_bundles());
+    for (auto bundle : buf.get_in_bundles()) {
+      edges.insert(bundle);
+    }
+    //assert(buf.get_in_bundles().size() == 1);
+    //auto bundle = pick(buf.get_in_bundles());
 
-    edges.insert(bundle);
+    //edges.insert(bundle);
   }
 
   return edges;
@@ -663,13 +673,21 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
   for (auto out : prg.outs) {
     assert(contains_key(out, buffers));
     auto& buf = buffers.at(out);
-    assert(buf.get_in_bundles().size() == 1);
-    auto bundle = pick(buf.get_in_bundles());
-    string in_bundle_tp = buf.bundle_type_string(bundle);
+    for (auto bundle : buf.get_in_bundles()) {
+      //auto bundle = pick(buf.get_in_bundles());
+      string in_bundle_tp = buf.bundle_type_string(bundle);
 
-    ptr_arg_decls.push_back(in_bundle_tp + "* " + bundle);
-    ptr_args.push_back(bundle);
-    buffer_args.push_back(bundle + "_channel");
+      ptr_arg_decls.push_back(in_bundle_tp + "* " + bundle);
+      ptr_args.push_back(bundle);
+      buffer_args.push_back(bundle + "_channel");
+    }
+    //assert(buf.get_in_bundles().size() == 1);
+    //auto bundle = pick(buf.get_in_bundles());
+    //string in_bundle_tp = buf.bundle_type_string(bundle);
+
+    //ptr_arg_decls.push_back(in_bundle_tp + "* " + bundle);
+    //ptr_args.push_back(bundle);
+    //buffer_args.push_back(bundle + "_channel");
   }
 
   vector<string> all_arg_decls = ptr_arg_decls;
@@ -733,11 +751,15 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
   for (auto in : prg.outs) {
     assert(contains_key(in, buffers));
     auto& buf = buffers.at(in);
-    assert(buf.get_in_bundles().size() == 1);
-    auto bundle = pick(buf.get_in_bundles());
+    for (auto bundle : buf.get_in_bundles()) {
+      //auto bundle = pick(buf.get_in_bundles());
+      out << tab(1) << "write_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
+    }
+    //assert(buf.get_in_bundles().size() == 1);
+    //auto bundle = pick(buf.get_in_bundles());
 
-    //out << tab(1) << "write_output(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
-    out << tab(1) << "write_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
+    ////out << tab(1) << "write_output(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
+    //out << tab(1) << "write_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
   }
 
   out << "}" << endl << endl;

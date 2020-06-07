@@ -9625,7 +9625,6 @@ void manual_unroll_test() {
   prg.add_output("out");
   prg.buffer_port_widths["in"] = 32;
   prg.buffer_port_widths["out"] = 32;
-  prg.buffer_port_widths["out_tmp"] = 32;
   prg.buffer_port_widths["M"] = 32;
 
   auto p = prg.add_loop("p", 0, 5);
@@ -9644,7 +9643,7 @@ void manual_unroll_test() {
     compute->add_load("M", "2*c");
     compute->add_load("M", "2*c + 1");
     compute->add_load("M", "2*c + 2");
-    compute->add_store("out_tmp", "2*c");
+    compute->add_store("out", "2*c");
   }
   {
     auto compute = c->add_op("l1");
@@ -9652,15 +9651,15 @@ void manual_unroll_test() {
     compute->add_load("M", "2*c + 1");
     compute->add_load("M", "2*c + 2");
     compute->add_load("M", "2*c + 3");
-    compute->add_store("out_tmp", "2*c + 1");
+    compute->add_store("out", "2*c + 1");
   }
 
-  {
-    auto p = prg.add_loop("co", 0, 6);
-    auto write = p->add_op("push_out");
-    write->add_load("out_tmp", "co");
-    write->add_store("out", "co");
-  }
+  //{
+    //auto p = prg.add_loop("co", 0, 6);
+    //auto write = p->add_op("push_out");
+    //write->add_load("out_tmp", "co");
+    //write->add_store("out", "co");
+  //}
   regression_test(prg);
 
   assert(false);
