@@ -1290,7 +1290,7 @@ cout << "&&&&&&&&&&&&&&&&&&&&&&&& 510 " << endl;
       for (auto outpt : get_out_ports()) {
         auto overlap =
           its(range(access_map.at(inpt)), range(access_map.at(outpt)));
-
+cout<<"access map in "<<str(access_map.at(inpt))<<" out "<<str(access_map.at(outpt))<<endl;
         if (!empty(overlap)) {
           stack_bank bank = compute_bank_info(inpt, outpt);
           add_bank_between(inpt, outpt, bank);
@@ -1334,13 +1334,18 @@ cout << "&&&&&&&&&&&&&&&&&&&&&&&& 510 " << endl;
           auto outpt_vect = bnk.get_out_ports();
           auto outpt = outpt_vect[0];
           for (auto i : outpt_vect) {cout << " out port: " << i << endl;}
+          cout<<"output access map "<<str(access_map.at(outpt))<<endl;
+         cout<<bnk.delay_map.size()<<endl; 
+for(auto b : bnk.delay_map){
+  cout<< b.first<<" "<<b.second<<" "<<endl;
+}          
 
-          add_bank_between(inpt, outpt, bank2);
+add_bank_between(inpt, outpt, bank2);
           add_bank_between(inpt, outpt, bank1);
           remove_bank(bnk.name);
           mergeable.push_back(bank1);
 
-        } else {
+        } else { 
           if (options.debug_options.expect_all_linebuffers) {
             //assert(receivers.size() == 1 || bnk.read_delays.size() == 2);
             assert(bnk.read_delays.size() == 2);
