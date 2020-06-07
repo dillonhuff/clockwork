@@ -1350,9 +1350,9 @@ cout << "num receivers " << receivers.size() << endl;
             cout<< b.first<<" "<<b.second<<" "<<endl;
           }          
 
+          remove_bank(outpt);
           add_bank_between(inpt, outpt, bank2);
           add_bank_between(inpt, outpt, bank1);
-          remove_bank(bnk.name);
           mergeable.push_back(bank1);
 
         } else { 
