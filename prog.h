@@ -577,19 +577,19 @@ struct prog {
     isl_ctx_free(ctx);
   }
 
-  vector<string> cache_args(op* op) {
-    vector<string> args;
-    for (auto cs : op->consume_locs) {
-      args.push_back(cs.first);
-    }
-    for (auto cs : op->consume_locs_pair) {
-      args.push_back(cs.first);
-    }
-    for (auto cs : op->produce_locs) {
-      args.push_back(cs.first);
-    }
-    return args;
-  }
+  //vector<string> cache_args(op* op) {
+    //vector<string> args;
+    //for (auto cs : op->consume_locs) {
+      //args.push_back(cs.first);
+    //}
+    //for (auto cs : op->consume_locs_pair) {
+      //args.push_back(cs.first);
+    //}
+    //for (auto cs : op->produce_locs) {
+      //args.push_back(cs.first);
+    //}
+    //return args;
+  //}
 
   std::set<op*> all_loops() { return root->all_loops(); }
   std::set<op*> all_ops() { return root->all_ops(); }
@@ -846,15 +846,15 @@ struct prog {
      }
      m = unn(m, pmap);
      // original
-       for (auto p : op->consumes()) {
-        string buf = take_until(p, "[");
-        if (buf == buf_name) {
-          umap* vmap =
-            its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
-          pmap = unn(pmap, vmap);
-        }
-      }
-      m = unn(m, pmap);
+     for (auto p : op->consumes()) {
+       string buf = take_until(p, "[");
+       if (buf == buf_name) {
+         umap* vmap =
+           its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
+         pmap = unn(pmap, vmap);
+       }
+     }
+     m = unn(m, pmap);
     }
     return m;
   }
