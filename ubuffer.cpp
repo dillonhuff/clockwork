@@ -524,6 +524,7 @@ void generate_code_prefix(CodegenOptions& options,
 
   //string inpt = buf.get_in_port();
   out << "#include \"hw_classes.h\"" << endl << endl;
+  cout << "before get banks " << endl;
   for (auto b : buf.get_banks()) {
     generate_bank(options, out, b);
   }
@@ -1369,7 +1370,7 @@ cout << "num receivers " << receivers.size() << endl;
         if (mergeable.size() > 0) {
 cout << "before merge bank call" << endl;
           merge_bank(options, inpt, mergeable);
-          auto banks = get_banks();
+//          auto banks = get_banks();
         }
           //cout << "finished create bank!" << endl;
           //for (bank bk : banks) {
