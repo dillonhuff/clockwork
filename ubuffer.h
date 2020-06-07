@@ -979,12 +979,17 @@ class UBuffer {
 
     void replace_bank(stack_bank& target, stack_bank& replacement) {
       for (auto bnk : stack_banks) {
+        cout<<"-----------------------------bnk.second.size"<<bnk.second.size()<<endl;
         for (int i = 0; i < bnk.second.size(); i++) {
-          auto b_ = bnk.second[i];
+        auto b_ = bnk.second[i];
+        //for(auto b_ : bnk.second){
           if (b_.name == target.name) {
-            bnk.second[i] = replacement;
-            // stack_banks[bnk.first] = replacement;
-            break;
+            //std::remove(stack_banks[bnk.first].begin(), stack_banks[bnk.first].begin() + stack_banks[bnk.first].size(), b_);
+            //stack_banks[bnk.first].push_back(replacement);
+             stack_banks[bnk.first][i] = replacement;
+             
+             cout<<"-----------------------------bnk.second.size2"<<bnk.second.size()<<endl;
+            // break;
           }
         }
       }
@@ -992,6 +997,7 @@ class UBuffer {
 
     // removes all banks at this output port
     void remove_bank(string pt_name) {
+cout<<"remove bank --------------------------------------------------------"<<pt_name<<endl;
         map<pair<string, string>, std::vector<stack_bank>> replace;
         for (auto bnk : stack_banks) {
           if (bnk.first.second != pt_name) {
