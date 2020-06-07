@@ -1344,10 +1344,10 @@ cout << "num receivers " << receivers.size() << endl;
           auto outpt = outpt_vect[0];
           for (auto i : outpt_vect) {cout << " out port: " << i << endl;}
           cout<<"output access map "<<str(access_map.at(outpt))<<endl;
-         cout<<bnk.delay_map.size()<<endl; 
-for(auto b : bnk.delay_map){
-  cout<< b.first<<" "<<b.second<<" "<<endl;
-}          
+          cout<<bnk.delay_map.size()<<endl; 
+          for(auto b : bnk.delay_map){
+            cout<< b.first<<" "<<b.second<<" "<<endl;
+          }          
 
           add_bank_between(inpt, outpt, bank2);
           add_bank_between(inpt, outpt, bank1);
@@ -1364,11 +1364,13 @@ for(auto b : bnk.delay_map){
             mergeable.push_back(bnk);
           }
         }
-}
+      }
+
         if (mergeable.size() > 0) {
 cout << "before merge bank call" << endl;
           merge_bank(options, inpt, mergeable);
           auto banks = get_banks();
+        }
           //cout << "finished create bank!" << endl;
           //for (bank bk : banks) {
           //cout << bk.name << " has delays: ";//<< bk.read_delays << endl;
@@ -1382,7 +1384,6 @@ cout << "before merge bank call" << endl;
           //}
 
           //}
-        }
  //     }
     }
   }
