@@ -978,19 +978,14 @@ class UBuffer {
     }
 
     void replace_bank(stack_bank& target, stack_bank& replacement) {
-      cout << "target name " << target.name << " replace name " << replacement.name << endl;
+      //cout << "target name " << target.name << " replace name " << replacement.name << endl;
       for (auto bnk : stack_banks) {
-        cout<<"-----------------------------bnk.second.size"<<bnk.second.size()<<endl;
         for (int i = 0; i < bnk.second.size(); i++) {
-        auto b_ = bnk.second[i];
-        //for(auto b_ : bnk.second){
+          auto b_ = bnk.second[i];
           if (b_.name == target.name) {
-            //std::remove(stack_banks[bnk.first].begin(), stack_banks[bnk.first].begin() + stack_banks[bnk.first].size(), b_);
-            //stack_banks[bnk.first].push_back(replacement);
              stack_banks[bnk.first][i] = replacement;
              
-             cout<<"-----------------------------bnk.second.size2"<<bnk.second.size()<<endl;
-            // break;
+            break;
           }
         }
       }
@@ -998,7 +993,6 @@ class UBuffer {
 
     // removes all banks at this output port
     void remove_bank(string pt_name) {
-cout<<"remove bank --------------------------------------------------------"<<pt_name<<endl;
         map<pair<string, string>, std::vector<stack_bank>> replace;
         for (auto bnk : stack_banks) {
           if (bnk.first.second != pt_name) {
@@ -1017,28 +1011,17 @@ cout<<"remove bank --------------------------------------------------------"<<pt
 
     vector<stack_bank> get_banks() {
       vector<stack_bank> bnk;
+      std::set<string> done;
       for (auto b : stack_banks) {
         for (auto b_ : b.second) {
  cout << "bank name " << b_.name << endl;
-          bnk.push_back(b_);
-        }
-      }
-      return bnk;
-      /*std::set<string> done;
-      for (auto bs : stack_banks) {
-        auto ex = bs.second;
-        if (!elem(ex[0].name, done)) {
-          bnk.push_back(ex[0]);
-          done.insert(ex[0].name);
-        }*/
-        /*for (auto b_ : bs.second) {
-          if (!elem(b_.name, done)) {
-	    bnk.push_back(b_);
+          if (!elem(b_.name, done)){
+            bnk.push_back(b_);
             done.insert(b_.name);
           }
         }
       }
-      return bnk;*/
+      return bnk;
     }
 
     void add_bank_between(const std::string& inpt, const std::string& outpt, stack_bank& bank) {
