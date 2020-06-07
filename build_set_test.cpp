@@ -9668,7 +9668,7 @@ void manual_unroll_test() {
 void application_tests() {
   //print_test();
   reaccess_no_hierarchy_test();
-  assert(false);
+  //assert(false);
   ram_addr_unit_test();
   //manual_unroll_test();
   reduce_1d_test();
