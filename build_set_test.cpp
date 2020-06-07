@@ -1771,8 +1771,8 @@ void reaccess_no_hierarchy_test() {
 
   find_high_bandwidth_non_const_rd_reads(prg);
 
-  assert(false);
-  //generate_optimized_code(prg);
+  //assert(false);
+  generate_optimized_code(prg);
 
 //#ifdef COREIR
   //auto opt_sched = prg.optimized_schedule();
@@ -2575,6 +2575,7 @@ void ram_addr_unit_test() {
   generate_app_code(options, buffers, prg, opt_sched);
 
   generate_regression_testbench(prg, buffers);
+  //generate_regression_testbench(prg);
 
   int res = system(string("g++ -std=c++11 regression_tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
   assert(res == 0);
@@ -2625,6 +2626,7 @@ void cnn_test() {
     generate_app_code(options, buffers, prg, opt_sched);
 
     generate_regression_testbench(prg, buffers);
+    //generate_regression_testbench(prg);
 
     int res = system(string("g++ -std=c++11 regression_tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
     assert(res == 0);
@@ -9580,8 +9582,97 @@ void travis_tests() {
   warp_and_upsample_test();
 }
 
+void print_test() {
+  struct isl_ctx *ctx;
+  ctx = isl_ctx_alloc();
+
+	const char *str;
+	isl_set *set;
+	isl_union_map *schedule;
+	isl_union_map *options;
+	isl_ast_build *build;
+	isl_ast_node *tree;
+
+	str = "{ A[i,j] -> [i,j] : 0 <= i,j <= 1 }";
+	schedule = isl_union_map_read_from_str(ctx, str);
+	set = isl_set_universe(isl_space_params_alloc(ctx, 0));
+	build = isl_ast_build_from_context(set);
+
+	//str = "{ [i,j] -> atomic[1] : i + j = 1; [i,j] -> unroll[1] : i = j }";
+	//str = "{ [i, j] -> atomic[1] }";
+  //str = "{ [i,j] -> unroll[0] }";
+  //[i,j] -> atomic[1] : i + j = 1; [i,j] -> unroll[1] : i = j }";
+	options = isl_union_map_read_from_str(ctx, str);
+	build = isl_ast_build_set_options(build, options);
+	tree = isl_ast_build_node_from_schedule_map(build, schedule);
+  char* code_str = isl_ast_node_to_C_str(tree);
+  std::string code_string(code_str);
+  free(code_str);
+  cout << "Code..." << endl;
+  cout << code_string << endl;
+	isl_ast_build_free(build);
+	isl_ast_node_free(tree);
+
+  isl_ctx_free(ctx);
+  assert(false);
+}
+
+void manual_unroll_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_3x3.h";
+  prg.name = "manual_unroll";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["in"] = 32;
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["out_tmp"] = 32;
+  prg.buffer_port_widths["M"] = 32;
+
+  auto p = prg.add_loop("p", 0, 5);
+  {
+    auto write = p->add_op("get_input0");
+    write->add_load("in", "2*p");
+    write->add_load("in", "2*p + 1");
+    write->add_store("M", "2*p");
+    write->add_store("M", "2*p + 1");
+  }
+
+  auto c = prg.add_loop("c", 0, 3);
+  {
+    auto compute = c->add_op("l0");
+    compute->add_function("conv_1_3");
+    compute->add_load("M", "2*c");
+    compute->add_load("M", "2*c + 1");
+    compute->add_load("M", "2*c + 2");
+    compute->add_store("out_tmp", "2*c");
+  }
+  {
+    auto compute = c->add_op("l1");
+    compute->add_function("conv_1_3");
+    compute->add_load("M", "2*c + 1");
+    compute->add_load("M", "2*c + 2");
+    compute->add_load("M", "2*c + 3");
+    compute->add_store("out_tmp", "2*c + 1");
+  }
+
+  {
+    auto p = prg.add_loop("co", 0, 6);
+    auto write = p->add_op("push_out");
+    write->add_load("out_tmp", "co");
+    write->add_store("out", "co");
+  }
+  regression_test(prg);
+
+  assert(false);
+}
+
 void application_tests() {
+  //print_test();
+  ram_addr_unit_test();
+  manual_unroll_test();
   reduce_1d_test();
+  assert(false);
+  reaccess_no_hierarchy_test();
   reduce_2d_test();
 
   iccad_tests();
@@ -9595,7 +9686,6 @@ void application_tests() {
   //conv_1d_bc_test();
   halide_frontend_test();
 
-  ram_addr_unit_test();
   denoise2d_test();
 
   conv_1d_test();
@@ -9710,8 +9800,7 @@ void application_tests() {
 }
 
 void memory_tile_tests() {
-  reaccess_no_hierarchy_test();
-  assert(false);
+  //assert(false);
   //shift_reg_test();
   bankmerge_vec_test();
   reaccess_test();
@@ -9812,8 +9901,8 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
-    memory_tile_tests();
     application_tests();
+    memory_tile_tests();
     cout << "All tests passed" << endl;
 
   } else {

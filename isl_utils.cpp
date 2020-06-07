@@ -1320,7 +1320,13 @@ isl_basic_set* domain(isl_basic_map* const m) {
 }
 
 std::string codegen_c(isl_union_map* res) {
+  //assert(false);
+  auto context = ctx(res);
   isl_ast_build* build = isl_ast_build_alloc(isl_union_map_get_ctx(res));
+  //auto options = isl_union_map_read_from_str(context, "{ [a, b, c, d] -> atomic[t] : 0 <= t <= 3}");
+  //auto options = isl_union_map_read_from_str(context, "{ [a, b] -> atomic[1] : 0 <= t <= 1 }");
+  //auto options = isl_union_map_read_from_str(context, "{ [a, b] -> atomic[t] : t = 0 }");
+  //build = isl_ast_build_set_options(build, options);
   isl_ast_node* code =
     isl_ast_build_node_from_schedule_map(build, cpy(res));
 
