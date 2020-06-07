@@ -568,7 +568,6 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
   cout << "Generating accel wrapper" << endl;
   string driver_func = prg.name + "_accel";
 
-  //out << "#include \"" << prg.name << ".h\"" << endl << endl;
 
   for (auto eb : edge_buffers(buffers, prg)) {
     string out_rep = eb.first;
@@ -1847,13 +1846,13 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out << "}" << endl << endl;
 
-  {
-    conv_out << "void " << prg.name << outer_arg_buffers << " {" << endl << endl;
-    vector<string> arg_strings = get_arg_names(buffers, prg);
-    arg_strings.push_back("1");
-    conv_out << tab(1) << prg.name << sep_list(arg_strings, "(", ")", ", ") << ";" << endl;
-    conv_out << "}" << endl;
-  }
+  //{
+    //conv_out << "void " << prg.name << outer_arg_buffers << " {" << endl << endl;
+    //vector<string> arg_strings = get_arg_names(buffers, prg);
+    //arg_strings.push_back("1");
+    //conv_out << tab(1) << prg.name << sep_list(arg_strings, "(", ")", ", ") << ";" << endl;
+    //conv_out << "}" << endl;
+  //}
 
   open_synth_scope(conv_out);
   generate_xilinx_accel_wrapper(options, conv_out, buffers, prg);
