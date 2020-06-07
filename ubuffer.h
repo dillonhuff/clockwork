@@ -978,6 +978,7 @@ class UBuffer {
     }
 
     void replace_bank(stack_bank& target, stack_bank& replacement) {
+      cout << "target name " << target.name << " replace name " << replacement.name << endl;
       for (auto bnk : stack_banks) {
         cout<<"-----------------------------bnk.second.size"<<bnk.second.size()<<endl;
         for (int i = 0; i < bnk.second.size(); i++) {

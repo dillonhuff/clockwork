@@ -1177,10 +1177,10 @@ isl_union_map* test =access_map.at(outpt);
 auto maptest = to_map(test);
 cout<<"access map output "<< domain_name(maptest)<<endl;
 cout<<"access map output "<< range_name(maptest)<<endl;
-for(auto mapi : maptest){
+/*for(auto mapi : maptest){
   cout<<str(mapi.first)<<endl;
 }
-
+*/
     //Box mem_box = extract_box(rddom);
 
     //initial the delay map
