@@ -231,8 +231,10 @@ void generate_bank(CodegenOptions& options,
     if (num_readers == 1 || options.all_rams) {
       int partition_capacity = 1 + maxdelay;
       out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << ";" << endl;
+      cout << "peek1" << endl;
       out << "\tinline " + pt_type_string + " peek(const int offset) {" << endl;
       ignore_inter_deps(out, "f");
+      cout << "peek2" << endl;
       out << tab(2) << "return f.peek(" << partition_capacity - 1 << " - offset);" << endl;
       out << tab(1) << "}" << endl << endl;
 
@@ -294,6 +296,7 @@ void generate_bank(CodegenOptions& options,
         //int capacity = capacities.at(nind);
         int capacity = p.second;
         assert(dv >= 0);
+        cout << "peek3" << endl;
         out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
         if (capacity > 1) {
           ignore_inter_deps(out, p.first);
@@ -670,26 +673,33 @@ void generate_code_prefix(CodegenOptions& options,
     }
     else if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_STACK) {
       if (options.all_rams || buf.get_bank(bank).num_readers == 1) {
+cout << "peek4" << endl;
         value_str = bank + ".peek(/* one reader or all rams */ " + delay_expr + ")";
       } else if (opt_const) {
         if (!options.all_rams && is_number(dx)) {
           assert(safe_stoi(dx) >= 0);
+cout << "peek5" << endl;
           value_str = bank + ".peek_" + dx + "()";
         } else {
+cout << "peek6" << endl;
           value_str = bank + ".peek" + "( /* is opt const */ " + delay_expr + ")";
         }
       } else if (pieces.size() == 0 && !options.all_rams) {
+cout << "peek7" << endl;
         value_str = bank + ".peek_0()";
       } else if (pieces.size() == 1 &&
           isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
         string dx = codegen_c(pieces[0].second);
         if (!options.all_rams && is_number(dx)) {
           assert(safe_stoi(dx) >= 0);
+cout << "peek8" << endl;
           value_str = bank + ".peek_" + dx + "()";
         } else {
+cout << "peek9" << endl;
           value_str = bank + ".peek" + "(/* is one piece but not a number */" + dx + ")";
         }
       } else {
+cout << "peek10" << endl;
         value_str = bank + ".peek" + "(/* Needs general delay string */ " + delay_expr + ")";
       }
     }
@@ -1337,6 +1347,8 @@ cout<<"access map in "<<str(access_map.at(inpt))<<" out "<<str(access_map.at(out
             cout << tab(1) << str(s_) << endl;
             }
           }*/
+          remove_bank(outpt);
+
           vector<stack_bank> split_banks; 
           for (auto m : get_maps(access_map.at(outpt))) {
             for (auto m_ : get_basic_maps(m)) {
@@ -1344,14 +1356,14 @@ cout<<"access map in "<<str(access_map.at(inpt))<<" out "<<str(access_map.at(out
               access_map.insert(std::pair<std::string, umap*>(new_output, to_umap(to_map(m_))));
               schedule.insert(std::pair<std::string, isl_union_map*>(new_output, schedule.at(outpt)));
               //cout << "ACCESS MAP INSERT " << endl;
-
+	
               stack_bank b_ = compute_bank_info(inpt, new_output);
               add_bank_between(inpt, outpt, b_);
               if (b_.read_delays.size() == 2) {
                 mergeable.push_back(b_);
               }
-              access_map.erase(new_output);
-              schedule.erase(new_output);
+//              access_map.erase(new_output);
+//              schedule.erase(new_output);
               //for (int i = 0; i < b_.read_delays.size(); i++) {
               //  cout << "counter: " << counter << " " << " NEW BANK READ DELAYS: " << b_.read_delays[i] << endl;
               //}
@@ -1359,8 +1371,6 @@ cout<<"access map in "<<str(access_map.at(inpt))<<" out "<<str(access_map.at(out
               counter++;
             }
           }
-
-          remove_bank(outpt);
 
         } else { 
           if (options.debug_options.expect_all_linebuffers) {
