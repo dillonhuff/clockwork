@@ -1141,13 +1141,13 @@ cout << "generate hls code " << endl;
     int num_readers = 0;
 
     auto in_actions = domain.at(inpt);
-    //cout << "\t in action : " << str(in_actions) << endl;
+    cout << "\t in action : " << str(in_actions) << endl;
     auto lex_max_events = get_lexmax_events(outpt);
-    //cout << "\t lexmax result: " << str(lex_max_events) << endl;
+    cout << "\t lexmax result: " << str(lex_max_events) << endl;
     auto act_dom =
       ::domain(its_range(lex_max_events, to_uset(in_actions)));
 
-    //cout <<"\t act dom: " << str(act_dom) << endl;
+    cout <<"\t act dom: " << str(act_dom) << endl;
 
     if (!isl_union_set_is_empty(act_dom)) {
       num_readers++;
@@ -1155,7 +1155,7 @@ cout << "generate hls code " << endl;
       int qpd = compute_dd_bound(outpt, inpt, true);
       int lb = compute_dd_bound(outpt, inpt, false);
 
-      //cout << "ub: " << qpd << ", lb: " << lb << endl;
+      cout << "ub: " << qpd << ", lb: " << lb << endl;
 
       for (int i = lb; i < qpd + 1; i++) {
         read_delays.push_back(i);
@@ -1165,9 +1165,9 @@ cout << "generate hls code " << endl;
 
     string pt_type_string = port_type_string();
     string name = inpt + "_to_" + outpt;
-    //cout << "inpt  = " << inpt << endl;
-    //cout << "outpt = " << outpt << endl;
-    //cout << "name of bank = " << name << endl;
+    cout << "inpt  = " << inpt << endl;
+    cout << "outpt = " << outpt << endl;
+    cout << "name of bank = " << name << endl;
 
     auto rddom =
       unn(range(access_map.at(inpt)),
@@ -1183,8 +1183,6 @@ for(auto m : get_maps(access_map.at(outpt))){
 
 }
 
-
-assert(false);
 isl_union_map* test =access_map.at(outpt);
 auto maptest = to_map(test);
 cout<<"access map output "<< domain_name(maptest)<<endl;
@@ -1320,51 +1318,49 @@ cout<<"access map in "<<str(access_map.at(inpt))<<" out "<<str(access_map.at(out
     }
 
     int counter = 0;
-cout << "num inpt ports " << get_in_ports().size() << endl;
+    cout << "num inpt ports " << get_in_ports().size() << endl;
     for (auto inpt : get_in_ports()) {
       // try to turn the banks for this inpt into one big linebuffer
       vector<stack_bank> receivers = receiver_banks(inpt);
       vector<stack_bank> mergeable;
-cout << "num receivers " << receivers.size() << endl;
+      cout << "num receivers " << receivers.size() << endl;
       for (auto bnk : receivers) {
-        if (bnk.read_delays.size() != 2) {
-          cout << "splitting banks " << endl;
-          // splitting banks
-          stack_bank bank1, bank2;
-          bank1.tp = BANK_TYPE_STACK;
-          bank1.rddom = bnk.rddom;
-          bank1.name = inpt + "_split_banks1_" + to_string(counter);
-          bank1.pt_type_string = bnk.pt_type_string;
-          bank1.num_readers = mergeable.size();
-          bank1.maxdelay = bnk.maxdelay;
 
-          bank2.tp = BANK_TYPE_STACK;
-          bank2.rddom = bnk.rddom;
-          bank2.name = inpt + "_split_banks2_" + to_string(counter);
-          bank2.pt_type_string = bnk.pt_type_string;
-          bank2.num_readers = mergeable.size();
-          bank2.maxdelay = bnk.maxdelay;
-  	  // read delays are offsets are within banks
- 	  // look at different pieces of access pattern
-          bank1.read_delays.push_back(bnk.read_delays[0]);
-          bank1.read_delays.push_back(bnk.read_delays[bnk.read_delays.size() - 1]);
-          for (int i = 0; i < bnk.read_delays.size() - 1; i++) {
-             bank2.read_delays.push_back(bnk.read_delays[i]);
-          }
-      	  counter++;
+        if (bnk.read_delays.size() != 2) {
           auto outpt_vect = bnk.get_out_ports();
           auto outpt = outpt_vect[0];
-          for (auto i : outpt_vect) {cout << " out port: " << i << endl;}
-          cout<<"output access map "<<str(access_map.at(outpt))<<endl;
-          cout<<bnk.delay_map.size()<<endl; 
-          for(auto b : bnk.delay_map){
-            cout<< b.first<<" "<<b.second<<" "<<endl;
-          }          
+         
+          cout << "before splitting banks" << endl;
+/*          cout << " SCHEDULE : " << str(schedule.at(outpt)) << endl;
+          for (auto s : get_maps(schedule.at(outpt))) {
+            for (auto s_ : get_basic_maps(s)) {
+            cout << tab(1) << str(s_) << endl;
+            }
+          }*/
+          vector<stack_bank> split_banks; 
+          for (auto m : get_maps(access_map.at(outpt))) {
+            for (auto m_ : get_basic_maps(m)) {
+              string new_output = outpt + "_" + to_string(counter);
+              access_map.insert(std::pair<std::string, umap*>(new_output, to_umap(to_map(m_))));
+              schedule.insert(std::pair<std::string, isl_union_map*>(new_output, schedule.at(outpt)));
+              //cout << "ACCESS MAP INSERT " << endl;
+
+              stack_bank b_ = compute_bank_info(inpt, new_output);
+              add_bank_between(inpt, outpt, b_);
+              if (b_.read_delays.size() == 2) {
+                mergeable.push_back(b_);
+              }
+              access_map.erase(new_output);
+              schedule.erase(new_output);
+              //for (int i = 0; i < b_.read_delays.size(); i++) {
+              //  cout << "counter: " << counter << " " << " NEW BANK READ DELAYS: " << b_.read_delays[i] << endl;
+              //}
+              //cout << "ACCESS MAP: " << str(m_) << endl; 
+              counter++;
+            }
+          }
 
           remove_bank(outpt);
-          add_bank_between(inpt, outpt, bank2);
-          add_bank_between(inpt, outpt, bank1);
-          mergeable.push_back(bank1);
 
         } else { 
           if (options.debug_options.expect_all_linebuffers) {
