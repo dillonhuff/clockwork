@@ -257,6 +257,10 @@ isl_map* set_range_name(isl_map* const m, string new_name) {
     return isl_map_set_tuple_name(m, isl_dim_out, new_name.c_str());
 }
 
+isl_map* set_domain_name(isl_map* const m, string new_name) {
+    return isl_map_set_tuple_name(m, isl_dim_in, new_name.c_str());
+}
+
 isl_map* add_range_suffix(isl_map* const m, string suffix) {
     string origin_name = range_name(m);
     string new_name = origin_name + suffix;
@@ -1726,6 +1730,7 @@ isl_map* assign_domain_to_map(isl_map* m, isl_set* new_domain) {
     for (auto c : c_vec) {
         if (isl_constraint_is_equality(c)) {
             new_c.push_back(c);
+            //cout << "\t sched map has constraint: " << str(c) << endl;
         }
     }
     //for (auto c : origin_c_vec) {
@@ -1741,6 +1746,45 @@ isl_map* assign_domain_to_map(isl_map* m, isl_set* new_domain) {
 
     auto ret_m = isl_map_from_basic_map(ret);
     return its(ret_m, new_domain);
+}
+
+
+int get_innermost_sched_index(isl_map* m) {
+    auto c_vec = constraints(m);
+    for (auto c : c_vec) {
+        size_t range_dim = isl_constraint_dim(c, isl_dim_out);
+        bool involve = isl_constraint_involves_dims(c, isl_dim_out, range_dim - 1, 1);
+        if (involve && isl_constraint_is_equality(c)) {
+            int val = isl_val_get_num_si(isl_constraint_get_constant_val(c));
+            return val;
+        }
+    }
+    cout << "Should not reach here!" << endl;
+    assert(false);
+    return 0;
+}
+
+//delay the execution
+isl_map* delay_sched_map(isl_map* m, isl_map* write_sched) {
+    auto c_vec = constraints(m);
+    vector<isl_constraint*> new_c;
+    int idx = get_innermost_sched_index(write_sched);
+    for (auto c : c_vec) {
+        size_t range_dim = isl_constraint_dim(c, isl_dim_out);
+        bool involve = isl_constraint_involves_dims(c, isl_dim_out, range_dim - 1, 1);
+        if (involve && isl_constraint_is_equality(c)) {
+            auto val = isl_val_get_num_si(isl_constraint_get_constant_val(c));
+            c = isl_constraint_set_constant_si(c, idx - 1);
+        }
+        new_c.push_back(c);
+    }
+    auto ret = isl_basic_map_universe(get_space(m));
+    for (auto c : new_c) {
+        ret = isl_basic_map_add_constraint(ret, c);
+    }
+
+    auto ret_m = isl_map_from_basic_map(ret);
+    return ret_m;
 }
 
 

@@ -130,6 +130,8 @@ std::string range_name(isl_map* const m);
 
 isl_map* set_range_name(isl_map* const m, string new_name);
 
+isl_map* set_domain_name(isl_map* const m, string new_name);
+
 isl_map* add_range_suffix(isl_map* const m, string suffix);
 
 
@@ -349,6 +351,7 @@ isl_map* get_shift_map(isl_map* s);
 //some map transformation from reconstruct constraints
 isl_map* pad_to_domain_map(isl_map* s, int depth);
 isl_map* assign_domain_to_map(isl_map* s, isl_set* new_domain);
+isl_map* delay_sched_map(isl_map* s, isl_map* write_sched);
 
 isl_map* unn(isl_map* const m0, isl_map* const m1);
 

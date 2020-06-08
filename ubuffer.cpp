@@ -382,7 +382,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   for (auto it : stack_banks) {
     auto connection = it.first;
     auto bk = it.second;
-    //cout << "[inpt: " << connection.first << "] -> [bk: " << bk.name << "] -> [outpt:" << connection.second <<  "]\n";
+    //cout << "[inpt: " << connection.first << "] -> [bk: " << bk.name << ", delay = " << bk.maxdelay <<  "] -> [outpt:" << connection.second <<  "]\n";
   }
 
   //map save the register
@@ -416,6 +416,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     std::set<string> outpts = get_bank_outputs(bk.name);
     auto buf_inpts = get_in_ports();
     if (count(buf_inpts.begin(), buf_inpts.end(), pick(inpts)) == 0){
+      //TODO: support dilation conv, register information is in maxdelay
       //add register, wire valid from ubuffer
       auto reg = def->addInstance("d_reg_"+context->getUnique(), "mantle.reg",
           {{"width", CoreIR::Const::make(context, port_widths)},
@@ -999,18 +1000,24 @@ void generate_code_prefix(CodegenOptions& options,
     auto outmap = access_map.at(outpt);
     auto inmap = access_map.at(inpt);
     inmap = coalesce(unn(inmap, outmap));
-    cout << "Coalesce map: " << str(inmap) << endl;
+    //cout << "before access: " << str(beforeAcc) << endl;
+    //cout << "Coalesce map: " << str(inmap) << endl;
     src_map = its(dot(outmap, inv(inmap)), beforeAcc);
     assert(src_map != nullptr);
 
     //cout << "src map done: " << str(src_map) << endl;
-    auto sched = global_schedule();
+    auto sched = unn(schedule.at(inpt), schedule.at(outpt));
     auto after = lex_gt(sched, sched);
 
     src_map = its(src_map, after);
     src_map = lexmax(src_map);
 
+    //cout << "final src map: " << str(src_map) << endl;
+
     auto time_to_event = inv(sched);
+
+    //cout << "time 2 event: " << str(time_to_event) << endl;
+    //cout << "lexmax :" << str(lexmax(dot(src_map, sched))) << endl;
 
     auto lex_max_events =
       dot(lexmax(dot(src_map, sched)), time_to_event);
@@ -1033,20 +1040,20 @@ void generate_code_prefix(CodegenOptions& options,
     umap* wrsched = schedule.at(write_port);
     auto WritesBeforeRead =
       lex_gt(rdsched, wrsched);
-    cout << "\trdsched: " << str(rdsched) << "\n wrsched: " << str(wrsched) << "\n wbr: " << str(WritesBeforeRead) << endl;
+    //cout << "\trdsched: " << str(rdsched) << "\n wrsched: " << str(wrsched) << "\n wbr: " << str(WritesBeforeRead) << endl;
 
     //auto WriteThatProducesReadData = get_lexmax_events(read_port);
     //TODO: test these new method
     auto WriteThatProducesReadData = get_lexmax_events(write_port, read_port);
-    cout << "\twpr: " << str(WriteThatProducesReadData) << "\nwaw:" << str(WritesAfterWrite) << endl;
+    //cout << "\twpr: " << str(WriteThatProducesReadData) << "\nwaw:" << str(WritesAfterWrite) << endl;
 
     auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
 
-    cout << "\twap: " << str(WritesAfterProduction) << endl;
+    //cout << "\twap: " << str(WritesAfterProduction) << endl;
     auto WritesBtwn = its_range((its(WritesAfterProduction, WritesBeforeRead)),
         to_uset(domain.at(write_port)));
-    cout << "\tits:" << str(its(WritesAfterProduction, WritesBeforeRead)) << endl;
-    cout << "\tWritesBtwn: " << str(WritesBtwn) << endl;
+    //cout << "\tits:" << str(its(WritesAfterProduction, WritesBeforeRead)) << endl;
+    //cout << "\tWritesBtwn: " << str(WritesBtwn) << endl;
 
     auto c = card(WritesBtwn);
     //cout << "got card" << endl;
@@ -1266,18 +1273,13 @@ void generate_code_prefix(CodegenOptions& options,
 
   void UBuffer::port_reduction() {
     //find the lexmin of all out port
-    auto pt_vec = get_out_ports();
-    sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
-        auto l_start = lexminpt(range(access_map.at(l)));
-        auto r_start = lexminpt(range(access_map.at(r)));
-        return lex_gt_pt(l_start, r_start);
-        });
-    //cout << "Upper left access port: " << str(access_map.at(pt_vec.front())) << endl;
-    for (auto outpt : pt_vec) {
-      auto max_dd = compute_dd_bound(outpt, pt_vec.front(), true);
-      auto min_dd = compute_dd_bound(outpt, pt_vec.front(), false);
-      //cout << "\tpt: [" << outpt << "] -> pt:[" << pt_vec.front()
-      //<< "] has delay = [" << min_dd << ", " << max_dd << "]\n";
+    for (auto itr: stack_banks) {
+      string inpt = itr.first.first;
+      string outpt = itr.first.second;
+      auto max_dd = compute_dd_bound(outpt, inpt, true);
+      auto min_dd = compute_dd_bound(outpt, inpt, false);
+      cout << "\tpt: [" << outpt << "] -> pt:[" << inpt
+        << "] has delay = [" << min_dd << ", " << max_dd << "]\n";
     }
   }
 
@@ -1353,7 +1355,9 @@ void generate_code_prefix(CodegenOptions& options,
     }
     //cout << depth << endl;
     auto ret = pad_to_domain_map(s, depth);
-    //cout << "Rewrited output port map: " << str(ret) << endl;
+    string dom_name = domain_name(ret);
+    ret = set_domain_name(ret, dom_name + "_" + to_string(depth));
+    cout << "Rewrited output port map: " << str(ret) << endl;
     return ret;
   }
 
@@ -1426,7 +1430,9 @@ void generate_code_prefix(CodegenOptions& options,
         for (auto it : outpt_merge) {
           replace_pt(it.first, it.second);
           //auto new_sched = dot(schedule.at(it.first), to_umap(it.second));
-          auto new_sched = assign_domain_to_map(to_map(schedule.at(it.first)), ::domain(it.second));
+          auto new_sched = to_map(schedule.at(it.first));
+          new_sched = set_domain_name(new_sched, domain_name(it.second));
+          new_sched = assign_domain_to_map(new_sched, ::domain(it.second));
           cout << "new schedule with lib: " << str(new_sched) << endl;
           schedule.at(it.first) = to_umap(new_sched);
           //add valid bound, mark the main output
@@ -1437,6 +1443,13 @@ void generate_code_prefix(CodegenOptions& options,
           auto write = it.second;
           if (inpt_set.count(write) == 0) {
             //shift register
+
+            //delay the read schedule after write
+            auto new_sched = to_map(schedule.at(read));
+            auto wr_sched = to_map(schedule.at(write));
+            new_sched = delay_sched_map(new_sched, wr_sched);
+            schedule.at(read) = to_umap(new_sched);
+
             remove_bank(read);
             stack_bank bk = compute_bank_info(write, read);
             add_bank_between(write, read, bk);
@@ -1471,7 +1484,9 @@ void generate_code_prefix(CodegenOptions& options,
     if (!inpt_set.empty()) {
       for (auto it : outpt_merge) {
         replace_pt(it.first, it.second);
-        auto new_sched = assign_domain_to_map(to_map(schedule.at(it.first)), ::domain(it.second));
+        auto new_sched = to_map(schedule.at(it.first));
+        new_sched = set_domain_name(new_sched, domain_name(it.second));
+        new_sched = assign_domain_to_map(new_sched, ::domain(it.second));
         cout << "new schedule with lib: " << str(new_sched) << endl;
         schedule.at(it.first) = to_umap(new_sched);
       }
@@ -1480,6 +1495,13 @@ void generate_code_prefix(CodegenOptions& options,
         auto write = it.second;
         if (inpt_set.count(write) == 0) {
           //shift register
+
+          //delay the read schedule after write
+          auto new_sched = to_map(schedule.at(read));
+          auto wr_sched = to_map(schedule.at(write));
+          new_sched = delay_sched_map(new_sched, wr_sched);
+          schedule.at(read) = to_umap(new_sched);
+
           remove_bank(read);
           stack_bank bk = compute_bank_info(write, read);
           add_bank_between(write, read, bk);

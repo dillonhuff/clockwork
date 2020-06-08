@@ -1786,7 +1786,6 @@ json parse_config_file(string filename) {
         int val = safe_stoi(expr_val.at(1));
         string config_key = take_btw(expr_val.at(0), "[\"", "\"]");
         ret[config_key][0] = val;
-        cout << "\tconfig_key: " << config_key << ", val: " << val << endl;
     }
     return ret;
 }
@@ -1820,7 +1819,6 @@ void shift_reg_test() {
   //unoptimized schedule
   auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
   auto buffers = build_buffers(prg, sched_naive);
-  //buffers.at("buf").port_reduction();
 
   //optimized schedule
   auto buffers_opt = build_buffers(prg);
@@ -9620,9 +9618,10 @@ void application_tests() {
 }
 
 void memory_tile_tests() {
-  //shift_reg_test();
-  bankmerge_vec_test();
-  reaccess_test();
+  shift_reg_test();
+  //bankmerge_vec_test();
+  //reaccess_test();
+  assert(false);
 
   //new_bankmerge_tests();
   memtile_test();
