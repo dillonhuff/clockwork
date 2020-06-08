@@ -58,6 +58,24 @@ struct ir_node {
 
   ir_node() : parent(nullptr), is_loop(false), unroll_factor(1) {}
 
+  int num_read_ports(const std::string& buf) const {
+    int reads = 0;
+    for (auto l : consumes_pair()) {
+      if (l.first == buf) {
+        reads++;
+      }
+    }
+    return reads;
+  }
+
+  std::set<string> buffers_read() const {
+    std::set<string> read;
+    for (auto l : consumes_pair()) {
+      read.insert(l.first);
+    }
+    return read;
+  }
+
   std::set<op*> ancestors() {
     std::set<op*> anc;
     if (parent != nullptr) {
@@ -605,20 +623,6 @@ struct prog {
   ~prog() {
     isl_ctx_free(ctx);
   }
-
-  //vector<string> cache_args(op* op) {
-    //vector<string> args;
-    //for (auto cs : op->consume_locs) {
-      //args.push_back(cs.first);
-    //}
-    //for (auto cs : op->consume_locs_pair) {
-      //args.push_back(cs.first);
-    //}
-    //for (auto cs : op->produce_locs) {
-      //args.push_back(cs.first);
-    //}
-    //return args;
-  //}
 
   std::set<op*> all_loops() { return root->all_loops(); }
   std::set<op*> all_ops() { return root->all_ops(); }

@@ -1708,9 +1708,22 @@ void emit_address_stream2file(map<string, UBuffer> buffers_opt, string read_buf,
 
 void find_high_bandwidth_non_const_rd_reads(prog& prg) {
   cout << "Ops..." << endl;
+  map<string, vector<op*> > high_bw_buffers;
   for (auto op : prg.all_ops()) {
     cout << tab(1) << op->name << endl;
+    for (auto b : op->buffers_read()) {
+      if (op->num_read_ports(b) > 1) {
+        high_bw_buffers[b].push_back(op);
+      }
+    }
   }
+
+  cout << "High bandwidth" << endl;
+  for (auto b : high_bw_buffers) {
+    cout << tab(1) << b.first << endl;
+  }
+  assert(false);
+
   auto consumer_map = coalesce(prg.consumer_map());
   auto producer_map = prg.producer_map();
 
