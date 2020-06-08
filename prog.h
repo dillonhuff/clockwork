@@ -13,6 +13,16 @@ typedef ir_node op;
 typedef op loop;
 typedef std::string buffer_name;
 typedef std::string address;
+typedef std::vector<std::pair<std::string, std::string> > piecewise_address;
+
+string str(const piecewise_address& addr) {
+  string s = "";
+  for (auto p : addr) {
+    s += p.first + " : " + p.second + ",";
+  }
+
+  return s;
+}
 
 struct ir_node {
 

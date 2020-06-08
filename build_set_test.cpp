@@ -1721,6 +1721,22 @@ void find_high_bandwidth_non_const_rd_reads(prog& prg) {
     cout << tab(3) << str(m) << endl;
     cout << tab(3) << str(card(m)) << endl << endl;
   }
+
+  cout << "Iter vars..." << endl;
+  for (auto vo : prg.iter_vars()) {
+    cout << tab(1) << vo.first->name << " -> " << comma_list(vo.second) << endl;
+    cout << tab(2) << "Consumed..." << endl;
+    for (auto cp : vo.first->consumes_pair()) {
+      cout << tab(3) << cp.first << ": " << str(cp.second) << endl;
+    }    
+
+    cout << tab(2) << "Produced..." << endl;
+    for (auto cp : vo.first->produces()) {
+      cout << tab(3) << cp << endl;
+    }    
+  }
+
+
   // Now: Find the re-use distances for the pieces?
   // Q: What is the re-use distance? The difference
   // between the time when a value is written and
@@ -1771,7 +1787,7 @@ void reaccess_no_hierarchy_test() {
 
   find_high_bandwidth_non_const_rd_reads(prg);
 
-  //assert(false);
+  assert(false);
   generate_optimized_code(prg);
 
 //#ifdef COREIR
@@ -9666,9 +9682,9 @@ void manual_unroll_test() {
 }
 
 void application_tests() {
-  reduce_1d_test();
   reaccess_no_hierarchy_test();
-  //assert(false);
+  assert(false);
+  reduce_1d_test();
   //print_test();
   //assert(false);
   ram_addr_unit_test();
