@@ -227,7 +227,8 @@ void generate_bank(CodegenOptions& options,
     out << "\t// # of read delays: " << read_delays.size() << endl;
 
     read_delays = sort_unique(read_delays);
-
+    cout << "PEEK num readers " << num_readers << endl;
+    cout << "PEEK options.all_rams " << options.all_rams << endl;
     if (num_readers == 1 || options.all_rams) {
       int partition_capacity = 1 + maxdelay;
       out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << ";" << endl;
@@ -529,6 +530,8 @@ void generate_code_prefix(CodegenOptions& options,
   out << "#include \"hw_classes.h\"" << endl << endl;
   cout << "before get banks " << endl;
   for (auto b : buf.get_banks()) {
+cout << "BANK NAME " << b.name << endl;
+cout<< "BANK MERGED READERS " << b.num_readers << endl;
     generate_bank(options, out, b);
   }
 
@@ -672,6 +675,8 @@ void generate_code_prefix(CodegenOptions& options,
       value_str = bank + ".read(/*ram type address*/ "+ linear_addr + ")";
     }
     else if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_STACK) {
+      std::cout << "PEEK 4 options all rams " << options.all_rams << endl;
+      std::cout << "PEEK 4 num readers " << buf.get_bank(bank).num_readers << endl;
       if (options.all_rams || buf.get_bank(bank).num_readers == 1) {
 cout << "peek4" << endl;
         value_str = bank + ".peek(/* one reader or all rams */ " + delay_expr + ")";
@@ -1095,7 +1100,6 @@ cout << "generate hls code " << endl;
     }
     //cout << "compute max delay for super bank =  " << maxdelay << endl;
     vector<int> read_delays{0};
-
     int num_readers = outpt_set.size();
     //int num_writers = inpt_set.size();
 
@@ -1158,6 +1162,8 @@ cout << "generate hls code " << endl;
       ::domain(its_range(lex_max_events, to_uset(in_actions)));
 
     cout <<"\t act dom: " << str(act_dom) << endl;
+
+    cout << "COMPUTE BANK INFO " << !isl_union_set_is_empty(act_dom) << endl;
 
     if (!isl_union_set_is_empty(act_dom)) {
       num_readers++;
@@ -1224,6 +1230,7 @@ cout<<"access map output "<< range_name(maptest)<<endl;
       merged.pt_type_string =
         mergeable.at(0).pt_type_string;
       merged.num_readers = mergeable.size();
+cout << "MERGED NUM READERS " << merged.num_readers << endl;
       merged.maxdelay = -1;
       for (auto m : mergeable) {
         //cout << "merge: " << m.name << endl;
