@@ -1771,7 +1771,7 @@ void reaccess_no_hierarchy_test() {
 
   find_high_bandwidth_non_const_rd_reads(prg);
 
-  assert(false);
+  //assert(false);
   generate_optimized_code(prg);
 
 //#ifdef COREIR
@@ -9666,13 +9666,13 @@ void manual_unroll_test() {
 }
 
 void application_tests() {
+  reduce_1d_test();
   reaccess_no_hierarchy_test();
-  assert(false);
+  //assert(false);
   //print_test();
   //assert(false);
   ram_addr_unit_test();
   //manual_unroll_test();
-  reduce_1d_test();
   //assert(false);
   reduce_2d_test();
 

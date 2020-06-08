@@ -93,6 +93,22 @@ struct ir_node {
     }
   }
 
+  string consumed_value_name(const pair<string, vector<pair<string, string> > >& val_loc) {
+    string b = val_loc.first;
+    auto loc = val_loc.second;
+
+    string val_name = b;
+    for (auto val : loc) {
+      val_name += "_";
+      val_name += val.second;
+    }
+    val_name += "_value";
+    val_name = c_sanitize(val_name);
+    return val_name;
+
+    //string val_name = c_sanitize(val_loc.first + "_" + val_loc.second + "_value");
+    //return val_name;
+  }
   string consumed_value_name(pair<string, string>& val_loc) {
     string val_name = c_sanitize(val_loc.first + "_" + val_loc.second + "_value");
     return val_name;
@@ -212,14 +228,15 @@ struct ir_node {
   string add_load(const std::string& b, const std::vector<std::pair<std::string, std::string>> loc) {
     assert(!is_loop);
     consume_locs_pair.push_back({b, loc});
-    string val_name = b;
-    for (auto val : loc) {
-      val_name += "_";
-      val_name += val.second;
-    }
-    val_name += "_value";
-    val_name = c_sanitize(val_name);
-    return val_name;
+    return consumed_value_name({b, loc});
+    //string val_name = b;
+    //for (auto val : loc) {
+      //val_name += "_";
+      //val_name += val.second;
+    //}
+    //val_name += "_value";
+    //val_name = c_sanitize(val_name);
+    //return val_name;
   }
 
 
@@ -232,10 +249,11 @@ struct ir_node {
   }
 
   string add_load(const std::string& b, const std::string& loc) {
-    assert(!is_loop);
-    consume_locs.push_back({b, loc});
-    string val_name = c_sanitize(b + "_" + loc + "_value");
-    return val_name;
+    return add_load(b, {{"", loc}});
+    //assert(!is_loop);
+    //consume_locs.push_back({b, loc});
+    //string val_name = c_sanitize(b + "_" + loc + "_value");
+    //return val_name;
   }
 
   vector<string> consumes() const {

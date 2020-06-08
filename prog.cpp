@@ -909,7 +909,12 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
 
       string cond = "{ ";
       for (auto sec_pair : consumed.second) {
-        cond = cond + string(prg.op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+        if (sec_pair.first == "") {
+          cond = cond + string(prg.op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "]; ");
+
+        } else {
+          cond = cond + string(prg.op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+        }
       }
       cond = cond.substr(0, cond.length() - 2);
       cond = cond + string(" }");
@@ -1310,7 +1315,7 @@ vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, pro
   for (auto p : op->consume_locs_pair) {
     auto buf_name = p.first;
     if (!elem(buf_name, done)) {
-      buf_srcs.push_back(buf_name);
+      buf_srcs.push_back(buf_name + " /* buf name */");
       done.insert(buf_name);
     }
   }
@@ -1354,7 +1359,8 @@ vector<string> incoming_buffers(const map<string, UBuffer>& buffers, op* op, pro
 vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& prg) {
   std::set<string> done;
   vector<string> buf_srcs;
-  for (auto p : op->consume_locs) {
+  //for (auto p : op->consume_locs) {
+  for (auto p : op->consume_locs_pair) {
     auto buf_name = p.first;
     if (!elem(buf_name, done)) {
       if (prg.is_boundary(buf_name)) {
@@ -1418,9 +1424,11 @@ compute_kernel generate_compute_op(
 
   cout << "Got iteration variables" << endl;
   conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
-  vector<pair<string, string> > in_buffers;
+  //vector<pair<string, string> > in_buffers;
+  vector<pair<string, vector< pair< string, string > > > > in_buffers;
   std::set<string> distinct;
-  for (auto con : op->consume_locs) {
+  //for (auto con : op->consume_locs) {
+  for (auto con : op->consume_locs_pair) {
     if (!elem(con.first, distinct)) {
       in_buffers.push_back(con);
       distinct.insert(con.first);
@@ -1492,7 +1500,7 @@ compute_kernel generate_compute_op(
     vector<string> arg_names{res, buf.name};
     concat(arg_names, dim_args);
     conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" <<
-      comma_list(arg_names) << ");" << endl;
+      "/* arg names */" + comma_list(arg_names) << ");" << endl;
   }
 
   conv_out << endl;

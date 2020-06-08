@@ -164,7 +164,7 @@ inline void I_id0(HWStream<hw_uint<16> >& /* buffer_args num ports = 1 */in, I_c
 	auto in_id0_c__id1_value = in.read();
 	auto compute_result = id(in_id0_c__id1_value);
 	// Produce: I
-	I_I_id0_write_bundle_write(compute_result, I, root, id1, id0);
+	I_I_id0_write_bundle_write(/* arg names */compute_result, I, root, id1, id0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
@@ -213,9 +213,9 @@ for (int c0 = 0; c0 <= 7; c0 += 1)
   */
 	for (int c0 = 0; c0 <= 7; c0 += 1)
 	  for (int c1 = 0; c1 <= 31; c1 += 1) {
-	    I_id0(in, I, 0, c0, c1);
+	    I_id0(in /* buf name */, I, 0, c0, c1);
 	    if (c0 >= 2)
-	      out_blur_30(I, out, 0, c0 - 2, c1);
+	      out_blur_30(I /* buf name */, out, 0, c0 - 2, c1);
 	  }
 	
 #ifndef __VIVADO_SYNTH__
