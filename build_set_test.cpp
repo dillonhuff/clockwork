@@ -5170,17 +5170,17 @@ struct App {
       }
     }
 
-    cout << "Op consume / produce locs..." << endl;
-    for (auto op : prg.all_ops()) {
-      cout << "### " << op->name << endl;
-      for (auto l : op->produce_locs) {
-        cout << tab(1) << l.first << endl;
-      }
-      //cout << "Consume..." << endl;
-      for (auto l : op->consume_locs) {
-        cout << tab(1) << l.first << endl;
-      }
-    }
+    //cout << "Op consume / produce locs..." << endl;
+    //for (auto op : prg.all_ops()) {
+      //cout << "### " << op->name << endl;
+      //for (auto l : op->produce_locs) {
+        //cout << tab(1) << l.first << endl;
+      //}
+      ////cout << "Consume..." << endl;
+      //for (auto l : op->consume_locs) {
+        //cout << tab(1) << l.first << endl;
+      //}
+    //}
 
     prg.outs = {name};
 

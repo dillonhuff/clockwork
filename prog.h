@@ -35,7 +35,7 @@ struct ir_node {
   // Locations written
   std::vector<pair<buffer_name, address> > produce_locs;
   // Locations read
-  std::vector<pair<buffer_name, address> > consume_locs;
+  //std::vector<pair<buffer_name, address> > consume_locs;
   std::vector<pair<buffer_name, std::vector<pair<std::string, std::string>>>> consume_locs_pair;
   // The name of the HL C++ function that this op invokes
   std::string func;
@@ -89,6 +89,7 @@ struct ir_node {
       out << tab(level) << "}" << endl;
     } else {
       vector<string> args;
+      //out << tab(level) << name << ": " << comma_list(produces()) << " = " << func << "(" << comma_list(consumes()) << ")" << endl;
       out << tab(level) << name << ": " << comma_list(produces()) << " = " << func << "(" << comma_list(consumes()) << ")" << endl;
     }
   }
@@ -258,9 +259,9 @@ struct ir_node {
 
   vector<string> consumes() const {
     vector<string> ps;
-    for (auto p : consume_locs) {
-      ps.push_back(p.first + "[" + p.second + "]");
-    }
+    //for (auto p : consume_locs) {
+      //ps.push_back(p.first + "[" + p.second + "]");
+    //}
     return ps;
   }
 
