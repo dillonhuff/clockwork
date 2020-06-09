@@ -2218,33 +2218,35 @@ uset* pad_uset(uset* domain) {
     different_dims.insert(new_dim);
   }
 
-  map<string, int> pad_factor;
+  //map<string, int> pad_factor;
   map<string, isl_set*> padded_sets;
   for (auto s : get_sets(domain)) {
-    int pad_factor = max_dim - num_dims(s);
-    int original_dim = num_dims(s);
+    isl_set* padded = pad_set(s, max_dim);
 
-    isl_set* padded = isl_set_empty(get_space(s));
-    padded = isl_set_add_dims(padded, isl_dim_set, pad_factor);
+    //int pad_factor = max_dim - num_dims(s);
+    //int original_dim = num_dims(s);
 
-    for (auto bset : get_basic_sets(s)) {
+    //isl_set* padded = isl_set_empty(get_space(s));
+    //padded = isl_set_add_dims(padded, isl_dim_set, pad_factor);
 
-      auto pad = isl_basic_set_add_dims(cpy(bset), isl_dim_set, pad_factor);
+    //for (auto bset : get_basic_sets(s)) {
 
-      for (int i = original_dim; i < num_dims(pad); i++) {
-        auto ls = isl_local_space_from_space(cpy(get_space(padded)));
+      //auto pad = isl_basic_set_add_dims(cpy(bset), isl_dim_set, pad_factor);
 
-        auto is_zero = isl_constraint_alloc_equality(ls);
-        is_zero = isl_constraint_set_constant_val(is_zero, zero(ct));
-        is_zero = isl_constraint_set_coefficient_val(is_zero, isl_dim_set, i, one(ct));
-        pad = isl_basic_set_add_constraint(pad, is_zero);
-      }
+      //for (int i = original_dim; i < num_dims(pad); i++) {
+        //auto ls = isl_local_space_from_space(cpy(get_space(padded)));
 
-      isl_set* pbset = to_set(pad);
-      padded = unn(padded, pbset);
-    }
+        //auto is_zero = isl_constraint_alloc_equality(ls);
+        //is_zero = isl_constraint_set_constant_val(is_zero, zero(ct));
+        //is_zero = isl_constraint_set_coefficient_val(is_zero, isl_dim_set, i, one(ct));
+        //pad = isl_basic_set_add_constraint(pad, is_zero);
+      //}
 
-    padded = isl_set_set_tuple_id(padded, id(ct, name(s)));
+      //isl_set* pbset = to_set(pad);
+      //padded = unn(padded, pbset);
+    //}
+
+    //padded = isl_set_set_tuple_id(padded, id(ct, name(s)));
     padded_sets[name(s)] = padded;
   }
 
