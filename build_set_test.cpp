@@ -1739,7 +1739,7 @@ void find_high_bandwidth_non_const_rd_reads(prog& prg) {
     }
   }
 
-  assert(false);
+  //assert(false);
 
   auto consumer_map = coalesce(prg.consumer_map());
   auto producer_map = prg.producer_map();
@@ -1828,7 +1828,7 @@ void reaccess_no_hierarchy_test() {
 
   find_high_bandwidth_non_const_rd_reads(prg);
 
-  assert(false);
+  //assert(false);
   generate_optimized_code(prg);
 
 //#ifdef COREIR
@@ -1842,10 +1842,8 @@ void reaccess_no_hierarchy_test() {
   //generate_coreir(options, bufs, prg, schedmap);
 //#endif
 
-  //assert(false);
 
   //generate_optimized_code(prg);
-  //assert(false);
 
   //auto buffers_opt = build_buffers(prg);
   //CodegenOptions opt;
@@ -1909,10 +1907,8 @@ void reaccess_test() {
   generate_coreir(opt, bufs, prg, schedmap);
 #endif
 
-  //assert(false);
 
   //generate_optimized_code(prg);
-  //assert(false);
 
   //auto buffers_opt = build_buffers(prg);
   //CodegenOptions opt;
@@ -1994,7 +1990,6 @@ void shift_reg_test() {
   CoreIR::deleteContext(context);
 #endif
 
-  assert(false);
   auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
   for (auto buf : rewrite_buf) {
     cout << buf << endl;
@@ -7221,26 +7216,26 @@ void camera_pipeline_all_adds_test(const std::string& prefix) {
   assert(naive == optimized);
   move_to_benchmarks_folder(app_name + "_opt");
 
-  int rows = 1080;
-  int cols = 1920;
-  //vector<int> factors{1, 2, 4};
-  vector<int> factors{1};
-  for (int i = 0; i < (int) factors.size(); i++) {
-    int unroll_factor = factors.at(i);
-    //cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
-    string out_name = prefix + "_" + str(unroll_factor);
+  //int rows = 1080;
+  //int cols = 1920;
+  ////vector<int> factors{1, 2, 4};
+  //vector<int> factors{1};
+  //for (int i = 0; i < (int) factors.size(); i++) {
+    //int unroll_factor = factors.at(i);
+    ////cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
+    //string out_name = prefix + "_" + str(unroll_factor);
 
-    CodegenOptions options;
-    options.internal = true;
-    options.simplify_address_expressions = true;
-    //options.use_custom_code_string = true;
-    options.use_custom_code_string = false;
-    options.debug_options.expect_all_linebuffers = true;
-    //options.num_input_epochs = 30;
-    camera_pipeline_all_adds(out_name).realize(options, out_name, cols, rows, unroll_factor);
+    //CodegenOptions options;
+    //options.internal = true;
+    //options.simplify_address_expressions = true;
+    ////options.use_custom_code_string = true;
+    //options.use_custom_code_string = false;
+    //options.debug_options.expect_all_linebuffers = true;
+    ////options.num_input_epochs = 30;
+    //camera_pipeline_all_adds(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
-    move_to_benchmarks_folder(out_name + "_opt");
-  }
+    //move_to_benchmarks_folder(out_name + "_opt");
+  //}
 }
 
 void camera_pipeline_test(const std::string& prefix) {
@@ -7259,24 +7254,24 @@ void camera_pipeline_test(const std::string& prefix) {
   move_to_benchmarks_folder(app_name + "_opt");
 
 
-  int rows = 1080;
-  int cols = 1920;
-  vector<int> factors{1, 2, 4};
-  for (int i = 0; i < (int) factors.size(); i++) {
-    int unroll_factor = factors.at(i);
-    //cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
-    string out_name = prefix + "_" + str(unroll_factor);
+  //int rows = 1080;
+  //int cols = 1920;
+  //vector<int> factors{1, 2, 4};
+  //for (int i = 0; i < (int) factors.size(); i++) {
+    //int unroll_factor = factors.at(i);
+    ////cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
+    //string out_name = prefix + "_" + str(unroll_factor);
 
-    CodegenOptions options;
-    options.internal = true;
-    options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
-    options.debug_options.expect_all_linebuffers = true;
-    options.num_input_epochs = 30;
-    camera_pipeline(out_name).realize(options, out_name, cols, rows, unroll_factor);
+    //CodegenOptions options;
+    //options.internal = true;
+    //options.simplify_address_expressions = true;
+    //options.use_custom_code_string = true;
+    //options.debug_options.expect_all_linebuffers = true;
+    //options.num_input_epochs = 30;
+    //camera_pipeline(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
-    move_to_benchmarks_folder(out_name + "_opt");
-  }
+    //move_to_benchmarks_folder(out_name + "_opt");
+  //}
 }
 
 void different_path_latencies_test(const std::string& prefix) {
@@ -7307,25 +7302,25 @@ void harris16_test(const std::string& prefix) {
   move_to_benchmarks_folder("harris16_mini_opt");
 
 
-  int rows = 1080;
-  int cols = 1920;
-  vector<int> factors{1, 2, 4};
-  //8, 16};
-  for (int i = 0; i < (int) factors.size(); i++) {
-    int unroll_factor = factors.at(i);
-    cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
-    string out_name = prefix + "_" + str(unroll_factor);
+  //int rows = 1080;
+  //int cols = 1920;
+  //vector<int> factors{1, 2, 4};
+  ////8, 16};
+  //for (int i = 0; i < (int) factors.size(); i++) {
+    //int unroll_factor = factors.at(i);
+    //cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
+    //string out_name = prefix + "_" + str(unroll_factor);
 
-    CodegenOptions options;
-    options.internal = true;
-    options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
-    options.debug_options.expect_all_linebuffers = true;
-    options.num_input_epochs = 30;
-    harris16(out_name).realize(options, out_name, cols, rows, unroll_factor);
+    //CodegenOptions options;
+    //options.internal = true;
+    //options.simplify_address_expressions = true;
+    //options.use_custom_code_string = true;
+    //options.debug_options.expect_all_linebuffers = true;
+    //options.num_input_epochs = 30;
+    //harris16(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
-    move_to_benchmarks_folder(out_name + "_opt");
-  }
+    //move_to_benchmarks_folder(out_name + "_opt");
+  //}
 }
 
 void harris_test() {
@@ -7342,23 +7337,23 @@ void harris_test() {
   move_to_benchmarks_folder("harris_mini_opt");
 
 
-  int rows = 1080;
-  int cols = 1920;
-  vector<int> factors{1, 8, 16};
-  for (int i = 0; i < (int) factors.size(); i++) {
-    int unroll_factor = factors.at(i);
-    cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
-    string out_name = "hr_" + str(unroll_factor);
+  //int rows = 1080;
+  //int cols = 1920;
+  //vector<int> factors{1, 8, 16};
+  //for (int i = 0; i < (int) factors.size(); i++) {
+    //int unroll_factor = factors.at(i);
+    //cout << tab(1) << "harris unroll factor: " << unroll_factor << endl;
+    //string out_name = "hr_" + str(unroll_factor);
 
-    CodegenOptions options;
-    options.internal = true;
-    options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
-    options.debug_options.expect_all_linebuffers = true;
-    harris(out_name).realize(options, out_name, cols, rows, unroll_factor);
+    //CodegenOptions options;
+    //options.internal = true;
+    //options.simplify_address_expressions = true;
+    //options.use_custom_code_string = true;
+    //options.debug_options.expect_all_linebuffers = true;
+    //harris(out_name).realize(options, out_name, cols, rows, unroll_factor);
 
-    move_to_benchmarks_folder(out_name + "_opt");
-  }
+    //move_to_benchmarks_folder(out_name + "_opt");
+  //}
 }
 
 App denoise3d_reconverge(const std::string& out_name) {
@@ -9671,7 +9666,7 @@ void print_test() {
 	isl_ast_node_free(tree);
 
   isl_ctx_free(ctx);
-  assert(false);
+  //assert(false);
 }
 
 void manual_unroll_test() {
@@ -9723,8 +9718,9 @@ void manual_unroll_test() {
 }
 
 void application_tests() {
+  grayscale_conversion_test();
   reaccess_no_hierarchy_test();
-  assert(false);
+  //assert(false);
   reduce_1d_test();
   //print_test();
   //assert(false);
@@ -9753,7 +9749,6 @@ void application_tests() {
   //playground();
   jacobi2d_app_test();
 
-  grayscale_conversion_test();
   upsample2d_test();
 
   denoise2d_test();
