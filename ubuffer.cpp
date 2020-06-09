@@ -289,7 +289,7 @@ void generate_bank(CodegenOptions& options,
       //}
 
       //assert(capacities.size() == partitions.size());
-
+cout<<"num partitions "<<partitions.size()<<endl;
       out << endl << endl;
       int nind = 0;
       for (auto p : partitions) {
@@ -591,6 +591,7 @@ cout<< "BANK MERGED READERS " << b.num_readers << endl;
       auto pp = isl_pw_qpolynomial_intersect_domain(isl_pw_qpolynomial_from_qpolynomial(cpy(p.second)), cpy(p.first));
       pieces_dom = unn(pieces_dom, to_uset(p.first));
     }
+cout<<"DOMAIN "<<str(out_domain)<<endl;
 
     bool pieces_are_complete =
       subset(to_uset(out_domain), (pieces_dom));
@@ -669,6 +670,8 @@ cout<< "BANK MERGED READERS " << b.num_readers << endl;
     out << tab(1) << "// DD fold: " << str(dd_fold) << endl;
     string delay_expr = evaluate_dd(buf, outpt, inpt);
     string value_str = "";
+cout<<"PEEK inpt "<< inpt<<endl;
+cout<<"output "<<outpt<<endl;
     bool opt_const = is_optimizable_constant_dd(inpt, outpt, buf);
     if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_LINEAR) {
       string linear_addr = buf.generate_linearize_ram_addr(outpt);
@@ -677,6 +680,7 @@ cout<< "BANK MERGED READERS " << b.num_readers << endl;
     else if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_STACK) {
       std::cout << "PEEK 4 options all rams " << options.all_rams << endl;
       std::cout << "PEEK 4 num readers " << buf.get_bank(bank).num_readers << endl;
+      std::cout << "PEEK 4 opt const " << opt_const<< endl;
       if (options.all_rams || buf.get_bank(bank).num_readers == 1) {
 cout << "peek4" << endl;
         value_str = bank + ".peek(/* one reader or all rams */ " + delay_expr + ")";
@@ -708,7 +712,7 @@ cout << "peek10" << endl;
         value_str = bank + ".peek" + "(/* Needs general delay string */ " + delay_expr + ")";
       }
     }
-
+cout<<"value_str "<<value_str<<endl;
     return buf.name + "." + value_str;
   }
 
@@ -744,7 +748,7 @@ cout << "peek10" << endl;
       in_ports_to_conditions[inpt] =
         codegen_c(overlapped_read_condition);
     }
-
+cout<<"possible_ports.size "<<possible_ports.size()<<endl;
     if (possible_ports.size() == 1) {
       string inpt = possible_ports.at(0);
       string peeked_val = delay_string(options, out, inpt, outpt, buf);
