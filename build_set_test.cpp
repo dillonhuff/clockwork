@@ -1872,6 +1872,8 @@ void shift_reg_test() {
     TileConstraints tc{1,3,0};
     emit_address_stream2file(rewrite_buffers, it.first+"_sram", it.first+"_sram", it.first+"_SRAM_address", false, tc);
     emit_address_stream2file(rewrite_buffers, it.first+"_tb", it.first+"_agg", it.first+"_reg_TOP_address", true, tc);
+    compare_to_gold(it.first+"_SRAM_address.csv", "SRAM_address_tapeout.csv");
+    compare_to_gold(it.first+"_reg_TOP_address.csv", "TOP_address.csv");
   }
 }
 
@@ -1904,36 +1906,63 @@ void bankmerge_vec_test() {
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
   buffers_opt.at("buf").generate_bank_and_merge(opt);
-  cout << buffers_opt.at("buf") << endl;
-  auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
-  for (auto buf : rewrite_buf) {
+  //cout << buffers_opt.at("buf") << endl;
+  //auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
+  buffers_opt.at("buf").port_group2bank(2, 2);
+
+  auto post_proc_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
+  opt.conditional_merge = false;
+  auto rewrite_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
+
+  for (auto it: post_proc_buffers) {
+    buffer_vectorization(it.first, 1, 4, rewrite_buffers);
+    string buf_name = it.first;
+
+    //auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
+    auto opt_sched = optimized_schedule_from_buffers_flatten(rewrite_buffers, true);
+    cout << codegen_c(opt_sched) << endl;
+
+    rewrite_buffers.erase(buf_name);
+
+    HWconstraints sram = {4, 1, 512, false, true};
+
+    lattice_schedule_buf(prg.ctx, rewrite_buffers, opt_sched, sram);
+
+    TileConstraints tc{1,3,0}, tc_tape{2,2,4};
+    emit_address_stream2file(rewrite_buffers, buf_name +"_sram", buf_name+"_sram", "SRAM_address_tapeout", false, tc);
+    emit_address_stream2file(rewrite_buffers, it.first+"_tb", it.first+"_agg", "TOP_address", true, tc);
+    emit_address_stream2file(rewrite_buffers, it.first+"_tb", it.first+"_agg", "TOP_address_tapeout", true, tc_tape);
+    compare_to_gold("SRAM_address_tapeout.csv");
+    compare_to_gold("TOP_address.csv");
+  }
+  /*for (auto buf : rewrite_buf) {
     cout << buf << endl;
     buffers_opt[buf.name] = buf;
-  }
-  buffers_opt.erase("buf");
-  buffer_vectorization("buf1", 1, 4, buffers_opt);
+  }*/
+  //buffers_opt.erase("buf");
+  //buffer_vectorization("buf1", 1, 4, rewrite_buffers);
 
   //second time
   //auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
-  auto opt_sched = optimized_schedule_from_buffers_flatten(buffers_opt, true);
-  cout << codegen_c(opt_sched) << endl;
-  cout << str(opt_sched) << endl;
+  //auto opt_sched = optimized_schedule_from_buffers_flatten(rewrite_buffers, true);
+  //cout << codegen_c(opt_sched) << endl;
+  //cout << str(opt_sched) << endl;
 
-  buffers_opt.erase("buf0");
-  buffers_opt.erase("in");
-  buffers_opt.erase("out");
+  //buffers_opt.erase("buf0");
+  //buffers_opt.erase("in");
+  //buffers_opt.erase("out");
 
-  HWconstraints sram = {4, 1, 512, false, true};
+ // HWconstraints sram = {4, 1, 512, false, true};
 
-  lattice_schedule_buf(prg.ctx, buffers_opt, opt_sched, sram);
+ // lattice_schedule_buf(prg.ctx, rewrite_buffers, opt_sched, sram);
 
-  TileConstraints tc{1,3,0}, tc_tape{2,2,4};
-  emit_address_stream2file(buffers_opt, "buf1_sram", "buf1_sram", "SRAM_address_tapeout", false, tc);
-  emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "TOP_address", true, tc);
-  emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "TOP_address_tapeout", true, tc_tape);
+ // TileConstraints tc{1,3,0}, tc_tape{2,2,4};
+ // emit_address_stream2file(rewrite_buffers, "buf1_sram", "buf1_sram", "SRAM_address_tapeout", false, tc);
+ // emit_address_stream2file(rewrite_buffers, "buf1_tb", "buf1_agg", "TOP_address", true, tc);
+ // emit_address_stream2file(rewrite_buffers, "buf1_tb", "buf1_agg", "TOP_address_tapeout", true, tc_tape);
 
-  compare_to_gold("SRAM_address_tapeout.csv");
-  compare_to_gold("TOP_address.csv");
+ // compare_to_gold("SRAM_address_tapeout.csv");
+ // compare_to_gold("TOP_address.csv");
 }
 
 void auto_vec_test() {
@@ -9623,8 +9652,8 @@ void application_tests() {
 
 void memory_tile_tests() {
   shift_reg_test();
-  //bankmerge_vec_test();
-  //reaccess_test();
+  bankmerge_vec_test();
+  reaccess_test();
   assert(false);
 
   //new_bankmerge_tests();
