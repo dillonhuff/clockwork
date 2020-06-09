@@ -15,6 +15,35 @@ typedef std::string buffer_name;
 typedef std::string address;
 typedef std::vector<std::pair<std::string, std::string> > piecewise_address;
 
+isl_multi_aff*
+to_multi_aff(isl_ctx* context,
+    const std::vector<std::string>& vars,
+    const std::string& addr) {
+  string str =
+    sep_list(vars, "[", "]", ", ") + " -> " +
+    brackets(addr);
+  str = "{" + str + " }";
+
+  //cout << "str = " << str << endl;
+  return isl_multi_aff_read_from_str(context, str.c_str());
+}
+
+isl_pw_multi_aff*
+to_pw_multi_aff(isl_ctx* context,
+    const std::vector<std::string>& vars,
+    const piecewise_address& addr) {
+
+  vector<isl_multi_aff*> affs;
+  for (auto piece : addr) {
+    affs.push_back(to_multi_aff(context, vars, piece.second));
+  }
+  //for (auto a : affs) {
+    //cout << tab(1) << str(a) << endl;
+  //}
+  assert(affs.size() == 1);
+  return isl_pw_multi_aff_from_multi_aff(affs.at(0));
+}
+
 string str(const piecewise_address& addr) {
   string s = "";
   for (auto p : addr) {
@@ -57,6 +86,26 @@ struct ir_node {
   isl_ctx* ctx;
 
   ir_node() : parent(nullptr), is_loop(false), unroll_factor(1) {}
+
+  vector<piecewise_address> write_addrs(const std::string& buf) const {
+    vector<piecewise_address> addrs;
+    for (auto l : produce_locs) {
+      if (l.first == buf) {
+        addrs.push_back({{"", l.second}});
+      }
+    }
+    return addrs;
+  }
+
+  vector<piecewise_address> read_addrs(const std::string& buf) const {
+    vector<piecewise_address> addrs;
+    for (auto l : consumes_pair()) {
+      if (l.first == buf) {
+        addrs.push_back(l.second);
+      }
+    }
+    return addrs;
+  }
 
   int num_read_ports(const std::string& buf) const {
     int reads = 0;

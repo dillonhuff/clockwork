@@ -1721,7 +1721,24 @@ void find_high_bandwidth_non_const_rd_reads(prog& prg) {
   cout << "High bandwidth" << endl;
   for (auto b : high_bw_buffers) {
     cout << tab(1) << b.first << endl;
+
+    for (auto vo : prg.iter_vars()) {
+      auto op = vo.first;
+      vector<string> vars = vo.second;
+      cout << tab(2) << "Reads from " << b.first << " by " << op->name << "..." << endl;
+      for (auto addr : op->read_addrs(b.first)) {
+        auto expr = to_pw_multi_aff(prg.ctx, vars, addr);
+        cout << tab(3) << str(expr) << endl;
+      }
+
+      cout << tab(2) << "Writes to " << b.first << " by " << op->name << "..." << endl;
+      for (auto addr : op->write_addrs(b.first)) {
+        auto expr = to_pw_multi_aff(prg.ctx, vars, addr);
+        cout << tab(3) << str(expr) << endl;
+      }
+    }
   }
+
   assert(false);
 
   auto consumer_map = coalesce(prg.consumer_map());
@@ -1781,18 +1798,29 @@ void reaccess_no_hierarchy_test() {
   prg.add_input("in");
   prg.add_output("out");
   prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["weights_oc"] = 16;
   prg.buffer_port_widths["out"] = 16;
   prg.buffer_port_widths["bufl2"] = 16;
+  prg.buffer_port_widths["weights"] = 16;
 
   auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
   auto write = p->add_op("input");
   write->add_load("in", "pi, po");
   write->add_store("bufl2", "pi, po");
 
+  // Load weights
+  {
+    auto p = prg.add_nest("aow", 0, 2, "pow", 0, 3, "piw", 0, 3);
+    auto write = p->add_op("load_weights");
+    write->add_load("weights_oc", "piw, pow, aow");
+    write->add_store("weights", "piw, pow, aow");
+  }
+
   auto q = prg.add_nest("ao", 0 , 2, "qo", 0, 6, "qi", 0, 14);
   auto read = q->add_op("output");
   for (size_t wy = 0; wy < 3; wy ++) {
       for (size_t wx = 0; wx < 3; wx ++) {
+        read->add_load("weights", to_string(wy) + ", " + to_string(wx) + ", ao");
         read->add_load("bufl2", "qi+" + to_string(wy) + ", qo+" + to_string(wx));
       }
   }

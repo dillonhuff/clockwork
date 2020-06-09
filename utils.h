@@ -285,6 +285,11 @@ string str(const int i) {
 }
 
 static inline
+string brackets(const std::string& s) {
+  return "[" + s + "]";
+}
+
+static inline
 string parens(const std::string& s) {
   return "(" + s + ")";
 }

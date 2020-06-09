@@ -1280,6 +1280,23 @@ hardware_schedule(
   return hw_schedules;
 }
 
+//vector<isl_set*>
+//pad_and_permute(const vector<isl_set*>& domains) {
+  //int max_dims = -1;
+  //for (auto d : domains) {
+    //if (num_dims(d) > max_dims) {
+      //max_dims = num_dims(d);
+    //}
+  //}
+
+  //vector<isl_set*> padded;
+  //map<isl_set*, int> 
+  //for (auto d : domains) {
+    //padded = pad_set(d, max_dims);
+  //}
+  //return padded;
+//}
+
 map<string, vector<isl_aff*> >
 clockwork_schedule(uset* domain,
     umap* validity,
