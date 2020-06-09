@@ -9654,7 +9654,6 @@ void memory_tile_tests() {
   shift_reg_test();
   bankmerge_vec_test();
   reaccess_test();
-  assert(false);
 
   //new_bankmerge_tests();
   memtile_test();
