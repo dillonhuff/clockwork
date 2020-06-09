@@ -373,6 +373,48 @@ void generate_vivado_tcl(UBuffer& buf) {
   generate_vivado_tcl(buf.name);
 }
 
+//Post processing get the ubuffer for each bank
+map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
+  map<string, UBuffer> buffers;
+  for (auto b: get_banks()) {
+    //fiter out those node will implemented as a shift register
+    if (options.conditional_merge) {
+      if (b.maxdelay <= options.merge_threshold) {
+        continue;
+      }
+    }
+    UBuffer buf;
+    string bname = b.name + "_ubuf";
+    buf.name = bname;
+    buf.ctx = ctx;
+    buf.port_widths = port_widths;
+    auto inpts = get_bank_inputs(b.name);
+    auto outpts = get_bank_outputs(b.name);
+    int usuffix = 0;
+    for (auto inpt: inpts) {
+      auto acc_map = to_map(access_map.at(inpt));
+      acc_map = set_range_name(acc_map, bname);
+      auto dom = domain.at(inpt);
+      string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
+      buf.port_bundles[::name(dom) + "_write"].push_back(pt_name);
+      buf.add_in_pt(pt_name, dom, acc_map, schedule.at(inpt));
+      usuffix ++;
+    }
+
+    for (auto outpt: outpts) {
+      auto acc_map = to_map(access_map.at(outpt));
+      acc_map = set_range_name(acc_map, bname);
+      auto dom = domain.at(outpt);
+      string pt_name = bname + "_" + ::name(dom) + "_" + to_string(usuffix);
+      buf.port_bundles[::name(dom) + "_read"].push_back(pt_name);
+      buf.add_out_pt(pt_name, dom, acc_map, schedule.at(outpt));
+      usuffix ++;
+    }
+    buffers[bname] = buf;
+    cout << "\t\tNeed for vectorization: \n" << buf << endl;
+  }
+  return buffers;
+}
 
 #ifdef COREIR
 
@@ -1361,6 +1403,33 @@ void generate_code_prefix(CodegenOptions& options,
     return ret;
   }
 
+  pair<isl_map*, isl_map*> UBuffer::merge_output_pt_with_sched(vector<string> merge_pt) {
+    //cout << "merge port vec: " << merge_pt << endl;
+    string pt_name = pick(merge_pt);
+    auto first_pt_amap = access_map.at(pt_name);
+    auto s = to_map(first_pt_amap);
+    auto sched = to_map(schedule.at(pt_name));
+    auto shift_map = cpy(s);
+    int depth = 0;
+    for (size_t i = 1; i < merge_pt.size(); i ++) {
+      shift_map = get_shift_map(shift_map);
+      string name = merge_pt.at(i);
+      //cout << "shift map: " << str(shift_map) << ", original map: " << str(access_map.at(name)) << endl;
+      if (equal(range(to_umap(shift_map)), range(access_map.at(name)))) {
+        //assign the largest depth
+        depth  = i;
+      }
+    }
+    //cout << depth << endl;
+    auto ret = pad_to_domain_map(s, depth);
+    auto ret_sched = pad_to_domain_map(sched, depth);
+    string dom_name = domain_name(ret);
+    ret = set_domain_name(ret, dom_name + "_" + to_string(depth));
+    ret_sched = set_domain_name(ret_sched, dom_name + "_" + to_string(depth));
+    cout << "Rewrited output port map: " << str(ret) << endl;
+    return make_pair(ret, ret_sched);
+  }
+
   void UBuffer::port_group2bank(int in_port_width, int out_port_width) {
     /*Refactor the port grouping algorithm, we should put it into bank,
      * instead of ubuffer. Think about ubuffer is the original
@@ -1381,7 +1450,8 @@ void generate_code_prefix(CodegenOptions& options,
 
     //Using set for reoccuring port, single input multi output available
     std::set<string> inpt_set, outpt_set;
-    map<string, isl_map*> outpt_merge;
+    //Save the new access pattern and schedule
+    map<string, pair<isl_map*, isl_map*>> outpt_merge;
 
     //the buffer connection information, out-port point to in-port
     map<string, string> back_edge;
@@ -1409,8 +1479,7 @@ void generate_code_prefix(CodegenOptions& options,
 
         for (size_t i = 0; i < pt_vec.size(); i ++) {
           auto out_map_merge =
-            merge_output_pt(vector<string>(pt_vec.begin() + i, pt_vec.end()));
-          cout <<"Port: " << pt_vec.at(i) << " ,get merge map: " << str(out_map_merge) << endl;
+            merge_output_pt_with_sched(vector<string>(pt_vec.begin() + i, pt_vec.end()));
           outpt_merge.insert(make_pair(pt_vec.at(i), out_map_merge));
           if (i == 0) {
             back_edge.insert(make_pair(pt_vec.at(i), input));
@@ -1428,16 +1497,15 @@ void generate_code_prefix(CodegenOptions& options,
 
         //replace port
         for (auto it : outpt_merge) {
-          replace_pt(it.first, it.second);
+          replace_pt(it.first, it.second.first, it.second.second);
           //auto new_sched = dot(schedule.at(it.first), to_umap(it.second));
-          auto new_sched = to_map(schedule.at(it.first));
-          new_sched = set_domain_name(new_sched, domain_name(it.second));
-          new_sched = assign_domain_to_map(new_sched, ::domain(it.second));
-          cout << "new schedule with lib: " << str(new_sched) << endl;
-          schedule.at(it.first) = to_umap(new_sched);
-          //add valid bound, mark the main output
+          //auto new_sched = to_map(schedule.at(it.first));
+          //new_sched = set_domain_name(new_sched, domain_name(it.second));
+          //new_sched = assign_domain_to_map(new_sched, ::domain(it.second));
+          //cout << "new schedule with lib: " << str(new_sched) << endl;
+          //schedule.at(it.first) = to_umap(new_sched);
         }
-        //TODO: replace bank with output port as new input port
+        //replace bank with output port as new input port
         for (auto it: back_edge) {
           auto read = it.first;
           auto write = it.second;
@@ -1483,12 +1551,12 @@ void generate_code_prefix(CodegenOptions& options,
     //chances are that we have some leftover
     if (!inpt_set.empty()) {
       for (auto it : outpt_merge) {
-        replace_pt(it.first, it.second);
-        auto new_sched = to_map(schedule.at(it.first));
-        new_sched = set_domain_name(new_sched, domain_name(it.second));
-        new_sched = assign_domain_to_map(new_sched, ::domain(it.second));
-        cout << "new schedule with lib: " << str(new_sched) << endl;
-        schedule.at(it.first) = to_umap(new_sched);
+        replace_pt(it.first, it.second.first, it.second.second);
+        //auto new_sched = to_map(schedule.at(it.first));
+        //new_sched = set_domain_name(new_sched, domain_name(it.second));
+        //new_sched = assign_domain_to_map(new_sched, ::domain(it.second));
+        //cout << "new schedule with lib: " << str(new_sched) << endl;
+        //schedule.at(it.first) = to_umap(new_sched);
       }
       for (auto it: back_edge) {
         auto read = it.first;

@@ -977,10 +977,11 @@ class UBuffer {
     }
 
     //The method replace the original access map and add a valid domain
-    void replace_pt(string pt, isl_map* target) {
+    void replace_pt(string pt, isl_map* target, isl_map* sched) {
         access_map.at(pt) = to_umap(target);
         sv_domain[pt] = domain.at(pt);
         domain.at(pt) = ::domain(target);
+        schedule.at(pt) = to_umap(sched);
     }
 
     vector<stack_bank> get_banks() {
@@ -1390,6 +1391,9 @@ class UBuffer {
     void merge_bank(CodegenOptions& options, string inpt, vector<bank> mergeable);
     void generate_bank_and_merge(CodegenOptions& options);
 
+    //from bank to ubuffer
+    map<string, UBuffer> generate_ubuffer(CodegenOptions& opt);
+
 #ifdef COREIR
     void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def);
 #endif
@@ -1403,6 +1407,7 @@ class UBuffer {
     vector<UBuffer> port_grouping(int port_width);
     void port_group2bank(int in_port_width, int out_port_width);
     isl_map* merge_output_pt(vector<string> merge_pt);
+    pair<isl_map*, isl_map*> merge_output_pt_with_sched(vector<string> merge_pt);
 
 };
 

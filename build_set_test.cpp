@@ -789,6 +789,7 @@ void buffer_vectorization(string vec_buf_name, int dim_id, int fetch_width, map<
     buffers[tb.name] = tb;
 }
 
+
 //This method does not work.
 isl_union_map* filter_inner_sram_deps(isl_ctx* ctx, isl_union_map* deps) {
     vector<isl_map*> deps_map = get_maps(deps);
@@ -880,7 +881,7 @@ isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffe
 }
 
 isl_union_map* optimized_schedule_from_buffers_flatten(const map<string, UBuffer> &buffers, bool second_round) {
-    map<string, int> ii_map = {{"input", 1}, {"output", 1}, {"input_vec", 1}, {"output_vec",1}};
+    //map<string, int> ii_map = {{"input", 1}, {"output", 1}, {"input_vec", 1}, {"output_vec",1}};
     isl_ctx* ctx = pick(buffers).second.ctx;
     isl_union_map* global_p_map = isl_union_map_read_from_str(ctx, "{}");
     isl_union_map* global_c_map = isl_union_map_read_from_str(ctx, "{}");
@@ -893,9 +894,9 @@ isl_union_map* optimized_schedule_from_buffers_flatten(const map<string, UBuffer
         global_sched = unn(its(buf.global_schedule(), buf.global_domain()), global_sched);
     }
     //get all map domain flatten
-    global_c_map = flatten_umap_domain(ctx, global_c_map, ii_map);
-    global_p_map = flatten_umap_domain(ctx, global_p_map, ii_map);
-    global_sched = flatten_umap_domain(ctx, global_sched, ii_map);
+    global_c_map = flatten_umap_domain(ctx, global_c_map);
+    global_p_map = flatten_umap_domain(ctx, global_p_map);
+    global_sched = flatten_umap_domain(ctx, global_sched);
     isl_union_set* domain = ::domain(global_sched);
 
     cout << "Global Schedule: " << str(global_sched) << endl;
@@ -905,6 +906,7 @@ isl_union_map* optimized_schedule_from_buffers_flatten(const map<string, UBuffer
     auto proximity = cpy(raw_deps);
 
     //Try to remove proximity between_input vec to output_vec
+    //FIXME: using the name is hacky
     if (second_round)
         proximity = remove_dep_domain_name(proximity, "input_vec");
     //proximity = filter_inner_sram_deps(ctx, proximity);
@@ -1589,6 +1591,7 @@ void lattice_schedule_buf(isl_ctx* ctx, map<string, UBuffer> & buffers_opt, umap
 
   //cout << "Lattice schedule: " << str(opt_sched) << endl;
 
+
   //get a map from op to schedule
   auto op2sched = get_op2sched(buffers_opt, opt_sched);
 
@@ -1609,10 +1612,14 @@ void lattice_schedule_buf(isl_ctx* ctx, map<string, UBuffer> & buffers_opt, umap
   //Initialize the variable for lattice count
   map<string, bool> update_map;
   size_t cycle = 0;
+  string sram_name;
   for (auto buf : buffers_opt) {
       update_map[buf.first] = false;
+      if (is_suffix(buf.first, "sram")) {
+          sram_name = buf.first;
+      }
   }
-  buffers_opt.at("buf1_sram").hardware = sram;
+  buffers_opt.at(sram_name).hardware = sram;
   cout << str(sched_set) << endl;
   auto point_vec = get_points(sched_set);
   std::sort(point_vec.begin(), point_vec.end(), lex_lt_pt);
@@ -1668,7 +1675,7 @@ void lattice_schedule_buf(isl_ctx* ctx, map<string, UBuffer> & buffers_opt, umap
             //cout << str(point) << " write = " << buf.is_wr(point) << " at cycle:" << cycle << endl;
             cout << endl;
             //TODO: pop out sram rd operation ahead of tb read
-            buffers_opt.at("buf1_sram").schedule_read_sram(cycle, iter_set, buf);
+            buffers_opt.at(sram_name).schedule_read_sram(cycle, iter_set, buf);
           }
           else if(buf.is_wr(point) && is_suffix(buf.name, "sram")) {
               //TODO:get the number of cycle depend on hw constraints
@@ -1845,30 +1852,27 @@ void shift_reg_test() {
   CoreIR::deleteContext(context);
 #endif
 
-  assert(false);
-  auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
-  for (auto buf : rewrite_buf) {
-    cout << buf << endl;
-    buffers_opt[buf.name] = buf;
+  auto post_proc_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
+  opt.conditional_merge = false;
+  auto rewrite_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
+
+  for (auto it: post_proc_buffers) {
+    buffer_vectorization(it.first, 1, 4, rewrite_buffers);
+
+    //auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
+    auto opt_sched = optimized_schedule_from_buffers_flatten(rewrite_buffers, true);
+    cout << codegen_c(opt_sched) << endl;
+
+    rewrite_buffers.erase(it.first);
+
+    HWconstraints sram = {4, 1, 512, false, true};
+
+    lattice_schedule_buf(prg.ctx, rewrite_buffers, opt_sched, sram);
+
+    TileConstraints tc{1,3,0};
+    emit_address_stream2file(rewrite_buffers, it.first+"_sram", it.first+"_sram", it.first+"_SRAM_address", false, tc);
+    emit_address_stream2file(rewrite_buffers, it.first+"_tb", it.first+"_agg", it.first+"_reg_TOP_address", true, tc);
   }
-  buffers_opt.erase("buf");
-  buffer_vectorization("buf1", 1, 4, buffers_opt);
-
-  //auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
-  auto opt_sched = optimized_schedule_from_buffers_flatten(buffers_opt, true);
-  cout << codegen_c(opt_sched) << endl;
-
-  buffers_opt.erase("buf0");
-  buffers_opt.erase("in");
-  buffers_opt.erase("out");
-
-  HWconstraints sram = {4, 1, 512, false, true};
-
-  lattice_schedule_buf(prg.ctx, buffers_opt, opt_sched, sram);
-
-  TileConstraints tc{1,3,0};
-  emit_address_stream2file(buffers_opt, "buf1_sram", "buf1_sram", "shift_reg_SRAM_address", false, tc);
-  emit_address_stream2file(buffers_opt, "buf1_tb", "buf1_agg", "shift_reg_TOP_address", true, tc);
 }
 
 void bankmerge_vec_test() {
