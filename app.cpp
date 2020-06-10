@@ -1325,10 +1325,13 @@ clockwork_schedule(uset* domain,
   return clockwork_schedule(domain, validity, proximity, deps);
 }
 
-typedef pair<string, int> op_level;
 std::set<pair<op_level , op_level> > get_dims_to_match(umap* validity) {
   std::set<pair<pair<string, int> , pair<string, int> > > matched_dims;
   for (auto v : get_maps(validity)) {
+    if (domain_name(v) != range_name(v)) {
+      matched_dims.insert({{domain_name(v), 0}, {range_name(v), 0}});
+    }
+
     cout << tab(1) << "M = " << str(v) << endl;
     for (auto c : constraints(v)) {
       auto ls = get_local_space(c);
@@ -1366,9 +1369,8 @@ std::set<pair<op_level , op_level> > get_dims_to_match(umap* validity) {
   return matched_dims;
 }
 
-map<string, vector<isl_aff*> >
-clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, vector<string> >& high_bandwidth_deps) {
-
+map<string, vector<int> >
+pad_insertion_indexes(uset* domain, umap* validity) {
   auto matched_dims = get_dims_to_match(validity);
   int max_dim = -1;
   for (auto m : get_sets(domain)) {
@@ -1384,48 +1386,78 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, ve
       << d.first.first << "[" << d.first.second << "]" << ", "
       << d.second.first << "[" << d.second.second << "]" << endl;
   }
-  {
-    auto ct = ctx(domain);
-    ilp_builder pad_positions(ct);
-    string some_domain = "";
-    for (auto m : get_sets(domain)) {
-      string dom = name(m);
-      some_domain = dom;
-      for (int d = 0; d < num_dims(m); d++) {
-        pad_positions.add_geq({{lv(dom, d), one(ct)}}, zero(ct));
-        pad_positions.add_geq(max_dim - 1, lv(dom, d));
-      }
 
-      //for (int d = num_dims(m); d < max_dim; d++) {
-        //pad_positions.add_geq({{pv(dom, d), one(ct)}}, zero(ct));
-        //pad_positions.add_geq(max_dim - 1, pv(dom, d));
-      //}
-
-      for (int d = 0; d < num_dims(m) - 1; d++) {
-        pad_positions.add_gt(lv(dom, d + 1), lv(dom, d));
-      }
+  auto ct = ctx(domain);
+  ilp_builder pad_positions(ct);
+  string some_domain = "";
+  for (auto m : get_sets(domain)) {
+    string dom = name(m);
+    some_domain = dom;
+    for (int d = 0; d < num_dims(m); d++) {
+      pad_positions.add_geq({{lv(dom, d), one(ct)}}, zero(ct));
+      pad_positions.add_geq(max_dim - 1, lv(dom, d));
     }
 
-    for (auto m : matched_dims) {
-      auto lv1 =
-        lv(m.first.first, m.first.second);
-      auto lv2 =
-        lv(m.second.first, m.second.second);
-      cout << "lv1 = " << lv1 << endl;
-      cout << "lv2 = " << lv2 << endl;
-      pad_positions.add_eq(lv1, lv2);
-      //lv(m.first.first, m.first.second), lv(m.second.first, m.second.second));
+    for (int d = 0; d < num_dims(m) - 1; d++) {
+      pad_positions.add_gt(lv(dom, d + 1), lv(dom, d));
     }
-
-    auto min = pad_positions.minimize({{lv(some_domain, 0), one(ct)}});
-    cout << "Solution point: " << str(pad_positions.solution_point) << endl;
   }
-  //assert(false);
+
+  for (auto m : matched_dims) {
+    auto lv1 =
+      lv(m.first.first, m.first.second);
+    auto lv2 =
+      lv(m.second.first, m.second.second);
+    cout << "lv1 = " << lv1 << endl;
+    cout << "lv2 = " << lv2 << endl;
+    pad_positions.add_eq(lv1, lv2);
+  }
+
+  auto min = pad_positions.minimize({{lv(some_domain, 0), one(ct)}});
+  cout << "Solution point: " << str(pad_positions.solution_point) << endl;
+
+
+  map<string, vector<int> > sites;
+  for (auto s : get_sets(domain)) {
+    string n = name(s);
+    for (int d = 0; d < num_dims(s); d++) {
+      sites[n].push_back(
+          to_int(pad_positions.value(lv(n, d))));
+    }
+  }
+  map<string, vector<int> > dense_sites;
+  for (auto m : sites) {
+    string name = m.first;
+    vector<int> dense;
+    for (int i = 0; i < max_dim; i++) {
+      dense.push_back(-1);
+    }
+    int i = 0;
+    for (auto d : m.second) {
+      dense[d] = i;
+      i++;
+    }
+    dense_sites[name] = dense;
+  }
+
+  return dense_sites;
+}
+
+map<string, vector<isl_aff*> >
+clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, vector<string> >& high_bandwidth_deps) {
+
+  map<string, vector<int> > sites =
+    pad_insertion_indexes(domain, validity);
+
+  cout << "Domain" << endl;
+  for (auto s : sites) {
+    cout << s.first << " -> " << sep_list(s.second, "[", "]", ", ") << endl;
+  }
+  assert(false);
 
   uset* padded_domain = pad_uset(domain);
   auto padded_validity = pad_map(validity);
   auto padded_proximity = pad_map(proximity);
-
 
   vector<isl_map*> deps;
   auto finite_validity = its_range(its(padded_validity, padded_domain), padded_domain);

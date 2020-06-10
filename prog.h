@@ -87,6 +87,16 @@ struct ir_node {
 
   ir_node() : parent(nullptr), is_loop(false), unroll_factor(1) {}
 
+  void replace_child(op* c, op* replacement) {
+    for (int i = 0; i < (int) children.size(); i++) {
+      if (children.at(i) == c) {
+        children[i] = replacement;
+        return;
+      }
+    }
+    assert(false);
+  }
+
   vector<piecewise_address> write_addrs(const std::string& buf) const {
     vector<piecewise_address> addrs;
     for (auto l : produce_locs) {
@@ -123,6 +133,36 @@ struct ir_node {
       read.insert(l.first);
     }
     return read;
+  }
+
+  std::set<std::string> descendant_op_names() {
+    std::set<std::string> names;
+    for (auto d : descendant_ops()) {
+      names.insert(d->name);
+    }
+    return names;
+  }
+
+  std::set<op*> descendant_ops() {
+    std::set<op*> dec = descendants();
+    std::set<op*> ops;
+    for (auto d : dec) {
+      if (!d->is_loop) {
+        ops.insert(d);
+      }
+    }
+    return ops;
+  }
+
+  std::set<op*> descendants() {
+    std::set<op*> anc;
+    for (auto c : children) {
+      for (auto d : c->descendants()) {
+        anc.insert(d);
+      }
+      anc.insert(c);
+    }
+    return anc;
   }
 
   std::set<op*> ancestors() {
@@ -231,7 +271,7 @@ struct ir_node {
     auto lp = new op();
     lp->name = name;
     lp->ctx = ctx;
-    lp->parent = this ;
+    lp->parent = this;
     lp->is_loop = true;
     lp->start = l;
     lp->end_exclusive = u;

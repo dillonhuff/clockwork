@@ -1373,6 +1373,41 @@ void find_high_bandwidth_non_const_rd_reads(prog& prg) {
   //cout << tab(2) << "producer map: " << str(producer_map) << endl;
 }
 
+void insert_pad_loops(const int level, op* root, const map<string, vector<int> >& pad_indexes) {
+  if (!root->is_loop) {
+    return;
+  }
+
+  for (auto c : root->children) {
+    for (auto n : c->descendant_op_names()) {
+      int should_pad = map_find(n, pad_indexes)[level + 1];
+      if (should_pad == -1) {
+        cout << "Should insert pad between: " << root->name << " and " << c->name << endl;
+        op* lp = new op();
+        lp->name = "pad_" + root->name + "_to_" + c->name;
+        lp->ctx = root->ctx;
+        lp->parent = root;
+        lp->is_loop = true;
+        lp->start = 0;
+        lp->end_exclusive = 1;
+        lp->children.push_back(c);
+        root->replace_child(c, lp);
+        break;
+      }
+    }
+  }
+
+  for (auto c : root->children) {
+    insert_pad_loops(level + 1, c, pad_indexes);
+  }
+
+  //insert_pad_loops(prg.root, pad_indexes);
+}
+
+void insert_pad_loops(prog& prg, const map<string, vector<int> >& pad_indexes) {
+  insert_pad_loops(0, prg.root, pad_indexes);
+}
+
 void reaccess_no_hierarchy_test() {
 
   prog prg;
@@ -1411,12 +1446,26 @@ void reaccess_no_hierarchy_test() {
 
   auto dom = prg.whole_iteration_domain();
   auto valid = coalesce(prg.validity_deps());
-  clockwork_schedule(dom, valid, cpy(valid));
+
+
+  cout << "Before padding..." << endl;
+  prg.pretty_print();
+
+  auto pad_indexes = pad_insertion_indexes(dom, valid);
+  insert_pad_loops(prg, pad_indexes);
+
+  cout << "After padding..." << endl;
+  prg.pretty_print();
+  assert(false);
+
+  //clockwork_schedule(dom, valid, cpy(valid));
   //assert(false);
   //find_high_bandwidth_non_const_rd_reads(prg);
 
   //assert(false);
   generate_optimized_code(prg);
+
+  assert(false);
 
 //#ifdef COREIR
   //auto opt_sched = prg.optimized_schedule();
@@ -9305,9 +9354,9 @@ void manual_unroll_test() {
 }
 
 void application_tests() {
+  reaccess_no_hierarchy_test();
   halide_cascade_test();
   halide_frontend_test();
-  reaccess_no_hierarchy_test();
   grayscale_conversion_test();
   //assert(false);
   reduce_1d_test();
