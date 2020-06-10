@@ -1024,4 +1024,9 @@ compute_qfactors(vector<isl_map*>& deps);
 map<string, vector<int> >
 pad_insertion_indexes(uset* domain, umap* validity);
 
+umap*
+clockwork_schedule_umap(uset* domain,
+    umap* validity,
+    umap* proximity);
 
+umap* qschedule_to_map(isl_ctx* ctx, map<string, vector<QExpr> >& schedules);

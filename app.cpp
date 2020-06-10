@@ -1317,6 +1317,105 @@ hardware_schedule(
   //return padded;
 //}
 
+umap* qschedule_to_map_final_sort(isl_ctx* ctx, map<string, vector<QExpr> >& schedules) {
+  umap* m = rdmap(ctx, "{}");
+  for (auto fn : schedules) {
+    string f = fn.first;
+    vector<string> sched_exprs;
+    vector<string> var_names;
+    int i = 0;
+    for (auto v : map_find(f, schedules)) {
+      string dv = "d" + to_string(i);
+      sched_exprs.push_back(isl_str(v));
+      cout << "Sched expr: " << sched_exprs.back() << endl;
+      var_names.push_back(dv);
+      i++;
+    }
+    //var_names.pop_back();
+    string map_str = "{ " + f + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
+
+    cout << "Map str: " << map_str << endl;
+    auto rm = rdmap(ctx, map_str);
+    cout << "map got str" << endl;
+    m = unn(m, rm);
+    isl_union_map_free(rm);
+  }
+
+  return m;
+}
+
+umap* qschedule_to_map(isl_ctx* ctx, map<string, vector<QExpr> >& schedules) {
+  umap* m = rdmap(ctx, "{}");
+  for (auto fn : schedules) {
+    string f = fn.first;
+    vector<string> sched_exprs;
+    vector<string> var_names;
+    int i = 0;
+    for (auto v : map_find(f, schedules)) {
+      string dv = "d" + to_string(i);
+      sched_exprs.push_back(isl_str(v));
+      cout << "Sched expr: " << sched_exprs.back() << endl;
+      var_names.push_back(dv);
+      i++;
+    }
+    var_names.pop_back();
+    string map_str = "{ " + f + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
+
+    cout << "Map str: " << map_str << endl;
+    auto rm = rdmap(ctx, map_str);
+    cout << "map got str" << endl;
+    m = unn(m, rm);
+    isl_union_map_free(rm);
+  }
+
+  return m;
+}
+
+umap*
+clockwork_schedule_umap(uset* domain,
+    umap* validity,
+    umap* proximity) {
+  auto sched = clockwork_schedule(domain, validity, proximity);
+
+
+  map<string, vector<QExpr> > scheds;
+  for (auto s : sched) {
+    string name = s.first;
+    vector<isl_aff*> vals = s.second;
+
+    scheds[name] = {};
+    int i = 0;
+    for (auto v : vals) {
+      QExpr rate = qexpr("d" + str(i));
+      auto rate_coeff =
+        qexpr(int_coeff(v, 0));
+      auto delay =
+        qexpr(int_const_coeff(v));
+
+      QExpr expr =
+        rate_coeff*rate + delay;
+      scheds[name].push_back(expr);
+      i++;
+    }
+  }
+
+  // schedule is dN, ..., d1, d0
+  for (auto& s : scheds) {
+    reverse(s.second);
+  }
+
+  cout << "Final schedule..." << endl;
+  for (auto s : scheds) {
+    cout << tab(1) << s.first << endl;
+    for (auto v : s.second) {
+      cout << tab(2) << v << endl;
+    }
+    cout << endl;
+  }
+
+  return qschedule_to_map_final_sort(ctx(domain), scheds);
+}
+
 map<string, vector<isl_aff*> >
 clockwork_schedule(uset* domain,
     umap* validity,
@@ -1446,14 +1545,14 @@ pad_insertion_indexes(uset* domain, umap* validity) {
 map<string, vector<isl_aff*> >
 clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, vector<string> >& high_bandwidth_deps) {
 
-  map<string, vector<int> > sites =
-    pad_insertion_indexes(domain, validity);
+  //map<string, vector<int> > sites =
+    //pad_insertion_indexes(domain, validity);
 
-  cout << "Domain" << endl;
-  for (auto s : sites) {
-    cout << s.first << " -> " << sep_list(s.second, "[", "]", ", ") << endl;
-  }
-  assert(false);
+  //cout << "Domain" << endl;
+  //for (auto s : sites) {
+    //cout << s.first << " -> " << sep_list(s.second, "[", "]", ", ") << endl;
+  //}
+  //assert(false);
 
   uset* padded_domain = pad_uset(domain);
   auto padded_validity = pad_map(validity);

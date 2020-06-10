@@ -1409,7 +1409,6 @@ void insert_pad_loops(prog& prg, const map<string, vector<int> >& pad_indexes) {
 }
 
 void reaccess_no_hierarchy_test() {
-
   prog prg;
   prg.compute_unit_file = "vec_access.h";
   prg.name = "reaccess_conv_no_hierarchy";
@@ -1447,7 +1446,6 @@ void reaccess_no_hierarchy_test() {
   auto dom = prg.whole_iteration_domain();
   auto valid = coalesce(prg.validity_deps());
 
-
   cout << "Before padding..." << endl;
   prg.pretty_print();
 
@@ -1456,14 +1454,16 @@ void reaccess_no_hierarchy_test() {
 
   cout << "After padding..." << endl;
   prg.pretty_print();
-  //assert(false);
 
-  //clockwork_schedule(dom, valid, cpy(valid));
-  //assert(false);
-  //find_high_bandwidth_non_const_rd_reads(prg);
-
-  //assert(false);
-  generate_optimized_code(prg);
+  {
+    auto dom = prg.whole_iteration_domain();
+    auto valid = coalesce(prg.validity_deps());
+    auto cs = clockwork_schedule_umap(dom, valid, cpy(valid));
+    cout << "Clockwork schedule" << endl;
+    for (auto m : get_maps(cs)) {
+      cout << tab(1) << str(m) << endl;
+    }
+  }
 
   assert(false);
 
@@ -5068,36 +5068,9 @@ struct App {
     return schedules;
   }
 
-  umap* qschedule_to_map(map<string, vector<QExpr> >& schedules) {
-    umap* m = rdmap(ctx, "{}");
-    for (auto fn : schedules) {
-      string f = fn.first;
-      vector<string> sched_exprs;
-      vector<string> var_names;
-      int i = 0;
-      for (auto v : map_find(f, schedules)) {
-        string dv = "d" + to_string(i);
-        sched_exprs.push_back(isl_str(v));
-        cout << "Sched expr: " << sched_exprs.back() << endl;
-        var_names.push_back(dv);
-        i++;
-      }
-      var_names.pop_back();
-      string map_str = "{ " + f + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
-
-      cout << "Map str: " << map_str << endl;
-      auto rm = rdmap(ctx, map_str);
-      cout << "map got str" << endl;
-      m = unn(m, rm);
-      isl_union_map_free(rm);
-    }
-
-    return m;
-  }
-
   umap* schedule() {
     auto schedules = schedule_opt();
-    return qschedule_to_map(schedules);
+    return qschedule_to_map(ctx, schedules);
 
   }
 
@@ -5257,7 +5230,7 @@ struct App {
     //auto m = schedule_isl();
 
     auto scheds = schedule_opt();
-    umap* m = qschedule_to_map(scheds);
+    umap* m = qschedule_to_map(ctx, scheds);
     //umap* m = schedule();
     ofstream schedule_out(name + "_sched_" + time_str);
     for (auto k : get_maps(m)) {
