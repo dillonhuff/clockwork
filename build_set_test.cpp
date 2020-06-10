@@ -1456,7 +1456,7 @@ void reaccess_no_hierarchy_test() {
 
   cout << "After padding..." << endl;
   prg.pretty_print();
-  assert(false);
+  //assert(false);
 
   //clockwork_schedule(dom, valid, cpy(valid));
   //assert(false);
