@@ -77,7 +77,10 @@ isl_val* negone(isl_ctx* c);
 isl_val* zero(isl_ctx* c);
 isl_aff* cpy(isl_aff* const b);
 
+bool is_zero(isl_val* c);
+
 isl_local_space* get_local_space(isl_set* const m);
+isl_local_space* get_local_space(isl_constraint* const m);
 isl_local_space* get_local_space(isl_basic_set* const m);
 isl_local_space* get_local_space(isl_aff* const m);
 isl_space* get_space(isl_constraint* const m);
@@ -480,6 +483,8 @@ isl_set* add_constraint(isl_set* s, isl_constraint* c);
 
 int num_out_dims(isl_space* const s);
 int num_in_dims(isl_space* const s);
+int num_in_dims(isl_local_space* const s);
+int num_out_dims(isl_local_space* const s);
 
 int num_in_dims(isl_aff* const s);
 int num_div_dims(isl_aff* const s);
@@ -529,3 +534,5 @@ isl_val* coord(isl_point* const p, const int pos);
 
 bool lex_lt_pt(isl_point* const l, isl_point* const r);
 bool lex_gt_pt(isl_point* const l, isl_point* const r);
+
+isl_val* get_coeff(isl_constraint* c, enum isl_dim_type type, int pos);

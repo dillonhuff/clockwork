@@ -98,6 +98,10 @@ isl_aff* cpy(isl_aff* const b) {
   return isl_aff_copy(b);
 }
 
+isl_local_space* get_local_space(isl_constraint* const m) {
+  return isl_constraint_get_local_space(m);
+}
+
 isl_local_space* get_local_space(isl_set* const m) {
 
   auto bsets = get_basic_sets(m);
@@ -175,6 +179,18 @@ bool empty(uset* const s) {
 int num_out_dims(isl_space* const s) {
   assert(isl_space_is_map(s));
   int ndims = isl_space_dim(s, isl_dim_out);
+  return ndims;
+}
+
+int num_out_dims(isl_local_space* const s) {
+  assert(!isl_local_space_is_set(s));
+  int ndims = isl_local_space_dim(s, isl_dim_out);
+  return ndims;
+}
+
+int num_in_dims(isl_local_space* const s) {
+  assert(!isl_local_space_is_set(s));
+  int ndims = isl_local_space_dim(s, isl_dim_in);
   return ndims;
 }
 
@@ -2418,3 +2434,13 @@ isl_space* map_space(isl_ctx* ctx, const int in_dims, const int out_dims) {
   auto s = isl_space_alloc(ctx, 0, in_dims, out_dims);
   return s;
 }
+
+bool is_zero(isl_val* c) {
+  return isl_val_is_zero(c);
+}
+
+
+isl_val* get_coeff(isl_constraint* c, enum isl_dim_type type, int pos) {
+  return isl_constraint_get_coefficient_val(c, type, pos);
+}
+
