@@ -1315,20 +1315,26 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, ve
   for (auto v : get_maps(padded_validity)) {
     cout << tab(1) << "M = " << str(v) << endl;
     for (auto c : constraints(v)) {
-      cout << tab(2) << str(c) << endl;
+      //cout << tab(2) << str(c) << endl;
       auto ls = get_local_space(c);
       assert(!isl_local_space_is_set(ls));
 
+      int num_non_zero = 0;
       for (int d = 0; d < num_in_dims(ls); d++) {
         if (!is_zero(get_coeff(c, isl_dim_in, d))) {
-          cout << tab(3) << "non zero at in dim " << d << endl;
+          //cout << tab(3) << "non zero at in dim " << d << endl;
+          num_non_zero++;
         }
       }
 
       for (int d = 0; d < num_out_dims(ls); d++) {
         if (!is_zero(get_coeff(c, isl_dim_out, d))) {
-          cout << tab(3) << "non zero at out dim " << d << endl;
+          //cout << tab(3) << "non zero at out dim " << d << endl;
+          num_non_zero++;
         }
+      }
+      if (num_non_zero > 1) {
+        cout << tab(3) << "Relevant constraint: " << str(c) << endl;
       }
     }
   }
