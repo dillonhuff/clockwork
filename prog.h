@@ -166,8 +166,8 @@ struct ir_node {
       out << tab(level) << "}" << endl;
     } else {
       vector<string> args;
-      //out << tab(level) << name << ": " << comma_list(produces()) << " = " << func << "(" << comma_list(consumes()) << ")" << endl;
       out << tab(level) << name << ": " << comma_list(produces()) << " = " << func << "(" << comma_list(consumes()) << ")" << endl;
+      //out << tab(level) << name << ": " << comma_list(produces()) << " = " << func << "(" << comma_list(consumes()) << ")" << endl;
     }
   }
 
@@ -336,9 +336,10 @@ struct ir_node {
 
   vector<string> consumes() const {
     vector<string> ps;
-    //for (auto p : consume_locs) {
-      //ps.push_back(p.first + "[" + p.second + "]");
-    //}
+    for (auto p : consume_locs_pair) {
+      ps.push_back(p.first + str(p.second));
+      //"[" + p.second + "]");
+    }
     return ps;
   }
 
@@ -928,15 +929,15 @@ struct prog {
      }
      m = unn(m, pmap);
      // original
-     for (auto p : op->consumes()) {
-       string buf = take_until(p, "[");
-       if (buf == buf_name) {
-         umap* vmap =
-           its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
-         pmap = unn(pmap, vmap);
-       }
-     }
-     m = unn(m, pmap);
+     //for (auto p : op->consumes()) {
+       //string buf = take_until(p, "[");
+       //if (buf == buf_name) {
+         //umap* vmap =
+           //its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
+         //pmap = unn(pmap, vmap);
+       //}
+     //}
+     //m = unn(m, pmap);
     }
     return m;
   }
@@ -968,14 +969,14 @@ struct prog {
      m = unn(m, pmap);
       
      // original case
-     for (auto p : op-> consumes()){
-      //cout << "second for loop" << endl;
-       umap* vmap =
-          its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
+     //for (auto p : op-> consumes()){
+      ////cout << "second for loop" << endl;
+       //umap* vmap =
+          //its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
 
-        pmap = unn(pmap, vmap);
-      }
-      m = unn(m, pmap); 
+        //pmap = unn(pmap, vmap);
+      //}
+      //m = unn(m, pmap); 
     }
     return m;
   }

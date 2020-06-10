@@ -1,11 +1,11 @@
 #include "app.h"
 
 std::string lv(const string& n, const int d) {
-  return "pad_" + n + "_" + str(d);
+  return "pad_dim_permute_" + n + "_pdim" + str(d);
 }
 
 std::string pv(const string& n, const int d) {
-  return n + "_" + str(d);
+  return n + "_dim_permute" + str(d);
 }
 
 QExpr delayvar(const string& n) {
@@ -1354,9 +1354,11 @@ std::set<pair<op_level , op_level> > get_dims_to_match(umap* validity) {
       if (num_non_zero > 1) {
         assert(in_pos >= 0);
         assert(out_pos >= 0);
-        matched_dims.insert({{domain_name(v), in_pos}, {range_name(v), out_pos}});
+        if (domain_name(v) != range_name(v)) {
+          matched_dims.insert({{domain_name(v), in_pos}, {range_name(v), out_pos}});
+          cout << tab(3) << "Relevant constraint: " << str(c) << endl;
+        }
 
-        cout << tab(3) << "Relevant constraint: " << str(c) << endl;
       }
     }
   }
@@ -1394,10 +1396,10 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, ve
         pad_positions.add_geq(max_dim - 1, lv(dom, d));
       }
 
-      for (int d = num_dims(m); d < max_dim; d++) {
-        pad_positions.add_geq({{pv(dom, d), one(ct)}}, zero(ct));
-        pad_positions.add_geq(max_dim - 1, pv(dom, d));
-      }
+      //for (int d = num_dims(m); d < max_dim; d++) {
+        //pad_positions.add_geq({{pv(dom, d), one(ct)}}, zero(ct));
+        //pad_positions.add_geq(max_dim - 1, pv(dom, d));
+      //}
 
       for (int d = 0; d < num_dims(m) - 1; d++) {
         pad_positions.add_gt(lv(dom, d + 1), lv(dom, d));
@@ -1405,13 +1407,20 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, ve
     }
 
     for (auto m : matched_dims) {
-      pad_positions.add_eq(lv(m.first.first, m.first.second), lv(m.second.first, m.second.second));
+      auto lv1 =
+        lv(m.first.first, m.first.second);
+      auto lv2 =
+        lv(m.second.first, m.second.second);
+      cout << "lv1 = " << lv1 << endl;
+      cout << "lv2 = " << lv2 << endl;
+      pad_positions.add_eq(lv1, lv2);
+      //lv(m.first.first, m.first.second), lv(m.second.first, m.second.second));
     }
 
     auto min = pad_positions.minimize({{lv(some_domain, 0), one(ct)}});
     cout << "Solution point: " << str(pad_positions.solution_point) << endl;
   }
-  assert(false);
+  //assert(false);
 
   uset* padded_domain = pad_uset(domain);
   auto padded_validity = pad_map(validity);
