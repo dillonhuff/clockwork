@@ -1305,15 +1305,10 @@ clockwork_schedule(uset* domain,
   return clockwork_schedule(domain, validity, proximity, deps);
 }
 
-map<string, vector<isl_aff*> >
-clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, vector<string> >& high_bandwidth_deps) {
-
-  uset* padded_domain = pad_uset(domain);
-  auto padded_validity = pad_map(validity);
-  auto padded_proximity = pad_map(proximity);
-
+typedef pair<string, int> op_level;
+std::set<pair<op_level , op_level> > get_dims_to_match(umap* validity) {
   std::set<pair<pair<string, int> , pair<string, int> > > matched_dims;
-  for (auto v : get_maps(padded_validity)) {
+  for (auto v : get_maps(validity)) {
     cout << tab(1) << "M = " << str(v) << endl;
     for (auto c : constraints(v)) {
       auto ls = get_local_space(c);
@@ -1346,6 +1341,13 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, ve
     }
   }
 
+  return matched_dims;
+}
+
+map<string, vector<isl_aff*> >
+clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, vector<string> >& high_bandwidth_deps) {
+
+  auto matched_dims = get_dims_to_match(validity);
   cout << "Dims to match: " << endl;
   for (auto d : matched_dims) {
     cout << tab(1)
@@ -1353,6 +1355,11 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, ve
       << d.second.first << "[" << d.second.second << "]" << endl;
   }
   assert(false);
+
+  uset* padded_domain = pad_uset(domain);
+  auto padded_validity = pad_map(validity);
+  auto padded_proximity = pad_map(proximity);
+
 
   vector<isl_map*> deps;
   auto finite_validity = its_range(its(padded_validity, padded_domain), padded_domain);
