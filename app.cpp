@@ -1312,31 +1312,45 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, ve
   auto padded_validity = pad_map(validity);
   auto padded_proximity = pad_map(proximity);
 
+  std::set<pair<pair<string, int> , pair<string, int> > > matched_dims;
   for (auto v : get_maps(padded_validity)) {
     cout << tab(1) << "M = " << str(v) << endl;
     for (auto c : constraints(v)) {
-      //cout << tab(2) << str(c) << endl;
       auto ls = get_local_space(c);
       assert(!isl_local_space_is_set(ls));
 
       int num_non_zero = 0;
+      int in_pos = -1;
       for (int d = 0; d < num_in_dims(ls); d++) {
         if (!is_zero(get_coeff(c, isl_dim_in, d))) {
-          //cout << tab(3) << "non zero at in dim " << d << endl;
           num_non_zero++;
+          in_pos = d;
         }
       }
 
+      int out_pos = -1;
       for (int d = 0; d < num_out_dims(ls); d++) {
         if (!is_zero(get_coeff(c, isl_dim_out, d))) {
-          //cout << tab(3) << "non zero at out dim " << d << endl;
           num_non_zero++;
+          out_pos = d;
         }
       }
+
       if (num_non_zero > 1) {
+        assert(in_pos >= 0);
+        assert(out_pos >= 0);
+        matched_dims.insert({{domain_name(v), in_pos}, {range_name(v), out_pos}});
+
         cout << tab(3) << "Relevant constraint: " << str(c) << endl;
       }
     }
+  }
+
+  cout << "Dims to match: " << endl;
+  for (auto d : matched_dims) {
+    cout << tab(1)
+      << d.first.first << "[" << d.first.second << "]" << ", "
+      << d.second.first << "[" << d.second.second << "]" << endl;
   }
   assert(false);
 
