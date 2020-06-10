@@ -1,6 +1,10 @@
 #include "app.h"
 
 std::string lv(const string& n, const int d) {
+  return "pad_" + n + "_" + str(d);
+}
+
+std::string pv(const string& n, const int d) {
   return n + "_" + str(d);
 }
 
@@ -47,6 +51,10 @@ struct ilp_builder {
   void add_geq(const int v, const std::string& a) {
     add_geq({{a, negone(ctx)}}, isl_val_int_from_si(ctx, v));
   } 
+
+  void add_eq(const std::string& a, const std::string& b) {
+    add_eq({{a, one(ctx)}, {b, negone(ctx)}}, zero(ctx));
+  }
 
   void add_gt(const std::string& a, const std::string& b) {
     add_geq({{a, one(ctx)}, {b, negone(ctx)}}, negone(ctx));
@@ -1385,9 +1393,19 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, ve
         pad_positions.add_geq({{lv(dom, d), one(ct)}}, zero(ct));
         pad_positions.add_geq(max_dim - 1, lv(dom, d));
       }
+
+      for (int d = num_dims(m); d < max_dim; d++) {
+        pad_positions.add_geq({{pv(dom, d), one(ct)}}, zero(ct));
+        pad_positions.add_geq(max_dim - 1, pv(dom, d));
+      }
+
       for (int d = 0; d < num_dims(m) - 1; d++) {
         pad_positions.add_gt(lv(dom, d + 1), lv(dom, d));
       }
+    }
+
+    for (auto m : matched_dims) {
+      pad_positions.add_eq(lv(m.first.first, m.first.second), lv(m.second.first, m.second.second));
     }
 
     auto min = pad_positions.minimize({{lv(some_domain, 0), one(ct)}});
