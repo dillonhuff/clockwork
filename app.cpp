@@ -1312,6 +1312,14 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, ve
   auto padded_validity = pad_map(validity);
   auto padded_proximity = pad_map(proximity);
 
+  for (auto v : get_maps(padded_validity)) {
+    cout << tab(1) << "M = " << str(v) << endl;
+    for (auto c : constraints(v)) {
+      cout << tab(2) << str(c) << endl;
+    }
+  }
+  assert(false);
+
   vector<isl_map*> deps;
   auto finite_validity = its_range(its(padded_validity, padded_domain), padded_domain);
   cout << "Finite validity: " << str(finite_validity) << endl;

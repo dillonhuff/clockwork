@@ -1826,7 +1826,11 @@ void reaccess_no_hierarchy_test() {
   }
   read->add_store("out", "qi, qo, ao");
 
-  find_high_bandwidth_non_const_rd_reads(prg);
+  auto dom = prg.whole_iteration_domain();
+  auto valid = coalesce(prg.validity_deps());
+  clockwork_schedule(dom, valid, cpy(valid));
+  assert(false);
+  //find_high_bandwidth_non_const_rd_reads(prg);
 
   //assert(false);
   generate_optimized_code(prg);
@@ -9718,8 +9722,8 @@ void manual_unroll_test() {
 }
 
 void application_tests() {
-  grayscale_conversion_test();
   reaccess_no_hierarchy_test();
+  grayscale_conversion_test();
   //assert(false);
   reduce_1d_test();
   //print_test();
