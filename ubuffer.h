@@ -1405,6 +1405,13 @@ class UBuffer {
     Box extract_addr_box(uset* rddom, vector<size_t> sequence);
     string generate_linearize_ram_addr(const std::string& pt);
     vector<UBuffer> port_grouping(int port_width);
+
+    //helper function for port group2bank
+    void create_subbank_branch(
+            set<string> & inpt_set,
+            set<string> & outpt_set,
+            map<string, pair<isl_map*, isl_map*> > & outpt_merge,
+            map<string, string> & back_edge);
     void port_group2bank(int in_port_width, int out_port_width);
     isl_map* merge_output_pt(vector<string> merge_pt);
     pair<isl_map*, isl_map*> merge_output_pt_with_sched(vector<string> merge_pt);

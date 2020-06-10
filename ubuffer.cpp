@@ -1495,99 +1495,161 @@ void generate_code_prefix(CodegenOptions& options,
       }
       else {
 
+        create_subbank_branch(inpt_set, outpt_set, outpt_merge, back_edge);
         //replace port
-        for (auto it : outpt_merge) {
-          replace_pt(it.first, it.second.first, it.second.second);
-          //auto new_sched = dot(schedule.at(it.first), to_umap(it.second));
-          //auto new_sched = to_map(schedule.at(it.first));
-          //new_sched = set_domain_name(new_sched, domain_name(it.second));
-          //new_sched = assign_domain_to_map(new_sched, ::domain(it.second));
-          //cout << "new schedule with lib: " << str(new_sched) << endl;
-          //schedule.at(it.first) = to_umap(new_sched);
-        }
-        //replace bank with output port as new input port
-        for (auto it: back_edge) {
-          auto read = it.first;
-          auto write = it.second;
-          if (inpt_set.count(write) == 0) {
-            //shift register
+        //for (auto it : outpt_merge) {
+        //  replace_pt(it.first, it.second.first, it.second.second);
+        //  //auto new_sched = dot(schedule.at(it.first), to_umap(it.second));
+        //  //auto new_sched = to_map(schedule.at(it.first));
+        //  //new_sched = set_domain_name(new_sched, domain_name(it.second));
+        //  //new_sched = assign_domain_to_map(new_sched, ::domain(it.second));
+        //  //cout << "new schedule with lib: " << str(new_sched) << endl;
+        //  //schedule.at(it.first) = to_umap(new_sched);
+        //}
+        ////replace bank with output port as new input port
+        //for (auto it: back_edge) {
+        //  auto read = it.first;
+        //  auto write = it.second;
+        //  if (inpt_set.count(write) == 0) {
+        //    //shift register
 
-            //delay the read schedule after write
-            auto new_sched = to_map(schedule.at(read));
-            auto wr_sched = to_map(schedule.at(write));
-            new_sched = delay_sched_map(new_sched, wr_sched);
-            schedule.at(read) = to_umap(new_sched);
+        //    //delay the read schedule after write
+        //    auto new_sched = to_map(schedule.at(read));
+        //    auto wr_sched = to_map(schedule.at(write));
+        //    new_sched = delay_sched_map(new_sched, wr_sched);
+        //    schedule.at(read) = to_umap(new_sched);
 
-            remove_bank(read);
-            stack_bank bk = compute_bank_info(write, read);
-            add_bank_between(write, read, bk);
-          }
-          else {
-            remove_bank(read);
-            outpt_set.insert(read);
-          }
-        }
-        //create a supper bank between inpt_set and outpt_set
-        stack_bank super_bk = compute_bank_info(inpt_set, outpt_set);
-        for (auto inpt: inpt_set) {
-          for (auto outpt: outpt_set) {
-            cout << "Merge port: " << outpt << endl;
-            add_bank_between(inpt, outpt, super_bk);
-          }
-        }
+        //    remove_bank(read);
+        //    stack_bank bk = compute_bank_info(write, read);
+        //    add_bank_between(write, read, bk);
+        //  }
+        //  else {
+        //    remove_bank(read);
+        //    outpt_set.insert(read);
+        //  }
+        //}
+        ////create a supper bank between inpt_set and outpt_set
+        //stack_bank super_bk = compute_bank_info(inpt_set, outpt_set);
+        //for (auto inpt: inpt_set) {
+        //  for (auto outpt: outpt_set) {
+        //    cout << "Merge port: " << outpt << endl;
+        //    add_bank_between(inpt, outpt, super_bk);
+        //  }
+        //}
 
 
         //reset the grouping counter
         cout << "Reset Counter" << endl;
         group_in_port_width = 0;
         group_out_port_width = 0;
-        inpt_set.clear();
-        outpt_set.clear();
-        outpt_merge.clear();
-        back_edge.clear();
+        //inpt_set.clear();
+        //outpt_set.clear();
+        //outpt_merge.clear();
+        //back_edge.clear();
         cnt ++;
       }
     }
     //chances are that we have some leftover
     if (!inpt_set.empty()) {
-      for (auto it : outpt_merge) {
-        replace_pt(it.first, it.second.first, it.second.second);
-        //auto new_sched = to_map(schedule.at(it.first));
-        //new_sched = set_domain_name(new_sched, domain_name(it.second));
-        //new_sched = assign_domain_to_map(new_sched, ::domain(it.second));
-        //cout << "new schedule with lib: " << str(new_sched) << endl;
-        //schedule.at(it.first) = to_umap(new_sched);
-      }
-      for (auto it: back_edge) {
-        auto read = it.first;
-        auto write = it.second;
-        if (inpt_set.count(write) == 0) {
-          //shift register
+      create_subbank_branch(inpt_set, outpt_set, outpt_merge, back_edge);
 
-          //delay the read schedule after write
-          auto new_sched = to_map(schedule.at(read));
-          auto wr_sched = to_map(schedule.at(write));
-          new_sched = delay_sched_map(new_sched, wr_sched);
-          schedule.at(read) = to_umap(new_sched);
+      //for (auto it : outpt_merge) {
+      //  replace_pt(it.first, it.second.first, it.second.second);
+      //  //auto new_sched = to_map(schedule.at(it.first));
+      //  //new_sched = set_domain_name(new_sched, domain_name(it.second));
+      //  //new_sched = assign_domain_to_map(new_sched, ::domain(it.second));
+      //  //cout << "new schedule with lib: " << str(new_sched) << endl;
+      //  //schedule.at(it.first) = to_umap(new_sched);
+      //}
+      //for (auto it: back_edge) {
+      //  auto read = it.first;
+      //  auto write = it.second;
+      //  if (inpt_set.count(write) == 0) {
+      //    //shift register
 
-          remove_bank(read);
-          stack_bank bk = compute_bank_info(write, read);
-          add_bank_between(write, read, bk);
-        }
-        else {
-          remove_bank(read);
-          outpt_set.insert(read);
-        }
+      //    //delay the read schedule after write
+      //    auto new_sched = to_map(schedule.at(read));
+      //    auto wr_sched = to_map(schedule.at(write));
+      //    new_sched = delay_sched_map(new_sched, wr_sched);
+      //    schedule.at(read) = to_umap(new_sched);
+
+      //    remove_bank(read);
+      //    stack_bank bk = compute_bank_info(write, read);
+      //    add_bank_between(write, read, bk);
+      //  }
+      //  else {
+      //    remove_bank(read);
+      //    outpt_set.insert(read);
+      //  }
+      //}
+      ////create a supper bank between inpt_set and outpt_set
+      //stack_bank super_bk = compute_bank_info(inpt_set, outpt_set);
+      //for (auto inpt: inpt_set) {
+      //  for (auto outpt: outpt_set) {
+      //    cout << "Merge port: " << outpt << endl;
+      //    add_bank_between(inpt, outpt, super_bk);
+      //  }
+      //}
+    }
+  }
+
+  /* This is the function to transform the chain buffer structure into a tree
+   * Where it create a sub-bank with all the backedge information
+   *
+   * -[]-[]-[_______]-[]-[]-[_______]-[]-[]
+   *
+   * =>
+   *
+   * -[]-[]
+   * |
+   * | _______
+   * -[ 1-in  ]-[]-[]
+   *  [_2-out_]-[]-[]
+   * */
+
+  void UBuffer::create_subbank_branch(
+          set<string> & inpt_set,
+          set<string> & outpt_set,
+          map<string, pair<isl_map*, isl_map*> > & outpt_merge,
+          map<string, string> & back_edge) {
+    for (auto it : outpt_merge) {
+      replace_pt(it.first, it.second.first, it.second.second);
+    }
+    for (auto it: back_edge) {
+      auto read = it.first;
+      auto write = it.second;
+      if (inpt_set.count(write) == 0) {
+        //shift register
+
+        //delay the read schedule after write
+        auto new_sched = to_map(schedule.at(read));
+        auto wr_sched = to_map(schedule.at(write));
+        new_sched = delay_sched_map(new_sched, wr_sched);
+        schedule.at(read) = to_umap(new_sched);
+
+        remove_bank(read);
+        stack_bank bk = compute_bank_info(write, read);
+        add_bank_between(write, read, bk);
       }
-      //create a supper bank between inpt_set and outpt_set
-      stack_bank super_bk = compute_bank_info(inpt_set, outpt_set);
-      for (auto inpt: inpt_set) {
-        for (auto outpt: outpt_set) {
-          cout << "Merge port: " << outpt << endl;
-          add_bank_between(inpt, outpt, super_bk);
-        }
+      else {
+        remove_bank(read);
+        outpt_set.insert(read);
       }
     }
+    //create a supper bank between inpt_set and outpt_set
+    stack_bank super_bk = compute_bank_info(inpt_set, outpt_set);
+    for (auto inpt: inpt_set) {
+      for (auto outpt: outpt_set) {
+        cout << "Merge port: " << outpt << endl;
+        add_bank_between(inpt, outpt, super_bk);
+      }
+    }
+
+    //clear the temporary storage
+    inpt_set.clear();
+    outpt_set.clear();
+    outpt_merge.clear();
+    back_edge.clear();
   }
 
   vector<UBuffer> UBuffer::port_grouping(int port_width) {
