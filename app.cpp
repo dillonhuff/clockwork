@@ -1,5 +1,9 @@
 #include "app.h"
 
+std::string lv(const string& n, const int d) {
+  return n + "_" + str(d);
+}
+
 QExpr delayvar(const string& n) {
   return qexpr(delay_var_name(n));
 }
@@ -38,6 +42,14 @@ struct ilp_builder {
     variable_positions[name] = next_pos;
     s = isl_basic_set_add_dims(s, isl_dim_set, 1);
     s = isl_basic_set_set_dim_name(s, isl_dim_set, next_pos, name.c_str());
+  }
+
+  void add_geq(const int v, const std::string& a) {
+    add_geq({{a, negone(ctx)}}, isl_val_int_from_si(ctx, v));
+  } 
+
+  void add_gt(const std::string& a, const std::string& b) {
+    add_geq({{a, one(ctx)}, {b, negone(ctx)}}, negone(ctx));
   }
 
   void add_geq(const std::map<string, isl_val*>& coeffs, isl_val* constant) {
@@ -1348,11 +1360,38 @@ map<string, vector<isl_aff*> >
 clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, vector<string> >& high_bandwidth_deps) {
 
   auto matched_dims = get_dims_to_match(validity);
+  int max_dim = -1;
+  for (auto m : get_sets(domain)) {
+    if (num_dims(m) > max_dim) {
+      max_dim = num_dims(m);
+    }
+  }
+
+  cout << "max dim = " << max_dim << endl;
   cout << "Dims to match: " << endl;
   for (auto d : matched_dims) {
     cout << tab(1)
       << d.first.first << "[" << d.first.second << "]" << ", "
       << d.second.first << "[" << d.second.second << "]" << endl;
+  }
+  {
+    auto ct = ctx(domain);
+    ilp_builder pad_positions(ct);
+    string some_domain = "";
+    for (auto m : get_sets(domain)) {
+      string dom = name(m);
+      some_domain = dom;
+      for (int d = 0; d < num_dims(m); d++) {
+        pad_positions.add_geq({{lv(dom, d), one(ct)}}, zero(ct));
+        pad_positions.add_geq(max_dim - 1, lv(dom, d));
+      }
+      for (int d = 0; d < num_dims(m) - 1; d++) {
+        pad_positions.add_gt(lv(dom, d + 1), lv(dom, d));
+      }
+    }
+
+    auto min = pad_positions.minimize({{lv(some_domain, 0), one(ct)}});
+    cout << "Solution point: " << str(pad_positions.solution_point) << endl;
   }
   assert(false);
 

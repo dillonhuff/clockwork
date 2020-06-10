@@ -34,6 +34,7 @@ using std::map;
 using std::string;
 
 std::string name(isl_space* const s);
+std::string name(isl_set* const s);
 isl_pw_aff* cpy(isl_pw_aff* const s);
 isl_multi_aff* cpy(isl_multi_aff* const s);
 
