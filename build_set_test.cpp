@@ -1408,6 +1408,42 @@ void insert_pad_loops(prog& prg, const map<string, vector<int> >& pad_indexes) {
   insert_pad_loops(0, prg.root, pad_indexes);
 }
 
+op* find_op(const std::string& target_op, prog& prg) {
+  for (auto v : prg.all_ops()) {
+    if (v->name == target_op) {
+      return v;
+    }
+  }
+  cout << "Error: No op named " << target_op << " in" << endl;
+  prg.pretty_print();
+  assert(false);
+}
+
+std::set<string> buffers_written(op* p) {
+  assert(!p->is_loop);
+
+  std::set<string> bufs;
+  for (auto b : p->consumes_pair()) {
+    bufs.insert(b.first);
+  }
+  return bufs;
+}
+
+bool writes(const std::string& target_buf, op* p) {
+  return elem(target_buf, buffers_written(p));
+}
+
+op* find_writer(const std::string& target_buf, prog& prg) {
+  vector<op*> writers;
+  for (auto v : prg.all_ops()) {
+    if (writes(target_buf, v)) {
+      writers.push_back(v);
+    }
+  }
+  assert(writers.size() == 1);
+  return writers.at(0);
+}
+
 void reaccess_no_hierarchy_test() {
   prog prg;
   prg.compute_unit_file = "vec_access.h";
@@ -1455,6 +1491,16 @@ void reaccess_no_hierarchy_test() {
   cout << "After padding..." << endl;
   prg.pretty_print();
 
+  string target_op = "output";
+  string target_buf = "bufl2";
+
+  op* target = find_op(target_op, prg);
+  op* source = find_writer(target_buf, prg);
+
+  cout << "target = " << target->name << endl;
+  cout << "writer = " << source->name << endl;
+  assert(false);
+
   {
     auto dom = prg.whole_iteration_domain();
     auto valid = coalesce(prg.validity_deps());
@@ -1465,7 +1511,7 @@ void reaccess_no_hierarchy_test() {
     }
   }
 
-  assert(false);
+  //assert(false);
 
 //#ifdef COREIR
   //auto opt_sched = prg.optimized_schedule();
