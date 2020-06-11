@@ -1408,6 +1408,16 @@ void insert_pad_loops(prog& prg, const map<string, vector<int> >& pad_indexes) {
   insert_pad_loops(0, prg.root, pad_indexes);
 }
 
+op* find_loop(const std::string& target_op, prog& prg) {
+  for (auto v : prg.all_loops()) {
+    if (v->name == target_op) {
+      return v;
+    }
+  }
+  cout << "Error: No loop named " << target_op << " in" << endl;
+  prg.pretty_print();
+  assert(false);
+}
 op* find_op(const std::string& target_op, prog& prg) {
   for (auto v : prg.all_ops()) {
     if (v->name == target_op) {
@@ -1511,16 +1521,27 @@ void reaccess_no_hierarchy_test() {
   cout << "Vars: " << source->name << " -> " << str(map_find(source, vars)) << endl;
 
   string last_shared_level = "";
+  int num_unshared_levels = target_vars.size();
   for (int i = 0; i < source_vars.size(); i++) {
     if (target_vars[i] != source_vars[i]) {
       break;
     }
     last_shared_level = target_vars[i];
+    num_unshared_levels--;
   }
   assert(last_shared_level != "");
 
   cout << "last shared level = " << last_shared_level << endl;
 
+  op* loop = find_loop(last_shared_level, prg);
+  string lp_loader = "sw_loader_from_" + source->name + "_to_" + target->name;
+  op* next = loop;
+  for (int i = 0; i < num_unshared_levels; i++) {
+    next = next->add_loop(lp_loader + "_" + str(i), 0, 1);
+  }
+
+  cout << "After loop insertion" << endl;
+  prg.pretty_print();
   assert(false);
 
   {
