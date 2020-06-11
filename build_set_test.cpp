@@ -1732,18 +1732,22 @@ void reaccess_no_hierarchy_test() {
   string lp_loader = "sw_loader_from_" + source->name + "_to_" + target->name;
   //op* next = loop;
   vector<string> iter_vars;
+  vector<string> read_vars;
   op* next =
     loop->add_loop_after(source, lp_loader + "_" + str(0), 0, 1);
   iter_vars.push_back(next->name);
   for (int i = 1; i < num_unshared_levels; i++) {
     next = next->add_loop(lp_loader + "_" + str(i), 0, 1);
     iter_vars.push_back(next->name);
+    read_vars.push_back(next->name);
   }
+  reverse(iter_vars);
+  reverse(read_vars);
 
   string l1_buf = target_buf + "_" + target->name + "_l1";
   auto cpy_op = next->add_op("load_" + target_buf + "_to_" + target->name);
   cpy_op->add_store(l1_buf, comma_list(iter_vars));
-  cpy_op->add_load(target_buf, "qo");
+  cpy_op->add_load(target_buf, comma_list(read_vars));
 
   for (auto v : target->consume_locs_pair) {
     if (v.first == target_buf) {
@@ -1751,13 +1755,12 @@ void reaccess_no_hierarchy_test() {
       cout << tab(1) << str(mv) << endl;
     }
   }
-  //assert(false);
 
   target->replace_reads_from(target_buf, l1_buf);
 
   cout << "After loop insertion" << endl;
   prg.pretty_print();
-  //assert(false);
+  assert(false);
 
   {
     auto dom = prg.whole_iteration_domain();
@@ -9666,12 +9669,12 @@ void manual_unroll_test() {
 }
 
 void application_tests() {
+  reaccess_no_hierarchy_test();
   mini_conv_halide_test();
   conv_3_3_halide_test();
   reduce_1d_test();
   reduce_2d_test();
   halide_cascade_test();
-  reaccess_no_hierarchy_test();
   halide_frontend_test();
   grayscale_conversion_test();
   //assert(false);
