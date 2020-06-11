@@ -1724,6 +1724,7 @@ void reaccess_no_hierarchy_test() {
     last_shared_level = target_vars[i];
     num_unshared_levels--;
   }
+  int num_shared_levels = target_vars.size() - num_unshared_levels;
   assert(last_shared_level != "");
 
   cout << "last shared level = " << last_shared_level << endl;
@@ -1756,7 +1757,15 @@ void reaccess_no_hierarchy_test() {
     }
   }
 
+  string upsample_var = target_vars.at(num_shared_levels);
   target->replace_reads_from(target_buf, l1_buf);
+  for (auto& v : target->consume_locs_pair) {
+    if (v.first == l1_buf) {
+      for (auto& a : v.second) {
+        a.second = a.second + ", " + upsample_var;
+      }
+    }
+  }
 
   cout << "After loop insertion" << endl;
   prg.pretty_print();
