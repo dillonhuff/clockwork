@@ -264,6 +264,57 @@ struct ir_node {
     return cl;
   }
 
+  op* container_child(op* source) {
+    for (auto c : children) {
+      if (source == c) {
+        return c;
+      }
+    }
+
+    for (auto c : children) {
+      auto sr = c->container_child(source);
+      if (sr != nullptr) {
+        return c;
+      }
+    }
+    return nullptr;
+  }
+
+  op* add_loop_after(op* source, const std::string& name, const int l, const int u) {
+    assert(is_loop);
+
+    op* sr = container_child(source); 
+    assert(sr != nullptr);
+
+    cout << "Before inserting " << name << " we have " << children.size() << " children" << endl;
+
+    auto lp = new op();
+    lp->name = name;
+    lp->ctx = ctx;
+    lp->parent = this;
+    lp->is_loop = true;
+    lp->start = l;
+    lp->end_exclusive = u;
+    vector<op*> new_children;
+    bool found_sr = false;
+    for (auto c : children) {
+      new_children.push_back(c);
+      if (c == sr) {
+        new_children.push_back(lp);
+        found_sr = true;
+      }
+    }
+    cout << "After inserting " << name << " we have " << children.size() << " children" << endl;
+
+
+    assert(found_sr);
+    assert(new_children.size() == children.size() + 1);
+
+    this->children = new_children;
+
+    return lp;
+  }
+
   op* add_loop(const std::string& name, const int l, const int u) {
     assert(is_loop);
     //assert(!elem(name, all_existing_loop_names()));
