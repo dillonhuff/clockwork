@@ -1536,17 +1536,21 @@ void reaccess_no_hierarchy_test() {
   op* loop = find_loop(last_shared_level, prg);
   string lp_loader = "sw_loader_from_" + source->name + "_to_" + target->name;
   //op* next = loop;
+  vector<string> iter_vars;
   op* next =
     loop->add_loop_after(source, lp_loader + "_" + str(0), 0, 1);
+  iter_vars.push_back(next->name);
   for (int i = 1; i < num_unshared_levels; i++) {
     next = next->add_loop(lp_loader + "_" + str(i), 0, 1);
+    iter_vars.push_back(next->name);
   }
 
   string l1_buf = target_buf + "_" + target->name + "_l1";
   auto cpy_op = next->add_op("load_" + target_buf + "_to_" + target->name);
-  cpy_op->add_store(l1_buf, "qo");
+  cpy_op->add_store(l1_buf, comma_list(iter_vars));
   cpy_op->add_load(target_buf, "qo");
 
+  target->replace_reads_from(target_buf, l1_buf);
   cout << "After loop insertion" << endl;
   prg.pretty_print();
   assert(false);

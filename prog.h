@@ -91,6 +91,14 @@ struct ir_node {
 
   ir_node() : parent(nullptr), is_loop(false), unroll_factor(1) {}
 
+  void replace_reads_from(const std::string& source_buf, const std::string& replacement) {
+    for (auto& b : consume_locs_pair) {
+      if (b.first == source_buf) {
+        b.first = replacement;
+      }
+    }
+  }
+
   void replace_child(op* c, op* replacement) {
     for (int i = 0; i < (int) children.size(); i++) {
       if (children.at(i) == c) {
