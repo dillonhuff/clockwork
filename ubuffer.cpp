@@ -720,7 +720,7 @@ void generate_code_prefix(CodegenOptions& options,
       auto overlap = its(written, read);
       auto overlapped_reads = its_range(buf.access_map.at(outpt), overlap);
       auto overlapped_read_set = domain(overlapped_reads);
-      auto overlapped_read_condition =
+      uset* overlapped_read_condition =
         gist(overlapped_read_set, (write_ops));
 
       in_ports_to_conditions[inpt] =
@@ -730,7 +730,6 @@ void generate_code_prefix(CodegenOptions& options,
     if (possible_ports.size() == 1) {
       string inpt = possible_ports.at(0);
       string peeked_val = delay_string(options, out, inpt, outpt, buf);
-      //extract_box(range(buf.access_map.at(outpt)));
       string access_val = buf.generate_linearize_ram_addr(outpt);
       buf.get_ram_address(outpt);
       sel.bank_conditions.push_back("1");
@@ -739,7 +738,10 @@ void generate_code_prefix(CodegenOptions& options,
       out << tab(1) << "auto value_" << inpt << " = " << peeked_val << ";" << endl;
       out << tab(1) << "return value_" << inpt << ";" << endl;
     } else {
+      //assert(false);
       for (auto port : possible_ports) {
+        auto lm = buf.get_lexmax_events(port, outpt);
+        cout << "lexmax events = " << str(lm) << endl;
         out << tab(1) << "if (" << map_find(port, in_ports_to_conditions) << ") {" << endl;
         string peeked_val = delay_string(options, out, port, outpt, buf);
         sel.bank_conditions.push_back("1");
@@ -750,6 +752,7 @@ void generate_code_prefix(CodegenOptions& options,
         out << tab(1) << "}" << endl << endl;
         out << tab(1) << endl;
       }
+      //assert(false);
     }
 
     select_debug_assertions(options, out, outpt, buf);
