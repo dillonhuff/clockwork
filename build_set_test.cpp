@@ -1734,11 +1734,12 @@ void reaccess_no_hierarchy_test() {
   //op* next = loop;
   vector<string> iter_vars;
   vector<string> read_vars;
+  vector<pair<int, int> > bounds{{0, 2}, {0, 8}, {0, 16}};
   op* next =
-    loop->add_loop_after(source, lp_loader + "_" + str(0), 0, 1);
+    loop->add_loop_after(source, lp_loader + "_" + str(0), bounds.at(0).first, bounds.at(0).second);
   iter_vars.push_back(next->name);
   for (int i = 1; i < num_unshared_levels; i++) {
-    next = next->add_loop(lp_loader + "_" + str(i), 0, 1);
+    next = next->add_loop(lp_loader + "_" + str(i), bounds.at(i).first, bounds.at(i).second);
     iter_vars.push_back(next->name);
     read_vars.push_back(next->name);
   }
