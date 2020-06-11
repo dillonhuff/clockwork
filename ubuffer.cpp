@@ -717,9 +717,19 @@ void generate_code_prefix(CodegenOptions& options,
     for (auto inpt : possible_ports) {
       auto write_ops =
         domain(buf.access_map.at(inpt));
+      auto read_ops = 
+        domain(buf.access_map.at(outpt));
       auto overlap = its(write_ops, producers_for_outpt);
-      in_ports_to_conditions[inpt] =
-        codegen_c(overlap);
+
+      if (!empty(overlap)) {
+        in_ports_to_conditions[inpt] = "true";
+      } else {
+        in_ports_to_conditions[inpt] = "false";
+      }
+
+      //auto overlap_gist = gist(overlap, read_ops);
+      //in_ports_to_conditions[inpt] =
+        //"/* " + str(overlap_gist) + " */ " + codegen_c(overlap_gist);
 
       //auto write_ops =
         //domain(buf.access_map.at(outpt));

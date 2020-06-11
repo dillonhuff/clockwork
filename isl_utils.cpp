@@ -1817,14 +1817,19 @@ vector<string> collect_sched_vec(isl_set* const s) {
 }
 
 std::string codegen_c(isl_union_set* s) {
+  if (empty(s)) {
+    return "false";
+  }
+
   vector<isl_set*> code_holder;
   isl_union_set_foreach_set(s, uset_collect_set, &code_holder);
   vector<string> set_strings;
   for (auto hc : code_holder) {
     set_strings.push_back(codegen_c(hc));
   }
+
   if (set_strings.size() == 0) {
-    return "false";
+    return "true";
   }
   return sep_list(set_strings, "(", ")", " || ");
 }
