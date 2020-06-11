@@ -45,6 +45,10 @@ to_pw_multi_aff(isl_ctx* context,
 }
 
 string str(const piecewise_address& addr) {
+  if (addr.size() == 1 && addr.at(0).first == "") {
+    return "[" + addr.at(0).second + "]";
+  }
+
   string s = "";
   for (auto p : addr) {
     s += p.first + " : " + p.second + ",";

@@ -1542,7 +1542,10 @@ void reaccess_no_hierarchy_test() {
     next = next->add_loop(lp_loader + "_" + str(i), 0, 1);
   }
 
-  next->add_op("load_" + target_buf + "_to_" + target->name);
+  string l1_buf = target_buf + "_" + target->name + "_l1";
+  auto cpy_op = next->add_op("load_" + target_buf + "_to_" + target->name);
+  cpy_op->add_store(l1_buf, "qo");
+  cpy_op->add_load(target_buf, "qo");
 
   cout << "After loop insertion" << endl;
   prg.pretty_print();
