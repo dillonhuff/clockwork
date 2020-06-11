@@ -700,7 +700,6 @@ void generate_code_prefix(CodegenOptions& options,
 
     out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
 
-
     vector<string> possible_ports;
     for (auto pt : buf.get_in_ports()) {
       if (buf.has_bank_between(pt, outpt)) {
@@ -709,22 +708,33 @@ void generate_code_prefix(CodegenOptions& options,
     }
 
     map<string, string> in_ports_to_conditions;
+    // Singleton map from all read operations on this port to the
+    // corresponding write operation that produces the data being
+    // read.
+    umap* reads_to_sources = buf.get_lexmax_events(outpt);
+    uset* producers_for_outpt = range(reads_to_sources);
 
     for (auto inpt : possible_ports) {
       auto write_ops =
-        domain(buf.access_map.at(outpt));
-      auto written =
-        range(buf.access_map.at(inpt));
-      auto read =
-        range(buf.access_map.at(outpt));
-      auto overlap = its(written, read);
-      auto overlapped_reads = its_range(buf.access_map.at(outpt), overlap);
-      auto overlapped_read_set = domain(overlapped_reads);
-      uset* overlapped_read_condition =
-        gist(overlapped_read_set, (write_ops));
-
+        domain(buf.access_map.at(inpt));
+      auto overlap = its(write_ops, producers_for_outpt);
       in_ports_to_conditions[inpt] =
-        codegen_c(overlapped_read_condition);
+        codegen_c(overlap);
+
+      //auto write_ops =
+        //domain(buf.access_map.at(outpt));
+      //auto written =
+        //range(buf.access_map.at(inpt));
+      //auto read =
+        //range(buf.access_map.at(outpt));
+      //auto overlap = its(written, read);
+      //auto overlapped_reads = its_range(buf.access_map.at(outpt), overlap);
+      //auto overlapped_read_set = domain(overlapped_reads);
+      //uset* overlapped_read_condition =
+        //gist(overlapped_read_set, (write_ops));
+
+      //in_ports_to_conditions[inpt] =
+        //codegen_c(overlapped_read_condition);
     }
 
     if (possible_ports.size() == 1) {
@@ -962,7 +972,7 @@ void generate_code_prefix(CodegenOptions& options,
     generate_vivado_tcl(buf);
   }
 
-  umap* UBuffer::get_lexmax_events(const std::string& outpt) {
+  umap* UBuffer::get_lexmax_events(const std::string& outpt) const {
     umap* src_map = nullptr;
     for (auto inpt : get_in_ports()) {
       auto beforeAcc = lex_gt(schedule.at(outpt), schedule.at(inpt));

@@ -1823,6 +1823,9 @@ std::string codegen_c(isl_union_set* s) {
   for (auto hc : code_holder) {
     set_strings.push_back(codegen_c(hc));
   }
+  if (set_strings.size() == 0) {
+    return "false";
+  }
   return sep_list(set_strings, "(", ")", " || ");
 }
 

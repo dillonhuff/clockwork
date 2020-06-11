@@ -29,16 +29,9 @@ endif
 
 TEST_FILES = build_set_test.cpp
 LIB_CPP_FILES = qexpr.cpp app.cpp isl_utils.cpp prog.cpp codegen.cpp minihls.cpp ubuffer.cpp coreir_backend.cpp coreir_lib.cpp
+LIB_HEADER_FILES = $(patsubst %.cpp,%.h,$(LIB_CPP_FILES))
 
 OBJ_FILES := $(patsubst %.cpp,%.o,$(LIB_CPP_FILES))
-
-# Works on rice and my machine
-#$(TARGET): $(LIB_CPP_FILES) $(TEST_FILES)  # clkwrk.a clockwork.o
-	#$(CXX) $(CXX_FLAGS) $^ $(LINK_FLAGS) -o $@
-
-# Works on rice and my machine
-#$(TARGET): $(OBJ_FILES) clockwork.o
-	#$(CXX) $(CXX_FLAGS) $^ $(LINK_FLAGS) -o $@
 
 $(TARGET): libclkwrk.$(LIB_EXT) $(TARGET).o
 	$(CXX) $(CXX_FLAGS) $(TARGET).o $(LINK_FLAGS) -o $@
@@ -53,7 +46,7 @@ else
 	$(CXX) $(CXX_FLAGS) -g -fPIC -rdynamic -shared $^ -o lib/$@
 endif
 
-%.o: %.cpp %.h
+%.o: %.cpp $(LIB_HEADER_FILES)
 	$(CXX) $(CXX_FLAGS) -c -o $@ $<
 
 clean:

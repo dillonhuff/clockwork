@@ -59,6 +59,7 @@ prog mini_conv_halide_fixed() {
 
   return prg;
 }
+
 prog mini_conv_halide() {
   prog prg;
   prg.compute_unit_file = "conv_3_3_compute.h";
@@ -6355,12 +6356,6 @@ prog halide_cascade() {
 }
 
 void mini_conv_halide_test() {
-  prog prg_fixed = mini_conv_halide_fixed();
-  prg_fixed.pretty_print();
-
-  generate_optimized_code(prg_fixed);
-  generate_regression_testbench(prg_fixed);
-  vector<string> optimized_res = run_regression_tb(prg_fixed);
 
   prog prg = mini_conv_halide();
   prg.pretty_print();
@@ -6368,6 +6363,13 @@ void mini_conv_halide_test() {
   generate_optimized_code(prg);
   generate_regression_testbench(prg);
   vector<string> auto_gen_res = run_regression_tb(prg);
+
+  prog prg_fixed = mini_conv_halide_fixed();
+  prg_fixed.pretty_print();
+
+  generate_optimized_code(prg_fixed);
+  generate_regression_testbench(prg_fixed);
+  vector<string> optimized_res = run_regression_tb(prg_fixed);
   assert(optimized_res == auto_gen_res);
 }
 

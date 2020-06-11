@@ -1902,6 +1902,7 @@ void generate_optimized_code(CodegenOptions& options, prog& prg) {
 
   cout << "Buffers..." << endl;
   for (auto b : buffers) {
+    //b.second.generate_bank_and_merge(options);
     cout << b.second << endl;
   }
 

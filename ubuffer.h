@@ -1174,7 +1174,7 @@ class UBuffer {
       return s;
     }
 
-    isl_union_map* global_schedule() {
+    isl_union_map* global_schedule() const {
       umap* s = isl_union_map_read_from_str(ctx, "{ }");
       for (auto other : schedule) {
         s = unn(s, (cpy(other.second)));
@@ -1381,7 +1381,7 @@ class UBuffer {
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
 
     void port_reduction();
-    umap* get_lexmax_events(const std::string& outpt);
+    umap* get_lexmax_events(const std::string& outpt) const;
     umap* get_lexmax_events(const std::string& inpt, const std::string& outpt);
     int compute_dd_bound(const std::string & read_port, const std::string & write_port, bool is_max);
     isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
@@ -1432,7 +1432,7 @@ std::ostream& operator<<(std::ostream& out, const AccessPattern& acc_pattern) {
 static inline
 std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
   out << "--- " << buf.name << endl;
-  out << "\t---- In ports" << endl;
+  out << "\t---- " << buf.get_in_ports().size() << " in ports" << endl;
 
   //add a copy for compute_max_dd function
   UBuffer tmp = buf;
@@ -1444,9 +1444,10 @@ std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
     out << "\t\t\tbuffer capacity: " << compute_max_dd(tmp, inpt) << endl;
     out << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
     out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
+    out << endl;
   }
 
-  out << "\t---- Out ports" << endl;
+  out << "\t---- " << buf.get_out_ports().size() << " out ports:" << endl;
   for (auto inpt : buf.get_out_ports()) {
     out << "\t\t" << inpt << endl;
     out << "\t\t\tdom : " << str(buf.domain.at(inpt)) << endl;
@@ -1454,6 +1455,9 @@ std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
     out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
     out << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
     out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
+    //out << "\t\t\tlexmax events: " << str(buf.get_lexmax_events(inpt)) << endl;
+
+    out << endl;
   }
 
 
