@@ -1423,7 +1423,7 @@ std::set<string> buffers_written(op* p) {
   assert(!p->is_loop);
 
   std::set<string> bufs;
-  for (auto b : p->consumes_pair()) {
+  for (auto b : p->produce_locs) {
     bufs.insert(b.first);
   }
   return bufs;
@@ -1499,6 +1499,28 @@ void reaccess_no_hierarchy_test() {
 
   cout << "target = " << target->name << endl;
   cout << "writer = " << source->name << endl;
+
+
+  auto vars = prg.iter_vars();
+  auto target_vars = map_find(target, vars);
+  auto source_vars = map_find(source, vars);
+
+  assert(target_vars.size() == source_vars.size());
+
+  cout << "Vars: " << target->name << " -> " << str(map_find(target, vars)) << endl;
+  cout << "Vars: " << source->name << " -> " << str(map_find(source, vars)) << endl;
+
+  string last_shared_level = "";
+  for (int i = 0; i < source_vars.size(); i++) {
+    if (target_vars[i] != source_vars[i]) {
+      break;
+    }
+    last_shared_level = target_vars[i];
+  }
+  assert(last_shared_level != "");
+
+  cout << "last shared level = " << last_shared_level << endl;
+
   assert(false);
 
   {
@@ -6027,7 +6049,7 @@ prog halide_cascade() {
   prg.buffer_port_widths["hw_output_stencil"] = 16;
 
 
-  int size = 6200;
+  int size = 64;
 //consuming hw_input.stencil
 ////producing conv1.stencil
   auto loop_conv1_s0_y = prg.add_loop("conv1_s0_y", 0, size);
@@ -6134,7 +6156,7 @@ void halide_cascade_test() {
     cout << tab(2) << "ma = " << str(ma) << endl;
   }
 
-  generate_optimized_code(prg);
+  //generate_optimized_code(prg);
 
   //regression_test(prg);
 }
@@ -9373,8 +9395,8 @@ void manual_unroll_test() {
 }
 
 void application_tests() {
-  reaccess_no_hierarchy_test();
   halide_cascade_test();
+  reaccess_no_hierarchy_test();
   halide_frontend_test();
   grayscale_conversion_test();
   //assert(false);
