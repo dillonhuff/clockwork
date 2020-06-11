@@ -1204,3 +1204,18 @@ prog duplicate_interface(prog& p);
 
 vector<pair<string, string> > incoming_bundles(op* op, map<string, UBuffer>& buffers, prog& prg);
 vector<pair<string, string> > outgoing_bundles(op* op, map<string, UBuffer>& buffers, prog& prg);
+
+
+void generate_regression_testbench(prog& prg);
+void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers);
+
+
+std::vector<std::string> run_regression_tb(const std::string& name);
+
+std::vector<std::string> run_regression_tb(prog& prg);
+
+
+void run_tb(prog& prg);
+
+void regression_test(prog& prg);
+

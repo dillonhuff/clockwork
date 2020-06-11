@@ -984,6 +984,8 @@ void generate_code_prefix(CodegenOptions& options,
 
   umap* UBuffer::get_lexmax_events(const std::string& outpt) const {
     umap* src_map = nullptr;
+    cout << "Buffer = " << name << endl;
+    assert(get_in_ports().size() > 0);
     for (auto inpt : get_in_ports()) {
       auto beforeAcc = lex_gt(schedule.at(outpt), schedule.at(inpt));
       if (src_map == nullptr) {

@@ -1963,3 +1963,221 @@ incoming_bundles(op* op,
   }
   return incoming;
 }
+
+
+void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
+  ofstream rgtb("regression_tb_" + prg.name + ".cpp");
+  rgtb << "#include <fstream>" << endl;
+  rgtb << "#include \"" << prg.name << ".h\"" << endl << endl;
+
+  rgtb << "int main() {" << endl;
+  rgtb << tab(1) << "ofstream in_pix(\"" << "input_pixels_regression_result_" << prg.name << ".txt\");" << endl;
+  rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << ".txt\");" << endl;
+
+  vector<string> optimized_streams;
+  for (auto in : prg.ins) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_out_bundles().size() == 1);
+    auto bundle = pick(buf.get_out_bundles());
+
+    rgtb << tab(1) << "HWStream<" << buf.bundle_type_string(bundle) << " > " << bundle << ";" << endl;
+    optimized_streams.push_back(bundle);
+  }
+  for (auto out : prg.outs) {
+    assert(contains_key(out, buffers));
+    auto& buf = buffers.at(out);
+    assert(buf.get_in_bundles().size() == 1);
+    auto bundle = pick(buf.get_in_bundles());
+
+    rgtb << tab(1) << "HWStream<" << buf.bundle_type_string(bundle) << " > " << bundle << ";" << endl;
+    optimized_streams.push_back(bundle);
+  }
+
+  rgtb << endl << endl;
+
+  rgtb << tab(1) << "// Loading input data" << endl;
+  for (auto in : prg.ins) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_out_bundles().size() == 1);
+    auto bundle = pick(buf.get_out_bundles());
+    int port_width = buf.port_width(in);
+    int bundle_width = buf.port_bundle_width(bundle);
+
+    auto cmap = prg.consumer_map(in);
+    auto read_map = inv(cmap);
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    int num_pushes = int_upper_bound(range_card);
+
+    vector<string> pts = buf.port_bundles.at(bundle);
+    int num_ports = pts.size();
+
+    rgtb << tab(1) << "// cmap    : " << str(cmap) << endl;
+    rgtb << tab(1) << "// read map: " << str(read_map) << endl;
+    rgtb << tab(1) << "// rng     : " << str(rng) << endl;
+
+    rgtb << tab(1) << "for (int i = 0; i < " << num_pushes << "; i++) {" << endl;
+    rgtb << tab(2) << buf.bundle_type_string(bundle) << " in_val;" << endl;
+    for (int p = 0; p < num_ports; p++) {
+      string next_val = str(num_ports) + "*i + " + str(p);
+      rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
+      rgtb << tab(2) << "in_pix << in_val << endl;" << endl;
+    }
+    rgtb << tab(2) << bundle << ".write(in_val);" << endl;
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+
+  rgtb << tab(1) << prg.name << "(" << comma_list(optimized_streams) << ");" << endl << endl;
+
+  for (auto out : prg.outs) {
+    assert(contains_key(out, buffers));
+    auto& buf = buffers.at(out);
+    assert(buf.get_in_bundles().size() == 1);
+    auto bundle = pick(buf.get_in_bundles());
+
+    auto cmap = prg.producer_map(out);
+    auto read_map = inv(cmap);
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    int num_pops = int_upper_bound(range_card);
+    int port_width = buf.port_width(out);
+
+    vector<string> pts = buf.port_bundles.at(bundle);
+    int num_ports = pts.size();
+
+    rgtb << tab(1) << "for (int i = 0; i < " << (num_pops) << "; i++) {" << endl;
+    rgtb << tab(2) << buf.bundle_type_string(bundle) << " actual = " << bundle << ".read();" << endl;
+    for (int p = 0; p < num_ports; p++) {
+      rgtb << tab(2) << "auto actual_lane_" << p
+        << " = actual.extract<" << p << "*" << port_width << ", "
+        << (p + 1)*port_width - 1 << ">();" << endl;
+
+      rgtb << tab(2) << "fout << actual_lane_" << p << " << endl;" << endl;
+      //rgtb << tab(2) << "fout << (uint64_t) actual_lane_" << p << " << endl;" << endl;
+    }
+
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+
+  rgtb << tab(1) << "in_pix.close();" << endl;
+  rgtb << tab(1) << "fout.close();" << endl;
+  rgtb << tab(1) << "return 0;" << endl;
+  rgtb << "}" << endl;
+  rgtb.close();
+}
+
+void generate_regression_testbench(prog& prg) {
+  ofstream rgtb("regression_tb_" + prg.name + ".cpp");
+  rgtb << "#include <fstream>" << endl;
+  rgtb << "#include \"" << prg.name << ".h\"" << endl << endl;
+
+  rgtb << "int main() {" << endl;
+  rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << ".txt\");" << endl;
+
+  //vector<string> unoptimized_streams;
+  vector<string> optimized_streams;
+  for (auto in : prg.ins) {
+    rgtb << tab(1) << "HWStream<" << prg.buffer_element_type_string(in) << " > " << in << ";" << endl;
+    optimized_streams.push_back(in);
+  }
+  for (auto out : prg.outs) {
+    rgtb << tab(1) << "HWStream<" << prg.buffer_element_type_string(out) << " > " << out << ";" << endl;
+    optimized_streams.push_back(out);
+  }
+
+  rgtb << endl << endl;
+
+  rgtb << tab(1) << "// Loading input data" << endl;
+  for (auto in : prg.ins) {
+    auto cmap = prg.consumer_map(in);
+    auto read_map = inv(cmap);
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    int num_pushes = int_upper_bound(range_card);
+
+    rgtb << tab(1) << "// cmap    : " << str(cmap) << endl;
+    rgtb << tab(1) << "// read map: " << str(read_map) << endl;
+    rgtb << tab(1) << "// rng     : " << str(rng) << endl;
+    rgtb << tab(1) << "for (int i = 0; i < " << num_pushes << "; i++) {" << endl;
+    rgtb << tab(2) << in << ".write(i);" << endl;
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+  rgtb << tab(1) << prg.name << "(" << comma_list(optimized_streams) << ");" << endl;
+
+  for (auto out : prg.outs) {
+    auto cmap = prg.producer_map(out);
+    auto read_map = inv(cmap);
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    int num_pops = int_upper_bound(range_card);
+    rgtb << tab(1) << "for (int i = 0; i < " << num_pops << "; i++) {" << endl;
+    rgtb << tab(2) << "int actual = " << out << ".read();" << endl;
+    rgtb << tab(2) << "fout << actual << endl;" << endl;
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+  rgtb << tab(1) << "return 0;" << endl;
+  rgtb << "}" << endl;
+  rgtb.close();
+}
+
+std::vector<std::string> run_regression_tb(const std::string& name) {
+  int res = system(string("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+
+  ifstream infile("regression_result_" + name + ".txt");
+  vector<string> lines;
+  std::string line;
+  while (std::getline(infile, line))
+  {
+    lines.push_back(line);
+  }
+  return lines;
+}
+
+std::vector<std::string> run_regression_tb(prog& prg) {
+  return run_regression_tb(prg.name);
+}
+
+
+void run_tb(prog& prg) {
+  int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+
+void regression_test(prog& prg) {
+  generate_unoptimized_code(prg);
+
+  cout << "Built unoptimized code" << endl;
+  auto old_name = prg.name;
+  prg.name = "unoptimized_" + old_name;
+  generate_regression_testbench(prg);
+  vector<string> unoptimized_res = run_regression_tb(prg);
+  prg.name = old_name;
+
+  cout << "Building optimized code" << endl;
+  generate_optimized_code(prg);
+  generate_regression_testbench(prg);
+  vector<string> optimized_res = run_regression_tb(prg);
+
+  assert(unoptimized_res.size() == optimized_res.size());
+  for (size_t i = 0; i < unoptimized_res.size(); i++) {
+
+    if (!(unoptimized_res.at(i) == optimized_res.at(i))) {
+      cout << "Error: After optimization, at output " << i << " unoptimized_res != optimized_res" << endl;
+      cout << "\tunoptimized = " << unoptimized_res.at(i) << endl;
+      cout << "\toptimized   = " << optimized_res.at(i) << endl;
+      assert(unoptimized_res.at(i) == optimized_res.at(i));
+    }
+  }
+
+}
+
