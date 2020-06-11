@@ -1381,7 +1381,7 @@ class UBuffer {
 
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
 
-    void port_reduction();
+    void print_bank_info();
     umap* get_lexmax_events(const std::string& outpt);
     umap* get_lexmax_events(const std::string& inpt, const std::string& outpt);
     int compute_dd_bound(const std::string & read_port, const std::string & write_port, bool is_max);
@@ -1411,7 +1411,7 @@ class UBuffer {
             set<string> & inpt_set,
             set<string> & outpt_set,
             map<string, pair<isl_map*, isl_map*> > & outpt_merge,
-            map<string, string> & back_edge);
+            vector<pair<string, string> > & back_edge);
     void port_group2bank(int in_port_width, int out_port_width);
     isl_map* merge_output_pt(vector<string> merge_pt);
     pair<isl_map*, isl_map*> merge_output_pt_with_sched(vector<string> merge_pt);

@@ -1773,6 +1773,7 @@ isl_map* delay_sched_map(isl_map* m, isl_map* write_sched) {
     auto c_vec = constraints(m);
     vector<isl_constraint*> new_c;
     int idx = get_innermost_sched_index(write_sched);
+    //cout << "\tinner most sched vector is " << idx << " in schedule : " << str(write_sched) << endl;
     for (auto c : c_vec) {
         size_t range_dim = isl_constraint_dim(c, isl_dim_out);
         bool involve = isl_constraint_involves_dims(c, isl_dim_out, range_dim - 1, 1);

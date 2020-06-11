@@ -375,6 +375,7 @@ void generate_vivado_tcl(UBuffer& buf) {
 
 //Post processing get the ubuffer for each bank
 map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
+  print_bank_info();
   map<string, UBuffer> buffers;
   for (auto b: get_banks()) {
     //fiter out those node will implemented as a shift register
@@ -1313,7 +1314,7 @@ void generate_code_prefix(CodegenOptions& options,
     }
   }
 
-  void UBuffer::port_reduction() {
+  void UBuffer::print_bank_info() {
     //find the lexmin of all out port
     for (auto itr: stack_banks) {
       string inpt = itr.first.first;
@@ -1448,26 +1449,45 @@ void generate_code_prefix(CodegenOptions& options,
     int group_in_port_width = 0;
     int group_out_port_width = 0;
 
+    //heruistic solution for chain the port output
+    pair<string, string> last_bank_IO;
+
     //Using set for reoccuring port, single input multi output available
     std::set<string> inpt_set, outpt_set;
     //Save the new access pattern and schedule
     map<string, pair<isl_map*, isl_map*>> outpt_merge;
 
     //the buffer connection information, out-port point to in-port
-    map<string, string> back_edge;
+    vector<pair<string, string> > back_edge;
+    vector<string> pt_vec;
     while(!bank_pool.empty()) {
       auto bk = bank_pool.top();
       auto input = get_bank_input(bk.name);
 
       group_in_port_width = inpt_set.size();
       group_out_port_width ++;
+
       if ((group_in_port_width <= in_port_width) && (group_out_port_width <= out_port_width)) {
         //pop stack and add port width
         bank_pool.pop();
 
-        //add it to the group
-        inpt_set.insert(input);
-        auto pt_vec = bk.get_out_ports();
+        //add it to the set
+        //If they share the input port we should insert the latest output port
+        string bank_input = input;
+        if (last_bank_IO.first == "") {
+            inpt_set.insert(input);
+            bank_input = input;
+        }
+        else if (last_bank_IO.first != input) {
+            inpt_set.insert(input);
+            bank_input = input;
+        }
+        else {
+            cout << "Substitute the output port: " << last_bank_IO.second << "to the input : " << input << endl;
+            bank_input = last_bank_IO.second;
+            inpt_set.insert(bank_input);
+        }
+        pt_vec = bk.get_out_ports();
 
         //sort the output port vec with the largest access in beginning
         sort(pt_vec.begin(), pt_vec.end(), [this](const string l, const string r) {
@@ -1481,10 +1501,10 @@ void generate_code_prefix(CodegenOptions& options,
             merge_output_pt_with_sched(vector<string>(pt_vec.begin() + i, pt_vec.end()));
           outpt_merge.insert(make_pair(pt_vec.at(i), out_map_merge));
           if (i == 0) {
-            back_edge.insert(make_pair(pt_vec.at(i), input));
+            back_edge.push_back(make_pair(pt_vec.at(i), bank_input));
           }
           else {
-            back_edge.insert(make_pair(pt_vec.at(i), pt_vec.at(i-1)));
+            back_edge.push_back(make_pair(pt_vec.at(i), pt_vec.at(i-1)));
           }
         }
 
@@ -1501,6 +1521,9 @@ void generate_code_prefix(CodegenOptions& options,
         //outpt_merge.insert(make_pair(pt_vec.front(), out_map_merge));
       }
       else {
+        //update the input port
+        last_bank_IO.first = input;
+        last_bank_IO.second = pt_vec.front();
 
         create_subbank_branch(inpt_set, outpt_set, outpt_merge, back_edge);
 
@@ -1534,7 +1557,7 @@ void generate_code_prefix(CodegenOptions& options,
           set<string> & inpt_set,
           set<string> & outpt_set,
           map<string, pair<isl_map*, isl_map*> > & outpt_merge,
-          map<string, string> & back_edge) {
+          vector<pair<string, string> > & back_edge) {
     for (auto it : outpt_merge) {
       replace_pt(it.first, it.second.first, it.second.second);
     }

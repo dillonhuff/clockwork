@@ -1837,25 +1837,28 @@ void conv45_test() {
   cout << buffers_opt.at("buf") << endl;
   buffers_opt.at("buf").port_group2bank(2, 2);
   cout << buffers_opt.at("buf") << endl;
+  buffers_opt.at("buf").print_bank_info();
   assert(false);
 
 #ifdef COREIR
-  //CoreIR::Context* context = CoreIR::newContext();
-  //CoreIRLoadLibrary_commonlib(context);
-  //CoreIRLoadLibrary_cwlib(context);
+  CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_commonlib(context);
+  CoreIRLoadLibrary_cwlib(context);
   //json config_reg_map = parse_config_file("sample_configuration.txt");
-  //buffers_opt.at("buf").set_config(config_reg_map);
-  //generate_coreir(opt, context, buffers_opt.at("buf"));
+  json config_reg_map;
+  config_reg_map["config"]["0"] = "TOP_address.csv";
+  buffers_opt.at("buf").set_config(config_reg_map);
+  generate_coreir(opt, context, buffers_opt.at("buf"));
 
-  //if(!saveToFile(context->getNamespace("global"), "conv33_ubuffer.json")) {
-  //  cout << "Could not save ubuffer coreir!" << endl;
-  //  context->die();
-  //}
-  //CoreIR::deleteContext(context);
+  if(!saveToFile(context->getNamespace("global"), "conv45_ubuffer.json")) {
+    cout << "Could not save ubuffer coreir!" << endl;
+    context->die();
+  }
+  CoreIR::deleteContext(context);
 #endif
 
   auto post_proc_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
-  opt.conditional_merge = false;
+  /*opt.conditional_merge = false;
   auto rewrite_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
 
   for (auto it: post_proc_buffers) {
@@ -1876,7 +1879,7 @@ void conv45_test() {
     emit_address_stream2file(rewrite_buffers, it.first+"_tb", it.first+"_agg", it.first+"_reg_TOP_address", true, tc);
     compare_to_gold(it.first+"_SRAM_address.csv", "SRAM_address_tapeout.csv");
     compare_to_gold(it.first+"_reg_TOP_address.csv", "TOP_address.csv");
-  }
+  }*/
 }
 
 void conv33_test() {
