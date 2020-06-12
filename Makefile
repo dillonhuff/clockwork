@@ -36,7 +36,7 @@ OBJ_FILES := $(patsubst %.cpp,%.o,$(LIB_CPP_FILES))
 $(TARGET): libclkwrk.$(LIB_EXT) $(TARGET).o
 	$(CXX) $(CXX_FLAGS) $(TARGET).o $(LINK_FLAGS) -o $@
 
-$(TARGET).o: build_set_test.cpp
+$(TARGET).o: build_set_test.cpp $(LIB_HEADER_FILES)
 	$(CXX) $(CXX_FLAGS) -c $< -o $@
 
 libclkwrk.$(LIB_EXT): $(OBJ_FILES)

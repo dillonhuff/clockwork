@@ -1437,28 +1437,38 @@ std::set<pair<op_level , op_level> > get_dims_to_match(umap* validity) {
       assert(!isl_local_space_is_set(ls));
 
       int num_non_zero = 0;
-      int in_pos = -1;
+      vector<int> in_positions;
+      //int in_pos = -1;
       for (int d = 0; d < num_in_dims(ls); d++) {
         if (!is_zero(get_coeff(c, isl_dim_in, d))) {
           num_non_zero++;
-          in_pos = d;
+          in_positions.push_back(d);
+          //in_pos = d;
         }
       }
 
-      int out_pos = -1;
+      vector<int> out_positions;
+      //int out_pos = -1;
       for (int d = 0; d < num_out_dims(ls); d++) {
         if (!is_zero(get_coeff(c, isl_dim_out, d))) {
           num_non_zero++;
-          out_pos = d;
+          out_positions.push_back(d);
+          //out_pos = d;
         }
       }
 
       if (num_non_zero > 1) {
-        assert(in_pos >= 0);
-        assert(out_pos >= 0);
+        assert(in_positions.size() >= 0);
+        assert(out_positions.size() >= 0);
+        //assert(in_pos >= 0);
+        //assert(out_pos >= 0);
         if (domain_name(v) != range_name(v)) {
-          matched_dims.insert({{domain_name(v), in_pos}, {range_name(v), out_pos}});
-          cout << tab(3) << "Relevant constraint: " << str(c) << endl;
+          for (auto in_pos : in_positions) {
+            for (auto out_pos : out_positions) {
+              matched_dims.insert({{domain_name(v), in_pos}, {range_name(v), out_pos}});
+            }
+          }
+          //cout << tab(3) << "Relevant constraint: " << str(c) << endl;
         }
 
       }
@@ -1483,16 +1493,18 @@ pad_insertion_indexes(uset* domain, umap* validity) {
       << d.second.first << "[" << d.second.second << "]" << endl;
   }
 
-  std::set<pair<op_level, op_level> > matched_dims;
-  for (auto m : matches) {
-    cout << m.first.first << ", " << m.first.second << endl;
-    assert(m.second.size() > 0);
-    matched_dims.insert({m.first, m.second.at(0)});
+  auto matched_dims = matched_dims_init;
+
+  //std::set<pair<op_level, op_level> > matched_dims;
+  //for (auto m : matches) {
+    //cout << m.first.first << ", " << m.first.second << endl;
+    //assert(m.second.size() > 0);
+    ////matched_dims.insert({m.first, m.second.at(0)});
     //for (auto s : m.second) {
       //cout << tab(1) << s.first << ", " << s.second << endl;
     //}
-    //assert(m.second.size() == 1);
-  }
+    ////assert(m.second.size() == 1);
+  //}
 
   //assert(false);
 
@@ -1537,7 +1549,7 @@ pad_insertion_indexes(uset* domain, umap* validity) {
     cout << "lv2 = " << lv2 << endl;
     obj.push_back({lv1, one(ct)});
     obj.push_back({lv2, negone(ct)});
-    //pad_positions.add_eq(lv1, lv2);
+    pad_positions.add_eq(lv1, lv2);
   }
 
   auto min = pad_positions.minimize(simplify(obj));

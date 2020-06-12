@@ -1575,8 +1575,9 @@ void insert_pad_loops(const int level, op* root, const map<string, vector<int> >
 
   cout << "level = " << level << ", op = " << root->name << endl;
   for (auto c : root->children) {
+    cout << tab(1) << "child = " << c->name << endl;
     for (auto n : c->descendant_op_names()) {
-      cout << tab(1) << "checking if we should pad " << n << endl;
+      cout << tab(2) << "checking if we should pad " << n << endl;
       int should_pad = map_find(n, pad_indexes)[level + 1];
       if (should_pad == -1) {
         cout << "Should insert pad between: " << root->name << " and " << c->name << endl;
