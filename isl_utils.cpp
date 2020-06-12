@@ -1829,6 +1829,14 @@ vector<string> collect_sched_vec(isl_set* const s) {
   vector<string> sched_vec(vec_dim);
 
   for (auto hc : code_holder) {
+      cout << "sched vector constraints: " << str(hc) << endl;
+      auto sp = get_space(hc);
+      sp = isl_space_add_dims(sp, isl_dim_out, 1);
+      auto cons = isl_constraint_alloc_equality(isl_local_space_from_space(cpy(sp)));
+      cons = isl_constraint_set_constant_si(cons, -1);
+      cons = isl_constraint_set_coefficient_si(cons, isl_dim_out, 3, 1);
+      cout << "constraints space:" << str(sp) << endl;
+      cout << "constraints :" << str(cons) << endl;
       for (size_t i = 0; i < vec_dim; i ++) {
           bool involve =  isl_constraint_involves_dims(hc, isl_dim_set, i, 1);
           if (involve) {
@@ -1869,7 +1877,7 @@ vector<string> collect_sched_vec(isl_union_map* um) {
 umap* pad_one_more_dim_to_sched_map(isl_ctx* ctx, umap* const um, string pad_val) {
     vector<string> sched_vec;
     sched_vec = collect_sched_vec(cpy(um));
-    string op = range_name(to_map(um));
+    string op = domain_name(to_map(um));
     for (size_t dim = 0; dim < sched_vec.size(); dim ++) {
         if (!is_number(sched_vec[dim])) {
             auto it = sched_vec.begin() + dim;
@@ -1879,6 +1887,58 @@ umap* pad_one_more_dim_to_sched_map(isl_ctx* ctx, umap* const um, string pad_val
     }
     return to_umap(gen_map_from_sched_vec(ctx, sched_vec, op));
 }
+
+isl_constraint* pad_dim_to_constraint(isl_constraint* c) {
+  auto sp = get_space(c);
+  sp = isl_space_add_dims(sp, isl_dim_out, 1);
+  isl_constraint* cons;
+  if (isl_constraint_is_equality(c)) {
+    cons = isl_constraint_alloc_equality(isl_local_space_from_space(cpy(sp)));
+  } else {
+    cons = isl_constraint_alloc_inequality(isl_local_space_from_space(cpy(sp)));
+  }
+  cons = isl_constraint_set_constant_val(cons, isl_constraint_get_constant_val(c));
+  for (size_t i = 0; i < isl_constraint_dim(c, isl_dim_in); i ++) {
+    cons = isl_constraint_set_coefficient_val(cons, isl_dim_in, i,
+            isl_constraint_get_coefficient_val(c, isl_dim_in, i));
+  }
+  for (size_t i = 0; i < isl_constraint_dim(c, isl_dim_out); i ++) {
+    if (isl_constraint_involves_dims(c, isl_dim_out, i, 1)) {
+      cons = isl_constraint_set_coefficient_val(cons, isl_dim_out, i,
+           isl_constraint_get_coefficient_val(c, isl_dim_out, i));
+    }
+  }
+  //cout << "rewrite constraits: " << str(cons) << endl;
+  return cons;
+}
+
+umap* pad_one_more_dim_to_sched_map_innermost(umap* const um, int pad_val) {
+    auto sched_map = to_map(um);
+    auto c_vec = constraints(sched_map);
+    vector<isl_constraint*> new_c;
+
+    //pad the space for the original constraints
+    for (auto c : c_vec) {
+        auto tmp = pad_dim_to_constraint(c);
+        new_c.push_back(tmp);
+    }
+
+    auto sp = get_space(pick(new_c));
+    auto cons = isl_constraint_alloc_equality(isl_local_space_from_space(cpy(sp)));
+    int out_dim = isl_constraint_dim(cons, isl_dim_out);
+    cons = isl_constraint_set_constant_si(cons, -pad_val);
+    cons = isl_constraint_set_coefficient_si(cons, isl_dim_out, out_dim - 1, 1);
+    new_c.push_back(cons);
+
+    auto ret = isl_basic_map_universe(sp);
+    for (auto c : new_c) {
+        ret = isl_basic_map_add_constraint(ret, c);
+    }
+
+    auto ret_m = isl_map_from_basic_map(ret);
+    return to_umap(ret_m);
+}
+
 
 isl_stat get_pw_multi_aff_piece(isl_set* dom, isl_multi_aff* domain, void* user) {
   vector<pair<isl_set*, isl_multi_aff*> >* v =

@@ -240,6 +240,7 @@ vector<std::string> collect_sched_vec(isl_union_set* const bset);
 vector<string> collect_sched_vec(isl_union_map* const um);
 
 umap* pad_one_more_dim_to_sched_map(isl_ctx* ctx, umap* const um, string pad_val);
+umap* pad_one_more_dim_to_sched_map_innermost(umap* const um, int pad_val);
 
 std::string codegen_c(isl_set* const bset);
 std::string codegen_c(isl_union_set* bset);

@@ -458,28 +458,41 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     std::set<string> inpts = get_bank_inputs(bk.name);
     std::set<string> outpts = get_bank_outputs(bk.name);
     auto buf_inpts = get_in_ports();
-    if (count(buf_inpts.begin(), buf_inpts.end(), pick(inpts)) == 0){
-      //TODO: support dilation conv, register information is in maxdelay
-      //add register, wire valid from ubuffer
-      auto reg = def->addInstance("d_reg_"+context->getUnique(), "mantle.reg",
-          {{"width", CoreIR::Const::make(context, port_widths)},
-          {"has_en", CoreIR::Const::make(context, false)}});
-      assert(inpts.size() == 1);
-      assert(outpts.size() == 1);
-      //do not wire input for the first pass
-      if (isIn.at(pick(inpts))) {
-        def->connect(reg->sel("in"), pt2wire.at(pick(inpts)));
-      } else {
-        reg_in[pick(inpts)] = reg->sel("in");
-        wire2out[pick(outpts)] = reg->sel("out");
-      }
-      def->connect(reg->sel("out"), pt2wire.at(pick(outpts)));
-    } else if (bk.maxdelay == 0) {
+    //if (count(buf_inpts.begin(), buf_inpts.end(), pick(inpts)) == 0){
+    if (bk.maxdelay == 0) {
       //this is a wire
       assert(inpts.size() == 1);
       assert(outpts.size() == 1);
       def->connect(pt2wire.at(pick(inpts)), pt2wire.at(pick(outpts)));
       wire2out[pick(outpts)] = pt2wire.at(pick(inpts));
+    } else if (bk.maxdelay <= options.merge_threshold) {
+      //TODO: support dilation conv, register information is in maxdelay
+      //add register, wire valid from ubuffer
+      CoreIR::Wireable* last_out;
+      for (size_t i = 0; i < bk.maxdelay; i ++) {
+        auto reg = def->addInstance("d_reg_"+context->getUnique(), "mantle.reg",
+            {{"width", CoreIR::Const::make(context, port_widths)},
+            {"has_en", CoreIR::Const::make(context, false)}});
+        assert(inpts.size() == 1);
+        assert(outpts.size() == 1);
+        //do not wire input for the first pass
+        //Wire the shift register chain
+        if (i == 0) {
+          if (isIn.at(pick(inpts))) {
+            def->connect(reg->sel("in"), pt2wire.at(pick(inpts)));
+          } else {
+            reg_in[pick(inpts)] = reg->sel("in");
+            wire2out[pick(outpts)] = reg->sel("out");
+          }
+        } else {
+          def->connect(reg->sel("in"), last_out);
+        }
+        if (i == bk.maxdelay - 1) {
+          def->connect(reg->sel("out"), pt2wire.at(pick(outpts)));
+        } else {
+          last_out = reg->sel("out");
+        }
+      }
     } else {
       string ub_ins_name = "ub_"+bk.name;
       CoreIR::Values args = {
@@ -494,15 +507,21 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       int inpt_cnt = 0, outpt_cnt = 0;
       for (auto inpt: inpts) {
         //TODO: datain may be an output port
-        def->connect(buf->sel("datain_" + to_string(inpt_cnt)), pt2wire.at(inpt));
-        def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
+        if (isIn.at(inpt)){
+          def->connect(buf->sel("datain_" + to_string(inpt_cnt)), pt2wire.at(inpt));
+          def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
+        } else {
+          def->connect(buf->sel("datain_" + to_string(inpt_cnt)), wire2out.at(inpt));
+          def->connect(buf->sel("wen_" + to_string(inpt_cnt)), wire2out.at(inpt + "_valid"));
+        }
         inpt_cnt++;
       }
       for (auto outpt: outpts) {
         def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), pt2wire.at(outpt));
         wire2out[outpt] = buf->sel("dataout_" + to_string(outpt_cnt));
+        wire2out[outpt + "_valid"] = buf->sel("valid_" + to_string(outpt_cnt));
         //TODO: figure out valid wiring strategy
-        //
+        //Wire the bank with the largest delay
         outpt_cnt++;
       }
     }
@@ -1070,6 +1089,44 @@ void generate_code_prefix(CodegenOptions& options,
     return lex_max_events;
   }
 
+  umap* UBuffer::get_lexmax_events(
+          umap* in_sched, umap* out_sched,
+          const string& inpt, const string& outpt) {
+
+    umap* src_map = nullptr;
+    //auto in_sched = schedule.at(inpt);
+    //auto out_sched = schedule.at(outpt);
+    auto beforeAcc = lex_gt(out_sched, in_sched);
+    auto outmap = access_map.at(outpt);
+    auto inmap = access_map.at(inpt);
+    inmap = coalesce(unn(inmap, outmap));
+    //cout << "before access: " << str(beforeAcc) << endl;
+    //cout << "Coalesce map: " << str(inmap) << endl;
+    src_map = its(dot(outmap, inv(inmap)), beforeAcc);
+    assert(src_map != nullptr);
+
+    //cout << "src map done: " << str(src_map) << endl;
+    auto sched = unn(in_sched, out_sched);
+    auto after = lex_gt(sched, sched);
+
+    src_map = its(src_map, after);
+    src_map = lexmax(src_map);
+
+    //cout << "final src map: " << str(src_map) << endl;
+
+    auto time_to_event = inv(sched);
+
+    //cout << "time 2 event: " << str(time_to_event) << endl;
+    //cout << "lexmax :" << str(lexmax(dot(src_map, sched))) << endl;
+
+    auto lex_max_events =
+      dot(lexmax(dot(src_map, sched)), time_to_event);
+
+    //cout << "Done" << outpt << endl;
+    assert(lex_max_events != nullptr);
+    return lex_max_events;
+  }
+
   isl_union_pw_qpolynomial* UBuffer::compute_dd(const std::string& read_port, const std::string& write_port) {
 
     isl_union_map* sched = schedule.at(write_port);
@@ -1081,13 +1138,20 @@ void generate_code_prefix(CodegenOptions& options,
 
     umap* rdsched = schedule.at(read_port);
     umap* wrsched = schedule.at(write_port);
+    bool out2out = !isIn.at(write_port);
+    if (out2out) {
+      rdsched = pad_one_more_dim_to_sched_map_innermost(rdsched, 1);
+      wrsched = pad_one_more_dim_to_sched_map_innermost(wrsched, 0);
+    }
+    cout << "rewrite rd sched:" << str(rdsched) << endl;
+    cout << "rewrite wr sched:" << str(wrsched) << endl;
     auto WritesBeforeRead =
       lex_gt(rdsched, wrsched);
     //cout << "\trdsched: " << str(rdsched) << "\n wrsched: " << str(wrsched) << "\n wbr: " << str(WritesBeforeRead) << endl;
 
     //auto WriteThatProducesReadData = get_lexmax_events(read_port);
     //TODO: test these new method
-    auto WriteThatProducesReadData = get_lexmax_events(write_port, read_port);
+    auto WriteThatProducesReadData = get_lexmax_events(wrsched, rdsched, write_port, read_port);
     //cout << "\twpr: " << str(WriteThatProducesReadData) << "\nwaw:" << str(WritesAfterWrite) << endl;
 
     auto WritesAfterProduction = dot(WriteThatProducesReadData, WritesAfterWrite);
@@ -1124,13 +1188,23 @@ void generate_code_prefix(CodegenOptions& options,
 
     //we just need connection information
     int maxdelay = 0;
+    vector<int> read_delays{0};
     for (auto inpt : inpt_set) {
       for (auto outpt: outpt_set) {
-        maxdelay = std::max(maxdelay, compute_dd_bound(outpt, inpt, true));
+        int delay = 0;
+        if (isIn.at(inpt)) {
+          delay = compute_dd_bound(outpt, inpt, true);
+        } else {
+          //TODO: possible bug
+          string original_inpt = pick(get_in_ports());
+          delay = compute_dd_bound(outpt, original_inpt, true) -
+              compute_dd_bound(inpt, original_inpt, true);
+        }
+        read_delays.push_back(delay);
+        maxdelay = std::max(maxdelay, delay);
       }
     }
     //cout << "compute max delay for super bank =  " << maxdelay << endl;
-    vector<int> read_delays{0};
 
     int num_readers = outpt_set.size();
     //int num_writers = inpt_set.size();
@@ -1157,7 +1231,7 @@ void generate_code_prefix(CodegenOptions& options,
     read_delays.push_back(i);
     }
     }*/
-
+//
 
     string pt_type_string = port_type_string();
     string name = pick(inpt_set) + "_to_" + pick(outpt_set);
@@ -1319,10 +1393,8 @@ void generate_code_prefix(CodegenOptions& options,
     for (auto itr: stack_banks) {
       string inpt = itr.first.first;
       string outpt = itr.first.second;
-      auto max_dd = compute_dd_bound(outpt, inpt, true);
-      auto min_dd = compute_dd_bound(outpt, inpt, false);
       cout << "\tpt: [" << outpt << "] -> pt:[" << inpt
-        << "] has delay = [" << min_dd << ", " << max_dd << "]\n";
+        << "] has delay = " << itr.second.maxdelay << endl ;
     }
   }
 
@@ -1568,10 +1640,10 @@ void generate_code_prefix(CodegenOptions& options,
         //shift register
 
         //delay the read schedule after write
-        auto new_sched = to_map(schedule.at(read));
-        auto wr_sched = to_map(schedule.at(write));
-        new_sched = delay_sched_map(new_sched, wr_sched);
-        schedule.at(read) = to_umap(new_sched);
+        //auto new_sched = to_map(schedule.at(read));
+        //auto wr_sched = to_map(schedule.at(write));
+        //new_sched = delay_sched_map(new_sched, wr_sched);
+        //schedule.at(read) = to_umap(new_sched);
 
         remove_bank(read);
         stack_bank bk = compute_bank_info(write, read);

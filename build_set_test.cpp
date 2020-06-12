@@ -1838,7 +1838,6 @@ void conv45_test() {
   buffers_opt.at("buf").port_group2bank(2, 2);
   cout << buffers_opt.at("buf") << endl;
   buffers_opt.at("buf").print_bank_info();
-  assert(false);
 
 #ifdef COREIR
   CoreIR::Context* context = CoreIR::newContext();
@@ -1846,7 +1845,7 @@ void conv45_test() {
   CoreIRLoadLibrary_cwlib(context);
   //json config_reg_map = parse_config_file("sample_configuration.txt");
   json config_reg_map;
-  config_reg_map["config"]["0"] = "TOP_address.csv";
+  config_reg_map["name"][0] = "TOP_address.csv";
   buffers_opt.at("buf").set_config(config_reg_map);
   generate_coreir(opt, context, buffers_opt.at("buf"));
 

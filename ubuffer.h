@@ -1384,6 +1384,7 @@ class UBuffer {
     void print_bank_info();
     umap* get_lexmax_events(const std::string& outpt);
     umap* get_lexmax_events(const std::string& inpt, const std::string& outpt);
+    umap* get_lexmax_events(umap* insched, umap* outsched, const std::string& inpt, const std::string& outpt);
     int compute_dd_bound(const std::string & read_port, const std::string & write_port, bool is_max);
     isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
     bank compute_bank_info(const std::string& inpt, const std::string& outpt);
