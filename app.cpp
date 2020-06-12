@@ -1470,7 +1470,25 @@ std::set<pair<op_level , op_level> > get_dims_to_match(umap* validity) {
 
 map<string, vector<int> >
 pad_insertion_indexes(uset* domain, umap* validity) {
-  auto matched_dims = get_dims_to_match(validity);
+  auto matched_dims_init = get_dims_to_match(validity);
+  map<op_level, vector<op_level> > matches;
+  for (auto m : matched_dims_init) {
+    matches[m.first].push_back(m.second);
+  }
+
+  std::set<pair<op_level, op_level> > matched_dims;
+  for (auto m : matches) {
+    cout << m.first.first << ", " << m.first.second << endl;
+    assert(m.second.size() > 0);
+    matched_dims.insert({m.first, m.second.at(0)});
+    //for (auto s : m.second) {
+      //cout << tab(1) << s.first << ", " << s.second << endl;
+    //}
+    //assert(m.second.size() == 1);
+  }
+
+  //assert(false);
+
   int max_dim = -1;
   for (auto m : get_sets(domain)) {
     if (num_dims(m) > max_dim) {
