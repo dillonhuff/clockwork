@@ -1476,6 +1476,13 @@ pad_insertion_indexes(uset* domain, umap* validity) {
     matches[m.first].push_back(m.second);
   }
 
+  cout << "Dims to match: " << endl;
+  for (auto d : matched_dims_init) {
+    cout << tab(1)
+      << d.first.first << "[" << d.first.second << "]" << ", "
+      << d.second.first << "[" << d.second.second << "]" << endl;
+  }
+
   std::set<pair<op_level, op_level> > matched_dims;
   for (auto m : matches) {
     cout << m.first.first << ", " << m.first.second << endl;

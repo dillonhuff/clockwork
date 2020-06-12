@@ -1,6 +1,11 @@
 #include "isl_utils.h"
 #include "utils.h"
 
+std::string dim_name(isl_aff* const a, const int d) {
+  string str(isl_aff_get_dim_name(a, isl_dim_in, d));
+  return str;
+}
+
 isl_stat get_set(isl_set* m, void* user) {
   auto* vm = (vector<isl_set*>*) user;
   vm->push_back((m));
@@ -206,6 +211,11 @@ int num_out_dims(isl_map* const m) {
 
 int num_in_dims(isl_map* const s) {
   return num_in_dims(get_space((s)));
+}
+
+int num_dims(isl_aff* const s) {
+  auto ls = isl_aff_get_local_space(s);
+  return isl_local_space_dim(ls, isl_dim_set);
 }
 
 int num_div_dims(isl_aff* const s) {
@@ -2188,6 +2198,12 @@ isl_val* const_coeff(isl_aff* const a) {
 }
 
 isl_val* coeff(isl_aff* const a, const int pos) {
+  auto s = get_local_space(a);
+  assert(isl_local_space_is_set(s));
+  return isl_aff_get_coefficient_val(a, isl_dim_in, pos);
+}
+
+isl_val* get_coeff(isl_aff* const a, const int pos) {
   return isl_aff_get_coefficient_val(a, isl_dim_in, pos);
 }
 

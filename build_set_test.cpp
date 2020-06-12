@@ -1713,9 +1713,9 @@ void reaccess_no_hierarchy_rolled_test() {
 
   auto qw = q->add_loop("wy", 0, 3);
   auto read = qw->add_op("output");
+  read->add_load("out", "qi, qo, ao");
+  read->add_function("weighted_conv_3_3");
   for (size_t wx = 0; wx < 3; wx ++) {
-    read->add_function("weighted_conv_3_3");
-    read->add_load("out", "qi, qo, ao");
     read->add_load("weights", str(wx) + ", wy, ao");
     read->add_load("bufl2", "qi+" + str(wx) + ", qo+wy");
   }
@@ -1738,13 +1738,18 @@ void reaccess_no_hierarchy_rolled_test() {
         cout << tab(2) << str(a) << endl;
         cout << tab(2) << str(ma) << endl;
         for (int i = 0; i < isl_multi_aff_dim(ma, isl_dim_set); i++) {
-          cout << tab(3) << i << ": " << str(isl_multi_aff_get_aff(ma, i)) << endl;
+          auto aff = isl_multi_aff_get_aff(ma, i);
+          cout << tab(3) << i << ": " << str(aff) << endl;
+
+          for (int d = 0; d < num_in_dims(aff); d++) {
+            cout << tab(4) << dim_name(aff, d) << ": " << str(get_coeff(aff, d)) << endl;
+          }
         }
       }
     }
   }
 
-  assert(false);
+  //assert(false);
   
   //generate_optimized_code(prg);
   //generate_regression_testbench(prg);
@@ -9675,7 +9680,7 @@ void manual_unroll_test() {
 }
 
 void application_tests() {
-  reaccess_no_hierarchy_rolled_test();
+  //reaccess_no_hierarchy_rolled_test();
   reaccess_no_hierarchy_test();
   mini_conv_halide_test();
   conv_3_3_halide_test();

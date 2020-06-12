@@ -33,6 +33,8 @@ using std::pair;
 using std::map;
 using std::string;
 
+std::string dim_name(isl_aff* const a, const int d);
+
 std::string name(isl_space* const s);
 std::string name(isl_set* const s);
 isl_pw_aff* cpy(isl_pw_aff* const s);
@@ -487,6 +489,7 @@ int num_in_dims(isl_space* const s);
 int num_in_dims(isl_local_space* const s);
 int num_out_dims(isl_local_space* const s);
 
+int num_dims(isl_aff* const s);
 int num_in_dims(isl_aff* const s);
 int num_div_dims(isl_aff* const s);
 int num_out_dims(isl_aff* const s);
@@ -522,6 +525,7 @@ int bnd_int(isl_union_pw_qpolynomial_fold* bound);
 int int_lower_bound(isl_union_pw_qpolynomial* range_card);
 int int_upper_bound(isl_union_pw_qpolynomial* range_card);
 
+isl_val* get_coeff(isl_aff* const a, const int pos);
 int int_coeff(isl_aff* const a, const int pos);
 int int_const_coeff(isl_aff* const a);
 
