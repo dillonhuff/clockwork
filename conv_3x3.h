@@ -2,6 +2,8 @@
 
 #include "hw_classes.h"
 
+typedef int16_t int16;
+
 static inline
 float int_to_float(const hw_uint<32>& in) {
   return (float) in.to_int();
@@ -555,4 +557,20 @@ contrived(hw_uint<32*3>& in, hw_uint<32*2>& b) {
 static inline
 hw_uint<32> compute_with_variable(const hw_uint<32>& m, const int loop_var) {
   return m + loop_var;
+}
+
+template<int Len>
+static inline
+int16_t to_int16(hw_uint<Len>& v) {
+  return v.to_int();
+}
+
+template<typename A, typename T>
+T select(const A& test, const T& v, const T& u) {
+  return test ? v : u;
+}
+
+template<typename T>
+T uint8(const T& v) {
+  return v;
 }
