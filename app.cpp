@@ -1527,6 +1527,7 @@ pad_insertion_indexes(uset* domain, umap* validity) {
     }
   }
 
+  vector<pair<string, isl_val*> > obj;
   for (auto m : matched_dims) {
     auto lv1 =
       lv(m.first.first, m.first.second);
@@ -1534,10 +1535,13 @@ pad_insertion_indexes(uset* domain, umap* validity) {
       lv(m.second.first, m.second.second);
     cout << "lv1 = " << lv1 << endl;
     cout << "lv2 = " << lv2 << endl;
-    pad_positions.add_eq(lv1, lv2);
+    obj.push_back({lv1, one(ct)});
+    obj.push_back({lv2, negone(ct)});
+    //pad_positions.add_eq(lv1, lv2);
   }
 
-  auto min = pad_positions.minimize({{lv(some_domain, 0), one(ct)}});
+  auto min = pad_positions.minimize(simplify(obj));
+  //auto min = pad_positions.minimize({{lv(some_domain, 0), one(ct)}});
   cout << "Solution point: " << str(pad_positions.solution_point) << endl;
 
 

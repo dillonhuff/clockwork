@@ -167,7 +167,7 @@ struct ir_node {
   }
 
   std::set<op*> descendants() {
-    std::set<op*> anc;
+    std::set<op*> anc{this};
     for (auto c : children) {
       for (auto d : c->descendants()) {
         anc.insert(d);

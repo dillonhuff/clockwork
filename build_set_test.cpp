@@ -1573,8 +1573,10 @@ void insert_pad_loops(const int level, op* root, const map<string, vector<int> >
     return;
   }
 
+  cout << "level = " << level << ", op = " << root->name << endl;
   for (auto c : root->children) {
     for (auto n : c->descendant_op_names()) {
+      cout << tab(1) << "checking if we should pad " << n << endl;
       int should_pad = map_find(n, pad_indexes)[level + 1];
       if (should_pad == -1) {
         cout << "Should insert pad between: " << root->name << " and " << c->name << endl;
@@ -1762,6 +1764,11 @@ void reaccess_no_hierarchy_rolled_test() {
   cout << "validity = " << str(valid) << endl;
 
   auto pad_indexes = pad_insertion_indexes(dom, valid);
+  for (auto p : pad_indexes) {
+    cout << p.first << " -> " << str(p.second) << endl;
+  }
+  //assert(false);
+
   insert_pad_loops(prg, pad_indexes);
 
   cout << "After padding..." << endl;
@@ -9680,7 +9687,7 @@ void manual_unroll_test() {
 }
 
 void application_tests() {
-  //reaccess_no_hierarchy_rolled_test();
+  reaccess_no_hierarchy_rolled_test();
   reaccess_no_hierarchy_test();
   mini_conv_halide_test();
   conv_3_3_halide_test();
