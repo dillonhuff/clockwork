@@ -1523,6 +1523,31 @@ pad_insertion_indexes(uset* domain, umap* validity) {
       << d.second.first << "[" << d.second.second << "]" << endl;
   }
 
+  map<string, vector<int> > dense_pad_sites;
+  map<string, int> total_dims;
+  map<string, int> next_dim_to_place;
+  for (auto s : get_sets(domain)) {
+    string n = name(s);
+    total_dims[n] = num_dims(s);
+    next_dim_to_place[n] = 0;
+    for (int d = 0; d < max_dim; d++) {
+      dense_pad_sites[n].push_back(-1);
+    }
+  }
+
+  for (int current_level = 0; current_level < max_dim; current_level++) {
+    for (auto d : next_dim_to_place) {
+      string opname = d.first;
+      int level = d.second;
+      int total_dim = map_find(opname, total_dims);
+      if (current_level < total_dim) {
+        dense_pad_sites[opname][current_level] = current_level;
+      }
+    }
+  }
+
+  return dense_pad_sites;
+
   auto ct = ctx(domain);
   ilp_builder pad_positions(ct);
   string some_domain = "";
