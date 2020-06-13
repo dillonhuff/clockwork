@@ -1865,6 +1865,15 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
   cout << "target = " << target->name << endl;
   cout << "writer = " << source->name << endl;
 
+  vector<string> upsamples = upsample_vars(target_buf, target, prg);
+  cout << "Upsample vars..." << endl;
+  for (auto v : upsamples) {
+    cout << tab(1) << v << endl;
+  }
+
+  assert(upsamples.size() == 1);
+  assert(upsamples.at(0) == target_vars.at(num_shared_levels));
+  //target_vars.at(num_shared_levels);
   auto vars = prg.iter_vars();
   auto target_vars = map_find(target, vars);
   auto source_vars = map_find(source, vars);
@@ -1887,12 +1896,23 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
   assert(last_shared_level != "");
 
   cout << "last shared level = " << last_shared_level << endl;
+  assert(num_unshared_levels == 3);
 
   op* loop = prg.find_loop(last_shared_level);
   string lp_loader = "sw_loader_from_" + source->name + "_to_" + target->name;
   vector<string> iter_vars;
   vector<string> read_vars;
-  vector<pair<int, int> > bounds{{0, 2}, {0, 8}, {0, 16}};
+  //vector<pair<int, int> > bounds{{0, 2}, {0, 8}, {0, 16}};
+  vector<pair<int, int> > bounds;
+  for (int i = 0; i < num_unshared_levels; i++) {
+    string target_var = target_vars.at(last_shared_level + i + 1);
+    if (elem(target_var, upsamples)) {
+      bounds.push_back({prg.start(target_var), prg.end_exclusive(target_var)});
+    } else {
+      bounds.push_back({0, 1});
+    }
+  }
+
   op* next =
     loop->add_loop_after(source, lp_loader + "_" + str(0), bounds.at(0).first, bounds.at(0).second);
   iter_vars.push_back(next->name);
@@ -1910,25 +1930,6 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
   cpy_op->add_load(target_buf, comma_list(read_vars));
   prg.buffer_port_widths[l1_buf] = prg.buffer_port_width(target_buf);
 
-  //for (auto v : target->consume_locs_pair) {
-    //if (v.first == target_buf) {
-      //auto mv = to_multi_aff(prg.ctx, target_vars, v.second.at(0).second);
-      //cout << tab(1) << str(mv) << endl;
-    //}
-  //}
-
-  // Q: Where do we place the upsample vars in the new components
-  // if there are several of them?
-  // A: Maybe it is irrelevant?
-  //string upsample_var = target_vars.at(num_shared_levels);
-  vector<string> upsamples = upsample_vars(target_buf, target, prg);
-  cout << "Upsample vars..." << endl;
-  for (auto v : upsamples) {
-    cout << tab(1) << v << endl;
-  }
-  assert(upsamples.size() == 1);
-  assert(upsamples.at(0) == target_vars.at(num_shared_levels));
-  //target_vars.at(num_shared_levels);
   target->replace_reads_from(target_buf, l1_buf);
   for (auto& v : target->consume_locs_pair) {
     if (v.first == l1_buf) {
