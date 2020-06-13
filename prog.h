@@ -622,6 +622,32 @@ struct prog {
 
   map<string, vector<int> > buffer_bounds;
 
+  isl_point* max_point(op* op) {
+    std::vector<string> surrounding_loops = map_find(op, iter_vars());
+
+    isl_point* pt =
+      isl_point_zero(set_space(ctx, surrounding_loops.size()));
+    int i = 0;
+    for (auto lp : surrounding_loops) {
+      pt = isl_point_set_coordinate_val(pt, isl_dim_set, i, isl_val_int_from_si(ctx, end_exclusive(lp) - 1));
+      i++;
+    }
+    return pt;
+  }
+
+  isl_point* min_point(op* op) {
+    std::vector<string> surrounding_loops = map_find(op, iter_vars());
+
+    isl_point* pt =
+      isl_point_zero(set_space(ctx, surrounding_loops.size()));
+    int i = 0;
+    for (auto lp : surrounding_loops) {
+      pt = isl_point_set_coordinate_val(pt, isl_dim_set, i, isl_val_int_from_si(ctx, start(lp)));
+      i++;
+    }
+    return pt;
+  }
+
   op* find_loop(const std::string& target_op) {
     for (auto v : all_loops()) {
       if (v->name == target_op) {

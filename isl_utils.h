@@ -541,3 +541,4 @@ bool lex_lt_pt(isl_point* const l, isl_point* const r);
 bool lex_gt_pt(isl_point* const l, isl_point* const r);
 
 isl_val* get_coeff(isl_constraint* c, enum isl_dim_type type, int pos);
+isl_val* eval(isl_aff* a, isl_point* p);

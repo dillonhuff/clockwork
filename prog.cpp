@@ -2280,6 +2280,7 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
 
   op* loop = prg.find_loop(last_shared_level);
   string lp_loader = "sw_loader_from_" + source->name + "_to_" + target->name;
+  vector<string> all_vars = map_find(target, prg.iter_vars());
   vector<string> iter_vars;
   vector<string> read_vars;
   //vector<pair<int, int> > bounds{{0, 2}, {0, 8}, {0, 16}};
@@ -2291,6 +2292,29 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
     if (elem(target_var, upsamples)) {
       bounds.push_back({prg.start(target_var), prg.end_exclusive(target_var)});
     } else {
+      //int all_max = -1;
+      //int all_min = 10000000;
+      //for (auto addr : addrs_referenced(target, target_buf)) {
+        //for (auto piece : addr) {
+          //auto ma = to_multi_aff(prg.ctx, all_vars, piece.second);
+          //isl_aff* aff =
+            //isl_multi_aff_get_aff(ma, num_shared_levels + i);
+          //int min_val =
+            //to_int(eval(aff, prg.min_point(target)));
+          //int max_val =
+            //to_int(eval(aff, prg.max_point(target)));
+
+          //if (min_val < all_min) {
+            //all_min = min_val;
+          //}
+          //if (max_val < all_max) {
+            //all_max = max_val;
+          //}
+        //}
+      //}
+      //cout << "all max = " << all_max << endl;
+      //cout << "all min = " << all_min << endl;
+      //bounds.push_back({all_min, all_max});
       bounds.push_back({prg.start(source_var), prg.end_exclusive(source_var)});
       src_pos++;
     }
