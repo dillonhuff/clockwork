@@ -2190,3 +2190,19 @@ std::set<std::string> get_kernels(prog& prg) {
   }
   return kernels;
 }
+
+std::vector<piecewise_address> addrs_referenced(op* p, const std::string& buffer) {
+  vector<piecewise_address> addrs;
+  for (auto b : p->produce_locs) {
+    if (b.first == buffer) {
+      addrs.push_back({{"", b.second}});
+    }
+  }
+
+  for (auto b : p->consume_locs_pair) {
+    if (b.first == buffer) {
+      addrs.push_back(b.second);
+    }
+  }
+  return addrs;
+}

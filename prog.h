@@ -94,6 +94,11 @@ struct ir_node {
 
   ir_node() : parent(nullptr), is_loop(false), unroll_factor(1) {}
 
+  int trip_count() const {
+    assert(is_loop);
+    return end_exclusive - start;
+  }
+
   void replace_reads_from(const std::string& source_buf, const std::string& replacement) {
     for (auto& b : consume_locs_pair) {
       if (b.first == source_buf) {
@@ -616,6 +621,32 @@ struct prog {
   string compute_unit_file;
 
   map<string, vector<int> > buffer_bounds;
+
+  op* find_loop(const std::string& target_op) {
+    for (auto v : all_loops()) {
+      if (v->name == target_op) {
+        return v;
+      }
+    }
+    cout << "Error: No loop named " << target_op << " in" << endl;
+    pretty_print();
+    assert(false);
+  }
+
+  op* find_op(const std::string& target_op) {
+    for (auto v : all_ops()) {
+      if (v->name == target_op) {
+        return v;
+      }
+    }
+    cout << "Error: No op named " << target_op << " in" << endl;
+    pretty_print();
+    assert(false);
+  }
+
+  int trip_count(const std::string& loop_level) {
+    return find_loop(loop_level)->trip_count();
+  }
 
   int buffer_size(const std::string& buf) const {
     if (!(contains_key(buf, buffer_bounds))) {
@@ -1223,3 +1254,5 @@ void run_tb(prog& prg);
 void regression_test(prog& prg);
 
 std::set<std::string> get_kernels(prog& prg);
+
+std::vector<piecewise_address> addrs_referenced(op* p, const std::string& buffer);

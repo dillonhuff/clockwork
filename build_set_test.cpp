@@ -1607,43 +1607,6 @@ void insert_pad_loops(prog& prg, const map<string, vector<int> >& pad_indexes) {
   insert_pad_loops(0, prg.root, pad_indexes);
 }
 
-op* find_loop(const std::string& target_op, prog& prg) {
-  for (auto v : prg.all_loops()) {
-    if (v->name == target_op) {
-      return v;
-    }
-  }
-  cout << "Error: No loop named " << target_op << " in" << endl;
-  prg.pretty_print();
-  assert(false);
-}
-op* find_op(const std::string& target_op, prog& prg) {
-  for (auto v : prg.all_ops()) {
-    if (v->name == target_op) {
-      return v;
-    }
-  }
-  cout << "Error: No op named " << target_op << " in" << endl;
-  prg.pretty_print();
-  assert(false);
-}
-
-std::vector<piecewise_address> addrs_referenced(op* p, const std::string& buffer) {
-  vector<piecewise_address> addrs;
-  for (auto b : p->produce_locs) {
-    if (b.first == buffer) {
-      addrs.push_back({{"", b.second}});
-    }
-  }
-
-  for (auto b : p->consume_locs_pair) {
-    if (b.first == buffer) {
-      addrs.push_back(b.second);
-    }
-  }
-  return addrs;
-}
-
 std::set<string> buffers_referenced(op* p) {
   assert(!p->is_loop);
 
@@ -1860,6 +1823,120 @@ void reaccess_no_hierarchy_rolled_test() {
   //assert(optimized_res == unoptimized_res);
 }
 
+vector<string> upsample_vars(const std::string& target_buf, op* reader, prog& prg) {
+
+  auto all_vars = map_find(reader, prg.iter_vars());
+  vector<string> vars_used_in_read;
+  for (auto a : addrs_referenced(reader, target_buf)) {
+    assert(a.size() > 0);
+    isl_multi_aff* ma = to_multi_aff(prg.ctx, all_vars, a.at(0).second);
+    cout << tab(2) << str(a) << endl;
+    cout << tab(2) << str(ma) << endl;
+    for (int i = 0; i < isl_multi_aff_dim(ma, isl_dim_set); i++) {
+      auto aff = isl_multi_aff_get_aff(ma, i);
+      cout << tab(3) << i << ": " << str(aff) << endl;
+
+      for (int d = 0; d < num_in_dims(aff); d++) {
+        isl_val* coeff = get_coeff(aff, d);
+        if (!is_zero(coeff)) {
+          vars_used_in_read.push_back(dim_name(aff, d));
+        }
+        //cout << tab(4) << dim_name(aff, d) << ": " << str(get_coeff(aff, d)) << endl;
+      }
+    }
+  }
+
+  vector<string> upsamples;
+  for (auto v : all_vars) {
+    if (prg.trip_count(v) > 1 && !elem(v, vars_used_in_read)) {
+      upsamples.push_back(v);
+    }
+  }
+  return upsamples;
+}
+
+void make_constant_dd(const std::string& target_op, const std::string& target_buf, prog& prg) {
+
+  op* target = prg.find_op(target_op);
+  op* source = find_writer(target_buf, prg);
+
+  cout << "target = " << target->name << endl;
+  cout << "writer = " << source->name << endl;
+
+  auto vars = prg.iter_vars();
+  auto target_vars = map_find(target, vars);
+  auto source_vars = map_find(source, vars);
+
+  assert(target_vars.size() == source_vars.size());
+
+  cout << "Vars: " << target->name << " -> " << str(map_find(target, vars)) << endl;
+  cout << "Vars: " << source->name << " -> " << str(map_find(source, vars)) << endl;
+
+  string last_shared_level = "";
+  int num_unshared_levels = target_vars.size();
+  for (int i = 0; i < source_vars.size(); i++) {
+    if (target_vars[i] != source_vars[i]) {
+      break;
+    }
+    last_shared_level = target_vars[i];
+    num_unshared_levels--;
+  }
+  int num_shared_levels = target_vars.size() - num_unshared_levels;
+  assert(last_shared_level != "");
+
+  cout << "last shared level = " << last_shared_level << endl;
+
+  op* loop = prg.find_loop(last_shared_level);
+  string lp_loader = "sw_loader_from_" + source->name + "_to_" + target->name;
+  vector<string> iter_vars;
+  vector<string> read_vars;
+  vector<pair<int, int> > bounds{{0, 2}, {0, 8}, {0, 16}};
+  op* next =
+    loop->add_loop_after(source, lp_loader + "_" + str(0), bounds.at(0).first, bounds.at(0).second);
+  iter_vars.push_back(next->name);
+  for (int i = 1; i < num_unshared_levels; i++) {
+    next = next->add_loop(lp_loader + "_" + str(i), bounds.at(i).first, bounds.at(i).second);
+    iter_vars.push_back(next->name);
+    read_vars.push_back(next->name);
+  }
+  reverse(iter_vars);
+  reverse(read_vars);
+
+  string l1_buf = target_buf + "_" + target->name + "_l1";
+  auto cpy_op = next->add_op("load_" + target_buf + "_to_" + target->name);
+  cpy_op->add_store(l1_buf, comma_list(iter_vars));
+  cpy_op->add_load(target_buf, comma_list(read_vars));
+  prg.buffer_port_widths[l1_buf] = prg.buffer_port_width(target_buf);
+
+  //for (auto v : target->consume_locs_pair) {
+    //if (v.first == target_buf) {
+      //auto mv = to_multi_aff(prg.ctx, target_vars, v.second.at(0).second);
+      //cout << tab(1) << str(mv) << endl;
+    //}
+  //}
+
+  // Q: Where do we place the upsample vars in the new components
+  // if there are several of them?
+  // A: Maybe it is irrelevant?
+  //string upsample_var = target_vars.at(num_shared_levels);
+  vector<string> upsamples = upsample_vars(target_buf, target, prg);
+  cout << "Upsample vars..." << endl;
+  for (auto v : upsamples) {
+    cout << tab(1) << v << endl;
+  }
+  assert(upsamples.size() == 1);
+  assert(upsamples.at(0) == target_vars.at(num_shared_levels));
+  //target_vars.at(num_shared_levels);
+  target->replace_reads_from(target_buf, l1_buf);
+  for (auto& v : target->consume_locs_pair) {
+    if (v.first == l1_buf) {
+      for (auto& a : v.second) {
+        a.second = a.second + (upsamples.size() > 0 ? ", " : "") + comma_list(upsamples);
+      }
+    }
+  }
+}
+
 void reaccess_no_hierarchy_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
@@ -1913,81 +1990,13 @@ void reaccess_no_hierarchy_test() {
   auto pad_indexes = pad_insertion_indexes(dom, valid);
   insert_pad_loops(prg, pad_indexes);
 
-  cout << "After padding..." << endl;
-  prg.pretty_print();
+  //cout << "After padding..." << endl;
+  //prg.pretty_print();
 
   string target_op = "output";
   string target_buf = "bufl2";
 
-  op* target = find_op(target_op, prg);
-  op* source = find_writer(target_buf, prg);
-
-  cout << "target = " << target->name << endl;
-  cout << "writer = " << source->name << endl;
-
-
-  auto vars = prg.iter_vars();
-  auto target_vars = map_find(target, vars);
-  auto source_vars = map_find(source, vars);
-
-  assert(target_vars.size() == source_vars.size());
-
-  cout << "Vars: " << target->name << " -> " << str(map_find(target, vars)) << endl;
-  cout << "Vars: " << source->name << " -> " << str(map_find(source, vars)) << endl;
-
-  string last_shared_level = "";
-  int num_unshared_levels = target_vars.size();
-  for (int i = 0; i < source_vars.size(); i++) {
-    if (target_vars[i] != source_vars[i]) {
-      break;
-    }
-    last_shared_level = target_vars[i];
-    num_unshared_levels--;
-  }
-  int num_shared_levels = target_vars.size() - num_unshared_levels;
-  assert(last_shared_level != "");
-
-  cout << "last shared level = " << last_shared_level << endl;
-
-  op* loop = find_loop(last_shared_level, prg);
-  string lp_loader = "sw_loader_from_" + source->name + "_to_" + target->name;
-  //op* next = loop;
-  vector<string> iter_vars;
-  vector<string> read_vars;
-  vector<pair<int, int> > bounds{{0, 2}, {0, 8}, {0, 16}};
-  op* next =
-    loop->add_loop_after(source, lp_loader + "_" + str(0), bounds.at(0).first, bounds.at(0).second);
-  iter_vars.push_back(next->name);
-  for (int i = 1; i < num_unshared_levels; i++) {
-    next = next->add_loop(lp_loader + "_" + str(i), bounds.at(i).first, bounds.at(i).second);
-    iter_vars.push_back(next->name);
-    read_vars.push_back(next->name);
-  }
-  reverse(iter_vars);
-  reverse(read_vars);
-
-  string l1_buf = target_buf + "_" + target->name + "_l1";
-  auto cpy_op = next->add_op("load_" + target_buf + "_to_" + target->name);
-  cpy_op->add_store(l1_buf, comma_list(iter_vars));
-  cpy_op->add_load(target_buf, comma_list(read_vars));
-  prg.buffer_port_widths[l1_buf] = 16;
-
-  for (auto v : target->consume_locs_pair) {
-    if (v.first == target_buf) {
-      auto mv = to_multi_aff(prg.ctx, target_vars, v.second.at(0).second);
-      cout << tab(1) << str(mv) << endl;
-    }
-  }
-
-  string upsample_var = target_vars.at(num_shared_levels);
-  target->replace_reads_from(target_buf, l1_buf);
-  for (auto& v : target->consume_locs_pair) {
-    if (v.first == l1_buf) {
-      for (auto& a : v.second) {
-        a.second = a.second + ", " + upsample_var;
-      }
-    }
-  }
+  make_constant_dd(target_op, target_buf, prg);
 
   cout << "After loop insertion" << endl;
   prg.pretty_print();
@@ -1995,39 +2004,7 @@ void reaccess_no_hierarchy_test() {
   generate_regression_testbench(prg);
   vector<string> optimized_res = run_regression_tb(prg);
   assert(optimized_res == unoptimized_res);
-  //assert(false);
-
-  //{
-    //auto dom = prg.whole_iteration_domain();
-    //auto valid = coalesce(prg.validity_deps());
-    //auto cs = clockwork_schedule_umap(dom, valid, cpy(valid));
-    //cout << "Clockwork schedule" << endl;
-    //for (auto m : get_maps(cs)) {
-      //cout << tab(1) << str(m) << endl;
-    //}
-  //}
-
-  //assert(false);
-
-//#ifdef COREIR
-  //auto opt_sched = prg.optimized_schedule();
-  //auto schedmap = its(isl_schedule_get_map(opt_sched), prg.whole_iteration_domain());
-  //auto bufs = build_buffers(prg, schedmap);
-  //CodegenOptions options;
-  //for (auto& b : bufs) {
-    //b.second.generate_bank_and_merge(options);
-  //}
-  //generate_coreir(options, bufs, prg, schedmap);
-//#endif
-
-
-  //generate_optimized_code(prg);
-
-  //auto buffers_opt = build_buffers(prg);
-  //CodegenOptions opt;
-  //opt.conditional_merge = false;
-  //buffers_opt.at("buf").generate_bank_and_merge(opt);
-
+  assert(false);
 }
 void reaccess_test() {
 
@@ -9916,8 +9893,8 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
-    prog_splitting_tests();
     application_tests();
+    prog_splitting_tests();
     memory_tile_tests();
     cout << "All tests passed" << endl;
 
