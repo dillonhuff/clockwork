@@ -6,7 +6,7 @@
 
 prog brighten_blur() {
   prog prg;
-  prg.compute_unit_file = "conv_3x3.h";
+  prg.compute_unit_file = "clockwork_standard_compute_units.h";
   prg.name = "brighten_blur";
   prg.add_input("off_chip_input");
   prg.add_output("off_chip_output");

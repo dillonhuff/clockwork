@@ -179,6 +179,13 @@ T psef_weight(T& src) {
 
 template<typename T>
 static inline
+T multiply_by_two(T& src) {
+  T scaled = 2*src;
+  return min(scaled.to_int(), 255);
+}
+
+template<typename T>
+static inline
 T scale_exposure(T& src) {
   T scaled = 3*src;
   return min(scaled.to_int(), 255);
@@ -369,6 +376,7 @@ hw_uint<16> weighted_conv_3_3(hw_uint<16*9>& in, hw_uint<16*9>& weights) {
     w3*v3 + w4*v4 + w5*v5 +
     w6*v6 + w7*v7 + w8*v8);
 }
+
 static inline
 hw_uint<16> conv_3_3(hw_uint<16*9>& in) {
   hw_uint<16> v0 = in.extract<0, 15>();
@@ -574,3 +582,24 @@ template<typename T>
 T uint8(const T& v) {
   return v;
 }
+
+
+static inline
+hw_uint<16> blur_3_3(hw_uint<16*9>& in) {
+  hw_uint<16> v0 = in.extract<0, 15>();
+  hw_uint<16> v1 = in.extract<16, 31>();
+  hw_uint<16> v2 = in.extract<32, 47>();
+
+  hw_uint<16> v3 = in.extract<48, 63>();
+  hw_uint<16> v4 = in.extract<64, 79>();
+  hw_uint<16> v5 = in.extract<80, 95>();
+
+  hw_uint<16> v6 = in.extract<96, 111>();
+  hw_uint<16> v7 = in.extract<112, 127>();
+  hw_uint<16> v8 = in.extract<128, 143>();
+
+  return (v0 + v1 + v2 +
+    v3 + v4 + v5 +
+    v6 + v7 + v8) / 9;
+}
+
