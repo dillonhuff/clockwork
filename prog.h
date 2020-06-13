@@ -622,6 +622,7 @@ struct prog {
 
   map<string, vector<int> > buffer_bounds;
 
+  isl_set* domain(op* op);
   umap* read_map(op* op);
   isl_map* read_map(op* op, const std::string& buf);
 

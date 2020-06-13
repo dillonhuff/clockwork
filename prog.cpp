@@ -856,6 +856,10 @@ map<string, UBuffer> build_buffers(prog& prg) {
   return build_buffers(prg, opt_sched);
 }
 
+isl_set* prog::domain(op* op) {
+  return map_find(op, domains());
+}
+
 map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
   int usuffix = 0;
 
@@ -2341,9 +2345,13 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
     if (elem(target_var, upsamples)) {
       bounds.push_back({prg.start(target_var), prg.end_exclusive(target_var)});
     } else {
-      auto read = prg.read_map(target, target_buf);
+      auto read = its(prg.read_map(target, target_buf), prg.domain(target));
       cout << "Read: " << str(read) << endl;
-      assert(false);
+      auto minpt = lexmin(range(read));
+      auto maxpt = lexmax(range(read));
+      cout << "Min: " << str(minpt) << endl;
+      cout << "Max: " << str(maxpt) << endl;
+      //assert(false);
       //int all_max = -1;
       //int all_min = 10000000;
       //for (auto addr : addrs_referenced(target, target_buf)) {
