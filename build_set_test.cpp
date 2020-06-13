@@ -2010,8 +2010,8 @@ void reaccess_no_hierarchy_test() {
   generate_regression_testbench(prg);
   vector<string> optimized_res = run_regression_tb(prg);
   assert(optimized_res == unoptimized_res);
-  assert(false);
 }
+
 void reaccess_test() {
 
   prog prg;
