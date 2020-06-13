@@ -1628,10 +1628,11 @@ void reaccess_no_hierarchy_rolled_test() {
   prg.name = "reaccess_conv_no_hierarchy_rolled";
   prg.add_input("in");
   prg.add_input("weights_oc");
-  prg.add_output("out");
+  prg.add_output("out_oc");
   prg.buffer_port_widths["in"] = 16;
   prg.buffer_port_widths["weights_oc"] = 16;
   prg.buffer_port_widths["out"] = 16;
+  prg.buffer_port_widths["out_oc"] = 16;
   prg.buffer_port_widths["bufl2"] = 16;
   prg.buffer_port_widths["weights"] = 16;
 
@@ -1663,11 +1664,14 @@ void reaccess_no_hierarchy_rolled_test() {
   }
   read->add_store("out", "qi, qo, ao");
 
-  auto dom = prg.whole_iteration_domain();
-  auto valid = coalesce(prg.validity_deps());
+  auto write_oc = q->add_op("write_out_oc");
+  write_oc->add_load("out", "qi, qo, ao");
+  write_oc->add_store("out_oc", "qi, qo, ao");
+
 
   cout << "Before padding..." << endl;
   prg.pretty_print();
+  //assert(false);
 
   generate_optimized_code(prg);
   generate_regression_testbench(prg);
@@ -1704,6 +1708,9 @@ void reaccess_no_hierarchy_rolled_test() {
 
   //generate_optimized_code(prg);
   //assert(false);
+
+  auto dom = prg.whole_iteration_domain();
+  auto valid = coalesce(prg.validity_deps());
 
   cout << "dom = " << str(dom) << endl;
   cout << "validity = " << str(valid) << endl;
