@@ -1,4 +1,5 @@
 #include "app.h"
+#include "app_splitting_test.h"
 #include "ubuffer.h"
 #include "codegen.h"
 #include "coreir_backend.h"

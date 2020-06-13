@@ -27,16 +27,19 @@ CXX_FLAGS += -I $(COREIR_INCLUDE) -D COREIR
 LINK_FLAGS += -L $(COREIR_LIB) -Wl,-rpath $(COREIR_LIB) -lcoreir -lcoreirsim -lcoreir-commonlib
 endif
 
-TEST_FILES = build_set_test.cpp
+TEST_FILES = build_set_test.cpp app_splitting_test.cpp
+LIB_HEADER_FILES = $(patsubst %.cpp,%.h,$(TEST_FILES))
+
 LIB_CPP_FILES = qexpr.cpp app.cpp isl_utils.cpp prog.cpp codegen.cpp minihls.cpp ubuffer.cpp coreir_backend.cpp coreir_lib.cpp
 LIB_HEADER_FILES = $(patsubst %.cpp,%.h,$(LIB_CPP_FILES))
 
+TEST_OBJ_FILES := $(patsubst %.cpp,%.o,$(TEST_FILES))
 OBJ_FILES := $(patsubst %.cpp,%.o,$(LIB_CPP_FILES))
 
-$(TARGET): libclkwrk.$(LIB_EXT) $(TARGET).o
-	$(CXX) $(CXX_FLAGS) $(TARGET).o $(LINK_FLAGS) -o $@
+$(TARGET): libclkwrk.$(LIB_EXT) $(TEST_OBJ_FILES)
+	$(CXX) $(CXX_FLAGS) $(TEST_OBJ_FILES) $(LINK_FLAGS) -o $@
 
-$(TARGET).o: build_set_test.cpp $(LIB_HEADER_FILES)
+$(TARGET).o: $(TEST_FILES) $(LIB_HEADER_FILES) $(TEST_HEADER_FILES)
 	$(CXX) $(CXX_FLAGS) -c $< -o $@
 
 libclkwrk.$(LIB_EXT): $(OBJ_FILES)
