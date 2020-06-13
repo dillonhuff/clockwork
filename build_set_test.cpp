@@ -1656,7 +1656,7 @@ void reaccess_no_hierarchy_rolled_test() {
   auto qw = q->add_loop("wy", 0, 3);
   auto read = qw->add_op("output");
   read->add_load("out", "qi, qo, ao");
-  read->add_function("weighted_conv_3_3");
+  read->add_function("weighted_conv_3_1");
   for (size_t wx = 0; wx < 3; wx ++) {
     read->add_load("weights", str(wx) + ", wy, ao");
     read->add_load("bufl2", "qi+" + str(wx) + ", qo+wy");
@@ -1668,6 +1668,10 @@ void reaccess_no_hierarchy_rolled_test() {
 
   cout << "Before padding..." << endl;
   prg.pretty_print();
+
+  generate_optimized_code(prg);
+  generate_regression_testbench(prg);
+  vector<string> unoptimized_res = run_regression_tb(prg);
 
   for (auto op : prg.all_ops()) {
     cout << op->name << endl;
@@ -1722,87 +1726,10 @@ void reaccess_no_hierarchy_rolled_test() {
   cout << "After loop insertion" << endl;
   prg.pretty_print();
 
-  assert(false);
-
-  //string target_op = "output";
-  //string target_buf = "bufl2";
-
-  //op* target = find_op(target_op, prg);
-  //op* source = find_writer(target_buf, prg);
-
-  //cout << "target = " << target->name << endl;
-  //cout << "writer = " << source->name << endl;
-
-
-  //auto vars = prg.iter_vars();
-  //auto target_vars = map_find(target, vars);
-  //auto source_vars = map_find(source, vars);
-
-  //assert(target_vars.size() == source_vars.size());
-
-  //cout << "Vars: " << target->name << " -> " << str(map_find(target, vars)) << endl;
-  //cout << "Vars: " << source->name << " -> " << str(map_find(source, vars)) << endl;
-
-  //string last_shared_level = "";
-  //int num_unshared_levels = target_vars.size();
-  //for (int i = 0; i < source_vars.size(); i++) {
-    //if (target_vars[i] != source_vars[i]) {
-      //break;
-    //}
-    //last_shared_level = target_vars[i];
-    //num_unshared_levels--;
-  //}
-  //int num_shared_levels = target_vars.size() - num_unshared_levels;
-  //assert(last_shared_level != "");
-
-  //cout << "last shared level = " << last_shared_level << endl;
-
-  //op* loop = find_loop(last_shared_level, prg);
-  //string lp_loader = "sw_loader_from_" + source->name + "_to_" + target->name;
-  ////op* next = loop;
-  //vector<string> iter_vars;
-  //vector<string> read_vars;
-  //vector<pair<int, int> > bounds{{0, 2}, {0, 8}, {0, 16}};
-  //op* next =
-    //loop->add_loop_after(source, lp_loader + "_" + str(0), bounds.at(0).first, bounds.at(0).second);
-  //iter_vars.push_back(next->name);
-  //for (int i = 1; i < num_unshared_levels; i++) {
-    //next = next->add_loop(lp_loader + "_" + str(i), bounds.at(i).first, bounds.at(i).second);
-    //iter_vars.push_back(next->name);
-    //read_vars.push_back(next->name);
-  //}
-  //reverse(iter_vars);
-  //reverse(read_vars);
-
-  //string l1_buf = target_buf + "_" + target->name + "_l1";
-  //auto cpy_op = next->add_op("load_" + target_buf + "_to_" + target->name);
-  //cpy_op->add_store(l1_buf, comma_list(iter_vars));
-  //cpy_op->add_load(target_buf, comma_list(read_vars));
-  //prg.buffer_port_widths[l1_buf] = 16;
-
-  //for (auto v : target->consume_locs_pair) {
-    //if (v.first == target_buf) {
-      //auto mv = to_multi_aff(prg.ctx, target_vars, v.second.at(0).second);
-      //cout << tab(1) << str(mv) << endl;
-    //}
-  //}
-
-  //string upsample_var = target_vars.at(num_shared_levels);
-  //target->replace_reads_from(target_buf, l1_buf);
-  //for (auto& v : target->consume_locs_pair) {
-    //if (v.first == l1_buf) {
-      //for (auto& a : v.second) {
-        //a.second = a.second + ", " + upsample_var;
-      //}
-    //}
-  //}
-
-  //cout << "After loop insertion" << endl;
-  //prg.pretty_print();
-  //generate_optimized_code(prg);
-  //generate_regression_testbench(prg);
-  //vector<string> optimized_res = run_regression_tb(prg);
-  //assert(optimized_res == unoptimized_res);
+  generate_optimized_code(prg);
+  generate_regression_testbench(prg);
+  vector<string> optimized_res = run_regression_tb(prg);
+  assert(optimized_res == unoptimized_res);
 }
 
 void reaccess_no_hierarchy_test() {

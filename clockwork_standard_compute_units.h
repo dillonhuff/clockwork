@@ -253,6 +253,10 @@ int set_zero() {
   return 0;
 }
 
+hw_uint<16> zero() {
+  return 16;
+}
+
 static inline
 hw_uint<32> blury_comp(hw_uint<32*3>& in) {
   hw_uint<32> v0 = in.extract<0, 31>();
@@ -344,6 +348,21 @@ int blur_27(hw_uint<16*27>& in) {
   return v0 + v1 + v2 +
     v3 + v4 + v5 +
     v6 + v7 + v8;
+}
+
+static inline
+hw_uint<16> weighted_conv_3_1(hw_uint<16>& base, hw_uint<16*3>& in, hw_uint<16*3>& weights) {
+  hw_uint<16> v0 = in.extract<0, 15>();
+  hw_uint<16> v1 = in.extract<16, 31>();
+  hw_uint<16> v2 = in.extract<32, 47>();
+
+
+  hw_uint<16> w0 = in.extract<0, 15>();
+  hw_uint<16> w1 = in.extract<16, 31>();
+  hw_uint<16> w2 = in.extract<32, 47>();
+
+
+  return (w0*v0 + w1*v1 + w2*v2) + base;
 }
 
 static inline
