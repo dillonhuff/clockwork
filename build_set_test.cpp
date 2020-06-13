@@ -1829,19 +1829,21 @@ vector<string> upsample_vars(const std::string& target_buf, op* reader, prog& pr
   vector<string> vars_used_in_read;
   for (auto a : addrs_referenced(reader, target_buf)) {
     assert(a.size() > 0);
-    isl_multi_aff* ma = to_multi_aff(prg.ctx, all_vars, a.at(0).second);
-    cout << tab(2) << str(a) << endl;
-    cout << tab(2) << str(ma) << endl;
-    for (int i = 0; i < isl_multi_aff_dim(ma, isl_dim_set); i++) {
-      auto aff = isl_multi_aff_get_aff(ma, i);
-      cout << tab(3) << i << ": " << str(aff) << endl;
+    for (auto ar : a) {
+      isl_multi_aff* ma = to_multi_aff(prg.ctx, all_vars, ar.second);
+      cout << tab(2) << str(a) << endl;
+      cout << tab(2) << str(ma) << endl;
+      for (int i = 0; i < isl_multi_aff_dim(ma, isl_dim_set); i++) {
+        auto aff = isl_multi_aff_get_aff(ma, i);
+        cout << tab(3) << i << ": " << str(aff) << endl;
 
-      for (int d = 0; d < num_in_dims(aff); d++) {
-        isl_val* coeff = get_coeff(aff, d);
-        if (!is_zero(coeff)) {
-          vars_used_in_read.push_back(dim_name(aff, d));
+        for (int d = 0; d < num_in_dims(aff); d++) {
+          isl_val* coeff = get_coeff(aff, d);
+          if (!is_zero(coeff)) {
+            vars_used_in_read.push_back(dim_name(aff, d));
+          }
+          //cout << tab(4) << dim_name(aff, d) << ": " << str(get_coeff(aff, d)) << endl;
         }
-        //cout << tab(4) << dim_name(aff, d) << ": " << str(get_coeff(aff, d)) << endl;
       }
     }
   }
