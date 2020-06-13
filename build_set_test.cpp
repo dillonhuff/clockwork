@@ -1,5 +1,5 @@
 #include "app.h"
-#include "app_splitting_test.h"
+#include "prog_splitting_test.h"
 #include "ubuffer.h"
 #include "codegen.h"
 #include "coreir_backend.h"
@@ -9916,7 +9916,7 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
-    app_splitting_tests();
+    prog_splitting_tests();
     application_tests();
     memory_tile_tests();
     cout << "All tests passed" << endl;

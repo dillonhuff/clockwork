@@ -27,7 +27,7 @@ CXX_FLAGS += -I $(COREIR_INCLUDE) -D COREIR
 LINK_FLAGS += -L $(COREIR_LIB) -Wl,-rpath $(COREIR_LIB) -lcoreir -lcoreirsim -lcoreir-commonlib
 endif
 
-TEST_FILES = build_set_test.cpp app_splitting_test.cpp
+TEST_FILES = build_set_test.cpp prog_splitting_test.cpp
 LIB_HEADER_FILES = $(patsubst %.cpp,%.h,$(TEST_FILES))
 
 LIB_CPP_FILES = qexpr.cpp app.cpp isl_utils.cpp prog.cpp codegen.cpp minihls.cpp ubuffer.cpp coreir_backend.cpp coreir_lib.cpp

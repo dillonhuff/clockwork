@@ -1,3 +1,3 @@
 #pragma once
 
-void app_splitting_tests();
+void prog_splitting_tests();
