@@ -9677,11 +9677,10 @@ void manual_unroll_test() {
 
 void application_tests() {
   //halide_harris_test();
-  conv_3_3_halide_test();
-  //assert(false);
   reaccess_no_hierarchy_test();
   //reaccess_no_hierarchy_rolled_test();
   mini_conv_halide_test();
+  conv_3_3_halide_test();
   reduce_1d_test();
   reduce_2d_test();
   halide_cascade_test();
@@ -9817,13 +9816,13 @@ void application_tests() {
 void memory_tile_tests() {
   //assert(false);
   //shift_reg_test();
+  vec_test();
   bankmerge_vec_test();
   reaccess_test();
 
   //new_bankmerge_tests();
   memtile_test();
   auto_vec_test();
-  vec_test();
   agg_test();
 
   //assert(false);
@@ -9916,6 +9915,7 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
+    app_splitting_tests();
     application_tests();
     memory_tile_tests();
     cout << "All tests passed" << endl;
