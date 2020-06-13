@@ -1622,31 +1622,6 @@ std::set<string> buffers_referenced(op* p) {
   return bufs;
 }
 
-std::set<string> buffers_written(op* p) {
-  assert(!p->is_loop);
-
-  std::set<string> bufs;
-  for (auto b : p->produce_locs) {
-    bufs.insert(b.first);
-  }
-  return bufs;
-}
-
-bool writes(const std::string& target_buf, op* p) {
-  return elem(target_buf, buffers_written(p));
-}
-
-op* find_writer(const std::string& target_buf, prog& prg) {
-  vector<op*> writers;
-  for (auto v : prg.all_ops()) {
-    if (writes(target_buf, v)) {
-      writers.push_back(v);
-    }
-  }
-  assert(writers.size() == 1);
-  return writers.at(0);
-}
-
 void reaccess_no_hierarchy_rolled_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
@@ -1739,6 +1714,13 @@ void reaccess_no_hierarchy_rolled_test() {
   cout << "After padding..." << endl;
   prg.pretty_print();
 
+  string target_op = "output";
+  string target_buf = "bufl2";
+
+  make_constant_dd(target_op, target_buf, prg);
+
+  cout << "After loop insertion" << endl;
+  prg.pretty_print();
 
   assert(false);
 
@@ -1823,126 +1805,6 @@ void reaccess_no_hierarchy_rolled_test() {
   //assert(optimized_res == unoptimized_res);
 }
 
-vector<string> upsample_vars(const std::string& target_buf, op* reader, prog& prg) {
-
-  auto all_vars = map_find(reader, prg.iter_vars());
-  vector<string> vars_used_in_read;
-  for (auto a : addrs_referenced(reader, target_buf)) {
-    assert(a.size() > 0);
-    for (auto ar : a) {
-      isl_multi_aff* ma = to_multi_aff(prg.ctx, all_vars, ar.second);
-      cout << tab(2) << str(a) << endl;
-      cout << tab(2) << str(ma) << endl;
-      for (int i = 0; i < isl_multi_aff_dim(ma, isl_dim_set); i++) {
-        auto aff = isl_multi_aff_get_aff(ma, i);
-        cout << tab(3) << i << ": " << str(aff) << endl;
-
-        for (int d = 0; d < num_in_dims(aff); d++) {
-          isl_val* coeff = get_coeff(aff, d);
-          if (!is_zero(coeff)) {
-            vars_used_in_read.push_back(dim_name(aff, d));
-          }
-          //cout << tab(4) << dim_name(aff, d) << ": " << str(get_coeff(aff, d)) << endl;
-        }
-      }
-    }
-  }
-
-  vector<string> upsamples;
-  for (auto v : all_vars) {
-    if (prg.trip_count(v) > 1 && !elem(v, vars_used_in_read)) {
-      upsamples.push_back(v);
-    }
-  }
-  return upsamples;
-}
-
-void make_constant_dd(const std::string& target_op, const std::string& target_buf, prog& prg) {
-
-  op* target = prg.find_op(target_op);
-  op* source = find_writer(target_buf, prg);
-
-  cout << "target = " << target->name << endl;
-  cout << "writer = " << source->name << endl;
-
-  vector<string> upsamples = upsample_vars(target_buf, target, prg);
-  cout << "Upsample vars..." << endl;
-  for (auto v : upsamples) {
-    cout << tab(1) << v << endl;
-  }
-
-  auto vars = prg.iter_vars();
-  auto target_vars = map_find(target, vars);
-  auto source_vars = map_find(source, vars);
-
-  assert(target_vars.size() == source_vars.size());
-
-  cout << "Vars: " << target->name << " -> " << str(map_find(target, vars)) << endl;
-  cout << "Vars: " << source->name << " -> " << str(map_find(source, vars)) << endl;
-
-  string last_shared_level = "";
-  int num_unshared_levels = target_vars.size();
-  for (int i = 0; i < source_vars.size(); i++) {
-    if (target_vars[i] != source_vars[i]) {
-      break;
-    }
-    last_shared_level = target_vars[i];
-    num_unshared_levels--;
-  }
-  int num_shared_levels = target_vars.size() - num_unshared_levels;
-  assert(upsamples.size() == 1);
-  assert(upsamples.at(0) == target_vars.at(num_shared_levels));
-  //target_vars.at(num_shared_levels);
-  assert(last_shared_level != "");
-
-  cout << "last shared level = " << last_shared_level << endl;
-  assert(num_unshared_levels == 3);
-
-  op* loop = prg.find_loop(last_shared_level);
-  string lp_loader = "sw_loader_from_" + source->name + "_to_" + target->name;
-  vector<string> iter_vars;
-  vector<string> read_vars;
-  //vector<pair<int, int> > bounds{{0, 2}, {0, 8}, {0, 16}};
-  vector<pair<int, int> > bounds;
-  int src_pos = num_shared_levels;
-  for (int i = 0; i < num_unshared_levels; i++) {
-    string target_var = target_vars.at(num_shared_levels + i);
-    string source_var = source_vars.at(src_pos);
-    if (elem(target_var, upsamples)) {
-      bounds.push_back({prg.start(target_var), prg.end_exclusive(target_var)});
-    } else {
-      bounds.push_back({prg.start(source_var), prg.end_exclusive(source_var)});
-      src_pos++;
-    }
-  }
-
-  op* next =
-    loop->add_loop_after(source, lp_loader + "_" + str(0), bounds.at(0).first, bounds.at(0).second);
-  iter_vars.push_back(next->name);
-  for (int i = 1; i < num_unshared_levels; i++) {
-    next = next->add_loop(lp_loader + "_" + str(i), bounds.at(i).first, bounds.at(i).second);
-    iter_vars.push_back(next->name);
-    read_vars.push_back(next->name);
-  }
-  reverse(iter_vars);
-  reverse(read_vars);
-
-  string l1_buf = target_buf + "_" + target->name + "_l1";
-  auto cpy_op = next->add_op("load_" + target_buf + "_to_" + target->name);
-  cpy_op->add_store(l1_buf, comma_list(iter_vars));
-  cpy_op->add_load(target_buf, comma_list(read_vars));
-  prg.buffer_port_widths[l1_buf] = prg.buffer_port_width(target_buf);
-
-  target->replace_reads_from(target_buf, l1_buf);
-  for (auto& v : target->consume_locs_pair) {
-    if (v.first == l1_buf) {
-      for (auto& a : v.second) {
-        a.second = a.second + (upsamples.size() > 0 ? ", " : "") + comma_list(upsamples);
-      }
-    }
-  }
-}
-
 void reaccess_no_hierarchy_test() {
   prog prg;
   prg.compute_unit_file = "conv_3x3.h";
@@ -2002,6 +1864,12 @@ void reaccess_no_hierarchy_test() {
   string target_op = "output";
   string target_buf = "bufl2";
 
+  vector<string> upsamples =
+    upsample_vars(target_buf, prg.find_op(target_op), prg);
+
+  assert(upsamples.size() == 1);
+  assert(upsamples.at(0) == "ao");
+  
   make_constant_dd(target_op, target_buf, prg);
 
   cout << "After loop insertion" << endl;
@@ -9661,8 +9529,8 @@ void manual_unroll_test() {
 
 void application_tests() {
   //halide_harris_test();
+  reaccess_no_hierarchy_rolled_test();
   reaccess_no_hierarchy_test();
-  //reaccess_no_hierarchy_rolled_test();
   mini_conv_halide_test();
   conv_3_3_halide_test();
   reduce_1d_test();

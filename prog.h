@@ -1264,3 +1264,13 @@ void regression_test(prog& prg);
 std::set<std::string> get_kernels(prog& prg);
 
 std::vector<piecewise_address> addrs_referenced(op* p, const std::string& buffer);
+
+vector<string> upsample_vars(const std::string& target_buf, op* reader, prog& prg);
+
+void make_constant_dd(const std::string& target_op, const std::string& target_buf, prog& prg);
+
+std::set<string> buffers_written(op* p);
+
+bool writes(const std::string& target_buf, op* p);
+
+op* find_writer(const std::string& target_buf, prog& prg);
