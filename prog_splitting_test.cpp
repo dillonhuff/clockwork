@@ -17,9 +17,11 @@ prog brighten_blur() {
   prg.buffer_port_widths["off_chip_output"] = 16;
 
 
-  int input_image_rows = 32;
-  int input_image_cols = 32;
+  int input_image_rows = 256;
+  int input_image_cols = 256;
 
+  // Actually you dont have to fill these
+  // buffer bounds in. I am just adding them for completeness.
   prg.buffer_bounds["off_chip_input"] = {input_image_cols, input_image_rows};
   prg.buffer_bounds["in"] = {input_image_cols, input_image_rows};
   prg.buffer_bounds["brightened"] = {input_image_cols, input_image_rows};
@@ -57,7 +59,6 @@ prog brighten_blur() {
   write_op->add_store("off_chip_output", "n, m");
 
   return prg;
-
 }
 
 void prog_splitting_tests() {
@@ -66,5 +67,9 @@ void prog_splitting_tests() {
   generate_optimized_code(prg);
   generate_regression_testbench(prg);
   vector<string> unoptimized_res = run_regression_tb(prg);
+
+  // Run the code on a tiny test image
+  system("clang++ -std=c++11 brighten_blur_sw_bmp_test_harness.cpp brighten_blur.cpp -I ./aws_collateral/ -I .");
+  system("./a.out");
   assert(false);
 }
