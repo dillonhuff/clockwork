@@ -2181,3 +2181,12 @@ void regression_test(prog& prg) {
 
 }
 
+std::set<std::string> get_kernels(prog& prg) {
+  std::set<string> kernels;
+  for (auto child : prg.root->children) {
+    if (child->is_loop) {
+      kernels.insert(child->name);
+    }
+  }
+  return kernels;
+}

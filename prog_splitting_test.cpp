@@ -4,6 +4,10 @@
 
 #include <cassert>
 
+#define INT_MULTIPLIER_COST 1
+#define INT_ADDER_COST 1
+#define INT_CONSTANT_DIVIDER_COST 1
+
 prog brighten_blur() {
   prog prg;
   prg.compute_unit_file = "clockwork_standard_compute_units.h";
@@ -61,15 +65,114 @@ prog brighten_blur() {
   return prg;
 }
 
+struct TargetTechlibInfo {
+  map<string, int> compute_unit_costs;
+  int sram_cost_per_bit;
+  int reg_cost_per_bit;
+};
+
+map<string, int> estimate_kernel_areas(prog& prg, TargetTechlibInfo& target_info) {
+  // TODO: Come up with a better area estimate
+  map<string, int> costs;
+  for (string kernel : get_kernels(prg)) {
+    costs[kernel] = 100000;
+  }
+  return costs;
+}
+
+std::set<std::set<string> > group_kernels_for_compilation(prog& prg,
+    map<string, int>& kernel_costs,
+    const int max_area_cost_per_group) {
+
+  // TODO: Improve this greedy algorithm
+  std::set<std::set<string> > groups;
+
+  int current_group_cost = 0;
+  std::set<string> current_group;
+  for (string kernel : get_kernels(prg)) {
+    if (current_group_cost + map_find(kernel, kernel_costs) > max_area_cost_per_group) {
+      groups.insert(current_group);
+      current_group = {kernel};
+      current_group_cost = 0;
+    } else {
+      current_group.insert({kernel});
+    }
+  }
+
+  groups.insert(current_group);
+
+  // Sanity check
+  int num_kernels_in_groups = 0;
+  for (auto g : groups) {
+    num_kernels_in_groups += g.size();
+  }
+
+  assert(num_kernels_in_groups == get_kernels(prg).size());
+
+  return groups;
+}
+
+prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original) {
+  // TODO: Implement this function
+  prog extracted;
+
+  return extracted;
+}
+
+void generate_optimized_code_for_program_dag(std::vector<prog>& group_programs) {
+  // TODO: Implement this function
+}
+
 void prog_splitting_tests() {
   prog prg = brighten_blur();
 
+  cout << "Original program..." << endl;
+  prg.pretty_print();
+
+  // Compile the application into
+  // one large module.
   generate_optimized_code(prg);
-  generate_regression_testbench(prg);
-  vector<string> unoptimized_res = run_regression_tb(prg);
 
   // Run the code on a tiny test image
+  // and save it to brighten_blur_bmp_out.bmp
   system("clang++ -std=c++11 brighten_blur_sw_bmp_test_harness.cpp brighten_blur.cpp -I ./aws_collateral/ -I .");
   system("./a.out");
+
+  // Estimate the area required for each
+  // kernel in the application
+  TargetTechlibInfo target_info;
+  target_info.compute_unit_costs["multiply_by_two"] =
+    INT_MULTIPLIER_COST;
+  target_info.compute_unit_costs["blur_3_3"] =
+    INT_ADDER_COST*8 + INT_CONSTANT_DIVIDER_COST;
+  target_info.sram_cost_per_bit = 1;
+  target_info.reg_cost_per_bit = 1;
+
+  map<string, int> kernel_areas =
+    estimate_kernel_areas(prg, target_info);
+  cout << "Estimated area costs..." << endl;
+  for (auto kernel_and_area : kernel_areas) {
+    string kernel_name = kernel_and_area.first;
+    int area = kernel_and_area.second;
+    cout << tab(1) << kernel_name << " has area cost: " << area << endl;
+  }
+
+  int max_area_cost_per_group = 20000;
+  std::set<std::set<string> > kernel_grouping =
+    group_kernels_for_compilation(prg,
+        kernel_areas,
+        max_area_cost_per_group);
+
+  vector<prog> group_programs;
+  cout << "Kernel grouping..." << endl;
+  for (auto group : kernel_grouping) {
+    prog prog_for_group = extract_group_to_separate_prog(group, prg);
+    cout << "Group program..." << endl;
+    prog_for_group.pretty_print();
+    group_programs.push_back(prog_for_group);
+  }
+
+  generate_optimized_code_for_program_dag(group_programs);
+
   assert(false);
 }

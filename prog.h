@@ -777,7 +777,7 @@ struct prog {
   }
 
   ~prog() {
-    isl_ctx_free(ctx);
+    //isl_ctx_free(ctx);
   }
 
   std::set<op*> all_loops() { return root->all_loops(); }
@@ -1222,3 +1222,4 @@ void run_tb(prog& prg);
 
 void regression_test(prog& prg);
 
+std::set<std::string> get_kernels(prog& prg);
