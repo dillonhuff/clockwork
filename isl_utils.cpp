@@ -643,15 +643,11 @@ isl_map* to_map(isl_union_map* const m) {
   vector<isl_map*> map_vec;
   isl_union_map_foreach_map(m, get_maps, &map_vec);
 
-
   if (map_vec.size() != 1) {
     std::cout << "Error: Several maps in: " << str(m) << std::endl;
   }
   assert(map_vec.size() == 1);
   return map_vec.at(0);
-  //auto map_list = isl_union_map_get_map_list(m);
-  //assert(isl_map_list_size(map_list) == 1);
-  //return isl_map_list_get_map(map_list, 0);
 }
 
 isl_union_map* to_umap(isl_map* const m) {

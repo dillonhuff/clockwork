@@ -622,6 +622,9 @@ struct prog {
 
   map<string, vector<int> > buffer_bounds;
 
+  umap* read_map(op* op);
+  isl_map* read_map(op* op, const std::string& buf);
+
   isl_point* max_point(op* op) {
     std::vector<string> surrounding_loops = map_find(op, iter_vars());
 

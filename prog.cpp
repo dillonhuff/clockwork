@@ -801,6 +801,55 @@ void generate_op_code(map<string, UBuffer>& buffers, op* op) {
   out.close();
 }
 
+isl_map* prog::read_map(op* op, const std::string& buf) {
+  umap* read = isl_union_map_read_from_str(ctx, "{}");
+  for (auto consumed : op->consume_locs_pair) {
+    string name = consumed.first;
+
+    if (name == buf) {
+      string cond = "{ ";
+      for (auto sec_pair : consumed.second) {
+        if (sec_pair.first == "") {
+          cond = cond + string(op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "]; ");
+
+        } else {
+          cond = cond + string(op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+        }
+      }
+      cond = cond.substr(0, cond.length() - 2);
+      cond = cond + string(" }");
+
+      isl_map* consumed_here =
+        isl_map_read_from_str(ctx, cond.c_str());
+      read = unn(read, to_umap(consumed_here));
+    }
+  }
+  return to_map(read);
+}
+
+umap* prog::read_map(op* op) {
+  umap* read = isl_union_map_read_from_str(ctx, "{}");
+  for (auto consumed : op->consume_locs_pair) {
+    string name = consumed.first;
+
+    string cond = "{ ";
+    for (auto sec_pair : consumed.second) {
+      if (sec_pair.first == "") {
+        cond = cond + string(op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "]; ");
+
+      } else {
+        cond = cond + string(op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+      }
+    }
+    cond = cond.substr(0, cond.length() - 2);
+    cond = cond + string(" }");
+
+    isl_map* consumed_here =
+      isl_map_read_from_str(ctx, cond.c_str());
+    read = unn(read, to_umap(consumed_here));
+  }
+  return read;
+}
 
 map<string, UBuffer> build_buffers(prog& prg) {
   umap* opt_sched = prg.optimized_codegen();
@@ -2292,6 +2341,9 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
     if (elem(target_var, upsamples)) {
       bounds.push_back({prg.start(target_var), prg.end_exclusive(target_var)});
     } else {
+      auto read = prg.read_map(target, target_buf);
+      cout << "Read: " << str(read) << endl;
+      assert(false);
       //int all_max = -1;
       //int all_min = 10000000;
       //for (auto addr : addrs_referenced(target, target_buf)) {
