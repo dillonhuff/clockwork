@@ -1871,9 +1871,6 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
     cout << tab(1) << v << endl;
   }
 
-  assert(upsamples.size() == 1);
-  assert(upsamples.at(0) == target_vars.at(num_shared_levels));
-  //target_vars.at(num_shared_levels);
   auto vars = prg.iter_vars();
   auto target_vars = map_find(target, vars);
   auto source_vars = map_find(source, vars);
@@ -1893,6 +1890,9 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
     num_unshared_levels--;
   }
   int num_shared_levels = target_vars.size() - num_unshared_levels;
+  assert(upsamples.size() == 1);
+  assert(upsamples.at(0) == target_vars.at(num_shared_levels));
+  //target_vars.at(num_shared_levels);
   assert(last_shared_level != "");
 
   cout << "last shared level = " << last_shared_level << endl;
@@ -1904,12 +1904,15 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
   vector<string> read_vars;
   //vector<pair<int, int> > bounds{{0, 2}, {0, 8}, {0, 16}};
   vector<pair<int, int> > bounds;
+  int src_pos = num_shared_levels;
   for (int i = 0; i < num_unshared_levels; i++) {
-    string target_var = target_vars.at(last_shared_level + i + 1);
+    string target_var = target_vars.at(num_shared_levels + i);
+    string source_var = source_vars.at(src_pos);
     if (elem(target_var, upsamples)) {
       bounds.push_back({prg.start(target_var), prg.end_exclusive(target_var)});
     } else {
-      bounds.push_back({0, 1});
+      bounds.push_back({prg.start(source_var), prg.end_exclusive(source_var)});
+      src_pos++;
     }
   }
 

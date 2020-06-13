@@ -633,6 +633,14 @@ struct prog {
     assert(false);
   }
 
+  int start(const std::string& loop) {
+    return find_loop(loop)->start;
+  }
+
+  int end_exclusive(const std::string& loop) {
+    return find_loop(loop)->end_exclusive;
+  }
+
   op* find_op(const std::string& target_op) {
     for (auto v : all_ops()) {
       if (v->name == target_op) {
