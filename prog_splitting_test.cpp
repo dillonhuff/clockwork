@@ -16,8 +16,15 @@ prog brighten_blur() {
   prg.buffer_port_widths["blurred"] = 16;
   prg.buffer_port_widths["off_chip_output"] = 16;
 
+
   int input_image_rows = 32;
   int input_image_cols = 32;
+
+  prg.buffer_bounds["off_chip_input"] = {input_image_cols, input_image_rows};
+  prg.buffer_bounds["in"] = {input_image_cols, input_image_rows};
+  prg.buffer_bounds["brightened"] = {input_image_cols, input_image_rows};
+  prg.buffer_bounds["blurred"] = {input_image_cols - 2, input_image_rows - 2};
+  prg.buffer_bounds["off_chip_output"] = {input_image_cols - 2, input_image_rows - 2};
 
   auto p = prg.add_nest("po", 0, input_image_rows,
       "pi", 0, input_image_cols);
