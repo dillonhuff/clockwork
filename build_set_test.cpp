@@ -1671,6 +1671,7 @@ void reaccess_no_hierarchy_rolled_test() {
 
   generate_optimized_code(prg);
   generate_regression_testbench(prg);
+  cout << "Running unoptimized code" << endl;
   vector<string> unoptimized_res = run_regression_tb(prg);
 
   for (auto op : prg.all_ops()) {
@@ -1728,6 +1729,7 @@ void reaccess_no_hierarchy_rolled_test() {
 
   generate_optimized_code(prg);
   generate_regression_testbench(prg);
+  cout << "Running optimized code" << endl;
   vector<string> optimized_res = run_regression_tb(prg);
   assert(optimized_res == unoptimized_res);
 }
