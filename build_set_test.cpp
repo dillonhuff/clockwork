@@ -9580,6 +9580,7 @@ void manual_unroll_test() {
 }
 
 void application_tests() {
+  sum_diffs_test();
   //halide_harris_test();
   reaccess_no_hierarchy_rolled_test();
   reaccess_no_hierarchy_test();
@@ -9641,7 +9642,6 @@ void application_tests() {
 
   two_input_mag_test();
   one_input_mag_test();
-  sum_diffs_test();
   sum_float_test();
   sum_denoise_test();
 
