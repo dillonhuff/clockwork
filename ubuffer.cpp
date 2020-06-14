@@ -1,6 +1,8 @@
 #include "ubuffer.h"
 #include "codegen.h"
-#include "coreir_lib.h"
+#ifdef COREIR
+#include "cwlib.h"
+#endif
 #include "coreir_backend.h"
 
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
@@ -763,7 +765,6 @@ void generate_code_prefix(CodegenOptions& options,
 
     out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
 
-
     vector<string> possible_ports;
     for (auto pt : buf.get_in_ports()) {
       if (buf.has_bank_between(pt, outpt)) {
@@ -772,28 +773,48 @@ void generate_code_prefix(CodegenOptions& options,
     }
 
     map<string, string> in_ports_to_conditions;
+    // Singleton map from all read operations on this port to the
+    // corresponding write operation that produces the data being
+    // read.
+    umap* reads_to_sources = buf.get_lexmax_events(outpt);
+    uset* producers_for_outpt = range(reads_to_sources);
 
     for (auto inpt : possible_ports) {
       auto write_ops =
+        domain(buf.access_map.at(inpt));
+      auto read_ops =
         domain(buf.access_map.at(outpt));
-      auto written =
-        range(buf.access_map.at(inpt));
-      auto read =
-        range(buf.access_map.at(outpt));
-      auto overlap = its(written, read);
-      auto overlapped_reads = its_range(buf.access_map.at(outpt), overlap);
-      auto overlapped_read_set = domain(overlapped_reads);
-      auto overlapped_read_condition =
-        gist(overlapped_read_set, (write_ops));
+      auto overlap = its(write_ops, producers_for_outpt);
 
-      in_ports_to_conditions[inpt] =
-        codegen_c(overlapped_read_condition);
+      if (!empty(overlap)) {
+        in_ports_to_conditions[inpt] = "true";
+      } else {
+        in_ports_to_conditions[inpt] = "false";
+      }
+
+      //auto overlap_gist = gist(overlap, read_ops);
+      //in_ports_to_conditions[inpt] =
+        //"/* " + str(overlap_gist) + " */ " + codegen_c(overlap_gist);
+
+      //auto write_ops =
+        //domain(buf.access_map.at(outpt));
+      //auto written =
+        //range(buf.access_map.at(inpt));
+      //auto read =
+        //range(buf.access_map.at(outpt));
+      //auto overlap = its(written, read);
+      //auto overlapped_reads = its_range(buf.access_map.at(outpt), overlap);
+      //auto overlapped_read_set = domain(overlapped_reads);
+      //uset* overlapped_read_condition =
+        //gist(overlapped_read_set, (write_ops));
+
+      //in_ports_to_conditions[inpt] =
+        //codegen_c(overlapped_read_condition);
     }
 
     if (possible_ports.size() == 1) {
       string inpt = possible_ports.at(0);
       string peeked_val = delay_string(options, out, inpt, outpt, buf);
-      //extract_box(range(buf.access_map.at(outpt)));
       string access_val = buf.generate_linearize_ram_addr(outpt);
       buf.get_ram_address(outpt);
       sel.bank_conditions.push_back("1");
@@ -802,7 +823,10 @@ void generate_code_prefix(CodegenOptions& options,
       out << tab(1) << "auto value_" << inpt << " = " << peeked_val << ";" << endl;
       out << tab(1) << "return value_" << inpt << ";" << endl;
     } else {
+      //assert(false);
       for (auto port : possible_ports) {
+        auto lm = buf.get_lexmax_events(port, outpt);
+        cout << "lexmax events = " << str(lm) << endl;
         out << tab(1) << "if (" << map_find(port, in_ports_to_conditions) << ") {" << endl;
         string peeked_val = delay_string(options, out, port, outpt, buf);
         sel.bank_conditions.push_back("1");
@@ -813,6 +837,7 @@ void generate_code_prefix(CodegenOptions& options,
         out << tab(1) << "}" << endl << endl;
         out << tab(1) << endl;
       }
+      //assert(false);
     }
 
     select_debug_assertions(options, out, outpt, buf);
@@ -1022,8 +1047,10 @@ void generate_code_prefix(CodegenOptions& options,
     generate_vivado_tcl(buf);
   }
 
-  umap* UBuffer::get_lexmax_events(const std::string& outpt) {
+  umap* UBuffer::get_lexmax_events(const std::string& outpt) const {
     umap* src_map = nullptr;
+    cout << "Buffer = " << name << endl;
+    assert(get_in_ports().size() > 0);
     for (auto inpt : get_in_ports()) {
       auto beforeAcc = lex_gt(schedule.at(outpt), schedule.at(inpt));
       if (src_map == nullptr) {
@@ -1626,8 +1653,8 @@ void generate_code_prefix(CodegenOptions& options,
    * */
 
   void UBuffer::create_subbank_branch(
-          set<string> & inpt_set,
-          set<string> & outpt_set,
+          std::set<string> & inpt_set,
+          std::set<string> & outpt_set,
           map<string, pair<isl_map*, isl_map*> > & outpt_merge,
           vector<pair<string, string> > & back_edge) {
     for (auto it : outpt_merge) {

@@ -1,5 +1,13 @@
 #include "app.h"
 
+std::string lv(const string& n, const int d) {
+  return "pad_dim_permute_" + n + "_pdim" + str(d);
+}
+
+std::string pv(const string& n, const int d) {
+  return n + "_dim_permute" + str(d);
+}
+
 QExpr delayvar(const string& n) {
   return qexpr(delay_var_name(n));
 }
@@ -38,6 +46,18 @@ struct ilp_builder {
     variable_positions[name] = next_pos;
     s = isl_basic_set_add_dims(s, isl_dim_set, 1);
     s = isl_basic_set_set_dim_name(s, isl_dim_set, next_pos, name.c_str());
+  }
+
+  void add_geq(const int v, const std::string& a) {
+    add_geq({{a, negone(ctx)}}, isl_val_int_from_si(ctx, v));
+  } 
+
+  void add_eq(const std::string& a, const std::string& b) {
+    add_eq({{a, one(ctx)}, {b, negone(ctx)}}, zero(ctx));
+  }
+
+  void add_gt(const std::string& a, const std::string& b) {
+    add_geq({{a, one(ctx)}, {b, negone(ctx)}}, negone(ctx));
   }
 
   void add_geq(const std::map<string, isl_val*>& coeffs, isl_val* constant) {
@@ -1280,6 +1300,122 @@ hardware_schedule(
   return hw_schedules;
 }
 
+//vector<isl_set*>
+//pad_and_permute(const vector<isl_set*>& domains) {
+  //int max_dims = -1;
+  //for (auto d : domains) {
+    //if (num_dims(d) > max_dims) {
+      //max_dims = num_dims(d);
+    //}
+  //}
+
+  //vector<isl_set*> padded;
+  //map<isl_set*, int> 
+  //for (auto d : domains) {
+    //padded = pad_set(d, max_dims);
+  //}
+  //return padded;
+//}
+
+umap* qschedule_to_map_final_sort(isl_ctx* ctx, map<string, vector<QExpr> >& schedules) {
+  umap* m = rdmap(ctx, "{}");
+  for (auto fn : schedules) {
+    string f = fn.first;
+    vector<string> sched_exprs;
+    vector<string> var_names;
+    int i = 0;
+    for (auto v : map_find(f, schedules)) {
+      string dv = "d" + to_string(i);
+      sched_exprs.push_back(isl_str(v));
+      cout << "Sched expr: " << sched_exprs.back() << endl;
+      var_names.push_back(dv);
+      i++;
+    }
+    //var_names.pop_back();
+    string map_str = "{ " + f + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
+
+    cout << "Map str: " << map_str << endl;
+    auto rm = rdmap(ctx, map_str);
+    cout << "map got str" << endl;
+    m = unn(m, rm);
+    isl_union_map_free(rm);
+  }
+
+  return m;
+}
+
+umap* qschedule_to_map(isl_ctx* ctx, map<string, vector<QExpr> >& schedules) {
+  umap* m = rdmap(ctx, "{}");
+  for (auto fn : schedules) {
+    string f = fn.first;
+    vector<string> sched_exprs;
+    vector<string> var_names;
+    int i = 0;
+    for (auto v : map_find(f, schedules)) {
+      string dv = "d" + to_string(i);
+      sched_exprs.push_back(isl_str(v));
+      cout << "Sched expr: " << sched_exprs.back() << endl;
+      var_names.push_back(dv);
+      i++;
+    }
+    var_names.pop_back();
+    string map_str = "{ " + f + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(sched_exprs, "[", "]", ", ") + " }";
+
+    cout << "Map str: " << map_str << endl;
+    auto rm = rdmap(ctx, map_str);
+    cout << "map got str" << endl;
+    m = unn(m, rm);
+    isl_union_map_free(rm);
+  }
+
+  return m;
+}
+
+umap*
+clockwork_schedule_umap(uset* domain,
+    umap* validity,
+    umap* proximity) {
+  auto sched = clockwork_schedule(domain, validity, proximity);
+
+
+  map<string, vector<QExpr> > scheds;
+  for (auto s : sched) {
+    string name = s.first;
+    vector<isl_aff*> vals = s.second;
+
+    scheds[name] = {};
+    int i = 0;
+    for (auto v : vals) {
+      QExpr rate = qexpr("d" + str(i));
+      auto rate_coeff =
+        qexpr(int_coeff(v, 0));
+      auto delay =
+        qexpr(int_const_coeff(v));
+
+      QExpr expr =
+        rate_coeff*rate + delay;
+      scheds[name].push_back(expr);
+      i++;
+    }
+  }
+
+  // schedule is dN, ..., d1, d0
+  for (auto& s : scheds) {
+    reverse(s.second);
+  }
+
+  cout << "Final schedule..." << endl;
+  for (auto s : scheds) {
+    cout << tab(1) << s.first << endl;
+    for (auto v : s.second) {
+      cout << tab(2) << v << endl;
+    }
+    cout << endl;
+  }
+
+  return qschedule_to_map_final_sort(ctx(domain), scheds);
+}
+
 map<string, vector<isl_aff*> >
 clockwork_schedule(uset* domain,
     umap* validity,
@@ -1288,8 +1424,201 @@ clockwork_schedule(uset* domain,
   return clockwork_schedule(domain, validity, proximity, deps);
 }
 
+std::set<pair<op_level , op_level> > get_dims_to_match(umap* validity) {
+  std::set<pair<pair<string, int> , pair<string, int> > > matched_dims;
+  for (auto v : get_maps(validity)) {
+    if (domain_name(v) != range_name(v)) {
+      matched_dims.insert({{domain_name(v), 0}, {range_name(v), 0}});
+    }
+
+    cout << tab(1) << "M = " << str(v) << endl;
+    for (auto c : constraints(v)) {
+      auto ls = get_local_space(c);
+      assert(!isl_local_space_is_set(ls));
+
+      int num_non_zero = 0;
+      vector<int> in_positions;
+      //int in_pos = -1;
+      for (int d = 0; d < num_in_dims(ls); d++) {
+        if (!is_zero(get_coeff(c, isl_dim_in, d))) {
+          num_non_zero++;
+          in_positions.push_back(d);
+          //in_pos = d;
+        }
+      }
+
+      vector<int> out_positions;
+      //int out_pos = -1;
+      for (int d = 0; d < num_out_dims(ls); d++) {
+        if (!is_zero(get_coeff(c, isl_dim_out, d))) {
+          num_non_zero++;
+          out_positions.push_back(d);
+          //out_pos = d;
+        }
+      }
+
+      if (num_non_zero > 1) {
+        assert(in_positions.size() >= 0);
+        assert(out_positions.size() >= 0);
+        //assert(in_pos >= 0);
+        //assert(out_pos >= 0);
+        if (domain_name(v) != range_name(v)) {
+          for (auto in_pos : in_positions) {
+            for (auto out_pos : out_positions) {
+              matched_dims.insert({{domain_name(v), in_pos}, {range_name(v), out_pos}});
+            }
+          }
+          //cout << tab(3) << "Relevant constraint: " << str(c) << endl;
+        }
+
+      }
+    }
+  }
+
+  return matched_dims;
+}
+
+map<string, vector<int> >
+pad_insertion_indexes(uset* domain, umap* validity) {
+  auto matched_dims_init = get_dims_to_match(validity);
+  map<op_level, vector<op_level> > matches;
+  for (auto m : matched_dims_init) {
+    matches[m.first].push_back(m.second);
+  }
+
+  cout << "Dims to match: " << endl;
+  for (auto d : matched_dims_init) {
+    cout << tab(1)
+      << d.first.first << "[" << d.first.second << "]" << ", "
+      << d.second.first << "[" << d.second.second << "]" << endl;
+  }
+
+  auto matched_dims = matched_dims_init;
+
+  //std::set<pair<op_level, op_level> > matched_dims;
+  //for (auto m : matches) {
+    //cout << m.first.first << ", " << m.first.second << endl;
+    //assert(m.second.size() > 0);
+    ////matched_dims.insert({m.first, m.second.at(0)});
+    //for (auto s : m.second) {
+      //cout << tab(1) << s.first << ", " << s.second << endl;
+    //}
+    ////assert(m.second.size() == 1);
+  //}
+
+  //assert(false);
+
+  int max_dim = -1;
+  for (auto m : get_sets(domain)) {
+    if (num_dims(m) > max_dim) {
+      max_dim = num_dims(m);
+    }
+  }
+
+  cout << "max dim = " << max_dim << endl;
+  cout << "Dims to match: " << endl;
+  for (auto d : matched_dims) {
+    cout << tab(1)
+      << d.first.first << "[" << d.first.second << "]" << ", "
+      << d.second.first << "[" << d.second.second << "]" << endl;
+  }
+
+  map<string, vector<int> > dense_pad_sites;
+  map<string, int> total_dims;
+  map<string, int> next_dim_to_place;
+  for (auto s : get_sets(domain)) {
+    string n = name(s);
+    total_dims[n] = num_dims(s);
+    next_dim_to_place[n] = 0;
+    for (int d = 0; d < max_dim; d++) {
+      dense_pad_sites[n].push_back(-1);
+    }
+  }
+
+  for (int current_level = 0; current_level < max_dim; current_level++) {
+    for (auto d : next_dim_to_place) {
+      string opname = d.first;
+      int level = d.second;
+      int total_dim = map_find(opname, total_dims);
+      if (current_level < total_dim) {
+        dense_pad_sites[opname][current_level] = current_level;
+      }
+    }
+  }
+
+  return dense_pad_sites;
+
+  auto ct = ctx(domain);
+  ilp_builder pad_positions(ct);
+  string some_domain = "";
+  for (auto m : get_sets(domain)) {
+    string dom = name(m);
+    some_domain = dom;
+    for (int d = 0; d < num_dims(m); d++) {
+      pad_positions.add_geq({{lv(dom, d), one(ct)}}, zero(ct));
+      pad_positions.add_geq(max_dim - 1, lv(dom, d));
+    }
+
+    for (int d = 0; d < num_dims(m) - 1; d++) {
+      pad_positions.add_gt(lv(dom, d + 1), lv(dom, d));
+    }
+  }
+
+  vector<pair<string, isl_val*> > obj;
+  for (auto m : matched_dims) {
+    auto lv1 =
+      lv(m.first.first, m.first.second);
+    auto lv2 =
+      lv(m.second.first, m.second.second);
+    cout << "lv1 = " << lv1 << endl;
+    cout << "lv2 = " << lv2 << endl;
+    obj.push_back({lv1, one(ct)});
+    obj.push_back({lv2, negone(ct)});
+    pad_positions.add_eq(lv1, lv2);
+  }
+
+  auto min = pad_positions.minimize(simplify(obj));
+  //auto min = pad_positions.minimize({{lv(some_domain, 0), one(ct)}});
+  cout << "Solution point: " << str(pad_positions.solution_point) << endl;
+
+
+  map<string, vector<int> > sites;
+  for (auto s : get_sets(domain)) {
+    string n = name(s);
+    for (int d = 0; d < num_dims(s); d++) {
+      sites[n].push_back(
+          to_int(pad_positions.value(lv(n, d))));
+    }
+  }
+  map<string, vector<int> > dense_sites;
+  for (auto m : sites) {
+    string name = m.first;
+    vector<int> dense;
+    for (int i = 0; i < max_dim; i++) {
+      dense.push_back(-1);
+    }
+    int i = 0;
+    for (auto d : m.second) {
+      dense[d] = i;
+      i++;
+    }
+    dense_sites[name] = dense;
+  }
+
+  return dense_sites;
+}
+
 map<string, vector<isl_aff*> >
 clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, vector<string> >& high_bandwidth_deps) {
+
+  //map<string, vector<int> > sites =
+    //pad_insertion_indexes(domain, validity);
+
+  //cout << "Domain" << endl;
+  //for (auto s : sites) {
+    //cout << s.first << " -> " << sep_list(s.second, "[", "]", ", ") << endl;
+  //}
+  //assert(false);
 
   uset* padded_domain = pad_uset(domain);
   auto padded_validity = pad_map(validity);

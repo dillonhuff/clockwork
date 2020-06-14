@@ -33,7 +33,10 @@ using std::pair;
 using std::map;
 using std::string;
 
+std::string dim_name(isl_aff* const a, const int d);
+
 std::string name(isl_space* const s);
+std::string name(isl_set* const s);
 isl_pw_aff* cpy(isl_pw_aff* const s);
 isl_multi_aff* cpy(isl_multi_aff* const s);
 
@@ -77,7 +80,10 @@ isl_val* negone(isl_ctx* c);
 isl_val* zero(isl_ctx* c);
 isl_aff* cpy(isl_aff* const b);
 
+bool is_zero(isl_val* c);
+
 isl_local_space* get_local_space(isl_set* const m);
+isl_local_space* get_local_space(isl_constraint* const m);
 isl_local_space* get_local_space(isl_basic_set* const m);
 isl_local_space* get_local_space(isl_aff* const m);
 isl_space* get_space(isl_constraint* const m);
@@ -484,7 +490,10 @@ isl_set* add_constraint(isl_set* s, isl_constraint* c);
 
 int num_out_dims(isl_space* const s);
 int num_in_dims(isl_space* const s);
+int num_in_dims(isl_local_space* const s);
+int num_out_dims(isl_local_space* const s);
 
+int num_dims(isl_aff* const s);
 int num_in_dims(isl_aff* const s);
 int num_div_dims(isl_aff* const s);
 int num_out_dims(isl_aff* const s);
@@ -520,11 +529,13 @@ int bnd_int(isl_union_pw_qpolynomial_fold* bound);
 int int_lower_bound(isl_union_pw_qpolynomial* range_card);
 int int_upper_bound(isl_union_pw_qpolynomial* range_card);
 
+isl_val* get_coeff(isl_aff* const a, const int pos);
 int int_coeff(isl_aff* const a, const int pos);
 int int_const_coeff(isl_aff* const a);
 
 isl_aff* aff_on_domain(isl_local_space* ls, isl_val* max);
 
+isl_set* pad_set(isl_set* s, const int max_dim);
 uset* pad_uset(uset* domain);
 umap* pad_map(umap* unpadded);
 
@@ -532,3 +543,6 @@ isl_val* coord(isl_point* const p, const int pos);
 
 bool lex_lt_pt(isl_point* const l, isl_point* const r);
 bool lex_gt_pt(isl_point* const l, isl_point* const r);
+
+isl_val* get_coeff(isl_constraint* c, enum isl_dim_type type, int pos);
+isl_val* eval(isl_aff* a, isl_point* p);

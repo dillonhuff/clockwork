@@ -1,6 +1,11 @@
 #include "isl_utils.h"
 #include "utils.h"
 
+std::string dim_name(isl_aff* const a, const int d) {
+  string str(isl_aff_get_dim_name(a, isl_dim_in, d));
+  return str;
+}
+
 isl_stat get_set(isl_set* m, void* user) {
   auto* vm = (vector<isl_set*>*) user;
   vm->push_back((m));
@@ -98,6 +103,10 @@ isl_aff* cpy(isl_aff* const b) {
   return isl_aff_copy(b);
 }
 
+isl_local_space* get_local_space(isl_constraint* const m) {
+  return isl_constraint_get_local_space(m);
+}
+
 isl_local_space* get_local_space(isl_set* const m) {
 
   auto bsets = get_basic_sets(m);
@@ -178,6 +187,18 @@ int num_out_dims(isl_space* const s) {
   return ndims;
 }
 
+int num_out_dims(isl_local_space* const s) {
+  assert(!isl_local_space_is_set(s));
+  int ndims = isl_local_space_dim(s, isl_dim_out);
+  return ndims;
+}
+
+int num_in_dims(isl_local_space* const s) {
+  assert(!isl_local_space_is_set(s));
+  int ndims = isl_local_space_dim(s, isl_dim_in);
+  return ndims;
+}
+
 int num_in_dims(isl_space* const s) {
   assert(isl_space_is_map(s));
   int ndims = isl_space_dim(s, isl_dim_in);
@@ -190,6 +211,11 @@ int num_out_dims(isl_map* const m) {
 
 int num_in_dims(isl_map* const s) {
   return num_in_dims(get_space((s)));
+}
+
+int num_dims(isl_aff* const s) {
+  auto ls = isl_aff_get_local_space(s);
+  return isl_local_space_dim(ls, isl_dim_set);
 }
 
 int num_div_dims(isl_aff* const s) {
@@ -621,15 +647,11 @@ isl_map* to_map(isl_union_map* const m) {
   vector<isl_map*> map_vec;
   isl_union_map_foreach_map(m, get_maps, &map_vec);
 
-
   if (map_vec.size() != 1) {
     std::cout << "Error: Several maps in: " << str(m) << std::endl;
   }
   assert(map_vec.size() == 1);
   return map_vec.at(0);
-  //auto map_list = isl_union_map_get_map_list(m);
-  //assert(isl_map_list_size(map_list) == 1);
-  //return isl_map_list_get_map(map_list, 0);
 }
 
 isl_union_map* to_umap(isl_map* const m) {
@@ -1324,7 +1346,13 @@ isl_basic_set* domain(isl_basic_map* const m) {
 }
 
 std::string codegen_c(isl_union_map* res) {
+  //assert(false);
+  auto context = ctx(res);
   isl_ast_build* build = isl_ast_build_alloc(isl_union_map_get_ctx(res));
+  //auto options = isl_union_map_read_from_str(context, "{ [a, b, c, d] -> atomic[t] : 0 <= t <= 3}");
+  //auto options = isl_union_map_read_from_str(context, "{ [a, b] -> atomic[1] : 0 <= t <= 1 }");
+  //auto options = isl_union_map_read_from_str(context, "{ [a, b] -> atomic[t] : t = 0 }");
+  //build = isl_ast_build_set_options(build, options);
   isl_ast_node* code =
     isl_ast_build_node_from_schedule_map(build, cpy(res));
 
@@ -1852,11 +1880,19 @@ vector<string> collect_sched_vec(isl_set* const s) {
 }
 
 std::string codegen_c(isl_union_set* s) {
+  if (empty(s)) {
+    return "false";
+  }
+
   vector<isl_set*> code_holder;
   isl_union_set_foreach_set(s, uset_collect_set, &code_holder);
   vector<string> set_strings;
   for (auto hc : code_holder) {
     set_strings.push_back(codegen_c(hc));
+  }
+
+  if (set_strings.size() == 0) {
+    return "true";
   }
   return sep_list(set_strings, "(", ")", " || ");
 }
@@ -2267,6 +2303,12 @@ isl_val* const_coeff(isl_aff* const a) {
 }
 
 isl_val* coeff(isl_aff* const a, const int pos) {
+  auto s = get_local_space(a);
+  assert(isl_local_space_is_set(s));
+  return isl_aff_get_coefficient_val(a, isl_dim_in, pos);
+}
+
+isl_val* get_coeff(isl_aff* const a, const int pos) {
   return isl_aff_get_coefficient_val(a, isl_dim_in, pos);
 }
 
@@ -2276,6 +2318,37 @@ int int_coeff(isl_aff* const a, const int pos) {
 
 int int_const_coeff(isl_aff* const a) {
   return to_int(isl_aff_get_constant_val(a));
+}
+
+isl_set* pad_set(isl_set* s, const int max_dim) {
+  auto ct = ctx(s);
+
+  map<string, isl_set*> padded_sets;
+  int pad_factor = max_dim - num_dims(s);
+  int original_dim = num_dims(s);
+
+  isl_set* padded = isl_set_empty(get_space(s));
+  padded = isl_set_add_dims(padded, isl_dim_set, pad_factor);
+
+  for (auto bset : get_basic_sets(s)) {
+
+    auto pad = isl_basic_set_add_dims(cpy(bset), isl_dim_set, pad_factor);
+
+    for (int i = original_dim; i < num_dims(pad); i++) {
+      auto ls = isl_local_space_from_space(cpy(get_space(padded)));
+
+      auto is_zero = isl_constraint_alloc_equality(ls);
+      is_zero = isl_constraint_set_constant_val(is_zero, zero(ct));
+      is_zero = isl_constraint_set_coefficient_val(is_zero, isl_dim_set, i, one(ct));
+      pad = isl_basic_set_add_constraint(pad, is_zero);
+    }
+
+    isl_set* pbset = to_set(pad);
+    padded = unn(padded, pbset);
+  }
+
+  padded = isl_set_set_tuple_id(padded, id(ct, name(s)));
+  return padded;
 }
 
 uset* pad_uset(uset* domain) {
@@ -2290,33 +2363,35 @@ uset* pad_uset(uset* domain) {
     different_dims.insert(new_dim);
   }
 
-  map<string, int> pad_factor;
+  //map<string, int> pad_factor;
   map<string, isl_set*> padded_sets;
   for (auto s : get_sets(domain)) {
-    int pad_factor = max_dim - num_dims(s);
-    int original_dim = num_dims(s);
+    isl_set* padded = pad_set(s, max_dim);
 
-    isl_set* padded = isl_set_empty(get_space(s));
-    padded = isl_set_add_dims(padded, isl_dim_set, pad_factor);
+    //int pad_factor = max_dim - num_dims(s);
+    //int original_dim = num_dims(s);
 
-    for (auto bset : get_basic_sets(s)) {
+    //isl_set* padded = isl_set_empty(get_space(s));
+    //padded = isl_set_add_dims(padded, isl_dim_set, pad_factor);
 
-      auto pad = isl_basic_set_add_dims(cpy(bset), isl_dim_set, pad_factor);
+    //for (auto bset : get_basic_sets(s)) {
 
-      for (int i = original_dim; i < num_dims(pad); i++) {
-        auto ls = isl_local_space_from_space(cpy(get_space(padded)));
+      //auto pad = isl_basic_set_add_dims(cpy(bset), isl_dim_set, pad_factor);
 
-        auto is_zero = isl_constraint_alloc_equality(ls);
-        is_zero = isl_constraint_set_constant_val(is_zero, zero(ct));
-        is_zero = isl_constraint_set_coefficient_val(is_zero, isl_dim_set, i, one(ct));
-        pad = isl_basic_set_add_constraint(pad, is_zero);
-      }
+      //for (int i = original_dim; i < num_dims(pad); i++) {
+        //auto ls = isl_local_space_from_space(cpy(get_space(padded)));
 
-      isl_set* pbset = to_set(pad);
-      padded = unn(padded, pbset);
-    }
+        //auto is_zero = isl_constraint_alloc_equality(ls);
+        //is_zero = isl_constraint_set_constant_val(is_zero, zero(ct));
+        //is_zero = isl_constraint_set_coefficient_val(is_zero, isl_dim_set, i, one(ct));
+        //pad = isl_basic_set_add_constraint(pad, is_zero);
+      //}
 
-    padded = isl_set_set_tuple_id(padded, id(ct, name(s)));
+      //isl_set* pbset = to_set(pad);
+      //padded = unn(padded, pbset);
+    //}
+
+    //padded = isl_set_set_tuple_id(padded, id(ct, name(s)));
     padded_sets[name(s)] = padded;
   }
 
@@ -2487,4 +2562,19 @@ isl_space* set_space(isl_ctx* ctx, const int dim) {
 isl_space* map_space(isl_ctx* ctx, const int in_dims, const int out_dims) {
   auto s = isl_space_alloc(ctx, 0, in_dims, out_dims);
   return s;
+}
+
+bool is_zero(isl_val* c) {
+  return isl_val_is_zero(c);
+}
+
+
+isl_val* get_coeff(isl_constraint* c, enum isl_dim_type type, int pos) {
+  return isl_constraint_get_coefficient_val(c, type, pos);
+}
+
+isl_val* eval(isl_aff* a, isl_point* p) {
+  auto ct = ctx(a);
+  isl_val* val = zero(ct);
+  return val;
 }

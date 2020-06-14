@@ -5,6 +5,8 @@
 #include "qexpr.h"
 #include "expr.h"
 
+typedef pair<string, int> op_level;
+
 static inline
 string sched_var_name(const string& n) {
   return "s_" + n;
@@ -1018,3 +1020,13 @@ string compute_unit_string(const num_type tp,
 
 map<string, isl_val*> 
 compute_qfactors(vector<isl_map*>& deps);
+
+map<string, vector<int> >
+pad_insertion_indexes(uset* domain, umap* validity);
+
+umap*
+clockwork_schedule_umap(uset* domain,
+    umap* validity,
+    umap* proximity);
+
+umap* qschedule_to_map(isl_ctx* ctx, map<string, vector<QExpr> >& schedules);

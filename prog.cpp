@@ -1,5 +1,47 @@
-#include "prog.h"
 #include "codegen.h"
+#include "prog.h"
+
+isl_multi_aff*
+to_multi_aff(isl_ctx* context,
+    const std::vector<std::string>& vars,
+    const std::string& addr) {
+  string str =
+    sep_list(vars, "[", "]", ", ") + " -> " +
+    brackets(addr);
+  str = "{" + str + " }";
+
+  //cout << "str = " << str << endl;
+  return isl_multi_aff_read_from_str(context, str.c_str());
+}
+
+isl_pw_multi_aff*
+to_pw_multi_aff(isl_ctx* context,
+    const std::vector<std::string>& vars,
+    const piecewise_address& addr) {
+
+  vector<isl_multi_aff*> affs;
+  for (auto piece : addr) {
+    affs.push_back(to_multi_aff(context, vars, piece.second));
+  }
+  //for (auto a : affs) {
+    //cout << tab(1) << str(a) << endl;
+  //}
+  assert(affs.size() == 1);
+  return isl_pw_multi_aff_from_multi_aff(affs.at(0));
+}
+
+string str(const piecewise_address& addr) {
+  if (addr.size() == 1 && addr.at(0).first == "") {
+    return "[" + addr.at(0).second + "]";
+  }
+
+  string s = "";
+  for (auto p : addr) {
+    s += p.first + " : " + p.second + ",";
+  }
+
+  return s;
+}
 
 std::string vanilla_c_pixel_type_string(const int w) {
   if (w == 8) {
@@ -93,10 +135,14 @@ std::set<pair<string, string> > outputs(map<string, UBuffer>& buffers, prog& prg
   for (auto out : prg.outs) {
     assert(contains_key(out, buffers));
     auto& buf = buffers.at(out);
-    assert(buf.get_in_bundles().size() == 1);
-    auto bundle = pick(buf.get_in_bundles());
+    cout << "# in bundles: " << buf.get_in_bundles().size() << endl;
+    for (auto bundle : buf.get_in_bundles()) {
+      //assert(buf.get_in_bundles().size() == 1);
+      //auto bundle = pick(buf.get_in_bundles());
+      edges.insert({buf.name, bundle});
+    }
 
-    edges.insert({buf.name, bundle});
+    //edges.insert({buf.name, bundle});
   }
 
   return edges;
@@ -107,10 +153,13 @@ std::set<string> out_bundles(map<string, UBuffer>& buffers, prog& prg) {
   for (auto out : prg.outs) {
     assert(contains_key(out, buffers));
     auto& buf = buffers.at(out);
-    assert(buf.get_in_bundles().size() == 1);
-    auto bundle = pick(buf.get_in_bundles());
+    for (auto bundle : buf.get_in_bundles()) {
+      edges.insert(bundle);
+    }
+/*    assert(buf.get_in_bundles().size() == 1);*/
+    //auto bundle = pick(buf.get_in_bundles());
 
-    edges.insert(bundle);
+    //edges.insert(bundle);
   }
 
   return edges;
@@ -142,10 +191,13 @@ std::set<string> edge_bundles(map<string, UBuffer>& buffers, prog& prg) {
   for (auto out : prg.outs) {
     assert(contains_key(out, buffers));
     auto& buf = buffers.at(out);
-    assert(buf.get_in_bundles().size() == 1);
-    auto bundle = pick(buf.get_in_bundles());
+    for (auto bundle : buf.get_in_bundles()) {
+      edges.insert(bundle);
+    }
+    //assert(buf.get_in_bundles().size() == 1);
+    //auto bundle = pick(buf.get_in_bundles());
 
-    edges.insert(bundle);
+    //edges.insert(bundle);
   }
 
   return edges;
@@ -558,7 +610,6 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
   cout << "Generating accel wrapper" << endl;
   string driver_func = prg.name + "_accel";
 
-  //out << "#include \"" << prg.name << ".h\"" << endl << endl;
 
   for (auto eb : edge_buffers(buffers, prg)) {
     string out_rep = eb.first;
@@ -663,13 +714,21 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
   for (auto out : prg.outs) {
     assert(contains_key(out, buffers));
     auto& buf = buffers.at(out);
-    assert(buf.get_in_bundles().size() == 1);
-    auto bundle = pick(buf.get_in_bundles());
-    string in_bundle_tp = buf.bundle_type_string(bundle);
+    for (auto bundle : buf.get_in_bundles()) {
+      //auto bundle = pick(buf.get_in_bundles());
+      string in_bundle_tp = buf.bundle_type_string(bundle);
 
-    ptr_arg_decls.push_back(in_bundle_tp + "* " + bundle);
-    ptr_args.push_back(bundle);
-    buffer_args.push_back(bundle + "_channel");
+      ptr_arg_decls.push_back(in_bundle_tp + "* " + bundle);
+      ptr_args.push_back(bundle);
+      buffer_args.push_back(bundle + "_channel");
+    }
+    //assert(buf.get_in_bundles().size() == 1);
+    //auto bundle = pick(buf.get_in_bundles());
+    //string in_bundle_tp = buf.bundle_type_string(bundle);
+
+    //ptr_arg_decls.push_back(in_bundle_tp + "* " + bundle);
+    //ptr_args.push_back(bundle);
+    //buffer_args.push_back(bundle + "_channel");
   }
 
   vector<string> all_arg_decls = ptr_arg_decls;
@@ -733,11 +792,15 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
   for (auto in : prg.outs) {
     assert(contains_key(in, buffers));
     auto& buf = buffers.at(in);
-    assert(buf.get_in_bundles().size() == 1);
-    auto bundle = pick(buf.get_in_bundles());
+    for (auto bundle : buf.get_in_bundles()) {
+      //auto bundle = pick(buf.get_in_bundles());
+      out << tab(1) << "write_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
+    }
+    //assert(buf.get_in_bundles().size() == 1);
+    //auto bundle = pick(buf.get_in_bundles());
 
-    //out << tab(1) << "write_output(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
-    out << tab(1) << "write_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
+    ////out << tab(1) << "write_output(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
+    //out << tab(1) << "write_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
   }
 
   out << "}" << endl << endl;
@@ -763,9 +826,9 @@ void generate_op_code(map<string, UBuffer>& buffers, op* op) {
 
   ofstream out(name + "_wrapper.cpp");
   vector<string> decls;
-  for (auto consumed : op->consume_locs) {
-    decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
-  }
+  //for (auto consumed : op->consume_locs) {
+    //decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
+  //}
 
   for (auto consumed : op->consume_locs_pair) {
     decls.push_back(buffers.at(consumed.first).bundle_type_string(op->name) + "& " + consumed.first);
@@ -780,10 +843,63 @@ void generate_op_code(map<string, UBuffer>& buffers, op* op) {
   out.close();
 }
 
+isl_map* prog::read_map(op* op, const std::string& buf) {
+  umap* read = isl_union_map_read_from_str(ctx, "{}");
+  for (auto consumed : op->consume_locs_pair) {
+    string name = consumed.first;
+
+    if (name == buf) {
+      string cond = "{ ";
+      for (auto sec_pair : consumed.second) {
+        if (sec_pair.first == "") {
+          cond = cond + string(op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "]; ");
+
+        } else {
+          cond = cond + string(op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+        }
+      }
+      cond = cond.substr(0, cond.length() - 2);
+      cond = cond + string(" }");
+
+      isl_map* consumed_here =
+        isl_map_read_from_str(ctx, cond.c_str());
+      read = unn(read, to_umap(consumed_here));
+    }
+  }
+  return to_map(read);
+}
+
+umap* prog::read_map(op* op) {
+  umap* read = isl_union_map_read_from_str(ctx, "{}");
+  for (auto consumed : op->consume_locs_pair) {
+    string name = consumed.first;
+
+    string cond = "{ ";
+    for (auto sec_pair : consumed.second) {
+      if (sec_pair.first == "") {
+        cond = cond + string(op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "]; ");
+
+      } else {
+        cond = cond + string(op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+      }
+    }
+    cond = cond.substr(0, cond.length() - 2);
+    cond = cond + string(" }");
+
+    isl_map* consumed_here =
+      isl_map_read_from_str(ctx, cond.c_str());
+    read = unn(read, to_umap(consumed_here));
+  }
+  return read;
+}
 
 map<string, UBuffer> build_buffers(prog& prg) {
   umap* opt_sched = prg.optimized_codegen();
   return build_buffers(prg, opt_sched);
+}
+
+isl_set* prog::domain(op* op) {
+  return map_find(op, domains());
 }
 
 map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
@@ -831,41 +947,41 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
     }
 
 
-    cout << "# of consumed locations: " << op->consume_locs.size() << endl;
-    for (auto consumed : op->consume_locs) {
-      string name = consumed.first;
+    //cout << "# of consumed locations: " << op->consume_locs.size() << endl;
+    //for (auto consumed : op->consume_locs) {
+      //string name = consumed.first;
 
-      if (!contains_key(name, buffers)) {
-        cout << "Creating ports for op: " << name << endl;
-        UBuffer buf;
-        buf.name = name;
-        buf.ctx = prg.ctx;
-        if (contains_key(name, prg.buffer_port_widths)) {
-          buf.port_widths = map_find(name, prg.buffer_port_widths);
-        }
-        buffers[name] = buf;
-      }
+      //if (!contains_key(name, buffers)) {
+        //cout << "Creating ports for op: " << name << endl;
+        //UBuffer buf;
+        //buf.name = name;
+        //buf.ctx = prg.ctx;
+        //if (contains_key(name, prg.buffer_port_widths)) {
+          //buf.port_widths = map_find(name, prg.buffer_port_widths);
+        //}
+        //buffers[name] = buf;
+      //}
 
-      UBuffer& buf = buffers.at(name);
+      //UBuffer& buf = buffers.at(name);
 
-      string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
-      buf.port_bundles[op->name + "_read"].push_back(pt_name);
+      //string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
+      //buf.port_bundles[op->name + "_read"].push_back(pt_name);
 
-      isl_map* consumed_here =
-        its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + consumed.second + "]" + " }").c_str()), cpy(domains.at(op)));
-      assert(contains_key(op, domains));
+      //isl_map* consumed_here =
+        //its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + consumed.second + "]" + " }").c_str()), cpy(domains.at(op)));
+      //assert(contains_key(op, domains));
 
-      cout << "\tAdding output port: " << pt_name << endl;
-      cout << "\t\tConsumed: " << str(consumed_here) << endl;
-      buf.add_out_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
+      //cout << "\tAdding output port: " << pt_name << endl;
+      //cout << "\t\tConsumed: " << str(consumed_here) << endl;
+      //buf.add_out_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
 
-      vector<string> inpt = buf.get_out_ports();
-      cout << "current out port name: " << endl;
-      for_each(inpt.begin(), inpt.end(), [](string pt_name){cout <<"\t" << pt_name;});
-      cout << endl;
+      //vector<string> inpt = buf.get_out_ports();
+      //cout << "current out port name: " << endl;
+      //for_each(inpt.begin(), inpt.end(), [](string pt_name){cout <<"\t" << pt_name;});
+      //cout << endl;
 
-      usuffix++;
-    }
+      //usuffix++;
+    //}
 
     for (auto consumed : op->consume_locs_pair) {
       string name = consumed.first;
@@ -888,7 +1004,12 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
 
       string cond = "{ ";
       for (auto sec_pair : consumed.second) {
-        cond = cond + string(prg.op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+        if (sec_pair.first == "") {
+          cond = cond + string(prg.op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "]; ");
+
+        } else {
+          cond = cond + string(prg.op_iter(op) + " -> " + consumed.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+        }
       }
       cond = cond.substr(0, cond.length() - 2);
       cond = cond + string(" }");
@@ -1278,18 +1399,18 @@ vector<string> buffer_arg_names(const map<string, UBuffer>& buffers, op* op, pro
   std::set<string> done;
   vector<string> buf_srcs;
 
-  for (auto p : op->consume_locs) {
-    auto buf_name = p.first;
-    if (!elem(buf_name, done)) {
-      buf_srcs.push_back(buf_name);
-      done.insert(buf_name);
-    }
-  }
+  //for (auto p : op->consume_locs) {
+    //auto buf_name = p.first;
+    //if (!elem(buf_name, done)) {
+      //buf_srcs.push_back(buf_name);
+      //done.insert(buf_name);
+    //}
+  //}
 
   for (auto p : op->consume_locs_pair) {
     auto buf_name = p.first;
     if (!elem(buf_name, done)) {
-      buf_srcs.push_back(buf_name);
+      buf_srcs.push_back(buf_name + " /* buf name */");
       done.insert(buf_name);
     }
   }
@@ -1320,7 +1441,7 @@ vector<string> outgoing_buffers(const map<string, UBuffer>& buffers, op* op, pro
 vector<string> incoming_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg) {
   vector<string> incoming;
   std::set<string> done;
-  for (auto p : op->consume_locs) {
+  for (auto p : op->consume_locs_pair) {
     auto buf_name = p.first;
     if (!elem(buf_name, done)) {
       incoming.push_back(buf_name);
@@ -1333,7 +1454,8 @@ vector<string> incoming_buffers(const map<string, UBuffer>& buffers, op* op, pro
 vector<string> buffer_args(const map<string, UBuffer>& buffers, op* op, prog& prg) {
   std::set<string> done;
   vector<string> buf_srcs;
-  for (auto p : op->consume_locs) {
+  //for (auto p : op->consume_locs) {
+  for (auto p : op->consume_locs_pair) {
     auto buf_name = p.first;
     if (!elem(buf_name, done)) {
       if (prg.is_boundary(buf_name)) {
@@ -1397,9 +1519,11 @@ compute_kernel generate_compute_op(
 
   cout << "Got iteration variables" << endl;
   conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
-  vector<pair<string, string> > in_buffers;
+  //vector<pair<string, string> > in_buffers;
+  vector<pair<string, vector< pair< string, string > > > > in_buffers;
   std::set<string> distinct;
-  for (auto con : op->consume_locs) {
+  //for (auto con : op->consume_locs) {
+  for (auto con : op->consume_locs_pair) {
     if (!elem(con.first, distinct)) {
       in_buffers.push_back(con);
       distinct.insert(con.first);
@@ -1471,7 +1595,7 @@ compute_kernel generate_compute_op(
     vector<string> arg_names{res, buf.name};
     concat(arg_names, dim_args);
     conv_out << "\t" << out_buffer << "_" << op->name << "_write_bundle_write(" <<
-      comma_list(arg_names) << ");" << endl;
+      "/* arg names */" + comma_list(arg_names) << ");" << endl;
   }
 
   conv_out << endl;
@@ -1769,7 +1893,7 @@ void generate_app_code(CodegenOptions& options,
   string outer_arg_buffers = sep_list(arg_buf_list, "(", ")", ", ");
 
   auto inner_args = arg_buf_list;
-  inner_args.push_back("int num_epochs");
+  //inner_args.push_back("int num_epochs");
   string inner_arg_buffers = sep_list(inner_args, "(", ")", ", ");
 
   conv_out << "void " << prg.name << inner_arg_buffers << " {" << endl << endl;
@@ -1797,22 +1921,27 @@ void generate_app_code(CodegenOptions& options,
   code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
 
   for (auto op : prg.all_ops()) {
-    regex re("\n\t\\s+" + op->name + "\\((.*)\\);");
+    regex re("(\n\t\\s+)" + op->name + "\\((.*)\\);");
     string args_list = sep_list(buffer_arg_names(buffers, op, prg), "", "", ", ");
-    code_string = regex_replace(code_string, re, "\n\t" + op->name + "(" + args_list + ", $1);");
+    //code_string = regex_replace(code_string, re, "\n\t" + op->name + "(" + args_list + ", $1);");
+    code_string = regex_replace(code_string, re, "$1" + op->name + "(" + args_list + ", $2);");
   }
 
   conv_out << "#ifdef __VIVADO_SYNTH__" << endl;
   conv_out << "#pragma HLS inline recursive" << endl;
   conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
 
-  if (options.num_input_epochs < 0) {
-    conv_out << tab(1) << "for (int epoch = 0; epoch < num_epochs; epoch++) {" << endl;
-  } else {
-    conv_out << tab(1) << "for (int epoch = 0; epoch < " << options.num_input_epochs << "; epoch++) {" << endl;
-  }
+  conv_out << "// schedule: " << str(schedmap) << endl;
+  conv_out << tab(1) << "/*" << endl;
+  conv_out << original_isl_code_string << endl;
+  conv_out << tab(1) << "*/" << endl;
+  //if (options.num_input_epochs < 0) {
+    //conv_out << tab(1) << "for (int epoch = 0; epoch < num_epochs; epoch++) {" << endl;
+  //} else {
+    //conv_out << tab(1) << "for (int epoch = 0; epoch < " << options.num_input_epochs << "; epoch++) {" << endl;
+  //}
   conv_out << code_string << endl;
-  conv_out << tab(1) << "}" << endl << endl;
+  //conv_out << tab(1) << "}" << endl << endl;
 
   open_debug_scope(conv_out);
   conv_out << tab(1) << "debug_file.close();" << endl;
@@ -1820,13 +1949,13 @@ void generate_app_code(CodegenOptions& options,
 
   conv_out << "}" << endl << endl;
 
-  {
-    conv_out << "void " << prg.name << outer_arg_buffers << " {" << endl << endl;
-    vector<string> arg_strings = get_arg_names(buffers, prg);
-    arg_strings.push_back("1");
-    conv_out << tab(1) << prg.name << sep_list(arg_strings, "(", ")", ", ") << ";" << endl;
-    conv_out << "}" << endl;
-  }
+  //{
+    //conv_out << "void " << prg.name << outer_arg_buffers << " {" << endl << endl;
+    //vector<string> arg_strings = get_arg_names(buffers, prg);
+    //arg_strings.push_back("1");
+    //conv_out << tab(1) << prg.name << sep_list(arg_strings, "(", ")", ", ") << ";" << endl;
+    //conv_out << "}" << endl;
+  //}
 
   open_synth_scope(conv_out);
   generate_xilinx_accel_wrapper(options, conv_out, buffers, prg);
@@ -1857,7 +1986,7 @@ void generate_app_code(CodegenOptions& options, map<string, UBuffer>& buffers, p
   generate_app_code(options, buffers, prg, schedmap, domain_map);
 }
 
-void generate_optimized_code(prog& prg) {
+void generate_optimized_code(CodegenOptions& options, prog& prg) {
   auto sched = its(isl_schedule_get_map(prg.optimized_schedule()), prg.whole_iteration_domain());
 
   cout << "Optimized schedule..." << endl;
@@ -1868,13 +1997,21 @@ void generate_optimized_code(prog& prg) {
 
   cout << "Buffers..." << endl;
   for (auto b : buffers) {
+    //b.second.generate_bank_and_merge(options);
     cout << b.second << endl;
   }
 
   //assert(false);
-  generate_app_code(buffers, prg, sched);
+  generate_app_code(options, buffers, prg, sched);
   generate_vivado_tcl(prg.name);
 }
+
+void generate_optimized_code(prog& prg) {
+  CodegenOptions options;
+  options.internal = true;
+  generate_optimized_code(options, prg);
+}
+
 
 void generate_unoptimized_code(prog& prg) {
   string old_name = prg.name;
@@ -1921,3 +2058,419 @@ incoming_bundles(op* op,
   }
   return incoming;
 }
+
+
+void generate_regression_testbench(prog& prg, map<string, UBuffer>& buffers) {
+  ofstream rgtb("regression_tb_" + prg.name + ".cpp");
+  rgtb << "#include <fstream>" << endl;
+  rgtb << "#include \"" << prg.name << ".h\"" << endl << endl;
+
+  rgtb << "int main() {" << endl;
+  rgtb << tab(1) << "ofstream in_pix(\"" << "input_pixels_regression_result_" << prg.name << ".txt\");" << endl;
+  rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << ".txt\");" << endl;
+
+  vector<string> optimized_streams;
+  for (auto in : prg.ins) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_out_bundles().size() == 1);
+    auto bundle = pick(buf.get_out_bundles());
+
+    rgtb << tab(1) << "HWStream<" << buf.bundle_type_string(bundle) << " > " << bundle << ";" << endl;
+    optimized_streams.push_back(bundle);
+  }
+  for (auto out : prg.outs) {
+    assert(contains_key(out, buffers));
+    auto& buf = buffers.at(out);
+    assert(buf.get_in_bundles().size() == 1);
+    auto bundle = pick(buf.get_in_bundles());
+
+    rgtb << tab(1) << "HWStream<" << buf.bundle_type_string(bundle) << " > " << bundle << ";" << endl;
+    optimized_streams.push_back(bundle);
+  }
+
+  rgtb << endl << endl;
+
+  rgtb << tab(1) << "// Loading input data" << endl;
+  for (auto in : prg.ins) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_out_bundles().size() == 1);
+    auto bundle = pick(buf.get_out_bundles());
+    int port_width = buf.port_width(in);
+    int bundle_width = buf.port_bundle_width(bundle);
+
+    auto cmap = prg.consumer_map(in);
+    auto read_map = inv(cmap);
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    int num_pushes = int_upper_bound(range_card);
+
+    vector<string> pts = buf.port_bundles.at(bundle);
+    int num_ports = pts.size();
+
+    rgtb << tab(1) << "// cmap    : " << str(cmap) << endl;
+    rgtb << tab(1) << "// read map: " << str(read_map) << endl;
+    rgtb << tab(1) << "// rng     : " << str(rng) << endl;
+
+    rgtb << tab(1) << "for (int i = 0; i < " << num_pushes << "; i++) {" << endl;
+    rgtb << tab(2) << buf.bundle_type_string(bundle) << " in_val;" << endl;
+    for (int p = 0; p < num_ports; p++) {
+      string next_val = str(num_ports) + "*i + " + str(p);
+      rgtb << tab(2) << "set_at<" << p << "*" << port_width << ", " << bundle_width << ", " << port_width << ">(in_val, " << next_val << ");" << endl;
+      rgtb << tab(2) << "in_pix << in_val << endl;" << endl;
+    }
+    rgtb << tab(2) << bundle << ".write(in_val);" << endl;
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+
+  rgtb << tab(1) << prg.name << "(" << comma_list(optimized_streams) << ");" << endl << endl;
+
+  for (auto out : prg.outs) {
+    assert(contains_key(out, buffers));
+    auto& buf = buffers.at(out);
+    assert(buf.get_in_bundles().size() == 1);
+    auto bundle = pick(buf.get_in_bundles());
+
+    auto cmap = prg.producer_map(out);
+    auto read_map = inv(cmap);
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    int num_pops = int_upper_bound(range_card);
+    int port_width = buf.port_width(out);
+
+    vector<string> pts = buf.port_bundles.at(bundle);
+    int num_ports = pts.size();
+
+    rgtb << tab(1) << "for (int i = 0; i < " << (num_pops) << "; i++) {" << endl;
+    rgtb << tab(2) << buf.bundle_type_string(bundle) << " actual = " << bundle << ".read();" << endl;
+    for (int p = 0; p < num_ports; p++) {
+      rgtb << tab(2) << "auto actual_lane_" << p
+        << " = actual.extract<" << p << "*" << port_width << ", "
+        << (p + 1)*port_width - 1 << ">();" << endl;
+
+      rgtb << tab(2) << "fout << actual_lane_" << p << " << endl;" << endl;
+      //rgtb << tab(2) << "fout << (uint64_t) actual_lane_" << p << " << endl;" << endl;
+    }
+
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+
+  rgtb << tab(1) << "in_pix.close();" << endl;
+  rgtb << tab(1) << "fout.close();" << endl;
+  rgtb << tab(1) << "return 0;" << endl;
+  rgtb << "}" << endl;
+  rgtb.close();
+}
+
+void generate_regression_testbench(prog& prg) {
+  ofstream rgtb("regression_tb_" + prg.name + ".cpp");
+  rgtb << "#include <fstream>" << endl;
+  rgtb << "#include \"" << prg.name << ".h\"" << endl << endl;
+
+  rgtb << "int main() {" << endl;
+  rgtb << tab(1) << "ofstream fout(\"" << "regression_result_" << prg.name << ".txt\");" << endl;
+
+  //vector<string> unoptimized_streams;
+  vector<string> optimized_streams;
+  for (auto in : prg.ins) {
+    rgtb << tab(1) << "HWStream<" << prg.buffer_element_type_string(in) << " > " << in << ";" << endl;
+    optimized_streams.push_back(in);
+  }
+  for (auto out : prg.outs) {
+    rgtb << tab(1) << "HWStream<" << prg.buffer_element_type_string(out) << " > " << out << ";" << endl;
+    optimized_streams.push_back(out);
+  }
+
+  rgtb << endl << endl;
+
+  rgtb << tab(1) << "// Loading input data" << endl;
+  for (auto in : prg.ins) {
+    auto cmap = prg.consumer_map(in);
+    auto read_map = inv(cmap);
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    int num_pushes = int_upper_bound(range_card);
+
+    rgtb << tab(1) << "// cmap    : " << str(cmap) << endl;
+    rgtb << tab(1) << "// read map: " << str(read_map) << endl;
+    rgtb << tab(1) << "// rng     : " << str(rng) << endl;
+    rgtb << tab(1) << "for (int i = 0; i < " << num_pushes << "; i++) {" << endl;
+    rgtb << tab(2) << in << ".write(i);" << endl;
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+  rgtb << tab(1) << prg.name << "(" << comma_list(optimized_streams) << ");" << endl;
+
+  for (auto out : prg.outs) {
+    auto cmap = prg.producer_map(out);
+    auto read_map = inv(cmap);
+    auto rng = range(read_map);
+    auto range_card = card(rng);
+    int num_pops = int_upper_bound(range_card);
+    rgtb << tab(1) << "for (int i = 0; i < " << num_pops << "; i++) {" << endl;
+    rgtb << tab(2) << "int actual = " << out << ".read();" << endl;
+    rgtb << tab(2) << "fout << actual << endl;" << endl;
+    rgtb << tab(1) << "}" << endl << endl;
+  }
+  rgtb << tab(1) << "return 0;" << endl;
+  rgtb << "}" << endl;
+  rgtb.close();
+}
+
+std::vector<std::string> run_regression_tb(const std::string& name) {
+  int res = system(string("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+
+  ifstream infile("regression_result_" + name + ".txt");
+  vector<string> lines;
+  std::string line;
+  while (std::getline(infile, line))
+  {
+    lines.push_back(line);
+  }
+  return lines;
+}
+
+std::vector<std::string> run_regression_tb(prog& prg) {
+  return run_regression_tb(prg.name);
+}
+
+
+void run_tb(prog& prg) {
+  int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
+  assert(res == 0);
+
+  res = system("./a.out");
+  assert(res == 0);
+}
+
+
+void regression_test(prog& prg) {
+  generate_unoptimized_code(prg);
+
+  cout << "Built unoptimized code" << endl;
+  auto old_name = prg.name;
+  prg.name = "unoptimized_" + old_name;
+  generate_regression_testbench(prg);
+  vector<string> unoptimized_res = run_regression_tb(prg);
+  prg.name = old_name;
+
+  cout << "Building optimized code" << endl;
+  generate_optimized_code(prg);
+  generate_regression_testbench(prg);
+  vector<string> optimized_res = run_regression_tb(prg);
+
+  assert(unoptimized_res.size() == optimized_res.size());
+  for (size_t i = 0; i < unoptimized_res.size(); i++) {
+
+    if (!(unoptimized_res.at(i) == optimized_res.at(i))) {
+      cout << "Error: After optimization, at output " << i << " unoptimized_res != optimized_res" << endl;
+      cout << "\tunoptimized = " << unoptimized_res.at(i) << endl;
+      cout << "\toptimized   = " << optimized_res.at(i) << endl;
+      assert(unoptimized_res.at(i) == optimized_res.at(i));
+    }
+  }
+
+}
+
+std::set<std::string> get_kernels(prog& prg) {
+  std::set<string> kernels;
+  for (auto child : prg.root->children) {
+    if (child->is_loop) {
+      kernels.insert(child->name);
+    }
+  }
+  return kernels;
+}
+
+std::vector<piecewise_address> addrs_referenced(op* p, const std::string& buffer) {
+  vector<piecewise_address> addrs;
+  for (auto b : p->produce_locs) {
+    if (b.first == buffer) {
+      addrs.push_back({{"", b.second}});
+    }
+  }
+
+  for (auto b : p->consume_locs_pair) {
+    if (b.first == buffer) {
+      addrs.push_back(b.second);
+    }
+  }
+  return addrs;
+}
+
+vector<string> upsample_vars(const std::string& target_buf, op* reader, prog& prg) {
+
+  auto all_vars = map_find(reader, prg.iter_vars());
+  vector<string> vars_used_in_read;
+  for (auto a : addrs_referenced(reader, target_buf)) {
+    assert(a.size() > 0);
+    for (auto ar : a) {
+      isl_multi_aff* ma = to_multi_aff(prg.ctx, all_vars, ar.second);
+      cout << tab(2) << str(a) << endl;
+      cout << tab(2) << str(ma) << endl;
+      for (int i = 0; i < isl_multi_aff_dim(ma, isl_dim_set); i++) {
+        auto aff = isl_multi_aff_get_aff(ma, i);
+        cout << tab(3) << i << ": " << str(aff) << endl;
+
+        for (int d = 0; d < num_in_dims(aff); d++) {
+          isl_val* coeff = get_coeff(aff, d);
+          if (!is_zero(coeff)) {
+            vars_used_in_read.push_back(dim_name(aff, d));
+          }
+          //cout << tab(4) << dim_name(aff, d) << ": " << str(get_coeff(aff, d)) << endl;
+        }
+      }
+    }
+  }
+
+  vector<string> upsamples;
+  for (auto v : all_vars) {
+    if (prg.trip_count(v) > 1 && !elem(v, vars_used_in_read)) {
+      upsamples.push_back(v);
+    }
+  }
+  return upsamples;
+}
+
+void make_constant_dd(const std::string& target_op, const std::string& target_buf, prog& prg) {
+
+  op* target = prg.find_op(target_op);
+  op* source = find_writer(target_buf, prg);
+
+  cout << "target = " << target->name << endl;
+  cout << "writer = " << source->name << endl;
+
+  vector<string> upsamples = upsample_vars(target_buf, target, prg);
+  cout << "Upsample vars..." << endl;
+  for (auto v : upsamples) {
+    cout << tab(1) << v << endl;
+  }
+
+  auto vars = prg.iter_vars();
+  auto target_vars = map_find(target, vars);
+  auto source_vars = map_find(source, vars);
+
+  assert(target_vars.size() == source_vars.size());
+
+  cout << "Vars: " << target->name << " -> " << str(map_find(target, vars)) << endl;
+  cout << "Vars: " << source->name << " -> " << str(map_find(source, vars)) << endl;
+
+  string last_shared_level = "";
+  int num_unshared_levels = target_vars.size();
+  for (int i = 0; i < source_vars.size(); i++) {
+    if (target_vars[i] != source_vars[i]) {
+      break;
+    }
+    last_shared_level = target_vars[i];
+    num_unshared_levels--;
+  }
+  int num_shared_levels = target_vars.size() - num_unshared_levels;
+
+  //cout << "last shared level = " << last_shared_level << endl;
+  //assert(num_unshared_levels == 3);
+
+  op* loop = prg.find_loop(last_shared_level);
+  string lp_loader = "sw_loader_from_" + source->name + "_to_" + target->name;
+  vector<string> all_vars = map_find(target, prg.iter_vars());
+  vector<string> iter_vars;
+  vector<string> read_vars;
+  //vector<pair<int, int> > bounds{{0, 2}, {0, 8}, {0, 16}};
+  vector<pair<int, int> > bounds;
+  int src_pos = num_shared_levels;
+  for (int i = 0; i < num_unshared_levels; i++) {
+    string target_var = target_vars.at(num_shared_levels + i);
+    string source_var = source_vars.at(src_pos);
+    if (elem(target_var, upsamples)) {
+      bounds.push_back({prg.start(target_var), prg.end_exclusive(target_var)});
+    } else {
+      auto read = its(prg.read_map(target, target_buf), prg.domain(target));
+      cout << "Read: " << str(read) << endl;
+      auto minpt = lexmin(range(read));
+      auto maxpt = lexmax(range(read));
+      cout << "Min: " << str(minpt) << endl;
+      cout << "Max: " << str(maxpt) << endl;
+      //assert(false);
+      //int all_max = -1;
+      //int all_min = 10000000;
+      //for (auto addr : addrs_referenced(target, target_buf)) {
+        //for (auto piece : addr) {
+          //auto ma = to_multi_aff(prg.ctx, all_vars, piece.second);
+          //isl_aff* aff =
+            //isl_multi_aff_get_aff(ma, num_shared_levels + i);
+          //int min_val =
+            //to_int(eval(aff, prg.min_point(target)));
+          //int max_val =
+            //to_int(eval(aff, prg.max_point(target)));
+
+          //if (min_val < all_min) {
+            //all_min = min_val;
+          //}
+          //if (max_val < all_max) {
+            //all_max = max_val;
+          //}
+        //}
+      //}
+      //cout << "all max = " << all_max << endl;
+      //cout << "all min = " << all_min << endl;
+      //bounds.push_back({all_min, all_max});
+      bounds.push_back({prg.start(source_var), prg.end_exclusive(source_var)});
+      src_pos++;
+    }
+  }
+
+  op* next =
+    loop->add_loop_after(source, lp_loader + "_" + str(0), bounds.at(0).first, bounds.at(0).second);
+  iter_vars.push_back(next->name);
+  for (int i = 1; i < num_unshared_levels; i++) {
+    next = next->add_loop(lp_loader + "_" + str(i), bounds.at(i).first, bounds.at(i).second);
+    iter_vars.push_back(next->name);
+    read_vars.push_back(next->name);
+  }
+  reverse(iter_vars);
+  reverse(read_vars);
+
+  string l1_buf = target_buf + "_" + target->name + "_l1";
+  auto cpy_op = next->add_op("load_" + target_buf + "_to_" + target->name);
+  cpy_op->add_store(l1_buf, comma_list(iter_vars));
+  cpy_op->add_load(target_buf, comma_list(read_vars));
+  prg.buffer_port_widths[l1_buf] = prg.buffer_port_width(target_buf);
+
+  target->replace_reads_from(target_buf, l1_buf);
+  for (auto& v : target->consume_locs_pair) {
+    if (v.first == l1_buf) {
+      for (auto& a : v.second) {
+        a.second = a.second + (upsamples.size() > 0 ? ", " : "") + comma_list(upsamples);
+      }
+    }
+  }
+}
+
+std::set<string> buffers_written(op* p) {
+  assert(!p->is_loop);
+
+  std::set<string> bufs;
+  for (auto b : p->produce_locs) {
+    bufs.insert(b.first);
+  }
+  return bufs;
+}
+
+bool writes(const std::string& target_buf, op* p) {
+  return elem(target_buf, buffers_written(p));
+}
+
+op* find_writer(const std::string& target_buf, prog& prg) {
+  vector<op*> writers;
+  for (auto v : prg.all_ops()) {
+    if (writes(target_buf, v)) {
+      writers.push_back(v);
+    }
+  }
+  assert(writers.size() == 1);
+  return writers.at(0);
+}
+
