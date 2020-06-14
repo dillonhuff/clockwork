@@ -1,11 +1,11 @@
 #pragma once
 
-#include "qexpr.h"
-
 #ifdef COREIR
 #include "coreir.h"
 #include "coreir/libs/commonlib.h"
 #endif
+
+#include "qexpr.h"
 
 using namespace std;
 

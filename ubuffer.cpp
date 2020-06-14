@@ -1,6 +1,8 @@
 #include "ubuffer.h"
 #include "codegen.h"
-#include "coreir_lib.h"
+#ifdef COREIR
+#include "cwlib.h"
+#endif
 #include "coreir_backend.h"
 
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
@@ -717,7 +719,7 @@ void generate_code_prefix(CodegenOptions& options,
     for (auto inpt : possible_ports) {
       auto write_ops =
         domain(buf.access_map.at(inpt));
-      auto read_ops = 
+      auto read_ops =
         domain(buf.access_map.at(outpt));
       auto overlap = its(write_ops, producers_for_outpt);
 

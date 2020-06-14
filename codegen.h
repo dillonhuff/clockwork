@@ -1,9 +1,9 @@
 #pragma once
 
-#include "minihls.h"
 #include "ubuffer.h"
+#include "minihls.h"
 
-#define US + "_" + 
+#define US + "_" +
 
 using minihls::outpt;
 using minihls::inpt;
@@ -66,7 +66,7 @@ instr* out_wire_write(block& blk, const string& arg_name, int width, instr* arg)
   module_instance* arg_wire =
     get_out_wire(blk, arg_name, width);
 
-  instruction_binding* rd_wire = 
+  instruction_binding* rd_wire =
     wr_out_wire_binding(blk, arg_name, width);
 
   instruction_type* instr_tp =
@@ -130,7 +130,7 @@ instr* in_wire_read(block& blk, const string& arg_name, int width) {
   module_instance* arg_wire =
     get_in_wire(blk, arg_name, width);
 
-  instruction_binding* rd_wire = 
+  instruction_binding* rd_wire =
     read_in_wire_binding(blk, arg_name, width);
 
   instruction_type* instr_tp =
@@ -211,7 +211,7 @@ instr* wire_write(block& blk, const string& arg_name, int width, instr* arg) {
   module_instance* arg_wire =
     get_wire(blk, arg_name, width);
 
-  instruction_binding* rd_wire = 
+  instruction_binding* rd_wire =
     wr_wire_binding(blk, width);
 
   instruction_type* instr_tp =
@@ -229,7 +229,7 @@ instr* wire_read(block& blk, const string& arg_name, int width) {
   module_instance* arg_wire =
     get_wire(blk, arg_name, width);
 
-  instruction_binding* rd_wire = 
+  instruction_binding* rd_wire =
     rd_wire_binding(blk, width);
 
   instruction_type* instr_tp =

@@ -1,10 +1,10 @@
+#include "coreir_backend.h"
+#ifdef COREIR
+#include "cwlib.h"
+#endif
 #include "app.h"
 #include "prog_splitting_test.h"
-#include "ubuffer.h"
 #include "codegen.h"
-#include "coreir_backend.h"
-#include "coreir_lib.h"
-
 #include "prog.h"
 
 #include <chrono>
@@ -27,7 +27,7 @@ prog mini_conv_halide_fixed() {
 
   prg.add_input("hw_input_stencil");
   prg.buffer_port_widths["hw_input_stencil"] = 16;
-  
+
   prg.add_output("hw_output_stencil");
   prg.buffer_port_widths["hw_output_stencil"] = 16;
 
@@ -68,7 +68,7 @@ prog mini_conv_halide() {
 
   prg.add_input("hw_input_stencil");
   prg.buffer_port_widths["hw_input_stencil"] = 16;
-  
+
   prg.add_output("hw_output_stencil");
   prg.buffer_port_widths["hw_output_stencil"] = 16;
 
@@ -1537,12 +1537,12 @@ void find_high_bandwidth_non_const_rd_reads(prog& prg) {
     cout << tab(2) << "Consumed..." << endl;
     for (auto cp : vo.first->consumes_pair()) {
       cout << tab(3) << cp.first << ": " << str(cp.second) << endl;
-    }    
+    }
 
     cout << tab(2) << "Produced..." << endl;
     for (auto cp : vo.first->produces()) {
       cout << tab(3) << cp << endl;
-    }    
+    }
   }
 
 
@@ -1701,7 +1701,7 @@ void reaccess_no_hierarchy_rolled_test() {
   }
 
   //assert(false);
-  
+
   //generate_optimized_code(prg);
   //generate_regression_testbench(prg);
   //vector<string> unoptimized_res = run_regression_tb(prg);
@@ -1784,7 +1784,7 @@ void reaccess_no_hierarchy_test() {
 
   cout << "Before padding..." << endl;
   prg.pretty_print();
-  
+
   generate_optimized_code(prg);
   generate_regression_testbench(prg);
   vector<string> unoptimized_res = run_regression_tb(prg);
@@ -1806,7 +1806,7 @@ void reaccess_no_hierarchy_test() {
 
   assert(upsamples.size() == 1);
   assert(upsamples.at(0) == "ao");
-  
+
   make_constant_dd(target_op, target_buf, prg);
 
   cout << "After loop insertion" << endl;

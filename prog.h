@@ -1,10 +1,10 @@
 #pragma once
 
+#include "ubuffer.h"
 #include "isl_utils.h"
 #include "utils.h"
 #include "qexpr.h"
 #include "app.h"
-#include "ubuffer.h"
 
 struct ir_node;
 struct prog;
@@ -15,50 +15,14 @@ typedef std::string buffer_name;
 typedef std::string address;
 typedef std::vector<std::pair<std::string, std::string> > piecewise_address;
 
-static
 isl_multi_aff*
-to_multi_aff(isl_ctx* context,
-    const std::vector<std::string>& vars,
-    const std::string& addr) {
-  string str =
-    sep_list(vars, "[", "]", ", ") + " -> " +
-    brackets(addr);
-  str = "{" + str + " }";
+to_multi_aff(isl_ctx* context, const std::vector<std::string>& vars, const std::string& addr);
 
-  //cout << "str = " << str << endl;
-  return isl_multi_aff_read_from_str(context, str.c_str());
-}
-
-static
 isl_pw_multi_aff*
-to_pw_multi_aff(isl_ctx* context,
-    const std::vector<std::string>& vars,
-    const piecewise_address& addr) {
+to_pw_multi_aff(isl_ctx* context, const std::vector<std::string>& vars, const piecewise_address& addr);
 
-  vector<isl_multi_aff*> affs;
-  for (auto piece : addr) {
-    affs.push_back(to_multi_aff(context, vars, piece.second));
-  }
-  //for (auto a : affs) {
-    //cout << tab(1) << str(a) << endl;
-  //}
-  assert(affs.size() == 1);
-  return isl_pw_multi_aff_from_multi_aff(affs.at(0));
-}
 
-static
-string str(const piecewise_address& addr) {
-  if (addr.size() == 1 && addr.at(0).first == "") {
-    return "[" + addr.at(0).second + "]";
-  }
-
-  string s = "";
-  for (auto p : addr) {
-    s += p.first + " : " + p.second + ",";
-  }
-
-  return s;
-}
+string str(const piecewise_address& addr);
 
 struct ir_node {
 
@@ -303,7 +267,7 @@ struct ir_node {
   op* add_loop_after(op* source, const std::string& name, const int l, const int u) {
     assert(is_loop);
 
-    op* sr = container_child(source); 
+    op* sr = container_child(source);
     assert(sr != nullptr);
 
     cout << "Before inserting " << name << " we have " << children.size() << " children" << endl;
@@ -814,7 +778,7 @@ struct prog {
       const std::string& c, int c_min, int c_max) {
     return root->add_nest(x, x_min, x_max, y, y_min, y_max, c, c_min, c_max);
   }
-  
+
   bool is_output(const std::string& name) {
     return elem(name, outs);
   }
@@ -1090,7 +1054,7 @@ struct prog {
       auto dom = map_find(op, doms);
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
-     // adding vector pair 
+     // adding vector pair
      for (auto top_pair : op->consumes_pair()) {
       string cond = "{ ";
         for (auto sec_pair : top_pair.second) {
@@ -1098,7 +1062,7 @@ struct prog {
         }
         cond = cond.substr(0, cond.length() - 2);
         cond = cond + string(" }");
-     
+
         umap* vmap = its(isl_union_map_read_from_str(ctx, cond.c_str()), to_uset(dom));
         pmap = unn(pmap, vmap);
      }
@@ -1129,9 +1093,9 @@ struct prog {
       auto dom = map_find(op, doms);
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
-      
+
       // for boundary condition expressions
-      for (auto top_pair : op->consumes_pair()) {     
+      for (auto top_pair : op->consumes_pair()) {
         string cond = "{ ";
         for (auto sec_pair : top_pair.second) {
           cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
@@ -1142,7 +1106,7 @@ struct prog {
         pmap = unn(pmap, vmap);
      }
      m = unn(m, pmap);
-      
+
      // original case
      //for (auto p : op-> consumes()){
       ////cout << "second for loop" << endl;
@@ -1151,7 +1115,7 @@ struct prog {
 
         //pmap = unn(pmap, vmap);
       //}
-      //m = unn(m, pmap); 
+      //m = unn(m, pmap);
     }
     return m;
   }
@@ -1242,7 +1206,7 @@ struct prog {
 // and emits HLS C++ code for the program
 void generate_unoptimized_code(prog& prg);
 
-// Re-schedules all loops using ISL 
+// Re-schedules all loops using ISL
 // and then emits HLS C++ code for the program
 void generate_optimized_code(prog& prg);
 void generate_optimized_code(CodegenOptions& options, prog& prg);

@@ -30,7 +30,7 @@ endif
 TEST_FILES = build_set_test.cpp prog_splitting_test.cpp
 LIB_HEADER_FILES = $(patsubst %.cpp,%.h,$(TEST_FILES))
 
-LIB_CPP_FILES = qexpr.cpp app.cpp isl_utils.cpp prog.cpp codegen.cpp minihls.cpp ubuffer.cpp coreir_backend.cpp coreir_lib.cpp
+LIB_CPP_FILES = qexpr.cpp app.cpp isl_utils.cpp prog.cpp codegen.cpp minihls.cpp ubuffer.cpp coreir_backend.cpp cwlib.cpp
 LIB_HEADER_FILES = $(patsubst %.cpp,%.h,$(LIB_CPP_FILES))
 
 TEST_OBJ_FILES := $(patsubst %.cpp,%.o,$(TEST_FILES))
@@ -49,10 +49,19 @@ else
 	$(CXX) $(CXX_FLAGS) -g -fPIC -rdynamic -shared $^ -o lib/$@
 endif
 
+libcoreir-cwlib.$(LIB_EXT): cwlib.o
+ifeq ($(UNAME), Darwin)
+	$(CXX) $(CXX_FLAGS) -dynamiclib -undefined dynamic_lookup $^ -o lib/$@
+else
+	$(CXX) $(CXX_FLAGS) -g -fPIC -rdynamic -shared $^ -o lib/$@
+endif
+
 %.o: %.cpp $(LIB_HEADER_FILES)
 	$(CXX) $(CXX_FLAGS) -c -o $@ $<
 
+coreirlib: libcoreir-cwlib.$(LIB_EXT)
+
 clean:
-	rm -f *.o *.a lib/libclkwrk.so lib/libclkwrk.dylib $(TARGET)
+	rm -f *.o *.a lib/*.so lib/*.dylib $(TARGET)
 
 
