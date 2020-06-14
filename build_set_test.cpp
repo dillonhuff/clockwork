@@ -9720,7 +9720,7 @@ void application_tests() {
 void memory_tile_tests() {
   conv33_test();
   conv45_test();
-  assert(false);
+  //assert(false);
   vec_test();
   bankmerge_vec_test();
   reaccess_test();
