@@ -9581,6 +9581,78 @@ void manual_unroll_test() {
 
 void application_tests() {
   sum_diffs_test();
+  sum_float_test();
+  sum_denoise_test();
+
+  sobel_mag_y_test();
+  sobel_app_test();
+  sobel_mag_x_test();
+
+
+  heat_3d_test();
+
+  upsample_reduce_test();
+
+  pointwise_test();
+
+  stencil_3d_test();
+  soda_blur_test();
+  two_in_window_test();
+  two_in_conv2d_test();
+  gaussian_pyramid_test();
+  warp_and_upsample_test();
+
+  //conv_1d_rolled_test();
+  //synth_upsample_test();
+  unsharp_test();
+  //conv_2d_rolled_test();
+  conv_2d_bc_test();
+  //mobilenet_test();
+  pyramid_2d_test();
+  pyramid_test();
+
+  up_stencil_auto_unrolled_test();
+  up_down_auto_unrolled_test();
+  up_stencil_down_auto_unrolled_test();
+  conv3x3_app_unrolled_test();
+  conv3x3_app_test();
+  conv3x3_app_unrolled_uneven_test();
+
+  up_unrolled_4_test();
+
+
+  up_unrolled_test();
+  up_down_unrolled_test();
+
+  jacobi2d_app_test();
+
+  up_stencil_test();
+  neg_stencil_test();
+  blur_x_test();
+
+  //parse_denoise3d_test();
+  //app added for cnn
+  //conv_test();
+
+
+  sobel_16_stage_x_app_test();
+
+  up_stencil_test();
+  neg_stencil_test();
+  blur_x_test();
+
+  dummy_app_test();
+
+  //two_input_denoise_pipeline_test();
+
+
+  //synth_wire_test();
+  //synth_sr_boundary_condition_test();
+  //synth_lb_test();
+  //conv_app_rolled_reduce_test();
+
+  //up_stencil_down_unrolled_test();
+  //laplacian_pyramid_app_test();
   //halide_harris_test();
   reaccess_no_hierarchy_rolled_test();
   reaccess_no_hierarchy_test();
@@ -9642,79 +9714,6 @@ void application_tests() {
 
   two_input_mag_test();
   one_input_mag_test();
-  sum_float_test();
-  sum_denoise_test();
-
-  sobel_mag_y_test();
-  sobel_app_test();
-  sobel_mag_x_test();
-
-
-  heat_3d_test();
-
-  upsample_reduce_test();
-
-  pointwise_test();
-
-  stencil_3d_test();
-  soda_blur_test();
-  two_in_window_test();
-  two_in_conv2d_test();
-  gaussian_pyramid_test();
-  warp_and_upsample_test();
-
-  //conv_1d_rolled_test();
-  //synth_upsample_test();
-  unsharp_test();
-  //conv_2d_rolled_test();
-  conv_2d_bc_test();
-  //mobilenet_test();
-  pyramid_2d_test();
-  pyramid_test();
-
-  up_stencil_auto_unrolled_test();
-  up_down_auto_unrolled_test();
-  up_stencil_down_auto_unrolled_test();
-  conv3x3_app_unrolled_test();
-  conv3x3_app_test();
-  conv3x3_app_unrolled_uneven_test();
-
-  up_unrolled_4_test();
-
-
-  up_unrolled_test();
-  up_down_unrolled_test();
-
-  jacobi2d_app_test();
-
-  up_stencil_test();
-  neg_stencil_test();
-  blur_x_test();
-
-  //parse_denoise3d_test();
-  //app added for cnn
-  //conv_test();
-
-  sum_diffs_test();
-
-  sobel_16_stage_x_app_test();
-
-  up_stencil_test();
-  neg_stencil_test();
-  blur_x_test();
-
-  dummy_app_test();
-
-  //two_input_denoise_pipeline_test();
-
-
-  //synth_wire_test();
-  //synth_sr_boundary_condition_test();
-  //synth_lb_test();
-  //conv_app_rolled_reduce_test();
-
-  //up_stencil_down_unrolled_test();
-  //laplacian_pyramid_app_test();
 }
 
 void memory_tile_tests() {
@@ -9820,9 +9819,9 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
-    memory_tile_tests();
     application_tests();
     prog_splitting_tests();
+    memory_tile_tests();
     cout << "All tests passed" << endl;
 
   } else {
