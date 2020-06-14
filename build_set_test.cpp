@@ -1733,7 +1733,7 @@ void reaccess_no_hierarchy_rolled_test() {
 
   cout << "After loop insertion" << endl;
   prg.pretty_print();
-  assert(false);
+  //assert(false);
 
   generate_optimized_code(prg);
   generate_regression_testbench(prg);
@@ -9466,7 +9466,7 @@ void manual_unroll_test() {
 
 void application_tests() {
   //halide_harris_test();
-  //reaccess_no_hierarchy_rolled_test();
+  reaccess_no_hierarchy_rolled_test();
   reaccess_no_hierarchy_test();
   mini_conv_halide_test();
   conv_3_3_halide_test();

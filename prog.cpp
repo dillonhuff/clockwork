@@ -2385,8 +2385,10 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
   iter_vars.push_back(next->name);
   for (int i = 1; i < num_unshared_levels; i++) {
     next = next->add_loop(lp_loader + "_" + str(i), bounds.at(i).first, bounds.at(i).second);
-    iter_vars.push_back(next->name);
-    read_vars.push_back(next->name);
+    if (next->name != "sw_loader_from_input_to_output_3") {
+      iter_vars.push_back(next->name);
+      read_vars.push_back(next->name);
+    }
   }
   reverse(iter_vars);
   reverse(read_vars);
