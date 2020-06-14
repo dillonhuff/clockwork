@@ -62,6 +62,6 @@ endif
 coreirlib: libcoreir-cwlib.$(LIB_EXT)
 
 clean:
-	rm -f *.o *.a lib/clkwrk.so lib/clkwrk.dylib lib/libcoreir-cwlib.so lib/libcoreir-cwlib.dylib $(TARGET)
+	rm -f *.o *.a lib/libclkwrk.so lib/libclkwrk.dylib lib/libcoreir-cwlib.so lib/libcoreir-cwlib.dylib $(TARGET)
 
 
