@@ -1,5 +1,47 @@
-#include "prog.h"
 #include "codegen.h"
+#include "prog.h"
+
+isl_multi_aff*
+to_multi_aff(isl_ctx* context,
+    const std::vector<std::string>& vars,
+    const std::string& addr) {
+  string str =
+    sep_list(vars, "[", "]", ", ") + " -> " +
+    brackets(addr);
+  str = "{" + str + " }";
+
+  //cout << "str = " << str << endl;
+  return isl_multi_aff_read_from_str(context, str.c_str());
+}
+
+isl_pw_multi_aff*
+to_pw_multi_aff(isl_ctx* context,
+    const std::vector<std::string>& vars,
+    const piecewise_address& addr) {
+
+  vector<isl_multi_aff*> affs;
+  for (auto piece : addr) {
+    affs.push_back(to_multi_aff(context, vars, piece.second));
+  }
+  //for (auto a : affs) {
+    //cout << tab(1) << str(a) << endl;
+  //}
+  assert(affs.size() == 1);
+  return isl_pw_multi_aff_from_multi_aff(affs.at(0));
+}
+
+string str(const piecewise_address& addr) {
+  if (addr.size() == 1 && addr.at(0).first == "") {
+    return "[" + addr.at(0).second + "]";
+  }
+
+  string s = "";
+  for (auto p : addr) {
+    s += p.first + " : " + p.second + ",";
+  }
+
+  return s;
+}
 
 std::string vanilla_c_pixel_type_string(const int w) {
   if (w == 8) {

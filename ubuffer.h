@@ -1,11 +1,11 @@
 #pragma once
 
-#include "qexpr.h"
-
 #ifdef COREIR
 #include "coreir.h"
 #include "coreir/libs/commonlib.h"
 #endif
+
+#include "qexpr.h"
 
 using namespace std;
 
@@ -977,10 +977,11 @@ class UBuffer {
     }
 
     //The method replace the original access map and add a valid domain
-    void replace_pt(string pt, isl_map* target) {
+    void replace_pt(string pt, isl_map* target, isl_map* sched) {
         access_map.at(pt) = to_umap(target);
         sv_domain[pt] = domain.at(pt);
         domain.at(pt) = ::domain(target);
+        schedule.at(pt) = to_umap(sched);
     }
 
     vector<stack_bank> get_banks() {
@@ -1380,15 +1381,19 @@ class UBuffer {
 
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
 
-    void port_reduction();
+    void print_bank_info();
     umap* get_lexmax_events(const std::string& outpt) const;
     umap* get_lexmax_events(const std::string& inpt, const std::string& outpt);
+    umap* get_lexmax_events(umap* insched, umap* outsched, const std::string& inpt, const std::string& outpt);
     int compute_dd_bound(const std::string & read_port, const std::string & write_port, bool is_max);
     isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
     bank compute_bank_info(const std::string& inpt, const std::string& outpt);
     bank compute_bank_info(std::set<string> inpt, std::set<string> outpt);
     void merge_bank(CodegenOptions& options, string inpt, vector<bank> mergeable);
     void generate_bank_and_merge(CodegenOptions& options);
+
+    //from bank to ubuffer
+    map<string, UBuffer> generate_ubuffer(CodegenOptions& opt);
 
 #ifdef COREIR
     void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def);
@@ -1401,8 +1406,16 @@ class UBuffer {
     Box extract_addr_box(uset* rddom, vector<size_t> sequence);
     string generate_linearize_ram_addr(const std::string& pt);
     vector<UBuffer> port_grouping(int port_width);
+
+    //helper function for port group2bank
+    void create_subbank_branch(
+            std::set<string> & inpt_set,
+            std::set<string> & outpt_set,
+            map<string, pair<isl_map*, isl_map*> > & outpt_merge,
+            vector<pair<string, string> > & back_edge);
     void port_group2bank(int in_port_width, int out_port_width);
     isl_map* merge_output_pt(vector<string> merge_pt);
+    pair<isl_map*, isl_map*> merge_output_pt_with_sched(vector<string> merge_pt);
 
 };
 

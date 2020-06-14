@@ -1,6 +1,8 @@
-#include "coreir_lib.h"
-
 #ifdef COREIR
+#include "cwlib.h"
+#include "coreir/libs/commonlib.h"
+
+COREIR_GEN_C_API_DEFINITION_FOR_LIBRARY(cwlib);
 
 using CoreIR::Context, CoreIR::Namespace, CoreIR::RecordParams, CoreIR::Const, CoreIR::Values, CoreIR::Params;
 using namespace std;
