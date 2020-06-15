@@ -786,7 +786,10 @@ void generate_code_prefix(CodegenOptions& options,
       auto overlap = its(write_ops, producers_for_outpt);
 
       if (!empty(overlap)) {
-        in_ports_to_conditions[inpt] = "true";
+        auto readers_that_use_this_port =
+          gist(domain(its_range(reads_to_sources, overlap)), read_ops);
+        in_ports_to_conditions[inpt] =
+          codegen_c(readers_that_use_this_port);
       } else {
         in_ports_to_conditions[inpt] = "false";
       }

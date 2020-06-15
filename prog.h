@@ -1152,8 +1152,12 @@ struct prog {
 
     cout << "Got producer / consumer maps" << endl;
 
-    isl_union_map *validity =
+    //isl_union_map *validity =
+      //its(dot(writes, inv(writes)), before);
+    auto validity =
       its(dot(writes, inv(reads)), before);
+    //isl_union_map *validity =
+      //its(dot(writes, inv(reads)), before);
 
     //assert(false);
     return validity;

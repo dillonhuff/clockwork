@@ -2720,6 +2720,52 @@ void reduce_1d_test() {
 
 }
 
+void reduce_rows_test() {
+  prog prg;
+  prg.compute_unit_file = "mobilenet_compute.h";
+  prg.name = "reduce_rows";
+  prg.add_input("in");
+  prg.add_output("out");
+  prg.buffer_port_widths["in"] = 32;
+
+  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["I"] = 32;
+  prg.buffer_port_widths["tmp"] = 32;
+
+  auto read_in =
+    prg.add_nest("rd_r", 0, 3, "rd_c", 0, 10)->add_op({"I", "rd_c, rd_r"}, "id", {"in", "rd_c, rd_r"});
+
+  {
+
+    //auto accum_loop = prg.add_nest("ar", 0, 3, "ac", 0, 10);
+    auto accum_loop = prg.add_nest("ar", 0, 3);
+    auto init = accum_loop->add_op("set_z");
+    init->add_function("set_zero_32");
+    init->add_store("tmp", "ar");
+
+    auto accum_inner_loop = accum_loop->add_loop("ac", 0, 10);
+    auto accum = accum_inner_loop->add_op("accumulate");
+    auto tmp = accum->add_load("tmp", "ar");
+    auto next = accum->add_load("I", "ac, ar");
+    accum->add_function("inc", {tmp, next});
+    accum->add_store("tmp", "ar");
+
+    auto write_out = accum_loop->add_op("output");
+    write_out->add_load("tmp", "ar");
+    write_out->add_store("out", "ar");
+  }
+
+  //prg.pretty_print();
+  //assert(false);
+
+  CodegenOptions options;
+  options.internal = true;
+  options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
+  //options.inner_bank_offset_mode = INNER_BANK_OFFSET_STACK;
+  regression_test(options, prg);
+  //assert(false);
+}
+
 void reduce_2d_test() {
   prog prg;
   prg.compute_unit_file = "mobilenet_compute.h";
@@ -2762,7 +2808,6 @@ void reduce_2d_test() {
   options.internal = true;
   options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
   regression_test(options, prg);
-  assert(false);
 }
 
 umap* input_chunk(UBuffer& buf, const std::string& out_bundle) {
@@ -9525,6 +9570,7 @@ void manual_unroll_test() {
 }
 
 void application_tests() {
+  reduce_rows_test();
   ram_addr_unit_test();
   reduce_2d_test();
   reaccess_no_hierarchy_rolled_test();
