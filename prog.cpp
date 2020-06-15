@@ -2293,6 +2293,16 @@ std::set<std::string> get_kernels(prog& prg) {
   return kernels;
 }
 
+std::vector<piecewise_address> addrs_written(op* p, const std::string& buffer) {
+  vector<piecewise_address> addrs;
+  for (auto b : p->produce_locs) {
+    if (b.first == buffer) {
+      addrs.push_back({{"", b.second}});
+    }
+  }
+  return addrs;
+}
+
 std::vector<piecewise_address> addrs_referenced(op* p, const std::string& buffer) {
   vector<piecewise_address> addrs;
   for (auto b : p->produce_locs) {
@@ -2307,6 +2317,32 @@ std::vector<piecewise_address> addrs_referenced(op* p, const std::string& buffer
     }
   }
   return addrs;
+}
+
+vector<string> write_vars(const std::string& target_buf, op* reader, prog& prg) {
+
+  auto all_vars = map_find(reader, prg.iter_vars());
+  vector<string> vars_used_in_read;
+  for (auto a : addrs_written(reader, target_buf)) {
+    assert(a.size() > 0);
+    for (auto ar : a) {
+      isl_multi_aff* ma = to_multi_aff(prg.ctx, all_vars, ar.second);
+      cout << tab(2) << str(a) << endl;
+      cout << tab(2) << str(ma) << endl;
+      for (int i = 0; i < isl_multi_aff_dim(ma, isl_dim_set); i++) {
+        auto aff = isl_multi_aff_get_aff(ma, i);
+        cout << tab(3) << i << ": " << str(aff) << endl;
+
+        for (int d = 0; d < num_in_dims(aff); d++) {
+          isl_val* coeff = get_coeff(aff, d);
+          if (!is_zero(coeff)) {
+            vars_used_in_read.push_back(dim_name(aff, d));
+          }
+        }
+      }
+    }
+  }
+  return vars_used_in_read;
 }
 
 vector<string> upsample_vars(const std::string& target_buf, op* reader, prog& prg) {
@@ -2385,7 +2421,6 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
   vector<string> all_vars = map_find(target, prg.iter_vars());
   vector<string> iter_vars;
   vector<string> read_vars;
-  //vector<pair<int, int> > bounds{{0, 2}, {0, 8}, {0, 16}};
   vector<pair<int, int> > bounds;
   int src_pos = num_shared_levels;
   for (int i = 0; i < num_unshared_levels; i++) {
@@ -2394,36 +2429,6 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
     if (elem(target_var, upsamples)) {
       bounds.push_back({prg.start(target_var), prg.end_exclusive(target_var)});
     } else {
-      auto read = its(prg.read_map(target, target_buf), prg.domain(target));
-      cout << "Read: " << str(read) << endl;
-      auto minpt = lexmin(range(read));
-      auto maxpt = lexmax(range(read));
-      cout << "Min: " << str(minpt) << endl;
-      cout << "Max: " << str(maxpt) << endl;
-      //assert(false);
-      //int all_max = -1;
-      //int all_min = 10000000;
-      //for (auto addr : addrs_referenced(target, target_buf)) {
-        //for (auto piece : addr) {
-          //auto ma = to_multi_aff(prg.ctx, all_vars, piece.second);
-          //isl_aff* aff =
-            //isl_multi_aff_get_aff(ma, num_shared_levels + i);
-          //int min_val =
-            //to_int(eval(aff, prg.min_point(target)));
-          //int max_val =
-            //to_int(eval(aff, prg.max_point(target)));
-
-          //if (min_val < all_min) {
-            //all_min = min_val;
-          //}
-          //if (max_val < all_max) {
-            //all_max = max_val;
-          //}
-        //}
-      //}
-      //cout << "all max = " << all_max << endl;
-      //cout << "all min = " << all_min << endl;
-      //bounds.push_back({all_min, all_max});
       bounds.push_back({prg.start(source_var), prg.end_exclusive(source_var)});
       src_pos++;
     }
@@ -2433,8 +2438,10 @@ void make_constant_dd(const std::string& target_op, const std::string& target_bu
     loop->add_loop_after(source, lp_loader + "_" + str(0), bounds.at(0).first, bounds.at(0).second);
   iter_vars.push_back(next->name);
   for (int i = 1; i < num_unshared_levels; i++) {
+    string corresponding_writer_var = source_vars.at(i);
     next = next->add_loop(lp_loader + "_" + str(i), bounds.at(i).first, bounds.at(i).second);
-    if (next->name != "sw_loader_from_input_to_output_3") {
+    if (elem(corresponding_writer_var, write_vars(target_buf, source, prg))) {
+        //next->name != "sw_loader_from_input_to_output_3") {
       iter_vars.push_back(next->name);
       read_vars.push_back(next->name);
     }
