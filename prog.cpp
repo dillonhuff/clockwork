@@ -1518,10 +1518,12 @@ compute_kernel generate_compute_op(
   }
   conv_out << endl;
 
+  map<string, string> buf_vals;
   for (auto ib : in_buffers) {
     auto in_buffer = ib.first;
     conv_out << "\t// Consume: " << in_buffer << endl;
     string value_name = op->consumed_value_name(ib);
+    buf_vals[in_buffer] = value_name;
     conv_out << "\tauto " << value_name << " = ";
 
     string bundle_name = op->name + "_read";
@@ -1530,6 +1532,16 @@ compute_kernel generate_compute_op(
     if (prg.is_boundary(in_buffer)) {
       conv_out << in_buffer << ".read();" << endl;
     } else {
+      if (op->dynamic_reads(in_buffer)) {
+        string dynaddr = "";
+        for (auto dr : op->dynamic_load_addresses) {
+          if (dr.buffer == in_buffer) {
+            dynaddr = buf_vals[dr.table];
+          }
+        }
+        assert(dynaddr != "");
+        dim_args[dim_args.size() - 1] = dynaddr;
+      }
       vector<string> source_delays{in_buffer};
       cout << "op = " << op->name << endl;
       conv_out << in_buffer << "_" << op->name << "_read_bundle_read(" << comma_list(source_delays) << "/* source_delay */, " << comma_list(dim_args) << ");" << endl;
