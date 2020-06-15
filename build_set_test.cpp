@@ -2441,7 +2441,7 @@ void ram_addr_unit_test() {
 
   prog prg;
   prg.compute_unit_file = "mobilenet_compute.h";
-  prg.name = "ram_addr_unit_test";
+  prg.name = "ram_addr_unit_test_linear";
   prg.add_input("in");
   prg.add_output("out");
   prg.buffer_port_widths["in"] = 32;
@@ -2486,20 +2486,29 @@ void ram_addr_unit_test() {
   cout << "Optimized schedule..." << endl;
   cout << codegen_c(schedmap);
 
-  auto buffers = build_buffers(prg);
-  CodegenOptions options;
-  options.internal = true;
-  options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
-  generate_app_code(options, buffers, prg, opt_sched);
+  {
+    auto buffers = build_buffers(prg);
+    CodegenOptions options;
+    options.internal = true;
+    options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
+    generate_app_code(options, buffers, prg, opt_sched);
+  }
+  //generate_regression_testbench(prg, buffers);
+  generate_regression_testbench(prg);
+  auto linear_res = run_regression_tb(prg);
 
-  generate_regression_testbench(prg, buffers);
-  //generate_regression_testbench(prg);
+  {
+    prg.name = "ram_addr_unit_test_stack";
+    auto buffers = build_buffers(prg);
+    CodegenOptions options;
+    options.internal = true;
+    generate_app_code(options, buffers, prg, opt_sched);
+  }
+  generate_regression_testbench(prg);
+  auto stack_res = run_regression_tb(prg);
 
-  int res = system(string("g++ -std=c++11 regression_tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
-  assert(res == 0);
-
-  res = system("./a.out");
-  assert(res == 0);
+  assert(linear_res == stack_res);
+  assert(false);
 }
 
 void cnn_test() {
@@ -9580,6 +9589,7 @@ void manual_unroll_test() {
 }
 
 void application_tests() {
+  ram_addr_unit_test();
   sum_diffs_test();
   sum_float_test();
   sum_denoise_test();
@@ -9666,7 +9676,6 @@ void application_tests() {
   //assert(false);
   //print_test();
   //assert(false);
-  ram_addr_unit_test();
   //manual_unroll_test();
   //assert(false);
 
