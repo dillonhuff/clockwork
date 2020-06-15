@@ -1526,7 +1526,6 @@ compute_kernel generate_compute_op(
   //vector<pair<string, string> > in_buffers;
   vector<pair<string, vector< pair< string, string > > > > in_buffers;
   std::set<string> distinct;
-  //for (auto con : op->consume_locs) {
   for (auto con : op->consume_locs_pair) {
     if (!elem(con.first, distinct)) {
       in_buffers.push_back(con);
@@ -1537,6 +1536,15 @@ compute_kernel generate_compute_op(
   cout << "got in_buffers" << endl;
   string res;
   vector<string> buf_args;
+
+  conv_out << tab(1) << "// Dynamic address computation" << endl;
+  for (auto da : op->dynamic_load_addresses) {
+    conv_out << tab(1) << "// " << da.table << "[" << da.table_offset << "]" << endl;
+  }
+  for (auto da : op->dynamic_store_addresses) {
+    conv_out << tab(1) << "// " << da.table << "[" << da.table_offset << "]" << endl;
+  }
+  conv_out << endl;
 
   for (auto ib : in_buffers) {
     auto in_buffer = ib.first;

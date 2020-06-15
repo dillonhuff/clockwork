@@ -9,6 +9,12 @@
 
 using namespace std;
 
+struct dynamic_address {
+  std::string buffer;
+  std::string table;
+  std::string table_offset;
+};
+
 template <typename T>
 std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
     if ( !v.empty()  ) {
@@ -607,6 +613,8 @@ class UBuffer {
 
     std::map<string, bool> isIn;
     std::map<string, isl_set*> domain;
+
+    std::map<string, dynamic_address> dynamic_address;
 
     //Stencil valid domain for each port
     std::map<string, isl_set*> sv_domain;

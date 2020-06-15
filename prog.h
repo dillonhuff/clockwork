@@ -15,12 +15,6 @@ typedef std::string buffer_name;
 typedef std::string address;
 typedef std::vector<std::pair<std::string, std::string> > piecewise_address;
 
-struct dynamic_address {
-  std::string buffer;
-  std::string table;
-  std::string table_offset;
-};
-
 isl_multi_aff*
 to_multi_aff(isl_ctx* context, const std::vector<std::string>& vars, const std::string& addr);
 
