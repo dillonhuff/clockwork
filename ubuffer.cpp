@@ -714,7 +714,7 @@ void generate_code_prefix(CodegenOptions& options,
 
     string bank = buf.bank_between(inpt, outpt);
 
-    if (elem(inpt, buf.dynamic_ports)) {
+    if (elem(outpt, buf.dynamic_ports)) {
       return buf.name + "." + bank + ".read(dynamic_address)";
     }
 
