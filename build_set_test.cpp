@@ -1818,12 +1818,12 @@ void reaccess_no_hierarchy_test() {
 
   cout << "After loop insertion" << endl;
   prg.pretty_print();
-  generate_optimized_code(prg);
-  //CodegenOptions options;
-  //options.internal = true;
-  //options.all_rams = true;
+  //generate_optimized_code(prg);
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
   //options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
-  //generate_optimized_code(options, prg);
+  generate_optimized_code(options, prg);
 
   generate_regression_testbench(prg);
   vector<string> optimized_res = run_regression_tb(prg);
@@ -9570,11 +9570,12 @@ void manual_unroll_test() {
 }
 
 void application_tests() {
+  sum_diffs_test();
+  reaccess_no_hierarchy_test();
   reduce_rows_test();
   ram_addr_unit_test();
   reduce_2d_test();
   reaccess_no_hierarchy_rolled_test();
-  reaccess_no_hierarchy_test();
   mini_conv_halide_test();
   conv_3_3_halide_test();
   reduce_1d_test();
@@ -9632,7 +9633,6 @@ void application_tests() {
   two_input_mag_test();
   one_input_mag_test();
 
-  sum_diffs_test();
   sum_float_test();
   sum_denoise_test();
 
