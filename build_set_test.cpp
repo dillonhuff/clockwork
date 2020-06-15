@@ -9581,11 +9581,20 @@ void histogram_test() {
   ld->add_load("image_oc", "im");
   ld->add_store("image", "im");
 
+  // Assume zero initialization for now
+  //{
+    //auto st = prg.add_loop("iz", 0, 20)->
+      //add_op("init_counts");
+    //st->add_function("set_zero_32");
+    //st->add_store("buckets", "iz");
+  //}
+
   auto count_loop = prg.add_loop("i", 0, 20);
   auto update = count_loop->add_op("update_counts");
   update->add_function("histogram_inc");
   update->add_dynamic_load("buckets", "image", "i");
   update->add_dynamic_store("buckets", "image", "i");
+
 
   auto st = prg.add_loop("sm", 0, 20)->
     add_op("store_results");
@@ -9602,6 +9611,13 @@ void histogram_test() {
 
   int res = system(string("g++ -fstack-protector-all -std=c++11 -c unoptimized_" + prg.name + ".cpp").c_str());
   assert(res == 0);
+
+  int compile_res = system("clang++ -std=c++11 unoptimized_histogram.cpp ./manual_tbs/histogram_tb.cpp -I .");
+  assert(compile_res == 0);
+
+  int run_res = system("./a.out");
+  assert(run_res == 0);
+
   assert(false);
 }
 
