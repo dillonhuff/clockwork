@@ -622,3 +622,7 @@ hw_uint<16> blur_3_3(hw_uint<16*9>& in) {
     v6 + v7 + v8) / 9;
 }
 
+static inline
+hw_uint<32> histogram_inc(hw_uint<64>& ignore, hw_uint<32>& val) {
+  return val + 1;
+}

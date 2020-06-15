@@ -9572,7 +9572,7 @@ void manual_unroll_test() {
 void histogram_test() {
   prog prg;
   prg.name = "histogram";
-  prg.compute_unit_file = "clockwork_standard_compute.h";
+  prg.compute_unit_file = "clockwork_standard_compute_units.h";
   prg.add_input("image_oc");
   prg.add_output("color_counts");
 
@@ -9599,6 +9599,9 @@ void histogram_test() {
     INNER_BANK_OFFSET_LINEAR;
   generate_unoptimized_code(options, prg);
   generate_regression_testbench(prg);
+
+  int res = system(string("g++ -fstack-protector-all -std=c++11 -c unoptimized_" + prg.name + ".cpp").c_str());
+  assert(res == 0);
   assert(false);
 }
 
