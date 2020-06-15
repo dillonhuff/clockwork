@@ -946,43 +946,6 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       usuffix++;
     }
 
-
-    //cout << "# of consumed locations: " << op->consume_locs.size() << endl;
-    //for (auto consumed : op->consume_locs) {
-      //string name = consumed.first;
-
-      //if (!contains_key(name, buffers)) {
-        //cout << "Creating ports for op: " << name << endl;
-        //UBuffer buf;
-        //buf.name = name;
-        //buf.ctx = prg.ctx;
-        //if (contains_key(name, prg.buffer_port_widths)) {
-          //buf.port_widths = map_find(name, prg.buffer_port_widths);
-        //}
-        //buffers[name] = buf;
-      //}
-
-      //UBuffer& buf = buffers.at(name);
-
-      //string pt_name = name + "_" + op->name + "_" + to_string(usuffix);
-      //buf.port_bundles[op->name + "_read"].push_back(pt_name);
-
-      //isl_map* consumed_here =
-        //its(isl_map_read_from_str(buf.ctx, string("{ " + prg.op_iter(op) + " -> " + name + "[" + consumed.second + "]" + " }").c_str()), cpy(domains.at(op)));
-      //assert(contains_key(op, domains));
-
-      //cout << "\tAdding output port: " << pt_name << endl;
-      //cout << "\t\tConsumed: " << str(consumed_here) << endl;
-      //buf.add_out_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
-
-      //vector<string> inpt = buf.get_out_ports();
-      //cout << "current out port name: " << endl;
-      //for_each(inpt.begin(), inpt.end(), [](string pt_name){cout <<"\t" << pt_name;});
-      //cout << endl;
-
-      //usuffix++;
-    //}
-
     for (auto consumed : op->consume_locs_pair) {
       string name = consumed.first;
 
@@ -1517,6 +1480,8 @@ compute_kernel generate_compute_op(
     dim_args.push_back(a);
     kernel.iteration_variables.push_back(a);
   }
+  dim_args.push_back("0");
+
   for (auto a : space_var_decls(s)) {
     buf_srcs.push_back(a);
   }

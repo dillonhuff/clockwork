@@ -609,6 +609,7 @@ void generate_code_prefix(CodegenOptions& options,
     args.push_back(buf.port_type_string(inpt) + "& " + inpt);
     args.push_back(buf.name + "_cache& " + buf.name);
     concat(args, dimension_var_decls(inpt, buf));
+    args.push_back("int dynamic_address");
     string var_args = comma_list(dimension_var_args(inpt, buf));
 
     out << "inline void " << inpt << "_write(";
@@ -662,6 +663,7 @@ void generate_code_prefix(CodegenOptions& options,
   selector generate_select_decl(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
     isl_space* s = get_space(buf.domain.at(outpt));
     auto dim_decls = space_var_decls(s);
+    dim_decls.push_back("int dynamic_address");
 
     selector sel;
     sel.name = outpt + "_select";
@@ -874,6 +876,8 @@ void generate_code_prefix(CodegenOptions& options,
         dim_decls.push_back("int " + str(isl_space_get_dim_id(s, isl_dim_set, i)));
         dim_args.push_back(str(isl_space_get_dim_id(s, isl_dim_set, i)));
       }
+      dim_decls.push_back("int dynamic_address");
+      dim_args.push_back("dynamic_address");
 
       if (buf.is_out_pt(rep)) {
         out << "inline " << buf.bundle_type_string(b.first) << " " <<  buf.name << "_" << b.first << "_bundle_read(";

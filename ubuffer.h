@@ -614,8 +614,6 @@ class UBuffer {
     std::map<string, bool> isIn;
     std::map<string, isl_set*> domain;
 
-    std::map<string, dynamic_address> dynamic_address;
-
     //Stencil valid domain for each port
     std::map<string, isl_set*> sv_domain;
 
