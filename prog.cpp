@@ -938,6 +938,10 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       cout << "\t\tProduced:: " << str(produced_here) << endl;
       buf.add_in_pt(pt_name, domains.at(op), produced_here, its(opt_sched, domains.at(op)));
 
+      if (op->dynamic_writes(name)) {
+        buf.dynamic_ports.insert(pt_name);
+      }
+
       vector<string> inpt = buf.get_in_ports();
       cout << "current in port name: " << endl;
       for_each(inpt.begin(), inpt.end(), [](string pt_name){cout <<"\t" << pt_name;});
@@ -986,6 +990,10 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
       cout << "\t\tConsumed: " << str(consumed_here) << endl;
       buf.add_out_pt(pt_name, domains.at(op), consumed_here, its(opt_sched, domains.at(op)));
 
+      if (op->dynamic_reads(name)) {
+        buf.dynamic_ports.insert(pt_name);
+      }
+
       vector<string> inpt = buf.get_out_ports();
       cout << "current out port name: " << endl;
       for_each(inpt.begin(), inpt.end(), [](string pt_name){cout <<"\t" << pt_name;});
@@ -993,7 +1001,6 @@ map<string, UBuffer> build_buffers(prog& prg, umap* opt_sched) {
 
       usuffix++;
     }
-
   }
 
   return buffers;

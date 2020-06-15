@@ -61,6 +61,24 @@ struct ir_node {
 
   ir_node() : parent(nullptr), is_loop(false), unroll_factor(1) {}
 
+  bool dynamic_writes(const std::string& buf) {
+    for (auto d : dynamic_store_addresses) {
+      if (d.buffer == buf) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool dynamic_reads(const std::string& buf) {
+    for (auto d : dynamic_load_addresses) {
+      if (d.buffer == buf) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   int trip_count() const {
     assert(is_loop);
     return end_exclusive - start;

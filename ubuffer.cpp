@@ -710,6 +710,11 @@ void generate_code_prefix(CodegenOptions& options,
 
     string bank = buf.bank_between(inpt, outpt);
 
+    if (elem(inpt, buf.dynamic_ports)) {
+      return buf.name + "." + bank + ".read(dynamic_address)";
+    }
+
+
     auto out_domain = buf.domain.at(outpt);
     //cout << "Out domain: " << str(out_domain) << endl;
     auto qpd = compute_dd(buf, outpt, inpt);

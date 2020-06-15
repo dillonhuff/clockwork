@@ -9602,7 +9602,7 @@ void histogram_test() {
 
   int res = system(string("g++ -fstack-protector-all -std=c++11 -c unoptimized_" + prg.name + ".cpp").c_str());
   assert(res == 0);
-  //assert(false);
+  assert(false);
 }
 
 void application_tests() {
