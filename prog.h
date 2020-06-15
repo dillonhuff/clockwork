@@ -15,6 +15,12 @@ typedef std::string buffer_name;
 typedef std::string address;
 typedef std::vector<std::pair<std::string, std::string> > piecewise_address;
 
+struct dynamic_address {
+  std::string buffer;
+  std::string table;
+  std::string table_offset;
+};
+
 isl_multi_aff*
 to_multi_aff(isl_ctx* context, const std::vector<std::string>& vars, const std::string& addr);
 
@@ -44,9 +50,12 @@ struct ir_node {
   std::string name;
   // Locations written
   std::vector<pair<buffer_name, address> > produce_locs;
+  std::vector<dynamic_address> dynamic_store_addresses;
+
   // Locations read
-  //std::vector<pair<buffer_name, address> > consume_locs;
   std::vector<pair<buffer_name, std::vector<pair<std::string, std::string>>>> consume_locs_pair;
+  std::vector<dynamic_address> dynamic_load_addresses;
+
   // The name of the HL C++ function that this op invokes
   std::string func;
   // Name of loop index variables used by this unit
@@ -382,6 +391,7 @@ struct ir_node {
       const std::string& addr_table,
       const std::string& table_offset) {
     add_load(addr_table, table_offset);
+    dynamic_load_addresses.push_back({buf, addr_table, table_offset});
     add_store(buf, "0");
   }
 
@@ -389,6 +399,7 @@ struct ir_node {
       const std::string& addr_table,
       const std::string& table_offset) {
     add_load(addr_table, table_offset);
+    dynamic_store_addresses.push_back({buf, addr_table, table_offset});
     add_load(buf, "0");
   }
 
