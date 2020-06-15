@@ -378,6 +378,18 @@ struct ir_node {
     return fo;
   }
 
+  string add_dynamic_store(const std::string& buf,
+      const std::string& addr_table,
+      const std::string& table_offset) {
+    return "";
+  }
+
+  string add_dynamic_load(const std::string& buf,
+      const std::string& addr_table,
+      const std::string& table_offset) {
+    return "";
+  }
+
   string add_load(const std::string& b, const std::vector<std::pair<std::string, std::string>> loc) {
     assert(!is_loop);
     consume_locs_pair.push_back({b, loc});

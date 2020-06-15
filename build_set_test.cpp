@@ -9569,10 +9569,37 @@ void manual_unroll_test() {
   //assert(false);
 }
 
+void histogram_test() {
+  prog prg;
+  prg.name = "histogram";
+  prg.compute_unit_file = "clockwork_standard_compute.h";
+  prg.add_input("image_oc");
+  prg.add_output("color_counts");
+
+  auto ld = prg.add_loop("im", 0, 20)->
+    add_op("load_image_oc");
+  ld->add_load("image_oc", "im");
+  ld->add_store("image", "im");
+
+  auto count_loop = prg.add_loop("i", 0, 20);
+  auto update = count_loop->add_op("update_counts");
+  count_loop->add_dynamic_load("buckets", "image", "i");
+  count_loop->add_dynamic_store("buckets", "image", "i");
+
+  auto st = prg.add_loop("sm", 0, 20)->
+    add_op("store_results");
+  ld->add_load("buckets", "im");
+  ld->add_store("color_counts", "im");
+
+  generate_unoptimized_code(prg);
+  generate_regression_testbench(prg);
+  assert(false);
+}
+
 void application_tests() {
+  histogram_test();
   reaccess_no_hierarchy_test();
   reaccess_no_hierarchy_rolled_test();
-  assert(false);
   reduce_rows_test();
   ram_addr_unit_test();
   reduce_2d_test();
@@ -9583,11 +9610,8 @@ void application_tests() {
   halide_frontend_test();
   grayscale_conversion_test();
   sum_diffs_test();
-  //assert(false);
   //print_test();
-  //assert(false);
   //manual_unroll_test();
-  //assert(false);
 
   iccad_tests();
 
@@ -9670,7 +9694,6 @@ void application_tests() {
   conv3x3_app_unrolled_uneven_test();
 
   up_unrolled_4_test();
-
 
   up_unrolled_test();
   up_down_unrolled_test();
