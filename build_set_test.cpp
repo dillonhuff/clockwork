@@ -2738,7 +2738,8 @@ void reduce_2d_test() {
   prg.buffer_port_widths["tmp"] = 32;
   prg.buffer_bounds["tmp"] = {1};
 
-  auto read_in = prg.add_nest("rd_r", 0, 3, "rd_c", 0, 10)->add_op({"I", "rd_r, rd_c"}, "id", {"in", "rd_r, rd_c"});
+  auto read_in =
+    prg.add_nest("rd_r", 0, 3, "rd_c", 0, 10)->add_op({"I", "rd_c, rd_r"}, "id", {"in", "rd_c, rd_r"});
 
   {
     auto init = prg.add_op("set_z");
@@ -2748,7 +2749,7 @@ void reduce_2d_test() {
     auto accum_loop = prg.add_nest("ar", 0, 3, "ac", 0, 10);
     auto accum = accum_loop->add_op("accumulate");
     auto tmp = accum->add_load("tmp", "0");
-    auto next = accum->add_load("I", "ar, ac");
+    auto next = accum->add_load("I", "ac, ar");
     accum->add_function("inc", {tmp, next});
     accum->add_store("tmp", "0");
 
