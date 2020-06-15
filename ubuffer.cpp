@@ -617,15 +617,19 @@ void generate_code_prefix(CodegenOptions& options,
 
     //Different ram type, different address
     for (auto sb : buf.receiver_banks(inpt)) {
-      //if (sb.tp == BANK_TYPE_STACK) {
       if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_STACK) {
         out << tab(1) << buf.name << "." << sb.name << ".push(" << inpt << ");" << endl;
       }
       else if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_LINEAR) {
         string linear_addr = buf.generate_linearize_ram_addr(inpt);
         cout <<"Input port:" << inpt << ", Get ram string: " << linear_addr << endl;
-        out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt <<
-          ", " << linear_addr << ");" << endl;
+        if (!elem(inpt, buf.dynamic_ports)) {
+          out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt <<
+            ", " << linear_addr << ");" << endl;
+        } else {
+          out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt <<
+            ", " << "dynamic_address" << ");" << endl;
+        }
       }
       else {
         assert(false);
