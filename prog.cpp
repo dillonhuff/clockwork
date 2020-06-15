@@ -2020,7 +2020,7 @@ void generate_optimized_code(prog& prg) {
 }
 
 
-void generate_unoptimized_code(prog& prg) {
+void generate_unoptimized_code(CodegenOptions& options, prog& prg) {
   string old_name = prg.name;
 
   prg.name = "unoptimized_" + prg.name;
@@ -2033,13 +2033,32 @@ void generate_unoptimized_code(prog& prg) {
 
   auto buffers = build_buffers(prg, prg.unoptimized_schedule());
 
-  CodegenOptions options;
-  options.internal = true;
-  options.all_rams = true;
-
   generate_app_code(options, buffers, prg, sched);
 
   prg.name = old_name;
+}
+
+void generate_unoptimized_code(prog& prg) {
+  //string old_name = prg.name;
+
+  //prg.name = "unoptimized_" + prg.name;
+
+  //cout << "Unoptimized schedule..." << endl;
+  //auto sched = prg.unoptimized_schedule();
+  //cout << tab(1) << ": " << str(sched) << endl;
+
+  //cout << codegen_c(prg.unoptimized_schedule());
+
+  //auto buffers = build_buffers(prg, prg.unoptimized_schedule());
+
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  generate_unoptimized_code(options, prg);
+
+  //generate_app_code(options, buffers, prg, sched);
+
+  //prg.name = old_name;
 }
 
 vector<pair<string, string> >

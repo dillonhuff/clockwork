@@ -1223,6 +1223,7 @@ struct prog {
 // Schedules all loops in sequential order
 // and emits HLS C++ code for the program
 void generate_unoptimized_code(prog& prg);
+void generate_unoptimized_code(CodegenOptions& options, prog& prg);
 
 // Re-schedules all loops using ISL
 // and then emits HLS C++ code for the program

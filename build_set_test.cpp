@@ -9592,7 +9592,12 @@ void histogram_test() {
   st->add_load("buckets", "sm");
   st->add_store("color_counts", "sm");
 
-  generate_unoptimized_code(prg);
+  CodegenOptions options;
+  options.internal = true;
+  options.all_rams = true;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  generate_unoptimized_code(options, prg);
   generate_regression_testbench(prg);
   assert(false);
 }
