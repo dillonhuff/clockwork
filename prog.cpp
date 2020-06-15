@@ -2249,6 +2249,14 @@ void run_tb(prog& prg) {
 
 
 void regression_test(prog& prg) {
+
+  CodegenOptions options;
+  options.internal = true;
+  regression_test(options, prg);
+}
+
+void regression_test(CodegenOptions& options,
+    prog& prg) {
   generate_unoptimized_code(prg);
 
   cout << "Built unoptimized code" << endl;
@@ -2259,7 +2267,7 @@ void regression_test(prog& prg) {
   prg.name = old_name;
 
   cout << "Building optimized code" << endl;
-  generate_optimized_code(prg);
+  generate_optimized_code(options, prg);
   generate_regression_testbench(prg);
   vector<string> optimized_res = run_regression_tb(prg);
 
@@ -2273,7 +2281,6 @@ void regression_test(prog& prg) {
       assert(unoptimized_res.at(i) == optimized_res.at(i));
     }
   }
-
 }
 
 std::set<std::string> get_kernels(prog& prg) {

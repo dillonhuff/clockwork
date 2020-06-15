@@ -1254,6 +1254,7 @@ std::vector<std::string> run_regression_tb(prog& prg);
 void run_tb(prog& prg);
 
 void regression_test(prog& prg);
+void regression_test(CodegenOptions& options, prog& prg);
 
 std::set<std::string> get_kernels(prog& prg);
 

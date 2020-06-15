@@ -222,8 +222,7 @@ void generate_bank(CodegenOptions& options,
     }
     out << "};" << endl << endl;
 
-  }
-  else {
+  } else {
 
     out << "\t// Capacity: " << maxdelay + 1 << endl;
     out << "\t// # of read delays: " << read_delays.size() << endl;

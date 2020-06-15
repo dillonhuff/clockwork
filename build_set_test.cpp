@@ -1819,6 +1819,12 @@ void reaccess_no_hierarchy_test() {
   cout << "After loop insertion" << endl;
   prg.pretty_print();
   generate_optimized_code(prg);
+  //CodegenOptions options;
+  //options.internal = true;
+  //options.all_rams = true;
+  //options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
+  //generate_optimized_code(options, prg);
+
   generate_regression_testbench(prg);
   vector<string> optimized_res = run_regression_tb(prg);
   assert(optimized_res == unoptimized_res);
@@ -2508,7 +2514,6 @@ void ram_addr_unit_test() {
   auto stack_res = run_regression_tb(prg);
 
   assert(linear_res == stack_res);
-  assert(false);
 }
 
 void cnn_test() {
@@ -2716,32 +2721,31 @@ void reduce_1d_test() {
 }
 
 void reduce_2d_test() {
-
   prog prg;
   prg.compute_unit_file = "mobilenet_compute.h";
   prg.name = "reduce_2d";
   prg.add_input("in");
   prg.add_output("out");
   prg.buffer_port_widths["in"] = 32;
-  prg.buffer_bounds["in"] = {3, 3};
+  //prg.buffer_bounds["in"] = {3, 3};
 
   prg.buffer_port_widths["out"] = 32;
   prg.buffer_bounds["out"] = {1};
 
   prg.buffer_port_widths["I"] = 32;
-  prg.buffer_bounds["I"] = {3, 3};
+  //prg.buffer_bounds["I"] = {3, 3};
 
   prg.buffer_port_widths["tmp"] = 32;
   prg.buffer_bounds["tmp"] = {1};
 
-  auto read_in = prg.add_nest("rd_r", 0, 3, "rd_c", 0, 3)->add_op({"I", "rd_r, rd_c"}, "id", {"in", "rd_r, rd_c"});
+  auto read_in = prg.add_nest("rd_r", 0, 3, "rd_c", 0, 10)->add_op({"I", "rd_r, rd_c"}, "id", {"in", "rd_r, rd_c"});
 
   {
     auto init = prg.add_op("set_z");
     init->add_function("set_zero_32");
     init->add_store("tmp", "0");
 
-    auto accum_loop = prg.add_nest("ar", 0, 3, "ac", 0, 3);
+    auto accum_loop = prg.add_nest("ar", 0, 3, "ac", 0, 10);
     auto accum = accum_loop->add_op("accumulate");
     auto tmp = accum->add_load("tmp", "0");
     auto next = accum->add_load("I", "ar, ac");
@@ -2753,81 +2757,12 @@ void reduce_2d_test() {
     write_out->add_store("out", "0");
   }
 
-  regression_test(prg);
+  CodegenOptions options;
+  options.internal = true;
+  options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
+  regression_test(options, prg);
+  assert(false);
 }
-
-//void mobilenet_test() {
-
-  //prog prg;
-  //prg.compute_unit_file = "mobilenet_compute.h";
-  //prg.name = "mobilenet";
-  //prg.add_input("in");
-  //prg.add_input("weights");
-  //prg.add_output("out");
-  //prg.buffer_port_widths["in"] = 32;
-  //prg.buffer_port_widths["out"] = 32;
-  //prg.buffer_port_widths["dw_conv"] = 32;
-  //prg.buffer_port_widths["weights"] = 32;
-  //prg.buffer_port_widths["I"] = 32;
-
-  //{
-    //auto read_in = prg.add_nest("px", 0, 14, "py", 0, 14, "pc", 0, 4);
-    //auto write = read_in->add_op("read_input_stream");
-    //write->add_load("in", "px, py, pc");
-    //write->add_store("I", "px, py, pc");
-  //}
-
-  //{
-    //auto read_in = prg.add_nest("px", 0, 14, "py", 0, 14, "pc", 0, 4);
-    //auto write = read_in->add_op("read_weight_input_stream");
-    //write->add_load("weights", "px, py, pc");
-    //write->add_store("weight_buffer", "px, py, pc");
-  //}
-
-  //{
-    //// dw_conv
-    //auto set_dw = prg.add_nest("dwx", 0, 14 - 2, "dwy", 0, 14 - 2, "dwc", 0, 4);
-    //auto init_dw = set_dw->add_op("init_dw");
-    //init_dw->add_store("dw_conv", "dwx, dwy, dwz");
-    //init_dw->add_function("set_zero_32");
-    //// Set dw_conv to be
-    //auto update_dw = set_dw->add_nest("rx", 0, 3, "ry", 0, 3);
-    //auto rdw = update_dw->add_op("rdw");
-    //auto l1 = rdw->add_load("I", "dwx + rx, dwy + ry, dwc");
-    //auto w = rdw->add_load("weight_buffer", "dwx + rx, dwy + ry, dwc");
-    //auto l2 = rdw->add_load("dw_conv", "dwx, dwy, dwc");
-    //rdw->add_function("fma", {l1, w, l2});
-    //rdw->add_store("dw_conv", "dwx, dwy, dwc");
-  //}
-
-  //{
-    //auto read_in = prg.add_nest("ox", 0, 14 - 2, "oy", 0, 14 - 2, "ok", 0, 4);
-    //auto write = read_in->add_op("write_max_out");
-    //write->add_load("dw_conv", "ox, oy, ok");
-    //write->add_function("max_zero");
-    //write->add_store("out", "ox, oy, ok");
-  //}
-
-  //cout << "Program code without optimization..." << endl;
-  //prg.unoptimized_codegen();
-
-  //umap* opt_sched = prg.optimized_codegen();
-  //auto domain = prg.whole_iteration_domain();
-  //auto schedmap = its(opt_sched, domain);
-  //cout << "Optimized schedule..." << endl;
-  //cout << codegen_c(schedmap);
-
-  //auto buffers = build_buffers(prg);
-  //generate_app_code(buffers, prg);
-
-  //int res = system(string("g++ -std=c++11 tb_" + prg.name + ".cpp " + prg.name + ".cpp").c_str());
-  //assert(res == 0);
-
-  //res = system("./a.out");
-  //assert(res == 0);
-
-//}
-
 
 umap* input_chunk(UBuffer& buf, const std::string& out_bundle) {
 
@@ -9590,6 +9525,66 @@ void manual_unroll_test() {
 
 void application_tests() {
   ram_addr_unit_test();
+  reduce_2d_test();
+  reaccess_no_hierarchy_rolled_test();
+  reaccess_no_hierarchy_test();
+  mini_conv_halide_test();
+  conv_3_3_halide_test();
+  reduce_1d_test();
+  halide_cascade_test();
+  halide_frontend_test();
+  grayscale_conversion_test();
+  //assert(false);
+  //print_test();
+  //assert(false);
+  //manual_unroll_test();
+  //assert(false);
+
+  iccad_tests();
+
+  compute_unit_with_index_variables_test();
+
+  //pyr_1d_conv_test();
+  halide_dnn_test();
+  //conv_1d_bc_test();
+
+  denoise2d_test();
+
+  conv_1d_test();
+
+  tricky_shift_register_reconvergence_test();
+
+  //playground();
+  jacobi2d_app_test();
+
+  upsample2d_test();
+
+  denoise2d_test();
+
+  downsample2d_test();
+  up_stencil_down_test();
+  blur_and_downsample_test();
+  downsample_and_blur_test();
+
+  upsample_stencil_2d_test();
+  upsample_stencil_1d_test();
+
+  updown_merge_test();
+  harris_unrolled_test();
+
+  mismatched_stencil_test();
+  cnn_test();
+
+  sobel_test();
+
+  seidel2d_test();
+  jacobi_2d_2_test();
+  jacobi_2d_test();
+
+
+  two_input_mag_test();
+  one_input_mag_test();
+
   sum_diffs_test();
   sum_float_test();
   sum_denoise_test();
@@ -9597,8 +9592,6 @@ void application_tests() {
   sobel_mag_y_test();
   sobel_app_test();
   sobel_mag_x_test();
-
-
   heat_3d_test();
 
   upsample_reduce_test();
@@ -9664,65 +9657,6 @@ void application_tests() {
   //up_stencil_down_unrolled_test();
   //laplacian_pyramid_app_test();
   //halide_harris_test();
-  reaccess_no_hierarchy_rolled_test();
-  reaccess_no_hierarchy_test();
-  mini_conv_halide_test();
-  conv_3_3_halide_test();
-  reduce_1d_test();
-  reduce_2d_test();
-  halide_cascade_test();
-  halide_frontend_test();
-  grayscale_conversion_test();
-  //assert(false);
-  //print_test();
-  //assert(false);
-  //manual_unroll_test();
-  //assert(false);
-
-  iccad_tests();
-
-  compute_unit_with_index_variables_test();
-
-  //pyr_1d_conv_test();
-  halide_dnn_test();
-  //conv_1d_bc_test();
-
-  denoise2d_test();
-
-  conv_1d_test();
-
-  tricky_shift_register_reconvergence_test();
-
-  //playground();
-  jacobi2d_app_test();
-
-  upsample2d_test();
-
-  denoise2d_test();
-
-  downsample2d_test();
-  up_stencil_down_test();
-  blur_and_downsample_test();
-  downsample_and_blur_test();
-
-  upsample_stencil_2d_test();
-  upsample_stencil_1d_test();
-
-  updown_merge_test();
-  harris_unrolled_test();
-
-  mismatched_stencil_test();
-  cnn_test();
-
-  sobel_test();
-
-  seidel2d_test();
-  jacobi_2d_2_test();
-  jacobi_2d_test();
-
-
-  two_input_mag_test();
-  one_input_mag_test();
 }
 
 void memory_tile_tests() {
