@@ -9583,13 +9583,14 @@ void histogram_test() {
 
   auto count_loop = prg.add_loop("i", 0, 20);
   auto update = count_loop->add_op("update_counts");
-  count_loop->add_dynamic_load("buckets", "image", "i");
-  count_loop->add_dynamic_store("buckets", "image", "i");
+  update->add_function("histogram_inc");
+  update->add_dynamic_load("buckets", "image", "i");
+  update->add_dynamic_store("buckets", "image", "i");
 
   auto st = prg.add_loop("sm", 0, 20)->
     add_op("store_results");
-  ld->add_load("buckets", "im");
-  ld->add_store("color_counts", "im");
+  st->add_load("buckets", "sm");
+  st->add_store("color_counts", "sm");
 
   generate_unoptimized_code(prg);
   generate_regression_testbench(prg);

@@ -70,7 +70,7 @@ struct bank {
 
   //method to extract box from data_domain
   Box extract_layout() {
-    //cout << "extracting box from " << str(rddom) << endl;
+    cout << "extracting box from " << str(rddom) << endl;
     auto min_pt =
       parse_pt(sample(lexmin(rddom)));
     auto max_pt =

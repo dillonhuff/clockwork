@@ -1193,11 +1193,15 @@ vector<string> get_args(const map<string, UBuffer>& buffers, prog& prg) {
 
 void generate_soda_tb(CodegenOptions& options, map<string, UBuffer>& buffers, prog& prg) {
 
+  assert(prg.ins.size() > 0);
+  //assert(prg.buffer_port_widths.size() > 0);
   {
     ofstream of("tb_soda_" + prg.name + ".cpp");
 
+    auto in_rep = pick(prg.ins);
     int pixel_width =
-      pick(prg.buffer_port_widths).second;
+      prg.buffer_port_width(in_rep);
+      //pick(prg.buffer_port_widths).second;
 
     int unroll_factor =
       pick(map_find(pick(prg.ins), buffers).port_bundles).second.size();
@@ -1575,6 +1579,9 @@ compute_kernel generate_compute_op(
   std::set<string> out_buffers;
   for (auto con : op->produce_locs) {
     out_buffers.insert(con.first);
+  }
+  if (!(out_buffers.size() == 1)) {
+    cout << "Error: " << out_buffers.size() << " out_buffers in " << op->name << endl;
   }
   assert(out_buffers.size() == 1);
   string out_buffer = pick(out_buffers);

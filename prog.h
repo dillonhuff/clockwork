@@ -378,18 +378,18 @@ struct ir_node {
     return fo;
   }
 
-  string add_dynamic_store(const std::string& buf,
+  void add_dynamic_store(const std::string& buf,
       const std::string& addr_table,
       const std::string& table_offset) {
     add_load(addr_table, table_offset);
-    return add_store(buf, "0");
+    add_store(buf, "0");
   }
 
-  string add_dynamic_load(const std::string& buf,
+  void add_dynamic_load(const std::string& buf,
       const std::string& addr_table,
       const std::string& table_offset) {
     add_load(addr_table, table_offset);
-    return add_load(buf, "0");
+    add_load(buf, "0");
   }
 
   string add_load(const std::string& b, const std::vector<std::pair<std::string, std::string>> loc) {
