@@ -1250,45 +1250,39 @@ void generate_code_prefix(CodegenOptions& options,
     //cout << "compute max delay for super bank =  " << maxdelay << endl;
 
     int num_readers = outpt_set.size();
-    //int num_writers = inpt_set.size();
-
-    /*
-       auto in_actions = domain.at(inpt);
-    //cout << "\t in action : " << str(in_actions) << endl;
-    auto lex_max_events = get_lexmax_events(outpt);
-    //cout << "\t lexmax result: " << str(lex_max_events) << endl;
-    auto act_dom =
-    ::domain(its_range(lex_max_events, to_uset(in_actions)));
-
-    //cout <<"\t act dom: " << str(act_dom) << endl;
-
-    if (!isl_union_set_is_empty(act_dom)) {
-    num_readers++;
-    //auto c = compute_dd(buf, outpt, inpt);
-    int qpd = compute_dd_bound(outpt, inpt, true);
-    int lb = compute_dd_bound(outpt, inpt, false);
-
-    cout << "ub: " << qpd << ", lb: " << lb << endl;
-
-    for (int i = lb; i < qpd + 1; i++) {
-    read_delays.push_back(i);
-    }
-    }*/
-//
 
     string pt_type_string = port_type_string();
     string name = pick(inpt_set) + "_to_" + pick(outpt_set);
 
     string inpt_name = pick(inpt_set);
     auto rddom = isl_union_set_universe(range(access_map.at(inpt_name)));
-    //Box mem_box = extract_box(rddom);
 
     //initial the delay map
     map<string, int> delay_map = {};
 
-    //FIXME: figure out a correct depth of the bank
     stack_bank bank{name, BANK_TYPE_STACK, pt_type_string, read_delays, num_readers, maxdelay, rddom, delay_map};
-    //stack_bank bank{name, BANK_TYPE_RAM, pt_type_string, read_delays, num_readers, maxdelay, mem_box};
+
+    return bank;
+  }
+
+  bank UBuffer::compute_bank_info(const std::string& outpt) {
+    int maxdelay = -1;
+
+    vector<int> read_delays;
+    // NOTE: Just to ensure we dont force everything to be a RAM
+    int num_readers = 0;
+
+    string pt_type_string = port_type_string();
+    string name = "all_inputs_to_" + outpt;
+
+    auto rddom = to_uset(rdset(ctx, "{}"));
+    for (auto inpt : get_in_ports()) {
+      rddom = unn(rddom, range(access_map.at(inpt)));
+    }
+
+    map<string, int> delay_map;
+
+    stack_bank bank{name, BANK_TYPE_RAM, pt_type_string, read_delays, num_readers, maxdelay, rddom, delay_map};
 
     return bank;
   }
@@ -1300,49 +1294,34 @@ void generate_code_prefix(CodegenOptions& options,
     vector<int> read_delays{0};
 
     // NOTE: Just to ensure we dont force everything to be a RAM
-    //int num_readers = 10;
     int num_readers = 0;
 
     auto in_actions = domain.at(inpt);
-    //cout << "\t in action : " << str(in_actions) << endl;
     auto lex_max_events = get_lexmax_events(outpt);
-    //cout << "\t lexmax result: " << str(lex_max_events) << endl;
     auto act_dom =
       ::domain(its_range(lex_max_events, to_uset(in_actions)));
 
-    //cout <<"\t act dom: " << str(act_dom) << endl;
-
     if (!isl_union_set_is_empty(act_dom)) {
       num_readers++;
-      //auto c = compute_dd(buf, outpt, inpt);
       int qpd = compute_dd_bound(outpt, inpt, true);
       int lb = compute_dd_bound(outpt, inpt, false);
-
-      //cout << "ub: " << qpd << ", lb: " << lb << endl;
 
       for (int i = lb; i < qpd + 1; i++) {
         read_delays.push_back(i);
       }
     }
 
-
     string pt_type_string = port_type_string();
     string name = inpt + "_to_" + outpt;
-    //cout << "inpt  = " << inpt << endl;
-    //cout << "outpt = " << outpt << endl;
-    //cout << "name of bank = " << name << endl;
 
     auto rddom =
       unn(range(access_map.at(inpt)),
           range(access_map.at(outpt)));
-    //cout << "Read domain for bank: " << str(rddom) << endl;
-    //Box mem_box = extract_box(rddom);
 
     //initial the delay map
     map<string, int> delay_map = {{outpt, read_delays.back()}};
 
     stack_bank bank{name, BANK_TYPE_STACK, pt_type_string, read_delays, num_readers, maxdelay, rddom, delay_map};
-    //stack_bank bank{name, BANK_TYPE_RAM, pt_type_string, read_delays, num_readers, maxdelay, mem_box};
 
     return bank;
   }

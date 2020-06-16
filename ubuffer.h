@@ -1390,13 +1390,18 @@ class UBuffer {
     map<string, isl_map*> produce_vectorized_schedule(string in_pt, string out_pt);
 
     void print_bank_info();
+
     umap* get_lexmax_events(const std::string& outpt) const;
     umap* get_lexmax_events(const std::string& inpt, const std::string& outpt);
     umap* get_lexmax_events(umap* insched, umap* outsched, const std::string& inpt, const std::string& outpt);
+    
     int compute_dd_bound(const std::string & read_port, const std::string & write_port, bool is_max);
     isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
+
+    bank compute_bank_info(const std::string& outpt);
     bank compute_bank_info(const std::string& inpt, const std::string& outpt);
     bank compute_bank_info(std::set<string> inpt, std::set<string> outpt);
+
     void merge_bank(CodegenOptions& options, string inpt, vector<bank> mergeable);
     void generate_bank_and_merge(CodegenOptions& options);
 
