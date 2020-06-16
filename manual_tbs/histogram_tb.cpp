@@ -35,7 +35,7 @@ int main() {
     auto cnt = color_counts.read();
     cout << "count " << i << " = " << cnt.to_int() << endl;
     //cout << "expec " << i << " = " << expected.at(i).to_int() << endl;
-    //assert(cnt == expected.at(i));
+    assert(cnt == expected.at(i));
   }
 
   return 0;

@@ -136,46 +136,46 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
   return maxdelay;
 }
 
-void generate_ram_bank(CodegenOptions& options,
-    std::ostream& out,
-    stack_bank& bank) {
+//void generate_ram_bank(CodegenOptions& options,
+    //std::ostream& out,
+    //stack_bank& bank) {
 
-  string ram = bank.name + "_store";
+  //string ram = bank.name + "_store";
 
-  out << "#ifdef __VIVADO_SYNTH__" << endl;
-  out << tab(1) << bank.pt_type_string << " " << ram
-    << "[" << bank.extract_layout().cardinality() << "];" << endl << endl;
-  out << "#else" << endl;
-  out << tab(1) << bank.pt_type_string << "* " << ram << ";" << endl;
-  out << "#endif // __VIVADO_SYNTH__" << endl;
+  //out << "#ifdef __VIVADO_SYNTH__" << endl;
+  //out << tab(1) << bank.pt_type_string << " " << ram
+    //<< "[" << bank.extract_layout().cardinality() << "];" << endl << endl;
+  //out << "#else" << endl;
+  //out << tab(1) << bank.pt_type_string << "* " << ram << ";" << endl;
+  //out << "#endif // __VIVADO_SYNTH__" << endl;
 
-  vector<string> vars;
-  vector<string> decls;
-  for (int i = 0; i < bank.extract_layout().dimension(); i++) {
-    vars.push_back("d" + str(i));
-    decls.push_back("int d" + str(i));
-  }
-  string arg_list = comma_list(decls);
+  //vector<string> vars;
+  //vector<string> decls;
+  //for (int i = 0; i < bank.extract_layout().dimension(); i++) {
+    //vars.push_back("d" + str(i));
+    //decls.push_back("int d" + str(i));
+  //}
+  //string arg_list = comma_list(decls);
 
-  vector<string> addr;
-  for (int i = 0; i < vars.size(); i++) {
-    vector<string> offset{vars.at(i)};
-    for (int j = 0; j < i; j++) {
-      offset.push_back(str(bank.extract_layout().length(j)));
-    }
-    addr.push_back(sep_list(offset, "", "", "*"));
-  }
+  //vector<string> addr;
+  //for (int i = 0; i < vars.size(); i++) {
+    //vector<string> offset{vars.at(i)};
+    //for (int j = 0; j < i; j++) {
+      //offset.push_back(str(bank.extract_layout().length(j)));
+    //}
+    //addr.push_back(sep_list(offset, "", "", "*"));
+  //}
 
-  string addr_str = sep_list(addr, "(", ")", " + ");
+  //string addr_str = sep_list(addr, "(", ")", " + ");
 
-  out << tab(1) << bank.pt_type_string << " read(" << arg_list << ") {";
-  out << tab(2) << "return " << ram << "[" << addr_str << "];";
-  out << tab(1) << "}" << endl << endl;
-  out << tab(1) << "void write(" << bank.pt_type_string << "& value, " << arg_list << ") {" << endl;
-  out << tab(2) << ram << "[" << addr_str << "] = value;" << endl;
-  out << tab(1) << "}" << endl << endl;
+  //out << tab(1) << bank.pt_type_string << " read(" << arg_list << ") {";
+  //out << tab(2) << "return " << ram << "[" << addr_str << "];";
+  //out << tab(1) << "}" << endl << endl;
+  //out << tab(1) << "void write(" << bank.pt_type_string << "& value, " << arg_list << ") {" << endl;
+  //out << tab(2) << ram << "[" << addr_str << "] = value;" << endl;
+  //out << tab(1) << "}" << endl << endl;
 
-}
+//}
 
 void generate_bank(CodegenOptions& options,
     std::ostream& out,

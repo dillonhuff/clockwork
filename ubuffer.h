@@ -1520,9 +1520,9 @@ string evaluate_dd(UBuffer& buf, const std::string& read_port, const std::string
 
 int compute_max_dd(UBuffer& buf, const string& inpt);
 
-void generate_ram_bank(CodegenOptions& options,
-    std::ostream& out,
-    stack_bank& bank);
+//void generate_ram_bank(CodegenOptions& options,
+    //std::ostream& out,
+    //stack_bank& bank);
 
 void generate_bank(CodegenOptions& options,
     std::ostream& out,

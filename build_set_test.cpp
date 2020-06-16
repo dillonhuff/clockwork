@@ -9582,12 +9582,12 @@ void histogram_test() {
   ld->add_store("image", "im");
 
   // Assume zero initialization for now
-  {
-    auto st = prg.add_loop("iz", 0, 20)->
-      add_op("init_counts");
-    st->add_function("set_zero_32");
-    st->add_store("buckets", "iz");
-  }
+  //{
+    //auto st = prg.add_loop("iz", 0, 20)->
+      //add_op("init_counts");
+    //st->add_function("set_zero_32");
+    //st->add_store("buckets", "iz");
+  //}
 
   auto count_loop = prg.add_loop("i", 0, 20);
   auto update = count_loop->add_op("update_counts");
@@ -9618,7 +9618,7 @@ void histogram_test() {
   int run_res = system("./a.out");
   assert(run_res == 0);
 
-  assert(false);
+  //assert(false);
 }
 
 void application_tests() {

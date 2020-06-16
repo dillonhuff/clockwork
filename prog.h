@@ -404,7 +404,7 @@ struct ir_node {
       const std::string& table_offset) {
     add_load(addr_table, table_offset);
     dynamic_load_addresses.push_back({buf, addr_table, table_offset});
-    add_store(buf, "1");
+    add_store(buf, "0");
   }
 
   void add_dynamic_load(const std::string& buf,
