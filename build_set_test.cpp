@@ -9666,7 +9666,7 @@ void register_file_optimization_test() {
 
   generate_optimized_code(options, prg);
 
-  assert(false);
+  //assert(false);
 }
 
 void application_tests() {
