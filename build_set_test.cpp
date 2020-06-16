@@ -9582,12 +9582,12 @@ void histogram_test() {
   ld->add_store("image", "im");
 
   // Assume zero initialization for now
-  //{
-    //auto st = prg.add_loop("iz", 0, 20)->
-      //add_op("init_counts");
-    //st->add_function("set_zero_32");
-    //st->add_store("buckets", "iz");
-  //}
+  {
+    auto st = prg.add_loop("iz", 0, 20)->
+      add_op("init_counts");
+    st->add_function("set_zero_32");
+    st->add_store("buckets", "iz");
+  }
 
   auto count_loop = prg.add_loop("i", 0, 20);
   auto update = count_loop->add_op("update_counts");
@@ -9622,14 +9622,14 @@ void histogram_test() {
 }
 
 void application_tests() {
+  mini_conv_halide_test();
+  conv_3_3_halide_test();
   histogram_test();
   reaccess_no_hierarchy_test();
   reaccess_no_hierarchy_rolled_test();
   reduce_rows_test();
   ram_addr_unit_test();
   reduce_2d_test();
-  mini_conv_halide_test();
-  conv_3_3_halide_test();
   reduce_1d_test();
   halide_cascade_test();
   halide_frontend_test();

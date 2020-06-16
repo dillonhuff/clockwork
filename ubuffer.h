@@ -1398,7 +1398,7 @@ class UBuffer {
     int compute_dd_bound(const std::string & read_port, const std::string & write_port, bool is_max);
     isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
 
-    bank compute_bank_info(const std::string& outpt);
+    bank compute_bank_info();
     bank compute_bank_info(const std::string& inpt, const std::string& outpt);
     bank compute_bank_info(std::set<string> inpt, std::set<string> outpt);
 

@@ -1265,7 +1265,7 @@ void generate_code_prefix(CodegenOptions& options,
     return bank;
   }
 
-  bank UBuffer::compute_bank_info(const std::string& outpt) {
+  bank UBuffer::compute_bank_info() {
     int maxdelay = -1;
 
     vector<int> read_delays;
@@ -1273,12 +1273,14 @@ void generate_code_prefix(CodegenOptions& options,
     int num_readers = 0;
 
     string pt_type_string = port_type_string();
-    string name = "all_inputs_to_" + outpt;
+    string name = "all_inputs_to_all_outputs";
 
-    auto rddom = to_uset(rdset(ctx, "{}"));
+    cout << "getting rddom" << endl;
+    isl_union_set* rddom = isl_union_set_read_from_str(ctx, "{}");
     for (auto inpt : get_in_ports()) {
       rddom = unn(rddom, range(access_map.at(inpt)));
     }
+    cout << "rddom = " << str(rddom) << endl;
 
     map<string, int> delay_map;
 
@@ -1421,17 +1423,32 @@ void generate_code_prefix(CodegenOptions& options,
   }
 
   void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
-    // Naive always reaches target throughput
-    for (auto inpt : get_in_ports()) {
-      for (auto outpt : get_out_ports()) {
-        auto overlap =
-          its(range(access_map.at(inpt)), range(access_map.at(outpt)));
+    if (options.debug_options.expect_all_linebuffers) {
+      assert(dynamic_ports.size() == 0);
+    }
 
-        if (!empty(overlap)) {
-          stack_bank bank = compute_bank_info(inpt, outpt);
-          add_bank_between(inpt, outpt, bank);
+    if (dynamic_ports.size() == 0) {
+      // Naive always reaches target throughput
+      for (auto inpt : get_in_ports()) {
+        for (auto outpt : get_out_ports()) {
+          auto overlap =
+            its(range(access_map.at(inpt)), range(access_map.at(outpt)));
+
+          if (!empty(overlap)) {
+            stack_bank bank = compute_bank_info(inpt, outpt);
+            add_bank_between(inpt, outpt, bank);
+          }
         }
       }
+    } else {
+
+      bank bnk = compute_bank_info();
+      for (auto inpt : get_in_ports()) {
+        for (auto outpt : get_out_ports()) {
+          add_bank_between(inpt, outpt, bnk);
+        }
+      }
+
     }
 
     for (auto inpt : get_in_ports()) {
