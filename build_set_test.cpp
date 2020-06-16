@@ -5452,11 +5452,11 @@ struct App {
     auto scheds = schedule_opt();
     umap* m = qschedule_to_map(ctx, scheds);
     //umap* m = schedule();
-    ofstream schedule_out(name + "_sched_" + time_str);
-    for (auto k : get_maps(m)) {
-      schedule_out << str(k) << endl;
-    }
-    schedule_out.close();
+    //ofstream schedule_out(name + "_sched_" + time_str);
+    //for (auto k : get_maps(m)) {
+      //schedule_out << str(k) << endl;
+    //}
+    //schedule_out.close();
     assert(m != nullptr);
 
     map<string, Box> compute_domains;
