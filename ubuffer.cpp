@@ -787,6 +787,7 @@ void generate_code_prefix(CodegenOptions& options,
     // corresponding write operation that produces the data being
     // read.
     umap* reads_to_sources = buf.get_lexmax_events(outpt);
+    cout << "reads to source for " << outpt << ": " << str(reads_to_sources) << endl;
     uset* producers_for_outpt = range(reads_to_sources);
 
     for (auto inpt : possible_ports) {
