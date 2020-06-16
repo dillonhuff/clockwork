@@ -9631,12 +9631,22 @@ void register_file_optimization_test() {
   ld->add_load("in_oc", "li");
   ld->add_store("in", "li");
 
+  auto rld = prg.add_loop("k", -2, 8);
+  for (int i = 0; i < 3; i++) {
+    auto ld = rld->add_op("ld_" + str(i));
+    if (i < 2) {
+      ld->add_load("in_rf", "k, " + str(i + 1));
+    } else {
+      ld->add_load("in", "k + " + str(i));
+    }
+    ld->add_store("in_rf", "k, " + str(i));
+  }
+
   auto clp = prg.add_loop("c", 0, 8);
-  
   auto comp = clp->add_loop("i", 0, 3)->add_op("cp");
   comp->add_function("add");
   comp->add_load("tmp", "c");
-  comp->add_load("in", "c + i");
+  comp->add_load("in_rf", "c, i");
   comp->add_store("tmp", "c");
 
   auto st = clp->add_op("store_out");
