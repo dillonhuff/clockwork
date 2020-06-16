@@ -9721,7 +9721,7 @@ void register_file_optimization_test() {
 
       auto level_c = prg.find_loop(target_level);
       auto lc = prg.find_loop(last_common_level(levels, source_levels));
-      auto fresh = lc->add_loop_after(source, target_buf + "_rf", level_c->start, level_c->end_exclusive);
+      auto fresh = lc->add_loop_after(source, target_buf + "_rf", level_c->start - 2, level_c->end_exclusive);
       int i = 0;
       string register_file = target_buf + "_rf_at_" + op->name;
       for (auto lv : levels_below(target_level, levels)) {
@@ -9732,6 +9732,11 @@ void register_file_optimization_test() {
           i++;
         }
       }
+
+      op->replace_reads_from(target_buf, register_file);
+      piecewise_address addr{{"", "c, i"}};
+      op->consume_locs_pair[1] =
+      {op->consume_locs_pair[1].first, addr};
     }
   }
 
