@@ -9626,12 +9626,14 @@ void register_file_optimization_test() {
   prg.add_input("in_oc");
   prg.add_output("out_oc");
 
-  auto load_in = prg.add_loop("li", 0, 10);
+  int len = 1000;
+
+  auto load_in = prg.add_loop("li", 0, len);
   auto ld = load_in->add_op("ld_in");
   ld->add_load("in_oc", "li");
   ld->add_store("in", "li");
 
-  auto rld = prg.add_loop("k", -2, 8);
+  auto rld = prg.add_loop("k", -2, len - 2);
   for (int i = 0; i < 3; i++) {
     auto ld = rld->add_op("ld_" + str(i));
     if (i < 2) {
@@ -9642,7 +9644,7 @@ void register_file_optimization_test() {
     ld->add_store("in_rf", "k, " + str(i));
   }
 
-  auto clp = prg.add_loop("c", 0, 8);
+  auto clp = prg.add_loop("c", 0, len - 2);
   auto comp = clp->add_loop("i", 0, 3)->add_op("cp");
   comp->add_function("add");
   comp->add_load("tmp", "c");
@@ -9655,6 +9657,14 @@ void register_file_optimization_test() {
 
   prg.pretty_print();
   prg.sanity_check();
+
+  CodegenOptions options;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  options.all_rams = true;
+  options.register_files.insert("in_rf");
+
+  generate_optimized_code(options, prg);
 
   assert(false);
 }

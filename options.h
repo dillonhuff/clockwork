@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <set>
 
 using namespace std;
 
@@ -40,6 +41,8 @@ struct CodegenOptions {
   bool use_soda_casting;
   InnerBankOffsetMode inner_bank_offset_mode;
   ScheduleAlgorithm scheduling_algorithm;
+
+  std::set<std::string> register_files;
 
 
   DebugOptions debug_options;

@@ -1427,8 +1427,20 @@ void generate_code_prefix(CodegenOptions& options,
       assert(dynamic_ports.size() == 0);
     }
 
-    if (dynamic_ports.size() == 0) {
-      // Naive always reaches target throughput
+    if (dynamic_ports.size() > 0 ||
+        elem(name, options.register_files)) {
+
+      // Use a single bank implemented as registers
+      bank bnk = compute_bank_info();
+      for (auto inpt : get_in_ports()) {
+        for (auto outpt : get_out_ports()) {
+          add_bank_between(inpt, outpt, bnk);
+        }
+      }
+
+    } else {
+
+      // Use naive banking that reaches target throughput
       for (auto inpt : get_in_ports()) {
         for (auto outpt : get_out_ports()) {
           auto overlap =
@@ -1438,14 +1450,6 @@ void generate_code_prefix(CodegenOptions& options,
             stack_bank bank = compute_bank_info(inpt, outpt);
             add_bank_between(inpt, outpt, bank);
           }
-        }
-      }
-    } else {
-
-      bank bnk = compute_bank_info();
-      for (auto inpt : get_in_ports()) {
-        for (auto outpt : get_out_ports()) {
-          add_bank_between(inpt, outpt, bnk);
         }
       }
 
