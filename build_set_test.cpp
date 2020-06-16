@@ -9623,7 +9623,27 @@ void histogram_test() {
 
 void register_file_optimization_test() {
   prog prg("register_file");
+  prg.add_input("in_oc");
+  prg.add_output("out_oc");
 
+  auto load_in = prg.add_loop("li", 0, 10);
+  auto ld = load_in->add_op("ld_in");
+  ld->add_load("in_oc", "li");
+  ld->add_store("in", "li");
+
+  auto clp = prg.add_loop("c", 0, 8);
+  
+  auto comp = clp->add_loop("i", 0, 3)->add_op("cp");
+  comp->add_function("add");
+  comp->add_load("tmp", "c");
+  comp->add_load("in", "c + i");
+  comp->add_store("tmp", "c");
+
+  auto st = clp->add_op("store_out");
+  st->add_load("tmp", "c");
+  st->add_store("out_oc", "c");
+
+  prg.pretty_print();
   prg.sanity_check();
 
   assert(false);
