@@ -9621,6 +9621,48 @@ void histogram_test() {
   //assert(false);
 }
 
+template<typename T>
+vector<T> levels_above(const T& target_level, const std::vector<T>& c) {
+  vector<T> above;
+  for (auto l : c) {
+    if (l != target_level) {
+      above.push_back(l);
+    } else {
+      break;
+    }
+  }
+  return above;
+}
+
+template<typename T>
+T last_common_level(const std::vector<T>& a, const std::vector<T>& b) {
+  for (int i = 0; i < (int) a.size() - 1; i++) {
+    assert((int) a.size() > i + 1);
+    assert((int) b.size() > i + 1);
+    if (a.at(i + 1) != b.at(i + 1)) {
+      return a.at(i);
+    }
+  }
+
+  assert(false);
+  return a.back();
+}
+
+template<typename T>
+vector<T> levels_below(const T& target_level, const std::vector<T>& c) {
+  vector<T> above;
+  bool past = false;
+  for (auto l : c) {
+    if (l != target_level) {
+      if (past) {
+        above.push_back(l);
+      }
+    } else {
+      past = true;
+    }
+  }
+  return above;
+}
 void register_file_optimization_test() {
   prog prg("register_file");
   prg.add_input("in_oc");
@@ -9633,22 +9675,24 @@ void register_file_optimization_test() {
   ld->add_load("in_oc", "li");
   ld->add_store("in", "li");
 
-  auto rld = prg.add_loop("k", -2, len - 2);
-  for (int i = 0; i < 3; i++) {
-    auto ld = rld->add_op("ld_" + str(i));
-    if (i < 2) {
-      ld->add_load("in_rf", "k, " + str(i + 1));
-    } else {
-      ld->add_load("in", "k + " + str(i));
-    }
-    ld->add_store("in_rf", "k, " + str(i));
-  }
+  //auto rld = prg.add_loop("k", -2, len - 2);
+  //for (int i = 0; i < 3; i++) {
+    //auto ld = rld->add_op("ld_" + str(i));
+    //if (i < 2) {
+      //ld->add_load("in_rf", "k, " + str(i + 1));
+    //} else {
+      //ld->add_load("in", "k + " + str(i));
+    //}
+    //ld->add_store("in_rf", "k, " + str(i));
+  //}
 
   auto clp = prg.add_loop("c", 0, len - 2);
   auto comp = clp->add_loop("i", 0, 3)->add_op("cp");
   comp->add_function("add");
   comp->add_load("tmp", "c");
-  comp->add_load("in_rf", "c, i");
+  //comp->add_load("in_rf", "c, i");
+  //comp->add_load("in", "c, i");
+  comp->add_load("in", "c + i");
   comp->add_store("tmp", "c");
 
   auto st = clp->add_op("store_out");
@@ -9658,6 +9702,26 @@ void register_file_optimization_test() {
   prg.pretty_print();
   prg.sanity_check();
 
+  auto iter_vars = prg.iter_vars();
+  string target_buf = "in";
+  string target_level = "c";
+  cout << "Registerizing: " << target_buf << " at level " << target_level << endl;
+  op* source = find_writer(target_buf, prg);
+  auto source_levels = map_find(source, iter_vars);
+  cout << "source = " << source->name << endl;
+  auto possible_ops = prg.find_loop(target_level)->descendant_ops();
+  for (auto op : possible_ops) {
+    if (elem(target_buf, buffers_referenced(op))) {
+      cout << tab(1) << "op: " << op->name << endl;
+      auto levels = map_find(op, iter_vars);
+      cout << tab(2) << "levels: " << str(levels) << endl;
+      cout << tab(3) << "above target: " << str(levels_above(target_level, levels)) << endl;
+      cout << tab(3) << "below target: " << str(levels_below(target_level, levels)) << endl;
+      cout << tab(3) << "last common : " << last_common_level(levels, source_levels) << endl;
+    }
+  }
+  assert(false);
+
   CodegenOptions options;
   options.inner_bank_offset_mode =
     INNER_BANK_OFFSET_LINEAR;
@@ -9666,7 +9730,7 @@ void register_file_optimization_test() {
 
   generate_optimized_code(options, prg);
 
-  //assert(false);
+  assert(false);
 }
 
 void application_tests() {
