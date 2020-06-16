@@ -9718,8 +9718,25 @@ void register_file_optimization_test() {
       cout << tab(3) << "above target: " << str(levels_above(target_level, levels)) << endl;
       cout << tab(3) << "below target: " << str(levels_below(target_level, levels)) << endl;
       cout << tab(3) << "last common : " << last_common_level(levels, source_levels) << endl;
+
+      auto level_c = prg.find_loop(target_level);
+      auto lc = prg.find_loop(last_common_level(levels, source_levels));
+      auto fresh = lc->add_loop_after(source, target_buf + "_rf", level_c->start, level_c->end_exclusive);
+      int i = 0;
+      string register_file = target_buf + "_rf_at_" + op->name;
+      for (auto lv : levels_below(target_level, levels)) {
+        for (int tc = 0; tc < prg.trip_count(lv); tc++) {
+          auto ld = fresh->add_op("unrolled_" + str(i));
+          ld->add_load(target_buf, target_level + " + " + str(i));
+          ld->add_store(register_file, target_level + ", " + str(i));
+          i++;
+        }
+      }
     }
   }
+
+  cout << "After registerizing" << endl;
+  prg.pretty_print();
   assert(false);
 
   CodegenOptions options;
