@@ -623,6 +623,8 @@ struct prog {
 
   map<string, vector<int> > buffer_bounds;
 
+  void sanity_check();
+
   isl_set* domain(op* op);
   umap* read_map(op* op);
   isl_map* read_map(op* op, const std::string& buf);
@@ -836,6 +838,7 @@ struct prog {
     ins.insert(name);
   }
 
+
   prog() {
     ctx = isl_ctx_alloc();
     root = new op();
@@ -844,6 +847,17 @@ struct prog {
     root->is_loop = true;
     root->start = 0;
     root->end_exclusive = 1;
+  }
+
+  prog(const std::string& name_) {
+    ctx = isl_ctx_alloc();
+    root = new op();
+    root->name = "root";
+    root->ctx = ctx;
+    root->is_loop = true;
+    root->start = 0;
+    root->end_exclusive = 1;
+    name = name_;
   }
 
   ~prog() {

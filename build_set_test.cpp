@@ -9621,7 +9621,16 @@ void histogram_test() {
   //assert(false);
 }
 
+void register_file_optimization_test() {
+  prog prg("register_file");
+
+  prg.sanity_check();
+
+  assert(false);
+}
+
 void application_tests() {
+  register_file_optimization_test();
   mini_conv_halide_test();
   conv_3_3_halide_test();
   histogram_test();

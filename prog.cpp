@@ -2508,3 +2508,16 @@ op* find_writer(const std::string& target_buf, prog& prg) {
   return writers.at(0);
 }
 
+void prog::sanity_check() {
+  std::set<string> op_names;
+  for (auto op : all_ops()) {
+    assert(!elem(op->name, op_names));
+    op_names.insert(op->name);
+  }
+
+  std::set<string> loop_names;
+  for (auto lp : all_loops()) {
+    assert(!elem(lp->name, loop_names));
+    loop_names.insert(lp->name);
+  }
+}
