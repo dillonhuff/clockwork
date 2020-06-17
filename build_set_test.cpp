@@ -9913,9 +9913,9 @@ prog conv_layer_3D() {
 void halide_conv_layer_3D_test() {
   prog prg = conv_layer_3D();
   prg.pretty_print();
-  assert(false);
+  //assert(false);
   regression_test(prg);
-  assert(false);
+  //assert(false);
 }
 
 void load_buffer(const std::string& dest, const std::string& src, const vector<int>& ranges, prog& prg) {
@@ -9926,6 +9926,12 @@ void load_buffer(const std::string& dest, const std::string& src, const vector<i
     op = op->add_loop(prg.unique_name("l"), ranges.at(2*r), ranges.at(2*r + 1));
   }
   op = op->add_op(prg.unique_name("op"));
+  vector<string> vs = map_find(op, prg.iter_vars());
+  reverse(vs);
+  // root is not used
+  vs.pop_back();
+  op->add_load(src, comma_list(vs));
+  op->add_store(dest, comma_list(vs));
 }
 
 void cyclic_banked_conv_test() {
@@ -9935,21 +9941,30 @@ void cyclic_banked_conv_test() {
 
   load_buffer("in", "in_oc", {0, 10, 0, 10}, prg);
   auto reduce = prg.add_nest("y", 0, 8, "x", 0, 8, "yi", 0, 3)->add_op(prg.unique_name("op"));
-  //for (int r = 0; r < 3; r++) {
-    //for (int )
-  //}
+  for (int c = 0; c < 3; c++) {
+    reduce->add_load("in", "x + " + str(c), "y + yi");
+  }
+  reduce->add_store("out", "x, y");
   //for (auto l : prg.vector_load("in", 0, 3, 0, 3)) {
     //reduce->add_load("in", )
   //}
-
+ 
 
   prg.pretty_print();
-  assert(false);
+
+  auto buffers = build_buffers(prg, prg.optimized_codegen());
+  for (auto b : buffers) {
+    auto buf = b.second;
+    if (buf.get_out_ports().size() > 1) {
+      cout << buf << endl << endl;
+    }
+  }
+  //assert(false);
 }
 
 void application_tests() {
   cyclic_banked_conv_test();
-  halide_conv_layer_3D_test();
+  //halide_conv_layer_3D_test();
   //register_file_optimization_test();
   mini_conv_halide_test();
   halide_cascade_test();
@@ -10187,9 +10202,9 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
-    memory_tile_tests();
-    application_tests();
     prog_splitting_tests();
+    application_tests();
+    memory_tile_tests();
     cout << "All tests passed" << endl;
 
   } else {
