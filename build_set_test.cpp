@@ -9663,6 +9663,7 @@ vector<T> levels_below(const T& target_level, const std::vector<T>& c) {
   }
   return above;
 }
+
 void register_file_optimization_test() {
   prog prg("register_file");
   prg.add_input("in_oc");
@@ -9702,6 +9703,13 @@ void register_file_optimization_test() {
   prg.pretty_print();
   prg.sanity_check();
 
+  string old_name = prg.name;
+  prg.name = "unoptimized_" + prg.name;
+  generate_unoptimized_code(prg);
+  generate_regression_testbench(prg);
+  auto unopt = run_regression_tb(prg);
+  prg.name = old_name;
+
   auto iter_vars = prg.iter_vars();
   string target_buf = "in";
   string target_level = "c";
@@ -9721,14 +9729,15 @@ void register_file_optimization_test() {
 
       auto level_c = prg.find_loop(target_level);
       auto lc = prg.find_loop(last_common_level(levels, source_levels));
-      auto fresh = lc->add_loop_after(source, target_buf + "_rf", level_c->start - 2, level_c->end_exclusive);
+      string rf_var = target_buf + "_rf";
+      auto fresh = lc->add_loop_after(source, rf_var, level_c->start - 2, level_c->end_exclusive);
       int i = 0;
       string register_file = target_buf + "_rf_at_" + op->name;
       for (auto lv : levels_below(target_level, levels)) {
         for (int tc = 0; tc < prg.trip_count(lv); tc++) {
           auto ld = fresh->add_op("unrolled_" + str(i));
-          ld->add_load(target_buf, target_level + " + " + str(i));
-          ld->add_store(register_file, target_level + ", " + str(i));
+          ld->add_load(target_buf, rf_var + " + " + str(i));
+          ld->add_store(register_file, rf_var + ", " + str(i));
           i++;
         }
       }
@@ -9742,7 +9751,7 @@ void register_file_optimization_test() {
 
   cout << "After registerizing" << endl;
   prg.pretty_print();
-  assert(false);
+  //assert(false);
 
   CodegenOptions options;
   options.inner_bank_offset_mode =
@@ -9750,13 +9759,21 @@ void register_file_optimization_test() {
   options.all_rams = true;
   options.register_files.insert("in_rf");
 
+  assert(prg.compute_unit_file != "");
+
+
+  //assert(false);
   generate_optimized_code(options, prg);
+  generate_regression_testbench(prg);
+  auto opt = run_regression_tb(prg);
+
+  assert(opt == unopt);
 
   assert(false);
 }
 
 void application_tests() {
-  register_file_optimization_test();
+  //register_file_optimization_test();
   mini_conv_halide_test();
   conv_3_3_halide_test();
   histogram_test();

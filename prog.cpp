@@ -1873,6 +1873,8 @@ void generate_app_code(CodegenOptions& options,
   conv_out << tab(1) << "ofstream* global_debug_handle;" << endl << endl;
   close_debug_scope(conv_out);
 
+  assert(prg.compute_unit_file != "");
+  conv_out << "// compute file: " << prg.compute_unit_file << endl;
   conv_out << "#include \"" << prg.compute_unit_file << "\"" << endl << endl;
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
@@ -2000,6 +2002,8 @@ void generate_optimized_code(CodegenOptions& options, prog& prg) {
     cout << b.second << endl;
   }
 
+  assert(prg.compute_unit_file != "");
+  cout << "Compute unit file: " << prg.compute_unit_file << endl;
   //assert(false);
   generate_app_code(options, buffers, prg, sched);
   generate_vivado_tcl(prg.name);

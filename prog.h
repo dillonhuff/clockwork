@@ -847,6 +847,7 @@ struct prog {
     root->is_loop = true;
     root->start = 0;
     root->end_exclusive = 1;
+    compute_unit_file = "clockwork_standard_compute_units.h";
   }
 
   prog(const std::string& name_) {
@@ -858,6 +859,7 @@ struct prog {
     root->start = 0;
     root->end_exclusive = 1;
     name = name_;
+    compute_unit_file = "clockwork_standard_compute_units.h";
   }
 
   ~prog() {
