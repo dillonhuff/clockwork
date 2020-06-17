@@ -623,6 +623,8 @@ class UBuffer {
     std::map<string, isl_union_map*> schedule;
     std::map<string, vector<string> > port_bundles;
 
+    bank base_info;
+
     map<pair<string, string>, stack_bank > stack_banks;
     map<string, selector> selectors;
 
