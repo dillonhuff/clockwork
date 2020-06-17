@@ -382,7 +382,6 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
 //generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   auto context = def->getContext();
-  //for (auto it : stack_banks) {
   for (auto it : get_banks()) {
     auto connection = it.first;
     auto bk = it.second;
@@ -1374,7 +1373,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
   void UBuffer::print_bank_info() {
     //find the lexmin of all out port
-    //for (auto itr: stack_banks) {
     for (auto itr: get_banks()) {
       cout << itr.name << endl;
       //string inpt = itr.first.first;

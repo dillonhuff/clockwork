@@ -623,7 +623,11 @@ class UBuffer {
     std::map<string, isl_union_map*> schedule;
     std::map<string, vector<string> > port_bundles;
 
+    std::vector<bank> bank_list;
+    map<string, vector<string> > banks_to_inputs;
+    map<string, vector<string> > banks_to_outputs;
     map<pair<string, string>, bank > stack_banks;
+
     map<string, selector> selectors;
 
     //lowering ubuffer to memtile
@@ -924,11 +928,16 @@ class UBuffer {
     }
 
     bank get_bank(const std::string& name) const {
-      for (auto b : stack_banks) {
-        if (b.second.name == name) {
-          return b.second;
+      for (auto bank : bank_list) {
+        if (bank.name == name) {
+          return bank;
         }
       }
+      //for (auto b : stack_banks) {
+        //if (b.second.name == name) {
+          //return b.second;
+        //}
+      //}
       cout << "Error: No such bank as: " << name << endl;
       assert(false);
       return {};
@@ -938,53 +947,78 @@ class UBuffer {
       auto inputs = get_bank_inputs(name);
       assert(inputs.size() == 1);
       return *(std::begin(inputs));
-      //for (auto b : stack_banks) {
-        //if (b.second.name == name) {
-          //return b.first.first;
-        //}
-      //}
-      //cout << "Error: No such bank as: " << name << endl;
-      //assert(false);
-      //return "";
     }
 
     std::set<string> get_bank_inputs(const std::string& name) const {
       std::set<string> ret;
-      for (auto b : stack_banks) {
-        if (b.second.name == name) {
-          ret.insert(b.first.first);
-        }
+      for (auto in : map_find(name, banks_to_inputs)) {
+        ret.insert(in);
       }
       return ret;
+
+      //for (auto b : stack_banks) {
+        //if (b.second.name == name) {
+          //ret.insert(b.first.first);
+        //}
+      //}
+      //return ret;
     }
 
     std::set<string> get_bank_outputs(const std::string& name) const {
       std::set<string> ret;
-      for (auto b : stack_banks) {
-        if (b.second.name == name) {
-          ret.insert(b.first.second);
-        }
+      for (auto out : map_find(name, bank_to_outputs)) {
+        ret.insert(out);
       }
       return ret;
+      //for (auto b : stack_banks) {
+        //if (b.second.name == name) {
+          //ret.insert(b.first.second);
+        //}
+      //}
+      //return ret;
+    }
+
+    bool has_bank(const std::string& name) {
+      for (auto& bnk : bank_list) {
+        if (bnk.name == name) {
+          return true;
+        }
+      }
+      return false;
     }
 
     void replace_bank(stack_bank& target, stack_bank& replacement) {
-      for (auto bnk : stack_banks) {
-        if (bnk.second.name == target.name) {
-          stack_banks[bnk.first] = replacement;
-          break;
-        }
+      if (!has_bank(replacement.name)) {
+        bank_list.push_back(replacement);
       }
+
+      for (auto in : map_find(target.name, banks_to_inputs)) {
+        banks_to_inputs[replacement.name].push_back(in);
+      }
+
+      for (auto out : map_find(target.name, banks_to_outputs)) {
+        banks_to_outputs[replacement.name].push_back(out);
+      }
+
+      banks_to_inputs[target.name] = {};
+      banks_to_outputs[target.name] = {};
+
+      //for (auto bnk : stack_banks) {
+        //if (bnk.second.name == target.name) {
+          //stack_banks[bnk.first] = replacement;
+          //break;
+        //}
+      //}
     }
 
     void remove_bank(string pt_name) {
-        map<pair<string, string>, bank> replace;
-        for (auto bnk : stack_banks) {
-            if (bnk.first.second != pt_name) {
-                replace.insert(bnk);
-            }
+      map<pair<string, string>, bank> replace;
+      for (auto bnk : stack_banks) {
+        if (bnk.first.second != pt_name) {
+          replace.insert(bnk);
         }
-        stack_banks = replace;
+      }
+      stack_banks = replace;
     }
 
     //The method replace the original access map and add a valid domain
@@ -996,19 +1030,24 @@ class UBuffer {
     }
 
     vector<stack_bank> get_banks() {
-      vector<stack_bank> bnk;
-      std::set<string> done;
-      for (auto bs : stack_banks) {
-        if (!elem(bs.second.name, done)) {
-          bnk.push_back(bs.second);
-          done.insert(bs.second.name);
-        }
-      }
-      return bnk;
+      return bank_list;
+      //vector<stack_bank> bnk;
+      //std::set<string> done;
+      //for (auto bs : stack_banks) {
+        //if (!elem(bs.second.name, done)) {
+          //bnk.push_back(bs.second);
+          //done.insert(bs.second.name);
+        //}
+      //}
+      //return bnk;
     }
 
     void add_bank_between(const std::string& inpt, const std::string& outpt, stack_bank& bank) {
-      stack_banks[{inpt, outpt}] = bank;
+      bank_list.push_back(bank);
+      banks_to_inputs[bank.name].push_back(inpt);
+      banks_to_outputs[bank.name].push_back(outpt);
+
+      //stack_banks[{inpt, outpt}] = bank;
     }
 
     bool has_bank_between(const std::string& inpt, const std::string& outpt) const {
@@ -1050,7 +1089,6 @@ class UBuffer {
             done.push_back(bs.second.name);
           }
 
-          //assert(bnks.back().read_delays.size() == bs.second.read_delays.size());
         }
       }
       return bnks;
