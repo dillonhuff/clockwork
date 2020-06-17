@@ -319,7 +319,7 @@ struct ir_node {
 
     return lp;
   }
-
+  
   op* add_loop(const std::string& name, const int l, const int u) {
     assert(is_loop);
     //assert(!elem(name, all_existing_loop_names()));
@@ -430,6 +430,9 @@ struct ir_node {
   }
 
 
+  string add_load(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3) {
+    return add_load(b, d0 + ", " + d1 + ", " + d2 + ", " + d3);
+  }
   string add_load(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2) {
     return add_load(b, d0 + ", " + d1 + ", " + d2);
   }
@@ -465,6 +468,10 @@ struct ir_node {
       ps.push_back(p.first + "[" + p.second + "]");
     }
     return ps;
+  }
+
+  void add_store(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2, const std::string& d3) {
+    add_store(b, d0 + ", " + d1 + ", " + d2 + ", " + d3);
   }
 
   void add_store(const std::string& b, const std::string& d0, const std::string& d1, const std::string& d2) {
@@ -607,6 +614,7 @@ struct ir_node {
 
 struct prog {
 
+  int unique_num;
   std::string name;
   struct isl_ctx* ctx;
 
@@ -624,6 +632,16 @@ struct prog {
   map<string, vector<int> > buffer_bounds;
 
   void sanity_check();
+
+  std::string unique_name(const std::string& prefix) {
+    auto name = prefix + str(unique_num);
+    unique_num++;
+    return name;
+  }
+
+  op* add_loop(const int l, const int u) {
+    return add_loop(unique_name("l"), l, u);
+  }
 
   isl_set* domain(op* op);
   umap* read_map(op* op);
@@ -718,8 +736,8 @@ struct prog {
     cout << "buffers..." << endl;
     for (auto b : buffer_bounds) {
       cout << tab(1) << b.first << endl;
-      //"[" << comma_list(b.second) << "]" << endl;
     }
+    cout << "operations..." << endl;
     root->pretty_print(cout, 0);
   }
 
@@ -839,7 +857,7 @@ struct prog {
   }
 
 
-  prog() {
+  prog() : unique_num(0) {
     ctx = isl_ctx_alloc();
     root = new op();
     root->name = "root";
@@ -850,7 +868,7 @@ struct prog {
     compute_unit_file = "clockwork_standard_compute_units.h";
   }
 
-  prog(const std::string& name_) {
+  prog(const std::string& name_) : unique_num(0) {
     ctx = isl_ctx_alloc();
     root = new op();
     root->name = "root";

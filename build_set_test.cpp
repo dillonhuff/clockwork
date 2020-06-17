@@ -9766,7 +9766,190 @@ void register_file_optimization_test() {
   assert(false);
 }
 
+prog conv_layer_3D() {
+  prog prg;
+  prg.compute_unit_file = "conv_layer_3D_compute.h";
+  prg.name = "conv_layer_3D";
+
+//// Stencil<uint16_t, 18, 26, 64> &input_copy_stencil = arg_0;
+  //prg.add_input("input_copy_stencil");
+  //prg.buffer_port_widths["input_copy_stencil"] = 16;
+//// Stencil<uint16_t, 3, 3, 64, 46> &weight_copy_stencil = arg_1;
+  //prg.add_input("weight_copy_stencil");
+  //prg.buffer_port_widths["weight_copy_stencil"] = 16;
+//// Stencil<void *> &hw_output_stencil = arg_2;
+  //prg.add_output("hw_output_stencil");
+  //prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+
+////consuming weight_copy.stencil
+
+////consuming input_copy.stencil
+//////producing hw_input.stencil
+  //auto loop_hw_input_s0_c = prg.add_loop("hw_input_s0_c", 0, 64);
+  //auto loop_hw_input_s0_y = loop_hw_input_s0_c->add_loop("hw_input_s0_y", 0, 26);
+  //auto loop_hw_input_s0_x = loop_hw_input_s0_y->add_loop("hw_input_s0_x", 0, 18);
+
+////store is: hw_input.stencil(hw_input.s0.x, hw_input.s0.y, hw_input.s0.c) = input_copy.stencil(hw_input.s0.x, hw_input.s0.y, hw_input.s0.c)
+  //auto hcompute_hw_input_stencil = loop_hw_input_s0_x->add_op("hcompute_hw_input_stencil");
+  //hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
+  //hcompute_hw_input_stencil->add_load("input_copy_stencil", "hw_input_s0_x", "hw_input_s0_y", "hw_input_s0_c");
+  //prg.buffer_port_widths["hw_input_stencil"] = 16;
+  //hcompute_hw_input_stencil->add_store("hw_input_stencil", "hw_input_s0_x", "hw_input_s0_y", "hw_input_s0_c");
+//////producing hw_weight.stencil
+  //auto loop_hw_weight_s0_k = prg.add_loop("hw_weight_s0_k", 0, 35);
+  //auto loop_hw_weight_s0_c = loop_hw_weight_s0_k->add_loop("hw_weight_s0_c", 0, 64);
+  //auto loop_hw_weight_s0_y = loop_hw_weight_s0_c->add_loop("hw_weight_s0_y", 0, 3);
+  //auto loop_hw_weight_s0_x = loop_hw_weight_s0_y->add_loop("hw_weight_s0_x", 0, 3);
+
+////store is: hw_weight.stencil(hw_weight.s0.x, hw_weight.s0.y, hw_weight.s0.c, hw_weight.s0.k) = weight_copy.stencil(hw_weight.s0.x, hw_weight.s0.y, hw_weight.s0.c, hw_weight.s0.k)
+  //auto hcompute_hw_weight_stencil = loop_hw_weight_s0_x->add_op("hcompute_hw_weight_stencil");
+  //hcompute_hw_weight_stencil->add_function("hcompute_hw_weight_stencil");
+  //hcompute_hw_weight_stencil->add_load("weight_copy_stencil", "hw_weight_s0_x", "hw_weight_s0_y", "hw_weight_s0_c", "hw_weight_s0_k");
+  //prg.buffer_port_widths["hw_weight_stencil"] = 16;
+  //hcompute_hw_weight_stencil->add_store("hw_weight_stencil", "hw_weight_s0_x", "hw_weight_s0_y", "hw_weight_s0_c", "hw_weight_s0_k");
+//////producing conv.stencil
+  //auto loop_conv_s0_k = prg.add_loop("conv_s0_k", 0, 35);
+  //auto loop_conv_s0_y = loop_conv_s0_k->add_loop("conv_s0_y", 0, 24);
+  //auto loop_conv_s0_x = loop_conv_s0_y->add_loop("conv_s0_x", 0, 16);
+
+////store is: conv.stencil(conv.s0.x, conv.s0.y, conv.s0.k) = 0
+  //auto hcompute_conv_stencil = loop_conv_s0_x->add_op("hcompute_conv_stencil");
+  //hcompute_conv_stencil->add_function("hcompute_conv_stencil");
+  //prg.buffer_port_widths["conv_stencil"] = 16;
+  //hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_x", "conv_s0_y", "conv_s0_k");
+
+////consuming hw_weight.stencil
+
+////consuming hw_input.stencil
+  //auto loop_conv_s1_k = prg.add_loop("conv_s1_k", 0, 35);
+  //auto loop_conv_s1_y = loop_conv_s1_k->add_loop("conv_s1_y", 0, 24);
+  //auto loop_conv_s1_x = loop_conv_s1_y->add_loop("conv_s1_x", 0, 16);
+  //auto loop_conv_s1_win_z = loop_conv_s1_x->add_loop("conv_s1_win_z", 0, 64);
+  //auto loop_conv_s1_win_y = loop_conv_s1_win_z->add_loop("conv_s1_win_y", 0, 3);
+  //auto loop_conv_s1_win_x = loop_conv_s1_win_y->add_loop("conv_s1_win_x", 0, 3);
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y, conv.s1.k) = (conv.stencil(conv.s1.x, conv.s1.y, conv.s1.k) + int32((hw_weight.stencil(conv.s1.win$x, conv.s1.win$y, conv.s1.win$z, conv.s1.k)*hw_input.stencil((conv.s1.win$x + conv.s1.x), (conv.s1.win$y + conv.s1.y), conv.s1.win$z))))
+  //auto hcompute_conv_stencil_1 = loop_conv_s1_win_x->add_op("hcompute_conv_stencil_1");
+  //hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
+  //hcompute_conv_stencil_1->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "conv_s1_k");
+  //hcompute_conv_stencil_1->add_load("hw_input_stencil", "(conv_s1_win_x + conv_s1_x)", "(conv_s1_win_y + conv_s1_y)", "conv_s1_win_z");
+  //hcompute_conv_stencil_1->add_load("hw_weight_stencil", "conv_s1_win_x", "conv_s1_win_y", "conv_s1_win_z", "conv_s1_k");
+  //hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "conv_s1_k");
+
+////consuming conv.stencil
+  //auto loop_hw_output_s0_k_ki = prg.add_loop("hw_output_s0_k_ki", 0, 35);
+  //auto loop_hw_output_s0_y_yi = loop_hw_output_s0_k_ki->add_loop("hw_output_s0_y_yi", 0, 24);
+  //auto loop_hw_output_s0_x_xi = loop_hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 16);
+
+////store is: hw_output.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.k.ki) = uint8(conv.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.k.ki))
+  //auto hcompute_hw_output_stencil = loop_hw_output_s0_x_xi->add_op("hcompute_hw_output_stencil");
+  //hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
+  //hcompute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi", "hw_output_s0_k_ki");
+  //hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi", "hw_output_s0_k_ki");
+//////producing hw_input.stencil
+  //auto loop_hw_input_s0_c = prg.add_loop("hw_input_s0_c", 0, 64);
+  //auto loop_hw_input_s0_y = loop_hw_input_s0_c->add_loop("hw_input_s0_y", 0, 26);
+  //auto loop_hw_input_s0_x = loop_hw_input_s0_y->add_loop("hw_input_s0_x", 0, 18);
+
+////store is: hw_input.stencil(hw_input.s0.x, hw_input.s0.y, hw_input.s0.c) = input_copy.stencil(hw_input.s0.x, hw_input.s0.y, hw_input.s0.c)
+  //auto hcompute_hw_input_stencil_1 = loop_hw_input_s0_x->add_op("hcompute_hw_input_stencil_1");
+  //hcompute_hw_input_stencil_1->add_function("hcompute_hw_input_stencil_1");
+  //hcompute_hw_input_stencil_1->add_load("input_copy_stencil", "hw_input_s0_x", "hw_input_s0_y", "hw_input_s0_c");
+  //hcompute_hw_input_stencil_1->add_store("hw_input_stencil", "hw_input_s0_x", "hw_input_s0_y", "hw_input_s0_c");
+//////producing hw_weight.stencil
+  //auto loop_hw_weight_s0_k = prg.add_loop("hw_weight_s0_k", 11, 46);
+  //auto loop_hw_weight_s0_c = loop_hw_weight_s0_k->add_loop("hw_weight_s0_c", 0, 64);
+  //auto loop_hw_weight_s0_y = loop_hw_weight_s0_c->add_loop("hw_weight_s0_y", 0, 3);
+  //auto loop_hw_weight_s0_x = loop_hw_weight_s0_y->add_loop("hw_weight_s0_x", 0, 3);
+
+////store is: hw_weight.stencil(hw_weight.s0.x, hw_weight.s0.y, hw_weight.s0.c, hw_weight.s0.k) = weight_copy.stencil(hw_weight.s0.x, hw_weight.s0.y, hw_weight.s0.c, hw_weight.s0.k)
+  //auto hcompute_hw_weight_stencil_1 = loop_hw_weight_s0_x->add_op("hcompute_hw_weight_stencil_1");
+  //hcompute_hw_weight_stencil_1->add_function("hcompute_hw_weight_stencil_1");
+  //hcompute_hw_weight_stencil_1->add_load("weight_copy_stencil", "hw_weight_s0_x", "hw_weight_s0_y", "hw_weight_s0_c", "hw_weight_s0_k");
+  //hcompute_hw_weight_stencil_1->add_store("hw_weight_stencil", "hw_weight_s0_x", "hw_weight_s0_y", "hw_weight_s0_c", "hw_weight_s0_k");
+//////producing conv.stencil
+  //auto loop_conv_s0_k = prg.add_loop("conv_s0_k", 11, 46);
+  //auto loop_conv_s0_y = loop_conv_s0_k->add_loop("conv_s0_y", 0, 24);
+  //auto loop_conv_s0_x = loop_conv_s0_y->add_loop("conv_s0_x", 0, 16);
+
+////store is: conv.stencil(conv.s0.x, conv.s0.y, conv.s0.k) = 0
+  //auto hcompute_conv_stencil_2 = loop_conv_s0_x->add_op("hcompute_conv_stencil_2");
+  //hcompute_conv_stencil_2->add_function("hcompute_conv_stencil_2");
+  //hcompute_conv_stencil_2->add_store("conv_stencil", "conv_s0_x", "conv_s0_y", "conv_s0_k");
+
+////consuming hw_weight.stencil
+
+////consuming hw_input.stencil
+  //auto loop_conv_s1_k = prg.add_loop("conv_s1_k", 11, 46);
+  //auto loop_conv_s1_y = loop_conv_s1_k->add_loop("conv_s1_y", 0, 24);
+  //auto loop_conv_s1_x = loop_conv_s1_y->add_loop("conv_s1_x", 0, 16);
+  //auto loop_conv_s1_win_z = loop_conv_s1_x->add_loop("conv_s1_win_z", 0, 64);
+  //auto loop_conv_s1_win_y = loop_conv_s1_win_z->add_loop("conv_s1_win_y", 0, 3);
+  //auto loop_conv_s1_win_x = loop_conv_s1_win_y->add_loop("conv_s1_win_x", 0, 3);
+
+////store is: conv.stencil(conv.s1.x, conv.s1.y, conv.s1.k) = (conv.stencil(conv.s1.x, conv.s1.y, conv.s1.k) + int32((hw_weight.stencil(conv.s1.win$x, conv.s1.win$y, conv.s1.win$z, conv.s1.k)*hw_input.stencil((conv.s1.win$x + conv.s1.x), (conv.s1.win$y + conv.s1.y), conv.s1.win$z))))
+  //auto hcompute_conv_stencil_3 = loop_conv_s1_win_x->add_op("hcompute_conv_stencil_3");
+  //hcompute_conv_stencil_3->add_function("hcompute_conv_stencil_3");
+  //hcompute_conv_stencil_3->add_load("conv_stencil", "conv_s1_x", "conv_s1_y", "conv_s1_k");
+  //hcompute_conv_stencil_3->add_load("hw_input_stencil", "(conv_s1_win_x + conv_s1_x)", "(conv_s1_win_y + conv_s1_y)", "conv_s1_win_z");
+  //hcompute_conv_stencil_3->add_load("hw_weight_stencil", "conv_s1_win_x", "conv_s1_win_y", "conv_s1_win_z", "conv_s1_k");
+  //hcompute_conv_stencil_3->add_store("conv_stencil", "conv_s1_x", "conv_s1_y", "conv_s1_k");
+
+////consuming conv.stencil
+  //auto loop_hw_output_s0_k_ki = prg.add_loop("hw_output_s0_k_ki", 0, 35);
+  //auto loop_hw_output_s0_y_yi = loop_hw_output_s0_k_ki->add_loop("hw_output_s0_y_yi", 0, 24);
+  //auto loop_hw_output_s0_x_xi = loop_hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 16);
+
+////store is: hw_output.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, (hw_output.s0.k.ki + 11)) = uint8(conv.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, (hw_output.s0.k.ki + 11)))
+  //auto hcompute_hw_output_stencil_1 = loop_hw_output_s0_x_xi->add_op("hcompute_hw_output_stencil_1");
+  //hcompute_hw_output_stencil_1->add_function("hcompute_hw_output_stencil_1");
+  //hcompute_hw_output_stencil_1->add_load("conv_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi", "(hw_output_s0_k_ki + 11)");
+  //hcompute_hw_output_stencil_1->add_store("hw_output_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi", "(hw_output_s0_k_ki + 11)");
+
+  return prg;
+}
+
+void halide_conv_layer_3D_test() {
+  prog prg = conv_layer_3D();
+  prg.pretty_print();
+  assert(false);
+  regression_test(prg);
+  assert(false);
+}
+
+void load_buffer(const std::string& dest, const std::string& src, const vector<int>& ranges, prog& prg) {
+  assert(ranges.size() % 2 == 0);
+
+  auto op = prg.root;
+  for (int r = 0; r < ranges.size() / 2; r++) {
+    op = op->add_loop(prg.unique_name("l"), ranges.at(2*r), ranges.at(2*r + 1));
+  }
+  op = op->add_op(prg.unique_name("op"));
+}
+
+void cyclic_banked_conv_test() {
+  prog prg("cyclic_banked_conv");
+  prg.add_input("in_oc");
+  prg.add_input("out");
+
+  load_buffer("in", "in_oc", {0, 10, 0, 10}, prg);
+  auto reduce = prg.add_nest("y", 0, 8, "x", 0, 8, "yi", 0, 3)->add_op(prg.unique_name("op"));
+  //for (int r = 0; r < 3; r++) {
+    //for (int )
+  //}
+  //for (auto l : prg.vector_load("in", 0, 3, 0, 3)) {
+    //reduce->add_load("in", )
+  //}
+
+
+  prg.pretty_print();
+  assert(false);
+}
+
 void application_tests() {
+  cyclic_banked_conv_test();
+  halide_conv_layer_3D_test();
   //register_file_optimization_test();
   mini_conv_halide_test();
   halide_cascade_test();
