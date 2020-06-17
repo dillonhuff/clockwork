@@ -6,6 +6,7 @@ using namespace std;
   ofstream* global_debug_handle;
 
 #endif //__VIVADO_SYNTH__
+// compute file: conv_3x3.h
 #include "conv_3x3.h"
 
 #include "hw_classes.h"

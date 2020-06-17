@@ -625,7 +625,7 @@ class UBuffer {
 
     bank base_info;
 
-    map<pair<string, string>, stack_bank > stack_banks;
+    map<pair<string, string>, bank > stack_banks;
     map<string, selector> selectors;
 
     //lowering ubuffer to memtile

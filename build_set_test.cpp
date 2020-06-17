@@ -9775,6 +9775,8 @@ void register_file_optimization_test() {
 void application_tests() {
   //register_file_optimization_test();
   mini_conv_halide_test();
+  halide_cascade_test();
+  halide_frontend_test();
   conv_3_3_halide_test();
   histogram_test();
   reaccess_no_hierarchy_test();
@@ -9783,8 +9785,6 @@ void application_tests() {
   ram_addr_unit_test();
   reduce_2d_test();
   reduce_1d_test();
-  halide_cascade_test();
-  halide_frontend_test();
   grayscale_conversion_test();
   sum_diffs_test();
   //print_test();

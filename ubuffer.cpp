@@ -136,47 +136,6 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
   return maxdelay;
 }
 
-//void generate_ram_bank(CodegenOptions& options,
-    //std::ostream& out,
-    //stack_bank& bank) {
-
-  //string ram = bank.name + "_store";
-
-  //out << "#ifdef __VIVADO_SYNTH__" << endl;
-  //out << tab(1) << bank.pt_type_string << " " << ram
-    //<< "[" << bank.extract_layout().cardinality() << "];" << endl << endl;
-  //out << "#else" << endl;
-  //out << tab(1) << bank.pt_type_string << "* " << ram << ";" << endl;
-  //out << "#endif // __VIVADO_SYNTH__" << endl;
-
-  //vector<string> vars;
-  //vector<string> decls;
-  //for (int i = 0; i < bank.extract_layout().dimension(); i++) {
-    //vars.push_back("d" + str(i));
-    //decls.push_back("int d" + str(i));
-  //}
-  //string arg_list = comma_list(decls);
-
-  //vector<string> addr;
-  //for (int i = 0; i < vars.size(); i++) {
-    //vector<string> offset{vars.at(i)};
-    //for (int j = 0; j < i; j++) {
-      //offset.push_back(str(bank.extract_layout().length(j)));
-    //}
-    //addr.push_back(sep_list(offset, "", "", "*"));
-  //}
-
-  //string addr_str = sep_list(addr, "(", ")", " + ");
-
-  //out << tab(1) << bank.pt_type_string << " read(" << arg_list << ") {";
-  //out << tab(2) << "return " << ram << "[" << addr_str << "];";
-  //out << tab(1) << "}" << endl << endl;
-  //out << tab(1) << "void write(" << bank.pt_type_string << "& value, " << arg_list << ") {" << endl;
-  //out << tab(2) << ram << "[" << addr_str << "] = value;" << endl;
-  //out << tab(1) << "}" << endl << endl;
-
-//}
-
 void generate_bank(CodegenOptions& options,
     std::ostream& out,
     stack_bank& bank) {
@@ -423,7 +382,8 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
 //generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   auto context = def->getContext();
-  for (auto it : stack_banks) {
+  //for (auto it : stack_banks) {
+  for (auto it : get_banks()) {
     auto connection = it.first;
     auto bk = it.second;
     //cout << "[inpt: " << connection.first << "] -> [bk: " << bk.name << ", delay = " << bk.maxdelay <<  "] -> [outpt:" << connection.second <<  "]\n";
@@ -536,108 +496,108 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     def->connect(in, out);
   }
 
-}
-
-//generate coreir instance for single ubuffer
-//return the coreir module with port bundle and enable/valid interface
-CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf) {
-  //CoreIR::Context* context = CoreIR::newContext();
-  CoreIRLoadLibrary_commonlib(context);
-  CoreIRLoadLibrary_cwlib(context);
-  auto ns = context->getNamespace("global");
-  vector<pair<string, CoreIR::Type*> >
-    ub_field{{"clk", context->Named("coreir.clkIn")},
-      {"reset", context->BitIn()}};
-  for (auto b : buf.port_bundles) {
-    int pt_width = buf.port_widths;
-    int bd_width = buf.lanes_in_bundle(b.first);
-    string name = b.first;
-    if (buf.is_input_bundle(b.first)) {
-      ub_field.push_back(make_pair(name + "_en", context->BitIn()));
-      ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
-    } else {
-      ub_field.push_back(make_pair(name + "_valid", context->Bit()));
-      ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
-    }
   }
 
-  CoreIR::RecordType* utp = context->Record(ub_field);
-  auto ub = ns->newModuleDecl(buf.name + "_ub", utp);
-  auto def = ub->newModuleDef();
+  //generate coreir instance for single ubuffer
+  //return the coreir module with port bundle and enable/valid interface
+  CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf) {
+    //CoreIR::Context* context = CoreIR::newContext();
+    CoreIRLoadLibrary_commonlib(context);
+    CoreIRLoadLibrary_cwlib(context);
+    auto ns = context->getNamespace("global");
+    vector<pair<string, CoreIR::Type*> >
+      ub_field{{"clk", context->Named("coreir.clkIn")},
+        {"reset", context->BitIn()}};
+    for (auto b : buf.port_bundles) {
+      int pt_width = buf.port_widths;
+      int bd_width = buf.lanes_in_bundle(b.first);
+      string name = b.first;
+      if (buf.is_input_bundle(b.first)) {
+        ub_field.push_back(make_pair(name + "_en", context->BitIn()));
+        ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
+      } else {
+        ub_field.push_back(make_pair(name + "_valid", context->Bit()));
+        ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
+      }
+    }
 
-  buf.generate_coreir(options, def);
+    CoreIR::RecordType* utp = context->Record(ub_field);
+    auto ub = ns->newModuleDecl(buf.name + "_ub", utp);
+    auto def = ub->newModuleDef();
 
-  ub->setDef(def);
-  //if(!saveToFile(ns, "ubuffer.json")) {
-      //cout << "Could not save ubuffer coreir" << endl;
-      //context->die();
-  //}
-  //deleteContext(context);
-  return ub;
-}
+    buf.generate_coreir(options, def);
+
+    ub->setDef(def);
+    //if(!saveToFile(ns, "ubuffer.json")) {
+    //cout << "Could not save ubuffer coreir" << endl;
+    //context->die();
+    //}
+    //deleteContext(context);
+    return ub;
+  }
 
 #endif
 
-void generate_code_prefix(CodegenOptions& options,
-    std::ostream& out,
-    UBuffer& buf) {
+  void generate_code_prefix(CodegenOptions& options,
+      std::ostream& out,
+      UBuffer& buf) {
 
-  //banking and merge pass
-  buf.generate_bank_and_merge(options);
+    //banking and merge pass
+    buf.generate_bank_and_merge(options);
 
-  //string inpt = buf.get_in_port();
-  out << "#include \"hw_classes.h\"" << endl << endl;
-  for (auto b : buf.get_banks()) {
-    generate_bank(options, out, b);
-  }
-
-  out << "struct " << buf.name << "_cache {" << endl;
-
-  for (auto b : buf.get_banks()) {
-    out << tab(1)
-      << b.name << "_cache "
-      << b.name
-      << ";" << endl;
-  }
-
-  out << "};" << endl << endl;
-
-  out << endl << endl;
-
-  for (auto inpt : buf.get_in_ports()) {
-    vector<string> args;
-    args.push_back(buf.port_type_string(inpt) + "& " + inpt);
-    args.push_back(buf.name + "_cache& " + buf.name);
-    concat(args, dimension_var_decls(inpt, buf));
-    args.push_back("int dynamic_address");
-    string var_args = comma_list(dimension_var_args(inpt, buf));
-
-    out << "inline void " << inpt << "_write(";
-    out << comma_list(args) << ") {" << endl;
-
-    //Different ram type, different address
-    for (auto sb : buf.receiver_banks(inpt)) {
-      if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_STACK) {
-        out << tab(1) << buf.name << "." << sb.name << ".push(" << inpt << ");" << endl;
-      }
-      else if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_LINEAR) {
-        string linear_addr = buf.generate_linearize_ram_addr(inpt);
-        cout <<"Input port:" << inpt << ", Get ram string: " << linear_addr << endl;
-        if (!elem(inpt, buf.dynamic_ports)) {
-          out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt <<
-            ", " << linear_addr << ");" << endl;
-        } else {
-          out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt <<
-            ", " << "dynamic_address" << ");" << endl;
-        }
-      }
-      else {
-        assert(false);
-        out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt << ", " << var_args << ");" << endl;
-      }
+    //string inpt = buf.get_in_port();
+    out << "#include \"hw_classes.h\"" << endl << endl;
+    for (auto b : buf.get_banks()) {
+      generate_bank(options, out, b);
     }
 
-    out << "}" << endl << endl;
+    out << "struct " << buf.name << "_cache {" << endl;
+
+    for (auto b : buf.get_banks()) {
+      out << tab(1)
+        << b.name << "_cache "
+        << b.name
+        << ";" << endl;
+    }
+
+    out << "};" << endl << endl;
+
+    out << endl << endl;
+
+    for (auto inpt : buf.get_in_ports()) {
+      vector<string> args;
+      args.push_back(buf.port_type_string(inpt) + "& " + inpt);
+      args.push_back(buf.name + "_cache& " + buf.name);
+      concat(args, dimension_var_decls(inpt, buf));
+      args.push_back("int dynamic_address");
+      string var_args = comma_list(dimension_var_args(inpt, buf));
+
+      out << "inline void " << inpt << "_write(";
+      out << comma_list(args) << ") {" << endl;
+
+      //Different ram type, different address
+      for (auto sb : buf.receiver_banks(inpt)) {
+        if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_STACK) {
+          out << tab(1) << buf.name << "." << sb.name << ".push(" << inpt << ");" << endl;
+        }
+        else if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_LINEAR) {
+          string linear_addr = buf.generate_linearize_ram_addr(inpt);
+          cout <<"Input port:" << inpt << ", Get ram string: " << linear_addr << endl;
+          if (!elem(inpt, buf.dynamic_ports)) {
+            out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt <<
+              ", " << linear_addr << ");" << endl;
+          } else {
+            out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt <<
+              ", " << "dynamic_address" << ");" << endl;
+          }
+        }
+        else {
+          assert(false);
+          out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt << ", " << var_args << ");" << endl;
+        }
+      }
+
+      out << "}" << endl << endl;
     }
 
   }
@@ -808,22 +768,22 @@ void generate_code_prefix(CodegenOptions& options,
 
       //auto overlap_gist = gist(overlap, read_ops);
       //in_ports_to_conditions[inpt] =
-        //"/* " + str(overlap_gist) + " */ " + codegen_c(overlap_gist);
+      //"/* " + str(overlap_gist) + " */ " + codegen_c(overlap_gist);
 
       //auto write_ops =
-        //domain(buf.access_map.at(outpt));
+      //domain(buf.access_map.at(outpt));
       //auto written =
-        //range(buf.access_map.at(inpt));
+      //range(buf.access_map.at(inpt));
       //auto read =
-        //range(buf.access_map.at(outpt));
+      //range(buf.access_map.at(outpt));
       //auto overlap = its(written, read);
       //auto overlapped_reads = its_range(buf.access_map.at(outpt), overlap);
       //auto overlapped_read_set = domain(overlapped_reads);
       //uset* overlapped_read_condition =
-        //gist(overlapped_read_set, (write_ops));
+      //gist(overlapped_read_set, (write_ops));
 
       //in_ports_to_conditions[inpt] =
-        //codegen_c(overlapped_read_condition);
+      //codegen_c(overlapped_read_condition);
     }
 
     if (possible_ports.size() == 1) {
@@ -1133,8 +1093,8 @@ void generate_code_prefix(CodegenOptions& options,
   }
 
   umap* UBuffer::get_lexmax_events(
-          umap* in_sched, umap* out_sched,
-          const string& inpt, const string& outpt) {
+      umap* in_sched, umap* out_sched,
+      const string& inpt, const string& outpt) {
 
     umap* src_map = nullptr;
     //auto in_sched = schedule.at(inpt);
@@ -1241,7 +1201,7 @@ void generate_code_prefix(CodegenOptions& options,
           //TODO: possible bug
           string original_inpt = pick(get_in_ports());
           delay = compute_dd_bound(outpt, original_inpt, true) -
-              compute_dd_bound(inpt, original_inpt, true);
+            compute_dd_bound(inpt, original_inpt, true);
         }
         read_delays.push_back(delay);
         maxdelay = std::max(maxdelay, delay);
@@ -1414,7 +1374,8 @@ void generate_code_prefix(CodegenOptions& options,
 
   void UBuffer::print_bank_info() {
     //find the lexmin of all out port
-    for (auto itr: stack_banks) {
+    //for (auto itr: stack_banks) {
+    for (auto itr: get_banks()) {
       string inpt = itr.first.first;
       string outpt = itr.first.second;
       cout << "\tpt: [" << outpt << "] -> pt:[" << inpt
@@ -1590,17 +1551,17 @@ void generate_code_prefix(CodegenOptions& options,
         //If they share the input port we should insert the latest output port
         string bank_input = input;
         if (last_bank_IO.first == "") {
-            inpt_set.insert(input);
-            bank_input = input;
+          inpt_set.insert(input);
+          bank_input = input;
         }
         else if (last_bank_IO.first != input) {
-            inpt_set.insert(input);
-            bank_input = input;
+          inpt_set.insert(input);
+          bank_input = input;
         }
         else {
-            cout << "Substitute the output port: " << last_bank_IO.second << "to the input : " << input << endl;
-            bank_input = last_bank_IO.second;
-            inpt_set.insert(bank_input);
+          cout << "Substitute the output port: " << last_bank_IO.second << "to the input : " << input << endl;
+          bank_input = last_bank_IO.second;
+          inpt_set.insert(bank_input);
         }
         pt_vec = bk.get_out_ports();
 
@@ -1669,10 +1630,10 @@ void generate_code_prefix(CodegenOptions& options,
    * */
 
   void UBuffer::create_subbank_branch(
-          std::set<string> & inpt_set,
-          std::set<string> & outpt_set,
-          map<string, pair<isl_map*, isl_map*> > & outpt_merge,
-          vector<pair<string, string> > & back_edge) {
+      std::set<string> & inpt_set,
+      std::set<string> & outpt_set,
+      map<string, pair<isl_map*, isl_map*> > & outpt_merge,
+      vector<pair<string, string> > & back_edge) {
     for (auto it : outpt_merge) {
       replace_pt(it.first, it.second.first, it.second.second);
     }
@@ -2176,3 +2137,4 @@ void generate_code_prefix(CodegenOptions& options,
     cout << "SRAM Schedule: " << str(sram.global_schedule()) << endl;
     cout << "TB Schedule: " << str(tb.global_schedule())  << endl;
   }
+
