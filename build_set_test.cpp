@@ -10010,9 +10010,9 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
+    memory_tile_tests();
     application_tests();
     prog_splitting_tests();
-    memory_tile_tests();
     cout << "All tests passed" << endl;
 
   } else {

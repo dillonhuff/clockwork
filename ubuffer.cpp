@@ -1376,10 +1376,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     //find the lexmin of all out port
     //for (auto itr: stack_banks) {
     for (auto itr: get_banks()) {
-      string inpt = itr.first.first;
-      string outpt = itr.first.second;
-      cout << "\tpt: [" << outpt << "] -> pt:[" << inpt
-        << "] has delay = " << itr.second.maxdelay << endl ;
+      cout << itr.name << endl;
+      //string inpt = itr.first.first;
+      //string outpt = itr.first.second;
+      //cout << "\tpt: [" << outpt << "] -> pt:[" << inpt
+        //<< "] has delay = " << itr.second.maxdelay << endl ;
     }
   }
 

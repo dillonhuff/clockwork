@@ -623,8 +623,6 @@ class UBuffer {
     std::map<string, isl_union_map*> schedule;
     std::map<string, vector<string> > port_bundles;
 
-    bank base_info;
-
     map<pair<string, string>, bank > stack_banks;
     map<string, selector> selectors;
 
@@ -937,14 +935,17 @@ class UBuffer {
     }
 
     string get_bank_input(const std::string& name) const {
-      for (auto b : stack_banks) {
-        if (b.second.name == name) {
-          return b.first.first;
-        }
-      }
-      cout << "Error: No such bank as: " << name << endl;
-      assert(false);
-      return "";
+      auto inputs = get_bank_inputs(name);
+      assert(inputs.size() == 1);
+      return *(std::begin(inputs));
+      //for (auto b : stack_banks) {
+        //if (b.second.name == name) {
+          //return b.first.first;
+        //}
+      //}
+      //cout << "Error: No such bank as: " << name << endl;
+      //assert(false);
+      //return "";
     }
 
     std::set<string> get_bank_inputs(const std::string& name) const {
