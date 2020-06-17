@@ -2059,10 +2059,12 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     vector<string> in_bundle = get_in_bundles();
     vector<string> out_bundle = get_out_bundles();
 
+    cout << "in bundle  = " << in_bundle.size() << endl;
+    cout << "out bundle = " << out_bundle.size() << endl;
     //Only test bundle size = 1
     assert(in_bundle.size() == 1 && out_bundle.size() == 1);
 
-    //produce naive schedule for the rewrited buffer
+    //produce naive schedule for the rewritten buffer
     map<string, isl_map*> new_sched =  produce_vectorized_schedule(pick(in_bundle), pick(out_bundle));
     //assert(false);
 

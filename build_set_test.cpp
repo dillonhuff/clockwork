@@ -2021,9 +2021,9 @@ void conv33_test() {
   }
   read->add_store("out", "po, pi");
 
-  //unoptimized schedule
-  auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
-  auto buffers = build_buffers(prg, sched_naive);
+  ////unoptimized schedule
+  //auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
+  //auto buffers = build_buffers(prg, sched_naive);
 
   //optimized schedule
   auto buffers_opt = build_buffers(prg);
@@ -2054,7 +2054,8 @@ void conv33_test() {
   opt.conditional_merge = false;
   auto rewrite_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
 
-  for (auto it: post_proc_buffers) {
+  for (auto it : post_proc_buffers) {
+    cout << "Vectorizing " << it.first << endl;
     buffer_vectorization(it.first, 1, 4, rewrite_buffers);
 
     //auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
