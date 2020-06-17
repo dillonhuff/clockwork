@@ -539,55 +539,47 @@ void synth_lb_test() {
 }
 
 void buffer_vectorization(string vec_buf_name, int dim_id, int fetch_width, map<string, UBuffer> & buffers) {
-    /* Function to vectorize the buffer access, will rewrite the buffer access pattern,
-     * generate the new domain and access map and also add two other buffer on
-     * both input and output side
-     * */
-    //TODO: add SRAM, do not overwrite the original sram
-    UBuffer agg, tb, sram;
-    for(auto it : buffers) {
-        if (it.first == vec_buf_name) {
-            auto target_buffer = it.second;
-            target_buffer.vectorization(dim_id, fetch_width, agg, sram, tb);
-            break;
-        }
-        //else {
-        //    //add extra dimension in the schedule vector
-        //    auto buffer = it.second;
-        //    for(auto it_sched : buffer.schedule) {
-        //        cout << "pad one more dim" << endl;
-        //        umap* sched = it_sched.second;
-        //        string key = it_sched.first;
-        //        buffer.schedule[key] = pad_one_more_dim_to_sched_map(buffer.ctx, sched, "0");
-        //    }
+  /* Function to vectorize the buffer access, will rewrite the buffer access pattern,
+   * generate the new domain and access map and also add two other buffer on
+   * both input and output side
+   * */
+  //TODO: add SRAM, do not overwrite the original sram
+  UBuffer agg, tb, sram;
+  for(auto it : buffers) {
+    if (it.first == vec_buf_name) {
+      auto target_buffer = it.second;
+      cout << "buffer_vectorization Vectorizing: " << target_buffer.name << endl;
+      cout << target_buffer << endl;
+      target_buffer.vectorization(dim_id, fetch_width, agg, sram, tb);
+      break;
+    }
+  }
+  buffers.erase(vec_buf_name);
+  buffers[agg.name] = agg;
+  buffers[sram.name] = sram;
+  buffers[tb.name] = tb;
+}
+
+
+////This method does not work.
+//isl_union_map* filter_inner_sram_deps(isl_ctx* ctx, isl_union_map* deps) {
+    //vector<isl_map*> deps_map = get_maps(deps);
+    //umap* ret = rdmap(ctx, "{}");
+    //for ( auto m : deps_map ) {
+        //auto dname = domain_name(m);
+        //auto rname = range_name(m);
+        //bool is_sram_in = dname.find("output_vec") != std::string::npos;
+        //bool is_sram_out = rname.find("output") != std::string::npos;
+        //if (is_sram_in && is_sram_out) {
+            //ret = unn(ret, to_umap(inv(m)));
         //}
-    }
-    buffers.erase(vec_buf_name);
-    buffers[agg.name] = agg;
-    buffers[sram.name] = sram;
-    buffers[tb.name] = tb;
-}
-
-
-//This method does not work.
-isl_union_map* filter_inner_sram_deps(isl_ctx* ctx, isl_union_map* deps) {
-    vector<isl_map*> deps_map = get_maps(deps);
-    umap* ret = rdmap(ctx, "{}");
-    for ( auto m : deps_map ) {
-        auto dname = domain_name(m);
-        auto rname = range_name(m);
-        bool is_sram_in = dname.find("output_vec") != std::string::npos;
-        bool is_sram_out = rname.find("output") != std::string::npos;
-        if (is_sram_in && is_sram_out) {
-            ret = unn(ret, to_umap(inv(m)));
-        }
-        else {
-            cout << "union: " << str(m) << endl;
-            ret = unn(ret, to_umap(m));
-        }
-    }
-    return ret;
-}
+        //else {
+            //cout << "union: " << str(m) << endl;
+            //ret = unn(ret, to_umap(m));
+        //}
+    //}
+    //return ret;
+//}
 
 isl_union_map* optimized_schedule_from_buffers(const map<string, UBuffer> &buffers) {
     isl_ctx* ctx = pick(buffers).second.ctx;
@@ -2021,10 +2013,6 @@ void conv33_test() {
   }
   read->add_store("out", "po, pi");
 
-  ////unoptimized schedule
-  //auto sched_naive = its(prg.unoptimized_schedule(), prg.whole_iteration_domain());
-  //auto buffers = build_buffers(prg, sched_naive);
-
   //optimized schedule
   auto buffers_opt = build_buffers(prg);
   CodegenOptions opt;
@@ -2050,13 +2038,18 @@ void conv33_test() {
   CoreIR::deleteContext(context);
 #endif
 
+  cout << "post processing buf" << endl;
+  cout << buffers_opt.at("buf");
+
   auto post_proc_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
   opt.conditional_merge = false;
   auto rewrite_buffers = buffers_opt.at("buf").generate_ubuffer(opt);
 
   for (auto it : post_proc_buffers) {
     cout << "Vectorizing " << it.first << endl;
+    cout << it.second << endl;
     buffer_vectorization(it.first, 1, 4, rewrite_buffers);
+    cout << "Done with vectorization" << endl;
 
     //auto opt_sched = optimized_schedule_from_buffers(buffers_opt);
     auto opt_sched = optimized_schedule_from_buffers_flatten(rewrite_buffers, true);

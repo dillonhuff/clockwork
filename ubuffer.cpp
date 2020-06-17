@@ -337,7 +337,11 @@ void generate_vivado_tcl(UBuffer& buf) {
 map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
   print_bank_info();
   map<string, UBuffer> buffers;
-  for (auto b: get_banks()) {
+  for (auto b : get_banks()) {
+    if (get_bank_outputs(b.name).size() == 0 ||
+        get_bank_inputs(b.name).size() == 0) {
+      continue;
+    }
     //fiter out those node will implemented as a shift register
     if (options.conditional_merge) {
       if (b.maxdelay <= options.merge_threshold) {
