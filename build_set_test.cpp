@@ -9916,14 +9916,75 @@ void cyclic_banked_conv_test() {
     auto buf = b.second;
     if (buf.get_out_ports().size() > 1) {
       cout << buf << endl << endl;
+
+      auto sched = buf.global_schedule();
+      auto op_writes = buf.producer_map();
+      auto op_reads = buf.consumer_map();
+
+      auto written = range(op_writes);
+      auto read = range(op_reads);
+      auto all_data = unn(written, read);
+
+      isl_map* slot_func =
+        isl_map_read_from_str(prg.ctx,
+            "{in[x, y] -> M[(x + 10*y) % 30]}");
+
+      cout << "slot func = " << str(slot_func) << endl;
+
+      auto dloc = its(to_umap(slot_func), all_data);
+      cout << "store slots = " << str(dloc) << endl;
+
+      auto stored_to_same_slot = dot(dloc, inv(dloc));
+      cout << "stored to same slot = " << str(stored_to_same_slot) << endl;
+
+      // Goal: Compute smallest folding
+      // factor possible.
+      // What is the folding factor (F)?
+      //
+      // Value such that all addresses (a)
+      // can be replaced by a % F.
+      //
+      // Start: check safety of a folding factor.
+      // 
+      // F is safe if: live data is never over-written?
+      //
+      //
+      // Objects involved:
+      //   F
+      //   op schedule
+      //   ops -> data read
+      //   ops -> data written
+      //   data -> memory slot
+      //
+      // Plan
+      //   Construct data -> slot function
+      //
+      //   Construct the set of writes to memory slots
+      //   that contain live data at the time of the write
+      //
+      //   Check if it is empty
+      //
+      // Plan 2:
+      //   Construct the set of values written to the same slot
+      //   that have overlapping live ranges?
+      //
+      //     construct vl: (value, live time)
+      //     apply dot(vl, inv(vl))
+      //     subtract identity mapping
+      //       gives: (v0, v1) v0 != v1 and both are live at the same time
+      //     construct: (value, value) v0, v1 written to the same slot
+
+      assert(false);
+    
     }
   }
   //assert(false);
 }
 
 void application_tests() {
-  halide_conv_layer_3D_test();
+  cyclic_banked_conv_test();
   assert(false);
+  halide_conv_layer_3D_test();
   sum_denoise_test();
   sum_diffs_test();
   denoise2d_test();
@@ -9932,7 +9993,6 @@ void application_tests() {
   mini_conv_halide_test();
   gaussian_pyramid_app_test("gp64x64");
   reduce_1d_test();
-  cyclic_banked_conv_test();
   //register_file_optimization_test();
   halide_cascade_test();
   halide_frontend_test();

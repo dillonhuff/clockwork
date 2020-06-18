@@ -1316,21 +1316,28 @@ hardware_schedule(
 
     for (int i = 0; i < dim; i++) {
 
-      cout << "adding var " << ii_var(n, i) << endl;
+      //cout << "adding var " << ii_var(n, i) << endl;
 
       modulo_schedule.add_gt(ii_var(n, i), (int) 0);
 
       if (i < dim - 1) {
         // TODO: Add product of domain at dimension i - 1
-        auto dp = project_all_but(f, i);
+        auto dp = project_all_but(f, i + 1);
         auto tc =
-          add(sub(lexmaxval(dp), lexminval(dp)), one(ct));
+          sub(lexmaxval(dp), lexminval(dp));
+        //auto tc =
+          //add(sub(lexmaxval(dp), lexminval(dp)), one(ct));
         modulo_schedule.add_gt(ii_var(n, i), tc, ii_var(n, i + 1));
       }
 
       obj.push_back({ii_var(n, i), one(ct)});
     }
 
+  }
+
+  for (auto dep : get_maps(validity)) {
+    auto max_deps = isl_map_lexmax_pw_multi_aff(inv(dep));
+    cout << "lm = " << str(max_deps) << endl << endl;
   }
 
   modulo_schedule.minimize(simplify(obj));
