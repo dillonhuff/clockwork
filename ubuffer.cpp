@@ -768,25 +768,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       } else {
         in_ports_to_conditions[inpt] = "false";
       }
-
-      //auto overlap_gist = gist(overlap, read_ops);
-      //in_ports_to_conditions[inpt] =
-      //"/* " + str(overlap_gist) + " */ " + codegen_c(overlap_gist);
-
-      //auto write_ops =
-      //domain(buf.access_map.at(outpt));
-      //auto written =
-      //range(buf.access_map.at(inpt));
-      //auto read =
-      //range(buf.access_map.at(outpt));
-      //auto overlap = its(written, read);
-      //auto overlapped_reads = its_range(buf.access_map.at(outpt), overlap);
-      //auto overlapped_read_set = domain(overlapped_reads);
-      //uset* overlapped_read_condition =
-      //gist(overlapped_read_set, (write_ops));
-
-      //in_ports_to_conditions[inpt] =
-      //codegen_c(overlapped_read_condition);
     }
 
     if (possible_ports.size() == 1) {
@@ -802,8 +783,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     } else {
       //assert(false);
       for (auto port : possible_ports) {
-        auto lm = buf.get_lexmax_events(port, outpt);
-        cout << "lexmax events = " << str(lm) << endl;
+        //auto lm = buf.get_lexmax_events(port, outpt);
+        //cout << "lexmax events = " << str(lm) << endl;
         out << tab(1) << "if (" << map_find(port, in_ports_to_conditions) << ") {" << endl;
         string peeked_val = delay_string(options, out, port, outpt, buf);
         sel.bank_conditions.push_back("1");
@@ -1405,10 +1386,17 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     } else {
 
       // Use naive banking that reaches target throughput
-      for (auto inpt : get_in_ports()) {
-        for (auto outpt : get_out_ports()) {
-          auto overlap =
-            its(range(access_map.at(inpt)), range(access_map.at(outpt)));
+      for (auto outpt : get_out_ports()) {
+        umap* reads_to_sources = get_lexmax_events(outpt);
+        uset* producers_for_outpt = range(reads_to_sources);
+        for (auto inpt : get_in_ports()) {
+          auto write_ops =
+            ::domain(access_map.at(inpt));
+          auto read_ops =
+            ::domain(access_map.at(outpt));
+          auto overlap = its(write_ops, producers_for_outpt);
+          //auto overlap =
+            //its(range(access_map.at(inpt)), range(access_map.at(outpt)));
 
           if (!empty(overlap)) {
             stack_bank bank = compute_bank_info(inpt, outpt);
