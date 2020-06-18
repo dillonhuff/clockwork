@@ -9969,7 +9969,7 @@ void cyclic_banked_conv_test() {
       cout << buf << endl << endl;
       isl_map* slot_func =
         isl_map_read_from_str(prg.ctx,
-            "{in[x, y] -> M[x, y % 4]}");
+            "{in[x, y] -> M[x, y % 3]}");
       assert(inner_bank_offset_is_legal(slot_func, buf));
     }
   }
