@@ -5817,47 +5817,47 @@ void downsample2d_test() {
   assert(res == 0);
 }
 
-App tricky_reconvergence(const std::string& name) {
-  App dn;
-  dn.set_default_num_type(NUM_TYPE_FLOAT);
+//App tricky_reconvergence(const std::string& name) {
+  //App dn;
+  //dn.set_default_num_type(NUM_TYPE_FLOAT);
 
-  dn.func2d("f_off_chip");
-  dn.func2d("u_off_chip");
-  dn.func2d("f", v("f_off_chip"));
-  dn.func2d("u", v("u_off_chip"));
+  //dn.func2d("f_off_chip");
+  //dn.func2d("u_off_chip");
+  //dn.func2d("f", v("f_off_chip"));
+  //dn.func2d("u", v("u_off_chip"));
 
-  Expr* diff = sub(v("u", 0, -1), v("u", 0, 0));
-  dn.func2d("diff_qwe", diff);
-  dn.func2d("diff_d", "diff_d2d", "u", {{0, 0}, {0, 1}});
-  dn.func2d("diff_l", "diff_l2d", "u", {
-      {-1, 0},
-      {0, 0}
-      });
-  dn.func2d("diff_r", "diff_r2d", "u", {{0, 0}, {1, 0}});
+  //Expr* diff = sub(v("u", 0, -1), v("u", 0, 0));
+  //dn.func2d("diff_qwe", diff);
+  //dn.func2d("diff_d", "diff_d2d", "u", {{0, 0}, {0, 1}});
+  //dn.func2d("diff_l", "diff_l2d", "u", {
+      //{-1, 0},
+      //{0, 0}
+      //});
+  //dn.func2d("diff_r", "diff_r2d", "u", {{0, 0}, {1, 0}});
 
-  dn.func2d("g", div(fc("1.0f"), func("sqrt", add({sq("diff_qwe"), sq("diff_d"), sq("diff_l"), sq("diff_r")}))));
-  dn.func2d("r0", "comp_r02d", {pt("u"), pt("f")});
-  dn.func2d("r1", "r1_comp2d", pt("r0"));
-  //dn.func2d(name, "r1_comp2d", pt("r0"));
-  dn.func2d(name,
-      "out_comp_dn2d",
-      {pt("r1"),
-      pt("f"),
-      win("u", {
-          {-1, 0},
-          {0, -1},
-          {0, 0},
-          {1, 0}
-          }),
-      win("g", {
-          {-1, 0},
-          {0, -1},
-          {0, 1},
-          {1, 0}
-          })});
+  //dn.func2d("g", div(fc("1.0f"), func("sqrt", add({sq("diff_qwe"), sq("diff_d"), sq("diff_l"), sq("diff_r")}))));
+  //dn.func2d("r0", "comp_r02d", {pt("u"), pt("f")});
+  //dn.func2d("r1", "r1_comp2d", pt("r0"));
+  ////dn.func2d(name, "r1_comp2d", pt("r0"));
+  //dn.func2d(name,
+      //"out_comp_dn2d",
+      //{pt("r1"),
+      //pt("f"),
+      //win("u", {
+          //{-1, 0},
+          //{0, -1},
+          //{0, 0},
+          //{1, 0}
+          //}),
+      //win("g", {
+          //{-1, 0},
+          //{0, -1},
+          //{0, 1},
+          //{1, 0}
+          //})});
 
-  return dn;
-}
+  //return dn;
+//}
 
 prog halide_harris() {
   prog prg;
@@ -6340,7 +6340,6 @@ void halide_frontend_test() {
 }
 
 void tricky_shift_register_reconvergence_test() {
-  //App sobel = tricky_reconvergence("A");
   App sobel;
   sobel.func2d("C_oc");
   sobel.func2d("C", v("C_oc"));
@@ -7829,11 +7828,16 @@ void gaussian_pyramid_app_test(const std::string& prefix) {
   options.unroll_factors_as_pad = true;
   gp.realize_naive(options, name, size, size);
 
+  cout << "Running naive " << name << endl;
   std::vector<std::string> naive =
     run_regression_tb(name + "_naive");
+
+  cout << "Running optimized " << name << endl;
   std::vector<std::string> optimized =
     run_regression_tb(name + "_opt");
   assert(naive == optimized);
+
+  //assert(false);
 
   vector<int> unroll_factors{1, 2, 4, 8, 16, 32};
   for (auto factor : unroll_factors) {
@@ -9909,11 +9913,17 @@ void cyclic_banked_conv_test() {
 }
 
 void application_tests() {
+  sum_denoise_test();
+  sum_diffs_test();
+  denoise2d_test();
+  denoise2d_test();
+
+  mini_conv_halide_test();
   gaussian_pyramid_app_test("gp64x64");
+  reduce_1d_test();
   halide_conv_layer_3D_test();
   cyclic_banked_conv_test();
   //register_file_optimization_test();
-  mini_conv_halide_test();
   halide_cascade_test();
   halide_frontend_test();
   conv_3_3_halide_test();
@@ -9923,9 +9933,7 @@ void application_tests() {
   reduce_rows_test();
   ram_addr_unit_test();
   reduce_2d_test();
-  reduce_1d_test();
   grayscale_conversion_test();
-  sum_diffs_test();
   //print_test();
   //manual_unroll_test();
 
@@ -9937,7 +9945,6 @@ void application_tests() {
   halide_dnn_test();
   //conv_1d_bc_test();
 
-  denoise2d_test();
 
   conv_1d_test();
 
@@ -9947,8 +9954,6 @@ void application_tests() {
   jacobi2d_app_test();
 
   upsample2d_test();
-
-  denoise2d_test();
 
   downsample2d_test();
   up_stencil_down_test();
@@ -9975,7 +9980,6 @@ void application_tests() {
   one_input_mag_test();
 
   sum_float_test();
-  sum_denoise_test();
 
   sobel_mag_y_test();
   sobel_app_test();

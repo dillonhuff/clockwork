@@ -750,19 +750,40 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     // corresponding write operation that produces the data being
     // read.
     umap* reads_to_sources = buf.get_lexmax_events(outpt);
+    out << tab(1) << "// Get lexmax events: " << str(reads_to_sources) << endl;
     cout << "reads to source for " << outpt << ": " << str(reads_to_sources) << endl;
     uset* producers_for_outpt = range(reads_to_sources);
 
+    auto read_map = buf.access_map.at(outpt);
     for (auto inpt : possible_ports) {
+      auto write_map = buf.access_map.at(inpt);
+      auto data_written = range(write_map);
+
+      auto common_write_ops =
+        domain(its_range(read_map, data_written));
+
       auto write_ops =
         domain(buf.access_map.at(inpt));
-      auto read_ops =
-        domain(buf.access_map.at(outpt));
-      auto overlap = its(write_ops, producers_for_outpt);
+      auto op_overlap = domain(its_range(reads_to_sources, write_ops));
 
+      auto overlap = its(op_overlap, common_write_ops);
+
+      out << tab(2) << "// Op overlap with " << inpt << ": " << str(op_overlap) << endl;
+      out << tab(2) << "// Common write op with " << inpt << ": " << str(common_write_ops) << endl;
+      out << tab(2) << "// Overlap with " << inpt << ": " << str(overlap) << endl;
       if (!empty(overlap)) {
+        //assert(false);
+        auto read_ops =
+          domain(buf.access_map.at(outpt));
+
+        //auto unoptimized_select_condition =
+          //domain(its_range(reads_to_sources, overlap));
+        //auto readers_that_use_this_port =
+          //gist(unoptimized_select_condition, read_ops);
+          //gist(domain(its_range(reads_to_sources, overlap)), read_ops);
+        //out << tab(2) << "// Reads from " << inpt << ": " << str(unoptimized_select_condition) << endl;
         auto readers_that_use_this_port =
-          gist(domain(its_range(reads_to_sources, overlap)), read_ops);
+          gist(overlap, read_ops);
         in_ports_to_conditions[inpt] =
           codegen_c(readers_that_use_this_port);
       } else {
@@ -1041,6 +1062,84 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     //cout << "Done" << outpt << endl;
     assert(lex_max_events != nullptr);
     return lex_max_events;
+
+    //umap* writes = isl_union_map_read_from_str(ctx, "{}");
+
+    //cout << "Buffer = " << name << endl;
+    //assert(get_in_ports().size() > 0);
+    //for (auto inpt : get_in_ports()) {
+      //writes = unn(writes, access_map.at(inpt));
+
+      ////auto beforeAcc = lex_gt(schedule.at(outpt), schedule.at(inpt));
+      ////if (src_map == nullptr) {
+        ////auto outmap = access_map.at(outpt);
+        ////auto inmap = access_map.at(inpt);
+        ////src_map =
+          ////its(dot(outmap,
+                ////inv(inmap)), beforeAcc);
+      ////} else {
+        ////src_map =
+          ////unn(src_map, ((its(dot(access_map.at(outpt), inv(access_map.at(inpt))), beforeAcc))));
+      ////}
+    //}
+
+    ////auto reads = access_map.at(outpt);
+    ////auto sched = global_schedule();
+    ////auto before = lex_lt(sched, sched);
+
+    ////auto raw = its(before, dot(writes, inv(reads)));
+
+    ////return lexmax(inv(raw));
+
+    ////assert(src_map != nullptr);
+
+    //////cout << "src map done: " << str(src_map) << endl;
+
+    ////src_map = its(src_map, after);
+    ////src_map = lexmax(src_map);
+
+    ////auto time_to_event = inv(sched);
+
+    ////auto lex_max_events =
+      ////dot(lexmax(dot(src_map, sched)), time_to_event);
+
+    //////cout << "Done" << outpt << endl;
+    ////assert(lex_max_events != nullptr);
+    ////return lex_max_events;
+
+    ////umap* src_map = nullptr;
+    ////cout << "Buffer = " << name << endl;
+    ////assert(get_in_ports().size() > 0);
+    ////for (auto inpt : get_in_ports()) {
+      ////auto beforeAcc = lex_gt(schedule.at(outpt), schedule.at(inpt));
+      ////if (src_map == nullptr) {
+        ////auto outmap = access_map.at(outpt);
+        ////auto inmap = access_map.at(inpt);
+        ////src_map =
+          ////its(dot(outmap,
+                ////inv(inmap)), beforeAcc);
+      ////} else {
+        ////src_map =
+          ////unn(src_map, ((its(dot(access_map.at(outpt), inv(access_map.at(inpt))), beforeAcc))));
+      ////}
+    ////}
+    ////assert(src_map != nullptr);
+
+    //////cout << "src map done: " << str(src_map) << endl;
+    ////auto sched = global_schedule();
+    ////auto after = lex_gt(sched, sched);
+
+    ////src_map = its(src_map, after);
+    ////src_map = lexmax(src_map);
+
+    ////auto time_to_event = inv(sched);
+
+    ////auto lex_max_events =
+      ////dot(lexmax(dot(src_map, sched)), time_to_event);
+
+    //////cout << "Done" << outpt << endl;
+    ////assert(lex_max_events != nullptr);
+    ////return lex_max_events;
   }
 
   umap* UBuffer::get_lexmax_events(const std::string& inpt, const std::string& outpt) {
@@ -1297,9 +1396,15 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       }
       merged.read_delays = sort_unique(merged.read_delays);
 
+      cout << "# of banks = " << get_banks().size() << endl;
       for (auto to_replace : mergeable) {
         replace_bank(to_replace, merged);
       }
+      cout << "# of banks after merge = " << get_banks().size() << endl;
+      for (auto to_replace : mergeable) {
+        assert(!has_bank(to_replace.name));
+      }
+      //assert(false);
     }
     else {
       //Add a condition to the merged offset
@@ -1394,18 +1499,22 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
             ::domain(access_map.at(inpt));
           auto read_ops =
             ::domain(access_map.at(outpt));
-          auto overlap = its(write_ops, producers_for_outpt);
-          //auto overlap =
-            //its(range(access_map.at(inpt)), range(access_map.at(outpt)));
+          auto ops_overlap = its(write_ops, producers_for_outpt);
+          auto overlap =
+            its(range(access_map.at(inpt)), range(access_map.at(outpt)));
 
-          if (!empty(overlap)) {
+          if (!empty(ops_overlap) && !empty(overlap)) {
             stack_bank bank = compute_bank_info(inpt, outpt);
             add_bank_between(inpt, outpt, bank);
           }
         }
       }
 
+      //assert(get_banks().size() == get_out_ports().size()*get_in_ports().size());
+
     }
+
+    cout << "After naive banking there are " << get_banks().size() << " banks in " << name << endl;
 
     for (auto inpt : get_in_ports()) {
       // try to turn the banks for this inpt into one big linebuffer
@@ -1427,9 +1536,9 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
       }
 
-      if (mergeable.size() > 0) {
+      if (mergeable.size() > 1) {
         merge_bank(options, inpt, mergeable);
-        auto banks = get_banks();
+        //auto banks = get_banks();
         //cout << "finished create bank!" << endl;
         //for (bank bk : banks) {
         //cout << bk.name << " has delays: ";//<< bk.read_delays << endl;

@@ -624,8 +624,8 @@ class UBuffer {
     std::map<string, vector<string> > port_bundles;
 
     std::vector<bank> bank_list;
-    map<string, vector<string> > banks_to_inputs;
-    map<string, vector<string> > banks_to_outputs;
+    map<string, std::set<string> > banks_to_inputs;
+    map<string, std::set<string> > banks_to_outputs;
     //map<pair<string, string>, bank > stack_banks;
 
     map<string, selector> selectors;
@@ -999,11 +999,11 @@ class UBuffer {
       }
 
       for (auto in : get_bank_inputs(target.name)) {
-        banks_to_inputs[replacement.name].push_back(in);
+        banks_to_inputs[replacement.name].insert(in);
       }
 
       for (auto out : get_bank_outputs(target.name)) {
-        banks_to_outputs[replacement.name].push_back(out);
+        banks_to_outputs[replacement.name].insert(out);
       }
 
       remove_bank(target);
@@ -1085,8 +1085,8 @@ class UBuffer {
       if (!has_bank(bank.name)) {
         bank_list.push_back(bank);
       }
-      banks_to_inputs[bank.name].push_back(inpt);
-      banks_to_outputs[bank.name].push_back(outpt);
+      banks_to_inputs[bank.name].insert(inpt);
+      banks_to_outputs[bank.name].insert(outpt);
 
       assert(get_bank_outputs(bank.name).size() >= 0);
       assert(get_bank_inputs(bank.name).size() >= 0);
