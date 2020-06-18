@@ -7810,6 +7810,7 @@ void ef_cartoon_test(const std::string& out_name) {
 
 
 void gaussian_pyramid_app_test(const std::string& prefix) {
+  cout << "Starting gaussian pyramid test" << endl;
   string name = "gp";
   App gp = gaussian_pyramid_app(name, 3);
   int size = 64;
@@ -9292,7 +9293,6 @@ void iccad_tests() {
   //ef_cartoon_test("ef_cartoon_gauss");
   //assert(false);
 
-  gaussian_pyramid_app_test("gp64x64");
 
   max_pooling_test("mp25");
   exposure_fusion();
@@ -9861,7 +9861,7 @@ void halide_conv_layer_3D_test() {
   generate_optimized_code(options, prg);
   //assert(false);
   //regression_test(prg);
-  assert(false);
+  //assert(false);
 }
 
 void load_buffer(const std::string& dest, const std::string& src, const vector<int>& ranges, prog& prg) {
@@ -9909,6 +9909,7 @@ void cyclic_banked_conv_test() {
 }
 
 void application_tests() {
+  gaussian_pyramid_app_test("gp64x64");
   halide_conv_layer_3D_test();
   cyclic_banked_conv_test();
   //register_file_optimization_test();
