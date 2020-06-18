@@ -9931,11 +9931,26 @@ void cyclic_banked_conv_test() {
 
       cout << "slot func = " << str(slot_func) << endl;
 
+      // build (v0, v1) slot(v0) = slot(v1)
       auto dloc = its(to_umap(slot_func), all_data);
       cout << "store slots = " << str(dloc) << endl;
 
       auto stored_to_same_slot = dot(dloc, inv(dloc));
       cout << "stored to same slot = " << str(stored_to_same_slot) << endl;
+
+      auto in_id = isl_union_set_identity(cpy(all_data));
+      cout << "in id = " << str(in_id) << endl;
+
+      // build (v0, v1) live_range(v0) and live_range(v1) overlap
+      auto read_times = dot(inv(op_reads), sched);
+      auto write_times = dot(inv(op_writes), sched);
+      cout << "read times  = " << str(read_times) << endl;
+      cout << "write times = " << str(write_times) << endl;
+
+      isl_set* sched_range = to_set(range(sched));
+      auto time_le = isl_map_lex_le(get_space(sched_range));
+
+      cout << "le times    = " << str(time_le) << endl;
 
       // Goal: Compute smallest folding
       // factor possible.

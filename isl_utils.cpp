@@ -293,6 +293,12 @@ isl_map* add_range_suffix(isl_map* const m, string suffix) {
     return isl_map_set_tuple_name(m, isl_dim_out, new_name.c_str());
 }
 
+isl_set* to_set(isl_union_set* const m) {
+  auto ss = get_sets(m);
+  assert(ss.size() == 1);
+  return ss.at(0);
+}
+
 isl_set* to_set(isl_basic_set* const m) {
   return isl_set_from_basic_set(cpy(m));
 }

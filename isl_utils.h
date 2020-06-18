@@ -143,6 +143,7 @@ isl_map* add_range_suffix(isl_map* const m, string suffix);
 
 isl_union_set* to_uset(isl_set* const m);
 isl_set* to_set(isl_basic_set* const m);
+isl_set* to_set(isl_union_set* const m);
 
 vector<isl_point*> get_points(isl_set* m);
 
