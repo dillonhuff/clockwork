@@ -1,5 +1,9 @@
 #include "app.h"
 
+std::string ii_var(const string& n, const int d) {
+  return "ii_" + n + "_pdim" + str(d);
+}
+
 std::string lv(const string& n, const int d) {
   return "pad_dim_permute_" + n + "_pdim" + str(d);
 }
@@ -54,6 +58,10 @@ struct ilp_builder {
 
   void add_eq(const std::string& a, const std::string& b) {
     add_eq({{a, one(ctx)}, {b, negone(ctx)}}, zero(ctx));
+  }
+
+  void add_gt(const std::string& a, const int b) {
+    add_geq({{a, one(ctx)}}, isl_val_int_from_si(ctx, -(b + 1)));
   }
 
   void add_gt(const std::string& a, const std::string& b) {
@@ -1274,32 +1282,55 @@ hardware_schedule(
   auto padded_validity = pad_map(validity);
   auto padded_proximity = pad_map(proximity);
 
-  //auto sw_schedules =
-    //clockwork_schedule(padded_domain, padded_validity, padded_proximity);
-
   map<string, isl_aff*> hw_schedules;
   auto ct = ctx(padded_domain);
 
-
+  // Dummy latencies
+  map<string, int> latencies;
   for (auto f : get_sets(padded_domain)) {
+    latencies[name(f)] = 1;
+  }
+
+  ilp_builder modulo_schedule(ct);
+
+  vector<pair<string, isl_val*> > obj;
+  for (auto f : get_sets(padded_domain)) {
+    string n = name(f);
     int dim = num_dims(f);
 
     isl_aff* s = aff_on_domain(get_local_space(f), zero(ct));
     isl_aff* cycle_delay = aff_on_domain(get_local_space(f), one(ct));
-    //vector<isl_aff*> sw_exprs =
-      //map_find(name(f), sw_schedules);
 
     for (int i = 0; i < dim; i++) {
-      s = set_coeff(s, i, one(ct));
+
+      cout << "adding var " << ii_var(n, i) << endl;
+
+      modulo_schedule.add_gt(ii_var(n, i), (int) 0);
+
+      if (i > 0) {
+        // TODO: Add product of domain at dimension i - 1
+        modulo_schedule.add_gt(ii_var(n, i), ii_var(n, i - 1));
+      }
+
+      obj.push_back({ii_var(n, i), one(ct)});
     }
 
-    hw_schedules[startvar(name(f))] = s;
-      //aff_on_domain(get_local_space(f), one(ct));
-    hw_schedules[endvar(name(f))] =
-      add(s, cycle_delay);
-      //aff_on_domain(get_local_space(f), one(ct));
   }
 
+  modulo_schedule.minimize(simplify(obj));
+
+  for (auto f : get_sets(padded_domain)) {
+    int dim = num_dims(f);
+    string n = name(f);
+
+    isl_aff* s = aff_on_domain(get_local_space(f), zero(ct));
+    isl_aff* cycle_delay = aff_on_domain(get_local_space(f), one(ct));
+
+    for (int i = 0; i < dim; i++) {
+      s = set_coeff(s, i, modulo_schedule.value(ii_var(n, i)));
+    }
+    hw_schedules[name(f)] = s;
+  }
   return hw_schedules;
 }
 
