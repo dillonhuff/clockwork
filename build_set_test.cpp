@@ -9927,7 +9927,8 @@ void cyclic_banked_conv_test() {
 
       isl_map* slot_func =
         isl_map_read_from_str(prg.ctx,
-            "{in[x, y] -> M[(x + 10*y) % 30]}");
+            "{in[x, y] -> M[x, y % 4]}");
+      //(x + 10*y) % 15]}");
 
       cout << "slot func = " << str(slot_func) << endl;
 
@@ -9951,6 +9952,23 @@ void cyclic_banked_conv_test() {
       auto time_le = isl_map_lex_le(get_space(sched_range));
 
       cout << "le times    = " << str(time_le) << endl;
+      auto after_first_write = dot(write_times, time_le);
+      cout << "after first write: " << str(after_first_write) << endl;
+
+      auto time_ge = isl_map_lex_ge(get_space(sched_range));
+      auto before_last_read = dot(read_times, time_ge);
+
+      cout << "before last read: " << str(before_last_read) << endl;
+
+      auto live_range = (coalesce(its(after_first_write, before_last_read)));
+      cout << "live range = " << str(live_range) << endl;
+
+      auto overlapping_ranges = dot(live_range, inv(live_range));
+      cout << "overlapping = " << str(overlapping_ranges) << endl;
+
+      auto violated = coalesce(diff(its(overlapping_ranges, stored_to_same_slot), in_id));
+      cout << "violated    = " << str(violated) << endl;
+      cout << " # violated = " << str(card(domain(violated))) << endl;
 
       // Goal: Compute smallest folding
       // factor possible.

@@ -1186,8 +1186,16 @@ isl_set* unn(isl_set* const m0, isl_set* const m1) {
   return isl_set_union(cpy(m0), cpy(m1));
 }
 
+isl_union_set* diff(isl_union_set* const m0, isl_union_set* const m1) {
+  return isl_union_set_subtract(cpy(m0), cpy(m1));
+}
+
 isl_union_set* unn(isl_union_set* const m0, isl_union_set* const m1) {
   return isl_union_set_union(cpy(m0), cpy(m1));
+}
+
+isl_union_map* diff(isl_union_map* const m0, isl_union_map* const m1) {
+  return isl_union_map_subtract(cpy(m0), cpy(m1));
 }
 
 isl_union_map* unn(isl_union_map* const m0, isl_union_map* const m1) {
