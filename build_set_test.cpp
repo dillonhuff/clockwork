@@ -9913,6 +9913,8 @@ void cyclic_banked_conv_test() {
 }
 
 void application_tests() {
+  halide_conv_layer_3D_test();
+  assert(false);
   sum_denoise_test();
   sum_diffs_test();
   denoise2d_test();
@@ -9921,7 +9923,6 @@ void application_tests() {
   mini_conv_halide_test();
   gaussian_pyramid_app_test("gp64x64");
   reduce_1d_test();
-  halide_conv_layer_3D_test();
   cyclic_banked_conv_test();
   //register_file_optimization_test();
   halide_cascade_test();

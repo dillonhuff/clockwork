@@ -785,7 +785,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         auto readers_that_use_this_port =
           gist(overlap, read_ops);
         in_ports_to_conditions[inpt] =
-          codegen_c(readers_that_use_this_port);
+          codegen_c(simplify(readers_that_use_this_port));
       } else {
         in_ports_to_conditions[inpt] = "false";
       }
