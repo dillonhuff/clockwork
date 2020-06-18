@@ -1006,8 +1006,9 @@ class UBuffer {
         banks_to_outputs[replacement.name].push_back(out);
       }
 
-      banks_to_inputs[target.name] = {};
-      banks_to_outputs[target.name] = {};
+      remove_bank(target);
+      //banks_to_inputs[target.name] = {};
+      //banks_to_outputs[target.name] = {};
 
       //for (auto bnk : stack_banks) {
         //if (bnk.second.name == target.name) {
@@ -1015,6 +1016,27 @@ class UBuffer {
           //break;
         //}
       //}
+    }
+
+    void remove_bank(const bank& to_remove) {
+      vector<bank> replace;
+      for (auto bnk : get_banks()) {
+        if (bnk.name == to_remove.name) {
+          banks_to_inputs.erase(bnk.name);
+          banks_to_outputs.erase(bnk.name);
+        } else {
+          replace.push_back(bnk);
+        }
+      }
+      bank_list = replace;
+
+      //map<pair<string, string>, bank> replace;
+      //for (auto bnk : stack_banks) {
+        //if (bnk.first.second != pt_name) {
+          //replace.insert(bnk);
+        //}
+      //}
+      //stack_banks = replace;
     }
 
     void remove_bank(string pt_name) {
