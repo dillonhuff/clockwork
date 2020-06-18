@@ -181,6 +181,10 @@ bool empty(uset* const s) {
   return isl_union_set_is_empty(s);
 }
 
+bool empty(umap* const s) {
+  return isl_union_map_is_empty(s);
+}
+
 int num_out_dims(isl_space* const s) {
   assert(isl_space_is_map(s));
   int ndims = isl_space_dim(s, isl_dim_out);
