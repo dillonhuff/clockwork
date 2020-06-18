@@ -1274,20 +1274,23 @@ hardware_schedule(
   auto padded_validity = pad_map(validity);
   auto padded_proximity = pad_map(proximity);
 
-  auto sw_schedules =
-    clockwork_schedule(padded_domain, padded_validity, padded_proximity);
+  //auto sw_schedules =
+    //clockwork_schedule(padded_domain, padded_validity, padded_proximity);
 
   map<string, isl_aff*> hw_schedules;
   auto ct = ctx(padded_domain);
 
+
   for (auto f : get_sets(padded_domain)) {
+    int dim = num_dims(f);
+
     isl_aff* s = aff_on_domain(get_local_space(f), zero(ct));
     isl_aff* cycle_delay = aff_on_domain(get_local_space(f), one(ct));
-    vector<isl_aff*> sw_exprs =
-      map_find(name(f), sw_schedules);
+    //vector<isl_aff*> sw_exprs =
+      //map_find(name(f), sw_schedules);
 
-    for (int i = 0; i < sw_exprs.size(); i++) {
-      s = set_coeff(s, i, coeff(sw_exprs.at(i), 0));
+    for (int i = 0; i < dim; i++) {
+      s = set_coeff(s, i, one(ct));
     }
 
     hw_schedules[startvar(name(f))] = s;
