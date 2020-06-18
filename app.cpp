@@ -1,5 +1,9 @@
 #include "app.h"
 
+std::string hw_delay_var(const string& n) {
+  return "hw_delay_" + n;
+}
+
 std::string ii_var(const string& n, const int d) {
   return "ii_" + n + "_pdim" + str(d);
 }
@@ -60,8 +64,16 @@ struct ilp_builder {
     add_eq({{a, one(ctx)}, {b, negone(ctx)}}, zero(ctx));
   }
 
+  void add_geq(const std::string& a, const int b) {
+    add_geq({{a, one(ctx)}}, isl_val_int_from_si(ctx, -(b)));
+  }
+
   void add_gt(const std::string& a, const int b) {
     add_geq({{a, one(ctx)}}, isl_val_int_from_si(ctx, -(b + 1)));
+  }
+
+  void add_gt(const std::string& a, isl_val* b_coeff, const std::string& b) {
+    add_geq({{a, one(ctx)}, {b, mul(b_coeff, negone(ctx))}}, negone(ctx));
   }
 
   void add_gt(const std::string& a, const std::string& b) {
@@ -1282,7 +1294,6 @@ hardware_schedule(
   auto padded_validity = pad_map(validity);
   auto padded_proximity = pad_map(proximity);
 
-  map<string, isl_aff*> hw_schedules;
   auto ct = ctx(padded_domain);
 
   // Dummy latencies
@@ -1301,15 +1312,20 @@ hardware_schedule(
     isl_aff* s = aff_on_domain(get_local_space(f), zero(ct));
     isl_aff* cycle_delay = aff_on_domain(get_local_space(f), one(ct));
 
+    modulo_schedule.add_geq(hw_delay_var(n), (int) 0);
+
     for (int i = 0; i < dim; i++) {
 
       cout << "adding var " << ii_var(n, i) << endl;
 
       modulo_schedule.add_gt(ii_var(n, i), (int) 0);
 
-      if (i > 0) {
+      if (i < dim - 1) {
         // TODO: Add product of domain at dimension i - 1
-        modulo_schedule.add_gt(ii_var(n, i), ii_var(n, i - 1));
+        auto dp = project_all_but(f, i);
+        auto tc =
+          add(sub(lexmaxval(dp), lexminval(dp)), one(ct));
+        modulo_schedule.add_gt(ii_var(n, i), tc, ii_var(n, i + 1));
       }
 
       obj.push_back({ii_var(n, i), one(ct)});
@@ -1319,6 +1335,7 @@ hardware_schedule(
 
   modulo_schedule.minimize(simplify(obj));
 
+  map<string, isl_aff*> hw_schedules;
   for (auto f : get_sets(padded_domain)) {
     int dim = num_dims(f);
     string n = name(f);
@@ -1329,6 +1346,9 @@ hardware_schedule(
     for (int i = 0; i < dim; i++) {
       s = set_coeff(s, i, modulo_schedule.value(ii_var(n, i)));
     }
+
+    s = set_const_coeff(s, modulo_schedule.value(hw_delay_var(n)));
+
     hw_schedules[name(f)] = s;
   }
   return hw_schedules;
