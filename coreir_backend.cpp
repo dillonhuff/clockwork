@@ -2,6 +2,9 @@
 
 #ifdef COREIR
 
+std::string pg(const std::string& buf, const std::string& bundle) {
+  return buf + "_" + bundle;
+}
 
 CoreIR::Wireable* andVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::Wireable* b) {
   //auto c = def->getContext();
@@ -25,9 +28,6 @@ CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wire
   assert(vals.size() > 0);
   auto context = def->getContext();
   CoreIR::Wireable* val = nullptr;
-  if (vals.size() == 0) {
-    return def->addInstance("add_all_" + def->getContext()->getUnique(), "coreir.const", {{"value", COREMK(def->getContext(), BitVec(16, 0))}}, {{"width", COREMK(context, 16)}})->sel("out");
-  }
 
   if (vals.size() == 1) {
     return vals[0];
@@ -82,11 +82,11 @@ void generate_coreir(CodegenOptions& options,
       out_buf.lanes_in_bundle(out_bundle);
 
     if (prg.is_input(out_rep)) {
-      ub_field.push_back(make_pair(out_bundle + "_valid", context->BitIn()));
-      ub_field.push_back(make_pair(out_bundle, context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
+      ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_valid", context->BitIn()));
+      ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
     } else {
-      ub_field.push_back(make_pair(out_bundle + "_en", context->Bit()));
-      ub_field.push_back(make_pair(out_bundle, context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
+      ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_en", context->Bit()));
+      ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
     }
   }
 
@@ -113,8 +113,8 @@ void generate_coreir(CodegenOptions& options,
         cout << tab(1) << bndl.first << endl;
       }
       assert(buf.is_output_bundle(bundle.second));
-      ub_field.push_back(make_pair(bundle_name + "_en", context->BitIn()));
-      ub_field.push_back(make_pair(bundle_name, context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
+      ub_field.push_back(make_pair(buf_name + "_" + bundle_name + "_en", context->BitIn()));
+      ub_field.push_back(make_pair(buf_name + "_" + bundle_name, context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
     }
 
     for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
@@ -127,8 +127,8 @@ void generate_coreir(CodegenOptions& options,
           buf.lanes_in_bundle(bundle_name);
 
       assert(buf.is_input_bundle(bundle.second));
-      ub_field.push_back(make_pair(bundle_name + "_valid", context->Bit()));
-      ub_field.push_back(make_pair(bundle_name, context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
+      ub_field.push_back(make_pair(buf_name + "_" + bundle_name + "_valid", context->Bit()));
+      ub_field.push_back(make_pair(buf_name + "_" + bundle_name, context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
     }
 
     CoreIR::RecordType* utp = context->Record(ub_field);
@@ -139,32 +139,45 @@ void generate_coreir(CodegenOptions& options,
       // Generate dummy compute logic
       vector<CoreIR::Wireable*> inputs;
       for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+        cout << "Incoming bundle " << bundle.first << "." << bundle.second << endl;
         string buf_name = bundle.first;
         string bundle_name = bundle.second;
         auto buf = map_find(buf_name, buffers);
         //int pix_width = buf.port_widths;
         int nlanes = buf.lanes_in_bundle(bundle_name);
+        cout << "nlanes = " << nlanes << endl;
         //int bundle_width = buf.port_bundle_width(bundle_name);
         CoreIR::Wireable* bsel =
-          def->sel("self." + bundle_name);
+          def->sel("self." + buf_name + "_" + bundle_name);
         for (int l = 0; l < nlanes; l++) {
+          cout << "adding bsel" << endl;
           inputs.push_back(bsel->sel(l));
+          cout << "inputs size = " << inputs.size() << endl;
         }
       }
-      auto result = addList(def, inputs);
+      cout << "# inputs to " << op->name << " = " << inputs.size() << endl;
+      CoreIR::Wireable* result = nullptr;
+      if (inputs.size() == 0) {
+        result = def->addInstance("add_all_" + def->getContext()->getUnique(), "coreir.const",
+            {{"width", COREMK(context, 16)}},
+            {{"value", COREMK(def->getContext(), BitVec(16, 0))}})->sel("out");
+      } else { 
+        result = addList(def, inputs);
+      }
+      assert(result != nullptr);
 
       for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
-        def->connect(result, def->sel("self")->sel(bundle.second)->sel(0));
+        def->connect(result, def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
       }
 
       vector<CoreIR::Wireable*> vals;
       for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
-        vals.push_back(def->sel("self." + bundle.second + "_en"));
+        vals.push_back(def->sel("self." + pg(bundle.first, bundle.second) + "_en"));
       }
       auto valid = andList(def, vals);
 
       for (auto bundle : outgoing_bundles(op, buffers, prg)) {
-        def->connect(valid, def->sel("self." + bundle.second + "_valid"));
+        def->connect(valid, def->sel("self." + pg(bundle.first, bundle.second) + "_valid"));
       }
       compute_unit->setDef(def);
     }
@@ -190,11 +203,11 @@ void generate_coreir(CodegenOptions& options,
       assert(buf.is_input_bundle(bundle.second));
 
       if (prg.is_output(buf_name)) {
-        def->connect("self." + bundle_name, op->name + "." + bundle_name);
-        def->connect("self." + bundle_name + "_en", op->name + "." + bundle_name + "_valid");
+        def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
+        def->connect("self." + pg(buf_name, bundle_name) + "_en", op->name + "." + pg(buf_name, bundle_name) + "_valid");
       } else {
-        def->connect(buf_name + "." + bundle_name, op->name + "." + bundle_name);
-        def->connect(buf_name + "." + bundle_name + "_en", op->name + "." + bundle_name + "_valid");
+        def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
+        def->connect(buf_name + "." + bundle_name + "_en", op->name + "." + pg(buf_name, bundle_name) + "_valid");
       }
     }
 
@@ -206,11 +219,11 @@ void generate_coreir(CodegenOptions& options,
       assert(buf.is_output_bundle(bundle.second));
 
       if (prg.is_input(buf_name)) {
-        def->connect("self." + bundle_name, op->name + "." + bundle_name);
-        def->connect("self." + bundle_name + "_valid", op->name + "." + bundle_name + "_en");
+        def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
+        def->connect("self." + pg(buf_name, bundle_name) + "_valid", op->name + "." + pg(buf_name, bundle_name) + "_en");
       } else {
-        def->connect(buf_name + "." + bundle_name, op->name + "." + bundle_name);
-        def->connect(buf_name + "." + bundle_name + "_valid", op->name + "." + bundle_name + "_en");
+        def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
+        def->connect(buf_name + "." + bundle_name + "_valid", op->name + "." + pg(buf_name, bundle_name) + "_en");
       }
     }
   }
