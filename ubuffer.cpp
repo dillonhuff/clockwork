@@ -1514,37 +1514,40 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     }
 
-    cout << "After naive banking there are " << get_banks().size() << " banks in " << name << endl;
-    auto sched = global_schedule();
-    auto write_ops = producer_map();
-    auto read_ops = consumer_map();
+    //cout << "After naive banking there are " << get_banks().size() << " banks in " << name << endl;
+    //auto sched = global_schedule();
+    //auto write_ops = producer_map();
+    //auto read_ops = consumer_map();
 
-    for (auto b : get_banks()) {
-      cout << b.name << ": " << str(b.rddom) << endl;
-      cout << tab(1) << "max delay: " << b.maxdelay << endl;
-      umap* writes = cpy(write_ops);
-      cout << "writes = " << str(writes) << endl;
-      for (auto in_pt : get_bank_inputs(b.name)) {
-        cout << "in_pt = " << in_pt << endl;
-        writes = its(writes, access_map.at(in_pt));
-      }
-      umap* reads = cpy(read_ops);
-      cout << "reads = " << str(reads) << endl;
-      for (auto out_pt : get_bank_outputs(b.name)) {
-        cout << "out_pt = " << out_pt << ", " << str(access_map.at(out_pt)) << endl;
+    //for (auto b : get_banks()) {
+      //cout << b.name << ": " << str(b.rddom) << endl;
+      //cout << tab(1) << "max delay: " << b.maxdelay << endl;
+      //umap* writes = cpy(write_ops);
+      //cout << "writes = " << str(writes) << endl;
+      //for (auto in_pt : get_bank_inputs(b.name)) {
+        //cout << "in_pt = " << in_pt << endl;
+        //writes = its(writes, access_map.at(in_pt));
+      //}
+      //umap* reads = cpy(read_ops);
+      //cout << "reads = " << str(reads) << endl;
+      //for (auto out_pt : get_bank_outputs(b.name)) {
+        //cout << "out_pt = " << out_pt << ", " << str(access_map.at(out_pt)) << endl;
 
-        reads = its(reads, (access_map.at(out_pt)));
-      }
-      isl_map* slot_func =
-        isl_map_read_from_str(ctx,
-            ("{" + name + "[x, y, z] -> M[x % 1, y % 1, z % 1]}").c_str());
-      bool legal = inner_bank_offset_is_legal(slot_func,
-            writes,
-            reads,
-            sched);
-      assert(legal);
-    }
-    assert(name == "conv_stencil");
+        //reads = its(reads, (access_map.at(out_pt)));
+      //}
+      //isl_map* slot_func =
+        //isl_map_read_from_str(ctx,
+            //("{" + name + "[x, y, z] -> M[x % 1, y % 1, z % 1]}").c_str());
+      //bool legal = inner_bank_offset_is_legal(slot_func,
+            //writes,
+            //reads,
+            //sched);
+      //if (legal) {
+        //cout << "bank " << b.name << " can be converted into a register" << endl;
+      //}
+      ////assert(legal);
+    //}
+    //assert(name == "conv_stencil");
     //assert(false);
 
     for (auto inpt : get_in_ports()) {
@@ -2331,7 +2334,8 @@ bool inner_bank_offset_is_legal(isl_map* slot_func,
   auto after_first_write = dot(write_times, time_le);
   //cout << "after first write: " << str(after_first_write) << endl;
 
-  auto time_ge = isl_map_lex_ge(get_space(sched_range));
+  //auto time_ge = isl_map_lex_ge(get_space(sched_range));
+  auto time_ge = isl_map_lex_gt(get_space(sched_range));
   auto before_last_read = dot(read_times, time_ge);
 
   //cout << "before last read: " << str(before_last_read) << endl;

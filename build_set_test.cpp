@@ -9890,9 +9890,15 @@ void halide_conv_layer_3D_test() {
   options.inner_bank_offset_mode =
     INNER_BANK_OFFSET_LINEAR;
   options.all_rams = true;
-  generate_optimized_code(options, prg);
+  auto sched = prg.optimized_codegen();
+  auto buffers = build_buffers(prg, sched);
+
+#ifdef COREIR
+  generate_coreir(options, buffers, prg, sched);
+#endif
+  //generate_optimized_code(options, prg);
   //regression_test(prg);
-  assert(false);
+  //assert(false);
 }
 
 void load_buffer(const std::string& dest, const std::string& src, const vector<int>& ranges, prog& prg) {
@@ -9942,17 +9948,17 @@ void cyclic_banked_conv_test() {
 
       isl_map* bank_func =
         isl_map_read_from_str(prg.ctx,
-            "{in[x, y] -> B[x % 2]}");
+            "{in[x, y] -> B[x % 3]}");
       assert(banking_scheme_is_legal(bank_func, buf));
     }
   }
-  assert(false);
+  //assert(false);
 }
 
 void application_tests() {
   halide_conv_layer_3D_test();
   cyclic_banked_conv_test();
-  playground();
+  //playground();
   sum_denoise_test();
   sum_diffs_test();
   denoise2d_test();
