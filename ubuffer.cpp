@@ -5,6 +5,10 @@
 #endif
 #include "coreir_backend.h"
 
+std::string controller_name(const std::string& n) {
+  return n + "_port_controller";
+}
+
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
   umap* src_map = nullptr;
   for (auto inpt : buf.get_in_ports()) {
@@ -503,6 +507,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
   void generate_hls_style_coreir(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
     int width = buf.port_widths;
+
     auto c = def->getContext();
 
     auto ns = c->getNamespace("global");
@@ -515,11 +520,41 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       {{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, capacity)}});
     }
 
+    for (auto inpt : buf.get_out_ports()) {
+      vector<pair<string, CoreIR::Type*> >
+        ub_field{{"clk", c->Named("coreir.clkIn")},
+          {"reset", c->BitIn()},
+          {"addr", c->Bit()->Arr(16)},
+          {"valid", c->Bit()}};
+      string distrib = controller_name(inpt);
+      CoreIR::RecordType* utp = c->Record(ub_field);
+      auto bcm = ns->newModuleDecl(distrib, utp);
+      auto bdef = bcm->newModuleDef();
+      bcm->setDef(bdef);
+      def->addInstance(distrib, bcm);
+    }
+
     for (auto inpt : buf.get_in_ports()) {
       vector<pair<string, CoreIR::Type*> >
         ub_field{{"clk", c->Named("coreir.clkIn")},
           {"reset", c->BitIn()},
-          {"in", c->BitIn()->Arr(width)}};
+          {"addr", c->Bit()->Arr(16)},
+          {"valid", c->Bit()}};
+      string distrib = controller_name(inpt);
+      CoreIR::RecordType* utp = c->Record(ub_field);
+      auto bcm = ns->newModuleDecl(distrib, utp);
+      auto bdef = bcm->newModuleDef();
+      bcm->setDef(bdef);
+      def->addInstance(distrib, bcm);
+    }
+
+    for (auto inpt : buf.get_in_ports()) {
+      vector<pair<string, CoreIR::Type*> >
+        ub_field{{"clk", c->Named("coreir.clkIn")},
+          {"reset", c->BitIn()},
+          {"in", c->BitIn()->Arr(width)},
+          {"en", c->BitIn()},
+          {"valid", c->Bit()}};
       for (auto b : buf.get_banks()) {
         if (elem(inpt, buf.get_bank_inputs(b.name))) {
           ub_field.push_back({b.name, c->Bit()->Arr(width)});
@@ -540,9 +575,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       for (auto b : buf.get_banks()) {
         if (elem(inpt, buf.get_bank_inputs(b.name))) {
           def->connect(bc->sel(b.name), def->sel(b.name)->sel("wdata"));
+          def->connect(bc->sel("valid"), def->sel(b.name)->sel("wen"));
         }
       }
       def->connect(bc->sel("in"), def->sel("self")->sel(buf.container_bundle(inpt))->sel(buf.bundle_offset(inpt)));
+      def->connect(bc->sel("en"), def->sel(controller_name(inpt))->sel("valid"));
     }
 
     for (auto outpt : buf.get_out_ports()) {
