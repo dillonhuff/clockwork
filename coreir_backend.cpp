@@ -2,6 +2,10 @@
 
 #ifdef COREIR
 
+std::string cu_name(const std::string& n) {
+  return "cu_" + n;
+}
+
 std::string pg(const std::string& buf, const std::string& bundle) {
   return buf + "_" + bundle;
 }
@@ -65,6 +69,8 @@ void generate_coreir(CodegenOptions& options,
   CoreIR::Context* context = CoreIR::newContext();
   CoreIRLoadLibrary_commonlib(context);
   //CoreIRLoadLibrary_cwlib(context);
+
+  loadFromFile(context, "./coreir_compute/" + prg.name + ".json");
 
   auto ns = context->getNamespace("global");
   vector<pair<string, CoreIR::Type*> >
@@ -133,7 +139,7 @@ void generate_coreir(CodegenOptions& options,
 
     CoreIR::RecordType* utp = context->Record(ub_field);
     auto compute_unit =
-      ns->newModuleDecl(op->name, utp);
+      ns->newModuleDecl(cu_name(op->name), utp);
     {
       auto def = compute_unit->newModuleDef();
       // Generate dummy compute logic
