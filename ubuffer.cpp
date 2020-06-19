@@ -2324,7 +2324,8 @@ bool inner_bank_offset_is_legal(isl_map* slot_func,
   cout << "write times = " << str(write_times) << endl;
 
   isl_set* sched_range = to_set(range(sched));
-  auto time_le = isl_map_lex_le(get_space(sched_range));
+  //auto time_le = isl_map_lex_le(get_space(sched_range));
+  auto time_le = isl_map_lex_lt(get_space(sched_range));
 
   //cout << "le times    = " << str(time_le) << endl;
   auto after_first_write = dot(write_times, time_le);
