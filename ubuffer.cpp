@@ -537,6 +537,12 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         ub_field{{"clk", c->Named("coreir.clkIn")},
           {"reset", c->BitIn()},
           {"out", c->Bit()->Arr(width)}};
+      for (auto b : buf.get_banks()) {
+        if (elem(outpt, buf.get_bank_outputs(b.name))) {
+          ub_field.push_back({b.name, c->BitIn()->Arr(width)});
+        }
+      }
+
       string distrib = outpt + "_select";
       CoreIR::RecordType* utp = c->Record(ub_field);
       auto bc = ns->newModuleDecl(distrib, utp);
