@@ -529,6 +529,13 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       string distrib = inpt + "_broadcast";
       CoreIR::RecordType* utp = c->Record(ub_field);
       auto bcm = ns->newModuleDecl(distrib, utp);
+      auto bdef = bcm->newModuleDef();
+      for (auto b : buf.get_banks()) {
+        if (elem(inpt, buf.get_bank_inputs(b.name))) {
+          bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.in"));
+        }
+      }
+      bcm->setDef(bdef);
       auto bc = def->addInstance(inpt + "_broadcast", bcm);
     }
 
@@ -545,8 +552,17 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
       string distrib = outpt + "_select";
       CoreIR::RecordType* utp = c->Record(ub_field);
-      auto bc = ns->newModuleDecl(distrib, utp);
-      def->addInstance(outpt + "_select", bc);
+      auto bcm = ns->newModuleDecl(distrib, utp);
+      auto bdef = bcm->newModuleDef();
+      for (auto b : buf.get_banks()) {
+        if (elem(outpt, buf.get_bank_outputs(b.name))) {
+          // TODO: Add real selection logic
+          bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
+          break;
+        }
+      }
+      bcm->setDef(bdef);
+      def->addInstance(outpt + "_select", bcm);
     }
   }
 
