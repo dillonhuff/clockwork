@@ -5,6 +5,13 @@
 #endif
 #include "coreir_backend.h"
 
+std::string read_addrgen_name(const std::string& n) {
+  return n + "_read_addrgen";
+}
+
+std::string write_addrgen_name(const std::string& n) {
+  return n + "_write_addrgen";
+}
 std::string controller_name(const std::string& n) {
   return n + "_port_controller";
 }
@@ -514,10 +521,28 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     for (auto bank : buf.get_banks()) {
       int capacity = int_upper_bound(card(bank.rddom));
+      int addr_width = minihls::clog2(capacity);
       auto bnk = def->addInstance(
       bank.name,
       "coreir.mem",
       {{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, capacity)}});
+
+      {
+        vector<pair<string, CoreIR::Type*> >
+          ub_field{{"clk", c->Named("coreir.clkIn")},
+            {"reset", c->BitIn()},
+            {"addr", c->Bit()->Arr(addr_width)}};
+        string distrib = read_addrgen_name(bank.name);
+        CoreIR::RecordType* utp = c->Record(ub_field);
+        auto bcm = ns->newModuleDecl(distrib, utp);
+        auto bdef = bcm->newModuleDef();
+        bcm->setDef(bdef);
+        auto rdgen = def->addInstance(distrib, bcm);
+      }
+
+      {
+
+      }
     }
 
     for (auto inpt : buf.get_out_ports()) {
