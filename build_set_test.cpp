@@ -9899,7 +9899,7 @@ void halide_conv_layer_3D_test() {
   auto sched = prg.optimized_codegen();
   auto bufs = build_buffers(prg, sched);
   generate_coreir(options, bufs, prg, sched);
-  assert(false);
+  //assert(false);
 #endif
   //regression_test(prg);
   //assert(false);
@@ -10024,11 +10024,11 @@ void cyclic_banked_conv_test() {
 
       isl_map* bank_func =
         isl_map_read_from_str(prg.ctx,
-            "{in[x, y] -> B[x % 2]}");
+            "{in[x, y] -> B[x % 3]}");
       assert(banking_scheme_is_legal(bank_func, buf));
     }
   }
-  assert(false);
+  //assert(false);
 }
 
 void application_tests() {
@@ -10272,8 +10272,8 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
-    application_tests();
     memory_tile_tests();
+    application_tests();
     prog_splitting_tests();
     cout << "All tests passed" << endl;
 
