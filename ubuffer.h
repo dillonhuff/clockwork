@@ -667,6 +667,31 @@ class UBuffer {
         return false;
     }
 
+    int bundle_offset(const std::string& port) {
+      for (auto b : port_bundles) {
+        if (elem(port, b.second)) {
+          for (int i = 0; i < (int) b.second.size(); i++) {
+            if (b.second.at(i) == port) {
+              return i;
+            }
+          }
+        }
+      }
+
+      cout << "Error: No bundle for " << port << endl;
+      assert(false);
+    }
+
+    std::string container_bundle(const std::string& port) {
+      for (auto b : port_bundles) {
+        if (elem(port, b.second)) {
+          return b.first;
+        }
+      }
+      cout << "Error: No bundle for " << port << endl;
+      assert(false);
+    }
+
     bool is_wr(isl_point* pt) {
         for (auto it: port_bundles) {
             auto pt_name = pick(it.second);

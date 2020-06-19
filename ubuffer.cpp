@@ -537,6 +537,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       }
       bcm->setDef(bdef);
       auto bc = def->addInstance(inpt + "_broadcast", bcm);
+      def->connect(bc->sel("in"), def->sel("self")->sel(buf.container_bundle(inpt))->sel(buf.bundle_offset(inpt)));
     }
 
     for (auto outpt : buf.get_out_ports()) {
@@ -562,7 +563,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         }
       }
       bcm->setDef(bdef);
-      def->addInstance(outpt + "_select", bcm);
+      auto bc = def->addInstance(outpt + "_select", bcm);
+      def->connect(bc->sel("out"), def->sel("self")->sel(buf.container_bundle(outpt))->sel(buf.bundle_offset(outpt)));
     }
   }
 
