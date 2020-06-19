@@ -1442,6 +1442,13 @@ class UBuffer {
       return outpts;
     }
 
+    int num_out_ports() const {
+      return get_out_ports().size();
+    }
+
+    int num_in_ports() const {
+      return get_in_ports().size();
+    }
     vector<string> get_in_ports() const {
       vector<string> outpts;
       for (auto m : isIn) {

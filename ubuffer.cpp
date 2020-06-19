@@ -501,6 +501,49 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
   }
 
+  void generate_hls_style_coreir(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
+    int width = buf.port_widths;
+    auto c = def->getContext();
+
+    auto ns = c->getNamespace("global");
+
+    for (auto bank : buf.get_banks()) {
+      int capacity = int_upper_bound(card(bank.rddom));
+      auto bnk = def->addInstance(
+      bank.name,
+      "coreir.mem",
+      {{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, capacity)}});
+    }
+
+    for (auto inpt : buf.get_in_ports()) {
+      vector<pair<string, CoreIR::Type*> >
+        ub_field{{"clk", c->Named("coreir.clkIn")},
+          {"reset", c->BitIn()},
+          {"in", c->BitIn()->Arr(width)}};
+      for (auto b : buf.get_banks()) {
+        if (elem(inpt, buf.get_bank_inputs(b.name))) {
+          ub_field.push_back({b.name, c->Bit()->Arr(width)});
+        }
+      }
+
+      string distrib = inpt + "_broadcast";
+      CoreIR::RecordType* utp = c->Record(ub_field);
+      auto bcm = ns->newModuleDecl(distrib, utp);
+      auto bc = def->addInstance(inpt + "_broadcast", bcm);
+    }
+
+    for (auto outpt : buf.get_out_ports()) {
+      vector<pair<string, CoreIR::Type*> >
+        ub_field{{"clk", c->Named("coreir.clkIn")},
+          {"reset", c->BitIn()},
+          {"out", c->Bit()->Arr(width)}};
+      string distrib = outpt + "_select";
+      CoreIR::RecordType* utp = c->Record(ub_field);
+      auto bc = ns->newModuleDecl(distrib, utp);
+      def->addInstance(outpt + "_select", bc);
+    }
+  }
+
   //generate coreir instance for single ubuffer
   //return the coreir module with port bundle and enable/valid interface
   CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf) {
@@ -528,7 +571,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto ub = ns->newModuleDecl(buf.name + "_ub", utp);
     auto def = ub->newModuleDef();
 
-    buf.generate_coreir(options, def);
+    if (true) {
+      generate_hls_style_coreir(options, buf, def);
+    } else {
+      buf.generate_coreir(options, def);
+    }
 
     ub->setDef(def);
     //if(!saveToFile(ns, "ubuffer.json")) {

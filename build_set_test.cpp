@@ -9898,8 +9898,15 @@ void halide_conv_layer_3D_test() {
 
   auto sched = prg.optimized_codegen();
   auto bufs = build_buffers(prg, sched);
+  for (auto& b : bufs) {
+    if (b.second.num_in_ports() > 0 &&
+        b.second.num_out_ports() > 0) {
+      cout << b.second << endl;
+      b.second.generate_bank_and_merge(options);
+    }
+  }
   generate_coreir(options, bufs, prg, sched);
-  //assert(false);
+  assert(false);
 #endif
   //regression_test(prg);
   //assert(false);
@@ -10272,8 +10279,8 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
-    memory_tile_tests();
     application_tests();
+    memory_tile_tests();
     prog_splitting_tests();
     cout << "All tests passed" << endl;
 
