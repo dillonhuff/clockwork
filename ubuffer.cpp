@@ -564,6 +564,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       }
       bcm->setDef(bdef);
       auto bc = def->addInstance(outpt + "_select", bcm);
+      for (auto b : buf.get_banks()) {
+        if (elem(outpt, buf.get_bank_outputs(b.name))) {
+          def->connect(bc->sel(b.name), def->sel(b.name)->sel("rdata"));
+        }
+      }
       def->connect(bc->sel("out"), def->sel("self")->sel(buf.container_bundle(outpt))->sel(buf.bundle_offset(outpt)));
     }
   }
