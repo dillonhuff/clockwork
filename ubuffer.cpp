@@ -1523,23 +1523,29 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       cout << b.name << ": " << str(b.rddom) << endl;
       cout << tab(1) << "max delay: " << b.maxdelay << endl;
       umap* writes = cpy(write_ops);
+      cout << "writes = " << str(writes) << endl;
       for (auto in_pt : get_bank_inputs(b.name)) {
-        writes = its(writes, range(access_map.at(in_pt)));
+        cout << "in_pt = " << in_pt << endl;
+        writes = its(writes, access_map.at(in_pt));
       }
       umap* reads = cpy(read_ops);
+      cout << "reads = " << str(reads) << endl;
       for (auto out_pt : get_bank_outputs(b.name)) {
-        reads = its(reads, range(access_map.at(out_pt)));
+        cout << "out_pt = " << out_pt << ", " << str(access_map.at(out_pt)) << endl;
+
+        reads = its(reads, (access_map.at(out_pt)));
       }
       isl_map* slot_func =
         isl_map_read_from_str(ctx,
-            "{conv_stencil[x, y, z] -> M[x % 1, y % 1, z % 1]}");
+            ("{" + name + "[x, y, z] -> M[x % 1, y % 1, z % 1]}").c_str());
       bool legal = inner_bank_offset_is_legal(slot_func,
             writes,
             reads,
             sched);
       assert(legal);
     }
-    assert(false);
+    assert(name == "conv_stencil");
+    //assert(false);
 
     for (auto inpt : get_in_ports()) {
       // try to turn the banks for this inpt into one big linebuffer
@@ -2291,6 +2297,9 @@ bool inner_bank_offset_is_legal(isl_map* slot_func,
     umap* op_writes,
     umap* op_reads,
     umap* sched) {
+
+  cout << "write map: " << str(op_writes) << endl;
+  cout << "read  map: " << str(op_reads) << endl;
 
   auto written = range(op_writes);
   auto read = range(op_reads);
