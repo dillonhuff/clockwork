@@ -538,9 +538,21 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         auto bdef = bcm->newModuleDef();
         bcm->setDef(bdef);
         auto rdgen = def->addInstance(distrib, bcm);
+        def->connect(rdgen->sel("addr"), bnk->sel("raddr"));
       }
 
       {
+        vector<pair<string, CoreIR::Type*> >
+          ub_field{{"clk", c->Named("coreir.clkIn")},
+            {"reset", c->BitIn()},
+            {"addr", c->Bit()->Arr(addr_width)}};
+        string distrib = write_addrgen_name(bank.name);
+        CoreIR::RecordType* utp = c->Record(ub_field);
+        auto bcm = ns->newModuleDecl(distrib, utp);
+        auto bdef = bcm->newModuleDef();
+        bcm->setDef(bdef);
+        auto rdgen = def->addInstance(distrib, bcm);
+        def->connect(rdgen->sel("addr"), bnk->sel("waddr"));
 
       }
     }
