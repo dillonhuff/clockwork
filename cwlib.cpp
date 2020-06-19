@@ -28,7 +28,6 @@ Namespace* CoreIRLoadLibrary_cwlib(Context* c) {
             Json config = genargs.at("config")->get<Json>();
 
             RecordParams recordparams = {
-                {"flush", c->BitIn()},
                 {"reset", c->BitIn()}
             };
 

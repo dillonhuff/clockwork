@@ -434,6 +434,15 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   map<string, CoreIR::Wireable*> wire2out;
   map<string, CoreIR::Wireable*> pt2wire;
   map<string, CoreIR::Wireable*> reg_in;
+  //define the map save valid output using customized comparator
+  auto valid_out = std::map<string, CoreIR::Wireable*,
+       std::function<bool(const string&, const string&)>>{
+        [this](const string& l, const string& r) {
+            auto l_start = lexminpt(range(access_map.at(l)));
+            auto r_start = lexminpt(range(access_map.at(r)));
+            return lex_lt_pt(l_start, r_start);
+            }
+  };
 
   //TODO: possible bug, the sequence may not be correct
   for (auto b : get_in_bundles()) {
@@ -506,24 +515,35 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       CoreIR::Instance* buf;
       buf = def->addInstance(ub_ins_name, "cwlib.ub", args);
 
+      def->connect(buf->sel("reset"), def->sel("self.reset"));
+
       int inpt_cnt = 0, outpt_cnt = 0;
       for (auto inpt: inpts) {
         //TODO: datain may be an output port
         if (isIn.at(inpt)){
           def->connect(buf->sel("datain_" + to_string(inpt_cnt)), pt2wire.at(inpt));
           def->connect(buf->sel("wen_" + to_string(inpt_cnt)), def->sel("self."+get_bundle(inpt)+"_en"));
+          //also connect ren
+          for (size_t out_i = 0; out_i < outpts.size(); out_i ++ ) {
+            def->connect(buf->sel("ren_" + to_string(out_i)), def->sel("self."+get_bundle(inpt)+"_en"));
+          }
         } else {
           def->connect(buf->sel("datain_" + to_string(inpt_cnt)), wire2out.at(inpt));
           def->connect(buf->sel("wen_" + to_string(inpt_cnt)), wire2out.at(inpt + "_valid"));
+          //also connect ren
+          for (size_t out_i = 0; out_i < outpts.size(); out_i ++ ) {
+            def->connect(buf->sel("ren_" + to_string(out_i)), wire2out.at(inpt + "_valid"));
+          }
         }
         inpt_cnt++;
       }
       for (auto outpt: outpts) {
         def->connect(buf->sel("dataout_"+to_string(outpt_cnt)), pt2wire.at(outpt));
         wire2out[outpt] = buf->sel("dataout_" + to_string(outpt_cnt));
-        wire2out[outpt + "_valid"] = buf->sel("valid_" + to_string(outpt_cnt));
+        //wire2out[outpt + "_valid"] = buf->sel("valid_" + to_string(outpt_cnt));
         //TODO: figure out valid wiring strategy
         //Wire the bank with the largest delay
+        valid_out[outpt] = buf->sel("valid_" + to_string(outpt_cnt));
         outpt_cnt++;
       }
     }
@@ -536,6 +556,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto out = wire2out.at(outpt);
     def->connect(in, out);
   }
+  def->connect(valid_out.begin()->second, def->sel("self." + pick(get_out_bundles()) + "_valid"));
 
 }
 

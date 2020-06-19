@@ -1916,8 +1916,8 @@ void conv45_test() {
   prg.add_input("in");
   prg.add_output("out");
   //prg.buffer_port_widths["T"] = 32*3;
-  prg.buffer_port_widths["in"] = 32;
-  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["out"] = 16;
 
   auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
   auto write = p->add_op("input");
@@ -1956,7 +1956,7 @@ void conv45_test() {
   json config_reg_map;
   config_reg_map["name"][0] = "TOP_address.csv";
   buffers_opt.at("buf").set_config(config_reg_map);
-  generate_coreir(opt, context, buffers_opt.at("buf"));
+  auto def = generate_coreir(opt, context, buffers_opt.at("buf"));
 
   if(!saveToFile(context->getNamespace("global"), "conv45_ubuffer.json")) {
     cout << "Could not save ubuffer coreir!" << endl;
@@ -1998,8 +1998,9 @@ void conv33_test() {
   prg.add_input("in");
   prg.add_output("out");
   //prg.buffer_port_widths["T"] = 32*3;
-  prg.buffer_port_widths["in"] = 32;
-  prg.buffer_port_widths["out"] = 32;
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["out"] = 16;
+  prg.buffer_port_widths["buf"] = 16;
 
   auto p = prg.add_nest("po", 0, 8, "pi", 0, 16);
   auto write = p->add_op("input");
@@ -2035,9 +2036,9 @@ void conv33_test() {
   CoreIRLoadLibrary_cwlib(context);
   json config_reg_map = parse_config_file("sample_configuration.txt");
   buffers_opt.at("buf").set_config(config_reg_map);
-  generate_coreir(opt, context, buffers_opt.at("buf"));
+  auto def = generate_coreir(opt, context, buffers_opt.at("buf"));
 
-  if(!saveToFile(context->getNamespace("global"), "conv33_ubuffer.json")) {
+  if(!saveToFile(context->getNamespace("global"), "conv33_ubuffer.json", def)) {
     cout << "Could not save ubuffer coreir!" << endl;
     context->die();
   }
@@ -9719,6 +9720,7 @@ void application_tests() {
 
 void memory_tile_tests() {
   conv33_test();
+  assert(false);
   conv45_test();
   //assert(false);
   vec_test();
