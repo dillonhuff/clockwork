@@ -69,8 +69,9 @@ void generate_coreir(CodegenOptions& options,
   CoreIRLoadLibrary_commonlib(context);
   //CoreIRLoadLibrary_cwlib(context);
 
+  bool found_compute = true;
   if (!loadFromFile(context, "./coreir_compute/" + prg.name + "_compute.json")) {
-    assert(false);
+    found_compute = false;
   }
 
   auto ns = context->getNamespace("global");
@@ -82,7 +83,6 @@ void generate_coreir(CodegenOptions& options,
     string out_bundle = eb.second;
 
     UBuffer out_buf = map_find(out_rep, buffers);
-    //string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
 
     int pixel_width = out_buf.port_widths;
     int pix_per_burst =
@@ -143,55 +143,43 @@ void generate_coreir(CodegenOptions& options,
       ns->newModuleDecl(cu_name(op->name), utp);
     {
       auto def = compute_unit->newModuleDef();
-      auto halide_cu = def->addInstance("inner_compute", ns->getModule(op->name));
+      if (found_compute) {
+        auto halide_cu = def->addInstance("inner_compute", ns->getModule(op->name));
 
-      // Generate dummy compute logic
-      //vector<CoreIR::Wireable*> inputs;
-      //for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
-        //cout << "Incoming bundle " << bundle.first << "." << bundle.second << endl;
-        //string buf_name = bundle.first;
-        //string bundle_name = bundle.second;
-        ////auto buf = map_find(buf_name, buffers);
-        //////int pix_width = buf.port_widths;
-        ////int nlanes = buf.lanes_in_bundle(bundle_name);
-        ////cout << "nlanes = " << nlanes << endl;
-        //////int bundle_width = buf.port_bundle_width(bundle_name);
-        ////CoreIR::Wireable* bsel =
-          ////def->sel("self." + buf_name + "_" + bundle_name);
-        ////for (int l = 0; l < nlanes; l++) {
-          ////cout << "adding bsel" << endl;
-          ////inputs.push_back(bsel->sel(l));
-          ////cout << "inputs size = " << inputs.size() << endl;
-        ////}
-      //}
-      //cout << "# inputs to " << op->name << " = " << inputs.size() << endl;
-      //CoreIR::Wireable* result = nullptr;
-      //if (inputs.size() == 0) {
-        //result = def->addInstance("add_all_" + def->getContext()->getUnique(), "coreir.const",
-            //{{"width", COREMK(context, 16)}},
-            //{{"value", COREMK(def->getContext(), BitVec(16, 0))}})->sel("out");
-      //} else { 
-        //result = addList(def, inputs);
-      //}
-      //assert(result != nullptr);
-
-      for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
-        bool found = false;
-        cout << "# of selects = " << halide_cu->getSelects().size() << endl;
-        cout << CoreIR::toString(halide_cu) << endl;
-        for (auto s : halide_cu->getModuleRef()->getType()->getFields()) {
-          string name = s;
-          cout << "name = " << name << endl;
-          if (contains(name, bundle.first)) {
-            def->connect(halide_cu->sel(name), def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
-            found = true;
-            break;
+        for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+          bool found = false;
+          cout << "# of selects = " << halide_cu->getSelects().size() << endl;
+          cout << CoreIR::toString(halide_cu) << endl;
+          for (auto s : halide_cu->getModuleRef()->getType()->getFields()) {
+            string name = s;
+            cout << "name = " << name << endl;
+            if (is_prefix("in", name) &&
+                contains(name, bundle.first)) {
+              def->connect(halide_cu->sel(name)->sel(0), def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
+              found = true;
+              break;
+            }
           }
+          assert(found);
         }
-        assert(found);
-        //def->connect(result, def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
-      }
 
+        for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
+          bool found = false;
+          cout << "# of selects = " << halide_cu->getSelects().size() << endl;
+          cout << CoreIR::toString(halide_cu) << endl;
+          for (auto s : halide_cu->getModuleRef()->getType()->getFields()) {
+            string name = s;
+            cout << "name = " << name << endl;
+            if (is_prefix("out", name) &&
+                contains(name, bundle.first)) {
+              def->connect(halide_cu->sel(name), def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
+              found = true;
+              break;
+            }
+          }
+          assert(found);
+        }
+      }
       vector<CoreIR::Wireable*> vals;
       for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
         vals.push_back(def->sel("self." + pg(bundle.first, bundle.second) + "_en"));
