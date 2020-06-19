@@ -585,7 +585,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         iis.push_back(1);
       }
 
-      assert(false);
+      int d = 1;
+
+      // TODO: Generate a working controller that emits
+      // valid signals
+
       bcm->setDef(bdef);
       def->addInstance(distrib, bcm);
     }
@@ -698,7 +702,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto ub = ns->newModuleDecl(buf.name + "_ub", utp);
     auto def = ub->newModuleDef();
 
-    if (true) {
+    if (false) {
       generate_hls_style_coreir(options, buf, def);
     } else {
       buf.generate_coreir(options, def);
