@@ -70,7 +70,9 @@ void generate_coreir(CodegenOptions& options,
   CoreIRLoadLibrary_commonlib(context);
   //CoreIRLoadLibrary_cwlib(context);
 
-  loadFromFile(context, "./coreir_compute/" + prg.name + ".json");
+  if (!loadFromFile(context, "./coreir_compute/" + prg.name + "_compute.json")) {
+    assert(false);
+  }
 
   auto ns = context->getNamespace("global");
   vector<pair<string, CoreIR::Type*> >
@@ -142,6 +144,8 @@ void generate_coreir(CodegenOptions& options,
       ns->newModuleDecl(cu_name(op->name), utp);
     {
       auto def = compute_unit->newModuleDef();
+      auto halide_cu = def->addInstance("inner_compute", ns->getModule(op->name));
+
       // Generate dummy compute logic
       vector<CoreIR::Wireable*> inputs;
       for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
