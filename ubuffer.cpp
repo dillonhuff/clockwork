@@ -571,7 +571,20 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       assert(sms.size() == 1);
       auto svec = isl_pw_multi_aff_from_map(sms.at(0));
 
-      cout << "sched = " << str(svec) << endl;
+      vector<pair<isl_set*, isl_multi_aff*> > pieces =
+        get_pieces(svec);
+      assert(pieces.size() == 1);
+
+      auto saff = pieces.at(0).second;
+      auto dom = pieces.at(0).first;
+      cout << "sched = " << str(saff) << endl;
+      cout << tab(1) << "dom = " << str(dom) << endl;
+      int dim = num_dims(dom);
+      vector<int> iis;
+      for (int i = 0; i < dim; i++) {
+        iis.push_back(1);
+      }
+
       assert(false);
       bcm->setDef(bdef);
       def->addInstance(distrib, bcm);
