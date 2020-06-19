@@ -1866,14 +1866,16 @@ void reaccess_test() {
   int max_inpt = 2;
   int max_outpt = 2;
   for (auto& b : bufs) {
-    b.second.generate_bank_and_merge(opt);
+    if (b.second.get_in_ports().size() > 0) {
+      b.second.generate_bank_and_merge(opt);
 
-    //Assign an configuration file,
-    json config;
-    config["name"][0] = "TOP_address.csv";
-    b.second.set_config(config);
+      //Assign an configuration file,
+      json config;
+      config["name"][0] = "TOP_address.csv";
+      b.second.set_config(config);
 
-    b.second.port_group2bank(max_inpt, max_outpt);
+      b.second.port_group2bank(max_inpt, max_outpt);
+    }
   }
   generate_coreir(opt, bufs, prg, schedmap);
 #endif
@@ -10196,9 +10198,9 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
+    memory_tile_tests();
     application_tests();
     prog_splitting_tests();
-    memory_tile_tests();
     cout << "All tests passed" << endl;
 
   } else {

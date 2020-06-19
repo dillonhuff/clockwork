@@ -386,11 +386,11 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
 //generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   auto context = def->getContext();
-  for (auto it : get_banks()) {
-    auto connection = it.first;
-    auto bk = it.second;
-    //cout << "[inpt: " << connection.first << "] -> [bk: " << bk.name << ", delay = " << bk.maxdelay <<  "] -> [outpt:" << connection.second <<  "]\n";
-  }
+  //for (auto it : get_banks()) {
+    //auto connection = it.first;
+    //auto bk = it.second;
+    ////cout << "[inpt: " << connection.first << "] -> [bk: " << bk.name << ", delay = " << bk.maxdelay <<  "] -> [outpt:" << connection.second <<  "]\n";
+  //}
 
   //map save the register
   map<string, CoreIR::Wireable*> wire2out;
