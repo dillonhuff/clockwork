@@ -6,6 +6,10 @@ std::string dim_name(isl_aff* const a, const int d) {
   return str;
 }
 
+//isl_union_pw_multi_aff* cpy(isl_union_pw_multi_aff* const s) {
+  //return isl_union_pw_multi_aff(s);
+//}
+
 isl_stat get_set(isl_set* m, void* user) {
   auto* vm = (vector<isl_set*>*) user;
   vm->push_back((m));
@@ -458,6 +462,19 @@ std::string str(isl_pw_multi_aff* const pma) {
   return r;
 }
 
+std::string str(isl_union_pw_multi_aff* const pma) {
+  auto ctx = isl_union_pw_multi_aff_get_ctx(pma);
+  isl_printer *p;
+  p = isl_printer_to_str(ctx);
+  p = isl_printer_print_union_pw_multi_aff(p, pma);
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  std::string r(rs);
+  free(rs);
+
+  return r;
+
+}
 std::string str(isl_multi_union_pw_aff* const mupa) {
   auto ctx = isl_multi_union_pw_aff_get_ctx(mupa);
   isl_printer *p;

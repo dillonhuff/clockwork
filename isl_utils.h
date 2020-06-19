@@ -2,7 +2,6 @@
 
 extern "C" {
 #include <isl/id.h>
-#include <isl/aff.h>
 #include <isl/set.h>
 #include <isl/flow.h>
 #include <isl/polynomial.h>
@@ -17,6 +16,7 @@ extern "C" {
 #include <isl_ast_build_expr.h>
 #include <isl/options.h>
 #include <isl/map.h>
+#include <isl/aff.h>
 }
 
 #include "barvinok/barvinok.h"
@@ -46,6 +46,7 @@ isl_basic_map* cpy(isl_basic_map* const s);
 isl_schedule* cpy(isl_schedule* const s);
 
 isl_pw_multi_aff* cpy(isl_pw_multi_aff* const s);
+//isl_union_pw_multi_aff* cpy(isl_union_pw_multi_aff* const s);
 
 isl_qpolynomial* cpy(isl_qpolynomial* const s);
 
@@ -163,6 +164,7 @@ std::string str(umap* const m);
 std::string str(isl_pw_multi_aff* const pma);
 std::string str(isl_multi_aff* const pma);
 
+std::string str(isl_union_pw_multi_aff* const pma);
 std::string str(isl_multi_union_pw_aff* const pma);
 
 vector<vector<int> > get_access_matrix_from_map(isl_map* acc_map);
