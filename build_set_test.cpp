@@ -9878,21 +9878,28 @@ void halide_conv_layer_3D_test() {
   prog prg = conv_layer_3D();
   prg.pretty_print();
 
-  auto dom = prg.whole_iteration_domain();
-  auto valid = prg.validity_deps();
-  auto proximity = cpy(valid);
+  //auto dom = prg.whole_iteration_domain();
+  //auto valid = prg.validity_deps();
+  //auto proximity = cpy(valid);
 
-  auto hs = hardware_schedule(dom, valid, proximity);
-  for (auto h : hs) {
-    cout << tab(1) << h.first << " -> " << str(h.second) << endl;
-  }
-  assert(false);
+  //auto hs = hardware_schedule(dom, valid, proximity);
+  //for (auto h : hs) {
+    //cout << tab(1) << h.first << " -> " << str(h.second) << endl;
+  //}
+  //assert(false);
 
   CodegenOptions options;
   options.inner_bank_offset_mode =
     INNER_BANK_OFFSET_LINEAR;
   options.all_rams = true;
-  generate_optimized_code(options, prg);
+  //generate_optimized_code(options, prg);
+
+#ifdef COREIR
+
+  auto sched = prg.optimized_codegen();
+  auto bufs = build_buffers(prg, sched);
+  generate_coreir(options, bufs, prg, sched);
+#endif
   //regression_test(prg);
   //assert(false);
 }
@@ -10024,9 +10031,9 @@ void cyclic_banked_conv_test() {
 }
 
 void application_tests() {
-  playground();
-  cyclic_banked_conv_test();
   halide_conv_layer_3D_test();
+  //playground();
+  cyclic_banked_conv_test();
   sum_denoise_test();
   sum_diffs_test();
   denoise2d_test();
