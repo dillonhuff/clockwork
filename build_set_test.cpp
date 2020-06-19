@@ -9876,15 +9876,15 @@ void halide_conv_layer_3D_test() {
   prog prg = conv_layer_3D();
   prg.pretty_print();
 
-  auto dom = prg.whole_iteration_domain();
-  auto valid = prg.validity_deps();
-  auto proximity = cpy(valid);
+  //auto dom = prg.whole_iteration_domain();
+  //auto valid = prg.validity_deps();
+  //auto proximity = cpy(valid);
 
-  auto hs = hardware_schedule(dom, valid, proximity);
-  for (auto h : hs) {
-    cout << tab(1) << h.first << " -> " << str(h.second) << endl;
-  }
-  assert(false);
+  //auto hs = hardware_schedule(dom, valid, proximity);
+  //for (auto h : hs) {
+    //cout << tab(1) << h.first << " -> " << str(h.second) << endl;
+  //}
+  //assert(false);
 
   CodegenOptions options;
   options.inner_bank_offset_mode =
@@ -9892,7 +9892,7 @@ void halide_conv_layer_3D_test() {
   options.all_rams = true;
   generate_optimized_code(options, prg);
   //regression_test(prg);
-  //assert(false);
+  assert(false);
 }
 
 void load_buffer(const std::string& dest, const std::string& src, const vector<int>& ranges, prog& prg) {
@@ -9911,78 +9911,6 @@ void load_buffer(const std::string& dest, const std::string& src, const vector<i
   op->add_store(dest, comma_list(vs));
 }
 
-bool banking_scheme_is_legal(isl_map* bank_func, UBuffer& buf) {
-  auto sched = buf.global_schedule();
-  auto op_writes = buf.producer_map();
-  auto op_reads = buf.consumer_map();
-
-  auto written = range(op_writes);
-  auto read = range(op_reads);
-  auto all_data = unn(written, read);
-
-  auto read_times = dot(inv(op_reads), sched);
-  auto simul_reads = dot(read_times, inv(read_times));
-
-  auto data_to_bank = its(to_umap(bank_func), read);
-  auto same_bank = dot(data_to_bank, inv(data_to_bank));
-  
-  auto read_id = isl_union_set_identity(cpy(read));
-  auto bank_read_conflicts = diff(its(same_bank, simul_reads), read_id);
-
-  cout << "bank conflicts = " << str(bank_read_conflicts) << endl;
-  return empty(bank_read_conflicts);
-}
-
-bool inner_bank_offset_is_legal(isl_map* slot_func, UBuffer& buf) {
-  auto sched = buf.global_schedule();
-  auto op_writes = buf.producer_map();
-  auto op_reads = buf.consumer_map();
-
-  auto written = range(op_writes);
-  auto read = range(op_reads);
-  auto all_data = unn(written, read);
-
-  cout << "slot func = " << str(slot_func) << endl;
-
-  // build (v0, v1) slot(v0) = slot(v1)
-  auto dloc = its(to_umap(slot_func), all_data);
-  cout << "store slots = " << str(dloc) << endl;
-
-  auto stored_to_same_slot = dot(dloc, inv(dloc));
-  cout << "stored to same slot = " << str(stored_to_same_slot) << endl;
-
-  auto in_id = isl_union_set_identity(cpy(all_data));
-  cout << "in id = " << str(in_id) << endl;
-
-  // build (v0, v1) live_range(v0) and live_range(v1) overlap
-  auto read_times = dot(inv(op_reads), sched);
-  auto write_times = dot(inv(op_writes), sched);
-  cout << "read times  = " << str(read_times) << endl;
-  cout << "write times = " << str(write_times) << endl;
-
-  isl_set* sched_range = to_set(range(sched));
-  auto time_le = isl_map_lex_le(get_space(sched_range));
-
-  cout << "le times    = " << str(time_le) << endl;
-  auto after_first_write = dot(write_times, time_le);
-  cout << "after first write: " << str(after_first_write) << endl;
-
-  auto time_ge = isl_map_lex_ge(get_space(sched_range));
-  auto before_last_read = dot(read_times, time_ge);
-
-  cout << "before last read: " << str(before_last_read) << endl;
-
-  auto live_range = (coalesce(its(after_first_write, before_last_read)));
-  cout << "live range = " << str(live_range) << endl;
-
-  auto overlapping_ranges = dot(live_range, inv(live_range));
-  cout << "overlapping = " << str(overlapping_ranges) << endl;
-
-  auto violated = coalesce(diff(its(overlapping_ranges, stored_to_same_slot), in_id));
-  cout << "violated    = " << str(violated) << endl;
-  return empty(violated);
-  //cout << " # violated = " << str(card(domain(violated))) << endl;
-}
 
 void cyclic_banked_conv_test() {
   prog prg("cyclic_banked_conv");
@@ -10022,9 +9950,9 @@ void cyclic_banked_conv_test() {
 }
 
 void application_tests() {
-  playground();
-  cyclic_banked_conv_test();
   halide_conv_layer_3D_test();
+  cyclic_banked_conv_test();
+  playground();
   sum_denoise_test();
   sum_diffs_test();
   denoise2d_test();

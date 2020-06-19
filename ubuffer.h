@@ -1656,3 +1656,12 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);
 void generate_hls_code(std::ostream& out, UBuffer& buf);
 void generate_hls_code(UBuffer& buf);
+
+
+bool inner_bank_offset_is_legal(isl_map* slot_func, UBuffer& buf);
+bool banking_scheme_is_legal(isl_map* bank_func, UBuffer& buf);
+
+bool inner_bank_offset_is_legal(isl_map* slot_func,
+    umap* op_writes,
+    umap* op_reads,
+    umap* sched);
