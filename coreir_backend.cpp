@@ -11,7 +11,6 @@ std::string pg(const std::string& buf, const std::string& bundle) {
 }
 
 CoreIR::Wireable* andVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::Wireable* b) {
-  //auto c = def->getContext();
   auto ad = def->addInstance("and_all_" + def->getContext()->getUnique(), "corebit.and");
   def->connect(ad->sel("in0"), a);
   def->connect(ad->sel("in1"), b);
@@ -147,37 +146,50 @@ void generate_coreir(CodegenOptions& options,
       auto halide_cu = def->addInstance("inner_compute", ns->getModule(op->name));
 
       // Generate dummy compute logic
-      vector<CoreIR::Wireable*> inputs;
-      for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
-        cout << "Incoming bundle " << bundle.first << "." << bundle.second << endl;
-        string buf_name = bundle.first;
-        string bundle_name = bundle.second;
-        auto buf = map_find(buf_name, buffers);
-        //int pix_width = buf.port_widths;
-        int nlanes = buf.lanes_in_bundle(bundle_name);
-        cout << "nlanes = " << nlanes << endl;
-        //int bundle_width = buf.port_bundle_width(bundle_name);
-        CoreIR::Wireable* bsel =
-          def->sel("self." + buf_name + "_" + bundle_name);
-        for (int l = 0; l < nlanes; l++) {
-          cout << "adding bsel" << endl;
-          inputs.push_back(bsel->sel(l));
-          cout << "inputs size = " << inputs.size() << endl;
-        }
-      }
-      cout << "# inputs to " << op->name << " = " << inputs.size() << endl;
-      CoreIR::Wireable* result = nullptr;
-      if (inputs.size() == 0) {
-        result = def->addInstance("add_all_" + def->getContext()->getUnique(), "coreir.const",
-            {{"width", COREMK(context, 16)}},
-            {{"value", COREMK(def->getContext(), BitVec(16, 0))}})->sel("out");
-      } else { 
-        result = addList(def, inputs);
-      }
-      assert(result != nullptr);
+      //vector<CoreIR::Wireable*> inputs;
+      //for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+        //cout << "Incoming bundle " << bundle.first << "." << bundle.second << endl;
+        //string buf_name = bundle.first;
+        //string bundle_name = bundle.second;
+        ////auto buf = map_find(buf_name, buffers);
+        //////int pix_width = buf.port_widths;
+        ////int nlanes = buf.lanes_in_bundle(bundle_name);
+        ////cout << "nlanes = " << nlanes << endl;
+        //////int bundle_width = buf.port_bundle_width(bundle_name);
+        ////CoreIR::Wireable* bsel =
+          ////def->sel("self." + buf_name + "_" + bundle_name);
+        ////for (int l = 0; l < nlanes; l++) {
+          ////cout << "adding bsel" << endl;
+          ////inputs.push_back(bsel->sel(l));
+          ////cout << "inputs size = " << inputs.size() << endl;
+        ////}
+      //}
+      //cout << "# inputs to " << op->name << " = " << inputs.size() << endl;
+      //CoreIR::Wireable* result = nullptr;
+      //if (inputs.size() == 0) {
+        //result = def->addInstance("add_all_" + def->getContext()->getUnique(), "coreir.const",
+            //{{"width", COREMK(context, 16)}},
+            //{{"value", COREMK(def->getContext(), BitVec(16, 0))}})->sel("out");
+      //} else { 
+        //result = addList(def, inputs);
+      //}
+      //assert(result != nullptr);
 
       for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
-        def->connect(result, def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
+        bool found = false;
+        cout << "# of selects = " << halide_cu->getSelects().size() << endl;
+        cout << CoreIR::toString(halide_cu) << endl;
+        for (auto s : halide_cu->getModuleRef()->getType()->getFields()) {
+          string name = s;
+          cout << "name = " << name << endl;
+          if (contains(name, bundle.first)) {
+            def->connect(halide_cu->sel(name), def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
+            found = true;
+            break;
+          }
+        }
+        assert(found);
+        //def->connect(result, def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
       }
 
       vector<CoreIR::Wireable*> vals;
