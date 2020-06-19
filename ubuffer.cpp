@@ -537,6 +537,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       }
       bcm->setDef(bdef);
       auto bc = def->addInstance(inpt + "_broadcast", bcm);
+      for (auto b : buf.get_banks()) {
+        if (elem(inpt, buf.get_bank_inputs(b.name))) {
+          def->connect(bc->sel(b.name), def->sel(b.name)->sel("wdata"));
+        }
+      }
       def->connect(bc->sel("in"), def->sel("self")->sel(buf.container_bundle(inpt))->sel(buf.bundle_offset(inpt)));
     }
 
