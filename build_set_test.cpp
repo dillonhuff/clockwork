@@ -9905,9 +9905,15 @@ void halide_conv_layer_3D_test() {
       b.second.generate_bank_and_merge(options);
     }
   }
+
   generate_coreir(options, bufs, prg, sched);
+
+  int to_verilog_res = cmd("./coreir/bin/coreir --passes verilog --input conv_layer_3D.json");
+  assert(to_verilog_res == 0);
+
   assert(false);
 #endif
+
   //regression_test(prg);
   //assert(false);
 }

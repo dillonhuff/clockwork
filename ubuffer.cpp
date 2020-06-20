@@ -512,7 +512,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
   }
 
-  void generate_hls_style_coreir(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
+  void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
     int width = buf.port_widths;
 
     auto c = def->getContext();
@@ -569,6 +569,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       auto sched = buf.schedule.at(inpt);
       auto sms = get_maps(sched);
       assert(sms.size() == 1);
+
+
       auto svec = isl_pw_multi_aff_from_map(sms.at(0));
 
       vector<pair<isl_set*, isl_multi_aff*> > pieces =
@@ -702,8 +704,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto ub = ns->newModuleDecl(buf.name + "_ub", utp);
     auto def = ub->newModuleDef();
 
-    if (false) {
-      generate_hls_style_coreir(options, buf, def);
+    if (true) {
+      generate_synthesizable_functional_model(options, buf, def);
     } else {
       buf.generate_coreir(options, def);
     }

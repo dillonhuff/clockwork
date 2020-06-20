@@ -60,14 +60,26 @@ CoreIR::Wireable* andList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wire
   return val;
 }
 
-void generate_coreir(CodegenOptions& options,
+bool connected(CoreIR::Wireable* w) {
+  return w->getConnectedWireables().size() > 0;
+}
+
+void connect_signal(const std::string& signal, CoreIR::Module* m) {
+  auto def = m->getDef();
+  for (auto inst : def->getInstances()) {
+    for (auto f : m->getType()->getFields()) {
+      if (f == signal && !connected(inst.second->sel(f))) {
+        def->connect(def->sel("self")->sel(f), inst.second->sel(f));
+      }
+    }
+  }
+}
+
+CoreIR::Module* generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
-    umap* schedmap) {
-
-  CoreIR::Context* context = CoreIR::newContext();
-  CoreIRLoadLibrary_commonlib(context);
-  //CoreIRLoadLibrary_cwlib(context);
+    umap* schedmap,
+    CoreIR::Context* context) {
 
   bool found_compute = true;
   if (!loadFromFile(context, "./coreir_compute/" + prg.name + "_compute.json")) {
@@ -241,7 +253,25 @@ void generate_coreir(CodegenOptions& options,
   ub->setDef(def);
 
   ub->print();
+
+  connect_signal("reset", ub);
+  context->runPasses({"wireclocks-coreir"});
+
+  return ub;
   //assert(false);
+}
+
+void generate_coreir(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap) {
+  CoreIR::Context* context = CoreIR::newContext();
+  CoreIRLoadLibrary_commonlib(context);
+  //CoreIRLoadLibrary_cwlib(context);
+  //
+  generate_coreir(options, buffers, prg, schedmap, context);
+
+  auto ns = context->getNamespace("global");
   if(!saveToFile(ns, prg.name + ".json")) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();
@@ -250,4 +280,5 @@ void generate_coreir(CodegenOptions& options,
   deleteContext(context);
 }
 
+  CoreIR::Context* context = CoreIR::newContext();
 #endif
