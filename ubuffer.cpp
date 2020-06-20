@@ -791,7 +791,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         cout << "reduce map = " << str(reduce_map) << endl;
         auto addr_expr = dot(acc_map, reduce_map);
         cout << "composition = " << str(addr_expr) << endl;
-        assert(false);
+        auto addr_expr_aff = get_aff(addr_expr);
+
+        auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
+        auto agen = def->addInstance(read_addrgen_name(bank.name), aff_gen_mod);
+        //assert(false);
 
         //vector<pair<string, CoreIR::Type*> >
           //ub_field{{"clk", c->Named("coreir.clkIn")},
@@ -802,7 +806,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         //auto bdef = bcm->newModuleDef();
         //bcm->setDef(bdef);
         //auto rdgen = def->addInstance(distrib, bcm);
-        //def->connect(rdgen->sel("addr"), bnk->sel("raddr"));
+        def->connect(agen->sel("out"), bnk->sel("raddr"));
+        def->connect(agen->sel("d"), def->sel(controller_name(reader))->sel("d"));
       }
 
       {

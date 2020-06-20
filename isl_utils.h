@@ -558,3 +558,5 @@ isl_union_set* diff(isl_union_set* const m0, isl_union_set* const m1);
 
 
 isl_union_map* diff(isl_union_map* const m0, isl_union_map* const m1);
+
+isl_aff* get_aff(isl_map* m);
