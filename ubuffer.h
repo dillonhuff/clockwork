@@ -1546,6 +1546,8 @@ class UBuffer {
     map<string, UBuffer> generate_ubuffer(CodegenOptions& opt);
 
 #ifdef COREIR
+    CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
+
     void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def);
 #endif
 

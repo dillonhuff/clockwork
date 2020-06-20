@@ -6,6 +6,7 @@
 #include "prog_splitting_test.h"
 #include "codegen.h"
 #include "prog.h"
+#include "ubuffer.h"
 
 #include <chrono>
 
@@ -10182,7 +10183,24 @@ void application_tests() {
   //halide_harris_test();
 }
 
+void affine_controller_test() {
+#ifdef COREIR
+  isl_ctx* ctx = isl_ctx_alloc();
+  isl_set* dom = isl_set_read_from_str(ctx, "{ [i, j] : 0 <= i <= 9 and 0 <= j <= 3 }");
+  isl_aff* aff = isl_aff_read_from_str(ctx, "{ [i, j] -> [(10*i + j)] }");
+  auto context = CoreIR::newContext();
+  auto ac = affine_controller(context, dom, aff);
+
+  ac->print();
+
+  deleteContext(context);
+  isl_ctx_free(ctx);
+  assert(false);
+#endif
+}
+
 void memory_tile_tests() {
+  affine_controller_test();
   conv33_test();
   conv45_test();
   //assert(false);
@@ -10285,8 +10303,8 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
-    application_tests();
     memory_tile_tests();
+    application_tests();
     prog_splitting_tests();
     cout << "All tests passed" << endl;
 
