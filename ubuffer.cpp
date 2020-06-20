@@ -441,6 +441,33 @@ CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
   return m;
 }
 
+CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
+  cout << tab(1) << "dom = " << str(dom) << endl;
+  //cout << tab(3) << i << ": " << str(aff) << endl;
+
+  auto ns = context->getNamespace("global");
+  auto c = context;
+
+  int width = 16;
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"clk", c->Named("coreir.clkIn")},
+      {"reset", c->BitIn()}};
+  int dims = num_in_dims(aff);
+  ub_field.push_back({"d", context->Bit()->Arr(16)->Arr(dims)});
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto m = ns->newModuleDecl("affine_controller_" + context->getUnique(), utp);
+  auto def = m->newModuleDef();
+  auto aff_mod = coreir_for_aff(c, aff);
+  auto aff_func = def->addInstance("affine_func", aff_mod);
+
+
+  aff_mod->print();
+
+  m->setDef(def);
+  return m;
+}
+
 //generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   auto context = def->getContext();
@@ -618,6 +645,15 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       auto sched = buf.schedule.at(inpt);
       auto sms = get_maps(sched);
       assert(sms.size() == 1);
+      {
+        auto m = cpy(sms.at(0));
+        cout << "m = " << str(m) << endl;
+        auto rng = range(m);
+        cout << "r = " << str(rng) << endl;
+        auto ind = isl_set_indicator_function(cpy(rng));
+        cout << "ind = " << str(ind) << endl;
+        //assert(false);
+      }
 
       auto svec = isl_pw_multi_aff_from_map(sms.at(0));
 
@@ -627,26 +663,16 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
       auto saff = pieces.at(0).second;
       auto dom = pieces.at(0).first;
+
       cout << "sched = " << str(saff) << endl;
       cout << tab(1) << "dom = " << str(dom) << endl;
 
       for (int i = 0; i < isl_multi_aff_dim(saff, isl_dim_set); i++) {
         auto aff = isl_multi_aff_get_aff(saff, i);
-        cout << tab(3) << i << ": " << str(aff) << endl;
-        auto aff_mod = coreir_for_aff(c, aff);
-        aff_mod->print();
+        auto aff_c = affine_controller(c, dom, aff);
+        aff_c->print();
       }
       assert(false);
-      int dim = num_dims(dom);
-      vector<int> iis;
-      for (int i = 0; i < dim; i++) {
-        iis.push_back(1);
-      }
-
-      int d = 1;
-
-      // TODO: Generate a working controller that emits
-      // valid signals
 
       bcm->setDef(bdef);
       auto out_ctrl = def->addInstance(distrib, bcm);
