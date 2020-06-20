@@ -822,8 +822,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       auto bnk = def->addInstance(
           bank.name,
           ram_module(c, width, capacity));
-      //"global.RamType2",
-      //{{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, capacity)}});
 
       {
         auto bank_readers = buf.get_bank_outputs(bank.name);
@@ -841,12 +839,31 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         auto agen = def->addInstance(read_addrgen_name(bank.name), aff_gen_mod);
         
         def->connect(agen->sel("out"), bnk->sel("raddr"));
-        cout << "getting read controller: " << reader << endl;
         def->connect(agen->sel("d"), def->sel(controller_name(reader))->sel("d"));
-        cout << "got read controller: " << reader << endl;
+        def->connect(bnk->sel("ren"), def->sel(controller_name(reader))->sel("valid"));
       }
 
       {
+        auto bank_writers = buf.get_bank_inputs(bank.name);
+        assert(bank_writers.size() == 1);
+        auto writer = pick(bank_writers);
+        auto acc_map = to_map(buf.access_map.at(writer));
+        cout << "acc map = " << str(acc_map) << endl;
+        auto reduce_map = linear_address_map(to_set(bank.rddom));
+        cout << "reduce map = " << str(reduce_map) << endl;
+        auto addr_expr = dot(acc_map, reduce_map);
+        cout << "composition = " << str(addr_expr) << endl;
+        auto addr_expr_aff = get_aff(addr_expr);
+
+        auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
+        auto agen = def->addInstance(write_addrgen_name(bank.name), aff_gen_mod);
+        
+        def->connect(agen->sel("out"), bnk->sel("waddr"));
+        def->connect(agen->sel("d"), def->sel(controller_name(writer))->sel("d"));
+
+        //def->connect(bnk->sel("wen"), def->sel(controller_name(writer))->sel("valid"));
+
+        //cout << "got read controller: " << reader << endl;
         //vector<pair<string, CoreIR::Type*> >
           //ub_field{{"clk", c->Named("coreir.clkIn")},
             //{"addr", c->Bit()->Arr(addr_width)}};
