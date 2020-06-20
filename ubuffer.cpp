@@ -566,10 +566,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       CoreIR::RecordType* utp = c->Record(ub_field);
       auto bcm = ns->newModuleDecl(distrib, utp);
       auto bdef = bcm->newModuleDef();
+      // TODO: Fix
+      bdef->connect("self.reset", "self.valid");
       auto sched = buf.schedule.at(inpt);
       auto sms = get_maps(sched);
       assert(sms.size() == 1);
-
 
       auto svec = isl_pw_multi_aff_from_map(sms.at(0));
 
@@ -593,7 +594,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       // valid signals
 
       bcm->setDef(bdef);
-      def->addInstance(distrib, bcm);
+      auto out_ctrl = def->addInstance(distrib, bcm);
+      def->connect(def->sel("self")->sel(buf.container_bundle(inpt) + "_valid"), out_ctrl->sel("valid"));
     }
 
     for (auto inpt : buf.get_in_ports()) {
@@ -632,6 +634,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
           bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.in"));
         }
       }
+      bdef->connect("self.en", "self.valid");
       bcm->setDef(bdef);
       auto bc = def->addInstance(inpt + "_broadcast", bcm);
       for (auto b : buf.get_banks()) {
