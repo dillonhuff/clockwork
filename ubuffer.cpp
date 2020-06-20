@@ -491,6 +491,31 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
   def->connect(cmp->sel("in1"), zero->sel("out"));
   def->connect(cmp->sel("out"), def->sel("self")->sel("valid"));
 
+  vector<CoreIR::Instance*> domain_regs;
+  vector<CoreIR::Wireable*> domain_at_max;
+  for (int d = 0; d < num_dims(dom); d++) {
+    auto dom_reg = def->addInstance("d_" + str(d),
+        "mantle.reg",
+      {{"width", CoreIR::Const::make(context, width)},
+      {"has_en", CoreIR::Const::make(context, true)}});
+    domain_regs.push_back(dom_reg);
+    def->connect(def->sel("self")->sel("d")->sel(d), domain_regs.back()->sel("out"));
+    def->connect(aff_func->sel("d")->sel(d), domain_regs.back()->sel("out"));
+    def->connect(cmp->sel("out"), domain_regs.back()->sel("en"));
+
+    int max_pt = to_int(lexmaxval(project_all_but(dom, d)));
+    auto max_const = def->addInstance("d_" + str(d) + "_max",
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, max_pt))}});
+
+    auto atmax =
+      def->addInstance("d_" + str(d) + "_at_max", "coreir.eq", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(atmax->sel("in0"), dom_reg->sel("out"));
+    def->connect(atmax->sel("in1"), max_const->sel("out"));
+    domain_at_max.push_back(atmax->sel("out"));
+  }
+
   aff_mod->print();
 
   m->setDef(def);
