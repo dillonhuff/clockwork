@@ -394,6 +394,22 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
 
 #ifdef COREIR
 
+CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
+  auto ns = context->getNamespace("global");
+
+  vector<pair<string, CoreIR::Type*> >
+    ub_field;
+  cout << "aff = " << str(aff) << endl;
+  int dims = num_in_dims(aff);
+  cout << "dims = " << dims << endl;
+  ub_field.push_back({"d", context->BitIn()->Arr(16)->Arr(dims)});
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto m = ns->newModuleDecl("aff_" + context->getUnique(), utp);
+
+  return m;
+}
+
 //generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   auto context = def->getContext();
@@ -582,6 +598,14 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       auto dom = pieces.at(0).first;
       cout << "sched = " << str(saff) << endl;
       cout << tab(1) << "dom = " << str(dom) << endl;
+
+      for (int i = 0; i < isl_multi_aff_dim(saff, isl_dim_set); i++) {
+        auto aff = isl_multi_aff_get_aff(saff, i);
+        cout << tab(3) << i << ": " << str(aff) << endl;
+        auto aff_mod = coreir_for_aff(c, aff);
+        aff_mod->print();
+      }
+      assert(false);
       int dim = num_dims(dom);
       vector<int> iis;
       for (int i = 0; i < dim; i++) {
