@@ -2,6 +2,7 @@
 #include "codegen.h"
 #ifdef COREIR
 #include "cwlib.h"
+#include "coreir_backend.h"
 #endif
 #include "coreir_backend.h"
 
@@ -397,8 +398,9 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
 CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
   auto ns = context->getNamespace("global");
 
+  int width = 16;
   vector<pair<string, CoreIR::Type*> >
-    ub_field;
+    ub_field{{"out", context->Bit()->Arr(width)}};
   cout << "aff = " << str(aff) << endl;
   int dims = num_in_dims(aff);
   cout << "dims = " << dims << endl;
@@ -406,6 +408,35 @@ CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
 
   CoreIR::RecordType* utp = context->Record(ub_field);
   auto m = ns->newModuleDecl("aff_" + context->getUnique(), utp);
+  auto def = m->newModuleDef();
+
+  auto c = context;
+
+  vector<CoreIR::Wireable*> terms;
+  for (int d = 0; d < dims; d++) {
+    int v = to_int(get_coeff(aff, d));
+    cout << "coeff: " << v << endl;
+    auto constant = def->addInstance(context->getUnique(),
+        "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, v))}});
+    auto m = def->addInstance(context->getUnique(),
+        "coreir.mul",
+        {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(m->sel("in0"), constant->sel("out"));
+    def->connect(m->sel("in1"), def->sel("self")->sel("d")->sel(d));
+    terms.push_back(m->sel("out"));
+  }
+  int v = to_int(const_coeff(aff));
+  cout << "coeff: " << v << endl;
+  auto constant = def->addInstance(context->getUnique(),
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, v))}});
+  terms.push_back(constant->sel("out"));
+  auto out = addList(def, terms);
+  def->connect(def->sel("self.out"), out);
+  m->setDef(def);
 
   return m;
 }
