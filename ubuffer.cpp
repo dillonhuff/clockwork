@@ -443,7 +443,6 @@ CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
 
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
   cout << tab(1) << "dom = " << str(dom) << endl;
-  //cout << tab(3) << i << ": " << str(aff) << endl;
 
   auto ns = context->getNamespace("global");
   auto c = context;
@@ -516,6 +515,9 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
     domain_at_max.push_back(atmax->sel("out"));
   }
 
+  auto tinc = def->addInstance("true",
+      "corebit.const",
+      {{"value", CoreIR::Const::make(c, true)}});
   for (int d = 0; d < num_dims(dom); d++) {
     string df = "d_" + str(d);
     auto inc = def->addInstance(df + "_inc", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});
@@ -527,7 +529,13 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
       {{"width", CoreIR::Const::make(c, width)}},
       {{"value", CoreIR::Const::make(c, BitVector(width, min_pt))}});
 
-
+    CoreIR::Wireable* smaller_dims_at_max = tinc->sel("out");
+    for (int de = d + 1; de < num_dims(dom); de++) {
+      auto de_atmax = def->addInstance(df + "_am_" + context->getUnique(), "corebit.and");
+      def->connect(de_atmax->sel("in0"), smaller_dims_at_max);
+      def->connect(de_atmax->sel("in1"), domain_at_max.at(de));
+      smaller_dims_at_max = de_atmax->sel("out");
+    }
   }
 
   aff_mod->print();
