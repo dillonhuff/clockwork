@@ -516,6 +516,20 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
     domain_at_max.push_back(atmax->sel("out"));
   }
 
+  for (int d = 0; d < num_dims(dom); d++) {
+    string df = "d_" + str(d);
+    auto inc = def->addInstance(df + "_inc", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(inc->sel("in0"), domain_regs.at(d)->sel("out"));
+    def->connect(inc->sel("in1"), one->sel("out"));
+    int min_pt = to_int(lexminval(project_all_but(dom, d)));
+    auto min_const = def->addInstance("d_" + str(d) + "_min",
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, min_pt))}});
+
+
+  }
+
   aff_mod->print();
 
   m->setDef(def);
