@@ -269,10 +269,10 @@ void generate_coreir(CodegenOptions& options,
   CoreIRLoadLibrary_commonlib(context);
   //CoreIRLoadLibrary_cwlib(context);
   //
-  generate_coreir(options, buffers, prg, schedmap, context);
+  auto prg_mod = generate_coreir(options, buffers, prg, schedmap, context);
 
   auto ns = context->getNamespace("global");
-  if(!saveToFile(ns, prg.name + ".json")) {
+  if(!saveToFile(ns, prg.name + ".json", prg_mod)) {
     cout << "Could not save ubuffer coreir" << endl;
     context->die();
   }

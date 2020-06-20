@@ -9913,7 +9913,7 @@ void halide_conv_layer_3D_test() {
 
   generate_coreir(options, bufs, prg, sched);
 
-  int to_verilog_res = cmd("./coreir/bin/coreir --passes verilog --input conv_layer_3D.json");
+  int to_verilog_res = cmd("./coreir/bin/coreir --input conv_layer_3D.json --output conv_layer_3D.v --passes flattentypes;verilog");
   assert(to_verilog_res == 0);
 
   assert(false);
@@ -10203,7 +10203,7 @@ void affine_controller_test() {
 
   deleteContext(context);
   isl_ctx_free(ctx);
-  assert(false);
+  //assert(false);
 #endif
 }
 
@@ -10311,8 +10311,8 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
-    memory_tile_tests();
     application_tests();
+    memory_tile_tests();
     prog_splitting_tests();
     cout << "All tests passed" << endl;
 

@@ -493,7 +493,7 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
   vector<CoreIR::Instance*> domain_regs;
   vector<CoreIR::Wireable*> domain_at_max;
   for (int d = 0; d < num_dims(dom); d++) {
-    auto dom_reg = def->addInstance("d_" + str(d),
+    auto dom_reg = def->addInstance("d_" + str(d) + "_reg",
         "mantle.reg",
       {{"width", CoreIR::Const::make(context, width)},
       {"has_en", CoreIR::Const::make(context, true)}});
@@ -668,6 +668,32 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
   }
 
+  CoreIR::Instance* add_port_controller(CoreIR::ModuleDef* def, const std::string& inpt, UBuffer& buf) {
+    auto c = def->getContext();
+
+    auto sched = buf.schedule.at(inpt);
+    auto sms = get_maps(sched);
+    assert(sms.size() == 1);
+
+    auto svec = isl_pw_multi_aff_from_map(sms.at(0));
+
+    vector<pair<isl_set*, isl_multi_aff*> > pieces =
+      get_pieces(svec);
+    assert(pieces.size() == 1);
+
+    auto saff = pieces.at(0).second;
+    auto dom = pieces.at(0).first;
+
+    cout << "sched = " << str(saff) << endl;
+    cout << tab(1) << "dom = " << str(dom) << endl;
+
+    // TODO: Assert multi size == 1
+    auto aff = isl_multi_aff_get_aff(saff, 0);
+    auto aff_c = affine_controller(c, dom, aff);
+    aff_c->print();
+    return def->addInstance(controller_name(inpt), aff_c);
+  }
+
   void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
     int width = buf.port_widths;
 
@@ -686,7 +712,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       {
         vector<pair<string, CoreIR::Type*> >
           ub_field{{"clk", c->Named("coreir.clkIn")},
-            {"reset", c->BitIn()},
             {"addr", c->Bit()->Arr(addr_width)}};
         string distrib = read_addrgen_name(bank.name);
         CoreIR::RecordType* utp = c->Record(ub_field);
@@ -700,7 +725,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       {
         vector<pair<string, CoreIR::Type*> >
           ub_field{{"clk", c->Named("coreir.clkIn")},
-            {"reset", c->BitIn()},
             {"addr", c->Bit()->Arr(addr_width)}};
         string distrib = write_addrgen_name(bank.name);
         CoreIR::RecordType* utp = c->Record(ub_field);
@@ -712,73 +736,77 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       }
     }
 
+    for (auto inpt : buf.get_all_ports()) {
+      auto ac = add_port_controller(def, inpt, buf);
+      def->connect(ac->sel("reset"), def->sel("self.reset"));
+    }
+
     for (auto inpt : buf.get_out_ports()) {
-      vector<pair<string, CoreIR::Type*> >
-        ub_field{{"clk", c->Named("coreir.clkIn")},
-          {"reset", c->BitIn()},
-          {"addr", c->Bit()->Arr(16)},
-          {"valid", c->Bit()}};
-      string distrib = controller_name(inpt);
-      CoreIR::RecordType* utp = c->Record(ub_field);
-      auto bcm = ns->newModuleDecl(distrib, utp);
-      auto bdef = bcm->newModuleDef();
-      // TODO: Fix
-      bdef->connect("self.reset", "self.valid");
-      auto sched = buf.schedule.at(inpt);
-      auto sms = get_maps(sched);
-      assert(sms.size() == 1);
-      {
-        auto m = cpy(sms.at(0));
-        cout << "m = " << str(m) << endl;
-        auto rng = range(m);
-        cout << "r = " << str(rng) << endl;
-        auto ind = isl_set_indicator_function(cpy(rng));
-        cout << "ind = " << str(ind) << endl;
-        //assert(false);
-      }
+      //vector<pair<string, CoreIR::Type*> >
+        //ub_field{{"clk", c->Named("coreir.clkIn")},
+          //{"reset", c->BitIn()},
+          //{"addr", c->Bit()->Arr(16)},
+          //{"valid", c->Bit()}};
+      //string distrib = controller_name(inpt);
+      //CoreIR::RecordType* utp = c->Record(ub_field);
+      //auto bcm = ns->newModuleDecl(distrib, utp);
+      //auto bdef = bcm->newModuleDef();
+      //// TODO: Fix
+      //bdef->connect("self.reset", "self.valid");
+      //auto sched = buf.schedule.at(inpt);
+      //auto sms = get_maps(sched);
+      //assert(sms.size() == 1);
+      //{
+        //auto m = cpy(sms.at(0));
+        //cout << "m = " << str(m) << endl;
+        //auto rng = range(m);
+        //cout << "r = " << str(rng) << endl;
+        //auto ind = isl_set_indicator_function(cpy(rng));
+        //cout << "ind = " << str(ind) << endl;
+        ////assert(false);
+      //}
 
-      auto svec = isl_pw_multi_aff_from_map(sms.at(0));
+      //auto svec = isl_pw_multi_aff_from_map(sms.at(0));
 
-      vector<pair<isl_set*, isl_multi_aff*> > pieces =
-        get_pieces(svec);
-      assert(pieces.size() == 1);
+      //vector<pair<isl_set*, isl_multi_aff*> > pieces =
+        //get_pieces(svec);
+      //assert(pieces.size() == 1);
 
-      auto saff = pieces.at(0).second;
-      auto dom = pieces.at(0).first;
+      //auto saff = pieces.at(0).second;
+      //auto dom = pieces.at(0).first;
 
-      cout << "sched = " << str(saff) << endl;
-      cout << tab(1) << "dom = " << str(dom) << endl;
+      //cout << "sched = " << str(saff) << endl;
+      //cout << tab(1) << "dom = " << str(dom) << endl;
 
-      for (int i = 0; i < isl_multi_aff_dim(saff, isl_dim_set); i++) {
-        auto aff = isl_multi_aff_get_aff(saff, i);
-        auto aff_c = affine_controller(c, dom, aff);
-        aff_c->print();
-      }
-      assert(false);
+      //for (int i = 0; i < isl_multi_aff_dim(saff, isl_dim_set); i++) {
+        //auto aff = isl_multi_aff_get_aff(saff, i);
+        //auto aff_c = affine_controller(c, dom, aff);
+        //aff_c->print();
+      //}
+      ////assert(false);
 
-      bcm->setDef(bdef);
-      auto out_ctrl = def->addInstance(distrib, bcm);
+      //bcm->setDef(bdef);
+      auto out_ctrl = def->sel(controller_name(inpt));
       def->connect(def->sel("self")->sel(buf.container_bundle(inpt) + "_valid"), out_ctrl->sel("valid"));
     }
 
     for (auto inpt : buf.get_in_ports()) {
-      vector<pair<string, CoreIR::Type*> >
-        ub_field{{"clk", c->Named("coreir.clkIn")},
-          {"reset", c->BitIn()},
-          {"addr", c->Bit()->Arr(16)},
-          {"valid", c->Bit()}};
-      string distrib = controller_name(inpt);
-      CoreIR::RecordType* utp = c->Record(ub_field);
-      auto bcm = ns->newModuleDecl(distrib, utp);
-      auto bdef = bcm->newModuleDef();
-      bcm->setDef(bdef);
-      def->addInstance(distrib, bcm);
+      //vector<pair<string, CoreIR::Type*> >
+        //ub_field{{"clk", c->Named("coreir.clkIn")},
+          //{"reset", c->BitIn()},
+          //{"addr", c->Bit()->Arr(16)},
+          //{"valid", c->Bit()}};
+      //string distrib = controller_name(inpt);
+      //CoreIR::RecordType* utp = c->Record(ub_field);
+      //auto bcm = ns->newModuleDecl(distrib, utp);
+      //auto bdef = bcm->newModuleDef();
+      //bcm->setDef(bdef);
+      //def->addInstance(distrib, bcm);
     }
 
     for (auto inpt : buf.get_in_ports()) {
       vector<pair<string, CoreIR::Type*> >
         ub_field{{"clk", c->Named("coreir.clkIn")},
-          {"reset", c->BitIn()},
           {"in", c->BitIn()->Arr(width)},
           {"en", c->BitIn()},
           {"valid", c->Bit()}};
@@ -813,13 +841,14 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     for (auto outpt : buf.get_out_ports()) {
       vector<pair<string, CoreIR::Type*> >
         ub_field{{"clk", c->Named("coreir.clkIn")},
-          {"reset", c->BitIn()},
           {"out", c->Bit()->Arr(width)}};
       for (auto b : buf.get_banks()) {
         if (elem(outpt, buf.get_bank_outputs(b.name))) {
           ub_field.push_back({b.name, c->BitIn()->Arr(width)});
         }
       }
+
+      // TODO: Add domain variables to select from port controller
 
       string distrib = outpt + "_select";
       CoreIR::RecordType* utp = c->Record(ub_field);
