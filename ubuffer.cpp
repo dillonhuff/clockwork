@@ -17,6 +17,25 @@ std::string controller_name(const std::string& n) {
   return n + "_port_controller";
 }
 
+isl_map* linear_address_map(isl_set* s) {
+  string domain = name(s);
+  int dim = num_dims(s);
+  vector<string> var_names;
+  vector<string> exprs;
+  isl_val* stride = one(ctx(s));
+  for (int i = 0; i < dim; i++) {
+    string var = "d" + str(i);
+    var_names.push_back(var);
+    string stridestr = str(stride);
+    exprs.push_back(stridestr + "*" + var);
+    auto interval = project_all_but(s, i);
+    isl_val* extend = add(sub(lexmaxval(interval), lexminval(interval)), one(ctx(s)));
+    stride = mul(stride, extend);
+  }
+  string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(exprs, "[", "]", " + ") + " }";
+  return isl_map_read_from_str(ctx(s), map_str.c_str());
+}
+
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
   umap* src_map = nullptr;
   for (auto inpt : buf.get_in_ports()) {
@@ -441,6 +460,59 @@ CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
   return m;
 }
 
+CoreIR::Module* coreir_for_multi_aff(CoreIR::Context* context, isl_multi_aff* aff) {
+  auto ns = context->getNamespace("global");
+
+  int width = 16;
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"out", context->Bit()->Arr(width)}};
+  cout << "aff = " << str(aff) << endl;
+  int dims = num_in_dims(aff);
+  int out_dims = isl_multi_aff_dim(aff, isl_dim_set);
+  cout << "dims = " << dims << endl;
+  ub_field.push_back({"d", context->BitIn()->Arr(16)->Arr(dims)});
+  ub_field.push_back({"out", context->BitIn()->Arr(16)->Arr(out_dims)});
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto m = ns->newModuleDecl("aff_" + context->getUnique(), utp);
+  auto def = m->newModuleDef();
+  for (int i = 0; i < isl_multi_aff_dim(aff, isl_dim_set); i++) {
+    auto iaff = isl_multi_aff_get_aff(aff, i);
+    cout << tab(3) << i << ": " << str(iaff) << endl;
+
+  }
+
+  auto c = context;
+
+  //vector<CoreIR::Wireable*> terms;
+  //for (int d = 0; d < dims; d++) {
+    //int v = to_int(get_coeff(aff, d));
+    //cout << "coeff: " << v << endl;
+    //auto constant = def->addInstance(context->getUnique(),
+        //"coreir.const",
+      //{{"width", CoreIR::Const::make(c, width)}},
+      //{{"value", CoreIR::Const::make(c, BitVector(width, v))}});
+    //auto m = def->addInstance(context->getUnique(),
+        //"coreir.mul",
+        //{{"width", CoreIR::Const::make(c, width)}});
+    //def->connect(m->sel("in0"), constant->sel("out"));
+    //def->connect(m->sel("in1"), def->sel("self")->sel("d")->sel(d));
+    //terms.push_back(m->sel("out"));
+  //}
+  //int v = to_int(const_coeff(aff));
+  //cout << "coeff: " << v << endl;
+  //auto constant = def->addInstance(context->getUnique(),
+      //"coreir.const",
+      //{{"width", CoreIR::Const::make(c, width)}},
+      //{{"value", CoreIR::Const::make(c, BitVector(width, v))}});
+  //terms.push_back(constant->sel("out"));
+  //auto out = addList(def, terms);
+  //def->connect(def->sel("self.out"), out);
+  m->setDef(def);
+
+  return m;
+}
+
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
   cout << tab(1) << "dom = " << str(dom) << endl;
 
@@ -710,29 +782,40 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       {{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, capacity)}});
 
       {
-        vector<pair<string, CoreIR::Type*> >
-          ub_field{{"clk", c->Named("coreir.clkIn")},
-            {"addr", c->Bit()->Arr(addr_width)}};
-        string distrib = read_addrgen_name(bank.name);
-        CoreIR::RecordType* utp = c->Record(ub_field);
-        auto bcm = ns->newModuleDecl(distrib, utp);
-        auto bdef = bcm->newModuleDef();
-        bcm->setDef(bdef);
-        auto rdgen = def->addInstance(distrib, bcm);
-        def->connect(rdgen->sel("addr"), bnk->sel("raddr"));
+        auto bank_readers = buf.get_bank_outputs(bank.name);
+        assert(bank_readers.size() == 1);
+        auto reader = pick(bank_readers);
+        auto acc_map = to_map(buf.access_map.at(reader));
+        cout << "acc map = " << str(acc_map) << endl;
+        auto reduce_map = linear_address_map(to_set(bank.rddom));
+        cout << "reduce map = " << str(reduce_map) << endl;
+        auto addr_expr = dot(acc_map, reduce_map);
+        cout << "composition = " << str(addr_expr) << endl;
+        assert(false);
+
+        //vector<pair<string, CoreIR::Type*> >
+          //ub_field{{"clk", c->Named("coreir.clkIn")},
+            //{"addr", c->Bit()->Arr(addr_width)}};
+        //string distrib = read_addrgen_name(bank.name);
+        //CoreIR::RecordType* utp = c->Record(ub_field);
+        //auto bcm = ns->newModuleDecl(distrib, utp);
+        //auto bdef = bcm->newModuleDef();
+        //bcm->setDef(bdef);
+        //auto rdgen = def->addInstance(distrib, bcm);
+        //def->connect(rdgen->sel("addr"), bnk->sel("raddr"));
       }
 
       {
-        vector<pair<string, CoreIR::Type*> >
-          ub_field{{"clk", c->Named("coreir.clkIn")},
-            {"addr", c->Bit()->Arr(addr_width)}};
-        string distrib = write_addrgen_name(bank.name);
-        CoreIR::RecordType* utp = c->Record(ub_field);
-        auto bcm = ns->newModuleDecl(distrib, utp);
-        auto bdef = bcm->newModuleDef();
-        bcm->setDef(bdef);
-        auto rdgen = def->addInstance(distrib, bcm);
-        def->connect(rdgen->sel("addr"), bnk->sel("waddr"));
+        //vector<pair<string, CoreIR::Type*> >
+          //ub_field{{"clk", c->Named("coreir.clkIn")},
+            //{"addr", c->Bit()->Arr(addr_width)}};
+        //string distrib = write_addrgen_name(bank.name);
+        //CoreIR::RecordType* utp = c->Record(ub_field);
+        //auto bcm = ns->newModuleDecl(distrib, utp);
+        //auto bdef = bcm->newModuleDef();
+        //bcm->setDef(bdef);
+        //auto rdgen = def->addInstance(distrib, bcm);
+        //def->connect(rdgen->sel("addr"), bnk->sel("waddr"));
       }
     }
 

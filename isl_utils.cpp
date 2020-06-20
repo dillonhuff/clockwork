@@ -189,6 +189,10 @@ bool empty(umap* const s) {
   return isl_union_map_is_empty(s);
 }
 
+int num_in_dims(isl_multi_aff* const s) {
+  return isl_multi_aff_dim(s, isl_dim_in);
+}
+
 int num_out_dims(isl_space* const s) {
   assert(isl_space_is_map(s));
   int ndims = isl_space_dim(s, isl_dim_out);
