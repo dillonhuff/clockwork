@@ -462,6 +462,23 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
   auto aff_func = def->addInstance("affine_func", aff_mod);
 
 
+  auto cycle_time_reg = def->addInstance("cycle_time", "mantle.reg",
+      {{"width", CoreIR::Const::make(context, width)},
+      {"has_en", CoreIR::Const::make(context, false)}});
+
+  auto diff = def->addInstance("time_diff", "coreir.sub", {{"width", CoreIR::Const::make(c, width)}});
+  def->connect(cycle_time_reg->sel("out"), diff->sel("in1"));
+  def->connect(aff_func->sel("out"), diff->sel("in0"));
+
+  auto zero = def->addInstance(context->getUnique(),
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, 0))}});
+
+  auto cmp = def->addInstance("cmp_time", "coreir.eq", {{"width", CoreIR::Const::make(c, width)}});
+  def->connect(cmp->sel("in0"), diff->sel("out"));
+  def->connect(cmp->sel("in1"), zero->sel("out"));
+
   aff_mod->print();
 
   m->setDef(def);
