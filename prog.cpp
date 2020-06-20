@@ -1413,10 +1413,12 @@ vector<string> outgoing_buffers(const map<string, UBuffer>& buffers, op* op, pro
 }
 
 vector<string> incoming_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg) {
+  cout << "getting incoming buffers to " << op->name << endl;
   vector<string> incoming;
   std::set<string> done;
   for (auto p : op->consume_locs_pair) {
     auto buf_name = p.first;
+    cout << tab(1) << "consumed: " << buf_name << endl;
     if (!elem(buf_name, done)) {
       incoming.push_back(buf_name);
       done.insert(buf_name);

@@ -5,6 +5,17 @@
 #endif
 #include "coreir_backend.h"
 
+std::string read_addrgen_name(const std::string& n) {
+  return n + "_read_addrgen";
+}
+
+std::string write_addrgen_name(const std::string& n) {
+  return n + "_write_addrgen";
+}
+std::string controller_name(const std::string& n) {
+  return n + "_port_controller";
+}
+
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
   umap* src_map = nullptr;
   for (auto inpt : buf.get_in_ports()) {
@@ -501,6 +512,169 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
   }
 
+  void generate_hls_style_coreir(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
+    int width = buf.port_widths;
+
+    auto c = def->getContext();
+
+    auto ns = c->getNamespace("global");
+
+    for (auto bank : buf.get_banks()) {
+      int capacity = int_upper_bound(card(bank.rddom));
+      int addr_width = minihls::clog2(capacity);
+      auto bnk = def->addInstance(
+      bank.name,
+      "coreir.mem",
+      {{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, capacity)}});
+
+      {
+        vector<pair<string, CoreIR::Type*> >
+          ub_field{{"clk", c->Named("coreir.clkIn")},
+            {"reset", c->BitIn()},
+            {"addr", c->Bit()->Arr(addr_width)}};
+        string distrib = read_addrgen_name(bank.name);
+        CoreIR::RecordType* utp = c->Record(ub_field);
+        auto bcm = ns->newModuleDecl(distrib, utp);
+        auto bdef = bcm->newModuleDef();
+        bcm->setDef(bdef);
+        auto rdgen = def->addInstance(distrib, bcm);
+        def->connect(rdgen->sel("addr"), bnk->sel("raddr"));
+      }
+
+      {
+        vector<pair<string, CoreIR::Type*> >
+          ub_field{{"clk", c->Named("coreir.clkIn")},
+            {"reset", c->BitIn()},
+            {"addr", c->Bit()->Arr(addr_width)}};
+        string distrib = write_addrgen_name(bank.name);
+        CoreIR::RecordType* utp = c->Record(ub_field);
+        auto bcm = ns->newModuleDecl(distrib, utp);
+        auto bdef = bcm->newModuleDef();
+        bcm->setDef(bdef);
+        auto rdgen = def->addInstance(distrib, bcm);
+        def->connect(rdgen->sel("addr"), bnk->sel("waddr"));
+      }
+    }
+
+    for (auto inpt : buf.get_out_ports()) {
+      vector<pair<string, CoreIR::Type*> >
+        ub_field{{"clk", c->Named("coreir.clkIn")},
+          {"reset", c->BitIn()},
+          {"addr", c->Bit()->Arr(16)},
+          {"valid", c->Bit()}};
+      string distrib = controller_name(inpt);
+      CoreIR::RecordType* utp = c->Record(ub_field);
+      auto bcm = ns->newModuleDecl(distrib, utp);
+      auto bdef = bcm->newModuleDef();
+      auto sched = buf.schedule.at(inpt);
+      auto sms = get_maps(sched);
+      assert(sms.size() == 1);
+      auto svec = isl_pw_multi_aff_from_map(sms.at(0));
+
+      vector<pair<isl_set*, isl_multi_aff*> > pieces =
+        get_pieces(svec);
+      assert(pieces.size() == 1);
+
+      auto saff = pieces.at(0).second;
+      auto dom = pieces.at(0).first;
+      cout << "sched = " << str(saff) << endl;
+      cout << tab(1) << "dom = " << str(dom) << endl;
+      int dim = num_dims(dom);
+      vector<int> iis;
+      for (int i = 0; i < dim; i++) {
+        iis.push_back(1);
+      }
+
+      int d = 1;
+
+      // TODO: Generate a working controller that emits
+      // valid signals
+
+      bcm->setDef(bdef);
+      def->addInstance(distrib, bcm);
+    }
+
+    for (auto inpt : buf.get_in_ports()) {
+      vector<pair<string, CoreIR::Type*> >
+        ub_field{{"clk", c->Named("coreir.clkIn")},
+          {"reset", c->BitIn()},
+          {"addr", c->Bit()->Arr(16)},
+          {"valid", c->Bit()}};
+      string distrib = controller_name(inpt);
+      CoreIR::RecordType* utp = c->Record(ub_field);
+      auto bcm = ns->newModuleDecl(distrib, utp);
+      auto bdef = bcm->newModuleDef();
+      bcm->setDef(bdef);
+      def->addInstance(distrib, bcm);
+    }
+
+    for (auto inpt : buf.get_in_ports()) {
+      vector<pair<string, CoreIR::Type*> >
+        ub_field{{"clk", c->Named("coreir.clkIn")},
+          {"reset", c->BitIn()},
+          {"in", c->BitIn()->Arr(width)},
+          {"en", c->BitIn()},
+          {"valid", c->Bit()}};
+      for (auto b : buf.get_banks()) {
+        if (elem(inpt, buf.get_bank_inputs(b.name))) {
+          ub_field.push_back({b.name, c->Bit()->Arr(width)});
+        }
+      }
+
+      string distrib = inpt + "_broadcast";
+      CoreIR::RecordType* utp = c->Record(ub_field);
+      auto bcm = ns->newModuleDecl(distrib, utp);
+      auto bdef = bcm->newModuleDef();
+      for (auto b : buf.get_banks()) {
+        if (elem(inpt, buf.get_bank_inputs(b.name))) {
+          bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.in"));
+        }
+      }
+      bcm->setDef(bdef);
+      auto bc = def->addInstance(inpt + "_broadcast", bcm);
+      for (auto b : buf.get_banks()) {
+        if (elem(inpt, buf.get_bank_inputs(b.name))) {
+          def->connect(bc->sel(b.name), def->sel(b.name)->sel("wdata"));
+          def->connect(bc->sel("valid"), def->sel(b.name)->sel("wen"));
+        }
+      }
+      def->connect(bc->sel("in"), def->sel("self")->sel(buf.container_bundle(inpt))->sel(buf.bundle_offset(inpt)));
+      def->connect(bc->sel("en"), def->sel(controller_name(inpt))->sel("valid"));
+    }
+
+    for (auto outpt : buf.get_out_ports()) {
+      vector<pair<string, CoreIR::Type*> >
+        ub_field{{"clk", c->Named("coreir.clkIn")},
+          {"reset", c->BitIn()},
+          {"out", c->Bit()->Arr(width)}};
+      for (auto b : buf.get_banks()) {
+        if (elem(outpt, buf.get_bank_outputs(b.name))) {
+          ub_field.push_back({b.name, c->BitIn()->Arr(width)});
+        }
+      }
+
+      string distrib = outpt + "_select";
+      CoreIR::RecordType* utp = c->Record(ub_field);
+      auto bcm = ns->newModuleDecl(distrib, utp);
+      auto bdef = bcm->newModuleDef();
+      for (auto b : buf.get_banks()) {
+        if (elem(outpt, buf.get_bank_outputs(b.name))) {
+          // TODO: Add real selection logic
+          bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
+          break;
+        }
+      }
+      bcm->setDef(bdef);
+      auto bc = def->addInstance(outpt + "_select", bcm);
+      for (auto b : buf.get_banks()) {
+        if (elem(outpt, buf.get_bank_outputs(b.name))) {
+          def->connect(bc->sel(b.name), def->sel(b.name)->sel("rdata"));
+        }
+      }
+      def->connect(bc->sel("out"), def->sel("self")->sel(buf.container_bundle(outpt))->sel(buf.bundle_offset(outpt)));
+    }
+  }
+
   //generate coreir instance for single ubuffer
   //return the coreir module with port bundle and enable/valid interface
   CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf) {
@@ -528,7 +702,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto ub = ns->newModuleDecl(buf.name + "_ub", utp);
     auto def = ub->newModuleDef();
 
-    buf.generate_coreir(options, def);
+    if (false) {
+      generate_hls_style_coreir(options, buf, def);
+    } else {
+      buf.generate_coreir(options, def);
+    }
 
     ub->setDef(def);
     //if(!saveToFile(ns, "ubuffer.json")) {

@@ -9892,6 +9892,7 @@ void halide_conv_layer_3D_test() {
   options.inner_bank_offset_mode =
     INNER_BANK_OFFSET_LINEAR;
   options.all_rams = true;
+<<<<<<< HEAD
   auto sched = prg.optimized_codegen();
   auto buffers = build_buffers(prg, sched);
 
@@ -9899,6 +9900,24 @@ void halide_conv_layer_3D_test() {
   generate_coreir(options, buffers, prg, sched);
 #endif
   //generate_optimized_code(options, prg);
+=======
+  //generate_optimized_code(options, prg);
+
+#ifdef COREIR
+
+  auto sched = prg.optimized_codegen();
+  auto bufs = build_buffers(prg, sched);
+  for (auto& b : bufs) {
+    if (b.second.num_in_ports() > 0 &&
+        b.second.num_out_ports() > 0) {
+      cout << b.second << endl;
+      b.second.generate_bank_and_merge(options);
+    }
+  }
+  generate_coreir(options, bufs, prg, sched);
+  assert(false);
+#endif
+>>>>>>> 068142024190583121ec36b8de49847dc73bcbda
   //regression_test(prg);
   //assert(false);
 }
@@ -9959,8 +9978,13 @@ void cyclic_banked_conv_test() {
 
 void application_tests() {
   halide_conv_layer_3D_test();
+<<<<<<< HEAD
   cyclic_banked_conv_test();
   //playground();
+=======
+  //playground();
+  cyclic_banked_conv_test();
+>>>>>>> 068142024190583121ec36b8de49847dc73bcbda
   sum_denoise_test();
   sum_diffs_test();
   denoise2d_test();
@@ -10198,8 +10222,8 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
-    memory_tile_tests();
     application_tests();
+    memory_tile_tests();
     prog_splitting_tests();
     cout << "All tests passed" << endl;
 

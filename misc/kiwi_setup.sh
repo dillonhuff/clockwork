@@ -3,4 +3,4 @@ source ./user_settings/private_settings.sh
 
 source ./misc/install_deps_linux.sh
 
-git clone https://github.com/rdaly525/coreir.git
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${PWD}/lib
