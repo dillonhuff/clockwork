@@ -9967,13 +9967,8 @@ void cyclic_banked_conv_test() {
 
 void application_tests() {
   halide_conv_layer_3D_test();
-<<<<<<< HEAD
-  cyclic_banked_conv_test();
-  //playground();
-=======
   //playground();
   cyclic_banked_conv_test();
->>>>>>> 068142024190583121ec36b8de49847dc73bcbda
   sum_denoise_test();
   sum_diffs_test();
   denoise2d_test();
