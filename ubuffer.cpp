@@ -530,7 +530,7 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
       {{"value", CoreIR::Const::make(c, BitVector(width, min_pt))}});
 
     CoreIR::Wireable* smaller_dims_at_max = tinc->sel("out");
-    for (int de = d + 1; de < num_dims(dom); de++) {
+    for (int de = d; de < num_dims(dom); de++) {
       auto de_atmax = def->addInstance(df + "_am_" + context->getUnique(), "corebit.and");
       def->connect(de_atmax->sel("in0"), smaller_dims_at_max);
       def->connect(de_atmax->sel("in1"), domain_at_max.at(de));

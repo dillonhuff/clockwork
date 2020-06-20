@@ -10,6 +10,10 @@
 
 #include <chrono>
 
+#ifdef COREIR
+CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
+#endif
+
 void compare(vector<string>& opt, vector<string>& naive) {
   assert(opt.size() == naive.size());
   for (size_t i = 0; i < opt.size(); i++) {
@@ -10186,12 +10190,16 @@ void application_tests() {
 void affine_controller_test() {
 #ifdef COREIR
   isl_ctx* ctx = isl_ctx_alloc();
-  isl_set* dom = isl_set_read_from_str(ctx, "{ [i, j] : 0 <= i <= 9 and 0 <= j <= 3 }");
-  isl_aff* aff = isl_aff_read_from_str(ctx, "{ [i, j] -> [(10*i + j)] }");
+  isl_set* dom = isl_set_read_from_str(ctx, "{ event[i, j] : 0 <= i <= 9 and 0 <= j <= 3 }");
+  isl_aff* aff = isl_aff_read_from_str(ctx, "{ event[i, j] -> [(10*i + j)] }");
   auto context = CoreIR::newContext();
   auto ac = affine_controller(context, dom, aff);
 
   ac->print();
+  context->runPasses({"flattentypes", "flatten", "wireclocks-coreir"});
+
+  cmd("rm -f event.json");
+  saveToFile(context->getNamespace("global"), "event.json", ac);
 
   deleteContext(context);
   isl_ctx_free(ctx);
