@@ -414,6 +414,44 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
 
 #ifdef COREIR
 
+CoreIR::Module* ram_module(CoreIR::Context* c, const int width, const int depth) {
+  auto tp = c->Record({
+      {"clk", c->Named("coreir.clkIn")},
+      {"wdata", c->BitIn()->Arr(width)},
+      {"waddr", c->BitIn()->Arr(width)},
+      {"wen", c->BitIn()},
+      {"rdata", c->Bit()->Arr(width)},
+      {"raddr", c->BitIn()->Arr(width)},
+      {"ren", c->BitIn()}});
+  auto m = c->getNamespace("global")->newModuleDecl("ram_" + c->getUnique(), tp);
+  auto def = m->newModuleDef();
+  uint awidth = (uint)ceil(log2(depth));
+  CoreIR::Values sliceArgs = {{"width", CoreIR::Const::make(c, width)},
+    {"lo", CoreIR::Const::make(c, 0)},
+    {"hi", CoreIR::Const::make(c, awidth)}};
+  def->addInstance("raddr_slice", "coreir.slice", sliceArgs);
+  def->addInstance("waddr_slice", "coreir.slice", sliceArgs);
+
+  def->addInstance("mem", "coreir.mem", {{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, depth)}});
+  def->addInstance(
+      "readreg",
+      "mantle.reg",
+      {{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, true)}});
+  def->connect("self.clk", "readreg.clk");
+  def->connect("self.clk", "mem.clk");
+  def->connect("self.wdata", "mem.wdata");
+  def->connect("self.waddr", "waddr_slice.in");
+  def->connect("waddr_slice.out", "mem.waddr");
+  def->connect("self.wen", "mem.wen");
+  def->connect("mem.rdata", "readreg.in");
+  def->connect("self.rdata", "readreg.out");
+  def->connect("self.raddr", "raddr_slice.in");
+  def->connect("raddr_slice.out", "mem.raddr");
+  def->connect("self.ren", "readreg.en");
+  m->setDef(def);
+  return m;
+}
+
 CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
   auto ns = context->getNamespace("global");
 
@@ -773,13 +811,19 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     auto ns = c->getNamespace("global");
 
+    for (auto inpt : buf.get_all_ports()) {
+      auto ac = add_port_controller(def, inpt, buf);
+      def->connect(ac->sel("reset"), def->sel("self.reset"));
+    }
+
     for (auto bank : buf.get_banks()) {
       int capacity = int_upper_bound(card(bank.rddom));
       int addr_width = minihls::clog2(capacity);
       auto bnk = def->addInstance(
-      bank.name,
-      "coreir.mem",
-      {{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, capacity)}});
+          bank.name,
+          ram_module(c, width, capacity));
+      //"global.RamType2",
+      //{{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, capacity)}});
 
       {
         auto bank_readers = buf.get_bank_outputs(bank.name);
@@ -795,19 +839,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
         auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
         auto agen = def->addInstance(read_addrgen_name(bank.name), aff_gen_mod);
-        //assert(false);
-
-        //vector<pair<string, CoreIR::Type*> >
-          //ub_field{{"clk", c->Named("coreir.clkIn")},
-            //{"addr", c->Bit()->Arr(addr_width)}};
-        //string distrib = read_addrgen_name(bank.name);
-        //CoreIR::RecordType* utp = c->Record(ub_field);
-        //auto bcm = ns->newModuleDecl(distrib, utp);
-        //auto bdef = bcm->newModuleDef();
-        //bcm->setDef(bdef);
-        //auto rdgen = def->addInstance(distrib, bcm);
+        
         def->connect(agen->sel("out"), bnk->sel("raddr"));
+        cout << "getting read controller: " << reader << endl;
         def->connect(agen->sel("d"), def->sel(controller_name(reader))->sel("d"));
+        cout << "got read controller: " << reader << endl;
       }
 
       {
@@ -824,10 +860,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       }
     }
 
-    for (auto inpt : buf.get_all_ports()) {
-      auto ac = add_port_controller(def, inpt, buf);
-      def->connect(ac->sel("reset"), def->sel("self.reset"));
-    }
 
     for (auto inpt : buf.get_out_ports()) {
       //vector<pair<string, CoreIR::Type*> >

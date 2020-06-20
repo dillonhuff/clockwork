@@ -2,6 +2,12 @@
 
 #ifdef COREIR
 
+using CoreIR::Const;
+using CoreIR::Context;
+using CoreIR::Values;
+using CoreIR::Generator;
+using CoreIR::ModuleDef;
+
 std::string cu_name(const std::string& n) {
   return "cu_" + n;
 }
@@ -266,7 +272,8 @@ void generate_coreir(CodegenOptions& options,
     prog& prg,
     umap* schedmap) {
   CoreIR::Context* context = CoreIR::newContext();
-  CoreIRLoadLibrary_commonlib(context);
+  auto c = context;
+
   //CoreIRLoadLibrary_cwlib(context);
   //
   auto prg_mod = generate_coreir(options, buffers, prg, schedmap, context);
