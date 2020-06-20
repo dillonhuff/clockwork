@@ -451,7 +451,8 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
   int width = 16;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", c->Named("coreir.clkIn")},
-      {"reset", c->BitIn()}};
+      {"reset", c->BitIn()},
+      {"valid", c->Bit()}};
   int dims = num_in_dims(aff);
   ub_field.push_back({"d", context->Bit()->Arr(16)->Arr(dims)});
 
@@ -466,6 +467,16 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
       {{"width", CoreIR::Const::make(context, width)},
       {"has_en", CoreIR::Const::make(context, false)}});
 
+  auto one = def->addInstance(context->getUnique(),
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, 1))}});
+
+  auto inc_time = def->addInstance("inc_time", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});
+  def->connect(inc_time->sel("in0"), cycle_time_reg->sel("out"));
+  def->connect(inc_time->sel("in1"), one->sel("out"));
+  def->connect(inc_time->sel("out"), cycle_time_reg->sel("in"));
+
   auto diff = def->addInstance("time_diff", "coreir.sub", {{"width", CoreIR::Const::make(c, width)}});
   def->connect(cycle_time_reg->sel("out"), diff->sel("in1"));
   def->connect(aff_func->sel("out"), diff->sel("in0"));
@@ -478,6 +489,7 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
   auto cmp = def->addInstance("cmp_time", "coreir.eq", {{"width", CoreIR::Const::make(c, width)}});
   def->connect(cmp->sel("in0"), diff->sel("out"));
   def->connect(cmp->sel("in1"), zero->sel("out"));
+  def->connect(cmp->sel("out"), def->sel("self")->sel("valid"));
 
   aff_mod->print();
 
