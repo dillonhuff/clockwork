@@ -9892,19 +9892,9 @@ void halide_conv_layer_3D_test() {
   options.inner_bank_offset_mode =
     INNER_BANK_OFFSET_LINEAR;
   options.all_rams = true;
-<<<<<<< HEAD
-  auto sched = prg.optimized_codegen();
-  auto buffers = build_buffers(prg, sched);
-
-#ifdef COREIR
-  generate_coreir(options, buffers, prg, sched);
-#endif
-  //generate_optimized_code(options, prg);
-=======
   //generate_optimized_code(options, prg);
 
 #ifdef COREIR
-
   auto sched = prg.optimized_codegen();
   auto bufs = build_buffers(prg, sched);
   for (auto& b : bufs) {
@@ -9917,7 +9907,6 @@ void halide_conv_layer_3D_test() {
   generate_coreir(options, bufs, prg, sched);
   assert(false);
 #endif
->>>>>>> 068142024190583121ec36b8de49847dc73bcbda
   //regression_test(prg);
   //assert(false);
 }
