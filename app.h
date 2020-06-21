@@ -994,6 +994,9 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity);
 map<string, isl_aff*>
 hardware_schedule(uset* domain, umap* validity, umap* proximity);
 
+umap* 
+hardware_schedule_umap(uset* domain, umap* validity, umap* proximity);
+
 umap* experimental_opt(uset* domain, umap* validity, umap* proximity);
 
 static inline

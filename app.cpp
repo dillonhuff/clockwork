@@ -1361,6 +1361,39 @@ hardware_schedule(
   return hw_schedules;
 }
 
+umap* 
+hardware_schedule_umap(uset* domain, umap* validity, umap* proximity) {
+  auto hs = hardware_schedule(domain, validity, proximity);
+  assert(hs.size() > 0);
+  int nvars = num_in_dims(pick(hs).second);
+  vector<string> dimvars;
+  for (int i = 0; i < nvars; i++) {
+    dimvars.push_back("d_" + str(i));
+  }
+
+  auto ct = ctx(domain);
+  umap* schedmap = rdmap(ct, "{}");
+  for (auto s : get_sets(domain)) {
+    string n = name(s);
+    isl_aff* sched = map_find(n, hs);
+
+    isl_map* sm = isl_map_from_aff(sched);
+
+    cout << "schedule for n: " << str(sm) << endl;
+    schedmap = unn(schedmap, to_umap(sm));
+    cout << "schedmap = " << str(schedmap) << endl;
+    //vector<string> dvars;
+    //for (int d = 0; d < num_in_dims(sched); d++) {
+      //string name = dim_name(aff, d);
+      //dvars.push_back(dvars);
+      //string val = str(get_coeff(aff, d));
+    //}
+    //string const_val = str(const_coeff(aff, d));
+  }
+
+  return schedmap;
+}
+
 //vector<isl_set*>
 //pad_and_permute(const vector<isl_set*>& domains) {
   //int max_dims = -1;
