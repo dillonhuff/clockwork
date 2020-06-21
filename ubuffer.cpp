@@ -805,64 +805,53 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         }
       }
 
-      for (auto b : buf.get_banks()) {
-        if (elem(outpt, buf.get_bank_outputs(b.name))) {
-          // TODO: Add real selection logic
-          bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
-          break;
+      for (auto inpt : possible_ports) {
+        for (auto b : buf.get_banks()) {
+          if (elem(inpt, buf.get_bank_inputs(b.name))) {
+            // TODO: Add real selection logic
+            bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
+            break;
+          }
         }
       }
+      //for (auto b : buf.get_banks()) {
+      //if (elem(outpt, buf.get_bank_outputs(b.name))) {
+      //// TODO: Add real selection logic
+      //bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
+      //break;
+      //}
+      //}
       bcm->setDef(bdef);
       return bcm;
 
 
-    map<string, isl_set*> in_ports_to_conditions;
-    umap* reads_to_sources = buf.get_lexmax_events(outpt);
-    cout << "reads to source for " << outpt << ": " << str(reads_to_sources) << endl;
-    uset* producers_for_outpt = range(reads_to_sources);
+      map<string, isl_set*> in_ports_to_conditions;
+      umap* reads_to_sources = buf.get_lexmax_events(outpt);
+      cout << "reads to source for " << outpt << ": " << str(reads_to_sources) << endl;
+      uset* producers_for_outpt = range(reads_to_sources);
 
-    auto read_map = buf.access_map.at(outpt);
-    for (auto inpt : possible_ports) {
-      auto write_map = buf.access_map.at(inpt);
-      auto data_written = range(write_map);
+      auto read_map = buf.access_map.at(outpt);
+      for (auto inpt : possible_ports) {
+        auto write_map = buf.access_map.at(inpt);
+        auto data_written = range(write_map);
 
-      auto common_write_ops =
-        domain(its_range(read_map, data_written));
+        auto common_write_ops =
+          domain(its_range(read_map, data_written));
 
-      auto write_ops =
-        domain(buf.access_map.at(inpt));
-      auto op_overlap = domain(its_range(reads_to_sources, write_ops));
+        auto write_ops =
+          domain(buf.access_map.at(inpt));
+        auto op_overlap = domain(its_range(reads_to_sources, write_ops));
 
-      auto overlap = its(op_overlap, common_write_ops);
+        auto overlap = its(op_overlap, common_write_ops);
 
-      auto read_ops =
-        domain(buf.access_map.at(outpt));
+        auto read_ops =
+          domain(buf.access_map.at(outpt));
 
-      auto readers_that_use_this_port =
-        gist(overlap, read_ops);
-      in_ports_to_conditions[inpt] =
-        to_set(simplify(readers_that_use_this_port));
-    }
-
-    if (possible_ports.size() == 1) {
-      //string inpt = possible_ports.at(0);
-      //string peeked_val = delay_string(options, out, inpt, outpt, buf);
-      //string access_val = buf.generate_linearize_ram_addr(outpt);
-      //buf.get_ram_address(outpt);
-      //sel.bank_conditions.push_back("1");
-      //sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, inpt));
-
-    } else {
-      //for (auto port : possible_ports) {
-        //string peeked_val = delay_string(options, out, port, outpt, buf);
-        //sel.bank_conditions.push_back("1");
-        //sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, port));
-      //}
-    }
-
-    assert(false);
-    return nullptr;
-    //return sel;
+        auto readers_that_use_this_port =
+          gist(overlap, read_ops);
+        in_ports_to_conditions[inpt] =
+          to_set(simplify(readers_that_use_this_port));
+      }
   }
 
   CoreIR::Instance* add_port_controller(CoreIR::ModuleDef* def, const std::string& inpt, UBuffer& buf) {
