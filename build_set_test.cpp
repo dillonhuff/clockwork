@@ -9895,29 +9895,25 @@ void weight_streaming_test() {
   prg.buffer_port_widths["hw_input_stencil"] = 16;
 
   {
-    auto loop_hw_input_s0_c = prg.add_loop("c", 0, 3);
-    auto loop_hw_input_s0_y = loop_hw_input_s0_c->add_loop("y", 0, 3);
-    auto loop_hw_input_s0_x = loop_hw_input_s0_y->add_loop("x", 0, 3);
+    auto ldlp = prg.add_loop("c", 0, 3);
 
-    auto hcompute_hw_input_stencil = loop_hw_input_s0_x->add_op("ld");
+    auto hcompute_hw_input_stencil = ldlp->add_op("ld");
     hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
-    hcompute_hw_input_stencil->add_load("input_copy_stencil", "x", "y", "c");
-    hcompute_hw_input_stencil->add_store("in", "x", "y", "y");
+    hcompute_hw_input_stencil->add_load("input_copy_stencil", "c");
+    hcompute_hw_input_stencil->add_store("in", "c");
   }
 
   {
-    auto loop_hw_input_s0_c = prg.add_loop("cs", 0, 3);
-    auto loop_hw_input_s0_y = loop_hw_input_s0_c->add_loop("ys", 0, 3);
-    auto loop_hw_input_s0_x = loop_hw_input_s0_y->add_loop("xs", 0, 3);
+    auto stlp = prg.add_loop("cs", 0, 3);
 
-    auto hcompute_hw_input_stencil = loop_hw_input_s0_x->add_op("ld_o");
+    auto hcompute_hw_input_stencil = stlp->add_op("ld_o");
     hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
-    hcompute_hw_input_stencil->add_load("in", "xc", "yc", "cc");
-    hcompute_hw_input_stencil->add_store("hw_output_stencil", "xc", "yc", "yc");
+    hcompute_hw_input_stencil->add_load("in", "cs");
+    hcompute_hw_input_stencil->add_store("hw_output_stencil", "cs");
   }
 
   prg.pretty_print();
-  assert(false);
+  //assert(false);
 
   CodegenOptions options;
   options.inner_bank_offset_mode =
@@ -9927,7 +9923,15 @@ void weight_streaming_test() {
 
 #ifdef COREIR
 
-  auto sched = prg.optimized_codegen();
+  //auto sched = prg.optimized_codegen();
+  //string sstre = "{ ld_o[root = 0, cs, ys, xs] -> [2 + cs, 2 + ys, 2 + xs, 1] : 0 <= cs <= 2 and 0 <= ys <= 2 and 0 <= xs <= 2; ld[root = 0, c, y, x] -> [c, y, x, 0] : 0 <= c <= 2 and 0 <= y <= 2 and 0 <= x <= 2 }";
+  //string sstr = "{ ld_o[root = 0, cs, ys, xs] -> [2 + cs, 2 + ys, 2 + xs, 1] : 0 <= cs <= 2 and 0 <= ys <= 2 and 0 <= xs <= 2; ld[root = 0, c, y, x] -> [c, y, x, 0] : 0 <= c <= 2 and 0 <= y <= 2 and 0 <= x <= 2 }";
+ //cout << "=== sched; " << str(sched) << endl;
+ //string oned_sched = "{ ld_o[root = 0, cs] -> [2 + cs, 1] : 0 <= cs <= 2; ld[root = 0, c] -> [c, 0] : 0 <= c <= 2 }";
+  string hw_sched = "{ ld_o[root = 0, cs] -> [10 + 2*cs] : 0 <= cs <= 2; ld[root = 0, c] -> [2*c] : 0 <= c <= 2 }";
+  auto sched = isl_union_map_read_from_str(prg.ctx, hw_sched.c_str());
+
+ //assert(false);
   auto bufs = build_buffers(prg, sched);
   for (auto& b : bufs) {
     if (b.second.num_in_ports() > 0 &&

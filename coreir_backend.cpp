@@ -162,7 +162,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
     {
       auto def = compute_unit->newModuleDef();
       if (found_compute) {
-        auto halide_cu = def->addInstance("inner_compute", ns->getModule(op->name));
+        auto halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
 
         for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
           bool found = false;
@@ -194,6 +194,9 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
               found = true;
               break;
             }
+          }
+          if (!found) {
+            cout << "Error: Could not find compute unit for " << pg(bundle.first, bundle.second) << endl;
           }
           assert(found);
         }
