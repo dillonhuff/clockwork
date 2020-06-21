@@ -9892,7 +9892,9 @@ prog simplified_conv_layer() {
   prg.add_output("hw_output_stencil");
   prg.buffer_port_widths["hw_output_stencil"] = 16;
 
-  auto loop_hw_input_s0_x = prg.add_loop("hw_input_s0_x", 0, 3);
+  int bound = 20;
+
+  auto loop_hw_input_s0_x = prg.add_loop("hw_input_s0_x", 0, bound);
 
   auto hcompute_hw_input_stencil = loop_hw_input_s0_x->add_op("hcompute_hw_input_stencil");
   hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
@@ -9901,7 +9903,7 @@ prog simplified_conv_layer() {
   prg.buffer_port_widths["hw_input_stencil"] = 16;
   hcompute_hw_input_stencil->add_store("hw_input_stencil", "hw_input_s0_x");
   
-  auto loop_hw_weight_s0_x = prg.add_loop("hw_weight_s0_x", 0, 3);
+  auto loop_hw_weight_s0_x = prg.add_loop("hw_weight_s0_x", 0, bound);
 
   auto hcompute_hw_weight_stencil = loop_hw_weight_s0_x->add_op("hcompute_hw_weight_stencil");
   hcompute_hw_weight_stencil->add_function("hcompute_hw_weight_stencil");
@@ -9909,13 +9911,13 @@ prog simplified_conv_layer() {
   prg.buffer_port_widths["hw_weight_stencil"] = 16;
   hcompute_hw_weight_stencil->add_store("hw_weight_stencil", "hw_weight_s0_x");
 
-  auto loop_conv_s0_x = prg.add_loop("conv_s0_x", 0, 3);
+  auto loop_conv_s0_x = prg.add_loop("conv_s0_x", 0, bound);
   auto hcompute_conv_stencil = loop_conv_s0_x->add_op("hcompute_conv_stencil");
   hcompute_conv_stencil->add_function("hcompute_conv_stencil");
   prg.buffer_port_widths["conv_stencil"] = 16;
   hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_x");
 
-  auto loop_conv_s1_win_x = prg.add_loop("conv_s1_win_x", 0, 3);
+  auto loop_conv_s1_win_x = prg.add_loop("conv_s1_win_x", 0, bound);
 
   auto hcompute_conv_stencil_1 = loop_conv_s1_win_x->add_op("hcompute_conv_stencil_1");
   hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
@@ -9924,7 +9926,7 @@ prog simplified_conv_layer() {
   hcompute_conv_stencil_1->add_load("hw_weight_stencil", "conv_s1_win_x");
   hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_win_x");
 
-  auto loop_hw_output_s0_x_xi = prg.add_loop("hw_output_s0_x_xi", 0, 3);
+  auto loop_hw_output_s0_x_xi = prg.add_loop("hw_output_s0_x_xi", 0, bound);
   auto hcompute_hw_output_stencil = loop_hw_output_s0_x_xi->add_op("hcompute_hw_output_stencil");
   hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
   hcompute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_x_xi");
