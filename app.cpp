@@ -1304,6 +1304,30 @@ hardware_schedule(
 
   ilp_builder modulo_schedule(ct);
 
+  // TODO: Replace with more sophisticated
+  // dependence analysis that allows fusion
+  for (auto m : get_maps(validity)) {
+    cout << str(m) << endl;
+    //isl_map* lexmap = isl_map_lexmax(cpy(m));
+    //lexmap = set_domain_name(lexmap, range_name(lexmap));
+    //cout << "deltas: " << str(isl_map_deltas(cpy(lexmap))) << endl;
+    //auto lm = isl_map_lexmax_pw_multi_aff(cpy(m));
+    //cout << tab(2) << "lexmax: " << str(lm) << endl;
+    //vector<pair<isl_set*, isl_multi_aff*> > pieces =
+      //get_pieces(lm);
+    int diff = int_upper_bound(card(to_uset(::domain(m)))) *
+      latencies.at(domain_name(m));
+    cout << "diff = " << diff << endl;
+
+    map<string, isl_val*> vals;
+    vals.insert({hw_delay_var(range_name(m)), one(ct)});
+    vals.insert({hw_delay_var(domain_name(m)), negone(ct)});
+    modulo_schedule.add_geq(vals, isl_val_int_from_si(ct, -diff));
+    //hw_delay_var(range_name(n)), hw_delay_var(domain_name(m)), (int) diff);
+    //modulo_schedule.add_geq(hw_delay_var(range_name(n)), hw_delay_var(domain_name(m)), (int) diff);
+  }
+  //assert(false);
+
   vector<pair<string, isl_val*> > obj;
   for (auto f : get_sets(padded_domain)) {
     string n = name(f);
@@ -1364,12 +1388,6 @@ hardware_schedule(
 umap* 
 hardware_schedule_umap(uset* domain, umap* validity, umap* proximity) {
   auto hs = hardware_schedule(domain, validity, proximity);
-  assert(hs.size() > 0);
-  int nvars = num_in_dims(pick(hs).second);
-  vector<string> dimvars;
-  for (int i = 0; i < nvars; i++) {
-    dimvars.push_back("d_" + str(i));
-  }
 
   auto ct = ctx(domain);
   umap* schedmap = rdmap(ct, "{}");
@@ -1382,15 +1400,9 @@ hardware_schedule_umap(uset* domain, umap* validity, umap* proximity) {
     cout << "schedule for n: " << str(sm) << endl;
     schedmap = unn(schedmap, to_umap(sm));
     cout << "schedmap = " << str(schedmap) << endl;
-    //vector<string> dvars;
-    //for (int d = 0; d < num_in_dims(sched); d++) {
-      //string name = dim_name(aff, d);
-      //dvars.push_back(dvars);
-      //string val = str(get_coeff(aff, d));
-    //}
-    //string const_val = str(const_coeff(aff, d));
   }
 
+  //assert(false);
   return schedmap;
 }
 
