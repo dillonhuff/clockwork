@@ -560,7 +560,7 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
   int width = 16;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", c->Named("coreir.clkIn")},
-      {"reset", c->BitIn()},
+      //{"reset", c->BitIn()},
       {"valid", c->Bit()}};
   int dims = num_in_dims(aff);
   ub_field.push_back({"d", context->Bit()->Arr(16)->Arr(dims)});
@@ -813,7 +813,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     for (auto inpt : buf.get_all_ports()) {
       auto ac = add_port_controller(def, inpt, buf);
-      def->connect(ac->sel("reset"), def->sel("self.reset"));
+      //def->connect(ac->sel("reset"), def->sel("self.reset"));
     }
 
     for (auto bank : buf.get_banks()) {
@@ -860,91 +860,18 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         
         def->connect(agen->sel("out"), bnk->sel("waddr"));
         def->connect(agen->sel("d"), def->sel(controller_name(writer))->sel("d"));
-
-        //def->connect(bnk->sel("wen"), def->sel(controller_name(writer))->sel("valid"));
-
-        //cout << "got read controller: " << reader << endl;
-        //vector<pair<string, CoreIR::Type*> >
-          //ub_field{{"clk", c->Named("coreir.clkIn")},
-            //{"addr", c->Bit()->Arr(addr_width)}};
-        //string distrib = write_addrgen_name(bank.name);
-        //CoreIR::RecordType* utp = c->Record(ub_field);
-        //auto bcm = ns->newModuleDecl(distrib, utp);
-        //auto bdef = bcm->newModuleDef();
-        //bcm->setDef(bdef);
-        //auto rdgen = def->addInstance(distrib, bcm);
-        //def->connect(rdgen->sel("addr"), bnk->sel("waddr"));
       }
     }
 
 
     for (auto inpt : buf.get_out_ports()) {
-      //vector<pair<string, CoreIR::Type*> >
-        //ub_field{{"clk", c->Named("coreir.clkIn")},
-          //{"reset", c->BitIn()},
-          //{"addr", c->Bit()->Arr(16)},
-          //{"valid", c->Bit()}};
-      //string distrib = controller_name(inpt);
-      //CoreIR::RecordType* utp = c->Record(ub_field);
-      //auto bcm = ns->newModuleDecl(distrib, utp);
-      //auto bdef = bcm->newModuleDef();
-      //// TODO: Fix
-      //bdef->connect("self.reset", "self.valid");
-      //auto sched = buf.schedule.at(inpt);
-      //auto sms = get_maps(sched);
-      //assert(sms.size() == 1);
-      //{
-        //auto m = cpy(sms.at(0));
-        //cout << "m = " << str(m) << endl;
-        //auto rng = range(m);
-        //cout << "r = " << str(rng) << endl;
-        //auto ind = isl_set_indicator_function(cpy(rng));
-        //cout << "ind = " << str(ind) << endl;
-        ////assert(false);
-      //}
-
-      //auto svec = isl_pw_multi_aff_from_map(sms.at(0));
-
-      //vector<pair<isl_set*, isl_multi_aff*> > pieces =
-        //get_pieces(svec);
-      //assert(pieces.size() == 1);
-
-      //auto saff = pieces.at(0).second;
-      //auto dom = pieces.at(0).first;
-
-      //cout << "sched = " << str(saff) << endl;
-      //cout << tab(1) << "dom = " << str(dom) << endl;
-
-      //for (int i = 0; i < isl_multi_aff_dim(saff, isl_dim_set); i++) {
-        //auto aff = isl_multi_aff_get_aff(saff, i);
-        //auto aff_c = affine_controller(c, dom, aff);
-        //aff_c->print();
-      //}
-      ////assert(false);
-
-      //bcm->setDef(bdef);
       auto out_ctrl = def->sel(controller_name(inpt));
       def->connect(def->sel("self")->sel(buf.container_bundle(inpt) + "_valid"), out_ctrl->sel("valid"));
     }
 
     for (auto inpt : buf.get_in_ports()) {
-      //vector<pair<string, CoreIR::Type*> >
-        //ub_field{{"clk", c->Named("coreir.clkIn")},
-          //{"reset", c->BitIn()},
-          //{"addr", c->Bit()->Arr(16)},
-          //{"valid", c->Bit()}};
-      //string distrib = controller_name(inpt);
-      //CoreIR::RecordType* utp = c->Record(ub_field);
-      //auto bcm = ns->newModuleDecl(distrib, utp);
-      //auto bdef = bcm->newModuleDef();
-      //bcm->setDef(bdef);
-      //def->addInstance(distrib, bcm);
-    }
-
-    for (auto inpt : buf.get_in_ports()) {
       vector<pair<string, CoreIR::Type*> >
         ub_field{
-          //{"clk", c->Named("coreir.clkIn")},
           {"in", c->BitIn()->Arr(width)},
           {"en", c->BitIn()},
           {"valid", c->Bit()}};
@@ -1018,8 +945,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     CoreIRLoadLibrary_cwlib(context);
     auto ns = context->getNamespace("global");
     vector<pair<string, CoreIR::Type*> >
-      ub_field{{"clk", context->Named("coreir.clkIn")},
-        {"reset", context->BitIn()}};
+      ub_field{{"clk", context->Named("coreir.clkIn")}};
+        //{"reset", context->BitIn()}};
     for (auto b : buf.port_bundles) {
       int pt_width = buf.port_widths;
       int bd_width = buf.lanes_in_bundle(b.first);
@@ -1044,11 +971,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     }
 
     ub->setDef(def);
-    //if(!saveToFile(ns, "ubuffer.json")) {
-    //cout << "Could not save ubuffer coreir" << endl;
-    //context->die();
-    //}
-    //deleteContext(context);
     return ub;
   }
 

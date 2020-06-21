@@ -75,6 +75,7 @@ void connect_signal(const std::string& signal, CoreIR::Module* m) {
   for (auto inst : def->getInstances()) {
     for (auto f : m->getType()->getFields()) {
       if (f == signal && !connected(inst.second->sel(f))) {
+        cout << inst.first << " has reset " << endl;
         def->connect(def->sel("self")->sel(f), inst.second->sel(f));
       }
     }
@@ -94,8 +95,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
   auto ns = context->getNamespace("global");
   vector<pair<string, CoreIR::Type*> >
-    ub_field{{"clk", context->Named("coreir.clkIn")},
-      {"reset", context->BitIn()}};
+    ub_field{{"clk", context->Named("coreir.clkIn")}};
+      //{"reset", context->BitIn()}};
   for (auto eb : edge_buffers(buffers, prg)) {
     string out_rep = eb.first;
     string out_bundle = eb.second;
@@ -121,8 +122,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
   for (auto op : prg.all_ops()) {
     vector<pair<string, CoreIR::Type*> >
-      ub_field{{"clk", context->Named("coreir.clkIn")},
-        {"reset", context->BitIn()}};
+      ub_field{{"clk", context->Named("coreir.clkIn")}};
+        //{"reset", context->BitIn()}};
     for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
       string buf_name = bundle.first;
       string bundle_name = bundle.second;
@@ -230,13 +231,23 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
       string buf_name = bundle.first;
       string bundle_name = bundle.second;
       auto buf = map_find(buf_name, buffers);
+      int pixel_width = buf.port_widths;
 
       assert(buf.is_input_bundle(bundle.second));
 
       if (prg.is_output(buf_name)) {
+        auto load_delay_reg = def->addInstance("cycle_time", "mantle.reg",
+            {{"width", CoreIR::Const::make(context, 1)},
+            {"has_en", CoreIR::Const::make(context, false)}});
+        auto output_en = "self." + pg(buf_name, bundle_name) + "_en";
+        auto src = op->name + "." + pg(buf_name, bundle_name) + "_valid";
+        def->connect(load_delay_reg->sel("in")->sel(0), def->sel(src));
+        def->connect(load_delay_reg->sel("out")->sel(0), def->sel(output_en));
+
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
-        def->connect("self." + pg(buf_name, bundle_name) + "_en", op->name + "." + pg(buf_name, bundle_name) + "_valid");
+        //def->connect("self." + pg(buf_name, bundle_name) + "_en", op->name + "." + pg(buf_name, bundle_name) + "_valid");
       } else {
+        //assert(false);
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
         def->connect(buf_name + "." + bundle_name + "_en", op->name + "." + pg(buf_name, bundle_name) + "_valid");
       }
@@ -253,6 +264,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
         def->connect("self." + pg(buf_name, bundle_name) + "_valid", op->name + "." + pg(buf_name, bundle_name) + "_en");
       } else {
+        //assert(false);
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
         def->connect(buf_name + "." + bundle_name + "_valid", op->name + "." + pg(buf_name, bundle_name) + "_en");
       }
