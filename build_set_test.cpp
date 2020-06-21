@@ -9947,9 +9947,11 @@ void weight_streaming_test() {
   //generate_optimized_code(options, prg);
 
 #ifdef COREIR
+  string hw_str = "{ hcompute_conv_stencil[root = 0, conv_s0_x] -> [conv_s0_x] : 0 <= conv_s0_x <= 19; hcompute_conv_stencil_1[root = 0, conv_s1_win_x] -> [20 + conv_s1_win_x] : 0 <= conv_s1_win_x <= 19; hcompute_hw_weight_stencil[root = 0, hw_weight_s0_x] -> [hw_weight_s0_x] : 0 <= hw_weight_s0_x <= 19; hcompute_hw_output_stencil[root = 0, hw_output_s0_x_xi] -> [hw_output_s0_x_xi + 30] : 0 <= hw_output_s0_x_xi <= 19; hcompute_hw_input_stencil[root = 0, hw_input_s0_x] -> [hw_input_s0_x] : 0 <= hw_input_s0_x <= 19 }";
+  auto sched = isl_union_map_read_from_str(prg.ctx, hw_str.c_str());
 
-  auto sched = prg.optimized_codegen();
-  cout << "=== sched: " << str(sched) << endl;
+  //auto sched = prg.optimized_codegen();
+  //cout << "=== sched: " << str(sched) << endl;
   //string sstre = "{ ld_o[root = 0, cs, ys, xs] -> [2 + cs, 2 + ys, 2 + xs, 1] : 0 <= cs <= 2 and 0 <= ys <= 2 and 0 <= xs <= 2; ld[root = 0, c, y, x] -> [c, y, x, 0] : 0 <= c <= 2 and 0 <= y <= 2 and 0 <= x <= 2 }";
   //string sstr = "{ ld_o[root = 0, cs, ys, xs] -> [2 + cs, 2 + ys, 2 + xs, 1] : 0 <= cs <= 2 and 0 <= ys <= 2 and 0 <= xs <= 2; ld[root = 0, c, y, x] -> [c, y, x, 0] : 0 <= c <= 2 and 0 <= y <= 2 and 0 <= x <= 2 }";
  //cout << "=== sched; " << str(sched) << endl;
