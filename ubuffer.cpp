@@ -778,7 +778,35 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
   }
 
-  CoreIR::Module* generate_coreir_select(CodegenOptions& options, CoreIR::Context* context, const string& outpt, UBuffer& buf) {
+  CoreIR::Module* generate_coreir_select(CodegenOptions& options, CoreIR::Context* c, const string& outpt, UBuffer& buf) {
+    int width = buf.port_widths;
+
+    auto ns = c->getNamespace("global");
+      vector<pair<string, CoreIR::Type*> >
+        ub_field{{"clk", c->Named("coreir.clkIn")},
+          {"out", c->Bit()->Arr(width)}};
+      for (auto b : buf.get_banks()) {
+        if (elem(outpt, buf.get_bank_outputs(b.name))) {
+          ub_field.push_back({b.name, c->BitIn()->Arr(width)});
+        }
+      }
+
+      // TODO: Add domain variables to select from port controller
+
+      string distrib = outpt + "_select";
+      CoreIR::RecordType* utp = c->Record(ub_field);
+      auto bcm = ns->newModuleDecl(distrib, utp);
+      auto bdef = bcm->newModuleDef();
+      for (auto b : buf.get_banks()) {
+        if (elem(outpt, buf.get_bank_outputs(b.name))) {
+          // TODO: Add real selection logic
+          bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
+          break;
+        }
+      }
+      bcm->setDef(bdef);
+      return bcm;
+
     vector<string> possible_ports;
     for (auto pt : buf.get_in_ports()) {
       if (buf.has_bank_between(pt, outpt)) {
@@ -966,29 +994,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     }
 
     for (auto outpt : buf.get_out_ports()) {
-      vector<pair<string, CoreIR::Type*> >
-        ub_field{{"clk", c->Named("coreir.clkIn")},
-          {"out", c->Bit()->Arr(width)}};
-      for (auto b : buf.get_banks()) {
-        if (elem(outpt, buf.get_bank_outputs(b.name))) {
-          ub_field.push_back({b.name, c->BitIn()->Arr(width)});
-        }
-      }
-
-      // TODO: Add domain variables to select from port controller
-
-      string distrib = outpt + "_select";
-      CoreIR::RecordType* utp = c->Record(ub_field);
-      auto bcm = ns->newModuleDecl(distrib, utp);
-      auto bdef = bcm->newModuleDef();
-      for (auto b : buf.get_banks()) {
-        if (elem(outpt, buf.get_bank_outputs(b.name))) {
-          // TODO: Add real selection logic
-          bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
-          break;
-        }
-      }
-      bcm->setDef(bdef);
+      auto bcm = generate_coreir_select(options, c, outpt, buf);
       auto bc = def->addInstance(outpt + "_select", bcm);
       for (auto b : buf.get_banks()) {
         if (elem(outpt, buf.get_bank_outputs(b.name))) {
