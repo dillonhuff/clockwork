@@ -778,6 +778,68 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
   }
 
+  CoreIR::Module* generate_coreir_select(CodegenOptions& options, CoreIR::Context* context, const string& outpt, UBuffer& buf) {
+    vector<string> possible_ports;
+    for (auto pt : buf.get_in_ports()) {
+      if (buf.has_bank_between(pt, outpt)) {
+        possible_ports.push_back(pt);
+      }
+    }
+
+    map<string, string> in_ports_to_conditions;
+    umap* reads_to_sources = buf.get_lexmax_events(outpt);
+    cout << "reads to source for " << outpt << ": " << str(reads_to_sources) << endl;
+    uset* producers_for_outpt = range(reads_to_sources);
+
+    auto read_map = buf.access_map.at(outpt);
+    for (auto inpt : possible_ports) {
+      auto write_map = buf.access_map.at(inpt);
+      auto data_written = range(write_map);
+
+      auto common_write_ops =
+        domain(its_range(read_map, data_written));
+
+      auto write_ops =
+        domain(buf.access_map.at(inpt));
+      auto op_overlap = domain(its_range(reads_to_sources, write_ops));
+
+      auto overlap = its(op_overlap, common_write_ops);
+
+      if (!empty(overlap)) {
+        //assert(false);
+        auto read_ops =
+          domain(buf.access_map.at(outpt));
+
+        auto readers_that_use_this_port =
+          gist(overlap, read_ops);
+        in_ports_to_conditions[inpt] =
+          codegen_c(simplify(readers_that_use_this_port));
+      } else {
+        in_ports_to_conditions[inpt] = "false";
+      }
+    }
+
+    if (possible_ports.size() == 1) {
+      //string inpt = possible_ports.at(0);
+      //string peeked_val = delay_string(options, out, inpt, outpt, buf);
+      //string access_val = buf.generate_linearize_ram_addr(outpt);
+      //buf.get_ram_address(outpt);
+      //sel.bank_conditions.push_back("1");
+      //sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, inpt));
+
+    } else {
+      //for (auto port : possible_ports) {
+        //string peeked_val = delay_string(options, out, port, outpt, buf);
+        //sel.bank_conditions.push_back("1");
+        //sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, port));
+      //}
+    }
+
+    assert(false);
+    return nullptr;
+    //return sel;
+  }
+
   CoreIR::Instance* add_port_controller(CoreIR::ModuleDef* def, const std::string& inpt, UBuffer& buf) {
     auto c = def->getContext();
 
@@ -1211,12 +1273,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         auto read_ops =
           domain(buf.access_map.at(outpt));
 
-        //auto unoptimized_select_condition =
-          //domain(its_range(reads_to_sources, overlap));
-        //auto readers_that_use_this_port =
-          //gist(unoptimized_select_condition, read_ops);
-          //gist(domain(its_range(reads_to_sources, overlap)), read_ops);
-        //out << tab(2) << "// Reads from " << inpt << ": " << str(unoptimized_select_condition) << endl;
         auto readers_that_use_this_port =
           gist(overlap, read_ops);
         in_ports_to_conditions[inpt] =
