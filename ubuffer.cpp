@@ -797,6 +797,14 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       CoreIR::RecordType* utp = c->Record(ub_field);
       auto bcm = ns->newModuleDecl(distrib, utp);
       auto bdef = bcm->newModuleDef();
+
+      vector<string> possible_ports;
+      for (auto pt : buf.get_in_ports()) {
+        if (buf.has_bank_between(pt, outpt)) {
+          possible_ports.push_back(pt);
+        }
+      }
+
       for (auto b : buf.get_banks()) {
         if (elem(outpt, buf.get_bank_outputs(b.name))) {
           // TODO: Add real selection logic
@@ -807,14 +815,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       bcm->setDef(bdef);
       return bcm;
 
-    vector<string> possible_ports;
-    for (auto pt : buf.get_in_ports()) {
-      if (buf.has_bank_between(pt, outpt)) {
-        possible_ports.push_back(pt);
-      }
-    }
 
-    map<string, string> in_ports_to_conditions;
+    map<string, isl_set*> in_ports_to_conditions;
     umap* reads_to_sources = buf.get_lexmax_events(outpt);
     cout << "reads to source for " << outpt << ": " << str(reads_to_sources) << endl;
     uset* producers_for_outpt = range(reads_to_sources);
@@ -833,18 +835,13 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
       auto overlap = its(op_overlap, common_write_ops);
 
-      if (!empty(overlap)) {
-        //assert(false);
-        auto read_ops =
-          domain(buf.access_map.at(outpt));
+      auto read_ops =
+        domain(buf.access_map.at(outpt));
 
-        auto readers_that_use_this_port =
-          gist(overlap, read_ops);
-        in_ports_to_conditions[inpt] =
-          codegen_c(simplify(readers_that_use_this_port));
-      } else {
-        in_ports_to_conditions[inpt] = "false";
-      }
+      auto readers_that_use_this_port =
+        gist(overlap, read_ops);
+      in_ports_to_conditions[inpt] =
+        to_set(simplify(readers_that_use_this_port));
     }
 
     if (possible_ports.size() == 1) {
