@@ -9879,6 +9879,80 @@ prog conv_layer_3D() {
 
   return prg;
 }
+
+void weight_streaming_test() {
+  prog prg;
+  prg.compute_unit_file = "conv_layer_3D_compute.h";
+  prg.name = "conv_layer_3D";
+
+  prg.add_input("input_copy_stencil");
+  prg.buffer_port_widths["input_copy_stencil"] = 16;
+  prg.buffer_port_widths["in"] = 16;
+
+  prg.add_output("hw_output_stencil");
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
+
+  {
+    auto loop_hw_input_s0_c = prg.add_loop("c", 0, 3);
+    auto loop_hw_input_s0_y = loop_hw_input_s0_c->add_loop("y", 0, 3);
+    auto loop_hw_input_s0_x = loop_hw_input_s0_y->add_loop("x", 0, 3);
+
+    auto hcompute_hw_input_stencil = loop_hw_input_s0_x->add_op("ld");
+    hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
+    hcompute_hw_input_stencil->add_load("input_copy_stencil", "x", "y", "c");
+    hcompute_hw_input_stencil->add_store("in", "x", "y", "y");
+  }
+
+  {
+    auto loop_hw_input_s0_c = prg.add_loop("cs", 0, 3);
+    auto loop_hw_input_s0_y = loop_hw_input_s0_c->add_loop("ys", 0, 3);
+    auto loop_hw_input_s0_x = loop_hw_input_s0_y->add_loop("xs", 0, 3);
+
+    auto hcompute_hw_input_stencil = loop_hw_input_s0_x->add_op("ld_o");
+    hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
+    hcompute_hw_input_stencil->add_load("in", "xc", "yc", "cc");
+    hcompute_hw_input_stencil->add_store("hw_output_stencil", "xc", "yc", "yc");
+  }
+
+  prg.pretty_print();
+  assert(false);
+
+  CodegenOptions options;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  options.all_rams = true;
+  //generate_optimized_code(options, prg);
+
+#ifdef COREIR
+
+  auto sched = prg.optimized_codegen();
+  auto bufs = build_buffers(prg, sched);
+  for (auto& b : bufs) {
+    if (b.second.num_in_ports() > 0 &&
+        b.second.num_out_ports() > 0) {
+      cout << b.second << endl;
+      b.second.generate_bank_and_merge(options);
+    }
+  }
+
+  generate_coreir(options, bufs, prg, sched);
+
+  int to_verilog_res = cmd("./coreir/bin/coreir --input conv_layer_3D.json --output conv_layer_3D.v --passes flattentypes;verilog");
+  assert(to_verilog_res == 0);
+
+  int verilator_build = cmd("verilator -Wall --cc conv_layer_3D.v --exe --build conv_layer_3D_verilog_tb.cpp --top-module conv_layer_3D -Wno-lint");
+  assert(verilator_build == 0);
+
+  int verilator_run = cmd("./obj_dir/Vconv_layer_3D");
+  assert(verilator_build == 0);
+
+  assert(false);
+#endif
+
+}
+
 void halide_conv_layer_3D_test() {
   prog prg = conv_layer_3D();
   prg.pretty_print();
@@ -9922,7 +9996,7 @@ void halide_conv_layer_3D_test() {
   int verilator_run = cmd("./obj_dir/Vconv_layer_3D");
   assert(verilator_build == 0);
 
-  assert(false);
+  //assert(false);
 #endif
 
   //regression_test(prg);
@@ -10056,6 +10130,7 @@ void cyclic_banked_conv_test() {
 }
 
 void application_tests() {
+  weight_streaming_test();
   halide_conv_layer_3D_test();
   //playground();
   cyclic_banked_conv_test();
