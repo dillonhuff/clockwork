@@ -9880,38 +9880,61 @@ prog conv_layer_3D() {
   return prg;
 }
 
-void weight_streaming_test() {
+prog simplified_conv_layer() {
   prog prg;
   prg.compute_unit_file = "conv_layer_3D_compute.h";
   prg.name = "conv_layer_3D";
 
   prg.add_input("input_copy_stencil");
   prg.buffer_port_widths["input_copy_stencil"] = 16;
-  prg.buffer_port_widths["in"] = 16;
-
+  prg.add_input("weight_copy_stencil");
+  prg.buffer_port_widths["weight_copy_stencil"] = 16;
   prg.add_output("hw_output_stencil");
   prg.buffer_port_widths["hw_output_stencil"] = 16;
 
+  auto loop_hw_input_s0_x = prg.add_loop("hw_input_s0_x", 0, 3);
+
+  auto hcompute_hw_input_stencil = loop_hw_input_s0_x->add_op("hcompute_hw_input_stencil");
+  hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
+  hcompute_hw_input_stencil->add_load("input_copy_stencil", "hw_input_s0_x");
+
   prg.buffer_port_widths["hw_input_stencil"] = 16;
+  hcompute_hw_input_stencil->add_store("hw_input_stencil", "hw_input_s0_x");
+  
+  auto loop_hw_weight_s0_x = prg.add_loop("hw_weight_s0_x", 0, 3);
 
-  {
-    auto ldlp = prg.add_loop("c", 0, 3);
+  auto hcompute_hw_weight_stencil = loop_hw_weight_s0_x->add_op("hcompute_hw_weight_stencil");
+  hcompute_hw_weight_stencil->add_function("hcompute_hw_weight_stencil");
+  hcompute_hw_weight_stencil->add_load("weight_copy_stencil", "hw_weight_s0_x");
+  prg.buffer_port_widths["hw_weight_stencil"] = 16;
+  hcompute_hw_weight_stencil->add_store("hw_weight_stencil", "hw_weight_s0_x");
 
-    auto hcompute_hw_input_stencil = ldlp->add_op("ld");
-    hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
-    hcompute_hw_input_stencil->add_load("input_copy_stencil", "c");
-    hcompute_hw_input_stencil->add_store("in", "c");
-  }
+  auto loop_conv_s0_x = prg.add_loop("conv_s0_x", 0, 3);
+  auto hcompute_conv_stencil = loop_conv_s0_x->add_op("hcompute_conv_stencil");
+  hcompute_conv_stencil->add_function("hcompute_conv_stencil");
+  prg.buffer_port_widths["conv_stencil"] = 16;
+  hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_x");
 
-  {
-    auto stlp = prg.add_loop("cs", 0, 3);
+  auto loop_conv_s1_win_x = prg.add_loop("conv_s1_win_x", 0, 3);
 
-    auto hcompute_hw_input_stencil = stlp->add_op("ld_o");
-    hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
-    hcompute_hw_input_stencil->add_load("in", "cs");
-    hcompute_hw_input_stencil->add_store("hw_output_stencil", "cs");
-  }
+  auto hcompute_conv_stencil_1 = loop_conv_s1_win_x->add_op("hcompute_conv_stencil_1");
+  hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
+  hcompute_conv_stencil_1->add_load("conv_stencil", "conv_s1_win_x");
+  hcompute_conv_stencil_1->add_load("hw_input_stencil", "conv_s1_win_x");
+  hcompute_conv_stencil_1->add_load("hw_weight_stencil", "conv_s1_win_x");
+  hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_win_x");
 
+  auto loop_hw_output_s0_x_xi = prg.add_loop("hw_output_s0_x_xi", 0, 3);
+  auto hcompute_hw_output_stencil = loop_hw_output_s0_x_xi->add_op("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_x_xi");
+  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xi");
+
+  return prg;
+}
+
+void weight_streaming_test() {
+  prog prg = simplified_conv_layer();
   prg.pretty_print();
   //assert(false);
 
@@ -9923,13 +9946,14 @@ void weight_streaming_test() {
 
 #ifdef COREIR
 
-  //auto sched = prg.optimized_codegen();
+  auto sched = prg.optimized_codegen();
+  cout << "=== sched: " << str(sched) << endl;
   //string sstre = "{ ld_o[root = 0, cs, ys, xs] -> [2 + cs, 2 + ys, 2 + xs, 1] : 0 <= cs <= 2 and 0 <= ys <= 2 and 0 <= xs <= 2; ld[root = 0, c, y, x] -> [c, y, x, 0] : 0 <= c <= 2 and 0 <= y <= 2 and 0 <= x <= 2 }";
   //string sstr = "{ ld_o[root = 0, cs, ys, xs] -> [2 + cs, 2 + ys, 2 + xs, 1] : 0 <= cs <= 2 and 0 <= ys <= 2 and 0 <= xs <= 2; ld[root = 0, c, y, x] -> [c, y, x, 0] : 0 <= c <= 2 and 0 <= y <= 2 and 0 <= x <= 2 }";
  //cout << "=== sched; " << str(sched) << endl;
  //string oned_sched = "{ ld_o[root = 0, cs] -> [2 + cs, 1] : 0 <= cs <= 2; ld[root = 0, c] -> [c, 0] : 0 <= c <= 2 }";
-  string hw_sched = "{ ld_o[root = 0, cs] -> [10 + 2*cs] : 0 <= cs <= 2; ld[root = 0, c] -> [2*c] : 0 <= c <= 2 }";
-  auto sched = isl_union_map_read_from_str(prg.ctx, hw_sched.c_str());
+  //string hw_sched = "{ ld_o[root = 0, cs] -> [10 + 2*cs] : 0 <= cs <= 2; ld[root = 0, c] -> [2*c] : 0 <= c <= 2 }";
+  //auto sched = isl_union_map_read_from_str(prg.ctx, hw_sched.c_str());
 
  //assert(false);
   auto bufs = build_buffers(prg, sched);
