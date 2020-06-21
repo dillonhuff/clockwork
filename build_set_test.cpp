@@ -9916,6 +9916,12 @@ void halide_conv_layer_3D_test() {
   int to_verilog_res = cmd("./coreir/bin/coreir --input conv_layer_3D.json --output conv_layer_3D.v --passes flattentypes;verilog");
   assert(to_verilog_res == 0);
 
+  int verilator_build = cmd("verilator -Wall --cc conv_layer_3D.v --exe --build conv_layer_3D_verilog_tb.cpp --top-module conv_layer_3D -Wno-lint");
+  assert(verilator_build == 0);
+
+  int verilator_run = cmd("./obj_dir/Vconv_layer_3D");
+  assert(verilator_build == 0);
+
   assert(false);
 #endif
 

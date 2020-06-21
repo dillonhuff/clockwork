@@ -943,7 +943,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     for (auto inpt : buf.get_in_ports()) {
       vector<pair<string, CoreIR::Type*> >
-        ub_field{{"clk", c->Named("coreir.clkIn")},
+        ub_field{
+          //{"clk", c->Named("coreir.clkIn")},
           {"in", c->BitIn()->Arr(width)},
           {"en", c->BitIn()},
           {"valid", c->Bit()}};
