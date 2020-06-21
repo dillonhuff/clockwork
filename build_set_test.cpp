@@ -9938,6 +9938,7 @@ prog simplified_conv_layer() {
 void weight_streaming_test() {
   prog prg = simplified_conv_layer();
   prg.pretty_print();
+  regression_test(prg);
   //assert(false);
 
   CodegenOptions options;
