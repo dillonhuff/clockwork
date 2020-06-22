@@ -2523,36 +2523,25 @@
           ["ren","BitIn"]
         ]],
         "instances":{
-          "mem":{
-            "genref":"coreir.mem",
-            "genargs":{"depth":["Int",20], "has_init":["Bool",false], "width":["Int",16]}
+          "addr_select":{
+            "genref":"coreir.mux",
+            "genargs":{"width":["Int",16]}
           },
-          "raddr_slice":{
-            "genref":"coreir.slice",
-            "genargs":{"hi":["Int",5], "lo":["Int",0], "width":["Int",16]}
-          },
-          "readreg":{
-            "genref":"mantle.reg",
-            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",true], "has_rst":["Bool",false], "width":["Int",16]},
-            "modargs":{"init":[["BitVector",16],"16'h0000"]}
-          },
-          "waddr_slice":{
-            "genref":"coreir.slice",
-            "genargs":{"hi":["Int",5], "lo":["Int",0], "width":["Int",16]}
+          "bank":{
+            "genref":"cgralib.Mem",
+            "genargs":{"total_depth":["Int",20], "width":["Int",16]},
+            "modargs":{"almost_count":["Int",0], "chain_en":["Bool",false], "chain_enable":["Bool",false], "chain_idx":["Int",0], "depth":["Int",1024], "dimensionality":["Int",0], "init":["Json",{"init":[0]}], "iter_cnt":["Int",0], "mode":["String","SRAM"], "range_0":["Int",0], "range_1":["Int",0], "range_2":["Int",0], "range_3":["Int",0], "range_4":["Int",0], "range_5":["Int",0], "rate_matched":["Bool",false], "starting_addr":["Int",0], "stencil_width":["Int",0], "stride_0":["Int",0], "stride_1":["Int",0], "stride_2":["Int",0], "stride_3":["Int",0], "stride_4":["Int",0], "stride_5":["Int",0], "tile_en":["Bool",true]}
           }
         },
         "connections":[
-          ["self.clk","mem.clk"],
-          ["raddr_slice.out","mem.raddr"],
-          ["readreg.in","mem.rdata"],
-          ["waddr_slice.out","mem.waddr"],
-          ["self.wdata","mem.wdata"],
-          ["self.wen","mem.wen"],
-          ["self.raddr","raddr_slice.in"],
-          ["self.clk","readreg.clk"],
-          ["self.ren","readreg.en"],
-          ["self.rdata","readreg.out"],
-          ["waddr_slice.in","self.waddr"]
+          ["self.waddr","addr_select.in0"],
+          ["self.raddr","addr_select.in1"],
+          ["bank.addr","addr_select.out"],
+          ["self.wen","addr_select.sel"],
+          ["self.rdata","bank.rdata"],
+          ["self.ren","bank.ren"],
+          ["self.wdata","bank.wdata"],
+          ["self.wen","bank.wen"]
         ]
       },
       "ram__U166":{
@@ -2566,36 +2555,25 @@
           ["ren","BitIn"]
         ]],
         "instances":{
-          "mem":{
-            "genref":"coreir.mem",
-            "genargs":{"depth":["Int",20], "has_init":["Bool",false], "width":["Int",16]}
+          "addr_select":{
+            "genref":"coreir.mux",
+            "genargs":{"width":["Int",16]}
           },
-          "raddr_slice":{
-            "genref":"coreir.slice",
-            "genargs":{"hi":["Int",5], "lo":["Int",0], "width":["Int",16]}
-          },
-          "readreg":{
-            "genref":"mantle.reg",
-            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",true], "has_rst":["Bool",false], "width":["Int",16]},
-            "modargs":{"init":[["BitVector",16],"16'h0000"]}
-          },
-          "waddr_slice":{
-            "genref":"coreir.slice",
-            "genargs":{"hi":["Int",5], "lo":["Int",0], "width":["Int",16]}
+          "bank":{
+            "genref":"cgralib.Mem",
+            "genargs":{"total_depth":["Int",20], "width":["Int",16]},
+            "modargs":{"almost_count":["Int",0], "chain_en":["Bool",false], "chain_enable":["Bool",false], "chain_idx":["Int",0], "depth":["Int",1024], "dimensionality":["Int",0], "init":["Json",{"init":[0]}], "iter_cnt":["Int",0], "mode":["String","SRAM"], "range_0":["Int",0], "range_1":["Int",0], "range_2":["Int",0], "range_3":["Int",0], "range_4":["Int",0], "range_5":["Int",0], "rate_matched":["Bool",false], "starting_addr":["Int",0], "stencil_width":["Int",0], "stride_0":["Int",0], "stride_1":["Int",0], "stride_2":["Int",0], "stride_3":["Int",0], "stride_4":["Int",0], "stride_5":["Int",0], "tile_en":["Bool",true]}
           }
         },
         "connections":[
-          ["self.clk","mem.clk"],
-          ["raddr_slice.out","mem.raddr"],
-          ["readreg.in","mem.rdata"],
-          ["waddr_slice.out","mem.waddr"],
-          ["self.wdata","mem.wdata"],
-          ["self.wen","mem.wen"],
-          ["self.raddr","raddr_slice.in"],
-          ["self.clk","readreg.clk"],
-          ["self.ren","readreg.en"],
-          ["self.rdata","readreg.out"],
-          ["waddr_slice.in","self.waddr"]
+          ["self.waddr","addr_select.in0"],
+          ["self.raddr","addr_select.in1"],
+          ["bank.addr","addr_select.out"],
+          ["self.wen","addr_select.sel"],
+          ["self.rdata","bank.rdata"],
+          ["self.ren","bank.ren"],
+          ["self.wdata","bank.wdata"],
+          ["self.wen","bank.wen"]
         ]
       },
       "ram__U59":{
@@ -2609,36 +2587,25 @@
           ["ren","BitIn"]
         ]],
         "instances":{
-          "mem":{
-            "genref":"coreir.mem",
-            "genargs":{"depth":["Int",20], "has_init":["Bool",false], "width":["Int",16]}
+          "addr_select":{
+            "genref":"coreir.mux",
+            "genargs":{"width":["Int",16]}
           },
-          "raddr_slice":{
-            "genref":"coreir.slice",
-            "genargs":{"hi":["Int",5], "lo":["Int",0], "width":["Int",16]}
-          },
-          "readreg":{
-            "genref":"mantle.reg",
-            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",true], "has_rst":["Bool",false], "width":["Int",16]},
-            "modargs":{"init":[["BitVector",16],"16'h0000"]}
-          },
-          "waddr_slice":{
-            "genref":"coreir.slice",
-            "genargs":{"hi":["Int",5], "lo":["Int",0], "width":["Int",16]}
+          "bank":{
+            "genref":"cgralib.Mem",
+            "genargs":{"total_depth":["Int",20], "width":["Int",16]},
+            "modargs":{"almost_count":["Int",0], "chain_en":["Bool",false], "chain_enable":["Bool",false], "chain_idx":["Int",0], "depth":["Int",1024], "dimensionality":["Int",0], "init":["Json",{"init":[0]}], "iter_cnt":["Int",0], "mode":["String","SRAM"], "range_0":["Int",0], "range_1":["Int",0], "range_2":["Int",0], "range_3":["Int",0], "range_4":["Int",0], "range_5":["Int",0], "rate_matched":["Bool",false], "starting_addr":["Int",0], "stencil_width":["Int",0], "stride_0":["Int",0], "stride_1":["Int",0], "stride_2":["Int",0], "stride_3":["Int",0], "stride_4":["Int",0], "stride_5":["Int",0], "tile_en":["Bool",true]}
           }
         },
         "connections":[
-          ["self.clk","mem.clk"],
-          ["raddr_slice.out","mem.raddr"],
-          ["readreg.in","mem.rdata"],
-          ["waddr_slice.out","mem.waddr"],
-          ["self.wdata","mem.wdata"],
-          ["self.wen","mem.wen"],
-          ["self.raddr","raddr_slice.in"],
-          ["self.clk","readreg.clk"],
-          ["self.ren","readreg.en"],
-          ["self.rdata","readreg.out"],
-          ["waddr_slice.in","self.waddr"]
+          ["self.waddr","addr_select.in0"],
+          ["self.raddr","addr_select.in1"],
+          ["bank.addr","addr_select.out"],
+          ["self.wen","addr_select.sel"],
+          ["self.rdata","bank.rdata"],
+          ["self.ren","bank.ren"],
+          ["self.wdata","bank.wdata"],
+          ["self.wen","bank.wen"]
         ]
       },
       "ram__U76":{
@@ -2652,36 +2619,25 @@
           ["ren","BitIn"]
         ]],
         "instances":{
-          "mem":{
-            "genref":"coreir.mem",
-            "genargs":{"depth":["Int",20], "has_init":["Bool",false], "width":["Int",16]}
+          "addr_select":{
+            "genref":"coreir.mux",
+            "genargs":{"width":["Int",16]}
           },
-          "raddr_slice":{
-            "genref":"coreir.slice",
-            "genargs":{"hi":["Int",5], "lo":["Int",0], "width":["Int",16]}
-          },
-          "readreg":{
-            "genref":"mantle.reg",
-            "genargs":{"has_clr":["Bool",false], "has_en":["Bool",true], "has_rst":["Bool",false], "width":["Int",16]},
-            "modargs":{"init":[["BitVector",16],"16'h0000"]}
-          },
-          "waddr_slice":{
-            "genref":"coreir.slice",
-            "genargs":{"hi":["Int",5], "lo":["Int",0], "width":["Int",16]}
+          "bank":{
+            "genref":"cgralib.Mem",
+            "genargs":{"total_depth":["Int",20], "width":["Int",16]},
+            "modargs":{"almost_count":["Int",0], "chain_en":["Bool",false], "chain_enable":["Bool",false], "chain_idx":["Int",0], "depth":["Int",1024], "dimensionality":["Int",0], "init":["Json",{"init":[0]}], "iter_cnt":["Int",0], "mode":["String","SRAM"], "range_0":["Int",0], "range_1":["Int",0], "range_2":["Int",0], "range_3":["Int",0], "range_4":["Int",0], "range_5":["Int",0], "rate_matched":["Bool",false], "starting_addr":["Int",0], "stencil_width":["Int",0], "stride_0":["Int",0], "stride_1":["Int",0], "stride_2":["Int",0], "stride_3":["Int",0], "stride_4":["Int",0], "stride_5":["Int",0], "tile_en":["Bool",true]}
           }
         },
         "connections":[
-          ["self.clk","mem.clk"],
-          ["raddr_slice.out","mem.raddr"],
-          ["readreg.in","mem.rdata"],
-          ["waddr_slice.out","mem.waddr"],
-          ["self.wdata","mem.wdata"],
-          ["self.wen","mem.wen"],
-          ["self.raddr","raddr_slice.in"],
-          ["self.clk","readreg.clk"],
-          ["self.ren","readreg.en"],
-          ["self.rdata","readreg.out"],
-          ["waddr_slice.in","self.waddr"]
+          ["self.waddr","addr_select.in0"],
+          ["self.raddr","addr_select.in1"],
+          ["bank.addr","addr_select.out"],
+          ["self.wen","addr_select.sel"],
+          ["self.rdata","bank.rdata"],
+          ["self.ren","bank.ren"],
+          ["self.wdata","bank.wdata"],
+          ["self.wen","bank.wen"]
         ]
       }
     }

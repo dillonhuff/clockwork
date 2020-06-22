@@ -423,31 +423,61 @@ CoreIR::Module* ram_module(CoreIR::Context* c, const int width, const int depth)
       {"rdata", c->Bit()->Arr(width)},
       {"raddr", c->BitIn()->Arr(width)},
       {"ren", c->BitIn()}});
+
   auto m = c->getNamespace("global")->newModuleDecl("ram_" + c->getUnique(), tp);
   auto def = m->newModuleDef();
-  uint awidth = (uint)ceil(log2(depth));
-  CoreIR::Values sliceArgs = {{"width", CoreIR::Const::make(c, width)},
-    {"lo", CoreIR::Const::make(c, 0)},
-    {"hi", CoreIR::Const::make(c, awidth)}};
-  def->addInstance("raddr_slice", "coreir.slice", sliceArgs);
-  def->addInstance("waddr_slice", "coreir.slice", sliceArgs);
+  auto bnk = def->addInstance(
+      "bank",
+      "cgralib.Mem",
+      {{"width", CoreIR::Const::make(c, width)}, {"total_depth", CoreIR::Const::make(c, depth)}},
+      {{"mode", CoreIR::Const::make(c, "SRAM")}});
 
-  def->addInstance("mem", "coreir.mem", {{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, depth)}});
-  def->addInstance(
-      "readreg",
-      "mantle.reg",
-      {{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, true)}});
-  def->connect("self.clk", "readreg.clk");
-  def->connect("self.clk", "mem.clk");
-  def->connect("self.wdata", "mem.wdata");
-  def->connect("self.waddr", "waddr_slice.in");
-  def->connect("waddr_slice.out", "mem.waddr");
-  def->connect("self.wen", "mem.wen");
-  def->connect("mem.rdata", "readreg.in");
-  def->connect("self.rdata", "readreg.out");
-  def->connect("self.raddr", "raddr_slice.in");
-  def->connect("raddr_slice.out", "mem.raddr");
-  def->connect("self.ren", "readreg.en");
+  auto next_val = def->addInstance("addr_select", "coreir.mux", {{"width", CoreIR::Const::make(c, width)}});
+  def->connect(next_val->sel("sel"), def->sel("self.wen"));
+  def->connect(next_val->sel("in0"), def->sel("self.waddr"));
+  def->connect(next_val->sel("in1"), def->sel("self.raddr"));
+  def->connect(next_val->sel("out"), bnk->sel("addr"));
+
+  //def->connect(def->sel("self.clk"), bnk->sel("clk"));
+  def->connect(def->sel("self.wdata"), bnk->sel("wdata"));
+  def->connect(def->sel("self.rdata"), bnk->sel("rdata"));
+  def->connect(def->sel("self.wen"), bnk->sel("wen"));
+  def->connect(def->sel("self.ren"), bnk->sel("ren"));
+
+  //def->connect("self.clk", "mem.clk");
+  //def->connect("self.wdata", "mem.wdata");
+  //def->connect("self.waddr", "waddr_slice.in");
+  //def->connect("waddr_slice.out", "mem.waddr");
+  //def->connect("self.wen", "mem.wen");
+  //def->connect("mem.rdata", "readreg.in");
+  //def->connect("self.rdata", "readreg.out");
+  //def->connect("self.raddr", "raddr_slice.in");
+  //def->connect("raddr_slice.out", "mem.raddr");
+  //def->connect("self.ren", "readreg.en");
+
+  //uint awidth = (uint)ceil(log2(depth));
+  //CoreIR::Values sliceArgs = {{"width", CoreIR::Const::make(c, width)},
+    //{"lo", CoreIR::Const::make(c, 0)},
+    //{"hi", CoreIR::Const::make(c, awidth)}};
+  //def->addInstance("raddr_slice", "coreir.slice", sliceArgs);
+  //def->addInstance("waddr_slice", "coreir.slice", sliceArgs);
+
+  //def->addInstance("mem", "coreir.mem", {{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, depth)}});
+  //def->addInstance(
+      //"readreg",
+      //"mantle.reg",
+      //{{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, true)}});
+  //def->connect("self.clk", "readreg.clk");
+  //def->connect("self.clk", "mem.clk");
+  //def->connect("self.wdata", "mem.wdata");
+  //def->connect("self.waddr", "waddr_slice.in");
+  //def->connect("waddr_slice.out", "mem.waddr");
+  //def->connect("self.wen", "mem.wen");
+  //def->connect("mem.rdata", "readreg.in");
+  //def->connect("self.rdata", "readreg.out");
+  //def->connect("self.raddr", "raddr_slice.in");
+  //def->connect("raddr_slice.out", "mem.raddr");
+  //def->connect("self.ren", "readreg.en");
   m->setDef(def);
   return m;
 }
