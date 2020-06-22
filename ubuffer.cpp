@@ -432,6 +432,12 @@ CoreIR::Module* ram_module(CoreIR::Context* c, const int width, const int depth)
       {{"width", CoreIR::Const::make(c, width)}, {"total_depth", CoreIR::Const::make(c, depth)}},
       {{"mode", CoreIR::Const::make(c, "SRAM")}});
 
+  auto constant = def->addInstance(c->getUnique(),
+      "corebit.const",
+      {{"value", CoreIR::Const::make(c, true)}});
+
+  def->connect(constant->sel("out"), bnk->sel("cg_en"));
+
   auto next_val = def->addInstance("addr_select", "coreir.mux", {{"width", CoreIR::Const::make(c, width)}});
   def->connect(next_val->sel("sel"), def->sel("self.wen"));
   def->connect(next_val->sel("in0"), def->sel("self.waddr"));
