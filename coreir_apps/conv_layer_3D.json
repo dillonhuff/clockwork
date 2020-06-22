@@ -1,4 +1,4 @@
-{"top":"global.conv_layer_3D",
+{"top":"global.DesignTop",
 "namespaces":{
   "global":{
     "modules":{
@@ -1978,7 +1978,7 @@
           ["self.d.1","d_1_reg.out"]
         ]
       },
-      "conv_layer_3D":{
+      "DesignTop":{
         "type":["Record",[
           ["clk",["Named","coreir.clkIn"]],
           ["hw_output_stencil_hcompute_hw_output_stencil_write_en","Bit"],
