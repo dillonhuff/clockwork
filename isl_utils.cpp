@@ -189,6 +189,10 @@ bool empty(umap* const s) {
   return isl_union_map_is_empty(s);
 }
 
+int num_in_dims(isl_multi_aff* const s) {
+  return isl_multi_aff_dim(s, isl_dim_in);
+}
+
 int num_out_dims(isl_space* const s) {
   assert(isl_space_is_map(s));
   int ndims = isl_space_dim(s, isl_dim_out);
@@ -2612,4 +2616,17 @@ isl_val* eval(isl_aff* a, isl_point* p) {
   auto ct = ctx(a);
   isl_val* val = zero(ct);
   return val;
+}
+
+isl_aff* get_aff(isl_map* m) {
+  auto lm = isl_pw_multi_aff_from_map(cpy(m));
+  cout << tab(1) << str(m) << endl;
+  cout << tab(2) << "lexmax: " << str(lm) << endl;
+  vector<pair<isl_set*, isl_multi_aff*> > pieces =
+    get_pieces(lm);
+  assert(pieces.size() == 1);
+
+  auto saff = pieces.at(0).second;
+  auto aff = isl_multi_aff_get_aff(saff, 0);
+  return aff;
 }

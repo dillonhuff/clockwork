@@ -497,6 +497,8 @@ int num_in_dims(isl_space* const s);
 int num_in_dims(isl_local_space* const s);
 int num_out_dims(isl_local_space* const s);
 
+int num_in_dims(isl_multi_aff* const s);
+
 int num_dims(isl_aff* const s);
 int num_in_dims(isl_aff* const s);
 int num_div_dims(isl_aff* const s);
@@ -556,3 +558,5 @@ isl_union_set* diff(isl_union_set* const m0, isl_union_set* const m1);
 
 
 isl_union_map* diff(isl_union_map* const m0, isl_union_map* const m1);
+
+isl_aff* get_aff(isl_map* m);

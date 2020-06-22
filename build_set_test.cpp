@@ -6,8 +6,13 @@
 #include "prog_splitting_test.h"
 #include "codegen.h"
 #include "prog.h"
+#include "ubuffer.h"
 
 #include <chrono>
+
+#ifdef COREIR
+CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
+#endif
 
 void compare(vector<string>& opt, vector<string>& naive) {
   assert(opt.size() == naive.size());
@@ -9874,6 +9879,124 @@ prog conv_layer_3D() {
 
   return prg;
 }
+
+prog simplified_conv_layer() {
+  prog prg;
+  prg.compute_unit_file = "conv_layer_3D_compute.h";
+  prg.name = "conv_layer_3D";
+
+  prg.add_input("input_copy_stencil");
+  prg.buffer_port_widths["input_copy_stencil"] = 16;
+  prg.add_input("weight_copy_stencil");
+  prg.buffer_port_widths["weight_copy_stencil"] = 16;
+  prg.add_output("hw_output_stencil");
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+  int bound = 20;
+
+  auto loop_hw_input_s0_x = prg.add_loop("hw_input_s0_x", 0, bound);
+
+  auto hcompute_hw_input_stencil = loop_hw_input_s0_x->add_op("hcompute_hw_input_stencil");
+  hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
+  hcompute_hw_input_stencil->add_load("input_copy_stencil", "hw_input_s0_x");
+
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
+  hcompute_hw_input_stencil->add_store("hw_input_stencil", "hw_input_s0_x");
+  
+  auto loop_hw_weight_s0_x = prg.add_loop("hw_weight_s0_x", 0, bound);
+
+  auto hcompute_hw_weight_stencil = loop_hw_weight_s0_x->add_op("hcompute_hw_weight_stencil");
+  hcompute_hw_weight_stencil->add_function("hcompute_hw_weight_stencil");
+  hcompute_hw_weight_stencil->add_load("weight_copy_stencil", "hw_weight_s0_x");
+  prg.buffer_port_widths["hw_weight_stencil"] = 16;
+  hcompute_hw_weight_stencil->add_store("hw_weight_stencil", "hw_weight_s0_x");
+
+  auto loop_conv_s0_x = prg.add_loop("conv_s0_x", 0, bound);
+  auto hcompute_conv_stencil = loop_conv_s0_x->add_op("hcompute_conv_stencil");
+  hcompute_conv_stencil->add_function("hcompute_conv_stencil");
+  prg.buffer_port_widths["conv_stencil"] = 16;
+  hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_x");
+
+  auto loop_conv_s1_win_x = prg.add_loop("conv_s1_win_x", 0, bound);
+
+  auto hcompute_conv_stencil_1 = loop_conv_s1_win_x->add_op("hcompute_conv_stencil_1");
+  hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
+  hcompute_conv_stencil_1->add_load("conv_stencil", "conv_s1_win_x");
+  hcompute_conv_stencil_1->add_load("hw_input_stencil", "conv_s1_win_x");
+  hcompute_conv_stencil_1->add_load("hw_weight_stencil", "conv_s1_win_x");
+  hcompute_conv_stencil_1->add_store("conv_stencil", "conv_s1_win_x");
+
+  auto loop_hw_output_s0_x_xi = prg.add_loop("hw_output_s0_x_xi", 0, bound);
+  auto hcompute_hw_output_stencil = loop_hw_output_s0_x_xi->add_op("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_x_xi");
+  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xi");
+
+  return prg;
+}
+
+void weight_streaming_test() {
+  prog prg = simplified_conv_layer();
+  prg.pretty_print();
+  regression_test(prg);
+  //assert(false);
+
+  CodegenOptions options;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  options.all_rams = true;
+  //generate_optimized_code(options, prg);
+
+#ifdef COREIR
+
+  auto dom = prg.whole_iteration_domain();
+  auto valid = prg.validity_deps();
+  auto prox = cpy(valid);
+  auto sched = hardware_schedule_umap(dom, valid, prox);
+  sched = its(sched, prg.whole_iteration_domain());
+
+  //string hw_str = string("{ hcompute_conv_stencil[root = 0, conv_s0_x] -> [conv_s0_x + 1] : 0 <= conv_s0_x <= 19; ") +
+    //"hcompute_conv_stencil_1[root = 0, conv_s1_win_x] -> [20 + conv_s1_win_x] : 0 <= conv_s1_win_x <= 19; " +
+    //"hcompute_hw_weight_stencil[root = 0, hw_weight_s0_x] -> [hw_weight_s0_x + 1] : 0 <= hw_weight_s0_x <= 19; " + 
+    //"hcompute_hw_output_stencil[root = 0, hw_output_s0_x_xi] -> [2*hw_output_s0_x_xi + 40] : 0 <= hw_output_s0_x_xi <= 19; " +
+    //"hcompute_hw_input_stencil[root = 0, hw_input_s0_x] -> [hw_input_s0_x + 1] : 0 <= hw_input_s0_x <= 19 }";
+  //auto sched = isl_union_map_read_from_str(prg.ctx, hw_str.c_str());
+
+  //auto sched = prg.optimized_codegen();
+  //cout << "=== sched: " << str(sched) << endl;
+  //string sstre = "{ ld_o[root = 0, cs, ys, xs] -> [2 + cs, 2 + ys, 2 + xs, 1] : 0 <= cs <= 2 and 0 <= ys <= 2 and 0 <= xs <= 2; ld[root = 0, c, y, x] -> [c, y, x, 0] : 0 <= c <= 2 and 0 <= y <= 2 and 0 <= x <= 2 }";
+  //string sstr = "{ ld_o[root = 0, cs, ys, xs] -> [2 + cs, 2 + ys, 2 + xs, 1] : 0 <= cs <= 2 and 0 <= ys <= 2 and 0 <= xs <= 2; ld[root = 0, c, y, x] -> [c, y, x, 0] : 0 <= c <= 2 and 0 <= y <= 2 and 0 <= x <= 2 }";
+ //cout << "=== sched; " << str(sched) << endl;
+ //string oned_sched = "{ ld_o[root = 0, cs] -> [2 + cs, 1] : 0 <= cs <= 2; ld[root = 0, c] -> [c, 0] : 0 <= c <= 2 }";
+  //string hw_sched = "{ ld_o[root = 0, cs] -> [10 + 2*cs] : 0 <= cs <= 2; ld[root = 0, c] -> [2*c] : 0 <= c <= 2 }";
+  //auto sched = isl_union_map_read_from_str(prg.ctx, hw_sched.c_str());
+
+ //assert(false);
+  auto bufs = build_buffers(prg, sched);
+  for (auto& b : bufs) {
+    if (b.second.num_in_ports() > 0 &&
+        b.second.num_out_ports() > 0) {
+      cout << b.second << endl;
+      b.second.generate_bank_and_merge(options);
+    }
+  }
+
+  generate_coreir(options, bufs, prg, sched);
+
+  int to_verilog_res = cmd("./coreir/bin/coreir --input conv_layer_3D.json --output conv_layer_3D.v --passes flattentypes;verilog");
+  assert(to_verilog_res == 0);
+
+  int verilator_build = cmd("verilator -Wall --cc conv_layer_3D.v --exe --build conv_layer_3D_verilog_tb.cpp --top-module conv_layer_3D -Wno-lint");
+  assert(verilator_build == 0);
+
+  int verilator_run = cmd("./obj_dir/Vconv_layer_3D");
+  assert(verilator_build == 0);
+
+  assert(false);
+#endif
+
+}
+
 void halide_conv_layer_3D_test() {
   prog prg = conv_layer_3D();
   prg.pretty_print();
@@ -9904,9 +10027,21 @@ void halide_conv_layer_3D_test() {
       b.second.generate_bank_and_merge(options);
     }
   }
+
   generate_coreir(options, bufs, prg, sched);
-  assert(false);
+
+  int to_verilog_res = cmd("./coreir/bin/coreir --input conv_layer_3D.json --output conv_layer_3D.v --passes flattentypes;verilog");
+  assert(to_verilog_res == 0);
+
+  int verilator_build = cmd("verilator -Wall --cc conv_layer_3D.v --exe --build conv_layer_3D_verilog_tb.cpp --top-module conv_layer_3D -Wno-lint");
+  assert(verilator_build == 0);
+
+  int verilator_run = cmd("./obj_dir/Vconv_layer_3D");
+  assert(verilator_build == 0);
+
+  //assert(false);
 #endif
+
   //regression_test(prg);
   //assert(false);
 }
@@ -9966,6 +10101,7 @@ void cyclic_banked_conv_test() {
 }
 
 void application_tests() {
+  weight_streaming_test();
   halide_conv_layer_3D_test();
   //playground();
   cyclic_banked_conv_test();
@@ -10103,7 +10239,28 @@ void application_tests() {
   //halide_harris_test();
 }
 
+void affine_controller_test() {
+#ifdef COREIR
+  isl_ctx* ctx = isl_ctx_alloc();
+  isl_set* dom = isl_set_read_from_str(ctx, "{ event[i, j] : 0 <= i <= 9 and 0 <= j <= 3 }");
+  isl_aff* aff = isl_aff_read_from_str(ctx, "{ event[i, j] -> [(10*i + j)] }");
+  auto context = CoreIR::newContext();
+  auto ac = affine_controller(context, dom, aff);
+
+  ac->print();
+  context->runPasses({"flattentypes", "flatten", "wireclocks-coreir"});
+
+  cmd("rm -f event.json");
+  saveToFile(context->getNamespace("global"), "event.json", ac);
+
+  deleteContext(context);
+  isl_ctx_free(ctx);
+  //assert(false);
+#endif
+}
+
 void memory_tile_tests() {
+  affine_controller_test();
   conv33_test();
   conv45_test();
   //assert(false);

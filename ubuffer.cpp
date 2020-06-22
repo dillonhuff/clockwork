@@ -2,6 +2,7 @@
 #include "codegen.h"
 #ifdef COREIR
 #include "cwlib.h"
+#include "coreir_backend.h"
 #endif
 #include "coreir_backend.h"
 
@@ -14,6 +15,25 @@ std::string write_addrgen_name(const std::string& n) {
 }
 std::string controller_name(const std::string& n) {
   return n + "_port_controller";
+}
+
+isl_map* linear_address_map(isl_set* s) {
+  string domain = name(s);
+  int dim = num_dims(s);
+  vector<string> var_names;
+  vector<string> exprs;
+  isl_val* stride = one(ctx(s));
+  for (int i = 0; i < dim; i++) {
+    string var = "d" + str(i);
+    var_names.push_back(var);
+    string stridestr = str(stride);
+    exprs.push_back(stridestr + "*" + var);
+    auto interval = project_all_but(s, i);
+    isl_val* extend = add(sub(lexmaxval(interval), lexminval(interval)), one(ctx(s)));
+    stride = mul(stride, extend);
+  }
+  string map_str = "{" + domain + sep_list(var_names, "[", "]", ", ") + " -> " + sep_list(exprs, "[", "]", " + ") + " }";
+  return isl_map_read_from_str(ctx(s), map_str.c_str());
 }
 
 umap* get_lexmax_events(const std::string& outpt, UBuffer& buf) {
@@ -394,6 +414,288 @@ map<string, UBuffer> UBuffer::generate_ubuffer(CodegenOptions& options) {
 
 #ifdef COREIR
 
+CoreIR::Module* ram_module(CoreIR::Context* c, const int width, const int depth) {
+  auto tp = c->Record({
+      {"clk", c->Named("coreir.clkIn")},
+      {"wdata", c->BitIn()->Arr(width)},
+      {"waddr", c->BitIn()->Arr(width)},
+      {"wen", c->BitIn()},
+      {"rdata", c->Bit()->Arr(width)},
+      {"raddr", c->BitIn()->Arr(width)},
+      {"ren", c->BitIn()}});
+
+  auto m = c->getNamespace("global")->newModuleDecl("ram_" + c->getUnique(), tp);
+  auto def = m->newModuleDef();
+  auto bnk = def->addInstance(
+      "bank",
+      "cgralib.Mem",
+      {{"width", CoreIR::Const::make(c, width)}, {"total_depth", CoreIR::Const::make(c, depth)}},
+      {{"mode", CoreIR::Const::make(c, "SRAM")}});
+
+  auto constant = def->addInstance(c->getUnique(),
+      "corebit.const",
+      {{"value", CoreIR::Const::make(c, true)}});
+
+  def->connect(constant->sel("out"), bnk->sel("cg_en"));
+
+  auto next_val = def->addInstance("addr_select", "coreir.mux", {{"width", CoreIR::Const::make(c, width)}});
+  def->connect(next_val->sel("sel"), def->sel("self.wen"));
+  def->connect(next_val->sel("in0"), def->sel("self.waddr"));
+  def->connect(next_val->sel("in1"), def->sel("self.raddr"));
+  def->connect(next_val->sel("out"), bnk->sel("addr"));
+
+  //def->connect(def->sel("self.clk"), bnk->sel("clk"));
+  def->connect(def->sel("self.wdata"), bnk->sel("wdata"));
+  def->connect(def->sel("self.rdata"), bnk->sel("rdata"));
+  def->connect(def->sel("self.wen"), bnk->sel("wen"));
+  def->connect(def->sel("self.ren"), bnk->sel("ren"));
+
+  //def->connect("self.clk", "mem.clk");
+  //def->connect("self.wdata", "mem.wdata");
+  //def->connect("self.waddr", "waddr_slice.in");
+  //def->connect("waddr_slice.out", "mem.waddr");
+  //def->connect("self.wen", "mem.wen");
+  //def->connect("mem.rdata", "readreg.in");
+  //def->connect("self.rdata", "readreg.out");
+  //def->connect("self.raddr", "raddr_slice.in");
+  //def->connect("raddr_slice.out", "mem.raddr");
+  //def->connect("self.ren", "readreg.en");
+
+  //uint awidth = (uint)ceil(log2(depth));
+  //CoreIR::Values sliceArgs = {{"width", CoreIR::Const::make(c, width)},
+    //{"lo", CoreIR::Const::make(c, 0)},
+    //{"hi", CoreIR::Const::make(c, awidth)}};
+  //def->addInstance("raddr_slice", "coreir.slice", sliceArgs);
+  //def->addInstance("waddr_slice", "coreir.slice", sliceArgs);
+
+  //def->addInstance("mem", "coreir.mem", {{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, depth)}});
+  //def->addInstance(
+      //"readreg",
+      //"mantle.reg",
+      //{{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, true)}});
+  //def->connect("self.clk", "readreg.clk");
+  //def->connect("self.clk", "mem.clk");
+  //def->connect("self.wdata", "mem.wdata");
+  //def->connect("self.waddr", "waddr_slice.in");
+  //def->connect("waddr_slice.out", "mem.waddr");
+  //def->connect("self.wen", "mem.wen");
+  //def->connect("mem.rdata", "readreg.in");
+  //def->connect("self.rdata", "readreg.out");
+  //def->connect("self.raddr", "raddr_slice.in");
+  //def->connect("raddr_slice.out", "mem.raddr");
+  //def->connect("self.ren", "readreg.en");
+  m->setDef(def);
+  return m;
+}
+
+CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
+  auto ns = context->getNamespace("global");
+
+  int width = 16;
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"out", context->Bit()->Arr(width)}};
+  cout << "aff = " << str(aff) << endl;
+  int dims = num_in_dims(aff);
+  cout << "dims = " << dims << endl;
+  ub_field.push_back({"d", context->BitIn()->Arr(16)->Arr(dims)});
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto m = ns->newModuleDecl("aff_" + context->getUnique(), utp);
+  auto def = m->newModuleDef();
+
+  auto c = context;
+
+  vector<CoreIR::Wireable*> terms;
+  for (int d = 0; d < dims; d++) {
+    int v = to_int(get_coeff(aff, d));
+    cout << "coeff: " << v << endl;
+    auto constant = def->addInstance(context->getUnique(),
+        "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, v))}});
+    auto m = def->addInstance(context->getUnique(),
+        "coreir.mul",
+        {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(m->sel("in0"), constant->sel("out"));
+    def->connect(m->sel("in1"), def->sel("self")->sel("d")->sel(d));
+    terms.push_back(m->sel("out"));
+  }
+  int v = to_int(const_coeff(aff));
+  cout << "coeff: " << v << endl;
+  auto constant = def->addInstance(context->getUnique(),
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, v))}});
+  terms.push_back(constant->sel("out"));
+  auto out = addList(def, terms);
+  def->connect(def->sel("self.out"), out);
+  m->setDef(def);
+
+  return m;
+}
+
+CoreIR::Module* coreir_for_multi_aff(CoreIR::Context* context, isl_multi_aff* aff) {
+  auto ns = context->getNamespace("global");
+
+  int width = 16;
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"out", context->Bit()->Arr(width)}};
+  cout << "aff = " << str(aff) << endl;
+  int dims = num_in_dims(aff);
+  int out_dims = isl_multi_aff_dim(aff, isl_dim_set);
+  cout << "dims = " << dims << endl;
+  ub_field.push_back({"d", context->BitIn()->Arr(16)->Arr(dims)});
+  ub_field.push_back({"out", context->BitIn()->Arr(16)->Arr(out_dims)});
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto m = ns->newModuleDecl("aff_" + context->getUnique(), utp);
+  auto def = m->newModuleDef();
+  for (int i = 0; i < isl_multi_aff_dim(aff, isl_dim_set); i++) {
+    auto iaff = isl_multi_aff_get_aff(aff, i);
+    cout << tab(3) << i << ": " << str(iaff) << endl;
+
+  }
+
+  auto c = context;
+
+  //vector<CoreIR::Wireable*> terms;
+  //for (int d = 0; d < dims; d++) {
+    //int v = to_int(get_coeff(aff, d));
+    //cout << "coeff: " << v << endl;
+    //auto constant = def->addInstance(context->getUnique(),
+        //"coreir.const",
+      //{{"width", CoreIR::Const::make(c, width)}},
+      //{{"value", CoreIR::Const::make(c, BitVector(width, v))}});
+    //auto m = def->addInstance(context->getUnique(),
+        //"coreir.mul",
+        //{{"width", CoreIR::Const::make(c, width)}});
+    //def->connect(m->sel("in0"), constant->sel("out"));
+    //def->connect(m->sel("in1"), def->sel("self")->sel("d")->sel(d));
+    //terms.push_back(m->sel("out"));
+  //}
+  //int v = to_int(const_coeff(aff));
+  //cout << "coeff: " << v << endl;
+  //auto constant = def->addInstance(context->getUnique(),
+      //"coreir.const",
+      //{{"width", CoreIR::Const::make(c, width)}},
+      //{{"value", CoreIR::Const::make(c, BitVector(width, v))}});
+  //terms.push_back(constant->sel("out"));
+  //auto out = addList(def, terms);
+  //def->connect(def->sel("self.out"), out);
+  m->setDef(def);
+
+  return m;
+}
+
+CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
+  cout << tab(1) << "dom = " << str(dom) << endl;
+
+  auto ns = context->getNamespace("global");
+  auto c = context;
+
+  int width = 16;
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"clk", c->Named("coreir.clkIn")},
+      //{"reset", c->BitIn()},
+      {"valid", c->Bit()}};
+  int dims = num_in_dims(aff);
+  ub_field.push_back({"d", context->Bit()->Arr(16)->Arr(dims)});
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto m = ns->newModuleDecl("affine_controller_" + context->getUnique(), utp);
+  auto def = m->newModuleDef();
+  auto aff_mod = coreir_for_aff(c, aff);
+  auto aff_func = def->addInstance("affine_func", aff_mod);
+
+
+  auto cycle_time_reg = def->addInstance("cycle_time", "mantle.reg",
+      {{"width", CoreIR::Const::make(context, width)},
+      {"has_en", CoreIR::Const::make(context, false)}});
+
+  auto one = def->addInstance(context->getUnique(),
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, 1))}});
+
+  auto inc_time = def->addInstance("inc_time", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});
+  def->connect(inc_time->sel("in0"), cycle_time_reg->sel("out"));
+  def->connect(inc_time->sel("in1"), one->sel("out"));
+  def->connect(inc_time->sel("out"), cycle_time_reg->sel("in"));
+
+  auto diff = def->addInstance("time_diff", "coreir.sub", {{"width", CoreIR::Const::make(c, width)}});
+  def->connect(cycle_time_reg->sel("out"), diff->sel("in1"));
+  def->connect(aff_func->sel("out"), diff->sel("in0"));
+
+  auto zero = def->addInstance(context->getUnique(),
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, 0))}});
+
+  auto cmp = def->addInstance("cmp_time", "coreir.eq", {{"width", CoreIR::Const::make(c, width)}});
+  def->connect(cmp->sel("in0"), diff->sel("out"));
+  def->connect(cmp->sel("in1"), zero->sel("out"));
+  def->connect(cmp->sel("out"), def->sel("self")->sel("valid"));
+
+  vector<CoreIR::Instance*> domain_regs;
+  vector<CoreIR::Wireable*> domain_at_max;
+  for (int d = 0; d < num_dims(dom); d++) {
+    auto dom_reg = def->addInstance("d_" + str(d) + "_reg",
+        "mantle.reg",
+      {{"width", CoreIR::Const::make(context, width)},
+      {"has_en", CoreIR::Const::make(context, true)}});
+    domain_regs.push_back(dom_reg);
+    def->connect(def->sel("self")->sel("d")->sel(d), domain_regs.back()->sel("out"));
+    def->connect(aff_func->sel("d")->sel(d), domain_regs.back()->sel("out"));
+    def->connect(cmp->sel("out"), domain_regs.back()->sel("en"));
+
+    int max_pt = to_int(lexmaxval(project_all_but(dom, d)));
+    auto max_const = def->addInstance("d_" + str(d) + "_max",
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, max_pt))}});
+
+    auto atmax =
+      def->addInstance("d_" + str(d) + "_at_max", "coreir.eq", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(atmax->sel("in0"), dom_reg->sel("out"));
+    def->connect(atmax->sel("in1"), max_const->sel("out"));
+    domain_at_max.push_back(atmax->sel("out"));
+  }
+
+  auto tinc = def->addInstance("true",
+      "corebit.const",
+      {{"value", CoreIR::Const::make(c, true)}});
+  for (int d = 0; d < num_dims(dom); d++) {
+    string df = "d_" + str(d);
+    auto inc = def->addInstance(df + "_inc", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(inc->sel("in0"), domain_regs.at(d)->sel("out"));
+    def->connect(inc->sel("in1"), one->sel("out"));
+    int min_pt = to_int(lexminval(project_all_but(dom, d)));
+    auto min_const = def->addInstance("d_" + str(d) + "_min",
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, min_pt))}});
+
+    CoreIR::Wireable* smaller_dims_at_max = tinc->sel("out");
+    for (int de = d; de < num_dims(dom); de++) {
+      auto de_atmax = def->addInstance(df + "_am_" + context->getUnique(), "corebit.and");
+      def->connect(de_atmax->sel("in0"), smaller_dims_at_max);
+      def->connect(de_atmax->sel("in1"), domain_at_max.at(de));
+      smaller_dims_at_max = de_atmax->sel("out");
+    }
+
+    auto next_val = def->addInstance(df + "_next_value", "coreir.mux", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(next_val->sel("sel"), smaller_dims_at_max);
+    def->connect(next_val->sel("in0"), inc->sel("out"));
+    def->connect(next_val->sel("in1"), min_const->sel("out"));
+    def->connect(next_val->sel("out"), domain_regs.at(d)->sel("in"));
+  }
+
+  aff_mod->print();
+
+  m->setDef(def);
+  return m;
+}
+
 //generate/realize the rewrite structure inside ubuffer node
 void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   auto context = def->getContext();
@@ -512,106 +814,175 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
   }
 
-  void generate_hls_style_coreir(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
+  CoreIR::Module* generate_coreir_select(CodegenOptions& options, CoreIR::Context* c, const string& outpt, UBuffer& buf) {
+    int width = buf.port_widths;
+
+    auto ns = c->getNamespace("global");
+      vector<pair<string, CoreIR::Type*> >
+        ub_field{{"clk", c->Named("coreir.clkIn")},
+          {"out", c->Bit()->Arr(width)}};
+      for (auto b : buf.get_banks()) {
+        if (elem(outpt, buf.get_bank_outputs(b.name))) {
+          ub_field.push_back({b.name, c->BitIn()->Arr(width)});
+        }
+      }
+
+      // TODO: Add domain variables to select from port controller
+
+      string distrib = outpt + "_select";
+      CoreIR::RecordType* utp = c->Record(ub_field);
+      auto bcm = ns->newModuleDecl(distrib, utp);
+      auto bdef = bcm->newModuleDef();
+
+      vector<string> possible_ports;
+      for (auto pt : buf.get_in_ports()) {
+        if (buf.has_bank_between(pt, outpt)) {
+          possible_ports.push_back(pt);
+        }
+      }
+
+      assert(possible_ports.size() == 1 || possible_ports.size() == 2);
+
+      if (possible_ports.size() == 1) {
+        for (auto inpt : possible_ports) {
+          for (auto b : buf.get_banks()) {
+            if (elem(inpt, buf.get_bank_inputs(b.name))) {
+              // TODO: Add real selection logic
+              bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
+              break;
+            }
+          }
+        }
+      } else {
+        assert(false);
+      }
+
+      bcm->setDef(bdef);
+      return bcm;
+
+      //map<string, isl_set*> in_ports_to_conditions;
+      //umap* reads_to_sources = buf.get_lexmax_events(outpt);
+      //cout << "reads to source for " << outpt << ": " << str(reads_to_sources) << endl;
+      //uset* producers_for_outpt = range(reads_to_sources);
+
+      //auto read_map = buf.access_map.at(outpt);
+      //for (auto inpt : possible_ports) {
+        //auto write_map = buf.access_map.at(inpt);
+        //auto data_written = range(write_map);
+
+        //auto common_write_ops =
+          //domain(its_range(read_map, data_written));
+
+        //auto write_ops =
+          //domain(buf.access_map.at(inpt));
+        //auto op_overlap = domain(its_range(reads_to_sources, write_ops));
+
+        //auto overlap = its(op_overlap, common_write_ops);
+
+        //auto read_ops =
+          //domain(buf.access_map.at(outpt));
+
+        //auto readers_that_use_this_port =
+          //gist(overlap, read_ops);
+        //in_ports_to_conditions[inpt] =
+          //to_set(simplify(readers_that_use_this_port));
+      //}
+  }
+
+  CoreIR::Instance* add_port_controller(CoreIR::ModuleDef* def, const std::string& inpt, UBuffer& buf) {
+    auto c = def->getContext();
+
+    auto sched = buf.schedule.at(inpt);
+    auto sms = get_maps(sched);
+    assert(sms.size() == 1);
+
+    auto svec = isl_pw_multi_aff_from_map(sms.at(0));
+
+    vector<pair<isl_set*, isl_multi_aff*> > pieces =
+      get_pieces(svec);
+    assert(pieces.size() == 1);
+
+    auto saff = pieces.at(0).second;
+    auto dom = pieces.at(0).first;
+
+    cout << "sched = " << str(saff) << endl;
+    cout << tab(1) << "dom = " << str(dom) << endl;
+
+    // TODO: Assert multi size == 1
+    auto aff = isl_multi_aff_get_aff(saff, 0);
+    auto aff_c = affine_controller(c, dom, aff);
+    aff_c->print();
+    return def->addInstance(controller_name(inpt), aff_c);
+  }
+
+  void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
     int width = buf.port_widths;
 
     auto c = def->getContext();
 
     auto ns = c->getNamespace("global");
 
+    for (auto inpt : buf.get_all_ports()) {
+      auto ac = add_port_controller(def, inpt, buf);
+      //def->connect(ac->sel("reset"), def->sel("self.reset"));
+    }
+
     for (auto bank : buf.get_banks()) {
       int capacity = int_upper_bound(card(bank.rddom));
       int addr_width = minihls::clog2(capacity);
       auto bnk = def->addInstance(
-      bank.name,
-      "coreir.mem",
-      {{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, capacity)}});
+          bank.name,
+          ram_module(c, width, capacity));
 
       {
-        vector<pair<string, CoreIR::Type*> >
-          ub_field{{"clk", c->Named("coreir.clkIn")},
-            {"reset", c->BitIn()},
-            {"addr", c->Bit()->Arr(addr_width)}};
-        string distrib = read_addrgen_name(bank.name);
-        CoreIR::RecordType* utp = c->Record(ub_field);
-        auto bcm = ns->newModuleDecl(distrib, utp);
-        auto bdef = bcm->newModuleDef();
-        bcm->setDef(bdef);
-        auto rdgen = def->addInstance(distrib, bcm);
-        def->connect(rdgen->sel("addr"), bnk->sel("raddr"));
+        auto bank_readers = buf.get_bank_outputs(bank.name);
+        assert(bank_readers.size() == 1);
+        auto reader = pick(bank_readers);
+        auto acc_map = to_map(buf.access_map.at(reader));
+        cout << "acc map = " << str(acc_map) << endl;
+        auto reduce_map = linear_address_map(to_set(bank.rddom));
+        cout << "reduce map = " << str(reduce_map) << endl;
+        auto addr_expr = dot(acc_map, reduce_map);
+        cout << "composition = " << str(addr_expr) << endl;
+        auto addr_expr_aff = get_aff(addr_expr);
+
+        auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
+        auto agen = def->addInstance(read_addrgen_name(bank.name), aff_gen_mod);
+        
+        def->connect(agen->sel("out"), bnk->sel("raddr"));
+        def->connect(agen->sel("d"), def->sel(controller_name(reader))->sel("d"));
+        def->connect(bnk->sel("ren"), def->sel(controller_name(reader))->sel("valid"));
       }
 
       {
-        vector<pair<string, CoreIR::Type*> >
-          ub_field{{"clk", c->Named("coreir.clkIn")},
-            {"reset", c->BitIn()},
-            {"addr", c->Bit()->Arr(addr_width)}};
-        string distrib = write_addrgen_name(bank.name);
-        CoreIR::RecordType* utp = c->Record(ub_field);
-        auto bcm = ns->newModuleDecl(distrib, utp);
-        auto bdef = bcm->newModuleDef();
-        bcm->setDef(bdef);
-        auto rdgen = def->addInstance(distrib, bcm);
-        def->connect(rdgen->sel("addr"), bnk->sel("waddr"));
+        auto bank_writers = buf.get_bank_inputs(bank.name);
+        assert(bank_writers.size() == 1);
+        auto writer = pick(bank_writers);
+        auto acc_map = to_map(buf.access_map.at(writer));
+        cout << "acc map = " << str(acc_map) << endl;
+        auto reduce_map = linear_address_map(to_set(bank.rddom));
+        cout << "reduce map = " << str(reduce_map) << endl;
+        auto addr_expr = dot(acc_map, reduce_map);
+        cout << "composition = " << str(addr_expr) << endl;
+        auto addr_expr_aff = get_aff(addr_expr);
+
+        auto aff_gen_mod = coreir_for_aff(c, addr_expr_aff);
+        auto agen = def->addInstance(write_addrgen_name(bank.name), aff_gen_mod);
+        
+        def->connect(agen->sel("out"), bnk->sel("waddr"));
+        def->connect(agen->sel("d"), def->sel(controller_name(writer))->sel("d"));
       }
     }
+
 
     for (auto inpt : buf.get_out_ports()) {
-      vector<pair<string, CoreIR::Type*> >
-        ub_field{{"clk", c->Named("coreir.clkIn")},
-          {"reset", c->BitIn()},
-          {"addr", c->Bit()->Arr(16)},
-          {"valid", c->Bit()}};
-      string distrib = controller_name(inpt);
-      CoreIR::RecordType* utp = c->Record(ub_field);
-      auto bcm = ns->newModuleDecl(distrib, utp);
-      auto bdef = bcm->newModuleDef();
-      auto sched = buf.schedule.at(inpt);
-      auto sms = get_maps(sched);
-      assert(sms.size() == 1);
-      auto svec = isl_pw_multi_aff_from_map(sms.at(0));
-
-      vector<pair<isl_set*, isl_multi_aff*> > pieces =
-        get_pieces(svec);
-      assert(pieces.size() == 1);
-
-      auto saff = pieces.at(0).second;
-      auto dom = pieces.at(0).first;
-      cout << "sched = " << str(saff) << endl;
-      cout << tab(1) << "dom = " << str(dom) << endl;
-      int dim = num_dims(dom);
-      vector<int> iis;
-      for (int i = 0; i < dim; i++) {
-        iis.push_back(1);
-      }
-
-      int d = 1;
-
-      // TODO: Generate a working controller that emits
-      // valid signals
-
-      bcm->setDef(bdef);
-      def->addInstance(distrib, bcm);
+      auto out_ctrl = def->sel(controller_name(inpt));
+      def->connect(def->sel("self")->sel(buf.container_bundle(inpt) + "_valid"), out_ctrl->sel("valid"));
     }
 
     for (auto inpt : buf.get_in_ports()) {
       vector<pair<string, CoreIR::Type*> >
-        ub_field{{"clk", c->Named("coreir.clkIn")},
-          {"reset", c->BitIn()},
-          {"addr", c->Bit()->Arr(16)},
-          {"valid", c->Bit()}};
-      string distrib = controller_name(inpt);
-      CoreIR::RecordType* utp = c->Record(ub_field);
-      auto bcm = ns->newModuleDecl(distrib, utp);
-      auto bdef = bcm->newModuleDef();
-      bcm->setDef(bdef);
-      def->addInstance(distrib, bcm);
-    }
-
-    for (auto inpt : buf.get_in_ports()) {
-      vector<pair<string, CoreIR::Type*> >
-        ub_field{{"clk", c->Named("coreir.clkIn")},
-          {"reset", c->BitIn()},
+        ub_field{
           {"in", c->BitIn()->Arr(width)},
           {"en", c->BitIn()},
           {"valid", c->Bit()}};
@@ -630,6 +1001,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
           bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.in"));
         }
       }
+      bdef->connect("self.en", "self.valid");
       bcm->setDef(bdef);
       auto bc = def->addInstance(inpt + "_broadcast", bcm);
       for (auto b : buf.get_banks()) {
@@ -643,28 +1015,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     }
 
     for (auto outpt : buf.get_out_ports()) {
-      vector<pair<string, CoreIR::Type*> >
-        ub_field{{"clk", c->Named("coreir.clkIn")},
-          {"reset", c->BitIn()},
-          {"out", c->Bit()->Arr(width)}};
-      for (auto b : buf.get_banks()) {
-        if (elem(outpt, buf.get_bank_outputs(b.name))) {
-          ub_field.push_back({b.name, c->BitIn()->Arr(width)});
-        }
-      }
-
-      string distrib = outpt + "_select";
-      CoreIR::RecordType* utp = c->Record(ub_field);
-      auto bcm = ns->newModuleDecl(distrib, utp);
-      auto bdef = bcm->newModuleDef();
-      for (auto b : buf.get_banks()) {
-        if (elem(outpt, buf.get_bank_outputs(b.name))) {
-          // TODO: Add real selection logic
-          bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
-          break;
-        }
-      }
-      bcm->setDef(bdef);
+      auto bcm = generate_coreir_select(options, c, outpt, buf);
       auto bc = def->addInstance(outpt + "_select", bcm);
       for (auto b : buf.get_banks()) {
         if (elem(outpt, buf.get_bank_outputs(b.name))) {
@@ -683,8 +1034,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     CoreIRLoadLibrary_cwlib(context);
     auto ns = context->getNamespace("global");
     vector<pair<string, CoreIR::Type*> >
-      ub_field{{"clk", context->Named("coreir.clkIn")},
-        {"reset", context->BitIn()}};
+      ub_field{{"clk", context->Named("coreir.clkIn")}};
+        //{"reset", context->BitIn()}};
     for (auto b : buf.port_bundles) {
       int pt_width = buf.port_widths;
       int bd_width = buf.lanes_in_bundle(b.first);
@@ -702,18 +1053,13 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     auto ub = ns->newModuleDecl(buf.name + "_ub", utp);
     auto def = ub->newModuleDef();
 
-    if (false) {
-      generate_hls_style_coreir(options, buf, def);
+    if (true) {
+      generate_synthesizable_functional_model(options, buf, def);
     } else {
       buf.generate_coreir(options, def);
     }
 
     ub->setDef(def);
-    //if(!saveToFile(ns, "ubuffer.json")) {
-    //cout << "Could not save ubuffer coreir" << endl;
-    //context->die();
-    //}
-    //deleteContext(context);
     return ub;
   }
 
@@ -954,12 +1300,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         auto read_ops =
           domain(buf.access_map.at(outpt));
 
-        //auto unoptimized_select_condition =
-          //domain(its_range(reads_to_sources, overlap));
-        //auto readers_that_use_this_port =
-          //gist(unoptimized_select_condition, read_ops);
-          //gist(domain(its_range(reads_to_sources, overlap)), read_ops);
-        //out << tab(2) << "// Reads from " << inpt << ": " << str(unoptimized_select_condition) << endl;
         auto readers_that_use_this_port =
           gist(overlap, read_ops);
         in_ports_to_conditions[inpt] =
