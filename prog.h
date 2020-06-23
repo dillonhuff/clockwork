@@ -269,6 +269,18 @@ struct ir_node {
     return cl;
   }
 
+  op* add_nest(
+      const std::string& x, int x_min, int x_max,
+      const std::string& y, int y_min, int y_max,
+      const std::string& c, int c_min, int c_max,
+      const std::string& k, int k_min, int k_max) {
+    auto xl = this->add_loop(x, x_min, x_max);
+    auto yl = xl->add_loop(y, y_min, y_max);
+    auto cl = yl->add_loop(c, c_min, c_max);
+    auto kl = cl->add_loop(k, k_min, k_max);
+    return kl;
+  }
+
   op* container_child(op* source) {
     for (auto c : children) {
       if (source == c) {
@@ -834,6 +846,14 @@ struct prog {
       const std::string& y, int y_min, int y_max,
       const std::string& c, int c_min, int c_max) {
     return root->add_nest(x, x_min, x_max, y, y_min, y_max, c, c_min, c_max);
+  }
+
+  op* add_nest(
+      const std::string& x, int x_min, int x_max,
+      const std::string& y, int y_min, int y_max,
+      const std::string& c, int c_min, int c_max,
+      const std::string& k, int k_min, int k_max) {
+    return root->add_nest(x, x_min, x_max, y, y_min, y_max, c, c_min, c_max, k, k_min, k_max);
   }
 
   bool is_output(const std::string& name) {

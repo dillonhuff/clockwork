@@ -10100,7 +10100,24 @@ void cyclic_banked_conv_test() {
   //assert(false);
 }
 
+void mmul_outer_prod_test() {
+  prog prg("mmul_outer_prod");
+  prg.add_input("C");
+
+  auto ldc =
+    prg.add_nest("cit", 0, 10, "cjt", 0, 10,
+        "cii", 0, 3, "cji", 0, 3)->add_op("init_c");
+  ldc->add_store("C", "cit", "cjt", "cii", "cji");
+  ldc->add_function("zero_32");
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  assert(false);
+}
+
 void application_tests() {
+  mmul_outer_prod_test();
   weight_streaming_test();
   halide_conv_layer_3D_test();
   //playground();
