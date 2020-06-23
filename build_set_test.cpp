@@ -10121,11 +10121,28 @@ void mmul_outer_prod_test() {
 
   auto lda =
     prg.add_nest("ait", 0, 10,
-        //"ajt", 0, 10,
         // within each row of tiles of C:
         "aii", 0, 3, "aij", 0, 10)->add_op("ld_a");
   lda->add_load("A_oc", "ait", "aii", "aji");
   lda->add_store("A", "ait", "aii", "aji");
+
+  auto ld_a_col=
+    prg.add_nest(
+        "uit", 0, 10, "ujt", 0, 10,
+        "uok", 0, 10,
+        // For each tile: For each k value load a column of A to the A register file
+        "uac", 0, 3)->add_op("A_to_Ar");
+  ld_a_col->add_load("A", "uit", "ujt", "uac", "uok");
+  ld_a_col->add_store("A_r", "uit, ujt, uok, uac, uok");
+
+  auto ld_b_row =
+    prg.add_nest(
+        "qit", 0, 10, "qjt", 0, 10,
+        "qok", 0, 10,
+        // For each tile: For each k value load a column of A to the A register file
+        "qbc", 0, 3)->add_op("B_to_Br");
+  ld_b_row->add_load("B", "qit", "qjt", "qbc", "qok");
+  ld_b_row->add_store("B_r", "qit, qjt, uok, qbc, qok");
 
   prg.pretty_print();
   prg.sanity_check();
