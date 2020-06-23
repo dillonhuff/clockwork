@@ -10110,21 +10110,21 @@ void mmul_outer_prod_test() {
     prg.add_nest("cit", 0, 10, "cjt", 0, 10,
         "cii", 0, 3, "cji", 0, 3)->add_op("init_c");
   ldc->add_store("C", "cit", "cjt", "cii", "cji");
-  ldc->add_function("zero_32");
+  ldc->add_function("set_zero_32");
 
   auto ldb =
     prg.add_nest("bit", 0, 10, "bjt", 0, 10,
         // within each tile of C:
         "bii", 0, 10, "bij", 0, 3)->add_op("ld_b");
-  ldb->add_load("B_oc", "bit", "bjt", "bii", "bji");
-  ldb->add_store("B", "bit", "bjt", "bii", "bji");
+  ldb->add_load("B_oc", "bit", "bjt", "bii", "bij");
+  ldb->add_store("B", "bit", "bjt", "bii", "bij");
 
   auto lda =
     prg.add_nest("ait", 0, 10,
         // within each row of tiles of C:
         "aii", 0, 3, "aij", 0, 10)->add_op("ld_a");
-  lda->add_load("A_oc", "ait", "aii", "aji");
-  lda->add_store("A", "ait", "aii", "aji");
+  lda->add_load("A_oc", "ait", "aii", "aij");
+  lda->add_store("A", "ait", "aii", "aij");
 
   auto ld_a_col=
     prg.add_nest(
@@ -10132,20 +10132,39 @@ void mmul_outer_prod_test() {
         "uok", 0, 10,
         // For each tile: For each k value load a column of A to the A register file
         "uac", 0, 3)->add_op("A_to_Ar");
-  ld_a_col->add_load("A", "uit", "ujt", "uac", "uok");
-  ld_a_col->add_store("A_r", "uit, ujt, uok, uac, uok");
+  ld_a_col->add_load("A", "uit", "uac", "uok");
+  ld_a_col->add_store("A_r", "uit, ujt, uac, uok");
 
-  auto ld_b_row =
-    prg.add_nest(
-        "qit", 0, 10, "qjt", 0, 10,
-        "qok", 0, 10,
-        // For each tile: For each k value load a column of A to the A register file
-        "qbc", 0, 3)->add_op("B_to_Br");
-  ld_b_row->add_load("B", "qit", "qjt", "qbc", "qok");
-  ld_b_row->add_store("B_r", "qit, qjt, uok, qbc, qok");
+  //auto ld_b_row =
+    //prg.add_nest(
+        //"qit", 0, 10, "qjt", 0, 10,
+        //"qok", 0, 10,
+        //// For each tile: For each k value load a column of A to the A register file
+        //"qbc", 0, 3)->add_op("B_to_Br");
+  //ld_b_row->add_load("B", "qit", "qjt", "qbc", "qok");
+  //ld_b_row->add_store("B_r", "qit, qjt, uok, qbc, qok");
+
+
+  //auto update_c =
+    //prg.add_nest("ucit", 0, 10, "ucjt", 0, 10,
+        //"uck", 0, 10)->add_nest(
+        //"ucii", 0, 3, "ucji", 0, 3)->add_op("update_c");
+  //update_c->add_load("C", "ucit", "ucjt", "ucii", "ucji");
+  //update_c->add_load("A_r", "ucit", "ucjt", "uck", "ucji");
+  //update_c->add_load("B_r", "ucit", "ucjt", "ucii", "uck");
+  //update_c->add_store("C", "ucit", "ucjt", "ucii", "ucji");
+  //update_c->add_function("fma_32");
+
+  auto stc =
+    prg.add_nest("ocit", 0, 10, "ocjt", 0, 10,
+        "ocii", 0, 3, "ocji", 0, 3)->add_op("out_c");
+  stc->add_load("C", "ocit", "ocjt", "ocii", "ocji");
+  stc->add_store("C_oc", "ocit", "ocjt", "ocii", "ocji");
 
   prg.pretty_print();
   prg.sanity_check();
+
+  regression_test(prg);
 
   assert(false);
 }

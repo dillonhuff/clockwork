@@ -1614,6 +1614,7 @@ std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
     out << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
     out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
     out << "\t\t\tbuffer capacity: " << compute_max_dd(tmp, inpt) << endl;
+    out << "\t\t\tacc range: " << str(range(buf.access_map.at(inpt))) << endl;
     out << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
     out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
     out << endl;

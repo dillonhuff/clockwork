@@ -2369,6 +2369,39 @@ vector<string> write_vars(const std::string& target_buf, op* reader, prog& prg) 
   return vars_used_in_read;
 }
 
+vector<string> used_vars(const std::string& target_buf, op* reader, prog& prg) {
+  auto all_vars = map_find(reader, prg.iter_vars());
+  vector<string> vars_used_in_read;
+  for (auto a : addrs_referenced(reader, target_buf)) {
+    assert(a.size() > 0);
+    for (auto ar : a) {
+      isl_multi_aff* ma = to_multi_aff(prg.ctx, all_vars, ar.second);
+      cout << tab(2) << str(a) << endl;
+      cout << tab(2) << str(ma) << endl;
+      for (int i = 0; i < isl_multi_aff_dim(ma, isl_dim_set); i++) {
+        auto aff = isl_multi_aff_get_aff(ma, i);
+        cout << tab(3) << i << ": " << str(aff) << endl;
+
+        for (int d = 0; d < num_in_dims(aff); d++) {
+          isl_val* coeff = get_coeff(aff, d);
+          if (!is_zero(coeff)) {
+            vars_used_in_read.push_back(dim_name(aff, d));
+          }
+          //cout << tab(4) << dim_name(aff, d) << ": " << str(get_coeff(aff, d)) << endl;
+        }
+      }
+    }
+  }
+
+  vector<string> upsamples;
+  for (auto v : all_vars) {
+    if (prg.trip_count(v) > 1 && !elem(v, vars_used_in_read)) {
+      upsamples.push_back(v);
+    }
+  }
+  return upsamples;
+}
+
 vector<string> upsample_vars(const std::string& target_buf, op* reader, prog& prg) {
 
   auto all_vars = map_find(reader, prg.iter_vars());
@@ -2526,4 +2559,14 @@ void prog::sanity_check() {
     assert(!elem(lp->name, loop_names));
     loop_names.insert(lp->name);
   }
+
+  //auto ivars = iter_vars();
+  //for (auto op : all_ops()) {
+    //vector<string> ivs = map_find(op, ivars);
+    //vector<string> used_vars =
+      //used_vars(op, prg);
+    //for (auto v : used_vars) {
+      //assert(elem(v, ivs));
+    //}
+  //}
 }
