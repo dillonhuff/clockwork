@@ -10102,13 +10102,22 @@ void cyclic_banked_conv_test() {
 
 void mmul_outer_prod_test() {
   prog prg("mmul_outer_prod");
-  prg.add_input("C");
+  prg.add_input("B_oc");
+  prg.add_input("A_oc");
+  prg.add_output("C_oc");
 
   auto ldc =
     prg.add_nest("cit", 0, 10, "cjt", 0, 10,
         "cii", 0, 3, "cji", 0, 3)->add_op("init_c");
   ldc->add_store("C", "cit", "cjt", "cii", "cji");
   ldc->add_function("zero_32");
+
+  auto ldb =
+    prg.add_nest("bit", 0, 10, "bjt", 0, 10,
+        // within each tile of C:
+        "bii", 0, 10, "bij", 0, 3)->add_op("ld_b");
+  ldb->add_load("B_oc", "bit", "bjt", "bii", "bji");
+  ldb->add_store("B", "bit", "bjt", "bii", "bji");
 
   prg.pretty_print();
   prg.sanity_check();
