@@ -10119,6 +10119,14 @@ void mmul_outer_prod_test() {
   ldb->add_load("B_oc", "bit", "bjt", "bii", "bji");
   ldb->add_store("B", "bit", "bjt", "bii", "bji");
 
+  auto lda =
+    prg.add_nest("ait", 0, 10,
+        //"ajt", 0, 10,
+        // within each row of tiles of C:
+        "aii", 0, 3, "aij", 0, 10)->add_op("ld_a");
+  lda->add_load("A_oc", "ait", "aii", "aji");
+  lda->add_store("A", "ait", "aii", "aji");
+
   prg.pretty_print();
   prg.sanity_check();
 
