@@ -241,6 +241,10 @@ T inc(T& src, T& a0) {
   //return src + a0;
 //}
 
+hw_uint<32> fma_32(hw_uint<32>& src, hw_uint<32>& a0, hw_uint<32>& a1) {
+  return src + a0*a1;
+}
+
 int fma(int& src, int& a0, int& a1) {
   return src + a0*a1;
 }
