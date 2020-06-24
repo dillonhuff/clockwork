@@ -98,11 +98,35 @@ map<string, int> estimate_kernel_areas(prog& prg, TargetTechlibInfo& target_info
 
 std::set<string> get_producers(string next_kernel, prog& prg){
 
+  cout << "next kernel: " << next_kernel<< endl;
   std::set<string> producers;
   op* loop = prg.find_loop(next_kernel);
-  auto producers_of_kernel = loop -> ancestors();
-  for(auto producer : producers_of_kernel){
-	producers.insert(producer -> name);
+  std::set<string> buffers_read;
+  for(auto op : prg.find_loop(next_kernel)->descendant_ops()){
+	for(auto buff : op -> buffers_read()){
+	    buffers_read.insert(buff);
+	    cout << tab(1) << buff << endl;
+	}
+  }
+
+  cout << "getting other_kernels"<< endl;
+  for(auto other_kernel : get_kernels(prg)){
+	  if(other_kernel != next_kernel){
+		  std::set<string> buffers_written;
+		  for(auto op : prg.find_loop(other_kernel)->descendant_ops()){
+			  for(auto buff : op -> buffers_written()){
+				  buffers_written.insert(buff);
+//				  cout << tab(1) << buff << endl;
+			  }
+		  }
+
+
+		  if(intersection(buffers_written, buffers_read).size() > 0){
+			  producers.insert(other_kernel);
+			  cout << "producer name: " << other_kernel << endl;
+		  }
+	  }
+
   }
   return producers;
 }
@@ -144,7 +168,6 @@ std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int
 	
   assert(topologically_sorted_kernels.size() == get_kernels(prg).size());
   //for (string kernel : get_kernels(prg)) {
-  //  for(string kernel : topologically_sorted_kernels){
   for(int i = topologically_sorted_kernels.size(); i > 0; i--){
     string kernel = topologically_sorted_kernels[i-1];
     if (current_group_cost + map_find(kernel, kernel_costs) > max_area_cost_per_group) {
@@ -189,12 +212,12 @@ void prog_splitting_tests() {
 
   // Compile the application into
   // one large module.
-  generate_optimized_code(prg);
+//  generate_optimized_code(prg);
 
   // Run the code on a tiny test image
   // and save it to brighten_blur_bmp_out.bmp
-  system("clang++ -std=c++11 brighten_blur_sw_bmp_test_harness.cpp brighten_blur.cpp -I ./aws_collateral/ -I .");
-  system("./a.out");
+//  system("clang++ -std=c++11 brighten_blur_sw_bmp_test_harness.cpp brighten_blur.cpp -I ./aws_collateral/ -I .");
+//  system("./a.out");
 
   // Estimate the area required for each
   // kernel in the application
