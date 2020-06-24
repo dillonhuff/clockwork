@@ -10163,9 +10163,9 @@ void mmul_outer_prod_test() {
   prg.pretty_print();
   prg.sanity_check();
 
-  regression_test(prg);
+  //regression_test(prg);
 
-  assert(false);
+  //assert(false);
 }
 
 void application_tests() {
