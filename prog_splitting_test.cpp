@@ -75,7 +75,21 @@ map<string, int> estimate_kernel_areas(prog& prg, TargetTechlibInfo& target_info
   // TODO: Come up with a better area estimate
   map<string, int> costs;
   for (string kernel : get_kernels(prg)) {
-    costs[kernel] = 100000;
+    op* loop = prg.find_loop(kernel);
+    auto ops_in_kernel = loop -> descendant_ops();
+    cout << "ops_in_kernel " << kernel << endl;
+    int kernel_cost = 0;
+    for (auto op: ops_in_kernel){
+	cout << tab(1) << op -> name << endl;
+	if(op -> func != ""){
+	    if( contains_key(op -> func, target_info.compute_unit_costs)){
+		kernel_cost += map_find(op -> func, target_info.compute_unit_costs);
+	    }
+	    cout << tab(2) << op -> func << endl;
+	}
+    }
+    costs[kernel] = kernel_cost;
+    cout << "Kernel: " << costs[kernel] << endl;
   }
   return costs;
 }
@@ -89,13 +103,37 @@ std::set<std::set<string> > group_kernels_for_compilation(prog& prg,
 
   int current_group_cost = 0;
   std::set<string> current_group;
-  for (string kernel : get_kernels(prg)) {
+  std::vector<string> topologically_sorted_kernels;
+  std::set<string> not_yet_sorted = get_kernels(prg);
+  while(not_yet_sorted.size() > 0){
+	for(auto next_kernel : not_yet_sorted){
+	//string next_kernel = *begin(not_yet_sorted);
+	std::set<string> producers = get_producers(next_kernel, prg);
+	producers.erase(next_kernel);
+	bool all_producers_sorted = true;
+	for(auto producer : producers){
+	    if(!elem(producer, topologically_sorted_kernels){
+		all_producers_sorted = false;
+		break;
+	    }
+	}
+	if(all_producers_sorted){
+	     topologically_sorted_kernels.push_back(next_kernel);
+	     not_yet_sorted.erase(next_kernel);
+	     break;
+	}
+	}
+  }	
+  assert(topologically_sorted_kernels.size() == get_kernels(prg).size());
+  //for (string kernel : get_kernels(prg)) {
+    for(string kernel : topologically_sorted_kernels){
     if (current_group_cost + map_find(kernel, kernel_costs) > max_area_cost_per_group) {
       groups.insert(current_group);
       current_group = {kernel};
-      current_group_cost = 0;
+      current_group_cost = map_find(kernel, kernel_costs);
     } else {
       current_group.insert({kernel});
+      current_group_cost += map_find(kernel, kernel_costs);
     }
   }
 
@@ -157,11 +195,18 @@ void prog_splitting_tests() {
     cout << tab(1) << kernel_name << " has area cost: " << area << endl;
   }
 
-  int max_area_cost_per_group = 20000;
+  int max_area_cost_per_group = 9;
   std::set<std::set<string> > kernel_grouping =
     group_kernels_for_compilation(prg,
         kernel_areas,
         max_area_cost_per_group);
+	assert(kernel_grouping.size() == 2);
+	for(auto group : kernel_grouping){
+	    cout << "current group: "<< endl;
+	    for(auto kernel : group){
+		cout << tab(1) << kernel << endl;
+	    }
+	}
 
   vector<prog> group_programs;
   cout << "Kernel grouping..." << endl;
