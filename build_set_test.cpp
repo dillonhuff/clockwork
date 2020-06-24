@@ -10276,7 +10276,7 @@ void mmul_outer_prod_test() {
 
   prg.pretty_print();
   prg.sanity_check();
-  assert(false);
+  //assert(false);
 
   CodegenOptions options;
   options.internal = true;
