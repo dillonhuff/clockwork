@@ -319,6 +319,8 @@ void move_naive_to_benchmarks_folder(const std::string& app_name) {
   system(("mv regression_tb_" + out_name + "_naive.cpp " + isl_dir).c_str());
 }
 
+void move_to_synthesis_folder(const std::string& app_name);
+
 static inline
 void move_to_benchmarks_folder(const std::string& app_name) {
   string out_name = app_name;
