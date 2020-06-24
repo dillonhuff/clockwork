@@ -10113,6 +10113,20 @@ void copy(const std::string& dst, const std::string& src, const std::vector<int>
   c->add_store(dst, comma_list(iter_vars_no_root));
 }
 
+void init(const std::string& dst, const std::string& func, const std::vector<int>& dims, prog& prg) {
+  op* lp = prg.root;
+  for (int d : dims) {
+    lp = lp->add_loop(prg.unique_name("i"), 0, d);
+  }
+  auto c = lp->add_op(prg.unique_name("init"));
+  auto iter_vars_no_root = prg.iter_vars(c);
+  reverse(iter_vars_no_root);
+  iter_vars_no_root.pop_back();
+  reverse(iter_vars_no_root);
+  c->add_function(func);
+  c->add_store(dst, comma_list(iter_vars_no_root));
+}
+
 void mmul_outer_prod_test() {
   prog prg("mmul_outer_prod");
   prg.add_input("B_oc");
@@ -10121,7 +10135,7 @@ void mmul_outer_prod_test() {
 
   copy("A", "A_oc", {5, 5, 2, 2}, prg);
   copy("B", "B_oc", {5, 5, 2, 2}, prg);
-  //init("C", "set_zero_32", 5, 5, 2, 2, prg);
+  init("C", "set_zero_32", {5, 5, 2, 2}, prg);
   //reduce("C", {0, 1, 3, 4}, "fma_32", "A", {0, 1, 4, 2}, "B", {0, 1, 2, 3}, prg);
   copy("C_oc", "C", {5, 5, 2, 2}, prg);
 
