@@ -10126,31 +10126,13 @@ void mmul_outer_prod_test() {
   lda->add_load("A_oc", "ait", "aii", "aij");
   lda->add_store("A", "ait", "aii", "aij");
 
-  auto ld_a_col=
-    prg.add_nest(
-        "uit", 0, 10, "ujt", 0, 10,
-        "uok", 0, 10,
-        // For each tile: For each k value load a column of A to the A register file
-        "uac", 0, 3)->add_op("A_to_Ar");
-  ld_a_col->add_load("A", "uit", "uac", "uok");
-  ld_a_col->add_store("A_r", "uit, ujt, uac, uok");
-
-  auto ld_b_row =
-    prg.add_nest(
-        "qit", 0, 10, "qjt", 0, 10,
-        "qok", 0, 10,
-        // For each tile: For each k value load a column of A to the A register file
-        "qbc", 0, 3)->add_op("B_to_Br");
-  ld_b_row->add_load("B", "qit", "qjt", "qok", "qbc");
-  ld_b_row->add_store("B_r", "qit, qjt, qok, 0, qbc");
-
   auto update_c =
     prg.add_nest("ucit", 0, 10, "ucjt", 0, 10,
         "uck", 0, 10)->add_nest(
         "ucii", 0, 3, "ucji", 0, 3)->add_op("update_c");
   update_c->add_load("C", "ucit", "ucjt", "ucii", "ucji");
-  update_c->add_load("A_r", "ucit", "ucjt", "uck", "ucji");
-  update_c->add_load("B_r", "ucit, ucjt, ucii, 0, uck");
+  update_c->add_load("A", "ucit", "uck", "ucji");
+  update_c->add_load("B", "ucit, ucjt, ucii, uck");
   update_c->add_store("C", "ucit", "ucjt", "ucii", "ucji");
   update_c->add_function("fma_32");
 
@@ -10163,29 +10145,32 @@ void mmul_outer_prod_test() {
   prg.pretty_print();
   prg.sanity_check();
 
-  //regression_test(prg);
+  CodegenOptions options;
+  options.internal = true;
+  options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
+  regression_test(options, prg);
 
-  //assert(false);
+  assert(false);
 }
 
 void application_tests() {
-  mmul_outer_prod_test();
-  weight_streaming_test();
-  halide_conv_layer_3D_test();
-  //playground();
-  cyclic_banked_conv_test();
+  //mmul_outer_prod_test();
+  halide_cascade_test();
+  halide_frontend_test();
   sum_denoise_test();
   sum_diffs_test();
   denoise2d_test();
   denoise2d_test();
+  conv_3_3_halide_test();
+  weight_streaming_test();
+  halide_conv_layer_3D_test();
+  //playground();
+  cyclic_banked_conv_test();
 
   mini_conv_halide_test();
   gaussian_pyramid_app_test("gp64x64");
   reduce_1d_test();
   //register_file_optimization_test();
-  halide_cascade_test();
-  halide_frontend_test();
-  conv_3_3_halide_test();
   histogram_test();
   reaccess_no_hierarchy_test();
   reaccess_no_hierarchy_rolled_test();

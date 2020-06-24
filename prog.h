@@ -1146,16 +1146,18 @@ struct prog {
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
      // adding vector pair
-     for (auto top_pair : op->consumes_pair()) {
-      string cond = "{ ";
-        for (auto sec_pair : top_pair.second) {
-          cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
-        }
-        cond = cond.substr(0, cond.length() - 2);
-        cond = cond + string(" }");
+      for (auto top_pair : op->consumes_pair()) {
+        if (top_pair.first == buf_name) {
+          string cond = "{ ";
+          for (auto sec_pair : top_pair.second) {
+            cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+          }
+          cond = cond.substr(0, cond.length() - 2);
+          cond = cond + string(" }");
 
-        umap* vmap = its(isl_union_map_read_from_str(ctx, cond.c_str()), to_uset(dom));
-        pmap = unn(pmap, vmap);
+          umap* vmap = its(isl_union_map_read_from_str(ctx, cond.c_str()), to_uset(dom));
+          pmap = unn(pmap, vmap);
+        }
      }
      m = unn(m, pmap);
      // original

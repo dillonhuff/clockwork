@@ -2219,6 +2219,7 @@ void generate_regression_testbench(prog& prg) {
     rgtb << tab(1) << "// cmap    : " << str(cmap) << endl;
     rgtb << tab(1) << "// read map: " << str(read_map) << endl;
     rgtb << tab(1) << "// rng     : " << str(rng) << endl;
+    rgtb << tab(1) << "// rng card: " << str(range_card) << endl;
     rgtb << tab(1) << "for (int i = 0; i < " << num_pushes << "; i++) {" << endl;
     rgtb << tab(2) << in << ".write(i);" << endl;
     rgtb << tab(1) << "}" << endl << endl;
