@@ -132,6 +132,14 @@ struct ir_node {
     return reads;
   }
 
+  std::set<string> buffers_written() const {
+    std::set<string> written;
+    for (auto l : produce_locs) {
+      written.insert(l.first);
+    }
+    return written;
+  }
+
   std::set<string> buffers_read() const {
     std::set<string> read;
     for (auto l : consumes_pair()) {
