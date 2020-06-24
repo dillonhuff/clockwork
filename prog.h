@@ -935,6 +935,9 @@ struct prog {
     return whole_d;
   }
 
+  vector<string> iter_vars(op* o) {
+    return map_find(o, iter_vars());
+  }
   map<op*, vector<string> > iter_vars() {
     vector<string> act;
     map<op*, vector<string> > ivars;

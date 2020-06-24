@@ -2249,38 +2249,38 @@ isl_schedule_node* print_sched_tp(isl_schedule_node* n, void* user) {
   return n;
 }
 
-void mmul_test() {
-  prog prg;
-  auto r = prg.add_loop("r", 0, 8);
-  auto c = r->add_loop("c", 0, 8);
-  auto rd = c->add_op("read");
-  rd->add_store("T", "0");
+//void mmul_test() {
+  //prog prg;
+  //auto r = prg.add_loop("r", 0, 8);
+  //auto c = r->add_loop("c", 0, 8);
+  //auto rd = c->add_op("read");
+  //rd->add_store("T", "0");
 
-  auto k = c->add_loop("k", 0, 8);
-  auto accum = k->add_op("accum");
-  accum->add_load("T", "0");
-  accum->add_store("T", "0");
+  //auto k = c->add_loop("k", 0, 8);
+  //auto accum = k->add_op("accum");
+  //accum->add_load("T", "0");
+  //accum->add_store("T", "0");
 
-  auto write = c->add_op("write");
-  write->add_load("T", "0");
-  write->add_store("M", "r, c");
-
-
-  cout << "Program code without optimization..." << endl;
-  prg.unoptimized_codegen();
-
-  cout << "Program with optimized schedule..." << endl;
-  isl_schedule* opt_sched = prg.optimized_schedule();
-
-  int ind = 0;
-  opt_sched = isl_schedule_map_schedule_node_bottom_up(opt_sched, print_sched_tp, &ind);
+  //auto write = c->add_op("write");
+  //write->add_load("T", "0");
+  //write->add_store("M", "r, c");
 
 
-  auto domain = prg.whole_iteration_domain();
-  auto schedmap = its(isl_schedule_get_map(opt_sched), domain);
-  //cout << "Optimized schedule..." << endl;
-  //cout << codegen_c(schedmap);
-}
+  //cout << "Program code without optimization..." << endl;
+  //prg.unoptimized_codegen();
+
+  //cout << "Program with optimized schedule..." << endl;
+  //isl_schedule* opt_sched = prg.optimized_schedule();
+
+  //int ind = 0;
+  //opt_sched = isl_schedule_map_schedule_node_bottom_up(opt_sched, print_sched_tp, &ind);
+
+
+  //auto domain = prg.whole_iteration_domain();
+  //auto schedmap = its(isl_schedule_get_map(opt_sched), domain);
+  ////cout << "Optimized schedule..." << endl;
+  ////cout << codegen_c(schedmap);
+//}
 
 void pyramid_test() {
   prog prg;
@@ -10099,6 +10099,19 @@ void cyclic_banked_conv_test() {
   }
   //assert(false);
 }
+void copy(const std::string& dst, const std::string& src, const std::vector<int>& dims, prog& prg) {
+  op* lp = prg.root;
+  for (int d : dims) {
+    lp = lp->add_loop(prg.unique_name("c"), 0, d);
+  }
+  auto c = lp->add_op(prg.unique_name("cp"));
+  auto iter_vars_no_root = prg.iter_vars(c);
+  reverse(iter_vars_no_root);
+  iter_vars_no_root.pop_back();
+  reverse(iter_vars_no_root);
+  c->add_load(src, comma_list(iter_vars_no_root));
+  c->add_store(dst, comma_list(iter_vars_no_root));
+}
 
 void mmul_outer_prod_test() {
   prog prg("mmul_outer_prod");
@@ -10106,24 +10119,31 @@ void mmul_outer_prod_test() {
   prg.add_input("A_oc");
   prg.add_output("C_oc");
 
-  auto ldc =
-    prg.add_nest("cit", 0, 10, "cjt", 0, 10)->add_op("init_c");
-  ldc->add_store("C", "cit", "cjt");
-  ldc->add_function("set_zero_32");
+  copy("A", "A_oc", {5, 5, 2, 2}, prg);
+  copy("B", "B_oc", {5, 5, 2, 2}, prg);
+  //init("C", "set_zero_32", 5, 5, 2, 2, prg);
+  //reduce("C", {0, 1, 3, 4}, "fma_32", "A", {0, 1, 4, 2}, "B", {0, 1, 2, 3}, prg);
+  copy("C_oc", "C", {5, 5, 2, 2}, prg);
 
-  auto update_c =
-    prg.add_nest("ucit", 0, 10, "ucjt", 0, 10, "uck", 0, 10)->
-    add_op("update_c");
-  update_c->add_load("C", "ucit", "ucjt");
-  update_c->add_load("A_oc", "ucit", "uck");
-  update_c->add_load("B_oc", "uck", "ucjt");
-  update_c->add_store("C", "ucit", "ucjt");
-  update_c->add_function("fma_32");
 
-  auto stc =
-    prg.add_nest("sit", 0, 10, "sjt", 0, 10)->add_op("store_c_oc");
-  stc->add_load("C", "sit", "sjt");
-  stc->add_store("C_oc", "sit", "sjt");
+  //auto ldc =
+    //prg.add_nest("cit", 0, 10, "cjt", 0, 10)->add_op("init_c");
+  //ldc->add_store("C", "cit", "cjt");
+  //ldc->add_function("set_zero_32");
+
+  //auto update_c =
+    //prg.add_nest("ucit", 0, 10, "ucjt", 0, 10, "uck", 0, 10)->
+    //add_op("update_c");
+  //update_c->add_load("C", "ucit", "ucjt");
+  //update_c->add_load("A_oc", "ucit", "uck");
+  //update_c->add_load("B_oc", "uck", "ucjt");
+  //update_c->add_store("C", "ucit", "ucjt");
+  //update_c->add_function("fma_32");
+
+  //auto stc =
+    //prg.add_nest("sit", 0, 10, "sjt", 0, 10)->add_op("store_c_oc");
+  //stc->add_load("C", "sit", "sjt");
+  //stc->add_store("C_oc", "sit", "sjt");
 
   //auto ldc =
     //prg.add_nest("cit", 0, 10, "cjt", 0, 10,
@@ -10163,6 +10183,7 @@ void mmul_outer_prod_test() {
 
   prg.pretty_print();
   prg.sanity_check();
+  assert(false);
 
   CodegenOptions options;
   options.internal = true;
