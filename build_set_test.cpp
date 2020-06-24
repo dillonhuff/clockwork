@@ -10169,18 +10169,55 @@ void reduce(
   c->add_store(dst, comma_list(cvar_names));
 }
 
+void copy(const dimlist& dims, const std::string dst, const dimlist& avars,
+    const std::string& src,
+    const dimlist& bvars,
+    prog& prg) {
+
+  op* lp = prg.root;
+  for (int d : dims) {
+    lp = lp->add_loop(prg.unique_name("c"), 0, d);
+  }
+  auto c = lp->add_op(prg.unique_name("c"));
+  auto iter_vars_no_root = prg.iter_vars(c);
+  reverse(iter_vars_no_root);
+  iter_vars_no_root.pop_back();
+  reverse(iter_vars_no_root);
+
+  vector<string> avar_names;
+  for (auto d : avars) {
+    avar_names.push_back(iter_vars_no_root.at(d));
+  }
+
+  vector<string> bvar_names;
+  for (auto d : bvars) {
+    bvar_names.push_back(iter_vars_no_root.at(d));
+  }
+
+  c->add_store(dst, comma_list(avar_names));
+  c->add_load(src, comma_list(bvar_names));
+}
+
 void mmul_outer_prod_test() {
   prog prg("mmul_outer_prod");
   prg.add_input("B_oc");
   prg.add_input("A_oc");
   prg.add_output("C_oc");
 
-  copy("A", "A_oc", {5, 5, 2, 2}, prg);
-  copy("B", "B_oc", {5, 5, 2, 2}, prg);
+  copy("A", "A_oc", {5, 2, 10}, prg);
+  // Upsample
+  copy({5, 5, 2, 10}, "Ar", {0, 1, 2, 3}, "A", {0, 2, 3}, prg);
+  copy("B", "B_oc", {5, 5, 10, 2}, prg);
   init("C", "set_zero_32", {5, 5, 2, 2}, prg);
-  reduce({5, 5, 5, 2, 2}, "C", {0, 1, 3, 4}, "fma_32", "A", {0, 1, 3, 4}, "B", {0, 1, 3, 4}, prg);
-  //reduce({5, 5, 5, 2, 2}, "C", {0, 1, 3, 4}, "fma_32", "A", {0, 1, 2, 3}, "B", {0, 1, 2, 3}, prg);
+  reduce({5, 5, 10, 2, 2}, "C", {0, 1, 3, 4}, "fma_32", "Ar", {0, 1, 4, 2}, "B", {0, 1, 2, 4}, prg);
   copy("C_oc", "C", {5, 5, 2, 2}, prg);
+
+  //copy("A", "A_oc", {5, 5, 2, 2}, prg);
+  //copy("B", "B_oc", {5, 5, 2, 2}, prg);
+  //init("C", "set_zero_32", {5, 5, 2, 2}, prg);
+  //reduce({5, 5, 5, 2, 2}, "C", {0, 1, 3, 4}, "fma_32", "A", {0, 1, 3, 4}, "B", {0, 1, 3, 4}, prg);
+  ////reduce({5, 5, 5, 2, 2}, "C", {0, 1, 3, 4}, "fma_32", "A", {0, 1, 2, 3}, "B", {0, 1, 2, 3}, prg);
+  //copy("C_oc", "C", {5, 5, 2, 2}, prg);
 
   //auto ldc =
     //prg.add_nest("cit", 0, 10, "cjt", 0, 10)->add_op("init_c");
@@ -10239,7 +10276,7 @@ void mmul_outer_prod_test() {
 
   prg.pretty_print();
   prg.sanity_check();
-  //assert(false);
+  assert(false);
 
   CodegenOptions options;
   options.internal = true;
