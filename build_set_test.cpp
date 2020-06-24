@@ -10107,40 +10107,59 @@ void mmul_outer_prod_test() {
   prg.add_output("C_oc");
 
   auto ldc =
-    prg.add_nest("cit", 0, 10, "cjt", 0, 10,
-        "cii", 0, 3, "cji", 0, 3)->add_op("init_c");
-  ldc->add_store("C", "cit", "cjt", "cii", "cji");
+    prg.add_nest("cit", 0, 10, "cjt", 0, 10)->add_op("init_c");
+  ldc->add_store("C", "cit", "cjt");
   ldc->add_function("set_zero_32");
 
-  auto ldb =
-    prg.add_nest("bit", 0, 10, "bjt", 0, 10,
-        // within each tile of C:
-        "bii", 0, 10, "bij", 0, 3)->add_op("ld_b");
-  ldb->add_load("B_oc", "bit", "bjt", "bii", "bij");
-  ldb->add_store("B", "bit", "bjt", "bii", "bij");
-
-  auto lda =
-    prg.add_nest("ait", 0, 10,
-        // within each row of tiles of C:
-        "aii", 0, 3, "aij", 0, 10)->add_op("ld_a");
-  lda->add_load("A_oc", "ait", "aii", "aij");
-  lda->add_store("A", "ait", "aii", "aij");
-
   auto update_c =
-    prg.add_nest("ucit", 0, 10, "ucjt", 0, 10,
-        "uck", 0, 10)->add_nest(
-        "ucii", 0, 3, "ucji", 0, 3)->add_op("update_c");
-  update_c->add_load("C", "ucit", "ucjt", "ucii", "ucji");
-  update_c->add_load("A", "ucit", "uck", "ucji");
-  update_c->add_load("B", "ucit, ucjt, ucii, uck");
-  update_c->add_store("C", "ucit", "ucjt", "ucii", "ucji");
+    prg.add_nest("ucit", 0, 10, "ucjt", 0, 10, "uck", 0, 10)->
+    add_op("update_c");
+  update_c->add_load("C", "ucit", "ucjt");
+  update_c->add_load("A_oc", "ucit", "uck");
+  update_c->add_load("B_oc", "uck", "ucjt");
+  update_c->add_store("C", "ucit", "ucjt");
   update_c->add_function("fma_32");
 
   auto stc =
-    prg.add_nest("ocit", 0, 10, "ocjt", 0, 10,
-        "ocii", 0, 3, "ocji", 0, 3)->add_op("out_c");
-  stc->add_load("C", "ocit", "ocjt", "ocii", "ocji");
-  stc->add_store("C_oc", "ocit", "ocjt", "ocii", "ocji");
+    prg.add_nest("sit", 0, 10, "sjt", 0, 10)->add_op("store_c_oc");
+  stc->add_load("C", "sit", "sjt");
+  stc->add_store("C_oc", "sit", "sjt");
+
+  //auto ldc =
+    //prg.add_nest("cit", 0, 10, "cjt", 0, 10,
+        //"cii", 0, 3, "cji", 0, 3)->add_op("init_c");
+  //ldc->add_store("C", "cit", "cjt", "cii", "cji");
+  //ldc->add_function("set_zero_32");
+
+  //auto ldb =
+    //prg.add_nest("bit", 0, 10, "bjt", 0, 10,
+        //// within each tile of C:
+        //"bii", 0, 10, "bij", 0, 3)->add_op("ld_b");
+  //ldb->add_load("B_oc", "bit", "bjt", "bii", "bij");
+  //ldb->add_store("B", "bit", "bjt", "bii", "bij");
+
+  //auto lda =
+    //prg.add_nest("ait", 0, 10,
+        //// within each row of tiles of C:
+        //"aii", 0, 3, "aij", 0, 10)->add_op("ld_a");
+  //lda->add_load("A_oc", "ait", "aii", "aij");
+  //lda->add_store("A", "ait", "aii", "aij");
+
+  //auto update_c =
+    //prg.add_nest("ucit", 0, 10, "ucjt", 0, 10,
+        //"uck", 0, 10)->add_nest(
+        //"ucii", 0, 3, "ucji", 0, 3)->add_op("update_c");
+  //update_c->add_load("C", "ucit", "ucjt", "ucii", "ucji");
+  //update_c->add_load("A", "ucit", "uck", "ucji");
+  //update_c->add_load("B", "ucit, ucjt, ucii, uck");
+  //update_c->add_store("C", "ucit", "ucjt", "ucii", "ucji");
+  //update_c->add_function("fma_32");
+
+  //auto stc =
+    //prg.add_nest("ocit", 0, 10, "ocjt", 0, 10,
+        //"ocii", 0, 3, "ocji", 0, 3)->add_op("out_c");
+  //stc->add_load("C", "ocit", "ocjt", "ocii", "ocji");
+  //stc->add_store("C_oc", "ocit", "ocjt", "ocii", "ocji");
 
   prg.pretty_print();
   prg.sanity_check();
@@ -10154,7 +10173,7 @@ void mmul_outer_prod_test() {
 }
 
 void application_tests() {
-  //mmul_outer_prod_test();
+  mmul_outer_prod_test();
   halide_cascade_test();
   halide_frontend_test();
   sum_denoise_test();
