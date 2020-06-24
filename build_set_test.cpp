@@ -10169,7 +10169,7 @@ void mmul_outer_prod_test() {
   options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
   regression_test(options, prg);
 
-  assert(false);
+  //assert(false);
 }
 
 void application_tests() {
