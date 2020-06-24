@@ -101,6 +101,7 @@ std::set<string> get_producers(string next_kernel, prog& prg){
   cout << "next kernel: " << next_kernel<< endl;
   std::set<string> producers;
   op* loop = prg.find_loop(next_kernel);
+
   std::set<string> buffers_read;
   for(auto op : prg.find_loop(next_kernel)->descendant_ops()){
 	for(auto buff : op -> buffers_read()){
@@ -116,7 +117,6 @@ std::set<string> get_producers(string next_kernel, prog& prg){
 		  for(auto op : prg.find_loop(other_kernel)->descendant_ops()){
 			  for(auto buff : op -> buffers_written()){
 				  buffers_written.insert(buff);
-//				  cout << tab(1) << buff << endl;
 			  }
 		  }
 
@@ -167,9 +167,8 @@ std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int
   }
 	
   assert(topologically_sorted_kernels.size() == get_kernels(prg).size());
-  //for (string kernel : get_kernels(prg)) {
-  for(int i = topologically_sorted_kernels.size(); i > 0; i--){
-    string kernel = topologically_sorted_kernels[i-1];
+
+  for(auto kernel : topologically_sorted_kernels){
     if (current_group_cost + map_find(kernel, kernel_costs) > max_area_cost_per_group) {
       groups.insert(current_group);
       current_group = {kernel};
@@ -193,10 +192,24 @@ std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int
   return groups;
 }
 
+void deep_copy_child(op* dest, op* source){
+    if(source -> is_loop){
+	
+//	    op* kernel_copy = dest -> add_loop(source -> name, original.end_exclusive(source -> name));
+    }
+}
+
 prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original) {
   // TODO: Implement this function
   prog extracted;
-
+ /* for(auto kernel : get_kernels(original)){
+	if(elem(kernel, group)){
+		op* kernel_copy = extracted.add_loop(kernel, original.start(kernel), original.end_exclusive(kernel));
+		for(auto child : original.find_loop(kernel)){
+		    deep_copy_child(kernel_copy, child);
+		}
+	}
+  }*/
   return extracted;
 }
 

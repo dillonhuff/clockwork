@@ -2525,3 +2525,39 @@ void prog::sanity_check() {
     loop_names.insert(lp->name);
   }
 }
+
+
+std::set<string> get_producers(string next_kernel, prog& prg){
+
+  cout << "next kernel: " << next_kernel<< endl;
+  std::set<string> producers;
+  op* loop = prg.find_loop(next_kernel);
+
+  std::set<string> buffers_read;
+  for(auto op : prg.find_loop(next_kernel)->descendant_ops()){
+	for(auto buff : op -> buffers_read()){
+	    buffers_read.insert(buff);
+	    cout << tab(1) << buff << endl;
+	}
+  }
+
+  cout << "getting other_kernels"<< endl;
+  for(auto other_kernel : get_kernels(prg)){
+	  if(other_kernel != next_kernel){
+		  std::set<string> buffers_written;
+		  for(auto op : prg.find_loop(other_kernel)->descendant_ops()){
+			  for(auto buff : op -> buffers_written()){
+				  buffers_written.insert(buff);
+			  }
+		  }
+
+
+		  if(intersection(buffers_written, buffers_read).size() > 0){
+			  producers.insert(other_kernel);
+			  cout << "producer name: " << other_kernel << endl;
+		  }
+	  }
+
+  }
+  return producers;
+}
