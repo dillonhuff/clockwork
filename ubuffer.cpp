@@ -207,7 +207,7 @@ void generate_bank(CodegenOptions& options,
 
     }
     else {
-      cout << "Not support more than one reader in RAM mode" << endl;
+      cout << "Error in bank " << bank.name << ": no support more than one reader in RAM mode" << endl;
       assert(false);
     }
     out << "};" << endl << endl;

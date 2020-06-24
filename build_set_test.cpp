@@ -10127,6 +10127,48 @@ void init(const std::string& dst, const std::string& func, const std::vector<int
   c->add_store(dst, comma_list(iter_vars_no_root));
 }
 
+typedef std::vector<int> dimlist;
+
+void reduce(
+    const dimlist& dims,
+    const std::string& dst, const dimlist& cvars,
+    const std::string& func,
+    const std::string& a, const dimlist& avars,
+    const std::string& b, const dimlist& bvars,
+    prog& prg) {
+
+  op* lp = prg.root;
+  for (int d : dims) {
+    lp = lp->add_loop(prg.unique_name("r"), 0, d);
+  }
+  auto c = lp->add_op(prg.unique_name("reduce"));
+  auto iter_vars_no_root = prg.iter_vars(c);
+  reverse(iter_vars_no_root);
+  iter_vars_no_root.pop_back();
+  reverse(iter_vars_no_root);
+
+  vector<string> avar_names;
+  for (auto d : avars) {
+    avar_names.push_back(iter_vars_no_root.at(d));
+  }
+
+  vector<string> bvar_names;
+  for (auto d : bvars) {
+    bvar_names.push_back(iter_vars_no_root.at(d));
+  }
+
+  vector<string> cvar_names;
+  for (auto d : cvars) {
+    cvar_names.push_back(iter_vars_no_root.at(d));
+  }
+
+  c->add_function(func);
+  c->add_load(dst, comma_list(cvar_names));
+  c->add_load(a, comma_list(avar_names));
+  c->add_load(b, comma_list(bvar_names));
+  c->add_store(dst, comma_list(cvar_names));
+}
+
 void mmul_outer_prod_test() {
   prog prg("mmul_outer_prod");
   prg.add_input("B_oc");
@@ -10136,9 +10178,9 @@ void mmul_outer_prod_test() {
   copy("A", "A_oc", {5, 5, 2, 2}, prg);
   copy("B", "B_oc", {5, 5, 2, 2}, prg);
   init("C", "set_zero_32", {5, 5, 2, 2}, prg);
-  //reduce("C", {0, 1, 3, 4}, "fma_32", "A", {0, 1, 4, 2}, "B", {0, 1, 2, 3}, prg);
+  reduce({5, 5, 5, 2, 2}, "C", {0, 1, 3, 4}, "fma_32", "A", {0, 1, 3, 4}, "B", {0, 1, 3, 4}, prg);
+  //reduce({5, 5, 5, 2, 2}, "C", {0, 1, 3, 4}, "fma_32", "A", {0, 1, 2, 3}, "B", {0, 1, 2, 3}, prg);
   copy("C_oc", "C", {5, 5, 2, 2}, prg);
-
 
   //auto ldc =
     //prg.add_nest("cit", 0, 10, "cjt", 0, 10)->add_op("init_c");
@@ -10197,10 +10239,12 @@ void mmul_outer_prod_test() {
 
   prg.pretty_print();
   prg.sanity_check();
-  assert(false);
+  //assert(false);
 
   CodegenOptions options;
   options.internal = true;
+  options.all_rams = true;
+  options.register_files.insert("C");
   options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
   regression_test(options, prg);
 
