@@ -10292,15 +10292,14 @@ void mmul_outer_prod_test() {
 
 void application_tests() {
   mismatched_stencil_test();
+  //denoise2d_test();
+  //denoise3d_test();
+  denoise3d_reconvergence_test();
   gaussian_pyramid_app_test("gp64x64");
   iccad_tests();
 
-  // Fails with perfect codegen
-  //denoise2d_test();
-  //denoise3d_reconvergence_test();
 
   tricky_shift_register_reconvergence_test();
-  //assert(false);
   sum_denoise_test();
   sum_diffs_test();
 

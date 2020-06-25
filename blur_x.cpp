@@ -220,9 +220,9 @@ void blur_x(HWStream<hw_uint<16> >& /* no bundle get_args num ports = 1 */in, HW
 
 // schedule: { I_id0[root = 0, id1, id0] -> [id1, id0, 0] : 0 <= id1 <= 7 and 0 <= id0 <= 31; out_blur_30[root = 0, d1, d0] -> [2 + d1, d0, 1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
 //   { I_id0[root = 0, id1, id0] -> [id1, id0, 0] : 0 <= id1 <= 7 and 0 <= id0 <= 31 }
-// Condition for I_id0((i2 == 0) || (i0 >= 0) || (7 - i0 >= 0) || (i1 >= 0) || (31 - i1 >= 0))
+// Condition for I_id0(((i2 == 0) && (i0 >= 0) && (7 - i0 >= 0) && (i1 >= 0) && (31 - i1 >= 0)))
 //   { out_blur_30[root = 0, d1, d0] -> [2 + d1, d0, 1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
-// Condition for out_blur_30((-1 + i2 == 0) || (-2 + i0 >= 0) || (7 - i0 >= 0) || (i1 >= 0) || (31 - i1 >= 0))
+// Condition for out_blur_30(((-1 + i2 == 0) && (-2 + i0 >= 0) && (7 - i0 >= 0) && (i1 >= 0) && (31 - i1 >= 0)))
 
   /*
 for (int c0 = 0; c0 <= 7; c0 += 1)
