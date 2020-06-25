@@ -1860,6 +1860,49 @@ void generate_verilog_code(CodegenOptions& options,
   ////assert(false);
 }
 
+std::string perfect_loop_codegen(umap* schedmap) {
+  ostringstream conv_out;
+  auto time_range = coalesce(range(schedmap));
+  conv_out << "// time range: " << str(time_range) << endl;
+  auto sets = get_sets(time_range);
+
+  conv_out << "// # sets: " << sets.size() << endl;
+  assert(sets.size() == 1);
+  for (auto s : get_sets(time_range)) {
+    auto lm = lexminpt(s);
+    auto lmax = lexmaxpt(s);
+    conv_out << "// " << tab(1) << str(lm) << endl;
+    conv_out << "// " << tab(1) << str(lmax) << endl;
+    vector<int> lower_bounds = parse_pt(lm);
+    vector<int> upper_bounds = parse_pt(lmax);
+
+
+    for (int i = 0; i < lower_bounds.size(); i++) {
+      conv_out << tab(i) << "for (int i" << str(i) << " = " << lower_bounds.at(i) << "; i" << str(i) << " <= " << upper_bounds.at(i) << "; i" << i << "++) {" << endl;
+    }
+
+    for (auto time_to_val : get_maps(inv(schedmap))) {
+      auto pw = isl_pw_multi_aff_from_map(time_to_val);
+      vector<pair<isl_set*, isl_multi_aff*> > pieces =
+        get_pieces(pw);
+      assert(pieces.size() == 1);
+
+      auto saff = pieces.at(0).second;
+      auto dom = pieces.at(0).first;
+      conv_out << tab(lower_bounds.size()) << "if (" << codegen_c(dom) << ") {" << endl;
+      conv_out << tab(lower_bounds.size() + 1) << codegen_c(saff) << ";" << endl;
+      conv_out << tab(lower_bounds.size()) << "}" << endl;
+    }
+
+    for (int i = 0; i < lower_bounds.size(); i++) {
+      conv_out << tab(lower_bounds.size() - 1 - i) << "}" << endl;
+    }
+
+  }
+
+  return conv_out.str();
+}
+
 void generate_app_code(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -1916,7 +1959,8 @@ void generate_app_code(CodegenOptions& options,
 
   string code_string = options.code_string;
   if (!options.use_custom_code_string) {
-    code_string = codegen_c(schedmap);
+    //code_string = codegen_c(schedmap);
+    code_string = perfect_loop_codegen(schedmap);
   }
 
   string original_isl_code_string = code_string;
@@ -1940,63 +1984,6 @@ void generate_app_code(CodegenOptions& options,
     conv_out << "// Condition for " << domain_name(s) << codegen_c(range(s)) << endl;
   }
   conv_out << endl;
-  auto time_range = coalesce(range(schedmap));
-  conv_out << "// time range: " << str(time_range) << endl;
-  conv_out << "// # sets: " << get_sets(time_range).size() << endl;
-  for (auto s : get_sets(time_range)) {
-    auto lm = lexminpt(s);
-    auto lmax = lexmaxpt(s);
-    conv_out << "// " << tab(1) << str(lm) << endl;
-    conv_out << "// " << tab(1) << str(lmax) << endl;
-    vector<int> lower_bounds = parse_pt(lm);
-    vector<int> upper_bounds = parse_pt(lmax);
-
-    conv_out << "/*" << endl;
-
-    for (int i = 0; i < lower_bounds.size(); i++) {
-      conv_out << tab(i) << "for (int i" << str(i) << " = " << lower_bounds.at(i) << "; i" << str(i) << " <= " << upper_bounds.at(i) << "; i" << i << "++) {" << endl;
-    }
-
-    for (auto time_to_val : get_maps(inv(schedmap))) {
-      auto pw = isl_pw_multi_aff_from_map(time_to_val);
-      vector<pair<isl_set*, isl_multi_aff*> > pieces =
-        get_pieces(pw);
-      assert(pieces.size() == 1);
-
-      auto saff = pieces.at(0).second;
-      auto dom = pieces.at(0).first;
-      conv_out << tab(lower_bounds.size()) << "if (" << codegen_c(dom) << ") {" << endl;
-      conv_out << tab(lower_bounds.size() + 1) << "// aff: " << codegen_c(saff) << endl;
-      conv_out << tab(lower_bounds.size()) << "}" << endl;
-    }
-
-    for (int i = 0; i < lower_bounds.size(); i++) {
-      conv_out << tab(lower_bounds.size() - 1 - i) << "}" << endl;
-    }
-
-    conv_out << "*/" << endl;
-  }
-
-  isl_set* tr_set = nullptr;
-  for (auto s : get_sets(time_range)) {
-    if (tr_set == nullptr) {
-      tr_set = s;
-    } else {
-      tr_set = unn(tr_set, s);
-    }
-  }
-  conv_out << "// time range as set: " << str(tr_set) << endl;
-
-  for (auto time_to_val : get_maps(inv(schedmap))) {
-    auto pw = isl_pw_multi_aff_from_map(time_to_val);
-    vector<pair<isl_set*, isl_multi_aff*> > pieces =
-      get_pieces(pw);
-    assert(pieces.size() == 1);
-
-    auto saff = pieces.at(0).second;
-    auto dom = pieces.at(0).first;
-    conv_out << "// aff: " << codegen_c(saff) << endl;
-  }
 
   conv_out << tab(1) << "/*" << endl;
   conv_out << original_isl_code_string << endl;
