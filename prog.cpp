@@ -1940,8 +1940,43 @@ void generate_app_code(CodegenOptions& options,
     conv_out << "// Condition for " << domain_name(s) << codegen_c(range(s)) << endl;
   }
   conv_out << endl;
-  auto time_range = range(schedmap);
+  auto time_range = coalesce(range(schedmap));
   conv_out << "// time range: " << str(time_range) << endl;
+  conv_out << "// # sets: " << get_sets(time_range).size() << endl;
+  for (auto s : get_sets(time_range)) {
+    auto lm = lexminpt(s);
+    auto lmax = lexmaxpt(s);
+    conv_out << "// " << tab(1) << str(lm) << endl;
+    conv_out << "// " << tab(1) << str(lmax) << endl;
+    vector<int> lower_bounds = parse_pt(lm);
+    vector<int> upper_bounds = parse_pt(lm);
+
+    conv_out << "/*" << endl;
+
+    for (int i = 0; i < lower_bounds.size(); i++) {
+      conv_out << tab(i) << "for (int i" << str(i) << " = " << lower_bounds.at(i) << "; i" << str(i) << " <= " << upper_bounds.at(i) << "; i" << i << "++) {" << endl;
+    }
+
+    for (auto time_to_val : get_maps(inv(schedmap))) {
+      auto pw = isl_pw_multi_aff_from_map(time_to_val);
+      vector<pair<isl_set*, isl_multi_aff*> > pieces =
+        get_pieces(pw);
+      assert(pieces.size() == 1);
+
+      auto saff = pieces.at(0).second;
+      auto dom = pieces.at(0).first;
+      conv_out << tab(lower_bounds.size()) << "if (" << codegen_c(dom) << ") {" << endl;
+      conv_out << tab(lower_bounds.size() + 1) << "// aff: " << str(saff) << endl;
+      conv_out << tab(lower_bounds.size()) << "}" << endl;
+    }
+
+    for (int i = 0; i < lower_bounds.size(); i++) {
+      conv_out << tab(lower_bounds.size() - 1 - i) << "}" << endl;
+    }
+
+    conv_out << "*/" << endl;
+  }
+
   isl_set* tr_set = nullptr;
   for (auto s : get_sets(time_range)) {
     if (tr_set == nullptr) {
