@@ -10282,16 +10282,18 @@ void mmul_outer_prod_test() {
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
+  options.use_custom_code_string = true;
   options.register_files.insert("C");
   options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
   generate_optimized_code(options, prg);
   //regression_test(options, prg);
   move_to_synthesis_folder(prg.name);
 
-  //assert(false);
+  assert(false);
 }
 
 void application_tests() {
+  mmul_outer_prod_test();
   gaussian_pyramid_app_test("gp64x64");
   iccad_tests();
 
@@ -10303,7 +10305,6 @@ void application_tests() {
   sum_denoise_test();
   sum_diffs_test();
 
-  mmul_outer_prod_test();
   halide_cascade_test();
   halide_frontend_test();
   conv_3_3_halide_test();
