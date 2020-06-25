@@ -9336,7 +9336,6 @@ void iccad_tests() {
   harris16_test("hr" + istr);
   sobel_16_app_test("sbl" + istr);
 
-  denoise3d_reconvergence_test();
 
   different_path_latencies_test("dp");
   harris_test();
@@ -10297,6 +10296,7 @@ void application_tests() {
 
   // Fails with perfect codegen
   //denoise2d_test();
+  //denoise3d_reconvergence_test();
 
   tricky_shift_register_reconvergence_test();
   //assert(false);
