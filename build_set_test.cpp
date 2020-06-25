@@ -10291,6 +10291,7 @@ void mmul_outer_prod_test() {
 }
 
 void application_tests() {
+  mismatched_stencil_test();
   gaussian_pyramid_app_test("gp64x64");
   iccad_tests();
 
@@ -10351,7 +10352,6 @@ void application_tests() {
   updown_merge_test();
   harris_unrolled_test();
 
-  mismatched_stencil_test();
   cnn_test();
 
   sobel_test();
