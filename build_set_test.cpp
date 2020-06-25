@@ -9336,7 +9336,6 @@ void iccad_tests() {
   harris16_test("hr" + istr);
   sobel_16_app_test("sbl" + istr);
 
-  denoise3d_reconvergence_test();
 
   different_path_latencies_test("dp");
   harris_test();
@@ -10205,13 +10204,17 @@ void mmul_outer_prod_test() {
   prg.add_input("A_oc");
   prg.add_output("C_oc");
 
+  int M = 5;
+  int t = 200;
+  int K = 10;
+
   copy("A", "A_oc", {5, 2, 10}, prg);
   // Upsample
-  copy({5, 5, 2, 10}, "Ar", {0, 1, 2, 3}, "A", {0, 2, 3}, prg);
-  copy("B", "B_oc", {5, 5, 10, 2}, prg);
-  init("C", "set_zero_32", {5, 5, 2, 2}, prg);
-  reduce({5, 5, 10, 2, 2}, "C", {0, 1, 3, 4}, "fma_32", "Ar", {0, 1, 4, 2}, "B", {0, 1, 2, 4}, prg);
-  copy("C_oc", "C", {5, 5, 2, 2}, prg);
+  copy({5, 5, t, 10}, "Ar", {0, 1, 2, 3}, "A", {0, 2, 3}, prg);
+  copy("B", "B_oc", {5, 5, 10, t}, prg);
+  init("C", "set_zero_32", {5, 5, t, t}, prg);
+  reduce({5, 5, 10, t, t}, "C", {0, 1, 3, 4}, "fma_32", "Ar", {0, 1, 4, 2}, "B", {0, 1, 2, 4}, prg);
+  copy("C_oc", "C", {5, 5, t, t}, prg);
 
   //copy("A", "A_oc", {5, 5, 2, 2}, prg);
   //copy("B", "B_oc", {5, 5, 2, 2}, prg);
@@ -10294,11 +10297,13 @@ void mmul_outer_prod_test() {
 
 void application_tests() {
   mmul_outer_prod_test();
+  mismatched_stencil_test();
   gaussian_pyramid_app_test("gp64x64");
   iccad_tests();
 
   // Fails with perfect codegen
   //denoise2d_test();
+  //denoise3d_reconvergence_test();
 
   tricky_shift_register_reconvergence_test();
   //assert(false);
@@ -10352,7 +10357,6 @@ void application_tests() {
   updown_merge_test();
   harris_unrolled_test();
 
-  mismatched_stencil_test();
   cnn_test();
 
   sobel_test();
