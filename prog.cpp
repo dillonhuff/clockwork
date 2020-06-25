@@ -1949,7 +1949,7 @@ void generate_app_code(CodegenOptions& options,
     conv_out << "// " << tab(1) << str(lm) << endl;
     conv_out << "// " << tab(1) << str(lmax) << endl;
     vector<int> lower_bounds = parse_pt(lm);
-    vector<int> upper_bounds = parse_pt(lm);
+    vector<int> upper_bounds = parse_pt(lmax);
 
     conv_out << "/*" << endl;
 
@@ -1966,7 +1966,7 @@ void generate_app_code(CodegenOptions& options,
       auto saff = pieces.at(0).second;
       auto dom = pieces.at(0).first;
       conv_out << tab(lower_bounds.size()) << "if (" << codegen_c(dom) << ") {" << endl;
-      conv_out << tab(lower_bounds.size() + 1) << "// aff: " << str(saff) << endl;
+      conv_out << tab(lower_bounds.size() + 1) << "// aff: " << codegen_c(saff) << endl;
       conv_out << tab(lower_bounds.size()) << "}" << endl;
     }
 
@@ -1995,7 +1995,7 @@ void generate_app_code(CodegenOptions& options,
 
     auto saff = pieces.at(0).second;
     auto dom = pieces.at(0).first;
-    conv_out << "// aff: " << str(saff) << endl;
+    conv_out << "// aff: " << codegen_c(saff) << endl;
   }
 
   conv_out << tab(1) << "/*" << endl;

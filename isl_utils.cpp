@@ -777,31 +777,23 @@ isl_ctx* ctx(isl_pw_qpolynomial* const m) {
 //}
 
 std::string codegen_c(isl_multi_aff* const bset) {
-  auto ct = ctx(bset);
-  isl_printer *p;
-  p = isl_printer_to_str(ct);
-  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
-  p = isl_printer_print_multi_aff(p, cpy(bset));
+  string r = str(bset);
 
-  char* rs = isl_printer_get_str(p);
-  isl_printer_free(p);
-  std::string r(rs);
-  free(rs);
+  regex cm("\\{ (.*)\\[(.*)\\] -> (.*)\\[(.*)\\] \\}");
+  smatch match;
+  auto res = regex_match(r, match, cm);
 
-  return r;
+  assert(res);
 
-  //regex cm("\\{ (.*)\\[(.*)\\] : (.*) \\}");
-  //smatch match;
-  //auto res = regex_search(r, match, cm);
-
-  //assert(res);
+  string range_name = match[3];
+  string range_values = match[4];
+  return range_name + parens(range_values);
 
   //string gp = match[3];
   //regex eqsign(" = ");
   //gp = regex_replace(gp, eqsign, " == ");
-  ////assert(false);
+  //assert(false);
   //return "(" + gp + ")";
-
 }
 
 std::string codegen_c(isl_constraint* const bset) {
