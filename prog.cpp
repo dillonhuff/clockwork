@@ -1869,12 +1869,25 @@ std::string perfect_loop_codegen(umap* schedmap) {
   conv_out << "// # sets: " << sets.size() << endl;
   assert(sets.size() == 1);
   for (auto s : get_sets(time_range)) {
-    auto lm = lexminpt(s);
-    auto lmax = lexmaxpt(s);
-    conv_out << "// " << tab(1) << str(lm) << endl;
-    conv_out << "// " << tab(1) << str(lmax) << endl;
-    vector<int> lower_bounds = parse_pt(lm);
-    vector<int> upper_bounds = parse_pt(lmax);
+    vector<int> lower_bounds;
+    vector<int> upper_bounds;
+    for (int d = 0; d < num_dims(s); d++) {
+      auto ds = project_all_but(s, d);
+      auto lm = lexminval(ds);
+      auto lmax = lexmaxval(ds);
+      lower_bounds.push_back(to_int(lm));
+      upper_bounds.push_back(to_int(lmax));
+    }
+
+
+    //conv_out << "// lexmin: " << str(lexmin(s)) << endl;
+    //conv_out << "// lexmax: " << str(lexmax(s)) << endl;
+    //auto lm = lexminpt(s);
+    //auto lmax = lexmaxpt(s);
+    //conv_out << "// " << tab(1) << str(lm) << endl;
+    //conv_out << "// " << tab(1) << str(lmax) << endl;
+    //vector<int> lower_bounds = parse_pt(lm);
+    //vector<int> upper_bounds = parse_pt(lmax);
 
 
     for (int i = 0; i < lower_bounds.size(); i++) {
