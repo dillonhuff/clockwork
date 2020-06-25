@@ -733,7 +733,7 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
 
   vector<string> all_arg_decls = ptr_arg_decls;
   all_arg_decls.push_back("const int size");
-  buffer_args.push_back("size");
+  //buffer_args.push_back("size");
 
   cout << "Generating driver function" << endl;
 
@@ -1935,6 +1935,34 @@ void generate_app_code(CodegenOptions& options,
   conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
 
   conv_out << "// schedule: " << str(schedmap) << endl;
+  for (auto s : get_maps(schedmap)) {
+    conv_out << "// " << tab(1) << str(s) << endl;
+    conv_out << "// Condition for " << domain_name(s) << codegen_c(range(s)) << endl;
+  }
+  conv_out << endl;
+  auto time_range = range(schedmap);
+  conv_out << "// time range: " << str(time_range) << endl;
+  isl_set* tr_set = nullptr;
+  for (auto s : get_sets(time_range)) {
+    if (tr_set == nullptr) {
+      tr_set = s;
+    } else {
+      tr_set = unn(tr_set, s);
+    }
+  }
+  conv_out << "// time range as set: " << str(tr_set) << endl;
+
+  for (auto time_to_val : get_maps(inv(schedmap))) {
+    auto pw = isl_pw_multi_aff_from_map(time_to_val);
+    vector<pair<isl_set*, isl_multi_aff*> > pieces =
+      get_pieces(pw);
+    assert(pieces.size() == 1);
+
+    auto saff = pieces.at(0).second;
+    auto dom = pieces.at(0).first;
+    conv_out << "// aff: " << str(saff) << endl;
+  }
+
   conv_out << tab(1) << "/*" << endl;
   conv_out << original_isl_code_string << endl;
   conv_out << tab(1) << "*/" << endl;

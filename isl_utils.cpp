@@ -689,6 +689,10 @@ isl_union_map* to_umap(isl_map* const m) {
   return isl_union_map_from_map(cpy(m));
 }
 
+isl_ctx* ctx(isl_multi_aff* const m) {
+  return isl_multi_aff_get_ctx(m);
+}
+
 isl_ctx* ctx(isl_set* const m) {
   return isl_set_get_ctx(m);
 }
@@ -771,6 +775,34 @@ isl_ctx* ctx(isl_pw_qpolynomial* const m) {
   //free(rs);
   //return r;
 //}
+
+std::string codegen_c(isl_multi_aff* const bset) {
+  auto ct = ctx(bset);
+  isl_printer *p;
+  p = isl_printer_to_str(ct);
+  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
+  p = isl_printer_print_multi_aff(p, cpy(bset));
+
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  std::string r(rs);
+  free(rs);
+
+  return r;
+
+  //regex cm("\\{ (.*)\\[(.*)\\] : (.*) \\}");
+  //smatch match;
+  //auto res = regex_search(r, match, cm);
+
+  //assert(res);
+
+  //string gp = match[3];
+  //regex eqsign(" = ");
+  //gp = regex_replace(gp, eqsign, " == ");
+  ////assert(false);
+  //return "(" + gp + ")";
+
+}
 
 std::string codegen_c(isl_constraint* const bset) {
   auto ct = ctx(bset);
