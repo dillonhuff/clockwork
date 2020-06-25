@@ -8600,7 +8600,7 @@ void denoise2d_test() {
 
     assert(naive == optimized);
   }
-  assert(false);
+  //assert(false);
 
   {
     CodegenOptions options;
@@ -10292,7 +10292,7 @@ void mmul_outer_prod_test() {
 
 void application_tests() {
   mismatched_stencil_test();
-  //denoise2d_test();
+  denoise2d_test();
   //denoise3d_test();
   denoise3d_reconvergence_test();
   gaussian_pyramid_app_test("gp64x64");
