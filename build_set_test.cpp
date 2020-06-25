@@ -10291,6 +10291,10 @@ void mmul_outer_prod_test() {
 }
 
 void application_tests() {
+  tricky_shift_register_reconvergence_test();
+  sum_denoise_test();
+  sum_diffs_test();
+
   mismatched_stencil_test();
   denoise2d_test();
   //denoise3d_test();
@@ -10298,10 +10302,6 @@ void application_tests() {
   gaussian_pyramid_app_test("gp64x64");
   iccad_tests();
 
-
-  tricky_shift_register_reconvergence_test();
-  sum_denoise_test();
-  sum_diffs_test();
 
   mmul_outer_prod_test();
   halide_cascade_test();
