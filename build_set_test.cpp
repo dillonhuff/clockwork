@@ -8600,6 +8600,7 @@ void denoise2d_test() {
 
     assert(naive == optimized);
   }
+  assert(false);
 
   {
     CodegenOptions options;
@@ -10291,12 +10292,11 @@ void mmul_outer_prod_test() {
 }
 
 void application_tests() {
+  denoise2d_test();
   tricky_shift_register_reconvergence_test();
-  assert(false);
+  //assert(false);
   sum_denoise_test();
   sum_diffs_test();
-  denoise2d_test();
-  denoise2d_test();
 
   mmul_outer_prod_test();
   halide_cascade_test();
