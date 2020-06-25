@@ -762,20 +762,6 @@ isl_ctx* ctx(isl_pw_qpolynomial* const m) {
   return isl_pw_qpolynomial_get_ctx(m);
 }
 
-//std::string codegen_c(isl_set* const bset) {
-  //auto ct = ctx(bset);
-  //isl_printer *p;
-  //p = isl_printer_to_str(ct);
-  //p = isl_printer_set_output_format(p, ISL_FORMAT_C);
-  //p = isl_printer_print_set(p, cpy(bset));
-
-  //char* rs = isl_printer_get_str(p);
-  //isl_printer_free(p);
-  //std::string r(rs);
-  //free(rs);
-  //return r;
-//}
-
 std::string codegen_c(isl_multi_aff* const bset) {
   string r = str(bset);
 
@@ -1891,17 +1877,41 @@ vector<isl_constraint*> constraints(isl_set* s) {
 
 }
 
-std::string codegen_c(isl_set* const s) {
+std::string codegen_c(isl_basic_set* const s) {
   if (empty(s)) {
     return "false";
   }
 
   vector<isl_constraint*> code_holder;
-  isl_set_foreach_basic_set(s, bset_collect_constraints, &code_holder);
+  bset_collect_constraints(s, &code_holder);
+  //isl_set_foreach_basic_set(s, bset_collect_constraints, &code_holder);
   vector<string> set_strings;
   for (auto hc : code_holder) {
     set_strings.push_back(codegen_c(hc));
   }
+
+  if (set_strings.size() == 0) {
+    return "true";
+  }
+  return sep_list(set_strings, "(", ")", " && ");
+}
+
+std::string codegen_c(isl_set* const s) {
+  if (empty(s)) {
+    return "false";
+  }
+
+  vector<string> set_strings;
+  for (auto bset : get_basic_sets(s)) {
+    set_strings.push_back(codegen_c(bset));
+  }
+  //vector<isl_constraint*> code_holder;
+  //isl_set_foreach_basic_set(s, bset_collect_constraints, &code_holder);
+  //vector<string> set_strings;
+  //for (auto hc : code_holder) {
+    //set_strings.push_back(codegen_c(hc));
+  //}
+
   if (set_strings.size() == 0) {
     return "true";
   }

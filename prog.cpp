@@ -1889,6 +1889,7 @@ std::string perfect_loop_codegen(umap* schedmap) {
 
       auto saff = pieces.at(0).second;
       auto dom = pieces.at(0).first;
+      conv_out << tab(lower_bounds.size()) << "// " << str(dom) << endl;
       conv_out << tab(lower_bounds.size()) << "if (" << codegen_c(dom) << ") {" << endl;
       conv_out << tab(lower_bounds.size() + 1) << codegen_c(saff) << ";" << endl;
       conv_out << tab(lower_bounds.size()) << "}" << endl;
@@ -1957,7 +1958,9 @@ void generate_app_code(CodegenOptions& options,
   }
 
 
-  string code_string = options.code_string;
+  string code_string =
+    perfect_loop_codegen(schedmap);
+    //options.code_string;
   if (!options.use_custom_code_string) {
     code_string = codegen_c(schedmap);
     //code_string = perfect_loop_codegen(schedmap);
