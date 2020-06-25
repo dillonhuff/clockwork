@@ -41,9 +41,9 @@ struct CodegenOptions {
   bool use_soda_casting;
   InnerBankOffsetMode inner_bank_offset_mode;
   ScheduleAlgorithm scheduling_algorithm;
+  bool ignore_top_level_inter_deps;
 
   std::set<std::string> register_files;
-
 
   DebugOptions debug_options;
 
@@ -55,7 +55,8 @@ struct CodegenOptions {
   push_garbage_outputs(false),
   use_soda_casting(false),
   inner_bank_offset_mode(INNER_BANK_OFFSET_STACK),
-  scheduling_algorithm(SCHEDULE_ALGORITHM_NAIVE)
+  scheduling_algorithm(SCHEDULE_ALGORITHM_NAIVE),
+  ignore_top_level_inter_deps(false)
   {}
 
 };
