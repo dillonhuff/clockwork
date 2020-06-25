@@ -10283,10 +10283,11 @@ void mmul_outer_prod_test() {
   options.all_rams = true;
   options.register_files.insert("C");
   options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
-  regression_test(options, prg);
+  generate_optimized_code(options, prg);
+  //regression_test(options, prg);
   move_to_synthesis_folder(prg.name);
 
-  assert(false);
+  //assert(false);
 }
 
 void application_tests() {
