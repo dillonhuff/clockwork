@@ -3,6 +3,8 @@ sudo yum -y install vim
 sudo yum -y install gmp-devel
 sudo yum -y install python3
 
+cd ..
+
 git clone https://github.com/dillonhuff/VimSetup.git
 cp ./VimSetup/.vimrc ~/.vimrc
 
@@ -14,6 +16,7 @@ cd aws-fpga/
 source vitis_setup.sh
 cd ..
 
+cd clockwork
 cp ./user_settings/aws_settings.sh ./user_settings/private_settings.sh
 source ./user_settings/private_settings.sh
 
