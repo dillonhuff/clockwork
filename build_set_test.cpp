@@ -10295,9 +10295,38 @@ void mmul_outer_prod_test() {
   assert(false);
 }
 
-void application_tests() {
-  weight_streaming_test();
+void emit_lake_controller_config(const std::string& filename, isl_set* write_domain, isl_aff* write_sched) {
+  ofstream out(filename);
+  out << "\"dimensionality\"," << num_dims(write_domain) << ",0" << endl;
+  out << "\"starting_addr\"," << to_int(const_coeff(write_sched)) << ",0" << endl;
+  for (int d = 0; d < num_dims(write_domain); d++) {
+    auto ds = project_all_but(write_domain, d);
+    int extent_d = to_int(lexmaxval(ds)) - to_int(lexminval(ds)) + 1;
+    int ldim = num_dims(write_domain) - d - 1;
+    out << "\"extent_" << ldim << "\"," << extent_d << endl;
+    out << "\"stride_" << ldim << "\"," << to_int(get_coeff(write_sched, d)) << endl;
+  }
+  out.close();
+}
+
+void lake_accessor_config_test() {
+  isl_ctx* ctx = isl_ctx_alloc();
+  isl_set* write_domain = rdset(ctx, "{ op[a, b] : 0 <= a <= 10 and 0 <= b <= 5 }");
+  isl_aff* write_sched = rdaff(ctx, "{ op[a, b] -> [(8*a + b + 9)]}");
+
+  cout << "write domain: " << str(write_domain) << endl;
+  cout << "write  sched: " << str(write_sched) << endl;
+
+  emit_lake_controller_config("test_write_domain.csv", write_domain, write_sched);
+
+  isl_ctx_free(ctx);
+
   assert(false);
+}
+
+void application_tests() {
+  lake_accessor_config_test();
+  weight_streaming_test();
 
   mmul_outer_prod_test();
   tricky_shift_register_reconvergence_test();
