@@ -10403,7 +10403,67 @@ void adobe_meeting_apps() {
   assert(false);
 }
 
+prog halide_up_sample() {
+  prog prg;
+  prg.compute_unit_file = "up_sample_compute.h";
+  prg.name = "up_sample";
+
+// Stencil<uint16_t, 32, 32, 4> &input_copy_stencil = arg_0;
+  prg.add_input("input_copy_stencil");
+  prg.buffer_port_widths["input_copy_stencil"] = 16;
+// Stencil<void *> &hw_output_stencil = arg_1;
+  prg.add_output("hw_output_stencil");
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+
+//consuming input_copy.stencil
+////producing hw_input.stencil
+  auto hw_input_s0_z = prg.add_loop("hw_input_s0_z", 0, 4);
+  auto hw_input_s0_y = hw_input_s0_z->add_loop("hw_input_s0_y", 0, 32);
+  auto hw_input_s0_x = hw_input_s0_y->add_loop("hw_input_s0_x", 0, 32);
+
+//store is: hw_input.stencil(hw_input.s0.x, hw_input.s0.y, hw_input.s0.z) = input_copy.stencil(hw_input.s0.x, hw_input.s0.y, hw_input.s0.z)
+  auto hcompute_hw_input_stencil = hw_input_s0_x->add_op("hcompute_hw_input_stencil");
+  hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
+  hcompute_hw_input_stencil->add_load("input_copy_stencil", "hw_input_s0_x", "hw_input_s0_y", "hw_input_s0_z");
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
+  hcompute_hw_input_stencil->add_store("hw_input_stencil", "hw_input_s0_x", "hw_input_s0_y", "hw_input_s0_z");
+////producing nearest_neighbor.stencil
+
+//consuming hw_input.stencil
+  auto nearest_neighbor_s0_z = prg.add_loop("nearest_neighbor_s0_z", 0, 4);
+  auto nearest_neighbor_s0_y = nearest_neighbor_s0_z->add_loop("nearest_neighbor_s0_y", 0, 64);
+  auto nearest_neighbor_s0_x = nearest_neighbor_s0_y->add_loop("nearest_neighbor_s0_x", 0, 64);
+
+//store is: nearest_neighbor.stencil(nearest_neighbor.s0.x, nearest_neighbor.s0.y, nearest_neighbor.s0.z) = hw_input.stencil((nearest_neighbor.s0.x/2), (nearest_neighbor.s0.y/2), nearest_neighbor.s0.z)
+  auto hcompute_nearest_neighbor_stencil = nearest_neighbor_s0_x->add_op("hcompute_nearest_neighbor_stencil");
+  hcompute_nearest_neighbor_stencil->add_function("hcompute_nearest_neighbor_stencil");
+  hcompute_nearest_neighbor_stencil->add_load("hw_input_stencil", "(nearest_neighbor_s0_x/2)", "(nearest_neighbor_s0_y/2)", "nearest_neighbor_s0_z");
+  prg.buffer_port_widths["nearest_neighbor_stencil"] = 16;
+  hcompute_nearest_neighbor_stencil->add_store("nearest_neighbor_stencil", "nearest_neighbor_s0_x", "nearest_neighbor_s0_y", "nearest_neighbor_s0_z");
+
+//consuming nearest_neighbor.stencil
+  auto hw_output_s0_z = prg.add_loop("hw_output_s0_z", 0, 4);
+  auto hw_output_s0_y_yo = hw_output_s0_z->add_loop("hw_output_s0_y_yo", 0, 64);
+  auto hw_output_s0_x_xo = hw_output_s0_y_yo->add_loop("hw_output_s0_x_xo", 0, 64);
+
+//store is: hw_output.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo, hw_output.s0.z) = uint8(nearest_neighbor.stencil(hw_output.s0.x.xo, hw_output.s0.y.yo, hw_output.s0.z))
+  auto hcompute_hw_output_stencil = hw_output_s0_x_xo->add_op("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_load("nearest_neighbor_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo", "hw_output_s0_z");
+  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xo", "hw_output_s0_y_yo", "hw_output_s0_z");
+
+  return prg;
+
+}
+
+void halide_up_sample_test() {
+  auto us = halide_up_sample();
+  regression_test(us);
+}
+
 void application_tests() {
+  halide_up_sample_test();
   adobe_meeting_apps();
   weight_streaming_test();
   //assert(false);

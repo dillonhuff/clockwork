@@ -35,6 +35,8 @@ string c_sanitize(const std::string& str) {
       res += "_c_";
     } else if (c == '-') {
       res += "_m_";
+    } else if (c == '/') {
+      res += "_div_";
     } else {
       res += c;
     }
