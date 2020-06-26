@@ -192,24 +192,31 @@ std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int
   return groups;
 }
 
-void deep_copy_child(op* dest, op* source){
+void deep_copy_child(op* dest, op* source, prog& original){
+
+    op* kernel_copy;
     if(source -> is_loop){
-	
-//	    op* kernel_copy = dest -> add_loop(source -> name, original.end_exclusive(source -> name));
+	kernel_copy = dest -> add_loop(source->name, original.start(source->name), original.end_exclusive(source->name));
+    }else{
+	kernel_copy = dest -> add_op(source -> name);
+    }
+
+    for(auto child : original.find_loop(source->name)){
+	deep_copy_child(kernel_copy, child);
     }
 }
 
 prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original) {
   // TODO: Implement this function
   prog extracted;
- /* for(auto kernel : get_kernels(original)){
+  for(auto kernel : get_kernels(original)){
 	if(elem(kernel, group)){
 		op* kernel_copy = extracted.add_loop(kernel, original.start(kernel), original.end_exclusive(kernel));
 		for(auto child : original.find_loop(kernel)){
-		    deep_copy_child(kernel_copy, child);
+		    deep_copy_child(kernel_copy, child, original);
 		}
 	}
-  }*/
+  }
   return extracted;
 }
 
