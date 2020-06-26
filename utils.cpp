@@ -10,8 +10,8 @@ void move_to_synthesis_folder(const std::string& app_name) {
   system(("cp ./aws_collateral/Makefile " + synth_dir).c_str());
   system(("cp ./aws_collateral/utils.mk " + synth_dir).c_str());
 
+  make_exe("set_app.sh");
   system(("mv set_app.sh " + synth_dir).c_str());
-  make_exe("set_app");
 
   system(("mv " + out_name + "*.tcl " + synth_dir).c_str());
   system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
