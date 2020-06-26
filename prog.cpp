@@ -2682,6 +2682,22 @@ std::set<string> get_producers(string next_kernel, prog& prg){
   return producers;
 }
 
+void generate_verilog_instance(CodegenOptions& options,
+    std::ostream& out,
+    UBuffer& buf) {
+  vector<string> bundle_fields{".clk(clk)", ".rst_n(rst_n)"};
+  //for (auto eb : buf.port_bundles) {
+    //string out_rep = buf.name;
+    //string out_bundle = eb.first;
+
+    //int w = buf.port_bundle_width(out_bundle);
+    //string out_bundle_tp =
+      //(buf.is_output_bundle(out_bundle) ? "output" : "input");
+    //bundle_fields.push_back(out_bundle_tp + " [" + str(w - 1) + ":0] " + out_bundle);
+  //}
+  out << tab(1) << buf.name << " " << buf.name << "(" << comma_list(bundle_fields) << ");" << endl;
+}
+
 void generate_verilog(CodegenOptions& options,
     std::ostream& out,
     UBuffer& buf) {
@@ -2697,6 +2713,37 @@ void generate_verilog(CodegenOptions& options,
   }
   out << "module " << buf.name << "(" << comma_list(bundle_fields) << ");" << endl;
   out << "endmodule" << endl << endl;
+}
+
+void generate_verilog_instance(CodegenOptions& options,
+    ostream& out,
+    op* op,
+    map<string, UBuffer>& buffers,
+    prog& prg) {
+  vector<string> op_fields{".clk(clk)", ".rst_n(rst_n)"};
+
+  //for (auto ib : incoming_bundles(op, buffers, prg)) {
+    //string out_rep = ib.first;
+    //string out_bundle = ib.second;
+
+    //UBuffer out_buf = map_find(out_rep, buffers);
+    //int w = out_buf.port_bundle_width(out_bundle);
+    //string out_bundle_tp =
+      //(out_buf.is_output_bundle(out_bundle) ? "output" : "input");
+    //op_fields.push_back(out_bundle_tp + " [" + str(w - 1) + ":0] " + us(ib));
+  //}
+
+  //for (auto ib : outgoing_bundles(op, buffers, prg)) {
+    //string out_rep = ib.first;
+    //string out_bundle = ib.second;
+
+    //UBuffer out_buf = map_find(out_rep, buffers);
+    //int w = out_buf.port_bundle_width(out_bundle);
+    //string out_bundle_tp =
+      //(out_buf.is_output_bundle(out_bundle) ? "output" : "input");
+    //op_fields.push_back(out_bundle_tp + " [" + str(w - 1) + ":0] " + us(ib));
+  //}
+  out << tab(1) << op->name << " " << op->name << "(" << comma_list(op_fields) << ");" << endl;
 }
 
 void generate_verilog(CodegenOptions& options,
@@ -2760,7 +2807,21 @@ void generate_verilog(CodegenOptions& options,
       (out_buf.is_output_bundle(out_bundle) ? "input" : "output");
     edge_values.push_back(out_bundle_tp + " [" + str(w - 1) + ":0] " + us(out_rep, out_bundle));
   }
-  out << "module " << prg.name << "(" << comma_list(edge_values) << ");" << endl;
+  out << "module " << prg.name << "(" << comma_list(edge_values) << ");" << endl << endl;
+  for (auto& b : buffers) {
+    if (!prg.is_boundary(b.first)) {
+      generate_verilog_instance(options, out, b.second);
+      out << endl;
+    }
+  }
+  out << endl;
+
+  for (auto op : prg.all_ops()) {
+    generate_verilog_instance(options, out, op, buffers, prg);
+    out << endl;
+  }
+  out << endl;
+
   out << "endmodule" << endl;
   out.close();
 }
