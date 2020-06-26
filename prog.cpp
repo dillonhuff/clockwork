@@ -554,7 +554,20 @@ void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& b
     string edge_bundle = eb.second;
     string buf = eb.first;
 
-    out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = num_epochs*" << prg.buffer_size(buf) << ";" << endl;
+    int num_pixels = -1;
+    if (prg.is_input(buf)) {
+      auto cmap = prg.consumer_map(buf);
+      auto range_card = card(range(cmap));
+      num_pixels = int_upper_bound(range_card);
+    } else {
+      auto cmap = prg.producer_map(buf);
+      auto range_card = card(range(cmap));
+      num_pixels = int_upper_bound(range_card);
+    }
+
+
+    //out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = num_epochs*" << prg.buffer_size(buf) << ";" << endl;
+    out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = num_epochs*" << num_pixels << ";" << endl;
     out << tab(1) << "const int " << edge_bundle << "_BYTES_PER_PIXEL = " << map_find(buf, buffers).bundle_lane_width(edge_bundle) << " / 8;" << endl;
     out << tab(1) << "size_t " << edge_bundle << "_size_bytes = " << edge_bundle << "_BYTES_PER_PIXEL * " << edge_bundle << "_DATA_SIZE;" << endl << endl;
     out << tab(1) << "total_size_bytes += " << edge_bundle << "_size_bytes;" << endl;
