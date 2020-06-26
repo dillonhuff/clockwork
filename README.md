@@ -14,6 +14,8 @@ Clockwork is a tool for compiling naive descriptions of hardware accelerators wr
 
 Examples of how to install the dependencies can be found in [./misc/install\_deps\_mac.sh](./misc/install_deps_mac.sh) and [./misc/install\_deps\_linux.sh](./misc/install\_deps\_linux.sh).
 
+For a full setup script for AWS F1 with Developer AMI 1.8.1 see: [./misc/aws\_setup.sh](./misc/aws_setup.sh).
+
 Please install the specific versions of the listed dependencies. Do
 not just take the latest release of NTL or barvinok.
 
