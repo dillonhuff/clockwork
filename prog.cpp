@@ -9,6 +9,10 @@ std::string us(const pair<std::string, std::string>& a) {
   return us(a.first, a.second);
 }
 
+std::string dot(const pair<std::string, std::string>& a) {
+  return a.first + "." + a.second;
+}
+
 isl_multi_aff*
 to_multi_aff(isl_ctx* context,
     const std::vector<std::string>& vars,
@@ -2687,13 +2691,7 @@ void generate_verilog_instance(CodegenOptions& options,
     UBuffer& buf) {
   vector<string> bundle_fields{".clk(clk)", ".rst_n(rst_n)"};
   //for (auto eb : buf.port_bundles) {
-    //string out_rep = buf.name;
-    //string out_bundle = eb.first;
-
-    //int w = buf.port_bundle_width(out_bundle);
-    //string out_bundle_tp =
-      //(buf.is_output_bundle(out_bundle) ? "output" : "input");
-    //bundle_fields.push_back(out_bundle_tp + " [" + str(w - 1) + ":0] " + out_bundle);
+    //bundle_fields.push_back(string(".") + eb.first + parens(us(eb)));
   //}
   out << tab(1) << buf.name << " " << buf.name << "(" << comma_list(bundle_fields) << ");" << endl;
 }
@@ -2722,27 +2720,21 @@ void generate_verilog_instance(CodegenOptions& options,
     prog& prg) {
   vector<string> op_fields{".clk(clk)", ".rst_n(rst_n)"};
 
-  //for (auto ib : incoming_bundles(op, buffers, prg)) {
-    //string out_rep = ib.first;
-    //string out_bundle = ib.second;
+  for (auto ib : incoming_bundles(op, buffers, prg)) {
+    if (!prg.is_boundary(ib.first)) {
+      op_fields.push_back("." + us(ib) + parens(dot(ib)));
+    } else {
+      op_fields.push_back("." + us(ib) + parens(us(ib)));
+    }
+  }
 
-    //UBuffer out_buf = map_find(out_rep, buffers);
-    //int w = out_buf.port_bundle_width(out_bundle);
-    //string out_bundle_tp =
-      //(out_buf.is_output_bundle(out_bundle) ? "output" : "input");
-    //op_fields.push_back(out_bundle_tp + " [" + str(w - 1) + ":0] " + us(ib));
-  //}
-
-  //for (auto ib : outgoing_bundles(op, buffers, prg)) {
-    //string out_rep = ib.first;
-    //string out_bundle = ib.second;
-
-    //UBuffer out_buf = map_find(out_rep, buffers);
-    //int w = out_buf.port_bundle_width(out_bundle);
-    //string out_bundle_tp =
-      //(out_buf.is_output_bundle(out_bundle) ? "output" : "input");
-    //op_fields.push_back(out_bundle_tp + " [" + str(w - 1) + ":0] " + us(ib));
-  //}
+  for (auto ib : outgoing_bundles(op, buffers, prg)) {
+    if (!prg.is_boundary(ib.first)) {
+      op_fields.push_back("." + us(ib) + parens(dot(ib)));
+    } else {
+      op_fields.push_back("." + us(ib) + parens(us(ib)));
+    }
+  }
   out << tab(1) << op->name << " " << op->name << "(" << comma_list(op_fields) << ");" << endl;
 }
 
@@ -2760,7 +2752,7 @@ void generate_verilog(CodegenOptions& options,
     UBuffer out_buf = map_find(out_rep, buffers);
     int w = out_buf.port_bundle_width(out_bundle);
     string out_bundle_tp =
-      (out_buf.is_output_bundle(out_bundle) ? "output" : "input");
+      (out_buf.is_output_bundle(out_bundle) ? "input" : "output");
     op_fields.push_back(out_bundle_tp + " [" + str(w - 1) + ":0] " + us(ib));
   }
 
@@ -2771,7 +2763,7 @@ void generate_verilog(CodegenOptions& options,
     UBuffer out_buf = map_find(out_rep, buffers);
     int w = out_buf.port_bundle_width(out_bundle);
     string out_bundle_tp =
-      (out_buf.is_output_bundle(out_bundle) ? "output" : "input");
+      (out_buf.is_output_bundle(out_bundle) ? "input" : "output");
     op_fields.push_back(out_bundle_tp + " [" + str(w - 1) + ":0] " + us(ib));
   }
   out << "module " << op->name << "(" << comma_list(op_fields) << ");" << endl;
