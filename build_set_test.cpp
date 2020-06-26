@@ -10291,6 +10291,8 @@ void mmul_outer_prod_test() {
 }
 
 void application_tests() {
+  weight_streaming_test();
+  assert(false);
   tricky_shift_register_reconvergence_test();
   sum_denoise_test();
   sum_diffs_test();
@@ -10307,7 +10309,6 @@ void application_tests() {
   halide_cascade_test();
   halide_frontend_test();
   conv_3_3_halide_test();
-  weight_streaming_test();
   halide_conv_layer_3D_test();
   //playground();
   cyclic_banked_conv_test();
