@@ -10348,11 +10348,50 @@ void lake_accessor_config_test() {
 
 void adobe_downsample() {
   prog prg("adobe_downsample");
-  prg.addInput("off_chip_image");
-  assert(false);
+  prg.add_input("off_chip_image");
+  prg.add_output("downsampled");
+
+  auto ld = prg.add_nest("yl", 0, 32, "xl", 0, 32)->add_op("load_from_off_chip");
+  ld->add_load("off_chip_image", "xl", "yl");
+  ld->add_store("image", "xl", "yl");
+
+  auto ds = prg.add_nest("y", 0, 16, "x", 0, 16)->add_op("downsample");
+  ds->add_load("image", "2*x", "2*y");
+  ds->add_store("downsampled", "x", "y");
+  
+
+  prg.pretty_print();
+
+  regression_test(prg);
 }
 
 void adobe_sharpen() {
+  prog prg("adobe_sharpen");
+  prg.add_input("off_chip_image");
+  prg.add_output("sharpened");
+
+  auto ld = prg.add_nest("yl", 0, 32, "xl", 0, 32)->add_op("load_from_off_chip");
+  ld->add_load("off_chip_image", "xl", "yl");
+  ld->add_store("image", "xl", "yl");
+
+  auto ds = prg.add_nest("y", 0, 32 - 2, "x", 0, 32 - 2)->add_op("blur");
+  ds->add_function("conv_3_3");
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      ds->add_load("image", "x + " + str(i), "y + " + str(j));
+    }
+  }
+  ds->add_store("blurred", "x", "y");
+  
+  auto diff = prg.add_nest("yd", 0, 32 - 2, "xd", 0, 32 - 2)->add_op("diff");
+  diff->add_function("diff");
+  diff->add_load("image", "xd", "yd");
+  diff->add_load("blurred", "xd", "yd");
+  diff->add_store("sharpened", "xd", "yd");
+
+  prg.pretty_print();
+
+  regression_test(prg);
 
 }
 
