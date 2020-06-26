@@ -10312,14 +10312,11 @@ void application_tests() {
   iccad_tests();
 
 
-<<<<<<< HEAD
   tricky_shift_register_reconvergence_test();
   sum_denoise_test();
   sum_diffs_test();
 
-=======
   mmul_outer_prod_test();
->>>>>>> befbc0dde930048327ae8a44c21a97593b4be562
   halide_cascade_test();
   halide_frontend_test();
   conv_3_3_halide_test();
