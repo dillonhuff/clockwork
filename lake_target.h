@@ -1,12 +1,15 @@
 #pragma once
 
-#include <vector>
-#include <map>
-#include <string>
+#include "isl_utils.h"
 
 struct lake_accessor {
   std::string instance_name;
   int num_levels;
+};
+
+struct lake_accessor_instance {
+  isl_set* domain;
+  isl_aff* schedule;
 };
 
 struct lake_memory {

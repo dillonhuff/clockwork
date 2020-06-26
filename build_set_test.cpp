@@ -9955,6 +9955,7 @@ void weight_streaming_test() {
   auto sched = hardware_schedule_umap(dom, valid, prox);
   sched = its(sched, prg.whole_iteration_domain());
 
+
   //string hw_str = string("{ hcompute_conv_stencil[root = 0, conv_s0_x] -> [conv_s0_x + 1] : 0 <= conv_s0_x <= 19; ") +
     //"hcompute_conv_stencil_1[root = 0, conv_s1_win_x] -> [20 + conv_s1_win_x] : 0 <= conv_s1_win_x <= 19; " +
     //"hcompute_hw_weight_stencil[root = 0, hw_weight_s0_x] -> [hw_weight_s0_x + 1] : 0 <= hw_weight_s0_x <= 19; " + 
@@ -9980,6 +9981,9 @@ void weight_streaming_test() {
       b.second.generate_bank_and_merge(options);
     }
   }
+
+  generate_verilog(options, bufs, prg, sched);
+  assert(false);
 
   generate_coreir(options, bufs, prg, sched);
 
@@ -10204,13 +10208,17 @@ void mmul_outer_prod_test() {
   prg.add_input("A_oc");
   prg.add_output("C_oc");
 
+  int M = 5;
+  int t = 200;
+  int K = 10;
+
   copy("A", "A_oc", {5, 2, 10}, prg);
   // Upsample
-  copy({5, 5, 2, 10}, "Ar", {0, 1, 2, 3}, "A", {0, 2, 3}, prg);
-  copy("B", "B_oc", {5, 5, 10, 2}, prg);
-  init("C", "set_zero_32", {5, 5, 2, 2}, prg);
-  reduce({5, 5, 10, 2, 2}, "C", {0, 1, 3, 4}, "fma_32", "Ar", {0, 1, 4, 2}, "B", {0, 1, 2, 4}, prg);
-  copy("C_oc", "C", {5, 5, 2, 2}, prg);
+  copy({5, 5, t, 10}, "Ar", {0, 1, 2, 3}, "A", {0, 2, 3}, prg);
+  copy("B", "B_oc", {5, 5, 10, t}, prg);
+  init("C", "set_zero_32", {5, 5, t, t}, prg);
+  reduce({5, 5, 10, t, t}, "C", {0, 1, 3, 4}, "fma_32", "Ar", {0, 1, 4, 2}, "B", {0, 1, 2, 4}, prg);
+  copy("C_oc", "C", {5, 5, t, t}, prg);
 
   //copy("A", "A_oc", {5, 5, 2, 2}, prg);
   //copy("B", "B_oc", {5, 5, 2, 2}, prg);
@@ -10281,18 +10289,87 @@ void mmul_outer_prod_test() {
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
+  options.use_custom_code_string = true;
   options.register_files.insert("C");
   options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
   generate_optimized_code(options, prg);
   //regression_test(options, prg);
   move_to_synthesis_folder(prg.name);
 
+  assert(false);
+}
+
+void emit_lake_controller_config(const std::string& filename, isl_set* write_domain, isl_aff* write_sched, isl_aff* write_addr) {
+  ofstream out(filename);
+  out << "\"dimensionality\"," << num_dims(write_domain) << ",0" << endl;
+  out << "\"cycle_starting_addr\"," << to_int(const_coeff(write_sched)) << ",0" << endl;
+  for (int d = 0; d < num_dims(write_domain); d++) {
+    auto ds = project_all_but(write_domain, d);
+    int extent_d = to_int(lexmaxval(ds)) - to_int(lexminval(ds)) + 1;
+    int ldim = num_dims(write_domain) - d - 1;
+    out << "\"extent_" << ldim << "\"," << extent_d << ",0" << endl;
+    out << "\"cycle_stride_" << ldim << "\"," << to_int(get_coeff(write_sched, d)) << ",0" << endl;
+  }
+  out << "\"data_starting_addr\"," << to_int(const_coeff(write_addr)) << ",0" << endl;
+  for (int d = 0; d < num_dims(write_domain); d++) {
+    int ldim = num_dims(write_domain) - d - 1;
+    out << "\"data_stride_" << ldim << "\"," << to_int(get_coeff(write_addr, d)) << ",0" << endl;
+  }
+  out.close();
+}
+
+void lake_accessor_config_test() {
+  isl_ctx* ctx = isl_ctx_alloc();
+  {
+    isl_set* write_domain = rdset(ctx, "{ op[a] : 0 <= a <= 9 }");
+    isl_aff* write_sched = rdaff(ctx, "{ op[a] -> [(2*a)]}");
+    isl_aff* write_addr = rdaff(ctx, "{ op[a] -> [(a)]}");
+
+    cout << "write domain: " << str(write_domain) << endl;
+    cout << "write  sched: " << str(write_sched) << endl;
+
+    emit_lake_controller_config("test_write_domain.csv", write_domain, write_sched, write_addr);
+  }
+
+  {
+    isl_set* write_domain = rdset(ctx, "{ op[a] : 0 <= a <= 9 }");
+    isl_aff* write_sched = rdaff(ctx, "{ op[a] -> [(2*a + 3)]}");
+    isl_aff* write_addr = rdaff(ctx, "{ op[a] -> [(a)]}");
+
+    cout << "write domain: " << str(write_domain) << endl;
+    cout << "write  sched: " << str(write_sched) << endl;
+
+    emit_lake_controller_config("test_read_domain.csv", write_domain, write_sched, write_addr);
+  }
+  isl_ctx_free(ctx);
+
   //assert(false);
 }
 
-void application_tests() {
-  weight_streaming_test();
+void adobe_downsample() {
+  prog prg("adobe_downsample");
+  prg.addInput("off_chip_image");
   assert(false);
+}
+
+void adobe_sharpen() {
+
+}
+
+void adobe_meeting_apps() {
+  adobe_downsample();
+  adobe_sharpen();
+  assert(false);
+}
+
+void application_tests() {
+  adobe_meeting_apps();
+  weight_streaming_test();
+  //assert(false);
+  lake_accessor_config_test();
+  weight_streaming_test();
+
+  mmul_outer_prod_test();
   tricky_shift_register_reconvergence_test();
   sum_denoise_test();
   sum_diffs_test();
@@ -10304,6 +10381,10 @@ void application_tests() {
   gaussian_pyramid_app_test("gp64x64");
   iccad_tests();
 
+
+  tricky_shift_register_reconvergence_test();
+  sum_denoise_test();
+  sum_diffs_test();
 
   mmul_outer_prod_test();
   halide_cascade_test();

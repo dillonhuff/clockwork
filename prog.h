@@ -1381,4 +1381,8 @@ op* find_writer(const std::string& target_buf, prog& prg);
 
 std::set<string> get_producers(string next_kernel, prog& prg);
 
+void generate_verilog(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap);
 
