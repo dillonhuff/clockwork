@@ -2710,6 +2710,14 @@ void generate_verilog(CodegenOptions& options,
     bundle_fields.push_back(out_bundle_tp + " [" + str(w - 1) + ":0] " + out_bundle);
   }
   out << "module " << buf.name << "(" << comma_list(bundle_fields) << ");" << endl;
+  for (auto bnk : buf.get_banks()) {
+    out << tab(1) << "// " << bnk.name << endl;
+  }
+  out << endl;
+
+  for (auto pt : buf.get_all_ports()) {
+    out << tab(1) << "// " << pt << endl;
+  }
   out << "endmodule" << endl << endl;
 }
 
@@ -2767,6 +2775,24 @@ void generate_verilog(CodegenOptions& options,
     op_fields.push_back(out_bundle_tp + " [" + str(w - 1) + ":0] " + us(ib));
   }
   out << "module " << op->name << "(" << comma_list(op_fields) << ");" << endl;
+  vector<string> ins;
+  for (auto ib : incoming_bundles(op, buffers, prg)) {
+    string out_rep = ib.first;
+    string out_bundle = ib.second;
+
+    UBuffer out_buf = map_find(out_rep, buffers);
+    int w = out_buf.port_bundle_width(out_bundle);
+    int lanes = out_buf.lanes_in_bundle(out_bundle);
+    out << tab(1) << "// " << lanes << endl;
+    ins.push_back(us(ib));
+  }
+  if (ins.size() == 0) {
+    ins.push_back("0");
+  }
+  for (auto eb : outgoing_bundles(op, buffers, prg)) {
+    out << tab(1) << "assign " << us(eb) << " = "
+      << sep_list(ins, "(", ")", " + ") << ";" << endl;
+  }
   out << "endmodule" << endl << endl;
 }
 
