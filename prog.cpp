@@ -5,6 +5,10 @@ std::string us(const std::string& a, const std::string& b) {
   return a + "_" + b;
 }
 
+std::string us(const pair<std::string, std::string>& a) {
+  return us(a.first, a.second);
+}
+
 isl_multi_aff*
 to_multi_aff(isl_ctx* context,
     const std::vector<std::string>& vars,
@@ -2696,16 +2700,55 @@ void generate_verilog(CodegenOptions& options,
 }
 
 void generate_verilog(CodegenOptions& options,
+    ostream& out,
+    op* op,
+    map<string, UBuffer>& buffers,
+    prog& prg) {
+  vector<string> op_fields{"input clk", "input rst_n"};
+
+  for (auto ib : incoming_bundles(op, buffers, prg)) {
+    string out_rep = ib.first;
+    string out_bundle = ib.second;
+
+    UBuffer out_buf = map_find(out_rep, buffers);
+    int w = out_buf.port_bundle_width(out_bundle);
+    string out_bundle_tp =
+      (out_buf.is_output_bundle(out_bundle) ? "output" : "input");
+    op_fields.push_back(out_bundle_tp + " [" + str(w - 1) + ":0] " + us(ib));
+  }
+
+  for (auto ib : outgoing_bundles(op, buffers, prg)) {
+    string out_rep = ib.first;
+    string out_bundle = ib.second;
+
+    UBuffer out_buf = map_find(out_rep, buffers);
+    int w = out_buf.port_bundle_width(out_bundle);
+    string out_bundle_tp =
+      (out_buf.is_output_bundle(out_bundle) ? "output" : "input");
+    op_fields.push_back(out_bundle_tp + " [" + str(w - 1) + ":0] " + us(ib));
+  }
+  out << "module " << op->name << "(" << comma_list(op_fields) << ");" << endl;
+  out << "endmodule" << endl << endl;
+}
+
+void generate_verilog(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
     umap* schedmap) {
   ofstream out(prg.name + ".v");
+
   for (auto& b : buffers) {
     if (!prg.is_boundary(b.first)) {
       generate_verilog(options, out, b.second);
     }
   }
   out << endl;
+
+  for (auto op : prg.all_ops()) {
+    generate_verilog(options, out, op, buffers, prg);
+  }
+  out << endl;
+
   vector<string> edge_values{"input clk", "input rst_n"};
   for (auto eb : edge_buffers(buffers, prg)) {
     string out_rep = eb.first;
