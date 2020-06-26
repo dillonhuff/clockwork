@@ -10318,7 +10318,7 @@ void lake_accessor_config_test() {
   isl_ctx* ctx = isl_ctx_alloc();
   {
     isl_set* write_domain = rdset(ctx, "{ op[a] : 0 <= a <= 9 }");
-    isl_aff* write_sched = rdaff(ctx, "{ op[a] -> [(a)]}");
+    isl_aff* write_sched = rdaff(ctx, "{ op[a] -> [(2*a)]}");
     isl_aff* write_addr = rdaff(ctx, "{ op[a] -> [(a)]}");
 
     cout << "write domain: " << str(write_domain) << endl;
@@ -10329,7 +10329,7 @@ void lake_accessor_config_test() {
 
   {
     isl_set* write_domain = rdset(ctx, "{ op[a] : 0 <= a <= 9 }");
-    isl_aff* write_sched = rdaff(ctx, "{ op[a] -> [(a + 3)]}");
+    isl_aff* write_sched = rdaff(ctx, "{ op[a] -> [(2*a + 3)]}");
     isl_aff* write_addr = rdaff(ctx, "{ op[a] -> [(a)]}");
 
     cout << "write domain: " << str(write_domain) << endl;
