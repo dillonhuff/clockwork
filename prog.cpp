@@ -1,6 +1,10 @@
 #include "codegen.h"
 #include "prog.h"
 
+std::string us(const std::string& a, const std::string& b) {
+  return a + "_" + b;
+}
+
 isl_multi_aff*
 to_multi_aff(isl_ctx* context,
     const std::vector<std::string>& vars,
@@ -2672,4 +2676,48 @@ std::set<string> get_producers(string next_kernel, prog& prg){
 
   }
   return producers;
+}
+
+void generate_verilog(CodegenOptions& options,
+    std::ostream& out,
+    UBuffer& buf) {
+  vector<string> bundle_fields{"input clk", "input rst_n"};
+  for (auto eb : buf.port_bundles) {
+    string out_rep = buf.name;
+    string out_bundle = eb.first;
+
+    int w = buf.port_bundle_width(out_bundle);
+    string out_bundle_tp =
+      (buf.is_output_bundle(out_bundle) ? "output" : "input");
+    bundle_fields.push_back(out_bundle_tp + " [" + str(w - 1) + ":0] " + out_bundle);
+  }
+  out << "module " << buf.name << "(" << comma_list(bundle_fields) << ");" << endl;
+  out << "endmodule" << endl << endl;
+}
+
+void generate_verilog(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap) {
+  ofstream out(prg.name + ".v");
+  for (auto& b : buffers) {
+    if (!prg.is_boundary(b.first)) {
+      generate_verilog(options, out, b.second);
+    }
+  }
+  out << endl;
+  vector<string> edge_values{"input clk", "input rst_n"};
+  for (auto eb : edge_buffers(buffers, prg)) {
+    string out_rep = eb.first;
+    string out_bundle = eb.second;
+
+    UBuffer out_buf = map_find(out_rep, buffers);
+    int w = out_buf.port_bundle_width(out_bundle);
+    string out_bundle_tp =
+      (out_buf.is_output_bundle(out_bundle) ? "input" : "output");
+    edge_values.push_back(out_bundle_tp + " [" + str(w - 1) + ":0] " + us(out_rep, out_bundle));
+  }
+  out << "module " << prg.name << "(" << comma_list(edge_values) << ");" << endl;
+  out << "endmodule" << endl;
+  out.close();
 }

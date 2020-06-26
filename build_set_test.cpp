@@ -9955,6 +9955,7 @@ void weight_streaming_test() {
   auto sched = hardware_schedule_umap(dom, valid, prox);
   sched = its(sched, prg.whole_iteration_domain());
 
+
   //string hw_str = string("{ hcompute_conv_stencil[root = 0, conv_s0_x] -> [conv_s0_x + 1] : 0 <= conv_s0_x <= 19; ") +
     //"hcompute_conv_stencil_1[root = 0, conv_s1_win_x] -> [20 + conv_s1_win_x] : 0 <= conv_s1_win_x <= 19; " +
     //"hcompute_hw_weight_stencil[root = 0, hw_weight_s0_x] -> [hw_weight_s0_x + 1] : 0 <= hw_weight_s0_x <= 19; " + 
@@ -9980,6 +9981,9 @@ void weight_streaming_test() {
       b.second.generate_bank_and_merge(options);
     }
   }
+
+  generate_verilog(options, bufs, prg, sched);
+  assert(false);
 
   generate_coreir(options, bufs, prg, sched);
 
@@ -10339,7 +10343,7 @@ void lake_accessor_config_test() {
   }
   isl_ctx_free(ctx);
 
-  assert(false);
+  //assert(false);
 }
 
 void application_tests() {
