@@ -630,7 +630,10 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
     UBuffer out_buf = map_find(out_rep, buffers);
     string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
 
-    int num_pixels = prg.buffer_size(out_rep);
+    //int num_pixels = prg.buffer_size(out_rep);
+    auto cmap = prg.consumer_map(out_rep);
+    auto range_card = card(range(cmap));
+    int num_pixels = int_upper_bound(range_card);
 
     int pix_per_burst =
       out_buf.lanes_in_bundle(out_bundle);

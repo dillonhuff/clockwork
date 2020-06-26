@@ -10363,6 +10363,7 @@ void adobe_downsample() {
   prg.pretty_print();
 
   regression_test(prg);
+  move_to_synthesis_folder(prg.name);
 }
 
 void adobe_sharpen() {
@@ -10392,6 +10393,7 @@ void adobe_sharpen() {
   prg.pretty_print();
 
   regression_test(prg);
+  move_to_synthesis_folder(prg.name);
 
 }
 
