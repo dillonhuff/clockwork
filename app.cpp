@@ -61,7 +61,14 @@ struct ilp_builder {
   } 
 
   void add_eq(const std::string& a, const std::string& b) {
-    add_eq({{a, one(ctx)}, {b, negone(ctx)}}, zero(ctx));
+    //add_eq({{a, one(ctx)}, {b, negone(ctx)}}, zero(ctx));
+    add_geq(a, b);
+    add_geq(b, a);
+    //{{a, one(ctx)}, {b, one(ctx)}}, zero(ctx));
+  }
+
+  void add_geq(const std::string& a, const std::string& b) {
+    add_geq({{a, one(ctx)}, {b, negone(ctx)}}, zero(ctx));
   }
 
   void add_geq(const std::string& a, const int b) {
@@ -1364,6 +1371,16 @@ hardware_schedule(
     cout << "lm = " << str(max_deps) << endl << endl;
   }
 
+  // All root IIs must be equal
+  for (auto s : get_sets(padded_domain)) {
+    for (auto other : get_sets(padded_domain)) {
+      string iis = ii_var(name(s), 0);
+      string iio = ii_var(name(other), 0);
+      cout << iis << " == " << iio << endl;
+      modulo_schedule.add_eq(iis, iio);
+    }
+  }
+
   modulo_schedule.minimize(simplify(obj));
 
   map<string, isl_aff*> hw_schedules;
@@ -1375,6 +1392,7 @@ hardware_schedule(
     isl_aff* cycle_delay = aff_on_domain(get_local_space(f), one(ct));
 
     for (int i = 0; i < dim; i++) {
+      cout << ii_var(n, i) << " = " << str(modulo_schedule.value(ii_var(n, i))) << endl;
       s = set_coeff(s, i, modulo_schedule.value(ii_var(n, i)));
     }
 
