@@ -227,15 +227,15 @@ void generate_bank(CodegenOptions& options,
     out << "\t// # of read delays: " << read_delays.size() << endl;
 
     read_delays = sort_unique(read_delays);
-    cout << "PEEK num readers " << num_readers << endl;
-    cout << "PEEK options.all_rams " << options.all_rams << endl;
+    // cout << "PEEK num readers " << num_readers << endl;
+    // cout << "PEEK options.all_rams " << options.all_rams << endl;
     if (num_readers == 1 || options.all_rams) {
       int partition_capacity = 1 + maxdelay;
       out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << ";" << endl;
-      cout << "peek1" << endl;
+      // cout << "peek1" << endl;
       out << "\tinline " + pt_type_string + " peek(const int offset) {" << endl;
       ignore_inter_deps(out, "f");
-      cout << "peek2" << endl;
+      // cout << "peek2" << endl;
       out << tab(2) << "return f.peek(" << partition_capacity - 1 << " - offset);" << endl;
       out << tab(1) << "}" << endl << endl;
 
@@ -289,7 +289,7 @@ void generate_bank(CodegenOptions& options,
       //}
 
       //assert(capacities.size() == partitions.size());
-cout<<"num partitions "<<partitions.size()<<endl;
+      // cout<<"num partitions "<<partitions.size()<<endl;
       out << endl << endl;
       int nind = 0;
       for (auto p : partitions) {
@@ -297,7 +297,7 @@ cout<<"num partitions "<<partitions.size()<<endl;
         //int capacity = capacities.at(nind);
         int capacity = p.second;
         assert(dv >= 0);
-        cout << "peek3" << endl;
+        // cout << "peek3" << endl;
         out << "\tinline " << pt_type_string << " peek_" << to_string(dv) << "() {" << endl;
         if (capacity > 1) {
           ignore_inter_deps(out, p.first);
@@ -523,19 +523,20 @@ void generate_code_prefix(CodegenOptions& options,
     UBuffer& buf) {
 
   //banking and merge pass
-  cout << "before generate bank and merge " << endl;
+  // cout << "before generate bank and merge " << endl;
   buf.generate_bank_and_merge(options);
 
   //string inpt = buf.get_in_port();
   out << "#include \"hw_classes.h\"" << endl << endl;
   cout << "before get banks " << endl;
   for (auto b : buf.get_banks()) {
-cout << "BANK NAME " << b.name << endl;
-cout<< "BANK MERGED READERS " << b.num_readers << endl;
+    // cout << "BANK NAME " << b.name << endl;
+    // cout<< "BANK MERGED READERS " << b.num_readers << endl;
     generate_bank(options, out, b);
   }
 
   out << "struct " << buf.name << "_cache {" << endl;
+
   for (auto b : buf.get_banks()) {
     out << tab(1)
       << b.name << "_cache "
@@ -567,7 +568,7 @@ cout<< "BANK MERGED READERS " << b.num_readers << endl;
       }
       else if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_LINEAR) {
         string linear_addr = buf.generate_linearize_ram_addr(inpt);
-        //cout <<"Input port:" << inpt << ", Get ram string: " << linear_addr << endl;
+        cout <<"Input port:" << inpt << ", Get ram string: " << linear_addr << endl;
         out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt <<
           ", " << linear_addr << ");" << endl;
       }
@@ -591,7 +592,8 @@ cout<< "BANK MERGED READERS " << b.num_readers << endl;
       auto pp = isl_pw_qpolynomial_intersect_domain(isl_pw_qpolynomial_from_qpolynomial(cpy(p.second)), cpy(p.first));
       pieces_dom = unn(pieces_dom, to_uset(p.first));
     }
-cout<<"DOMAIN "<<str(out_domain)<<endl;
+
+    // cout<<"DOMAIN "<<str(out_domain)<<endl;
 
     bool pieces_are_complete =
       subset(to_uset(out_domain), (pieces_dom));
@@ -670,49 +672,49 @@ cout<<"DOMAIN "<<str(out_domain)<<endl;
     out << tab(1) << "// DD fold: " << str(dd_fold) << endl;
     string delay_expr = evaluate_dd(buf, outpt, inpt);
     string value_str = "";
-cout<<"PEEK inpt "<< inpt<<endl;
-cout<<"output "<<outpt<<endl;
+    // cout<<"PEEK inpt "<< inpt<<endl;
+    // cout<<"output "<<outpt<<endl;
     bool opt_const = is_optimizable_constant_dd(inpt, outpt, buf);
     if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_LINEAR) {
       string linear_addr = buf.generate_linearize_ram_addr(outpt);
       value_str = bank + ".read(/*ram type address*/ "+ linear_addr + ")";
     }
     else if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_STACK) {
-      std::cout << "PEEK 4 options all rams " << options.all_rams << endl;
-      std::cout << "PEEK 4 num readers " << buf.get_bank(bank).num_readers << endl;
-      std::cout << "PEEK 4 opt const " << opt_const<< endl;
+      // std::cout << "PEEK 4 options all rams " << options.all_rams << endl;
+      // std::cout << "PEEK 4 num readers " << buf.get_bank(bank).num_readers << endl;
+      // std::cout << "PEEK 4 opt const " << opt_const<< endl;
       if (options.all_rams || buf.get_bank(bank).num_readers == 1) {
-cout << "peek4" << endl;
+        // cout << "peek4" << endl;
         value_str = bank + ".peek(/* one reader or all rams */ " + delay_expr + ")";
       } else if (opt_const) {
         if (!options.all_rams && is_number(dx)) {
           assert(safe_stoi(dx) >= 0);
-cout << "peek5" << endl;
+          // cout << "peek5" << endl;
           value_str = bank + ".peek_" + dx + "()";
         } else {
-cout << "peek6" << endl;
+          // cout << "peek6" << endl;
           value_str = bank + ".peek" + "( /* is opt const */ " + delay_expr + ")";
         }
       } else if (pieces.size() == 0 && !options.all_rams) {
-cout << "peek7" << endl;
+        // cout << "peek7" << endl;
         value_str = bank + ".peek_0()";
       } else if (pieces.size() == 1 &&
           isl_set_is_subset(cpy(out_domain), cpy(pieces[0].first))) {
         string dx = codegen_c(pieces[0].second);
         if (!options.all_rams && is_number(dx)) {
           assert(safe_stoi(dx) >= 0);
-cout << "peek8" << endl;
+          // cout << "peek8" << endl;
           value_str = bank + ".peek_" + dx + "()";
         } else {
-cout << "peek9" << endl;
+          // cout << "peek9" << endl;
           value_str = bank + ".peek" + "(/* is one piece but not a number */" + dx + ")";
         }
       } else {
-cout << "peek10" << endl;
+        // cout << "peek10" << endl;
         value_str = bank + ".peek" + "(/* Needs general delay string */ " + delay_expr + ")";
       }
     }
-cout<<"value_str "<<value_str<<endl;
+    // cout<<"value_str "<<value_str<<endl;
     return buf.name + "." + value_str;
   }
 
@@ -748,7 +750,7 @@ cout<<"value_str "<<value_str<<endl;
       in_ports_to_conditions[inpt] =
         codegen_c(overlapped_read_condition);
     }
-cout<<"possible_ports.size "<<possible_ports.size()<<endl;
+    // cout<<"possible_ports.size "<<possible_ports.size()<<endl;
     if (possible_ports.size() == 1) {
       string inpt = possible_ports.at(0);
       string peeked_val = delay_string(options, out, inpt, outpt, buf);
@@ -876,7 +878,7 @@ cout<<"possible_ports.size "<<possible_ports.size()<<endl;
   }
 
   void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
-cout << "generate hls code " << endl;
+    // cout << "generate hls code " << endl;
     generate_code_prefix(options, out, buf);
 
     for (auto outpt : buf.get_out_ports()) {
@@ -1104,6 +1106,7 @@ cout << "generate hls code " << endl;
     }
     //cout << "compute max delay for super bank =  " << maxdelay << endl;
     vector<int> read_delays{0};
+
     int num_readers = outpt_set.size();
     //int num_writers = inpt_set.size();
 
@@ -1159,15 +1162,15 @@ cout << "generate hls code " << endl;
     int num_readers = 0;
 
     auto in_actions = domain.at(inpt);
-    cout << "\t in action : " << str(in_actions) << endl;
+    // cout << "\t in action : " << str(in_actions) << endl;
     auto lex_max_events = get_lexmax_events(outpt);
-    cout << "\t lexmax result: " << str(lex_max_events) << endl;
+    // cout << "\t lexmax result: " << str(lex_max_events) << endl;
     auto act_dom =
       ::domain(its_range(lex_max_events, to_uset(in_actions)));
 
-    cout <<"\t act dom: " << str(act_dom) << endl;
+    // cout <<"\t act dom: " << str(act_dom) << endl;
 
-    cout << "COMPUTE BANK INFO " << !isl_union_set_is_empty(act_dom) << endl;
+    // cout << "COMPUTE BANK INFO " << !isl_union_set_is_empty(act_dom) << endl;
 
     if (!isl_union_set_is_empty(act_dom)) {
       num_readers++;
@@ -1193,24 +1196,23 @@ cout << "generate hls code " << endl;
       unn(range(access_map.at(inpt)),
           range(access_map.at(outpt)));
     cout << "Read domain for bank: " << str(rddom) << endl;
-cout<<"access map "<<str(access_map.at(outpt))<<endl;
-for(auto m : get_maps(access_map.at(outpt))){
- cout<<"Map"<<endl;
- cout<<tab(1)<<str(m)<<endl;
- for(auto m_ : get_basic_maps(m)){
-   cout<<tab(2)<<str(m_)<<endl;
- }
+    cout<<"access map "<<str(access_map.at(outpt))<<endl;
+    for(auto m : get_maps(access_map.at(outpt))){
+      cout<<"Map"<<endl;
+      cout<<tab(1)<<str(m)<<endl;
+      for(auto m_ : get_basic_maps(m)){
+        cout<<tab(2)<<str(m_)<<endl;
+      }
+    }
 
-}
-
-isl_union_map* test =access_map.at(outpt);
-auto maptest = to_map(test);
-cout<<"access map output "<< domain_name(maptest)<<endl;
-cout<<"access map output "<< range_name(maptest)<<endl;
-/*for(auto mapi : maptest){
-  cout<<str(mapi.first)<<endl;
-}
-*/
+    isl_union_map* test =access_map.at(outpt);
+    auto maptest = to_map(test);
+    cout<<"access map output "<< domain_name(maptest)<<endl;
+    cout<<"access map output "<< range_name(maptest)<<endl;
+    /*for(auto mapi : maptest){
+      cout<<str(mapi.first)<<endl;
+    }
+    */
     //Box mem_box = extract_box(rddom);
 
     //initial the delay map
@@ -1234,7 +1236,7 @@ cout<<"access map output "<< range_name(maptest)<<endl;
       merged.pt_type_string =
         mergeable.at(0).pt_type_string;
       merged.num_readers = mergeable.size();
-cout << "MERGED NUM READERS " << merged.num_readers << endl;
+      // cout << "MERGED NUM READERS " << merged.num_readers << endl;
       merged.maxdelay = -1;
       for (auto m : mergeable) {
         //cout << "merge: " << m.name << endl;

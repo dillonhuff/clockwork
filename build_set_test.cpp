@@ -1001,37 +1001,6 @@ void conv_1d_bc_test() {
   assert(res == 0);
 }
 
-prog conv_1d_bc_mirror() {
-  prog prg;
-  prg.compute_unit_file = "accumulate_3.h";
-  prg.name = "conv_1d_bc";
-  prg.add_input("in");
-  prg.add_output("out");
-  prg.buffer_port_widths["in"] = 32;
-  prg.buffer_port_widths["out"] = 32;
-  prg.buffer_port_widths["M"] = 32;
-
-  auto p = prg.add_loop("p", 0, 10);
-  auto write = p->add_op("get_input");
-  write->add_load("in", "p");
-  write->add_store("M", "p");
-
-  auto c = prg.add_loop("c", 0, 10);
-  auto compute = c->add_op("compute_output");
-  compute->add_function("accumulate_3");
-  /*compute->add_load("M", {{"c < 2", "0"}, {"2 <= c <= 7", "c"}, {"7 < c <= 8", "9"}, {"c > 8", "8"}});
-  compute->add_load("M", {{"c < 2", "0"}, {"2 <= c <= 7", "c"}, {"7 < c <= 8", "9"}, {"c > 8", "8"}});
-  compute->add_load("M", {{"c < 2", "0"}, {"2 <= c <= 7", "c"}, {"7 < c <= 8", "9"}, {"c > 8", "8"}});*/
-  compute->add_load("M", {{"0 <= c < 9", "c"}, {"c >= 9", "9"}});
-  compute->add_load("M", {{"0 <= c < 8", "c + 1"}, {"c >= 8", "9"}});
-  compute->add_load("M", {{"0 <= c < 7", "c + 2"}, {"c >= 7", "9"}});
-/*  compute->add_load("M", "min(c, 9)");
-  compute->add_load("M", "min(c + 1, 9)");
-  compute->add_load("M", "min(c + 2, 9)");*/
-  compute->add_store("out", "c");
-  return prg;
-}
-
 prog conv_1d_bc() {
   prog prg;
   prg.compute_unit_file = "accumulate_3.h";

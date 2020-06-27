@@ -1517,7 +1517,6 @@ module_type* generate_rtl_buffer(CodegenOptions& options,
     UBuffer& buffer) {
 
   minihls::block* blk = minigen.add_block(buffer.name);
-  cout << "&&&&&&&&&&&&&&&& prog.cpp" << endl;
   for (auto bank_struct : buffer.get_banks()) {
     auto bankprog = minigen.add_block(bank_struct.name);
 

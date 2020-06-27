@@ -611,21 +611,10 @@ class UBuffer {
     //Stencil valid domain for each port
     std::map<string, isl_set*> sv_domain;
 
-    // string port name, piecewise
-    // compute operations -> addresses (multi D)
     std::map<string, umap*> access_map;
     std::map<string, isl_union_map*> schedule;
     std::map<string, vector<string> > port_bundles;
 
-    // input port -> output port bank
-    // input ports -> switching networks that set inputs to banks, array of
-    // banks , output ports
-    // generalize this mapping -> mixing + matching
-    // addressing scheme: bank index, addr in bank
-    // indices on domain of access map -> bank nums it's reading
-    // generalize data structure
-    // pair of ports + piece of access pattern
-    // 1 bank bw input + output for each piece
     map<pair<string, string>, std::vector<stack_bank> > stack_banks;
     map<string, selector> selectors;
 
@@ -1014,7 +1003,7 @@ class UBuffer {
       std::set<string> done;
       for (auto b : stack_banks) {
         for (auto b_ : b.second) {
- cout << "bank name " << b_.name << endl;
+          cout << "bank name " << b_.name << endl;
           if (!elem(b_.name, done)){
             bnk.push_back(b_);
             done.insert(b_.name);
@@ -1058,7 +1047,7 @@ class UBuffer {
       for (auto bs : stack_banks) {
         if (bs.first.first == inpt && bs.first.second == outpt) {
           auto first_bank = bs.second[0];
-cout << "first bank name " << first_bank.name << endl;
+          cout << "first bank name " << first_bank.name << endl;
           return first_bank.name;
         }
       }
