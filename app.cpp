@@ -1290,6 +1290,30 @@ map<string, isl_aff*> clockwork_schedule_dimension(
   return schedule_functions;
 }
 
+vector<std::string> topological_sort(const vector<isl_set*>& sets,
+    const vector<isl_map*>& maps) {
+  vector<string> finished;
+  while (finished.size() < sets.size()) {
+    for (auto s : sets) {
+      if (!elem(name(s), finished)) {
+        bool all_deps_finished = true;
+        for (auto m : maps) {
+          if (range_name(m) == name(s) &&
+              !elem(domain_name(m), finished)) {
+            all_deps_finished = false;
+            break;
+          }
+        }
+        if (all_deps_finished) {
+          finished.push_back(name(s));
+        }
+      }
+    }
+  }
+
+  assert(finished.size() == sets.size());
+  return finished;
+}
 
 map<string, isl_aff*>
 hardware_schedule(
@@ -1303,6 +1327,13 @@ hardware_schedule(
 
   auto ct = ctx(padded_domain);
 
+  vector<std::string> sorted_sets =
+    topological_sort(get_sets(padded_domain), get_maps(padded_validity));
+  cout << "Sorted..." << endl;
+  for (auto s : sorted_sets) {
+    cout << tab(1) << s << endl;
+  }
+  assert(false);
   // Dummy latencies
   map<string, int> latencies;
   for (auto f : get_sets(padded_domain)) {
