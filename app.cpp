@@ -1333,7 +1333,8 @@ hardware_schedule(
   for (auto s : sorted_sets) {
     cout << tab(1) << s << endl;
   }
-  assert(false);
+
+
   // Dummy latencies
   map<string, int> latencies;
   for (auto f : get_sets(padded_domain)) {
@@ -1414,6 +1415,28 @@ hardware_schedule(
 
   modulo_schedule.minimize(simplify(obj));
 
+  auto clks = clockwork_schedule(padded_domain, padded_validity, padded_proximity);
+  cout << "clockwork sched" << endl;
+
+  map<string, vector<isl_val*> > iis;
+  map<string, isl_val*> delays;
+  for (auto c : clks) {
+    vector<isl_val*> final_iss;
+    isl_val* d = zero(ct);
+    cout << tab(1) << c.first << " ";
+    int dim = 0;
+    for (auto s : c.second) {
+      cout << str(s) << ", ";
+      final_iss.push_back(mul(get_coeff(s, 0), modulo_schedule.value(ii_var(c.first, dim))));
+      d = add(d, mul(const_coeff(s), modulo_schedule.value(ii_var(c.first, dim))));
+      dim++;
+    }
+    cout << endl;
+    iis[c.first] = final_iss;
+    delays[c.first] = d;
+  }
+  //assert(false);
+
   map<string, isl_aff*> hw_schedules;
   for (auto f : get_sets(padded_domain)) {
     int dim = num_dims(f);
@@ -1424,10 +1447,12 @@ hardware_schedule(
 
     for (int i = 0; i < dim; i++) {
       cout << ii_var(n, i) << " = " << str(modulo_schedule.value(ii_var(n, i))) << endl;
-      s = set_coeff(s, i, modulo_schedule.value(ii_var(n, i)));
+      s = set_coeff(s, i, map_find(n, iis).at(i));
+      //s = set_coeff(s, i, modulo_schedule.value(ii_var(n, i)));
     }
 
-    s = set_const_coeff(s, modulo_schedule.value(hw_delay_var(n)));
+    s = set_const_coeff(s, map_find(n, delays));
+    //s = set_const_coeff(s, modulo_schedule.value(hw_delay_var(n)));
 
     hw_schedules[name(f)] = s;
   }
