@@ -1422,7 +1422,15 @@ hardware_schedule(
   map<string, isl_val*> delays;
   for (auto c : clks) {
     vector<isl_val*> final_iss;
-    isl_val* d = zero(ct);
+    isl_val* d = nullptr;
+    for (int i = 0; i < sorted_sets.size(); i++) {
+      if (sorted_sets.at(i) == c.first) {
+        d = isl_val_int_from_si(ct, i);
+      }
+    }
+
+    //zero(ct);
+    assert(d != nullptr);
     cout << tab(1) << c.first << " ";
     int dim = 0;
     for (auto s : c.second) {
