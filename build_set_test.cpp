@@ -9128,6 +9128,17 @@ isl_val* constant(isl_aff* a) {
 
 void playground() {
   {
+    isl_ctx* ctx = isl_ctx_alloc();
+    auto s = rdset(ctx, "{ [x] : x >= 0 }");
+    auto fs = form_farkas_constraints(to_bset(s), {{"x", "II_x"}}, "d");
+    cout << "fs = " << str(fs) << endl;
+    auto pt = sample(fs);
+    cout << "Example solution: " << str(pt) << endl;
+    isl_ctx_free(ctx);
+  }
+
+  assert(false);
+  {
     prog prg;
 
 
@@ -10584,6 +10595,8 @@ void halide_up_sample_test() {
 }
 
 void application_tests() {
+  playground();
+
   lake_agg_sram_tb_config_test();
   adobe_meeting_apps();
   lake_accessor_config_test();
@@ -10614,7 +10627,6 @@ void application_tests() {
   mmul_outer_prod_test();
   conv_3_3_halide_test();
   halide_conv_layer_3D_test();
-  //playground();
   cyclic_banked_conv_test();
 
   mini_conv_halide_test();

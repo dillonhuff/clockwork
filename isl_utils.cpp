@@ -2669,3 +2669,9 @@ isl_aff* get_aff(isl_map* m) {
   auto aff = isl_multi_aff_get_aff(saff, 0);
   return aff;
 }
+
+isl_basic_set* to_bset(isl_set* m) {
+  auto sets = get_basic_sets(m);
+  assert(sets.size() == 1);
+  return sets.at(0);
+}

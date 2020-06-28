@@ -158,6 +158,7 @@ map<string, isl_map*> get_maps_in_map(isl_union_map* m);
 vector<isl_set*> get_sets(isl_union_set* m);
 vector<isl_basic_map*> get_basic_maps(isl_map* m);
 vector<isl_basic_set*> get_basic_sets(isl_set* m);
+isl_basic_set* to_bset(isl_set* m);
 
 std::string str(umap* const m);
 

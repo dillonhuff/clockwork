@@ -1033,3 +1033,9 @@ clockwork_schedule_umap(uset* domain,
     umap* proximity);
 
 umap* qschedule_to_map(isl_ctx* ctx, map<string, vector<QExpr> >& schedules);
+
+
+isl_basic_set*
+form_farkas_constraints(isl_basic_set* constraints,
+    const map<string, string>& cmap,
+    const std::string& dname);

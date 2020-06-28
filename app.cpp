@@ -529,6 +529,258 @@ string str(isl_mat* const ineqmat) {
   return out.str();
 }
 
+isl_basic_set*
+form_farkas_constraints(isl_basic_set* constraints,
+    const map<string, string>& cmap,
+    const std::string& dname) {
+  auto ct = ctx(constraints);
+  auto fspace =
+    isl_space_set_alloc(ct, 0, 5);
+  auto fs =
+    isl_basic_set_universe(fspace);
+  return fs;
+  //assert(false);
+
+  //cout << "Deps..." << endl;
+  //for (auto d : deps) {
+    //cout << tab(1) << str(d) << endl;
+  //}
+
+  //int next_column = 0;
+  //map<string, int> space_var_offsets;
+  //map<isl_map*, int> div_offsets;
+  //int total_constraints = 0;
+  //int space_offset = 0;
+  //int total_divs = 0;
+
+  ////cout << "Iter stage dependencies..." << endl;
+  //for (auto m : deps) {
+    ////cout << tab(1) << str(m) << endl;
+    //vector<isl_basic_map*> basics = get_basic_maps(m);
+    //assert(basics.size() == 1);
+
+    //auto bm = basics.at(0);
+    //auto ls = isl_basic_map_get_local_space(bm);
+    //div_offsets[m] = total_divs;
+    //total_divs += isl_local_space_dim(ls, isl_dim_div);
+
+    //if (!contains_key(domain_name(m), space_var_offsets)) {
+      //space_var_offsets[domain_name(m)] = space_offset;
+      //space_offset += isl_local_space_dim(ls, isl_dim_in);
+    //}
+
+    //if (!contains_key(range_name(m), space_var_offsets)) {
+      //space_var_offsets[range_name(m)] = space_offset;
+      //space_offset += isl_local_space_dim(ls, isl_dim_out);
+    //}
+
+    //auto eqmat = isl_basic_map_equalities_matrix(bm,
+        //isl_dim_cst,
+        //isl_dim_in,
+        //isl_dim_out,
+        //isl_dim_div,
+        //isl_dim_param);
+    ////cout << "Eq Rows: " << isl_mat_rows(eqmat) << endl;
+    ////cout << "Eq Cols: " << isl_mat_cols(eqmat) << endl;
+
+    //total_constraints += 2*isl_mat_rows(eqmat);
+
+    //auto ineqmat = isl_basic_map_inequalities_matrix(bm,
+        //isl_dim_cst,
+        //isl_dim_in,
+        //isl_dim_out,
+        //isl_dim_div,
+        //isl_dim_param);
+    ////cout << "Ineq Rows: " << isl_mat_rows(ineqmat) << endl;
+    ////cout << "Ineq Cols: " << isl_mat_cols(ineqmat) << endl;
+
+    //assert(isl_mat_cols(ineqmat) == isl_mat_cols(eqmat));
+
+    //total_constraints += isl_mat_rows(ineqmat);
+
+    ////for (int r = 0; r < isl_mat_rows(ineqmat); r++) {
+      ////for (int c = 0; c < isl_mat_cols(ineqmat); c++) {
+        ////cout << str(isl_mat_get_element_val(ineqmat, r, c)) << " ";
+      ////}
+      ////cout << endl;
+    ////}
+
+    ////cout << endl << endl;
+  //}
+
+  //int num_dependence_edges = deps.size();
+  //int num_constraints = total_constraints;
+  //int num_divs = total_divs;
+  //int num_spaces = space_offset;
+
+  //sym_matrix<QExpr> S(num_dependence_edges, num_spaces + num_divs);
+  //map<isl_map*, int> edge_rows;
+  //int constraint_row = 0;
+  //for (auto d : deps) {
+    //edge_rows[d] = constraint_row;
+
+    //string producer = domain_name(d);
+    //string consumer = range_name(d);
+
+    //int producer_sched_col = map_find(producer, space_var_offsets);
+    //int consumer_sched_col = map_find(consumer, space_var_offsets);
+
+
+    //S(constraint_row, producer_sched_col) = qexpr(-1) * schedvar(producer);
+    //S(constraint_row, consumer_sched_col) = qexpr(1) * schedvar(consumer);
+
+    //constraint_row++;
+  //}
+
+  //sym_matrix<QExpr> L(num_dependence_edges, num_constraints);
+  //for (int r = 0; r < L.num_rows(); r++) {
+    //for (int c = 0; c < L.num_cols(); c++) {
+      //L(r, c) = qexpr("L_" + str(r) + "_" + str(c));
+    //}
+  //}
+
+  //sym_matrix<QExpr> A(num_constraints, num_spaces + num_divs);
+  //sym_matrix<QExpr> b(num_constraints, 1);
+
+  //cout << "S..." << S.num_rows() << ", " << S.num_cols() << endl;
+  //cout << S << endl << endl;
+
+  //cout << "L..." << L.num_rows() << ", " << L.num_cols() << endl;
+  //cout << L << endl << endl;
+
+  //cout << "A..." << A.num_rows() << ", " << A.num_cols() << endl;
+  //int constraints_entered = 0;
+  //for (auto dr : edge_rows) {
+    //isl_map* dep_edge = dr.first;
+
+    //vector<isl_basic_map*> basics = get_basic_maps(dep_edge);
+    //assert(basics.size() == 1);
+
+    //auto bm = basics.at(0);
+
+    //auto eqmat = isl_basic_map_equalities_matrix(bm,
+        //isl_dim_cst,
+        //isl_dim_in,
+        //isl_dim_out,
+        //isl_dim_div,
+        //isl_dim_param);
+    //cout << "Eq Rows: " << isl_mat_rows(eqmat) << endl;
+    //cout << "Eq Cols: " << isl_mat_cols(eqmat) << endl;
+
+    //assert(isl_mat_cols(eqmat) == 3);
+
+    //string producer = domain_name(dep_edge);
+    //string consumer = range_name(dep_edge);
+
+    //for (int r = 0; r < isl_mat_rows(eqmat); r++) {
+      //isl_val* producer_coeff = isl_mat_get_element_val(eqmat, r, 1);
+      //isl_val* consumer_coeff = isl_mat_get_element_val(eqmat, r, 2);
+
+      //int pc = stoi(str(producer_coeff));
+      //isl_val* cv = isl_mat_get_element_val(eqmat, r, 0);
+      //b(constraints_entered, 0) = qexpr(stoi(str(cv)));
+
+      //A(constraints_entered, map_find(producer, space_var_offsets)) =
+        //qexpr(pc);
+      //int cc = stoi(str(consumer_coeff));
+      //A(constraints_entered, map_find(consumer, space_var_offsets)) =
+        //qexpr(cc);
+      //constraints_entered++;
+
+      //b(constraints_entered, 0) = qexpr(-1*stoi(str(cv)));
+
+      //A(constraints_entered, map_find(producer, space_var_offsets)) =
+        //qexpr(-pc);
+      //A(constraints_entered, map_find(consumer, space_var_offsets)) =
+        //qexpr(-cc);
+      //constraints_entered++;
+    //}
+
+    //auto ineqmat = isl_basic_map_inequalities_matrix(bm,
+        //isl_dim_cst,
+        //isl_dim_in,
+        //isl_dim_out,
+        //isl_dim_div,
+        //isl_dim_param);
+    //cout << "InEq Rows: " << isl_mat_rows(ineqmat) << endl;
+    //cout << "InEq Cols: " << isl_mat_cols(ineqmat) << endl;
+
+    //assert(isl_mat_cols(ineqmat) == 3);
+
+    //for (int r = 0; r < isl_mat_rows(ineqmat); r++) {
+      //isl_val* cv = isl_mat_get_element_val(ineqmat, r, 0);
+      //b(constraints_entered, 0) = qexpr(stoi(str(cv)));
+
+      //isl_val* producer_coeff = isl_mat_get_element_val(ineqmat, r, 1);
+      //isl_val* consumer_coeff = isl_mat_get_element_val(ineqmat, r, 2);
+
+      //int pc = stoi(str(producer_coeff));
+      //A(constraints_entered, map_find(producer, space_var_offsets)) =
+        //qexpr(pc);
+      //int cc = stoi(str(consumer_coeff));
+      //A(constraints_entered, map_find(consumer, space_var_offsets)) =
+        //qexpr(cc);
+      //constraints_entered++;
+    //}
+  //}
+
+  //cout << "Constraints entered: " << constraints_entered << endl;
+  //cout << "Total constraints  : " << total_constraints << endl;
+  //assert(constraints_entered == total_constraints);
+
+  //cout << A << endl << endl;
+
+  //sym_matrix<QExpr> system =
+    //S - L*A;
+
+  //for (int r = 0; r < system.num_rows(); r++) {
+    //for (int c = 0; c < system.num_cols(); c++) {
+      //system(r, c).simplify();
+    //}
+  //}
+
+  //std::set<string> vars;
+  //for (int r = 0; r < system.num_rows(); r++) {
+    //for (int c = 0; c < system.num_cols(); c++) {
+      //for (auto v : system(r, c).vars()) {
+        //vars.insert(v.get_name());
+      //}
+    //}
+  //}
+  //cout << "# of vars: " << vars.size() << endl;
+  //cout << "system(" << system.num_rows() << ", " << system.num_cols() << ")" << endl;
+  //cout << system << endl;
+  //assert(false);
+
+  //sym_matrix<QExpr> l(num_dependence_edges, 1);
+  //sym_matrix<QExpr> d(num_dependence_edges, 1);
+
+  //for (auto dep : deps) {
+    //string producer = domain_name(dep);
+    //string consumer = range_name(dep);
+    //d(map_find(dep, edge_rows), 0) = delayvar(consumer) - delayvar(producer);
+    //l(map_find(dep, edge_rows), 0) = qexpr("Lc_" + str(map_find(dep, edge_rows)));
+  //}
+
+
+  //cout << "Delays..." << endl;
+  //cout << d << endl;
+
+  //cout << "B values..." << endl;
+  //cout << b << endl;
+
+  //cout << "l values..." << endl;
+  //cout << l << endl;
+
+  //sym_matrix<QExpr> delay_system =
+    //d - L*b - l;
+
+  //cout << "Delay system..." << endl;
+  //cout << delay_system << endl;
+
+  //return {system, delay_system};
+}
+
 umap* opt_schedule_dimension(vector<isl_map*> deps) {
 
   //cout << "Deps..." << endl;
