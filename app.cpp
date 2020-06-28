@@ -533,11 +533,52 @@ isl_basic_set*
 form_farkas_constraints(isl_basic_set* constraints,
     const map<string, string>& cmap,
     const std::string& dname) {
+
+  cout << "constraints: " << str(constraints) << endl;
+
+  auto ineqs = isl_basic_set_inequalities_matrix(constraints,
+      isl_dim_set,
+      isl_dim_cst,
+      isl_dim_div,
+      isl_dim_param);
+  auto eqs = isl_basic_set_equalities_matrix(constraints,
+      isl_dim_set,
+      isl_dim_cst,
+      isl_dim_div,
+      isl_dim_param);
+
+  int cdim = cmap.size();
+
+  assert(isl_mat_rows(eqs) == 0);
+  cout << "# of columns = " << isl_mat_cols(eqs) << endl;
+  cout << "cdim         = " << cdim << endl;
+  assert(isl_mat_cols(ineqs) == cdim + 1);
+  assert(isl_mat_cols(eqs) == cdim + 1);
+
+  cout << "Ineqs..." << endl;
+  cout << str(ineqs) << endl;
+  //for (int r = 0; r < isl_mat_rows(ineqs); r++) {
+    //for (int c = 0; c < isl_mat_cols(ineqs); c++) {
+      //cout << str(isl_mat_get_coefficient(ineqs, r, c)) << " ";
+    //}
+    //cout << endl;
+  //}
+  int num_farkas = isl_mat_rows(ineqs) + 2*isl_mat_rows(eqs);
+
+
+  int farkas_dim = num_farkas + cdim + 2;
+
   auto ct = ctx(constraints);
   auto fspace =
-    isl_space_set_alloc(ct, 0, 5);
+    isl_space_set_alloc(ct, 0, farkas_dim);
   auto fs =
     isl_basic_set_universe(fspace);
+
+  // Layout [c1, ..., cN, d, l1, ..., lM, l0]
+  int farkas_var_offset = cdim + 1;
+  for (int i = 0; i < num_farkas; i++) {
+
+  }
   return fs;
   //assert(false);
 

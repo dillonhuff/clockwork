@@ -9129,7 +9129,7 @@ isl_val* constant(isl_aff* a) {
 void playground() {
   {
     isl_ctx* ctx = isl_ctx_alloc();
-    auto s = rdset(ctx, "{ [x] : x >= 0 }");
+    auto s = rdset(ctx, "{ [x] : 2*x >= 5 and x < 19}");
     auto fs = form_farkas_constraints(to_bset(s), {{"x", "II_x"}}, "d");
     cout << "fs = " << str(fs) << endl;
     auto pt = sample(fs);
