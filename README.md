@@ -10,11 +10,13 @@ Clockwork is a tool for compiling naive descriptions of hardware accelerators wr
 * `ubuffer.h` - The header file which stores the `UBuffer` class, which represents re-use buffers that store data between compute operations.
 * `prog.h` - The header file which stores the `prog` class, which is the clockwork input representation.
 
+## AWS F1 Quick Start
+
+For a full setup script for AWS F1 with Developer AMI 1.8.1 see: [./misc/aws\_setup.sh](./misc/aws_setup.sh).
+
 ## Dependencies
 
 Examples of how to install the dependencies can be found in [./misc/install\_deps\_mac.sh](./misc/install_deps_mac.sh) and [./misc/install\_deps\_linux.sh](./misc/install\_deps\_linux.sh).
-
-For a full setup script for AWS F1 with Developer AMI 1.8.1 see: [./misc/aws\_setup.sh](./misc/aws_setup.sh).
 
 Please install the specific versions of the listed dependencies. Do
 not just take the latest release of NTL or barvinok.
