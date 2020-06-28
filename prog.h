@@ -1386,3 +1386,6 @@ void generate_verilog(CodegenOptions& options,
     prog& prg,
     umap* schedmap);
 
+umap* hardware_schedule(prog& prg);
+
+std::string optimized_code_string(prog& prg);

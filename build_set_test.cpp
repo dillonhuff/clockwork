@@ -10321,19 +10321,63 @@ void emit_lake_controller_config(const std::string& filename, isl_set* write_dom
 
 void lake_agg_sram_tb_config_test() {
 
-  isl_ctx* ctx = isl_ctx_alloc();
-  {
-    isl_set* write_domain = rdset(ctx, "{ in2agg[a, b] : 0 <= a <= 8 and 0 <= b <= 3 }");
-    isl_aff* write_sched = rdaff(ctx, "{ op[a] -> [(2*a)]}");
-    isl_aff* write_addr = rdaff(ctx, "{ op[a] -> [(a)]}");
+  prog lake_agg("lake_agg_test");
+  lake_agg.add_input("in");
+  lake_agg.add_output("out");
 
-    cout << "write domain: " << str(write_domain) << endl;
-    cout << "write  sched: " << str(write_sched) << endl;
+  auto in2agg = lake_agg.add_nest("a1", 0, 8, "a0", 0, 4)->add_op("in2agg");
+  in2agg->add_load("in", "a0, a1");
+  in2agg->add_store("agg", "a0, a1");
 
-    emit_lake_controller_config("test_write_domain.csv", write_domain, write_sched, write_addr);
+  auto agg2sram = lake_agg.add_nest("as1", 0, 8, "as0", 0, 1)->add_op("agg2sram");
+  for (int i = 0; i < 4; i++) {
+    agg2sram->add_load("agg", str(i) + ", as1");
+  }
+  agg2sram->add_store("sram", "as1");
+
+  auto sram2tb = lake_agg.add_nest("at1", 0, 8, "at0", 0, 1)->add_op("sram2tb");
+  sram2tb->add_load("sram", "at1");
+  for (int i = 0; i < 4; i++) {
+    sram2tb->add_store("tb", str(i) + ", at1");
   }
 
-  isl_ctx_free(ctx);
+  auto tb2out = lake_agg.add_nest("ao1", 0, 8, "ao0", 0, 4)->add_op("tb2out");
+  tb2out->add_load("tb", "ao0, ao1");
+  tb2out->add_store("out", "ao0, ao1");
+
+  auto valid = lake_agg.validity_deps();
+
+  lake_agg.pretty_print();
+  cout << "validity: " << str(valid) << endl;
+  cout << "Schedule..." << endl;
+  auto hs = hardware_schedule(lake_agg);
+  hs = its(hs, lake_agg.whole_iteration_domain());
+  //for (auto m : get_maps(hardware_schedule(lake_agg))) {
+    //cout << tab(1) << str(m) << endl;
+  //}
+  cmd("mkdir -p ./lake_controllers/identity_stream/");
+  for (auto m : get_maps(hs)) {
+    cout << tab(1) << str(m) << endl;
+    auto dom = domain(m);
+    auto write_sched = m;
+    isl_aff* write_addr =
+      rdaff(lake_agg.ctx, "{ " + domain_name(m) + "[root, a, b] -> [(2*a + b)] }");
+    emit_lake_controller_config("./lake_controllers/identity_stream/" + domain_name(m) + ".csv", dom, get_aff(write_sched), write_addr);
+  }
+  assert(false);
+  //isl_ctx* ctx = isl_ctx_alloc();
+  //{
+    //isl_set* write_domain = rdset(ctx, "{ in2agg[a, b] : 0 <= a <= 8 and 0 <= b <= 3 }");
+    //isl_aff* write_sched = rdaff(ctx, "{ op[a] -> [(2*a)]}");
+    //isl_aff* write_addr = rdaff(ctx, "{ op[a] -> [(a)]}");
+
+    //cout << "write domain: " << str(write_domain) << endl;
+    //cout << "write  sched: " << str(write_sched) << endl;
+
+    //emit_lake_controller_config("test_write_domain.csv", write_domain, write_sched, write_addr);
+  //}
+
+  //isl_ctx_free(ctx);
 }
 
 void lake_accessor_config_test() {
@@ -10364,25 +10408,16 @@ void lake_accessor_config_test() {
   //assert(false);
 }
 
-umap* hardware_schedule(prog& prg) {
-  auto hs = hardware_schedule_umap(prg.whole_iteration_domain(), prg.validity_deps(), prg.validity_deps());
-  return hs;
-}
-
-std::string optimized_code_string(prog& prg) {
-  auto sched = prg.optimized_codegen();
-  cout << "sched map" << str(sched) << endl;
-  return codegen_c(its(sched, prg.whole_iteration_domain()));
-}
-
 void adobe_downsample_two_adds() {
   prog prg("adobe_downsample");
   prg.add_input("off_chip_image");
   prg.add_output("out");
 
-  auto ld = prg.add_nest("yl", 0, 32, "xl", 0, 32)->add_op("load_from_off_chip");
-  ld->add_load("off_chip_image", "xl", "yl");
-  ld->add_store("image", "xl", "yl");
+  auto ld = prg.add_nest("yl", 0, 32, "xl", 0, 16)->add_op("load_from_off_chip");
+  ld->add_load("off_chip_image", "2*xl", "yl");
+  ld->add_load("off_chip_image", "2*xl + 1", "yl");
+  ld->add_store("image", "2*xl", "yl");
+  ld->add_store("image", "2*xl + 1", "yl");
 
   {
     auto ds = prg.add_nest("y", 0, 16, "x", 0, 16)->add_op("downsample");
@@ -10434,10 +10469,17 @@ void adobe_downsample() {
   }
 
   prg.pretty_print();
+  cmd("mkdir -p ./lake_controllers/identity_stream/");
+
   cout << optimized_code_string(prg) << endl;
   auto hs = hardware_schedule(prg);
   for (auto m : get_maps(hs)) {
     cout << tab(1) << str(m) << endl;
+    auto dom = domain(m);
+    auto write_sched = m;
+    isl_aff* write_addr =
+      rdaff(prg.ctx, domain_name(m) + "[a, b] -> [(2*a + b)]");
+    emit_lake_controller_config("./lake_controllers/identity_stream/" + domain_name(m) + ".csv", dom, get_aff(write_sched), write_addr);
   }
   assert(false);
   regression_test(prg);
@@ -10476,9 +10518,9 @@ void adobe_sharpen() {
 }
 
 void adobe_meeting_apps() {
-  adobe_downsample();
-  assert(false);
   adobe_downsample_two_adds();
+  assert(false);
+  adobe_downsample();
   adobe_sharpen();
 }
 
@@ -10542,8 +10584,8 @@ void halide_up_sample_test() {
 }
 
 void application_tests() {
-  adobe_meeting_apps();
   lake_agg_sram_tb_config_test();
+  adobe_meeting_apps();
   lake_accessor_config_test();
   halide_frontend_test();
   halide_cascade_test();

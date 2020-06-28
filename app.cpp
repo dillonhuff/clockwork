@@ -1422,12 +1422,7 @@ hardware_schedule(
   map<string, isl_val*> delays;
   for (auto c : clks) {
     vector<isl_val*> final_iss;
-    isl_val* d = nullptr;
-    for (int i = 0; i < sorted_sets.size(); i++) {
-      if (sorted_sets.at(i) == c.first) {
-        d = isl_val_int_from_si(ct, i);
-      }
-    }
+    isl_val* d = zero(ct);
 
     //zero(ct);
     assert(d != nullptr);
@@ -1441,7 +1436,15 @@ hardware_schedule(
     }
     cout << endl;
     iis[c.first] = final_iss;
-    delays[c.first] = d;
+    isl_val* opos = nullptr;
+    for (int i = 0; i < sorted_sets.size(); i++) {
+      if (sorted_sets.at(i) == c.first) {
+        opos = isl_val_int_from_si(ct, i);
+        break;
+      }
+    }
+    assert(opos != nullptr);
+    delays[c.first] = add(d, opos);
   }
   //assert(false);
 

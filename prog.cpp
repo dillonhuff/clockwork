@@ -1,5 +1,7 @@
-#include "codegen.h"
 #include "prog.h"
+
+#include "codegen.h"
+#include "app.h"
 
 std::string us(const std::string& a, const std::string& b) {
   return a + "_" + b;
@@ -2854,3 +2856,15 @@ void generate_verilog(CodegenOptions& options,
   out << "endmodule" << endl;
   out.close();
 }
+
+umap* hardware_schedule(prog& prg) {
+  auto hs = hardware_schedule_umap(prg.whole_iteration_domain(), prg.validity_deps(), prg.validity_deps());
+  return hs;
+}
+
+std::string optimized_code_string(prog& prg) {
+  auto sched = prg.optimized_codegen();
+  cout << "sched map" << str(sched) << endl;
+  return codegen_c(its(sched, prg.whole_iteration_domain()));
+}
+
