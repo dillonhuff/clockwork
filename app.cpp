@@ -531,7 +531,7 @@ string str(isl_mat* const ineqmat) {
 
 isl_basic_set*
 form_farkas_constraints(isl_basic_set* constraints,
-    const map<string, string>& cmap,
+    const vector<pair<string, string> >& cvals,
     const std::string& dname) {
 
   cout << "constraints: " << str(constraints) << endl;
@@ -547,7 +547,7 @@ form_farkas_constraints(isl_basic_set* constraints,
       isl_dim_div,
       isl_dim_param);
 
-  int cdim = cmap.size();
+  int cdim = cvals.size();
 
   assert(isl_mat_rows(eqs) == 0);
   cout << "# of columns = " << isl_mat_cols(eqs) << endl;
@@ -576,8 +576,11 @@ form_farkas_constraints(isl_basic_set* constraints,
 
   // Layout [c1, ..., cN, d, l1, ..., lM, l0]
   int farkas_var_offset = cdim + 1;
-  for (int i = 0; i < num_farkas; i++) {
-
+  for (int c = 0; c < isl_mat_cols(ineqs) - 1; c++) {
+    cout << "c " << c << " = " << cvals.at(c).second;
+    for (int i = 0; i < num_farkas; i++) {
+      cout << tab(1) << "farkas coeff " << i << ", " << c << " = " << str(isl_mat_get_element_val(ineqs, i, c)) << endl;
+    }
   }
   return fs;
   //assert(false);
