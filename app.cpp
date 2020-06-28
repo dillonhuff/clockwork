@@ -575,12 +575,17 @@ form_farkas_constraints(isl_basic_set* constraints,
     isl_basic_set_universe(fspace);
 
   // Layout [c1, ..., cN, d, l1, ..., lM, l0]
-  int farkas_var_offset = cdim + 1;
+  int farkas_var_offset = cdim;
   for (int c = 0; c < isl_mat_cols(ineqs) - 1; c++) {
+    auto constraint = isl_constraint_alloc_equality(get_local_space(fs));
     cout << "c " << c << " = " << cvals.at(c).second;
+    isl_constraint_set_coefficient_si(constraint, isl_dim_set, c, 1);
     for (int i = 0; i < num_farkas; i++) {
-      cout << tab(1) << "farkas coeff " << i << ", " << c << " = " << str(isl_mat_get_element_val(ineqs, i, c)) << endl;
+      auto fc = mul(negone(ct), isl_mat_get_element_val(ineqs, i, c));
+      isl_constraint_set_coefficient_val(constraint, isl_dim_set, farkas_var_offset + i, fc);
+      //cout << tab(1) << "farkas coeff " << i << ", " << c << " = " << str(isl_mat_get_element_val(ineqs, i, c)) << endl;
     }
+    fs = isl_basic_set_add_constraint(fs, constraint);
   }
   return fs;
   //assert(false);
