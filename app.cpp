@@ -575,18 +575,41 @@ form_farkas_constraints(isl_basic_set* constraints,
     isl_basic_set_universe(fspace);
 
   // Layout [c1, ..., cN, d, l1, ..., lM, l0]
-  int farkas_var_offset = cdim;
+  int farkas_var_offset = cdim + 1;
   for (int c = 0; c < isl_mat_cols(ineqs) - 1; c++) {
     auto constraint = isl_constraint_alloc_equality(get_local_space(fs));
-    cout << "c " << c << " = " << cvals.at(c).second;
-    isl_constraint_set_coefficient_si(constraint, isl_dim_set, c, 1);
+    cout << "c " << c << " = " << cvals.at(c).second << endl;
+    constraint = isl_constraint_set_coefficient_si(constraint, isl_dim_set, c, 1);
     for (int i = 0; i < num_farkas; i++) {
       auto fc = mul(negone(ct), isl_mat_get_element_val(ineqs, i, c));
-      isl_constraint_set_coefficient_val(constraint, isl_dim_set, farkas_var_offset + i, fc);
-      //cout << tab(1) << "farkas coeff " << i << ", " << c << " = " << str(isl_mat_get_element_val(ineqs, i, c)) << endl;
+      constraint = isl_constraint_set_coefficient_val(constraint, isl_dim_set, farkas_var_offset + i, fc);
     }
     fs = isl_basic_set_add_constraint(fs, constraint);
   }
+
+  auto constraint = isl_constraint_alloc_equality(get_local_space(fs));
+  constraint = isl_constraint_set_coefficient_si(constraint, isl_dim_set, cdim, 1);
+  constraint = isl_constraint_set_coefficient_si(constraint, isl_dim_set, farkas_var_offset + num_farkas, -1);
+  for (int i = 0; i < num_farkas; i++) {
+    isl_val* b = isl_mat_get_element_val(ineqs, i, isl_mat_cols(ineqs) - 1);
+    b = mul(negone(ct), b);
+    cout << "b " << i << " = " << str(b) << endl;
+    constraint = isl_constraint_set_coefficient_val(constraint, isl_dim_set, farkas_var_offset + i, b);
+
+    {
+      auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
+      non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, farkas_var_offset + i, 1);
+      fs = isl_basic_set_add_constraint(fs, non_neg);
+    }
+  }
+
+  {
+    auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
+    non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, farkas_var_offset + num_farkas, 1);
+    fs = isl_basic_set_add_constraint(fs, non_neg);
+  }
+  cout << "adding constant constraint: " << str(constraint) << endl;
+  fs = isl_basic_set_add_constraint(fs, constraint);
 
   for (int c = 0; c < isl_mat_cols(ineqs) - 1; c++) {
     fs = isl_basic_set_set_dim_name(fs, isl_dim_set, c, cvals.at(c).second.c_str());
