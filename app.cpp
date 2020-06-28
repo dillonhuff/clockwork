@@ -587,6 +587,10 @@ form_farkas_constraints(isl_basic_set* constraints,
     }
     fs = isl_basic_set_add_constraint(fs, constraint);
   }
+
+  for (int c = 0; c < isl_mat_cols(ineqs) - 1; c++) {
+    fs = isl_basic_set_set_dim_name(fs, isl_dim_set, c, cvals.at(c).second.c_str());
+  }
   return fs;
   //assert(false);
 
