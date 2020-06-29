@@ -31,7 +31,8 @@ not just take the latest release of NTL or barvinok.
 ## Setting Your private\_settings.sh
 
 The clockwork build script requires some paths and environment variables to be set in
-a script called `./user_settings\_private_settings.sh`. Several example private settings
+a script called `./user_settings\private_settings.sh`. You will need to create this script
+since each user has their own private settings. Several example private settings
 files can be found in `./user_settings/`. In particular if you used [./misc/install\_deps\_linux.sh](./misc/install\_deps\_linux.sh) you will probably want to use [./user_settings/linux\_settings\_template.sh](./user_settings/linux\_settings\_template.sh).
 
 # Building an example 
