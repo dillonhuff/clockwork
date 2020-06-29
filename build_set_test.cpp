@@ -10457,7 +10457,11 @@ void lake_agg_sram_tb_config_test() {
 umap* clockwork_schedule(prog& prg) {
   auto valid = prg.validity_deps();
   auto dom = prg.whole_iteration_domain();
-  //auto doms = get_sets(dom);
+  auto doms = get_sets(dom);
+  auto valids = get_maps(valid);
+  auto topologically_sorted =
+    topological_sort(doms, valids);
+
   auto cs =
     clockwork_schedule(dom, valid, cpy(valid));
   umap* csm = (isl_union_map_read_from_str(prg.ctx, "{}"));
@@ -10474,12 +10478,26 @@ umap* clockwork_schedule(prog& prg) {
       aff = set_coeff(aff, d, get_coeff(sched.second.at(d), 0));
       isl_multi_aff_set_aff(sched_aff, d, aff);
     }
+
+
+    {
+      isl_local_space* aff_space = local_set_space(prg.ctx, num_dims);
+      isl_aff* aff = isl_aff_zero_on_domain(aff_space);
+
+      int pos = -1;
+      for (int i = 0; i < topologically_sorted.size(); i++) {
+        if (topologically_sorted.at(i) == sched.first) {
+          pos = i;
+          break;
+        }
+      }
+      assert(pos >= 0);
+      aff = set_const_coeff(aff, isl_val_int_from_si(prg.ctx, pos));
+      isl_multi_aff_set_aff(sched_aff, num_dims, aff);
+    }
+
     auto m = isl_map_from_multi_aff(sched_aff);
     m = set_domain_name(m, sched.first);
-    //for (int i = 0; i < num_dims; i++) {
-
-    //}
-    //auto m = isl_map_read_from_str(prg.ctx, ("{" + sched.first + "[x] -> [x] }").c_str());
     csm = unn(csm, to_umap(m));
   }
   return csm;

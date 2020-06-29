@@ -1039,3 +1039,7 @@ isl_basic_set*
 form_farkas_constraints(isl_basic_set* constraints,
     const vector<pair<string, string> >& cmap,
     const std::string& dname);
+
+
+vector<std::string> topological_sort(const vector<isl_set*>& sets,
+    const vector<isl_map*>& maps);
