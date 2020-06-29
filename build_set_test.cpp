@@ -9650,7 +9650,7 @@ void histogram_test() {
   int res = system(string("g++ -fstack-protector-all -std=c++11 -c unoptimized_" + prg.name + ".cpp").c_str());
   assert(res == 0);
 
-  int compile_res = system("clang++ -std=c++11 unoptimized_histogram.cpp ./manual_tbs/histogram_tb.cpp -I .");
+  int compile_res = system("g++ -std=c++11 unoptimized_histogram.cpp ./manual_tbs/histogram_tb.cpp -I .");
   assert(compile_res == 0);
 
   int run_res = system("./a.out");
@@ -10774,9 +10774,10 @@ void halide_up_sample_test() {
 }
 
 void application_tests() {
-  adobe_meeting_apps();
+  histogram_test();
+  //adobe_meeting_apps();
   halide_up_sample_test();
-  playground();
+  //playground();
   //assert(false);
   
   lake_agg_sram_tb_config_test();
@@ -10785,7 +10786,7 @@ void application_tests() {
   weight_streaming_test();
   weight_streaming_test();
 
-  mmul_outer_prod_test();
+  //mmul_outer_prod_test();
   tricky_shift_register_reconvergence_test();
   sum_denoise_test();
   sum_diffs_test();
@@ -10809,7 +10810,6 @@ void application_tests() {
   mini_conv_halide_test();
   reduce_1d_test();
   //register_file_optimization_test();
-  histogram_test();
   reaccess_no_hierarchy_test();
   reaccess_no_hierarchy_rolled_test();
   reduce_rows_test();
