@@ -10462,18 +10462,18 @@ umap* clockwork_schedule(prog& prg) {
     clockwork_schedule(dom, valid, cpy(valid));
   umap* csm = (isl_union_map_read_from_str(prg.ctx, "{}"));
   for (auto sched : cs) {
-    //isl_set* dom = nullptr;
-    //for (auto d : doms) {
-      //if (name(d) == sched.first) {
-        //dom = d;
-        //break;
-      //}
-    //}
-    //assert(dom != nullptr);
 
     int num_dims = sched.second.size();
     isl_multi_aff* sched_aff =
       isl_multi_aff_zero(map_space(prg.ctx, num_dims, num_dims + 1));
+
+    for (int d = 0; d < num_dims; d++) {
+      isl_local_space* aff_space = local_set_space(prg.ctx, num_dims);
+      isl_aff* aff = isl_aff_zero_on_domain(aff_space);
+      aff = set_const_coeff(aff, const_coeff(sched.second.at(d)));
+      aff = set_coeff(aff, d, get_coeff(sched.second.at(d), 0));
+      isl_multi_aff_set_aff(sched_aff, d, aff);
+    }
     auto m = isl_map_from_multi_aff(sched_aff);
     m = set_domain_name(m, sched.first);
     //for (int i = 0; i < num_dims; i++) {
