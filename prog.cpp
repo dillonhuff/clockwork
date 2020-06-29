@@ -2021,8 +2021,8 @@ void generate_app_code(CodegenOptions& options,
 
 
   string code_string =
-    perfect_loop_codegen(schedmap);
-    //options.code_string;
+    //perfect_loop_codegen(schedmap);
+    options.code_string;
   if (!options.use_custom_code_string) {
     code_string = codegen_c(schedmap);
     //code_string = perfect_loop_codegen(schedmap);
