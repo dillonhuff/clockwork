@@ -61,6 +61,8 @@ struct ir_node {
 
   ir_node() : parent(nullptr), is_loop(false), unroll_factor(1) {}
 
+  void copy_fields_from(op* other){}
+
   bool dynamic_writes(const std::string& buf) {
     for (auto d : dynamic_store_addresses) {
       if (d.buffer == buf) {
@@ -1355,5 +1357,3 @@ bool writes(const std::string& target_buf, op* p);
 op* find_writer(const std::string& target_buf, prog& prg);
 
 std::set<string> get_producers(string next_kernel, prog& prg);
-
-
