@@ -86,6 +86,7 @@ bool is_zero(isl_val* c);
 isl_local_space* get_local_space(isl_set* const m);
 isl_local_space* get_local_space(isl_constraint* const m);
 isl_local_space* get_local_space(isl_basic_set* const m);
+isl_local_space* get_local_space(isl_basic_map* const m);
 isl_local_space* get_local_space(isl_aff* const m);
 isl_space* get_space(isl_constraint* const m);
 
@@ -95,6 +96,7 @@ isl_space* get_space(isl_map* const m);
 
 isl_space* get_space(isl_set* const m);
 isl_space* get_space(isl_basic_set* const m);
+isl_space* get_space(isl_basic_map* const m);
 isl_space* get_space(isl_union_set* const m);
 isl_space* get_space(isl_aff* const m);
 
@@ -221,6 +223,7 @@ isl_ctx* ctx(isl_point* const m);
 isl_ctx* ctx(isl_constraint* const m);
 
 isl_ctx* ctx(isl_basic_set* const m);
+isl_ctx* ctx(isl_basic_map* const m);
 isl_ctx* ctx(isl_set* const m);
 
 isl_ctx* ctx(isl_space* const m);
@@ -495,8 +498,10 @@ isl_set* universe(isl_space* s);
 isl_set* add_constraint(isl_set* s, isl_constraint* c);
 
 
+int num_div_dims(isl_local_space* const ls);
 int num_out_dims(isl_space* const s);
 int num_in_dims(isl_space* const s);
+int num_param_dims(isl_space* const s);
 int num_in_dims(isl_local_space* const s);
 int num_out_dims(isl_local_space* const s);
 
@@ -509,6 +514,11 @@ int num_out_dims(isl_aff* const s);
 
 int num_out_dims(isl_map* const s);
 int num_in_dims(isl_map* const s);
+
+int num_out_dims(isl_basic_map* const s);
+int num_in_dims(isl_basic_map* const s);
+int num_div_dims(isl_basic_map* const s);
+int num_param_dims(isl_basic_map* const s);
 
 vector<int> parse_pt(isl_point* p);
 
@@ -565,3 +575,4 @@ isl_union_map* diff(isl_union_map* const m0, isl_union_map* const m1);
 isl_aff* get_aff(isl_map* m);
 
 
+string str(isl_mat* const ineqmat);

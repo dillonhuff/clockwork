@@ -9129,12 +9129,6 @@ isl_val* constant(isl_aff* a) {
 void playground() {
   {
     isl_ctx* ctx = isl_ctx_alloc();
-    //auto sf = isl_basic_map_read_from_str(ctx, "{ [x] -> [x + 2] }");
-    //cout << "orig    = " << str(sf) << endl;
-    //auto wrapped = isl_basic_map_wrap(sf);
-    //cout << "wrapped = " << str(wrapped) << endl;
-    //assert(false);
-
     auto s = rdset(ctx, "{ [x] : x >= -4 and x < 19}");
     auto fs = form_farkas_constraints(to_bset(s), {{"x", "II_x"}}, "d");
     cout << "fs = " << str(fs) << endl;
@@ -10535,6 +10529,33 @@ void adobe_downsample_two_adds_epochs() {
   cout << optimized_code_string(prg) << endl;
 }
 
+isl_basic_set* flatten_bmap_to_bset(isl_basic_map* bm) {
+  auto ineqs = isl_basic_map_inequalities_matrix(bm, isl_dim_in, isl_dim_out, isl_dim_cst, isl_dim_div, isl_dim_param);
+
+  auto eqs = isl_basic_map_equalities_matrix(bm, isl_dim_in, isl_dim_out, isl_dim_cst, isl_dim_div, isl_dim_param);
+
+  cout << "bm = " << str(bm) << endl;
+
+  cout << "ineqs..." << endl;
+  cout << str(ineqs) << endl;
+
+  cout << "eqs..." << endl;
+  cout << str(eqs) << endl;
+
+  int set_dim =
+    num_in_dims(bm) + num_out_dims(bm);
+  int div_dims = num_div_dims(bm);
+  int param_dims = num_param_dims(bm);
+
+  assert(div_dims == 0);
+  assert(param_dims == 0);
+
+  auto s = isl_space_set_alloc(ctx(bm),
+      param_dims, set_dim);
+
+  return isl_basic_set_from_constraint_matrices(s, eqs, ineqs, isl_dim_set, isl_dim_cst, isl_dim_div, isl_dim_param);
+}
+
 void adobe_downsample_two_adds() {
   prog prg("adobe_downsample");
   prg.add_input("off_chip_image");
@@ -10563,6 +10584,42 @@ void adobe_downsample_two_adds() {
   }
 
   prg.pretty_print();
+  {
+    auto valid = prg.validity_deps();
+    auto dom = prg.whole_iteration_domain();
+    for (auto m : get_maps(valid)) {
+      cout << tab(1) << str(m) << endl;
+      auto maps = get_basic_maps(m);
+      cout << tab(1) << maps.size() << " basic maps" << endl;
+      for (auto bm : maps) {
+        cout << str(bm) << endl;
+        vector<pair<string, string> > diffs{{"root", "rdiff"}, {"x", "xdiff"}, {"y", "ydiff"}};
+        string ddiff = "ddiff";
+
+        isl_basic_set* basic_set_for_map = flatten_bmap_to_bset(bm);
+        auto fs = form_farkas_constraints(basic_set_for_map, diffs, ddiff);
+        cout << "fs = " << str(fs) << endl;
+
+        //auto extra_constraint0 = rdset(ctx, "{ [rdiff, a, b, c, d] : rdiff = 0 }");
+        //auto sol = its(extra_constraint0, to_set(fs));
+
+        //cout << "New fs = " << str(sol) << endl;
+        auto pt = sample(fs);
+        cout << "Example solution: " << str(pt) << endl;
+
+        assert(false);
+      }
+      //auto md = maps.at(0);
+      //cout << tab(2) << "basic map: " << str(md) << endl;
+    }
+    //auto fs = form_farkas_constraints(to_bset(s), {{"x", "II_x"}}, "d");
+    //cout << "fs = " << str(fs) << endl;
+    //auto extra_constraint = rdset(ctx, "{ [II_x, a, b, c, d] : II_x >= 1 }");
+    //auto sol = its(extra_constraint, to_set(fs));
+    //cout << "New fs = " << str(sol) << endl;
+    //auto pt = sample(sol);
+    //cout << "Example solution: " << str(pt) << endl;
+  }
   cout << optimized_code_string(prg) << endl;
   regression_test(prg);
   move_to_synthesis_folder(prg.name);
@@ -10649,8 +10706,8 @@ void adobe_sharpen() {
 }
 
 void adobe_meeting_apps() {
-  adobe_downsample();
   adobe_downsample_two_adds();
+  adobe_downsample();
   adobe_downsample_two_adds_epochs();
   adobe_sharpen();
 }
@@ -10717,12 +10774,9 @@ void halide_up_sample_test() {
 }
 
 void application_tests() {
-   //Failing in the *unoptimized* version
+  adobe_meeting_apps();
   halide_up_sample_test();
-
-  //playground();
-
-  //adobe_meeting_apps();
+  playground();
   //assert(false);
   
   lake_agg_sram_tb_config_test();

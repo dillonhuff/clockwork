@@ -518,17 +518,6 @@ vector<int> soda_offsets(const int app) {
   return {};
 }
 
-string str(isl_mat* const ineqmat) {
-  ostringstream out;
-  for (int r = 0; r < isl_mat_rows(ineqmat); r++) {
-    for (int c = 0; c < isl_mat_cols(ineqmat); c++) {
-      out << str(isl_mat_get_element_val(ineqmat, r, c)) << " ";
-    }
-    out << endl;
-  }
-  return out.str();
-}
-
 isl_basic_set*
 form_farkas_constraints(isl_basic_set* constraints,
     const vector<pair<string, string> >& cvals,

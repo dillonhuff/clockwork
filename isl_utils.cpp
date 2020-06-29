@@ -122,8 +122,16 @@ isl_local_space* get_local_space(isl_aff* const m) {
   return isl_aff_get_local_space(m);
 }
 
+isl_local_space* get_local_space(isl_basic_map* const m) {
+  return isl_basic_map_get_local_space(m);
+}
+
 isl_local_space* get_local_space(isl_basic_set* const m) {
   return isl_basic_set_get_local_space(m);
+}
+
+isl_space* get_space(isl_basic_map* const m) {
+  return isl_basic_map_get_space(m);
 }
 
 isl_space* get_space(isl_basic_set* const m) {
@@ -193,6 +201,10 @@ int num_in_dims(isl_multi_aff* const s) {
   return isl_multi_aff_dim(s, isl_dim_in);
 }
 
+int num_param_dims(isl_space* const s) {
+  return isl_space_dim(s, isl_dim_param);
+}
+
 int num_out_dims(isl_space* const s) {
   assert(isl_space_is_map(s));
   int ndims = isl_space_dim(s, isl_dim_out);
@@ -228,6 +240,10 @@ int num_in_dims(isl_map* const s) {
 int num_dims(isl_aff* const s) {
   auto ls = isl_aff_get_local_space(s);
   return isl_local_space_dim(ls, isl_dim_set);
+}
+
+int num_div_dims(isl_local_space* const ls) {
+  return isl_local_space_dim(ls, isl_dim_div);
 }
 
 int num_div_dims(isl_aff* const s) {
@@ -711,6 +727,10 @@ isl_ctx* ctx(isl_point* const m) {
 
 isl_ctx* ctx(isl_constraint* const m) {
   return isl_constraint_get_ctx(m);
+}
+
+isl_ctx* ctx(isl_basic_map* const m) {
+  return isl_basic_map_get_ctx(m);
 }
 
 isl_ctx* ctx(isl_basic_set* const m) {
@@ -2675,3 +2695,32 @@ isl_basic_set* to_bset(isl_set* m) {
   assert(sets.size() == 1);
   return sets.at(0);
 }
+
+
+int num_out_dims(isl_basic_map* const s) {
+  return num_out_dims(get_space(s));
+}
+
+int num_in_dims(isl_basic_map* const s) {
+  return num_in_dims(get_space(s));
+}
+
+int num_div_dims(isl_basic_map* const s) {
+  return num_div_dims(get_local_space(s));
+}
+
+int num_param_dims(isl_basic_map* const s) {
+  return num_param_dims(get_space(s));
+}
+
+string str(isl_mat* const ineqmat) {
+  ostringstream out;
+  for (int r = 0; r < isl_mat_rows(ineqmat); r++) {
+    for (int c = 0; c < isl_mat_cols(ineqmat); c++) {
+      out << str(isl_mat_get_element_val(ineqmat, r, c)) << " ";
+    }
+    out << endl;
+  }
+  return out.str();
+}
+
