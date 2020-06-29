@@ -10690,7 +10690,7 @@ prog halide_up_sample() {
 //store is: nearest_neighbor.stencil(nearest_neighbor.s0.x, nearest_neighbor.s0.y, nearest_neighbor.s0.z) = hw_input.stencil((nearest_neighbor.s0.x/2), (nearest_neighbor.s0.y/2), nearest_neighbor.s0.z)
   auto hcompute_nearest_neighbor_stencil = nearest_neighbor_s0_x->add_op("hcompute_nearest_neighbor_stencil");
   hcompute_nearest_neighbor_stencil->add_function("hcompute_nearest_neighbor_stencil");
-  hcompute_nearest_neighbor_stencil->add_load("hw_input_stencil", "(nearest_neighbor_s0_x/2)", "(nearest_neighbor_s0_y/2)", "nearest_neighbor_s0_z");
+  hcompute_nearest_neighbor_stencil->add_load("hw_input_stencil", "floor(nearest_neighbor_s0_x/2)", "floor(nearest_neighbor_s0_y/2)", "nearest_neighbor_s0_z");
   prg.buffer_port_widths["nearest_neighbor_stencil"] = 16;
   hcompute_nearest_neighbor_stencil->add_store("nearest_neighbor_stencil", "nearest_neighbor_s0_x", "nearest_neighbor_s0_y", "nearest_neighbor_s0_z");
 
@@ -10711,16 +10711,19 @@ prog halide_up_sample() {
 
 void halide_up_sample_test() {
   auto us = halide_up_sample();
+  us.pretty_print();
+  //assert(false);
   regression_test(us);
 }
 
 void application_tests() {
+   //Failing in the *unoptimized* version
+  halide_up_sample_test();
+
   //playground();
 
   //adobe_meeting_apps();
   //assert(false);
-  // Failing in the *unoptimized* version
-  //halide_up_sample_test();
   
   lake_agg_sram_tb_config_test();
   halide_frontend_test();
