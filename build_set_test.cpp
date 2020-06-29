@@ -10454,6 +10454,69 @@ void lake_agg_sram_tb_config_test() {
   ////assert(false);
 //}
 
+umap* clockwork_schedule(prog& prg) {
+  auto valid = prg.validity_deps();
+  auto dom = prg.whole_iteration_domain();
+  //auto doms = get_sets(dom);
+  auto cs =
+    clockwork_schedule(dom, valid, cpy(valid));
+  umap* csm = (isl_union_map_read_from_str(prg.ctx, "{}"));
+  for (auto sched : cs) {
+    //isl_set* dom = nullptr;
+    //for (auto d : doms) {
+      //if (name(d) == sched.first) {
+        //dom = d;
+        //break;
+      //}
+    //}
+    //assert(dom != nullptr);
+
+    int num_dims = sched.second.size();
+    isl_multi_aff* sched_aff =
+      isl_multi_aff_zero(map_space(prg.ctx, num_dims, num_dims + 1));
+    auto m = isl_map_from_multi_aff(sched_aff);
+    m = set_domain_name(m, sched.first);
+    //for (int i = 0; i < num_dims; i++) {
+
+    //}
+    //auto m = isl_map_read_from_str(prg.ctx, ("{" + sched.first + "[x] -> [x] }").c_str());
+    csm = unn(csm, to_umap(m));
+  }
+  return csm;
+}
+
+void adobe_downsample_two_adds_epochs() {
+  prog prg("adobe_downsample");
+  prg.add_input("off_chip_image");
+  prg.add_output("out");
+
+  auto ld = prg.add_nest("yl", 0, 16, "ye", 0, 2, "xl", 0, 16)->add_op("load_from_off_chip");
+  ld->add_load("off_chip_image", "2*xl", "2*yl + ye");
+  ld->add_load("off_chip_image", "2*xl + 1", "2*yl + ye");
+  ld->add_store("image", "2*xl", "2*yl + ye");
+  ld->add_store("image", "2*xl + 1", "2*yl + ye");
+
+  {
+    auto ds = prg.add_nest("y", 0, 16, "dp", 0, 1, "x", 0, 16)->add_op("downsample");
+    ds->add_function("inc");
+    ds->add_load("image", "2*x", "2*y");
+    ds->add_load("image", "2*x + 1", "2*y");
+    ds->add_store("downsampled", "2*x", "y");
+    ds->add_store("downsampled", "2*x + 1", "y");
+  }
+
+  {
+    auto ds = prg.add_nest("oy", 0, 16, "oe", 0, 2, "ox", 0, 16)->add_op("scale");
+    ds->add_function("scale");
+    ds->add_load("downsampled", "ox + 16*oe", "oy");
+    ds->add_store("out", "ox + 16*oe", "oy");
+  }
+
+  prg.pretty_print();
+  //assert(false);
+  cout << optimized_code_string(prg) << endl;
+}
+
 void adobe_downsample_two_adds() {
   prog prg("adobe_downsample");
   prg.add_input("off_chip_image");
@@ -10483,7 +10546,6 @@ void adobe_downsample_two_adds() {
 
   prg.pretty_print();
   cout << optimized_code_string(prg) << endl;
-  assert(false);
   regression_test(prg);
   move_to_synthesis_folder(prg.name);
 }
@@ -10515,6 +10577,9 @@ void adobe_downsample() {
   }
 
   prg.pretty_print();
+  auto cs = clockwork_schedule(prg);
+  cout << "clockwork schedule: " << str(cs) << endl;
+  assert(false);
   cmd("mkdir -p ./lake_controllers/identity_stream/");
 
   //cout << optimized_code_string(prg) << endl;
@@ -10564,9 +10629,9 @@ void adobe_sharpen() {
 }
 
 void adobe_meeting_apps() {
-  adobe_downsample_two_adds();
-  assert(false);
   adobe_downsample();
+  adobe_downsample_two_adds();
+  adobe_downsample_two_adds_epochs();
   adobe_sharpen();
 }
 
@@ -10632,14 +10697,13 @@ void halide_up_sample_test() {
 void application_tests() {
   //playground();
 
-  lake_agg_sram_tb_config_test();
   adobe_meeting_apps();
-  //lake_accessor_config_test();
+  //assert(false);
+  lake_agg_sram_tb_config_test();
   halide_frontend_test();
   halide_cascade_test();
   halide_up_sample_test();
   weight_streaming_test();
-  //assert(false);
   weight_streaming_test();
 
   mmul_outer_prod_test();

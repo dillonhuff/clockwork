@@ -1229,6 +1229,7 @@ extract_linear_rational_approximation(isl_aff* aff_bound) {
 
   assert(in_dims == 1);
   assert(out_dims == 1);
+  cout << "div dims = " << div_dims << endl;
 
   if (div_dims == 0) {
     auto dkb = extract_div_free_linear_rational_approximation(aff_bound);
@@ -1239,8 +1240,13 @@ extract_linear_rational_approximation(isl_aff* aff_bound) {
 
     return {k, b};
   } else {
+    cout << "Getting div bound for: " << str(aff_bound) << endl;
+    cout << "Div exprs..." << endl;
+    for (int i = 0; i < div_dims; i++) {
+      auto dexpr = isl_aff_get_div(aff_bound, i);
+      cout << tab(1) << str(dexpr) << endl;
+    }
     assert(div_dims == 1);
-    //cout << "Getting div bound for: " << str(aff_bound) << endl;
 
     isl_val* k = isl_aff_get_coefficient_val(aff_bound, isl_dim_in, 0);
     isl_val* b = isl_aff_get_constant_val(aff_bound);
@@ -2165,6 +2171,7 @@ clockwork_schedule(uset* domain, umap* validity, umap* proximity, map<string, ve
   map<string, vector<isl_aff*> > scheds;
   cout << "Schedule dim = " << schedule_dim << endl;
   for (int d = 0; d < schedule_dim; d++) {
+    cout << tab(1) << "scheduling dimension " << d << endl;
     vector<isl_map*> projected_deps;
     for (auto dmap : deps) {
       isl_map* projected = project_all_but(dmap, d);
