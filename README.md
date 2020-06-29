@@ -14,7 +14,7 @@ Clockwork is a tool for compiling naive descriptions of hardware accelerators wr
 
 For a full setup script for AWS F1 with Developer AMI 1.8.1 see: [./misc/aws\_setup.sh](./misc/aws_setup.sh).
 
-## Dependencies
+## Installing Dependencies
 
 Examples of how to install the dependencies can be found in [./misc/install\_deps\_mac.sh](./misc/install_deps_mac.sh) and [./misc/install\_deps\_linux.sh](./misc/install\_deps\_linux.sh).
 
@@ -27,6 +27,12 @@ not just take the latest release of NTL or barvinok.
    * https://repo.or.cz/w/barvinok.git/blob/HEAD:/README - instructions for installing barvinok with ntl and GMP
    * note that linux users may need to manually add -lpthread to the LIBS field (change "LIBS = -lntl -lgmp", to "LIBS = -lpthread -lntl -lgmp")
 * *optional codegen backend* **CoreIR** - [github link](https://github.com/rdaly525/coreir.git)
+
+## Setting Your private\_settings.sh
+
+The clockwork build script requires some paths and environment variables to be set in
+a script called `./user_settings\_private_settings.sh`. Several example private settings
+files can be found in `./user_settings/`. In particular if you used [./misc/install\_deps\_linux.sh](./misc/install\_deps\_linux.sh) you will probably want to use [./user_settings/linux\_settings\_template.sh](./user_settings/linux\_settings\_template.sh).
 
 # Building an example 
 

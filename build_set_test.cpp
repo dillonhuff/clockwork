@@ -10740,7 +10740,6 @@ void application_tests() {
   gaussian_pyramid_app_test("gp64x64");
   iccad_tests();
 
-
   tricky_shift_register_reconvergence_test();
   sum_denoise_test();
   sum_diffs_test();
