@@ -444,6 +444,7 @@ form_farkas_constraints(isl_basic_set* orig_constraints,
     fs = isl_basic_set_set_dim_name(fs, isl_dim_set, c, cvals.at(c).second.c_str());
   }
 
+  fs = isl_basic_set_set_dim_name(fs, isl_dim_set, isl_mat_cols(ineqs) - 1, dname.c_str());
   return fs;
 }
 

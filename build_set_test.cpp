@@ -10631,34 +10631,50 @@ void adobe_downsample_two_adds() {
         isl_basic_set* basic_set_for_map = flatten_bmap_to_bset(bm);
         auto fs = form_farkas_constraints(basic_set_for_map, diffs, ddiff);
         cout << "fs = " << str(fs) << endl;
-        fs = positive(fs, 3);
-        fs = positive(fs, 4);
-        fs = positive(fs, 5);
 
-        fs = negative(fs, 0);
-        fs = negative(fs, 1);
-        fs = negative(fs, 2);
-
-        fs = gtconst(fs, 4, 15);
-        fs = gtconst(fs, 3, 225);
+        //cout << "New fs = " << str(sol) << endl;
+        auto pt = sample(fs);
+        cout << "Example solution: " << str(pt) << endl;
 
         auto ct = prg.ctx;
         ilp_builder builder(fs);
+        builder.add_gt("II_c_root", (int) 0);
+        builder.add_gt("II_c_y", (int) 0);
+        builder.add_gt("II_c_x", (int) 0);
+        builder.add_geq("c_d", (int) 0);
+
+        builder.add_gt("II_p_root", (int) 0);
+        builder.add_gt("II_p_y", (int) 0);
+        builder.add_gt("II_p_x", (int) 0);
+        builder.add_geq("p_d", (int) 0);
+
+        builder.add_eq("rcc", "II_c_root");
+        builder.add_eq("ydc", "II_c_y");
+        builder.add_eq("xdc", "II_c_x");
+        
+        builder.add_eq({{"ddiff", one(ct)}, {"p_d", negone(ct)}, {"c_d", one(ct)}},
+            zero(ct));
+ 
+        builder.add_eq({{"rp", one(ct)}, {"II_p_root", negone(ct)}}, zero(ct));
+        builder.add_eq({{"xdp", one(ct)}, {"II_p_x", negone(ct)}}, zero(ct));
+        builder.add_eq({{"ydp", one(ct)}, {"II_p_y", negone(ct)}}, zero(ct));
+
         cout << "Builder set..." << endl;
         cout << tab(1) << str(builder.s) << endl;
+
+        cout << "sample point in builder set = " << str(sample(builder.s)) << endl;
+
+        assert(false);
         map<string, isl_val*> sum_of_iis{{"rcc", one(ct)}, {"xdc", one(ct)}, {"ydc", one(ct)}};
         builder.minimize(sum_of_iis);
 
         for (auto v : builder.variable_positions) {
-          cout << tab(1) << str(builder.value(v.first)) << endl;
+          cout << tab(1) << v.first << " = " << str(builder.value(v.first)) << endl;
         }
 
         //auto extra_constraint0 = rdset(ctx, "{ [rdiff, a, b, c, d] : rdiff = 0 }");
         //auto sol = its(extra_constraint0, to_set(fs));
 
-        //cout << "New fs = " << str(sol) << endl;
-        //auto pt = sample(fs);
-        //cout << "Example solution: " << str(pt) << endl;
 
         assert(false);
       }

@@ -1220,59 +1220,65 @@ struct ilp_builder {
   }
 
   void add_eq(const std::map<string, isl_val*>& coeffs, isl_val* constant) {
-    vector<isl_val*> denoms;
-    if (isl_val_is_rat(constant)) {
-      denoms.push_back(isl_val_get_den_val(constant));
+    add_geq(coeffs, constant);
+    map<string, isl_val*> neg_coeffs;
+    for (auto c : coeffs) {
+      neg_coeffs[c.first] = mul(negone(ctx), c.second);
     }
-    for (auto v : coeffs) {
-      if (isl_val_is_rat(v.second)) {
-        auto dv = isl_val_get_den_val(v.second);
-        assert(isl_val_is_pos(dv));
-        denoms.push_back(dv);
-      } else {
-        //cout << tab(1) << "non-rational: " << str(v.second) << endl;
-      }
-    }
+    add_geq(neg_coeffs, mul(negone(ctx), constant));
+    //vector<isl_val*> denoms;
+    //if (isl_val_is_rat(constant)) {
+      //denoms.push_back(isl_val_get_den_val(constant));
+    //}
+    //for (auto v : coeffs) {
+      //if (isl_val_is_rat(v.second)) {
+        //auto dv = isl_val_get_den_val(v.second);
+        //assert(isl_val_is_pos(dv));
+        //denoms.push_back(dv);
+      //} else {
+        ////cout << tab(1) << "non-rational: " << str(v.second) << endl;
+      //}
+    //}
 
-    //cout << "Denoms..." << endl;
-    isl_val* dn = isl_val_one(ctx);
-    for (auto v : denoms) {
-      //cout << tab(1) << str(v) << endl;
-      dn = mul(dn, v);
-    }
-    //assert(isl_val_is_int(constant));
+    ////cout << "Denoms..." << endl;
+    //isl_val* dn = isl_val_one(ctx);
+    //for (auto v : denoms) {
+      ////cout << tab(1) << str(v) << endl;
+      //dn = mul(dn, v);
+    //}
+    ////assert(isl_val_is_int(constant));
 
-    //cout << "Denom: " << str(dn) << endl;
-    for (auto v : coeffs) {
-      //assert(isl_val_is_int(v.second));
-      if (!contains_key(v.first, variable_positions)) {
-        int next_pos = num_dims(isl_basic_set_get_space(s));
-        variable_positions[v.first] = next_pos;
-        s = isl_basic_set_add_dims(s, isl_dim_set, 1);
-      }
-    }
+    ////cout << "Denom: " << str(dn) << endl;
+    //for (auto v : coeffs) {
+      ////assert(isl_val_is_int(v.second));
+      //if (!contains_key(v.first, variable_positions)) {
+        //int next_pos = num_dims(isl_basic_set_get_space(s));
+        //variable_positions[v.first] = next_pos;
+        //s = isl_basic_set_add_dims(s, isl_dim_set, 1);
+      //}
+    //}
 
-    isl_constraint* c = isl_constraint_alloc_equality(get_local_space(s));
-    auto cv = mul(dn, constant);
-    //cout << "cv = " << str(cv) << endl;
-    //cout << "dn = " << str(dn) << endl;
-    assert(isl_val_is_int(cv));
+    //isl_constraint* c = isl_constraint_alloc_equality(get_local_space(s));
+    //auto cv = mul(dn, constant);
+    ////cout << "cv = " << str(cv) << endl;
+    ////cout << "dn = " << str(dn) << endl;
+    //assert(isl_val_is_int(cv));
 
-    isl_constraint_set_constant_val(c, cv);
+    //isl_constraint_set_constant_val(c, cv);
 
-    for (auto v : coeffs) {
-      //cout << "index = " << map_find(v.first, variable_positions) << endl;
-      auto m = mul(dn, v.second);
-      //cout << "dn = " << str(dn) << endl;
-      //cout << "m = " << str(m) << endl;
-      assert(isl_val_is_int(m));
-      isl_constraint_set_coefficient_val(c,
-          isl_dim_set,
-          map_find(v.first, variable_positions),
-          m);
-    }
+    //for (auto v : coeffs) {
+      ////cout << "index = " << map_find(v.first, variable_positions) << endl;
+      //auto m = mul(dn, v.second);
+      ////cout << "dn = " << str(dn) << endl;
+      ////cout << "m = " << str(m) << endl;
+      //assert(isl_val_is_int(m));
+      //isl_constraint_set_coefficient_val(c,
+          //isl_dim_set,
+          //map_find(v.first, variable_positions),
+          //m);
+    //}
 
-    s = isl_basic_set_add_constraint(s, c);
+    //s = isl_basic_set_add_constraint(s, c);
   }
 
 };
