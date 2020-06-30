@@ -518,6 +518,14 @@ vector<int> soda_offsets(const int app) {
   return {};
 }
 
+isl_basic_set* non_negative(isl_basic_set* fs, int var) {
+  auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
+  non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, var, 1);
+  fs = isl_basic_set_add_constraint(fs, non_neg);
+
+  return fs;
+}
+
 isl_basic_set*
 form_farkas_constraints(isl_basic_set* constraints,
     const vector<pair<string, string> >& cvals,
@@ -585,18 +593,22 @@ form_farkas_constraints(isl_basic_set* constraints,
     cout << "b " << i << " = " << str(b) << endl;
     constraint = isl_constraint_set_coefficient_val(constraint, isl_dim_set, farkas_var_offset + i, b);
 
-    {
-      auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
-      non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, farkas_var_offset + i, 1);
-      fs = isl_basic_set_add_constraint(fs, non_neg);
-    }
+    //{
+      //auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
+      //non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, farkas_var_offset + i, 1);
+      //fs = isl_basic_set_add_constraint(fs, non_neg);
+    //}
   }
 
-  {
-    auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
-    non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, farkas_var_offset + num_farkas, 1);
-    fs = isl_basic_set_add_constraint(fs, non_neg);
+  for (int i = 0; i < num_farkas; i++) {
+    fs = non_negative(fs, farkas_var_offset + i);
   }
+
+  //{
+    //auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
+    //non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, farkas_var_offset + num_farkas, 1);
+    //fs = isl_basic_set_add_constraint(fs, non_neg);
+  //}
   cout << "adding constant constraint: " << str(constraint) << endl;
   fs = isl_basic_set_add_constraint(fs, constraint);
 

@@ -10589,42 +10589,42 @@ void adobe_downsample_two_adds() {
   }
 
   prg.pretty_print();
-  //{
-    //auto valid = prg.validity_deps();
-    //auto dom = prg.whole_iteration_domain();
-    //for (auto m : get_maps(valid)) {
-      //cout << tab(1) << str(m) << endl;
-      //auto maps = get_basic_maps(m);
-      //cout << tab(1) << maps.size() << " basic maps" << endl;
-      //for (auto bm : maps) {
-        //cout << str(bm) << endl;
-        //vector<pair<string, string> > diffs{{"root", "rdiff"}, {"x", "xdiff"}, {"y", "ydiff"}};
-        //string ddiff = "ddiff";
+  {
+    auto valid = prg.validity_deps();
+    auto dom = prg.whole_iteration_domain();
+    for (auto m : get_maps(valid)) {
+      cout << tab(1) << str(m) << endl;
+      auto maps = get_basic_maps(m);
+      cout << tab(1) << maps.size() << " basic maps" << endl;
+      for (auto bm : maps) {
+        cout << str(bm) << endl;
+        vector<pair<string, string> > diffs{{"root", "rdiff"}, {"x", "xdiff"}, {"y", "ydiff"}};
+        string ddiff = "ddiff";
 
-        //isl_basic_set* basic_set_for_map = flatten_bmap_to_bset(bm);
-        //auto fs = form_farkas_constraints(basic_set_for_map, diffs, ddiff);
-        //cout << "fs = " << str(fs) << endl;
+        isl_basic_set* basic_set_for_map = flatten_bmap_to_bset(bm);
+        auto fs = form_farkas_constraints(basic_set_for_map, diffs, ddiff);
+        cout << "fs = " << str(fs) << endl;
 
-        ////auto extra_constraint0 = rdset(ctx, "{ [rdiff, a, b, c, d] : rdiff = 0 }");
-        ////auto sol = its(extra_constraint0, to_set(fs));
+        //auto extra_constraint0 = rdset(ctx, "{ [rdiff, a, b, c, d] : rdiff = 0 }");
+        //auto sol = its(extra_constraint0, to_set(fs));
 
-        ////cout << "New fs = " << str(sol) << endl;
-        //auto pt = sample(fs);
-        //cout << "Example solution: " << str(pt) << endl;
+        //cout << "New fs = " << str(sol) << endl;
+        auto pt = sample(fs);
+        cout << "Example solution: " << str(pt) << endl;
 
-        //assert(false);
-      //}
-      ////auto md = maps.at(0);
-      ////cout << tab(2) << "basic map: " << str(md) << endl;
-    //}
-    ////auto fs = form_farkas_constraints(to_bset(s), {{"x", "II_x"}}, "d");
-    ////cout << "fs = " << str(fs) << endl;
-    ////auto extra_constraint = rdset(ctx, "{ [II_x, a, b, c, d] : II_x >= 1 }");
-    ////auto sol = its(extra_constraint, to_set(fs));
-    ////cout << "New fs = " << str(sol) << endl;
-    ////auto pt = sample(sol);
-    ////cout << "Example solution: " << str(pt) << endl;
-  //}
+        assert(false);
+      }
+      //auto md = maps.at(0);
+      //cout << tab(2) << "basic map: " << str(md) << endl;
+    }
+    //auto fs = form_farkas_constraints(to_bset(s), {{"x", "II_x"}}, "d");
+    //cout << "fs = " << str(fs) << endl;
+    //auto extra_constraint = rdset(ctx, "{ [II_x, a, b, c, d] : II_x >= 1 }");
+    //auto sol = its(extra_constraint, to_set(fs));
+    //cout << "New fs = " << str(sol) << endl;
+    //auto pt = sample(sol);
+    //cout << "Example solution: " << str(pt) << endl;
+  }
   cout << optimized_code_string(prg) << endl;
   generate_optimized_trace(prg);
   assert(false);
@@ -10782,10 +10782,10 @@ void halide_up_sample_test() {
 }
 
 void application_tests() {
+  playground();
   adobe_meeting_apps();
   histogram_test();
   halide_up_sample_test();
-  //playground();
   //assert(false);
   
   lake_agg_sram_tb_config_test();
