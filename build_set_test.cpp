@@ -10652,6 +10652,22 @@ void adobe_downsample_two_adds() {
         builder.add_eq("ydc", "II_c_y");
         builder.add_eq("xdc", "II_c_x");
         
+        builder.add_geq({{"II_c_root", one(ct)},
+            {"II_c_y", isl_val_int_from_si(ct, -15)}},
+            zero(ct));
+
+        builder.add_geq({{"II_c_y", one(ct)},
+            {"II_c_x", isl_val_int_from_si(ct, -15)}},
+            zero(ct));
+
+        builder.add_geq({{"II_p_root", one(ct)},
+            {"II_p_y", isl_val_int_from_si(ct, -15)}},
+            zero(ct));
+
+        builder.add_geq({{"II_p_y", one(ct)},
+            {"II_p_x", isl_val_int_from_si(ct, -15)}},
+            zero(ct));
+
         builder.add_eq({{"ddiff", one(ct)}, {"p_d", negone(ct)}, {"c_d", one(ct)}},
             zero(ct));
  
@@ -10663,6 +10679,7 @@ void adobe_downsample_two_adds() {
         cout << tab(1) << str(builder.s) << endl;
 
         cout << "sample point in builder set = " << str(sample(builder.s)) << endl;
+
 
         assert(false);
         map<string, isl_val*> sum_of_iis{{"rcc", one(ct)}, {"xdc", one(ct)}, {"ydc", one(ct)}};
