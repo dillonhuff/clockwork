@@ -10965,6 +10965,34 @@ void memory_tile_tests() {
   //assert(false);
 }
 
+App durst_blur_xy_16(const std::string output_name) {
+  App blur;
+  blur.set_default_pixel_width(16);
+  blur.func2d("input_arg");
+  blur.func2d("input", v("input_arg"));
+  blur.func2d("blurx", div(add(v("input", 0, 0), v("input", 0, 1), v("input", 0, 2)), 3));
+  blur.func2d(output_name, div(add(v("blurx", 0, 0), v("blurx", 1, 0), v("blurx", 2, 0)), 3));
+
+  return blur;
+}
+
+void durst_blur_example() {
+  int cols = 1920;
+  int rows = 1080;
+
+  const int unroll_factor = 2;
+  cout << "blur_xy" << endl;
+  cout << tab(1) << "unroll factor: " << unroll_factor << endl;
+  string out_name = "durst_blur_example";
+  durst_blur_xy_16(out_name).realize(out_name, cols, rows, unroll_factor);
+
+  string synth_dir =
+    "./" + out_name;
+  system(("mkdir -p " + synth_dir).c_str());
+  system(("mv " + out_name + "*.cpp " + synth_dir).c_str());
+  system(("mv " + out_name + "*.h " + synth_dir).c_str());
+}
+
 void blur_example() {
   int cols = 1920;
   int rows = 1080;
@@ -10990,6 +11018,10 @@ int main(int argc, char** argv) {
     assert(argc == 2);
     string cmd = argv[1];
 
+    if (cmd == "durst-blur-example") {
+      durst_blur_example();
+      return 0;
+    }
     if (cmd == "blur-example") {
       blur_example();
       return 0;
