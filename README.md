@@ -17,6 +17,7 @@ For a full setup script for AWS F1 with Developer AMI 1.8.1 see: [./misc/aws\_se
     source ./misc/aws_setup.sh
     ./rebuild_and_run.sh blur-example
     cd blur_example
+    source ./set_app.sh
     make check TARGET=sw_emu DEVICE=$AWS_PLATFORM all 
 
 This will install and build clockwork, run it to produce a blur over a 1920 x 1080 image and then run a software emulation of the blur using Xilinx Vitis.
