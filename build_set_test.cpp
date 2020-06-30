@@ -11096,6 +11096,9 @@ void blur_example() {
   system(("cp ./aws_collateral/xrt.ini " + synth_dir).c_str());
   system(("cp ./aws_collateral/Makefile " + synth_dir).c_str());
   system(("cp ./aws_collateral/utils.mk " + synth_dir).c_str());
+  system(("cp conv_3x3.h " + synth_dir).c_str());
+  system(("cp clockwork_standard_compute_units.h " + synth_dir).c_str());
+  system(("cp hw_classes.h " + synth_dir).c_str());
   make_exe("set_app.sh");
   system(("mv set_app.sh " + synth_dir).c_str());
 
