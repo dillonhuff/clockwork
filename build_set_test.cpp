@@ -10782,8 +10782,8 @@ void halide_up_sample_test() {
 }
 
 void application_tests() {
-  playground();
   adobe_meeting_apps();
+  playground();
   histogram_test();
   halide_up_sample_test();
   //assert(false);
