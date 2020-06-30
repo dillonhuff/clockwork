@@ -1350,6 +1350,8 @@ vector<string> upsample_vars(const std::string& target_buf, op* reader, prog& pr
 
 void make_constant_dd(const std::string& target_op, const std::string& target_buf, prog& prg);
 
+std::vector<string> topologically_sort_kernels(prog& prg);
+
 std::set<string> buffers_written(op* p);
 
 bool writes(const std::string& target_buf, op* p);
@@ -1357,3 +1359,9 @@ bool writes(const std::string& target_buf, op* p);
 op* find_writer(const std::string& target_buf, prog& prg);
 
 std::set<string> get_producers(string next_kernel, prog& prg);
+
+void deep_copy_child(op* dest, op* source, prog& original);
+
+std::set<string> get_consumed_buffers(std::set<std::string>& group, prog& original);
+
+std::set<string> get_produced_buffers(std::set<std::string>& group, prog& original);

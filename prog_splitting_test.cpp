@@ -67,6 +67,8 @@ struct TargetTechlibInfo {
   int reg_cost_per_bit;
 };
 
+//-----------------------------------------ESTIMATE_KERNEL_AREAS-------------------------------------------
+
 map<string, int> estimate_kernel_areas(prog& prg, TargetTechlibInfo& target_info) {
 
   // TODO: Come up with a better area estimate
@@ -96,38 +98,7 @@ map<string, int> estimate_kernel_areas(prog& prg, TargetTechlibInfo& target_info
   return costs;
 }
 
-
-std::vector<string> topologically_sort_kernels(prog& prg){
-std::vector<string> topologically_sorted_kernels;
-
-  std::set<string> not_yet_sorted = get_kernels(prg);
-  // Sorting the kernels:
-  while(not_yet_sorted.size() > 0){
-      for(auto next_kernel : not_yet_sorted){
-          std::set<string> producers = get_producers(next_kernel, prg);
-          producers.erase(next_kernel);
-	  bool all_producers_sorted = true;
-	  for(auto producer : producers){
-	      if(!elem(producer, topologically_sorted_kernels)){
-		  all_producers_sorted = false;
-		  break;
-	      }
-	  }
-	  if(all_producers_sorted){
-	      topologically_sorted_kernels.push_back(next_kernel);
-	      not_yet_sorted.erase(next_kernel);
-	      break;
-	  }
-      }
-  }
-
-  cout << "topologically_sorted_kernels:"<< endl;
-  for(int i = 0; i < 4; i++){
-	cout << topologically_sorted_kernels[i] << endl;
-  }
-	
-  return topologically_sorted_kernels;
-}
+//-----------------------------------------GROUP_KERNELS_FOR_COMPILATION-------------------------------------------
 
 std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int>& kernel_costs,const int max_area_cost_per_group){
 
@@ -164,70 +135,50 @@ std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int
   return groups;
 }
 
-void deep_copy_child(op* dest, op* source, prog& original){
-	op* kernel_copy;
-	if(source -> is_loop){
-		kernel_copy = dest -> add_loop(source->name, original.start(source->name), original.end_exclusive(source->name));
-		for(auto child : original.find_loop(source->name)->children){
-			deep_copy_child(kernel_copy, child, original);
-		}
-	}else{
-		kernel_copy = dest -> add_op(source -> name);
-		kernel_copy->copy_fields_from(source);
-	}
 
-}
-
-std::set<string> get_consumed_buffers(std::set<std::string>& group, prog& original){
-	std::set<string> all_consumed_buffers;
-	for(auto kernel_in_group : group){
-		auto kernel_ops = original.find_loop(kernel_in_group)->descendant_ops();
-		for(auto op : kernel_ops){
-			std::set<string> all_buffers_read = op->buffers_read();
-			for(auto buffer : all_buffers_read){
-				all_consumed_buffers.insert(buffer); 
-			}
-		}
-	}
-	return all_consumed_buffers;
-}
-
-
-std::set<string> get_produced_buffers(std::set<std::string>& group, prog& original){
-	std::set<string> all_produced_buffers;
-	for(auto kernel_in_group : group){
-		auto kernel_ops = original.find_loop(kernel_in_group)->descendant_ops();
-		for(auto op : kernel_ops){
-			std::set<string> all_buffers_written = op->buffers_written();
-			for(auto buffer : all_buffers_written){
-				all_produced_buffers.insert(buffer);
-			}
-		}
-	}
-	return all_produced_buffers;
-}
+//-----------------------------------------GROUP_TO_SEPARATE_PROG-----------------------------------------------------
 
 prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original) {
-  // TODO: Implement this function
-  prog extracted;
-  for(auto kernel : topologically_sort_kernels(original)){
-	if(elem(kernel, group)){
-		op* kernel_copy = extracted.add_loop(kernel, original.start(kernel), original.end_exclusive(kernel));
-		for(auto child : original.find_loop(kernel)->children){
-		    deep_copy_child(kernel_copy, child, original);
+	// TODO: Implement this function
+	prog extracted;
+	for(auto kernel : topologically_sort_kernels(original)){
+		if(elem(kernel, group)){
+			op* kernel_copy = extracted.add_loop(kernel, original.start(kernel), original.end_exclusive(kernel));
+			for(auto child : original.find_loop(kernel)->children){
+				deep_copy_child(kernel_copy, child, original);
+			}
 		}
 	}
-  }
 
-  return extracted;
+	std::set<string> all_consumed_buffers = get_consumed_buffers(group, original);
+	std::set<string> all_produced_buffers = get_produced_buffers(group, original);
+	for(auto consumed : all_consumed_buffers){
+		if(!elem(consumed, all_produced_buffers)){
+			extracted.add_input(consumed);
+			cout << "Input added: " << consumed << endl;
+			// Do I need to calculate the width?
+			// extracted.buffer_port_widths[consumed] = original.buffer_port_widths.find(consumed);
+		}
+	}
+	
+	for(auto produced : all_produced_buffers){
+		if(!elem(produced, all_consumed_buffers)){
+			extracted.add_output(produced);
+			cout << "Output added: " << produced << endl;
+			// Do I need to calculate the width?
+		}
+	}
+	
+	return extracted;
 }
 
-
+//-----------------------------------GENERATE_OPTIMIZED_CODE_FOR_PROGRAM_DAG-------------------------------------------
 
 void generate_optimized_code_for_program_dag(std::vector<prog>& group_programs) {
   // TODO: Implement this function
 }
 
+//-----------------------------------------VOID PROG_SPLITTING_TESTS-------------------------------------------
 void prog_splitting_tests() {
   prog prg = brighten_blur();
 
@@ -236,7 +187,7 @@ void prog_splitting_tests() {
 
   // Compile the application into
   // one large module.
-//  generate_optimized_code(prg);
+  // generate_optimized_code(prg);
 
   // Run the code on a tiny test image
   // and save it to brighten_blur_bmp_out.bmp
