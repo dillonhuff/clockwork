@@ -11167,7 +11167,6 @@ int main(int argc, char** argv) {
     memory_tile_tests();
     prog_splitting_tests();
     cout << "All tests passed" << endl;
-
   } else {
     assert(false);
   }
