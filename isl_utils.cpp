@@ -286,6 +286,14 @@ std::string name(isl_set* const s) {
   return name(get_space(s));
 }
 
+std::string domain_name(isl_basic_map* const s) {
+  return domain_name(get_space(s));
+}
+
+std::string range_name(isl_basic_map* const s) {
+  return range_name(get_space(s));
+}
+
 std::string domain_name(isl_map* const s) {
   return domain_name(get_space(s));
 }

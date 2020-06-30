@@ -131,6 +131,9 @@ std::string str(isl_local_space* const id);
 std::string domain_name(isl_map* const s);
 std::string range_name(isl_map* const s);
 
+std::string domain_name(isl_basic_map* const s);
+std::string range_name(isl_basic_map* const s);
+
 std::string domain_name(isl_space* const s);
 std::string range_name(isl_space* const s);
 

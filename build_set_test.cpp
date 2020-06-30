@@ -10587,6 +10587,7 @@ isl_basic_set* positive(isl_basic_set* fs, const int var) {
 
   return fs;
 }
+
 void adobe_downsample_two_adds() {
   prog prg("adobe_downsample");
   prg.add_input("off_chip_image");
@@ -10623,10 +10624,13 @@ void adobe_downsample_two_adds() {
       auto maps = get_basic_maps(m);
       cout << tab(1) << maps.size() << " basic maps" << endl;
       for (auto bm : maps) {
+        string producer_delay = domain_name(bm) + "_delay";
+        string consumer_delay = range_name(bm) + "_delay";
+        string ddiff = "ddiff";
+
         cout << str(bm) << endl;
         vector<pair<string, string> > diffs{{"rootp", "rp"}, {"xp", "xdp"}, {"yp", "ydp"},
           {"rootc", "rcc"}, {"xc", "xdc"}, {"yc", "ydc"}};
-        string ddiff = "ddiff";
 
         isl_basic_set* basic_set_for_map = flatten_bmap_to_bset(bm);
         auto fs = form_farkas_constraints(basic_set_for_map, diffs, ddiff);
@@ -10635,18 +10639,22 @@ void adobe_downsample_two_adds() {
         //cout << "New fs = " << str(sol) << endl;
         auto pt = sample(fs);
         cout << "Example solution: " << str(pt) << endl;
+        //cout << "eliminating..." << endl;
+        //fs = isl_basic_set_eliminate(fs, isl_dim_set, 0, 20);
+        //cout << "after eliminating: " << str(fs) << endl;
+        //assert(false);
 
         auto ct = prg.ctx;
         ilp_builder builder(fs);
         builder.add_gt("II_c_root", (int) 0);
         builder.add_gt("II_c_y", (int) 0);
         builder.add_gt("II_c_x", (int) 0);
-        builder.add_geq("c_d", (int) 0);
+        builder.add_geq(consumer_delay, (int) 0);
 
         builder.add_gt("II_p_root", (int) 0);
         builder.add_gt("II_p_y", (int) 0);
         builder.add_gt("II_p_x", (int) 0);
-        builder.add_geq("p_d", (int) 0);
+        builder.add_geq(producer_delay, (int) 0);
 
         builder.add_eq("rcc", "II_c_root");
         builder.add_eq("ydc", "II_c_y");
@@ -10668,18 +10676,19 @@ void adobe_downsample_two_adds() {
             {"II_p_x", isl_val_int_from_si(ct, -15)}},
             zero(ct));
 
-        builder.add_eq({{"ddiff", one(ct)}, {"p_d", negone(ct)}, {"c_d", one(ct)}},
+        builder.add_eq({{ddiff, one(ct)}, {"p_d", negone(ct)}, {"c_d", one(ct)}},
             zero(ct));
  
         builder.add_eq({{"rp", one(ct)}, {"II_p_root", negone(ct)}}, zero(ct));
         builder.add_eq({{"xdp", one(ct)}, {"II_p_x", negone(ct)}}, zero(ct));
         builder.add_eq({{"ydp", one(ct)}, {"II_p_y", negone(ct)}}, zero(ct));
 
+        builder.add_eq({{"II_p_x", one(ct)}}, isl_val_int_from_si(ct, -3));
+
         cout << "Builder set..." << endl;
         cout << tab(1) << str(builder.s) << endl;
 
         cout << "sample point in builder set = " << str(sample(builder.s)) << endl;
-
 
         //assert(false);
         map<string, isl_val*> sum_of_iis{{"rcc", one(ct)}, {"xdc", one(ct)}, {"ydc", one(ct)}};
@@ -10688,10 +10697,6 @@ void adobe_downsample_two_adds() {
         for (auto v : builder.variable_positions) {
           cout << tab(1) << v.first << " = " << str(builder.value(v.first)) << endl;
         }
-
-        //auto extra_constraint0 = rdset(ctx, "{ [rdiff, a, b, c, d] : rdiff = 0 }");
-        //auto sol = its(extra_constraint0, to_set(fs));
-
 
         assert(false);
       }
