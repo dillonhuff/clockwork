@@ -1,7 +1,5 @@
 #include "prog_splitting_test.h"
-
 #include "prog.h"
-
 #include <cassert>
 
 #define INT_MULTIPLIER_COST 1
@@ -71,68 +69,70 @@ struct TargetTechlibInfo {
 
 map<string, int> estimate_kernel_areas(prog& prg, TargetTechlibInfo& target_info) {
 
-  // TODO: Come up with a better area estimate
-  map<string, int> costs;
+	// TODO: Come up with a better area estimate
+	map<string, int> costs;
 
-  for (string kernel : get_kernels(prg)) {
+	for (string kernel : get_kernels(prg)) {
 
-    op* loop = prg.find_loop(kernel);
-    auto ops_in_kernel = loop -> descendant_ops();
-    cout << "ops_in_kernel " << kernel << ":" << endl;
-    int kernel_cost = 0;
+		op* loop = prg.find_loop(kernel);
+		auto ops_in_kernel = loop -> descendant_ops();
+		cout << "ops_in_kernel " << kernel << ":" << endl;
+		int kernel_cost = 0;
 
-    for (auto op: ops_in_kernel){
-	cout << tab(1) << op -> name << endl;
-	if(op -> func != ""){
-	    if( contains_key(op -> func, target_info.compute_unit_costs)){
-		kernel_cost += map_find(op -> func, target_info.compute_unit_costs);
-	    }
-	    cout << tab(2) << op -> func << endl;
+		for (auto op: ops_in_kernel){
+			cout << tab(1) << op -> name << endl;
+			if(op -> func != ""){
+				if(contains_key(op -> func, target_info.compute_unit_costs)){
+					kernel_cost += map_find(op -> func, target_info.compute_unit_costs);
+				}
+				cout << tab(2) << op -> func << endl;
+			}
+		}
+
+		costs[kernel] = kernel_cost;
+		cout << "Kernel '" << kernel << "' cost: " << costs[kernel] << endl;
 	}
-    }
 
-    costs[kernel] = kernel_cost;
-    cout << "Kernel: " << costs[kernel] << endl;
-  }
-
-  return costs;
+	return costs;
 }
 
 //-----------------------------------------GROUP_KERNELS_FOR_COMPILATION-------------------------------------------
 
 std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int>& kernel_costs,const int max_area_cost_per_group){
 
-  // TODO: Improve this greedy algorith
+	// TODO: Improve this greedy algorithm
 
-  int current_group_cost = 0;
-  std::set<std::set<string> > groups;
-  std::set<string> current_group;
-  std::vector<string> topologically_sorted_kernels = topologically_sort_kernels(prg); 
- 
-  assert(topologically_sorted_kernels.size() == get_kernels(prg).size());
+	std::vector<string> topologically_sorted_kernels = topologically_sort_kernels(prg); 
+	std::set<std::set<string>> groups;
+	std::set<string> current_group;
+	int current_group_cost = 0;
 
-  for(auto kernel : topologically_sorted_kernels){
-    if (current_group_cost + map_find(kernel, kernel_costs) > max_area_cost_per_group) {
-      groups.insert(current_group);
-      current_group = {kernel};
-      current_group_cost = map_find(kernel, kernel_costs);
-    } else {
-      current_group.insert({kernel});
-      current_group_cost += map_find(kernel, kernel_costs);
-    }
-  }
+	assert(topologically_sorted_kernels.size() == get_kernels(prg).size());
 
-  groups.insert(current_group);
+	cout << "Topologically sorted kernels:" << endl;
+	for(auto kernel : topologically_sorted_kernels){
+		cout << kernel << endl;
+		if (current_group_cost + map_find(kernel, kernel_costs) > max_area_cost_per_group) {
+			groups.insert(current_group);
+			current_group = {kernel};
+			current_group_cost = map_find(kernel, kernel_costs);
+		} else {
+			current_group.insert({kernel});
+			current_group_cost += map_find(kernel, kernel_costs);
+		}
+	}
 
-  // Sanity check
-  int num_kernels_in_groups = 0;
-  for (auto g : groups) {
-    num_kernels_in_groups += g.size();
-  }
+	groups.insert(current_group);
 
-  assert(num_kernels_in_groups == get_kernels(prg).size());
+	// Sanity check
+	int num_kernels_in_groups = 0;
+	for (auto g : groups) {
+		num_kernels_in_groups += g.size();
+	}
 
-  return groups;
+	assert(num_kernels_in_groups == get_kernels(prg).size());
+
+	return groups;
 }
 
 
@@ -149,6 +149,7 @@ prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original
 			}
 		}
 	}
+	cout << "Programs copied" << endl;
 
 	std::set<string> all_consumed_buffers = get_consumed_buffers(group, original);
 	std::set<string> all_produced_buffers = get_produced_buffers(group, original);
@@ -157,7 +158,8 @@ prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original
 			extracted.add_input(consumed);
 			cout << "Input added: " << consumed << endl;
 			// Do I need to calculate the width?
-			// extracted.buffer_port_widths[consumed] = original.buffer_port_widths.find(consumed);
+			 extracted.buffer_port_widths[consumed] = map_find(consumed, original.buffer_port_widths);
+			cout << "Input width: " << extracted.buffer_port_widths[consumed] << endl;
 		}
 	}
 	
@@ -165,7 +167,8 @@ prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original
 		if(!elem(produced, all_consumed_buffers)){
 			extracted.add_output(produced);
 			cout << "Output added: " << produced << endl;
-			// Do I need to calculate the width?
+			extracted.buffer_port_widths[produced] = map_find(produced, original.buffer_port_widths);
+			cout << "Output width: " << extracted.buffer_port_widths[produced] << endl;
 		}
 	}
 	
@@ -202,17 +205,14 @@ void prog_splitting_tests() {
   target_info.sram_cost_per_bit = 1;
   target_info.reg_cost_per_bit = 1;
 
+  cout << endl << "Estimating area costs..." << endl;
   map<string, int> kernel_areas = estimate_kernel_areas(prg, target_info);
-  cout << "Estimated area costs..." << endl;
-  for (auto kernel_and_area : kernel_areas) {
-    string kernel_name = kernel_and_area.first;
-    int area = kernel_and_area.second;
-    cout << tab(1) << kernel_name << " has area cost: " << area << endl;
-  }
 
+  cout << endl << "Grouping kernels..." << endl;
   int max_area_cost_per_group = 9;
-  std::set<std::set<string> > kernel_grouping = group_kernels_for_compilation(prg, kernel_areas, max_area_cost_per_group);
+  std::set<std::set<string>> kernel_grouping = group_kernels_for_compilation(prg, kernel_areas, max_area_cost_per_group);
   assert(kernel_grouping.size() == 2);
+
   for(auto group : kernel_grouping){
 	cout << "current group: "<< endl;
 	for(auto kernel : group){
@@ -221,7 +221,7 @@ void prog_splitting_tests() {
   }
 
   vector<prog> group_programs;
-  cout << "Kernel grouping..." << endl;
+  cout << endl << "Extracting progs..." << endl;
   for (auto group : kernel_grouping) {
     prog prog_for_group = extract_group_to_separate_prog(group, prg);
     cout << "Group program..." << endl;
