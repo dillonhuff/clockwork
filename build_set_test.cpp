@@ -10681,7 +10681,7 @@ void adobe_downsample_two_adds() {
         cout << "sample point in builder set = " << str(sample(builder.s)) << endl;
 
 
-        assert(false);
+        //assert(false);
         map<string, isl_val*> sum_of_iis{{"rcc", one(ct)}, {"xdc", one(ct)}, {"ydc", one(ct)}};
         builder.minimize(sum_of_iis);
 
