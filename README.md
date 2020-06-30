@@ -14,7 +14,7 @@ Clockwork is a tool for compiling naive descriptions of hardware accelerators wr
 
 For a full setup script for AWS F1 with Developer AMI 1.8.1 see: [./misc/aws\_setup.sh](./misc/aws_setup.sh). From inside the top-level of the clockwork repo run the commands:
 
-    source ./misc/aws\_setup.sh
+    source ./misc/aws_setup.sh
     ./rebuild_and_run.sh blur-example
     cd blur_example
     make check TARGET=sw_emu DEVICE=$AWS_PLATFORM all 
