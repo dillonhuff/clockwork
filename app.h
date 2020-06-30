@@ -1056,6 +1056,13 @@ struct ilp_builder {
     ctx(isl_basic_set_get_ctx(bset)) {
     auto init_space = get_space(bset);
     s = cpy(bset);
+    for (int next_pos = 0; next_pos < num_dims(s); next_pos++) {
+      const char* n =
+        isl_basic_set_get_dim_name(s, isl_dim_set, next_pos);
+      if (n != nullptr) {
+        variable_positions[string(n)] = next_pos;
+      }
+    }
     solved = false;
     solution_point = nullptr;
   }

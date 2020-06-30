@@ -10642,14 +10642,23 @@ void adobe_downsample_two_adds() {
         fs = gtconst(fs, 4, 15);
         fs = gtconst(fs, 3, 225);
 
+        auto ct = prg.ctx;
         ilp_builder builder(fs);
+        cout << "Builder set..." << endl;
+        cout << tab(1) << str(builder.s) << endl;
+        map<string, isl_val*> sum_of_iis{{"rcc", one(ct)}, {"xdc", one(ct)}, {"ydc", one(ct)}};
+        builder.minimize(sum_of_iis);
+
+        for (auto v : builder.variable_positions) {
+          cout << tab(1) << str(builder.value(v.first)) << endl;
+        }
 
         //auto extra_constraint0 = rdset(ctx, "{ [rdiff, a, b, c, d] : rdiff = 0 }");
         //auto sol = its(extra_constraint0, to_set(fs));
 
         //cout << "New fs = " << str(sol) << endl;
-        auto pt = sample(fs);
-        cout << "Example solution: " << str(pt) << endl;
+        //auto pt = sample(fs);
+        //cout << "Example solution: " << str(pt) << endl;
 
         assert(false);
       }
