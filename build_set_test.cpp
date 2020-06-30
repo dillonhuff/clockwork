@@ -10817,7 +10817,7 @@ void adobe_sharpen() {
 
 void adobe_meeting_apps() {
   adobe_downsample_two_adds();
-  assert(false);
+  //assert(false);
   adobe_downsample();
   adobe_downsample_two_adds_epochs();
   adobe_sharpen();
@@ -10885,8 +10885,8 @@ void halide_up_sample_test() {
 }
 
 void application_tests() {
-  adobe_meeting_apps();
-  playground();
+  //adobe_meeting_apps();
+  //playground();
   histogram_test();
   halide_up_sample_test();
   //assert(false);
@@ -11093,6 +11093,12 @@ void blur_example() {
   system(("mv " + out_name + "*.h " + synth_dir).c_str());
   system(("mv regression_tb_" + out_name + "*.cpp " + synth_dir).c_str());
   system(("mv tb_soda_" + out_name + "*.cpp " + synth_dir).c_str());
+  system(("cp ./aws_collateral/xrt.ini " + synth_dir).c_str());
+  system(("cp ./aws_collateral/Makefile " + synth_dir).c_str());
+  system(("cp ./aws_collateral/utils.mk " + synth_dir).c_str());
+  make_exe("set_app.sh");
+  system(("mv set_app.sh " + synth_dir).c_str());
+
 }
 
 int main(int argc, char** argv) {
