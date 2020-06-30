@@ -2510,13 +2510,6 @@ std::vector<string> topologically_sort_kernels(prog& prg){
 		}
 	}
 
-	/*
-	   cout << "topologically_sorted_kernels:"<< endl;
-	   for(int i = 0; i < 4; i++){
-	   cout << topologically_sorted_kernels[i] << endl;
-	   }
-	 */
-
 	return topologically_sorted_kernels;
 }
 
@@ -2562,7 +2555,7 @@ void prog::sanity_check() {
 
 std::set<string> get_producers(string next_kernel, prog& prg){
  
-   cout << "next kernel: " << next_kernel<< endl;
+//   cout << "next kernel: " << next_kernel<< endl;
    std::set<string> producers;
    op* loop = prg.find_loop(next_kernel);
  
@@ -2570,11 +2563,11 @@ std::set<string> get_producers(string next_kernel, prog& prg){
    for(auto op : prg.find_loop(next_kernel)->descendant_ops()){
          for(auto buff : op -> buffers_read()){
              buffers_read.insert(buff);
-             cout << tab(1) << buff << endl;
+//             cout << tab(1) << buff << endl;
          }
    }
  
-   cout << "getting other_kernels"<< endl;
+//   cout << "getting other_kernels"<< endl;
    for(auto other_kernel : get_kernels(prg)){
            if(other_kernel != next_kernel){
                    std::set<string> buffers_written;
@@ -2587,7 +2580,7 @@ std::set<string> get_producers(string next_kernel, prog& prg){
  
                    if(intersection(buffers_written, buffers_read).size() > 0){
                            producers.insert(other_kernel);
-                           cout << "producer name: " << other_kernel << endl;
+//                           cout << "producer name: " << other_kernel << endl;
                    }
            }
  

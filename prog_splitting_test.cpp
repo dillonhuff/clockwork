@@ -41,17 +41,13 @@ prog brighten_blur() {
   scale->add_load("in", "bi, bo");
   scale->add_store("brightened", "bi, bo");
 
-  auto blr = prg.add_nest("y", 0 , input_image_rows - 2, "x", 0, input_image_cols - 2);
+  auto blr = prg.add_nest("y", 0 , input_image_rows, "x", 0, input_image_cols);
   auto blur = blr->add_op("blur_image");
-  blur->add_function("blur_3_3");
-  for (size_t wy = 0; wy < 3; wy ++) {
-    for (size_t wx = 0; wx < 3; wx ++) {
-      blur->add_load("brightened", "x + " + to_string(wy) + ", y + " + to_string(wx));
-    }
-  }
-  blur->add_store("blurred", "x, y");
+  blur->add_function("inc");
+  blur->add_load("brightened", "x","y");
+  blur->add_store("blurred", "x","y");
 
-  auto write_out = prg.add_nest("m", 0, input_image_rows - 2, "n", 0, input_image_cols - 2);
+  auto write_out = prg.add_nest("m", 0, input_image_rows, "n", 0, input_image_cols);
   auto write_op = write_out->add_op("write_blurred_off_chip");
   write_op->add_load("blurred", "n, m");
   write_op->add_store("off_chip_output", "n, m");
@@ -141,6 +137,12 @@ std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int
 prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original) {
 	// TODO: Implement this function
 	prog extracted;
+	string prg_name = "Extracted_";
+	for(auto g : group){
+	prg_name += g + "_";
+	}
+	extracted.name = prg_name;
+
 	for(auto kernel : topologically_sort_kernels(original)){
 		if(elem(kernel, group)){
 			op* kernel_copy = extracted.add_loop(kernel, original.start(kernel), original.end_exclusive(kernel));
@@ -179,10 +181,13 @@ prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original
 
 void generate_optimized_code_for_program_dag(std::vector<prog>& group_programs) {
   // TODO: Implement this function
+  for(auto& prg : group_programs){
+	generate_unoptimized_code(prg);
+  }
 }
 
-//-----------------------------------------VOID PROG_SPLITTING_TESTS-------------------------------------------
-void prog_splitting_tests() {
+void toy_task(){
+
   prog prg = brighten_blur();
 
   cout << "Original program..." << endl;
@@ -201,7 +206,7 @@ void prog_splitting_tests() {
   // kernel in the application
   TargetTechlibInfo target_info;
   target_info.compute_unit_costs["multiply_by_two"] = INT_MULTIPLIER_COST;
-  target_info.compute_unit_costs["blur_3_3"] = INT_ADDER_COST*8 + INT_CONSTANT_DIVIDER_COST;
+  target_info.compute_unit_costs["inc"] = INT_ADDER_COST*8 + INT_CONSTANT_DIVIDER_COST;
   target_info.sram_cost_per_bit = 1;
   target_info.reg_cost_per_bit = 1;
 
@@ -232,4 +237,10 @@ void prog_splitting_tests() {
   generate_optimized_code_for_program_dag(group_programs);
 
   assert(false);
+
+}
+
+//-----------------------------------------VOID PROG_SPLITTING_TESTS-------------------------------------------
+void prog_splitting_tests() {
+
 }
