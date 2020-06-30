@@ -2561,3 +2561,17 @@ std::set<string> get_producers(string next_kernel, prog& prg){
    }
    return producers;
   }
+
+
+  void ir_node::copy_fields_from(op* other){
+	name = other->name;
+	start = other -> start;
+	end_exclusive = other -> end_exclusive;
+	produce_locs = other -> produce_locs;
+	unroll_factor = other -> unroll_factor;
+	dynamic_store_addresses = other -> dynamic_store_addresses;
+	consume_locs_pair = other -> consume_locs_pair;
+	dynamic_load_addresses = other -> dynamic_load_addresses;
+	index_variables_needed_by_compute = other -> index_variables_needed_by_compute;
+	func = other -> func;
+  }

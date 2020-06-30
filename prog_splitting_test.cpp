@@ -165,17 +165,46 @@ std::set<std::set<string>>group_kernels_for_compilation(prog& prg,map<string,int
 }
 
 void deep_copy_child(op* dest, op* source, prog& original){
-    op* kernel_copy;
-    if(source -> is_loop){
-	kernel_copy = dest -> add_loop(source->name, original.start(source->name), original.end_exclusive(source->name));
-    for(auto child : original.find_loop(source->name)->children){
-	deep_copy_child(kernel_copy, child, original);
-    }
-    }else{
-	kernel_copy = dest -> add_op(source -> name);
-	kernel_copy->copy_fields_from(source);
-    }
+	op* kernel_copy;
+	if(source -> is_loop){
+		kernel_copy = dest -> add_loop(source->name, original.start(source->name), original.end_exclusive(source->name));
+		for(auto child : original.find_loop(source->name)->children){
+			deep_copy_child(kernel_copy, child, original);
+		}
+	}else{
+		kernel_copy = dest -> add_op(source -> name);
+		kernel_copy->copy_fields_from(source);
+	}
 
+}
+
+std::set<string> get_consumed_buffers(std::set<std::string>& group, prog& original){
+	std::set<string> all_consumed_buffers;
+	for(auto kernel_in_group : group){
+		auto kernel_ops = original.find_loop(kernel_in_group)->descendant_ops();
+		for(auto op : kernel_ops){
+			std::set<string> all_buffers_read = op->buffers_read();
+			for(auto buffer : all_buffers_read){
+				all_consumed_buffers.insert(buffer); 
+			}
+		}
+	}
+	return all_consumed_buffers;
+}
+
+
+std::set<string> get_produced_buffers(std::set<std::string>& group, prog& original){
+	std::set<string> all_produced_buffers;
+	for(auto kernel_in_group : group){
+		auto kernel_ops = original.find_loop(kernel_in_group)->descendant_ops();
+		for(auto op : kernel_ops){
+			std::set<string> all_buffers_written = op->buffers_written();
+			for(auto buffer : all_buffers_written){
+				all_produced_buffers.insert(buffer);
+			}
+		}
+	}
+	return all_produced_buffers;
 }
 
 prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original) {
@@ -189,8 +218,11 @@ prog extract_group_to_separate_prog(std::set<std::string>& group, prog& original
 		}
 	}
   }
+
   return extracted;
 }
+
+
 
 void generate_optimized_code_for_program_dag(std::vector<prog>& group_programs) {
   // TODO: Implement this function
