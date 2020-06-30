@@ -1043,3 +1043,229 @@ form_farkas_constraints(isl_basic_set* constraints,
 
 vector<std::string> topological_sort(const vector<isl_set*>& sets,
     const vector<isl_map*>& maps);
+
+struct ilp_builder {
+
+  isl_ctx* ctx;
+  isl_basic_set* s;
+  map<string, int> variable_positions;
+  bool solved;
+  isl_point* solution_point;
+
+  ilp_builder(isl_basic_set* bset) :
+    ctx(isl_basic_set_get_ctx(bset)) {
+    auto init_space = get_space(bset);
+    s = cpy(bset);
+    solved = false;
+    solution_point = nullptr;
+  }
+
+  ilp_builder(isl_ctx* ctx_) : ctx(ctx_) {
+    auto init_space = isl_space_set_alloc(ctx, 0, 0);
+    s = isl_basic_set_universe(init_space);
+    solved = false;
+    solution_point = nullptr;
+  }
+
+  isl_val* value(const std::string& var) {
+    assert(solved);
+    assert(solution_point != nullptr);
+    assert(contains_key(var, variable_positions));
+
+    return isl_point_get_coordinate_val(solution_point,
+        isl_dim_set,
+        map_find(var, variable_positions));
+  }
+
+  void add_variable(const std::string& name) {
+    int next_pos = num_dims(isl_basic_set_get_space(s));
+    variable_positions[name] = next_pos;
+    s = isl_basic_set_add_dims(s, isl_dim_set, 1);
+    s = isl_basic_set_set_dim_name(s, isl_dim_set, next_pos, name.c_str());
+  }
+
+  void add_geq(const int v, const std::string& a) {
+    add_geq({{a, negone(ctx)}}, isl_val_int_from_si(ctx, v));
+  } 
+
+  void add_eq(const std::string& a, const std::string& b) {
+    //add_eq({{a, one(ctx)}, {b, negone(ctx)}}, zero(ctx));
+    add_geq(a, b);
+    add_geq(b, a);
+    //{{a, one(ctx)}, {b, one(ctx)}}, zero(ctx));
+  }
+
+  void add_geq(const std::string& a, const std::string& b) {
+    add_geq({{a, one(ctx)}, {b, negone(ctx)}}, zero(ctx));
+  }
+
+  void add_geq(const std::string& a, const int b) {
+    add_geq({{a, one(ctx)}}, isl_val_int_from_si(ctx, -(b)));
+  }
+
+  void add_gt(const std::string& a, const int b) {
+    add_geq({{a, one(ctx)}}, isl_val_int_from_si(ctx, -(b + 1)));
+  }
+
+  void add_gt(const std::string& a, isl_val* b_coeff, const std::string& b) {
+    add_geq({{a, one(ctx)}, {b, mul(b_coeff, negone(ctx))}}, negone(ctx));
+  }
+
+  void add_gt(const std::string& a, const std::string& b) {
+    add_geq({{a, one(ctx)}, {b, negone(ctx)}}, negone(ctx));
+  }
+
+  void add_geq(const std::map<string, isl_val*>& coeffs, isl_val* constant) {
+    vector<isl_val*> denoms;
+    if (isl_val_is_rat(constant)) {
+      denoms.push_back(isl_val_get_den_val(constant));
+    }
+    for (auto v : coeffs) {
+      if (isl_val_is_rat(v.second)) {
+        auto dv = isl_val_get_den_val(v.second);
+        assert(isl_val_is_pos(dv));
+        denoms.push_back(isl_val_get_den_val(dv));
+      }
+    }
+
+    isl_val* dn = isl_val_one(ctx);
+    for (auto v : denoms) {
+      dn = mul(dn, v);
+    }
+    assert(isl_val_is_int(dn));
+
+    for (auto v : coeffs) {
+      if (!contains_key(v.first, variable_positions)) {
+        add_variable(v.first);
+      }
+    }
+
+    isl_constraint* c = isl_constraint_alloc_inequality(get_local_space(s));
+    isl_constraint_set_constant_val(c, mul(dn, constant));
+
+    for (auto v : coeffs) {
+      auto m = mul(dn, v.second);
+      assert(isl_val_is_int(m));
+
+      isl_constraint_set_coefficient_val(c,
+          isl_dim_set,
+          map_find(v.first, variable_positions),
+          m);
+    }
+
+    s = isl_basic_set_add_constraint(s, c);
+    assert(isl_val_is_int(constant));
+
+  }
+
+  vector<isl_val*> lex_minimize(const vector<std::map<string, isl_val*> >& objectives) {
+    vector<isl_val*> values;
+
+    isl_basic_set* max_loc = cpy(s);
+    for (auto obj : objectives) {
+      isl_aff* objective = isl_aff_zero_on_domain(get_local_space(s));
+      for (auto coeff : obj) {
+        int index = map_find(coeff.first, variable_positions);
+        isl_val* cn = mul(isl_val_negone(ctx), coeff.second);
+        objective = isl_aff_set_coefficient_val(objective, isl_dim_in, index, cn);
+      }
+      isl_val* max = isl_basic_set_max_val(cpy(max_loc), objective);
+      values.push_back(max);
+
+      auto max_loc_s =
+        isl_aff_eq_basic_set(objective,
+            aff_on_domain(get_local_space(s), max));
+      max_loc = its(max_loc, max_loc_s);
+
+      assert(!empty(max_loc));
+    }
+
+    solution_point = sample(max_loc);
+
+    assert(solution_point != nullptr);
+    assert(values.size() == objectives.size());
+
+    solved = true;
+
+    //assert(false);
+    return values;
+  }
+
+  isl_val* minimize(const std::map<string, isl_val*>& obj) {
+    isl_aff* objective = isl_aff_zero_on_domain(get_local_space(s));
+    for (auto coeff : obj) {
+      int index = map_find(coeff.first, variable_positions);
+      isl_val* cn = mul(isl_val_negone(ctx), coeff.second);
+      objective = isl_aff_set_coefficient_val(objective, isl_dim_in, index, cn);
+    }
+    isl_val* max = isl_basic_set_max_val(cpy(s), objective);
+    isl_basic_set* max_loc =
+      isl_aff_eq_basic_set(objective,
+          aff_on_domain(get_local_space(s), max));
+    solved = true;
+    auto max_loc_pts = its(max_loc, s);
+
+    assert(!empty(max_loc_pts));
+
+    solution_point = sample(its(max_loc, s));
+    assert(solution_point != nullptr);
+    return max;
+  }
+
+  void add_eq(const std::map<string, isl_val*>& coeffs, isl_val* constant) {
+    vector<isl_val*> denoms;
+    if (isl_val_is_rat(constant)) {
+      denoms.push_back(isl_val_get_den_val(constant));
+    }
+    for (auto v : coeffs) {
+      if (isl_val_is_rat(v.second)) {
+        auto dv = isl_val_get_den_val(v.second);
+        assert(isl_val_is_pos(dv));
+        denoms.push_back(dv);
+      } else {
+        //cout << tab(1) << "non-rational: " << str(v.second) << endl;
+      }
+    }
+
+    //cout << "Denoms..." << endl;
+    isl_val* dn = isl_val_one(ctx);
+    for (auto v : denoms) {
+      //cout << tab(1) << str(v) << endl;
+      dn = mul(dn, v);
+    }
+    //assert(isl_val_is_int(constant));
+
+    //cout << "Denom: " << str(dn) << endl;
+    for (auto v : coeffs) {
+      //assert(isl_val_is_int(v.second));
+      if (!contains_key(v.first, variable_positions)) {
+        int next_pos = num_dims(isl_basic_set_get_space(s));
+        variable_positions[v.first] = next_pos;
+        s = isl_basic_set_add_dims(s, isl_dim_set, 1);
+      }
+    }
+
+    isl_constraint* c = isl_constraint_alloc_equality(get_local_space(s));
+    auto cv = mul(dn, constant);
+    //cout << "cv = " << str(cv) << endl;
+    //cout << "dn = " << str(dn) << endl;
+    assert(isl_val_is_int(cv));
+
+    isl_constraint_set_constant_val(c, cv);
+
+    for (auto v : coeffs) {
+      //cout << "index = " << map_find(v.first, variable_positions) << endl;
+      auto m = mul(dn, v.second);
+      //cout << "dn = " << str(dn) << endl;
+      //cout << "m = " << str(m) << endl;
+      assert(isl_val_is_int(m));
+      isl_constraint_set_coefficient_val(c,
+          isl_dim_set,
+          map_find(v.first, variable_positions),
+          m);
+    }
+
+    s = isl_basic_set_add_constraint(s, c);
+  }
+
+};

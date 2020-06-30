@@ -10570,6 +10570,15 @@ isl_basic_set* negative(isl_basic_set* fs, const int var) {
   return fs;
 }
 
+isl_basic_set* gtconst(isl_basic_set* fs, const int var, const int bound) {
+  auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
+  non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, var, 1);
+  non_neg = isl_constraint_set_constant_si(non_neg, -bound);
+  fs = isl_basic_set_add_constraint(fs, non_neg);
+
+  return fs;
+}
+
 isl_basic_set* positive(isl_basic_set* fs, const int var) {
   auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
   non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, var, 1);
@@ -10629,6 +10638,11 @@ void adobe_downsample_two_adds() {
         fs = negative(fs, 0);
         fs = negative(fs, 1);
         fs = negative(fs, 2);
+
+        fs = gtconst(fs, 4, 15);
+        fs = gtconst(fs, 3, 225);
+
+        ilp_builder builder(fs);
 
         //auto extra_constraint0 = rdset(ctx, "{ [rdiff, a, b, c, d] : rdiff = 0 }");
         //auto sol = its(extra_constraint0, to_set(fs));
