@@ -2892,3 +2892,113 @@ std::string optimized_code_string(prog& prg) {
   return codegen_c(its(sched, prg.whole_iteration_domain()));
 }
 
+void generate_compute_trace(
+    std::ostream& conv_out,
+    prog& prg,
+    op* op,
+    map<string, isl_set*> domain_map) {
+
+  cout << "Generating compute for: " << op->name << endl;
+
+  compute_kernel kernel;
+  kernel.name = op->name;
+  kernel.functional_unit = op->func;
+
+  vector<string> buf_srcs;
+
+  auto s = get_space(domain_map.at(op->name));
+
+  for (auto a : space_var_decls(s)) {
+    buf_srcs.push_back(a);
+  }
+
+  cout << "Got iteration variables" << endl;
+  conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
+  conv_out << tab(1) << "cout << \"" << op->name << "\" << endl;" << endl;
+
+  conv_out << endl;
+  open_debug_scope(conv_out);
+
+  ////cout << "emitting bundle code" << endl;
+  //auto& buf = buffers.at(out_buffer);
+  //int bundle_width = buf.port_bundle_width(bundle_name);
+
+  //int unroll_factor = op->unroll_factor;
+  //int element_width = bundle_width / op->unroll_factor;
+
+
+  //string dbg_res_name = "debug_" + res;
+  //conv_out << tab(1) << "hw_uint<" << bundle_width << "> " << dbg_res_name << "(" << res << ");" << endl;
+  //vector<string> lane_values =
+    //split_bv(1, conv_out, dbg_res_name, element_width, op->unroll_factor);
+
+  //for (int lane = 0; lane < unroll_factor; lane++) {
+    //conv_out << tab(1) << "*global_debug_handle << \"" << op->name << ",\" << ";
+    //int i = 0;
+    //for (auto v : kernel.iteration_variables) {
+      //if (i == 0) {
+        //conv_out << "(" << unroll_factor << "*" << v << " + " << lane << ") << \",\" << ";
+      //} else {
+        //conv_out << v << "<< \",\" << ";
+      //}
+      //i++;
+    //}
+    //assert(lane < lane_values.size());
+    //conv_out << " " << lane_values.at(lane) << " << endl;" << endl;
+  //}
+
+  close_debug_scope(conv_out);
+  conv_out << endl;
+  conv_out << "}" << endl << endl;
+
+}
+
+void generate_trace(prog& prg, umap* schedmap) {
+
+  ofstream conv_out(prg.name + "_trace.cpp");
+
+  conv_out << "#include <iostream>" << endl << endl;
+  conv_out << "using namespace std;" << endl << endl;
+
+  auto domains = prg.domains();
+  map<string, isl_set*> domain_map;
+  for (auto d : domains) {
+    domain_map[d.first->name] = d.second;
+  }
+  conv_out << "// Operation logic" << endl;
+  for (auto op : prg.all_ops()) {
+    generate_compute_trace(conv_out, prg, op, domain_map);
+  }
+
+  conv_out << "// Driver function" << endl;
+  conv_out << "void " << prg.name << "() {" << endl << endl;
+
+  string code_string = codegen_c(schedmap);
+  code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
+
+  //for (auto op : prg.all_ops()) {
+    //regex re("(\n\t\\s+)" + op->name + "\\((.*)\\);");
+    //string args_list = sep_list(buffer_arg_names(buffers, op, prg), "", "", ", ");
+    ////code_string = regex_replace(code_string, re, "\n\t" + op->name + "(" + args_list + ", $1);");
+    //code_string = regex_replace(code_string, re, "$1" + op->name + "(" + args_list + ", $2);");
+  //}
+
+  conv_out << "// schedule: " << str(schedmap) << endl;
+  for (auto s : get_maps(schedmap)) {
+    conv_out << "// " << tab(1) << str(s) << endl;
+    conv_out << "// Condition for " << domain_name(s) << codegen_c(range(s)) << endl;
+  }
+  conv_out << endl;
+
+  conv_out << code_string << endl;
+
+  conv_out << "}" << endl << endl;
+
+  conv_out << "int main() {" << endl;
+  conv_out << tab(1) << prg.name << "();" << endl;
+  conv_out << "}" << endl;
+
+  conv_out << endl;
+
+  conv_out.close();
+}
