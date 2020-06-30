@@ -10561,6 +10561,23 @@ void generate_optimized_trace(prog& prg) {
   generate_trace(prg, sched);
 }
 
+isl_basic_set* negative(isl_basic_set* fs, const int var) {
+  auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
+  non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, var, -1);
+  non_neg = isl_constraint_set_constant_si(non_neg, -1);
+  fs = isl_basic_set_add_constraint(fs, non_neg);
+
+  return fs;
+}
+
+isl_basic_set* positive(isl_basic_set* fs, const int var) {
+  auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
+  non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, var, 1);
+  non_neg = isl_constraint_set_constant_si(non_neg, -1);
+  fs = isl_basic_set_add_constraint(fs, non_neg);
+
+  return fs;
+}
 void adobe_downsample_two_adds() {
   prog prg("adobe_downsample");
   prg.add_input("off_chip_image");
@@ -10598,12 +10615,20 @@ void adobe_downsample_two_adds() {
       cout << tab(1) << maps.size() << " basic maps" << endl;
       for (auto bm : maps) {
         cout << str(bm) << endl;
-        vector<pair<string, string> > diffs{{"root", "rdiff"}, {"x", "xdiff"}, {"y", "ydiff"}};
+        vector<pair<string, string> > diffs{{"rootp", "rp"}, {"xp", "xdp"}, {"yp", "ydp"},
+          {"rootc", "rcc"}, {"xc", "xdc"}, {"yc", "ydc"}};
         string ddiff = "ddiff";
 
         isl_basic_set* basic_set_for_map = flatten_bmap_to_bset(bm);
         auto fs = form_farkas_constraints(basic_set_for_map, diffs, ddiff);
         cout << "fs = " << str(fs) << endl;
+        fs = positive(fs, 3);
+        fs = positive(fs, 4);
+        fs = positive(fs, 5);
+
+        fs = negative(fs, 0);
+        fs = negative(fs, 1);
+        fs = negative(fs, 2);
 
         //auto extra_constraint0 = rdset(ctx, "{ [rdiff, a, b, c, d] : rdiff = 0 }");
         //auto sol = its(extra_constraint0, to_set(fs));
