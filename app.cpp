@@ -1,13 +1,5 @@
 #include "app.h"
 
-std::string hw_delay_var(const string& n) {
-  return "hw_delay_" + n;
-}
-
-std::string ii_var(const string& n, const int d) {
-  return "ii_" + n + "_pdim" + str(d);
-}
-
 std::string lv(const string& n, const int d) {
   return "pad_dim_permute_" + n + "_pdim" + str(d);
 }

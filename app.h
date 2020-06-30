@@ -8,6 +8,16 @@
 typedef pair<string, int> op_level;
 
 static inline
+std::string hw_delay_var(const string& n) {
+  return "hw_delay_" + n;
+}
+
+static inline
+std::string ii_var(const string& n, const int d) {
+  return "ii_" + n + "_pdim" + str(d);
+}
+
+static inline
 string sched_var_name(const string& n) {
   return "s_" + n;
 }

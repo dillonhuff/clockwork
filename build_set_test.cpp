@@ -10629,8 +10629,21 @@ void adobe_downsample_two_adds() {
         string ddiff = "ddiff";
 
         cout << str(bm) << endl;
-        vector<pair<string, string> > diffs{{"rootp", "rp"}, {"xp", "xdp"}, {"yp", "ydp"},
-          {"rootc", "rcc"}, {"xc", "xdc"}, {"yc", "ydc"}};
+        vector<pair<string, string> > diffs;
+        // This order of pushes to diffs is expected for
+        // matrix formatting
+        for (int d = 0; d < num_in_dims(bm); d++) {
+          diffs.push_back({"d_" + str(d), ii_var(domain_name(bm), d)});
+        }
+        
+        for (int d = 0; d < num_out_dims(bm); d++) {
+          diffs.push_back({"d_" + str(d), ii_var(range_name(bm), d)});
+        }
+
+        //diffs.push_back({"yc", ddiff});
+
+        //vector<pair<string, string> > diffs{{"rootp", "rp"}, {"xp", "xdp"}, {"yp", "ydp"},
+          //{"rootc", "rcc"}, {"xc", "xdc"}, {"yc", "ydc"}};
 
         isl_basic_set* basic_set_for_map = flatten_bmap_to_bset(bm);
         auto fs = form_farkas_constraints(basic_set_for_map, diffs, ddiff);
@@ -10646,44 +10659,44 @@ void adobe_downsample_two_adds() {
 
         auto ct = prg.ctx;
         ilp_builder builder(fs);
-        builder.add_gt("II_c_root", (int) 0);
-        builder.add_gt("II_c_y", (int) 0);
-        builder.add_gt("II_c_x", (int) 0);
+        for (int d = 0; d < num_in_dims(bm); d++) {
+          builder.add_gt(ii_var(domain_name(bm), d), (int) 0);
+        }
         builder.add_geq(consumer_delay, (int) 0);
-
-        builder.add_gt("II_p_root", (int) 0);
-        builder.add_gt("II_p_y", (int) 0);
-        builder.add_gt("II_p_x", (int) 0);
+        
+        for (int d = 0; d < num_out_dims(bm); d++) {
+          builder.add_gt(ii_var(range_name(bm), d), (int) 0);
+        }
         builder.add_geq(producer_delay, (int) 0);
 
-        builder.add_eq("rcc", "II_c_root");
-        builder.add_eq("ydc", "II_c_y");
-        builder.add_eq("xdc", "II_c_x");
+        //builder.add_eq("rcc", "II_c_root");
+        //builder.add_eq("ydc", "II_c_y");
+        //builder.add_eq("xdc", "II_c_x");
         
-        builder.add_geq({{"II_c_root", one(ct)},
-            {"II_c_y", isl_val_int_from_si(ct, -15)}},
-            zero(ct));
+        //builder.add_geq({{"II_c_root", one(ct)},
+            //{"II_c_y", isl_val_int_from_si(ct, -15)}},
+            //zero(ct));
 
-        builder.add_geq({{"II_c_y", one(ct)},
-            {"II_c_x", isl_val_int_from_si(ct, -15)}},
-            zero(ct));
+        //builder.add_geq({{"II_c_y", one(ct)},
+            //{"II_c_x", isl_val_int_from_si(ct, -15)}},
+            //zero(ct));
 
-        builder.add_geq({{"II_p_root", one(ct)},
-            {"II_p_y", isl_val_int_from_si(ct, -15)}},
-            zero(ct));
+        //builder.add_geq({{"II_p_root", one(ct)},
+            //{"II_p_y", isl_val_int_from_si(ct, -15)}},
+            //zero(ct));
 
-        builder.add_geq({{"II_p_y", one(ct)},
-            {"II_p_x", isl_val_int_from_si(ct, -15)}},
-            zero(ct));
+        //builder.add_geq({{"II_p_y", one(ct)},
+            //{"II_p_x", isl_val_int_from_si(ct, -15)}},
+            //zero(ct));
 
-        builder.add_eq({{ddiff, one(ct)}, {"p_d", negone(ct)}, {"c_d", one(ct)}},
+        builder.add_eq({{ddiff, one(ct)}, {producer_delay, negone(ct)}, {consumer_delay, one(ct)}},
             zero(ct));
  
-        builder.add_eq({{"rp", one(ct)}, {"II_p_root", negone(ct)}}, zero(ct));
-        builder.add_eq({{"xdp", one(ct)}, {"II_p_x", negone(ct)}}, zero(ct));
-        builder.add_eq({{"ydp", one(ct)}, {"II_p_y", negone(ct)}}, zero(ct));
+        //builder.add_eq({{"rp", one(ct)}, {"II_p_root", negone(ct)}}, zero(ct));
+        //builder.add_eq({{"xdp", one(ct)}, {"II_p_x", negone(ct)}}, zero(ct));
+        //builder.add_eq({{"ydp", one(ct)}, {"II_p_y", negone(ct)}}, zero(ct));
 
-        builder.add_eq({{"II_p_x", one(ct)}}, isl_val_int_from_si(ct, -3));
+        //builder.add_eq({{"II_p_x", one(ct)}}, isl_val_int_from_si(ct, -3));
 
         cout << "Builder set..." << endl;
         cout << tab(1) << str(builder.s) << endl;
@@ -10691,7 +10704,11 @@ void adobe_downsample_two_adds() {
         cout << "sample point in builder set = " << str(sample(builder.s)) << endl;
 
         //assert(false);
-        map<string, isl_val*> sum_of_iis{{"rcc", one(ct)}, {"xdc", one(ct)}, {"ydc", one(ct)}};
+        map<string, isl_val*> sum_of_iis;
+        for (int d = 0; d < num_out_dims(bm); d++) {
+          sum_of_iis[ii_var(domain_name(bm), d)] = one(ct);
+        }
+        //{{"rcc", one(ct)}, {"xdc", one(ct)}, {"ydc", one(ct)}};
         builder.minimize(sum_of_iis);
 
         for (auto v : builder.variable_positions) {

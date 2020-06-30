@@ -57,6 +57,6 @@ ds_*
 run_tb_*
 aws_*
 soda_*
-./user_settings/private_settings.sh
+user_settings/private_settings.sh
 images/
 synthesis/
