@@ -2705,6 +2705,14 @@ int num_in_dims(isl_basic_map* const s) {
   return num_in_dims(get_space(s));
 }
 
+int num_div_dims(isl_basic_set* const s) {
+  return num_div_dims(get_local_space(s));
+}
+
+int num_param_dims(isl_basic_set* const s) {
+  return num_param_dims(get_space(s));
+}
+
 int num_div_dims(isl_basic_map* const s) {
   return num_div_dims(get_local_space(s));
 }

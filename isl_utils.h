@@ -520,6 +520,9 @@ int num_in_dims(isl_basic_map* const s);
 int num_div_dims(isl_basic_map* const s);
 int num_param_dims(isl_basic_map* const s);
 
+int num_div_dims(isl_basic_set* const s);
+int num_param_dims(isl_basic_set* const s);
+
 vector<int> parse_pt(isl_point* p);
 
 uset* gist(uset* base, uset* context);
