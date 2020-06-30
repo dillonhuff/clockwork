@@ -526,7 +526,7 @@ isl_basic_set* non_negative(isl_basic_set* fs, int var) {
   return fs;
 }
 
-isl_basic_set* equalities_to_inequalities(isl_basic_set* bset) {
+isl_mat* equalities_to_inequalities(isl_basic_set* bset) {
   auto orig_ineqs = isl_basic_set_inequalities_matrix(bset,
       isl_dim_set,
       isl_dim_cst,
@@ -539,16 +539,22 @@ isl_basic_set* equalities_to_inequalities(isl_basic_set* bset) {
       isl_dim_param);
 
   int new_num_ineqs = isl_mat_rows(orig_ineqs) + 2*isl_mat_rows(orig_eqs);
+  cout << "new num ineqs: " << new_num_ineqs << endl;
 
-  auto ineqs = isl_mat_alloc(ctx(bset), isl_mat_rows(orig_ineqs) + 2*isl_mat_rows(orig_eqs), isl_mat_cols(orig_ineqs));
+  cout << "original eqs" << endl;
+  cout << str(orig_eqs) << endl;
+
+  auto ineqs = isl_mat_alloc(ctx(bset), new_num_ineqs, isl_mat_cols(orig_ineqs));
   for (int r = 0; r < new_num_ineqs; r++) {
     for (int c = 0; c < isl_mat_cols(orig_ineqs); c++) {
       if (r < isl_mat_rows(orig_ineqs)) {
         ineqs = isl_mat_set_element_val(ineqs, r, c, isl_mat_get_element_val(orig_ineqs, r, c));
       } else {
+        cout << "r = " << r << endl;
         int orig_r = (r - isl_mat_rows(orig_ineqs)) / 2;
         isl_val* v = isl_mat_get_element_val(orig_eqs, orig_r, c);
-        if ((r - isl_mat_rows(orig_ineqs) % 2 == 0)) {
+        cout << "orig r = " << orig_r << endl;
+        if (r % 2 == 0) {
           v = mul(negone(ctx(bset)), v);
         }
         ineqs = isl_mat_set_element_val(ineqs, r, c, v);
@@ -570,7 +576,12 @@ isl_basic_set* equalities_to_inequalities(isl_basic_set* bset) {
   auto s = isl_space_set_alloc(ctx(bset),
       param_dims, set_dim);
 
-  return isl_basic_set_from_constraint_matrices(s, eqs, ineqs, isl_dim_set, isl_dim_cst, isl_dim_div, isl_dim_param);
+  cout << "new ineqs..." << endl;
+  cout << str(ineqs) << endl;
+  return ineqs;
+  //assert(false);
+
+  //return isl_basic_set_from_constraint_matrices(s, eqs, ineqs, isl_dim_set, isl_dim_cst, isl_dim_div, isl_dim_param);
 }
 
 isl_basic_set*
@@ -578,36 +589,38 @@ form_farkas_constraints(isl_basic_set* orig_constraints,
     const vector<pair<string, string> >& cvals,
     const std::string& dname) {
 
-  auto constraints = equalities_to_inequalities(orig_constraints);
-  cout << "constraints: " << str(constraints) << endl;
+  auto ineqs = equalities_to_inequalities(orig_constraints);
+  //auto constraints = equalities_to_inequalities(orig_constraints);
+  //cout << "constraints: " << str(constraints) << endl;
 
-  auto ineqs = isl_basic_set_inequalities_matrix(constraints,
-      isl_dim_set,
-      isl_dim_cst,
-      isl_dim_div,
-      isl_dim_param);
-  auto eqs = isl_basic_set_equalities_matrix(constraints,
-      isl_dim_set,
-      isl_dim_cst,
-      isl_dim_div,
-      isl_dim_param);
+  //auto ineqs = isl_basic_set_inequalities_matrix(constraints,
+      //isl_dim_set,
+      //isl_dim_cst,
+      //isl_dim_div,
+      //isl_dim_param);
+  //auto eqs = isl_basic_set_equalities_matrix(constraints,
+      //isl_dim_set,
+      //isl_dim_cst,
+      //isl_dim_div,
+      //isl_dim_param);
 
   int cdim = cvals.size();
 
-  assert(isl_mat_rows(eqs) == 0);
-  cout << "# of columns = " << isl_mat_cols(eqs) << endl;
+  //assert(isl_mat_rows(eqs) == 0);
+  //cout << "# of columns = " << isl_mat_cols(eqs) << endl;
   cout << "cdim         = " << cdim << endl;
   assert(isl_mat_cols(ineqs) == cdim + 1);
-  assert(isl_mat_cols(eqs) == cdim + 1);
+  //assert(isl_mat_cols(eqs) == cdim + 1);
 
   cout << "Ineqs..." << endl;
   cout << str(ineqs) << endl;
 
-  int num_farkas = isl_mat_rows(ineqs) + 2*isl_mat_rows(eqs);
+  int num_farkas = isl_mat_rows(ineqs);
+  //+ 2*isl_mat_rows(eqs);
 
   int farkas_dim = num_farkas + cdim + 2;
 
-  auto ct = ctx(constraints);
+  auto ct = ctx(orig_constraints);
   auto fspace =
     isl_space_set_alloc(ct, 0, farkas_dim);
   auto fs =
