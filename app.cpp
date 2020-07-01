@@ -1813,3 +1813,58 @@ umap* experimental_opt(uset* domain,
   //assert(false);
   return nullptr;
 }
+
+void ilp_builder::add_geq(const std::map<string, isl_val*>& coeffs, isl_val* constant) {
+    vector<isl_val*> denoms;
+    if (isl_val_is_rat(constant)) {
+      denoms.push_back(isl_val_get_den_val(constant));
+    }
+    for (auto v : coeffs) {
+      cout << tab(1) << "checking if v = " << str(v.second) << " is rational" << endl;
+      if (isl_val_is_rat(v.second)) {
+        cout << tab(2) << "rational!" << endl;
+        auto dv = isl_val_get_den_val(v.second);
+        cout << tab(3) << "dv = " << str(dv) << endl;
+        assert(isl_val_is_pos(dv));
+        denoms.push_back(dv);
+      } else {
+        cout << tab(2) << "not rational" << endl;
+        assert(isl_val_is_int(v.second));
+      }
+    }
+
+    cout << "# denoms = " << denoms.size() << endl;
+    isl_val* dn = isl_val_one(ctx);
+    for (auto v : denoms) {
+      cout << tab(1) << "denom = " << str(v) << endl;
+      dn = mul(dn, v);
+    }
+    assert(isl_val_is_int(dn));
+
+    for (auto v : coeffs) {
+      if (!contains_key(v.first, variable_positions)) {
+        add_variable(v.first);
+      }
+    }
+
+    isl_constraint* c = isl_constraint_alloc_inequality(get_local_space(s));
+    isl_constraint_set_constant_val(c, mul(dn, constant));
+
+    cout << "dn = " << str(dn) << endl;
+    for (auto v : coeffs) {
+      cout << "v = " << str(v.second) << endl;
+      auto m = mul(dn, v.second);
+      cout << "m = " << str(m) << endl;
+      assert(isl_val_is_int(m));
+
+      isl_constraint_set_coefficient_val(c,
+          isl_dim_set,
+          map_find(v.first, variable_positions),
+          m);
+    }
+
+    s = isl_basic_set_add_constraint(s, c);
+    assert(isl_val_is_int(constant));
+
+  }
+

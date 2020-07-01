@@ -1132,48 +1132,7 @@ struct ilp_builder {
     add_geq({{a, one(ctx)}, {b, negone(ctx)}}, negone(ctx));
   }
 
-  void add_geq(const std::map<string, isl_val*>& coeffs, isl_val* constant) {
-    vector<isl_val*> denoms;
-    if (isl_val_is_rat(constant)) {
-      denoms.push_back(isl_val_get_den_val(constant));
-    }
-    for (auto v : coeffs) {
-      if (isl_val_is_rat(v.second)) {
-        auto dv = isl_val_get_den_val(v.second);
-        assert(isl_val_is_pos(dv));
-        denoms.push_back(isl_val_get_den_val(dv));
-      }
-    }
-
-    isl_val* dn = isl_val_one(ctx);
-    for (auto v : denoms) {
-      dn = mul(dn, v);
-    }
-    assert(isl_val_is_int(dn));
-
-    for (auto v : coeffs) {
-      if (!contains_key(v.first, variable_positions)) {
-        add_variable(v.first);
-      }
-    }
-
-    isl_constraint* c = isl_constraint_alloc_inequality(get_local_space(s));
-    isl_constraint_set_constant_val(c, mul(dn, constant));
-
-    for (auto v : coeffs) {
-      auto m = mul(dn, v.second);
-      assert(isl_val_is_int(m));
-
-      isl_constraint_set_coefficient_val(c,
-          isl_dim_set,
-          map_find(v.first, variable_positions),
-          m);
-    }
-
-    s = isl_basic_set_add_constraint(s, c);
-    assert(isl_val_is_int(constant));
-
-  }
+  void add_geq(const std::map<string, isl_val*>& coeffs, isl_val* constant);
 
   vector<isl_val*> lex_minimize(const vector<std::map<string, isl_val*> >& objectives) {
     vector<isl_val*> values;

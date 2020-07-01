@@ -25,6 +25,154 @@ void compare(vector<string>& opt, vector<string>& naive) {
   assert(opt == naive);
 }
 
+prog unet_conv_3_3() {
+  prog prg;
+  prg.compute_unit_file = "conv_3_3_compute.h";
+  prg.name = "conv_3_3";
+
+// Stencil<uint16_t, 2, 16, 16> &input_copy_stencil = arg_0;
+  prg.add_input("input_copy_stencil");
+  prg.buffer_port_widths["input_copy_stencil"] = 16;
+// Stencil<uint8_t, 2, 4, 3, 3> &kernel_copy_stencil = arg_1;
+  prg.add_input("kernel_copy_stencil");
+  prg.buffer_port_widths["kernel_copy_stencil"] = 16;
+// Stencil<void *> &hw_output_stencil = arg_2;
+  prg.add_output("hw_output_stencil");
+  prg.buffer_port_widths["hw_output_stencil"] = 16;
+
+
+//consuming kernel_copy.stencil
+
+//consuming input_copy.stencil
+////producing hw_input.stencil
+  auto hw_input_s0_y = prg.add_loop("hw_input_s0_y", 0, 16);
+  auto hw_input_s0_x = hw_input_s0_y->add_loop("hw_input_s0_x", 0, 16);
+  auto hw_input_s0_z = hw_input_s0_x->add_loop("hw_input_s0_z", 0, 2);
+
+//store is: hw_input.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y) = input_copy.stencil(hw_input.s0.z, hw_input.s0.x, hw_input.s0.y)
+  auto hcompute_hw_input_stencil = hw_input_s0_z->add_op("hcompute_hw_input_stencil");
+  hcompute_hw_input_stencil->add_function("hcompute_hw_input_stencil");
+  hcompute_hw_input_stencil->add_load("input_copy_stencil", "hw_input_s0_z", "hw_input_s0_x", "hw_input_s0_y");
+  prg.buffer_port_widths["hw_input_stencil"] = 16;
+  hcompute_hw_input_stencil->add_store("hw_input_stencil", "hw_input_s0_z", "hw_input_s0_x", "hw_input_s0_y");
+////producing hw_kernel.stencil
+  auto hw_kernel_s0_y = prg.add_loop("hw_kernel_s0_y", 0, 3);
+  auto hw_kernel_s0_x = hw_kernel_s0_y->add_loop("hw_kernel_s0_x", 0, 3);
+  auto hw_kernel_s0_w = hw_kernel_s0_x->add_loop("hw_kernel_s0_w", 0, 4);
+  auto hw_kernel_s0_z = hw_kernel_s0_w->add_loop("hw_kernel_s0_z", 0, 2);
+
+//store is: hw_kernel.stencil(hw_kernel.s0.z, hw_kernel.s0.w, hw_kernel.s0.x, hw_kernel.s0.y) = kernel_copy.stencil(hw_kernel.s0.z, hw_kernel.s0.w, hw_kernel.s0.x, hw_kernel.s0.y)
+  auto hcompute_hw_kernel_stencil = hw_kernel_s0_z->add_op("hcompute_hw_kernel_stencil");
+  hcompute_hw_kernel_stencil->add_function("hcompute_hw_kernel_stencil");
+  hcompute_hw_kernel_stencil->add_load("kernel_copy_stencil", "hw_kernel_s0_z", "hw_kernel_s0_w", "hw_kernel_s0_x", "hw_kernel_s0_y");
+  prg.buffer_port_widths["hw_kernel_stencil"] = 16;
+  hcompute_hw_kernel_stencil->add_store("hw_kernel_stencil", "hw_kernel_s0_z", "hw_kernel_s0_w", "hw_kernel_s0_x", "hw_kernel_s0_y");
+////producing conv.stencil
+  auto conv_s0_y = prg.add_loop("conv_s0_y", 0, 14);
+  auto conv_s0_x = conv_s0_y->add_loop("conv_s0_x", 0, 14);
+  auto conv_s0_w = conv_s0_x->add_loop("conv_s0_w", 0, 4);
+
+//store is: conv.stencil(conv.s0.x, conv.s0.y, conv.s0.w) = 0
+  auto hcompute_conv_stencil = conv_s0_w->add_op("hcompute_conv_stencil");
+  hcompute_conv_stencil->add_function("hcompute_conv_stencil");
+  prg.buffer_port_widths["conv_stencil"] = 16;
+  hcompute_conv_stencil->add_store("conv_stencil", "conv_s0_x", "conv_s0_y", "conv_s0_w");
+
+//consuming hw_kernel.stencil
+
+//consuming hw_input.stencil
+  auto conv_s1_w = prg.add_loop("conv_s1_w", 0, 4);
+  auto conv_s1_y_y = conv_s1_w->add_loop("conv_s1_y_y", 0, 5);
+  auto conv_s1_x_x = conv_s1_y_y->add_loop("conv_s1_x_x", 0, 5);
+  auto conv_s1_r_z = conv_s1_x_x->add_loop("conv_s1_r_z", 0, 2);
+  auto conv_s1_r_y = conv_s1_r_z->add_loop("conv_s1_r_y", 0, 3);
+  auto conv_s1_r_x = conv_s1_r_y->add_loop("conv_s1_r_x", 0, 3);
+
+//store is: conv.stencil((conv.s1.x.x*3), (conv.s1.y.y*3), conv.s1.w) = (conv.stencil((conv.s1.x.x*3), (conv.s1.y.y*3), conv.s1.w) + int32((hw_input.stencil(conv.s1.r$z, (conv.s1.r$x + (conv.s1.x.x*3)), (conv.s1.r$y + (conv.s1.y.y*3)))*uint16(hw_kernel.stencil(conv.s1.r$z, conv.s1.w, conv.s1.r$x, conv.s1.r$y)))))
+  auto hcompute_conv_stencil_1 = conv_s1_r_x->add_op("hcompute_conv_stencil_1");
+  hcompute_conv_stencil_1->add_function("hcompute_conv_stencil_1");
+  hcompute_conv_stencil_1->add_load("conv_stencil", "(conv_s1_x_x*3)", "(conv_s1_y_y*3)", "conv_s1_w");
+  hcompute_conv_stencil_1->add_load("hw_input_stencil", "conv_s1_r_z", "(conv_s1_r_x + (conv_s1_x_x*3))", "(conv_s1_r_y + (conv_s1_y_y*3))");
+  hcompute_conv_stencil_1->add_load("hw_kernel_stencil", "conv_s1_r_z", "conv_s1_w", "conv_s1_r_x", "conv_s1_r_y");
+  hcompute_conv_stencil_1->add_store("conv_stencil", "(conv_s1_x_x*3)", "(conv_s1_y_y*3)", "conv_s1_w");
+
+//store is: conv.stencil(((conv.s1.x.x*3) + 1), (conv.s1.y.y*3), conv.s1.w) = (conv.stencil(((conv.s1.x.x*3) + 1), (conv.s1.y.y*3), conv.s1.w) + int32((hw_input.stencil(conv.s1.r$z, (conv.s1.r$x + ((conv.s1.x.x*3) + 1)), (conv.s1.r$y + (conv.s1.y.y*3)))*uint16(hw_kernel.stencil(conv.s1.r$z, conv.s1.w, conv.s1.r$x, conv.s1.r$y)))))
+  auto hcompute_conv_stencil_2 = conv_s1_r_x->add_op("hcompute_conv_stencil_2");
+  hcompute_conv_stencil_2->add_function("hcompute_conv_stencil_2");
+  hcompute_conv_stencil_2->add_load("conv_stencil", "((conv_s1_x_x*3) + 1)", "(conv_s1_y_y*3)", "conv_s1_w");
+  hcompute_conv_stencil_2->add_load("hw_input_stencil", "conv_s1_r_z", "(conv_s1_r_x + ((conv_s1_x_x*3) + 1))", "(conv_s1_r_y + (conv_s1_y_y*3))");
+  hcompute_conv_stencil_2->add_load("hw_kernel_stencil", "conv_s1_r_z", "conv_s1_w", "conv_s1_r_x", "conv_s1_r_y");
+  hcompute_conv_stencil_2->add_store("conv_stencil", "((conv_s1_x_x*3) + 1)", "(conv_s1_y_y*3)", "conv_s1_w");
+
+//store is: conv.stencil(((conv.s1.x.x*3) + 2), (conv.s1.y.y*3), conv.s1.w) = (conv.stencil(((conv.s1.x.x*3) + 2), (conv.s1.y.y*3), conv.s1.w) + int32((hw_input.stencil(conv.s1.r$z, (conv.s1.r$x + ((conv.s1.x.x*3) + 2)), (conv.s1.r$y + (conv.s1.y.y*3)))*uint16(hw_kernel.stencil(conv.s1.r$z, conv.s1.w, conv.s1.r$x, conv.s1.r$y)))))
+  auto hcompute_conv_stencil_3 = conv_s1_r_x->add_op("hcompute_conv_stencil_3");
+  hcompute_conv_stencil_3->add_function("hcompute_conv_stencil_3");
+  hcompute_conv_stencil_3->add_load("conv_stencil", "((conv_s1_x_x*3) + 2)", "(conv_s1_y_y*3)", "conv_s1_w");
+  hcompute_conv_stencil_3->add_load("hw_input_stencil", "conv_s1_r_z", "(conv_s1_r_x + ((conv_s1_x_x*3) + 2))", "(conv_s1_r_y + (conv_s1_y_y*3))");
+  hcompute_conv_stencil_3->add_load("hw_kernel_stencil", "conv_s1_r_z", "conv_s1_w", "conv_s1_r_x", "conv_s1_r_y");
+  hcompute_conv_stencil_3->add_store("conv_stencil", "((conv_s1_x_x*3) + 2)", "(conv_s1_y_y*3)", "conv_s1_w");
+
+//store is: conv.stencil((conv.s1.x.x*3), ((conv.s1.y.y*3) + 1), conv.s1.w) = (conv.stencil((conv.s1.x.x*3), ((conv.s1.y.y*3) + 1), conv.s1.w) + int32((hw_input.stencil(conv.s1.r$z, (conv.s1.r$x + (conv.s1.x.x*3)), (conv.s1.r$y + ((conv.s1.y.y*3) + 1)))*uint16(hw_kernel.stencil(conv.s1.r$z, conv.s1.w, conv.s1.r$x, conv.s1.r$y)))))
+  auto hcompute_conv_stencil_4 = conv_s1_r_x->add_op("hcompute_conv_stencil_4");
+  hcompute_conv_stencil_4->add_function("hcompute_conv_stencil_4");
+  hcompute_conv_stencil_4->add_load("conv_stencil", "(conv_s1_x_x*3)", "((conv_s1_y_y*3) + 1)", "conv_s1_w");
+  hcompute_conv_stencil_4->add_load("hw_input_stencil", "conv_s1_r_z", "(conv_s1_r_x + (conv_s1_x_x*3))", "(conv_s1_r_y + ((conv_s1_y_y*3) + 1))");
+  hcompute_conv_stencil_4->add_load("hw_kernel_stencil", "conv_s1_r_z", "conv_s1_w", "conv_s1_r_x", "conv_s1_r_y");
+  hcompute_conv_stencil_4->add_store("conv_stencil", "(conv_s1_x_x*3)", "((conv_s1_y_y*3) + 1)", "conv_s1_w");
+
+//store is: conv.stencil(((conv.s1.x.x*3) + 1), ((conv.s1.y.y*3) + 1), conv.s1.w) = (conv.stencil(((conv.s1.x.x*3) + 1), ((conv.s1.y.y*3) + 1), conv.s1.w) + int32((hw_input.stencil(conv.s1.r$z, (conv.s1.r$x + ((conv.s1.x.x*3) + 1)), (conv.s1.r$y + ((conv.s1.y.y*3) + 1)))*uint16(hw_kernel.stencil(conv.s1.r$z, conv.s1.w, conv.s1.r$x, conv.s1.r$y)))))
+  auto hcompute_conv_stencil_5 = conv_s1_r_x->add_op("hcompute_conv_stencil_5");
+  hcompute_conv_stencil_5->add_function("hcompute_conv_stencil_5");
+  hcompute_conv_stencil_5->add_load("conv_stencil", "((conv_s1_x_x*3) + 1)", "((conv_s1_y_y*3) + 1)", "conv_s1_w");
+  hcompute_conv_stencil_5->add_load("hw_input_stencil", "conv_s1_r_z", "(conv_s1_r_x + ((conv_s1_x_x*3) + 1))", "(conv_s1_r_y + ((conv_s1_y_y*3) + 1))");
+  hcompute_conv_stencil_5->add_load("hw_kernel_stencil", "conv_s1_r_z", "conv_s1_w", "conv_s1_r_x", "conv_s1_r_y");
+  hcompute_conv_stencil_5->add_store("conv_stencil", "((conv_s1_x_x*3) + 1)", "((conv_s1_y_y*3) + 1)", "conv_s1_w");
+
+//store is: conv.stencil(((conv.s1.x.x*3) + 2), ((conv.s1.y.y*3) + 1), conv.s1.w) = (conv.stencil(((conv.s1.x.x*3) + 2), ((conv.s1.y.y*3) + 1), conv.s1.w) + int32((hw_input.stencil(conv.s1.r$z, (conv.s1.r$x + ((conv.s1.x.x*3) + 2)), (conv.s1.r$y + ((conv.s1.y.y*3) + 1)))*uint16(hw_kernel.stencil(conv.s1.r$z, conv.s1.w, conv.s1.r$x, conv.s1.r$y)))))
+  auto hcompute_conv_stencil_6 = conv_s1_r_x->add_op("hcompute_conv_stencil_6");
+  hcompute_conv_stencil_6->add_function("hcompute_conv_stencil_6");
+  hcompute_conv_stencil_6->add_load("conv_stencil", "((conv_s1_x_x*3) + 2)", "((conv_s1_y_y*3) + 1)", "conv_s1_w");
+  hcompute_conv_stencil_6->add_load("hw_input_stencil", "conv_s1_r_z", "(conv_s1_r_x + ((conv_s1_x_x*3) + 2))", "(conv_s1_r_y + ((conv_s1_y_y*3) + 1))");
+  hcompute_conv_stencil_6->add_load("hw_kernel_stencil", "conv_s1_r_z", "conv_s1_w", "conv_s1_r_x", "conv_s1_r_y");
+  hcompute_conv_stencil_6->add_store("conv_stencil", "((conv_s1_x_x*3) + 2)", "((conv_s1_y_y*3) + 1)", "conv_s1_w");
+
+//store is: conv.stencil((conv.s1.x.x*3), ((conv.s1.y.y*3) + 2), conv.s1.w) = (conv.stencil((conv.s1.x.x*3), ((conv.s1.y.y*3) + 2), conv.s1.w) + int32((hw_input.stencil(conv.s1.r$z, (conv.s1.r$x + (conv.s1.x.x*3)), (conv.s1.r$y + ((conv.s1.y.y*3) + 2)))*uint16(hw_kernel.stencil(conv.s1.r$z, conv.s1.w, conv.s1.r$x, conv.s1.r$y)))))
+  auto hcompute_conv_stencil_7 = conv_s1_r_x->add_op("hcompute_conv_stencil_7");
+  hcompute_conv_stencil_7->add_function("hcompute_conv_stencil_7");
+  hcompute_conv_stencil_7->add_load("conv_stencil", "(conv_s1_x_x*3)", "((conv_s1_y_y*3) + 2)", "conv_s1_w");
+  hcompute_conv_stencil_7->add_load("hw_input_stencil", "conv_s1_r_z", "(conv_s1_r_x + (conv_s1_x_x*3))", "(conv_s1_r_y + ((conv_s1_y_y*3) + 2))");
+  hcompute_conv_stencil_7->add_load("hw_kernel_stencil", "conv_s1_r_z", "conv_s1_w", "conv_s1_r_x", "conv_s1_r_y");
+  hcompute_conv_stencil_7->add_store("conv_stencil", "(conv_s1_x_x*3)", "((conv_s1_y_y*3) + 2)", "conv_s1_w");
+
+//store is: conv.stencil(((conv.s1.x.x*3) + 1), ((conv.s1.y.y*3) + 2), conv.s1.w) = (conv.stencil(((conv.s1.x.x*3) + 1), ((conv.s1.y.y*3) + 2), conv.s1.w) + int32((hw_input.stencil(conv.s1.r$z, (conv.s1.r$x + ((conv.s1.x.x*3) + 1)), (conv.s1.r$y + ((conv.s1.y.y*3) + 2)))*uint16(hw_kernel.stencil(conv.s1.r$z, conv.s1.w, conv.s1.r$x, conv.s1.r$y)))))
+  auto hcompute_conv_stencil_8 = conv_s1_r_x->add_op("hcompute_conv_stencil_8");
+  hcompute_conv_stencil_8->add_function("hcompute_conv_stencil_8");
+  hcompute_conv_stencil_8->add_load("conv_stencil", "((conv_s1_x_x*3) + 1)", "((conv_s1_y_y*3) + 2)", "conv_s1_w");
+  hcompute_conv_stencil_8->add_load("hw_input_stencil", "conv_s1_r_z", "(conv_s1_r_x + ((conv_s1_x_x*3) + 1))", "(conv_s1_r_y + ((conv_s1_y_y*3) + 2))");
+  hcompute_conv_stencil_8->add_load("hw_kernel_stencil", "conv_s1_r_z", "conv_s1_w", "conv_s1_r_x", "conv_s1_r_y");
+  hcompute_conv_stencil_8->add_store("conv_stencil", "((conv_s1_x_x*3) + 1)", "((conv_s1_y_y*3) + 2)", "conv_s1_w");
+
+//store is: conv.stencil(((conv.s1.x.x*3) + 2), ((conv.s1.y.y*3) + 2), conv.s1.w) = (conv.stencil(((conv.s1.x.x*3) + 2), ((conv.s1.y.y*3) + 2), conv.s1.w) + int32((hw_input.stencil(conv.s1.r$z, (conv.s1.r$x + ((conv.s1.x.x*3) + 2)), (conv.s1.r$y + ((conv.s1.y.y*3) + 2)))*uint16(hw_kernel.stencil(conv.s1.r$z, conv.s1.w, conv.s1.r$x, conv.s1.r$y)))))
+  auto hcompute_conv_stencil_9 = conv_s1_r_x->add_op("hcompute_conv_stencil_9");
+  hcompute_conv_stencil_9->add_function("hcompute_conv_stencil_9");
+  hcompute_conv_stencil_9->add_load("conv_stencil", "((conv_s1_x_x*3) + 2)", "((conv_s1_y_y*3) + 2)", "conv_s1_w");
+  hcompute_conv_stencil_9->add_load("hw_input_stencil", "conv_s1_r_z", "(conv_s1_r_x + ((conv_s1_x_x*3) + 2))", "(conv_s1_r_y + ((conv_s1_y_y*3) + 2))");
+  hcompute_conv_stencil_9->add_load("hw_kernel_stencil", "conv_s1_r_z", "conv_s1_w", "conv_s1_r_x", "conv_s1_r_y");
+  hcompute_conv_stencil_9->add_store("conv_stencil", "((conv_s1_x_x*3) + 2)", "((conv_s1_y_y*3) + 2)", "conv_s1_w");
+
+//consuming conv.stencil
+  auto hw_output_s0_w = prg.add_loop("hw_output_s0_w", 0, 4);
+  auto hw_output_s0_y_yi = hw_output_s0_w->add_loop("hw_output_s0_y_yi", 0, 14);
+  auto hw_output_s0_x_xi = hw_output_s0_y_yi->add_loop("hw_output_s0_x_xi", 0, 14);
+
+//store is: hw_output.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.w) = uint8(conv.stencil(hw_output.s0.x.xi, hw_output.s0.y.yi, hw_output.s0.w))
+  auto hcompute_hw_output_stencil = hw_output_s0_x_xi->add_op("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_function("hcompute_hw_output_stencil");
+  hcompute_hw_output_stencil->add_load("conv_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi", "hw_output_s0_w");
+  hcompute_hw_output_stencil->add_store("hw_output_stencil", "hw_output_s0_x_xi", "hw_output_s0_y_yi", "hw_output_s0_w");
+
+  return prg;
+}
 prog mini_conv_halide_fixed() {
   prog prg;
   prg.compute_unit_file = "conv_3_3_compute.h";
@@ -10884,7 +11032,22 @@ void halide_up_sample_test() {
   regression_test(us);
 }
 
+void unet_conv_3_3_test() {
+  prog prg = unet_conv_3_3();
+  prg.pretty_print();
+  //assert(false);
+  regression_test(prg);
+}
+
 void application_tests() {
+  up_down_unrolled_test();
+  upsample2d_test();
+  upsample_stencil_2d_test();
+  upsample_stencil_1d_test();
+  iccad_tests();
+
+  //unet_conv_3_3_test();
+
   //adobe_meeting_apps();
   //playground();
   histogram_test();
@@ -10907,7 +11070,6 @@ void application_tests() {
   //denoise3d_test();
   denoise3d_reconvergence_test();
   gaussian_pyramid_app_test("gp64x64");
-  iccad_tests();
 
   tricky_shift_register_reconvergence_test();
   sum_denoise_test();
@@ -10943,15 +11105,12 @@ void application_tests() {
 
   jacobi2d_app_test();
 
-  upsample2d_test();
 
   downsample2d_test();
   up_stencil_down_test();
   blur_and_downsample_test();
   downsample_and_blur_test();
 
-  upsample_stencil_2d_test();
-  upsample_stencil_1d_test();
 
   updown_merge_test();
   harris_unrolled_test();
@@ -11005,7 +11164,6 @@ void application_tests() {
   up_unrolled_4_test();
 
   up_unrolled_test();
-  up_down_unrolled_test();
 
   jacobi2d_app_test();
 
