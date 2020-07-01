@@ -626,7 +626,6 @@ class UBuffer {
     std::vector<bank> bank_list;
     map<string, std::set<string> > banks_to_inputs;
     map<string, std::set<string> > banks_to_outputs;
-    //map<pair<string, string>, bank > stack_banks;
 
     map<string, selector> selectors;
 
@@ -1547,7 +1546,9 @@ class UBuffer {
     bank compute_bank_info(std::set<string> inpt, std::set<string> outpt);
 
     void merge_bank(CodegenOptions& options, string inpt, vector<bank> mergeable);
-    void generate_bank_and_merge(CodegenOptions& options);
+
+    void generate_banks(CodegenOptions& options);
+    void generate_banks_and_merge(CodegenOptions& options);
 
     //from bank to ubuffer
     map<string, UBuffer> generate_ubuffer(CodegenOptions& opt);

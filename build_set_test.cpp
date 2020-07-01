@@ -1353,7 +1353,7 @@ void flatten_sched_test() {
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
-  buffers_opt.at("buf").generate_bank_and_merge(opt);
+  buffers_opt.at("buf").generate_banks_and_merge(opt);
   cout << buffers_opt.at("buf") << endl;
   auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
   for (auto buf : rewrite_buf) {
@@ -2025,7 +2025,7 @@ void reaccess_test() {
   int max_outpt = 2;
   for (auto& b : bufs) {
     if (b.second.get_in_ports().size() > 0) {
-      b.second.generate_bank_and_merge(opt);
+      b.second.generate_banks_and_merge(opt);
 
       //Assign an configuration file,
       json config;
@@ -2100,7 +2100,7 @@ void conv45_test() {
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
-  buffers_opt.at("buf").generate_bank_and_merge(opt);
+  buffers_opt.at("buf").generate_banks_and_merge(opt);
   cout << buffers_opt.at("buf") << endl;
   buffers_opt.at("buf").port_group2bank(2, 2);
   cout << buffers_opt.at("buf") << endl;
@@ -2178,7 +2178,7 @@ void conv33_test() {
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
-  buffers_opt.at("buf").generate_bank_and_merge(opt);
+  buffers_opt.at("buf").generate_banks_and_merge(opt);
   cout << buffers_opt.at("buf") << endl;
   buffers_opt.at("buf").port_group2bank(2, 2);
   cout << buffers_opt.at("buf") << endl;
@@ -2257,7 +2257,7 @@ void bankmerge_vec_test() {
   CodegenOptions opt;
   opt.conditional_merge = true;
   opt.merge_threshold = 4;
-  buffers_opt.at("buf").generate_bank_and_merge(opt);
+  buffers_opt.at("buf").generate_banks_and_merge(opt);
   //cout << buffers_opt.at("buf") << endl;
   //auto rewrite_buf = buffers_opt.at("buf").port_grouping(4);
   buffers_opt.at("buf").port_group2bank(2, 2);
@@ -10146,7 +10146,7 @@ void weight_streaming_test() {
     if (b.second.num_in_ports() > 0 &&
         b.second.num_out_ports() > 0) {
       cout << b.second << endl;
-      b.second.generate_bank_and_merge(options);
+      b.second.generate_banks_and_merge(options);
     }
   }
 
@@ -10196,7 +10196,7 @@ void halide_conv_layer_3D_test() {
     if (b.second.num_in_ports() > 0 &&
         b.second.num_out_ports() > 0) {
       cout << b.second << endl;
-      b.second.generate_bank_and_merge(options);
+      b.second.generate_banks_and_merge(options);
     }
   }
 
@@ -11045,6 +11045,13 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
+  tricky_shift_register_reconvergence_test();
+  mismatched_stencil_test();
+  sum_denoise_test();
+  sum_diffs_test();
+  denoise2d_test();
+  denoise3d_reconvergence_test();
+  gaussian_pyramid_app_test("gp64x64");
   //unet_conv_3_3_test();
   //assert(false);
 
@@ -11068,19 +11075,8 @@ void application_tests() {
   weight_streaming_test();
 
   //mmul_outer_prod_test();
-  tricky_shift_register_reconvergence_test();
-  sum_denoise_test();
-  sum_diffs_test();
-
-  mismatched_stencil_test();
-  denoise2d_test();
-  //denoise3d_test();
-  denoise3d_reconvergence_test();
-  gaussian_pyramid_app_test("gp64x64");
 
   tricky_shift_register_reconvergence_test();
-  sum_denoise_test();
-  sum_diffs_test();
 
   mmul_outer_prod_test();
   conv_3_3_halide_test();
@@ -11337,8 +11333,8 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
-    application_tests();
     memory_tile_tests();
+    application_tests();
     prog_splitting_tests();
     cout << "All tests passed" << endl;
   } else {

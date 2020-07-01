@@ -1070,7 +1070,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       UBuffer& buf) {
 
     //banking and merge pass
-    buf.generate_bank_and_merge(options);
+    buf.generate_banks_and_merge(options);
 
     //string inpt = buf.get_in_port();
     out << "#include \"hw_classes.h\"" << endl << endl;
@@ -1990,7 +1990,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     }
   }
 
-  void UBuffer::generate_bank_and_merge(CodegenOptions& options) {
+  void UBuffer::generate_banks(CodegenOptions& options) {
     if (options.debug_options.expect_all_linebuffers) {
       assert(dynamic_ports.size() == 0);
     }
@@ -2028,45 +2028,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         }
       }
 
-      //assert(get_banks().size() == get_out_ports().size()*get_in_ports().size());
-
     }
+  }
 
-    //cout << "After naive banking there are " << get_banks().size() << " banks in " << name << endl;
-    //auto sched = global_schedule();
-    //auto write_ops = producer_map();
-    //auto read_ops = consumer_map();
-
-    //for (auto b : get_banks()) {
-      //cout << b.name << ": " << str(b.rddom) << endl;
-      //cout << tab(1) << "max delay: " << b.maxdelay << endl;
-      //umap* writes = cpy(write_ops);
-      //cout << "writes = " << str(writes) << endl;
-      //for (auto in_pt : get_bank_inputs(b.name)) {
-        //cout << "in_pt = " << in_pt << endl;
-        //writes = its(writes, access_map.at(in_pt));
-      //}
-      //umap* reads = cpy(read_ops);
-      //cout << "reads = " << str(reads) << endl;
-      //for (auto out_pt : get_bank_outputs(b.name)) {
-        //cout << "out_pt = " << out_pt << ", " << str(access_map.at(out_pt)) << endl;
-
-        //reads = its(reads, (access_map.at(out_pt)));
-      //}
-      //isl_map* slot_func =
-        //isl_map_read_from_str(ctx,
-            //("{" + name + "[x, y, z] -> M[x % 1, y % 1, z % 1]}").c_str());
-      //bool legal = inner_bank_offset_is_legal(slot_func,
-            //writes,
-            //reads,
-            //sched);
-      //if (legal) {
-        //cout << "bank " << b.name << " can be converted into a register" << endl;
-      //}
-      ////assert(legal);
-    //}
-    //assert(name == "conv_stencil");
-    //assert(false);
+  void UBuffer::generate_banks_and_merge(CodegenOptions& options) {
+    generate_banks(options);
 
     for (auto inpt : get_in_ports()) {
       // try to turn the banks for this inpt into one big linebuffer
@@ -2090,20 +2056,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
       if (mergeable.size() > 1) {
         merge_bank(options, inpt, mergeable);
-        //auto banks = get_banks();
-        //cout << "finished create bank!" << endl;
-        //for (bank bk : banks) {
-        //cout << bk.name << " has delays: ";//<< bk.read_delays << endl;
-        //cout << tab(1);
-        //for (int dl: bk.read_delays) {
-        //cout << dl << "," ;
-        //}
-        //cout << endl;
-        //for (auto dl: bk.delay_map) {
-        //cout <<tab(1)<< dl.first << ":" << dl.second <<endl; ;
-        //}
-
-        //}
       }
     }
   }
