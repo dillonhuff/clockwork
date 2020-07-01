@@ -1686,94 +1686,94 @@ compute_kernel generate_compute_op(
   return kernel;
 }
 
-module_type* generate_rtl_buffer(CodegenOptions& options,
-    minihls::context& minigen,
-    UBuffer& buffer) {
+//module_type* generate_rtl_buffer(CodegenOptions& options,
+    //minihls::context& minigen,
+    //UBuffer& buffer) {
 
-  minihls::block* blk = minigen.add_block(buffer.name);
-  for (auto bank_struct : buffer.get_banks()) {
-    auto bankprog = minigen.add_block(bank_struct.name);
+  //minihls::block* blk = minigen.add_block(buffer.name);
+  //for (auto bank_struct : buffer.get_banks()) {
+    //auto bankprog = minigen.add_block(bank_struct.name);
 
-    map<string, minihls::module_instance*> partitions;
-    map<string, minihls::instruction_instance*> read_partitions;
-    for (auto part : bank_struct.get_partitions()) {
-      auto part_tp = sr_buffer(*bankprog,
-          32,
-          part.second);
-      partitions[part.first] =
-        bankprog->add_module_instance(part.first, part_tp);
-    }
+    //map<string, minihls::module_instance*> partitions;
+    //map<string, minihls::instruction_instance*> read_partitions;
+    //for (auto part : bank_struct.get_partitions()) {
+      //auto part_tp = sr_buffer(*bankprog,
+          //32,
+          //part.second);
+      //partitions[part.first] =
+        //bankprog->add_module_instance(part.first, part_tp);
+    //}
 
-    auto bankmod = minigen.compile(bankprog);
-    blk->add_module_instance(bank_struct.name, bankmod);
-  }
+    //auto bankmod = minigen.compile(bankprog);
+    //blk->add_module_instance(bank_struct.name, bankmod);
+  //}
 
-  for (auto osel : buffer.selectors) {
-    selector sel = osel.second;
-    vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
-    for (auto pt : sel.vars) {
-      ports.push_back(minihls::inpt(pt, 32));
-    }
-    ports.push_back(minihls::outpt("out", 32));
+  //for (auto osel : buffer.selectors) {
+    //selector sel = osel.second;
+    //vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
+    //for (auto pt : sel.vars) {
+      //ports.push_back(minihls::inpt(pt, 32));
+    //}
+    //ports.push_back(minihls::outpt("out", 32));
 
-    ostringstream body;
-    for (int i = 0; i < sel.bank_conditions.size(); i++) {
-      body << tab(1) << "always @(*) begin" << endl;
-      body << tab(2) << "if (" << sel.bank_conditions.at(i) << ") begin" << endl;
-      body << tab(3) << "out = " << sel.inner_bank_offsets.at(i) << ";" << endl;
-      body << tab(2) << "end" << endl;
-      body << tab(1) << "end" << endl;
-    }
-    auto ubufmod =
-      blk->add_module_type(sel.name, ports, body.str());
-    blk->add_module_instance("selector_" + sel.name,
-        ubufmod);
-  }
+    //ostringstream body;
+    //for (int i = 0; i < sel.bank_conditions.size(); i++) {
+      //body << tab(1) << "always @(*) begin" << endl;
+      //body << tab(2) << "if (" << sel.bank_conditions.at(i) << ") begin" << endl;
+      //body << tab(3) << "out = " << sel.inner_bank_offsets.at(i) << ";" << endl;
+      //body << tab(2) << "end" << endl;
+      //body << tab(1) << "end" << endl;
+    //}
+    //auto ubufmod =
+      //blk->add_module_type(sel.name, ports, body.str());
+    //blk->add_module_instance("selector_" + sel.name,
+        //ubufmod);
+  //}
 
 
-  for (auto out_bundle : buffer.get_in_bundles()) {
-    // Here I need to get all banks which receive data from this bundle
-    // and write to them
-    in_wire_read(*blk, out_bundle US "wen", 1);
-    in_wire_read(*blk, out_bundle US "wdata", buffer.port_bundle_width(out_bundle));
-  }
+  //for (auto out_bundle : buffer.get_in_bundles()) {
+    //// Here I need to get all banks which receive data from this bundle
+    //// and write to them
+    //in_wire_read(*blk, out_bundle US "wen", 1);
+    //in_wire_read(*blk, out_bundle US "wdata", buffer.port_bundle_width(out_bundle));
+  //}
 
-  for (auto out_bundle : buffer.get_out_bundles()) {
-    auto dummy = in_wire_read(*blk, out_bundle US "dummy", buffer.port_bundle_width(out_bundle));
-    // Here I need to get all sources of this bundle and concatenate
-    // them together
-    out_wire_write(*blk, out_bundle US "rdata", buffer.port_bundle_width(out_bundle), dummy);
-  }
+  //for (auto out_bundle : buffer.get_out_bundles()) {
+    //auto dummy = in_wire_read(*blk, out_bundle US "dummy", buffer.port_bundle_width(out_bundle));
+    //// Here I need to get all sources of this bundle and concatenate
+    //// them together
+    //out_wire_write(*blk, out_bundle US "rdata", buffer.port_bundle_width(out_bundle), dummy);
+  //}
 
-  auto mod = minigen.compile(blk);
+  //auto mod = minigen.compile(blk);
 
-  for (auto out_bundle : buffer.get_in_bundles()) {
-    auto wr_bundle =
-      blk->add_instruction_type(buffer.name US out_bundle US "write");
-    auto wr_bind =
-      blk->add_instruction_binding(buffer.name US out_bundle US "write_binding",
-          wr_bundle,
-          mod,
-          out_bundle US "wdata",
-          {});
-    wr_bind->latency = 1;
-    wr_bind->en = out_bundle US "wen";
-  }
+  //for (auto out_bundle : buffer.get_in_bundles()) {
+    //auto wr_bundle =
+      //blk->add_instruction_type(buffer.name US out_bundle US "write");
+    //auto wr_bind =
+      //blk->add_instruction_binding(buffer.name US out_bundle US "write_binding",
+          //wr_bundle,
+          //mod,
+          //out_bundle US "wdata",
+          //{});
+    //wr_bind->latency = 1;
+    //wr_bind->en = out_bundle US "wen";
+  //}
 
-  for (auto bundle : buffer.get_out_bundles()) {
-    auto rd_bundle =
-      blk->add_instruction_type(buffer.name US bundle US "read");
-    auto rd_bind =
-      blk->add_instruction_binding(buffer.name US bundle US "read_binding",
-          rd_bundle,
-          mod,
-          bundle US "rdata",
-          {});
-    rd_bind->latency = 1;
-  }
+  //for (auto bundle : buffer.get_out_bundles()) {
+    //auto rd_bundle =
+      //blk->add_instruction_type(buffer.name US bundle US "read");
+    //auto rd_bind =
+      //blk->add_instruction_binding(buffer.name US bundle US "read_binding",
+          //rd_bundle,
+          //mod,
+          //bundle US "rdata",
+          //{});
+    //rd_bind->latency = 1;
+  //}
 
-  return mod;
-}
+  //return mod;
+//}
 
 vector<compute_kernel> writers(vector<compute_kernel>& kernels, const std::string& in_buf) {
   vector<compute_kernel> ws;

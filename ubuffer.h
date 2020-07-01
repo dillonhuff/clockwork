@@ -628,7 +628,7 @@ class UBuffer {
     map<string, std::set<string> > banks_to_inputs;
     map<string, std::set<string> > banks_to_outputs;
 
-    map<string, selector> selectors;
+    //map<string, selector> selectors;
 
     //lowering ubuffer to memtile
     vector<int> read_cycle, write_cycle;

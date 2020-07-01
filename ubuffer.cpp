@@ -1420,7 +1420,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     generate_code_prefix(options, out, buf);
 
     for (auto outpt : buf.get_out_ports()) {
-      buf.selectors[outpt] = generate_select(options, out, outpt, buf);
+      generate_select(options, out, outpt, buf);
+      //buf.selectors[outpt] = generate_select(options, out, outpt, buf);
     }
 
     generate_bundles(options, out, buf);
