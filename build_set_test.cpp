@@ -11046,12 +11046,12 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
-  tricky_shift_register_reconvergence_test();
-  mismatched_stencil_test();
   sum_denoise_test();
   sum_diffs_test();
   denoise2d_test();
   denoise3d_reconvergence_test();
+  tricky_shift_register_reconvergence_test();
+  mismatched_stencil_test();
   gaussian_pyramid_app_test("gp64x64");
   //unet_conv_3_3_test();
   //assert(false);
@@ -11334,8 +11334,8 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
-    memory_tile_tests();
     application_tests();
+    memory_tile_tests();
     prog_splitting_tests();
     cout << "All tests passed" << endl;
   } else {

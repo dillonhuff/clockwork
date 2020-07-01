@@ -182,6 +182,7 @@ void generate_bank(CodegenOptions& options,
 
   //C array with read and write method
   if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_LINEAR){
+  //if (bank.tp == INNER_BANK_OFFSET_LINEAR) {
     //num reader > 1 partiions = 1;
     auto partitions =
       bank.get_partitions();
@@ -213,6 +214,7 @@ void generate_bank(CodegenOptions& options,
     out << "};" << endl << endl;
 
   } else {
+    //assert(bank.tp == INNER_BANK_OFFSET_STACK);
 
     out << "\t// Capacity: " << maxdelay + 1 << endl;
     out << "\t// # of read delays: " << read_delays.size() << endl;
@@ -1864,7 +1866,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     //initial the delay map
     map<string, int> delay_map = {{outpt, read_delays.back()}};
 
-    stack_bank bank{name, INNER_BANK_OFFSET_LINEAR, pt_type_string, read_delays, num_readers, maxdelay, rddom, delay_map};
+    stack_bank bank{name, INNER_BANK_OFFSET_STACK, pt_type_string, read_delays, num_readers, maxdelay, rddom, delay_map};
 
     return bank;
   }
@@ -2029,7 +2031,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         }
         if (bnk.tp == INNER_BANK_OFFSET_STACK &&
             bnk.read_delays.size() == 2) {
-          assert(bnk.read_delays[0] == 0);
+        //if (bnk.read_delays.size() == 2) {
+          //assert(bnk.read_delays[0] == 0);
           mergeable.push_back(bnk);
         }
 
