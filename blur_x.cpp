@@ -246,7 +246,9 @@ for (int c0 = 0; c0 <= 7; c0 += 1)
 }
 
 #ifdef __VIVADO_SYNTH__
+  // { I_id0[root = 0, id1, id0] -> in[id0, id1] : 0 <= id1 <= 7 and 0 <= id0 <= 31 }
 const int I_id0_read_num_transfers = 256;
+  // { out_blur_30[root = 0, d1, d0] -> out[d0, d1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
 const int out_blur_30_write_num_transfers = 192;
 
 
