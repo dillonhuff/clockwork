@@ -5,6 +5,7 @@ export OPT_LIB_PATH=${PWD}/lib
 
 export COREIR_PATH=${PWD}/coreir
 
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${PWD}/lib
 export CXX=g++
 
 

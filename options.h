@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <set>
 
 using namespace std;
@@ -20,6 +21,11 @@ enum ScheduleAlgorithm {
 enum InnerBankOffsetMode {
   INNER_BANK_OFFSET_STACK,
   INNER_BANK_OFFSET_LINEAR
+};
+
+struct banking_strategy {
+  string bank_partition;
+  vector<int> cycle_factors;
 };
 
 struct CodegenOptions {
@@ -43,7 +49,7 @@ struct CodegenOptions {
   ScheduleAlgorithm scheduling_algorithm;
   bool ignore_top_level_inter_deps;
 
-  std::set<std::string> register_files;
+  std::map<string, banking_strategy> banking_strategies;
 
   DebugOptions debug_options;
 

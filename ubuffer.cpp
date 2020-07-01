@@ -1996,7 +1996,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     }
 
     if (dynamic_ports.size() > 0 ||
-        elem(name, options.register_files)) {
+        options.banking_strategy(name) == "register_file") {
+        //elem(name, options.register_files)) {
 
       // Use a single bank implemented as registers
       bank bnk = compute_bank_info();
