@@ -1127,17 +1127,18 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     return false;
   }
 
-  selector generate_select_decl(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
+  //selector generate_select_decl(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
+  void generate_select_decl(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
     isl_space* s = get_space(buf.domain.at(outpt));
     auto dim_decls = space_var_decls(s);
     dim_decls.push_back("int dynamic_address");
 
-    selector sel;
-    sel.name = outpt + "_select";
-    sel.buf_name = buf.name;
-    sel.pt_type = buf.port_type_string();
-    sel.out_port = outpt;
-    sel.vars = space_var_args(s);
+    //selector sel;
+    //sel.name = outpt + "_select";
+    //sel.buf_name = buf.name;
+    //sel.pt_type = buf.port_type_string();
+    //sel.out_port = outpt;
+    //sel.vars = space_var_args(s);
 
     out << "inline " + buf.port_type_string() + " " + outpt + "_select(";
     size_t nargs = 0;
@@ -1149,7 +1150,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     //cout << "Created dim decls" << endl;
     ignore_inter_deps(out, buf.name);
 
-    return sel;
+    //return sel;
   }
 
   void select_debug_assertions(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
@@ -1232,9 +1233,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     return buf.name + "." + value_str;
   }
 
-  selector generate_select(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
+  //selector generate_select(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
+  void generate_select(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
     //cout << "creating select for port: <" << outpt <<"> in buffer: " << buf.name << endl;
-    selector sel = generate_select_decl(options, out, outpt, buf);
+    //selector sel = generate_select_decl(options, out, outpt, buf);
+    generate_select_decl(options, out, outpt, buf);
 
     out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
 
@@ -1290,8 +1293,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       string peeked_val = delay_string(options, out, inpt, outpt, buf);
       string access_val = buf.generate_linearize_ram_addr(outpt);
       buf.get_ram_address(outpt);
-      sel.bank_conditions.push_back("1");
-      sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, inpt));
+      //sel.bank_conditions.push_back("1");
+      //sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, inpt));
 
       out << tab(1) << "auto value_" << inpt << " = " << peeked_val << ";" << endl;
       out << tab(1) << "return value_" << inpt << ";" << endl;
@@ -1302,8 +1305,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         //cout << "lexmax events = " << str(lm) << endl;
         out << tab(1) << "if (" << map_find(port, in_ports_to_conditions) << ") {" << endl;
         string peeked_val = delay_string(options, out, port, outpt, buf);
-        sel.bank_conditions.push_back("1");
-        sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, port));
+        //sel.bank_conditions.push_back("1");
+        //sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, port));
 
         out << tab(2) << "auto value_" << port << " = " << peeked_val << ";" << endl;
         out << tab(2) << "return value_" << port << ";" << endl;
@@ -1316,7 +1319,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     select_debug_assertions(options, out, outpt, buf);
     out << "}" << endl << endl;
 
-    return sel;
+    //return sel;
   }
 
   void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) {

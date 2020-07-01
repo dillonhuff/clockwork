@@ -30,15 +30,15 @@ std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
   //BANK_TYPE_RAM
 //};
 
-struct selector {
-  string buf_name;
-  string pt_type;
-  string out_port;
-  string name;
-  vector<string> vars;
-  vector<string> bank_conditions;
-  vector<string> inner_bank_offsets;
-};
+//struct selector {
+  //string buf_name;
+  //string pt_type;
+  //string out_port;
+  //string name;
+  //vector<string> vars;
+  //vector<string> bank_conditions;
+  //vector<string> inner_bank_offsets;
+//};
 
 struct HWconstraints {
     size_t port_width;
