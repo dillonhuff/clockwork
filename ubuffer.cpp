@@ -2025,10 +2025,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         //cout << tab(2) << "# receivers: " << receivers.size() << endl;
 
         if (options.debug_options.expect_all_linebuffers) {
-          //assert(receivers.size() == 1 || bnk.read_delays.size() == 2);
           assert(bnk.read_delays.size() == 2);
         }
-        if (bnk.read_delays.size() == 2) {
+        if (bnk.tp == INNER_BANK_OFFSET_STACK &&
+            bnk.read_delays.size() == 2) {
           assert(bnk.read_delays[0] == 0);
           mergeable.push_back(bnk);
         }
