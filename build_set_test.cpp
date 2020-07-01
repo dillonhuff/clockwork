@@ -9948,7 +9948,8 @@ void register_file_optimization_test() {
   options.inner_bank_offset_mode =
     INNER_BANK_OFFSET_LINEAR;
   options.all_rams = true;
-  options.register_files.insert("in_rf");
+  //options.register_files.insert("in_rf");
+  options.banking_strategies["in_rf"] = {"register_file"};
 
   assert(prg.compute_unit_file != "");
 
@@ -10458,7 +10459,7 @@ void mmul_outer_prod_test() {
   options.internal = true;
   options.all_rams = true;
   options.use_custom_code_string = true;
-  options.register_files.insert("C");
+  options.banking_strategies["C"] = {"register_file"};
   options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
   generate_optimized_code(options, prg);
   //regression_test(options, prg);

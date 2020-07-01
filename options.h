@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <set>
 
 using namespace std;
@@ -64,6 +65,8 @@ struct CodegenOptions {
   scheduling_algorithm(SCHEDULE_ALGORITHM_NAIVE),
   ignore_top_level_inter_deps(false)
   {}
+
+  std::string banking_strategy(const std::string& buffer);
 
 };
 
