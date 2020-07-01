@@ -25,10 +25,10 @@ std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
     return out;
 }
 
-enum bank_type {
-  BANK_TYPE_STACK,
-  BANK_TYPE_RAM
-};
+//enum bank_type {
+  //BANK_TYPE_STACK,
+  //BANK_TYPE_RAM
+//};
 
 struct selector {
   string buf_name;
@@ -56,7 +56,8 @@ struct TileConstraints{
 
 struct bank {
   std::string name;
-  bank_type tp;
+  InnerBankOffsetMode tp;
+  //bank_type tp;
 
   // Stack bank properties
   std::string pt_type_string;

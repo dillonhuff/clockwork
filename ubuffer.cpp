@@ -254,30 +254,6 @@ void generate_bank(CodegenOptions& options,
         }
       }
 
-      //vector<int> capacities;
-      //for (size_t i = 0; i < read_delays.size(); i++) {
-      //int current = read_delays[i];
-      //int partition_capacity = -1;
-      //int next = -1;
-      //if (i < (int) read_delays.size() - 1 &&
-      //read_delays[i] != read_delays[i + 1]) {
-      //next = read_delays[i + 1];
-      //partition_capacity = next - current;
-      //} else {
-      //partition_capacity = 1;
-      //}
-      //capacities.push_back(partition_capacity);
-
-      //out << "\t// Parition [" << current << ", " << next << ") capacity = " << partition_capacity << endl;
-      //if (partition_capacity > 1) {
-      //out << "\tfifo<" << pt_type_string << ", " << partition_capacity << "> f" << i << ";" << endl;
-      //} else {
-      //out << "\t" << pt_type_string << " f" << i << ";" << endl;
-      //}
-      //}
-
-      //assert(capacities.size() == partitions.size());
-
       out << endl << endl;
       int nind = 0;
       for (auto p : partitions) {
@@ -1821,7 +1797,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     //initial the delay map
     map<string, int> delay_map = {};
 
-    stack_bank bank{name, BANK_TYPE_STACK, pt_type_string, read_delays, num_readers, maxdelay, rddom, delay_map};
+    stack_bank bank{name, INNER_BANK_OFFSET_STACK, pt_type_string, read_delays, num_readers, maxdelay, rddom, delay_map};
 
     return bank;
   }
@@ -1845,7 +1821,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     map<string, int> delay_map;
 
-    stack_bank bank{name, BANK_TYPE_RAM, pt_type_string, read_delays, num_readers, maxdelay, rddom, delay_map};
+    stack_bank bank{name, INNER_BANK_OFFSET_LINEAR, pt_type_string, read_delays, num_readers, maxdelay, rddom, delay_map};
 
     return bank;
   }
@@ -1884,7 +1860,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     //initial the delay map
     map<string, int> delay_map = {{outpt, read_delays.back()}};
 
-    stack_bank bank{name, BANK_TYPE_STACK, pt_type_string, read_delays, num_readers, maxdelay, rddom, delay_map};
+    stack_bank bank{name, INNER_BANK_OFFSET_LINEAR, pt_type_string, read_delays, num_readers, maxdelay, rddom, delay_map};
 
     return bank;
   }
@@ -1892,7 +1868,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   void UBuffer::merge_bank(CodegenOptions& options, string inpt, vector<stack_bank> mergeable) {
     if (!options.conditional_merge){
       stack_bank merged;
-      merged.tp = BANK_TYPE_STACK;
+      merged.tp = INNER_BANK_OFFSET_STACK;
       //merged.layout = Box(mergeable.at(0).layout.dimension());
       merged.rddom = isl_union_set_read_from_str(ctx, "{}");
       merged.name =
@@ -1937,7 +1913,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       while(mergeable.size()) {
         //keep pop port to merged bank and replace origin bank
         stack_bank merged;
-        merged.tp = BANK_TYPE_STACK;
+        merged.tp = INNER_BANK_OFFSET_STACK;
         //merged.layout = Box(mergeable.at(0).layout.dimension());
         merged.rddom = isl_union_set_read_from_str(ctx, "{}");
         merged.name =
