@@ -269,5 +269,5 @@ void prog_splitting_tests() {
 
   generate_optimized_code_for_program_dag(group_programs);
 
-  assert(false);
+  //assert(false);
 }

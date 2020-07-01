@@ -68,9 +68,13 @@ prog unet_conv_3_3() {
   prg.buffer_port_widths["hw_kernel_stencil"] = 16;
   hcompute_hw_kernel_stencil->add_store("hw_kernel_stencil", "hw_kernel_s0_z", "hw_kernel_s0_w", "hw_kernel_s0_x", "hw_kernel_s0_y");
 ////producing conv.stencil
-  auto conv_s0_y = prg.add_loop("conv_s0_y", 0, 14);
-  auto conv_s0_x = conv_s0_y->add_loop("conv_s0_x", 0, 14);
-  auto conv_s0_w = conv_s0_x->add_loop("conv_s0_w", 0, 4);
+  auto conv_s0_y = prg.add_loop("conv_s0_y", 0, 15);
+  auto conv_s0_x = conv_s0_y->add_loop("conv_s0_x", 0, 15);
+  auto conv_s0_w = conv_s0_x->add_loop("conv_s0_w", 0, 5);
+
+  //auto conv_s0_y = prg.add_loop("conv_s0_y", 0, 14);
+  //auto conv_s0_x = conv_s0_y->add_loop("conv_s0_x", 0, 14);
+  //auto conv_s0_w = conv_s0_x->add_loop("conv_s0_w", 0, 4);
 
 //store is: conv.stencil(conv.s0.x, conv.s0.y, conv.s0.w) = 0
   auto hcompute_conv_stencil = conv_s0_w->add_op("hcompute_conv_stencil");
@@ -173,6 +177,7 @@ prog unet_conv_3_3() {
 
   return prg;
 }
+
 prog mini_conv_halide_fixed() {
   prog prg;
   prg.compute_unit_file = "conv_3_3_compute.h";
@@ -11040,13 +11045,15 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
+  //unet_conv_3_3_test();
+  //assert(false);
+
   up_down_unrolled_test();
   upsample2d_test();
   upsample_stencil_2d_test();
   upsample_stencil_1d_test();
   iccad_tests();
 
-  //unet_conv_3_3_test();
 
   //adobe_meeting_apps();
   //playground();

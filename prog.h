@@ -246,10 +246,12 @@ struct ir_node {
   }
 
   void add_function(const std::string& n) {
+    //assert(n != name);
     func = n;
   }
 
   void add_function(const std::string& n, const vector<string>& args) {
+    //assert(n != name);
     func = n;
   }
 
