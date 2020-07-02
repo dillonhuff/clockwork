@@ -2023,6 +2023,11 @@ void print_hw_schedule(
 }
 
 void append_basic_set(ilp_builder& b, isl_basic_set* s) {
+  cout << "appending: " << str(s) << endl;
+  auto ineqs =
+    equalities_to_inequalities(s);
+  cout << "Ineqs..." << endl;
+  cout << str(ineqs) << endl;
   assert(num_div_dims(s) == 0);
   assert(num_param_dims(s) == 0);
 

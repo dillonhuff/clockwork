@@ -2747,9 +2747,11 @@ string str(isl_mat* const ineqmat) {
 }
 
 isl_basic_set* flatten_bmap_to_bset(isl_basic_map* bm) {
-  auto ineqs = isl_basic_map_inequalities_matrix(bm, isl_dim_in, isl_dim_out, isl_dim_cst, isl_dim_div, isl_dim_param);
+  auto ineqs = isl_basic_map_inequalities_matrix(bm, isl_dim_in, isl_dim_out, isl_dim_div, isl_dim_cst, isl_dim_param);
+  auto eqs = isl_basic_map_equalities_matrix(bm, isl_dim_in, isl_dim_out, isl_dim_div, isl_dim_cst, isl_dim_param);
 
-  auto eqs = isl_basic_map_equalities_matrix(bm, isl_dim_in, isl_dim_out, isl_dim_cst, isl_dim_div, isl_dim_param);
+  //auto ineqs = isl_basic_map_inequalities_matrix(bm, isl_dim_in, isl_dim_out, isl_dim_cst, isl_dim_div, isl_dim_param);
+  //auto eqs = isl_basic_map_equalities_matrix(bm, isl_dim_in, isl_dim_out, isl_dim_cst, isl_dim_div, isl_dim_param);
 
   cout << "bm = " << str(bm) << endl;
 
@@ -2759,12 +2761,12 @@ isl_basic_set* flatten_bmap_to_bset(isl_basic_map* bm) {
   cout << "eqs..." << endl;
   cout << str(eqs) << endl;
 
-  int set_dim =
-    num_in_dims(bm) + num_out_dims(bm);
   int div_dims = num_div_dims(bm);
+  //assert(div_dims == 0);
+  int set_dim =
+    num_in_dims(bm) + num_out_dims(bm) + div_dims;
   int param_dims = num_param_dims(bm);
 
-  assert(div_dims == 0);
   assert(param_dims == 0);
 
   auto s = isl_space_set_alloc(ctx(bm),

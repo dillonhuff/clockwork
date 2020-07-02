@@ -10942,7 +10942,14 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
-  playground();
+  upsample2d_test();
+  upsample_stencil_2d_test();
+  upsample_stencil_1d_test();
+  up_unrolled_4_test();
+
+  up_unrolled_test();
+
+  //playground();
   iccad_tests();
   //adobe_meeting_apps();
   sum_denoise_test();
@@ -10956,9 +10963,6 @@ void application_tests() {
   //assert(false);
 
   up_down_unrolled_test();
-  upsample2d_test();
-  upsample_stencil_2d_test();
-  upsample_stencil_1d_test();
 
 
   histogram_test();
@@ -11060,10 +11064,6 @@ void application_tests() {
   conv3x3_app_unrolled_test();
   conv3x3_app_test();
   conv3x3_app_unrolled_uneven_test();
-
-  up_unrolled_4_test();
-
-  up_unrolled_test();
 
   jacobi2d_app_test();
 
