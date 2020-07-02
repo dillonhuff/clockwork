@@ -9286,7 +9286,7 @@ void playground() {
     isl_ctx* ctx = isl_ctx_alloc();
     auto dom = isl_union_set_read_from_str(ctx, "{ p[x] : -200 <= x <= 200; c[x] : 0 <= x <= 10 }");
     auto dep = rdmap(ctx, "{ p[x] -> c[y] : y - 10 <= x <= y + 10 }");
-    print_hw_schedule(dom, dep);
+    print_hw_schedule(dom, its(dep, dom));
 
     isl_ctx_free(ctx);
     assert(false);

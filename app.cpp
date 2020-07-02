@@ -391,7 +391,6 @@ form_farkas_constraints(isl_basic_set* orig_constraints,
   cout << str(ineqs) << endl;
 
   int num_farkas = isl_mat_rows(ineqs);
-  //+ 2*isl_mat_rows(eqs);
 
   int farkas_dim = num_farkas + cdim + 2;
 
@@ -401,6 +400,11 @@ form_farkas_constraints(isl_basic_set* orig_constraints,
   auto fs =
     isl_basic_set_universe(fspace);
 
+  for (int c = 0; c < isl_mat_cols(ineqs) - 1; c++) {
+    fs = isl_basic_set_set_dim_name(fs, isl_dim_set, c, cvals.at(c).second.c_str());
+  }
+
+  fs = isl_basic_set_set_dim_name(fs, isl_dim_set, isl_mat_cols(ineqs) - 1, dname.c_str());
   // Layout [c1, ..., cN, d, l1, ..., lM, l0]
   int farkas_var_offset = cdim + 1;
   for (int c = 0; c < isl_mat_cols(ineqs) - 1; c++) {
@@ -411,6 +415,7 @@ form_farkas_constraints(isl_basic_set* orig_constraints,
       auto fc = mul(negone(ct), isl_mat_get_element_val(ineqs, i, c));
       constraint = isl_constraint_set_coefficient_val(constraint, isl_dim_set, farkas_var_offset + i, fc);
     }
+    cout << "adding farkas constraint: " << str(constraint) << endl;
     fs = isl_basic_set_add_constraint(fs, constraint);
   }
 
@@ -433,11 +438,6 @@ form_farkas_constraints(isl_basic_set* orig_constraints,
   cout << "adding constant constraint: " << str(constraint) << endl;
   fs = isl_basic_set_add_constraint(fs, constraint);
 
-  for (int c = 0; c < isl_mat_cols(ineqs) - 1; c++) {
-    fs = isl_basic_set_set_dim_name(fs, isl_dim_set, c, cvals.at(c).second.c_str());
-  }
-
-  fs = isl_basic_set_set_dim_name(fs, isl_dim_set, isl_mat_cols(ineqs) - 1, dname.c_str());
   return fs;
 }
 
@@ -1978,7 +1978,7 @@ void print_hw_schedule(const std::string& latency_to_minimize,
       fs = positive(fs, 1);
       auto pt = sample(fs);
       cout << "Example solution to farkas: " << str(pt) << endl;
-      assert(false);
+      //assert(false);
 
       cout << "Example solution without farkas: " << str(sample(builder.s)) << endl;
       append_basic_set(builder, fs);
@@ -2042,12 +2042,13 @@ void append_basic_set(ilp_builder& b, isl_basic_set* s) {
     } else {
       string name_str = next_name("fm", b);
       assert(!contains_key(name_str, b.variable_positions));
-      cout << tab(1) << " name = " << name_str << endl;
+      //cout << tab(1) << " name = " << name_str << endl;
       b.add_variable(name_str);
       s = isl_basic_set_set_dim_name(s, isl_dim_set, d, name_str.c_str());
     }
   }
 
+  cout << "set after naming: " << str(s) << endl;
   for (auto c : constraints(s)) {
     map<string, isl_val*> values;
     for (int d = 0; d < num_dims(s); d++) {
