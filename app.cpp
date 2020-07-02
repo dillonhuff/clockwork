@@ -1999,7 +1999,7 @@ void print_hw_schedule(const std::string& latency_to_minimize,
   for (int d = 0; d < domain_dim; d++) {
     sum_of_iis[ii_var(latency_to_minimize, d)] = one(ct);
   }
-  //sum_of_iis[hw_delay_var(latency_to_minimize)] = one(ct);
+  sum_of_iis[hw_delay_var(latency_to_minimize)] = one(ct);
   //builder.add_eq({{"p_to_c_ddiff", one(ct)}}, isl_val_int_from_si(ct, 10));
   builder.minimize(sum_of_iis);
 

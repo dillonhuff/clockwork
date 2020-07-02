@@ -2769,7 +2769,15 @@ isl_basic_set* lift_divs(isl_basic_set* bm) {
   auto s = isl_space_set_alloc(ctx(bm),
       param_dims, set_dim);
 
-  return isl_basic_set_from_constraint_matrices(s, eqs, ineqs, isl_dim_set, isl_dim_cst, isl_dim_div, isl_dim_param);
+  auto final_s = isl_basic_set_from_constraint_matrices(s, eqs, ineqs, isl_dim_set, isl_dim_cst, isl_dim_div, isl_dim_param);
+  for (int d = 0; d < num_dims(bm); d++) {
+    auto name = isl_basic_set_get_dim_name(bm, isl_dim_set, d);
+    if (name != nullptr) {
+      final_s = isl_basic_set_set_dim_name(final_s, isl_dim_set, d, string(name).c_str());
+    }
+
+  }
+  return final_s;
 }
 
 isl_basic_set* zero(isl_basic_set* fs, const int var) {
