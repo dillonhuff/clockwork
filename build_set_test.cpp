@@ -22,27 +22,38 @@ void append_basic_set(ilp_builder& b, isl_basic_set* s) {
   assert(num_div_dims(s) == 0);
   assert(num_param_dims(s) == 0);
 
+  for (int d = 0; d < num_dims(s); d++) {
+    auto id = isl_basic_set_get_dim_name(s, isl_dim_set, d);
+    if (id != nullptr) {
+    } else {
+      string name_str = next_name("fm", b);
+      assert(!contains_key(name_str, b.variable_positions));
+      cout << tab(1) << " name = " << name_str << endl;
+      b.add_variable(name_str);
+      s = isl_basic_set_set_dim_name(s, isl_dim_set, d, name_str.c_str());
+    }
+  }
+
   for (auto c : constraints(s)) {
     map<string, isl_val*> values;
     for (int d = 0; d < num_dims(s); d++) {
       auto id = isl_basic_set_get_dim_name(s, isl_dim_set, d);
-      if (id != nullptr) {
-        string name_str(id);
-        cout << tab(1) << " name = " << name_str << endl;
-        values[name_str] = isl_constraint_get_coefficient_val(c, isl_dim_set, d);
-      } else {
-        string name_str = next_name("fm", b);
-        assert(!contains_key(name_str, b.variable_positions));
-        values[name_str] = isl_constraint_get_coefficient_val(c, isl_dim_set, d);
-      }
+      assert(id != nullptr);
+      string name_str(id);
+      cout << tab(1) << " name = " << name_str << endl;
+      values[name_str] = isl_constraint_get_coefficient_val(c, isl_dim_set, d);
     }
 
     isl_val* constant = isl_constraint_get_constant_val(c);
+    for (auto c : values) {
+      cout << tab(1) << c.first << " " << str(c.second) << endl;
+    }
     if (isl_constraint_is_equality(c)) {
       b.add_eq(values, constant);
     } else {
       b.add_geq(values, constant);
     }
+    cout << "after adding constraint: " << str(sample(b.s)) << endl;
   }
 }
 
@@ -10851,9 +10862,13 @@ void adobe_downsample_two_adds() {
 
         //cout << "New fs = " << str(sol) << endl;
         auto pt = sample(fs);
-        cout << "Example solution: " << str(pt) << endl;
+        //cout << "Example solution: " << str(pt) << endl;
 
+        cout << "Example solution without farkas: " << str(sample(builder.s)) << endl;
         append_basic_set(builder, fs);
+        cout << "Example solution with farkas: " << str(sample(builder.s)) << endl;
+        //assert(false);
+
         auto ct = prg.ctx;
         //ilp_builder builder(fs);
         for (int d = 0; d < num_in_dims(bm); d++) {
