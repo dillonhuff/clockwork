@@ -10904,7 +10904,7 @@ void adobe_downsample_two_adds() {
 
     print_hw_schedule("scale", dom, valid, dummy_latencies);
 
-    assert(false);
+    //assert(false);
     //auto fs = form_farkas_constraints(to_bset(s), {{"x", "II_x"}}, "d");
     //cout << "fs = " << str(fs) << endl;
     //auto extra_constraint = rdset(ctx, "{ [II_x, a, b, c, d] : II_x >= 1 }");
@@ -10913,9 +10913,9 @@ void adobe_downsample_two_adds() {
     //auto pt = sample(sol);
     //cout << "Example solution: " << str(pt) << endl;
   }
-  cout << optimized_code_string(prg) << endl;
-  generate_optimized_trace(prg);
-  assert(false);
+  //cout << optimized_code_string(prg) << endl;
+  //generate_optimized_trace(prg);
+  //assert(false);
   //regression_test(prg);
   //move_to_synthesis_folder(prg.name);
 }
@@ -11077,7 +11077,7 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
-  adobe_meeting_apps();
+  //adobe_meeting_apps();
   sum_denoise_test();
   sum_diffs_test();
   denoise2d_test();
