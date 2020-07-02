@@ -417,6 +417,7 @@ form_farkas_constraints(isl_basic_set* orig_constraints,
   auto constraint = isl_constraint_alloc_equality(get_local_space(fs));
   constraint = isl_constraint_set_coefficient_si(constraint, isl_dim_set, cdim, 1);
   constraint = isl_constraint_set_coefficient_si(constraint, isl_dim_set, farkas_var_offset + num_farkas, -1);
+  //constraint = isl_constraint_set_coefficient_si(constraint, isl_dim_set, farkas_var_offset + num_farkas, 1);
   for (int i = 0; i < num_farkas; i++) {
     isl_val* b = isl_mat_get_element_val(ineqs, i, isl_mat_cols(ineqs) - 1);
     b = mul(negone(ct), b);
@@ -1939,6 +1940,9 @@ void print_hw_schedule(const std::string& latency_to_minimize,
     map<string, int>& op_latencies) {
 
   ilp_builder builder = modulo_constraints(dom, valid, op_latencies);
+  //for (auto s : get_sets(dom)) {
+    //builder.add_geq(hw_delay_var(name(s)), (int) 1);
+  //}
   auto ct = ctx(dom);
 
   //assert(false);
@@ -1970,9 +1974,11 @@ void print_hw_schedule(const std::string& latency_to_minimize,
       auto fs = form_farkas_constraints(basic_set_for_map, diffs, ddiff);
       cout << "fs = " << str(fs) << endl;
 
-      //cout << "New fs = " << str(sol) << endl;
+      fs = negative(fs, 0);
+      fs = positive(fs, 1);
       auto pt = sample(fs);
-      //cout << "Example solution: " << str(pt) << endl;
+      cout << "Example solution to farkas: " << str(pt) << endl;
+      assert(false);
 
       cout << "Example solution without farkas: " << str(sample(builder.s)) << endl;
       append_basic_set(builder, fs);

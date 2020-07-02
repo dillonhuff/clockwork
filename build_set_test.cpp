@@ -10722,33 +10722,6 @@ void generate_optimized_trace(prog& prg) {
   generate_trace(prg, sched);
 }
 
-isl_basic_set* negative(isl_basic_set* fs, const int var) {
-  auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
-  non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, var, -1);
-  non_neg = isl_constraint_set_constant_si(non_neg, -1);
-  fs = isl_basic_set_add_constraint(fs, non_neg);
-
-  return fs;
-}
-
-isl_basic_set* gtconst(isl_basic_set* fs, const int var, const int bound) {
-  auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
-  non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, var, 1);
-  non_neg = isl_constraint_set_constant_si(non_neg, -bound);
-  fs = isl_basic_set_add_constraint(fs, non_neg);
-
-  return fs;
-}
-
-isl_basic_set* positive(isl_basic_set* fs, const int var) {
-  auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
-  non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, var, 1);
-  non_neg = isl_constraint_set_constant_si(non_neg, -1);
-  fs = isl_basic_set_add_constraint(fs, non_neg);
-
-  return fs;
-}
-
 void adobe_downsample_two_adds() {
   prog prg("adobe_downsample");
   prg.add_input("off_chip_image");
