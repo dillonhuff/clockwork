@@ -1971,13 +1971,14 @@ void reaccess_no_hierarchy_test() {
   //generate_optimized_code(prg);
   CodegenOptions options;
   options.internal = true;
-  //options.all_rams = true;
+  options.all_rams = true;
   //options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
   generate_optimized_code(options, prg);
 
   generate_regression_testbench(prg);
   vector<string> optimized_res = run_regression_tb(prg);
   assert(optimized_res == unoptimized_res);
+  //assert(false);
 }
 
 void reaccess_test() {
@@ -10956,6 +10957,7 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
+  reduce_rows_test();
   reaccess_no_hierarchy_test();
   reaccess_no_hierarchy_rolled_test();
   //playground();
@@ -11003,7 +11005,6 @@ void application_tests() {
   mini_conv_halide_test();
   reduce_1d_test();
   //register_file_optimization_test();
-  reduce_rows_test();
   ram_addr_unit_test();
   reduce_2d_test();
   grayscale_conversion_test();

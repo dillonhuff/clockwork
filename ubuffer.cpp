@@ -1082,10 +1082,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
       //Different ram type, different address
       for (auto sb : buf.receiver_banks(inpt)) {
-        if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_STACK) {
+        //if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_STACK) {
+        if (sb.tp == INNER_BANK_OFFSET_STACK) {
           out << tab(1) << buf.name << "." << sb.name << ".push(" << inpt << ");" << endl;
-        }
-        else if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_LINEAR) {
+        //} else if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_LINEAR) {
+        } else if (sb.tp == INNER_BANK_OFFSET_LINEAR) {
           string linear_addr = buf.generate_linearize_ram_addr(inpt);
           cout <<"Input port:" << inpt << ", Get ram string: " << linear_addr << endl;
           if (!elem(inpt, buf.dynamic_ports)) {
@@ -1095,8 +1096,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
             out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt <<
               ", " << "dynamic_address" << ");" << endl;
           }
-        }
-        else {
+        } else {
           assert(false);
           out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt << ", " << var_args << ");" << endl;
         }
@@ -1184,7 +1184,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       return buf.name + "." + bank + ".read(dynamic_address)";
     }
 
-
     auto out_domain = buf.domain.at(outpt);
     //cout << "Out domain: " << str(out_domain) << endl;
     auto qpd = compute_dd(buf, outpt, inpt);
@@ -1202,11 +1201,14 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     string delay_expr = evaluate_dd(buf, outpt, inpt);
     string value_str = "";
     bool opt_const = is_optimizable_constant_dd(inpt, outpt, buf);
-    if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_LINEAR) {
+    auto sb = buf.get_bank(bank);
+
+    //if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_LINEAR) {
+    if (sb.tp == INNER_BANK_OFFSET_LINEAR) {
       string linear_addr = buf.generate_linearize_ram_addr(outpt);
       value_str = bank + ".read(/*ram type address*/ "+ linear_addr + ")";
-    }
-    else if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_STACK) {
+    //} else if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_STACK) {
+    } else if (sb.tp == INNER_BANK_OFFSET_STACK) {
       if (options.all_rams || buf.get_bank(bank).num_readers == 1) {
         value_str = bank + ".peek(/* one reader or all rams */ " + delay_expr + ")";
       } else if (opt_const) {
