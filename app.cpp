@@ -366,27 +366,12 @@ form_farkas_constraints(isl_basic_set* orig_constraints,
     const std::string& dname) {
 
   auto ineqs = equalities_to_inequalities(orig_constraints);
-  //auto constraints = equalities_to_inequalities(orig_constraints);
-  //cout << "constraints: " << str(constraints) << endl;
-
-  //auto ineqs = isl_basic_set_inequalities_matrix(constraints,
-      //isl_dim_set,
-      //isl_dim_cst,
-      //isl_dim_div,
-      //isl_dim_param);
-  //auto eqs = isl_basic_set_equalities_matrix(constraints,
-      //isl_dim_set,
-      //isl_dim_cst,
-      //isl_dim_div,
-      //isl_dim_param);
 
   int cdim = cvals.size();
 
-  //assert(isl_mat_rows(eqs) == 0);
   //cout << "# of columns = " << isl_mat_cols(eqs) << endl;
   cout << "cdim         = " << cdim << endl;
   assert(isl_mat_cols(ineqs) == cdim + 1);
-  //assert(isl_mat_cols(eqs) == cdim + 1);
 
   cout << "Ineqs..." << endl;
   cout << str(ineqs) << endl;
@@ -423,13 +408,11 @@ form_farkas_constraints(isl_basic_set* orig_constraints,
   auto constraint = isl_constraint_alloc_equality(get_local_space(fs));
   constraint = isl_constraint_set_coefficient_si(constraint, isl_dim_set, cdim, 1);
   constraint = isl_constraint_set_coefficient_si(constraint, isl_dim_set, farkas_var_offset + num_farkas, -1);
-  //constraint = isl_constraint_set_coefficient_si(constraint, isl_dim_set, farkas_var_offset + num_farkas, 1);
   for (int i = 0; i < num_farkas; i++) {
     isl_val* b = isl_mat_get_element_val(ineqs, i, isl_mat_cols(ineqs) - 1);
     b = mul(negone(ct), b);
     cout << "b " << i << " = " << str(b) << endl;
     constraint = isl_constraint_set_coefficient_val(constraint, isl_dim_set, farkas_var_offset + i, b);
-
   }
 
   for (int i = 0; i < num_farkas; i++) {
@@ -1976,7 +1959,17 @@ void print_hw_schedule(const std::string& latency_to_minimize,
       //assert(false);
 
       //cout << "Example solution without farkas: " << str(sample(builder.s)) << endl;
+
+      cout << "dims in farkas: " << num_dims(fs) << endl;
+      int base_dims = num_in_dims(bm) + num_out_dims(bm) + 1;
+      int num_farkas_mults = num_dims(fs) - base_dims;
+      cout << "dims in res   : " << base_dims << endl;
+      cout << "farkas mults  : " << num_farkas_mults << endl;
+      fs = isl_basic_set_project_out(fs, isl_dim_set, base_dims, num_farkas_mults);
+      cout << "projecting out: " << str(fs) << endl;
+      
       append_basic_set(builder, fs);
+
       //cout << "Example solution with farkas: " << str(sample(builder.s)) << endl;
       //assert(false);
 

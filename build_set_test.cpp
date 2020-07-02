@@ -4881,7 +4881,7 @@ struct App {
     }
 
 
-    //print_hw_schedule(cpy(domain), cpy(validity));
+    print_hw_schedule(cpy(domain), cpy(validity));
 
     map<string, vector<isl_aff*> > sched =
       clockwork_schedule(domain, validity, proximity, high_bandwidth_deps);
@@ -10942,8 +10942,8 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
+  playground();
   iccad_tests();
-  //playground();
   //adobe_meeting_apps();
   sum_denoise_test();
   sum_diffs_test();
