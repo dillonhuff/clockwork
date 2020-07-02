@@ -4881,8 +4881,8 @@ struct App {
     }
 
 
-    //print_hw_schedule(cpy(domain), cpy(validity));
-    //assert(false);
+    print_hw_schedule(cpy(domain), cpy(validity));
+    assert(false);
 
     map<string, vector<isl_aff*> > sched =
       clockwork_schedule(domain, validity, proximity, high_bandwidth_deps);
