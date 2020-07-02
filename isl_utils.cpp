@@ -2746,6 +2746,69 @@ string str(isl_mat* const ineqmat) {
   return out.str();
 }
 
+isl_basic_set* lift_divs(isl_basic_set* bm) {
+  auto ineqs = isl_basic_set_inequalities_matrix(bm, isl_dim_set, isl_dim_div, isl_dim_cst, isl_dim_param);
+  auto eqs = isl_basic_set_equalities_matrix(bm, isl_dim_set, isl_dim_div, isl_dim_cst, isl_dim_param);
+
+  cout << "bm = " << str(bm) << endl;
+
+  cout << "ineqs..." << endl;
+  cout << str(ineqs) << endl;
+
+  cout << "eqs..." << endl;
+  cout << str(eqs) << endl;
+
+  int div_dims = num_div_dims(bm);
+  //assert(div_dims == 0);
+  int set_dim =
+    num_dims(bm) + div_dims;
+  int param_dims = num_param_dims(bm);
+
+  assert(param_dims == 0);
+
+  auto s = isl_space_set_alloc(ctx(bm),
+      param_dims, set_dim);
+
+  return isl_basic_set_from_constraint_matrices(s, eqs, ineqs, isl_dim_set, isl_dim_cst, isl_dim_div, isl_dim_param);
+}
+
+isl_basic_set* zero(isl_basic_set* fs, const int var) {
+  auto non_neg = isl_constraint_alloc_equality(get_local_space(fs));
+  non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, var, 1);
+  non_neg = isl_constraint_set_constant_si(non_neg, 0);
+  fs = isl_basic_set_add_constraint(fs, non_neg);
+
+  return fs;
+}
+
+isl_basic_set* negative(isl_basic_set* fs, const int var) {
+  auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
+  non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, var, -1);
+  non_neg = isl_constraint_set_constant_si(non_neg, -1);
+  fs = isl_basic_set_add_constraint(fs, non_neg);
+
+  return fs;
+}
+
+isl_basic_set* gtconst(isl_basic_set* fs, const int var, const int bound) {
+  auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
+  non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, var, 1);
+  non_neg = isl_constraint_set_constant_si(non_neg, -bound);
+  fs = isl_basic_set_add_constraint(fs, non_neg);
+
+  return fs;
+}
+
+isl_basic_set* positive(isl_basic_set* fs, const int var) {
+  auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
+  non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, var, 1);
+  non_neg = isl_constraint_set_constant_si(non_neg, -1);
+  fs = isl_basic_set_add_constraint(fs, non_neg);
+
+  return fs;
+
+}
+
 isl_basic_set* flatten_bmap_to_bset(isl_basic_map* bm) {
   auto ineqs = isl_basic_map_inequalities_matrix(bm, isl_dim_in, isl_dim_out, isl_dim_div, isl_dim_cst, isl_dim_param);
   auto eqs = isl_basic_map_equalities_matrix(bm, isl_dim_in, isl_dim_out, isl_dim_div, isl_dim_cst, isl_dim_param);
@@ -2773,40 +2836,5 @@ isl_basic_set* flatten_bmap_to_bset(isl_basic_map* bm) {
       param_dims, set_dim);
 
   return isl_basic_set_from_constraint_matrices(s, eqs, ineqs, isl_dim_set, isl_dim_cst, isl_dim_div, isl_dim_param);
-}
-
-isl_basic_set* zero(isl_basic_set* fs, const int var) {
-  auto non_neg = isl_constraint_alloc_equality(get_local_space(fs));
-  non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, var, 1);
-  non_neg = isl_constraint_set_constant_si(non_neg, 0);
-  fs = isl_basic_set_add_constraint(fs, non_neg);
-
-  return fs;
-}
-isl_basic_set* negative(isl_basic_set* fs, const int var) {
-  auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
-  non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, var, -1);
-  non_neg = isl_constraint_set_constant_si(non_neg, -1);
-  fs = isl_basic_set_add_constraint(fs, non_neg);
-
-  return fs;
-}
-
-isl_basic_set* gtconst(isl_basic_set* fs, const int var, const int bound) {
-  auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
-  non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, var, 1);
-  non_neg = isl_constraint_set_constant_si(non_neg, -bound);
-  fs = isl_basic_set_add_constraint(fs, non_neg);
-
-  return fs;
-}
-
-isl_basic_set* positive(isl_basic_set* fs, const int var) {
-  auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
-  non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, var, 1);
-  non_neg = isl_constraint_set_constant_si(non_neg, -1);
-  fs = isl_basic_set_add_constraint(fs, non_neg);
-
-  return fs;
 }
 

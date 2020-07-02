@@ -4881,7 +4881,8 @@ struct App {
     }
 
 
-    print_hw_schedule(cpy(domain), cpy(validity));
+    //print_hw_schedule(cpy(domain), cpy(validity));
+    //assert(false);
 
     map<string, vector<isl_aff*> > sched =
       clockwork_schedule(domain, validity, proximity, high_bandwidth_deps);
@@ -9284,6 +9285,19 @@ isl_val* constant(isl_aff* a) {
 void playground() {
   {
     isl_ctx* ctx = isl_ctx_alloc();
+    auto dom = isl_map_read_from_str(ctx, "{ p[x] -> c[k] : exists y : 2y = x and x = 3*k }");
+    cout << "dom = " << str(dom) << endl;
+    for (auto m : get_basic_maps(dom)) {
+      cout << "flattened = " << str(flatten_bmap_to_bset(m)) << endl;
+    }
+    //auto dep = rdmap(ctx, "{ p[x, y] -> c[x, y] }");
+    //print_hw_schedule(dom, its(dep, dom));
+
+    isl_ctx_free(ctx);
+    assert(false);
+  }
+  {
+    isl_ctx* ctx = isl_ctx_alloc();
     auto dom = isl_union_set_read_from_str(ctx, "{ p[x, y] : 0 <= x <= 200 and 0 <= y <= 10; c[x, y] : 30 <= x <= 50 and 0 <= y <= 10}");
     auto dep = rdmap(ctx, "{ p[x, y] -> c[x, y] }");
     print_hw_schedule(dom, its(dep, dom));
@@ -10942,6 +10956,8 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
+  iccad_tests();
+  //playground();
   upsample2d_test();
   upsample_stencil_2d_test();
   upsample_stencil_1d_test();
@@ -10949,8 +10965,6 @@ void application_tests() {
 
   up_unrolled_test();
 
-  //playground();
-  iccad_tests();
   //adobe_meeting_apps();
   sum_denoise_test();
   sum_diffs_test();

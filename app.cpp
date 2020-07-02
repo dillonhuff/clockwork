@@ -1967,6 +1967,8 @@ void print_hw_schedule(const std::string& latency_to_minimize,
       cout << "farkas mults  : " << num_farkas_mults << endl;
       fs = isl_basic_set_project_out(fs, isl_dim_set, base_dims, num_farkas_mults);
       cout << "projecting out: " << str(fs) << endl;
+      fs = lift_divs(fs);
+      cout << "after lifting: " << str(fs) << endl;
       
       append_basic_set(builder, fs);
 
