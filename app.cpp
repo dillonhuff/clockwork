@@ -1232,6 +1232,71 @@ vector<std::string> topological_sort(const vector<isl_set*>& sets,
   return finished;
 }
 
+ilp_builder module_constraints(uset* padded_domain, umap* padded_validity, map<string, int>& latencies) {
+  auto ct = ctx(padded_domain);
+  ilp_builder modulo_schedule(ct);
+
+  for (auto m : get_maps(padded_validity)) {
+    cout << str(m) << endl;
+    int diff = int_upper_bound(card(to_uset(::domain(m)))) *
+      latencies.at(domain_name(m));
+    cout << "diff = " << diff << endl;
+
+    map<string, isl_val*> vals;
+    vals.insert({hw_delay_var(range_name(m)), one(ct)});
+    vals.insert({hw_delay_var(domain_name(m)), negone(ct)});
+    modulo_schedule.add_geq(vals, isl_val_int_from_si(ct, -diff));
+  }
+
+  vector<pair<string, isl_val*> > obj;
+  for (auto f : get_sets(padded_domain)) {
+    string n = name(f);
+    int dim = num_dims(f);
+
+    isl_aff* s = aff_on_domain(get_local_space(f), zero(ct));
+    isl_aff* cycle_delay = aff_on_domain(get_local_space(f), one(ct));
+
+    modulo_schedule.add_geq(hw_delay_var(n), (int) 0);
+
+    for (int i = 0; i < dim; i++) {
+
+      //cout << "adding var " << ii_var(n, i) << endl;
+
+      modulo_schedule.add_gt(ii_var(n, i), (int) 0);
+
+      if (i < dim - 1) {
+        // TODO: Add product of domain at dimension i - 1
+        auto dp = project_all_but(f, i + 1);
+        auto tc =
+          sub(lexmaxval(dp), lexminval(dp));
+        //auto tc =
+          //add(sub(lexmaxval(dp), lexminval(dp)), one(ct));
+        modulo_schedule.add_gt(ii_var(n, i), tc, ii_var(n, i + 1));
+      }
+
+      obj.push_back({ii_var(n, i), one(ct)});
+    }
+
+  }
+
+  for (auto dep : get_maps(padded_validity)) {
+    auto max_deps = isl_map_lexmax_pw_multi_aff(inv(dep));
+    cout << "lm = " << str(max_deps) << endl << endl;
+  }
+
+  // All root IIs must be equal
+  for (auto s : get_sets(padded_domain)) {
+    for (auto other : get_sets(padded_domain)) {
+      string iis = ii_var(name(s), 0);
+      string iio = ii_var(name(other), 0);
+      cout << iis << " == " << iio << endl;
+      modulo_schedule.add_eq(iis, iio);
+    }
+  }
+
+  return modulo_schedule;
+}
+
 map<string, isl_aff*>
 hardware_schedule(
     uset* domain,
