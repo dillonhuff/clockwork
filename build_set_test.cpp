@@ -5725,7 +5725,7 @@ struct App {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    //options.use_custom_code_string = true;
     realize(options, name, d0, d1);
   }
 
@@ -5768,7 +5768,7 @@ struct App {
     CodegenOptions options;
     options.internal = true;
     options.simplify_address_expressions = true;
-    options.use_custom_code_string = true;
+    //options.use_custom_code_string = true;
 
     realize(options, name, {d0, d1}, unroll_factor);
   }
@@ -9707,11 +9707,11 @@ void compute_unit_with_index_variables_test() {
 void travis_tests() {
   reduce_1d_test();
   reduce_2d_test();
+  compute_unit_with_index_variables_test();
   return;
   heat_3d_test();
   upsample2d_test();
   halide_dnn_test();
-  compute_unit_with_index_variables_test();
 
   exposure_fusion();
 
@@ -10985,17 +10985,18 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
+  iccad_tests();
+  //assert(false);
+  upsample2d_test();
+  upsample_stencil_2d_test();
+  upsample_stencil_1d_test();
+  up_unrolled_4_test();
   register_file_test();
   register_file_optimization_test();
   reduce_rows_test();
   reaccess_no_hierarchy_test();
   reaccess_no_hierarchy_rolled_test();
   //playground();
-  upsample2d_test();
-  upsample_stencil_2d_test();
-  upsample_stencil_1d_test();
-  up_unrolled_4_test();
-  iccad_tests();
 
   up_unrolled_test();
 

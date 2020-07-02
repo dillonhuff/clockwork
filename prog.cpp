@@ -1928,17 +1928,6 @@ std::string perfect_loop_codegen(umap* schedmap) {
       upper_bounds.push_back(to_int(lmax));
     }
 
-
-    //conv_out << "// lexmin: " << str(lexmin(s)) << endl;
-    //conv_out << "// lexmax: " << str(lexmax(s)) << endl;
-    //auto lm = lexminpt(s);
-    //auto lmax = lexmaxpt(s);
-    //conv_out << "// " << tab(1) << str(lm) << endl;
-    //conv_out << "// " << tab(1) << str(lmax) << endl;
-    //vector<int> lower_bounds = parse_pt(lm);
-    //vector<int> upper_bounds = parse_pt(lmax);
-
-
     for (int i = 0; i < lower_bounds.size(); i++) {
       conv_out << tab(i) << "for (int i" << str(i) << " = " << lower_bounds.at(i) << "; i" << str(i) << " <= " << upper_bounds.at(i) << "; i" << i << "++) {" << endl;
     }

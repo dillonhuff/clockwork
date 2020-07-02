@@ -1423,13 +1423,29 @@ isl_basic_set* domain(isl_basic_map* const m) {
 }
 
 std::string codegen_c(isl_union_map* res) {
-  //assert(false);
+  auto maps = get_maps(res);
+  if (maps.size() == 0) {
+    return "";
+  }
+
+  auto rep = pick(maps);
+  auto range_rep = range(rep);
+  int dim = num_dims(range_rep);
+
+  vector<string> vars;
+  for (int d = 0; d < dim; d++) {
+    vars.push_back("t" + str(d));
+  }
+  string atomic_str =
+    "{" + sep_list(vars, "[", "]", ", ") + " -> atomic[1] }";
+  //assert(false); 
   auto context = ctx(res);
   isl_ast_build* build = isl_ast_build_alloc(isl_union_map_get_ctx(res));
+  auto options = isl_union_map_read_from_str(context, atomic_str.c_str());
   //auto options = isl_union_map_read_from_str(context, "{ [a, b, c, d] -> atomic[t] : 0 <= t <= 3}");
   //auto options = isl_union_map_read_from_str(context, "{ [a, b] -> atomic[1] : 0 <= t <= 1 }");
   //auto options = isl_union_map_read_from_str(context, "{ [a, b] -> atomic[t] : t = 0 }");
-  //build = isl_ast_build_set_options(build, options);
+  build = isl_ast_build_set_options(build, options);
   isl_ast_node* code =
     isl_ast_build_node_from_schedule_map(build, cpy(res));
 
