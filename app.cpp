@@ -1261,14 +1261,14 @@ ilp_builder modulo_constraints(uset* padded_domain, umap* padded_validity, map<s
   //}
 
   // All root IIs must be equal
-  for (auto s : get_sets(padded_domain)) {
-    for (auto other : get_sets(padded_domain)) {
-      string iis = ii_var(name(s), 0);
-      string iio = ii_var(name(other), 0);
-      cout << iis << " == " << iio << endl;
-      modulo_schedule.add_eq(iis, iio);
-    }
-  }
+  //for (auto s : get_sets(padded_domain)) {
+    //for (auto other : get_sets(padded_domain)) {
+      //string iis = ii_var(name(s), 0);
+      //string iio = ii_var(name(other), 0);
+      //cout << iis << " == " << iio << endl;
+      //modulo_schedule.add_eq(iis, iio);
+    //}
+  //}
 
   return modulo_schedule;
 }
@@ -1996,8 +1996,11 @@ void print_hw_schedule(const std::string& latency_to_minimize,
 
   assert(domain_dim > 0);
   map<string, isl_val*> sum_of_iis;
+
   for (int d = 0; d < domain_dim; d++) {
-    sum_of_iis[ii_var(latency_to_minimize, d)] = one(ct);
+    isl_val* v = isl_val_2exp(sub(isl_val_int_from_si(ct, domain_dim),
+          isl_val_int_from_si(ct, d)));
+    sum_of_iis[ii_var(latency_to_minimize, d)] = mul(v, one(ct));
   }
   sum_of_iis[hw_delay_var(latency_to_minimize)] = one(ct);
   //builder.add_eq({{"p_to_c_ddiff", one(ct)}}, isl_val_int_from_si(ct, 10));
@@ -2013,12 +2016,11 @@ void print_hw_schedule(const std::string& latency_to_minimize,
 void print_hw_schedule(
     uset* dom,
     umap* valid) {
-  string lm = "";
   map<string, int> latencies;
   for (auto s : get_sets(dom)) {
     latencies[name(s)] = 1;
-    lm = name(s);
   }
+  string lm = topological_sort(get_sets(dom), get_maps(valid)).back();
   assert(lm != "");
 
   print_hw_schedule(lm, dom, its(valid, dom), latencies);
