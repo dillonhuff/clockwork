@@ -10942,8 +10942,8 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
-  playground();
-  adobe_meeting_apps();
+  //playground();
+  //adobe_meeting_apps();
   sum_denoise_test();
   sum_diffs_test();
   denoise2d_test();
