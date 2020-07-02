@@ -4881,8 +4881,8 @@ struct App {
     }
 
 
-    print_hw_schedule(cpy(domain), cpy(validity));
-    assert(false);
+    //print_hw_schedule(cpy(domain), cpy(validity));
+    //assert(false);
 
     map<string, vector<isl_aff*> > sched =
       clockwork_schedule(domain, validity, proximity, high_bandwidth_deps);
@@ -10957,11 +10957,11 @@ void unet_conv_3_3_test() {
 
 void application_tests() {
   //playground();
-  iccad_tests();
   upsample2d_test();
   upsample_stencil_2d_test();
   upsample_stencil_1d_test();
   up_unrolled_4_test();
+  iccad_tests();
 
   up_unrolled_test();
 
@@ -11244,8 +11244,8 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
-    application_tests();
     memory_tile_tests();
+    application_tests();
     prog_splitting_tests();
     cout << "All tests passed" << endl;
   } else {

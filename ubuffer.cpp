@@ -2010,7 +2010,13 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
           }
         }
       }
+    }
 
+    if (options.inner_bank_offset_mode ==
+        INNER_BANK_OFFSET_LINEAR) {
+      for (auto& b : bank_list) {
+        b.tp = INNER_BANK_OFFSET_LINEAR;
+      }
     }
   }
 
