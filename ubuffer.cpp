@@ -1818,7 +1818,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     int num_readers = 0;
 
     string pt_type_string = port_type_string();
-    string name = "all_inputs_to_all_outputs";
+    string bank_name = name + "_all_inputs_to_all_outputs";
 
     cout << "getting rddom" << endl;
     isl_union_set* rddom = isl_union_set_read_from_str(ctx, "{}");
@@ -1829,7 +1829,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     map<string, int> delay_map;
 
-    stack_bank bank{name, INNER_BANK_OFFSET_LINEAR, pt_type_string, read_delays, num_readers, maxdelay, rddom, delay_map};
+    stack_bank bank{bank_name, INNER_BANK_OFFSET_LINEAR, pt_type_string, read_delays, num_readers, maxdelay, rddom, delay_map};
 
     return bank;
   }

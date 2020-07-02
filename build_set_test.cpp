@@ -9913,6 +9913,43 @@ vector<T> levels_below(const T& target_level, const std::vector<T>& c) {
   return above;
 }
 
+void register_file_test() {
+  prog prg("reduce_register_file");
+  prg.add_input("in_oc");
+  prg.add_output("out_oc");
+
+  int len = 1000;
+
+  auto load_in = prg.add_loop("li", 0, len);
+  auto ld = load_in->add_op("ld_in");
+  ld->add_load("in_oc", "li");
+  ld->add_store("in", "li");
+
+  auto clp = prg.add_loop("c", 0, len - 2);
+  auto comp = clp->add_loop("i", 0, 3)->add_op("cp");
+  comp->add_function("add");
+  comp->add_load("tmp", "c");
+  comp->add_load("in", "c + i");
+  comp->add_store("tmp", "c");
+
+  auto st = clp->add_op("store_out");
+  st->add_load("tmp", "c");
+  st->add_store("out_oc", "c");
+
+  prg.pretty_print();
+  prg.sanity_check();
+
+  CodegenOptions options;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  options.all_rams = true;
+  //options.register_files.insert("in_rf");
+  options.banking_strategies["tmp"] = {"register_file"};
+  options.banking_strategies["in"] = {"register_file"};
+  regression_test(options, prg);
+  assert(false);
+}
+
 void register_file_optimization_test() {
   prog prg("register_file");
   prg.add_input("in_oc");
@@ -9924,17 +9961,6 @@ void register_file_optimization_test() {
   auto ld = load_in->add_op("ld_in");
   ld->add_load("in_oc", "li");
   ld->add_store("in", "li");
-
-  //auto rld = prg.add_loop("k", -2, len - 2);
-  //for (int i = 0; i < 3; i++) {
-    //auto ld = rld->add_op("ld_" + str(i));
-    //if (i < 2) {
-      //ld->add_load("in_rf", "k, " + str(i + 1));
-    //} else {
-      //ld->add_load("in", "k + " + str(i));
-    //}
-    //ld->add_store("in_rf", "k, " + str(i));
-  //}
 
   auto clp = prg.add_loop("c", 0, len - 2);
   auto comp = clp->add_loop("i", 0, 3)->add_op("cp");
@@ -10007,7 +10033,7 @@ void register_file_optimization_test() {
     INNER_BANK_OFFSET_LINEAR;
   options.all_rams = true;
   //options.register_files.insert("in_rf");
-  options.banking_strategies["in_rf"] = {"register_file"};
+  options.banking_strategies["in_rf_at_cp"] = {"register_file"};
 
   assert(prg.compute_unit_file != "");
 
@@ -10017,9 +10043,8 @@ void register_file_optimization_test() {
   generate_regression_testbench(prg);
   auto opt = run_regression_tb(prg);
 
-  assert(opt == unopt);
+  //compare(opt, unopt);
 
-  assert(false);
 }
 
 prog conv_layer_3D() {
@@ -10957,7 +10982,8 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
-  //register_file_optimization_test();
+  register_file_test();
+  register_file_optimization_test();
   reduce_rows_test();
   reaccess_no_hierarchy_test();
   reaccess_no_hierarchy_rolled_test();
@@ -11244,8 +11270,8 @@ int main(int argc, char** argv) {
   } else if (argc == 1) {
 
     system("mkdir -p scratch");
-    memory_tile_tests();
     application_tests();
+    memory_tile_tests();
     prog_splitting_tests();
     cout << "All tests passed" << endl;
   } else {
