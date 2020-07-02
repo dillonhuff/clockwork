@@ -10838,7 +10838,7 @@ void adobe_downsample_two_adds() {
       for (auto bm : maps) {
         string producer_delay = hw_delay_var(domain_name(bm));
         string consumer_delay = hw_delay_var(range_name(bm));
-        string ddiff = "ddiff";
+        string ddiff = domain_name(bm) + "_to_" + range_name(bm) + "_ddiff";
 
         cout << str(bm) << endl;
         vector<pair<string, string> > diffs;
@@ -10888,6 +10888,7 @@ void adobe_downsample_two_adds() {
     for (int d = 0; d < 3; d++) {
       sum_of_iis[ii_var("scale", d)] = one(ct);
     }
+    sum_of_iis[hw_delay_var("scale")] = one(ct);
     builder.minimize(sum_of_iis);
 
     for (auto v : builder.variable_positions) {
