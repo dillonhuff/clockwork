@@ -1808,7 +1808,7 @@ void reaccess_no_hierarchy_rolled_test() {
 
   auto q = prg.add_nest("ao", 0 , 2, "qo", 0, 6, "qi", 0, 14);
   auto init_out = q->add_op("init_out");
-  init_out->add_function("zero");
+  init_out->add_function("set_zero_32");
   init_out->add_store("out", "qi, qo, ao");
 
   auto qw = q->add_loop("wy", 0, 3);
@@ -9926,6 +9926,9 @@ void register_file_test() {
   ld->add_store("in", "li");
 
   auto clp = prg.add_loop("c", 0, len - 2);
+  auto init = clp->add_op("init_tmp");
+  init->add_function("set_zero_32");
+  init->add_store("tmp", "c");
   auto comp = clp->add_loop("i", 0, 3)->add_op("cp");
   comp->add_function("add");
   comp->add_load("tmp", "c");
@@ -9938,16 +9941,16 @@ void register_file_test() {
 
   prg.pretty_print();
   prg.sanity_check();
+  //assert(false);
 
   CodegenOptions options;
   options.inner_bank_offset_mode =
     INNER_BANK_OFFSET_LINEAR;
   options.all_rams = true;
-  //options.register_files.insert("in_rf");
   options.banking_strategies["tmp"] = {"register_file"};
   options.banking_strategies["in"] = {"register_file"};
   regression_test(options, prg);
-  assert(false);
+  //assert(false);
 }
 
 void register_file_optimization_test() {
