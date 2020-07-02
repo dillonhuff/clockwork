@@ -4881,7 +4881,7 @@ struct App {
     }
 
 
-    print_hw_schedule(cpy(domain), cpy(validity));
+    //print_hw_schedule(cpy(domain), cpy(validity));
 
     map<string, vector<isl_aff*> > sched =
       clockwork_schedule(domain, validity, proximity, high_bandwidth_deps);
@@ -9535,8 +9535,8 @@ void iccad_tests() {
   //assert(false);
 
 
-  max_pooling_test("mp25");
   exposure_fusion();
+  max_pooling_test("mp25");
 
   int index = 20;
   string istr = str(index);

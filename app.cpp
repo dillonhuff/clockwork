@@ -1993,7 +1993,7 @@ void print_hw_schedule(const std::string& latency_to_minimize,
       cout << "Builder set..." << endl;
       cout << tab(1) << str(builder.s) << endl;
 
-      cout << "sample point in builder set = " << str(sample(builder.s)) << endl;
+      //cout << "sample point in builder set = " << str(sample(builder.s)) << endl;
 
     }
 
