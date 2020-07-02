@@ -1236,17 +1236,17 @@ ilp_builder modulo_constraints(uset* padded_domain, umap* padded_validity, map<s
   auto ct = ctx(padded_domain);
   ilp_builder modulo_schedule(ct);
 
-  for (auto m : get_maps(padded_validity)) {
-    cout << str(m) << endl;
-    int diff = int_upper_bound(card(to_uset(::domain(m)))) *
-      latencies.at(domain_name(m));
-    cout << "diff = " << diff << endl;
+  //for (auto m : get_maps(padded_validity)) {
+    //cout << str(m) << endl;
+    //int diff = int_upper_bound(card(to_uset(::domain(m)))) *
+      //latencies.at(domain_name(m));
+    //cout << "diff = " << diff << endl;
 
-    map<string, isl_val*> vals;
-    vals.insert({hw_delay_var(range_name(m)), one(ct)});
-    vals.insert({hw_delay_var(domain_name(m)), negone(ct)});
-    modulo_schedule.add_geq(vals, isl_val_int_from_si(ct, -diff));
-  }
+    //map<string, isl_val*> vals;
+    //vals.insert({hw_delay_var(range_name(m)), one(ct)});
+    //vals.insert({hw_delay_var(domain_name(m)), negone(ct)});
+    //modulo_schedule.add_geq(vals, isl_val_int_from_si(ct, -diff));
+  //}
 
   vector<pair<string, isl_val*> > obj;
   for (auto f : get_sets(padded_domain)) {
