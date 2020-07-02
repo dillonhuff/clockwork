@@ -14,9 +14,36 @@
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 #endif
 
+string next_name(const std::string& prefix, ilp_builder& b) {
+  return prefix + "_" + str(b.variable_positions.size());
+}
+
 void append_basic_set(ilp_builder& b, isl_basic_set* s) {
-  auto ineqs =
-    equalities_to_inequalities(s);
+  assert(num_div_dims(s) == 0);
+  assert(num_param_dims(s) == 0);
+
+  for (auto c : constraints(s)) {
+    map<string, isl_val*> values;
+    for (int d = 0; d < num_dims(s); d++) {
+      auto id = isl_basic_set_get_dim_name(s, isl_dim_set, d);
+      if (id != nullptr) {
+        string name_str(id);
+        cout << tab(1) << " name = " << name_str << endl;
+        values[name_str] = isl_constraint_get_coefficient_val(c, isl_dim_set, d);
+      } else {
+        string name_str = next_name("fm", b);
+        assert(!contains_key(name_str, b.variable_positions));
+        values[name_str] = isl_constraint_get_coefficient_val(c, isl_dim_set, d);
+      }
+    }
+
+    isl_val* constant = isl_constraint_get_constant_val(c);
+    if (isl_constraint_is_equality(c)) {
+      b.add_eq(values, constant);
+    } else {
+      b.add_geq(values, constant);
+    }
+  }
 }
 
 static inline

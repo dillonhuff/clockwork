@@ -1898,6 +1898,12 @@ isl_map* delay_sched_map(isl_map* m, isl_map* write_sched) {
 }
 
 
+vector<isl_constraint*> constraints(isl_basic_set* s) {
+  vector<isl_constraint*> code_holder;
+  bset_collect_constraints(s, &code_holder);
+  return code_holder;
+}
+
 vector<isl_constraint*> constraints(isl_set* s) {
   vector<isl_constraint*> code_holder;
   isl_set_foreach_basic_set(s, bset_collect_constraints, &code_holder);

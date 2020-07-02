@@ -492,6 +492,7 @@ get_polynomial_folds(isl_union_pw_qpolynomial_fold* p);
 vector<isl_pw_qpolynomial*>
 get_polynomials(isl_union_pw_qpolynomial* p);
 
+vector<isl_constraint*> constraints(isl_basic_set* s);
 vector<isl_constraint*> constraints(isl_set* s);
 vector<isl_constraint*> constraints(isl_map* s);
 
