@@ -10790,6 +10790,82 @@ isl_basic_set* positive(isl_basic_set* fs, const int var) {
   return fs;
 }
 
+void print_hw_schedule(const std::string& latency_to_minimize,
+    uset* dom,
+    umap* valid,
+    map<string, int>& op_latencies) {
+
+  ilp_builder builder = modulo_constraints(dom, valid, op_latencies);
+  auto ct = ctx(dom);
+
+  //assert(false);
+
+  for (auto m : get_maps(valid)) {
+    cout << tab(1) << str(m) << endl;
+    auto maps = get_basic_maps(m);
+    cout << tab(1) << maps.size() << " basic maps" << endl;
+    for (auto bm : maps) {
+      string producer_delay = hw_delay_var(domain_name(bm));
+      string consumer_delay = hw_delay_var(range_name(bm));
+      string ddiff = domain_name(bm) + "_to_" + range_name(bm) + "_ddiff";
+
+      cout << str(bm) << endl;
+      vector<pair<string, string> > diffs;
+      // This order of pushes to diffs is expected for
+      // matrix formatting
+      for (int d = 0; d < num_in_dims(bm); d++) {
+        diffs.push_back({"d_" + str(d), neg_ii_var(domain_name(bm), d)});
+      }
+
+      for (int d = 0; d < num_out_dims(bm); d++) {
+        diffs.push_back({"d_" + str(d), ii_var(range_name(bm), d)});
+      }
+
+      isl_basic_set* basic_set_for_map = flatten_bmap_to_bset(bm);
+      auto fs = form_farkas_constraints(basic_set_for_map, diffs, ddiff);
+      cout << "fs = " << str(fs) << endl;
+
+      //cout << "New fs = " << str(sol) << endl;
+      auto pt = sample(fs);
+      //cout << "Example solution: " << str(pt) << endl;
+
+      cout << "Example solution without farkas: " << str(sample(builder.s)) << endl;
+      append_basic_set(builder, fs);
+      cout << "Example solution with farkas: " << str(sample(builder.s)) << endl;
+      //assert(false);
+
+      //ilp_builder builder(fs);
+      for (int d = 0; d < num_in_dims(bm); d++) {
+        string neg_consumer = neg_ii_var(domain_name(bm), d);
+        builder.add_eq({{neg_consumer, one(ct)}, {ii_var(domain_name(bm), d), one(ct)}},
+            zero(ct));
+      }
+
+      builder.add_eq({{ddiff, one(ct)}, {producer_delay, negone(ct)}, {consumer_delay, one(ct)}},
+          zero(ct));
+
+      cout << "Builder set..." << endl;
+      cout << tab(1) << str(builder.s) << endl;
+
+      cout << "sample point in builder set = " << str(sample(builder.s)) << endl;
+
+    }
+
+  }
+
+  map<string, isl_val*> sum_of_iis;
+  for (int d = 0; d < 3; d++) {
+    sum_of_iis[ii_var(latency_to_minimize, d)] = one(ct);
+  }
+  sum_of_iis[hw_delay_var(latency_to_minimize)] = one(ct);
+  builder.minimize(sum_of_iis);
+
+  for (auto v : builder.variable_positions) {
+    cout << tab(1) << v.first << " = " << str(builder.value(v.first)) << endl;
+  }
+
+}
+
 void adobe_downsample_two_adds() {
   prog prg("adobe_downsample");
   prg.add_input("off_chip_image");
@@ -10826,74 +10902,7 @@ void adobe_downsample_two_adds() {
       dummy_latencies[name(d)] = 1;
     }
 
-    ilp_builder builder = modulo_constraints(dom, valid, dummy_latencies);
-    auto ct = prg.ctx;
-
-    //assert(false);
-
-    for (auto m : get_maps(valid)) {
-      cout << tab(1) << str(m) << endl;
-      auto maps = get_basic_maps(m);
-      cout << tab(1) << maps.size() << " basic maps" << endl;
-      for (auto bm : maps) {
-        string producer_delay = hw_delay_var(domain_name(bm));
-        string consumer_delay = hw_delay_var(range_name(bm));
-        string ddiff = domain_name(bm) + "_to_" + range_name(bm) + "_ddiff";
-
-        cout << str(bm) << endl;
-        vector<pair<string, string> > diffs;
-        // This order of pushes to diffs is expected for
-        // matrix formatting
-        for (int d = 0; d < num_in_dims(bm); d++) {
-          diffs.push_back({"d_" + str(d), neg_ii_var(domain_name(bm), d)});
-        }
-        
-        for (int d = 0; d < num_out_dims(bm); d++) {
-          diffs.push_back({"d_" + str(d), ii_var(range_name(bm), d)});
-        }
-
-        isl_basic_set* basic_set_for_map = flatten_bmap_to_bset(bm);
-        auto fs = form_farkas_constraints(basic_set_for_map, diffs, ddiff);
-        cout << "fs = " << str(fs) << endl;
-
-        //cout << "New fs = " << str(sol) << endl;
-        auto pt = sample(fs);
-        //cout << "Example solution: " << str(pt) << endl;
-
-        cout << "Example solution without farkas: " << str(sample(builder.s)) << endl;
-        append_basic_set(builder, fs);
-        cout << "Example solution with farkas: " << str(sample(builder.s)) << endl;
-        //assert(false);
-
-        //ilp_builder builder(fs);
-        for (int d = 0; d < num_in_dims(bm); d++) {
-          string neg_consumer = neg_ii_var(domain_name(bm), d);
-          builder.add_eq({{neg_consumer, one(ct)}, {ii_var(domain_name(bm), d), one(ct)}},
-              zero(ct));
-        }
-
-        builder.add_eq({{ddiff, one(ct)}, {producer_delay, negone(ct)}, {consumer_delay, one(ct)}},
-            zero(ct));
- 
-        cout << "Builder set..." << endl;
-        cout << tab(1) << str(builder.s) << endl;
-
-        cout << "sample point in builder set = " << str(sample(builder.s)) << endl;
-
-      }
-
-    }
-
-    map<string, isl_val*> sum_of_iis;
-    for (int d = 0; d < 3; d++) {
-      sum_of_iis[ii_var("scale", d)] = one(ct);
-    }
-    sum_of_iis[hw_delay_var("scale")] = one(ct);
-    builder.minimize(sum_of_iis);
-
-    for (auto v : builder.variable_positions) {
-      cout << tab(1) << v.first << " = " << str(builder.value(v.first)) << endl;
-    }
+    print_hw_schedule("scale", dom, valid, dummy_latencies);
 
     assert(false);
     //auto fs = form_farkas_constraints(to_bset(s), {{"x", "II_x"}}, "d");
