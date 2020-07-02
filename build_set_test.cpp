@@ -14,54 +14,6 @@
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 #endif
 
-string next_name(const std::string& prefix, ilp_builder& b) {
-  return prefix + "_" + str(b.variable_positions.size());
-}
-
-void append_basic_set(ilp_builder& b, isl_basic_set* s) {
-  assert(num_div_dims(s) == 0);
-  assert(num_param_dims(s) == 0);
-
-  for (int d = 0; d < num_dims(s); d++) {
-    auto id = isl_basic_set_get_dim_name(s, isl_dim_set, d);
-    if (id != nullptr) {
-    } else {
-      string name_str = next_name("fm", b);
-      assert(!contains_key(name_str, b.variable_positions));
-      cout << tab(1) << " name = " << name_str << endl;
-      b.add_variable(name_str);
-      s = isl_basic_set_set_dim_name(s, isl_dim_set, d, name_str.c_str());
-    }
-  }
-
-  for (auto c : constraints(s)) {
-    map<string, isl_val*> values;
-    for (int d = 0; d < num_dims(s); d++) {
-      auto id = isl_basic_set_get_dim_name(s, isl_dim_set, d);
-      assert(id != nullptr);
-      string name_str(id);
-      cout << tab(1) << " name = " << name_str << endl;
-      values[name_str] = isl_constraint_get_coefficient_val(c, isl_dim_set, d);
-    }
-
-    isl_val* constant = isl_constraint_get_constant_val(c);
-    for (auto c : values) {
-      cout << tab(1) << c.first << " " << str(c.second) << endl;
-    }
-    if (isl_constraint_is_equality(c)) {
-      b.add_eq(values, constant);
-    } else {
-      b.add_geq(values, constant);
-    }
-    cout << "after adding constraint: " << str(sample(b.s)) << endl;
-  }
-}
-
-static inline
-std::string neg_ii_var(const string& n, const int d) {
-  return "neg_ii_" + n + "_pdim" + str(d);
-}
-
 void compare(vector<string>& opt, vector<string>& naive) {
   assert(opt.size() == naive.size());
   for (size_t i = 0; i < opt.size(); i++) {
@@ -4929,6 +4881,8 @@ struct App {
     }
 
 
+    print_hw_schedule(cpy(domain), cpy(validity));
+
     map<string, vector<isl_aff*> > sched =
       clockwork_schedule(domain, validity, proximity, high_bandwidth_deps);
 
@@ -9330,6 +9284,38 @@ isl_val* constant(isl_aff* a) {
 void playground() {
   {
     isl_ctx* ctx = isl_ctx_alloc();
+    auto dom = isl_union_set_read_from_str(ctx, "{ p[x] : -200 <= x <= 200; c[x] : 0 <= x <= 10 }");
+    auto dep = rdmap(ctx, "{ p[x] -> c[y] : y - 10 <= x <= y + 10 }");
+    print_hw_schedule(dom, dep);
+
+    isl_ctx_free(ctx);
+    assert(false);
+  }
+
+  {
+    isl_ctx* ctx = isl_ctx_alloc();
+    auto s = rdset(ctx, "{ [x, y] : 2y = x }");
+    cout << "pre projection: " << str(s) << endl;
+
+    auto p = isl_set_project_out(s, isl_dim_set, 1, 1);
+    cout << "post          : " << str(p) << endl;
+    for (auto bset : get_basic_sets(p)) {
+      cout << str(bset) << endl;
+      auto ineqs = isl_basic_set_inequalities_matrix(bset,
+          isl_dim_set, isl_dim_div, isl_dim_param, isl_dim_cst);
+      cout << "ineqs: " << endl;
+      cout << str(ineqs) << endl;
+      auto eqs = isl_basic_set_equalities_matrix(bset,
+          isl_dim_set, isl_dim_div, isl_dim_param, isl_dim_cst);
+      cout << "eqs: " << endl;
+      cout << str(eqs) << endl;
+    }
+    isl_ctx_free(ctx);
+    assert(false);
+  }
+
+  {
+    isl_ctx* ctx = isl_ctx_alloc();
     auto s = rdset(ctx, "{ [x, y] : y = 5 and x >= -4 and x < 19}");
     auto fs = form_farkas_constraints(to_bset(s), {{"x", "II_x"}, {"y", "II_y"}}, "d");
     cout << "fs = " << str(fs) << endl;
@@ -10731,33 +10717,6 @@ void adobe_downsample_two_adds_epochs() {
   cout << optimized_code_string(prg) << endl;
 }
 
-isl_basic_set* flatten_bmap_to_bset(isl_basic_map* bm) {
-  auto ineqs = isl_basic_map_inequalities_matrix(bm, isl_dim_in, isl_dim_out, isl_dim_cst, isl_dim_div, isl_dim_param);
-
-  auto eqs = isl_basic_map_equalities_matrix(bm, isl_dim_in, isl_dim_out, isl_dim_cst, isl_dim_div, isl_dim_param);
-
-  cout << "bm = " << str(bm) << endl;
-
-  cout << "ineqs..." << endl;
-  cout << str(ineqs) << endl;
-
-  cout << "eqs..." << endl;
-  cout << str(eqs) << endl;
-
-  int set_dim =
-    num_in_dims(bm) + num_out_dims(bm);
-  int div_dims = num_div_dims(bm);
-  int param_dims = num_param_dims(bm);
-
-  assert(div_dims == 0);
-  assert(param_dims == 0);
-
-  auto s = isl_space_set_alloc(ctx(bm),
-      param_dims, set_dim);
-
-  return isl_basic_set_from_constraint_matrices(s, eqs, ineqs, isl_dim_set, isl_dim_cst, isl_dim_div, isl_dim_param);
-}
-
 void generate_optimized_trace(prog& prg) {
   auto sched = prg.optimized_codegen();
   generate_trace(prg, sched);
@@ -10788,82 +10747,6 @@ isl_basic_set* positive(isl_basic_set* fs, const int var) {
   fs = isl_basic_set_add_constraint(fs, non_neg);
 
   return fs;
-}
-
-void print_hw_schedule(const std::string& latency_to_minimize,
-    uset* dom,
-    umap* valid,
-    map<string, int>& op_latencies) {
-
-  ilp_builder builder = modulo_constraints(dom, valid, op_latencies);
-  auto ct = ctx(dom);
-
-  //assert(false);
-
-  for (auto m : get_maps(valid)) {
-    cout << tab(1) << str(m) << endl;
-    auto maps = get_basic_maps(m);
-    cout << tab(1) << maps.size() << " basic maps" << endl;
-    for (auto bm : maps) {
-      string producer_delay = hw_delay_var(domain_name(bm));
-      string consumer_delay = hw_delay_var(range_name(bm));
-      string ddiff = domain_name(bm) + "_to_" + range_name(bm) + "_ddiff";
-
-      cout << str(bm) << endl;
-      vector<pair<string, string> > diffs;
-      // This order of pushes to diffs is expected for
-      // matrix formatting
-      for (int d = 0; d < num_in_dims(bm); d++) {
-        diffs.push_back({"d_" + str(d), neg_ii_var(domain_name(bm), d)});
-      }
-
-      for (int d = 0; d < num_out_dims(bm); d++) {
-        diffs.push_back({"d_" + str(d), ii_var(range_name(bm), d)});
-      }
-
-      isl_basic_set* basic_set_for_map = flatten_bmap_to_bset(bm);
-      auto fs = form_farkas_constraints(basic_set_for_map, diffs, ddiff);
-      cout << "fs = " << str(fs) << endl;
-
-      //cout << "New fs = " << str(sol) << endl;
-      auto pt = sample(fs);
-      //cout << "Example solution: " << str(pt) << endl;
-
-      cout << "Example solution without farkas: " << str(sample(builder.s)) << endl;
-      append_basic_set(builder, fs);
-      cout << "Example solution with farkas: " << str(sample(builder.s)) << endl;
-      //assert(false);
-
-      //ilp_builder builder(fs);
-      for (int d = 0; d < num_in_dims(bm); d++) {
-        string neg_consumer = neg_ii_var(domain_name(bm), d);
-        builder.add_eq({{neg_consumer, one(ct)}, {ii_var(domain_name(bm), d), one(ct)}},
-            zero(ct));
-      }
-
-      builder.add_eq({{ddiff, one(ct)}, {producer_delay, negone(ct)}, {consumer_delay, one(ct)}},
-          zero(ct));
-
-      cout << "Builder set..." << endl;
-      cout << tab(1) << str(builder.s) << endl;
-
-      cout << "sample point in builder set = " << str(sample(builder.s)) << endl;
-
-    }
-
-  }
-
-  map<string, isl_val*> sum_of_iis;
-  for (int d = 0; d < 3; d++) {
-    sum_of_iis[ii_var(latency_to_minimize, d)] = one(ct);
-  }
-  sum_of_iis[hw_delay_var(latency_to_minimize)] = one(ct);
-  builder.minimize(sum_of_iis);
-
-  for (auto v : builder.variable_positions) {
-    cout << tab(1) << v.first << " = " << str(builder.value(v.first)) << endl;
-  }
-
 }
 
 void adobe_downsample_two_adds() {
@@ -11077,6 +10960,7 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
+  playground();
   //adobe_meeting_apps();
   sum_denoise_test();
   sum_diffs_test();
@@ -11095,7 +10979,6 @@ void application_tests() {
   iccad_tests();
 
 
-  //playground();
   histogram_test();
   halide_up_sample_test();
   //assert(false);

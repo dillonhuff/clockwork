@@ -1885,23 +1885,23 @@ void ilp_builder::add_geq(const std::map<string, isl_val*>& coeffs, isl_val* con
       denoms.push_back(isl_val_get_den_val(constant));
     }
     for (auto v : coeffs) {
-      cout << tab(1) << "checking if v = " << str(v.second) << " is rational" << endl;
+      //cout << tab(1) << "checking if v = " << str(v.second) << " is rational" << endl;
       if (isl_val_is_rat(v.second)) {
-        cout << tab(2) << "rational!" << endl;
+        //cout << tab(2) << "rational!" << endl;
         auto dv = isl_val_get_den_val(v.second);
-        cout << tab(3) << "dv = " << str(dv) << endl;
+        //cout << tab(3) << "dv = " << str(dv) << endl;
         assert(isl_val_is_pos(dv));
         denoms.push_back(dv);
       } else {
-        cout << tab(2) << "not rational" << endl;
+        //cout << tab(2) << "not rational" << endl;
         assert(isl_val_is_int(v.second));
       }
     }
 
-    cout << "# denoms = " << denoms.size() << endl;
+    //cout << "# denoms = " << denoms.size() << endl;
     isl_val* dn = isl_val_one(ctx);
     for (auto v : denoms) {
-      cout << tab(1) << "denom = " << str(v) << endl;
+      //cout << tab(1) << "denom = " << str(v) << endl;
       dn = mul(dn, v);
     }
     assert(isl_val_is_int(dn));
@@ -1915,11 +1915,11 @@ void ilp_builder::add_geq(const std::map<string, isl_val*>& coeffs, isl_val* con
     isl_constraint* c = isl_constraint_alloc_inequality(get_local_space(s));
     isl_constraint_set_constant_val(c, mul(dn, constant));
 
-    cout << "dn = " << str(dn) << endl;
+    //cout << "dn = " << str(dn) << endl;
     for (auto v : coeffs) {
-      cout << "v = " << str(v.second) << endl;
+      //cout << "v = " << str(v.second) << endl;
       auto m = mul(dn, v.second);
-      cout << "m = " << str(m) << endl;
+      //cout << "m = " << str(m) << endl;
       assert(isl_val_is_int(m));
 
       isl_constraint_set_coefficient_val(c,
@@ -1932,4 +1932,136 @@ void ilp_builder::add_geq(const std::map<string, isl_val*>& coeffs, isl_val* con
     assert(isl_val_is_int(constant));
 
   }
+
+void print_hw_schedule(const std::string& latency_to_minimize,
+    uset* dom,
+    umap* valid,
+    map<string, int>& op_latencies) {
+
+  ilp_builder builder = modulo_constraints(dom, valid, op_latencies);
+  auto ct = ctx(dom);
+
+  //assert(false);
+
+  int domain_dim = -1;
+  for (auto m : get_maps(valid)) {
+    domain_dim = num_in_dims(m);
+    cout << tab(1) << str(m) << endl;
+    auto maps = get_basic_maps(m);
+    cout << tab(1) << maps.size() << " basic maps" << endl;
+    for (auto bm : maps) {
+      string producer_delay = hw_delay_var(domain_name(bm));
+      string consumer_delay = hw_delay_var(range_name(bm));
+      string ddiff = domain_name(bm) + "_to_" + range_name(bm) + "_ddiff";
+
+      cout << str(bm) << endl;
+      vector<pair<string, string> > diffs;
+      // This order of pushes to diffs is expected for
+      // matrix formatting
+      for (int d = 0; d < num_in_dims(bm); d++) {
+        diffs.push_back({"d_" + str(d), neg_ii_var(domain_name(bm), d)});
+      }
+
+      for (int d = 0; d < num_out_dims(bm); d++) {
+        diffs.push_back({"d_" + str(d), ii_var(range_name(bm), d)});
+      }
+
+      isl_basic_set* basic_set_for_map = flatten_bmap_to_bset(bm);
+      auto fs = form_farkas_constraints(basic_set_for_map, diffs, ddiff);
+      cout << "fs = " << str(fs) << endl;
+
+      //cout << "New fs = " << str(sol) << endl;
+      auto pt = sample(fs);
+      //cout << "Example solution: " << str(pt) << endl;
+
+      cout << "Example solution without farkas: " << str(sample(builder.s)) << endl;
+      append_basic_set(builder, fs);
+      cout << "Example solution with farkas: " << str(sample(builder.s)) << endl;
+      //assert(false);
+
+      //ilp_builder builder(fs);
+      for (int d = 0; d < num_in_dims(bm); d++) {
+        string neg_consumer = neg_ii_var(domain_name(bm), d);
+        builder.add_eq({{neg_consumer, one(ct)}, {ii_var(domain_name(bm), d), one(ct)}},
+            zero(ct));
+      }
+
+      builder.add_eq({{ddiff, one(ct)}, {producer_delay, one(ct)}, {consumer_delay, negone(ct)}},
+          zero(ct));
+
+      cout << "Builder set..." << endl;
+      cout << tab(1) << str(builder.s) << endl;
+
+      cout << "sample point in builder set = " << str(sample(builder.s)) << endl;
+
+    }
+
+  }
+
+  assert(domain_dim > 0);
+  map<string, isl_val*> sum_of_iis;
+  for (int d = 0; d < domain_dim; d++) {
+    sum_of_iis[ii_var(latency_to_minimize, d)] = one(ct);
+  }
+  sum_of_iis[hw_delay_var(latency_to_minimize)] = one(ct);
+  builder.minimize(sum_of_iis);
+
+  cout << "Final HW schedule" << endl;
+  for (auto v : builder.variable_positions) {
+    cout << tab(1) << v.first << " = " << str(builder.value(v.first)) << endl;
+  }
+
+}
+
+void print_hw_schedule(
+    uset* dom,
+    umap* valid) {
+  string lm = "";
+  map<string, int> latencies;
+  for (auto s : get_sets(dom)) {
+    latencies[name(s)] = 1;
+    lm = name(s);
+  }
+  assert(lm != "");
+  print_hw_schedule(lm, dom, valid, latencies);
+}
+
+void append_basic_set(ilp_builder& b, isl_basic_set* s) {
+  assert(num_div_dims(s) == 0);
+  assert(num_param_dims(s) == 0);
+
+  for (int d = 0; d < num_dims(s); d++) {
+    auto id = isl_basic_set_get_dim_name(s, isl_dim_set, d);
+    if (id != nullptr) {
+    } else {
+      string name_str = next_name("fm", b);
+      assert(!contains_key(name_str, b.variable_positions));
+      cout << tab(1) << " name = " << name_str << endl;
+      b.add_variable(name_str);
+      s = isl_basic_set_set_dim_name(s, isl_dim_set, d, name_str.c_str());
+    }
+  }
+
+  for (auto c : constraints(s)) {
+    map<string, isl_val*> values;
+    for (int d = 0; d < num_dims(s); d++) {
+      auto id = isl_basic_set_get_dim_name(s, isl_dim_set, d);
+      assert(id != nullptr);
+      string name_str(id);
+      cout << tab(1) << " name = " << name_str << endl;
+      values[name_str] = isl_constraint_get_coefficient_val(c, isl_dim_set, d);
+    }
+
+    isl_val* constant = isl_constraint_get_constant_val(c);
+    for (auto c : values) {
+      cout << tab(1) << c.first << " " << str(c.second) << endl;
+    }
+    if (isl_constraint_is_equality(c)) {
+      b.add_eq(values, constant);
+    } else {
+      b.add_geq(values, constant);
+    }
+    cout << "after adding constraint: " << str(sample(b.s)) << endl;
+  }
+}
 

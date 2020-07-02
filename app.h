@@ -8,6 +8,11 @@
 typedef pair<string, int> op_level;
 
 static inline
+std::string neg_ii_var(const string& n, const int d) {
+  return "neg_ii_" + n + "_pdim" + str(d);
+}
+
+static inline
 std::string hw_delay_var(const string& n) {
   return "hw_delay_" + n;
 }
@@ -1084,6 +1089,15 @@ struct ilp_builder {
     solution_point = nullptr;
   }
 
+  int position(const std::string& var) {
+    if (!contains_key(var, variable_positions)) {
+      cout << "Error: No variable named " << var << " in positions" << endl;
+      assert(false);
+    }
+
+    return map_find(var, variable_positions);
+  }
+
   isl_val* value(const std::string& var) {
     assert(solved);
     assert(solution_point != nullptr);
@@ -1091,7 +1105,10 @@ struct ilp_builder {
 
     return isl_point_get_coordinate_val(solution_point,
         isl_dim_set,
-        map_find(var, variable_positions));
+        position(var));
+    //return isl_point_get_coordinate_val(solution_point,
+        //isl_dim_set,
+        //map_find(var, variable_positions));
   }
 
   void add_variable(const std::string& name) {
@@ -1141,7 +1158,8 @@ struct ilp_builder {
     for (auto obj : objectives) {
       isl_aff* objective = isl_aff_zero_on_domain(get_local_space(s));
       for (auto coeff : obj) {
-        int index = map_find(coeff.first, variable_positions);
+        int index = position(coeff.first);
+        //map_find(coeff.first, variable_positions);
         isl_val* cn = mul(isl_val_negone(ctx), coeff.second);
         objective = isl_aff_set_coefficient_val(objective, isl_dim_in, index, cn);
       }
@@ -1170,7 +1188,8 @@ struct ilp_builder {
   isl_val* minimize(const std::map<string, isl_val*>& obj) {
     isl_aff* objective = isl_aff_zero_on_domain(get_local_space(s));
     for (auto coeff : obj) {
-      int index = map_find(coeff.first, variable_positions);
+      //int index = map_find(coeff.first, variable_positions);
+      int index = position(coeff.first);
       isl_val* cn = mul(isl_val_negone(ctx), coeff.second);
       objective = isl_aff_set_coefficient_val(objective, isl_dim_in, index, cn);
     }
@@ -1255,3 +1274,20 @@ struct ilp_builder {
 
 isl_mat* equalities_to_inequalities(isl_basic_set* bset);
 ilp_builder modulo_constraints(uset* padded_domain, umap* padded_validity, map<string, int>& latencies);
+
+
+void print_hw_schedule(uset* dom,
+    umap* valid);
+
+void print_hw_schedule(const std::string& latency_to_minimize,
+    uset* dom,
+    umap* valid,
+    map<string, int>& latencies);
+
+void append_basic_set(ilp_builder& b, isl_basic_set* s);
+
+static inline
+string next_name(const std::string& prefix, ilp_builder& b) {
+  return prefix + "_" + str(b.variable_positions.size());
+}
+

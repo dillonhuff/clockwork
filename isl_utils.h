@@ -583,3 +583,5 @@ isl_aff* get_aff(isl_map* m);
 
 
 string str(isl_mat* const ineqmat);
+
+isl_basic_set* flatten_bmap_to_bset(isl_basic_map* bm);
