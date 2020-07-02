@@ -587,3 +587,4 @@ string str(isl_mat* const ineqmat);
 isl_basic_set* flatten_bmap_to_bset(isl_basic_map* bm);
 isl_basic_set* negative(isl_basic_set* fs, const int var);
 isl_basic_set* positive(isl_basic_set* fs, const int var);
+isl_basic_set* zero(isl_basic_set* fs, const int var);

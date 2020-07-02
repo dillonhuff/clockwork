@@ -9284,8 +9284,8 @@ isl_val* constant(isl_aff* a) {
 void playground() {
   {
     isl_ctx* ctx = isl_ctx_alloc();
-    auto dom = isl_union_set_read_from_str(ctx, "{ p[x] : -200 <= x <= 200; c[x] : 0 <= x <= 10 }");
-    auto dep = rdmap(ctx, "{ p[x] -> c[y] : y - 10 <= x <= y + 10 }");
+    auto dom = isl_union_set_read_from_str(ctx, "{ p[x] : 0 <= x <= 200; c[x] : 30 <= x <= 50 }");
+    auto dep = rdmap(ctx, "{ p[x] -> c[y] : 2*y - 10 <= x <= 2*y + 10 }");
     print_hw_schedule(dom, its(dep, dom));
 
     isl_ctx_free(ctx);

@@ -296,6 +296,7 @@ vector<int> soda_offsets(const int app) {
 isl_basic_set* non_negative(isl_basic_set* fs, int var) {
   auto non_neg = isl_constraint_alloc_inequality(get_local_space(fs));
   non_neg = isl_constraint_set_coefficient_si(non_neg, isl_dim_set, var, 1);
+  cout << "non neg: " << str(non_neg) << endl;
   fs = isl_basic_set_add_constraint(fs, non_neg);
 
   return fs;
@@ -432,8 +433,10 @@ form_farkas_constraints(isl_basic_set* orig_constraints,
   }
 
   for (int i = 0; i < num_farkas; i++) {
+    cout << "adding non-negativity constraint on " << i << endl;
     fs = non_negative(fs, farkas_var_offset + i);
   }
+  fs = non_negative(fs, farkas_var_offset + num_farkas);
 
   cout << "adding constant constraint: " << str(constraint) << endl;
   fs = isl_basic_set_add_constraint(fs, constraint);
@@ -1236,26 +1239,15 @@ vector<std::string> topological_sort(const vector<isl_set*>& sets,
 ilp_builder modulo_constraints(uset* padded_domain, umap* padded_validity, map<string, int>& latencies) {
   auto ct = ctx(padded_domain);
   ilp_builder modulo_schedule(ct);
-
-  //for (auto m : get_maps(padded_validity)) {
-    //cout << str(m) << endl;
-    //int diff = int_upper_bound(card(to_uset(::domain(m)))) *
-      //latencies.at(domain_name(m));
-    //cout << "diff = " << diff << endl;
-
-    //map<string, isl_val*> vals;
-    //vals.insert({hw_delay_var(range_name(m)), one(ct)});
-    //vals.insert({hw_delay_var(domain_name(m)), negone(ct)});
-    //modulo_schedule.add_geq(vals, isl_val_int_from_si(ct, -diff));
-  //}
+  return modulo_schedule;
 
   vector<pair<string, isl_val*> > obj;
   for (auto f : get_sets(padded_domain)) {
     string n = name(f);
     int dim = num_dims(f);
 
-    isl_aff* s = aff_on_domain(get_local_space(f), zero(ct));
-    isl_aff* cycle_delay = aff_on_domain(get_local_space(f), one(ct));
+    //isl_aff* s = aff_on_domain(get_local_space(f), zero(ct));
+    //isl_aff* cycle_delay = aff_on_domain(get_local_space(f), one(ct));
 
     modulo_schedule.add_geq(hw_delay_var(n), (int) 0);
 
@@ -1280,10 +1272,10 @@ ilp_builder modulo_constraints(uset* padded_domain, umap* padded_validity, map<s
 
   }
 
-  for (auto dep : get_maps(padded_validity)) {
-    auto max_deps = isl_map_lexmax_pw_multi_aff(inv(dep));
-    cout << "lm = " << str(max_deps) << endl << endl;
-  }
+  //for (auto dep : get_maps(padded_validity)) {
+    //auto max_deps = isl_map_lexmax_pw_multi_aff(inv(dep));
+    //cout << "lm = " << str(max_deps) << endl << endl;
+  //}
 
   // All root IIs must be equal
   for (auto s : get_sets(padded_domain)) {
@@ -1976,9 +1968,10 @@ void print_hw_schedule(const std::string& latency_to_minimize,
 
       fs = negative(fs, 0);
       fs = positive(fs, 1);
+      fs = zero(fs, 2);
       auto pt = sample(fs);
       cout << "Example solution to farkas: " << str(pt) << endl;
-      //assert(false);
+      assert(false);
 
       cout << "Example solution without farkas: " << str(sample(builder.s)) << endl;
       append_basic_set(builder, fs);
@@ -1992,8 +1985,8 @@ void print_hw_schedule(const std::string& latency_to_minimize,
             zero(ct));
       }
 
-      builder.add_eq({{ddiff, one(ct)}, {producer_delay, one(ct)}, {consumer_delay, negone(ct)}},
-          zero(ct));
+      //builder.add_eq({{ddiff, one(ct)}, {producer_delay, one(ct)}, {consumer_delay, negone(ct)}},
+          //zero(ct));
 
       cout << "Builder set..." << endl;
       cout << tab(1) << str(builder.s) << endl;
@@ -2009,7 +2002,8 @@ void print_hw_schedule(const std::string& latency_to_minimize,
   for (int d = 0; d < domain_dim; d++) {
     sum_of_iis[ii_var(latency_to_minimize, d)] = one(ct);
   }
-  sum_of_iis[hw_delay_var(latency_to_minimize)] = one(ct);
+  //sum_of_iis[hw_delay_var(latency_to_minimize)] = one(ct);
+  //builder.add_eq({{"p_to_c_ddiff", one(ct)}}, isl_val_int_from_si(ct, 10));
   builder.minimize(sum_of_iis);
 
   cout << "Final HW schedule" << endl;
@@ -2048,27 +2042,27 @@ void append_basic_set(ilp_builder& b, isl_basic_set* s) {
     }
   }
 
-  cout << "set after naming: " << str(s) << endl;
+  //cout << "set after naming: " << str(s) << endl;
   for (auto c : constraints(s)) {
     map<string, isl_val*> values;
     for (int d = 0; d < num_dims(s); d++) {
       auto id = isl_basic_set_get_dim_name(s, isl_dim_set, d);
       assert(id != nullptr);
       string name_str(id);
-      cout << tab(1) << " name = " << name_str << endl;
+      //cout << tab(1) << " name = " << name_str << endl;
       values[name_str] = isl_constraint_get_coefficient_val(c, isl_dim_set, d);
     }
 
     isl_val* constant = isl_constraint_get_constant_val(c);
-    for (auto c : values) {
-      cout << tab(1) << c.first << " " << str(c.second) << endl;
-    }
+    //for (auto c : values) {
+      //cout << tab(1) << c.first << " " << str(c.second) << endl;
+    //}
     if (isl_constraint_is_equality(c)) {
       b.add_eq(values, constant);
     } else {
       b.add_geq(values, constant);
     }
-    cout << "after adding constraint: " << str(sample(b.s)) << endl;
+    //cout << "after adding constraint: " << str(sample(b.s)) << endl;
   }
 }
 
