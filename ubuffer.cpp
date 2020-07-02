@@ -181,8 +181,8 @@ void generate_bank(CodegenOptions& options,
   out << "\t// RAM Box: " << bank.extract_layout() << endl;
 
   //C array with read and write method
-  if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_LINEAR){
-  //if (bank.tp == INNER_BANK_OFFSET_LINEAR) {
+  //if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_LINEAR){
+  if (bank.tp == INNER_BANK_OFFSET_LINEAR) {
     //num reader > 1 partiions = 1;
     auto partitions =
       bank.get_partitions();
@@ -214,7 +214,7 @@ void generate_bank(CodegenOptions& options,
     out << "};" << endl << endl;
 
   } else {
-    //assert(bank.tp == INNER_BANK_OFFSET_STACK);
+    assert(bank.tp == INNER_BANK_OFFSET_STACK);
 
     out << "\t// Capacity: " << maxdelay + 1 << endl;
     out << "\t// # of read delays: " << read_delays.size() << endl;

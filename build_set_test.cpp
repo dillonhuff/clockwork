@@ -10956,6 +10956,8 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
+  reaccess_no_hierarchy_test();
+  reaccess_no_hierarchy_rolled_test();
   //playground();
   upsample2d_test();
   upsample_stencil_2d_test();
@@ -11001,8 +11003,6 @@ void application_tests() {
   mini_conv_halide_test();
   reduce_1d_test();
   //register_file_optimization_test();
-  reaccess_no_hierarchy_test();
-  reaccess_no_hierarchy_rolled_test();
   reduce_rows_test();
   ram_addr_unit_test();
   reduce_2d_test();
