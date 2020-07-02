@@ -10942,6 +10942,7 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
+  iccad_tests();
   //playground();
   //adobe_meeting_apps();
   sum_denoise_test();
@@ -10958,7 +10959,6 @@ void application_tests() {
   upsample2d_test();
   upsample_stencil_2d_test();
   upsample_stencil_1d_test();
-  iccad_tests();
 
 
   histogram_test();

@@ -1971,13 +1971,13 @@ void print_hw_schedule(const std::string& latency_to_minimize,
       //fs = negative(fs, 0);
       //fs = positive(fs, 1);
       //fs = zero(fs, 2);
-      auto pt = sample(fs);
+      //auto pt = sample(fs);
       //cout << "Example solution to farkas: " << str(pt) << endl;
       //assert(false);
 
-      cout << "Example solution without farkas: " << str(sample(builder.s)) << endl;
+      //cout << "Example solution without farkas: " << str(sample(builder.s)) << endl;
       append_basic_set(builder, fs);
-      cout << "Example solution with farkas: " << str(sample(builder.s)) << endl;
+      //cout << "Example solution with farkas: " << str(sample(builder.s)) << endl;
       //assert(false);
 
       //ilp_builder builder(fs);
