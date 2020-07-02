@@ -10882,19 +10882,19 @@ void adobe_downsample_two_adds() {
 
       }
 
-      map<string, isl_val*> sum_of_iis;
-      for (int d = 0; d < num_out_dims(m); d++) {
-        sum_of_iis[ii_var(domain_name(m), d)] = one(ct);
-      }
-      builder.minimize(sum_of_iis);
-
-      for (auto v : builder.variable_positions) {
-        cout << tab(1) << v.first << " = " << str(builder.value(v.first)) << endl;
-      }
-
-      assert(false);
     }
 
+    map<string, isl_val*> sum_of_iis;
+    for (int d = 0; d < 3; d++) {
+      sum_of_iis[ii_var("scale", d)] = one(ct);
+    }
+    builder.minimize(sum_of_iis);
+
+    for (auto v : builder.variable_positions) {
+      cout << tab(1) << v.first << " = " << str(builder.value(v.first)) << endl;
+    }
+
+    assert(false);
     //auto fs = form_farkas_constraints(to_bset(s), {{"x", "II_x"}}, "d");
     //cout << "fs = " << str(fs) << endl;
     //auto extra_constraint = rdset(ctx, "{ [II_x, a, b, c, d] : II_x >= 1 }");
