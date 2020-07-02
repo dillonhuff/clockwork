@@ -10957,6 +10957,7 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
+  //register_file_optimization_test();
   reduce_rows_test();
   reaccess_no_hierarchy_test();
   reaccess_no_hierarchy_rolled_test();
@@ -11004,13 +11005,11 @@ void application_tests() {
 
   mini_conv_halide_test();
   reduce_1d_test();
-  //register_file_optimization_test();
   ram_addr_unit_test();
   reduce_2d_test();
   grayscale_conversion_test();
   //print_test();
   //manual_unroll_test();
-
 
   compute_unit_with_index_variables_test();
 
