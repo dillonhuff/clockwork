@@ -14,6 +14,16 @@
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 #endif
 
+void append_basic_set(ilp_builder& b, isl_basic_set* s) {
+  auto ineqs =
+    equalities_to_inequalities(s);
+}
+
+static inline
+std::string neg_ii_var(const string& n, const int d) {
+  return "neg_ii_" + n + "_pdim" + str(d);
+}
+
 void compare(vector<string>& opt, vector<string>& naive) {
   assert(opt.size() == naive.size());
   for (size_t i = 0; i < opt.size(); i++) {
@@ -10773,13 +10783,22 @@ void adobe_downsample_two_adds() {
   {
     auto valid = prg.validity_deps();
     auto dom = prg.whole_iteration_domain();
+    map<string, int> dummy_latencies;
+    for (auto d : get_sets(dom)) {
+      dummy_latencies[name(d)] = 1;
+    }
+
+    ilp_builder builder = modulo_constraints(dom, valid, dummy_latencies);
+
+    //assert(false);
+
     for (auto m : get_maps(valid)) {
       cout << tab(1) << str(m) << endl;
       auto maps = get_basic_maps(m);
       cout << tab(1) << maps.size() << " basic maps" << endl;
       for (auto bm : maps) {
-        string producer_delay = domain_name(bm) + "_delay";
-        string consumer_delay = range_name(bm) + "_delay";
+        string producer_delay = hw_delay_var(domain_name(bm));
+        string consumer_delay = hw_delay_var(range_name(bm));
         string ddiff = "ddiff";
 
         cout << str(bm) << endl;
@@ -10787,7 +10806,7 @@ void adobe_downsample_two_adds() {
         // This order of pushes to diffs is expected for
         // matrix formatting
         for (int d = 0; d < num_in_dims(bm); d++) {
-          diffs.push_back({"d_" + str(d), ii_var(domain_name(bm), d)});
+          diffs.push_back({"d_" + str(d), neg_ii_var(domain_name(bm), d)});
         }
         
         for (int d = 0; d < num_out_dims(bm); d++) {
@@ -10806,52 +10825,26 @@ void adobe_downsample_two_adds() {
         //cout << "New fs = " << str(sol) << endl;
         auto pt = sample(fs);
         cout << "Example solution: " << str(pt) << endl;
-        //cout << "eliminating..." << endl;
-        //fs = isl_basic_set_eliminate(fs, isl_dim_set, 0, 20);
-        //cout << "after eliminating: " << str(fs) << endl;
-        //assert(false);
 
+        append_basic_set(builder, fs);
         auto ct = prg.ctx;
-        ilp_builder builder(fs);
+        //ilp_builder builder(fs);
         for (int d = 0; d < num_in_dims(bm); d++) {
-          builder.add_gt(ii_var(domain_name(bm), d), (int) 0);
+          string neg_consumer = neg_ii_var(domain_name(bm), d);
+          builder.add_eq({{neg_consumer, one(ct)}, {ii_var(domain_name(bm), d), one(ct)}},
+              zero(ct));
+          //builder.add_lt(neg_ii_var(domain_name(bm), d), (int) 0);
         }
-        builder.add_geq(consumer_delay, (int) 0);
+        //builder.add_geq(consumer_delay, (int) 0);
         
-        for (int d = 0; d < num_out_dims(bm); d++) {
-          builder.add_gt(ii_var(range_name(bm), d), (int) 0);
-        }
-        builder.add_geq(producer_delay, (int) 0);
-
-        //builder.add_eq("rcc", "II_c_root");
-        //builder.add_eq("ydc", "II_c_y");
-        //builder.add_eq("xdc", "II_c_x");
-        
-        //builder.add_geq({{"II_c_root", one(ct)},
-            //{"II_c_y", isl_val_int_from_si(ct, -15)}},
-            //zero(ct));
-
-        //builder.add_geq({{"II_c_y", one(ct)},
-            //{"II_c_x", isl_val_int_from_si(ct, -15)}},
-            //zero(ct));
-
-        //builder.add_geq({{"II_p_root", one(ct)},
-            //{"II_p_y", isl_val_int_from_si(ct, -15)}},
-            //zero(ct));
-
-        //builder.add_geq({{"II_p_y", one(ct)},
-            //{"II_p_x", isl_val_int_from_si(ct, -15)}},
-            //zero(ct));
+        //for (int d = 0; d < num_out_dims(bm); d++) {
+          //builder.add_gt(ii_var(range_name(bm), d), (int) 0);
+        //}
+        //builder.add_geq(producer_delay, (int) 0);
 
         builder.add_eq({{ddiff, one(ct)}, {producer_delay, negone(ct)}, {consumer_delay, one(ct)}},
             zero(ct));
  
-        //builder.add_eq({{"rp", one(ct)}, {"II_p_root", negone(ct)}}, zero(ct));
-        //builder.add_eq({{"xdp", one(ct)}, {"II_p_x", negone(ct)}}, zero(ct));
-        //builder.add_eq({{"ydp", one(ct)}, {"II_p_y", negone(ct)}}, zero(ct));
-
-        //builder.add_eq({{"II_p_x", one(ct)}}, isl_val_int_from_si(ct, -3));
-
         cout << "Builder set..." << endl;
         cout << tab(1) << str(builder.s) << endl;
 
@@ -11046,6 +11039,7 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
+  adobe_meeting_apps();
   sum_denoise_test();
   sum_diffs_test();
   denoise2d_test();
@@ -11063,7 +11057,6 @@ void application_tests() {
   iccad_tests();
 
 
-  //adobe_meeting_apps();
   //playground();
   histogram_test();
   halide_up_sample_test();

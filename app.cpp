@@ -1232,7 +1232,7 @@ vector<std::string> topological_sort(const vector<isl_set*>& sets,
   return finished;
 }
 
-ilp_builder module_constraints(uset* padded_domain, umap* padded_validity, map<string, int>& latencies) {
+ilp_builder modulo_constraints(uset* padded_domain, umap* padded_validity, map<string, int>& latencies) {
   auto ct = ctx(padded_domain);
   ilp_builder modulo_schedule(ct);
 

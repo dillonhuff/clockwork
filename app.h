@@ -1251,3 +1251,7 @@ struct ilp_builder {
   }
 
 };
+
+
+isl_mat* equalities_to_inequalities(isl_basic_set* bset);
+ilp_builder modulo_constraints(uset* padded_domain, umap* padded_validity, map<string, int>& latencies);
