@@ -195,7 +195,8 @@ void toy_task(){
 
   // Compile the application into
   // one large module.
-  // generate_optimized_code(prg);
+   generate_optimized_code(prg);
+   assert(false);
 
   // Run the code on a tiny test image
   // and save it to brighten_blur_bmp_out.bmp
@@ -242,5 +243,5 @@ void toy_task(){
 
 //-----------------------------------------VOID PROG_SPLITTING_TESTS-------------------------------------------
 void prog_splitting_tests() {
-
+	toy_task();
 }
