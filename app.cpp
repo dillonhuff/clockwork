@@ -1239,7 +1239,7 @@ vector<std::string> topological_sort(const vector<isl_set*>& sets,
 ilp_builder modulo_constraints(uset* padded_domain, umap* padded_validity, map<string, int>& latencies) {
   auto ct = ctx(padded_domain);
   ilp_builder modulo_schedule(ct);
-  return modulo_schedule;
+  //return modulo_schedule;
 
   vector<pair<string, isl_val*> > obj;
   for (auto f : get_sets(padded_domain)) {
@@ -1931,6 +1931,8 @@ void print_hw_schedule(const std::string& latency_to_minimize,
     umap* valid,
     map<string, int>& op_latencies) {
 
+  cout << "dom   = " << str(dom) << endl;
+  cout << "valid = " << str(valid) << endl;
   ilp_builder builder = modulo_constraints(dom, valid, op_latencies);
   //for (auto s : get_sets(dom)) {
     //builder.add_geq(hw_delay_var(name(s)), (int) 1);
@@ -1966,12 +1968,12 @@ void print_hw_schedule(const std::string& latency_to_minimize,
       auto fs = form_farkas_constraints(basic_set_for_map, diffs, ddiff);
       cout << "fs = " << str(fs) << endl;
 
-      fs = negative(fs, 0);
-      fs = positive(fs, 1);
-      fs = zero(fs, 2);
+      //fs = negative(fs, 0);
+      //fs = positive(fs, 1);
+      //fs = zero(fs, 2);
       auto pt = sample(fs);
-      cout << "Example solution to farkas: " << str(pt) << endl;
-      assert(false);
+      //cout << "Example solution to farkas: " << str(pt) << endl;
+      //assert(false);
 
       cout << "Example solution without farkas: " << str(sample(builder.s)) << endl;
       append_basic_set(builder, fs);
@@ -1985,8 +1987,8 @@ void print_hw_schedule(const std::string& latency_to_minimize,
             zero(ct));
       }
 
-      //builder.add_eq({{ddiff, one(ct)}, {producer_delay, one(ct)}, {consumer_delay, negone(ct)}},
-          //zero(ct));
+      builder.add_eq({{ddiff, one(ct)}, {producer_delay, one(ct)}, {consumer_delay, negone(ct)}},
+          zero(ct));
 
       cout << "Builder set..." << endl;
       cout << tab(1) << str(builder.s) << endl;
@@ -2023,7 +2025,8 @@ void print_hw_schedule(
     lm = name(s);
   }
   assert(lm != "");
-  print_hw_schedule(lm, dom, valid, latencies);
+
+  print_hw_schedule(lm, dom, its(valid, dom), latencies);
 }
 
 void append_basic_set(ilp_builder& b, isl_basic_set* s) {

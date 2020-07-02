@@ -9284,6 +9284,15 @@ isl_val* constant(isl_aff* a) {
 void playground() {
   {
     isl_ctx* ctx = isl_ctx_alloc();
+    auto dom = isl_union_set_read_from_str(ctx, "{ p[x, y] : 0 <= x <= 200 and 0 <= y <= 10; c[x, y] : 30 <= x <= 50 and 0 <= y <= 10}");
+    auto dep = rdmap(ctx, "{ p[x, y] -> c[x, y] }");
+    print_hw_schedule(dom, its(dep, dom));
+
+    isl_ctx_free(ctx);
+    assert(false);
+  }
+  {
+    isl_ctx* ctx = isl_ctx_alloc();
     auto dom = isl_union_set_read_from_str(ctx, "{ p[x] : 0 <= x <= 200; c[x] : 30 <= x <= 50 }");
     auto dep = rdmap(ctx, "{ p[x] -> c[y] : 2*y - 10 <= x <= 2*y + 10 }");
     print_hw_schedule(dom, its(dep, dom));
@@ -10934,7 +10943,7 @@ void unet_conv_3_3_test() {
 
 void application_tests() {
   playground();
-  //adobe_meeting_apps();
+  adobe_meeting_apps();
   sum_denoise_test();
   sum_diffs_test();
   denoise2d_test();
