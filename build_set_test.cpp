@@ -10827,6 +10827,7 @@ void adobe_downsample_two_adds() {
     }
 
     ilp_builder builder = modulo_constraints(dom, valid, dummy_latencies);
+    auto ct = prg.ctx;
 
     //assert(false);
 
@@ -10851,11 +10852,6 @@ void adobe_downsample_two_adds() {
           diffs.push_back({"d_" + str(d), ii_var(range_name(bm), d)});
         }
 
-        //diffs.push_back({"yc", ddiff});
-
-        //vector<pair<string, string> > diffs{{"rootp", "rp"}, {"xp", "xdp"}, {"yp", "ydp"},
-          //{"rootc", "rcc"}, {"xc", "xdc"}, {"yc", "ydc"}};
-
         isl_basic_set* basic_set_for_map = flatten_bmap_to_bset(bm);
         auto fs = form_farkas_constraints(basic_set_for_map, diffs, ddiff);
         cout << "fs = " << str(fs) << endl;
@@ -10869,20 +10865,12 @@ void adobe_downsample_two_adds() {
         cout << "Example solution with farkas: " << str(sample(builder.s)) << endl;
         //assert(false);
 
-        auto ct = prg.ctx;
         //ilp_builder builder(fs);
         for (int d = 0; d < num_in_dims(bm); d++) {
           string neg_consumer = neg_ii_var(domain_name(bm), d);
           builder.add_eq({{neg_consumer, one(ct)}, {ii_var(domain_name(bm), d), one(ct)}},
               zero(ct));
-          //builder.add_lt(neg_ii_var(domain_name(bm), d), (int) 0);
         }
-        //builder.add_geq(consumer_delay, (int) 0);
-        
-        //for (int d = 0; d < num_out_dims(bm); d++) {
-          //builder.add_gt(ii_var(range_name(bm), d), (int) 0);
-        //}
-        //builder.add_geq(producer_delay, (int) 0);
 
         builder.add_eq({{ddiff, one(ct)}, {producer_delay, negone(ct)}, {consumer_delay, one(ct)}},
             zero(ct));
@@ -10892,23 +10880,21 @@ void adobe_downsample_two_adds() {
 
         cout << "sample point in builder set = " << str(sample(builder.s)) << endl;
 
-        //assert(false);
-        map<string, isl_val*> sum_of_iis;
-        for (int d = 0; d < num_out_dims(bm); d++) {
-          sum_of_iis[ii_var(domain_name(bm), d)] = one(ct);
-        }
-        //{{"rcc", one(ct)}, {"xdc", one(ct)}, {"ydc", one(ct)}};
-        builder.minimize(sum_of_iis);
-
-        for (auto v : builder.variable_positions) {
-          cout << tab(1) << v.first << " = " << str(builder.value(v.first)) << endl;
-        }
-
-        assert(false);
       }
-      //auto md = maps.at(0);
-      //cout << tab(2) << "basic map: " << str(md) << endl;
+
+      map<string, isl_val*> sum_of_iis;
+      for (int d = 0; d < num_out_dims(m); d++) {
+        sum_of_iis[ii_var(domain_name(m), d)] = one(ct);
+      }
+      builder.minimize(sum_of_iis);
+
+      for (auto v : builder.variable_positions) {
+        cout << tab(1) << v.first << " = " << str(builder.value(v.first)) << endl;
+      }
+
+      assert(false);
     }
+
     //auto fs = form_farkas_constraints(to_bset(s), {{"x", "II_x"}}, "d");
     //cout << "fs = " << str(fs) << endl;
     //auto extra_constraint = rdset(ctx, "{ [II_x, a, b, c, d] : II_x >= 1 }");
