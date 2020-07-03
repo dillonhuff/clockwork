@@ -11214,7 +11214,7 @@ void unet_conv_3_3_test() {
   regression_test(prg);
 }
 
-void application_tests() {
+void coreir_tests() {
   identity_stream_coreir_test();
   weight_streaming_test();
 
@@ -11222,6 +11222,10 @@ void application_tests() {
   identity_stream_through_mem_coreir_test();
   reduce_stream_coreir_test();
   //assert(false);
+}
+
+void application_tests() {
+  coreir_tests();
 
   halide_conv_layer_3D_test();
   iccad_tests();
