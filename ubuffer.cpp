@@ -1078,9 +1078,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     CoreIR::RecordType* utp = c->Record(ub_field);
     auto bcm = ns->newModuleDecl(distrib, utp);
     auto bdef = bcm->newModuleDef();
-    auto in_sel = delay(bdef, bdef->sel("self.in"), width);
-    auto in_en = delaybit(bdef, bdef->sel("self.en"));
+    //auto in_sel = delay(bdef, bdef->sel("self.in"), width);
+    //auto in_en = delaybit(bdef, bdef->sel("self.en"));
 
+    auto in_sel = bdef->sel("self.in");
+    auto in_en = bdef->sel("self.en");
     for (auto b : buf.get_banks()) {
       if (elem(inpt, buf.get_bank_inputs(b.name))) {
         //bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.in"));
