@@ -17,6 +17,14 @@ std::string exe_start_name(const std::string& n) {
   return n + "_exe_start";
 }
 
+std::string read_start_control_vars_name(const std::string& n) {
+  return n + "_read_start_control_vars";
+}
+
+std::string write_start_control_vars_name(const std::string& n) {
+  return n + "_write_start_control_vars";
+}
+
 std::string read_start_name(const std::string& n) {
   return n + "_read_start";
 }
@@ -284,6 +292,14 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
   def->addInstance(op->name, compute_unit);
 }
 
+Wireable* read_start_control_vars(ModuleDef* def, const std::string& opname) {
+  return def->sel(read_start_control_vars_name(opname))->sel("out");
+}
+
+Wireable* write_start_control_vars(ModuleDef* def, const std::string& opname) {
+  return def->sel(write_start_control_vars_name(opname))->sel("out");
+}
+
 Wireable* read_start_wire(ModuleDef* def, const std::string& opname) {
   return def->sel(write_start_name(opname))->sel("out");
 }
@@ -405,6 +421,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         def->connect(buf_name + "." + bundle_name + "_en", op->name + "." + pg(buf_name, bundle_name) + "_valid");
         def->connect(def->sel(buf_name + "." + bundle_name + "_wen"),
             write_start_wire(def, op->name));
+        def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
+            write_start_control_vars(def, op->name));
       }
     }
 
@@ -423,6 +441,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         def->connect(buf_name + "." + bundle_name + "_valid", op->name + "." + pg(buf_name, bundle_name) + "_en");
         def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
             read_start_wire(def, op->name));
+        def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
+            read_start_control_vars(def, op->name));
       }
     }
   }
