@@ -752,8 +752,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     return def->addInstance(controller_name(inpt), aff_c);
   }
 
-  CoreIR::Wireable* control_vars(CoreIR::ModuleDef* def, const std::string& reader) {
-    return def->sel(controller_name(reader))->sel("d");
+  CoreIR::Wireable* control_vars(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {
+    //return def->sel(controller_name(reader))->sel("d");
+    string bundle = buf.container_bundle(reader);
+    return def->sel("self." + bundle + "_ctrl_vars");
   }
 
   CoreIR::Wireable* control_en(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {
@@ -811,9 +813,9 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     auto ns = c->getNamespace("global");
 
-    for (auto inpt : buf.get_all_ports()) {
-      auto ac = add_port_controller(def, inpt, buf);
-    }
+    //for (auto inpt : buf.get_all_ports()) {
+      //auto ac = add_port_controller(def, inpt, buf);
+    //}
 
     for (auto bank : buf.get_banks()) {
       int capacity = int_upper_bound(card(bank.rddom));
@@ -839,7 +841,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         
         def->connect(agen->sel("out"), bnk->sel("raddr"));
         def->connect(agen->sel("d"),
-            control_vars(def, reader));
+            control_vars(def, reader, buf));
             //def->sel(controller_name(reader))->sel("d"));
         def->connect(bnk->sel("ren"),
             control_en(def, reader, buf));
@@ -863,7 +865,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         
         def->connect(agen->sel("out"), bnk->sel("waddr"));
         def->connect(agen->sel("d"),
-            control_vars(def, writer));
+            control_vars(def, writer, buf));
             //def->sel(controller_name(writer))->sel("d"));
       }
     }
@@ -902,7 +904,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         }
       }
       def->connect(
-          control_vars(def, outpt),
+          control_vars(def, outpt, buf),
           //def->sel(controller_name(outpt))->sel("d"),
           bc->sel("d"));
       def->connect(bc->sel("out"), def->sel("self")->sel(buf.container_bundle(outpt))->sel(buf.bundle_offset(outpt)));
