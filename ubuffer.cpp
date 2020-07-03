@@ -797,10 +797,54 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
   }
 
+
+  map<string, isl_set*> input_ports_to_conditions(const std::string& outpt, UBuffer& buf) {
+    map<string, isl_set*> in_ports_to_conditions;
+    umap* reads_to_sources = buf.get_lexmax_events(outpt);
+    cout << "reads to source for " << outpt << ": " << str(reads_to_sources) << endl;
+    uset* producers_for_outpt = range(reads_to_sources);
+
+    vector<string> possible_ports;
+    for (auto pt : buf.get_in_ports()) {
+      if (buf.has_bank_between(pt, outpt)) {
+        possible_ports.push_back(pt);
+      }
+    }
+
+    auto read_map = buf.access_map.at(outpt);
+    for (auto inpt : possible_ports) {
+      auto write_map = buf.access_map.at(inpt);
+      auto data_written = range(write_map);
+
+      auto common_write_ops =
+        domain(its_range(read_map, data_written));
+
+      auto write_ops =
+        domain(buf.access_map.at(inpt));
+      auto op_overlap = domain(its_range(reads_to_sources, write_ops));
+
+      auto overlap = its(op_overlap, common_write_ops);
+
+      auto read_ops =
+        domain(buf.access_map.at(outpt));
+
+      auto readers_that_use_this_port =
+        gist(overlap, read_ops);
+      in_ports_to_conditions[inpt] =
+        to_set(simplify(readers_that_use_this_port));
+    }
+    return in_ports_to_conditions;
+  }
+
   CoreIR::Module* generate_coreir_select(CodegenOptions& options, CoreIR::Context* c, const string& outpt, UBuffer& buf) {
     int width = buf.port_widths;
 
     cout << "creating select for " << outpt << endl;
+
+    map<string, isl_set*> in_ports_to_conditions =
+      input_ports_to_conditions(outpt, buf);
+    assert(in_ports_to_conditions.size() > 0);
+    int num_select_vars = num_dims(pick(in_ports_to_conditions).second);
 
     auto ns = c->getNamespace("global");
       vector<pair<string, CoreIR::Type*> >
@@ -815,7 +859,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         }
       }
 
-      // TODO: Add domain variables to select from port controller
+      ub_field.push_back({"d", c->BitIn()->Arr(16)->Arr(num_select_vars)});
 
       string distrib = outpt + "_select";
       CoreIR::RecordType* utp = c->Record(ub_field);
@@ -857,33 +901,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       bcm->setDef(bdef);
       return bcm;
 
-      //map<string, isl_set*> in_ports_to_conditions;
-      //umap* reads_to_sources = buf.get_lexmax_events(outpt);
-      //cout << "reads to source for " << outpt << ": " << str(reads_to_sources) << endl;
-      //uset* producers_for_outpt = range(reads_to_sources);
-
-      //auto read_map = buf.access_map.at(outpt);
-      //for (auto inpt : possible_ports) {
-        //auto write_map = buf.access_map.at(inpt);
-        //auto data_written = range(write_map);
-
-        //auto common_write_ops =
-          //domain(its_range(read_map, data_written));
-
-        //auto write_ops =
-          //domain(buf.access_map.at(inpt));
-        //auto op_overlap = domain(its_range(reads_to_sources, write_ops));
-
-        //auto overlap = its(op_overlap, common_write_ops);
-
-        //auto read_ops =
-          //domain(buf.access_map.at(outpt));
-
-        //auto readers_that_use_this_port =
-          //gist(overlap, read_ops);
-        //in_ports_to_conditions[inpt] =
-          //to_set(simplify(readers_that_use_this_port));
-      //}
   }
 
   CoreIR::Instance* add_port_controller(CoreIR::ModuleDef* def, const std::string& inpt, UBuffer& buf) {
