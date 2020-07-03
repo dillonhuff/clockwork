@@ -833,9 +833,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         
         def->connect(agen->sel("out"), bnk->sel("raddr"));
         def->connect(agen->sel("d"),
-            def->sel(controller_name(reader))->sel("d"));
+            control_vars(def, reader));
+            //def->sel(controller_name(reader))->sel("d"));
         def->connect(bnk->sel("ren"),
-            def->sel(controller_name(reader))->sel("valid"));
+            control_en(def, reader));
+            //def->sel(controller_name(reader))->sel("valid"));
       }
 
       {
@@ -855,13 +857,16 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         
         def->connect(agen->sel("out"), bnk->sel("waddr"));
         def->connect(agen->sel("d"),
-            def->sel(controller_name(writer))->sel("d"));
+            control_vars(def, writer));
+            //def->sel(controller_name(writer))->sel("d"));
       }
     }
 
 
     for (auto inpt : buf.get_out_ports()) {
-      auto out_ctrl = def->sel(controller_name(inpt))->sel("valid");
+      //auto out_ctrl = def->sel(controller_name(inpt))->sel("valid");
+      auto out_ctrl = control_en(def, inpt);
+      //def->sel(controller_name(inpt))->sel("valid");
       def->connect(def->sel("self")->sel(buf.container_bundle(inpt) + "_valid"),
           out_ctrl);
           //out_ctrl->sel("valid"));
@@ -878,7 +883,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       }
       def->connect(bc->sel("in"), def->sel("self")->sel(buf.container_bundle(inpt))->sel(buf.bundle_offset(inpt)));
       def->connect(bc->sel("en"),
-          def->sel(controller_name(inpt))->sel("valid"));
+          control_en(def, inpt));
+          //def->sel(controller_name(inpt))->sel("valid"));
     }
 
     for (auto outpt : buf.get_out_ports()) {
@@ -890,7 +896,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         }
       }
       def->connect(
-          def->sel(controller_name(outpt))->sel("d"),
+          control_vars(def, outpt),
+          //def->sel(controller_name(outpt))->sel("d"),
           bc->sel("d"));
       def->connect(bc->sel("out"), def->sel("self")->sel(buf.container_bundle(outpt))->sel(buf.bundle_offset(outpt)));
     }
