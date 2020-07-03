@@ -43,4 +43,9 @@ void generate_coreir(CodegenOptions& options,
       const std::string name,
       CoreIR::Wireable* w,
       const int width);
+CoreIR::Wireable* delay_array(CoreIR::ModuleDef* def,
+    const std::string& name,
+    CoreIR::Wireable* input,
+    int elem_width,
+    int num_elems);
 #endif

@@ -314,8 +314,8 @@ Wireable* read_start_control_vars(ModuleDef* def, const std::string& opname) {
 }
 
 Wireable* write_start_control_vars(ModuleDef* def, const std::string& opname) {
-  return def->sel(controller_name(opname))->sel("d");
-  //return def->sel(write_start_control_vars_name(opname))->sel("out");
+  //return def->sel(controller_name(opname))->sel("d");
+  return def->sel(write_start_control_vars_name(opname))->sel("out");
 }
 
 Wireable* read_start_wire(ModuleDef* def, const std::string& opname) {
@@ -366,9 +366,10 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
   //auto exe_start_ctrl = delay(def, exe_start_control_vars_name(op->name),
       //controller->sel("d"),
       //16*num_dims(dom));
-  //delay(def, write_start_control_vars_name(op->name),
-      //exe_start_ctrl,
-      //16*num_dims(dom));
+  delay_array(def, write_start_control_vars_name(op->name),
+      controller->sel("d"),
+      16,
+      num_dims(dom));
   return controller;
 }
 
@@ -704,7 +705,32 @@ void generate_coreir(CodegenOptions& options,
     return delay(bdef, bdef->getContext()->getUnique(), w, width);
   }
 
-  CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
+CoreIR::Wireable* delay_array(ModuleDef* def,
+    const std::string& name,
+    CoreIR::Wireable* input,
+    int elem_width,
+    int num_elems) {
+  auto context = def->getContext();
+  auto c = context;
+  auto ns = context->getNamespace("global");
+  vector<pair<string, CoreIR::Type*> > ub_field{{"in", input->getType()->getFlipped()},
+    {"out", input->getType()}};
+  CoreIR::RecordType* utp = context->Record(ub_field); 
+  auto ub = ns->newModuleDecl("array_delay" + c->getUnique(), utp);
+  {
+    auto def = ub->newModuleDef();
+    for (int r = 0; r < num_elems; r++) {
+      auto e = delay(def, def->sel("self")->sel("in")->sel(r), elem_width);
+      def->connect(e, def->sel("self")->sel("out")->sel(r));
+    }
+    ub->setDef(def);
+  }
+  auto delay = def->addInstance(name, ub);
+  def->connect(delay->sel("in"), input);
+  return delay->sel("out");
+}
+
+CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
       const std::string name,
       CoreIR::Wireable* w,
       const int width) {
