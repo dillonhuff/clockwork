@@ -1315,7 +1315,7 @@ hardware_schedule(
     map<string, isl_val*> vals;
     vals.insert({hw_delay_var(range_name(m)), one(ct)});
     vals.insert({hw_delay_var(domain_name(m)), negone(ct)});
-    modulo_schedule.add_geq(vals, isl_val_int_from_si(ct, -2*diff));
+    modulo_schedule.add_geq(vals, isl_val_int_from_si(ct, -3*diff));
     //hw_delay_var(range_name(n)), hw_delay_var(domain_name(m)), (int) diff);
     //modulo_schedule.add_geq(hw_delay_var(range_name(n)), hw_delay_var(domain_name(m)), (int) diff);
   }
@@ -1344,7 +1344,8 @@ hardware_schedule(
           sub(lexmaxval(dp), lexminval(dp));
         //auto tc =
           //add(sub(lexmaxval(dp), lexminval(dp)), one(ct));
-        modulo_schedule.add_gt(ii_var(n, i), tc, ii_var(n, i + 1));
+        //modulo_schedule.add_gt(ii_var(n, i), tc, ii_var(n, i + 1));
+        modulo_schedule.add_gt(ii_var(n, i), mul(isl_val_int_from_si(ct, 3), tc), ii_var(n, i + 1));
       }
 
       obj.push_back({ii_var(n, i), one(ct)});

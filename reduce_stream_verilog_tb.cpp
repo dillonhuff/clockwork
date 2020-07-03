@@ -25,7 +25,7 @@ int main() {
 
     if (dut.out_st_write_en == 1) {
       num_valids++;
-      cout << "valid out = " << (int) dut.out_st_write_0 << endl;
+      cout << "@ " << t << ": valid out = " << (int) dut.out_st_write_0 << endl;
       //actual.push_back((int) dut.out_st_write_0);
     }
     dut.clk = 0;
@@ -37,7 +37,7 @@ int main() {
 
   }
 
-  //assert(num_valids == 10);
+  assert(num_valids == 7);
   //assert(actual.size() == 10);
   //assert(expected == actual);
   cout << "done" << endl;
