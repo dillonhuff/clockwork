@@ -414,3 +414,7 @@ int cmd(const std::string& cm) {
   std::cout << "cmd: " << cm << std::endl;
   return system(cm.c_str());
 }
+
+void compare(const std::string& name,
+    vector<string>& opt,
+    vector<string>& naive);

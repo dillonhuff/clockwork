@@ -128,6 +128,139 @@ void connect_signal(const std::string& signal, CoreIR::Module* m) {
   }
 }
 
+void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op* op, prog& prg, map<string, UBuffer>& buffers) {
+  auto context = def->getContext();
+  auto ns = context->getNamespace("global");
+
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"clk", context->Named("coreir.clkIn")}};
+  for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+    string buf_name = bundle.first;
+    string bundle_name = bundle.second;
+    auto buf = map_find(buf_name, buffers);
+    int pixel_width = buf.port_widths;
+    int pix_per_burst =
+      buf.lanes_in_bundle(bundle_name);
+
+    cout << "Bundle = " << bundle.second << endl;
+    cout << "Possible bundles..." << endl;
+    for (auto bndl : buf.port_bundles) {
+      cout << tab(1) << bndl.first << endl;
+    }
+    assert(buf.is_output_bundle(bundle.second));
+    ub_field.push_back(make_pair(buf_name + "_" + bundle_name + "_en", context->BitIn()));
+    ub_field.push_back(make_pair(buf_name + "_" + bundle_name, context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
+  }
+
+  for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
+    string buf_name = bundle.first;
+    string bundle_name = bundle.second;
+    auto buf = map_find(buf_name, buffers);
+    //int bundle_width = buf.port_bundle_width(bundle_name);
+    int pixel_width = buf.port_widths;
+    int pix_per_burst =
+      buf.lanes_in_bundle(bundle_name);
+
+    assert(buf.is_input_bundle(bundle.second));
+    ub_field.push_back(make_pair(buf_name + "_" + bundle_name + "_valid", context->Bit()));
+    ub_field.push_back(make_pair(buf_name + "_" + bundle_name, context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
+  }
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto compute_unit =
+    ns->newModuleDecl(cu_name(op->name), utp);
+
+  {
+    auto def = compute_unit->newModuleDef();
+    if (found_compute) {
+      auto halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
+
+      for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+        bool found = false;
+        cout << "# of selects = " << halide_cu->getSelects().size() << endl;
+        cout << CoreIR::toString(halide_cu) << endl;
+        for (auto s : halide_cu->getModuleRef()->getType()->getFields()) {
+          string name = s;
+          cout << "name = " << name << endl;
+          if (is_prefix("in", name) &&
+              contains(name, bundle.first)) {
+            def->connect(halide_cu->sel(name)->sel(0), def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
+            found = true;
+            break;
+          }
+        }
+        assert(found);
+      }
+
+      for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
+        bool found = false;
+        cout << "# of selects = " << halide_cu->getSelects().size() << endl;
+        cout << CoreIR::toString(halide_cu) << endl;
+        for (auto s : halide_cu->getModuleRef()->getType()->getFields()) {
+          string name = s;
+          cout << "name = " << name << endl;
+          if (is_prefix("out", name) &&
+              contains(name, bundle.first)) {
+            def->connect(halide_cu->sel(name), def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          cout << "Error: Could not find compute unit for " << pg(bundle.first, bundle.second) << endl;
+        }
+        assert(found);
+      }
+    } else {
+      // Generate dummy compute logic
+      cout << "generating dummy compute" << endl;
+      vector<CoreIR::Wireable*> inputs;
+      for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+        string buf_name = bundle.first;
+        string bundle_name = bundle.second;
+
+        cout << "buf = " << buf_name << ", bundle = " << bundle_name << endl;
+
+        auto buf = map_find(buf_name, buffers);
+        int pix_width = buf.port_widths;
+        int nlanes = buf.lanes_in_bundle(bundle_name);
+        int bundle_width = buf.port_bundle_width(bundle_name);
+        int offset = 0;
+        CoreIR::Wireable* bsel =
+          def->sel("self." + pg(buf_name, bundle_name));
+        for (int l = 0; l < nlanes; l++) {
+          int lo = l*pix_width;
+          int hi = lo + pix_width;
+          assert(hi - lo == pix_width);
+          auto w =
+            def->addInstance("slice_" + def->getContext()->getUnique(), "coreir.slice", {{"lo", COREMK(context, lo)}, {"hi", COREMK(context, hi)}, {"width", COREMK(context, bundle_width)}});
+          def->connect(w->sel("in"), bsel->sel(0));
+          inputs.push_back(w->sel("out"));
+        }
+      }
+      auto result = addList(def, inputs);
+
+      for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
+        def->connect(result, def->sel("self")->sel(pg(bundle))->sel(0));
+      }
+
+      cout << "done with dummy compute" << endl;
+    }
+    vector<CoreIR::Wireable*> vals;
+    for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+      vals.push_back(def->sel("self." + pg(bundle.first, bundle.second) + "_en"));
+    }
+    auto valid = andList(def, vals);
+
+    for (auto bundle : outgoing_bundles(op, buffers, prg)) {
+      def->connect(valid, def->sel("self." + pg(bundle.first, bundle.second) + "_valid"));
+    }
+    compute_unit->setDef(def);
+  }
+
+  def->addInstance(op->name, compute_unit);
+}
+
 CoreIR::Module* generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -142,7 +275,6 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   auto ns = context->getNamespace("global");
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", context->Named("coreir.clkIn")}};
-      //{"reset", context->BitIn()}};
   for (auto eb : edge_buffers(buffers, prg)) {
     string out_rep = eb.first;
     string out_bundle = eb.second;
@@ -167,135 +299,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   auto def = ub->newModuleDef();
 
   for (auto op : prg.all_ops()) {
-    vector<pair<string, CoreIR::Type*> >
-      ub_field{{"clk", context->Named("coreir.clkIn")}};
-        //{"reset", context->BitIn()}};
-    for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
-      string buf_name = bundle.first;
-      string bundle_name = bundle.second;
-      auto buf = map_find(buf_name, buffers);
-      //int bundle_width = buf.port_bundle_width(bundle_name);
-      int pixel_width = buf.port_widths;
-      int pix_per_burst =
-          buf.lanes_in_bundle(bundle_name);
-
-      cout << "Bundle = " << bundle.second << endl;
-      cout << "Possible bundles..." << endl;
-      for (auto bndl : buf.port_bundles) {
-        cout << tab(1) << bndl.first << endl;
-      }
-      assert(buf.is_output_bundle(bundle.second));
-      ub_field.push_back(make_pair(buf_name + "_" + bundle_name + "_en", context->BitIn()));
-      ub_field.push_back(make_pair(buf_name + "_" + bundle_name, context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
-    }
-
-    for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
-      string buf_name = bundle.first;
-      string bundle_name = bundle.second;
-      auto buf = map_find(buf_name, buffers);
-      //int bundle_width = buf.port_bundle_width(bundle_name);
-      int pixel_width = buf.port_widths;
-      int pix_per_burst =
-          buf.lanes_in_bundle(bundle_name);
-
-      assert(buf.is_input_bundle(bundle.second));
-      ub_field.push_back(make_pair(buf_name + "_" + bundle_name + "_valid", context->Bit()));
-      ub_field.push_back(make_pair(buf_name + "_" + bundle_name, context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
-    }
-
-    CoreIR::RecordType* utp = context->Record(ub_field);
-    auto compute_unit =
-      ns->newModuleDecl(cu_name(op->name), utp);
-    {
-      auto def = compute_unit->newModuleDef();
-      if (found_compute) {
-        auto halide_cu = def->addInstance("inner_compute", ns->getModule(op->func));
-
-        for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
-          bool found = false;
-          cout << "# of selects = " << halide_cu->getSelects().size() << endl;
-          cout << CoreIR::toString(halide_cu) << endl;
-          for (auto s : halide_cu->getModuleRef()->getType()->getFields()) {
-            string name = s;
-            cout << "name = " << name << endl;
-            if (is_prefix("in", name) &&
-                contains(name, bundle.first)) {
-              def->connect(halide_cu->sel(name)->sel(0), def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
-              found = true;
-              break;
-            }
-          }
-          assert(found);
-        }
-
-        for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
-          bool found = false;
-          cout << "# of selects = " << halide_cu->getSelects().size() << endl;
-          cout << CoreIR::toString(halide_cu) << endl;
-          for (auto s : halide_cu->getModuleRef()->getType()->getFields()) {
-            string name = s;
-            cout << "name = " << name << endl;
-            if (is_prefix("out", name) &&
-                contains(name, bundle.first)) {
-              def->connect(halide_cu->sel(name), def->sel("self")->sel(pg(bundle.first, bundle.second))->sel(0));
-              found = true;
-              break;
-            }
-          }
-          if (!found) {
-            cout << "Error: Could not find compute unit for " << pg(bundle.first, bundle.second) << endl;
-          }
-          assert(found);
-        }
-      } else {
-        // Generate dummy compute logic
-        cout << "generating dummy compute" << endl;
-        vector<CoreIR::Wireable*> inputs;
-        for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
-          string buf_name = bundle.first;
-          string bundle_name = bundle.second;
-
-          cout << "buf = " << buf_name << ", bundle = " << bundle_name << endl;
-
-          auto buf = map_find(buf_name, buffers);
-          int pix_width = buf.port_widths;
-          int nlanes = buf.lanes_in_bundle(bundle_name);
-          int bundle_width = buf.port_bundle_width(bundle_name);
-          int offset = 0;
-          CoreIR::Wireable* bsel =
-            def->sel("self." + pg(buf_name, bundle_name));
-          for (int l = 0; l < nlanes; l++) {
-            int lo = l*pix_width;
-            int hi = lo + pix_width;
-            assert(hi - lo == pix_width);
-            auto w =
-              def->addInstance("slice_" + def->getContext()->getUnique(), "coreir.slice", {{"lo", COREMK(context, lo)}, {"hi", COREMK(context, hi)}, {"width", COREMK(context, bundle_width)}});
-            def->connect(w->sel("in"), bsel->sel(0));
-            inputs.push_back(w->sel("out"));
-          }
-        }
-        auto result = addList(def, inputs);
-
-        for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
-          def->connect(result, def->sel("self")->sel(pg(bundle))->sel(0));
-        }
-
-        cout << "done with dummy compute" << endl;
-      }
-      vector<CoreIR::Wireable*> vals;
-      for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
-        vals.push_back(def->sel("self." + pg(bundle.first, bundle.second) + "_en"));
-      }
-      auto valid = andList(def, vals);
-
-      for (auto bundle : outgoing_bundles(op, buffers, prg)) {
-        def->connect(valid, def->sel("self." + pg(bundle.first, bundle.second) + "_valid"));
-      }
-      compute_unit->setDef(def);
-    }
-
-    def->addInstance(op->name, compute_unit);
-
+    generate_coreir_compute_unit(found_compute, def, op, prg, buffers);
   }
 
   for (auto& buf : buffers) {
@@ -344,7 +348,6 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
         def->connect("self." + pg(buf_name, bundle_name) + "_valid", op->name + "." + pg(buf_name, bundle_name) + "_en");
       } else {
-        //assert(false);
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
         def->connect(buf_name + "." + bundle_name + "_valid", op->name + "." + pg(buf_name, bundle_name) + "_en");
       }

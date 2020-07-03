@@ -20,6 +20,48 @@ std::string controller_name(const std::string& n) {
   return n + "_port_controller";
 }
 
+map<string, isl_set*> input_ports_to_conditions(const std::string& outpt, UBuffer& buf) {
+  map<string, isl_set*> in_ports_to_conditions;
+  umap* reads_to_sources = buf.get_lexmax_events(outpt);
+  cout << "reads to source for " << outpt << ": " << str(reads_to_sources) << endl;
+  uset* producers_for_outpt = range(reads_to_sources);
+
+  vector<string> possible_ports;
+  for (auto pt : buf.get_in_ports()) {
+    if (buf.has_bank_between(pt, outpt)) {
+      possible_ports.push_back(pt);
+    }
+  }
+
+  auto read_map = buf.access_map.at(outpt);
+  auto read_space = get_space(read_map);
+  for (auto inpt : possible_ports) {
+    auto write_map = buf.access_map.at(inpt);
+    auto data_written = range(write_map);
+
+    auto common_write_ops =
+      domain(its_range(read_map, data_written));
+
+    auto write_ops =
+      domain(buf.access_map.at(inpt));
+    auto op_overlap = domain(its_range(reads_to_sources, write_ops));
+
+    auto overlap = its(op_overlap, common_write_ops);
+
+    auto read_ops =
+      domain(buf.access_map.at(outpt));
+
+    auto readers_that_use_this_port =
+      gist(overlap, read_ops);
+    cout << "Readers that use " << inpt << " -> outpt: " << str(readers_that_use_this_port) << endl;
+    if (!empty(readers_that_use_this_port)) {
+      in_ports_to_conditions[inpt] =
+        to_set(simplify(readers_that_use_this_port));
+    }
+  }
+  return in_ports_to_conditions;
+}
+
 isl_map* linear_address_map(isl_set* s) {
   string domain = name(s);
   int dim = num_dims(s);
@@ -608,44 +650,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     return next_val;
   }
 
-  map<string, isl_set*> input_ports_to_conditions(const std::string& outpt, UBuffer& buf) {
-    map<string, isl_set*> in_ports_to_conditions;
-    umap* reads_to_sources = buf.get_lexmax_events(outpt);
-    cout << "reads to source for " << outpt << ": " << str(reads_to_sources) << endl;
-    uset* producers_for_outpt = range(reads_to_sources);
-
-    vector<string> possible_ports;
-    for (auto pt : buf.get_in_ports()) {
-      if (buf.has_bank_between(pt, outpt)) {
-        possible_ports.push_back(pt);
-      }
-    }
-
-    auto read_map = buf.access_map.at(outpt);
-    for (auto inpt : possible_ports) {
-      auto write_map = buf.access_map.at(inpt);
-      auto data_written = range(write_map);
-
-      auto common_write_ops =
-        domain(its_range(read_map, data_written));
-
-      auto write_ops =
-        domain(buf.access_map.at(inpt));
-      auto op_overlap = domain(its_range(reads_to_sources, write_ops));
-
-      auto overlap = its(op_overlap, common_write_ops);
-
-      auto read_ops =
-        domain(buf.access_map.at(outpt));
-
-      auto readers_that_use_this_port =
-        gist(overlap, read_ops);
-      in_ports_to_conditions[inpt] =
-        to_set(simplify(readers_that_use_this_port));
-    }
-    return in_ports_to_conditions;
-  }
-
   CoreIR::Module* generate_coreir_select(CodegenOptions& options, CoreIR::Context* c, const string& outpt, UBuffer& buf) {
     int width = buf.port_widths;
 
@@ -1067,12 +1071,12 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     //assert(false);
 
     string dx = to_string(int_upper_bound(qpd));
-    auto dd_fold = compute_dd(buf, outpt, inpt);
+    //auto dd_fold = compute_dd(buf, outpt, inpt);
 
     out << tab(1) << "// Read schedule : " << str(buf.schedule.at(outpt)) << endl;
     out << tab(1) << "// Write schedule: " << str(buf.schedule.at(inpt)) << endl;
 
-    out << tab(1) << "// DD fold: " << str(dd_fold) << endl;
+    //out << tab(1) << "// DD fold: " << str(dd_fold) << endl;
     string delay_expr = evaluate_dd(buf, outpt, inpt);
     string value_str = "";
     bool opt_const = is_optimizable_constant_dd(inpt, outpt, buf);
@@ -1112,10 +1116,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     return buf.name + "." + value_str;
   }
 
-  //selector generate_select(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
   void generate_select(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
-    //cout << "creating select for port: <" << outpt <<"> in buffer: " << buf.name << endl;
-    //selector sel = generate_select_decl(options, out, outpt, buf);
     generate_select_decl(options, out, outpt, buf);
 
     out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
@@ -1128,77 +1129,76 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     }
 
     map<string, string> in_ports_to_conditions;
-    // Singleton map from all read operations on this port to the
-    // corresponding write operation that produces the data being
-    // read.
-    umap* reads_to_sources = buf.get_lexmax_events(outpt);
-    out << tab(1) << "// Get lexmax events: " << str(reads_to_sources) << endl;
-    cout << "reads to source for " << outpt << ": " << str(reads_to_sources) << endl;
-    uset* producers_for_outpt = range(reads_to_sources);
-
-    auto read_map = buf.access_map.at(outpt);
-    for (auto inpt : possible_ports) {
-      auto write_map = buf.access_map.at(inpt);
-      auto data_written = range(write_map);
-
-      auto common_write_ops =
-        domain(its_range(read_map, data_written));
-
-      auto write_ops =
-        domain(buf.access_map.at(inpt));
-      auto op_overlap = domain(its_range(reads_to_sources, write_ops));
-
-      auto overlap = its(op_overlap, common_write_ops);
-
-      out << tab(2) << "// Op overlap with " << inpt << ": " << str(op_overlap) << endl;
-      out << tab(2) << "// Common write op with " << inpt << ": " << str(common_write_ops) << endl;
-      out << tab(2) << "// Overlap with " << inpt << ": " << str(overlap) << endl;
-      if (!empty(overlap)) {
-        //assert(false);
-        auto read_ops =
-          domain(buf.access_map.at(outpt));
-
-        auto readers_that_use_this_port =
-          gist(overlap, read_ops);
-        in_ports_to_conditions[inpt] =
-          codegen_c(simplify(readers_that_use_this_port));
-      } else {
-        in_ports_to_conditions[inpt] = "false";
-      }
+    map<string, isl_set*> input_ports_to_condition_sets = input_ports_to_conditions(outpt, buf);
+    for (auto s : input_ports_to_condition_sets) {
+      in_ports_to_conditions[s.first] = codegen_c(s.second);
     }
 
-    if (possible_ports.size() == 1) {
-      string inpt = possible_ports.at(0);
+    //// Singleton map from all read operations on this port to the
+    //// corresponding write operation that produces the data being
+    //// read.
+    //umap* reads_to_sources = buf.get_lexmax_events(outpt);
+    //out << tab(1) << "// Get lexmax events: " << str(reads_to_sources) << endl;
+    //cout << "reads to source for " << outpt << ": " << str(reads_to_sources) << endl;
+    //uset* producers_for_outpt = range(reads_to_sources);
+
+    //auto read_map = buf.access_map.at(outpt);
+    //for (auto inpt : possible_ports) {
+      //auto write_map = buf.access_map.at(inpt);
+      //auto data_written = range(write_map);
+
+      //auto common_write_ops =
+        //domain(its_range(read_map, data_written));
+
+      //auto write_ops =
+        //domain(buf.access_map.at(inpt));
+      //auto op_overlap = domain(its_range(reads_to_sources, write_ops));
+
+      //auto overlap = its(op_overlap, common_write_ops);
+
+      //out << tab(2) << "// Op overlap with " << inpt << ": " << str(op_overlap) << endl;
+      //out << tab(2) << "// Common write op with " << inpt << ": " << str(common_write_ops) << endl;
+      //out << tab(2) << "// Overlap with " << inpt << ": " << str(overlap) << endl;
+      //if (!empty(overlap)) {
+        ////assert(false);
+        //auto read_ops =
+          //domain(buf.access_map.at(outpt));
+
+        //auto readers_that_use_this_port =
+          //gist(overlap, read_ops);
+        //in_ports_to_conditions[inpt] =
+          //codegen_c(simplify(readers_that_use_this_port));
+      //} else {
+        //in_ports_to_conditions[inpt] = "false";
+      //}
+    //}
+
+    //if (possible_ports.size() == 1) {
+    if (in_ports_to_conditions.size() == 1) {
+      string inpt = pick(in_ports_to_conditions).first;
+      //possible_ports.at(0);
       string peeked_val = delay_string(options, out, inpt, outpt, buf);
-      string access_val = buf.generate_linearize_ram_addr(outpt);
-      buf.get_ram_address(outpt);
-      //sel.bank_conditions.push_back("1");
-      //sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, inpt));
+      //string access_val = buf.generate_linearize_ram_addr(outpt);
+      //buf.get_ram_address(outpt);
 
       out << tab(1) << "auto value_" << inpt << " = " << peeked_val << ";" << endl;
       out << tab(1) << "return value_" << inpt << ";" << endl;
     } else {
-      //assert(false);
-      for (auto port : possible_ports) {
-        //auto lm = buf.get_lexmax_events(port, outpt);
-        //cout << "lexmax events = " << str(lm) << endl;
+      //for (auto port : possible_ports) {
+      for (auto pc : in_ports_to_conditions) {
+        string port = pc.first;
         out << tab(1) << "if (" << map_find(port, in_ports_to_conditions) << ") {" << endl;
         string peeked_val = delay_string(options, out, port, outpt, buf);
-        //sel.bank_conditions.push_back("1");
-        //sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, port));
 
         out << tab(2) << "auto value_" << port << " = " << peeked_val << ";" << endl;
         out << tab(2) << "return value_" << port << ";" << endl;
         out << tab(1) << "}" << endl << endl;
         out << tab(1) << endl;
       }
-      //assert(false);
     }
 
     select_debug_assertions(options, out, outpt, buf);
     out << "}" << endl << endl;
-
-    //return sel;
   }
 
   void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
@@ -1612,7 +1612,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       lex_gt(rdsched, wrsched);
     //cout << "\trdsched: " << str(rdsched) << "\n wrsched: " << str(wrsched) << "\n wbr: " << str(WritesBeforeRead) << endl;
 
-    //auto WriteThatProducesReadData = get_lexmax_events(read_port);
     //TODO: test these new method
     auto WriteThatProducesReadData = get_lexmax_events(wrsched, rdsched, write_port, read_port);
     //cout << "\twpr: " << str(WriteThatProducesReadData) << "\nwaw:" << str(WritesAfterWrite) << endl;

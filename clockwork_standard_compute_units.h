@@ -249,6 +249,10 @@ int fma(int& src, int& a0, int& a1) {
   return src + a0*a1;
 }
 
+hw_uint<16> set_zero_16() {
+  return hw_uint<16>(0);
+}
+
 hw_uint<32> set_zero_32() {
   return hw_uint<32>(0);
 }

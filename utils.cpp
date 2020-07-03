@@ -43,3 +43,20 @@ void move_to_synthesis_folder(const std::string& app_name) {
   //make_exe("run_tb.sh");
   //system(("mv run_tb.sh " + soda_dir).c_str());
 }
+
+
+void compare(const std::string& name,
+    vector<string>& optimized_res,
+    vector<string>& unoptimized_res) {
+  assert(unoptimized_res.size() == optimized_res.size());
+  for (size_t i = 0; i < unoptimized_res.size(); i++) {
+
+    if (!(unoptimized_res.at(i) == optimized_res.at(i))) {
+      cout << "Error: After optimization, at output " << i << " unoptimized_res != optimized_res" << endl;
+      cout << "\tunoptimized = " << unoptimized_res.at(i) << endl;
+      cout << "\toptimized   = " << optimized_res.at(i) << endl;
+      assert(unoptimized_res.at(i) == optimized_res.at(i));
+    }
+  }
+}
+
