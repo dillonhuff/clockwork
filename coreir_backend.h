@@ -10,9 +10,25 @@ CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wire
 CoreIR::Wireable* orList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals);
 CoreIR::Wireable* andList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals);
 
+CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff);
+
+CoreIR::Module* coreir_for_multi_aff(CoreIR::Context* context, isl_multi_aff* aff);
+
+CoreIR::Module* coreir_for_basic_set(CoreIR::Context* context, isl_basic_set* dom);
+
+CoreIR::Module* coreir_for_set(CoreIR::Context* context, isl_set* dom);
+
+CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
+
 void generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
     umap* schedmap);
 
+  CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
+      CoreIR::Wireable* w);
+
+  CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
+      CoreIR::Wireable* w,
+      const int width);
 #endif

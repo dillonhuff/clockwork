@@ -11215,15 +11215,16 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
-  identity_stream_through_mem_coreir_test();
-  reduce_stream_coreir_test();
   identity_stream_coreir_test();
   weight_streaming_test();
+
+  // Not yet working
+  identity_stream_through_mem_coreir_test();
+  reduce_stream_coreir_test();
   //assert(false);
+
   halide_conv_layer_3D_test();
-  //assert(false);
   iccad_tests();
-  //assert(false);
   upsample2d_test();
   upsample_stencil_2d_test();
   upsample_stencil_1d_test();
