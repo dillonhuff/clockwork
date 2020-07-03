@@ -756,8 +756,14 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     return def->sel(controller_name(reader))->sel("d");
   }
 
-  CoreIR::Wireable* control_en(CoreIR::ModuleDef* def, const std::string& reader) {
-    return def->sel(controller_name(reader))->sel("valid");
+  CoreIR::Wireable* control_en(CoreIR::ModuleDef* def, const std::string& reader, UBuffer& buf) {
+    string bundle = buf.container_bundle(reader);
+    if (buf.is_in_pt(reader)) {
+      return def->sel("self." + bundle + "_wen");
+    } else {
+      return def->sel("self." + bundle + "_ren");
+    }
+    //return def->sel(controller_name(reader))->sel("valid");
   }
 
   CoreIR::Module* coreir_broadcast(CoreIR::Context* c, const std::string& inpt, UBuffer& buf) {
@@ -836,7 +842,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
             control_vars(def, reader));
             //def->sel(controller_name(reader))->sel("d"));
         def->connect(bnk->sel("ren"),
-            control_en(def, reader));
+            control_en(def, reader, buf));
             //def->sel(controller_name(reader))->sel("valid"));
       }
 
@@ -865,7 +871,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     for (auto inpt : buf.get_out_ports()) {
       //auto out_ctrl = def->sel(controller_name(inpt))->sel("valid");
-      auto out_ctrl = control_en(def, inpt);
+      auto out_ctrl = control_en(def, inpt, buf);
       //def->sel(controller_name(inpt))->sel("valid");
       def->connect(def->sel("self")->sel(buf.container_bundle(inpt) + "_valid"),
           out_ctrl);
@@ -883,7 +889,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       }
       def->connect(bc->sel("in"), def->sel("self")->sel(buf.container_bundle(inpt))->sel(buf.bundle_offset(inpt)));
       def->connect(bc->sel("en"),
-          control_en(def, inpt));
+          control_en(def, inpt, buf));
           //def->sel(controller_name(inpt))->sel("valid"));
     }
 
