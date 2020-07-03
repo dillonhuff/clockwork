@@ -455,7 +455,13 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
       if (prg.is_input(buf_name)) {
         auto output_valid = "self." + pg(buf_name, bundle_name) + "_valid";
-        def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
+        auto input_bus = "self." + pg(buf_name, bundle_name);
+        auto delayed_input = delay(def, def->sel(input_bus)->sel(0), 16);
+        //def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
+        // TODO: This delayed input is a hack that I insert to
+        // ensure that I can assume all buffer reads take 1 cycle
+        def->connect(delayed_input,
+            def->sel(op->name + "." + pg(buf_name, bundle_name))->sel(0));
         def->connect(def->sel(output_valid),
             read_start_wire(def, op->name));
       } else {
