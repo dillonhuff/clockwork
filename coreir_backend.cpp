@@ -19,8 +19,21 @@ std::string pg(const std::string& buf, const std::string& bundle) {
   return buf + "_" + bundle;
 }
 
+std::string pg(const pair<string, string>& b) {
+  return pg(b.first, b.second);
+}
+
 CoreIR::Wireable* andVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::Wireable* b) {
   auto ad = def->addInstance("and_all_" + def->getContext()->getUnique(), "corebit.and");
+  def->connect(ad->sel("in0"), a);
+  def->connect(ad->sel("in1"), b);
+
+  return ad->sel("out");
+}
+
+CoreIR::Wireable* orVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::Wireable* b) {
+  auto context = def->getContext();
+  auto ad = def->addInstance("or_all_" + def->getContext()->getUnique(), "corebit.or");
   def->connect(ad->sel("in0"), a);
   def->connect(ad->sel("in1"), b);
 
@@ -36,7 +49,37 @@ CoreIR::Wireable* addVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::W
   return ad->sel("out");
 }
 
+CoreIR::Wireable* orList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals) {
+  assert(vals.size() > 0);
+  auto context = def->getContext();
+  CoreIR::Wireable* val = nullptr;
+
+  if (vals.size() == 1) {
+    return vals[0];
+  }
+
+  val = vals[0];
+  for (int i = 1; i < ((int) vals.size()); i++) {
+    val = orVals(def, val, vals[i]);
+  }
+  return val;
+}
+
+CoreIR::Wireable* mkConst(CoreIR::ModuleDef* def, const int width, const int val) {
+  auto context = def->getContext();
+  auto c = def->getContext();
+  auto one = def->addInstance(context->getUnique(),
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, val))}});
+  return one->sel("out");
+}
+
+
 CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals) {
+  if (vals.size() == 0) {
+    return mkConst(def, 16, 0);
+  }
   assert(vals.size() > 0);
   auto context = def->getContext();
   CoreIR::Wireable* val = nullptr;
@@ -204,6 +247,40 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
           }
           assert(found);
         }
+      } else {
+        // Generate dummy compute logic
+        cout << "generating dummy compute" << endl;
+        vector<CoreIR::Wireable*> inputs;
+        for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+          string buf_name = bundle.first;
+          string bundle_name = bundle.second;
+
+          cout << "buf = " << buf_name << ", bundle = " << bundle_name << endl;
+
+          auto buf = map_find(buf_name, buffers);
+          int pix_width = buf.port_widths;
+          int nlanes = buf.lanes_in_bundle(bundle_name);
+          int bundle_width = buf.port_bundle_width(bundle_name);
+          int offset = 0;
+          CoreIR::Wireable* bsel =
+            def->sel("self." + pg(buf_name, bundle_name));
+          for (int l = 0; l < nlanes; l++) {
+            int lo = l*pix_width;
+            int hi = lo + pix_width;
+            assert(hi - lo == pix_width);
+            auto w =
+              def->addInstance("slice_" + def->getContext()->getUnique(), "coreir.slice", {{"lo", COREMK(context, lo)}, {"hi", COREMK(context, hi)}, {"width", COREMK(context, bundle_width)}});
+            def->connect(w->sel("in"), bsel->sel(0));
+            inputs.push_back(w->sel("out"));
+          }
+        }
+        auto result = addList(def, inputs);
+
+        for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
+          def->connect(result, def->sel("self")->sel(pg(bundle))->sel(0));
+        }
+
+        cout << "done with dummy compute" << endl;
       }
       vector<CoreIR::Wireable*> vals;
       for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
@@ -481,4 +558,314 @@ void generate_coreir(CodegenOptions& options,
 }
 
   CoreIR::Context* context = CoreIR::newContext();
+
+  CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
+      CoreIR::Wireable* w) {
+    auto c = bdef->getContext();
+    auto r = bdef->addInstance(
+        "delay_reg_" + c->getUnique(),
+        "corebit.reg");
+    bdef->connect(r->sel("in"), w);
+    return r->sel("out");
+  }
+
+  CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
+      CoreIR::Wireable* w,
+      const int width) {
+    auto c = bdef->getContext();
+    auto r = bdef->addInstance(
+        "delay_reg_" + c->getUnique(),
+        "mantle.reg",
+        {{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, false)}});
+    bdef->connect(r->sel("in"), w);
+    return r->sel("out");
+  }
+
+
+CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
+  auto ns = context->getNamespace("global");
+
+  int width = 16;
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"out", context->Bit()->Arr(width)}};
+  cout << "aff = " << str(aff) << endl;
+  int dims = num_in_dims(aff);
+  cout << "dims = " << dims << endl;
+  ub_field.push_back({"d", context->BitIn()->Arr(16)->Arr(dims)});
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto m = ns->newModuleDecl("aff_" + context->getUnique(), utp);
+  auto def = m->newModuleDef();
+
+  auto c = context;
+
+  vector<CoreIR::Wireable*> terms;
+  for (int d = 0; d < dims; d++) {
+    int v = to_int(get_coeff(aff, d));
+    cout << "coeff: " << v << endl;
+    auto constant = def->addInstance(context->getUnique(),
+        "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, v))}});
+    auto m = def->addInstance(context->getUnique(),
+        "coreir.mul",
+        {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(m->sel("in0"), constant->sel("out"));
+    def->connect(m->sel("in1"), def->sel("self")->sel("d")->sel(d));
+    terms.push_back(m->sel("out"));
+  }
+  int v = to_int(const_coeff(aff));
+  cout << "coeff: " << v << endl;
+  auto constant = def->addInstance(context->getUnique(),
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, v))}});
+  terms.push_back(constant->sel("out"));
+  auto out = addList(def, terms);
+  def->connect(def->sel("self.out"), out);
+  m->setDef(def);
+
+  return m;
+}
+
+CoreIR::Module* coreir_for_multi_aff(CoreIR::Context* context, isl_multi_aff* aff) {
+  auto ns = context->getNamespace("global");
+
+  int width = 16;
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"out", context->Bit()->Arr(width)}};
+  cout << "aff = " << str(aff) << endl;
+  int dims = num_in_dims(aff);
+  int out_dims = isl_multi_aff_dim(aff, isl_dim_set);
+  cout << "dims = " << dims << endl;
+  ub_field.push_back({"d", context->BitIn()->Arr(16)->Arr(dims)});
+  ub_field.push_back({"out", context->BitIn()->Arr(16)->Arr(out_dims)});
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto m = ns->newModuleDecl("aff_" + context->getUnique(), utp);
+  auto def = m->newModuleDef();
+  for (int i = 0; i < isl_multi_aff_dim(aff, isl_dim_set); i++) {
+    auto iaff = isl_multi_aff_get_aff(aff, i);
+    cout << tab(3) << i << ": " << str(iaff) << endl;
+
+  }
+
+  auto c = context;
+
+  //vector<CoreIR::Wireable*> terms;
+  //for (int d = 0; d < dims; d++) {
+    //int v = to_int(get_coeff(aff, d));
+    //cout << "coeff: " << v << endl;
+    //auto constant = def->addInstance(context->getUnique(),
+        //"coreir.const",
+      //{{"width", CoreIR::Const::make(c, width)}},
+      //{{"value", CoreIR::Const::make(c, BitVector(width, v))}});
+    //auto m = def->addInstance(context->getUnique(),
+        //"coreir.mul",
+        //{{"width", CoreIR::Const::make(c, width)}});
+    //def->connect(m->sel("in0"), constant->sel("out"));
+    //def->connect(m->sel("in1"), def->sel("self")->sel("d")->sel(d));
+    //terms.push_back(m->sel("out"));
+  //}
+  //int v = to_int(const_coeff(aff));
+  //cout << "coeff: " << v << endl;
+  //auto constant = def->addInstance(context->getUnique(),
+      //"coreir.const",
+      //{{"width", CoreIR::Const::make(c, width)}},
+      //{{"value", CoreIR::Const::make(c, BitVector(width, v))}});
+  //terms.push_back(constant->sel("out"));
+  //auto out = addList(def, terms);
+  //def->connect(def->sel("self.out"), out);
+  m->setDef(def);
+
+  return m;
+}
+
+CoreIR::Module* coreir_for_basic_set(CoreIR::Context* context, isl_basic_set* dom) {
+  cout << tab(1) << "dom = " << str(dom) << endl;
+  assert(num_div_dims(dom) == 0);
+  assert(num_param_dims(dom) == 0);
+
+  auto ns = context->getNamespace("global");
+  auto c = context;
+
+  int width = 16;
+  int dims = num_dims(dom);
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"d", c->BitIn()->Arr(16)->Arr(dims)},
+      {"valid", c->Bit()}};
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto m = ns->newModuleDecl("basic_set_checker_" + context->getUnique(), utp);
+  auto def = m->newModuleDef();
+
+  vector<CoreIR::Wireable*> bset_outs;
+  for (auto c : constraints(dom)) {
+    auto caff = isl_constraint_get_aff(cpy(c));
+    auto cs = coreir_for_aff(context, caff);
+    auto csm = def->addInstance("bs" + context->getUnique(), cs);
+    def->connect(csm->sel("d"), def->sel("self.d"));
+
+    CoreIR::Instance* cmp = nullptr;
+    auto zero = mkConst(def, 16, 0);
+    if (isl_constraint_is_equality(c)) {
+      cmp = def->addInstance("eq_" + context->getUnique(), "coreir.eq", {{"width", COREMK(context, width)}});
+    } else {
+      cmp = def->addInstance("eq_" + context->getUnique(), "coreir.sge", {{"width", COREMK(context, width)}});
+    }
+    assert(cmp != nullptr);
+    def->connect(cmp->sel("in0"), csm->sel("out"));
+    def->connect(cmp->sel("in1"), zero);
+    bset_outs.push_back(cmp->sel("out"));
+  }
+
+  auto in_set = andList(def, bset_outs);
+  def->connect(in_set, def->sel("self.valid"));
+  m->setDef(def);
+  return m;
+}
+
+CoreIR::Module* coreir_for_set(CoreIR::Context* context, isl_set* dom) {
+  cout << tab(1) << "dom = " << str(dom) << endl;
+  //assert(num_div_dims(dom) == 0);
+  //assert(num_param_dims(dom) == 0);
+
+  auto ns = context->getNamespace("global");
+  auto c = context;
+
+  int width = 16;
+  int dims = num_dims(dom);
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"d", c->BitIn()->Arr(16)->Arr(dims)},
+      {"valid", c->Bit()}};
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto m = ns->newModuleDecl("set_checker_" + context->getUnique(), utp);
+  auto def = m->newModuleDef();
+
+  auto bs = get_basic_sets(dom);
+
+  vector<CoreIR::Wireable*> bset_outs;
+  for (auto basic_set : bs) {
+    auto cs = coreir_for_basic_set(context, basic_set);
+    auto csm = def->addInstance("bs" + context->getUnique(), cs);
+    def->connect(csm->sel("d"), def->sel("self")->sel("d"));
+    bset_outs.push_back(csm->sel("valid"));
+  }
+
+  auto in_set = orList(def, bset_outs);
+  def->connect(in_set, def->sel("self.valid"));
+  m->setDef(def);
+  return m;
+}
+
+CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
+  cout << tab(1) << "dom = " << str(dom) << endl;
+
+  auto ns = context->getNamespace("global");
+  auto c = context;
+
+  int width = 16;
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"clk", c->Named("coreir.clkIn")},
+      //{"reset", c->BitIn()},
+      {"valid", c->Bit()}};
+  int dims = num_in_dims(aff);
+  ub_field.push_back({"d", context->Bit()->Arr(16)->Arr(dims)});
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto m = ns->newModuleDecl("affine_controller_" + context->getUnique(), utp);
+  auto def = m->newModuleDef();
+  auto aff_mod = coreir_for_aff(c, aff);
+  auto aff_func = def->addInstance("affine_func", aff_mod);
+
+
+  auto cycle_time_reg = def->addInstance("cycle_time", "mantle.reg",
+      {{"width", CoreIR::Const::make(context, width)},
+      {"has_en", CoreIR::Const::make(context, false)}});
+
+  auto one = def->addInstance(context->getUnique(),
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, 1))}});
+
+  auto inc_time = def->addInstance("inc_time", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});
+  def->connect(inc_time->sel("in0"), cycle_time_reg->sel("out"));
+  def->connect(inc_time->sel("in1"), one->sel("out"));
+  def->connect(inc_time->sel("out"), cycle_time_reg->sel("in"));
+
+  auto diff = def->addInstance("time_diff", "coreir.sub", {{"width", CoreIR::Const::make(c, width)}});
+  def->connect(cycle_time_reg->sel("out"), diff->sel("in1"));
+  def->connect(aff_func->sel("out"), diff->sel("in0"));
+
+  auto zero = def->addInstance(context->getUnique(),
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, 0))}});
+
+  auto cmp = def->addInstance("cmp_time", "coreir.eq", {{"width", CoreIR::Const::make(c, width)}});
+  def->connect(cmp->sel("in0"), diff->sel("out"));
+  def->connect(cmp->sel("in1"), zero->sel("out"));
+  def->connect(cmp->sel("out"), def->sel("self")->sel("valid"));
+
+  vector<CoreIR::Instance*> domain_regs;
+  vector<CoreIR::Wireable*> domain_at_max;
+  for (int d = 0; d < num_dims(dom); d++) {
+    auto dom_reg = def->addInstance("d_" + str(d) + "_reg",
+        "mantle.reg",
+      {{"width", CoreIR::Const::make(context, width)},
+      {"has_en", CoreIR::Const::make(context, true)}});
+    domain_regs.push_back(dom_reg);
+    def->connect(def->sel("self")->sel("d")->sel(d), domain_regs.back()->sel("out"));
+    def->connect(aff_func->sel("d")->sel(d), domain_regs.back()->sel("out"));
+    def->connect(cmp->sel("out"), domain_regs.back()->sel("en"));
+
+    int max_pt = to_int(lexmaxval(project_all_but(dom, d)));
+    auto max_const = def->addInstance("d_" + str(d) + "_max",
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, max_pt))}});
+
+    auto atmax =
+      def->addInstance("d_" + str(d) + "_at_max", "coreir.eq", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(atmax->sel("in0"), dom_reg->sel("out"));
+    def->connect(atmax->sel("in1"), max_const->sel("out"));
+    domain_at_max.push_back(atmax->sel("out"));
+  }
+
+  auto tinc = def->addInstance("true",
+      "corebit.const",
+      {{"value", CoreIR::Const::make(c, true)}});
+  for (int d = 0; d < num_dims(dom); d++) {
+    string df = "d_" + str(d);
+    auto inc = def->addInstance(df + "_inc", "coreir.add", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(inc->sel("in0"), domain_regs.at(d)->sel("out"));
+    def->connect(inc->sel("in1"), one->sel("out"));
+    int min_pt = to_int(lexminval(project_all_but(dom, d)));
+    auto min_const = def->addInstance("d_" + str(d) + "_min",
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, min_pt))}});
+
+    CoreIR::Wireable* smaller_dims_at_max = tinc->sel("out");
+    for (int de = d; de < num_dims(dom); de++) {
+      auto de_atmax = def->addInstance(df + "_am_" + context->getUnique(), "corebit.and");
+      def->connect(de_atmax->sel("in0"), smaller_dims_at_max);
+      def->connect(de_atmax->sel("in1"), domain_at_max.at(de));
+      smaller_dims_at_max = de_atmax->sel("out");
+    }
+
+    auto next_val = def->addInstance(df + "_next_value", "coreir.mux", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(next_val->sel("sel"), smaller_dims_at_max);
+    def->connect(next_val->sel("in0"), inc->sel("out"));
+    def->connect(next_val->sel("in1"), min_const->sel("out"));
+    def->connect(next_val->sel("out"), domain_regs.at(d)->sel("in"));
+  }
+
+  aff_mod->print();
+
+  m->setDef(def);
+  return m;
+}
+
 #endif

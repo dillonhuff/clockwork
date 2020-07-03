@@ -66,7 +66,7 @@ struct CodegenOptions {
   ignore_top_level_inter_deps(false)
   {}
 
-  std::string banking_strategy(const std::string& buffer);
+  std::string get_banking_strategy(const std::string& buffer);
 
 };
 
