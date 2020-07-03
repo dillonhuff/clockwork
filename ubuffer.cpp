@@ -883,21 +883,24 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   //generate coreir instance for single ubuffer
   //return the coreir module with port bundle and enable/valid interface
   CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* context, UBuffer& buf) {
-    //CoreIR::Context* context = CoreIR::newContext();
     CoreIRLoadLibrary_commonlib(context);
     CoreIRLoadLibrary_cwlib(context);
     auto ns = context->getNamespace("global");
     vector<pair<string, CoreIR::Type*> >
       ub_field{{"clk", context->Named("coreir.clkIn")}};
-        //{"reset", context->BitIn()}};
+
     for (auto b : buf.port_bundles) {
       int pt_width = buf.port_widths;
       int bd_width = buf.lanes_in_bundle(b.first);
       string name = b.first;
       if (buf.is_input_bundle(b.first)) {
+        ub_field.push_back(make_pair(name + "_wen", context->BitIn()));
+
         ub_field.push_back(make_pair(name + "_en", context->BitIn()));
         ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
       } else {
+        ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
+
         ub_field.push_back(make_pair(name + "_valid", context->Bit()));
         ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
       }
