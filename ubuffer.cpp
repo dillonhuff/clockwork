@@ -573,6 +573,60 @@ CoreIR::Module* coreir_for_multi_aff(CoreIR::Context* context, isl_multi_aff* af
   return m;
 }
 
+CoreIR::Wireable* mkConst(CoreIR::ModuleDef* def, const int width, const int val) {
+  auto context = def->getContext();
+  auto c = def->getContext();
+  auto one = def->addInstance(context->getUnique(),
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, val))}});
+  return one->sel("out");
+}
+
+CoreIR::Module* coreir_for_basic_set(CoreIR::Context* context, isl_basic_set* dom) {
+  cout << tab(1) << "dom = " << str(dom) << endl;
+  assert(num_div_dims(dom) == 0);
+  assert(num_param_dims(dom) == 0);
+
+  auto ns = context->getNamespace("global");
+  auto c = context;
+
+  int width = 16;
+  int dims = num_dims(dom);
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"d", c->BitIn()->Arr(16)->Arr(dims)},
+      {"valid", c->Bit()}};
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto m = ns->newModuleDecl("basic_set_checker_" + context->getUnique(), utp);
+  auto def = m->newModuleDef();
+
+  vector<CoreIR::Wireable*> bset_outs;
+  for (auto c : constraints(dom)) {
+    auto caff = isl_constraint_get_aff(cpy(c));
+    auto cs = coreir_for_aff(context, caff);
+    auto csm = def->addInstance("bs" + context->getUnique(), cs);
+    def->connect(csm->sel("d"), def->sel("self.d"));
+
+    CoreIR::Instance* cmp = nullptr;
+    auto zero = mkConst(def, 16, 0);
+    if (isl_constraint_is_equality(c)) {
+      cmp = def->addInstance("eq_" + context->getUnique(), "coreir.eq", {{"width", COREMK(context, width)}});
+    } else {
+      cmp = def->addInstance("eq_" + context->getUnique(), "coreir.sge", {{"width", COREMK(context, width)}});
+    }
+    assert(cmp != nullptr);
+    def->connect(cmp->sel("in0"), csm->sel("out"));
+    def->connect(cmp->sel("in1"), zero);
+    bset_outs.push_back(cmp->sel("out"));
+  }
+
+  auto in_set = andList(def, bset_outs);
+  def->connect(in_set, def->sel("self.valid"));
+  m->setDef(def);
+  return m;
+}
+
 CoreIR::Module* coreir_for_set(CoreIR::Context* context, isl_set* dom) {
   cout << tab(1) << "dom = " << str(dom) << endl;
   //assert(num_div_dims(dom) == 0);
@@ -590,6 +644,19 @@ CoreIR::Module* coreir_for_set(CoreIR::Context* context, isl_set* dom) {
   CoreIR::RecordType* utp = context->Record(ub_field);
   auto m = ns->newModuleDecl("set_checker_" + context->getUnique(), utp);
   auto def = m->newModuleDef();
+
+  auto bs = get_basic_sets(dom);
+
+  vector<CoreIR::Wireable*> bset_outs;
+  for (auto basic_set : bs) {
+    auto cs = coreir_for_basic_set(context, basic_set);
+    auto csm = def->addInstance("bs" + context->getUnique(), cs);
+    def->connect(csm->sel("d"), def->sel("self")->sel("d"));
+    bset_outs.push_back(csm->sel("valid"));
+  }
+
+  auto in_set = orList(def, bset_outs);
+  def->connect(in_set, def->sel("self.valid"));
   m->setDef(def);
   return m;
 }

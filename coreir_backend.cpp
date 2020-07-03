@@ -27,6 +27,15 @@ CoreIR::Wireable* andVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::W
   return ad->sel("out");
 }
 
+CoreIR::Wireable* orVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::Wireable* b) {
+  auto context = def->getContext();
+  auto ad = def->addInstance("or_all_" + def->getContext()->getUnique(), "corebit.or");
+  def->connect(ad->sel("in0"), a);
+  def->connect(ad->sel("in1"), b);
+
+  return ad->sel("out");
+}
+
 CoreIR::Wireable* addVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::Wireable* b) {
   auto context = def->getContext();
   auto ad = def->addInstance("add_all_" + def->getContext()->getUnique(), "coreir.add", {{"width", COREMK(context, 16)}});
@@ -36,6 +45,21 @@ CoreIR::Wireable* addVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::W
   return ad->sel("out");
 }
 
+CoreIR::Wireable* orList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals) {
+  assert(vals.size() > 0);
+  auto context = def->getContext();
+  CoreIR::Wireable* val = nullptr;
+
+  if (vals.size() == 1) {
+    return vals[0];
+  }
+
+  val = vals[0];
+  for (int i = 1; i < ((int) vals.size()); i++) {
+    val = orVals(def, val, vals[i]);
+  }
+  return val;
+}
 CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals) {
   assert(vals.size() > 0);
   auto context = def->getContext();
