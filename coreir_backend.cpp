@@ -195,7 +195,7 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
       cout << tab(1) << bndl.first << endl;
     }
     assert(buf.is_output_bundle(bundle.second));
-    ub_field.push_back(make_pair(buf_name + "_" + bundle_name + "_en", context->BitIn()));
+    //ub_field.push_back(make_pair(buf_name + "_" + bundle_name + "_en", context->BitIn()));
     ub_field.push_back(make_pair(buf_name + "_" + bundle_name, context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
   }
 
@@ -209,7 +209,7 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
       buf.lanes_in_bundle(bundle_name);
 
     assert(buf.is_input_bundle(bundle.second));
-    ub_field.push_back(make_pair(buf_name + "_" + bundle_name + "_valid", context->Bit()));
+    //ub_field.push_back(make_pair(buf_name + "_" + bundle_name + "_valid", context->Bit()));
     ub_field.push_back(make_pair(buf_name + "_" + bundle_name, context->Bit()->Arr(pixel_width)->Arr(pix_per_burst)));
   }
 
@@ -293,15 +293,15 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
 
       cout << "done with dummy compute" << endl;
     }
-    vector<CoreIR::Wireable*> vals;
-    for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
-      vals.push_back(def->sel("self." + pg(bundle.first, bundle.second) + "_en"));
-    }
-    auto valid = andList(def, vals);
+    //vector<CoreIR::Wireable*> vals;
+    //for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+      //vals.push_back(def->sel("self." + pg(bundle.first, bundle.second) + "_en"));
+    //}
+    //auto valid = andList(def, vals);
 
-    for (auto bundle : outgoing_bundles(op, buffers, prg)) {
-      def->connect(valid, def->sel("self." + pg(bundle.first, bundle.second) + "_valid"));
-    }
+    //for (auto bundle : outgoing_bundles(op, buffers, prg)) {
+      //def->connect(valid, def->sel("self." + pg(bundle.first, bundle.second) + "_valid"));
+    //}
     compute_unit->setDef(def);
   }
 
@@ -447,7 +447,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
       } else {
         //assert(false);
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
-        def->connect(buf_name + "." + bundle_name + "_en", op->name + "." + pg(buf_name, bundle_name) + "_valid");
+        //def->connect(buf_name + "." + bundle_name + "_en", op->name + "." + pg(buf_name, bundle_name) + "_valid");
         def->connect(def->sel(buf_name + "." + bundle_name + "_wen"),
             write_start_wire(def, op->name));
         def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
@@ -464,10 +464,10 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
       if (prg.is_input(buf_name)) {
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
-        def->connect("self." + pg(buf_name, bundle_name) + "_valid", op->name + "." + pg(buf_name, bundle_name) + "_en");
+        //def->connect("self." + pg(buf_name, bundle_name) + "_valid", op->name + "." + pg(buf_name, bundle_name) + "_en");
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
-        def->connect(buf_name + "." + bundle_name + "_valid", op->name + "." + pg(buf_name, bundle_name) + "_en");
+        //def->connect(buf_name + "." + bundle_name + "_valid", op->name + "." + pg(buf_name, bundle_name) + "_en");
         def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
             read_start_wire(def, op->name));
         def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),

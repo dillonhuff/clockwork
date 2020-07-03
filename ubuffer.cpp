@@ -871,14 +871,14 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     }
 
 
-    for (auto inpt : buf.get_out_ports()) {
-      //auto out_ctrl = def->sel(controller_name(inpt))->sel("valid");
-      auto out_ctrl = control_en(def, inpt, buf);
-      //def->sel(controller_name(inpt))->sel("valid");
-      def->connect(def->sel("self")->sel(buf.container_bundle(inpt) + "_valid"),
-          out_ctrl);
-          //out_ctrl->sel("valid"));
-    }
+    //for (auto inpt : buf.get_out_ports()) {
+      ////auto out_ctrl = def->sel(controller_name(inpt))->sel("valid");
+      //auto out_ctrl = control_en(def, inpt, buf);
+      ////def->sel(controller_name(inpt))->sel("valid");
+      //def->connect(def->sel("self")->sel(buf.container_bundle(inpt) + "_valid"),
+          //out_ctrl);
+          ////out_ctrl->sel("valid"));
+    //}
 
     for (auto inpt : buf.get_in_ports()) {
       auto bcm = coreir_broadcast(c, inpt, buf);
@@ -932,13 +932,13 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         ub_field.push_back(make_pair(name + "_wen", context->BitIn()));
         ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
 
-        ub_field.push_back(make_pair(name + "_en", context->BitIn()));
+        //ub_field.push_back(make_pair(name + "_en", context->BitIn()));
         ub_field.push_back(make_pair(name, context->BitIn()->Arr(pt_width)->Arr(bd_width)));
       } else {
         ub_field.push_back(make_pair(name + "_ren", context->BitIn()));
         ub_field.push_back(make_pair(name + "_ctrl_vars", context->BitIn()->Arr(16)->Arr(control_dimension)));
 
-        ub_field.push_back(make_pair(name + "_valid", context->Bit()));
+        //ub_field.push_back(make_pair(name + "_valid", context->Bit()));
         ub_field.push_back(make_pair(name, context->Bit()->Arr(pt_width)->Arr(bd_width)));
       }
     }
