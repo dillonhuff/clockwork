@@ -10481,7 +10481,7 @@ void halide_conv_layer_3D_test() {
   for (auto h : hs) {
     cout << tab(1) << h.first << " -> " << str(h.second) << endl;
   }
-  assert(false);
+  //assert(false);
 
   CodegenOptions options;
   options.inner_bank_offset_mode =
@@ -11200,18 +11200,7 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
-  unet_conv_3_3_test();
-  assert(false);
-
-  reaccess_no_hierarchy_rolled_test();
-  register_file_test();
-  iccad_tests();
-  identity_stream_coreir_test();
-  weight_streaming_test();
-
-  // Not yet working
-  identity_stream_through_mem_coreir_test();
-  reduce_stream_coreir_test();
+  //unet_conv_3_3_test();
   //assert(false);
 
   halide_conv_layer_3D_test();
@@ -11350,6 +11339,17 @@ void application_tests() {
   blur_x_test();
 
   dummy_app_test();
+
+  register_file_test();
+  reaccess_no_hierarchy_rolled_test();
+  iccad_tests();
+  identity_stream_coreir_test();
+  weight_streaming_test();
+
+  // Not yet working
+  identity_stream_through_mem_coreir_test();
+  reduce_stream_coreir_test();
+  //assert(false);
 
   //two_input_denoise_pipeline_test();
 
