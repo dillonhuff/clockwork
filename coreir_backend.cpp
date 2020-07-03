@@ -358,7 +358,7 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
 
   wirebit(def, read_start_name(op->name), controller->sel("valid"));
   auto exe_start = delaybit(def, exe_start_name(op->name), controller->sel("valid"));
-  delaybit(def, write_start_name(op->name), exe_start);
+  auto write_start = delaybit(def, write_start_name(op->name), exe_start);
 
   //wire(def, 16*num_dims(dom), read_start_control_vars_name(op->name), controller->sel("d"));
   //auto exe_start_ctrl = delay(def, exe_start_control_vars_name(op->name),
@@ -431,15 +431,19 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
       assert(buf.is_input_bundle(bundle.second));
 
       if (prg.is_output(buf_name)) {
-        auto load_delay_reg = def->addInstance("cycle_time", "mantle.reg",
-            {{"width", CoreIR::Const::make(context, 1)},
-            {"has_en", CoreIR::Const::make(context, false)}});
+        //auto load_delay_reg = def->addInstance("cycle_time", "mantle.reg",
+            //{{"width", CoreIR::Const::make(context, 1)},
+            //{"has_en", CoreIR::Const::make(context, false)}});
         auto output_en = "self." + pg(buf_name, bundle_name) + "_en";
-        auto src = op->name + "." + pg(buf_name, bundle_name) + "_valid";
-        def->connect(load_delay_reg->sel("in")->sel(0), def->sel(src));
-        def->connect(load_delay_reg->sel("out")->sel(0), def->sel(output_en));
+        //auto src = op->name + "." + pg(buf_name, bundle_name) + "_valid";
+        //def->connect(load_delay_reg->sel("in")->sel(0), def->sel(src));
+        //def->connect(load_delay_reg->sel("out")->sel(0), def->sel(output_en));
 
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
+        def->connect(def->sel(output_en),
+            write_start_wire(def, op->name));
+        //pick(buf.port_bundles.at(bundle_name))));
+            //"self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
       } else {
         //assert(false);
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
