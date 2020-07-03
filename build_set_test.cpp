@@ -10242,11 +10242,11 @@ void identity_stream_coreir_test() {
   int to_verilog_res = cmd("./coreir/bin/coreir --input identity_stream.json --output identity_stream.v --passes flattentypes;verilog");
   assert(to_verilog_res == 0);
 
-  int verilator_build = cmd("verilator -Wall --cc identity_stream.v --exe --build identity_stream.cpp --top-module identity_stream -Wno-lint");
+  int verilator_build = cmd("verilator -Wall --cc identity_stream.v --exe --build identity_stream_verilog_tb.cpp --top-module identity_stream -Wno-lint");
   assert(verilator_build == 0);
 
   int verilator_run = cmd("./obj_dir/Videntity_stream");
-  assert(verilator_build == 0);
+  assert(verilator_run == 0);
 
   assert(false);
 #endif
@@ -10316,7 +10316,7 @@ void weight_streaming_test() {
   assert(verilator_build == 0);
 
   int verilator_run = cmd("./obj_dir/Vconv_layer_3D");
-  assert(verilator_build == 0);
+  assert(verilator_run == 0);
 
   assert(false);
 #endif

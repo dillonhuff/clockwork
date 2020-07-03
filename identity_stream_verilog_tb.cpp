@@ -2,29 +2,30 @@
 #include "Videntity_stream.h"
 
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
 int main() {
   int num_valids = 0;
 
-  Vconv_layer_3D dut;
+  Videntity_stream dut;
   dut.clk = 0;
-  //dut.reset = 0;
-  dut.input_copy_stencil_hcompute_hw_input_stencil_read_0 = 90;
-  dut.weight_copy_stencil_hcompute_hw_weight_stencil_read_0 = 3;
 
   dut.eval();
 
+  vector<int> expected;
+  for (int i = 0; i < 10; i++) {
+    expected.push_back(i + 1);
+  }
+  vector<int> actual;
+
   for (int t = 0; t < 120; t++) {
-    cout << "t = " << t << ", valid = " << (int) dut.hw_output_stencil_hcompute_hw_output_stencil_write_en << endl;
-    cout << "t = " << t << ", value = " << (int) dut.hw_output_stencil_hcompute_hw_output_stencil_write_0 << endl << endl;
+    dut.in_ld_read_0 = t + 1;
 
-    dut.input_copy_stencil_hcompute_hw_input_stencil_read_0++;
-    dut.weight_copy_stencil_hcompute_hw_weight_stencil_read_0++;
-
-    if (dut.hw_output_stencil_hcompute_hw_output_stencil_write_en == 1) {
+    if (dut.out_st_write_en == 1) {
       num_valids++;
+      cout << "valid out = " << (int) dut.out_st_write_0 << endl;
     }
     dut.clk = 0;
     dut.eval();
@@ -35,6 +36,8 @@ int main() {
 
   }
 
-  assert(num_valids == 20);
+  assert(num_valids == 10);
+  assert(actual.size() == 10);
+  assert(expected == actual);
   cout << "done" << endl;
 }
