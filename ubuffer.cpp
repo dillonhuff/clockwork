@@ -1041,29 +1041,36 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     int width = buf.port_widths;
     CoreIR::Namespace* ns = c->getNamespace("global");
 
-      vector<pair<string, CoreIR::Type*> >
-        ub_field{
-          {"in", c->BitIn()->Arr(width)},
+    vector<pair<string, CoreIR::Type*> >
+      ub_field{
+        {"in", c->BitIn()->Arr(width)},
           {"en", c->BitIn()},
           {"valid", c->Bit()}};
-      for (auto b : buf.get_banks()) {
-        if (elem(inpt, buf.get_bank_inputs(b.name))) {
-          ub_field.push_back({b.name, c->Bit()->Arr(width)});
-        }
+    for (auto b : buf.get_banks()) {
+      if (elem(inpt, buf.get_bank_inputs(b.name))) {
+        ub_field.push_back({b.name, c->Bit()->Arr(width)});
       }
+    }
 
-      string distrib = inpt + "_broadcast";
-      CoreIR::RecordType* utp = c->Record(ub_field);
-      auto bcm = ns->newModuleDecl(distrib, utp);
-      auto bdef = bcm->newModuleDef();
-      for (auto b : buf.get_banks()) {
-        if (elem(inpt, buf.get_bank_inputs(b.name))) {
-          bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.in"));
-        }
+    string distrib = inpt + "_broadcast";
+    CoreIR::RecordType* utp = c->Record(ub_field);
+    auto bcm = ns->newModuleDecl(distrib, utp);
+    auto bdef = bcm->newModuleDef();
+    auto in_sel = bdef->sel("self.in");
+    auto in_en = bdef->sel("self.en");
+
+    for (auto b : buf.get_banks()) {
+      if (elem(inpt, buf.get_bank_inputs(b.name))) {
+        //bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.in"));
+        bdef->connect(bdef->sel("self")->sel(b.name), in_sel);
       }
-      bdef->connect("self.en", "self.valid");
-      bcm->setDef(bdef);
-      return bcm;
+    }
+
+    //bdef->connect("self.en", "self.valid");
+    bdef->connect(bdef->sel("self.valid"), in_en);
+
+    bcm->setDef(bdef);
+    return bcm;
   }
 
   void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
