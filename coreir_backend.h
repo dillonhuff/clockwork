@@ -36,4 +36,7 @@ void generate_coreir(CodegenOptions& options,
   CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
       CoreIR::Wireable* w,
       const int width);
+  CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
+      const std::string& name,
+      CoreIR::Wireable* w);
 #endif

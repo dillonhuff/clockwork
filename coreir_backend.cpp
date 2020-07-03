@@ -12,6 +12,16 @@ using CoreIR::Values;
 using CoreIR::Generator;
 using CoreIR::ModuleDef;
 
+std::string exe_start_name(const std::string& n) {
+  return n + "_exe_start";
+}
+std::string read_start_name(const std::string& n) {
+  return n + "_read_start";
+}
+
+std::string write_start_name(const std::string& n) {
+  return n + "_write_start";
+}
 std::string cu_name(const std::string& n) {
   return "cu_" + n;
 }
@@ -24,6 +34,16 @@ std::string pg(const pair<string, string>& b) {
   return pg(b.first, b.second);
 }
 
+  CoreIR::Wireable* wirebit(CoreIR::ModuleDef* bdef,
+      const std::string& name,
+      CoreIR::Wireable* w) {
+    auto c = bdef->getContext();
+    auto r = bdef->addInstance(
+        name,
+        "corebit.wire");
+    bdef->connect(r->sel("in"), w);
+    return r->sel("out");
+  }
 CoreIR::Wireable* andVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::Wireable* b) {
   auto ad = def->addInstance("and_all_" + def->getContext()->getUnique(), "corebit.and");
   def->connect(ad->sel("in0"), a);
@@ -290,7 +310,12 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
   auto aff = isl_multi_aff_get_aff(saff, 0);
   auto aff_c = affine_controller(c, dom, aff);
   aff_c->print();
-  return def->addInstance(controller_name(op->name), aff_c);
+  auto controller = def->addInstance(controller_name(op->name), aff_c);
+  wirebit(def, read_start_name(op->name), controller->sel("valid"));
+  auto exe_start = delaybit(def, exe_start_name(op->name), controller->sel("valid"));
+  delaybit(def, write_start_name(op->name), exe_start);
+
+  return controller;
 }
 
 CoreIR::Module* generate_coreir(CodegenOptions& options,
@@ -598,9 +623,15 @@ void generate_coreir(CodegenOptions& options,
 
   CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
       CoreIR::Wireable* w) {
+    return delaybit(bdef, "delay_reg_" + bdef->getContext()->getUnique(), w);
+  }
+
+  CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
+      const std::string& name,
+      CoreIR::Wireable* w) {
     auto c = bdef->getContext();
     auto r = bdef->addInstance(
-        "delay_reg_" + c->getUnique(),
+        name,
         "corebit.reg");
     bdef->connect(r->sel("in"), w);
     return r->sel("out");
