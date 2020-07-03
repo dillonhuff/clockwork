@@ -1202,7 +1202,8 @@ vector<std::string> topological_sort(const vector<isl_set*>& sets,
       if (!elem(name(s), finished)) {
         bool all_deps_finished = true;
         for (auto m : maps) {
-          if (range_name(m) == name(s) &&
+          if (domain_name(m) != name(s) &&
+              range_name(m) == name(s) &&
               !elem(domain_name(m), finished)) {
             all_deps_finished = false;
             break;
@@ -1279,6 +1280,7 @@ hardware_schedule(
     umap* validity,
     umap* proximity) {
 
+  cout << "Creating hw schedule..." << endl;
   auto padded_domain = pad_uset(domain);
   auto padded_validity = pad_map(validity);
   auto padded_proximity = pad_map(proximity);

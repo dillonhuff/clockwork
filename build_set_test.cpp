@@ -10237,8 +10237,8 @@ void weight_streaming_test() {
     }
   }
 
-  generate_verilog(options, bufs, prg, sched);
-  assert(false);
+  //generate_verilog(options, bufs, prg, sched);
+  //assert(false);
 
   generate_coreir(options, bufs, prg, sched);
 
@@ -10260,15 +10260,18 @@ void halide_conv_layer_3D_test() {
   prog prg = conv_layer_3D();
   prg.pretty_print();
 
-  //auto dom = prg.whole_iteration_domain();
-  //auto valid = prg.validity_deps();
-  //auto proximity = cpy(valid);
+  cout << "getting validity / dom"  << endl;
+  auto dom = prg.whole_iteration_domain();
+  auto valid = prg.validity_deps();
+  auto proximity = cpy(valid);
 
-  //auto hs = hardware_schedule(dom, valid, proximity);
-  //for (auto h : hs) {
-    //cout << tab(1) << h.first << " -> " << str(h.second) << endl;
-  //}
-  //assert(false);
+  cout << "createing hw schedule" << endl;
+
+  auto hs = hardware_schedule(dom, valid, proximity);
+  for (auto h : hs) {
+    cout << tab(1) << h.first << " -> " << str(h.second) << endl;
+  }
+  assert(false);
 
   CodegenOptions options;
   options.inner_bank_offset_mode =
@@ -10278,6 +10281,8 @@ void halide_conv_layer_3D_test() {
 
 #ifdef COREIR
   auto sched = prg.optimized_codegen();
+  cout << "sched = " << str(sched) << endl;
+  assert(false);
   auto bufs = build_buffers(prg, sched);
   for (auto& b : bufs) {
     if (b.second.num_in_ports() > 0 &&
@@ -10985,9 +10990,9 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
-  halide_conv_layer_3D_test();
-  assert(false);
   weight_streaming_test();
+  assert(false);
+  halide_conv_layer_3D_test();
   //assert(false);
   iccad_tests();
   //assert(false);
