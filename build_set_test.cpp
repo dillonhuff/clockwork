@@ -10210,6 +10210,11 @@ void weight_streaming_test() {
   auto sched = hardware_schedule_umap(dom, valid, prox);
   sched = its(sched, prg.whole_iteration_domain());
 
+  cout << "Hw schedule" << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+  //assert(false);
 
   //string hw_str = string("{ hcompute_conv_stencil[root = 0, conv_s0_x] -> [conv_s0_x + 1] : 0 <= conv_s0_x <= 19; ") +
     //"hcompute_conv_stencil_1[root = 0, conv_s1_win_x] -> [20 + conv_s1_win_x] : 0 <= conv_s1_win_x <= 19; " +

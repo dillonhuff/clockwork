@@ -1280,6 +1280,7 @@ hardware_schedule(
     umap* validity,
     umap* proximity) {
 
+
   cout << "Creating hw schedule..." << endl;
   auto padded_domain = pad_uset(domain);
   auto padded_validity = pad_map(validity);
@@ -1307,13 +1308,6 @@ hardware_schedule(
   // dependence analysis that allows fusion
   for (auto m : get_maps(validity)) {
     cout << str(m) << endl;
-    //isl_map* lexmap = isl_map_lexmax(cpy(m));
-    //lexmap = set_domain_name(lexmap, range_name(lexmap));
-    //cout << "deltas: " << str(isl_map_deltas(cpy(lexmap))) << endl;
-    //auto lm = isl_map_lexmax_pw_multi_aff(cpy(m));
-    //cout << tab(2) << "lexmax: " << str(lm) << endl;
-    //vector<pair<isl_set*, isl_multi_aff*> > pieces =
-      //get_pieces(lm);
     int diff = int_upper_bound(card(to_uset(::domain(m)))) *
       latencies.at(domain_name(m));
     cout << "diff = " << diff << endl;
@@ -1321,7 +1315,7 @@ hardware_schedule(
     map<string, isl_val*> vals;
     vals.insert({hw_delay_var(range_name(m)), one(ct)});
     vals.insert({hw_delay_var(domain_name(m)), negone(ct)});
-    modulo_schedule.add_geq(vals, isl_val_int_from_si(ct, -diff));
+    modulo_schedule.add_geq(vals, isl_val_int_from_si(ct, -2*diff));
     //hw_delay_var(range_name(n)), hw_delay_var(domain_name(m)), (int) diff);
     //modulo_schedule.add_geq(hw_delay_var(range_name(n)), hw_delay_var(domain_name(m)), (int) diff);
   }
@@ -1422,8 +1416,8 @@ hardware_schedule(
       //s = set_coeff(s, i, modulo_schedule.value(ii_var(n, i)));
     }
 
-    s = set_const_coeff(s, map_find(n, delays));
-    //s = set_const_coeff(s, modulo_schedule.value(hw_delay_var(n)));
+    //s = set_const_coeff(s, map_find(n, delays));
+    s = set_const_coeff(s, modulo_schedule.value(hw_delay_var(n)));
 
     hw_schedules[name(f)] = s;
   }
