@@ -19,6 +19,10 @@ std::string pg(const std::string& buf, const std::string& bundle) {
   return buf + "_" + bundle;
 }
 
+std::string pg(const pair<string, string>& b) {
+  return pg(b.first, b.second);
+}
+
 CoreIR::Wireable* andVals(CoreIR::ModuleDef* def, CoreIR::Wireable* a, CoreIR::Wireable* b) {
   auto ad = def->addInstance("and_all_" + def->getContext()->getUnique(), "corebit.and");
   def->connect(ad->sel("in0"), a);
@@ -230,17 +234,21 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         }
       } else {
         // Generate dummy compute logic
+        cout << "generating dummy compute" << endl;
         vector<CoreIR::Wireable*> inputs;
         for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
           string buf_name = bundle.first;
           string bundle_name = bundle.second;
+
+          cout << "buf = " << buf_name << ", bundle = " << bundle_name << endl;
+
           auto buf = map_find(buf_name, buffers);
           int pix_width = buf.port_widths;
           int nlanes = buf.lanes_in_bundle(bundle_name);
           int bundle_width = buf.port_bundle_width(bundle_name);
           int offset = 0;
           CoreIR::Wireable* bsel =
-            def->sel("self." + bundle_name);
+            def->sel("self." + pg(buf_name, bundle_name));
           for (int l = 0; l < nlanes; l++) {
             int lo = l*pix_width;
             int hi = lo + pix_width;
@@ -254,9 +262,10 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         auto result = addList(def, inputs);
 
         for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
-          def->connect(result, def->sel("self")->sel(bundle.second));
+          def->connect(result, def->sel("self")->sel(pg(bundle)));
         }
 
+        cout << "done with dummy compute" << endl;
       }
       vector<CoreIR::Wireable*> vals;
       for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {

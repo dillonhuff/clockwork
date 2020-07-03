@@ -10202,7 +10202,7 @@ void identity_stream_coreir_test() {
   st->add_load("in_buf", "y");
   st->add_store("out", "y");
   prg.pretty_print();
-  assert(false);
+  //assert(false);
 
   CodegenOptions options;
   options.inner_bank_offset_mode =
@@ -10221,7 +10221,6 @@ void identity_stream_coreir_test() {
   for (auto m : get_maps(sched)) {
     cout << tab(1) << str(m) << endl;
   }
-  assert(false);
   
   auto bufs = build_buffers(prg, sched);
   for (auto& b : bufs) {
@@ -10236,13 +10235,13 @@ void identity_stream_coreir_test() {
 
   generate_coreir(options, bufs, prg, sched);
 
-  int to_verilog_res = cmd("./coreir/bin/coreir --input conv_layer_3D.json --output conv_layer_3D.v --passes flattentypes;verilog");
+  int to_verilog_res = cmd("./coreir/bin/coreir --input identity_stream.json --output identity_stream.v --passes flattentypes;verilog");
   assert(to_verilog_res == 0);
 
-  int verilator_build = cmd("verilator -Wall --cc conv_layer_3D.v --exe --build conv_layer_3D_verilog_tb.cpp --top-module conv_layer_3D -Wno-lint");
+  int verilator_build = cmd("verilator -Wall --cc identity_stream.v --exe --build identity_stream.cpp --top-module identity_stream -Wno-lint");
   assert(verilator_build == 0);
 
-  int verilator_run = cmd("./obj_dir/Vconv_layer_3D");
+  int verilator_run = cmd("./obj_dir/Videntity_stream");
   assert(verilator_build == 0);
 
   assert(false);
