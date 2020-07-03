@@ -1037,6 +1037,35 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     return def->addInstance(controller_name(inpt), aff_c);
   }
 
+  CoreIR::Module* coreir_broadcast(CoreIR::Context* c, const std::string& inpt, UBuffer& buf) {
+    int width = buf.port_widths;
+    CoreIR::Namespace* ns = c->getNamespace("global");
+
+      vector<pair<string, CoreIR::Type*> >
+        ub_field{
+          {"in", c->BitIn()->Arr(width)},
+          {"en", c->BitIn()},
+          {"valid", c->Bit()}};
+      for (auto b : buf.get_banks()) {
+        if (elem(inpt, buf.get_bank_inputs(b.name))) {
+          ub_field.push_back({b.name, c->Bit()->Arr(width)});
+        }
+      }
+
+      string distrib = inpt + "_broadcast";
+      CoreIR::RecordType* utp = c->Record(ub_field);
+      auto bcm = ns->newModuleDecl(distrib, utp);
+      auto bdef = bcm->newModuleDef();
+      for (auto b : buf.get_banks()) {
+        if (elem(inpt, buf.get_bank_inputs(b.name))) {
+          bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.in"));
+        }
+      }
+      bdef->connect("self.en", "self.valid");
+      bcm->setDef(bdef);
+      return bcm;
+  }
+
   void generate_synthesizable_functional_model(CodegenOptions& options, UBuffer& buf, CoreIR::ModuleDef* def) {
     int width = buf.port_widths;
 
@@ -1046,7 +1075,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     for (auto inpt : buf.get_all_ports()) {
       auto ac = add_port_controller(def, inpt, buf);
-      //def->connect(ac->sel("reset"), def->sel("self.reset"));
     }
 
     for (auto bank : buf.get_banks()) {
@@ -1103,28 +1131,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     }
 
     for (auto inpt : buf.get_in_ports()) {
-      vector<pair<string, CoreIR::Type*> >
-        ub_field{
-          {"in", c->BitIn()->Arr(width)},
-          {"en", c->BitIn()},
-          {"valid", c->Bit()}};
-      for (auto b : buf.get_banks()) {
-        if (elem(inpt, buf.get_bank_inputs(b.name))) {
-          ub_field.push_back({b.name, c->Bit()->Arr(width)});
-        }
-      }
-
-      string distrib = inpt + "_broadcast";
-      CoreIR::RecordType* utp = c->Record(ub_field);
-      auto bcm = ns->newModuleDecl(distrib, utp);
-      auto bdef = bcm->newModuleDef();
-      for (auto b : buf.get_banks()) {
-        if (elem(inpt, buf.get_bank_inputs(b.name))) {
-          bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.in"));
-        }
-      }
-      bdef->connect("self.en", "self.valid");
-      bcm->setDef(bdef);
+      auto bcm = coreir_broadcast(c, inpt, buf);
       auto bc = def->addInstance(inpt + "_broadcast", bcm);
       for (auto b : buf.get_banks()) {
         if (elem(inpt, buf.get_bank_inputs(b.name))) {
