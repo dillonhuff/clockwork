@@ -16,9 +16,6 @@ std::string read_addrgen_name(const std::string& n) {
 std::string write_addrgen_name(const std::string& n) {
   return n + "_write_addrgen";
 }
-std::string controller_name(const std::string& n) {
-  return n + "_port_controller";
-}
 
 map<string, isl_set*> input_ports_to_conditions(const std::string& outpt, UBuffer& buf) {
   map<string, isl_set*> in_ports_to_conditions;

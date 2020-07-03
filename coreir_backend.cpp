@@ -5,6 +5,7 @@
 using CoreIR::Params;
 using CoreIR::JsonType;
 using CoreIR::Namespace;
+using CoreIR::Instance;
 using CoreIR::Const;
 using CoreIR::Context;
 using CoreIR::Values;
@@ -261,8 +262,35 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
   def->addInstance(op->name, compute_unit);
 }
 
-void generate_coreir_op_controller(op* op, vector<isl_map*>& sched_maps) {
+Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>& sched_maps) {
+  auto c = def->getContext();
 
+  isl_map* sched = nullptr;
+  for (auto s : sched_maps) {
+    if (domain_name(s) == op->name) {
+      sched = s;
+      break;
+    }
+  }
+  assert(sched != nullptr);
+
+  auto svec = isl_pw_multi_aff_from_map(sched);
+
+  vector<pair<isl_set*, isl_multi_aff*> > pieces =
+    get_pieces(svec);
+  assert(pieces.size() == 1);
+
+  auto saff = pieces.at(0).second;
+  auto dom = pieces.at(0).first;
+
+  cout << "sched = " << str(saff) << endl;
+  cout << tab(1) << "dom = " << str(dom) << endl;
+
+  // TODO: Assert multi size == 1
+  auto aff = isl_multi_aff_get_aff(saff, 0);
+  auto aff_c = affine_controller(c, dom, aff);
+  aff_c->print();
+  return def->addInstance(controller_name(op->name), aff_c);
 }
 
 CoreIR::Module* generate_coreir(CodegenOptions& options,
@@ -304,7 +332,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
   auto sched_maps = get_maps(schedmap);
   for (auto op : prg.all_ops()) {
-    generate_coreir_op_controller(op, sched_maps);
+    generate_coreir_op_controller(def, op, sched_maps);
     generate_coreir_compute_unit(found_compute, def, op, prg, buffers);
   }
 

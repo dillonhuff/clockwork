@@ -5,6 +5,11 @@
 #include "prog.h"
 #define COREMK(ctx, v) CoreIR::Const::make((ctx), (v))
 
+static inline
+std::string controller_name(const std::string& n) {
+  return n + "_port_controller";
+}
+
 CoreIR::Wireable* mkConst(CoreIR::ModuleDef* def, const int width, const int val);
 CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals);
 CoreIR::Wireable* orList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals);
