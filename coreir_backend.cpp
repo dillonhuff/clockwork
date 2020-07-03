@@ -395,7 +395,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
       out_buf.lanes_in_bundle(out_bundle);
 
     if (prg.is_input(out_rep)) {
-      ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_valid", context->BitIn()));
+      ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_valid", context->Bit()));
       ub_field.push_back(make_pair(pg(out_rep, out_bundle), context->BitIn()->Arr(pixel_width)->Arr(pix_per_burst)));
     } else {
       ub_field.push_back(make_pair(pg(out_rep, out_bundle) + "_en", context->Bit()));
@@ -431,21 +431,12 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
       assert(buf.is_input_bundle(bundle.second));
 
       if (prg.is_output(buf_name)) {
-        //auto load_delay_reg = def->addInstance("cycle_time", "mantle.reg",
-            //{{"width", CoreIR::Const::make(context, 1)},
-            //{"has_en", CoreIR::Const::make(context, false)}});
         auto output_en = "self." + pg(buf_name, bundle_name) + "_en";
-        //auto src = op->name + "." + pg(buf_name, bundle_name) + "_valid";
-        //def->connect(load_delay_reg->sel("in")->sel(0), def->sel(src));
-        //def->connect(load_delay_reg->sel("out")->sel(0), def->sel(output_en));
 
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
         def->connect(def->sel(output_en),
             write_start_wire(def, op->name));
-        //pick(buf.port_bundles.at(bundle_name))));
-            //"self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
       } else {
-        //assert(false);
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
         //def->connect(buf_name + "." + bundle_name + "_en", op->name + "." + pg(buf_name, bundle_name) + "_valid");
         def->connect(def->sel(buf_name + "." + bundle_name + "_wen"),
@@ -463,11 +454,12 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
       assert(buf.is_output_bundle(bundle.second));
 
       if (prg.is_input(buf_name)) {
+        auto output_valid = "self." + pg(buf_name, bundle_name) + "_valid";
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
-        //def->connect("self." + pg(buf_name, bundle_name) + "_valid", op->name + "." + pg(buf_name, bundle_name) + "_en");
+        def->connect(def->sel(output_valid),
+            read_start_wire(def, op->name));
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
-        //def->connect(buf_name + "." + bundle_name + "_valid", op->name + "." + pg(buf_name, bundle_name) + "_en");
         def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
             read_start_wire(def, op->name));
         def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),

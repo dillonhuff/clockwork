@@ -7,6 +7,7 @@
 using namespace std;
 
 int main() {
+  int num_reads = 0;
   int num_valids = 0;
 
   Videntity_stream dut;
@@ -14,6 +15,10 @@ int main() {
 
   dut.eval();
 
+  vector<int> input;
+  for (int i = 0; i < 10; i++) {
+    input.push_back(i + 1);
+  }
   vector<int> expected;
   for (int i = 0; i < 10; i++) {
     expected.push_back(i + 1);
@@ -21,10 +26,19 @@ int main() {
   vector<int> actual;
 
   for (int t = 0; t < 120; t++) {
-    dut.in_ld_read_0 = t + 1;
+    if (num_reads < input.size()) {
+      dut.in_ld_read_0 = input.at(num_reads);
+    }
+    //dut.in_ld_read_0 = t + 1;
+    if (dut.in_ld_read_valid == 1) {
+      cout << "@ " << t << ":";
+      cout << "valid in = " << (int) dut.in_ld_read_0 << ", sending " << (int) dut.in_ld_read_0 << " to accelerator" << endl;
+      num_reads++;
+    }
 
     if (dut.out_st_write_en == 1) {
       num_valids++;
+      cout << "@ " << t << ":";
       cout << "valid out = " << (int) dut.out_st_write_0 << endl;
       actual.push_back((int) dut.out_st_write_0);
     }
@@ -37,6 +51,7 @@ int main() {
 
   }
 
+  assert(num_reads == 10);
   assert(num_valids == 10);
   assert(actual.size() == 10);
   assert(expected == actual);
