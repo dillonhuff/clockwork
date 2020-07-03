@@ -1037,6 +1037,28 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     return def->addInstance(controller_name(inpt), aff_c);
   }
 
+  CoreIR::Wireable* delaybit(CoreIR::ModuleDef* bdef,
+      CoreIR::Wireable* w) {
+    auto c = bdef->getContext();
+    auto r = bdef->addInstance(
+        "delay_reg_" + c->getUnique(),
+        "corebit.reg");
+    bdef->connect(r->sel("in"), w);
+    return r->sel("out");
+  }
+
+  CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
+      CoreIR::Wireable* w,
+      const int width) {
+    auto c = bdef->getContext();
+    auto r = bdef->addInstance(
+        "delay_reg_" + c->getUnique(),
+        "mantle.reg",
+        {{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, false)}});
+    bdef->connect(r->sel("in"), w);
+    return r->sel("out");
+  }
+
   CoreIR::Module* coreir_broadcast(CoreIR::Context* c, const std::string& inpt, UBuffer& buf) {
     int width = buf.port_widths;
     CoreIR::Namespace* ns = c->getNamespace("global");
@@ -1056,8 +1078,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     CoreIR::RecordType* utp = c->Record(ub_field);
     auto bcm = ns->newModuleDecl(distrib, utp);
     auto bdef = bcm->newModuleDef();
-    auto in_sel = bdef->sel("self.in");
-    auto in_en = bdef->sel("self.en");
+    auto in_sel = delay(bdef, bdef->sel("self.in"), width);
+    auto in_en = delaybit(bdef, bdef->sel("self.en"));
 
     for (auto b : buf.get_banks()) {
       if (elem(inpt, buf.get_bank_inputs(b.name))) {
