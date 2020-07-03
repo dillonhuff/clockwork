@@ -10247,7 +10247,7 @@ void identity_stream_through_mem_coreir_test() {
 
   generate_coreir(options, bufs, prg, sched);
   run_verilator_tb(prg.name);
-  assert(false);
+  //assert(false);
 #endif
 
 }
