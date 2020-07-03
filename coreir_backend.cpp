@@ -3,6 +3,7 @@
 #ifdef COREIR
 
 using CoreIR::Params;
+using CoreIR::Wireable;
 using CoreIR::JsonType;
 using CoreIR::Namespace;
 using CoreIR::Instance;
@@ -282,6 +283,14 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
   def->addInstance(op->name, compute_unit);
 }
 
+Wireable* read_start_wire(ModuleDef* def, const std::string& opname) {
+  return def->sel(write_start_name(opname))->sel("out");
+}
+
+Wireable* write_start_wire(ModuleDef* def, const std::string& opname) {
+  return def->sel(write_start_name(opname))->sel("out");
+}
+
 Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>& sched_maps) {
   auto c = def->getContext();
 
@@ -393,6 +402,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         //assert(false);
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
         def->connect(buf_name + "." + bundle_name + "_en", op->name + "." + pg(buf_name, bundle_name) + "_valid");
+        def->connect(def->sel(buf_name + "." + bundle_name + "_wen"),
+            write_start_wire(def, op->name));
       }
     }
 
@@ -409,6 +420,8 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
         def->connect(buf_name + "." + bundle_name + "_valid", op->name + "." + pg(buf_name, bundle_name) + "_en");
+        def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
+            read_start_wire(def, op->name));
       }
     }
   }
