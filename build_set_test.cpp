@@ -10333,6 +10333,67 @@ void reduce_stream_coreir_test() {
 
 }
 
+void identity_stream_2d_coreir_test() {
+  prog prg("identity_stream_2d");
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["out"] = 16;
+  prg.buffer_port_widths["in_buf"] = 16;
+
+  prg.add_input("in");
+  prg.add_output("out");
+  auto ld = prg.add_loop("x", 0, 10)->add_loop("xi", 0, 4)->add_op("ld");
+  ld->add_load("in", "x, xi");
+  ld->add_store("in_buf", "x, xi");
+  
+  auto st = prg.add_loop("y", 0, 10)->add_loop("yi", 0, 4)->add_op("st");
+  st->add_load("in_buf", "y, yi");
+  st->add_store("out", "y, yi");
+  prg.pretty_print();
+
+  CodegenOptions options;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  options.all_rams = true;
+
+#ifdef COREIR
+
+  auto dom = prg.whole_iteration_domain();
+  auto valid = prg.validity_deps();
+  auto prox = cpy(valid);
+  auto sched = hardware_schedule_umap(dom, valid, prox);
+  sched = its(sched, prg.whole_iteration_domain());
+
+  cout << "Hw schedule" << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+  
+  auto bufs = build_buffers(prg, sched);
+  for (auto& b : bufs) {
+    if (b.second.num_in_ports() > 0 &&
+        b.second.num_out_ports() > 0) {
+      cout << b.second << endl;
+      b.second.generate_banks_and_merge(options);
+    }
+  }
+
+  //assert(false);
+
+  generate_coreir(options, bufs, prg, sched);
+  run_verilator_tb(prg.name);
+  //int to_verilog_res = cmd("./coreir/bin/coreir --input identity_stream.json --output identity_stream.v --passes flattentypes;verilog");
+  //assert(to_verilog_res == 0);
+
+  //int verilator_build = cmd("verilator -Wall --cc identity_stream.v --exe --build identity_stream_verilog_tb.cpp --top-module identity_stream -Wno-lint");
+  //assert(verilator_build == 0);
+
+  //int verilator_run = cmd("./obj_dir/Videntity_stream");
+  //assert(verilator_run == 0);
+
+  //assert(false);
+#endif
+
+}
 void identity_stream_coreir_test() {
   prog prg("identity_stream");
   prg.buffer_port_widths["in"] = 16;
@@ -11200,6 +11261,7 @@ void unet_conv_3_3_test() {
 }
 
 void coreir_tests() {
+  identity_stream_2d_coreir_test();
   identity_stream_coreir_test();
   weight_streaming_test();
 

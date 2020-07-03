@@ -21,13 +21,15 @@ int main() {
   //vector<int> actual;
 
   for (int t = 0; t < 200; t++) {
-    dut.in_ld_read_0 = t + 1;
+    dut.in_ld_read_0 = t + 5;
+    cout << "@ " << t;
 
     if (dut.out_st_write_en == 1) {
+      cout << ": valid out = " << (int) dut.out_st_write_0;
       num_valids++;
-      cout << "@ " << t << ": valid out = " << (int) dut.out_st_write_0 << endl;
       //actual.push_back((int) dut.out_st_write_0);
     }
+    cout << endl;
     dut.clk = 0;
     dut.eval();
     dut.clk = 1;
