@@ -358,7 +358,9 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
 
   wirebit(def, read_start_name(op->name), controller->sel("valid"));
   auto exe_start = delaybit(def, exe_start_name(op->name), controller->sel("valid"));
-  auto write_start = delaybit(def, write_start_name(op->name), exe_start);
+  // Assume exe is combinational
+  auto write_start = wirebit(def, write_start_name(op->name), exe_start);
+  //auto write_start = delaybit(def, write_start_name(op->name), exe_start);
 
   //wire(def, 16*num_dims(dom), read_start_control_vars_name(op->name), controller->sel("d"));
   //auto exe_start_ctrl = delay(def, exe_start_control_vars_name(op->name),
@@ -432,13 +434,11 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
 
       if (prg.is_output(buf_name)) {
         auto output_en = "self." + pg(buf_name, bundle_name) + "_en";
-
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
         def->connect(def->sel(output_en),
             write_start_wire(def, op->name));
       } else {
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
-        //def->connect(buf_name + "." + bundle_name + "_en", op->name + "." + pg(buf_name, bundle_name) + "_valid");
         def->connect(def->sel(buf_name + "." + bundle_name + "_wen"),
             write_start_wire(def, op->name));
         def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
