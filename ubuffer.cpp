@@ -1192,12 +1192,12 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     //assert(false);
 
     string dx = to_string(int_upper_bound(qpd));
-    auto dd_fold = compute_dd(buf, outpt, inpt);
+    //auto dd_fold = compute_dd(buf, outpt, inpt);
 
     out << tab(1) << "// Read schedule : " << str(buf.schedule.at(outpt)) << endl;
     out << tab(1) << "// Write schedule: " << str(buf.schedule.at(inpt)) << endl;
 
-    out << tab(1) << "// DD fold: " << str(dd_fold) << endl;
+    //out << tab(1) << "// DD fold: " << str(dd_fold) << endl;
     string delay_expr = evaluate_dd(buf, outpt, inpt);
     string value_str = "";
     bool opt_const = is_optimizable_constant_dd(inpt, outpt, buf);
@@ -1737,7 +1737,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       lex_gt(rdsched, wrsched);
     //cout << "\trdsched: " << str(rdsched) << "\n wrsched: " << str(wrsched) << "\n wbr: " << str(WritesBeforeRead) << endl;
 
-    //auto WriteThatProducesReadData = get_lexmax_events(read_port);
     //TODO: test these new method
     auto WriteThatProducesReadData = get_lexmax_events(wrsched, rdsched, write_port, read_port);
     //cout << "\twpr: " << str(WriteThatProducesReadData) << "\nwaw:" << str(WritesAfterWrite) << endl;

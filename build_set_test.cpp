@@ -1793,7 +1793,7 @@ void reaccess_no_hierarchy_rolled_test() {
 
   auto q = prg.add_nest("ao", 0 , 2, "qo", 0, 6, "qi", 0, 14);
   auto init_out = q->add_op("init_out");
-  init_out->add_function("set_zero_32");
+  init_out->add_function("set_zero_16");
   init_out->add_store("out", "qi, qo, ao");
 
   auto qw = q->add_loop("wy", 0, 3);
@@ -10972,17 +10972,18 @@ void unet_conv_3_3_test() {
 void application_tests() {
   unet_conv_3_3_test();
   assert(false);
+
+  reaccess_no_hierarchy_rolled_test();
+  register_file_test();
   iccad_tests();
   //assert(false);
   upsample2d_test();
   upsample_stencil_2d_test();
   upsample_stencil_1d_test();
   up_unrolled_4_test();
-  register_file_test();
   register_file_optimization_test();
   reduce_rows_test();
   reaccess_no_hierarchy_test();
-  reaccess_no_hierarchy_rolled_test();
   //playground();
 
   up_unrolled_test();

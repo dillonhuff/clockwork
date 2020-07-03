@@ -78,7 +78,6 @@ inline hw_uint<16> conv_stencil_hcompute_conv_stencil_1_4_select(conv_stencil_ca
     // Overlap with conv_stencil_hcompute_conv_stencil_2: { hcompute_conv_stencil_1[root = 0, hw_output_s0_y_yo, hw_output_s0_x_xo] : 0 <= hw_output_s0_y_yo <= 61 and 0 <= hw_output_s0_x_xo <= 61 }
   // Read schedule : { hcompute_conv_stencil_1[root = 0, hw_output_s0_y_yo, hw_output_s0_x_xo] -> [hw_output_s0_y_yo, hw_output_s0_x_xo, 2] : 0 <= hw_output_s0_y_yo <= 61 and 0 <= hw_output_s0_x_xo <= 61 }
   // Write schedule: { hcompute_conv_stencil[root = 0, hw_output_s0_y_yo, hw_output_s0_x_xo] -> [hw_output_s0_y_yo, hw_output_s0_x_xo, 0] : 0 <= hw_output_s0_y_yo <= 61 and 0 <= hw_output_s0_x_xo <= 61 }
-  // DD fold: {  }
   auto value_conv_stencil_hcompute_conv_stencil_2 = conv_stencil.conv_stencil_hcompute_conv_stencil_2_to_conv_stencil_hcompute_conv_stencil_1_4.peek(/* one reader or all rams */ 0);
   return value_conv_stencil_hcompute_conv_stencil_2;
 #ifndef __VIVADO_SYNTH__
@@ -98,7 +97,6 @@ inline hw_uint<16> conv_stencil_hcompute_hw_output_stencil_7_select(conv_stencil
     // Overlap with conv_stencil_hcompute_conv_stencil_1_3: { hcompute_hw_output_stencil[root = 0, hw_output_s0_y_yo, hw_output_s0_x_xo] : 0 <= hw_output_s0_y_yo <= 61 and 0 <= hw_output_s0_x_xo <= 61 }
   // Read schedule : { hcompute_hw_output_stencil[root = 0, hw_output_s0_y_yo, hw_output_s0_x_xo] -> [hw_output_s0_y_yo, hw_output_s0_x_xo, 3] : 0 <= hw_output_s0_y_yo <= 61 and 0 <= hw_output_s0_x_xo <= 61 }
   // Write schedule: { hcompute_conv_stencil_1[root = 0, hw_output_s0_y_yo, hw_output_s0_x_xo] -> [hw_output_s0_y_yo, hw_output_s0_x_xo, 2] : 0 <= hw_output_s0_y_yo <= 61 and 0 <= hw_output_s0_x_xo <= 61 }
-  // DD fold: {  }
   auto value_conv_stencil_hcompute_conv_stencil_1_3 = conv_stencil.conv_stencil_hcompute_conv_stencil_1_3_to_conv_stencil_hcompute_hw_output_stencil_7.peek(/* one reader or all rams */ 0);
   return value_conv_stencil_hcompute_conv_stencil_1_3;
 #ifndef __VIVADO_SYNTH__
@@ -190,7 +188,6 @@ inline hw_uint<16> hw_input_copy_stencil_hcompute_conv_stencil_1_5_select(hw_inp
     // Overlap with hw_input_copy_stencil_hcompute_hw_input_copy_stencil_0: { hcompute_conv_stencil_1[root = 0, hw_output_s0_y_yo, hw_output_s0_x_xo] : 0 <= hw_output_s0_y_yo <= 61 and 0 <= hw_output_s0_x_xo <= 61 }
   // Read schedule : { hcompute_conv_stencil_1[root = 0, hw_output_s0_y_yo, hw_output_s0_x_xo] -> [hw_output_s0_y_yo, hw_output_s0_x_xo, 2] : 0 <= hw_output_s0_y_yo <= 61 and 0 <= hw_output_s0_x_xo <= 61 }
   // Write schedule: { hcompute_hw_input_copy_stencil[root = 0, hw_input_copy_s0_y, hw_input_copy_s0_x] -> [hw_input_copy_s0_y, hw_input_copy_s0_x, 1] : 0 <= hw_input_copy_s0_y <= 63 and 0 <= hw_input_copy_s0_x <= 63 }
-  // DD fold: {  }
   auto value_hw_input_copy_stencil_hcompute_hw_input_copy_stencil_0 = hw_input_copy_stencil.hw_input_copy_stencil_hcompute_hw_input_copy_stencil_0_to_hw_input_copy_stencil_hcompute_conv_stencil_1_5.peek(/* one reader or all rams */ 0);
   return value_hw_input_copy_stencil_hcompute_hw_input_copy_stencil_0;
 #ifndef __VIVADO_SYNTH__

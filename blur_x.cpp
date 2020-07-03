@@ -91,7 +91,6 @@ inline hw_uint<16> I_out_blur_30_3_select(I_cache& I, int root, int d1, int d0, 
     // Overlap with I_I_id0_0: { out_blur_30[root = 0, d1, d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // Read schedule : { out_blur_30[root = 0, d1, d0] -> [2 + d1, d0, 1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // Write schedule: { I_id0[root = 0, id1, id0] -> [id1, id0, 0] : 0 <= id1 <= 7 and 0 <= id0 <= 31 }
-  // DD fold: { out_blur_30[root, d1, d0] -> 64 : root = 0 and 0 <= d1 <= 5 and 0 < d0 <= 30; out_blur_30[root, d1, d0] -> (33 + d0) : root = 0 and d0 = 31 and 0 <= d1 <= 5; out_blur_30[root, d1, d0] -> 64 : root = 0 and d0 = 0 and 0 <= d1 <= 5 }
   auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_3.peek_64();
   return value_I_I_id0_0;
 #ifndef __VIVADO_SYNTH__
@@ -111,7 +110,6 @@ inline hw_uint<16> I_out_blur_30_4_select(I_cache& I, int root, int d1, int d0, 
     // Overlap with I_I_id0_0: { out_blur_30[root = 0, d1, d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // Read schedule : { out_blur_30[root = 0, d1, d0] -> [2 + d1, d0, 1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // Write schedule: { I_id0[root = 0, id1, id0] -> [id1, id0, 0] : 0 <= id1 <= 7 and 0 <= id0 <= 31 }
-  // DD fold: { out_blur_30[root, d1, d0] -> 32 : root = 0 and 0 <= d1 <= 5 and 0 < d0 <= 30; out_blur_30[root, d1, d0] -> (1 + d0) : root = 0 and d0 = 31 and 0 <= d1 <= 5; out_blur_30[root, d1, d0] -> 32 : root = 0 and d0 = 0 and 0 <= d1 <= 5 }
   auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_3.peek_32();
   return value_I_I_id0_0;
 #ifndef __VIVADO_SYNTH__
@@ -131,7 +129,6 @@ inline hw_uint<16> I_out_blur_30_5_select(I_cache& I, int root, int d1, int d0, 
     // Overlap with I_I_id0_0: { out_blur_30[root = 0, d1, d0] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // Read schedule : { out_blur_30[root = 0, d1, d0] -> [2 + d1, d0, 1] : 0 <= d1 <= 5 and 0 <= d0 <= 31 }
   // Write schedule: { I_id0[root = 0, id1, id0] -> [id1, id0, 0] : 0 <= id1 <= 7 and 0 <= id0 <= 31 }
-  // DD fold: {  }
   auto value_I_I_id0_0 = I.I_I_id0_0_merged_banks_3.peek_0();
   return value_I_I_id0_0;
 #ifndef __VIVADO_SYNTH__
