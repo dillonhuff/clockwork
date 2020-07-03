@@ -261,6 +261,10 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
   def->addInstance(op->name, compute_unit);
 }
 
+void generate_coreir_op_controller(op* op, vector<isl_map*>& sched_maps) {
+
+}
+
 CoreIR::Module* generate_coreir(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -298,7 +302,9 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
   auto ub = ns->newModuleDecl(prg.name, utp);
   auto def = ub->newModuleDef();
 
+  auto sched_maps = get_maps(schedmap);
   for (auto op : prg.all_ops()) {
+    generate_coreir_op_controller(op, sched_maps);
     generate_coreir_compute_unit(found_compute, def, op, prg, buffers);
   }
 
