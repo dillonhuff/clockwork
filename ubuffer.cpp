@@ -1036,6 +1036,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
           def->connect(bc->sel(b.name), def->sel(b.name)->sel("rdata"));
         }
       }
+      def->connect(def->sel(controller_name(outpt))->sel("d"), bc->sel("d"));
       def->connect(bc->sel("out"), def->sel("self")->sel(buf.container_bundle(outpt))->sel(buf.bundle_offset(outpt)));
     }
   }
