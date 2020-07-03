@@ -573,16 +573,6 @@ CoreIR::Module* coreir_for_multi_aff(CoreIR::Context* context, isl_multi_aff* af
   return m;
 }
 
-CoreIR::Wireable* mkConst(CoreIR::ModuleDef* def, const int width, const int val) {
-  auto context = def->getContext();
-  auto c = def->getContext();
-  auto one = def->addInstance(context->getUnique(),
-      "coreir.const",
-      {{"width", CoreIR::Const::make(c, width)}},
-      {{"value", CoreIR::Const::make(c, BitVector(width, val))}});
-  return one->sel("out");
-}
-
 CoreIR::Module* coreir_for_basic_set(CoreIR::Context* context, isl_basic_set* dom) {
   cout << tab(1) << "dom = " << str(dom) << endl;
   assert(num_div_dims(dom) == 0);
@@ -1018,9 +1008,13 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   }
 
   CoreIR::Instance* add_port_controller(CoreIR::ModuleDef* def, const std::string& inpt, UBuffer& buf) {
+    cout << "Buffer..." << endl;
+    cout << buf << endl;
+
     auto c = def->getContext();
 
     auto sched = buf.schedule.at(inpt);
+    cout << "sched = " << str(sched) << endl;
     auto sms = get_maps(sched);
     assert(sms.size() == 1);
 

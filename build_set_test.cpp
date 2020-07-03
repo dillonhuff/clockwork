@@ -10190,6 +10190,97 @@ prog simplified_conv_layer() {
   return prg;
 }
 
+void run_verilator_tb(const std::string& name) {
+
+  int to_verilog_res = cmd("./coreir/bin/coreir --input " + name + ".json --output " + name + ".v --passes flattentypes;verilog");
+  assert(to_verilog_res == 0);
+
+  int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
+  assert(verilator_build == 0);
+
+  int verilator_run = cmd("./obj_dir/Videntity_stream");
+  assert(verilator_run == 0);
+}
+
+void reduce_stream_coreir_test() {
+  prog prg("reduce_stream");
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["out"] = 16;
+  prg.buffer_port_widths["in_buf"] = 16;
+  prg.buffer_port_widths["tmp"] = 16;
+
+  prg.add_input("in");
+  prg.add_output("out");
+  auto ld = prg.add_loop("x", 0, 10)->add_op("ld");
+  ld->add_load("in", "x");
+  ld->add_store("in_buf", "x");
+  
+  auto rd = prg.add_loop("r", 0, 7);
+  auto init = rd->add_op("init");
+  init->add_function("set_zero");
+  init->add_store("tmp", "r");
+  auto reduce = rd->add_loop("k", 0, 3)->add_op("reduce");
+  reduce->add_load("tmp", "r");
+  reduce->add_load("in_buf", "r + k");
+  reduce->add_store("tmp", "r");
+  
+  auto st = prg.add_loop("y", 0, 7)->add_op("st");
+  st->add_load("tmp", "y");
+  st->add_store("out", "y");
+  prg.pretty_print();
+  //assert(false);
+
+  CodegenOptions options;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  options.all_rams = true;
+
+#ifdef COREIR
+
+  auto dom = pad_uset(prg.whole_iteration_domain());
+  auto valid = pad_map(prg.validity_deps());
+  auto prox = cpy(valid);
+  auto sched = hardware_schedule_umap(dom, valid, prox);
+  cout << "sched before its = " << str(sched) << endl;
+  sched = its(sched, dom);
+  cout << "sched after its = " << str(sched) << endl;
+
+  cout << "Hw schedule" << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+ 
+  //assert(false);
+
+  auto bufs = build_buffers(prg, sched);
+  for (auto& b : bufs) {
+    if (b.second.num_in_ports() > 0 &&
+        b.second.num_out_ports() > 0) {
+      cout << b.second << endl;
+      b.second.generate_banks_and_merge(options);
+    }
+  }
+
+  //assert(false);
+
+  generate_coreir(options, bufs, prg, sched);
+  run_verilator_tb(prg.name);
+  assert(false);
+
+  //int to_verilog_res = cmd("./coreir/bin/coreir --input identity_stream.json --output identity_stream.v --passes flattentypes;verilog");
+  //assert(to_verilog_res == 0);
+
+  //int verilator_build = cmd("verilator -Wall --cc identity_stream.v --exe --build identity_stream_verilog_tb.cpp --top-module identity_stream -Wno-lint");
+  //assert(verilator_build == 0);
+
+  //int verilator_run = cmd("./obj_dir/Videntity_stream");
+  //assert(verilator_run == 0);
+
+  //assert(false);
+#endif
+
+}
+
 void identity_stream_coreir_test() {
   prog prg("identity_stream");
   prg.buffer_port_widths["in"] = 16;
@@ -10248,7 +10339,7 @@ void identity_stream_coreir_test() {
   int verilator_run = cmd("./obj_dir/Videntity_stream");
   assert(verilator_run == 0);
 
-  assert(false);
+  //assert(false);
 #endif
 
 }
@@ -10318,7 +10409,7 @@ void weight_streaming_test() {
   int verilator_run = cmd("./obj_dir/Vconv_layer_3D");
   assert(verilator_run == 0);
 
-  assert(false);
+  //assert(false);
 #endif
 
 }
@@ -11057,6 +11148,7 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
+  reduce_stream_coreir_test();
   identity_stream_coreir_test();
   weight_streaming_test();
   //assert(false);

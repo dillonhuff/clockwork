@@ -26,6 +26,7 @@ int main() {
     if (dut.out_st_write_en == 1) {
       num_valids++;
       cout << "valid out = " << (int) dut.out_st_write_0 << endl;
+      actual.push_back((int) dut.out_st_write_0);
     }
     dut.clk = 0;
     dut.eval();

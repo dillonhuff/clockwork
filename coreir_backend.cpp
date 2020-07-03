@@ -64,7 +64,22 @@ CoreIR::Wireable* orList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wirea
   }
   return val;
 }
+
+CoreIR::Wireable* mkConst(CoreIR::ModuleDef* def, const int width, const int val) {
+  auto context = def->getContext();
+  auto c = def->getContext();
+  auto one = def->addInstance(context->getUnique(),
+      "coreir.const",
+      {{"width", CoreIR::Const::make(c, width)}},
+      {{"value", CoreIR::Const::make(c, BitVector(width, val))}});
+  return one->sel("out");
+}
+
+
 CoreIR::Wireable* addList(CoreIR::ModuleDef* def, const std::vector<CoreIR::Wireable*>& vals) {
+  if (vals.size() == 0) {
+    return mkConst(def, 16, 0);
+  }
   assert(vals.size() > 0);
   auto context = def->getContext();
   CoreIR::Wireable* val = nullptr;
