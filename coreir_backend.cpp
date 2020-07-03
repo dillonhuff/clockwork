@@ -255,7 +255,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
             assert(hi - lo == pix_width);
             auto w =
               def->addInstance("slice_" + def->getContext()->getUnique(), "coreir.slice", {{"lo", COREMK(context, lo)}, {"hi", COREMK(context, hi)}, {"width", COREMK(context, bundle_width)}});
-            def->connect(w->sel("in"), bsel);
+            def->connect(w->sel("in"), bsel->sel(0));
             inputs.push_back(w->sel("out"));
           }
         }
