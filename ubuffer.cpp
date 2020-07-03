@@ -838,33 +838,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       bcm->setDef(bdef);
       return bcm;
 
-      //map<string, isl_set*> in_ports_to_conditions;
-      //umap* reads_to_sources = buf.get_lexmax_events(outpt);
-      //cout << "reads to source for " << outpt << ": " << str(reads_to_sources) << endl;
-      //uset* producers_for_outpt = range(reads_to_sources);
-
-      //auto read_map = buf.access_map.at(outpt);
-      //for (auto inpt : possible_ports) {
-        //auto write_map = buf.access_map.at(inpt);
-        //auto data_written = range(write_map);
-
-        //auto common_write_ops =
-          //domain(its_range(read_map, data_written));
-
-        //auto write_ops =
-          //domain(buf.access_map.at(inpt));
-        //auto op_overlap = domain(its_range(reads_to_sources, write_ops));
-
-        //auto overlap = its(op_overlap, common_write_ops);
-
-        //auto read_ops =
-          //domain(buf.access_map.at(outpt));
-
-        //auto readers_that_use_this_port =
-          //gist(overlap, read_ops);
-        //in_ports_to_conditions[inpt] =
-          //to_set(simplify(readers_that_use_this_port));
-      //}
   }
 
   CoreIR::Instance* add_port_controller(CoreIR::ModuleDef* def, const std::string& inpt, UBuffer& buf) {
@@ -1237,10 +1210,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     return buf.name + "." + value_str;
   }
 
-  //selector generate_select(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
   void generate_select(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
-    //cout << "creating select for port: <" << outpt <<"> in buffer: " << buf.name << endl;
-    //selector sel = generate_select_decl(options, out, outpt, buf);
     generate_select_decl(options, out, outpt, buf);
 
     out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
@@ -1295,35 +1265,25 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     if (possible_ports.size() == 1) {
       string inpt = possible_ports.at(0);
       string peeked_val = delay_string(options, out, inpt, outpt, buf);
-      string access_val = buf.generate_linearize_ram_addr(outpt);
-      buf.get_ram_address(outpt);
-      //sel.bank_conditions.push_back("1");
-      //sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, inpt));
+      //string access_val = buf.generate_linearize_ram_addr(outpt);
+      //buf.get_ram_address(outpt);
 
       out << tab(1) << "auto value_" << inpt << " = " << peeked_val << ";" << endl;
       out << tab(1) << "return value_" << inpt << ";" << endl;
     } else {
-      //assert(false);
       for (auto port : possible_ports) {
-        //auto lm = buf.get_lexmax_events(port, outpt);
-        //cout << "lexmax events = " << str(lm) << endl;
         out << tab(1) << "if (" << map_find(port, in_ports_to_conditions) << ") {" << endl;
         string peeked_val = delay_string(options, out, port, outpt, buf);
-        //sel.bank_conditions.push_back("1");
-        //sel.inner_bank_offsets.push_back(evaluate_dd(buf, outpt, port));
 
         out << tab(2) << "auto value_" << port << " = " << peeked_val << ";" << endl;
         out << tab(2) << "return value_" << port << ";" << endl;
         out << tab(1) << "}" << endl << endl;
         out << tab(1) << endl;
       }
-      //assert(false);
     }
 
     select_debug_assertions(options, out, outpt, buf);
     out << "}" << endl << endl;
-
-    //return sel;
   }
 
   void generate_bundles(CodegenOptions& options, std::ostream& out, UBuffer& buf) {
