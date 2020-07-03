@@ -397,7 +397,6 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         def->connect(load_delay_reg->sel("out")->sel(0), def->sel(output_en));
 
         def->connect("self." + pg(buf_name, bundle_name), op->name + "." + pg(buf_name, bundle_name));
-        //def->connect("self." + pg(buf_name, bundle_name) + "_en", op->name + "." + pg(buf_name, bundle_name) + "_valid");
       } else {
         //assert(false);
         def->connect(buf_name + "." + bundle_name, op->name + "." + pg(buf_name, bundle_name));
