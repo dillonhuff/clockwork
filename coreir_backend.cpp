@@ -17,6 +17,10 @@ std::string exe_start_name(const std::string& n) {
   return n + "_exe_start";
 }
 
+std::string exe_start_control_vars_name(const std::string& n) {
+  return n + "_exe_start_control_vars";
+}
+
 std::string read_start_control_vars_name(const std::string& n) {
   return n + "_read_start_control_vars";
 }
@@ -44,6 +48,18 @@ std::string pg(const pair<string, string>& b) {
   return pg(b.first, b.second);
 }
 
+  CoreIR::Wireable* wire(CoreIR::ModuleDef* bdef,
+      const int width,
+      const std::string& name,
+      CoreIR::Wireable* w) {
+    auto c = bdef->getContext();
+    auto r = bdef->addInstance(
+        name,
+        "coreir.wire", {{"width", COREMK(c, width)}});
+
+    bdef->connect(r->sel("in"), w);
+    return r->sel("out");
+  }
   CoreIR::Wireable* wirebit(CoreIR::ModuleDef* bdef,
       const std::string& name,
       CoreIR::Wireable* w) {
@@ -342,6 +358,13 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
   auto exe_start = delaybit(def, exe_start_name(op->name), controller->sel("valid"));
   delaybit(def, write_start_name(op->name), exe_start);
 
+  wire(def, 16*num_dims(dom), read_start_control_vars_name(op->name), controller->sel("d"));
+  auto exe_start_ctrl = delay(def, exe_start_control_vars_name(op->name),
+      controller->sel("d"),
+      16*num_dims(dom));
+  delay(def, write_start_control_vars_name(op->name),
+      exe_start_ctrl,
+      16*num_dims(dom));
   return controller;
 }
 
@@ -674,14 +697,33 @@ void generate_coreir(CodegenOptions& options,
   CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
       CoreIR::Wireable* w,
       const int width) {
+    return delay(bdef, bdef->getContext()->getUnique(), w, width);
+  }
+
+  CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
+      const std::string name,
+      CoreIR::Wireable* w,
+      const int width) {
     auto c = bdef->getContext();
     auto r = bdef->addInstance(
-        "delay_reg_" + c->getUnique(),
+        name,
         "mantle.reg",
         {{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, false)}});
     bdef->connect(r->sel("in"), w);
     return r->sel("out");
   }
+
+  //CoreIR::Wireable* delay(CoreIR::ModuleDef* bdef,
+      //CoreIR::Wireable* w,
+      //const int width) {
+    //auto c = bdef->getContext();
+    //auto r = bdef->addInstance(
+        //"delay_reg_" + c->getUnique(),
+        //"mantle.reg",
+        //{{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, false)}});
+    //bdef->connect(r->sel("in"), w);
+    //return r->sel("out");
+  //}
 
 
 CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
