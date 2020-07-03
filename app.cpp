@@ -1358,6 +1358,14 @@ hardware_schedule(
     cout << "lm = " << str(max_deps) << endl << endl;
   }
 
+  // TODO: Replace with more precise self-constraint
+  // for reductions
+  for (auto dep : get_maps(validity)) {
+    if (domain_name(dep) == "reduce") {
+      string iis = ii_var(domain_name(dep), num_in_dims(dep) - 1);
+      modulo_schedule.add_geq(iis, (int) 4);
+    }
+  }
   // All root IIs must be equal
   for (auto s : get_sets(padded_domain)) {
     for (auto other : get_sets(padded_domain)) {

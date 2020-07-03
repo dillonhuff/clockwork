@@ -20,7 +20,7 @@ int main() {
   //}
   //vector<int> actual;
 
-  for (int t = 0; t < 120; t++) {
+  for (int t = 0; t < 200; t++) {
     dut.in_ld_read_0 = t + 1;
 
     if (dut.out_st_write_en == 1) {
