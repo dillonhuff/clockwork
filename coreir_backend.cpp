@@ -228,6 +228,35 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
           }
           assert(found);
         }
+      } else {
+        // Generate dummy compute logic
+        vector<CoreIR::Wireable*> inputs;
+        for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
+          string buf_name = bundle.first;
+          string bundle_name = bundle.second;
+          auto buf = map_find(buf_name, buffers);
+          int pix_width = buf.port_widths;
+          int nlanes = buf.lanes_in_bundle(bundle_name);
+          int bundle_width = buf.port_bundle_width(bundle_name);
+          int offset = 0;
+          CoreIR::Wireable* bsel =
+            def->sel("self." + bundle_name);
+          for (int l = 0; l < nlanes; l++) {
+            int lo = l*pix_width;
+            int hi = lo + pix_width;
+            assert(hi - lo == pix_width);
+            auto w =
+              def->addInstance("slice_" + def->getContext()->getUnique(), "coreir.slice", {{"lo", COREMK(context, lo)}, {"hi", COREMK(context, hi)}, {"width", COREMK(context, bundle_width)}});
+            def->connect(w->sel("in"), bsel);
+            inputs.push_back(w->sel("out"));
+          }
+        }
+        auto result = addList(def, inputs);
+
+        for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
+          def->connect(result, def->sel("self")->sel(bundle.second));
+        }
+
       }
       vector<CoreIR::Wireable*> vals;
       for (pair<string, string> bundle : incoming_bundles(op, buffers, prg)) {
