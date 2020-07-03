@@ -10202,6 +10202,71 @@ void run_verilator_tb(const std::string& name) {
   assert(verilator_run == 0);
 }
 
+void identity_stream_through_mem_coreir_test() {
+  prog prg("identity_stream_through_mem");
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["out"] = 16;
+  prg.buffer_port_widths["in_buf"] = 16;
+  prg.buffer_port_widths["tmp"] = 16;
+
+  prg.add_input("in");
+  prg.add_output("out");
+  auto ld = prg.add_loop("x", 0, 10)->add_op("ld");
+  ld->add_load("in", "x");
+  ld->add_store("in_buf", "x");
+  
+  auto rd = prg.add_loop("r", 0, 10)->add_op("transfer");
+  rd->add_load("in_buf", "r");
+  rd->add_store("tmp", "r");
+  
+  auto st = prg.add_loop("y", 0, 10)->add_op("st");
+  st->add_load("tmp", "y");
+  st->add_store("out", "y");
+  prg.pretty_print();
+  //assert(false);
+
+  CodegenOptions options;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  options.all_rams = true;
+
+#ifdef COREIR
+
+  //auto dom = pad_uset(prg.whole_iteration_domain());
+  //auto valid = pad_map(prg.validity_deps());
+  auto dom = (prg.whole_iteration_domain());
+  auto valid = (prg.validity_deps());
+  auto prox = cpy(valid);
+  auto sched = hardware_schedule_umap(dom, valid, prox);
+  cout << "sched before its = " << str(sched) << endl;
+  sched = its(sched, dom);
+  cout << "sched after its = " << str(sched) << endl;
+
+  cout << "Hw schedule" << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+ 
+  //assert(false);
+
+  auto bufs = build_buffers(prg, sched);
+  for (auto& b : bufs) {
+    if (b.second.num_in_ports() > 0 &&
+        b.second.num_out_ports() > 0) {
+      cout << b.second << endl;
+      b.second.generate_banks_and_merge(options);
+    }
+  }
+
+  //assert(false);
+
+  generate_coreir(options, bufs, prg, sched);
+  run_verilator_tb(prg.name);
+  assert(false);
+#endif
+
+}
+
 void reduce_stream_coreir_test() {
   prog prg("reduce_stream");
   prg.buffer_port_widths["in"] = 16;
@@ -11150,6 +11215,7 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
+  identity_stream_through_mem_coreir_test();
   reduce_stream_coreir_test();
   identity_stream_coreir_test();
   weight_streaming_test();
