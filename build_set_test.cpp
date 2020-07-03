@@ -10190,6 +10190,65 @@ prog simplified_conv_layer() {
   return prg;
 }
 
+void identity_stream_coreir_test() {
+  prog prg("identity_stream");
+  prg.add_input("in");
+  prg.add_output("out");
+  auto ld = prg.add_loop("x", 0, 10)->add_op("ld");
+  ld->add_load("in", "x");
+  ld->add_store("in_buf", "x");
+  
+  auto st = prg.add_loop("y", 0, 10)->add_op("st");
+  st->add_load("in_buf", "y");
+  st->add_store("out", "y");
+  prg.pretty_print();
+  assert(false);
+
+  CodegenOptions options;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  options.all_rams = true;
+
+#ifdef COREIR
+
+  auto dom = prg.whole_iteration_domain();
+  auto valid = prg.validity_deps();
+  auto prox = cpy(valid);
+  auto sched = hardware_schedule_umap(dom, valid, prox);
+  sched = its(sched, prg.whole_iteration_domain());
+
+  cout << "Hw schedule" << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+  assert(false);
+  
+  auto bufs = build_buffers(prg, sched);
+  for (auto& b : bufs) {
+    if (b.second.num_in_ports() > 0 &&
+        b.second.num_out_ports() > 0) {
+      cout << b.second << endl;
+      b.second.generate_banks_and_merge(options);
+    }
+  }
+
+  //assert(false);
+
+  generate_coreir(options, bufs, prg, sched);
+
+  int to_verilog_res = cmd("./coreir/bin/coreir --input conv_layer_3D.json --output conv_layer_3D.v --passes flattentypes;verilog");
+  assert(to_verilog_res == 0);
+
+  int verilator_build = cmd("verilator -Wall --cc conv_layer_3D.v --exe --build conv_layer_3D_verilog_tb.cpp --top-module conv_layer_3D -Wno-lint");
+  assert(verilator_build == 0);
+
+  int verilator_run = cmd("./obj_dir/Vconv_layer_3D");
+  assert(verilator_build == 0);
+
+  assert(false);
+#endif
+
+}
 void weight_streaming_test() {
   prog prg = simplified_conv_layer();
   prg.pretty_print();
@@ -10995,6 +11054,7 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
+  identity_stream_coreir_test();
   weight_streaming_test();
   //assert(false);
   halide_conv_layer_3D_test();
