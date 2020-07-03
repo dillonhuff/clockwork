@@ -16,6 +16,7 @@ using CoreIR::ModuleDef;
 std::string exe_start_name(const std::string& n) {
   return n + "_exe_start";
 }
+
 std::string read_start_name(const std::string& n) {
   return n + "_read_start";
 }
@@ -320,6 +321,7 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
   auto aff_c = affine_controller(c, dom, aff);
   aff_c->print();
   auto controller = def->addInstance(controller_name(op->name), aff_c);
+
   wirebit(def, read_start_name(op->name), controller->sel("valid"));
   auto exe_start = delaybit(def, exe_start_name(op->name), controller->sel("valid"));
   delaybit(def, write_start_name(op->name), exe_start);
