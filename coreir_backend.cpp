@@ -319,7 +319,7 @@ Wireable* write_start_control_vars(ModuleDef* def, const std::string& opname) {
 }
 
 Wireable* read_start_wire(ModuleDef* def, const std::string& opname) {
-  return def->sel(write_start_name(opname))->sel("out");
+  return def->sel(read_start_name(opname))->sel("out");
 }
 
 Wireable* write_start_wire(ModuleDef* def, const std::string& opname) {
