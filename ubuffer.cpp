@@ -752,6 +752,14 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     return def->addInstance(controller_name(inpt), aff_c);
   }
 
+  CoreIR::Wireable* control_vars(CoreIR::ModuleDef* def, const std::string& reader) {
+    return def->sel(controller_name(reader))->sel("d");
+  }
+
+  CoreIR::Wireable* control_en(CoreIR::ModuleDef* def, const std::string& reader) {
+    return def->sel(controller_name(reader))->sel("valid");
+  }
+
   CoreIR::Module* coreir_broadcast(CoreIR::Context* c, const std::string& inpt, UBuffer& buf) {
     int width = buf.port_widths;
     CoreIR::Namespace* ns = c->getNamespace("global");
