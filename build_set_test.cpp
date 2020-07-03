@@ -10198,7 +10198,7 @@ void run_verilator_tb(const std::string& name) {
   int verilator_build = cmd("verilator -Wall --cc " + name + ".v --exe --build " + name + "_verilog_tb.cpp --top-module " + name + " -Wno-lint");
   assert(verilator_build == 0);
 
-  int verilator_run = cmd("./obj_dir/Videntity_stream");
+  int verilator_run = cmd("./obj_dir/V" + name);
   assert(verilator_run == 0);
 }
 
@@ -10237,8 +10237,10 @@ void reduce_stream_coreir_test() {
 
 #ifdef COREIR
 
-  auto dom = pad_uset(prg.whole_iteration_domain());
-  auto valid = pad_map(prg.validity_deps());
+  //auto dom = pad_uset(prg.whole_iteration_domain());
+  //auto valid = pad_map(prg.validity_deps());
+  auto dom = (prg.whole_iteration_domain());
+  auto valid = (prg.validity_deps());
   auto prox = cpy(valid);
   auto sched = hardware_schedule_umap(dom, valid, prox);
   cout << "sched before its = " << str(sched) << endl;

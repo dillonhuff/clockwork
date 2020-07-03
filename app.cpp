@@ -1282,9 +1282,9 @@ hardware_schedule(
 
 
   cout << "Creating hw schedule..." << endl;
-  auto padded_domain = pad_uset(domain);
-  auto padded_validity = pad_map(validity);
-  auto padded_proximity = pad_map(proximity);
+  auto padded_domain = cpy(domain);
+  auto padded_validity = cpy(validity);
+  auto padded_proximity = cpy(proximity);
 
   auto ct = ctx(padded_domain);
 
@@ -1369,38 +1369,35 @@ hardware_schedule(
 
   modulo_schedule.minimize(simplify(obj));
 
-  auto clks = clockwork_schedule(padded_domain, padded_validity, padded_proximity);
-  cout << "clockwork sched" << endl;
+  //auto clks = clockwork_schedule(padded_domain, padded_validity, padded_proximity);
+  //cout << "clockwork sched" << endl;
 
-  map<string, vector<isl_val*> > iis;
-  map<string, isl_val*> delays;
-  for (auto c : clks) {
-    vector<isl_val*> final_iss;
-    isl_val* d = zero(ct);
+  //map<string, vector<isl_val*> > iis;
+  //map<string, isl_val*> delays;
+  //for (auto c : clks) {
+    //vector<isl_val*> final_iss;
 
-    //zero(ct);
-    assert(d != nullptr);
-    cout << tab(1) << c.first << " ";
-    int dim = 0;
-    for (auto s : c.second) {
-      cout << str(s) << ", ";
-      final_iss.push_back(mul(get_coeff(s, 0), modulo_schedule.value(ii_var(c.first, dim))));
-      d = add(d, mul(const_coeff(s), modulo_schedule.value(ii_var(c.first, dim))));
-      dim++;
-    }
-    cout << endl;
-    iis[c.first] = final_iss;
-    isl_val* opos = nullptr;
-    for (int i = 0; i < sorted_sets.size(); i++) {
-      if (sorted_sets.at(i) == c.first) {
-        opos = isl_val_int_from_si(ct, i);
-        break;
-      }
-    }
-    assert(opos != nullptr);
-    delays[c.first] = add(d, opos);
-  }
-  //assert(false);
+    //cout << tab(1) << c.first << " ";
+    //int dim = 0;
+    //for (auto s : c.second) {
+      //cout << str(s) << ", ";
+      ////final_iss.push_back(mul(get_coeff(s, 0), modulo_schedule.value(ii_var(c.first, dim))));
+      //final_iss.push_back(modulo_schedule.value(ii_var(c.first, dim)));
+      //dim++;
+    //}
+    //cout << endl;
+    //iis[c.first] = final_iss;
+    //isl_val* opos = nullptr;
+    //for (int i = 0; i < sorted_sets.size(); i++) {
+      //if (sorted_sets.at(i) == c.first) {
+        //opos = isl_val_int_from_si(ct, i);
+        //break;
+      //}
+    //}
+    //assert(opos != nullptr);
+    ////delays[c.first] = add(d, opos);
+  //}
+  ////assert(false);
 
   map<string, isl_aff*> hw_schedules;
   for (auto f : get_sets(padded_domain)) {
@@ -1408,15 +1405,13 @@ hardware_schedule(
     string n = name(f);
 
     isl_aff* s = aff_on_domain(get_local_space(f), zero(ct));
-    isl_aff* cycle_delay = aff_on_domain(get_local_space(f), one(ct));
+    //isl_aff* cycle_delay = aff_on_domain(get_local_space(f), one(ct));
 
     for (int i = 0; i < dim; i++) {
       cout << ii_var(n, i) << " = " << str(modulo_schedule.value(ii_var(n, i))) << endl;
-      s = set_coeff(s, i, map_find(n, iis).at(i));
-      //s = set_coeff(s, i, modulo_schedule.value(ii_var(n, i)));
+      s = set_coeff(s, i, modulo_schedule.value(ii_var(n, i)));
     }
 
-    //s = set_const_coeff(s, map_find(n, delays));
     s = set_const_coeff(s, modulo_schedule.value(hw_delay_var(n)));
 
     hw_schedules[name(f)] = s;
