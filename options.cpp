@@ -3,7 +3,7 @@
 
 using namespace dbhc;
 
-std::string CodegenOptions::banking_strategy(const std::string& buffer) {
+std::string CodegenOptions::get_banking_strategy(const std::string& buffer) {
   if (!contains_key(buffer, banking_strategies)) {
     return "exhaustive";
   }

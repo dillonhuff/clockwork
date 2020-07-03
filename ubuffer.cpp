@@ -404,29 +404,34 @@ CoreIR::Module* ram_module(CoreIR::Context* c, const int width, const int depth)
 
   auto m = c->getNamespace("global")->newModuleDecl("ram_" + c->getUnique(), tp);
   auto def = m->newModuleDef();
-  auto bnk = def->addInstance(
-      "bank",
-      "cgralib.Mem",
-      {{"width", CoreIR::Const::make(c, width)}, {"total_depth", CoreIR::Const::make(c, depth)}},
-      {{"mode", CoreIR::Const::make(c, "SRAM")}});
+  //auto bnk = def->addInstance(
+      //"bank",
+      //"coreir.mem",
+      //{{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, depth)}});
+      ////{{"mode", CoreIR::Const::make(c, "SRAM")}});
+  ////auto bnk = def->addInstance(
+      ////"bank",
+      ////"cgralib.Mem",
+      ////{{"width", CoreIR::Const::make(c, width)}, {"total_depth", CoreIR::Const::make(c, depth)}},
+      ////{{"mode", CoreIR::Const::make(c, "SRAM")}});
 
-  auto constant = def->addInstance(c->getUnique(),
-      "corebit.const",
-      {{"value", CoreIR::Const::make(c, true)}});
+  //auto constant = def->addInstance(c->getUnique(),
+      //"corebit.const",
+      //{{"value", CoreIR::Const::make(c, true)}});
 
-  def->connect(constant->sel("out"), bnk->sel("cg_en"));
+  ////def->connect(constant->sel("out"), bnk->sel("cg_en"));
 
-  auto next_val = def->addInstance("addr_select", "coreir.mux", {{"width", CoreIR::Const::make(c, width)}});
-  def->connect(next_val->sel("sel"), def->sel("self.wen"));
-  def->connect(next_val->sel("in0"), def->sel("self.waddr"));
-  def->connect(next_val->sel("in1"), def->sel("self.raddr"));
-  def->connect(next_val->sel("out"), bnk->sel("addr"));
+  //auto next_val = def->addInstance("addr_select", "coreir.mux", {{"width", CoreIR::Const::make(c, width)}});
+  //def->connect(next_val->sel("sel"), def->sel("self.wen"));
+  //def->connect(next_val->sel("in0"), def->sel("self.waddr"));
+  //def->connect(next_val->sel("in1"), def->sel("self.raddr"));
+  //def->connect(next_val->sel("out"), bnk->sel("addr"));
 
-  //def->connect(def->sel("self.clk"), bnk->sel("clk"));
-  def->connect(def->sel("self.wdata"), bnk->sel("wdata"));
-  def->connect(def->sel("self.rdata"), bnk->sel("rdata"));
-  def->connect(def->sel("self.wen"), bnk->sel("wen"));
-  def->connect(def->sel("self.ren"), bnk->sel("ren"));
+  ////def->connect(def->sel("self.clk"), bnk->sel("clk"));
+  //def->connect(def->sel("self.wdata"), bnk->sel("wdata"));
+  //def->connect(def->sel("self.rdata"), bnk->sel("rdata"));
+  //def->connect(def->sel("self.wen"), bnk->sel("wen"));
+  //def->connect(def->sel("self.ren"), bnk->sel("ren"));
 
   //def->connect("self.clk", "mem.clk");
   //def->connect("self.wdata", "mem.wdata");
@@ -439,29 +444,29 @@ CoreIR::Module* ram_module(CoreIR::Context* c, const int width, const int depth)
   //def->connect("raddr_slice.out", "mem.raddr");
   //def->connect("self.ren", "readreg.en");
 
-  //uint awidth = (uint)ceil(log2(depth));
-  //CoreIR::Values sliceArgs = {{"width", CoreIR::Const::make(c, width)},
-    //{"lo", CoreIR::Const::make(c, 0)},
-    //{"hi", CoreIR::Const::make(c, awidth)}};
-  //def->addInstance("raddr_slice", "coreir.slice", sliceArgs);
-  //def->addInstance("waddr_slice", "coreir.slice", sliceArgs);
+  uint awidth = (uint)ceil(log2(depth));
+  CoreIR::Values sliceArgs = {{"width", CoreIR::Const::make(c, width)},
+    {"lo", CoreIR::Const::make(c, 0)},
+    {"hi", CoreIR::Const::make(c, awidth)}};
+  def->addInstance("raddr_slice", "coreir.slice", sliceArgs);
+  def->addInstance("waddr_slice", "coreir.slice", sliceArgs);
 
-  //def->addInstance("mem", "coreir.mem", {{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, depth)}});
-  //def->addInstance(
-      //"readreg",
-      //"mantle.reg",
-      //{{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, true)}});
-  //def->connect("self.clk", "readreg.clk");
-  //def->connect("self.clk", "mem.clk");
-  //def->connect("self.wdata", "mem.wdata");
-  //def->connect("self.waddr", "waddr_slice.in");
-  //def->connect("waddr_slice.out", "mem.waddr");
-  //def->connect("self.wen", "mem.wen");
-  //def->connect("mem.rdata", "readreg.in");
-  //def->connect("self.rdata", "readreg.out");
-  //def->connect("self.raddr", "raddr_slice.in");
-  //def->connect("raddr_slice.out", "mem.raddr");
-  //def->connect("self.ren", "readreg.en");
+  def->addInstance("mem", "coreir.mem", {{"width", CoreIR::Const::make(c, width)}, {"depth", CoreIR::Const::make(c, depth)}});
+  def->addInstance(
+      "readreg",
+      "mantle.reg",
+      {{"width", CoreIR::Const::make(c, width)}, {"has_en", CoreIR::Const::make(c, true)}});
+  def->connect("self.clk", "readreg.clk");
+  def->connect("self.clk", "mem.clk");
+  def->connect("self.wdata", "mem.wdata");
+  def->connect("self.waddr", "waddr_slice.in");
+  def->connect("waddr_slice.out", "mem.waddr");
+  def->connect("self.wen", "mem.wen");
+  def->connect("mem.rdata", "readreg.in");
+  def->connect("self.rdata", "readreg.out");
+  def->connect("self.raddr", "raddr_slice.in");
+  def->connect("raddr_slice.out", "mem.raddr");
+  def->connect("self.ren", "readreg.en");
   m->setDef(def);
   return m;
 }
@@ -795,13 +800,18 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   CoreIR::Module* generate_coreir_select(CodegenOptions& options, CoreIR::Context* c, const string& outpt, UBuffer& buf) {
     int width = buf.port_widths;
 
+    cout << "creating select for " << outpt << endl;
+
     auto ns = c->getNamespace("global");
       vector<pair<string, CoreIR::Type*> >
         ub_field{{"clk", c->Named("coreir.clkIn")},
           {"out", c->Bit()->Arr(width)}};
+      vector<string> possible_source_banks;
       for (auto b : buf.get_banks()) {
         if (elem(outpt, buf.get_bank_outputs(b.name))) {
           ub_field.push_back({b.name, c->BitIn()->Arr(width)});
+          possible_source_banks.push_back(b.name);
+          cout << "adding field for source bank: " << b.name << endl;
         }
       }
 
@@ -822,17 +832,19 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       assert(possible_ports.size() == 1 || possible_ports.size() == 2);
 
       if (possible_ports.size() == 1) {
+        cout << "only one possible port: " << possible_ports.at(0) << endl;
         for (auto inpt : possible_ports) {
-          for (auto b : buf.get_banks()) {
-            if (elem(inpt, buf.get_bank_inputs(b.name))) {
-              // TODO: Add real selection logic
-              bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
-              break;
-            }
-          }
+          auto b = buf.get_bank_between(inpt, outpt);
+          //for (auto b : buf.get_banks()) {
+          //if (elem(inpt, buf.get_bank_inputs(b.name))) {
+          // TODO: Add real selection logic
+          bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
+          break;
+          //}
+          //}
         }
       } else {
-        assert(false);
+        //assert(false);
       }
 
       bcm->setDef(bdef);
@@ -1980,7 +1992,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     }
 
     if (dynamic_ports.size() > 0 ||
-        options.banking_strategy(name) == "register_file") {
+        options.get_banking_strategy(name) == "register_file") {
         //elem(name, options.register_files)) {
 
       // Use a single bank implemented as registers

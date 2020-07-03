@@ -10985,6 +10985,9 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
+  halide_conv_layer_3D_test();
+  weight_streaming_test();
+  //assert(false);
   iccad_tests();
   //assert(false);
   upsample2d_test();
@@ -11021,8 +11024,6 @@ void application_tests() {
   lake_agg_sram_tb_config_test();
   halide_frontend_test();
   halide_cascade_test();
-  weight_streaming_test();
-  weight_streaming_test();
 
   //mmul_outer_prod_test();
 
@@ -11030,7 +11031,6 @@ void application_tests() {
 
   mmul_outer_prod_test();
   conv_3_3_halide_test();
-  halide_conv_layer_3D_test();
   cyclic_banked_conv_test();
 
   mini_conv_halide_test();
