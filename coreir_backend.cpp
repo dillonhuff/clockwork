@@ -309,11 +309,13 @@ void generate_coreir_compute_unit(bool found_compute, CoreIR::ModuleDef* def, op
 }
 
 Wireable* read_start_control_vars(ModuleDef* def, const std::string& opname) {
-  return def->sel(read_start_control_vars_name(opname))->sel("out");
+  return def->sel(controller_name(opname))->sel("d");
+  //return def->sel(read_start_control_vars_name(opname))->sel("out");
 }
 
 Wireable* write_start_control_vars(ModuleDef* def, const std::string& opname) {
-  return def->sel(write_start_control_vars_name(opname))->sel("out");
+  return def->sel(controller_name(opname))->sel("d");
+  //return def->sel(write_start_control_vars_name(opname))->sel("out");
 }
 
 Wireable* read_start_wire(ModuleDef* def, const std::string& opname) {
@@ -358,13 +360,13 @@ Instance* generate_coreir_op_controller(ModuleDef* def, op* op, vector<isl_map*>
   auto exe_start = delaybit(def, exe_start_name(op->name), controller->sel("valid"));
   delaybit(def, write_start_name(op->name), exe_start);
 
-  wire(def, 16*num_dims(dom), read_start_control_vars_name(op->name), controller->sel("d"));
-  auto exe_start_ctrl = delay(def, exe_start_control_vars_name(op->name),
-      controller->sel("d"),
-      16*num_dims(dom));
-  delay(def, write_start_control_vars_name(op->name),
-      exe_start_ctrl,
-      16*num_dims(dom));
+  //wire(def, 16*num_dims(dom), read_start_control_vars_name(op->name), controller->sel("d"));
+  //auto exe_start_ctrl = delay(def, exe_start_control_vars_name(op->name),
+      //controller->sel("d"),
+      //16*num_dims(dom));
+  //delay(def, write_start_control_vars_name(op->name),
+      //exe_start_ctrl,
+      //16*num_dims(dom));
   return controller;
 }
 
@@ -464,7 +466,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         def->connect(buf_name + "." + bundle_name + "_valid", op->name + "." + pg(buf_name, bundle_name) + "_en");
         def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
             read_start_wire(def, op->name));
-        def->connect(def->sel(buf_name + "." + bundle_name + "_ren"),
+        def->connect(def->sel(buf_name + "." + bundle_name + "_ctrl_vars"),
             read_start_control_vars(def, op->name));
       }
     }
