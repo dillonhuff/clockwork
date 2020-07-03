@@ -10986,6 +10986,7 @@ void unet_conv_3_3_test() {
 
 void application_tests() {
   halide_conv_layer_3D_test();
+  assert(false);
   weight_streaming_test();
   //assert(false);
   iccad_tests();

@@ -831,21 +831,28 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
       assert(possible_ports.size() == 1 || possible_ports.size() == 2);
 
-      if (possible_ports.size() == 1) {
-        cout << "only one possible port: " << possible_ports.at(0) << endl;
-        for (auto inpt : possible_ports) {
-          auto b = buf.get_bank_between(inpt, outpt);
-          //for (auto b : buf.get_banks()) {
-          //if (elem(inpt, buf.get_bank_inputs(b.name))) {
-          // TODO: Add real selection logic
-          bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
-          break;
-          //}
-          //}
-        }
-      } else {
-        //assert(false);
+      for (auto inpt : possible_ports) {
+        auto b = buf.get_bank_between(inpt, outpt);
+        // TODO: Add real selection logic
+        bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
+        break;
       }
+
+      //if (possible_ports.size() == 1) {
+        //cout << "only one possible port: " << possible_ports.at(0) << endl;
+        //for (auto inpt : possible_ports) {
+          //auto b = buf.get_bank_between(inpt, outpt);
+          ////for (auto b : buf.get_banks()) {
+          ////if (elem(inpt, buf.get_bank_inputs(b.name))) {
+          //// TODO: Add real selection logic
+          //bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
+          //break;
+          ////}
+          ////}
+        //}
+      //} else {
+        ////assert(false);
+      //}
 
       bcm->setDef(bdef);
       return bcm;
