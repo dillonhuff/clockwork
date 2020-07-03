@@ -1007,8 +1007,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         auto mux = cmux(bdef, width,
             bdef->sel("self.out"),
             in_set->sel("valid"),
-            bdef->sel("self")->sel(b0_name),
-            bdef->sel("self")->sel(b1_name));
+            bdef->sel("self")->sel(b1_name),
+            bdef->sel("self")->sel(b0_name));
+            //bdef->sel("self")->sel(b0_name),
+            //bdef->sel("self")->sel(b1_name));
       }
 
       bcm->setDef(bdef);
