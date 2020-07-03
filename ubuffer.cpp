@@ -3,8 +3,11 @@
 #ifdef COREIR
 #include "cwlib.h"
 #include "coreir_backend.h"
+
+using CoreIR::ModuleDef;
 #endif
 #include "coreir_backend.h"
+
 
 std::string read_addrgen_name(const std::string& n) {
   return n + "_read_addrgen";
@@ -570,6 +573,27 @@ CoreIR::Module* coreir_for_multi_aff(CoreIR::Context* context, isl_multi_aff* af
   return m;
 }
 
+CoreIR::Module* coreir_for_set(CoreIR::Context* context, isl_set* dom) {
+  cout << tab(1) << "dom = " << str(dom) << endl;
+  //assert(num_div_dims(dom) == 0);
+  //assert(num_param_dims(dom) == 0);
+
+  auto ns = context->getNamespace("global");
+  auto c = context;
+
+  int width = 16;
+  int dims = num_dims(dom);
+  vector<pair<string, CoreIR::Type*> >
+    ub_field{{"d", c->BitIn()->Arr(16)->Arr(dims)},
+      {"valid", c->Bit()}};
+
+  CoreIR::RecordType* utp = context->Record(ub_field);
+  auto m = ns->newModuleDecl("set_checker_" + context->getUnique(), utp);
+  auto def = m->newModuleDef();
+  m->setDef(def);
+  return m;
+}
+
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff) {
   cout << tab(1) << "dom = " << str(dom) << endl;
 
@@ -797,6 +821,21 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
   }
 
+  CoreIR::Instance* cmux(ModuleDef* def,
+      const int width,
+      CoreIR::Wireable* out,
+      CoreIR::Wireable* sel,
+      CoreIR::Wireable* in0,
+      CoreIR::Wireable* in1) {
+
+    auto c = def->getContext();
+    auto next_val = def->addInstance(def->getContext()->getUnique() + "_mux", "coreir.mux", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(out, next_val->sel("out"));
+    def->connect(in0, next_val->sel("in0"));
+    def->connect(in1, next_val->sel("in1"));
+    def->connect(sel, next_val->sel("sel"));
+    return next_val;
+  }
 
   map<string, isl_set*> input_ports_to_conditions(const std::string& outpt, UBuffer& buf) {
     map<string, isl_set*> in_ports_to_conditions;
@@ -875,32 +914,38 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
       assert(possible_ports.size() == 1 || possible_ports.size() == 2);
 
-      for (auto inpt : possible_ports) {
-        auto b = buf.get_bank_between(inpt, outpt);
-        // TODO: Add real selection logic
-        bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
-        break;
-      }
-
-      //if (possible_ports.size() == 1) {
-        //cout << "only one possible port: " << possible_ports.at(0) << endl;
-        //for (auto inpt : possible_ports) {
-          //auto b = buf.get_bank_between(inpt, outpt);
-          ////for (auto b : buf.get_banks()) {
-          ////if (elem(inpt, buf.get_bank_inputs(b.name))) {
-          //// TODO: Add real selection logic
-          //bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
-          //break;
-          ////}
-          ////}
-        //}
-      //} else {
-        ////assert(false);
+      //for (auto inpt : possible_ports) {
+        //auto b = buf.get_bank_between(inpt, outpt);
+        //// TODO: Add real selection logic
+        //bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
+        //break;
       //}
+
+      if (possible_ports.size() == 1) {
+        cout << "only one possible port: " << possible_ports.at(0) << endl;
+        for (auto inpt : possible_ports) {
+          auto b = buf.get_bank_between(inpt, outpt);
+          bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
+          break;
+        }
+      } else {
+        assert(possible_ports.size() == 2);
+        string pt0 = possible_ports.at(0);
+        string b0_name = buf.bank_between(pt0, outpt);
+        string pt1 = possible_ports.at(1);
+        string b1_name = buf.bank_between(pt1, outpt);
+        CoreIR::Module* in_set_mod = coreir_for_set(c, map_find(pt1, in_ports_to_conditions));
+        auto in_set = bdef->addInstance("set_select", in_set_mod);
+        bdef->connect(in_set->sel("d"), bdef->sel("self.d"));
+        auto mux = cmux(bdef, width,
+            bdef->sel("self.out"),
+            in_set->sel("valid"),
+            bdef->sel("self")->sel(b0_name),
+            bdef->sel("self")->sel(b1_name));
+      }
 
       bcm->setDef(bdef);
       return bcm;
-
   }
 
   CoreIR::Instance* add_port_controller(CoreIR::ModuleDef* def, const std::string& inpt, UBuffer& buf) {
