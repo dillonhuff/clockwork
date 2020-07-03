@@ -2400,16 +2400,7 @@ void regression_test(CodegenOptions& options,
   generate_regression_testbench(prg);
   vector<string> optimized_res = run_regression_tb(prg);
 
-  assert(unoptimized_res.size() == optimized_res.size());
-  for (size_t i = 0; i < unoptimized_res.size(); i++) {
-
-    if (!(unoptimized_res.at(i) == optimized_res.at(i))) {
-      cout << "Error: After optimization, at output " << i << " unoptimized_res != optimized_res" << endl;
-      cout << "\tunoptimized = " << unoptimized_res.at(i) << endl;
-      cout << "\toptimized   = " << optimized_res.at(i) << endl;
-      assert(unoptimized_res.at(i) == optimized_res.at(i));
-    }
-  }
+  compare(prg.name, optimized_res, unoptimized_res);
 }
 
 std::set<std::string> get_kernels(prog& prg) {

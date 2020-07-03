@@ -14,17 +14,6 @@
 CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
 #endif
 
-void compare(vector<string>& opt, vector<string>& naive) {
-  assert(opt.size() == naive.size());
-  for (size_t i = 0; i < opt.size(); i++) {
-    if (!(opt.at(i) == naive.at(i))) {
-      cout << "Error: Opt and naive disagree at " << i << ", opt = " << opt.at(i) << ", naive = " << naive.at(i) << endl;
-    }
-    assert(opt.at(i) == naive.at(i));
-  }
-  assert(opt == naive);
-}
-
 prog unet_conv_3_3() {
   prog prg;
   prg.compute_unit_file = "conv_3_3_compute.h";
@@ -68,13 +57,9 @@ prog unet_conv_3_3() {
   prg.buffer_port_widths["hw_kernel_stencil"] = 16;
   hcompute_hw_kernel_stencil->add_store("hw_kernel_stencil", "hw_kernel_s0_z", "hw_kernel_s0_w", "hw_kernel_s0_x", "hw_kernel_s0_y");
 ////producing conv.stencil
-  auto conv_s0_y = prg.add_loop("conv_s0_y", 0, 15);
-  auto conv_s0_x = conv_s0_y->add_loop("conv_s0_x", 0, 15);
-  auto conv_s0_w = conv_s0_x->add_loop("conv_s0_w", 0, 5);
-
-  //auto conv_s0_y = prg.add_loop("conv_s0_y", 0, 14);
-  //auto conv_s0_x = conv_s0_y->add_loop("conv_s0_x", 0, 14);
-  //auto conv_s0_w = conv_s0_x->add_loop("conv_s0_w", 0, 4);
+  auto conv_s0_y = prg.add_loop("conv_s0_y", 0, 14);
+  auto conv_s0_x = conv_s0_y->add_loop("conv_s0_x", 0, 14);
+  auto conv_s0_w = conv_s0_x->add_loop("conv_s0_w", 0, 4);
 
 //store is: conv.stencil(conv.s0.x, conv.s0.y, conv.s0.w) = 0
   auto hcompute_conv_stencil = conv_s0_w->add_op("hcompute_conv_stencil");
@@ -6901,7 +6886,7 @@ void up_stencil_down_test() {
   lp.realize_naive(options, "ds", size, size);
   auto naive = run_regression_tb("ds_naive");
 
-  compare(opt, naive);
+  compare("ds", opt, naive);
   //assert(opt == naive);
 }
 
@@ -10985,6 +10970,8 @@ void unet_conv_3_3_test() {
 }
 
 void application_tests() {
+  unet_conv_3_3_test();
+  assert(false);
   iccad_tests();
   //assert(false);
   upsample2d_test();
@@ -11008,7 +10995,6 @@ void application_tests() {
   tricky_shift_register_reconvergence_test();
   mismatched_stencil_test();
   gaussian_pyramid_app_test("gp64x64");
-  //unet_conv_3_3_test();
   //assert(false);
 
   up_down_unrolled_test();
