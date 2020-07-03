@@ -262,7 +262,7 @@ CoreIR::Module* generate_coreir(CodegenOptions& options,
         auto result = addList(def, inputs);
 
         for (pair<string, string> bundle : outgoing_bundles(op, buffers, prg)) {
-          def->connect(result, def->sel("self")->sel(pg(bundle)));
+          def->connect(result, def->sel("self")->sel(pg(bundle))->sel(0));
         }
 
         cout << "done with dummy compute" << endl;

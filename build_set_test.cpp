@@ -10192,6 +10192,10 @@ prog simplified_conv_layer() {
 
 void identity_stream_coreir_test() {
   prog prg("identity_stream");
+  prg.buffer_port_widths["in"] = 16;
+  prg.buffer_port_widths["out"] = 16;
+  prg.buffer_port_widths["in_buf"] = 16;
+
   prg.add_input("in");
   prg.add_output("out");
   auto ld = prg.add_loop("x", 0, 10)->add_op("ld");
