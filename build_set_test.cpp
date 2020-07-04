@@ -10613,7 +10613,7 @@ void cyclic_banked_conv_test() {
   CodegenOptions options;
   options.all_rams = true;
   options.banking_strategies["in"] =
-  {"cyclic", {3, -1}};
+  {"cyclic", {3, 1}};
   options.inner_bank_offset_mode =
     INNER_BANK_OFFSET_LINEAR;
 

@@ -637,6 +637,8 @@ class UBuffer {
     }
 #endif
 
+    int logical_dimension();
+
     //TODO: only support one read/write
     bool is_rd(isl_point* pt) {
         for (auto it: port_bundles) {

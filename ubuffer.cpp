@@ -1909,6 +1909,14 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     }
   }
 
+  int UBuffer::logical_dimension() {
+    assert(access_map.size() > 0);
+    umap* m = pick(access_map).second;
+    auto ms = get_maps(m);
+    assert(ms.size() > 0);
+    return num_out_dims(pick(ms));
+  }
+
   void UBuffer::print_bank_info() {
     //find the lexmin of all out port
     for (auto itr: get_banks()) {
@@ -1938,6 +1946,22 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       }
 
     } else if (options.get_banking_strategy(name) == "cyclic") {
+      banking_strategy strat = map_find(name, options.banking_strategies);
+      int dim = logical_dimension();
+      assert(dim == strat.cycle_factors.size());
+      vector<string> dvs;
+      vector<string> addrs;
+      for (int i = 0; i < dim; i++) {
+        assert(strat.cycle_factors.at(i) > 0);
+        dvs.push_back("a_" + str(i));
+        addrs.push_back("a_" + str(i) + " % " + str(strat.cycle_factors.at(i)));
+      }
+      string bank_func =
+        curlies(bracket_list(dvs) + " -> " + bracket_list(addrs));
+
+      cout << "bank func = " << bank_func << endl;
+      auto bank_map = isl_map_read_from_str(ctx, bank_func.c_str());
+      assert(banking_scheme_is_legal(bank_map, *this));
       assert(false);
     } else {
 

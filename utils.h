@@ -189,6 +189,11 @@ std::string comma_list(const std::vector<std::string>& strs) {
   return sep_list(strs, "", "", ", ");
 }
 
+static inline
+std::string bracket_list(const std::vector<std::string>& strs) {
+  return sep_list(strs, "[", "]", ", ");
+}
+
 template<typename T>
 static inline
 std::string comma_list(const std::vector<T>& vals) {
@@ -284,6 +289,11 @@ std::ostream& operator<<(std::ostream& out, vector<T>& v) {
 static inline
 string str(const int i) {
   return to_string(i);
+}
+
+static inline
+string curlies(const std::string& s) {
+  return "{" + s + "}";
 }
 
 static inline
