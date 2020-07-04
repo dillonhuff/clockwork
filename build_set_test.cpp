@@ -11247,8 +11247,14 @@ void halide_up_sample_test() {
 void unet_conv_3_3_test() {
   prog prg = unet_conv_3_3();
   prg.pretty_print();
-  //assert(false);
-  regression_test(prg);
+
+  CodegenOptions options;
+  options.all_rams = true;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+ 
+  generate_optimized_code(options, prg);
+  //regression_test(prg);
 }
 
 void coreir_set_test() {
@@ -11354,6 +11360,7 @@ void coreir_tests() {
 }
 
 void application_tests() {
+  unet_conv_3_3_test();
   coreir_tests();
 
   halide_conv_layer_3D_test();
