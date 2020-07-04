@@ -11340,7 +11340,7 @@ void unet_coreir_test() {
 }
 
 void coreir_tests() {
-  unet_coreir_test();
+  //unet_coreir_test();
   coreir_set_test();
   reduce_stream_coreir_test();
   coreir_controller_test();
