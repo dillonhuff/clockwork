@@ -1033,10 +1033,17 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
       smaller_dims_at_max = de_atmax->sel("out");
     }
 
+    auto next_val_atmax =
+      def->addInstance(df + "_next_value_at_max", "coreir.mux", {{"width", CoreIR::Const::make(c, width)}});
+    def->connect(next_val_atmax->sel("sel"), domain_at_max.at(d));
+    def->connect(next_val_atmax->sel("in0"), inc->sel("out"));
+    def->connect(next_val_atmax->sel("in1"), min_const->sel("out"));
+
     auto next_val = def->addInstance(df + "_next_value", "coreir.mux", {{"width", CoreIR::Const::make(c, width)}});
     def->connect(next_val->sel("sel"), smaller_dims_at_max);
     def->connect(next_val->sel("in0"), domain_regs.at(d)->sel("out"));
-    def->connect(next_val->sel("in1"), inc->sel("out"));
+    //def->connect(next_val->sel("in1"), inc->sel("out"));
+    def->connect(next_val->sel("in1"), next_val_atmax->sel("out"));
     def->connect(next_val->sel("out"), domain_regs.at(d)->sel("in"));
 
     //auto next_val = def->addInstance(df + "_next_value", "coreir.mux", {{"width", CoreIR::Const::make(c, width)}});
