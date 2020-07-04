@@ -1197,7 +1197,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       }
 
     } else {
-      assert(false);
+      // TODO: Fix this dummy implementation
+      string bank = pick(buf.get_banks()).name;
+      out << tab(1) << "auto value " << " = " << buf.name << "." << bank << ".RAM[0];" << endl;
+      out << tab(1) << "return value;" << endl;
     }
     select_debug_assertions(options, out, outpt, buf);
     out << "}" << endl << endl;
@@ -1943,6 +1946,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       bank bnk = compute_bank_info();
       for (int i = 0; i < num_banks; i++) {
         bank cpy = bnk;
+        cpy.name = "cyclic_bank_" + str(i);
         bank_list.push_back(cpy);
       }
 
