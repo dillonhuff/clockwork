@@ -706,16 +706,17 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         string b0_name = buf.bank_between(pt0, outpt);
         string pt1 = possible_ports.at(1);
         string b1_name = buf.bank_between(pt1, outpt);
+        cout << "creating coreir for set: " << str(map_find(pt1, in_ports_to_conditions)) << endl;
         CoreIR::Module* in_set_mod = coreir_for_set(c, map_find(pt1, in_ports_to_conditions));
         auto in_set = bdef->addInstance("set_select", in_set_mod);
         bdef->connect(in_set->sel("d"), bdef->sel("self.d"));
         auto mux = cmux(bdef, width,
             bdef->sel("self.out"),
             in_set->sel("valid"),
-            bdef->sel("self")->sel(b1_name),
-            bdef->sel("self")->sel(b0_name));
-            //bdef->sel("self")->sel(b0_name),
-            //bdef->sel("self")->sel(b1_name));
+            //bdef->sel("self")->sel(b1_name),
+            //bdef->sel("self")->sel(b0_name));
+            bdef->sel("self")->sel(b0_name),
+            bdef->sel("self")->sel(b1_name));
       }
 
       bcm->setDef(bdef);

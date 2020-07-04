@@ -889,7 +889,7 @@ CoreIR::Module* coreir_for_basic_set(CoreIR::Context* context, isl_basic_set* do
     if (isl_constraint_is_equality(c)) {
       cmp = def->addInstance("eq_" + context->getUnique(), "coreir.eq", {{"width", COREMK(context, width)}});
     } else {
-      cmp = def->addInstance("eq_" + context->getUnique(), "coreir.sge", {{"width", COREMK(context, width)}});
+      cmp = def->addInstance("geq_" + context->getUnique(), "coreir.sge", {{"width", COREMK(context, width)}});
     }
     assert(cmp != nullptr);
     def->connect(cmp->sel("in0"), csm->sel("out"));

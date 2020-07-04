@@ -10267,9 +10267,10 @@ void reduce_stream_coreir_test() {
   
   auto rd = prg.add_loop("r", 0, 7);
   auto init = rd->add_op("init");
-  init->add_function("set_zero");
+  init->add_function("set_zero_16");
   init->add_store("tmp", "r");
   auto reduce = rd->add_loop("k", 0, 3)->add_op("reduce");
+  reduce->add_function("fmadd_16");
   reduce->add_load("tmp", "r");
   reduce->add_load("in_buf", "r + k");
   reduce->add_store("tmp", "r");
@@ -10278,6 +10279,7 @@ void reduce_stream_coreir_test() {
   st->add_load("tmp", "y");
   st->add_store("out", "y");
   prg.pretty_print();
+  regression_test(prg);
   //assert(false);
 
   CodegenOptions options;
@@ -11250,6 +11252,30 @@ void unet_conv_3_3_test() {
   regression_test(prg);
 }
 
+void coreir_set_test() {
+#ifdef COREIR
+  CoreIR::Context* context = CoreIR::newContext();
+  isl_ctx* ctx = isl_ctx_alloc();
+
+  auto dom = rdset(ctx, "{ st[root, y] : y <= 2 }");
+
+  auto ctrl = coreir_for_set(context, dom);
+  context->runPasses({"wireclocks-coreir"});
+
+  ctrl->print();
+  if(!saveToFile(context->getNamespace("global"),
+        ctrl->getName() + ".json",
+        ctrl)) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
+
+  run_verilator_tb(ctrl->getName());
+
+  isl_ctx_free(ctx);
+  deleteContext(context);
+#endif // COREIR
+}
 void coreir_controller_test() {
 #ifdef COREIR
   CoreIR::Context* context = CoreIR::newContext();
@@ -11277,6 +11303,8 @@ void coreir_controller_test() {
 }
 
 void coreir_tests() {
+  coreir_set_test();
+  reduce_stream_coreir_test();
   coreir_controller_test();
   identity_stream_2d_coreir_test();
   identity_stream_coreir_test();
@@ -11284,7 +11312,6 @@ void coreir_tests() {
   weight_streaming_test();
 
   // Not yet working
-  reduce_stream_coreir_test();
   //assert(false);
 }
 
