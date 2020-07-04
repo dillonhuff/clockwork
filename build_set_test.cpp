@@ -11266,7 +11266,7 @@ void coreir_controller_test() {
   isl_ctx* ctx = isl_ctx_alloc();
 
   auto aff = rdaff(ctx, "{ [y, yi] -> [(10*y + yi)] }");
-  auto dom = rdset(ctx, "{ [y, yi] : 0 <= y <= 10 and 0 <= yi <= 3 }");
+  auto dom = rdset(ctx, "{ [y, yi] : 0 <= y < 10 and 0 <= yi < 3 }");
 
   auto ctrl = affine_controller(context, dom, aff);
   context->runPasses({"wireclocks-coreir"});

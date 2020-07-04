@@ -777,11 +777,14 @@ CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
   for (int d = 0; d < dims; d++) {
     int v = to_int(get_coeff(aff, d));
     cout << "coeff: " << v << endl;
-    auto constant = def->addInstance(context->getUnique(),
+    auto constant = def->addInstance(
+        "coeff_" + str(d),
+        //context->getUnique(),
         "coreir.const",
       {{"width", CoreIR::Const::make(c, width)}},
       {{"value", CoreIR::Const::make(c, BitVector(width, v))}});
-    auto m = def->addInstance(context->getUnique(),
+    auto m = def->addInstance(
+        "mul_d" + str(d) + "_" + context->getUnique(),
         "coreir.mul",
         {{"width", CoreIR::Const::make(c, width)}});
     def->connect(m->sel("in0"), constant->sel("out"));
@@ -790,7 +793,8 @@ CoreIR::Module* coreir_for_aff(CoreIR::Context* context, isl_aff* aff) {
   }
   int v = to_int(const_coeff(aff));
   cout << "coeff: " << v << endl;
-  auto constant = def->addInstance(context->getUnique(),
+  auto constant = def->addInstance(
+      "const_term",
       "coreir.const",
       {{"width", CoreIR::Const::make(c, width)}},
       {{"value", CoreIR::Const::make(c, BitVector(width, v))}});
@@ -994,6 +998,7 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
     def->connect(cmp->sel("out"), domain_regs.back()->sel("en"));
 
     int max_pt = to_int(lexmaxval(project_all_but(dom, d)));
+    cout << "controller max point for dimension " << d << " = " << max_pt << endl;
     auto max_const = def->addInstance("d_" + str(d) + "_max",
       "coreir.const",
       {{"width", CoreIR::Const::make(c, width)}},
@@ -1021,7 +1026,7 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
       {{"value", CoreIR::Const::make(c, BitVector(width, min_pt))}});
 
     CoreIR::Wireable* smaller_dims_at_max = tinc->sel("out");
-    for (int de = d; de < num_dims(dom); de++) {
+    for (int de = d + 1; de < num_dims(dom); de++) {
       auto de_atmax = def->addInstance(df + "_am_" + context->getUnique(), "corebit.and");
       def->connect(de_atmax->sel("in0"), smaller_dims_at_max);
       def->connect(de_atmax->sel("in1"), domain_at_max.at(de));
@@ -1030,9 +1035,15 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
 
     auto next_val = def->addInstance(df + "_next_value", "coreir.mux", {{"width", CoreIR::Const::make(c, width)}});
     def->connect(next_val->sel("sel"), smaller_dims_at_max);
-    def->connect(next_val->sel("in0"), inc->sel("out"));
-    def->connect(next_val->sel("in1"), min_const->sel("out"));
+    def->connect(next_val->sel("in0"), domain_regs.at(d)->sel("out"));
+    def->connect(next_val->sel("in1"), inc->sel("out"));
     def->connect(next_val->sel("out"), domain_regs.at(d)->sel("in"));
+
+    //auto next_val = def->addInstance(df + "_next_value", "coreir.mux", {{"width", CoreIR::Const::make(c, width)}});
+    //def->connect(next_val->sel("sel"), smaller_dims_at_max);
+    //def->connect(next_val->sel("in0"), inc->sel("out"));
+    //def->connect(next_val->sel("in1"), min_const->sel("out"));
+    //def->connect(next_val->sel("out"), domain_regs.at(d)->sel("in"));
   }
 
   aff_mod->print();
