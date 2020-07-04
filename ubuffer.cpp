@@ -979,8 +979,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     out << endl << endl;
 
-    for (auto inpt : buf.get_in_ports()) {
-    }
+    //for (auto inpt : buf.get_in_ports()) {
+    //}
 
   }
 
@@ -1006,18 +1006,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     return false;
   }
 
-  //selector generate_select_decl(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
   void generate_select_decl(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
     isl_space* s = get_space(buf.domain.at(outpt));
     auto dim_decls = space_var_decls(s);
     dim_decls.push_back("int dynamic_address");
-
-    //selector sel;
-    //sel.name = outpt + "_select";
-    //sel.buf_name = buf.name;
-    //sel.pt_type = buf.port_type_string();
-    //sel.out_port = outpt;
-    //sel.vars = space_var_args(s);
 
     out << "inline " + buf.port_type_string() + " " + outpt + "_select(";
     size_t nargs = 0;
@@ -1026,10 +1018,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     out << sep_list(dim_decls, "", "", ", ");
 
     out << ") {" << endl;
-    //cout << "Created dim decls" << endl;
     ignore_inter_deps(out, buf.name);
-
-    //return sel;
   }
 
   void select_debug_assertions(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
@@ -1115,16 +1104,17 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   }
 
   void generate_broadcast(CodegenOptions& options, std::ostream& out, const string& inpt, UBuffer& buf) {
-      vector<string> args;
-      args.push_back(buf.port_type_string(inpt) + "& " + inpt);
-      args.push_back(buf.name + "_cache& " + buf.name);
-      concat(args, dimension_var_decls(inpt, buf));
-      args.push_back("int dynamic_address");
-      string var_args = comma_list(dimension_var_args(inpt, buf));
+    vector<string> args;
+    args.push_back(buf.port_type_string(inpt) + "& " + inpt);
+    args.push_back(buf.name + "_cache& " + buf.name);
+    concat(args, dimension_var_decls(inpt, buf));
+    args.push_back("int dynamic_address");
+    string var_args = comma_list(dimension_var_args(inpt, buf));
 
-      out << "inline void " << inpt << "_write(";
-      out << comma_list(args) << ") {" << endl;
+    out << "inline void " << inpt << "_write(";
+    out << comma_list(args) << ") {" << endl;
 
+    if (buf.banking.partition != "cyclic") {
       //Different ram type, different address
       for (auto sb : buf.receiver_banks(inpt)) {
         if (sb.tp == INNER_BANK_OFFSET_STACK) {
@@ -1141,11 +1131,30 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
           }
         } else {
           assert(false);
-          out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt << ", " << var_args << ");" << endl;
         }
       }
+    } else {
+      // TODO: Replace with actual bank computation
+      for (auto sb : buf.get_banks()) {
+        if (sb.tp == INNER_BANK_OFFSET_STACK) {
+          out << tab(1) << buf.name << "." << sb.name << ".push(" << inpt << ");" << endl;
+        } else if (sb.tp == INNER_BANK_OFFSET_LINEAR) {
+          string linear_addr = buf.generate_linearize_ram_addr(inpt);
+          cout <<"Input port:" << inpt << ", Get ram string: " << linear_addr << endl;
+          if (!elem(inpt, buf.dynamic_ports)) {
+            out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt <<
+              ", " << linear_addr << ");" << endl;
+          } else {
+            out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt <<
+              ", " << "dynamic_address" << ");" << endl;
+          }
+        } else {
+          assert(false);
+        }
+      }
+    }
 
-      out << "}" << endl << endl;
+    out << "}" << endl << endl;
 
   }
 
@@ -1154,82 +1163,42 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
 
-    vector<string> possible_ports;
-    for (auto pt : buf.get_in_ports()) {
-      if (buf.has_bank_between(pt, outpt)) {
-        possible_ports.push_back(pt);
+    if (buf.banking.partition != "cyclic") {
+      vector<string> possible_ports;
+      for (auto pt : buf.get_in_ports()) {
+        if (buf.has_bank_between(pt, outpt)) {
+          possible_ports.push_back(pt);
+        }
       }
-    }
 
-    map<string, string> in_ports_to_conditions;
-    map<string, isl_set*> input_ports_to_condition_sets = input_ports_to_conditions(outpt, buf);
-    for (auto s : input_ports_to_condition_sets) {
-      in_ports_to_conditions[s.first] = codegen_c(s.second);
-    }
+      map<string, string> in_ports_to_conditions;
+      map<string, isl_set*> input_ports_to_condition_sets = input_ports_to_conditions(outpt, buf);
+      for (auto s : input_ports_to_condition_sets) {
+        in_ports_to_conditions[s.first] = codegen_c(s.second);
+      }
 
-    //// Singleton map from all read operations on this port to the
-    //// corresponding write operation that produces the data being
-    //// read.
-    //umap* reads_to_sources = buf.get_lexmax_events(outpt);
-    //out << tab(1) << "// Get lexmax events: " << str(reads_to_sources) << endl;
-    //cout << "reads to source for " << outpt << ": " << str(reads_to_sources) << endl;
-    //uset* producers_for_outpt = range(reads_to_sources);
+      if (in_ports_to_conditions.size() == 1) {
+        string inpt = pick(in_ports_to_conditions).first;
+        string peeked_val = delay_string(options, out, inpt, outpt, buf);
 
-    //auto read_map = buf.access_map.at(outpt);
-    //for (auto inpt : possible_ports) {
-      //auto write_map = buf.access_map.at(inpt);
-      //auto data_written = range(write_map);
+        out << tab(1) << "auto value_" << inpt << " = " << peeked_val << ";" << endl;
+        out << tab(1) << "return value_" << inpt << ";" << endl;
+      } else {
+        for (auto pc : in_ports_to_conditions) {
+          string port = pc.first;
+          out << tab(1) << "if (" << map_find(port, in_ports_to_conditions) << ") {" << endl;
+          string peeked_val = delay_string(options, out, port, outpt, buf);
 
-      //auto common_write_ops =
-        //domain(its_range(read_map, data_written));
+          out << tab(2) << "auto value_" << port << " = " << peeked_val << ";" << endl;
+          out << tab(2) << "return value_" << port << ";" << endl;
+          out << tab(1) << "}" << endl << endl;
+          out << tab(1) << endl;
+        }
+      }
 
-      //auto write_ops =
-        //domain(buf.access_map.at(inpt));
-      //auto op_overlap = domain(its_range(reads_to_sources, write_ops));
-
-      //auto overlap = its(op_overlap, common_write_ops);
-
-      //out << tab(2) << "// Op overlap with " << inpt << ": " << str(op_overlap) << endl;
-      //out << tab(2) << "// Common write op with " << inpt << ": " << str(common_write_ops) << endl;
-      //out << tab(2) << "// Overlap with " << inpt << ": " << str(overlap) << endl;
-      //if (!empty(overlap)) {
-        ////assert(false);
-        //auto read_ops =
-          //domain(buf.access_map.at(outpt));
-
-        //auto readers_that_use_this_port =
-          //gist(overlap, read_ops);
-        //in_ports_to_conditions[inpt] =
-          //codegen_c(simplify(readers_that_use_this_port));
-      //} else {
-        //in_ports_to_conditions[inpt] = "false";
-      //}
-    //}
-
-    //if (possible_ports.size() == 1) {
-    if (in_ports_to_conditions.size() == 1) {
-      string inpt = pick(in_ports_to_conditions).first;
-      //possible_ports.at(0);
-      string peeked_val = delay_string(options, out, inpt, outpt, buf);
-      //string access_val = buf.generate_linearize_ram_addr(outpt);
-      //buf.get_ram_address(outpt);
-
-      out << tab(1) << "auto value_" << inpt << " = " << peeked_val << ";" << endl;
-      out << tab(1) << "return value_" << inpt << ";" << endl;
     } else {
-      //for (auto port : possible_ports) {
-      for (auto pc : in_ports_to_conditions) {
-        string port = pc.first;
-        out << tab(1) << "if (" << map_find(port, in_ports_to_conditions) << ") {" << endl;
-        string peeked_val = delay_string(options, out, port, outpt, buf);
-
-        out << tab(2) << "auto value_" << port << " = " << peeked_val << ";" << endl;
-        out << tab(2) << "return value_" << port << ";" << endl;
-        out << tab(1) << "}" << endl << endl;
-        out << tab(1) << endl;
-      }
+      assert(false);
     }
-
     select_debug_assertions(options, out, outpt, buf);
     out << "}" << endl << endl;
   }
