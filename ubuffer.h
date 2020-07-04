@@ -25,21 +25,6 @@ std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
     return out;
 }
 
-//enum bank_type {
-  //BANK_TYPE_STACK,
-  //BANK_TYPE_RAM
-//};
-
-//struct selector {
-  //string buf_name;
-  //string pt_type;
-  //string out_port;
-  //string name;
-  //vector<string> vars;
-  //vector<string> bank_conditions;
-  //vector<string> inner_bank_offsets;
-//};
-
 struct HWconstraints {
     size_t port_width;
     size_t port_number;
@@ -57,7 +42,6 @@ struct TileConstraints{
 struct bank {
   std::string name;
   InnerBankOffsetMode tp;
-  //bank_type tp;
 
   // Stack bank properties
   std::string pt_type_string;

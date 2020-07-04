@@ -1937,6 +1937,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         }
       }
 
+    } else if (options.get_banking_strategy(name) == "cyclic") {
+      assert(false);
     } else {
 
       // Use naive banking that reaches target throughput

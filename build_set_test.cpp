@@ -11257,19 +11257,15 @@ void unet_conv_3_3_test() {
 
   auto buffers = build_buffers(prg, sched);
   auto buf = map_find(string("conv_stencil"), buffers);
-  //isl_map* slot_func =
-    //isl_map_read_from_str(prg.ctx,
-        //"{conv_stencil[x, y, z] -> M[x % 3, y % 3, z]}");
-  //assert(inner_bank_offset_is_legal(slot_func, buf));
 
   isl_map* bank_func =
     isl_map_read_from_str(prg.ctx,
         "{conv_stencil[x, y, z] -> B[x % 3, y % 3, z]}");
   assert(banking_scheme_is_legal(bank_func, buf));
-  assert(false);
 
   CodegenOptions options;
   options.all_rams = true;
+  options.banking_strategies["conv_stencil"] = {"cyclic", {3, 3, -1}};
   options.inner_bank_offset_mode =
     INNER_BANK_OFFSET_LINEAR;
  
