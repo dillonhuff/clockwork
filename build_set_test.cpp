@@ -10602,10 +10602,6 @@ void cyclic_banked_conv_test() {
     reduce->add_load("in", "x + " + str(c), "y + yi");
   }
   reduce->add_store("out", "x, y");
-  //for (auto l : prg.vector_load("in", 0, 3, 0, 3)) {
-    //reduce->add_load("in", )
-  //}
- 
 
   prg.pretty_print();
   prg.sanity_check();

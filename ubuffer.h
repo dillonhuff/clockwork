@@ -608,11 +608,10 @@ class UBuffer {
     std::map<string, isl_union_map*> schedule;
     std::map<string, vector<string> > port_bundles;
 
+    banking_strategy banking;
     std::vector<bank> bank_list;
     map<string, std::set<string> > banks_to_inputs;
     map<string, std::set<string> > banks_to_outputs;
-
-    //map<string, selector> selectors;
 
     //lowering ubuffer to memtile
     vector<int> read_cycle, write_cycle;
