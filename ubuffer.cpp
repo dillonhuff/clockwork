@@ -1747,42 +1747,82 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   }
 
   bank UBuffer::compute_bank_info(
+      CodegenOptions& options,
       const std::string& inpt,
       const std::string& outpt) {
-    int maxdelay = compute_dd_bound(outpt, inpt, true);
-    vector<int> read_delays{0};
 
-    // NOTE: Just to ensure we dont force everything to be a RAM
-    int num_readers = 0;
+    if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_STACK) {
 
-    auto in_actions = domain.at(inpt);
-    auto lex_max_events = get_lexmax_events(outpt);
-    auto act_dom =
-      ::domain(its_range(lex_max_events, to_uset(in_actions)));
+      int maxdelay = compute_dd_bound(outpt, inpt, true);
+      vector<int> read_delays{0};
 
-    if (!isl_union_set_is_empty(act_dom)) {
-      num_readers++;
-      int qpd = compute_dd_bound(outpt, inpt, true);
-      int lb = compute_dd_bound(outpt, inpt, false);
+      // NOTE: Just to ensure we dont force everything to be a RAM
+      int num_readers = 0;
 
-      for (int i = lb; i < qpd + 1; i++) {
-        read_delays.push_back(i);
+      auto in_actions = domain.at(inpt);
+      auto lex_max_events = get_lexmax_events(outpt);
+      auto act_dom =
+        ::domain(its_range(lex_max_events, to_uset(in_actions)));
+
+      if (!isl_union_set_is_empty(act_dom)) {
+        num_readers++;
+        int qpd = compute_dd_bound(outpt, inpt, true);
+        int lb = compute_dd_bound(outpt, inpt, false);
+
+        for (int i = lb; i < qpd + 1; i++) {
+          read_delays.push_back(i);
+        }
       }
+
+      auto rddom =
+        unn(range(access_map.at(inpt)),
+            range(access_map.at(outpt)));
+
+      //initial the delay map
+      map<string, int> delay_map = {{outpt, read_delays.back()}};
+
+      string pt_type_string = port_type_string();
+      string name = inpt + "_to_" + outpt;
+
+      stack_bank bank{name,
+        options.inner_bank_offset_mode,
+        pt_type_string,
+        read_delays,
+        num_readers,
+        maxdelay,
+        rddom,
+        delay_map};
+
+      return bank;
+    } else {
+      cout << "linear offset" << endl;
+      int maxdelay = -1;
+      vector<int> read_delays;
+      int num_readers = 0;
+
+      auto rddom =
+        unn(range(access_map.at(inpt)),
+            range(access_map.at(outpt)));
+
+      cout << "got rddom" << endl;
+      //initial the delay map
+      map<string, int> delay_map = {};
+
+      string pt_type_string = port_type_string();
+      string name = inpt + "_to_" + outpt;
+
+      stack_bank bank{name,
+        options.inner_bank_offset_mode,
+        pt_type_string,
+        read_delays,
+        num_readers,
+        maxdelay,
+        rddom,
+        delay_map};
+
+      return bank;
+
     }
-
-    string pt_type_string = port_type_string();
-    string name = inpt + "_to_" + outpt;
-
-    auto rddom =
-      unn(range(access_map.at(inpt)),
-          range(access_map.at(outpt)));
-
-    //initial the delay map
-    map<string, int> delay_map = {{outpt, read_delays.back()}};
-
-    stack_bank bank{name, INNER_BANK_OFFSET_STACK, pt_type_string, read_delays, num_readers, maxdelay, rddom, delay_map};
-
-    return bank;
   }
 
   void UBuffer::merge_bank(CodegenOptions& options, string inpt, vector<stack_bank> mergeable) {
@@ -1919,7 +1959,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
             its(range(access_map.at(inpt)), range(access_map.at(outpt)));
 
           if (!empty(ops_overlap) && !empty(overlap)) {
-            stack_bank bank = compute_bank_info(inpt, outpt);
+            stack_bank bank = compute_bank_info(options, inpt, outpt);
             add_bank_between(inpt, outpt, bank);
           }
         }
@@ -2158,7 +2198,9 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         //schedule.at(read) = to_umap(new_sched);
 
         remove_bank(read);
-        stack_bank bk = compute_bank_info(write, read);
+        CodegenOptions options;
+        options.inner_bank_offset_mode = INNER_BANK_OFFSET_STACK;
+        stack_bank bk = compute_bank_info(options, write, read);
         add_bank_between(write, read, bk);
       }
       else {

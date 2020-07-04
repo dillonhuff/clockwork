@@ -11303,7 +11303,44 @@ void coreir_controller_test() {
 #endif // COREIR
 }
 
+void unet_coreir_test() {
+  prog prg = unet_conv_3_3();
+
+#ifdef COREIR
+
+  auto dom = (prg.whole_iteration_domain());
+  auto valid = (prg.validity_deps());
+  auto prox = cpy(valid);
+  auto sched = hardware_schedule_umap(dom, valid, prox);
+  sched = its(sched, dom);
+
+  cout << "Hw schedule" << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+
+  CodegenOptions options;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  options.all_rams = true;
+  auto bufs = build_buffers(prg, sched);
+  for (auto& b : bufs) {
+    if (b.second.num_in_ports() > 0 &&
+        b.second.num_out_ports() > 0) {
+      //cout << b.second << endl;
+      b.second.generate_banks_and_merge(options);
+    }
+  }
+
+  generate_coreir(options, bufs, prg, sched);
+  run_verilator_tb(prg.name);
+
+#endif
+
+}
+
 void coreir_tests() {
+  unet_coreir_test();
   coreir_set_test();
   reduce_stream_coreir_test();
   coreir_controller_test();
