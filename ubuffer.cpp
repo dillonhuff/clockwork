@@ -814,10 +814,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     auto ns = c->getNamespace("global");
 
-    //for (auto inpt : buf.get_all_ports()) {
-      //auto ac = add_port_controller(def, inpt, buf);
-    //}
-
     for (auto bank : buf.get_banks()) {
       int capacity = int_upper_bound(card(bank.rddom));
       int addr_width = minihls::clog2(capacity);

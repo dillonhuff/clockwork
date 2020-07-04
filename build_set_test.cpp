@@ -11257,7 +11257,8 @@ void coreir_set_test() {
   CoreIR::Context* context = CoreIR::newContext();
   isl_ctx* ctx = isl_ctx_alloc();
 
-  auto dom = rdset(ctx, "{ st[root, y] : y <= 2 }");
+  //auto dom = rdset(ctx, "{ st[root, y] : y <= 2 }");
+  auto dom = rdset(ctx, "{ reduce[root, r, k] : k > 0 }");
 
   auto ctrl = coreir_for_set(context, dom);
   context->runPasses({"wireclocks-coreir"});
@@ -11272,6 +11273,7 @@ void coreir_set_test() {
 
   run_verilator_tb(ctrl->getName());
 
+  //assert(false);
   isl_ctx_free(ctx);
   deleteContext(context);
 #endif // COREIR

@@ -14,6 +14,7 @@ int main() {
 
   dut.d_0 = 10;
   dut.d_1 = 0;
+  dut.d_2 = 3;
 
   dut.eval();
 
@@ -21,7 +22,8 @@ int main() {
   assert(dut.valid == 1);
 
   dut.d_0 = 10;
-  dut.d_1 = 3;
+  dut.d_1 = 8;
+  dut.d_2 = 0;
 
   dut.eval();
 
@@ -29,7 +31,8 @@ int main() {
   assert(dut.valid == 0);
 
   dut.d_0 = 10;
-  dut.d_1 = 2;
+  dut.d_1 = 234;
+  dut.d_2 = 2;
 
   dut.eval();
 
