@@ -11260,7 +11260,34 @@ void unet_conv_3_3_test() {
   regression_test(prg);
 }
 
+void coreir_controller_test() {
+#ifdef COREIR
+  CoreIR::Context* context = CoreIR::newContext();
+  isl_ctx* ctx = isl_ctx_alloc();
+
+  auto aff = rdaff(ctx, "{ [y, yi] -> [(10*y + yi)] }");
+  auto dom = rdset(ctx, "{ [y, yi] : 0 <= y <= 10 and 0 <= yi <= 3 }");
+
+  auto ctrl = affine_controller(context, dom, aff);
+  context->runPasses({"wireclocks-coreir"});
+
+  ctrl->print();
+  if(!saveToFile(context->getNamespace("global"),
+        ctrl->getName() + ".json",
+        ctrl)) {
+    cout << "Could not save ubuffer coreir" << endl;
+    context->die();
+  }
+
+  run_verilator_tb(ctrl->getName());
+
+  isl_ctx_free(ctx);
+  deleteContext(context);
+#endif // COREIR
+}
+
 void coreir_tests() {
+  coreir_controller_test();
   identity_stream_2d_coreir_test();
   identity_stream_coreir_test();
   weight_streaming_test();

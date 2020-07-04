@@ -942,7 +942,6 @@ CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_af
   int width = 16;
   vector<pair<string, CoreIR::Type*> >
     ub_field{{"clk", c->Named("coreir.clkIn")},
-      //{"reset", c->BitIn()},
       {"valid", c->Bit()}};
   int dims = num_in_dims(aff);
   ub_field.push_back({"d", context->Bit()->Arr(16)->Arr(dims)});
