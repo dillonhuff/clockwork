@@ -10613,8 +10613,9 @@ void cyclic_banked_conv_test() {
   options.inner_bank_offset_mode =
     INNER_BANK_OFFSET_LINEAR;
 
-  regression_test(options, prg);
-  assert(false);
+  generate_optimized_code(options, prg);
+  //regression_test(options, prg);
+  //assert(false);
 
   //auto buffers = build_buffers(prg, prg.optimized_codegen());
   //for (auto b : buffers) {
@@ -11386,7 +11387,7 @@ void coreir_tests() {
 void application_tests() {
   cyclic_banked_conv_test();
 
-  unet_conv_3_3_test();
+  //unet_conv_3_3_test();
   reduce_1d_test();
   reduce_2d_test();
   ram_addr_unit_test();
