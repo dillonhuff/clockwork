@@ -35,6 +35,6 @@ int main() {
 
   cout << "num valids = " << num_valids << endl;
   assert(num_valids == 10*3);
-  assert(false);
+  //assert(false);
   cout << "done" << endl;
 }

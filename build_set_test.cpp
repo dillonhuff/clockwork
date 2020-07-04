@@ -10319,16 +10319,6 @@ void reduce_stream_coreir_test() {
   run_verilator_tb(prg.name);
   assert(false);
 
-  //int to_verilog_res = cmd("./coreir/bin/coreir --input identity_stream.json --output identity_stream.v --passes flattentypes;verilog");
-  //assert(to_verilog_res == 0);
-
-  //int verilator_build = cmd("verilator -Wall --cc identity_stream.v --exe --build identity_stream_verilog_tb.cpp --top-module identity_stream -Wno-lint");
-  //assert(verilator_build == 0);
-
-  //int verilator_run = cmd("./obj_dir/Videntity_stream");
-  //assert(verilator_run == 0);
-
-  //assert(false);
 #endif
 
 }
@@ -11290,10 +11280,10 @@ void coreir_tests() {
   coreir_controller_test();
   identity_stream_2d_coreir_test();
   identity_stream_coreir_test();
+  identity_stream_through_mem_coreir_test();
   weight_streaming_test();
 
   // Not yet working
-  identity_stream_through_mem_coreir_test();
   reduce_stream_coreir_test();
   //assert(false);
 }
