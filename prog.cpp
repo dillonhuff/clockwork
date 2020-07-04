@@ -2990,3 +2990,27 @@ void all_register_files(prog& prg, CodegenOptions& options) {
     }
   }
 }
+
+
+void prog::merge_ops(const std::string& loop) {
+  cout << "Merging ops at: " << loop << endl;
+  auto lp = find_loop(loop);
+  vector<op*> children_copies = lp->children;
+  lp->children = {};
+  op* merged = lp->add_op(unique_name("merged"));
+  for (auto c : children_copies) {
+    assert(!c->is_loop);
+    merged->copy_memory_operations_from(c);
+  }
+  lp->pretty_print(1);
+}
+
+void ir_node::copy_memory_operations_from(op* other) {
+  assert(!other->is_loop);
+
+  concat(produce_locs, other->produce_locs);
+  concat(dynamic_store_addresses, other->dynamic_store_addresses);
+  concat(consume_locs_pair, other->consume_locs_pair);
+  concat(dynamic_load_addresses, other->dynamic_load_addresses);
+}
+

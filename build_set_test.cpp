@@ -11249,6 +11249,25 @@ void unet_conv_3_3_test() {
   prog prg = unet_conv_3_3();
   prg.pretty_print();
 
+  prg.merge_ops("conv_s1_r_x");
+  prg.pretty_print();
+
+  auto sched = prg.unoptimized_schedule();
+
+
+  auto buffers = build_buffers(prg, sched);
+  auto buf = map_find(string("conv_stencil"), buffers);
+  //isl_map* slot_func =
+    //isl_map_read_from_str(prg.ctx,
+        //"{conv_stencil[x, y, z] -> M[x % 3, y % 3, z]}");
+  //assert(inner_bank_offset_is_legal(slot_func, buf));
+
+  isl_map* bank_func =
+    isl_map_read_from_str(prg.ctx,
+        "{conv_stencil[x, y, z] -> B[x % 3, y % 3, z]}");
+  assert(banking_scheme_is_legal(bank_func, buf));
+  assert(false);
+
   CodegenOptions options;
   options.all_rams = true;
   options.inner_bank_offset_mode =
@@ -11361,11 +11380,11 @@ void coreir_tests() {
 }
 
 void application_tests() {
+  unet_conv_3_3_test();
   reduce_1d_test();
   reduce_2d_test();
   ram_addr_unit_test();
 
-  unet_conv_3_3_test();
   coreir_tests();
 
   halide_conv_layer_3D_test();

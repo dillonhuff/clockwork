@@ -61,6 +61,8 @@ struct ir_node {
 
   ir_node() : parent(nullptr), is_loop(false), unroll_factor(1) {}
 
+  void copy_memory_operations_from(op* other);
+
   bool dynamic_writes(const std::string& buf) {
     for (auto d : dynamic_store_addresses) {
       if (d.buffer == buf) {
@@ -215,6 +217,10 @@ struct ir_node {
       for (auto c : children) {
           c->get_domain_boxes(b, domain_map);
       }
+  }
+
+  void pretty_print(int level) const {
+    pretty_print(std::cout, level);
   }
 
   void pretty_print(std::ostream& out, int level) const {
@@ -668,6 +674,8 @@ struct prog {
     unique_num++;
     return name;
   }
+
+  void merge_ops(const std::string& loop);
 
   op* add_loop(const int l, const int u) {
     return add_loop(unique_name("l"), l, u);
