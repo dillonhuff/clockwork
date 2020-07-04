@@ -2982,3 +2982,11 @@ void generate_trace(prog& prg, umap* schedmap) {
 
   conv_out.close();
 }
+
+void all_register_files(prog& prg, CodegenOptions& options) {
+  for (auto op : prg.all_ops()) {
+    for (auto b : op->buffers_referenced()) {
+      options.banking_strategies[b] = {"register_file"};
+    }
+  }
+}

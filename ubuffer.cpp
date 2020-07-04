@@ -229,30 +229,24 @@ void generate_bank(CodegenOptions& options,
     auto partitions =
       bank.get_partitions();
     int partition_size = partitions.size();
-    if (num_readers == 1 || partition_size == 1 || options.all_rams) {
-      //add a ram capacity compute pass is different from stack bank
-      int capacity = int_upper_bound(card(bank.rddom));
-      out << "\t// Capacity: " << capacity << endl;
-      out << tab(1) << pt_type_string << " RAM[" << capacity << "];" << endl;
-      out << tab(1) << "inline " + pt_type_string + " read(const int addr) {" << endl;
+    //add a ram capacity compute pass is different from stack bank
+    int capacity = int_upper_bound(card(bank.rddom));
+    out << "\t// Capacity: " << capacity << endl;
+    out << tab(1) << pt_type_string << " RAM[" << capacity << "];" << endl;
+    out << tab(1) << "inline " + pt_type_string + " read(const int addr) {" << endl;
 
+    ignore_inter_deps(out, "RAM");
+    out << tab(2) << "return RAM[addr];" << endl;
+    out << tab(1) << "}" << endl << endl;
+    out << endl << endl;
+
+    out << "\tinline void write(const " + pt_type_string + " value, const int addr) {" << endl;
+    if (options.add_dependence_pragmas) {
       ignore_inter_deps(out, "RAM");
-      out << tab(2) << "return RAM[addr];" << endl;
-      out << tab(1) << "}" << endl << endl;
-      out << endl << endl;
-
-      out << "\tinline void write(const " + pt_type_string + " value, const int addr) {" << endl;
-      if (options.add_dependence_pragmas) {
-        ignore_inter_deps(out, "RAM");
-      }
-      out << tab(2) << "RAM[addr] = value;" << endl;
-      out << tab(1) << "}" << endl << endl;
-
     }
-    else {
-      cout << "Error in bank " << bank.name << ": no support more than one reader in RAM mode" << endl;
-      assert(false);
-    }
+    out << tab(2) << "RAM[addr] = value;" << endl;
+    out << tab(1) << "}" << endl << endl;
+
     out << "};" << endl << endl;
 
   } else {

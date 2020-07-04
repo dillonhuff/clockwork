@@ -2637,6 +2637,7 @@ void ram_addr_unit_test() {
     CodegenOptions options;
     options.internal = true;
     options.inner_bank_offset_mode = INNER_BANK_OFFSET_LINEAR;
+    all_register_files(prg, options);
     generate_app_code(options, buffers, prg, opt_sched);
   }
   //generate_regression_testbench(prg, buffers);
@@ -11360,6 +11361,10 @@ void coreir_tests() {
 }
 
 void application_tests() {
+  reduce_1d_test();
+  reduce_2d_test();
+  ram_addr_unit_test();
+
   unet_conv_3_3_test();
   coreir_tests();
 
@@ -11406,9 +11411,6 @@ void application_tests() {
   cyclic_banked_conv_test();
 
   mini_conv_halide_test();
-  reduce_1d_test();
-  ram_addr_unit_test();
-  reduce_2d_test();
   grayscale_conversion_test();
   //print_test();
   //manual_unroll_test();

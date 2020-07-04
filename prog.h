@@ -132,6 +132,14 @@ struct ir_node {
     return reads;
   }
 
+  std::set<string> buffers_referenced() const {
+    std::set<string> written = buffers_written();
+    for (auto b : buffers_read()) {
+      written.insert(b);
+    }
+    return written;
+  }
+
   std::set<string> buffers_written() const {
     std::set<string> written;
     for (auto l : produce_locs) {
@@ -1393,3 +1401,5 @@ umap* hardware_schedule(prog& prg);
 std::string optimized_code_string(prog& prg);
 
 void generate_trace(prog& prg, umap* sched);
+
+void all_register_files(prog& prg, CodegenOptions& options);
