@@ -1363,7 +1363,7 @@ hardware_schedule(
   for (auto dep : get_maps(validity)) {
     if (domain_name(dep) == "reduce") {
       string iis = ii_var(domain_name(dep), num_in_dims(dep) - 1);
-      modulo_schedule.add_geq(iis, (int) 4);
+      modulo_schedule.add_geq(iis, (int) 2);
     }
   }
   // All root IIs must be equal

@@ -10319,7 +10319,7 @@ void reduce_stream_coreir_test() {
 
   generate_coreir(options, bufs, prg, sched);
   run_verilator_tb(prg.name);
-  assert(false);
+  //assert(false);
 
 #endif
 
@@ -10545,7 +10545,6 @@ void halide_conv_layer_3D_test() {
 #ifdef COREIR
   auto sched = prg.optimized_codegen();
   cout << "sched = " << str(sched) << endl;
-  assert(false);
   auto bufs = build_buffers(prg, sched);
   for (auto& b : bufs) {
     if (b.second.num_in_ports() > 0 &&
