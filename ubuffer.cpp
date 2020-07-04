@@ -694,7 +694,9 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       //}
 
       if (possible_ports.size() == 1) {
-        cout << "only one possible port: " << possible_ports.at(0) << endl;
+      //if (true) {
+        //possible_ports.size() == 1) {
+        cout << "only one possible port: " << possible_ports.at(0);
         for (auto inpt : possible_ports) {
           auto b = buf.get_bank_between(inpt, outpt);
           bdef->connect(bdef->sel("self")->sel(b.name), bdef->sel("self.out"));
@@ -712,7 +714,9 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         bdef->connect(in_set->sel("d"), bdef->sel("self.d"));
         auto mux = cmux(bdef, width,
             bdef->sel("self.out"),
-            in_set->sel("valid"),
+            delaybit(bdef,
+              in_set->sel("valid")),
+            //in_set->sel("valid"),
             //bdef->sel("self")->sel(b1_name),
             //bdef->sel("self")->sel(b0_name));
             bdef->sel("self")->sel(b0_name),
