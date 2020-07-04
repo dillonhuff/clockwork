@@ -2656,6 +2656,16 @@ void prog::sanity_check() {
     loop_names.insert(lp->name);
   }
 
+  for (auto op : all_ops()) {
+    for (auto b : op->buffers_read()) {
+      assert(!is_output(b));
+    }
+
+    for (auto b : op->buffers_written()) {
+      assert(!is_input(b));
+    }
+  }
+
   //auto ivars = iter_vars();
   //for (auto op : all_ops()) {
     //vector<string> ivs = map_find(op, ivars);

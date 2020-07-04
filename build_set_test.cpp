@@ -10593,10 +10593,11 @@ void load_buffer(const std::string& dest, const std::string& src, const vector<i
 void cyclic_banked_conv_test() {
   prog prg("cyclic_banked_conv");
   prg.add_input("in_oc");
-  prg.add_input("out");
+  prg.add_output("out");
 
   load_buffer("in", "in_oc", {0, 10, 0, 10}, prg);
   auto reduce = prg.add_nest("y", 0, 8, "x", 0, 8, "yi", 0, 3)->add_op(prg.unique_name("op"));
+  reduce->add_function("conv_1_3");
   for (int c = 0; c < 3; c++) {
     reduce->add_load("in", "x + " + str(c), "y + yi");
   }
@@ -10607,23 +10608,34 @@ void cyclic_banked_conv_test() {
  
 
   prg.pretty_print();
+  prg.sanity_check();
 
-  auto buffers = build_buffers(prg, prg.optimized_codegen());
-  for (auto b : buffers) {
-    auto buf = b.second;
-    if (buf.get_out_ports().size() > 1) {
-      cout << buf << endl << endl;
-      isl_map* slot_func =
-        isl_map_read_from_str(prg.ctx,
-            "{in[x, y] -> M[x, y % 3]}");
-      assert(inner_bank_offset_is_legal(slot_func, buf));
+  CodegenOptions options;
+  options.all_rams = true;
+  options.banking_strategies["in"] =
+  {"cyclic", {3, -1}};
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
 
-      isl_map* bank_func =
-        isl_map_read_from_str(prg.ctx,
-            "{in[x, y] -> B[x % 3]}");
-      assert(banking_scheme_is_legal(bank_func, buf));
-    }
-  }
+  regression_test(options, prg);
+  assert(false);
+
+  //auto buffers = build_buffers(prg, prg.optimized_codegen());
+  //for (auto b : buffers) {
+    //auto buf = b.second;
+    //if (buf.get_out_ports().size() > 1) {
+      //cout << buf << endl << endl;
+      //isl_map* slot_func =
+        //isl_map_read_from_str(prg.ctx,
+            //"{in[x, y] -> M[x, y % 3]}");
+      //assert(inner_bank_offset_is_legal(slot_func, buf));
+
+      //isl_map* bank_func =
+        //isl_map_read_from_str(prg.ctx,
+            //"{in[x, y] -> B[x % 3]}");
+      //assert(banking_scheme_is_legal(bank_func, buf));
+    //}
+  //}
   //assert(false);
 }
 void copy(const std::string& dst, const std::string& src, const std::vector<int>& dims, prog& prg) {
@@ -11376,6 +11388,8 @@ void coreir_tests() {
 }
 
 void application_tests() {
+  cyclic_banked_conv_test();
+
   unet_conv_3_3_test();
   reduce_1d_test();
   reduce_2d_test();
@@ -11423,7 +11437,6 @@ void application_tests() {
 
   mmul_outer_prod_test();
   conv_3_3_halide_test();
-  cyclic_banked_conv_test();
 
   mini_conv_halide_test();
   grayscale_conversion_test();
