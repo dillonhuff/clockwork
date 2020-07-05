@@ -636,6 +636,34 @@ void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& b
   out.close();
 }
 
+std::string hwstream(const std::string& tp) {
+  return "HWStream<" + tp + " >";
+}
+
+void generate_distributor(
+    CodegenOptions& options,
+    std::ostream& out,
+    UBuffer& buf,
+    const std::string& bundle_name,
+    prog& prg) {
+
+  string in_bundle_tp = buf.bundle_type_string(bundle_name);
+
+  vector<string> args;
+  args.push_back(hwstream(in_bundle_tp) + "& in");
+  args.push_back(hwstream(in_bundle_tp) + "& out0");
+  args.push_back(hwstream(in_bundle_tp) + "& out1");
+
+  out << "static void distributor_" << bundle_name << "(" << comma_list(args) << ") {" << endl;
+  out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
+  out << tab(2) << "#pragma HLS pipeline II=1" << endl;
+  out << tab(2) << "auto v = in.read();" << endl;
+  out << tab(2) << "out0.write(v0);" << endl;
+  out << tab(2) << "out1.write(v1);" << endl;
+  out << tab(1) << "}" << endl;
+  out << "}" << endl << endl;
+}
+
 void generate_collector(
     CodegenOptions& options,
     std::ostream& out,
@@ -645,22 +673,19 @@ void generate_collector(
 
   string in_bundle_tp = buf.bundle_type_string(bundle_name);
 
-  out << "static void collector_" << bundle_name << "(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const int size) {" << endl;
+  vector<string> args;
+  args.push_back(hwstream(in_bundle_tp) + "& in0");
+  args.push_back(hwstream(in_bundle_tp) + "& in1");
+  args.push_back(hwstream(in_bundle_tp) + "& out");
 
-  out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
-  if (options.num_input_epochs < 0) {
-    out << tab(1) << "int num_transfers = " << bundle_name << "_num_transfers" << "*size;" << endl;
-  } else {
-    out << tab(1) << "int num_transfers = " << bundle_name << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
-  }
-
+  out << "static void collector_" << bundle_name << "(" << comma_list(args) << ") {" << endl;
   out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
   out << tab(2) << "#pragma HLS pipeline II=1" << endl;
-  out << tab(2) << "burst_reg = input[i];" << endl;
-  out << tab(2) << "v.write(burst_reg);" << endl;
+  out << tab(2) << "auto v0 = in0.read();" << endl;
+  out << tab(2) << "auto v1 = in1.read();" << endl;
+  out << tab(2) << "out.write({v0, v1});" << endl;
   out << tab(1) << "}" << endl;
   out << "}" << endl << endl;
-
 }
 
 void generate_xilinx_multi_channel_accel_wrapper(
@@ -681,6 +706,7 @@ void generate_xilinx_multi_channel_accel_wrapper(
     string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
 
     generate_collector(options, out, out_buf, eb.second, prg);
+    generate_distributor(options, out, out_buf, eb.second, prg);
 
     int num_pixels = -1;
     if (prg.is_input(out_rep)) {
