@@ -11386,6 +11386,14 @@ void coreir_tests() {
 
 void application_tests() {
   cyclic_banked_conv_test();
+  assert(false);
+
+  sum_diffs_test();
+  denoise2d_test();
+  denoise3d_reconvergence_test();
+  tricky_shift_register_reconvergence_test();
+  mismatched_stencil_test();
+  gaussian_pyramid_app_test("gp64x64");
 
   //unet_conv_3_3_test();
   reduce_1d_test();
@@ -11409,12 +11417,6 @@ void application_tests() {
 
   //adobe_meeting_apps();
   sum_denoise_test();
-  sum_diffs_test();
-  denoise2d_test();
-  denoise3d_reconvergence_test();
-  tricky_shift_register_reconvergence_test();
-  mismatched_stencil_test();
-  gaussian_pyramid_app_test("gp64x64");
   //assert(false);
 
   up_down_unrolled_test();

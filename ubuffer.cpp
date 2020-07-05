@@ -8,6 +8,25 @@ using CoreIR::ModuleDef;
 #endif
 #include "coreir_backend.h"
 
+isl_map* bank_map(isl_ctx* ctx, const std::string& src_name, banking_strategy& banking) {
+  vector<string> dvs;
+  vector<string> addrs;
+  int num_banks = 1;
+  for (int i = 0; i < (int) banking.cycle_factors.size(); i++) {
+    assert(banking.cycle_factors.at(i) > 0);
+    dvs.push_back("a_" + str(i));
+    addrs.push_back("a_" + str(i) + " % " + str(banking.cycle_factors.at(i)));
+    num_banks *= banking.cycle_factors.at(i);
+  }
+
+  string bank_func =
+    curlies(bracket_list(dvs) + " -> " + bracket_list(addrs));
+
+  cout << "bank func = " << bank_func << endl;
+  auto bank_map = isl_map_read_from_str(ctx, bank_func.c_str());
+  set_domain_name(bank_map, src_name);
+  return bank_map;
+}
 
 std::string read_addrgen_name(const std::string& n) {
   return n + "_read_addrgen";
@@ -1050,31 +1069,25 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       return buf.name + "." + bank + ".read(dynamic_address)";
     }
 
-    auto out_domain = buf.domain.at(outpt);
-    //cout << "Out domain: " << str(out_domain) << endl;
-    auto qpd = compute_dd(buf, outpt, inpt);
-    //cout << "Pieces of " << str(qpd) << endl;
-    auto pieces = get_pieces(qpd);
-    //assert(false);
-
-    string dx = to_string(int_upper_bound(qpd));
-    //auto dd_fold = compute_dd(buf, outpt, inpt);
-
-    out << tab(1) << "// Read schedule : " << str(buf.schedule.at(outpt)) << endl;
-    out << tab(1) << "// Write schedule: " << str(buf.schedule.at(inpt)) << endl;
-
-    //out << tab(1) << "// DD fold: " << str(dd_fold) << endl;
-    string delay_expr = evaluate_dd(buf, outpt, inpt);
-    string value_str = "";
-    bool opt_const = is_optimizable_constant_dd(inpt, outpt, buf);
     auto sb = buf.get_bank(bank);
+    string value_str = "";
 
-    //if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_LINEAR) {
     if (sb.tp == INNER_BANK_OFFSET_LINEAR) {
       string linear_addr = buf.generate_linearize_ram_addr(outpt);
       value_str = bank + ".read(/*ram type address*/ "+ linear_addr + ")";
-    //} else if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_STACK) {
     } else if (sb.tp == INNER_BANK_OFFSET_STACK) {
+      auto out_domain = buf.domain.at(outpt);
+
+      auto qpd = compute_dd(buf, outpt, inpt);
+      auto pieces = get_pieces(qpd);
+
+      string dx = to_string(int_upper_bound(qpd));
+
+      out << tab(1) << "// Read schedule : " << str(buf.schedule.at(outpt)) << endl;
+      out << tab(1) << "// Write schedule: " << str(buf.schedule.at(inpt)) << endl;
+
+      string delay_expr = evaluate_dd(buf, outpt, inpt);
+      bool opt_const = is_optimizable_constant_dd(inpt, outpt, buf);
       if (options.all_rams || buf.get_bank(bank).num_readers == 1) {
         value_str = bank + ".peek(/* one reader or all rams */ " + delay_expr + ")";
       } else if (opt_const) {
@@ -1134,6 +1147,31 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         }
       }
     } else {
+      auto bank_function = bank_map(buf.ctx, buf.name, buf.banking);
+      auto acc_umap = map_find(inpt, buf.access_map);
+      auto acc_map = to_map(acc_umap);
+      auto writes = range(acc_map);
+      cout << "writes = " << str(writes) << endl;
+      auto lt = its(its_range(isl_map_lex_lt(get_space(writes)), writes), writes);
+      cout << "lt     = " << str(lt) << endl;
+      auto next_write = simplify(lexmin(lt));
+      cout << "next w = " << str(next_write) << endl;
+      cout << "diff   = " << str(isl_map_deltas_map(cpy(next_write))) << endl;
+      auto next_bank = dot(dot(inv(bank_function), next_write), bank_function);
+      cout << "next bank = " << str(next_bank) << endl;
+      assert(false);
+
+      //auto next = lexmin(its(isl_map_lex_lt(get_space(writes)), writes));
+
+      //out << tab(1) << "// Next         : " << str(next) << endl;
+      //out << tab(1) << "// Next bank    : " << str(next_bank) << endl;
+      //out << tab(1) << "// Bank function: " << str(bank_function) << endl;
+      //out << tab(1) << "// Bank func aff: " << str(get_aff(bank_function)) << endl;
+      //out << tab(1) << "// Access func  : " << str(acc_map) << endl;
+      //isl_union_map* target = dot(acc_map, to_umap(bank_function));
+      //out << tab(1) << "// Bank mapping : " << str(target) << endl;
+      //out << tab(1) << "// Bank aff     : " << str(get_aff(get_maps(acc_map).at(0))) << endl;
+
       // TODO: Replace with actual bank computation
       for (auto sb : buf.get_banks()) {
         if (sb.tp == INNER_BANK_OFFSET_STACK) {
