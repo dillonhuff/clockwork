@@ -1157,8 +1157,13 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       auto next_write = simplify(lexmin(lt));
       cout << "next w = " << str(next_write) << endl;
       cout << "diff   = " << str(isl_map_deltas_map(cpy(next_write))) << endl;
+      auto banks_to_next_reads = dot(inv(bank_function), next_write);
+      cout << "banks to next reads = " << str(banks_to_next_reads) << endl;
       auto next_bank = dot(dot(inv(bank_function), next_write), bank_function);
       cout << "next bank = " << str(next_bank) << endl;
+      cout << "next bcar = " << str(card(next_bank)) << endl;
+      auto bank_delta = isl_map_deltas_map(cpy(next_bank));
+      cout << "nb delta  = " << str(bank_delta) << endl;
       assert(false);
 
       //auto next = lexmin(its(isl_map_lex_lt(get_space(writes)), writes));
