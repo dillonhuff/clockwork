@@ -8758,7 +8758,6 @@ void denoise2d_test() {
 
     assert(naive == optimized);
   }
-  //assert(false);
 
   {
     CodegenOptions options;
@@ -11399,11 +11398,11 @@ void coreir_tests() {
 }
 
 void application_tests() {
+  halide_up_sample_test();
+  denoise2d_test();
   cyclic_banked_conv_test();
-  assert(false);
 
   sum_diffs_test();
-  denoise2d_test();
   denoise3d_reconvergence_test();
   tricky_shift_register_reconvergence_test();
   mismatched_stencil_test();
@@ -11437,7 +11436,6 @@ void application_tests() {
 
 
   histogram_test();
-  halide_up_sample_test();
   //assert(false);
   
   lake_agg_sram_tb_config_test();

@@ -790,6 +790,20 @@ isl_ctx* ctx(isl_pw_qpolynomial* const m) {
   return isl_pw_qpolynomial_get_ctx(m);
 }
 
+std::string codegen_c(isl_aff* const bset) {
+  string r = str(bset);
+
+  regex cm("\\{ (.*)\\[(.*)\\] -> (.*)\\[(.*)\\] \\}");
+  smatch match;
+  auto res = regex_match(r, match, cm);
+
+  assert(res);
+
+  string range_name = match[3];
+  string range_values = match[4];
+  return range_name + parens(range_values);
+}
+
 std::string codegen_c(isl_multi_aff* const bset) {
   string r = str(bset);
 

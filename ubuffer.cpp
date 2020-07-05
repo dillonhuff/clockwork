@@ -2511,7 +2511,19 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   string UBuffer::generate_linearize_ram_addr(const std::string& pt) {
 
     auto address_map = separate_offset_dim(pt);
-    vector<string> addr_vec = map2address(to_map(address_map));
+    //vector<string> addr_vec = map2address(to_map(address_map));
+
+    vector<string> addr_vec;
+    isl_map* m = to_map(access_map.at(pt));
+    auto svec = isl_pw_multi_aff_from_map(m);
+    vector<pair<isl_set*, isl_multi_aff*> > pieces =
+      get_pieces(svec);
+    assert(pieces.size() == 1);
+    isl_multi_aff* ma = pieces.at(0).second;
+    for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
+      isl_aff* aff = isl_multi_aff_get_aff(ma, d);
+      addr_vec.push_back(codegen_c(aff));
+    }
 
     vector<size_t> sequence;
     for (size_t i = 0; i < get_out_dim(to_map(address_map)); i ++) {

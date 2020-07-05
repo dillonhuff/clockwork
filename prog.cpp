@@ -2384,6 +2384,10 @@ void generate_unoptimized_code(CodegenOptions& options, prog& prg) {
   cout << codegen_c(prg.unoptimized_schedule());
 
   auto buffers = build_buffers(prg, prg.unoptimized_schedule());
+  //for (auto b : buffers) {
+    //cout << b.second << endl;
+  //}
+  //assert(false);
 
   generate_app_code(options, buffers, prg, sched);
 
@@ -2391,26 +2395,15 @@ void generate_unoptimized_code(CodegenOptions& options, prog& prg) {
 }
 
 void generate_unoptimized_code(prog& prg) {
-  //string old_name = prg.name;
-
-  //prg.name = "unoptimized_" + prg.name;
-
-  //cout << "Unoptimized schedule..." << endl;
-  //auto sched = prg.unoptimized_schedule();
-  //cout << tab(1) << ": " << str(sched) << endl;
-
-  //cout << codegen_c(prg.unoptimized_schedule());
-
-  //auto buffers = build_buffers(prg, prg.unoptimized_schedule());
 
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  all_register_files(prg, options);
+  //assert(false);
   generate_unoptimized_code(options, prg);
-
-  //generate_app_code(options, buffers, prg, sched);
-
-  //prg.name = old_name;
 }
 
 vector<pair<string, string> >
