@@ -11608,7 +11608,7 @@ void multi_channel_example() {
   int cols = 1920;
   int rows = 1080;
 
-  const int unroll_factor = 64;
+  const int unroll_factor = 32;
   cout << "blur_xy" << endl;
   cout << tab(1) << "unroll factor: " << unroll_factor << endl;
   string out_name = "blur_example";

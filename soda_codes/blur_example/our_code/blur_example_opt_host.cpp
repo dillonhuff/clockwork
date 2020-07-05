@@ -127,9 +127,9 @@ nsduration = end - start;
   double dbytes = total_size_bytes;
   double bpersec = (dbytes / dsduration);
   double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
-std::cout << "bytes / sec = " << bpersec << std::endl;
-std::cout << "GB / sec = " << gbpersec << std::endl;
-printf("Execution time = %f (sec) \n", dsduration);
+  std::cout << "bytes / sec = " << bpersec << std::endl;
+  std::cout << "GB / sec = " << gbpersec << std::endl;
+  printf("Execution time = %f (sec) \n", dsduration);
   std::ofstream regression_result("blur_example_update_0_write_accel_result.csv");
   for (int i = 0; i < blur_example_update_0_write_DATA_SIZE; i++) {
     regression_result << ((uint32_t*) (blur_example_update_0_write.data()))[i] << std::endl;

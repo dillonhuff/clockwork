@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
   OCL_CHECK(err, cl::Buffer in1_update_0_read_ocl_buf(context, CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, in1_update_0_read_size_bytes, in1_update_0_read.data(), &err));
   OCL_CHECK(err, err = krnl_vector_add.setArg(2, in1_update_0_read_ocl_buf));
 
-  uint64_t transfer_size = num_epochs*(2073600 / 64);
+  uint64_t transfer_size = num_epochs*(2073600 / 32);
   OCL_CHECK(err, err = krnl_vector_add.setArg(3, transfer_size));
 
   std::cout << "Migrating memory" << std::endl;
@@ -127,9 +127,9 @@ nsduration = end - start;
   double dbytes = total_size_bytes;
   double bpersec = (dbytes / dsduration);
   double gbpersec = bpersec / ((double)1024 * 1024 * 1024);
-std::cout << "bytes / sec = " << bpersec << std::endl;
-std::cout << "GB / sec = " << gbpersec << std::endl;
-printf("Execution time = %f (sec) \n", dsduration);
+  std::cout << "bytes / sec = " << bpersec << std::endl;
+  std::cout << "GB / sec = " << gbpersec << std::endl;
+  printf("Execution time = %f (sec) \n", dsduration);
   std::ofstream regression_result("blur_example_update_0_write_accel_result.csv");
   for (int i = 0; i < blur_example_update_0_write_DATA_SIZE; i++) {
     regression_result << ((uint32_t*) (blur_example_update_0_write.data()))[i] << std::endl;
