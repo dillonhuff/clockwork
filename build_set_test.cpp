@@ -8116,6 +8116,20 @@ App pointwise_add(const std::string output_name) {
   return jac;
 }
 
+App multi_channel(const std::string output_name) {
+  App jac;
+  jac.func2d("in0_oc");
+  jac.func2d("in1_oc");
+  jac.func2d("in0", "id", pt("in0_oc"));
+  jac.func2d("in1", "id", pt("in1_oc"));
+
+  Window in0 = pt("in0");
+  Window in1 = pt("in1");
+  jac.func2d("average", "add", {in0, in1});
+  jac.func2d(output_name, "id", pt("average"));
+  return jac;
+}
+
 App blur_xy(const std::string output_name) {
   App jac;
   jac.func2d("input_arg");
@@ -11590,6 +11604,18 @@ void memory_tile_tests() {
   //assert(false);
 }
 
+void multi_channel_example() {
+  int cols = 1920;
+  int rows = 1080;
+
+  const int unroll_factor = 64;
+  cout << "blur_xy" << endl;
+  cout << tab(1) << "unroll factor: " << unroll_factor << endl;
+  string out_name = "blur_example";
+  multi_channel(out_name).realize(out_name, cols, rows, unroll_factor);
+  move_to_benchmarks_folder(out_name);
+}
+
 void blur_example() {
   int cols = 1920;
   int rows = 1080;
@@ -11623,6 +11649,11 @@ int main(int argc, char** argv) {
   if (argc > 1) {
     assert(argc == 2);
     string cmd = argv[1];
+
+    if (cmd == "multi-channel-example") {
+      multi_channel_example();
+      return 0;
+    }
 
     if (cmd == "blur-example") {
       blur_example();

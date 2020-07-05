@@ -256,9 +256,9 @@ void ocl_timing_suffix(std::ostream& out) {
   out << tab(1) << "double bpersec = (dbytes / dsduration);" << endl;
   out << tab(1) << "double gbpersec = bpersec / ((double)1024 * 1024 * 1024);" << endl;
 
-  out << "std::cout << \"bytes / sec = \" << bpersec << std::endl;" << endl;
-  out << "std::cout << \"GB / sec = \" << gbpersec << std::endl;" << endl;
-  out << "printf(\"Execution time = %f (sec) \\n\", dsduration);" << endl;
+  out << tab(1) << "std::cout << \"bytes / sec = \" << bpersec << std::endl;" << endl;
+  out << tab(1) << "std::cout << \"GB / sec = \" << gbpersec << std::endl;" << endl;
+  out << tab(1) << "printf(\"Execution time = %f (sec) \\n\", dsduration);" << endl;
 }
 
 void run_kernel(std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
