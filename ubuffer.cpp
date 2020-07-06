@@ -253,17 +253,22 @@ void generate_bank(CodegenOptions& options,
     out << "\t// Capacity: " << capacity << endl;
     out << tab(1) << pt_type_string << " RAM[" << capacity << "];" << endl;
     out << tab(1) << "inline " + pt_type_string + " read(const int addr) {" << endl;
-    out << tab(1) << "if (!(addr < " << capacity << ")) {" << endl;
-    out << tab(2) << "cout << \"Error: Address \" << addr << \" is out of bounds\" << endl;" << endl;
-    out << tab(1) << "}" << endl;
-    out << tab(1) << "assert(addr < " << capacity << ");" << endl;
+    out << tab(2) << "if (addr < 0 || !(addr < " << capacity << ")) {" << endl;
+    out << tab(2) << "cout << \"Read error: Address \" << addr << \" is out of bounds\" << endl;" << endl;
+    out << tab(2) << "}" << endl;
+    out << tab(2) << "assert(addr < " << capacity << ");" << endl;
+    out << tab(2) << "assert(addr >= " << (int) 0 << ");" << endl;
     ignore_inter_deps(out, "RAM");
     out << tab(2) << "return RAM[addr];" << endl;
     out << tab(1) << "}" << endl << endl;
     out << endl << endl;
 
     out << "\tinline void write(const " + pt_type_string + " value, const int addr) {" << endl;
-    out << tab(1) << "assert(addr < " << capacity << ");" << endl;
+    out << tab(2) << "if (addr < 0 || !(addr < " << capacity << ")) {" << endl;
+    out << tab(2) << "cout << \"Write error: Address \" << addr << \" is out of bounds\" << endl;" << endl;
+    out << tab(2) << "}" << endl;
+    out << tab(2) << "assert(addr < " << capacity << ");" << endl;
+    out << tab(2) << "assert(addr >= " << (int) 0 << ");" << endl;
     if (options.add_dependence_pragmas) {
       ignore_inter_deps(out, "RAM");
     }
@@ -2518,9 +2523,11 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   //string UBuffer::generate_linearize_ram_addr(const std::string& pt) {
   string UBuffer::generate_linearize_ram_addr(const std::string& pt, bank& bnk) {
     vector<int> lengths;
+    vector<int> mins;
     for (int i = 0; i < logical_dimension(); i++) {
       auto s = project_all_but(to_set(bnk.rddom), i);
       auto min = to_int(lexminval(s));
+      mins.push_back(min);
       auto max = to_int(lexmaxval(s));
       int length = max - min + 1;
       lengths.push_back(length);
@@ -2534,7 +2541,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     vector<string> offsets;
     for (auto piece : pieces) {
       vector<string> addr_vec;
-      //isl_multi_aff* ma = pieces.at(0).second;
       isl_multi_aff* ma = piece.second;
       for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
         isl_aff* aff = isl_multi_aff_get_aff(ma, d);
@@ -2547,7 +2553,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         for (int d = 0; d < i; d++) {
           length *= lengths.at(d);
         }
-        string item = "(" + addr_vec.at(i) + ") * " + to_string(length);
+        string item = "(" + addr_vec.at(i) + " - " + str(mins.at(i)) + ") * " + to_string(length);
         addr_vec_out.push_back(item);
       }
 

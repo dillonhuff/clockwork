@@ -11398,17 +11398,11 @@ void coreir_tests() {
 }
 
 void application_tests() {
-  conv_test();
   // Does not work with register files?
-  conv_2d_bc_test();
+  seidel2d_test();
   cnn_test();
 
-  register_file_test();
-  reaccess_no_hierarchy_rolled_test();
-
   sobel_test();
-
-  seidel2d_test();
   jacobi_2d_2_test();
   jacobi_2d_test();
 
@@ -11546,6 +11540,13 @@ void application_tests() {
 
   identity_stream_through_mem_coreir_test();
   reduce_stream_coreir_test();
+  conv_test();
+  conv_2d_bc_test();
+
+  register_file_test();
+  reaccess_no_hierarchy_rolled_test();
+
+
 
   //two_input_denoise_pipeline_test();
   //synth_wire_test();
