@@ -2513,24 +2513,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
   //string UBuffer::generate_linearize_ram_addr(const std::string& pt) {
   string UBuffer::generate_linearize_ram_addr(const std::string& pt, bank& bnk) {
-
-    //auto address_map = separate_offset_dim(pt);
-    //vector<string> addr_vec = map2address(to_map(address_map));
-
-    vector<string> addr_vec;
-    isl_map* m = to_map(access_map.at(pt));
-    auto svec = isl_pw_multi_aff_from_map(m);
-    vector<pair<isl_set*, isl_multi_aff*> > pieces =
-      get_pieces(svec);
-    assert(pieces.size() == 1);
-    isl_multi_aff* ma = pieces.at(0).second;
-    for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
-      isl_aff* aff = isl_multi_aff_get_aff(ma, d);
-      addr_vec.push_back(codegen_c(aff));
-    }
-
     vector<int> lengths;
-
     for (int i = 0; i < logical_dimension(); i++) {
       auto s = project_all_but(to_set(bnk.rddom), i);
       auto min = to_int(lexminval(s));
@@ -2539,28 +2522,64 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       lengths.push_back(length);
     }
 
-    vector<string> addr_vec_out;
-    for (int i = 0; i < logical_dimension(); i++) {
-      int length = 1;
-      for (int d = 0; d < i; d++) {
-        length *= lengths.at(d);
+    vector<string> addr_vec;
+    isl_map* m = to_map(access_map.at(pt));
+    auto svec = isl_pw_multi_aff_from_map(m);
+    vector<pair<isl_set*, isl_multi_aff*> > pieces =
+      get_pieces(svec);
+    vector<string> domains;
+    vector<string> offsets;
+    for (auto piece : pieces) {
+      //isl_multi_aff* ma = pieces.at(0).second;
+      isl_multi_aff* ma = piece.second;
+      for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
+        isl_aff* aff = isl_multi_aff_get_aff(ma, d);
+        addr_vec.push_back(codegen_c(aff));
       }
-      string item = "(" + addr_vec.at(i) + ") * " + to_string(length);
-      addr_vec_out.push_back(item);
+
+      vector<string> addr_vec_out;
+      for (int i = 0; i < logical_dimension(); i++) {
+        int length = 1;
+        for (int d = 0; d < i; d++) {
+          length *= lengths.at(d);
+        }
+        string item = "(" + addr_vec.at(i) + ") * " + to_string(length);
+        addr_vec_out.push_back(item);
+      }
+
+      string addr = sep_list(addr_vec_out, "", "", " + ");
+      offsets.push_back(addr);
+      domains.push_back(codegen_c(piece.first));
     }
 
-    //vector<size_t> sequence;
-    //for (size_t i = 0; i < get_out_dim(to_map(address_map)); i ++) {
-      //sequence.push_back(i);
+    assert(offsets.size() > 0);
+    assert(domains.size() == offsets.size());
+
+    string base = offsets.at(0);
+    for (int d = 1; d < offsets.size(); d++) {
+      base = parens(parens(domains.at(d)) + " ? " + offsets.at(d) + " : " + base);
+    }
+
+    return base;
+
+    ////assert(pieces.size() == 1);
+    //isl_multi_aff* ma = pieces.at(0).second;
+    //for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
+      //isl_aff* aff = isl_multi_aff_get_aff(ma, d);
+      //addr_vec.push_back(codegen_c(aff));
     //}
 
-    //auto address_box = extract_addr_box(range(address_map), sequence);
     //vector<string> addr_vec_out;
-    //for (size_t i = 0; i < get_out_dim(to_map(address_map)); i ++) {
-      //string item = "(" + addr_vec.at(i) + ") * " + to_string(address_box.cardinality(i));
+    //for (int i = 0; i < logical_dimension(); i++) {
+      //int length = 1;
+      //for (int d = 0; d < i; d++) {
+        //length *= lengths.at(d);
+      //}
+      //string item = "(" + addr_vec.at(i) + ") * " + to_string(length);
       //addr_vec_out.push_back(item);
     //}
-    return sep_list(addr_vec_out, "", "", " + ");
+
+    //return sep_list(addr_vec_out, "", "", " + ");
   }
 
   map<string, isl_map*> UBuffer::produce_vectorized_schedule(string in_bd_name, string out_bd_name) {

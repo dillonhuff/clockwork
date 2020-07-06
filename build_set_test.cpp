@@ -11398,8 +11398,8 @@ void coreir_tests() {
 }
 
 void application_tests() {
-  conv_2d_bc_test();
   // Does not work with register files?
+  //conv_2d_bc_test();
   //cnn_test();
 
   register_file_test();
