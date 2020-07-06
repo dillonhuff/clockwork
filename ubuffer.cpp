@@ -1050,6 +1050,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
   }
 
   void select_debug_assertions(CodegenOptions& options, std::ostream& out, const string& outpt, UBuffer& buf) {
+    out << tab(1) << "return 0;" << endl;
+    return;
     // ------------ Error printouts only
     vector<string> offset_printouts;
     isl_space* s = get_space(buf.domain.at(outpt));
@@ -1760,6 +1762,9 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     cout << "getting rddom" << endl;
     isl_union_set* rddom = isl_union_set_read_from_str(ctx, "{}");
     for (auto inpt : get_in_ports()) {
+      rddom = unn(rddom, range(access_map.at(inpt)));
+    }
+    for (auto inpt : get_out_ports()) {
       rddom = unn(rddom, range(access_map.at(inpt)));
     }
     cout << "rddom = " << str(rddom) << endl;
