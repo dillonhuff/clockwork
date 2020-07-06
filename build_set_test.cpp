@@ -11296,7 +11296,6 @@ void unet_conv_3_3_test() {
  
   //generate_optimized_code(options, prg);
   regression_test(options, prg);
-  assert(false);
 }
 
 void coreir_set_test() {
