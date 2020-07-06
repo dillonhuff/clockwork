@@ -253,13 +253,17 @@ void generate_bank(CodegenOptions& options,
     out << "\t// Capacity: " << capacity << endl;
     out << tab(1) << pt_type_string << " RAM[" << capacity << "];" << endl;
     out << tab(1) << "inline " + pt_type_string + " read(const int addr) {" << endl;
-
+    out << tab(1) << "if (!(addr < " << capacity << ")) {" << endl;
+    out << tab(2) << "cout << \"Error: Address \" << addr << \" is out of bounds\" << endl;" << endl;
+    out << tab(1) << "}" << endl;
+    out << tab(1) << "assert(addr < " << capacity << ");" << endl;
     ignore_inter_deps(out, "RAM");
     out << tab(2) << "return RAM[addr];" << endl;
     out << tab(1) << "}" << endl << endl;
     out << endl << endl;
 
     out << "\tinline void write(const " + pt_type_string + " value, const int addr) {" << endl;
+    out << tab(1) << "assert(addr < " << capacity << ");" << endl;
     if (options.add_dependence_pragmas) {
       ignore_inter_deps(out, "RAM");
     }
@@ -2522,7 +2526,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       lengths.push_back(length);
     }
 
-    vector<string> addr_vec;
     isl_map* m = to_map(access_map.at(pt));
     auto svec = isl_pw_multi_aff_from_map(m);
     vector<pair<isl_set*, isl_multi_aff*> > pieces =
@@ -2530,6 +2533,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     vector<string> domains;
     vector<string> offsets;
     for (auto piece : pieces) {
+      vector<string> addr_vec;
       //isl_multi_aff* ma = pieces.at(0).second;
       isl_multi_aff* ma = piece.second;
       for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {

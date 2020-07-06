@@ -2590,7 +2590,8 @@ void generate_regression_testbench(prog& prg) {
 }
 
 std::vector<std::string> run_regression_tb(const std::string& name) {
-  int res = system(string("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
+  //int res = system(string("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
+  int res = cmd("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp");
   assert(res == 0);
 
   res = system("./a.out");

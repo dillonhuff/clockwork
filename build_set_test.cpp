@@ -11398,9 +11398,10 @@ void coreir_tests() {
 }
 
 void application_tests() {
+  conv_test();
   // Does not work with register files?
-  //conv_2d_bc_test();
-  //cnn_test();
+  conv_2d_bc_test();
+  cnn_test();
 
   register_file_test();
   reaccess_no_hierarchy_rolled_test();
@@ -11455,7 +11456,6 @@ void application_tests() {
 
   //parse_denoise3d_test();
   //app added for cnn
-  //conv_test();
 
 
   sobel_16_stage_x_app_test();
