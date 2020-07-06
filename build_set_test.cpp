@@ -10622,6 +10622,16 @@ prog partially_unrolled_conv() {
 
 }
 
+void read_in(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
+  assert(loop->is_loop);
+
+  string buf = name(read_data);
+  op* next_lp = loop;
+  for (int d = 0; d < num_dims(read_data); d++) {
+    next_lp = next_lp->add_loop_front(prg.unique_name(buf + "_ld"), 0, 1);
+  }
+}
+
 void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg) {
   auto loop = prg.find_loop(level);
   cout << "Re-use " << buffer << " at" << endl;
@@ -10639,17 +10649,29 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
 
   auto cm = prg.consumer_maps();
   cout << "Consumer maps: " << endl;
+  isl_set* read_data = nullptr;
   for (auto op : users) {
-    cout << tab(1) << str(map_find(op, cm)) << endl;
+    auto consumed = map_find(op, cm);
+    for (auto m : get_maps(consumed)) {
+      if (range_name(m) == buffer) {
+        if (read_data == nullptr) {
+          read_data = range(m);
+        } else {
+          read_data = unn(read_data, range(m));
+        }
+      }
+    }
   }
-  //auto read = coalesce(range(cm));
-  //cout << "Consumed:" << str(read) << endl;
 
-  // Q: In what order should I do loads and
-  // stores from buf -> rb and vice versa?
-  // A: I suppose really we ought to do it
-  // in program order for max locality?
-}
+  string rb_name = buffer + "_rb_at_" + level;
+  read_data = simplify(read_data);
+  cout << "All data from " << buffer << ": " << str(read_data) << endl;
+  read_in(loop, read_data, rb_name, prg);
+  for (auto rd : users) {
+    rd->replace_reads_from(buffer, rb_name);
+  }
+
+} 
 
 void reuse_buffered_conv_test() {
   prog prg = partially_unrolled_conv();
@@ -10658,6 +10680,7 @@ void reuse_buffered_conv_test() {
 
   add_reuse_buffer("y", "in", prg);
 
+  prg.pretty_print();
   assert(false);
 
   CodegenOptions options;

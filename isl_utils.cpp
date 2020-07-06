@@ -1376,6 +1376,10 @@ isl_map* simplify(isl_map* const m) {
   return isl_map_remove_redundancies(cpy(m));
 }
 
+isl_set* simplify(isl_set* const m) {
+  return isl_set_remove_redundancies(cpy(m));
+}
+
 isl_map* simplify_expr(isl_map* const m) {
   return isl_map_from_pw_multi_aff(isl_pw_multi_aff_from_map(cpy(m)));
 }

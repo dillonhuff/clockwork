@@ -360,6 +360,21 @@ struct ir_node {
     return lp;
   }
   
+  op* add_loop_front(const std::string& name, const int l, const int u) {
+    assert(is_loop);
+    //assert(!elem(name, all_existing_loop_names()));
+
+    auto lp = new op();
+    lp->name = name;
+    lp->ctx = ctx;
+    lp->parent = this;
+    lp->is_loop = true;
+    lp->start = l;
+    lp->end_exclusive = u;
+    children.insert(begin(children), lp);
+
+    return lp;
+  }
   op* add_loop(const std::string& name, const int l, const int u) {
     assert(is_loop);
     //assert(!elem(name, all_existing_loop_names()));
