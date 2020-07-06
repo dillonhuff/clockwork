@@ -1073,7 +1073,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     string value_str = "";
 
     if (sb.tp == INNER_BANK_OFFSET_LINEAR) {
-      string linear_addr = buf.generate_linearize_ram_addr(outpt);
+      //string linear_addr = buf.generate_linearize_ram_addr(outpt);
+      string linear_addr = buf.generate_linearize_ram_addr(outpt, sb);
       value_str = bank + ".read(/*ram type address*/ "+ linear_addr + ")";
     } else if (sb.tp == INNER_BANK_OFFSET_STACK) {
       auto out_domain = buf.domain.at(outpt);
@@ -1133,7 +1134,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         if (sb.tp == INNER_BANK_OFFSET_STACK) {
           out << tab(1) << buf.name << "." << sb.name << ".push(" << inpt << ");" << endl;
         } else if (sb.tp == INNER_BANK_OFFSET_LINEAR) {
-          string linear_addr = buf.generate_linearize_ram_addr(inpt);
+          //string linear_addr = buf.generate_linearize_ram_addr(inpt);
+          string linear_addr = buf.generate_linearize_ram_addr(inpt, sb);
           cout <<"Input port:" << inpt << ", Get ram string: " << linear_addr << endl;
           if (!elem(inpt, buf.dynamic_ports)) {
             out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt <<
@@ -1182,7 +1184,8 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         if (sb.tp == INNER_BANK_OFFSET_STACK) {
           out << tab(1) << buf.name << "." << sb.name << ".push(" << inpt << ");" << endl;
         } else if (sb.tp == INNER_BANK_OFFSET_LINEAR) {
-          string linear_addr = buf.generate_linearize_ram_addr(inpt);
+          //string linear_addr = buf.generate_linearize_ram_addr(inpt);
+          string linear_addr = buf.generate_linearize_ram_addr(inpt, sb);
           cout <<"Input port:" << inpt << ", Get ram string: " << linear_addr << endl;
           if (!elem(inpt, buf.dynamic_ports)) {
             out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt <<
@@ -2508,9 +2511,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     return map2address(pt_access_map);
   }
 
-  string UBuffer::generate_linearize_ram_addr(const std::string& pt) {
+  //string UBuffer::generate_linearize_ram_addr(const std::string& pt) {
+  string UBuffer::generate_linearize_ram_addr(const std::string& pt, bank& bnk) {
 
-    auto address_map = separate_offset_dim(pt);
+    //auto address_map = separate_offset_dim(pt);
     //vector<string> addr_vec = map2address(to_map(address_map));
 
     vector<string> addr_vec;
@@ -2525,17 +2529,37 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       addr_vec.push_back(codegen_c(aff));
     }
 
-    vector<size_t> sequence;
-    for (size_t i = 0; i < get_out_dim(to_map(address_map)); i ++) {
-      sequence.push_back(i);
+    vector<int> lengths;
+
+    for (int i = 0; i < logical_dimension(); i++) {
+      auto s = project_all_but(to_set(bnk.rddom), i);
+      auto min = to_int(lexminval(s));
+      auto max = to_int(lexmaxval(s));
+      int length = max - min + 1;
+      lengths.push_back(length);
     }
 
-    auto address_box = extract_addr_box(range(address_map), sequence);
     vector<string> addr_vec_out;
-    for (size_t i = 0; i < get_out_dim(to_map(address_map)); i ++) {
-      string item = "(" + addr_vec.at(i) + ") * " + to_string(address_box.cardinality(i));
+    for (int i = 0; i < logical_dimension(); i++) {
+      int length = 1;
+      for (int d = 0; d < i; d++) {
+        length *= lengths.at(d);
+      }
+      string item = "(" + addr_vec.at(i) + ") * " + to_string(length);
       addr_vec_out.push_back(item);
     }
+
+    //vector<size_t> sequence;
+    //for (size_t i = 0; i < get_out_dim(to_map(address_map)); i ++) {
+      //sequence.push_back(i);
+    //}
+
+    //auto address_box = extract_addr_box(range(address_map), sequence);
+    //vector<string> addr_vec_out;
+    //for (size_t i = 0; i < get_out_dim(to_map(address_map)); i ++) {
+      //string item = "(" + addr_vec.at(i) + ") * " + to_string(address_box.cardinality(i));
+      //addr_vec_out.push_back(item);
+    //}
     return sep_list(addr_vec_out, "", "", " + ");
   }
 

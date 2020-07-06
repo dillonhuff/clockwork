@@ -11398,6 +11398,76 @@ void coreir_tests() {
 }
 
 void application_tests() {
+  conv_2d_bc_test();
+  // Does not work with register files?
+  //cnn_test();
+
+  register_file_test();
+  reaccess_no_hierarchy_rolled_test();
+
+  sobel_test();
+
+  seidel2d_test();
+  jacobi_2d_2_test();
+  jacobi_2d_test();
+
+  two_input_mag_test();
+  one_input_mag_test();
+
+  sum_float_test();
+
+  sobel_mag_y_test();
+  sobel_app_test();
+  sobel_mag_x_test();
+  heat_3d_test();
+
+  upsample_reduce_test();
+
+  pointwise_test();
+
+  stencil_3d_test();
+  soda_blur_test();
+  two_in_window_test();
+  two_in_conv2d_test();
+  gaussian_pyramid_test();
+  warp_and_upsample_test();
+
+  //conv_1d_rolled_test();
+  //synth_upsample_test();
+  unsharp_test();
+  //conv_2d_rolled_test();
+  //mobilenet_test();
+  pyramid_2d_test();
+  pyramid_test();
+
+  up_stencil_auto_unrolled_test();
+  up_down_auto_unrolled_test();
+  up_stencil_down_auto_unrolled_test();
+  conv3x3_app_unrolled_test();
+  conv3x3_app_test();
+  conv3x3_app_unrolled_uneven_test();
+
+  jacobi2d_app_test();
+
+  up_stencil_test();
+  neg_stencil_test();
+  blur_x_test();
+
+  //parse_denoise3d_test();
+  //app added for cnn
+  //conv_test();
+
+
+  sobel_16_stage_x_app_test();
+
+  up_stencil_test();
+  neg_stencil_test();
+  blur_x_test();
+
+  dummy_app_test();
+
+  iccad_tests();
+  blur_and_downsample_test();
   halide_up_sample_test();
   denoise2d_test();
   cyclic_banked_conv_test();
@@ -11460,106 +11530,28 @@ void application_tests() {
   halide_dnn_test();
   //conv_1d_bc_test();
 
-
   conv_1d_test();
 
-
   jacobi2d_app_test();
-
-
   downsample2d_test();
   up_stencil_down_test();
-  blur_and_downsample_test();
   downsample_and_blur_test();
-
 
   updown_merge_test();
   harris_unrolled_test();
 
-  cnn_test();
 
-  sobel_test();
-
-  seidel2d_test();
-  jacobi_2d_2_test();
-  jacobi_2d_test();
-
-
-  two_input_mag_test();
-  one_input_mag_test();
-
-  sum_float_test();
-
-  sobel_mag_y_test();
-  sobel_app_test();
-  sobel_mag_x_test();
-  heat_3d_test();
-
-  upsample_reduce_test();
-
-  pointwise_test();
-
-  stencil_3d_test();
-  soda_blur_test();
-  two_in_window_test();
-  two_in_conv2d_test();
-  gaussian_pyramid_test();
-  warp_and_upsample_test();
-
-  //conv_1d_rolled_test();
-  //synth_upsample_test();
-  unsharp_test();
-  //conv_2d_rolled_test();
-  conv_2d_bc_test();
-  //mobilenet_test();
-  pyramid_2d_test();
-  pyramid_test();
-
-  up_stencil_auto_unrolled_test();
-  up_down_auto_unrolled_test();
-  up_stencil_down_auto_unrolled_test();
-  conv3x3_app_unrolled_test();
-  conv3x3_app_test();
-  conv3x3_app_unrolled_uneven_test();
-
-  jacobi2d_app_test();
-
-  up_stencil_test();
-  neg_stencil_test();
-  blur_x_test();
-
-  //parse_denoise3d_test();
-  //app added for cnn
-  //conv_test();
-
-
-  sobel_16_stage_x_app_test();
-
-  up_stencil_test();
-  neg_stencil_test();
-  blur_x_test();
-
-  dummy_app_test();
-
-  register_file_test();
-  reaccess_no_hierarchy_rolled_test();
-  iccad_tests();
   identity_stream_coreir_test();
   weight_streaming_test();
 
-  // Not yet working
   identity_stream_through_mem_coreir_test();
   reduce_stream_coreir_test();
-  //assert(false);
 
   //two_input_denoise_pipeline_test();
-
-
   //synth_wire_test();
   //synth_sr_boundary_condition_test();
   //synth_lb_test();
   //conv_app_rolled_reduce_test();
-
   //up_stencil_down_unrolled_test();
   //laplacian_pyramid_app_test();
   //halide_harris_test();

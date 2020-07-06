@@ -1550,7 +1550,9 @@ class UBuffer {
     umap* separate_offset_dim(const std::string& pt);
     Box get_bundle_box(const std::string& pt);
     Box extract_addr_box(uset* rddom, vector<size_t> sequence);
-    string generate_linearize_ram_addr(const std::string& pt);
+    //string generate_linearize_ram_addr(const std::string& pt);
+    string generate_linearize_ram_addr(const std::string& pt, bank& bank);
+
     vector<UBuffer> port_grouping(int port_width);
 
     //helper function for port group2bank
