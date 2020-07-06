@@ -86,6 +86,18 @@ struct ir_node {
     return end_exclusive - start;
   }
 
+  void add_prefix_to_reads(const std::string& prefix,
+      const std::string& buf) {
+    for (auto& b : consume_locs_pair) {
+      if (b.first == buf) {
+        for (auto& p : b.second) {
+          p.second = prefix + ", " + p.second;
+        }
+
+      }
+    }
+  }
+
   void replace_reads_from(const std::string& source_buf, const std::string& replacement) {
     for (auto& b : consume_locs_pair) {
       if (b.first == source_buf) {

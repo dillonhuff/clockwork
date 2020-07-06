@@ -10622,17 +10622,58 @@ prog partially_unrolled_conv() {
 
 }
 
+vector<string> surrounding_vars(op* loop, prog& prg) {
+  vector<string> surrounding;
+  op* current = prg.root;
+  while (current != loop) {
+    surrounding.push_back(current->name);
+    current = current->container_child(loop);
+  }
+  return surrounding;
+}
+
+isl_map* next_iteration(isl_set* domain) {
+  vector<string> invars;
+  vector<string> outvars;
+  for (int d = 0; d < num_dims(domain); d++) {
+    string v = "v_" + str(d);
+    invars.push_back(v);
+    if (d == num_dims(domain) - 1) {
+      outvars.push_back(v + " + 1");
+    } else {
+      outvars.push_back(v);
+    }
+  }
+
+  string sname = name(domain);
+  return isl_map_read_from_str(ctx(domain), curlies(arrow(sname + bracket_list(invars), sname + bracket_list(outvars))).c_str());
+}
+
 void read_in(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
   assert(loop->is_loop);
 
   string buf = name(read_data);
   op* next_lp = loop;
+  vector<string> load_addrs;
+  vector<string> store_addrs;
+  for (auto v : surrounding_vars(loop, prg)) {
+    store_addrs.push_back(v);
+  }
+  store_addrs.push_back(loop->name);
+
   for (int d = 0; d < num_dims(read_data); d++) {
     auto ps = project_all_but(read_data, d);
     int lb = to_int(lexminval(ps));
     int ub = to_int(lexmaxval(ps)) + 1;
-    next_lp = next_lp->add_loop_front(prg.unique_name(buf + "_ld"), lb, ub);
+    string lname = prg.unique_name(buf + "_ld");
+    next_lp = next_lp->add_loop_front(lname, lb, ub);
+    load_addrs.push_back(lname);
+    store_addrs.push_back(lname);
   }
+
+  auto ld = next_lp->add_op(prg.unique_name("load_to_" + rb_name));
+  ld->add_load(buf, comma_list(load_addrs));
+  ld->add_store(rb_name, comma_list(store_addrs));
 }
 
 void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg) {
@@ -10654,7 +10695,26 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
   cout << "Consumer maps: " << endl;
   isl_set* read_data = nullptr;
   for (auto op : users) {
+
     auto consumed = map_find(op, cm);
+    cout << "consumed = " << str(consumed) << endl;
+
+    {
+      auto m = to_map(consumed);
+      auto call = isl_map_project_out(cpy(m), isl_dim_in, 2, 2);
+      call = set_domain_name(call, domain_name(m));
+      call = set_range_name(call, range_name(m));
+      cout << "call = " << str(call) << endl;
+
+      auto next = next_iteration(domain(call));
+      cout << "next = " << str(next) << endl;
+      auto next_data_read = dot(next, call);
+      cout << "next read = " << str(next_data_read) << endl;
+      auto overlap = its(next_data_read, domain(call));
+      cout << "overlap   = " << str(overlap) << endl;
+      assert(false);
+    }
+
     for (auto m : get_maps(consumed)) {
       if (range_name(m) == buffer) {
         if (read_data == nullptr) {
@@ -10670,8 +10730,11 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
   read_data = simplify(read_data);
   cout << "All data from " << buffer << ": " << str(read_data) << endl;
   read_in(loop, read_data, rb_name, prg);
+  vector<string> prefixes = surrounding_vars(loop, prg);
+  prefixes.push_back(loop->name);
   for (auto rd : users) {
     rd->replace_reads_from(buffer, rb_name);
+    rd->add_prefix_to_reads(comma_list(prefixes), rb_name);
   }
 
 } 

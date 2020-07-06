@@ -292,6 +292,11 @@ string str(const int i) {
 }
 
 static inline
+string arrow(const std::string& a, const std::string& b) {
+  return a + " -> " + b;
+}
+
+static inline
 string curlies(const std::string& s) {
   return "{" + s + "}";
 }
