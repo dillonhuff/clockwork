@@ -11289,12 +11289,13 @@ void unet_conv_3_3_test() {
 
   CodegenOptions options;
   options.all_rams = true;
-  //options.banking_strategies["conv_stencil"] = {"cyclic", {3, 3, -1}};
+  //options.banking_strategies["conv_stencil"] = {"cyclic", {3, 3, 1}};
   options.inner_bank_offset_mode =
     INNER_BANK_OFFSET_LINEAR;
   all_register_files(prg, options);
  
   //generate_optimized_code(options, prg);
+  //assert(false);
   regression_test(options, prg);
 }
 
