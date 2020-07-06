@@ -11400,7 +11400,7 @@ void coreir_tests() {
 void application_tests() {
   // Does not work with register files?
   seidel2d_test();
-  cnn_test();
+  //cnn_test();
 
   sobel_test();
   jacobi_2d_2_test();
