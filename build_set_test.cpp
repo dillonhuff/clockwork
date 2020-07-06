@@ -10628,7 +10628,10 @@ void read_in(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg
   string buf = name(read_data);
   op* next_lp = loop;
   for (int d = 0; d < num_dims(read_data); d++) {
-    next_lp = next_lp->add_loop_front(prg.unique_name(buf + "_ld"), 0, 1);
+    auto ps = project_all_but(read_data, d);
+    int lb = to_int(lexminval(ps));
+    int ub = to_int(lexmaxval(ps)) + 1;
+    next_lp = next_lp->add_loop_front(prg.unique_name(buf + "_ld"), lb, ub);
   }
 }
 
