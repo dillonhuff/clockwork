@@ -219,6 +219,10 @@ struct ir_node {
       }
   }
 
+  void pretty_print() const {
+    pretty_print(std::cout, 0);
+  }
+
   void pretty_print(int level) const {
     pretty_print(std::cout, level);
   }
@@ -1069,52 +1073,6 @@ struct prog {
     return m;
   }
 
-  //map<string, Result> data_demands_maps() {
-    //map<string, Result> m;
-    //auto ivars = iter_vars();
-    //auto doms = domains();
-
-    //auto ops = root->all_ops();
-    //for (auto op : ops) {
-        //if (!op->is_loop) {
-            //Window win;
-            //string result_buf = "";
-            //for (auto p : op->produces()) {
-                //result_buf= take_until(p, "[");
-                //cout << "Producer :" << p << endl;
-            //}
-            //assert(result_buf != "");
-
-            //auto vars = map_find(op, ivars);
-            ////TODO: fix this hack
-            ////reverse(vars);
-            ////vars.pop_back();
-            ////reverse(vars);
-            //string ivar_str = sep_list(vars, "[", "]", ", ");
-            //auto dom = map_find(op, doms);
-
-            //umap* pmap = rdmap(ctx, "{}");
-            //int cnt_ld_st_pair = 0;
-            //auto producers = op->produces();
-            //for (auto p : op->consumes()) {
-                //cout << "DEBUG:" << result_buf + ivar_str <<", " << producers[cnt_ld_st_pair] << endl;
-                //isl_union_map* vmap =
-                  //rdmap(ctx, string("{ " + producers[cnt_ld_st_pair] + " -> " + p + " }").c_str());
-                  ////rdmap(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str());
-                //pmap = unn(pmap, vmap);
-                //cnt_ld_st_pair ++;
-                //cout << "Consumer map : " << str(pmap) << endl;
-            //}
-            //win.needed = pmap;
-            //Result res;
-            //res.srcs.push_back(win);
-            //m[op->name] = res;
-        //}
-    //}
-      //return m;
-  //}
-
-
   map<op*, isl_map*> producer_maps() {
     map<op*, isl_map*> m;
     auto ivars = iter_vars();
@@ -1137,6 +1095,7 @@ struct prog {
     return m;
 
   }
+
   umap* producer_map(const std::string& buf_name) {
     auto ivars = iter_vars();
     auto doms = domains();
@@ -1189,18 +1148,37 @@ struct prog {
         }
      }
      m = unn(m, pmap);
-     // original
-     //for (auto p : op->consumes()) {
-       //string buf = take_until(p, "[");
-       //if (buf == buf_name) {
-         //umap* vmap =
-           //its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
-         //pmap = unn(pmap, vmap);
-       //}
-     //}
-     //m = unn(m, pmap);
     }
     return m;
+  }
+
+  map<op*, umap*> consumer_maps() {
+    auto ivars = iter_vars();
+    auto doms = domains();
+
+    auto ops = root->all_ops();
+    map<op*, umap*> maps;
+    for (auto op : ops) {
+      auto vars = map_find(op, ivars);
+      string ivar_str = sep_list(vars, "[", "]", ", ");
+      auto dom = map_find(op, doms);
+
+      umap* pmap = isl_union_map_read_from_str(ctx, "{}");
+
+      // for boundary condition expressions
+      for (auto top_pair : op->consumes_pair()) {
+        string cond = "{ ";
+        for (auto sec_pair : top_pair.second) {
+          cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+        }
+        cond = cond.substr(0, cond.length() - 2);
+        cond = cond + string(" }");
+        umap* vmap = its(isl_union_map_read_from_str(ctx, cond.c_str()), to_uset(dom));
+        pmap = unn(pmap, vmap);
+      }
+      maps[op] = pmap;
+    }
+    return maps;
   }
 
   umap* consumer_map() {
@@ -1229,15 +1207,6 @@ struct prog {
      }
      m = unn(m, pmap);
 
-     // original case
-     //for (auto p : op-> consumes()){
-      ////cout << "second for loop" << endl;
-       //umap* vmap =
-          //its(isl_union_map_read_from_str(ctx, string("{ " + op->name + ivar_str + " -> " + p + " }").c_str()), to_uset(dom));
-
-        //pmap = unn(pmap, vmap);
-      //}
-      //m = unn(m, pmap);
     }
     return m;
   }

@@ -2891,49 +2891,4 @@ bool inner_bank_offset_is_legal(isl_map* slot_func, UBuffer& buf) {
   auto op_reads = buf.consumer_map();
 
   return inner_bank_offset_is_legal(slot_func, op_writes, op_reads, sched);
-
-  //auto written = range(op_writes);
-  //auto read = range(op_reads);
-  //auto all_data = unn(written, read);
-
-  //cout << "slot func = " << str(slot_func) << endl;
-
-  //// build (v0, v1) slot(v0) = slot(v1)
-  //auto dloc = its(to_umap(slot_func), all_data);
-  //cout << "store slots = " << str(dloc) << endl;
-
-  //auto stored_to_same_slot = dot(dloc, inv(dloc));
-  //cout << "stored to same slot = " << str(stored_to_same_slot) << endl;
-
-  //auto in_id = isl_union_set_identity(cpy(all_data));
-  //cout << "in id = " << str(in_id) << endl;
-
-  //// build (v0, v1) live_range(v0) and live_range(v1) overlap
-  //auto read_times = dot(inv(op_reads), sched);
-  //auto write_times = dot(inv(op_writes), sched);
-  //cout << "read times  = " << str(read_times) << endl;
-  //cout << "write times = " << str(write_times) << endl;
-
-  //isl_set* sched_range = to_set(range(sched));
-  //auto time_le = isl_map_lex_le(get_space(sched_range));
-
-  //cout << "le times    = " << str(time_le) << endl;
-  //auto after_first_write = dot(write_times, time_le);
-  //cout << "after first write: " << str(after_first_write) << endl;
-
-  //auto time_ge = isl_map_lex_ge(get_space(sched_range));
-  //auto before_last_read = dot(read_times, time_ge);
-
-  //cout << "before last read: " << str(before_last_read) << endl;
-
-  //auto live_range = (coalesce(its(after_first_write, before_last_read)));
-  //cout << "live range = " << str(live_range) << endl;
-
-  //auto overlapping_ranges = dot(live_range, inv(live_range));
-  //cout << "overlapping = " << str(overlapping_ranges) << endl;
-
-  //auto violated = coalesce(diff(its(overlapping_ranges, stored_to_same_slot), in_id));
-  //cout << "violated    = " << str(violated) << endl;
-  //return empty(violated);
-  ////cout << " # violated = " << str(card(domain(violated))) << endl;
 }

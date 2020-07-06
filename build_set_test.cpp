@@ -10047,8 +10047,9 @@ void register_file_optimization_test() {
   generate_regression_testbench(prg);
   auto opt = run_regression_tb(prg);
 
-  //compare(opt, unopt);
+  compare("register_file_optimization_test", opt, unopt);
 
+  assert(false);
 }
 
 prog conv_layer_3D() {
@@ -10604,8 +10605,7 @@ void load_buffer(const std::string& dest, const std::string& src, const vector<i
   op->add_store(dest, comma_list(vs));
 }
 
-
-void cyclic_banked_conv_test() {
+prog partially_unrolled_conv() {
   prog prg("cyclic_banked_conv");
   prg.add_input("in_oc");
   prg.add_output("out");
@@ -10618,6 +10618,60 @@ void cyclic_banked_conv_test() {
   }
   reduce->add_store("out", "x, y");
 
+  return prg;
+
+}
+
+void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg) {
+  auto loop = prg.find_loop(level);
+  cout << "Re-use " << buffer << " at" << endl;
+  loop->pretty_print();
+  std::set<op*> users;
+  for (auto op : loop->descendant_ops()) {
+    if (elem(buffer, op->buffers_referenced())) {
+      users.insert(op);
+    }
+  }
+  cout << "Users..." << endl;
+  for (auto u : users) {
+    cout << tab(1) << u->name << endl;
+  }
+
+  auto cm = prg.consumer_maps();
+  cout << "Consumer maps: " << endl;
+  for (auto op : users) {
+    cout << tab(1) << str(map_find(op, cm)) << endl;
+  }
+  //auto read = coalesce(range(cm));
+  //cout << "Consumed:" << str(read) << endl;
+
+  // Q: In what order should I do loads and
+  // stores from buf -> rb and vice versa?
+  // A: I suppose really we ought to do it
+  // in program order for max locality?
+}
+
+void reuse_buffered_conv_test() {
+  prog prg = partially_unrolled_conv();
+  prg.pretty_print();
+  prg.sanity_check();
+
+  add_reuse_buffer("y", "in", prg);
+
+  assert(false);
+
+  CodegenOptions options;
+  options.all_rams = true;
+  options.banking_strategies["in"] =
+  {"cyclic", {3, 1}};
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+
+  generate_optimized_code(options, prg);
+}
+
+void cyclic_banked_conv_test() {
+  prog prg = partially_unrolled_conv();
   prg.pretty_print();
   prg.sanity_check();
 
@@ -10629,26 +10683,6 @@ void cyclic_banked_conv_test() {
     INNER_BANK_OFFSET_LINEAR;
 
   generate_optimized_code(options, prg);
-  //regression_test(options, prg);
-  //assert(false);
-
-  //auto buffers = build_buffers(prg, prg.optimized_codegen());
-  //for (auto b : buffers) {
-    //auto buf = b.second;
-    //if (buf.get_out_ports().size() > 1) {
-      //cout << buf << endl << endl;
-      //isl_map* slot_func =
-        //isl_map_read_from_str(prg.ctx,
-            //"{in[x, y] -> M[x, y % 3]}");
-      //assert(inner_bank_offset_is_legal(slot_func, buf));
-
-      //isl_map* bank_func =
-        //isl_map_read_from_str(prg.ctx,
-            //"{in[x, y] -> B[x % 3]}");
-      //assert(banking_scheme_is_legal(bank_func, buf));
-    //}
-  //}
-  //assert(false);
 }
 void copy(const std::string& dst, const std::string& src, const std::vector<int>& dims, prog& prg) {
   op* lp = prg.root;
@@ -11402,6 +11436,9 @@ void coreir_tests() {
 }
 
 void application_tests() {
+  reuse_buffered_conv_test();
+  cyclic_banked_conv_test();
+  register_file_optimization_test();
   unet_conv_3_3_test();
   // Does not work with register files?
   seidel2d_test();
@@ -11469,7 +11506,6 @@ void application_tests() {
   blur_and_downsample_test();
   halide_up_sample_test();
   denoise2d_test();
-  cyclic_banked_conv_test();
 
   sum_diffs_test();
   denoise3d_reconvergence_test();
@@ -11489,7 +11525,6 @@ void application_tests() {
   upsample_stencil_2d_test();
   upsample_stencil_1d_test();
   up_unrolled_4_test();
-  register_file_optimization_test();
   reduce_rows_test();
   reaccess_no_hierarchy_test();
   //playground();
