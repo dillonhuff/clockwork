@@ -260,10 +260,11 @@ void generate_bank(CodegenOptions& options,
     out << tab(2) << "}" << endl;
     out << tab(2) << "assert(addr < " << capacity << ");" << endl;
     out << tab(2) << "assert(addr >= " << (int) 0 << ");" << endl;
+    close_debug_scope(out);
+
     ignore_inter_deps(out, "RAM");
     out << tab(2) << "return RAM[addr];" << endl;
     out << tab(1) << "}" << endl << endl;
-    close_debug_scope(out);
 
     out << endl << endl;
 

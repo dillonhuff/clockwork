@@ -12070,12 +12070,13 @@ void resnet_test() {
 }
 
 void application_tests() {
+  resnet_test();
+  assert(false);
   seidel2d_test();
   sobel_test();
   jacobi_2d_2_test();
   jacobi_2d_test();
 
-  resnet_test();
   unet_conv_3_3_test();
   //reuse_buffered_conv_test();
   cyclic_banked_conv_test();
