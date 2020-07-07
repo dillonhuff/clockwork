@@ -11075,6 +11075,33 @@ isl_map* next_iteration(isl_set* domain) {
   return isl_map_read_from_str(ctx(domain), curlies(arrow(sname + bracket_list(invars), sname + bracket_list(outvars))).c_str());
 }
 
+void write_out(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
+  assert(loop->is_loop);
+
+  string buf = name(read_data);
+  op* next_lp = loop;
+  vector<string> load_addrs;
+  vector<string> store_addrs;
+  for (auto v : surrounding_vars(loop, prg)) {
+    store_addrs.push_back(v);
+  }
+  store_addrs.push_back(loop->name);
+
+  for (int d = 0; d < num_dims(read_data); d++) {
+    auto ps = project_all_but(read_data, d);
+    int lb = to_int(lexminval(ps));
+    int ub = to_int(lexmaxval(ps)) + 1;
+    string lname = prg.unique_name(buf + "_st");
+    next_lp = next_lp->add_loop(lname, lb, ub);
+    load_addrs.push_back(lname);
+    store_addrs.push_back(lname);
+  }
+
+  auto ld = next_lp->add_op(prg.unique_name("store_from_" + rb_name));
+  ld->add_load(rb_name, comma_list(store_addrs));
+  ld->add_store(buf, comma_list(load_addrs));
+}
+
 void read_in(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg) {
   assert(loop->is_loop);
 
@@ -11168,6 +11195,7 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
 
   read_in(loop, read_data, rb_name, prg);
 
+  write_out(loop, read_data, rb_name, prg);
   vector<string> prefixes = surrounding_vars(loop, prg);
   prefixes.push_back(loop->name);
   for (auto rd : users) {
