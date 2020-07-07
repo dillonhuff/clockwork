@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <vector>
+#include <map>
 #include <set>
 
 using namespace std;
@@ -22,6 +24,11 @@ enum InnerBankOffsetMode {
   INNER_BANK_OFFSET_LINEAR
 };
 
+struct banking_strategy {
+  string partition;
+  vector<int> cycle_factors;
+};
+
 struct CodegenOptions {
   bool internal;
   bool all_rams;
@@ -41,9 +48,9 @@ struct CodegenOptions {
   bool use_soda_casting;
   InnerBankOffsetMode inner_bank_offset_mode;
   ScheduleAlgorithm scheduling_algorithm;
+  bool ignore_top_level_inter_deps;
 
-  std::set<std::string> register_files;
-
+  std::map<string, banking_strategy> banking_strategies;
 
   DebugOptions debug_options;
 
@@ -55,8 +62,11 @@ struct CodegenOptions {
   push_garbage_outputs(false),
   use_soda_casting(false),
   inner_bank_offset_mode(INNER_BANK_OFFSET_STACK),
-  scheduling_algorithm(SCHEDULE_ALGORITHM_NAIVE)
+  scheduling_algorithm(SCHEDULE_ALGORITHM_NAIVE),
+  ignore_top_level_inter_deps(false)
   {}
+
+  banking_strategy get_banking_strategy(const std::string& buffer);
 
 };
 

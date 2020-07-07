@@ -1,5 +1,19 @@
-#include "codegen.h"
 #include "prog.h"
+
+#include "codegen.h"
+#include "app.h"
+
+std::string us(const std::string& a, const std::string& b) {
+  return a + "_" + b;
+}
+
+std::string us(const pair<std::string, std::string>& a) {
+  return us(a.first, a.second);
+}
+
+std::string dot(const pair<std::string, std::string>& a) {
+  return a.first + "." + a.second;
+}
 
 isl_multi_aff*
 to_multi_aff(isl_ctx* context,
@@ -242,9 +256,9 @@ void ocl_timing_suffix(std::ostream& out) {
   out << tab(1) << "double bpersec = (dbytes / dsduration);" << endl;
   out << tab(1) << "double gbpersec = bpersec / ((double)1024 * 1024 * 1024);" << endl;
 
-  out << "std::cout << \"bytes / sec = \" << bpersec << std::endl;" << endl;
-  out << "std::cout << \"GB / sec = \" << gbpersec << std::endl;" << endl;
-  out << "printf(\"Execution time = %f (sec) \\n\", dsduration);" << endl;
+  out << tab(1) << "std::cout << \"bytes / sec = \" << bpersec << std::endl;" << endl;
+  out << tab(1) << "std::cout << \"GB / sec = \" << gbpersec << std::endl;" << endl;
+  out << tab(1) << "printf(\"Execution time = %f (sec) \\n\", dsduration);" << endl;
 }
 
 void run_kernel(std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
@@ -542,7 +556,24 @@ void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& b
     string edge_bundle = eb.second;
     string buf = eb.first;
 
-    out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = num_epochs*" << prg.buffer_size(buf) << ";" << endl;
+    int num_pixels = -1;
+    if (prg.is_input(buf)) {
+      auto cmap = prg.consumer_map(buf);
+      auto range_card = card(range(cmap));
+      num_pixels = int_upper_bound(range_card);
+    } else {
+      auto cmap = prg.producer_map(buf);
+      auto range_card = card(range(cmap));
+      num_pixels = int_upper_bound(range_card);
+    }
+
+    // TODO: Unify prg and app size computation syntax
+    if (num_pixels < prg.buffer_size(buf)) {
+      num_pixels = prg.buffer_size(buf);
+    }
+
+    //out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = num_epochs*" << prg.buffer_size(buf) << ";" << endl;
+    out << tab(1) << "const int " << edge_bundle << "_DATA_SIZE = num_epochs*" << num_pixels << ";" << endl;
     out << tab(1) << "const int " << edge_bundle << "_BYTES_PER_PIXEL = " << map_find(buf, buffers).bundle_lane_width(edge_bundle) << " / 8;" << endl;
     out << tab(1) << "size_t " << edge_bundle << "_size_bytes = " << edge_bundle << "_BYTES_PER_PIXEL * " << edge_bundle << "_DATA_SIZE;" << endl << endl;
     out << tab(1) << "total_size_bytes += " << edge_bundle << "_size_bytes;" << endl;
@@ -605,7 +636,63 @@ void generate_xilinx_accel_host(CodegenOptions& options, map<string, UBuffer>& b
   out.close();
 }
 
-void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
+std::string hwstream(const std::string& tp) {
+  return "HWStream<" + tp + " >";
+}
+
+void generate_distributor(
+    CodegenOptions& options,
+    std::ostream& out,
+    UBuffer& buf,
+    const std::string& bundle_name,
+    prog& prg) {
+
+  string in_bundle_tp = buf.bundle_type_string(bundle_name);
+
+  vector<string> args;
+  args.push_back(hwstream(in_bundle_tp) + "& in");
+  args.push_back(hwstream(in_bundle_tp) + "& out0");
+  args.push_back(hwstream(in_bundle_tp) + "& out1");
+
+  out << "static void distributor_" << bundle_name << "(" << comma_list(args) << ") {" << endl;
+  out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
+  out << tab(2) << "#pragma HLS pipeline II=1" << endl;
+  out << tab(2) << "auto v = in.read();" << endl;
+  out << tab(2) << "out0.write(v0);" << endl;
+  out << tab(2) << "out1.write(v1);" << endl;
+  out << tab(1) << "}" << endl;
+  out << "}" << endl << endl;
+}
+
+void generate_collector(
+    CodegenOptions& options,
+    std::ostream& out,
+    UBuffer& buf,
+    const std::string& bundle_name,
+    prog& prg) {
+
+  string in_bundle_tp = buf.bundle_type_string(bundle_name);
+
+  vector<string> args;
+  args.push_back(hwstream(in_bundle_tp) + "& in0");
+  args.push_back(hwstream(in_bundle_tp) + "& in1");
+  args.push_back(hwstream(in_bundle_tp) + "& out");
+
+  out << "static void collector_" << bundle_name << "(" << comma_list(args) << ") {" << endl;
+  out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
+  out << tab(2) << "#pragma HLS pipeline II=1" << endl;
+  out << tab(2) << "auto v0 = in0.read();" << endl;
+  out << tab(2) << "auto v1 = in1.read();" << endl;
+  out << tab(2) << "out.write({v0, v1});" << endl;
+  out << tab(1) << "}" << endl;
+  out << "}" << endl << endl;
+}
+
+void generate_xilinx_multi_channel_accel_wrapper(
+    CodegenOptions& options,
+    std::ostream& out,
+    map<string, UBuffer>& buffers,
+    prog& prg) {
 
   cout << "Generating accel wrapper" << endl;
   string driver_func = prg.name + "_accel";
@@ -618,7 +705,28 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
     UBuffer out_buf = map_find(out_rep, buffers);
     string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
 
-    int num_pixels = prg.buffer_size(out_rep);
+    generate_collector(options, out, out_buf, eb.second, prg);
+    generate_distributor(options, out, out_buf, eb.second, prg);
+
+    int num_pixels = -1;
+    if (prg.is_input(out_rep)) {
+
+      auto cmap = prg.consumer_map(out_rep);
+      out << tab(1) << "// " << str(cmap) << endl;
+      auto range_card = card(range(cmap));
+      num_pixels = int_upper_bound(range_card);
+    } else {
+      auto cmap = prg.producer_map(out_rep);
+      out << tab(1) << "// " << str(cmap) << endl;
+      auto range_card = card(range(cmap));
+      num_pixels = int_upper_bound(range_card);
+    }
+
+    assert(num_pixels >= 0);
+    // TODO: Unify prg and app size computation syntax
+    if (num_pixels < prg.buffer_size(out_rep)) {
+      num_pixels = prg.buffer_size(out_rep);
+    }
 
     int pix_per_burst =
       out_buf.lanes_in_bundle(out_bundle);
@@ -650,9 +758,209 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
     out_buf.lanes_in_bundle(out_bundle);
   int out_burst = out_pix / pix_per_out_burst;
 
-  //out << "// TODO: Adapt to have one size for each edge buffer" << endl;
-  //out << "#define INPUT_SIZE " << in_burst << endl;
-  //out << "#define OUTPUT_SIZE " << out_burst << endl;
+  out << endl;
+  out << "extern \"C\" {" << endl << endl;
+
+  for (auto in_bundle : in_bundles(buffers, prg)) {
+
+    out << "static void read_" << in_bundle << "(" << in_bundle_tp << "* input, HWStream<" << in_bundle_tp << " >& v, const int size) {" << endl;
+
+    out << tab(1) << in_bundle_tp << " burst_reg;" << endl;
+    if (options.num_input_epochs < 0) {
+      out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*size;" << endl;
+    } else {
+      out << tab(1) << "int num_transfers = " << in_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
+    }
+
+    out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
+    out << tab(2) << "#pragma HLS pipeline II=1" << endl;
+    out << tab(2) << "burst_reg = input[i];" << endl;
+    out << tab(2) << "v.write(burst_reg);" << endl;
+    out << tab(1) << "}" << endl;
+    out << "}" << endl << endl;
+  }
+
+  for (auto out_bundle : out_bundles(buffers, prg)) {
+    out << "static void write_" << out_bundle << "(" << out_bundle_tp << "* output, HWStream<" << out_bundle_tp << " >& v, const int size) {" << endl;
+    out << tab(1) << out_bundle_tp << " burst_reg;" << endl;
+    if (options.num_input_epochs < 0) {
+      out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*size;" << endl;
+    } else {
+      out << tab(1) << "int num_transfers = " << out_bundle << "_num_transfers" << "*" << options.num_input_epochs << ";" << endl;
+    }
+
+    out << tab(1) << "for (int i = 0; i < num_transfers; i++) {" << endl;
+    out << tab(2) << "#pragma HLS pipeline II=1" << endl;
+    out << tab(2) << "burst_reg = v.read();" << endl;
+    out << tab(2) << "output[i] = burst_reg;" << endl;
+    out << tab(1) << "}" << endl;
+    out << "}" << endl << endl;
+  }
+
+  cout << "Generating arg list" << endl;
+  vector<string> ptr_args;
+  vector<string> ptr_arg_decls;
+  vector<string> buffer_args;
+  for (auto in : prg.ins) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_out_bundles().size() == 1);
+
+    cout << "picking from bundle" << endl;
+    auto bundle = pick(buf.get_out_bundles());
+    cout << "bundle: " << bundle << endl;
+
+    string out_bundle_tp = buf.bundle_type_string(bundle);
+    ptr_arg_decls.push_back(out_bundle_tp + "* " + bundle);
+    ptr_args.push_back(bundle);
+    buffer_args.push_back(bundle + "_channel");
+  }
+
+  for (auto out : prg.outs) {
+    assert(contains_key(out, buffers));
+    auto& buf = buffers.at(out);
+    for (auto bundle : buf.get_in_bundles()) {
+      //auto bundle = pick(buf.get_in_bundles());
+      string in_bundle_tp = buf.bundle_type_string(bundle);
+
+      ptr_arg_decls.push_back(in_bundle_tp + "* " + bundle);
+      ptr_args.push_back(bundle);
+      buffer_args.push_back(bundle + "_channel");
+    }
+  }
+
+  vector<string> all_arg_decls = ptr_arg_decls;
+  all_arg_decls.push_back("const int size");
+
+  cout << "Generating driver function" << endl;
+
+  out << "void " << driver_func << "(" << comma_list(all_arg_decls) << ") { " << endl;
+  out << "#pragma HLS dataflow" << endl;
+
+  int bank_no = 0;
+  for (auto pt : ptr_args) {
+    out << "#pragma HLS INTERFACE m_axi port = " << pt << " offset = slave depth = 65536 bundle = gmem" << bank_no << endl;
+    if (bank_no < 3) {
+      bank_no++;
+    }
+  }
+  out << endl;
+  for (auto pt : ptr_args) {
+    out << "#pragma HLS INTERFACE s_axilite port = " << pt << " bundle = control" << endl;
+  }
+  out << "#pragma HLS INTERFACE s_axilite port = size bundle = control" << endl;
+  out << "#pragma HLS INTERFACE s_axilite port = return bundle = control" << endl;
+  out << endl;
+
+  for (auto in : prg.ins) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    //assert(buf.get_in_bundles().size() == 1);
+    auto bundle = pick(buf.get_out_bundles());
+    string in_bundle_tp = buf.bundle_type_string(bundle);
+
+    out << tab(1) << "static HWStream<" << in_bundle_tp << " > " << bundle << "_channel;" << endl;
+  }
+
+  for (auto in : prg.outs) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    //assert(buf.get_in_bundles().size() == 1);
+    auto bundle = pick(buf.get_in_bundles());
+    string in_bundle_tp = buf.bundle_type_string(bundle);
+
+    out << tab(1) << "static HWStream<" << in_bundle_tp << " > " << bundle << "_channel;" << endl;
+  }
+
+  out << endl;
+
+  for (auto in : prg.ins) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    assert(buf.get_out_bundles().size() == 1);
+    auto bundle = pick(buf.get_out_bundles());
+
+    //out << tab(1) << "read_input(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
+    out << tab(1) << "read_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
+  }
+
+  out << endl << tab(1) << prg.name << "(" << comma_list(buffer_args) << ");" << endl << endl;
+
+  for (auto in : prg.outs) {
+    assert(contains_key(in, buffers));
+    auto& buf = buffers.at(in);
+    for (auto bundle : buf.get_in_bundles()) {
+      //auto bundle = pick(buf.get_in_bundles());
+      out << tab(1) << "write_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
+    }
+  }
+
+  out << "}" << endl << endl;
+  out << "}" << endl;
+  cout << "Generated accel wrapper" << endl;
+}
+void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, map<string, UBuffer>& buffers, prog& prg) {
+
+  cout << "Generating accel wrapper" << endl;
+  string driver_func = prg.name + "_accel";
+
+
+  for (auto eb : edge_buffers(buffers, prg)) {
+    string out_rep = eb.first;
+    string out_bundle = eb.second;
+
+    UBuffer out_buf = map_find(out_rep, buffers);
+    string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
+
+    int num_pixels = -1;
+    if (prg.is_input(out_rep)) {
+
+      auto cmap = prg.consumer_map(out_rep);
+      out << tab(1) << "// " << str(cmap) << endl;
+      auto range_card = card(range(cmap));
+      num_pixels = int_upper_bound(range_card);
+    } else {
+      auto cmap = prg.producer_map(out_rep);
+      out << tab(1) << "// " << str(cmap) << endl;
+      auto range_card = card(range(cmap));
+      num_pixels = int_upper_bound(range_card);
+    }
+
+    assert(num_pixels >= 0);
+    // TODO: Unify prg and app size computation syntax
+    if (num_pixels < prg.buffer_size(out_rep)) {
+      num_pixels = prg.buffer_size(out_rep);
+    }
+
+    int pix_per_burst =
+      out_buf.lanes_in_bundle(out_bundle);
+    int num_in_bursts = num_pixels / pix_per_burst;
+
+    out << "const int " << out_bundle << "_num_transfers = " << num_in_bursts << ";" << endl;
+  }
+  out << endl;
+
+  string in_rep = pick(prg.ins);
+  UBuffer& in_buf = buffers.at(in_rep);
+  string in_bundle = pick(in_buf.port_bundles).first;
+  string in_bundle_tp = in_buf.bundle_type_string(in_bundle);
+
+  cout << "Got in bundle" << endl;
+
+  string out_rep = pick(prg.outs);
+  UBuffer& out_buf = buffers.at(out_rep);
+  string out_bundle = pick(out_buf.port_bundles).first;
+  string out_bundle_tp = out_buf.bundle_type_string(out_bundle);
+
+  int in_pix = prg.buffer_size(in_rep);
+  int pix_per_in_burst =
+    in_buf.lanes_in_bundle(in_bundle);
+  int in_burst = in_pix / pix_per_in_burst;
+
+  int out_pix = prg.buffer_size(out_rep);
+  int pix_per_out_burst =
+    out_buf.lanes_in_bundle(out_bundle);
+  int out_burst = out_pix / pix_per_out_burst;
 
   out << endl;
   out << "extern \"C\" {" << endl << endl;
@@ -722,18 +1030,10 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
       ptr_args.push_back(bundle);
       buffer_args.push_back(bundle + "_channel");
     }
-    //assert(buf.get_in_bundles().size() == 1);
-    //auto bundle = pick(buf.get_in_bundles());
-    //string in_bundle_tp = buf.bundle_type_string(bundle);
-
-    //ptr_arg_decls.push_back(in_bundle_tp + "* " + bundle);
-    //ptr_args.push_back(bundle);
-    //buffer_args.push_back(bundle + "_channel");
   }
 
   vector<string> all_arg_decls = ptr_arg_decls;
   all_arg_decls.push_back("const int size");
-  buffer_args.push_back("size");
 
   cout << "Generating driver function" << endl;
 
@@ -796,11 +1096,6 @@ void generate_xilinx_accel_wrapper(CodegenOptions& options, std::ostream& out, m
       //auto bundle = pick(buf.get_in_bundles());
       out << tab(1) << "write_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
     }
-    //assert(buf.get_in_bundles().size() == 1);
-    //auto bundle = pick(buf.get_in_bundles());
-
-    ////out << tab(1) << "write_output(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
-    //out << tab(1) << "write_" << bundle << "(" << bundle << ", " << bundle << "_channel" << ", size);" << endl;
   }
 
   out << "}" << endl << endl;
@@ -1413,10 +1708,12 @@ vector<string> outgoing_buffers(const map<string, UBuffer>& buffers, op* op, pro
 }
 
 vector<string> incoming_buffers(const map<string, UBuffer>& buffers, op* op, prog& prg) {
+  cout << "getting incoming buffers to " << op->name << endl;
   vector<string> incoming;
   std::set<string> done;
   for (auto p : op->consume_locs_pair) {
     auto buf_name = p.first;
+    cout << tab(1) << "consumed: " << buf_name << endl;
     if (!elem(buf_name, done)) {
       incoming.push_back(buf_name);
       done.insert(buf_name);
@@ -1635,94 +1932,94 @@ compute_kernel generate_compute_op(
   return kernel;
 }
 
-module_type* generate_rtl_buffer(CodegenOptions& options,
-    minihls::context& minigen,
-    UBuffer& buffer) {
+//module_type* generate_rtl_buffer(CodegenOptions& options,
+    //minihls::context& minigen,
+    //UBuffer& buffer) {
 
-  minihls::block* blk = minigen.add_block(buffer.name);
-  for (auto bank_struct : buffer.get_banks()) {
-    auto bankprog = minigen.add_block(bank_struct.name);
+  //minihls::block* blk = minigen.add_block(buffer.name);
+  //for (auto bank_struct : buffer.get_banks()) {
+    //auto bankprog = minigen.add_block(bank_struct.name);
 
-    map<string, minihls::module_instance*> partitions;
-    map<string, minihls::instruction_instance*> read_partitions;
-    for (auto part : bank_struct.get_partitions()) {
-      auto part_tp = sr_buffer(*bankprog,
-          32,
-          part.second);
-      partitions[part.first] =
-        bankprog->add_module_instance(part.first, part_tp);
-    }
+    //map<string, minihls::module_instance*> partitions;
+    //map<string, minihls::instruction_instance*> read_partitions;
+    //for (auto part : bank_struct.get_partitions()) {
+      //auto part_tp = sr_buffer(*bankprog,
+          //32,
+          //part.second);
+      //partitions[part.first] =
+        //bankprog->add_module_instance(part.first, part_tp);
+    //}
 
-    auto bankmod = minigen.compile(bankprog);
-    blk->add_module_instance(bank_struct.name, bankmod);
-  }
+    //auto bankmod = minigen.compile(bankprog);
+    //blk->add_module_instance(bank_struct.name, bankmod);
+  //}
 
-  for (auto osel : buffer.selectors) {
-    selector sel = osel.second;
-    vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
-    for (auto pt : sel.vars) {
-      ports.push_back(minihls::inpt(pt, 32));
-    }
-    ports.push_back(minihls::outpt("out", 32));
+  //for (auto osel : buffer.selectors) {
+    //selector sel = osel.second;
+    //vector<minihls::port> ports{{"clk", 1, true}, {"rst", 1, true}};
+    //for (auto pt : sel.vars) {
+      //ports.push_back(minihls::inpt(pt, 32));
+    //}
+    //ports.push_back(minihls::outpt("out", 32));
 
-    ostringstream body;
-    for (int i = 0; i < sel.bank_conditions.size(); i++) {
-      body << tab(1) << "always @(*) begin" << endl;
-      body << tab(2) << "if (" << sel.bank_conditions.at(i) << ") begin" << endl;
-      body << tab(3) << "out = " << sel.inner_bank_offsets.at(i) << ";" << endl;
-      body << tab(2) << "end" << endl;
-      body << tab(1) << "end" << endl;
-    }
-    auto ubufmod =
-      blk->add_module_type(sel.name, ports, body.str());
-    blk->add_module_instance("selector_" + sel.name,
-        ubufmod);
-  }
+    //ostringstream body;
+    //for (int i = 0; i < sel.bank_conditions.size(); i++) {
+      //body << tab(1) << "always @(*) begin" << endl;
+      //body << tab(2) << "if (" << sel.bank_conditions.at(i) << ") begin" << endl;
+      //body << tab(3) << "out = " << sel.inner_bank_offsets.at(i) << ";" << endl;
+      //body << tab(2) << "end" << endl;
+      //body << tab(1) << "end" << endl;
+    //}
+    //auto ubufmod =
+      //blk->add_module_type(sel.name, ports, body.str());
+    //blk->add_module_instance("selector_" + sel.name,
+        //ubufmod);
+  //}
 
 
-  for (auto out_bundle : buffer.get_in_bundles()) {
-    // Here I need to get all banks which receive data from this bundle
-    // and write to them
-    in_wire_read(*blk, out_bundle US "wen", 1);
-    in_wire_read(*blk, out_bundle US "wdata", buffer.port_bundle_width(out_bundle));
-  }
+  //for (auto out_bundle : buffer.get_in_bundles()) {
+    //// Here I need to get all banks which receive data from this bundle
+    //// and write to them
+    //in_wire_read(*blk, out_bundle US "wen", 1);
+    //in_wire_read(*blk, out_bundle US "wdata", buffer.port_bundle_width(out_bundle));
+  //}
 
-  for (auto out_bundle : buffer.get_out_bundles()) {
-    auto dummy = in_wire_read(*blk, out_bundle US "dummy", buffer.port_bundle_width(out_bundle));
-    // Here I need to get all sources of this bundle and concatenate
-    // them together
-    out_wire_write(*blk, out_bundle US "rdata", buffer.port_bundle_width(out_bundle), dummy);
-  }
+  //for (auto out_bundle : buffer.get_out_bundles()) {
+    //auto dummy = in_wire_read(*blk, out_bundle US "dummy", buffer.port_bundle_width(out_bundle));
+    //// Here I need to get all sources of this bundle and concatenate
+    //// them together
+    //out_wire_write(*blk, out_bundle US "rdata", buffer.port_bundle_width(out_bundle), dummy);
+  //}
 
-  auto mod = minigen.compile(blk);
+  //auto mod = minigen.compile(blk);
 
-  for (auto out_bundle : buffer.get_in_bundles()) {
-    auto wr_bundle =
-      blk->add_instruction_type(buffer.name US out_bundle US "write");
-    auto wr_bind =
-      blk->add_instruction_binding(buffer.name US out_bundle US "write_binding",
-          wr_bundle,
-          mod,
-          out_bundle US "wdata",
-          {});
-    wr_bind->latency = 1;
-    wr_bind->en = out_bundle US "wen";
-  }
+  //for (auto out_bundle : buffer.get_in_bundles()) {
+    //auto wr_bundle =
+      //blk->add_instruction_type(buffer.name US out_bundle US "write");
+    //auto wr_bind =
+      //blk->add_instruction_binding(buffer.name US out_bundle US "write_binding",
+          //wr_bundle,
+          //mod,
+          //out_bundle US "wdata",
+          //{});
+    //wr_bind->latency = 1;
+    //wr_bind->en = out_bundle US "wen";
+  //}
 
-  for (auto bundle : buffer.get_out_bundles()) {
-    auto rd_bundle =
-      blk->add_instruction_type(buffer.name US bundle US "read");
-    auto rd_bind =
-      blk->add_instruction_binding(buffer.name US bundle US "read_binding",
-          rd_bundle,
-          mod,
-          bundle US "rdata",
-          {});
-    rd_bind->latency = 1;
-  }
+  //for (auto bundle : buffer.get_out_bundles()) {
+    //auto rd_bundle =
+      //blk->add_instruction_type(buffer.name US bundle US "read");
+    //auto rd_bind =
+      //blk->add_instruction_binding(buffer.name US bundle US "read_binding",
+          //rd_bundle,
+          //mod,
+          //bundle US "rdata",
+          //{});
+    //rd_bind->latency = 1;
+  //}
 
-  return mod;
-}
+  //return mod;
+//}
 
 vector<compute_kernel> writers(vector<compute_kernel>& kernels, const std::string& in_buf) {
   vector<compute_kernel> ws;
@@ -1858,6 +2155,52 @@ void generate_verilog_code(CodegenOptions& options,
   ////assert(false);
 }
 
+std::string perfect_loop_codegen(umap* schedmap) {
+  ostringstream conv_out;
+  auto time_range = coalesce(range(schedmap));
+  conv_out << "// time range: " << str(time_range) << endl;
+  auto sets = get_sets(time_range);
+
+  conv_out << "// # sets: " << sets.size() << endl;
+  assert(sets.size() == 1);
+  for (auto s : get_sets(time_range)) {
+    vector<int> lower_bounds;
+    vector<int> upper_bounds;
+    for (int d = 0; d < num_dims(s); d++) {
+      auto ds = project_all_but(s, d);
+      auto lm = lexminval(ds);
+      auto lmax = lexmaxval(ds);
+      lower_bounds.push_back(to_int(lm));
+      upper_bounds.push_back(to_int(lmax));
+    }
+
+    for (int i = 0; i < lower_bounds.size(); i++) {
+      conv_out << tab(i) << "for (int i" << str(i) << " = " << lower_bounds.at(i) << "; i" << str(i) << " <= " << upper_bounds.at(i) << "; i" << i << "++) {" << endl;
+    }
+
+    for (auto time_to_val : get_maps(inv(schedmap))) {
+      auto pw = isl_pw_multi_aff_from_map(time_to_val);
+      vector<pair<isl_set*, isl_multi_aff*> > pieces =
+        get_pieces(pw);
+      assert(pieces.size() == 1);
+
+      auto saff = pieces.at(0).second;
+      auto dom = pieces.at(0).first;
+      conv_out << tab(lower_bounds.size()) << "// " << str(dom) << endl;
+      conv_out << tab(lower_bounds.size()) << "if (" << codegen_c(dom) << ") {" << endl;
+      conv_out << tab(lower_bounds.size() + 1) << codegen_c(saff) << ";" << endl;
+      conv_out << tab(lower_bounds.size()) << "}" << endl;
+    }
+
+    for (int i = 0; i < lower_bounds.size(); i++) {
+      conv_out << tab(lower_bounds.size() - 1 - i) << "}" << endl;
+    }
+
+  }
+
+  return conv_out.str();
+}
+
 void generate_app_code(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -1912,9 +2255,12 @@ void generate_app_code(CodegenOptions& options,
   }
 
 
-  string code_string = options.code_string;
+  string code_string =
+    //perfect_loop_codegen(schedmap);
+    options.code_string;
   if (!options.use_custom_code_string) {
     code_string = codegen_c(schedmap);
+    //code_string = perfect_loop_codegen(schedmap);
   }
 
   string original_isl_code_string = code_string;
@@ -1933,6 +2279,12 @@ void generate_app_code(CodegenOptions& options,
   conv_out << "#endif // __VIVADO_SYNTH__" << endl << endl;
 
   conv_out << "// schedule: " << str(schedmap) << endl;
+  for (auto s : get_maps(schedmap)) {
+    conv_out << "// " << tab(1) << str(s) << endl;
+    conv_out << "// Condition for " << domain_name(s) << codegen_c(range(s)) << endl;
+  }
+  conv_out << endl;
+
   conv_out << tab(1) << "/*" << endl;
   conv_out << original_isl_code_string << endl;
   conv_out << tab(1) << "*/" << endl;
@@ -1963,6 +2315,10 @@ void generate_app_code(CodegenOptions& options,
   close_synth_scope(conv_out);
 
   conv_out << endl;
+
+  ofstream test_out("multi_channel_accel_wrapper.cpp");
+  generate_xilinx_multi_channel_accel_wrapper(options, test_out, buffers, prg);
+  test_out.close();
 
   // Collateral generation
   generate_sw_bmp_test_harness(buffers, prg);
@@ -1997,10 +2353,10 @@ void generate_optimized_code(CodegenOptions& options, prog& prg) {
   auto buffers = build_buffers(prg, sched);
 
   cout << "Buffers..." << endl;
-  for (auto b : buffers) {
-    //b.second.generate_bank_and_merge(options);
-    cout << b.second << endl;
-  }
+  //for (auto b : buffers) {
+    ////b.second.generate_bank_and_merge(options);
+    //cout << b.second << endl;
+  //}
 
   assert(prg.compute_unit_file != "");
   cout << "Compute unit file: " << prg.compute_unit_file << endl;
@@ -2028,6 +2384,10 @@ void generate_unoptimized_code(CodegenOptions& options, prog& prg) {
   cout << codegen_c(prg.unoptimized_schedule());
 
   auto buffers = build_buffers(prg, prg.unoptimized_schedule());
+  //for (auto b : buffers) {
+    //cout << b.second << endl;
+  //}
+  //assert(false);
 
   generate_app_code(options, buffers, prg, sched);
 
@@ -2035,26 +2395,15 @@ void generate_unoptimized_code(CodegenOptions& options, prog& prg) {
 }
 
 void generate_unoptimized_code(prog& prg) {
-  //string old_name = prg.name;
-
-  //prg.name = "unoptimized_" + prg.name;
-
-  //cout << "Unoptimized schedule..." << endl;
-  //auto sched = prg.unoptimized_schedule();
-  //cout << tab(1) << ": " << str(sched) << endl;
-
-  //cout << codegen_c(prg.unoptimized_schedule());
-
-  //auto buffers = build_buffers(prg, prg.unoptimized_schedule());
 
   CodegenOptions options;
   options.internal = true;
   options.all_rams = true;
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_LINEAR;
+  all_register_files(prg, options);
+  //assert(false);
   generate_unoptimized_code(options, prg);
-
-  //generate_app_code(options, buffers, prg, sched);
-
-  //prg.name = old_name;
 }
 
 vector<pair<string, string> >
@@ -2217,6 +2566,7 @@ void generate_regression_testbench(prog& prg) {
     rgtb << tab(1) << "// cmap    : " << str(cmap) << endl;
     rgtb << tab(1) << "// read map: " << str(read_map) << endl;
     rgtb << tab(1) << "// rng     : " << str(rng) << endl;
+    rgtb << tab(1) << "// rng card: " << str(range_card) << endl;
     rgtb << tab(1) << "for (int i = 0; i < " << num_pushes << "; i++) {" << endl;
     rgtb << tab(2) << in << ".write(i);" << endl;
     rgtb << tab(1) << "}" << endl << endl;
@@ -2240,7 +2590,8 @@ void generate_regression_testbench(prog& prg) {
 }
 
 std::vector<std::string> run_regression_tb(const std::string& name) {
-  int res = system(string("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
+  //int res = system(string("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp").c_str());
+  int res = cmd("g++ -fstack-protector-all -std=c++11 regression_tb_" + name + ".cpp " + name + ".cpp");
   assert(res == 0);
 
   res = system("./a.out");
@@ -2293,16 +2644,7 @@ void regression_test(CodegenOptions& options,
   generate_regression_testbench(prg);
   vector<string> optimized_res = run_regression_tb(prg);
 
-  assert(unoptimized_res.size() == optimized_res.size());
-  for (size_t i = 0; i < unoptimized_res.size(); i++) {
-
-    if (!(unoptimized_res.at(i) == optimized_res.at(i))) {
-      cout << "Error: After optimization, at output " << i << " unoptimized_res != optimized_res" << endl;
-      cout << "\tunoptimized = " << unoptimized_res.at(i) << endl;
-      cout << "\toptimized   = " << optimized_res.at(i) << endl;
-      assert(unoptimized_res.at(i) == optimized_res.at(i));
-    }
-  }
+  compare(prg.name, optimized_res, unoptimized_res);
 }
 
 std::set<std::string> get_kernels(prog& prg) {
@@ -2365,6 +2707,39 @@ vector<string> write_vars(const std::string& target_buf, op* reader, prog& prg) 
     }
   }
   return vars_used_in_read;
+}
+
+vector<string> used_vars(const std::string& target_buf, op* reader, prog& prg) {
+  auto all_vars = map_find(reader, prg.iter_vars());
+  vector<string> vars_used_in_read;
+  for (auto a : addrs_referenced(reader, target_buf)) {
+    assert(a.size() > 0);
+    for (auto ar : a) {
+      isl_multi_aff* ma = to_multi_aff(prg.ctx, all_vars, ar.second);
+      cout << tab(2) << str(a) << endl;
+      cout << tab(2) << str(ma) << endl;
+      for (int i = 0; i < isl_multi_aff_dim(ma, isl_dim_set); i++) {
+        auto aff = isl_multi_aff_get_aff(ma, i);
+        cout << tab(3) << i << ": " << str(aff) << endl;
+
+        for (int d = 0; d < num_in_dims(aff); d++) {
+          isl_val* coeff = get_coeff(aff, d);
+          if (!is_zero(coeff)) {
+            vars_used_in_read.push_back(dim_name(aff, d));
+          }
+          //cout << tab(4) << dim_name(aff, d) << ": " << str(get_coeff(aff, d)) << endl;
+        }
+      }
+    }
+  }
+
+  vector<string> upsamples;
+  for (auto v : all_vars) {
+    if (prg.trip_count(v) > 1 && !elem(v, vars_used_in_read)) {
+      upsamples.push_back(v);
+    }
+  }
+  return upsamples;
 }
 
 vector<string> upsample_vars(const std::string& target_buf, op* reader, prog& prg) {
@@ -2550,6 +2925,26 @@ void prog::sanity_check() {
     assert(!elem(lp->name, loop_names));
     loop_names.insert(lp->name);
   }
+
+  for (auto op : all_ops()) {
+    for (auto b : op->buffers_read()) {
+      assert(!is_output(b));
+    }
+
+    for (auto b : op->buffers_written()) {
+      assert(!is_input(b));
+    }
+  }
+
+  //auto ivars = iter_vars();
+  //for (auto op : all_ops()) {
+    //vector<string> ivs = map_find(op, ivars);
+    //vector<string> used_vars =
+      //used_vars(op, prg);
+    //for (auto v : used_vars) {
+      //assert(elem(v, ivs));
+    //}
+  //}
 }
 
 
@@ -2643,3 +3038,315 @@ std::set<string> get_produced_buffers(std::set<std::string>& group, prog& origin
 	}
 	return all_produced_buffers;
 }
+
+void generate_verilog_instance(CodegenOptions& options,
+    std::ostream& out,
+    UBuffer& buf) {
+  vector<string> bundle_fields{".clk(clk)", ".rst_n(rst_n)"};
+  //for (auto eb : buf.port_bundles) {
+    //bundle_fields.push_back(string(".") + eb.first + parens(us(eb)));
+  //}
+  out << tab(1) << buf.name << " " << buf.name << "(" << comma_list(bundle_fields) << ");" << endl;
+}
+
+void generate_verilog(CodegenOptions& options,
+    std::ostream& out,
+    UBuffer& buf) {
+  vector<string> bundle_fields{"input clk", "input rst_n"};
+  for (auto eb : buf.port_bundles) {
+    string out_rep = buf.name;
+    string out_bundle = eb.first;
+
+    int w = buf.port_bundle_width(out_bundle);
+    string out_bundle_tp =
+      (buf.is_output_bundle(out_bundle) ? "output" : "input");
+    bundle_fields.push_back(out_bundle_tp + " [" + str(w - 1) + ":0] " + out_bundle);
+  }
+  out << "module " << buf.name << "(" << comma_list(bundle_fields) << ");" << endl;
+  for (auto bnk : buf.get_banks()) {
+    out << tab(1) << "// " << bnk.name << endl;
+  }
+  out << endl;
+
+  for (auto pt : buf.get_all_ports()) {
+    out << tab(1) << "// " << pt << endl;
+  }
+  out << "endmodule" << endl << endl;
+}
+
+void generate_verilog_instance(CodegenOptions& options,
+    ostream& out,
+    op* op,
+    map<string, UBuffer>& buffers,
+    prog& prg) {
+  vector<string> op_fields{".clk(clk)", ".rst_n(rst_n)"};
+
+  for (auto ib : incoming_bundles(op, buffers, prg)) {
+    if (!prg.is_boundary(ib.first)) {
+      op_fields.push_back("." + us(ib) + parens(dot(ib)));
+    } else {
+      op_fields.push_back("." + us(ib) + parens(us(ib)));
+    }
+  }
+
+  for (auto ib : outgoing_bundles(op, buffers, prg)) {
+    if (!prg.is_boundary(ib.first)) {
+      op_fields.push_back("." + us(ib) + parens(dot(ib)));
+    } else {
+      op_fields.push_back("." + us(ib) + parens(us(ib)));
+    }
+  }
+  out << tab(1) << op->name << " " << op->name << "(" << comma_list(op_fields) << ");" << endl;
+}
+
+void generate_verilog(CodegenOptions& options,
+    ostream& out,
+    op* op,
+    map<string, UBuffer>& buffers,
+    prog& prg) {
+  vector<string> op_fields{"input clk", "input rst_n"};
+
+  for (auto ib : incoming_bundles(op, buffers, prg)) {
+    string out_rep = ib.first;
+    string out_bundle = ib.second;
+
+    UBuffer out_buf = map_find(out_rep, buffers);
+    int w = out_buf.port_bundle_width(out_bundle);
+    string out_bundle_tp =
+      (out_buf.is_output_bundle(out_bundle) ? "input" : "output");
+    op_fields.push_back(out_bundle_tp + " [" + str(w - 1) + ":0] " + us(ib));
+  }
+
+  for (auto ib : outgoing_bundles(op, buffers, prg)) {
+    string out_rep = ib.first;
+    string out_bundle = ib.second;
+
+    UBuffer out_buf = map_find(out_rep, buffers);
+    int w = out_buf.port_bundle_width(out_bundle);
+    string out_bundle_tp =
+      (out_buf.is_output_bundle(out_bundle) ? "input" : "output");
+    op_fields.push_back(out_bundle_tp + " [" + str(w - 1) + ":0] " + us(ib));
+  }
+  out << "module " << op->name << "(" << comma_list(op_fields) << ");" << endl;
+  vector<string> ins;
+  for (auto ib : incoming_bundles(op, buffers, prg)) {
+    string out_rep = ib.first;
+    string out_bundle = ib.second;
+
+    UBuffer out_buf = map_find(out_rep, buffers);
+    int w = out_buf.port_bundle_width(out_bundle);
+    int lanes = out_buf.lanes_in_bundle(out_bundle);
+    out << tab(1) << "// " << lanes << endl;
+    ins.push_back(us(ib));
+  }
+  if (ins.size() == 0) {
+    ins.push_back("0");
+  }
+  for (auto eb : outgoing_bundles(op, buffers, prg)) {
+    out << tab(1) << "assign " << us(eb) << " = "
+      << sep_list(ins, "(", ")", " + ") << ";" << endl;
+  }
+  out << "endmodule" << endl << endl;
+}
+
+void generate_verilog(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap) {
+  ofstream out(prg.name + ".v");
+
+  for (auto& b : buffers) {
+    if (!prg.is_boundary(b.first)) {
+      generate_verilog(options, out, b.second);
+    }
+  }
+  out << endl;
+
+  for (auto op : prg.all_ops()) {
+    generate_verilog(options, out, op, buffers, prg);
+  }
+  out << endl;
+
+  vector<string> edge_values{"input clk", "input rst_n"};
+  for (auto eb : edge_buffers(buffers, prg)) {
+    string out_rep = eb.first;
+    string out_bundle = eb.second;
+
+    UBuffer out_buf = map_find(out_rep, buffers);
+    int w = out_buf.port_bundle_width(out_bundle);
+    string out_bundle_tp =
+      (out_buf.is_output_bundle(out_bundle) ? "input" : "output");
+    edge_values.push_back(out_bundle_tp + " [" + str(w - 1) + ":0] " + us(out_rep, out_bundle));
+  }
+  out << "module " << prg.name << "(" << comma_list(edge_values) << ");" << endl << endl;
+  for (auto& b : buffers) {
+    if (!prg.is_boundary(b.first)) {
+      generate_verilog_instance(options, out, b.second);
+      out << endl;
+    }
+  }
+  out << endl;
+
+  for (auto op : prg.all_ops()) {
+    generate_verilog_instance(options, out, op, buffers, prg);
+    out << endl;
+  }
+  out << endl;
+
+  out << "endmodule" << endl;
+  out.close();
+}
+
+umap* hardware_schedule(prog& prg) {
+  auto hs = hardware_schedule_umap(prg.whole_iteration_domain(), prg.validity_deps(), prg.validity_deps());
+  return hs;
+}
+
+std::string optimized_code_string(prog& prg) {
+  auto sched = prg.optimized_codegen();
+  cout << "sched map" << str(sched) << endl;
+  return codegen_c(its(sched, prg.whole_iteration_domain()));
+}
+
+void generate_compute_trace(
+    std::ostream& conv_out,
+    prog& prg,
+    op* op,
+    map<string, isl_set*> domain_map) {
+
+  cout << "Generating compute for: " << op->name << endl;
+
+  compute_kernel kernel;
+  kernel.name = op->name;
+  kernel.functional_unit = op->func;
+
+  vector<string> buf_srcs;
+
+  auto s = get_space(domain_map.at(op->name));
+
+  for (auto a : space_var_decls(s)) {
+    buf_srcs.push_back(a);
+  }
+
+  cout << "Got iteration variables" << endl;
+  conv_out << "inline void " << op->name << sep_list(buf_srcs, "(", ")", ", ") << " {" << endl;
+  conv_out << tab(1) << "cout << \"" << op->name << "\" << endl;" << endl;
+
+  conv_out << endl;
+  open_debug_scope(conv_out);
+
+  ////cout << "emitting bundle code" << endl;
+  //auto& buf = buffers.at(out_buffer);
+  //int bundle_width = buf.port_bundle_width(bundle_name);
+
+  //int unroll_factor = op->unroll_factor;
+  //int element_width = bundle_width / op->unroll_factor;
+
+
+  //string dbg_res_name = "debug_" + res;
+  //conv_out << tab(1) << "hw_uint<" << bundle_width << "> " << dbg_res_name << "(" << res << ");" << endl;
+  //vector<string> lane_values =
+    //split_bv(1, conv_out, dbg_res_name, element_width, op->unroll_factor);
+
+  //for (int lane = 0; lane < unroll_factor; lane++) {
+    //conv_out << tab(1) << "*global_debug_handle << \"" << op->name << ",\" << ";
+    //int i = 0;
+    //for (auto v : kernel.iteration_variables) {
+      //if (i == 0) {
+        //conv_out << "(" << unroll_factor << "*" << v << " + " << lane << ") << \",\" << ";
+      //} else {
+        //conv_out << v << "<< \",\" << ";
+      //}
+      //i++;
+    //}
+    //assert(lane < lane_values.size());
+    //conv_out << " " << lane_values.at(lane) << " << endl;" << endl;
+  //}
+
+  close_debug_scope(conv_out);
+  conv_out << endl;
+  conv_out << "}" << endl << endl;
+
+}
+
+void generate_trace(prog& prg, umap* schedmap) {
+
+  ofstream conv_out(prg.name + "_trace.cpp");
+
+  conv_out << "#include <iostream>" << endl << endl;
+  conv_out << "using namespace std;" << endl << endl;
+
+  auto domains = prg.domains();
+  map<string, isl_set*> domain_map;
+  for (auto d : domains) {
+    domain_map[d.first->name] = d.second;
+  }
+  conv_out << "// Operation logic" << endl;
+  for (auto op : prg.all_ops()) {
+    generate_compute_trace(conv_out, prg, op, domain_map);
+  }
+
+  conv_out << "// Driver function" << endl;
+  conv_out << "void " << prg.name << "() {" << endl << endl;
+
+  string code_string = codegen_c(schedmap);
+  code_string = "\t" + ReplaceString(code_string, "\n", "\n\t");
+
+  //for (auto op : prg.all_ops()) {
+    //regex re("(\n\t\\s+)" + op->name + "\\((.*)\\);");
+    //string args_list = sep_list(buffer_arg_names(buffers, op, prg), "", "", ", ");
+    ////code_string = regex_replace(code_string, re, "\n\t" + op->name + "(" + args_list + ", $1);");
+    //code_string = regex_replace(code_string, re, "$1" + op->name + "(" + args_list + ", $2);");
+  //}
+
+  conv_out << "// schedule: " << str(schedmap) << endl;
+  for (auto s : get_maps(schedmap)) {
+    conv_out << "// " << tab(1) << str(s) << endl;
+    conv_out << "// Condition for " << domain_name(s) << codegen_c(range(s)) << endl;
+  }
+  conv_out << endl;
+
+  conv_out << code_string << endl;
+
+  conv_out << "}" << endl << endl;
+
+  conv_out << "int main() {" << endl;
+  conv_out << tab(1) << prg.name << "();" << endl;
+  conv_out << "}" << endl;
+
+  conv_out << endl;
+
+  conv_out.close();
+}
+
+void all_register_files(prog& prg, CodegenOptions& options) {
+  for (auto op : prg.all_ops()) {
+    for (auto b : op->buffers_referenced()) {
+      options.banking_strategies[b] = {"register_file"};
+    }
+  }
+}
+
+
+void prog::merge_ops(const std::string& loop) {
+  cout << "Merging ops at: " << loop << endl;
+  auto lp = find_loop(loop);
+  vector<op*> children_copies = lp->children;
+  lp->children = {};
+  op* merged = lp->add_op(unique_name("merged"));
+  for (auto c : children_copies) {
+    assert(!c->is_loop);
+    merged->copy_memory_operations_from(c);
+  }
+  lp->pretty_print(1);
+}
+
+void ir_node::copy_memory_operations_from(op* other) {
+  assert(!other->is_loop);
+
+  concat(produce_locs, other->produce_locs);
+  concat(dynamic_store_addresses, other->dynamic_store_addresses);
+  concat(consume_locs_pair, other->consume_locs_pair);
+  concat(dynamic_load_addresses, other->dynamic_load_addresses);
+}
+

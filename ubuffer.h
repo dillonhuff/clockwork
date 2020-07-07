@@ -25,21 +25,6 @@ std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
     return out;
 }
 
-enum bank_type {
-  BANK_TYPE_STACK,
-  BANK_TYPE_RAM
-};
-
-struct selector {
-  string buf_name;
-  string pt_type;
-  string out_port;
-  string name;
-  vector<string> vars;
-  vector<string> bank_conditions;
-  vector<string> inner_bank_offsets;
-};
-
 struct HWconstraints {
     size_t port_width;
     size_t port_number;
@@ -56,7 +41,7 @@ struct TileConstraints{
 
 struct bank {
   std::string name;
-  bank_type tp;
+  InnerBankOffsetMode tp;
 
   // Stack bank properties
   std::string pt_type_string;
@@ -623,12 +608,10 @@ class UBuffer {
     std::map<string, isl_union_map*> schedule;
     std::map<string, vector<string> > port_bundles;
 
+    banking_strategy banking;
     std::vector<bank> bank_list;
-    map<string, vector<string> > banks_to_inputs;
-    map<string, vector<string> > banks_to_outputs;
-    //map<pair<string, string>, bank > stack_banks;
-
-    map<string, selector> selectors;
+    map<string, std::set<string> > banks_to_inputs;
+    map<string, std::set<string> > banks_to_outputs;
 
     //lowering ubuffer to memtile
     vector<int> read_cycle, write_cycle;
@@ -653,6 +636,8 @@ class UBuffer {
     }
 #endif
 
+    int logical_dimension();
+
     //TODO: only support one read/write
     bool is_rd(isl_point* pt) {
         for (auto it: port_bundles) {
@@ -665,6 +650,31 @@ class UBuffer {
         }
         assert(false);
         return false;
+    }
+
+    int bundle_offset(const std::string& port) {
+      for (auto b : port_bundles) {
+        if (elem(port, b.second)) {
+          for (int i = 0; i < (int) b.second.size(); i++) {
+            if (b.second.at(i) == port) {
+              return i;
+            }
+          }
+        }
+      }
+
+      cout << "Error: No bundle for " << port << endl;
+      assert(false);
+    }
+
+    std::string container_bundle(const std::string& port) {
+      for (auto b : port_bundles) {
+        if (elem(port, b.second)) {
+          return b.first;
+        }
+      }
+      cout << "Error: No bundle for " << port << endl;
+      assert(false);
     }
 
     bool is_wr(isl_point* pt) {
@@ -999,15 +1009,16 @@ class UBuffer {
       }
 
       for (auto in : get_bank_inputs(target.name)) {
-        banks_to_inputs[replacement.name].push_back(in);
+        banks_to_inputs[replacement.name].insert(in);
       }
 
       for (auto out : get_bank_outputs(target.name)) {
-        banks_to_outputs[replacement.name].push_back(out);
+        banks_to_outputs[replacement.name].insert(out);
       }
 
-      banks_to_inputs[target.name] = {};
-      banks_to_outputs[target.name] = {};
+      remove_bank(target);
+      //banks_to_inputs[target.name] = {};
+      //banks_to_outputs[target.name] = {};
 
       //for (auto bnk : stack_banks) {
         //if (bnk.second.name == target.name) {
@@ -1015,6 +1026,27 @@ class UBuffer {
           //break;
         //}
       //}
+    }
+
+    void remove_bank(const bank& to_remove) {
+      vector<bank> replace;
+      for (auto bnk : get_banks()) {
+        if (bnk.name == to_remove.name) {
+          banks_to_inputs.erase(bnk.name);
+          banks_to_outputs.erase(bnk.name);
+        } else {
+          replace.push_back(bnk);
+        }
+      }
+      bank_list = replace;
+
+      //map<pair<string, string>, bank> replace;
+      //for (auto bnk : stack_banks) {
+        //if (bnk.first.second != pt_name) {
+          //replace.insert(bnk);
+        //}
+      //}
+      //stack_banks = replace;
     }
 
     void remove_bank(string pt_name) {
@@ -1063,8 +1095,8 @@ class UBuffer {
       if (!has_bank(bank.name)) {
         bank_list.push_back(bank);
       }
-      banks_to_inputs[bank.name].push_back(inpt);
-      banks_to_outputs[bank.name].push_back(outpt);
+      banks_to_inputs[bank.name].insert(inpt);
+      banks_to_outputs[bank.name].insert(outpt);
 
       assert(get_bank_outputs(bank.name).size() >= 0);
       assert(get_bank_inputs(bank.name).size() >= 0);
@@ -1420,6 +1452,20 @@ class UBuffer {
       return outpts;
     }
 
+    int num_out_ports() const {
+      return get_out_ports().size();
+    }
+
+    int num_in_ports() const {
+      return get_in_ports().size();
+    }
+
+    vector<string> get_all_ports() const {
+      auto in = get_in_ports();
+      concat(in, get_out_ports());
+      return in;
+    }
+
     vector<string> get_in_ports() const {
       vector<string> outpts;
       for (auto m : isIn) {
@@ -1482,16 +1528,20 @@ class UBuffer {
     isl_union_pw_qpolynomial* compute_dd(const std::string& read_port, const std::string& write_port);
 
     bank compute_bank_info();
-    bank compute_bank_info(const std::string& inpt, const std::string& outpt);
+    bank compute_bank_info(CodegenOptions& options, const std::string& inpt, const std::string& outpt);
     bank compute_bank_info(std::set<string> inpt, std::set<string> outpt);
 
     void merge_bank(CodegenOptions& options, string inpt, vector<bank> mergeable);
-    void generate_bank_and_merge(CodegenOptions& options);
+
+    void generate_banks(CodegenOptions& options);
+    void generate_banks_and_merge(CodegenOptions& options);
 
     //from bank to ubuffer
     map<string, UBuffer> generate_ubuffer(CodegenOptions& opt);
 
 #ifdef COREIR
+    CoreIR::Module* affine_controller(CoreIR::Context* context, isl_set* dom, isl_aff* aff);
+
     void generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def);
 #endif
 
@@ -1500,7 +1550,9 @@ class UBuffer {
     umap* separate_offset_dim(const std::string& pt);
     Box get_bundle_box(const std::string& pt);
     Box extract_addr_box(uset* rddom, vector<size_t> sequence);
-    string generate_linearize_ram_addr(const std::string& pt);
+    //string generate_linearize_ram_addr(const std::string& pt);
+    string generate_linearize_ram_addr(const std::string& pt, bank& bank);
+
     vector<UBuffer> port_grouping(int port_width);
 
     //helper function for port group2bank
@@ -1551,6 +1603,7 @@ std::ostream& operator<<(std::ostream& out, const UBuffer& buf) {
     out << "\t\t\tacc : " << str(buf.access_map.at(inpt)) << endl;
     out << "\t\t\tsched: " << str(buf.schedule.at(inpt)) << endl;
     out << "\t\t\tbuffer capacity: " << compute_max_dd(tmp, inpt) << endl;
+    out << "\t\t\tacc range: " << str(range(buf.access_map.at(inpt))) << endl;
     out << "\t\t\tmin location: " << str(lexmin(range(buf.access_map.at(inpt)))) << endl;
     out << "\t\t\tmax location: " << str(lexmax(range(buf.access_map.at(inpt)))) << endl;
     out << endl;
@@ -1634,3 +1687,12 @@ CoreIR::Module* generate_coreir(CodegenOptions& options, CoreIR::Context* contex
 void generate_hls_code(CodegenOptions& options, std::ostream& out, UBuffer& buf);
 void generate_hls_code(std::ostream& out, UBuffer& buf);
 void generate_hls_code(UBuffer& buf);
+
+
+bool inner_bank_offset_is_legal(isl_map* slot_func, UBuffer& buf);
+bool banking_scheme_is_legal(isl_map* bank_func, UBuffer& buf);
+
+bool inner_bank_offset_is_legal(isl_map* slot_func,
+    umap* op_writes,
+    umap* op_reads,
+    umap* sched);

@@ -35,6 +35,8 @@ string c_sanitize(const std::string& str) {
       res += "_c_";
     } else if (c == '-') {
       res += "_m_";
+    } else if (c == '/') {
+      res += "_div_";
     } else {
       res += c;
     }
@@ -187,6 +189,11 @@ std::string comma_list(const std::vector<std::string>& strs) {
   return sep_list(strs, "", "", ", ");
 }
 
+static inline
+std::string bracket_list(const std::vector<std::string>& strs) {
+  return sep_list(strs, "[", "]", ", ");
+}
+
 template<typename T>
 static inline
 std::string comma_list(const std::vector<T>& vals) {
@@ -285,6 +292,11 @@ string str(const int i) {
 }
 
 static inline
+string curlies(const std::string& s) {
+  return "{" + s + "}";
+}
+
+static inline
 string brackets(const std::string& s) {
   return "[" + s + "]";
 }
@@ -318,6 +330,8 @@ void move_naive_to_benchmarks_folder(const std::string& app_name) {
   system(("mv " + out_name + "_naive.h " + isl_dir).c_str());
   system(("mv regression_tb_" + out_name + "_naive.cpp " + isl_dir).c_str());
 }
+
+void move_to_synthesis_folder(const std::string& app_name);
 
 static inline
 void move_to_benchmarks_folder(const std::string& app_name) {
@@ -400,3 +414,17 @@ void compare_to_gold(const std::string& name) {
   compare_to_gold(name, name);
 }
 
+static inline
+bool contains(const std::string& s1, const std::string& s2) {
+  return s1.find(s2) != std::string::npos;
+}
+
+static inline
+int cmd(const std::string& cm) {
+  std::cout << "cmd: " << cm << std::endl;
+  return system(cm.c_str());
+}
+
+void compare(const std::string& name,
+    vector<string>& opt,
+    vector<string>& naive);

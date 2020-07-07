@@ -237,6 +237,7 @@ void toy_task(){
 
   generate_optimized_code_for_program_dag(group_programs);
 
+<<<<<<< HEAD
   assert(false);
 
 }
@@ -244,4 +245,7 @@ void toy_task(){
 //-----------------------------------------VOID PROG_SPLITTING_TESTS-------------------------------------------
 void prog_splitting_tests() {
 	toy_task();
+=======
+  //assert(false);
+>>>>>>> origin
 }

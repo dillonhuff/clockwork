@@ -61,7 +61,11 @@ struct ir_node {
 
   ir_node() : parent(nullptr), is_loop(false), unroll_factor(1) {}
 
+<<<<<<< HEAD
   void copy_fields_from(op* other);
+=======
+  void copy_memory_operations_from(op* other);
+>>>>>>> origin
 
   bool dynamic_writes(const std::string& buf) {
     for (auto d : dynamic_store_addresses) {
@@ -132,6 +136,14 @@ struct ir_node {
       }
     }
     return reads;
+  }
+
+  std::set<string> buffers_referenced() const {
+    std::set<string> written = buffers_written();
+    for (auto b : buffers_read()) {
+      written.insert(b);
+    }
+    return written;
   }
 
   std::set<string> buffers_written() const {
@@ -211,6 +223,10 @@ struct ir_node {
       }
   }
 
+  void pretty_print(int level) const {
+    pretty_print(std::cout, level);
+  }
+
   void pretty_print(std::ostream& out, int level) const {
 
     if (is_loop) {
@@ -248,10 +264,12 @@ struct ir_node {
   }
 
   void add_function(const std::string& n) {
+    //assert(n != name);
     func = n;
   }
 
   void add_function(const std::string& n, const vector<string>& args) {
+    //assert(n != name);
     func = n;
   }
 
@@ -277,6 +295,18 @@ struct ir_node {
     auto yl = xl->add_loop(y, y_min, y_max);
     auto cl = yl->add_loop(c, c_min, c_max);
     return cl;
+  }
+
+  op* add_nest(
+      const std::string& x, int x_min, int x_max,
+      const std::string& y, int y_min, int y_max,
+      const std::string& c, int c_min, int c_max,
+      const std::string& k, int k_min, int k_max) {
+    auto xl = this->add_loop(x, x_min, x_max);
+    auto yl = xl->add_loop(y, y_min, y_max);
+    auto cl = yl->add_loop(c, c_min, c_max);
+    auto kl = cl->add_loop(k, k_min, k_max);
+    return kl;
   }
 
   op* container_child(op* source) {
@@ -649,6 +679,8 @@ struct prog {
     return name;
   }
 
+  void merge_ops(const std::string& loop);
+
   op* add_loop(const int l, const int u) {
     return add_loop(unique_name("l"), l, u);
   }
@@ -846,6 +878,14 @@ struct prog {
     return root->add_nest(x, x_min, x_max, y, y_min, y_max, c, c_min, c_max);
   }
 
+  op* add_nest(
+      const std::string& x, int x_min, int x_max,
+      const std::string& y, int y_min, int y_max,
+      const std::string& c, int c_min, int c_max,
+      const std::string& k, int k_min, int k_max) {
+    return root->add_nest(x, x_min, x_max, y, y_min, y_max, c, c_min, c_max, k, k_min, k_max);
+  }
+
   bool is_output(const std::string& name) {
     return elem(name, outs);
   }
@@ -925,6 +965,9 @@ struct prog {
     return whole_d;
   }
 
+  vector<string> iter_vars(op* o) {
+    return map_find(o, iter_vars());
+  }
   map<op*, vector<string> > iter_vars() {
     vector<string> act;
     map<op*, vector<string> > ivars;
@@ -1136,16 +1179,18 @@ struct prog {
 
       umap* pmap = isl_union_map_read_from_str(ctx, "{}");
      // adding vector pair
-     for (auto top_pair : op->consumes_pair()) {
-      string cond = "{ ";
-        for (auto sec_pair : top_pair.second) {
-          cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
-        }
-        cond = cond.substr(0, cond.length() - 2);
-        cond = cond + string(" }");
+      for (auto top_pair : op->consumes_pair()) {
+        if (top_pair.first == buf_name) {
+          string cond = "{ ";
+          for (auto sec_pair : top_pair.second) {
+            cond = cond + string(op->name + ivar_str + " -> " + top_pair.first + "[" + sec_pair.second + "] : " + sec_pair.first + "; ");
+          }
+          cond = cond.substr(0, cond.length() - 2);
+          cond = cond + string(" }");
 
-        umap* vmap = its(isl_union_map_read_from_str(ctx, cond.c_str()), to_uset(dom));
-        pmap = unn(pmap, vmap);
+          umap* vmap = its(isl_union_map_read_from_str(ctx, cond.c_str()), to_uset(dom));
+          pmap = unn(pmap, vmap);
+        }
      }
      m = unn(m, pmap);
      // original
@@ -1360,8 +1405,23 @@ op* find_writer(const std::string& target_buf, prog& prg);
 
 std::set<string> get_producers(string next_kernel, prog& prg);
 
+<<<<<<< HEAD
 void deep_copy_child(op* dest, op* source, prog& original);
 
 std::set<string> get_consumed_buffers(std::set<std::string>& group, prog& original);
 
 std::set<string> get_produced_buffers(std::set<std::string>& group, prog& original);
+=======
+void generate_verilog(CodegenOptions& options,
+    map<string, UBuffer>& buffers,
+    prog& prg,
+    umap* schedmap);
+
+umap* hardware_schedule(prog& prg);
+
+std::string optimized_code_string(prog& prg);
+
+void generate_trace(prog& prg, umap* sched);
+
+void all_register_files(prog& prg, CodegenOptions& options);
+>>>>>>> origin
