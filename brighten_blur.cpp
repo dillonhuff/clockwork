@@ -5,7 +5,6 @@ using namespace std;
   // Debug utility
   ofstream* global_debug_handle;
 
-//Hello I am a cat
 #endif //__VIVADO_SYNTH__
 // compute file: clockwork_standard_compute_units.h
 #include "clockwork_standard_compute_units.h"
