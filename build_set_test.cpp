@@ -11129,6 +11129,11 @@ void read_in(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg
   ld->add_store(rb_name, comma_list(store_addrs));
 }
 
+isl_map* data_demands(const int start_of_inner_loops, isl_map* m) {
+  auto pr = isl_map_project_out(cpy(m), isl_dim_in, start_of_inner_loops, num_in_dims(m) - start_of_inner_loops);
+  return pr;
+}
+
 void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg) {
 //{ op3[root = 0, y] -> in[o0, o1] : 0 <= y <= 7 and 0 <= o0 <= 9 and y <= o1 <= 2 + y and ((0 < o0 <= 8) or o0 >= 2 or o0 <= 7) }
   //auto m = isl_map_read_from_str(prg.ctx,
@@ -11153,30 +11158,18 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
   }
 
   auto cm = prg.consumer_maps();
+  auto buf_map = prg.consumer_map(buffer);
+  cout << "buf map: " << str(buf_map) << endl;
+  for (auto m : get_maps(buf_map)) {
+    auto pm = data_demands(3, m);
+    cout << tab(1) << "demands: " << str(pm) << endl;
+  }
+  assert(false);
+
   cout << "Consumer maps: " << endl;
   isl_set* read_data = nullptr;
   for (auto op : users) {
-
     auto consumed = map_find(op, cm);
-    //cout << "consumed = " << str(consumed) << endl;
-
-    //{
-      //auto m = to_map(consumed);
-      //auto call = isl_map_project_out(cpy(m), isl_dim_in, 2, 2);
-      //call = set_domain_name(call, domain_name(m));
-      //call = set_range_name(call, range_name(m));
-      //cout << "call = " << str(call) << endl;
-
-      //auto next = next_iteration(domain(call));
-      //cout << "next = " << str(next) << endl;
-      //auto next_data_read = dot(next, call);
-      //cout << "next read = " << str(next_data_read) << endl;
-      //cout << "min next   = " << str(lexmin(next_data_read)) << endl;
-      //cout << "max next   = " << str(lexmax(next_data_read)) << endl;
-      ////auto overlap = its(next_data_read, domain(call));
-      ////cout << "overlap   = " << str(overlap) << endl;
-      //assert(false);
-    //}
 
     for (auto m : get_maps(consumed)) {
       if (range_name(m) == buffer) {
