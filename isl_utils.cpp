@@ -319,6 +319,10 @@ isl_map* set_range_name(isl_map* const m, string new_name) {
     return isl_map_set_tuple_name(m, isl_dim_out, new_name.c_str());
 }
 
+isl_set* set_name(isl_set* const m, string new_name) {
+    return isl_set_set_tuple_name(m, new_name.c_str());
+}
+
 isl_map* set_domain_name(isl_map* const m, string new_name) {
     return isl_map_set_tuple_name(m, isl_dim_in, new_name.c_str());
 }
@@ -788,6 +792,33 @@ isl_ctx* ctx(isl_pw_qpolynomial_fold* const m) {
 
 isl_ctx* ctx(isl_pw_qpolynomial* const m) {
   return isl_pw_qpolynomial_get_ctx(m);
+}
+
+std::string codegen_c(isl_aff* const bset) {
+  auto ct = ctx(bset);
+  isl_printer *p;
+  p = isl_printer_to_str(ct);
+  p = isl_printer_set_output_format(p, ISL_FORMAT_C);
+  p = isl_printer_print_aff(p, cpy(bset));
+
+  char* rs = isl_printer_get_str(p);
+  isl_printer_free(p);
+  std::string r(rs);
+  free(rs);
+
+  return r;
+
+  //string r = str(bset);
+
+  //regex cm("\\{ (.*)\\[(.*)\\] -> (.*)\\[(.*)\\] \\}");
+  //smatch match;
+  //auto res = regex_match(r, match, cm);
+
+  //assert(res);
+
+  //string range_name = match[3];
+  //string range_values = match[4];
+  //return range_name + parens(range_values);
 }
 
 std::string codegen_c(isl_multi_aff* const bset) {
@@ -1343,6 +1374,14 @@ isl_map* dot(isl_map* const m0, isl_map* const m1) {
 
 isl_union_set* simplify(uset* const m) {
   return isl_union_set_remove_redundancies(cpy(m));
+}
+
+isl_map* simplify(isl_map* const m) {
+  return isl_map_remove_redundancies(cpy(m));
+}
+
+isl_set* simplify(isl_set* const m) {
+  return isl_set_remove_redundancies(cpy(m));
 }
 
 isl_map* simplify_expr(isl_map* const m) {
@@ -2840,13 +2879,13 @@ isl_basic_set* flatten_bmap_to_bset(isl_basic_map* bm) {
   //auto ineqs = isl_basic_map_inequalities_matrix(bm, isl_dim_in, isl_dim_out, isl_dim_cst, isl_dim_div, isl_dim_param);
   //auto eqs = isl_basic_map_equalities_matrix(bm, isl_dim_in, isl_dim_out, isl_dim_cst, isl_dim_div, isl_dim_param);
 
-  cout << "bm = " << str(bm) << endl;
+  //cout << "bm = " << str(bm) << endl;
 
-  cout << "ineqs..." << endl;
-  cout << str(ineqs) << endl;
+  //cout << "ineqs..." << endl;
+  //cout << str(ineqs) << endl;
 
-  cout << "eqs..." << endl;
-  cout << str(eqs) << endl;
+  //cout << "eqs..." << endl;
+  //cout << str(eqs) << endl;
 
   int div_dims = num_div_dims(bm);
   //assert(div_dims == 0);

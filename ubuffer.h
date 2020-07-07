@@ -25,21 +25,6 @@ std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
     return out;
 }
 
-//enum bank_type {
-  //BANK_TYPE_STACK,
-  //BANK_TYPE_RAM
-//};
-
-//struct selector {
-  //string buf_name;
-  //string pt_type;
-  //string out_port;
-  //string name;
-  //vector<string> vars;
-  //vector<string> bank_conditions;
-  //vector<string> inner_bank_offsets;
-//};
-
 struct HWconstraints {
     size_t port_width;
     size_t port_number;
@@ -57,7 +42,6 @@ struct TileConstraints{
 struct bank {
   std::string name;
   InnerBankOffsetMode tp;
-  //bank_type tp;
 
   // Stack bank properties
   std::string pt_type_string;
@@ -624,11 +608,10 @@ class UBuffer {
     std::map<string, isl_union_map*> schedule;
     std::map<string, vector<string> > port_bundles;
 
+    banking_strategy banking;
     std::vector<bank> bank_list;
     map<string, std::set<string> > banks_to_inputs;
     map<string, std::set<string> > banks_to_outputs;
-
-    //map<string, selector> selectors;
 
     //lowering ubuffer to memtile
     vector<int> read_cycle, write_cycle;
@@ -652,6 +635,8 @@ class UBuffer {
         config_file = config;
     }
 #endif
+
+    int logical_dimension();
 
     //TODO: only support one read/write
     bool is_rd(isl_point* pt) {
@@ -1565,7 +1550,9 @@ class UBuffer {
     umap* separate_offset_dim(const std::string& pt);
     Box get_bundle_box(const std::string& pt);
     Box extract_addr_box(uset* rddom, vector<size_t> sequence);
-    string generate_linearize_ram_addr(const std::string& pt);
+    //string generate_linearize_ram_addr(const std::string& pt);
+    string generate_linearize_ram_addr(const std::string& pt, bank& bank);
+
     vector<UBuffer> port_grouping(int port_width);
 
     //helper function for port group2bank

@@ -409,6 +409,7 @@ isl_union_map* dot(isl_union_map* const m0, isl_map* const m1);
 
 isl_map* dot(isl_map* const m0, isl_map* const m1);
 
+isl_set* simplify(isl_set* const m);
 isl_union_set* simplify(uset* const m);
 isl_union_pw_qpolynomial* coalesce(isl_union_pw_qpolynomial* const m);
 
@@ -589,3 +590,7 @@ isl_basic_set* flatten_bmap_to_bset(isl_basic_map* bm);
 isl_basic_set* negative(isl_basic_set* fs, const int var);
 isl_basic_set* positive(isl_basic_set* fs, const int var);
 isl_basic_set* zero(isl_basic_set* fs, const int var);
+
+
+std::string codegen_c(isl_aff* const bset);
+isl_set* set_name(isl_set* const m, string new_name);
