@@ -16,9 +16,9 @@ struct conv_stencil_all_inputs_to_all_outputs_cache {
 	// Capacity: 12544
   hw_uint<16> RAM[12544];
   inline hw_uint<16> read(const int addr) {
-    if (addr < 0 || !(addr < 12544)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    }
+    //if (addr < 0 || !(addr < 12544)) {
+    //cout << "Read error: Address " << addr << " is out of bounds" << endl;
+    //}
     assert(addr < 12544);
     assert(addr >= 0);
 #ifdef __VIVADO_SYNTH__
@@ -30,7 +30,7 @@ struct conv_stencil_all_inputs_to_all_outputs_cache {
 
 	inline void write(const hw_uint<16> value, const int addr) {
     if (addr < 0 || !(addr < 12544)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
+    //cout << "Write error: Address " << addr << " is out of bounds" << endl;
     }
     assert(addr < 12544);
     assert(addr >= 0);
@@ -854,7 +854,7 @@ struct hw_input_stencil_all_inputs_to_all_outputs_cache {
   hw_uint<16> RAM[7200];
   inline hw_uint<16> read(const int addr) {
     if (addr < 0 || !(addr < 7200)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
+    //cout << "Read error: Address " << addr << " is out of bounds" << endl;
     }
     assert(addr < 7200);
     assert(addr >= 0);
@@ -867,7 +867,7 @@ struct hw_input_stencil_all_inputs_to_all_outputs_cache {
 
 	inline void write(const hw_uint<16> value, const int addr) {
     if (addr < 0 || !(addr < 7200)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
+    //cout << "Write error: Address " << addr << " is out of bounds" << endl;
     }
     assert(addr < 7200);
     assert(addr >= 0);
@@ -2696,7 +2696,7 @@ struct hw_kernel_stencil_all_inputs_to_all_outputs_cache {
   hw_uint<16> RAM[1152];
   inline hw_uint<16> read(const int addr) {
     if (addr < 0 || !(addr < 1152)) {
-    cout << "Read error: Address " << addr << " is out of bounds" << endl;
+    //cout << "Read error: Address " << addr << " is out of bounds" << endl;
     }
     assert(addr < 1152);
     assert(addr >= 0);
@@ -2709,7 +2709,7 @@ struct hw_kernel_stencil_all_inputs_to_all_outputs_cache {
 
 	inline void write(const hw_uint<16> value, const int addr) {
     if (addr < 0 || !(addr < 1152)) {
-    cout << "Write error: Address " << addr << " is out of bounds" << endl;
+    //cout << "Write error: Address " << addr << " is out of bounds" << endl;
     }
     assert(addr < 1152);
     assert(addr >= 0);
@@ -5079,12 +5079,15 @@ void unoptimized_resnet(HWStream<hw_uint<16> >& /* no bundle get_args num ports 
   global_debug_handle = &debug_file;
 #endif //__VIVADO_SYNTH__
   conv_stencil_cache conv_stencil;
+//#pragma HLS ARRAY_PARTITION variable=conv_stencil.conv_stencil_all_inputs_to_all_outputs dim=0 complete
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   hw_input_stencil_cache hw_input_stencil;
+//#pragma HLS ARRAY_PARTITION variable=hw_input_stencil.hw_input_stencil_all_inputs_to_all_outputs dim=0 complete
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   hw_kernel_stencil_cache hw_kernel_stencil;
+//#pragma HLS ARRAY_PARTITION variable=hw_kernel_stencil.hw_kernel_stencil_all_inputs_to_all_outputs dim=0 complete
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 #ifdef __VIVADO_SYNTH__
@@ -5194,6 +5197,7 @@ void unoptimized_resnet(HWStream<hw_uint<16> >& /* no bundle get_args num ports 
 	    for (int c5 = 0; c5 <= 27; c5 += 1)
 	      for (int c7 = 0; c7 <= 2; c7 += 1)
 	        for (int c9 = 0; c9 <= 2; c9 += 1) {
+#pragma HLS pipeline II=1
 	          op_hcompute_conv_stencil_1(conv_stencil /* buf name */, hw_input_stencil /* buf name */, hw_kernel_stencil /* buf name */, 0, c3, c5, c7, c9);
 	          op_hcompute_conv_stencil_2(conv_stencil /* buf name */, hw_input_stencil /* buf name */, hw_kernel_stencil /* buf name */, 0, c3, c5, c7, c9);
 	          op_hcompute_conv_stencil_3(conv_stencil /* buf name */, hw_input_stencil /* buf name */, hw_kernel_stencil /* buf name */, 0, c3, c5, c7, c9);
