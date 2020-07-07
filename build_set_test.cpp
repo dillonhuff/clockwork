@@ -11129,9 +11129,36 @@ void read_in(op* loop, isl_set* read_data, const std::string& rb_name, prog& prg
   ld->add_store(rb_name, comma_list(store_addrs));
 }
 
-isl_map* data_demands(const int start_of_inner_loops, isl_map* m) {
+isl_set* data_demands(const int start_of_inner_loops, isl_map* m) {
+
+  int num_params = start_of_inner_loops;
+  cout << "params in new set: " << num_params << endl;
   auto pr = isl_map_project_out(cpy(m), isl_dim_in, start_of_inner_loops, num_in_dims(m) - start_of_inner_loops);
-  return pr;
+  cout << "projected = " << str(pr) << endl;
+  auto bms = get_basic_maps(pr);
+  isl_set* demands = nullptr;
+  for (auto bm : bms) {
+    assert(num_div_dims(bm) == 0);
+    assert(num_param_dims(bm) == 0);
+
+    auto bs = flatten_bmap_to_bset(bm);
+    cout << "bs = " << str(bs) << endl;
+    auto eq = isl_basic_set_equalities_matrix(bs, isl_dim_set, isl_dim_param, isl_dim_div, isl_dim_cst);
+    auto ineq = isl_basic_set_inequalities_matrix(bs, isl_dim_set, isl_dim_param, isl_dim_div, isl_dim_cst);
+
+    auto space = isl_space_set_alloc(ctx(m), num_params, num_out_dims(pr) + num_in_dims(pr) - num_params);
+    auto ps = isl_basic_set_from_constraint_matrices(space, eq, ineq, isl_dim_param, isl_dim_set, isl_dim_div, isl_dim_cst);
+    cout << "ps = " << str(ps) << endl;
+    if (demands == nullptr) {
+      demands = to_set(ps);
+    } else {
+      demands = unn(demands, to_set(ps));
+    }
+  }
+  demands = set_name(demands, range_name(m));
+  //assert(false);
+  return demands;
+
 }
 
 void add_reuse_buffer(const std::string& level, const std::string& buffer, prog& prg) {
@@ -11158,16 +11185,12 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
   }
 
   auto cm = prg.consumer_maps();
-  auto buf_map = prg.consumer_map(buffer);
-  cout << "buf map: " << str(buf_map) << endl;
-  for (auto m : get_maps(buf_map)) {
-    auto pm = data_demands(3, m);
-    cout << tab(1) << "demands: " << str(pm) << endl;
-  }
-  assert(false);
+  //auto buf_map = prg.consumer_map(buffer);
+  //cout << "buf map: " << str(buf_map) << endl;
 
   cout << "Consumer maps: " << endl;
   isl_set* read_data = nullptr;
+  isl_set* demands = nullptr;
   for (auto op : users) {
     auto consumed = map_find(op, cm);
 
@@ -11178,9 +11201,32 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
         } else {
           read_data = unn(read_data, range(m));
         }
+
+        auto pm = data_demands(3, m);
+        cout << tab(1) << "demands: " << str(pm) << endl;
+        if (demands == nullptr) {
+          demands = pm;
+        } else {
+          demands = unn(demands, pm);
+        }
       }
     }
   }
+
+  //for (auto m : get_maps(buf_map)) {
+    //auto pm = data_demands(3, m);
+    //cout << tab(1) << "demands: " << str(pm) << endl;
+    //if (demands == nullptr) {
+      //demands = pm;
+    //} else {
+      //demands = unn(demands, pm);
+    //}
+  //}
+  demands = simplify(demands);
+  cout << "Total demands: " << str(demands) << endl;
+  cout << "lmin : " << str(lexmin(demands)) << endl;
+  cout << "lmax : " << str(lexmax(demands)) << endl;
+  assert(false);
 
   string rb_name = buffer + "_rb_at_" + level;
   read_data = simplify(read_data);
@@ -12016,9 +12062,10 @@ void coreir_tests() {
 void resnet_test() {
   auto prg = resnet();
   prg.pretty_print();
-  cout << "after adding rb" << endl;
-  add_reuse_buffer("conv_s1_x", "conv_stencil", prg);
-  prg.pretty_print();
+  //cout << "after adding rb" << endl;
+  //add_reuse_buffer("conv_s1_x", "conv_stencil", prg);
+  //prg.pretty_print();
+  generate_unoptimized_code(prg);
   assert(false);
 }
 

@@ -593,3 +593,4 @@ isl_basic_set* zero(isl_basic_set* fs, const int var);
 
 
 std::string codegen_c(isl_aff* const bset);
+isl_set* set_name(isl_set* const m, string new_name);
