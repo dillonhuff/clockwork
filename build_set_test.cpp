@@ -11932,7 +11932,7 @@ void unet_conv_3_3_test() {
 
   //prg.merge_ops("conv_s1_r_x");
   prg.pretty_print();
-  assert(false);
+  //assert(false);
 
   //auto sched = prg.unoptimized_schedule();
 
@@ -12066,22 +12066,23 @@ void resnet_test() {
   //add_reuse_buffer("conv_s1_x", "conv_stencil", prg);
   //prg.pretty_print();
   generate_unoptimized_code(prg);
-  assert(false);
+  //assert(false);
 }
 
 void application_tests() {
-  resnet_test();
-  unet_conv_3_3_test();
-  reuse_buffered_conv_test();
-  cyclic_banked_conv_test();
-  register_file_optimization_test();
-  // Does not work with register files?
   seidel2d_test();
-  //cnn_test();
-
   sobel_test();
   jacobi_2d_2_test();
   jacobi_2d_test();
+
+  resnet_test();
+  unet_conv_3_3_test();
+  //reuse_buffered_conv_test();
+  cyclic_banked_conv_test();
+  //register_file_optimization_test();
+  // Does not work with register files?
+  //cnn_test();
+
 
   two_input_mag_test();
   one_input_mag_test();
