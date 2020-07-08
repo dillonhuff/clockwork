@@ -1258,6 +1258,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       } else {
         value_str = bank + ".peek" + "(/* Needs general delay string */ " + delay_expr + ")";
       }
+    } else {
+      assert(sb.tp == INNER_BANK_OFFSET_MULTILINEAR);
+      string linear_addr = generate_multilinear_ram_addr(outpt, sb, buf);
+      value_str = bank + ".read(" + linear_addr + ")";
     }
 
     return buf.name + "." + value_str;
