@@ -12062,8 +12062,8 @@ void coreir_tests() {
 void resnet_test() {
   auto prg = resnet();
   prg.pretty_print();
-  generate_unoptimized_code(prg);
   assert(false);
+  generate_unoptimized_code(prg);
 
   CodegenOptions options;
   options.all_rams = true;
@@ -12081,7 +12081,7 @@ void resnet_test() {
 }
 
 void application_tests() {
-  resnet_test();
+  //resnet_test();
 
   //reuse_buffered_conv_test();
   register_file_test();
