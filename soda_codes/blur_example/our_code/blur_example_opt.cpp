@@ -4462,9 +4462,9 @@ static void write_blur_example_update_0_write(hw_uint<1024>* output, HWStream<hw
 
 void blur_example_opt_accel(hw_uint<1024>* in0_update_0_read, hw_uint<1024>* in1_update_0_read, hw_uint<1024>* blur_example_update_0_write, const int size) { 
 #pragma HLS dataflow
-#pragma HLS INTERFACE m_axi port = in0_update_0_read offset = slave depth = 65536 bundle = gmem0
-#pragma HLS INTERFACE m_axi port = in1_update_0_read offset = slave depth = 65536 bundle = gmem1
-#pragma HLS INTERFACE m_axi port = blur_example_update_0_write offset = slave depth = 65536 bundle = gmem2
+#pragma HLS INTERFACE m_axi port = in0_update_0_read offset = slave depth = 65536 bundle = gmem
+#pragma HLS INTERFACE m_axi port = in1_update_0_read offset = slave depth = 65536 bundle = gmem
+#pragma HLS INTERFACE m_axi port = blur_example_update_0_write offset = slave depth = 65536 bundle = gmem
 
 #pragma HLS INTERFACE s_axilite port = in0_update_0_read bundle = control
 #pragma HLS INTERFACE s_axilite port = in1_update_0_read bundle = control
