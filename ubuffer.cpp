@@ -298,7 +298,6 @@ void generate_multilinear_bank(CodegenOptions& options,
   vector<int> ranges;
   vector<int> mins;
   vector<int> maxs;
-  vector<string> vars;
   for (int d = 0; d < num_dims(rddom); d++) {
     auto ps = project_all_but(rddom, d);
     int minv = to_int(lexminval(ps));
@@ -311,6 +310,12 @@ void generate_multilinear_bank(CodegenOptions& options,
 
   vector<string> decls =
     space_var_decls(get_space(rddom));
+  vector<string> vars =
+    space_var_args(get_space(rddom));
+  vector<string> args;
+  for (auto v : vars) {
+    args.push_back("[" + v + "]");
+  }
 
   vector<string> range_strs;
   for (auto r : ranges) {
@@ -332,7 +337,7 @@ void generate_multilinear_bank(CodegenOptions& options,
   //close_debug_scope(out);
 
   //ignore_inter_deps(out, "RAM");
-  //out << tab(2) << "return RAM[addr];" << endl;
+  out << tab(2) << "return RAM" << sep_list(args, "", "", "") << ";" << endl;
   out << tab(1) << "}" << endl << endl;
 
   out << endl << endl;
@@ -350,6 +355,7 @@ void generate_multilinear_bank(CodegenOptions& options,
     //ignore_inter_deps(out, "RAM");
   //}
   //out << tab(2) << "RAM[addr] = value;" << endl;
+  out << tab(2) << "RAM" << sep_list(args, "", "", "") << " = value;" << endl;
   out << tab(1) << "}" << endl << endl;
 
   out << "};" << endl << endl;
