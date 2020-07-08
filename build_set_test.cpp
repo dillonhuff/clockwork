@@ -12062,6 +12062,7 @@ void coreir_tests() {
 void resnet_test() {
   auto prg = resnet();
   prg.pretty_print();
+  assert(false);
   //cout << "after adding rb" << endl;
   //add_reuse_buffer("conv_s1_x", "conv_stencil", prg);
   //prg.pretty_print();
@@ -12070,8 +12071,8 @@ void resnet_test() {
 }
 
 void application_tests() {
-  resnet_test();
-  assert(false);
+  //resnet_test();
+  //assert(false);
   seidel2d_test();
   sobel_test();
   jacobi_2d_2_test();
