@@ -35,11 +35,8 @@ endif
 TEST_FILES = build_set_test.cpp prog_splitting_test.cpp
 LIB_HEADER_FILES = $(patsubst %.cpp,%.h,$(TEST_FILES))
 
-<<<<<<< HEAD
 LIB_CPP_FILES = qexpr.cpp app.cpp isl_utils.cpp prog.cpp codegen.cpp minihls.cpp ubuffer.cpp coreir_backend.cpp cwlib.cpp options.cpp example_progs.cpp
-=======
-LIB_CPP_FILES = qexpr.cpp app.cpp isl_utils.cpp prog.cpp codegen.cpp minihls.cpp ubuffer.cpp coreir_backend.cpp cwlib.cpp options.cpp lake_target.cpp utils.cpp
->>>>>>> origin
+
 LIB_HEADER_FILES = $(patsubst %.cpp,%.h,$(LIB_CPP_FILES))
 
 TEST_OBJ_FILES := $(patsubst %.cpp,%.o,$(TEST_FILES))
