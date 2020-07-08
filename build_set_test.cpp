@@ -12062,6 +12062,9 @@ void coreir_tests() {
 void resnet_test() {
   auto prg = resnet();
   prg.pretty_print();
+  generate_unoptimized_code(prg);
+  assert(false);
+
   CodegenOptions options;
   options.all_rams = true;
   all_register_files(prg, options);
@@ -12074,7 +12077,6 @@ void resnet_test() {
   //cout << "after adding rb" << endl;
   //add_reuse_buffer("conv_s1_x", "conv_stencil", prg);
   //prg.pretty_print();
-  //generate_unoptimized_code(prg);
   //assert(false);
 }
 
