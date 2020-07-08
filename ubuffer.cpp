@@ -228,6 +228,140 @@ int compute_max_dd(UBuffer& buf, const string& inpt) {
   return maxdelay;
 }
 
+string generate_multilinear_ram_addr(const std::string& pt, bank& bnk, UBuffer& buf) {
+  vector<int> lengths;
+  vector<int> mins;
+  for (int i = 0; i < buf.logical_dimension(); i++) {
+    auto s = project_all_but(to_set(bnk.rddom), i);
+    auto min = to_int(lexminval(s));
+    mins.push_back(min);
+    auto max = to_int(lexmaxval(s));
+    int length = max - min + 1;
+    lengths.push_back(length);
+  }
+
+  isl_map* m = to_map(buf.access_map.at(pt));
+  auto svec = isl_pw_multi_aff_from_map(m);
+  vector<pair<isl_set*, isl_multi_aff*> > pieces =
+    get_pieces(svec);
+  vector<string> domains;
+  vector<string> offsets;
+  for (auto piece : pieces) {
+    vector<string> addr_vec;
+    isl_multi_aff* ma = piece.second;
+    for (int d = 0; d < isl_multi_aff_dim(ma, isl_dim_set); d++) {
+      isl_aff* aff = isl_multi_aff_get_aff(ma, d);
+      addr_vec.push_back(codegen_c(aff));
+    }
+
+    vector<string> addr_vec_out;
+    for (int i = 0; i < buf.logical_dimension(); i++) {
+      //int length = 1;
+      //for (int d = 0; d < i; d++) {
+        //length *= lengths.at(d);
+      //}
+      //string item = "(" + addr_vec.at(i) + " - " + str(mins.at(i)) + ") * " + to_string(length);
+      //string item = "[" + addr_vec.at(i) + " - " + str(mins.at(i)) + "]";
+      string item = addr_vec.at(i) + " - " + str(mins.at(i));
+      addr_vec_out.push_back(item);
+    }
+
+    //string addr = sep_list(addr_vec_out, "", "", " + ");
+    string addr = sep_list(addr_vec_out, "", "", ", ");
+    offsets.push_back(addr);
+    domains.push_back(codegen_c(piece.first));
+  }
+
+  assert(offsets.size() == 1);
+  return offsets.at(0);
+
+  assert(offsets.size() > 0);
+  assert(domains.size() == offsets.size());
+
+  string base = offsets.at(0);
+  for (int d = 1; d < offsets.size(); d++) {
+    base = parens(parens(domains.at(d)) + " ? " + offsets.at(d) + " : " + base);
+  }
+
+  return base;
+}
+
+void generate_multilinear_bank(CodegenOptions& options,
+    std::ostream& out,
+    stack_bank& bank) {
+
+  auto pt_type_string = bank.pt_type_string;
+  auto partitions =
+    bank.get_partitions();
+  int partition_size = partitions.size();
+  isl_set* rddom = to_set(bank.rddom);
+  vector<int> ranges;
+  vector<int> mins;
+  vector<int> maxs;
+  for (int d = 0; d < num_dims(rddom); d++) {
+    auto ps = project_all_but(rddom, d);
+    int minv = to_int(lexminval(ps));
+    int maxv = to_int(lexmaxval(ps));
+
+    mins.push_back(minv);
+    maxs.push_back(maxv);
+    ranges.push_back(maxv - minv + 1);
+  }
+
+  vector<string> decls =
+    space_var_decls(get_space(rddom));
+  vector<string> vars =
+    space_var_args(get_space(rddom));
+  vector<string> args;
+  for (auto v : vars) {
+    args.push_back("[" + v + "]");
+  }
+
+  vector<string> range_strs;
+  for (auto r : ranges) {
+    range_strs.push_back("[" + str(r) + "]");
+  }
+
+  //out << "\t// Capacity: " << capacity << endl;
+  //out << tab(1) << pt_type_string << " RAM[" << capacity << "];" << endl;
+  out << tab(1) << pt_type_string << " RAM" << sep_list(range_strs, "", "", "") << ";" << endl;
+
+  out << tab(1) << "inline " + pt_type_string + " read(" << comma_list(decls) << ") {" << endl;
+
+  //open_debug_scope(out);
+  //out << tab(2) << "if (addr < 0 || !(addr < " << capacity << ")) {" << endl;
+  //out << tab(2) << "cout << \"Read error: Address \" << addr << \" is out of bounds\" << endl;" << endl;
+  //out << tab(2) << "}" << endl;
+  //out << tab(2) << "assert(addr < " << capacity << ");" << endl;
+  //out << tab(2) << "assert(addr >= " << (int) 0 << ");" << endl;
+  //close_debug_scope(out);
+
+  //ignore_inter_deps(out, "RAM");
+  out << tab(2) << "return RAM" << sep_list(args, "", "", "") << ";" << endl;
+  out << tab(1) << "}" << endl << endl;
+
+  out << endl << endl;
+
+  out << "\tinline void write(const " + pt_type_string + " value, " << comma_list(decls) << ") {" << endl;
+  //open_debug_scope(out);
+  //out << tab(2) << "if (addr < 0 || !(addr < " << capacity << ")) {" << endl;
+  //out << tab(2) << "cout << \"Write error: Address \" << addr << \" is out of bounds\" << endl;" << endl;
+  //out << tab(2) << "}" << endl;
+  //out << tab(2) << "assert(addr < " << capacity << ");" << endl;
+  //out << tab(2) << "assert(addr >= " << (int) 0 << ");" << endl;
+  //close_debug_scope(out);
+
+  //if (options.add_dependence_pragmas) {
+    //ignore_inter_deps(out, "RAM");
+  //}
+  //out << tab(2) << "RAM[addr] = value;" << endl;
+  out << tab(2) << "RAM" << sep_list(args, "", "", "") << " = value;" << endl;
+  out << tab(1) << "}" << endl << endl;
+
+  out << "};" << endl << endl;
+
+}
+
 void generate_bank(CodegenOptions& options,
     std::ostream& out,
     stack_bank& bank) {
@@ -242,9 +376,7 @@ void generate_bank(CodegenOptions& options,
   out << "\t// RAM Box: " << bank.extract_layout() << endl;
 
   //C array with read and write method
-  //if (options.inner_bank_offset_mode == INNER_BANK_OFFSET_LINEAR){
   if (bank.tp == INNER_BANK_OFFSET_LINEAR) {
-    //num reader > 1 partiions = 1;
     auto partitions =
       bank.get_partitions();
     int partition_size = partitions.size();
@@ -260,10 +392,11 @@ void generate_bank(CodegenOptions& options,
     out << tab(2) << "}" << endl;
     out << tab(2) << "assert(addr < " << capacity << ");" << endl;
     out << tab(2) << "assert(addr >= " << (int) 0 << ");" << endl;
+    close_debug_scope(out);
+
     ignore_inter_deps(out, "RAM");
     out << tab(2) << "return RAM[addr];" << endl;
     out << tab(1) << "}" << endl << endl;
-    close_debug_scope(out);
 
     out << endl << endl;
 
@@ -284,6 +417,8 @@ void generate_bank(CodegenOptions& options,
 
     out << "};" << endl << endl;
 
+  } else if (bank.tp == INNER_BANK_OFFSET_MULTILINEAR) {
+    generate_multilinear_bank(options, out, bank);
   } else {
     assert(bank.tp == INNER_BANK_OFFSET_STACK);
 
@@ -1129,6 +1264,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       } else {
         value_str = bank + ".peek" + "(/* Needs general delay string */ " + delay_expr + ")";
       }
+    } else {
+      assert(sb.tp == INNER_BANK_OFFSET_MULTILINEAR);
+      string linear_addr = generate_multilinear_ram_addr(outpt, sb, buf);
+      value_str = bank + ".read(" + linear_addr + ")";
     }
 
     return buf.name + "." + value_str;
@@ -1151,7 +1290,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         if (sb.tp == INNER_BANK_OFFSET_STACK) {
           out << tab(1) << buf.name << "." << sb.name << ".push(" << inpt << ");" << endl;
         } else if (sb.tp == INNER_BANK_OFFSET_LINEAR) {
-          //string linear_addr = buf.generate_linearize_ram_addr(inpt);
           string linear_addr = buf.generate_linearize_ram_addr(inpt, sb);
           cout <<"Input port:" << inpt << ", Get ram string: " << linear_addr << endl;
           if (!elem(inpt, buf.dynamic_ports)) {
@@ -1162,7 +1300,10 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
               ", " << "dynamic_address" << ");" << endl;
           }
         } else {
-          assert(false);
+          assert(sb.tp == INNER_BANK_OFFSET_MULTILINEAR);
+          string linear_addr = generate_multilinear_ram_addr(inpt, sb, buf);
+          out << tab(1) << buf.name << "." << sb.name << ".write(" << inpt << ", " << linear_addr << ");" << endl;
+
         }
       }
     } else {
@@ -2048,12 +2189,19 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
       }
     }
 
-    if (options.inner_bank_offset_mode ==
-        INNER_BANK_OFFSET_LINEAR) {
+    if (options.inner_bank_offset_mode !=
+        INNER_BANK_OFFSET_STACK) {
       for (auto& b : bank_list) {
-        b.tp = INNER_BANK_OFFSET_LINEAR;
+        b.tp = options.inner_bank_offset_mode;
       }
     }
+
+    //if (options.inner_bank_offset_mode ==
+        //INNER_BANK_OFFSET_LINEAR) {
+      //for (auto& b : bank_list) {
+        //b.tp = INNER_BANK_OFFSET_LINEAR;
+      //}
+    //}
   }
 
   void UBuffer::generate_banks_and_merge(CodegenOptions& options) {
@@ -2540,7 +2688,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     return map2address(pt_access_map);
   }
 
-  //string UBuffer::generate_linearize_ram_addr(const std::string& pt) {
   string UBuffer::generate_linearize_ram_addr(const std::string& pt, bank& bnk) {
     vector<int> lengths;
     vector<int> mins;

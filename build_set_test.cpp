@@ -12062,24 +12062,39 @@ void coreir_tests() {
 void resnet_test() {
   auto prg = resnet();
   prg.pretty_print();
+  CodegenOptions options;
+  options.all_rams = true;
+  all_register_files(prg, options);
+  options.inner_bank_offset_mode =
+    INNER_BANK_OFFSET_MULTILINEAR;
+  generate_optimized_code(options, prg);
+  assert(false);
+
+  //assert(false);
   //cout << "after adding rb" << endl;
   //add_reuse_buffer("conv_s1_x", "conv_stencil", prg);
   //prg.pretty_print();
-  generate_unoptimized_code(prg);
+  //generate_unoptimized_code(prg);
   //assert(false);
 }
 
 void application_tests() {
+  resnet_test();
+
+  //reuse_buffered_conv_test();
+  register_file_test();
+  reaccess_no_hierarchy_rolled_test();
+
+  //assert(false);
   seidel2d_test();
   sobel_test();
   jacobi_2d_2_test();
   jacobi_2d_test();
 
-  resnet_test();
   unet_conv_3_3_test();
-  //reuse_buffered_conv_test();
   cyclic_banked_conv_test();
   //register_file_optimization_test();
+  
   // Does not work with register files?
   //cnn_test();
 
@@ -12217,11 +12232,6 @@ void application_tests() {
   reduce_stream_coreir_test();
   conv_test();
   conv_2d_bc_test();
-
-  register_file_test();
-  reaccess_no_hierarchy_rolled_test();
-
-
 
   //two_input_denoise_pipeline_test();
   //synth_wire_test();
