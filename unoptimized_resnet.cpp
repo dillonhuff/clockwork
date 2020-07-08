@@ -16,11 +16,13 @@ struct conv_stencil_all_inputs_to_all_outputs_cache {
 	// Capacity: 12544
   hw_uint<16> RAM[12544];
   inline hw_uint<16> read(const int addr) {
-    //if (addr < 0 || !(addr < 12544)) {
-    //cout << "Read error: Address " << addr << " is out of bounds" << endl;
-    //}
+#ifndef __VIVADO_SYNTH__
+    if (addr < 0 || !(addr < 12544)) {
+    cout << "Read error: Address " << addr << " is out of bounds" << endl;
+    }
     assert(addr < 12544);
     assert(addr >= 0);
+#endif //__VIVADO_SYNTH__
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     return RAM[addr];
@@ -29,11 +31,13 @@ struct conv_stencil_all_inputs_to_all_outputs_cache {
 
 
 	inline void write(const hw_uint<16> value, const int addr) {
+#ifndef __VIVADO_SYNTH__
     if (addr < 0 || !(addr < 12544)) {
-    //cout << "Write error: Address " << addr << " is out of bounds" << endl;
+    cout << "Write error: Address " << addr << " is out of bounds" << endl;
     }
     assert(addr < 12544);
     assert(addr >= 0);
+#endif //__VIVADO_SYNTH__
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     RAM[addr] = value;
@@ -119,18 +123,8 @@ inline hw_uint<16> conv_stencil_op_hcompute_conv_stencil_10_168_select(conv_sten
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_op_hcompute_conv_stencil_10_168 read pattern: { op_hcompute_conv_stencil_10[root = 0, conv_s1_y, conv_s1_x, conv_s1_r_y, conv_s1_r_x] -> conv_stencil[conv_s1_x, conv_s1_y, 9] : 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 and 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 }
-  if ((((-1 + conv_s1_r_x >= 0)) || ((conv_s1_r_x == 0) && (-1 + conv_s1_r_y >= 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_10_167 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (9 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_10_167;
-  }
-
-  
-  if ((((conv_s1_r_x == 0) && (conv_s1_r_y == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_4 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (9 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_4;
-  }
-
-  
+  auto value_conv_stencil_op_hcompute_conv_stencil_10_167 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (9 - 0) * 784);
+  return value_conv_stencil_op_hcompute_conv_stencil_10_167;
   return 0;
 }
 
@@ -138,18 +132,8 @@ inline hw_uint<16> conv_stencil_op_hcompute_conv_stencil_11_186_select(conv_sten
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_op_hcompute_conv_stencil_11_186 read pattern: { op_hcompute_conv_stencil_11[root = 0, conv_s1_y, conv_s1_x, conv_s1_r_y, conv_s1_r_x] -> conv_stencil[conv_s1_x, conv_s1_y, 10] : 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 and 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 }
-  if ((((-1 + conv_s1_r_x >= 0)) || ((conv_s1_r_x == 0) && (-1 + conv_s1_r_y >= 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_11_185 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (10 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_11_185;
-  }
-
-  
-  if ((((conv_s1_r_x == 0) && (conv_s1_r_y == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_4 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (10 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_4;
-  }
-
-  
+  auto value_conv_stencil_op_hcompute_conv_stencil_10_167 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (10 - 0) * 784);
+  return value_conv_stencil_op_hcompute_conv_stencil_10_167;
   return 0;
 }
 
@@ -157,18 +141,8 @@ inline hw_uint<16> conv_stencil_op_hcompute_conv_stencil_12_204_select(conv_sten
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_op_hcompute_conv_stencil_12_204 read pattern: { op_hcompute_conv_stencil_12[root = 0, conv_s1_y, conv_s1_x, conv_s1_r_y, conv_s1_r_x] -> conv_stencil[conv_s1_x, conv_s1_y, 11] : 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 and 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 }
-  if ((((-1 + conv_s1_r_x >= 0)) || ((conv_s1_r_x == 0) && (-1 + conv_s1_r_y >= 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_12_203 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (11 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_12_203;
-  }
-
-  
-  if ((((conv_s1_r_x == 0) && (conv_s1_r_y == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_4 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (11 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_4;
-  }
-
-  
+  auto value_conv_stencil_op_hcompute_conv_stencil_10_167 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (11 - 0) * 784);
+  return value_conv_stencil_op_hcompute_conv_stencil_10_167;
   return 0;
 }
 
@@ -176,18 +150,8 @@ inline hw_uint<16> conv_stencil_op_hcompute_conv_stencil_13_222_select(conv_sten
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_op_hcompute_conv_stencil_13_222 read pattern: { op_hcompute_conv_stencil_13[root = 0, conv_s1_y, conv_s1_x, conv_s1_r_y, conv_s1_r_x] -> conv_stencil[conv_s1_x, conv_s1_y, 12] : 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 and 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 }
-  if ((((-1 + conv_s1_r_x >= 0)) || ((conv_s1_r_x == 0) && (-1 + conv_s1_r_y >= 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_13_221 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (12 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_13_221;
-  }
-
-  
-  if ((((conv_s1_r_x == 0) && (conv_s1_r_y == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_4 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (12 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_4;
-  }
-
-  
+  auto value_conv_stencil_op_hcompute_conv_stencil_10_167 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (12 - 0) * 784);
+  return value_conv_stencil_op_hcompute_conv_stencil_10_167;
   return 0;
 }
 
@@ -195,18 +159,8 @@ inline hw_uint<16> conv_stencil_op_hcompute_conv_stencil_14_240_select(conv_sten
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_op_hcompute_conv_stencil_14_240 read pattern: { op_hcompute_conv_stencil_14[root = 0, conv_s1_y, conv_s1_x, conv_s1_r_y, conv_s1_r_x] -> conv_stencil[conv_s1_x, conv_s1_y, 13] : 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 and 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 }
-  if ((((-1 + conv_s1_r_x >= 0)) || ((conv_s1_r_x == 0) && (-1 + conv_s1_r_y >= 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_14_239 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (13 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_14_239;
-  }
-
-  
-  if ((((conv_s1_r_x == 0) && (conv_s1_r_y == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_4 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (13 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_4;
-  }
-
-  
+  auto value_conv_stencil_op_hcompute_conv_stencil_10_167 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (13 - 0) * 784);
+  return value_conv_stencil_op_hcompute_conv_stencil_10_167;
   return 0;
 }
 
@@ -214,18 +168,8 @@ inline hw_uint<16> conv_stencil_op_hcompute_conv_stencil_15_258_select(conv_sten
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_op_hcompute_conv_stencil_15_258 read pattern: { op_hcompute_conv_stencil_15[root = 0, conv_s1_y, conv_s1_x, conv_s1_r_y, conv_s1_r_x] -> conv_stencil[conv_s1_x, conv_s1_y, 14] : 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 and 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 }
-  if ((((-1 + conv_s1_r_x >= 0)) || ((conv_s1_r_x == 0) && (-1 + conv_s1_r_y >= 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_15_257 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (14 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_15_257;
-  }
-
-  
-  if ((((conv_s1_r_x == 0) && (conv_s1_r_y == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_4 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (14 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_4;
-  }
-
-  
+  auto value_conv_stencil_op_hcompute_conv_stencil_10_167 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (14 - 0) * 784);
+  return value_conv_stencil_op_hcompute_conv_stencil_10_167;
   return 0;
 }
 
@@ -233,18 +177,8 @@ inline hw_uint<16> conv_stencil_op_hcompute_conv_stencil_16_276_select(conv_sten
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_op_hcompute_conv_stencil_16_276 read pattern: { op_hcompute_conv_stencil_16[root = 0, conv_s1_y, conv_s1_x, conv_s1_r_y, conv_s1_r_x] -> conv_stencil[conv_s1_x, conv_s1_y, 15] : 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 and 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 }
-  if ((((-1 + conv_s1_r_x >= 0)) || ((conv_s1_r_x == 0) && (-1 + conv_s1_r_y >= 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_16_275 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (15 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_16_275;
-  }
-
-  
-  if ((((conv_s1_r_x == 0) && (conv_s1_r_y == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_4 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (15 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_4;
-  }
-
-  
+  auto value_conv_stencil_op_hcompute_conv_stencil_10_167 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (15 - 0) * 784);
+  return value_conv_stencil_op_hcompute_conv_stencil_10_167;
   return 0;
 }
 
@@ -252,18 +186,8 @@ inline hw_uint<16> conv_stencil_op_hcompute_conv_stencil_1_6_select(conv_stencil
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_op_hcompute_conv_stencil_1_6 read pattern: { op_hcompute_conv_stencil_1[root = 0, conv_s1_y, conv_s1_x, conv_s1_r_y, conv_s1_r_x] -> conv_stencil[conv_s1_x, conv_s1_y, 0] : 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 and 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 }
-  if ((((-1 + conv_s1_r_x >= 0)) || ((conv_s1_r_x == 0) && (-1 + conv_s1_r_y >= 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_1_5 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (0 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_1_5;
-  }
-
-  
-  if ((((conv_s1_r_x == 0) && (conv_s1_r_y == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_4 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (0 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_4;
-  }
-
-  
+  auto value_conv_stencil_op_hcompute_conv_stencil_10_167 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (0 - 0) * 784);
+  return value_conv_stencil_op_hcompute_conv_stencil_10_167;
   return 0;
 }
 
@@ -271,18 +195,8 @@ inline hw_uint<16> conv_stencil_op_hcompute_conv_stencil_2_24_select(conv_stenci
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_op_hcompute_conv_stencil_2_24 read pattern: { op_hcompute_conv_stencil_2[root = 0, conv_s1_y, conv_s1_x, conv_s1_r_y, conv_s1_r_x] -> conv_stencil[conv_s1_x, conv_s1_y, 1] : 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 and 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 }
-  if ((((-1 + conv_s1_r_x >= 0)) || ((conv_s1_r_x == 0) && (-1 + conv_s1_r_y >= 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_2_23 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (1 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_2_23;
-  }
-
-  
-  if ((((conv_s1_r_x == 0) && (conv_s1_r_y == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_4 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (1 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_4;
-  }
-
-  
+  auto value_conv_stencil_op_hcompute_conv_stencil_10_167 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (1 - 0) * 784);
+  return value_conv_stencil_op_hcompute_conv_stencil_10_167;
   return 0;
 }
 
@@ -290,18 +204,8 @@ inline hw_uint<16> conv_stencil_op_hcompute_conv_stencil_3_42_select(conv_stenci
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_op_hcompute_conv_stencil_3_42 read pattern: { op_hcompute_conv_stencil_3[root = 0, conv_s1_y, conv_s1_x, conv_s1_r_y, conv_s1_r_x] -> conv_stencil[conv_s1_x, conv_s1_y, 2] : 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 and 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 }
-  if ((((-1 + conv_s1_r_x >= 0)) || ((conv_s1_r_x == 0) && (-1 + conv_s1_r_y >= 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_3_41 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (2 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_3_41;
-  }
-
-  
-  if ((((conv_s1_r_x == 0) && (conv_s1_r_y == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_4 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (2 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_4;
-  }
-
-  
+  auto value_conv_stencil_op_hcompute_conv_stencil_10_167 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (2 - 0) * 784);
+  return value_conv_stencil_op_hcompute_conv_stencil_10_167;
   return 0;
 }
 
@@ -309,18 +213,8 @@ inline hw_uint<16> conv_stencil_op_hcompute_conv_stencil_4_60_select(conv_stenci
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_op_hcompute_conv_stencil_4_60 read pattern: { op_hcompute_conv_stencil_4[root = 0, conv_s1_y, conv_s1_x, conv_s1_r_y, conv_s1_r_x] -> conv_stencil[conv_s1_x, conv_s1_y, 3] : 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 and 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 }
-  if ((((conv_s1_r_x == 0) && (conv_s1_r_y == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_4 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (3 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_4;
-  }
-
-  
-  if ((((-1 + conv_s1_r_x >= 0)) || ((conv_s1_r_x == 0) && (-1 + conv_s1_r_y >= 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_4_59 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (3 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_4_59;
-  }
-
-  
+  auto value_conv_stencil_op_hcompute_conv_stencil_10_167 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (3 - 0) * 784);
+  return value_conv_stencil_op_hcompute_conv_stencil_10_167;
   return 0;
 }
 
@@ -328,18 +222,8 @@ inline hw_uint<16> conv_stencil_op_hcompute_conv_stencil_5_78_select(conv_stenci
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_op_hcompute_conv_stencil_5_78 read pattern: { op_hcompute_conv_stencil_5[root = 0, conv_s1_y, conv_s1_x, conv_s1_r_y, conv_s1_r_x] -> conv_stencil[conv_s1_x, conv_s1_y, 4] : 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 and 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 }
-  if ((((conv_s1_r_x == 0) && (conv_s1_r_y == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_4 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (4 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_4;
-  }
-
-  
-  if ((((-1 + conv_s1_r_x >= 0)) || ((conv_s1_r_x == 0) && (-1 + conv_s1_r_y >= 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_5_77 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (4 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_5_77;
-  }
-
-  
+  auto value_conv_stencil_op_hcompute_conv_stencil_10_167 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (4 - 0) * 784);
+  return value_conv_stencil_op_hcompute_conv_stencil_10_167;
   return 0;
 }
 
@@ -347,18 +231,8 @@ inline hw_uint<16> conv_stencil_op_hcompute_conv_stencil_6_96_select(conv_stenci
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_op_hcompute_conv_stencil_6_96 read pattern: { op_hcompute_conv_stencil_6[root = 0, conv_s1_y, conv_s1_x, conv_s1_r_y, conv_s1_r_x] -> conv_stencil[conv_s1_x, conv_s1_y, 5] : 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 and 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 }
-  if ((((conv_s1_r_x == 0) && (conv_s1_r_y == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_4 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (5 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_4;
-  }
-
-  
-  if ((((-1 + conv_s1_r_x >= 0)) || ((conv_s1_r_x == 0) && (-1 + conv_s1_r_y >= 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_6_95 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (5 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_6_95;
-  }
-
-  
+  auto value_conv_stencil_op_hcompute_conv_stencil_10_167 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (5 - 0) * 784);
+  return value_conv_stencil_op_hcompute_conv_stencil_10_167;
   return 0;
 }
 
@@ -366,18 +240,8 @@ inline hw_uint<16> conv_stencil_op_hcompute_conv_stencil_7_114_select(conv_stenc
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_op_hcompute_conv_stencil_7_114 read pattern: { op_hcompute_conv_stencil_7[root = 0, conv_s1_y, conv_s1_x, conv_s1_r_y, conv_s1_r_x] -> conv_stencil[conv_s1_x, conv_s1_y, 6] : 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 and 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 }
-  if ((((conv_s1_r_x == 0) && (conv_s1_r_y == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_4 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (6 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_4;
-  }
-
-  
-  if ((((-1 + conv_s1_r_x >= 0)) || ((conv_s1_r_x == 0) && (-1 + conv_s1_r_y >= 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_7_113 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (6 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_7_113;
-  }
-
-  
+  auto value_conv_stencil_op_hcompute_conv_stencil_10_167 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (6 - 0) * 784);
+  return value_conv_stencil_op_hcompute_conv_stencil_10_167;
   return 0;
 }
 
@@ -385,18 +249,8 @@ inline hw_uint<16> conv_stencil_op_hcompute_conv_stencil_8_132_select(conv_stenc
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_op_hcompute_conv_stencil_8_132 read pattern: { op_hcompute_conv_stencil_8[root = 0, conv_s1_y, conv_s1_x, conv_s1_r_y, conv_s1_r_x] -> conv_stencil[conv_s1_x, conv_s1_y, 7] : 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 and 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 }
-  if ((((conv_s1_r_x == 0) && (conv_s1_r_y == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_4 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (7 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_4;
-  }
-
-  
-  if ((((-1 + conv_s1_r_x >= 0)) || ((conv_s1_r_x == 0) && (-1 + conv_s1_r_y >= 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_8_131 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (7 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_8_131;
-  }
-
-  
+  auto value_conv_stencil_op_hcompute_conv_stencil_10_167 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (7 - 0) * 784);
+  return value_conv_stencil_op_hcompute_conv_stencil_10_167;
   return 0;
 }
 
@@ -404,18 +258,8 @@ inline hw_uint<16> conv_stencil_op_hcompute_conv_stencil_9_150_select(conv_stenc
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_op_hcompute_conv_stencil_9_150 read pattern: { op_hcompute_conv_stencil_9[root = 0, conv_s1_y, conv_s1_x, conv_s1_r_y, conv_s1_r_x] -> conv_stencil[conv_s1_x, conv_s1_y, 8] : 0 <= conv_s1_y <= 27 and 0 <= conv_s1_x <= 27 and 0 <= conv_s1_r_y <= 2 and 0 <= conv_s1_r_x <= 2 }
-  if ((((conv_s1_r_x == 0) && (conv_s1_r_y == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_4 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (8 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_4;
-  }
-
-  
-  if ((((-1 + conv_s1_r_x >= 0)) || ((conv_s1_r_x == 0) && (-1 + conv_s1_r_y >= 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_9_149 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (8 - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_9_149;
-  }
-
-  
+  auto value_conv_stencil_op_hcompute_conv_stencil_10_167 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (conv_s1_x - 0) * 1 + (conv_s1_y - 0) * 28 + (8 - 0) * 784);
+  return value_conv_stencil_op_hcompute_conv_stencil_10_167;
   return 0;
 }
 
@@ -423,102 +267,8 @@ inline hw_uint<16> conv_stencil_op_hcompute_hw_output_stencil_294_select(conv_st
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   // conv_stencil_op_hcompute_hw_output_stencil_294 read pattern: { op_hcompute_hw_output_stencil[root = 0, hw_output_s0_w, hw_output_s0_y_yi, hw_output_s0_x_xi] -> conv_stencil[hw_output_s0_x_xi, hw_output_s0_y_yi, hw_output_s0_w] : 0 <= hw_output_s0_w <= 15 and 0 <= hw_output_s0_y_yi <= 27 and 0 <= hw_output_s0_x_xi <= 27 }
-  if ((((-9 + hw_output_s0_w == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_10_167 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (hw_output_s0_x_xi - 0) * 1 + (hw_output_s0_y_yi - 0) * 28 + (hw_output_s0_w - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_10_167;
-  }
-
-  
-  if ((((-10 + hw_output_s0_w == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_11_185 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (hw_output_s0_x_xi - 0) * 1 + (hw_output_s0_y_yi - 0) * 28 + (hw_output_s0_w - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_11_185;
-  }
-
-  
-  if ((((-11 + hw_output_s0_w == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_12_203 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (hw_output_s0_x_xi - 0) * 1 + (hw_output_s0_y_yi - 0) * 28 + (hw_output_s0_w - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_12_203;
-  }
-
-  
-  if ((((-12 + hw_output_s0_w == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_13_221 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (hw_output_s0_x_xi - 0) * 1 + (hw_output_s0_y_yi - 0) * 28 + (hw_output_s0_w - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_13_221;
-  }
-
-  
-  if ((((-13 + hw_output_s0_w == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_14_239 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (hw_output_s0_x_xi - 0) * 1 + (hw_output_s0_y_yi - 0) * 28 + (hw_output_s0_w - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_14_239;
-  }
-
-  
-  if ((((-14 + hw_output_s0_w == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_15_257 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (hw_output_s0_x_xi - 0) * 1 + (hw_output_s0_y_yi - 0) * 28 + (hw_output_s0_w - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_15_257;
-  }
-
-  
-  if ((((-15 + hw_output_s0_w == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_16_275 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (hw_output_s0_x_xi - 0) * 1 + (hw_output_s0_y_yi - 0) * 28 + (hw_output_s0_w - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_16_275;
-  }
-
-  
-  if ((((hw_output_s0_w == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_1_5 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (hw_output_s0_x_xi - 0) * 1 + (hw_output_s0_y_yi - 0) * 28 + (hw_output_s0_w - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_1_5;
-  }
-
-  
-  if ((((-1 + hw_output_s0_w == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_2_23 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (hw_output_s0_x_xi - 0) * 1 + (hw_output_s0_y_yi - 0) * 28 + (hw_output_s0_w - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_2_23;
-  }
-
-  
-  if ((((-2 + hw_output_s0_w == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_3_41 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (hw_output_s0_x_xi - 0) * 1 + (hw_output_s0_y_yi - 0) * 28 + (hw_output_s0_w - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_3_41;
-  }
-
-  
-  if ((((-3 + hw_output_s0_w == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_4_59 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (hw_output_s0_x_xi - 0) * 1 + (hw_output_s0_y_yi - 0) * 28 + (hw_output_s0_w - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_4_59;
-  }
-
-  
-  if ((((-4 + hw_output_s0_w == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_5_77 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (hw_output_s0_x_xi - 0) * 1 + (hw_output_s0_y_yi - 0) * 28 + (hw_output_s0_w - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_5_77;
-  }
-
-  
-  if ((((-5 + hw_output_s0_w == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_6_95 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (hw_output_s0_x_xi - 0) * 1 + (hw_output_s0_y_yi - 0) * 28 + (hw_output_s0_w - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_6_95;
-  }
-
-  
-  if ((((-6 + hw_output_s0_w == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_7_113 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (hw_output_s0_x_xi - 0) * 1 + (hw_output_s0_y_yi - 0) * 28 + (hw_output_s0_w - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_7_113;
-  }
-
-  
-  if ((((-7 + hw_output_s0_w == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_8_131 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (hw_output_s0_x_xi - 0) * 1 + (hw_output_s0_y_yi - 0) * 28 + (hw_output_s0_w - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_8_131;
-  }
-
-  
-  if ((((-8 + hw_output_s0_w == 0)))) {
-    auto value_conv_stencil_op_hcompute_conv_stencil_9_149 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (hw_output_s0_x_xi - 0) * 1 + (hw_output_s0_y_yi - 0) * 28 + (hw_output_s0_w - 0) * 784);
-    return value_conv_stencil_op_hcompute_conv_stencil_9_149;
-  }
-
-  
+  auto value_conv_stencil_op_hcompute_conv_stencil_10_167 = conv_stencil.conv_stencil_all_inputs_to_all_outputs.read(/*ram type address*/ (hw_output_s0_x_xi - 0) * 1 + (hw_output_s0_y_yi - 0) * 28 + (hw_output_s0_w - 0) * 784);
+  return value_conv_stencil_op_hcompute_conv_stencil_10_167;
   return 0;
 }
 
@@ -853,11 +603,13 @@ struct hw_input_stencil_all_inputs_to_all_outputs_cache {
 	// Capacity: 7200
   hw_uint<16> RAM[7200];
   inline hw_uint<16> read(const int addr) {
+#ifndef __VIVADO_SYNTH__
     if (addr < 0 || !(addr < 7200)) {
-    //cout << "Read error: Address " << addr << " is out of bounds" << endl;
+    cout << "Read error: Address " << addr << " is out of bounds" << endl;
     }
     assert(addr < 7200);
     assert(addr >= 0);
+#endif //__VIVADO_SYNTH__
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     return RAM[addr];
@@ -866,11 +618,13 @@ struct hw_input_stencil_all_inputs_to_all_outputs_cache {
 
 
 	inline void write(const hw_uint<16> value, const int addr) {
+#ifndef __VIVADO_SYNTH__
     if (addr < 0 || !(addr < 7200)) {
-    //cout << "Write error: Address " << addr << " is out of bounds" << endl;
+    cout << "Write error: Address " << addr << " is out of bounds" << endl;
     }
     assert(addr < 7200);
     assert(addr >= 0);
+#endif //__VIVADO_SYNTH__
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     RAM[addr] = value;
@@ -2695,11 +2449,13 @@ struct hw_kernel_stencil_all_inputs_to_all_outputs_cache {
 	// Capacity: 1152
   hw_uint<16> RAM[1152];
   inline hw_uint<16> read(const int addr) {
+#ifndef __VIVADO_SYNTH__
     if (addr < 0 || !(addr < 1152)) {
-    //cout << "Read error: Address " << addr << " is out of bounds" << endl;
+    cout << "Read error: Address " << addr << " is out of bounds" << endl;
     }
     assert(addr < 1152);
     assert(addr >= 0);
+#endif //__VIVADO_SYNTH__
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     return RAM[addr];
@@ -2708,11 +2464,13 @@ struct hw_kernel_stencil_all_inputs_to_all_outputs_cache {
 
 
 	inline void write(const hw_uint<16> value, const int addr) {
+#ifndef __VIVADO_SYNTH__
     if (addr < 0 || !(addr < 1152)) {
-    //cout << "Write error: Address " << addr << " is out of bounds" << endl;
+    cout << "Write error: Address " << addr << " is out of bounds" << endl;
     }
     assert(addr < 1152);
     assert(addr >= 0);
+#endif //__VIVADO_SYNTH__
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
     RAM[addr] = value;
@@ -5079,15 +4837,13 @@ void unoptimized_resnet(HWStream<hw_uint<16> >& /* no bundle get_args num ports 
   global_debug_handle = &debug_file;
 #endif //__VIVADO_SYNTH__
   conv_stencil_cache conv_stencil;
-//#pragma HLS ARRAY_PARTITION variable=conv_stencil.conv_stencil_all_inputs_to_all_outputs dim=0 complete
+#pragma HLS ARRAY_PARTITION variable=conv_stencil.conv_stencil_all_inputs_to_all_outputs cyclic dim=1 factor=16
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   hw_input_stencil_cache hw_input_stencil;
-//#pragma HLS ARRAY_PARTITION variable=hw_input_stencil.hw_input_stencil_all_inputs_to_all_outputs dim=0 complete
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   hw_kernel_stencil_cache hw_kernel_stencil;
-//#pragma HLS ARRAY_PARTITION variable=hw_kernel_stencil.hw_kernel_stencil_all_inputs_to_all_outputs dim=0 complete
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 #ifdef __VIVADO_SYNTH__

@@ -253,6 +253,8 @@ void generate_bank(CodegenOptions& options,
     out << "\t// Capacity: " << capacity << endl;
     out << tab(1) << pt_type_string << " RAM[" << capacity << "];" << endl;
     out << tab(1) << "inline " + pt_type_string + " read(const int addr) {" << endl;
+
+    open_debug_scope(out);
     out << tab(2) << "if (addr < 0 || !(addr < " << capacity << ")) {" << endl;
     out << tab(2) << "cout << \"Read error: Address \" << addr << \" is out of bounds\" << endl;" << endl;
     out << tab(2) << "}" << endl;
@@ -261,14 +263,19 @@ void generate_bank(CodegenOptions& options,
     ignore_inter_deps(out, "RAM");
     out << tab(2) << "return RAM[addr];" << endl;
     out << tab(1) << "}" << endl << endl;
+    close_debug_scope(out);
+
     out << endl << endl;
 
     out << "\tinline void write(const " + pt_type_string + " value, const int addr) {" << endl;
+    open_debug_scope(out);
     out << tab(2) << "if (addr < 0 || !(addr < " << capacity << ")) {" << endl;
     out << tab(2) << "cout << \"Write error: Address \" << addr << \" is out of bounds\" << endl;" << endl;
     out << tab(2) << "}" << endl;
     out << tab(2) << "assert(addr < " << capacity << ");" << endl;
     out << tab(2) << "assert(addr >= " << (int) 0 << ");" << endl;
+    close_debug_scope(out);
+
     if (options.add_dependence_pragmas) {
       ignore_inter_deps(out, "RAM");
     }
@@ -1084,7 +1091,6 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
     string value_str = "";
 
     if (sb.tp == INNER_BANK_OFFSET_LINEAR) {
-      //string linear_addr = buf.generate_linearize_ram_addr(outpt);
       string linear_addr = buf.generate_linearize_ram_addr(outpt, sb);
       value_str = bank + ".read(/*ram type address*/ "+ linear_addr + ")";
     } else if (sb.tp == INNER_BANK_OFFSET_STACK) {
@@ -1220,7 +1226,16 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
 
     out << tab(1) << "// " << outpt << " read pattern: " << str(buf.access_map.at(outpt)) << endl;
 
-    if (buf.banking.partition != "cyclic") {
+    if (buf.banking.partition == "register_file") {
+      assert(buf.bank_list.size() == 1);
+      // Port is irrelevant here
+      // TODO: Extract inner bank offset
+      string inpt = pick(buf.get_in_ports());
+      string peeked_val = delay_string(options, out, inpt, outpt, buf);
+      out << tab(1) << "auto value_" << inpt << " = " << peeked_val << ";" << endl;
+      out << tab(1) << "return value_" << inpt << ";" << endl;
+    } else if (buf.banking.partition != "cyclic") {
+      cout << "partition = " << buf.banking.partition << endl;
       vector<string> possible_ports;
       for (auto pt : buf.get_in_ports()) {
         if (buf.has_bank_between(pt, outpt)) {
