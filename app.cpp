@@ -1280,7 +1280,6 @@ hardware_schedule(
     umap* validity,
     umap* proximity) {
 
-
   cout << "Creating hw schedule..." << endl;
   auto padded_domain = cpy(domain);
   auto padded_validity = cpy(validity);
@@ -1302,7 +1301,11 @@ hardware_schedule(
     latencies[name(f)] = 1;
   }
 
-  ilp_builder modulo_schedule(ct);
+  ilp_builder modulo_schedule =
+    modulo_constraints(domain, validity, latencies);
+
+
+  //ilp_builder modulo_schedule(ct);
 
   // TODO: Replace with more sophisticated
   // dependence analysis that allows fusion

@@ -12014,6 +12014,7 @@ void coreir_set_test() {
   deleteContext(context);
 #endif // COREIR
 }
+
 void coreir_controller_test() {
 #ifdef COREIR
   CoreIR::Context* context = CoreIR::newContext();
@@ -12056,6 +12057,7 @@ void unet_coreir_test() {
     cout << tab(1) << str(m) << endl;
   }
 
+  assert(false);
   CodegenOptions options;
   options.inner_bank_offset_mode =
     INNER_BANK_OFFSET_LINEAR;
@@ -12077,9 +12079,9 @@ void unet_coreir_test() {
 }
 
 void coreir_tests() {
-  unet_coreir_test();
-  coreir_set_test();
+  //unet_coreir_test();
   reduce_stream_coreir_test();
+  coreir_set_test();
   coreir_controller_test();
   identity_stream_2d_coreir_test();
   identity_stream_coreir_test();
@@ -12087,7 +12089,7 @@ void coreir_tests() {
   weight_streaming_test();
 
   // Not yet working
-  //assert(false);
+  assert(false);
 }
 
 void resnet_test() {
@@ -12112,8 +12114,9 @@ void resnet_test() {
 }
 
 void application_tests() {
+  coreir_tests();
+
   resnet_test();
-  assert(false);
   reuse_buffered_conv_test();
 
   register_file_test();
@@ -12202,7 +12205,6 @@ void application_tests() {
   reduce_2d_test();
   ram_addr_unit_test();
 
-  coreir_tests();
 
   halide_conv_layer_3D_test();
   iccad_tests();

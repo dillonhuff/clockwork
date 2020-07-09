@@ -848,6 +848,7 @@ void UBuffer::generate_coreir(CodegenOptions& options, CoreIR::ModuleDef* def) {
         }
       }
 
+      cout << "possible ports = " << possible_ports.size() << endl;
       assert(possible_ports.size() == 1 || possible_ports.size() == 2);
 
       //for (auto inpt : possible_ports) {

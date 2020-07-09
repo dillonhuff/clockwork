@@ -4780,13 +4780,16 @@ void unoptimized_resnet(HWStream<hw_uint<16> >& /* no bundle get_args num ports 
   global_debug_handle = &debug_file;
 #endif //__VIVADO_SYNTH__
   conv_stencil_cache conv_stencil;
-#pragma HLS ARRAY_PARTITION variable=conv_stencil.conv_stencil_all_inputs_to_all_outputs cyclic dim=1 factor=16
+#pragma HLS ARRAY_PARTITION variable=conv_stencil.conv_stencil_all_inputs_to_all_outputs cyclic dim=3 factor=16
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   hw_input_stencil_cache hw_input_stencil;
+#pragma HLS ARRAY_PARTITION variable=hw_input_stencil.hw_input_stencil_all_inputs_to_all_outputs cyclic dim=1 factor=8
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
   hw_kernel_stencil_cache hw_kernel_stencil;
+#pragma HLS ARRAY_PARTITION variable=hw_kernel_stencil.hw_kernel_stencil_all_inputs_to_all_outputs cyclic dim=1 factor=8
+#pragma HLS ARRAY_PARTITION variable=hw_kernel_stencil.hw_kernel_stencil_all_inputs_to_all_outputs cyclic dim=2 factor=16
 #ifdef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
 #ifdef __VIVADO_SYNTH__
@@ -4882,15 +4885,18 @@ void unoptimized_resnet(HWStream<hw_uint<16> >& /* no bundle get_args num ports 
 	  for (int c3 = 0; c3 <= 29; c3 += 1)
 	    for (int c5 = 0; c5 <= 29; c5 += 1)
 	      for (int c7 = 0; c7 <= 7; c7 += 1)
+#pragma HLS pipeline II=1
 	        op_hcompute_hw_input_stencil(input_copy_stencil /* buf name */, hw_input_stencil, 0, c3, c5, c7);
 	  for (int c3 = 0; c3 <= 2; c3 += 1)
 	    for (int c5 = 0; c5 <= 2; c5 += 1)
 	      for (int c7 = 0; c7 <= 15; c7 += 1)
 	        for (int c9 = 0; c9 <= 7; c9 += 1)
+#pragma HLS pipeline II=1
 	          op_hcompute_hw_kernel_stencil(kernel_copy_stencil /* buf name */, hw_kernel_stencil, 0, c3, c5, c7, c9);
 	  for (int c3 = 0; c3 <= 27; c3 += 1)
 	    for (int c5 = 0; c5 <= 27; c5 += 1)
 	      for (int c7 = 0; c7 <= 15; c7 += 1)
+#pragma HLS pipeline II=1
 	        op_hcompute_conv_stencil(conv_stencil, 0, c3, c5, c7);
 	  for (int c3 = 0; c3 <= 27; c3 += 1)
 	    for (int c5 = 0; c5 <= 27; c5 += 1)
@@ -4917,6 +4923,7 @@ void unoptimized_resnet(HWStream<hw_uint<16> >& /* no bundle get_args num ports 
 	  for (int c3 = 0; c3 <= 15; c3 += 1)
 	    for (int c5 = 0; c5 <= 27; c5 += 1)
 	      for (int c7 = 0; c7 <= 27; c7 += 1)
+#pragma HLS pipeline II=1
 	        op_hcompute_hw_output_stencil(conv_stencil /* buf name */, hw_output_stencil, 0, c3, c5, c7);
 	}
 	
