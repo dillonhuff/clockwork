@@ -8546,6 +8546,7 @@ App pointwise_add(const std::string output_name) {
 
 App multi_channel(const std::string output_name) {
   App jac;
+  jac.set_default_pixel_width(16);
   jac.func2d("in0_oc");
   jac.func2d("in1_oc");
   jac.func2d("in0", "id", pt("in0_oc"));
@@ -12114,6 +12115,7 @@ void resnet_test() {
 void application_tests() {
   resnet_test();
   assert(false);
+
   reuse_buffered_conv_test();
 
   register_file_test();
@@ -12318,9 +12320,9 @@ void multi_channel_example() {
   int cols = 1920;
   int rows = 1080;
 
-  const int unroll_factor = 2;
-  string out_name = "bxy_mc_" + str(unroll_factor);
-  blur_xy_16(out_name).realize(out_name, cols, rows, unroll_factor);
+  const int unroll_factor = 32;
+  string out_name = "three_channel_" + str(unroll_factor);
+  multi_channel(out_name).realize(out_name, cols, rows, unroll_factor);
   move_to_benchmarks_folder(out_name);
 }
 
