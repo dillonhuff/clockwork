@@ -10780,7 +10780,6 @@ void reduce_stream_coreir_test() {
   for (auto m : get_maps(sched)) {
     cout << tab(1) << str(m) << endl;
   }
-  assert(false);
   cout << "sched before its = " << str(sched) << endl;
   sched = its(sched, dom);
   cout << "sched after its = " << str(sched) << endl;
@@ -12122,7 +12121,7 @@ void unet_coreir_test() {
 }
 
 void coreir_tests() {
-  reduce_stream_schedule_test();
+  //reduce_stream_schedule_test();
   reduce_stream_coreir_test();
   //unet_coreir_test();
   
