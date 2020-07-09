@@ -2203,9 +2203,13 @@ std::string perfect_loop_codegen(umap* schedmap) {
 
 void generate_xilinx_aws_ddr_config(CodegenOptions& options, map<string, UBuffer>& buffers, prog prg) {
   ofstream out(prg.name + "_config.ini");
+  out << "[connectivity]" << endl;
+  int i = 0;
   for (auto e : edge_bundles(buffers, prg)) {
-    out << prg.name << "_accel_1:" << e << endl;
+    out << "sp=" << prg.name << "_accel_1." << e << ":DDR[" << i << "]" << endl;
+    i++;
   }
+
   out.close();
 }
 

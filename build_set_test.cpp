@@ -12318,8 +12318,8 @@ void multi_channel_example() {
   int cols = 1920;
   int rows = 1080;
 
-  const int unroll_factor = 1;
-  string out_name = "bxy_mc";
+  const int unroll_factor = 32;
+  string out_name = "bxy_mc_32";
   blur_xy_16(out_name).realize(out_name, cols, rows, unroll_factor);
   move_to_benchmarks_folder(out_name);
 }
