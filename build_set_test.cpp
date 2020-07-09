@@ -11184,6 +11184,36 @@ void add_reuse_buffer(const std::string& level, const std::string& buffer, prog&
     cout << tab(1) << u->name << endl;
   }
 
+  auto sched = prg.unoptimized_schedule();
+  cout << "sched = " << str(sched) << endl;
+  auto earlier = lex_gt(sched, sched);
+  cout << "earlier = " << str(earlier) << endl;
+ 
+  auto read = prg.consumer_map();
+  cout << "consumed = " << str(read) << endl;
+  auto read_earlier = coalesce(dot(earlier, read));
+  cout << "consumed earlier = " << str(read_earlier) << endl;
+  auto consumed_earlier_and_now = its(read_earlier, read);
+  cout << "overlap          = " << str(consumed_earlier_and_now) << endl;
+  auto consumed_first_time = diff(read, consumed_earlier_and_now);
+  cout << "first time read  = " << str(consumed_first_time) << endl;
+  for (auto m : get_maps(consumed_first_time)) {
+    if (range_name(m) == buffer) {
+      cout << "m = " << str(m) << endl;
+      auto pr = isl_map_project_out(cpy(m), isl_dim_in, 2, 2);
+      cout << "pr               = " << str(pr) << endl;
+    }
+
+  }
+  assert(false);
+  for (auto m : get_maps(read_earlier)) {
+    if (range_name(m) == buffer) {
+      cout << tab(1) << str(m) << endl;
+      auto mp = isl_map_project_out(cpy(m), isl_dim_in, 3, 1);
+      cout << tab(2) << "projected: " << str(mp) << endl;
+    }
+  }
+  assert(false);
   auto cm = prg.consumer_maps();
   //auto buf_map = prg.consumer_map(buffer);
   //cout << "buf map: " << str(buf_map) << endl;
@@ -11256,9 +11286,10 @@ void reuse_buffered_conv_test() {
   prg.sanity_check();
 
   add_reuse_buffer("y", "in", prg);
-  //assert(false);
 
   prg.pretty_print();
+  assert(false);
+
   umap* sched = prg.optimized_codegen();
   umap* consumed = prg.consumer_map();
   auto read_id = isl_union_set_identity(cpy(domain(consumed)));
@@ -12081,9 +12112,10 @@ void resnet_test() {
 }
 
 void application_tests() {
-  //resnet_test();
+  resnet_test();
+  assert(false);
+  reuse_buffered_conv_test();
 
-  //reuse_buffered_conv_test();
   register_file_test();
   reaccess_no_hierarchy_rolled_test();
 
@@ -12286,11 +12318,9 @@ void multi_channel_example() {
   int cols = 1920;
   int rows = 1080;
 
-  const int unroll_factor = 32;
-  cout << "blur_xy" << endl;
-  cout << tab(1) << "unroll factor: " << unroll_factor << endl;
-  string out_name = "blur_example";
-  multi_channel(out_name).realize(out_name, cols, rows, unroll_factor);
+  const int unroll_factor = 1;
+  string out_name = "bxy_mc";
+  blur_xy_16(out_name).realize(out_name, cols, rows, unroll_factor);
   move_to_benchmarks_folder(out_name);
 }
 

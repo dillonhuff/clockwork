@@ -2201,6 +2201,14 @@ std::string perfect_loop_codegen(umap* schedmap) {
   return conv_out.str();
 }
 
+void generate_xilinx_aws_ddr_config(CodegenOptions& options, map<string, UBuffer>& buffers, prog prg) {
+  ofstream out(prg.name + "_config.ini");
+  for (auto e : edge_bundles(buffers, prg)) {
+    out << prg.name << "_accel_1:" << e << endl;
+  }
+  out.close();
+}
+
 void generate_app_code(CodegenOptions& options,
     map<string, UBuffer>& buffers,
     prog& prg,
@@ -2324,6 +2332,7 @@ void generate_app_code(CodegenOptions& options,
   generate_sw_bmp_test_harness(buffers, prg);
   generate_app_code_header(buffers, prg);
   generate_soda_tb(options, buffers, prg);
+  generate_xilinx_aws_ddr_config(options, buffers, prg);
   generate_xilinx_accel_soda_host(options, buffers, prg);
   generate_xilinx_accel_host(options, buffers, prg);
   generate_verilog_code(options, buffers, prg, schedmap, domain_map, kernels);
