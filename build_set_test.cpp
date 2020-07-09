@@ -10738,6 +10738,10 @@ void reduce_stream_coreir_test() {
   auto valid = (prg.validity_deps());
   auto prox = cpy(valid);
   auto sched = hardware_schedule_umap(dom, valid, prox);
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+  //assert(false);
   cout << "sched before its = " << str(sched) << endl;
   sched = its(sched, dom);
   cout << "sched after its = " << str(sched) << endl;
@@ -12080,12 +12084,12 @@ void unet_coreir_test() {
 
 void coreir_tests() {
   //unet_coreir_test();
+  identity_stream_through_mem_coreir_test();
+  identity_stream_2d_coreir_test();
   reduce_stream_coreir_test();
   coreir_set_test();
   coreir_controller_test();
-  identity_stream_2d_coreir_test();
   identity_stream_coreir_test();
-  identity_stream_through_mem_coreir_test();
   weight_streaming_test();
 
   // Not yet working

@@ -16,7 +16,7 @@ int main() {
 
   dut.eval();
 
-  for (int t = 0; t < 200; t++) {
+  for (int t = 0; t < 400; t++) {
     cout << "t = " << t << ", valid = " << (int) dut.hw_output_stencil_hcompute_hw_output_stencil_write_en << endl;
     cout << "t = " << t << ", value = " << (int) dut.hw_output_stencil_hcompute_hw_output_stencil_write_0 << endl << endl;
 

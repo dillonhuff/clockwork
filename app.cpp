@@ -1286,7 +1286,6 @@ hardware_schedule(
   auto padded_proximity = cpy(proximity);
 
   cout << "validity : " << str(padded_validity) << endl;
-  //assert(false);
 
   auto ct = ctx(padded_domain);
 
@@ -1297,18 +1296,14 @@ hardware_schedule(
     cout << tab(1) << s << endl;
   }
 
-
   // Dummy latencies
   map<string, int> latencies;
   for (auto f : get_sets(padded_domain)) {
-    latencies[name(f)] = 1;
+    latencies[name(f)] = 2;
   }
 
   ilp_builder modulo_schedule =
     modulo_constraints(domain, validity, latencies);
-
-
-  //ilp_builder modulo_schedule(ct);
 
   // TODO: Replace with more sophisticated
   // dependence analysis that allows fusion
@@ -1322,98 +1317,30 @@ hardware_schedule(
     vals.insert({hw_delay_var(range_name(m)), one(ct)});
     vals.insert({hw_delay_var(domain_name(m)), negone(ct)});
     modulo_schedule.add_geq(vals, isl_val_int_from_si(ct, -4*diff));
-    //hw_delay_var(range_name(n)), hw_delay_var(domain_name(m)), (int) diff);
-    //modulo_schedule.add_geq(hw_delay_var(range_name(n)), hw_delay_var(domain_name(m)), (int) diff);
   }
-  //assert(false);
 
   vector<pair<string, isl_val*> > obj;
   for (auto f : get_sets(padded_domain)) {
     string n = name(f);
     int dim = num_dims(f);
 
-    //isl_aff* s = aff_on_domain(get_local_space(f), zero(ct));
-    //isl_aff* cycle_delay = aff_on_domain(get_local_space(f), one(ct));
-
-    //modulo_schedule.add_geq(hw_delay_var(n), (int) 0);
-
     for (int i = 0; i < dim; i++) {
-
-      //cout << "adding var " << ii_var(n, i) << endl;
-
-      //modulo_schedule.add_gt(ii_var(n, i), (int) 0);
-
-      if (i < dim - 1) {
-        // TODO: Add product of domain at dimension i - 1
-        auto dp = project_all_but(f, i + 1);
-        auto tc =
-          sub(lexmaxval(dp), lexminval(dp));
-        //auto tc =
-          //add(sub(lexmaxval(dp), lexminval(dp)), one(ct));
-        //modulo_schedule.add_gt(ii_var(n, i), tc, ii_var(n, i + 1));
-        modulo_schedule.add_gt(ii_var(n, i), mul(isl_val_int_from_si(ct, 3), tc), ii_var(n, i + 1));
-      }
-
       obj.push_back({ii_var(n, i), one(ct)});
     }
 
   }
-
-  //for (auto dep : get_maps(validity)) {
-    //auto max_deps = isl_map_lexmax_pw_multi_aff(inv(dep));
-    //cout << "lm = " << str(max_deps) << endl << endl;
-  //}
 
   // TODO: Replace with more precise self-constraint
   // for reductions
   for (auto dep : get_maps(validity)) {
     if (domain_name(dep) == "reduce") {
       string iis = ii_var(domain_name(dep), num_in_dims(dep) - 1);
-      modulo_schedule.add_geq(iis, (int) 2);
+      modulo_schedule.add_geq(iis, (int) map_find(domain_name(dep), latencies));
+      //modulo_schedule.add_geq(iis, (int) 2);
     }
   }
 
-  //// All root IIs must be equal
-  //for (auto s : get_sets(padded_domain)) {
-    //for (auto other : get_sets(padded_domain)) {
-      //string iis = ii_var(name(s), 0);
-      //string iio = ii_var(name(other), 0);
-      //cout << iis << " == " << iio << endl;
-      //modulo_schedule.add_eq(iis, iio);
-    //}
-  //}
-
   modulo_schedule.minimize(simplify(obj));
-
-  //auto clks = clockwork_schedule(padded_domain, padded_validity, padded_proximity);
-  //cout << "clockwork sched" << endl;
-
-  //map<string, vector<isl_val*> > iis;
-  //map<string, isl_val*> delays;
-  //for (auto c : clks) {
-    //vector<isl_val*> final_iss;
-
-    //cout << tab(1) << c.first << " ";
-    //int dim = 0;
-    //for (auto s : c.second) {
-      //cout << str(s) << ", ";
-      ////final_iss.push_back(mul(get_coeff(s, 0), modulo_schedule.value(ii_var(c.first, dim))));
-      //final_iss.push_back(modulo_schedule.value(ii_var(c.first, dim)));
-      //dim++;
-    //}
-    //cout << endl;
-    //iis[c.first] = final_iss;
-    //isl_val* opos = nullptr;
-    //for (int i = 0; i < sorted_sets.size(); i++) {
-      //if (sorted_sets.at(i) == c.first) {
-        //opos = isl_val_int_from_si(ct, i);
-        //break;
-      //}
-    //}
-    //assert(opos != nullptr);
-    ////delays[c.first] = add(d, opos);
-  //}
-  ////assert(false);
 
   map<string, isl_aff*> hw_schedules;
   for (auto f : get_sets(padded_domain)) {
@@ -1421,7 +1348,6 @@ hardware_schedule(
     string n = name(f);
 
     isl_aff* s = aff_on_domain(get_local_space(f), zero(ct));
-    //isl_aff* cycle_delay = aff_on_domain(get_local_space(f), one(ct));
 
     for (int i = 0; i < dim; i++) {
       cout << ii_var(n, i) << " = " << str(modulo_schedule.value(ii_var(n, i))) << endl;
