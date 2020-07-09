@@ -10667,6 +10667,10 @@ void identity_stream_through_mem_coreir_test() {
   auto prox = cpy(valid);
   auto sched = hardware_schedule_umap(dom, valid, prox);
   cout << "sched before its = " << str(sched) << endl;
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+  //assert(false);
   sched = its(sched, dom);
   cout << "sched after its = " << str(sched) << endl;
 

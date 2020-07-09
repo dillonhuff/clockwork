@@ -1305,19 +1305,91 @@ hardware_schedule(
   ilp_builder modulo_schedule =
     modulo_constraints(domain, validity, latencies);
 
-  // TODO: Replace with more sophisticated
-  // dependence analysis that allows fusion
-  for (auto m : get_maps(validity)) {
-    cout << str(m) << endl;
-    int diff = int_upper_bound(card(to_uset(::domain(m)))) *
-      latencies.at(domain_name(m));
-    cout << "diff = " << diff << endl;
+  {
+    //int domain_dim = -1;
+    for (auto m : get_maps(padded_validity)) {
+      //domain_dim = num_in_dims(m);
+      cout << tab(1) << str(m) << endl;
+      auto maps = get_basic_maps(m);
+      cout << tab(1) << maps.size() << " basic maps" << endl;
+      for (auto bm : maps) {
+        string producer_delay = hw_delay_var(domain_name(bm));
+        string consumer_delay = hw_delay_var(range_name(bm));
+        string ddiff = domain_name(bm) + "_to_" + range_name(bm) + "_ddiff";
 
-    map<string, isl_val*> vals;
-    vals.insert({hw_delay_var(range_name(m)), one(ct)});
-    vals.insert({hw_delay_var(domain_name(m)), negone(ct)});
-    modulo_schedule.add_geq(vals, isl_val_int_from_si(ct, -4*diff));
+        cout << str(bm) << endl;
+        vector<pair<string, string> > diffs;
+        // This order of pushes to diffs is expected for
+        // matrix formatting
+        for (int d = 0; d < num_in_dims(bm); d++) {
+          diffs.push_back({"d_" + str(d), neg_ii_var(domain_name(bm), d)});
+        }
+
+        for (int d = 0; d < num_out_dims(bm); d++) {
+          diffs.push_back({"d_" + str(d), ii_var(range_name(bm), d)});
+        }
+
+        isl_basic_set* basic_set_for_map = flatten_bmap_to_bset(bm);
+        auto fs = form_farkas_constraints(basic_set_for_map, diffs, ddiff);
+        cout << "fs = " << str(fs) << endl;
+
+        cout << "dims in farkas: " << num_dims(fs) << endl;
+        int base_dims = num_in_dims(bm) + num_out_dims(bm) + 1;
+        int num_farkas_mults = num_dims(fs) - base_dims;
+        cout << "dims in res   : " << base_dims << endl;
+        cout << "farkas mults  : " << num_farkas_mults << endl;
+        fs = isl_basic_set_project_out(fs, isl_dim_set, base_dims, num_farkas_mults);
+        cout << "projecting out: " << str(fs) << endl;
+        fs = lift_divs(fs);
+        cout << "after lifting: " << str(fs) << endl;
+
+        append_basic_set(modulo_schedule, fs);
+
+        //cout << "Example solution with farkas: " << str(sample(builder.s)) << endl;
+        //assert(false);
+
+        for (int d = 0; d < num_in_dims(bm); d++) {
+          string neg_consumer = neg_ii_var(domain_name(bm), d);
+          modulo_schedule.add_eq({{neg_consumer, one(ct)}, {ii_var(domain_name(bm), d), one(ct)}},
+              zero(ct));
+        }
+
+        modulo_schedule.add_eq({{ddiff, one(ct)}, {producer_delay, one(ct)}, {consumer_delay, negone(ct)}},
+            mul(one(ct), isl_val_int_from_si(ct, map_find(domain_name(bm), latencies))));
+            //zero(ct));
+
+        cout << "Builder set..." << endl;
+        cout << tab(1) << str(modulo_schedule.s) << endl;
+
+        //cout << "sample point in builder set = " << str(sample(builder.s)) << endl;
+
+      }
+
+    }
   }
+
+  //// TODO: Replace with more sophisticated
+  //// dependence analysis that allows fusion
+  //for (auto m : get_maps(validity)) {
+    //cout << str(m) << endl;
+    //int diff = int_upper_bound(card(to_uset(::domain(m)))) *
+      //latencies.at(domain_name(m));
+    //cout << "diff = " << diff << endl;
+
+    //map<string, isl_val*> vals;
+    //vals.insert({hw_delay_var(range_name(m)), one(ct)});
+    //vals.insert({hw_delay_var(domain_name(m)), negone(ct)});
+    //modulo_schedule.add_geq(vals, isl_val_int_from_si(ct, -4*diff));
+  //}
+
+  //// TODO: Replace with more precise self-constraint
+  //// for reductions
+  //for (auto dep : get_maps(validity)) {
+    //if (domain_name(dep) == "reduce") {
+      //string iis = ii_var(domain_name(dep), num_in_dims(dep) - 1);
+      //modulo_schedule.add_geq(iis, (int) map_find(domain_name(dep), latencies));
+    //}
+  //}
 
   vector<pair<string, isl_val*> > obj;
   for (auto f : get_sets(padded_domain)) {
@@ -1330,15 +1402,6 @@ hardware_schedule(
 
   }
 
-  // TODO: Replace with more precise self-constraint
-  // for reductions
-  for (auto dep : get_maps(validity)) {
-    if (domain_name(dep) == "reduce") {
-      string iis = ii_var(domain_name(dep), num_in_dims(dep) - 1);
-      modulo_schedule.add_geq(iis, (int) map_find(domain_name(dep), latencies));
-      //modulo_schedule.add_geq(iis, (int) 2);
-    }
-  }
 
   modulo_schedule.minimize(simplify(obj));
 
