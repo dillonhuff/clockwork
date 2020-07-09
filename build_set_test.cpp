@@ -10699,6 +10699,23 @@ void identity_stream_through_mem_coreir_test() {
 
 }
 
+void reduce_stream_schedule_test() {
+  auto ctx = isl_ctx_alloc();
+
+  auto dom = isl_union_set_read_from_str(ctx, "{ reduce[root = 0, r, k] : 0 <= r < 6 and 0 <= k <= 2 }");
+  //auto valid = rdmap(ctx, "{ reduce[x] -> reduce[e] : e > x }");
+  auto valid = rdmap(ctx, "{ reduce[root = 0, r, k] -> reduce[root' = 0, r' = r, k'] : 0 <= r <= 6 and 0 <= k <= 2 and k' > k and 0 <= k' <= 2 }");
+  //reduce_stream_coreir_test();
+  auto prox = cpy(valid);
+  auto sched = hardware_schedule_umap(dom, valid, prox);
+  for (auto m : get_maps(sched)) {
+    cout << tab(1) << str(m) << endl;
+  }
+
+  isl_ctx_free(ctx);
+  assert(false);
+}
+
 void reduce_stream_coreir_test() {
   prog prg("reduce_stream");
   prg.buffer_port_widths["in"] = 16;
@@ -10742,10 +10759,19 @@ void reduce_stream_coreir_test() {
   auto valid = (prg.validity_deps());
   auto prox = cpy(valid);
   auto sched = hardware_schedule_umap(dom, valid, prox);
+  cout << "domains..." << endl;
+  for (auto d : get_sets(dom)) {
+    cout << tab(1) << str(d) << endl;
+  }
+  cout << "valid..." << endl;
+  for (auto v : get_maps(valid)) {
+    cout << tab(1) << str(v) << endl;
+  }
+  cout << "schedule..." << endl;
   for (auto m : get_maps(sched)) {
     cout << tab(1) << str(m) << endl;
   }
-  //assert(false);
+  assert(false);
   cout << "sched before its = " << str(sched) << endl;
   sched = its(sched, dom);
   cout << "sched after its = " << str(sched) << endl;
@@ -12087,7 +12113,10 @@ void unet_coreir_test() {
 }
 
 void coreir_tests() {
+  reduce_stream_schedule_test();
+  reduce_stream_coreir_test();
   //unet_coreir_test();
+  
   identity_stream_through_mem_coreir_test();
   identity_stream_2d_coreir_test();
   coreir_set_test();
@@ -12095,7 +12124,6 @@ void coreir_tests() {
   identity_stream_coreir_test();
   weight_streaming_test();
 
-  reduce_stream_coreir_test();
   // Not yet working
   assert(false);
 }

@@ -1306,9 +1306,7 @@ hardware_schedule(
     modulo_constraints(domain, validity, latencies);
 
   {
-    //int domain_dim = -1;
     for (auto m : get_maps(padded_validity)) {
-      //domain_dim = num_in_dims(m);
       cout << tab(1) << str(m) << endl;
       auto maps = get_basic_maps(m);
       cout << tab(1) << maps.size() << " basic maps" << endl;
@@ -1391,6 +1389,7 @@ hardware_schedule(
     //}
   //}
 
+  //modulo_schedule.add_eq({{ii_var("reduce", 2), one(ct)}}, isl_val_int_from_si(ct, 2));
   vector<pair<string, isl_val*> > obj;
   for (auto f : get_sets(padded_domain)) {
     string n = name(f);
