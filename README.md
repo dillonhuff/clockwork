@@ -5,16 +5,29 @@ Clockwork is a tool for compiling naive descriptions of hardware accelerators wr
 ![](./pictures/polyhedral_scheduling_figure_2.jpg)
 
 ## Important Files
+
 * `build_set_test.cpp` - The main driver program
 * `ubuffer.h` - The header file which stores the `UBuffer` class, which represents re-use buffers that store data between compute operations.
 * `prog.h` - The header file which stores the `prog` class, which is the clockwork input representation.
 
-## Dependencies
+## AWS F1 Quick Start
+
+For a full setup script for AWS F1 with Developer AMI 1.8.1 see: [./misc/aws\_setup.sh](./misc/aws_setup.sh). From inside the top-level of the clockwork repo run the commands:
+
+    source ./misc/aws_setup.sh
+    ./rebuild_and_run.sh blur-example
+    cd blur_example
+    source ./set_app.sh
+    make check TARGET=sw_emu DEVICE=$AWS_PLATFORM all 
+
+This will install and build clockwork, run it to produce a blur over a 1920 x 1080 image and then run a software emulation of the blur using Xilinx Vitis.
+
+## Installing Dependencies
 
 Examples of how to install the dependencies can be found in [./misc/install\_deps\_mac.sh](./misc/install_deps_mac.sh) and [./misc/install\_deps\_linux.sh](./misc/install\_deps\_linux.sh).
 
 Please install the specific versions of the listed dependencies. Do
-not just take the latest release on NTL or barvinok.
+not just take the latest release of NTL or barvinok.
 
 * ntl-11.4.1 - [download here](https://shoup.net/ntl/download.html) 
     * https://www.shoup.net/ntl/doc/tour-unix.html (needs GMP to be installed already)
@@ -22,6 +35,13 @@ not just take the latest release on NTL or barvinok.
    * https://repo.or.cz/w/barvinok.git/blob/HEAD:/README - instructions for installing barvinok with ntl and GMP
    * note that linux users may need to manually add -lpthread to the LIBS field (change "LIBS = -lntl -lgmp", to "LIBS = -lpthread -lntl -lgmp")
 * *optional codegen backend* **CoreIR** - [github link](https://github.com/rdaly525/coreir.git)
+
+## Setting Your private\_settings.sh
+
+The clockwork build script requires some paths and environment variables to be set in
+a script called `./user_settings\private_settings.sh`. You will need to create this script
+since each user has their own private settings. Several example private settings
+files can be found in `./user_settings/`. In particular if you used [./misc/install\_deps\_linux.sh](./misc/install\_deps\_linux.sh) you will probably want to use [./user_settings/linux\_settings\_template.sh](./user_settings/linux\_settings\_template.sh).
 
 # Building an example 
 
