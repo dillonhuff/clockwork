@@ -17,8 +17,8 @@ int main(const int argc, char** argv){
 		return -1;
 	}
 
-	//area.print(cout);
-	auto used_FF = (int) doc.child("profile").child("AreaEstimates").child("Resources").child("FF").child_value();
+	doc.print(cout);
+	auto used_FF =  doc.child("profile").child("AreaEstimates").child("Resources").child("FF").child_value();
 	auto used_LUT = doc.child("profile").child("AreaEstimates").child("Resources").child("LUT").child_value();
 	auto used_BRAM_18K = doc.child("profile").child("AreaEstimates").child("Resources").child("BRAM_18K").child_value();
 	auto used_DSP48E = doc.child("profile").child("AreaEstimates").child("Resources").child("DSP48E").child_value();
@@ -31,12 +31,19 @@ int main(const int argc, char** argv){
 	auto available_DSP48E = doc.child("profile").child("AreaEstimates").child("AvailableResources").child("DSP48E").child_value();
 	auto available_URAM = doc.child("profile").child("AreaEstimates").child("AvailableResources").child("URAM").child_value();
 
-	cout << "Used FF: " << used_FF << " = " << available_FF << endl;
-	cout << "Used LUT: " << used_LUT << endl;
-	cout << "Used BRAM_18K: " << used_BRAM_18K << endl;
-	cout << "Used DSP48E: " << used_DSP48E << endl;
-	cout << "Used URAM: " << used_URAM << endl;
+	double FF = std::stoi(used_FF)*100.00/std::stoi(available_FF);
+	double LUT = std::stoi(used_LUT)*100.00/std::stoi(available_LUT);
+	double BRAM_18K = std::stoi(used_BRAM_18K)*100.00/std::stoi(available_BRAM_18K);
+	double DSP48E = std::stoi(used_DSP48E)*100.00/std::stoi(available_DSP48E);
+	//double URAM = std::stoi(used_URAM)*100.00/std::stoi(available_URAM);
+	double URAM = 0;
+
+	cout << "FF: " << used_FF << " out of " << available_FF << " = " << FF << "%" << endl;
+	cout << "LUT: " << used_LUT << " out of " << available_LUT << " = " << LUT << "%" << endl;
+	cout << "BRAM_18K: " << used_BRAM_18K << " out of " << available_BRAM_18K << " = " << BRAM_18K << "%" << endl;
+	cout << "DSP48E: " << used_DSP48E << " out of " << available_DSP48E << " = " << DSP48E << "%" << endl;
+	cout << "URAM: " << used_URAM <<  " out of " << available_URAM << " = " << URAM << "%" << endl;
 	cout << "Done parsing vivado" << endl;
 	
-	//ifstream vivado_file ("./conv_3_3_halide_proj/solution1/syn/conv_3_3_halide_csynth.xml");
+	//ifstream vivado_file ("./conv_3_3_halide_proj/solution1/syn/report/conv_3_3_halide_csynth.xml");
 }
