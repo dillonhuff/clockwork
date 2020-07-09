@@ -856,11 +856,7 @@ inline hw_uint<32>  blur_example_rd0_select(average_cache& average, int d0, int 
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write0 = average.average_average_update_0_write0_to_blur_example_rd0.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write0;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd1_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -871,11 +867,7 @@ inline hw_uint<32>  blur_example_rd1_select(average_cache& average, int d0, int 
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write1 = average.average_average_update_0_write1_to_blur_example_rd1.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write1;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd10_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -886,11 +878,7 @@ inline hw_uint<32>  blur_example_rd10_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write10 = average.average_average_update_0_write10_to_blur_example_rd10.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write10;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd11_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -901,11 +889,7 @@ inline hw_uint<32>  blur_example_rd11_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write11 = average.average_average_update_0_write11_to_blur_example_rd11.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write11;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd12_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -916,11 +900,7 @@ inline hw_uint<32>  blur_example_rd12_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write12 = average.average_average_update_0_write12_to_blur_example_rd12.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write12;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd13_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -931,11 +911,7 @@ inline hw_uint<32>  blur_example_rd13_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write13 = average.average_average_update_0_write13_to_blur_example_rd13.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write13;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd14_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -946,11 +922,7 @@ inline hw_uint<32>  blur_example_rd14_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write14 = average.average_average_update_0_write14_to_blur_example_rd14.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write14;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd15_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -961,11 +933,7 @@ inline hw_uint<32>  blur_example_rd15_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write15 = average.average_average_update_0_write15_to_blur_example_rd15.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write15;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd16_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -976,11 +944,7 @@ inline hw_uint<32>  blur_example_rd16_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write16 = average.average_average_update_0_write16_to_blur_example_rd16.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write16;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd17_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -991,11 +955,7 @@ inline hw_uint<32>  blur_example_rd17_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write17 = average.average_average_update_0_write17_to_blur_example_rd17.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write17;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd18_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1006,11 +966,7 @@ inline hw_uint<32>  blur_example_rd18_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write18 = average.average_average_update_0_write18_to_blur_example_rd18.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write18;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd19_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1021,11 +977,7 @@ inline hw_uint<32>  blur_example_rd19_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write19 = average.average_average_update_0_write19_to_blur_example_rd19.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write19;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd2_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1036,11 +988,7 @@ inline hw_uint<32>  blur_example_rd2_select(average_cache& average, int d0, int 
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write2 = average.average_average_update_0_write2_to_blur_example_rd2.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write2;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd20_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1051,11 +999,7 @@ inline hw_uint<32>  blur_example_rd20_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write20 = average.average_average_update_0_write20_to_blur_example_rd20.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write20;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd21_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1066,11 +1010,7 @@ inline hw_uint<32>  blur_example_rd21_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write21 = average.average_average_update_0_write21_to_blur_example_rd21.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write21;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd22_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1081,11 +1021,7 @@ inline hw_uint<32>  blur_example_rd22_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write22 = average.average_average_update_0_write22_to_blur_example_rd22.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write22;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd23_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1096,11 +1032,7 @@ inline hw_uint<32>  blur_example_rd23_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write23 = average.average_average_update_0_write23_to_blur_example_rd23.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write23;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd24_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1111,11 +1043,7 @@ inline hw_uint<32>  blur_example_rd24_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write24 = average.average_average_update_0_write24_to_blur_example_rd24.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write24;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd25_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1126,11 +1054,7 @@ inline hw_uint<32>  blur_example_rd25_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write25 = average.average_average_update_0_write25_to_blur_example_rd25.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write25;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd26_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1141,11 +1065,7 @@ inline hw_uint<32>  blur_example_rd26_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write26 = average.average_average_update_0_write26_to_blur_example_rd26.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write26;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd27_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1156,11 +1076,7 @@ inline hw_uint<32>  blur_example_rd27_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write27 = average.average_average_update_0_write27_to_blur_example_rd27.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write27;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd28_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1171,11 +1087,7 @@ inline hw_uint<32>  blur_example_rd28_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write28 = average.average_average_update_0_write28_to_blur_example_rd28.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write28;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd29_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1186,11 +1098,7 @@ inline hw_uint<32>  blur_example_rd29_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write29 = average.average_average_update_0_write29_to_blur_example_rd29.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write29;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd3_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1201,11 +1109,7 @@ inline hw_uint<32>  blur_example_rd3_select(average_cache& average, int d0, int 
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write3 = average.average_average_update_0_write3_to_blur_example_rd3.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write3;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd30_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1216,11 +1120,7 @@ inline hw_uint<32>  blur_example_rd30_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write30 = average.average_average_update_0_write30_to_blur_example_rd30.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write30;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd31_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1231,11 +1131,7 @@ inline hw_uint<32>  blur_example_rd31_select(average_cache& average, int d0, int
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write31 = average.average_average_update_0_write31_to_blur_example_rd31.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write31;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd4_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1246,11 +1142,7 @@ inline hw_uint<32>  blur_example_rd4_select(average_cache& average, int d0, int 
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write4 = average.average_average_update_0_write4_to_blur_example_rd4.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write4;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd5_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1261,11 +1153,7 @@ inline hw_uint<32>  blur_example_rd5_select(average_cache& average, int d0, int 
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write5 = average.average_average_update_0_write5_to_blur_example_rd5.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write5;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd6_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1276,11 +1164,7 @@ inline hw_uint<32>  blur_example_rd6_select(average_cache& average, int d0, int 
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write6 = average.average_average_update_0_write6_to_blur_example_rd6.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write6;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd7_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1291,11 +1175,7 @@ inline hw_uint<32>  blur_example_rd7_select(average_cache& average, int d0, int 
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write7 = average.average_average_update_0_write7_to_blur_example_rd7.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write7;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd8_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1306,11 +1186,7 @@ inline hw_uint<32>  blur_example_rd8_select(average_cache& average, int d0, int 
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write8 = average.average_average_update_0_write8_to_blur_example_rd8.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write8;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  blur_example_rd9_select(average_cache& average, int d0, int d1, int dynamic_address) {
@@ -1321,11 +1197,7 @@ inline hw_uint<32>  blur_example_rd9_select(average_cache& average, int d0, int 
   // Write schedule: { average_update_0[d0, d1] -> [d1, d0, 4] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_average_average_update_0_write9 = average.average_average_update_0_write9_to_blur_example_rd9.peek(/* one reader or all rams */ 0);
   return value_average_average_update_0_write9;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 // # of bundles = 2
@@ -2412,11 +2284,7 @@ inline hw_uint<32>  average_rd0_select(in0_cache& in0, int d0, int d1, int dynam
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write0 = in0.in0_in0_update_0_write0_to_average_rd0.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write0;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd1_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2427,11 +2295,7 @@ inline hw_uint<32>  average_rd1_select(in0_cache& in0, int d0, int d1, int dynam
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write1 = in0.in0_in0_update_0_write1_to_average_rd1.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write1;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd10_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2442,11 +2306,7 @@ inline hw_uint<32>  average_rd10_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write10 = in0.in0_in0_update_0_write10_to_average_rd10.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write10;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd11_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2457,11 +2317,7 @@ inline hw_uint<32>  average_rd11_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write11 = in0.in0_in0_update_0_write11_to_average_rd11.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write11;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd12_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2472,11 +2328,7 @@ inline hw_uint<32>  average_rd12_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write12 = in0.in0_in0_update_0_write12_to_average_rd12.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write12;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd13_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2487,11 +2339,7 @@ inline hw_uint<32>  average_rd13_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write13 = in0.in0_in0_update_0_write13_to_average_rd13.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write13;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd14_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2502,11 +2350,7 @@ inline hw_uint<32>  average_rd14_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write14 = in0.in0_in0_update_0_write14_to_average_rd14.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write14;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd15_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2517,11 +2361,7 @@ inline hw_uint<32>  average_rd15_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write15 = in0.in0_in0_update_0_write15_to_average_rd15.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write15;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd16_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2532,11 +2372,7 @@ inline hw_uint<32>  average_rd16_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write16 = in0.in0_in0_update_0_write16_to_average_rd16.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write16;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd17_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2547,11 +2383,7 @@ inline hw_uint<32>  average_rd17_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write17 = in0.in0_in0_update_0_write17_to_average_rd17.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write17;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd18_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2562,11 +2394,7 @@ inline hw_uint<32>  average_rd18_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write18 = in0.in0_in0_update_0_write18_to_average_rd18.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write18;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd19_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2577,11 +2405,7 @@ inline hw_uint<32>  average_rd19_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write19 = in0.in0_in0_update_0_write19_to_average_rd19.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write19;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd2_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2592,11 +2416,7 @@ inline hw_uint<32>  average_rd2_select(in0_cache& in0, int d0, int d1, int dynam
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write2 = in0.in0_in0_update_0_write2_to_average_rd2.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write2;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd20_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2607,11 +2427,7 @@ inline hw_uint<32>  average_rd20_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write20 = in0.in0_in0_update_0_write20_to_average_rd20.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write20;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd21_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2622,11 +2438,7 @@ inline hw_uint<32>  average_rd21_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write21 = in0.in0_in0_update_0_write21_to_average_rd21.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write21;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd22_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2637,11 +2449,7 @@ inline hw_uint<32>  average_rd22_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write22 = in0.in0_in0_update_0_write22_to_average_rd22.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write22;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd23_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2652,11 +2460,7 @@ inline hw_uint<32>  average_rd23_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write23 = in0.in0_in0_update_0_write23_to_average_rd23.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write23;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd24_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2667,11 +2471,7 @@ inline hw_uint<32>  average_rd24_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write24 = in0.in0_in0_update_0_write24_to_average_rd24.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write24;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd25_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2682,11 +2482,7 @@ inline hw_uint<32>  average_rd25_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write25 = in0.in0_in0_update_0_write25_to_average_rd25.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write25;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd26_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2697,11 +2493,7 @@ inline hw_uint<32>  average_rd26_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write26 = in0.in0_in0_update_0_write26_to_average_rd26.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write26;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd27_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2712,11 +2504,7 @@ inline hw_uint<32>  average_rd27_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write27 = in0.in0_in0_update_0_write27_to_average_rd27.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write27;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd28_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2727,11 +2515,7 @@ inline hw_uint<32>  average_rd28_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write28 = in0.in0_in0_update_0_write28_to_average_rd28.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write28;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd29_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2742,11 +2526,7 @@ inline hw_uint<32>  average_rd29_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write29 = in0.in0_in0_update_0_write29_to_average_rd29.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write29;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd3_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2757,11 +2537,7 @@ inline hw_uint<32>  average_rd3_select(in0_cache& in0, int d0, int d1, int dynam
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write3 = in0.in0_in0_update_0_write3_to_average_rd3.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write3;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd30_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2772,11 +2548,7 @@ inline hw_uint<32>  average_rd30_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write30 = in0.in0_in0_update_0_write30_to_average_rd30.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write30;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd31_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2787,11 +2559,7 @@ inline hw_uint<32>  average_rd31_select(in0_cache& in0, int d0, int d1, int dyna
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write31 = in0.in0_in0_update_0_write31_to_average_rd31.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write31;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd4_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2802,11 +2570,7 @@ inline hw_uint<32>  average_rd4_select(in0_cache& in0, int d0, int d1, int dynam
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write4 = in0.in0_in0_update_0_write4_to_average_rd4.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write4;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd5_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2817,11 +2581,7 @@ inline hw_uint<32>  average_rd5_select(in0_cache& in0, int d0, int d1, int dynam
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write5 = in0.in0_in0_update_0_write5_to_average_rd5.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write5;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd6_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2832,11 +2592,7 @@ inline hw_uint<32>  average_rd6_select(in0_cache& in0, int d0, int d1, int dynam
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write6 = in0.in0_in0_update_0_write6_to_average_rd6.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write6;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd7_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2847,11 +2603,7 @@ inline hw_uint<32>  average_rd7_select(in0_cache& in0, int d0, int d1, int dynam
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write7 = in0.in0_in0_update_0_write7_to_average_rd7.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write7;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd8_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2862,11 +2614,7 @@ inline hw_uint<32>  average_rd8_select(in0_cache& in0, int d0, int d1, int dynam
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write8 = in0.in0_in0_update_0_write8_to_average_rd8.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write8;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd9_select(in0_cache& in0, int d0, int d1, int dynamic_address) {
@@ -2877,11 +2625,7 @@ inline hw_uint<32>  average_rd9_select(in0_cache& in0, int d0, int d1, int dynam
   // Write schedule: { in0_update_0[d0, d1] -> [d1, d0, 3] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in0_in0_update_0_write9 = in0.in0_in0_update_0_write9_to_average_rd9.peek(/* one reader or all rams */ 0);
   return value_in0_in0_update_0_write9;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 // # of bundles = 2
@@ -3968,11 +3712,7 @@ inline hw_uint<32>  average_rd0_select(in1_cache& in1, int d0, int d1, int dynam
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write0 = in1.in1_in1_update_0_write0_to_average_rd0.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write0;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd1_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -3983,11 +3723,7 @@ inline hw_uint<32>  average_rd1_select(in1_cache& in1, int d0, int d1, int dynam
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write1 = in1.in1_in1_update_0_write1_to_average_rd1.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write1;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd10_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -3998,11 +3734,7 @@ inline hw_uint<32>  average_rd10_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write10 = in1.in1_in1_update_0_write10_to_average_rd10.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write10;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd11_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4013,11 +3745,7 @@ inline hw_uint<32>  average_rd11_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write11 = in1.in1_in1_update_0_write11_to_average_rd11.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write11;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd12_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4028,11 +3756,7 @@ inline hw_uint<32>  average_rd12_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write12 = in1.in1_in1_update_0_write12_to_average_rd12.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write12;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd13_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4043,11 +3767,7 @@ inline hw_uint<32>  average_rd13_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write13 = in1.in1_in1_update_0_write13_to_average_rd13.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write13;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd14_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4058,11 +3778,7 @@ inline hw_uint<32>  average_rd14_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write14 = in1.in1_in1_update_0_write14_to_average_rd14.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write14;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd15_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4073,11 +3789,7 @@ inline hw_uint<32>  average_rd15_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write15 = in1.in1_in1_update_0_write15_to_average_rd15.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write15;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd16_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4088,11 +3800,7 @@ inline hw_uint<32>  average_rd16_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write16 = in1.in1_in1_update_0_write16_to_average_rd16.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write16;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd17_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4103,11 +3811,7 @@ inline hw_uint<32>  average_rd17_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write17 = in1.in1_in1_update_0_write17_to_average_rd17.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write17;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd18_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4118,11 +3822,7 @@ inline hw_uint<32>  average_rd18_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write18 = in1.in1_in1_update_0_write18_to_average_rd18.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write18;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd19_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4133,11 +3833,7 @@ inline hw_uint<32>  average_rd19_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write19 = in1.in1_in1_update_0_write19_to_average_rd19.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write19;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd2_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4148,11 +3844,7 @@ inline hw_uint<32>  average_rd2_select(in1_cache& in1, int d0, int d1, int dynam
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write2 = in1.in1_in1_update_0_write2_to_average_rd2.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write2;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd20_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4163,11 +3855,7 @@ inline hw_uint<32>  average_rd20_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write20 = in1.in1_in1_update_0_write20_to_average_rd20.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write20;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd21_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4178,11 +3866,7 @@ inline hw_uint<32>  average_rd21_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write21 = in1.in1_in1_update_0_write21_to_average_rd21.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write21;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd22_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4193,11 +3877,7 @@ inline hw_uint<32>  average_rd22_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write22 = in1.in1_in1_update_0_write22_to_average_rd22.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write22;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd23_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4208,11 +3888,7 @@ inline hw_uint<32>  average_rd23_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write23 = in1.in1_in1_update_0_write23_to_average_rd23.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write23;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd24_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4223,11 +3899,7 @@ inline hw_uint<32>  average_rd24_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write24 = in1.in1_in1_update_0_write24_to_average_rd24.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write24;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd25_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4238,11 +3910,7 @@ inline hw_uint<32>  average_rd25_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write25 = in1.in1_in1_update_0_write25_to_average_rd25.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write25;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd26_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4253,11 +3921,7 @@ inline hw_uint<32>  average_rd26_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write26 = in1.in1_in1_update_0_write26_to_average_rd26.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write26;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd27_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4268,11 +3932,7 @@ inline hw_uint<32>  average_rd27_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write27 = in1.in1_in1_update_0_write27_to_average_rd27.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write27;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd28_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4283,11 +3943,7 @@ inline hw_uint<32>  average_rd28_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write28 = in1.in1_in1_update_0_write28_to_average_rd28.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write28;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd29_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4298,11 +3954,7 @@ inline hw_uint<32>  average_rd29_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write29 = in1.in1_in1_update_0_write29_to_average_rd29.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write29;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd3_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4313,11 +3965,7 @@ inline hw_uint<32>  average_rd3_select(in1_cache& in1, int d0, int d1, int dynam
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write3 = in1.in1_in1_update_0_write3_to_average_rd3.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write3;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd30_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4328,11 +3976,7 @@ inline hw_uint<32>  average_rd30_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write30 = in1.in1_in1_update_0_write30_to_average_rd30.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write30;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd31_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4343,11 +3987,7 @@ inline hw_uint<32>  average_rd31_select(in1_cache& in1, int d0, int d1, int dyna
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write31 = in1.in1_in1_update_0_write31_to_average_rd31.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write31;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd4_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4358,11 +3998,7 @@ inline hw_uint<32>  average_rd4_select(in1_cache& in1, int d0, int d1, int dynam
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write4 = in1.in1_in1_update_0_write4_to_average_rd4.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write4;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd5_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4373,11 +4009,7 @@ inline hw_uint<32>  average_rd5_select(in1_cache& in1, int d0, int d1, int dynam
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write5 = in1.in1_in1_update_0_write5_to_average_rd5.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write5;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd6_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4388,11 +4020,7 @@ inline hw_uint<32>  average_rd6_select(in1_cache& in1, int d0, int d1, int dynam
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write6 = in1.in1_in1_update_0_write6_to_average_rd6.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write6;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd7_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4403,11 +4031,7 @@ inline hw_uint<32>  average_rd7_select(in1_cache& in1, int d0, int d1, int dynam
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write7 = in1.in1_in1_update_0_write7_to_average_rd7.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write7;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd8_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4418,11 +4042,7 @@ inline hw_uint<32>  average_rd8_select(in1_cache& in1, int d0, int d1, int dynam
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write8 = in1.in1_in1_update_0_write8_to_average_rd8.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write8;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 inline hw_uint<32>  average_rd9_select(in1_cache& in1, int d0, int d1, int dynamic_address) {
@@ -4433,11 +4053,7 @@ inline hw_uint<32>  average_rd9_select(in1_cache& in1, int d0, int d1, int dynam
   // Write schedule: { in1_update_0[d0, d1] -> [d1, d0, 1] : 0 <= d0 <= 59 and 0 <= d1 <= 1079 }
   auto value_in1_in1_update_0_write9 = in1.in1_in1_update_0_write9_to_average_rd9.peek(/* one reader or all rams */ 0);
   return value_in1_in1_update_0_write9;
-#ifndef __VIVADO_SYNTH__
-	cout << "Error: Unsupported offsets: " << " d0 = " << d0  << " d1 = " << d1  << endl;
-	assert(false);
-	return 0;
-#endif //__VIVADO_SYNTH__
+  return 0;
 }
 
 // # of bundles = 2
@@ -4680,6 +4296,30 @@ inline void in1_in1_update_0_write_bundle_write(hw_uint<1024>& in1_update_0_writ
 
 
 // Operation logic
+inline void average_update_0(in0_cache& in0, in1_cache& in1, average_cache& average, int d0, int d1) {
+  // Dynamic address computation
+
+	// Consume: in0
+	auto in0_0_c__0_value = in0_average_update_0_read_bundle_read(in0/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	// Consume: in1
+	auto in1_0_c__0_value = in1_average_update_0_read_bundle_read(in1/* source_delay */, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+	auto compute_result = add_unrolled_32(in0_0_c__0_value, in1_0_c__0_value);
+	// Produce: average
+	average_average_update_0_write_bundle_write(/* arg names */compute_result, average, d0, d1, 0);
+
+#ifndef __VIVADO_SYNTH__
+#endif //__VIVADO_SYNTH__
+
+}
+
 inline void in1_update_0(HWStream<hw_uint<1024> >& /* buffer_args num ports = 32 */in1_oc, in1_cache& in1, int d0, int d1) {
   // Dynamic address computation
 
@@ -4702,30 +4342,6 @@ inline void in0_update_0(HWStream<hw_uint<1024> >& /* buffer_args num ports = 32
 	auto compute_result = id_unrolled_32(in0_oc_0_c__0_value);
 	// Produce: in0
 	in0_in0_update_0_write_bundle_write(/* arg names */compute_result, in0, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-}
-
-inline void average_update_0(in0_cache& in0, in1_cache& in1, average_cache& average, int d0, int d1) {
-  // Dynamic address computation
-
-	// Consume: in0
-	auto in0_0_c__0_value = in0_average_update_0_read_bundle_read(in0/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	// Consume: in1
-	auto in1_0_c__0_value = in1_average_update_0_read_bundle_read(in1/* source_delay */, d0, d1, 0);
-
-#ifndef __VIVADO_SYNTH__
-#endif //__VIVADO_SYNTH__
-
-	auto compute_result = add_unrolled_32(in0_0_c__0_value, in1_0_c__0_value);
-	// Produce: average
-	average_average_update_0_write_bundle_write(/* arg names */compute_result, average, d0, d1, 0);
 
 #ifndef __VIVADO_SYNTH__
 #endif //__VIVADO_SYNTH__
